@@ -106,7 +106,7 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
     }
 }
 
-SimpleDIBClass::~SimpleDIBClass(void)
+SimpleDIBClass::~SimpleDIBClass()
 {
 	if (Info) delete [] Info;
 	if (Handle) DeleteObject(Handle);

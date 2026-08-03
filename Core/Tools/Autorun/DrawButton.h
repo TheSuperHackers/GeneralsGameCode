@@ -54,29 +54,29 @@ class DrawButton
 		DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const char *string, TTFontClass *fontptr );
 		DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const wchar_t *string, TTFontClass *fontptr );
 
-		char			*Return_Normal_Bitmap	( void )						{ return NormalBitmap;	};
-		char			*Return_Pressed_Bitmap	( void )						{ return PressedBitmap; };
-		char			*Return_Focus_Bitmap 	( void )						{ return FocusBitmap;	};
-		char			*Return_Bitmap 			( void );
+		char			*Return_Normal_Bitmap	()						{ return NormalBitmap;	};
+		char			*Return_Pressed_Bitmap	()						{ return PressedBitmap; };
+		char			*Return_Focus_Bitmap 	()						{ return FocusBitmap;	};
+		char			*Return_Bitmap 			();
 
-		bool	 		Draw_Bitmaps		   	( void )						{ return( UseBitmaps ); };
+		bool	 		Draw_Bitmaps		   	()						{ return( UseBitmaps ); };
 
 		void			Draw_Text				( HDC hDC );
 
-		BUTTON_STATE 	Get_State			   	( void )						{ return ButtonState;	};
+		BUTTON_STATE 	Get_State			   	()						{ return ButtonState;	};
 		bool	 		Is_Mouse_In_Region 		( int mouse_x, int mouse_y );
-		int				Return_Id			   	( void )						{ return Id; };
-		int				Return_X_Pos 		   	( void )						{ return rect.left; };
-		int				Return_Y_Pos		   	( void )						{ return rect.top; };
-		int				Return_Width		   	( void )						{ return( rect.right - rect.left ); };
-		int				Return_Height		   	( void )						{ return( rect.bottom - rect.top ); };
-		int				Return_Stretched_Width	( void )						{ return( StretchedWidth ); };
-		int				Return_Stretched_Height	( void )						{ return( StretchedHeight ); };
+		int				Return_Id			   	()						{ return Id; };
+		int				Return_X_Pos 		   	()						{ return rect.left; };
+		int				Return_Y_Pos		   	()						{ return rect.top; };
+		int				Return_Width		   	()						{ return( rect.right - rect.left ); };
+		int				Return_Height		   	()						{ return( rect.bottom - rect.top ); };
+		int				Return_Stretched_Width	()						{ return( StretchedWidth ); };
+		int				Return_Stretched_Height	()						{ return( StretchedHeight ); };
 		void	 		Return_Area			   	( RECT *area );
 		void	 		Return_Area			   	( Rect *area );
 		void	 		Return_Text_Area	   	( Rect *area );
-		TTFontClass		*Return_Font_Ptr		( void )						{ return( MyFontPtr ); };
-		wchar_t			*Return_Text			( void )						{ return( String ); };
+		TTFontClass		*Return_Font_Ptr		()						{ return( MyFontPtr ); };
+		wchar_t			*Return_Text			()						{ return( String ); };
 		void	 		Set_State				( BUTTON_STATE state )			{ ButtonState = state; };
 		int				Set_Stretched_Width		( int  );
 		int				Set_Stretched_Height	( int  );

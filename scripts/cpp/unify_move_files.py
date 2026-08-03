@@ -549,6 +549,9 @@ def main():
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp")
 
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/ww3d.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/ww3d.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/ww3d.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/ww3d.cpp")
+
     #unify_move_file(Game.ZEROHOUR, "GameEngine/Include/Common/AcademyStats.h", Game.CORE, "GameEngine/Include/Common/AcademyStats.h")
     #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/AcademyStats.cpp", Game.CORE, "GameEngine/Source/Common/RTS/AcademyStats.cpp")
 
@@ -615,6 +618,38 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWater.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWater.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWeapon.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWeapon.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWebpageURL.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWebpageURL.cpp")
+    
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DParticleSys.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DParticleSys.cpp")
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/DamageFX.h", Game.CORE, "GameEngine/Include/Common/DamageFX.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/DamageFX.cpp", Game.CORE, "GameEngine/Source/Common/DamageFX.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Dict.h", Game.CORE, "GameEngine/Include/Common/Dict.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Dict.cpp", Game.CORE, "GameEngine/Source/Common/Dict.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/DiscreteCircle.h", Game.CORE, "GameEngine/Include/Common/DiscreteCircle.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/DiscreteCircle.cpp", Game.CORE, "GameEngine/Source/Common/DiscreteCircle.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Language.h", Game.CORE, "GameEngine/Include/Common/Language.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Language.cpp", Game.CORE, "GameEngine/Source/Common/Language.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/MessageStream.h", Game.CORE, "GameEngine/Include/Common/MessageStream.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/MessageStream.cpp", Game.CORE, "GameEngine/Source/Common/MessageStream.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/MiniLog.h", Game.CORE, "GameEngine/Include/Common/MiniLog.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/MiniLog.cpp", Game.CORE, "GameEngine/Source/Common/MiniLog.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/PerfTimer.h", Game.CORE, "GameEngine/Include/Common/PerfTimer.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/PerfTimer.cpp", Game.CORE, "GameEngine/Source/Common/PerfTimer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/TerrainTypes.h", Game.CORE, "GameEngine/Include/Common/TerrainTypes.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/TerrainTypes.cpp", Game.CORE, "GameEngine/Source/Common/TerrainTypes.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/version.h", Game.CORE, "GameEngine/Include/Common/version.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/version.cpp", Game.CORE, "GameEngine/Source/Common/version.cpp")
+    
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/CommandLine.h", Game.CORE, "GameEngine/Include/Common/CommandLine.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/CommandLine.cpp", Game.CORE, "GameEngine/Source/Common/CommandLine.cpp")
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/BezFwdIterator.h", Game.CORE, "GameEngine/Include/Common/BezFwdIterator.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/BezierSegment.h", Game.CORE, "GameEngine/Include/Common/BezierSegment.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Bezier/BezFwdIterator.cpp", Game.CORE, "GameEngine/Source/Common/Bezier/BezFwdIterator.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Bezier/BezierSegment.cpp", Game.CORE, "GameEngine/Source/Common/Bezier/BezierSegment.cpp")
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Precompiled/PreRTS.h", Game.CORE, "GameEngine/Include/Precompiled/PreRTS.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Precompiled/PreRTS.cpp", Game.CORE, "GameEngine/Source/Precompiled/PreRTS.cpp")
 
     return
 

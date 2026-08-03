@@ -262,6 +262,11 @@ public:
 	void toLower();
 
 	/**
+	  Make the string uppercase
+	*/
+	void toUpper();
+
+	/**
 		Remove the final character in the string. If the string is empty,
 		do nothing. (This is a rather dorky method, but used a lot in
 		text editing, thus its presence here.)

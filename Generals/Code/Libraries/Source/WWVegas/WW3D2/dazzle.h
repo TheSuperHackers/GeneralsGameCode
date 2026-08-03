@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include "always.h"
-#include "vector3.h"
-#include "matrix3d.h"
-#include "rendobj.h"
-#include "wwstring.h"
-#include "proto.h"
-#include "w3derr.h"
+#include "WWLib/always.h"
+#include "WWMath/vector3.h"
+#include "WWMath/matrix3d.h"
+#include "WW3D2/rendobj.h"
+#include "WWLib/wwstring.h"
+#include "WW3D2/proto.h"
+#include "WW3D2/w3derr.h"
 #include "shader.h"
-#include "matrix4.h"
+#include "WWMath/matrix4.h"
 
 class CameraClass;
 class DazzleVisibilityClass;

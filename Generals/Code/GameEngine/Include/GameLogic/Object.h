@@ -29,7 +29,7 @@
 #pragma once
 
 #include "Lib/BaseType.h"
-#include "ref_ptr.h"
+#include "WWLib/ref_ptr.h"
 
 #include "Common/Geometry.h"
 #include "Common/Snapshot.h"
@@ -424,9 +424,13 @@ public:
 	void onContainedBy( Object *containedBy );
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
-	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
+	void friend_setContainedBy( Object *containedBy );
 	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
 	const Object* getOuterObject() const; ///< Get the top-level object
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	void friend_setContainedByID(ObjectID id) { m_containedByID = id; }
+#endif
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;

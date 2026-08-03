@@ -43,8 +43,8 @@
 
 #include "renderobjectrecycler.h"
 #include "rendobj.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/part_emt.h"
+#include "assetmgr.h"
+#include "part_emt.h"
 #include "WWMath/matrix3d.h"
 
 

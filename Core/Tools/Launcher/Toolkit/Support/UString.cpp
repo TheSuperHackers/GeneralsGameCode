@@ -286,7 +286,7 @@ UString::~UString()
 *
 ******************************************************************************/
 
-UInt UString::Length(void) const
+UInt UString::Length() const
 	{
 	if (mData == nullptr)
 		{
@@ -988,7 +988,7 @@ UString UString::Right(UInt count)
 *
 ******************************************************************************/
 
-void UString::ToUpper(void)
+void UString::ToUpper()
 	{
 	if (mData != nullptr)
 		{
@@ -1013,7 +1013,7 @@ void UString::ToUpper(void)
 *
 ******************************************************************************/
 
-void UString::ToLower(void)
+void UString::ToLower()
 	{
 	if (mData != nullptr)
 		{
@@ -1038,7 +1038,7 @@ void UString::ToLower(void)
 *
 ******************************************************************************/
 
-void UString::Reverse(void)
+void UString::Reverse()
 	{
 	if (mData != nullptr)
 		{
@@ -1214,7 +1214,7 @@ void UString::ConvertToANSI(Char* buffer, UInt bufferLength) const
 *
 ******************************************************************************/
 
-UInt UString::Size(void) const
+UInt UString::Size() const
 	{
 	if (mData == nullptr)
 		{
@@ -1241,7 +1241,7 @@ UInt UString::Size(void) const
 *
 ******************************************************************************/
 
-UInt UString::Capacity(void) const
+UInt UString::Capacity() const
 	{
 	return mCapacity;
 	}

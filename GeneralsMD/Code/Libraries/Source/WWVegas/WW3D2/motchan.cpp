@@ -46,10 +46,10 @@
 
 #include "motchan.h"
 #include "w3d_file.h"
-#include "chunkio.h"
-#include "Vector.h"
-#include "wwmath.h"
-#include "quat.h"
+#include "WWLib/chunkio.h"
+#include "WWLib/Vector.h"
+#include "WWMath/wwmath.h"
+#include "WWMath/quat.h"
 //#include <Windows.h>
 // Static Table, for Adaptive Delta Decompressor
 #define FILTER_TABLE_SIZE (256)

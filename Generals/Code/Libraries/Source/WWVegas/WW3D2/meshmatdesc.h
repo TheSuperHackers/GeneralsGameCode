@@ -38,12 +38,12 @@
 
 #pragma once
 
-#include "always.h"
-#include "vector2.h"
-#include "vector3.h"
-#include "Vector3i.h"
-#include "vector4.h"
-#include "sharebuf.h"
+#include "WWLib/always.h"
+#include "WWMath/vector2.h"
+#include "WWMath/vector3.h"
+#include "WWMath/Vector3i.h"
+#include "WWMath/vector4.h"
+#include "WWLib/sharebuf.h"
 #include "shader.h"
 #include "vertmaterial.h"
 

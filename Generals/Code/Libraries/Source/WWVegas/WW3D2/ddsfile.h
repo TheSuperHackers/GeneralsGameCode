@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "ww3dformat.h"
-#include "wwstring.h"
-#include "vector3.h"
+#include "WWLib/always.h"
+#include "WW3D2/ww3dformat.h"
+#include "WWLib/wwstring.h"
+#include "WWMath/vector3.h"
 
 struct IDirect3DSurface8;
 struct IDirect3DVolume8;

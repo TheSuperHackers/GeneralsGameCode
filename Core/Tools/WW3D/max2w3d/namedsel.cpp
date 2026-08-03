@@ -77,7 +77,7 @@ void NamedSelSetList::Delete_Set(TSTR & setname)
 	if (i >= 0) Delete_Set(i);
 }
 
-void NamedSelSetList::Reset(void)
+void NamedSelSetList::Reset()
 {
 	while (Sets.Count() > 0) {
 		Delete_Set(0);

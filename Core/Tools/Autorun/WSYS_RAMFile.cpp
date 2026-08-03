@@ -196,7 +196,7 @@ Bool RAMFile::open( File *file )
 	*/
 //=================================================================
 
-void RAMFile::close( void )
+void RAMFile::close()
 {
 	delete [] m_data;
 	m_data = nullptr;

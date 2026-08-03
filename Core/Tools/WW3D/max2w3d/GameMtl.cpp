@@ -784,7 +784,7 @@ GameMtl::GameMtl(BOOL loading)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-GameMtl::~GameMtl(void)
+GameMtl::~GameMtl()
 {
 	for (int pass=0; pass<W3dMaterialClass::MAX_PASSES; ++pass) {
 		for (int stage=0; stage<W3dMaterialClass::MAX_STAGES; ++stage) {
@@ -1136,7 +1136,7 @@ RefTargetHandle GameMtl::GetReference(int i)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-int GameMtl::NumSubTexmaps(void)
+int GameMtl::NumSubTexmaps()
 {
 	return (W3dMaterialClass::MAX_PASSES * W3dMaterialClass::MAX_STAGES) + 1;
 }
@@ -1154,7 +1154,7 @@ int GameMtl::NumSubTexmaps(void)
  * HISTORY:                                                                                    *
  *   7/01/99   PDS : Created.                                                                 *
  *=============================================================================================*/
-int GameMtl::Get_Displacement_Map_Index(void) const
+int GameMtl::Get_Displacement_Map_Index() const
 {
 	return DISPLACEMENT_INDEX;
 }
@@ -1246,7 +1246,7 @@ ParamDlg * GameMtl::CreateParamDlg(HWND hwnd_mtl_edit, IMtlParams *imp)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtl::Notify_Changed(void)
+void GameMtl::Notify_Changed()
 {
 	NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
 	if (MaterialDialog != nullptr) {
@@ -2526,7 +2526,7 @@ void GameMtl::Set_Pass_Count(int passcount)
 	MainParameterBlock->SetValue(0, TimeValue(0), passcount);
 }
 
-int GameMtl::Get_Pass_Count(void)
+int GameMtl::Get_Pass_Count()
 {
 	assert(MainParameterBlock);
 	int pcount;

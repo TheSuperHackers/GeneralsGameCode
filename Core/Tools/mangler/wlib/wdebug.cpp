@@ -169,22 +169,22 @@ int MsgManager::setErrorStream(OutputDevice *device)
 
 
 
-ostream *MsgManager::debugStream(void)
+ostream *MsgManager::debugStream()
 {
   return(debug_ostream);
 }
 
-ostream *MsgManager::infoStream(void)
+ostream *MsgManager::infoStream()
 {
   return(info_ostream);
 }
 
-ostream *MsgManager::warnStream(void)
+ostream *MsgManager::warnStream()
 {
   return(warn_ostream);
 }
 
-ostream *MsgManager::errorStream(void)
+ostream *MsgManager::errorStream()
 {
   return(error_ostream);
 }

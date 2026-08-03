@@ -45,9 +45,9 @@ class CGenerateDlg : public CDialog
 public:
 	CGenerateDlg(CWnd* pParent = nullptr);   // standard constructor
 
-	char*					FilePrefix	( void )		{ return filename; };
-	GNOPTIONS*		Options			( void )		{ return &options; };
-	LangID*				Langauges		( void )		{ return langids; };
+	char*					FilePrefix	()		{ return filename; };
+	GNOPTIONS*		Options			()		{ return &options; };
+	LangID*				Langauges		()		{ return langids; };
 
 // Dialog Data
 	//{{AFX_DATA(CGenerateDlg)

@@ -259,7 +259,7 @@ BOOL GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, L
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlShaderDlg::ReloadDialog(void)
+void GameMtlShaderDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlShaderDlg::ReloadDialog\n");
 	SendDlgItemMessage(m_hWnd, IDC_DESTBLEND_COMBO, CB_SETCURSEL, TheMtl->Get_Dest_Blend(PassIndex), 0 );
@@ -339,7 +339,7 @@ void GameMtlShaderDlg::Apply_Preset(int preset_index)
  * HISTORY:                                                                                    *
  *   02/26/99   NH : Created.                                                                  *
  *=============================================================================================*/
-void GameMtlShaderDlg::Set_Preset(void)
+void GameMtlShaderDlg::Set_Preset()
 {
 	for (int i = 0; i < NUM_SHADER_BLEND_PRESETS; i++) {
 		if (CompareShaderToBlendPreset(ShaderBlendSettingPresets[i])) break;
@@ -384,7 +384,7 @@ bool GameMtlShaderDlg::CompareShaderToBlendPreset(const ShaderBlendSettingPreset
  * HISTORY:                                                                                    *
  *   02/26/99   NH : Created.                                                                  *
  *=============================================================================================*/
-void GameMtlShaderDlg::Set_Advanced_Defaults(void)
+void GameMtlShaderDlg::Set_Advanced_Defaults()
 {
 	TheMtl->Set_Pri_Gradient(PassIndex, W3DSHADER_PRIGRADIENT_DEFAULT);
 	TheMtl->Set_Sec_Gradient(PassIndex, W3DSHADER_SECGRADIENT_DEFAULT);

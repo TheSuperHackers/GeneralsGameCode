@@ -49,7 +49,7 @@
 class PointFilterClass : public INodeFilterClass
 {
 public:
-	PointFilterClass(void) { }
+	PointFilterClass() { }
 
 	virtual BOOL Accept_Node(INode * node, TimeValue time)
 	{

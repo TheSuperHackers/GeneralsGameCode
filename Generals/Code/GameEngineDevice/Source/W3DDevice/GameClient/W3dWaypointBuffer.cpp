@@ -54,8 +54,8 @@
 
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
-#include <assetmgr.h>
-#include <texture.h>
+#include <WW3D2/assetmgr.h>
+#include <WW3D2/texture.h>
 
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"

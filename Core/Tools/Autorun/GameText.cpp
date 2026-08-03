@@ -137,10 +137,10 @@ class GameTextManager : public GameTextInterface
 		GameTextManager();
 		virtual ~GameTextManager();
 
-		virtual void					init( void );						///< Initlaizes the text system
-		virtual void					deinit( void );					///< De-initlaizes the text system
-		virtual void					update( void ) {};			///< update text manager
-		virtual void					reset( void );					///< Resets the text system
+		virtual void					init();						///< Initlaizes the text system
+		virtual void					deinit();					///< De-initlaizes the text system
+		virtual void					update() {};			///< update text manager
+		virtual void					reset();					///< Resets the text system
 
 		virtual const wchar_t * fetch( const Char *label );		///< Returns the associated labeled unicode text
 	protected:
@@ -207,7 +207,7 @@ GameTextInterface *TheGameText = nullptr;
 // CreateGameTextInterface
 //============================================================================
 
-GameTextInterface* CreateGameTextInterface( void )
+GameTextInterface* CreateGameTextInterface()
 {
 	return new GameTextManager;
 }
@@ -246,7 +246,7 @@ GameTextManager::~GameTextManager()
 
 extern char szArgvPath[];
 
-void GameTextManager::init( void )
+void GameTextManager::init()
 {
 	const Char *strFile = "autorun.str";
 	const Char *csfFile = "autorun.csf";
@@ -338,7 +338,7 @@ void GameTextManager::init( void )
 // GameTextManager::deinit
 //============================================================================
 
-void GameTextManager::deinit( void )
+void GameTextManager::deinit()
 {
 	delete [] m_stringInfo;
 	m_stringInfo = nullptr;
@@ -371,7 +371,7 @@ void GameTextManager::deinit( void )
 // GameTextManager::reset
 //============================================================================
 
-void GameTextManager::reset( void )
+void GameTextManager::reset()
 {
 }
 

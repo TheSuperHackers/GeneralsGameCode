@@ -64,7 +64,7 @@
 #include "hanim.h"
 #include "hcanim.h"
 #include "ww3d.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwmemlog.h"
 #include "animatedsoundmgr.h"
 
 

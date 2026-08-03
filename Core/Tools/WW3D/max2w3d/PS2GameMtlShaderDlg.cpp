@@ -244,7 +244,7 @@ BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam
  * HISTORY:                                                                                    *
  *   10/12/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-void PS2GameMtlShaderDlg::ReloadDialog(void)
+void PS2GameMtlShaderDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlShaderDlg::ReloadDialog\n");
 	SendDlgItemMessage(m_hWnd, IDC_PRIGRADIENT_COMBO, CB_SETCURSEL, TheMtl->Get_Pri_Gradient(PassIndex), 0 );
@@ -309,7 +309,7 @@ void PS2GameMtlShaderDlg::Apply_Preset(int preset_index)
  * HISTORY:                                                                                    *
  *   10/12/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-void PS2GameMtlShaderDlg::Set_Preset(void)
+void PS2GameMtlShaderDlg::Set_Preset()
 {
 	for (int i = 0; i < NUM_PS2_SHADER_BLEND_PRESETS; i++) {
 		if (CompareShaderToBlendPreset(PS2ShaderBlendSettingPresets[i])) break;
@@ -359,7 +359,7 @@ bool PS2GameMtlShaderDlg::CompareShaderToBlendPreset(const PS2ShaderBlendSetting
  * HISTORY:                                                                                    *
  *   02/26/99   NH : Created.                                                                  *
  *=============================================================================================*/
-void PS2GameMtlShaderDlg::Set_Advanced_Defaults(void)
+void PS2GameMtlShaderDlg::Set_Advanced_Defaults()
 {
 	TheMtl->Set_Pri_Gradient(PassIndex, PSS_PRIGRADIENT_MODULATE);
 	TheMtl->Set_Depth_Compare(PassIndex, PSS_DEPTHCOMPARE_PASS_LEQUAL);

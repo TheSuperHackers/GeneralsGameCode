@@ -42,7 +42,7 @@ class VerifyDlg : public CDialog
 // Construction
 public:
 	VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd* pParent = nullptr);   // standard constructor
-	void CloseAudio ( void );
+	void CloseAudio ();
 
 // Dialog Data
 	//{{AFX_DATA(VerifyDlg)

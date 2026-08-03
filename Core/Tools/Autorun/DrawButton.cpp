@@ -325,7 +325,7 @@ bool DrawButton::Is_Mouse_In_Region ( int mouse_x, int mouse_y )
 //   07/15/1996  MML : Created.
 //=============================================================================
 
-char *DrawButton::Return_Bitmap ( void )
+char *DrawButton::Return_Bitmap ()
 {
 	if ( ButtonState == PRESSED_STATE ) {
 		return ( PressedBitmap );

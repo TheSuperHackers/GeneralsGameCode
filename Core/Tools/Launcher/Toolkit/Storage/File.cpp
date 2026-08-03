@@ -153,7 +153,7 @@ File::~File()
 *
 ******************************************************************************/
 
-const UString& File::GetName(void) const
+const UString& File::GetName() const
 	{
 	return mName;
 	}
@@ -198,7 +198,7 @@ void File::SetName(const UString& name)
 *
 ******************************************************************************/
 
-ERights File::GetRights(void) const
+ERights File::GetRights() const
 	{
 	return mRights;
 	}
@@ -304,7 +304,7 @@ bool File::IsAvailable(bool force)
 *
 ******************************************************************************/
 
-bool File::IsOpen(void) const
+bool File::IsOpen() const
 	{
 	return ((mHandle != INVALID_HANDLE) ? true : false);
 	}
@@ -443,7 +443,7 @@ File::EFileError File::Open(const UString& name, ERights rights)
 *
 ******************************************************************************/
 
-void File::Close(void)
+void File::Close()
 	{
 	if (IsOpen())
 		{
@@ -470,7 +470,7 @@ void File::Close(void)
 *
 ******************************************************************************/
 
-File::EFileError File::Create(void)
+File::EFileError File::Create()
 	{
 	// Close any previous handle
 	Close();
@@ -504,7 +504,7 @@ File::EFileError File::Create(void)
 *
 ******************************************************************************/
 
-File::EFileError File::Delete(void)
+File::EFileError File::Delete()
 	{
 	// Make sure the file is closed.
 	Close();
@@ -764,7 +764,7 @@ bool File::OnFileError(EFileError error, bool)
 *
 ******************************************************************************/
 
-UInt32 File::GetLength(void)
+UInt32 File::GetLength()
 	{
 	// If the file is not open then it must be opened first.
 	bool openedHere = false;
@@ -843,7 +843,7 @@ void File::SetLength(UInt32 length)
 *
 ******************************************************************************/
 
-UInt32 File::GetMarker(void)
+UInt32 File::GetMarker()
 	{
 	return SetFilePointer(mHandle, 0, nullptr, FILE_CURRENT);
 	}
@@ -919,7 +919,7 @@ void File::SetMarker(Int32 offset, EStreamFrom from)
 *
 ******************************************************************************/
 
-bool File::AtEnd(void)
+bool File::AtEnd()
 	{
 	return (GetMarker() >= GetLength());
 	}
@@ -1103,6 +1103,6 @@ UInt32 File::PeekBytes(void* ptr, UInt32 bytes)
 *
 ******************************************************************************/
 
-void File::Flush(void)
+void File::Flush()
 	{
 	}

@@ -53,9 +53,9 @@ class Sem4
                Sem4(uint32 value);
               ~Sem4();
 
-  sint32       Wait(void) const;
-  sint32       TryWait(void) const;
-  sint32       Post(void) const;
+  sint32       Wait() const;
+  sint32       TryWait() const;
+  sint32       Post() const;
   sint32       GetValue(int *sval) const;
-  sint32       Destroy(void);
+  sint32       Destroy();
 };

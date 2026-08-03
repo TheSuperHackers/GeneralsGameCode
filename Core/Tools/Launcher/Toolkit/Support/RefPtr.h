@@ -84,10 +84,10 @@ class RefPtrBase
 		inline bool operator!=(const RefPtrBase& rhs) const
 			{return !operator==(rhs);}
 
-		inline bool IsValid(void) const
+		inline bool IsValid() const
 			{return (mRefObject != nullptr);}
 
-		inline void Detach(void)
+		inline void Detach()
 			{
 			if (IsValid())
 				{
@@ -128,10 +128,10 @@ class RefPtrBase
 
 		const RefPtrBase& operator=(const RefPtrBase&);
 
-		inline RefCounted* const GetRefObject(void)
+		inline RefCounted* const GetRefObject()
 			{return mRefObject;}
 
-		inline const RefCounted* const GetRefObject(void) const
+		inline const RefCounted* const GetRefObject() const
 			{return mRefObject;}
 
 		inline void Attach(RefCounted* object)
@@ -214,10 +214,10 @@ template<typename Type> class RefPtr
 			}
 
 		// These are public mostly because I can't seem to declare rc_ptr<Other> as a friend
-		inline Type* const ReferencedObject(void)
+		inline Type* const ReferencedObject()
 			{return reinterpret_cast<Type*>(GetRefObject());}
 
-		inline const Type* const ReferencedObject(void) const
+		inline const Type* const ReferencedObject() const
 			{return reinterpret_cast<const Type*>(GetRefObject());}
 
 		RefPtr(Type* object)

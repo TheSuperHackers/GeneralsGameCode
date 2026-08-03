@@ -94,11 +94,6 @@ typedef std::vector<ObjectID>::iterator										ObjectIDVectorIterator;
 typedef std::vector<Coord3D> VecCoord3D;
 typedef VecCoord3D::iterator VecCoord3DIt;
 
-// Used for cursor->3D position request caching in the heightmap
-typedef std::pair<ICoord2D, Coord3D>											PosRequest;
-typedef std::vector<PosRequest>														VecPosRequests;
-typedef std::vector<PosRequest>::iterator									VecPosRequestsIt;
-
 // Used to cache off names of objects for faster lookup
 typedef std::pair<AsciiString, Object*>										NamedRequest;
 typedef std::vector<NamedRequest>													VecNamedRequests;

@@ -27,6 +27,7 @@ public:
 	FrameRateLimit();
 
 	Real wait(UnsignedInt maxFps);
+	void reset(); ///< Move the timing anchor to now, discarding any time elapsed since the last call to wait.
 
 private:
 	Int64 m_freq;

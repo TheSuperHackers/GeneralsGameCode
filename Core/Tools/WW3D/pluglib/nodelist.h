@@ -70,7 +70,7 @@ public:
 	void			Insert(INodeListClass & insertlist);
 	void			Insert(INode * node);
 	void			Remove(int i);
-	unsigned		Num_Nodes(void) const { return NumNodes; }
+	unsigned		Num_Nodes() const { return NumNodes; }
 	INode *		operator[] (int index) const;
 	void			Sort(const INodeCompareClass & node_compare);
 	void			Add_Tree(INode * root);

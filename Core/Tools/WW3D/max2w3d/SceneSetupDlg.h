@@ -56,7 +56,7 @@ public:
 	SceneSetupDlg(Interface *max_interface);
 
 	// Methods
-	int DoModal (void);
+	int DoModal ();
 
 	// DialogProc
 	BOOL CALLBACK DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -76,8 +76,8 @@ public:
 protected:
 
 	// Message Handlers
-	void OnInitDialog (void);
-	BOOL OnOK (void);		// TRUE if ok to close dialog
+	void OnInitDialog ();
+	BOOL OnOK ();		// TRUE if ok to close dialog
 
 	// Protected Methods
 	void  SetEditInt   (int control_id, int value);

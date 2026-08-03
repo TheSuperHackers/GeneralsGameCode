@@ -62,7 +62,7 @@ BitChannelClass::BitChannelClass
 	End = 0;
 }
 
-BitChannelClass::~BitChannelClass(void)
+BitChannelClass::~BitChannelClass()
 {
 }
 
@@ -222,7 +222,7 @@ bool BitChannelClass::is_default(bool bit)
 	return (bit == DefaultVal);
 }
 
-void BitChannelClass::compute_range(void)
+void BitChannelClass::compute_range()
 {
 	Begin = 0;
 	while ((Begin < MaxFrames) && (is_default(Get_Bit(Begin)))) {

@@ -26,8 +26,8 @@
 
 
 #include "streakRender.h"
-#include "WW3D2/ww3d.h"
-#include "WW3D2/rinfo.h"
+#include "ww3d.h"
+#include "rinfo.h"
 #include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "WWMath/vp.h"

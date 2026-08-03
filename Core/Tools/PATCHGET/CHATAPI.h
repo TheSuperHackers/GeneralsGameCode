@@ -38,9 +38,9 @@ namespace patchget
 
 int main(int argc, char *argv[]);
 
-void Startup_Chat(void);
-void Shutdown_Chat(void);
-void Update_If_Required(void);
+void Startup_Chat();
+void Shutdown_Chat();
+void Update_If_Required();
 
 char const * Fetch_String(int id);
 

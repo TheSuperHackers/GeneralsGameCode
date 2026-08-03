@@ -339,7 +339,7 @@ void CreatePrimaryWin(const char *prefix)
 }
 
 
-//void DestroyPrimaryWin(void)
+//void DestroyPrimaryWin()
 //{
 //  DestroyWindow(PrimaryWin);
 //  UnregisterClass(classname);

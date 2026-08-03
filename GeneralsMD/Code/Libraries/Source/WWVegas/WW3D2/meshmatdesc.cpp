@@ -39,7 +39,7 @@
 #include "meshmatdesc.h"
 #include "texture.h"
 #include "vertmaterial.h"
-#include "realcrc.h"
+#include "WWLib/realcrc.h"
 #include	"dx8wrapper.h"
 #include "dx8caps.h"
 #include "meshmdl.h"

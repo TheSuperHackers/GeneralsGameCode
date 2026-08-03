@@ -12,25 +12,25 @@ set(GAMEENGINE_SRC
 #    Include/Common/AudioRequest.h
 #    Include/Common/AudioSettings.h
     Include/Common/BattleHonors.h
-    Include/Common/BezFwdIterator.h
-    Include/Common/BezierSegment.h
+#    Include/Common/BezFwdIterator.h
+#    Include/Common/BezierSegment.h
     Include/Common/BitFlags.h
     Include/Common/BitFlagsIO.h
     Include/Common/BorderColors.h
     Include/Common/BuildAssistant.h
     Include/Common/ClientUpdateModule.h
-    Include/Common/CommandLine.h
+#    Include/Common/CommandLine.h
 #    Include/Common/crc.h
 #    Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
     Include/Common/CustomMatchPreferences.h
-    Include/Common/DamageFX.h
+#    Include/Common/DamageFX.h
     Include/Common/DataChunk.h
 #    Include/Common/Debug.h
-    Include/Common/Dict.h
+#    Include/Common/Dict.h
     Include/Common/Directory.h
     Include/Common/DisabledTypes.h
-    Include/Common/DiscreteCircle.h
+#    Include/Common/DiscreteCircle.h
     Include/Common/DrawModule.h
 #    Include/Common/DynamicAudioEventInfo.h
     Include/Common/encrypt.h
@@ -59,15 +59,15 @@ set(GAMEENGINE_SRC
     Include/Common/INIException.h
     Include/Common/KindOf.h
     Include/Common/LadderPreferences.h
-    Include/Common/Language.h
+#    Include/Common/Language.h
     Include/Common/LatchRestore.h
     Include/Common/List.h
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
 #    Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
-    Include/Common/MessageStream.h
-    Include/Common/MiniLog.h
+#    Include/Common/MessageStream.h
+#    Include/Common/MiniLog.h
 #    Include/Common/MiscAudio.h
     Include/Common/MissionStats.h
     Include/Common/ModelState.h
@@ -82,7 +82,7 @@ set(GAMEENGINE_SRC
     Include/Common/Override.h
     Include/Common/PartitionSolver.h
     Include/Common/PerfMetrics.h
-    Include/Common/PerfTimer.h
+#    Include/Common/PerfTimer.h
     Include/Common/Player.h
     Include/Common/PlayerList.h
     Include/Common/PlayerTemplate.h
@@ -115,7 +115,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/SubsystemInterface.h
     Include/Common/Team.h
     Include/Common/Terrain.h
-    Include/Common/TerrainTypes.h
+#    Include/Common/TerrainTypes.h
     Include/Common/Thing.h
     Include/Common/ThingFactory.h
     Include/Common/ThingSort.h
@@ -126,7 +126,7 @@ set(GAMEENGINE_SRC
     Include/Common/Upgrade.h
 #    Include/Common/urllaunch.h
 #    Include/Common/UserPreferences.h
-    Include/Common/version.h
+#    Include/Common/version.h
     Include/Common/WellKnownKeys.h
 #    Include/Common/WorkerProcess.h
 #    Include/Common/Xfer.h
@@ -547,7 +547,7 @@ set(GAMEENGINE_SRC
 #    Include/GameNetwork/User.h
 #    Include/GameNetwork/WOLBrowser/FEBDispatch.h
 #    Include/GameNetwork/WOLBrowser/WebBrowser.h
-    Include/Precompiled/PreRTS.h
+#    Include/Precompiled/PreRTS.h
 #    Source/Common/Audio/AudioEventRTS.cpp
 #    Source/Common/Audio/AudioRequest.cpp
 #    Source/Common/Audio/DynamicAudioEventInfo.cpp
@@ -556,15 +556,15 @@ set(GAMEENGINE_SRC
 #    Source/Common/Audio/GameSounds.cpp
     #Source/Common/Audio/simpleplayer.cpp # unused
     #Source/Common/Audio/urllaunch.cpp # unused
-    Source/Common/Bezier/BezFwdIterator.cpp
-    Source/Common/Bezier/BezierSegment.cpp
+#    Source/Common/Bezier/BezFwdIterator.cpp
+#    Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
-    Source/Common/CommandLine.cpp
+#    Source/Common/CommandLine.cpp
 #    Source/Common/crc.cpp
 #    Source/Common/CRCDebug.cpp
-    Source/Common/DamageFX.cpp
-    Source/Common/Dict.cpp
-    Source/Common/DiscreteCircle.cpp
+#    Source/Common/DamageFX.cpp
+#    Source/Common/Dict.cpp
+#    Source/Common/DiscreteCircle.cpp
     Source/Common/GameEngine.cpp
     Source/Common/GameLOD.cpp
     Source/Common/GameMain.cpp
@@ -597,13 +597,13 @@ set(GAMEENGINE_SRC
 #    Source/Common/INI/INIWater.cpp
 #    Source/Common/INI/INIWeapon.cpp
 #    Source/Common/INI/INIWebpageURL.cpp
-    Source/Common/Language.cpp
-    Source/Common/MessageStream.cpp
-    Source/Common/MiniLog.cpp
+#    Source/Common/Language.cpp
+#    Source/Common/MessageStream.cpp
+#    Source/Common/MiniLog.cpp
     Source/Common/MultiplayerSettings.cpp
     Source/Common/NameKeyGenerator.cpp
     Source/Common/PartitionSolver.cpp
-    Source/Common/PerfTimer.cpp
+#    Source/Common/PerfTimer.cpp
 #    Source/Common/RandomValue.cpp
     Source/Common/Recorder.cpp
 #    Source/Common/ReplaySimulation.cpp
@@ -666,7 +666,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/XferCRC.cpp
 #    Source/Common/System/XferLoad.cpp
 #    Source/Common/System/XferSave.cpp
-    Source/Common/TerrainTypes.cpp
+#    Source/Common/TerrainTypes.cpp
     Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp
     Source/Common/Thing/ModuleFactory.cpp
@@ -674,7 +674,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ThingFactory.cpp
     Source/Common/Thing/ThingTemplate.cpp
 #    Source/Common/UserPreferences.cpp
-    Source/Common/version.cpp
+#    Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
 #    Source/GameClient/ClientInstance.cpp
 #    Source/GameClient/Color.cpp
@@ -1128,7 +1128,7 @@ set(GAMEENGINE_SRC
 #    Source/GameNetwork/udp.cpp
 #    Source/GameNetwork/User.cpp
 #    Source/GameNetwork/WOLBrowser/WebBrowser.cpp
-    Source/Precompiled/PreRTS.cpp
+#    Source/Precompiled/PreRTS.cpp
 )
 
 if(RTS_GAMEMEMORY_ENABLE)
@@ -1172,5 +1172,5 @@ target_link_libraries(z_gameengine PUBLIC
 
 target_precompile_headers(z_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
-    Include/Precompiled/PreRTS.h
+#    Include/Precompiled/PreRTS.h
 )

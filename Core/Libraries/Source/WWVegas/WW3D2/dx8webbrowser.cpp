@@ -31,7 +31,7 @@
 //******************************************************************************************
 
 #include "dx8webbrowser.h"
-#include "WW3D2/ww3d.h"
+#include "ww3d.h"
 #include "dx8wrapper.h"
 
 #if ENABLE_EMBEDDED_BROWSER
@@ -39,10 +39,7 @@
 #if defined(_MSC_VER) && _MSC_VER < 1300
 
 // Import the Browser Type Library
-// BGC, the path for the dll file is pretty odd, no?
-//      I'll leave it like this till I can figure out a
-//      better way.
-#import "../../../../../Run/BrowserEngine.dll" no_namespace
+#import "EABrowserEngine/BrowserEngine.tlb" no_namespace
 
 #else
 

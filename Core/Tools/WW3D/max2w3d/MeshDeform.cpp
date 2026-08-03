@@ -64,7 +64,7 @@ Class_ID _MeshDeformClassID(0x51981f5b, 0x1db2bf3);
 class MeshDeformClassDesc : public ClassDesc
 {
 	public:
-	int 				IsPublic (void)			{ return 1; }
+	int 				IsPublic ()			{ return 1; }
 	void *			Create (BOOL loading)	{ return new MeshDeformClass (); }
 	const TCHAR *	ClassName ()				{ return _T("WWDeform"); }
 	SClass_ID		SuperClassID ()			{ return OSM_CLASS_ID; }
@@ -80,9 +80,9 @@ class MeshDeformClassDesc : public ClassDesc
 ///////////////////////////////////////////////////////////////////////////
 #if 0 // (gth) MeshDeform is obsolete! making sure nobody uses it...
 static MeshDeformClassDesc _MeshDeformCD;
-ClassDesc * Get_Mesh_Deform_Desc (void) { return &_MeshDeformCD; }
+ClassDesc * Get_Mesh_Deform_Desc () { return &_MeshDeformCD; }
 #else
-ClassDesc * Get_Mesh_Deform_Desc (void) { return nullptr; }
+ClassDesc * Get_Mesh_Deform_Desc () { return nullptr; }
 #endif
 
 
@@ -92,7 +92,7 @@ ClassDesc * Get_Mesh_Deform_Desc (void) { return nullptr; }
 //
 ///////////////////////////////////////////////////////////////////////////
 ChannelMask
-MeshDeformClass::ChannelsUsed (void)
+MeshDeformClass::ChannelsUsed ()
 {
 	return GEOM_CHANNEL | SELECT_CHANNEL | SUBSEL_TYPE_CHANNEL | VERTCOLOR_CHANNEL;
 }
@@ -104,7 +104,7 @@ MeshDeformClass::ChannelsUsed (void)
 //
 ///////////////////////////////////////////////////////////////////////////
 ChannelMask
-MeshDeformClass::ChannelsChanged (void)
+MeshDeformClass::ChannelsChanged ()
 {
 	return GEOM_CHANNEL | SELECT_CHANNEL | SUBSEL_TYPE_CHANNEL | VERTCOLOR_CHANNEL;
 }
@@ -161,7 +161,7 @@ MeshDeformClass::ModifyObject
 //
 ///////////////////////////////////////////////////////////////////////////
 Class_ID
-MeshDeformClass::InputType (void)
+MeshDeformClass::InputType ()
 {
 	return triObjectClassID;
 }
@@ -191,7 +191,7 @@ MeshDeformClass::NotifyRefChanged
 //
 ///////////////////////////////////////////////////////////////////////////
 CreateMouseCallBack *
-MeshDeformClass::GetCreateMouseCallBack (void)
+MeshDeformClass::GetCreateMouseCallBack ()
 {
 	return nullptr;
 }
@@ -1123,7 +1123,7 @@ MeshDeformClass::Set_Max_Deform_Sets (int max)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformClass::Update_Set_Count (void)
+MeshDeformClass::Update_Set_Count ()
 {
 	m_MaxSets = 1;
 	if (m_MaxInterface != nullptr) {
@@ -1213,7 +1213,7 @@ MeshDeformClass::Set_Current_Set
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformClass::Update_Current_Set (void)
+MeshDeformClass::Update_Current_Set ()
 {
 	if (m_MaxInterface != nullptr) {
 

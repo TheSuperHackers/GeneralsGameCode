@@ -79,7 +79,7 @@ LogDataDialogClass::LogDataDialogClass(HWND parent):
 	}
 }
 
-LogDataDialogClass::~LogDataDialogClass(void)
+LogDataDialogClass::~LogDataDialogClass()
 {
 	status = 3;
 	if (::IsWindow(Hwnd)) {

@@ -748,6 +748,15 @@ void GameClient::step()
 	TheDisplay->step();
 }
 
+Bool GameClient::skipCurrentIntroStage()
+{
+	if (m_intro != nullptr)
+	{
+		return m_intro->skipCurrentIntroStage();
+	}
+	return false;
+}
+
 Bool GameClient::isMovieAbortRequested()
 {
 	if (TheGameEngine)
@@ -760,7 +769,7 @@ Bool GameClient::isMovieAbortRequested()
 	{
 		TheKeyboard->UPDATE();
 		KeyboardIO *io = TheKeyboard->findKey(KEY_ESC, KeyboardIO::STATUS_UNUSED);
-		if (io && BitIsSet(io->state, KEY_STATE_DOWN))
+		if (io && BitIsSet(io->state, KEY_STATE_UP))
 		{
 			io->setUsed();
 			return TRUE;

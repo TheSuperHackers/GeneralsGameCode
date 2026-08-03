@@ -45,7 +45,7 @@ class ErrorClass
 public:
 	ErrorClass(char * format,...);
 	ErrorClass(const ErrorClass & that);
-	~ErrorClass(void) { if (error_message != nullptr) free(error_message); }
+	~ErrorClass() { if (error_message != nullptr) free(error_message); }
 
 	ErrorClass & operator = (const ErrorClass & that);
 

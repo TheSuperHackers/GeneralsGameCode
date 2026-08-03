@@ -90,10 +90,10 @@
 
 #include "boxrobj.h"
 #include "w3d_util.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "vertmaterial.h"
 #include "ww3d.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "rinfo.h"
 #include "coltest.h"
 #include "inttest.h"

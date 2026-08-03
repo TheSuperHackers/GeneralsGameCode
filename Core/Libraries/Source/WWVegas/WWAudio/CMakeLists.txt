@@ -50,8 +50,6 @@ add_library(corei_wwaudio INTERFACE)
 
 target_sources(corei_wwaudio INTERFACE ${WWAUDIO_SRC})
 
-target_include_directories(corei_wwaudio INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
 target_link_libraries(corei_wwaudio INTERFACE
     core_wwcommon
 )

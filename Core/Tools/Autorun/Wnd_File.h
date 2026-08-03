@@ -95,7 +95,7 @@
 #ifdef RTS_DEBUG
 void __cdecl Msg( int line, const char *file, const char *fmt, ... );
 void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, unsigned int codepage=1252, ... );
-void 	Delete_Msg_File( void );
+void 	Delete_Msg_File();
 #else
 #define Msg
 #define Delete_Msg_File()
@@ -116,19 +116,19 @@ class StandardFileClass
 		StandardFileClass();
 		~StandardFileClass();
 		bool 	Open 				( const char *file_name, int open_mode );
-		bool 	Close				( void );
+		bool 	Close				();
 		int 	Read 				( void *buffer, unsigned long int bytes_to_read );
 		int 	Write				( void *buffer, unsigned long int bytes_to_write );
 		bool 	Seek 				( int distance, int seek_file_position );
-		int 	Tell 				( void );
-		int 	Query_Size			( void );
-		bool 	Query_Open			( void );
-		char *	Query_Name_String	( void );
-     	int		End_Of_File			( void );
-		int		Flush	  	 		( void );
+		int 	Tell 				();
+		int 	Query_Size			();
+		bool 	Query_Open			();
+		char *	Query_Name_String	();
+	int		End_Of_File			();
+		int		Flush	  	 		();
 
 		#if( SUPPORT_STREAMS )
-		FILE *Query_File_Stream_Pointer( void );
+		FILE *Query_File_Stream_Pointer();
 		#endif
 
 	private:
@@ -136,7 +136,7 @@ class StandardFileClass
 		//
 		// private class functions...
 		//
-		void Reset( void );
+		void Reset();
 		//
 		// private class data...
 		//

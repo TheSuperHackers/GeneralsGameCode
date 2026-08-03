@@ -67,7 +67,7 @@ typedef enum
 ///////////////////////////////////////////////////////////////////////////
 typedef struct _VERT_INFO
 {
-	_VERT_INFO (void)
+	_VERT_INFO ()
 		:	index (0),
 			color_index (0),
 			value (0,0,0)				{ }

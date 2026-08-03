@@ -98,9 +98,32 @@ void Intro::draw()
 	}
 }
 
+Bool Intro::skipCurrentIntroStage()
+{
+	// Aborts waits, stops movies and skips waiting states
+
+	Bool isSkipping = !isDone();
+
+	m_waitUntilMs = 0;
+
+	switch (m_currentState)
+	{
+	case IntroState_EALogoMovie:
+	case IntroState_SizzleMovie:
+		TheDisplay->stopMovie();
+		enterNextState();
+		break;
+
+	case IntroState_TheSuperHackers:
+		enterNextState();
+		break;
+	}
+
+	return isSkipping;
+}
+
 void Intro::doEALogoMovie()
 {
-	TheWritableGlobalData->m_allowExitOutOfMovies = FALSE;
 	if (TheGameLODManager && TheGameLODManager->didMemPass())
 		TheDisplay->playMovie("EALogoMovie");
 	else
@@ -221,7 +244,6 @@ void Intro::doTheSuperHackers()
 
 void Intro::doSizzleMovie()
 {
-	TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 	if (TheGameLODManager && TheGameLODManager->didMemPass())
 		TheDisplay->playMovie("Sizzle");
 	else
@@ -231,7 +253,6 @@ void Intro::doSizzleMovie()
 void Intro::doPostIntro()
 {
 	TheWritableGlobalData->m_breakTheMovie = TRUE;
-	TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 }
 
 void Intro::doAsyncWait(UnsignedInt milliseconds)

@@ -79,11 +79,11 @@
 #include "assetmgr.h"
 #include <assert.h>
 
-#include "bittype.h"
-#include "chunkio.h"
-#include "realcrc.h"
+#include "WWLib/bittype.h"
+#include "WWLib/chunkio.h"
+#include "WWLib/realcrc.h"
 
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 #include "htreemgr.h"
 #include "hanimmgr.h"
@@ -96,23 +96,23 @@
 #include "htree.h"
 #include "collect.h"
 #include "ww3d.h"
-#include "ffactory.h"
+#include "WWLib/ffactory.h"
 #include "boxrobj.h"
 #include "nullrobj.h"
 #include "distlod.h"
 #include "hlod.h"
 #include "agg_def.h"
-#include "wwstring.h"
-#include "wwmemlog.h"
+#include "WWLib/wwstring.h"
+#include "WWDebug/wwmemlog.h"
 #include "dazzle.h"
 #include "dx8wrapper.h"
 #include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <INI.h>
+#include <WWLib/INI.h>
 #include <windows.h>
 #include <d3dx8core.h>
-#include "wwprofile.h"
+#include "WWDebug/wwprofile.h"
 #include "assetstatus.h"
 #include "ringobj.h"
 #include "sphereobj.h"

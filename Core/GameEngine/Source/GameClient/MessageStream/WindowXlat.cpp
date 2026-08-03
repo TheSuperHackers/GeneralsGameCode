@@ -50,6 +50,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/MessageStream.h"
+#include "GameClient/GameClient.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/WindowXlat.h"
 #include "GameClient/Shell.h"
@@ -318,12 +319,17 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			// If we're in a movie, we want to be able to escape out of it
 			if(returnCode != WIN_INPUT_USED
 				&& (key == KEY_ESC)
-				&& (BitIsSet( state, KEY_STATE_UP ))
-				&& TheDisplay->isMoviePlaying()
-				&& TheGlobalData->m_allowExitOutOfMovies == TRUE )
+				&& (BitIsSet( state, KEY_STATE_UP )) )
 			{
-				TheDisplay->stopMovie();
-				returnCode = WIN_INPUT_USED;
+				if (TheGameClient->skipCurrentIntroStage())
+				{
+					returnCode = WIN_INPUT_USED;
+				}
+				else if (TheDisplay->isMoviePlaying())
+				{
+					TheDisplay->stopMovie();
+					returnCode = WIN_INPUT_USED;
+				}
 			}
 
 			// TheSuperHackers @bugfix If the input is disabled, then only allow the ESC button to get through.

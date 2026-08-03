@@ -92,7 +92,7 @@ GenNamesDialogClass::GenNamesDialogClass(Interface * maxinterface) :
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-GenNamesDialogClass::~GenNamesDialogClass(void)
+GenNamesDialogClass::~GenNamesDialogClass()
 {
 	ReleaseISpinner(NameIndexSpin);
 }
@@ -150,7 +150,7 @@ bool GenNamesDialogClass::Get_Options(OptionsStruct * options)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool GenNamesDialogClass::Ok_To_Exit(void)
+bool GenNamesDialogClass::Ok_To_Exit()
 {
 	if (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_NAMES_CHECK) == BST_CHECKED) {
 
@@ -182,7 +182,7 @@ bool GenNamesDialogClass::Ok_To_Exit(void)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void GenNamesDialogClass::Toggle_Name_Assignment(void)
+void GenNamesDialogClass::Toggle_Name_Assignment()
 {
 	bool onoff = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_NAMES_CHECK) == BST_CHECKED);
 	EnableWindow(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),onoff);
@@ -205,7 +205,7 @@ void GenNamesDialogClass::Toggle_Name_Assignment(void)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void GenNamesDialogClass::Toggle_Collision_Bits_Assignment(void)
+void GenNamesDialogClass::Toggle_Collision_Bits_Assignment()
 {
 	bool onoff = (IsDlgButtonChecked(Hwnd,IDC_ASSIGN_COLLISION_BITS_CHECK) == BST_CHECKED);
 	EnableWindow(GetDlgItem(Hwnd,IDC_COLLISION_PHYSICAL),onoff);

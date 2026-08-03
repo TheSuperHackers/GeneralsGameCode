@@ -57,7 +57,7 @@ public:
 
 	struct OptionsStruct
 	{
-		OptionsStruct(void) : LodIndex(0)
+		OptionsStruct() : LodIndex(0)
 		{
 		}
 

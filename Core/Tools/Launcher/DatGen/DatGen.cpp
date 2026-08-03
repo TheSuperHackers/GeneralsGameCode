@@ -26,9 +26,9 @@
 #include "BFISH.h"
 #include <Debug/DebugPrint.h>
 
-void __cdecl doIt(void);
+void __cdecl doIt();
 
-static void doIt(void)
+static void doIt()
 {
 	// Generate passkey
 	char passKey[128];

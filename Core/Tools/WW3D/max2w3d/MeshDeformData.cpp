@@ -45,7 +45,7 @@
 //	~MeshDeformModData
 //
 ///////////////////////////////////////////////////////////////////////////
-MeshDeformModData::~MeshDeformModData (void)
+MeshDeformModData::~MeshDeformModData ()
 {
 	Free_Sets_List ();
 }
@@ -85,7 +85,7 @@ MeshDeformModData::Record_Mesh_State (TriObject &tri_obj, float state, bool upda
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformModData::Free_Sets_List (void)
+MeshDeformModData::Free_Sets_List ()
 {
 	//
 	//	Delete all the object pointers in the set list

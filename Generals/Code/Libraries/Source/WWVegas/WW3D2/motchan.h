@@ -37,10 +37,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "bittype.h"
+#include "WWLib/always.h"
+#include "WWLib/bittype.h"
 #include "w3d_file.h"
-#include "quat.h"
+#include "WWMath/quat.h"
 
 class ChunkLoadClass;
 class Quaternion;

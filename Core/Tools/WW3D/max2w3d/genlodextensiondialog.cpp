@@ -87,7 +87,7 @@ GenLodExtensionDialogClass::GenLodExtensionDialogClass(Interface * maxinterface)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-GenLodExtensionDialogClass::~GenLodExtensionDialogClass(void)
+GenLodExtensionDialogClass::~GenLodExtensionDialogClass()
 {
 	ReleaseISpinner(LodIndexSpin);
 }

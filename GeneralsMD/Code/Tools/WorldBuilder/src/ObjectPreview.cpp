@@ -19,9 +19,9 @@
 // ObjectPreview.cpp : implementation file
 //
 
-#include <rinfo.h>
-#include <camera.h>
-#include <light.h>
+#include <WW3D2/rinfo.h>
+#include <WW3D2/camera.h>
+#include <WW3D2/light.h>
 
 #include "StdAfx.h"
 #include "resource.h"

@@ -62,7 +62,7 @@ public:
 	HLodSaveClass (MeshConnectionsClass **connections, int lod_count, TimeValue CurTime,
 						char *name, const char *htree_name, Progress_Meter_Class &meter,
 						INodeListClass *origin_list);
-	~HLodSaveClass (void);
+	~HLodSaveClass ();
 
 	bool Save (ChunkSaveClass &csave);
 
@@ -86,7 +86,7 @@ protected:
 			Allocate_Sub_Objects(num_sub_objs);
 		}
 
-		~HLodArrayEntry (void)
+		~HLodArrayEntry ()
 		{
 			if (sub_obj)
 			{

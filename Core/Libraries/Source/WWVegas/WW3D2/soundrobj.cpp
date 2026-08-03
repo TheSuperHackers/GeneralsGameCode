@@ -44,7 +44,7 @@
 #include "WWLib/ffactory.h"
 #include "WWLib/WWFILE.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/scene.h"
+#include "scene.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -52,7 +52,7 @@ class UString
 		virtual ~UString();
 
 		//! Get the length of the string
-		UInt Length(void) const;
+		UInt Length() const;
 
 		//! Copy string
 		void Copy(const Char* s);
@@ -97,13 +97,13 @@ class UString
 		UString Right(UInt count);
 
 		//! Convert string to uppercase
-		void ToUpper(void);
+		void ToUpper();
 
 		//! Convert string to lowercase
-		void ToLower(void);
+		void ToLower();
 
 		//! Reverse characters of string
-		void Reverse(void);
+		void Reverse();
 
 		//! Remove leading and trailing characters from string.
 		//  Returns true if any characters removed
@@ -127,15 +127,15 @@ class UString
 		void ConvertToANSI(Char* buffer, UInt bufferLength) const;
 
 		//! Get the size (in bytes) of the string.
-		UInt Size(void) const;
+		UInt Size() const;
 
 		//! Get the maximum number of characters this string can hold.
-		UInt Capacity(void) const;
+		UInt Capacity() const;
 
 		//! Resize the string
 		bool Resize(UInt size);
 
-		const WChar* Get(void) const
+		const WChar* Get() const
 			{return (mData != nullptr) ? mData : L"";}
 
 		//! Assignment operator

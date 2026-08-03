@@ -77,13 +77,13 @@ W3dMapClass & W3dMapClass::operator = (const W3dMapClass & that)
 	return *this;
 }
 
-W3dMapClass::~W3dMapClass(void)
+W3dMapClass::~W3dMapClass()
 {
 	if (Filename) free(Filename);
 	if (AnimInfo) delete AnimInfo;
 }
 
-void W3dMapClass::Reset(void)
+void W3dMapClass::Reset()
 {
 	if (Filename) free(Filename);
 	if (AnimInfo) delete AnimInfo;
@@ -147,7 +147,7 @@ void W3dMapClass::Set_Anim_Info(int framecount,float framerate)
 */
 
 
-W3dMaterialClass::W3dMaterialClass(void)
+W3dMaterialClass::W3dMaterialClass()
 {
 	PassCount = 0;
 	SortLevel = SORT_LEVEL_NONE;
@@ -162,12 +162,12 @@ W3dMaterialClass::W3dMaterialClass(void)
 	}
 }
 
-W3dMaterialClass::~W3dMaterialClass(void)
+W3dMaterialClass::~W3dMaterialClass()
 {
 	Free();
 }
 
-void W3dMaterialClass::Free(void)
+void W3dMaterialClass::Free()
 {
 	for (int pass = 0; pass < MAX_PASSES; pass++) {
 
@@ -190,7 +190,7 @@ void W3dMaterialClass::Free(void)
 	}
 }
 
-void W3dMaterialClass::Reset(void)
+void W3dMaterialClass::Reset()
 {
 	Free();
 	SortLevel = SORT_LEVEL_NONE;
@@ -276,17 +276,17 @@ void W3dMaterialClass::Set_Map_Channel(int pass,int stage,int channel)
 	MapChannel[pass][stage] = channel;
 }
 
-unsigned int W3dMaterialClass::Get_Surface_Type(void) const
+unsigned int W3dMaterialClass::Get_Surface_Type() const
 {
 	return SurfaceType;
 }
 
-int W3dMaterialClass::Get_Sort_Level(void) const
+int W3dMaterialClass::Get_Sort_Level() const
 {
 	return SortLevel;
 }
 
-int W3dMaterialClass::Get_Pass_Count(void) const
+int W3dMaterialClass::Get_Pass_Count() const
 {
 	return PassCount;
 }
@@ -663,7 +663,7 @@ void W3dMaterialClass::Init(GameMtl * gamemtl, char *materialColorTexture)
 }
 
 
-bool W3dMaterialClass::Is_Multi_Pass_Transparent(void) const
+bool W3dMaterialClass::Is_Multi_Pass_Transparent() const
 {
 	return ((PassCount >= 2) && (Get_Shader(0).DestBlend != W3DSHADER_DESTBLENDFUNC_ZERO));
 }
@@ -676,7 +676,7 @@ bool W3dMaterialClass::Is_Multi_Pass_Transparent(void) const
 
 
 */
-W3dMaterialDescClass::VertMatClass::VertMatClass(void) :
+W3dMaterialDescClass::VertMatClass::VertMatClass() :
 	PassIndex(-1),
 	Crc(0),
 	Name(nullptr)
@@ -686,7 +686,7 @@ W3dMaterialDescClass::VertMatClass::VertMatClass(void) :
 	}
 }
 
-W3dMaterialDescClass::VertMatClass::~VertMatClass(void)
+W3dMaterialDescClass::VertMatClass::~VertMatClass()
 {
 	if (Name) free(Name);
 
@@ -758,7 +758,7 @@ void W3dMaterialDescClass::VertMatClass::Set_Mapper_Args(const char * args, int 
 
 
 */
-W3dMaterialDescClass::MaterialRemapClass::MaterialRemapClass(void)
+W3dMaterialDescClass::MaterialRemapClass::MaterialRemapClass()
 {
 	PassCount = -1;
 	for (int pass=0; pass<W3dMaterialClass::MAX_PASSES; pass++) {
@@ -792,16 +792,16 @@ bool W3dMaterialDescClass::MaterialRemapClass::operator == (const MaterialRemapC
 
 
 
-W3dMaterialDescClass::W3dMaterialDescClass(void)
+W3dMaterialDescClass::W3dMaterialDescClass()
 {
 	Reset();
 }
 
-W3dMaterialDescClass::~W3dMaterialDescClass(void)
+W3dMaterialDescClass::~W3dMaterialDescClass()
 {
 }
 
-void W3dMaterialDescClass::Reset(void)
+void W3dMaterialDescClass::Reset()
 {
 	PassCount = -1;
 	SortLevel = -1;
@@ -877,32 +877,32 @@ W3dMaterialDescClass::ErrorType W3dMaterialDescClass::Add_Material(const W3dMate
 }
 
 
-int W3dMaterialDescClass::Material_Count(void)
+int W3dMaterialDescClass::Material_Count()
 {
 	return MaterialRemaps.Count();
 }
 
-int W3dMaterialDescClass::Pass_Count(void)
+int W3dMaterialDescClass::Pass_Count()
 {
 	return PassCount;
 }
 
-int W3dMaterialDescClass::Vertex_Material_Count(void)
+int W3dMaterialDescClass::Vertex_Material_Count()
 {
 	return VertexMaterials.Count();
 }
 
-int W3dMaterialDescClass::Shader_Count(void)
+int W3dMaterialDescClass::Shader_Count()
 {
 	return Shaders.Count();
 }
 
-int W3dMaterialDescClass::Texture_Count(void)
+int W3dMaterialDescClass::Texture_Count()
 {
 	return Textures.Count();
 }
 
-int W3dMaterialDescClass::Get_Sort_Level(void)
+int W3dMaterialDescClass::Get_Sort_Level()
 {
 	return SortLevel;
 }

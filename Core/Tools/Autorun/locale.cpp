@@ -98,7 +98,7 @@ static LOCALE_INSTANCE	*lx			= nullptr;
 /*************************************************************************/
 
 /* helper function to make assertions for initialization clearer */
-int LOCALE_isinitialized( void )
+int LOCALE_isinitialized()
 {
     if ( lx == nullptr ) {
 //        TRACE("LOCALE API is not initialized - call LOCALE_init before calling LOCALE functions\n");
@@ -117,7 +117,7 @@ int LOCALE_isinitialized( void )
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_init(void)
+; int LOCALE_init()
 ;
 ; DESCRIPTION
 ;
@@ -143,7 +143,7 @@ int LOCALE_isinitialized( void )
 ;
 */
 
-int LOCALE_init(void)
+int LOCALE_init()
 {
     int ok = 0;
 
@@ -170,7 +170,7 @@ int LOCALE_init(void)
 ;
 ; #include "realfont.h"
 ;
-; void LOCALE_restore(void)
+; void LOCALE_restore()
 ;
 ; DESCRIPTION
 ;
@@ -194,7 +194,7 @@ int LOCALE_init(void)
 ;
 */
 
-void LOCALE_restore(void)
+void LOCALE_restore()
 {
     int i;
 
@@ -276,7 +276,7 @@ void LOCALE_setbank(int BankIndex)
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_getbank(void)
+; int LOCALE_getbank()
 ;
 ; DESCRIPTION
 ;
@@ -299,7 +299,7 @@ void LOCALE_setbank(int BankIndex)
 ;
 */
 
-int LOCALE_getbank(void)
+int LOCALE_getbank()
 {
     ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
     return lx->BankIndex;
@@ -317,7 +317,7 @@ int LOCALE_getbank(void)
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_getbanklanguageid(void)
+; int LOCALE_getbanklanguageid()
 ;
 ; DESCRIPTION
 ;
@@ -340,7 +340,7 @@ int LOCALE_getbank(void)
 ;
 */
 
-int LOCALE_getbanklanguageid(void)
+int LOCALE_getbanklanguageid()
 {
     ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
     ASSERT(lx->pBank[lx->BankIndex]);       /* must load a table into bank before calling this function */
@@ -358,7 +358,7 @@ int LOCALE_getbanklanguageid(void)
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_getbankstringcount(void)
+; int LOCALE_getbankstringcount()
 ;
 ; DESCRIPTION
 ;
@@ -381,7 +381,7 @@ int LOCALE_getbanklanguageid(void)
 ;
 */
 
-int LOCALE_getbankstringcount(void)
+int LOCALE_getbankstringcount()
 {
     int StringCount = 0;
 
@@ -611,7 +611,7 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 ;
 ; #include "realfont.h"
 ;
-; void LOCALE_freetable(void)
+; void LOCALE_freetable()
 ;
 ; DESCRIPTION
 ;
@@ -635,7 +635,7 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 ;
 */
 
-void LOCALE_freetable(void)
+void LOCALE_freetable()
 {
 	if( lx != nullptr ) {
 

@@ -39,9 +39,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "bittype.h"
-#include "matrix4.h"
+#include "WWLib/always.h"
+#include "WWLib/bittype.h"
+#include "WWMath/matrix4.h"
 #include "mapper.h"
 
 // Modified to use DX 8 texture matrices

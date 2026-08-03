@@ -936,7 +936,7 @@ bool W3dExportClass::Export_HLod( char *name, const char *htree_name, ChunkSaveC
  * HISTORY:                                                                                    *
  *   10/16/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
+HierarchySaveClass * W3dExportClass::get_hierarchy_tree()
 {
 	/*
 	** If the hierarchy tree pointer has been initialized, just return it
@@ -981,7 +981,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
  * HISTORY:                                                                                    *
  *   10/17/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass * W3dExportClass::get_damage_root_list(void)
+INodeListClass * W3dExportClass::get_damage_root_list()
 {
 	if (DamageRootList != nullptr) return DamageRootList;
 
@@ -1006,7 +1006,7 @@ INodeListClass * W3dExportClass::get_damage_root_list(void)
  * HISTORY:                                                                                    *
  *   9/13/1999  AJA : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass * W3dExportClass::get_origin_list(void)
+INodeListClass * W3dExportClass::get_origin_list()
 {
 	if (OriginList != nullptr) return OriginList;
 
@@ -1153,7 +1153,7 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
  * HISTORY:                                                                                    *
  *   10/16/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void W3dExportClass::Start_Progress_Bar(void)
+void W3dExportClass::Start_Progress_Bar()
 {
 	MaxInterface->ProgressStart(
 		"Processing Triangle Mesh",
@@ -1174,7 +1174,7 @@ void W3dExportClass::Start_Progress_Bar(void)
  * HISTORY:                                                                                    *
  *   10/16/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void W3dExportClass::End_Progress_Bar(void)
+void W3dExportClass::End_Progress_Bar()
 {
 	MaxInterface->ProgressUpdate( 100);
 	MaxInterface->ProgressEnd();

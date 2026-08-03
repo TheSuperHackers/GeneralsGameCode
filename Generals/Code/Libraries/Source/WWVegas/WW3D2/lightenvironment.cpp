@@ -38,7 +38,7 @@
 
 
 #include "lightenvironment.h"
-#include "matrix3d.h"
+#include "WWMath/matrix3d.h"
 #include "camera.h"
 #include "light.h"
 

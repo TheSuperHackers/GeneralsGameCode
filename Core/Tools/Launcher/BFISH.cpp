@@ -78,7 +78,7 @@ typedef union {
  * HISTORY:                                                                                    *
  *   07/08/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-BlowfishEngine::~BlowfishEngine(void)
+BlowfishEngine::~BlowfishEngine()
 {
 	if (IsKeyed) {
 		Submit_Key(nullptr, 0);

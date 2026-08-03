@@ -49,7 +49,7 @@
 #include "metalmap.h"
 #include "texture.h"
 #include "ww3dformat.h"
-#include "WW3D2/ww3d.h"
+#include "ww3d.h"
 #include <WWMath/vp.h>
 #include <WWLib/INI.h>
 #include <WWLib/Point.h>

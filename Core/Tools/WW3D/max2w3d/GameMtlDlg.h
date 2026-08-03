@@ -61,25 +61,25 @@ public:
 	~GameMtlDlg();
 
 	// From ParamDlg:
-	Class_ID				ClassID(void);
+	Class_ID				ClassID();
 	void					SetThing(ReferenceTarget *m);
-	ReferenceTarget*	GetThing(void) { return (ReferenceTarget*)TheMtl; }
+	ReferenceTarget*	GetThing() { return (ReferenceTarget*)TheMtl; }
 	void					DeleteThis() { delete this;  }
 	void					SetTime(TimeValue t);
-	void					ReloadDialog(void);
+	void					ReloadDialog();
 	void					ActivateDlg(BOOL onOff);
 
-	void					Invalidate(void);
-	void					Update_Display(void)	{ IParams->MtlChanged(); }
+	void					Invalidate();
+	void					Update_Display()	{ IParams->MtlChanged(); }
 
 protected:
 
-	void					Build_Dialog(void);
+	void					Build_Dialog();
 
 	BOOL					DisplacementMapProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	BOOL					SurfaceTypeProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 	BOOL					PassCountProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-	void					Set_Pass_Count_Dialog(void);
+	void					Set_Pass_Count_Dialog();
 
 	enum { MAX_PASSES = 4 };
 

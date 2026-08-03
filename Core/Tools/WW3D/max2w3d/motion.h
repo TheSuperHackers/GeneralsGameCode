@@ -96,7 +96,7 @@ public:
 																	// base object space (for damage animations)
 					);
 
-	~MotionClass(void);
+	~MotionClass();
 
 	bool Save(ChunkSaveClass & csave);
 
@@ -153,6 +153,6 @@ private:
 	bool			save_header(ChunkSaveClass & csave);
 	bool			save_channels(ChunkSaveClass & csave);
 
-	void			init(void);
+	void			init();
 
 };

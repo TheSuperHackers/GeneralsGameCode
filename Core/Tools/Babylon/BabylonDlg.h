@@ -79,21 +79,21 @@ public:
 	int RetranslateText ( BabylonText *text, BabylonText *label );
 	void VerifyDialog( TransDB *db, LangID langid);
 	void VerifyTranslations( TransDB *db, LangID langid ) ;
-	int	CanProceed ( void );
-	int	CanOperate ( void );
-	int SaveMainDB ( void );
+	int	CanProceed ();
+	int	CanOperate ();
+	int SaveMainDB ();
 	int UpdateLabel ( BabylonLabel *source, BabylonLabel *destination, UPDATEINFO &info, int update = TRUE, int skip = FALSE);
 	int UpdateDB ( TransDB *source, TransDB *destination, int update = TRUE);
-	void ProgressComplete ( void );
+	void ProgressComplete ();
 	void SetProgress ( int pos );
 	void InitProgress ( int range );
-	int SaveLog ( void );
+	int SaveLog ();
 	void Status ( const char *string, int log = TRUE);
 	void Log ( const char *string, LogFormat format = NEW_LINE );
 	CBabylonDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CBabylonDlg();
-	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) (void ) = nullptr );
-	void Ready ( void ) { Status ( "Ready", FALSE ); ProgressComplete(); };
+	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) () = nullptr );
+	void Ready () { Status ( "Ready", FALSE ); ProgressComplete(); };
 
 // Dialog Data
 	//{{AFX_DATA(CBabylonDlg)

@@ -324,7 +324,6 @@ public:
 
 	UnsignedInt m_defaultIP;			///< preferred IP address for LAN
 	UnsignedInt m_firewallBehavior;	///< Last detected firewall behavior
-	Bool m_firewallSendDelay;			///< Use send delay for firewall connection negotiations
 	UnsignedInt m_firewallPortOverride;	///< User-specified port to be used
 	Short m_firewallPortAllocationDelta; ///< the port allocation delta last detected.
 
@@ -365,7 +364,6 @@ public:
 	Bool m_shellMapOn;								///< User can set the shell map not to load
 	Bool m_playIntro;									///< Flag to say if we're to play the intro or not
 	Bool m_playSizzle;								///< Flag to say whether we play the sizzle movie after the logo movie.
-	Bool m_allowExitOutOfMovies;			///< flag to allow exit out of movies only after the Intro has played
 
 	Bool m_loadScreenRender;						///< flag to disallow rendering of almost everything during a loadscreen
 

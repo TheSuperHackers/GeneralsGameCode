@@ -36,22 +36,22 @@
 
 #pragma once
 
-#include "vector2.h"
-#include "vector3.h"
-#include "vector4.h"
-#include "Vector3i.h"
-#include "sharebuf.h"
+#include "WWMath/vector2.h"
+#include "WWMath/vector3.h"
+#include "WWMath/vector4.h"
+#include "WWMath/Vector3i.h"
+#include "WWLib/sharebuf.h"
 #include "shader.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "vertmaterial.h"
-#include "bittype.h"
-#include "colmath.h"
-#include "simplevec.h"
-#include "wwstring.h"
+#include "WWLib/bittype.h"
+#include "WWMath/colmath.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/wwstring.h"
 #include "rinfo.h"
 #include "meshgeometry.h"
 #include "meshmatdesc.h"
-#include "dx8list.h"
+#include "WW3D2/dx8list.h"
 
 class TextureClass;
 class RenderInfoClass;

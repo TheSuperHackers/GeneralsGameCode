@@ -34,9 +34,9 @@
 #include <afxtempl.h> // CList class
 #include <afxdlgs.h> // FileDialog class
 
-#include "chunkio.h"
-#include "Vector3i.h"
-#include "w3d_file.h"
+#include "WWLib/chunkio.h"
+#include "WWMath/Vector3i.h"
+#include "WW3D2/w3d_file.h"
 
 
 //{{AFX_INSERT_LOCATION}}

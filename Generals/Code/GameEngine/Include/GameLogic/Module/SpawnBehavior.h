@@ -111,6 +111,7 @@ public:
 	virtual CanAttackResult getCanAnySlavesUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *victim, const Coord3D *pos, CommandSourceType cmdSource ) = 0;
 	virtual Bool canAnySlavesAttack() = 0;
 	virtual void orderSlavesToGoIdle( CommandSourceType cmdSource ) = 0;
+	virtual Int getSlaveCount() const = 0;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -160,6 +161,7 @@ public:
 	virtual CanAttackResult getCanAnySlavesUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *victim, const Coord3D *pos, CommandSourceType cmdSource ) override;
 	virtual Bool canAnySlavesAttack() override;
 	virtual void orderSlavesToGoIdle( CommandSourceType cmdSource ) override;
+	virtual Int getSlaveCount() const override { return m_spawnCount; }
 
 	// **********************************************************************************************
 	// our own methods

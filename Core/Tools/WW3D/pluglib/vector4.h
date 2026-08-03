@@ -65,7 +65,7 @@ public:
 
 
 	// Constructors
-	Vector4(void) {};
+	Vector4() {};
 	Vector4(const Vector4 & v) { X = v.X; Y = v.Y; Z = v.Z; W = v.W; }
 	Vector4(float x, float y, float z, float w) { X = x; Y = y; Z = z; W = w; }
 	Vector4(const float vector[4]) { X = vector[0]; Y = vector[1]; Z = vector[2]; W = vector[3]; }
@@ -79,9 +79,9 @@ public:
 	const float &  operator [](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
-	void	Normalize(void);
-	float	Length(void) const;
-	float Length2(void) const;
+	void	Normalize();
+	float	Length() const;
+	float Length2() const;
 
 	// unary operators
 	Vector4 operator-() const { return(Vector4(-X,-Y,-Z,-W)); }
@@ -110,7 +110,7 @@ public:
 	friend bool operator != (const Vector4 &a,const Vector4 &b);
 
 	// verify that none of the members of this vector are invalid floats
-	bool Is_Valid(void) const;
+	bool Is_Valid() const;
 };
 
 /**************************************************************************
@@ -375,7 +375,7 @@ inline Vector4 Lerp(const Vector4 & a, const Vector4 & b, float alpha)
  * HISTORY:                                                                                    *
  *   10/18/99   gth : Created.                                                                 *
  *=============================================================================================*/
-inline bool Vector4::Is_Valid(void) const
+inline bool Vector4::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z) && WWMath::Is_Valid_Float(W));
 }

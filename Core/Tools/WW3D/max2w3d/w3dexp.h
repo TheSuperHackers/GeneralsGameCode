@@ -99,9 +99,9 @@ private:
 	HierarchySaveClass *	HierarchyTree;
 
 	bool get_export_options(BOOL suppress_prompts = FALSE);
-	INodeListClass * get_origin_list(void);
-	INodeListClass * get_damage_root_list(void);
-	HierarchySaveClass * get_hierarchy_tree(void);
+	INodeListClass * get_origin_list();
+	INodeListClass * get_damage_root_list();
+	HierarchySaveClass * get_hierarchy_tree();
 
 	bool get_base_object_tm(Matrix3 &tm);
 
@@ -112,7 +112,7 @@ private:
 	bool Export_HLod (char *name, const char *htree_name, ChunkSaveClass &csave, Progress_Meter_Class &meter, MeshConnectionsClass **connections, int lod_count);
 	bool Export_Collection(const char * name,ChunkSaveClass & csave,DynamicVectorClass<GeometryExportTaskClass *> & objlist,INodeListClass & placeholder_list,INodeListClass & transform_node_list);
 
-	void Start_Progress_Bar(void);
-	void End_Progress_Bar(void);
+	void Start_Progress_Bar();
+	void End_Progress_Bar();
 
 };

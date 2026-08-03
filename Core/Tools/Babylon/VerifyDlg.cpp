@@ -205,7 +205,7 @@ void VerifyDlg::OnPause()
 
 }
 
-void VerifyDlg::CloseAudio ( void )
+void VerifyDlg::CloseAudio ()
 {
 	#if 0
 	if ( stream )

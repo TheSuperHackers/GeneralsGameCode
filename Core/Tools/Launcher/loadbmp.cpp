@@ -165,7 +165,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
 }
 
 
-bit8 LoadBmp::drawBmp(void)
+bit8 LoadBmp::drawBmp()
 {
   // Paint the window (and draw the bitmap).
 

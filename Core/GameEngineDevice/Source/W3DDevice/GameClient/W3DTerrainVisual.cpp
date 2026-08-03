@@ -42,6 +42,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/ClientRandomValue.h"
+#include "GameClient/View.h"
 
 #include "GameLogic/Object.h"
 #include "GameLogic/GameLogic.h"
@@ -493,6 +494,10 @@ void W3DTerrainVisual::updateSeismicSimulations()
         ++it;
 
 	  }
+
+	if (TheTacticalView) {
+		TheTacticalView->onHeightMapChanged();
+	}
 
   }
 }

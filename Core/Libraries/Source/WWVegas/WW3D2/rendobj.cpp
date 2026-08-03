@@ -73,10 +73,10 @@
 
 
 #include "rendobj.h"
-#include "WW3D2/assetmgr.h"
+#include "assetmgr.h"
 #include "WWLib/win.h"
 #include "WWMath/pot.h"
-#include "WW3D2/scene.h"
+#include "scene.h"
 #include "WWMath/colmath.h"
 #include "coltest.h"
 #include "inttest.h"
@@ -84,8 +84,8 @@
 #include "matinfo.h"
 #include "htree.h"
 #include "predlod.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/ww3d.h"
+#include "camera.h"
+#include "ww3d.h"
 #include "WWLib/chunkio.h"
 #include "WWSaveLoad/persistfactory.h"
 #include "WWSaveLoad/saveload.h"

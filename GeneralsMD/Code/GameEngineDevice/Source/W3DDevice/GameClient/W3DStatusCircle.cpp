@@ -26,13 +26,13 @@
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 
 #include <stdlib.h>
-#include <assetmgr.h>
-#include <texture.h>
-#include <tri.h>
-#include <colmath.h>
-#include <coltest.h>
-#include <rinfo.h>
-#include <camera.h>
+#include <WW3D2/assetmgr.h>
+#include <WW3D2/texture.h>
+#include <WWMath/tri.h>
+#include <WWMath/colmath.h>
+#include <WW3D2/coltest.h>
+#include <WW3D2/rinfo.h>
+#include <WW3D2/camera.h>
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/shader.h"
 #include "Common/GlobalData.h"

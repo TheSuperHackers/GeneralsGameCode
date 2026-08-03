@@ -27,13 +27,13 @@
 //
 
 #include "Lib/BaseType.h"
-#include "rendobj.h"
-#include "robjlist.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/robjlist.h"
 #include "wbview.h"
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
 #include "Common/ModelState.h"
-#include "dx8wrapper.h"
+#include "WW3D2/dx8wrapper.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
 enum BodyDamageType CPP_11(: Int); //Ahhhh much better!

@@ -79,7 +79,7 @@ const int W3DAPPDATA2_CURRENT_VERSION = 1;
 
 
 
-W3DAppData2Struct::W3DAppData2Struct(void) :
+W3DAppData2Struct::W3DAppData2Struct() :
 	ExportFlags(0),
 	GeometryType(0),
 	GeometryFlags(0),
@@ -99,7 +99,7 @@ W3DAppData2Struct::W3DAppData2Struct(W3DAppData0Struct & olddata)	:
 	Init_From_AppData0(olddata);
 }
 
-void W3DAppData2Struct::Init_With_Mesh_Defaults(void)
+void W3DAppData2Struct::Init_With_Mesh_Defaults()
 {
 	ExportFlags = (EXPORT_TRANSFORM|EXPORT_GEOMETRY);
 	GeometryType = GEO_TYPE_NORMAL_MESH;
@@ -110,7 +110,7 @@ void W3DAppData2Struct::Init_With_Mesh_Defaults(void)
 	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
 }
 
-void	W3DAppData2Struct::Init_With_Other_Defaults(void)
+void	W3DAppData2Struct::Init_With_Other_Defaults()
 {
 	ExportFlags = 0;
 	GeometryType = 0;
@@ -160,7 +160,7 @@ void	W3DAppData2Struct::Init_From_AppData0(W3DAppData0Struct & olddata)
 	Set_Version(W3DAPPDATA2_CURRENT_VERSION);
 }
 
-void W3DAppData2Struct::Update_Version(void)
+void W3DAppData2Struct::Update_Version()
 {
 	/*
 	** If this is a version 0 struct, We need to initialize the camera collision
@@ -278,7 +278,7 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 ** W3DDazzleAppDataStruct Implementation
 **
 ***********************************************************************************************/
-W3DDazzleAppDataStruct::W3DDazzleAppDataStruct(void)
+W3DDazzleAppDataStruct::W3DDazzleAppDataStruct()
 {
 	UnUsed[0] = 0;
 	UnUsed[1] = 0;

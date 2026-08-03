@@ -39,10 +39,10 @@
 
 #include "bmp2d.h"
 #include "WWMath/pot.h"
-#include "WW3D2/ww3d.h"
+#include "ww3d.h"
 #include "texture.h"
 #include "surfaceclass.h"
-#include "WW3D2/assetmgr.h"
+#include "assetmgr.h"
 #include "textureloader.h"
 #include "ww3dformat.h"
 

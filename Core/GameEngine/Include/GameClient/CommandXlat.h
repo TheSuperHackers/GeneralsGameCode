@@ -65,6 +65,33 @@ private:
 	GameMessage::Type issueFireWeaponCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos );
 	GameMessage::Type issueCombatDropCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos );
 
+	void resolveContextTarget( Drawable *&draw, Object *&obj, Drawable *&drawableInWay );
+	void resolveGuiCommandTarget( const CommandButton *command, Drawable *&draw, Object *&obj );
+
+	GameMessage::Type handleWaypointModeCommand( const Coord3D *pos, Drawable *draw, CommandEvaluateType type );
+	GameMessage::Type handleGuiCommand( const CommandButton *command, Drawable *draw, Object *obj, const Coord3D *pos, CommandEvaluateType type );
+	GameMessage::Type handleSpecialPowerConstructCommand( const CommandButton *command, Drawable *draw, const Coord3D *pos, CommandEvaluateType type );
+	GameMessage::Type handleSpecialPowerOverrideDestinationCommand( const Coord3D *pos, CommandEvaluateType type );
+	GameMessage::Type handleResumeConstructionCommand( Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleDockAtCommand( Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleRepairObjectCommand( Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleGetRepairedAtCommand( Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleGetHealedAtCommand( Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleHijackVehicleCommand( Drawable *draw, CommandEvaluateType type );
+	GameMessage::Type handleConvertObjectToCarBombCommand( Drawable *draw, Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleSabotageBuildingCommand( Drawable *draw, CommandEvaluateType type );
+	GameMessage::Type handleSalvageCommand( Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleEnterObjectCommand( Drawable *draw, Object *obj, CommandEvaluateType type );
+	GameMessage::Type handleAttackObjectCommand( Drawable *draw, Object *obj, CommandEvaluateType type, GameMessage::Type hintType );
+	GameMessage::Type handleCaptureBuildingCommand( Drawable *draw, Object *obj, const Coord3D *pos, CommandEvaluateType type );
+	GameMessage::Type handleHackCommand( Drawable *draw, Object *obj, const Coord3D *pos, CommandEvaluateType type, SpecialPowerType hackPower );
+#ifdef ALLOW_SURRENDER
+	GameMessage::Type handlePickUpPrisonerCommand( Drawable *draw, Object *obj, CommandEvaluateType type );
+#endif
+	GameMessage::Type handleSetRallyPointCommand( const Coord3D *pos, CommandEvaluateType type );
+	GameMessage::Type handleInvalidShotCommand( const Coord3D *pos );
+	GameMessage::Type handleDefaultMoveCommand( Drawable *draw, Drawable *drawableInWay, const Coord3D *pos, CommandEvaluateType type );
+
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 };
 

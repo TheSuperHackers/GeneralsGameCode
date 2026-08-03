@@ -37,11 +37,11 @@
 #pragma once
 
 #include "animobj.h"
-#include "Vector.h"
-#include "snapPts.h"
-#include "proto.h"
-#include "w3derr.h"
-#include "proxy.h"
+#include "WWLib/Vector.h"
+#include "WW3D2/snapPts.h"
+#include "WW3D2/proto.h"
+#include "WW3D2/w3derr.h"
+#include "WW3D2/proxy.h"
 
 class DistLODClass;
 class HModelClass;

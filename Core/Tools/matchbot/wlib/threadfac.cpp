@@ -203,7 +203,7 @@ Runnable::~Runnable()
 { }
 
 // Is there a thread running in this class
-bit8 Runnable::isRunning(void)
+bit8 Runnable::isRunning()
 {
   // Don't need to lock a simple assignment
   int temp=ThreadCount_;
@@ -211,7 +211,7 @@ bit8 Runnable::isRunning(void)
 }
 
 // How many threads are running in this class
-int Runnable::getThreadCount(void)
+int Runnable::getThreadCount()
 {
   // Don't need to lock a simple assignment
   int temp=ThreadCount_;

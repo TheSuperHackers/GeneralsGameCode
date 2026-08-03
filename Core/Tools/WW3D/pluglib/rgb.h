@@ -48,9 +48,9 @@ class HSVClass;
 class RGBClass
 {
 	public:
-		RGBClass(void) : Red(0), Green(0), Blue(0) {}
+		RGBClass() : Red(0), Green(0), Blue(0) {}
 		RGBClass(unsigned char red, unsigned char green, unsigned char blue) : Red(red), Green(green), Blue(blue) {}
-		operator HSVClass (void) const;
+		operator HSVClass () const;
 		RGBClass & operator = (RGBClass const & rgb) {
 			if (this == &rgb) return(*this);
 
@@ -66,9 +66,9 @@ class RGBClass
 
 		void Adjust(int ratio, RGBClass const & rgb);
 		int Difference(RGBClass const & rgb) const;
-		int Get_Red(void) const {return (Red);}
-		int Get_Green(void) const {return(Green);}
-		int Get_Blue(void) const {return(Blue);}
+		int Get_Red() const {return (Red);}
+		int Get_Green() const {return(Green);}
+		int Get_Blue() const {return(Blue);}
 		void Set_Red(unsigned char value) {Red = value;}
 		void Set_Green(unsigned char value) {Green = value;}
 		void Set_Blue(unsigned char value) {Blue = value;}

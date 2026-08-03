@@ -52,7 +52,7 @@
 
 #include "hrawanim.h"
 #include "motchan.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "assetmgr.h"
 #include "htree.h"
 

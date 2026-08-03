@@ -59,15 +59,15 @@ class VertexRestoreClass : public RestoreObj
 		//	Public constructors/destructor
 		//////////////////////////////////////////////////////////////////
 		VertexRestoreClass (Mesh *mesh, MeshDeformClass *modifier, MeshDeformModData *mod_data);
-		virtual ~VertexRestoreClass (void)	{ Free_Vertex_Array (); };
+		virtual ~VertexRestoreClass ()	{ Free_Vertex_Array (); };
 
 		//////////////////////////////////////////////////////////////////
 		//	RestoreObj overrides
 		//////////////////////////////////////////////////////////////////
 		virtual void			Restore (int is_undo);
-		virtual void			Redo (void);
-		virtual int				Size (void)				{ return (m_VertexList.Count () * sizeof (Point3) * 2) + sizeof (VertexRestoreClass); }
-		virtual void			EndHold (void);
+		virtual void			Redo ();
+		virtual int				Size ()				{ return (m_VertexList.Count () * sizeof (Point3) * 2) + sizeof (VertexRestoreClass); }
+		virtual void			EndHold ();
 
 	protected:
 
@@ -76,7 +76,7 @@ class VertexRestoreClass : public RestoreObj
 		//////////////////////////////////////////////////////////////////
 		virtual void			Copy_Vertex_State (DEFORM_LIST &list) = 0;
 		virtual void			Apply_Vertex_Data (DEFORM_LIST &list) = 0;
-		void						Free_Vertex_Array (void);
+		void						Free_Vertex_Array ();
 
 		//////////////////////////////////////////////////////////////////
 		//	Protected member data
@@ -104,12 +104,12 @@ class VertexPositionRestoreClass : public VertexRestoreClass
 		//	Public constructors/destructor
 		//////////////////////////////////////////////////////////////////
 		VertexPositionRestoreClass (Mesh *mesh, MeshDeformClass *modifier, MeshDeformModData *mod_data);
-		virtual ~VertexPositionRestoreClass (void)	{ };
+		virtual ~VertexPositionRestoreClass ()	{ };
 
 		//////////////////////////////////////////////////////////////////
 		//	RestoreObj overrides
 		//////////////////////////////////////////////////////////////////
-		TSTR				Description (void)	{ return TSTR(_T("Vertex Position")); }
+		TSTR				Description ()	{ return TSTR(_T("Vertex Position")); }
 
 	protected:
 
@@ -134,12 +134,12 @@ class VertexColorRestoreClass : public VertexRestoreClass
 		//	Public constructors/destructor
 		//////////////////////////////////////////////////////////////////
 		VertexColorRestoreClass (Mesh *mesh, MeshDeformClass *modifier, MeshDeformModData *mod_data);
-		virtual ~VertexColorRestoreClass (void)	{ };
+		virtual ~VertexColorRestoreClass ()	{ };
 
 		//////////////////////////////////////////////////////////////////
 		//	RestoreObj overrides
 		//////////////////////////////////////////////////////////////////
-		TSTR				Description (void)	{ return TSTR(_T("Vertex Color")); }
+		TSTR				Description ()	{ return TSTR(_T("Vertex Color")); }
 
 	protected:
 

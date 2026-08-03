@@ -209,10 +209,10 @@ target_include_directories(z_worldbuilder PRIVATE
 
 target_precompile_headers(z_worldbuilder PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
-    [["always.h"]]
+    [["WWLib/always.h"]]
     [["Common/STLTypedefs.h"]]
     [["StdAfx.h"]]
-    [["WWCommon.h"]]
+    [["WWLib/WWCommon.h"]]
 )
 
 target_link_libraries(z_worldbuilder PRIVATE

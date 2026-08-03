@@ -72,7 +72,7 @@ template<class T> class TRect;
 template<class T>
 class TPoint2D {
 	public:
-		TPoint2D(void) {}		// Default constructor does nothing by design.
+		TPoint2D() {}		// Default constructor does nothing by design.
 		TPoint2D(T x, T y) : X(x), Y(y) {}
 
 		// Equality comparison operators.
@@ -97,11 +97,11 @@ class TPoint2D {
 		TPoint2D<T> const Cross_Product(TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(T(Y - rvalue.Y), T(rvalue.X - X)));}
 
 		// Negation operator -- simple and effective
-		TPoint2D<T> const operator - (void) const {return(TPoint2D<T>(T(-X), T(-Y)));}
+		TPoint2D<T> const operator - () const {return(TPoint2D<T>(T(-X), T(-Y)));}
 
 		// Vector support functions.
-		T Length(void) const {return(T(sqrt(double(X*X + Y*Y))));}
-		TPoint2D<T> const Normalize(void) const {
+		T Length() const {return(T(sqrt(double(X*X + Y*Y))));}
+		TPoint2D<T> const Normalize() const {
 			double len = sqrt(X*X + Y*Y);
 			if (len != 0.0) {
 				return(TPoint2D<T>((T)(X / len), (T)(Y / len)));
@@ -125,12 +125,12 @@ class TPoint2D {
 class Point2D : public TPoint2D<int>
 {
 	public:
-		Point2D(void) {}		// Default constructor does nothing by design.
+		Point2D() {}		// Default constructor does nothing by design.
 		Point2D(int x, int y) : TPoint2D<int>(x, y) {}
 		Point2D(Point2DStruct const & rvalue) : TPoint2D<int>(rvalue.X, rvalue.Y) {}
 		Point2D(TPoint2D<int> const & rvalue) : TPoint2D<int>(rvalue) {}
 
-		operator Point2DStruct (void) const {Point2DStruct pt;pt.X = X;pt.Y = Y;return(pt);}
+		operator Point2DStruct () const {Point2DStruct pt;pt.X = X;pt.Y = Y;return(pt);}
 
 		Point2D const & operator += (Point2D const & rvalue) {X += rvalue.X;Y += rvalue.Y;return(*this);}
 		Point2D const & operator -= (Point2D const & rvalue) {X -= rvalue.X;Y -= rvalue.Y;return(*this);}
@@ -172,7 +172,7 @@ class TPoint3D : public TPoint2D<T> {
 		using BASECLASS::Y;
 
 	public:
-		TPoint3D(void) {}		// Default constructor does nothing by design.
+		TPoint3D() {}		// Default constructor does nothing by design.
 		TPoint3D(T x, T y, T z) : BASECLASS(x, y), Z(z) {}
 		TPoint3D(BASECLASS const & rvalue, T z /*= 0*/) : BASECLASS(rvalue), Z(z) {}
 
@@ -202,11 +202,11 @@ class TPoint3D : public TPoint2D<T> {
 		TPoint3D<T> const Cross_Product(TPoint3D<T> const & rvalue) const {return TPoint3D<T>(Y * rvalue.Z - Z * rvalue.Y, Z * rvalue.X - X * rvalue.Z, X * rvalue.Y - Y * rvalue.X);}
 
 		// Negation operator -- simple and effective
-		TPoint3D<T> const operator - (void) const {return(TPoint3D<T>(-X, -Y, -Z));}
+		TPoint3D<T> const operator - () const {return(TPoint3D<T>(-X, -Y, -Z));}
 
 		// Vector support functions.
-		T Length(void) const {return(T(sqrt(double(X*X + Y*Y + Z*Z))));}
-		TPoint3D<T> const Normalize(void) const {
+		T Length() const {return(T(sqrt(double(X*X + Y*Y + Z*Z))));}
+		TPoint3D<T> const Normalize() const {
 			double len = sqrt(X*X + Y*Y + Z*Z);
 			if (len != 0.0) {
 				return(TPoint3D<T>((T)(X / len), (T)(Y / len), (T)(Z / len)));

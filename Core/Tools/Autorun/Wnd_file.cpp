@@ -73,9 +73,9 @@ char DebugFile	[ MAX_PATH ] = { '\0' };
 //-----------------------------------------------------------------------------
 // non-class private functions in this module...
 //-----------------------------------------------------------------------------
-// int Get_Internal_File_Handle( void );
+// int Get_Internal_File_Handle();
 // #if( SUPPORT_STREAMS )
-//	 FILE *Get_Internal_File_Stream( void );
+//	 FILE *Get_Internal_File_Stream();
 // #endif
 
 
@@ -85,7 +85,7 @@ char DebugFile	[ MAX_PATH ] = { '\0' };
 #if(0)
 #ifndef RTS_DEBUG
 void __cdecl Msg( int, char *, char *, ... ) { };	// line, file, fmt
-void 	Delete_Msg_File ( void )  { };
+void 	Delete_Msg_File ()  { };
 #endif
 #endif
 
@@ -274,7 +274,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 // Delete_Msg_File
 //----------------------------------------------------------------------
 
-void Delete_Msg_File ( void )
+void Delete_Msg_File ()
 {
 	DWORD	nBytes;
 	char	buff	[ 300 ];
@@ -326,7 +326,7 @@ void Delete_Msg_File ( void )
 // StandardFileClass::StandardFileClass
 //------------------------------------------------------------------------------
 
-StandardFileClass::StandardFileClass( void )
+StandardFileClass::StandardFileClass()
 {
 	//
 	// reset all internal data
@@ -338,7 +338,7 @@ StandardFileClass::StandardFileClass( void )
 // StandardFileClass::~StandardFileClass
 //------------------------------------------------------------------------------
 
-StandardFileClass::~StandardFileClass( void )
+StandardFileClass::~StandardFileClass()
 {
 	//
 	// make sure this file got shut down before we destruct
@@ -516,7 +516,7 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 // bool StandardFileClass::Close
 //------------------------------------------------------------------------------
 
-bool StandardFileClass::Close( void )
+bool StandardFileClass::Close()
 {
 	int status;
 
@@ -819,7 +819,7 @@ bool StandardFileClass::Seek( int distance, int seek_file_position )
 //
 // return file position
 //
-int StandardFileClass::Tell( void )
+int StandardFileClass::Tell()
 {
 	int file_pos;
 
@@ -879,7 +879,7 @@ int StandardFileClass::Tell( void )
 // int StandardFileClass::Query_Size
 //------------------------------------------------------------------------------
 
-int StandardFileClass::Query_Size( void )
+int StandardFileClass::Query_Size()
 {
 	int size;
 
@@ -928,7 +928,7 @@ int StandardFileClass::Query_Size( void )
 // int StandardFileClass::Query_Size
 //------------------------------------------------------------------------------
 
-bool StandardFileClass::Query_Open( void )
+bool StandardFileClass::Query_Open()
 {
 	return( Currently_Open );
 }
@@ -937,7 +937,7 @@ bool StandardFileClass::Query_Open( void )
 // char *StandardFileClass::Query_Name_String
 //------------------------------------------------------------------------------
 
-char *StandardFileClass::Query_Name_String( void )
+char *StandardFileClass::Query_Name_String()
 {
 	return( File_Name );
 }
@@ -949,7 +949,7 @@ char *StandardFileClass::Query_Name_String( void )
 // FILE *StandardFileClass::Query_File_Stream_Pointer
 //------------------------------------------------------------------------------
 
-FILE *StandardFileClass::Query_File_Stream_Pointer( void )
+FILE *StandardFileClass::Query_File_Stream_Pointer()
 {
 	return( File_Stream_Ptr );
 }
@@ -965,7 +965,7 @@ FILE *StandardFileClass::Query_File_Stream_Pointer( void )
 // void StandardFileClass::Reset
 //------------------------------------------------------------------------------
 
-void StandardFileClass::Reset( void )
+void StandardFileClass::Reset()
 {
 	//
 	// reset all internal data
@@ -981,7 +981,7 @@ void StandardFileClass::Reset( void )
 }
 
 
-int StandardFileClass::End_Of_File	( void )
+int StandardFileClass::End_Of_File	()
 {
 	#if( SUPPORT_HANDLES )
    	return( TRUE );
@@ -996,7 +996,7 @@ int StandardFileClass::End_Of_File	( void )
 	#endif
 }
 
-int StandardFileClass::Flush ( void )
+int StandardFileClass::Flush ()
 {
 	#if( SUPPORT_STREAMS )
 	ASSERT( File_Stream_Ptr != nullptr );
@@ -1507,7 +1507,7 @@ bool Find_File( char const *file_name )
 //
 // private...
 //
-int Get_Internal_File_Handle( void )
+int Get_Internal_File_Handle()
 {
 	static bool _initialized = FALSE;
 	int i;

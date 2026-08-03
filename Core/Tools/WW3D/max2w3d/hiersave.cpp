@@ -217,7 +217,7 @@ HierarchySaveClass::HierarchySaveClass():
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HierarchySaveClass::~HierarchySaveClass(void)
+HierarchySaveClass::~HierarchySaveClass()
 {
 	Free();
 }
@@ -234,7 +234,7 @@ HierarchySaveClass::~HierarchySaveClass(void)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HierarchySaveClass::Free(void)
+void HierarchySaveClass::Free()
 {
 	Node.Clear();
 }
@@ -321,7 +321,7 @@ Matrix3 HierarchySaveClass::get_relative_transform(int nodeidx) const
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-const char * HierarchySaveClass::Get_Name(void) const
+const char * HierarchySaveClass::Get_Name() const
 {
 	return HierarchyHeader.Name;
 }

@@ -50,25 +50,25 @@ public:
 	/////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////
-	SphereKeysClass (void)
+	SphereKeysClass ()
 		:	m_Keys (nullptr),
 			m_KeyCount (0),
 			m_MaxKeys (0)		{ }
 
-	virtual ~SphereKeysClass (void)	{ Free_Keys (); }
+	virtual ~SphereKeysClass ()	{ Free_Keys (); }
 
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
-	W3dSphereKeyFrameStruct *	Detach (void);
+	W3dSphereKeyFrameStruct *	Detach ();
 
-	int								Get_Key_Count (void) const { return m_KeyCount; }
-	W3dSphereKeyFrameStruct *	Get_Keys (void)				{ return m_Keys; }
+	int								Get_Key_Count () const { return m_KeyCount; }
+	W3dSphereKeyFrameStruct *	Get_Keys ()				{ return m_Keys; }
 
 	void								Add_Keys (W3dSphereKeyFrameStruct *keys, int key_count);
 	void								Add_Key (W3dSphereKeyFrameStruct &key);
 
-	void								Free_Keys (void);
+	void								Free_Keys ();
 
 protected:
 

@@ -59,7 +59,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "meshbuild.h"
-#include "uarray.h"
+#include "WWLib/uarray.h"
 #include <stdlib.h>
 #include <assert.h>
 

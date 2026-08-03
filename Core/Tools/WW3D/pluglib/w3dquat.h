@@ -58,14 +58,14 @@ public:
 
 public:
 
-	Quaternion(void) {};
+	Quaternion() {};
 	explicit Quaternion(bool init) { if (init) { X = 0.0f; Y = 0.0f; Z = 0.0f; W = 1.0f; } }
 	explicit Quaternion(float a, float b, float c, float d) { X=a; Y=b; Z=c; W=d; }
 	explicit Quaternion(const Vector3 & axis,float angle);
 	Quaternion & operator=(const Quaternion & source);
 
 	void		Set(float a = 0.0, float b = 0.0, float c = 0.0, float d = 1.0) { X = a; Y = b; Z = c; W = d; }
-	void		Make_Identity(void) { Set(); };
+	void		Make_Identity() { Set(); };
 	void		Scale(float s) { X = (float)(s*X); Y = (float)(s*Y); Z = (float)(s*Z); W = (float)(s*W); }
 
 	// Array access
@@ -83,13 +83,13 @@ public:
 	Quaternion & Make_Closest(const Quaternion & qto);
 
 	// Square of the magnitude of the quaternion
-	float Length2(void) const { return (X*X + Y*Y + Z*Z + W*W); }
+	float Length2() const { return (X*X + Y*Y + Z*Z + W*W); }
 
 	// Magnitude of the quaternion
-	float Length(void) const { return WWMath::Sqrt(Length2()); }
+	float Length() const { return WWMath::Sqrt(Length2()); }
 
 	// Make the quaternion unit length
-	void Normalize(void);
+	void Normalize();
 
 	// post-concatenate rotations about the coordinate axes
 	void	Rotate_X(float theta);
@@ -97,14 +97,14 @@ public:
 	void 	Rotate_Z(float theta);
 
 	// initialize this quaternion randomly (creates a random *unit* quaternion)
-	void	Randomize(void);
+	void	Randomize();
 
 	// transform (rotate) a vector with this quaternion
 	Vector3	Rotate_Vector(const Vector3 & v) const;
 	void		Rotate_Vector(const Vector3 & v,Vector3 * set_result) const;
 
 	// verify that none of the members of this quaternion are invalid floats
-	bool		Is_Valid(void) const;
+	bool		Is_Valid() const;
 };
 
 // Inverse of the quaternion (1/q)
@@ -243,7 +243,7 @@ inline void Quaternion::Rotate_Vector(const Vector3 & v,Vector3 * result) const
 	result->Z = w*(-Z) + W*z + (x*(-Y) - (-X)*y);
 }
 
-inline bool Quaternion::Is_Valid(void) const
+inline bool Quaternion::Is_Valid() const
 {
 	return (	WWMath::Is_Valid_Float(X) &&
 				WWMath::Is_Valid_Float(Y) &&

@@ -127,5 +127,5 @@ public:
 
 	static void                enableParanoid(int flag);
 
-	static ostream            *paranoidStream(void);
+	static ostream            *paranoidStream();
 };

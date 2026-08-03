@@ -90,7 +90,7 @@ static float		Sign(float val);
 static float		Floor(float val) { return (float)floor(val); }
 static bool			Fast_Is_Float_Positive(const float & val);
 
-static float		Random_Float(void);
+static float		Random_Float();
 static float		Random_Float(float min,float max);
 static float		Clamp(float val, float min = 0.0f, float max = 1.0f);
 static double		Clamp(double val, double min = 0.0f, double max = 1.0f);

@@ -65,7 +65,7 @@ ExportAllDlg::ExportAllDlg (Interface *max_interface)
 /////////////////////////////////////////////////////////////////////////////
 // ExportAllDlg Methods
 
-int ExportAllDlg::DoModal (void)
+int ExportAllDlg::DoModal ()
 {
 	// Put up the dialog box.
 	BOOL result = DialogBoxParam(AppInstance, MAKEINTRESOURCE(IDD_EXPORT_ALL),
@@ -151,7 +151,7 @@ BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 /////////////////////////////////////////////////////////////////////////////
 // ExportAllDlg message handlers
 
-void ExportAllDlg::OnInitDialog (void)
+void ExportAllDlg::OnInitDialog ()
 {
 	CenterWindow(m_hWnd, m_MaxInterface->GetMAXHWnd());
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
@@ -192,7 +192,7 @@ void ExportAllDlg::OnBrowse()
 	}
 }
 
-BOOL ExportAllDlg::OnOK (void)
+BOOL ExportAllDlg::OnOK ()
 {
 	// Get the directory chosen by the user. If none is entered,
 	// freak on the user.

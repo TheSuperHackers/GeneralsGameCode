@@ -31,7 +31,7 @@ from now, not 2 hours ago.  Oh well.
 void GetTimezoneInfo(const char * &timezone_str, int &timezone_offset);
 
 // Returns the description of the current timezone (daylight savings included)
-const char * TimezoneString(void);
+const char * TimezoneString();
 
 // Returns the offset from GMT of the current timezone
-int TimezoneOffset(void);
+int TimezoneOffset();

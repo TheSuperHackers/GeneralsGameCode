@@ -47,18 +47,18 @@ class IGROptionsClass
 {
 	public:
 		// Constructor
-		IGROptionsClass( void ) : valid( false ), options( 0 ) {};
+		IGROptionsClass() : valid( false ), options( 0 ) {};
 
 		// Destructor
-		~IGROptionsClass( void ) {};
+		~IGROptionsClass() {};
 
 		// Initialize. Read value(s) from registry
-		bool Init( void );
+		bool Init();
 
 		// Check various options
-		bool Is_Auto_Login_Allowed( void );
-		bool Is_Storing_Nicks_Allowed( void );
-		bool Is_Running_Reg_App_Allowed( void );
+		bool Is_Auto_Login_Allowed();
+		bool Is_Storing_Nicks_Allowed();
+		bool Is_Running_Reg_App_Allowed();
 
 		// Set various options
 		bool Set_Options( IGROptionsType options );

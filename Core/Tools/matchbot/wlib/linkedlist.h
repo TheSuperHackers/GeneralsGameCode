@@ -60,7 +60,7 @@ class LinkedList
                   ~LinkedList();
 
   // Remove all entries from the lsit
-  void             clear(void);
+  void             clear();
 
   // Add a node after the zero based 'pos'
   bit8             add(IN T &node,sint32 pos, OUT T **newnodeptr=nullptr);
@@ -83,7 +83,7 @@ class LinkedList
   bit8             getPointer(OUT T **node, sint32 pos);
 
   // Get the number of entries in the list
-  sint32           length(void);
+  sint32           length();
 
   // Print information on the list
   void             print(IN FILE *out);
@@ -487,6 +487,6 @@ void LinkedList<T>::print(IN FILE *out)
 
 // Return the current length of the list
 template <class T>
-sint32 LinkedList<T>::length(void) {
+sint32 LinkedList<T>::length() {
   return(Entries);
 }

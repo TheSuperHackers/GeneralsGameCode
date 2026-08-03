@@ -62,10 +62,10 @@
 #include "w3d_file.h"
 #include "w3d_util.h"
 #include "w3derr.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "rinfo.h"
 #include "scene.h"
-#include "persistfactory.h"
+#include "WWSaveLoad/persistfactory.h"
 #include "statistics.h"
 
 

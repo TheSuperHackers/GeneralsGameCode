@@ -56,7 +56,7 @@ public:
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
 	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
-	~PresetExportOptionsDialogClass (void);
+	~PresetExportOptionsDialogClass ();
 
 
 	//////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
 	//////////////////////////////////////////////////////////////////
 
 	void			Set_Options (W3dExportOptionsStruct *options)	{ Options = options; ::memcpy (&OrigOptions, Options, sizeof (OrigOptions)); }
-	int			Do_Modal (void);
+	int			Do_Modal ();
 
 private:
 
@@ -98,12 +98,12 @@ private:
 	BOOL			Settings_Message_Proc (UINT message, WPARAM wparam, LPARAM lparam);
 	BOOL			On_Command (WPARAM wparam, LPARAM lparam);
 	void			Show_Settings_Pane (int pane_id);
-	void			Create_Settings_Panes (void);
-	void			Destroy_Settings_Panes (void);
-	void			Determine_Preset_Type (void);
-	void			Initialize_Controls (void);
-	void			Update_Controls (void);
-	void			Save_Settings (void);
+	void			Create_Settings_Panes ();
+	void			Destroy_Settings_Panes ();
+	void			Determine_Preset_Type ();
+	void			Initialize_Controls ();
+	void			Update_Controls ();
+	void			Save_Settings ();
 
 	//////////////////////////////////////////////////////////////////
 	//	Private member data

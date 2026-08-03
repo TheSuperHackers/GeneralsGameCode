@@ -10,7 +10,6 @@ target_link_libraries(g_wwcommon INTERFACE
 
 target_include_directories(g_wwcommon INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    WW3D2
 )
 
 add_subdirectory(WWAudio)
@@ -22,7 +21,6 @@ add_library(g_wwvegas INTERFACE)
 
 target_include_directories(g_wwvegas INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    WW3D2
 )
 
 target_link_libraries(g_wwvegas INTERFACE

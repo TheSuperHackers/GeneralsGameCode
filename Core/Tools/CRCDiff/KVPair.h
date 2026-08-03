@@ -33,7 +33,7 @@ typedef std::map<std::string, std::string> KeyValueMap;
 class KVPairClass
 {
 public:
-	KVPairClass( void );
+	KVPairClass();
 	KVPairClass( const std::string& in, const std::string& delim );
 	void set( const std::string& in, const std::string& delim );
 	void readFromFile( const std::string& in, const std::string& delim );

@@ -46,9 +46,9 @@ class CReport : public CDialog
 public:
 	CReport(CWnd* pParent = nullptr);   // standard constructor
 
-	char*					Filename	( void )			{ return filename; };
-	RPOPTIONS*		Options			( void )		{ return &options; };
-	LangID*				Langauges		( void )		{ return langids; };
+	char*					Filename	()			{ return filename; };
+	RPOPTIONS*		Options			()		{ return &options; };
+	LangID*				Langauges		()		{ return langids; };
 
 // Dialog Data
 	//{{AFX_DATA(CReport)

@@ -38,7 +38,7 @@ char AppTitle[200];
 CBabylonDlg *MainDLG = nullptr;
 
 static const char *AppName = "Babylon:";
-static int AlreadyRunning( void );
+static int AlreadyRunning();
 static HWND FoundWindow = nullptr;
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp
@@ -169,7 +169,7 @@ static BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam);
 static BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam);
 static const char *szSearchTitle;
 
-static int AlreadyRunning( void )
+static int AlreadyRunning()
 {
 	BOOL found = FALSE;
 
@@ -182,7 +182,7 @@ static int AlreadyRunning( void )
 
 //--------------------------------------------------------------------------------
 
-int ExcelRunning( void )
+int ExcelRunning()
 {
 	BOOL found = FALSE;
 

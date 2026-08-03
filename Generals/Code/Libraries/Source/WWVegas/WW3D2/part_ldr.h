@@ -34,11 +34,11 @@
 
 #pragma once
 
-#include "proto.h"
-#include "rendobj.h"
+#include "WW3D2/proto.h"
+#include "WW3D2/rendobj.h"
 #include "w3d_file.h"
-#include "w3derr.h"
-#include "w3d_util.h"
+#include "WW3D2/w3derr.h"
+#include "WW3D2/w3d_util.h"
 #include "part_emt.h"
 
 

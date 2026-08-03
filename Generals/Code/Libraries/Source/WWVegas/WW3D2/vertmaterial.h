@@ -36,14 +36,14 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 
-#include "vector3.h"
+#include "WWMath/vector3.h"
 #include "w3d_file.h"
 #include "meshbuild.h"
-#include "w3derr.h"
+#include "WW3D2/w3derr.h"
 #include "mapper.h"
-#include "wwstring.h"
+#include "WWLib/wwstring.h"
 
 class ChunkLoadClass;
 class ChunkSaveClass;

@@ -69,7 +69,7 @@ int MyMsgManager::setParanoidStream(OutputDevice *device)
 
 
 
-ostream *MyMsgManager::paranoidStream(void)
+ostream *MyMsgManager::paranoidStream()
 {
 	return(paranoid_ostream);
 }

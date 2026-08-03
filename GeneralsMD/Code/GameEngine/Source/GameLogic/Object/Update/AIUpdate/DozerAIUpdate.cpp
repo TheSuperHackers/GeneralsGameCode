@@ -832,16 +832,30 @@ void DozerActionStateMachine::crc( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Xfer Method */
+/** Xfer Method
+  * Version Info:
+  * 1: Initial version
+  * 2: TheSuperHackers @bugfix bobtista 19/07/2026 Serialize the base StateMachine state.
+  *    Without this the dozer reverts to its default state on load.
+  */
 // ------------------------------------------------------------------------------------------------
 void DozerActionStateMachine::xfer( Xfer *xfer )
 {
   // version
+#if RETAIL_COMPATIBLE_XFER_SAVE
   XferVersion currentVersion = 1;
+#else
+  XferVersion currentVersion = 2;
+#endif
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
+
+	if (version >= 2)
+	{
+		StateMachine::xfer(xfer);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -849,6 +863,7 @@ void DozerActionStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerActionStateMachine::loadPostProcess()
 {
+	StateMachine::loadPostProcess();
 }
 
 

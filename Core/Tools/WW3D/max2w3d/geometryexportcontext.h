@@ -85,7 +85,7 @@ public:
 		OriginTransform = Origin->GetNodeTM(CurTime);
 	}
 
-	~GeometryExportContextClass(void)
+	~GeometryExportContextClass()
 	{
 		delete[] ModelName;
 	}

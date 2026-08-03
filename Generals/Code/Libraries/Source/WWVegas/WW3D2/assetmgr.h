@@ -37,14 +37,14 @@
 
 #pragma once
 
-#include "always.h"
-#include "Vector.h"
+#include "WWLib/always.h"
+#include "WWLib/Vector.h"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "SLIST.h"
-#include "texture.h"
-#include "hashtemplate.h"
-#include "simplevec.h"
+#include "WWLib/SLIST.h"
+#include "WW3D2/texture.h"
+#include "WWLib/hashtemplate.h"
+#include "WWLib/simplevec.h"
 
 class	HAnimClass;
 class	HTreeClass;

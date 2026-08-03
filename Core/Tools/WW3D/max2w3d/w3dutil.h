@@ -46,7 +46,7 @@
 
 #define W3DUtilityClassID Class_ID(0x3c362c97, 0x5fc73ab0)
 
-ClassDesc * Get_W3D_Utility_Desc(void);
+ClassDesc * Get_W3D_Utility_Desc();
 
 
 

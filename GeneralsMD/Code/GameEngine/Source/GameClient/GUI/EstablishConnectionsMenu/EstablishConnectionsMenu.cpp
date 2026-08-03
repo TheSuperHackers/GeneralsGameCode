@@ -124,8 +124,6 @@ void EstablishConnectionsMenu::setPlayerStatus(Int slot, NATConnectionState stat
 		DEBUG_ASSERTCRASH(control != nullptr, ("player status control for slot %d is null", slot));
 		return;
 	}
-//	if (state == NATCONNECTIONSTATE_NETGEARDELAY) {
-//		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:NetgearDelay"));
 	if (state == NATCONNECTIONSTATE_WAITINGFORMANGLERRESPONSE) {
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:WaitingForManglerResponse"));
 	} else if (state == NATCONNECTIONSTATE_WAITINGFORMANGLEDPORT) {

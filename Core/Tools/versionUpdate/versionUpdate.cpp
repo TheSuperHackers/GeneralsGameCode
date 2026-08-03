@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <trim.h>
+#include <WWLib/trim.h>
 
 // Local defines
 #define VERSION_BUILDNUM "VERSION_LOCALBUILDNUM"

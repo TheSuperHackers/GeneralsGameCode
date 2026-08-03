@@ -36,12 +36,12 @@
 
 #pragma once
 
-#include "always.h"
-#include "rendobj.h"
+#include "WWLib/always.h"
+#include "WW3D2/rendobj.h"
 #include "w3d_file.h"
 #include "shader.h"
-#include "proto.h"
-#include "obbox.h"
+#include "WW3D2/proto.h"
+#include "WWMath/obbox.h"
 
 class VertexMaterialClass;
 

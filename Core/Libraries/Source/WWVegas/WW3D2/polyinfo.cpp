@@ -39,8 +39,8 @@
 
 #include "polyinfo.h"
 #include "texture.h"
-#include "WW3D2/vertmaterial.h"
-#include "WW3D2/shader.h"
+#include "vertmaterial.h"
+#include "shader.h"
 
 void PolygonInfoClass::Set_Texture(TextureClass *texture)
 {

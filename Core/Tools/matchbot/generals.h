@@ -51,7 +51,7 @@ typedef enum
 class GeneralsUser
 {
 public:
-	GeneralsUser(void);
+	GeneralsUser();
 	UserStatus status;
 
 	int points, minPoints, maxPoints;
@@ -96,8 +96,8 @@ public:
 	virtual ~GeneralsMatcher()
 	{}
 
-	virtual void init(void);
-	virtual void checkMatches(void);
+	virtual void init();
+	virtual void checkMatches();
 
 	virtual void handleDisconnect( const char *reason );
 	virtual void handleRoomMessage( const char *nick, const char *message, MessageType messageType );
@@ -137,7 +137,7 @@ private:
 
 	void checkMatchesInUserMap(UserMap& userMap, int ladderID, int numPlayers, bool showPoolSize);
 
-	void dumpUsers(void);
+	void dumpUsers();
 
 	void sendMatchInfo(std::string name1, std::string name2, std::string name3, std::string name4,
 	                   std::string name5, std::string name6, std::string name7, std::string name8,
@@ -174,8 +174,8 @@ public:
 	virtual ~GeneralsClientMatcher()
 	{}
 
-	virtual void init(void);
-	virtual void checkMatches(void);
+	virtual void init();
+	virtual void checkMatches();
 
 	virtual void handleDisconnect( const char *reason );
 	virtual void handleRoomMessage( const char *nick, const char *message, MessageType messageType );

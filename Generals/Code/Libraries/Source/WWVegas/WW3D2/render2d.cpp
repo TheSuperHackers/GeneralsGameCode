@@ -33,13 +33,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "render2d.h"
-#include "mutex.h"
+#include "WWLib/mutex.h"
 #include "ww3d.h"
 #include "font3d.h"
-#include "rect.h"
+#include "WWMath/rect.h"
 #include "texture.h"
-#include "matrix4.h"
-#include "matrix3d.h"
+#include "WWMath/matrix4.h"
+#include "WWMath/matrix3d.h"
 #include "dx8wrapper.h"
 #include "dx8indexbuffer.h"
 #include "dx8vertexbuffer.h"
@@ -47,8 +47,8 @@
 #include "vertmaterial.h"
 #include "dx8fvf.h"
 #include "dx8caps.h"
-#include "wwprofile.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwprofile.h"
+#include "WWDebug/wwmemlog.h"
 #include "assetmgr.h"
 
 RectClass							Render2DClass::ScreenResolution( 0,0,0,0 );

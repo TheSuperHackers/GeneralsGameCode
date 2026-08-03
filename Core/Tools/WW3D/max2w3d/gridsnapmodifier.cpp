@@ -107,10 +107,10 @@ public:
 class GridSnapDeformerClass : public Deformer
 {
 public:
-	GridSnapDeformerClass(void) : GridDimension(0.001f) {}
+	GridSnapDeformerClass() : GridDimension(0.001f) {}
 
 	void		Set_Grid_Dimension(float grid_dim)		{ GridDimension = grid_dim; }
-	float		Get_Grid_Dimension(void)					{ return GridDimension; }
+	float		Get_Grid_Dimension()					{ return GridDimension; }
 
 	void		Set_Matrices(const Matrix3 & tm,const Matrix3 & invtm)	{ Transform = tm; InvTransform = invtm; }
 
@@ -152,7 +152,7 @@ public:
 
 static GridSnapModifierClassDesc _GridSnapModifierDesc;
 
-ClassDesc* Get_Grid_Snap_Modifier_Desc(void)
+ClassDesc* Get_Grid_Snap_Modifier_Desc()
 {
 	return &_GridSnapModifierDesc;
 }

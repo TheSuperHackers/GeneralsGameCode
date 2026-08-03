@@ -44,7 +44,7 @@ IGROptionsClass *OnlineOptions = nullptr;
  * HISTORY:                                                                                  *
  *   07/05/00 JeffB: Initial coding																				*
  *===========================================================================================*/
-bool IGROptionsClass::Init( void )
+bool IGROptionsClass::Init()
 {
 	int	size;
 	int	returnValue;
@@ -96,7 +96,7 @@ bool IGROptionsClass::Init( void )
  * HISTORY:                                                                                    *
  *   07/05/00 JeffB: Initial coding					                                           *
  *=============================================================================================*/
-bool IGROptionsClass::Is_Auto_Login_Allowed( void )
+bool IGROptionsClass::Is_Auto_Login_Allowed()
 {
 	return(( options & IGR_NO_AUTO_LOGIN ) == 0 );
 }
@@ -113,7 +113,7 @@ bool IGROptionsClass::Is_Auto_Login_Allowed( void )
  * HISTORY:                                                                                    *
  *   07/05/00 JeffB: Initial coding					                                           *
  *=============================================================================================*/
-bool IGROptionsClass::Is_Storing_Nicks_Allowed( void )
+bool IGROptionsClass::Is_Storing_Nicks_Allowed()
 {
 	return(( options & IGR_NEVER_STORE_NICKS ) == 0 );
 }
@@ -130,7 +130,7 @@ bool IGROptionsClass::Is_Storing_Nicks_Allowed( void )
  * HISTORY:                                                                                    *
  *   07/05/00 JeffB: Initial coding					                                           *
  *=============================================================================================*/
-bool IGROptionsClass::Is_Running_Reg_App_Allowed( void )
+bool IGROptionsClass::Is_Running_Reg_App_Allowed()
 {
 	return(( options & IGR_NEVER_RUN_REG_APP ) == 0 );
 }

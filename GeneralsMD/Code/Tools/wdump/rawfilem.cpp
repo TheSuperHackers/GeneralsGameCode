@@ -51,7 +51,7 @@
  *   RawFileMClass::Write -- Writes the specified data to the buffer specified.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
+#include	"WWLib/always.h"
 #include	"rawfilem.h"
 #include	<direct.h>
 #include	<share.h>

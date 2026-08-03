@@ -296,7 +296,7 @@ BOOL GameMtlVertexMaterialDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wp
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlVertexMaterialDlg::ReloadDialog(void)
+void GameMtlVertexMaterialDlg::ReloadDialog()
 {
 	// Vertex Material Controls
 	DebugPrint("GameMtlVertexMaterialDlg::ReloadDialog\n");

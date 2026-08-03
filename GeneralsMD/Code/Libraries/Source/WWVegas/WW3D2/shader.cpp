@@ -42,7 +42,7 @@
 
 #include "shader.h"
 #include "w3d_file.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
 

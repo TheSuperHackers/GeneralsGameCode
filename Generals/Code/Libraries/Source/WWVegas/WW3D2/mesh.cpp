@@ -91,16 +91,16 @@
 #include "w3d_file.h"
 #include "assetmgr.h"
 #include "w3derr.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "vertmaterial.h"
 #include "shader.h"
 #include "matinfo.h"
 #include "htree.h"
 #include "meshbuild.h"
-#include "tri.h"
-#include "aaplane.h"
+#include "WWMath/tri.h"
+#include "WWMath/aaplane.h"
 #include "aabtree.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "w3d_util.h"
 #include "meshmdl.h"
 #include "meshgeometry.h"
@@ -116,8 +116,8 @@
 #include "dx8indexbuffer.h"
 #include "dx8renderer.h"
 #include "visrasterizer.h"
-#include "wwmemlog.h"
-#include <wwprofile.h>
+#include "WWDebug/wwmemlog.h"
+#include <WWDebug/wwprofile.h>
 
 
 bool MeshClass::Legacy_Meshes_Fogged = true;

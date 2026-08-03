@@ -41,13 +41,13 @@
 #include "matinfo.h"
 #include "aabtree.h"
 #include "htree.h"
-#include "vp.h"
+#include "WWMath/vp.h"
 #include "visrasterizer.h"
 #include "dx8polygonrenderer.h"
 #include "bwrender.h"
 #include "camera.h"
 #include "dx8renderer.h"
-#include "hashtemplate.h"
+#include "WWLib/hashtemplate.h"
 
 
 /*

@@ -53,7 +53,7 @@ class Streamer : public streambuf
     // Virtual methods from streambuf
     int       xsputn(const char* s, int n); // buffer some characters
     int       overflow(int = EOF);          // flush buffer and make more room
-    int       underflow(void);              // Does nothing
+    int       underflow();              // Does nothing
     int       sync();
 
     int       doallocate();                 // allocate a buffer

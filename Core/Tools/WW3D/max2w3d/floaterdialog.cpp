@@ -86,7 +86,7 @@ BOOL CALLBACK _floater_dialog_proc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-FloaterDialogClass::FloaterDialogClass(void) :
+FloaterDialogClass::FloaterDialogClass() :
 	Hwnd(nullptr),
 	ChildDialogTemplateID(-1),
 	ChildDialogProc(nullptr)
@@ -105,7 +105,7 @@ FloaterDialogClass::FloaterDialogClass(void) :
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-FloaterDialogClass::~FloaterDialogClass(void)
+FloaterDialogClass::~FloaterDialogClass()
 {
 	if (Hwnd != nullptr) {
 		::DestroyWindow(Hwnd);
@@ -125,7 +125,7 @@ FloaterDialogClass::~FloaterDialogClass(void)
  * HISTORY:                                                                                    *
  *   10/11/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool FloaterDialogClass::Is_Created(void)
+bool FloaterDialogClass::Is_Created()
 {
 	return (Hwnd != nullptr);
 }

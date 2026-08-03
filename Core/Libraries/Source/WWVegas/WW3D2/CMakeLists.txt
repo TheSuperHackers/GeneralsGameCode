@@ -225,8 +225,8 @@ set(WW3D2_SRC
     w3derr.h
     w3dexclusionlist.cpp
     w3dexclusionlist.h
-    #ww3d.cpp
-    #ww3d.h
+    ww3d.cpp
+    ww3d.h
     ww3dformat.cpp
     ww3dformat.h
     ww3dids.h
@@ -236,6 +236,10 @@ set(WW3D2_SRC
 add_library(corei_ww3d2 INTERFACE)
 
 target_sources(corei_ww3d2 INTERFACE ${WW3D2_SRC})
+
+target_include_directories(corei_ww3d2 INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
 
 if (MSVC AND NOT IS_VS6_BUILD)
     target_link_libraries(corei_ww3d2 INTERFACE

@@ -102,8 +102,8 @@ public:
 		}
 	}
 
-	unsigned int Get_Width(void) { return bitmap_width; }
-	unsigned int Get_Height(void) { return bitmap_height; }
+	unsigned int Get_Width() { return bitmap_width; }
+	unsigned int Get_Height() { return bitmap_height; }
 
 protected:
 

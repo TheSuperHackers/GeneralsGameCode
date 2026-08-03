@@ -137,6 +137,8 @@ public:
 	virtual void getOrigin( Int *x, Int *y) { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
 	virtual void forceRedraw() = 0;
+	virtual void onHeightMapChanged() {}
+	virtual void onBridgeChanged() {}
 
 	virtual void lookAt( const Coord3D *o );														///< Center the view on the given coordinate
 	virtual void initHeightForMap() {};														///< Init the camera height for the map at the current position.

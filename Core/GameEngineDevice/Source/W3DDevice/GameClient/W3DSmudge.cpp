@@ -362,21 +362,23 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	//TODO: Optimize out this extra pass!
 	//TODO: Find size of screen rectangle that actually needs copying.
 
-	SmudgeSet *set=m_usedSmudgeSetList.Head();	//first set that didn't fit into render batch.
+	SmudgeSetDeque::iterator setIt=m_usedSmudgeSetList.begin();	//first set that didn't fit into render batch.
 	Int count = 0;
 
-	if (set)
+	if (setIt != m_usedSmudgeSetList.end())
 	{
 		//there are possibly some smudges to render, so make sure background particles have finished drawing.
 		SortingRendererClass::Flush();	//draw sorted translucent polys like particles.
 	}
 
-	while (set)
+	for(; setIt != m_usedSmudgeSetList.end(); ++setIt)
 	{
-		Smudge *smudge=set->getUsedSmudgeList().Head();
+		SmudgeSet* set=*setIt;
+		SmudgeDeque::iterator smudgeIt=set->getUsedSmudgeList().begin();
 
-		for (; smudge; smudge = smudge->Succ())
+		for (; smudgeIt != set->getUsedSmudgeList().end(); ++smudgeIt)
 		{
+			Smudge* smudge=*smudgeIt;
 			if (!smudge->m_draw)
 				continue;
 
@@ -420,8 +422,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 			count++;	//increment visible smudge count.
 		}
-
-		set=set->Succ();	//advance to next node.
 	}
 
 	m_smudgeCountLastFrame = count;
@@ -466,8 +466,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_SELECTARG2);
 
 	Int smudgesRemaining=count;
-	set=m_usedSmudgeSetList.Head();	//first smudge set that needs rendering.
-	Smudge	*remainingSmudgeStart=set->getUsedSmudgeList().Head();	//first smudge that needs rendering.
+	setIt=m_usedSmudgeSetList.begin();	//first smudge set that needs rendering.
+	SmudgeDeque::iterator smudgeIt = (*setIt)->getUsedSmudgeList().begin();	//first smudge that needs rendering.
 
 	while (smudgesRemaining)	//keep drawing smudges until we run out.
 	{
@@ -484,21 +484,23 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 			DynamicVBAccessClass::WriteLockClass lock(&vb_access);
 			VertexFormatXYZNDUV2* verts=lock.Get_Formatted_Vertex_Array();
 
-			while (set)
+			while (setIt != m_usedSmudgeSetList.end())
 			{
-				Smudge *smudge=remainingSmudgeStart;
+				SmudgeDeque& smudgeList = (*setIt)->getUsedSmudgeList();
 
-				for (; smudge; smudge=smudge->Succ())
+				for(; smudgeIt != smudgeList.end(); ++smudgeIt)
 				{
+					Smudge* smudge = *smudgeIt;
 					if (!smudge->m_draw)
+					{
 						continue;
+					}
 
 					Smudge::smudgeVertex *smVerts = smudge->m_verts;
 
 					//Check if we exceeded maximum number of smudges allowed per draw call.
 					if (smudgesInRenderBatch >= count)
 					{
-						remainingSmudgeStart = smudge;
 						goto flushSmudges;
 					}
 
@@ -525,10 +527,10 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 					smudgesInRenderBatch++;
 				}
 
-				set=set->Succ();	//advance to next node.
+				++setIt;	//advance to next node.
 
-				if (set)	//start next batch at beginning of set.
-					remainingSmudgeStart = set->getUsedSmudgeList().Head();
+				if (setIt != m_usedSmudgeSetList.end())	//start next batch at beginning of set.
+					smudgeIt = (*setIt)->getUsedSmudgeList().begin();
 			}
 		}
 

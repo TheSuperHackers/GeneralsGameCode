@@ -56,7 +56,7 @@ Sem4::~Sem4()
 #endif
 }
 
-sint32  Sem4::Wait(void) const
+sint32  Sem4::Wait() const
 {
 #ifndef _WIN32
 	return(sem_wait((sem_t *)&sem));
@@ -77,7 +77,7 @@ sint32  Sem4::Wait(void) const
 #endif
 }
 
-sint32 Sem4::Post(void) const
+sint32 Sem4::Post() const
 {
 #ifndef _WIN32
   return(sem_post((sem_t *)&sem));
@@ -90,7 +90,7 @@ sint32 Sem4::Post(void) const
 #endif
 }
 
-sint32 Sem4::TryWait(void) const
+sint32 Sem4::TryWait() const
 {
 #ifndef _WIN32
   return(sem_trywait((sem_t *)&sem));
@@ -126,7 +126,7 @@ sint32 Sem4::GetValue(int *sval) const
 #endif
 }
 
-sint32 Sem4::Destroy(void)
+sint32 Sem4::Destroy()
 {
 #ifndef _WIN32
   return(sem_destroy(&sem));
@@ -153,17 +153,17 @@ Sem4::~Sem4()
 {
 }
 
-sint32  Sem4::Wait(void) const
+sint32  Sem4::Wait() const
 {
   return(0);
 }
 
-sint32 Sem4::Post(void) const
+sint32 Sem4::Post() const
 {
   return(0);
 }
 
-sint32 Sem4::TryWait(void) const
+sint32 Sem4::TryWait() const
 {
   return(0);
 }
@@ -173,7 +173,7 @@ sint32 Sem4::GetValue(int *) const
   return(0);
 }
 
-sint32 Sem4::Destroy(void)
+sint32 Sem4::Destroy()
 {
   return(0);
 }

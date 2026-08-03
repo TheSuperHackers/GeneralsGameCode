@@ -1088,8 +1088,6 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		}
 	}
 
-	m_mode = RECORDERMODETYPE_PLAYBACK;
-
 	ReplayHeader header;
 	header.forPlayback = TRUE;
 	header.filename = filename;
@@ -1147,8 +1145,6 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	DEBUG_ASSERTCRASH(!exeDifferent && !iniDifferent, (debugString.str()));
 #endif
 
-	TheWritableGlobalData->m_pendingFile = m_gameInfo.getMap();
-
 #ifdef DEBUG_LOGGING
 	if (header.localPlayerIndex >= 0)
 	{
@@ -1181,6 +1177,13 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	TheCommandList->reset();
 
 	readNextFrame();
+	// readNextFrame() closes m_file via stopPlayback() if the first frame cannot be read.
+	if(m_file == nullptr)
+	{
+		return FALSE;
+	}
+
+	TheWritableGlobalData->m_pendingFile = m_gameInfo.getMap();
 
 	// send a message to the logic for a new game
 	if (!m_doingAnalysis)
@@ -1198,6 +1201,11 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		TheCommandList->appendMessage( msg );
 		InitRandom( m_gameInfo.getSeed() );
 	}
+
+	// TheSuperHackers @bugfix bobtista 25/07/2026 Enter playback mode only once the playback is ready.
+	// Previously a failed open left the recorder in playback mode with a NULL m_file, and the next
+	// update dereferenced it, for example when the replay is deleted during the version mismatch prompt.
+	m_mode = RECORDERMODETYPE_PLAYBACK;
 
 	m_currentReplayFilename = filename;
 	m_playbackFrameCount = header.frameCount;

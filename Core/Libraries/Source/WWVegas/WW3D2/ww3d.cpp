@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@
  *   WW3D::Render -- Render a 3D Scene using the given camera                                  *
  *   WW3D::Render -- Render a single render object                                             *
  *   WW3D::End_Render -- Mark the completion of a frame                                        *
- *   WW3D::Sync -- Time sychronization                                                         *
+ *   WW3D::Sync -- Time synchronization                                                        *
  *   WW3D::Set_Ext_Swap_Interval -- Sets the swap interval the device should aim sync for.     *
  *   WW3D::Get_Ext_Swap_Interval -- Queries the swap interval the device is aiming sync for.   *
  *   WW3D::Get_Polygon_Mode -- returns the current rendering mode                              *
@@ -88,35 +88,36 @@
 #include "predlod.h"
 #include "camera.h"
 #include "scene.h"
-#include "registry.h"
+#include "WWLib/registry.h"
 #include "segline.h"
 #include "shader.h"
 #include "vertmaterial.h"
-#include "wwdebug.h"
-#include "wwprofile.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwdebug.h"
+#include "WWDebug/wwprofile.h"
+#include "WWDebug/wwmemlog.h"
 #include "shattersystem.h"
 #include "textureloader.h"
 #include "statistics.h"
 #include "pointgr.h"
-#include "ffactory.h"
-#include "INI.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/INI.h"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"
 #include "render2d.h"
-#include "bound.h"
+#include "WWLib/bound.h"
 #include "rddesc.h"
-#include "Vector3i.h"
+#include "WWMath/Vector3i.h"
 #include "dx8wrapper.h"
-#include "TARGA.h"
+#include "WWLib/TARGA.h"
 #include "sortingrenderer.h"
-#include "thread.h"
-#include "cpudetect.h"
+#include "WWLib/thread.h"
+#include "WWLib/cpudetect.h"
 #include "dx8texman.h"
 #include "formconv.h"
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
+#include "shdlib.h"
 #include "framgrab.h"
 #include "Lib/BaseType.h"
 
@@ -1061,10 +1062,12 @@ WW3DErrorType WW3D::Render(
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   4/17/2001  gth : Created.                                                                 *
+ * 07/01/02 KM Scalable shader library integration				                               *
  *=============================================================================================*/
 void WW3D::Flush(RenderInfoClass & rinfo)
 {
 	TheDX8MeshRenderer.Flush();
+	SHD_FLUSH;
 	WW3D::Render_And_Clear_Static_Sort_Lists(rinfo);	//draws things like water
 
 	SortingRendererClass::Flush();
@@ -1177,7 +1180,7 @@ void WW3D::Update_Logic_Frame_Time(float milliseconds)
 
 
 /***********************************************************************************************
- * WW3D::Sync -- Time sychronization                                                           *
+ * WW3D::Sync -- Time synchronization                                                          *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -1254,7 +1257,7 @@ void WW3D::Set_Collision_Box_Display_Mask(int mask)
 }
 
 /***********************************************************************************************
- * WW3D::Get_Collision_Box_Display_Mask -- returns the current display mask for collision boxe *
+ * WW3D::Get_Collision_Box_Display_Mask -- returns the current display mask for collision box  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *

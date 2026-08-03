@@ -178,14 +178,14 @@ sint32 UDP::Read(uint8 *msg,uint32 len,sockaddr_in *from)
 }
 
 
-void UDP::ClearStatus(void)
+void UDP::ClearStatus()
 {
   #ifndef _WIN32
   errno=0;
   #endif
 }
 
-UDP::sockStat UDP::GetStatus(void)
+UDP::sockStat UDP::GetStatus()
 {
  #ifdef _WIN32
   int status=WSAGetLastError();
@@ -344,7 +344,7 @@ bit8 UDP::SetOutputBuffer(uint32 bytes)
 
 // Get the system buffer sizes
 
-int UDP::GetInputBuffer(void)
+int UDP::GetInputBuffer()
 {
   #ifndef _WIN32
    int retval,arg=0,len=sizeof(int);
@@ -358,7 +358,7 @@ int UDP::GetInputBuffer(void)
 }
 
 
-int UDP::GetOutputBuffer(void)
+int UDP::GetOutputBuffer()
 {
   #ifndef _WIN32
    int retval,arg=0,len=sizeof(int);
