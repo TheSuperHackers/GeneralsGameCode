@@ -1125,8 +1125,10 @@ void PathfindCellInfo::forceCleanPathFindCellInfos()
 
 void Pathfinder::forceCleanCells()
 {
-	UnicodeString pathfinderFailoverMessage = TheGameText->FETCH_OR_SUBSTITUTE("GUI:PathfindingCrashPrevented", L"A pathfinding crash was prevented, now switching to the crash fixed pathfinding.");
+	UnicodeString pathfinderFailoverMessage = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:PathfindingCrashPrevented", L"A pathfinding crash was prevented at frame %u, now switching to the crash fixed pathfinding.", TheGameLogic->getFrame());
 	TheInGameUI->message(pathfinderFailoverMessage);
+
+	printf("%ls\n", pathfinderFailoverMessage.str());
 
 	TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_allCheerSound);
 
@@ -1727,6 +1729,13 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 	UnsignedInt cellCount = 0;
 	while (currentCell && cellCount < PATHFIND_CELLS_PER_FRAME && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
 	{
+		// Prevent a retail crash where a pathfindCell has an m_info with a dangling nextOpen pointer
+		if (currentCell->m_info->m_nextOpen && !currentCell->m_info->m_nextOpen->m_cell->m_info)
+		{
+			currentCell->m_info->m_nextOpen->m_cell = nullptr;
+			currentCell->m_info->m_nextOpen = nullptr;
+		}
+
 		cellCount++;
 		previousCell = currentCell;
 		currentCell = currentCell->getNextOpen();
