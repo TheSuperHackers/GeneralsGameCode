@@ -313,6 +313,21 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		tempmsg = tempmsg->getNext();
 	}
 
+	// Equal sort numbers can represent different ACKs, so check the entire
+	// equal-sort run before inserting another message.
+	NetCommandRef *equalSortMsg = tempmsg;
+	while (equalSortMsg != nullptr
+		&& msg->getCommand()->getNetCommandType() == equalSortMsg->getCommand()->getNetCommandType()
+		&& msg->getCommand()->getPlayerID() == equalSortMsg->getCommand()->getPlayerID()
+		&& msg->getCommand()->getSortNumber() == equalSortMsg->getCommand()->getSortNumber()) {
+		if (isEqualCommandMsg(equalSortMsg->getCommand(), msg->getCommand())) {
+			deleteInstance(msg);
+			msg = nullptr;
+			return nullptr;
+		}
+		equalSortMsg = equalSortMsg->getNext();
+	}
+
 	if (tempmsg == nullptr) {
 		// Make sure this command isn't already in the list.
 		if (isEqualCommandMsg(m_last->getCommand(), msg->getCommand())) {
