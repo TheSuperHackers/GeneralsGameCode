@@ -1976,7 +1976,19 @@ void PathfindCell::putOnClosedList( PathfindCellList &list )
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = list.m_head ? list.m_head->m_info : nullptr;
 		if (list.m_head)
+#if RETAIL_COMPATIBLE_PATHFINDING
+		// TheSuperHackers @info This is only here to catch a crash point in the retail compatible pathfinding
+		// This crash mode occurs due to the closed list head not having an m_info associated with it
+		// A node cannot be put onto the closed list without an m_info under normal conditions
+		{
+			if (list.m_head->m_info)
+			{
+				list.m_head->m_info->m_prevOpen = this->m_info;
+			}
+		}
+#else
 			list.m_head->m_info->m_prevOpen = this->m_info;
+#endif
 
 		list.m_head = this;
 	}
