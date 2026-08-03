@@ -32,6 +32,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/BitFlagsIO.h"
+#include "Common/CRCDebug.h"
 
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -386,6 +387,11 @@ void MissileAIUpdate::detonate()
 
 	if (m_detonationWeaponTmpl)
 	{
+		// TheSuperHackers @info Okladnoj 03/08/2026 DieOnDetonate decides whether the projectile dies here
+		// or a frame later in doKillSelfState, which moves its die modules to a different frame. Record it,
+		// because a client that disagrees on this flag desyncs at the frame the projectile detonates.
+		CRCDEBUG_LOG_NOCOUNTER(("MissileAIUpdate::detonate() obj=%d weapon=%s dieOnDetonate=%d",
+			obj->getID(), m_detonationWeaponTmpl->getName().str(), m_detonationWeaponTmpl->getDieOnDetonate() ? 1 : 0));
 
 		TheWeaponStore->handleProjectileDetonation(m_detonationWeaponTmpl, obj, obj->getPosition(), m_extraBonusFlags, !m_noDamage );
 

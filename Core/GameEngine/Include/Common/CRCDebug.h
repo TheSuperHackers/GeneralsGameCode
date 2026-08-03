@@ -73,6 +73,7 @@
 	void addCRCDumpLine(const char *fmt, ...);
 	void addCRCGenLine(const char *fmt, ...);
 	#define CRCDEBUG_LOG(x) addCRCDebugLine x
+	#define CRCDEBUG_LOG_NOCOUNTER(x) addCRCDebugLineNoCounter x
 	#define CRCDUMP_LOG(x) addCRCDumpLine x
 	#define CRCGEN_LOG(x) addCRCGenLine x
 
@@ -116,6 +117,7 @@
 	#define DUMPREALNAMED(x, y)
 
 	#define CRCDEBUG_LOG(x)
+	#define CRCDEBUG_LOG_NOCOUNTER(x)
 	#define CRCDUMP_LOG(x)
 	#define CRCGEN_LOG(x)
 
