@@ -43,7 +43,6 @@
 UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 {
 	m_specialPower = nullptr;
-	m_hasInitialReloadTime = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -55,7 +54,6 @@ UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, nullptr, offsetof( UnpauseSpecialPowerUpgradeModuleData, m_specialPower ) },
-		{ "HasInitialReloadTime", INI::parseBool, nullptr, offsetof( UnpauseSpecialPowerUpgradeModuleData, m_hasInitialReloadTime) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
@@ -95,7 +93,7 @@ void UnpauseSpecialPowerUpgrade::upgradeImplementation()
 		{
 			sp->pauseCountdown( FALSE );
 
-			if (!getUnpauseSpecialPowerUpgradeModuleData()->m_hasInitialReloadTime)
+			if (!sp->hasInitialReloadTime())
 			{
 				UnsignedInt now = TheGameLogic->getFrame();
 				sp->setReadyFrame(now);

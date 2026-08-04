@@ -66,6 +66,7 @@ public:
 	virtual void markSpecialPowerTriggered( const Coord3D *location ) = 0;
 	virtual void startPowerRecharge() = 0;
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
+	virtual Bool hasInitialReloadTime() const = 0;
 	virtual Bool isScriptOnly() const = 0;
 
 	//If the special power launches a construction site, we need to know the final product for placement purposes.
@@ -86,6 +87,7 @@ public:
 	AudioEventRTS			m_initiateSound;
 	Bool							m_updateModuleStartsAttack;	///< update module determines when the special power actually starts! If true, update module is required.
 	Bool							m_startsPaused; ///< Paused on creation, someone else will have to unpause (like upgrade module, or script)
+	Bool							m_hasInitialReloadTime; ///< If true, the special power will have a reload time on creation, otherwise it will be ready immediately.
 	Bool							m_scriptedSpecialPowerOnly;
 };
 
@@ -157,6 +159,7 @@ public:
 	virtual void startPowerRecharge() override;
 	virtual const AudioEventRTS& getInitiateSound() const override;
 
+	virtual Bool hasInitialReloadTime() const override;
 	virtual Bool isScriptOnly() const override;
 
 	//If the special power launches a construction site, we need to know the final product for placement purposes.

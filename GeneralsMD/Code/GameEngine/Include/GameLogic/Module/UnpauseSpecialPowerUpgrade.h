@@ -49,7 +49,6 @@ public:
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	const SpecialPowerTemplate *m_specialPower;
-	Bool m_hasInitialReloadTime;
 
 };
 

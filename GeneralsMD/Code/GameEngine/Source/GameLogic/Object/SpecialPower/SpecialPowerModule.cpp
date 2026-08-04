@@ -64,6 +64,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	m_specialPowerTemplate = nullptr;
 	m_updateModuleStartsAttack = false;
 	m_startsPaused = FALSE;
+	m_hasInitialReloadTime = TRUE;
 	m_scriptedSpecialPowerOnly = FALSE;
 
 }
@@ -79,6 +80,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 		{ "SpecialPowerTemplate",			INI::parseSpecialPowerTemplate, nullptr, offsetof( SpecialPowerModuleData, m_specialPowerTemplate ) },
 		{ "UpdateModuleStartsAttack", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_updateModuleStartsAttack ) },
 		{ "StartsPaused",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_startsPaused ) },
+		{ "HasInitialReloadTime",			INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_hasInitialReloadTime ) },
 		{ "InitiateSound",						INI::parseAudioEventRTS,				nullptr, offsetof( SpecialPowerModuleData, m_initiateSound ) },
 		{ "ScriptedSpecialPowerOnly", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_scriptedSpecialPowerOnly ) },
 		{ nullptr, nullptr, nullptr, 0 }
@@ -370,6 +372,12 @@ Real SpecialPowerModule::getPercentReady() const
 	return percent;
 }
 
+Bool SpecialPowerModule::hasInitialReloadTime() const
+{
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
+	return modData->m_hasInitialReloadTime;
+}
+
 //-------------------------------------------------------------------------------------------------
 // A special power module that is only supposed to be fired via scripts. An example of this
 // are the various cargo plane units we have. Scripters can launch specials from them after
@@ -421,7 +429,10 @@ void SpecialPowerModule::startPowerRecharge()
 	else
 	{
 		// set the frame we will be 100% available on now
-		m_availableOnFrame = TheGameLogic->getFrame() + getSpecialPowerTemplate()->getReloadTime();
+		m_availableOnFrame = TheGameLogic->getFrame();
+
+		if (hasInitialReloadTime())
+			m_availableOnFrame += getSpecialPowerTemplate()->getReloadTime();
 	}
 }
 
