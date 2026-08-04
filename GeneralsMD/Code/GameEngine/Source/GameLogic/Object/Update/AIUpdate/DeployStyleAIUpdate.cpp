@@ -143,6 +143,24 @@ UpdateSleepTime DeployStyleAIUpdate::update()
 		}
 	}
 
+// TheSuperHackers @bugfix CookieLandProjects 31/07/2026 - This keeps deployed units from fully deploying even though their target exited the range,
+// instead reverse the deploy.
+#if !RETAIL_COMPATIBLE_CRC
+	if (m_state == DEPLOY && isTryingToAttack && !isInRange)
+	{
+		if (m_frameToWaitForDeploy != 0)
+		{
+			// Reverse the deploy at its current frame so we dont finish deploying fully.
+			setMyState(UNDEPLOY, TRUE);
+		}
+		else
+		{
+			// No pending deploy timer? Make sure we transition to undeploy state.
+			setMyState(UNDEPLOY);
+		}
+	}
+#endif
+
 	if( isInRange || isInGuardIdleState )
 	{
 		switch( m_state )
