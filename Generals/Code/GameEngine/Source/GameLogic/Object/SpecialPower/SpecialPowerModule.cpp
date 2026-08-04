@@ -349,6 +349,10 @@ Real SpecialPowerModule::getPercentReady() const
 
 Bool SpecialPowerModule::hasInitialReloadTime() const
 {
+#if RETAIL_COMPATIBLE_CRC
+	return true;
+#endif
+
 	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 	return modData->m_hasInitialReloadTime;
 }
