@@ -19,265 +19,524 @@
 #include "always.h"
 #include "utf8.h"
 
-// wchar_t is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other
-// platforms. WCHAR_MAX lets us distinguish the two at compile time so the surrogate-pair paths
-// are excluded entirely (not just constant-folded) where wchar_t is wide enough to hold a codepoint.
-#if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
-#define UTF8_WCHAR_IS_UTF16 1
-#else
-#define UTF8_WCHAR_IS_UTF16 0
-#endif
+#include <limits.h>
+#include <string.h>
 
-static const unsigned int UTF8_CODEPOINT_MAX = 0x10FFFF;
-static const unsigned int UTF8_SURROGATE_MIN = 0xD800;
-static const unsigned int UTF8_SURROGATE_MAX = 0xDFFF;
-static const unsigned int UTF8_REPLACEMENT_CHAR = 0xFFFD;
+#ifdef _WIN32
 
-// Number of UTF-8 bytes required to encode a codepoint.
-static size_t Utf8_Encoded_Length(unsigned int cp)
+#include <windows.h>
+
+namespace
 {
-	if (cp < 0x80)
-	{
-		return 1;
-	}
-	if (cp < 0x800)
-	{
-		return 2;
-	}
-	if (cp < 0x10000)
-	{
-		return 3;
-	}
-	return 4;
+
+typedef unsigned short IcuChar;
+typedef int IcuChar32;
+typedef int IcuErrorCode;
+typedef IcuChar* (__cdecl* IcuStrFromUtf8)(
+    IcuChar*, int, int*, const char*, int, IcuErrorCode*);
+typedef char* (__cdecl* IcuStrToUtf8WithSub)(
+    char*, int, int*, const IcuChar*, int, IcuChar32, int*, IcuErrorCode*);
+
+enum
+{
+    ICU_ZERO_ERROR = 0,
+    ICU_BUFFER_OVERFLOW_ERROR = 15,
+    ICU_REPLACEMENT_CHARACTER = 0xFFFD
+};
+
+class WindowsIcuFunctions
+{
+public:
+    WindowsIcuFunctions() : m_fromUtf8(nullptr), m_toUtf8WithSub(nullptr), m_module(nullptr)
+    {
+        char systemIcuPath[MAX_PATH];
+        const UINT systemDirectoryLength = GetSystemDirectoryA(systemIcuPath, MAX_PATH);
+        if (systemDirectoryLength > 0 && systemDirectoryLength <= MAX_PATH - sizeof("\\icu.dll"))
+        {
+            memcpy(systemIcuPath + systemDirectoryLength, "\\icu.dll", sizeof("\\icu.dll"));
+            m_module = LoadLibraryA(systemIcuPath);
+        }
+
+        if (m_module != nullptr)
+        {
+            m_fromUtf8 = reinterpret_cast<IcuStrFromUtf8>(GetProcAddress(m_module, "u_strFromUTF8"));
+            m_toUtf8WithSub = reinterpret_cast<IcuStrToUtf8WithSub>(GetProcAddress(m_module, "u_strToUTF8WithSub"));
+        }
+
+        if (m_fromUtf8 == nullptr || m_toUtf8WithSub == nullptr)
+        {
+            if (m_module != nullptr)
+            {
+                FreeLibrary(m_module);
+            }
+
+            m_module = nullptr;
+            m_fromUtf8 = nullptr;
+            m_toUtf8WithSub = nullptr;
+        }
+    }
+
+    bool isAvailable() const
+    {
+        return m_module != nullptr;
+    }
+
+    IcuStrFromUtf8 m_fromUtf8;
+    IcuStrToUtf8WithSub m_toUtf8WithSub;
+
+private:
+    HMODULE m_module;
+};
+
+// Keep ICU loaded for the process lifetime so conversions remain safe during global destruction.
+WindowsIcuFunctions g_icu;
+
+bool FitsInt(size_t length)
+{
+    return length <= static_cast<size_t>(INT_MAX);
 }
 
-// Encode a codepoint to dest, which is assumed to have room. Returns the number of bytes written.
-static size_t Utf8_Encode(char* dest, unsigned int cp)
+bool IcuPreflightSucceeded(IcuErrorCode error)
 {
-	if (cp < 0x80)
-	{
-		dest[0] = (char)cp;
-		return 1;
-	}
-	if (cp < 0x800)
-	{
-		dest[0] = (char)(0xC0 | (cp >> 6));
-		dest[1] = (char)(0x80 | (cp & 0x3F));
-		return 2;
-	}
-	if (cp < 0x10000)
-	{
-		dest[0] = (char)(0xE0 | (cp >> 12));
-		dest[1] = (char)(0x80 | ((cp >> 6) & 0x3F));
-		dest[2] = (char)(0x80 | (cp & 0x3F));
-		return 3;
-	}
-	dest[0] = (char)(0xF0 | (cp >> 18));
-	dest[1] = (char)(0x80 | ((cp >> 12) & 0x3F));
-	dest[2] = (char)(0x80 | ((cp >> 6) & 0x3F));
-	dest[3] = (char)(0x80 | (cp & 0x3F));
-	return 4;
+    return error <= ICU_ZERO_ERROR || error == ICU_BUFFER_OVERFLOW_ERROR;
 }
 
-// Decode one UTF-8 sequence at src, with srcLen bytes remaining. On success returns the number of
-// bytes consumed (1-4) and sets cp. Returns 0 on any malformed, overlong, out-of-range or surrogate
-// encoding.
-static size_t Utf8_Decode(const char* src, size_t srcLen, unsigned int& cp)
+bool IcuConversionSucceeded(IcuErrorCode error)
 {
-	const unsigned char lead = (unsigned char)src[0];
-	if (lead < 0x80)
-	{
-		cp = lead;
-		return 1;
-	}
-
-	size_t count;
-	unsigned int lowerBound;
-	if ((lead & 0xE0) == 0xC0)
-	{
-		count = 2;
-		cp = lead & 0x1F;
-		lowerBound = 0x80;
-	}
-	else if ((lead & 0xF0) == 0xE0)
-	{
-		count = 3;
-		cp = lead & 0x0F;
-		lowerBound = 0x800;
-	}
-	else if ((lead & 0xF8) == 0xF0)
-	{
-		count = 4;
-		cp = lead & 0x07;
-		lowerBound = 0x10000;
-	}
-	else
-	{
-		return 0; // a continuation byte or a 5/6-byte form cannot start a sequence
-	}
-
-	if (srcLen < count)
-	{
-		return 0; // truncated sequence
-	}
-	for (size_t i = 1; i < count; ++i)
-	{
-		const unsigned char trail = (unsigned char)src[i];
-		if ((trail & 0xC0) != 0x80)
-		{
-			return 0; // not a continuation byte
-		}
-		cp = (cp << 6) | (trail & 0x3F);
-	}
-
-	if (cp < lowerBound || cp > UTF8_CODEPOINT_MAX || (cp >= UTF8_SURROGATE_MIN && cp <= UTF8_SURROGATE_MAX))
-	{
-		return 0; // overlong, out of range, or a surrogate codepoint
-	}
-	return count;
+    return error <= ICU_ZERO_ERROR;
 }
 
-// Read one codepoint at src, with srcLen wide characters remaining. Returns the number of wide
-// characters consumed (1-2) and sets cp. Combines UTF-16 surrogate pairs where wchar_t is 16-bit;
-// treats each element as a whole codepoint where wchar_t is 32-bit. Wide data that has no UTF-8
-// representation is reported as U+FFFD, so the encoder never emits a sequence that the decoder
-// would reject.
-static size_t Wide_Read(const wchar_t* src, size_t srcLen, unsigned int& cp)
+size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
 {
-	size_t consumed = 1;
-#if UTF8_WCHAR_IS_UTF16
-	cp = (unsigned int)src[0] & 0xFFFF;
-	if (cp >= UTF8_SURROGATE_MIN && cp <= 0xDBFF && srcLen > 1)
-	{
-		const unsigned int low = (unsigned int)src[1] & 0xFFFF;
-		if (low >= 0xDC00 && low <= UTF8_SURROGATE_MAX)
-		{
-			cp = 0x10000 + ((cp - UTF8_SURROGATE_MIN) << 10) + (low - 0xDC00);
-			consumed = 2;
-		}
-	}
-#else
-	(void)srcLen;
-	cp = (unsigned int)src[0];
-#endif
-	if (cp > UTF8_CODEPOINT_MAX || (cp >= UTF8_SURROGATE_MIN && cp <= UTF8_SURROGATE_MAX))
-	{
-		cp = UTF8_REPLACEMENT_CHAR;
-	}
-	return consumed;
+    if (!FitsInt(destLen) || !FitsInt(srcLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    WWASSERT(sizeof(wchar_t) == sizeof(IcuChar));
+    IcuErrorCode error = ICU_ZERO_ERROR;
+    int outputLength = 0;
+    g_icu.m_toUtf8WithSub(dest, static_cast<int>(destLen), &outputLength,
+        reinterpret_cast<const IcuChar*>(src), static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
+    if (!IcuConversionSucceeded(error))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    return static_cast<size_t>(outputLength);
 }
 
-// Number of wide characters required to store a codepoint.
-static size_t Wide_Encoded_Length(unsigned int cp)
+size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
 {
-#if UTF8_WCHAR_IS_UTF16
-	return (cp >= 0x10000) ? 2 : 1;
-#else
-	(void)cp;
-	return 1;
-#endif
+    if (!FitsInt(srcLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    WWASSERT(sizeof(wchar_t) == sizeof(IcuChar));
+    IcuErrorCode error = ICU_ZERO_ERROR;
+    int outputLength = 0;
+    g_icu.m_toUtf8WithSub(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
+        static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
+    if (!IcuPreflightSucceeded(error))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    return static_cast<size_t>(outputLength);
 }
 
-// Write one codepoint to a wide buffer, which is assumed to have room. Returns wide characters written.
-static size_t Wide_Write(wchar_t* dest, unsigned int cp)
+size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
 {
-#if UTF8_WCHAR_IS_UTF16
-	if (cp >= 0x10000)
-	{
-		cp -= 0x10000;
-		dest[0] = (wchar_t)(0xD800 + (cp >> 10));
-		dest[1] = (wchar_t)(0xDC00 + (cp & 0x3FF));
-		return 2;
-	}
-#endif
-	dest[0] = (wchar_t)cp;
-	return 1;
+    if (!FitsInt(destLen) || !FitsInt(srcLen))
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+    WWASSERT(sizeof(wchar_t) == sizeof(IcuChar));
+    IcuErrorCode error = ICU_ZERO_ERROR;
+    int outputLength = 0;
+    g_icu.m_fromUtf8(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
+        src, static_cast<int>(srcLen), &error);
+    if (!IcuConversionSucceeded(error))
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+    return static_cast<size_t>(outputLength);
 }
+
+size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
+{
+    if (!FitsInt(srcLen))
+    {
+        return UTF8_INVALID;
+    }
+
+    IcuErrorCode error = ICU_ZERO_ERROR;
+    int outputLength = 0;
+    g_icu.m_fromUtf8(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error);
+    if (!IcuPreflightSucceeded(error))
+    {
+        return UTF8_INVALID;
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+size_t WindowsWideToUtf8Len(const wchar_t* src, size_t srcLen)
+{
+    if (!FitsInt(srcLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    const int outputLength = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen), nullptr, 0, nullptr, nullptr);
+    if (outputLength == 0 && srcLen != 0)
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+size_t WindowsWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
+{
+    if (!FitsInt(destLen) || !FitsInt(srcLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    const int outputLength = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen),
+        dest, static_cast<int>(destLen), nullptr, nullptr);
+    if (outputLength == 0 && srcLen != 0)
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    if (static_cast<size_t>(outputLength) < destLen)
+    {
+        dest[outputLength] = '\0';
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+size_t WindowsUtf8ToWideLen(const char* src, size_t srcLen)
+{
+    if (!FitsInt(srcLen))
+    {
+        return UTF8_INVALID;
+    }
+
+    const int outputLength = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src,
+        static_cast<int>(srcLen), nullptr, 0);
+    if (outputLength == 0 && srcLen != 0)
+    {
+        return UTF8_INVALID;
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+size_t WindowsUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
+{
+    if (!FitsInt(destLen) || !FitsInt(srcLen))
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+    const int outputLength = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src,
+        static_cast<int>(srcLen), dest, static_cast<int>(destLen));
+    if (outputLength == 0 && srcLen != 0)
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+    if (static_cast<size_t>(outputLength) < destLen)
+    {
+        dest[outputLength] = L'\0';
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+} // namespace
 
 size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t i = 0;
-	while (i < srcLen)
-	{
-		unsigned int cp;
-		i += Wide_Read(src + i, srcLen - i, cp);
-		needed += Utf8_Encoded_Length(cp);
-	}
-	return needed;
+    if (g_icu.isAvailable())
+    {
+        return IcuWideToUtf8Len(src, srcLen);
+    }
+
+    return WindowsWideToUtf8Len(src, srcLen);
 }
 
 size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t i = 0;
-	while (i < srcLen)
-	{
-		unsigned int cp;
-		const size_t consumed = Utf8_Decode(src + i, srcLen - i, cp);
-		if (consumed == 0)
-		{
-			return UTF8_INVALID;
-		}
-		i += consumed;
-		needed += Wide_Encoded_Length(cp);
-	}
-	return needed;
+    if (g_icu.isAvailable())
+    {
+        return IcuUtf8ToWideLen(src, srcLen);
+    }
+
+    return WindowsUtf8ToWideLen(src, srcLen);
 }
 
 size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t out = 0;
-	size_t i = 0;
-	while (i < srcLen)
-	{
-		unsigned int cp;
-		i += Wide_Read(src + i, srcLen - i, cp);
-		const size_t need = Utf8_Encoded_Length(cp);
-		// Stop writing at the first codepoint that does not fit, but keep counting for the caller.
-		if (needed == out && out + need <= destLen)
-		{
-			out += Utf8_Encode(dest + out, cp);
-		}
-		needed += need;
-	}
-	if (out < destLen)
-	{
-		dest[out] = '\0';
-	}
-	return needed;
+    if (g_icu.isAvailable())
+    {
+        return IcuWideToUtf8(dest, destLen, src, srcLen);
+    }
+
+    return WindowsWideToUtf8(dest, destLen, src, srcLen);
 }
 
 size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
 {
-	size_t needed = 0;
-	size_t out = 0;
-	size_t i = 0;
-	while (i < srcLen)
-	{
-		unsigned int cp;
-		const size_t consumed = Utf8_Decode(src + i, srcLen - i, cp);
-		if (consumed == 0)
-		{
-			if (destLen > 0)
-			{
-				dest[0] = L'\0';
-			}
-			return UTF8_INVALID;
-		}
-		i += consumed;
-		const size_t need = Wide_Encoded_Length(cp);
-		// Stop writing at the first codepoint that does not fit, but keep counting for the caller.
-		if (needed == out && out + need <= destLen)
-		{
-			out += Wide_Write(dest + out, cp);
-		}
-		needed += need;
-	}
-	if (out < destLen)
-	{
-		dest[out] = L'\0';
-	}
-	return needed;
+    if (g_icu.isAvailable())
+    {
+        return IcuUtf8ToWide(dest, destLen, src, srcLen);
+    }
+
+    return WindowsUtf8ToWide(dest, destLen, src, srcLen);
 }
+
+#else
+
+#include <unicode/ustring.h>
+
+#include <vector>
+
+namespace
+{
+
+bool FitsIcuLength(size_t length)
+{
+    return length <= static_cast<size_t>(INT32_MAX);
+}
+
+bool IcuPreflightSucceeded(UErrorCode error)
+{
+    return U_SUCCESS(error) || error == U_BUFFER_OVERFLOW_ERROR;
+}
+
+bool WideToUtf16(std::vector<UChar>& utf16, const wchar_t* src, size_t srcLen)
+{
+    if (!FitsIcuLength(srcLen))
+    {
+        return false;
+    }
+
+#if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
+    utf16.assign(reinterpret_cast<const UChar*>(src), reinterpret_cast<const UChar*>(src) + srcLen);
+    utf16.push_back(0);
+    return true;
+#else
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t outputLength = 0;
+    u_strFromUTF32WithSub(nullptr, 0, &outputLength, reinterpret_cast<const UChar32*>(src),
+        static_cast<int32_t>(srcLen), 0xFFFD, nullptr, &error);
+    if (!IcuPreflightSucceeded(error))
+    {
+        return false;
+    }
+
+    utf16.resize(static_cast<size_t>(outputLength) + 1);
+    error = U_ZERO_ERROR;
+    u_strFromUTF32WithSub(&utf16[0], static_cast<int32_t>(utf16.size()), &outputLength,
+        reinterpret_cast<const UChar32*>(src), static_cast<int32_t>(srcLen), 0xFFFD, nullptr, &error);
+    return U_SUCCESS(error);
+#endif
+}
+
+bool Utf8ToUtf16(std::vector<UChar>& utf16, const char* src, size_t srcLen)
+{
+    if (!FitsIcuLength(srcLen))
+    {
+        return false;
+    }
+
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t outputLength = 0;
+    u_strFromUTF8(nullptr, 0, &outputLength, src, static_cast<int32_t>(srcLen), &error);
+    if (!IcuPreflightSucceeded(error))
+    {
+        return false;
+    }
+
+    utf16.resize(static_cast<size_t>(outputLength) + 1);
+    error = U_ZERO_ERROR;
+    u_strFromUTF8(&utf16[0], static_cast<int32_t>(utf16.size()), &outputLength,
+        src, static_cast<int32_t>(srcLen), &error);
+    return U_SUCCESS(error);
+}
+
+} // namespace
+
+size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
+{
+    std::vector<UChar> utf16;
+    if (!WideToUtf16(utf16, src, srcLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t outputLength = 0;
+    u_strToUTF8WithSub(nullptr, 0, &outputLength, utf16.empty() ? nullptr : &utf16[0],
+        static_cast<int32_t>(utf16.empty() ? 0 : utf16.size() - 1), 0xFFFD, nullptr, &error);
+    if (!IcuPreflightSucceeded(error))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
+{
+    std::vector<UChar> utf16;
+    if (!Utf8ToUtf16(utf16, src, srcLen))
+    {
+        return UTF8_INVALID;
+    }
+
+#if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
+    return utf16.empty() ? 0 : utf16.size() - 1;
+#else
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t outputLength = 0;
+    u_strToUTF32(nullptr, 0, &outputLength, utf16.empty() ? nullptr : &utf16[0],
+        static_cast<int32_t>(utf16.empty() ? 0 : utf16.size() - 1), &error);
+    if (!IcuPreflightSucceeded(error))
+    {
+        return UTF8_INVALID;
+    }
+
+    return static_cast<size_t>(outputLength);
+#endif
+}
+
+size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
+{
+    if (!FitsIcuLength(destLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    std::vector<UChar> utf16;
+    if (!WideToUtf16(utf16, src, srcLen))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t outputLength = 0;
+    u_strToUTF8WithSub(dest, static_cast<int32_t>(destLen), &outputLength,
+        utf16.empty() ? nullptr : &utf16[0], static_cast<int32_t>(utf16.empty() ? 0 : utf16.size() - 1),
+        0xFFFD, nullptr, &error);
+    if (U_FAILURE(error))
+    {
+        WWASSERT(false);
+        return 0;
+    }
+
+    return static_cast<size_t>(outputLength);
+}
+
+size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
+{
+    if (!FitsIcuLength(destLen))
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+    std::vector<UChar> utf16;
+    if (!Utf8ToUtf16(utf16, src, srcLen))
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+#if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
+    const size_t outputLength = utf16.empty() ? 0 : utf16.size() - 1;
+    if (outputLength > destLen)
+    {
+        WWASSERT(false);
+        return UTF8_INVALID;
+    }
+
+    for (size_t i = 0; i < outputLength; ++i)
+    {
+        dest[i] = static_cast<wchar_t>(utf16[i]);
+    }
+
+    if (outputLength < destLen)
+    {
+        dest[outputLength] = L'\0';
+    }
+
+    return outputLength;
+#else
+    UErrorCode error = U_ZERO_ERROR;
+    int32_t outputLength = 0;
+    u_strToUTF32(reinterpret_cast<UChar32*>(dest), static_cast<int32_t>(destLen), &outputLength,
+        utf16.empty() ? nullptr : &utf16[0], static_cast<int32_t>(utf16.empty() ? 0 : utf16.size() - 1), &error);
+    if (U_FAILURE(error))
+    {
+        if (destLen > 0)
+        {
+            dest[0] = L'\0';
+        }
+
+        return UTF8_INVALID;
+    }
+
+    return static_cast<size_t>(outputLength);
+#endif
+}
+
+#endif

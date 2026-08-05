@@ -188,3 +188,8 @@ target_link_libraries(core_wwlib PRIVATE
     core_wwcommon
     corei_always
 )
+
+if(NOT WIN32)
+    find_package(ICU REQUIRED COMPONENTS uc data)
+    target_link_libraries(core_wwlib PRIVATE ICU::uc ICU::data)
+endif()
