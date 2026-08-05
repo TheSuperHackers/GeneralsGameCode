@@ -308,19 +308,27 @@ char*  AsciiString::getBufferForRead(Int len)
 void AsciiString::translate(const UnicodeString& stringSrc)
 {
 	validate();
-	// TheSuperHackers @fix bobtista 02/04/2026 Implement UTF-8 conversion replacing 7-bit ASCII only implementation
+	// TheSuperHackers @bugfix CryoTheRenegade 04/08/2026 Convert wide text to UTF-8 with ICU4C.
 	const WideChar* src = stringSrc.str();
-	const size_t srcLen = wcslen(src);
-	const size_t dstLen = Wide_To_Utf8_Len(src, srcLen);
-	if (dstLen == 0)
+	const size_t srcLen = stringSrc.getLength();
+	const size_t len = Wide_To_Utf8_Len(src, srcLen);
+	if (len == 0)
 	{
+		clear();
+	}
+	else if (len >= static_cast<size_t>(MAX_LEN))
+	{
+		DEBUG_ASSERTCRASH(false,
+			("AsciiString::translate exceeds max string length %d with required UTF-8 length %u",
+				MAX_LEN, static_cast<unsigned int>(len)));
 		clear();
 	}
 	else
 	{
-		ensureUniqueBufferOfSize((Int)dstLen + 1, false, nullptr, nullptr);
-		Wide_To_Utf8(peek(), dstLen + 1, src, srcLen);
+		ensureUniqueBufferOfSize(static_cast<Int>(len) + 1, false, nullptr, nullptr);
+		Wide_To_Utf8(peek(), len + 1, src, srcLen);
 	}
+
 	validate();
 }
 
