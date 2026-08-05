@@ -32,61 +32,54 @@
 
 //-------------------------------------------------------------------------
 
-// TheSuperHackers @refactor bobtista 02/04/2026 Use WWLib UTF-8 functions instead of raw Win32 API calls
-std::wstring MultiByteToWideCharSingleLine( const char *orig )
+// TheSuperHackers @refactor CryoTheRenegade 04/08/2026 Use the shared ICU4C UTF conversion functions.
+std::wstring MultiByteToWideCharSingleLine( const char* orig )
 {
 	const size_t srcLen = strlen(orig);
-	const size_t dstLen = Utf8_To_Wide_Len(orig, srcLen);
-	if (dstLen == 0)
-		return std::wstring();
-	std::wstring ret;
-	if (dstLen == UTF8_INVALID)
+	const size_t len = Utf8_To_Wide_Len(orig, srcLen);
+	if (len == 0)
 	{
-		// Not UTF-8. Fall back to a 1:1 byte cast so legacy data keeps its characters, matching
-		// UnicodeString::translate.
+		return std::wstring();
+	}
+
+	std::wstring ret;
+	if (len == UTF8_INVALID)
+	{
 		ret.resize(srcLen);
 		for (size_t i = 0; i < srcLen; ++i)
 		{
-			ret[i] = (WideChar)(unsigned char)orig[i];
+			ret[i] = static_cast<WideChar>(static_cast<unsigned char>(orig[i]));
 		}
 	}
 	else
 	{
-		ret.resize(dstLen);
-		Utf8_To_Wide(&ret[0], dstLen, orig, srcLen);
+		ret.resize(len);
+		Utf8_To_Wide(&ret[0], len, orig, srcLen);
 	}
-	WideChar *c = nullptr;
-	do
+
+	for (size_t i = 0; i < ret.size(); ++i)
 	{
-		c = wcschr(&ret[0], L'\n');
-		if (c)
+		if (ret[i] == L'\n' || ret[i] == L'\x0D')
 		{
-			*c = L' ';
+			ret[i] = L' ';
 		}
 	}
-	while ( c != nullptr );
-	do
-	{
-		c = wcschr(&ret[0], L'\r');
-		if (c)
-		{
-			*c = L' ';
-		}
-	}
-	while ( c != nullptr );
 
 	return ret;
 }
 
-std::string WideCharStringToMultiByte( const WideChar *orig )
+std::string WideCharStringToMultiByte( const WideChar* orig )
 {
 	const size_t srcLen = wcslen(orig);
-	const size_t dstLen = Wide_To_Utf8_Len(orig, srcLen);
-	if (dstLen == 0)
+	const size_t len = Wide_To_Utf8_Len(orig, srcLen);
+	if (len == 0)
+	{
 		return std::string();
+	}
+
 	std::string ret;
-	ret.resize(dstLen);
-	Wide_To_Utf8(&ret[0], dstLen, orig, srcLen);
+	ret.resize(len);
+	Wide_To_Utf8(&ret[0], len, orig, srcLen);
 	return ret;
 }
 
