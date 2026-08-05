@@ -79,6 +79,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onObjectCreated() override;
+	virtual void onDelete() override;
 
 	virtual UpdateSleepTime update() override;							///< called once per frame
 

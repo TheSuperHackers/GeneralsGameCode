@@ -273,13 +273,20 @@ void StickyBombUpdate::detonate()
 		}
 	}
 
-	if( getObject()->isKindOf(KINDOF_BOOBY_TRAP) && boobyTrappedObject )
-	{
-		// This kind of sticky bomb needs to set a status, so the poor victim can trigger us from assorted places
-		boobyTrappedObject->clearStatus( MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_BOOBY_TRAPPED) );
-	}
-
 	getObject()->kill();// Most things just fire weapons in their death modules
+}
+
+void StickyBombUpdate::onDelete()
+{
+	if (!getObject()->isKindOf(KINDOF_BOOBY_TRAP))
+		return;
+
+	Object* boobyTrappedObject = getTargetObject();
+	if (!boobyTrappedObject)
+		return;
+
+	// This kind of sticky bomb needs to set a status, so the poor victim can trigger us from assorted places
+	boobyTrappedObject->clearStatus( MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_BOOBY_TRAPPED) );
 }
 
 // ------------------------------------------------------------------------------------------------
