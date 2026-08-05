@@ -67,7 +67,7 @@ public:
 	ScienceType						m_extraRequiredScience;		///< science required (if any) to actually execute this power
 	WeaponTemplate	      *m_howitzerWeaponTemplate;
   AsciiString           m_gunshipTemplateName;
-  AsciiString           m_gattlingTemplateName;
+  AsciiString           m_gatlingTemplateName;
 //  AsciiString           m_howitzerTemplateName;
   RadiusDecalTemplate   m_attackAreaDecalTemplate;
   RadiusDecalTemplate   m_targetingReticleDecalTemplate;
@@ -78,7 +78,7 @@ public:
 	GunshipCreateLocType	m_createLoc;
 
 
-	const ParticleSystemTemplate * m_gattlingStrafeFXParticleSystem;
+	const ParticleSystemTemplate * m_gatlingStrafeFXParticleSystem;
 
 	SpectreGunshipDeploymentUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);

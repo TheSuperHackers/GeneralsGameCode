@@ -53,7 +53,7 @@ public:
 	SpecialPowerTemplate *m_specialPowerTemplate;
 	WeaponTemplate	      *m_howitzerWeaponTemplate;
 //  AsciiString           m_gunshipTemplateName;
-  AsciiString           m_gattlingTemplateName;
+  AsciiString           m_gatlingTemplateName;
 //  AsciiString           m_howitzerTemplateName;
   RadiusDecalTemplate   m_attackAreaDecalTemplate;
   RadiusDecalTemplate   m_targetingReticleDecalTemplate;
@@ -67,7 +67,7 @@ public:
   Real                  m_orbitInsertionSlope;
   Real                  m_randomOffsetForHowitzer;
 
-	const ParticleSystemTemplate * m_gattlingStrafeFXParticleSystem;
+	const ParticleSystemTemplate * m_gatlingStrafeFXParticleSystem;
 
 	SpectreGunshipUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -139,7 +139,7 @@ protected:
   Coord3D				m_initialTargetPosition;
 	Coord3D				m_overrideTargetDestination;
   Coord3D       m_satellitePosition;
-  Coord3D       m_gattlingTargetPosition;
+  Coord3D       m_gatlingTargetPosition;
   Coord3D       m_positionToShootAt;
 
 
@@ -150,7 +150,7 @@ protected:
 
 
 //  ObjectID        m_howitzerID;
-  ObjectID        m_gattlingID;
+  ObjectID        m_gatlingID;
 
 
 	RadiusDecal			m_attackAreaDecal;

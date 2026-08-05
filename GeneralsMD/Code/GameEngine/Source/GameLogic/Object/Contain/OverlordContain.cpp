@@ -380,7 +380,7 @@ void OverlordContain::onContaining( Object *obj, Bool wasSelected )
         if ( myStealth )
         {
           myStealth->receiveGrant( true );
-          // note to anyone... once stealth is granted to this gattlingcannon ( or such )
+          // note to anyone... once stealth is granted to this gatlingcannon ( or such )
           // let its own stealthupdate govern the allowedtostealth cases
           // a portable structure never gets removed, so...
         }

@@ -82,7 +82,7 @@ SpectreGunshipUpdateModuleData::SpectreGunshipUpdateModuleData()
 {
 	m_specialPowerTemplate			   = nullptr;
 /******BOTH*******//*BOTH*//******BOTH*******//******BOTH*******/  m_attackAreaRadius             = 200.0f;
-/*************/  m_gattlingStrafeFXParticleSystem = nullptr;
+/*************/  m_gatlingStrafeFXParticleSystem = nullptr;
 /*************/  m_howitzerWeaponTemplate = nullptr;
 /*************/  m_orbitFrames                  = 0;
 /*************/  m_targetingReticleRadius       = 25.0f;
@@ -103,7 +103,7 @@ static Real zero = 0.0f;
 	static const FieldParse dataFieldParse[] =
 	{
     { "SpecialPowerTemplate",           INI::parseSpecialPowerTemplate,   nullptr, offsetof( SpectreGunshipUpdateModuleData, m_specialPowerTemplate ) },
-    { "GattlingTemplateName",           INI::parseAsciiString,				    nullptr, offsetof( SpectreGunshipUpdateModuleData, m_gattlingTemplateName ) },
+    { "GattlingTemplateName",           INI::parseAsciiString,				    nullptr, offsetof( SpectreGunshipUpdateModuleData, m_gatlingTemplateName ) },
 		{ "HowitzerFiringRate",	            INI::parseDurationUnsignedInt,    nullptr, offsetof( SpectreGunshipUpdateModuleData, m_howitzerFiringRate ) },
 		{ "OrbitTime",	                    INI::parseDurationUnsignedInt,		nullptr, offsetof( SpectreGunshipUpdateModuleData, m_orbitFrames ) },
 		{ "HowitzerFollowLag",	            INI::parseDurationUnsignedInt,		nullptr, offsetof( SpectreGunshipUpdateModuleData, m_howitzerFollowLag ) },
@@ -113,8 +113,8 @@ static Real zero = 0.0f;
 		{ "RandomOffsetForHowitzer",        INI::parseReal,	                  nullptr, offsetof( SpectreGunshipUpdateModuleData, m_randomOffsetForHowitzer ) },
 		{ "TargetingReticleRadius",	        INI::parseReal,				            nullptr, offsetof( SpectreGunshipUpdateModuleData, m_targetingReticleRadius ) },
 		{ "GunshipOrbitRadius",	            INI::parseReal,				            nullptr, offsetof( SpectreGunshipUpdateModuleData, m_gunshipOrbitRadius ) },
-		{ "HowitzerWeaponTemplate",				  INI::parseWeaponTemplate,				  nullptr, offsetof( SpectreGunshipUpdateModuleData, m_howitzerWeaponTemplate ) },
-		{ "GattlingStrafeFXParticleSystem",	INI::parseParticleSystemTemplate, nullptr, offsetof( SpectreGunshipUpdateModuleData, m_gattlingStrafeFXParticleSystem ) },
+		{ "HowitzerWeaponTemplate",				  INI::parseWeaponTemplate,			  nullptr, offsetof( SpectreGunshipUpdateModuleData, m_howitzerWeaponTemplate ) },
+		{ "GattlingStrafeFXParticleSystem",	INI::parseParticleSystemTemplate, nullptr, offsetof( SpectreGunshipUpdateModuleData, m_gatlingStrafeFXParticleSystem ) },
 		{ "AttackAreaDecal",		            RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( SpectreGunshipUpdateModuleData, m_attackAreaDecalTemplate ) },
 		{ "TargetingReticleDecal",		      RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( SpectreGunshipUpdateModuleData, m_targetingReticleDecalTemplate ) },
 
@@ -130,11 +130,11 @@ static Real zero = 0.0f;
 SpectreGunshipUpdate::SpectreGunshipUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
 	m_specialPowerModule = nullptr;
-  m_gattlingID = INVALID_ID;
+  m_gatlingID = INVALID_ID;
 	m_status = GUNSHIP_STATUS_IDLE;
 	m_initialTargetPosition.zero();
 	m_overrideTargetDestination.zero();
-  m_gattlingTargetPosition.zero();
+  m_gatlingTargetPosition.zero();
   m_positionToShootAt.zero();
 	m_attackAreaDecal.clear();
 	m_targetingReticleDecal.clear();
@@ -195,7 +195,7 @@ Bool SpectreGunshipUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemp
 	{
 		m_initialTargetPosition.set( *targetPos );
 		m_overrideTargetDestination.set( *targetPos );
-    m_gattlingTargetPosition.set( *targetPos );
+    m_gatlingTargetPosition.set( *targetPos );
 	}
 	else
 	{
@@ -233,25 +233,25 @@ Bool SpectreGunshipUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemp
     if ( shipContain )
     {
 
-      Object *newGattling = TheGameLogic->findObjectByID( m_gattlingID );
-	    const ThingTemplate *gattlingTemplate = TheThingFactory->findTemplate( data->m_gattlingTemplateName );
-	    if( newGattling != nullptr )
+      Object *newGatling = TheGameLogic->findObjectByID( m_gatlingID );
+	    const ThingTemplate *gatlingTemplate = TheThingFactory->findTemplate( data->m_gatlingTemplateName );
+	    if( newGatling != nullptr )
       {
-        m_gattlingID = INVALID_ID;
-        newGattling = nullptr;
+        m_gatlingID = INVALID_ID;
+        newGatling = nullptr;
       }
-      if ( gattlingTemplate )
+      if ( gatlingTemplate )
       {
-        newGattling = TheThingFactory->newObject( gattlingTemplate, getObject()->getTeam() );
-        DEBUG_ASSERTCRASH( gunShip, ("SpecterGunshipUpdate failed to find or create a GATTLING object"));
-        shipContain->addToContain( newGattling );
-        m_gattlingID = newGattling->getID();
+        newGatling = TheThingFactory->newObject( gatlingTemplate, getObject()->getTeam() );
+        DEBUG_ASSERTCRASH( gunShip, ("SpecterGunshipUpdate failed to find or create a GATLING object"));
+        shipContain->addToContain( newGatling );
+        m_gatlingID = newGatling->getID();
       }
 
 
-      Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-      if ( gattling )
-        gattling->setDisabled ( DISABLED_PARALYZED );
+      Object *gatling = TheGameLogic->findObjectByID( m_gatlingID );
+      if ( gatling )
+        gatling->setDisabled ( DISABLED_PARALYZED );
 
     }
 
@@ -374,12 +374,12 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 #endif
 
       AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
-      AIUpdateInterface *gattlingAI = nullptr;
+      AIUpdateInterface *gatlingAI = nullptr;
 
-      Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-      if ( gattling )
+      Object *gatling = TheGameLogic->findObjectByID( m_gatlingID );
+      if ( gatling )
       {
-				gattlingAI = gattling->getAIUpdateInterface();
+				gatlingAI = gatling->getAIUpdateInterface();
       }
 
 
@@ -459,7 +459,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
 
 #if defined TRACKERS
-	 m_howitzerTrackerDecal.setPosition( m_gattlingTargetPosition );
+	 m_howitzerTrackerDecal.setPosition( m_gatlingTargetPosition );
 #endif
 
 
@@ -468,9 +468,9 @@ UpdateSleepTime SpectreGunshipUpdate::update()
           setLogicalStatus( GUNSHIP_STATUS_ORBITING );
           m_orbitEscapeFrame = TheGameLogic->getFrame() + data->m_orbitFrames;
 
-          Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-          if ( gattling )
-            gattling->clearDisabled ( DISABLED_PARALYZED );
+          Object *gatling = TheGameLogic->findObjectByID( m_gatlingID );
+          if ( gatling )
+            gatling->clearDisabled ( DISABLED_PARALYZED );
 
           AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
           if ( shipAI)
@@ -576,19 +576,19 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
 
 
-            //lets keep a constant barrage of gattling bullets on the current aim location
-				    if( gattlingAI )
+            //lets keep a constant barrage of gatling bullets on the current aim location
+				    if( gatlingAI )
 				    {
               if ( validTargetObject )// either in the reticle or the targeting area
-                gattlingAI->aiAttackObject( validTargetObject, LOTS_OF_SHOTS, CMD_FROM_AI );
+                gatlingAI->aiAttackObject( validTargetObject, LOTS_OF_SHOTS, CMD_FROM_AI );
               else
-  					    gattlingAI->aiAttackPosition( &m_gattlingTargetPosition, LOTS_OF_SHOTS, CMD_FROM_AI );
+  					    gatlingAI->aiAttackPosition( &m_gatlingTargetPosition, LOTS_OF_SHOTS, CMD_FROM_AI );
 				    }
 
 
 
 
-            // IF THE GATTLING GUN HAS BEEN PLINKING THE TARGET LONG ENOUGH, LETS FOLLOW WITH A VOLLEY OF HOWITZER FIRE
+            // IF THE GATLING GUN HAS BEEN PLINKING THE TARGET LONG ENOUGH, LETS FOLLOW WITH A VOLLEY OF HOWITZER FIRE
             if ( m_okToFireHowitzerCounter > data->m_howitzerFollowLag )
             {
               WeaponTemplate *wt = data->m_howitzerWeaponTemplate;
@@ -596,9 +596,9 @@ UpdateSleepTime SpectreGunshipUpdate::update()
               {
                 Coord3D attackPositionWithRandomOffset;
                 Real offs = data->m_randomOffsetForHowitzer;
-                attackPositionWithRandomOffset.x = m_gattlingTargetPosition.x + GameLogicRandomValue( -offs, offs );
-                attackPositionWithRandomOffset.y = m_gattlingTargetPosition.y + GameLogicRandomValue( -offs, offs );
-                attackPositionWithRandomOffset.z = m_gattlingTargetPosition.z;
+                attackPositionWithRandomOffset.x = m_gatlingTargetPosition.x + GameLogicRandomValue( -offs, offs );
+                attackPositionWithRandomOffset.y = m_gatlingTargetPosition.y + GameLogicRandomValue( -offs, offs );
+                attackPositionWithRandomOffset.z = m_gatlingTargetPosition.z;
 	              TheWeaponStore->createAndFireTempWeapon( wt, gunship, &attackPositionWithRandomOffset );
 
                 m_howitzerFireSound.setObjectID(gunship->getID());
@@ -614,23 +614,23 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
 
 
-          // GATTLING TARGETING LOGIC------------------------------------------
-				  const ParticleSystemTemplate *tmp = data->m_gattlingStrafeFXParticleSystem;
-				  if (tmp && gattling && gattling->testStatus( OBJECT_STATUS_IS_FIRING_WEAPON) )
+          // GATLING TARGETING LOGIC------------------------------------------
+				  const ParticleSystemTemplate *tmp = data->m_gatlingStrafeFXParticleSystem;
+				  if (tmp && gatling && gatling->testStatus( OBJECT_STATUS_IS_FIRING_WEAPON) )
 				  {
 
 
 
-            // I am going to wind my gattling gun toward the next good spot,
+            // I am going to wind my gatling gun toward the next good spot,
             //whether an object's position or a cursor position
 
 
             Coord3D delta = m_positionToShootAt;
-            delta.sub( m_gattlingTargetPosition );
+            delta.sub( m_gatlingTargetPosition );
             Real dist = delta.length();
             if ( dist < data->m_strafingIncrement )
             {
-              m_gattlingTargetPosition = m_positionToShootAt;
+              m_gatlingTargetPosition = m_positionToShootAt;
               ++m_okToFireHowitzerCounter;
             }
             else
@@ -638,7 +638,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
               m_okToFireHowitzerCounter = ZERO;
               delta.normalize();
               delta.scale( data->m_strafingIncrement );
-              m_gattlingTargetPosition.add( delta );
+              m_gatlingTargetPosition.add( delta );
             }
 
 
@@ -648,13 +648,13 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 			if ( gunship->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
 			{
 
-				// This makes the client smoke effects of the gattling cannon strafing the ground toward the attack position
+				// This makes the client smoke effects of the gatling cannon strafing the ground toward the attack position
 						  ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
 						  if (sys)
 				{
 				  Coord3D impactPosition;
-				  impactPosition.x = m_gattlingTargetPosition.x + GameClientRandomValueReal( -5.0f, 5.0f );
-				  impactPosition.y = m_gattlingTargetPosition.y + GameClientRandomValueReal( -5.0f, 5.0f );
+				  impactPosition.x = m_gatlingTargetPosition.x + GameClientRandomValueReal( -5.0f, 5.0f );
+				  impactPosition.y = m_gatlingTargetPosition.y + GameClientRandomValueReal( -5.0f, 5.0f );
 				  impactPosition.z = TheTerrainLogic->getGroundHeight( impactPosition.x, impactPosition.y );
 							  sys->setPosition( &impactPosition );
 
@@ -764,9 +764,9 @@ void SpectreGunshipUpdate::cleanUp()
   m_targetingReticleDecal.clear();
 
 
-  Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-  if ( gattling )
-    TheGameLogic->destroyObject( gattling );
+  Object *gatling = TheGameLogic->findObjectByID( m_gatlingID );
+  if ( gatling )
+    TheGameLogic->destroyObject( gatling );
 
 #if defined TRACKERS
 	 m_howitzerTrackerDecal.clear();
@@ -802,9 +802,9 @@ void SpectreGunshipUpdate::disengageAndDepartAO( Object *gunship )
   }
 
 
-    Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-    if ( gattling )
-      gattling->setDisabled ( DISABLED_PARALYZED );
+    Object *gatling = TheGameLogic->findObjectByID( m_gatlingID );
+    if ( gatling )
+      gatling->setDisabled ( DISABLED_PARALYZED );
 
 
     if ( shipAI)
@@ -891,10 +891,10 @@ void SpectreGunshipUpdate::xfer( Xfer *xfer )
 
 	if( version >= 2 )
 	{
-		xfer->xferCoord3D( &m_gattlingTargetPosition );
+		xfer->xferCoord3D( &m_gatlingTargetPosition );
 		xfer->xferCoord3D( &m_positionToShootAt );
 	  xfer->xferUnsignedInt( &m_okToFireHowitzerCounter );
-		xfer->xferObjectID( &m_gattlingID );
+		xfer->xferObjectID( &m_gatlingID );
 	}
 
 }

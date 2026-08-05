@@ -78,7 +78,7 @@ void TransportAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire,
 				//Advance to the next iterator
 				passengerIterator++;
 
-				// If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
+				// If I am an overlord with a gatling upgrade, I do not tell it to fire if it is disabled
 				if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				{
 					if( passenger->isDisabledByType( DISABLED_HACKED )
@@ -122,7 +122,7 @@ void TransportAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsTo
 				//Advance to the next iterator
 				passengerIterator++;
 
-				// If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
+				// If I am an overlord with a gatling upgrade, I do not tell it to fire if it is disabled
 				if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				{
 					if( passenger->isDisabledByType( DISABLED_HACKED )
@@ -166,7 +166,7 @@ void TransportAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 				//Advance to the next iterator
 				passengerIterator++;
 
-				// If I am an overlord with a gattling upgrade, I do not tell it ti fire if it is disabled
+				// If I am an overlord with a gatling upgrade, I do not tell it ti fire if it is disabled
 				if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				{
 					if( passenger->isDisabledByType( DISABLED_HACKED )

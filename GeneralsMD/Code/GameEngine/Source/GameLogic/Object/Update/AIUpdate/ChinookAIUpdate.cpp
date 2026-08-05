@@ -1503,7 +1503,7 @@ void ChinookAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire, C
           if ( ! passenger->isKindOf( KINDOF_INFANTRY ))
             continue;
 
-				  // If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
+				  // If I am an overlord with a gatling upgrade, I do not tell it to fire if it is disabled
 				  if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				  {
 					  if( passenger->isDisabledByType( DISABLED_HACKED )
@@ -1537,7 +1537,7 @@ void ChinookAIUpdate::private___TellPortableStructureToAttackWithMe( Object *vic
   ContainModuleInterface* contain = getObject()->getContain();
 	if( contain != nullptr )
 	{
-    //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
+    //--------- THE GATLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
     Object *rider = (Object*)contain->friend_getRider();
 		if ( rider
       && rider->isKindOf( KINDOF_PORTABLE_STRUCTURE )
@@ -1591,7 +1591,7 @@ void ChinookAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsToFi
           if ( ! passenger->isKindOf( KINDOF_INFANTRY ))
             continue;
 
-				  // If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
+				  // If I am an overlord with a gatling upgrade, I do not tell it to fire if it is disabled
 				  if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				  {
 					  if( passenger->isDisabledByType( DISABLED_HACKED )
@@ -1611,7 +1611,7 @@ void ChinookAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsToFi
       }
 
 
-      //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
+      //--------- THE GATLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
       Object *rider = (Object*)contain->friend_getRider();
 			if ( rider
         && rider->isKindOf( KINDOF_PORTABLE_STRUCTURE )
@@ -1669,7 +1669,7 @@ void ChinookAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsToF
           if ( ! passenger->isKindOf( KINDOF_INFANTRY ))
             continue;
 
-          // If I am an overlord with a gattling upgrade, I do not tell it ti fire if it is disabled
+          // If I am an overlord with a gatling upgrade, I do not tell it ti fire if it is disabled
 				  if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 				  {
 					  if( passenger->isDisabledByType( DISABLED_HACKED )
@@ -1688,7 +1688,7 @@ void ChinookAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsToF
 			  }
       }
 
-      //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
+      //--------- THE GATLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
       Object *rider = (Object*)contain->friend_getRider();
 			if ( rider
         && rider->isKindOf( KINDOF_PORTABLE_STRUCTURE )

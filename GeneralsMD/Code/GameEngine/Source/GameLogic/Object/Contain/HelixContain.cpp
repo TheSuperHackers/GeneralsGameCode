@@ -402,7 +402,7 @@ Bool HelixContain::isPassengerAllowedToFire( ObjectID id ) const
 {
   // WHETHER WE ARE ALLOWED TO FIRE DEPENDS ON WHO WE ARE
   // PASSENGERS (PROPER) MAY ONLY IF THE FLAG IS TRUE
-  // RIDERS ARE ALWAYS ALLOWED TO FIRE (GATTLING CANNONS)
+  // RIDERS ARE ALWAYS ALLOWED TO FIRE (GATLING CANNONS)
 
   if ( getObject() && getObject()->getContainedBy() ) // nested containment voids firing, always
     return FALSE;
@@ -442,7 +442,7 @@ void HelixContain::onContaining( Object *obj, Bool wasSelected )
     if ( myStealth )
     {
       myStealth->receiveGrant( true );
-      // note to anyone... once stealth is granted to this gattlingcannon ( or such )
+      // note to anyone... once stealth is granted to this gatlingcannon ( or such )
       // let its own stealthupdate govern the allowedtostealth cases
       // a portable structure never gets removed, so...
     }
