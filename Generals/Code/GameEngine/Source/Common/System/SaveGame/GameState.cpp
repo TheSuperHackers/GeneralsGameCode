@@ -531,9 +531,8 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 /** Save the current state of the engine in a save file
 	* NOTE: filename is a *filename only* */
 // ------------------------------------------------------------------------------------------------
-SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
-													SaveFileType saveType, SnapshotType which,
-													AsciiString *resolvedFilename )
+SaveResult GameState::saveGame( AsciiString filename, UnicodeString desc,
+													SaveFileType saveType, SnapshotType which )
 {
 
 	// if there is no filename, this is a new file being created, find an appropriate filename
@@ -543,12 +542,8 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	{
 
 		DEBUG_CRASH(( "GameState::saveGame - Unable to find valid filename for save game" ));
-		return SC_NO_FILE_AVAILABLE;
+		return SaveResult( SC_NO_FILE_AVAILABLE );
 
-	}
-	if( resolvedFilename != nullptr )
-	{
-		*resolvedFilename = filename;
 	}
 
 	// make absolutely sure the save directory exists
@@ -566,7 +561,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		xferSave.open( filepath );
 	} catch(...) {
 		DEBUG_LOG(( "Error opening file '%s'", filepath.str() ));
-		return SC_UNABLE_TO_OPEN_FILE;
+		return SaveResult( SC_UNABLE_TO_OPEN_FILE, filename );
 	}
 
 	// save our save file type
@@ -596,21 +591,21 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 
 		// close the file and get out of here
 		xferSave.close();
-		return SC_ERROR;
+		return SaveResult( SC_ERROR, filename );
 
 	}
 
 	// close the file
 	xferSave.close();
 
-	return SC_OK;
+	return SaveResult( SC_OK, filename );
 
 }
 
 // ------------------------------------------------------------------------------------------------
 /** A mission save */
 // ------------------------------------------------------------------------------------------------
-SaveCode GameState::missionSave( AsciiString *resolvedFilename )
+SaveResult GameState::missionSave()
 {
 
 	// get campaign
@@ -625,7 +620,7 @@ SaveCode GameState::missionSave( AsciiString *resolvedFilename )
 	desc.format( format, TheGameText->fetch( campaign->m_campaignNameLabel ).str(), missionNumber );
 
 	// do an automatic mission save
-	return saveGame( "", desc, SAVE_FILE_TYPE_MISSION, SNAPSHOT_SAVELOAD, resolvedFilename );
+	return saveGame( "", desc, SAVE_FILE_TYPE_MISSION );
 
 }
 

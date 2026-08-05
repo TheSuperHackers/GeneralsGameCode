@@ -791,9 +791,8 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					// save the game
 					AsciiString filename;
 					filename = selectedGameInfo->filename;
-					SaveCode result = TheGameState->saveGame( filename, selectedGameInfo->saveGameInfo.description,
-						fileType, SNAPSHOT_SAVELOAD, &filename );
-					presentSaveResult( result, filename );
+					presentSaveResult( TheGameState->saveGame( filename,
+						selectedGameInfo->saveGameInfo.description, fileType ) );
 
 /*
 					// set the description text entry field to default value
@@ -857,9 +856,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				AsciiString filename;
 				if( selectedGameInfo )
 					filename = selectedGameInfo->filename;
-				SaveCode result = TheGameState->saveGame( filename, desc, fileType,
-					SNAPSHOT_SAVELOAD, &filename );
-				presentSaveResult( result, filename );
+				presentSaveResult( TheGameState->saveGame( filename, desc, fileType ) );
 
 			}
 			else if( controlID == buttonSaveDescCancel )

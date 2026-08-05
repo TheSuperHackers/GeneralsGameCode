@@ -29,9 +29,9 @@ static UnicodeString getUnicodeSavePath( const AsciiString &filename )
 	return path;
 }
 
-void presentSaveResult( SaveCode result, const AsciiString &filename )
+void presentSaveResult( const SaveResult &result )
 {
-	switch( result )
+	switch( result.saveCode )
 	{
 		case SC_OK:
 		{
@@ -46,7 +46,7 @@ void presentSaveResult( SaveCode result, const AsciiString &filename )
 		case SC_ERROR:
 		{
 			UnicodeString msg;
-			msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), getUnicodeSavePath(filename).str() );
+			msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), getUnicodeSavePath(result.filename).str() );
 			MessageBoxOk( TheGameText->fetch("GUI:Error"), msg, nullptr );
 			break;
 		}

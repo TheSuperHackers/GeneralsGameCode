@@ -764,9 +764,7 @@ void finishSinglePlayerInit()
 			GadgetButtonSetText(buttonContinue, TheGameText->fetch("GUI:SaveAndContinue"));
 
 			// auto save game
-			AsciiString filename;
-			SaveCode result = TheGameState->missionSave( &filename );
-			presentSaveResult( result, filename );
+			presentSaveResult( TheGameState->missionSave() );
 			if(staticTextGameSaved)
 				staticTextGameSaved->winHide(FALSE);
 		}
