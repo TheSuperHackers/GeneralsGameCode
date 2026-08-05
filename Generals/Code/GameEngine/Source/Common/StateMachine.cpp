@@ -37,8 +37,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#include "WWLib/ref_ptr.h"
-
 
 //------------------------------------------------------------------------------ Performance Timers
 //#include "Common/PerfMetrics.h"
