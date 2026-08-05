@@ -449,7 +449,7 @@ AIGroupPtr AI::createGroup()
 	AIGroup *group = newInstance(AIGroup);
 #else
 	AIGroupPtr group;
-	group.Assign_NoAddRef(newInstance(AIGroup));
+	group.Assign_No_Add_Ref(newInstance(AIGroup));
 #endif
 
 	// add it to the list

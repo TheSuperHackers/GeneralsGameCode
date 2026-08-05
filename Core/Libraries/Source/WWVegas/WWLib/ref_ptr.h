@@ -129,15 +129,15 @@
 		copying.
 
 		To create a RefCountPtr<T> from a raw pointer, use the global template functions
-		Create_NoAddRef should be used when wrapping a pointer that has just been created with NEW
-		Create_NoAddRef should be used when wrapping a pointer that has been returned from a "Get" function
+		Create_No_Add_Ref should be used when wrapping a pointer that has just been created with NEW
+		Create_No_Add_Ref should be used when wrapping a pointer that has been returned from a "Get" function
 			(the function added a reference prior to returning the pointer)
-		Create_AddRef should be used when wrapping a pointer that has been returned from a "Peek" function
+		Create_Add_Ref should be used when wrapping a pointer that has been returned from a "Peek" function
 			(the function did not add a reference prior to returning the pointer).
 
-		Create_NoAddRef and Create_AddRef are provided to allow old code to migrate from manual reference count
+		Create_No_Add_Ref and Create_Add_Ref are provided to allow old code to migrate from manual reference count
 		management to RefCountPtr.  New code written with RefCountPtr should rarely if ever use
-		Create_NoAddRef and Create_AddRef.
+		Create_No_Add_Ref and Create_Add_Ref.
 
 		If it is absolutely necessary to extract the raw pointer, use Peek.  Peek does not add a new
 		reference to the object.  Using a Peek'd object after its RefCountPtr has gone out of scope requires
@@ -217,8 +217,8 @@ class RefCountPtr
 
 		// Creates a RefCountPtr<T> and does not increment the reference counter of the passed object.
 		// Is generally used for objects returned by operator new and "Get" functions.
-		// Prefer using Assign_NoAddRef.
-		static RefCountPtr<T> Create_NoAddRef(T *t)
+		// Prefer using Assign_No_Add_Ref.
+		static RefCountPtr<T> Create_No_Add_Ref(T *t)
 		{
 			WWASSERT(t == nullptr || t->Num_Refs() >= 1);
 			return RefCountPtr<T>(t, RefCountPtr<T>::GET);
@@ -226,8 +226,8 @@ class RefCountPtr
 
 		// Creates a RefCountPtr<T> and increments the reference counter of the passed object.
 		// Is generally used for objects returned by "Peek" functions.
-		// Prefer using Assign_AddRef.
-		static RefCountPtr<T> Create_AddRef(T *t)
+		// Prefer using Assign_Add_Ref.
+		static RefCountPtr<T> Create_Add_Ref(T *t)
 		{
 			return RefCountPtr<T>(t, RefCountPtr<T>::PEEK);
 		}
@@ -303,7 +303,7 @@ class RefCountPtr
 
 		// Assigns a pointer T and does not increment the reference counter of the passed object.
 		// Is generally used for objects returned by operator new and "Get" functions.
-		void Assign_NoAddRef(T *t)
+		void Assign_No_Add_Ref(T *t)
 		{
 			WWASSERT(t == nullptr || t->Num_Refs() >= 1);
 
@@ -316,7 +316,7 @@ class RefCountPtr
 
 		// Assigns a pointer T and increments the reference counter of the passed object.
 		// Is generally used for objects returned by "Peek" functions.
-		void Assign_AddRef(T *t)
+		void Assign_Add_Ref(T *t)
 		{
 			if (t != nullptr) {
 				t->Add_Ref();
@@ -471,17 +471,17 @@ bool operator !=(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 template <class Derived, class Base>
 RefCountPtr<Derived> Static_Cast(const RefCountPtr<Base> & base)
 {
-	return RefCountPtr<Derived>::Create_AddRef(static_cast<Derived *>(base.Peek()));
+	return RefCountPtr<Derived>::Create_Add_Ref(static_cast<Derived *>(base.Peek()));
 }
 
 template <class T>
-RefCountPtr<T> Create_AddRef(T *ptr)
+RefCountPtr<T> Create_Add_Ref(T *ptr)
 {
-	return RefCountPtr<T>::Create_AddRef(ptr);
+	return RefCountPtr<T>::Create_Add_Ref(ptr);
 }
 
 template <class T>
-RefCountPtr<T> Create_NoAddRef(T *ptr)
+RefCountPtr<T> Create_No_Add_Ref(T *ptr)
 {
-	return RefCountPtr<T>::Create_NoAddRef(ptr);
+	return RefCountPtr<T>::Create_No_Add_Ref(ptr);
 }
