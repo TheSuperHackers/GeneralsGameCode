@@ -1152,6 +1152,19 @@ Bool initialAcceptEnable = FALSE;
 static FirewallHelperClass::FirewallBehaviorType publishedNATBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
 static Bool hasPublishedNATBehavior = FALSE;
 
+static void broadcastSlotList( GameSpyStagingRoom *game )
+{
+	if (!TheGameSpyPeerMessageQueue)
+		return;
+
+	PeerRequest slReq;
+	slReq.peerRequestType = PeerRequest::PEERREQUEST_UTMROOM;
+	slReq.UTM.isStagingRoom = TRUE;
+	slReq.id = "SL/";
+	slReq.options = GameInfoToAsciiString(game).str();
+	TheGameSpyPeerMessageQueue->addRequest(slReq);
+}
+
 static void republishNATBehaviorIfChanged( void )
 {
 	if (!hasPublishedNATBehavior || TheFirewallHelper == nullptr || TheGameSpyInfo == nullptr)
@@ -1183,15 +1196,7 @@ static void republishNATBehaviorIfChanged( void )
 		TheGameSpyInfo->setGameOptions();
 		WOLDisplaySlotList();
 
-		if (TheGameSpyPeerMessageQueue)
-		{
-			PeerRequest slReq;
-			slReq.peerRequestType = PeerRequest::PEERREQUEST_UTMROOM;
-			slReq.UTM.isStagingRoom = TRUE;
-			slReq.id = "SL/";
-			slReq.options = GameInfoToAsciiString(game).str();
-			TheGameSpyPeerMessageQueue->addRequest(slReq);
-		}
+		broadcastSlotList(game);
 	}
 	else
 	{
@@ -2293,14 +2298,9 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 										slot->getColor(), slot->getPlayerTemplate(), slot->getStartPos(), slot->getTeamNumber(), slot->getIP()));
 									DEBUG_LOG(("Slot list updated to %s", GameInfoToAsciiString(game).str()));
 
-									if (TheGameSpyInfo->amIHost() && TheGameSpyPeerMessageQueue)
+									if (TheGameSpyInfo->amIHost())
 									{
-										PeerRequest slReq;
-										slReq.peerRequestType = PeerRequest::PEERREQUEST_UTMROOM;
-										slReq.UTM.isStagingRoom = TRUE;
-										slReq.id = "SL/";
-										slReq.options = GameInfoToAsciiString(game).str();
-										TheGameSpyPeerMessageQueue->addRequest(slReq);
+										broadcastSlotList(game);
 									}
 								}
 							}

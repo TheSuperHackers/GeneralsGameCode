@@ -504,7 +504,6 @@ void FirewallHelperClass::detectFirewallBehavior()
 	m_timeoutLength = 0;
 	m_timeoutStart = 0;
 
-
 	m_sourcePortAllocationDelta = 0;
 	m_behavior = FIREWALL_TYPE_UNKNOWN;
 	m_currentState = DETECTIONSTATE_BEGIN;

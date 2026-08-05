@@ -759,7 +759,7 @@ static void PlayerUTMCallback(PEER peer, const char * nick,
 				}
 				else if (key == "NAT")
 				{
-					if ((val >= FirewallHelperClass::FIREWALL_TYPE_UNKNOWN) &&
+					if ((val >= FirewallHelperClass::FIREWALL_TYPE_SIMPLE) &&
 							(val <= FirewallHelperClass::FIREWALL_TYPE_DESTINATION_PORT_DELTA))
 					{
 						slot->setNATBehavior((FirewallHelperClass::FirewallBehaviorType)val);
