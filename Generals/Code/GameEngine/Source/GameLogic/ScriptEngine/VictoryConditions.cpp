@@ -214,7 +214,7 @@ void VictoryConditions::update()
 			if (TheGameInfo)
 			{
 				const Int slotIndex = ThePlayerList->getSlotIndex(p->getPlayerIndex());
-				GameSlot *const slot = slotIndex >= 0 ? TheGameInfo->getSlot(slotIndex) : nullptr;
+				const GameSlot* slot = slotIndex >= 0 ? TheGameInfo->getSlot(slotIndex) : nullptr;
 
 				if (slot && slot->isAI())
 				{
