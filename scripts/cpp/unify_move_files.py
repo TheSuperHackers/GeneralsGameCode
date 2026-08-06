@@ -652,6 +652,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Bezier/BezFwdIterator.cpp", Game.CORE, "GameEngine/Source/Common/Bezier/BezFwdIterator.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Bezier/BezierSegment.cpp", Game.CORE, "GameEngine/Source/Common/Bezier/BezierSegment.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/PolygonTrigger.h", Game.CORE, "GameEngine/Include/GameLogic/PolygonTrigger.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/Map/PolygonTrigger.cpp", Game.CORE, "GameEngine/Source/GameLogic/Map/PolygonTrigger.cpp")
+
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Precompiled/PreRTS.h", Game.CORE, "GameEngine/Include/Precompiled/PreRTS.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Precompiled/PreRTS.cpp", Game.CORE, "GameEngine/Source/Precompiled/PreRTS.cpp")
 
