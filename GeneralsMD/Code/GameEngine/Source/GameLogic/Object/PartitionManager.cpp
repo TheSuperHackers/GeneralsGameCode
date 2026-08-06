@@ -4697,7 +4697,7 @@ Bool PartitionManager::checkWeaponNameStackAtCell(const Coord3D *pos, const Asci
 	Int cellX, cellY;
 	worldToCell(pos->x, pos->y, &cellX, &cellY);
 	PartitionCell* cell = getCellAt(cellX, cellY);	// might be null if off the edge
-	DEBUG_ASSERTCRASH(cell != NULL, ("off the map"));
+	DEBUG_ASSERTCRASH(cell != nullptr, ("off the map"));
 	if (cell)
 		return cell->checkWeaponNameStack(weaponName, maxCount, duration);
 	else

@@ -970,7 +970,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		{
 			// Check if there is any FX Stack to apply for the Weapon at Loc. Returns TRUE if stack reaches MaxStackCount
 			if(ThePartitionManager->checkWeaponNameStackAtCell(&targetPos, getName(), getFXMaxStackPerLoc(), getFXMaxStackInterval() ? getFXMaxStackInterval() : getDelayBetweenShots(bonus)))
-				fx = NULL;
+				fx = nullptr;
 		}
 #endif
 
@@ -1204,7 +1204,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			{
 				static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
 				BoneFXUpdate *bfxu = (BoneFXUpdate *)projectile->findUpdateModule(key_BoneFXUpdate);
-				if (bfxu != NULL)
+				if (bfxu != nullptr)
 				{
 					bfxu->setInactive();
 				}
