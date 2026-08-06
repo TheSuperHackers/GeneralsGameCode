@@ -990,7 +990,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 
 	Int localPlayerIndex = m_crcInfo.getLocalPlayer();
 	const Player *p = ThePlayerList->getNthPlayer(playerIndex);
-	const Bool isLocalPlayer = !p || localPlayerIndex < 0 || ThePlayerList->getSlotIndex(playerIndex) == localPlayerIndex;
+	const Bool isLocalPlayer = !p || ThePlayerList->getSlotIndex(playerIndex) == localPlayerIndex;
 	if (isLocalPlayer)
 	{
 		UnsignedInt playbackCRC = m_crcInfo.readCRC();
