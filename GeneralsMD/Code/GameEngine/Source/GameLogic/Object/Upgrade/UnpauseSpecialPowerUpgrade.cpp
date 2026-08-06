@@ -93,7 +93,7 @@ void UnpauseSpecialPowerUpgrade::upgradeImplementation()
 		{
 			sp->pauseCountdown( FALSE );
 
-			if (!sp->hasInitialReloadTime())
+			if (sp->startsReady())
 			{
 				UnsignedInt now = TheGameLogic->getFrame();
 				sp->setReadyFrame(now);
