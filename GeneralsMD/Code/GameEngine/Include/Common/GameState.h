@@ -132,6 +132,16 @@ enum SaveCode CPP_11(: Int)
 	SC_ERROR,
 };
 
+// The result of a save, pairing the outcome with the file it resolved to so the two cannot drift.
+struct SaveResult
+{
+	explicit SaveResult( SaveCode code ) : saveCode(code) { }
+	SaveResult( SaveCode code, const AsciiString &file ) : saveCode(code), filename(file) { }
+
+	SaveCode saveCode;
+	AsciiString filename;	///< the file that was written, empty when no filename could be found
+};
+
 enum SnapshotType CPP_11(: Int) {
 	SNAPSHOT_SAVELOAD,
 	SNAPSHOT_DEEPCRC_LOGICONLY,
@@ -156,11 +166,11 @@ public:
 	virtual void update() override { }
 
 	// save game methods
-	SaveCode saveGame( AsciiString filename,
+	SaveResult saveGame( AsciiString filename,
 										 UnicodeString desc,
 										 SaveFileType saveType,
-										 SnapshotType which = SNAPSHOT_SAVELOAD  );  ///< save a game
-	SaveCode missionSave();																	 ///< do a in between mission save
+										 SnapshotType which = SNAPSHOT_SAVELOAD );  ///< save a game
+	SaveResult missionSave();																 ///< do a in between mission save
 	SaveCode loadGame( AvailableGameInfo gameInfo );							 ///< load a save file
 	SaveGameInfo *getSaveGameInfo() { return &m_gameInfo; }
 

@@ -56,6 +56,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GUICallbacks.h"
+#include "GameClient/SaveLoadFeedback.h"
 #include "GameClient/Shell.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameWindowTransitions.h"
@@ -414,7 +415,10 @@ static void doLoadGame()
 	// loose these allocated user data pointers attached as listbox item data when the
 	// engine resets
 	//
-	if (TheGameState->loadGame( *selectedGameInfo ) != SC_OK)
+	AsciiString filename = selectedGameInfo->filename;
+	SaveCode result = TheGameState->loadGame( *selectedGameInfo );
+	presentLoadResult( result, filename );
+	if (result != SC_OK)
 	{
 		if (TheGameLogic->isInGame())
 			TheGameLogic->clearGameData( FALSE );
@@ -787,7 +791,8 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					// save the game
 					AsciiString filename;
 					filename = selectedGameInfo->filename;
-					TheGameState->saveGame( filename, selectedGameInfo->saveGameInfo.description, fileType );
+					presentSaveResult( TheGameState->saveGame( filename,
+						selectedGameInfo->saveGameInfo.description, fileType ) );
 
 /*
 					// set the description text entry field to default value
@@ -851,7 +856,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				AsciiString filename;
 				if( selectedGameInfo )
 					filename = selectedGameInfo->filename;
-				TheGameState->saveGame( filename, desc, fileType );
+				presentSaveResult( TheGameState->saveGame( filename, desc, fileType ) );
 
 			}
 			else if( controlID == buttonSaveDescCancel )
