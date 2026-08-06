@@ -105,7 +105,7 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	UnsignedInt currentChunk = 0;
 	UnsignedInt bigPacketCurrentOffset = 0;
 
-	while (currentChunk < numChunks) {
+	while (true) {
 		UnsignedInt dataSizeThisChunk = commandSizePerPacket;
 		if ((bufferSize - bigPacketCurrentOffset) < dataSizeThisChunk) {
 			dataSizeThisChunk = bufferSize - bigPacketCurrentOffset;
@@ -135,6 +135,12 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 
 		commandList->addMessage(chunkRef);
 		++currentChunk;
+
+		if (currentChunk >= numChunks)
+			break;
+
+		wrapperMsg->detach();
+		wrapperMsg = newInstance(NetWrapperCommandMsg);
 	}
 
 	wrapperMsg->detach();
