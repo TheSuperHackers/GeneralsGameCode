@@ -507,7 +507,7 @@ static void testSphereAgainstRect(
 	Real &distSqr
 )
 {
-	// Get two points that are closest to the source
+	// Get three points that are closest to the source
 	Real minDist, secondMinDist, thirdMinDist;
 	Int minIdx, secondMinIdx, thirdMinIdx;
 	minDist = secondMinDist = thirdMinDist = HUGE_DIST_SQR;
@@ -541,7 +541,7 @@ static void testSphereAgainstRect(
 
 	for (i = 0; i < 4; ++i)
 	{
-		if( i == minIdx || i == secondMinIdx || secondMinDist >= dDistSqr[i] )
+		if( i == minIdx || i == secondMinIdx )
 			continue;
 
 		if( thirdMinDist > dDistSqr[i] )
@@ -564,7 +564,7 @@ static void testSphereAgainstRect(
 		polarity_dy == polarity_dy2 && polarity_dy == polarity_dy3 )
 	{
 		// Same directional vector, so get the closest distance from a point.
-		distSqr = sqr(derivative[minIdx][0]) + sqr(derivative[minIdx][1]);
+		distSqr = dDistSqr[minIdx];
 		return;
 	}
 
@@ -578,7 +578,7 @@ static void testSphereAgainstRect(
 	if( fabs(relAngle_21) < fabs(relAngle_31) )
 		secondMinIdx = thirdMinIdx;
 
-	// Get the "reflected" points of pos B, if the points have higher distance than the current points, that means the current points are within boundary
+	// Get the "reflected" points of pos B, if these points have higher distance than the current points, that means the current points are within boundary
 	Real other_x1 = pts[minIdx].x - b_pos->x;
 	Real other_y1 = pts[minIdx].y - b_pos->y;
 	Real new_bpos_x = pts[secondMinIdx].x + other_x1;
