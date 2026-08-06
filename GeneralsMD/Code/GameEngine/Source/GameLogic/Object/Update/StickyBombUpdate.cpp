@@ -288,15 +288,14 @@ void StickyBombUpdate::detonate()
 void StickyBombUpdate::onDelete()
 {
 	// TheSuperHackers @bugfix Stubbjax 05/08/2026 Clear booby trap status when destroyed, not just when detonated.
-	if (!getObject()->isKindOf(KINDOF_BOOBY_TRAP))
-		return;
+	if (getObject()->isKindOf(KINDOF_BOOBY_TRAP))
+	{
+		Object* boobyTrappedObject = getTargetObject();
 
-	Object* boobyTrappedObject = getTargetObject();
-	if (!boobyTrappedObject)
-		return;
-
-	// This kind of sticky bomb needs to set a status, so the poor victim can trigger us from assorted places
-	boobyTrappedObject->clearStatus( MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_BOOBY_TRAPPED) );
+		// This kind of sticky bomb needs to set a status, so the poor victim can trigger us from assorted places
+		if (boobyTrappedObject)
+			boobyTrappedObject->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_BOOBY_TRAPPED));
+	}
 }
 #endif
 
