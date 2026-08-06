@@ -131,8 +131,8 @@ void ProjectileStreamUpdate::cullFrontOfList()
 	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == nullptr) )
 	{
 		// Chew off the front if they are gone.  Don't chew on the middle, as bad ones there are just a break in the chain
-		if(++m_nextFreeIndex >= MAX_PROJECTILE_STREAM)
-			m_nextFreeIndex -= MAX_PROJECTILE_STREAM;
+		if(++m_firstValidIndex >= MAX_PROJECTILE_STREAM)
+			m_firstValidIndex -= MAX_PROJECTILE_STREAM;
 	}
 }
 
