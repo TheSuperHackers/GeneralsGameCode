@@ -161,6 +161,8 @@ protected:
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
 
+	Int getPlayerIndexFromSlotIndex(Int slotIndex) const;
+
 private:
 	void assignSlotIndices(const GameInfo& gameInfo);
 	void setSlotIndex(Int playerIndex, Int slotIndex);
@@ -169,6 +171,7 @@ private:
 	Int						m_playerCount;
 	Player				*m_players[MAX_PLAYER_COUNT];
 	Int						m_slotIndices[MAX_PLAYER_COUNT];
+	Int						m_playerIndices[MAX_PLAYER_COUNT];
 
 };
 

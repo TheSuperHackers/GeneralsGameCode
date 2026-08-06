@@ -242,6 +242,7 @@ void PlayerList::init()
 		m_players[i]->init(nullptr);
 
 	std::fill(m_slotIndices, m_slotIndices + ARRAY_SIZE(m_slotIndices), -1);
+	std::fill(m_playerIndices, m_playerIndices + ARRAY_SIZE(m_playerIndices), -1);
 
 	// call setLocalPlayer so that becomingLocalPlayer() gets called appropriately
 	setLocalPlayer(m_players[0]);
@@ -492,7 +493,18 @@ void PlayerList::setSlotIndex(Int playerIndex, Int slotIndex)
 {
 	if (playerIndex >= 0 && playerIndex < ARRAY_SIZE(m_slotIndices))
 	{
+		Int oldSlotIndex = m_slotIndices[playerIndex];
+		if (oldSlotIndex >= 0 && oldSlotIndex < ARRAY_SIZE(m_playerIndices))
+		{
+			m_playerIndices[oldSlotIndex] = -1;
+		}
+
 		m_slotIndices[playerIndex] = slotIndex;
+
+		if (slotIndex >= 0 && slotIndex < ARRAY_SIZE(m_playerIndices))
+		{
+			m_playerIndices[slotIndex] = playerIndex;
+		}
 	}
 }
 
@@ -508,15 +520,23 @@ Int PlayerList::getSlotIndex(Int playerIndex) const
 }
 
 //-----------------------------------------------------------------------------
+Int PlayerList::getPlayerIndexFromSlotIndex(Int slotIndex) const
+{
+	if (slotIndex >= 0 && slotIndex < ARRAY_SIZE(m_playerIndices))
+	{
+		return m_playerIndices[slotIndex];
+	}
+
+	return -1;
+}
+
+//-----------------------------------------------------------------------------
 Player *PlayerList::getPlayerFromSlotIndex(Int slotIndex) const
 {
-	if (slotIndex >= 0 && slotIndex < MAX_SLOTS)
+	Int playerIndex = getPlayerIndexFromSlotIndex(slotIndex);
+	if (playerIndex >= 0 && playerIndex < m_playerCount)
 	{
-		for (Int playerIndex = 0; playerIndex < m_playerCount; ++playerIndex)
-		{
-			if (getSlotIndex(playerIndex) == slotIndex)
-				return m_players[playerIndex];
-		}
+		return m_players[playerIndex];
 	}
 
 	return nullptr;
