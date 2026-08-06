@@ -4306,6 +4306,8 @@ VideoBuffer* InGameUI::videoBuffer()
 // ------------------------------------------------------------------------------------------------
 void InGameUI::playCameoMovie( const AsciiString& movieName )
 {
+	if (TheGlobalData->m_headless)
+		return;
 
 	stopCameoMovie();
 
