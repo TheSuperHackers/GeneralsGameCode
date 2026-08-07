@@ -220,9 +220,9 @@ set(GAMEENGINE_SRC
     Include/GameClient/SelectionInfo.h
     Include/GameClient/SelectionXlat.h
 #    Include/GameClient/Shadow.h
-#    Include/GameClient/Shell.h
-#    Include/GameClient/ShellHooks.h
-#    Include/GameClient/ShellMenuScheme.h
+    Include/GameClient/Shell.h
+    Include/GameClient/ShellHooks.h
+    Include/GameClient/ShellMenuScheme.h
     Include/GameClient/Smudge.h
     Include/GameClient/Snow.h
     Include/GameClient/Statistics.h
@@ -799,8 +799,8 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/IMEManager.cpp
     Source/GameClient/GUI/LoadScreen.cpp
     Source/GameClient/GUI/ProcessAnimateWindow.cpp
-#    Source/GameClient/GUI/Shell/Shell.cpp
-#    Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
+    Source/GameClient/GUI/Shell/Shell.cpp
+    Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
     Source/GameClient/GUI/WindowLayout.cpp
     Source/GameClient/GUI/WindowVideoManager.cpp
     Source/GameClient/GUI/WinInstanceData.cpp
@@ -1179,6 +1179,7 @@ target_include_directories(corei_gameengine_private INTERFACE
 
 target_link_libraries(corei_gameengine_private INTERFACE
     corei_always
+    core_profile_legacy
 )
 
 target_compile_definitions(corei_gameengine_private INTERFACE

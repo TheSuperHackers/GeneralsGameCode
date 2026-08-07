@@ -689,6 +689,12 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DConvert.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DConvert.h")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/W3DConvert.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/W3DConvert.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Shell.h", Game.CORE, "GameEngine/Include/GameClient/Shell.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/Shell/Shell.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/Shell/Shell.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ShellHooks.h", Game.CORE, "GameEngine/Include/GameClient/ShellHooks.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ShellMenuScheme.h", Game.CORE, "GameEngine/Include/GameClient/ShellMenuScheme.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/Shell/ShellMenuScheme.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/Shell/ShellMenuScheme.cpp")
+
     return
 
 

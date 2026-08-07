@@ -10,8 +10,6 @@ endif()
 target_link_libraries(z_generals PRIVATE
     binkstub
     comctl32
-    core_debug
-    core_profile_legacy
     d3d8
     d3dx8
     dinput8

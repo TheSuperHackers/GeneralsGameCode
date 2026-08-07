@@ -216,8 +216,6 @@ target_precompile_headers(z_worldbuilder PRIVATE
 )
 
 target_link_libraries(z_worldbuilder PRIVATE
-    core_debug
-    core_profile_legacy
     d3d8lib
     imm32
     vfw32
