@@ -154,7 +154,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/ControlBarScheme.h
     Include/GameClient/Credits.h
     Include/GameClient/DebugDisplay.h
-#    Include/GameClient/Diplomacy.h
+    Include/GameClient/Diplomacy.h
 #    Include/GameClient/DisconnectMenu.h
     Include/GameClient/Display.h
     Include/GameClient/DisplayString.h
@@ -164,7 +164,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/DrawGroupInfo.h
 #    Include/GameClient/EstablishConnectionsMenu.h
 #    Include/GameClient/Eva.h
-#    Include/GameClient/ExtendedMessageBox.h
+    Include/GameClient/ExtendedMessageBox.h
 #    Include/GameClient/FontDesc.h
     Include/GameClient/FXList.h
     Include/GameClient/Gadget.h
@@ -205,7 +205,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/LoadScreen.h
     Include/GameClient/LookAtXlat.h
     Include/GameClient/MapUtil.h
-#    Include/GameClient/MessageBox.h
+    Include/GameClient/MessageBox.h
     Include/GameClient/MetaEvent.h
     Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
     Include/GameClient/Module/BeaconClientUpdate.h
@@ -746,12 +746,12 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
-#    Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp
-#    Source/GameClient/GUI/GUICallbacks/ExtendedMessageBox.cpp
-#    Source/GameClient/GUI/GUICallbacks/GeneralsExpPoints.cpp
-#    Source/GameClient/GUI/GUICallbacks/IMECandidate.cpp
-#    Source/GameClient/GUI/GUICallbacks/InGameChat.cpp
-#    Source/GameClient/GUI/GUICallbacks/InGamePopupMessage.cpp
+    Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp
+    Source/GameClient/GUI/GUICallbacks/ExtendedMessageBox.cpp
+    Source/GameClient/GUI/GUICallbacks/GeneralsExpPoints.cpp
+    Source/GameClient/GUI/GUICallbacks/IMECandidate.cpp
+    Source/GameClient/GUI/GUICallbacks/InGameChat.cpp
+    Source/GameClient/GUI/GUICallbacks/InGamePopupMessage.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/ChallengeMenu.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/CreditsMenu.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/DifficultySelect.cpp
@@ -793,8 +793,8 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/GUICallbacks/Menus/WOLQuickMatchMenu.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/WOLStatusMenu.cpp
 #    Source/GameClient/GUI/GUICallbacks/Menus/WOLWelcomeMenu.cpp
-#    Source/GameClient/GUI/GUICallbacks/MessageBox.cpp
-#    Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp
+    Source/GameClient/GUI/GUICallbacks/MessageBox.cpp
+    Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp
     Source/GameClient/GUI/HeaderTemplate.cpp
     Source/GameClient/GUI/IMEManager.cpp
     Source/GameClient/GUI/LoadScreen.cpp

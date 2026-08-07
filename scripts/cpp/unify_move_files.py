@@ -655,6 +655,18 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Precompiled/PreRTS.h", Game.CORE, "GameEngine/Include/Precompiled/PreRTS.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Precompiled/PreRTS.cpp", Game.CORE, "GameEngine/Source/Precompiled/PreRTS.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Diplomacy.h", Game.CORE, "GameEngine/Include/GameClient/Diplomacy.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ExtendedMessageBox.h", Game.CORE, "GameEngine/Include/GameClient/ExtendedMessageBox.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ExtendedMessageBox.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ExtendedMessageBox.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/GeneralsExpPoints.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/GeneralsExpPoints.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/IMECandidate.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/IMECandidate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/InGameChat.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/InGameChat.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/InGamePopupMessage.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/InGamePopupMessage.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/MessageBox.h", Game.CORE, "GameEngine/Include/GameClient/MessageBox.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp")
+
     return
 
 
