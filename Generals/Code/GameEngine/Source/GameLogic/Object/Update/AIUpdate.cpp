@@ -839,9 +839,11 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 		// This lives in AIUpdateInterface rather than in a slow death module because every
 		// aircraft reaches it, which is why the symptom is reported for jets and helicopters
 		// alike.
+#if !RETAIL_COMPATIBLE_CRC
 		Object* obj = getObject();
 		if (obj != nullptr && obj->isEffectivelyDead() && obj->isKindOf(KINDOF_AIRCRAFT))
 			return FALSE;
+#endif
 
 		m_locomotorSet.clear();
 		m_curLocomotor = nullptr;
