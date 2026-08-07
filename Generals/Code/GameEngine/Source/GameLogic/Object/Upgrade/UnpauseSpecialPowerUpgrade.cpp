@@ -33,6 +33,7 @@
 #include "PreRTS.h"
 #include "Common/SpecialPower.h"
 #include "Common/Xfer.h"
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/Module/UnpauseSpecialPowerUpgrade.h"
@@ -89,7 +90,15 @@ void UnpauseSpecialPowerUpgrade::upgradeImplementation()
 			continue;
 
 		if( sp->getSpecialPowerTemplate() == getUnpauseSpecialPowerUpgradeModuleData()->m_specialPower )
+		{
 			sp->pauseCountdown( FALSE );
+
+			if (sp->startsReady())
+			{
+				UnsignedInt now = TheGameLogic->getFrame();
+				sp->setReadyFrame(now);
+			}
+		}
 	}
 }
 

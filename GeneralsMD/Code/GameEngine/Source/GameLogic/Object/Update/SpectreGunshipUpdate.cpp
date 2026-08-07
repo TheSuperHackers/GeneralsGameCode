@@ -615,8 +615,13 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
 
           // GATTLING TARGETING LOGIC------------------------------------------
+#if RETAIL_COMPATIBLE_CRC
+				  // TheSuperHackers @fix The particle system is now decoupled from the logic crc
 				  const ParticleSystemTemplate *tmp = data->m_gattlingStrafeFXParticleSystem;
 				  if (tmp && gattling && gattling->testStatus( OBJECT_STATUS_IS_FIRING_WEAPON) )
+#else
+				  if (gattling && gattling->testStatus( OBJECT_STATUS_IS_FIRING_WEAPON) )
+#endif
 				  {
 
 
@@ -649,7 +654,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 			{
 
 				// This makes the client smoke effects of the gattling cannon strafing the ground toward the attack position
-						  ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
+						  ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(data->m_gattlingStrafeFXParticleSystem);
 						  if (sys)
 				{
 				  Coord3D impactPosition;

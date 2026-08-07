@@ -178,10 +178,13 @@ public:
 	Bool isReversed();										///< Returns whether or not we're in our reversed state.
 	Bool isEmpty();
 private:
+	void step();															///< Runs a single base-rate step of all registered window animations
+
 	AnimateWindowList	m_winList;								///< A list of AnimationWindows that we don't care if their finished animating
 	AnimateWindowList m_winMustFinishList;			///< A list of AnimationWindows that we do care about
 	Bool m_needsUpdate;													///< If we're done animating all our monitored windows, then this will be false
 	Bool m_reverse;															///< Are we in a reverse state?
+	Real m_frameAccumulator;										///< Carries fractional base-rate frames between updates
 	ProcessAnimateWindowSlideFromRight *m_slideFromRight;			///< Holds the process in which the windows slide from the right
 	ProcessAnimateWindowSlideFromRightFast *m_slideFromRightFast;
 	ProcessAnimateWindowSlideFromTop *m_slideFromTop;					///< Holds the process in which the windows slide from the Top

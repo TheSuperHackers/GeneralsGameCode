@@ -445,7 +445,8 @@ AIGroupPtr AI::createGroup()
 #if RETAIL_COMPATIBLE_AIGROUP
 	AIGroup *group = newInstance(AIGroup);
 #else
-	AIGroupPtr group = AIGroupPtr::Create_NoAddRef(newInstance(AIGroup));
+	AIGroupPtr group;
+	group.Assign_No_Add_Ref(newInstance(AIGroup));
 #endif
 
 	// add it to the list

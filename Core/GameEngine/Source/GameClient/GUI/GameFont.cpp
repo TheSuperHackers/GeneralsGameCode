@@ -178,9 +178,8 @@ void FontLibrary::reset()
 //-------------------------------------------------------------------------------------------------
 GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 {
-	// sanity check the size - anything over 100 is probably wrong. -MW
-	// TheSuperHackers @fix Now also no longer creates fonts with zero size.
-	if (pointSize < 1 || pointSize > 100)
+	// TheSuperHackers @fix No longer creates fonts with zero size. And allows fonts with size larger than 100.
+	if (pointSize < 1)
 	{
 		return nullptr;
 	}

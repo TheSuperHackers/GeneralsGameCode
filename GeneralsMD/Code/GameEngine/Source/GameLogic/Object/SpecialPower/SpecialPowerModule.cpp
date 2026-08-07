@@ -64,6 +64,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	m_specialPowerTemplate = nullptr;
 	m_updateModuleStartsAttack = false;
 	m_startsPaused = FALSE;
+	m_startsReady = FALSE;
 	m_scriptedSpecialPowerOnly = FALSE;
 
 }
@@ -79,6 +80,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 		{ "SpecialPowerTemplate",			INI::parseSpecialPowerTemplate, nullptr, offsetof( SpecialPowerModuleData, m_specialPowerTemplate ) },
 		{ "UpdateModuleStartsAttack", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_updateModuleStartsAttack ) },
 		{ "StartsPaused",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_startsPaused ) },
+		{ "StartsReady",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_startsReady ) },
 		{ "InitiateSound",						INI::parseAudioEventRTS,				nullptr, offsetof( SpecialPowerModuleData, m_initiateSound ) },
 		{ "ScriptedSpecialPowerOnly", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_scriptedSpecialPowerOnly ) },
 		{ nullptr, nullptr, nullptr, 0 }
@@ -111,7 +113,12 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
 		//Since a new module with same SPTemplates may construct at any time.
 		if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
+		{
 			startPowerRecharge();
+
+			if (startsReady())
+				m_availableOnFrame = TheGameLogic->getFrame();
+		}
 	}
 	// WE USED TO DO THE POLL-EVERYBODY-AND-VOTE-ON-WHO-TO-SYNC-TO THING HERE,
 	// BUT NO MORE, NOW IT IS HANDLED IN PLAYER
@@ -365,6 +372,16 @@ Real SpecialPowerModule::getPercentReady() const
 												 (Real)modData->m_specialPowerTemplate->getReloadTime());
 
 	return percent;
+}
+
+Bool SpecialPowerModule::startsReady() const
+{
+#if RETAIL_COMPATIBLE_CRC
+	return false;
+#endif
+
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
+	return modData->m_startsReady;
 }
 
 //-------------------------------------------------------------------------------------------------
