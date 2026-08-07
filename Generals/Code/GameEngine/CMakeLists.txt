@@ -205,9 +205,9 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/SelectionInfo.h
 #    Include/GameClient/SelectionXlat.h
     Include/GameClient/Shadow.h
-    Include/GameClient/Shell.h
+#    Include/GameClient/Shell.h
     Include/GameClient/ShellHooks.h
-    Include/GameClient/ShellMenuScheme.h
+#    Include/GameClient/ShellMenuScheme.h
 #    Include/GameClient/Statistics.h
 #    Include/GameClient/TerrainRoads.h
 #    Include/GameClient/TerrainVisual.h
@@ -741,8 +741,8 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/IMEManager.cpp
 #    Source/GameClient/GUI/LoadScreen.cpp
 #    Source/GameClient/GUI/ProcessAnimateWindow.cpp
-    Source/GameClient/GUI/Shell/Shell.cpp
-    Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
+#    Source/GameClient/GUI/Shell/Shell.cpp
+#    Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
 #    Source/GameClient/GUI/WindowLayout.cpp
 #    Source/GameClient/GUI/WindowVideoManager.cpp
 #    Source/GameClient/GUI/WinInstanceData.cpp
