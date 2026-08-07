@@ -1179,6 +1179,7 @@ target_include_directories(corei_gameengine_private INTERFACE
 
 target_link_libraries(corei_gameengine_private INTERFACE
     corei_always
+    core_profile_legacy
 )
 
 target_compile_definitions(corei_gameengine_private INTERFACE
