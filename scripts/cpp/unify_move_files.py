@@ -667,6 +667,16 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGUICallbacks.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGUICallbacks.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMainMenu.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMainMenu.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMOTD.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMOTD.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGameFont.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGameFont.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DGameFont.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DGameFont.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGameWindow.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGameWindow.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DGameWindow.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DGameWindow.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGameWindowManager.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DGameWindowManager.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cpp")
+
     return
 
 
