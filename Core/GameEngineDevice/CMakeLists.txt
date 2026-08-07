@@ -1,11 +1,11 @@
 set(GAMEENGINEDEVICE_SRC
     Include/MilesAudioDevice/MilesAudioManager.h
     Include/VideoDevice/Bink/BinkVideoPlayer.h
-#    Include/W3DDevice/Common/W3DConvert.h
-#    Include/W3DDevice/Common/W3DFunctionLexicon.h
-#    Include/W3DDevice/Common/W3DModuleFactory.h
+    Include/W3DDevice/Common/W3DConvert.h
+    Include/W3DDevice/Common/W3DFunctionLexicon.h
+    Include/W3DDevice/Common/W3DModuleFactory.h
     Include/W3DDevice/Common/W3DRadar.h
-#    Include/W3DDevice/Common/W3DThingFactory.h
+    Include/W3DDevice/Common/W3DThingFactory.h
     Include/W3DDevice/GameClient/BaseHeightMap.h
 #    Include/W3DDevice/GameClient/camerashakesystem.h
     Include/W3DDevice/GameClient/FlatHeightMap.h
@@ -93,11 +93,11 @@ set(GAMEENGINEDEVICE_SRC
     Include/Win32Device/GameClient/Win32Mouse.h
     Source/MilesAudioDevice/MilesAudioManager.cpp
     Source/VideoDevice/Bink/BinkVideoPlayer.cpp
-#    Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
+    Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
     Source/W3DDevice/Common/System/W3DRadar.cpp
-#    Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
-#    Source/W3DDevice/Common/Thing/W3DThingFactory.cpp
-#    Source/W3DDevice/Common/W3DConvert.cpp
+    Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
+    Source/W3DDevice/Common/Thing/W3DThingFactory.cpp
+    Source/W3DDevice/Common/W3DConvert.cpp
     Source/W3DDevice/GameClient/BaseHeightMap.cpp
     Source/W3DDevice/GameClient/CameraShakeSystem.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp

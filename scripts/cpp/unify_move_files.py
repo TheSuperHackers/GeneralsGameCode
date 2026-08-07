@@ -667,6 +667,15 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DFunctionLexicon.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DFunctionLexicon.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DModuleFactory.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DModuleFactory.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DThingFactory.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DThingFactory.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/Thing/W3DThingFactory.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/Thing/W3DThingFactory.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DConvert.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DConvert.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/W3DConvert.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/W3DConvert.cpp")
+
     return
 
 
