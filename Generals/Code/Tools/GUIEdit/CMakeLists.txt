@@ -47,6 +47,8 @@ target_include_directories(g_guiedit PRIVATE
 
 target_link_libraries(g_guiedit PRIVATE
     comctl32
+    core_debug
+    core_profile_legacy
     d3d8lib
     g_gameengine
     g_gameenginedevice
