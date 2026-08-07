@@ -3,6 +3,7 @@ name: GenCI
 permissions:
   contents: read
   pull-requests: write
+  packages: write
 
 on:
   push:
@@ -80,15 +81,15 @@ jobs:
           - preset: "win32-debug"
             tools: true
             extras: true
-          #- preset: "win32-vcpkg"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-vcpkg-profile"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-vcpkg-debug"
-          #  tools: true
-          #  extras: true
+          - preset: "win32-vcpkg"
+            tools: true
+            extras: true
+          - preset: "win32-vcpkg-profile"
+            tools: true
+            extras: true
+          - preset: "win32-vcpkg-debug"
+            tools: true
+            extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
@@ -144,15 +145,15 @@ jobs:
           - preset: "win32-debug"
             tools: true
             extras: true
-          #- preset: "win32-vcpkg"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-vcpkg-profile"
-          #  tools: true
-          #  extras: true
-          #- preset: "win32-vcpkg-debug"
-          #  tools: true
-          #  extras: true
+          - preset: "win32-vcpkg"
+            tools: true
+            extras: true
+          - preset: "win32-vcpkg-profile"
+            tools: true
+            extras: true
+          - preset: "win32-vcpkg-debug"
+            tools: true
+            extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
