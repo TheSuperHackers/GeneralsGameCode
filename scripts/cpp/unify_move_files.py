@@ -666,6 +666,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/MessageBox.h", Game.CORE, "GameEngine/Include/GameClient/MessageBox.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/MessageBox.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp")
+    
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/EstablishConnectionsMenu.h", Game.CORE, "GameEngine/Include/GameClient/EstablishConnectionsMenu.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/EstablishConnectionsMenu/EstablishConnectionsMenu.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/EstablishConnectionsMenu/EstablishConnectionsMenu.cpp")
 
     return
 

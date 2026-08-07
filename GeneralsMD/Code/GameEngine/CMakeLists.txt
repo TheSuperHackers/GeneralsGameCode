@@ -155,7 +155,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Drawable.h
     Include/GameClient/DrawableInfo.h
 #    Include/GameClient/DrawGroupInfo.h
-    Include/GameClient/EstablishConnectionsMenu.h
+#    Include/GameClient/EstablishConnectionsMenu.h
     Include/GameClient/Eva.h
 #    Include/GameClient/ExtendedMessageBox.h
     Include/GameClient/FontDesc.h
@@ -709,7 +709,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/ControlBar/ControlBarStructureInventory.cpp
 #    Source/GameClient/GUI/ControlBar/ControlBarUnderConstruction.cpp
     Source/GameClient/GUI/DisconnectMenu/DisconnectMenu.cpp
-    Source/GameClient/GUI/EstablishConnectionsMenu/EstablishConnectionsMenu.cpp
+#    Source/GameClient/GUI/EstablishConnectionsMenu/EstablishConnectionsMenu.cpp
 #    Source/GameClient/GUI/Gadget/GadgetCheckBox.cpp
 #    Source/GameClient/GUI/Gadget/GadgetComboBox.cpp
 #    Source/GameClient/GUI/Gadget/GadgetHorizontalSlider.cpp
