@@ -2723,7 +2723,11 @@ void JetAIUpdate::xfer( Xfer *xfer )
 {
 
   // version
-  XferVersion currentVersion = 2;
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 2;
+#else
+	XferVersion currentVersion = 3;
+#endif
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
@@ -2761,6 +2765,11 @@ void JetAIUpdate::xfer( Xfer *xfer )
 	if( version >= 2 )
 	{
 		xfer->xferBool( &m_enginesOn );
+
+		if (version >= 3)
+		{
+			xfer->xferCoord3D(&m_landingPosForHelipadStuff);
+		}
 	}
 	else
 	{
