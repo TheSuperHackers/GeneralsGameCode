@@ -53,7 +53,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameType.h
     Include/Common/Geometry.h
     Include/Common/GlobalData.h
-    Include/Common/Handicap.h
+#    Include/Common/Handicap.h
     Include/Common/IgnorePreferences.h
 #    Include/Common/INI.h
     Include/Common/INIException.h
@@ -69,7 +69,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/MessageStream.h
 #    Include/Common/MiniLog.h
 #    Include/Common/MiscAudio.h
-    Include/Common/MissionStats.h
+#    Include/Common/MissionStats.h
     Include/Common/ModelState.h
     Include/Common/Module.h
     Include/Common/ModuleFactory.h
@@ -84,7 +84,7 @@ set(GAMEENGINE_SRC
     Include/Common/PerfMetrics.h
 #    Include/Common/PerfTimer.h
     Include/Common/Player.h
-    Include/Common/PlayerList.h
+#    Include/Common/PlayerList.h
     Include/Common/PlayerTemplate.h
     Include/Common/ProductionPrerequisite.h
     Include/Common/QuickmatchPreferences.h
@@ -95,10 +95,10 @@ set(GAMEENGINE_SRC
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
     Include/Common/Registry.h
-    Include/Common/ResourceGatheringManager.h
-    Include/Common/Science.h
+#    Include/Common/ResourceGatheringManager.h
+#    Include/Common/Science.h
     Include/Common/ScopedMutex.h
-    Include/Common/ScoreKeeper.h
+#    Include/Common/ScoreKeeper.h
 #    Include/Common/simpleplayer.h
     Include/Common/SkirmishBattleHonors.h
     Include/Common/SkirmishPreferences.h
@@ -610,16 +610,16 @@ set(GAMEENGINE_SRC
 #    Source/Common/RTS/AcademyStats.cpp
     Source/Common/RTS/ActionManager.cpp
     Source/Common/RTS/Energy.cpp
-    Source/Common/RTS/Handicap.cpp
-    Source/Common/RTS/MissionStats.cpp
+#    Source/Common/RTS/Handicap.cpp
+#    Source/Common/RTS/MissionStats.cpp
     Source/Common/RTS/Money.cpp
     Source/Common/RTS/Player.cpp
-    Source/Common/RTS/PlayerList.cpp
+#    Source/Common/RTS/PlayerList.cpp
     Source/Common/RTS/PlayerTemplate.cpp
     Source/Common/RTS/ProductionPrerequisite.cpp
-    Source/Common/RTS/ResourceGatheringManager.cpp
-    Source/Common/RTS/Science.cpp
-    Source/Common/RTS/ScoreKeeper.cpp
+#    Source/Common/RTS/ResourceGatheringManager.cpp
+#    Source/Common/RTS/Science.cpp
+#    Source/Common/RTS/ScoreKeeper.cpp
     Source/Common/RTS/SpecialPower.cpp
     Source/Common/RTS/Team.cpp
     Source/Common/RTS/TunnelTracker.cpp

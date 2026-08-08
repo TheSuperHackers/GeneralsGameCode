@@ -689,6 +689,19 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DConvert.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DConvert.h")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/W3DConvert.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/W3DConvert.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Handicap.h", Game.CORE, "GameEngine/Include/Common/Handicap.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/Handicap.cpp", Game.CORE, "GameEngine/Source/Common/RTS/Handicap.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/MissionStats.h", Game.CORE, "GameEngine/Include/Common/MissionStats.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/MissionStats.cpp", Game.CORE, "GameEngine/Source/Common/RTS/MissionStats.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/PlayerList.h", Game.CORE, "GameEngine/Include/Common/PlayerList.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/PlayerList.cpp", Game.CORE, "GameEngine/Source/Common/RTS/PlayerList.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/ResourceGatheringManager.h", Game.CORE, "GameEngine/Include/Common/ResourceGatheringManager.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/ResourceGatheringManager.cpp", Game.CORE, "GameEngine/Source/Common/RTS/ResourceGatheringManager.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Science.h", Game.CORE, "GameEngine/Include/Common/Science.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/Science.cpp", Game.CORE, "GameEngine/Source/Common/RTS/Science.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/ScoreKeeper.h", Game.CORE, "GameEngine/Include/Common/ScoreKeeper.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/ScoreKeeper.cpp", Game.CORE, "GameEngine/Source/Common/RTS/ScoreKeeper.cpp")
+
     return
 
 
