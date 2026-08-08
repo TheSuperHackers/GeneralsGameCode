@@ -62,7 +62,7 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 {
 	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
-	if (fileInfo == nullptr) {
+	if (fileInfo == nullptr || fileInfo->m_ignore) {
 		return nullptr;
 	}
 
@@ -151,17 +151,17 @@ void StdBIGFile::close()
 
 Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
-	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
+	const ArchivedFileInfo *archivedFileInfo = getArchivedFileInfo(filename);
 
-	if (tempFileInfo == nullptr) {
+	if (archivedFileInfo == nullptr) {
 		return FALSE;
 	}
 
-	TheLocalFileSystem->getFileInfo(AsciiString(m_file->getName()), fileInfo);
-
-	// fill in the size info.  Since the size can't be bigger than a JUNK file, the high Int will always be 0.
+	// fill in the size info.  Since the size can't be bigger than a JUNK file, the high int will always be 0.
 	fileInfo->sizeHigh = 0;
-	fileInfo->sizeLow = tempFileInfo->m_size;
+	fileInfo->sizeLow = archivedFileInfo->m_size;
+	fileInfo->timestampHigh = 0;
+	fileInfo->timestampLow = 0;
 
 	return TRUE;
 }

@@ -251,6 +251,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	initSubsystem(TheLocalFileSystem, (LocalFileSystem*)new Win32LocalFileSystem);
 	initSubsystem(TheArchiveFileSystem, (ArchiveFileSystem*)new Win32BIGFileSystem);
 	INI ini;
+	// TheSuperHackers @feature xezon 26/07/2026 Loads new FileSystem.ini before any other ini files
+	// to allow configure the file system, such as setting up ignored game files and directories.
+	ini.loadFileDirectory( "Data\\INI\\Default\\FileSystem", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
+	ini.loadFileDirectory( "Data\\INI\\FileSystem", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
+
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 	initSubsystem(TheGameText, CreateGameTextInterface());
 	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science", "Data\\INI\\Science");

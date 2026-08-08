@@ -33,6 +33,22 @@
 
 class LocalFileSystem : public SubsystemInterface
 {
+	struct IgnoreFileData
+	{
+	};
+
+	typedef std::hash_map<
+		rts::string_key<AsciiString>, IgnoreFileData,
+		rts::string_key_hash_path,
+		rts::string_key_equal_to_path> IgnoreFileHashMap;
+
+protected:
+	typedef Int IgnoreFileTestFlags;
+	enum IgnoreFileTestFlags_
+	{
+		IgnoreFileTestFlags_SkipParentDirectories = 1 << 0,
+	};
+
 public:
 	virtual ~LocalFileSystem() override {}
 
@@ -43,7 +59,27 @@ public:
 	virtual Bool createDirectory(AsciiString directory) = 0; ///< see FileSystem.h
 	virtual AsciiString normalizePath(const AsciiString& filePath) const = 0;	///< see FileSystem.h
 
+	Bool ignoreFile(const AsciiString& filename, Bool ignore = true); ///< Ignore this file on the disk.
+	Bool ignoreDirectory(const AsciiString& directory, Bool ignore = true); ///< Ignore this directory and all its contents on the disk.
+
 protected:
+	Bool isFileIgnored(const Char* filename, IgnoreFileTestFlags flags = 0) const; ///< Whether the given file or its parent directories are ignored.
+	Bool isDirectoryIgnored(const Char* directory, IgnoreFileTestFlags flags = 0) const; ///< Whether the given directory or its parent directories are ignored.
+
+private:
+	Bool isDirectoryIgnoredRecursive(AsciiString& directory, IgnoreFileTestFlags flags) const;
+	Bool isFileIgnoredInternal(const Char* filename) const;
+	Bool isDirectoryIgnoredInternal(const Char* directory) const;
+	Bool hasIgnoredFile() const;
+	Bool hasIgnoredDirectory() const;
+
+	static void trimLastPathSegmentInplace(AsciiString& path); ///< Removes trailing path segment until and including the last slash.
+	static void trimTrailingSlash(AsciiString& path); ///< Remove trailing forward or backward slashes.
+
+	IgnoreFileHashMap m_ignoreFileHashMap;
+	IgnoreFileHashMap m_ignoreDirectoryHashMap;
+	mutable FastCriticalSectionClass m_ignoreFileMutex;
+	mutable FastCriticalSectionClass m_ignoreDirectoryMutex;
 };
 
 extern LocalFileSystem *TheLocalFileSystem;

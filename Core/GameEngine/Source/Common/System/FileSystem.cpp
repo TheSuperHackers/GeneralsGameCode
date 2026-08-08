@@ -54,8 +54,6 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/PerfTimer.h"
 
-#include "Lib/PathUtil.h"
-
 
 DECLARE_PERF_TIMER(FileSystem)
 
@@ -329,6 +327,52 @@ Bool FileSystem::createDirectory(AsciiString directory)
 		return TheLocalFileSystem->createDirectory(directory);
 	}
 	return FALSE;
+}
+
+//============================================================================
+Bool FileSystem::ignoreFile(const AsciiString& filename, Bool ignore)
+{
+	Bool wasIgnored = FALSE;
+	wasIgnored |= TheLocalFileSystem->ignoreFile(filename, ignore);
+	wasIgnored |= TheArchiveFileSystem->ignoreFile(filename, ignore);
+
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+	if (wasIgnored)
+	{
+		// Remove this file from the existence cache.
+		FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+		m_fileExist.erase(filename);
+	}
+#endif
+
+	return wasIgnored;
+}
+
+//============================================================================
+Bool FileSystem::ignoreDirectory(const AsciiString& directory, Bool ignore)
+{
+	Bool wasIgnored = FALSE;
+	wasIgnored |= TheLocalFileSystem->ignoreDirectory(directory, ignore);
+	wasIgnored |= TheArchiveFileSystem->ignoreDirectory(directory, ignore);
+
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
+	if (wasIgnored)
+	{
+		// Remove all relevant files from the existence cache.
+		FastCriticalSectionClass::LockClass lock(m_fileExistMutex);
+		FileExistMap::const_iterator it = m_fileExist.begin();
+		while (it != m_fileExist.end())
+		{
+			FileExistMap::const_iterator curr = it++;
+			if (startsWithPath(curr->first.c_str(), directory.str()))
+			{
+				m_fileExist.erase(curr->first);
+			}
+		}
+	}
+#endif
+
+	return wasIgnored;
 }
 
 //============================================================================

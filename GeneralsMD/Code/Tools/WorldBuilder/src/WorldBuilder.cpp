@@ -334,6 +334,11 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	INI ini;
 
+	// TheSuperHackers @feature xezon 26/07/2026 Loads new FileSystem.ini before any other ini files
+	// to allow configure the file system, such as setting up ignored game files and directories.
+	ini.loadFileDirectory( "Data\\INI\\Default\\FileSystem", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
+	ini.loadFileDirectory( "Data\\INI\\FileSystem", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
+
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 
 	TheFramePacer = new FramePacer();

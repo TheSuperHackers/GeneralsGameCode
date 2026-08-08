@@ -114,7 +114,7 @@ namespace rts
 	// specific types.
 	template<typename T> struct hash
 	{
-		size_t operator()(const T& __t) const
+		size_t operator()(const T& __t) const noexcept
 		{
 			std::hash<T> tmp;
 			return tmp(__t);
@@ -126,7 +126,7 @@ namespace rts
 	// the case of pointers.)
 	template<typename T> struct equal_to
 	{
-		Bool operator()(const T& __t1, const T& __t2) const
+		Bool operator()(const T& __t1, const T& __t2) const noexcept
 		{
 			return (__t1 == __t2);
 		}
@@ -137,7 +137,7 @@ namespace rts
 	// the case of pointers, or strings.)
 	template<typename T> struct less_than_nocase
 	{
-		bool operator()(const T& __t1, const T& __t2) const
+		bool operator()(const T& __t1, const T& __t2) const noexcept
 		{
 			return (__t1 < __t2);
 		}
@@ -146,7 +146,7 @@ namespace rts
 #ifdef USING_STLPORT
 	template<> struct hash<NameKeyType>
 	{
-		size_t operator()(NameKeyType nkt) const
+		size_t operator()(NameKeyType nkt) const noexcept
 		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
@@ -155,7 +155,7 @@ namespace rts
 
 	template<> struct hash<DrawableID>
 	{
-		size_t operator()(DrawableID nkt) const
+		size_t operator()(DrawableID nkt) const noexcept
 		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
@@ -164,7 +164,7 @@ namespace rts
 
 	template<> struct hash<ObjectID>
 	{
-		size_t operator()(ObjectID nkt) const
+		size_t operator()(ObjectID nkt) const noexcept
 		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
@@ -173,7 +173,7 @@ namespace rts
 
 	template<> struct hash<ParticleSystemID>
 	{
-		size_t operator()(ParticleSystemID nkt) const
+		size_t operator()(ParticleSystemID nkt) const noexcept
 		{
 			std::hash<UnsignedInt> tmp;
 			return tmp((UnsignedInt)nkt);
@@ -183,7 +183,7 @@ namespace rts
 
 	template<> struct hash<const Char*>
 	{
-		size_t operator()(const Char* s) const
+		size_t operator()(const Char* s) const noexcept
 		{
 #ifdef USING_STLPORT
 			std::hash<const Char*> hasher;
@@ -201,7 +201,7 @@ namespace rts
 	// they are to be used in lots of places.)
 	template<> struct equal_to<const char*>
 	{
-		Bool operator()(const char* s1, const char* s2) const
+		Bool operator()(const char* s1, const char* s2) const noexcept
 		{
 			return strcmp(s1, s2) == 0;
 		}
@@ -209,13 +209,12 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(const AsciiString& ast) const
+		size_t operator()(const AsciiString& ast) const noexcept
 		{
 #ifdef USING_STLPORT
 			std::hash<const char *> tmp;
 			return tmp((const char *) ast.str());
 #else
-			// TheSuperHackers @bugfix xezon 16/03/2024 Re-implements hash function that works with non-STLPort.
 			std::hash<std::string_view> hasher;
 			return hasher(std::string_view(ast.str(), ast.getLength()));
 #endif
@@ -224,7 +223,7 @@ namespace rts
 
 	template<> struct equal_to<AsciiString>
 	{
-		Bool operator()(const AsciiString& __t1, const AsciiString& __t2) const
+		Bool operator()(const AsciiString& __t1, const AsciiString& __t2) const noexcept
 		{
 			return (__t1 == __t2);
 		}
@@ -232,7 +231,7 @@ namespace rts
 
 	template<> struct less_than_nocase<AsciiString>
 	{
-		bool operator()(const AsciiString& __t1, const AsciiString& __t2) const
+		bool operator()(const AsciiString& __t1, const AsciiString& __t2) const noexcept
 		{
 			return (__t1.compareNoCase(__t2) < 0);
 		}
@@ -240,9 +239,51 @@ namespace rts
 
 	template<> struct less_than_nocase<UnicodeString>
 	{
-		bool operator()(const UnicodeString& __t1, const UnicodeString& __t2) const
+		bool operator()(const UnicodeString& __t1, const UnicodeString& __t2) const noexcept
 		{
 			return (__t1.compareNoCase(__t2) < 0);
+		}
+	};
+
+	// TheSuperHackers @info Functor to compare equal paths with. Ignores case, type of slash and trailing slash.
+	struct equal_to_path
+	{
+		bool operator()(const char* __t1, const char* __t2) const noexcept
+		{
+			return comparePath(__t1, __t2) == 0;
+		}
+
+		bool operator()(const AsciiString& __t1, const AsciiString& __t2) const noexcept
+		{
+			return comparePath(__t1.str(), __t2.str()) == 0;
+		}
+	};
+
+	// TheSuperHackers @info Functor to compare lesser paths with. Ignores case, type of slash and trailing slash.
+	struct less_than_path
+	{
+		bool operator()(const char* __t1, const char* __t2) const noexcept
+		{
+			return comparePath(__t1, __t2) < 0;
+		}
+
+		bool operator()(const AsciiString& __t1, const AsciiString& __t2) const noexcept
+		{
+			return comparePath(__t1.str(), __t2.str()) < 0;
+		}
+	};
+
+	// TheSuperHackers @info Functor to hash paths with. Ignores case, type of slash and trailing slash.
+	struct hash_path
+	{
+		size_t operator()(const char* str) const noexcept
+		{
+			return hashPath(str);
+		}
+
+		size_t operator()(const AsciiString& str) const noexcept
+		{
+			return hashPath(str.str());
 		}
 	};
 
@@ -282,22 +323,41 @@ namespace rts
 		const_pointer cstr;
 	};
 
-	template <typename String>
 	struct string_key_hash
 	{
-		typedef typename String::const_pointer const_pointer;
-		size_t operator()(const string_key<String>& key) const
+		template <typename String>
+		size_t operator()(const string_key<String>& key) const noexcept
 		{
+			typedef typename String::const_pointer const_pointer;
 			return hash<const_pointer>()(key.c_str());
 		}
 	};
 
-	template <typename String>
 	struct string_key_equal
 	{
-		bool operator()(const string_key<String>& a, const string_key<String>& b) const
+		template <typename String>
+		bool operator()(const string_key<String>& a, const string_key<String>& b) const noexcept
 		{
 			return strcmp(a.c_str(), b.c_str()) == 0;
+		}
+	};
+
+	
+	struct string_key_hash_path
+	{
+		template <typename String>
+		size_t operator()(const string_key<String>& key) const noexcept
+		{
+			return hashPath(key.c_str());
+		}
+	};
+
+	struct string_key_equal_to_path
+	{
+		template <typename String>
+		bool operator()(const string_key<String>& a, const string_key<String>& b) const noexcept
+		{
+			return comparePath(a.c_str(), b.c_str()) == 0;
 		}
 	};
 

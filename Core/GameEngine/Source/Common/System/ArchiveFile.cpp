@@ -106,20 +106,79 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 	while (!token.isEmpty())
 	{
 		DetailedArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
-		if (tempiter == dirInfo->m_directories.end())
-		{
+		if (tempiter == dirInfo->m_directories.end()) {
 			dirInfo = &(dirInfo->m_directories[token]);
 			dirInfo->m_directoryName = token;
 		}
-		else
-		{
+		else {
 			dirInfo = &tempiter->second;
 		}
 
 		tokenizer.nextToken(&token, "\\/");
 	}
 
-	dirInfo->m_files[fileInfo->m_filename] = *fileInfo;
+	typedef std::pair<ArchivedFileInfoMap::iterator, bool> Result;
+	const Result result = dirInfo->m_files.insert(std::make_pair(fileInfo->m_filename, *fileInfo));
+	if (result.second) {
+		AsciiString filename = path;
+		filename.concat(fileInfo->m_filename);
+		m_absFilenameToFileInfo[filename] = &result.first->second;
+
+		static_assert((std::is_same_v<decltype(dirInfo->m_files), std::map<AsciiString, ArchivedFileInfo>>), "Hash map expects stable references");
+	}
+}
+
+Bool ArchiveFile::ignoreFile(const AsciiString& filename, Bool ignore)
+{
+	ArchivedFileInfoPtrHashMap::iterator it = m_absFilenameToFileInfo.find(filename);
+	if (it == m_absFilenameToFileInfo.end()) {
+		return false;
+	}
+
+	it->second->m_ignore = ignore;
+	return true;
+}
+
+Bool ArchiveFile::ignoreDirectory(const AsciiString& directory, Bool ignore)
+{
+	DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
+
+	AsciiString token;
+	AsciiString tokenizer = directory;
+	tokenizer.toLower();
+	tokenizer.nextToken(&token, "\\/");
+
+	while (!token.isEmpty()) {
+		DetailedArchivedDirectoryInfoMap::iterator it = dirInfo->m_directories.find(token);
+		if (it == dirInfo->m_directories.end())
+			return false;
+		dirInfo = &it->second;
+		tokenizer.nextToken(&token, "\\/");
+	}
+
+	ignoreDirectory(dirInfo, ignore);
+	return true;
+}
+
+void ArchiveFile::ignoreDirectory(DetailedArchivedDirectoryInfo *dirInfo, Bool ignore)
+{
+	// Ignore this directory
+	dirInfo->m_ignore = ignore;
+
+	// Ignore all files in this directory
+	ArchivedFileInfoMap::iterator fileIt = dirInfo->m_files.begin();
+	for (; fileIt != dirInfo->m_files.end(); ++fileIt) {
+		ArchivedFileInfo &fileInfo = fileIt->second;
+		fileInfo.m_ignore = ignore;
+	}
+
+	// Ignore subdirectories and its files
+	DetailedArchivedDirectoryInfoMap::iterator dirIt = dirInfo->m_directories.begin();
+	for (; dirIt != dirInfo->m_directories.end(); ++dirIt) {
+		DetailedArchivedDirectoryInfo *tempDirInfo = &(dirIt->second);
+		tempDirInfo->m_ignore = ignore;
+		ignoreDirectory(tempDirInfo, ignore);
+	}
 }
 
 void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
@@ -132,17 +191,14 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 	tokenizer.nextToken(&token, "\\/");
 
 	while (!token.isEmpty()) {
-
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
-		if (it != dirInfo->m_directories.end())
-		{
-			dirInfo = &it->second;
-		}
-		else
-		{
-			// if the directory doesn't exist, then there aren't any files to be had.
+		// if the directory doesn't exist, then there aren't any files to be had.
+		if (it == dirInfo->m_directories.end())
 			return;
-		}
+
+		dirInfo = &it->second;
+		if (dirInfo->m_ignore)
+			return;
 
 		tokenizer.nextToken(&token, "\\/");
 	}
@@ -153,33 +209,35 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *dirInfo, const AsciiString& currentDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
 	DetailedArchivedDirectoryInfoMap::const_iterator diriter = dirInfo->m_directories.begin();
-	while (diriter != dirInfo->m_directories.end()) {
+	for (; diriter != dirInfo->m_directories.end(); ++diriter) {
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
-		AsciiString tempdirname;
-		tempdirname = currentDirectory;
-		if ((!tempdirname.isEmpty()) && (!tempdirname.endsWith("\\"))) {
-			tempdirname.concat('\\');
+		if (tempDirInfo->m_ignore)
+			continue;
+		AsciiString tempDirName = currentDirectory;
+		if (!tempDirName.isEmpty() && !tempDirName.endsWith("\\")) {
+			tempDirName.concat('\\');
 		}
-		tempdirname.concat(tempDirInfo->m_directoryName);
-		getFileListInDirectory(tempDirInfo, tempdirname, searchName, filenameList, searchSubdirectories);
-		diriter++;
+		tempDirName.concat(tempDirInfo->m_directoryName);
+		getFileListInDirectory(tempDirInfo, tempDirName, searchName, filenameList, searchSubdirectories);
 	}
 
 	ArchivedFileInfoMap::const_iterator fileiter = dirInfo->m_files.begin();
-	while (fileiter != dirInfo->m_files.end()) {
-		if (SearchStringMatches(fileiter->second.m_filename, searchName)) {
+	for (; fileiter != dirInfo->m_files.end(); ++fileiter) {
+		const ArchivedFileInfo &fileInfo = fileiter->second;
+		if (fileInfo.m_ignore)
+			continue;
+		if (SearchStringMatches(fileInfo.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			if ((!tempfilename.isEmpty()) && (!tempfilename.endsWith("\\"))) {
+			if (!tempfilename.isEmpty() && !tempfilename.endsWith("\\")) {
 				tempfilename.concat('\\');
 			}
-			tempfilename.concat(fileiter->second.m_filename);
+			tempfilename.concat(fileInfo.m_filename);
 			if (filenameList.find(tempfilename) == filenameList.end()) {
 				// only insert into the list if its not already in there.
 				filenameList.insert(tempfilename);
 			}
 		}
-		fileiter++;
 	}
 }
 
@@ -194,36 +252,12 @@ void ArchiveFile::attachFile(File *file)
 
 const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const
 {
-	const DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
-
-	AsciiString token;
-	AsciiString tokenizer = filename;
-	tokenizer.toLower();
-	tokenizer.nextToken(&token, "\\/");
-
-	while (!token.find('.') || tokenizer.find('.'))
-	{
-		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
-		if (it != dirInfo->m_directories.end())
-		{
-			dirInfo = &it->second;
-		}
-		else
-		{
-			return nullptr;
-		}
-
-		tokenizer.nextToken(&token, "\\/");
-	}
-
-	ArchivedFileInfoMap::const_iterator it = dirInfo->m_files.find(token);
-	if (it != dirInfo->m_files.end())
-	{
-		return &it->second;
-	}
-	else
-	{
+	ArchivedFileInfoPtrHashMap::const_iterator it = m_absFilenameToFileInfo.find(filename);
+	if (it == m_absFilenameToFileInfo.end())
 		return nullptr;
-	}
 
+	if (it->second->m_ignore)
+		return nullptr;
+
+	return it->second;
 }
