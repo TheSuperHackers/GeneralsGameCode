@@ -76,7 +76,6 @@
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
 #include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
-#include "W3DDevice/GameClient/W3DCustomEdging.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
@@ -639,9 +638,6 @@ void BaseHeightMapRenderObjClass::reset()
 		m_propBuffer->clearAllProps();
 	}
 	clearAllScorches();
-#ifdef TEST_CUSTOM_EDGING
-	m_customEdging ->clearAllEdging();
-#endif
 #ifdef DO_ROADS
 	if (m_roadBuffer) {
 		m_roadBuffer->clearAllRoads();

@@ -77,7 +77,6 @@
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
 #include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
-#include "W3DDevice/GameClient/W3DCustomEdging.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
@@ -2072,15 +2071,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		Int yCoordMax = m_y+m_map->getDrawOrgY()-1;
 		Int xCoordMin = m_map->getDrawOrgX();
 		Int xCoordMax = m_x+m_map->getDrawOrgX()-1;
-	#ifdef TEST_CUSTOM_EDGING
-		// Draw edging just before last pass.
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
-		m_stageTwoTexture->restore();
-		m_customEdging->drawEdging(m_map, xCoordMin, xCoordMax, yCoordMin, yCoordMax,
-			m_stageZeroTexture, doCloud?m_stageTwoTexture: nullptr, TheGlobalData->m_useLightMap?m_stageThreeTexture: nullptr);
-	#endif
-	#ifdef DO_ROADS
+#ifdef DO_ROADS
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
