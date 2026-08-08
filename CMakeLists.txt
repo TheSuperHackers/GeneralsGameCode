@@ -39,6 +39,9 @@ include(cmake/compilers.cmake)
 # Debug symbol stripping for Release builds (MinGW)
 include(cmake/debug_strip.cmake)
 
+# D3DX dependency verification for NO_D3DX builds (MinGW)
+include(cmake/no_d3dx_verify.cmake)
+
 include(FetchContent)
 
 # MinGW-w64 specific configuration

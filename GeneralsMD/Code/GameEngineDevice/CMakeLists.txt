@@ -220,3 +220,8 @@ target_link_libraries(z_gameenginedevice PUBLIC
     corei_gameenginedevice_public
     z_gameengine
 )
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(TARGET core_d3dxcompat)
+    target_link_libraries(z_gameenginedevice PRIVATE core_d3dxcompat)
+endif()

@@ -74,18 +74,47 @@ if(MINGW)
     # are provided by Dependencies/Utility/Utility/comsupp_compat.h as header-only
     # implementations. No library linking required.
     
-    # MinGW-w64 compatibility: Create d3dx8 as an alias to d3dx8d
-    # MinGW-w64 only provides libd3dx8d.a (debug library), not libd3dx8.a
-    # The min-dx8-sdk (dx8.cmake) handles this correctly via d3d8lib interface target,
-    # but for compatibility with direct library references in main executables,
-    # we create an alias so that linking to d3dx8 automatically uses d3dx8d
-    if(NOT TARGET d3dx8)
-        add_library(d3dx8 INTERFACE IMPORTED GLOBAL)
-        set_target_properties(d3dx8 PROPERTIES
-            INTERFACE_LINK_LIBRARIES "d3dx8d"
+    # MinGW-w64 D3DX8 dependency elimination option
+    # Header conflicts resolved using include guard coordination (Option A)
+    # D3DXCompat.h pre-defines min-dx8-sdk include guards to prevent redefinitions
+    option(MINGW_NO_D3DX "Eliminate D3DX8.dll dependency using native compatibility layer" ON)
+if(MINGW_NO_D3DX)
+        # Use compatibility layer
+        add_compile_definitions(NO_D3DX)
+
+        # Create INTERFACE library for D3DX compatibility wrapper
+        # Targets that need D3DX replacement should link to core_d3dxcompat
+        add_library(core_d3dxcompat INTERFACE)
+        target_compile_options(core_d3dxcompat INTERFACE
+            "-include${CMAKE_SOURCE_DIR}/Core/Libraries/Include/Lib/D3DXWrapper.h"
         )
-        message(STATUS "Created d3dx8 -> d3dx8d alias for MinGW-w64")
+
+        message(STATUS "MinGW: D3DX8 dependency eliminated (NO_D3DX enabled)")
+        message(STATUS "  Link core_d3dxcompat for D3DXWrapper.h inclusion")
+
+        # Create empty d3dx8 INTERFACE library (like stlport pattern)
+        # This allows unconditional linking to d3dx8 in CMakeLists.txt files
+        if(NOT TARGET d3dx8)
+            add_library(d3dx8 INTERFACE)
+            message(STATUS "Created empty d3dx8 INTERFACE library (NO_D3DX)")
+        endif()
+    else()
+        # Legacy behavior: use D3DX8 with DLL dependency
+        message(STATUS "MinGW: Using D3DX8.dll (NO_D3DX disabled)")
+
+        # MinGW-w64 compatibility: Create d3dx8 as an alias to d3dx8d
+        # MinGW-w64 only provides libd3dx8d.a (debug library), not libd3dx8.a
+        # The min-dx8-sdk (dx8.cmake) handles this correctly via d3d8lib interface target,
+        # but for compatibility with direct library references in main executables,
+        # we create an alias so that linking to d3dx8 automatically uses d3dx8d
+        if(NOT TARGET d3dx8)
+            add_library(d3dx8 INTERFACE IMPORTED GLOBAL)
+            set_target_properties(d3dx8 PROPERTIES
+                INTERFACE_LINK_LIBRARIES "d3dx8d"
+            )
+            message(STATUS "Created d3dx8 -> d3dx8d alias for MinGW-w64")
+        endif()
     endif()
-    
+
     message(STATUS "MinGW-w64 configuration complete")
 endif()
