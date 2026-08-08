@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "Lib/BaseDefines.h"
+
 // Enable translation and rotation interpolation for raw animation (HRawAnimClass) updates.
 // This was intentionally disabled in the retail version, but likely not fully thought through.
 // Interpolation is certainly desired for animations that move and rotate meshes, but may not be

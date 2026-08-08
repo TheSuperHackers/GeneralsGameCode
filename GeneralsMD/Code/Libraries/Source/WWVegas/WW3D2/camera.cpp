@@ -769,13 +769,13 @@ void CameraClass::Get_Clip_Planes(float & znear,float & zfar) const
 float CameraClass::Get_Horizontal_FOV() const
 {
 	float width = ViewPlane.Max.X - ViewPlane.Min.X;
-	return 2*WWMath::Atan2(width,2.0);
+	return 2*WWMath::Atan2_Legacy(width,2.0);
 }
 
 float CameraClass::Get_Vertical_FOV() const
 {
 	float height = ViewPlane.Max.Y - ViewPlane.Min.Y;
-	return 2*WWMath::Atan2(height,2.0);
+	return 2*WWMath::Atan2_Legacy(height,2.0);
 }
 
 float CameraClass::Get_Aspect_Ratio() const

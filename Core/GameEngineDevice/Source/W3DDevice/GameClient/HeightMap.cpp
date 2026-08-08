@@ -1768,8 +1768,8 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *c
 		shiftPivot.X = viewDir.X * magicEdgeLenScale;
 		shiftPivot.Y = viewDir.Y * magicEdgeLenScale;
 
-		newOrgX = WWMath::Round((cameraPivot->X + shiftPivot.X)/MAP_XY_FACTOR) - m_x/2 + m_map->getBorderSizeInline();
-		newOrgY = WWMath::Round((cameraPivot->Y + shiftPivot.Y)/MAP_XY_FACTOR) - m_y/2 + m_map->getBorderSizeInline();
+		newOrgX = WWMath::Roundf((cameraPivot->X + shiftPivot.X)/MAP_XY_FACTOR) - m_x/2 + m_map->getBorderSizeInline();
+		newOrgY = WWMath::Roundf((cameraPivot->Y + shiftPivot.Y)/MAP_XY_FACTOR) - m_y/2 + m_map->getBorderSizeInline();
 	}
 
 	WorldHeightMap::DrawArea newDrawArea = m_map->createDrawArea(newOrgX, newOrgY);

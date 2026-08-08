@@ -213,7 +213,7 @@ SoundPseudo3DClass::Update_Pseudo_Pan ()
 		//
 		//	Calculate a normalized pan from 0 (hard left) to 1.0F (hard right)
 		//
-		float angle	= WWMath::Atan2 (rel_sound_pos.Y, rel_sound_pos.X);
+		float angle	= WWMath::Atan2_Legacy (rel_sound_pos.Y, rel_sound_pos.X);
 		float pan	= -WWMath::Fast_Sin (angle);
 		pan			= (pan / 2.0F) + 0.5F;
 

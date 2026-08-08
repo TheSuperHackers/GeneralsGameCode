@@ -167,13 +167,13 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 					Real psize = p->getSize();
 
 					//Cull particle to edges of screen and terrain.
-					if (WWMath::Fabs( pos->x - bcX ) > ( beX + psize ) )
+					if (WWMath::Fabsf_Legacy( pos->x - bcX ) > ( beX + psize ) )
 						continue;
 
-					if (WWMath::Fabs( pos->y - bcY ) > ( beY + psize ) )
+					if (WWMath::Fabsf_Legacy( pos->y - bcY ) > ( beY + psize ) )
 						continue;
 
-					if (WWMath::Fabs( pos->z - bcZ ) > ( beZ + psize ) )
+					if (WWMath::Fabsf_Legacy( pos->z - bcZ ) > ( beZ + psize ) )
 						continue;
 
 					if (Smudge *smudge = TheSmudgeManager->findSmudge(p))
@@ -207,13 +207,13 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			psize = p->getSize();
 
 			//Cull particle to edges of screen and terrain.
-			if (WWMath::Fabs(pos->x - bcX) > (beX + psize))
+			if (WWMath::Fabsf_Legacy(pos->x - bcX) > (beX + psize))
 				continue;
 
-			if (WWMath::Fabs(pos->y - bcY) > (beY + psize))
+			if (WWMath::Fabsf_Legacy(pos->y - bcY) > (beY + psize))
 				continue;
 
-			if (WWMath::Fabs(pos->z - bcZ) > (beZ + psize))
+			if (WWMath::Fabsf_Legacy(pos->z - bcZ) > (beZ + psize))
 				continue;
 
 			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && sys->m_isGroundAligned != FALSE );

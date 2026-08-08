@@ -866,7 +866,7 @@ void HTreeClass::Combo_Update
 			if (weight_total != 0.0f ) {
 				// SKB: Removed assert because I have a case where I don't want normalization.
 				// 	  One anim moves X, the other moves Y.  Assert was just in to warn programmers.
-//				WWASSERT(WWMath::Fabs( weight_total - 1.0 ) < WWMATH_EPSILON);
+//				WWASSERT(WWMath::Fabsf( weight_total - 1.0 ) < WWMATH_EPSILON);
 
 				pivot->Transform.Translate(trans);
 #ifdef ALLOW_TEMPORARIES
@@ -1204,8 +1204,8 @@ HTreeClass * HTreeClass::Create_Interpolated(const HTreeClass * tree_base,
 	// Clone the first one,
 	HTreeClass * new_tree = W3DNEW HTreeClass( *tree_base );
 
-	float	a_scale_abs = WWMath::Fabs( a_scale );
-	float	b_scale_abs = WWMath::Fabs( b_scale );
+	float	a_scale_abs = WWMath::Fabsf_Legacy( a_scale );
+	float	b_scale_abs = WWMath::Fabsf_Legacy( b_scale );
 
 	if ( a_scale_abs + b_scale_abs > 0 ) {
 

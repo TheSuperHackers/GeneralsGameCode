@@ -670,7 +670,7 @@ void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
 		Vector3 outwards;
 		float pos_l2 = rand_pos.Length2();
 		if (pos_l2) {
-			outwards = rand_pos * (OutwardVel * WWMath::Inv_Sqrt(pos_l2));
+			outwards = rand_pos * (OutwardVel * WWMath::Inv_Sqrt_Legacy(pos_l2));
 		} else {
 			outwards.X = OutwardVel;
 			outwards.Y = 0.0f;

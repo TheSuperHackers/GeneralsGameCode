@@ -180,35 +180,35 @@ void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 	_euler_unpack_order(order,i,j,k,h,n,s,f);
 
 	if (s == EULER_REPEAT_YES) {
-		double sy = sqrt(M[i][j]*M[i][j] + M[i][k]*M[i][k]);
+		double sy = WWMath::Sqrt(M[i][j]*M[i][j] + M[i][k]*M[i][k]);
 
 		if (sy > 16*FLT_EPSILON) {
 
-			Angle[0] = WWMath::Atan2(M[i][j],M[i][k]);
-			Angle[1] = WWMath::Atan2(sy,M[i][i]);
-			Angle[2] = WWMath::Atan2(M[j][i],-M[k][i]);
+			Angle[0] = WWMath::Atan2_Legacy(M[i][j],M[i][k]);
+			Angle[1] = WWMath::Atan2_Legacy(sy,M[i][i]);
+			Angle[2] = WWMath::Atan2_Legacy(M[j][i],-M[k][i]);
 
 		} else {
 
-			Angle[0] = WWMath::Atan2(-M[j][k],M[j][j]);
-			Angle[1] = WWMath::Atan2(sy,M[i][i]);
+			Angle[0] = WWMath::Atan2_Legacy(-M[j][k],M[j][j]);
+			Angle[1] = WWMath::Atan2_Legacy(sy,M[i][i]);
 			Angle[2] = 0.0;
 		}
 
 	} else {
 
-		double cy = sqrt(M[i][i]*M[i][i] + M[j][i]*M[j][i]);
+		double cy = WWMath::Sqrt(M[i][i]*M[i][i] + M[j][i]*M[j][i]);
 
 		if (cy > 16*FLT_EPSILON) {
 
-			Angle[0] = WWMath::Atan2(M[k][j],M[k][k]);
-			Angle[1] = WWMath::Atan2(-M[k][i],cy);
-			Angle[2] = WWMath::Atan2(M[j][i],M[i][i]);
+			Angle[0] = WWMath::Atan2_Legacy(M[k][j],M[k][k]);
+			Angle[1] = WWMath::Atan2_Legacy(-M[k][i],cy);
+			Angle[2] = WWMath::Atan2_Legacy(M[j][i],M[i][i]);
 
 		} else {
 
-			Angle[0] = WWMath::Atan2(-M[j][k],M[j][j]);
-			Angle[1] = WWMath::Atan2(-M[k][i],cy);
+			Angle[0] = WWMath::Atan2_Legacy(-M[j][k],M[j][j]);
+			Angle[1] = WWMath::Atan2_Legacy(-M[k][i],cy);
 			Angle[2] = 0;
 		}
 	}
@@ -284,8 +284,8 @@ void EulerAnglesClass::To_Matrix(Matrix3D & M)
 	}
 
 	ti = a0;				tj = a1;				th = a2;
-	ci = WWMath::Cos(ti);		cj = WWMath::Cos(tj);		ch = WWMath::Cos(th);
-	si = WWMath::Sin(ti);		sj = WWMath::Sin(tj);		sh = WWMath::Sin(th);
+	ci = WWMath::Cosf_Legacy(ti);		cj = WWMath::Cosf_Legacy(tj);		ch = WWMath::Cosf_Legacy(th);
+	si = WWMath::Sinf_Legacy(ti);		sj = WWMath::Sinf_Legacy(tj);		sh = WWMath::Sinf_Legacy(th);
 
 	cc = ci*ch;
 	cs = ci*sh;

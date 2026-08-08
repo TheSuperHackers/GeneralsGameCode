@@ -309,7 +309,7 @@ WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
  *========================================================================*/
 WWINLINE bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon)
 {
-   return( (WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon) );
+   return( (WWMath::Fabsf_Legacy(a.X - b.X) < epsilon) && (WWMath::Fabsf_Legacy(a.Y - b.Y) < epsilon) );
 }
 
 /**************************************************************************
@@ -327,7 +327,7 @@ WWINLINE void Vector2::Normalize()
 {
 	float len2 = Length2();
 	if (len2 != 0.0f) {
-		float oolen = WWMath::Inv_Sqrt(len2);
+		float oolen = WWMath::Inv_Sqrt_Legacy(len2);
 		X *= oolen;
 		Y *= oolen;
 	}
@@ -337,7 +337,7 @@ WWINLINE Vector2 Normalize(const Vector2 & vec)
 {
 	float len2 = vec.Length2();
 	if (len2 != 0.0f) {
-		float oolen = WWMath::Inv_Sqrt(len2);
+		float oolen = WWMath::Inv_Sqrt_Legacy(len2);
 		return vec / oolen;
 	}
 	return Vector2(0.0f,0.0f);
@@ -356,7 +356,7 @@ WWINLINE Vector2 Normalize(const Vector2 & vec)
  *========================================================================*/
 WWINLINE float Vector2::Length() const
 {
-	return (float)WWMath::Sqrt(Length2());
+	return (float)WWMath::Sqrt_Legacy(Length2());
 }
 
 /**************************************************************************
@@ -389,7 +389,7 @@ WWINLINE float Vector2::Length2() const
  *========================================================================*/
 WWINLINE void Vector2::Rotate(float theta)
 {
-	Rotate(WWMath::Sin(theta), WWMath::Cos(theta));
+	Rotate(WWMath::Sinf_Legacy(theta), WWMath::Cosf_Legacy(theta));
 }
 
 /**************************************************************************
@@ -429,7 +429,7 @@ WWINLINE void Vector2::Rotate(float s, float c)
  *========================================================================*/
 WWINLINE bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn)
 {
-	return Rotate_Towards_Vector(target, WWMath::Sin(max_theta), WWMath::Cos(max_theta), positive_turn);
+	return Rotate_Towards_Vector(target, WWMath::Sinf_Legacy(max_theta), WWMath::Cosf_Legacy(max_theta), positive_turn);
 }
 
 /**************************************************************************
@@ -597,8 +597,8 @@ WWINLINE float Quick_Distance(float x1, float y1, float x2, float y2)
 	float x_diff = x1 - x2;
 	float y_diff = y1 - y2;
 
-	WWMath::Fabs(x_diff);
-	WWMath::Fabs(y_diff);
+	WWMath::Fabsf_Legacy(x_diff);
+	WWMath::Fabsf_Legacy(y_diff);
 
 	if (x_diff > y_diff)
 	{
@@ -638,7 +638,7 @@ WWINLINE float Distance(float x1, float y1, float x2, float y2)
 	float x_diff = x1 - x2;
 	float y_diff = y1 - y2;
 
-	return (WWMath::Sqrt((x_diff * x_diff) + (y_diff * y_diff)));
+	return (WWMath::Sqrt_Legacy((x_diff * x_diff) + (y_diff * y_diff)));
 }
 
 

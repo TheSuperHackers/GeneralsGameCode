@@ -2872,7 +2872,7 @@ void W3DRoadBuffer::insertCurveSegmentAt(Int ndx1, Int ndx2)
  		line1.Set(Vector3(pr1->X, pr1->Y, 0), Vector3(pr2->X, pr2->Y, 0));
  		line2.Set(Vector3(pr3->X, pr3->Y, 0), Vector3(pr4->X, pr4->Y, 0));
 	}
-	Real angle = WWMath::Acos(curSin);
+	Real angle = WWMath::Acos_Legacy(curSin);
 	Real count = angle / (PI/6.0f); // number of 30 degree steps.
 	if (count<0.9 || m_roads[ndx1].m_pt1.isAngled) {
 		miter(ndx1, ndx2);

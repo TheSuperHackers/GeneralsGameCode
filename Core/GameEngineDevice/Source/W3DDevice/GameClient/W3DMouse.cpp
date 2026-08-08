@@ -568,7 +568,7 @@ void W3DMouse::draw()
 					offset = TheInGameUI->getScrollAmount();
 					offset.normalize();
 					Real theta = atan2(-offset.y, offset.x);
-					theta -= (Real)M_PI/2;
+					theta -= (Real)WWMATH_HALF_PI;
 					tm.Rotate_Z(theta);
 				}
 				cursorModels[m_currentW3DCursor]->Set_Transform(tm);
@@ -672,12 +672,12 @@ void W3DMouse::setCursorDirection(MouseCursor cursor)
 		{
 			offset.normalize();
 			Real theta = atan2(offset.y, offset.x);
-			theta = fmod(theta+M_PI*2,M_PI*2);
+			theta = fmod(theta+WWMATH_TWO_PI,WWMATH_TWO_PI);
 			Int numDirections=m_cursorInfo[m_currentCursor].numDirections;
 			//Figure out which of our predrawn cursor orientations best matches the
 			//actual cursor direction.  Frame 0 is assumed to point right and continue
 			//clockwise.
-			m_directionFrame=(Int)(theta/(2.0f*M_PI/(Real)numDirections)+0.5f);
+			m_directionFrame=(Int)(theta/(WWMATH_TWO_PI/(Real)numDirections)+0.5f);
 			if (m_directionFrame >= numDirections)
 				m_directionFrame = 0;
 		}

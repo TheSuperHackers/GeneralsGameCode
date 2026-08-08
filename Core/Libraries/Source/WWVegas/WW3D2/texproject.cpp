@@ -940,7 +940,7 @@ bool TexProjectClass::Compute_Perspective_Projection
 	** If the box is behind the viewpoint or the viewpoint is inside the box
 	** our FOV will be > 180 degrees. Have to give up
 	*/
-	if ((box.Center.Z > 0.0f) || (box.Extent.Z > WWMath::Fabs(box.Center.Z))) {
+	if ((box.Center.Z > 0.0f) || (box.Extent.Z > WWMath::Fabsf_Legacy(box.Center.Z))) {
 		return false;
 	}
 
@@ -958,10 +958,10 @@ bool TexProjectClass::Compute_Perspective_Projection
 		zfar = box.Center.Z + user_zfar;
 	}
 
-	float tan_hfov2 = WWMath::Fabs(box.Extent.X / (box.Center.Z + box.Extent.Z));
-	float tan_vfov2 = WWMath::Fabs(box.Extent.Y / (box.Center.Z + box.Extent.Z));
-	float hfov = 2.0f * WWMath::Atan(tan_hfov2);
-	float vfov = 2.0f * WWMath::Atan(tan_vfov2);
+	float tan_hfov2 = WWMath::Fabsf_Legacy(box.Extent.X / (box.Center.Z + box.Extent.Z));
+	float tan_vfov2 = WWMath::Fabsf_Legacy(box.Extent.Y / (box.Center.Z + box.Extent.Z));
+	float hfov = 2.0f * WWMath::Atan_Legacy(tan_hfov2);
+	float vfov = 2.0f * WWMath::Atan_Legacy(tan_vfov2);
 
 	/*
 	** Plug in the results.

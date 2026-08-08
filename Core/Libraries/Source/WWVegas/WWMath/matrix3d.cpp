@@ -248,7 +248,7 @@ void Matrix3D::Set_Rotation(const Quaternion & q)
  *=============================================================================================*/
 float Matrix3D::Get_X_Rotation() const
 {
-	return WWMath::Atan2(Row[2][1], Row[1][1]);
+	return WWMath::Atan2_Legacy(Row[2][1], Row[1][1]);
 }
 
 
@@ -266,7 +266,7 @@ float Matrix3D::Get_X_Rotation() const
  *=============================================================================================*/
 float Matrix3D::Get_Y_Rotation() const
 {
-	return WWMath::Atan2(Row[0][2], Row[2][2]);
+	return WWMath::Atan2_Legacy(Row[0][2], Row[2][2]);
 }
 
 
@@ -284,7 +284,7 @@ float Matrix3D::Get_Y_Rotation() const
  *=============================================================================================*/
 float Matrix3D::Get_Z_Rotation() const
 {
-	return WWMath::Atan2(Row[1][0], Row[0][0]);
+	return WWMath::Atan2_Legacy(Row[1][0], Row[0][0]);
 }
 
 
@@ -372,7 +372,7 @@ void Matrix3D::Look_At_Dir(const Vector3 &pos, const Vector3 &dir, float roll)
 	float dz = dir.Z;
 
 	// length of projection onto XY plane
-	float len2 = (float)WWMath::Sqrt(dx*dx + dy*dy);
+	float len2 = (float)WWMath::Sqrt_Legacy(dx*dx + dy*dy);
 
 	// pitch
 	sinp = dz;
@@ -414,7 +414,7 @@ void Matrix3D::buildTransformMatrix( const Vector3 &pos, const Vector3 &dir )
 	float sinp, cosp;	// sine and cosine of the pitch ("up-down" tilt about y)
 	float siny, cosy;	// sine and cosine of the yaw ("left-right"tilt about z)
 
-	float len2 = (float)sqrt( (dir.X * dir.X) + (dir.Y * dir.Y) );
+	float len2 = (float)WWMath::Sqrt( (dir.X * dir.X) + (dir.Y * dir.Y) );
 
 	sinp = dir.Z;
 	cosp = len2;
@@ -472,8 +472,8 @@ void Matrix3D::Obj_Look_At(const Vector3 &p,const Vector3 &t,float roll)
 	dy = (t[1] - p[1]);
 	dz = (t[2] - p[2]);
 
-	len1 = (float)sqrt(dx*dx + dy*dy + dz*dz);
-	len2 = (float)sqrt(dx*dx + dy*dy);
+	len1 = (float)WWMath::Sqrt(dx*dx + dy*dy + dz*dz);
+	len2 = (float)WWMath::Sqrt(dx*dx + dy*dy);
 
 	if (len1 != 0.0f) {
 		sinp = dz/len1;
@@ -552,7 +552,7 @@ Matrix3D * Matrix3D::Get_Inverse(Matrix3D * out, float * detOut, const Matrix3D 
 	if (detOut)
 			*detOut = det;
 
-	if (fabsf(det) < 1e-8f)
+	if (WWMath::Fabsf(det) < 1e-8f)
 			return NULL;
 
 	const float invDet = 1.0f / det;
@@ -1121,7 +1121,7 @@ void Matrix3D::Transform_Center_Extent_AABox
 		for (int j=0; j<3; j++) {
 
 			(*set_center)[i] += Row[i][j] * center[j];
-			(*set_extent)[i] += WWMath::Fabs(Row[i][j] * extent[j]);
+			(*set_extent)[i] += WWMath::Fabsf_Legacy(Row[i][j] * extent[j]);
 
 		}
 	}
@@ -1150,9 +1150,9 @@ int Matrix3D::Is_Orthogonal() const
 	if (Vector3::Dot_Product(y,z) > WWMATH_EPSILON) return 0;
 	if (Vector3::Dot_Product(z,x) > WWMATH_EPSILON) return 0;
 
-	if (WWMath::Fabs(x.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
-	if (WWMath::Fabs(y.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
-	if (WWMath::Fabs(z.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(x.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(y.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(z.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
 
 	return 1;
 }

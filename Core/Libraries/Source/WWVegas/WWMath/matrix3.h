@@ -361,12 +361,12 @@ WWINLINE Matrix3x3::Matrix3x3(const Vector3 & axis,float s_angle,float c_angle)
 
 WWINLINE void Matrix3x3::Set(const Vector3 & axis,float angle)
 {
-	Set(axis,sinf(angle),cosf(angle));
+	Set(axis,WWMath::Sinf(angle),WWMath::Cosf(angle));
 }
 
 WWINLINE void Matrix3x3::Set(const Vector3 & axis,float s,float c)
 {
-	WWASSERT(WWMath::Fabs(axis.Length2() - 1.0f) < 0.001f);
+	WWASSERT(WWMath::Fabsf_Legacy(axis.Length2() - 1.0f) < 0.001f);
 
 	Row[0].Set(
 		(float)(axis[0]*axis[0] + c*(1.0f - axis[0]*axis[0])),
@@ -437,7 +437,7 @@ WWINLINE Matrix3x3 Matrix3x3::Inverse() const    // Gauss-Jordan elimination wit
 		// Find largest pivot in column j among rows j..3
 		i1 = j;
 		for (i=j+1; i<3; i++) {
-			if (WWMath::Fabs(a[i][j]) > WWMath::Fabs(a[i1][j])) {
+			if (WWMath::Fabsf_Legacy(a[i][j]) > WWMath::Fabsf_Legacy(a[i1][j])) {
 				i1 = i;
 			}
 		}
@@ -589,7 +589,7 @@ WWINLINE Matrix3x3& Matrix3x3::operator /= (float d)
 WWINLINE float Matrix3x3::Get_X_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(0.0,1.0,0.0);
-	return WWMath::Atan2(v[2], v[1]);
+	return WWMath::Atan2_Legacy(v[2], v[1]);
 }
 
 /***********************************************************************************************
@@ -607,7 +607,7 @@ WWINLINE float Matrix3x3::Get_X_Rotation() const
 WWINLINE float Matrix3x3::Get_Y_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(0.0,0.0,1.0);
-	return WWMath::Atan2(v[0],v[2]);
+	return WWMath::Atan2_Legacy(v[0],v[2]);
 }
 
 /***********************************************************************************************
@@ -625,7 +625,7 @@ WWINLINE float Matrix3x3::Get_Y_Rotation() const
 WWINLINE float Matrix3x3::Get_Z_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(1.0,0.0,0.0);
-	return WWMath::Atan2(v[1],v[0]);
+	return WWMath::Atan2_Legacy(v[1],v[0]);
 }
 
 WWINLINE Vector3 Matrix3x3::Get_X_Vector() const
@@ -775,7 +775,7 @@ WWINLINE int operator != (const Matrix3x3 & a, const Matrix3x3 & b)
  *=============================================================================================*/
 WWINLINE void Matrix3x3::Rotate_X(float theta)
 {
-	Rotate_X(sinf(theta),cosf(theta));
+	Rotate_X(WWMath::Sinf(theta),WWMath::Cosf(theta));
 }
 
 WWINLINE void Matrix3x3::Rotate_X(float s,float c)
@@ -809,7 +809,7 @@ WWINLINE void Matrix3x3::Rotate_X(float s,float c)
  *=============================================================================================*/
 WWINLINE void Matrix3x3::Rotate_Y(float theta)
 {
-	Rotate_Y(sinf(theta),cosf(theta));
+	Rotate_Y(WWMath::Sinf(theta),WWMath::Cosf(theta));
 }
 
 WWINLINE void Matrix3x3::Rotate_Y(float s,float c)
@@ -844,7 +844,7 @@ WWINLINE void Matrix3x3::Rotate_Y(float s,float c)
  *=============================================================================================*/
 WWINLINE void Matrix3x3::Rotate_Z(float theta)
 {
-	Rotate_Z(sinf(theta),cosf(theta));
+	Rotate_Z(WWMath::Sinf(theta),WWMath::Cosf(theta));
 }
 
 WWINLINE void Matrix3x3::Rotate_Z(float s,float c)
@@ -898,7 +898,7 @@ WWINLINE Matrix3x3 Create_X_Rotation_Matrix3(float s,float c)
 
 WWINLINE Matrix3x3 Create_X_Rotation_Matrix3(float rad)
 {
-	return Create_X_Rotation_Matrix3(sinf(rad),cosf(rad));
+	return Create_X_Rotation_Matrix3(WWMath::Sinf(rad),WWMath::Cosf(rad));
 }
 
 /***********************************************************************************************
@@ -934,7 +934,7 @@ WWINLINE Matrix3x3 Create_Y_Rotation_Matrix3(float s,float c)
 
 WWINLINE Matrix3x3 Create_Y_Rotation_Matrix3(float rad)
 {
-	return Create_Y_Rotation_Matrix3(sinf(rad),cosf(rad));
+	return Create_Y_Rotation_Matrix3(WWMath::Sinf(rad),WWMath::Cosf(rad));
 }
 
 /***********************************************************************************************
@@ -970,7 +970,7 @@ WWINLINE Matrix3x3 Create_Z_Rotation_Matrix3(float s,float c)
 
 WWINLINE Matrix3x3 Create_Z_Rotation_Matrix3(float rad)
 {
-	return Create_Z_Rotation_Matrix3(sinf(rad),cosf(rad));
+	return Create_Z_Rotation_Matrix3(WWMath::Sinf(rad),WWMath::Cosf(rad));
 }
 
 WWINLINE void Matrix3x3::Rotate_Vector(const Matrix3x3 & A,const Vector3 & in,Vector3 * out)
@@ -1018,7 +1018,7 @@ WWINLINE void Matrix3x3::Rotate_AABox_Extent(const Vector3 & extent,Vector3 * se
 		(*set_extent)[i] = 0.0f;
 
 		for (int j=0; j<3; j++) {
-			(*set_extent)[i] += WWMath::Fabs(Row[i][j] * extent[j]);
+			(*set_extent)[i] += WWMath::Fabsf_Legacy(Row[i][j] * extent[j]);
 		}
 	}
 }

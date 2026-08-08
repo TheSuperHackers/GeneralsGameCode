@@ -450,7 +450,7 @@ void PolygonClass::Compute_Plane()
 	ay /= (double)NumVerts;
 	az /= (double)NumVerts;
 
-	double len = WWMath::Sqrt(nx*nx + ny*ny + nz*nz);
+	double len = WWMath::Sqrt_Legacy(nx*nx + ny*ny + nz*nz);
 	nx /= len;
 	ny /= len;
 	nz /= len;

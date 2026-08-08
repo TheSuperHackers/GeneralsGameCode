@@ -87,7 +87,7 @@ public:
 	WWINLINE float Length2() const { return (X*X + Y*Y + Z*Z + W*W); }
 
 	// Magnitude of the quaternion
-	WWINLINE float Length() const { return WWMath::Sqrt(Length2()); }
+	WWINLINE float Length() const { return WWMath::Sqrt_Legacy(Length2()); }
 
 	// Make the quaternion unit length
 	void Normalize();
@@ -277,10 +277,10 @@ WWINLINE bool Quaternion::Is_Valid() const
 
 WWINLINE bool Equal_Within_Epsilon(const Quaternion &a, const Quaternion &b, float epsilon)
 {
-   return(	(WWMath::Fabs(a.X - b.X) < epsilon) &&
-				(WWMath::Fabs(a.Y - b.Y) < epsilon) &&
-				(WWMath::Fabs(a.Z - b.Z) < epsilon)	&&
-				(WWMath::Fabs(a.W - b.W) < epsilon) );
+   return(	(WWMath::Fabsf_Legacy(a.X - b.X) < epsilon) &&
+				(WWMath::Fabsf_Legacy(a.Y - b.Y) < epsilon) &&
+				(WWMath::Fabsf_Legacy(a.Z - b.Z) < epsilon)	&&
+				(WWMath::Fabsf_Legacy(a.W - b.W) < epsilon) );
 }
 
 /***********************************************************************************************

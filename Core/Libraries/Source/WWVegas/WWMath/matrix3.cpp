@@ -338,9 +338,9 @@ int Matrix3x3::Is_Orthogonal() const
 	if (Vector3::Dot_Product(y,z) > WWMATH_EPSILON) return 0;
 	if (Vector3::Dot_Product(z,x) > WWMATH_EPSILON) return 0;
 
-	if (WWMath::Fabs(x.Length() - 1.0f) > WWMATH_EPSILON) return 0;
-	if (WWMath::Fabs(y.Length() - 1.0f) > WWMATH_EPSILON) return 0;
-	if (WWMath::Fabs(z.Length() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(x.Length() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(y.Length() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(z.Length() - 1.0f) > WWMATH_EPSILON) return 0;
 
 	return 1;
 }
