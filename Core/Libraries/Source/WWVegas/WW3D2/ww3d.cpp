@@ -104,6 +104,7 @@
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"
+#include "Backend/RenderBackend.h"
 #include "render2d.h"
 #include "WWLib/bound.h"
 #include "rddesc.h"
@@ -278,6 +279,12 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
 	if (!DX8Wrapper::Init(_Hwnd, lite)) {
 		return(WW3D_ERROR_INITIALIZATION_FAILED);
 	}
+
+	// TheSuperHackers @refactor bobtista 07/08/2026 The backend object is created
+	// once here and destroyed in WW3D::Shutdown, so it survives the device
+	// release and create cycles that drive its Initialize and Shutdown calls.
+	Init_Render_Backend();
+
 	WWDEBUG_SAY(("Allocate Debug Resources"));
 	Allocate_Debug_Resources();
 
@@ -367,6 +374,8 @@ WW3DErrorType WW3D::Shutdown()
 	if (!Lite) {
 		DX8Wrapper::Shutdown();
 	}
+
+	Shutdown_Render_Backend();
 
 	/*
 	** Clear the default static sort lists
