@@ -140,26 +140,18 @@ enum ThingTemplateAudioType CPP_11(: Int)
 class AudioArray
 {
 public:
-	DynamicAudioEventRTS* m_audio[TTAUDIO_COUNT];
+	RefCountPtr<DynamicAudioEventRTS> m_audio[TTAUDIO_COUNT];
 
-	AudioArray()
-	{
-		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
-			m_audio[i] = nullptr;
-	}
+	AudioArray() {}
 
-	~AudioArray()
-	{
-		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
-			deleteInstance(m_audio[i]);
-	}
+	~AudioArray() {}
 
 	AudioArray(const AudioArray& that)
 	{
 		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
 		{
 			if (that.m_audio[i])
-				m_audio[i] = newInstance(DynamicAudioEventRTS)(*that.m_audio[i]);
+				m_audio[i] = RefCountPtr<DynamicAudioEventRTS>::Create_NoAddRef(newInstance(DynamicAudioEventRTS)(*that.m_audio[i]));
 			else
 				m_audio[i] = nullptr;
 		}
@@ -176,7 +168,7 @@ public:
 					if (m_audio[i])
 						*m_audio[i] = *that.m_audio[i];
 					else
-						m_audio[i] = newInstance(DynamicAudioEventRTS)(*that.m_audio[i]);
+						m_audio[i] = RefCountPtr<DynamicAudioEventRTS>::Create_NoAddRef(newInstance(DynamicAudioEventRTS)(*that.m_audio[i]));
 				}
 				else
 				{
@@ -633,7 +625,7 @@ protected:
 	Real getBuildTime() const { return m_buildTime; }
 	const PerUnitSoundMap* getAllPerUnitSounds() const { return &m_perUnitSounds; }
 	void validateAudio();
-	const AudioEventRTS* getAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] ? &m_audioarray.m_audio[t]->m_event : &s_audioEventNoSound; }
+	const AudioEventRTS* getAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] ? m_audioarray.m_audio[t].Peek() : &s_audioEventNoSound; }
   Bool hasAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] != nullptr; }
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

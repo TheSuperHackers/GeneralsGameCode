@@ -95,10 +95,10 @@ MusicManager::~MusicManager()
 }
 
 //-------------------------------------------------------------------------------------------------
-void MusicManager::playTrack( AudioEventRTS *eventToUse )
+void MusicManager::playTrack( DynamicAudioEventRTS *eventToUse )
 {
-	AudioRequest *audioRequest = TheAudio->allocateAudioRequest( true );
-	audioRequest->m_pendingEvent = eventToUse;
+	AudioRequest *audioRequest = TheAudio->allocateAudioRequest();
+	audioRequest->m_pendingEvent = RefCountPtr<DynamicAudioEventRTS>::Create_AddRef(eventToUse);
 	audioRequest->m_request = AR_Play;
 	TheAudio->appendAudioRequest( audioRequest );
 }
@@ -106,14 +106,14 @@ void MusicManager::playTrack( AudioEventRTS *eventToUse )
 //-------------------------------------------------------------------------------------------------
 void MusicManager::stopTrack( AudioHandle eventToRemove )
 {
-	AudioRequest *audioRequest = TheAudio->allocateAudioRequest( false );
+	AudioRequest *audioRequest = TheAudio->allocateAudioRequest();
 	audioRequest->m_handleToInteractOn = eventToRemove;
 	audioRequest->m_request = AR_Stop;
 	TheAudio->appendAudioRequest( audioRequest );
 }
 
 //-------------------------------------------------------------------------------------------------
-void MusicManager::addAudioEvent( AudioEventRTS *eventToAdd )
+void MusicManager::addAudioEvent( DynamicAudioEventRTS *eventToAdd )
 {
 	playTrack( eventToAdd );
 }
