@@ -45,6 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
+#include "WWLib/utf8.h"
 
 
 // -----------------------------------------------------
@@ -307,11 +308,19 @@ char*  AsciiString::getBufferForRead(Int len)
 void AsciiString::translate(const UnicodeString& stringSrc)
 {
 	validate();
-	/// @todo srj put in a real translation here; this will only work for 7-bit ascii
-	clear();
-	Int len = stringSrc.getLength();
-	for (Int i = 0; i < len; i++)
-		concat((char)stringSrc.getCharAt(i));
+	// TheSuperHackers @fix bobtista 02/04/2026 Implement UTF-8 conversion replacing 7-bit ASCII only implementation
+	const WideChar* src = stringSrc.str();
+	const size_t srcLen = wcslen(src);
+	const size_t dstLen = Wide_To_Utf8_Len(src, srcLen);
+	if (dstLen == 0)
+	{
+		clear();
+	}
+	else
+	{
+		ensureUniqueBufferOfSize((Int)dstLen + 1, false, nullptr, nullptr);
+		Wide_To_Utf8(peek(), dstLen + 1, src, srcLen);
+	}
 	validate();
 }
 

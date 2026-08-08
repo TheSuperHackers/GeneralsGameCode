@@ -45,6 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
+#include "WWLib/utf8.h"
 
 
 // -----------------------------------------------------
@@ -221,11 +222,31 @@ WideChar* UnicodeString::getBufferForRead(Int len)
 void UnicodeString::translate(const AsciiString& stringSrc)
 {
 	validate();
-	/// @todo srj put in a real translation here; this will only work for 7-bit ascii
-	clear();
-	Int len = stringSrc.getLength();
-	for (Int i = 0; i < len; i++)
-		concat((WideChar)stringSrc.getCharAt(i));
+	// TheSuperHackers @fix bobtista 02/04/2026 Convert UTF-8 to wide, replacing the 7-bit ASCII only
+	// implementation. Data that is not valid UTF-8 (e.g. legacy CP1252) falls back to a 1:1 byte cast
+	// to preserve the original characters instead of producing replacement characters.
+	const char* src = stringSrc.str();
+	const size_t srcLen = strlen(src);
+	const size_t dstLen = Utf8_To_Wide_Len(src, srcLen);
+	if (srcLen == 0)
+	{
+		clear();
+	}
+	else if (dstLen == UTF8_INVALID)
+	{
+		ensureUniqueBufferOfSize((Int)srcLen + 1, false, nullptr, nullptr);
+		WideChar* buf = peek();
+		for (size_t i = 0; i < srcLen; ++i)
+		{
+			buf[i] = (WideChar)(unsigned char)src[i];
+		}
+		buf[srcLen] = 0;
+	}
+	else
+	{
+		ensureUniqueBufferOfSize((Int)dstLen + 1, false, nullptr, nullptr);
+		Utf8_To_Wide(peek(), dstLen + 1, src, srcLen);
+	}
 	validate();
 }
 

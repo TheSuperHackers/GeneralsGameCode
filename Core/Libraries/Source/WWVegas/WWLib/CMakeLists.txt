@@ -134,6 +134,8 @@ set(WWLIB_SRC
     trim.cpp
     trim.h
     uarray.h
+    utf8.cpp
+    utf8.h
     vector.cpp
     Vector.h
     visualc.h
