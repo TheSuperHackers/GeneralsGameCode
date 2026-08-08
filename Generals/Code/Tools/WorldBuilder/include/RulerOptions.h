@@ -18,61 +18,55 @@
 
 #pragma once
 
-// EditAction.h : header file
+// RulerOptions.h : header file
 //
-
-
-class ScriptAction;
-class SidesList;
+#include "OptionsPanel.h"
 
 /////////////////////////////////////////////////////////////////////////////
-// EditAction dialog
+// RulerOptions dialog
 
-class EditAction : public CDialog
+class RulerOptions : public COptionsPanel
 {
+
 // Construction
 public:
-	EditAction(CWnd* pParent = nullptr);   // standard constructor
+
+	RulerOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(EditAction)
-	enum { IDD = IDD_ScriptAction };
+	//{{AFX_DATA(RulerOptions)
+	enum { IDD = IDD_RULER_OPTIONS };
 		// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(EditAction)
+	//{{AFX_VIRTUAL(RulerOptions)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
+	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
 // Implementation
-public:
-	void setAction(ScriptAction *pAction) {m_action = pAction;}
-
-protected:
-	void formatScriptActionText(Int parmNdx);
-protected:
-	ScriptAction *m_action;
-	Bool			m_updating;
-	Bool			m_modifiedTextColor;
-	CRichEditCtrl m_myEditCtrl;
-	CHARRANGE m_curLinkChrg;
-	Int				m_curEditParameter;
-	CTreeCtrl	m_actionTreeView;
-
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(EditAction)
+	//{{AFX_MSG(RulerOptions)
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnSelchangeScriptActionType();
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnChangeWidthEdit();
+	afx_msg void OnChangeCheckRuler();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	static RulerOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+
+	Bool		m_updating; ///<true if the ui is updating itself.
+
+public:
+	static void setWidth(Real width);
 };
 
 //{{AFX_INSERT_LOCATION}}

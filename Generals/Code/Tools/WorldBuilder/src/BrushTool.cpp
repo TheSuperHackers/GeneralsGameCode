@@ -20,6 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
+
 #include "StdAfx.h"
 #include "resource.h"
 

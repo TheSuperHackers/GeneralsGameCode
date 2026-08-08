@@ -108,7 +108,7 @@ BOOL ContourOptions::OnInitDialog()
 
 /// Handles slider ui messages.
 /** Gets the info, determines if it is the feather or width slider,
-		gets the new value, and updates the correspondig edit control
+		gets the new value, and updates the corresponding edit control
 		and the brush tool. */
 void ContourOptions::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {

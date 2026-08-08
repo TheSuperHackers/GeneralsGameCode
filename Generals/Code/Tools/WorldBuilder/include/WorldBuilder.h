@@ -51,6 +51,7 @@
 #include "BuildListTool.h"
 #include "RampTool.h"
 #include "ScorchTool.h"
+#include "RulerTool.h"
 #include "Common/Debug.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -93,7 +94,7 @@ public:
 
 protected:
 
-	enum {NUM_VIEW_TOOLS=24};
+	enum {NUM_VIEW_TOOLS=25};
 
 	Tool							*m_tools[NUM_VIEW_TOOLS]; ///< array of tool pointers.
 	Tool							*m_curTool;   ///< Currently active tool.
@@ -122,6 +123,7 @@ protected:
 	RampTool					m_rampTool;					///< Ramp tool.
 	ScorchTool				m_scorchTool;				///< Scorch tool.
 	BorderTool				m_borderTool;				///< Border tool.
+	RulerTool					m_rulerTool;				///< Ruler tool.
 
 	Int								m_lockCurTool;
 
@@ -154,7 +156,7 @@ public:
 	/// Set the tool that will be active.
 	void setActiveTool(Tool *newTool);
 
-	/// Sets the current directry for file opens.
+	/// Sets the current directory for file opens.
 	void setCurrentDirectory(AsciiString dir) {m_currentDirectory = dir;};
 
 	Tool *getCurTool() { return m_curTool; }

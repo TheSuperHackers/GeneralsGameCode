@@ -147,6 +147,8 @@ public: // Editing methods.
 	void reloadTextures(); ///< Reloads textures from disk.
 	void resetResources(); ///< Releases textures in preparation for device reset.
 
+	Bool getRawTileData(Short tileNdx, Int width, UnsignedByte *buffer, Int bufLen);
+
 	void dbgVerifyAfterUndo(); ///< Verifies the structures are still consistent.
 	Bool doCliffAdjustment(Int xIndex, Int yIndex);
 	Bool removeCliffMapping();

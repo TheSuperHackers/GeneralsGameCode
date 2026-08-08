@@ -59,6 +59,7 @@
 #include "WorldBuilderView.h"
 #include "MapPreview.h"
 
+
 // Can't currently have multiple open... jba.
 #define notONLY_ONE_AT_A_TIME
 
@@ -107,6 +108,7 @@ BEGIN_MESSAGE_MAP(CWorldBuilderDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_2DWINDOW, OnUpdateWindow2dwindow)
 	ON_COMMAND(ID_VIEW_RELOADTEXTURES, OnViewReloadtextures)
 	ON_COMMAND(ID_EDIT_SCRIPTS, OnEditScripts)
+	ON_COMMAND(ID_SCRIPT_EDIT, OnEditScripts)
 	ON_COMMAND(ID_VIEWHOME, OnViewHome)
 	ON_COMMAND(ID_TEXTURESIZING_TILE4X4, OnTexturesizingTile4x4)
 	ON_UPDATE_COMMAND_UI(ID_TEXTURESIZING_TILE4X4, OnUpdateTexturesizingTile4x4)
@@ -393,6 +395,16 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 				}
 				pMapObj = pMapObj->getNext();
 			}
+
+			PolygonTrigger* polyTrigger = PolygonTrigger::getFirstPolygonTrigger();
+			// Add the triggers to the layers list.
+			while (polyTrigger) {
+				layerName = polyTrigger->getLayerName();
+				TheLayersList->addPolygonTriggerToLayersList(polyTrigger, layerName);
+
+				polyTrigger = polyTrigger->getNext();
+			}
+
 			TheLayersList->enableUpdates();
 
 			TerrainMaterial::updateTextures(m_heightMap);
@@ -418,6 +430,25 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 
 		// note - mHeight map has ref count of 1.
 	}
+}
+
+AsciiString ConvertToNonGCName(AsciiString name, Bool checkTemplate=true)
+{
+	const char* replacePrefix = "GC_";
+	const size_t offset = name.startsWith(replacePrefix) ? strlen(replacePrefix) : 0u;
+	char newName[256];
+	strlcpy(newName, name.str() + offset, ARRAY_SIZE(newName));
+	AsciiString swapName;
+	swapName.set(newName);
+	if (checkTemplate)
+	{
+		const ThingTemplate *tt = TheThingFactory->findTemplate(swapName);
+		if (tt) {
+			return swapName;
+		}
+		return AsciiString::TheEmptyString;
+	}
+	return swapName;
 }
 
 AsciiString ConvertName(AsciiString name)
@@ -460,14 +491,20 @@ void CWorldBuilderDoc::validate()
 	Bool changed = false;
 	AsciiString swapName;
 
+	Bool needToFixTeams = false;
+
 	// verify/fix the build lists
 	for (int side=0; side<TheSidesList->getNumSides(); side++) {
 		SidesInfo *pSide = TheSidesList->getSideInfo(side);
 
 		AsciiString tmplname = pSide->getDict()->getAsciiString(TheKey_playerFaction);
+		AsciiString playername = pSide->getDict()->getAsciiString(TheKey_playerName);
+		if (tmplname.isEmpty()) {
+			continue; // Neutral player has empty template. jba. [8/8/2003]
+		}
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 		if (!pt) {
-			DEBUG_LOG(("Faction %s could not be found in sides list!", tmplname.str()));
+			DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!", playername.str(), tmplname.str()));
 			if (tmplname.startsWith("FactionFundamentalist")) {
 				swapName = ConvertFaction(tmplname);
 				if (swapName != AsciiString::TheEmptyString) {
@@ -550,6 +587,15 @@ void CWorldBuilderDoc::validate()
 				}
 			}
 
+			// quick hack to remove "GC_" objects from Generals mission disk maps.
+			if (name.startsWith("GC_")) {
+				swapName = ConvertToNonGCName(name);
+				if (swapName != AsciiString::TheEmptyString) {
+					swapDict.setAsciiString(NAMEKEY(name), swapName);
+					exists = true;
+				}
+			}
+
 			if (!exists) {
 				ReplaceUnitDialog dlg;
 				dlg.setMissing(name);
@@ -590,9 +636,13 @@ void CWorldBuilderDoc::validate()
 				if (pSide) {
 //					Bool hasColor = false;
 					AsciiString tmplname = pSide->getDict()->getAsciiString(TheKey_playerFaction);
+					AsciiString playername = pSide->getDict()->getAsciiString(TheKey_playerName);
+					if (tmplname.isEmpty()) {
+						continue; // Neutral player has empty template. jba. [8/8/2003]
+					}
 					const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 					if (!pt) {
-						DEBUG_LOG(("Faction %s could not be found in sides list!", tmplname.str()));
+						DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!", playername.str(), tmplname.str()));
 						if (tmplname.startsWith("FactionFundamentalist")) {
 							swapName = ConvertFaction(tmplname);
 							if (swapName != AsciiString::TheEmptyString) {
@@ -602,14 +652,20 @@ void CWorldBuilderDoc::validate()
 						}
 					}
 				} else {
-					DEBUG_LOG(("Side %s could not be found in sides list!", teamOwner.str()));
+					needToFixTeams = true;
+					DEBUG_LOG(("Side '%s' could not be found in sides list!", teamOwner.str()));
 				}
 			} else {
-				DEBUG_LOG(("Team %s could not be found in sides list!", teamName.str()));
+				needToFixTeams = true;
+				DEBUG_LOG(("Team '%s' could not be found in sides list!", teamName.str()));
 			}
 		} else {
-			DEBUG_LOG(("Object %s does not have a team at all!", name.str()));
+			needToFixTeams = true;
+			DEBUG_LOG(("Object '%s' does not have a team at all!", name.str()));
 		}
+	}
+	if (needToFixTeams) {
+		AfxMessageBox(IDS_NEED_TO_FIX_TEAMS, MB_OK|MB_ICONERROR);
 	}
 }
 
@@ -1235,6 +1291,7 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 	ICoord3D loc;
 	pTrig->setWaterArea(true);
+	pTrig->setTriggerName("Default Water");
 	loc.x = -hi.borderWidth*MAP_XY_FACTOR;
 	loc.y = -hi.borderWidth*MAP_XY_FACTOR;
 	loc.z = TheGlobalData->m_waterPositionZ;
@@ -1246,7 +1303,7 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	loc.x = -hi.borderWidth*MAP_XY_FACTOR;
 	pTrig->addPoint(loc);
 	PolygonTrigger::addPolygonTrigger(pTrig);
-
+	TheLayersList->addPolygonTriggerToLayersList(pTrig, pTrig->getLayerName());
 	SetHeightMap(m_heightMap, true);
 	TerrainMaterial::updateTextures(m_heightMap);
 
@@ -1886,8 +1943,8 @@ void CWorldBuilderDoc::OnViewReloadtextures()
 
 void CWorldBuilderDoc::OnEditScripts()
 {
-	ScriptDialog script;
-	script.DoModal();
+	ASSERT(CMainFrame::GetMainFrame());
+	CMainFrame::GetMainFrame()->onEditScripts();
 }
 
 /* when "home" key is pressed, goes to the initial camera waypoint or if

@@ -109,6 +109,14 @@ protected:
 	afx_msg void OnViewShowmacrotexture();
 	afx_msg void OnUpdateViewShowmacrotexture(CCmdUI* pCmdUI);
 	afx_msg void OnEditSelectmacrotexture();
+	afx_msg void OnLookEast();
+	afx_msg void OnUpdateLookEast(CCmdUI* pCmdUI);
+	afx_msg void OnLookNorth();
+	afx_msg void OnUpdateLookNorth(CCmdUI* pCmdUI);
+	afx_msg void OnLookSouth();
+	afx_msg void OnUpdateLookSouth(CCmdUI* pCmdUI);
+	afx_msg void OnLookWest();
+	afx_msg void OnUpdateLookWest(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowshadows();
 	afx_msg void OnUpdateViewShowshadows(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowSoftWater();

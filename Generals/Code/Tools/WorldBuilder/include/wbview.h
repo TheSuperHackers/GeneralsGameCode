@@ -34,6 +34,12 @@ enum TPickedStatus {
 	PICK_ARROW
 };
 
+enum RulerTypeEnum {
+	RULER_NONE,
+	RULER_LINE,
+	RULER_CIRCLE,
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // WbView view
 
@@ -77,6 +83,9 @@ protected:
 	// Box feedback.
 	RECT										m_feedbackBox;
 	Bool										m_doRectFeedback;
+	int											m_doRulerFeedback;
+	Coord3D									m_rulerPoints[2];
+	Real										m_rulerLength;
 
 	// Light direction feedback
 	Coord3D m_lightDirection[3];	//direction of all 3 lights
@@ -88,6 +97,8 @@ protected:
 public:
 
 	void doRectFeedback(Bool doFeedback, RECT &rect) {m_feedbackBox=rect;m_doRectFeedback = doFeedback;};
+	void doRulerFeedback(int doRulerFeedback) {m_doRulerFeedback = doRulerFeedback;}
+	void rulerFeedbackInfo(Coord3D &point1, Coord3D &point2, Real dist);
 
 	void doLightFeedback(Bool doFeedback, Coord3D direction, Int lightIndex) { m_doLightFeedback=doFeedback; if (m_doLightFeedback) m_lightDirection[lightIndex]=direction;}
 

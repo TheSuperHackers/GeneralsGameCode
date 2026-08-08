@@ -274,8 +274,10 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 			break;
 		case Parameter::ANGLE:
 			break;
+#if !RTS_GENERALS
 		case Parameter::PERCENT:
 			break;
+#endif
 		case Parameter::BOOLEAN:
 			break;
 
@@ -299,8 +301,10 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 		case Parameter::RADAR_EVENT_TYPE:
 			break;
 
+#if !RTS_GENERALS
     case Parameter::LEFT_OR_RIGHT:
       break;
+#endif
 
     case Parameter::RELATION:
 			break;
@@ -428,7 +432,9 @@ AsciiString EditParameter::getInfoText(Parameter *pParm)
 		case Parameter::COLOR:
 		case Parameter::COORD3D:
 		case Parameter::ANGLE:
+#if !RTS_GENERALS
 		case Parameter::PERCENT:
+#endif
 		case Parameter::BOOLEAN:
 		case Parameter::REAL:
 		case Parameter::FLAG:
@@ -455,7 +461,9 @@ AsciiString EditParameter::getInfoText(Parameter *pParm)
 		case Parameter::OBJECT_TYPE_LIST:
 		case Parameter::REVEALNAME:
 		case Parameter::OBJECT_PANEL_FLAG:
+#if !RTS_GENERALS
     case Parameter::LEFT_OR_RIGHT:
+#endif
 
 			break;
 
@@ -1849,11 +1857,13 @@ BOOL EditParameter::OnInitDialog()
 			showCombo = false;
 			break;
 
+#if !RTS_GENERALS
 		case Parameter::PERCENT:
 			captionText = "Percent:";
 			editText.Format("%.2f", m_parameter->getReal()*100.0f);
 			showCombo = false;
 			break;
+#endif
 
 		case Parameter::FLAG:
 			captionText = "Flag named:";
@@ -1923,6 +1933,7 @@ BOOL EditParameter::OnInitDialog()
 			break;
 
 
+#if !RTS_GENERALS
     case Parameter::LEFT_OR_RIGHT:
 			captionText = "Evacuate Container Side Choices:";
 			pList->InsertString(-1,"Left");
@@ -1932,6 +1943,7 @@ BOOL EditParameter::OnInitDialog()
 			showList = true;
 			break;
 
+#endif
 
 		case Parameter::RELATION:
 			captionText = "Relation:";
@@ -2234,11 +2246,13 @@ void EditParameter::OnOK()
 			}
 			break;
 
+#if !RTS_GENERALS
 		case Parameter::PERCENT:
 			if (! scanReal(pEdit, 1.0f/100.0f)) {
 				return;
 			}
 			break;
+#endif
 
 		case Parameter::BOOLEAN:
 		case Parameter::COMPARISON:
@@ -2265,10 +2279,12 @@ void EditParameter::OnOK()
 			break;
 
 
+#if !RTS_GENERALS
     case Parameter::LEFT_OR_RIGHT:
       m_parameter->friend_setInt(pList->GetCurSel() + 1);
       break;
 
+#endif
 
 		case Parameter::LOCALIZED_TEXT:
 			pCombo->GetWindowText(txt);

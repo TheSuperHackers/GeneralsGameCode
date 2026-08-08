@@ -277,6 +277,13 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Show Wireframe 3D View\tCtrl+W", ID_VIEW_SHOWWIREFRAME
         MENUITEM "Show From Top Down View\tCtrl+F", ID_VIEW_SHOWTOPDOWNVIEW
+        POPUP "Camera Direction"
+        BEGIN
+            MENUITEM "Look North",                   ID_LOOK_NORTH
+            MENUITEM "Look South",                   ID_LOOK_SOUTH
+            MENUITEM "Look West",                    ID_LOOK_WEST
+            MENUITEM "Look East",                    ID_LOOK_EAST
+        END
         MENUITEM "Show 3-Way Blends in White",  ID_VIEW_SHOWEXTRABLENDS
         MENUITEM "Show Clouds\tCtrl+U",         ID_VIEW_SHOWCLOUDS
         MENUITEM "Show Soft Water",             ID_VIEW_SHOWSOFTWATER

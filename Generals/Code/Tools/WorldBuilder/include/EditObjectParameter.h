@@ -44,6 +44,7 @@ public:
 	//{{AFX_VIRTUAL(EditObjectParameter)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
