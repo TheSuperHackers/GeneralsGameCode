@@ -211,18 +211,15 @@ void VictoryConditions::update()
 				TheAudio->addAudioEvent(&leftGameSound);
 			}
 
-			for (Int idx = 0; idx < MAX_SLOTS; ++idx)
+			if (TheGameInfo)
 			{
-				AsciiString pName;
-				pName.format("player%d", idx);
-				if (p->getPlayerNameKey() == NAMEKEY(pName))
+				const Int slotIndex = ThePlayerList->getSlotIndex(p->getPlayerIndex());
+				const GameSlot* slot = slotIndex >= 0 ? TheGameInfo->getSlot(slotIndex) : nullptr;
+
+				if (slot && slot->isAI())
 				{
-					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):nullptr;
-					if (slot && slot->isAI())
-					{
-						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
-						slot->setLastFrameInGame(TheGameLogic->getFrame());
-					}
+					DEBUG_LOG(("Marking AI player %s as defeated", TheNameKeyGenerator->keyToName(p->getPlayerNameKey()).str()));
+					slot->setLastFrameInGame(TheGameLogic->getFrame());
 				}
 			}
 
