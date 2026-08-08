@@ -131,59 +131,38 @@ User * Connection::getUser() {
  * The relay mostly has to do with the packet router.
  */
 void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
-	static NetPacket *packet = nullptr;
-
-	// this is done so we don't have to allocate and delete a packet every time we send a message.
-	if (packet == nullptr) {
-		packet = newInstance(NetPacket);
-	}
-
-
 	if (m_isQuitting)
 		return;
 
 	if (m_netCommandList != nullptr) {
+		NetPacket packet;
+
 		// check to see if this command will fit in a packet.  If not, we need to split it up.
 		// we are splitting up the command here so that the retry logic will not try to
 		// resend the ENTIRE command (i.e. multiple packets work of data) and only do the retry
 		// one wrapper command at a time.
-		packet->reset();
 
 		NetCommandRef *tempref = NEW_NETCOMMANDREF(msg);
+		if (packet.addCommand(tempref)) {
+			deleteInstance(tempref);
+			tempref = nullptr;
+		} else {
+			tempref->setRelay(relay);
 
-		Bool msgFits = packet->addCommand(tempref);
-		deleteInstance(tempref); // delete the temporary reference.
-		tempref = nullptr;
-
-		if (!msgFits) {
-			NetCommandRef *origref = NEW_NETCOMMANDREF(msg);
-			origref->setRelay(relay);
 			// the message doesn't fit in a single packet, need to split it up.
-			NetPacketList packetList = NetPacket::ConstructBigCommandPacketList(origref);
-			NetPacketListIter tempPacketPtr = packetList.begin();
-
-			while (tempPacketPtr != packetList.end()) {
-				NetPacket *tempPacket = (*tempPacketPtr);
-
-				NetCommandList *list = tempPacket->getCommandList();
-				NetCommandRef *ref1 = list->getFirstMessage();
-				while (ref1 != nullptr) {
-					NetCommandRef *ref2 = m_netCommandList->addMessage(ref1->getCommand());
-					ref2->setRelay(relay);
-
-					ref1 = ref1->getNext();
+			if (NetCommandList* list = NetPacket::ConstructBigCommandList(tempref)) {
+				for (NetCommandRef* ref1 = list->getFirstMessage(); ref1 != nullptr; ref1 = ref1->getNext()) {
+					if (NetCommandRef* ref2 = m_netCommandList->addMessage(ref1->getCommand())) {
+						ref2->setRelay(relay);
+					}
 				}
-
-				deleteInstance(tempPacket);
-				tempPacket = nullptr;
-				++tempPacketPtr;
 
 				deleteInstance(list);
 				list = nullptr;
 			}
 
-			deleteInstance(origref);
-			origref = nullptr;
+			deleteInstance(tempref);
+			tempref = nullptr;
 
 			return;
 		}
@@ -270,9 +249,8 @@ UnsignedInt Connection::doSend() {
 	NetCommandRef *msg = m_netCommandList->getFirstMessage();
 
 	while ((msg != nullptr) && couldQueue) {
-		NetPacket *packet = newInstance(NetPacket);
-		packet->init();
-		packet->setAddress(m_user->GetIPAddr(), m_user->GetPort());
+		NetPacket packet;
+		packet.setAddress(m_user->GetIPAddr(), m_user->GetPort());
 
 		Bool notDone = TRUE;
 
@@ -283,7 +261,7 @@ UnsignedInt Connection::doSend() {
 			time_t timeLastSent = msg->getTimeLastSent();
 
 			if (((curtime - timeLastSent) > m_retryTime) || (timeLastSent == -1)) {
-				notDone = packet->addCommand(msg);
+				notDone = packet.addCommand(msg);
 				if (notDone) {
 					// the msg command was added to the packet.
 					if (CommandRequiresAck(msg->getCommand())) {
@@ -308,14 +286,12 @@ UnsignedInt Connection::doSend() {
 		++numpackets;
 
 		/// @todo Make the act of giving the transport object a packet to send more efficient.  Make the transport take a NetPacket object rather than the raw data, thus avoiding an extra memcpy.
-		if (packet->getNumCommands() > 0) {
+		if (packet.getNumCommands() > 0) {
 			// If the packet actually has any information to give, give it to the transport object
 			// for transmission.
-			couldQueue = m_transport->queueSend(packet->getAddr(), packet->getPort(), packet->getData(), packet->getLength());
+			couldQueue = m_transport->queueSend(packet.getAddr(), packet.getPort(), packet.getData(), packet.getLength());
 			m_lastTimeSent = curtime;
 		}
-
-		deleteInstance(packet); // delete the packet now that we're done with it.
 	}
 
 	return numpackets;

@@ -40,18 +40,12 @@ be specialized code.
 #include "Common/MessageStream.h"
 #include "Common/GameMemory.h"
 
-class NetPacket;
-
-typedef std::list<NetPacket *> NetPacketList;
-typedef std::list<NetPacket *>::iterator NetPacketListIter;
-
-class NetPacket : public MemoryPoolObject
+class NetPacket
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacket, "NetPacket")
 public:
 	NetPacket();
-	NetPacket(TransportMessage *msg);
-	//virtual ~NetPacket();
+	NetPacket(const TransportMessage& msg);
+	~NetPacket();
 
 	void init();
 	void reset();
@@ -62,7 +56,7 @@ public:
 	NetCommandList *getCommandList();
 
 	static NetCommandRef *ConstructNetCommandMsgFromRawData(const UnsignedByte *data, UnsignedInt dataLength);
-	static NetPacketList ConstructBigCommandPacketList(NetCommandRef *ref);
+	static NetCommandList *ConstructBigCommandList(NetCommandRef *ref);
 
 	UnsignedByte *getData();
 	Int getLength();
