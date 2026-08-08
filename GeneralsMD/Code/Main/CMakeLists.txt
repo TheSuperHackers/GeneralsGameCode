@@ -12,6 +12,7 @@ target_link_libraries(z_generals PRIVATE
     comctl32
     core_debug
     core_profile_legacy
+    corei_main
     d3d8
     d3dx8
     dinput8
@@ -55,9 +56,21 @@ target_include_directories(z_generals PRIVATE
 )
 
 target_sources(z_generals PRIVATE
-    WinMain.cpp
-    WinMain.h
+    ${CMAKE_SOURCE_DIR}/Core/Main/AppMain.cpp
+    ${CMAKE_SOURCE_DIR}/Core/Main/AppMain.h
 )
+
+if(RTS_BUILD_OPTION_SDL3)
+    target_sources(z_generals PRIVATE
+        ${CMAKE_SOURCE_DIR}/Core/Main/SDL3Main.cpp
+        ${CMAKE_SOURCE_DIR}/Core/Main/SDL3Main.h
+    )
+else()
+    target_sources(z_generals PRIVATE
+        WinMain.cpp
+        WinMain.h
+    )
+endif()
 
 # RC files optional for MinGW builds
 # Icon: LoadIcon() handles missing resource gracefully (uses default system icon)

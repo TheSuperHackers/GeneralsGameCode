@@ -76,44 +76,60 @@ static Bool scrollDir[4] = { false, false, false, false };
 
 constexpr const Real SCROLL_MULTIPLIER = 2.0f;
 constexpr const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
+constexpr const Real MIN_CONTROLLER_SCROLL_SCALE = 0.4f;
 
 static const Int edgeScrollSize = 3;
 
 static Mouse::MouseCursor prevCursor = Mouse::ARROW;
 
 //-----------------------------------------------------------------------------
-void LookAtTranslator::setScrolling(ScrollType scrollType)
+//-----------------------------------------------------------------------------
+void LookAtTranslator::setScrolling( ScrollType scrollType )
 {
-	if (!TheInGameUI->getInputEnabled())
+	if (TheInGameUI != nullptr && !TheInGameUI->getInputEnabled())
 		return;
 
-	prevCursor = TheMouse->getMouseCursor();
+	if (!m_isScrolling)
+	{
+		if (TheMouse != nullptr)
+			prevCursor = TheMouse->getMouseCursor();
+		if (TheStatsCollector != nullptr)
+			TheStatsCollector->startScrollTime();
+	}
+
 	m_isScrolling = true;
-	TheInGameUI->setScrolling( TRUE );
-	TheTacticalView->setMouseLock( TRUE );
+	if (TheInGameUI != nullptr)
+		TheInGameUI->setScrolling( TRUE );
+	if (TheTacticalView != nullptr)
+		TheTacticalView->setMouseLock( TRUE );
 	m_scrollType = scrollType;
-	if(TheStatsCollector)
-		TheStatsCollector->startScrollTime();
 }
 
 //-----------------------------------------------------------------------------
 void LookAtTranslator::stopScrolling()
 {
+	if (m_isScrolling)
+	{
+		if (TheStatsCollector != nullptr)
+			TheStatsCollector->endScrollTime();
+		if (TheInGameUI != nullptr)
+			TheInGameUI->setScrolling( FALSE );
+		if (TheTacticalView != nullptr)
+			TheTacticalView->setMouseLock( FALSE );
+		if (TheMouse != nullptr)
+			TheMouse->setCursor( prevCursor );
+	}
+
 	m_isScrolling = false;
-	TheInGameUI->setScrolling( FALSE );
-	TheTacticalView->setMouseLock( FALSE );
-	TheMouse->setCursor(prevCursor);
 	m_scrollType = SCROLL_NONE;
-
-	// increment the stats if we have a stats collector
-	if(TheStatsCollector)
-		TheStatsCollector->endScrollTime();
-
 }
 
 //-----------------------------------------------------------------------------
 Bool LookAtTranslator::canScrollAtScreenEdge() const
 {
+	if (m_controllerInputActive)
+		return false;
+
 	if (!TheMouse->isCursorCaptured())
 		return false;
 
@@ -132,6 +148,22 @@ Bool LookAtTranslator::canScrollAtScreenEdge() const
 }
 
 //-----------------------------------------------------------------------------
+Real LookAtTranslator::getControllerScrollScale() const
+{
+	if (!m_controllerInputActive || !TheTacticalView)
+		return 1.0f;
+
+	const Real minHeight = TheTacticalView->getMinHeightAboveGround();
+	const Real maxHeight = TheTacticalView->getMaxHeightAboveGround();
+	const Real heightRange = maxHeight - minHeight;
+	if (heightRange <= 0.0f)
+		return 1.0f;
+
+	const Real zoomOutFraction = clamp(0.0f, (TheTacticalView->getHeightAboveGround() - minHeight) / heightRange, 1.0f);
+	return MIN_CONTROLLER_SCROLL_SCALE + zoomOutFraction * (1.0f - MIN_CONTROLLER_SCROLL_SCALE);
+}
+
+//-----------------------------------------------------------------------------
 LookAtTranslator::LookAtTranslator() :
 	m_isScrolling(false),
 	m_isRotating(false),
@@ -140,8 +172,9 @@ LookAtTranslator::LookAtTranslator() :
 	m_isChangingFOV(false),
 	m_middleButtonDownTimeMsec(0),
 	m_lastPlaneID(INVALID_DRAWABLE_ID),
-	m_lastMouseMoveTimeMsec(0),
-	m_scrollType(SCROLL_NONE)
+	m_scrollType(SCROLL_NONE),
+	m_controllerInputActive(false),
+	m_lastMouseMoveTimeMsec(0)
 {
 	m_anchor.x = m_anchor.y = 0;
 	m_currentPos.x = m_currentPos.y = 0;
@@ -188,6 +221,14 @@ void LookAtTranslator::setCurrentPos( const ICoord2D& pos )
 void LookAtTranslator::setScreenEdgeScrollMode(ScreenEdgeScrollMode mode)
 {
 	m_screenEdgeScrollMode = mode;
+}
+
+void LookAtTranslator::setControllerInputActive(Bool active)
+{
+	m_controllerInputActive = active;
+
+	if (active && m_isScrolling && m_scrollType == SCROLL_SCREENEDGE)
+		stopScrolling();
 }
 
 //-----------------------------------------------------------------------------
@@ -485,21 +526,22 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 					break;
 				case SCROLL_KEY:
 					{
+						const Real scrollAmount = SCROLL_AMT * getControllerScrollScale();
 						if (scrollDir[DIR_UP])
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * scrollAmount * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_DOWN])
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * fpsRatio * scrollAmount * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_LEFT])
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * scrollAmount * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_RIGHT])
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * fpsRatio * scrollAmount * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;

@@ -40,6 +40,7 @@
 #include <dbt.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "AppMain.h"
 #include "WinMain.h"
 #include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
@@ -60,10 +61,11 @@
 #include "GameLogic/GameLogic.h"  ///< @todo for demo, remove
 #include "GameClient/Mouse.h"
 #include "GameClient/IMEManager.h"
-#include "Win32Device/GameClient/Win32Mouse.h"
-#include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/version.h"
 #include "BuildVersion.h"
+#include "Win32Device/Common/Win32GameEngine.h"
+#include "Win32Device/GameClient/Win32Mouse.h"
+
 #include "GeneratedVersion.h"
 #include "resource.h"
 
@@ -75,18 +77,21 @@
 // GLOBALS ////////////////////////////////////////////////////////////////////
 HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
 HWND ApplicationHWnd = nullptr;  ///< our application window handle
-Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
+extern Win32Mouse *TheWin32Mouse;  ///< defined in AppMain.cpp
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
-const Char *g_strFile = "data\\Generals.str";
-const Char *g_csfFile = "data\\%s\\Generals.csf";
-const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
+extern const Char *g_strFile;
+extern const Char *g_csfFile;
+extern const char *gAppPrefix;
 
 static Bool gInitializing = false;
 static Bool gDoPaint = true;
 static Bool isWinMainActive = false;
 
 static HBITMAP gLoadScreenBitmap = nullptr;
+#if RTS_SDL3_ENABLE
+static SDL_Surface* gLoadScreenSurface = nullptr;
+#endif
 
 //#define DEBUG_WINDOWS_MESSAGES
 
@@ -471,9 +476,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					// paths that take care of that.
 
 					isWinMainActive = (BOOL) wParam;
-
-					if (TheGameEngine)
-						TheGameEngine->setIsActive(isWinMainActive);
+					AppMain::setAppActive(isWinMainActive);
 
 					if (isWinMainActive)
 					{
@@ -848,100 +851,40 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//	WWDebug_Install_Message_Handler(WWDebug_Message_Callback);
 	//	WWDebug_Install_Assert_Handler(WWAssert_Callback);
 
+		if (!AppMain::initBeforeWindow())
+		{
+			return exitcode;
+		}
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined(RTS_DEBUG) || defined RTS_PROFILE_LEGACY
-
-			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
-		const char *fileName = "Install_Final.bmp";
-		static const char *localizedPathFormat = "Data/%s/";
-		sprintf(filePath,localizedPathFormat, GetRegistryLanguage().str());
-		strlcat(filePath, fileName, ARRAY_SIZE(filePath));
-		FILE *fileImage = fopen(filePath, "r");
-		if (fileImage) {
-			fclose(fileImage);
-			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-		}
-		else {
-			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, fileName, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-		}
-#else
+		AppMain::getSplashFilePath(filePath, sizeof(filePath));
+		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED | LR_LOADFROMFILE);
 
-		// in release, the file only ever lives in the root dir
-		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-#endif
-
-		CommandLine::parseCommandLineForStartup();
-#ifdef RTS_ENABLE_CRASHDUMP
-		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
-		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData());
-#endif
-
-		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
+			AppMain::shutdown();
 			return exitcode;
 		}
 
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
 
-		if (gLoadScreenBitmap!=nullptr) {
+		if (gLoadScreenBitmap != nullptr) {
 			::DeleteObject(gLoadScreenBitmap);
 			gLoadScreenBitmap = nullptr;
 		}
 
-
-		// BGC - initialize COM
-	//	OleInitialize(nullptr);
-
-
-
-		// Set up version info
-		TheVersion = NEW Version;
-		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
-			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
-			AsciiString(__TIME__), AsciiString(__DATE__));
-
-		// TheSuperHackers @refactor The instance mutex now lives in its own class.
-
-		if (!rts::ClientInstance::initialize())
+		if (!AppMain::initAfterWindow())
 		{
-			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), nullptr);
-			if (ccwindow)
-			{
-				SetForegroundWindow(ccwindow);
-				ShowWindow(ccwindow, SW_RESTORE);
-			}
-
-			DEBUG_LOG(("Generals is already running...Bail!"));
-			delete TheVersion;
-			TheVersion = nullptr;
-			shutdownMemoryManager();
+			AppMain::shutdown();
 			return exitcode;
 		}
-		DEBUG_LOG(("Create Generals Mutex okay."));
-
-		DEBUG_LOG(("CRC message is %d", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
-		exitcode = GameMain();
+		exitcode = AppMain::run();
 
-		delete TheVersion;
-		TheVersion = nullptr;
-
-	#ifdef MEMORYPOOL_DEBUG
-		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
-	#endif
-	#if defined(RTS_DEBUG)
-		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
-	#endif
-
-		shutdownMemoryManager();
-
-		// BGC - shut down COM
-	//	OleUninitialize();
+		AppMain::shutdown();
 	}
 	catch (...)
 	{
@@ -969,8 +912,7 @@ GameEngine *CreateGameEngine()
 	engine = NEW Win32GameEngine;
 	//game engine may not have existed when app got focus so make sure it
 	//knows about current focus state.
-	engine->setIsActive(isWinMainActive);
+	engine->setIsActive(AppMain::isAppActive());
 
 	return engine;
-
 }

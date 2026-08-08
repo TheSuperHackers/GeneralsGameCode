@@ -10,6 +10,7 @@ endif()
 target_link_libraries(g_generals PRIVATE
     binkstub
     comctl32
+    corei_main
     d3d8
     d3dx8
     dinput8
@@ -65,9 +66,21 @@ target_include_directories(g_generals PRIVATE
 )
 
 target_sources(g_generals PRIVATE
-    WinMain.cpp
-    WinMain.h
+    ${CMAKE_SOURCE_DIR}/Core/Main/AppMain.cpp
+    ${CMAKE_SOURCE_DIR}/Core/Main/AppMain.h
 )
+
+if(RTS_BUILD_OPTION_SDL3)
+    target_sources(g_generals PRIVATE
+        ${CMAKE_SOURCE_DIR}/Core/Main/SDL3Main.cpp
+        ${CMAKE_SOURCE_DIR}/Core/Main/SDL3Main.h
+    )
+else()
+    target_sources(g_generals PRIVATE
+        WinMain.cpp
+        WinMain.h
+    )
+endif()
 
 # RC files are optional for MinGW builds
 # Icon: LoadIcon() handles missing resource gracefully (uses default system icon)
