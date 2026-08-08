@@ -78,6 +78,7 @@
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 #include "W3DDevice/GameClient/W3DCustomEdging.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
+#include "W3DDevice/GameClient/W3DScorch.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
@@ -149,9 +150,8 @@ inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 //=============================================================================
 Int BaseHeightMapRenderObjClass::freeMapResources()
 {
-#ifdef DO_SCORCH
-	freeScorchBuffers();
-#endif
+	m_scorches->freeBuffers();
+
 	REF_PTR_RELEASE(m_vertexMaterialClass);
 	REF_PTR_RELEASE(m_stageZeroTexture);
 	REF_PTR_RELEASE(m_stageOneTexture);
@@ -163,7 +163,6 @@ Int BaseHeightMapRenderObjClass::freeMapResources()
 	return 0;
 }
 
-#ifdef DO_SCORCH
 //=============================================================================
 // BaseHeightMapRenderObjClass::drawScorches
 //=============================================================================
@@ -171,22 +170,11 @@ Int BaseHeightMapRenderObjClass::freeMapResources()
 //=============================================================================
 void BaseHeightMapRenderObjClass::drawScorches()
 {
-
-	updateScorches();
-	if (m_curNumScorchIndices == 0) {
-		return;
-	}
-	DX8Wrapper::Set_Index_Buffer(m_indexScorch,0);
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexScorch);
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
-
-	DX8Wrapper::Set_Texture(0,m_scorchTexture);
-	if (Is_Hidden() == 0) {
-		DX8Wrapper::Draw_Triangles(	0,m_curNumScorchIndices/3, 0,	m_curNumScorchVertices);
+	ShaderClass::Invalidate();
+	if (Is_Hidden() == 0 && !ShaderClass::Is_Backface_Culling_Inverted()) {
+		m_scorches->drawScorches(m_map);
 	}
 }
-#endif
-
 
 //-----------------------------------------------------------------------------
 //         Public Functions
@@ -223,6 +211,9 @@ BaseHeightMapRenderObjClass::~BaseHeightMapRenderObjClass()
 
 	delete m_shroud;
 	m_shroud = nullptr;
+
+	delete m_scorches;
+	m_scorches = nullptr;
 
 	delete [] m_shoreLineTilePositions;
 	m_shoreLineTilePositions = nullptr;
@@ -280,12 +271,10 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass()
 #ifdef DO_ROADS
 	m_roadBuffer = nullptr;
 #endif
-#ifdef DO_SCORCH
-	m_vertexScorch = nullptr;
-	m_indexScorch = nullptr;
-	m_scorchTexture = nullptr;
-	clearAllScorches();
-	m_shroud = nullptr;
+#if DO_SCORCH
+	m_scorches = NEW W3DScorch;
+#else
+	m_scorches = NEW W3DScorchDummy;
 #endif
 	m_bridgeBuffer = NEW W3DBridgeBuffer;
 
@@ -303,6 +292,7 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass()
 #ifdef DO_ROADS
 	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
+	m_shroud = nullptr;
 #if ENABLE_CONFIGURABLE_SHROUD
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
@@ -1833,9 +1823,8 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	Set_Force_Visible(TRUE);	//terrain is always visible.
 	scheduleFullUpdate();
 
-	m_scorchesInBuffer = 0;
-	m_curNumScorchVertices=0;
-	m_curNumScorchIndices=0;
+	m_scorches->invalidateBuffers();
+
 	// If the textures aren't allocated (usually because of a hardware reset) need to allocate.
 	Bool needToAllocate = false;
 	if (m_stageTwoTexture == nullptr && m_treeBuffer) {
@@ -1850,9 +1839,7 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 		m_stageThreeTexture=NEW LightMapTerrainTextureClass(m_macroTextureName);
 		m_destAlphaTexture=MSGNEW("TextureClass") TextureClass(256,1,WW3D_FORMAT_A8R8G8B8,MIP_LEVELS_1);
 		initDestAlphaLUT();
-#ifdef DO_SCORCH
-		allocateScorchBuffers();
-#endif
+		m_scorches->allocateScorchBuffers();
 
 		m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
@@ -1862,168 +1849,6 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	return 0;
 }
 
-#ifdef DO_SCORCH
-//=============================================================================
-// BaseHeightMapRenderObjClass::freeScorchBuffers
-//=============================================================================
-/** Frees the vertex buffers for scorches.*/
-//=============================================================================
-void BaseHeightMapRenderObjClass::freeScorchBuffers()
-{
-	REF_PTR_RELEASE(m_vertexScorch);
-	REF_PTR_RELEASE(m_indexScorch);
-	REF_PTR_RELEASE(m_scorchTexture);
-}
-
-//=============================================================================
-// BaseHeightMapRenderObjClass::allocateScorchBuffers
-//=============================================================================
-/** Allocates the vertex buffer and texture for scorches.*/
-//=============================================================================
-void BaseHeightMapRenderObjClass::allocateScorchBuffers()
-{
-	m_vertexScorch=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,MAX_SCORCH_VERTEX,DX8VertexBufferClass::USAGE_DEFAULT));
-	m_indexScorch=NEW_REF(DX8IndexBufferClass,(MAX_SCORCH_INDEX));
-	m_scorchTexture=NEW ScorchTextureClass;
-	m_scorchesInBuffer = 0; // If we just allocated the buffers, we got no scorches in the buffer.
-	m_curNumScorchVertices=0;
-	m_curNumScorchIndices=0;
-#ifdef RTS_DEBUG
-	Vector3 loc(4*MAP_XY_FACTOR,4*MAP_XY_FACTOR,0);
-	addScorch(loc, 1*MAP_XY_FACTOR, SCORCH_1);
-	loc.Y += 10*MAP_XY_FACTOR;
-	loc.X += 5*MAP_XY_FACTOR;
-	addScorch(loc, 3*MAP_XY_FACTOR, SCORCH_1);
-#endif
-
-}
-
-//=============================================================================
-// BaseHeightMapRenderObjClass::updateScorches
-//=============================================================================
-/** Builds the vertex buffer data for drawing the scorches.*/
-//=============================================================================
-void BaseHeightMapRenderObjClass::updateScorches()
-{
-	if (m_scorchesInBuffer > 1) {
-		return;
-	}
-	if (m_numScorches==0) {
-		return;
-	}
-	if (!m_indexScorch || !m_vertexScorch) {
-		return;
-	}
-	m_curNumScorchVertices = 0;
-	m_curNumScorchIndices = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexScorch);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
-
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexScorch);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
-
-	Int curScorch;
-	Real shadeR, shadeG, shadeB;
-	shadeR = TheGlobalData->m_terrainAmbient[0].red;
-	shadeG = TheGlobalData->m_terrainAmbient[0].green;
-	shadeB = TheGlobalData->m_terrainAmbient[0].blue;
-	shadeR += TheGlobalData->m_terrainDiffuse[0].red/2;
-	shadeG += TheGlobalData->m_terrainDiffuse[0].green/2;
-	shadeB += TheGlobalData->m_terrainDiffuse[0].blue/2;
-	shadeR*=255.0f;
-	shadeG*=255.0f;
-	shadeB*=255.0f;
-	Int diffuse=REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | ((int)255 << 24);
-	m_scorchesInBuffer = 0;
-	for (curScorch=m_numScorches-1; curScorch>=0; curScorch--) {
-		m_scorchesInBuffer++;
-		Real radius = m_scorches[curScorch].radius;
-		Vector3 loc = m_scorches[curScorch].location;
-		Int type = m_scorches[curScorch].scorchType;
-		if (type<0) {
-			type = 0;
-		}
-		if (type >= SCORCH_MARKS_IN_TEXTURE) {
-			type = 0;
-		}
-		Real amtToFloat = 0;
-		amtToFloat = MAP_HEIGHT_SCALE/10;
-
-		Int minX = REAL_TO_INT_FLOOR((loc.X-radius)/MAP_XY_FACTOR);
-		Int minY = REAL_TO_INT_FLOOR((loc.Y-radius)/MAP_XY_FACTOR);
-		if (minX<-m_map->getBorderSizeInline()) minX=-m_map->getBorderSizeInline();
-		if (minY<-m_map->getBorderSizeInline()) minY=-m_map->getBorderSizeInline();
-		Int maxX = REAL_TO_INT_CEIL((loc.X+radius)/MAP_XY_FACTOR);
-		Int maxY = REAL_TO_INT_CEIL((loc.Y+radius)/MAP_XY_FACTOR);
-		maxX++; maxY++;
-		if (maxX > m_map->getXExtent()-m_map->getBorderSizeInline()) {
-			maxX = m_map->getXExtent()-m_map->getBorderSizeInline();
-		}
-		if (maxY > m_map->getYExtent()-m_map->getBorderSizeInline()) {
-			maxY = m_map->getYExtent()-m_map->getBorderSizeInline();
-		}
-		Int startVertex = m_curNumScorchVertices;
-		Int i, j;
-		for (j=minY; j<maxY; j++) {
-			for (i=minX; i<maxX; i++) {
-				if (m_curNumScorchVertices >= MAX_SCORCH_VERTEX) return;
-				curVb->diffuse = diffuse;
-				Real theZ;
-				theZ = amtToFloat+((float)getClipHeight(i+m_map->getBorderSizeInline(),j+m_map->getBorderSizeInline())*MAP_HEIGHT_SCALE);
-				// The scorchmarks are spaced out by 1.5 in the texture.
-				Real uOffset = (type%SCORCH_PER_ROW) * 1.5f;
-				Real vOffset = (type/SCORCH_PER_ROW) * 1.5f;
-				Real X = i*MAP_XY_FACTOR;
-				Real Y = j*MAP_XY_FACTOR;
-				curVb->u1 = (uOffset + 0.5f + (X - loc.X)/(2*radius)) / (SCORCH_PER_ROW+1);
-				curVb->v1 = (vOffset + 0.5f + (Y - loc.Y)/(2*radius)) / (SCORCH_PER_ROW+1);
-				curVb->x = X;
-				curVb->y = Y;
-				curVb->z = theZ;
-				curVb++;
-				m_curNumScorchVertices++;
-			}
-		}
-		Int yOffset = maxX-minX;
-		for (j=0; j<maxY-minY-1; j++) {
-			for (i=0; i<maxX-minX-1; i++) {
-				if (m_curNumScorchIndices+6 > MAX_SCORCH_INDEX) return;
-				Int xNdx = i+minX+m_map->getBorderSizeInline();
-				Int yNdx = j+minY+m_map->getBorderSizeInline();
-				Bool flipForBlend = m_map->getFlipState(xNdx, yNdx);
-#if 0
-				UnsignedByte alpha[4];
-				float UA[4], VA[4];
-				m_map->getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
-#endif
-				if (flipForBlend) {
-					*curIb++ = startVertex + j*yOffset + i+1;
- 					*curIb++ = startVertex + j*yOffset + i+yOffset;
-					*curIb++ = startVertex + j*yOffset + i;
- 					*curIb++ = startVertex + j*yOffset + i+1;
- 					*curIb++ = startVertex + j*yOffset + i+1+yOffset;
-					*curIb++ = startVertex + j*yOffset + i+yOffset;
-				}
-				else
-				{
-					*curIb++ = startVertex + j*yOffset + i;
-					*curIb++ = startVertex + j*yOffset + i+1+yOffset;
-					*curIb++ = startVertex + j*yOffset + i+yOffset;
-					*curIb++ = startVertex + j*yOffset + i;
-					*curIb++ = startVertex + j*yOffset + i+1;
-					*curIb++ = startVertex + j*yOffset + i+1+yOffset;
-				}
-				m_curNumScorchIndices+=6;
-			}
-		}
-	}
-
-}
-
-#endif
-
 //=============================================================================
 // BaseHeightMapRenderObjClass::clearAllScorches
 //=============================================================================
@@ -2031,10 +1856,7 @@ void BaseHeightMapRenderObjClass::updateScorches()
 //=============================================================================
 void BaseHeightMapRenderObjClass::clearAllScorches()
 {
-#ifdef DO_SCORCH
-	m_numScorches=0;
-	m_scorchesInBuffer=0;
-#endif
+	m_scorches->clearAllScorches();
 }
 
 //=============================================================================
@@ -2044,34 +1866,8 @@ void BaseHeightMapRenderObjClass::clearAllScorches()
 //=============================================================================
 void BaseHeightMapRenderObjClass::addScorch(Vector3 location, Real radius, Scorches type)
 {
-#ifdef DO_SCORCH
-	if (m_numScorches >= MAX_SCORCH_MARKS) {
-		Int i;
-		for (i=0; i<MAX_SCORCH_MARKS-1; i++) {
-			m_scorches[i] = m_scorches[i+1];
-		}
-		m_numScorches--;
-	}
-
-	Int i;
-	Real limit = radius/4;
-	for (i=0; i<m_numScorches; i++) {
-		if ( abs(location.X-m_scorches[i].location.X) < limit &&
-				 abs(location.Y-m_scorches[i].location.Y) < limit &&
-				 abs(radius - m_scorches[i].radius) < limit &&
-				 m_scorches[i].scorchType == type) {
-			return; // basically a duplicate.
-		}
-	}
-
-	m_scorches[m_numScorches].location = location;
-	m_scorches[m_numScorches].radius = radius;
-	m_scorches[m_numScorches].scorchType = type;
-	m_numScorches++;
-	m_scorchesInBuffer = 0; // force buffer regenerations.
-#endif
+	m_scorches->addScorch(location, radius, type);
 }
-
 
 //=============================================================================
 // BaseHeightMapRenderObjClass::getStaticDiffuse
@@ -2363,9 +2159,8 @@ void BaseHeightMapRenderObjClass::staticLightingChanged()
 	scheduleFullUpdate();
 
 	// Cause the scorches to get updated with new lighting.
-	m_scorchesInBuffer = 0; // If we just allocated the buffers, we got no scorches in the buffer.
-	m_curNumScorchVertices=0;
-	m_curNumScorchIndices=0;
+	m_scorches->invalidateBuffers();
+
 	if (m_roadBuffer)
 		m_roadBuffer->updateLighting();
 
