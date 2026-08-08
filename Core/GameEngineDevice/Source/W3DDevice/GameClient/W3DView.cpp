@@ -821,7 +821,10 @@ void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 		}
 	}
 
-	m_3DCamera->Set_Clip_Planes(NearZ, farZ);
+	if (farZ >= 0.0f)
+	{
+		m_3DCamera->Set_Clip_Planes(NearZ, farZ);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

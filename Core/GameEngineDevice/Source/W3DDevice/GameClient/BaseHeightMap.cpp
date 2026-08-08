@@ -663,10 +663,6 @@ void BaseHeightMapRenderObjClass::reset()
 	}
 }
 
-/**@todo: Ray intersection needs to be optimized with some sort of grid-tracing
-(ala line drawing).  We should also try making the search in a front->back order
-relative to the ray so we can early exit as soon as we have a hit.
-*
 //=============================================================================
 // BaseHeightMapRenderObjClass::Cast_Ray
 //=============================================================================
@@ -678,18 +674,27 @@ map plane so this is very quick (small bounding box).  But it can become slow
 for arbitrary rays such as those used in AI visibility checks(2 units on
 opposite corners of the map would check every polygon in the map).
 */
+/** @todo: Ray intersection needs to be optimized with some sort of grid-tracing
+(ala line drawing).  We should also try making the search in a front->back order
+relative to the ray so we can early exit as soon as we have a hit.
+*/
+// TheSuperHackers @fix The ray cast can now correctly collide with the initial
+// hit boxes even if the ray starts inside of it and no longer falls back to an
+// infinitely large search region if the initial boxes cannot be collided with.
 //=============================================================================
 bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
+	if (!m_map)
+		return false;	//need valid pointer to heightmap samples
+
 	TriClass tri;
 	Bool hit = false;
 	Int X,Y;
 	Vector3 normal,P0,P1,P2,P3;
-	Bool hasP0 = false;
-	Bool hasP1 = false;
-
-	if (!m_map)
-		return false;	//need valid pointer to heightmap samples
+	P0.Set(FLT_MAX, FLT_MAX, FLT_MAX); // Set initial bogus value
+	P1.Set(FLT_MAX, FLT_MAX, FLT_MAX); // Set initial bogus value
+	Int P0HitCount = 0;
+	Int P1HitCount = 0;
 
 	//Clip ray to extents of height map
 	AABoxClass hbox;
@@ -701,16 +706,19 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	Int endCellY = 0;
 	const Int borderSize = m_map->getBorderSizeInline();
 	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH + borderSize; // Allow picking past the edge for scrolling & objects.
- 	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
-	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang),
-		MAP_XY_FACTOR*(m_map->getYExtent()+overhang), MAP_HEIGHT_SCALE*m_map->getMaxHeightValue()+MAP_XY_FACTOR);
-	MinMaxAABoxClass mmbox(minPt, maxPt);
+
+	// The initial hit boxes are very rough and are only meant to narrow the search before the triangle intersection.
+	const Real mapMinHeight = MAP_HEIGHT_SCALE * m_map->getMinHeightValue();
+	const Real mapMaxHeight = MAP_HEIGHT_SCALE * m_map->getMaxHeightValue();
+	const Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), mapMinHeight);
+	const Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang), MAP_XY_FACTOR*(m_map->getYExtent()+overhang), mapMaxHeight);
+	const MinMaxAABoxClass mmbox(minPt, maxPt);
 	hbox.Init(mmbox);
 
 	lineseg=raytest.Ray;
 
-	Int p;
-	for (p=0; p<3; p++) {
+	Int terrainIntersectionIteration = 0;
+	for (; ; ++terrainIntersectionIteration) {
 		//find intersection point of ray and terrain bounding box
 		result.Reset();
 		result.ComputeContactPoint=true;
@@ -719,13 +727,9 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		if (CollisionMath::Collide(lineseg,hbox,&result))
 		{
-			//ray intersects terrain or starts inside the terrain.
-			if (!result.StartBad)	//check if start point inside terrain
-			{
-				newP0 = P0 != result.ContactPoint;
-				hasP0 = true;
-				P0 = result.ContactPoint;	//make intersection point the new start of the ray.
-			}
+			newP0 = P0 != result.ContactPoint;
+			P0 = result.ContactPoint;	//make intersection point the new start of the ray.
+			++P0HitCount;
 
 			//reverse direction of original ray and clip again to extent of heightmap
 			result.Fraction=1.0f;	//reset the result
@@ -733,16 +737,18 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 			lineseg2.Set(lineseg.Get_P1(),lineseg.Get_P0());	//reverse line segment
 			if (CollisionMath::Collide(lineseg2,hbox,&result))
 			{
-				if (!result.StartBad)	//check if end point inside terrain
-				{
-					newP1 = P1 != result.ContactPoint;
-					hasP1 = true;
-					P1 = result.ContactPoint;	//make intersection point the new end point of ray
-				}
+				newP1 = P1 != result.ContactPoint;
+				P1 = result.ContactPoint;	//make intersection point the new end point of ray
+				++P1HitCount;
 			}
 		}
 
-		if (!newP0 || !newP1)
+		// Has not even hit the first hit box?
+		if (P0HitCount == 0 || P1HitCount == 0)
+			return false;
+
+		// Has no new hit points?
+		if (!newP0 && !newP1)
 			break;
 
 		// Take the 2D bounding box of ray and check heights
@@ -762,6 +768,10 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 			endCellY = REAL_TO_INT_CEIL(P1.Y/MAP_XY_FACTOR);
 		}
 
+		// Stop narrowing after the third iteration
+		if (terrainIntersectionIteration == 2)
+			break;
+
 		Int i, j, minHt, maxHt;
 
 		minHt = m_map->getMaxHeightValue();
@@ -780,9 +790,6 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 		hbox.Init(mmbox);
 	}
 
-	if (!hasP0 || !hasP1)
-		return false;
-
 	raytest.Result->ComputeContactPoint=true;	//tell CollisionMath that we need point.
 
 	// Adjust indexes into the bordered height map.
@@ -795,7 +802,6 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	Int offset;
 	for (offset = 1; offset < 5; offset *= 3) {
 		for (Y=startCellY-offset; Y<=endCellY+offset; Y++) {
-
 			for (X=startCellX-offset; X<=endCellX+offset; X++) {
 				//test the 2 triangles in this cell
 				//	3-----2
