@@ -72,7 +72,7 @@ AnimateWindow::AnimateWindow()
 	m_delay = 0;
 	m_startPos.x = m_startPos.y = 0;
 	m_endPos.x = m_endPos.y = 0;
-	m_curPos.x = m_curPos.y = 0;
+	m_curPos.x = m_curPos.y = 0.0f;
 	m_win = nullptr;
 	m_animType = WIN_ANIMATION_NONE;
 
@@ -89,7 +89,7 @@ AnimateWindow::~AnimateWindow()
 }
 
 void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos,
-																	ICoord2D curPos, ICoord2D restPos,
+																	Coord2D curPos, ICoord2D restPos,
 																	Coord2D vel, UnsignedInt startTime,
 																	UnsignedInt endTime )
 
@@ -134,7 +134,6 @@ AnimateWindowManager::AnimateWindowManager()
 	m_winList.clear();
 	m_needsUpdate = FALSE;
 	m_reverse = FALSE;
-	m_frameAccumulator = 0.0f;
 	m_winMustFinishList.clear();
 }
 AnimateWindowManager::~AnimateWindowManager()
@@ -161,7 +160,6 @@ void AnimateWindowManager::init()
 	clearWinList(m_winMustFinishList);
 	m_needsUpdate = FALSE;
 	m_reverse = FALSE;
-	m_frameAccumulator = 0.0f;
 }
 
 void AnimateWindowManager::reset()
@@ -171,24 +169,13 @@ void AnimateWindowManager::reset()
 	clearWinList(m_winMustFinishList);
 	m_needsUpdate = FALSE;
 	m_reverse = FALSE;
-	m_frameAccumulator = 0.0f;
 }
 
-// TheSuperHackers @tweak bobtista 27/06/2026 Decouple GUI window-move animations from the render frame rate
+// TheSuperHackers @tweak bobtista 04/08/2026 Advances the animations by a fractional base rate frame
+// so that they move fluently on high render frame rates.
 void AnimateWindowManager::update()
 {
-	m_frameAccumulator += TheFramePacer->getBaseOverUpdateFpsRatio();
-	Int steps = (Int)m_frameAccumulator;
-	m_frameAccumulator -= (Real)steps;
-
-	while (steps-- > 0)
-	{
-		step();
-	}
-}
-
-void AnimateWindowManager::step()
-{
+	const Real deltaFrames = TheFramePacer->getBaseOverUpdateFpsRatio();
 
 	ProcessAnimateWindow *processAnim = nullptr;
 
@@ -211,12 +198,12 @@ void AnimateWindowManager::step()
 			{
 				if(m_reverse)
 				{
-					if(!processAnim->reverseAnimateWindow(animWin))
+					if(!processAnim->reverseAnimateWindow(animWin, deltaFrames))
 						m_needsUpdate = TRUE;
 				}
 				else
 				{
-					if(!processAnim->updateAnimateWindow(animWin))
+					if(!processAnim->updateAnimateWindow(animWin, deltaFrames))
 						m_needsUpdate = TRUE;
 				}
 			}
@@ -239,12 +226,12 @@ void AnimateWindowManager::step()
 		if(m_reverse)
 		{
 			if(processAnim)
-				processAnim->reverseAnimateWindow(animWin);
+				processAnim->reverseAnimateWindow(animWin, deltaFrames);
 		}
 		else
 		{
 			if(processAnim)
-				processAnim->updateAnimateWindow(animWin);
+				processAnim->updateAnimateWindow(animWin, deltaFrames);
 		}
 		it ++;
 	}

@@ -107,10 +107,10 @@ public:
 		return newInstance(AnimateWindow);
 	}
 
-	void setAnimData( ICoord2D startPos, ICoord2D endPos, ICoord2D curPos, ICoord2D restPos, Coord2D vel, UnsignedInt startTime, UnsignedInt endTime);
+	void setAnimData( ICoord2D startPos, ICoord2D endPos, Coord2D curPos, ICoord2D restPos, Coord2D vel, UnsignedInt startTime, UnsignedInt endTime);
 
 	ICoord2D		getStartPos();							///< Get the Start Position 2D coord
-	ICoord2D		getCurPos();								///< Get the Current Position 2D coord
+	Coord2D			getCurPos();								///< Get the Current Position 2D coord
 	ICoord2D		getEndPos();								///< Get the End Position 2D coord
 	ICoord2D		getRestPos();								///< Get the Rest Position 2D coord
 	GameWindow *getGameWindow();						///< Get the GameWindow that will be animating
@@ -121,7 +121,7 @@ public:
 	UnsignedInt getEndTime();								///< Get the end time of the time-based anim
 
 	void	setStartPos( ICoord2D starPos);					///< Set the Start Position 2D coord
-	void	setCurPos( ICoord2D curPos);						///< Set the Current Position 2D coord
+	void	setCurPos( Coord2D curPos);							///< Set the Current Position 2D coord
 	void	setEndPos( ICoord2D endPos);						///< Set the End Position 2D coord
 	void	setRestPos( ICoord2D restPos);					///< Set the Rest Position 2D coord
 	void	setGameWindow( GameWindow *win);				///< Set the GameWindow that will be animating
@@ -141,7 +141,7 @@ private:
 	ICoord2D m_startPos;													///< Holds the starting position of the animation
 																								///<(usually is also the end position of the animation when the animation is reversed)
 	ICoord2D m_endPos;														///< Holds the target End Position (usually is the same as the rest position)
-	ICoord2D m_curPos;														///< It's Current Position
+	Coord2D m_curPos;															///< It's Current Position
 	ICoord2D m_restPos;														///< When the Manager Resets, It sets the window's position to this position
 	GameWindow *m_win;														///< the window that this animation is happening on
 	Coord2D m_vel;																///< the Velocity of the animation
@@ -178,13 +178,10 @@ public:
 	Bool isReversed();										///< Returns whether or not we're in our reversed state.
 	Bool isEmpty();
 private:
-	void step();															///< Runs a single base-rate step of all registered window animations
-
 	AnimateWindowList	m_winList;								///< A list of AnimationWindows that we don't care if their finished animating
 	AnimateWindowList m_winMustFinishList;			///< A list of AnimationWindows that we do care about
 	Bool m_needsUpdate;													///< If we're done animating all our monitored windows, then this will be false
 	Bool m_reverse;															///< Are we in a reverse state?
-	Real m_frameAccumulator;										///< Carries fractional base-rate frames between updates
 	ProcessAnimateWindowSlideFromRight *m_slideFromRight;			///< Holds the process in which the windows slide from the right
 	ProcessAnimateWindowSlideFromRightFast *m_slideFromRightFast;
 	ProcessAnimateWindowSlideFromTop *m_slideFromTop;					///< Holds the process in which the windows slide from the Top
@@ -203,7 +200,7 @@ private:
 namespace wnd
 {
 	inline ICoord2D			AnimateWindow::getStartPos()	{ return m_startPos; };
-	inline ICoord2D			AnimateWindow::getCurPos()		{ return m_curPos; };
+	inline Coord2D			AnimateWindow::getCurPos()		{ return m_curPos; };
 	inline ICoord2D			AnimateWindow::getEndPos()		{ return m_endPos; };
 	inline ICoord2D			AnimateWindow::getRestPos()		{ return m_restPos; };
 	inline GameWindow  *AnimateWindow::getGameWindow(){ return m_win; };
@@ -214,7 +211,7 @@ namespace wnd
 	inline UnsignedInt	AnimateWindow::getEndTime()		{ return m_endTime; };
 
 	inline void	AnimateWindow::setStartPos( ICoord2D startPos)		{ m_startPos = startPos; };
-	inline void	AnimateWindow::setCurPos( ICoord2D curPos)				{ m_curPos = curPos; };
+	inline void	AnimateWindow::setCurPos( Coord2D curPos)					{ m_curPos = curPos; };
 	inline void	AnimateWindow::setEndPos( ICoord2D endPos)				{ m_endPos = endPos; };
 	inline void	AnimateWindow::setRestPos( ICoord2D restPos)			{ m_restPos = restPos; };
 	inline void	AnimateWindow::setGameWindow( GameWindow *win)		{ m_win = win; };

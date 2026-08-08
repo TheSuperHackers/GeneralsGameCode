@@ -78,6 +78,13 @@ static Real getDisplayHeightScaler()
 	return static_cast<Real>(TheDisplay->getHeight()) / DEFAULT_DISPLAY_HEIGHT;
 }
 
+// TheSuperHackers @tweak bobtista 04/08/2026 The animated position is tracked with sub pixel
+// precision and is rounded to the nearest pixel when applied to the window.
+static void setWindowPosition( GameWindow *win, const Coord2D &pos )
+{
+	win->winSetPosition( REAL_TO_INT_FLOOR(pos.x + 0.5f), REAL_TO_INT_FLOOR(pos.y + 0.5f) );
+}
+
 //-----------------------------------------------------------------------------
 // ProcessAnimateWindowSlideFromRight PUBLIC FUNCTIONS ////////////////////////
 //-----------------------------------------------------------------------------
@@ -118,7 +125,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -143,8 +150,10 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 
 	//set the initial positions for the window. In this case, off the Right of the screen
 	Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	startPos.x = curPos.x = restPos.x + travelDistance;
-	startPos.y = curPos.y = restPos.y;
+	startPos.x = restPos.x + travelDistance;
+	startPos.y = restPos.y;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -165,7 +174,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *
 
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -190,22 +199,24 @@ Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	curPos.x += (Int)vel.x;
+	curPos.x += vel.x * deltaFrames;
 
 	if(curPos.x < endPos.x)
 	{
-		curPos.x = endPos.x;
+		// TheSuperHackers @bugfix bobtista 05/08/2026 Apply the end position so the window does not stop short of it
+		curPos.x = (Real)endPos.x;
 		animWin->setFinished( TRUE );
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	if( curPos.x - endPos.x <= m_slowDownThreshold )
 	{
-		vel.x *= m_slowDownRatio;
+		vel.x *= powf(m_slowDownRatio, deltaFrames);
 	}
 	if( vel.x >= -1.0f)
 		vel.x = -1.0f;
@@ -213,7 +224,7 @@ Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -239,25 +250,25 @@ Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindo
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D startPos = animWin->getStartPos();
 	Coord2D vel = animWin->getVel();
-	curPos.x += (Int)vel.x;
+	curPos.x += vel.x * deltaFrames;
 
 	if(curPos.x > startPos.x)
 	{
-		curPos.x = startPos.x;
+		curPos.x = (Real)startPos.x;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 
 	ICoord2D endPos = animWin->getEndPos();
 	if( curPos.x - endPos.x <= m_slowDownThreshold )
 	{
-		vel.x *= m_speedUpRatio;
+		vel.x *= powf(m_speedUpRatio, deltaFrames);
 	}
 	else
 	{
@@ -305,7 +316,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -329,8 +340,10 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 
 	//set the initial positions for the window. In this case, off the Left of the screen
 	Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	startPos.x = curPos.x = restPos.x - travelDistance;
-	startPos.y = curPos.y = restPos.y;
+	startPos.x = restPos.x - travelDistance;
+	startPos.y = restPos.y;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -347,7 +360,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *a
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -373,22 +386,24 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow 
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	curPos.x += (Int)vel.x;
+	curPos.x += vel.x * deltaFrames;
 
 	if(curPos.x > endPos.x)
 	{
-		curPos.x = endPos.x;
+		// TheSuperHackers @bugfix bobtista 05/08/2026 Apply the end position so the window does not stop short of it
+		curPos.x = (Real)endPos.x;
 		animWin->setFinished( TRUE );
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	if( endPos.x - curPos.x <= m_slowDownThreshold )
 	{
-		vel.x *= m_slowDownRatio;
+		vel.x *= powf(m_slowDownRatio, deltaFrames);
 	}
 	if( vel.x < 1.0f)
 		vel.x = 1.0f;
@@ -396,7 +411,7 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow 
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -422,25 +437,25 @@ Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D startPos = animWin->getStartPos();
 	Coord2D vel = animWin->getVel();
-	curPos.x += (Int)vel.x;
+	curPos.x += vel.x * deltaFrames;
 
 	if(curPos.x < startPos.x)
 	{
-		curPos.x = startPos.x;
+		curPos.x = (Real)startPos.x;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 
 	ICoord2D endPos = animWin->getEndPos();
 	if( endPos.x - curPos.x <= m_slowDownThreshold )
 	{
-		vel.x *= m_speedUpRatio;
+		vel.x *= powf(m_speedUpRatio, deltaFrames);
 	}
 	else
 	{
@@ -488,7 +503,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -512,8 +527,10 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 
 	//set the initial positions for the window. In this case, off the Top of the screen
 	Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	startPos.x = curPos.x = restPos.x ;
-	startPos.y = curPos.y = restPos.y - travelDistance;
+	startPos.x = restPos.x ;
+	startPos.y = restPos.y - travelDistance;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -530,7 +547,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *an
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -556,23 +573,23 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	curPos.y += (Int)vel.y;
+	curPos.y += vel.y * deltaFrames;
 
 	if(curPos.y > endPos.y)
 	{
-		curPos.y = endPos.y;
-		win->winSetPosition(curPos.x, curPos.y);
+		curPos.y = (Real)endPos.y;
+		setWindowPosition(win, curPos);
 		animWin->setFinished( TRUE );
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	if( endPos.y - curPos.y  <= m_slowDownThreshold )
 	{
-		vel.y *= m_slowDownRatio;
+		vel.y *= powf(m_slowDownRatio, deltaFrames);
 	}
 	if( vel.y < 1.0f)
 		vel.y = 1.0f;
@@ -580,7 +597,7 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -606,25 +623,25 @@ Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow 
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D startPos = animWin->getStartPos();
 	Coord2D vel = animWin->getVel();
-	curPos.y += (Int)vel.y;
+	curPos.y += vel.y * deltaFrames;
 
 	if(curPos.y < startPos.y)
 	{
-		curPos.y = startPos.y;
+		curPos.y = (Real)startPos.y;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 
 	ICoord2D endPos = animWin->getEndPos();
 	if( endPos.y - curPos.y <= m_slowDownThreshold )
 	{
-		vel.y *= m_speedUpRatio;
+		vel.y *= powf(m_speedUpRatio, deltaFrames);
 	}
 	else
 	{
@@ -673,7 +690,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -697,8 +714,10 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 
 	//set the initial positions for the window. In this case, off the Bottom of the screen
 	Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	startPos.x = curPos.x = restPos.x;
-	startPos.y = curPos.y = restPos.y + travelDistance;
+	startPos.x = restPos.x;
+	startPos.y = restPos.y + travelDistance;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -715,7 +734,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow 
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -741,23 +760,23 @@ Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindo
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	curPos.y += (Int)vel.y;
+	curPos.y += vel.y * deltaFrames;
 
 	if(curPos.y < endPos.y)
 	{
-		curPos.y = endPos.y;
+		curPos.y = (Real)endPos.y;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	if( curPos.y - endPos.y <= m_slowDownThreshold )
 	{
-		vel.y *= m_slowDownRatio;
+		vel.y *= powf(m_slowDownRatio, deltaFrames);
 	}
 	if( vel.y >= -1.0f)
 		vel.y = -1.0f;
@@ -765,7 +784,7 @@ Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindo
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -791,25 +810,25 @@ Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWind
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D startPos = animWin->getStartPos();
 	Coord2D vel = animWin->getVel();
-	curPos.y += (Int)vel.y;
+	curPos.y += vel.y * deltaFrames;
 
 	if(curPos.y > startPos.y)
 	{
-		curPos.y = startPos.y;
+		curPos.y = (Real)startPos.y;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 
 	ICoord2D endPos = animWin->getEndPos();
 	if( curPos.y - endPos.y <= m_slowDownThreshold )
 	{
-		vel.y *= m_speedUpRatio;
+		vel.y *= powf(m_speedUpRatio, deltaFrames);
 	}
 	else
 	{
@@ -837,7 +856,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::An
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -857,11 +876,13 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::An
 	}
 	restPos = animWin->getRestPos();
 	startPos.x = restPos.x;
-	curPos.y = startPos.y = restPos.y;
+	startPos.y = restPos.y;
+	curPos.y = (Real)startPos.y;
 
 	//set the initial positions for the window. In this case, off the Bottom of the screen
 	Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	endPos.x = curPos.x = restPos.x;
+	endPos.x = restPos.x;
+	curPos.x = (Real)endPos.x;
 	endPos.y = restPos.y + travelDistance;
 
 	//set the window's position to the new start positions.
@@ -878,7 +899,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -902,8 +923,10 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 
 	//set the initial positions for the window. In this case, off the Bottom of the screen
 	Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	startPos.x = curPos.x = restPos.x;
-	startPos.y = curPos.y = restPos.y + travelDistance;
+	startPos.x = restPos.x;
+	startPos.y = restPos.y + travelDistance;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -915,7 +938,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWi
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, now + delay, now + m_maxDuration + delay);
 }
 
-Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -942,7 +965,7 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::Animate
 	}
 
 	ICoord2D startPos = animWin->getStartPos();
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 
 	UnsignedInt now = timeGetTime();
@@ -955,25 +978,25 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::Animate
 	Real percentDone = 1.0f - (Real)(endTime - now) / (Real)(m_maxDuration);
 	if (now >= endTime)
 	{
-		curPos.y = endPos.y;
+		curPos.y = (Real)endPos.y;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		DEBUG_LOG(("window finished animating at %d (%d->%d)", now, startTime, endTime));
 		return TRUE;
 	}
 
 	curPos.y = startPos.y + percentDone*(endPos.y - startPos.y);
-	DEBUG_LOG(("(%d,%d) -> (%d,%d) -> (%d,%d) at %g",
+	DEBUG_LOG(("(%d,%d) -> (%g,%g) -> (%d,%d) at %g",
 		startPos.x, startPos.y, curPos.x, curPos.y, endPos.x, endPos.y, percentDone));
 
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromBottomTimed::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottomTimed::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
-	return updateAnimateWindow(animWin);
+	return updateAnimateWindow(animWin, deltaFrames);
 }
 
 
@@ -1012,7 +1035,7 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	ICoord2D size = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
@@ -1038,8 +1061,10 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 	//set the initial positions for the window. In this case, off the Bottom of the screen
 	vel.x = 0;
 	vel.y = m_maxR;
-	startPos.x = curPos.x = (vel.y * cos(vel.x)) + endPos.x;
-	startPos.y = curPos.y = (vel.y * sin(vel.x)) + endPos.y;
+	curPos.x = (vel.y * cos(vel.x)) + endPos.x;
+	curPos.y = (vel.y * sin(vel.x)) + endPos.y;
+	startPos.x = REAL_TO_INT(curPos.x);
+	startPos.y = REAL_TO_INT(curPos.y);
 
 
 	//set the window's position to the new start positions.
@@ -1049,7 +1074,7 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin 
 }
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -1075,15 +1100,15 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWi
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
 
 	curPos.x = (vel.y * cos(vel.x)) + endPos.x;
 	curPos.y = (vel.y * sin(vel.x)) + endPos.y;
 
-	vel.x = vel.x + m_deltaTheta;
-	vel.y -=5;
+	vel.x = vel.x + m_deltaTheta * deltaFrames;
+	vel.y -=5 * deltaFrames;
 
 	ICoord2D size;
 	win->winGetSize(&size.x, &size.y);
@@ -1096,14 +1121,14 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWi
 		win->winSetPosition(restPos.x, restPos.y);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	animWin->setVel(vel);
 	return FALSE;
 }
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -1127,15 +1152,15 @@ Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animW
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
 
 	curPos.x = (vel.y * cos(vel.x)) + endPos.x;
 	curPos.y = (vel.y * sin(vel.x)) + endPos.y;
 
-	vel.x = vel.x - m_deltaTheta;
-	vel.y +=5;
+	vel.x = vel.x - m_deltaTheta * deltaFrames;
+	vel.y +=5 * deltaFrames;
 
 	ICoord2D size;
 	win->winGetSize(&size.x, &size.y);
@@ -1148,7 +1173,7 @@ Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animW
 		//win->winSetPosition(restPos.x, restPos.y);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	animWin->setVel(vel);
 	return FALSE;
@@ -1192,7 +1217,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 	ICoord2D size = {0,0};
@@ -1219,8 +1244,10 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 
 	//set the initial positions for the window. In this case, off the Top of the screen
 	//Int travelDistance = TheDisplay->getWidth();// / 4 * 3;
-	startPos.x = curPos.x = restPos.x ;
-	startPos.y = curPos.y = -size.y;//restPos.y - travelDistance;
+	startPos.x = restPos.x ;
+	startPos.y = -size.y;//restPos.y - travelDistance;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -1231,7 +1258,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -1257,23 +1284,23 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWind
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	curPos.y += (Int)vel.y;
+	curPos.y += vel.y * deltaFrames;
 
 	if(curPos.y > endPos.y)
 	{
-		curPos.y = endPos.y;
-		win->winSetPosition(curPos.x, curPos.y);
+		curPos.y = (Real)endPos.y;
+		setWindowPosition(win, curPos);
 		animWin->setFinished( TRUE );
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	if( endPos.y - curPos.y  <= m_slowDownThreshold )
 	{
-		vel.y *= m_slowDownRatio;
+		vel.y *= powf(m_slowDownRatio, deltaFrames);
 	}
 	if( vel.y < 1.0f)
 		vel.y = 1.0f;
@@ -1281,7 +1308,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWind
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -1307,25 +1334,25 @@ Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWin
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D startPos = animWin->getStartPos();
 	Coord2D vel = animWin->getVel();
-	curPos.y += (Int)vel.y;
+	curPos.y += vel.y * deltaFrames;
 
 	if(curPos.y < startPos.y)
 	{
-		curPos.y = startPos.y;
+		curPos.y = (Real)startPos.y;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 
 	ICoord2D endPos = animWin->getEndPos();
 	if( endPos.y - curPos.y <= m_slowDownThreshold )
 	{
-		vel.y *= m_speedUpRatio;
+		vel.y *= powf(m_speedUpRatio, deltaFrames);
 	}
 	else
 	{
@@ -1374,9 +1401,9 @@ void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( wnd::Anim
 	GameWindow * win = animWin->getGameWindow();
 	ICoord2D pos, tempPos;
 	win->winGetPosition(&pos.x, &pos.y);
-	tempPos = animWin->getCurPos();
-	tempPos.y = pos.y;
-	animWin->setCurPos(tempPos);
+	Coord2D tempCurPos = animWin->getCurPos();
+	tempCurPos.y = (Real)pos.y;
+	animWin->setCurPos(tempCurPos);
 
 	tempPos = animWin->getEndPos();
 	tempPos.y = pos.y;
@@ -1397,7 +1424,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
 	ICoord2D size = {0,0};
-	ICoord2D curPos = {0,0};
+	Coord2D curPos = {0.0f,0.0f};
 	ICoord2D endPos = {0,0};
 	Coord2D	vel = {0.0f,0.0f};
 
@@ -1423,8 +1450,10 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 
 	//set the initial positions for the window. In this case, off the Right of the screen
 	Int travelDistance = TheDisplay->getWidth() - restPos.x + size.x ;// / 4 * 3;
-	startPos.x = curPos.x = restPos.x + travelDistance;
-	startPos.y = curPos.y = restPos.y;
+	startPos.x = restPos.x + travelDistance;
+	startPos.y = restPos.y;
+	curPos.x = (Real)startPos.x;
+	curPos.y = (Real)startPos.y;
 
 	//set the window's position to the new start positions.
 	win->winSetPosition(startPos.x, startPos.y);
@@ -1439,7 +1468,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWind
 
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -1464,22 +1493,24 @@ Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWi
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D endPos = animWin->getEndPos();
 	Coord2D vel = animWin->getVel();
-	curPos.x += (Int)vel.x;
+	curPos.x += vel.x * deltaFrames;
 
 	if(curPos.x < endPos.x)
 	{
-		curPos.x = endPos.x;
+		// TheSuperHackers @bugfix bobtista 05/08/2026 Apply the end position so the window does not stop short of it
+		curPos.x = (Real)endPos.x;
 		animWin->setFinished( TRUE );
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 	if( curPos.x - endPos.x <= m_slowDownThreshold )
 	{
-		vel.x *= m_slowDownRatio;
+		vel.x *= powf(m_slowDownRatio, deltaFrames);
 	}
 	if( vel.x >= -1.0f)
 		vel.x = -1.0f;
@@ -1487,7 +1518,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWi
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames )
 {
 
 	if(!animWin)
@@ -1513,25 +1544,25 @@ Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateW
 		return TRUE;
 	}
 
-	ICoord2D curPos = animWin->getCurPos();
+	Coord2D curPos = animWin->getCurPos();
 	ICoord2D startPos = animWin->getStartPos();
 	Coord2D vel = animWin->getVel();
-	curPos.x += (Int)vel.x;
+	curPos.x += vel.x * deltaFrames;
 
 	if(curPos.x > startPos.x)
 	{
-		curPos.x = startPos.x;
+		curPos.x = (Real)startPos.x;
 		animWin->setFinished( TRUE );
-		win->winSetPosition(curPos.x, curPos.y);
+		setWindowPosition(win, curPos);
 		return TRUE;
 	}
-	win->winSetPosition(curPos.x, curPos.y);
+	setWindowPosition(win, curPos);
 	animWin->setCurPos(curPos);
 
 	ICoord2D endPos = animWin->getEndPos();
 	if( curPos.x - endPos.x <= m_slowDownThreshold )
 	{
-		vel.x *= m_speedUpRatio;
+		vel.x *= powf(m_speedUpRatio, deltaFrames);
 	}
 	else
 	{
