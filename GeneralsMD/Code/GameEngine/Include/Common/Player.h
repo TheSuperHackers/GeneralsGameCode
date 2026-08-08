@@ -682,6 +682,8 @@ private:
 	*/
 	Bool addScience(ScienceType science);
 
+	void setSafeLevels(Int levelUp, Int levelDown);
+
 public:
 	Int getSkillPoints() const						{ return m_skillPoints; }
 	Int getSciencePurchasePoints() const	{ return m_sciencePurchasePoints; }
