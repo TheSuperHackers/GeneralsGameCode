@@ -54,6 +54,7 @@
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/udp.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
 
@@ -61,7 +62,9 @@ FirewallHelperClass *TheFirewallHelper = nullptr;
 
 FirewallHelperClass * createFirewallHelper()
 {
-	return NEW FirewallHelperClass();
+	FirewallHelperClass *helper = NEW FirewallHelperClass();
+	helper->detectFirewallBehavior();
+	return helper;
 }
 
 
@@ -84,15 +87,14 @@ FirewallHelperClass * createFirewallHelper()
 FirewallHelperClass::FirewallHelperClass()
 {
 	m_currentTry = 0;
+	m_lastDetectionTime = 0;
 	m_numManglers = 0;
 	m_numResponses = 0;
 	m_packetID = 0;
 	m_timeoutLength = 0;
 	m_timeoutStart = 0;
 	m_behavior = FIREWALL_TYPE_UNKNOWN;
-	m_lastBehavior = FIREWALL_TYPE_UNKNOWN;
 	m_sourcePortAllocationDelta = 0;
-	m_lastSourcePortAllocationDelta = 0;
 	Int i = 0;
 	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		m_spareSockets[i].port = 0;
@@ -154,6 +156,8 @@ void FirewallHelperClass::reset()
 	m_currentState = DETECTIONSTATE_IDLE;
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 		m_messages[i].length = 0;
+		m_mangledPorts[i] = 0;
+		m_sparePorts[i] = 0;
 	}
 }
 
@@ -176,22 +180,12 @@ void FirewallHelperClass::reset()
  *=============================================================================================*/
 Bool FirewallHelperClass::detectFirewall()
 {
-	OptionPreferences pref;
-
-	OptionPreferences::const_iterator it = pref.find("FirewallNeedToRefresh");
-	if (it != pref.end()) {
-		AsciiString str = it->second;
-		if (str.compareNoCase("TRUE") == 0) {
-			TheWritableGlobalData->m_firewallBehavior = FIREWALL_TYPE_UNKNOWN;
-		}
-	}
-
-	if (TheWritableGlobalData->m_firewallBehavior == FIREWALL_TYPE_UNKNOWN) {
+	if (m_behavior == FIREWALL_TYPE_UNKNOWN) {
 		detectFirewallBehavior();
 
 		return FALSE;
 	} else {
-		DEBUG_LOG(("FirewallHelperClass::detectFirewall - firewall behavior already specified as %d, port allocation delta is %d, skipping detection.", TheWritableGlobalData->m_firewallBehavior, TheWritableGlobalData->m_firewallPortAllocationDelta));
+		DEBUG_LOG(("FirewallHelperClass::detectFirewall - firewall behavior already specified as %d, port allocation delta is %d, skipping detection.", m_behavior, m_sourcePortAllocationDelta));
 	}
 
 	return TRUE;
@@ -480,93 +474,6 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 	return mangled_port;
 }
 
-
-
-
-/***********************************************************************************************
- * FirewallHelperClass::Write_Firewall_Settings -- Save out firewall settings.                 *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/22/01 10:23PM ST : Created                                                              *
- *=============================================================================================*/
-void FirewallHelperClass::writeFirewallBehavior()
-{
-	OptionPreferences pref;
-
-	char num[16];
-	num[0] = 0;
-	itoa(TheGlobalData->m_firewallBehavior, num, 10);
-	AsciiString numstr;
-	numstr = num;
-	(pref)["FirewallBehavior"] = numstr;
-
-	TheWritableGlobalData->m_firewallPortAllocationDelta = getSourcePortAllocationDelta();
-	num[0] = 0;
-	itoa(TheGlobalData->m_firewallPortAllocationDelta, num, 10);
-	numstr = num;
-	(pref)["FirewallPortAllocationDelta"] = numstr;
-
-	pref.write();
-}
-
-
-/***********************************************************************************************
- * FirewallHelperClass::flagNeedToRefresh -- Flag that the next time we log in we need to      *
- *    refresh our firewall settings.                                                           *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    flag - whether or not to refresh...munkee                                         *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   2/19/03 4:30PM BGC : Created                                                              *
- *=============================================================================================*/
-void FirewallHelperClass::flagNeedToRefresh(Bool flag)
-{
-	OptionPreferences pref;
-
-	(pref)["FirewallNeedToRefresh"] = flag ? "TRUE" : "FALSE";
-
-	pref.write();
-}
-
-
-/***********************************************************************************************
- * FirewallHelperClass::Read_Firewall_Behavior -- Read in old firewall settings                *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   3/22/01 10:25PM ST : Created                                                              *
- *=============================================================================================*/
-void FirewallHelperClass::readFirewallBehavior()
-{
-#if (0)
-	m_lastBehavior = (FirewallBehaviorType) ConfigINI.Get_Int("MultiPlayer", "FirewallSettings", FIREWALL_UNKNOWN);
-	m_lastSourcePortAllocationDelta = ConfigINI.Get_Int("MultiPlayer", "FirewallDelta", 1);
-#endif //(0)
-}
-
-
-
 /***********************************************************************************************
  * FHC::detectFirewallBehavior -- What is that wacky firewall doing to our packet headers?   *
  *                                                                                             *
@@ -581,19 +488,32 @@ void FirewallHelperClass::readFirewallBehavior()
  * HISTORY:                                                                                    *
  *   3/15/01 12:30PM ST : Created                                                              *
  *=============================================================================================*/
-void FirewallHelperClass::detectFirewallBehavior(/*Bool &canRecord*/)
+void FirewallHelperClass::detectFirewallBehavior()
 {
-	m_behavior = FIREWALL_TYPE_SIMPLE;
+	UnsignedInt currentTime = timeGetTime();
+	if (m_lastDetectionTime != 0 && (currentTime - m_lastDetectionTime) < 5000) {
+		return;
+	}
+	m_lastDetectionTime = currentTime;
 
+	reset();
+	m_currentTry = 0;
+	m_numManglers = 0;
+	m_numResponses = 0;
+	m_packetID = 0;
+	m_timeoutLength = 0;
+	m_timeoutStart = 0;
+
+	m_sourcePortAllocationDelta = 0;
+	m_behavior = FIREWALL_TYPE_UNKNOWN;
 	m_currentState = DETECTIONSTATE_BEGIN;
 }
 
-FirewallHelperClass::FirewallBehaviorType FirewallHelperClass::getFirewallBehavior() {
-	m_currentState = DETECTIONSTATE_IDLE;
+FirewallHelperClass::FirewallBehaviorType FirewallHelperClass::getFirewallBehavior() const {
 	return m_behavior;
 }
 
-Short FirewallHelperClass::getSourcePortAllocationDelta() {
+Short FirewallHelperClass::getSourcePortAllocationDelta() const {
 	return m_sourcePortAllocationDelta;
 }
 
@@ -608,6 +528,12 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 Bool FirewallHelperClass::detectionBeginUpdate() {
 //	UnsignedShort mangler_port = MANGLER_PORT;
 	 m_packetID = 0x7f00;
+
+	if (TheGameSpyConfig == nullptr) {
+		DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - no GameSpy config, skipping detection."));
+		m_currentState = DETECTIONSTATE_DONE;
+		return TRUE;
+	}
 	//int current_mangler = 0;
 
 	/*
@@ -731,7 +657,7 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 	** Send to the mangler from this port until we get a response.
 	*/
 	m_timeoutStart = timeGetTime();
-	m_timeoutLength = 6000;
+	m_timeoutLength = 3000;
 
 	sendToManglerFromPort(m_manglers[0], m_sparePorts[0], m_packetID);
 	m_currentState = DETECTIONSTATE_TEST1;
@@ -781,7 +707,7 @@ Bool FirewallHelperClass::detectionTest1Update() {
 	** Send to the mangler from this port until we get a response.
 	*/
 	m_timeoutStart = timeGetTime();
-	m_timeoutLength = 6000;
+	m_timeoutLength = 3000;
 	m_mangledPorts[1] = 0;
 	sendToManglerFromPort(m_manglers[1], m_sparePorts[0], m_packetID+1);
 
@@ -896,7 +822,7 @@ Bool FirewallHelperClass::detectionTest3Update() {
 		** delay between initial sends due to the timeout in Get_Mangler_Response.
 		*/
 		m_timeoutStart = timeGetTime();
-		m_timeoutLength = 12000;
+		m_timeoutLength = 6000;
 
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3Update - Sending to %d manglers", NUM_TEST_PORTS));
 		for (i=0 ; i<NUM_TEST_PORTS ; i++) {
@@ -958,12 +884,6 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 	** We need at least 4 responses to be sure of the port allocation scheme.
 	*/
 	if (m_numResponses < 4) {
-		if (m_lastSourcePortAllocationDelta != 0 && (int)m_lastBehavior > (int)FIREWALL_TYPE_SIMPLE) {
-			/*
-			** If the delta we got last time we played looks good then use that.
-			*/
-			m_sourcePortAllocationDelta = m_lastSourcePortAllocationDelta;
-		}
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get enough responses, using %d as the source port allocation delta, finished test", m_sourcePortAllocationDelta));
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
@@ -995,13 +915,6 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - setting source port delta to %d", delta));
 	} else {
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get a delta value"));
-		if (m_lastSourcePortAllocationDelta != 0 && (Int)m_lastBehavior > (Int)FIREWALL_TYPE_SIMPLE) {
-			/*
-			** If the delta we got last time we played looks good then use that.
-			*/
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - using the port allocation delta we have from before which is %d", m_lastSourcePortAllocationDelta));
-			m_sourcePortAllocationDelta = m_lastSourcePortAllocationDelta;
-		}
 		++m_currentTry;
 		m_currentState = DETECTIONSTATE_TEST3;
 		return FALSE;
@@ -1041,7 +954,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			** Get a reference port.
 			*/
 			m_timeoutStart = timeGetTime();
-			m_timeoutLength = 4000;
+			m_timeoutLength = 3000;
 			m_mangledPorts[0] = 0;
 			m_packetID += 10;
 
@@ -1106,7 +1019,7 @@ Bool FirewallHelperClass::detectionTest4Stage1Update() {
 	*/
 	m_packetID++;
 	m_timeoutStart = timeGetTime();
-	m_timeoutLength = 4000;
+	m_timeoutLength = 3000;
 
 	sendToManglerFromPort(m_manglers[0], m_sparePorts[1], m_packetID);
 
@@ -1369,7 +1282,7 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
  * HISTORY:                                                                                    *
  *   3/16/01 11:43AM ST : Created                                                              *
  *=============================================================================================*/
-Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
+Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior) const
 {
 
 	Int hardness = 0;
@@ -1418,7 +1331,7 @@ Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
  * HISTORY:                                                                                    *
  *   3/16/01 11:43AM ST : Created                                                              *
  *=============================================================================================*/
-Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
+Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior) const
 {
 
 	Int retries = 2;
