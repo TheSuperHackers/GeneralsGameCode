@@ -819,6 +819,126 @@ struct RGBColor
 		blue = ((c >>  0) & 0xff) / 255.0f;
 	}
 
+	RGBColor& operator+=(const RGBColor& c)
+	{
+		red += c.red;
+		green += c.green;
+		blue += c.blue;
+		return *this;
+	}
+
+	RGBColor& operator-=(const RGBColor& c)
+	{
+		red -= c.red;
+		green -= c.green;
+		blue -= c.blue;
+		return *this;
+	}
+
+	RGBColor& operator*=(const RGBColor& c)
+	{
+		red *= c.red;
+		green *= c.green;
+		blue *= c.blue;
+		return *this;
+	}
+
+	RGBColor& operator/=(const RGBColor& c)
+	{
+		red /= c.red;
+		green /= c.green;
+		blue /= c.blue;
+		return *this;
+	}
+
+	RGBColor operator+(const RGBColor& c) const
+	{
+		RGBColor res = *this;
+		res += c;
+		return res;
+	}
+
+	RGBColor operator-(const RGBColor& c) const
+	{
+		RGBColor res = *this;
+		res -= c;
+		return res;
+	}
+
+	RGBColor operator*(const RGBColor& c) const
+	{
+		RGBColor res = *this;
+		res *= c;
+		return res;
+	}
+
+	RGBColor operator/(const RGBColor& c) const
+	{
+		RGBColor res = *this;
+		res /= c;
+		return res;
+	}
+
+	RGBColor& operator+=(Real s)
+	{
+		red += s;
+		green += s;
+		blue += s;
+		return *this;
+	}
+
+	RGBColor& operator-=(Real s)
+	{
+		red -= s;
+		green -= s;
+		blue -= s;
+		return *this;
+	}
+
+	RGBColor& operator*=(Real s)
+	{
+		red *= s;
+		green *= s;
+		blue *= s;
+		return *this;
+	}
+
+	RGBColor& operator/=(Real s)
+	{
+		red /= s;
+		green /= s;
+		blue /= s;
+		return *this;
+	}
+
+	RGBColor operator+(Real s) const
+	{
+		RGBColor res = *this;
+		res += s;
+		return res;
+	}
+
+	RGBColor operator-(Real s) const
+	{
+		RGBColor res = *this;
+		res -= s;
+		return res;
+	}
+
+	RGBColor operator*(Real s) const
+	{
+		RGBColor res = *this;
+		res *= s;
+		return res;
+	}
+
+	RGBColor operator/(Real s) const
+	{
+		RGBColor res = *this;
+		res /= s;
+		return res;
+	}
+
 };
 
 struct RGBAColorReal
