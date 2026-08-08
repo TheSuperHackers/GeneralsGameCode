@@ -1006,7 +1006,11 @@ public:
 		Object* airfield;
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
+			return STATE_FAILURE;
+#endif
 
 		Coord3D landingApproach;
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
@@ -1623,6 +1627,13 @@ public:
 	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
+
+#if !RETAIL_COMPATIBLE_CRC
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
+		if (pp == nullptr)
+			return STATE_FAILURE;
+#endif
+
 		UnsignedInt now = TheGameLogic->getFrame();
 		Bool allDone = true;
 		for (Int i = 0; i < WEAPONSLOT_COUNT;	++i)
@@ -1769,8 +1780,13 @@ HeliAIStateMachine::HeliAIStateMachine(Object *owner, AsciiString name) : AIStat
 	defineState( TAKING_OFF, newInstance(HeliTakeoffOrLandingState)( this, false ), AI_IDLE, AI_IDLE );
 	defineState( LANDING_AWAIT_CLEARANCE, newInstance(SuccessState)( this ), ORIENT_FOR_PARKING_PLACE, AI_IDLE );
 	defineState( ORIENT_FOR_PARKING_PLACE, newInstance(JetOrHeliParkOrientState)( this ), LANDING, AI_IDLE );
+#if RETAIL_COMPATIBLE_CRC
 	defineState( LANDING, newInstance(HeliTakeoffOrLandingState)( this, true ), RELOAD_AMMO, AI_IDLE );
 	defineState( RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)( this ), AI_IDLE, AI_IDLE );
+#else
+	defineState( LANDING, newInstance(HeliTakeoffOrLandingState)( this, true ), RELOAD_AMMO, TAKING_OFF );
+	defineState( RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)( this ), AI_IDLE, TAKING_OFF );
+#endif
 	defineState( RETURN_TO_DEAD_AIRFIELD, newInstance(JetOrHeliReturningToDeadAirfieldState)( this ), CIRCLING_DEAD_AIRFIELD, RETURN_TO_DEAD_AIRFIELD );
 	defineState( CIRCLING_DEAD_AIRFIELD, newInstance(JetOrHeliCirclingDeadAirfieldState)( this ), AI_IDLE, AI_IDLE );
 	defineState( TAXI_FROM_HANGAR, newInstance(JetOrHeliTaxiState)( this, FROM_HANGAR ), AI_IDLE, AI_IDLE );
