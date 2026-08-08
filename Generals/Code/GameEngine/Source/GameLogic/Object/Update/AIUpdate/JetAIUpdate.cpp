@@ -816,13 +816,10 @@ public:
 		loco->setUltraAccurate(true);
 		jetAI->ignoreObstacleID(jet->getProducerID());
 
-		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
+		Object* airfield;
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
 		if (pp == nullptr)
-#if RETAIL_COMPATIBLE_CRC
-			return STATE_SUCCESS;
-#else
-			return STATE_FAILURE;
-#endif
+			return STATE_SUCCESS;	// no airfield? just skip this step
 
 		Coord3D landingApproach;
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
