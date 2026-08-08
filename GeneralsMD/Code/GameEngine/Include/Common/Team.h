@@ -471,7 +471,11 @@ public:
 		a convenience routine used to estimate the team's position by just returning the position
 		of the first member of the team
 		*/
+#if RTS_GENERALS
+	const Coord3D* getEstimateTeamPosition();
+#elif RTS_ZEROHOUR
 	const Coord3D* getEstimateTeamPosition() const;
+#endif
 
 	/**
 		a convenience routine to move a team's units to another team.

@@ -96,6 +96,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound, Bool trackIncom
 	}
 
 	m_money += amountToDeposit;
+#if RTS_ZEROHOUR
 
 	if( amountToDeposit > 0 )
 	{
@@ -105,6 +106,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound, Bool trackIncom
 			player->getAcademyStats()->recordIncome();
 		}
 	}
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------

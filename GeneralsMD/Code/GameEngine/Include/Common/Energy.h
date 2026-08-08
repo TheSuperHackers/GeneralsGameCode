@@ -70,7 +70,9 @@ public:
 	{
 		m_energyProduction = 0;
 		m_energyConsumption = 0;
+#if RTS_ZEROHOUR
 		m_powerSabotagedTillFrame = 0;
+#endif
 		m_owner = owner;
 	}
 
@@ -95,9 +97,11 @@ public:
 	void addPowerBonus( Object *obj );
 	void removePowerBonus( Object *obj );
 
+#if RTS_ZEROHOUR
 	void setPowerSabotagedTillFrame( UnsignedInt frame ) { m_powerSabotagedTillFrame = frame; }
 	UnsignedInt getPowerSabotagedTillFrame() const { return m_powerSabotagedTillFrame; }
 
+#endif
 	/**
 		return the percentage of energy needed that we actually produce, as a 0.0 ... 1.0 fraction.
 	*/
@@ -117,6 +121,8 @@ private:
 
 	Int		m_energyProduction;		///< level of energy production, in kw
 	Int		m_energyConsumption;	///< level of energy consumption, in kw
+#if RTS_ZEROHOUR
 	UnsignedInt m_powerSabotagedTillFrame; ///< If power is sabotaged, the frame will be greater than now.
+#endif
 	Player *m_owner;						///< Tight pointer to the Player I am intrinsic to.
 };

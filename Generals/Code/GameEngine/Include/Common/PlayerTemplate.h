@@ -112,7 +112,17 @@ public:
 	//const Image *getHiliteImage() const;
 	//const Image *getPushedImage() const;
 	const Image *getSideIconImage() const;
+#if RTS_ZEROHOUR
+	const Image *getGeneralImage() const;
+#endif
 	const AsciiString getTooltip() const { return m_tooltip; }
+#if RTS_ZEROHOUR
+	const AsciiString getGeneralFeatures() const { return m_strGeneralFeatures; }
+
+	AsciiString getMedallionNormal() const { return m_strMedallionNormal; }
+	AsciiString getMedallionHilite() const { return m_strMedallionHilite; }
+	AsciiString getMedallionSelected() const { return m_strMedallionSelected; }
+#endif
 
 	const ScienceVec& getIntrinsicSciences() const { return m_intrinsicSciences; }
 	Int getIntrinsicSciencePurchasePoints() const { return m_intrinsicSPP; }
@@ -125,6 +135,9 @@ public:
 	Int getSpecialPowerShortcutButtonCount() const {return m_specialPowerShortcutButtonCount;	}
 
 	AsciiString getLoadScreenMusic() const {return m_loadScreenMusic;	}
+#if RTS_ZEROHOUR
+	AsciiString getScoreScreenMusic() const { return m_scoreScreenMusic; }
+#endif
 
   Bool isOldFaction() const { return m_oldFaction; }
 
@@ -161,6 +174,9 @@ private:
 	AsciiString				m_specialPowerShortcutWinName;			///< The name of the window we'll be using for the shortcut bar
 	Int								m_specialPowerShortcutButtonCount;	///< The number of buttons located on the shortcut bar
 	AsciiString				m_loadScreenMusic;									///< the load screen music we want to play
+#if RTS_ZEROHOUR
+	AsciiString				m_scoreScreenMusic;									///< the score screen music we want to play
+#endif
 	AsciiString				m_tooltip;								///< The tooltip describing this player template
 	Bool							m_observer;
 	Bool							m_playableSide;
@@ -178,8 +194,18 @@ private:
 	//AsciiString			m_hiliteImage;					///< hilite button image
 	//AsciiString			m_pushedImage;					///< pushed button image
 	AsciiString			m_sideIconImage;				///< The little icon we show on game info screens for the sides
+#if RTS_ZEROHOUR
+	AsciiString			m_generalImage;				///< The icon overlayed on the rank image in My Persona
+#endif
 
 	AsciiString			m_beaconTemplate;				///< ThingTemplate name for beacons
+#if RTS_ZEROHOUR
+
+	AsciiString m_strGeneralFeatures;		///< used in loadscreens
+	AsciiString m_strMedallionNormal;
+	AsciiString m_strMedallionHilite;
+	AsciiString m_strMedallionSelected;
+#endif
 };
 
 // ----------------------------------------------------------------------------------------------
@@ -202,7 +228,11 @@ public:
 	const PlayerTemplate* getNthPlayerTemplate(Int i) const;
 	const PlayerTemplate* findPlayerTemplate(NameKeyType namekey) const;
 	Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
+#if RTS_GENERALS
 
+#elif RTS_ZEROHOUR
+	Int getTemplateNumByName(AsciiString name) const;
+#endif
 
 	// This function will fill outStringList with all the sides found in all the templates
 	void getAllSideStrings(AsciiStringList *outStringList);

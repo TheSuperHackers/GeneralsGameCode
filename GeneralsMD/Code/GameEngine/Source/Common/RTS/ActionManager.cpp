@@ -36,7 +36,9 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
+#if RTS_ZEROHOUR
 #include "Common/BuildAssistant.h"
+#endif
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -156,10 +158,12 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 	if( obj->isEffectivelyDead() )
 		return FALSE;
 
+#if RTS_ZEROHOUR
 	// If I can't move, I can't get repaired
 	if( !obj->isMobile() )
 		return FALSE;
 
+#endif
 	// nothing can be done with things that are under construction
 	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
 			repairDest->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
@@ -569,11 +573,13 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 		return FALSE;
 	}
 
+#if RTS_ZEROHOUR
 
   if (objectToEnter->isDisabledByType( DISABLED_SUBDUED ))
     return FALSE; // a microwave tank has soldered the doors shut
 
 
+#endif
 	if( obj->isKindOf( KINDOF_STRUCTURE ) || obj->isKindOf( KINDOF_IMMOBILE ) )
 	{
 		//Structures or immobiles can't garrison
@@ -583,21 +589,27 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 	// Special case for unmanned vehicles. Any infantry unit can take over any unmanned vehicle!
 	if( obj->isKindOf( KINDOF_INFANTRY ) && objectToEnter->isDisabledByType( DISABLED_UNMANNED ) )
 	{
+#if RTS_GENERALS
+		return TRUE;
+#elif RTS_ZEROHOUR
 		if( !obj->isKindOf( KINDOF_REJECT_UNMANNED ) )
 		{
 			//But only if it's allowed to.
 			return TRUE;
 		}
+#endif
 	}
 
 	// Special case for aircraft.
 	if( obj->isKindOf( KINDOF_AIRCRAFT ) && objectToEnter->isKindOf( KINDOF_FS_AIRFIELD ) )
 	{
+#if RTS_ZEROHOUR
 		if( obj->getStatusBits().test( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) && obj->getCarrierDeckHeight() >= obj->getPosition()->z )
 		{
 			return FALSE;
 		}
 
+#endif
 		if (!obj->isAboveTerrain())
 			return FALSE;
 
@@ -745,6 +757,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 	CanAttackResult result = obj->getAbleToAttackSpecificObject( attackType, objectToAttack, commandSource );
 	if( result != ATTACKRESULT_NOT_POSSIBLE  )
 	{
+#if RTS_ZEROHOUR
 		//Kris: August 5, 2003
 		//Fix a case where the Demo_GLAInfantryWorker is able to attack using his passive bomb upgrade. We don't
 		//want him to allow a visible attack cursor for the player. This code never checked for AutoChoosesSources
@@ -768,6 +781,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 			}
 		}
 
+#endif
 		if( result == ATTACKRESULT_INVALID_SHOT && obj->isKindOf( KINDOF_DOZER ) )
 		{
 			//For the case of dozers, we don't ever want to see an attack cursor
@@ -801,6 +815,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 				}
 			}
 		}
+#if RTS_ZEROHOUR
     else if( result == ATTACKRESULT_NOT_POSSIBLE )// oh dear me. The weird case of a garrisoncontainer being a KINDOF_SPAWNS_ARE_THE_WEAPONS... the AmericaBuildingFirebase
     {
       ContainModuleInterface *contain = obj->getContain();
@@ -815,6 +830,7 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
         }
       }
     }
+#endif
 	}
 
 	return ATTACKRESULT_NOT_POSSIBLE;
@@ -859,6 +875,12 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 // ------------------------------------------------------------------------------------------------
 Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToHijack, CommandSourceType commandSource ) //LORENZEN
 {
+#if RTS_GENERALS
+
+	int foo = 10;
+	++foo;
+
+#endif
 	// sanity
 	if( obj == nullptr || objectToHijack == nullptr )
 	{
@@ -890,17 +912,35 @@ Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToH
 		return FALSE;
 	}
 
+#if RTS_GENERALS
+	//Silly hijacker, you can't hijack that plane from the ground!
+	//if( objectToHijack->isAirborneTarget() )
+	//{
+	//	return FALSE;
+	//}
+
+#endif
 	//Kris -- Hijackers can no longer hijack any aircraft.
 	if( objectToHijack->isKindOf( KINDOF_AIRCRAFT ) )
 	{
 		return FALSE;
 	}
 
+#if RTS_GENERALS
+// Dustin asked for this to be removed, 12/13... ML
+	//Elite and heroic units are immune to this kind of attack
+//	VeterancyLevel veterancyLevel = objectToHijack->getVeterancyLevel();
+//	if( veterancyLevel >= LEVEL_ELITE )
+//	{
+//		return FALSE;
+//	}
+#elif RTS_ZEROHOUR
 	//Can't hijack a drone type.
 	if( objectToHijack->isKindOf( KINDOF_DRONE ) )
 	{
 		return FALSE;
 	}
+#endif
 
 	// last, see if we'd like to collide with 'objectToHijack'
 	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
@@ -918,6 +958,7 @@ Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToH
 	return FALSE;
 }
 
+#if RTS_ZEROHOUR
 // ------------------------------------------------------------------------------------------------
 Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *objectToSabotage, CommandSourceType commandSource )
 {
@@ -962,6 +1003,7 @@ Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *object
 	return FALSE;
 }
 
+#endif
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 Bool ActionManager::canMakeObjectDefector( const Object *obj, const Object *objectToMakeDefector, CommandSourceType commandSource ) //LORENZEN
@@ -1076,8 +1118,12 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 
 	//If the enemy unit is stealthed and not detected, then we can't capture it!
 	if( objectToCapture->testStatus( OBJECT_STATUS_STEALTHED ) &&
+#if RTS_GENERALS
+			!objectToCapture->testStatus( OBJECT_STATUS_DETECTED ) )
+#elif RTS_ZEROHOUR
 			!objectToCapture->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToCapture->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 	{
 		return FALSE;
 	}
@@ -1166,8 +1212,12 @@ Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object
 
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
 	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
+#if RTS_GENERALS
+			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) )
+#elif RTS_ZEROHOUR
 			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			return FALSE;
 		}
@@ -1296,8 +1346,12 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
 	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
+#if RTS_GENERALS
+			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) )
+#elif RTS_ZEROHOUR
 			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			return FALSE;
 		}
@@ -1369,8 +1423,12 @@ Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Objec
 
 	//If the enemy unit is stealthed and not detected, then we can't attack it!
 	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
+#if RTS_GENERALS
+			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) )
+#elif RTS_ZEROHOUR
 			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
 			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 	{
 		return FALSE;
 	}
@@ -1425,16 +1483,22 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 			return FALSE;
 		}
 
+#if RTS_ZEROHOUR
 		//Can't be a drone type.
 		if( objectToSnipe->isKindOf( KINDOF_DRONE ) )
 		{
 			return FALSE;
 		}
 
+#endif
 		//Make sure object is not flying
 		if( objectToSnipe->isAirborneTarget() )
 		{
+#if RTS_GENERALS
+			return false;
+#elif RTS_ZEROHOUR
 			return FALSE;
+#endif
 		}
 
 		//Make sure the vehicle is manned!
@@ -1443,6 +1507,7 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 			return FALSE;
 		}
 
+#if RTS_ZEROHOUR
 		// TheSuperHackers @bugfix Caball009 04/09/2025 Disabled bikes may not have a rider to snipe.
 		ContainModuleInterface* contain = objectToSnipe->getContain();
 		if ( contain && contain->isRiderChangeContain() && contain->getContainedItemsList()->empty() )
@@ -1450,12 +1515,14 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 			return FALSE;
 		}
 
+#endif
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
+#if RTS_ZEROHOUR
 
 
 
@@ -1469,6 +1536,7 @@ inline Bool isPointOnMap( const Coord3D  *testPos )
 }
 
 
+#endif
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3D *loc, CommandSourceType commandSource, const SpecialPowerTemplate *spTemplate, const Object *objectInWay, UnsignedInt commandOptions, Bool checkSourceRequirements )
@@ -1498,32 +1566,48 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 		switch( spTemplate->getSpecialPowerType() )
 		{
 			case SPECIAL_PARADROP_AMERICA:
+#if RTS_ZEROHOUR
 			case INFA_SPECIAL_PARADROP_AMERICA:
+#endif
 			case SPECIAL_CRATE_DROP:
+#if RTS_ZEROHOUR
 			case SPECIAL_TANK_PARADROP:
+#endif
 			{
 				if( TheTerrainLogic->isUnderwater( loc->x, loc->y ) )
 					return FALSE;
 			}
 		}
 
+#if RTS_GENERALS
+		// Last check is shroudedness, if it is cared about
+#elif RTS_ZEROHOUR
 		// Second check is shroudedness, if it is cared about
+#endif
 		switch( spTemplate->getSpecialPowerType() )
 		{
 			case SPECIAL_DAISY_CUTTER:
+#if RTS_ZEROHOUR
 			case AIRF_SPECIAL_DAISY_CUTTER:
+#endif
 			case SPECIAL_PARADROP_AMERICA:
+#if RTS_ZEROHOUR
 			case SPECIAL_TANK_PARADROP:
 			case INFA_SPECIAL_PARADROP_AMERICA:
+#endif
 			case SPECIAL_CARPET_BOMB:
+#if RTS_ZEROHOUR
 			case SPECIAL_CHINA_CARPET_BOMB:
 			case SPECIAL_LEAFLET_DROP:
 			case EARLY_SPECIAL_LEAFLET_DROP:
 			case EARLY_SPECIAL_CHINA_CARPET_BOMB:
 			case AIRF_SPECIAL_CARPET_BOMB:
 			case SUPR_SPECIAL_CRUISE_MISSILE:
+#endif
 			case SPECIAL_CLUSTER_MINES:
+#if RTS_ZEROHOUR
 			case NUKE_SPECIAL_CLUSTER_MINES:
+#endif
 			case SPECIAL_EMP_PULSE:
 			case SPECIAL_CRATE_DROP:
 			case SPECIAL_NAPALM_STRIKE:
@@ -1532,46 +1616,66 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case SPECIAL_TERROR_CELL:
 			case SPECIAL_AMBUSH:
 			case SPECIAL_NEUTRON_MISSILE:
+#if RTS_ZEROHOUR
 			case NUKE_SPECIAL_NEUTRON_MISSILE:
 			case SUPW_SPECIAL_NEUTRON_MISSILE:
+#endif
 			case SPECIAL_SCUD_STORM:
 #ifdef ALLOW_DEMORALIZE
 			case SPECIAL_DEMORALIZE:
 #endif
 			case SPECIAL_A10_THUNDERBOLT_STRIKE:
+#if RTS_ZEROHOUR
 			case AIRF_SPECIAL_A10_THUNDERBOLT_STRIKE:
 			case SPECIAL_SPECTRE_GUNSHIP:
 			case AIRF_SPECIAL_SPECTRE_GUNSHIP:
+#endif
 			case SPECIAL_REPAIR_VEHICLES:
+#if RTS_ZEROHOUR
 			case EARLY_SPECIAL_REPAIR_VEHICLES:
       case SPECIAL_GPS_SCRAMBLER:
 			case SLTH_SPECIAL_GPS_SCRAMBLER:
+#endif
 			case SPECIAL_ARTILLERY_BARRAGE:
+#if RTS_ZEROHOUR
 			case SPECIAL_FRENZY:
 			case EARLY_SPECIAL_FRENZY:
+#endif
 			case SPECIAL_PARTICLE_UPLINK_CANNON:
+#if RTS_ZEROHOUR
 			case SUPW_SPECIAL_PARTICLE_UPLINK_CANNON:
 			case LAZR_SPECIAL_PARTICLE_UPLINK_CANNON:
+#endif
 			case SPECIAL_CLEANUP_AREA:
+#if RTS_ZEROHOUR
 			case SPECIAL_BATTLESHIP_BOMBARDMENT:
+#endif
 				//Don't allow "damaging" special powers in shrouded areas, but Fogged are okay.
 				return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
 
 			case SPECIAL_SPY_SATELLITE:
 			case SPECIAL_RADAR_VAN_SCAN:
 			case SPECIAL_SPY_DRONE:
+#if RTS_GENERALS
+			case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
+				//These specials can be used anywhere!
+				return true;
+#elif RTS_ZEROHOUR
 			case SPECIAL_HELIX_NAPALM_BOMB:
 
         //These specials can be used anywhere!
         return isPointOnMap( loc );
       case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
 			  return TRUE;
+#endif
 
 			//These special powers require object targets!
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
 			case SPECIAL_HACKER_DISABLE_BUILDING:
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:
+#if RTS_ZEROHOUR
 			case SPECIAL_BOOBY_TRAP:
+#endif
 			case SPECIAL_CASH_HACK:
 			case SPECIAL_DEFECTOR:
 			case SPECIAL_BLACKLOTUS_CAPTURE_BUILDING:
@@ -1586,6 +1690,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case SPECIAL_CHANGE_BATTLE_PLANS:
 				return false;
 		}
+#if RTS_ZEROHOUR
 
 		// TheSuperHackers @fix stephanmeesters 04/04/2026 Some special powers can spawn a building.
 		// To avoid cheating, verify that it is legal to place this building.
@@ -1614,6 +1719,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 #endif
 			}
 		}
+#endif
 	}
 	return false;
 }
@@ -1659,6 +1765,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			case SPECIAL_CASH_BOUNTY:
 				return false;
 
+#if RTS_ZEROHOUR
 			case SPECIAL_BATTLESHIP_BOMBARDMENT:
 				if( obj->getRelationship( target ) != ALLIES )
 				{
@@ -1666,6 +1773,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				}
 				return FALSE;
 
+#endif
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:
 				if( target->isKindOf( KINDOF_STRUCTURE ) || (target->isKindOf( KINDOF_VEHICLE ) && !target->isKindOf(KINDOF_AIRCRAFT)) )
 				{
@@ -1673,6 +1781,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				}
 				break;
 
+#if RTS_ZEROHOUR
 			case SPECIAL_BOOBY_TRAP:
 			{
 				// We can booby trap any building that is allied or neutral
@@ -1683,6 +1792,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				return FALSE;
 			}
 
+#endif
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
 				//Can only use laser guided missiles on vehicles!
 				if( target->isKindOf( KINDOF_VEHICLE ) && r == ENEMIES )
@@ -1738,10 +1848,14 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				break;
 
 			case SPECIAL_DISGUISE_AS_VEHICLE:
+#if RTS_GENERALS
+				if( target->isKindOf( KINDOF_VEHICLE ) && !target->isKindOf( KINDOF_AIRCRAFT ) && !target->isKindOf( KINDOF_BOAT ) )
+#elif RTS_ZEROHOUR
 				if( target->isKindOf( KINDOF_VEHICLE )
 						&& !target->isKindOf( KINDOF_AIRCRAFT )
 						&& !target->isKindOf( KINDOF_BOAT )
 						&& !target->isKindOf( KINDOF_CLIFF_JUMPER ) )
+#endif
 				{
 					//Don't allow it to disguise as another bomb truck -- that's just plain dumb.
 					//if( target->getTemplate() != obj->getTemplate() )
@@ -1779,27 +1893,37 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 
 			//These special powers require locations, not objects!
 			case SPECIAL_DAISY_CUTTER:
+#if RTS_ZEROHOUR
 			case AIRF_SPECIAL_DAISY_CUTTER:
+#endif
 			case SPECIAL_PARADROP_AMERICA:
+#if RTS_ZEROHOUR
 			case SPECIAL_TANK_PARADROP:
 			case INFA_SPECIAL_PARADROP_AMERICA:
+#endif
 			case SPECIAL_CARPET_BOMB:
+#if RTS_ZEROHOUR
 			case SPECIAL_CHINA_CARPET_BOMB:
 			case SPECIAL_LEAFLET_DROP:
 			case EARLY_SPECIAL_LEAFLET_DROP:
 			case EARLY_SPECIAL_CHINA_CARPET_BOMB:
 			case AIRF_SPECIAL_CARPET_BOMB:
 			case SUPR_SPECIAL_CRUISE_MISSILE:
+#endif
 			case SPECIAL_CLUSTER_MINES:
+#if RTS_ZEROHOUR
 			case NUKE_SPECIAL_CLUSTER_MINES:
+#endif
 			case SPECIAL_EMP_PULSE:
 			case SPECIAL_CRATE_DROP:
 			case SPECIAL_NAPALM_STRIKE:
 			case SPECIAL_TERROR_CELL:
 			case SPECIAL_AMBUSH:
 			case SPECIAL_NEUTRON_MISSILE:
+#if RTS_ZEROHOUR
 			case NUKE_SPECIAL_NEUTRON_MISSILE:
 			case SUPW_SPECIAL_NEUTRON_MISSILE:
+#endif
 			case SPECIAL_DETONATE_DIRTY_NUKE:
 			case SPECIAL_BLACK_MARKET_NUKE:
 			case SPECIAL_ANTHRAX_BOMB:
@@ -1808,26 +1932,36 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			case SPECIAL_RADAR_VAN_SCAN:
 			case SPECIAL_SCUD_STORM:
 			case SPECIAL_A10_THUNDERBOLT_STRIKE:
+#if RTS_ZEROHOUR
 			case AIRF_SPECIAL_A10_THUNDERBOLT_STRIKE:
       case SPECIAL_SPECTRE_GUNSHIP:
 			case AIRF_SPECIAL_SPECTRE_GUNSHIP:
+#endif
 			case SPECIAL_ARTILLERY_BARRAGE:
+#if RTS_ZEROHOUR
 			case SPECIAL_FRENZY:
 			case EARLY_SPECIAL_FRENZY:
+#endif
 			case SPECIAL_REPAIR_VEHICLES:
+#if RTS_ZEROHOUR
 			case EARLY_SPECIAL_REPAIR_VEHICLES:
       case SPECIAL_GPS_SCRAMBLER:
 			case SLTH_SPECIAL_GPS_SCRAMBLER:
+#endif
 			case SPECIAL_PARTICLE_UPLINK_CANNON:
 			case SPECIAL_CHANGE_BATTLE_PLANS:
 			case SPECIAL_CLEANUP_AREA:
 			case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
+#if RTS_ZEROHOUR
 			case SPECIAL_SNEAK_ATTACK:
+#endif
 				return false;
 
 			case SPECIAL_REMOTE_CHARGES:
 			case SPECIAL_TIMED_CHARGES:
+#if RTS_ZEROHOUR
 			case SPECIAL_HELIX_NAPALM_BOMB:
+#endif
 			{
 				if( target->isEffectivelyDead() ||
 						target->isKindOf( KINDOF_BRIDGE ) ||
@@ -1909,10 +2043,15 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 		{
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:
+#if RTS_ZEROHOUR
 			case SPECIAL_BOOBY_TRAP:
+#endif
 			case SPECIAL_DAISY_CUTTER:
+#if RTS_ZEROHOUR
 			case AIRF_SPECIAL_DAISY_CUTTER:
+#endif
 			case SPECIAL_PARADROP_AMERICA:
+#if RTS_ZEROHOUR
 			case SPECIAL_TANK_PARADROP:
 			case INFA_SPECIAL_PARADROP_AMERICA:
 			case SPECIAL_CARPET_BOMB:
@@ -1924,11 +2063,14 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 			case SUPR_SPECIAL_CRUISE_MISSILE:
 			case SPECIAL_CLUSTER_MINES:
 			case NUKE_SPECIAL_CLUSTER_MINES:
+#endif
 			case SPECIAL_NAPALM_STRIKE:
 			case SPECIAL_TERROR_CELL:
 			case SPECIAL_NEUTRON_MISSILE:
+#if RTS_ZEROHOUR
 			case NUKE_SPECIAL_NEUTRON_MISSILE:
 			case SUPW_SPECIAL_NEUTRON_MISSILE:
+#endif
 			case SPECIAL_BLACK_MARKET_NUKE:
 			case SPECIAL_ANTHRAX_BOMB:
 			case SPECIAL_SPY_SATELLITE:
@@ -1937,30 +2079,40 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 			case SPECIAL_TIMED_CHARGES:
 			case SPECIAL_SCUD_STORM:
 			case SPECIAL_A10_THUNDERBOLT_STRIKE:
+#if RTS_ZEROHOUR
 			case AIRF_SPECIAL_A10_THUNDERBOLT_STRIKE:
       case SPECIAL_SPECTRE_GUNSHIP:
 			case AIRF_SPECIAL_SPECTRE_GUNSHIP:
+#endif
 			case SPECIAL_ARTILLERY_BARRAGE:
+#if RTS_ZEROHOUR
 			case SPECIAL_FRENZY:
 			case EARLY_SPECIAL_FRENZY:
+#endif
 			case SPECIAL_DISGUISE_AS_VEHICLE:
 			case SPECIAL_REPAIR_VEHICLES:
+#if RTS_ZEROHOUR
 			case EARLY_SPECIAL_REPAIR_VEHICLES:
       case SPECIAL_GPS_SCRAMBLER:
 			case SLTH_SPECIAL_GPS_SCRAMBLER:
+#endif
 			case SPECIAL_PARTICLE_UPLINK_CANNON:
 			case SPECIAL_CASH_BOUNTY:
  			case SPECIAL_CLEANUP_AREA:
+#if RTS_ZEROHOUR
 			case SPECIAL_HELIX_NAPALM_BOMB:
 			case SPECIAL_SNEAK_ATTACK:
 			case SPECIAL_EMP_PULSE:
 			case SPECIAL_CASH_HACK:
+#endif
 				//These all require object or location targets.
 				return false;
 
 			case SPECIAL_REMOTE_CHARGES:
 			case SPECIAL_CIA_INTELLIGENCE:
+#if RTS_ZEROHOUR
 			case SPECIAL_COMMUNICATIONS_DOWNLOAD:
+#endif
 			case SPECIAL_DETONATE_DIRTY_NUKE:
 			case SPECIAL_CHANGE_BATTLE_PLANS:
 			case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
@@ -1996,16 +2148,30 @@ Bool ActionManager::canFireWeaponAtObject( const Object *obj, const Object *targ
 	//Sanity check
 	if( obj == nullptr || target == nullptr )
 	{
+#if RTS_GENERALS
+		return false;
+#elif RTS_ZEROHOUR
 		return FALSE;
+#endif
 	}
 
 	//Make sure we have the right weapon.
 	Weapon *weapon = obj->getWeaponInWeaponSlot( slot );
 	if( !weapon )
 	{
+#if RTS_GENERALS
+		return false;
+#elif RTS_ZEROHOUR
 		return FALSE;
+#endif
 	}
 
+#if RTS_GENERALS
+	//if( weapon->getDamageType() == DAMAGE_KILLPILOT )
+	//{
+	//	return canSnipeVehicle( obj, target, commandSource );
+	//}
+#elif RTS_ZEROHOUR
 	Bool sniper = FALSE;
 	if( weapon->getDamageType() == DAMAGE_KILLPILOT )
 	{
@@ -2015,12 +2181,17 @@ Bool ActionManager::canFireWeaponAtObject( const Object *obj, const Object *targ
 		}
 		sniper = TRUE;
 	}
+#endif
 
+#if RTS_GENERALS
+	CanAttackResult result = obj->getAbleToAttackSpecificObject( ATTACK_NEW_TARGET, target, commandSource );
+#elif RTS_ZEROHOUR
 	CanAttackResult result;
 	if( sniper )
 		result = obj->getAbleToAttackSpecificObject( ATTACK_NEW_TARGET, target, commandSource, slot );
 	else
 		result = obj->getAbleToAttackSpecificObject( ATTACK_NEW_TARGET, target, commandSource );
+#endif
 
 	if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
 	{

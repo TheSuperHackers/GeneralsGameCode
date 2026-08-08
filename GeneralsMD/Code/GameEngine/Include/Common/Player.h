@@ -225,7 +225,9 @@ public:
 	NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
 
 	AsciiString getSide() const { return m_side; }
+#if RTS_ZEROHOUR
 	AsciiString getBaseSide() const { return m_baseSide; }
+#endif
 
 	const PlayerTemplate* getPlayerTemplate() const { return m_playerTemplate;	}
 	/// return the Player's Handicap sub-object
@@ -236,7 +238,11 @@ public:
 	Money *getMoney() { return &m_money; }
 	const Money *getMoney() const { return &m_money; }
 
+#if RTS_GENERALS
+	UnsignedInt getSupplyBoxValue();///< Many things can affect the alue of a crate, but at heart it is a GlobalData ratio.
+#elif RTS_ZEROHOUR
 	UnsignedInt getSupplyBoxValue();///< Many things can affect the value of a crate, but at heart it is a GlobalData ratio.
+#endif
 
 	Energy *getEnergy() { return &m_energy; }
 	const Energy *getEnergy() const { return &m_energy; }
@@ -269,9 +275,11 @@ public:
 	// Can we afford to build?
 	Bool canAffordBuild( const ThingTemplate *whatToBuild ) const;
 
+#if RTS_ZEROHOUR
   // Check MaxSimultaneousOfType
   Bool canBuildMoreOfType( const ThingTemplate *whatToBuild ) const;
 
+#endif
 	/// Difficulty level for this player.
 	GameDifficulty getPlayerDifficulty() const;
 
@@ -326,6 +334,24 @@ public:
 	void onUpgradeCompleted( const UpgradeTemplate *upgradeTemplate );				///< An upgrade just finished, do things like tell all objects to recheck UpgradeModules
 	void onUpgradeRemoved(){}					///< An upgrade just got removed, this doesn't do anything now.
 
+#if RTS_GENERALS
+#if defined(RTS_DEBUG)
+	/// Prereq disabling cheat key
+	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
+	void enableIgnorePrereqs(Bool enable) { m_DEMO_ignorePrereqs = enable; }
+	Bool ignoresPrereqs() const { return m_DEMO_ignorePrereqs; }
+
+	/// No cost building cheat key
+	void toggleFreeBuild(){ m_DEMO_freeBuild = !m_DEMO_freeBuild; }
+	void enableFreeBuild(Bool enable) { m_DEMO_freeBuild = enable; }
+	Bool buildsForFree() const { return m_DEMO_freeBuild; }
+
+	/// No time building cheat key
+	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
+	void enableInstantBuild(Bool enable) { m_DEMO_instantBuild = enable; }
+	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
+#endif
+#elif RTS_ZEROHOUR
 #if defined(RTS_DEBUG)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
@@ -344,6 +370,7 @@ public:
 	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
 	void enableInstantBuild(Bool enable) { m_DEMO_instantBuild = enable; }
 	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
+#endif
 #endif
 
 	///< Power just changed at all.  Didn't make two functions so you can't forget to undo something you didin one of them.
@@ -442,7 +469,11 @@ public:
 	/// Have the team guard a supply center.
 	void guardSupplyCenter( Team *team, Int minSupplies );
 
+#if RTS_GENERALS
+	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+#elif RTS_ZEROHOUR
 	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+#endif
 
 	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
 	Player  *getCurrentEnemy();
@@ -562,7 +593,14 @@ public:
 	Bool getUnitsShouldHunt() const { return m_unitsShouldHunt; }
 
 	/// All of our units are new spied upon; they sight for the given enemy
+#if RTS_GENERALS
+	void setUnitsVisionSpied( Bool setting, PlayerIndex byWhom );
+
+	/// This will be asked by units when they look to get extra people to sight for
+	PlayerMaskType getVisionSpiedMask() const;
+#elif RTS_ZEROHOUR
 	void setUnitsVisionSpied( Bool setting, KindOfMaskType whichUnits, PlayerIndex byWhom );
+#endif
 
 	/// Destroy all of the teams for this player, causing him to DIE.
 	void killPlayer();
@@ -579,9 +617,11 @@ public:
 	/// Build a building near a supply dump with at least cash.  Gets passed to aiPlayer.
 	void buildBySupplies(Int minimumCash, const AsciiString &thingName);
 
+#if RTS_ZEROHOUR
 	/// Build an instance of a specific building nearest specified team.  Gets passed to aiPlayer.
 	void buildSpecificBuildingNearestTeam( const AsciiString &thingName, const Team *team );
 
+#endif
 	/// Build an upgrade.  Gets passed to aiPlayer.
 	void buildUpgrade(const AsciiString &upgrade);
 
@@ -594,9 +634,11 @@ public:
 	/// Recruits an instance of a specific team.  Gets passed to aiPlayer.
 	void recruitSpecificTeam(TeamPrototype *teamProto, Real recruitRadius);
 
+#if RTS_ZEROHOUR
 	/// Calculates the closest construction zone location based on a template. Gets plassed to aiPlayer
 	Bool calcClosestConstructionZoneLocation( const ThingTemplate *constructTemplate, Coord3D *location );
 
+#endif
 	/// Enable/Disable the construction of units
 	Bool getCanBuildUnits() { return m_canBuildUnits; }
 	void setCanBuildUnits(Bool canProduce) { m_canBuildUnits = canProduce; }
@@ -746,7 +788,9 @@ private:
 	NameKeyType									m_playerNameKey;							///< This player's internal name (for matching map objects)
 	PlayerIndex									m_playerIndex;								///< player unique index.
 	AsciiString									m_side;												///< the "side" this player is on
+#if RTS_ZEROHOUR
 	AsciiString									m_baseSide;											///< the base side, GLA, USA, or China
+#endif
 	PlayerType									m_playerType;									///< human/computer control
 	Money												m_money;											///< Player's current wealth
 	Upgrade*										m_upgradeList;								///< list of all upgrades this player has
@@ -773,15 +817,29 @@ private:
 	TunnelTracker*							m_tunnelSystem;								///< All TunnelContain buildings use this part of me for actual containment
 	Team*												m_defaultTeam;								///< our "default" team.
 
+#if RTS_GENERALS
+	ScienceVec					m_sciences;					///< (SAVE) sciences that we know (either intrinsically or via later purchases)
+	ScienceVec					m_sciencesDisabled;	///< (SAVE) sciences that we are not permitted to purchase "yet". Controlled by mission scripts.
+	ScienceVec					m_sciencesHidden;		///< (SAVE) sciences that aren't shown. Controlled by mission scripts.
+#elif RTS_ZEROHOUR
 	ScienceVec						m_sciences;					///< (SAVE) sciences that we know (either intrinsically or via later purchases)
 	ScienceVec						m_sciencesDisabled;	///< (SAVE) sciences that we are not permitted to purchase "yet". Controlled by mission scripts.
 	ScienceVec						m_sciencesHidden;		///< (SAVE) sciences that aren't shown. Controlled by mission scripts.
+#endif
 
+#if RTS_GENERALS
+	Int									m_rankLevel;			///< (SAVE) our RankLevel, 1...n
+	Int									m_skillPoints;		///< (SAVE) our cumulative SkillPoint total
+	Int									m_sciencePurchasePoints;		///< (SAVE) our unspent SciencePurchasePoint total
+	Int									m_levelUp, m_levelDown;			///< (NO-SAVE) skill points to go up/down a level (runtime only)
+	UnicodeString				m_generalName;		///< (SAVE) This is the name of the general the player is allowed to change.
+#elif RTS_ZEROHOUR
 	Int										m_rankLevel;			///< (SAVE) our RankLevel, 1...n
 	Int										m_skillPoints;		///< (SAVE) our cumulative SkillPoint total
 	Int										m_sciencePurchasePoints;		///< (SAVE) our unspent SciencePurchasePoint total
 	Int										m_levelUp, m_levelDown;			///< (NO-SAVE) skill points to go up/down a level (runtime only)
 	UnicodeString					m_generalName;		///< (SAVE) This is the name of the general the player is allowed to change.
+#endif
 
 	PlayerTeamList				m_playerTeamPrototypes;				///< ALL the teams we control, via prototype
 	PlayerRelationMap			*m_playerRelations;						///< allies & enemies
@@ -800,10 +858,21 @@ private:
 
 	Bool									m_attackedBy[MAX_PLAYER_COUNT];	///< For each player, have they attacked me?
 	UnsignedInt						m_attackedFrame;	///< Last frame attacked.
+#if RTS_GENERALS
+	Int										m_visionSpiedBy[MAX_PLAYER_COUNT];  ///< Reference count of having units spied on by players.
+	PlayerMaskType				m_visionSpiedMask;	///< For quick lookup and edge triggered maintenance
+#endif
 
 	Real									m_cashBountyPercent;
 
 	/// @todo REMOVE (not disable) these cheat keys
+#if RTS_GENERALS
+#if defined(RTS_DEBUG)
+	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
+	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
+	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?
+#endif
+#elif RTS_ZEROHOUR
 #if defined(RTS_DEBUG)
 	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
 	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
@@ -811,6 +880,7 @@ private:
 
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?
+#endif
 #endif
 
 	ScoreKeeper						m_scoreKeeper;					///< The local scorekeeper for this player

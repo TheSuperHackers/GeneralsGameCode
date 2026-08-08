@@ -1521,7 +1521,12 @@ Object *Team::getTeamTargetObject()
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
 	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
+#if RTS_GENERALS
 			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+#elif RTS_ZEROHOUR
+			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
+			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			target = nullptr;
 		}
@@ -1532,6 +1537,13 @@ Object *Team::getTeamTargetObject()
 	if (target && target->getContainedBy()) {
 		target = nullptr; // target entered a building or vehicle, so stop targeting.
 	}
+#if RTS_ZEROHOUR
+	if (target && target->isKindOf(KINDOF_AIRCRAFT)) {
+		// It is just generally bad to have an aircraft as the team target.
+		// Let team members acquire aircraft individually.  jba. [8/27/2003]
+		target = nullptr;
+	}
+#endif
 	if (target == nullptr) {
 		m_commonAttackTarget = INVALID_ID;
 	}
@@ -2218,7 +2230,11 @@ Bool Team::someInsideSomeOutside(PolygonTrigger *pTrigger, UnsignedInt whichToCo
 	return anyConsidered && anyInside && anyOutside;
 }
 
+#if RTS_GENERALS
 const Coord3D* Team::getEstimateTeamPosition()
+#elif RTS_ZEROHOUR
+const Coord3D* Team::getEstimateTeamPosition() const
+#endif
 {
 	// this doesn't actually calculate the team position, but rather estimates it by
 	// returning the position of the first member of the team

@@ -49,8 +49,10 @@
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#if RTS_ZEROHOUR
 
 #include "GameLogic/GameLogic.h"
+#endif
 #include "GameLogic/Object.h"
 
 
@@ -60,17 +62,21 @@ Energy::Energy()
 	m_energyProduction = 0;
 	m_energyConsumption = 0;
 	m_owner = nullptr;
+#if RTS_ZEROHOUR
 	m_powerSabotagedTillFrame = 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------
 Int Energy::getProduction() const
 {
+#if RTS_ZEROHOUR
 	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
 	{
 		//Power sabotaged, therefore no power.
 		return 0;
 	}
+#endif
 	return m_energyProduction;
 }
 
@@ -79,12 +85,14 @@ Real Energy::getEnergySupplyRatio() const
 {
 	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
 
+#if RTS_ZEROHOUR
 	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
 	{
 		//Power sabotaged, therefore no power, no ratio.
 		return 0.0f;
 	}
 
+#endif
 	if (m_energyConsumption == 0)
 		return (Real)m_energyProduction;
 
@@ -94,11 +102,13 @@ Real Energy::getEnergySupplyRatio() const
 //-------------------------------------------------------------------------------------------------
 Bool Energy::hasSufficientPower() const
 {
+#if RTS_ZEROHOUR
 	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
 	{
 		//Power sabotaged, therefore no power.
 		return FALSE;
 	}
+#endif
 	return m_energyProduction >= m_energyConsumption;
 }
 
@@ -268,7 +278,11 @@ void Energy::xfer( Xfer *xfer )
 {
 
 	// version
+#if RTS_GENERALS
+	XferVersion currentVersion = 2;
+#elif RTS_ZEROHOUR
 	XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -290,12 +304,14 @@ void Energy::xfer( Xfer *xfer )
 	xfer->xferInt( &owningPlayerIndex );
 	m_owner = ThePlayerList->getNthPlayer( owningPlayerIndex );
 
+#if RTS_ZEROHOUR
 	//Sabotage
 	if( version >= 3 )
 	{
 		xfer->xferUnsignedInt( &m_powerSabotagedTillFrame );
 	}
 
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
