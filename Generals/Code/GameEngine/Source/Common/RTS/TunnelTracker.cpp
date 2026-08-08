@@ -147,7 +147,12 @@ Object *TunnelTracker::getCurNemesis()
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
 	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
+#if RTS_GENERALS
 			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+#elif RTS_ZEROHOUR
+			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
+			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
+#endif
 		{
 			target = nullptr;
 		}

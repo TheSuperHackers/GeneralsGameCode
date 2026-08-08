@@ -100,7 +100,9 @@
 		{ "ScoreScreenImage",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_scoreScreenImage ) },
 		{ "LoadScreenImage",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenImage ) },
 		{ "LoadScreenMusic",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenMusic ) },
+#if RTS_ZEROHOUR
 		{ "ScoreScreenMusic",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_scoreScreenMusic ) },
+#endif
 
 		{ "HeadWaterMark",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_headWaterMark ) },
 		{ "FlagWaterMark",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_flagWaterMark ) },
@@ -109,15 +111,19 @@
 		//{ "HiliteImage",							INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_hiliteImage ) },
 		//{ "PushedImage",							INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_pushedImage ) },
 		{ "SideIconImage",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_sideIconImage ) },
+#if RTS_ZEROHOUR
 		{ "GeneralImage",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_generalImage ) },
+#endif
 
 		{ "BeaconName",								INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_beaconTemplate ) },
+#if RTS_ZEROHOUR
 		{ "ArmyTooltip",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_tooltip ) },
 		{ "Features",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strGeneralFeatures ) },
 		{ "MedallionRegular",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strMedallionNormal ) },
 		{ "MedallionHilite",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strMedallionHilite ) },
 		{ "MedallionSelect",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strMedallionSelected ) },
 
+#endif
 		{ nullptr,											nullptr,																				nullptr, 0 },
 	};
 
@@ -219,12 +225,14 @@ const Image *PlayerTemplate::getSideIconImage() const
 	return TheMappedImageCollection->findImageByName(m_sideIconImage);
 }
 
+#if RTS_ZEROHOUR
 //-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getGeneralImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_generalImage);
 }
 
+#endif
 //-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getEnabledImage() const
 {
@@ -286,6 +294,7 @@ void PlayerTemplateStore::update()
 	// nothing
 }
 
+#if RTS_ZEROHOUR
 
 Int PlayerTemplateStore::getTemplateNumByName(AsciiString name) const
 {
@@ -298,6 +307,7 @@ Int PlayerTemplateStore::getTemplateNumByName(AsciiString name) const
 	return -1;
 }
 
+#endif
 //-----------------------------------------------------------------------------
 const PlayerTemplate* PlayerTemplateStore::findPlayerTemplate(NameKeyType namekey) const
 {

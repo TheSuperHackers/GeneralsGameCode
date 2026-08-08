@@ -117,7 +117,7 @@ static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *
 		return FLT_MAX;
 
 	if( !TheActionManager->canTransferSuppliesAt(queryObject, destObject) )
-		return FLT_MAX;// Handles emptyness and alliances
+		return FLT_MAX;// Handles emptiness and alliances
 
 	DockUpdateInterface *dockInterface = destObject->getDockUpdateInterface();
 	if( !dockInterface->isClearToApproach( queryObject ) )

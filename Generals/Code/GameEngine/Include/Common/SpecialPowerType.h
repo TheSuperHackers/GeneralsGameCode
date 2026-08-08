@@ -71,6 +71,9 @@ enum SpecialPowerType CPP_11(: Int)
 	SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES,
 	SPECIAL_REMOTE_CHARGES,
 	SPECIAL_TIMED_CHARGES,
+#if RTS_ZEROHOUR
+	SPECIAL_HELIX_NAPALM_BOMB,
+#endif
 	SPECIAL_HACKER_DISABLE_BUILDING,
 	SPECIAL_TANKHUNTER_TNT_ATTACK,
 	SPECIAL_BLACKLOTUS_CAPTURE_BUILDING,
@@ -80,6 +83,9 @@ enum SpecialPowerType CPP_11(: Int)
 	SPECIAL_RADAR_VAN_SCAN,
 	SPECIAL_SPY_DRONE,
 	SPECIAL_DISGUISE_AS_VEHICLE,
+#if RTS_ZEROHOUR
+	SPECIAL_BOOBY_TRAP,
+#endif
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 	SPECIAL_REPAIR_VEHICLES,
 	SPECIAL_PARTICLE_UPLINK_CANNON,
@@ -90,8 +96,57 @@ enum SpecialPowerType CPP_11(: Int)
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 	SPECIAL_LAUNCH_BAIKONUR_ROCKET,
 
+#if RTS_ZEROHOUR
+  SPECIAL_SPECTRE_GUNSHIP,
+  SPECIAL_GPS_SCRAMBLER,
+
+	SPECIAL_FRENZY,
+	SPECIAL_SNEAK_ATTACK,
+
+	//Ack, this is ass. These enums fix a bug where new enums were missing for
+	//shortcut powers... but the real clincher was that if you were say USA and
+	//captured a Tank China command center, your US paradrop would be assigned
+	//to the china tank drop and when you tried to fire it from the shortcut
+	//it could pick the china one and not fire it because it didn't have
+	//complete connection... ugh!!!
+	SPECIAL_CHINA_CARPET_BOMB,
+	EARLY_SPECIAL_CHINA_CARPET_BOMB,
+	SPECIAL_LEAFLET_DROP,
+	EARLY_SPECIAL_LEAFLET_DROP,
+	EARLY_SPECIAL_FRENZY,
+	SPECIAL_COMMUNICATIONS_DOWNLOAD,
+	EARLY_SPECIAL_REPAIR_VEHICLES,
+	SPECIAL_TANK_PARADROP,
+	SUPW_SPECIAL_PARTICLE_UPLINK_CANNON,
+	AIRF_SPECIAL_DAISY_CUTTER,
+	NUKE_SPECIAL_CLUSTER_MINES,
+	NUKE_SPECIAL_NEUTRON_MISSILE,
+	AIRF_SPECIAL_A10_THUNDERBOLT_STRIKE,
+	AIRF_SPECIAL_SPECTRE_GUNSHIP,
+	INFA_SPECIAL_PARADROP_AMERICA,
+	SLTH_SPECIAL_GPS_SCRAMBLER,
+	AIRF_SPECIAL_CARPET_BOMB,
+	SUPR_SPECIAL_CRUISE_MISSILE,
+	LAZR_SPECIAL_PARTICLE_UPLINK_CANNON,
+	SUPW_SPECIAL_NEUTRON_MISSILE,
+
+	SPECIAL_BATTLESHIP_BOMBARDMENT,
+
+#endif
 	SPECIALPOWER_COUNT,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 };
+
+#if RTS_GENERALS
+static_assert(SPECIAL_HACKER_DISABLE_BUILDING == 24, "Generals special-power save ordinals changed");
+static_assert(SPECIAL_LAUNCH_BAIKONUR_ROCKET == 39, "Generals special-power save ordinals changed");
+static_assert(SPECIALPOWER_COUNT == 40, "Generals special-power count changed");
+#elif RTS_ZEROHOUR
+static_assert(SPECIAL_HELIX_NAPALM_BOMB == 24, "Zero Hour special-power save ordinals changed");
+static_assert(SPECIAL_HACKER_DISABLE_BUILDING == 25, "Zero Hour special-power save ordinals changed");
+static_assert(SPECIAL_BOOBY_TRAP == 34, "Zero Hour special-power save ordinals changed");
+static_assert(SPECIAL_BATTLESHIP_BOMBARDMENT == 66, "Zero Hour special-power save ordinals changed");
+static_assert(SPECIALPOWER_COUNT == 67, "Zero Hour special-power count changed");
+#endif
 
 	// Definition of these names is located in SpecialPower.cpp
