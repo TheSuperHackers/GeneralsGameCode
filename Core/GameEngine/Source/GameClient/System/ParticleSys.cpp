@@ -1235,6 +1235,12 @@ ParticleSystem::~ParticleSystem()
 	{
 
 		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!") );
+
+		// TheSuperHackers @bugfix Destroy the slave instead of orphaning it alive. A masterless
+		// slave has no transform of its own and starts self-emitting at the world origin.
+		// See the pull request for the full explanation.
+		m_slaveSystem->destroy();
+
 		m_slaveSystem->setMaster( nullptr );
 		setSlave( nullptr );
 
