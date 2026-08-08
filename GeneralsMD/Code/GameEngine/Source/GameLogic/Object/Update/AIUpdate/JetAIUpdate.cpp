@@ -234,9 +234,11 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-		{
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
 			return STATE_FAILURE;
-		}
+#endif
 
 		// gotta reserve a space in order to reserve a runway
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), nullptr))
@@ -506,7 +508,11 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
 			return STATE_FAILURE;
+#endif
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
@@ -745,7 +751,11 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
 			return STATE_FAILURE;
+#endif
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
@@ -995,7 +1005,11 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
 			return STATE_FAILURE;
+#endif
 
 		Coord3D landingApproach;
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
