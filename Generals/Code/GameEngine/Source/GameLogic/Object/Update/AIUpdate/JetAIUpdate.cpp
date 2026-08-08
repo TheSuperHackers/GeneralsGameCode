@@ -216,10 +216,11 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-		{
-			// no producer? just skip this step.
+#if RETAIL_COMPATIBLE_CRC
 			return STATE_SUCCESS;
-		}
+#else
+			return STATE_FAILURE;
+#endif
 
 		// gotta reserve a space in order to reserve a runway
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), nullptr))
@@ -446,10 +447,13 @@ public:
 		jetAI->chooseLocomotorSet(LOCOMOTORSET_TAXIING);
 		DEBUG_ASSERTCRASH(jetAI->getCurLocomotor(), ("no loco"));
 
-		Object* airfield;
-		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step.
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
+			return STATE_FAILURE;
+#endif
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
@@ -585,7 +589,11 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_SUCCESS;
+#else
+			return STATE_FAILURE;
+#endif
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
