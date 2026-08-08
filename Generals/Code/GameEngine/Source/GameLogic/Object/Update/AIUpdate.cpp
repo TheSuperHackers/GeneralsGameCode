@@ -826,6 +826,25 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 	const LocomotorTemplateVector* set = getAIUpdateModuleData()->findLocomotorTemplateVector(wst);
 	if (set)
 	{
+		// TheSuperHackers @bugfix Do not rebuild the locomotor set of a dead aircraft.
+		//
+		// A slow death module disables flight by mutating the CURRENT Locomotor instance -
+		// JetSlowDeathBehavior::beginSlowDeath() applies a negative maxLift and a zero
+		// maxTurnRate to getCurLocomotor(). Rebuilding the set here deleteInstance()s that
+		// Locomotor and constructs replacements from template, and the Locomotor constructor
+		// resets m_maxLift and m_maxTurnRate to BIGNUM. The wreck therefore regains full lift
+		// and full turn rate and keeps flying, circling forever because DestructionDelay is
+		// effectively infinite.
+		//
+		// This lives in AIUpdateInterface rather than in a slow death module because every
+		// aircraft reaches it, which is why the symptom is reported for jets and helicopters
+		// alike.
+#if !RETAIL_COMPATIBLE_CRC
+		Object* obj = getObject();
+		if (obj != nullptr && obj->isEffectivelyDead() && obj->isKindOf(KINDOF_AIRCRAFT))
+			return FALSE;
+#endif
+
 		m_locomotorSet.clear();
 		m_curLocomotor = nullptr;
 		for (size_t i = 0; i < set->size(); ++i)
