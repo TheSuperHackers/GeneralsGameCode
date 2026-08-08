@@ -38,6 +38,7 @@
 #include "Common/DrawModule.h"
 #include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
+#include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
 #include "Common/GameUtility.h"
@@ -61,6 +62,7 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/StickyBombUpdate.h"
 #include "GameLogic/Module/BattlePlanUpdate.h"
+#include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
@@ -408,6 +410,12 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	//Real scaleFuzziness = thingTemplate->getInstanceScaleFuzziness();
 	//Real fuzzyScale = ( 1.0f + GameClientRandomValueReal( -scaleFuzziness, scaleFuzziness ));
 	m_instanceScale = thingTemplate->getAssetScale();// * fuzzyScale;
+	m_useExtrapolation = FALSE;
+	m_visualExtrapolationMtx.Make_Identity();
+	m_prevLogicMtx.Make_Identity();
+	m_currLogicMtx.Make_Identity();
+	m_lastSampledLogicFrame = 0;
+	m_hasInterpolationData = FALSE;
 
 	// initially not bound to an object
 	m_object = nullptr;
@@ -1144,6 +1152,8 @@ void Drawable::updateDrawable()
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	Object *obj = getObject();
+
+	applySubFrameExtrapolation();
 
 	{
 		for (ClientUpdateModule** cu = getClientUpdateModules(); cu && *cu; ++cu)
@@ -4244,6 +4254,11 @@ void Drawable::setInstanceMatrix( const Matrix3D *instance )
 //-------------------------------------------------------------------------------------------------
 const Matrix3D *Drawable::getTransformMatrix() const
 {
+	if (m_useExtrapolation)
+	{
+		return &m_visualExtrapolationMtx;
+	}
+
 	const Object *obj = getObject();
 
 	if (obj)
@@ -5639,3 +5654,73 @@ void TintEnvelope::loadPostProcess()
 
 }
 
+void Drawable::applySubFrameExtrapolation()
+{
+	Object* obj = getObject();
+	if (!obj || !TheGameLogic)
+	{
+		m_useExtrapolation = FALSE;
+		return;
+	}
+
+	UnsignedInt currentLogicFrame = TheGameLogic->getFrame();
+
+	if (currentLogicFrame != m_lastSampledLogicFrame)
+	{
+		const Matrix3D& currentMtx = *obj->getTransformMatrix();
+
+		if (m_lastSampledLogicFrame > 0 && currentLogicFrame == m_lastSampledLogicFrame + 1)
+		{
+			m_prevLogicMtx = m_currLogicMtx;
+			m_currLogicMtx = currentMtx;
+
+			Vector3 deltaPos = m_currLogicMtx.Get_Translation() - m_prevLogicMtx.Get_Translation();
+			if (deltaPos.Length2() > 40000.0f) // >200 units threshold for teleportation
+			{
+				m_prevLogicMtx = m_currLogicMtx;
+				m_hasInterpolationData = FALSE;
+			}
+			else
+			{
+				m_hasInterpolationData = TRUE;
+			}
+		}
+		else
+		{
+			m_prevLogicMtx = currentMtx;
+			m_currLogicMtx = currentMtx;
+			m_hasInterpolationData = FALSE;
+		}
+
+		m_lastSampledLogicFrame = currentLogicFrame;
+	}
+
+	Real alpha = TheGameEngine->getLogicTimeAccumulator() * TheFramePacer->getActualLogicTimeScaleFps();
+
+	if (m_hasInterpolationData && alpha >= 0.0f)
+	{
+		Real clampAlpha = (alpha > 1.0f) ? 1.0f : alpha;
+
+		Vector3 prevPos = m_prevLogicMtx.Get_Translation();
+		Vector3 currPos = m_currLogicMtx.Get_Translation();
+		Vector3 interpPos = prevPos + (currPos - prevPos) * clampAlpha;
+
+		Real prevAngle = m_prevLogicMtx.Get_Z_Rotation();
+		Real currAngle = m_currLogicMtx.Get_Z_Rotation();
+		Real angleDelta = stdAngleDiff(currAngle, prevAngle);
+
+		m_visualExtrapolationMtx = m_prevLogicMtx;
+
+		if (fabs(angleDelta) > 0.001f && fabs(angleDelta) < 3.0f)
+		{
+			m_visualExtrapolationMtx.In_Place_Pre_Rotate_Z(angleDelta * clampAlpha);
+		}
+
+		m_visualExtrapolationMtx.Set_Translation(interpPos);
+		m_useExtrapolation = TRUE;
+	}
+	else
+	{
+		m_useExtrapolation = FALSE;
+	}
+}
