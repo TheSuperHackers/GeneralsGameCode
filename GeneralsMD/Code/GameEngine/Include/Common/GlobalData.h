@@ -56,8 +56,15 @@ constexpr const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 //-------------------------------------------------------------------------------------------------
 class CommandLineData
 {
+public:
+	// TheSuperHackers @refactor Jaredl-Dev 08/08/2026
+	// Exposes the raw -mod operands captured during startup in command-line order.
+	const std::vector<AsciiString> &getModArguments() const { return m_modArguments; }
+
+private:
 	friend class CommandLine;
 	friend class GlobalData;
+	friend Int parseModForStartup(char *args[], Int num);
 
 	CommandLineData()
 		: m_hasParsedCommandLineForStartup(false)
@@ -66,6 +73,7 @@ class CommandLineData
 
 	Bool m_hasParsedCommandLineForStartup;
 	Bool m_hasParsedCommandLineForEngineInit;
+	std::vector<AsciiString> m_modArguments;
 };
 
 //-------------------------------------------------------------------------------------------------

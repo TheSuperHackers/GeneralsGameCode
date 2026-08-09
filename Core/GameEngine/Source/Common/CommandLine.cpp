@@ -1036,6 +1036,18 @@ Int parseUpdateImages(char *args[], int num)
 	return 1;
 }
 
+// TheSuperHackers @refactor Jaredl-Dev 08/08/2026
+// Captures each raw -mod operand in command-line order during startup.
+Int parseModForStartup(char *args[], Int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_commandLineData.m_modArguments.push_back(args[1]);
+		return 2;
+	}
+	return 1;
+}
+
 Int parseMod(char *args[], Int num)
 {
 	if (num > 1)
@@ -1141,6 +1153,10 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// TheSuperHackers @refactor Jaredl-Dev 08/08/2026
+	// Captures raw -mod operands before engine initialization.
+	{ "-mod", parseModForStartup },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
