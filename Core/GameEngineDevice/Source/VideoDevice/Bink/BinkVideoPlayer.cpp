@@ -221,8 +221,8 @@ Int BinkVideoPlayer::calculateMovieAudioVolume()
 	}
 
 	// Never let volume go to 0, as Bink will interpret that as "play at full
-	// volume". Floor at 1 out of 32768 (~-90dB, effectively silent) instead of
-	// the old floor of ~327, which was clearly audible at a 0 speech slider.
+	// volume". Floor at 327 out of 32768 (~1%), effectively silent. This is
+	// retail's formula, unchanged.
 	Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
 	return (32768*mod)/100;
 }
@@ -357,10 +357,10 @@ void BinkVideoStream::frameDecompress()
 {
 	BinkDoFrame( m_handle );
 
-	// Reapply the volume every decoded frame. BinkSetVolume only takes effect
-	// reliably once Bink's audio output is actually running, so the one-shot
-	// call in createStream() (before the first frame) never stuck. Refreshing
-	// here also picks up live volume slider changes during playback.
+	// Reapply the volume on every decoded frame. The one-shot BinkSetVolume in
+	// createStream() runs before Bink's audio output has started, so it never
+	// actually took effect. Reapplying once audio is running is what makes the
+	// setting stick.
 	if ( m_player != nullptr )
 	{
 		BinkSetVolume( m_handle, 0, BinkVideoPlayer::calculateMovieAudioVolume() );
