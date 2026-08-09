@@ -3823,6 +3823,9 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 	if (!objectToExit)
 	{
 		objectToExit = us->getContainedBy();
+
+		if (!objectToExit)
+			return;
 	}
 	else
 	{
@@ -3835,9 +3838,6 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 			return;
 #endif
 	}
-
-	if (!objectToExit)
-		return;
 
   if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
     return;
@@ -3862,6 +3862,9 @@ void AIUpdateInterface::privateExitInstantly( Object *objectToExit, CommandSourc
 	if (!objectToExit)
 	{
 		objectToExit = us->getContainedBy();
+
+		if (!objectToExit)
+			return;
 	}
 	else
 	{
@@ -3874,9 +3877,6 @@ void AIUpdateInterface::privateExitInstantly( Object *objectToExit, CommandSourc
 			return;
 #endif
 	}
-
-	if (!objectToExit)
-		return;
 
   if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
     return;
