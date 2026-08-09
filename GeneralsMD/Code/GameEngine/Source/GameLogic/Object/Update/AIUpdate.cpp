@@ -3824,19 +3824,21 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 	{
 		objectToExit = us->getContainedBy();
 	}
+	else
+	{
+		// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
+		// because an object should not attempt to exit something it's not contained by.
+#if !RETAIL_COMPATIBLE_CRC
+		if (us->getContainedBy() != objectToExit)
+			return;
+#endif
+	}
 
 	if (!objectToExit)
 		return;
 
   if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
     return;
-
-	// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
-	// because an object should not attempt to exit something it's not contained by.
-#if !RETAIL_COMPATIBLE_CRC
-	if (us->getContainedBy() != objectToExit)
-		return;
-#endif
 
 	// we must go thru this state (rather than calling exitObjectViaDoor directly!),
 	// because a few containers might need to delay to allow
@@ -3859,19 +3861,21 @@ void AIUpdateInterface::privateExitInstantly( Object *objectToExit, CommandSourc
 	{
 		objectToExit = us->getContainedBy();
 	}
+	else
+	{
+		// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
+		// because an object should not attempt to exit something it's not contained by.
+#if !RETAIL_COMPATIBLE_CRC
+		if (us->getContainedBy() != objectToExit)
+			return;
+#endif
+	}
 
 	if (!objectToExit)
 		return;
 
   if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
     return;
-
-	// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
-	// because an object should not attempt to exit something it's not contained by.
-#if !RETAIL_COMPATIBLE_CRC
-	if (us->getContainedBy() != objectToExit)
-		return;
-#endif
 
 	// we must go thru this state (rather than calling exitObjectViaDoor directly!),
 	// because a few containers might need to delay to allow
