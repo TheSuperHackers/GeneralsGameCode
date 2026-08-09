@@ -201,9 +201,6 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		stream->m_next = m_firstStream;
 		stream->m_player = this;
 		m_firstStream = stream;
-
-		BinkSetVolume( stream->m_handle, 0, calculateMovieAudioVolume() );
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume"));
 	}
 
 	return stream;
@@ -314,6 +311,7 @@ void BinkVideoPlayer::initializeBinkWithMiles()
 
 BinkVideoStream::BinkVideoStream()
 : m_handle(nullptr)
+, m_volumeSet(FALSE)
 {
 
 }
@@ -357,13 +355,14 @@ void BinkVideoStream::frameDecompress()
 {
 	BinkDoFrame( m_handle );
 
-	// Reapply the volume on every decoded frame. The one-shot BinkSetVolume in
-	// createStream() runs before Bink's audio output has started, so it never
-	// actually took effect. Reapplying once audio is running is what makes the
-	// setting stick.
-	if ( m_player != nullptr )
+	// Apply the volume on the first decoded frame. Setting it in createStream()
+	// is too early: Bink's audio output is not running yet, so the volume is
+	// discarded. The first BinkDoFrame() is when audio output actually starts,
+	// so that is the earliest the volume can be applied and stick.
+	if ( !m_volumeSet )
 	{
 		BinkSetVolume( m_handle, 0, BinkVideoPlayer::calculateMovieAudioVolume() );
+		m_volumeSet = TRUE;
 	}
 }
 
