@@ -108,6 +108,10 @@ class BinkVideoPlayer : public VideoPlayer
 
 	public:
 
+		// TheSuperHackers @bugfix Compute the Bink volume for the current speech
+		// volume setting. Shared by stream creation and per-frame volume refresh.
+		static Int	calculateMovieAudioVolume();
+
 		// subsytem requirements
 		virtual void	init() override;														///< Initialize video playback code
 		virtual void	reset() override;													///< Reset video playback

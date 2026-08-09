@@ -202,16 +202,29 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		stream->m_player = this;
 		m_firstStream = stream;
 
-		// never let volume go to 0, as Bink will interpret that as "play at full volume".
-		Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
-		Int volume = (32768*mod)/100;
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d -> %d",
-			TheAudio->getVolume(AudioAffect_Speech), mod, volume));
-		BinkSetVolume( stream->m_handle,0, volume);
+		BinkSetVolume( stream->m_handle, 0, calculateMovieAudioVolume() );
 		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume"));
 	}
 
 	return stream;
+}
+
+//============================================================================
+// BinkVideoPlayer::calculateMovieAudioVolume
+//============================================================================
+
+Int BinkVideoPlayer::calculateMovieAudioVolume()
+{
+	if (TheAudio == nullptr)
+	{
+		return 0;
+	}
+
+	// Never let volume go to 0, as Bink will interpret that as "play at full
+	// volume". Floor at 1 out of 32768 (~-90dB, effectively silent) instead of
+	// the old floor of ~327, which was clearly audible at a 0 speech slider.
+	Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
+	return (32768*mod)/100;
 }
 
 //============================================================================
@@ -342,7 +355,16 @@ Bool BinkVideoStream::isFrameReady()
 
 void BinkVideoStream::frameDecompress()
 {
-		BinkDoFrame( m_handle );
+	BinkDoFrame( m_handle );
+
+	// Reapply the volume every decoded frame. BinkSetVolume only takes effect
+	// reliably once Bink's audio output is actually running, so the one-shot
+	// call in createStream() (before the first frame) never stuck. Refreshing
+	// here also picks up live volume slider changes during playback.
+	if ( m_player != nullptr )
+	{
+		BinkSetVolume( m_handle, 0, BinkVideoPlayer::calculateMovieAudioVolume() );
+	}
 }
 
 //============================================================================
