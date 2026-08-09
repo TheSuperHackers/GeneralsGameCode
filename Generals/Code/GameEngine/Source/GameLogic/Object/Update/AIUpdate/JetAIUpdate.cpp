@@ -816,8 +816,7 @@ public:
 		loco->setUltraAccurate(true);
 		jetAI->ignoreObstacleID(jet->getProducerID());
 
-		Object* airfield;
-		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
 #if RETAIL_COMPATIBLE_CRC
 			return STATE_SUCCESS;
