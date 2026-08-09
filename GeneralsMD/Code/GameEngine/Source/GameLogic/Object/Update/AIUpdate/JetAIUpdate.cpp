@@ -2733,7 +2733,7 @@ void JetAIUpdate::xfer( Xfer *xfer )
 {
 
   // version
-#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 2;
 #else
 	XferVersion currentVersion = 3;
