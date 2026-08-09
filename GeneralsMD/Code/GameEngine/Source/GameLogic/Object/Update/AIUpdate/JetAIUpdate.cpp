@@ -2773,11 +2773,6 @@ void JetAIUpdate::xfer( Xfer *xfer )
 	if( version >= 2 )
 	{
 		xfer->xferBool( &m_enginesOn );
-
-		if (version >= 3)
-		{
-			xfer->xferCoord3D(&m_landingPosForHelipadStuff);
-		}
 	}
 	else
 	{
@@ -2792,6 +2787,10 @@ void JetAIUpdate::xfer( Xfer *xfer )
 		}
 	}
 
+	if (version >= 3)
+	{
+		xfer->xferCoord3D(&m_landingPosForHelipadStuff);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
