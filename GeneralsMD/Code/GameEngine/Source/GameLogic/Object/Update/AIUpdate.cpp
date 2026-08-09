@@ -3829,6 +3829,8 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 		// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
 		// because an object should not attempt to exit something it's not contained by.
 #if !RETAIL_COMPATIBLE_CRC
+		// @todo Remove function parameter 'objectToExit' because it's become obsolete.
+
 		if (us->getContainedBy() != objectToExit)
 			return;
 #endif
@@ -3866,6 +3868,8 @@ void AIUpdateInterface::privateExitInstantly( Object *objectToExit, CommandSourc
 		// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
 		// because an object should not attempt to exit something it's not contained by.
 #if !RETAIL_COMPATIBLE_CRC
+		// @todo Remove function parameter 'objectToExit' because it's become obsolete.
+
 		if (us->getContainedBy() != objectToExit)
 			return;
 #endif
