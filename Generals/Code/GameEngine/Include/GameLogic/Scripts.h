@@ -142,7 +142,7 @@ public:
 	void setWarnings(Bool warnings) { m_hasWarnings = warnings;}
 	void setNextGroup(ScriptGroup *pGr) {m_nextGroup = pGr;}
 
-	AsciiString getName() const { return m_groupName;}
+	const AsciiString& getName() const { return m_groupName;}
 	Bool isActive() const { return m_isGroupActive;}
 	Bool isSubroutine() const { return m_isGroupSubroutine;}
 	Bool hasWarnings() const { return m_hasWarnings;}
@@ -661,7 +661,7 @@ public:
 	Real getCurTime() {return m_curTime;}
 	Int getDelayEvalSeconds() {return m_delayEvaluationSeconds;}
 
-	AsciiString getName() const { return m_scriptName;}
+	const AsciiString& getName() const { return m_scriptName;}
 	AsciiString getComment() const {return m_comment;}
 	AsciiString getActionComment() const {return m_actionComment;}
 	AsciiString getConditionComment() const {return m_conditionComment;}
@@ -691,7 +691,7 @@ public:
 	OrCondition *findPreviousOrCondition( OrCondition *curOr );
 
 	// Support routines for ScriptEngine -
-	AsciiString getConditionTeamName() {return m_conditionTeamName;}
+	const AsciiString& getConditionTeamName() const {return m_conditionTeamName;}
 	void setConditionTeamName(AsciiString teamName) {m_conditionTeamName = teamName;}
 };
 
