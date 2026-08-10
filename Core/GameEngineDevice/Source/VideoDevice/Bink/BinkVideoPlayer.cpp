@@ -214,12 +214,11 @@ Int BinkVideoPlayer::calculateMovieAudioVolume()
 {
 	if (TheAudio == nullptr)
 	{
-		return 0;
+		return 327;
 	}
 
 	// Never let volume go to 0, as Bink will interpret that as "play at full
-	// volume". Floor at 327 out of 32768 (~1%), effectively silent. This is
-	// retail's formula, unchanged.
+	// volume".
 	Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
 	return (32768*mod)/100;
 }

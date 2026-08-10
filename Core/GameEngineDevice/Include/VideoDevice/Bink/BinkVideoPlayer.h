@@ -70,7 +70,7 @@ class BinkVideoStream : public VideoStream
 
 		HBINK					m_handle;											///< Bink streaming handle;
 		Char					*m_memFile;											///< Pointer to memory resident file
-		Bool					m_volumeSet;										///< True once the movie volume has been applied
+		Bool					m_volumeSet;											///< True once the movie volume has been applied
 
 		BinkVideoStream();																///< only BinkVideoPlayer can create these
 		virtual ~BinkVideoStream() override;
