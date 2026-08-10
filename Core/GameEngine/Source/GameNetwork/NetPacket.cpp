@@ -83,7 +83,7 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 		return nullptr;
 	}
 
-	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);  // need to implement.  I have a drinking problem.
+	UnsignedInt bufferSize = msg->getSizeForNetPacket();
 	UnsignedByte* bigPacketData = NEW UnsignedByte[bufferSize];
 
 	// create the buffer for the huge message and fill the buffer with that message.
@@ -92,7 +92,7 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	// create the wrapper command message we'll be using.
 	NetWrapperCommandMsg *wrapperMsg = newInstance(NetWrapperCommandMsg);
 	// get the amount of space needed for the wrapper message, not including the wrapped command data.
-	UnsignedInt wrapperSize = GetBufferSizeNeededForCommand(wrapperMsg);
+	UnsignedInt wrapperSize = static_cast<NetCommandMsg*>(wrapperMsg)->getSizeForNetPacket();
 	UnsignedInt commandSizePerPacket = MAX_PACKET_SIZE - wrapperSize;
 
 	UnsignedInt numChunks = bufferSize / commandSizePerPacket;
@@ -152,16 +152,6 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	bigPacketData = nullptr;
 
 	return commandList;
-}
-
-UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
-	// This is where the fun begins...
-
-	if (msg == nullptr) {
-		return 0; // There was nothing to add.
-	}
-	// Use the virtual function for all command message types
-	return msg->getSizeForNetPacket();
 }
 
 /**
