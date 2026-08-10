@@ -68,9 +68,8 @@ class BinkVideoStream : public VideoStream
 
 	protected:
 
-		HBINK					m_handle;											///< Bink streaming handle;
-		Char					*m_memFile;											///< Pointer to memory resident file
-		Bool					m_volumeSet;											///< True once the movie volume has been applied
+		HBINK					m_handle;														///< Bink streaming handle;
+		Char					*m_memFile;													///< Pointer to memory resident file
 
 		BinkVideoStream();																///< only BinkVideoPlayer can create these
 		virtual ~BinkVideoStream() override;
@@ -106,8 +105,6 @@ class BinkVideoPlayer : public VideoPlayer
 	protected:
 
 		VideoStreamInterface* createStream( HBINK handle );
-
-		Bool	m_volumeApplied;												///< True once the movie volume has been applied to a live audio output
 
 	public:
 

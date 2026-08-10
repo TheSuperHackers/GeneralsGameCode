@@ -108,7 +108,6 @@
 //============================================================================
 
 BinkVideoPlayer::BinkVideoPlayer()
-: m_volumeApplied(FALSE)
 {
 
 }
@@ -160,16 +159,6 @@ void	BinkVideoPlayer::reset()
 void	BinkVideoPlayer::update()
 {
 	VideoPlayer::update();
-
-	// Apply the volume once a stream's audio output is actually running. Setting
-	// it in createStream() is too early: Bink's audio output is not up yet, so
-	// the volume is discarded. By the first update() with a live stream the audio
-	// output exists, so the set sticks.
-	if ( !m_volumeApplied && firstStream() != nullptr )
-	{
-		setVolume( TheAudio->getVolume(AudioAffect_Speech) );
-		m_volumeApplied = TRUE;
-	}
 }
 
 //============================================================================
