@@ -2726,6 +2726,7 @@ void JetAIUpdate::crc( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
+	* 2: Save engine on/off state.
 	* 3: TheSuperHackers @tweak Save landing position.
 	*/
 // ------------------------------------------------------------------------------------------------
