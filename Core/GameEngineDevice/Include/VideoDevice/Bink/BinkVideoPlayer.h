@@ -107,11 +107,9 @@ class BinkVideoPlayer : public VideoPlayer
 
 		VideoStreamInterface* createStream( HBINK handle );
 
-	public:
+		Bool	m_volumeApplied;												///< True once the movie volume has been applied to a live audio output
 
-		// TheSuperHackers @bugfix Compute the Bink volume for the current speech
-		// volume setting. Shared by stream creation and per-frame volume refresh.
-		static Int	calculateMovieAudioVolume();
+	public:
 
 		// subsytem requirements
 		virtual void	init() override;														///< Initialize video playback code
@@ -131,7 +129,11 @@ class BinkVideoPlayer : public VideoPlayer
 		virtual VideoStreamInterface*	open( AsciiString movieTitle ) override;	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle ) override;	///< Load video file in to memory for playback
 
+		// TheSuperHackers @bugfix Compute the Bink volume for a given speech volume.
+		static Int	calculateMovieAudioVolume( Real speechVolume );
+
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) override;
+		virtual void setVolume( Real volume ) override;
 		virtual void initializeBinkWithMiles();
 };
 
