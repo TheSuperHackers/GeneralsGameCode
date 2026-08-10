@@ -1236,9 +1236,9 @@ ParticleSystem::~ParticleSystem()
 
 		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!") );
 
-		// TheSuperHackers @bugfix Destroy the slave instead of orphaning it alive. A masterless
-		// slave has no transform of its own and starts self-emitting at the world origin.
-		// See the pull request for the full explanation.
+		// TheSuperHackers @bugfix wh1ter0se69 10/08/2026 Destroy the slave instead of orphaning it
+		// alive. A slave has no position of its own - its master merges one in on every burst - and
+		// nothing stops a masterless slave from emitting, so it starts bursting at the world origin.
 		m_slaveSystem->destroy();
 
 		m_slaveSystem->setMaster( nullptr );
