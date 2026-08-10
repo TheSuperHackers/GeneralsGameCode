@@ -92,7 +92,7 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	// create the wrapper command message we'll be using.
 	NetWrapperCommandMsg *wrapperMsg = newInstance(NetWrapperCommandMsg);
 	// get the amount of space needed for the wrapper message, not including the wrapped command data.
-	UnsignedInt wrapperSize = static_cast<NetCommandMsg*>(wrapperMsg)->getSizeForNetPacket();
+	UnsignedInt wrapperSize = wrapperMsg->getSizeForNetPacket();
 	UnsignedInt maxDataSizePerPacket = MAX_PACKET_SIZE - wrapperSize;
 
 	UnsignedInt numChunks = bufferSize / maxDataSizePerPacket;
