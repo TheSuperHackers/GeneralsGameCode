@@ -317,7 +317,6 @@ public:
 	TintEnvelope *getColorTintEnvelope() { return m_colorTintEnvelope; }
 	void setColorTintEnvelope( TintEnvelope &source ) { if (m_colorTintEnvelope) *m_colorTintEnvelope = source; }
 
-
   void imitateStealthLook( Drawable& otherDraw );
 
 	void setTerrainDecal(TerrainDecalType type);	///<decal that is to appear under the drawable
@@ -387,9 +386,6 @@ public:
 
 	void setFullyObscuredByShroud(Bool fullyObscured);
 	Bool getFullyObscuredByShroud() {return m_drawableFullyObscuredByShroud;}
-
-  // Put on ice until later... M Lorenzen
-  //	inline UnsignedByte getFullyObscuredByShroudWithCheatSpy() {return (UnsignedByte)m_drawableFullyObscuredByShroud | 128;}//8 looks like a zero in most fonts
 
 	Bool getDrawsInMirror() const { return BitIsSet(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
 

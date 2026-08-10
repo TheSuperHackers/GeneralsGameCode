@@ -252,7 +252,7 @@ private:
 		IMMUNE_TO_FALLING_DAMAGE				= 0x0100,
 		IS_IN_FREEFALL									= 0x0200,
 		IS_IN_UPDATE										= 0x0400,
-		IS_STUNNED											= 0x0800,
+		IS_STUNNED											= 0x0800, // Added in Zero Hour
 	};
 
 	/*

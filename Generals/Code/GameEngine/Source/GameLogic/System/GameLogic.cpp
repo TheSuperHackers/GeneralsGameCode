@@ -2107,6 +2107,18 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
 
+  if( loadingSaveGame == FALSE )
+  {
+    // Drawables need to do some work on level start; give them a chance to do it
+    Drawable * drawable = TheGameClient->getDrawableList();
+
+    while ( drawable != nullptr )
+    {
+      drawable->onLevelStart();
+      drawable = drawable->getNextDrawable();
+    }
+  }
+
 	//ReAllows quit menu to work during loading scene
 	//setGameLoading(FALSE);
 	setLoadingMap( FALSE );

@@ -1111,8 +1111,6 @@ void Drawable::setEffectiveOpacity( Real pulseFactor, Real explicitOpacity /* = 
 	m_effectiveStealthOpacity = m_stealthOpacity + pulseAmount;
 }
 
-
-
 //-------------------------------------------------------------------------------------------------
 void Drawable::imitateStealthLook( Drawable& otherDraw )
 {
@@ -1125,14 +1123,6 @@ void Drawable::imitateStealthLook( Drawable& otherDraw )
   m_secondMaterialPassOpacity = otherDraw.getSecondMaterialPassOpacity();
 
 }
-
-
-
-
-
-
-
-
 
 //-------------------------------------------------------------------------------------------------
 /** update is called once per frame */
@@ -1525,7 +1515,6 @@ void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, Physics
 	const Real FORWARD_ACCEL_COEFF = locomotor->getForwardAccelCoef();
 	const Real LATERAL_ACCEL_COEFF = locomotor->getLateralAccelCoef();
 	const Real UNIFORM_AXIAL_DAMPING = locomotor->getUniformAxialDamping();
-
 
 	// get object from logic
 	Object *obj = getObject();
@@ -4869,7 +4858,9 @@ void Drawable::xfer( Xfer *xfer )
 {
 
 	// version
-#if RETAIL_COMPATIBLE_XFER_SAVE
+#if RETAIL_COMPATIBLE_XFER_SAVE && RTS_GENERALS
+	const XferVersion currentVersion = 5;
+#elif RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
 	const XferVersion currentVersion = 8;
@@ -5033,7 +5024,7 @@ void Drawable::xfer( Xfer *xfer )
 	// tint status
 	xfer->xferUnsignedInt( &m_tintStatus );
 
-	if (version <= 7)
+	if (version <= 5)
 	{
 		// prev tint status
 		xfer->xferUnsignedInt( &m_prevTintStatus );
@@ -5512,7 +5503,7 @@ void TintEnvelope::update()
 		{
 			const Vector3 decayRate = m_decayRate * timeScale;
 
-			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON) 
+			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON)
 			{
 				// We are at rest
 				m_envState = ENVELOPE_STATE_REST;

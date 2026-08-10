@@ -170,11 +170,14 @@ public:
 	void setAllowCollideForce(Bool allow) { setFlag(ALLOW_COLLIDE_FORCE, allow); }
 	void setAllowAirborneFriction(Bool allow) { setFlag(APPLY_FRICTION2D_WHEN_AIRBORNE, allow); }
 	void setImmuneToFallingDamage(Bool allow) { setFlag(IMMUNE_TO_FALLING_DAMAGE, allow); }
+	void setStunned(Bool allow) { setFlag(IS_STUNNED, allow); }
 
 	Bool getAllowToFall() const { return getFlag(ALLOW_TO_FALL); }
 
 	void setIsInFreeFall(Bool allow) { setFlag(IS_IN_FREEFALL, allow); }
 	Bool getIsInFreeFall() const { return getFlag(IS_IN_FREEFALL); }
+
+	Bool getIsStunned() const { return getFlag(IS_STUNNED); }
 
 	void setExtraBounciness(Real b) { m_extraBounciness = b; }
 	void setExtraFriction(Real b) { m_extraFriction = b; }
@@ -238,7 +241,8 @@ private:
 		HAS_PITCHROLLYAW								= 0x0080,
 		IMMUNE_TO_FALLING_DAMAGE				= 0x0100,
 		IS_IN_FREEFALL									= 0x0200,
-		IS_IN_UPDATE										= 0x0400
+		IS_IN_UPDATE										= 0x0400,
+		IS_STUNNED											= 0x0800, // Added in Zero Hour
 	};
 
 	/*
