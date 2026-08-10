@@ -105,6 +105,8 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	UnsignedInt currentChunk = 0;
 	UnsignedInt bigPacketCurrentOffset = 0;
 
+	DEBUG_ASSERTCRASH(bufferSize > 0 && numChunks > 0, ("buffer size for command must be bigger than 0"));
+
 	while (true) {
 		UnsignedInt dataSizeThisChunk = commandSizePerPacket;
 		if ((bufferSize - bigPacketCurrentOffset) < dataSizeThisChunk) {
