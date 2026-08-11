@@ -398,9 +398,9 @@ void NetworkAutoStart::updateGameOptions()
 	}
 
 	Int humanPlayers = 0;
-	for (Int i = 0; i < MAX_SLOTS; ++i)
+	for (Int humanIndex = 0; humanIndex < MAX_SLOTS; ++humanIndex)
 	{
-		LANGameSlot *slot = game->getLANSlot(i);
+		LANGameSlot *slot = game->getLANSlot(humanIndex);
 		if (slot != nullptr && slot->isHuman())
 		{
 			++humanPlayers;
@@ -424,9 +424,9 @@ void NetworkAutoStart::updateGameOptions()
 		return;
 	}
 	hostSlot->setAccept();
-	for (Int i = 0; i < MAX_SLOTS; ++i)
+	for (Int acceptedIndex = 0; acceptedIndex < MAX_SLOTS; ++acceptedIndex)
 	{
-		LANGameSlot *slot = game->getLANSlot(i);
+		LANGameSlot *slot = game->getLANSlot(acceptedIndex);
 		if (slot != nullptr && slot->isHuman() && !slot->isAccepted())
 		{
 			return;
