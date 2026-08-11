@@ -768,6 +768,9 @@ void OpenContain::scatterToNearbyPosition(Object* rider)
 		// set position of the object at center of building and move them toward pos
 		rider->setPosition( theContainer->getPosition() );
 		ai->ignoreObstacle(theContainer);
+#if !RETAIL_COMPATIBLE_CRC
+		ai->friend_setGoalObject(nullptr);
+#endif
 		ai->aiMoveToPosition( &pos, CMD_FROM_AI );
 
 	}
