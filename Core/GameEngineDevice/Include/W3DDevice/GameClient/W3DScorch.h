@@ -33,7 +33,7 @@ public:
 	W3DScorch();
 	virtual ~W3DScorch();
 
-	virtual void allocateScorchBuffers();    ///< allocate static buffers for drawing scorch marks.
+	virtual void allocateBuffers();    ///< allocate static buffers for drawing scorch marks.
 	virtual void freeBuffers();    ///< frees up scorch buffers.
 	virtual void clearAllScorches();
 	virtual void invalidateBuffers();
@@ -72,7 +72,7 @@ private:
 class W3DScorchDummy : public W3DScorch
 {
 public:
-	void allocateScorchBuffers() override {}
+	void allocateBuffers() override {}
 	void freeBuffers() override {}
 	void clearAllScorches() override {}
 	void invalidateBuffers() override {}
