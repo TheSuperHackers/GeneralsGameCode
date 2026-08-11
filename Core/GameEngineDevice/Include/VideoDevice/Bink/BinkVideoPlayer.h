@@ -101,6 +101,10 @@ class BinkVideoStream : public VideoStream
 
 class BinkVideoPlayer : public VideoPlayer
 {
+	private:
+
+		// TheSuperHackers @bugfix Compute the Bink volume for a given speech volume.
+		static Int	calculateMovieAudioVolume( Real speechVolume );
 
 	protected:
 
@@ -125,9 +129,6 @@ class BinkVideoPlayer : public VideoPlayer
 
 		virtual VideoStreamInterface*	open( AsciiString movieTitle ) override;	///< Open video file for playback
 		virtual VideoStreamInterface*	load( AsciiString movieTitle ) override;	///< Load video file in to memory for playback
-
-		// TheSuperHackers @bugfix Compute the Bink volume for a given speech volume.
-		static Int	calculateMovieAudioVolume( Real speechVolume );
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) override;
 		virtual void setVolume( Real volume ) override;
