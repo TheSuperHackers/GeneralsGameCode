@@ -695,6 +695,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ShellHooks.h", Game.CORE, "GameEngine/Include/GameClient/ShellHooks.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ShellMenuScheme.h", Game.CORE, "GameEngine/Include/GameClient/ShellMenuScheme.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/Shell/ShellMenuScheme.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/Shell/ShellMenuScheme.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/MapReaderWriterInfo.h", Game.CORE, "GameEngine/Include/Common/MapReaderWriterInfo.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/PolygonTrigger.h", Game.CORE, "GameEngine/Include/GameLogic/PolygonTrigger.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/Map/PolygonTrigger.cpp", Game.CORE, "GameEngine/Source/GameLogic/Map/PolygonTrigger.cpp")
 
     return
 
