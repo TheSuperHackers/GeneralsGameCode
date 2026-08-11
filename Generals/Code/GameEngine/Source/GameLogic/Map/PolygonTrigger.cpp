@@ -48,6 +48,8 @@ m_numPoints(0),
 m_sizePoints(0),
 m_exportWithScripts(false),
 m_isWaterArea(false),
+m_shouldRender(true),
+m_selected(false),
 m_isRiver(FALSE),
 m_riverStart(0)
 {
@@ -140,6 +142,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 	Bool isRiver;
 	Int riverStart;
 	AsciiString triggerName;
+	AsciiString layerName;
 	// Remove any existing polygon triggers, if any.
 	PolygonTrigger::deleteTriggers(); // just in case.
 	PolygonTrigger *pPrevTrig = nullptr;
@@ -148,6 +151,9 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 	while (count>0) {
 		count--;
 		triggerName = file.readAsciiString();
+		if (info->version >= K_TRIGGERS_VERSION_4) {
+			layerName = file.readAsciiString();
+		}
 		triggerID = file.readInt();
 		isWater = false;
 		if (info->version >= K_TRIGGERS_VERSION_2) {
@@ -163,6 +169,9 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		numPoints = file.readInt();
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);
 		pTrig->setTriggerName(triggerName);
+		if (info->version >= K_TRIGGERS_VERSION_4) {
+			pTrig->setLayerName(layerName);
+		}
 		pTrig->setWaterArea(isWater);
 		pTrig->setRiver(isRiver);
 		pTrig->setRiverStart(riverStart);
@@ -177,6 +186,14 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			loc.z = file.readInt();
 			pTrig->addPoint(loc);
 		}
+#if RTS_ZEROHOUR
+		if (numPoints<2) {
+			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.",
+					pTrig->getTriggerName().str(), numPoints));
+			deleteInstance(pTrig);
+			continue;
+		}
+#endif
 		if (pPrevTrig) {
 			pPrevTrig->setNextPoly(pTrig);
 		} else {
@@ -224,7 +241,11 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 */
 void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
 {
+#if RTS_GENERALS
 	chunkWriter.openDataChunk("PolygonTriggers", 	K_TRIGGERS_VERSION_3);
+#else
+	chunkWriter.openDataChunk("PolygonTriggers", 	K_TRIGGERS_VERSION_4);
+#endif
 
 		PolygonTrigger *pTrig;
 		Int count = 0;
@@ -234,6 +255,9 @@ void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
 		chunkWriter.writeInt(count);
 		for (pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 			chunkWriter.writeAsciiString(pTrig->getTriggerName());
+#if RTS_ZEROHOUR
+			chunkWriter.writeAsciiString(pTrig->getLayerName());
+#endif
 			chunkWriter.writeInt(pTrig->getID());
 			chunkWriter.writeByte(pTrig->isWaterArea());
 			chunkWriter.writeByte(pTrig->isRiver());

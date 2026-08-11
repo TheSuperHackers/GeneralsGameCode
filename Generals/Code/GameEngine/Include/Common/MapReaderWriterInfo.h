@@ -39,6 +39,7 @@
 #define K_BLEND_TILE_VERSION_5	5	// Added custom cliff u/v coordinates.
 #define K_BLEND_TILE_VERSION_6	6	// Added extra blend layer for 3 textures in cell.
 #define K_BLEND_TILE_VERSION_7	7	// Added flag for painting passable/impassable to cells.
+#define K_BLEND_TILE_VERSION_8	8	// Added flag for painting passable/impassable to cells.
 #define K_OBJECTS_VERSION_1			1	// no dict
 #define K_OBJECTS_VERSION_2			2	// includes dict
 #define K_OBJECTS_VERSION_3			3	// includes dict
@@ -48,6 +49,7 @@
 #define K_TRIGGERS_VERSION_1 1
 #define K_TRIGGERS_VERSION_2 2		// Added m_isWaterArea
 #define K_TRIGGERS_VERSION_3 3		// Added m_isRiver & m_riverStart
+#define K_TRIGGERS_VERSION_4 4		// Added layer name.
 #define K_LIGHTING_VERSION_1	1
 #define K_LIGHTING_VERSION_2	2	// Added 2 additional global lights for objects.
 #define K_LIGHTING_VERSION_3	3	// Added 2 additional global lights for terrain.
