@@ -46,7 +46,7 @@ class W3DWaypointBuffer;
 class W3DTerrainLogic;
 class W3DAssetManager;
 class SimpleSceneClass;
-class W3DScorch;
+class W3DScorchInterface;
 class W3DShroud;
 class W3DPropDrawModuleData;
 class W3DPropBuffer;
@@ -267,7 +267,7 @@ protected:
 	W3DRoadBuffer *m_roadBuffer; ///< Class for drawing roads.
 #endif
 	W3DBridgeBuffer *m_bridgeBuffer;
-	W3DScorch *m_scorches;
+	W3DScorchInterface *m_scorches;
 	W3DShroud *m_shroud;	///< Class for drawing the shroud over terrain.
 	struct shoreLineTileInfo
 	{	Int m_xy;	//x,y position of tile

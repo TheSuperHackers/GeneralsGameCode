@@ -27,18 +27,31 @@ class DX8IndexBufferClass;
 class DX8VertexBufferClass;
 class WorldHeightMap;
 
-class W3DScorch
+class W3DScorchInterface
+{
+public:
+	virtual ~W3DScorchInterface() {}
+
+	virtual void allocateBuffers() = 0;
+	virtual void freeBuffers() = 0;
+	virtual void clearAllScorches() = 0;
+	virtual void invalidateBuffers() = 0;
+	virtual void addScorch(Vector3 location, Real radius, Scorches type) = 0;
+	virtual void drawScorches(WorldHeightMap& map) = 0;
+};
+
+class W3DScorch : public W3DScorchInterface
 {
 public:
 	W3DScorch();
-	virtual ~W3DScorch();
+	~W3DScorch() override;
 
-	virtual void allocateBuffers();    ///< allocate static buffers for drawing scorch marks.
-	virtual void freeBuffers();    ///< frees up scorch buffers.
-	virtual void clearAllScorches();
-	virtual void invalidateBuffers();
-	virtual void addScorch(Vector3 location, Real radius, Scorches type);
-	virtual void drawScorches(WorldHeightMap& map);    ///< Draws the scorch mark polygons in m_vertexScorch.
+	void allocateBuffers() override;    ///< allocate static buffers for drawing scorch marks.
+	void freeBuffers() override;    ///< frees up scorch buffers.
+	void clearAllScorches() override;
+	void invalidateBuffers() override;
+	void addScorch(Vector3 location, Real radius, Scorches type) override;
+	void drawScorches(WorldHeightMap& map) override;    ///< Draws the scorch mark polygons in m_vertexScorch.
 
 private:
 	typedef struct
@@ -57,7 +70,7 @@ private:
 		SCORCH_PER_ROW = 3
 	};
 
-	virtual void updateScorches(WorldHeightMap& map);    ///< Update m_vertexScorch and m_indexScorch so all scorches will be drawn.
+	void updateScorches(WorldHeightMap& map);    ///< Update m_vertexScorch and m_indexScorch so all scorches will be drawn.
 
 	DX8VertexBufferClass* m_vertexScorch;    ///< Scorch vertex buffer.
 	DX8IndexBufferClass* m_indexScorch;    ///< indices defining a triangles for the scorch drawing.
@@ -69,16 +82,13 @@ private:
 	Int m_scorchesInBuffer;    ///< how many are in the buffers.  If less than numScorches, we need to update
 };
 
-class W3DScorchDummy : public W3DScorch
+class W3DScorchDummy : public W3DScorchInterface
 {
 public:
 	void allocateBuffers() override {}
 	void freeBuffers() override {}
 	void clearAllScorches() override {}
 	void invalidateBuffers() override {}
-	void addScorch(Vector3 location, Real radius, Scorches type) override {}
-	void drawScorches(WorldHeightMap& map) override {}
-
-private:
-	void updateScorches(WorldHeightMap& map) override {}
+	void addScorch(Vector3, Real, Scorches) override {}
+	void drawScorches(WorldHeightMap&) override {}
 };
