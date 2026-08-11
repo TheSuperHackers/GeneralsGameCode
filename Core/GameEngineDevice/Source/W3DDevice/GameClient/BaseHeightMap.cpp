@@ -171,8 +171,8 @@ Int BaseHeightMapRenderObjClass::freeMapResources()
 void BaseHeightMapRenderObjClass::drawScorches()
 {
 	ShaderClass::Invalidate();
-	if (Is_Hidden() == 0 && !ShaderClass::Is_Backface_Culling_Inverted()) {
-		m_scorches->drawScorches(m_map);
+	if (m_map && Is_Hidden() == 0 && !ShaderClass::Is_Backface_Culling_Inverted()) {
+		m_scorches->drawScorches(*m_map);
 	}
 }
 

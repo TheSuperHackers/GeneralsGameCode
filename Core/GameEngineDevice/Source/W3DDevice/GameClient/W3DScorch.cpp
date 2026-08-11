@@ -105,7 +105,7 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 	m_scorchesInBuffer = 0;    // force buffer regenerations.
 }
 
-void W3DScorch::drawScorches(WorldHeightMap* map)
+void W3DScorch::drawScorches(WorldHeightMap& map)
 {
 	updateScorches(map);
 	if (m_curNumScorchIndices == 0)
@@ -120,14 +120,14 @@ void W3DScorch::drawScorches(WorldHeightMap* map)
 	DX8Wrapper::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
 }
 
-static Real getMapHeight(WorldHeightMap* map, Int x, Int y)
+static Real getMapHeight(WorldHeightMap& map, Int x, Int y)
 {
-	x += map->getBorderSizeInline();
-	y += map->getBorderSizeInline();
-	return map->getDataPtr()[x + y * map->getXExtent()] * MAP_HEIGHT_SCALE;
+	x += map.getBorderSizeInline();
+	y += map.getBorderSizeInline();
+	return map.getDataPtr()[x + y * map.getXExtent()] * MAP_HEIGHT_SCALE;
 }
 
-void W3DScorch::updateScorches(WorldHeightMap* map)
+void W3DScorch::updateScorches(WorldHeightMap& map)
 {
 	if (m_scorchesInBuffer > 1)
 	{
@@ -141,9 +141,6 @@ void W3DScorch::updateScorches(WorldHeightMap* map)
 	{
 		return;
 	}
-	if (!map)
-		return;
-
 	m_curNumScorchVertices = 0;
 	m_curNumScorchIndices = 0;
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexScorch);
@@ -186,21 +183,21 @@ void W3DScorch::updateScorches(WorldHeightMap* map)
 
 		Int minX = REAL_TO_INT_FLOOR((loc.X - radius) / MAP_XY_FACTOR);
 		Int minY = REAL_TO_INT_FLOOR((loc.Y - radius) / MAP_XY_FACTOR);
-		if (minX < -map->getBorderSizeInline())
-			minX = -map->getBorderSizeInline();
-		if (minY < -map->getBorderSizeInline())
-			minY = -map->getBorderSizeInline();
+		if (minX < -map.getBorderSizeInline())
+			minX = -map.getBorderSizeInline();
+		if (minY < -map.getBorderSizeInline())
+			minY = -map.getBorderSizeInline();
 		Int maxX = REAL_TO_INT_CEIL((loc.X + radius) / MAP_XY_FACTOR);
 		Int maxY = REAL_TO_INT_CEIL((loc.Y + radius) / MAP_XY_FACTOR);
 		maxX++;
 		maxY++;
-		if (maxX > map->getXExtent() - map->getBorderSizeInline())
+		if (maxX > map.getXExtent() - map.getBorderSizeInline())
 		{
-			maxX = map->getXExtent() - map->getBorderSizeInline();
+			maxX = map.getXExtent() - map.getBorderSizeInline();
 		}
-		if (maxY > map->getYExtent() - map->getBorderSizeInline())
+		if (maxY > map.getYExtent() - map.getBorderSizeInline())
 		{
-			maxY = map->getYExtent() - map->getBorderSizeInline();
+			maxY = map.getYExtent() - map.getBorderSizeInline();
 		}
 		Int startVertex = m_curNumScorchVertices;
 		Int i, j;
@@ -233,13 +230,13 @@ void W3DScorch::updateScorches(WorldHeightMap* map)
 			{
 				if (m_curNumScorchIndices + 6 > MAX_SCORCH_INDEX)
 					return;
-				Int xNdx = i + minX + map->getBorderSizeInline();
-				Int yNdx = j + minY + map->getBorderSizeInline();
-				Bool flipForBlend = map->getFlipState(xNdx, yNdx);
+				Int xNdx = i + minX + map.getBorderSizeInline();
+				Int yNdx = j + minY + map.getBorderSizeInline();
+				Bool flipForBlend = map.getFlipState(xNdx, yNdx);
 #if 0
 				UnsignedByte alpha[4];
 				float UA[4], VA[4];
-				m_map->getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
+				map.getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
 #endif
 				if (flipForBlend)
 				{

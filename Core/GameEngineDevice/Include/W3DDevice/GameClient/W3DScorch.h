@@ -38,7 +38,7 @@ public:
 	virtual void clearAllScorches();
 	virtual void invalidateBuffers();
 	virtual void addScorch(Vector3 location, Real radius, Scorches type);
-	virtual void drawScorches(WorldHeightMap* map);    ///< Draws the scorch mark polygons in m_vertexScorch.
+	virtual void drawScorches(WorldHeightMap& map);    ///< Draws the scorch mark polygons in m_vertexScorch.
 
 private:
 	typedef struct
@@ -57,7 +57,7 @@ private:
 		SCORCH_PER_ROW = 3
 	};
 
-	virtual void updateScorches(WorldHeightMap* map);    ///< Update m_vertexScorch and m_indexScorch so all scorches will be drawn.
+	virtual void updateScorches(WorldHeightMap& map);    ///< Update m_vertexScorch and m_indexScorch so all scorches will be drawn.
 
 	DX8VertexBufferClass* m_vertexScorch;    ///< Scorch vertex buffer.
 	DX8IndexBufferClass* m_indexScorch;    ///< indices defining a triangles for the scorch drawing.
@@ -77,8 +77,8 @@ public:
 	void clearAllScorches() override {}
 	void invalidateBuffers() override {}
 	void addScorch(Vector3 location, Real radius, Scorches type) override {}
-	void drawScorches(WorldHeightMap* map) override {}
+	void drawScorches(WorldHeightMap& map) override {}
 
 private:
-	void updateScorches(WorldHeightMap* map) override {}
+	void updateScorches(WorldHeightMap& map) override {}
 };
