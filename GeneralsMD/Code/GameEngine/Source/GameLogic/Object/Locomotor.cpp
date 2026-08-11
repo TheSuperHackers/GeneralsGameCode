@@ -879,13 +879,11 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 		return;
 	}
 
-#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	// Skip moveTowardsAngle if physics say you're stunned
 	if(physics->getIsStunned())
 	{
 		return;
 	}
-#endif
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
 //	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
@@ -974,13 +972,11 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 		return;
 	}
 
-#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	// Skip moveTowardsPosition if physics say you're stunned
 	if(physics->getIsStunned())
 	{
 		return;
 	}
-#endif
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
 //	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
@@ -1022,12 +1018,10 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	Coord3D pos = *obj->getPosition();
 	Real heightAboveSurface = pos.z - TheTerrainLogic->getLayerHeight(pos.x, pos.y, obj->getLayer());
 
-#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	if( obj->getStatusBits().test( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) )
 	{
 		heightAboveSurface -= obj->getCarrierDeckHeight();
 	}
-#endif
 
 	if (heightAboveSurface > -(3*3)*TheGlobalData->m_gravity)
 	{
