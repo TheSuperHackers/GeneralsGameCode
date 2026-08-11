@@ -292,10 +292,11 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass()
 #ifdef DO_ROADS
 	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
-	m_shroud = nullptr;
 #if ENABLE_CONFIGURABLE_SHROUD
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
+	else
+		m_shroud = nullptr;
 #else
 	m_shroud = NEW W3DShroud;
 #endif
