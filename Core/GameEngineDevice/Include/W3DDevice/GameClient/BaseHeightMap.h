@@ -152,6 +152,7 @@ public:
 	/// Update the diffuse value from static light info for one vertex.
 	void doTheLight(VERTEX_FORMAT *vb, const Vector3*light, Vector3*normal, RefRenderObjListIterator *pLightsIterator, UnsignedByte alpha);
 	void addScorch(Vector3 location, Real radius, Scorches type);
+	void addStaticScorch(Vector3 location, Real radius, Scorches type);
 	void addTree(DrawableID id, Coord3D location, Real scale, Real angle,
 								Real randomScaleAmount,  const W3DTreeDrawModuleData *data);
 	void removeAllTrees();
@@ -268,6 +269,7 @@ protected:
 #endif
 	W3DBridgeBuffer *m_bridgeBuffer;
 	W3DScorchInterface *m_scorches;
+	W3DScorchInterface *m_staticScorches;
 	W3DShroud *m_shroud;	///< Class for drawing the shroud over terrain.
 	struct shoreLineTileInfo
 	{	Int m_xy;	//x,y position of tile

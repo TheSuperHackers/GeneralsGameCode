@@ -661,7 +661,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 			Vector3 loc(pos->x, pos->y, pos->z);
 			Real radius = d->getReal(TheKey_objectRadius);
 			Scorches type = (Scorches)d->getInt(TheKey_scorchType);
-			m_terrainRenderObject->addScorch(loc, radius, type);
+			m_terrainRenderObject->addStaticScorch(loc, radius, type);
 		}
 		pMapObj = pMapObj->getNext();
 	}
