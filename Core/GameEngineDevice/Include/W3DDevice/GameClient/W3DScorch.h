@@ -44,7 +44,7 @@ public:
 class W3DScorch : public W3DScorchInterface
 {
 public:
-	W3DScorch();
+	W3DScorch(bool dedupeScorches);
 	virtual ~W3DScorch() override;
 
 	virtual void allocateBuffers() override;    ///< allocate static buffers for drawing scorch marks.
@@ -82,6 +82,7 @@ private:
 	TScorch m_scorches[MAX_SCORCH_MARKS];
 	Int m_numScorches;
 	Int m_scorchesInBuffer;    ///< how many are in the buffers.  If less than numScorches, we need to update
+	Bool m_dedupeScorches;
 };
 
 class W3DScorchDummy : public W3DScorchInterface

@@ -26,7 +26,7 @@
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "WW3D2/dx8wrapper.h"
 
-W3DScorch::W3DScorch()
+W3DScorch::W3DScorch(bool dedupeScorches)
   : m_vertexScorch(nullptr)
   , m_indexScorch(nullptr)
   , m_scorchTexture(nullptr)
@@ -34,6 +34,7 @@ W3DScorch::W3DScorch()
   , m_curNumScorchIndices(0)
   , m_numScorches(0)
   , m_scorchesInBuffer(0)
+  , m_dedupeScorches(dedupeScorches)
 {}
 
 W3DScorch::~W3DScorch() { freeBuffers(); }
@@ -93,16 +94,18 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 		m_numScorches--;
 	}
 
-	Int i;
-	Real limit = radius / 4;
-	for (i = 0; i < m_numScorches; i++)
+	if (m_dedupeScorches)
 	{
-		if (abs(location.X - m_scorches[i].location.X) < limit &&
-		    abs(location.Y - m_scorches[i].location.Y) < limit &&
-		    abs(radius - m_scorches[i].radius) < limit &&
-		    m_scorches[i].scorchType == type)
+		const Real limit = radius / 4;
+		for (Int i = 0; i < m_numScorches; i++)
 		{
-			return;    // basically a duplicate.
+			if (abs(location.X - m_scorches[i].location.X) < limit &&
+			    abs(location.Y - m_scorches[i].location.Y) < limit &&
+			    abs(radius - m_scorches[i].radius) < limit &&
+			    m_scorches[i].scorchType == type)
+			{
+				return;    // basically a duplicate.
+			}
 		}
 	}
 

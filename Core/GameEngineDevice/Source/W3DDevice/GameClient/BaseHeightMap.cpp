@@ -276,8 +276,8 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass()
 	m_roadBuffer = nullptr;
 #endif
 #if DO_SCORCH
-	m_scorches = NEW W3DScorch;
-	m_staticScorches = NEW W3DScorch;
+	m_scorches = NEW W3DScorch(true);
+	m_staticScorches = NEW W3DScorch(false);
 #else
 	m_scorches = NEW W3DScorchDummy;
 	m_staticScorches = NEW W3DScorchDummy;
