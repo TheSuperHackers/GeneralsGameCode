@@ -44,14 +44,14 @@ class W3DScorch : public W3DScorchInterface
 {
 public:
 	W3DScorch();
-	~W3DScorch() override;
+	virtual ~W3DScorch() override;
 
-	void allocateBuffers() override;    ///< allocate static buffers for drawing scorch marks.
-	void freeBuffers() override;    ///< frees up scorch buffers.
-	void clearAllScorches() override;
-	void invalidateBuffers() override;
-	void addScorch(Vector3 location, Real radius, Scorches type) override;
-	void drawScorches(WorldHeightMap& map) override;    ///< Draws the scorch mark polygons in m_vertexScorch.
+	virtual void allocateBuffers() override;    ///< allocate static buffers for drawing scorch marks.
+	virtual void freeBuffers() override;    ///< frees up scorch buffers.
+	virtual void clearAllScorches() override;
+	virtual void invalidateBuffers() override;
+	virtual void addScorch(Vector3 location, Real radius, Scorches type) override;
+	virtual void drawScorches(WorldHeightMap& map) override;    ///< Draws the scorch mark polygons in m_vertexScorch.
 
 private:
 	typedef struct
@@ -85,10 +85,10 @@ private:
 class W3DScorchDummy : public W3DScorchInterface
 {
 public:
-	void allocateBuffers() override {}
-	void freeBuffers() override {}
-	void clearAllScorches() override {}
-	void invalidateBuffers() override {}
-	void addScorch(Vector3, Real, Scorches) override {}
-	void drawScorches(WorldHeightMap&) override {}
+	virtual void allocateBuffers() override {}
+	virtual void freeBuffers() override {}
+	virtual void clearAllScorches() override {}
+	virtual void invalidateBuffers() override {}
+	virtual void addScorch(Vector3, Real, Scorches) override {}
+	virtual void drawScorches(WorldHeightMap&) override {}
 };
