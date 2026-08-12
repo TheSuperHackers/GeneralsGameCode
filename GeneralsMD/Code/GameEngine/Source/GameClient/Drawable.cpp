@@ -5024,11 +5024,7 @@ void Drawable::xfer( Xfer *xfer )
 	// tint status
 	xfer->xferUnsignedInt( &m_tintStatus );
 
-#if RTS_GENERALS
-	if (version <= 5)
-#else
 	if (version <= 7)
-#endif
 	{
 		// prev tint status
 		xfer->xferUnsignedInt( &m_prevTintStatus );
