@@ -511,6 +511,7 @@ private:
 	Int														m_animationMode;
 
 	Bool													m_needUpdateTurretPosition;
+	Bool													m_lastNeedUpdateTurretPosition;
 	Bool													m_doHandleRecoil;
 
 	void adjustAnimation(const ModelConditionInfo* prevState, Real prevAnimFraction);

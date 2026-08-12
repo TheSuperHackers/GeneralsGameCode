@@ -1743,6 +1743,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	m_needRecalcBoneParticleSystems = false;
 	m_fullyObscuredByShroud = false;
 	m_needUpdateTurretPosition = true;
+	m_lastNeedUpdateTurretPosition = true;
 	m_doHandleRecoil = true;
 
 	// only validate the current time-of-day and weather conditions by default.
@@ -2421,8 +2422,16 @@ void W3DModelDraw::stopClientParticleSystems()
 */
 void W3DModelDraw::handleClientTurretPositioning()
 {
-	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::TURRETS_VALID) || !m_needUpdateTurretPosition)
+	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::TURRETS_VALID))
 		return;
+
+	if (!m_needUpdateTurretPosition)
+	{
+		if(!m_lastNeedUpdateTurretPosition) 
+			return;
+
+		m_lastNeedUpdateTurretPosition = false;
+	}
 
 	for (int tslot = 0; tslot < MAX_TURRETS; ++tslot)
 	{
@@ -4023,6 +4032,7 @@ void W3DModelDraw::updateSubObjects()
 void W3DModelDraw::setNeedUpdateTurretPositioning(Bool set)
 {
 	m_needUpdateTurretPosition = set;
+	if(set) m_lastNeedUpdateTurretPosition = true;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4285,6 +4295,7 @@ void W3DModelDraw::loadPostProcess()
 	DrawModule::loadPostProcess();
 
 	m_needUpdateTurretPosition = TRUE;
+	m_lastNeedUpdateTurretPosition = TRUE;
 	m_doHandleRecoil = TRUE;
 
 }
