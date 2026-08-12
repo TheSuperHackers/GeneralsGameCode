@@ -73,6 +73,14 @@ void W3DScorch::invalidateBuffers()
 	m_curNumScorchIndices = 0;
 }
 
+void W3DScorch::invalidateTexture()
+{
+	if (m_scorchTexture)
+	{
+		m_scorchTexture->Invalidate();
+	}
+}
+
 void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 {
 	if (m_numScorches >= MAX_SCORCH_MARKS)

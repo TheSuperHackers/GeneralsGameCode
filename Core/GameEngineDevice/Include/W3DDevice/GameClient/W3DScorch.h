@@ -36,6 +36,7 @@ public:
 	virtual void freeBuffers() = 0;
 	virtual void clearAllScorches() = 0;
 	virtual void invalidateBuffers() = 0;
+	virtual void invalidateTexture() = 0;
 	virtual void addScorch(Vector3 location, Real radius, Scorches type) = 0;
 	virtual void drawScorches(WorldHeightMap& map) = 0;
 };
@@ -50,6 +51,7 @@ public:
 	virtual void freeBuffers() override;    ///< frees up scorch buffers.
 	virtual void clearAllScorches() override;
 	virtual void invalidateBuffers() override;
+	virtual void invalidateTexture() override;
 	virtual void addScorch(Vector3 location, Real radius, Scorches type) override;
 	virtual void drawScorches(WorldHeightMap& map) override;    ///< Draws the scorch mark polygons in m_vertexScorch.
 
@@ -89,6 +91,7 @@ public:
 	virtual void freeBuffers() override {}
 	virtual void clearAllScorches() override {}
 	virtual void invalidateBuffers() override {}
+	virtual void invalidateTexture() override {}
 	virtual void addScorch(Vector3, Real, Scorches) override {}
 	virtual void drawScorches(WorldHeightMap&) override {}
 };
