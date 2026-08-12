@@ -4849,8 +4849,8 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	*    during the module xfer (CBD)
 	* 4: Added m_ambientSoundEnabled flag
 	* 5: save full mtx, not pos+orient.
-	* 6: Added m_ambientSoundEnabledFromScript flag
-	* 7: Save the customize ambient sound info
+	* 6: Added m_ambientSoundEnabledFromScript flag (Added in Zero Hour)
+	* 7: Save the customize ambient sound info (Added in Zero Hour)
 	* 8: TheSuperHackers @bugfix Removed m_prevTintStatus because loading its value is unnecessary and undesirable
 	*/
 // ------------------------------------------------------------------------------------------------
@@ -5024,7 +5024,11 @@ void Drawable::xfer( Xfer *xfer )
 	// tint status
 	xfer->xferUnsignedInt( &m_tintStatus );
 
+#if RTS_GENERALS
 	if (version <= 5)
+#else
+	if (version <= 7)
+#endif
 	{
 		// prev tint status
 		xfer->xferUnsignedInt( &m_prevTintStatus );
