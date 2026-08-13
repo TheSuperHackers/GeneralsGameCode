@@ -22,6 +22,7 @@
 #include "Common/GameType.h"
 #include "Lib/BaseTypeCore.h"
 
+struct VertexFormatXYZDUV1;
 class TextureClass;
 class DX8IndexBufferClass;
 class DX8VertexBufferClass;
@@ -72,7 +73,10 @@ private:
 		SCORCH_PER_ROW = 3
 	};
 
+	Bool isDuplicate(const TScorch& scorch) const;
 	void updateScorches(WorldHeightMap& map);    ///< Update m_vertexScorch and m_indexScorch so all scorches will be drawn.
+	Bool writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, UnsignedInt diffuse,
+	                         VertexFormatXYZDUV1* curVb, UnsignedShort* curIb);
 
 	DX8VertexBufferClass* m_vertexScorch;    ///< Scorch vertex buffer.
 	DX8IndexBufferClass* m_indexScorch;    ///< indices defining a triangles for the scorch drawing.
@@ -81,7 +85,7 @@ private:
 	Int m_curNumScorchIndices;    ///< number of indices used in m_indexScorch.
 	TScorch m_scorches[MAX_SCORCH_MARKS];
 	Int m_numScorches;
-	Int m_scorchesInBuffer;    ///< how many are in the buffers.  If less than numScorches, we need to update
+	Bool m_needBufferRecompute;
 	Bool m_deduplicateScorches;
 };
 

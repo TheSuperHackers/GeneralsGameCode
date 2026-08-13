@@ -33,7 +33,7 @@ W3DScorch::W3DScorch(bool deduplicateScorches)
   , m_curNumScorchVertices(0)
   , m_curNumScorchIndices(0)
   , m_numScorches(0)
-  , m_scorchesInBuffer(0)
+  , m_needBufferRecompute(true)
   , m_deduplicateScorches(deduplicateScorches)
 {}
 
@@ -63,7 +63,7 @@ void W3DScorch::clearAllScorches()
 
 void W3DScorch::invalidateBuffers()
 {
-	m_scorchesInBuffer = 0;
+	m_needBufferRecompute = true;
 	m_curNumScorchVertices = 0;
 	m_curNumScorchIndices = 0;
 }
@@ -78,36 +78,46 @@ void W3DScorch::invalidateTexture()
 
 void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 {
-	if (m_deduplicateScorches)
+	TScorch scorch;
+	scorch.location = location;
+	scorch.radius = radius;
+	if (type >= 0 && (Int)type < SCORCH_MARKS_IN_TEXTURE)
+		scorch.scorchType = type;
+	else
+		scorch.scorchType = SCORCH_1;
+
+	if (m_deduplicateScorches && isDuplicate(scorch))
 	{
-		const Real limit = radius / 4;
-		for (Int i = 0; i < m_numScorches; i++)
-		{
-			if (abs(location.X - m_scorches[i].location.X) < limit &&
-			    abs(location.Y - m_scorches[i].location.Y) < limit &&
-			    abs(radius - m_scorches[i].radius) < limit &&
-			    m_scorches[i].scorchType == type)
-			{
-				return;    // basically a duplicate.
-			}
-		}
+		return;
 	}
 
 	if (m_numScorches >= MAX_SCORCH_MARKS)
 	{
-		Int i;
-		for (i = 0; i < MAX_SCORCH_MARKS - 1; i++)
+		for (Int i = 0; i < MAX_SCORCH_MARKS - 1; i++)
 		{
 			m_scorches[i] = m_scorches[i + 1];
 		}
 		m_numScorches--;
 	}
+	m_scorches[m_numScorches++] = scorch;
 
-	m_scorches[m_numScorches].location = location;
-	m_scorches[m_numScorches].radius = radius;
-	m_scorches[m_numScorches].scorchType = type;
-	m_numScorches++;
-	m_scorchesInBuffer = 0;    // force buffer regenerations.
+	invalidateBuffers();
+}
+
+Bool W3DScorch::isDuplicate(const TScorch& scorch) const
+{
+	const Real limit = scorch.radius / 4;
+	for (Int i = 0; i < m_numScorches; i++)
+	{
+		if (m_scorches[i].scorchType == scorch.scorchType &&
+		    fabsf(scorch.location.X - m_scorches[i].location.X) < limit &&
+		    fabsf(scorch.location.Y - m_scorches[i].location.Y) < limit &&
+		    fabsf(scorch.radius - m_scorches[i].radius) < limit)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void W3DScorch::drawScorches(WorldHeightMap& map)
@@ -134,128 +144,122 @@ static Real getMapHeight(WorldHeightMap& map, Int x, Int y)
 
 void W3DScorch::updateScorches(WorldHeightMap& map)
 {
-	if (m_scorchesInBuffer > 1)
+	if (!m_needBufferRecompute || m_numScorches == 0 || !m_indexScorch || !m_vertexScorch)
 	{
 		return;
 	}
-	if (m_numScorches == 0)
-	{
-		return;
-	}
-	if (!m_indexScorch || !m_vertexScorch)
-	{
-		return;
-	}
+
+	m_needBufferRecompute = false;
 	m_curNumScorchVertices = 0;
 	m_curNumScorchIndices = 0;
+
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexScorch);
 	UnsignedShort* ib = lockIdxBuffer.Get_Index_Array();
-	UnsignedShort* curIb = ib;
 
 	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexScorch);
 	VertexFormatXYZDUV1* vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1* curVb = vb;
 
 	Real shadeR = (TheGlobalData->m_terrainAmbient[0].red + TheGlobalData->m_terrainDiffuse[0].red) / 2.0f;
 	Real shadeG = (TheGlobalData->m_terrainAmbient[0].green + TheGlobalData->m_terrainDiffuse[0].green) / 2.0f;
 	Real shadeB = (TheGlobalData->m_terrainAmbient[0].blue + TheGlobalData->m_terrainDiffuse[0].blue) / 2.0f;
 	UnsignedInt diffuse = DX8Wrapper::Convert_Color_Clamp(Vector4(shadeR, shadeG, shadeB, 1.0f));
 
-	m_scorchesInBuffer = 0;
-	for (Int curScorch = m_numScorches - 1; curScorch >= 0; curScorch--)
+	for (Int i = m_numScorches - 1; i >= 0; i--)
 	{
-		m_scorchesInBuffer++;
-		Real radius = m_scorches[curScorch].radius;
-		Vector3 loc = m_scorches[curScorch].location;
-		Int type = m_scorches[curScorch].scorchType;
-		if (type < 0)
+		if (!writeScorchToBuffer(m_scorches[i], map, diffuse,
+		                         vb + m_curNumScorchVertices, ib + m_curNumScorchIndices))
 		{
-			type = 0;
-		}
-		if (type >= SCORCH_MARKS_IN_TEXTURE)
-		{
-			type = 0;
-		}
-		Real amtToFloat = 0;
-		amtToFloat = MAP_HEIGHT_SCALE / 10;
-
-		Int minX = REAL_TO_INT_FLOOR((loc.X - radius) / MAP_XY_FACTOR);
-		Int minY = REAL_TO_INT_FLOOR((loc.Y - radius) / MAP_XY_FACTOR);
-		if (minX < -map.getBorderSizeInline())
-			minX = -map.getBorderSizeInline();
-		if (minY < -map.getBorderSizeInline())
-			minY = -map.getBorderSizeInline();
-		Int maxX = REAL_TO_INT_CEIL((loc.X + radius) / MAP_XY_FACTOR);
-		Int maxY = REAL_TO_INT_CEIL((loc.Y + radius) / MAP_XY_FACTOR);
-		maxX++;
-		maxY++;
-		if (maxX > map.getXExtent() - map.getBorderSizeInline())
-		{
-			maxX = map.getXExtent() - map.getBorderSizeInline();
-		}
-		if (maxY > map.getYExtent() - map.getBorderSizeInline())
-		{
-			maxY = map.getYExtent() - map.getBorderSizeInline();
-		}
-		Int startVertex = m_curNumScorchVertices;
-		Int i, j;
-		for (j = minY; j < maxY; j++)
-		{
-			for (i = minX; i < maxX; i++)
-			{
-				if (m_curNumScorchVertices >= MAX_SCORCH_VERTEX)
-					return;
-				curVb->diffuse = diffuse;
-				Real theZ = amtToFloat + getMapHeight(map, i, j);
-				// The scorchmarks are spaced out by 1.5 in the texture.
-				Real uOffset = (type % SCORCH_PER_ROW) * 1.5f;
-				Real vOffset = (type / SCORCH_PER_ROW) * 1.5f;
-				Real X = i * MAP_XY_FACTOR;
-				Real Y = j * MAP_XY_FACTOR;
-				curVb->u1 = (uOffset + 0.5f + (X - loc.X) / (2 * radius)) / (SCORCH_PER_ROW + 1);
-				curVb->v1 = (vOffset + 0.5f + (Y - loc.Y) / (2 * radius)) / (SCORCH_PER_ROW + 1);
-				curVb->x = X;
-				curVb->y = Y;
-				curVb->z = theZ;
-				curVb++;
-				m_curNumScorchVertices++;
-			}
-		}
-		Int yOffset = maxX - minX;
-		for (j = 0; j < maxY - minY - 1; j++)
-		{
-			for (i = 0; i < maxX - minX - 1; i++)
-			{
-				if (m_curNumScorchIndices + 6 > MAX_SCORCH_INDEX)
-					return;
-				Int xNdx = i + minX + map.getBorderSizeInline();
-				Int yNdx = j + minY + map.getBorderSizeInline();
-				Bool flipForBlend = map.getFlipState(xNdx, yNdx);
-#if 0
-				UnsignedByte alpha[4];
-				float UA[4], VA[4];
-				map.getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
-#endif
-				if (flipForBlend)
-				{
-					*curIb++ = startVertex + j * yOffset + i + 1;
-					*curIb++ = startVertex + j * yOffset + i + yOffset;
-					*curIb++ = startVertex + j * yOffset + i;
-					*curIb++ = startVertex + j * yOffset + i + 1;
-					*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
-					*curIb++ = startVertex + j * yOffset + i + yOffset;
-				}
-				else
-				{
-					*curIb++ = startVertex + j * yOffset + i;
-					*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
-					*curIb++ = startVertex + j * yOffset + i + yOffset;
-					*curIb++ = startVertex + j * yOffset + i;
-					*curIb++ = startVertex + j * yOffset + i + 1;
-					*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
-				}
-				m_curNumScorchIndices += 6;
-			}
+			return;
 		}
 	}
+}
+
+Bool W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, UnsignedInt diffuse,
+                                    VertexFormatXYZDUV1* curVb, UnsignedShort* curIb)
+{
+	Real radius = scorch.radius;
+	Vector3 loc = scorch.location;
+	Int type = scorch.scorchType;
+	Real amtToFloat = MAP_HEIGHT_SCALE / 10;
+
+	Int minX = REAL_TO_INT_FLOOR((loc.X - radius) / MAP_XY_FACTOR);
+	Int minY = REAL_TO_INT_FLOOR((loc.Y - radius) / MAP_XY_FACTOR);
+	if (minX < -map.getBorderSizeInline())
+		minX = -map.getBorderSizeInline();
+	if (minY < -map.getBorderSizeInline())
+		minY = -map.getBorderSizeInline();
+	Int maxX = REAL_TO_INT_CEIL((loc.X + radius) / MAP_XY_FACTOR);
+	Int maxY = REAL_TO_INT_CEIL((loc.Y + radius) / MAP_XY_FACTOR);
+	maxX++;
+	maxY++;
+	if (maxX > map.getXExtent() - map.getBorderSizeInline())
+	{
+		maxX = map.getXExtent() - map.getBorderSizeInline();
+	}
+	if (maxY > map.getYExtent() - map.getBorderSizeInline())
+	{
+		maxY = map.getYExtent() - map.getBorderSizeInline();
+	}
+	Int startVertex = m_curNumScorchVertices;
+	Int i, j;
+	for (j = minY; j < maxY; j++)
+	{
+		for (i = minX; i < maxX; i++)
+		{
+			if (m_curNumScorchVertices >= MAX_SCORCH_VERTEX)
+				return false;
+			curVb->diffuse = diffuse;
+			Real theZ = amtToFloat + getMapHeight(map, i, j);
+			// The scorchmarks are spaced out by 1.5 in the texture.
+			Real uOffset = (type % SCORCH_PER_ROW) * 1.5f;
+			Real vOffset = (type / SCORCH_PER_ROW) * 1.5f;
+			Real X = i * MAP_XY_FACTOR;
+			Real Y = j * MAP_XY_FACTOR;
+			curVb->u1 = (uOffset + 0.5f + (X - loc.X) / (2 * radius)) / (SCORCH_PER_ROW + 1);
+			curVb->v1 = (vOffset + 0.5f + (Y - loc.Y) / (2 * radius)) / (SCORCH_PER_ROW + 1);
+			curVb->x = X;
+			curVb->y = Y;
+			curVb->z = theZ;
+			curVb++;
+			m_curNumScorchVertices++;
+		}
+	}
+	Int yOffset = maxX - minX;
+	for (j = 0; j < maxY - minY - 1; j++)
+	{
+		for (i = 0; i < maxX - minX - 1; i++)
+		{
+			if (m_curNumScorchIndices + 6 > MAX_SCORCH_INDEX)
+				return false;
+			Int xNdx = i + minX + map.getBorderSizeInline();
+			Int yNdx = j + minY + map.getBorderSizeInline();
+			Bool flipForBlend = map.getFlipState(xNdx, yNdx);
+#if 0
+			UnsignedByte alpha[4];
+			float UA[4], VA[4];
+			map.getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
+#endif
+			if (flipForBlend)
+			{
+				*curIb++ = startVertex + j * yOffset + i + 1;
+				*curIb++ = startVertex + j * yOffset + i + yOffset;
+				*curIb++ = startVertex + j * yOffset + i;
+				*curIb++ = startVertex + j * yOffset + i + 1;
+				*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
+				*curIb++ = startVertex + j * yOffset + i + yOffset;
+			}
+			else
+			{
+				*curIb++ = startVertex + j * yOffset + i;
+				*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
+				*curIb++ = startVertex + j * yOffset + i + yOffset;
+				*curIb++ = startVertex + j * yOffset + i;
+				*curIb++ = startVertex + j * yOffset + i + 1;
+				*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
+			}
+			m_curNumScorchIndices += 6;
+		}
+	}
+
+	return true;
 }
