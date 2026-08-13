@@ -2596,7 +2596,13 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 
 			case AICMD_ENTER:
 			case AICMD_GET_REPAIRED:
+				// if we're already located at the airfield in question, just ignore.
+				// TheSuperHackers @bugfix Caball009 12/08/2026 This applies to units produced at the helipad now as well.
+#if RETAIL_COMPATIBLE_CRC
 				if (parms->m_obj && !getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
+#else
+				if (parms->m_obj)
+#endif
 				{
 					Object* airfield;
 					ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID(), &airfield);

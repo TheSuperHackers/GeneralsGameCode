@@ -1293,7 +1293,11 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 #else
 	// TheSuperHackers @bugfix Stubbjax 31/10/2025 Don't leave healing state for evacuation commands.
 	if (parms->m_cmd != AICMD_EVACUATE && parms->m_cmd != AICMD_EXIT)
-		setAirfieldForHealing(INVALID_ID);
+	{
+		// TheSuperHackers @bugfix Caball009 12/08/2026 Don't leave healing state if chinook is already repairing at this airfield.
+		if (!(parms->m_cmd == AICMD_GET_REPAIRED && parms->m_obj->getID() == getAirfieldForHealing()))
+			setAirfieldForHealing(INVALID_ID);
+	}
 #endif
 
 	if (!isAllowedToRespondToAiCommands(parms))
@@ -1369,6 +1373,20 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 			}
 		}
 		break;
+
+#if !RETAIL_COMPATIBLE_CRC
+		case AICMD_GET_REPAIRED:
+		{
+			// TheSuperHackers @bugfix Caball009 12/08/2026 Don't process command if chinook is already repairing at this airfield.
+			if (parms->m_obj->getID() == getAirfieldForHealing())
+			{
+				passItThru = false;
+				break;
+			}
+
+			FALLTHROUGH;
+		}
+#endif
 
 		default:
 		{
