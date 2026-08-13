@@ -2609,7 +2609,7 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 					return;
 				}
 
-				FALLTHROUGH;
+				goto defaultCase; // cannot fall through to get to the default case!
 #endif
 
 			case AICMD_ENTER:
@@ -2619,9 +2619,10 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 				if (isParkedAt(parms->m_obj))
 					return;
 
-				FALLTHROUGH; // else fall thru to the default case!
+				FALLTHROUGH; // else fall through to the default case!
 
 			default:
+			defaultCase:
 			{
 				// nuke any existing pending cmd
 				m_mostRecentCommand.store(*parms);
