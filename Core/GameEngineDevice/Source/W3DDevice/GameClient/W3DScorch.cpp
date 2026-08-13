@@ -84,16 +84,6 @@ void W3DScorch::invalidateTexture()
 
 void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 {
-	if (m_numScorches >= MAX_SCORCH_MARKS)
-	{
-		Int i;
-		for (i = 0; i < MAX_SCORCH_MARKS - 1; i++)
-		{
-			m_scorches[i] = m_scorches[i + 1];
-		}
-		m_numScorches--;
-	}
-
 	if (m_deduplicateScorches)
 	{
 		const Real limit = radius / 4;
@@ -107,6 +97,16 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 				return;    // basically a duplicate.
 			}
 		}
+	}
+
+	if (m_numScorches >= MAX_SCORCH_MARKS)
+	{
+		Int i;
+		for (i = 0; i < MAX_SCORCH_MARKS - 1; i++)
+		{
+			m_scorches[i] = m_scorches[i + 1];
+		}
+		m_numScorches--;
 	}
 
 	m_scorches[m_numScorches].location = location;
