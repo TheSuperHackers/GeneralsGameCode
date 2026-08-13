@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <deque>
+
 #include "WWMath/vector3.h"
 #include "Common/GameType.h"
 #include "Lib/BaseTypeCore.h"
@@ -83,8 +85,7 @@ private:
 	TextureClass* m_scorchTexture;    ///< Scorch mark texture
 	Int m_curNumScorchVertices;    ///< number of vertices used in m_vertexScorch.
 	Int m_curNumScorchIndices;    ///< number of indices used in m_indexScorch.
-	TScorch m_scorches[MAX_SCORCH_MARKS];
-	Int m_numScorches;
+	std::deque<TScorch> m_scorches;
 	Bool m_needBufferRecompute;
 	Bool m_deduplicateScorches;
 };

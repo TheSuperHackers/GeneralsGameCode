@@ -32,7 +32,6 @@ W3DScorch::W3DScorch(bool deduplicateScorches)
   , m_scorchTexture(nullptr)
   , m_curNumScorchVertices(0)
   , m_curNumScorchIndices(0)
-  , m_numScorches(0)
   , m_needBufferRecompute(true)
   , m_deduplicateScorches(deduplicateScorches)
 {}
@@ -57,7 +56,7 @@ void W3DScorch::freeBuffers()
 
 void W3DScorch::clearAllScorches()
 {
-	m_numScorches = 0;
+	m_scorches.clear();
 	invalidateBuffers();
 }
 
@@ -91,15 +90,11 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 		return;
 	}
 
-	if (m_numScorches >= MAX_SCORCH_MARKS)
+	if ((Int)m_scorches.size() >= MAX_SCORCH_MARKS)
 	{
-		for (Int i = 0; i < MAX_SCORCH_MARKS - 1; i++)
-		{
-			m_scorches[i] = m_scorches[i + 1];
-		}
-		m_numScorches--;
+		m_scorches.pop_front();
 	}
-	m_scorches[m_numScorches++] = scorch;
+	m_scorches.push_back(scorch);
 
 	invalidateBuffers();
 }
@@ -107,12 +102,12 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 Bool W3DScorch::isDuplicate(const TScorch& scorch) const
 {
 	const Real limit = scorch.radius / 4;
-	for (Int i = 0; i < m_numScorches; i++)
+	for (std::deque<TScorch>::const_iterator it = m_scorches.begin(); it != m_scorches.end(); ++it)
 	{
-		if (m_scorches[i].scorchType == scorch.scorchType &&
-		    fabsf(scorch.location.X - m_scorches[i].location.X) < limit &&
-		    fabsf(scorch.location.Y - m_scorches[i].location.Y) < limit &&
-		    fabsf(scorch.radius - m_scorches[i].radius) < limit)
+		if (it->scorchType == scorch.scorchType &&
+		    fabsf(scorch.location.X - it->location.X) < limit &&
+		    fabsf(scorch.location.Y - it->location.Y) < limit &&
+		    fabsf(scorch.radius - it->radius) < limit)
 		{
 			return true;
 		}
@@ -144,7 +139,7 @@ static Real getMapHeight(WorldHeightMap& map, Int x, Int y)
 
 void W3DScorch::updateScorches(WorldHeightMap& map)
 {
-	if (!m_needBufferRecompute || m_numScorches == 0 || !m_indexScorch || !m_vertexScorch)
+	if (!m_needBufferRecompute || m_scorches.empty() || !m_indexScorch || !m_vertexScorch)
 	{
 		return;
 	}
@@ -164,9 +159,10 @@ void W3DScorch::updateScorches(WorldHeightMap& map)
 	Real shadeB = (TheGlobalData->m_terrainAmbient[0].blue + TheGlobalData->m_terrainDiffuse[0].blue) / 2.0f;
 	UnsignedInt diffuse = DX8Wrapper::Convert_Color_Clamp(Vector4(shadeR, shadeG, shadeB, 1.0f));
 
-	for (Int i = m_numScorches - 1; i >= 0; i--)
+	// TheSuperHackers @info Scorches are written in reverse order to ensure that the last added scorches fit in the buffers.
+	for (std::deque<TScorch>::reverse_iterator it = m_scorches.rbegin(); it != m_scorches.rend(); ++it)
 	{
-		if (!writeScorchToBuffer(m_scorches[i], map, diffuse,
+		if (!writeScorchToBuffer(*it, map, diffuse,
 		                         vb + m_curNumScorchVertices, ib + m_curNumScorchIndices))
 		{
 			return;
