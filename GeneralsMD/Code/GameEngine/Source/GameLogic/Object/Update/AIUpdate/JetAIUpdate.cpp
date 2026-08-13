@@ -2604,9 +2604,9 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 				if (parms->m_obj)
 #endif
 				{
-					Object* airfield;
+					Object* airfield = nullptr;
 					ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID(), &airfield);
-					if (pp != nullptr && airfield != nullptr && airfield == parms->m_obj)
+					if (pp != nullptr && airfield == parms->m_obj)
 						return;
 				}
 
