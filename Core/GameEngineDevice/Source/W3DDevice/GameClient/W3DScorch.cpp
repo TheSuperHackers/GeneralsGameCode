@@ -46,13 +46,6 @@ void W3DScorch::allocateBuffers()
 	m_indexScorch = NEW_REF(DX8IndexBufferClass, (MAX_SCORCH_INDEX));
 	m_scorchTexture = NEW ScorchTextureClass;
 	invalidateBuffers();
-#ifdef RTS_DEBUG
-	Vector3 loc(4 * MAP_XY_FACTOR, 4 * MAP_XY_FACTOR, 0);
-	addScorch(loc, 1 * MAP_XY_FACTOR, SCORCH_1);
-	loc.Y += 10 * MAP_XY_FACTOR;
-	loc.X += 5 * MAP_XY_FACTOR;
-	addScorch(loc, 3 * MAP_XY_FACTOR, SCORCH_1);
-#endif
 }
 
 void W3DScorch::freeBuffers()
