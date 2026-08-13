@@ -3113,7 +3113,7 @@ Bool Object::isSelectable() const
 //				|| (m_isSelectable
 //						&& !testStatus(OBJECT_STATUS_UNSELECTABLE)
 //						&& !isEffectivelyDead()
-//						&& !getTemplate()->isKindOf(KINDOF_DRONE)//Most drones are unselectable from being slaved, but the SpyDrone needs help
+//						&& !getTemplate()->isKindOf(KINDOF_NO_SELECT)
 //						);
 
 
@@ -3123,7 +3123,7 @@ Bool Object::isSelectable() const
 	if ( m_isSelectable )
     if ( !testStatus(OBJECT_STATUS_UNSELECTABLE) )
 		  if ( !isEffectivelyDead() )
-				//if ( !getTemplate()->isKindOf(KINDOF_DRONE) )//Most drones are unselectable from being slaved, but the SpyDrone needs help
+				if ( !getTemplate()->isKindOf(KINDOF_NO_SELECT) )
 					return TRUE;
 
   return FALSE;
