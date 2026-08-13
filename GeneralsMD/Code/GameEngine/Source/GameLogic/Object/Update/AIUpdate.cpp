@@ -3829,12 +3829,11 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 	}
 	else
 	{
-		// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
+		// TheSuperHackers @bugfix Caball009 / Okladnoj 10/08/2026 Don't process invalid exit commands,
 		// because an object should not attempt to exit something it's not contained by.
 #if !RETAIL_COMPATIBLE_CRC
-		// @todo Remove function parameter 'objectToExit' because it's become obsolete.
-
-		if (us->getContainedBy() != objectToExit)
+		const ContainModuleInterface *contain = objectToExit->getContain();
+		if (contain == nullptr || !contain->isContained(us))
 			return;
 #endif
 	}
@@ -3868,12 +3867,11 @@ void AIUpdateInterface::privateExitInstantly( Object *objectToExit, CommandSourc
 	}
 	else
 	{
-		// TheSuperHackers @bugfix Caball009 10/08/2026 Don't process invalid exit commands,
+		// TheSuperHackers @bugfix Caball009 / Okladnoj 10/08/2026 Don't process invalid exit commands,
 		// because an object should not attempt to exit something it's not contained by.
 #if !RETAIL_COMPATIBLE_CRC
-		// @todo Remove function parameter 'objectToExit' because it's become obsolete.
-
-		if (us->getContainedBy() != objectToExit)
+		const ContainModuleInterface *contain = objectToExit->getContain();
+		if (contain == nullptr || !contain->isContained(us))
 			return;
 #endif
 	}
