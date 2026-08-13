@@ -1479,6 +1479,22 @@ void ControlBar::update()
 			exitPosition = obj->getObjectExitInterface()->getRallyPoint();
 
 		showRallyPoint(exitPosition);
+
+		ContainModuleInterface* observerContain = obj ? obj->getContain() : nullptr;
+		Bool showObserverInventory = (observerContain != nullptr && observerContain->getContainMax() > 0);
+
+		if (showObserverInventory && m_observerLookAtPlayer == nullptr)
+		{
+			if (m_currContext != CB_CONTEXT_STRUCTURE_INVENTORY || m_currentSelectedDrawable != drawToEvaluateFor)
+				switchToContext(CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor);
+			else
+				updateContextStructureInventory();
+		}
+		else if (m_currContext != CB_CONTEXT_OBSERVER_LIST)
+		{
+			switchToContext(CB_CONTEXT_OBSERVER_LIST, nullptr);
+		}
+
 		return;
 	}
 
