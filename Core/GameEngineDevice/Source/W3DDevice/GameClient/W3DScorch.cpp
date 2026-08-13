@@ -41,6 +41,7 @@ W3DScorch::~W3DScorch() { freeBuffers(); }
 
 void W3DScorch::allocateBuffers()
 {
+	freeBuffers();
 	m_vertexScorch = NEW_REF(DX8VertexBufferClass, (DX8_FVF_XYZDUV1, MAX_SCORCH_VERTEX, DX8VertexBufferClass::USAGE_DEFAULT));
 	m_indexScorch = NEW_REF(DX8IndexBufferClass, (MAX_SCORCH_INDEX));
 	m_scorchTexture = NEW ScorchTextureClass;
