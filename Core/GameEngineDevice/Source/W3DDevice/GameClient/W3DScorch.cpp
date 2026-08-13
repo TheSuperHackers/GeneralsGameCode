@@ -26,7 +26,7 @@
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "WW3D2/dx8wrapper.h"
 
-W3DScorch::W3DScorch(bool dedupeScorches)
+W3DScorch::W3DScorch(bool deduplicateScorches)
   : m_vertexScorch(nullptr)
   , m_indexScorch(nullptr)
   , m_scorchTexture(nullptr)
@@ -34,7 +34,7 @@ W3DScorch::W3DScorch(bool dedupeScorches)
   , m_curNumScorchIndices(0)
   , m_numScorches(0)
   , m_scorchesInBuffer(0)
-  , m_dedupeScorches(dedupeScorches)
+  , m_deduplicateScorches(deduplicateScorches)
 {}
 
 W3DScorch::~W3DScorch() { freeBuffers(); }
@@ -94,7 +94,7 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 		m_numScorches--;
 	}
 
-	if (m_dedupeScorches)
+	if (m_deduplicateScorches)
 	{
 		const Real limit = radius / 4;
 		for (Int i = 0; i < m_numScorches; i++)

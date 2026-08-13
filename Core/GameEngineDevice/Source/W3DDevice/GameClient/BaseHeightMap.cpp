@@ -1880,7 +1880,8 @@ void BaseHeightMapRenderObjClass::addScorch(Vector3 location, Real radius, Scorc
 //=============================================================================
 // BaseHeightMapRenderObjClass::addStaticScorch
 //=============================================================================
-/** Adds a permanent scorch mark loaded from the map. */
+/** TheSuperHackers @feature stephanmeesters 13/08/2026 Adds a permanent scorch mark loaded from the map. Static
+ * scorch marks are managed separately so adding gameplay scorch marks cannot evict them. */
 //=============================================================================
 void BaseHeightMapRenderObjClass::addStaticScorch(Vector3 location, Real radius, Scorches type)
 {
