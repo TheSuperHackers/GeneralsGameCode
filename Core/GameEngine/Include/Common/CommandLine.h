@@ -34,4 +34,9 @@ public:
 
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
+
+	// TheSuperHackers @feature 14/08/2026
+	// Sets the working directory to the executable path, unless -cwd is passed.
+	// -cwd keeps the OS working directory. -cwd <path> uses the given directory instead.
+	static void applyStartupWorkingDirectory();
 };
