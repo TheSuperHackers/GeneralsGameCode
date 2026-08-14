@@ -3113,7 +3113,7 @@ Bool Object::isSelectable() const
 //				|| (m_isSelectable
 //						&& !testStatus(OBJECT_STATUS_UNSELECTABLE)
 //						&& !isEffectivelyDead()
-//						&& !getTemplate()->isKindOf(KINDOF_NO_SELECT)
+//						&& !getTemplate()->isKindOf(KINDOF_DRONE)//Most drones are unselectable from being slaved, but the SpyDrone needs help
 //						);
 
 
