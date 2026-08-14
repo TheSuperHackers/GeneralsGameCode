@@ -20,6 +20,34 @@
 #include "Common/FrameRateLimit.h"
 
 
+namespace
+{
+	typedef HANDLE (WINAPI *CreateWaitableTimerExWFunction)(LPSECURITY_ATTRIBUTES, LPCWSTR, DWORD, DWORD);
+
+	HANDLE CreateFrameRateTimer()
+	{
+		const DWORD createWaitableTimerHighResolution = 0x00000002;
+		HANDLE timer = nullptr;
+		HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
+		if (kernel32 != nullptr)
+		{
+			CreateWaitableTimerExWFunction createWaitableTimerExW =
+				reinterpret_cast<CreateWaitableTimerExWFunction>(GetProcAddress(kernel32, "CreateWaitableTimerExW"));
+			if (createWaitableTimerExW != nullptr)
+			{
+				timer = createWaitableTimerExW(
+					nullptr, nullptr, createWaitableTimerHighResolution, TIMER_MODIFY_STATE | SYNCHRONIZE);
+			}
+		}
+
+		if (timer == nullptr)
+			timer = CreateWaitableTimer(nullptr, FALSE, nullptr);
+
+		return timer;
+	}
+}
+
+
 FrameRateLimit::FrameRateLimit()
 {
 	LARGE_INTEGER freq;
@@ -28,6 +56,21 @@ FrameRateLimit::FrameRateLimit()
 	QueryPerformanceCounter(&start);
 	m_freq = freq.QuadPart;
 	m_start = start.QuadPart;
+	m_waitableTimer = CreateFrameRateTimer();
+}
+
+FrameRateLimit::~FrameRateLimit()
+{
+	if (m_waitableTimer != nullptr)
+		CloseHandle(static_cast<HANDLE>(m_waitableTimer));
+}
+
+Int64 FrameRateLimit::calculateCoarseWaitTicks(Int64 remainingTicks, Int64 spinTicks)
+{
+	if (remainingTicks <= spinTicks)
+		return 0;
+
+	return remainingTicks - spinTicks;
 }
 
 Real FrameRateLimit::wait(UnsignedInt maxFps)
@@ -35,27 +78,46 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	PROFILER_SECTION;
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
-	double elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
-	const double targetSeconds = 1.0 / maxFps;
-	const double sleepSeconds = targetSeconds - elapsedSeconds - 0.002; // leave ~2ms for spin wait
-
-	if (sleepSeconds > 0.0)
+	Int64 elapsedTicks = tick.QuadPart - m_start;
+	if (maxFps == 0 || m_freq <= 0)
 	{
-		// Non busy wait with Munkee sleep
-		DWORD dwMilliseconds = static_cast<DWORD>(sleepSeconds * 1000);
-		Sleep(dwMilliseconds);
+		m_start = tick.QuadPart;
+		return m_freq > 0 ? static_cast<Real>(static_cast<double>(elapsedTicks) / m_freq) : 0.0f;
 	}
 
-	// Busy wait for remaining time
+	const Int64 targetTicks = (m_freq + maxFps - 1) / maxFps;
+	const Int64 spinTicks = m_freq / 5000; // Keep only the final ~0.2 ms as a busy wait.
+	const Int64 coarseWaitTicks = calculateCoarseWaitTicks(targetTicks - elapsedTicks, spinTicks);
+
+	if (coarseWaitTicks > 0)
+	{
+		Bool waited = false;
+		if (m_waitableTimer != nullptr)
+		{
+			LARGE_INTEGER dueTime;
+			dueTime.QuadPart = -((coarseWaitTicks * 10000000 + m_freq - 1) / m_freq);
+			if (SetWaitableTimer(static_cast<HANDLE>(m_waitableTimer), &dueTime, 0, nullptr, nullptr, FALSE))
+				waited = WaitForSingleObject(static_cast<HANDLE>(m_waitableTimer), INFINITE) == WAIT_OBJECT_0;
+		}
+
+		if (!waited)
+		{
+			const DWORD milliseconds = static_cast<DWORD>((coarseWaitTicks * 1000) / m_freq);
+			if (milliseconds > 0)
+				Sleep(milliseconds);
+		}
+	}
+
+	// Busy wait only for the final scheduling jitter.
 	do
 	{
 		QueryPerformanceCounter(&tick);
-		elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
+		elapsedTicks = tick.QuadPart - m_start;
 	}
-	while (elapsedSeconds < targetSeconds);
+	while (elapsedTicks < targetTicks);
 
 	m_start = tick.QuadPart;
-	return (Real)elapsedSeconds;
+	return static_cast<Real>(static_cast<double>(elapsedTicks) / m_freq);
 }
 
 void FrameRateLimit::reset()

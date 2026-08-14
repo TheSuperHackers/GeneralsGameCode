@@ -25,13 +25,19 @@ class FrameRateLimit
 {
 public:
 	FrameRateLimit();
+	~FrameRateLimit();
 
 	Real wait(UnsignedInt maxFps);
 	void reset(); ///< Move the timing anchor to now, discarding any time elapsed since the last call to wait.
+	static Int64 calculateCoarseWaitTicks(Int64 remainingTicks, Int64 spinTicks);
 
 private:
+	FrameRateLimit(const FrameRateLimit &);
+	FrameRateLimit &operator=(const FrameRateLimit &);
+
 	Int64 m_freq;
 	Int64 m_start;
+	void *m_waitableTimer;
 };
 
 

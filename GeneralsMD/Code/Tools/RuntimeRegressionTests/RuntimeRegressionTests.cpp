@@ -10,8 +10,10 @@
 
 #include "GameNetwork/NetCommandValidation.h"
 #include "GameLogic/TriggerInfo.h"
+#include "Common/FrameRateLimit.h"
 
 #include <stdio.h>
+#include <windows.h>
 
 
 static Int s_failures = 0;
@@ -95,11 +97,62 @@ static void TestTriggerInfoStorage()
 	CHECK(storage[5].pTrigger == reinterpret_cast<const PolygonTrigger *>(6));
 }
 
+static ULONGLONG FileTimeToTicks(const FILETIME &fileTime)
+{
+	ULARGE_INTEGER ticks;
+	ticks.LowPart = fileTime.dwLowDateTime;
+	ticks.HighPart = fileTime.dwHighDateTime;
+	return ticks.QuadPart;
+}
+
+static void TestFrameRateLimitCpuUsage()
+{
+	FILETIME createTime;
+	FILETIME exitTime;
+	FILETIME kernelStart;
+	FILETIME userStart;
+	FILETIME kernelEnd;
+	FILETIME userEnd;
+	LARGE_INTEGER frequency;
+	LARGE_INTEGER wallStart;
+	LARGE_INTEGER wallEnd;
+
+	CHECK(GetProcessTimes(GetCurrentProcess(), &createTime, &exitTime, &kernelStart, &userStart));
+	CHECK(QueryPerformanceFrequency(&frequency));
+	CHECK(QueryPerformanceCounter(&wallStart));
+
+	FrameRateLimit limiter;
+	for (Int i = 0; i < 240; ++i)
+		limiter.wait(480);
+
+	CHECK(QueryPerformanceCounter(&wallEnd));
+	CHECK(GetProcessTimes(GetCurrentProcess(), &createTime, &exitTime, &kernelEnd, &userEnd));
+
+	const double wallSeconds = static_cast<double>(wallEnd.QuadPart - wallStart.QuadPart) / frequency.QuadPart;
+	const double cpuSeconds = static_cast<double>(
+		FileTimeToTicks(kernelEnd) - FileTimeToTicks(kernelStart) +
+		FileTimeToTicks(userEnd) - FileTimeToTicks(userStart)) / 10000000.0;
+	const double cpuRatio = cpuSeconds / wallSeconds;
+	printf("Frame limiter CPU ratio at 480 FPS: %.3f\n", cpuRatio);
+	CHECK(wallSeconds >= 0.45);
+	CHECK(cpuRatio < 0.60);
+}
+
+static void TestFrameRateLimitWaitCalculation()
+{
+	CHECK(FrameRateLimit::calculateCoarseWaitTicks(1000, 200) == 800);
+	CHECK(FrameRateLimit::calculateCoarseWaitTicks(200, 200) == 0);
+	CHECK(FrameRateLimit::calculateCoarseWaitTicks(100, 200) == 0);
+	CHECK(FrameRateLimit::calculateCoarseWaitTicks(-1, 200) == 0);
+}
+
 int main()
 {
 	TestNetworkValidation();
 	TestNetworkReceiveBudget();
 	TestTriggerInfoStorage();
+	TestFrameRateLimitWaitCalculation();
+	TestFrameRateLimitCpuUsage();
 
 	if (s_failures != 0)
 	{
