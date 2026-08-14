@@ -331,6 +331,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheWritableGlobalData->m_debugIgnoreAsserts = true;
 #endif
 
+	char buf[_MAX_PATH];
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
