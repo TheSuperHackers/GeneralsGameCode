@@ -515,7 +515,7 @@ public:
 
 	void validate();
 
-	AsciiString getName() const { return m_name; }
+	const AsciiString& getName() const { return m_name; }
 
 	// This function was made const because of update modules' module data being all const.
 	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-null, it is a slave system for use
@@ -607,11 +607,12 @@ public:
 	void setInitialDelay( UnsignedInt delay ) { m_delayLeft = delay; }
 
 	const AsciiString& getParticleTypeName() const { return m_particleTypeName; }	///< return the name of the particles
-	const Bool isUsingDrawables() const { return m_particleType == DRAWABLE; }
-	const Bool isUsingStreak() const { return m_particleType == STREAK; }
-	const Bool isUsingSmudge() const { return m_particleType == SMUDGE; }
-	const Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
-	const UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
+	Bool isUsingParticles() const { return m_particleType == PARTICLE; }
+	Bool isUsingDrawables() const { return m_particleType == DRAWABLE; }
+	Bool isUsingStreak() const { return m_particleType == STREAK; }
+	Bool isUsingSmudge() const { return m_particleType == SMUDGE; }
+	Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
+	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	Bool shouldBillboard() { return !m_isGroundAligned; }
 
