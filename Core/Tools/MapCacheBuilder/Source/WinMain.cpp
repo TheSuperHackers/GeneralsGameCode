@@ -43,6 +43,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
 #include "Common/GlobalData.h"
@@ -220,14 +221,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// save application instance
 	ApplicationHInstance = hInstance;
 
-
-	// Set the current directory to the app directory.
-	char buf[_MAX_PATH];
-	GetModuleFileName(nullptr, buf, sizeof(buf));
-	if (char *pEnd = strrchr(buf, '\\')) {
-		*pEnd = 0;
-	}
-	::SetCurrentDirectory(buf);
+	CommandLine::applyStartupWorkingDirectory();
 
 	/*
 	** Convert WinMain arguments to simple main argc and argv

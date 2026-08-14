@@ -49,6 +49,7 @@
 #include <commctrl.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/FramePacer.h"
 #include "Common/GameMemory.h"
@@ -184,14 +185,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	HACCEL hAccelTable;
 	Bool quit = FALSE;
 
-	/// @todo remove this force set of working directory later
-	Char buffer[ _MAX_PATH ];
-	GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
-	if (Char *pEnd = strrchr(buffer, '\\'))
-	{
-		*pEnd = 0;
-	}
-	::SetCurrentDirectory(buffer);
+	CommandLine::applyStartupWorkingDirectory();
 
 	// initialize the memory manager early
 	initMemoryManager();

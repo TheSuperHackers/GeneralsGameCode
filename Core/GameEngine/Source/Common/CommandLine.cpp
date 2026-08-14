@@ -463,6 +463,16 @@ Int parseJobs(char *args[], int num)
 	return 1;
 }
 
+Int parseCwd(char *args[], int num)
+{
+	// TheSuperHackers @feature 14/08/2026
+	// Working directory is applied earlier by CommandLine::applyStartupWorkingDirectory().
+	// Consume an optional path argument here so it is not treated as another flag.
+	if (num > 1 && args[1] != nullptr && args[1][0] != '-')
+		return 2;
+	return 1;
+}
+
 Int parseXRes(char *args[], int num)
 {
 	if (num > 1)
@@ -1141,6 +1151,11 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// TheSuperHackers @feature 14/08/2026
+	// Use the current working directory as provided by the OS, or an optional path.
+	// Without this flag the working directory is forced to the executable directory.
+	{ "-cwd", parseCwd },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
@@ -1417,6 +1432,44 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 			arg++;
 		}
 	}
+}
+
+static void setCurrentDirectoryToExecutablePath()
+{
+	Char buffer[_MAX_PATH];
+	GetModuleFileName(nullptr, buffer, sizeof(buffer));
+	if (Char *pEnd = strrchr(buffer, '\\'))
+	{
+		*pEnd = 0;
+	}
+	::SetCurrentDirectory(buffer);
+}
+
+void CommandLine::applyStartupWorkingDirectory()
+{
+	std::vector<char*> argv;
+	std::string cmdLine = GetCommandLineA();
+	char *token = nextParam(&cmdLine[0], "\" ");
+	while (token != nullptr)
+	{
+		argv.push_back(strtrim(token));
+		token = nextParam(nullptr, "\" ");
+	}
+
+	const int argc = (int)argv.size();
+	for (int arg = 1; arg < argc; ++arg)
+	{
+		if (stricmp(argv[arg], "-cwd") != 0)
+			continue;
+
+		if (arg + 1 < argc && argv[arg + 1] != nullptr && argv[arg + 1][0] != '-')
+		{
+			::SetCurrentDirectory(argv[arg + 1]);
+		}
+		return;
+	}
+
+	setCurrentDirectoryToExecutablePath();
 }
 
 void createGlobalData()
