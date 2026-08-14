@@ -44,6 +44,7 @@ public:
 	UnsignedInt getRawDataLength();
 	UnsignedInt getAllocationSize() const;
 	Bool copyChunkData(NetWrapperCommandMsg *msg);
+	Bool isExpired(UnsignedInt now) const;
 	UnsignedByte * getRawData();
 
 	Int getPercentComplete();
@@ -61,6 +62,7 @@ protected:
 	UnsignedInt *m_chunkLengths;
 	UnsignedInt m_numChunks;
 	UnsignedInt m_numChunksPresent;
+	UnsignedInt m_lastChunkTime;
 
 };
 
@@ -76,6 +78,10 @@ public:
 
 	Bool processWrapper(NetCommandRef *ref);
 	NetCommandList * getReadyCommands();
+	void purgeExpired(UnsignedInt now);
+	void removeForPlayer(UnsignedByte playerID);
+	UnsignedInt getNodeCount() const { return m_nodeCount; }
+	UnsignedInt getAllocatedBytes() const { return m_allocatedBytes; }
 
 	Int getPercentComplete(UnsignedByte playerID, UnsignedShort wrappedCommandID);
 
@@ -84,4 +90,6 @@ protected:
 
 	NetCommandWrapperListNode *m_list;
 	UnsignedInt m_allocatedBytes;
+	UnsignedInt m_nodeCount;
+	UnsignedInt m_playerNodeCounts[MAX_SLOTS];
 };

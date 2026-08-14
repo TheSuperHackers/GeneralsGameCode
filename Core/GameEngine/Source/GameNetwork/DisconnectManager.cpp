@@ -359,6 +359,9 @@ void DisconnectManager::processPacketRouterAck(NetCommandMsg *msg, ConnectionMan
 void DisconnectManager::processDisconnectVote(NetCommandMsg *msg, ConnectionManager *conMgr) {
 	NetDisconnectVoteCommandMsg *cmdMsg = (NetDisconnectVoteCommandMsg *)msg;
 	DEBUG_LOG(("DisconnectManager::processDisconnectVote - Got a disconnect vote for player %d command from player %d", cmdMsg->getSlot(), cmdMsg->getPlayerID()));
+	if (cmdMsg->getSlot() >= MAX_SLOTS || cmdMsg->getPlayerID() >= MAX_SLOTS)
+		return;
+
 	Int transSlot = translatedSlotPosition(msg->getPlayerID(), conMgr->getLocalPlayerID());
 
 	if (isPlayerInGame(transSlot, conMgr) == FALSE) {
@@ -435,6 +438,9 @@ void DisconnectManager::processDisconnectScreenOff(NetCommandMsg *msg, Connectio
 }
 
 void DisconnectManager::applyDisconnectVote(Int slot, UnsignedInt frame, Int fromSlot, ConnectionManager *conMgr) {
+	if (slot < 0 || slot >= MAX_SLOTS || fromSlot < 0 || fromSlot >= MAX_SLOTS)
+		return;
+
 	m_playerVotes[slot][fromSlot].vote = TRUE;
 	m_playerVotes[slot][fromSlot].frame = frame;
 	Int numVotes = countVotesForPlayer(slot);

@@ -176,6 +176,21 @@ jobs:
         run: |
           cmake --build --preset ${{ inputs.preset }}
 
+      - name: Run runtime regression tests
+        # The standalone harness links only in the release configuration. Debug validation
+        # still happens through the normal game executable build in its own matrix jobs.
+        if: ${{ inputs.game == 'GeneralsMD' && inputs.extras && inputs.preset == 'win32' }}
+        shell: pwsh
+        run: |
+          $test = Get-ChildItem -Path "build\${{ inputs.preset }}" -Recurse -Filter z_runtime_regression_tests.exe |
+            Select-Object -First 1
+          if (-not $test) {
+            Write-Error "z_runtime_regression_tests.exe was not produced"
+            exit 1
+          }
+          & $test.FullName
+          exit $LASTEXITCODE
+
       - name: Save vcpkg binary cache
         # Only one job should save to avoid "Unable to reserve cache" conflicts.
         if: ${{ contains(inputs.preset, 'vcpkg') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}

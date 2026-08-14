@@ -1,14 +1,23 @@
-add_executable(z_runtime_regression_tests WIN32)
+add_executable(z_runtime_regression_tests)
 
 target_sources(z_runtime_regression_tests PRIVATE
     RuntimeRegressionTests.cpp
 )
 
 target_link_libraries(z_runtime_regression_tests PRIVATE
-    z_gameengine
-    zi_always
+	binkstub
+	comctl32
+	core_debug
+	core_profile_legacy
+	d3d8
+	d3dx8
+	dinput8
+	dxguid
+	imm32
+	milesstub
+	vfw32
+	winmm
+	z_gameengine
+	z_gameenginedevice
+	zi_always
 )
-
-if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_link_options(z_runtime_regression_tests PRIVATE /subsystem:console)
-endif()

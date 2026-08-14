@@ -517,17 +517,16 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	NetCommandMsg *msg = ref->getCommand();
 	NetCommandType cmdType = msg->getNetCommandType();
 
-	// Handle ACK commands first (before connection validation)
+	// Every command path below indexes player-owned state or relay bits.
+	if (msg->getPlayerID() >= MAX_SLOTS) {
+		return TRUE;
+	}
+
 	if ((cmdType == NETCOMMANDTYPE_ACKSTAGE1) ||
 			(cmdType == NETCOMMANDTYPE_ACKSTAGE2) ||
 			(cmdType == NETCOMMANDTYPE_ACKBOTH)) {
 		processAck(msg);
 		return FALSE;
-	}
-
-	// Early validation checks
-	if (msg->getPlayerID() >= MAX_SLOTS) {
-		return TRUE;
 	}
 
 	if ((m_connections[msg->getPlayerID()] == nullptr) && (msg->getPlayerID() != m_localSlot)) {
@@ -1014,6 +1013,8 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 	} else {
 		return;
 	}
+	if (playerID >= MAX_SLOTS || msg->getPlayerID() >= MAX_SLOTS)
+		return;
 
 	NetCommandRef *ref = m_pendingCommands->findMessage(commandID, playerID);
 	if (ref != nullptr) {
@@ -1072,11 +1073,15 @@ void ConnectionManager::processAck(NetCommandMsg *msg) {
  */
 PlayerLeaveCode ConnectionManager::processPlayerLeave(NetPlayerLeaveCommandMsg *msg) {
 	UnsignedByte playerID = msg->getLeavingPlayerID();
+	if (playerID >= MAX_SLOTS)
+		return PLAYERLEAVECODE_UNKNOWN;
+
 	if ((playerID != m_localSlot) && (m_connections[playerID] != nullptr)) {
 		DEBUG_LOG(("ConnectionManager::processPlayerLeave() - setQuitting() on player %d on frame %d", playerID, TheGameLogic->getFrame()));
 		m_connections[playerID]->setQuitting();
 	}
-	DEBUG_ASSERTCRASH(m_frameData[playerID]->getIsQuitting() == FALSE, ("Player %d is already quitting", playerID));
+	DEBUG_ASSERTCRASH(m_frameData[playerID] == nullptr || m_frameData[playerID]->getIsQuitting() == FALSE,
+		("Player %d is already quitting", playerID));
 	if ((playerID != m_localSlot) && (m_frameData[playerID] != nullptr) && (m_frameData[playerID]->getIsQuitting() == FALSE)) {
 		DEBUG_LOG(("ConnectionManager::processPlayerLeave - setQuitFrame on player %d for frame %d", playerID, TheGameLogic->getFrame()+1));
 		m_frameData[playerID]->setQuitFrame(TheGameLogic->getFrame() + FRAMES_TO_KEEP + 1);
@@ -1845,6 +1850,9 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 		return PLAYERLEAVECODE_UNKNOWN;
 	}
 
+	if (m_netCommandWrapperList != nullptr)
+		m_netCommandWrapperList->removeForPlayer(static_cast<UnsignedByte>(slot));
+
 	if (TheGameInfo)
 	{
 		GameSlot *gSlot = TheGameInfo->getSlot( slot );
@@ -1887,8 +1895,7 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 		while ((index < (MAX_SLOTS-1)) && (m_packetRouterFallback[index] != m_packetRouterSlot)) {
 			++index;
 		}
-		++index;
-		m_packetRouterSlot = m_packetRouterFallback[index];
+		m_packetRouterSlot = index < MAX_SLOTS - 1 ? m_packetRouterFallback[index + 1] : MAX_SLOTS;
 		DEBUG_LOG(("Packet router left.  New packet router is slot %d", m_packetRouterSlot));
 		retval = PLAYERLEAVECODE_PACKETROUTER;
 	}

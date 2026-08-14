@@ -49,13 +49,17 @@ namespace
 
 
 FrameRateLimit::FrameRateLimit()
+	: m_freq(0)
+	, m_start(0)
+	, m_waitableTimer(nullptr)
 {
 	LARGE_INTEGER freq;
 	LARGE_INTEGER start;
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&start);
-	m_freq = freq.QuadPart;
-	m_start = start.QuadPart;
+	if (QueryPerformanceFrequency(&freq) && QueryPerformanceCounter(&start))
+	{
+		m_freq = freq.QuadPart;
+		m_start = start.QuadPart;
+	}
 	m_waitableTimer = CreateFrameRateTimer();
 }
 
@@ -77,7 +81,8 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 {
 	PROFILER_SECTION;
 	LARGE_INTEGER tick;
-	QueryPerformanceCounter(&tick);
+	if (!QueryPerformanceCounter(&tick))
+		return 0.0f;
 	Int64 elapsedTicks = tick.QuadPart - m_start;
 	if (maxFps == 0 || m_freq <= 0)
 	{
@@ -111,7 +116,8 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	// Busy wait only for the final scheduling jitter.
 	do
 	{
-		QueryPerformanceCounter(&tick);
+		if (!QueryPerformanceCounter(&tick))
+			return 0.0f;
 		elapsedTicks = tick.QuadPart - m_start;
 	}
 	while (elapsedTicks < targetTicks);
@@ -123,8 +129,8 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 void FrameRateLimit::reset()
 {
 	LARGE_INTEGER tick;
-	QueryPerformanceCounter(&tick);
-	m_start = tick.QuadPart;
+	if (QueryPerformanceCounter(&tick))
+		m_start = tick.QuadPart;
 }
 
 

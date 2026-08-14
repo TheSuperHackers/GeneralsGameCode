@@ -2298,10 +2298,17 @@ void PeerThreadClass::nickErrorCallback( PEER peer, Int type, const char *nick )
 {
 	if(type == PEER_IN_USE)
 	{
-		Int len = strlen(nick);
+		if (nick == nullptr)
+		{
+			peerRetryWithNick(peer, nullptr);
+			return;
+		}
+
+		const size_t len = strlen(nick);
 		std::string nickStr = nick;
 		Int newVal = 0;
-		if (nick[len-1] == '}' && nick[len-3] == '{' && isdigit(nick[len-2]))
+		if (len >= 3 && nick[len-1] == '}' && nick[len-3] == '{' &&
+			isdigit(static_cast<unsigned char>(nick[len-2])))
 		{
 			newVal = nick[len-2] - '0' + 1;
 			nickStr.erase(len-3, 3);

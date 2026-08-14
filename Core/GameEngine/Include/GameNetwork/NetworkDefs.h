@@ -88,6 +88,9 @@ static constexpr const Int MAX_MESSAGES = 256;
 static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_SIZE = 64U * 1024U * 1024U;
 static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_MEMORY = 256U * 1024U * 1024U;
 static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_CHUNKS = 256U * 1024U;
+static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_NODES = 64U;
+static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_NODES_PER_PLAYER = 16U;
+static constexpr const UnsignedInt WRAPPED_COMMAND_IDLE_TIMEOUT = 30U * 1000U;
 
 /**
  * Command packet - contains frame #, total # of commands, and each command.  This is what gets sent

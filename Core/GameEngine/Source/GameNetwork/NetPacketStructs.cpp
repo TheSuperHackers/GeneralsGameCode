@@ -893,112 +893,49 @@ size_t NetPacketGameCommandData::copyBytes(UnsignedByte *buffer, const NetComman
 	return size;
 }
 
+static size_t RejectNetworkGameMessage(NetGameCommandMsg *cmdMsg, size_t availableBytes)
+{
+	cmdMsg->setGameMessageType(GameMessage::MSG_INVALID);
+	// ConnectionManager rejects invalid player IDs before relaying the command.
+	cmdMsg->setPlayerID(MAX_SLOTS);
+	return availableBytes;
+}
+
 size_t NetPacketGameCommandData::readMessage(NetCommandRef &ref, NetPacketBuf buf)
 {
 	CommandMsg *cmdMsg = static_cast<CommandMsg *>(ref.getCommand());
-	GameMessageParser *parser = newInstance(GameMessageParser)();
-	Int newType = 0;
-	UnsignedByte numArgTypes = 0;
+	static const size_t headerSize = sizeof(Int) + sizeof(UnsignedByte);
 
-	size_t size = 0;
-	size += network::readObject(newType, buf.offset(size));
-	size += network::readObject(numArgTypes, buf.offset(size));
+	NetworkGameMessageLayout layout;
+	if (!TryParseNetworkGameMessageLayout(buf.data(), buf.size(), layout))
+		return RejectNetworkGameMessage(cmdMsg, buf.size());
 
-	cmdMsg->setGameMessageType(static_cast<GameMessage::Type>(newType));
-
-	Int totalArgCount = 0;
-	Int argIndex = 0;
-
-	for (; argIndex < (Int)numArgTypes; ++argIndex)
+	size_t size = headerSize + layout.descriptorBytes;
+	cmdMsg->setGameMessageType(static_cast<GameMessage::Type>(layout.messageType));
+	for (UnsignedInt typeIndex = 0; typeIndex < layout.argumentTypeCount; ++typeIndex)
 	{
-		UnsignedByte type = (UnsignedByte)ARGUMENTDATATYPE_UNKNOWN;
-		UnsignedByte argCount = 0;
-
-		size += network::readObject(type, buf.offset(size));
-		size += network::readObject(argCount, buf.offset(size));
-
-		parser->addArgType(static_cast<GameMessageArgumentDataType>(type), argCount);
-		totalArgCount += argCount;
-	}
-
-	GameMessageParserArgumentType *parserArgType = parser->getFirstArgumentType();
-	GameMessageArgumentDataType lastType = ARGUMENTDATATYPE_UNKNOWN;
-	Int argsLeftForType = 0;
-
-	if (parserArgType != nullptr)
-	{
-		lastType = parserArgType->getType();
-		argsLeftForType = parserArgType->getArgCount();
-	}
-
-	for (argIndex = 0; argIndex < totalArgCount; ++argIndex)
-	{
-		GameMessageArgumentType arg;
-		const size_t sizeBefore = size;
-
-		switch (lastType)
+		for (UnsignedInt argIndex = 0; argIndex < layout.argumentCounts[typeIndex]; ++argIndex)
 		{
-		case ARGUMENTDATATYPE_INTEGER:
-			size += network::readObject(arg.integer, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_REAL:
-			size += network::readObject(arg.real, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_BOOLEAN:
-			size += network::readObject(arg.boolean, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_OBJECTID:
-			size += network::readObject(arg.objectID, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_DRAWABLEID:
-			size += network::readObject(arg.drawableID, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_TEAMID:
-			size += network::readObject(arg.teamID, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_LOCATION:
-			size += network::readObject(arg.location, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_PIXEL:
-			size += network::readObject(arg.pixel, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_PIXELREGION:
-			size += network::readObject(arg.pixelRegion, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_TIMESTAMP:
-			size += network::readObject(arg.timestamp, buf.offset(size));
-			break;
-		case ARGUMENTDATATYPE_WIDECHAR:
-			size += network::readObject(arg.wChar, buf.offset(size));
-			break;
-		}
-
-		if (size > sizeBefore)
-		{
-			cmdMsg->addArgument(lastType, arg);
-		}
-
-		--argsLeftForType;
-
-		if (argsLeftForType == 0)
-		{
-			if (parserArgType == nullptr)
+			GameMessageArgumentType arg;
+			memset(&arg, 0, sizeof(arg));
+			switch (layout.argumentTypes[typeIndex])
 			{
-				DEBUG_CRASH(("parserArgType was null when it shouldn't have been."));
-				break;
+			case ARGUMENTDATATYPE_INTEGER: size += network::readObject(arg.integer, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_REAL: size += network::readObject(arg.real, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_BOOLEAN: size += network::readObject(arg.boolean, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_OBJECTID: size += network::readObject(arg.objectID, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_DRAWABLEID: size += network::readObject(arg.drawableID, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_TEAMID: size += network::readObject(arg.teamID, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_LOCATION: size += network::readObject(arg.location, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_PIXEL: size += network::readObject(arg.pixel, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_PIXELREGION: size += network::readObject(arg.pixelRegion, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_TIMESTAMP: size += network::readObject(arg.timestamp, buf.offset(size)); break;
+			case ARGUMENTDATATYPE_WIDECHAR: size += network::readObject(arg.wChar, buf.offset(size)); break;
+			default: return RejectNetworkGameMessage(cmdMsg, buf.size());
 			}
-
-			parserArgType = parserArgType->getNext();
-			// parserArgType is allowed to be null here
-			if (parserArgType != nullptr)
-			{
-				argsLeftForType = parserArgType->getArgCount();
-				lastType = parserArgType->getType();
-			}
+			cmdMsg->addArgument(layout.argumentTypes[typeIndex], arg);
 		}
 	}
-
-	deleteInstance(parser);
 
 	return size;
 }

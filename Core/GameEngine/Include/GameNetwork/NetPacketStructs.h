@@ -113,6 +113,8 @@ size_t readObject(T &value, NetPacketBuf src)
 inline size_t readBytes(UnsignedByte *dest, size_t destLen, NetPacketBuf src)
 {
 	const size_t readLen = min(destLen, src.size());
+	if (readLen == 0)
+		return 0;
 	memcpy(dest, src.data(), readLen);
 	return readLen;
 }

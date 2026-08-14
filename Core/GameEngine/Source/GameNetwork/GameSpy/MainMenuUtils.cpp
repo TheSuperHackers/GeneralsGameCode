@@ -50,6 +50,7 @@
 #include "GameNetwork/GameSpy/MainMenuUtils.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
+#include "GameNetwork/NetCommandValidation.h"
 
 #include "WWDownload/Registry.h"
 #include "WWDownload/urlBuilder.h"
@@ -66,6 +67,7 @@ static std::list<QueuedDownload> queuedDownloads;
 
 static char *MOTDBuffer = nullptr;
 static char *configBuffer = nullptr;
+static const size_t MAX_GAMESPY_TEXT_BYTES = 4U * 1024U * 1024U;
 GameWindow *onlineCancelWindow = nullptr;
 
 static Bool s_asyncDNSThreadDone = TRUE;
@@ -317,9 +319,13 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 	}
 
 	delete[] MOTDBuffer;
-	MOTDBuffer = NEW char[bufferLen];
-	memcpy(MOTDBuffer, buffer, bufferLen);
-	MOTDBuffer[bufferLen-1] = 0;
+	MOTDBuffer = nullptr;
+	if (result == GHTTPSuccess && IsValidExternalBuffer(buffer, bufferLen, 1, MAX_GAMESPY_TEXT_BYTES))
+	{
+		MOTDBuffer = NEW char[static_cast<size_t>(bufferLen) + 1];
+		memcpy(MOTDBuffer, buffer, static_cast<size_t>(bufferLen));
+		MOTDBuffer[bufferLen] = 0;
+	}
 
 	--checksLeftBeforeOnline;
 	DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
@@ -354,7 +360,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 	delete[] configBuffer;
 	configBuffer = nullptr;
 
-	if (result != GHTTPSuccess || bufferLen < 100)
+	if (result != GHTTPSuccess || !IsValidExternalBuffer(buffer, bufferLen, 100, MAX_GAMESPY_TEXT_BYTES))
 	{
 		if (!checkingForPatchBeforeGameSpy)
 			return GHTTPTrue;
@@ -372,9 +378,9 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
-	configBuffer = NEW char[bufferLen];
-	memcpy(configBuffer, buffer, bufferLen);
-	configBuffer[bufferLen-1] = 0;
+	configBuffer = NEW char[static_cast<size_t>(bufferLen) + 1];
+	memcpy(configBuffer, buffer, static_cast<size_t>(bufferLen));
+	configBuffer[bufferLen] = 0;
 
 	AsciiString fname;
 	fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
@@ -413,13 +419,13 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
-	DEBUG_LOG(("HTTP head resp: res=%d, len=%d, buf=[%s]", result, bufferLen, buffer));
+	DEBUG_LOG(("HTTP head resp: res=%d, len=%d", result, bufferLen));
 
 	if (result == GHTTPSuccess)
 	{
-		DEBUG_LOG(("Headers are [%s]", ghttpGetHeaders( request )));
-
-		AsciiString headers(ghttpGetHeaders( request ));
+		const char *rawHeaders = ghttpGetHeaders(request);
+		DEBUG_LOG(("Headers are [%s]", rawHeaders ? rawHeaders : ""));
+		AsciiString headers(rawHeaders ? rawHeaders : "");
 		AsciiString line;
 		while (headers.nextToken(&line, "\n\r"))
 		{
@@ -429,8 +435,8 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 			if (key.compare("Content-Length") == 0 && val.isNotEmpty())
 			{
-				Int serverLen = atoi(val.str());
-				Int fileLen = 0;
+				const Int64 serverLen = _atoi64(val.str());
+				long fileLen = -1;
 				AsciiString fname;
 				fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
 				FILE *fp = fopen(fname.str(), "rb");
@@ -441,17 +447,9 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 					fclose(fp);
 				}
 
-				if (serverLen == fileLen)
+				if (serverLen == fileLen && fileLen >= 100 &&
+					static_cast<UnsignedInt64>(fileLen) <= MAX_GAMESPY_TEXT_BYTES)
 				{
-					// we don't need to download the MOTD again
-					--checksLeftBeforeOnline;
-					DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
-					if (onlineCancelWindow && !checksLeftBeforeOnline)
-					{
-						TheWindowManager->winDestroy(onlineCancelWindow);
-						onlineCancelWindow = nullptr;
-					}
-
 					delete[] configBuffer;
 					configBuffer = nullptr;
 
@@ -460,10 +458,25 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 					FILE *fp = fopen(fname.str(), "rb");
 					if (fp)
 					{
-						configBuffer = NEW char[fileLen];
-						fread(configBuffer, fileLen, 1, fp);
-						configBuffer[fileLen-1] = 0;
+						configBuffer = NEW char[static_cast<size_t>(fileLen) + 1];
+						const size_t bytesRead = fread(configBuffer, 1, static_cast<size_t>(fileLen), fp);
 						fclose(fp);
+						if (bytesRead != static_cast<size_t>(fileLen))
+						{
+							delete[] configBuffer;
+							configBuffer = nullptr;
+							break;
+						}
+						configBuffer[fileLen] = 0;
+
+						// The complete cached file is equivalent to the pending HTTP GET callback.
+						--checksLeftBeforeOnline;
+						DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
+						if (onlineCancelWindow && !checksLeftBeforeOnline)
+						{
+							TheWindowManager->winDestroy(onlineCancelWindow);
+							onlineCancelWindow = nullptr;
+						}
 
 						DEBUG_LOG(("Got Config before going online"));
 

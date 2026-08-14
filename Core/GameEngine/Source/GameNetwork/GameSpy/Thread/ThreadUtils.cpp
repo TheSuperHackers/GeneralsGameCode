@@ -32,48 +32,49 @@
 
 std::wstring MultiByteToWideCharSingleLine( const char *orig )
 {
-	Int len = strlen(orig);
-	WideChar *dest = NEW WideChar[len+1];
+	if (orig == nullptr)
+		return std::wstring();
 
-	MultiByteToWideChar(CP_UTF8, 0, orig, -1, dest, len);
-	WideChar *c = nullptr;
-	do
-	{
-		c = wcschr(dest, L'\n');
-		if (c)
-		{
-			*c = L' ';
-		}
-	}
-	while ( c != nullptr );
-	do
-	{
-		c = wcschr(dest, L'\r');
-		if (c)
-		{
-			*c = L' ';
-		}
-	}
-	while ( c != nullptr );
+	const Int requiredLength = MultiByteToWideChar(CP_UTF8, 0, orig, -1, nullptr, 0);
+	if (requiredLength <= 0)
+		return std::wstring();
 
-	dest[len] = 0;
-	std::wstring ret = dest;
+	WideChar *dest = NEW WideChar[requiredLength];
+	if (MultiByteToWideChar(CP_UTF8, 0, orig, -1, dest, requiredLength) != requiredLength)
+	{
+		delete[] dest;
+		return std::wstring();
+	}
+
+	for (Int i = 0; i < requiredLength - 1; ++i)
+	{
+		if (dest[i] == L'\n' || dest[i] == L'\r')
+			dest[i] = L' ';
+	}
+
+	const std::wstring ret = dest;
 	delete[] dest;
 	return ret;
 }
 
 std::string WideCharStringToMultiByte( const WideChar *orig )
 {
-	std::string ret;
-	Int len = WideCharToMultiByte( CP_UTF8, 0, orig, wcslen(orig), nullptr, 0, nullptr, nullptr ) + 1;
-	if (len > 0)
+	if (orig == nullptr)
+		return std::string();
+
+	const Int requiredLength = WideCharToMultiByte(CP_UTF8, 0, orig, -1, nullptr, 0, nullptr, nullptr);
+	if (requiredLength <= 0)
+		return std::string();
+
+	char *dest = NEW char[requiredLength];
+	if (WideCharToMultiByte(CP_UTF8, 0, orig, -1, dest, requiredLength, nullptr, nullptr) != requiredLength)
 	{
-		char *dest = NEW char[len];
-		WideCharToMultiByte( CP_UTF8, 0, orig, -1, dest, len, nullptr, nullptr );
-		dest[len-1] = 0;
-		ret = dest;
 		delete[] dest;
+		return std::string();
 	}
+
+	const std::string ret = dest;
+	delete[] dest;
 	return ret;
 }
 

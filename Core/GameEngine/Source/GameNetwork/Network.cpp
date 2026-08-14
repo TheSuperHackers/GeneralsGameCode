@@ -37,6 +37,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameNetwork/NetworkInterface.h"
+#include "GameNetwork/NetCommandValidation.h"
 #include "GameNetwork/udp.h"
 #include "GameNetwork/Transport.h"
 #include "WWLib/strtok_r.h"
@@ -641,6 +642,12 @@ void Network::processFrameSynchronizedNetCommand(NetCommandRef *msg) {
 }
 
 void Network::processRunAheadCommand(NetRunAheadCommandMsg *msg) {
+	if (!IsValidRunAheadFrameRate(msg->getFrameRate()))
+	{
+		DEBUG_LOG(("Network::processRunAheadCommand - rejected zero frame rate"));
+		return;
+	}
+
 	m_runAhead = msg->getRunAhead();
 	m_frameRate = msg->getFrameRate();
 	time_t frameGrouping = (1000 * m_runAhead) / m_frameRate; // number of miliseconds between packet sends

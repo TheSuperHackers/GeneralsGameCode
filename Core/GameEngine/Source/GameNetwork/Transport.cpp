@@ -372,6 +372,8 @@ Bool Transport::doRecv()
 					m_delayedInBuffer[bufferIndex].message.port = ntohs(from.sin_port);
 					memcpy(&m_delayedInBuffer[bufferIndex].message, buf, len);
 					++bufferIndex;
+					while (bufferIndex < bufferCapacity && m_delayedInBuffer[bufferIndex].message.length > 0)
+						++bufferIndex;
 					break;
 				}
 			}
@@ -390,6 +392,8 @@ Bool Transport::doRecv()
 				m_inBuffer[bufferIndex].port = ntohs(from.sin_port);
 				memcpy(&m_inBuffer[bufferIndex], buf, len);
 				++bufferIndex;
+				while (bufferIndex < bufferCapacity && m_inBuffer[bufferIndex].length > 0)
+					++bufferIndex;
 				break;
 			}
 		}
