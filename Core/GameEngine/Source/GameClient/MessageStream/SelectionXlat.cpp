@@ -1301,7 +1301,8 @@ GameMessageDisposition SelectionTranslator::onMetaAddTeam(MAYBE_UNUSED const Gam
 GameMessageDisposition SelectionTranslator::onMetaViewTeam(MAYBE_UNUSED const GameMessage *msg)
 {
 	Int group = msg->getType() - GameMessage::MSG_META_VIEW_TEAM0;
-	if ( group >= 1 && group <= 10 )
+	// TheSuperHackers @bugfix Fix the group index range so control group 0 can be viewed.
+	if ( group >= 0 && group < 10 )
 	{
 		DEBUG_LOG(("META: view team %d",group));
 		Player *player = ThePlayerList->getLocalPlayer();
