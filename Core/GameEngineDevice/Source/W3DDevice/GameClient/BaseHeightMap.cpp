@@ -324,6 +324,7 @@ void BaseHeightMapRenderObjClass::setTextureLOD(Int lod)
 	if (m_map)
 		m_map->setTextureLOD(lod);
 	m_scorches->invalidateTexture();
+	m_staticScorches->invalidateTexture();
 }
 
 //=============================================================================
