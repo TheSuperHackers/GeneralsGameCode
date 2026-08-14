@@ -44,6 +44,7 @@
 #include "GameLogic/WeaponSet.h"
 #include "GameLogic/WeaponSetFlags.h"
 #include "GameLogic/Module/StealthUpdate.h"
+#include "GameLogic/TriggerInfo.h"
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -77,7 +78,6 @@ class PartitionData;
 class PhysicsBehavior;
 class PhysicsUpdate;
 class Player;
-class PolygonTrigger;
 class ProductionUpdateInterface;
 class RadarObject;
 class SightingInfo;
@@ -120,21 +120,6 @@ enum CanAttackResult CPP_11(: Int);
 //-----------------------------------------------------------------------------
 //           Type Defines
 //-----------------------------------------------------------------------------
-
-struct TTriggerInfo
-{
-	const PolygonTrigger*	pTrigger; ///< The trigger area that the object is inside.
-	Byte									entered;	///< True if the object entered this trigger area this frame.
-	Byte									exited;		///< True if the object entered this trigger area this frame.
-	Byte									isInside;	///< True if the object is inside this trigger area this frame.
-	Byte									padding;	///< unused.
-
-	TTriggerInfo() : entered(false), exited(false), isInside(false), padding(false), pTrigger(nullptr) { }
-
-};
-
-//----------------------------------------------------
-
 
 enum CrushSquishTestType CPP_11(: Int)
 {
@@ -750,8 +735,8 @@ private:
 	///////////////////////////////////
 
 	// Entered & exited housekeeping.
-	enum { MAX_TRIGGER_AREA_INFOS = 5 };
-	TTriggerInfo									m_triggerInfo[MAX_TRIGGER_AREA_INFOS];
+	enum { MAX_TRIGGER_AREA_INFOS = TriggerInfoStorage::MaxCapacity };
+	TriggerInfoStorage						m_triggerInfo;
 	UnsignedInt										m_enteredOrExitedFrame;
 	ICoord3D											m_iPos;
 

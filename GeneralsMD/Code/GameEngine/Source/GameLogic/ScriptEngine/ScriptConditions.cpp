@@ -600,7 +600,8 @@ Bool ScriptConditions::evaluatePlayerHasUnitKindInArea(Condition *pCondition, Pa
 		case Parameter::GREATER :				comparison = (count > pCountParm->getInt()); break;
 		case Parameter::NOT_EQUAL :			comparison = (count != pCountParm->getInt()); break;
 	}
-	pCondition->setCustomData(TheScriptEngine->getFrameObjectCountChanged());
+	pCondition->setCustomData(comparison ? 1 : -1);
+	pCondition->setCustomFrame(TheScriptEngine->getFrameObjectCountChanged());
 	return comparison;
 }
 

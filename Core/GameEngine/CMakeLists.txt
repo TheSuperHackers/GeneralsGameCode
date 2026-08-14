@@ -488,6 +488,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/PolygonTrigger.h
 #    Include/GameLogic/Powers.h
     Include/GameLogic/RankInfo.h
+    Include/GameLogic/TriggerInfo.h
 #    Include/GameLogic/ScriptActions.h
 #    Include/GameLogic/ScriptConditions.h
 #    Include/GameLogic/ScriptEngine.h
