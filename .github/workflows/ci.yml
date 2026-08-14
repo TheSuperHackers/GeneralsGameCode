@@ -164,7 +164,7 @@ jobs:
 
   replaycheck-generalsmd:
     name: Replay Check GeneralsMD${{ matrix.preset && '' }}
-    needs: build-generalsmd-vc6
+    needs: [detect-changes, build-generalsmd-vc6]
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
