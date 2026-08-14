@@ -342,6 +342,7 @@ BOOL CWorldBuilderApp::InitInstance()
 #endif
 
 	DEBUG_LOG(("TheWritableGlobalData %x", TheWritableGlobalData));
+	char buf[_MAX_PATH];
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);

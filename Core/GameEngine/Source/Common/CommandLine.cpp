@@ -1434,15 +1434,28 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	}
 }
 
-static void setCurrentDirectoryToExecutablePath()
+static Bool setCurrentDirectoryToExecutablePath()
 {
 	Char buffer[_MAX_PATH];
-	GetModuleFileName(nullptr, buffer, sizeof(buffer));
+	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
+	if (len == 0 || len >= ARRAY_SIZE(buffer))
+	{
+		DEBUG_LOG(("Failed to get executable path for working directory (error %d)", GetLastError()));
+		return FALSE;
+	}
+
 	if (Char *pEnd = strrchr(buffer, '\\'))
 	{
 		*pEnd = 0;
 	}
-	::SetCurrentDirectory(buffer);
+
+	if (::SetCurrentDirectory(buffer) == 0)
+	{
+		DEBUG_LOG(("Failed to set working directory to executable path '%s' (error %d)", buffer, GetLastError()));
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 void CommandLine::applyStartupWorkingDirectory()
@@ -1462,9 +1475,13 @@ void CommandLine::applyStartupWorkingDirectory()
 		if (stricmp(argv[arg], "-cwd") != 0)
 			continue;
 
-		if (arg + 1 < argc && argv[arg + 1] != nullptr && argv[arg + 1][0] != '-')
+		if (arg + 1 < argc && argv[arg + 1] != nullptr && argv[arg + 1][0] != '-' && argv[arg + 1][0] != '\0')
 		{
-			::SetCurrentDirectory(argv[arg + 1]);
+			if (::SetCurrentDirectory(argv[arg + 1]) == 0)
+			{
+				DEBUG_LOG(("Failed to set working directory to '%s' (error %d)", argv[arg + 1], GetLastError()));
+				setCurrentDirectoryToExecutablePath();
+			}
 		}
 		return;
 	}
