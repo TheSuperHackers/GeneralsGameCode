@@ -144,6 +144,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		TheSmudgeManager->resetDraw();
 	}
 
+	// Number of particle/points being rendered
+	UnsignedInt pointCount = 0;
+
 	ParticleSystemManager::ParticleSystemList &particleSysList = TheParticleSystemManager->getAllParticleSystems();
 	for( ParticleSystemManager::ParticleSystemListIt it = particleSysList.begin(); it != particleSysList.end(); ++it)
 	{
@@ -189,7 +192,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		/// @todo lorenzen sez: declare these outside the sys loop, and put some in registers
 		// initialize them here still, of course
 		// build W3D particle buffer
-		Int count = 0;
+		pointCount = 0;
 		Vector3 *posArray = m_posBuffer->Get_Array();
 		Real *sizeArray = m_sizeBuffer->Get_Array();
 		Vector4 *RGBAArray = m_RGBABuffer->Get_Array();
@@ -219,32 +222,32 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && sys->m_isGroundAligned != FALSE );
 
 			//@todo lorenzen sez: use pointer arithmetic for these arrays
-			personalities[count] = p->getPersonality();
+			personalities[pointCount] = p->getPersonality();
 
-			posArray[count].X = pos->x;
-			posArray[count].Y = pos->y;
-			posArray[count].Z = pos->z;
+			posArray[pointCount].X = pos->x;
+			posArray[pointCount].Y = pos->y;
+			posArray[pointCount].Z = pos->z;
 
-			sizeArray[count] = psize;
+			sizeArray[pointCount] = psize;
 
 			color = p->getColor();
-			RGBAArray[count].X = color->red;
-			RGBAArray[count].Y = color->green;
-			RGBAArray[count].Z = color->blue;
-			RGBAArray[count].W = p->getAlpha();
+			RGBAArray[pointCount].X = color->red;
+			RGBAArray[pointCount].Y = color->green;
+			RGBAArray[pointCount].Z = color->blue;
+			RGBAArray[pointCount].W = p->getAlpha();
 
-			angleArray[count] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
+			angleArray[pointCount] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
 
-			if (++count == MAX_POINTS_PER_GROUP)
+			if (++pointCount == MAX_POINTS_PER_GROUP)
 				break;
 		}
 
-		if ( count == 0 )
+		if ( pointCount == 0 )
 			continue;	//this system has no particles to render
 
 		TextureClass *texture = W3DDisplay::m_assetManager->Get_Texture( sys->getParticleTypeName().str() );
 
-		if ( m_streakLine && sys->isUsingStreak() && (count >= 2) )
+		if ( m_streakLine && sys->isUsingStreak() && (pointCount >= 2) )
 		{
 			m_streakLine->Reset_Line();
 
@@ -268,14 +271,14 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			//UPDATE THE STREAK'S ARRAYS
 			m_streakLine->Set_LocsWidthsColors(
-				count,
+				pointCount,
 				m_posBuffer->Get_Array(),
 				m_sizeBuffer->Get_Array(),
 				m_RGBABuffer->Get_Array(),
 				&personalities[0]
 				);
 
-			//WWASSERT( m_streakLine->Get_Num_Points() == count );
+			//WWASSERT( m_streakLine->Get_Num_Points() == pointCount );
 
 			// This is the happy place for this!
 			RGBAArray[0].X = 0;//eliminates the scissor edge on the trailing edge of the streak
@@ -318,7 +321,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 				/// @todo Use both QUADS and TRIS for particles
 				m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
-				m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, count );
+				m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
 				m_pointGroup->Set_Billboard(sys->shouldBillboard());
 
 				/// @todo Support animated texture particles
@@ -340,7 +343,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 		/// @todo lorenzen sez: this should be debug only:
 		//add particle count to total
-		m_onScreenParticleCount += count;
+		m_onScreenParticleCount += pointCount;
 
 	/*
 		// draw the wind vector for this particle system on the screen
