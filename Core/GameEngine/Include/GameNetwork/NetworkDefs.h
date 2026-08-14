@@ -83,6 +83,12 @@ static constexpr const Int MAX_NETWORK_MESSAGE_LEN = MAX_UDP_PAYLOAD_SIZE;
 // TheSuperHackers @bugfix Mauller 08/02/2026 Double send and receive buffer sizes to alleviate the occurance of disconnection issues in retail and non retail code.
 static constexpr const Int MAX_MESSAGES = 256;
 
+// Bound memory allocated while assembling commands that span multiple packets. These limits do not
+// change the packet format; they only reject resource-exhausting metadata from untrusted peers.
+static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_SIZE = 64U * 1024U * 1024U;
+static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_MEMORY = 256U * 1024U * 1024U;
+static constexpr const UnsignedInt MAX_WRAPPED_COMMAND_CHUNKS = 256U * 1024U;
+
 /**
  * Command packet - contains frame #, total # of commands, and each command.  This is what gets sent
  * to each player every frame

@@ -666,11 +666,11 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - origProgress[%d] == %d for command %d",
 		m_localSlot, origProgress, commandID));
 
-	m_netCommandWrapperList->processWrapper(ref);
+	const Bool accepted = m_netCommandWrapperList->processWrapper(ref);
 
-	if (fcIt != s_fileCommandMap.end())
+	if (accepted && fcIt != s_fileCommandMap.end())
 	{
-		Int newProgress = m_netCommandWrapperList->getPercentComplete(commandID);
+		Int newProgress = m_netCommandWrapperList->getPercentComplete(wrapperMsg->getPlayerID(), commandID);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - newProgress[%d] == %d for command %d",
 			m_localSlot, newProgress, commandID));
 		if (newProgress > origProgress && newProgress < 100)
@@ -781,6 +781,11 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 
 void ConnectionManager::processFile(NetFileCommandMsg *msg)
 {
+	if (msg->getFileLength() == 0)
+	{
+		DEBUG_LOG(("Ignoring empty network file transfer"));
+		return;
+	}
 #ifdef DEBUG_LOGGING
 	UnicodeString log;
 	log.format(L"Saw file transfer: '%hs' of %d bytes from %d", msg->getPortableFilename().str(), msg->getFileLength(), msg->getPlayerID());

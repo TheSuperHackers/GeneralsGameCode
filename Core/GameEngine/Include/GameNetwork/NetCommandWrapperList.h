@@ -37,9 +37,13 @@ public:
 	//virtual ~NetCommandWrapperListNode();
 
 	Bool isComplete();
+	Bool hasAllChunks() const;
+	Bool isCompatible(const NetWrapperCommandMsg *msg) const;
 	UnsignedShort getCommandID();
+	UnsignedByte getPlayerID() const;
 	UnsignedInt getRawDataLength();
-	void copyChunkData(NetWrapperCommandMsg *msg);
+	UnsignedInt getAllocationSize() const;
+	Bool copyChunkData(NetWrapperCommandMsg *msg);
 	UnsignedByte * getRawData();
 
 	Int getPercentComplete();
@@ -48,9 +52,13 @@ public:
 
 protected:
 	UnsignedShort m_commandID;
+	UnsignedByte m_playerID;
 	UnsignedByte *m_data;
 	UnsignedInt m_totalDataLength;
+	UnsignedInt m_allocationSize;
 	Bool *m_chunksPresent;
+	UnsignedInt *m_chunkOffsets;
+	UnsignedInt *m_chunkLengths;
 	UnsignedInt m_numChunks;
 	UnsignedInt m_numChunksPresent;
 
@@ -66,13 +74,14 @@ public:
 	void init();
 	void reset();
 
-	void processWrapper(NetCommandRef *ref);
+	Bool processWrapper(NetCommandRef *ref);
 	NetCommandList * getReadyCommands();
 
-	Int getPercentComplete(UnsignedShort wrappedCommandID);
+	Int getPercentComplete(UnsignedByte playerID, UnsignedShort wrappedCommandID);
 
 protected:
 	void removeFromList(NetCommandWrapperListNode *node);
 
 	NetCommandWrapperListNode *m_list;
+	UnsignedInt m_allocatedBytes;
 };

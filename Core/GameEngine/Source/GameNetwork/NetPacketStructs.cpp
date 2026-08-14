@@ -18,6 +18,7 @@
 
 #include "PreRTS.h"
 #include "GameNetwork/NetPacketStructs.h"
+#include "GameNetwork/NetCommandValidation.h"
 
 #include "GameNetwork/GameMessageParser.h"
 #include "GameNetwork/NetCommandRef.h"
@@ -1060,8 +1061,17 @@ size_t NetPacketWrapperCommandData::readMessage(NetCommandRef &ref, NetPacketBuf
 	size_t size = 0;
 	size += network::readObject(data, buf.offset(size));
 
+	const NetPacketBuf payload = buf.offset(size);
+	const Bool isPayloadValid = IsValidNetworkPayloadLength(data.dataLength, payload.size(), MAX_PACKET_SIZE);
+	if (!isPayloadValid)
+	{
+		DEBUG_LOG(("NetPacketWrapperCommandData::readMessage - invalid payload length %u with %u bytes available",
+			data.dataLength, payload.size()));
+		data.dataLength = 0;
+	}
+
 	NetCommandDataChunk dataChunk(data.dataLength);
-	size += network::readBytes(dataChunk.data(), dataChunk.size(), buf.offset(size));
+	size += network::readBytes(dataChunk.data(), dataChunk.size(), payload);
 
 	cmdMsg->setWrappedCommandID(data.wrappedCommandId);
 	cmdMsg->setChunkNumber(data.chunkNumber);
@@ -1070,7 +1080,7 @@ size_t NetPacketWrapperCommandData::readMessage(NetCommandRef &ref, NetPacketBuf
 	cmdMsg->setDataOffset(data.dataOffset);
 	cmdMsg->setData(dataChunk);
 
-	return size;
+	return isPayloadValid ? size : buf.size();
 }
 
 size_t NetPacketWrapperCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)
@@ -1122,13 +1132,22 @@ size_t NetPacketFileCommandData::readMessage(NetCommandRef &ref, NetPacketBuf bu
 	size += network::readStringWithNull(filename, _MAX_PATH, buf.offset(size));
 	size += network::readObject(dataLength, buf.offset(size));
 
+	const NetPacketBuf payload = buf.offset(size);
+	const Bool isPayloadValid = IsValidNetworkPayloadLength(dataLength, payload.size(), MAX_WRAPPED_COMMAND_SIZE);
+	if (!isPayloadValid)
+	{
+		DEBUG_LOG(("NetPacketFileCommandData::readMessage - invalid payload length %u with %u bytes available",
+			dataLength, payload.size()));
+		dataLength = 0;
+	}
+
 	NetCommandDataChunk dataChunk(dataLength);
-	size += network::readBytes(dataChunk.data(), dataChunk.size(), buf.offset(size));
+	size += network::readBytes(dataChunk.data(), dataChunk.size(), payload);
 
 	cmdMsg->setPortableFilename(filename);
 	cmdMsg->setFileData(dataChunk);
 
-	return size;
+	return isPayloadValid ? size : buf.size();
 }
 
 size_t NetPacketFileCommandBase::copyBytes(UnsignedByte *buffer, const NetCommandRef &ref)

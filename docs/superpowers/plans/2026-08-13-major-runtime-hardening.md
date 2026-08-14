@@ -66,7 +66,7 @@ Run:
 
 ```powershell
 cmake --preset win32 -DRTS_BUILD_ZEROHOUR_EXTRAS=ON -DRTS_BUILD_CORE_TOOLS=OFF -DRTS_BUILD_GENERALS_TOOLS=OFF -DRTS_BUILD_ZEROHOUR_TOOLS=OFF
-cmake --build --preset win32-debug --target z_runtime_regression_tests -j 2
+cmake --build --preset win32 --target z_runtime_regression_tests -j 2
 ```
 
 Expected: compilation fails because `GameNetwork/NetCommandValidation.h` or its validation interfaces do not exist.
@@ -98,8 +98,8 @@ Make completion require nonzero chunk count and exact presence count. In `getRea
 Run:
 
 ```powershell
-cmake --build --preset win32-debug --target z_runtime_regression_tests -j 2
-& build/win32/GeneralsMD/Code/Tools/RuntimeRegressionTests/Debug/z_runtime_regression_tests.exe
+cmake --build --preset win32 --target z_runtime_regression_tests -j 2
+& build/win32/GeneralsMD/Release/z_runtime_regression_tests.exe
 ```
 
 Expected: executable exits 0 and reports all network validation checks passed.

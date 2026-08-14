@@ -54,7 +54,7 @@ public:
 	{}
 
 	NetCommandDataChunk(UnsignedInt size)
-		: m_data(NEW UnsignedByte[size])
+		: m_data(size > 0 ? NEW UnsignedByte[size] : nullptr)
 		, m_size(size)
 	{}
 
