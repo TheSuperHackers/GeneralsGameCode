@@ -58,9 +58,18 @@ static void TestNetworkValidation()
 	CHECK(!IsCompleteWrappedCommandLayout(chunkOffsets, chunkLengths, 2, 8));
 }
 
+static void TestNetworkReceiveBudget()
+{
+	CHECK(ShouldReceiveNetworkMessage(0, TRUE));
+	CHECK(ShouldReceiveNetworkMessage(MAX_MESSAGES - 1, TRUE));
+	CHECK(!ShouldReceiveNetworkMessage(MAX_MESSAGES, TRUE));
+	CHECK(!ShouldReceiveNetworkMessage(0, FALSE));
+}
+
 int main()
 {
 	TestNetworkValidation();
+	TestNetworkReceiveBudget();
 
 	if (s_failures != 0)
 	{

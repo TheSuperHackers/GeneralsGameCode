@@ -84,3 +84,8 @@ inline Bool IsCompleteWrappedCommandLayout(const UnsignedInt *chunkOffsets, cons
 
 	return expectedOffset == totalDataLength;
 }
+
+inline Bool ShouldReceiveNetworkMessage(UnsignedInt processedMessages, Bool hasBufferCapacity)
+{
+	return hasBufferCapacity && processedMessages < MAX_MESSAGES;
+}

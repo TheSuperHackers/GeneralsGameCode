@@ -26,8 +26,9 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/crc.h"
-#include "GameNetwork/Transport.h"
+#include "GameNetwork/NetCommandValidation.h"
 #include "GameNetwork/NetworkInterface.h"
+#include "GameNetwork/Transport.h"
 
 
 //--------------------------------------------------------------------------
@@ -295,9 +296,27 @@ Bool Transport::doRecv()
 	unsigned char *buf = (unsigned char *)&incomingMessage;
 	int len = MAX_NETWORK_MESSAGE_LEN;
 	size_t bufferIndex = 0;
-//	DEBUG_LOG(("Transport::doRecv - checking"));
-	while ( (len=m_udpsock->Read(buf, MAX_NETWORK_MESSAGE_LEN, &from)) > 0 )
+	size_t bufferCapacity = ARRAY_SIZE(m_inBuffer);
+#if defined(RTS_DEBUG)
+	if (m_useLatency)
 	{
+		bufferCapacity = ARRAY_SIZE(m_delayedInBuffer);
+		while (bufferIndex < bufferCapacity && m_delayedInBuffer[bufferIndex].message.length > 0)
+			++bufferIndex;
+	}
+	else
+#endif
+	{
+		while (bufferIndex < bufferCapacity && m_inBuffer[bufferIndex].length > 0)
+			++bufferIndex;
+	}
+
+	UnsignedInt processedMessages = 0;
+//	DEBUG_LOG(("Transport::doRecv - checking"));
+	while (ShouldReceiveNetworkMessage(processedMessages, bufferIndex < bufferCapacity) &&
+		(len=m_udpsock->Read(buf, MAX_NETWORK_MESSAGE_LEN, &from)) > 0)
+	{
+		++processedMessages;
 #if defined(RTS_DEBUG)
 		// Packet loss simulation
 		if (m_usePacketLoss)
