@@ -43,6 +43,7 @@
 #include "WinMain.h"
 #include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
+#include "Common/WorkingDirectory.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
@@ -817,7 +818,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// initialize the memory manager early
 		initMemoryManager();
 
-		CommandLine::applyStartupWorkingDirectory();
+		CommandLine::parseCommandLineForStartup();
+		if (TheGlobalData->m_changeCurrentWorkingDirectoryToExecutablePath)
+			rts::setCurrentDirectoryToExecutablePath();
 
 
 		#ifdef RTS_DEBUG
@@ -837,8 +840,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
  		// [SKB: Jun 24 2003 @ 1:50pm] :
 		// Force to be loaded from a file, not a resource so same exe can be used in germany and retail.
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-
-		CommandLine::parseCommandLineForStartup();
 
 #ifdef RTS_ENABLE_CRASHDUMP
 		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup

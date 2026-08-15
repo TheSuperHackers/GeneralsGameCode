@@ -136,6 +136,7 @@ set(GAMEENGINE_SRC
     Include/Common/version.h
 #    Include/Common/WellKnownKeys.h
     Include/Common/WorkerProcess.h
+    Include/Common/WorkingDirectory.h
     Include/Common/Xfer.h
     Include/Common/XferCRC.h
     Include/Common/XferDeepCRC.h
@@ -692,6 +693,7 @@ set(GAMEENGINE_SRC
     Source/Common/UserPreferences.cpp
     Source/Common/version.cpp
     Source/Common/WorkerProcess.cpp
+    Source/Common/WorkingDirectory.cpp
     Source/GameClient/ClientInstance.cpp
     Source/GameClient/Color.cpp
     Source/GameClient/Credits.cpp

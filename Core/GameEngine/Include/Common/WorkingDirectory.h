@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,22 +16,21 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// CommandLine.h
-// The command-line interface
-// Author: Matthew D. Campbell, September 2001
-
 #pragma once
 
-class CommandLine
-{
-public:
+#include "Lib/BaseType.h"
 
-	static void parseCommandLineForStartup();
-	static void parseCommandLineForEngineInit();
-};
+namespace rts
+{
+
+// TheSuperHackers @feature 14/08/2026
+// Startup working directory helpers. By default the process working directory is
+// the executable directory. -cwd keeps the OS directory. -cwd <path> uses that path.
+
+Bool setCurrentDirectoryToExecutablePath();
+Bool setCurrentDirectoryToPath(const char *path);
+
+// For tools that do not parse CommandLine startup flags.
+void applyStartupWorkingDirectory();
+
+} // namespace rts

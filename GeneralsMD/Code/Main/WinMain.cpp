@@ -43,6 +43,7 @@
 #include "WinMain.h"
 #include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
+#include "Common/WorkingDirectory.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
@@ -824,7 +825,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// initialize the memory manager early
 		initMemoryManager();
 
-		CommandLine::applyStartupWorkingDirectory();
+		CommandLine::parseCommandLineForStartup();
+		if (TheGlobalData->m_changeCurrentWorkingDirectoryToExecutablePath)
+			rts::setCurrentDirectoryToExecutablePath();
 
 
 		#ifdef RTS_DEBUG
@@ -865,7 +868,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 #endif
 
-		CommandLine::parseCommandLineForStartup();
 #ifdef RTS_ENABLE_CRASHDUMP
 		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
 		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData());

@@ -28,6 +28,7 @@
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
+#include "Common/WorkingDirectory.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
@@ -466,10 +467,15 @@ Int parseJobs(char *args[], int num)
 Int parseCwd(char *args[], int num)
 {
 	// TheSuperHackers @feature 14/08/2026
-	// Working directory is applied earlier by CommandLine::applyStartupWorkingDirectory().
-	// Consume an optional path argument here so it is not treated as another flag.
-	if (num > 1 && args[1] != nullptr && args[1][0] != '-')
+	// -cwd keeps the OS working directory. -cwd <path> uses that directory instead.
+	TheWritableGlobalData->m_changeCurrentWorkingDirectoryToExecutablePath = FALSE;
+
+	if (num > 1 && args[1] != nullptr && args[1][0] != '-' && args[1][0] != '\0')
+	{
+		if (!rts::setCurrentDirectoryToPath(args[1]))
+			rts::setCurrentDirectoryToExecutablePath();
 		return 2;
+	}
 	return 1;
 }
 
@@ -1432,61 +1438,6 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 			arg++;
 		}
 	}
-}
-
-static Bool setCurrentDirectoryToExecutablePath()
-{
-	Char buffer[_MAX_PATH];
-	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
-	if (len == 0 || len >= ARRAY_SIZE(buffer))
-	{
-		DEBUG_LOG(("Failed to get executable path for working directory (error %d)", GetLastError()));
-		return FALSE;
-	}
-
-	if (Char *pEnd = strrchr(buffer, '\\'))
-	{
-		*pEnd = 0;
-	}
-
-	if (::SetCurrentDirectory(buffer) == 0)
-	{
-		DEBUG_LOG(("Failed to set working directory to executable path '%s' (error %d)", buffer, GetLastError()));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-void CommandLine::applyStartupWorkingDirectory()
-{
-	std::vector<char*> argv;
-	std::string cmdLine = GetCommandLineA();
-	char *token = nextParam(&cmdLine[0], "\" ");
-	while (token != nullptr)
-	{
-		argv.push_back(strtrim(token));
-		token = nextParam(nullptr, "\" ");
-	}
-
-	const int argc = (int)argv.size();
-	for (int arg = 1; arg < argc; ++arg)
-	{
-		if (stricmp(argv[arg], "-cwd") != 0)
-			continue;
-
-		if (arg + 1 < argc && argv[arg + 1] != nullptr && argv[arg + 1][0] != '-' && argv[arg + 1][0] != '\0')
-		{
-			if (::SetCurrentDirectory(argv[arg + 1]) == 0)
-			{
-				DEBUG_LOG(("Failed to set working directory to '%s' (error %d)", argv[arg + 1], GetLastError()));
-				setCurrentDirectoryToExecutablePath();
-			}
-		}
-		return;
-	}
-
-	setCurrentDirectoryToExecutablePath();
 }
 
 void createGlobalData()
