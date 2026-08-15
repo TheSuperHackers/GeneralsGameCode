@@ -134,9 +134,36 @@ static bool isCommandIdNewer(UnsignedShort newVal, UnsignedShort oldVal)
 #endif
 }
 
+static bool isCommandNewer(const NetCommandMsg* newCommand, const NetCommandMsg* oldCommand)
+{
+	if (newCommand->getNetCommandType() != oldCommand->getNetCommandType())
+	{
+		return newCommand->getNetCommandType() > oldCommand->getNetCommandType();
+	}
+
+	if (newCommand->getPlayerID() != oldCommand->getPlayerID())
+	{
+		return newCommand->getPlayerID() > oldCommand->getPlayerID();
+	}
+
+	return isCommandIdNewer(newCommand->getSortNumber(), oldCommand->getSortNumber());
+}
+
+static bool isCommandFromSamePlayerGroup(const NetCommandMsg* firstCommand, const NetCommandMsg* secondCommand)
+{
+	return firstCommand->getNetCommandType() == secondCommand->getNetCommandType()
+		&& firstCommand->getPlayerID() == secondCommand->getPlayerID();
+}
+
+static bool isCommandNewerInSamePlayerGroup(const NetCommandMsg* newCommand, const NetCommandMsg* oldCommand)
+{
+	return isCommandFromSamePlayerGroup(newCommand, oldCommand)
+		&& isCommandIdNewer(newCommand->getSortNumber(), oldCommand->getSortNumber());
+}
+
 /**
  * Insert sorts msg.  Assumes that all the previous message inserts were done using this function.
- * The message is sorted in based first on command type, then player id, and then command id.
+ * The message is sorted based first on command type, then player id, and then sort number.
  */
 NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 	if (cmdMsg == nullptr) {
@@ -166,19 +193,25 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		// Messages that are inserted in order should just be put in one right after the other.
 		// So saving the placement of the last message inserted can give us a huge boost in
 		// efficiency.
-		NetCommandRef *theNext = m_lastMessageInserted->getNext();
+		NetCommandMsg* command = msg->getCommand();
+		NetCommandMsg* lastCommand = m_lastMessageInserted->getCommand();
+		NetCommandRef* nextCommandRef = m_lastMessageInserted->getNext();
 
 		// TheSuperHackers @bugfix CryoTheRenegade 03/08/2026 Keep both cached
 		// insertion boundaries consistent with the full scan's polymorphic sort key.
-		if ((m_lastMessageInserted->getCommand()->getNetCommandType() == msg->getCommand()->getNetCommandType()) &&
-			(m_lastMessageInserted->getCommand()->getPlayerID() == msg->getCommand()->getPlayerID()) &&
-			isCommandIdNewer(msg->getCommand()->getSortNumber(), m_lastMessageInserted->getCommand()->getSortNumber()) &&
-			((theNext == nullptr) || ((theNext->getCommand()->getNetCommandType() > msg->getCommand()->getNetCommandType()) ||
-			 (theNext->getCommand()->getPlayerID() > msg->getCommand()->getPlayerID()) ||
-			 isCommandIdNewer(theNext->getCommand()->getSortNumber(), msg->getCommand()->getSortNumber())))) {
+		bool canInsertAfterLast = isCommandNewerInSamePlayerGroup(command, lastCommand);
+
+		if (canInsertAfterLast && nextCommandRef != nullptr)
+		{
+			canInsertAfterLast = isCommandNewer(nextCommandRef->getCommand(), command);
+		}
+
+		if (canInsertAfterLast)
+		{
 
 			// Make sure this command isn't already in the list.
-			if (isEqualCommandMsg(m_lastMessageInserted->getCommand(), msg->getCommand())) {
+			if (isEqualCommandMsg(lastCommand, command))
+			{
 
 				// This command is already in the list, don't duplicate it.
 				deleteInstance(msg);
@@ -186,20 +219,21 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 				return nullptr;
 			}
 
-			if (theNext == nullptr) {
+			msg->setNext(nextCommandRef);
+			msg->setPrev(m_lastMessageInserted);
+			m_lastMessageInserted->setNext(msg);
+
+			if (nextCommandRef == nullptr)
+			{
 				// this means that m_lastMessageInserted == m_last, so m_last should point to the msg that is being inserted.
-				msg->setNext(m_lastMessageInserted->getNext());
-				msg->setPrev(m_lastMessageInserted);
-				m_lastMessageInserted->setNext(msg);
-				m_lastMessageInserted = msg;
 				m_last = msg;
-			} else {
-				msg->setNext(m_lastMessageInserted->getNext());
-				msg->setPrev(m_lastMessageInserted);
-				m_lastMessageInserted->setNext(msg);
-				msg->getNext()->setPrev(msg);
-				m_lastMessageInserted = msg;
 			}
+			else
+			{
+				nextCommandRef->setPrev(msg);
+			}
+
+			m_lastMessageInserted = msg;
 			return msg;
 		}
 	}
@@ -294,12 +328,10 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		return msg;
 	}
 
-	// Find the position within the player's section based on the command ID.
-	// If the command type doesn't require a command ID, sort by whatever it should be sorted by.
+	// Find the position within the player's section based on the sort number.
 	while (tempmsg != nullptr
-		&& msg->getCommand()->getNetCommandType() == tempmsg->getCommand()->getNetCommandType()
-		&& msg->getCommand()->getPlayerID() == tempmsg->getCommand()->getPlayerID()
-		&& isCommandIdNewer(msg->getCommand()->getSortNumber(), tempmsg->getCommand()->getSortNumber())) {
+		&& isCommandNewerInSamePlayerGroup(msg->getCommand(), tempmsg->getCommand()))
+	{
 		tempmsg = tempmsg->getNext();
 	}
 

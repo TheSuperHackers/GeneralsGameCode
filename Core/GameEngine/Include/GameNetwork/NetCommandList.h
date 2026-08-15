@@ -28,8 +28,8 @@
 #include "GameNetwork/NetCommandRef.h"
 
 /**
- * The NetCommandList is a ordered linked list of NetCommandRef objects.
- * The list is ordered based on the command id, player id, and command type.
+ * The NetCommandList is an ordered linked list of NetCommandRef objects.
+ * The list is ordered by command type, player id, and sort number.
  * It is ordered in this way to aid in constructing the packets efficiently.
  * The list keeps track of the last message inserted in order to accommodate
  * adding commands in order more efficiently since that is whats going to be
