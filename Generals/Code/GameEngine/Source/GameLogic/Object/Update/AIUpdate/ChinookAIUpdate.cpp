@@ -1191,6 +1191,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 		break;
 #if !RETAIL_COMPATIBLE_CRC
 		case AICMD_ENTER:
+		{
 			// TheSuperHackers @bugfix Stubbjax 12/08/2026 Ignore the command if we are told to enter ourselves (we can be in the same group).
 			if (parms->m_obj && parms->m_obj->getID() == getObject()->getID())
 				return;
@@ -1198,6 +1199,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 			// TheSuperHackers @bugfix Stubbjax 12/08/2026 Ignore the command if we are told to enter something we cannot (we can be in the same group).
 			if (!TheActionManager->canEnterObject(getObject(), parms->m_obj, parms->m_cmdSource, DONT_CHECK_CAPACITY))
 				return;
+		}
 		break;
 #endif
 
