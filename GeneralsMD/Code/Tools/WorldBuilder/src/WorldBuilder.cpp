@@ -32,7 +32,7 @@
 
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
-#include "Common/CommandLine.h"
+#include "Common/WorkingDirectory.h"
 #include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
@@ -316,7 +316,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
 
-	CommandLine::applyStartupWorkingDirectory();
+	rts::applyStartupWorkingDirectory();
 
 	TheFileSystem = new FileSystem;
 

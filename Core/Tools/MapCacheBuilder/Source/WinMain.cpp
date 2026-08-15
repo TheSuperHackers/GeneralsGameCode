@@ -43,7 +43,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
-#include "Common/CommandLine.h"
+#include "Common/WorkingDirectory.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
 #include "Common/GlobalData.h"
@@ -221,7 +221,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// save application instance
 	ApplicationHInstance = hInstance;
 
-	CommandLine::applyStartupWorkingDirectory();
+	rts::applyStartupWorkingDirectory();
 
 	/*
 	** Convert WinMain arguments to simple main argc and argv
