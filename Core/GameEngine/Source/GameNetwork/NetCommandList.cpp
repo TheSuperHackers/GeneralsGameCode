@@ -167,12 +167,15 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		// So saving the placement of the last message inserted can give us a huge boost in
 		// efficiency.
 		NetCommandRef *theNext = m_lastMessageInserted->getNext();
+
+		// TheSuperHackers @bugfix CryoTheRenegade 03/08/2026 Keep both cached
+		// insertion boundaries consistent with the full scan's polymorphic sort key.
 		if ((m_lastMessageInserted->getCommand()->getNetCommandType() == msg->getCommand()->getNetCommandType()) &&
 			(m_lastMessageInserted->getCommand()->getPlayerID() == msg->getCommand()->getPlayerID()) &&
-			isCommandIdNewer(msg->getCommand()->getID(), m_lastMessageInserted->getCommand()->getID()) &&
+			isCommandIdNewer(msg->getCommand()->getSortNumber(), m_lastMessageInserted->getCommand()->getSortNumber()) &&
 			((theNext == nullptr) || ((theNext->getCommand()->getNetCommandType() > msg->getCommand()->getNetCommandType()) ||
 			 (theNext->getCommand()->getPlayerID() > msg->getCommand()->getPlayerID()) ||
-			 isCommandIdNewer(theNext->getCommand()->getID(), msg->getCommand()->getID())))) {
+			 isCommandIdNewer(theNext->getCommand()->getSortNumber(), msg->getCommand()->getSortNumber())))) {
 
 			// Make sure this command isn't already in the list.
 			if (isEqualCommandMsg(m_lastMessageInserted->getCommand(), msg->getCommand())) {
