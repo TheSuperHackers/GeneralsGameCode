@@ -315,8 +315,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 		return;
 
 	// TheSuperHackers @perf stephanmeesters 14/08/2026 Early return when we have no smudge sets
-	// or if there are no smudges in the global smudge set.
-	if(m_usedSmudgeSetList.empty() || m_usedSmudgeSetList.front()->getUsedSmudgeCount() == 0)
+	// or if the global smudge set is the only set and contains no smudges.
+	if (m_usedSmudgeSetList.empty() || (m_usedSmudgeSetList.size() == 1 && m_usedSmudgeSetList.front()->getUsedSmudgeCount() == 0))
 	{
 		m_smudgeCountLastFrame = 0;
 		return;
