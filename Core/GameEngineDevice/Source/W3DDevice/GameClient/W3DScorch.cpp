@@ -162,20 +162,13 @@ void W3DScorch::updateScorches(WorldHeightMap& map)
 	VertexFormatXYZDUV1* vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 	VertexFormatXYZDUV1* curVb = vb;
 
-	Int curScorch;
-	Real shadeR, shadeG, shadeB;
-	shadeR = TheGlobalData->m_terrainAmbient[0].red;
-	shadeG = TheGlobalData->m_terrainAmbient[0].green;
-	shadeB = TheGlobalData->m_terrainAmbient[0].blue;
-	shadeR += TheGlobalData->m_terrainDiffuse[0].red / 2;
-	shadeG += TheGlobalData->m_terrainDiffuse[0].green / 2;
-	shadeB += TheGlobalData->m_terrainDiffuse[0].blue / 2;
-	shadeR *= 255.0f;
-	shadeG *= 255.0f;
-	shadeB *= 255.0f;
-	Int diffuse = REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | ((int)255 << 24);
+	Real shadeR = (TheGlobalData->m_terrainAmbient[0].red + TheGlobalData->m_terrainDiffuse[0].red) / 2.0f;
+	Real shadeG = (TheGlobalData->m_terrainAmbient[0].green + TheGlobalData->m_terrainDiffuse[0].green) / 2.0f;
+	Real shadeB = (TheGlobalData->m_terrainAmbient[0].blue + TheGlobalData->m_terrainDiffuse[0].blue) / 2.0f;
+	UnsignedInt diffuse = DX8Wrapper::Convert_Color_Clamp(Vector4(shadeR, shadeG, shadeB, 1.0f));
+
 	m_scorchesInBuffer = 0;
-	for (curScorch = m_numScorches - 1; curScorch >= 0; curScorch--)
+	for (Int curScorch = m_numScorches - 1; curScorch >= 0; curScorch--)
 	{
 		m_scorchesInBuffer++;
 		Real radius = m_scorches[curScorch].radius;
