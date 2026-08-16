@@ -93,7 +93,8 @@ void Shell::deconstruct()
 	WindowLayout *newTop = top();
 	while(newTop)
 	{
-		popImmediate();
+		// TheSuperHackers @bugfix CryoTheRenegade 10/08/2026 Do not initialize uncovered screens while the shell is being destroyed.
+		popImmediate( TRUE );
 		newTop = top();
 	}
 
@@ -424,7 +425,7 @@ void Shell::pop()
 	* from the shutdown() for the screen, it will be immediately popped off
 	* the stack */
 //-------------------------------------------------------------------------------------------------
-void Shell::popImmediate()
+void Shell::popImmediate( Bool suppressInit )
 {
 	WindowLayout *screen = top();
 
@@ -448,7 +449,7 @@ void Shell::popImmediate()
 	screen->runShutdown( &immediatePop );
 
 	// pop the screen of the stack
-	doPop( FALSE );
+	doPop( suppressInit );
 
 	if (TheIMEManager)
 		TheIMEManager->detach();
