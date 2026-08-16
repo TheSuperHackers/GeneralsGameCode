@@ -211,11 +211,10 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 // BinkVideoPlayer::calculateMovieAudioVolume
 //============================================================================
 
-Int BinkVideoPlayer::calculateMovieAudioVolume( Real speechVolume )
+Int BinkVideoPlayer::calculateMovieAudioVolume( Real volume )
 {
-	// Never let volume go to 0, as Bink will interpret that as "play at full
-	// volume".
-	Int mod = (Int) ((speechVolume * 0.8f) * 100) + 1;
+	// Never let volume go to 0, as Bink will interpret that as "play at full volume".
+	Int mod = (Int) ((volume * 0.8f) * 100) + 1;
 	return (32768*mod)/100;
 }
 
@@ -227,7 +226,7 @@ void BinkVideoPlayer::setVolume( Real volume )
 {
 	// Push the new volume to every open stream's audio output.
 	Int binkVolume = calculateMovieAudioVolume( volume );
-	for ( VideoStreamInterface *stream = firstStream(); stream != nullptr; stream = stream->next() )
+	for ( VideoStreamInterface* stream = firstStream(); stream != nullptr; stream = stream->next() )
 	{
 		BinkSetVolume( static_cast<BinkVideoStream*>( stream )->m_handle, 0, binkVolume );
 	}

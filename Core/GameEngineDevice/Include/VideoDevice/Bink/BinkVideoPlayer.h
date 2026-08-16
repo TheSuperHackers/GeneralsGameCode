@@ -103,8 +103,7 @@ class BinkVideoPlayer : public VideoPlayer
 {
 	private:
 
-		// TheSuperHackers @bugfix Compute the Bink volume for a given speech volume.
-		static Int	calculateMovieAudioVolume( Real speechVolume );
+		static Int	calculateMovieAudioVolume( Real volume );
 
 	protected:
 

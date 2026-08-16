@@ -2270,8 +2270,7 @@ void MilesAudioManager::processPlayingList()
 	if (m_volumeHasChanged) {
 		m_volumeHasChanged = false;
 
-		// Push the new speech volume to any playing movie's audio output, which
-		// bypasses the Miles mixer and so does not see volume changes on its own.
+		// Push speech volume changes because Bink movie audio bypasses the Miles mixer.
 		if (TheVideoPlayer) {
 			TheVideoPlayer->setVolume(getVolume(AudioAffect_Speech));
 		}
