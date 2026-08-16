@@ -686,7 +686,7 @@ void Shell::doPush( AsciiString layoutFile )
 //-------------------------------------------------------------------------------------------------
 /** Actually do the work for a pop */
 //-------------------------------------------------------------------------------------------------
-void Shell::doPop( Bool impendingPush )
+void Shell::doPop( Bool suppressInit )
 {
 	WindowLayout *currentTop = top();
 
@@ -707,7 +707,7 @@ void Shell::doPop( Bool impendingPush )
 
 	// run the init for the new top of the stack if present
 	WindowLayout *newTop = top();
-	if( newTop && !impendingPush )
+	if( newTop && !suppressInit )
 	{
 		newTop->runInit( nullptr );
 		//newTop->bringForward();

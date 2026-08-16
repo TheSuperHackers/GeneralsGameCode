@@ -166,7 +166,7 @@ protected:
 	void unlinkScreen( WindowLayout *screen );							///< remove screen from list
 
 	void doPush( AsciiString layoutFile );									///< workhorse for push action
-	void doPop( Bool impendingPush );												///< workhorse for pop action
+	void doPop( Bool suppressInit );													///< workhorse for pop action
 
 	enum { MAX_SHELL_STACK = 16 };													///< max simultaneous shell screens
 	WindowLayout *m_screenStack[ MAX_SHELL_STACK ];					///< the screen layout stack
