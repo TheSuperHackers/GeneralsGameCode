@@ -69,12 +69,12 @@ void FrameRateLimit::reset()
 const UnsignedInt RenderFpsPreset::s_fpsValues[] = {
 	15, 30, 50, 56, 60, 70, 72, 75, 85, 90, 100, 120, 144, 240, 480, UncappedFpsValue };
 
-// TheSuperHackers @info s_fpsValues MUST be strictly ascending; the search loops break on first match.
 const UnsignedInt LogicTimeScaleFpsPreset::s_fpsValues[] = {
 	1, 5, 15, 30, 45, 60, 75, 90, 105, 120, 240, 480, 960, RenderFpsPreset::UncappedFpsValue };
 
 UnsignedInt RenderFpsPreset::getNextFpsValue(UnsignedInt value)
 {
+	assert(std::is_sorted(std::begin(s_fpsValues), std::end(s_fpsValues)));
 	const Int first = 0;
 	const Int last = ARRAY_SIZE(s_fpsValues) - 1;
 	for (Int i = first; i < last; ++i)
@@ -113,6 +113,7 @@ UnsignedInt RenderFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange ch
 
 UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
+	assert(std::is_sorted(std::begin(s_fpsValues), std::end(s_fpsValues)));
 	UnsignedInt nextValue = RenderFpsPreset::UncappedFpsValue;
 
 	// Check if snapValue (e.g. current render FPS) is the next closest candidate
