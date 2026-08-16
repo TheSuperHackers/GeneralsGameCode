@@ -67,7 +67,7 @@ void FrameRateLimit::reset()
 
 
 const UnsignedInt RenderFpsPreset::s_fpsValues[] = {
-	15, 30, 50, 56, 60, 65, 70, 72, 75, 80, 85, 90, 100, 110, 120, 144, 240, 480, UncappedFpsValue };
+	15, 30, 50, 56, 60, 70, 72, 75, 85, 90, 100, 120, 144, 240, 480, UncappedFpsValue };
 
 // TheSuperHackers @info s_fpsValues MUST be strictly ascending; the search loops break on first match.
 const UnsignedInt LogicTimeScaleFpsPreset::s_fpsValues[] = {
@@ -131,6 +131,7 @@ UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, Unsigned
 			{
 				nextValue = fpsValue;
 			}
+
 			break;
 		}
 	}
