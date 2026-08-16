@@ -349,6 +349,7 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 	damageInfo.in.m_amount = blastInfo->minDamage;
 
 	// scan objects around us and do damage to objects we have "passed over" and are behind us
+	// TheSuperHackers @todo Optimize this function. Iterates through the blasts even if they apply zero damage.
 	if( blastInfo->outerRadius )
 	{
 #if defined(RTS_DEBUG)
@@ -359,9 +360,17 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 		}
 #endif
 
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_SEARCH
+		const DistanceCalculationType dc = FROM_CENTER_2D;
+#else
+		// TheSuperHackers @bugfix xezon 16/08/2026 From FROM_CENTER_2D,
+		// because objects that reach into the outer radius should also receive damage.
+		const DistanceCalculationType dc = FROM_BOUNDINGSPHERE_2D;
+#endif
+
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( missilePos,
 																																			 blastInfo->outerRadius,
-																																			 FROM_CENTER_2D,
+																																			 dc,
 																																			 nullptr );
 		MemoryPoolObjectHolder hold( iter );
 		Object *other;
@@ -374,10 +383,31 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 			// get other position
 			otherPos = other->getPosition();
 
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE
 			// compute vector from the missile to other object
 			forceVector.x = otherPos->x - missilePos->x;
 			forceVector.y = otherPos->y - missilePos->y;
 			forceVector.z = otherPos->z - missilePos->z;
+#else
+			// compute vector from the missile to other object
+			// TheSuperHackers @tweak xezon 16/08/2026 No longer calculate the force vector to the center of the object,
+			// but to half way between the closest edge and the center of the object. This way a more appropriate
+			// damage value is sampled for a large structure inside the damage fall off range.
+			Coord2D toCenterVector;
+			toCenterVector.x = otherPos->x - missilePos->x;
+			toCenterVector.y = otherPos->y - missilePos->y;
+
+			ThePartitionManager->getVectorTo(other, missilePos, FROM_BOUNDINGSPHERE_2D, forceVector);
+
+			// flip direction
+			forceVector.x = -forceVector.x;
+			forceVector.y = -forceVector.y;
+
+			// take average between min and max force
+			forceVector.x = (forceVector.x + toCenterVector.x) * 0.5f;
+			forceVector.y = (forceVector.y + toCenterVector.y) * 0.5f;
+			forceVector.z = 0.0f;
+#endif
 
 			// try to topple other object
 			other->topple( &forceVector, blastInfo->toppleSpeed, TOPPLE_OPTIONS_NO_BOUNCE |
