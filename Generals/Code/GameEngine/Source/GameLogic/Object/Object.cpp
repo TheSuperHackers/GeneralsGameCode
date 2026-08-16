@@ -2822,11 +2822,7 @@ Bool Object::isSelectable() const
 				|| (m_isSelectable
 						&& !testStatus(OBJECT_STATUS_UNSELECTABLE)
 						&& !isEffectivelyDead()
-#if RETAIL_COMPATIBLE_CRC
-						&& !getTemplate()->isKindOf(KINDOF_DRONE)//Most drones are unselectable from being slaved, but the SpyDrone needs help
-#else
 						&& !getTemplate()->isKindOf(KINDOF_NO_SELECT)
-#endif
 						);
 }
 
