@@ -325,12 +325,8 @@ static void displayBlastRadii( Object *missile, const BlastInfo *blastInfo )
 
 	const Coord3D *missilePos = missile->getPosition();
 
-	if (blastInfo->maxDamage > 0.0f)
-	{
 		drawDebugRadiusRing( missilePos, blastInfo->innerRadius, tileWidth, duration, innerColor );
-	}
-
-	if (blastInfo->minDamage > 0.0f)
+	if (blastInfo->maxDamage > 0.0f || blastInfo->minDamage > 0.0f)
 	{
 		drawDebugRadiusRing( missilePos, blastInfo->outerRadius, tileWidth, duration, outerColor );
 	}
