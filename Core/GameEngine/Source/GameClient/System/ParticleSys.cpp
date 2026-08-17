@@ -1190,6 +1190,15 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_particleType = sysTemplate->m_particleType;
 	m_particleTypeName = sysTemplate->m_particleTypeName;
 
+#if PRESERVE_RETAIL_PARTICLES
+	// TheSuperHackers @info Hack to allow isUsingSmudge() functionality with retail smudge particles
+	// The retail data template for smudge particles is not correctly configured with the smudge particle type
+	if (m_particleType != ParticleType::SMUDGE && m_particleTypeName.startsWithNoCase("SMUDGE."))
+	{
+		m_particleType = ParticleType::SMUDGE;
+	}
+#endif
+
 	m_isStopped = false;
 
 	// set up slave particle system, if any
@@ -3023,8 +3032,8 @@ void ParticleSystemManager::update()
 			if (sys->isUsingDrawables())
 				continue;
 
-			// temporary hack that checks if texture name starts with "SMUD" - if so, we can assume it's a smudge type
-			if (/*sys->isUsingSmudge()*/ *((DWORD *)sys->getParticleTypeName().str()) == 0x44554D53)
+			// Handle smudge type particles
+			if (sys->isUsingSmudge())
 			{
 				for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
 				{
