@@ -288,9 +288,7 @@ UpdateSleepTime NeutronMissileSlowDeathBehavior::update()
 
 }
 
-#if defined(RTS_DEBUG)
-
-static void drawDebugRadiusRing( const Coord3D *center, Real radius, Real tileWidth,
+static void debugDrawBlastCircle( const Coord3D *center, Real radius, Real tileWidth,
 																 Int numFramesDuration, const RGBColor &color )
 {
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -316,7 +314,7 @@ static void drawDebugRadiusRing( const Coord3D *center, Real radius, Real tileWi
 	}
 }
 
-static void displayBlastRadii( Object *missile, const BlastInfo *blastInfo )
+static void debugDrawBlastRadii( Object *missile, const BlastInfo *blastInfo )
 {
 	const Int duration = 60 * LOGICFRAMES_PER_SECOND;
 	const Real tileWidth = TheGlobalData->m_debugProjectileTileWidth;
@@ -325,14 +323,12 @@ static void displayBlastRadii( Object *missile, const BlastInfo *blastInfo )
 
 	const Coord3D *missilePos = missile->getPosition();
 
-		drawDebugRadiusRing( missilePos, blastInfo->innerRadius, tileWidth, duration, innerColor );
 	if (blastInfo->maxDamage > 0.0f || blastInfo->minDamage > 0.0f)
 	{
-		drawDebugRadiusRing( missilePos, blastInfo->outerRadius, tileWidth, duration, outerColor );
+		debugDrawBlastCircle( missilePos, blastInfo->innerRadius, tileWidth, duration, innerColor );
+		debugDrawBlastCircle( missilePos, blastInfo->outerRadius, tileWidth, duration, outerColor );
 	}
 }
-
-#endif // defined(RTS_DEBUG)
 
 // ------------------------------------------------------------------------------------------------
 /** Do a single blast for the bomb */
@@ -363,7 +359,7 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 	{
 #if defined(RTS_DEBUG)
 		if( TheGlobalData->m_debugProjectilePath )
-			displayBlastRadii( missile, blastInfo );
+			debugDrawBlastRadii( missile, blastInfo );
 #endif
 
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( missilePos,
