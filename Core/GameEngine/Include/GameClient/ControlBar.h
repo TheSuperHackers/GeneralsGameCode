@@ -975,6 +975,7 @@ protected:
 	Color m_buildUpClockColor;
 
 	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly different
+	Bool m_isReadOnly;                                  ///< If this is true, the command bar will not allow any commands to be issued
 	Player *m_observerLookAtPlayer;											///< The current player we're looking at, Null if we're not looking at anyone.
 	Player *m_observedPlayer;														///< The current player we're observing, Null if we're not observing anyone.
 

@@ -884,6 +884,7 @@ ControlBar::ControlBar()
 	m_commandSets = nullptr;
 	m_controlBarSchemeManager = nullptr;
 	m_isObserverCommandBar = FALSE;
+	m_isReadOnly = FALSE;
 	m_observerLookAtPlayer = nullptr;
 	m_observedPlayer = nullptr;
 	m_buildToolTipLayout = nullptr;
@@ -1321,6 +1322,7 @@ void ControlBar::reset()
 	m_displayedOCLTimerSeconds = 0;
 
 	m_isObserverCommandBar = FALSE; // reset us to use a normal command bar
+	m_isReadOnly = FALSE;
 	m_observerLookAtPlayer = nullptr;
 	m_observedPlayer = nullptr;
 
@@ -2805,6 +2807,7 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 	if( !p->isPlayerActive() )
 	{
 		m_isObserverCommandBar = TRUE;
+		m_isReadOnly = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, nullptr );
 		DEBUG_LOG(("We're loading the Observer Command Bar"));
 
