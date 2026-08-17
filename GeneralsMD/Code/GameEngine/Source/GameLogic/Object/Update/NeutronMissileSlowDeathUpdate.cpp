@@ -393,20 +393,23 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 			// TheSuperHackers @tweak xezon 16/08/2026 No longer calculate the force vector to the center of the object,
 			// but to half way between the closest edge and the center of the object. This way a more appropriate
 			// damage value is sampled for a large structure inside the damage fall off range.
-			Coord2D toCenterVector;
-			toCenterVector.x = otherPos->x - missilePos->x;
-			toCenterVector.y = otherPos->y - missilePos->y;
+			Coord3D missileToObjectCenter;
+			missileToObjectCenter.x = otherPos->x - missilePos->x;
+			missileToObjectCenter.y = otherPos->y - missilePos->y;
+			missileToObjectCenter.z = otherPos->z - missilePos->z;
 
-			ThePartitionManager->getVectorTo(other, missilePos, FROM_BOUNDINGSPHERE_2D, forceVector);
+			Coord3D missileToObjectEdge;
+			ThePartitionManager->getVectorTo(other, missilePos, FROM_BOUNDINGSPHERE_2D, missileToObjectEdge);
 
 			// flip direction
-			forceVector.x = -forceVector.x;
-			forceVector.y = -forceVector.y;
+			missileToObjectEdge.x = -missileToObjectEdge.x;
+			missileToObjectEdge.y = -missileToObjectEdge.y;
+			missileToObjectEdge.z = -missileToObjectEdge.z;
 
-			// take average between min and max force
-			forceVector.x = (forceVector.x + toCenterVector.x) * 0.5f;
-			forceVector.y = (forceVector.y + toCenterVector.y) * 0.5f;
-			forceVector.z = 0.0f;
+			// take the average between the edge and center vectors
+			forceVector.x = (missileToObjectEdge.x + missileToObjectCenter.x) * 0.5f;
+			forceVector.y = (missileToObjectEdge.y + missileToObjectCenter.y) * 0.5f;
+			forceVector.z = (missileToObjectEdge.z + missileToObjectCenter.z) * 0.5f;
 #endif
 
 			// try to topple other object
