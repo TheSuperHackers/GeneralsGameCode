@@ -316,6 +316,9 @@ static void debugDrawBlastCircle( const Coord3D *center, Real radius, Real tileW
 
 static void debugDrawBlastRadii( Object *missile, const BlastInfo *blastInfo )
 {
+	if (!(blastInfo->maxDamage > 0.0f || blastInfo->minDamage > 0.0f))
+		return;
+
 	const Int duration = 60 * LOGICFRAMES_PER_SECOND;
 	const Real tileWidth = TheGlobalData->m_debugProjectileTileWidth;
 	constexpr const RGBColor innerColor = { 0.0f, 1.0f, 1.0f }; // cyan, everything in here takes full damage
@@ -323,11 +326,8 @@ static void debugDrawBlastRadii( Object *missile, const BlastInfo *blastInfo )
 
 	const Coord3D *missilePos = missile->getPosition();
 
-	if (blastInfo->maxDamage > 0.0f || blastInfo->minDamage > 0.0f)
-	{
-		debugDrawBlastCircle( missilePos, blastInfo->innerRadius, tileWidth, duration, innerColor );
-		debugDrawBlastCircle( missilePos, blastInfo->outerRadius, tileWidth, duration, outerColor );
-	}
+	debugDrawBlastCircle( missilePos, blastInfo->innerRadius, tileWidth, duration, innerColor );
+	debugDrawBlastCircle( missilePos, blastInfo->outerRadius, tileWidth, duration, outerColor );
 }
 
 // ------------------------------------------------------------------------------------------------
