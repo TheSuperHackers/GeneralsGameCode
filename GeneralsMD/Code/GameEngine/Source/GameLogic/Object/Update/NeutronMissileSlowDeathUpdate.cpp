@@ -299,7 +299,8 @@ static void drawDebugRadiusRing( const Coord3D *center, Real radius, Real tileWi
 		return;
 
 	// space the icons roughly one tile apart along the circumference, within sane bounds
-	Int segments = (Int)ceilf( (2.0f * PI * radius) / max( tileWidth, 1.0f ) * 0.5f );
+	tileWidth = max( tileWidth, 1.0f );
+	Int segments = (Int)ceilf( (2.0f * PI * radius) / tileWidth * 0.5f );
 	segments = clamp(1, segments, 256);
 
 	for( Int i = 0; i < segments; ++i )
