@@ -289,9 +289,9 @@ UpdateSleepTime NeutronMissileSlowDeathBehavior::update()
 }
 
 static void debugDrawBlastCircle( const Coord3D *center, Real radius, Real tileWidth,
-																 Int numFramesDuration, const RGBColor &color )
+																 Int frameDuration, const RGBColor &color )
 {
-	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
+	extern void addIcon(const Coord3D *pos, Real width, Int frameDuration, RGBColor color);
 
 	if( radius <= 0.0f )
 		return;
@@ -310,24 +310,18 @@ static void debugDrawBlastCircle( const Coord3D *center, Real radius, Real tileW
 		pos.y = center->y + radius * sinf( angle );
 		pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 
-		addIcon( &pos, tileWidth, numFramesDuration, color );
+		addIcon( &pos, tileWidth, frameDuration, color );
 	}
 }
 
-static void debugDrawBlastRadii( Object *missile, const BlastInfo *blastInfo )
+static void debugDrawBlastRadii( Object *missile, const BlastInfo *blastInfo, Real tileWidth, Int frameDuration )
 {
-	if (!(blastInfo->maxDamage > 0.0f || blastInfo->minDamage > 0.0f))
-		return;
-
-	const Int duration = 60 * LOGICFRAMES_PER_SECOND;
-	const Real tileWidth = TheGlobalData->m_debugProjectileTileWidth;
 	constexpr const RGBColor innerColor = { 0.0f, 1.0f, 1.0f }; // cyan, everything in here takes full damage
 	constexpr const RGBColor outerColor = { 1.0f, 1.0f, 0.0f }; // yellow, damage falls off out here
-
 	const Coord3D *missilePos = missile->getPosition();
 
-	debugDrawBlastCircle( missilePos, blastInfo->innerRadius, tileWidth, duration, innerColor );
-	debugDrawBlastCircle( missilePos, blastInfo->outerRadius, tileWidth, duration, outerColor );
+	debugDrawBlastCircle( missilePos, blastInfo->innerRadius, tileWidth, frameDuration, innerColor );
+	debugDrawBlastCircle( missilePos, blastInfo->outerRadius, tileWidth, frameDuration, outerColor );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -358,8 +352,11 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 	if( blastInfo->outerRadius )
 	{
 #if defined(RTS_DEBUG)
-		if( TheGlobalData->m_debugProjectilePath )
-			debugDrawBlastRadii( missile, blastInfo );
+		if( TheGlobalData->m_debugProjectilePath && (blastInfo->maxDamage > 0.0f || blastInfo->minDamage > 0.0f) )
+		{
+			constexpr const Int frameDuration = 60 * LOGICFRAMES_PER_SECOND;
+			debugDrawBlastRadii( missile, blastInfo, TheGlobalData->m_debugProjectileTileWidth, frameDuration );
+		}
 #endif
 
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( missilePos,
