@@ -1483,10 +1483,14 @@ void ControlBar::update()
 		showRallyPoint(exitPosition);
 
 		ContainModuleInterface* observerContain = obj ? obj->getContain() : nullptr;
-		Bool showObserverInventory = (observerContain != nullptr && observerContain->getContainMax() > 0);
+		Bool showObserverInventory = observerContain != nullptr
+			&& observerContain->getContainMax() > 0
+			&& m_observerLookAtPlayer == nullptr
+			&& isApparentControllingPlayerNeutral(obj);
 
-		if (showObserverInventory && m_observerLookAtPlayer == nullptr)
+		if (showObserverInventory)
 		{
+
 			if (m_currContext != CB_CONTEXT_STRUCTURE_INVENTORY || m_currentSelectedDrawable != drawToEvaluateFor)
 				switchToContext(CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor);
 			else
@@ -1823,24 +1827,12 @@ void ControlBar::evaluateContextUI()
 		ContainModuleInterface *contain = obj->getContain();
 		if( contain && contain->getContainMax() > 0 )
 		{
-
-			const Player *otherPlayer = contain->getApparentControllingPlayer(ThePlayerList->getLocalPlayer());
-			if (!otherPlayer)
-				otherPlayer = obj->getControllingPlayer();
-			Player *player = ThePlayerList->getLocalPlayer();
-
-			if( !player || !otherPlayer )
-			{
-				//Sanity.
-				return;
-			}
-			Relationship relation = player->getRelationship( otherPlayer->getDefaultTeam() );
-
+			Bool apparentControllingPlayerNeutral = isApparentControllingPlayerNeutral(obj);
 			//Note: All following checks already account for the fact that this object
 			//isn't ours.
 
 			//The only case we can actually see a non-controlled controlbar is a neutral garrisonable structure.
-			if( !contain->isGarrisonable() || relation != NEUTRAL )
+			if( !contain->isGarrisonable() || !apparentControllingPlayerNeutral)
 			{
 				//Can't peek inside enemy/allied containers period!
 				return;
@@ -2822,6 +2814,7 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 	{
 		switchToContext( CB_CONTEXT_NONE, nullptr );
 		m_isObserverCommandBar = FALSE;
+		m_isReadOnly = FALSE;
 
 		if (buttonPlaceBeacon)
 			buttonPlaceBeacon->winHide(
@@ -2853,6 +2846,7 @@ void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 	if(pt == ThePlayerTemplateStore->findPlayerTemplate(TheNameKeyGenerator->nameToKey("FactionObserver")))
 	{
 		m_isObserverCommandBar = TRUE;
+		m_isReadOnly = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, nullptr );
 		DEBUG_LOG(("We're loading the Observer Command Bar"));
 
@@ -2867,6 +2861,7 @@ void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 	{
 		switchToContext( CB_CONTEXT_NONE, nullptr );
 		m_isObserverCommandBar = FALSE;
+		m_isReadOnly = FALSE;
 
 		if (buttonPlaceBeacon)
 			buttonPlaceBeacon->winHide(
@@ -3599,6 +3594,25 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 		return true;
 
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
+{
+	ContainModuleInterface* contain = obj->getContain();
+	const Player* otherPlayer = contain->getApparentControllingPlayer(ThePlayerList->getLocalPlayer());
+	if (!otherPlayer)
+		otherPlayer = obj->getControllingPlayer();
+	const Player* player = ThePlayerList->getLocalPlayer();
+
+	if (!player || !otherPlayer)
+	{
+		//Sanity.
+		return FALSE;
+	}
+
+	Relationship relation = player->getRelationship(otherPlayer->getDefaultTeam());
+	return relation == NEUTRAL;
 }
 
 //-------------------------------------------------------------------------------------------------
