@@ -3789,6 +3789,10 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
 		// ground far away, behind the camera, or not at all - cannot produce a degenerate draw size.
 		const Int mapExtent = (map->getXExtent() > map->getYExtent()) ? map->getXExtent() : map->getYExtent();
 		const Real worldBound = (Real)mapExtent * MAP_XY_FACTOR;
+		const Real worldMinX = cameraLocation.X - worldBound;
+		const Real worldMaxX = cameraLocation.X + worldBound;
+		const Real worldMinY = cameraLocation.Y - worldBound;
+		const Real worldMaxY = cameraLocation.Y + worldBound;
 
 		Real footprintMinX = cameraLocation.X, footprintMaxX = cameraLocation.X;
 		Real footprintMinY = cameraLocation.Y, footprintMaxY = cameraLocation.Y;
@@ -3800,25 +3804,25 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
 				const Real xMod = (-i + 0.5f + viewportMin.X) * viewPlaneDist * viewPlaneScaleX;
 				const Real yMod = ( j - 0.5f - viewportMin.Y) * viewPlaneDist * viewPlaneScaleY;
 
-				Vector3 rayDirection(
+				const Vector3 rayDirection(
 					viewPlaneDist * cameraTransform[0][2] + xMod * cameraTransform[0][0] + yMod * cameraTransform[0][1],
 					viewPlaneDist * cameraTransform[1][2] + xMod * cameraTransform[1][0] + yMod * cameraTransform[1][1],
 					viewPlaneDist * cameraTransform[2][2] + xMod * cameraTransform[2][0] + yMod * cameraTransform[2][1]);
-				rayDirection.Normalize();
-				const Vector3 rayPoint = cameraLocation + rayDirection;
 
-				Real groundX = Vector3::Find_X_At_Z(groundZ, cameraLocation, rayPoint);
-				Real groundY = Vector3::Find_Y_At_Z(groundZ, cameraLocation, rayPoint);
+				// A ray's scale does not affect its intersection with the ground plane. Reuse one division
+				// for both coordinates instead of normalizing the ray and solving X and Y independently.
+				const Real rayScale = (groundZ - cameraLocation.Z) / rayDirection.Z;
+				Real groundX = cameraLocation.X + rayDirection.X * rayScale;
+				Real groundY = cameraLocation.Y + rayDirection.Y * rayScale;
 
-				// Clamp into [camera +/- worldBound]; the !(>=) form also rejects NaN from parallel rays.
-				if (!(groundX >= cameraLocation.X - worldBound))
-					groundX = cameraLocation.X - worldBound;
-				else if (groundX > cameraLocation.X + worldBound)
-					groundX = cameraLocation.X + worldBound;
-				if (!(groundY >= cameraLocation.Y - worldBound))
-					groundY = cameraLocation.Y - worldBound;
-				else if (groundY > cameraLocation.Y + worldBound)
-					groundY = cameraLocation.Y + worldBound;
+				// clamp() leaves NaN unchanged, so replace NaN from a parallel ray with the existing
+				// conservative fallback first. Infinite intersections are handled by clamp().
+				if (_isnan(groundX))
+					groundX = worldMinX;
+				if (_isnan(groundY))
+					groundY = worldMinY;
+				groundX = clamp(worldMinX, groundX, worldMaxX);
+				groundY = clamp(worldMinY, groundY, worldMaxY);
 
 				if (groundX < footprintMinX)
 					footprintMinX = groundX;
