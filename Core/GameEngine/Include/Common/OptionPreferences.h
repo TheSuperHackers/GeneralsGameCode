@@ -67,6 +67,8 @@ public:
 	void setOnlineIPAddress(AsciiString IP);
 	void setLANIPAddress(UnsignedInt IP);
 	void setOnlineIPAddress(UnsignedInt IP);
+	AsciiString getGameSpyServer() const;
+	UnsignedShort getGameSpyChatPort() const;
 	Bool getArchiveReplaysEnabled() const;
 	Bool getAlternateMouseModeEnabled();
 	Bool getRightMouseScrollWithAlternateMouseEnabled() const;

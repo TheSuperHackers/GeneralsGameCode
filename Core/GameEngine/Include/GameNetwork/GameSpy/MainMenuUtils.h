@@ -36,6 +36,10 @@ void CancelPatchCheckCallback();
 void StartDownloadingPatches();
 void HandleCanceledDownload( Bool resetDropDown = TRUE );
 
+// Host name or IPv4 address of the GameSpy service.
+const char *GetGameSpyServer();
+UnsignedShort GetGameSpyChatPort();
+
 #if RTS_GENERALS
 enum OverallStatsPeriod CPP_11(: Int)
 {
