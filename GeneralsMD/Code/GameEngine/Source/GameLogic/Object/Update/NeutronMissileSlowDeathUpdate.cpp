@@ -365,7 +365,7 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 #else
 		// TheSuperHackers @bugfix xezon 16/08/2026 From FROM_CENTER_2D,
 		// because objects that reach into the outer radius should also receive damage.
-		const DistanceCalculationType dc = FROM_BOUNDINGSPHERE_2D;
+		const DistanceCalculationType dc = FROM_BOUNDINGSPHERE_3D;
 #endif
 
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( missilePos,
