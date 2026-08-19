@@ -987,7 +987,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	constexpr const Real DiagonalCompensation = 1.0f / 1.20710678f;
 	return dot * DiagonalCompensation;
 
-#endif
+#endif // RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1032,7 +1032,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	constexpr const Real DiagonalCompensation = 1.0f / 1.36602540f;
 	return dot * DiagonalCompensation;
 
-#endif
+#endif // RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
 }
 
 //-------------------------------------------------------------------------------------------------
