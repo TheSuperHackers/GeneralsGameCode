@@ -374,7 +374,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				if (TheInGameUI->isInForceAttackMode())
 				{
 					const Real snapRadians = DEG_TO_RADF(45);
-					targetAngle = WWMath::Round(targetAngle / snapRadians) * snapRadians;
+					targetAngle = WWMath::Roundf(targetAngle / snapRadians) * snapRadians;
 				}
 
 				TheTacticalView->userSetAngle(targetAngle);
