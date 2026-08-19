@@ -71,7 +71,7 @@ AABoxCollisionTestClass::AABoxCollisionTestClass(const AABoxClass & aabox,const 
 bool AABoxCollisionTestClass::Cull(const AABoxClass & box)
 {
 //	const float MOVE_THRESHOLD = 2.0f;
-//	if (WWMath::Fabs(Move.X) + WWMath::Fabs(Move.Y) + WWMath::Fabs(Move.Z) > MOVE_THRESHOLD) {
+//	if (WWMath::Fabsf(Move.X) + WWMath::Fabsf(Move.Y) + WWMath::Fabsf(Move.Z) > MOVE_THRESHOLD) {
 //		CastResultStruct res;
 //		return !Box.Cast_To_Box(Move,box,&res);
 //	} else {
@@ -287,17 +287,17 @@ OBBoxCollisionTestClass::OBBoxCollisionTestClass
 	Move(move)
 {
 	Vector3 max_extent;
-	max_extent.X =	WWMath::Fabs(Box.Basis[0][0] * Box.Extent.X) +
-						WWMath::Fabs(Box.Basis[0][1] * Box.Extent.Y) +
-						WWMath::Fabs(Box.Basis[0][2] * Box.Extent.Z) + 0.01f;
+	max_extent.X =	WWMath::Fabsf_Legacy(Box.Basis[0][0] * Box.Extent.X) +
+						WWMath::Fabsf_Legacy(Box.Basis[0][1] * Box.Extent.Y) +
+						WWMath::Fabsf_Legacy(Box.Basis[0][2] * Box.Extent.Z) + 0.01f;
 
-	max_extent.Y =	WWMath::Fabs(Box.Basis[1][0] * Box.Extent.X) +
-						WWMath::Fabs(Box.Basis[1][1] * Box.Extent.Y) +
-						WWMath::Fabs(Box.Basis[1][2] * Box.Extent.Z) + 0.01f;
+	max_extent.Y =	WWMath::Fabsf_Legacy(Box.Basis[1][0] * Box.Extent.X) +
+						WWMath::Fabsf_Legacy(Box.Basis[1][1] * Box.Extent.Y) +
+						WWMath::Fabsf_Legacy(Box.Basis[1][2] * Box.Extent.Z) + 0.01f;
 
-	max_extent.Z =	WWMath::Fabs(Box.Basis[2][0] * Box.Extent.X) +
-						WWMath::Fabs(Box.Basis[2][1] * Box.Extent.Y) +
-						WWMath::Fabs(Box.Basis[2][2] * Box.Extent.Z) + 0.01f;
+	max_extent.Z =	WWMath::Fabsf_Legacy(Box.Basis[2][0] * Box.Extent.X) +
+						WWMath::Fabsf_Legacy(Box.Basis[2][1] * Box.Extent.Y) +
+						WWMath::Fabsf_Legacy(Box.Basis[2][2] * Box.Extent.Z) + 0.01f;
 
 	SweepMin = Box.Center - max_extent;
 	SweepMax = Box.Center + max_extent;

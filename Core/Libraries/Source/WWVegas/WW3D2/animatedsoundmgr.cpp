@@ -512,7 +512,7 @@ AnimatedSoundMgrClass::Trigger_Sound
 				//
 				//	Don't trigger the sound if its skipped too far past...
 				//
-				//if (WWMath::Fabs (new_frame - old_frame) < 3.0F) {
+				//if (WWMath::Fabsf (new_frame - old_frame) < 3.0F) {
 
 					//
 					// Stop the audio?
