@@ -159,7 +159,7 @@ public:
 		Region3D terrainExtent;
 		TheTerrainLogic->getExtent( &terrainExtent );
 		const Real FUDGE = 1.2f;
-		Real HUGE_DIST = FUDGE * sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
+		Real HUGE_DIST = FUDGE * WWMath::Sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
 
 		exitCoord.x += dir->x * HUGE_DIST;
 		exitCoord.y += dir->y * HUGE_DIST;
@@ -569,7 +569,7 @@ public:
 		{
 			if (it->ropeLen < it->ropeLenMax)
 			{
-				it->ropeSpeed += fabs(TheGlobalData->m_gravity);
+				it->ropeSpeed += WWMath::Fabs(TheGlobalData->m_gravity);
 				if (it->ropeSpeed > d->m_ropeDropSpeed)
 					it->ropeSpeed = d->m_ropeDropSpeed;
 				it->ropeLen += it->ropeSpeed;
@@ -761,7 +761,7 @@ public:
 		StateReturnType status = AIMoveToState::update();
 
 		const Real THRESH = 3.0f;
-		if (status != STATE_CONTINUE && fabs(obj->getPosition()->z - m_destZ) > THRESH)
+		if (status != STATE_CONTINUE && WWMath::Fabs(obj->getPosition()->z - m_destZ) > THRESH)
 			status = STATE_CONTINUE;
 
 		return status;
@@ -840,7 +840,7 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 	m_minDropHeight = 30.0f;
 	m_ropeFinalHeight = 0.0f;
 	m_ropeDropSpeed = 1e10f;		// um, fast.
-	m_rappelSpeed = fabs(TheGlobalData->m_gravity) * LOGICFRAMES_PER_SECOND * 0.5f;
+	m_rappelSpeed = WWMath::Fabs(TheGlobalData->m_gravity) * LOGICFRAMES_PER_SECOND * 0.5f;
 	m_ropeWobbleLen = 10.0f;
 	m_ropeWobbleAmp = 1.0f;
 	m_ropeWobbleRate = 0.1f;
