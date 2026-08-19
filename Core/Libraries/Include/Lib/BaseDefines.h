@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -18,13 +18,20 @@
 
 #pragma once
 
-#include "Lib/BaseDefines.h"
+#ifndef RETAIL_COMPATIBLE_CRC
+#define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#endif
 
-// Enable translation and rotation interpolation for raw animation (HRawAnimClass) updates.
-// This was intentionally disabled in the retail version, but likely not fully thought through.
-// Interpolation is certainly desired for animations that move and rotate meshes, but may not be
-// desired for animations that teleport meshes from one location to another, such as blinking lights.
-// @todo Implement a new flag per animation file to opt-out of interpolation.
-#ifndef WW3D_ENABLE_RAW_ANIM_INTERPOLATION
-#define WW3D_ENABLE_RAW_ANIM_INTERPOLATION (1)
+#ifndef USE_DETERMINISTIC_MATH
+#define USE_DETERMINISTIC_MATH (1) // Game uses deterministic math for game simulation compatibility among different system architectures in peer to peer networks
+#endif
+
+#if defined(__has_include)
+#if __has_include("gmath.h")
+#define HAS_GAMEMATH (1)
+#endif
+#endif
+
+#if !HAS_GAMEMATH || RETAIL_COMPATIBLE_CRC
+#undef USE_DETERMINISTIC_MATH // Cannot actually use deterministic math :(
 #endif
