@@ -1722,7 +1722,7 @@ void BaseHeightMapRenderObjClass::updateViewImpassableAreas(Bool partial, Int mi
 	}
 
 	// save calculating the tangent over and over again.
-	Real tanImpassableRad = tan(m_curImpassableSlope / 360.f * 2 * PI);
+	Real tanImpassableRad = WWMath::Tan(m_curImpassableSlope / 360.f * 2 * PI);
 	for (Int j = minY; j < maxY; ++j) {
 		for (Int i = minX; i < maxX; ++i) {
 			m_showAsVisibleCliff[i + j * xSize] = evaluateAsVisibleCliff(i, j, tanImpassableRad);
