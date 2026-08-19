@@ -59,9 +59,9 @@ static inline void find_dominant_plane_fast(const TriClass & tri, FDPRec& info)
 	/*
 	** Find the largest component of the normal
 	*/
-	float x = WWMath::Fabs(tri.N->X);
-	float y = WWMath::Fabs(tri.N->Y);
-	float z = WWMath::Fabs(tri.N->Z);
+	float x = WWMath::Fabsf_Legacy(tri.N->X);
+	float y = WWMath::Fabsf_Legacy(tri.N->Y);
+	float z = WWMath::Fabsf_Legacy(tri.N->Z);
 
 	float val = x;
 	int ni = 0;
@@ -86,9 +86,9 @@ static inline void find_dominant_plane(const TriClass & tri, int * axis1,int * a
 	** Find the largest component of the normal
 	*/
 	int ni = 0;
-	float x = WWMath::Fabs(tri.N->X);
-	float y = WWMath::Fabs(tri.N->Y);
-	float z = WWMath::Fabs(tri.N->Z);
+	float x = WWMath::Fabsf_Legacy(tri.N->X);
+	float y = WWMath::Fabsf_Legacy(tri.N->Y);
+	float z = WWMath::Fabsf_Legacy(tri.N->Z);
 	float val = x;
 
 	if (y > val) {
@@ -146,9 +146,9 @@ void TriClass::Find_Dominant_Plane(int * axis1,int * axis2) const
 	** Find the largest component of the normal
 	*/
 	int ni = 0;
-	float x = WWMath::Fabs(N->X);
-	float y = WWMath::Fabs(N->Y);
-	float z = WWMath::Fabs(N->Z);
+	float x = WWMath::Fabsf_Legacy(N->X);
+	float y = WWMath::Fabsf_Legacy(N->Y);
+	float z = WWMath::Fabsf_Legacy(N->Z);
 	float val = x;
 
 	if (y > val) {
