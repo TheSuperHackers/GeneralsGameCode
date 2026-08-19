@@ -53,7 +53,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DInGameUI.h
 #    Include/W3DDevice/GameClient/W3DMirror.h
     Include/W3DDevice/GameClient/W3DMouse.h
-#    Include/W3DDevice/GameClient/W3DParticleSys.h
+    Include/W3DDevice/GameClient/W3DParticleSys.h
 #    Include/W3DDevice/GameClient/W3DPoly.h
     Include/W3DDevice/GameClient/W3DProfilerFrameCapture.h
 #    Include/W3DDevice/GameClient/W3DProjectedShadow.h

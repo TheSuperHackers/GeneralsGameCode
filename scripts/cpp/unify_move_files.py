@@ -623,6 +623,7 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWeapon.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWeapon.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWebpageURL.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWebpageURL.cpp")
     
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DParticleSys.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DParticleSys.h")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DParticleSys.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DParticleSys.cpp")
 
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/DamageFX.h", Game.CORE, "GameEngine/Include/Common/DamageFX.h")
