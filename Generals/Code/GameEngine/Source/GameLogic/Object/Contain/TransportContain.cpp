@@ -506,6 +506,7 @@ void TransportContain::onCapture( Player *oldOwner, Player *newOwner )
 #if RETAIL_COMPATIBLE_CRC
 			orderAllPassengersToExit( CMD_FROM_AI );
 #else
+			// TheSuperHackers @bugfix Stubbjax 20/11/2025 Only eject passengers if the new owner is not allied with the old owner.
 			if (oldOwner->getRelationship(newOwner->getDefaultTeam()) != ALLIES)
 				orderAllPassengersToExit(CMD_FROM_AI);
 #endif
