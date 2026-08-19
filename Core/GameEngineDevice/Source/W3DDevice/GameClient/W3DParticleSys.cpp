@@ -170,9 +170,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			const Real psize = vp->getSize();
 
 			//Test if particle is at the screen or terrain edges.
-			if (WWMath::Fabs(pos->x - bcX) > (beX + psize) ||
-				WWMath::Fabs(pos->y - bcY) > (beY + psize) ||
-				WWMath::Fabs(pos->z - bcZ) > (beZ + psize))
+			if (WWMath::Fabsf_Legacy(pos->x - bcX) > (beX + psize) ||
+				WWMath::Fabsf_Legacy(pos->y - bcY) > (beY + psize) ||
+				WWMath::Fabsf_Legacy(pos->z - bcZ) > (beZ + psize))
 			{
 				vp->setIsCulled(true);
 				continue;
