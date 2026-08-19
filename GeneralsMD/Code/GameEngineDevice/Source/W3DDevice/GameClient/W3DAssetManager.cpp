@@ -718,7 +718,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	GetPrecisionTimer(&startTime64);
 	#endif
 
-	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
+	Bool reallyscale = (WWMath::Fabsf_Legacy(scale - ident_scale) > scale_epsilon);
 	Bool reallycolor = (color & 0xFFFFFF) != 0;	//black is not a valid color and assumes no custom coloring.
 	Bool reallytexture = (oldTexture != nullptr && newTexture != nullptr);
 
@@ -1330,9 +1330,9 @@ static inline void Munge_Texture_Name(char *newname, const char *oldname, const 
 RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scale, const Vector3 &hsv_shift)
 {
 	Bool isGranny = false;
-	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
-	Bool reallyhsv_shift = (WWMath::Fabs(hsv_shift.X - ident_HSV.X) > H_epsilon ||
-		WWMath::Fabs(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabs(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
+	Bool reallyscale = (WWMath::Fabsf(scale - ident_scale) > scale_epsilon);
+	Bool reallyhsv_shift = (WWMath::Fabsf(hsv_shift.X - ident_HSV.X) > H_epsilon ||
+		WWMath::Fabsf(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabsf(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
 
 	// base case, no scale or hue shifting
 	if (!reallyscale && !reallyhsv_shift) return WW3DAssetManager::Create_Render_Obj(name);
@@ -1429,8 +1429,8 @@ TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename
 {
 	WWPROFILE( "W3DAssetManager::Get_Texture with HSV shift" );
 
-	Bool is_hsv_shift = (WWMath::Fabs(hsv_shift.X - ident_HSV.X) > H_epsilon ||
-		WWMath::Fabs(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabs(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
+	Bool is_hsv_shift = (WWMath::Fabsf(hsv_shift.X - ident_HSV.X) > H_epsilon ||
+		WWMath::Fabsf(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabsf(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
 
 	if (!is_hsv_shift) {
 

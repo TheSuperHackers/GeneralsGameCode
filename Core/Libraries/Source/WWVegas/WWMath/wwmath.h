@@ -40,12 +40,18 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
+#include "Lib/BaseDefines.h"
+
+#if USE_DETERMINISTIC_MATH
+#include "gmath.h"
+#endif
 
 /*
 ** Some global constants.
 */
 #define WWMATH_EPSILON		0.0001f
 #define WWMATH_EPSILON2		WWMATH_EPSILON * WWMATH_EPSILON
+#define WWMATH_HALF_PI		1.570796327f
 #define WWMATH_PI			3.141592654f
 #define WWMATH_TWO_PI		6.283185308f
 #define WWMATH_FLOAT_MAX	(FLT_MAX)
@@ -86,6 +92,7 @@ extern float _FastInvSinTable[SIN_TABLE_SIZE];
 ** Include the various other header files in the WWMATH library
 ** in order to get matrices, quaternions, etc.
 */
+// TheSuperHackers @todo The Legacy functions can be removed when retail compatibility is abandoned.
 class WWMath
 {
 public:
@@ -95,29 +102,75 @@ public:
 static void				Init();
 static void				Shutdown();
 
-static WWINLINE float  Sqrt(float val);
-static WWINLINE float  Inv_Sqrt(float a);
+// The float overloads of Sqrt, Acos, Asin, Atan, Atan2, Cos, Sin, Tan and Fabs keep a float argument
+// from being promoted to the double overload. With deterministic math they call the single-precision
+// GameMath functions (gm_*f), which are guaranteed to be cross-platform bit-identical, whereas the
+// double-precision ones (gm_*) can diverge by 1 ULP due to FPU precision differences (x87 vs NEON).
+static WWINLINE double Pow(double x, double y);
+static WWINLINE float  Powf(float x, float y);
+static WWINLINE float  Sqrt(float x);
+static WWINLINE double Sqrt(double x);
+static WWINLINE float  Sqrtf(float x);
+static WWINLINE float  Inv_Sqrt_Legacy(float a);
+static WWINLINE double Inv_Sqrt(double x);
+static WWINLINE float  Inv_Sqrtf(float x);
 
 static WWINLINE float  Fast_Acos(float val);
 static WWINLINE float  Fast_Asin(float val);
-static WWINLINE float  Acos(float val);
-static WWINLINE float  Asin(float val);
+static WWINLINE float  Acos(float x);
+static WWINLINE double Acos(double x);
+static WWINLINE float  Acosf(float x);
+static WWINLINE float  Asin(float x);
+static WWINLINE double Asin(double x);
+static WWINLINE float  Asinf(float x);
 static WWINLINE float  Atan(float x);
-static WWINLINE float  Atan2(float y, float x);
+static WWINLINE double Atan(double x);
+static WWINLINE float  Atanf(float x);
+static WWINLINE float  Atan2(float x, float y);
+static WWINLINE double Atan2(double x, double y);
+static WWINLINE float  Atan2f(float x, float y);
 
 static WWINLINE float  Fast_Cos(float val);
 static WWINLINE float  Fast_Inv_Cos(float val);
 static WWINLINE float  Fast_Sin(float val);
 static WWINLINE float  Fast_Inv_Sin(float val);
 static WWINLINE float  Cos(float val);
+static WWINLINE double Cos(double val);
+static WWINLINE float  Cosf(float val);
+static WWINLINE float  Cosf_Legacy(float val);
 static WWINLINE float  Sin(float val);
+static WWINLINE double Sin(double val);
+static WWINLINE float  Sinf(float val);
+static WWINLINE float  Sinf_Legacy(float val);
+static WWINLINE float  Tan(float x);
+static WWINLINE double Tan(double x);
+static WWINLINE float  Tanf(float x);
 
-static WWINLINE float  Fabs(float val);
+static WWINLINE double Cosh(double x);
+static WWINLINE float  Coshf(float x);
+static WWINLINE double Sinh(double x);
+static WWINLINE float  Sinhf(float x);
+static WWINLINE double Tanh(double x);
+static WWINLINE float  Tanhf(float x);
 
-static WWINLINE float  Ceil(float val);
-static WWINLINE float  Floor(float val);
-static WWINLINE float  Round(float val) { return floorf(val + 0.5f); }
-static WWINLINE float  Sign(float val);
+static WWINLINE float  Fabs(float x);
+static WWINLINE double Fabs(double x);
+static WWINLINE float  Fabsf(float x);
+static WWINLINE float  Fabsf_Legacy(float val);
+
+static WWINLINE double Ceil(double x);
+static WWINLINE float  Ceilf(float x);
+static WWINLINE double Floor(double x);
+static WWINLINE float  Floorf(float x);
+static WWINLINE double Round(double x) { return Floor(x + 0.5); }
+static WWINLINE float  Roundf(float x) { return Floorf(x + 0.5f); }
+
+static WWINLINE double Exp(double x);
+static WWINLINE float  Expf(float x);
+static WWINLINE double Log10(double x);
+static WWINLINE float  Log10f(float x);
+static WWINLINE double Log(double x);
+static WWINLINE float  Logf(float x);
 
 static WWINLINE bool	Fast_Is_Float_Positive(const float & val);
 static WWINLINE bool	Is_Power_Of_2(const unsigned int val);
@@ -146,8 +199,8 @@ static WWINLINE double	Inverse_Lerp(double a, double b, float v);
 static WWINLINE bool	Is_Valid_Float(float x);
 static WWINLINE bool	Is_Valid_Double(double x);
 
-static WWINLINE int		Float_To_Int_Chop(const float& f);
-static WWINLINE int		Float_To_Int_Floor(const float& f);
+static WWINLINE int		Float_To_Int_Chop(float f);
+static WWINLINE int		Float_To_Int_Floor(float f);
 static WWINLINE long	Float_To_Long(float f);
 static WWINLINE long	Float_To_Long(double f);
 static WWINLINE int		Float_As_Int(const float f) { return *((int*)&f); }
@@ -156,27 +209,62 @@ static WWINLINE float	Byte_To_Unit_Float(unsigned char byte) { return ((float)by
 
 static WWINLINE float	Normalize_Angle(float angle); // Normalizes the angle to the range -PI..PI
 
+static WWINLINE float	Div_Safe(float dividend, float divisor, float fallback = 0.0f);
+static WWINLINE double	Div_Safe(double dividend, double divisor, double fallback = 0.0);
+
 };
 
-WWINLINE float WWMath::Sqrt(float val)
+WWINLINE double WWMath::Pow(double x, double y)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
-	float retval;
-	__asm {
-		fld [val]
-		fsqrt
-		fstp [retval]
-	}
-	return retval;
-
+#if USE_DETERMINISTIC_MATH
+	return (double)gm_powf((float)x, (float)y); // gm_pow diverges on x87, gm_powf is bit-identical
 #else
-	return (float)sqrt(val);
+	return pow(x, y);
 #endif
 }
 
-WWINLINE float WWMath::Inv_Sqrt(float a)
+WWINLINE float WWMath::Powf(float x, float y)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if USE_DETERMINISTIC_MATH
+	return gm_powf(x, y);
+#else
+	return powf(x, y);
+#endif
+}
+
+WWINLINE float WWMath::Sqrt(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sqrtf(x);
+#else
+	return sqrtf(x);
+#endif
+}
+
+WWINLINE double WWMath::Sqrt(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sqrt(x);
+#else
+	return sqrt(x);
+#endif
+}
+
+WWINLINE float WWMath::Sqrtf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sqrtf(x);
+#else
+	return sqrtf(x);
+#endif
+}
+
+WWINLINE float WWMath::Inv_Sqrt_Legacy(float a)
+{
+#if USE_DETERMINISTIC_MATH
+	return 1.0f / gm_sqrtf(a);
+
+#elif defined(_MSC_VER) && defined(_M_IX86)
 	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
 	float retval;
 
@@ -227,14 +315,24 @@ WWINLINE float WWMath::Inv_Sqrt(float a)
 	return retval;
 
 #else
-	return 1.0f / (float)sqrt(a);
+	return 1.0f / (float)sqrt((double)a);
 #endif
+}
+
+WWINLINE double WWMath::Inv_Sqrt(double x)
+{
+	return 1.0 / Sqrt(x);
+}
+
+WWINLINE float WWMath::Inv_Sqrtf(float x)
+{
+	return 1.0f / Sqrtf(x);
 }
 
 WWINLINE float WWMath::Fast_Acos(float val)
 {
 	// Near -1 and +1, the table becomes too inaccurate
-	if (Fabs(val) > 0.975f) {
+	if (Fabsf_Legacy(val) > 0.975f) {
 		return Acos(val);
 	}
 
@@ -258,7 +356,7 @@ WWINLINE float WWMath::Fast_Acos(float val)
 WWINLINE float WWMath::Fast_Asin(float val)
 {
 	// Near -1 and +1, the table becomes too inaccurate
-	if (Fabs(val) > 0.975f) {
+	if (Fabsf_Legacy(val) > 0.975f) {
 		return Asin(val);
 	}
 
@@ -279,24 +377,112 @@ WWINLINE float WWMath::Fast_Asin(float val)
 	return (1.0f - frac) * _FastAsinTable[idx0] + frac * _FastAsinTable[idx1];
 }
 
-WWINLINE float WWMath::Acos(float val)
+WWINLINE float WWMath::Acos(float x)
 {
-	return (float)acos(val);
+#if USE_DETERMINISTIC_MATH
+	return gm_acosf(x);
+#else
+	return (float)acos((double)x);
+#endif
 }
 
-WWINLINE float WWMath::Asin(float val)
+WWINLINE double WWMath::Acos(double x)
 {
-	return (float)asin(val);
+#if USE_DETERMINISTIC_MATH
+	return gm_acos(x);
+#else
+	return acos(x);
+#endif
+}
+
+WWINLINE float WWMath::Acosf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_acosf(x);
+#else
+	return acosf(x);
+#endif
+}
+
+WWINLINE float WWMath::Asin(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_asinf(x);
+#else
+	return (float)asin((double)x);
+#endif
+}
+
+WWINLINE double WWMath::Asin(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_asin(x);
+#else
+	return asin(x);
+#endif
+}
+
+WWINLINE float WWMath::Asinf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_asinf(x);
+#else
+	return asinf(x);
+#endif
 }
 
 WWINLINE float WWMath::Atan(float x)
 {
-	return static_cast<float>(atan(x));
+#if USE_DETERMINISTIC_MATH
+	return gm_atanf(x);
+#else
+	return (float)atan((double)x);
+#endif
 }
 
-WWINLINE float WWMath::Atan2(float y, float x)
+WWINLINE double WWMath::Atan(double x)
 {
-	return static_cast<float>(atan2(y,x));
+#if USE_DETERMINISTIC_MATH
+	return (double) gm_atanf((float)x); // gm_atan diverges on x87, gm_atanf is bit-identical
+#else
+	return atan(x);
+#endif
+}
+
+WWINLINE float WWMath::Atanf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_atanf(x);
+#else
+	return atanf(x);
+#endif
+}
+
+WWINLINE float WWMath::Atan2(float x, float y)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_atan2f(x, y);
+#else
+	return (float)atan2((double)x, (double)y);
+#endif
+}
+
+WWINLINE double WWMath::Atan2(double x, double y)
+{
+#if USE_DETERMINISTIC_MATH
+	return (double) gm_atan2f((float)x, (float)y); // gm_atan2 diverges on x87, gm_atan2f is bit-identical
+#else
+	return atan2(x, y);
+#endif
+}
+
+WWINLINE float WWMath::Atan2f(float x, float y)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_atan2f(x, y);
+#else
+	return atan2f(x, y);
+#endif
 }
 
 WWINLINE float WWMath::Fast_Cos(float val)
@@ -378,7 +564,37 @@ WWINLINE float WWMath::Fast_Inv_Sin(float val)
 
 WWINLINE float WWMath::Cos(float val)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if USE_DETERMINISTIC_MATH
+	return gm_cosf(val);
+#else
+	return (float)cos((double)val);
+#endif
+}
+
+WWINLINE double WWMath::Cos(double val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_cos(val);
+#else
+	return cos(val);
+#endif
+}
+
+WWINLINE float WWMath::Cosf(float val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_cosf(val);
+#else
+	return cosf(val);
+#endif
+}
+
+WWINLINE float WWMath::Cosf_Legacy(float val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_cosf(val);
+
+#elif defined(_MSC_VER) && defined(_M_IX86)
 	float retval;
 	__asm {
 		fld [val]
@@ -394,7 +610,37 @@ WWINLINE float WWMath::Cos(float val)
 
 WWINLINE float WWMath::Sin(float val)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if USE_DETERMINISTIC_MATH
+	return gm_sinf(val);
+#else
+	return (float)sin((double)val);
+#endif
+}
+
+WWINLINE double WWMath::Sin(double val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sin(val);
+#else
+	return sin(val);
+#endif
+}
+
+WWINLINE float WWMath::Sinf(float val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sinf(val);
+#else
+	return sinf(val);
+#endif
+}
+
+WWINLINE float WWMath::Sinf_Legacy(float val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sinf(val);
+
+#elif defined(_MSC_VER) && defined(_M_IX86)
 	float retval;
 	__asm {
 		fld [val]
@@ -408,32 +654,217 @@ WWINLINE float WWMath::Sin(float val)
 #endif
 }
 
-WWINLINE float WWMath::Fabs(float val)
+WWINLINE float WWMath::Tan(float x)
 {
+#if USE_DETERMINISTIC_MATH
+	return gm_tanf(x);
+#else
+	return (float)tan((double)x);
+#endif
+}
+
+WWINLINE double WWMath::Tan(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_tan(x);
+#else
+	return tan(x);
+#endif
+}
+
+WWINLINE float WWMath::Tanf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_tanf(x);
+#else
+	return tanf(x);
+#endif
+}
+
+WWINLINE double WWMath::Cosh(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_cosh(x);
+#else
+	return cosh(x);
+#endif
+}
+
+WWINLINE float WWMath::Coshf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_coshf(x);
+#else
+	return coshf(x);
+#endif
+}
+
+WWINLINE double WWMath::Sinh(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sinh(x);
+#else
+	return sinh(x);
+#endif
+}
+
+WWINLINE float WWMath::Sinhf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_sinhf(x);
+#else
+	return sinhf(x);
+#endif
+}
+
+WWINLINE double WWMath::Tanh(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_tanh(x);
+#else
+	return tanh(x);
+#endif
+}
+
+WWINLINE float WWMath::Tanhf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_tanhf(x);
+#else
+	return tanhf(x);
+#endif
+}
+
+WWINLINE float WWMath::Fabs(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_fabsf(x);
+#else
+	return (float)fabs((double)x);
+#endif
+}
+
+WWINLINE double WWMath::Fabs(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_fabs(x);
+#else
+	return fabs(x);
+#endif
+}
+
+WWINLINE float WWMath::Fabsf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_fabsf(x);
+#else
+	return fabsf(x);
+#endif
+}
+
+WWINLINE float WWMath::Fabsf_Legacy(float val)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_fabsf(val);
+
+#elif defined(_MSC_VER) && defined(_M_IX86)
 	int value=*(int*)&val;
 	value&=0x7fffffff;
 	return *(float*)&value;
+
+#else
+	return fabsf(val);
+#endif
 }
 
-WWINLINE float WWMath::Ceil(float val)
+WWINLINE double WWMath::Ceil(double x)
 {
-	return ceilf(val);
+#if USE_DETERMINISTIC_MATH
+	return gm_ceil(x);
+#else
+	return ceil(x);
+#endif
 }
 
-WWINLINE float WWMath::Floor(float val)
+WWINLINE float WWMath::Ceilf(float x)
 {
-	return floorf(val);
+#if USE_DETERMINISTIC_MATH
+	return gm_ceilf(x);
+#else
+	return ceilf(x);
+#endif
 }
 
-WWINLINE float WWMath::Sign(float val)
+WWINLINE double WWMath::Floor(double x)
 {
-	if (val > 0.0f) {
-		return +1.0f;
-	}
-	if (val < 0.0f) {
-		return -1.0f;
-	}
-	return 0.0f;
+#if USE_DETERMINISTIC_MATH
+	return gm_floor(x);
+#else
+	return floor(x);
+#endif
+}
+
+WWINLINE float WWMath::Floorf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_floorf(x);
+#else
+	return floorf(x);
+#endif
+}
+
+WWINLINE double WWMath::Exp(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_exp(x);
+#else
+	return exp(x);
+#endif
+}
+
+WWINLINE float WWMath::Expf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_expf(x);
+#else
+	return expf(x);
+#endif
+}
+
+WWINLINE double WWMath::Log10(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_log10(x);
+#else
+	return log10(x);
+#endif
+}
+
+WWINLINE float WWMath::Log10f(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_log10f(x);
+#else
+	return log10f(x);
+#endif
+}
+
+WWINLINE double WWMath::Log(double x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_log(x);
+#else
+	return log(x);
+#endif
+}
+
+WWINLINE float WWMath::Logf(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return gm_logf(x);
+#else
+	return logf(x);
+#endif
 }
 
 WWINLINE bool WWMath::Fast_Is_Float_Positive(const float & val)
@@ -559,7 +990,10 @@ WWINLINE bool WWMath::Is_Valid_Double(double x)
 
 WWINLINE long WWMath::Float_To_Long(float f)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if USE_DETERMINISTIC_MATH
+	return gm_lrintf(f);
+
+#elif defined(_MSC_VER) && defined(_M_IX86)
 	long i;
 	__asm {
 		fld [f]
@@ -574,7 +1008,10 @@ WWINLINE long WWMath::Float_To_Long(float f)
 
 WWINLINE long WWMath::Float_To_Long(double f)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if USE_DETERMINISTIC_MATH
+	return gm_lrint(f);
+
+#elif defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
 	__asm {
 		fld	qword ptr [f]
@@ -587,7 +1024,7 @@ WWINLINE long WWMath::Float_To_Long(double f)
 #endif
 }
 
-WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
+WWINLINE int WWMath::Float_To_Int_Chop(float f)
 {
     int a	= *reinterpret_cast<const int*>(&f);				// take bit pattern of float into a register
     int sign	= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
@@ -597,7 +1034,7 @@ WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
     return ((r ^ (sign)) - sign ) &~ (exponent>>31);			// add original sign. If exponent was negative, make return value 0.
 }
 
-WWINLINE int WWMath::Float_To_Int_Floor(const float& f)
+WWINLINE int WWMath::Float_To_Int_Floor(float f)
 {
 	int a			= *reinterpret_cast<const int*>(&f);			// take bit pattern of float into a register
 	int sign		= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
@@ -615,5 +1052,23 @@ WWINLINE int WWMath::Float_To_Int_Floor(const float& f)
 
 WWINLINE float WWMath::Normalize_Angle(float angle)
 {
-	return angle - (WWMATH_TWO_PI * Floor((angle + WWMATH_PI) / WWMATH_TWO_PI));
+	return angle - (WWMATH_TWO_PI * Floorf((angle + WWMATH_PI) / WWMATH_TWO_PI));
+}
+
+WWINLINE float WWMath::Div_Safe(float dividend, float divisor, float fallback)
+{
+#if USE_DETERMINISTIC_MATH
+	return (divisor == 0.0f) ? fallback : dividend / divisor;
+#else
+	return dividend / divisor;
+#endif
+}
+
+WWINLINE double WWMath::Div_Safe(double dividend, double divisor, double fallback)
+{
+#if USE_DETERMINISTIC_MATH
+	return (divisor == 0.0) ? fallback : dividend / divisor;
+#else
+	return dividend / divisor;
+#endif
 }
