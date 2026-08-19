@@ -18,8 +18,12 @@
 
 #pragma once
 
+// Flags for diagnostic math benchmarks
+#define RUN_MATH_BENCHMARK_REPLAY400_FLAG (0)
+
 class SimulationMathCrc
 {
 public:
 	static UnsignedInt calculate();
+	static void runBenchmark(int iterations = 10000);
 };
