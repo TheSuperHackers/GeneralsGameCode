@@ -98,11 +98,8 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 									: BehaviorModule( thing, moduleData )
 {
 
-#if RETAIL_COMPATIBLE_CRC
+
 	m_availableOnFrame = 0;
-#else
-	m_availableOnFrame = 0xFFFFFFFF;
-#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
