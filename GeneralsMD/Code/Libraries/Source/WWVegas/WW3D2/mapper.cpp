@@ -168,8 +168,8 @@ void LinearOffsetTextureMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_mat
 	// If ClampFix is TRUE we clamp the offsets between -Scale and +Scale with no wraparound.
 	// This works well for clamped textures.
 	if (!ClampFix) {
-		offset_u = offset_u - WWMath::Floor(offset_u);
-		offset_v = offset_v - WWMath::Floor(offset_v);
+		offset_u = offset_u - WWMath::Floorf(offset_u);
+		offset_v = offset_v - WWMath::Floorf(offset_v);
 	} else {
 		offset_u = WWMath::Clamp(offset_u, -Scale.X, Scale.X);
 		offset_v = WWMath::Clamp(offset_v, -Scale.Y, Scale.Y);
@@ -372,8 +372,8 @@ void RotateTextureMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 
 	// Set up the rotation matrix
 	float c,s;
-	c=WWMath::Cos(CurrentAngle);
-	s=WWMath::Sin(CurrentAngle);
+	c=WWMath::Cosf_Legacy(CurrentAngle);
+	s=WWMath::Sinf_Legacy(CurrentAngle);
 	tex_matrix.Make_Identity();
 
 	// subtract center
@@ -514,8 +514,8 @@ void StepLinearOffsetTextureMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex
 	// If ClampFix is TRUE we clamp the offsets between -Scale and +Scale with no wraparound.
 	// This works well for clamped textures.
 	if (!ClampFix) {
-		CurrentStep.U -= WWMath::Floor(CurrentStep.U);
-	  	CurrentStep.V -= WWMath::Floor(CurrentStep.V);
+		CurrentStep.U -= WWMath::Floorf(CurrentStep.U);
+	  	CurrentStep.V -= WWMath::Floorf(CurrentStep.V);
 	} else {
 		CurrentStep.U = WWMath::Clamp(CurrentStep.U, -Scale.X, Scale.X);
 		CurrentStep.V = WWMath::Clamp(CurrentStep.V, -Scale.Y, Scale.Y);
@@ -732,7 +732,7 @@ void EdgeMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 	LastUsedSyncTime=now;
 
 	VOffset+=delta*VSpeed;
-	VOffset-=WWMath::Floor(VOffset);
+	VOffset-=WWMath::Floorf(VOffset);
 
 	// takes the Z component and
 	// uses it to index the texture
@@ -918,8 +918,8 @@ void ScreenMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 	// If ClampFix is TRUE we clamp the offsets between -Scale and +Scale with no wraparound.
 	// This works well for clamped textures.
 	if (!ClampFix) {
-		offset_u = offset_u - WWMath::Floor(offset_u);
-		offset_v = offset_v - WWMath::Floor(offset_v);
+		offset_u = offset_u - WWMath::Floorf(offset_u);
+		offset_v = offset_v - WWMath::Floorf(offset_v);
 	} else {
 		offset_u = WWMath::Clamp(offset_u, -Scale.X, Scale.X);
 		offset_v = WWMath::Clamp(offset_v, -Scale.Y, Scale.Y);
