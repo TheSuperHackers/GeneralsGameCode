@@ -33,6 +33,7 @@
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
+#include "Common/Diagnostic/SimulationMathCrc.h"
 #include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
@@ -848,7 +849,7 @@ static void populateRandomStartPosition( GameInfo *game )
 				{
 					Coord3D p1 = c1->second;
 					Coord3D p2 = c2->second;
-					startSpotDistance[i][j] = sqrt( sqr(p1.x-p2.x) + sqr(p1.y-p2.y) );
+					startSpotDistance[i][j] = WWMath::Sqrt( sqr(p1.x-p2.x) + sqr(p1.y-p2.y) );
 				}
 			}
 			else
@@ -3752,6 +3753,16 @@ void GameLogic::update()
 	{
 		TheTerrainLogic->UPDATE();
 	}
+
+#if RUN_MATH_BENCHMARK_REPLAY400_FLAG
+	static bool s_benchmarkRun = false;
+
+	if (!s_benchmarkRun && m_frame == 400)
+	{
+		SimulationMathCrc::runBenchmark(10000);
+		s_benchmarkRun = true;
+	}
+#endif
 
 	// force CRC calculation, so we can keep a cache of the last N CRCs.  We do this right where the recorder
 	// would be getting the CRC anyway, so replays can get the CRCs from the exact instant in time as the original.
