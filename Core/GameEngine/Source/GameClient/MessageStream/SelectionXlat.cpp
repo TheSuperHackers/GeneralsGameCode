@@ -659,7 +659,7 @@ GameMessageDisposition SelectionTranslator::onMouseLeftDoubleClick(MAYBE_UNUSED 
 		selectMore->appendBooleanArgument(FALSE);
 		for (DrawableListIt it = listOfSelectedDrawables.begin(); it != listOfSelectedDrawables.end(); ++it) {
 			Drawable *draw = *it;
-			if (draw && draw->isSelectable()) {
+			if (draw && draw->isMassSelectable()) {
 				TheInGameUI->selectDrawable(draw);
 				selectMore->appendObjectIDArgument(draw->getObject()->getID());
 			}
