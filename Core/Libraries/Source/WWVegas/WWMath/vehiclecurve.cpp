@@ -95,7 +95,7 @@ Find_Tangent
 	//
 	float delta_x = point.X - center.X;
 	float delta_y = point.Y - center.Y;
-	float dist = ::sqrt (delta_x * delta_x + delta_y * delta_y);
+	float dist = WWMath::Sqrt(delta_x * delta_x + delta_y * delta_y);
 	if (dist >= radius) {
 
 		//
