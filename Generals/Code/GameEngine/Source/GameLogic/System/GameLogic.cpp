@@ -808,7 +808,7 @@ static void populateRandomStartPosition( GameInfo *game )
 				{
 					Coord3D p1 = c1->second;
 					Coord3D p2 = c2->second;
-					startSpotDistance[i][j] = sqrt( sqr(p1.x-p2.x) + sqr(p1.y-p2.y) );
+					startSpotDistance[i][j] = WWMath::Sqrt( sqr(p1.x-p2.x) + sqr(p1.y-p2.y) );
 				}
 			}
 			else
