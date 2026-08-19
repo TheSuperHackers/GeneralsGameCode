@@ -436,7 +436,7 @@ WWINLINE float AABoxClass::Project_To_Axis(const Vector3 & axis) const
 	float z = Extent[2] * axis[2];
 
 	// projection is the sum of the absolute values of the projections of the three extents
-	return (WWMath::Fabs(x) + WWMath::Fabs(y) + WWMath::Fabs(z));
+	return (WWMath::Fabsf_Legacy(x) + WWMath::Fabsf_Legacy(y) + WWMath::Fabsf_Legacy(z));
 }
 
 /***********************************************************************************************
