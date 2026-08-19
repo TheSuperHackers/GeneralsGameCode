@@ -70,9 +70,9 @@ bool CollisionMath::Intersection_Test(const AABoxClass & box,const AABoxClass & 
 {
 	Vector3 dc = box2.Center - box.Center;
 
-	if (box.Extent.X + box2.Extent.X < WWMath::Fabs(dc.X)) return false;
-	if (box.Extent.Y + box2.Extent.Y < WWMath::Fabs(dc.Y)) return false;
-	if (box.Extent.Z + box2.Extent.Z < WWMath::Fabs(dc.Z)) return false;
+	if (box.Extent.X + box2.Extent.X < WWMath::Fabsf_Legacy(dc.X)) return false;
+	if (box.Extent.Y + box2.Extent.Y < WWMath::Fabsf_Legacy(dc.Y)) return false;
+	if (box.Extent.Z + box2.Extent.Z < WWMath::Fabsf_Legacy(dc.Z)) return false;
 	return true;
 }
 
@@ -101,9 +101,9 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 	//
 	//	Check to see if the sphere is completely outside the box
 	//
-	if (WWMath::Fabs(dist.X) > extent.X) return OUTSIDE;
-	if (WWMath::Fabs(dist.Y) > extent.Y) return OUTSIDE;
-	if (WWMath::Fabs(dist.Z) > extent.Z) return OUTSIDE;
+	if (WWMath::Fabsf_Legacy(dist.X) > extent.X) return OUTSIDE;
+	if (WWMath::Fabsf_Legacy(dist.Y) > extent.Y) return OUTSIDE;
+	if (WWMath::Fabsf_Legacy(dist.Z) > extent.Z) return OUTSIDE;
 
 	return INSIDE;
 }
@@ -224,21 +224,21 @@ CollisionMath::OverlapType CollisionMath::Overlap_Test(const AABoxClass & box,co
 		// that 'dp' will always project to zero for this axis.
 		Vector3 axis;
 		axis.Set(0,-line.Get_Dir().Z,line.Get_Dir().Y);	// == (1,0,0) cross (x,y,z)
-		box_proj = WWMath::Fabs(axis.Y*box.Extent.Y) + WWMath::Fabs(axis.Z*box.Extent.Z);
+		box_proj = WWMath::Fabsf_Legacy(axis.Y*box.Extent.Y) + WWMath::Fabsf_Legacy(axis.Z*box.Extent.Z);
 		p0_proj = Vector3::Dot_Product(axis,dp0);
-		if (WWMath::Fabs(p0_proj) > box_proj) return OUTSIDE;
+		if (WWMath::Fabsf_Legacy(p0_proj) > box_proj) return OUTSIDE;
 
 		// Project box and line onto (y cross line)
 		axis.Set(line.Get_Dir().Z,0,-line.Get_Dir().X);	// == (0,1,0) cross (x,y,z)
-		box_proj = WWMath::Fabs(axis.X*box.Extent.X) + WWMath::Fabs(axis.Z*box.Extent.Z);
+		box_proj = WWMath::Fabsf_Legacy(axis.X*box.Extent.X) + WWMath::Fabsf_Legacy(axis.Z*box.Extent.Z);
 		p0_proj = Vector3::Dot_Product(axis,dp0);
-		if (WWMath::Fabs(p0_proj) > box_proj) return OUTSIDE;
+		if (WWMath::Fabsf_Legacy(p0_proj) > box_proj) return OUTSIDE;
 
 		// Project box and line onto (z cross line)
 		axis.Set(-line.Get_Dir().Y,line.Get_Dir().X,0);	// == (0,0,1) cross (x,y,z)
-		box_proj = WWMath::Fabs(axis.X*box.Extent.X) + WWMath::Fabs(axis.Y*box.Extent.Y);
+		box_proj = WWMath::Fabsf_Legacy(axis.X*box.Extent.X) + WWMath::Fabsf_Legacy(axis.Y*box.Extent.Y);
 		p0_proj = Vector3::Dot_Product(axis,dp0);
-		if (WWMath::Fabs(p0_proj) > box_proj) return OUTSIDE;
+		if (WWMath::Fabsf_Legacy(p0_proj) > box_proj) return OUTSIDE;
 
 	}
 	return OVERLAPPED;
