@@ -56,7 +56,7 @@ public:
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
 	AnimationCompressionSettingsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
-	~AnimationCompressionSettingsDialogClass (void);
+	~AnimationCompressionSettingsDialogClass ();
 
 
 	//////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
 	//////////////////////////////////////////////////////////////////
 
 	void			Set_Options (W3dExportOptionsStruct *options)	{ Options = options; }
-	int			Do_Modal (void);
+	int			Do_Modal ();
 
 private:
 
@@ -77,8 +77,8 @@ private:
 	//	Private methods
 	//////////////////////////////////////////////////////////////////
 	BOOL			Message_Proc (UINT message, WPARAM wparam, LPARAM lparam);
-	void			Initialize_Controls (void);
-	void			Save_Settings (void);
+	void			Initialize_Controls ();
+	void			Save_Settings ();
 
 	//////////////////////////////////////////////////////////////////
 	//	Private member data

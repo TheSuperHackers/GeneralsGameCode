@@ -26,7 +26,7 @@
 #define usleep(x) Sleep((x)/100000)
 #endif
 
-MatcherClass::MatcherClass(void)
+MatcherClass::MatcherClass()
 {
 	m_lastRotation = 0;
 	m_baseNick = "matcher";
@@ -52,7 +52,7 @@ void logIt(const char *Txt)
 	fclose(fp);
 }
 
-void MatcherClass::readLoop(void)
+void MatcherClass::readLoop()
 {
 	int delay = -1;
 	Global.config.getInt("ROTATEDELAY", delay);
@@ -310,7 +310,7 @@ static void AuthenticateCDKeyCallback
 	}
 }
 
-void MatcherClass::connectAndLoop(void)
+void MatcherClass::connectAndLoop()
 {
 	// Game-specific initializations, if necessary
 	init();

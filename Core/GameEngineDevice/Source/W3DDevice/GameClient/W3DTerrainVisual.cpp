@@ -42,6 +42,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/ClientRandomValue.h"
+#include "GameClient/View.h"
 
 #include "GameLogic/Object.h"
 #include "GameLogic/GameLogic.h"
@@ -494,6 +495,10 @@ void W3DTerrainVisual::updateSeismicSimulations()
 
 	  }
 
+	if (TheTacticalView) {
+		TheTacticalView->onHeightMapChanged();
+	}
+
   }
 }
 
@@ -656,7 +661,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 			Vector3 loc(pos->x, pos->y, pos->z);
 			Real radius = d->getReal(TheKey_objectRadius);
 			Scorches type = (Scorches)d->getInt(TheKey_scorchType);
-			m_terrainRenderObject->addScorch(loc, radius, type);
+			m_terrainRenderObject->addStaticScorch(loc, radius, type);
 		}
 		pMapObj = pMapObj->getNext();
 	}

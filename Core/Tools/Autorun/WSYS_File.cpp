@@ -170,7 +170,7 @@ Bool File::open( const Char *filename, Int access )
 	*/
 //=================================================================
 
-void File::close( void )
+void File::close()
 {
 	if( m_open )
 	{
@@ -192,7 +192,7 @@ void File::close( void )
 	*/
 //=================================================================
 
-Int File::size( void )
+Int File::size()
 {
 	Int pos = seek( 0, CURRENT );
 	Int size = seek( 0, END );
@@ -206,7 +206,7 @@ Int File::size( void )
 // File::position
 //============================================================================
 
-Int File::position( void )
+Int File::position()
 {
 	return seek(0, CURRENT);
 }

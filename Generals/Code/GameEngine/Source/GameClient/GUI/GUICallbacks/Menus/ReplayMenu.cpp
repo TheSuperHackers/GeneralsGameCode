@@ -548,6 +548,27 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 
 }
 
+static void handleReplayLoadFailure()
+{
+	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayLoadFailedTitle", L"REPLAY CANNOT BE LOADED");
+	UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayLoadFailed", L"The replay file could not be opened or is invalid.");
+
+	MessageBoxOk(title, body, nullptr);
+
+	GadgetListBoxReset(listboxReplayFiles);
+	PopulateReplayFileListbox(listboxReplayFiles);
+}
+
+static void showReplayMapNotFound()
+{
+	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFoundTitle", L"MAP NOT FOUND");
+	UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFound", L"This replay cannot be loaded because the map was not found on this device.");
+
+	MessageBoxOk(title, body, nullptr);
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void reallyLoadReplay()
 {
 	UnicodeString filename;
@@ -564,11 +585,35 @@ void reallyLoadReplay()
 	AsciiString asciiFilename;
 	asciiFilename.translate(filename);
 
-	TheRecorder->playbackFile(asciiFilename);
+	// TheSuperHackers @bugfix bobtista 25/07/2026 Re-validate the replay before starting playback.
+	// The user can delete the file while the version mismatch prompt is open, in which case the
+	// listbox entry is stale. Prompts the same message box as loadReplay and refreshes the list.
+	RecorderClass::ReplayHeader header;
+	ReplayGameInfo info;
+	const MapMetaData *mapData;
 
-	if(parentReplayMenu != nullptr)
+	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
 	{
-		parentReplayMenu->winHide(TRUE);
+		handleReplayLoadFailure();
+		return;
+	}
+
+	if(mapData == nullptr)
+	{
+		showReplayMapNotFound();
+		return;
+	}
+
+	if(TheRecorder->playbackFile(asciiFilename))
+	{
+		if(parentReplayMenu != nullptr)
+		{
+			parentReplayMenu->winHide(TRUE);
+		}
+	}
+	else
+	{
+		handleReplayLoadFailure();
 	}
 }
 
@@ -585,19 +630,13 @@ static void loadReplay(UnicodeString filename)
 	{
 		// TheSuperHackers @bugfix Prompts a message box when the replay was deleted by the user while the Replay Menu was opened.
 
-		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
-		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
-
-		MessageBoxOk(title, body, nullptr);
+		handleReplayLoadFailure();
 	}
 	else if(mapData == nullptr)
 	{
 		// TheSuperHackers @bugfix Prompts a message box when the map used by the replay was not found.
 
-		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFoundTitle", L"MAP NOT FOUND");
-		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFound", L"This replay cannot be loaded because the map was not found on this device.");
-
-		MessageBoxOk(title, body, nullptr);
+		showReplayMapNotFound();
 	}
 	else if(!TheRecorder->replayMatchesGameVersion(header))
 	{
@@ -607,11 +646,18 @@ static void loadReplay(UnicodeString filename)
 	}
 	else
 	{
-		TheRecorder->playbackFile(asciiFilename);
-
-		if(parentReplayMenu != nullptr)
+		// TheSuperHackers @bugfix bobtista 25/07/2026 Keep the Replay Menu open when the playback
+		// could not be started, for example when the replay was deleted after it was validated above.
+		if(TheRecorder->playbackFile(asciiFilename))
 		{
-			parentReplayMenu->winHide(TRUE);
+			if(parentReplayMenu != nullptr)
+			{
+				parentReplayMenu->winHide(TRUE);
+			}
+		}
+		else
+		{
+			handleReplayLoadFailure();
 		}
 	}
 }
@@ -826,4 +872,3 @@ void copyReplay()
 	}
 
 }
-

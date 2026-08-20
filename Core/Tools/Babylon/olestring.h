@@ -34,17 +34,17 @@ class OLEString
 
 	public:
 
-	OLEString ( void ) ;
+	OLEString () ;
 	~OLEString ();
 	void		Set ( OLECHAR *new_ole );
 	void		Set ( const char *new_sb );
-	OLECHAR*Get ( void ) { return ole; };
-	int			Len ( void ) { return len; };
-	char*		GetSB ( void ) { return sb; };
-	void		StripSpaces ( void );
-	void		FormatMetaString ( void );
-	void		Lock ( void )	{ locked = TRUE; };
-	void		Unlock ( void )	{ locked = FALSE; };
+	OLECHAR*Get () { return ole; };
+	int			Len () { return len; };
+	char*		GetSB () { return sb; };
+	void		StripSpaces ();
+	void		FormatMetaString ();
+	void		Lock ()	{ locked = TRUE; };
+	void		Unlock ()	{ locked = FALSE; };
 };
 
 template <typename text> void StripSpaces ( text *string );

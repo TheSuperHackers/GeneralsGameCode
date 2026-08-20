@@ -109,7 +109,7 @@ private:
 	RingGeneralPropPageClass	m_GeneralPage;
 	RingColorPropPageClass		m_ColorPage;
 	RingSizePropPageClass		m_ScalePage;
-	RingRenderObjClass *			m_RenderObj;
+	RefCountPtr<RingRenderObjClass>			m_RenderObj;
 	CString							m_LastSavedName;
 };
 

@@ -48,7 +48,7 @@ class TextureSettingsDialogClass : public CDialog
 // Construction
 public:
 	TextureSettingsDialogClass (IndirectTextureClass *ptexture, IndirectTextureClass *poriginal_texture, CWnd *pParent = nullptr);
-	virtual ~TextureSettingsDialogClass (void);
+	virtual ~TextureSettingsDialogClass ();
 
 // Dialog Data
 	//{{AFX_DATA(TextureSettingsDialogClass)
@@ -89,7 +89,7 @@ protected:
 		//
 		//	Private methods
 		//
-		bool					Were_Settings_Modified (void) const { return m_bWereSettingsModified; }
+		bool					Were_Settings_Modified () const { return m_bWereSettingsModified; }
 
 	protected:
 
@@ -99,9 +99,9 @@ protected:
 		//
 		void					Fill_Controls (TextureClass *ptexture);
 		void					Fill_Animation_Controls (TextureClass *ptexture);
-		void					Load_Textures_Into_Combo (void);
-		void					Load_Texture_Settings (void);
-		void					Paint_Thumbnail (void);
+		void					Load_Textures_Into_Combo ();
+		void					Load_Texture_Settings ();
+		void					Paint_Thumbnail ();
 
 	private:
 

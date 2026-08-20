@@ -367,7 +367,7 @@ error:
 
 }
 
-int OpenExcel ( void )
+int OpenExcel ()
 {
 	LPDISPATCH dispatch;
 
@@ -457,7 +457,7 @@ error_access:
 }
 
 
-void CloseExcel ( void )
+void CloseExcel ()
 {
 	CloseWorkBook ();
 
@@ -592,7 +592,7 @@ int SaveWorkBook ( const char *filename, int protect )
 
 }
 
-void CloseWorkBook ( void )
+void CloseWorkBook ()
 {
 	if ( workbook )
 	{
@@ -604,7 +604,7 @@ void CloseWorkBook ( void )
 
 }
 
-void SelectActiveSheet ( void )
+void SelectActiveSheet ()
 {
 	LPDISPATCH dispatch;
 

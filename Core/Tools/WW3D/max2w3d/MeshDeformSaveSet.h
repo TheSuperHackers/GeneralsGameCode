@@ -92,10 +92,10 @@ public:
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		MeshDeformSaveSetClass (void)
+		MeshDeformSaveSetClass ()
 			:	m_Flags (0),
 				m_CurrentKeyFrame (nullptr)	{ }
-		~MeshDeformSaveSetClass (void)	{ Reset (); }
+		~MeshDeformSaveSetClass ()	{ Reset (); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
@@ -103,23 +103,23 @@ public:
 
 		// Keyframe management
 		void					Begin_Keyframe (float state);
-		void					End_Keyframe (void);
+		void					End_Keyframe ();
 
 		// Vertex management
 		void					Add_Vert (UINT vert_index, const Point3 &position, const VertColor &color);
 
 		// Misc
-		void					Reset (void);
-		bool					Is_Empty (void) const	{ return m_DeformData.Count () == 0; }
+		void					Reset ();
+		bool					Is_Empty () const	{ return m_DeformData.Count () == 0; }
 
 		// Flag support
 		bool					Get_Flag (unsigned int flag) const				{ return (m_Flags & flag) == flag; }
 		void					Set_Flag (unsigned int flag, bool value)		{ if (value) (m_Flags |= flag); else (m_Flags &= ~flag); }
-		unsigned int		Get_Flags (void) const								{ return m_Flags; }
+		unsigned int		Get_Flags () const								{ return m_Flags; }
 
 		// Enumeration
 		float					Get_Deform_State (int key_frame) const			{ return m_DeformData[key_frame]->state; }
-		int					Get_Keyframe_Count (void) const					{ return m_DeformData.Count (); }
+		int					Get_Keyframe_Count () const					{ return m_DeformData.Count (); }
 		int					Get_Deform_Data_Count (int key_frame) const	{ return m_DeformData[key_frame]->deform_list.Count (); }
 		DEFORM_DATA &		Get_Deform_Data (int key_frame, int index)	{ return m_DeformData[key_frame]->deform_list[index]; }
 		void					Replace_Deform_Data (int keyframe_index, DynamicVectorClass<DEFORM_DATA> &list);

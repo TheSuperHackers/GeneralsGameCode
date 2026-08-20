@@ -45,7 +45,7 @@
 //
 ////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSaveSetClass::Reset (void)
+MeshDeformSaveSetClass::Reset ()
 {
 	//
 	//	Free all the keyframe pointers in our list
@@ -86,7 +86,7 @@ MeshDeformSaveSetClass::Begin_Keyframe (float state)
 //
 ////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSaveSetClass::End_Keyframe (void)
+MeshDeformSaveSetClass::End_Keyframe ()
 {
 	m_CurrentKeyFrame = nullptr;
 }
@@ -156,7 +156,7 @@ MeshDeformSaveSetClass::Replace_Deform_Data
 //
 ////////////////////////////////////////////////////////////////////////
 /*int
-MeshDeformSaveSetClass::Get_Deform_Count (void) const
+MeshDeformSaveSetClass::Get_Deform_Count () const
 {
 	//
 	//	Count up all the deform entries for all the keyframes

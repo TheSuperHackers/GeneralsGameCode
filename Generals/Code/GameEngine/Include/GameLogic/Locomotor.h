@@ -58,6 +58,7 @@ enum LocomotorAppearance CPP_11(: Int)
 	LOCO_WINGS,
 	LOCO_CLIMBER,			// human climber - backs down cliffs.
 	LOCO_OTHER,
+	LOCO_MOTORCYCLE, // Added in Zero Hour
 
 	LOCOMOTOR_APPEARANCE_COUNT
 };
@@ -82,6 +83,7 @@ static const char *const TheLocomotorAppearanceNames[] =
 	"WINGS",
 	"CLIMBER",
 	"OTHER",
+	"MOTORCYCLE",
 
 	nullptr
 };
@@ -171,7 +173,8 @@ private:
 	LocomotorAppearance				m_appearance;						///< how we should diddle the Drawable to imitate this motion
 	LocomotorPriority					m_movePriority;					///< Where we move - front, middle, back.
 
-	Real											m_accelPitchLimit;			///< Maximum amount we will pitch up or down under acceleration (including recoil.)
+	Real											m_accelPitchLimit;			///< Maximum amount we will pitch up  under acceleration (including recoil.)
+	Real											m_decelPitchLimit;			///< Maximum amount we will pitch down under deceleration (including recoil.)
 	Real											m_bounceKick;						///< How much simulating rough terrain "bounces" a wheel up.
 	Real											m_pitchStiffness;				///< How stiff the springs are forward & back.
 	Real											m_rollStiffness;				///< How stiff the springs are side to side.
@@ -209,6 +212,12 @@ private:
 	Real											m_wanderWidthFactor;
 	Real											m_wanderLengthFactor;
 	Real											m_wanderAboutPointRadius;
+
+
+	Real											m_rudderCorrectionDegree;
+	Real											m_rudderCorrectionRate;
+	Real											m_elevatorCorrectionDegree;
+	Real											m_elevatorCorrectionRate;
 };
 
 typedef OVERRIDE<LocomotorTemplate> LocomotorTemplateOverride;
@@ -251,6 +260,7 @@ public:
 	AsciiString getTemplateName() const { return m_template->m_name;}
 	Real getMinSpeed() const { return m_template->m_minSpeed;}
 	Real getAccelPitchLimit() const { return m_template->m_accelPitchLimit;}	///< Maximum amount we will pitch up or down under acceleration (including recoil.)
+	Real getDecelPitchLimit() const { return m_template->m_decelPitchLimit;}	///< Maximum amount we will pitch down under deceleration (including recoil.)
 	Real getBounceKick() const { return m_template->m_bounceKick;}						///< How much simulating rough terrain "bounces" a wheel up.
 	Real getPitchStiffness() const { return m_template->m_pitchStiffness;}			///< How stiff the springs are forward & back.
 	Real getRollStiffness() const { return m_template->m_rollStiffness;}				///< How stiff the springs are side to side.
@@ -282,6 +292,13 @@ public:
 	Real getMaxWheelCompression() const {return m_template->m_maximumWheelCompression;}
 	Real getWheelTurnAngle() const {return m_template->m_wheelTurnAngle;}
 
+
+	Real getRudderCorrectionDegree()	  const { return m_template->m_rudderCorrectionDegree;}			///< How much we roll in response to acceleration.
+	Real getRudderCorrectionRate()	    const { return m_template->m_rudderCorrectionRate;}			///< How much we roll in response to acceleration.
+	Real getElevatorCorrectionDegree() const { return m_template->m_elevatorCorrectionDegree;}			///< How much we roll in response to acceleration.
+	Real getElevatorCorrectionRate()	  const { return m_template->m_elevatorCorrectionRate;}			///< How much we roll in response to acceleration.
+
+
 	Real getWanderWidthFactor() const {return m_template->m_wanderWidthFactor;}
 	Real getWanderAboutPointRadius() const {return m_template->m_wanderAboutPointRadius;}
 
@@ -300,6 +317,7 @@ public:
 	void setAllowInvalidPosition(Bool allow) { setFlag(ALLOW_INVALID_POSITION, allow); }
 	void setCloseEnoughDist( Real dist ) { m_closeEnoughDist = dist; }
 	void setCloseEnoughDist3D( Bool setting ) { setFlag(IS_CLOSE_ENOUGH_DIST_3D, setting); }
+	Bool isInvalidPositionAllowed() const { return getFlag( ALLOW_INVALID_POSITION ); }
 
 	void setPreferredHeight( Real height ) { m_preferredHeight = height; }
 

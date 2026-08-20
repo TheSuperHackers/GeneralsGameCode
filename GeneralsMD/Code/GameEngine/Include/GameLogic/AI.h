@@ -34,7 +34,6 @@
 #include "Common/GameType.h"
 #include "GameLogic/Damage.h"
 #include "Common/STLTypedefs.h"
-#include "WWLib/ref_ptr.h"
 
 class AIGroup;
 class AttackPriorityInfo;

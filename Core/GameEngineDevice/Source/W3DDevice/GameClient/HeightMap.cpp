@@ -77,7 +77,6 @@
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
 #include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
-#include "W3DDevice/GameClient/W3DCustomEdging.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
@@ -306,7 +305,6 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, VERTEX_FORMAT *
 {
 	Int i,j;
 	Vector3 lightRay[MAX_GLOBAL_LIGHTS];
-	const Coord3D *lightPos;
 	Int xCoord, yCoord;
 	Int vn0,un0,vp1,up1;
 	Vector3 l2r,n2f,normalAtTexel;
@@ -319,6 +317,12 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, VERTEX_FORMAT *
 #ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif
+
+		for (Int lightIndex=0; lightIndex < TheGlobalData->m_numGlobalLights; lightIndex++)
+		{
+			const Coord3D& lightPos = TheGlobalData->m_terrainLightPos[lightIndex];
+			lightRay[lightIndex].Set(-lightPos.x, -lightPos.y, -lightPos.z);
+		}
 
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VERTEX_FORMAT *vbHardware = (VERTEX_FORMAT*)lockVtxBuffer.Get_Vertex_Array();
@@ -361,12 +365,6 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, VERTEX_FORMAT *
 
 				pMap->getUVData(mapX, mapY, U, V);
 				pMap->getAlphaUVData(mapX, mapY, UA, VA, alpha, &flipForBlend);
-
-				for (Int lightIndex=0; lightIndex < TheGlobalData->m_numGlobalLights; lightIndex++)
-				{
-					lightPos=&TheGlobalData->m_terrainLightPos[lightIndex];
-					lightRay[lightIndex].Set(-lightPos->x,-lightPos->y,	-lightPos->z);
-				}
 
 				//top-left sample
 				l2r.Set(2*MAP_XY_FACTOR,0,MAP_HEIGHT_SCALE*(pMap->getDisplayHeight(mapX+cellOffset, mapY) - pMap->getDisplayHeight(un0, mapY)));
@@ -1200,7 +1198,7 @@ void HeightMapRenderObjClass::setTerrainDrawSize(Int width, Int height)
 	//delete m_shroud;
 	//m_shroud = nullptr;
 	initHeightData(m_map->getDrawWidth(), m_map->getDrawHeight(), m_map, nullptr, FALSE);
-	m_needFullUpdate = true;
+	scheduleFullUpdate();
 }
 
 
@@ -1267,7 +1265,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 
 	m_originX = 0;
 	m_originY = 0;
-	m_needFullUpdate = true;
+	scheduleFullUpdate();
 
 	// If the size changed, we need to allocate.
 	Bool needToAllocate = (x != m_x || y != m_y);
@@ -2073,15 +2071,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		Int yCoordMax = m_y+m_map->getDrawOrgY()-1;
 		Int xCoordMin = m_map->getDrawOrgX();
 		Int xCoordMax = m_x+m_map->getDrawOrgX()-1;
-	#ifdef TEST_CUSTOM_EDGING
-		// Draw edging just before last pass.
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
-		m_stageTwoTexture->restore();
-		m_customEdging->drawEdging(m_map, xCoordMin, xCoordMax, yCoordMin, yCoordMax,
-			m_stageZeroTexture, doCloud?m_stageTwoTexture: nullptr, TheGlobalData->m_useLightMap?m_stageThreeTexture: nullptr);
-	#endif
-	#ifdef DO_ROADS
+#ifdef DO_ROADS
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
@@ -2100,16 +2090,12 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	if (m_propBuffer) {
 		m_propBuffer->drawProps(rinfo);
 	}
-	#ifdef DO_SCORCH
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 
-		ShaderClass::Invalidate();
-		if (!ShaderClass::Is_Backface_Culling_Inverted()) {
-			drawScorches();
-		}
-	#endif
+		drawScorches();
+
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();

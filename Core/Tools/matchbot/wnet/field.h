@@ -58,7 +58,7 @@ class FieldClass
    // Define constructors to be able to create all the different kinds
    // of fields.
    //
-   FieldClass(void) {};
+   FieldClass() {};
    FieldClass(char *id, char data);
    FieldClass(char *id, unsigned char data);
    FieldClass(char *id, short data);
@@ -80,17 +80,17 @@ class FieldClass
    void Set(char *id, char *data);
    void Set(char *id, void *data, int length);
 
-   int             Get_Type(void);    // get the datatype of this field
-   unsigned short  Get_Size(void)  { return Size; }
-   void *             Get_Data(void);    // get the datatype of this field
-   char *             Get_ID(void);    // get the datatype of this field
+   int             Get_Type();    // get the datatype of this field
+   unsigned short  Get_Size()  { return Size; }
+   void *             Get_Data();    // get the datatype of this field
+   char *             Get_ID();    // get the datatype of this field
 
-   void            Host_To_Net(void);
-   void            Net_To_Host(void);
+   void            Host_To_Net();
+   void            Net_To_Host();
 
  private:
 
-   void            Clear(void);        // dealloc mem & zero safely
+   void            Clear();        // dealloc mem & zero safely
 
    char            ID[4];              // id value of this field
    unsigned short  DataType;           // id of the data type we are using

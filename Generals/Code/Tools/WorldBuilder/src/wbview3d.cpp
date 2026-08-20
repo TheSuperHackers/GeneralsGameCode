@@ -973,7 +973,7 @@ void WbView3d::updateScorches()
 			Scorches type = (Scorches) pMapObj->getProperties()->getInt(TheKey_scorchType);
 
 			Vector3 loc(pos->x, pos->y, pos->z);
-			TheTerrainRenderObject->addScorch(loc, radius, type);
+			TheTerrainRenderObject->addStaticScorch(loc, radius, type);
 		}
 	}
 }

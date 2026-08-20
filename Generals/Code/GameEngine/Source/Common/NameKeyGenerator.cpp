@@ -175,7 +175,11 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const AsciiString& name)
 	}
 
 	// nope, guess not. let's allocate it.
-	return createNameKey(hash, name);
+	// TheSuperHackers @fix CryoTheRenegade 08/08/2026 Store the canonical lowercase name
+	// so a regular lowercase lookup reuses this key.
+	AsciiString lowercaseName = name;
+	lowercaseName.toLower();
+	return createNameKey(hash, lowercaseName);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -209,7 +213,11 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
 	}
 
 	// nope, guess not. let's allocate it.
-	return createNameKey(hash, name);
+	// TheSuperHackers @fix CryoTheRenegade 08/08/2026 Store the canonical lowercase name
+	// so a regular lowercase lookup reuses this key.
+	AsciiString lowercaseName(name);
+	lowercaseName.toLower();
+	return createNameKey(hash, lowercaseName);
 }
 
 //-------------------------------------------------------------------------------------------------

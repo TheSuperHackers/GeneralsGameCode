@@ -53,6 +53,7 @@ class Shadow;
 class ModuleInfo;
 class Anim2DTemplate;
 class Image;
+class DynamicAudioEventInfo;
 enum BodyDamageType CPP_11(: Int);
 
 // this is a very worthwhile performance win. left conditionally defined for now, just
@@ -148,6 +149,8 @@ public:
 	Real m_overlapZVel;					///< fake Z velocity
 	Real m_overlapZ;						///< current height (additional)
 	Real m_wobble;							///< for wobbling
+  Real m_yawModulator;        ///< for the swimmy soft hover of a helicopter
+  Real m_pitchModulator;        ///< for the swimmy soft hover of a helicopter
 	TWheelInfo m_wheelInfo;			///< Wheel offset & angle info for a wheeled type locomotor.
 
 	DrawableLocoInfo();
@@ -240,6 +243,8 @@ enum TintStatus CPP_11(: Int)
 	TINT_STATUS_DISABLED		= 0x00000001,///< drawable tint color is deathly dark grey
 	TINT_STATUS_IRRADIATED	= 0x00000002,///< drawable tint color is sickly green
 	TINT_STATUS_POISONED		= 0x00000004,///< drawable tint color is open-sore red
+	TINT_STATUS_GAINING_SUBDUAL_DAMAGE		= 0x00000008,///< When gaining subdual damage, we tint SUBDUAL_DAMAGE_COLOR
+	TINT_STATUS_FRENZY			= 0x00000010,///< When frenzied, we tint FRENZY_COLOR
 
 };
 
@@ -297,6 +302,7 @@ public:
 	Drawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	void onDestroy();																							///< run from GameClient::destroyDrawable
+  void onLevelStart();                                                ///< run from GameLogic::startNewGame
 
 	Drawable *getNextDrawable() const { return m_nextDrawable; }	///< return the next drawable in the global list
 	Drawable *getPrevDrawable() const { return m_prevDrawable; }  ///< return the prev drawable in the global list
@@ -360,6 +366,7 @@ public:
 	ClientUpdateModule* findClientUpdateModule( NameKeyType key );
 
 	// never returns null
+	DrawModule** getDrawModulesNonDirty();
 	DrawModule** getDrawModules();
 	DrawModule const** getDrawModules() const;
 
@@ -409,10 +416,11 @@ public:
 
 	void drawIconUI();													///< draw "icon"(s) needed on drawable (health bars, veterency, etc)
 
-	void startAmbientSound();
+	void startAmbientSound( Bool onlyIfPermanent = false );
 	void stopAmbientSound();
 	void enableAmbientSound( Bool enable );
 	void setTimeOfDay( TimeOfDay tod );
+  Bool getAmbientSoundEnabledFromScript() const { return m_ambientSoundEnabledFromScript; }
 
 	void prependToList(Drawable **pListHead);
 	void removeFromList(Drawable **pListHead);
@@ -455,6 +463,8 @@ public:
 
 	const TWheelInfo *getWheelInfo() const { return m_locoInfo ? &m_locoInfo->m_wheelInfo : nullptr; }
 
+	const DrawableLocoInfo *getLocoInfo() const { return m_locoInfo; }
+
 	// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
 	Bool clientOnly_getFirstRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform);
 
@@ -492,6 +502,10 @@ public:
 		"in between", it is included in the completion time.
 	*/
 	void setAnimationCompletionTime(UnsignedInt numFrames);
+
+	//Kris: Manually set a drawable's current animation to specific frame.
+	virtual void setAnimationFrame( int frame );
+
 	void updateSubObjects();
 	void showSubObject( const AsciiString& name, Bool show );
 
@@ -554,10 +568,25 @@ public:
 	void killIcon(DrawableIconType t) { if (m_iconInfo) m_iconInfo->killIcon(t); }
 	Bool hasIconInfo() const { return m_iconInfo != nullptr; }
 
-  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == nullptr ? nullptr : &m_ambientSound->m_event; }
 
   Bool getReceivesDynamicLights() { return m_receivesDynamicLights; };
   void setReceivesDynamicLights( Bool set ) { m_receivesDynamicLights = set; };
+
+  //---------------------------------------------------------------------------------
+  // Stuff for overriding ambient sound
+  const AudioEventInfo * getBaseSoundAmbientInfo() const; //< Possible starting point if only some parameters are customized
+  void enableAmbientSoundFromScript( Bool enable );
+  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == nullptr ? nullptr : m_ambientSound.Peek(); }
+  void setCustomSoundAmbientOff(); //< Kill the ambient sound
+  void setCustomSoundAmbientInfo( DynamicAudioEventInfo * customAmbientInfo ); //< Set ambient sound.
+  void clearCustomSoundAmbient() { clearCustomSoundAmbient( true ); } //< Return to using defaults
+  Bool getAmbientSoundEnabled() const { return m_ambientSoundEnabled; }
+  void mangleCustomAudioName( DynamicAudioEventInfo * audioToMangle ) const;
+
+
+  Real friend_getStealthOpacity() { return m_stealthOpacity; }
+  Real friend_getExplicitOpacity() { return m_explicitOpacity; }
+  Real friend_getEffectiveStealthOpacity() { return m_effectiveStealthOpacity; }
 
 protected:
 
@@ -567,7 +596,7 @@ protected:
 	virtual void loadPostProcess() override;
 	void xferDrawableModules( Xfer *xfer );
 
-	void	startAmbientSound(BodyDamageType dt, TimeOfDay tod);
+	void	startAmbientSound( BodyDamageType dt, TimeOfDay tod, Bool onlyIfPermanent = false );
 
 	virtual Drawable *asDrawableMeth() override { return this; }
 	virtual const Drawable *asDrawableMeth() const override { return this; }
@@ -601,8 +630,11 @@ protected:
 	void calcPhysicsXformHoverOrWings(const Locomotor *locomotor, PhysicsXformInfo& info);
 	void calcPhysicsXformTreads(const Locomotor *locomotor, PhysicsXformInfo& info);
 	void calcPhysicsXformWheels(const Locomotor *locomotor, PhysicsXformInfo& info);
+	void calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXformInfo& info );
 
 	const AudioEventRTS& getAmbientSoundByDamage(BodyDamageType dt);
+
+  void clearCustomSoundAmbient( bool restartSound ); //< Return to using defaults
 
 #ifdef RTS_DEBUG
 	void validatePos() const;
@@ -642,6 +674,8 @@ private:
 	Drawable *m_nextDrawable;
 	Drawable *m_prevDrawable;		///< list links
 
+  DynamicAudioEventInfo *m_customSoundAmbientInfo; ///< If not nullptr, info about the ambient sound to attach to this object
+
 	DrawableStatusBits m_status;		///< status bits (see DrawableStatus enum)
 	UnsignedInt m_tintStatus;				///< tint color status bits (see TintStatus enum)
 	UnsignedInt m_prevTintStatus;///< for edge testing with m_tintStatus
@@ -662,8 +696,7 @@ private:
 
 	PhysicsXformInfo* m_physicsXform;
 
-	DynamicAudioEventRTS*	m_ambientSound;		///< sound module for ambient sound (lazily allocated)
-	Bool								m_ambientSoundEnabled;
+	RefCountPtr<DynamicAudioEventRTS> m_ambientSound;		///< sound module for ambient sound (lazily allocated)
 
 	Module** m_modules[NUM_DRAWABLE_MODULE_TYPES];
 
@@ -694,6 +727,8 @@ private:
 	Bool m_hiddenByStealth;			///< drawable is hidden due to stealth
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
+  Bool m_ambientSoundEnabled;
+  Bool m_ambientSoundEnabledFromScript;
 
   Bool m_receivesDynamicLights;
 

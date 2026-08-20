@@ -145,7 +145,7 @@ MeshDeformSaveClass::Initialize
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSaveClass::Reset (void)
+MeshDeformSaveClass::Reset ()
 {
 	//
 	//	Delete all the damage sets
@@ -370,7 +370,7 @@ MeshDeformSaveClass::Re_Index (MeshBuilderClass &builder)
 //
 ///////////////////////////////////////////////////////////////////////////
 bool
-MeshDeformSaveClass::Does_Deformer_Modify_DCG (void)
+MeshDeformSaveClass::Does_Deformer_Modify_DCG ()
 {
 	bool retval = false;
 

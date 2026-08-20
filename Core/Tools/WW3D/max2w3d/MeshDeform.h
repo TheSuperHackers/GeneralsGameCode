@@ -50,7 +50,7 @@ class MeshDeformModData;
 //	Prototypes
 //
 ///////////////////////////////////////////////////////////////////////////
-ClassDesc *Get_Mesh_Deform_Desc (void);
+ClassDesc *Get_Mesh_Deform_Desc ();
 extern Class_ID _MeshDeformClassID;
 
 
@@ -66,7 +66,7 @@ class MeshDeformClass : public OSModifier
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		MeshDeformClass (void)
+		MeshDeformClass ()
 			:	m_MaxInterface (nullptr),
 				m_ModeMove (nullptr),
 				m_ModeSelect (nullptr),
@@ -82,7 +82,7 @@ class MeshDeformClass : public OSModifier
 				m_MaxSets (0),
 				m_hRollupWnd (nullptr)			{ SetName ("WW Mesh Deformer"); Set_Max_Deform_Sets (1); }
 
-		virtual ~MeshDeformClass (void)	{ }
+		virtual ~MeshDeformClass ()	{ }
 #if defined W3D_MAX4		//defined as in the project (.dsp)
 		NumSubObjTypes();
 		GetSubObjType();
@@ -91,13 +91,13 @@ class MeshDeformClass : public OSModifier
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
 		void							Set_Deform_State (float state = 1.0F);
-		float							Get_Deform_State (void) const					{ return m_DeformState; }
+		float							Get_Deform_State () const					{ return m_DeformState; }
 		void							Set_Vertex_Color (const Point3 &color, bool button_up);
 		void							Get_Vertex_Color (Point3 &color);
 		void							Set_Max_Deform_Sets (int max);
-		int							Get_Max_Deform_Sets (void) const				{ return m_MaxSets; }
+		int							Get_Max_Deform_Sets () const				{ return m_MaxSets; }
 		void							Set_Current_Set (int index, bool update_selection);
-		int							Get_Current_Set (void) const					{ return m_CurrentSet; }
+		int							Get_Current_Set () const					{ return m_CurrentSet; }
 		void							Update_UI (MeshDeformModData *mod_data);
 		void							Auto_Apply (bool auto_apply = true);
 
@@ -108,11 +108,11 @@ class MeshDeformClass : public OSModifier
 		//////////////////////////////////////////////////////////////////////
 		// From Animatable
 		//////////////////////////////////////////////////////////////////////
-		void							DeleteThis (void) { delete this; }
+		void							DeleteThis () { delete this; }
 		void							GetClassName (TSTR& s) { s = TSTR(_T("WWDeform")); }
-		TCHAR *						GetObjectName (void) { return _T("WWDamage"); }
-		SClass_ID					SuperClassID (void) { return OSM_CLASS_ID; }
-		Class_ID						ClassID (void) { return _MeshDeformClassID; }
+		TCHAR *						GetObjectName () { return _T("WWDamage"); }
+		SClass_ID					SuperClassID () { return OSM_CLASS_ID; }
+		Class_ID						ClassID () { return _MeshDeformClassID; }
 		//RefTargetHandle			Clone(RemapDir& remap = NoRemap());
 		void							BeginEditParams (IObjParam  *ip, ULONG flags,Animatable *prev);
 		void							EndEditParams (IObjParam *ip, ULONG flags,Animatable *next);
@@ -120,12 +120,12 @@ class MeshDeformClass : public OSModifier
 		//////////////////////////////////////////////////////////////////////
 		// From Modifier
 		//////////////////////////////////////////////////////////////////////
-		ChannelMask					ChannelsUsed (void);
-		ChannelMask					ChannelsChanged (void);
+		ChannelMask					ChannelsUsed ();
+		ChannelMask					ChannelsChanged ();
 		void							ModifyObject (TimeValue t, ModContext &mod_context, ObjectState* os, INode *node);
 		BOOL							DependOnTopology (ModContext &mod_context) { return TRUE; }
-		int							NeedUseSubselButton (void) { return TRUE; }
-		Class_ID						InputType (void);
+		int							NeedUseSubselButton () { return TRUE; }
+		Class_ID						InputType ();
 
 		//////////////////////////////////////////////////////////////////////
 		// From ReferenceMaker
@@ -137,7 +137,7 @@ class MeshDeformClass : public OSModifier
 		//////////////////////////////////////////////////////////////////////
 		// From BaseObject
 		//////////////////////////////////////////////////////////////////////
-		CreateMouseCallBack *	GetCreateMouseCallBack (void);
+		CreateMouseCallBack *	GetCreateMouseCallBack ();
 		void							ActivateSubobjSel (int level, XFormModes &modes);
 		int							HitTest (TimeValue time_value, INode * node, int type, int crossing, int flags, IPoint2 *point, ViewExp *viewport, ModContext *mod_context);
 		void							SelectSubComponent (HitRecord *hit_record, BOOL selected, BOOL all, BOOL invert);
@@ -164,8 +164,8 @@ class MeshDeformClass : public OSModifier
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		//////////////////////////////////////////////////////////////////////
-		void							Update_Current_Set (void);
-		void							Update_Set_Count (void);
+		void							Update_Current_Set ();
+		void							Update_Set_Count ();
 
 	private:
 

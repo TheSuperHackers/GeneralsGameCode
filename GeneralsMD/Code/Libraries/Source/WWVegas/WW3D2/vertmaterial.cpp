@@ -40,12 +40,12 @@
 #include "vertmaterial.h"
 #include "WWLib/realcrc.h"
 #include "WWDebug/wwdebug.h"
-#include "WW3D2/w3d_util.h"
+#include "w3d_util.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/w3derr.h"
+#include "w3derr.h"
 #include "WWLib/INI.h"
 #include "WWLib/XSTRAW.h"
-#include "WW3D2/dx8wrapper.h"
+#include "dx8wrapper.h"
 
 
 static unsigned int unique=1;

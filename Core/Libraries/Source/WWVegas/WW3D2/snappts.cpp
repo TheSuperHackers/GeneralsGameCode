@@ -36,7 +36,7 @@
 
 #include "snapPts.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/w3d_file.h"
+#include "w3d_file.h"
 #include "w3derr.h"
 
 WW3DErrorType SnapPointsClass::Load_W3D(ChunkLoadClass & cload)

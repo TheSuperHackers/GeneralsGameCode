@@ -209,7 +209,7 @@ typedef struct
 
 /* Example Information Functions */
 
-GABOUT * GCALL aboutbmp(void);
+GABOUT * GCALL aboutbmp();
 int      GCALL isbmp(GSTREAM *g);
 
 /* Example Import Functions */

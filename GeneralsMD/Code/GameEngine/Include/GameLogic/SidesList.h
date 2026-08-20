@@ -330,7 +330,7 @@ public:
 	const Coord2D *getRallyOffset() const {return &m_rallyPointOffset;}
 	Real getAngle() const {return m_angle;}
 	Bool isInitiallyBuilt() {return m_isInitiallyBuilt;}
-	AsciiString getScript() {return m_script;}
+	const AsciiString& getScript() const {return m_script;}
 	Int getHealth() {return m_health;}
 	Bool getWhiner() {return m_whiner;}
 	Bool getUnsellable() {return m_unsellable;}

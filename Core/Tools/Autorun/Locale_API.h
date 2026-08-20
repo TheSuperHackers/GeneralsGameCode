@@ -52,11 +52,11 @@ extern	int		SubLanguage;
 /* LOCALE API                                                               */
 /****************************************************************************/
 int				Locale_Init						( int language, char *file );
-void			Locale_Restore					( void );
+void			Locale_Restore					();
 const wchar_t* Locale_GetString( const char *id, wchar_t *buffer = nullptr, int size = _MAX_PATH );
 /*
 const char*		Locale_GetString				( int StringID, char *String );
 const wchar_t*	Locale_GetString				( int StringID, wchar_t *String=nullptr );
 */
-bool			Locale_Use_Multi_Language_Files	( void );
-//int				Locale_Get_Language_ID 			( void )	{ return LanguageID; };
+bool			Locale_Use_Multi_Language_Files	();
+//int				Locale_Get_Language_ID 			()	{ return LanguageID; };

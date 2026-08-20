@@ -83,7 +83,7 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static void startOnline( void );
+static void startOnline();
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -170,7 +170,7 @@ BOOL CALLBACK simpleDialogProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   return(FALSE);
 }
 
-static void startOnline( void )
+static void startOnline()
 {
 	checkingForPatch = false;
 
@@ -443,22 +443,13 @@ static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, c
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static void StartPatchCheck( void )
+static void StartPatchCheck()
 {
 	checkingForPatch = true;
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
 
 	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
-
-	std::string proxy;
-	if (GetStringFromRegistry("", "Proxy", proxy))
-	{
-		if (!proxy.empty())
-		{
-			ghttpSetProxy(proxy.c_str());
-		}
-	}
 
 	// check for a patch first
 	checksLeft = 2;
@@ -598,7 +589,7 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 BOOL CALLBACK Simple_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
     LPARAM lParam );
 
-HWND CreatePrimaryWin(void);
+HWND CreatePrimaryWin();
 
 char const * Fetch_String(int id);
 
@@ -606,7 +597,7 @@ char const * Fetch_String(int id);
 //
 // Create a primary window
 //
-HWND CreatePrimaryWin(void)
+HWND CreatePrimaryWin()
 {
   HWND                hwnd;
   WNDCLASS            wc;
@@ -663,7 +654,7 @@ HWND CreatePrimaryWin(void)
 //
 // Dispatch pending windows events
 //
-void DispatchEvents(void)
+void DispatchEvents()
 {
   MSG msg;
   int counter=0;
@@ -790,7 +781,7 @@ typedef struct SRecord {
 	int TimeStamp;				// 'Time' that this string was last requested.
 	char String[2048];			// Copy of string resource.
 
-	SRecord(void) : ID(-1), TimeStamp(-1) {}
+	SRecord() : ID(-1), TimeStamp(-1) {}
 } SRecord;
 
 
@@ -898,7 +889,7 @@ void LogMsg(const char *msg)
 
 
 
-void Startup_Chat(void)
+void Startup_Chat()
 {
 	/*
   //////CComObject<CChatEventSink>* g_pChatSink;
@@ -940,7 +931,7 @@ void Startup_Chat(void)
 	*/
 }
 
-void Shutdown_Chat(void)
+void Shutdown_Chat()
 {
 	/*
     /////AtlUnadvise(pChat, IID_IChatEvent, dwChatAdvise);
@@ -970,7 +961,7 @@ void Shutdown_Chat(void)
 // Download a patch for the registration client if required
 //   This uses the chat API for ver checking and FTP.
 //
-void Update_If_Required(void)
+void Update_If_Required()
 {
   int   retval;
   int   i;
@@ -1199,7 +1190,7 @@ CDownloadEventSink::Release()
 //// FTP Download stuff
 
 
-void SetupDownload( void )
+void SetupDownload()
 {
 	/*
   HRESULT              hRes;
@@ -1227,7 +1218,7 @@ void SetupDownload( void )
 
 
 
-void ClosedownDownload( void )
+void ClosedownDownload()
 {
 /*
   // AtlUnadvise(pDownload, IID_IDownloadEvent, dwDownloadAdvise);
@@ -1388,7 +1379,7 @@ BOOL CALLBACK Simple_Dialog_Proc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 /*
 
-STDMETHODIMP CDownloadEventSink::OnEnd(void)
+STDMETHODIMP CDownloadEventSink::OnEnd()
 {
   LogMsg("Finished!");
   g_Finished = 1;
@@ -1456,7 +1447,7 @@ STDMETHODIMP CDownloadEventSink::OnStatusUpdate(int status)
 //
 // Just tell the FTP module to go ahead and resume
 //
-STDMETHODIMP CDownloadEventSink::OnQueryResume(void)
+STDMETHODIMP CDownloadEventSink::OnQueryResume()
 {
   return(DOWNLOADEVENT_RESUME);
 }

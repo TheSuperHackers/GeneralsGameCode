@@ -46,6 +46,7 @@ class W3DWaypointBuffer;
 class W3DTerrainLogic;
 class W3DAssetManager;
 class SimpleSceneClass;
+class W3DScorchInterface;
 class W3DShroud;
 class W3DPropDrawModuleData;
 class W3DPropBuffer;
@@ -69,14 +70,6 @@ class W3DDynamicLight;
 #define DO_SCORCH 1
 
 #define DO_ROADS 1
-
-#ifdef DO_SCORCH
-typedef struct {
-	Vector3 location;
-	Real		radius;
-	Int			scorchType;
-} TScorch;
-#endif
 
 #define VERTEX_FORMAT VertexFormatXYZDUV2
 #define DX8_VERTEX_FORMAT DX8_FVF_XYZDUV2
@@ -157,8 +150,9 @@ public:
 	void updateMacroTexture(AsciiString textureName);
 	void doTextures(Bool flag) {m_disableTextures = !flag;};
 	/// Update the diffuse value from static light info for one vertex.
-	void doTheLight(VERTEX_FORMAT *vb, Vector3*light, Vector3*normal, RefRenderObjListIterator *pLightsIterator, UnsignedByte alpha);
+	void doTheLight(VERTEX_FORMAT *vb, const Vector3*light, Vector3*normal, RefRenderObjListIterator *pLightsIterator, UnsignedByte alpha);
 	void addScorch(Vector3 location, Real radius, Scorches type);
+	void addStaticScorch(Vector3 location, Real radius, Scorches type);
 	void addTree(DrawableID id, Coord3D location, Real scale, Real angle,
 								Real randomScaleAmount,  const W3DTreeDrawModuleData *data);
 	void removeAllTrees();
@@ -195,6 +189,7 @@ public:
 	void updateShorelineTile(Int X, Int Y, Int Border, WorldHeightMap *pMap);	///<figure out which tiles on this map cross water plane
 	void recordShoreLineSortInfos();
 	void updateViewImpassableAreas(Bool partial = FALSE, Int minX = 0, Int maxX = 0, Int minY = 0, Int maxY = 0);
+	void drawScorches();
 	void clearAllScorches();
 	void setTimeOfDay( TimeOfDay tod );
 	void loadRoadsAndBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame); ///< Load the roads from the map objects.
@@ -229,6 +224,8 @@ public:
 	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) = 0;
 
 protected:
+	void scheduleFullUpdate();
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
@@ -238,30 +235,7 @@ protected:
 	Int	m_x;	///< dimensions of heightmap
 	Int	m_y;	///< dimensions of heightmap
 
-#ifdef DO_SCORCH
-	enum { MAX_SCORCH_VERTEX=8194,
-					MAX_SCORCH_INDEX=6*8194,
-					MAX_SCORCH_MARKS=500,
-					SCORCH_MARKS_IN_TEXTURE=9,
-					SCORCH_PER_ROW = 3};
-	DX8VertexBufferClass	*m_vertexScorch;	///<Scorch vertex buffer.
-	DX8IndexBufferClass			*m_indexScorch;	///<indices defining a triangles for the scorch drawing.
-	TextureClass *m_scorchTexture;	///<Scorch mark texture
-	Int			m_curNumScorchVertices;	 ///<number of vertices used in m_vertexScorch.
-	Int			m_curNumScorchIndices;	 ///<number of indices used in m_indexScorch.
-	TScorch	m_scorches[MAX_SCORCH_MARKS];
-	Int			m_numScorches;
-
-	Int			m_scorchesInBuffer;		///< how many are in the buffers.  If less than numScorches, we need to update
-
-	// NOTE: This argument (contrary to most of the rest of the engine), is in degrees, not radians.
-	Real		m_curImpassableSlope;
-
-	void updateScorches();	 ///<Update m_vertexScorch and m_indexScorch so all scorches will be drawn.
-	void allocateScorchBuffers();	 ///<allocate static buffers for drawing scorch marks.
-	void freeScorchBuffers();		 ///< frees up scorch buffers.
-	void drawScorches();		///< Draws the scorch mark polygons in m_vertexScorch.
-#endif
+	Real m_curImpassableSlope; // NOTE: This argument (contrary to most of the rest of the engine), is in degrees, not radians.
 	WorldHeightMap *m_map;
 	Bool m_useDepthFade;	///<fade terrain lighting under water
 	Bool m_updating;
@@ -294,6 +268,8 @@ protected:
 	W3DRoadBuffer *m_roadBuffer; ///< Class for drawing roads.
 #endif
 	W3DBridgeBuffer *m_bridgeBuffer;
+	W3DScorchInterface *m_scorches;
+	W3DScorchInterface *m_staticScorches;
 	W3DShroud *m_shroud;	///< Class for drawing the shroud over terrain.
 	struct shoreLineTileInfo
 	{	Int m_xy;	//x,y position of tile

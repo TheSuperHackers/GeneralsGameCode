@@ -279,7 +279,7 @@ MeshDeformPanelClass::Set_Deformer (MeshDeformClass *obj)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformPanelClass::Update_Vertex_Color (void)
+MeshDeformPanelClass::Update_Vertex_Color ()
 {
 	if (m_pMeshDeformer != nullptr) {
 

@@ -63,7 +63,7 @@ char g_generalsSerial[1024];
 #define DLL_REG_KEY_BOTTOM DLL_REG_KEY_PATH "\\"											///< WOLAPI registry key with trailing backslashes
 #define DLL_REG_KEY_LOCATION ""																		///< Version registry key
 
-void getPathsFromRegistry( void )
+void getPathsFromRegistry()
 {
 	HKEY handle;
 	unsigned long type;
@@ -186,7 +186,7 @@ IChat *g_pChat = nullptr;
 	* checkInstalledWolapiVersion inits WOLAPI if possible and gets its version
 	* number.  It also saves off its install path from the registry.
 	*/
-void checkInstalledWolapiVersion( void )
+void checkInstalledWolapiVersion()
 {
 	// Initialize this instance
 	_Module.Init(nullptr, g_hInst);

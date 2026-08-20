@@ -88,7 +88,7 @@ TextureSettingsDialogClass::TextureSettingsDialogClass
 //
 // ~TextureSettingsDialogClass
 //
-TextureSettingsDialogClass::~TextureSettingsDialogClass (void)
+TextureSettingsDialogClass::~TextureSettingsDialogClass ()
 {
 	SR_RELEASE (m_pTexture);
 	SR_RELEASE (m_pOriginalTexture);
@@ -128,7 +128,7 @@ END_MESSAGE_MAP()
 // OnInitDialog
 //
 BOOL
-TextureSettingsDialogClass::OnInitDialog (void)
+TextureSettingsDialogClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -164,7 +164,7 @@ TextureSettingsDialogClass::OnInitDialog (void)
 //  Load_Texture_Settings
 //
 void
-TextureSettingsDialogClass::Load_Texture_Settings (void)
+TextureSettingsDialogClass::Load_Texture_Settings ()
 {
 	// Free the old thumbnail (if there was one)
 	if (m_hThumbnail != nullptr) {
@@ -317,7 +317,7 @@ TextureSettingsDialogClass::Fill_Animation_Controls (TextureClass *ptexture)
 // OnOK
 //
 void
-TextureSettingsDialogClass::OnOK (void)
+TextureSettingsDialogClass::OnOK ()
 {
 	// Force the new settings to take effect
 	OnApply ();
@@ -332,7 +332,7 @@ TextureSettingsDialogClass::OnOK (void)
 // OnCancel
 //
 void
-TextureSettingsDialogClass::OnCancel (void)
+TextureSettingsDialogClass::OnCancel ()
 {
 	// Reuse the starting texture
 	m_pTexture->Set_Texture (m_pStartingTexture);
@@ -347,7 +347,7 @@ TextureSettingsDialogClass::OnCancel (void)
 // OnAnimationCheck
 //
 void
-TextureSettingsDialogClass::OnAnimationCheck (void)
+TextureSettingsDialogClass::OnAnimationCheck ()
 {
 	bool benable = (SendDlgItemMessage (IDC_ANIMATION_CHECK, BM_GETCHECK) == 1);
 
@@ -417,7 +417,7 @@ TextureSettingsDialogClass::WindowProc
 // OnDestroy
 //
 void
-TextureSettingsDialogClass::OnDestroy (void)
+TextureSettingsDialogClass::OnDestroy ()
 {
 	if (m_hThumbnail != nullptr) {
 		::DeleteObject (m_hThumbnail);
@@ -434,7 +434,7 @@ TextureSettingsDialogClass::OnDestroy (void)
 // OnBrowseButton
 //
 void
-TextureSettingsDialogClass::OnBrowseButton (void)
+TextureSettingsDialogClass::OnBrowseButton ()
 {
 	// Get the current filename to display
 	CString filename;
@@ -466,7 +466,7 @@ TextureSettingsDialogClass::OnBrowseButton (void)
 // Paint_Thumbnail
 //
 void
-TextureSettingsDialogClass::Paint_Thumbnail (void)
+TextureSettingsDialogClass::Paint_Thumbnail ()
 {
 	// Paint the thumbnail
 	if (m_hThumbnail != nullptr) {
@@ -505,7 +505,7 @@ TextureSettingsDialogClass::Paint_Thumbnail (void)
 // OnRestore
 //
 void
-TextureSettingsDialogClass::OnRestore (void)
+TextureSettingsDialogClass::OnRestore ()
 {
 	if (m_pOriginalTexture != nullptr) {
 
@@ -528,7 +528,7 @@ TextureSettingsDialogClass::OnRestore (void)
 // OnApply
 //
 void
-TextureSettingsDialogClass::OnApply (void)
+TextureSettingsDialogClass::OnApply ()
 {
 	// Get the current texture name from the edit control
 	CString texture_name;

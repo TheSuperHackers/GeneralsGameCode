@@ -60,7 +60,7 @@ template <typename text>int IsFormatTypeChar ( text ch )
 
 
 
-OLEString::OLEString ( void )
+OLEString::OLEString ()
 {
 	ole = nullptr;
 	sb = nullptr;
@@ -123,7 +123,7 @@ void OLEString::Set ( const char *new_sb )
 	}
 }
 
-void OLEString::StripSpaces ( void )
+void OLEString::StripSpaces ()
 {
 	if ( locked )
 	{
@@ -141,7 +141,7 @@ void OLEString::StripSpaces ( void )
 }
 
 
-void OLEString::FormatMetaString ( void )
+void OLEString::FormatMetaString ()
 {
 	char *str, *ptr;
 	char ch, last = -1;

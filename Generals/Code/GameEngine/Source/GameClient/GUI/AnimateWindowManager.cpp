@@ -57,6 +57,7 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 #include "GameClient/ProcessAnimateWindow.h"
+#include "Common/FramePacer.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -71,7 +72,7 @@ AnimateWindow::AnimateWindow()
 	m_delay = 0;
 	m_startPos.x = m_startPos.y = 0;
 	m_endPos.x = m_endPos.y = 0;
-	m_curPos.x = m_curPos.y = 0;
+	m_curPos.x = m_curPos.y = 0.0f;
 	m_win = nullptr;
 	m_animType = WIN_ANIMATION_NONE;
 
@@ -88,7 +89,7 @@ AnimateWindow::~AnimateWindow()
 }
 
 void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos,
-																	ICoord2D curPos, ICoord2D restPos,
+																	Coord2D curPos, ICoord2D restPos,
 																	Coord2D vel, UnsignedInt startTime,
 																	UnsignedInt endTime )
 
@@ -170,8 +171,11 @@ void AnimateWindowManager::reset()
 	m_reverse = FALSE;
 }
 
+// TheSuperHackers @tweak bobtista 04/08/2026 Advances the animations by a fractional base rate frame
+// so that they move fluently on high render frame rates.
 void AnimateWindowManager::update()
 {
+	const Real deltaFrames = TheFramePacer->getBaseOverUpdateFpsRatio();
 
 	ProcessAnimateWindow *processAnim = nullptr;
 
@@ -194,12 +198,12 @@ void AnimateWindowManager::update()
 			{
 				if(m_reverse)
 				{
-					if(!processAnim->reverseAnimateWindow(animWin))
+					if(!processAnim->reverseAnimateWindow(animWin, deltaFrames))
 						m_needsUpdate = TRUE;
 				}
 				else
 				{
-					if(!processAnim->updateAnimateWindow(animWin))
+					if(!processAnim->updateAnimateWindow(animWin, deltaFrames))
 						m_needsUpdate = TRUE;
 				}
 			}
@@ -222,12 +226,12 @@ void AnimateWindowManager::update()
 		if(m_reverse)
 		{
 			if(processAnim)
-				processAnim->reverseAnimateWindow(animWin);
+				processAnim->reverseAnimateWindow(animWin, deltaFrames);
 		}
 		else
 		{
 			if(processAnim)
-				processAnim->updateAnimateWindow(animWin);
+				processAnim->updateAnimateWindow(animWin, deltaFrames);
 		}
 		it ++;
 	}

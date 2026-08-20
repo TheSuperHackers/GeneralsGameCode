@@ -71,7 +71,8 @@ NetCommandRef *NetPacket::ConstructNetCommandMsgFromRawData(const UnsignedByte *
 	return ref;
 }
 
-NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
+NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
+{
 	// if we don't have a unique command ID, then the wrapped command cannot
 	// be identified.  Therefore don't allow commands without a unique ID to
 	// be wrapped.
@@ -79,88 +80,78 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 
 	if (!DoesCommandRequireACommandID(msg->getNetCommandType())) {
 		DEBUG_CRASH(("Trying to wrap a command that doesn't have a unique command ID"));
-		return NetPacketList();
+		return nullptr;
 	}
 
-	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);  // need to implement.  I have a drinking problem.
-	UnsignedByte *bigPacketData = nullptr;
-
-	NetPacketList packetList;
+	UnsignedInt bufferSize = msg->getSizeForNetPacket();
+	UnsignedByte* bigPacketData = NEW UnsignedByte[bufferSize];
 
 	// create the buffer for the huge message and fill the buffer with that message.
-	UnsignedInt bigPacketCurrentOffset = 0;
-	bigPacketData = NEW UnsignedByte[bufferSize];
 	ref->getCommand()->copyBytesForNetPacket(bigPacketData, *ref);
 
 	// create the wrapper command message we'll be using.
 	NetWrapperCommandMsg *wrapperMsg = newInstance(NetWrapperCommandMsg);
 	// get the amount of space needed for the wrapper message, not including the wrapped command data.
-	UnsignedInt wrapperSize = GetBufferSizeNeededForCommand(wrapperMsg);
-	UnsignedInt commandSizePerPacket = MAX_PACKET_SIZE - wrapperSize;
+	UnsignedInt wrapperSize = wrapperMsg->getSizeForNetPacket();
+	UnsignedInt maxDataSizePerPacket = MAX_PACKET_SIZE - wrapperSize;
 
-	UnsignedInt numChunks = bufferSize / commandSizePerPacket;
-	if ((bufferSize % commandSizePerPacket) > 0) {
+	UnsignedInt numChunks = bufferSize / maxDataSizePerPacket;
+	if ((bufferSize % maxDataSizePerPacket) > 0) {
 		++numChunks;
 	}
+
+	NetCommandList* commandList = newInstance(NetCommandList);
+
 	UnsignedInt currentChunk = 0;
+	UnsignedInt bigPacketCurrentOffset = 0;
 
-	// create the packets and the wrapper messages.
-	while (currentChunk < numChunks) {
-		NetPacket *packet = newInstance(NetPacket);
+	DEBUG_ASSERTCRASH(bufferSize > 0 && numChunks > 0, ("buffer size for command must be bigger than 0"));
 
-		UnsignedInt dataSizeThisPacket = commandSizePerPacket;
-		if ((bufferSize - bigPacketCurrentOffset) < dataSizeThisPacket) {
-			dataSizeThisPacket = bufferSize - bigPacketCurrentOffset;
+	while (true) {
+		UnsignedInt dataSizeThisChunk = maxDataSizePerPacket;
+		if ((bufferSize - bigPacketCurrentOffset) < dataSizeThisChunk) {
+			dataSizeThisChunk = bufferSize - bigPacketCurrentOffset;
 		}
-		NetCommandDataChunk bigPacket(dataSizeThisPacket);
-		memcpy(bigPacket.data(), bigPacketData + bigPacketCurrentOffset, bigPacket.size());
+
+		NetCommandDataChunk chunkData(dataSizeThisChunk);
+		memcpy(chunkData.data(), bigPacketData + bigPacketCurrentOffset, chunkData.size());
 
 		if (DoesCommandRequireACommandID(wrapperMsg->getNetCommandType())) {
 			wrapperMsg->setID(GenerateNextCommandID());
 		}
+
 		wrapperMsg->setPlayerID(msg->getPlayerID());
 		wrapperMsg->setExecutionFrame(msg->getExecutionFrame());
 
 		wrapperMsg->setChunkNumber(currentChunk);
 		wrapperMsg->setNumChunks(numChunks);
 		wrapperMsg->setDataOffset(bigPacketCurrentOffset);
-		wrapperMsg->setData(bigPacket);
+		wrapperMsg->setData(chunkData);
 		wrapperMsg->setTotalDataLength(bufferSize);
 		wrapperMsg->setWrappedCommandID(msg->getID());
 
-		bigPacketCurrentOffset += dataSizeThisPacket;
+		bigPacketCurrentOffset += dataSizeThisChunk;
 
-		NetCommandRef *ref = NEW_NETCOMMANDREF(wrapperMsg);
-		ref->setRelay(ref->getRelay());
+		NetCommandRef* chunkRef = NEW_NETCOMMANDREF(wrapperMsg);
+		chunkRef->setRelay(ref->getRelay());
 
-		if (packet->addCommand(ref) == FALSE) {
-			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::BeginBigCommandPacketList - failed to add a wrapper command to the packet")); // I still have a drinking problem.
-		}
-
-		packetList.push_back(packet);
-
-		deleteInstance(ref);
-		ref = nullptr;
-
+		commandList->addMessage(chunkRef);
 		++currentChunk;
+
+		if (currentChunk >= numChunks)
+			break;
+
+		wrapperMsg->detach();
+		wrapperMsg = newInstance(NetWrapperCommandMsg);
 	}
+
 	wrapperMsg->detach();
 	wrapperMsg = nullptr;
 
 	delete[] bigPacketData;
 	bigPacketData = nullptr;
 
-	return packetList;
-}
-
-UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
-	// This is where the fun begins...
-
-	if (msg == nullptr) {
-		return 0; // There was nothing to add.
-	}
-	// Use the virtual function for all command message types
-	return msg->getSizeForNetPacket();
+	return commandList;
 }
 
 /**
@@ -173,13 +164,14 @@ NetPacket::NetPacket() {
 /**
  * Constructor given raw transport data.
  */
-NetPacket::NetPacket(TransportMessage *msg) {
+NetPacket::NetPacket(const TransportMessage& msg) {
 	init();
-	m_packetLen = msg->length;
-	memcpy(m_packet, msg->data, MAX_PACKET_SIZE);
+
+	m_packetLen = msg.length;
+	memcpy(m_packet, msg.data, MAX_PACKET_SIZE);
 	m_numCommands = -1;
-	m_addr = msg->addr;
-	m_port = msg->port;
+	m_addr = msg.addr;
+	m_port = msg.port;
 }
 
 /**

@@ -115,7 +115,7 @@ static KeyValueMap parseIntoKVPairs( std::string s, const std::string& delim )
 	return m;
 }
 
-KVPairClass::KVPairClass( void )
+KVPairClass::KVPairClass()
 {}
 
 KVPairClass::KVPairClass( const std::string& in, const std::string& delim )

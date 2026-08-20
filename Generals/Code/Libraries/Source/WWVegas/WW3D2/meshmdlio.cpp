@@ -76,19 +76,19 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "meshmdl.h"
-#include "WW3D2/aabtree.h"
-#include "WW3D2/matinfo.h"
+#include "aabtree.h"
+#include "matinfo.h"
 #include "vertmaterial.h"
 #include "shader.h"
-#include "WW3D2/texture.h"
+#include "texture.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/w3derr.h"
+#include "w3derr.h"
 #include "w3d_file.h"
-#include "WW3D2/w3d_util.h"
+#include "w3d_util.h"
 #include "assetmgr.h"
 #include "WWLib/simplevec.h"
 #include "WWLib/realcrc.h"
-#include "WW3D2/dx8wrapper.h"
+#include "dx8wrapper.h"
 
 #ifdef _UNIX
 #include "osdep/osdep.h"

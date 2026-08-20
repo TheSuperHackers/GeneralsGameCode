@@ -49,5 +49,5 @@ public:
 extern GlobalClass Global;
 
 // Log rotation functions
-void rotateOutput(void);
-void rotateParanoid(void);
+void rotateOutput();
+void rotateParanoid();

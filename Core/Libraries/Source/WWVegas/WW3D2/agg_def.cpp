@@ -38,7 +38,7 @@
 #include "w3derr.h"
 #include "WWLib/chunkio.h"
 #include "WWDebug/wwdebug.h"
-#include "WW3D2/assetmgr.h"
+#include "assetmgr.h"
 #include "matinfo.h"
 #include "texture.h"
 #include "WWLib/wwstring.h"

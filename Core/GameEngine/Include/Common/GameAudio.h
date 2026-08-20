@@ -257,9 +257,9 @@ class AudioManager : public SubsystemInterface
 		virtual void setListenerPosition( const Coord3D *newListenerPos, const Coord3D *newListenerOrientation );
 		virtual const Coord3D *getListenerPosition() const;
 
-		virtual AudioRequest *allocateAudioRequest( Bool useAudioEvent );
+		virtual AudioRequest *allocateAudioRequest();
 		virtual void releaseAudioRequest( AudioRequest *requestToRelease );
-		virtual void appendAudioRequest( AudioRequest *m_request );
+		virtual void appendAudioRequest( AudioRequest *request );
 		virtual void processRequestList();
 
 		virtual AudioEventInfo *newAudioEventInfo( AsciiString newEventName );
@@ -268,9 +268,6 @@ class AudioManager : public SubsystemInterface
 
 		const AudioSettings *getAudioSettings() const;
 		const MiscAudio *getMiscAudio() const;
-
-		// This function should only be called by AudioManager, MusicManager and SoundManager
-		virtual void releaseAudioEventRTS( AudioEventRTS *&eventToRelease );
 
 		// For INI
 		AudioSettings *friend_getAudioSettings();

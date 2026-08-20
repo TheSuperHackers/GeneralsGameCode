@@ -56,15 +56,15 @@
 #include "WWLib/WWFILE.h"
 #include "WWLib/inisup.h"
 #include "WWSaveLoad/persistfactory.h"
-#include "WW3D2/ww3dids.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/sortingrenderer.h"
-#include "WW3D2/texture.h"
+#include "ww3dids.h"
+#include "dx8wrapper.h"
+#include "dx8vertexbuffer.h"
+#include "dx8indexbuffer.h"
+#include "sortingrenderer.h"
+#include "texture.h"
 #include "scene.h"
 #include "WWDebug/wwprofile.h"
-#include "WW3D2/visrasterizer.h"
+#include "visrasterizer.h"
 #include <limits.h>
 #include <WWDebug/wwprofile.h>
 

@@ -53,7 +53,7 @@ class Command_Line_Arguments
 		Command_Line_Arguments ( HINSTANCE, LPTSTR );
 		Command_Line_Arguments ( LPTSTR )    {};
 		Command_Line_Arguments ( HINSTANCE );
-		~Command_Line_Arguments( void );
+		~Command_Line_Arguments();
 
 		const char *	Get_argv( int argument_index );
 		int		 		Get_argc();

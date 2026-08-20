@@ -324,7 +324,7 @@ char		szCDDrive[ MAX_PATH ];
 //-----------------------------------------------------------------------------
 void 		Cant_Find_MessageBox		( HINSTANCE hInstance, const char *szPath );
 HPALETTE	CreateDIBPalette 			( LPBITMAPINFO lpbmi, LPINT lpiNumColors );
-void		Debug_Date_And_Time_Stamp	( void );
+void		Debug_Date_And_Time_Stamp	();
 
 void 		Error_Message				( HINSTANCE hInstance, int title, int string, const char *path );
 void 		Error_Message				( HINSTANCE hInstance, const char * title, const char * string, const char *path );
@@ -333,13 +333,13 @@ bool		Is_On_CD					( const char * );
 HBITMAP 	LoadResourceBitmap			( HMODULE hInstance, LPCTSTR lpString, HPALETTE FAR *lphPalette, bool loading_a_button=FALSE );
 HBITMAP 	LoadResourceButton			( HMODULE hInstance, LPCTSTR lpString, HPALETTE FAR lphPalette );
 BOOL 		Options						( Command_Line_Arguments *Orgs );
-void		Prog_End					( void );
+void		Prog_End					();
 bool		Prompt_For_CD				( HWND window_handle, char *volume_name, const char * message1, const char * message2, int *cd_drive );
 void		Reformat_Volume_Name		( const char *volume_name, char *new_volume_name );
 int			Show_Message				( HWND window_handle, const char * message_num1, const char * message_num2 );
 int			Show_Message				( HWND window_handle, int message_num1 );
-void		Stop_Sound_Playing			( void );
-BOOL 		Valid_Environment 			( void );
+void		Stop_Sound_Playing			();
+BOOL 		Valid_Environment 			();
 
 BOOL 		CALLBACK	Dialog_Box_Proc	( HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param );
 LRESULT 	CALLBACK	Wnd_Proc 		( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam );
@@ -864,7 +864,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 //   01/22/2001  MML : Created.
 //=============================================================================
 
-void Prog_End ( void )
+void Prog_End ()
 {
 	//==========================================================================
 	// UnLock the CD!
@@ -925,7 +925,7 @@ void Prog_End ( void )
 //   06/04/1996  MML : Created.
 //=============================================================================
 
-int Main::MessageLoop( void )
+int Main::MessageLoop()
 {
 	MSG msg;
 
@@ -973,7 +973,7 @@ int Main::MessageLoop( void )
 //   06/04/1996  MML : Created.
 //=============================================================================
 
-void MainWindow::Register( void )
+void MainWindow::Register()
 {
 	//--------------------------------------------------------------------------
 	// Structure used to register Windows class.
@@ -1041,7 +1041,7 @@ void MainWindow::Register( void )
 //   06/04/1996  MML : Created.
 //=============================================================================
 
-MainWindow::MainWindow( void )
+MainWindow::MainWindow()
 {
 	char szTitle[ _MAX_PATH ];
 	hWnd = 0;
@@ -1225,7 +1225,7 @@ LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 //   06/04/1996  MML : Created.
 //=============================================================================
 
-BOOL MainWindow::Is_Product_Registered( void )
+BOOL MainWindow::Is_Product_Registered()
 {
 	HKEY	phKey;
 	BOOL	result = FALSE;
@@ -4588,7 +4588,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //   06/04/1999  MML : Created.
 //=============================================================================
 
-void Stop_Sound_Playing ( void )
+void Stop_Sound_Playing ()
 {
 	PlaySound( nullptr, nullptr, SND_ASYNC | SND_FILENAME );
 }
@@ -4792,7 +4792,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 //   06/04/1996  MML : Created.
 //=============================================================================
 
-BOOL Valid_Environment ( void )
+BOOL Valid_Environment ()
 {
 	bool result = 0;
 
@@ -5185,7 +5185,7 @@ void LaunchObjectClass::SetArgs ( char *args )
 	}
 }
 
-unsigned int LaunchObjectClass::Launch ( void )
+unsigned int LaunchObjectClass::Launch ()
 {
 	char 	filepath	[_MAX_PATH];
 	char 	dir			[_MAX_DIR];
@@ -5273,7 +5273,7 @@ unsigned int LaunchObjectClass::Launch ( void )
 	return( result );
 }
 
-void Debug_Date_And_Time_Stamp ( void )
+void Debug_Date_And_Time_Stamp ()
 {
 	//-------------------------------------------------------------------------
 	//	tm_sec	- Seconds after minute (0 - 59)

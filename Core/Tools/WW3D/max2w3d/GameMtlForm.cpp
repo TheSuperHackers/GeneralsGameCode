@@ -103,7 +103,7 @@ void GameMtlFormClass::SetThing(ReferenceTarget * target)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-ReferenceTarget * GameMtlFormClass::GetThing(void)
+ReferenceTarget * GameMtlFormClass::GetThing()
 {
 	return (ReferenceTarget*)TheMtl;
 }
@@ -121,7 +121,7 @@ ReferenceTarget * GameMtlFormClass::GetThing(void)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlFormClass::DeleteThis(void)
+void GameMtlFormClass::DeleteThis()
 {
 	delete this;
 }

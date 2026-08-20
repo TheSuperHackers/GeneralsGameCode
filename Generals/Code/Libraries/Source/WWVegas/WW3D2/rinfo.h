@@ -41,7 +41,7 @@
 
 #include "WWLib/always.h"
 #include "WWLib/bittype.h"
-#include "ww3d.h"
+#include "WW3D2/ww3d.h"
 #include "WWDebug/wwdebug.h"
 #include "shader.h"
 #include "WWLib/Vector.h"

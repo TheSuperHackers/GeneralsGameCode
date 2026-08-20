@@ -112,7 +112,7 @@ wchar_t *	Remove_Quotes_Around_String ( wchar_t *old_string );
 // make using the single vs. multi language files more transparent to the program.
 //=============================================================================
 
-bool Locale_Use_Multi_Language_Files ( void )
+bool Locale_Use_Multi_Language_Files ()
 {
 #if( USE_MULTI_FILE_FORMAT )
 	return true;
@@ -288,7 +288,7 @@ int Locale_Init	( int language, char *file )
 /* restore	 															*/
 /************************************************************************/
 
-void Locale_Restore ( void )
+void Locale_Restore ()
 {
 	delete TheGameText;
 	TheGameText = nullptr;

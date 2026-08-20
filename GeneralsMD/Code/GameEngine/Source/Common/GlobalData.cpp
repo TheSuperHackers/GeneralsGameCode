@@ -946,7 +946,6 @@ GlobalData::GlobalData()
 //	m_languageFilterPref = false;
 	m_languageFilterPref = true;
 	m_firewallBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
-	m_firewallSendDelay = FALSE;
 	m_firewallPortOverride = 0;
 	m_firewallPortAllocationDelta = 0;
 	m_loadScreenDemo = FALSE;
@@ -1212,7 +1211,6 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
 	TheWritableGlobalData->m_moveScrollAnchor = optionPref.getMoveScrollAnchor();
 	TheWritableGlobalData->m_defaultIP = optionPref.getLANIPAddress();
-	TheWritableGlobalData->m_firewallSendDelay = optionPref.getSendDelay();
 	TheWritableGlobalData->m_firewallBehavior = optionPref.getFirewallBehavior();
 	TheWritableGlobalData->m_firewallPortAllocationDelta = optionPref.getFirewallPortAllocationDelta();
 	TheWritableGlobalData->m_firewallPortOverride = optionPref.getFirewallPortOverride();

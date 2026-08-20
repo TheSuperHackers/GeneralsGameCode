@@ -55,11 +55,11 @@ class SimpleDIBClass
 public:
 
 	SimpleDIBClass(HWND hwnd,int width, int height,PaletteClass & pal);
-	~SimpleDIBClass(void);
+	~SimpleDIBClass();
 
 	HBITMAP		Get_Handle()		{ return Handle; }
-	int			Get_Width(void)		{ return Width; }
-	int			Get_Height(void)	{ return Height; }
+	int			Get_Width()		{ return Width; }
+	int			Get_Height()	{ return Height; }
 
 	void			Clear(unsigned char color);
 	void			Set_Pixel(int i,int j,unsigned char color);

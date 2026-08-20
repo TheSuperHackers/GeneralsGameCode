@@ -55,13 +55,13 @@ class Bin
 	Bin ( int size = 256 );
 	~Bin ();
 
-	void				Clear				( void );
+	void				Clear				();
 	void*				Get					( OLECHAR *text1, OLECHAR *text2 = nullptr );
-	void*				GetNext			( void );
+	void*				GetNext			();
 	void				Add					( void *item, OLECHAR *text1, OLECHAR *text2 = nullptr );
 	BinItem*		GetBinItem	( OLECHAR *text1, OLECHAR *text2 = nullptr );
 	BinItem*		GetBinItem	( void *item );
-	BinItem*		GetNextBinItem	( void );
+	BinItem*		GetNextBinItem	();
 	void				Remove			( void *item );
 	void				Remove			( OLECHAR *text1, OLECHAR *text2 = nullptr );
 	void				Remove			( BinItem *item );
@@ -90,7 +90,7 @@ class BinID
 	BinID ( int size = 256 );
 	~BinID ();
 
-	void				Clear				( void );
+	void				Clear				();
 	void*				Get					( int id );
 	void				Add					( void *item, int id  );
 	BinIDItem*	GetBinIDItem	( int id );

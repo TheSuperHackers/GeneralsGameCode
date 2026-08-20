@@ -90,7 +90,7 @@ GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-GenMtlNamesDialogClass::~GenMtlNamesDialogClass(void)
+GenMtlNamesDialogClass::~GenMtlNamesDialogClass()
 {
 	ReleaseISpinner(NameIndexSpin);
 }
@@ -144,7 +144,7 @@ bool GenMtlNamesDialogClass::Get_Options(OptionsStruct * options)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool GenMtlNamesDialogClass::Ok_To_Exit(void)
+bool GenMtlNamesDialogClass::Ok_To_Exit()
 {
 	// just check that the user entered a name
 	char buf[W3D_NAME_LEN];

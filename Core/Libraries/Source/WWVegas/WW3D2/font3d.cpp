@@ -38,7 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "font3d.h"
-#include "WW3D2/assetmgr.h"
+#include "assetmgr.h"
 #include "texture.h"
 #include <assert.h>
 #include <WWDebug/wwdebug.h>

@@ -27,7 +27,7 @@
 HWND PatchDialog;
 BOOL CALLBACK Patch_Window_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
-HWND Create_Patch_Dialog(void)
+HWND Create_Patch_Dialog()
 {
   PatchDialog=CreateDialog(Global_instance, MAKEINTRESOURCE(IDD_PATCHPROGRESS),
     nullptr, (DLGPROC)Patch_Window_Proc);

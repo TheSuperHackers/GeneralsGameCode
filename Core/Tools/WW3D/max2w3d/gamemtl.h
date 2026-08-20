@@ -136,7 +136,7 @@ public:
 		};
 
 		GameMtl(BOOL loading = FALSE);
-		~GameMtl(void);
+		~GameMtl();
 
 		Class_ID				ClassID();
 		SClass_ID			SuperClassID();
@@ -166,11 +166,11 @@ public:
 		float					GetXParency(int mtlNum=0, BOOL backFace=FALSE)		{ return 0.0f; }
 		float					GetShininess(int mtlNum=0, BOOL backFace=FALSE)		{ return Get_Shininess(0,0); }
 		float					GetShinStr(int mtlNum=0, BOOL backFace=FALSE)		{ return 1.0f; }
-		void					Reset(void);
+		void					Reset();
 		void					Update(TimeValue t, Interval& validr);
 		Interval				Validity(TimeValue t);
 
-		int					NumSubTexmaps(void);
+		int					NumSubTexmaps();
 		void					SetSubTexmap(int i, Texmap * m);
 		Texmap *				GetSubTexmap(int i);
 
@@ -195,13 +195,13 @@ public:
 		int					Get_Flag(ULONG f)		 										{ return ((Flags&f) ? 1 : 0); }
 
 		void					Set_Surface_Type(unsigned int type)						{ SurfaceType = type; }
-		unsigned int		Get_Surface_Type(void) const								{ return SurfaceType; }
+		unsigned int		Get_Surface_Type() const								{ return SurfaceType; }
 
 		void					Set_Sort_Level(int level)									{ SortLevel = level; }
-		int					Get_Sort_Level(void) const									{ return SortLevel; }
+		int					Get_Sort_Level() const									{ return SortLevel; }
 
 		void					Set_Pass_Count(int passcount);
-		int					Get_Pass_Count(void);
+		int					Get_Pass_Count();
 
 		IParamBlock *		Get_Parameter_Block(int pass);
 		int					Get_Current_Page(int pass)									{ return CurPage[pass]; }
@@ -245,9 +245,9 @@ public:
 		int					Get_Texture_Frame_Count(int pass,int stage);
 		int					Get_Texture_Anim_Type(int pass,int stage);
 		Texmap *				Get_Texture(int pass,int stage);
-		Texmap *				Get_Displacement_Map(void) const								{ return DisplacementMap; }
-		float					Get_Displacement_Amount(void) const							{ return DisplacementAmt; }
-		int					Get_Displacement_Map_Index(void) const;
+		Texmap *				Get_Displacement_Map() const								{ return DisplacementMap; }
+		float					Get_Displacement_Amount() const							{ return DisplacementAmt; }
+		int					Get_Displacement_Map_Index() const;
 		int					Get_Map_Channel(int pass,int stage);
 
 		void					Set_Current_Page(int pass,int page)							{ CurPage[pass] = page; }
@@ -295,7 +295,7 @@ public:
 
 		void					Set_Map_Channel(int pass,int stage,int channel);
 
-		void					Notify_Changed(void);
+		void					Notify_Changed();
 
 		// This returns the mapping args string buffer for that pass after
 		// assuring that it is at least of length 'len'.

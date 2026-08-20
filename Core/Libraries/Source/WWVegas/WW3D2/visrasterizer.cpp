@@ -37,7 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "visrasterizer.h"
-#include "WW3D2/camera.h"
+#include "camera.h"
 #include "WWMath/plane.h"
 #include "WWMath/vp.h"
 

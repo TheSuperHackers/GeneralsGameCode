@@ -79,7 +79,7 @@ public:
 		Progress_Meter_Class &		meter
 	);
 
-	~VoxelClass(void);
+	~VoxelClass();
 
 	int		Get_Width() { return XDim; }
 	int		Get_Height() { return YDim; }
@@ -113,7 +113,7 @@ private:
 	uint8  raw_read_vis(int i,int j,int k);
 
 	int    voxel_touches_space(int i,int j,int k);
-	void   purge_interior(void);
+	void   purge_interior();
 
 	void Quantize_Meshes
 	(

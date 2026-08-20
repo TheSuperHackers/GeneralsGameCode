@@ -196,7 +196,7 @@ sint32 TCP::SetBlocking(bit8 block,sint32 whichFD)
 }
 
 
-sint32 TCP::GetMaxFD(void)
+sint32 TCP::GetMaxFD()
 {
   if (mode==CLIENT)
     return(fd);
@@ -657,7 +657,7 @@ sint32 TCP::EncapsulatedRead(uint8 *msg,uint32 len,sint32 whichFD)
 }
 
 
-sint32 TCP::CloseAll(void)
+sint32 TCP::CloseAll()
 {
   int i;
 
@@ -676,7 +676,7 @@ sint32 TCP::CloseAll(void)
 // For clients this is used to give up ownership of a socket.
 //  Often used so the destructor won't call close on a socket.
 //
-void TCP::DisownSocket(void)
+void TCP::DisownSocket()
 {
   if (mode==CLIENT)
   {
@@ -1157,14 +1157,14 @@ bit8 TCP::ConnectAsync(uint32 IP,uint16 Port)
 
 
 
-void TCP::ClearStatus(void)
+void TCP::ClearStatus()
 {
   #ifndef _WIN32
   errno=0;
   #endif
 }
 
-int TCP::GetStatus(void)
+int TCP::GetStatus()
 {
   #ifdef _WIN32
   int status=WSAGetLastError();
@@ -1201,7 +1201,7 @@ int TCP::GetStatus(void)
 
 // this is only for servers
 
-sint32 TCP::GetConnection(void)
+sint32 TCP::GetConnection()
 {
   if (mode!=SERVER)
     return(-1);

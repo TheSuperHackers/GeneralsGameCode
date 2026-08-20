@@ -125,7 +125,7 @@ END_MESSAGE_MAP()
 // Fill_List_Ctrl_With_Meshes
 //
 void
-TextureMgrDialogClass::Fill_List_Ctrl_With_Meshes (void)
+TextureMgrDialogClass::Fill_List_Ctrl_With_Meshes ()
 {
 	m_ListCtrl.DeleteAllItems ();
 	m_ListCtrl.SetImageList (m_pImageList, LVSIL_NORMAL);
@@ -204,7 +204,7 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Textures (TextureListNodeClass &paren
 // OnInitDialog
 //
 BOOL
-TextureMgrDialogClass::OnInitDialog (void)
+TextureMgrDialogClass::OnInitDialog ()
 {
 	CWaitCursor wait_cursor;
 
@@ -362,7 +362,7 @@ TextureMgrDialogClass::Find_Texture_Thumbnail (LPCTSTR name)
 // OnOK
 //
 void
-TextureMgrDialogClass::OnOK (void)
+TextureMgrDialogClass::OnOK ()
 {
 	// Allow the base class to process this message
 	CDialog::OnOK ();
@@ -374,7 +374,7 @@ TextureMgrDialogClass::OnOK (void)
 // OnCancel
 //
 void
-TextureMgrDialogClass::OnCancel (void)
+TextureMgrDialogClass::OnCancel ()
 {
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
@@ -491,7 +491,7 @@ TextureMgrDialogClass::OnKeydownMeshTextureListCtrl
 // OnDestroy
 //
 void
-TextureMgrDialogClass::OnDestroy (void)
+TextureMgrDialogClass::OnDestroy ()
 {
 	// Free the state image list we associated with the control
 	m_ListCtrl.SetImageList (nullptr, LVSIL_NORMAL);
@@ -521,7 +521,7 @@ TextureMgrDialogClass::OnDestroy (void)
 // OnBack
 //
 void
-TextureMgrDialogClass::OnBack (void)
+TextureMgrDialogClass::OnBack ()
 {
 	// Display the mesh list
 	if (m_bContainsMeshes == false) {
@@ -535,7 +535,7 @@ TextureMgrDialogClass::OnBack (void)
 // OnDetails
 //
 void
-TextureMgrDialogClass::OnDetails (void)
+TextureMgrDialogClass::OnDetails ()
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_REPORT);
@@ -547,7 +547,7 @@ TextureMgrDialogClass::OnDetails (void)
 // OnLarge
 //
 void
-TextureMgrDialogClass::OnLarge (void)
+TextureMgrDialogClass::OnLarge ()
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_ICON);
@@ -559,7 +559,7 @@ TextureMgrDialogClass::OnLarge (void)
 // OnList
 //
 void
-TextureMgrDialogClass::OnList (void)
+TextureMgrDialogClass::OnList ()
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_LIST);
@@ -571,7 +571,7 @@ TextureMgrDialogClass::OnList (void)
 // OnSmall
 //
 void
-TextureMgrDialogClass::OnSmall (void)
+TextureMgrDialogClass::OnSmall ()
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_SMALLICON);
@@ -692,7 +692,7 @@ TextureMgrDialogClass::Insert_Texture_Details
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TextureMgrDialogClass::OnPropagate (void)
+TextureMgrDialogClass::OnPropagate ()
 {
 	//
 	//	Determine the currently selected item

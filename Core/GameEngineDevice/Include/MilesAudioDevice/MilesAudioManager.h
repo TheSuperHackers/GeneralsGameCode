@@ -26,6 +26,7 @@
 #include "WWLib/mutex.h"
 
 class AudioEventRTS;
+class DynamicAudioEventRTS;
 
 enum { MAXPROVIDERS = 64 };
 
@@ -61,13 +62,13 @@ struct PlayingAudio
 		HSTREAM m_stream;
 	};
 
-	AudioEventRTS *m_audioEventRTS;
+	RefCountPtr<DynamicAudioEventRTS> m_audioEventRTS;
 	void *m_file; // The file that was opened to play this
 	PlayingAudioType m_type;
 	volatile PlayingStatus m_status; // This member is adjusted by another running thread.
 	Short m_framesFaded;
 	Bool m_fade;
-	Bool m_cleanupAudioEventRTS;
+	volatile Bool m_rerequestOnNextUpdate;
 
 	PlayingAudio()
 		: m_sample(nullptr)
@@ -77,7 +78,7 @@ struct PlayingAudio
 		, m_status(PS_Playing)
 		, m_framesFaded(0)
 		, m_fade(false)
-		, m_cleanupAudioEventRTS(true)
+		, m_rerequestOnNextUpdate(false)
 	{}
 
 	static_assert(sizeof(m_status) == sizeof(long), "Must be size of long, because it is used with Interlocked functions");
@@ -175,7 +176,7 @@ class MilesAudioManager : public AudioManager
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
 		virtual Bool isCurrentlyPlaying( AudioHandle handle ) override;
 
-		virtual void notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt flags ) override;
+		virtual void notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt flags ) override; ///< Is called on MSS Timer thread
 		virtual PlayingAudio *findPlayingAudioFrom( UnsignedInt handle, UnsignedInt flags );
 
 		virtual UnsignedInt getProviderCount() const override;
@@ -265,6 +266,8 @@ class MilesAudioManager : public AudioManager
 		void releaseMilesHandles( PlayingAudio *release );
 		void releasePlayingAudio( PlayingAudio *release );
 		void stopPlayingAudio( PlayingAudio *release );
+		void rerequestPlayingAudio( PlayingAudio *playing );
+		void rerequestPlayingAudioWhenSignalled( PlayingAudio *playing );
 		void fadePlayingAudio( PlayingAudio *playing );
 
 		PlayingAudio *findActiveMusic( const AsciiString *trackName = nullptr );

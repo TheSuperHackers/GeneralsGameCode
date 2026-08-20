@@ -52,28 +52,23 @@ AssetInfoClass::Initialize ()
 	if (m_AssetType != TypeMaterial) {
 
 		// Assume we are wrapping an instance as apposed to an asset 'name'.
-		RenderObjClass *prender_obj = m_pRenderObj;
-		if (prender_obj)
-			prender_obj->Add_Ref();
+		RefCountPtr<RenderObjClass> render_obj = m_pRenderObj;
 
 		// If we are wrapping an asset name, then create an instance of it.
-		if (prender_obj == nullptr) {
-			prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_Name);
+		if (render_obj == nullptr) {
+			render_obj.Assign_No_Add_Ref (WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_Name));
 		}
 
-		if (prender_obj != nullptr) {
+		if (render_obj != nullptr) {
 
 			// Get the hierarchy tree for this object (if one exists)
-			const HTreeClass *phtree = prender_obj->Get_HTree ();
+			const HTreeClass *phtree = render_obj->Get_HTree ();
 			if (phtree) {
 
 				// Get the name of the hierarchy tree
 				m_HierarchyName = phtree->Get_Name ();
 			}
 		}
-
-		// Release our hold on the temporary object
-		REF_PTR_RELEASE (prender_obj);
 	}
 }
 

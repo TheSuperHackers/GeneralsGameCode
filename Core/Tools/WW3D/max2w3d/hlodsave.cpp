@@ -220,7 +220,7 @@ HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count,
  * HISTORY:                                                                                    *
  *   9/14/1999  AJA : Created.                                                                 *
  *=============================================================================================*/
-HLodSaveClass::~HLodSaveClass (void)
+HLodSaveClass::~HLodSaveClass ()
 {
 	if (lod_array)
 	{

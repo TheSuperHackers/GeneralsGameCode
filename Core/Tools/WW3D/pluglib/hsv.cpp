@@ -134,7 +134,7 @@ int HSVClass::Difference(HSVClass const & hsv) const
  * HISTORY:                                                                                    *
  *   02/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-HSVClass::operator RGBClass (void) const
+HSVClass::operator RGBClass () const
 {
 	unsigned int i;				// Integer part.
 	unsigned int f;				// Fractional or remainder part.  f/HSV_BASE gives fraction.

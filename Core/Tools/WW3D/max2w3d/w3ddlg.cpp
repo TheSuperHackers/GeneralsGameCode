@@ -52,7 +52,7 @@
 ** Static functions
 */
 static BOOL CALLBACK		_options_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
-static void					_init_ofn(void);
+static void					_init_ofn();
 
 /*
 ** Static data
@@ -86,7 +86,7 @@ W3dOptionsDialogClass::W3dOptionsDialogClass(Interface * maxinterface,ExpInterfa
 	GetMasterUnitInfo(&UnitsType, &UnitsScale);
 }
 
-W3dOptionsDialogClass::~W3dOptionsDialogClass(void)
+W3dOptionsDialogClass::~W3dOptionsDialogClass()
 {
 	ReleaseISpinner(RangeLowSpin);
 	ReleaseISpinner(RangeHighSpin);
@@ -558,7 +558,7 @@ BOOL W3dOptionsDialogClass::Dialog_Ok()
 	return TRUE;
 }
 
-void W3dOptionsDialogClass::Enable_WHT_Export(void)
+void W3dOptionsDialogClass::Enable_WHT_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_TRANSLATION_ONLY_CHECK),TRUE);
 	EnableWindow(GetDlgItem(Hwnd,IDC_TERRAIN_MODE_CHECK),TRUE);
@@ -566,7 +566,7 @@ void W3dOptionsDialogClass::Enable_WHT_Export(void)
 	EnableWindow(GetDlgItem(Hwnd,IDC_WHA_EXPORT_RADIO),TRUE);
 }
 
-void W3dOptionsDialogClass::Enable_WHT_Load(void)
+void W3dOptionsDialogClass::Enable_WHT_Load()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_TRANSLATION_ONLY_CHECK),FALSE);
 	EnableWindow(GetDlgItem(Hwnd,IDC_TERRAIN_MODE_CHECK),FALSE);
@@ -574,7 +574,7 @@ void W3dOptionsDialogClass::Enable_WHT_Load(void)
 	EnableWindow(GetDlgItem(Hwnd,IDC_WHA_EXPORT_RADIO),TRUE);
 }
 
-void W3dOptionsDialogClass::Disable_WHT_Export(void)
+void W3dOptionsDialogClass::Disable_WHT_Export()
 {
 	// since there will be no hierarchy tree, disable animation
 	CheckDlgButton(Hwnd,IDC_WHA_EXPORT_RADIO,BST_UNCHECKED);
@@ -587,7 +587,7 @@ void W3dOptionsDialogClass::Disable_WHT_Export(void)
 	EnableWindow(GetDlgItem(Hwnd,IDC_WHA_EXPORT_RADIO),FALSE);
 }
 
-void W3dOptionsDialogClass::Enable_WHA_Export(void)
+void W3dOptionsDialogClass::Enable_WHA_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_EDIT),TRUE);
 	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_SPIN),TRUE);
@@ -602,7 +602,7 @@ void W3dOptionsDialogClass::Enable_WHA_Export(void)
 	}
 }
 
-void W3dOptionsDialogClass::Disable_WHA_Export(void)
+void W3dOptionsDialogClass::Disable_WHA_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_EDIT),FALSE);
 	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_SPIN),FALSE);
@@ -614,17 +614,17 @@ void W3dOptionsDialogClass::Disable_WHA_Export(void)
 	Disable_CompressAnimationOptions_Export();
 }
 
-void W3dOptionsDialogClass::Enable_ReduceAnimationOptions_Export(void)
+void W3dOptionsDialogClass::Enable_ReduceAnimationOptions_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_COMBO), TRUE);
 }
 
-void W3dOptionsDialogClass::Disable_ReduceAnimationOptions_Export(void)
+void W3dOptionsDialogClass::Disable_ReduceAnimationOptions_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_COMBO), FALSE);
 }
 
-void W3dOptionsDialogClass::Enable_CompressAnimationOptions_Export(void)
+void W3dOptionsDialogClass::Enable_CompressAnimationOptions_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_COMPRESS_ANIMATION_FLAVOR_COMBO), TRUE);
 	EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), TRUE);
@@ -634,7 +634,7 @@ void W3dOptionsDialogClass::Enable_CompressAnimationOptions_Export(void)
 	WHA_Compression_Flavor_Changed();
 }
 
-void W3dOptionsDialogClass::Disable_CompressAnimationOptions_Export(void)
+void W3dOptionsDialogClass::Disable_CompressAnimationOptions_Export()
 {
 	EnableWindow(GetDlgItem(Hwnd,IDC_COMPRESS_ANIMATION_FLAVOR_COMBO), FALSE);
 	EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), FALSE);
@@ -643,7 +643,7 @@ void W3dOptionsDialogClass::Disable_CompressAnimationOptions_Export(void)
 	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_COMBO), FALSE);
 }
 
-void W3dOptionsDialogClass::Enable_WTM_Export(void)
+void W3dOptionsDialogClass::Enable_WTM_Export()
 {
 	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK),TRUE);
 	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_AABTREES),TRUE);
@@ -652,7 +652,7 @@ void W3dOptionsDialogClass::Enable_WTM_Export(void)
 #endif
 }
 
-void W3dOptionsDialogClass::Disable_WTM_Export(void)
+void W3dOptionsDialogClass::Disable_WTM_Export()
 {
 	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK),FALSE);
 	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_AABTREES),FALSE);
@@ -661,7 +661,7 @@ void W3dOptionsDialogClass::Disable_WTM_Export(void)
 #endif
 }
 
-void W3dOptionsDialogClass::WHT_Export_Radio_Changed(void)
+void W3dOptionsDialogClass::WHT_Export_Radio_Changed()
 {
 	if (IsDlgButtonChecked(Hwnd, IDC_WHT_EXPORT_RADIO) == BST_CHECKED) {
 		Enable_WHT_Export();
@@ -672,7 +672,7 @@ void W3dOptionsDialogClass::WHT_Export_Radio_Changed(void)
 	}
 }
 
-void W3dOptionsDialogClass::WHA_Export_Radio_Changed(void)
+void W3dOptionsDialogClass::WHA_Export_Radio_Changed()
 {
 	if (IsDlgButtonChecked(Hwnd, IDC_WHA_EXPORT_RADIO) == BST_CHECKED) {
 		Enable_WHA_Export();
@@ -681,7 +681,7 @@ void W3dOptionsDialogClass::WHA_Export_Radio_Changed(void)
 	}
 }
 
-void W3dOptionsDialogClass::WTM_Export_Radio_Changed(void)
+void W3dOptionsDialogClass::WTM_Export_Radio_Changed()
 {
 	if (IsDlgButtonChecked(Hwnd, IDC_WTM_EXPORT_RADIO) == BST_CHECKED) {
 		Enable_WTM_Export();
@@ -691,7 +691,7 @@ void W3dOptionsDialogClass::WTM_Export_Radio_Changed(void)
 }
 
 
-void W3dOptionsDialogClass::WHA_Compress_Animation_Check_Changed(void)
+void W3dOptionsDialogClass::WHA_Compress_Animation_Check_Changed()
 {
 	if (IsDlgButtonChecked(Hwnd, IDC_COMPRESS_ANIMATION_CHECK) == BST_CHECKED) {
 		Enable_CompressAnimationOptions_Export();
@@ -700,7 +700,7 @@ void W3dOptionsDialogClass::WHA_Compress_Animation_Check_Changed(void)
 	}
 }
 
-void W3dOptionsDialogClass::WHA_Reduce_Animation_Check_Changed(void)
+void W3dOptionsDialogClass::WHA_Reduce_Animation_Check_Changed()
 {
 	if (IsDlgButtonChecked(Hwnd, IDC_REDUCE_ANIMATION_CHECK) == BST_CHECKED) {
 		Enable_ReduceAnimationOptions_Export();
@@ -793,7 +793,7 @@ BOOL CALLBACK _options_dialog_proc
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void _init_ofn(void)
+void _init_ofn()
 {
 	static char _szhierarchyfilter[] = "W3D Files (*.W3D)\0*.W3D\0WHT Files (*.WHT)\0*.WHT\0\0";
 

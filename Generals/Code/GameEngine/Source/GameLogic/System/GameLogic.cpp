@@ -1648,13 +1648,11 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			if (!slot || !slot->isOccupied())
 				continue;
 
-			AsciiString playerName;
-			playerName.format("player%d", i);
-			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
+			Player *player = ThePlayerList->getPlayerFromSlotIndex(i);
 
 			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
 			{
-				DEBUG_LOG(("Clearing shroud for observer %s in playerList slot %d", playerName.str(), player->getPlayerIndex()));
+				DEBUG_LOG(("Clearing shroud for observer in slot %d with player index %d", i, player->getPlayerIndex()));
 				ThePartitionManager->revealMapForPlayerPermanently( player->getPlayerIndex() );
 			}
 			else
@@ -1785,9 +1783,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			if (!slot || !slot->isOccupied())
 				continue;
 
-			AsciiString playerName;
-			playerName.format("player%d", i);
-			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
+			Player *player = ThePlayerList->getPlayerFromSlotIndex(i);
 
 			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
 			{
@@ -2106,6 +2102,18 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			ARRAY_SIZE(req.arg.status.locationString));
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
+
+  if( loadingSaveGame == FALSE )
+  {
+    // Drawables need to do some work on level start; give them a chance to do it
+    Drawable * drawable = TheGameClient->getDrawableList();
+
+    while ( drawable != nullptr )
+    {
+      drawable->onLevelStart();
+      drawable = drawable->getNextDrawable();
+    }
+  }
 
 	//ReAllows quit menu to work during loading scene
 	//setGameLoading(FALSE);

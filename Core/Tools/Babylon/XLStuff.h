@@ -243,15 +243,15 @@ enum {
 
 
 
-int OpenExcel ( void );
-void CloseExcel ( void );
+int OpenExcel ();
+void CloseExcel ();
 int NewWorkBook ( const char *path );
 int SaveWorkBook ( const char *filename, int protect = FALSE );
 int OpenWorkBook ( const char *filename );
-void CloseWorkBook ( void );
+void CloseWorkBook ();
 int PutCell ( int row, int column, const OLECHAR *string, int val );
 int PutSeparator ( int row );
 int PutSection ( int row, const OLECHAR *title );
-void SelectActiveSheet ( void );
+void SelectActiveSheet ();
 int GetInt ( int row, int cell );
 int GetString ( int row, int cell, OLECHAR *buffer );

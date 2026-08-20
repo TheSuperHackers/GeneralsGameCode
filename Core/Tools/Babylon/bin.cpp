@@ -45,7 +45,7 @@ Bin::~Bin ( )
 
 
 
-void Bin::Clear ( void )
+void Bin::Clear ()
 {
 	int count = num_buckets;
 	sh_item = nullptr;
@@ -74,7 +74,7 @@ void*				Bin::Get					( OLECHAR *text1, OLECHAR *text2 )
 	return nullptr;
 }
 
-void*				Bin::GetNext			( void )
+void*				Bin::GetNext			()
 {
 	BinItem *item;
 
@@ -128,7 +128,7 @@ BinItem*		Bin::GetBinItem		( OLECHAR *text1, OLECHAR *text2)
 	return GetNextBinItem ();
 }
 
-BinItem*		Bin::GetNextBinItem ( void )
+BinItem*		Bin::GetNextBinItem ()
 {
 	if ( sh_item )
 	{
@@ -277,7 +277,7 @@ BinID::~BinID ( )
 
 
 
-void BinID::Clear ( void )
+void BinID::Clear ()
 {
 	int count = num_buckets;
 

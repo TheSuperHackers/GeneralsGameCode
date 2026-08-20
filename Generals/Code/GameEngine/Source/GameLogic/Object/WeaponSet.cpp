@@ -231,6 +231,9 @@ void WeaponSet::xfer( Xfer *xfer )
 			if (tt == nullptr)
 				throw INI_INVALID_DATA;
 
+			// TheSuperHackers @fix bobtista 27/01/2026 Use the same final override as Object.
+			tt = static_cast<const ThingTemplate*>(tt->getFinalOverride());
+
 			m_curWeaponTemplateSet = tt->findWeaponTemplateSet(wsFlags);
 			if (m_curWeaponTemplateSet == nullptr)
 				throw INI_INVALID_DATA;

@@ -106,7 +106,7 @@ jobs:
           arch: x86
 
       - name: Compute vcpkg cache key parts
-        if: startsWith(inputs.preset, 'win32')
+        if: contains(inputs.preset, 'vcpkg')
         id: vcpkg_key
         shell: pwsh
         run: |
@@ -121,7 +121,7 @@ jobs:
           Write-Host "vcpkg cache key parts: baseline=$baseline, triplet=$triplet"
 
       - name: Restore vcpkg binary cache
-        if: startsWith(inputs.preset, 'win32')
+        if: contains(inputs.preset, 'vcpkg')
         id: vcpkg_cache
         uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
@@ -132,13 +132,14 @@ jobs:
             vcpkg-bincache-v3-${{ runner.os }}-
 
       - name: Setup vcpkg
-        uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
+        if: contains(inputs.preset, 'vcpkg')
+        uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 # v11.6
         with:
           runVcpkgInstall: false
-          doNotCache: true
+          doNotCache: false
 
       - name: Configure vcpkg to use cached directory
-        if: startsWith(inputs.preset, 'win32')
+        if: contains(inputs.preset, 'vcpkg')
         shell: pwsh
         run: |
           $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
@@ -177,7 +178,7 @@ jobs:
 
       - name: Save vcpkg binary cache
         # Only one job should save to avoid "Unable to reserve cache" conflicts.
-        if: ${{ startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
+        if: ${{ contains(inputs.preset, 'vcpkg') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
         uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ github.workspace }}\vcpkg-bincache

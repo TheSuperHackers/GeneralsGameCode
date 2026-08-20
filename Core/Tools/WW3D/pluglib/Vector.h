@@ -83,7 +83,7 @@ class VectorClass
 		VectorClass(NoInitClass const &) {};
 		VectorClass(int size=0, T const * array=0);
 		VectorClass(VectorClass<T> const &);		// Copy constructor.
-		virtual ~VectorClass(void);
+		virtual ~VectorClass();
 
 		T & operator[](int index) {assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]);};
 		T const & operator[](int index) const {assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]);};
@@ -92,8 +92,8 @@ class VectorClass
 		virtual bool operator == (VectorClass<T> const &) const;	// Equality operator.
 
 		virtual bool Resize(int newsize, T const * array=0);
-		virtual void Clear(void);
-		int Length(void) const {return VectorMax;};
+		virtual void Clear();
+		int Length() const {return VectorMax;};
 		virtual int ID(T const * ptr);	// Pointer based identification.
 		virtual int ID(T const & ptr);	// Value based identification.
 
@@ -180,7 +180,7 @@ VectorClass<T>::VectorClass(int size, T const * array) :
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-VectorClass<T>::~VectorClass(void)
+VectorClass<T>::~VectorClass()
 {
 	VectorClass<T>::Clear();
 }
@@ -354,7 +354,7 @@ int VectorClass<T>::ID(T const & object)
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-void VectorClass<T>::Clear(void)
+void VectorClass<T>::Clear()
 {
 	if (Vector && IsAllocated) {
 		delete[] Vector;
@@ -486,10 +486,10 @@ protected:
 		virtual bool Resize(int newsize, T const * array=0);
 
 		// Resets and frees the vector array.
-		virtual void Clear(void) {ActiveCount = 0;VectorClass<T>::Clear();};
+		virtual void Clear() {ActiveCount = 0;VectorClass<T>::Clear();};
 
 		// Fetch number of "allocated" vector objects.
-		int Count(void) const {return(ActiveCount);};
+		int Count() const {return(ActiveCount);};
 
 		// Add object to vector (growing as necessary).
 		bool Add(T const & object);
@@ -502,13 +502,13 @@ protected:
 		bool Delete(int index);
 
 		// Deletes all objects in the vector.
-		void Delete_All(void) {ActiveCount = 0;};
+		void Delete_All() {ActiveCount = 0;};
 
 		// Set amount that vector grows by.
 		int Set_Growth_Step(int step) {return(GrowthStep = step);};
 
 		// Fetch current growth step rate.
-		int Growth_Step(void) {return GrowthStep;};
+		int Growth_Step() {return GrowthStep;};
 
 		virtual int ID(T const * ptr) {return(VectorClass<T>::ID(ptr));};
 		virtual int ID(T const & ptr);
@@ -525,7 +525,7 @@ protected:
       // the 'new' spot. (null if the Add failed). NOTE - you must then fill
       // this memory area with a valid object (e.g. by using placement new),
       // or chaos will result!
-      T * Uninitialized_Add(void);
+      T * Uninitialized_Add();
 
 	protected:
 
@@ -817,7 +817,7 @@ bool DynamicVectorClass<T>::Delete(int index)
  *   03/04/1998 NH : Created.                                                                  *
  *=============================================================================================*/
 template<class T>
-T * DynamicVectorClass<T>::Uninitialized_Add(void)
+T * DynamicVectorClass<T>::Uninitialized_Add()
 {
 	if (ActiveCount >= Length()) {
 		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
@@ -876,16 +876,16 @@ class BooleanVectorClass
 		bool operator == (BooleanVectorClass const & vector);
 
 		// Fetch number of boolean objects in vector.
-		int Length(void) {return BitCount;};
+		int Length() {return BitCount;};
 
 		// Set all boolean values to false;
-		void Reset(void);
+		void Reset();
 
 		// Set all boolean values to true.
-		void Set(void);
+		void Set();
 
 		// Resets vector to zero length (frees memory).
-		void Clear(void);
+		void Clear();
 
 		// Change size of this boolean vector.
 		int Resize(unsigned size);
@@ -907,7 +907,7 @@ class BooleanVectorClass
 		};
 
 		// Find first index that is false.
-		int First_False(void) const {
+		int First_False() const {
 			if (LastIndex != -1) Fixup(-1);
 
 			int retval = First_False_Bit(&BitArray[0]);
@@ -921,7 +921,7 @@ class BooleanVectorClass
 		}
 
 		// Find first index that is true.
-		int First_True(void) const {
+		int First_True() const {
 			if (LastIndex != -1) Fixup(-1);
 
 			int retval = First_True_Bit(&BitArray[0]);

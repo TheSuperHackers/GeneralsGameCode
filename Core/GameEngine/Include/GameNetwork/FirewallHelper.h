@@ -143,11 +143,7 @@ class FirewallHelperClass {
 			*/
 			FIREWALL_TYPE_SMART_MANGLING = 4,
 
-			/*
-			** This is a firewall that exhibits the bug as seen in the Netgear firewalls. A previously good
-			** source port mapping will change in response to unsolicited traffic from a known IP.
-			*/
-			FIREWALL_TYPE_NETGEAR_BUG = 8,
+			FIREWALL_TYPE_UNUSED = 8,
 
 			/*
 			** This firewall has a simple absolute offset port allocation scheme.
@@ -223,20 +219,6 @@ class FirewallHelperClass {
 				return(FALSE);
 			}
 			return(TRUE);
-		};
-
-		Bool isNetgear(FirewallBehaviorType behavior) {
-			if ((behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-				return(TRUE);
-			}
-			return(FALSE);
-		};
-
-		Bool isNetgear() {
-			if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-				return(TRUE);
-			}
-			return(FALSE);
 		};
 
 

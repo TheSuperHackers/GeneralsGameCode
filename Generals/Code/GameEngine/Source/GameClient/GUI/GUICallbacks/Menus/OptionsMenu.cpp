@@ -112,9 +112,6 @@ static GameWindow *		checkUseCamera			= nullptr;
 static NameKeyType		checkSaveCameraID		= NAMEKEY_INVALID;
 static GameWindow *		checkSaveCamera			= nullptr;
 
-static NameKeyType		checkSendDelayID		= NAMEKEY_INVALID;
-static GameWindow *		checkSendDelay			= nullptr;
-
 static NameKeyType		checkDrawAnchorID		= NAMEKEY_INVALID;
 static GameWindow *		checkDrawAnchor			= nullptr;
 
@@ -224,10 +221,6 @@ static void setDefaults()
 	//-------------------------------------------------------------------------------------------------
 	// language filter
 	GadgetCheckBoxSetChecked( checkLanguageFilter, TRUE );
-
-	//-------------------------------------------------------------------------------------------------
-	// send Delay
-	GadgetCheckBoxSetChecked(checkSendDelay, FALSE);
 
 	if constexpr (ModifyDisplaySettings)
 	{
@@ -390,18 +383,6 @@ static void saveOptions()
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	// send Delay
-	if (checkSendDelay && checkSendDelay->winGetEnabled())
-	{
-		TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
-		if (TheGlobalData->m_firewallSendDelay) {
-			(*pref)["SendDelay"] = "yes";
-		} else {
-			(*pref)["SendDelay"] = "no";
-		}
-	}
-
-	//-------------------------------------------------------------------------------------------------
 	// Custom game detail settings.
 	GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
 	if (index == STATIC_GAME_LOD_CUSTOM)
@@ -499,18 +480,6 @@ static void saveOptions()
 			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
 			pref->setOnlineIPAddress(ip);
 		}
-	}
-
-	//-------------------------------------------------------------------------------------------------
-	// HTTP Proxy
-	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
-	if (textEntryHTTPProxy && textEntryHTTPProxy->winGetEnabled())
-	{
-		UnicodeString uStr = GadgetTextEntryGetText(textEntryHTTPProxy);
-		AsciiString aStr;
-		aStr.translate(uStr);
-		SetStringInRegistry("", "Proxy", aStr.str());
-		ghttpSetProxy(aStr.str());
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -968,10 +937,17 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	checkLanguageFilterID  = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckLanguageFilter" );
 	checkLanguageFilter    = TheWindowManager->winGetWindowFromId( nullptr, checkLanguageFilterID );
-	checkSendDelayID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckSendDelay" );
-	checkSendDelay				 = TheWindowManager->winGetWindowFromId( nullptr, checkSendDelayID);
 	buttonFirewallRefreshID	= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonFirewallRefresh" );
 	buttonFirewallRefresh		= TheWindowManager->winGetWindowFromId( nullptr, buttonFirewallRefreshID);
+
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak 26/07/2026 The Send Delay feature was obsoleted because it only worked around
+	// a source port remapping bug in early 2000s Netgear firewalls. Hide the obsoleted UI element accordingly.
+	GameWindow *checkSendDelay = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:CheckSendDelay"));
+	if (checkSendDelay)
+		checkSendDelay->winHide(TRUE);
+#endif
+
 	checkDrawAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxDrawAnchor" );
 	checkDrawAnchor				 = TheWindowManager->winGetWindowFromId( nullptr, checkDrawAnchorID);
 	checkMoveAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxMoveAnchor" );
@@ -1125,16 +1101,19 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		}
 	}
 
-	// HTTP Proxy
-	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak 26/07/2026 The http proxy feature was obsoleted because it did nothing for the UDP game traffic or match sockets.
+	// Hide the relevant obsoleted UI elements accordingly.
+	NameKeyType textEntryHTTPProxyID = TheNameKeyGenerator->nameToKey("OptionsMenu.wnd:TextEntryHTTPProxy");
+	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, textEntryHTTPProxyID);
 	if (textEntryHTTPProxy)
-	{
-		UnicodeString uStr;
-		std::string proxy;
-		GetStringFromRegistry("", "Proxy", proxy);
-		uStr.translate(proxy.c_str());
-		GadgetTextEntrySetText(textEntryHTTPProxy, uStr);
-	}
+		textEntryHTTPProxy->winHide(TRUE);
+
+	NameKeyType staticTextHTTPProxyID = TheNameKeyGenerator->nameToKey("OptionsMenu.wnd:StaticTextHTTPProxy");
+	GameWindow *staticTextHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, staticTextHTTPProxyID);
+	if (staticTextHTTPProxy)
+		staticTextHTTPProxy->winHide(TRUE);
+#endif
 
  	// Firewall Port Override
  	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
@@ -1355,9 +1334,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 	DEBUG_LOG(("Scroll Speed %d", scrollPos));
 
-	// set the send delay check box
-	GadgetCheckBoxSetChecked(checkSendDelay, TheGlobalData->m_firewallSendDelay);
-
  	// set volume sliders
 
 	// set music volume slider
@@ -1389,8 +1365,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		if (comboBoxOnlineIP)
 			comboBoxOnlineIP->winEnable(FALSE);
 
-		checkSendDelay->winEnable(FALSE);
-
 		buttonFirewallRefresh->winEnable(FALSE);
 
 		if (comboBoxDetail)
@@ -1401,9 +1375,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 		if (textEntryFirewallPortOverride)
 			textEntryFirewallPortOverride->winEnable(FALSE);
-
-		if (textEntryHTTPProxy)
-			textEntryHTTPProxy->winEnable(FALSE);
 
 //		if (checkAudioSurround)
 //			checkAudioSurround->winEnable(FALSE);

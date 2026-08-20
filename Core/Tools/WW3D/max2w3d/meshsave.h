@@ -120,7 +120,7 @@ public:
 			WorldInfoClass *			world_info = nullptr
 			);
 
-	~MeshSaveClass(void);
+	~MeshSaveClass();
 
 	int Write_To_File(ChunkSaveClass & csave,bool export_aabtrees = false);
 
@@ -153,7 +153,7 @@ private:
 	void Build_Mesh(Mesh & mesh, Mtl *node_mtl, unsigned int *materialColors, int &numMaterialColors, int &numHouseColors);
 
 	// compute properties for the mesh
-	void compute_bounding_volumes(void);
+	void compute_bounding_volumes();
 	void compute_physical_constants(INode * inode,Progress_Meter_Class & meter,bool voxelize);
 
 	// create the materials
@@ -200,10 +200,10 @@ private:
 	// inverse deform the mesh so that its ready to be used as a skin!
 	void get_skin_modifier_objects(SkinDataClass ** skin_data_ptr,SkinWSMObjectClass ** skin_obj_ptr);
 	int  get_htree_bone_index_for_inode(INode * node);
-	void inv_deform_mesh(void);
+	void inv_deform_mesh();
 
 	// get rendering settings for the materials
-	void customize_materials(void);
+	void customize_materials();
 
 	// Write the ps2 shaders and approximate them as close as possible in the W3D shaders.
 	int write_ps2_shaders(ChunkSaveClass & csave);

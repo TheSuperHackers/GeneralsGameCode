@@ -1125,8 +1125,10 @@ void PathfindCellInfo::forceCleanPathFindCellInfos()
 
 void Pathfinder::forceCleanCells()
 {
-	UnicodeString pathfinderFailoverMessage = TheGameText->FETCH_OR_SUBSTITUTE("GUI:PathfindingCrashPrevented", L"A pathfinding crash was prevented, now switching to the crash fixed pathfinding.");
+	UnicodeString pathfinderFailoverMessage = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:PathfindingCrashPrevented", L"A pathfinding crash was prevented at frame %u, now switching to the crash fixed pathfinding.", TheGameLogic->getFrame());
 	TheInGameUI->message(pathfinderFailoverMessage);
+
+	printf("%ls\n", pathfinderFailoverMessage.str());
 
 	TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_allCheerSound);
 
@@ -1727,6 +1729,13 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 	UnsignedInt cellCount = 0;
 	while (currentCell && cellCount < PATHFIND_CELLS_PER_FRAME && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
 	{
+		// Prevent a retail crash where a pathfindCell has an m_info with a dangling nextOpen pointer
+		if (currentCell->m_info->m_nextOpen && !currentCell->m_info->m_nextOpen->m_cell->m_info)
+		{
+			currentCell->m_info->m_nextOpen->m_cell = nullptr;
+			currentCell->m_info->m_nextOpen = nullptr;
+		}
+
 		cellCount++;
 		previousCell = currentCell;
 		currentCell = currentCell->getNextOpen();
@@ -1976,7 +1985,19 @@ void PathfindCell::putOnClosedList( PathfindCellList &list )
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = list.m_head ? list.m_head->m_info : nullptr;
 		if (list.m_head)
+#if RETAIL_COMPATIBLE_PATHFINDING
+		// TheSuperHackers @info This is only here to catch a crash point in the retail compatible pathfinding
+		// This crash mode occurs due to the closed list head not having an m_info associated with it
+		// A node cannot be put onto the closed list without an m_info under normal conditions
+		{
+			if (list.m_head->m_info)
+			{
+				list.m_head->m_info->m_prevOpen = this->m_info;
+			}
+		}
+#else
 			list.m_head->m_info->m_prevOpen = this->m_info;
+#endif
 
 		list.m_head = this;
 	}

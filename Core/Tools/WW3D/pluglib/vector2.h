@@ -76,7 +76,7 @@ public:
 	};
 
 	// Constructors
-	Vector2(void) {};
+	Vector2() {};
 	Vector2(const Vector2 & v) { X = v.X; Y = v.Y; }
 	Vector2(float x, float y) { X = x; Y = y; }
 	Vector2(const float vector[2]) { X = vector[0]; Y = vector[1]; }
@@ -92,9 +92,9 @@ public:
 	const float &  operator [](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
-	void	Normalize(void);
-	float	Length(void) const;
-	float	Length2(void) const;
+	void	Normalize();
+	float	Length() const;
+	float	Length2() const;
 
 	// unary operators
 	Vector2 operator-() const { return Vector2(-X,-Y); }
@@ -133,7 +133,7 @@ public:
 	bool Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn);
 
 	// verify that none of the members of this vector are invalid floats
-	bool Is_Valid(void) const;
+	bool Is_Valid() const;
 
 	// make this vector the min or max of itself and the passed vector
 	void Update_Min (const Vector2 & a);
@@ -488,7 +488,7 @@ inline void Swap(Vector2 & a,Vector2 & b)
  * HISTORY:                                                                                    *
  *   10/18/99   gth : Created.                                                                 *
  *=============================================================================================*/
-inline bool Vector2::Is_Valid(void) const
+inline bool Vector2::Is_Valid() const
 {
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y));
 }

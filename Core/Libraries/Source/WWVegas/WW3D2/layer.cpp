@@ -46,8 +46,8 @@
 
 
 #include "layer.h"
-#include "WW3D2/scene.h"
-#include "WW3D2/camera.h"
+#include "scene.h"
+#include "camera.h"
 
 
 /***********************************************************************************************

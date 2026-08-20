@@ -626,12 +626,6 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		m_behavior = FIREWALL_TYPE_SIMPLE;
 		DEBUG_LOG(("Source port %d specified by user", TheGlobalData->m_firewallPortOverride));
 
-		if (TheGlobalData->m_firewallSendDelay) {
-			UnsignedInt addbehavior = FIREWALL_TYPE_NETGEAR_BUG;
-			addbehavior |= (UnsignedInt)m_behavior;
-			m_behavior = (FirewallBehaviorType) addbehavior;
-			DEBUG_LOG(("Netgear bug specified by command line or SendDelay flag"));
-		}
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
 	}
@@ -712,20 +706,6 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		temp += mangler_addresses[i][0] << 24;
 		m_manglers[i] = temp;
 //		memcpy(&(m_manglers[i]), &mangler_addresses[i][0], 4);
-	}
-
-	DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - Testing for Netgear bug"));
-
-	/*
-	** See if the user specified a netgear firewall - that will save us the trouble.
-	*/
-	if (TheGlobalData->m_firewallSendDelay) {
-		UnsignedInt addbehavior = FIREWALL_TYPE_NETGEAR_BUG;
-		addbehavior |= (UnsignedInt)m_behavior;
-		m_behavior = (FirewallBehaviorType) addbehavior;
-		DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - Netgear bug specified by command line or SendDelay flag"));
-	} else {
-		DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - Netgear bug not specified"));
 	}
 
 	/*
@@ -1173,28 +1153,7 @@ Bool FirewallHelperClass::detectionTest4Stage2Update() {
 Bool FirewallHelperClass::detectionTest5Update() {
 	/*
 	** We have done all the tests we *have* to. There's other info that it would be nice to know though.
-	**
-	** Test for the netgear bug behavior.
 	*/
-#if (0)
-// moved to before test 1.  Moved because this flag could be specified for another firewall
-// for testing purposes and never get this far because it has behavior that doesn't require
-// all the tests to be performed.
-// BGC 10/1/02
-	DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - Testing for Netgear bug"));
-
-	/*
-	** See if the user specified a netgear firewall - that will save us the trouble.
-	*/
-	if (TheGlobalData->m_firewallSendDelay) {
-		UnsignedInt addbehavior = FIREWALL_TYPE_NETGEAR_BUG;
-		addbehavior |= (UnsignedInt)m_behavior;
-		m_behavior = (FirewallBehaviorType) addbehavior;
-		DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - Netgear bug specified by command line or SendDelay flag"));
-	} else {
-		DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - Netgear bug not specified"));
-	}
-#endif // #if (0)
 
 	DEBUG_LOG_RAW(("FirewallHelperClass::detectionTest5Update - All done, behavior is: "));
 
@@ -1206,9 +1165,6 @@ Bool FirewallHelperClass::detectionTest5Update() {
 	}
 	if ((m_behavior & FIREWALL_TYPE_SMART_MANGLING) != 0) {
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_SMART_MANGLING "));
-	}
-	if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-		DEBUG_LOG_RAW((" FIREWALL_TYPE_NETGEAR_BUG "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0) {
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION "));
@@ -1433,10 +1389,6 @@ Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
 		hardness += 3;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_NETGEAR_BUG & fw) != 0) {
-		hardness += 10;
-	}
-
 	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION & fw) != 0) {
 		hardness += 1;
 	}
@@ -1484,10 +1436,6 @@ Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
 
 	if (((UnsignedInt)FIREWALL_TYPE_SMART_MANGLING & fw) != 0) {
 		retries += 1;
-	}
-
-	if (((UnsignedInt)FIREWALL_TYPE_NETGEAR_BUG & fw) != 0) {
-		//retries += 10;
 	}
 
 	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION & fw) != 0) {

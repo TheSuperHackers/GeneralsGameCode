@@ -128,7 +128,7 @@ int MapSetCount(const MapBitSet& a)
 // Users
 // =====================================================================
 
-GeneralsUser::GeneralsUser(void)
+GeneralsUser::GeneralsUser()
 {
 	status = STATUS_INCHANNEL;
 	points = 1;
@@ -197,12 +197,12 @@ GeneralsMatcher::GeneralsMatcher()
 	m_nextPoolSizeAnnouncement = time(nullptr);
 }
 
-void GeneralsMatcher::init(void)
+void GeneralsMatcher::init()
 {}
 
 
 #define W(x) setw(x) <<
-void GeneralsMatcher::dumpUsers(void)
+void GeneralsMatcher::dumpUsers()
 {}
 
 
@@ -431,7 +431,7 @@ void GeneralsMatcher::sendMatchInfo(std::string name1, std::string name2, std::s
 	peerMessagePlayer(m_peer, n.c_str(), s.c_str(), NormalMessage);
 }
 
-void GeneralsMatcher::checkMatches(void)
+void GeneralsMatcher::checkMatches()
 {
 	bool showPoolSize = false;
 	time_t now = time(nullptr);
@@ -1290,13 +1290,13 @@ GeneralsClientMatcher::GeneralsClientMatcher()
 		quiet = false;
 }
 
-void GeneralsClientMatcher::init(void)
+void GeneralsClientMatcher::init()
 {
 	m_baseNick.setFormatted("qmBot%d", time(nullptr));
 	m_profileID = 0;
 }
 
-void GeneralsClientMatcher::checkMatches(void)
+void GeneralsClientMatcher::checkMatches()
 {}
 
 void GeneralsClientMatcher::handleDisconnect( const char *reason )

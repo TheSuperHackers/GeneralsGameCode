@@ -854,15 +854,6 @@ static void reallyStartPatchCheck()
 
 	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
 
-	std::string proxy;
-	if (GetStringFromRegistry("", "Proxy", proxy))
-	{
-		if (!proxy.empty())
-		{
-			ghttpSetProxy(proxy.c_str());
-		}
-	}
-
 	// check for a patch first
 	DEBUG_LOG(("Game patch check: [%s]", gameURL.c_str()));
 	DEBUG_LOG(("Map patch check: [%s]", mapURL.c_str()));

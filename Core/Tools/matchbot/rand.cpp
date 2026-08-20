@@ -50,7 +50,7 @@ RandClass::RandClass(int start)
 // Add with carry. SUM is replaced with A + B + C, C is replaced with 1  if there was a carry, 0 if there wasn't. A carry occurred if the sum is  less than one of the inputs. This is addition, so carry can never be  more than one.
 #define ADC(SUM, A, B, C)   SUM = (A) + (B) + (C); C = ((SUM < (A)) || (SUM < (B)))
 
-unsigned int RandClass::randomValue( void )
+unsigned int RandClass::randomValue()
 {
 	unsigned int ax;
 	unsigned int c = 0;
@@ -94,7 +94,7 @@ unsigned int RandClass::randomValue( void )
 }
 
 
-int RandClass::Int(void)
+int RandClass::Int()
 {
 	return (int)randomValue();
 }
@@ -112,7 +112,7 @@ int RandClass::Int(int low, int high)
 	return rval;
 }
 
-double RandClass::Double(void)
+double RandClass::Double()
 {
 	return Double(0.0, 1.0);
 }

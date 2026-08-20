@@ -202,7 +202,7 @@ class TTFontClass
 			BYTE	quality				= PROOF_QUALITY,
 			BYTE	pitchAndFamily		= FF_DONTCARE );
 
-		virtual ~TTFontClass(void)
+		virtual ~TTFontClass()
 			{
 				if ( Font != nullptr ) {
 					DeleteObject( Font );
@@ -215,13 +215,13 @@ class TTFontClass
 		virtual int		Char_Pixel_Width		( HDC hdc, char const * string, int *num_bytes=nullptr ) const;
 		virtual int		String_Pixel_Width		( HDC hdc, char const * string ) const;
 		virtual void	String_Pixel_Bounds		( HDC hdc, const char * string, Rect& bounds ) const;
-		virtual int		Get_Width				( void ) const;
-		virtual int		Get_Height				( void ) const;
+		virtual int		Get_Width				() const;
+		virtual int		Get_Height				() const;
 		virtual int		Set_XSpacing			( HDC hdc, int x );
 		virtual int		Set_YSpacing			( int y );
 		virtual int		Find_Text_VLength		( HDC hdc, char *str, int width );
-		virtual HFONT	Get_Font_Ptr			( void )		{ return Font; };
-		virtual int		IsFontDBCS				( void ) const	{ return ((CharSet==SHIFTJIS_CHARSET)||(CharSet==HANGEUL_CHARSET)||(CharSet==CHINESEBIG5_CHARSET)); };	// [OYO]
+		virtual HFONT	Get_Font_Ptr			()		{ return Font; };
+		virtual int		IsFontDBCS				() const	{ return ((CharSet==SHIFTJIS_CHARSET)||(CharSet==HANGEUL_CHARSET)||(CharSet==CHINESEBIG5_CHARSET)); };	// [OYO]
 		virtual UINT	Get_Double_Byte_Char	( const char *string, int *num_bytes=nullptr ) const;
 
 		virtual Point2D	Print(
@@ -278,7 +278,7 @@ class FontManagerClass
 {
 	public:
 		FontManagerClass		( HDC hdc );
-		~FontManagerClass		( void );
+		~FontManagerClass		();
 		TTFontClass * Get_Font	( TextPrintType flags )	{ return( Font_From_TPF( flags ));  };
 };
 

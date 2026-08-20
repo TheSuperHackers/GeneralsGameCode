@@ -52,7 +52,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-int ExcelRunning( void );
+int ExcelRunning();
 extern TransDB				*BabylonstrDB;
 extern TransDB				*MainDB;
 extern char						BabylonstrFilename[];

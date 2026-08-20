@@ -325,7 +325,7 @@ NATConnectionState NAT::connectionUpdate() {
 	m_transport->update();
 
 	// check to see if we've been probed.
-	for (Int i = 0; i < MAX_MESSAGES; ++i) {
+	for (size_t i = 0; i < ARRAY_SIZE(m_transport->m_inBuffer); ++i) {
 		if (m_transport->m_inBuffer[i].length > 0) {
 #ifdef DEBUG_LOGGING
 			UnsignedInt ip = m_transport->m_inBuffer[i].addr;
@@ -368,6 +368,8 @@ NATConnectionState NAT::connectionUpdate() {
 										PRINTF_IP_AS_4_INTS(ip), m_transport->m_inBuffer[i].port));
 				m_transport->m_inBuffer[i].length = 0;
 			}
+		} else {
+			break;
 		}
 	}
 
@@ -402,7 +404,7 @@ NATConnectionState NAT::connectionUpdate() {
 			mangledPort = TheFirewallHelper->getManglerResponse(m_packetID);
 		}
 		if (mangledPort != 0) {
-			// we got a response.  now we need to start probing (unless of course we have a netgear)
+			// we got a response.  now we need to start probing
 			processManglerResponse(mangledPort);
 
 			// we know there is a firewall helper if we got here.
@@ -497,50 +499,7 @@ void NAT::establishConnectionPaths() {
 
 	m_previousSourcePort = 0;
 
-// check for netgear bug behavior.
-// as an aside, if there are more than 2 netgear bug firewall's in the game,
-// it probably isn't going to work so well.  stupid netgear.
-
-// nodes with a netgear bug behavior need to be matched up first. This prevents
-// the NAT table from being reset for connections to other nodes.  This also happens
-// to be the reason why I call them "nodes" rather than "slots" or "players" as the
-// ordering has to be messed with to get the netgears to make love, not war.
 	DEBUG_LOG(("NAT::establishConnectionPaths - about to set up the node list"));
-	DEBUG_LOG(("NAT::establishConnectionPaths - doing the netgear stuff"));
-	UnsignedInt otherNetgearNum = -1;
-	for (i = 0; i < MAX_SLOTS; ++i) {
-		if ((m_slotList != nullptr) && (m_slotList[i] != nullptr)) {
-			if ((m_slotList[i]->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-				if (otherNetgearNum == -1) {
-					// this is the start of a new pair, put it in as the first non -1 node connection pair thing.
-					Int nodeindex = 0;
-					while ((m_connectionPairs[m_connectionPairIndex][0][nodeindex] == -1) || (m_connectionNodes[nodeindex].m_slotIndex != -1)) {
-						++nodeindex;
-					}
-					m_connectionNodes[nodeindex].m_slotIndex = i;
-					m_connectionNodes[nodeindex].m_behavior = m_slotList[i]->getNATBehavior();
-					connectionAssigned[i] = TRUE;
-					otherNetgearNum = nodeindex;
-					DEBUG_LOG(("NAT::establishConnectionPaths - first netgear in pair. assigning node %d to slot %d (%ls)", nodeindex, i, m_slotList[i]->getName().str()));
-				} else {
-					// this is the second in the pair of netgears, pair this up with the other one
-					// for the first round.
-					Int nodeindex = 0;
-					while (m_connectionPairs[m_connectionPairIndex][0][nodeindex] != otherNetgearNum) {
-						++nodeindex;
-					}
-					m_connectionNodes[nodeindex].m_slotIndex = i;
-					m_connectionNodes[nodeindex].m_behavior = m_slotList[i]->getNATBehavior();
-					connectionAssigned[i] = TRUE;
-					otherNetgearNum = -1;
-					DEBUG_LOG(("NAT::establishConnectionPaths - second netgear in pair. assigning node %d to slot %d (%ls)", nodeindex, i, m_slotList[i]->getName().str()));
-				}
-			}
-		}
-	}
-
-	// fill in the rest of the nodes with the remaining slots.
-	DEBUG_LOG(("NAT::establishConnectionPaths - doing the non-Netgear nodes"));
 	for (i = 0; i < MAX_SLOTS; ++i) {
 		if (connectionAssigned[i] == TRUE) {
 			continue;
@@ -662,6 +621,7 @@ void NAT::doThisConnectionRound() {
 			if (i == m_localNodeNumber) {
 				m_targetNodeNumber = targetNodeNumber;
 				DEBUG_LOG(("NAT::doThisConnectionRound - Local node is connecting to node %d", m_targetNodeNumber));
+#if defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING)
 				UnsignedInt targetSlotIndex = m_connectionNodes[(m_connectionPairs[m_connectionPairIndex][m_connectionRound][i])].m_slotIndex;
 				GameSlot *targetSlot = m_slotList[targetSlotIndex];
 				GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
@@ -670,25 +630,10 @@ void NAT::doThisConnectionRound() {
 				DEBUG_ASSERTCRASH(targetSlot != nullptr, ("trying to negotiate with a null target slot, slot is %d", m_connectionPairs[m_connectionPairIndex][m_connectionRound][i]));
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot index = %d (%ls)", targetSlotIndex, m_slotList[targetSlotIndex]->getName().str()));
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot has NAT behavior 0x%8X, local slot has NAT behavior 0x%8X", targetSlot->getNATBehavior(), localSlot->getNATBehavior()));
-
-#if defined(DEBUG_LOGGING)
-				UnsignedInt targetIP = targetSlot->getIP();
-				UnsignedInt localIP = localSlot->getIP();
-#endif
-
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot has IP %d.%d.%d.%d  Local slot has IP %d.%d.%d.%d",
-							PRINTF_IP_AS_4_INTS(targetIP),
-							PRINTF_IP_AS_4_INTS(localIP)));
-
-				if (((targetSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) == 0) &&
-						((localSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0)) {
-
-					// we have a netgear bug type behavior and the target does not, so we need them to send to us
-					// first to avoid having our NAT table reset.
-
-					DEBUG_LOG(("NAT::doThisConnectionRound - Local node has a netgear and the target node does not, need to delay our probe."));
-					m_timeTillNextSend = -1;
-				}
+							PRINTF_IP_AS_4_INTS(targetSlot->getIP()),
+							PRINTF_IP_AS_4_INTS(localSlot->getIP())));
+#endif
 
 				// figure out which port number I'm using for this connection
 				// this merely starts to talk to the mangler server, we have to keep calling
@@ -941,26 +886,6 @@ void NAT::probed(Int nodeNumber) {
 	if (m_beenProbed == FALSE) {
 		m_beenProbed = TRUE;
 		DEBUG_LOG(("NAT::probed - just got probed for the first time."));
-		if ((localSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-			DEBUG_LOG(("NAT::probed - we have a NETGEAR and we were just probed for the first time"));
-			GameSlot *targetSlot = m_slotList[m_connectionNodes[m_targetNodeNumber].m_slotIndex];
-			DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::probed - targetSlot is null"));
-			if (targetSlot == nullptr) {
-				DEBUG_LOG(("NAT::probed - targetSlot is null, failed this connection"));
-				setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
-				return;
-			}
-
-			if (targetSlot->getPort() == 0) {
-				setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_WAITINGFORMANGLEDPORT);
-				DEBUG_LOG(("NAT::probed - still waiting for mangled port"));
-			} else {
-				DEBUG_LOG(("NAT::probed - sending a probe to %ls", targetSlot->getName().str()));
-				sendAProbe(targetSlot->getIP(), targetSlot->getPort(), m_localNodeNumber);
-				notifyTargetOfProbe(targetSlot);
-				setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_WAITINGFORRESPONSE);
-			}
-		}
 	}
 }
 
@@ -996,20 +921,12 @@ void NAT::gotMangledPort(Int nodeNumber, UnsignedShort mangledPort) {
 
 	targetSlot->setPort(mangledPort);
 	DEBUG_LOG(("NAT::gotMangledPort - got mangled port number %d from our target node (%ls)", mangledPort, targetSlot->getName().str()));
-	if (((localSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) == 0) || (m_beenProbed == TRUE) ||
-			(((localSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0) && ((targetSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0))) {
-#ifdef DEBUG_LOGGING
-		UnsignedInt ip = targetSlot->getIP();
-#endif
-		DEBUG_LOG(("NAT::gotMangledPort - don't have a netgear or we have already been probed, or both my target and I have a netgear, send a PROBE. Sending to %d.%d.%d.%d:%d",
-								PRINTF_IP_AS_4_INTS(ip), targetSlot->getPort()));
+	DEBUG_LOG(("NAT::gotMangledPort - Send a PROBE to %d.%d.%d.%d:%d",
+							PRINTF_IP_AS_4_INTS(targetSlot->getIP()), targetSlot->getPort()));
 
-		sendAProbe(targetSlot->getIP(), targetSlot->getPort(), m_localNodeNumber);
-		notifyTargetOfProbe(targetSlot);
-		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_WAITINGFORRESPONSE);
-	} else {
-		DEBUG_LOG(("NAT::gotMangledPort - we are a netgear, not sending a PROBE yet."));
-	}
+	sendAProbe(targetSlot->getIP(), targetSlot->getPort(), m_localNodeNumber);
+	notifyTargetOfProbe(targetSlot);
+	setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_WAITINGFORRESPONSE);
 }
 
 void NAT::gotInternalAddress(Int nodeNumber, UnsignedInt address) {
@@ -1171,8 +1088,7 @@ void NAT::processGlobalMessage(Int slotNum, const char *options) {
 	DEBUG_LOG(("NAT::processGlobalMessage - got message from slot %d, message is \"%s\"", slotNum, ptr));
 	if (strncmp(ptr, "PROBED", strlen("PROBED")) == 0) {
 		// format: PROBED<node number>
-		// a probe has been sent at us, if we are waiting because of a netgear or something, we
-		// should start sending our own probes.
+		// a probe has been sent at us; notify probed node.
 		Int node = atoi(ptr + strlen("PROBED"));
 		if (node == m_targetNodeNumber) {
 			// make sure we're being probed by who we're supposed to be probed by.

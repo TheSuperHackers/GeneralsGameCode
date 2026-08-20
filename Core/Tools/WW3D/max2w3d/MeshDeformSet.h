@@ -63,7 +63,7 @@ class MeshDeformSetClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		MeshDeformSetClass (void)
+		MeshDeformSetClass ()
 			:	m_pMesh (nullptr),
 				m_pVertexArray (nullptr),
 				m_pVertexOPStartArray (nullptr),
@@ -74,27 +74,27 @@ class MeshDeformSetClass
 				m_bAutoApply (true),
 				m_VertexCount (0)					{ Init_Key_Frames (); }
 
-		virtual ~MeshDeformSetClass (void);
+		virtual ~MeshDeformSetClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
-		//virtual LocalModData *	Clone (void)	{ return new MeshDeformSetClass; }
+		//virtual LocalModData *	Clone ()	{ return new MeshDeformSetClass; }
 		void					Update_Mesh (TriObject &tri_obj);
 		void					Set_State (float state);
 
 		//	Inline accessors
-		Mesh *				Peek_Mesh (void) const						{ return m_pMesh; }
-		const Point3 *		Peek_Orig_Vertex_Array (void) const		{ return m_pVertexArray; }
-		Point3 *				Peek_Vertex_OPStart_Array (void) const	{ return m_pVertexOPStartArray; }
-		VertColor *			Peek_Vertex_Colors (void) const			{ return m_pVertexColors; }
+		Mesh *				Peek_Mesh () const						{ return m_pMesh; }
+		const Point3 *		Peek_Orig_Vertex_Array () const		{ return m_pVertexArray; }
+		Point3 *				Peek_Vertex_OPStart_Array () const	{ return m_pVertexOPStartArray; }
+		VertColor *			Peek_Vertex_Colors () const			{ return m_pVertexColors; }
 
 		// Keyframe managment
 		void					Set_Current_Key_Frame (int index);
-		int					Get_Current_Key_Frame (void) const		{ return m_CurrentKeyFrame; }
+		int					Get_Current_Key_Frame () const		{ return m_CurrentKeyFrame; }
 		void					Update_Key_Frame (int key_frame);
-		void					Update_Current_Data (void);
-		void					Update_Set_Members (void);
+		void					Update_Current_Data ();
+		void					Update_Set_Members ();
 		void					Collapse_Keyframe_Data (int keyframe);
 		void					Reset_Key_Frame_Verts (int keyframe);
 		void					Reset_Key_Frame_Colors (int keyframe);
@@ -104,16 +104,16 @@ class MeshDeformSetClass
 		void					Set_Vertex_Color (int index, int color_index, const VertColor &value);
 
 		// Set managment
-		void					Select_Members (void);
+		void					Select_Members ();
 		void					Update_Members (DEFORM_CHANNELS flags);
-		void					Restore_Members (void);
+		void					Restore_Members ();
 
 		//	Auto apply
-		bool					Does_Set_Auto_Apply (void) const			{ return m_bAutoApply; }
+		bool					Does_Set_Auto_Apply () const			{ return m_bAutoApply; }
 		void					Auto_Apply (bool auto_apply = true)		{ m_bAutoApply = auto_apply; }
 
 		// Information
-		bool					Is_Empty (void) const;
+		bool					Is_Empty () const;
 		int					Get_Vertex_Count (int keyframe) const				{ return m_KeyFrames[keyframe]->vertices.Count (); }
 		int					Get_Color_Count (int keyframe) const				{ return m_KeyFrames[keyframe]->colors.Count (); }
 		const VERT_INFO &	Get_Vertex_Data (int keyframe, int index) const	{ return m_KeyFrames[keyframe]->vertices[index]; }
@@ -134,8 +134,8 @@ class MeshDeformSetClass
 		void					Copy_Vertex_Array (Mesh &mesh);
 
 		// Keyframe methods
-		void					Init_Key_Frames (void);
-		void					Free_Key_Frames (void);
+		void					Init_Key_Frames ();
+		void					Free_Key_Frames ();
 		void					Determine_Interpolation_Indicies (int key_frame, bool position, int &from, int &to, float &state);
 
 		// Deformation application methods

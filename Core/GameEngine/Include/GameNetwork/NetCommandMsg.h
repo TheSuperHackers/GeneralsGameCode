@@ -134,27 +134,28 @@ protected:
 template<typename NetPacketType, typename SmallNetPacketType>
 class NetCommandMsgT : public NetCommandMsg
 {
-	virtual size_t getSizeForNetPacket() const override
+public:
+	virtual size_t getSizeForNetPacket() const final
 	{
 		return NetPacketType::getSize(*this);
 	}
 
-	virtual size_t copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const override
+	virtual size_t copyBytesForNetPacket(UnsignedByte* buffer, const NetCommandRef& ref) const final
 	{
 		return NetPacketType::copyBytes(buffer, ref);
 	}
 
-	virtual size_t getSizeForSmallNetPacket(const Select* select = nullptr) const override
+	virtual size_t getSizeForSmallNetPacket(const Select* select = nullptr) const final
 	{
 		return SmallNetPacketType::getSize(*this, select);
 	}
 
-	virtual size_t copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select = nullptr) const override
+	virtual size_t copyBytesForSmallNetPacket(UnsignedByte* buffer, const NetCommandRef& ref, const Select* select = nullptr) const final
 	{
 		return SmallNetPacketType::copyBytes(buffer, ref, select);
 	}
 
-	virtual size_t readMessageData(NetCommandRef& ref, NetPacketBuf buf) const override
+	virtual size_t readMessageData(NetCommandRef& ref, NetPacketBuf buf) const final
 	{
 		return SmallNetPacketType::CommandData::readMessage(ref, buf);
 	}

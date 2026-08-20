@@ -95,9 +95,7 @@ public:
 
 	Thing( const ThingTemplate *thingTemplate );
 
-	/**
-		return the thing template for this thing.
-	*/
+	/** Return the final override of this thing's template. */
 	const ThingTemplate *getTemplate() const;
 
 	// convenience method for patching isKindOf thru to template.

@@ -170,7 +170,7 @@ protected:
         void					SetAllowedCameraRotation (CAMERA_ROTATION cameraRotation);
         CAMERA_ROTATION		GetAllowedCameraRotation () const			{ return m_allowedCameraRotation; }
         void					SetCameraPos (CAMERA_POS cameraPos);
-        class CameraClass *GetCamera () const							{ return m_pCamera; }
+        class CameraClass *GetCamera () const							{ return m_pCamera.Peek(); }
 
 		  float					Get_Camera_Distance () const				{ return m_CameraDistance; }
 		  void					Set_Camera_Distance (float dist);
@@ -200,7 +200,7 @@ protected:
 			//
 			//	Misc
 			//
-			RenderObjClass *	Get_Light_Mesh () const					{ return m_pLightMesh; }
+			RenderObjClass *	Get_Light_Mesh () const					{ return m_pLightMesh.Peek(); }
 			Vector3 &			Get_Object_Center ()						{ return m_ObjectCenter; }
 
 			//
@@ -227,8 +227,8 @@ protected:
         BOOL					m_bInitialized;
         BOOL					m_bActive;
         UINT					m_TimerID;
-        CameraClass	*		m_pCamera;
-		  RenderObjClass *	m_pLightMesh;
+        RefCountPtr<CameraClass>	m_pCamera;
+		  RefCountPtr<RenderObjClass>	m_pLightMesh;
 		  bool					m_bLightMeshInScene;
 		  Vector3				m_ObjectCenter;
 		  SphereClass			m_ViewedSphere;

@@ -60,22 +60,22 @@ class MaxWorldInfoClass : public WorldInfoClass
 				SmoothBetweenMeshes (true),
 				CurrentTask(nullptr),
 				CurrentTime(0)					{ }
-		virtual ~MaxWorldInfoClass(void)	{ }
+		virtual ~MaxWorldInfoClass()	{ }
 
 		// Public methods
 		virtual Vector3	Get_Shared_Vertex_Normal(Vector3 pos, int smgroup);
 
-		virtual GeometryExportTaskClass *	Get_Current_Task(void) const								{ return CurrentTask; }
+		virtual GeometryExportTaskClass *	Get_Current_Task() const								{ return CurrentTask; }
 		virtual void								Set_Current_Task(GeometryExportTaskClass * task)	{ CurrentTask = task; }
 
-		virtual TimeValue	Get_Current_Time(void) const	{ return CurrentTime; }
+		virtual TimeValue	Get_Current_Time() const	{ return CurrentTime; }
 		virtual void		Set_Current_Time(TimeValue &time) { CurrentTime = time; }
 
-		virtual Matrix3	Get_Export_Transform(void) const	{ return ExportTrans; }
+		virtual Matrix3	Get_Export_Transform() const	{ return ExportTrans; }
 		virtual void		Set_Export_Transform(const Matrix3 &matrix) { ExportTrans = matrix; }
 
 		virtual void		Allow_Mesh_Smoothing (bool onoff)	{ SmoothBetweenMeshes = onoff; }
-		virtual bool		Are_Meshes_Smoothed (void) const		{ return SmoothBetweenMeshes; }
+		virtual bool		Are_Meshes_Smoothed () const		{ return SmoothBetweenMeshes; }
 
 	private:
 

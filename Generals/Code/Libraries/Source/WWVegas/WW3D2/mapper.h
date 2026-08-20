@@ -44,7 +44,7 @@
 #include "WW3D2/w3derr.h"
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
-#include "ww3d.h"
+#include "WW3D2/ww3d.h"
 #include "WWMath/matrix4.h"
 
 class INIClass;

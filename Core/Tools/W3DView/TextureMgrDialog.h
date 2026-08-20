@@ -93,7 +93,7 @@ class TextureListNodeClass
 			  m_TextureIndex (0),
 			  m_IconIndex (ICON_DEF_TEXTURE) { REF_PTR_SET (m_pTexture, ptexture); }
 
-		~TextureListNodeClass (void) { REF_PTR_RELEASE (m_pTexture); Free_Subobj_List (); }
+		~TextureListNodeClass () { REF_PTR_RELEASE (m_pTexture); Free_Subobj_List (); }
 
 
 		////////////////////////////////////////////////////////////
@@ -101,25 +101,25 @@ class TextureListNodeClass
 		//	Public methods
 		//
 		void									Set_Name (LPCTSTR name)		{ m_Name = name; }
-		LPCTSTR								Get_Name (void) const		{ return m_Name; }
+		LPCTSTR								Get_Name () const		{ return m_Name; }
 
-		NODE_TYPE							Get_Type (void) const		{ return m_Type; }
+		NODE_TYPE							Get_Type () const		{ return m_Type; }
 		void									Set_Type (NODE_TYPE type)	{ m_Type = type; }
 
-		TextureClass *						Peek_Texture (void) const	{ return m_pTexture; }
+		TextureClass *						Peek_Texture () const	{ return m_pTexture; }
 		void									Set_Texture (TextureClass *ptex) { REF_PTR_SET (m_pTexture, ptex); }
 
-		TEXTURE_NODE_LIST	&				Get_Subobj_List (void)		{ return m_SubObjectList; }
+		TEXTURE_NODE_LIST	&				Get_Subobj_List ()		{ return m_SubObjectList; }
 
 		void									Set_Parent (TextureListNodeClass *pparent)	{ m_pParent = pparent; }
-		TextureListNodeClass *			Get_Parent (void) const		{ return m_pParent; }
+		TextureListNodeClass *			Get_Parent () const		{ return m_pParent; }
 
 		void									Add_Subobj (TextureListNodeClass *pchild)	{ m_SubObjectList.Add (pchild); }
 
-		int									Get_Icon_Index (void) const	{ return m_IconIndex; }
+		int									Get_Icon_Index () const	{ return m_IconIndex; }
 		void									Set_Icon_Index (int index)		{ m_IconIndex = index; }
 
-		int									Get_Texture_Index (void) const	{ return m_TextureIndex; }
+		int									Get_Texture_Index () const	{ return m_TextureIndex; }
 		void									Set_Texture_Index (int index)		{ m_TextureIndex = index; }
 
 	protected:
@@ -128,7 +128,7 @@ class TextureListNodeClass
 		//
 		//	Protected methods
 		//
-		void									Free_Subobj_List (void);
+		void									Free_Subobj_List ();
 
 	private:
 
@@ -151,7 +151,7 @@ class TextureListNodeClass
 // Free_Subobj_List
 //
 __inline void
-TextureListNodeClass::Free_Subobj_List (void)
+TextureListNodeClass::Free_Subobj_List ()
 {
 	// Loop through all the subobject entries and free their pointers
 	for (int index = 0; index < m_SubObjectList.Count (); index ++) {
@@ -218,7 +218,7 @@ protected:
 		//
 		void						Add_Subobjs_To_List (RenderObjClass *prender_obj);
 		void						Add_Textures_To_Node (MeshClass *pmesh, TextureListNodeClass *pmesh_node);
-		void						Fill_List_Ctrl_With_Meshes (void);
+		void						Fill_List_Ctrl_With_Meshes ();
 		void						Fill_List_Ctrl_With_Textures (TextureListNodeClass &pparent);
 		int						Find_Texture_Thumbnail (LPCTSTR name);
 		int						Get_Thumbnail (TextureClass *ptexture);

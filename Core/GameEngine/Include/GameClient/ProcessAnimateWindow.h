@@ -79,8 +79,9 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) = 0;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) = 0;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) = 0;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) = 0;
+	// TheSuperHackers @tweak bobtista 04/08/2026 deltaFrames is a real number of frames to advance by based on a 30 fps base rate
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) = 0;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) = 0;
 	virtual void setMaxDuration(UnsignedInt maxDuration) { }
 };
 
@@ -95,8 +96,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -118,8 +119,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -141,8 +142,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -162,8 +163,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -185,8 +186,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -207,8 +208,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 	Real m_deltaTheta;
 	Int m_maxR;
@@ -225,8 +226,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 	virtual void setMaxDuration(UnsignedInt maxDuration) override { m_maxDuration = maxDuration; }
 
 private:
@@ -243,8 +244,8 @@ public:
 
 	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
 	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin, Real deltaFrames ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting

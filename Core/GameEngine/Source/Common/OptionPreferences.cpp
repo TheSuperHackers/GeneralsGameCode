@@ -451,18 +451,6 @@ Int OptionPreferences::getStaticGameDetail()
 	return TheGameLODManager->getStaticGameLODIndex(it->second);
 }
 
-Bool OptionPreferences::getSendDelay()
-{
-	OptionPreferences::const_iterator it = find("SendDelay");
-	if (it == end())
-		return TheGlobalData->m_firewallSendDelay;
-
-	if (stricmp(it->second.str(), "yes") == 0) {
-		return TRUE;
-	}
-	return FALSE;
-}
-
 Int OptionPreferences::getFirewallBehavior()
 {
 	OptionPreferences::const_iterator it = find("FirewallBehavior");

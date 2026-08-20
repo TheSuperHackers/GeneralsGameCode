@@ -80,6 +80,12 @@ public:
 
 	virtual Bool allow(Object *objOther) override
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Stubbjax 07/08/2026 Prevent dead units from being considered for horde membership.
+		if (objOther->isEffectivelyDead())
+			return false;
+#endif
+		
 		// must be exact same type as us (well, maybe)
 		if (m_data->m_exactMatch && m_obj->getTemplate() != objOther->getTemplate())
 			return false;

@@ -657,14 +657,12 @@ void Network::processRunAheadCommand(NetRunAheadCommandMsg *msg) {
 
 void Network::processDestroyPlayerCommand(NetDestroyPlayerCommandMsg *msg)
 {
-	UnsignedInt playerIndex = msg->getPlayerIndex();
-	DEBUG_ASSERTCRASH(playerIndex < MAX_SLOTS, ("Bad player index"));
-	if (playerIndex >= MAX_SLOTS)
+	UnsignedInt slotIndex = msg->getPlayerIndex();
+	DEBUG_ASSERTCRASH(slotIndex < MAX_SLOTS, ("Bad slot index"));
+	if (slotIndex >= MAX_SLOTS)
 		return;
 
-	AsciiString playerName;
-	playerName.format("player%d", playerIndex);
-	Player *pPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+	Player *pPlayer = ThePlayerList->getPlayerFromSlotIndex(slotIndex);
 	if (pPlayer)
 	{
 		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_SELF_DESTRUCT);

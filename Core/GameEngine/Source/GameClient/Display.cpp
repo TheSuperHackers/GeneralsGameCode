@@ -201,6 +201,8 @@ void Display::setHeight( UnsignedInt height )
 
 void Display::playMovie( AsciiString movieName)
 {
+	if (TheGlobalData->m_headless)
+		return;
 
 	stopMovie();
 

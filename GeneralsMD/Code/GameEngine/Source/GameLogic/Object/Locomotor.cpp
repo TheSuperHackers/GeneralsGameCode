@@ -422,6 +422,13 @@ void LocomotorTemplate::validate()
 			m_minSpeed = 0.01f;
 		}
 	}
+
+#if RTS_GENERALS
+	// TheSuperHackers @info DecelerationPitchLimit was just added in Zero Hour and is therefore defaulted to
+	// AccelerationPitchLimit when zero to preserve the original behavior of Generals.
+	if (m_decelPitchLimit == 0.0f)
+		m_decelPitchLimit = m_accelPitchLimit;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -460,7 +467,7 @@ const FieldParse* LocomotorTemplate::getFieldParse() const
 		{ "GroupMovementPriority", INI::parseIndexList, TheLocomotorPriorityNames, offsetof(LocomotorTemplate, m_movePriority) },		\
 
 		{ "AccelerationPitchLimit", INI::parseAngleReal, nullptr, offsetof(LocomotorTemplate, m_accelPitchLimit) },
-		{ "DecelerationPitchLimit", INI::parseAngleReal, nullptr, offsetof(LocomotorTemplate, m_decelPitchLimit) },
+		{ "DecelerationPitchLimit", INI::parseAngleReal, nullptr, offsetof(LocomotorTemplate, m_decelPitchLimit) }, // Added in Zero Hour
 		{ "BounceAmount", INI::parseAngularVelocityReal, nullptr, offsetof(LocomotorTemplate, m_bounceKick) },
 		{ "PitchStiffness", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_pitchStiffness) },
 		{ "RollStiffness", INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rollStiffness) },
@@ -496,10 +503,10 @@ const FieldParse* LocomotorTemplate::getFieldParse() const
 		{ "WanderLengthFactor",				 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_wanderLengthFactor) },
 		{ "WanderAboutPointRadius",				 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_wanderAboutPointRadius) },
 
-		{ "RudderCorrectionDegree",		 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rudderCorrectionDegree) },
-		{ "RudderCorrectionRate",			 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rudderCorrectionRate) },
-		{ "ElevatorCorrectionDegree",	 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_elevatorCorrectionDegree) },
-		{ "ElevatorCorrectionRate",		 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_elevatorCorrectionRate) },
+		{ "RudderCorrectionDegree",		 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rudderCorrectionDegree) }, // Added in Zero Hour
+		{ "RudderCorrectionRate",			 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_rudderCorrectionRate) }, // Added in Zero Hour
+		{ "ElevatorCorrectionDegree",	 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_elevatorCorrectionDegree) }, // Added in Zero Hour
+		{ "ElevatorCorrectionRate",		 INI::parseReal, nullptr, offsetof(LocomotorTemplate, m_elevatorCorrectionRate) }, // Added in Zero Hour
 		{ nullptr, nullptr, nullptr, 0 }
 
 	};
@@ -1078,7 +1085,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 					break;
 			case LOCO_WHEELS_FOUR:
 			case LOCO_MOTORCYCLE:
-					moveTowardsPositionWheels( obj, physics, goalPos, onPathDistToGoal, desiredSpeed );
+					moveTowardsPositionWheels(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
 					break;
 			case LOCO_TREADS:
 					moveTowardsPositionTreads(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
@@ -2573,14 +2580,6 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 			force.x = accelForce * dir->x;
 			force.y = accelForce * dir->y;
 			force.z = 0.0f;
-
-
-      // Apply a random kick (if applicable) to dirty-up visually.
-      // The idea is that chopper pilots have to do course corrections all the time
-      // Because of changes in wind, pressure, etc.
-      // Those changes are added here, then the
-
-
 
 			// apply forces to object
 			physics->applyMotiveForce( &force );

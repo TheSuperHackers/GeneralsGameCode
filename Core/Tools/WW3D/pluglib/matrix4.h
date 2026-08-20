@@ -67,7 +67,7 @@ public:
 	/*
 	** Constructors
 	*/
-	Matrix4(void) {};
+	Matrix4() {};
 	Matrix4(const Matrix4 & m);
 
 	explicit Matrix4(bool identity);
@@ -75,7 +75,7 @@ public:
 	explicit Matrix4(const Matrix3 & m);
 	explicit Matrix4(const Vector4 & v0, const Vector4 & v1, const Vector4 & v2, const Vector4 & v3);
 
-	void		Make_Identity(void);
+	void		Make_Identity();
 	void		Init(const Matrix3D & m);
 	void		Init(const Matrix3 & m);
 	void		Init(const Vector4 & v0, const Vector4 & v1, const Vector4 & v2, const Vector4 & v3);
@@ -93,8 +93,8 @@ public:
 	/*
 	** Transpose and Inverse
 	*/
-	Matrix4 Transpose(void) const;
-	Matrix4 Inverse(void) const;
+	Matrix4 Transpose() const;
+	Matrix4 Inverse() const;
 
 	/*
 	** Assignment operators
@@ -251,7 +251,7 @@ inline Matrix4::Matrix4(const Vector4 & r0, const Vector4 & r1, const Vector4 & 
  * HISTORY:                                                                                    *
  *   11/5/99    gth : Created.                                                                 *
  *=============================================================================================*/
-inline void Matrix4::Make_Identity(void)
+inline void Matrix4::Make_Identity()
 {
 	Row[0].Set(1.0,0.0,0.0,0.0);
 	Row[1].Set(0.0,1.0,0.0,0.0);

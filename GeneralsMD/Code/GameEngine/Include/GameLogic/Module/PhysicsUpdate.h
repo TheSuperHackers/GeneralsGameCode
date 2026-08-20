@@ -191,7 +191,7 @@ public:
 	void setExtraFriction(Real b) { m_extraFriction = b; }
 
 	void setBounceSound(const AudioEventRTS* bounceSound);
-	const AudioEventRTS* getBounceSound() { return m_bounceSound ? &m_bounceSound->m_event : TheAudio->getValidSilentAudioEvent(); }
+	const AudioEventRTS* getBounceSound() { return m_bounceSound ? m_bounceSound.Peek() : TheAudio->getValidSilentAudioEvent(); }
 
 	/**
 		Reset all values (vel, accel, etc) to starting values.
@@ -252,7 +252,7 @@ private:
 		IMMUNE_TO_FALLING_DAMAGE				= 0x0100,
 		IS_IN_FREEFALL									= 0x0200,
 		IS_IN_UPDATE										= 0x0400,
-		IS_STUNNED											= 0x0800,
+		IS_STUNNED											= 0x0800, // Added in Zero Hour
 	};
 
 	/*
@@ -263,7 +263,7 @@ private:
 	Real												m_yawRate;								///< rate of rotation around up vector
 	Real												m_rollRate;								///< rate of rotation around forward vector
 	Real												m_pitchRate;							///< rate or rotation around side vector
-	DynamicAudioEventRTS*				m_bounceSound;						///< The sound for when this thing bounces, or nullptr
+	RefCountPtr<DynamicAudioEventRTS> m_bounceSound;			///< The sound for when this thing bounces, or nullptr
 	Coord3D											m_accel;									///< current acceleration
 	Coord3D											m_prevAccel;							///< last frame's acceleration
 	Coord3D											m_vel;										///< current velocity

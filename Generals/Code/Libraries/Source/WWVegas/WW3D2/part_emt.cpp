@@ -39,9 +39,9 @@
 #include "ww3d.h"
 #include "assetmgr.h"
 #include "part_ldr.h"
-#include "WW3D2/w3derr.h"
+#include "w3derr.h"
 #include "scene.h"
-#include "WW3D2/texture.h"
+#include "texture.h"
 #include "WWDebug/wwprofile.h"
 #include <limits.h>
 #include <WWLib/gcd_lcm.h>

@@ -57,9 +57,9 @@ class VoxelDebugWindowClass
 public:
 
 	VoxelDebugWindowClass(VoxelClass * vxl);
-	~VoxelDebugWindowClass(void);
+	~VoxelDebugWindowClass();
 
-	void	Display_Window(void);
+	void	Display_Window();
 	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
 
 private:
@@ -72,5 +72,5 @@ private:
 	HWND						ViewportHWND;
 	ISpinnerControl *		LayerSpin;
 
-	void update_display(void);
+	void update_display();
 };

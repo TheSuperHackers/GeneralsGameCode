@@ -40,6 +40,7 @@
 #include "Common/Xfer.h"
 
 #include "GameClient/TerrainVisual.h"
+#include "GameClient/View.h"
 
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
@@ -1535,6 +1536,9 @@ void TerrainLogic::addBridgeToLogic(BridgeInfo *pInfo, Dict *props, AsciiString 
 	PathfindLayerEnum layer = TheAI->pathfinder()->addBridge(pBridge);
 	pBridge->setLayer(layer);
 
+	if (TheTacticalView) {
+		TheTacticalView->onBridgeChanged();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1542,13 +1546,15 @@ void TerrainLogic::addBridgeToLogic(BridgeInfo *pInfo, Dict *props, AsciiString 
 //-------------------------------------------------------------------------------------------------
 void TerrainLogic::addLandmarkBridgeToLogic(Object *bridgeObj)
 {
-
 	Bridge *pBridge = newInstance(Bridge)(bridgeObj);
 	pBridge->setNext(m_bridgeListHead);
 	m_bridgeListHead = pBridge;
 	PathfindLayerEnum layer = TheAI->pathfinder()->addBridge(pBridge);
 	pBridge->setLayer(layer);
 
+	if (TheTacticalView) {
+		TheTacticalView->onBridgeChanged();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1863,6 +1869,9 @@ void TerrainLogic::updateBridgeDamageStates()
 		pBridge = pBridge->getNext();
 	}
 	m_bridgeDamageStatesChanged = true;
+	if (TheTacticalView) {
+		TheTacticalView->onBridgeChanged();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1980,6 +1989,8 @@ Drawable *TerrainLogic::pickBridge(const Vector3 &from, const Vector3 &to, Vecto
 //-------------------------------------------------------------------------------------------------
 void TerrainLogic::deleteBridges()
 {
+	Bool bridgesChanged = m_bridgeListHead != nullptr;
+
 	Bridge *pNext = nullptr;
 	Bridge *pBridge;
 	// Traverse all waypoints.
@@ -1989,6 +2000,10 @@ void TerrainLogic::deleteBridges()
 		deleteInstance(pBridge);
 	}
 	m_bridgeListHead = nullptr;
+
+	if (bridgesChanged && TheTacticalView) {
+		TheTacticalView->onBridgeChanged();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2044,6 +2059,9 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 	// delete the bridge in question
 	deleteInstance(bridge);
 
+	if (TheTacticalView) {
+		TheTacticalView->onBridgeChanged();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

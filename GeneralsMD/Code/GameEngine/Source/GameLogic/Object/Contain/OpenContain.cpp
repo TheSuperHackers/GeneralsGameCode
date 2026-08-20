@@ -390,6 +390,11 @@ void OpenContain::addToContain( Object *rider )
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool OpenContain::isContained( const Object *obj ) const
+{
+	return obj->getContainedBy() == getObject();
+}
+
 //-------------------------------------------------------------------------------------------------
 void OpenContain::addToContainList( Object *rider )
 {
@@ -768,6 +773,9 @@ void OpenContain::scatterToNearbyPosition(Object* rider)
 		// set position of the object at center of building and move them toward pos
 		rider->setPosition( theContainer->getPosition() );
 		ai->ignoreObstacle(theContainer);
+#if !RETAIL_COMPATIBLE_CRC
+		ai->friend_setGoalObject(nullptr);
+#endif
 		ai->aiMoveToPosition( &pos, CMD_FROM_AI );
 
 	}

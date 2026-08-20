@@ -96,16 +96,16 @@ class UDP
   sint32           Bind(char *Host,uint16 port);
   sint32           Write(uint8 *msg,uint32 len,uint32 IP,uint16 port);
   sint32           Read(uint8 *msg,uint32 len,sockaddr_in *from);
-  sockStat         GetStatus(void);
-  void             ClearStatus(void);
+  sockStat         GetStatus();
+  void             ClearStatus();
   int              Wait(sint32 sec,sint32 usec,fd_set &returnSet);
   int              Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet);
 
   bit8             getLocalAddr(uint32 &ip, uint16 &port);
-  sint32           getFD(void) { return(fd); }
+  sint32           getFD() { return(fd); }
 
   bit8             SetInputBuffer(uint32 bytes);
   bit8             SetOutputBuffer(uint32 bytes);
-  int              GetInputBuffer(void);
-  int              GetOutputBuffer(void);
+  int              GetInputBuffer();
+  int              GetOutputBuffer();
 };

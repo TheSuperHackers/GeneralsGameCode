@@ -255,9 +255,7 @@ void ControlBar::populateObserverList()
 
 		for (i = 0; i < MAX_SLOTS; ++i)
 		{
-			AsciiString name;
-			name.format("player%d", i);
-			Player *p = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name));
+			Player *p = ThePlayerList->getPlayerFromSlotIndex(i);
 			if(p)
 			{
 				if(p->isPlayerObserver())

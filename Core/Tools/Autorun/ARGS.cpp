@@ -263,7 +263,7 @@ Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_hand
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-Command_Line_Arguments::~Command_Line_Arguments ( void )
+Command_Line_Arguments::~Command_Line_Arguments ()
 {
 	//--------------------------------------------------------------------------
 	// reset all data...
@@ -285,7 +285,7 @@ Command_Line_Arguments::~Command_Line_Arguments ( void )
 //   09/01/1997  ML/MG : Created.
 //=============================================================================
 
-int Command_Line_Arguments::Get_argc ( void )
+int Command_Line_Arguments::Get_argc ()
 {
 	//--------------------------------------------------------------------------
 	// debug checks - make sure we at least have the application name

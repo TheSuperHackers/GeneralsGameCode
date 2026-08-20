@@ -167,6 +167,8 @@ public:
 	virtual void scrollBy( const Coord2D *delta ) override;  ///< Shift the view by the given delta
 
 	virtual void forceRedraw() override;
+	virtual void onHeightMapChanged() override { m_lastScreenToTerrainValid = false; }
+	virtual void onBridgeChanged() override { m_lastScreenToTerrainValid = false; }
 
 	virtual Bool isDoingScriptedCamera() override;
 	virtual void stopDoingScriptedCamera() override;
@@ -277,8 +279,10 @@ private:
 	Bool		m_freezeTimeForCameraMovement;
 	Int			m_timeMultiplier;												///< Time speedup multiplier.
 
-	Bool		m_cameraHasMovedSinceRequest;					///< If true, throw out all saved locations
-	VecPosRequests	m_locationRequests;		///< These are cached. New requests are added here
+	// TheSuperHackers @performance Cache only the latest screen-to-terrain result.
+	Bool		m_lastScreenToTerrainValid;
+	ICoord2D	m_lastScreenToTerrainScreen;
+	Coord3D		m_lastScreenToTerrainWorld;
 
 	Coord3D m_previousLookAtPosition;
 	Coord2D m_scrollAmount;													///< scroll speed

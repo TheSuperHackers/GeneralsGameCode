@@ -102,7 +102,6 @@ class WorldHeightMap : public RefCountClass,
 {
 	friend class TerrainTextureClass;
 	friend class AlphaTerrainTextureClass;
-	friend class W3DCustomEdging;
 	friend class AlphaEdgeTextureClass;
 
 #define NO_EVAL_TILING_MODES

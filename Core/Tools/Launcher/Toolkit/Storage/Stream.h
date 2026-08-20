@@ -50,19 +50,19 @@ class Stream
 			} EStreamFrom;
 
 		//! Get the length of the stream
-		virtual UInt32 GetLength(void) = 0;
+		virtual UInt32 GetLength() = 0;
 
 		//! Set the length of the stream
 		virtual void SetLength(UInt32 length) = 0;
 
 		//! Get current position of stream marker
-		virtual UInt32 GetMarker(void) = 0;
+		virtual UInt32 GetMarker() = 0;
 
 		//! Set position of stream marker
 		virtual void SetMarker(Int32 offset, EStreamFrom from) = 0;
 
 		//! End of stream test
-		virtual bool AtEnd(void) = 0;
+		virtual bool AtEnd() = 0;
 
 		//! Retrieve a sequence of bytes.
 		virtual UInt32 GetBytes(void* ptr, UInt32 bytes) = 0;
@@ -74,5 +74,5 @@ class Stream
 		virtual UInt32 PeekBytes(void* ptr, UInt32 bytes) = 0;
 
 		//! Flush the stream
-		virtual void Flush(void) = 0;
+		virtual void Flush() = 0;
 	};

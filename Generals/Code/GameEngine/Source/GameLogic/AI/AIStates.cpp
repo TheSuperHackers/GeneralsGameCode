@@ -1016,6 +1016,13 @@ void AIStateMachine::clear()
 	m_goalWaypoint = nullptr;
 	m_goalSquad = nullptr;
 
+#if !RETAIL_COMPATIBLE_CRC
+	if (m_temporaryState)
+		m_temporaryState->onExit(EXIT_RESET);
+
+	m_temporaryState = nullptr;
+#endif
+
 	AIUpdateInterface* ai = getOwner()->getAI();
 	if (ai)
 		ai->friend_notifyStateMachineChanged();

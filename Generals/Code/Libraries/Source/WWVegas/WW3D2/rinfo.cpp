@@ -37,7 +37,7 @@
 
 #include "rinfo.h"
 #include "camera.h"
-#include "WW3D2/matpass.h"
+#include "matpass.h"
 
 
 /***********************************************************************************************

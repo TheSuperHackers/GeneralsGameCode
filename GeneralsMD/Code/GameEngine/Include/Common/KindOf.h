@@ -172,6 +172,10 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_CONSERVATIVE_BUILDING,		///< Conservative structures aren't considered part of your base for sneak attack boundary calculations...
 	KINDOF_IGNORE_DOCKING_BONES,		///< Structure will not look up docking bones. Patch 1.03 hack.
 
+	// TheSuperHackers @info New kinds for Mods
+
+	KINDOF_NO_ATTACK_WARNING,				///< does not trigger the under attack radar/EVA warning when taking damage
+
 	KINDOF_COUNT,										// total number of kindofs
 	KINDOF_FIRST = 0,
 };

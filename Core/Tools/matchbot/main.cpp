@@ -66,7 +66,7 @@ void Signal_Quit(int)
 	exit(2);
 }
 
-void Setup_Signals(void)
+void Setup_Signals()
 {
 #ifdef _UNIX
 	struct sigaction act, oact;
@@ -298,7 +298,7 @@ void logMonitor(void *)
 #endif
 }
 
-void rotateOutput(void)
+void rotateOutput()
 {
 	Xtime xtime;
 	char filenamebuf[128];
@@ -374,7 +374,7 @@ void paranoidLogMonitor(void *)
 #endif
 }
 
-void rotateParanoid(void)
+void rotateParanoid()
 {
 	Xtime xtime;
 	char filenamebuf[128];
