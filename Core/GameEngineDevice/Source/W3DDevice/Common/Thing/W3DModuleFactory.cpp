@@ -64,8 +64,10 @@ void W3DModuleFactory::init()
 	addModule( W3DModelDraw );
 	addModule( W3DLaserDraw );
 	addModule( W3DOverlordTankDraw );
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	addModule( W3DOverlordTruckDraw );
 	addModule( W3DOverlordAircraftDraw );
+#endif
 	addModule( W3DProjectileStreamDraw );
 	addModule( W3DPoliceCarDraw );
 	addModule( W3DRopeDraw );
@@ -76,7 +78,9 @@ void W3DModuleFactory::init()
 	addModule( W3DTruckDraw );
 	addModule( W3DTracerDraw );
 	addModule( W3DTankTruckDraw );
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	addModule( W3DTreeDraw );
 	addModule( W3DPropDraw );
+#endif
 
 }
