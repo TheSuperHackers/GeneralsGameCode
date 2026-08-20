@@ -90,13 +90,7 @@ void Shell::construct()
 //-------------------------------------------------------------------------------------------------
 void Shell::deconstruct()
 {
-	WindowLayout *newTop = top();
-	while(newTop)
-	{
-		// TheSuperHackers @bugfix CryoTheRenegade 10/08/2026 Do not initialize uncovered screens while the shell is being destroyed.
-		popImmediate( TRUE );
-		newTop = top();
-	}
+	destroyScreenStack();
 
 	if(m_background)
 	{
@@ -137,6 +131,32 @@ void Shell::deconstruct()
 		deleteInstance(m_optionsLayout);
 		m_optionsLayout = nullptr;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Tear down every screen on the stack without initializing uncovered layouts.
+	* Used when the shell itself is being destroyed. */
+//-------------------------------------------------------------------------------------------------
+void Shell::destroyScreenStack()
+{
+	// TheSuperHackers @bugfix CryoTheRenegade 10/08/2026 Do not initialize uncovered screens while the shell is being destroyed.
+	while( top() )
+	{
+		WindowLayout *screen = top();
+
+		// do NOT set pending pop, we are going to force a pop after the shutdown is run
+		m_pendingPop = FALSE;
+
+		Bool immediatePop = TRUE;
+		screen->runShutdown( &immediatePop );
+
+		unlinkScreen( screen );
+		screen->destroyWindows();
+		deleteInstance( screen );
+	}
+
+	if (TheIMEManager)
+		TheIMEManager->detach();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -425,7 +445,7 @@ void Shell::pop()
 	* from the shutdown() for the screen, it will be immediately popped off
 	* the stack */
 //-------------------------------------------------------------------------------------------------
-void Shell::popImmediate( Bool suppressInit )
+void Shell::popImmediate()
 {
 	WindowLayout *screen = top();
 
@@ -449,7 +469,7 @@ void Shell::popImmediate( Bool suppressInit )
 	screen->runShutdown( &immediatePop );
 
 	// pop the screen of the stack
-	doPop( suppressInit );
+	doPop( FALSE );
 
 	if (TheIMEManager)
 		TheIMEManager->detach();
@@ -686,7 +706,7 @@ void Shell::doPush( AsciiString layoutFile )
 //-------------------------------------------------------------------------------------------------
 /** Actually do the work for a pop */
 //-------------------------------------------------------------------------------------------------
-void Shell::doPop( Bool suppressInit )
+void Shell::doPop( Bool impendingPush )
 {
 	WindowLayout *currentTop = top();
 
@@ -707,7 +727,7 @@ void Shell::doPop( Bool suppressInit )
 
 	// run the init for the new top of the stack if present
 	WindowLayout *newTop = top();
-	if( newTop && !suppressInit )
+	if( newTop && !impendingPush )
 	{
 		newTop->runInit( nullptr );
 		//newTop->bringForward();
