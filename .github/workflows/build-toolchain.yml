@@ -189,14 +189,19 @@ jobs:
         run: |
           $buildDir = "build\${{ inputs.preset }}"
           $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
+          $searchRoot = (Resolve-Path $buildDir).Path
 
-          if ("${{ inputs.preset }}" -like "win32*") {
-            $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
-            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File |
-              Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
-          } else {
-            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File |
-              Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+          # CMake generators place binaries differently across Visual Studio, VC6,
+          # and MinGW-style layouts. Search the preset tree instead of assuming
+          # that both Core and the game target have a top-level configuration folder.
+          $files = Get-ChildItem -Path $searchRoot -Recurse -File |
+            Where-Object {
+              $_.Extension -in @(".exe", ".dll", ".pdb") -and
+              $_.DirectoryName -notlike "*\artifacts"
+            } -Verbose
+
+          if (-not $files) {
+            throw "No executable, DLL, or PDB files were found below $searchRoot"
           }
 
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
