@@ -1,0 +1,92 @@
+name: TECHBYSAKH Release Build
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'techbysakh-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: techbysakh-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-zerohour:
+    name: Build TECHBYSAKH Zero Hour
+    uses: ./.github/workflows/build-toolchain.yml
+    with:
+      game: GeneralsMD
+      preset: win32
+      tools: false
+      extras: false
+    secrets: inherit
+
+  package:
+    name: Package TECHBYSAKH Modified
+    needs: build-zerohour
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source and mod content
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Download built Zero Hour artifact
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: GeneralsMD-win32
+          path: build-artifact
+
+      - name: Assemble distributable package
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_root="package/TECHBYSAKH_Modified"
+          mkdir -p "$package_root"
+
+          find build-artifact -type f \( -iname '*.exe' -o -iname '*.dll' \) -exec cp -v {} "$package_root/" \;
+          test -n "$(find "$package_root" -maxdepth 1 -type f \( -iname '*.exe' -o -iname '*.dll' \) -print -quit)"
+
+          cp -R TECHBYSAKH_Mod "$package_root/"
+          cp README.md TECHBYSAKH_RELEASE_NOTES.md TECHBYSAKH_UPGRADE_PLAN.md "$package_root/"
+          sha256sum "$package_root"/*.exe "$package_root"/*.dll 2>/dev/null > "$package_root/SHA256SUMS.txt" || \
+            sha256sum "$package_root"/*.exe > "$package_root/SHA256SUMS.txt"
+
+          (cd package && zip -9 -r ../TECHBYSAKH_Modified_Build.zip TECHBYSAKH_Modified)
+          test -s TECHBYSAKH_Modified_Build.zip
+
+      - name: Upload packaged build
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: TECHBYSAKH-Modified-${{ github.sha }}
+          path: TECHBYSAKH_Modified_Build.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  publish-release:
+    name: Publish TECHBYSAKH GitHub Release
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/techbysakh-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download packaged build
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: TECHBYSAKH-Modified-${{ github.sha }}
+          path: release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+        with:
+          files: release/TECHBYSAKH_Modified_Build.zip
+          generate_release_notes: true
+          prerelease: true

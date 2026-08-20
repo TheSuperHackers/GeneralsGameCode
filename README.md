@@ -62,6 +62,10 @@ cmake --build build/techbysakh --config Release
 
 Use `-DRTS_BUILD_TECHBYSAKH=OFF` to produce the upstream-compatible product title and fallback LAN/frame-pacing behavior. The enhanced profile remains opt-out because higher LOD can increase GPU and particle load on older hardware.
 
+### Automated package workflow
+
+The `TECHBYSAKH Release Build` workflow runs on pushes to `main` and can also be started manually from the repository’s Actions page. It builds the 32-bit Windows Zero Hour target, packages the executable with `TECHBYSAKH_Mod`, the release notes, and checksums, and uploads `TECHBYSAKH_Modified_Build.zip` as a 30-day Actions artifact. Pushing a tag named `techbysakh-*` additionally creates a prerelease containing that ZIP, so a reproducible downloadable build can be produced without building on a developer machine.
+
 ## Running the Game
 
 To run *Generals* or *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game
