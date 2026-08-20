@@ -288,7 +288,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			continue;	//this system has no particles to render
 		}
 
-		if ( m_streakLine && sys->isUsingStreak() && (pointCount >= 2) )
+		// Handle drawing streak type particles.
+		if ( sys->isUsingStreak() && (pointCount >= 2) )
 		{
 			m_streakLine->Reset_Line();
 
@@ -329,63 +330,45 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			//RENDER STREAK!
 			m_streakLine->Render( rinfo );
-
+			m_onScreenParticleCount += (pointCount - startCount);
+			pointCount = startCount;
 		}
-		else
+
+		// Handle volumetric type particle systems.
+		const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
+		if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
 		{
+			m_pointGroup->Set_Texture( texture.Peek() );
+			m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
 
-			WWASSERT( m_pointGroup );
-
-			if ( m_pointGroup ) // this catches the particle and volumeparticle cases
+			switch( sys->getShaderType() )
 			{
-				const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
-				if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
-				{
-					m_pointGroup->Set_Texture( texture.Peek() );
-					m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
-
-					switch( sys->getShaderType() )
-					{
-						case ParticleSystemInfo::ADDITIVE:
-							m_pointGroup->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
-							break;
-						case ParticleSystemInfo::ALPHA:
-							m_pointGroup->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
-							break;
-						case ParticleSystemInfo::ALPHA_TEST:
-							m_pointGroup->Set_Shader( ShaderClass::_PresetATestSpriteShader );
-							break;
-						case ParticleSystemInfo::MULTIPLY:
-							m_pointGroup->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
-							break;
-					}
-
-					/// @todo Use both QUADS and TRIS for particles
-					m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
-					m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount );
-					m_pointGroup->Set_Billboard(sys->shouldBillboard());
-
-					/// @todo Support animated texture particles
-					/// @todo lorenzen sez: unimplemented code wastes cpu cycles
-					m_pointGroup->Set_Point_Frame( 0 );
-
-					m_pointGroup->RenderVolumeParticle( rinfo, volumeParticleDepth);
-					m_onScreenParticleCount += (pointCount - startCount);
-					pointCount = startCount;
-				}
-				else
-				{
-					if ( m_batchTexture == nullptr )
-					{
-						initializeBatch(sys, texture);
-					}
-
-					if ( pointCount >= MAX_POINTS_PER_GROUP )
-					{
-						flushParticleBatch(rinfo, pointCount);
-					}
-				}
+				case ParticleSystemInfo::ADDITIVE:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
+					break;
+				case ParticleSystemInfo::ALPHA:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
+					break;
+				case ParticleSystemInfo::ALPHA_TEST:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetATestSpriteShader );
+					break;
+				case ParticleSystemInfo::MULTIPLY:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
+					break;
 			}
+
+			/// @todo Use both QUADS and TRIS for particles
+			m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
+			m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount );
+			m_pointGroup->Set_Billboard(sys->shouldBillboard());
+
+			/// @todo Support animated texture particles
+			/// @todo lorenzen sez: unimplemented code wastes cpu cycles
+			m_pointGroup->Set_Point_Frame( 0 );
+
+			m_pointGroup->RenderVolumeParticle( rinfo, volumeParticleDepth);
+			m_onScreenParticleCount += (pointCount - startCount);
+			pointCount = startCount;
 		}
 
 
