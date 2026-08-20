@@ -55,7 +55,7 @@ jobs:
           test -n "$(find "$package_root" -maxdepth 1 -type f \( -iname '*.exe' -o -iname '*.dll' \) -print -quit)"
 
           cp -R TECHBYSAKH_Mod "$package_root/"
-          cp README.md TECHBYSAKH_RELEASE_NOTES.md TECHBYSAKH_UPGRADE_PLAN.md "$package_root/"
+          cp Install-TECHBYSAKH.cmd README.md TECHBYSAKH_RELEASE_NOTES.md TECHBYSAKH_UPGRADE_PLAN.md "$package_root/"
           sha256sum "$package_root"/*.exe "$package_root"/*.dll 2>/dev/null > "$package_root/SHA256SUMS.txt" || \
             sha256sum "$package_root"/*.exe > "$package_root/SHA256SUMS.txt"
 

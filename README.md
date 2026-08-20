@@ -49,7 +49,7 @@ Here's an overview of our current focus and future plans
 
 This fork includes a compatibility-preserving **TECHBYSAKH Modified - Community Edition** profile. It keeps the original lockstep simulation and LAN transport, while adding a drift-resistant render limiter, a more responsive LAN lobby pump, a GPU-aware high-quality LOD profile, and a visible TECHBYSAKH credit identity. The existing W3D/Direct3D 8-compatible renderer remains the runtime graphics backend; a complete D3D11/Vulkan replacement is not claimed here because that would require a separate renderer and asset/material migration project.
 
-The source-only upgrade includes an original emblem at `TECHBYSAKH_Mod/Branding/techbysakh_emblem.png` plus data-driven mode and map authoring material under `TECHBYSAKH_Mod/`. The repository still requires the original game installation and compatible community data/assets to run.
+The source-only upgrade includes an original emblem at `TECHBYSAKH_Mod/Branding/techbysakh_emblem.png` plus data-driven mode and map authoring material under `TECHBYSAKH_Mod/`. The repository still requires the original game installation and compatible community data/assets to run. The release ZIP includes a root-level `Install-TECHBYSAKH.cmd` installer that detects common existing Zero Hour installations, backs up `generalszh.exe`, installs the rebuilt executable and TECHBYSAKH package, and creates a launcher. It cannot and does not include the original commercial game data files.
 
 ### TECHBYSAKH build switches
 
@@ -67,6 +67,16 @@ Use `-DRTS_BUILD_TECHBYSAKH=OFF` to produce the upstream-compatible product titl
 The `TECHBYSAKH Release Build` workflow runs on pushes to `main` and can also be started manually from the repository’s Actions page. It builds the 32-bit Windows Zero Hour target, packages the executable with `TECHBYSAKH_Mod`, the release notes, and checksums, and uploads `TECHBYSAKH_Modified_Build.zip` as a 30-day Actions artifact. Main-branch builds also create or update the permanent [`techbysakh-latest` release](https://github.com/techbysakh963/GeneralsGameCode/releases/tag/techbysakh-latest), which is the normal download location for installation. Pushing a tag named `techbysakh-*` additionally creates a versioned prerelease containing that ZIP, so a reproducible downloadable build can be produced without building on a developer machine.
 
 Replay compatibility checks use protected Cloudflare R2 test data. On forks where `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_ENDPOINT_URL` are not configured, the replay job now reports a clear skip in the Actions summary instead of failing the workflow. Maintainers with access to the protected test data can add those three repository secrets to enable the full replay validation path.
+
+## Installing the Release Build
+
+1. Install Generals/Zero Hour through your legitimate game source.
+2. Download `TECHBYSAKH_Modified_Build.zip` from the [`techbysakh-latest` release](https://github.com/techbysakh963/GeneralsGameCode/releases/tag/techbysakh-latest).
+3. Extract the ZIP and double-click `Install-TECHBYSAKH.cmd`.
+4. If the installer cannot detect the game directory, enter the folder containing your existing `generalszh.exe` when prompted.
+5. Launch the generated `Launch-TECHBYSAKH.cmd` from the game directory. For LAN sessions, use the same release package and matching maps/data on every machine.
+
+The installer preserves the original executable as `generalszh.exe.original` on first installation. The release contains the rebuilt code, TECHBYSAKH branding, mod documentation, installer, and launcher support; it does not redistribute the original commercial game assets.
 
 ## Running the Game
 

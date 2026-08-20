@@ -40,7 +40,7 @@ The result is `build/mingw-techbysakh/GeneralsMD/generalszh.exe`. The build reac
 
 ## Runtime requirements
 
-The binary still requires a legally obtained Generals/Zero Hour installation and compatible game data. The repository does not redistribute EA assets. For multiplayer, install the same executable, map, and data-pack version on every machine, allow the game through the private-network firewall, and use LAN discovery or direct connect with the host’s private IPv4 address.
+The binary still requires a legally obtained Generals/Zero Hour installation and compatible game data. The repository does not redistribute EA assets. The release ZIP now includes a root-level `Install-TECHBYSAKH.cmd` installer. Run it after installing Generals/Zero Hour from your legitimate source; it detects common install locations or prompts for the folder, backs up `generalszh.exe` as `generalszh.exe.original`, installs the rebuilt executable and TECHBYSAKH package, and creates `Launch-TECHBYSAKH.cmd`. For multiplayer, install the same executable, map, and data-pack version on every machine, allow the game through the private-network firewall, and use LAN discovery or direct connect with the host’s private IPv4 address.
 
 ## Content status
 
