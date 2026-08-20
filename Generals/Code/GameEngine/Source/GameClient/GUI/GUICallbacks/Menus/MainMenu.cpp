@@ -1385,19 +1385,8 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			}
 			else if( controlID == exitID )
 			{
-				// If we ever want to add a dialog before we exit out of the game, uncomment this line and kill the quitCallback() line below.
-//#if defined(RTS_DEBUG)
-				if (TheGlobalData->m_windowed)
-				{
-					quitCallback();
-//#else
-				}
-				else
-				{
-					QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),quitCallback,nullptr);
-				}
-//#endif
-
+				// TheSuperHackers @tweak Jaredl-Dev 20/08/2026 Show the main menu quit confirmation in windowed mode.
+				QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"), quitCallback, nullptr);
 			}
 			else if(controlID == buttonTRAININGID)
 			{
