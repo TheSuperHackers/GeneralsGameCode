@@ -45,78 +45,12 @@
 #include "W3DDevice/GameClient/W3DParticleSys.h"
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
 #include "W3DDevice/GameLogic/W3DGameLogic.h"
+#include "WWLib/utf8.h"
 
 // Extern globals for input devices (set by GameClient)
 extern Mouse* TheMouse;
 extern Keyboard* TheKeyboard;
 extern GameWindowManager* TheWindowManager;
-
-namespace
-{
-
-Bool DecodeNextUtf8Codepoint(const char* text, size_t length, size_t& offset, UnsignedInt& outCodepoint)
-{
-	outCodepoint = 0;
-	if (!text || offset >= length)
-	{
-		return false;
-	}
-
-	const unsigned char first = static_cast<unsigned char>(text[offset]);
-	if (first == 0)
-	{
-		return false;
-	}
-
-	if (first < 0x80)
-	{
-		outCodepoint = first;
-		offset += 1;
-		return true;
-	}
-
-	if ((first & 0xE0) == 0xC0 && offset + 1 < length)
-	{
-		const unsigned char second = static_cast<unsigned char>(text[offset + 1]);
-		if ((second & 0xC0) == 0x80)
-		{
-			outCodepoint = ((first & 0x1F) << 6) | (second & 0x3F);
-			offset += 2;
-			return true;
-		}
-	}
-
-	if ((first & 0xF0) == 0xE0 && offset + 2 < length)
-	{
-		const unsigned char second = static_cast<unsigned char>(text[offset + 1]);
-		const unsigned char third = static_cast<unsigned char>(text[offset + 2]);
-		if ((second & 0xC0) == 0x80 && (third & 0xC0) == 0x80)
-		{
-			outCodepoint = ((first & 0x0F) << 12) | ((second & 0x3F) << 6) | (third & 0x3F);
-			offset += 3;
-			return true;
-		}
-	}
-
-	if ((first & 0xF8) == 0xF0 && offset + 3 < length)
-	{
-		const unsigned char second = static_cast<unsigned char>(text[offset + 1]);
-		const unsigned char third = static_cast<unsigned char>(text[offset + 2]);
-		const unsigned char fourth = static_cast<unsigned char>(text[offset + 3]);
-		if ((second & 0xC0) == 0x80 && (third & 0xC0) == 0x80 && (fourth & 0xC0) == 0x80)
-		{
-			outCodepoint = ((first & 0x07) << 18) | ((second & 0x3F) << 12) | ((third & 0x3F) << 6) | (fourth & 0x3F);
-			offset += 4;
-			return true;
-		}
-	}
-
-	// Invalid UTF-8 sequence: skip one byte and keep processing.
-	offset += 1;
-	return false;
-}
-
-}    // namespace
 
 SDL3GameEngine::SDL3GameEngine()
 	: GameEngine()
@@ -293,33 +227,21 @@ void SDL3GameEngine::forwardTextInputEvent(const char* utf8Text)
 	}
 
 	const size_t textLength = strlen(utf8Text);
-	size_t offset = 0;
-	while (offset < textLength)
+	const size_t wideLength = Utf8_To_Wide_Len(utf8Text, textLength);
+	if (wideLength == UTF8_INVALID || wideLength == 0)
 	{
-		UnsignedInt codepoint = 0;
-		if (!DecodeNextUtf8Codepoint(utf8Text, textLength, offset, codepoint))
-		{
-			continue;
-		}
-
-		if (codepoint == 0 || codepoint > 0x10FFFFU)
-		{
-			continue;
-		}
-
-		if (codepoint >= 0xD800U && codepoint <= 0xDFFFU)
-		{
-			continue;
-		}
-
-		if (codepoint > 0xFFFFU)
-		{
-			continue;
-		}
-
-		const WideChar wideCharacter = static_cast<WideChar>(codepoint);
-		TheWindowManager->winSendInputMsg(targetWindow, GWM_IME_CHAR, static_cast<WindowMsgData>(wideCharacter), 0);
+		return;
 	}
+
+	WideChar* wideText = NEW WideChar[wideLength + 1];
+	Utf8_To_Wide(wideText, wideLength + 1, utf8Text, textLength);
+
+	for (size_t i = 0; i < wideLength; ++i)
+	{
+		TheWindowManager->winSendInputMsg(targetWindow, GWM_IME_CHAR, static_cast<WindowMsgData>(wideText[i]), 0);
+	}
+
+	delete [] wideText;
 }
 
 LocalFileSystem* SDL3GameEngine::createLocalFileSystem()
