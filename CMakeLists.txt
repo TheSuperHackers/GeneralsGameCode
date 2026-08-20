@@ -30,6 +30,12 @@ if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(FATAL_ERROR "Building in-source is not supported! Create a build dir and remove ${CMAKE_SOURCE_DIR}/CMakeCache.txt")
 endif()
 
+# Define VCPKG feature before `project` block
+option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
+if(RTS_BUILD_OPTION_FFMPEG)
+    list(APPEND VCPKG_MANIFEST_FEATURES "ffmpeg")
+endif()
+
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
