@@ -48,7 +48,6 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 {
 	m_batchBillboard = true;
 	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
-	m_batchTexture = nullptr;
 
 	m_pointGroup = nullptr;
 	m_streakLine = nullptr;
@@ -79,11 +78,6 @@ W3DParticleSystemManager::~W3DParticleSystemManager()
 	if (m_streakLine)
 	{
 		REF_PTR_RELEASE(m_streakLine);
-	}
-
-	if (m_batchTexture)
-	{
-		REF_PTR_RELEASE(m_batchTexture);
 	}
 
 	REF_PTR_RELEASE(m_posBuffer);
@@ -216,12 +210,12 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// TheSuperHackers @performance Ronin/Mauller 09/08/2026 Implement batched rendering for similar particles.
 		// Particles with the same properties will now be batched onto a single texture surface before being drawn.
 		// If a different particle type appears before the batch is filled, the previous batch will be drawn first.
-		TextureClass *texture = W3DDisplay::m_assetManager->Get_Texture( sys->getParticleTypeName().str() );
+		RefCountPtr<TextureClass> texture;
+		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
+
 		const Bool canBatch = sys->isUsingParticles();
-		if (!canBatch ||
-			texture != m_batchTexture ||
-			sys->getShaderType() != m_batchShaderType ||
-			sys->shouldBillboard() != m_batchBillboard)
+		const Bool batchDone = texture.Peek() != m_batchTexture.Peek() || sys->getShaderType() != m_batchShaderType || sys->shouldBillboard() != m_batchBillboard;
+		if (!canBatch || batchDone)
 		{
 			flushParticleBatch(rinfo, pointCount);
 		}
@@ -229,10 +223,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// setup a new particle batch texture if prior batch was flushed.
 		if (canBatch && m_batchTexture == nullptr)
 		{
-			m_batchTexture = texture;
-			m_batchTexture->Add_Ref();
-			m_batchShaderType = sys->getShaderType();
-			m_batchBillboard = sys->shouldBillboard();
+			initializeBatch(sys, texture);
 		}
 
 		Int startCount = pointCount;
@@ -287,17 +278,13 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				// This prevents particles being dropped. Bank the stats first as the flush resets count to 0.
 				m_onScreenParticleCount += (pointCount - startCount);
 				flushParticleBatch(rinfo, pointCount);
-				m_batchTexture = texture;
-				m_batchTexture->Add_Ref();
-				m_batchShaderType = sys->getShaderType();
-				m_batchBillboard = sys->shouldBillboard();
+				initializeBatch(sys, texture);
 				startCount = 0;
 			}
 		}
 
 		if (pointCount == startCount)
 		{
-			texture->Release_Ref();
 			continue;	//this system has no particles to render
 		}
 
@@ -305,8 +292,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		{
 			m_streakLine->Reset_Line();
 
-			m_streakLine->Set_Texture( texture );
-			texture->Release_Ref();//release reference since it's held by streakline
+			m_streakLine->Set_Texture( texture.Peek() );
 			switch( sys->getShaderType() )
 			{
 				case ParticleSystemInfo::ADDITIVE:
@@ -355,8 +341,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
 				if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
 				{
-					m_pointGroup->Set_Texture( texture );
-					texture->Release_Ref();//release reference since it's held by pointGroup
+					m_pointGroup->Set_Texture( texture.Peek() );
 					m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
 
 					switch( sys->getShaderType() )
@@ -392,13 +377,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				{
 					if ( m_batchTexture == nullptr )
 					{
-						m_batchTexture    = texture;
-						m_batchShaderType = sys->getShaderType();
-						m_batchBillboard  = sys->shouldBillboard();
-					}
-					else
-					{
-						texture->Release_Ref();	// same key as the pending batch so drop the duplicate ref
+						initializeBatch(sys, texture);
 					}
 
 					if ( pointCount >= MAX_POINTS_PER_GROUP )
@@ -406,10 +385,6 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 						flushParticleBatch(rinfo, pointCount);
 					}
 				}
-			}
-			else
-			{
-				texture->Release_Ref();
 			}
 		}
 
@@ -455,11 +430,18 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	}
 }
 
+void W3DParticleSystemManager::initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture)
+{
+	m_batchTexture = texture;
+	m_batchShaderType = system->getShaderType();
+	m_batchBillboard = system->shouldBillboard();
+}
+
 void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount)
 {
-	if (pointCount > 0 && m_batchTexture != nullptr && m_pointGroup != nullptr)
+	if (pointCount > 0 && m_batchTexture != nullptr)
 	{
-		m_pointGroup->Set_Texture(m_batchTexture);
+		m_pointGroup->Set_Texture(m_batchTexture.Peek());
 
 		switch (m_batchShaderType)
 		{
@@ -487,8 +469,7 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 
 	if (m_batchTexture != nullptr)
 	{
-		m_batchTexture->Release_Ref();
-		m_batchTexture = nullptr;
+		m_batchTexture.Clear();
 	}
 
 	pointCount = 0;
