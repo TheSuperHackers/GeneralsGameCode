@@ -2599,6 +2599,9 @@ void W3DShaderManager::init()
 	if ((res=W3DShaderManager::getChipset()) != 0)
 	{
 		m_currentChipset = res;	//cache the current chipset.
+#if defined(RTS_TECHBYSAKH_HIGH_QUALITY)
+		DEBUG_LOG(("TECHBYSAKH GPU profile enabled for chipset %d", res));
+#endif
 
 		//Some of our effects require an offscreen render target, so try creating it here.
 		HRESULT hr=DX8Wrapper::_Get_D3D_Device8()->GetRenderTarget(&m_oldRenderSurface);
@@ -3136,7 +3139,14 @@ StaticGameLODLevel W3DShaderManager::getGPUPerformanceIndex()
 	{	//a known video card so we can make some assumptions
 		if (chipType >=	DC_GEFORCE2)
 			detailSetting=STATIC_GAME_LOD_LOW;	//these cards need multiple terrain passes.
-		if (chipType >= DC_GENERIC_PIXEL_SHADER_1_1)	//these cards can do terrain in single pass.
+#if defined(RTS_TECHBYSAKH_HIGH_QUALITY)
+			// Use the higher material/particle budget on known GPU-capable hardware;
+			// the pixel-shader check below still protects the very-high path.
+			if (chipType >= DC_GEFORCE2)
+				detailSetting=STATIC_GAME_LOD_HIGH;
+#endif
+			if (chipType >= DC_GENERIC_PIXEL_SHADER_1_1)	//these cards can do terrain in single pass.
+
 			detailSetting=STATIC_GAME_LOD_VERY_HIGH;
 	}
 

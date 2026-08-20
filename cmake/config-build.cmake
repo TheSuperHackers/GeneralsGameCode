@@ -9,6 +9,8 @@ option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
+option(RTS_BUILD_TECHBYSAKH "Enable TECHBYSAKH branding and upgrade defaults" ON)
+option(RTS_BUILD_TECHBYSAKH_HIGH_QUALITY "Prefer the enhanced GPU quality profile when supported" ON)
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
     set(RTS_BUILD_ZEROHOUR TRUE)
@@ -24,6 +26,8 @@ add_feature_info(DebugBuild RTS_BUILD_OPTION_DEBUG "Building as a \"Debug\" buil
 add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address sanitizer")
 add_feature_info(Vc6FullDebug RTS_BUILD_OPTION_VC6_FULL_DEBUG "Building VC6 with full debug info")
 add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
+add_feature_info(TECHBYSAKHMod RTS_BUILD_TECHBYSAKH "Building the TECHBYSAKH Modified community edition")
+add_feature_info(TECHBYSAKHHighQuality RTS_BUILD_TECHBYSAKH_HIGH_QUALITY "Prefer the enhanced GPU quality profile")
 
 set(RTS_BUILD_OUTPUT_SUFFIX "" CACHE STRING "Suffix appended to output names of installable targets")
 
@@ -75,6 +79,14 @@ endif()
 
 if(RTS_BUILD_OPTION_PROFILE)
     target_compile_definitions(core_config INTERFACE RTS_PROFILE_LEGACY)
+endif()
+
+if(RTS_BUILD_TECHBYSAKH)
+    target_compile_definitions(core_config INTERFACE RTS_TECHBYSAKH_MOD)
+endif()
+
+if(RTS_BUILD_TECHBYSAKH_HIGH_QUALITY)
+    target_compile_definitions(core_config INTERFACE RTS_TECHBYSAKH_HIGH_QUALITY)
 endif()
 
 # Define a dummy Tracy target when the build option is disabled.

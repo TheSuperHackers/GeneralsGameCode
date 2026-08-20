@@ -321,7 +321,13 @@ void LANAPI::update()
 {
 	if(LANbuttonPushed)
 		return;
+#if defined(RTS_TECHBYSAKH_MOD)
+	// A 50 ms pump makes LAN discovery, chat, and ready-state changes feel immediate
+	// without changing the synchronized in-game transport.
+	static const UnsignedInt LANAPIUpdateDelay = 50;
+#else
 	static const UnsignedInt LANAPIUpdateDelay = 200;
+#endif
 	UnsignedInt now = timeGetTime();
 
 	if( now > m_lastUpdate + LANAPIUpdateDelay)

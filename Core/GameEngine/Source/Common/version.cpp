@@ -320,8 +320,12 @@ UnicodeString Version::getUnicodeBuildUserOrGitCommitAuthorName() const
 
 UnicodeString Version::getUnicodeProductTitle() const
 {
-	// @todo Make configurable
+#if defined(RTS_TECHBYSAKH_MOD)
+	return L"TECHBYSAKH Modified - Community Edition";
+#else
+	// Keep the upstream-compatible fallback title when the fork branding is disabled.
 	return L"Community Patch";
+#endif
 }
 
 UnicodeString Version::getUnicodeProductVersion() const

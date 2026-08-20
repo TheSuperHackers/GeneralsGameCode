@@ -28,6 +28,8 @@ FrameRateLimit::FrameRateLimit()
 	QueryPerformanceCounter(&start);
 	m_freq = freq.QuadPart;
 	m_start = start.QuadPart;
+	m_nextDeadline = m_start;
+	m_lastFps = 0;
 }
 
 Real FrameRateLimit::wait(UnsignedInt maxFps)
@@ -35,27 +37,59 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	PROFILER_SECTION;
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
-	double elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
-	const double targetSeconds = 1.0 / maxFps;
-	const double sleepSeconds = targetSeconds - elapsedSeconds - 0.002; // leave ~2ms for spin wait
 
-	if (sleepSeconds > 0.0)
+	// The uncapped sentinel is deliberately handled without a synthetic 1 MHz wait.
+	// This keeps benchmark and fast-forward paths from paying an unnecessary timing cost.
+	if (maxFps == 0 || maxFps >= RenderFpsPreset::UncappedFpsValue)
 	{
-		// Non busy wait with Munkee sleep
-		DWORD dwMilliseconds = static_cast<DWORD>(sleepSeconds * 1000);
-		Sleep(dwMilliseconds);
+		const Real elapsedSeconds = static_cast<Real>(static_cast<double>(tick.QuadPart - m_start) / m_freq);
+		m_start = tick.QuadPart;
+		m_nextDeadline = m_start;
+		m_lastFps = 0;
+		return elapsedSeconds;
 	}
 
-	// Busy wait for remaining time
-	do
+	const Int64 targetTicks = static_cast<Int64>(static_cast<double>(m_freq) / maxFps);
+	if (m_lastFps != maxFps || m_nextDeadline <= m_start)
+	{
+		// Re-anchor when the user changes the render limit or after a reset.
+		m_lastFps = maxFps;
+		m_nextDeadline = tick.QuadPart + targetTicks;
+	}
+
+	// Sleep until close to the deadline, then use the high-resolution counter for the
+	// final fraction. Unlike the old implementation, the deadline advances from the
+	// previous deadline, which prevents small sleep errors from becoming visible drift.
+	for (;;)
 	{
 		QueryPerformanceCounter(&tick);
-		elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
-	}
-	while (elapsedSeconds < targetSeconds);
+		const Int64 remainingTicks = m_nextDeadline - tick.QuadPart;
+		if (remainingTicks <= 0)
+		{
+			break;
+		}
 
+		const double remainingSeconds = static_cast<double>(remainingTicks) / m_freq;
+		if (remainingSeconds > 0.0015)
+		{
+			DWORD sleepMilliseconds = static_cast<DWORD>(remainingSeconds * 1000.0);
+			if (sleepMilliseconds > 1)
+			{
+				Sleep(sleepMilliseconds - 1);
+			}
+		}
+	}
+
+	const Int64 elapsedTicks = tick.QuadPart - m_start;
 	m_start = tick.QuadPart;
-	return (Real)elapsedSeconds;
+	m_nextDeadline += targetTicks;
+	if (m_nextDeadline <= tick.QuadPart)
+	{
+		// Recover cleanly after a long stall without trying to replay missed render frames.
+		m_nextDeadline = tick.QuadPart + targetTicks;
+	}
+
+	return static_cast<Real>(static_cast<double>(elapsedTicks) / m_freq);
 }
 
 void FrameRateLimit::reset()
@@ -63,6 +97,8 @@ void FrameRateLimit::reset()
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
 	m_start = tick.QuadPart;
+	m_nextDeadline = m_start;
+	m_lastFps = 0;
 }
 
 

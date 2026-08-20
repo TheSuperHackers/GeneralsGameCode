@@ -153,6 +153,16 @@ void CreditsManager::init()
 
 void CreditsManager::load()
 {
+#if defined(RTS_TECHBYSAKH_MOD)
+	// Keep the branding in the executable so it remains visible even when the
+	// user installs a stock or community data pack with its own Credits INI.
+	m_currentStyle = CREDIT_STYLE_TITLE;
+	addText("TECHBYSAKH MODIFIED");
+	m_currentStyle = CREDIT_STYLE_POSITION;
+	addText("Community Edition - LAN / Co-op / Versus");
+	m_currentStyle = CREDIT_STYLE_NORMAL;
+#endif
+
 	INI ini;
 	// Read from INI all the ControlBarSchemes
 	ini.loadFileDirectory( "Data\\INI\\Credits", INI_LOAD_OVERWRITE, nullptr );

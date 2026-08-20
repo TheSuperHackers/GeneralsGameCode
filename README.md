@@ -45,6 +45,23 @@ Here's an overview of our current focus and future plans
 - **Community-Driven Improvements**: Once the community grows, we plan to incorporate more features, updates, and
   changes based on player feedback.
 
+## TECHBYSAKH Modified Edition
+
+This fork includes a compatibility-preserving **TECHBYSAKH Modified - Community Edition** profile. It keeps the original lockstep simulation and LAN transport, while adding a drift-resistant render limiter, a more responsive LAN lobby pump, a GPU-aware high-quality LOD profile, and a visible TECHBYSAKH credit identity. The existing W3D/Direct3D 8-compatible renderer remains the runtime graphics backend; a complete D3D11/Vulkan replacement is not claimed here because that would require a separate renderer and asset/material migration project.
+
+The source-only upgrade includes an original emblem at `TECHBYSAKH_Mod/Branding/techbysakh_emblem.png` plus data-driven mode and map authoring material under `TECHBYSAKH_Mod/`. The repository still requires the original game installation and compatible community data/assets to run.
+
+### TECHBYSAKH build switches
+
+The branded profile is enabled by default. To build it explicitly with the enhanced GPU quality profile:
+
+```bash
+cmake -S . -B build/techbysakh -DRTS_BUILD_TECHBYSAKH=ON -DRTS_BUILD_TECHBYSAKH_HIGH_QUALITY=ON
+cmake --build build/techbysakh --config Release
+```
+
+Use `-DRTS_BUILD_TECHBYSAKH=OFF` to produce the upstream-compatible product title and fallback LAN/frame-pacing behavior. The enhanced profile remains opt-out because higher LOD can increase GPU and particle load on older hardware.
+
 ## Running the Game
 
 To run *Generals* or *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game

@@ -266,7 +266,13 @@ void LANAPI::OnGameStart()
 		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
 		msg->appendIntegerArgument(GAME_LAN);
 
-		TheWritableGlobalData->m_useFpsLimit = false;
+	#if defined(RTS_TECHBYSAKH_MOD)
+			// Keep the user-selected render cap in LAN games so the presentation stays
+			// smooth instead of running uncapped and competing with the lockstep thread.
+			DEBUG_LOG(("TECHBYSAKH LAN profile: preserving the configured render FPS limit"));
+#else
+			TheWritableGlobalData->m_useFpsLimit = false;
+#endif
 
 		// Set the seeds
 		InitRandom( m_currentGame->getSeed() );
