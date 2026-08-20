@@ -66,6 +66,8 @@ Use `-DRTS_BUILD_TECHBYSAKH=OFF` to produce the upstream-compatible product titl
 
 The `TECHBYSAKH Release Build` workflow runs on pushes to `main` and can also be started manually from the repository’s Actions page. It builds the 32-bit Windows Zero Hour target, packages the executable with `TECHBYSAKH_Mod`, the release notes, and checksums, and uploads `TECHBYSAKH_Modified_Build.zip` as a 30-day Actions artifact. Pushing a tag named `techbysakh-*` additionally creates a prerelease containing that ZIP, so a reproducible downloadable build can be produced without building on a developer machine.
 
+Replay compatibility checks use protected Cloudflare R2 test data. On forks where `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_ENDPOINT_URL` are not configured, the replay job now reports a clear skip in the Actions summary instead of failing the workflow. Maintainers with access to the protected test data can add those three repository secrets to enable the full replay validation path.
+
 ## Running the Game
 
 To run *Generals* or *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game
