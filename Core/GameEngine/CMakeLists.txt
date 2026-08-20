@@ -1212,6 +1212,7 @@ target_link_libraries(corei_gameengine_public INTERFACE
     core_browserdispatch
     dbghelploader
     #core_wwvegas
+    core_icu
     d3d8lib
     gamespy::gamespy
     stlport
