@@ -1,6 +1,3 @@
-# FORCE is required to guarantee cross-platform bit-exact determinism.
-# Intrinsics would use platform-specific SIMD, breaking CRC parity between architectures.
-set(GM_ENABLE_INTRINSICS OFF CACHE BOOL "Disable intrinsics for cross-arch determinism" FORCE)
 set(GM_ENABLE_TESTS OFF CACHE BOOL "Disable GameMath tests" FORCE)
 
 FetchContent_Declare(
