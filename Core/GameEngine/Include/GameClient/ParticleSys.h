@@ -516,6 +516,7 @@ public:
 	void validate();
 
 	const AsciiString& getName() const { return m_name; }
+	Bool getIsTerrainConforming() const { return m_isTerrainConforming; }
 
 	// This function was made const because of update modules' module data being all const.
 	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-null, it is a slave system for use
@@ -543,6 +544,7 @@ protected:
 
 	// This has to be mutable because of the delayed initialization thing in createSlaveSystem
 	mutable const ParticleSystemTemplate *m_slaveTemplate;		///< if non-null, use this to create a slave system
+	Bool m_isTerrainConforming;														///< render ground-aligned particles conforming to the terrain
 
 	// template attribute data inherited from ParticleSystemInfo class
 };
@@ -615,6 +617,7 @@ public:
 	const UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	Bool shouldBillboard() { return !m_isGroundAligned; }
+	Bool isTerrainConforming() { return m_template->getIsTerrainConforming(); }
 
 	ParticleShaderType getShaderType() { return m_shaderType; }
 
