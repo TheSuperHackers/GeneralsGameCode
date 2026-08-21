@@ -308,6 +308,7 @@ char*  AsciiString::getBufferForRead(Int len)
 void AsciiString::translate(const UnicodeString& stringSrc)
 {
 	validate();
+	// TheSuperHackers @fix bobtista 02/04/2026 Implement UTF-8 conversion replacing 7-bit ASCII only implementation
 	// TheSuperHackers @bugfix CryoTheRenegade 04/08/2026 Convert wide text to UTF-8 with ICU4C.
 	const WideChar* src = stringSrc.str();
 	const size_t srcLen = stringSrc.getLength();

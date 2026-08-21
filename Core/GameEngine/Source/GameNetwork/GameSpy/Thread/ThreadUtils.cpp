@@ -32,6 +32,7 @@
 
 //-------------------------------------------------------------------------
 
+// TheSuperHackers @refactor bobtista 02/04/2026 Use WWLib UTF-8 functions instead of raw Win32 API calls
 // TheSuperHackers @refactor CryoTheRenegade 04/08/2026 Use the shared ICU4C UTF conversion functions.
 std::wstring MultiByteToWideCharSingleLine( const char* orig )
 {
