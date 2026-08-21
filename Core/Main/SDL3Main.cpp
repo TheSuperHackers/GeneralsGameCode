@@ -104,10 +104,10 @@ int main(int argc, char* argv[])
 		if (gLoadScreenSurface != nullptr)
 		{
 			SDL_Surface* screen = SDL_GetWindowSurface(TheSDL3Window);
-			if (screen)
+			if (screen && gLoadScreenSurface->h > 0)
 			{
 				SDL_ClearSurface(screen, 0.0f, 0.0f, 0.0f, 1.0f);
-				float bitmapAspect = 800.0f / 600.0f;
+				float bitmapAspect = (float)gLoadScreenSurface->w / (float)gLoadScreenSurface->h;
 				int drawWidth = (float)screen->w / screen->h > bitmapAspect ? (int)(screen->h * bitmapAspect) : screen->w;
 				int drawHeight = (float)screen->w / screen->h > bitmapAspect ? screen->h : (int)(screen->w / bitmapAspect);
 				SDL_Rect destRect = { (screen->w - drawWidth) / 2, (screen->h - drawHeight) / 2, drawWidth, drawHeight };
