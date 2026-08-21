@@ -33,6 +33,8 @@
 #include "WW3D2/rinfo.h"
 #include "WWLib/bittype.h"
 
+class W3DTerrainParticles;
+
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
   * all interaction with the screen and updating the display
@@ -51,7 +53,7 @@ public:
 
 private:
 	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
-	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
+	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const AABoxClass& bbox);
 	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
 
 	enum { MAX_POINTS_PER_GROUP = 512 };
@@ -59,6 +61,7 @@ private:
 	RefCountPtr<TextureClass> m_batchTexture;		///< the texture used as the drawing surface for batched particle draws
 	PointGroupClass *m_pointGroup;							///< the point group that contains all of the particles
 	StreakLineClass *m_streakLine;							///< the streak class that contains all of the streaks
+	W3DTerrainParticles *m_terrainParticles;			///< the terrain-conforming particles renderer
 	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
 	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
 	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
@@ -67,4 +70,5 @@ private:
 	ParticleSystemInfo::ParticleShaderType m_batchShaderType;
 	Bool m_readyToRender;											///< if true, it is OK to render
 	ParticleSystemInfo::ParticleAlignmentType m_batchParticleAlignment;
+	AABoxClass m_batchBoundingBox;
 };
