@@ -51,6 +51,9 @@ namespace Debug_Statistics
 	void Record_DX8_Skin_Polys_And_Vertices(int pcount,int vcount);
 	void Record_DX8_Polys_And_Vertices(int pcount,int vcount,const ShaderClass& shader);
 	void Record_Sorting_Polys_And_Vertices(int pcount,int vcount);
+	void Record_Terrain_Particle_Quad();
+	void Record_Terrain_Particle_Mesh();
+	void Record_Terrain_Particle_Batch(int triangle_count);
 	int Get_DX8_Polygons();
 	int Get_DX8_Vertices();
 	int Get_DX8_Skin_Renders();
@@ -58,6 +61,10 @@ namespace Debug_Statistics
 	int Get_DX8_Skin_Vertices();
 	int Get_Sorting_Polygons();
 	int Get_Sorting_Vertices();
+	int Get_Terrain_Particle_Triangles();
+	int Get_Terrain_Particle_Quads();
+	int Get_Terrain_Particle_Meshes();
+	int Get_Terrain_Particle_Batches();
 	int Get_Draw_Calls();
 
 	void Begin_Statistics();
@@ -71,3 +78,6 @@ namespace Debug_Statistics
 #define DX8_RECORD_RENDER(polys,verts,shader) Debug_Statistics::Record_DX8_Polys_And_Vertices(polys,verts,shader)
 #define DX8_RECORD_SORTING_RENDER(polys,verts) Debug_Statistics::Record_Sorting_Polys_And_Vertices(polys,verts)
 #define DX8_RECORD_SKIN_RENDER(polys,verts) Debug_Statistics::Record_DX8_Skin_Polys_And_Vertices(polys,verts)
+#define DX8_RECORD_TERRAIN_PARTICLE_QUAD() Debug_Statistics::Record_Terrain_Particle_Quad()
+#define DX8_RECORD_TERRAIN_PARTICLE_MESH() Debug_Statistics::Record_Terrain_Particle_Mesh()
+#define DX8_RECORD_TERRAIN_PARTICLE_BATCH(triangles) Debug_Statistics::Record_Terrain_Particle_Batch(triangles)

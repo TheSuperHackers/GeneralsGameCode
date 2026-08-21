@@ -279,6 +279,14 @@ static int sorting_polygons;
 static int last_frame_sorting_polygons;
 static int sorting_vertices;
 static int last_frame_sorting_vertices;
+static int terrain_particle_triangles;
+static int last_frame_terrain_particle_triangles;
+static int terrain_particle_quads;
+static int last_frame_terrain_particle_quads;
+static int terrain_particle_meshes;
+static int last_frame_terrain_particle_meshes;
+static int terrain_particle_batches;
+static int last_frame_terrain_particle_batches;
 static int draw_calls;
 static int last_frame_draw_calls;
 
@@ -344,6 +352,42 @@ int Debug_Statistics::Get_Sorting_Vertices()
 	return last_frame_sorting_vertices;
 }
 
+void Debug_Statistics::Record_Terrain_Particle_Quad()
+{
+	terrain_particle_quads++;
+}
+
+void Debug_Statistics::Record_Terrain_Particle_Mesh()
+{
+	terrain_particle_meshes++;
+}
+
+void Debug_Statistics::Record_Terrain_Particle_Batch(int triangle_count)
+{
+	terrain_particle_triangles += triangle_count;
+	terrain_particle_batches++;
+}
+
+int Debug_Statistics::Get_Terrain_Particle_Triangles()
+{
+	return last_frame_terrain_particle_triangles;
+}
+
+int Debug_Statistics::Get_Terrain_Particle_Quads()
+{
+	return last_frame_terrain_particle_quads;
+}
+
+int Debug_Statistics::Get_Terrain_Particle_Meshes()
+{
+	return last_frame_terrain_particle_meshes;
+}
+
+int Debug_Statistics::Get_Terrain_Particle_Batches()
+{
+	return last_frame_terrain_particle_batches;
+}
+
 int Debug_Statistics::Get_Draw_Calls()
 {
 	return last_frame_draw_calls;
@@ -364,6 +408,10 @@ void Debug_Statistics::Begin_Statistics()
 	dx8_skin_renders=0;
 	sorting_polygons=0;
 	sorting_vertices=0;
+	terrain_particle_triangles=0;
+	terrain_particle_quads=0;
+	terrain_particle_meshes=0;
+	terrain_particle_batches=0;
 	draw_calls=0;
 	Record_Texture_Begin();
 	DX8Wrapper::Begin_Statistics();
@@ -380,6 +428,10 @@ void Debug_Statistics::End_Statistics()
 	last_frame_dx8_vertices=dx8_vertices;
 	last_frame_sorting_polygons=sorting_polygons;
 	last_frame_sorting_vertices=sorting_vertices;
+	last_frame_terrain_particle_triangles=terrain_particle_triangles;
+	last_frame_terrain_particle_quads=terrain_particle_quads;
+	last_frame_terrain_particle_meshes=terrain_particle_meshes;
+	last_frame_terrain_particle_batches=terrain_particle_batches;
 	last_frame_draw_calls=draw_calls;
 //	DX8MeshRendererClass::End_Statistics();
 	DX8Wrapper::End_Statistics();

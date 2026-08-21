@@ -28,6 +28,7 @@
 #include "WW3D2/dx8vertexbuffer.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/rinfo.h"
+#include "WW3D2/statistics.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/vertmaterial.h"
 #include "WWLib/refcount.h"
@@ -248,6 +249,8 @@ void W3DTerrainParticle::drawQuad(const Vector3& loc,
                                   Real height,
                                   const Vector3& normal)
 {
+	DX8_RECORD_TERRAIN_PARTICLE_QUAD();
+
 	if (m_numVertices + 4 > MAX_VERTICES || m_numIndices + 6 > MAX_INDICES)
 	{
 		flushBatch();
@@ -289,6 +292,8 @@ void W3DTerrainParticle::drawQuad(const Vector3& loc,
 
 void W3DTerrainParticle::drawTerrainConformingMesh(WorldHeightMap& map, const Vector3& loc, const IRegion2D& bounds, UnsignedInt diffuse, Real size, Real cosine, Real sine)
 {
+	DX8_RECORD_TERRAIN_PARTICLE_MESH();
+
 	// Split the drawing into blocks of at most MAX_TILES_IN_BATCH cells per axis.
 	// This lets large particles that exceed the batch buffers be drawn over multiple flushes.
 	for (Int batchMinY = bounds.lo.y; batchMinY < bounds.hi.y - 1; batchMinY += MAX_TILES_IN_BATCH)
@@ -397,6 +402,7 @@ void W3DTerrainParticle::flushBatch()
 
 		DX8Wrapper::Set_Index_Buffer(indexAccess, 0);
 		DX8Wrapper::Set_Vertex_Buffer(vertexAccess);
+		DX8_RECORD_TERRAIN_PARTICLE_BATCH(m_numIndices / 3);
 		DX8Wrapper::Draw_Triangles(0,
 		                           m_numIndices / 3,
 		                           0,
