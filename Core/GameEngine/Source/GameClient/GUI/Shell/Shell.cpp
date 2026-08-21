@@ -134,12 +134,11 @@ void Shell::deconstruct()
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Tear down every screen on the stack without initializing uncovered layouts.
+/** TheSuperHackers @bugfix CryoTheRenegade 10/08/2026 Tear down every screen on the stack without initializing uncovered layouts.
 	* Used when the shell itself is being destroyed. */
 //-------------------------------------------------------------------------------------------------
 void Shell::destroyScreenStack()
 {
-	// TheSuperHackers @bugfix CryoTheRenegade 10/08/2026 Do not initialize uncovered screens while the shell is being destroyed.
 	while( top() )
 	{
 		WindowLayout *screen = top();
