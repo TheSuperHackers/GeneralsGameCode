@@ -92,6 +92,12 @@ AnimatedCursor* SDL3CursorManager::loadANI(const char* filepath)
 	}
 
 	Int size = file->size();
+	if (size <= 0)
+	{
+		file->close();
+		return nullptr;
+	}
+
 	std::vector<char> buf(size);
 	file->read(buf.data(), size);
 	file->close();
