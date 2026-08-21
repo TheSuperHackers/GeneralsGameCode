@@ -121,6 +121,7 @@ class FFmpegVideoPlayer : public VideoPlayer
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid );
+		virtual void setVolume( Real volume );
 		virtual void initializeBinkWithMiles();
 };
 

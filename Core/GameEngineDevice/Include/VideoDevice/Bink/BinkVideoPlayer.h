@@ -104,6 +104,7 @@ class BinkVideoPlayer : public VideoPlayer
 	private:
 
 		static Int	calculateMovieAudioVolume( Real volume );
+		Bool m_volumeApplied;
 
 	protected:
 
