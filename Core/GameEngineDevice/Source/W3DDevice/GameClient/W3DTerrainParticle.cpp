@@ -27,6 +27,7 @@
 #include "WW3D2/dx8vertexbuffer.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/rinfo.h"
+#include "WW3D2/statistics.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/vertmaterial.h"
 #include "WWLib/refcount.h"
@@ -256,6 +257,7 @@ void W3DTerrainParticle::flushBatch()
 
 		DX8Wrapper::Set_Index_Buffer(indexAccess, 0);
 		DX8Wrapper::Set_Vertex_Buffer(vertexAccess);
+		DX8_RECORD_TERRAIN_PARTICLE_BATCH(m_numIndices / 3);
 		DX8Wrapper::Draw_Triangles(0,
 		                           m_numIndices / 3,
 		                           0,
