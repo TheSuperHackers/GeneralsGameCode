@@ -335,11 +335,8 @@ void SDL3Mouse::translateEvent(const SDL_Event& event, MouseIO* result)
 
 		case SDL_EVENT_MOUSE_WHEEL:
 		{
-			// For wheel events, use current mouse position
-			float mx, my;
-			SDL_GetMouseState(&mx, &my);
-			rawX = (int)mx;
-			rawY = (int)my;
+			rawX = (int)event.wheel.mouse_x;
+			rawY = (int)event.wheel.mouse_y;
 			windowID = event.wheel.windowID;
 			result->wheelPos = (Int)(event.wheel.y * MOUSE_WHEEL_DELTA);
 			break;
@@ -436,7 +433,7 @@ void SDL3Keyboard::getKey(KeyboardIO* key)
 	key->key = keyDef;
 	key->status = KeyboardIO::STATUS_UNUSED;
 	key->state = keyEvent.down ? KEY_STATE_DOWN : KEY_STATE_UP;
-	key->keyDownTimeMsec = keyEvent.down ? timeGetTime() : 0;
+	key->keyDownTimeMsec = keyEvent.down ? (UnsignedInt)(keyEvent.timestamp / 1000000) : 0;
 
 	SDL_Keymod mod = keyEvent.mod;
 	if (mod & SDL_KMOD_LSHIFT)
@@ -801,7 +798,7 @@ void SDL3InputManager::update()
 								const UnsignedInt style = focus->winGetStyle();
 								if (BitIsSet(style, GWS_ENTRY_FIELD) || BitIsSet(style, GWS_COMBO_BOX))
 								{
-									TheWindowManager->winSendInputMsg(focus, GWM_IME_CHAR, VK_RETURN, 0);
+									TheWindowManager->winSendInputMsg(focus, GWM_IME_CHAR, 13, 0);
 								}
 							}
 						}
