@@ -161,14 +161,8 @@ void	BinkVideoPlayer::update()
 {
 	VideoPlayer::update();
 
-	if ( firstStream() == nullptr )
-	{
-		m_volumeApplied = FALSE;
-		return;
-	}
-
 	// createStream() is too early; apply once a live stream exists.
-	if ( !m_volumeApplied )
+	if ( !m_volumeApplied && firstStream() != nullptr )
 	{
 		setVolume( TheAudio->getVolume(AudioAffect_Speech) );
 		m_volumeApplied = TRUE;
@@ -214,6 +208,7 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		stream->m_next = m_firstStream;
 		stream->m_player = this;
 		m_firstStream = stream;
+		m_volumeApplied = FALSE;
 	}
 
 	return stream;
