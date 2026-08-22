@@ -161,6 +161,11 @@ void SDL3GameEngine::setIsActive(Bool isActive)
 	m_IsActive = isActive;
 }
 
+UnsignedInt SDL3GameEngine::getTicksMsec() const
+{
+	return (UnsignedInt)SDL_GetTicks();
+}
+
 void SDL3GameEngine::pollSDL3Events()
 {
 	if (!m_SDLWindow || !TheSDL3InputManager)
