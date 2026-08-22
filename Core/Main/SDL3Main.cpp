@@ -131,6 +131,7 @@ int main(int argc, char* argv[])
 			TheSDL3Window = nullptr;
 		}
 		SDL_Quit();
+		AppMain::shutdown();
 		return exitcode;
 	}
 
