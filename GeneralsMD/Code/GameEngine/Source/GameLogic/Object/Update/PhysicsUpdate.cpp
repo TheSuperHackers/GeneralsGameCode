@@ -980,12 +980,12 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	}
 #endif
 
-	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns scaled dot product instead of +-sqrtf(vx*vx+vy*vy)
-	// Inverse scales len by (1 + sqrt(2)) / 2 to adjust to the average of the former min/max movement speed.
-	// The inverse looks intuitively wrong, but it is correct, because the value returned by this function is
-	// used to determine the additional velocity needed to reach the target speed.
-	constexpr const Real DiagonalCompensation = 1.0f / 1.20710678f;
-	return dot * DiagonalCompensation;
+	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns the dot product instead of +-sqrtf(vx*vx+vy*vy).
+	// The retail formula understates the forward speed by up to 1/sqrt(2) on diagonal headings, which made
+	// the Locomotor overshoot its goal speed there. The dot product is the true projection of the velocity
+	// onto the facing vector, so this now reports real distance per logic frame and can be used for distance
+	// and time calculations. The speeds the Locomotor commands are compensated to match, in LocomotorTemplate.
+	return dot;
 
 #endif // RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
 }
@@ -1025,12 +1025,9 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	}
 #endif
 
-	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns scaled dot product instead of +-sqrtf(vx*vx+vy*vy+vz*vz)
-	// Inverse scales len by (1 + sqrt(3)) / 2 to adjust to the average of the former min/max movement speed.
-	// The inverse looks intuitively wrong, but it is correct, because the value returned by this function is
-	// used to determine the additional velocity needed to reach the target speed.
-	constexpr const Real DiagonalCompensation = 1.0f / 1.36602540f;
-	return dot * DiagonalCompensation;
+	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns the dot product instead of
+	// +-sqrtf(vx*vx+vy*vy+vz*vz). See getForwardSpeed2D for the rationale.
+	return dot;
 
 #endif // RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
 }
