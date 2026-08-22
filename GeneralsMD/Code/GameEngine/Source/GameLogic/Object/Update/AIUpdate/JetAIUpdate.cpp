@@ -735,11 +735,11 @@ public:
 		loco->setMaxLift(BIGNUM);
 		BodyDamageType bdt = jet->getBodyModule()->getDamageState();
 		m_maxLift = loco->getMaxLift(bdt);
-		m_maxSpeed = loco->getMaxSpeedForCondition(bdt);
+		m_maxSpeed = loco->getMaxSpeedForCondition(bdt, jet);
 		m_landingSoundPlayed = FALSE;
 		if (m_landing)
 		{
-			loco->setMaxSpeed(loco->getMinSpeed());
+			loco->setMaxSpeed(loco->getTemplate()->getMinSpeed());
 		}
 		else
 		{
