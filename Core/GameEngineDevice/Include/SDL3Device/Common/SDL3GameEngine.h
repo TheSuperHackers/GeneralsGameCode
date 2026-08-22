@@ -54,6 +54,7 @@ public:
 	virtual void serviceWindowsOS() override;
 	virtual Bool isActive() override;
 	virtual void setIsActive(Bool isActive) override;
+	virtual UnsignedInt getTicksMsec() const override;
 
 	// Factory methods (override GameEngine)
 	virtual LocalFileSystem* createLocalFileSystem() override;
