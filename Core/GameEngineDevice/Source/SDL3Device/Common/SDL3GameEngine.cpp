@@ -226,7 +226,7 @@ void SDL3GameEngine::forwardTextInputEvent(const char* utf8Text)
 	}
 
 	GameWindow* targetWindow = m_TextInputFocusWindow;
-	if (!targetWindow || !BitIsSet(targetWindow->winGetStyle(), GWS_ENTRY_FIELD))
+	if (!targetWindow || (!BitIsSet(targetWindow->winGetStyle(), GWS_ENTRY_FIELD) && !BitIsSet(targetWindow->winGetStyle(), GWS_COMBO_BOX)))
 	{
 		return;
 	}
