@@ -113,7 +113,6 @@ Bool initAfterWindow()
 		DEBUG_LOG(("Generals is already running...Bail!"));
 		delete TheVersion;
 		TheVersion = nullptr;
-		shutdownMemoryManager();
 		return false;
 	}
 	DEBUG_LOG(("Create Generals Mutex okay."));

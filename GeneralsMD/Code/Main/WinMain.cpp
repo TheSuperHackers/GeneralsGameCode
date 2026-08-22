@@ -773,9 +773,6 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 }
 
-// Necessary to allow memory managers and such to have useful critical sections
-static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
-
 // UnHandledExceptionFilter ===================================================
 /** Handler for unhandled win32 exceptions. */
 //=============================================================================
@@ -810,42 +807,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	try {
 
 		SetUnhandledExceptionFilter( UnHandledExceptionFilter );
-		//
-		// there is something about checkin in and out the .dsp and .dsw files
-		// that blows the working directory information away on each of the
-		// developers machines so we're going to hack it for a while and set our
-		// working directory to the directory with the .exe since that's not the
-		// default in a DevStudio project
-		//
-
-		TheAsciiStringCriticalSection = &critSec1;
-		TheUnicodeStringCriticalSection = &critSec2;
-		TheDmaCriticalSection = &critSec3;
-		TheMemoryPoolCriticalSection = &critSec4;
-		TheDebugLogCriticalSection = &critSec5;
-
-		// initialize the memory manager early
-		initMemoryManager();
-
-		/// @todo remove this force set of working directory later
-		Char buffer[ _MAX_PATH ];
-		GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
-		if (Char *pEnd = strrchr(buffer, '\\'))
-		{
-			*pEnd = 0;
-		}
-		::SetCurrentDirectory(buffer);
-
-
-		#ifdef RTS_DEBUG
-			// Turn on Memory heap tracking
-			int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
-			tmpFlag |= (_CRTDBG_LEAK_CHECK_DF|_CRTDBG_ALLOC_MEM_DF);
-			tmpFlag &= ~_CRTDBG_CHECK_CRT_DF;
-			_CrtSetDbgFlag( tmpFlag );
-		#endif
-
-
 
 		// install debug callbacks
 	//	WWDebug_Install_Message_Handler(WWDebug_Message_Callback);
