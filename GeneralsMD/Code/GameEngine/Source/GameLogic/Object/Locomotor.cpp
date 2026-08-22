@@ -77,6 +77,33 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+
+// TheSuperHackers @bugfix xezon 30/07/2026 The compensation that equalizes straight and diagonal
+// movement speeds. Each constant is the average of the former minimum (straight) and maximum
+// (diagonal) movement speed for its dimension, so the average movement speed of the game does not
+// change; only the spread between headings does.
+constexpr const Real DiagonalCompensation2D = 1.20710678f; // (1 + sqrt(2)) / 2
+constexpr const Real DiagonalCompensation3D = 1.36602540f; // (1 + sqrt(3)) / 2
+
+static Real scaleSpeed2D(Real iniSpeed) { return iniSpeed * DiagonalCompensation2D; }
+static Real scaleSpeed3D(Real iniSpeed) { return iniSpeed * DiagonalCompensation3D; }
+
+#endif
+
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+
+static Bool isScriptedMovement(const Object* obj)
+{
+	if (obj == nullptr)
+		return FALSE;
+
+	const AIUpdateInterface* ai = obj->getAIUpdateInterface();
+	return ai != nullptr && ai->getLastCommandSource() == CMD_FROM_SCRIPT;
+}
+
+#endif
+
 //-------------------------------------------------------------------------------------------------
 static Real calcSlowDownDist(Real curSpeed, Real desiredSpeed, Real maxBraking)
 {
@@ -289,6 +316,12 @@ LocomotorTemplate::LocomotorTemplate()
 	m_braking = BIGNUM;
 	m_minSpeed = 0.0f;
 	m_minTurnSpeed = BIGNUM;
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+	m_maxSpeedScaled = 0.0f;
+	m_maxSpeedDamagedScaled = 0.0f;
+	m_minSpeedScaled = 0.0f;
+	m_minTurnSpeedScaled = BIGNUM;
+#endif
 	m_behaviorZ = Z_NO_Z_MOTIVE_FORCE;
 	m_appearance = LOCO_OTHER;
 	m_movePriority = LOCO_MOVES_MIDDLE;
@@ -428,6 +461,97 @@ void LocomotorTemplate::validate()
 	// AccelerationPitchLimit when zero to preserve the original behavior of Generals.
 	if (m_decelPitchLimit == 0.0f)
 		m_decelPitchLimit = m_accelPitchLimit;
+#endif
+
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+	// TheSuperHackers @bugfix xezon 30/07/2026 THRUST is the only appearance whose mover measures
+	// itself with getForwardSpeed3D, so the dimension is decided here, once, rather than every time a
+	// speed is read. This runs last so that the twins are computed from the healed and defaulted
+	// values above, and it is safe to run again on an INI override because each twin is assigned from
+	// its untouched source rather than multiplied in place.
+	if (m_appearance == LOCO_THRUST)
+	{
+		m_maxSpeedScaled = scaleSpeed3D(m_maxSpeed);
+		m_maxSpeedDamagedScaled = scaleSpeed3D(m_maxSpeedDamaged);
+		m_minSpeedScaled = scaleSpeed3D(m_minSpeed);
+		m_minTurnSpeedScaled = scaleSpeed3D(m_minTurnSpeed);
+	}
+	else
+	{
+		m_maxSpeedScaled = scaleSpeed2D(m_maxSpeed);
+		m_maxSpeedDamagedScaled = scaleSpeed2D(m_maxSpeedDamaged);
+		m_minSpeedScaled = scaleSpeed2D(m_minSpeed);
+		m_minTurnSpeedScaled = scaleSpeed2D(m_minTurnSpeed);
+	}
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getMaxSpeed(const Object* obj) const
+{
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+	return m_maxSpeed;
+#else
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (isScriptedMovement(obj))
+		return m_maxSpeed;
+#endif
+	return m_maxSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getMaxSpeedDamaged(const Object* obj) const
+{
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+	return m_maxSpeedDamaged;
+#else
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (isScriptedMovement(obj))
+		return m_maxSpeedDamaged;
+#endif
+	return m_maxSpeedDamagedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getMinSpeed(const Object* obj) const
+{
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+	return m_minSpeed;
+#else
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (isScriptedMovement(obj))
+		return m_minSpeed;
+#endif
+	return m_minSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getMinTurnSpeed(const Object* obj) const
+{
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+	return m_minTurnSpeed;
+#else
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (isScriptedMovement(obj))
+		return m_minTurnSpeed;
+#endif
+	return m_minTurnSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::scaleSpeed(Real speed) const
+{
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+	return speed;
+#else
+	if (m_appearance == LOCO_THRUST)
+		return scaleSpeed3D(speed);
+
+	return scaleSpeed2D(speed);
 #endif
 }
 
@@ -658,6 +782,9 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 	m_brakingFactor = 1.0f;
 	m_maxLift = BIGNUM;
 	m_maxSpeed = BIGNUM;
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+	m_maxSpeedScaled = BIGNUM;
+#endif
 	m_maxAccel = BIGNUM;
 	m_maxBraking = BIGNUM;
 	m_maxTurnRate = BIGNUM;
@@ -685,6 +812,9 @@ Locomotor::Locomotor(const Locomotor& that)
 	m_brakingFactor = that.m_brakingFactor;
 	m_maxLift = that.m_maxLift;
 	m_maxSpeed = that.m_maxSpeed;
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+	m_maxSpeedScaled = that.m_maxSpeedScaled;
+#endif
 	m_maxAccel = that.m_maxAccel;
 	m_maxBraking = that.m_maxBraking;
 	m_maxTurnRate = that.m_maxTurnRate;
@@ -708,6 +838,9 @@ Locomotor& Locomotor::operator=(const Locomotor& that)
 		m_brakingFactor = that.m_brakingFactor;
 		m_maxLift = that.m_maxLift;
 		m_maxSpeed = that.m_maxSpeed;
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+		m_maxSpeedScaled = that.m_maxSpeedScaled;
+#endif
 		m_maxAccel = that.m_maxAccel;
 		m_maxBraking = that.m_maxBraking;
 		m_maxTurnRate = that.m_maxTurnRate;
@@ -755,6 +888,12 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_brakingFactor);
 	xfer->xferReal(&m_maxLift);
 	xfer->xferReal(&m_maxSpeed);
+#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+	// TheSuperHackers @bugfix xezon 30/07/2026 The scaled twin is derived, so recompute it rather
+	// than transfer it. That keeps the save format byte identical and lets saves written before this
+	// change load correctly. In the save direction this simply recomputes the value it already has.
+	m_maxSpeedScaled = m_template->scaleSpeed(m_maxSpeed);
+#endif
 	xfer->xferReal(&m_maxAccel);
 	xfer->xferReal(&m_maxBraking);
 	xfer->xferReal(&m_maxTurnRate);
@@ -786,19 +925,46 @@ void Locomotor::startMove()
 }
 
 //-------------------------------------------------------------------------------------------------
-Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition) const
+Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition, const Object* obj) const
 {
 	Real speed;
 
 	if( IS_CONDITION_BETTER( condition, TheGlobalData->m_movementPenaltyDamageState ) )
-		speed = m_template->m_maxSpeed;
+		speed = m_template->getMaxSpeed(obj);
 	else
-		speed = m_template->m_maxSpeedDamaged;
+		speed = m_template->getMaxSpeedDamaged(obj);
 
-	if (speed > m_maxSpeed)
-		speed = m_maxSpeed;
+	Real maxSpeed = getMaxSpeedOverride(obj);
+	if (speed > maxSpeed)
+		speed = maxSpeed;
 
 	return speed;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real Locomotor::getMaxSpeedOverride(const Object* obj) const
+{
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+	return m_maxSpeed;
+#else
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (isScriptedMovement(obj))
+		return m_maxSpeed;
+#endif
+	return m_maxSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real Locomotor::getMinSpeed(const Object* obj) const
+{
+	return m_template->getMinSpeed(obj);
+}
+
+//-------------------------------------------------------------------------------------------------
+Real Locomotor::getMinTurnSpeed(const Object* obj) const
+{
+	return m_template->getMinTurnSpeed(obj);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -889,7 +1055,7 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 //	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
-	Real minSpeed = getMinSpeed();
+	Real minSpeed = getMinSpeed(obj);
 	if (minSpeed > 0)
 	{
 		// can't stay in one place; move in the desired direction at min speed.
@@ -953,7 +1119,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	setFlag(MAINTAIN_POS_IS_VALID, false);
 
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
-	Real maxSpeed = getMaxSpeedForCondition(bdt);
+	Real maxSpeed = getMaxSpeedForCondition(bdt, obj);
 
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
 	if( desiredSpeed > maxSpeed )
@@ -1167,7 +1333,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
-	Real maxSpeed = getMaxSpeedForCondition(bdt);
+	Real maxSpeed = getMaxSpeedForCondition(bdt, obj);
 	if( desiredSpeed > maxSpeed )
 		desiredSpeed = maxSpeed;
 
@@ -1279,7 +1445,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed)
 {
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
-	Real maxSpeed = getMaxSpeedForCondition(bdt);
+	Real maxSpeed = getMaxSpeedForCondition(bdt, obj);
 	Real maxTurnRate = getMaxTurnRate(bdt);
 	Real maxAcceleration = getMaxAcceleration(bdt);
 
@@ -1291,7 +1457,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	//
 	// See if we are turning.  If so, use the min turn speed.
 	//
-	Real turnSpeed = m_template->m_minTurnSpeed;
+	Real turnSpeed = getMinTurnSpeed(obj);
 	Real angle = obj->getOrientation();
 //	Real relAngle = ThePartitionManager->getRelativeAngle2D( obj, &goalPos );
 //	Real desiredAngle = angle + relAngle;
@@ -1585,9 +1751,9 @@ Bool Locomotor::fixInvalidPosition(Object* obj, PhysicsBehavior *physics)
 }
 
 //-------------------------------------------------------------------------------------------------
-Real Locomotor::calcMinTurnRadius(BodyDamageType condition, Real* timeToTravelThatDist) const
+Real Locomotor::calcMinTurnRadius(BodyDamageType condition, const Object* obj, Real* timeToTravelThatDist) const
 {
-	Real minSpeed = getMinSpeed();								// in dist/frame
+	Real minSpeed = getMinSpeed(obj);								// in dist/frame
 	Real maxTurnRate = getMaxTurnRate(condition);	// in rads/frame
 
 	/*
@@ -1622,7 +1788,7 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 	Real maxAcceleration = getMaxAcceleration( obj->getBodyModule()->getDamageState() );
 
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
-	Real maxSpeed = getMaxSpeedForCondition( obj->getBodyModule()->getDamageState() );
+	Real maxSpeed = getMaxSpeedForCondition( obj->getBodyModule()->getDamageState(), obj );
 	if( desiredSpeed > maxSpeed )
 		desiredSpeed = maxSpeed;
 
@@ -1667,10 +1833,10 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 	Real goalSpeed = (1.0f - angleCoeff) * desiredSpeed;
 
 	//Real slowDownDist = (actualSpeed - m_template->m_minSpeed) / getBraking();
-	Real slowDownDist = calcSlowDownDist(actualSpeed, m_template->m_minSpeed, getBraking());
+	Real slowDownDist = calcSlowDownDist(actualSpeed, getMinSpeed(obj), getBraking());
 	if (onPathDistToGoal < slowDownDist && !getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
 	{
-		goalSpeed = m_template->m_minSpeed;
+		goalSpeed = getMinSpeed(obj);
 	}
 
 
@@ -1713,7 +1879,7 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 	Real maxAcceleration = getMaxAcceleration( obj->getBodyModule()->getDamageState() );
 
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
-	Real maxSpeed = getMaxSpeedForCondition( obj->getBodyModule()->getDamageState() );
+	Real maxSpeed = getMaxSpeedForCondition( obj->getBodyModule()->getDamageState(), obj );
 	if( desiredSpeed > maxSpeed )
 		desiredSpeed = maxSpeed;
 
@@ -1794,10 +1960,10 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 	}
 
 	//Real slowDownDist = (actualSpeed - m_template->m_minSpeed) / getBraking();
-	Real slowDownDist = calcSlowDownDist(actualSpeed, m_template->m_minSpeed, getBraking());
+	Real slowDownDist = calcSlowDownDist(actualSpeed, getMinSpeed(obj), getBraking());
 	if (onPathDistToGoal < slowDownDist && !getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
 	{
-		goalSpeed = m_template->m_minSpeed;
+		goalSpeed = getMinSpeed(obj);
 	}
 
 	//
@@ -1864,7 +2030,7 @@ void Locomotor::moveTowardsPositionWings(Object* obj, PhysicsBehavior *physics, 
 			angleTowardPos += aimDir;
 
 			BodyDamageType bdt = obj->getBodyModule()->getDamageState();
-			Real turnRadius = calcMinTurnRadius(bdt, nullptr) * 4;
+			Real turnRadius = calcMinTurnRadius(bdt, obj, nullptr) * 4;
 
 			// project a spot "radius" dist away from it, in that dir
 			Coord3D desiredPos = goalPos;
@@ -1913,16 +2079,16 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 {
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
 
-	Real maxForwardSpeed = getMaxSpeedForCondition(bdt);
-	desiredSpeed = clamp(m_template->m_minSpeed, desiredSpeed, maxForwardSpeed);
+	Real maxForwardSpeed = getMaxSpeedForCondition(bdt, obj);
+	desiredSpeed = clamp(getMinSpeed(obj), desiredSpeed, maxForwardSpeed);
 	Real actualForwardSpeed = physics->getForwardSpeed3D();
 
 	if (getBraking() > 0)
 	{
 		//Real slowDownDist = (actualForwardSpeed - m_template->m_minSpeed) / getBraking();
-		Real slowDownDist = calcSlowDownDist(actualForwardSpeed, m_template->m_minSpeed, getBraking());
+		Real slowDownDist = calcSlowDownDist(actualForwardSpeed, getMinSpeed(obj), getBraking());
 		if (onPathDistToGoal < slowDownDist && !getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
-			desiredSpeed = m_template->m_minSpeed;
+			desiredSpeed = getMinSpeed(obj);
 	}
 
 	Coord3D localGoalPos = goalPos;
@@ -2350,7 +2516,7 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 	Real maxAcceleration = getMaxAcceleration(bdt);
 
 	// sanity, we cannot use desired speed that is greater than our max speed we are capable of moving at
-	Real maxSpeed = getMaxSpeedForCondition(bdt);
+	Real maxSpeed = getMaxSpeedForCondition(bdt, obj);
 	if( desiredSpeed > maxSpeed )
 		desiredSpeed = maxSpeed;
 
@@ -2388,10 +2554,10 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 
 	if (!getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
 	{
-		Real slowDownDist = calcSlowDownDist(actualSpeed, m_template->m_minSpeed, getBraking());
+		Real slowDownDist = calcSlowDownDist(actualSpeed, getMinSpeed(obj), getBraking());
 		if (onPathDistToGoal < slowDownDist)
 		{
-			goalSpeed = m_template->m_minSpeed;
+			goalSpeed = getMinSpeed(obj);
 		}
 	}
 
@@ -2502,7 +2668,7 @@ void Locomotor::maintainCurrentPositionThrust(Object* obj, PhysicsBehavior *phys
 {
 	DEBUG_ASSERTCRASH(getFlag(MAINTAIN_POS_IS_VALID), ("invalid maintain pos"));
 	/// @todo srj -- should these also use the "circling radius" stuff, like wings?
-	moveTowardsPositionThrust(obj, physics, m_maintainPos, 0, getMinSpeed());
+	moveTowardsPositionThrust(obj, physics, m_maintainPos, 0, getMinSpeed(obj));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2517,7 +2683,7 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 		BodyDamageType bdt = obj->getBodyModule()->getDamageState();
 		Real turnRadius = m_template->m_circlingRadius;
 		if (turnRadius == 0.0f)
-			turnRadius = calcMinTurnRadius(bdt, nullptr);
+			turnRadius = calcMinTurnRadius(bdt, obj, nullptr);
 
 		// find the direction towards our "maintain pos"
 		const Coord3D* pos = obj->getPosition();
@@ -2540,7 +2706,7 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 		Coord3D desiredPos = m_maintainPos;
 		desiredPos.x += Cos(angleTowardMaintainPos) * turnRadius;
 		desiredPos.y += Sin(angleTowardMaintainPos) * turnRadius;
-		moveTowardsPositionWings(obj, physics, desiredPos, 0, m_template->m_minSpeed);
+		moveTowardsPositionWings(obj, physics, desiredPos, 0, getMinSpeed(obj));
 	}
 }
 
@@ -2558,7 +2724,7 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 		//
 		// Stop
 		//
-		Real minSpeed = max( 1.0E-10f, m_template->m_minSpeed );
+		Real minSpeed = max( 1.0E-10f, getMinSpeed(obj) );
 		Real speedDelta = minSpeed - actualSpeed;
 		if (fabs(speedDelta) > minSpeed)
 		{

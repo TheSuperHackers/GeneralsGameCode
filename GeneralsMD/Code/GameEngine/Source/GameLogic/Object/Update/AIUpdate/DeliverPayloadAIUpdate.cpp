@@ -330,7 +330,7 @@ Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real* timeToTravelThatDist) const
 	const Locomotor* loco = getCurLocomotor();
 	BodyDamageType bdt = getObject()->getBodyModule()->getDamageState();
 	/// @todo srj -- this should probably use min-speed, not max-speed... fix after E3
-	Real maxSpeed = loco->getMaxSpeedForCondition(bdt);				// in dist/frame
+	Real maxSpeed = loco->getMaxSpeedForCondition(bdt, getObject());				// in dist/frame
 	Real maxTurnRate = loco->getMaxTurnRate(bdt);	// in rads/frame
 
 	/*
