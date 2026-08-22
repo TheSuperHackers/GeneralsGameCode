@@ -430,7 +430,7 @@ static AsciiString static_readPlayerNames[MAX_PLAYER_COUNT];
 *
 */
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1 1
-#define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2
+#define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2 // Added in Zero Hour
 
 static Bool ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {

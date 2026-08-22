@@ -81,6 +81,9 @@ protected:
 	Bool							m_exportWithScripts;
 	Bool							m_isWaterArea; ///< Used to specify water areas in the map.
 	Bool							m_isRiver;		///< Used to specify that a water area is a river.
+	AsciiString			m_layerName;  ///< Used to specify the layer in the World Builder.
+	Bool				m_shouldRender;
+	Bool				m_selected;
 
 	static PolygonTrigger* ThePolygonTriggerListPtr;
 	static Int s_currentID; ///< Current id for new triggers.
@@ -115,6 +118,15 @@ public:
 	void insertPoint(const ICoord3D &point, Int ndx);
 	void deletePoint(Int ndx);
 	void setTriggerName(AsciiString name) {m_triggerName = name;};
+
+	void setLayerName(AsciiString name) {m_layerName = name;};
+	AsciiString getLayerName()  const {return m_layerName;}
+
+	void setShouldRender(Bool toggle) {m_shouldRender = toggle;}
+	Bool getShouldRender() {return m_shouldRender;}
+
+	void setSelected(Bool toggle) {m_selected = toggle;}
+	Bool getSelected() {return m_selected;}
 
 	void getCenterPoint(Coord3D* pOutCoord) const;
 	Real getRadius() const;
