@@ -142,6 +142,10 @@ public:
 	Bool m_useAlternateMouse;
 	Bool m_useRightMouseScrollWithAlternateMouse; // TheSuperHackers @feature User option for RMB scroll in Alternate Mouse mode.
 	Bool m_clientRetaliationModeEnabled;
+	// TheSuperHackers @feature Client side health bar display preference, from Options.ini.
+	// Holds a HealthBarDisplayMode; stored as Int so this widely included header does not
+	// have to pull in OptionPreferences.h.
+	Int m_healthBarDisplayMode;
 	Bool m_doubleClickAttackMove;
 	Bool m_rightMouseAlwaysScrolls;
 	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.

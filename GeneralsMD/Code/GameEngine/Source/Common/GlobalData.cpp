@@ -1063,6 +1063,8 @@ GlobalData::GlobalData()
 #endif
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
 	m_doubleClickAttackMove = FALSE;
+	// TheSuperHackers @feature Health bars behave exactly as they always have unless Options.ini says otherwise.
+	m_healthBarDisplayMode = HealthBarDisplayMode_Default;
 
 }
 
@@ -1205,6 +1207,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_useAlternateMouse = optionPref.getAlternateMouseModeEnabled();
 	TheWritableGlobalData->m_useRightMouseScrollWithAlternateMouse = optionPref.getRightMouseScrollWithAlternateMouseEnabled();
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
+	TheWritableGlobalData->m_healthBarDisplayMode = optionPref.getHealthBarDisplayMode();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
 	TheWritableGlobalData->m_jpegQuality = optionPref.getJpegQuality();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();

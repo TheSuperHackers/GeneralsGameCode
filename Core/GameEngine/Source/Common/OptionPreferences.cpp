@@ -216,6 +216,29 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Health bar display mode, read from Options.ini as
+// HealthBarDisplayMode = Classic | Damaged | Always (a plain index also works).
+HealthBarDisplayMode OptionPreferences::getHealthBarDisplayMode() const
+{
+	OptionPreferences::const_iterator it = find("HealthBarDisplayMode");
+	if (it == end())
+		return HealthBarDisplayMode_Default;
+
+	if (stricmp(it->second.str(), "Always") == 0)
+		return HealthBarDisplayMode_Always;
+	if (stricmp(it->second.str(), "Damaged") == 0)
+		return HealthBarDisplayMode_Damaged;
+	if (stricmp(it->second.str(), "Classic") == 0)
+		return HealthBarDisplayMode_Classic;
+
+	// also accept the raw index, so the value round trips if it is ever written numerically
+	Int mode = atoi(it->second.str());
+	if (mode >= 0 && mode < HealthBarDisplayMode_Count)
+		return (HealthBarDisplayMode)mode;
+
+	return HealthBarDisplayMode_Default;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

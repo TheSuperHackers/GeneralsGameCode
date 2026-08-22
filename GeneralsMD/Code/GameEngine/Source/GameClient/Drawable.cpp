@@ -42,6 +42,7 @@
 #include "Common/GameState.h"
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
+#include "Common/OptionPreferences.h"
 #include "Common/ModuleFactory.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -3764,6 +3765,42 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 /** Draw health bar information for drawable */
 // ------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Health bar display modes (Options.ini: HealthBarDisplayMode).
+/**
+ * Should this object show a health bar even though it is neither selected nor moused over?
+ *
+ * Purely a client side display question -- it reads state but never changes any, so it cannot
+ * affect game logic, multiplayer sync or replays.
+ */
+static Bool isHealthBarAlwaysVisible( const Object *obj, Real healthRatio )
+{
+	const Int mode = TheGlobalData->m_healthBarDisplayMode;
+
+	if( mode == HealthBarDisplayMode_Classic )
+		return FALSE;
+
+	// never label a corpse or a piece of scenery, in any mode
+	if( obj->isEffectivelyDead() )
+		return FALSE;
+
+	if( obj->isKindOf( KINDOF_PROJECTILE )
+			|| obj->isKindOf( KINDOF_SHRUBBERY )
+			|| obj->isKindOf( KINDOF_OPTIMIZED_TREE )
+			|| obj->isKindOf( KINDOF_DRAWABLE_ONLY )
+			|| obj->isKindOf( KINDOF_INERT )
+			|| obj->isKindOf( KINDOF_UNATTACKABLE )
+			|| obj->isKindOf( KINDOF_MINE )
+			|| obj->isKindOf( KINDOF_NO_SELECT ) )
+		return FALSE;
+
+	if( mode == HealthBarDisplayMode_Damaged )
+		return healthRatio < 1.0f;
+
+	// HealthBarDisplayMode_Always -- real combatants and buildings only, so the map does not
+	// fill up with bars over rocks, crates and civilian props.
+	return obj->isKindOf( KINDOF_STRUCTURE ) || obj->getAI() != nullptr;
+}
+
 void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 {
 	if (!healthBarRegion)
@@ -3771,11 +3808,14 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 	//
 	// only draw health for selected drawables and drawables that have been moused over
-	// by the cursor
+	// by the cursor. TheSuperHackers @feature Options.ini HealthBarDisplayMode can widen this
+	// to also cover damaged objects, or every unit and structure.
 	//
-	if( TheGlobalData->m_showObjectHealth &&
-			(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) )
+	if( TheGlobalData->m_showObjectHealth )
 	{
+		const Bool classicallyVisible = isSelected()
+			|| (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()));
+
 		Object *obj = getObject();
 
 		// if no object, nothing to do
@@ -3804,6 +3844,12 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 		// what is our health ratio
 		Real healthRatio = health / maxHealth;
+
+		// TheSuperHackers @feature Decide whether this object gets a bar it would not classically get.
+		// Objects hidden, stealthed or shrouded never reach here at all -- drawablePostDraw filters
+		// those out before drawIconUI is ever called.
+		if( !classicallyVisible && !isHealthBarAlwaysVisible( obj, healthRatio ) )
+			return;
 
 		//
 		// what color will we use for the health bar based on our ratio, this makes it
