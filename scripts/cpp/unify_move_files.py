@@ -531,6 +531,13 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/PolygonTrigger.h", Game.CORE, "GameEngine/Include/GameLogic/PolygonTrigger.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/SidesList.h", Game.CORE, "GameEngine/Include/GameLogic/SidesList.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/TerrainLogic.h", Game.CORE, "GameEngine/Include/GameLogic/TerrainLogic.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/Map/PolygonTrigger.cpp", Game.CORE, "GameEngine/Source/GameLogic/Map/PolygonTrigger.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/Map/SidesList.cpp", Game.CORE, "GameEngine/Source/GameLogic/Map/SidesList.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/Map/TerrainLogic.cpp", Game.CORE, "GameEngine/Source/GameLogic/Map/TerrainLogic.cpp")
+
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/CaveSystem.h", Game.CORE, "GameEngine/Include/GameLogic/CaveSystem.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/CrateSystem.h", Game.CORE, "GameEngine/Include/GameLogic/CrateSystem.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/Damage.h", Game.CORE, "GameEngine/Include/GameLogic/Damage.h")
