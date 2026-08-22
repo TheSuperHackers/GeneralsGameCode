@@ -2384,7 +2384,7 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 		Coord3D center;
 		center.x = affectedRegion.lo.x + affectedRegion.width() / 2.0f;
 		center.y = affectedRegion.lo.y + affectedRegion.height() / 2.0f;
-		center.z = 0.0f;  // irrelavant
+		center.z = 0.0f;  // irrelevant
 
 		// the max radius to scan around us is the diagonal of the bounding region
 		Real maxDist = sqrt( affectedRegion.width() * affectedRegion.width() +
@@ -2863,6 +2863,55 @@ void TerrainLogic::flattenTerrain(Object *obj)
 		}
 		break;
 	}
+
+}
+
+// ------------------------------------------------------------------------------------------------
+/** Dig a deep circular gorge into the terrain beneath an object. */
+// ------------------------------------------------------------------------------------------------
+void TerrainLogic::createCraterInTerrain(Object *obj)
+{
+	if (obj->getGeometryInfo().getIsSmall())
+		return;
+
+	const Coord3D *pos = obj->getPosition();
+  Real radius = obj->getGeometryInfo().getMajorRadius();
+
+  if ( radius <= 0.0f )
+    return; // sanity
+
+  ICoord2D iMin, iMax;
+  iMin.x = REAL_TO_INT_FLOOR( ( pos->x - radius ) / MAP_XY_FACTOR );
+  iMin.y = REAL_TO_INT_FLOOR( ( pos->y - radius ) / MAP_XY_FACTOR );
+  iMax.x = REAL_TO_INT_FLOOR( ( pos->x + radius ) / MAP_XY_FACTOR );
+	iMax.y = REAL_TO_INT_FLOOR( ( pos->y + radius ) / MAP_XY_FACTOR );
+
+  Real deltaX, deltaY;
+
+	for (Int i = iMin.x; i <= iMax.x; i++ )
+  {
+		for ( Int j=0; j <= iMax.y; j++ )
+    {
+			deltaX = ( i * MAP_XY_FACTOR ) - pos->x;
+			deltaY = ( j * MAP_XY_FACTOR ) - pos->y;
+
+      Real distance = sqrt( sqr( deltaX ) + sqr( deltaY ) );
+
+			if ( distance < radius ) //inside circle
+      {
+				ICoord2D gridPos;
+				gridPos.x = i;
+				gridPos.y = j;
+
+
+        Real displacementAmount = radius * (1.0f - distance / radius );
+
+        Int targetHeight = MAX( 1, TheTerrainVisual->getRawMapHeight( &gridPos ) - displacementAmount );
+
+				TheTerrainVisual->setRawMapHeight( &gridPos, targetHeight );
+			}
+    }
+  }
 
 }
 
