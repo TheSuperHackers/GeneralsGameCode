@@ -76,6 +76,8 @@ public:
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 	virtual void checkAbnormalQuitting();	///< check if user is quitting at an unusual time - as in cheating!
 
+	virtual UnsignedInt getTicksMsec() const;	///< Get a monotonic cross-platform timestamp in milliseconds
+
 protected:
 
 	virtual void resetSubsystems();
