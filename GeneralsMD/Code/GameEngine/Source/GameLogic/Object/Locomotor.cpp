@@ -80,11 +80,38 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 #if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
 
 // TheSuperHackers @bugfix xezon 30/07/2026 The compensation that equalizes straight and diagonal
-// movement speeds. Each constant is the average of the former minimum (straight) and maximum
-// (diagonal) movement speed for its dimension, so the average movement speed of the game does not
-// change; only the spread between headings does.
-constexpr const Real DiagonalCompensation2D = 1.20710678f; // (1 + sqrt(2)) / 2
-constexpr const Real DiagonalCompensation3D = 1.36602540f; // (1 + sqrt(3)) / 2
+// movement speeds.
+//
+// Retail measured forward speed as sqrt(sum of (vi * di)^2) rather than the true projection of the
+// velocity onto the heading, sum of (vi * di). For a unit heading d that understates the speed by
+// sqrt(sum of di^4), which is 1 on an axis aligned heading and falls to 1/sqrt(2) on a 2d diagonal
+// and 1/sqrt(3) on a 3d body diagonal. The Locomotor therefore kept accelerating until the real
+// speed was between 1x and sqrt(2)x (2d), or between 1x and sqrt(3)x (3d), the authored speed,
+// decided by nothing but which way the object happened to face.
+//
+// getForwardSpeed2D and getForwardSpeed3D now report the true projection, so the real speed equals
+// the commanded speed on every heading. The speeds commanded by the Locomotor are scaled by a single
+// constant per dimension, which picks where inside the old range that now uniform speed sits.
+//
+// Each constant is the mean of the old factor over the headings the movers actually take, so the
+// average movement speed of the game is preserved and only the spread between headings collapses.
+// It is deliberately not the midpoint of the old range. The factor is weighted heavily toward its
+// low end, spending far more of the circle near 1x than near sqrt(2)x, so the midpoint sits above
+// the mean and would quietly speed the whole game up.
+//
+// 2d movers take an arbitrary heading, so the mean is taken over a uniformly random angle. It has a
+// closed form as a complete elliptic integral of the first kind, and equals 1.18034060.
+//
+// 3d movers are THRUST only, which in practice means missiles. Those fly level most of the time and
+// use all three axes only while arcing, so the mean is taken over a mix assumed to be 80% level
+// flight and 20% an arbitrary 3d direction. Level flight has dz = 0, which makes the 3d factor
+// degenerate to the 2d one exactly, so the level part contributes the 2d constant unchanged. The
+// mean over a uniformly random direction on the sphere is 1.33122576. The result barely depends on
+// the assumed split: anything from 90/10 to 70/30 lands between 1.195 and 1.226, and even spending
+// the whole 20% at the worst possible heading would only reach 1.291.
+
+constexpr const Real DiagonalCompensation2D = 1.18034060f; // (2/pi)*K(1/2) = Gamma(1/4)^2 / (2*pi^(3/2))
+constexpr const Real DiagonalCompensation3D = 1.21051763f; // 0.8 * 1.18034060 + 0.2 * 1.33122576
 
 static Real scaleSpeed2D(Real iniSpeed) { return iniSpeed * DiagonalCompensation2D; }
 static Real scaleSpeed3D(Real iniSpeed) { return iniSpeed * DiagonalCompensation3D; }
