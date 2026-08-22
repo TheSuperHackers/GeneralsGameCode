@@ -931,6 +931,7 @@ void SDL3InputManager::virtualPulseKey(SDL_Scancode scancode, bool down)
 	SDL_Event keyEvent;
 	memset(&keyEvent, 0, sizeof(keyEvent));
 	keyEvent.type = down ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
+	keyEvent.common.timestamp = SDL_GetTicksNS();
 	keyEvent.key.scancode = scancode;
 	keyEvent.key.down = down;
 
@@ -952,6 +953,7 @@ void SDL3InputManager::virtualPulseMouse(Uint8 button, bool down)
 	SDL_Event clickEvent;
 	memset(&clickEvent, 0, sizeof(clickEvent));
 	clickEvent.type = down ? SDL_EVENT_MOUSE_BUTTON_DOWN : SDL_EVENT_MOUSE_BUTTON_UP;
+	clickEvent.common.timestamp = SDL_GetTicksNS();
 	clickEvent.button.button = button;
 
 	int buttonIdx = (button == SDL_BUTTON_LEFT) ? 0 : ((button == SDL_BUTTON_RIGHT) ? 1 : 2);
@@ -996,6 +998,19 @@ void SDL3InputManager::processGamepadInput()
 {
 	if (!m_gamepad)
 		return;
+
+	if (m_window && !(SDL_GetWindowFlags(m_window) & SDL_WINDOW_INPUT_FOCUS))
+	{
+		m_state = GamepadState();
+		m_lastUpdateTime = 0;
+		m_cursorSpeed = 0.0f;
+		m_edgeAccelTimer = 0.0f;
+		m_cursorRemainderX = 0.0f;
+		m_cursorRemainderY = 0.0f;
+		if (TheLookAtTranslator)
+			TheLookAtTranslator->setControllerInputActive(false);
+		return;
+	}
 
 	const float DEADZONE = DEFAULT_DEADZONE;
 	float rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
@@ -1110,6 +1125,7 @@ void SDL3InputManager::processGamepadInput()
 			SDL_Event motionEvent;
 			memset(&motionEvent, 0, sizeof(motionEvent));
 			motionEvent.type = SDL_EVENT_MOUSE_MOTION;
+			motionEvent.common.timestamp = SDL_GetTicksNS();
 			motionEvent.motion.xrel = (float)cursorDeltaX;
 			motionEvent.motion.yrel = (float)cursorDeltaY;
 

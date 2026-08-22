@@ -49,7 +49,7 @@ class Win32Mouse;
 Win32Mouse *TheWin32Mouse = nullptr;
 
 // Critical sections for memory manager and string systems
-static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
+static CriticalSection critSec1, critSec2, critSec3, critSec4;
 
 namespace AppMain
 {
@@ -60,7 +60,6 @@ Bool initBeforeWindow()
 	TheUnicodeStringCriticalSection = &critSec2;
 	TheDmaCriticalSection = &critSec3;
 	TheMemoryPoolCriticalSection = &critSec4;
-	TheDebugLogCriticalSection = &critSec5;
 
 	// Initialize memory manager early
 	initMemoryManager();
@@ -117,7 +116,6 @@ Bool initAfterWindow()
 		DEBUG_LOG(("Generals is already running...Bail!"));
 		delete TheVersion;
 		TheVersion = nullptr;
-		shutdownMemoryManager();
 		return false;
 	}
 	DEBUG_LOG(("Create Generals Mutex okay."));
@@ -192,7 +190,6 @@ void shutdown()
 	TheUnicodeStringCriticalSection = nullptr;
 	TheDmaCriticalSection = nullptr;
 	TheMemoryPoolCriticalSection = nullptr;
-	TheDebugLogCriticalSection = nullptr;
 }
 
 } // namespace AppMain
