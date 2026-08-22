@@ -791,7 +791,7 @@ WhichTurretType AIUpdateInterface::getWhichTurretForWeaponSlot(WeaponSlotType ws
 Real AIUpdateInterface::getCurLocomotorSpeed() const
 {
 	if (m_curLocomotor != nullptr)
-		return m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
+		return m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState(), getObject());
 
 	DEBUG_LOG(("no current locomotor!"));
 	return 0.0f;
@@ -1486,10 +1486,10 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 #define dont_MOVE_AROUND // It just causes more problems than it fixes. jba.
 #ifdef MOVE_AROUND
 				if (m_curLocomotor!= nullptr && (other->isKindOf(KINDOF_INFANTRY)==getObject()->isKindOf(KINDOF_INFANTRY))) {
-					Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
+					Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState(), getObject());
 					Locomotor *hisLoco = aiOther->getCurLocomotor();
 					if (hisLoco) {
-						Real hisMaxSpeed = hisLoco->getMaxSpeedForCondition(other->getBodyModule()->getDamageState());
+						Real hisMaxSpeed = hisLoco->getMaxSpeedForCondition(other->getBodyModule()->getDamageState(), other);
 						if (hisMaxSpeed > 0.05 && hisMaxSpeed < 0.6f*myMaxSpeed)	{
 							aiOther->aiMoveAwayFromUnit(getObject(), CMD_FROM_AI);
 							return FALSE;
@@ -2163,7 +2163,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor()
 				case POSITION_EXPLICIT:
 					{
 						Real speed = m_desiredSpeed;
-						Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
+						Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState(), getObject());
 						if( speed == FAST_AS_POSSIBLE || speed > myMaxSpeed )
 							speed = myMaxSpeed;
 						m_curLocomotor->locoUpdate_moveTowardsPosition(getObject(),
@@ -2210,7 +2210,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor()
 						}
 
 						Real speed = m_desiredSpeed;
-						Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
+						Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState(), getObject());
 						if( speed == FAST_AS_POSSIBLE || speed > myMaxSpeed )
 							speed = myMaxSpeed;
 
