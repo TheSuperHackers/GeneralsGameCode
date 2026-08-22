@@ -312,6 +312,7 @@ public:
 	void setActiveBoundary(Int newActiveBoundary);
 
   void flattenTerrain(Object *obj);  ///< Flatten the terrain under a building.
+  void createCraterInTerrain(Object *obj);  ///< Flatten the terrain under a building.
 
 protected:
 
