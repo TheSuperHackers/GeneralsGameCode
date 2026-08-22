@@ -1,6 +1,7 @@
 # Standardized vcpkg integration: Try find_package first, fallback to source build if not found.
+# Require SDL3_image >= 3.4.5 for the ANI loader RIFF word-alignment fix.
 find_package(SDL3 CONFIG QUIET)
-find_package(SDL3_image CONFIG QUIET)
+find_package(SDL3_image 3.4.5 CONFIG QUIET)
 
 if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
     message(STATUS "SDL3 not found via vcpkg/find_package, falling back to source build (FetchContent)...")
