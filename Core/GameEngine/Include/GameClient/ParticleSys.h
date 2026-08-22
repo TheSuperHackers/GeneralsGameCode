@@ -57,9 +57,11 @@ enum ParticleSystemID CPP_11(: Int)
 	INVALID_PARTICLE_SYSTEM_ID = 0
 };
 
-#define MAX_VOLUME_PARTICLE_DEPTH ( 16 )
-#define DEFAULT_VOLUME_PARTICLE_DEPTH ( 0 )//The Default is not to do the volume thing!
-#define OPTIMUM_VOLUME_PARTICLE_DEPTH ( 6 )
+constexpr const UnsignedInt INVALID_VOLUME_PARTICLE_DEPTH = 0; //The volume depth is not initialized
+constexpr const UnsignedInt DEFAULT_VOLUME_PARTICLE_DEPTH = 1; //The Default is not to do the volume thing!
+constexpr const UnsignedInt MIN_VOLUME_PARTICLE_DEPTH = 2;
+constexpr const UnsignedInt OPTIMUM_VOLUME_PARTICLE_DEPTH = 6;
+constexpr const UnsignedInt MAX_VOLUME_PARTICLE_DEPTH = 16;
 
 // TheSuperHackers @info The X and Y angles are not necessary for particles because there are only 2 placement modes:
 // Billboard (always facing camera) and Ground Aligned, which overwrite any rotations on the X and Y axis by design.
@@ -511,6 +513,8 @@ class ParticleSystemTemplate : public MemoryPoolObject, protected ParticleSystem
 public:
 	ParticleSystemTemplate( const AsciiString &name );
 
+	void validate();
+
 	AsciiString getName() const { return m_name; }
 
 	// This function was made const because of update modules' module data being all const.
@@ -602,11 +606,12 @@ public:
 
 	void setInitialDelay( UnsignedInt delay ) { m_delayLeft = delay; }
 
-	AsciiString getParticleTypeName() { return m_particleTypeName; }	///< return the name of the particles
-	Bool isUsingDrawables() { return (m_particleType == DRAWABLE) ? true : false; }
-	Bool isUsingStreak() { return (m_particleType == STREAK) ? true : false; }
-	Bool isUsingSmudge() { return (m_particleType == SMUDGE) ? true : false; }
-	UnsignedInt getVolumeParticleDepth() { return ( m_particleType == VOLUME_PARTICLE ) ? OPTIMUM_VOLUME_PARTICLE_DEPTH : 0; }
+	const AsciiString& getParticleTypeName() const { return m_particleTypeName; }	///< return the name of the particles
+	const Bool isUsingDrawables() const { return m_particleType == DRAWABLE; }
+	const Bool isUsingStreak() const { return m_particleType == STREAK; }
+	const Bool isUsingSmudge() const { return m_particleType == SMUDGE; }
+	const Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
+	const UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	Bool shouldBillboard() { return !m_isGroundAligned; }
 

@@ -1644,11 +1644,12 @@ void PointGroupClass::_Shutdown()
  *   12/03/2002	Mark Lorenzen		Created.                                  *
  *																		                                    *
  *========================================================================*/
+#define DEFAULT_VOLUME_PARTICLE_DEPTH ( 1 )
 #define MAX_VOLUME_PARTICLE_DEPTH ( 16 )
 void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int depth )
 {
 
-	if ( depth <= 1 ) //oops,wrong number
+	if ( depth <= DEFAULT_VOLUME_PARTICLE_DEPTH) //oops,wrong number
 	{
 		Render( rinfo );
 		return;

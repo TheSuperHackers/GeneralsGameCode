@@ -326,9 +326,10 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				m_pointGroup->Set_Point_Frame( 0 );
 
 				//RENDER IT!
-				if( sys->getVolumeParticleDepth() > 1 )
+				const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
+				if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
 				{
-					m_pointGroup->RenderVolumeParticle( rinfo, sys->getVolumeParticleDepth() );
+					m_pointGroup->RenderVolumeParticle( rinfo, volumeParticleDepth);
 				}
 				else
 					m_pointGroup->Render( rinfo );
