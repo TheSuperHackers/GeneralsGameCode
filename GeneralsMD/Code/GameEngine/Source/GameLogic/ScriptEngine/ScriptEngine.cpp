@@ -8450,9 +8450,9 @@ void ScriptEngine::friend_notifyLetterBoxActive(Bool active)
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Is a cinematic running right now? */
+/** Is the letterbox active right now? */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptEngine::isInCinematic() const
+Bool ScriptEngine::isLetterBoxActive() const
 {
 	return m_letterBoxActive;
 }
@@ -9342,7 +9342,10 @@ void ScriptEngine::xfer( Xfer *xfer )
 	}
 	else
 	{
-		m_letterBoxActive = FALSE;
+		if (xfer->getXferMode() == XFER_LOAD)
+		{
+			m_letterBoxActive = FALSE;
+		}
 	}
 
 	if( xfer->getXferMode() == XFER_LOAD ) {
@@ -9377,7 +9380,10 @@ void ScriptEngine::loadPostProcess()
 		TheAudio->addAudioEvent(&event);
 	}
 
-	rts::enableLetterBox(m_letterBoxActive);
+	if (m_letterBoxActive)
+	{
+		rts::enableLetterBox(TRUE);
+	}
 
 }
 
