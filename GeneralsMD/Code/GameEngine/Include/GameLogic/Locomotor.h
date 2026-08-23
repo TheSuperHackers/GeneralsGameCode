@@ -140,15 +140,13 @@ public:
 
 	void validate();
 
-	Real getMinSpeed() const { return m_minSpeed; }
-
 private:
 
 	/// TheSuperHackers @bugfix Speeds authored in INI are understated by the forward speed the Locomotor measures
 	/// itself with, by up to 1/sqrt(2) in 2d and 1/sqrt(3) in 3d, which is what made objects move faster on diagonal
 	/// headings than on axis aligned ones. Each authored speed therefore also gets a "scaled" twin, in world distance
-	/// per logic frame, computed once at INI load. These accessors hand out whichever of the two the given object should
-	/// be commanded with. They all return the authored value in retail compatible builds.
+	/// per logic frame, computed once at INI load. These accessors hand out whichever of the two the mover should be
+	/// commanded with. They all return the authored value in retail compatible builds.
 	Real getActualMaxSpeed() const;
 	Real getActualMaxSpeedDamaged() const;
 	Real getActualMinSpeed() const;
@@ -178,10 +176,10 @@ private:
 	Real											m_braking;							///< max braking (deceleration)
 	Real											m_minTurnSpeed;					///< we must be going >= this speed in order to turn
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
-	Real											m_maxSpeedScaled;				///< real max speed
-	Real											m_maxSpeedDamagedScaled;///< real speed when "damaged"
-	Real											m_minSpeedScaled;				///< real min speed; we should never brake past this
-	Real											m_minTurnSpeedScaled;		///< real min turn speed; we must be going >= this speed in order to turn
+	Real											m_maxSpeedScaled;				///< compensated max speed
+	Real											m_maxSpeedDamagedScaled;///< compensated speed when "damaged"
+	Real											m_minSpeedScaled;				///< compensated min speed; we should never brake past this
+	Real											m_minTurnSpeedScaled;		///< compensated min turn speed; we must be going >= this speed in order to turn
 #endif
 	Real											m_preferredHeight;			///< our preferred height (if flying)
 	Real											m_preferredHeightDamping;		///< how aggressively to adjust to preferred height: 1.0 = very much so, 0.1 = gradually, etc
@@ -277,7 +275,6 @@ public:
 	LocomotorPriority getMovePriority() const { return m_template->m_movePriority; }
 	LocomotorSurfaceTypeMask getLegalSurfaces() const { return m_template->m_surfaces; }
 
-	const LocomotorTemplate *getTemplate() const { return m_template; }
 	AsciiString getTemplateName() const { return m_template->m_name;}
 	Real getMinSpeed() const;
 	Real getMinTurnSpeed() const;
@@ -336,6 +333,7 @@ public:
 		m_maxSpeedScaled = m_template->scaleSpeed(speed);
 #endif
 	}
+	void setMaxSpeedToMinSpeed() { setMaxSpeed(m_template->m_minSpeed); }
 	void setMaxAcceleration(Real accel) { m_maxAccel = accel; }
 	void setMaxBraking(Real braking) { m_maxBraking = braking; }
 	void setMaxTurnRate(Real turn) { m_maxTurnRate = turn; }
