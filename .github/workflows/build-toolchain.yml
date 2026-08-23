@@ -138,7 +138,7 @@ jobs:
             -Source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           "VCPKG_INSTALL_OPTIONS=--x-abi-tools-use-exact-versions" >> $env:GITHUB_ENV
 
-      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.ffmpeg && '+ffmpeg'}} Preset
+      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.ffmpeg && '+ffmpeg' || '' }} Preset
         shell: pwsh
         run: |
           $buildFlags = @(
