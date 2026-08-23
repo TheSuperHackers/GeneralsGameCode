@@ -1032,7 +1032,7 @@ Bool PhysicsBehavior::useLegacyForwardSpeed()
 {
 	// TheSuperHackers @info The retail speeds are kept for the duration of a cinematic, because
 	// legacy missions time their cinematics against them.
-	return TheScriptEngine->isInCinematic();
+	return TheScriptEngine->isLetterBoxActive();
 }
 #endif
 
