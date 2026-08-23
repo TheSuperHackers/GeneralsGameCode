@@ -45,8 +45,6 @@ bool FitsInt(size_t length)
 
 #ifdef _WIN32
 
-#include "Utility/interlocked_adapter.h"
-
 enum
 {
     IcuProbeUnknown = 0,
@@ -58,21 +56,33 @@ enum
 bool LoadSystemIcu()
 {
     static volatile LONG cached = IcuProbeUnknown;
+    static volatile LONG initGate = 0;
 
-    const LONG existing = cached;
-    if (existing != IcuProbeUnknown)
+    if (cached != IcuProbeUnknown)
     {
-        return existing == IcuProbeLoaded;
+        return cached == IcuProbeLoaded;
     }
 
-    const LONG result = LoadLibraryA("icu.dll") != nullptr ? IcuProbeLoaded : IcuProbeMissing;
-    const LONG previous = InterlockedCompareExchange(&cached, result, IcuProbeUnknown);
-    if (previous != IcuProbeUnknown)
+    // InterlockedIncrement is LONG* on every supported SDK. InterlockedCompareExchange is not:
+    // VC6 winbase.h takes PVOID*, while later SDKs take LONG*.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    const LONG gate = InterlockedIncrement(const_cast<LONG*>(&initGate));
+#else
+    const LONG gate = InterlockedIncrement(&initGate);
+#endif
+    if (gate == 1)
     {
-        return previous == IcuProbeLoaded;
+        cached = LoadLibraryA("icu.dll") != nullptr ? IcuProbeLoaded : IcuProbeMissing;
+    }
+    else
+    {
+        while (cached == IcuProbeUnknown)
+        {
+            Sleep(0);
+        }
     }
 
-    return result == IcuProbeLoaded;
+    return cached == IcuProbeLoaded;
 }
 
 size_t WindowsWideToUtf8Len(const wchar_t* src, size_t srcLen)
