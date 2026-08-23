@@ -45,26 +45,34 @@ bool FitsInt(size_t length)
 
 #ifdef _WIN32
 
+#include "Utility/interlocked_adapter.h"
+
+enum
+{
+    IcuProbeUnknown = 0,
+    IcuProbeMissing = 1,
+    IcuProbeLoaded = 2
+};
+
+// TheSuperHackers @fix CryoTheRenegade 23/08/2026 Probe icu.dll once through the normal DLL search order.
 bool LoadSystemIcu()
 {
-    static bool attempted = false;
-    static bool available = false;
-    if (attempted)
+    static volatile LONG cached = IcuProbeUnknown;
+
+    const LONG existing = cached;
+    if (existing != IcuProbeUnknown)
     {
-        return available;
+        return existing == IcuProbeLoaded;
     }
 
-    attempted = true;
-
-    char systemIcuPath[MAX_PATH];
-    const UINT systemDirectoryLength = GetSystemDirectoryA(systemIcuPath, MAX_PATH);
-    if (systemDirectoryLength > 0 && systemDirectoryLength <= MAX_PATH - sizeof("\\icu.dll"))
+    const LONG result = LoadLibraryA("icu.dll") != nullptr ? IcuProbeLoaded : IcuProbeMissing;
+    const LONG previous = InterlockedCompareExchange(&cached, result, IcuProbeUnknown);
+    if (previous != IcuProbeUnknown)
     {
-        memcpy(systemIcuPath + systemDirectoryLength, "\\icu.dll", sizeof("\\icu.dll"));
-        available = LoadLibraryA(systemIcuPath) != nullptr;
+        return previous == IcuProbeLoaded;
     }
 
-    return available;
+    return result == IcuProbeLoaded;
 }
 
 size_t WindowsWideToUtf8Len(const wchar_t* src, size_t srcLen)
