@@ -1488,7 +1488,7 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 	xfer->xferSnapshot(m_dozerMachine);
 	xfer->xferUser(&m_currentTask, sizeof(m_currentTask));
 
-	if (currentVersion >= 2)
+	if (version >= 2)
 	{
 		xfer->xferUser(&m_previousTask, sizeof(m_previousTask));
 		xfer->xferUser(&m_previousTaskInfo, sizeof(m_previousTaskInfo));
