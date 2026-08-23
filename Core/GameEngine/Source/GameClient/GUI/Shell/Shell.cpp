@@ -90,12 +90,7 @@ void Shell::construct()
 //-------------------------------------------------------------------------------------------------
 void Shell::deconstruct()
 {
-	WindowLayout *newTop = top();
-	while(newTop)
-	{
-		popImmediate();
-		newTop = top();
-	}
+	destroyScreenStack();
 
 	if(m_background)
 	{
@@ -136,6 +131,31 @@ void Shell::deconstruct()
 		deleteInstance(m_optionsLayout);
 		m_optionsLayout = nullptr;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+/** TheSuperHackers @bugfix CryoTheRenegade 10/08/2026 Tear down every screen on the stack without initializing uncovered layouts.
+	* Used when the shell itself is being destroyed. */
+//-------------------------------------------------------------------------------------------------
+void Shell::destroyScreenStack()
+{
+	while( top() )
+	{
+		WindowLayout *screen = top();
+
+		// do NOT set pending pop, we are going to force a pop after the shutdown is run
+		m_pendingPop = FALSE;
+
+		Bool immediatePop = TRUE;
+		screen->runShutdown( &immediatePop );
+
+		unlinkScreen( screen );
+		screen->destroyWindows();
+		deleteInstance( screen );
+	}
+
+	if (TheIMEManager)
+		TheIMEManager->detach();
 }
 
 //-------------------------------------------------------------------------------------------------
