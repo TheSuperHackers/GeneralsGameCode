@@ -149,10 +149,10 @@ private:
 	/// headings than on axis aligned ones. Each authored speed therefore also gets a "scaled" twin, in world distance
 	/// per logic frame, computed once at INI load. These accessors hand out whichever of the two the given object should
 	/// be commanded with. They all return the authored value in retail compatible builds.
-	Real getMaxSpeed(const Object* obj) const;
-	Real getMaxSpeedDamaged(const Object* obj) const;
-	Real getMinSpeed(const Object* obj) const;
-	Real getMinTurnSpeed(const Object* obj) const;
+	Real getActualMaxSpeed() const;
+	Real getActualMaxSpeedDamaged() const;
+	Real getActualMinSpeed() const;
+	Real getActualMinTurnSpeed() const;
 
 	/// Scale a speed that has no stored counterpart because it was not authored on this template.
 	Real scaleSpeed(Real speed) const;
@@ -177,7 +177,7 @@ private:
 	Real											m_liftDamaged;					///< max lift when damaged
 	Real											m_braking;							///< max braking (deceleration)
 	Real											m_minTurnSpeed;					///< we must be going >= this speed in order to turn
-#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
 	Real											m_maxSpeedScaled;				///< real max speed
 	Real											m_maxSpeedDamagedScaled;///< real speed when "damaged"
 	Real											m_minSpeedScaled;				///< real min speed; we should never brake past this
@@ -251,8 +251,6 @@ class Locomotor : public MemoryPoolObject, public Snapshot
 
 public:
 
-	const LocomotorTemplate *getTemplate() const { return m_template; }
-
 	void setPhysicsOptions(Object* obj);
 
 	void locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalPos,
@@ -266,7 +264,7 @@ public:
 	*/
 	Bool locoUpdate_maintainCurrentPosition(Object* obj);
 
-	Real getMaxSpeedForCondition(BodyDamageType condition, const Object* obj) const;  ///< get max speed given condition
+	Real getMaxSpeedForCondition(BodyDamageType condition) const;  ///< get max speed given condition
 	Real getMaxTurnRate(BodyDamageType condition) const;  ///< get max turning rate given condition
 	Real getMaxAcceleration(BodyDamageType condition) const;  ///< get acceleration given condition
 	Real getMaxLift(BodyDamageType condition) const;  ///< get acceleration given condition
@@ -279,9 +277,10 @@ public:
 	LocomotorPriority getMovePriority() const { return m_template->m_movePriority; }
 	LocomotorSurfaceTypeMask getLegalSurfaces() const { return m_template->m_surfaces; }
 
+	const LocomotorTemplate *getTemplate() const { return m_template; }
 	AsciiString getTemplateName() const { return m_template->m_name;}
-	Real getMinSpeed(const Object* obj) const;
-	Real getMinTurnSpeed(const Object* obj) const;
+	Real getMinSpeed() const;
+	Real getMinTurnSpeed() const;
 	Real getAccelPitchLimit() const { return m_template->m_accelPitchLimit;}	///< Maximum amount we will pitch up or down under acceleration (including recoil.)
 	Real getDecelPitchLimit() const { return m_template->m_decelPitchLimit;}	///< Maximum amount we will pitch down under deceleration (including recoil.)
 	Real getBounceKick() const { return m_template->m_bounceKick;}						///< How much simulating rough terrain "bounces" a wheel up.
@@ -325,7 +324,7 @@ public:
 	Real getWanderWidthFactor() const {return m_template->m_wanderWidthFactor;}
 	Real getWanderAboutPointRadius() const {return m_template->m_wanderAboutPointRadius;}
 
-	Real calcMinTurnRadius(BodyDamageType condition, const Object* obj, Real* timeToTravelThatDist) const;
+	Real calcMinTurnRadius(BodyDamageType condition, Real* timeToTravelThatDist) const;
 
 	/// this is handy for doing things like forcing helicopters to crash realistically: cut their lift.
 	void setMaxLift(Real lift) { m_maxLift = lift; }
@@ -333,7 +332,7 @@ public:
 	{
 		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!"));
 		m_maxSpeed = speed;
-#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
 		m_maxSpeedScaled = m_template->scaleSpeed(speed);
 #endif
 	}
@@ -393,7 +392,7 @@ public:
 	void startMove(); ///< Indicates that a move is starting, primarily to reset the donut timer. jba.
 
 protected:
-	Real getMaxSpeedOverride(const Object* obj) const;
+	Real getMaxSpeedOverride() const;
 
 	void moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
 	void moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
@@ -472,7 +471,7 @@ private:
 	Real				m_brakingFactor;
 	Real				m_maxLift;
 	Real				m_maxSpeed;
-#if !(RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
 	Real				m_maxSpeedScaled;
 #endif
 	Real				m_maxAccel;

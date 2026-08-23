@@ -24,7 +24,9 @@
 #include "Common/Radar.h"
 
 #include "GameClient/ControlBar.h"
+#include "GameClient/Display.h"
 #include "GameClient/GameClient.h"
+#include "GameClient/GUICallbacks.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/ParticleSys.h"
 
@@ -127,6 +129,20 @@ void changeObservedPlayer(Player* player)
 		if (becomePlayer == nullptr)
 			becomePlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
 		detail::changePlayerCommon(becomePlayer);
+	}
+}
+
+void enableLetterBox(Bool enable)
+{
+	if (enable)
+	{
+		HideControlBar(TRUE);
+		TheDisplay->enableLetterBox(TRUE);
+	}
+	else
+	{
+		ShowControlBar(FALSE);
+		TheDisplay->enableLetterBox(FALSE);
 	}
 }
 
