@@ -146,6 +146,8 @@ public:
 	// Holds a HealthBarDisplayMode; stored as Int so this widely included header does not
 	// have to pull in OptionPreferences.h.
 	Int m_healthBarDisplayMode;
+	// TheSuperHackers @feature Print hit points beside the health bar.
+	Bool m_numericalHealth;
 	Bool m_doubleClickAttackMove;
 	Bool m_rightMouseAlwaysScrolls;
 	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.

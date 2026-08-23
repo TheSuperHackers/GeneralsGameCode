@@ -3801,6 +3801,59 @@ static Bool isHealthBarAlwaysVisible( const Object *obj, Real healthRatio )
 	return obj->isKindOf( KINDOF_STRUCTURE ) || obj->getAI() != nullptr;
 }
 
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Print the hit points beside the health bar (Options.ini:
+// NumericalHealth). Called from drawHealthBar once the bar itself is down, so every rule that
+// decides whether a bar is drawn -- selection, mouseover, HealthBarDisplayMode -- already applies.
+//-------------------------------------------------------------------------------------------------
+void Drawable::drawNumericalHealth( const IRegion2D *healthBarRegion, Real health, Real maxHealth,
+																		Color color )
+{
+	if( healthBarRegion == nullptr || TheDisplayStringManager == nullptr )
+		return;
+
+	// One shared string, rebuilt whenever the text changes. Unlike the command bar overlays there
+	// is no small fixed set of values to cache per object, and many bars draw per frame, so this
+	// is rebuilt as often as it is reused. It stays static purely to avoid allocating every call.
+	static DisplayString *s_healthString = nullptr;
+
+	if( s_healthString == nullptr )
+	{
+		s_healthString = TheDisplayStringManager->newDisplayString();
+		if( s_healthString == nullptr )
+			return;
+
+		// Small on purpose: in Always mode this is drawn over every unit on screen at once, so it
+		// has to annotate the bar rather than compete with it.
+		Int pointSize = 6;
+		if( TheGlobalLanguageData )
+			pointSize = TheGlobalLanguageData->adjustFontSize( pointSize );
+		s_healthString->setFont( TheFontLibrary->getFont( AsciiString( "Arial" ), pointSize, FALSE ) );
+	}
+
+	// Round rather than truncate, so a sliver of health left does not read as 0 next to a unit
+	// that is plainly still alive.
+	const Int shownHealth = REAL_TO_INT( health + 0.5f );
+	const Int shownMax = REAL_TO_INT( maxHealth + 0.5f );
+
+	UnicodeString text;
+	text.format( L"%d/%d", shownHealth, shownMax );
+	s_healthString->setText( text );
+
+	Int width, height;
+	s_healthString->getSize( &width, &height );
+
+	// just past the right end of the bar, vertically centred on it
+	const Int healthBoxHeight = max( 3, healthBarRegion->hi.y - healthBarRegion->lo.y );
+	const Int textX = healthBarRegion->hi.x + 2;
+	const Int textY = healthBarRegion->lo.y + ( healthBoxHeight / 2 ) - ( height / 2 );
+
+	// Black drop shadow rather than a backdrop plate: the number sits over the battlefield rather
+	// than over a cameo, so a filled box would be far more intrusive than the bar it annotates.
+	s_healthString->draw( textX, textY, color, GameMakeColor( 0, 0, 0, 255 ) );
+}
+
+//-------------------------------------------------------------------------------------------------
 void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 {
 	if (!healthBarRegion)
@@ -3925,6 +3978,13 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		TheDisplay->drawFillRect( healthBarRegion->lo.x + 1, healthBarRegion->lo.y + 1,
 															(healthBoxWidth - 2) * healthRatio, healthBoxHeight - 2,
 															color );
+
+		// TheSuperHackers @feature NumericalHealth prints the hit points just past the end of the
+		// bar. It reuses the bar's own colour, so the number carries the same red to green reading
+		// at a glance, and it hangs off every path that got this far -- which means it follows
+		// HealthBarDisplayMode for free and appears exactly where a bar appears.
+		if( TheGlobalData->m_numericalHealth )
+			drawNumericalHealth( healthBarRegion, health, maxHealth, color );
 	}
 
 }

@@ -84,6 +84,7 @@ public:
 	Bool getRightMouseScrollWithAlternateMouseEnabled() const;
 	Bool getRetaliationModeEnabled();
 	HealthBarDisplayMode getHealthBarDisplayMode() const;
+	Bool getNumericalHealthEnabled() const;
 	Bool getDoubleClickAttackMoveEnabled();
 	Int getJpegQuality() const;
 	Real getScrollFactor();

@@ -239,6 +239,20 @@ HealthBarDisplayMode OptionPreferences::getHealthBarDisplayMode() const
 	return HealthBarDisplayMode_Default;
 }
 
+// TheSuperHackers @feature Options.ini: NumericalHealth = Yes prints the hit points beside the
+// health bar. Follows HealthBarDisplayMode, so the number appears exactly where a bar does.
+Bool OptionPreferences::getNumericalHealthEnabled() const
+{
+	OptionPreferences::const_iterator it = find("NumericalHealth");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");
