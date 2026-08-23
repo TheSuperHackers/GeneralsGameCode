@@ -1219,7 +1219,11 @@ Bool outOfWeaponRangePosition( State *thisState, void* userData )
 		}
 
 		Bool viewBlocked = false;
+#if RETAIL_COMPATIBLE_CRC
 		if (onGround)
+#else
+		if (onGround && !weapon->isContactWeapon())
+#endif
 		{
 			viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *obj->getPosition(), nullptr, *pos);
 		}
@@ -2740,7 +2744,11 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 		if (m_stopIfInRange && weapon && weapon->isWithinAttackRange(source, &m_goalPosition))
 		{
 			Bool viewBlocked = false;
+#if RETAIL_COMPATIBLE_CRC
 			if ( ai->isDoingGroundMovement() )
+#else
+			if ( ai->isDoingGroundMovement() && !weapon->isContactWeapon() )
+#endif
 			{
 				viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(source, *source->getPosition(), nullptr, m_goalPosition);
 			}
