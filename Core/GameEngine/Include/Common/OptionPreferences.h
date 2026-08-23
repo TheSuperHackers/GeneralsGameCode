@@ -85,6 +85,7 @@ public:
 	Bool getRetaliationModeEnabled();
 	HealthBarDisplayMode getHealthBarDisplayMode() const;
 	Bool getNumericalHealthEnabled() const;
+	Bool getSmartPipsEnabled() const;
 	Bool getDoubleClickAttackMoveEnabled();
 	Int getJpegQuality() const;
 	Real getScrollFactor();

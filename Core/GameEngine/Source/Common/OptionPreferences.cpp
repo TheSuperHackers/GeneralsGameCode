@@ -253,6 +253,22 @@ Bool OptionPreferences::getNumericalHealthEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Options.ini: SmartPips = Yes keeps ammo and passenger pips on screen
+// instead of showing them only while the unit is selected or moused over. Own units only -- not
+// allies, not enemies. Nothing is drawn when there is nothing to report: no shots left, or no
+// one aboard. So the pips read as "still loaded" and "carrying someone" at a glance.
+Bool OptionPreferences::getSmartPipsEnabled() const
+{
+	OptionPreferences::const_iterator it = find("SmartPips");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

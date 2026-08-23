@@ -1066,6 +1066,7 @@ GlobalData::GlobalData()
 	// TheSuperHackers @feature Health bars behave exactly as they always have unless Options.ini says otherwise.
 	m_healthBarDisplayMode = HealthBarDisplayMode_Default;
 	m_numericalHealth = FALSE;
+	m_smartPips = FALSE;
 
 }
 
@@ -1210,6 +1211,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
 	TheWritableGlobalData->m_healthBarDisplayMode = optionPref.getHealthBarDisplayMode();
 	TheWritableGlobalData->m_numericalHealth = optionPref.getNumericalHealthEnabled();
+	TheWritableGlobalData->m_smartPips = optionPref.getSmartPipsEnabled();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
 	TheWritableGlobalData->m_jpegQuality = optionPref.getJpegQuality();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();

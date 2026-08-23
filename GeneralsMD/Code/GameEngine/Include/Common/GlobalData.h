@@ -148,6 +148,9 @@ public:
 	Int m_healthBarDisplayMode;
 	// TheSuperHackers @feature Print hit points beside the health bar.
 	Bool m_numericalHealth;
+	// TheSuperHackers @feature Keep ammo and passenger pips on screen when there is something
+	// to report, rather than only on selection or hover.
+	Bool m_smartPips;
 	Bool m_doubleClickAttackMove;
 	Bool m_rightMouseAlwaysScrolls;
 	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.
