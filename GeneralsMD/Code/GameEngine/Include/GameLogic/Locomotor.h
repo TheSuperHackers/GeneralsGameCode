@@ -40,7 +40,6 @@
 class Locomotor;
 class LocomotorTemplate;
 class INI;
-class Object;
 class PhysicsBehavior;
 enum BodyDamageType CPP_11(: Int);
 enum PhysicsTurningType CPP_11(: Int);
