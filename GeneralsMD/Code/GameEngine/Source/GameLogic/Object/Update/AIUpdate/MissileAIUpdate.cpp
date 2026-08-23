@@ -608,7 +608,7 @@ void MissileAIUpdate::doKillState()
 			Real closeEnough = 1.0f;
 			if (curLoco)
 			{
-				closeEnough = curLoco->getMaxSpeedForCondition(BODY_PRISTINE, getObject());
+				closeEnough = curLoco->getMaxSpeedForCondition(BODY_PRISTINE);
 			}
 			Real distanceToTargetSq = ThePartitionManager->getDistanceSquared( getObject(), getGoalObject(), FROM_BOUNDINGSPHERE_3D);
 			//DEBUG_LOG(("Distance to target %f, closeEnough %f", sqrt(distanceToTargetSq), closeEnough));

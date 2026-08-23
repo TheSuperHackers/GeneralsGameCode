@@ -96,11 +96,19 @@
 #define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED (1)
 #endif
 
-// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all scripted objects.
-// This setting is very relevant for legacy missions and cinematic sequences.
-#ifndef PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
-#define PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED (1)
+// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects during cinematics.
+// Is mostly relevant for the original campaign missions.
+#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS (1)
 #endif
+
+// Whether the retail forward speed is used unconditionally, for every object at all times.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED (RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
+
+// Whether the retail forward speed is used for the duration of a scripted camera event. Is only
+// meaningful when the retail forward speed is not already used unconditionally.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS (!USE_RETAIL_PHYSICS_FORWARD_SPEED && PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS)
+
 
 #ifndef RETAIL_COMPATIBLE_CRC
 #define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
