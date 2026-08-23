@@ -80,7 +80,7 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 
 // TheSuperHackers @bugfix xezon 30/07/2026 The compensation that equalizes straight and diagonal
-// movement speeds.
+// movement speeds by the arithmetic mean.
 //
 // Retail measured forward speed as sqrt(sum of (vi * di)^2) rather than the true projection of the
 // velocity onto the heading, sum of (vi * di). For a unit heading d that understates the speed by
@@ -806,7 +806,7 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 	m_maxLift = BIGNUM;
 	m_maxSpeed = BIGNUM;
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
-	m_maxSpeedScaled = BIGNUM;
+	m_maxSpeedScaled = m_template->scaleSpeed(BIGNUM);
 #endif
 	m_maxAccel = BIGNUM;
 	m_maxBraking = BIGNUM;

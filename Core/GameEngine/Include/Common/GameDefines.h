@@ -91,7 +91,7 @@
 #define PRESERVE_RETAIL_PARTICLES (1) // Preserve original look of particles present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
-// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects.
+// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects that move via a Locomotor.
 // Set this to 0 when world objects need to move at consistent speed in all directions.
 #ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY
 #define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY (1)
@@ -109,20 +109,6 @@
 #ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS
 #define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS (1)
 #endif
-
-
-// Whether the retail forward speed is used unconditionally, for every object at all times.
-#define USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() \
-	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY || RETAIL_COMPATIBLE_CRC)
-
-// Whether the forward speed is scaled to a former averaged value.
-#define USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE() \
-	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE && !USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY())
-
-// Whether the retail forward speed is used for the duration of a scripted camera event.
-// Is only meaningful when the retail forward speed is not already used unconditionally.
-#define USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS() \
-	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS && !USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() && USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE())
 
 
 #ifndef RETAIL_COMPATIBLE_CRC
@@ -218,3 +204,19 @@
 #define DEFAULT_DISPLAY_BIT_DEPTH   32
 #define DEFAULT_DISPLAY_WIDTH      800 // The standard resolution this game was designed for
 #define DEFAULT_DISPLAY_HEIGHT     600 // The standard resolution this game was designed for
+
+
+// NON-TWEAKABLE DEFINES ARE DOWN HERE
+
+// Whether the retail forward speed is used unconditionally, for every object at all times.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() \
+	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY || RETAIL_COMPATIBLE_CRC)
+
+// Whether the forward speed is scaled to a former averaged value.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE() \
+	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE && !USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY())
+
+// Whether the retail forward speed is used for the duration of a cinematic event.
+// Is only meaningful when the retail forward speed discrepancy is not preserved and the forward speed is scaled.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS() \
+	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS && !USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() && USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE())

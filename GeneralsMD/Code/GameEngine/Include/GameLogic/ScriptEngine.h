@@ -310,8 +310,8 @@ public:
 	void doFreezeTime();
 	void doUnfreezeTime();
 
-	void friend_notifyLetterBoxActive(Bool active); ///< Report the scripted letterbox bracket opening or closing
-	Bool isInCinematic() const; ///< Ask whether a cinematic is running right now
+	void friend_notifyLetterBoxActive(Bool active);
+	Bool isLetterBoxActive() const; ///< Ask whether the letterbox has been activated by a script; indicates an active cinematic
 
 	/// The following functions are used to update and query the debug window
 	Bool isTimeFrozenDebug();		///< Ask whether the debug window has requested a pause.
