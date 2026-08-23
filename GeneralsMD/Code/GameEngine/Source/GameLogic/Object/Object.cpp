@@ -2196,10 +2196,6 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 				sound.setPosition( getPosition() );
 				TheAudio->addAudioEvent( &sound );
 			}
-
-			DozerAIInterface* dozerAI = getAI() ? getAI()->getDozerAIInterface() : nullptr;
-			if (dozerAI)
-				dozerAI->setPreviousTask(dozerAI->getCurrentTask());
 		}
 	}
 
@@ -3919,7 +3915,19 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 		{
 			// Have to say goodbye to the thing we might be building or repairing so someone else can do it.
 			if (dozerAI->getCurrentTask() != DOZER_TASK_INVALID)
+			{
+				// TheSuperHackers @info We want to explicitly define what types to resume from as some types
+				// are undesirable (e.g. DISABLED_HELD via entering/exiting a container).
+				Bool attemptToResumeTask = isDisabledByType(DISABLED_EMP) ||
+					isDisabledByType(DISABLED_HACKED) ||
+					isDisabledByType(DISABLED_SUBDUED) ||
+					isDisabledByType(DISABLED_UNDERPOWERED);
+
+				if (attemptToResumeTask)
+					dozerAI->setPreviousTask(dozerAI->getCurrentTask());
+
 				dozerAI->cancelTask(dozerAI->getCurrentTask());
+			}
 		}
 		else
 		{

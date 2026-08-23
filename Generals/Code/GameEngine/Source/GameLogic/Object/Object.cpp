@@ -1985,10 +1985,6 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 				sound.setPosition( getPosition() );
 				TheAudio->addAudioEvent( &sound );
 			}
-
-			DozerAIInterface* dozerAI = getAI() ? getAI()->getDozerAIInterface() : nullptr;
-			if (dozerAI)
-				dozerAI->setPreviousTask(dozerAI->getCurrentTask());
 		}
 	}
 
