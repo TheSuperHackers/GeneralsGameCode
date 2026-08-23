@@ -958,7 +958,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	Real vy = m_vel.y * dir->y;
 	Real dot = vx + vy;
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
 
 	Real speed = (Real)sqrtf( vx*vx + vy*vy );
 	if (dot >= 0.0f)
@@ -967,7 +967,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (useLegacyForwardSpeed())
 	{
 		Real speed = (Real)sqrtf( vx*vx + vy*vy );
@@ -984,7 +984,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	// and time calculations. The speeds the Locomotor commands are compensated to match, in LocomotorTemplate.
 	return dot;
 
-#endif // USE_RETAIL_PHYSICS_FORWARD_SPEED
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1000,7 +1000,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	Real vz = m_vel.z * dir.Z;
 	Real dot = vx + vy + vz;
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
 
 	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
 	if (dot >= 0.0f)
@@ -1009,7 +1009,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (useLegacyForwardSpeed())
 	{
 		Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
@@ -1023,10 +1023,10 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	// +-sqrtf(vx*vx+vy*vy+vz*vz). See getForwardSpeed2D for the rationale.
 	return dot;
 
-#endif // USE_RETAIL_PHYSICS_FORWARD_SPEED
+#endif
 }
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::useLegacyForwardSpeed()
 {
