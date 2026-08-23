@@ -141,7 +141,7 @@ public:
 	Real getForwardSpeed2D() const;															///< compute speed along object's 2d direction vector
 	Real getForwardSpeed3D() const;															///< compute speed along object's 3d direction vector
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	static Bool useLegacyForwardSpeed();
 #endif
 
