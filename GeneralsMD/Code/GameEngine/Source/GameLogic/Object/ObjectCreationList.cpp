@@ -415,7 +415,7 @@ public:
 					if (physics)
 					{
 						Coord3D startingForce = *transport->getUnitDirectionVector2D();
-						Real maxSpeed = ai->getCurLocomotor()->getMaxSpeedForCondition(transport->getBodyModule()->getDamageState(), transport);
+						Real maxSpeed = ai->getCurLocomotor()->getMaxSpeedForCondition(transport->getBodyModule()->getDamageState());
 						Real factor = maxSpeed * physics->getMass();
 						startingForce.x *= factor;
 						startingForce.y *= factor;
