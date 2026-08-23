@@ -478,11 +478,10 @@ void LocomotorTemplate::validate()
 #endif
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
-	// TheSuperHackers @bugfix xezon 30/07/2026 THRUST is the only appearance whose mover measures
-	// itself with getForwardSpeed3D, so the dimension is decided here, once, rather than every time a
-	// speed is read. This runs last so that the twins are computed from the healed and defaulted
-	// values above, and it is safe to run again on an INI override because each twin is assigned from
-	// its untouched source rather than multiplied in place.
+	// TheSuperHackers @info THRUST is the only appearance whose mover measures itself with getForwardSpeed3D,
+	// so the dimension is decided here, once, rather than every time a speed is read. This runs last so that
+	// the twins are computed from the healed and defaulted values above, and it is safe to run again on an
+	// INI override because each twin is assigned from its untouched source rather than multiplied in place.
 	if (m_appearance == LOCO_THRUST)
 	{
 		m_maxSpeedScaled = scaleSpeed3D(m_maxSpeed);
@@ -912,9 +911,7 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_maxLift);
 	xfer->xferReal(&m_maxSpeed);
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
-	// TheSuperHackers @bugfix xezon 30/07/2026 The scaled twin is derived, so recompute it rather
-	// than transfer it. That keeps the save format byte identical and lets saves written before this
-	// change load correctly. In the save direction this simply recomputes the value it already has.
+	// TheSuperHackers @info The scaled twin is derived, so recompute it rather than transfer it.
 	m_maxSpeedScaled = m_template->scaleSpeed(m_maxSpeed);
 #endif
 	xfer->xferReal(&m_maxAccel);
