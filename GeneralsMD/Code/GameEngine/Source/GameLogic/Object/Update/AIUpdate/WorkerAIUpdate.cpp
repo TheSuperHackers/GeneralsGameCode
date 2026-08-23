@@ -730,6 +730,12 @@ void WorkerAIUpdate::resumePreviousTask()
 		if (target && target->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
 			newTask(m_previousTask, target);
 	}
+	else if (m_previousTask == DOZER_TASK_REPAIR)
+	{
+		Object* target = TheGameLogic->findObjectByID(m_previousTaskInfo.m_targetObjectID);
+		if (target)
+			newTask(m_previousTask, target);
+	}
 
 	m_previousTask = DOZER_TASK_INVALID;
 	m_previousTaskInfo = DozerTaskInfo();
