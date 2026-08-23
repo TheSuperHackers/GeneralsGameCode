@@ -177,7 +177,7 @@ private:
 	Real											m_liftDamaged;					///< max lift when damaged
 	Real											m_braking;							///< max braking (deceleration)
 	Real											m_minTurnSpeed;					///< we must be going >= this speed in order to turn
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	Real											m_maxSpeedScaled;				///< real max speed
 	Real											m_maxSpeedDamagedScaled;///< real speed when "damaged"
 	Real											m_minSpeedScaled;				///< real min speed; we should never brake past this
@@ -332,7 +332,7 @@ public:
 	{
 		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!"));
 		m_maxSpeed = speed;
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 		m_maxSpeedScaled = m_template->scaleSpeed(speed);
 #endif
 	}
@@ -471,7 +471,7 @@ private:
 	Real				m_brakingFactor;
 	Real				m_maxLift;
 	Real				m_maxSpeed;
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	Real				m_maxSpeedScaled;
 #endif
 	Real				m_maxAccel;

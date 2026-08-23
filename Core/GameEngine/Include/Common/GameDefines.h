@@ -92,22 +92,37 @@
 #endif
 
 // Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects.
-#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
-#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED (1)
+// Set this to 0 when world objects need to move at consistent speed in all directions.
+#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY
+#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY (1)
+#endif
+
+// Whether to preserve the arithmetic mean speed based on the original forward speed discrepancy bug.
+// The locomotor speeds from the INI files are effectively scaled up a bit so that on average the world objects travel at comparable speeds.
+// Set this to 0 when speeds are set correctly by INI settings (recommended).
+#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE
+#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE (1)
 #endif
 
 // Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects during cinematics.
 // Is mostly relevant for the original campaign missions.
-#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
-#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS (1)
+#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS
+#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS (1)
 #endif
 
-// Whether the retail forward speed is used unconditionally, for every object at all times.
-#define USE_RETAIL_PHYSICS_FORWARD_SPEED (RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED)
 
-// Whether the retail forward speed is used for the duration of a scripted camera event. Is only
-// meaningful when the retail forward speed is not already used unconditionally.
-#define USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS (!USE_RETAIL_PHYSICS_FORWARD_SPEED && PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS)
+// Whether the retail forward speed is used unconditionally, for every object at all times.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() \
+	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY || RETAIL_COMPATIBLE_CRC)
+
+// Whether the forward speed is scaled to a former averaged value.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE() \
+	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE && !USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY())
+
+// Whether the retail forward speed is used for the duration of a scripted camera event.
+// Is only meaningful when the retail forward speed is not already used unconditionally.
+#define USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS() \
+	(PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS && !USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() && USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE())
 
 
 #ifndef RETAIL_COMPATIBLE_CRC

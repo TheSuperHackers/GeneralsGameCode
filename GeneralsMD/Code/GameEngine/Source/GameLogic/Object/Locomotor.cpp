@@ -77,7 +77,7 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 
 // TheSuperHackers @bugfix xezon 30/07/2026 The compensation that equalizes straight and diagonal
 // movement speeds.
@@ -330,7 +330,7 @@ LocomotorTemplate::LocomotorTemplate()
 	m_braking = BIGNUM;
 	m_minSpeed = 0.0f;
 	m_minTurnSpeed = BIGNUM;
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	m_maxSpeedScaled = 0.0f;
 	m_maxSpeedDamagedScaled = 0.0f;
 	m_minSpeedScaled = 0.0f;
@@ -477,7 +477,7 @@ void LocomotorTemplate::validate()
 		m_decelPitchLimit = m_accelPitchLimit;
 #endif
 
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	// TheSuperHackers @bugfix xezon 30/07/2026 THRUST is the only appearance whose mover measures
 	// itself with getForwardSpeed3D, so the dimension is decided here, once, rather than every time a
 	// speed is read. This runs last so that the twins are computed from the healed and defaulted
@@ -503,11 +503,11 @@ void LocomotorTemplate::validate()
 //-------------------------------------------------------------------------------------------------
 Real LocomotorTemplate::getActualMaxSpeed() const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	return m_maxSpeed;
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (PhysicsBehavior::useLegacyForwardSpeed())
 		return m_maxSpeed;
 #endif
@@ -519,11 +519,11 @@ Real LocomotorTemplate::getActualMaxSpeed() const
 //-------------------------------------------------------------------------------------------------
 Real LocomotorTemplate::getActualMaxSpeedDamaged() const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	return m_maxSpeedDamaged;
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (PhysicsBehavior::useLegacyForwardSpeed())
 		return m_maxSpeedDamaged;
 #endif
@@ -535,11 +535,11 @@ Real LocomotorTemplate::getActualMaxSpeedDamaged() const
 //-------------------------------------------------------------------------------------------------
 Real LocomotorTemplate::getActualMinSpeed() const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	return m_minSpeed;
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (PhysicsBehavior::useLegacyForwardSpeed())
 		return m_minSpeed;
 #endif
@@ -551,11 +551,11 @@ Real LocomotorTemplate::getActualMinSpeed() const
 //-------------------------------------------------------------------------------------------------
 Real LocomotorTemplate::getActualMinTurnSpeed() const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	return m_minTurnSpeed;
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (PhysicsBehavior::useLegacyForwardSpeed())
 		return m_minTurnSpeed;
 #endif
@@ -567,7 +567,7 @@ Real LocomotorTemplate::getActualMinTurnSpeed() const
 //-------------------------------------------------------------------------------------------------
 Real LocomotorTemplate::scaleSpeed(Real speed) const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	return speed;
 #else
 	if (m_appearance == LOCO_THRUST)
@@ -805,7 +805,7 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 	m_brakingFactor = 1.0f;
 	m_maxLift = BIGNUM;
 	m_maxSpeed = BIGNUM;
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	m_maxSpeedScaled = BIGNUM;
 #endif
 	m_maxAccel = BIGNUM;
@@ -835,7 +835,7 @@ Locomotor::Locomotor(const Locomotor& that)
 	m_brakingFactor = that.m_brakingFactor;
 	m_maxLift = that.m_maxLift;
 	m_maxSpeed = that.m_maxSpeed;
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	m_maxSpeedScaled = that.m_maxSpeedScaled;
 #endif
 	m_maxAccel = that.m_maxAccel;
@@ -861,7 +861,7 @@ Locomotor& Locomotor::operator=(const Locomotor& that)
 		m_brakingFactor = that.m_brakingFactor;
 		m_maxLift = that.m_maxLift;
 		m_maxSpeed = that.m_maxSpeed;
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 		m_maxSpeedScaled = that.m_maxSpeedScaled;
 #endif
 		m_maxAccel = that.m_maxAccel;
@@ -911,7 +911,7 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_brakingFactor);
 	xfer->xferReal(&m_maxLift);
 	xfer->xferReal(&m_maxSpeed);
-#if !USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	// TheSuperHackers @bugfix xezon 30/07/2026 The scaled twin is derived, so recompute it rather
 	// than transfer it. That keeps the save format byte identical and lets saves written before this
 	// change load correctly. In the save direction this simply recomputes the value it already has.
@@ -967,11 +967,11 @@ Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition) const
 //-------------------------------------------------------------------------------------------------
 Real Locomotor::getMaxSpeedOverride() const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	return m_maxSpeed;
 #else
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 	if (PhysicsBehavior::useLegacyForwardSpeed())
 		return m_maxSpeed;
 #endif
