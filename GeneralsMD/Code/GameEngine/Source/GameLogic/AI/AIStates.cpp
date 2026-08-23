@@ -4931,7 +4931,7 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	AIUpdateInterface* victimAI = victim ? victim->getAI() : nullptr;
 
 	Locomotor* curLoco = sourceAI->getCurLocomotor();
-	m_canTurnInPlace = curLoco ? curLoco->getMinSpeed(source) == 0.0f : false;
+	m_canTurnInPlace = curLoco ? curLoco->getMinSpeed() == 0.0f : false;
 
 
 //	if (!victim)
@@ -7459,7 +7459,7 @@ StateReturnType AIFaceState::onEnter()
 
 	AIUpdateInterface* ai = source->getAI();
 	Locomotor* curLoco = ai->getCurLocomotor();
-	m_canTurnInPlace = curLoco ? curLoco->getMinSpeed(source) == 0.0f : false;
+	m_canTurnInPlace = curLoco ? curLoco->getMinSpeed() == 0.0f : false;
 
 	Object* target = getMachineGoalObject();
 	if (m_obj && target == nullptr )

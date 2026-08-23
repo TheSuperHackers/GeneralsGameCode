@@ -958,7 +958,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	Real vy = m_vel.y * dir->y;
 	Real dot = vx + vy;
 
-#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED
 
 	Real speed = (Real)sqrtf( vx*vx + vy*vy );
 	if (dot >= 0.0f)
@@ -967,16 +967,13 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 
 #else
 
-#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
-	if (const AIUpdateInterface *ai = getObject()->getAIUpdateInterface())
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+	if (useLegacyForwardSpeed())
 	{
-		if (ai->getLastCommandSource() == CMD_FROM_SCRIPT)
-		{
-			Real speed = (Real)sqrtf( vx*vx + vy*vy );
-			if (dot >= 0.0f)
-				return speed;
-			return -speed;
-		}
+		Real speed = (Real)sqrtf( vx*vx + vy*vy );
+		if (dot >= 0.0f)
+			return speed;
+		return -speed;
 	}
 #endif
 
@@ -987,7 +984,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	// and time calculations. The speeds the Locomotor commands are compensated to match, in LocomotorTemplate.
 	return dot;
 
-#endif // RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+#endif // USE_RETAIL_PHYSICS_FORWARD_SPEED
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1003,7 +1000,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	Real vz = m_vel.z * dir.Z;
 	Real dot = vx + vy + vz;
 
-#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED
 
 	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
 	if (dot >= 0.0f)
@@ -1012,16 +1009,13 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 
 #else
 
-#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
-	if (const AIUpdateInterface *ai = getObject()->getAIUpdateInterface())
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+	if (useLegacyForwardSpeed())
 	{
-		if (ai->getLastCommandSource() == CMD_FROM_SCRIPT)
-		{
-			Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
-			if (dot >= 0.0f)
-				return speed;
-			return -speed;
-		}
+		Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
+		if (dot >= 0.0f)
+			return speed;
+		return -speed;
 	}
 #endif
 
@@ -1029,8 +1023,18 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	// +-sqrtf(vx*vx+vy*vy+vz*vz). See getForwardSpeed2D for the rationale.
 	return dot;
 
-#endif // RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+#endif // USE_RETAIL_PHYSICS_FORWARD_SPEED
 }
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_IN_CINEMATICS
+//-------------------------------------------------------------------------------------------------
+Bool PhysicsBehavior::useLegacyForwardSpeed()
+{
+	// TheSuperHackers @info The retail speeds are kept for the duration of a cinematic, because
+	// legacy missions time their cinematics against them.
+	return TheScriptEngine->isInCinematic();
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::isCurrentlyOverlapped(Object *obj) const
