@@ -173,28 +173,6 @@ PathNode *PathNode::prependToList( PathNode *list )
 	return this;
 }
 
-//-----------------------------------------------------------------------------------
-/// given a list, append this node, return new list.  slow implementation.
-/// @todo optimize this
-PathNode *PathNode::appendToList( PathNode *list )
-{
-	if (list == nullptr)
-	{
-		m_next = nullptr;
-		m_prev = nullptr;
-		return this;
-	}
-
-	PathNode *tail;
-	for( tail = list; tail->m_next; tail = tail->m_next )
-		;
-
-	tail->m_next = this;
-	m_prev = tail;
-	m_next = nullptr;
-
-	return list;
-}
 
 //-----------------------------------------------------------------------------------
 /// given a node, append new node to this.
@@ -437,7 +415,14 @@ void Path::appendNode( const Coord3D *pos, PathfindLayerEnum layer )
 	node->setPosition( pos );
 	node->setLayer(layer);
 
-	m_path = node->appendToList( m_path );
+	if (m_pathTail)
+	{
+		m_pathTail->append(node);
+	}
+	else
+	{
+		m_path = node->prependToList(nullptr);
+	}
 
 	if (m_isOptimized && m_pathTail)
 	{
