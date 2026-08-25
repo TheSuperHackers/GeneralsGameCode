@@ -8856,7 +8856,7 @@ void ScriptEngine::setGlobalDifficulty( GameDifficulty difficulty )
 	* 3: Added m_objectsShouldReceiveDifficultyBonus (JKMCD)
 	* 4: current music track info
 	* 5: add ChooseVictimAlwaysUsesNormal
-	* 6: TheSuperHackers @tweak Adds xfer for m_letterBoxActive
+	* 6: TheSuperHackers @tweak Serialize m_letterBoxActive
 	*/
 // ------------------------------------------------------------------------------------------------
 void ScriptEngine::xfer( Xfer *xfer )
