@@ -563,19 +563,17 @@ Real LocomotorTemplate::getActualMinTurnSpeed() const
 #endif
 }
 
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 //-------------------------------------------------------------------------------------------------
 Real LocomotorTemplate::scaleSpeed(Real speed) const
 {
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
-	return speed;
-#else
 	if (m_appearance == LOCO_THRUST)
 	{
 		return scaleSpeed3D(speed);
 	}
 	return scaleSpeed2D(speed);
-#endif
 }
+#endif
 
 //-------------------------------------------------------------------------------------------------
 static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
@@ -911,7 +909,6 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_maxLift);
 	xfer->xferReal(&m_maxSpeed);
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
-	// TheSuperHackers @info The scaled twin is derived, so recompute it rather than transfer it.
 	m_maxSpeedScaled = m_template->scaleSpeed(m_maxSpeed);
 #endif
 	xfer->xferReal(&m_maxAccel);
