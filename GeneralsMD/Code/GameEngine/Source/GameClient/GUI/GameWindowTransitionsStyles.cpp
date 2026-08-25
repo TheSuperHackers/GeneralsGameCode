@@ -66,6 +66,24 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 static void drawTypeText( GameWindow *window, DisplayString *str);
+
+static Color getFlashTransitionColor( UnsignedByte alpha )
+{
+#if RTS_GENERALS
+	return GameMakeColor( 255, 203, 45, alpha );
+#elif RTS_ZEROHOUR
+	return GameMakeColor( 255, 255, 255, alpha );
+#endif
+}
+
+static Color getFullFadeTransitionColor( UnsignedByte alpha )
+{
+#if RTS_GENERALS
+	return GameMakeColor( 255, 190, 0, alpha );
+#elif RTS_ZEROHOUR
+	return GameMakeColor( 60, 60, 180, alpha );
+#endif
+}
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -185,44 +203,44 @@ void FlashTransition::draw()
 	{
 		case FLASHTRANSITION_FADE_IN_1:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,100));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255, 33));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 100 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 33 ));
 		}
 		break;
 		case FLASHTRANSITION_FADE_IN_2:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,150));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255, 66));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 150 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 66 ));
 		}
 		break;
 		case FLASHTRANSITION_FADE_IN_3:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,200));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255, 99));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 200 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 99 ));
 		}
 		break;
 		case FLASHTRANSITION_FADE_TO_BACKGROUND_1:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255, 75));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 75 ));
 		}
 		break;
 		case FLASHTRANSITION_FADE_TO_BACKGROUND_2:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255,50));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 50 ));
 		}
 		break;
 		case FLASHTRANSITION_FADE_TO_BACKGROUND_3:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255, 25));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 25 ));
 		}
 		break;
 		case FLASHTRANSITION_FADE_TO_BACKGROUND_4:
 		{
-			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, GameMakeColor(255, 255, 255, 10));
+			TheDisplay->drawOpenRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x+1, m_pos.y+1,m_size.x-2, m_size.y, getFlashTransitionColor( 10 ));
 		}
 		break;
 	}
@@ -503,50 +521,50 @@ void ButtonFlashTransition::draw()
 		case BUTTONFLASHTRANSITION_FADE_IN_1:
 		{
 			//PushButtonImageDrawThree(m_win, 100);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,100));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255, 75));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 100 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 75 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_IN_2:
 		{
 			//PushButtonImageDrawThree(m_win, 150);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,150));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255, 150));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 150 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 150 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_IN_3:
 		{
 			//PushButtonImageDrawThree(m_win, 200);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,200));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255, 200));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 200 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 200 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_1:
 		{
 			PushButtonImageDrawThree(m_win, 255);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255, 150));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 150 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_2:
 		{
 			PushButtonImageDrawThree(m_win, 255);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255,100));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 100 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_3:
 		{
 			PushButtonImageDrawThree(m_win, 255);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255, 50));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 50 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_4:
 		{
 			PushButtonImageDrawThree(m_win, 255);
-			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, GameMakeColor(255, 255, 255,250));
-			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, GameMakeColor(255, 255, 255, 15));
+			TheDisplay->drawOpenRect(m_pos.x, m_pos.y,m_size.x, m_size.y, 1, getFlashTransitionColor( 250 ));
+			TheDisplay->drawFillRect(m_pos.x, m_pos.y,m_size.x, m_size.y, getFlashTransitionColor( 15 ));
 		}
 		break;
 		case BUTTONFLASHTRANSITION_FADE_TO_GRADE_IN_1:
@@ -1876,7 +1894,7 @@ void FullFadeTransition::draw()
 	if(alpha > 255)
 		alpha = 255;
 	TheDisplay->drawFillRect(m_pos.x, m_pos.y, m_size.x, m_size.y , GameMakeColor(0,0,0,alpha));
-	TheDisplay->drawOpenRect(m_pos.x, m_pos.y, m_size.x, m_size.y , 1.0f, GameMakeColor(60,60,180,alpha));
+	TheDisplay->drawOpenRect(m_pos.x, m_pos.y, m_size.x, m_size.y , 1.0f, getFullFadeTransitionColor( alpha ));
 }
 
 void FullFadeTransition::skip()

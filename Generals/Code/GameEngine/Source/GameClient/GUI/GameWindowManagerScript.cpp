@@ -143,6 +143,7 @@ const char *const WindowStatusNames[] = { "ACTIVE", "TOGGLE", "DRAGABLE", "ENABL
 														  "SMOOTH_TEXT", "ONE_LINE", "NO_FLUSH", "SEE_THRU",
 															"RIGHT_CLICK", "WRAP_CENTERED", "CHECK_LIKE","HOTKEY_TEXT",
 															"USE_OVERLAY_STATES", "NOT_READY", "FLASHING", "ALWAYS_COLOR",
+															"ON_MOUSE_DOWN", /*"SHORTCUT_BUTTON",*/
 															nullptr };
 
 const char *const WindowStyleNames[] = { "PUSHBUTTON",	"RADIOBUTTON",	"CHECKBOX",
@@ -2732,6 +2733,9 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 		DEBUG_LOG(( "WinCreateFromScript: Cannot access file '%s'.", filename ));
 		return nullptr;
 	}
+
+  // read into memory
+  inFile=inFile->convertToRAMFile();
 
 	// read the file version
 	Int version;

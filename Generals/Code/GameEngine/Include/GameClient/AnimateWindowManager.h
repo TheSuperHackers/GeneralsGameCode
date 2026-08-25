@@ -189,7 +189,7 @@ private:
 	ProcessAnimateWindowSlideFromBottom *m_slideFromBottom;		///< Holds the process in which the windows slide from the Bottom
 	ProcessAnimateWindowSpiral *m_spiral;											///< Holds the process in which the windows Spiral onto the screen
 	ProcessAnimateWindowSlideFromBottomTimed *m_slideFromBottomTimed;		///< Holds the process in which the windows slide from the Bottom in a time-based fashion
-	ProcessAnimateWindowSlideFromTopFast *m_slideFromTopFast;			///< holds the process in wich the windows slide from the top,fast
+	ProcessAnimateWindowSlideFromTopFast *m_slideFromTopFast;			///< holds the process in which the windows slide from the top,fast
 	ProcessAnimateWindow *getProcessAnimate( AnimTypes animType);		///< returns the process for the kind of animation we need.
 
 };
