@@ -141,18 +141,20 @@ public:
 
 private:
 
-	/// TheSuperHackers @bugfix Speeds authored in INI are understated by the forward speed the Locomotor measures
-	/// itself with, by up to 1/sqrt(2) in 2d and 1/sqrt(3) in 3d, which is what made objects move faster on diagonal
-	/// headings than on axis aligned ones. Each authored speed therefore also gets a "scaled" twin, in world distance
-	/// per logic frame, computed once at INI load. These accessors hand out whichever of the two the mover should be
-	/// commanded with. They all return the authored value in retail compatible builds.
+	/// TheSuperHackers @info Speeds authored in INI are understated by the forward speed the Locomotor measures
+	/// itself with, which is what made objects move faster on diagonal headings than on axis aligned ones.
+	/// Each authored speed therefore also gets a "scaled" twin, in world distance per logic frame, computed once at INI
+	/// load. These accessors hand out whichever of the two the mover should be commanded with.
+	/// They all return the authored value in retail compatible builds.
 	Real getActualMaxSpeed() const;
 	Real getActualMaxSpeedDamaged() const;
 	Real getActualMinSpeed() const;
 	Real getActualMinTurnSpeed() const;
 
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 	/// Scale a speed that has no stored counterpart because it was not authored on this template.
 	Real scaleSpeed(Real speed) const;
+#endif
 
 	/**
 		Units check:
