@@ -323,7 +323,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(ChunkInputStream *pStrm):
 Bool WorldHeightMapEdit::remapTextures()
 {
 	Int i;
-	Bool anyChanges;
+	Bool anyChanges = false;
 	for (i=0; i<m_numTextureClasses; i++) {
 		TerrainModal modalTerrainDlg(m_textureClasses[i].name, this);
 		if (IDOK==modalTerrainDlg.DoModal()) {
@@ -3394,6 +3394,7 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 
 	if (!pt) {
 		(*outNdx) = -1;
+		return;
 	}
 
 	int numBoundaries = m_boundaries.size();
