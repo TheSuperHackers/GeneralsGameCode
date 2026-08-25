@@ -127,7 +127,6 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->seek(0x10, File::START);
 	// read in each directory listing.
 	ArchivedFileInfo *fileInfo = NEW ArchivedFileInfo;
-	// TheSuperHackers @fix CryoTheRenegade 24/08/2026 Allocate after validation so failed opens and invalid BIG identifiers cannot leak the archive object.
 	ArchiveFile *archiveFile = NEW StdBIGFile(filename, AsciiString::TheEmptyString);
 
 	for (Int i = 0; i < numLittleFiles; ++i) {
