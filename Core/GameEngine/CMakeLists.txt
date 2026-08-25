@@ -142,7 +142,7 @@ set(GAMEENGINE_SRC
     Include/Common/XferLoad.h
     Include/Common/XferSave.h
     Include/GameClient/Anim2D.h
-#    Include/GameClient/AnimateWindowManager.h
+    Include/GameClient/AnimateWindowManager.h
 #    Include/GameClient/CampaignManager.h
     Include/GameClient/ChallengeGenerals.h
     Include/GameClient/ClientInstance.h
@@ -184,8 +184,8 @@ set(GAMEENGINE_SRC
     Include/GameClient/GameText.h
     Include/GameClient/GameWindow.h
     Include/GameClient/GameWindowGlobal.h
-#    Include/GameClient/GameWindowID.h
-#    Include/GameClient/GameWindowManager.h
+    Include/GameClient/GameWindowID.h
+    Include/GameClient/GameWindowManager.h
     Include/GameClient/GameWindowTransitions.h
     Include/GameClient/GlobalLanguage.h
     Include/GameClient/GraphDraw.h
@@ -711,7 +711,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GameText.cpp
     Source/GameClient/GlobalLanguage.cpp
     Source/GameClient/GraphDraw.cpp
-#    Source/GameClient/GUI/AnimateWindowManager.cpp
+    Source/GameClient/GUI/AnimateWindowManager.cpp
     Source/GameClient/GUI/ChallengeGenerals.cpp
     Source/GameClient/GUI/ControlBar/ControlBar.cpp
     Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp
@@ -741,10 +741,10 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/GameFont.cpp
     Source/GameClient/GUI/GameWindow.cpp
     Source/GameClient/GUI/GameWindowGlobal.cpp
-#    Source/GameClient/GUI/GameWindowManager.cpp
-#    Source/GameClient/GUI/GameWindowManagerScript.cpp
+    Source/GameClient/GUI/GameWindowManager.cpp
+    Source/GameClient/GUI/GameWindowManagerScript.cpp
     Source/GameClient/GUI/GameWindowTransitions.cpp
-#    Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
+    Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
     Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp
