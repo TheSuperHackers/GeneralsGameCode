@@ -51,6 +51,7 @@
 
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
+#include "Lib/PathUtil.h"
 #include "WWLib/WWCommon.h"
 #include "Common/GameDefines.h"
 

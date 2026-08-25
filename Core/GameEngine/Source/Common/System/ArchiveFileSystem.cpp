@@ -236,6 +236,32 @@ void ArchiveFileSystem::loadMods()
 	}
 }
 
+Bool ArchiveFileSystem::ignoreFile( const AsciiString& filename, Bool ignore )
+{
+	Bool wasIgnored = false;
+
+	if (!filename.isEmpty()){
+		ArchiveFileMap::const_iterator it = m_archiveFileMap.begin();
+		for (; it != m_archiveFileMap.end(); ++it) {
+			wasIgnored |= it->second->ignoreFile(filename, ignore);
+		}
+	}
+	return wasIgnored;
+}
+
+Bool ArchiveFileSystem::ignoreDirectory( const AsciiString& directory, Bool ignore )
+{
+	Bool wasIgnored = false;
+
+	if (!directory.isEmpty()) {
+		ArchiveFileMap::const_iterator it = m_archiveFileMap.begin();
+		for (; it != m_archiveFileMap.end(); ++it) {
+			wasIgnored |= it->second->ignoreDirectory(directory, ignore);
+		}
+	}
+	return wasIgnored;
+}
+
 Bool ArchiveFileSystem::doesFileExist(const Char *filename, FileInstance instance) const
 {
 	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename);
@@ -245,7 +271,14 @@ Bool ArchiveFileSystem::doesFileExist(const Char *filename, FileInstance instanc
 
 	stl::const_range<ArchivedFileLocationMap> range = stl::get_range(result.dirInfo->m_files, result.lastToken, instance);
 
-	return range.valid();
+	if (!range.valid())
+		return false;
+
+	FileInfo fileInfo;
+	ArchiveFile *archiveFile = range.get()->second;
+
+	// Returns null if the file in the archive is ignored.
+	return archiveFile->getFileInfo(filename, &fileInfo);
 }
 
 ArchivedDirectoryInfo* ArchiveFileSystem::friend_getArchivedDirectoryInfo(const Char* directory)

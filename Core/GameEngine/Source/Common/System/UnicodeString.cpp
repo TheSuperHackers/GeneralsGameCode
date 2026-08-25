@@ -455,20 +455,25 @@ Bool UnicodeString::endsWithNoCase(const WideChar* p) const
 }
 
 //-----------------------------------------------------------------------------
-Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
+Bool UnicodeString::nextToken(UnicodeString* tok, const WideChar* delimiters)
 {
-	if (this->isEmpty() || tok == this)
-		return false;
+	DEBUG_ASSERTCRASH(tok != this, ("Tokenizer and Token cannot be the same object"));
 
-	if (delimiters.isEmpty())
+	if (this->isEmpty())
+	{
+		tok->clear();
+		return false;
+	}
+
+	if (delimiters == nullptr)
 		delimiters = L" \t\n\r";
 
 	Int offset;
 
-	offset = wcsspn(peek(), delimiters.str());
+	offset = wcsspn(peek(), delimiters);
 	WideChar* start = peek() + offset;
 
-	offset = wcscspn(start, delimiters.str());
+	offset = wcscspn(start, delimiters);
 	WideChar* end = start + offset;
 
 	if (end > start)

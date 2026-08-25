@@ -595,6 +595,7 @@ set(GAMEENGINE_SRC
     Source/Common/INI/INIDamageFX.cpp
     Source/Common/INI/INIDrawGroupInfo.cpp
     Source/Common/INI/INIGameData.cpp
+    Source/Common/INI/INIFileSystem.cpp
     Source/Common/INI/INIMapCache.cpp
     Source/Common/INI/INIMapData.cpp
     Source/Common/INI/INIMappedImage.cpp

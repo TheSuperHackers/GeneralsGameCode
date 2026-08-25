@@ -442,6 +442,11 @@ void GameEngine::init()
 
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), nullptr); // this MUST come after TheLocalFileSystem creation
 
+	// TheSuperHackers @feature xezon 26/07/2026 Loads new FileSystem.ini before any other ini files
+	// to allow configure the file system, such as setting up ignored game files and directories.
+	ini.loadFileDirectory( "Data\\INI\\Default\\FileSystem", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
+	ini.loadFileDirectory( "Data\\INI\\FileSystem", INI_LOAD_OVERWRITE, nullptr, INI::LoadFlags_SearchSubDirs );
+
     	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
 	GetPrecisionTimer(&endTime64);//////////////////////////////////////////////////////////////////
 	sprintf(Buf,"----------------------------------------------------------------------------After TheArchiveFileSystem  = %f seconds",((double)(endTime64-startTime64)/(double)(freq64)));

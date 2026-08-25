@@ -164,17 +164,29 @@ class INI
 	INI& operator=(const INI&) FUNCTION_DELETE;
 
 public:
+
+	typedef UnsignedInt LoadFlags;
+	enum LoadFlags_ CPP_11( : UnsignedInt)
+	{
+		LoadFlags_SearchSubDirs = 1 << 0,
+		LoadFlags_ExpectFileFound = 1 << 1,
+	};
+
+public:
+
 	INI();
 
 	// TheSuperHackers @feature xezon 19/08/2025
 	// Load a specific INI file by name and/or INI files from a directory (and its subdirectories).
 	// For example "Data\INI\Armor" loads "Data\INI\Armor.ini" and all *.ini files in "Data\INI\Armor".
 	// Throws if not a single INI file is found or one is not read correctly.
-	UnsignedInt loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+	UnsignedInt loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer,
+		LoadFlags loadFlags = LoadFlags_SearchSubDirs | LoadFlags_ExpectFileFound );
 
 	// Load INI files from a directory (and its subdirectories).
 	// Throws if one INI file is not read correctly.
-	UnsignedInt loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+	UnsignedInt loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer,
+		LoadFlags loadFlags = LoadFlags_SearchSubDirs );
 
 	// Load one specific INI file by name.
 	// Throws if the INI file is not found or is not read correctly.
@@ -213,6 +225,7 @@ public:
 	static void parseTerrainRoadDefinition( INI *ini );
 	static void parseTerrainBridgeDefinition( INI *ini );
 	static void parseMetaMapDefinition( INI *ini );
+	static void parseFileSystemIgnoreDefinition( INI* ini );
 	static void parseFXListDefinition( INI *ini );
 	static void parseObjectCreationListDefinition( INI* ini );
 	static void parseMultiplayerSettingsDefinition( INI* ini );

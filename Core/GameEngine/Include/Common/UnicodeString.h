@@ -348,7 +348,7 @@ public:
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(UnicodeString* token, UnicodeString delimiters = UnicodeString::TheEmptyString);
+	Bool nextToken(UnicodeString* token, const WideChar* separators = nullptr);
 
 //
 // You might think it would be a good idea to overload the * operator
