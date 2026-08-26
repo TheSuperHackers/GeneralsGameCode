@@ -131,6 +131,12 @@ static void drawButtonHotKeyOverlay( GameWindow *window )
 	if( hotKey.isEmpty() )
 		return;
 
+	// Only a single byte printable key can be shown faithfully. A localized mnemonic outside
+	// ASCII arrives as a multi byte sequence here, and drawing its first byte would show a
+	// wrong or garbled shortcut - better to draw nothing for those.
+	if( hotKey.getLength() != 1 || !isprint( (unsigned char)hotKey.getCharAt( 0 ) ) )
+		return;
+
 	const UnsignedByte index = (UnsignedByte)hotKey.getCharAt( 0 );
 	DisplayString *hotKeyString = s_hotKeyStrings[ index ];
 
