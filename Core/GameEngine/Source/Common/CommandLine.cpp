@@ -464,11 +464,14 @@ Int parseJobs(char *args[], int num)
 	return 1;
 }
 
+// Set when -cwd is present so parseCommandLineForStartup does not force the executable directory.
+static Bool s_cwdOptionSpecified = FALSE;
+
 Int parseCwd(char *args[], int num)
 {
 	// TheSuperHackers @feature 14/08/2026
 	// -cwd keeps the OS working directory. -cwd <path> uses that directory instead.
-	TheWritableGlobalData->m_changeCurrentWorkingDirectoryToExecutablePath = FALSE;
+	s_cwdOptionSpecified = TRUE;
 
 	if (num > 1 && args[1] != nullptr && args[1][0] != '-' && args[1][0] != '\0')
 	{
@@ -1457,6 +1460,9 @@ void CommandLine::parseCommandLineForStartup()
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
 
 	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup));
+
+	if (!s_cwdOptionSpecified)
+		rts::setCurrentDirectoryToExecutablePath();
 }
 
 void CommandLine::parseCommandLineForEngineInit()

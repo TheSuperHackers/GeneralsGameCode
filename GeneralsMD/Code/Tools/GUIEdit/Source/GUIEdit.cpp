@@ -508,8 +508,8 @@ void GUIEdit::init()
 	// Game engine specific initializations -------------------------------------
 	//---------------------------------------------------------------------------
 
-	// create the global data
-	TheWritableGlobalData = new GlobalData;
+	// GlobalData is created by CommandLine::parseCommandLineForStartup().
+	DEBUG_ASSERTCRASH(TheWritableGlobalData, ("TheWritableGlobalData expected to be created"));
 	TheWritableGlobalData->init();
 
 	// TheSuperHackers @info global language relies on global data being initialized

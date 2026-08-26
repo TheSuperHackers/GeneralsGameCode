@@ -43,7 +43,6 @@
 #include "WinMain.h"
 #include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
-#include "Common/WorkingDirectory.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
@@ -819,8 +818,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		initMemoryManager();
 
 		CommandLine::parseCommandLineForStartup();
-		if (TheGlobalData->m_changeCurrentWorkingDirectoryToExecutablePath)
-			rts::setCurrentDirectoryToExecutablePath();
 
 
 		#ifdef RTS_DEBUG

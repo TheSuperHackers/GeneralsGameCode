@@ -49,7 +49,7 @@
 #include <commctrl.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Common/WorkingDirectory.h"
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/FramePacer.h"
 #include "Common/GameMemory.h"
@@ -185,10 +185,10 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	HACCEL hAccelTable;
 	Bool quit = FALSE;
 
-	rts::applyStartupWorkingDirectory();
-
 	// initialize the memory manager early
 	initMemoryManager();
+
+	CommandLine::parseCommandLineForStartup();
 
 	// register a class for our window with the OS
 	registerClass( hInstance );

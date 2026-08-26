@@ -32,6 +32,7 @@ class CommandLine
 {
 public:
 
+	// Parses startup flags and applies the process working directory (-cwd).
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
 };
