@@ -739,6 +739,8 @@ private:
 	//Perhaps we can move this out of Drawable???
 public:
 	static void killStaticImages();
+	// TheSuperHackers @feature Free shared display strings before the manager is destroyed.
+	static void killStaticDisplayStrings();
 
 #ifdef DIRTY_CONDITION_FLAGS
 	// only for StDrawableDirtyStuffLocker!

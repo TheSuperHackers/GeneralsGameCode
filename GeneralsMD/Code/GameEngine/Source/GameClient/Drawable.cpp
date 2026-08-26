@@ -305,6 +305,26 @@ const Int MAX_ENABLED_MODULES								= 16;
 	s_animationTemplates = nullptr;
 }
 
+// TheSuperHackers @feature One shared string for the numerical health text, rebuilt whenever the
+// text changes. Unlike the command bar overlays there is no small fixed set of values to cache
+// per object, and many bars draw per frame, so it is rebuilt as often as it is reused. It stays
+// static purely to avoid allocating every call, and is returned to the manager before the manager
+// itself is torn down -- see Drawable::killStaticDisplayStrings.
+static DisplayString *s_healthString = nullptr;
+
+//-------------------------------------------------------------------------------------------------
+/** Return the shared display strings to the manager. Must run before TheDisplayStringManager is
+	* destroyed, which asserts on any string still registered -- GameClient's destructor calls this
+	* right before deleting the manager, unlike killStaticImages, which runs after. */
+//-------------------------------------------------------------------------------------------------
+/*static*/ void Drawable::killStaticDisplayStrings()
+{
+	if( s_healthString != nullptr && TheDisplayStringManager != nullptr )
+		TheDisplayStringManager->freeDisplayString( s_healthString );
+
+	s_healthString = nullptr;
+}
+
 //-------------------------------------------------------------------------------------------------
 void Drawable::saturateRGB(RGBColor& color, Real factor)
 {
@@ -2847,6 +2867,13 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 {
 	const Object *obj = getObject();
 
+	// The pips are left justified against the health bar, so without that region there is nowhere
+	// to put them. It is null when the object is off screen or has no health box. The selected or
+	// moused over test used to make a valid region implicit; SmartPips draws without that test, so
+	// check it outright rather than dereference null further down.
+	if (!healthBarRegion)
+		return;
+
 	// TheSuperHackers @feature SmartPips shows a unit's ammo pips all the time rather than only
 	// while it is selected or moused over, so remaining ammo is readable at a glance. Restricted
 	// to the player's own units -- not allies, not enemies -- since standing ammo counts on units
@@ -3874,11 +3901,6 @@ void Drawable::drawNumericalHealth( const IRegion2D *healthBarRegion, Real healt
 {
 	if( healthBarRegion == nullptr || TheDisplayStringManager == nullptr )
 		return;
-
-	// One shared string, rebuilt whenever the text changes. Unlike the command bar overlays there
-	// is no small fixed set of values to cache per object, and many bars draw per frame, so this
-	// is rebuilt as often as it is reused. It stays static purely to avoid allocating every call.
-	static DisplayString *s_healthString = nullptr;
 
 	if( s_healthString == nullptr )
 	{
