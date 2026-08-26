@@ -105,6 +105,20 @@ void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param )
 	if(TheScriptEngine->isGameEnding())
 		TheControlBar->hideBuildTooltipLayout();
 
+	// TheSuperHackers @fix The unit build time follows the player's power state, but nothing
+	// marks the control bar dirty when power changes - so an open tooltip kept showing the
+	// old time. Refresh it about once a second while it is up; with the timer display off
+	// the tooltip carries no time and stays as cheap as retail.
+	if( TheGlobalData && TheGlobalData->m_buildTimerDisplayMode != BuildTimerDisplayMode_None )
+	{
+		static UnsignedInt s_framesSinceRefresh = 0;
+		if( ++s_framesSinceRefresh >= LOGICFRAMES_PER_SECOND )
+		{
+			s_framesSinceRefresh = 0;
+			TheControlBar->repopulateBuildTooltipLayout();
+		}
+	}
+
 	if(theAnimateWindowManager && !TheControlBar->getShowBuildTooltipLayout() && !theAnimateWindowManager->isReversed())
 		theAnimateWindowManager->reverseAnimateWindow();
 	else if(!TheControlBar->getShowBuildTooltipLayout() && (!TheGlobalData->m_animateWindows || !useAnimation))
