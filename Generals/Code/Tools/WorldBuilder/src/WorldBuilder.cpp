@@ -158,6 +158,8 @@ FileClass * WB_W3DFileSystem::Get_File( char const *filename )
 class WBCommandLineInfo : public CCommandLineInfo
 {
 public:
+	WBCommandLineInfo() : m_expectingCwdPath(FALSE) {}
+
 	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
 		if (m_expectingCwdPath)
@@ -177,7 +179,7 @@ public:
 	}
 
 private:
-	BOOL m_expectingCwdPath = FALSE;
+	BOOL m_expectingCwdPath;
 };
 
 /////////////////////////////////////////////////////////////////////////////
