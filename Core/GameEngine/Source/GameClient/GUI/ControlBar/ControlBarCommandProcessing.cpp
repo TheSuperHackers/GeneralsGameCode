@@ -358,6 +358,16 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 		TheInGameUI->setGUICommand( commandButton );
 	}
+#if RTS_ZEROHOUR
+	// TheSuperHackers @fix In hold to aim mode the key down pass exists only to arm targeted
+	// commands so the decal shows while aiming. Everything else must act on the key up pass
+	// alone - otherwise a production hotkey queues two units per press and a toggle undoes
+	// itself, one per key transition.
+	else if( HotKeyManager::isQuickCastAiming() )
+	{
+		// swallow the key down half; the key up pass executes normally
+	}
+#endif
 	else switch( commandButton->getCommandType() )
 	{
 

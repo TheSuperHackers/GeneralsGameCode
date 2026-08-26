@@ -1061,8 +1061,9 @@ InGameUI::InGameUI()
 	m_quickCastHintTimer = 0;
 	m_quickCastHintPosition.zero();
 	m_quickCastHintCursorType = RADIUSCURSOR_NONE;
-	m_queuedCastCommand = nullptr;
-	m_queuedCastScreenPos.x = m_queuedCastScreenPos.y = 0;
+	m_quickCastHintTemplate = nullptr;
+	m_quickCastHintWeaponSlot = PRIMARY_WEAPON;
+	m_queuedCastCommandName.clear();
 	m_queuedCastWorldPos.zero();
 	m_queuedCastSourceID = INVALID_ID;
 	m_queuedCastExpiryFrame = 0;
@@ -1524,7 +1525,7 @@ void InGameUI::handleRadiusCursor()
 	{
     // TheSuperHackers @feature While a cast is queued waiting on its cooldown, pin the decal
     // to the spot it will land on, so the player can see what is pending.
-    if ( m_queuedCastCommand != nullptr )
+    if ( hasQueuedQuickCast() )
     {
       m_curRadiusCursor.setOpacity( 0.5f );
       m_curRadiusCursor.setPosition( m_queuedCastWorldPos );
@@ -1584,12 +1585,14 @@ void InGameUI::triggerQuickCastHint( const CommandButton *command, const ICoord2
 
 	m_quickCastHintTimer = 11;
 	m_quickCastHintCursorType = command->getRadiusCursorType();
+	m_quickCastHintTemplate = command->getSpecialPowerTemplate();
+	m_quickCastHintWeaponSlot = command->getWeaponSlot();
 
 	if( !rts::localPlayerHasRadar() || (TheRadar->screenPixelToWorld( &screenPos, &m_quickCastHintPosition ) == FALSE) )
 		TheTacticalView->screenToTerrain( &screenPos, &m_quickCastHintPosition );
 
-	setRadiusCursor( m_quickCastHintCursorType, command->getSpecialPowerTemplate(),
-		command->getWeaponSlot() );
+	setRadiusCursor( m_quickCastHintCursorType, m_quickCastHintTemplate,
+		m_quickCastHintWeaponSlot );
 }
 
 // TheSuperHackers @feature Queued quick cast.
@@ -1599,8 +1602,7 @@ void InGameUI::queueQuickCast( const CommandButton *command, const ICoord2D &scr
 	if( command == nullptr )
 		return;
 
-	m_queuedCastCommand = command;
-	m_queuedCastScreenPos = screenPos;
+	m_queuedCastCommandName = command->getName();
 	m_queuedCastSourceID = INVALID_ID;
 
 	// Remember where in the world it was aimed, so the cast still lands on the chosen spot
@@ -1619,10 +1621,10 @@ void InGameUI::queueQuickCast( const CommandButton *command, const ICoord2D &scr
 //-------------------------------------------------------------------------------------------------
 void InGameUI::cancelQueuedQuickCast( void )
 {
-	if( m_queuedCastCommand == nullptr )
+	if( !hasQueuedQuickCast() )
 		return;
 
-	m_queuedCastCommand = nullptr;
+	m_queuedCastCommandName.clear();
 	m_queuedCastSourceID = INVALID_ID;
 	m_queuedCastExpiryFrame = 0;
 	setRadiusCursorNone();
@@ -1633,10 +1635,20 @@ void InGameUI::cancelQueuedQuickCast( void )
 	* frame rather than predicted, so this never fires earlier than a manual cast could. */
 void InGameUI::updateQueuedQuickCast( void )
 {
-	if( m_queuedCastCommand == nullptr )
+	if( !hasQueuedQuickCast() )
 		return;
 
 	if( TheGameLogic == nullptr || TheGameLogic->getFrame() > m_queuedCastExpiryFrame )
+	{
+		cancelQueuedQuickCast();
+		return;
+	}
+
+	// Re-resolve the button from its name: the control bar owns the buttons and recreates
+	// them on a resolution change, so a pointer retained across frames could dangle.
+	const CommandButton *command =
+			TheControlBar ? TheControlBar->findCommandButton( m_queuedCastCommandName ) : nullptr;
+	if( command == nullptr )
 	{
 		cancelQueuedQuickCast();
 		return;
@@ -1651,7 +1663,16 @@ void InGameUI::updateQueuedQuickCast( void )
 		return;
 	}
 
-	const SpecialPowerTemplate *spTemplate = m_queuedCastCommand->getSpecialPowerTemplate();
+	// The cast fires through the current selection, so the source has to still be part of
+	// it - otherwise a selection change while waiting would redirect the queued command to
+	// whatever is selected now.
+	if( source->getDrawable() == nullptr || !source->getDrawable()->isSelected() )
+	{
+		cancelQueuedQuickCast();
+		return;
+	}
+
+	const SpecialPowerTemplate *spTemplate = command->getSpecialPowerTemplate();
 	if( spTemplate )
 	{
 		SpecialPowerModuleInterface *mod = source->getSpecialPowerModule( spTemplate );
@@ -1667,13 +1688,14 @@ void InGameUI::updateQueuedQuickCast( void )
 
 	// Ready. Fire it the same way a manual cast would, by arming and clicking, so all the
 	// engine's validation and cleanup applies.
-	const CommandButton *command = m_queuedCastCommand;
-	ICoord2D screenPos = m_queuedCastScreenPos;
-
-	// aim at the remembered world position, so a scrolled camera does not move the target
-	ICoord2D reprojected;
-	if( TheTacticalView->worldToScreen( &m_queuedCastWorldPos, &reprojected ) )
-		screenPos = reprojected;
+	//
+	// The click has to land on the remembered world position. If the camera has scrolled it
+	// out of the frustum the projection fails, and reusing the originally captured pixel
+	// would resolve against the current camera and fire at different terrain - so hold the
+	// cast until the spot is back on screen, or let it expire.
+	ICoord2D screenPos;
+	if( !TheTacticalView->worldToScreen( &m_queuedCastWorldPos, &screenPos ) )
+		return;
 
 	cancelQueuedQuickCast();
 
@@ -3009,7 +3031,9 @@ void InGameUI::createCommandHint( const GameMessage *msg )
   {
     if ( --m_quickCastHintTimer > 0 )
     {
-      setRadiusCursor( m_quickCastHintCursorType, nullptr, PRIMARY_WEAPON );
+      // recreate with the same inputs it was made with, or a special power hint would lose
+      // its template and a non primary weapon hint its radius
+      setRadiusCursor( m_quickCastHintCursorType, m_quickCastHintTemplate, m_quickCastHintWeaponSlot );
       return;
     }
   }
