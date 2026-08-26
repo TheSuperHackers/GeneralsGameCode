@@ -1057,6 +1057,15 @@ InGameUI::InGameUI()
 	m_selectCount = 0;
 	m_frameSelectionChanged = 0;
   m_duringDoubleClickAttackMoveGuardHintTimer = 0;
+	// TheSuperHackers @feature quick cast indicator starts idle
+	m_quickCastHintTimer = 0;
+	m_quickCastHintPosition.zero();
+	m_quickCastHintCursorType = RADIUSCURSOR_NONE;
+	m_queuedCastCommand = nullptr;
+	m_queuedCastScreenPos.x = m_queuedCastScreenPos.y = 0;
+	m_queuedCastWorldPos.zero();
+	m_queuedCastSourceID = INVALID_ID;
+	m_queuedCastExpiryFrame = 0;
   m_duringDoubleClickAttackMoveGuardHintStashedPosition.zero();
 	m_maxSelectCount = -1;
 	m_isScrolling = FALSE;
@@ -1513,7 +1522,20 @@ void InGameUI::handleRadiusCursor()
 {
 	if (!m_curRadiusCursor.isEmpty())
 	{
-    if ( TheGlobalData->m_doubleClickAttackMove && m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
+    // TheSuperHackers @feature While a cast is queued waiting on its cooldown, pin the decal
+    // to the spot it will land on, so the player can see what is pending.
+    if ( m_queuedCastCommand != nullptr )
+    {
+      m_curRadiusCursor.setOpacity( 0.5f );
+      m_curRadiusCursor.setPosition( m_queuedCastWorldPos );
+    }
+    // TheSuperHackers @feature Quick cast indicator fades out where the command landed.
+    else if ( m_quickCastHintTimer > 0 )
+    {
+      m_curRadiusCursor.setOpacity( m_quickCastHintTimer * 0.1f );
+      m_curRadiusCursor.setPosition( m_quickCastHintPosition );
+    }
+    else if ( TheGlobalData->m_doubleClickAttackMove && m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
     {
       m_curRadiusCursor.setOpacity( m_duringDoubleClickAttackMoveGuardHintTimer * 0.1f );
   		m_curRadiusCursor.setPosition( m_duringDoubleClickAttackMoveGuardHintStashedPosition );	//world space position of center of decal
@@ -1551,6 +1573,121 @@ void InGameUI::handleRadiusCursor()
   }
 }
 
+
+// TheSuperHackers @feature Quick cast indicator.
+/** Flash the command's own targeting decal where the quick cast landed, so the player gets
+	* the same visual confirmation they would have had from aiming manually. */
+void InGameUI::triggerQuickCastHint( const CommandButton *command, const ICoord2D &screenPos )
+{
+	if( command == nullptr )
+		return;
+
+	m_quickCastHintTimer = 11;
+	m_quickCastHintCursorType = command->getRadiusCursorType();
+
+	if( !rts::localPlayerHasRadar() || (TheRadar->screenPixelToWorld( &screenPos, &m_quickCastHintPosition ) == FALSE) )
+		TheTacticalView->screenToTerrain( &screenPos, &m_quickCastHintPosition );
+
+	setRadiusCursor( m_quickCastHintCursorType, command->getSpecialPowerTemplate(),
+		command->getWeaponSlot() );
+}
+
+// TheSuperHackers @feature Queued quick cast.
+/** Remember a cast the player asked for while the ability was still recharging. */
+void InGameUI::queueQuickCast( const CommandButton *command, const ICoord2D &screenPos )
+{
+	if( command == nullptr )
+		return;
+
+	m_queuedCastCommand = command;
+	m_queuedCastScreenPos = screenPos;
+	m_queuedCastSourceID = INVALID_ID;
+
+	// Remember where in the world it was aimed, so the cast still lands on the chosen spot
+	// even if the camera has scrolled by the time it fires.
+	if( !rts::localPlayerHasRadar() || (TheRadar->screenPixelToWorld( &screenPos, &m_queuedCastWorldPos ) == FALSE) )
+		TheTacticalView->screenToTerrain( &screenPos, &m_queuedCastWorldPos );
+
+	Drawable *draw = getFirstSelectedDrawable();
+	if( draw && draw->getObject() )
+		m_queuedCastSourceID = draw->getObject()->getID();
+
+	// Give up eventually rather than firing minutes later out of nowhere.
+	m_queuedCastExpiryFrame = TheGameLogic->getFrame() + (LOGICFRAMES_PER_SECOND * 60);
+}
+
+//-------------------------------------------------------------------------------------------------
+void InGameUI::cancelQueuedQuickCast( void )
+{
+	if( m_queuedCastCommand == nullptr )
+		return;
+
+	m_queuedCastCommand = nullptr;
+	m_queuedCastSourceID = INVALID_ID;
+	m_queuedCastExpiryFrame = 0;
+	setRadiusCursorNone();
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Fire a queued cast once the ability is ready. Readiness is asked of the logic side every
+	* frame rather than predicted, so this never fires earlier than a manual cast could. */
+void InGameUI::updateQueuedQuickCast( void )
+{
+	if( m_queuedCastCommand == nullptr )
+		return;
+
+	if( TheGameLogic == nullptr || TheGameLogic->getFrame() > m_queuedCastExpiryFrame )
+	{
+		cancelQueuedQuickCast();
+		return;
+	}
+
+	// the caster has to still exist, still be ours, and still be selected
+	Object *source = TheGameLogic->findObjectByID( m_queuedCastSourceID );
+	if( source == nullptr || source->isEffectivelyDead() ||
+			source->getControllingPlayer() != ThePlayerList->getLocalPlayer() )
+	{
+		cancelQueuedQuickCast();
+		return;
+	}
+
+	const SpecialPowerTemplate *spTemplate = m_queuedCastCommand->getSpecialPowerTemplate();
+	if( spTemplate )
+	{
+		SpecialPowerModuleInterface *mod = source->getSpecialPowerModule( spTemplate );
+		if( mod == nullptr )
+		{
+			cancelQueuedQuickCast();
+			return;
+		}
+
+		if( !mod->isReady() )
+			return;	// still charging, check again next frame
+	}
+
+	// Ready. Fire it the same way a manual cast would, by arming and clicking, so all the
+	// engine's validation and cleanup applies.
+	const CommandButton *command = m_queuedCastCommand;
+	ICoord2D screenPos = m_queuedCastScreenPos;
+
+	// aim at the remembered world position, so a scrolled camera does not move the target
+	ICoord2D reprojected;
+	if( TheTacticalView->worldToScreen( &m_queuedCastWorldPos, &reprojected ) )
+		screenPos = reprojected;
+
+	cancelQueuedQuickCast();
+
+	setGUICommand( command );
+
+	IRegion2D clickRegion;
+	clickRegion.lo = screenPos;
+	clickRegion.hi = screenPos;
+
+	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_MOUSE_LEFT_CLICK );
+	msg->appendPixelRegionArgument( clickRegion );
+
+	triggerQuickCastHint( command, screenPos );
+}
 
 void InGameUI::triggerDoubleClickAttackMoveGuardHint()
 {
@@ -1845,6 +1982,9 @@ void InGameUI::update()
 {
 	//USE_PERF_TIMER(InGameUI_update)
 	Int i;
+
+	// TheSuperHackers @feature Fire a queued quick cast as soon as its ability comes up.
+	updateQueuedQuickCast();
 
 	/// @todo make sure this code gets called even when the UI is not being drawn
 	if ( m_videoStream && m_videoBuffer )
@@ -2862,6 +3002,18 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 
 
 	setRadiusCursorNone();
+
+  // TheSuperHackers @feature Hold the quick cast decal for a few frames after firing, then
+  // let the normal cursor logic take back over.
+  if ( m_quickCastHintTimer > 0 )
+  {
+    if ( --m_quickCastHintTimer > 0 )
+    {
+      setRadiusCursor( m_quickCastHintCursorType, nullptr, PRIMARY_WEAPON );
+      return;
+    }
+  }
+
   if ( TheGlobalData->m_doubleClickAttackMove )
   {
     if ( --m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
