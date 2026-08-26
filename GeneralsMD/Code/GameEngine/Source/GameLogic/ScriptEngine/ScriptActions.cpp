@@ -637,7 +637,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 		PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 		partition.solve();
-		SolutionVec solution = partition.getSolution();
+		const SolutionVec& solution = partition.getSolution();
 		for (size_t i = 0; i < solution.size(); ++i) {
 			Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 			Object *trans = TheGameLogic->findObjectByID(solution[i].second);
@@ -1511,7 +1511,7 @@ void ScriptActions::doLoadAllTransports(const AsciiString& teamName)
 
 	PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 	partition.solve();
-	SolutionVec solution = partition.getSolution();
+	const SolutionVec& solution = partition.getSolution();
 	for (size_t i = 0; i < solution.size(); ++i) {
 		Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 		Object *trans = TheGameLogic->findObjectByID(solution[i].second);
