@@ -67,6 +67,10 @@ include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
 
+if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
+    include(cmake/sdl3.cmake)
+endif()
+
 if (IS_VS6_BUILD)
     # The original max sdk does not compile against a modern compiler.
     # If there is a desire to make this work, then a fixed max sdk needs to be created.

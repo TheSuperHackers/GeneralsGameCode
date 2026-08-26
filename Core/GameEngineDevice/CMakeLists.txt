@@ -197,6 +197,18 @@ set(GAMEENGINEDEVICE_SRC
     Source/Win32Device/GameClient/Win32Mouse.cpp
 )
 
+# Add Core-level SDL3 implementation
+if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
+    list(APPEND GAMEENGINEDEVICE_SRC
+        Include/SDL3Device/Common/SDL3GameEngine.h
+        Include/SDL3Device/GameClient/SDL3Input.h
+        Include/SDL3Device/GameClient/SDL3Cursor.h
+        Source/SDL3Device/Common/SDL3GameEngine.cpp
+        Source/SDL3Device/GameClient/SDL3Input.cpp
+        Source/SDL3Device/GameClient/SDL3Cursor.cpp
+    )
+endif()
+
 # Add C++ 17 FileSystem implementation for non-VS6 builds
 if(NOT IS_VS6_BUILD)
     list(APPEND GAMEENGINEDEVICE_SRC
@@ -232,6 +244,14 @@ target_link_libraries(corei_gameenginedevice_public INTERFACE
     d3d8lib
     milesstub
 )
+
+# Export SDL3 dependencies for modern builds
+if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
+    target_link_libraries(corei_gameenginedevice_public INTERFACE
+        SDL3::SDL3
+        SDL3_image::SDL3_image
+    )
+endif()
 
 if(RTS_BUILD_OPTION_FFMPEG)
     find_package(FFMPEG REQUIRED)

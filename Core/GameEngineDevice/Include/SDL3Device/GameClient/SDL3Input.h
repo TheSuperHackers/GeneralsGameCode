@@ -1,0 +1,188 @@
+/*
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2026 TheSuperHackers
+**
+**	This program is free software: you can redistribute it and/or modify
+**	it under the terms of the GNU General Public License as published by
+**	the Free Software Foundation, either version 3 of the License, or
+**	(at your option) any later version.
+**
+**	This program is distributed in the hope that it will be useful,
+**	but WITHOUT ANY WARRANTY; without even the implied warranty of
+**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**	GNU General Public License for more details.
+**
+**	You should have received a copy of the GNU General Public License
+**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#pragma once
+
+#include "Lib/BaseType.h"
+
+// SYSTEM INCLUDES
+#include <SDL3/SDL.h>
+#include <array>
+#include <functional>
+
+// USER INCLUDES
+#include "GameClient/Mouse.h"
+#include "GameClient/Keyboard.h"
+#include "GameClient/KeyDefs.h"
+
+// FORWARD REFERENCES
+class SDL3InputManager;
+
+extern SDL3InputManager* TheSDL3InputManager;
+
+typedef KeyDefType KeyVal;
+
+class SDL3Mouse : public Mouse
+{
+public:
+	SDL3Mouse(SDL_Window* window);
+	virtual ~SDL3Mouse();
+
+	// SubsystemInterface
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
+	virtual void initCursorResources() override;
+	static void freeCursorResources();
+
+	// Mouse interface
+	virtual void setCursor(MouseCursor cursor) override;
+	virtual void setVisibility(Bool visible) override;
+	virtual void loseFocus() override;
+	virtual void regainFocus() override;
+	virtual void syncPositionToSystemCursor() override;
+
+	// SDL3-specific methods
+	void addSDLEvent(SDL_Event* event);
+
+protected:
+	virtual void capture() override;
+	virtual void releaseCapture() override;
+	virtual UnsignedByte getMouseEvent(MouseIO* result, Bool flush) override;
+
+private:
+	// Event translation from SDL_Event (Clean Slate implementation)
+	void translateEvent(const SDL_Event& event, MouseIO* result);
+
+	// Scale raw SDL window coordinates to game internal resolution
+	void scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& scaledX, int& scaledY);
+
+	SDL_Window* m_Window;
+	Bool m_IsCaptured;
+	Bool m_IsVisible;
+
+	Int m_directionFrame;
+
+	float m_accumulatedDeltaX;
+	float m_accumulatedDeltaY;
+
+	SDL_Cursor* m_activeSDLCursor;
+};
+
+class SDL3Keyboard : public Keyboard
+{
+public:
+	SDL3Keyboard();
+	virtual ~SDL3Keyboard();
+
+	// SubsystemInterface
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
+
+	// Keyboard interface
+	virtual Bool getCapsState() override;
+
+	// SDL3-specific methods
+	void addSDLEvent(SDL_Event* event);
+
+protected:
+	virtual void getKey(KeyboardIO* key) override;
+	virtual KeyVal translateScanCodeToKeyVal(SDL_Scancode scan);
+
+private:
+	void translateKeyEvent(const SDL_KeyboardEvent& event);
+};
+
+class SDL3InputManager
+{
+public:
+	SDL3InputManager(SDL_Window* window);
+	virtual ~SDL3InputManager();
+
+	void update();
+
+	// Buffer access
+	Bool getNextMouseEvent(SDL_Event& outEvent);
+	Bool getNextKeyboardEvent(SDL_Event& outEvent);
+
+	void addMouseSDLEvent(const SDL_Event& event);
+	void addKeyboardSDLEvent(const SDL_Event& event);
+
+	Bool isQuitting() const { return m_isQuitting; }
+
+	// Constants
+	static constexpr float AXIS_MAX = 32767.0f;
+	static constexpr int TRIGGER_THRESHOLD = 16384;
+	static constexpr float DEFAULT_DEADZONE = 0.15f;
+	static constexpr float DESIGNED_WINDOW_HEIGHT = 1440.0f;
+	static constexpr float DEFAULT_CURSOR_SPEED = 1226.6667f;
+	static constexpr float DEFAULT_CURSOR_ACCELERATION = 7200.0f;
+	static constexpr float DEFAULT_CURSOR_DECELERATION = 14400.0f;
+
+private:
+	struct GamepadState
+	{
+		bool buttonState[SDL_GAMEPAD_BUTTON_COUNT];
+		bool stickLeft, stickRight, stickUp, stickDown;
+		bool ltDown, rtDown;
+
+		GamepadState()
+		{
+			memset(buttonState, 0, sizeof(buttonState));
+			stickLeft = stickRight = stickUp = stickDown = false;
+			ltDown = rtDown = false;
+		}
+	};
+
+private:
+	// Gamepad management
+	void openFirstGamepad();
+	void closeGamepad();
+
+	SDL_Window* m_window;
+	SDL_Gamepad* m_gamepad;
+	void processGamepadInput();
+	void handleGamepadButton(SDL_GamepadButton button, bool& currentState, bool isDown, std::function<void(bool)> action);
+
+	// Virtual event injection
+	void virtualPulseKey(SDL_Scancode scancode, bool down);
+	void virtualPulseMouse(Uint8 button, bool down);
+
+	// Event buffers
+	static const UnsignedInt MAX_MOUSE_EVENTS = 256;
+	static const UnsignedInt MAX_KEY_EVENTS = 256;
+
+	SDL_Event m_mouseEvents[MAX_MOUSE_EVENTS];
+	UnsignedInt m_mouseNextFree;
+	UnsignedInt m_mouseNextGet;
+
+	SDL_Event m_keyEvents[MAX_KEY_EVENTS];
+	UnsignedInt m_keyNextFree;
+	UnsignedInt m_keyNextGet;
+
+	// Gamepad state
+	GamepadState m_state;
+
+	Uint64 m_lastUpdateTime;
+	float m_cursorSpeed;
+	float m_edgeAccelTimer;
+	float m_cursorRemainderX;
+	float m_cursorRemainderY;
+	Bool m_isQuitting;
+};

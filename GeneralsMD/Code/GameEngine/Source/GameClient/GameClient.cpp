@@ -402,7 +402,7 @@ void GameClient::init()
 		// finish initializing the mouse.
 		TheMouse->init();
 		TheMouse->initCapture();
-		TheMouse->setPosition( 0, 0 );
+		TheMouse->syncPositionToSystemCursor();
 		TheMouse->setMouseLimits();
 		TheMouse->setName("TheMouse");
 	}

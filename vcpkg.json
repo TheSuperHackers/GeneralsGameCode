@@ -1,9 +1,21 @@
 {
-    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-    "builtin-baseline": "b02e341c927f16d991edbd915d8ea43eac52096c",
-    "dependencies": [
-      "zlib",
-      "ffmpeg",
-      "stb"
-    ]
-  }
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "builtin-baseline": "b02e341c927f16d991edbd915d8ea43eac52096c",
+  "dependencies": [
+    "ffmpeg",
+    "sdl3",
+    "sdl3-image",
+    "stb",
+    "zlib"
+  ],
+  "overrides": [
+    {
+      "name": "sdl3",
+      "version": "3.4.10"
+    },
+    {
+      "name": "sdl3-image",
+      "version": "3.4.4"
+    }
+  ]
+}
