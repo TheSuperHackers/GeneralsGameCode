@@ -1135,6 +1135,14 @@ void W3DTerrainVisual::replaceSkyboxTextures(const AsciiString *oldTexName[5], c
 }
 
 // ------------------------------------------------------------------------------------------------
+/** Terrain visual state is only partially initialized in headless mode, so it is excluded from save game data */
+// ------------------------------------------------------------------------------------------------
+Bool W3DTerrainVisual::isXferEnabled() const
+{
+	return TheGlobalData->m_headless == FALSE;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::crc( Xfer *xfer )

@@ -862,6 +862,8 @@ public:
 
 	virtual Bool isDummy() const override { return true; }
 
+	virtual Bool isXferEnabled() const override { return FALSE; }
+
 	virtual Int getOnScreenParticleCount() override { return 0; }
 	virtual void doParticles(RenderInfoClass &rinfo) override {}
 	virtual void queueParticleRender() override {}

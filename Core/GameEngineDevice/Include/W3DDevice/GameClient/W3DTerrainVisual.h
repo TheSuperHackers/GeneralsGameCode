@@ -147,6 +147,7 @@ public:
 protected:
 
 	// snapshot methods
+	virtual Bool isXferEnabled() const override;
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;

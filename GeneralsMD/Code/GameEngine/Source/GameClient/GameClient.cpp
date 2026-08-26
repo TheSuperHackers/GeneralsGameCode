@@ -536,6 +536,11 @@ void GameClient::update()
 
 			TheShell->showShellMap(TRUE);
 			TheShell->showShell();
+
+			if (TheGlobalData->m_loadSaveGame.isNotEmpty())
+			{
+				TheGameState->loadQueuedSaveGame();
+			}
 		}
 	}
 

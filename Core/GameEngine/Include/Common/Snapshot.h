@@ -51,6 +51,10 @@ public:
 	Snapshot();
 	~Snapshot();
 
+	// Snapshots can disable xfer to be excluded from save game data,
+	// for example dummy implementations in headless mode.
+	virtual Bool isXferEnabled() const { return TRUE; }
+
 protected:
 
 	/// run the "light" crc check on this data structure
