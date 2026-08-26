@@ -134,21 +134,21 @@ class PeerThreadClass;
 class GameSpyPeerMessageQueue : public GameSpyPeerMessageQueueInterface
 {
 public:
-	virtual ~GameSpyPeerMessageQueue() override;
+	~GameSpyPeerMessageQueue() override;
 	GameSpyPeerMessageQueue();
-	virtual void startThread() override;
-	virtual void endThread() override;
-	virtual Bool isThreadRunning() override;
-	virtual Bool isConnected() override;
-	virtual Bool isConnecting() override;
+	void startThread() override;
+	void endThread() override;
+	Bool isThreadRunning() override;
+	Bool isConnected() override;
+	Bool isConnecting() override;
 
-	virtual void addRequest( const PeerRequest& req ) override;
-	virtual Bool getRequest( PeerRequest& req ) override;
+	void addRequest( const PeerRequest& req ) override;
+	Bool getRequest( PeerRequest& req ) override;
 
-	virtual void addResponse( const PeerResponse& resp ) override;
-	virtual Bool getResponse( PeerResponse& resp ) override;
+	void addResponse( const PeerResponse& resp ) override;
+	Bool getResponse( PeerResponse& resp ) override;
 
-	virtual SerialAuthResult getSerialAuthResult() override { return m_serialAuth; }
+	SerialAuthResult getSerialAuthResult() override { return m_serialAuth; }
 	void setSerialAuthResult( SerialAuthResult result ) { m_serialAuth = result; }
 
 	PeerThreadClass* getThread();
@@ -206,7 +206,7 @@ public:
 		}
 	}
 
-	virtual void Thread_Function() override;
+	void Thread_Function() override;
 
 	void markAsDisconnected() { m_isConnecting = m_isConnected = false; }
 

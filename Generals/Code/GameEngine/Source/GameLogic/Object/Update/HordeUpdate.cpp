@@ -78,7 +78,7 @@ public:
 	virtual const char* debugGetName() override { return "PartitionFilterHordeMember"; }
 #endif
 
-	virtual Bool allow(Object *objOther) override
+	Bool allow(Object *objOther) override
 	{
 #if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @bugfix Stubbjax 07/08/2026 Prevent dead units from being considered for horde membership.

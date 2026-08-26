@@ -109,7 +109,7 @@ class WBGameFileClass : public GameFileClass
 
 public:
 	WBGameFileClass(char const *filename):GameFileClass(filename){};
-	virtual char const * Set_Name(char const *filename) override;
+	char const * Set_Name(char const *filename) override;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ char const * WBGameFileClass::Set_Name( char const *filename )
 // wb only data.  jba.
 
 class	WB_W3DFileSystem : public W3DFileSystem {
-	virtual FileClass * Get_File( char const *filename ) override;
+	FileClass * Get_File( char const *filename ) override;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -568,7 +568,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAboutDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation

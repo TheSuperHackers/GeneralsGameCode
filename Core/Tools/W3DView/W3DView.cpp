@@ -275,13 +275,13 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAboutDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	//{{AFX_MSG(CAboutDlg)
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -47,24 +47,24 @@ class GameResultsThreadClass;
 class GameResultsQueue : public GameResultsInterface
 {
 public:
-	virtual ~GameResultsQueue() override;
+	~GameResultsQueue() override;
 	GameResultsQueue();
 
-	virtual void init() override {}
-	virtual void reset() override {}
-	virtual void update() override {}
+	void init() override {}
+	void reset() override {}
+	void update() override {}
 
-	virtual void startThreads() override;
-	virtual void endThreads() override;
-	virtual Bool areThreadsRunning() override;
+	void startThreads() override;
+	void endThreads() override;
+	Bool areThreadsRunning() override;
 
-	virtual void addRequest( const GameResultsRequest& req ) override;
-	virtual Bool getRequest( GameResultsRequest& resp ) override;
+	void addRequest( const GameResultsRequest& req ) override;
+	Bool getRequest( GameResultsRequest& resp ) override;
 
-	virtual void addResponse( const GameResultsResponse& resp ) override;
-	virtual Bool getResponse( GameResultsResponse& resp ) override;
+	void addResponse( const GameResultsResponse& resp ) override;
+	Bool getResponse( GameResultsResponse& resp ) override;
 
-	virtual Bool areGameResultsBeingSent() override;
+	Bool areGameResultsBeingSent() override;
 
 private:
 	MutexClass m_requestMutex;
@@ -92,7 +92,7 @@ class GameResultsThreadClass : public ThreadClass
 public:
 	GameResultsThreadClass() : ThreadClass() {}
 
-	virtual void Thread_Function() override;
+	void Thread_Function() override;
 
 private:
 	Int sendGameResults( UnsignedInt IP, UnsignedShort port, const std::string& results );

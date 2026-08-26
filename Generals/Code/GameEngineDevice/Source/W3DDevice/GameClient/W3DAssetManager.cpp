@@ -99,10 +99,10 @@ class W3DPrototypeClass : public MemoryPoolObject, public PrototypeClass
 public:
 	W3DPrototypeClass(RenderObjClass * proto, const AsciiString& name);
 
-	virtual const char*					Get_Name() const override { return Name.str(); }
-	virtual int									Get_Class_ID() const override { return Proto->Class_ID(); }
-	virtual RenderObjClass *		Create() override;
-	virtual void								DeleteSelf() override							{	deleteInstance(this); }
+	const char*					Get_Name() const override { return Name.str(); }
+	int									Get_Class_ID() const override { return Proto->Class_ID(); }
+	RenderObjClass *		Create() override;
+	void								DeleteSelf() override							{	deleteInstance(this); }
 
 protected:
 	//virtual ~W3DPrototypeClass();

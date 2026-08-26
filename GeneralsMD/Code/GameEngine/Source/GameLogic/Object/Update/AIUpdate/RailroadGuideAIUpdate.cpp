@@ -906,7 +906,7 @@ public:
 	virtual const char* debugGetName() override { return "PartitionFilterIsValidCarriage"; }
 #endif
 
-	virtual Bool allow(Object *objOther) override
+	Bool allow(Object *objOther) override
 	{
 
 		// must exist!

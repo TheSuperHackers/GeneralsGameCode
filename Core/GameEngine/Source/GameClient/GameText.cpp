@@ -138,23 +138,23 @@ class GameTextManager : public GameTextInterface
 	public:
 
 		GameTextManager();
-		virtual ~GameTextManager() override;
+		~GameTextManager() override;
 
-		virtual void					init() override;						///< Initializes the text system
+		void					init() override;						///< Initializes the text system
 		virtual void					deinit();					///< Shuts down the text system
-		virtual void					update() override {};			///< update text manager
-		virtual void					reset() override;					///< Resets the text system
+		void					update() override {};			///< update text manager
+		void					reset() override;					///< Resets the text system
 
-		virtual UnicodeString fetch( const Char *label, Bool *exists = nullptr ) override;		///< Returns the associated labeled unicode text
-		virtual UnicodeString fetch( AsciiString label, Bool *exists = nullptr ) override;		///< Returns the associated labeled unicode text
-		virtual UnicodeString fetchFormat( const Char *label, ... ) override;
-		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText ) override;
-		virtual UnicodeString fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... ) override;
-		virtual UnicodeString fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args ) override;
+		UnicodeString fetch( const Char *label, Bool *exists = nullptr ) override;		///< Returns the associated labeled unicode text
+		UnicodeString fetch( AsciiString label, Bool *exists = nullptr ) override;		///< Returns the associated labeled unicode text
+		UnicodeString fetchFormat( const Char *label, ... ) override;
+		UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText ) override;
+		UnicodeString fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... ) override;
+		UnicodeString fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args ) override;
 
-		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label) override;
+		AsciiStringVec& getStringsWithLabelPrefix(AsciiString label) override;
 
-		virtual void					initMapStringFile( const AsciiString& filename ) override;
+		void					initMapStringFile( const AsciiString& filename ) override;
 
 	protected:
 

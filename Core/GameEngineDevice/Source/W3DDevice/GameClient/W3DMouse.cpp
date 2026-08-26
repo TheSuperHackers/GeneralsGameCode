@@ -63,7 +63,7 @@ static class MouseThreadClass : public ThreadClass
 public:
 	MouseThreadClass() : ThreadClass() {}
 
-	virtual void Thread_Function() override;
+	void Thread_Function() override;
 
 } thread;
 

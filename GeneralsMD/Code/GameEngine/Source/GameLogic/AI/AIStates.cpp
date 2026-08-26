@@ -1957,9 +1957,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
-	virtual void loadPostProcess() override;
+	void crc( Xfer *xfer ) override;
+	void xfer( Xfer *xfer ) override;
+	void loadPostProcess() override;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -5754,9 +5754,9 @@ public:
 	AIAttackThenIdleStateMachine( Object *owner, AsciiString name );
 protected:
 	// snapshot interface .
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
-	virtual void loadPostProcess() override;
+	void crc( Xfer *xfer ) override;
+	void xfer( Xfer *xfer ) override;
+	void loadPostProcess() override;
 };
 
 // ------------------------------------------------------------------------------------------------
