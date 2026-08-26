@@ -759,8 +759,12 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 		for (DrawableListIt it = drawablesThatWillSelect.begin();
 					it != drawablesThatWillSelect.end(); ++it)
 		{
+			// Only the player's own units count: a foreign drawable in the box is rejected by the
+			// ownership filtering downstream, so letting it satisfy this test would suppress the
+			// builders-only pass and leave the drag selecting nothing.
 			const Drawable *d = *it;
-			if (d && !d->isKindOf(KINDOF_STRUCTURE))
+			if (d && !d->isKindOf(KINDOF_STRUCTURE) &&
+					d->getObject() && d->getObject()->isLocallyControlled())
 			{
 				anyNonStructure = TRUE;
 				break;

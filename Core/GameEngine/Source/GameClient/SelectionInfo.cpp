@@ -29,7 +29,7 @@
 
 #include "Common/ActionManager.h"
 // TheSuperHackers @feature for the EasyMilitaryDrag option
-#include "Common/OptionPreferences.h"
+#include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -77,8 +77,9 @@ Bool isEasyMilitaryDragInvertedActive( Bool selectionIsPoint )
 	if (!TheKeyboard || !TheKeyboard->isCtrl())
 		return FALSE;
 
-	OptionPreferences optionPref;
-	return optionPref.getEasyMilitaryDragEnabled();
+	// Read from the cached GlobalData copy: constructing OptionPreferences reparses
+	// Options.ini from disk, far too heavy for the input path.
+	return TheGlobalData && TheGlobalData->m_easyMilitaryDrag;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -97,15 +98,12 @@ PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr), isPointS
 	easyMilitaryDrag = FALSE;
 	easyMilitaryDragInverted = FALSE;
 	easyMilitaryDragDisabled = FALSE;
+	if (TheGlobalData && TheGlobalData->m_easyMilitaryDrag)
 	{
-		OptionPreferences optionPref;
-		if (optionPref.getEasyMilitaryDragEnabled())
-		{
-			if (TheKeyboard && TheKeyboard->isCtrl())
-				easyMilitaryDragInverted = TRUE;
-			else
-				easyMilitaryDrag = TRUE;
-		}
+		if (TheKeyboard && TheKeyboard->isCtrl())
+			easyMilitaryDragInverted = TRUE;
+		else
+			easyMilitaryDrag = TRUE;
 	}
 
 	// isPointSelection is set by the caller after construction, so this uses the flag resolved
