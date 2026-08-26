@@ -510,14 +510,17 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_CANCEL_UNIT_CREATE );
 			msg->appendIntegerArgument( productionIDToCancel );
 
-			// TheSuperHackers @feature Shift cancels a batch. Walk backwards from the clicked
-			// slot so we take the most recently queued copies first, leaving the item that is
-			// actually being built alone for as long as possible. Only cancels entries of the
-			// same type, so a shift click does not silently eat unrelated queued units.
+			// TheSuperHackers @feature Shift cancels a batch: the clicked entry plus the newest
+			// queued units. The queue is displayed oldest to newest, so the extra cancels walk
+			// from the tail towards the clicked slot - taking the most recently queued entries
+			// first and leaving whatever is closest to completion alone for as long as
+			// possible. Deliberately not filtered by template: the point of the batch is to
+			// clear what was just queued, whatever it was. Only unit entries are taken, so an
+			// upgrade sitting in the queue is never swept up.
 			if( TheKeyboard && TheKeyboard->isShift() )
 			{
 				Int cancelled = 1;
-				for( Int j = i + 1; j < MAX_BUILD_QUEUE_BUTTONS && cancelled < SHIFT_CLICK_BATCH_SIZE; ++j )
+				for( Int j = MAX_BUILD_QUEUE_BUTTONS - 1; j > i && cancelled < SHIFT_CLICK_BATCH_SIZE; --j )
 				{
 					if( m_queueData[ j ].control == nullptr )
 						continue;
