@@ -120,7 +120,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 */
 void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, AnisotropicFilterMode anisotropy_level)
 {
-	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
+	const D3DCAPS9& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
 	// TheSuperHackers @info Init zero stage filter defaults, point filtering is the lowest type for non mip filtering
 	_MinTextureFilters[0][FILTER_TYPE_NONE]=D3DTEXF_POINT;

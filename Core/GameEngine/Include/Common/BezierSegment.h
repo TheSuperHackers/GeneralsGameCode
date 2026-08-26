@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include <d3dx8math.h>
+#include <d3dx9math.h>
 #include "Common/STLTypedefs.h"
 
 #define USUAL_TOLERANCE 1.0f

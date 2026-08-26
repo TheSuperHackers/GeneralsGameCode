@@ -1163,7 +1163,7 @@ bool TexProjectClass::Compute_Texture
 		WW3D::End_Render(false);
 		WW3D::Activate_Snapshot(snapshot);	// End_Render() ends the shapsnot, so restore the state
 
-		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
+		DX8Wrapper::Set_Render_Target((IDirect3DSurface9 *)nullptr);
 
 	}
 

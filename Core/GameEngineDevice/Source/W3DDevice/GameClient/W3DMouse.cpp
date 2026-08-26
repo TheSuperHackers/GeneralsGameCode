@@ -108,7 +108,7 @@ W3DMouse::W3DMouse()
 
 W3DMouse::~W3DMouse()
 {
-	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	if (m_pDev)
 	{
@@ -389,7 +389,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	{
 		SetCursor(nullptr);	//Kill Windows Cursor
 
-		LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+		LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 		Bool doImageChange=FALSE;
 
 		if (m_pDev != nullptr)
@@ -485,7 +485,7 @@ void W3DMouse::draw()
 	{
 		//called from update thread or rendering loop.  Tells D3D where
 		//to draw the mouse cursor.
-		LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+		LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 		if (m_pDev)
 		{	m_pDev->ShowCursor(TRUE);	//Enable DX8 cursor
 

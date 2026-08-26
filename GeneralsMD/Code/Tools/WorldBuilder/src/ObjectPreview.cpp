@@ -78,14 +78,14 @@ END_MESSAGE_MAP()
 #define PREVIEW_WIDTH 128
 #define PREVIEW_HEIGHT 128
 
-static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
+static UnsignedByte * saveSurface(IDirect3DSurface9 *surface)
 {
 	D3DSURFACE_DESC desc;
-	IDirect3DSurface8 *tempSurface;
+	IDirect3DSurface9 *tempSurface;
 
 	surface->GetDesc(&desc);
 
-	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	HRESULT hr=m_pDev->CreateImageSurface(  desc.Width,desc.Height,desc.Format, &tempSurface);
 
@@ -248,7 +248,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			WW3D::End_Render(false);
 
 			// Change the rendertarget back to the main backbuffer
-			DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
+			DX8Wrapper::Set_Render_Target((IDirect3DSurface9 *)nullptr);
 
 			SurfaceClass *surface = objectTexture->Get_Surface_Level();
 			UnsignedByte *data = saveSurface(surface->Peek_D3D_Surface());

@@ -44,8 +44,8 @@
 #include <assert.h>
 
 #include "WWLib/win.h"
-#include <d3d8types.h>
-#include <d3dx8math.h>
+#include <d3d9types.h>
+#include <d3dx9math.h>
 
 /***********************************************************************************************
  * Matrix4x4::Multiply -- Multiply two Matrix4x4's together                                        *

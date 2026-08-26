@@ -78,7 +78,7 @@ Bool W3DSnowManager::ReAcquireResources()
 
 	if (TheWeatherSetting->m_usePointSprites && DX8Wrapper::Get_Current_Caps()->Support_PointSprites())
 	{
-		LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+		LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
 		DEBUG_ASSERTCRASH(m_pDev, ("Trying to ReAcquireResources on W3DSnowManager without device"));
 
@@ -91,7 +91,8 @@ Bool W3DSnowManager::ReAcquireResources()
 				D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC|D3DUSAGE_POINTS,
 				D3DFVF_POINTVERTEX,
 				D3DPOOL_DEFAULT,
-				&m_VertexBufferD3D
+				&m_VertexBufferD3D,
+				nullptr
 			)))
 				return FALSE;
 		}
@@ -268,7 +269,7 @@ void W3DSnowManager::renderSubBox(RenderInfoClass &rinfo, Int originX, Int origi
 		POINTVERTEX* verts;
 
 		if(m_VertexBufferD3D->Lock(m_dwBase * sizeof(POINTVERTEX), batchSize * sizeof(POINTVERTEX),
-			(unsigned char **) &verts, m_dwBase ? D3DLOCK_NOOVERWRITE : D3DLOCK_DISCARD) != D3D_OK )
+			(void**)&verts, m_dwBase ? D3DLOCK_NOOVERWRITE : D3DLOCK_DISCARD) != D3D_OK )
 			return;	//couldn't lock buffer.
 
 		Int numberInBatch=0;
@@ -429,8 +430,8 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
     DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_B,  FtoDW(0.00f) );
     DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_C,  FtoDW(1.00f) );
 
-	DX8Wrapper::_Get_D3D_Device8()->SetStreamSource( 0, m_VertexBufferD3D, sizeof(POINTVERTEX) );
-    DX8Wrapper::_Get_D3D_Device8()->SetVertexShader( D3DFVF_POINTVERTEX );
+	DX8Wrapper::_Get_D3D_Device8()->SetStreamSource(0, m_VertexBufferD3D, 0, sizeof(POINTVERTEX));
+	DX8Wrapper::_Get_D3D_Device8()->SetFVF(D3DFVF_POINTVERTEX);
 	m_dwBase = SNOW_BUFFER_SIZE;	//start with a new vertex buffer each frame.
 
 	m_leafDim = 45;	//cull boxes that are 20x20 emitters in size. Making them much smaller will result in too many draw calls.

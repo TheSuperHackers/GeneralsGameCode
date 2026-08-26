@@ -47,7 +47,9 @@ target_include_directories(z_guiedit PRIVATE
 
 target_link_libraries(z_guiedit PRIVATE
     comctl32
-    d3d8lib
+    core_debug
+    core_profile
+    d3d9lib
     imm32
     stlport
     vfw32

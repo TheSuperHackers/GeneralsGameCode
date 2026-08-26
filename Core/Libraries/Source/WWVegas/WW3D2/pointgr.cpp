@@ -86,7 +86,7 @@
 #include "rinfo.h"
 #include "camera.h"
 #include "dx8fvf.h"
-#include "d3dx8math.h"
+#include "d3dx9math.h"
 #include "sortingrenderer.h"
 
 // Upgraded to DX8 2/2/01 HY

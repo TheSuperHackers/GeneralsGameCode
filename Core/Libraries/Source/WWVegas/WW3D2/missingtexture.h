@@ -20,8 +20,8 @@
 
 #include "WWLib/always.h"
 
-struct IDirect3DTexture8;
-struct IDirect3DSurface8;
+struct IDirect3DTexture9;
+struct IDirect3DSurface9;
 
 class MissingTexture
 {
@@ -29,6 +29,6 @@ public:
 	static void _Init();
 	static void _Deinit();
 
-	static IDirect3DTexture8* _Get_Missing_Texture();		// Return a reference to missing texture
-	static IDirect3DSurface8* _Create_Missing_Surface();	// Create new surface which contain missing texture image
+	static IDirect3DTexture9* _Get_Missing_Texture();		// Return a reference to missing texture
+	static IDirect3DSurface9* _Create_Missing_Surface();	// Create new surface which contain missing texture image
 };

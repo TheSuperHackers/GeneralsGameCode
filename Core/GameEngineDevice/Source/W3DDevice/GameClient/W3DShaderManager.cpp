@@ -70,8 +70,9 @@
 #include "GameLogic/GameLogic.h"
 #include "Common/GlobalData.h"
 #include "Common/GameLOD.h"
-#include "d3dx8tex.h"
+#include "d3dx9tex.h"
 #include "WW3D2/dx8caps.h"
+#include <cstdint>
 
 
 // Turn this on to turn off pixel shaders. jba[4/3/2003]
@@ -109,10 +110,56 @@ GraphicsVenderID W3DShaderManager::m_currentVendor;
 __int64 W3DShaderManager::m_driverVersion;
 
 Bool W3DShaderManager::m_renderingToTexture = false;
-IDirect3DSurface8 *W3DShaderManager::m_oldRenderSurface=nullptr;	///<previous render target
-IDirect3DTexture8 *W3DShaderManager::m_renderTexture=nullptr;		///<texture into which rendering will be redirected.
-IDirect3DSurface8 *W3DShaderManager::m_newRenderSurface=nullptr;	///<new render target inside m_renderTexture
-IDirect3DSurface8 *W3DShaderManager::m_oldDepthSurface=nullptr;	///<previous depth buffer surface
+IDirect3DSurface9 *W3DShaderManager::m_oldRenderSurface=nullptr;	///<previous render target
+IDirect3DTexture9 *W3DShaderManager::m_renderTexture=nullptr;		///<texture into which rendering will be redirected.
+IDirect3DSurface9 *W3DShaderManager::m_newRenderSurface=nullptr;	///<new render target inside m_renderTexture
+IDirect3DSurface9 *W3DShaderManager::m_oldDepthSurface=nullptr;	///<previous depth buffer surface
+
+static IDirect3DPixelShader9 *PixelShaderFromHandle(DWORD handle)
+{
+	return reinterpret_cast<IDirect3DPixelShader9 *>(static_cast<uintptr_t>(handle));
+}
+
+static IDirect3DVertexShader9 *VertexShaderFromHandle(DWORD handle)
+{
+	return reinterpret_cast<IDirect3DVertexShader9 *>(static_cast<uintptr_t>(handle));
+}
+
+static HRESULT SetPixelShaderFromHandle(IDirect3DDevice9 *device, DWORD handle)
+{
+	return device->SetPixelShader(handle ? PixelShaderFromHandle(handle) : nullptr);
+}
+
+static void DeletePixelShaderHandle(DWORD &handle)
+{
+	if (!handle) {
+		return;
+	}
+	PixelShaderFromHandle(handle)->Release();
+	handle = 0;
+}
+
+static HRESULT CreateVertexShaderHandle(IDirect3DDevice9 *device, const DWORD *declaration, const DWORD *shader, DWORD *handle, DWORD usage)
+{
+	(void)declaration;
+	(void)usage;
+	IDirect3DVertexShader9 *vertex_shader = nullptr;
+	const HRESULT hr = device->CreateVertexShader(shader, &vertex_shader);
+	if (SUCCEEDED(hr)) {
+		*handle = static_cast<DWORD>(reinterpret_cast<uintptr_t>(vertex_shader));
+	}
+	return hr;
+}
+
+static HRESULT CreatePixelShaderHandle(IDirect3DDevice9 *device, const DWORD *shader, DWORD *handle)
+{
+	IDirect3DPixelShader9 *pixel_shader = nullptr;
+	const HRESULT hr = device->CreatePixelShader(shader, &pixel_shader);
+	if (SUCCEEDED(hr)) {
+		*handle = static_cast<DWORD>(reinterpret_cast<uintptr_t>(pixel_shader));
+	}
+	return hr;
+}
 /*===========================================================================================*/
 /*=========      Screen Shaders	=============================================================*/
 /*===========================================================================================*/
@@ -182,12 +229,12 @@ Bool ScreenDefaultFilter::preRender(Bool &skipRender, CustomScenePassModes &scen
 
 Bool ScreenDefaultFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender)
 {
-	IDirect3DTexture8 * tex =	W3DShaderManager::endRenderToTexture();
+	IDirect3DTexture9 * tex =	W3DShaderManager::endRenderToTexture();
 	DEBUG_ASSERTCRASH(tex, ("Require rendered texture."));
 	if (!tex) return false;
 	if (!set(mode)) return false;
 
-	LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	struct _TRANS_LIT_TEX_VERTEX {
 		D3DXVECTOR4 p;
@@ -222,7 +269,7 @@ Bool ScreenDefaultFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool
 
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
-	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
 
@@ -321,12 +368,12 @@ Bool ScreenBWFilter::preRender(Bool &skipRender, CustomScenePassModes &scenePass
 
 Bool ScreenBWFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender)
 {
-	IDirect3DTexture8 * tex =	W3DShaderManager::endRenderToTexture();
+	IDirect3DTexture9 * tex =	W3DShaderManager::endRenderToTexture();
 	DEBUG_ASSERTCRASH(tex, ("Require rendered texture."));
 	if (!tex) return false;
 	if (!set(mode)) return false;
 
-	LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	struct _TRANS_LIT_TEX_VERTEX {
 		D3DXVECTOR4 p;
@@ -361,7 +408,7 @@ Bool ScreenBWFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doE
 
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
-	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
 
@@ -421,8 +468,8 @@ Int ScreenBWFilter::set(FilterModes mode)
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE,FALSE);
 		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
 
-		hr=DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBWPixelShader);
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(0,   D3DXVECTOR4(0.3f, 0.59f, 0.11f, 1.0f), 1);
+		hr = SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBWPixelShader);
+		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstantF(0, D3DXVECTOR4(0.3f, 0.59f, 0.11f, 1.0f), 1);
 
 		D3DXVECTOR4	color(1.0f,1.0f,1.0f,1.0f);	//multiply color
 
@@ -450,8 +497,8 @@ Int ScreenBWFilter::set(FilterModes mode)
 			color.z = 0.0f;
 		}
 
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(1,   color, 1);
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(2,	D3DXVECTOR4(m_curFadeValue, m_curFadeValue, m_curFadeValue, 1.0f), 1);
+		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstantF(1, color, 1);
+		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstantF(2, D3DXVECTOR4(m_curFadeValue, m_curFadeValue, m_curFadeValue, 1.0f), 1);
 /*		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(2,   D3DXVECTOR4(150.0f/255.0f, 150.0f/255.0f, 150.0f/255.0f, 0.0f), 1);
 		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(3,   D3DXVECTOR4((765.0f/450.0f)/3, (765.0f/450.0f)/3, (765.0f/450.0f)/3, 1.0f), 1);
 		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(4,   D3DXVECTOR4(0.5f, 0.5f, 0.5f, 0), 1);
@@ -467,14 +514,14 @@ Int ScreenBWFilter::set(FilterModes mode)
 void ScreenBWFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
-	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
+	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(nullptr);	//turn off pixel shader
 	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
 Int ScreenBWFilter::shutdown()
 {
 	if (m_dwBWPixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBWPixelShader);
+		DeletePixelShaderHandle(m_dwBWPixelShader);
 
 	m_dwBWPixelShader=0;
 
@@ -510,12 +557,12 @@ Bool ScreenBWFilterDOT3::preRender(Bool &skipRender, CustomScenePassModes &scene
 
 Bool ScreenBWFilterDOT3::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender)
 {
-	IDirect3DTexture8 * tex =	W3DShaderManager::endRenderToTexture();
+	IDirect3DTexture9 * tex =	W3DShaderManager::endRenderToTexture();
 	DEBUG_ASSERTCRASH(tex, ("Require rendered texture."));
 	if (!tex) return false;
 	if (!set(mode)) return false;
 
-	LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	struct _TRANS_LIT_TEX_VERTEX {
 		D3DXVECTOR4 p;
@@ -552,7 +599,7 @@ Bool ScreenBWFilterDOT3::postRender(FilterModes mode, Coord2D &scrollDelta,Bool 
 
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
-	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	//Draw B&W version first
 	if (DX8Wrapper::Get_Current_Caps()->Support_Dot3())
@@ -759,7 +806,7 @@ Bool ScreenCrossFadeFilter::preRender(Bool &skipRender, CustomScenePassModes &sc
 
 Bool ScreenCrossFadeFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender)
 {
-	IDirect3DTexture8 * tex;
+	IDirect3DTexture9 * tex;
 
 	if (m_skipRender)
 	{
@@ -777,7 +824,7 @@ Bool ScreenCrossFadeFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bo
 	if (!tex) return false;
 	if (!set(mode)) return false;
 
-	LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	struct _TRANS_LIT_TEX_VERTEX {
 		D3DXVECTOR4 p;
@@ -837,7 +884,7 @@ Bool ScreenCrossFadeFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bo
 
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
-	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2);
+	pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2);
 
 //		m_pDev->SetTextureStageState(0,D3DTSS_MAGFILTER,D3DTEXF_POINT);
 //		m_pDev->SetTextureStageState(0,D3DTSS_MINFILTER,D3DTEXF_POINT);
@@ -941,12 +988,12 @@ Bool ScreenMotionBlurFilter::preRender(Bool &skipRender, CustomScenePassModes &s
 
 Bool ScreenMotionBlurFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender)
 {
-	IDirect3DTexture8 * tex =	W3DShaderManager::endRenderToTexture();
+	IDirect3DTexture9 * tex =	W3DShaderManager::endRenderToTexture();
 	DEBUG_ASSERTCRASH(tex, ("Require rendered texture."));
 	if (!tex) return false;
 	if (!set(mode)) return false;
 
-	LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	Bool continueEffect = true;
 	struct _TRANS_LIT_TEX_VERTEX {
@@ -992,7 +1039,7 @@ Bool ScreenMotionBlurFilter::postRender(FilterModes mode, Coord2D &scrollDelta,B
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
 	DX8Wrapper::Apply_Render_State_Changes();
-	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	Coord2D center;
 	center.x = 0.5f;
@@ -1930,13 +1977,13 @@ void TerrainShader8Stage::reset()
 Int TerrainShaderPixelShader::shutdown()
 {
 	if (m_dwBasePixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBasePixelShader);
+		DeletePixelShaderHandle(m_dwBasePixelShader);
 
 	if (m_dwBaseNoise1PixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise1PixelShader);
+		DeletePixelShaderHandle(m_dwBaseNoise1PixelShader);
 
 	if (m_dwBaseNoise2PixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
+		DeletePixelShaderHandle(m_dwBaseNoise2PixelShader);
 
 	m_dwBasePixelShader=0;
 	m_dwBaseNoise1PixelShader=0;
@@ -2056,7 +2103,7 @@ Int TerrainShaderPixelShader::set(Int pass)
 			DX8Wrapper::Set_DX8_Texture_Stage_State(3,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 			DX8Wrapper::_Get_D3D_Device8()->SetTexture(2, W3DShaderManager::getShaderTexture(2)->Peek_D3D_Texture());
 			DX8Wrapper::_Get_D3D_Device8()->SetTexture(3, W3DShaderManager::getShaderTexture(3)->Peek_D3D_Texture());
-			DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise2PixelShader);
+			SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBaseNoise2PixelShader);
 
 			DX8Wrapper::Set_DX8_Texture_Stage_State(2, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 			DX8Wrapper::Set_DX8_Texture_Stage_State(2, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
@@ -2076,7 +2123,7 @@ Int TerrainShaderPixelShader::set(Int pass)
 		}
 		else
 		{	//single noise texture shader
-			DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise1PixelShader);
+			SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBaseNoise1PixelShader);
 
 			if (W3DShaderManager::getCurrentShader() == W3DShaderManager::ST_TERRAIN_BASE_NOISE1)
 			{	//cloud map
@@ -2097,7 +2144,7 @@ Int TerrainShaderPixelShader::set(Int pass)
 	}
 	else
 	{	//just base texturing
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBasePixelShader);
+		SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBasePixelShader);
 	}
 
 	return TRUE;
@@ -2108,7 +2155,7 @@ void TerrainShaderPixelShader::reset()
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,nullptr);	//release reference to any texture
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,nullptr);	//release reference to any texture
 
-	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
+	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(nullptr);	//turn off pixel shader
 
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0, nullptr);
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(1, nullptr);
@@ -2232,7 +2279,7 @@ W3DShaderInterface *RoadShaderList[]=
 Int RoadShaderPixelShader::shutdown()
 {
 	if (m_dwBaseNoise2PixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
+		DeletePixelShaderHandle(m_dwBaseNoise2PixelShader);
 
 	m_dwBaseNoise2PixelShader=0;
 
@@ -2320,7 +2367,7 @@ Int RoadShaderPixelShader::set(Int pass)
 	DX8Wrapper::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
 	DX8Wrapper::Set_Texture(2,W3DShaderManager::getShaderTexture(2));
 
-	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise2PixelShader);
+	SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBaseNoise2PixelShader);
 
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
@@ -2344,7 +2391,7 @@ Int RoadShaderPixelShader::set(Int pass)
 void RoadShaderPixelShader::reset()
 {
 
-	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
+	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(nullptr);	//turn off pixel shader
 
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU|0);
@@ -2601,24 +2648,12 @@ void W3DShaderManager::init()
 		m_currentChipset = res;	//cache the current chipset.
 
 		//Some of our effects require an offscreen render target, so try creating it here.
-		HRESULT hr=DX8Wrapper::_Get_D3D_Device8()->GetRenderTarget(&m_oldRenderSurface);
+		HRESULT hr=DX8Wrapper::_Get_D3D_Device8()->GetRenderTarget(0, &m_oldRenderSurface);
 
 		if (hr != S_OK || !m_oldRenderSurface)
 			return;
 
-		m_oldRenderSurface->GetDesc(&desc);
-		
-		// TheSuperHackers @bugfix Redirecting rendering to a non-multisampled texture
-		// while using a multisampled depth buffer is an API violation in DX8.
-		if (desc.MultiSampleType == D3DMULTISAMPLE_NONE)
-		{
-			hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture);
-		}
-		else
-		{
-			// Force failure path to avoid MSAA mismatch
-			hr = E_FAIL;
-		}
+		hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture, nullptr);
 
 		if (hr != S_OK)
 		{
@@ -2786,7 +2821,7 @@ Bool W3DShaderManager::filterSetup(FilterTypes filter, FilterModes mode)
 /*Draws 2 triangles covering the viewport given the current render states*/
 void W3DShaderManager::drawViewport(Int color)
 {
-	LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	struct _TRANS_LIT_TEX_VERTEX {
 		D3DXVECTOR4 p;
@@ -2820,7 +2855,7 @@ void W3DShaderManager::drawViewport(Int color)
 
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
-	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
 }
@@ -2834,11 +2869,11 @@ void W3DShaderManager::startRenderToTexture()
 	DEBUG_ASSERTCRASH(!m_renderingToTexture, ("Already rendering to texture - cannot nest calls."));
 
 	if (m_renderingToTexture || m_newRenderSurface==nullptr || m_oldDepthSurface==nullptr) return;
-	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(m_newRenderSurface,m_oldDepthSurface);
-
-	// TheSuperHackers @bugfix If SetRenderTarget fails (e.g. due to MSAA forced by driver
-	// profile causing a depth buffer mismatch that D3DSURFACE_DESC doesn't report), permanently
-	// disable RTT to prevent repeated failures and accidental backbuffer clears.
+	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(0, m_newRenderSurface);
+	if (SUCCEEDED(hr)) {
+		hr = DX8Wrapper::_Get_D3D_Device8()->SetDepthStencilSurface(m_oldDepthSurface);
+	}
+	DEBUG_ASSERTCRASH(hr==S_OK, ("Set target failed unexpectedly."));
 	if (hr != S_OK)
 	{
 		// Permanently disable RTT
@@ -2877,11 +2912,14 @@ void W3DShaderManager::startRenderToTexture()
 /** Ends rendering to a texture.
  */
 //=============================================================================
-IDirect3DTexture8 *W3DShaderManager::endRenderToTexture()
+IDirect3DTexture9 *W3DShaderManager::endRenderToTexture(void)
 {
 	DEBUG_ASSERTCRASH(m_renderingToTexture, ("Not rendering to texture."));
 	if (!m_renderingToTexture) return nullptr;
-	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(m_oldRenderSurface,m_oldDepthSurface);	//restore original render target
+	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(0, m_oldRenderSurface);	//restore original render target
+	if (SUCCEEDED(hr)) {
+		hr = DX8Wrapper::_Get_D3D_Device8()->SetDepthStencilSurface(m_oldDepthSurface);
+	}
 	DEBUG_ASSERTCRASH(hr==S_OK, ("Set target failed unexpectedly."));
 	if (hr == S_OK)
 	{
@@ -2902,7 +2940,7 @@ IDirect3DTexture8 *W3DShaderManager::endRenderToTexture()
 /**Returns texture containing the image that was last rendered using any of the effects requiring render target
 textures.  Used mostly for cross-fading effects that need an unmodified version of the view before the effect
 was applied.  NOTE: This texture does not survive device reset.. so quit effect on reset!*/
-IDirect3DTexture8 *W3DShaderManager::getRenderTexture()
+IDirect3DTexture9 *W3DShaderManager::getRenderTexture(void)
 {
 	return m_renderTexture;
 }
@@ -2926,13 +2964,13 @@ ChipsetType W3DShaderManager::getChipset()
 		return (ChipsetType)TheGlobalData->m_chipSetType;
 
 	ChipsetType chip=DC_UNKNOWN;
-	IDirect3D8* d3d8Interface=DX8Wrapper::_Get_D3D8();
+	IDirect3D9* d3d8Interface=DX8Wrapper::_Get_D3D8();
 
 	if (d3d8Interface && DX8Wrapper::_Get_D3D_Device8())
 	{
 
-		D3DADAPTER_IDENTIFIER8 did;
-		::ZeroMemory(&did, sizeof(D3DADAPTER_IDENTIFIER8));
+		D3DADAPTER_IDENTIFIER9 did;
+		::ZeroMemory(&did, sizeof(D3DADAPTER_IDENTIFIER9));
 	/*	HRESULT res = */ d3d8Interface->GetAdapterIdentifier(0,D3DENUM_NO_WHQL_LEVEL,&did);
 		*((LARGE_INTEGER*)&m_driverVersion) = did.DriverVersion;
 
@@ -3047,11 +3085,11 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const 
 
 		if (ShaderType) // SHADERTYPE_VERTEX
 		{
-			hr = DX8Wrapper::_Get_D3D_Device8()->CreateVertexShader(pDeclaration, pShader, pHandle, Usage);
+			hr = CreateVertexShaderHandle(DX8Wrapper::_Get_D3D_Device8(), pDeclaration, pShader, pHandle, Usage);
 		}
 		else // SHADERTYPE_PIXEL
 		{
-			hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(pShader, pHandle);
+			hr = CreatePixelShaderHandle(DX8Wrapper::_Get_D3D_Device8(), pShader, pHandle);
 		}
 
 		HeapFree(GetProcessHeap(), 0, (void*)pShader);
@@ -3476,16 +3514,16 @@ Int FlatTerrainShader2Stage::set(Int pass)
 Int FlatTerrainShaderPixelShader::shutdown()
 {
 	if (m_dwBasePixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBasePixelShader);
+		DeletePixelShaderHandle(m_dwBasePixelShader);
 
 	if (m_dwBase0PixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBase0PixelShader);
+		DeletePixelShaderHandle(m_dwBase0PixelShader);
 
 	if (m_dwBaseNoise1PixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise1PixelShader);
+		DeletePixelShaderHandle(m_dwBaseNoise1PixelShader);
 
 	if (m_dwBaseNoise2PixelShader)
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
+		DeletePixelShaderHandle(m_dwBaseNoise2PixelShader);
 
 	m_dwBasePixelShader=0;
 	m_dwBase0PixelShader=0;
@@ -3693,13 +3731,13 @@ Int FlatTerrainShaderPixelShader::set(Int pass)
 		if (curStage==1) curStage++;
 	}
 	if (curStage<2) {
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBase0PixelShader);
+		SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBase0PixelShader);
 	}	else if (curStage==2) {
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBasePixelShader);
+		SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBasePixelShader);
 	}	else if (curStage==3) {
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise1PixelShader);
+		SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBaseNoise1PixelShader);
 	}else if (curStage==4) {
-		DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise2PixelShader);
+		SetPixelShaderFromHandle(DX8Wrapper::_Get_D3D_Device8(), m_dwBaseNoise2PixelShader);
 	}
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 	DX8Wrapper::Apply_Render_State_Changes();
@@ -3712,7 +3750,7 @@ void FlatTerrainShaderPixelShader::reset()
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(2,nullptr);	//release reference to any texture
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,nullptr);	//release reference to any texture
 
-	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
+	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(nullptr);	//turn off pixel shader
 
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0, nullptr);
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(1, nullptr);

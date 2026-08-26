@@ -3,7 +3,7 @@ add_library(z_wwcommon INTERFACE)
 
 target_link_libraries(z_wwcommon INTERFACE
     core_wwcommon
-    d3d8lib
+    d3d9lib
     milesstub
     stlport
 )

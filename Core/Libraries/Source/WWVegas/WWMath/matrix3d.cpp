@@ -66,8 +66,8 @@
 #include "quat.h"
 
 #include "WWLib/win.h"
-#include <d3d8types.h>
-#include <d3dx8math.h>
+#include <d3d9types.h>
+#include <d3dx9math.h>
 
 // some static matrices which are sometimes useful
 const Matrix3D Matrix3D::Identity

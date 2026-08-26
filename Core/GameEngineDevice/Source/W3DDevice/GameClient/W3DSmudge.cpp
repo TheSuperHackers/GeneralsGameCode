@@ -132,17 +132,18 @@ void W3DSmudgeManager::ReAcquireResources()
 /*Copies a portion of the current render target into a specified buffer*/
 Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int height)
 {
- 	IDirect3DSurface8 *surface=nullptr;	///<previous render target
- 	IDirect3DSurface8 *tempSurface=nullptr;
+ 	IDirect3DSurface9 *surface=nullptr;	///<previous render target
+ 	IDirect3DSurface9 *tempSurface=nullptr;
 	Int result = 0;
+	Int copySize = 0;
 	HRESULT hr = S_OK;
 
- 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+ 	LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	if (!m_pDev)
 		goto error;
 
- 	m_pDev->GetRenderTarget(&surface);
+ 	m_pDev->GetRenderTarget(0, &surface);
 
 	if (!surface)
 		goto error;
@@ -161,12 +162,12 @@ Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int hei
 	dstPoint.x=0;
 	dstPoint.y=0;
 
- 	hr=m_pDev->CreateImageSurface(  width, height, desc.Format, &tempSurface);
+ 	hr=m_pDev->CreateOffscreenPlainSurface(width, height, desc.Format, D3DPOOL_SCRATCH, &tempSurface, nullptr);
 
 	if (hr != S_OK)
 		goto error;
 
- 	hr=m_pDev->CopyRects(surface,&srcRect,1,tempSurface,&dstPoint);
+ 	hr=m_pDev->UpdateSurface(surface, &srcRect, tempSurface, &dstPoint);
 
 	if (hr != S_OK)
 		goto error;
@@ -180,8 +181,9 @@ Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int hei
 
  	tempSurface->GetDesc(&desc);
 
-	if (desc.Size < bufSize)
-		bufSize = desc.Size;
+	copySize = lrect.Pitch * height;
+	if (copySize < bufSize)
+		bufSize = copySize;
 
 	memcpy(buf,lrect.pBits,bufSize);
 	result = bufSize;
@@ -205,17 +207,9 @@ Bool W3DSmudgeManager::testHardwareSupport()
 	if (m_hardwareSupportStatus == SMUDGE_SUPPORT_UNKNOWN)
 	{	//we have not done the test yet.
 
-		IDirect3DTexture8 *backTexture=W3DShaderManager::getRenderTexture();
-		if (!backTexture || !W3DShaderManager::isRenderingToTexture())
-		{
-			// TheSuperHackers @bugfix When Render-To-Texture is disabled globally, we fallback
-			// to copying the backbuffer to a texture.
-			if (m_backgroundTexture)
-			{
-				m_hardwareSupportStatus = SMUDGE_SUPPORT_YES;
-				return TRUE;
-			}
-
+		IDirect3DTexture9 *backTexture=W3DShaderManager::getRenderTexture();
+		if (!backTexture)
+		{	//do trivial test first to see if render target exists.
 			m_hardwareSupportStatus = SMUDGE_SUPPORT_NO;
 			return FALSE;
 		}
@@ -260,11 +254,11 @@ Bool W3DSmudgeManager::testHardwareSupport()
 		v[2].color = UNIQUE_COLOR;
 		v[3].color = UNIQUE_COLOR;
 
-		LPDIRECT3DDEVICE8 pDev=DX8Wrapper::_Get_D3D_Device8();
+		LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
 
 		//draw polygons like this is very inefficient but for only 2 triangles, it's
 		//not worth bothering with index/vertex buffers.
-		pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+		pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 		pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
 

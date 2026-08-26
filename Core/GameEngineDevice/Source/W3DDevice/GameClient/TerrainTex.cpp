@@ -52,7 +52,7 @@
 #include "W3DDevice/GameClient/TileData.h"
 #include "Common/GlobalData.h"
 #include "WW3D2/dx8wrapper.h"
-#include "d3dx8tex.h"
+#include "d3dx9tex.h"
 
 /******************************************************************************
 						TerrainTextureClass
@@ -97,7 +97,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 {
 	// D3DTexture is our texture;
 
-	IDirect3DSurface8 *surface_level;
+	IDirect3DSurface9 *surface_level;
 	D3DSURFACE_DESC surface_desc;
 	D3DLOCKED_RECT locked_rect;
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0, &surface_level));
@@ -214,7 +214,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 {
 	// D3DTexture is our texture;
 
-	IDirect3DSurface8 *surface_level;
+	IDirect3DSurface9 *surface_level;
 	D3DSURFACE_DESC surface_desc;
 	D3DLOCKED_RECT locked_rect;
 	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(0, &surface_level));
@@ -377,7 +377,7 @@ Bool TerrainTextureClass::updateFlat(WorldHeightMap *htMap, Int xCell, Int yCell
 {
 	// D3DTexture is our texture;
 
-	IDirect3DSurface8 *surface_level;
+	IDirect3DSurface9 *surface_level;
 	D3DSURFACE_DESC surface_desc;
 	D3DLOCKED_RECT locked_rect;
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0, &surface_level));
@@ -490,7 +490,7 @@ AlphaTerrainTextureClass::AlphaTerrainTextureClass( TextureClass *pBaseTex ):
 		WW3D_FORMAT_A1R5G5B5, MIP_LEVELS_1 )
 {
 	// Attach the base texture's d3d texture.
-	IDirect3DTexture8 * d3d_tex = pBaseTex->Peek_D3D_Texture();
+	IDirect3DTexture9 * d3d_tex = pBaseTex->Peek_D3D_Texture();
 	Set_D3D_Base_Texture(d3d_tex);
 }
 
@@ -771,7 +771,7 @@ int AlphaEdgeTextureClass::update(WorldHeightMap *htMap)
 {
 	// D3DTexture is our texture;
 
-	IDirect3DSurface8 *surface_level;
+	IDirect3DSurface9 *surface_level;
 	D3DSURFACE_DESC surface_desc;
 	D3DLOCKED_RECT locked_rect;
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0, &surface_level));

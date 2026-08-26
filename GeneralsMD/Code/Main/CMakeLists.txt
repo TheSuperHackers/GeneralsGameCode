@@ -10,10 +10,7 @@ endif()
 target_link_libraries(z_generals PRIVATE
     binkstub
     comctl32
-    d3d8
-    d3dx8
-    dinput8
-    dxguid
+    d3d9lib
     imm32
     milesstub
     vfw32
@@ -46,6 +43,16 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 if(MSVC)
     target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
 endif()
+
+# Copy runtime game data next to the built executable.
+# The game sets working directory to the executable directory on startup,
+# so required data must exist directly under that directory (for example Data/...).
+add_custom_command(TARGET z_generals POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:z_generals>/Run"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/GeneralsMD/Run"
+        "$<TARGET_FILE_DIR:z_generals>"
+)
 
 target_include_directories(z_generals PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

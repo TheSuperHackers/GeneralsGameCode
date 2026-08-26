@@ -358,7 +358,7 @@ Render2DSentenceClass::Build_Textures ()
 		//
 		//	Create the new texture
 		//
-		TextureClass *new_texture = W3DNEW TextureClass (desc.Width, desc.Width, WW3D_FORMAT_A4R4G4B4, MIP_LEVELS_1);
+		TextureClass *new_texture = W3DNEW TextureClass (desc.Width, desc.Height, WW3D_FORMAT_A8R8G8B8, MIP_LEVELS_1);
 		SurfaceClass *texture_surface = new_texture->Get_Surface_Level ();
 
 		new_texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
@@ -371,7 +371,6 @@ Render2DSentenceClass::Build_Textures ()
 		//	Copy the contents of the texture from the surface
 		//
 		DX8Wrapper::_Copy_DX8_Rects (curr_surface->Peek_D3D_Surface (), nullptr, 0, texture_surface->Peek_D3D_Surface (), nullptr);
-		REF_PTR_RELEASE (texture_surface);
 
 		//
 		//	Assign this texture to any renderers that need it
@@ -384,6 +383,7 @@ Render2DSentenceClass::Build_Textures ()
 		//
 		//	Release our hold on the objects
 		//
+		REF_PTR_RELEASE (texture_surface);
 		REF_PTR_RELEASE (new_texture);
 		REF_PTR_RELEASE (curr_surface);
 	}

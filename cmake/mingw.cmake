@@ -63,7 +63,7 @@ if(MINGW)
         comctl32    # Common controls
         winmm       # Multimedia (timeGetTime, etc.)
         vfw32       # Video for Windows (AVIFile functions)
-        d3d8        # Direct3D 8
+        d3d9        # Direct3D 8
         dinput8     # DirectInput 8
         dsound      # DirectSound
         imm32       # Input Method Manager (IME)
@@ -74,17 +74,17 @@ if(MINGW)
     # are provided by Dependencies/Utility/Utility/comsupp_compat.h as header-only
     # implementations. No library linking required.
     
-    # MinGW-w64 compatibility: Create d3dx8 as an alias to d3dx8d
-    # MinGW-w64 only provides libd3dx8d.a (debug library), not libd3dx8.a
-    # The min-dx8-sdk (dx8.cmake) handles this correctly via d3d8lib interface target,
+    # MinGW-w64 compatibility: Create d3dx9 as an alias to d3dx9d
+    # MinGW-w64 only provides libd3dx9d.a (debug library), not libd3dx9.a
+    # The min-dx8-sdk (dx9.cmake) handles this correctly via d3d9lib interface target,
     # but for compatibility with direct library references in main executables,
-    # we create an alias so that linking to d3dx8 automatically uses d3dx8d
-    if(NOT TARGET d3dx8)
-        add_library(d3dx8 INTERFACE IMPORTED GLOBAL)
-        set_target_properties(d3dx8 PROPERTIES
-            INTERFACE_LINK_LIBRARIES "d3dx8d"
+    # we create an alias so that linking to d3dx9 automatically uses d3dx9d
+    if(NOT TARGET d3dx9)
+        add_library(d3dx9 INTERFACE IMPORTED GLOBAL)
+        set_target_properties(d3dx9 PROPERTIES
+            INTERFACE_LINK_LIBRARIES "d3dx9d"
         )
-        message(STATUS "Created d3dx8 -> d3dx8d alias for MinGW-w64")
+        message(STATUS "Created d3dx9 -> d3dx9d alias for MinGW-w64")
     endif()
     
     message(STATUS "MinGW-w64 configuration complete")
