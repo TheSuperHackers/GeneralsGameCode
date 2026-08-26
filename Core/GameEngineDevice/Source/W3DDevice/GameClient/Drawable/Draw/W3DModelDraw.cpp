@@ -1734,6 +1734,8 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	m_terrainDecal = nullptr;
 	// TheSuperHackers @feature no selection ring until one is asked for
 	m_selectionDecal = nullptr;
+	m_selectionDecalWanted = FALSE;
+	m_selectionDecalRadius = 0.0f;
 	m_trackRenderObject = nullptr;
 	m_whichAnimInCurState = -1;
 	m_nextState = nullptr;
@@ -1837,6 +1839,10 @@ void W3DModelDraw::setHidden(Bool hidden)
 
 	if (m_terrainDecal)
 		m_terrainDecal->enableShadowRender(!hidden);
+
+	// TheSuperHackers @fix the ring must not keep rendering under a hidden drawable
+	if (m_selectionDecal)
+		m_selectionDecal->enableShadowRender(!hidden);
 
 	if (m_trackRenderObject && hidden)
 	{	const Coord3D* pos = getDrawable()->getPosition();
@@ -1951,6 +1957,9 @@ void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)
 			m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
 		if (m_terrainDecal)
 			m_terrainDecal->enableShadowInvisible(m_fullyObscuredByShroud);
+		// TheSuperHackers @fix the ring must not expose a fully shrouded unit
+		if (m_selectionDecal)
+			m_selectionDecal->enableShadowInvisible(m_fullyObscuredByShroud);
 
 		doStartOrStopParticleSys();
 	}
@@ -2735,6 +2744,10 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setSelectionDecal(Bool enable, Real radius)
 {
+	// remembered so the ring can be recreated after a model swap tears the render object down
+	m_selectionDecalWanted = enable;
+	m_selectionDecalRadius = radius;
+
 	if (m_selectionDecal)
 	{
 		m_selectionDecal->release();
@@ -2769,13 +2782,6 @@ void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 {
 	if (m_terrainDecal)
 		m_terrainDecal->release();
-
-	// TheSuperHackers @feature drop the selection ring too
-	if (m_selectionDecal)
-	{
-		m_selectionDecal->release();
-		m_selectionDecal = nullptr;
-	}
 
 	m_terrainDecal = nullptr;
 
@@ -3137,6 +3143,11 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 				m_shadow->enableShadowRender(m_shadowEnabled);
 			}
 		}
+
+		// TheSuperHackers @fix The selection ring was bound to the render object that was just
+		// torn down; the object is still selected, so put the ring back on the new one.
+		if (m_selectionDecalWanted)
+			setSelectionDecal(TRUE, m_selectionDecalRadius);
 
 		if( m_renderObject )
 		{

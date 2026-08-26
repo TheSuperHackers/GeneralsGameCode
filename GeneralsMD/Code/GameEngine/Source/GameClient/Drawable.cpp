@@ -4204,6 +4204,9 @@ void Drawable::reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* old
 //-------------------------------------------------------------------------------------------------
 void Drawable::reactToGeometryChange()
 {
+	// TheSuperHackers @fix resize the selection ring along with the geometry it is derived from
+	updateSelectionDecal();
+
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{
 		(*dm)->reactToGeometryChange();
