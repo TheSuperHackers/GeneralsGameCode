@@ -1285,7 +1285,7 @@ void ParticleBufferClass::Prepare_LOD(CameraClass &camera)
 	// treat them as all being the maximum size and being in the center of the bounding sphere).
 
 	Vector3 cam = camera.Get_Position();
-	ViewportClass viewport = camera.Get_Viewport();
+	const ViewportClass &viewport = camera.Get_Viewport();
 	Vector2 vpr_min, vpr_max;
 	camera.Get_View_Plane(vpr_min, vpr_max);
 	float width_factor = viewport.Width() / (vpr_max.X - vpr_min.X);

@@ -698,7 +698,7 @@ void PopulateOldBuddyMessages()
 	BuddyMessageList *messages = TheGameSpyInfo->getBuddyMessages();
 	for (BuddyMessageList::iterator mIt = messages->begin(); mIt != messages->end(); ++mIt)
 	{
-		BuddyMessage message = *mIt;
+		const BuddyMessage &message = *mIt;
 		insertChat(message);
 	}
 }

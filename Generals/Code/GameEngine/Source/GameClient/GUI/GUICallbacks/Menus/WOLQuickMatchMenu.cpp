@@ -592,7 +592,7 @@ static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 	GadgetListBoxReset(listboxMapSelect);
 	for (std::list<AsciiString>::const_iterator it = maps.begin(); it != maps.end(); ++it)
 	{
-		AsciiString theMap = *it;
+		const AsciiString &theMap = *it;
 		const MapMetaData *md = TheMapCache->findMap(theMap);
 		if (md && md->m_numPlayers >= numPlayers)
 		{
@@ -1670,7 +1670,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 						if (cit != ladderInfo->validFactions.end())
 						{
 							Int numPlayerTemplates = ThePlayerTemplateStore->getPlayerTemplateCount();
-							AsciiString sideStr = *cit;
+							const AsciiString &sideStr = *cit;
 							DEBUG_LOG(("Chose %s as our side... finding", sideStr.str()));
 							for (Int c=0; c<numPlayerTemplates; ++c)
 							{

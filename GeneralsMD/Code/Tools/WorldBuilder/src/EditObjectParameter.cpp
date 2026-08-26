@@ -118,7 +118,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 			parent = findOrAdd( parent, "TEST" );
 
 		// first sort by Side, either create or find the tree item with matching side name
-		AsciiString side = thingTemplate->getDefaultOwningSide();
+		const AsciiString &side = thingTemplate->getDefaultOwningSide();
 		DEBUG_ASSERTCRASH(!side.isEmpty(), ("null default side in template") );
 		parent = findOrAdd( parent, side.str());
 

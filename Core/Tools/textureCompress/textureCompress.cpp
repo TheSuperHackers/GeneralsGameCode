@@ -472,7 +472,7 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 		FileInfoSet::iterator fit = sourceFiles->find(f);
 		if (fit != sourceFiles->end())
 		{
-			FileInfo sf = *fit;
+			const FileInfo &sf = *fit;
 			if (f.modTime < sf.modTime)
 			{
 				/**
@@ -563,7 +563,7 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 			FileInfoSet::iterator fit = cacheFiles->find(f);
 			if (fit != cacheFiles->end())
 			{
-				FileInfo cf = *fit;
+				const FileInfo &cf = *fit;
 				if (cf.modTime < f.modTime)
 				{
 					origFilesToCompress.insert(fname);

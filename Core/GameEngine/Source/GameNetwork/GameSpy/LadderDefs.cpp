@@ -183,7 +183,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 					AsciiStringList validFactions = lad->validFactions;
 					for (AsciiStringListIterator it = validFactions.begin(); it != validFactions.end(); ++it)
 					{
-						AsciiString faction = *it;
+						const AsciiString &faction = *it;
 						AsciiString marker;
 						marker.format("INI:Faction%s", faction.str());
 						DEBUG_LOG(("Faction %s has marker %s corresponding to str %ls", faction.str(), marker.str(), TheGameText->fetch(marker).str()));
@@ -196,7 +196,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 					std::list<AsciiString> qmMaps = TheGameSpyConfig->getQMMaps();
 					for (std::list<AsciiString>::const_iterator it = qmMaps.begin(); it != qmMaps.end(); ++it)
 					{
-						AsciiString mapName = *it;
+						const AsciiString &mapName = *it;
 
 						// check sizes on the maps before allowing them
 						const MapMetaData *md = TheMapCache->findMap(mapName);

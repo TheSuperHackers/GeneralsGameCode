@@ -302,7 +302,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 
 			setControlCommand( m_sciencePurchaseWindowsRank3[ i ], commandButton );
 			ScienceType	st = SCIENCE_INVALID;
-			ScienceVec sv = commandButton->getScienceVec();
+			const ScienceVec &sv = commandButton->getScienceVec();
 			if (! sv.empty())
 			{
 				st = sv[ 0 ];

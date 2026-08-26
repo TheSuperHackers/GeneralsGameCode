@@ -1156,7 +1156,7 @@ void ScriptDialog::markWaypoint(MapObject *pObj)
 void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, Bool doWaypoints, Bool doTriggers)
 {
 	if (pParm->getParameterType() == Parameter::WAYPOINT && doWaypoints) {
-		AsciiString waypointName  = pParm->getString();
+		const AsciiString &waypointName  = pParm->getString();
 		MapObject *pObj;
 		for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
 			if (pObj->isWaypoint() && pObj->getWaypointName()==waypointName) {
@@ -1165,7 +1165,7 @@ void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, 
 		}
 	}
 	if (pParm->getParameterType() == Parameter::WAYPOINT_PATH && doWaypoints) {
-		AsciiString waypointPathLabel = pParm->getString();
+		const AsciiString &waypointPathLabel = pParm->getString();
 		MapObject *pObj;
 		for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
 			if (pObj->isWaypoint() ) {
@@ -1183,7 +1183,7 @@ void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, 
 		}
 	}
 	if (pParm->getParameterType() == Parameter::TEAM) {
-		AsciiString teamName  = pParm->getString();
+		const AsciiString &teamName  = pParm->getString();
 		TeamsInfo * pInfo = m_sides.findTeamInfo(teamName);
 		if (pInfo) {
 			pInfo->getDict()->setBool(TheKey_exportWithScript, true);
@@ -1200,7 +1200,7 @@ void ScriptDialog::scanParmForWaypointsAndTeams(Parameter *pParm, Bool doUnits, 
 		}
 	}
 	if (pParm->getParameterType() == Parameter::UNIT) {
-		AsciiString unitName  = pParm->getString();
+		const AsciiString &unitName  = pParm->getString();
 		if (doUnits) {
 			MapObject *pObj;
 			for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {

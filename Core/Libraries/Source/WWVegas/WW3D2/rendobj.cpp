@@ -322,7 +322,7 @@ float RenderObjClass::Get_Screen_Size(CameraClass &camera)
 	// accurate (perhaps by using the object-space bounding-box)
 	Vector3 cam = camera.Get_Position();
 
-	ViewportClass viewport = camera.Get_Viewport();
+	const ViewportClass &viewport = camera.Get_Viewport();
 	Vector2 vpr_min, vpr_max;
 	camera.Get_View_Plane(vpr_min, vpr_max);
 	float width_factor = viewport.Width() / (vpr_max.X - vpr_min.X);

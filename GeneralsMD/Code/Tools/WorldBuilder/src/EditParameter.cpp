@@ -819,7 +819,7 @@ Bool EditParameter::loadUpgrades(CComboBox *pCombo, AsciiString match)
 
 	for (int i = 0; i < numUpgrades; ++i) {
 
-		AsciiString upgradeName = upgradeNames[i];
+		const AsciiString &upgradeName = upgradeNames[i];
 		if (pCombo) {
 			pCombo->AddString(upgradeName.str());
 		}

@@ -77,7 +77,7 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 	DWORD totalStartTimeMillis = GetTickCount();
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
-		AsciiString filename = filenames[i];
+		const AsciiString &filename = filenames[i];
 		printf("Simulating Replay \"%s\"\n", filename.str());
 		fflush(stdout);
 		DWORD startTimeMillis = GetTickCount();

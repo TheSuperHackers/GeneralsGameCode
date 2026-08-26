@@ -299,7 +299,7 @@ void W3DTreeBuffer::cull(const CameraClass * camera)
 	Int curTree;
 
 	// Calculate the vector direction that the camera is looking at.
-	Matrix3D camera_matrix = camera->Get_Transform();
+	const Matrix3D &camera_matrix = camera->Get_Transform();
 	float zmod = -1;
 	float x = zmod * camera_matrix[0][2] ;
 	float y = zmod * camera_matrix[1][2] ;

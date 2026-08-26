@@ -7362,7 +7362,7 @@ Bool ScriptEngine::isSpecialPowerTriggered( Int playerIndex, const AsciiString& 
 
 	for (ListAsciiStringObjectIDIt findIt = specialList->begin(); findIt != specialList->end(); ++findIt)
 	{
-		AsciiStringObjectIDPair pair = *findIt;
+		const AsciiStringObjectIDPair &pair = *findIt;
 		if (pair.first == completedPower && (sourceObj == INVALID_ID || sourceObj == pair.second))
 		{
 			if (removeFromList) {
@@ -7387,7 +7387,7 @@ Bool ScriptEngine::isSpecialPowerMidway( Int playerIndex, const AsciiString& com
 
 	for (ListAsciiStringObjectIDIt findIt = specialList->begin(); findIt != specialList->end(); ++findIt)
 	{
-		AsciiStringObjectIDPair pair = *findIt;
+		const AsciiStringObjectIDPair &pair = *findIt;
 		if (pair.first == completedPower && (sourceObj == INVALID_ID || sourceObj == pair.second))
 		{
 			if (removeFromList) {
@@ -7412,7 +7412,7 @@ Bool ScriptEngine::isSpecialPowerComplete( Int playerIndex, const AsciiString& c
 
 	for (ListAsciiStringObjectIDIt findIt = specialList->begin(); findIt != specialList->end(); ++findIt)
 	{
-		AsciiStringObjectIDPair pair = *findIt;
+		const AsciiStringObjectIDPair &pair = *findIt;
 		if (pair.first == completedPower && (sourceObj == INVALID_ID || sourceObj == pair.second))
 		{
 			if (removeFromList) {
@@ -7437,7 +7437,7 @@ Bool ScriptEngine::isUpgradeComplete( Int playerIndex, const AsciiString& upgrad
 
 	for (ListAsciiStringObjectIDIt findIt = specialList->begin(); findIt != specialList->end(); ++findIt)
 	{
-		AsciiStringObjectIDPair pair = *findIt;
+		const AsciiStringObjectIDPair &pair = *findIt;
 		if (pair.first == upgrade && (sourceObj == INVALID_ID || sourceObj == pair.second))
 		{
 			if (removeFromList) {
@@ -7554,7 +7554,7 @@ void ScriptEngine::adjustToppleDirection( Object *object, Coord2D *direction)
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::adjustToppleDirection( Object *object, Coord3D *direction)
 {
-	AsciiString objName = object->getName();
+	const AsciiString &objName = object->getName();
 	if (objName.isEmpty() || !direction) {
 		return;
 	}

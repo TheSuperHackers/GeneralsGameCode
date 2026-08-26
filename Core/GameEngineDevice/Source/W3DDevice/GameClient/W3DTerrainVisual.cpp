@@ -991,7 +991,7 @@ void W3DTerrainVisual::addFactionBib(Object *factionBuilding, Bool highlight, Re
 		pos.set(0,0,0);
 		Real exitWidth = factionBuilding->getTemplate()->getFactoryExitWidth();
 		Real extraWidth = factionBuilding->getTemplate()->getFactoryExtraBibWidth() + extra;
-		const GeometryInfo info = factionBuilding->getGeometryInfo();
+		const GeometryInfo &info = factionBuilding->getGeometryInfo();
 		Real sizeX = info.getMajorRadius();
 		Real sizeY = info.getMinorRadius();
 		if (info.getGeomType() != GEOMETRY_BOX) {
