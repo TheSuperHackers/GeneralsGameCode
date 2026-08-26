@@ -700,6 +700,7 @@ Keyboard::Keyboard()
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
 	m_modifiers = KEY_STATE_NONE;
+	m_resetGeneration = 0;
 	m_shift2Key = KEY_NONE;
 
 	memset( m_keyNames, 0, sizeof( m_keyNames ) );
@@ -752,7 +753,8 @@ void Keyboard::resetKeys()
 
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
-	refreshAltKeys();
+	refreshModifierKeys();
+	++m_resetGeneration;
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
@@ -765,21 +767,26 @@ void Keyboard::resetKeys()
 }
 
 //-------------------------------------------------------------------------------------------------
-// Refresh the state of the alt keys, necessary after alt tab
+// Refresh the state of held modifier keys, necessary after alt tab / focus loss
 //-------------------------------------------------------------------------------------------------
-void Keyboard::refreshAltKeys() const
+void Keyboard::refreshModifierKeys() const
 {
-	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
+	static const KeyDefType modifierKeys[] =
 	{
-		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_LALT);
-		msg->appendIntegerArgument(KEY_STATE_UP);
-	}
-	if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
+		KEY_LCTRL, KEY_RCTRL,
+		KEY_LSHIFT, KEY_RSHIFT,
+		KEY_LALT, KEY_RALT
+	};
+
+	for (Int i = 0; i < ARRAY_SIZE(modifierKeys); ++i)
 	{
-		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_RALT);
-		msg->appendIntegerArgument(KEY_STATE_UP);
+		const KeyDefType key = modifierKeys[i];
+		if (BitIsSet(m_keyStatus[key].state, KEY_STATE_DOWN))
+		{
+			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
+			msg->appendIntegerArgument(key);
+			msg->appendIntegerArgument(KEY_STATE_UP);
+		}
 	}
 }
 

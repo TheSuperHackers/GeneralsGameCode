@@ -113,6 +113,7 @@ public:
 	Bool isCtrl();
 	Bool isAlt();
 	Int getModifierFlags() { return m_modifiers; }
+	UnsignedInt getResetGeneration() const { return m_resetGeneration; }
 
 	// access methods for key data
 	void resetKeys();												///< reset the state of the keys
@@ -124,7 +125,7 @@ public:
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
 private:
-	void refreshAltKeys() const;									///< refresh the state of the alt keys, necessary after alt tab
+	void refreshModifierKeys() const;							///< refresh held CTRL/SHIFT/ALT keys, necessary after alt tab
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
@@ -140,6 +141,7 @@ protected:
 	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state
 
 	UnsignedShort m_modifiers;
+	UnsignedInt m_resetGeneration;
 	// internal keyboard data members
 	//Bool m_capsState;			// 1 if caps lock is on
 	//Bool m_shiftState;		// 1 if either shift key is pressed

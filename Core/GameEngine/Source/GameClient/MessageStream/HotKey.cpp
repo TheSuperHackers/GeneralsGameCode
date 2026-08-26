@@ -74,9 +74,14 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 
 	if ( t == GameMessage::MSG_RAW_KEY_UP)
 	{
-
-		//char key = msg->getArgument(0)->integer;
+		KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
 		Int keyState = msg->getArgument(1)->integer;
+		Bool suppressKeyUp = TheHotKeyManager && TheHotKeyManager->consumeKeyUpSuppression(key);
+
+		// TheSuperHackers @bugfix CryoTheRenegade 18/08/2026
+		// Suppress only the hotkey action so the raw key release remains visible to later translators.
+		if (suppressKeyUp)
+			return disp;
 
 		// for our purposes here, we don't care to distinguish between right and left keys,
 		// so just fudge a little to simplify things.
@@ -98,9 +103,9 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		}
 		if(newModState != 0)
 			return disp;
-		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
+		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);
 		UnicodeString uKey;
-		uKey.concat(key);
+		uKey.concat(printableKey);
 		AsciiString aKey;
 		aKey.translate(uKey);
 		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
@@ -119,7 +124,7 @@ HotKey::HotKey()
 //-----------------------------------------------------------------------------
 HotKeyManager::HotKeyManager()
 {
-
+	clearKeyUpSuppressions();
 }
 
 //-----------------------------------------------------------------------------
@@ -132,12 +137,36 @@ HotKeyManager::~HotKeyManager()
 void HotKeyManager::init()
 {
 	m_hotKeyMap.clear();
+	clearKeyUpSuppressions();
 }
 
 //-----------------------------------------------------------------------------
 void HotKeyManager::reset()
 {
 	m_hotKeyMap.clear();
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::setKeyUpSuppressed(KeyDefType key, Bool suppressed)
+{
+	m_suppressKeyUp[key] = suppressed;
+}
+
+//-----------------------------------------------------------------------------
+Bool HotKeyManager::consumeKeyUpSuppression(KeyDefType key)
+{
+	const Bool suppressKeyUp = m_suppressKeyUp[key];
+	m_suppressKeyUp[key] = FALSE;
+	return suppressKeyUp;
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::clearKeyUpSuppressions()
+{
+	for (Int key = 0; key < ARRAY_SIZE(m_suppressKeyUp); ++key)
+	{
+		m_suppressKeyUp[key] = FALSE;
+	}
 }
 
 //-----------------------------------------------------------------------------
