@@ -98,6 +98,11 @@ public:
 	AsciiString searchHotKey( const AsciiString& label);
 	AsciiString searchHotKey( const UnicodeString& uStr );
 
+	// TheSuperHackers @feature Which hotkey actually got registered to this window, if any.
+	// Deliberately not derived from the window's label -- addHotKey drops keys that collide
+	// with an earlier button, so only this reports the key that will really work.
+	AsciiString getHotKeyForWindow( const GameWindow *win ) const;
+
 private:
 	typedef std::map<AsciiString, HotKey> HotKeyMap;
 	HotKeyMap m_hotKeyMap;
