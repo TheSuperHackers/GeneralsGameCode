@@ -431,6 +431,10 @@ typedef struct _PushButtonData
 	void *userData;					///< random additional data we can set
 	const Image *overlayImage; ///< An overlay image (like a veterancy symbol)
 	AsciiString altSound;		///< use an alternative sound if one is set
+	// TheSuperHackers @feature Remaining time drawn over the cameo, in seconds. Negative means
+	// nothing to show. Like drawClock this is one shot -- it is cleared after being drawn, so
+	// whoever sets it must re-set it every frame.
+	Int countdownSeconds;
 } PushButtonData;
 
 // TabControlData ------------------------------------------------------------

@@ -53,6 +53,12 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/Display.h"
+// TheSuperHackers @feature for the command bar countdown text
+#include "Common/GlobalData.h"
+#include "Common/OptionPreferences.h"
+#include "GameClient/DisplayStringManager.h"
+#include "GameClient/GameFont.h"
+#include "GameClient/GlobalLanguage.h"
 #include "W3DDevice/GameClient/W3DGameWindow.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
@@ -78,6 +84,91 @@ void W3DGadgetPushButtonImageDrawOne(GameWindow *window, WinInstanceData *instDa
 // drawButtonText =============================================================
 /** Draw button text to the screen */
 //=============================================================================
+// TheSuperHackers @feature Countdown text over a cameo (Options.ini: BuildTimerDisplayMode).
+// One shared string, rebuilt only when the displayed value changes -- at one tick per second
+// that is far less often than we are drawn. Returned to the manager by
+// W3DGadgetPushButtonFreeCountdownString before the manager is torn down.
+static DisplayString *s_countdownString = nullptr;
+static Int s_countdownLastSeconds = -1;
+static Int s_countdownLastMode = -1;
+
+//=============================================================================
+/** Return the countdown's display string to the manager. Must run before
+	* TheDisplayStringManager is destroyed, which asserts on any string still
+	* registered -- the W3DDisplayStringManager destructor calls this. */
+//=============================================================================
+void W3DGadgetPushButtonFreeCountdownString( void )
+{
+	if( s_countdownString != nullptr && TheDisplayStringManager != nullptr )
+		TheDisplayStringManager->freeDisplayString( s_countdownString );
+
+	s_countdownString = nullptr;
+	s_countdownLastSeconds = -1;
+	s_countdownLastMode = -1;
+}
+
+// drawButtonCountdown ========================================================
+/** Draw the remaining time for whatever this button is counting down -- a queued unit or
+	* upgrade, or a special power recharging. Drawn after the clock sweep so the darkening
+	* does not swallow the digits. */
+//=============================================================================
+static void drawButtonCountdown( GameWindow *window, Int seconds )
+{
+	if( seconds < 0 )
+		return;
+
+	if( !TheGlobalData || TheGlobalData->m_buildTimerDisplayMode == BuildTimerDisplayMode_None )
+		return;
+
+	if( TheDisplayStringManager == nullptr )
+		return;
+
+	if( s_countdownString == nullptr )
+	{
+		s_countdownString = TheDisplayStringManager->newDisplayString();
+		if( s_countdownString == nullptr )
+			return;
+
+		Int pointSize = 10;
+		if( TheGlobalLanguageData )
+			pointSize = TheGlobalLanguageData->adjustFontSize( pointSize );
+		s_countdownString->setFont( TheFontLibrary->getFont( AsciiString( "Arial" ), pointSize, TRUE ) );
+	}
+
+	// only rebuild the sentence when the displayed value actually changes, which at one
+	// tick per second is far less often than we are drawn
+	if( s_countdownLastSeconds != seconds || s_countdownLastMode != TheGlobalData->m_buildTimerDisplayMode )
+	{
+		UnicodeString text;
+		if( TheGlobalData->m_buildTimerDisplayMode == BuildTimerDisplayMode_Auto && seconds >= 60 )
+			text.format( L"%d:%2.2d", seconds / 60, seconds % 60 );
+		else
+			text.format( L"%d", seconds );
+
+		s_countdownString->setText( text );
+		s_countdownLastSeconds = seconds;
+		s_countdownLastMode = TheGlobalData->m_buildTimerDisplayMode;
+	}
+
+	ICoord2D origin, size;
+	window->winGetScreenPosition( &origin.x, &origin.y );
+	window->winGetSize( &size.x, &size.y );
+
+	Int width, height;
+	s_countdownString->getSize( &width, &height );
+
+	// centered along the bottom, clear of the top left corner decorations
+	const Int pad = 1;
+	const Int textX = origin.x + (size.x / 2) - (width / 2);
+	const Int textY = origin.y + size.y - height - 2;
+
+	TheDisplay->drawFillRect( textX - pad, textY - pad,
+		width + pad * 2, height + pad * 2, GameMakeColor( 0, 0, 0, 128 ) );
+
+	s_countdownString->draw( textX, textY,
+		GameMakeColor( 255, 255, 255, 255 ), GameMakeColor( 0, 0, 0, 255 ) );
+}
+
 static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, textPos;
@@ -434,6 +525,15 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			window->winSetUserData(pData);
 		}
 
+		// TheSuperHackers @feature Countdown text, after the clock so the darkening does not
+		// swallow the digits. One shot, like the clock above.
+		if( pData->countdownSeconds >= 0 )
+		{
+			drawButtonCountdown( window, pData->countdownSeconds );
+			pData->countdownSeconds = -1;
+			window->winSetUserData(pData);
+		}
+
 		if( pData->drawBorder && pData->colorBorder != GAME_COLOR_UNDEFINED )
 		{
 
@@ -690,6 +790,15 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 				TheDisplay->drawRemainingRectClock( start.x, start.y, size.x, size.y, pData->percentClock,pData->colorClock );
 			}
 			pData->drawClock = NO_CLOCK;
+			window->winSetUserData(pData);
+		}
+
+		// TheSuperHackers @feature Countdown text, after the clock so the darkening does not
+		// swallow the digits. One shot, like the clock above.
+		if( pData->countdownSeconds >= 0 )
+		{
+			drawButtonCountdown( window, pData->countdownSeconds );
+			pData->countdownSeconds = -1;
 			window->winSetUserData(pData);
 		}
 
