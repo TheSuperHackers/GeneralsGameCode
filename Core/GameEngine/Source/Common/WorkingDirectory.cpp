@@ -19,7 +19,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/WorkingDirectory.h"
-#include "WWLib/trim.h"
 
 namespace rts
 {
@@ -60,83 +59,6 @@ Bool setCurrentDirectoryToPath(const char *path)
 	}
 
 	return TRUE;
-}
-
-static char *nextWorkingDirectoryParam(char *newSource, const char *seps)
-{
-	static char *source = nullptr;
-	if (newSource)
-	{
-		source = newSource;
-	}
-	if (!source)
-	{
-		return nullptr;
-	}
-
-	char *first = source;
-	if (first)
-	{
-		char *firstSep = strpbrk(first, seps);
-		char firstChar[2] = {0,0};
-		if (firstSep == first)
-		{
-			firstChar[0] = *first;
-			while (*first == firstChar[0]) first++;
-		}
-
-		char *end;
-		if (firstChar[0])
-			end = strpbrk(first, firstChar);
-		else
-			end = strpbrk(first, seps);
-
-		if (end)
-		{
-			source = end+1;
-			*end = 0;
-
-			if (!*source)
-				source = nullptr;
-		}
-		else
-		{
-			source = nullptr;
-		}
-
-		if (first && !*first)
-			first = nullptr;
-	}
-
-	return first;
-}
-
-void applyStartupWorkingDirectory()
-{
-	std::vector<char*> argv;
-	std::string cmdLine = GetCommandLineA();
-	char *token = nextWorkingDirectoryParam(&cmdLine[0], "\" ");
-	while (token != nullptr)
-	{
-		argv.push_back(strtrim(token));
-		token = nextWorkingDirectoryParam(nullptr, "\" ");
-	}
-
-	const int argc = (int)argv.size();
-	for (int arg = 1; arg < argc; ++arg)
-	{
-		if (stricmp(argv[arg], "-cwd") != 0)
-			continue;
-
-		if (arg + 1 < argc && argv[arg + 1] != nullptr && argv[arg + 1][0] != '-' && argv[arg + 1][0] != '\0')
-		{
-			if (!setCurrentDirectoryToPath(argv[arg + 1]))
-				setCurrentDirectoryToExecutablePath();
-		}
-		return;
-	}
-
-	setCurrentDirectoryToExecutablePath();
 }
 
 } // namespace rts

@@ -24,13 +24,11 @@ namespace rts
 {
 
 // TheSuperHackers @feature 14/08/2026
-// Startup working directory helpers. By default the process working directory is
-// the executable directory. -cwd keeps the OS directory. -cwd <path> uses that path.
+// Process working directory helpers. CommandLine::parseCommandLineForStartup()
+// applies these: default is the executable directory, -cwd keeps the OS
+// directory, and -cwd <path> uses that path.
 
 Bool setCurrentDirectoryToExecutablePath();
 Bool setCurrentDirectoryToPath(const char *path);
-
-// For tools that do not parse CommandLine startup flags.
-void applyStartupWorkingDirectory();
 
 } // namespace rts

@@ -121,10 +121,6 @@ public:
 	// Run game without graphics, input or audio.
 	Bool m_headless;
 
-	// TheSuperHackers @feature 14/08/2026
-	// On startup change the current working directory to the executable's location.
-	Bool m_changeCurrentWorkingDirectoryToExecutablePath;
-
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

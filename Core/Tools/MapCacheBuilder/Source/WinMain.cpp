@@ -43,7 +43,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
-#include "Common/WorkingDirectory.h"
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
 #include "Common/GlobalData.h"
@@ -221,7 +221,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// save application instance
 	ApplicationHInstance = hInstance;
 
-	rts::applyStartupWorkingDirectory();
+	CommandLine::parseCommandLineForStartup();
 
 	/*
 	** Convert WinMain arguments to simple main argc and argv
@@ -231,6 +231,17 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	token = nextParam(lpCmdLine, "\" ");
 	while (token != nullptr) {
 		char * str = strtrim(token);
+		if (stricmp(str, "-cwd") == 0)
+		{
+			token = nextParam(nullptr, "\" ");
+			if (token != nullptr)
+			{
+				char *cwdArg = strtrim(token);
+				if (cwdArg != nullptr && cwdArg[0] != '-' && cwdArg[0] != '\0')
+					token = nextParam(nullptr, "\" ");
+			}
+			continue;
+		}
 		argvSet.push_back(str);
 		DEBUG_LOG(("Adding '%s'", str));
 		token = nextParam(nullptr, "\" ");
@@ -245,7 +256,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	initSubsystem(TheLocalFileSystem, (LocalFileSystem*)new Win32LocalFileSystem);
 	initSubsystem(TheArchiveFileSystem, (ArchiveFileSystem*)new Win32BIGFileSystem);
 	INI ini;
-	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
+	initSubsystem(TheWritableGlobalData, TheWritableGlobalData, "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 	initSubsystem(TheGameText, CreateGameTextInterface());
 	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science", "Data\\INI\\Science");
 	initSubsystem(TheMultiplayerSettings, new MultiplayerSettings(), "Data\\INI\\Default\\Multiplayer", "Data\\INI\\Multiplayer");

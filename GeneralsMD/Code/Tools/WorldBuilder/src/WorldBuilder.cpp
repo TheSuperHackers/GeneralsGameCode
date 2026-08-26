@@ -32,7 +32,7 @@
 
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
-#include "Common/WorkingDirectory.h"
+#include "Common/CommandLine.h"
 #include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
@@ -152,8 +152,33 @@ FileClass * WB_W3DFileSystem::Get_File( char const *filename )
 	return pFile;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Skip -cwd [path] so MFC does not treat the path as a map to open.
 
+class WBCommandLineInfo : public CCommandLineInfo
+{
+public:
+	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
+	{
+		if (m_expectingCwdPath)
+		{
+			m_expectingCwdPath = FALSE;
+			if (!bFlag && pszParam != nullptr && pszParam[0] != 0)
+				return;
+		}
 
+		if (bFlag && lstrcmpi(pszParam, _T("cwd")) == 0)
+		{
+			m_expectingCwdPath = TRUE;
+			return;
+		}
+
+		CCommandLineInfo::ParseParam(pszParam, bFlag, bLast);
+	}
+
+private:
+	BOOL m_expectingCwdPath = FALSE;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CWorldBuilderApp object
@@ -282,6 +307,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	// initialize the memory manager early
 	initMemoryManager();
 
+	CommandLine::parseCommandLineForStartup();
+
 #ifdef DEBUG_LOGGING
 	// Turn on console output jba [3/20/2003]
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
@@ -316,8 +343,6 @@ BOOL CWorldBuilderApp::InitInstance()
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
 
-	rts::applyStartupWorkingDirectory();
-
 	TheFileSystem = new FileSystem;
 
 	initSubsystem(TheLocalFileSystem, (LocalFileSystem*)new Win32LocalFileSystem);
@@ -329,7 +354,7 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	INI ini;
 
-	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
+	initSubsystem(TheWritableGlobalData, TheWritableGlobalData, "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 
 	TheFramePacer = new FramePacer();
 
@@ -440,7 +465,7 @@ BOOL CWorldBuilderApp::InitInstance()
 #endif
 
 	// Parse command line for standard shell commands, DDE, file open
-	CCommandLineInfo cmdInfo;
+	WBCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
 	// Dispatch commands specified on the command line
