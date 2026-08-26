@@ -759,12 +759,15 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 		for (DrawableListIt it = drawablesThatWillSelect.begin();
 					it != drawablesThatWillSelect.end(); ++it)
 		{
-			// Only the player's own units count: a foreign drawable in the box is rejected by the
-			// ownership filtering downstream, so letting it satisfy this test would suppress the
-			// builders-only pass and leave the drag selecting nothing.
+			// Only units the final selection loop will actually keep count: a foreign drawable
+			// is rejected by the ownership filtering downstream, and a rider inside a container
+			// such as the Overlord's bunker is discarded as contained - letting either satisfy
+			// this test would suppress the builders-only pass and leave the drag selecting
+			// nothing.
 			const Drawable *d = *it;
 			if (d && !d->isKindOf(KINDOF_STRUCTURE) &&
-					d->getObject() && d->getObject()->isLocallyControlled())
+					d->getObject() && d->getObject()->isLocallyControlled() &&
+					d->getObject()->getContainedBy() == nullptr)
 			{
 				anyNonStructure = TRUE;
 				break;
