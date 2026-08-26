@@ -40,6 +40,8 @@
 #include "Common/GameType.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/NameKeyGenerator.h"
+// TheSuperHackers @feature for the grid hotkey exclusion list
+#include "Common/OptionPreferences.h"
 #include "Common/Override.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/Player.h"
@@ -2464,7 +2466,7 @@ void ControlBar::setCommandBarBorder( GameWindow *button, CommandButtonMappedBor
 	* bar's own ordering and needs no assumption about how many slots a mod uses. Slots past the
 	* end of the configured layout simply get no grid key. */
 //-------------------------------------------------------------------------------------------------
-AsciiString ControlBar::getGridHotKeyForButton( GameWindow *button ) const
+AsciiString ControlBar::getGridHotKeyForButton( GameWindow *button, Bool *isGridSlot ) const
 {
 	if( button == nullptr || TheGlobalData == nullptr )
 		return AsciiString::TheEmptyString;
@@ -2499,8 +2501,21 @@ AsciiString ControlBar::getGridHotKeyForButton( GameWindow *button ) const
 		if( layoutIndex >= layout.getLength() )
 			break;	// this mod has more slots than the layout covers
 
+		// this slot belongs to the grid, whatever we decide its key is
+		if( isGridSlot != nullptr )
+			*isGridSlot = TRUE;
+
 		AsciiString key;
 		key.concat( layout.getCharAt( layoutIndex ) );
+
+		// A key on the exclusion list is not used for this slot, so the slot falls back to its
+		// string file letter -- which is the point of the exclusion list: the key is freed for
+		// whatever the player wants it for, and the button keys the way it did before grid
+		// hotkeys existed. isGridSlot stays set, so the caller knows to check for a collision
+		// before handing the slot a letter the grid is already using.
+		if( OptionPreferences::isNonGridHotkeyInList( TheGlobalData->m_nonGridHotkeys, key ) )
+			return AsciiString::TheEmptyString;
+
 		return key;
 	}
 
@@ -2582,14 +2597,52 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 		// bar rather than by the letter its string file marked with an ampersand, so the keys
 		// stay in the same place whatever is being built.
 		AsciiString hotKey;
+		Bool isGridSlot = FALSE;
 
 		if( TheGlobalData && TheGlobalData->m_gridHotkeysEnabled )
-			hotKey = getGridHotKeyForButton( button );
+			hotKey = getGridHotKeyForButton( button, &isGridSlot );
 
-		// fall back to the string file letter, so a slot past the end of the layout, or a
-		// button that is not in the command bar at all, still keys the way it always did
+		// Fall back to the string file letter whenever the grid did not supply one. That covers a
+		// button the grid does not reach -- past the end of the layout, or not in the command bar
+		// at all -- and also a slot whose key the player put on NonGridHotkeys, which is what
+		// excluding a key is for: the key goes back to the game, and the button keys the way it
+		// did before grid hotkeys existed.
 		if( hotKey.isEmpty() )
-			hotKey = TheHotKeyManager->searchHotKey(commandButton->getTextLabel());
+		{
+			const AsciiString strHotKey = TheHotKeyManager->searchHotKey(commandButton->getTextLabel());
+
+			// A string file letter that the grid layout also uses would be a straight collision:
+			// addHotKey keeps whichever slot registered first and silently drops the other, so one
+			// of the two buttons would end up with no key and no overlay letter, seemingly at
+			// random. Leave the excluded slot without a hotkey instead -- the grid keeps its own
+			// letters, which is the behaviour the fixed layout is there to guarantee.
+			//
+			// Tested against the layout rather than against what is currently registered, so the
+			// result does not depend on the order the slots happen to be populated in.
+			Bool collidesWithGrid = FALSE;
+			if( isGridSlot && strHotKey.isNotEmpty() && TheGlobalData )
+			{
+				const AsciiString &layout = TheGlobalData->m_gridHotkeyLayout;
+				const char wanted = tolower( strHotKey.getCharAt( 0 ) );
+				for( const char *c = layout.str(); *c; ++c )
+				{
+					// A letter the player excluded is no longer the grid's, so it does not collide.
+					if( tolower( *c ) != wanted )
+						continue;
+
+					AsciiString gridKey;
+					gridKey.concat( *c );
+					if( !OptionPreferences::isNonGridHotkeyInList( TheGlobalData->m_nonGridHotkeys, gridKey ) )
+					{
+						collidesWithGrid = TRUE;
+					}
+					break;
+				}
+			}
+
+			if( !collidesWithGrid )
+				hotKey = strHotKey;
+		}
 
 		if(hotKey.isNotEmpty())
 			TheHotKeyManager->addHotKey(button, hotKey);

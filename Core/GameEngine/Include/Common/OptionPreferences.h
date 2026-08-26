@@ -79,6 +79,11 @@ public:
 	Bool getGridHotkeysEnabled() const;
 	AsciiString getGridHotkeyLayout() const;
 	Int getGridHotkeyColumns() const;
+	AsciiString getNonGridHotkeys() const;
+	Bool isNonGridHotkey(const AsciiString& key) const;
+	// TheSuperHackers @feature Exposed statically so GlobalData can test its cached copy of the
+	// list without re-reading Options.ini on every command bar rebuild.
+	static Bool isNonGridHotkeyInList(const AsciiString& list, const AsciiString& key);
 	Bool getCursorCaptureEnabledInWindowedGame() const;
 	Bool getCursorCaptureEnabledInWindowedMenu() const;
 	Bool getCursorCaptureEnabledInFullscreenGame() const;

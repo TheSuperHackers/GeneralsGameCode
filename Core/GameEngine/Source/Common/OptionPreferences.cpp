@@ -262,6 +262,48 @@ Int OptionPreferences::getGridHotkeyColumns() const
 	return columns;
 }
 
+// TheSuperHackers @feature Keys listed here opt out of the grid entirely. The slot that would
+// have taken such a key falls back to its string file letter, and the key keeps whatever it
+// normally does -- so a mod can leave S, G and friends on their usual bindings while everything
+// else grids. Letters only, case insensitive, separators optional: "SG" and "S,G" both work.
+// Options.ini: NonGridHotkeys = SG
+AsciiString OptionPreferences::getNonGridHotkeys() const
+{
+	OptionPreferences::const_iterator it = find("NonGridHotkeys");
+	if (it == end())
+		return AsciiString::TheEmptyString;
+
+	return it->second;
+}
+
+// TheSuperHackers @feature Is this key one the player asked to keep out of the grid?
+Bool OptionPreferences::isNonGridHotkey(const AsciiString& key) const
+{
+	if (key.isEmpty())
+		return FALSE;
+
+	return isNonGridHotkeyInList(getNonGridHotkeys(), key);
+}
+
+// TheSuperHackers @feature Shared by the option lookup above and by GlobalData's cached copy,
+// so both read the exclusion list exactly the same way.
+Bool OptionPreferences::isNonGridHotkeyInList(const AsciiString& list, const AsciiString& key)
+{
+	if (list.isEmpty() || key.isEmpty())
+		return FALSE;
+
+	const char wanted = tolower(key.getCharAt(0));
+	const char *c = list.str();
+	for (; *c; ++c)
+	{
+		// a plain scan, so commas, spaces or nothing at all all work as separators
+		if (tolower(*c) == wanted)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

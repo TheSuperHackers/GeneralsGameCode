@@ -769,7 +769,9 @@ public:
 	/// set the command data into the button
 	void setControlCommand( GameWindow *button, const CommandButton *commandButton );
 	// TheSuperHackers @feature Grid hotkey for a command bar slot, empty if not applicable.
-	AsciiString getGridHotKeyForButton( GameWindow *button ) const;
+	// isGridSlot, if given, reports whether the button is a command bar slot the grid covers,
+	// which is how the caller tells "excluded, so no key" apart from "not in the grid at all".
+	AsciiString getGridHotKeyForButton( GameWindow *button, Bool *isGridSlot = nullptr ) const;
 
 	void getForegroundMarkerPos(Int *x, Int *y);
 	void getBackgroundMarkerPos(Int *x, Int *y);

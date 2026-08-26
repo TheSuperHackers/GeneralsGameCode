@@ -146,6 +146,8 @@ public:
 	Bool m_gridHotkeysEnabled;
 	AsciiString m_gridHotkeyLayout;
 	Int m_gridHotkeyColumns;
+	// Keys the player asked to leave out of the grid; those slots keep their string file letter.
+	AsciiString m_nonGridHotkeys;
 	Bool m_rightMouseAlwaysScrolls;
 	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.
 	Bool m_useWaterPlane;
