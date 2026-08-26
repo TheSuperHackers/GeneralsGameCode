@@ -76,6 +76,9 @@ public:
 	Real getScrollFactor();
 	Bool getDrawScrollAnchor();
 	Bool getMoveScrollAnchor();
+	Bool getGridHotkeysEnabled() const;
+	AsciiString getGridHotkeyLayout() const;
+	Int getGridHotkeyColumns() const;
 	Bool getCursorCaptureEnabledInWindowedGame() const;
 	Bool getCursorCaptureEnabledInWindowedMenu() const;
 	Bool getCursorCaptureEnabledInFullscreenGame() const;

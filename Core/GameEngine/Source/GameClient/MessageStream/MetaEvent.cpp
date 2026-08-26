@@ -61,6 +61,11 @@
 #include "GameClient/Keyboard.h"
 #endif
 
+// TheSuperHackers @feature for grid hotkeys yielding to command bar buttons
+#include "Common/GlobalData.h"
+#include "GameClient/HotKey.h"
+#include "GameClient/Keyboard.h"
+
 MetaMap *TheMetaMap = nullptr;
 
 
@@ -623,6 +628,32 @@ void MetaEventTranslator::onKeyPressed(GameMessageDisposition &disp, Int systemK
 			}
 			else
 			{
+				// TheSuperHackers @feature With grid hotkeys on, a command bar button that has
+				// claimed this key wins over the meta event bound to the same letter. Checked
+				// here rather than by reordering translators, because the order is fixed before
+				// Options.ini is ever read. The meta event still fires whenever no button wants
+				// the key, so select all and friends keep working the rest of the time.
+				// Only ever yield for an unmodified key. A command bar hotkey is a bare letter, or
+				// Shift plus one for batching, so anything carrying Ctrl or Alt cannot be a cameo
+				// press and must keep its meta event. Without this a Ctrl combo whose base letter
+				// happens to sit on a visible button is swallowed: the meta event steps aside and
+				// HotKeyTranslator then rejects the modifiers, so the key does nothing at all.
+				if( (keyModState & ~SHIFT) == 0 &&
+						TheGlobalData && TheGlobalData->m_gridHotkeysEnabled && TheHotKeyManager )
+				{
+					WideChar wKey = TheKeyboard->getPrintableKey( (KeyDefType)keyType, 0 );
+					UnicodeString uKey;
+					uKey.concat( wKey );
+					AsciiString aKey;
+					aKey.translate( uKey );
+
+					if( aKey.isNotEmpty() && TheHotKeyManager->isHotKeyClaimed( aKey ) )
+					{
+						disp = KEEP_MESSAGE;	// let HotKeyTranslator have it
+						break;
+					}
+				}
+
 				// THIS IS A GREASY HACK... MESSAGE SHOULD BE HANDLED IN A TRANSLATOR, BUT DURING CINEMATICS THE TRANSLATOR IS DISABLED
 				if( map->m_meta ==  GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY)
 				{

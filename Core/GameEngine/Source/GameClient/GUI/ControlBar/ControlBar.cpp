@@ -2456,6 +2456,57 @@ void ControlBar::setCommandBarBorder( GameWindow *button, CommandButtonMappedBor
 //-------------------------------------------------------------------------------------------------
 /** Set the command data into the control */
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Grid hotkeys.
+//-------------------------------------------------------------------------------------------------
+/** Which grid key belongs to this command bar button, or empty if it is not one of them.
+	*
+	* The slot is found by looking the window up in m_commandWindows, so the mapping follows the
+	* bar's own ordering and needs no assumption about how many slots a mod uses. Slots past the
+	* end of the configured layout simply get no grid key. */
+//-------------------------------------------------------------------------------------------------
+AsciiString ControlBar::getGridHotKeyForButton( GameWindow *button ) const
+{
+	if( button == nullptr || TheGlobalData == nullptr )
+		return AsciiString::TheEmptyString;
+
+	const AsciiString &layout = TheGlobalData->m_gridHotkeyLayout;
+	if( layout.isEmpty() )
+		return AsciiString::TheEmptyString;
+
+	for( Int i = 0; i < MAX_COMMANDS_PER_SET; ++i )
+	{
+		if( m_commandWindows[ i ] != button )
+			continue;
+
+		// The command bar numbers its slots down each column, but the layout string is written
+		// in reading order, so translate between the two. Without this, sequential letters land
+		// on alternating rows.
+		Int layoutIndex = i;
+		const Int columns = TheGlobalData->m_gridHotkeyColumns;
+		if( columns > 0 )
+		{
+			// Rows come from the layout's own length, not MAX_COMMANDS_PER_SET, which is the
+			// internal cap of 32 rather than however many slots the mod actually shows.
+			const Int rows = ( layout.getLength() + columns - 1 ) / columns;
+			if( rows > 0 )
+			{
+				const Int column = i / rows;	// slots run down a column before moving right
+				const Int row = i % rows;
+				layoutIndex = row * columns + column;
+			}
+		}
+
+		if( layoutIndex >= layout.getLength() )
+			break;	// this mod has more slots than the layout covers
+
+		AsciiString key;
+		key.concat( layout.getCharAt( layoutIndex ) );
+		return key;
+	}
+
+	return AsciiString::TheEmptyString;
+}
+
 void ControlBar::setControlCommand( GameWindow *button, const CommandButton *commandButton )
 {
 
@@ -2527,7 +2578,19 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 
 	if (TheHotKeyManager)
 	{
-		AsciiString hotKey =	TheHotKeyManager->searchHotKey(commandButton->getTextLabel());
+		// TheSuperHackers @feature Grid hotkeys key a button by where it sits in the command
+		// bar rather than by the letter its string file marked with an ampersand, so the keys
+		// stay in the same place whatever is being built.
+		AsciiString hotKey;
+
+		if( TheGlobalData && TheGlobalData->m_gridHotkeysEnabled )
+			hotKey = getGridHotKeyForButton( button );
+
+		// fall back to the string file letter, so a slot past the end of the layout, or a
+		// button that is not in the command bar at all, still keys the way it always did
+		if( hotKey.isEmpty() )
+			hotKey = TheHotKeyManager->searchHotKey(commandButton->getTextLabel());
+
 		if(hotKey.isNotEmpty())
 			TheHotKeyManager->addHotKey(button, hotKey);
 	}

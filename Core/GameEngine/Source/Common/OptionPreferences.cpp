@@ -216,6 +216,52 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Grid hotkeys assign a command bar key by slot position rather than
+// by whatever letter the string file marked with an ampersand.
+// Options.ini: GridHotkeys = Yes
+Bool OptionPreferences::getGridHotkeysEnabled() const
+{
+	OptionPreferences::const_iterator it = find("GridHotkeys");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+// TheSuperHackers @feature The key for each slot, in slot order. Defaults to two rows of nine,
+// matching a command bar that is two rows deep. Mods with a different bar can set their own,
+// and the count is whatever the string is long -- slots past the end simply get no grid key.
+// Options.ini: GridHotkeyLayout = QWERTYUIOASDFGHJKL
+AsciiString OptionPreferences::getGridHotkeyLayout() const
+{
+	OptionPreferences::const_iterator it = find("GridHotkeyLayout");
+	if (it == end() || it->second.isEmpty())
+		return AsciiString("QWERTYUIOASDFGHJKL");
+
+	return it->second;
+}
+
+// TheSuperHackers @feature How many columns the command bar is wide. The engine numbers command
+// slots down each column rather than across each row, so the layout string -- which is written in
+// reading order -- has to be mapped through this to land the right key on the right button.
+// 0 means do not remap, i.e. the layout string is already in slot order.
+// Options.ini: GridHotkeyColumns = 9
+Int OptionPreferences::getGridHotkeyColumns() const
+{
+	OptionPreferences::const_iterator it = find("GridHotkeyColumns");
+	if (it == end())
+		return 9;	// two rows of nine, matching a bar two rows deep
+
+	Int columns = atoi(it->second.str());
+	if (columns < 0)
+		columns = 0;
+
+	return columns;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

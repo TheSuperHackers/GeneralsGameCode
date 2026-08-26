@@ -768,6 +768,8 @@ public:
 
 	/// set the command data into the button
 	void setControlCommand( GameWindow *button, const CommandButton *commandButton );
+	// TheSuperHackers @feature Grid hotkey for a command bar slot, empty if not applicable.
+	AsciiString getGridHotKeyForButton( GameWindow *button ) const;
 
 	void getForegroundMarkerPos(Int *x, Int *y);
 	void getBackgroundMarkerPos(Int *x, Int *y);
