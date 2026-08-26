@@ -176,7 +176,10 @@ Bool HotKeyManager::isHotKeyClaimed( const AsciiString& keyIn ) const
 	if( win == nullptr )
 		return FALSE;
 
-	// only a button the player can actually press counts as claiming the key
+	// Only a visible button counts as claiming the key. A visible but currently disabled
+	// button claims it deliberately: the player pressing a greyed out cameo's key should get
+	// the disabled click feedback from executeHotKey, not have the press fall through to a
+	// meta event bound to the same letter and do something unrelated to the button they see.
 	if( BitIsSet( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
 		return FALSE;
 

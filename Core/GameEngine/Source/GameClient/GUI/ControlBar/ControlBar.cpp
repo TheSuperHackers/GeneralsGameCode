@@ -2505,8 +2505,16 @@ AsciiString ControlBar::getGridHotKeyForButton( GameWindow *button, Bool *isGrid
 		if( isGridSlot != nullptr )
 			*isGridSlot = TRUE;
 
+		// A non alphanumeric layout character is a placeholder: the slot is covered by the
+		// grid but gets no key of its own. That lets a layout shorter than a full bar keep
+		// its row shape by padding with dots -- the row count above is derived from the
+		// layout's length, so a partial row would otherwise shift every key after it.
+		const char layoutChar = layout.getCharAt( layoutIndex );
+		if( !isalnum( (unsigned char)layoutChar ) )
+			return AsciiString::TheEmptyString;
+
 		AsciiString key;
-		key.concat( layout.getCharAt( layoutIndex ) );
+		key.concat( layoutChar );
 
 		// A key on the exclusion list is not used for this slot, so the slot falls back to its
 		// string file letter -- which is the point of the exclusion list: the key is freed for

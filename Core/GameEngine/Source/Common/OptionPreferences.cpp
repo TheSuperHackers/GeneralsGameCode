@@ -231,9 +231,11 @@ Bool OptionPreferences::getGridHotkeysEnabled() const
 	return FALSE;
 }
 
-// TheSuperHackers @feature The key for each slot, in slot order. Defaults to two rows of nine,
-// matching a command bar that is two rows deep. Mods with a different bar can set their own,
-// and the count is whatever the string is long -- slots past the end simply get no grid key.
+// TheSuperHackers @feature The key for each slot, in reading order. Defaults to two rows of
+// nine, matching a command bar that is two rows deep. Mods with a different bar can set their
+// own; slots past the end of the layout simply get no grid key. The layout should cover whole
+// rows -- pad any slot that should stay keyless with a non letter, e.g. "QWERT....", since the
+// row shape is derived from the layout's length.
 // Options.ini: GridHotkeyLayout = QWERTYUIOASDFGHJKL
 AsciiString OptionPreferences::getGridHotkeyLayout() const
 {
