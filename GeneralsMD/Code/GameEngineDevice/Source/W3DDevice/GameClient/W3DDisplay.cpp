@@ -2895,7 +2895,7 @@ VideoBuffer*	W3DDisplay::createVideoBuffer()
 {
 	VideoBuffer::Type format = VideoBuffer::TYPE_UNKNOWN;
 
-	/// @todo query video player for supported formats - we assume bink formats here
+	/// @todo query video player for supported formats
 
 	// first try to use the native format
 

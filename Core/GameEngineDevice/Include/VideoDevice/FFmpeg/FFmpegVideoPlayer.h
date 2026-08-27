@@ -39,6 +39,7 @@
 //----------------------------------------------------------------------------
 
 class FFmpegFile;
+struct SwrContext;
 struct AVFrame;
 struct SwsContext;
 
@@ -63,6 +64,9 @@ class FFmpegVideoStream : public VideoStream
 		Char			*m_memFile;				///< Pointer to memory resident file
 		UnsignedInt64	m_startTime = 0;		///< Time the stream started
 		UnsignedByte *	m_audioBuffer = nullptr;///< Audio buffer for the stream
+		SwrContext *	m_swrContext = nullptr;
+		Int m_lastAudioSampleRate = 0;
+		Int m_lastAudioChannels = 0;
 
 		FFmpegVideoStream(FFmpegFile* file);																///< only BinkVideoPlayer can create these
 		virtual ~FFmpegVideoStream();
@@ -121,7 +125,7 @@ class FFmpegVideoPlayer : public VideoPlayer
 		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid );
-		virtual void initializeBinkWithMiles();
+		virtual void initializeAudioForVideo();
 };
 
 

@@ -27,7 +27,7 @@
 #include "WW3D2/ww3dformat.h"
 #include "WWMath/wwmath.h"
 #include <cstring>
-#include <d3dx8core.h>
+#include <d3dx9core.h>
 
 W3DProfilerFrameCapture::W3DProfilerFrameCapture()
 {
@@ -167,13 +167,13 @@ void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt disp
 
 	// set viewport
 	IDirect3DDevice8 *device = DX8Wrapper::_Get_D3D_Device8();
-	D3DVIEWPORT8 restoreViewport;
+	D3DVIEWPORT9 restoreViewport;
 	device->GetViewport(&restoreViewport);
 
 	SurfaceClass::SurfaceDescription smallRenderDesc;
 	surfaceClass->Get_Description(smallRenderDesc);
 
-	D3DVIEWPORT8 viewport;
+	D3DVIEWPORT9 viewport;
 	viewport.X = 0;
 	viewport.Y = 0;
 	viewport.Width = PROFILER_FRAME_IMAGE_SIZE;

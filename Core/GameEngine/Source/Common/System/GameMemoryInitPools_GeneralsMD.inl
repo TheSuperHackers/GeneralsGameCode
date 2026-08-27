@@ -644,7 +644,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "SortingIndexBufferClass", 32, 32 },
 	{ "DX8VertexBufferClass", 128, 32 },
 	{ "SortingVertexBufferClass", 32, 32 },
-	{ "DynD3DMATERIAL8", 8192, 32 },
+	{ "DynD3DMATERIAL9", 8192, 32 },
 	{ "DynamicMatrix3D", 512, 32 },
 	{ "MeshGeometryClass", 32, 32 },
 	{ "DynamicMeshModel", 32, 32 },

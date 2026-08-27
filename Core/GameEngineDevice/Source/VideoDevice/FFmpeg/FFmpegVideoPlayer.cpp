@@ -43,12 +43,14 @@
 
 extern "C" {
 	#include <libavcodec/avcodec.h>
+	#include <libavutil/channel_layout.h>
 	#include <libswscale/swscale.h>
+	#include <libswresample/swresample.h>
 }
 
-#ifdef RTS_HAS_OPENAL
-#include "OpenALAudioDevice/OpenALAudioManager.h"
-#include "OpenALAudioDevice/OpenALAudioStream.h"
+#if 1
+#include "XAudio2AudioDevice/XAudio2AudioManager.h"
+#include "XAudio2AudioDevice/XAudio2VideoStream.h"
 #endif
 
 #include <chrono>
@@ -130,7 +132,8 @@ void	FFmpegVideoPlayer::init()
 	// Need to load the stuff from the ini file.
 	VideoPlayer::init();
 
-	initializeBinkWithMiles();
+	initializeAudioForVideo();
+
 }
 
 //============================================================================
@@ -139,7 +142,7 @@ void	FFmpegVideoPlayer::init()
 
 void FFmpegVideoPlayer::deinit()
 {
-	TheAudio->releaseHandleForBink();
+	TheAudio->releaseHandleForVideo();
 	VideoPlayer::deinit();
 }
 
@@ -150,6 +153,7 @@ void FFmpegVideoPlayer::deinit()
 void	FFmpegVideoPlayer::reset()
 {
 	VideoPlayer::reset();
+	TheAudio->releaseHandleForVideo();
 }
 
 //============================================================================
@@ -277,28 +281,18 @@ VideoStreamInterface*	FFmpegVideoPlayer::load( AsciiString movieTitle )
 void FFmpegVideoPlayer::notifyVideoPlayerOfNewProvider( Bool nowHasValid )
 {
 	if (!nowHasValid) {
-		TheAudio->releaseHandleForBink();
-		//BinkSetSoundTrack(0, 0);
+		TheAudio->releaseHandleForVideo();
 	} else {
-		initializeBinkWithMiles();
+		initializeAudioForVideo();
 	}
 }
 
 //============================================================================
 //============================================================================
-void FFmpegVideoPlayer::initializeBinkWithMiles()
+void FFmpegVideoPlayer::initializeAudioForVideo()
 {
-	Int retVal = 0;
-	void *driver = TheAudio->getHandleForBink();
-
-	if ( driver )
-	{
-		//retVal = BinkSoundUseDirectSound(driver);
-	}
-	if( !driver || retVal == 0)
-	{
-		//BinkSetSoundTrack ( 0,0 );
-	}
+	[[maybe_unused]] void *driver = TheAudio->getHandleForVideo();
+	// FFmpeg handles audio internally, no special initialization needed
 }
 
 //============================================================================
@@ -311,9 +305,9 @@ FFmpegVideoStream::FFmpegVideoStream(FFmpegFile* file)
 	m_ffmpegFile->setFrameCallback(onFrame);
 	m_ffmpegFile->setUserData(this);
 
-#ifdef RTS_USE_OPENAL
+#if 1
 	// Release the audio handle if it's already in use
-	OpenALAudioStream* audioStream = (OpenALAudioStream*)TheAudio->getHandleForBink();
+	XAudio2VideoStream* audioStream = (XAudio2VideoStream*)TheAudio->getHandleForVideo();
 	audioStream->reset();
 #endif
 
@@ -321,7 +315,7 @@ FFmpegVideoStream::FFmpegVideoStream(FFmpegFile* file)
 	while (m_good && m_gotFrame == false)
 		m_good = m_ffmpegFile->decodePacket();
 
- #ifdef RTS_USE_OPENAL
+#if 1
 	// Start audio playback
 	audioStream->play();
 #endif
@@ -336,6 +330,7 @@ FFmpegVideoStream::FFmpegVideoStream(FFmpegFile* file)
 FFmpegVideoStream::~FFmpegVideoStream()
 {
 	av_freep(&m_audioBuffer);
+	swr_free(&m_swrContext);
 	av_frame_free(&m_frame);
 	sws_freeContext(m_swsContext);
 	delete m_ffmpegFile;
@@ -349,40 +344,52 @@ void FFmpegVideoStream::onFrame(AVFrame *frame, int stream_idx, int stream_type,
 		videoStream->m_frame = av_frame_clone(frame);
 		videoStream->m_gotFrame = true;
 	}
-#ifdef RTS_USE_OPENAL
+#if 1
 	else if (stream_type == AVMEDIA_TYPE_AUDIO) {
-		OpenALAudioStream* audioStream = (OpenALAudioStream*)TheAudio->getHandleForBink();
+		XAudio2VideoStream* audioStream = (XAudio2VideoStream*)TheAudio->getHandleForVideo();
 		audioStream->update();
-		AVSampleFormat sampleFmt = static_cast<AVSampleFormat>(frame->format);
-		const int bytesPerSample = av_get_bytes_per_sample(sampleFmt);
-		const int frameSize = av_samples_get_buffer_size(nullptr, frame->ch_layout.nb_channels, frame->nb_samples, sampleFmt, 1);
-		uint8_t* frameData = frame->data[0];
-		// The format is planar - convert it to interleaved
-		if (av_sample_fmt_is_planar(sampleFmt))
-		{
-			videoStream->m_audioBuffer = static_cast<uint8_t*>(av_realloc(videoStream->m_audioBuffer, frameSize));
-			if (videoStream->m_audioBuffer == nullptr)
-			{
-				DEBUG_LOG(("Failed to allocate audio buffer"));
+		int channels = frame->ch_layout.nb_channels;
+		const int sampleRate = frame->sample_rate;
+		AVSampleFormat srcFormat = static_cast<AVSampleFormat>(frame->format);
+		if (channels <= 0 || sampleRate <= 0)
+			return;
+
+		if (videoStream->m_swrContext == nullptr || videoStream->m_lastAudioSampleRate != sampleRate || videoStream->m_lastAudioChannels != channels) {
+			swr_free(&videoStream->m_swrContext);
+			AVChannelLayout outputLayout{};
+			if (channels == 1) {
+				av_channel_layout_from_mask(&outputLayout, AV_CH_LAYOUT_MONO);
+			} else {
+				av_channel_layout_from_mask(&outputLayout, AV_CH_LAYOUT_STEREO);
+				channels = 2;
+			}
+			AVChannelLayout inputLayout = frame->ch_layout;
+			if (inputLayout.nb_channels == 0)
+				av_channel_layout_default(&inputLayout, frame->ch_layout.nb_channels > 0 ? frame->ch_layout.nb_channels : 2);
+			if (swr_alloc_set_opts2(&videoStream->m_swrContext, &outputLayout, AV_SAMPLE_FMT_S16, sampleRate,
+				&inputLayout, srcFormat, sampleRate, 0, nullptr) < 0 ||
+				swr_init(videoStream->m_swrContext) < 0) {
+				av_channel_layout_uninit(&outputLayout);
 				return;
 			}
-
-			// Write the samples into our audio buffer
-			for (int sample_idx = 0; sample_idx < frame->nb_samples; sample_idx++)
-			{
-				int byte_offset = sample_idx * bytesPerSample;
-				for (int channel_idx = 0; channel_idx < frame->ch_layout.nb_channels; channel_idx++)
-				{
-					uint8_t* dst = &videoStream->m_audioBuffer[byte_offset * frame->ch_layout.nb_channels + channel_idx * bytesPerSample];
-					uint8_t* src = &frame->data[channel_idx][byte_offset];
-					memcpy(dst, src, bytesPerSample);
-				}
-			}
-			frameData = videoStream->m_audioBuffer;
+			av_channel_layout_uninit(&outputLayout);
+			videoStream->m_lastAudioSampleRate = sampleRate;
+			videoStream->m_lastAudioChannels = channels;
 		}
 
-		ALenum format = OpenALAudioManager::getALFormat(frame->ch_layout.nb_channels, bytesPerSample * 8);
-		audioStream->bufferData(frameData, frameSize, format, frame->sample_rate);
+		const int outputSamples = frame->nb_samples;
+		uint8_t *output = nullptr;
+		int outputLinesize = 0;
+		if (av_samples_alloc(&output, &outputLinesize, channels, outputSamples, AV_SAMPLE_FMT_S16, 0) < 0)
+			return;
+		const int converted = swr_convert(videoStream->m_swrContext, &output, outputSamples,
+			const_cast<const uint8_t **>(frame->extended_data), frame->nb_samples);
+		if (converted > 0) {
+			const int dataSize = av_samples_get_buffer_size(nullptr, channels, converted, AV_SAMPLE_FMT_S16, 1);
+			audioStream->queueBuffer(output, dataSize, sampleRate, channels, 16);
+			audioStream->play();
+		}
+		av_freep(&output);
 	}
 #endif
 }
@@ -394,11 +401,6 @@ void FFmpegVideoStream::onFrame(AVFrame *frame, int stream_idx, int stream_type,
 
 void FFmpegVideoStream::update()
 {
-#ifdef RTS_USE_OPENAL
-	// Start audio playback
-	OpenALAudioStream* audioStream = (OpenALAudioStream*)TheAudio->getHandleForBink();
-	audioStream->play();
-#endif
 	//BinkWait( m_handle );
 }
 

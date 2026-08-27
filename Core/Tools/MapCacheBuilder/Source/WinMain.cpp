@@ -96,7 +96,7 @@
 
 #include "W3DDevice/Common/W3DModuleFactory.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"
-#include "MilesAudioDevice/MilesAudioManager.h"
+#include "XAudio2AudioDevice/XAudio2AudioManager.h"
 
 #include <io.h>
 #include "Win32Device/GameClient/Win32Mouse.h"
@@ -258,7 +258,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	initSubsystem(TheTerrainTypes, new TerrainTypeCollection(), "Data\\INI\\Default\\Terrain", "Data\\INI\\Terrain");
 	initSubsystem(TheTerrainRoads, new TerrainRoadCollection(), "Data\\INI\\Default\\Roads", "Data\\INI\\Roads");
 	initSubsystem(TheScriptEngine, (ScriptEngine*)(new ScriptEngine()));
-	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
+	initSubsystem(TheAudio, (AudioManager*)new XAudio2AudioManager());
 	initSubsystem(TheVideoPlayer, (VideoPlayerInterface*)(new VideoPlayer()));
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());

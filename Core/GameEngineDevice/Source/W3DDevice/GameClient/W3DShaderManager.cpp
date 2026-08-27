@@ -2653,6 +2653,13 @@ void W3DShaderManager::init()
 		if (hr != S_OK || !m_oldRenderSurface)
 			return;
 
+		hr = m_oldRenderSurface->GetDesc(&desc);
+		if (hr != S_OK)
+		{
+			SAFE_RELEASE(m_oldRenderSurface);
+			return;
+		}
+
 		hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture, nullptr);
 
 		if (hr != S_OK)

@@ -113,7 +113,7 @@ static const char *const _MemoryCategoryNames[] =
 	"GameInit",
 	"Renderer",
 	"Network",
-	"BINK",
+	"Video",
 	"<undefined>",
 	"<undefined>",
 	"<undefined>",

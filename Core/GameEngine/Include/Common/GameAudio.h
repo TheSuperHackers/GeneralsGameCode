@@ -246,8 +246,8 @@ class AudioManager : public SubsystemInterface
 
     virtual Bool has3DSensitiveStreamsPlaying() const = 0;
 
- 		virtual void *getHandleForBink() = 0;
- 		virtual void releaseHandleForBink() = 0;
+ 		virtual void *getHandleForVideo() = 0;
+ 		virtual void releaseHandleForVideo() = 0;
 
 		// this function will play an audio event rts by loading it into memory. It should not be used
 		// by anything except for the load screens.

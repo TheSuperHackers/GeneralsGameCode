@@ -8,11 +8,9 @@ else()
 endif()
 
 target_link_libraries(z_generals PRIVATE
-    binkstub
     comctl32
     d3d9lib
     imm32
-    milesstub
     vfw32
     winmm
     z_gameengine
@@ -51,6 +49,9 @@ add_custom_command(TARGET z_generals POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:z_generals>/Run"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/GeneralsMD/Run"
+        "$<TARGET_FILE_DIR:z_generals>"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ffmpeg_SOURCE_DIR}/bin"
         "$<TARGET_FILE_DIR:z_generals>"
 )
 

@@ -1,6 +1,13 @@
 set(GAMEENGINEDEVICE_SRC
-    Include/MilesAudioDevice/MilesAudioManager.h
-    Include/VideoDevice/Bink/BinkVideoPlayer.h
+    Include/XAudio2AudioDevice/XAudio2AudioManager.h
+    Include/XAudio2AudioDevice/XAudio2AudioSystem.h
+    Include/XAudio2AudioDevice/XAudio2Decoder.h
+    Include/XAudio2AudioDevice/XAudio2Mastering.h
+    Include/XAudio2AudioDevice/XAudio2VideoStream.h
+    Include/XAudio2AudioDevice/XAudio2Voice.h
+    Include/XAudio2AudioDevice/NullAudioSystem.h
+    Include/VideoDevice/FFmpeg/FFmpegFile.h
+    Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
     Include/W3DDevice/Common/W3DConvert.h
     Include/W3DDevice/Common/W3DFunctionLexicon.h
     Include/W3DDevice/Common/W3DModuleFactory.h
@@ -91,8 +98,17 @@ set(GAMEENGINEDEVICE_SRC
     Include/Win32Device/GameClient/Win32DIKeyboard.h
     #Include/Win32Device/GameClient/Win32DIMouse.h
     Include/Win32Device/GameClient/Win32Mouse.h
-    Source/MilesAudioDevice/MilesAudioManager.cpp
-    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
+    Source/XAudio2AudioDevice/XAudio2AudioManager.cpp
+    Source/XAudio2AudioDevice/XAudio2AudioSystem.cpp
+    Source/XAudio2AudioDevice/XAudio2Decoder.cpp
+    Source/XAudio2AudioDevice/XAudio2Mastering.cpp
+    Source/XAudio2AudioDevice/XAudio2VideoStream.cpp
+    Source/XAudio2AudioDevice/XAudio2Voice.cpp
+    Source/XAudio2AudioDevice/AudioEngine.cpp
+    Source/XAudio2AudioDevice/AudioFactory.cpp
+    Source/XAudio2AudioDevice/NullAudioSystem.cpp
+    Source/VideoDevice/FFmpeg/FFmpegFile.cpp
+    Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
     Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
     Source/W3DDevice/Common/System/W3DRadar.cpp
     Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
@@ -220,6 +236,11 @@ target_include_directories(corei_gameenginedevice_public INTERFACE
     Include
 )
 
+target_include_directories(corei_gameenginedevice_private INTERFACE
+    Include/XAudio2AudioDevice
+    Source/XAudio2AudioDevice
+)
+
 target_link_libraries(corei_gameenginedevice_private INTERFACE
     corei_always
     corei_main
@@ -227,25 +248,12 @@ target_link_libraries(corei_gameenginedevice_private INTERFACE
 )
 
 target_link_libraries(corei_gameenginedevice_public INTERFACE
-    binkstub
     corei_gameengine_public
     d3d9lib
-    milesstub
+    xaudio2
 )
 
-if(RTS_BUILD_OPTION_FFMPEG)
-    find_package(FFMPEG REQUIRED)
-
-    if(FFMPEG_FOUND)
-        target_sources(corei_gameenginedevice_private INTERFACE
-            Include/VideoDevice/FFmpeg/FFmpegFile.h
-            Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
-            Source/VideoDevice/FFmpeg/FFmpegFile.cpp
-            Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
-        )
-        target_include_directories(corei_gameenginedevice_private INTERFACE ${FFMPEG_INCLUDE_DIRS})
-        target_link_directories(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARY_DIRS})
-        target_link_libraries(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARIES})
-        target_compile_definitions(corei_gameenginedevice_public INTERFACE RTS_HAS_FFMPEG)
-    endif()
-endif()
+target_include_directories(corei_gameenginedevice_private INTERFACE ${FFMPEG_INCLUDE_DIRS})
+target_link_directories(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARY_DIRS})
+target_link_libraries(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARIES})
+target_compile_definitions(corei_gameenginedevice_public INTERFACE RTS_HAS_FFMPEG)

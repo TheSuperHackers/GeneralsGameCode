@@ -1276,9 +1276,9 @@ void Drawable::updateDrawable()
 	//If we have an ambient sound, and we aren't currently playing it, attempt to play it now.
   // However, if the attached sound is a one-shot (non-looping) sound, don't restart it -- only
   // start it ONCE. The problem is, looping sounds need to keep being restarted. Why? Because
-  // MilesAudioManager will kill the sound (in MilesAudioManager::processPlayingList) if gets
+  // The audio backend will kill the sound when it gets
   // out of range. Looping ambient sounds need to restart if the user moves back into range.
-  // The MilesAudioManager doesn't handle this, so we need to keep checking looping sounds
+  // so we need to keep checking looping sounds
   // to see if they are in range. But this messes up non-looping sounds -- they keep looping!
   // End result: a hack of testing the looping bit and only restarting the sound if the looping
   // bit is on and the loop count is 0 (loop forever).

@@ -5,7 +5,6 @@ target_link_libraries(z_w3dview PRIVATE
     corei_w3dview # this interface gets the source files for the tool
     d3d9lib
     imm32
-    milesstub
     Version
     vfw32
     winmm

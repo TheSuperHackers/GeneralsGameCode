@@ -67,7 +67,7 @@ enum
 	MEM_GAMEINIT,			// game init time allocations
 	MEM_RENDERER,			// dx8 renderer
 	MEM_NETWORK,
-	MEM_BINK,
+	MEM_VIDEO,
 
 	MEM_COUNT
 };
