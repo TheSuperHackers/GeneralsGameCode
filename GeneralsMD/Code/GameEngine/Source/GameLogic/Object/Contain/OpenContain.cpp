@@ -177,6 +177,12 @@ OpenContain::~OpenContain()
 										 ("OpenContain %s: m_xferContainIDList is not empty but should be",
 											getObject()->getTemplate()->getName().str() ) );
 
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Caball009 18/08/2026 Due to a potential use-after-free bug that cannot be fixed
+	// with retail compatibility, it's desirable to be able to check if the contain list is empty after its destruction.
+	// Clear the list explicitly to reset the list size.
+	m_containList.clear();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -433,6 +439,15 @@ void OpenContain::removeFromContain( Object *rider, Bool exposeStealthUnits )
 		return;
 
 	}
+
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Caball009 18/08/2026 Due to a potential use-after-free bug that cannot be fixed
+	// with retail compatibility, the 'contained by' pointer of this object may point to an already destroyed object.
+	// Check the list size before executing the find operation below, otherwise the game crashes if the list
+	// was already destructed.
+	if (m_containList.empty())
+		return;
+#endif
 
 	ContainedItemsList::iterator it = std::find(m_containList.begin(), m_containList.end(), rider);
 	if (it != m_containList.end())

@@ -691,6 +691,9 @@ void Object::onContainedBy( Object *containedBy )
 	m_containedBy = containedBy;
 	m_containedByFrame = TheGameLogic->getFrame();
 
+	DEBUG_ASSERTCRASH(containedBy == nullptr || !containedBy->isDestroyed(),
+		("Object::onContainedBy - Adding to a destroyed container"));
+
   handlePartitionCellMaintenance(); // which should unlook me now that I am contained
 
 }
@@ -727,6 +730,15 @@ Int Object::getTransportSlotCount() const
 		}
 	}
 	return count;
+}
+
+void Object::friend_setContainedBy(Object* containedBy)
+{
+	m_containedBy = containedBy;
+
+#if !RETAIL_COMPATIBLE_CRC
+	m_containedByFrame = containedBy ? TheGameLogic->getFrame() : 0;
+#endif
 }
 
 const Object* Object::getEnclosingContainedBy() const
