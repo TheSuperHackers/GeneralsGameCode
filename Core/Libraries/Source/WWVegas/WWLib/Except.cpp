@@ -65,6 +65,29 @@
 #include	<imagehlp.h>
 #include <crtdbg.h>
 
+#if defined(_M_X64)
+
+// The original Westwood crash reporter is an x86-only diagnostic component.  Keep
+// the public hooks available on Win64 while avoiding x86 CONTEXT/inline-assembly
+// assumptions.  Win64 uses the Windows Error Reporting/minidump path instead.
+unsigned long ExceptionReturnStack = 0;
+unsigned long ExceptionReturnAddress = 0;
+unsigned long ExceptionReturnFrame = 0;
+
+int Exception_Handler(int, EXCEPTION_POINTERS *) { return EXCEPTION_EXECUTE_HANDLER; }
+int Stack_Walk(unsigned long *, int, CONTEXT *) { return 0; }
+bool Lookup_Symbol(void *, char *, int &displacement) { displacement = 0; return false; }
+void Load_Image_Helper() {}
+void Register_Thread_ID(unsigned long, char *, bool) {}
+void Unregister_Thread_ID(unsigned long, char *) {}
+void Register_Application_Exception_Callback(void (*)()) {}
+void Register_Application_Version_Callback(char *(*)()) {}
+void Set_Exit_On_Exception(bool) {}
+bool Is_Trying_To_Exit() { return false; }
+unsigned long Get_Main_Thread_ID() { return 0; }
+
+#else
+
 #ifdef WWDEBUG
 #define DebugString 	WWDebug_Printf
 #else
@@ -1315,6 +1338,7 @@ bool Is_Trying_To_Exit()
 	return(TryingToExit);
 }
 
+#endif // _M_X64
 
 
 

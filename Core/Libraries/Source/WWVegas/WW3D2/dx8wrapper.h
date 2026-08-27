@@ -42,6 +42,7 @@
 #pragma once
 
 #include "WWLib/always.h"
+#include <cstdint>
 #include "dllist.h"
 #include "d3d9.h"
 #include "WWMath/matrix4.h"
@@ -603,8 +604,8 @@ public:
 	// shader system updates KJM v
 	static void Apply_Default_State();
 
-	static void Set_Vertex_Shader(DWORD vertex_shader);
-	static void Set_Pixel_Shader(DWORD pixel_shader);
+	static void Set_Vertex_Shader(uintptr_t vertex_shader);
+	static void Set_Pixel_Shader(uintptr_t pixel_shader);
 
 	static void Set_Vertex_Shader_Constant(int reg, const void* data, int count);
 	static void Set_Pixel_Shader_Constant(int reg, const void* data, int count);
@@ -744,8 +745,8 @@ protected:
 
 
 	// shader system updates KJM v
-	static DWORD							Vertex_Shader;
-	static DWORD							Pixel_Shader;
+	static uintptr_t					Vertex_Shader;
+	static uintptr_t					Pixel_Shader;
 
 	static Vector4							Vertex_Shader_Constants[MAX_VERTEX_SHADER_CONSTANTS];
 	static Vector4							Pixel_Shader_Constants[MAX_PIXEL_SHADER_CONSTANTS];
@@ -804,7 +805,7 @@ protected:
 };
 
 // shader system updates KJM v
-WWINLINE void DX8Wrapper::Set_Vertex_Shader(DWORD vertex_shader)
+WWINLINE void DX8Wrapper::Set_Vertex_Shader(uintptr_t vertex_shader)
 {
 #if 0 //(gth) some code is bypassing this accessor function so we can't count on this variable...
 	// may be incorrect if shaders are created and destroyed dynamically
@@ -829,7 +830,7 @@ WWINLINE void DX8Wrapper::Set_Vertex_Shader(DWORD vertex_shader)
 	}
 }
 
-WWINLINE void DX8Wrapper::Set_Pixel_Shader(DWORD pixel_shader)
+WWINLINE void DX8Wrapper::Set_Pixel_Shader(uintptr_t pixel_shader)
 {
 	// may be incorrect if shaders are created and destroyed dynamically
 	if (Pixel_Shader==pixel_shader) return;

@@ -127,8 +127,8 @@ D3DFORMAT					DX8Wrapper::DisplayFormat	= D3DFMT_UNKNOWN;
 D3DMULTISAMPLE_TYPE DX8Wrapper::MultiSampleAntiAliasing	= DEFAULT_MSAA;
 
 // shader system additions KJM v
-DWORD								DX8Wrapper::Vertex_Shader								= 0;
-DWORD								DX8Wrapper::Pixel_Shader								= 0;
+uintptr_t							DX8Wrapper::Vertex_Shader								= 0;
+uintptr_t							DX8Wrapper::Pixel_Shader								= 0;
 
 Vector4							DX8Wrapper::Vertex_Shader_Constants[MAX_VERTEX_SHADER_CONSTANTS];
 Vector4							DX8Wrapper::Pixel_Shader_Constants[MAX_PIXEL_SHADER_CONSTANTS];

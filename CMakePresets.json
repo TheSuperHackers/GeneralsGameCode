@@ -115,6 +115,32 @@
             }
         },
         {
+            "name": "win64",
+            "inherits": "default",
+            "hidden": false,
+            "displayName": "Windows 64bit Release",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "RTS_FLAGS": "/W3"
+            },
+            "vendor": {
+                "jetbrains.com/clion": {
+                    "toolchain": "Visual Studio"
+                }
+            }
+        },
+        {
+            "name": "win64-debug",
+            "inherits": "win64",
+            "displayName": "Windows 64bit Debug",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_DEBUG": "ON"
+            }
+        },
+        {
             "name": "win32-debug",
             "inherits": "win32",
             "displayName": "Windows 32bit Debug",
@@ -244,6 +270,20 @@
             "configurePreset": "win32-debug",
             "displayName": "Build Windows 32bit Debug",
             "description": "Build Windows 32bit Debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "win64",
+            "configurePreset": "win64",
+            "displayName": "Build Windows 64bit Release",
+            "description": "Build Windows 64bit Release",
+            "configuration": "Release"
+        },
+        {
+            "name": "win64-debug",
+            "configurePreset": "win64-debug",
+            "displayName": "Build Windows 64bit Debug",
+            "description": "Build Windows 64bit Debug",
             "configuration": "Debug"
         },
         {

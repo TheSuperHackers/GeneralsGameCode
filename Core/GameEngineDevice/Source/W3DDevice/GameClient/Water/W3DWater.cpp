@@ -119,22 +119,22 @@ typedef VertexFormatXYZDUV2 MaterMeshVertexFormat;
 // Converts a FLOAT to a DWORD for use in SetRenderState() calls
 static inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
 
-static IDirect3DPixelShader9 *PixelShaderFromHandle(DWORD handle)
+static IDirect3DPixelShader9 *PixelShaderFromHandle(uintptr_t handle)
 {
 	return reinterpret_cast<IDirect3DPixelShader9 *>(static_cast<uintptr_t>(handle));
 }
 
-static IDirect3DVertexShader9 *VertexShaderFromHandle(DWORD handle)
+static IDirect3DVertexShader9 *VertexShaderFromHandle(uintptr_t handle)
 {
 	return reinterpret_cast<IDirect3DVertexShader9 *>(static_cast<uintptr_t>(handle));
 }
 
-static HRESULT SetPixelShaderFromHandle(IDirect3DDevice9 *device, DWORD handle)
+static HRESULT SetPixelShaderFromHandle(IDirect3DDevice9 *device, uintptr_t handle)
 {
 	return device->SetPixelShader(handle ? PixelShaderFromHandle(handle) : nullptr);
 }
 
-static void DeletePixelShaderHandle(DWORD &handle)
+static void DeletePixelShaderHandle(uintptr_t &handle)
 {
 	if (!handle) {
 		return;
@@ -143,7 +143,7 @@ static void DeletePixelShaderHandle(DWORD &handle)
 	handle = 0;
 }
 
-static void DeleteVertexShaderHandle(DWORD &handle)
+static void DeleteVertexShaderHandle(uintptr_t &handle)
 {
 	if (!handle) {
 		return;
@@ -152,12 +152,12 @@ static void DeleteVertexShaderHandle(DWORD &handle)
 	handle = 0;
 }
 
-static HRESULT CreatePixelShaderHandle(IDirect3DDevice9 *device, const DWORD *shader, DWORD *handle)
+static HRESULT CreatePixelShaderHandle(IDirect3DDevice9 *device, const DWORD *shader, uintptr_t *handle)
 {
 	IDirect3DPixelShader9 *pixel_shader = nullptr;
 	const HRESULT hr = device->CreatePixelShader(shader, &pixel_shader);
 	if (SUCCEEDED(hr)) {
-		*handle = static_cast<DWORD>(reinterpret_cast<uintptr_t>(pixel_shader));
+		*handle = reinterpret_cast<uintptr_t>(pixel_shader);
 	}
 	return hr;
 }

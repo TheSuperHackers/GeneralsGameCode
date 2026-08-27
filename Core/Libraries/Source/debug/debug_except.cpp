@@ -31,6 +31,12 @@
 #include <windows.h>
 #include <commctrl.h>
 
+#if defined(_M_X64)
+#define Eip Rip
+#define Esp Rsp
+#define Ebp Rbp
+#endif
+
 DebugExceptionhandler::DebugExceptionhandler()
 {
   // don't do anything here!
@@ -118,6 +124,25 @@ void DebugExceptionhandler::LogRegisters(Debug &dbg, struct _EXCEPTION_POINTERS 
 {
   struct _CONTEXT &ctx=*exptr->ContextRecord;
 
+#if defined(_M_X64)
+  dbg << Debug::FillChar('0')
+      << Debug::Hex()
+      <<  "RAX:" << Debug::Width(16) << ctx.Rax
+      << " RBX:" << Debug::Width(16) << ctx.Rbx
+      << " RCX:" << Debug::Width(16) << ctx.Rcx << "\n"
+      <<  "RDX:" << Debug::Width(16) << ctx.Rdx
+      << " RSI:" << Debug::Width(16) << ctx.Rsi
+      << " RDI:" << Debug::Width(16) << ctx.Rdi << "\n"
+      <<  "RIP:" << Debug::Width(16) << ctx.Rip
+      << " RSP:" << Debug::Width(16) << ctx.Rsp
+      << " RBP:" << Debug::Width(16) << ctx.Rbp << "\n"
+      <<  "Flags:" << Debug::Bin() << Debug::Width(32) << ctx.EFlags << Debug::Hex() << "\n"
+      <<  "CS:" << Debug::Width(4) << ctx.SegCs
+      << " SS:" << Debug::Width(4) << ctx.SegSs
+      << " FS:" << Debug::Width(4) << ctx.SegFs
+      << " GS:" << Debug::Width(4) << ctx.SegGs << "\n" << Debug::FillChar() << Debug::Dec();
+  return;
+#else
   dbg << Debug::FillChar('0')
       << Debug::Hex()
       <<  "EAX:" << Debug::Width(8) << ctx.Eax
@@ -136,10 +161,16 @@ void DebugExceptionhandler::LogRegisters(Debug &dbg, struct _EXCEPTION_POINTERS 
       << "\nES:" << Debug::Width(4) << ctx.SegEs
       << " FS:" << Debug::Width(4) << ctx.SegFs
       << " GS:" << Debug::Width(4) << ctx.SegGs << "\n" << Debug::FillChar() << Debug::Dec();
+#endif
 }
 
 void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr)
 {
+#if defined(_M_X64)
+  (void)exptr;
+  dbg << "x87 FPU register dump is unavailable on Win64\n";
+  return;
+#else
   struct _CONTEXT &ctx=*exptr->ContextRecord;
 
   if (!(ctx.ContextFlags&CONTEXT_FLOATING_POINT))
@@ -181,6 +212,7 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
     dbg << "\n";
   }
   dbg << Debug::FillChar() << Debug::Dec();
+#endif
 }
 
 // include exception dialog box
@@ -407,7 +439,8 @@ LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS
   // Show a dialog box
   InitCommonControls();
   exPtrs=pExPtrs;
-  DialogBoxIndirect(NULL,(LPDLGTEMPLATE)rcException,nullptr,ExceptionDlgProc);
+  DialogBoxIndirect(NULL,(LPDLGTEMPLATE)rcException,nullptr,
+                    reinterpret_cast<DLGPROC>(ExceptionDlgProc));
 
   // Now die
   return EXCEPTION_EXECUTE_HANDLER;

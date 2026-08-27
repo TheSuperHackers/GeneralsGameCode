@@ -33,6 +33,10 @@
 #include "WWLib/stringex.h"
 #include <imagehlp.h>
 
+#ifdef StackWalk
+#undef StackWalk
+#endif
+
 // Definitions to allow run-time linking to the dbghelp.dll functions.
 
 #define DBGHELP(name,ret,par) typedef ret (WINAPI *name##Type) par;
@@ -143,6 +147,11 @@ unsigned DebugStackwalk::Signature::GetAddress(int n) const
 
 void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned bufSize)
 {
+#if defined(_M_X64)
+  (void)addr;
+  if (buf && bufSize) strcpy_s(buf, bufSize, "Win64 symbols unavailable");
+  return;
+#else
   DFAIL_IF(!buf) return;
   DFAIL_IF(bufSize<64||bufSize>=0x80000000) return;
 
@@ -204,6 +213,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   if ((unsigned int)(bufEnd-buf)<strlen(p)+16)
     return;
   buf+=wsprintf(buf,", %s:%i+0x%x",p,line.LineNumber,displacement);
+#endif
 }
 
 void DebugStackwalk::Signature::GetSymbol(unsigned addr,
@@ -211,6 +221,18 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
                                           char *bufSym, unsigned sizeSym, unsigned *relSym,
                                           char *bufFile, unsigned sizeFile, unsigned *linePtr, unsigned *relLine)
 {
+#if defined(_M_X64)
+  (void)addr;
+  if (bufMod && sizeMod) strcpy_s(bufMod, sizeMod, "Win64");
+  if (bufSym && sizeSym) strcpy_s(bufSym, sizeSym, "symbols unavailable");
+  if (bufFile && sizeFile) strcpy_s(bufFile, sizeFile, "unknown");
+  if (relMod) *relMod = 0;
+  if (relSym) *relSym = 0;
+  if (linePtr) *linePtr = 0;
+  if (relLine) *relLine = 0;
+  return;
+}
+#else
   InitDbghelp();
 
   if (bufMod) *bufMod=0;
@@ -298,6 +320,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     }
   }
 }
+#endif
 
 Debug& operator<<(Debug &dbg, const DebugStackwalk::Signature &sig)
 {
@@ -337,6 +360,11 @@ bool DebugStackwalk::IsOldDbghelp()
 
 int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 {
+#if defined(_M_X64)
+  (void)ctx;
+  sig.m_numAddr = 0;
+  return 0;
+#else
   InitDbghelp();
 
   sig.m_numAddr=0;
@@ -402,4 +430,5 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   }
 
 	return sig.m_numAddr;
+#endif
 }

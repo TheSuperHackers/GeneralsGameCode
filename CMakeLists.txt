@@ -49,7 +49,7 @@ if(MINGW)
 endif()
 
 # Find/Add build dependencies and stubs shared by all projects
-if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
+if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     # WWAudio still uses the Miles-compatible SDK types (mss.h); this does
     # not provide or select the removed MilesAudioManager backend.
     include(cmake/miles.cmake)

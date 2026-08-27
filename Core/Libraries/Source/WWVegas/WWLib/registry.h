@@ -35,6 +35,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "always.h"
 #include "Vector.h"
 #include "wwstring.h"
@@ -107,7 +109,7 @@ private:
 	static void Save_Registry_Values(HKEY key, char *path, INIClass *ini);
 
 
-	int	Key;
+	intptr_t	Key;
 	bool	IsValid;
 
 	//

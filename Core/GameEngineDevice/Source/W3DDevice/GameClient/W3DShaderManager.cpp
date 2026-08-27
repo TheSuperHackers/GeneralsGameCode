@@ -115,22 +115,22 @@ IDirect3DTexture9 *W3DShaderManager::m_renderTexture=nullptr;		///<texture into 
 IDirect3DSurface9 *W3DShaderManager::m_newRenderSurface=nullptr;	///<new render target inside m_renderTexture
 IDirect3DSurface9 *W3DShaderManager::m_oldDepthSurface=nullptr;	///<previous depth buffer surface
 
-static IDirect3DPixelShader9 *PixelShaderFromHandle(DWORD handle)
+static IDirect3DPixelShader9 *PixelShaderFromHandle(uintptr_t handle)
 {
 	return reinterpret_cast<IDirect3DPixelShader9 *>(static_cast<uintptr_t>(handle));
 }
 
-static IDirect3DVertexShader9 *VertexShaderFromHandle(DWORD handle)
+static IDirect3DVertexShader9 *VertexShaderFromHandle(uintptr_t handle)
 {
 	return reinterpret_cast<IDirect3DVertexShader9 *>(static_cast<uintptr_t>(handle));
 }
 
-static HRESULT SetPixelShaderFromHandle(IDirect3DDevice9 *device, DWORD handle)
+static HRESULT SetPixelShaderFromHandle(IDirect3DDevice9 *device, uintptr_t handle)
 {
 	return device->SetPixelShader(handle ? PixelShaderFromHandle(handle) : nullptr);
 }
 
-static void DeletePixelShaderHandle(DWORD &handle)
+static void DeletePixelShaderHandle(uintptr_t &handle)
 {
 	if (!handle) {
 		return;
@@ -139,24 +139,24 @@ static void DeletePixelShaderHandle(DWORD &handle)
 	handle = 0;
 }
 
-static HRESULT CreateVertexShaderHandle(IDirect3DDevice9 *device, const DWORD *declaration, const DWORD *shader, DWORD *handle, DWORD usage)
+static HRESULT CreateVertexShaderHandle(IDirect3DDevice9 *device, const DWORD *declaration, const DWORD *shader, uintptr_t *handle, DWORD usage)
 {
 	(void)declaration;
 	(void)usage;
 	IDirect3DVertexShader9 *vertex_shader = nullptr;
 	const HRESULT hr = device->CreateVertexShader(shader, &vertex_shader);
 	if (SUCCEEDED(hr)) {
-		*handle = static_cast<DWORD>(reinterpret_cast<uintptr_t>(vertex_shader));
+		*handle = reinterpret_cast<uintptr_t>(vertex_shader);
 	}
 	return hr;
 }
 
-static HRESULT CreatePixelShaderHandle(IDirect3DDevice9 *device, const DWORD *shader, DWORD *handle)
+static HRESULT CreatePixelShaderHandle(IDirect3DDevice9 *device, const DWORD *shader, uintptr_t *handle)
 {
 	IDirect3DPixelShader9 *pixel_shader = nullptr;
 	const HRESULT hr = device->CreatePixelShader(shader, &pixel_shader);
 	if (SUCCEEDED(hr)) {
-		*handle = static_cast<DWORD>(reinterpret_cast<uintptr_t>(pixel_shader));
+		*handle = reinterpret_cast<uintptr_t>(pixel_shader);
 	}
 	return hr;
 }
@@ -1554,10 +1554,10 @@ public:
 class FlatTerrainShaderPixelShader : public W3DShaderInterface
 {
 public:
-	DWORD					m_dwBasePixelShader;	///<handle to terrain D3D pixel shader
-	DWORD					m_dwBaseNoise1PixelShader;	///<handle to terrain/single noise D3D pixel shader
-	DWORD					m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
-	DWORD					m_dwBase0PixelShader;	///<handle to terrain only pixel shader
+	uintptr_t				m_dwBasePixelShader;	///<handle to terrain D3D pixel shader
+	uintptr_t				m_dwBaseNoise1PixelShader;	///<handle to terrain/single noise D3D pixel shader
+	uintptr_t				m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
+	uintptr_t				m_dwBase0PixelShader;	///<handle to terrain only pixel shader
 	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
 	virtual Int init() override;			///<perform any one time initialization and validation
 	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
@@ -1578,9 +1578,9 @@ class TerrainShader8Stage : public W3DShaderInterface
 ///Pixel shader based terrain shader - fastest method for the newest cards.
 class TerrainShaderPixelShader : public W3DShaderInterface
 {
-	DWORD					m_dwBasePixelShader;	///<handle to terrain D3D pixel shader
-	DWORD					m_dwBaseNoise1PixelShader;	///<handle to terrain/single noise D3D pixel shader
-	DWORD					m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
+	uintptr_t				m_dwBasePixelShader;	///<handle to terrain D3D pixel shader
+	uintptr_t				m_dwBaseNoise1PixelShader;	///<handle to terrain/single noise D3D pixel shader
+	uintptr_t				m_dwBaseNoise2PixelShader;	///<handle to terrain/double noise D3D pixel shader
 
 	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
 	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
@@ -2252,7 +2252,7 @@ void CloudTextureShader::reset()
 /*===========================================================================================*/
 class RoadShaderPixelShader : public W3DShaderInterface
 {
-	DWORD					m_dwBaseNoise2PixelShader;	///<handle to road/double noise D3D pixel shader
+	uintptr_t				m_dwBaseNoise2PixelShader;	///<handle to road/double noise D3D pixel shader
 
 	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
 	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
@@ -3057,7 +3057,7 @@ ChipsetType W3DShaderManager::getChipset()
 //=============================================================================
 /** Loads and creates a D3D pixel or vertex shader.*/
 //=============================================================================
-HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle)
+HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, uintptr_t* pHandle)
 {
 	if (getChipset() < DC_GENERIC_PIXEL_SHADER_1_1)
 		return E_FAIL;	//don't allow loading any shaders if hardware can't handle it.

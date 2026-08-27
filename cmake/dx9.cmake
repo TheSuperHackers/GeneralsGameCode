@@ -8,10 +8,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(dx9_d3dx)
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(DX9_ARCH x64)
+else()
+    set(DX9_ARCH x86)
+endif()
+
 find_library(D3DX9_LIBRARY NAMES d3dx9 d3dx9d
     PATHS
-        ${dx9_d3dx_SOURCE_DIR}/build/native/release/lib/x86
-        ${dx9_d3dx_SOURCE_DIR}/build/native/debug/lib/x86
+        ${dx9_d3dx_SOURCE_DIR}/build/native/release/lib/${DX9_ARCH}
+        ${dx9_d3dx_SOURCE_DIR}/build/native/debug/lib/${DX9_ARCH}
     NO_DEFAULT_PATH REQUIRED)
 find_path(DIRECTXSDK_INCLUDE_DIR d3dx9.h
     PATHS ${dx9_d3dx_SOURCE_DIR}/build/native/include

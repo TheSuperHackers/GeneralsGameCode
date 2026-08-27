@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #ifdef PROFILER_ENABLED
 
 #include "Lib/BaseType.h"
@@ -34,7 +36,7 @@ public:
 private:
 	bool ShouldReuseLastCapture(UnsignedInt currentTimeMs) const;
 
-	DWORD m_swizzleShader = 0;
+	uintptr_t m_swizzleShader = 0;
 	UnsignedInt m_lastCaptureTimeMs = 0;
 	UnsignedInt m_lastCaptureHeight = 0;
 	std::vector<UnsignedByte> m_lastCapturePixels;

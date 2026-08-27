@@ -37,7 +37,7 @@ W3DProfilerFrameCapture::~W3DProfilerFrameCapture()
 {
 	if (m_swizzleShader)
 	{
-		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_swizzleShader);
+		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(reinterpret_cast<IDirect3DPixelShader9*>(m_swizzleShader));
 		m_swizzleShader = 0;
 	}
 }
@@ -81,7 +81,10 @@ void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt disp
 		if (FAILED(hr))
 			return;
 
-		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD *)compiledShader->GetBufferPointer(), &m_swizzleShader);
+		IDirect3DPixelShader9* swizzleShader = nullptr;
+		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD *)compiledShader->GetBufferPointer(), &swizzleShader);
+		if (SUCCEEDED(hr))
+			m_swizzleShader = reinterpret_cast<uintptr_t>(swizzleShader);
 		compiledShader->Release();
 
 		if (FAILED(hr))

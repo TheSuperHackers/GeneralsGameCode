@@ -35,6 +35,7 @@
 #include <windows.h>
 #include <WWLib/WWCommon.h>
 #include <new>      // needed for placement new prototype
+#include <intrin.h>
 
 // a little dummy variable that makes the linker actually include
 // us...
@@ -307,11 +308,16 @@ bool Debug::SkipNext()
   // a valid frame pointer here!
   unsigned help;
 #if defined(_MSC_VER)
+#if defined(_M_X64)
+  const uintptr_t returnAddress = reinterpret_cast<uintptr_t>(_ReturnAddress());
+  help = static_cast<unsigned>(returnAddress ^ (returnAddress >> 32));
+#else
   _asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
   };
+#endif
 #elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
   // GCC/Clang inline assembly for x86-32
   __asm__ __volatile__(
@@ -321,7 +327,7 @@ bool Debug::SkipNext()
     : "memory"
   );
 #else
-  #error "Unsupported compiler or architecture for inline assembly"
+  help = 0;
 #endif
   curStackFrame=help;
 
@@ -434,8 +440,10 @@ bool Debug::AssertDone()
           }
           break;
         case IDRETRY:
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_M_X64)
           _asm int 0x03
+#elif defined(_MSC_VER)
+          __debugbreak();
 #elif defined(__GNUC__)
           __builtin_trap();
 #else
