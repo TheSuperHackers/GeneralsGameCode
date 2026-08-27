@@ -38,7 +38,7 @@ class CDebugWindowApp : public CWinApp
 {
 	public:
 		CDebugWindowApp();
-		~CDebugWindowApp();
+		~CDebugWindowApp() override;
 		DebugWindowDialog* GetDialogWindow();
 		void SetDialogWindow(DebugWindowDialog* pWnd);
 

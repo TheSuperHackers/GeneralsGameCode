@@ -82,7 +82,7 @@ class CFancyToolbar : public CControlBar
         //  Public Contructors
         //
         CFancyToolbar ();
-        virtual ~CFancyToolbar ();
+        virtual ~CFancyToolbar () override;
 
 
         ////////////////////////////////////////////////////////

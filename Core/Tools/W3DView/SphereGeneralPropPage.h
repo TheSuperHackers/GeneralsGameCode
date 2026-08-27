@@ -37,7 +37,7 @@ class SphereGeneralPropPageClass : public CPropertyPage
 // Construction
 public:
 	SphereGeneralPropPageClass (SphereRenderObjClass *sphere = nullptr);
-	~SphereGeneralPropPageClass ();
+	~SphereGeneralPropPageClass () override;
 
 // Dialog Data
 	//{{AFX_DATA(SphereGeneralPropPageClass)
@@ -50,18 +50,18 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SphereGeneralPropPageClass)
 	public:
-	virtual BOOL OnApply();
+	virtual BOOL OnApply() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SphereGeneralPropPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBrowseButton();
 	afx_msg void OnChangeFilenameEdit();
 	afx_msg void OnChangeNameEdit();

@@ -46,7 +46,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CWdumpView();
+	virtual ~CWdumpView() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const override;
 	virtual void Dump(CDumpContext& dc) const override;

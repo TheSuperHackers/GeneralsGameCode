@@ -62,7 +62,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CAdvancedAnimSheet();
+	virtual ~CAdvancedAnimSheet() override;
 
 	// Generated message map functions
 protected:

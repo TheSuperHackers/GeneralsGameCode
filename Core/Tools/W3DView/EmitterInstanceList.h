@@ -53,7 +53,7 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 		EmitterInstanceListClass (const EmitterInstanceListClass &src)
 			: ParticleEmitterDefClass (src)	{ }
 
-		virtual ~EmitterInstanceListClass ();
+		virtual ~EmitterInstanceListClass () override;
 
 		///////////////////////////////////////////////////////
 		// Public methods
@@ -71,30 +71,30 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 		//		definition and can be used to create a new prototype loader.
 		//
 
-		virtual void			Set_Velocity (const Vector3 &value);
-		virtual void			Set_Acceleration (const Vector3 &value);
-		virtual void			Set_Burst_Size (unsigned int count);
-		virtual void			Set_Outward_Vel (float value);
-		virtual void			Set_Vel_Inherit (float value);
+		virtual void			Set_Velocity (const Vector3 &value) override;
+		virtual void			Set_Acceleration (const Vector3 &value) override;
+		virtual void			Set_Burst_Size (unsigned int count) override;
+		virtual void			Set_Outward_Vel (float value) override;
+		virtual void			Set_Vel_Inherit (float value) override;
 
 		//
 		//	Randomizer accessors
 		//
-		virtual void			Set_Velocity_Random (Vector3Randomizer *randomizer);
+		virtual void			Set_Velocity_Random (Vector3Randomizer *randomizer) override;
 
 		//
 		//	Keyframe accessors
 		//
-		virtual void			Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes);
-		virtual void			Set_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes);
-		virtual void			Set_Size_Keyframes (ParticlePropertyStruct<float> &keyframes);
-		virtual void			Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd);
-		virtual void			Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes);
-		virtual void			Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes);
+		virtual void			Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) override;
+		virtual void			Set_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
+		virtual void			Set_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
+		virtual void			Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd) override;
+		virtual void			Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
+		virtual void			Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
 
-		virtual void			Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) const;
-		virtual void			Get_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) const;
-		virtual void			Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const;
+		virtual void			Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) const override;
+		virtual void			Get_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) const override;
+		virtual void			Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const override;
 
 
 	private:

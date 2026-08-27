@@ -66,7 +66,7 @@ public:
 
 // Implementation
 protected:
-	virtual ~CGraphicView();
+	virtual ~CGraphicView() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const override;
 	virtual void Dump(CDumpContext& dc) const override;

@@ -1162,14 +1162,14 @@ class ActAsDozerState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActAsDozerState, "ActAsDozerState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override {};
-	void xfer( Xfer *xfer ) override {};
-	void loadPostProcess() override {};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {};
+	virtual void loadPostProcess() override {};
 
 public:
 	ActAsDozerState( StateMachine *machine ) :State( machine, "ActAsDozerState" ){}
-	StateReturnType onEnter() override;
-	StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
 	virtual StateReturnType onExit();
 };
 EMPTY_DTOR(ActAsDozerState)
@@ -1181,14 +1181,14 @@ class ActAsSupplyTruckState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActAsSupplyTruckState, "ActAsSupplyTruckState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override {};
-	void xfer( Xfer *xfer ) override {};
-	void loadPostProcess() override {};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {};
+	virtual void loadPostProcess() override {};
 
 public:
 	ActAsSupplyTruckState( StateMachine *machine ) :State( machine, "ActAsSupplyTruckState" ){}
-	StateReturnType onEnter() override;
-	StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
 	virtual StateReturnType onExit();
 };
 EMPTY_DTOR(ActAsSupplyTruckState)

@@ -53,7 +53,7 @@ class ScreenCursorClass : public RenderObjClass
 		////////////////////////////////////////////////////////////////////////
 		ScreenCursorClass ();
 		ScreenCursorClass (const ScreenCursorClass &src);
-		virtual ~ScreenCursorClass ();
+		virtual ~ScreenCursorClass () override;
 
 		////////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -69,15 +69,15 @@ class ScreenCursorClass : public RenderObjClass
 		////////////////////////////////////////////////////////////////////////
 		//	Base class overrides
 		////////////////////////////////////////////////////////////////////////
-		RenderObjClass *		Clone () const								{ return new ScreenCursorClass (*this); }
-		virtual int				Class_ID() const								{ return CLASSID_LAST + 103L; }
-		virtual void			Render (RenderInfoClass &rinfo);
-		virtual void			On_Frame_Update ();
-		virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-		virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+		RenderObjClass *		Clone () const override								{ return new ScreenCursorClass (*this); }
+		virtual int				Class_ID() const override								{ return CLASSID_LAST + 103L; }
+		virtual void			Render (RenderInfoClass &rinfo) override;
+		virtual void			On_Frame_Update () override;
+		virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+		virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
-		virtual void			Notify_Added(SceneClass * scene);
-		virtual void			Notify_Removed(SceneClass * scene);
+		virtual void			Notify_Added(SceneClass * scene) override;
+		virtual void			Notify_Removed(SceneClass * scene) override;
 
 	protected:
 

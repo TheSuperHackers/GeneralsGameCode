@@ -47,23 +47,23 @@ class PingThreadClass;
 class Pinger : public PingerInterface
 {
 public:
-	~Pinger() override;
+	virtual ~Pinger() override;
 	Pinger();
-	void startThreads() override;
-	void endThreads() override;
-	Bool areThreadsRunning() override;
+	virtual void startThreads() override;
+	virtual void endThreads() override;
+	virtual Bool areThreadsRunning() override;
 
-	void addRequest( const PingRequest& req ) override;
-	Bool getRequest( PingRequest& resp ) override;
+	virtual void addRequest( const PingRequest& req ) override;
+	virtual Bool getRequest( PingRequest& resp ) override;
 
-	void addResponse( const PingResponse& resp ) override;
-	Bool getResponse( PingResponse& resp ) override;
+	virtual void addResponse( const PingResponse& resp ) override;
+	virtual Bool getResponse( PingResponse& resp ) override;
 
-	Bool arePingsInProgress() override;
-	Int getPing( AsciiString hostname ) override;
+	virtual Bool arePingsInProgress() override;
+	virtual Int getPing( AsciiString hostname ) override;
 
-	void clearPingMap() override;
-	AsciiString getPingString( Int timeout ) override;
+	virtual void clearPingMap() override;
+	virtual AsciiString getPingString( Int timeout ) override;
 
 private:
 	MutexClass m_requestMutex;
@@ -94,7 +94,7 @@ class PingThreadClass : public ThreadClass
 public:
 	PingThreadClass() : ThreadClass() {}
 
-	void Thread_Function() override;
+	virtual void Thread_Function() override;
 
 private:
 	Int doPing( UnsignedInt IP, Int timeout );

@@ -34,7 +34,7 @@ class CAnimReportPage : public CPropertyPage
 // Construction
 public:
 	CAnimReportPage(CAdvancedAnimSheet *sheet = nullptr);
-	~CAnimReportPage();
+	~CAnimReportPage() override;
 
 // Dialog Data
 	//{{AFX_DATA(CAnimReportPage)

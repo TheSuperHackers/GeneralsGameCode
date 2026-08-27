@@ -45,7 +45,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CAssetPropertySheet();
+	virtual ~CAssetPropertySheet() override;
 
 	// Generated message map functions
 protected:

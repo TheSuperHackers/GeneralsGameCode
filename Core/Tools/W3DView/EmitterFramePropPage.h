@@ -36,7 +36,7 @@ class EmitterFramePropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterFramePropPageClass();
-	~EmitterFramePropPageClass();
+	~EmitterFramePropPageClass() override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterFramePropPageClass)

@@ -218,7 +218,7 @@ public:
 
 	MultiListClass() { }
 
-	virtual ~MultiListClass()
+	virtual ~MultiListClass() override
 	{
 		while (!Is_Empty()) {
 			Remove_Head();
@@ -342,7 +342,7 @@ class RefMultiListClass : public GenericMultiListClass
 {
 public:
 
-	virtual			~RefMultiListClass()
+	virtual			~RefMultiListClass() override
 	{
 		while (!Is_Empty()) {
 			Release_Head();

@@ -51,6 +51,6 @@ public:
   void RunResultFunctions();
 
   virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv);
-  virtual void Delete() {}
+                       unsigned argn, const char * const * argv) override;
+  virtual void Delete() override {}
 };

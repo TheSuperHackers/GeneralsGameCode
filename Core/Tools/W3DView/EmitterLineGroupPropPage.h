@@ -39,7 +39,7 @@ class EmitterLineGroupPropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterLineGroupPropPageClass();
-	~EmitterLineGroupPropPageClass();
+	~EmitterLineGroupPropPageClass() override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterLineGroupPropPageClass)

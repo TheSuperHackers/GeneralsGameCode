@@ -37,7 +37,7 @@ class SphereSizePropPageClass : public CPropertyPage
 // Construction
 public:
 	SphereSizePropPageClass(SphereRenderObjClass *sphere = nullptr);
-	~SphereSizePropPageClass();
+	~SphereSizePropPageClass() override;
 
 // Dialog Data
 	//{{AFX_DATA(SphereSizePropPageClass)
@@ -52,19 +52,19 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SphereSizePropPageClass)
 	public:
-	virtual BOOL OnApply();
-	virtual void OnCancel();
+	virtual BOOL OnApply() override;
+	virtual void OnCancel() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SphereSizePropPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

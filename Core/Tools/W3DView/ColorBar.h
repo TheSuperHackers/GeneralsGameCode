@@ -108,7 +108,7 @@ public:
 
 // Implementation
 public:
-	virtual ~ColorBarClass();
+	virtual ~ColorBarClass() override;
 
 	// Generated message map functions
 protected:

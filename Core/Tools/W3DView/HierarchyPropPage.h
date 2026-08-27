@@ -31,7 +31,7 @@ class CHierarchyPropPage : public CPropertyPage
 // Construction
 public:
 	CHierarchyPropPage (const CString &stringHierarchyName);
-	~CHierarchyPropPage ();
+	~CHierarchyPropPage () override;
 
 // Dialog Data
 	//{{AFX_DATA(CHierarchyPropPage)
@@ -44,14 +44,14 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CHierarchyPropPage)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CHierarchyPropPage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDblclkSubObjectList(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

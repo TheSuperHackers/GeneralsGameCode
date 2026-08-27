@@ -123,15 +123,15 @@ class CollectionPrototypeClass : public PrototypeClass
 public:
 	CollectionPrototypeClass(CollectionDefClass * def)		{ ColDef = def; WWASSERT(ColDef); }
 
-	const char *			Get_Name() const override { return ColDef->Get_Name(); }
-	int								Get_Class_ID() const override { return RenderObjClass::CLASSID_COLLECTION; }
-	RenderObjClass *	Create() override							{ return NEW_REF( CollectionClass, (*ColDef)); }
-	void							DeleteSelf() override { delete this; }
+	virtual const char *			Get_Name() const override { return ColDef->Get_Name(); }
+	virtual int								Get_Class_ID() const override { return RenderObjClass::CLASSID_COLLECTION; }
+	virtual RenderObjClass *	Create() override							{ return NEW_REF( CollectionClass, (*ColDef)); }
+	virtual void							DeleteSelf() override { delete this; }
 
 	CollectionDefClass *			ColDef;
 
 protected:
-	~CollectionPrototypeClass() override { delete ColDef; }
+	virtual ~CollectionPrototypeClass() override { delete ColDef; }
 };
 
 

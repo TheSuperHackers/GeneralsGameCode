@@ -39,7 +39,7 @@ class EmitterColorPropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterColorPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
-	~EmitterColorPropPageClass ();
+	~EmitterColorPropPageClass () override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterColorPropPageClass)

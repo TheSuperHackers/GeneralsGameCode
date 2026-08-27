@@ -39,7 +39,7 @@ class EmitterParticlePropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
-	~EmitterParticlePropPageClass ();
+	~EmitterParticlePropPageClass () override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterParticlePropPageClass)

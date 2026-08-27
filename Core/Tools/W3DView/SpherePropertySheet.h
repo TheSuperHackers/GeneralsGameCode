@@ -71,12 +71,12 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SpherePropertySheetClass)
 	protected:
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~SpherePropertySheetClass();
+	virtual ~SpherePropertySheetClass() override;
 
 	// Generated message map functions
 protected:

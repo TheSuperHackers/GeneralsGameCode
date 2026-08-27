@@ -86,9 +86,9 @@ class DebugCmdInterfaceDebug: public DebugCmdInterface
 {
 public:
   virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv);
+                       unsigned argn, const char * const * argv) override;
 
-  virtual void Delete()
+  virtual void Delete() override
   {
     this->~DebugCmdInterfaceDebug();
     DebugFreeMemory(this);

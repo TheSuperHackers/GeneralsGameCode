@@ -38,7 +38,7 @@ class EmitterPhysicsPropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
-	~EmitterPhysicsPropPageClass ();
+	~EmitterPhysicsPropPageClass () override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterPhysicsPropPageClass)

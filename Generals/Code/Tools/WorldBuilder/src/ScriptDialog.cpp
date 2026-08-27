@@ -965,7 +965,7 @@ protected:
 	CFile *m_file;
 public:
 	LocalMFCFileOutputStream(CFile *pFile):m_file(pFile) {};
-	Int write(const void *pData, Int numBytes) override {
+	virtual Int write(const void *pData, Int numBytes) override {
 		Int numBytesWritten = 0;
 		try {
 			m_file->Write(pData, numBytes);

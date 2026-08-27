@@ -39,7 +39,7 @@ class EmitterSizePropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterSizePropPageClass(EmitterInstanceListClass *pemitter = nullptr);
-	~EmitterSizePropPageClass();
+	~EmitterSizePropPageClass() override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterSizePropPageClass)

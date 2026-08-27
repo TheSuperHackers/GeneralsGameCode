@@ -59,14 +59,14 @@ class DebugIOCon: public DebugIOInterface
 
 public:
   explicit DebugIOCon();
-  virtual ~DebugIOCon();
-  virtual int Read(char *buf, int maxchar);
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush() {}
+  virtual ~DebugIOCon() override;
+  virtual int Read(char *buf, int maxchar) override;
+  virtual void Write(StringType type, const char *src, const char *str) override;
+  virtual void EmergencyFlush() override {}
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv);
+                       unsigned argn, const char * const * argv) override;
   static DebugIOInterface *Create();
-  virtual void Delete();
+  virtual void Delete() override;
 };
 
 /// \internal \brief con flat I/O class
@@ -210,14 +210,14 @@ class DebugIOFlat: public DebugIOInterface
 
 public:
   explicit DebugIOFlat();
-  virtual ~DebugIOFlat();
-  virtual int Read(char *buf, int maxchar) { return 0; }
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush();
+  virtual ~DebugIOFlat() override;
+  virtual int Read(char *buf, int maxchar) override { return 0; }
+  virtual void Write(StringType type, const char *src, const char *str) override;
+  virtual void EmergencyFlush() override;
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv);
+                       unsigned argn, const char * const * argv) override;
   static DebugIOInterface *Create();
-  virtual void Delete();
+  virtual void Delete() override;
 };
 
 /// \internal \brief net debug I/O class
@@ -228,14 +228,14 @@ class DebugIONet: public DebugIOInterface
 
 public:
   explicit DebugIONet();
-  virtual ~DebugIONet();
-  virtual int Read(char *buf, int maxchar);
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush();
+  virtual ~DebugIONet() override;
+  virtual int Read(char *buf, int maxchar) override;
+  virtual void Write(StringType type, const char *src, const char *str) override;
+  virtual void EmergencyFlush() override;
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv);
+                       unsigned argn, const char * const * argv) override;
   static DebugIOInterface *Create();
-  virtual void Delete();
+  virtual void Delete() override;
 };
 
 /// \internal \brief ods debug I/O class
@@ -243,11 +243,11 @@ class DebugIOOds: public DebugIOInterface
 {
 public:
   explicit DebugIOOds() {}
-  virtual int Read(char *buf, int maxchar) { return 0; }
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush() {}
+  virtual int Read(char *buf, int maxchar) override { return 0; }
+  virtual void Write(StringType type, const char *src, const char *str) override;
+  virtual void EmergencyFlush() override {}
   virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv) {}
+                       unsigned argn, const char * const * argv) override {}
   static DebugIOInterface *Create();
-  virtual void Delete();
+  virtual void Delete() override;
 };

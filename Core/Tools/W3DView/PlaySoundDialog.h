@@ -44,7 +44,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PlaySoundDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -53,8 +53,8 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(PlaySoundDialogClass)
 	afx_msg void OnPlaySoundEffect();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
+	virtual void OnCancel() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnStopSoundEffect();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

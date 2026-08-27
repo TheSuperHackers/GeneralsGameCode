@@ -134,7 +134,7 @@ protected:
 #if defined(RTS_DEBUG)
 	virtual const char* debugGetName() override { return "PartitionFilterHasParkingPlace"; }
 #endif
-	Bool allow(Object *objOther) override
+	virtual Bool allow(Object *objOther) override
 	{
 		ParkingPlaceBehaviorInterface* pp = getPP(objOther->getID());
 		if (pp != nullptr && pp->reserveSpace(m_id, 0.0f, nullptr))
@@ -182,16 +182,16 @@ class JetAwaitingRunwayState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetAwaitingRunwayState, "JetAwaitingRunwayState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override {};
-	void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	void loadPostProcess() override {};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 private:
 	const Bool m_landing;
 
 public:
 	JetAwaitingRunwayState( StateMachine *machine, Bool landing ) : m_landing(landing), State( machine, "JetAwaitingRunwayState") { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -204,7 +204,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
@@ -239,7 +239,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	void onExit(StateExitType status) override
+	virtual void onExit(StateExitType status) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -265,9 +265,9 @@ class JetOrHeliCirclingDeadAirfieldState : public State
 protected:
 	// snapshot interface	 STUBBED.
 	// The state will check immediately after a load game, but I think that's ok.  jba.
-	void crc( Xfer *xfer ) override {};
-	void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	void loadPostProcess() override {};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 private:
 	Int m_checkAirfield;
@@ -283,7 +283,7 @@ public:
 		State( machine, "JetOrHeliCirclingDeadAirfieldState"),
 		m_checkAirfield(0) { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -314,7 +314,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -370,7 +370,7 @@ class JetOrHeliReturningToDeadAirfieldState : public AIInternalMoveToState
 public:
 	JetOrHeliReturningToDeadAirfieldState( StateMachine *machine ) : AIInternalMoveToState( machine, "JetOrHeliReturningToDeadAirfieldState") { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -431,7 +431,7 @@ private:
 public:
 	JetOrHeliTaxiState( StateMachine *machine, TaxiType m ) : m_taxiMode(m), AIMoveOutOfTheWayState( machine ) { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -513,7 +513,7 @@ public:
 		return ret;
 	}
 
-	void onExit( StateExitType status ) override
+	virtual void onExit( StateExitType status ) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -554,7 +554,7 @@ private:
 public:
 	JetTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing), AIFollowPathState( machine, "JetTakeoffOrLandingState" ) { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -641,7 +641,7 @@ public:
 		return ret;
 	}
 
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
@@ -703,7 +703,7 @@ public:
 		return ret;
 	}
 
-	void onExit( StateExitType status ) override
+	virtual void onExit( StateExitType status ) override
 	{
 		AIFollowPathState::onExit(status);
 
@@ -761,12 +761,12 @@ class HeliTakeoffOrLandingState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeliTakeoffOrLandingState, "HeliTakeoffOrLandingState")
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override
+	virtual void crc( Xfer *xfer ) override
 	{
 		// empty. jba.
 	}
 
-	void xfer( Xfer *xfer ) override
+	virtual void xfer( Xfer *xfer ) override
 	{
 		// version
 		XferVersion currentVersion = 1;
@@ -780,7 +780,7 @@ protected:
 		xfer->xferCoord3D(&m_parkingLoc);
 		xfer->xferReal(&m_parkingOrientation);
 	}
-	void loadPostProcess() override
+	virtual void loadPostProcess() override
 	{
 		// empty. jba.
 	}
@@ -798,7 +798,7 @@ public:
 			m_parkingLoc.zero();
 		}
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -867,7 +867,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
@@ -929,7 +929,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	void onExit( StateExitType status ) override
+	virtual void onExit( StateExitType status ) override
 	{
 		// just in case.
 		Object* jet = getMachineOwner();
@@ -976,14 +976,14 @@ class JetOrHeliParkOrientState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetOrHeliParkOrientState, "JetOrHeliParkOrientState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override {};
-	void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	void loadPostProcess() override {};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 public:
 	JetOrHeliParkOrientState( StateMachine *machine ) : State( machine, "JetOrHeliParkOrientState") { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1002,7 +1002,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
@@ -1037,7 +1037,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	void onExit( StateExitType status ) override
+	virtual void onExit( StateExitType status ) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1057,12 +1057,12 @@ class JetPauseBeforeTakeoffState : public AIFaceState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetPauseBeforeTakeoffState, "JetPauseBeforeTakeoffState")
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override
+	virtual void crc( Xfer *xfer ) override
 	{
 		// empty. jba.
 	}
 
-	void xfer( Xfer *xfer ) override
+	virtual void xfer( Xfer *xfer ) override
 	{
 		// version
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
@@ -1096,7 +1096,7 @@ protected:
 		xfer->xferObjectID(&m_waitedForTaxiID);
 	}
 
-	void loadPostProcess() override
+	virtual void loadPostProcess() override
 	{
 		// empty. jba.
 	}
@@ -1188,7 +1188,7 @@ public:
 		// nothing
 	}
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1220,7 +1220,7 @@ public:
 	}
 
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1347,7 +1347,7 @@ public:
 	}
 #endif
 
-	void onExit(StateExitType status) override
+	virtual void onExit(StateExitType status) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1370,12 +1370,12 @@ private:
 protected:
 
 	// snapshot interface
-	void crc( Xfer *xfer ) override
+	virtual void crc( Xfer *xfer ) override
 	{
 		// empty. jba.
 	}
 
-	void xfer( Xfer *xfer ) override
+	virtual void xfer( Xfer *xfer ) override
 	{
 		// version
 		XferVersion currentVersion = 1;
@@ -1386,7 +1386,7 @@ protected:
 		xfer->xferUnsignedInt(&m_reloadTime);
 		xfer->xferUnsignedInt(&m_reloadDoneFrame);
 	}
-	void loadPostProcess() override
+	virtual void loadPostProcess() override
 	{
 		// empty. jba.
 	}
@@ -1394,7 +1394,7 @@ protected:
 public:
 	JetOrHeliReloadAmmoState( StateMachine *machine ) : State( machine, "JetOrHeliReloadAmmoState") { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1431,7 +1431,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	StateReturnType update() override
+	virtual StateReturnType update() override
 	{
 		Object* jet = getMachineOwner();
 
@@ -1464,7 +1464,7 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	void onExit(StateExitType status) override
+	virtual void onExit(StateExitType status) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -1486,7 +1486,7 @@ class JetOrHeliReturnForLandingState : public AIInternalMoveToState
 public:
 	JetOrHeliReturnForLandingState( StateMachine *machine ) : AIInternalMoveToState( machine, "JetOrHeliReturnForLandingState") { }
 
-	StateReturnType onEnter() override
+	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();

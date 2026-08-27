@@ -37,7 +37,7 @@ class RingSizePropPageClass : public CPropertyPage
 // Construction
 public:
 	RingSizePropPageClass(RingRenderObjClass *ring = nullptr);
-	~RingSizePropPageClass();
+	~RingSizePropPageClass() override;
 
 // Dialog Data
 	//{{AFX_DATA(RingSizePropPageClass)
@@ -53,19 +53,19 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(RingSizePropPageClass)
 	public:
-	virtual BOOL OnApply();
-	virtual void OnCancel();
+	virtual BOOL OnApply() override;
+	virtual void OnCancel() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(RingSizePropPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

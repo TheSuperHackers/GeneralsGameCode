@@ -88,7 +88,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CW3DViewDoc();
+	virtual ~CW3DViewDoc() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const override;
 	virtual void Dump(CDumpContext& dc) const override;

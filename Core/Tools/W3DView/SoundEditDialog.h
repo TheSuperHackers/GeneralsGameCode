@@ -37,7 +37,7 @@ class SoundEditDialogClass : public CDialog
 {
 public:
 	SoundEditDialogClass (CWnd *parent);
-	virtual ~SoundEditDialogClass ();
+	virtual ~SoundEditDialogClass () override;
 
 // Form Data
 public:
@@ -57,7 +57,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SoundEditDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -73,9 +73,9 @@ protected:
 	afx_msg void On2DRadio();
 	afx_msg void On3DRadio();
 	afx_msg void OnPlay();
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

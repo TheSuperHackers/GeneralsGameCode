@@ -38,7 +38,7 @@ class EmitterRotationPropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterRotationPropPageClass();
-	~EmitterRotationPropPageClass();
+	~EmitterRotationPropPageClass() override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterRotationPropPageClass)

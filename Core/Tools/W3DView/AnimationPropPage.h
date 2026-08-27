@@ -31,7 +31,7 @@ class CAnimationPropPage : public CPropertyPage
 // Construction
 public:
 	CAnimationPropPage();
-	~CAnimationPropPage();
+	~CAnimationPropPage() override;
 
 // Dialog Data
 	//{{AFX_DATA(CAnimationPropPage)

@@ -31,7 +31,7 @@ class CMeshPropPage : public CPropertyPage
 // Construction
 public:
     CMeshPropPage (const CString &stringMeshName);
-	~CMeshPropPage ();
+	~CMeshPropPage () override;
 
 // Dialog Data
 	//{{AFX_DATA(CMeshPropPage)
@@ -45,14 +45,14 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CMeshPropPage)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CMeshPropPage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnClose();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

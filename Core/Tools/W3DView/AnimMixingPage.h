@@ -33,7 +33,7 @@ class CAnimMixingPage : public CPropertyPage
 // Construction
 public:
 	CAnimMixingPage(CAdvancedAnimSheet *sheet = nullptr);
-	~CAnimMixingPage();
+	~CAnimMixingPage() override;
 
 // Dialog Data
 	//{{AFX_DATA(CAnimMixingPage)

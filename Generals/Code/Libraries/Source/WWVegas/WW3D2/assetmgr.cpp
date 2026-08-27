@@ -134,9 +134,9 @@ static NullPrototypeClass _NullPrototype;
 class RObjIterator : public RenderObjIterator
 {
 public:
-	bool					Is_Done() override;
-	const char *			Current_Item_Name() override;
-	int						Current_Item_Class_ID() override;
+	virtual bool					Is_Done() override;
+	virtual const char *			Current_Item_Name() override;
+	virtual int						Current_Item_Class_ID() override;
 protected:
 	friend class WW3DAssetManager;
 };
@@ -151,10 +151,10 @@ class HAnimIterator : public AssetIterator
 public:
 	HAnimIterator() : Iterator( WW3DAssetManager::Get_Instance()->HAnimManager ) { };
 
-	void			First() override { Iterator.First(); }
-	void			Next() override	{ Iterator.Next(); }
-	bool			Is_Done() override { return Iterator.Is_Done(); }
-	const char *	Current_Item_Name() override { return Iterator.Get_Current_Anim()->Get_Name(); }
+	virtual void			First() override { Iterator.First(); }
+	virtual void			Next() override	{ Iterator.Next(); }
+	virtual bool			Is_Done() override { return Iterator.Is_Done(); }
+	virtual const char *	Current_Item_Name() override { return Iterator.Get_Current_Anim()->Get_Name(); }
 
 protected:
 	HAnimManagerIterator	Iterator;
@@ -164,8 +164,8 @@ protected:
 class HTreeIterator : public AssetIterator
 {
 public:
-	bool					Is_Done() override;
-	const char *			Current_Item_Name() override;
+	virtual bool					Is_Done() override;
+	virtual const char *			Current_Item_Name() override;
 protected:
 	friend class WW3DAssetManager;
 };
@@ -174,10 +174,10 @@ class Font3DDataIterator : public AssetIterator
 {
 public:
 
-	void					First() override { Node = WW3DAssetManager::Get_Instance()->Font3DDatas.Head(); }
-	void					Next() override	{ Node = Node->Next(); }
-	bool					Is_Done() override { return Node==nullptr; }
-	const char *			Current_Item_Name() override { return Node->Data()->Name; }
+	virtual void					First() override { Node = WW3DAssetManager::Get_Instance()->Font3DDatas.Head(); }
+	virtual void					Next() override	{ Node = Node->Next(); }
+	virtual bool					Is_Done() override { return Node==nullptr; }
+	virtual const char *			Current_Item_Name() override { return Node->Data()->Name; }
 
 protected:
 

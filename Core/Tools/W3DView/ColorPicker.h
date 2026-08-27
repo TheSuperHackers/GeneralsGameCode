@@ -82,7 +82,7 @@ public:
 
 // Implementation
 public:
-	virtual ~ColorPickerClass();
+	virtual ~ColorPickerClass() override;
 
 	// Generated message map functions
 protected:

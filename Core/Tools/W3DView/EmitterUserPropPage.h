@@ -36,7 +36,7 @@ class EmitterUserPropPageClass : public CPropertyPage
 // Construction
 public:
 	EmitterUserPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
-	~EmitterUserPropPageClass ();
+	~EmitterUserPropPageClass () override;
 
 // Dialog Data
 	//{{AFX_DATA(EmitterUserPropPageClass)
