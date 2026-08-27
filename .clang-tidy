@@ -87,8 +87,10 @@ Checks: >
 # Treat warnings as errors for CI/CD
 WarningsAsErrors: false
 
-# Header filter to include project headers
-HeaderFilterRegex: '(Core|Generals|GeneralsMD|Dependencies)/.*\.(h|hpp)$'
+# Header filter to include project headers.
+# Accept both / and \ so Windows diagnostics (Core\Include\Common/Foo.h) are not dropped.
+HeaderFilterRegex: '[/\\](Core|GeneralsMD|Generals|Dependencies)[/\\].*\.(h|hpp)$'
+ExcludeHeaderFilterRegex: '[/\\](MaxSDK|_deps)[/\\]'
 
 # Check options for specific rules
 CheckOptions:
