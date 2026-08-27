@@ -255,7 +255,7 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	Int i;
 	for (i=0; i<pObj->Get_Num_Sub_Objects(); i++) {
 		RenderObjClass *pSub = pObj->Get_Sub_Object(i);
-		Matrix3D mtx = pSub->Get_Transform();
+		const Matrix3D& mtx = pSub->Get_Transform();
 		if (0==strnicmp(left, pSub->Get_Name(), strlen(left))) {
 			m_leftMtx = mtx;
 			strlcpy(left, pSub->Get_Name(), ARRAY_SIZE(left));

@@ -948,7 +948,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
 			Vector3 camera_loc(rinfo.Camera.Get_Position());
 			Vector3 camera_dir(-view_transform[2][0],-view_transform[2][1],-view_transform[2][2]);
-//			Matrix3D cam(rinfo.Camera.Get_Transform());
+//			const Matrix3D& cam = rinfo.Camera.Get_Transform();
 //			Vector3 camera_dir(-cam[2][0],-cam[2][1],-cam[2][2]);
 //			camera_dir.Normalize();
 
@@ -1515,7 +1515,7 @@ void DazzlePersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * obj)	
 	DazzleRenderObjClass * robj = (DazzleRenderObjClass *)obj;
 	unsigned int dazzle_type = robj->Get_Dazzle_Type();
 	const char * dazzle_type_name = DazzleRenderObjClass::Get_Type_Name(dazzle_type);
-	Matrix3D tm = robj->Get_Transform();
+	const Matrix3D& tm = robj->Get_Transform();
 
 	csave.Begin_Chunk(DAZZLEFACTORY_CHUNKID_VARIABLES);
 	WRITE_MICRO_CHUNK(csave,DAZZLEFACTORY_VARIABLE_OBJPOINTER,robj);

@@ -221,7 +221,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Texture(0, nullptr);
 	DX8Wrapper::Apply_Render_State_Changes();
 
-	Matrix3D tm(Transform);
+	const Matrix3D& tm = Transform;
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 
 	Int numRect = m_numDebugIcons;

@@ -1761,7 +1761,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 					DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 					DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
 				}
-				Matrix3D tmReset(Transform);
+				const Matrix3D& tmReset = Transform;
 				DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
 				updatePolygonVB(pTrig, polySelected, polySelected && PolygonTool::isSelectedOpen());
@@ -1826,7 +1826,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
 	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
-	Matrix3D tmReset(Transform);
+	const Matrix3D& tmReset = Transform;
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
 
 	if (m_drawWaypoints) {

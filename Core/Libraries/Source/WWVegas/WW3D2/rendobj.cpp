@@ -1277,7 +1277,7 @@ void RenderObjPersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * ob
 {
 	RenderObjClass * robj = (RenderObjClass *)obj;
 	const char * name = robj->Get_Name();
-	Matrix3D tm = robj->Get_Transform();
+	const Matrix3D& tm = robj->Get_Transform();
 
 	csave.Begin_Chunk(RENDOBJFACTORY_CHUNKID_VARIABLES);
 	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_OBJPOINTER,robj);

@@ -87,7 +87,7 @@ inline void IntersectionClass::Get_Screen_Ray(float screen_x, float screen_y, co
 	CameraClass *camera = Layer.Camera;
 
 	// determine the ray corresponding to the camera and distance to projection plane
-	Matrix3D camera_matrix = camera->Get_Transform();
+	const Matrix3D& camera_matrix = camera->Get_Transform();
 	Vector3 camera_location  = camera->Get_Position();
 
 	// the projected ray has the same origin as the camera

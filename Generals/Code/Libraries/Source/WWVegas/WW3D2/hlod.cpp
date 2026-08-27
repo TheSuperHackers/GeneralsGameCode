@@ -2057,7 +2057,7 @@ bool HLodClass::Get_Proxy (int index, ProxyClass &proxy) const
 		//	Lookup the proxy's transform
 		//
 		HTree->Base_Update(Get_Transform());
-		Matrix3D transform = HTree->Get_Transform((*ProxyArray)[index].Get_Bone_Index());
+		const Matrix3D& transform = HTree->Get_Transform((*ProxyArray)[index].Get_Bone_Index());
 		Set_Hierarchy_Valid(false);
 
 		//

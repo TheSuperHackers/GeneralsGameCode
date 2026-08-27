@@ -2277,7 +2277,7 @@ if (pMapObj->isSelected()) {
 					DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
 					DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
 				}
-				Matrix3D tmReset(Transform);
+				const Matrix3D& tmReset = Transform;
 				DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
 				updatePolygonVB(pTrig, polySelected, polySelected && PolygonTool::isSelectedOpen());
@@ -2339,7 +2339,7 @@ if (pMapObj->isSelected()) {
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
  	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
-	Matrix3D tmReset(Transform);
+	const Matrix3D& tmReset = Transform;
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
 
 	if (m_drawWaypoints) {

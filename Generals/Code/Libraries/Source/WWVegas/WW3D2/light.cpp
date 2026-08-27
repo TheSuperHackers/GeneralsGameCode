@@ -525,7 +525,7 @@ bool LightClass::Save (ChunkSaveClass &csave)
 	Save_W3D(csave);
 	csave.End_Chunk();
 
-	Matrix3D tm = Get_Transform();
+	const Matrix3D& tm = Get_Transform();
 	csave.Begin_Chunk(LIGHT_CHUNK_VARIABLES);
 	WRITE_MICRO_CHUNK(csave,LIGHT_VARIABLE_TRANSFORM,tm);
 	csave.End_Chunk();

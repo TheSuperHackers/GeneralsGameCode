@@ -920,7 +920,7 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 	/*
 	** Object-space to world-space transform
 	*/
-	Matrix3D Mobj_to_world = mesh->Get_Transform();
+	const Matrix3D& Mobj_to_world = mesh->Get_Transform();
 
 	/*
 	** World-space to shatter-space transform
