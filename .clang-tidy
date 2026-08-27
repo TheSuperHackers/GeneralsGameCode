@@ -88,9 +88,10 @@ Checks: >
 WarningsAsErrors: false
 
 # Header filter to include project headers.
-# Accept both / and \ so Windows diagnostics (Core\Include\Common/Foo.h) are not dropped.
-HeaderFilterRegex: '[/\\](Core|GeneralsMD|Generals|Dependencies)[/\\].*\.(h|hpp)$'
-ExcludeHeaderFilterRegex: '[/\\](MaxSDK|_deps)[/\\]'
+# Match relative paths (Core/Foo.h, Core\Foo.h) and absolute ones (.../Core/Foo.h).
+# Accept both / and \ so Windows diagnostics are not dropped.
+HeaderFilterRegex: '(^|[/\\])(Core|GeneralsMD|Generals|Dependencies)[/\\].*\.(h|hpp)$'
+ExcludeHeaderFilterRegex: '(^|[/\\])(MaxSDK|_deps)[/\\]'
 
 # Check options for specific rules
 CheckOptions:
