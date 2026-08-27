@@ -1687,7 +1687,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			Bool isTree = false;
 
 			Vector3 vec(loc.x, loc.y, loc.z);
-			Matrix3D tm(Transform);
+			Matrix3D tm = Transform;
 			Matrix3x3 rot(true);
 			rot.Rotate_Z(pMapObj->getAngle());
 
@@ -1749,7 +1749,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 					count++;
 
 					Vector3 vec(loc.x, loc.y, loc.z);
-					Matrix3D tm(Transform);
+					Matrix3D tm = Transform;
 					tm.Set_Translation(vec);
 
 					int polyCount = NUM_TRI;
@@ -1804,7 +1804,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			count++;
 // ok to here.
 			Vector3 vec(loc.x, loc.y, loc.z);
-			Matrix3D tmXX(Transform);
+			Matrix3D tmXX = Transform;
 			Matrix3x3 rot(true);
 			rot.Rotate_Z(pBuild->getAngle());
 

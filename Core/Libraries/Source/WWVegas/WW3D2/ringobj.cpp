@@ -690,8 +690,6 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 		// Process texture reductions:
 //		if (RingTexture) RingTexture->Process_Reduction();
 
-		Matrix3D temp = Transform;
-
 		// Do Time Based Animation
 		animate ();
 

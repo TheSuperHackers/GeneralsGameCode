@@ -246,7 +246,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile);
 
-		Matrix3D tm(Transform);
+		Matrix3D tm = Transform;
 		Vector3 vec(m_myLoc.x, m_myLoc.y, m_myLoc.z);
 		tm.Set_Translation(vec);
 		DX8Wrapper::Set_Transform(D3DTS_WORLD, tm);
