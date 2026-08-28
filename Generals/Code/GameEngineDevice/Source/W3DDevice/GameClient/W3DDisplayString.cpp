@@ -86,6 +86,8 @@ W3DDisplayString::W3DDisplayString()
 	m_size.x = 0;
 	m_size.y = 0;
 	m_fontChanged = FALSE;
+	m_sentenceChanged = FALSE;
+	m_hasComplexTextExtents = FALSE;
 	m_clipRegion.lo.x = 0;
 	m_clipRegion.lo.y = 0;
 	m_clipRegion.hi.x = 0;
@@ -145,6 +147,38 @@ void W3DDisplayString::notifyTextChanged()
 
 }
 
+// W3DDisplayString::checkForChangedTextData ==================================
+/** Rebuild the sentence and update its extents when its source data changes */
+//=============================================================================
+void W3DDisplayString::checkForChangedTextData()
+{
+	if( !m_fontChanged && !m_textChanged )
+		return;
+
+	bool usedComplexText = false;
+	Vector2 legacyExtents;
+	if(m_useHotKey)
+	{
+		m_textRenderer.Build_Sentence(
+			getText().str(), &m_hotKeyPos.x, &m_hotKeyPos.y, &usedComplexText, &legacyExtents);
+		m_textRendererHotKey.Build_Sentence(m_hotkey.str(), nullptr, nullptr);
+	}
+	else
+		m_textRenderer.Build_Sentence(
+			getText().str(), nullptr, nullptr, &usedComplexText, &legacyExtents);
+
+	// TheSuperHackers @bugfix Omar Aglan 04/09/2026 Resolve renderer fallback before callers position complex text.
+	if (m_hasComplexTextExtents && !usedComplexText) {
+		m_size.x = legacyExtents.X;
+		m_size.y = legacyExtents.Y;
+		m_hasComplexTextExtents = FALSE;
+	}
+
+	m_fontChanged = FALSE;
+	m_textChanged = FALSE;
+	m_sentenceChanged = TRUE;
+}
+
 // W3DDisplayString::Draw =====================================================
 /** Draw the text at the specified location in in the specified colors
 	* in the parameters.  Since we keep an instance of the rendered text
@@ -159,35 +193,13 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor )
 }
 void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDrop, Int yDrop )
 {
-	Bool needNewPolys = FALSE;
-
 	// sanity
 	if( getTextLength() == 0 )
 		return;  // nothing to draw
 
-	// if our font or text has changed we need to build a new sentence
-	if( m_fontChanged || m_textChanged )
-	{
-		if(m_useHotKey)
-		{
-			m_textRenderer.Set_Hot_Key_Parse(TRUE);
-			m_textRenderer.Build_Sentence( getText().str(), &m_hotKeyPos.x, &m_hotKeyPos.y );
-			m_hotkey.translate(TheHotKeyManager->searchHotKey(getText()));
-			if(!m_hotkey.isEmpty())
-				m_textRendererHotKey.Build_Sentence(m_hotkey.str(), nullptr, nullptr);
-			else
-			{
-				m_useHotKey = FALSE;
-				m_textRendererHotKey.Reset();
-			}
-		}
-		else
-			m_textRenderer.Build_Sentence( getText().str(), nullptr, nullptr );
-		m_fontChanged = FALSE;
-		m_textChanged = FALSE;
-		needNewPolys = TRUE;
-
-	}
+	checkForChangedTextData();
+	Bool needNewPolys = m_sentenceChanged;
+	m_sentenceChanged = FALSE;
 
 	//
 	// if our position has changed, or our colors have changed, or our
@@ -247,6 +259,8 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 //=============================================================================
 void W3DDisplayString::getSize( Int *width, Int *height )
 {
+	if ( m_hasComplexTextExtents )
+		checkForChangedTextData();
 
 	// assign the width and height we have stored to parameters present
 	if( width )
@@ -262,6 +276,9 @@ void W3DDisplayString::getSize( Int *width, Int *height )
 
 Int W3DDisplayString::getWidth( Int charPos )
 {
+	if ( charPos == -1 && m_hasComplexTextExtents )
+		checkForChangedTextData();
+
 	FontCharsClass *	font;
 	Int width = 0;
 	Int count = 0;
@@ -270,6 +287,9 @@ Int W3DDisplayString::getWidth( Int charPos )
 
 	if ( font )
 	{
+		if ( charPos == -1 && m_hasComplexTextExtents )
+			return m_size.x;
+
 		const WideChar *text = m_textString.str();
 		WideChar ch;
 
@@ -284,6 +304,17 @@ Int W3DDisplayString::getWidth( Int charPos )
 	}
 
 	return width;
+}
+
+// W3DDisplayString::setComplexTextEnabled ====================================
+/** Enable shaped complex text for this display string */
+//=============================================================================
+void W3DDisplayString::setComplexTextEnabled( Bool enabled )
+{
+	if (m_textRenderer.Set_Complex_Text_Enabled(enabled)) {
+		m_textRendererHotKey.Set_Complex_Text_Enabled(enabled);
+		notifyTextChanged();
+	}
 }
 
 // W3DDisplayString::setFont ==================================================
@@ -363,14 +394,17 @@ void W3DDisplayString::computeExtents()
 
 		m_size.x = 0;
 		m_size.y = 0;
+		m_hasComplexTextExtents = FALSE;
 
 	}
 	else
 	{
 
-		Vector2 extents = m_textRenderer.Get_Formatted_Text_Extents(getText().str()); //Get_Text_Extents( getText().str() );
+		bool hasComplexTextExtents = false;
+		Vector2 extents = m_textRenderer.Get_Formatted_Text_Extents(getText().str(), &hasComplexTextExtents);
 		m_size.x = extents.X;
 		m_size.y = extents.Y;
+		m_hasComplexTextExtents = hasComplexTextExtents;
 
 	}
 
@@ -388,9 +422,20 @@ void W3DDisplayString::setWordWrap( Int wordWrap )
 
 void W3DDisplayString::setUseHotkey( Bool useHotkey, Color hotKeyColor )
 {
-	m_useHotKey = useHotkey;
+	UnicodeString hotkey = UnicodeString::TheEmptyString;
+	if (useHotkey && TheHotKeyManager) {
+		hotkey.translate(TheHotKeyManager->searchHotKey(getText()));
+	}
+
+	const Bool hasHotkey = !hotkey.isEmpty();
+	if (m_useHotKey == hasHotkey && m_hotKeyColor == hotKeyColor && m_hotkey == hotkey) {
+		return;
+	}
+
+	m_useHotKey = hasHotkey;
 	m_hotKeyColor = hotKeyColor;
-	m_textRenderer.Set_Hot_Key_Parse(useHotkey);
+	m_hotkey = hotkey;
+	m_textRenderer.Set_Hot_Key_Parse(hasHotkey);
 	notifyTextChanged();
 }
 
