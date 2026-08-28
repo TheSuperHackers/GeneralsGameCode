@@ -2508,7 +2508,7 @@ void W3DModelDraw::handleClientTurretPositioning()
 void W3DModelDraw::handleClientRecoil()
 {
 	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
-	if (!(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID) || !m_doHandleRecoil)
+	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID) || !m_doHandleRecoil)
 	{
 		return;
 	}
@@ -2571,7 +2571,10 @@ void W3DModelDraw::handleClientRecoil()
 							recoils[i].m_shift = 0.0f;
 							recoils[i].m_state = WeaponRecoilInfo::IDLE;
 						}
-						m_doHandleRecoil = TRUE; // There's more recoil, need to update
+						else
+						{
+							m_doHandleRecoil = TRUE; // There's more recoil, need to update
+						}
 						break;
 				}
 
