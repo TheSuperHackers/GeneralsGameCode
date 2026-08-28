@@ -178,8 +178,8 @@ void FontLibrary::reset()
 //-------------------------------------------------------------------------------------------------
 GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 {
-	// TheSuperHackers @fix No longer creates fonts with zero size. And allows fonts with size larger than 100.
-	if (pointSize < 1)
+	// Reject sizes that can exceed the fixed glyph buffer used by the renderer.
+	if (pointSize < 1 || pointSize > 100)
 	{
 		return nullptr;
 	}
