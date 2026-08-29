@@ -1884,7 +1884,6 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		W3DShaderManager::updateCloud();
 	}
 
-	const Matrix3D& tm = Transform;
 #if 0 // There is some weirdness sometimes with the dx8 static buffers.
 			// This usually fixes terrain flashing.  jba.
 	static Int delay = 1;
@@ -1926,8 +1925,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Texture(1,nullptr);
 	ShaderClass::Invalidate();
 
-	//	tm.Scale(ObjSpaceExtent);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
 
 	//Apply the shader and material
 

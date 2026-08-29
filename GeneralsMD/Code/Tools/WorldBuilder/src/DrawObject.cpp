@@ -2205,12 +2205,9 @@ if (pMapObj->isSelected()) {
 			Bool isTree = false;
 
 			Vector3 vec(loc.x, loc.y, loc.z);
-			Matrix3D tm = Transform;
 			Matrix3x3 rot(true);
 			rot.Rotate_Z(pMapObj->getAngle());
-
-			tm.Set_Translation(vec);
-			tm.Set_Rotation(rot);
+			Matrix3D tm(rot, vec);
 			int polyCount = NUM_TRI;
 			if (!pMapObj->isSelected()) {
 				polyCount -= NUM_ARROW_TRI+NUM_SELECT_TRI;
