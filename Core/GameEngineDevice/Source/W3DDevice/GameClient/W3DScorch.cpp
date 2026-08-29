@@ -162,16 +162,17 @@ void W3DScorch::updateScorches(WorldHeightMap& map)
 	// TheSuperHackers @info Scorches are written in reverse order to ensure that the last added scorches fit in the buffers.
 	for (std::deque<TScorch>::reverse_iterator it = m_scorches.rbegin(); it != m_scorches.rend(); ++it)
 	{
-		if (!writeScorchToBuffer(*it, map, diffuse,
-		                         vb + m_curNumScorchVertices, ib + m_curNumScorchIndices))
+		if (writeScorchToBuffer(*it, map, diffuse,
+		                        vb + m_curNumScorchVertices, ib + m_curNumScorchIndices) == SCORCH_BUFFER_FULL)
 		{
 			return;
 		}
 	}
 }
 
-Bool W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, UnsignedInt diffuse,
-                                    VertexFormatXYZDUV1* curVb, UnsignedShort* curIb)
+W3DScorch::WriteScorchResult W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map,
+                                                          UnsignedInt diffuse, VertexFormatXYZDUV1* curVb,
+                                                          UnsignedShort* curIb)
 {
 	Real radius = scorch.radius;
 	Vector3 loc = scorch.location;
@@ -196,14 +197,28 @@ Bool W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, 
 	{
 		maxY = map.getYExtent() - map.getBorderSizeInline();
 	}
+
+	const Int vertexCountX = maxX - minX;
+	const Int vertexCountY = maxY - minY;
+	if (vertexCountX <= 0 || vertexCountY <= 0)
+	{
+		return SCORCH_SKIPPED;
+	}
+
+	const Int requiredVertices = vertexCountX * vertexCountY;
+	const Int requiredIndices = 6 * (vertexCountX - 1) * (vertexCountY - 1);
+	if (m_curNumScorchVertices + requiredVertices > MAX_SCORCH_VERTEX ||
+	    m_curNumScorchIndices + requiredIndices > MAX_SCORCH_INDEX)
+	{
+		return SCORCH_BUFFER_FULL;
+	}
+
 	Int startVertex = m_curNumScorchVertices;
 	Int i, j;
 	for (j = minY; j < maxY; j++)
 	{
 		for (i = minX; i < maxX; i++)
 		{
-			if (m_curNumScorchVertices >= MAX_SCORCH_VERTEX)
-				return false;
 			curVb->diffuse = diffuse;
 			Real theZ = amtToFloat + getMapHeight(map, i, j);
 			// The scorchmarks are spaced out by 1.5 in the texture.
@@ -225,8 +240,6 @@ Bool W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, 
 	{
 		for (i = 0; i < maxX - minX - 1; i++)
 		{
-			if (m_curNumScorchIndices + 6 > MAX_SCORCH_INDEX)
-				return false;
 			Int xNdx = i + minX + map.getBorderSizeInline();
 			Int yNdx = j + minY + map.getBorderSizeInline();
 			Bool flipForBlend = map.getFlipState(xNdx, yNdx);
@@ -257,5 +270,5 @@ Bool W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, 
 		}
 	}
 
-	return true;
+	return SCORCH_WRITTEN;
 }
