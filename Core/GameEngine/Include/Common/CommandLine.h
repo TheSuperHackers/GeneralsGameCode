@@ -35,4 +35,7 @@ public:
 	// Parses startup flags and applies the process working directory (-cwd).
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
+
+	// Returns true for the single-token -cwd and -cwd=<path> startup options.
+	static bool isStartupWorkingDirectoryOption(const char *arg);
 };
