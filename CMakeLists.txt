@@ -31,10 +31,7 @@ if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 # Define VCPKG feature before `project` block
-option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
-if(RTS_BUILD_OPTION_FFMPEG)
-    list(APPEND VCPKG_MANIFEST_FEATURES "ffmpeg")
-endif()
+include(cmake/vcpkg.cmake)
 
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
