@@ -69,7 +69,7 @@ AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData
 
 	m_laserFromAssisted = TheThingFactory->findTemplate(d->m_laserFromAssistedName);
 	m_laserToTarget = TheThingFactory->findTemplate(d->m_laserToTargetName);
-#if RTS_GENERALS
+#if RTS_GENERALS || !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @info Zero Hour needs the update to run once to avoid mismatches with retail.
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 #endif
