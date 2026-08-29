@@ -153,33 +153,18 @@ FileClass * WB_W3DFileSystem::Get_File( char const *filename )
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Skip -cwd [path] so MFC does not treat the path as a map to open.
+// Skip the single-token -cwd and -cwd=<path> options during MFC shell processing.
 
 class WBCommandLineInfo : public CCommandLineInfo
 {
 public:
-	WBCommandLineInfo() : m_expectingCwdPath(FALSE) {}
-
 	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
-		if (m_expectingCwdPath)
-		{
-			m_expectingCwdPath = FALSE;
-			if (!bFlag && pszParam != nullptr && pszParam[0] != 0)
-				return;
-		}
-
-		if (bFlag && lstrcmpi(pszParam, _T("cwd")) == 0)
-		{
-			m_expectingCwdPath = TRUE;
+		if (bFlag && CommandLine::isStartupWorkingDirectoryOption(pszParam))
 			return;
-		}
 
 		CCommandLineInfo::ParseParam(pszParam, bFlag, bLast);
 	}
-
-private:
-	BOOL m_expectingCwdPath;
 };
 
 /////////////////////////////////////////////////////////////////////////////

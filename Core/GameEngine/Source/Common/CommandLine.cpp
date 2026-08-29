@@ -467,18 +467,23 @@ Int parseJobs(char *args[], int num)
 // Set when -cwd is present so parseCommandLineForStartup does not force the executable directory.
 static Bool s_cwdOptionSpecified = FALSE;
 
-Int parseCwd(char *args[], int num)
+Int parseCwd(char *[], int)
 {
 	// TheSuperHackers @feature 14/08/2026
-	// -cwd keeps the OS working directory. -cwd <path> uses that directory instead.
+	// -cwd keeps the OS working directory.
 	s_cwdOptionSpecified = TRUE;
+	return 1;
+}
 
-	if (num > 1 && args[1] != nullptr && args[1][0] != '-' && args[1][0] != '\0')
-	{
-		if (!rts::setCurrentDirectoryToPath(args[1]))
-			rts::setCurrentDirectoryToExecutablePath();
-		return 2;
-	}
+Int parseCwdOverride(char *args[], int)
+{
+	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
+	// -cwd=<path> overrides the working directory. Keeping the path in the same
+	// token prevents -cwd from consuming a positional file argument.
+	s_cwdOptionSpecified = TRUE;
+	const char *path = args[0] + strlen("-cwd=");
+	if (!rts::setCurrentDirectoryToPath(path))
+		rts::setCurrentDirectoryToExecutablePath();
 	return 1;
 }
 
@@ -1162,8 +1167,9 @@ static CommandLineParam paramsForStartup[] =
 	{ "-jobs", parseJobs },
 
 	// TheSuperHackers @feature 14/08/2026
-	// Use the current working directory as provided by the OS, or an optional path.
+	// Use the current working directory as provided by the OS, or an explicit path.
 	// Without this flag the working directory is forced to the executable directory.
+	{ "-cwd=", parseCwdOverride },
 	{ "-cwd", parseCwd },
 };
 
@@ -1427,7 +1433,8 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 		{
 			int len = strlen(params[param].name);
 			int len2 = strlen(argv[arg]);
-			if (len2 != len)
+			const Bool matchPrefix = params[param].name[len - 1] == '=';
+			if ((!matchPrefix && len2 != len) || (matchPrefix && len2 < len))
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
@@ -1441,6 +1448,17 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 			arg++;
 		}
 	}
+}
+
+bool CommandLine::isStartupWorkingDirectoryOption(const char *arg)
+{
+	if (arg == nullptr)
+		return false;
+
+	if (arg[0] == '-' || arg[0] == '/')
+		++arg;
+
+	return stricmp(arg, "cwd") == 0 || strnicmp(arg, "cwd=", 4) == 0;
 }
 
 void createGlobalData()
