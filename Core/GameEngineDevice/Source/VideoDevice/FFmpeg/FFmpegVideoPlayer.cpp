@@ -208,7 +208,13 @@ VideoStreamInterface* FFmpegVideoPlayer::createStream( File* file )
 		stream->m_player = this;
 		m_firstStream = stream;
 
-		setVolume( TheAudio->getVolume(AudioAffect_Speech) );
+		// never let volume go to 0, as Bink will interpret that as "play at full volume".
+		Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
+		[[maybe_unused]]  Int volume = (32768 * mod) / 100;
+		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to set volume (%g -> %d -> %d",
+			TheAudio->getVolume(AudioAffect_Speech), mod, volume));
+		//BinkSetVolume( stream->m_handle,0, volume);
+		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - set volume"));
 	}
 
 	return stream;
@@ -267,26 +273,6 @@ VideoStreamInterface*	FFmpegVideoPlayer::load( AsciiString movieTitle )
 }
 
 //============================================================================
-// FFmpegVideoPlayer::setVolume
-//============================================================================
-
-void FFmpegVideoPlayer::setVolume( [[maybe_unused]] Real volume )
-{
-#ifdef RTS_USE_OPENAL
-	if ( firstStream() == nullptr )
-	{
-		return;
-	}
-
-	OpenALAudioStream* audioStream = (OpenALAudioStream*)TheAudio->getHandleForBink();
-	if ( audioStream )
-	{
-		audioStream->setVolume( volume );
-	}
-#endif
-}
-
-//============================================================================
 //============================================================================
 void FFmpegVideoPlayer::notifyVideoPlayerOfNewProvider( Bool nowHasValid )
 {
@@ -329,7 +315,6 @@ FFmpegVideoStream::FFmpegVideoStream(FFmpegFile* file)
 	// Release the audio handle if it's already in use
 	OpenALAudioStream* audioStream = (OpenALAudioStream*)TheAudio->getHandleForBink();
 	audioStream->reset();
-	audioStream->setVolume(TheAudio->getVolume(AudioAffect_Speech));
 #endif
 
 	// Decode until we have our first video frame

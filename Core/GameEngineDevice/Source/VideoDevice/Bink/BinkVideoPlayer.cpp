@@ -108,7 +108,6 @@
 //============================================================================
 
 BinkVideoPlayer::BinkVideoPlayer()
-: m_volumeApplied(FALSE)
 {
 
 }
@@ -161,12 +160,6 @@ void	BinkVideoPlayer::update()
 {
 	VideoPlayer::update();
 
-	// createStream() is too early; apply once a live stream exists.
-	if ( !m_volumeApplied && firstStream() != nullptr )
-	{
-		setVolume( TheAudio->getVolume(AudioAffect_Speech) );
-		m_volumeApplied = TRUE;
-	}
 }
 
 //============================================================================
@@ -208,7 +201,10 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		stream->m_next = m_firstStream;
 		stream->m_player = this;
 		m_firstStream = stream;
-		m_volumeApplied = FALSE;
+
+		// TheSuperHackers @bugfix Service Bink before applying the initial speech volume.
+		BinkWait( stream->m_handle );
+		BinkSetVolume( stream->m_handle, 0, calculateMovieAudioVolume(TheAudio->getVolume(AudioAffect_Speech)) );
 	}
 
 	return stream;
