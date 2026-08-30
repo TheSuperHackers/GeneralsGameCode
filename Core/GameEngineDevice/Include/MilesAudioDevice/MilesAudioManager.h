@@ -83,6 +83,16 @@ struct PlayingAudio
 		, m_requestStop(false)
 	{}
 
+	Bool isPlaying() const
+	{
+		return m_status == PS_Playing;
+	}
+
+	Bool isPlayingOrRequested() const
+	{
+		return m_status == PS_Playing || m_rerequestOnNextUpdate;
+	}
+
 	static_assert(sizeof(m_status) == sizeof(long), "Must be size of long, because it is used with Interlocked functions");
 };
 
