@@ -69,6 +69,7 @@ struct PlayingAudio
 	Short m_framesFaded;
 	Bool m_fade;
 	volatile Bool m_rerequestOnNextUpdate;
+	volatile Bool m_requestStop; // Let the audio finish but stop looping if it is looping
 
 	PlayingAudio()
 		: m_sample(nullptr)
@@ -79,6 +80,7 @@ struct PlayingAudio
 		, m_framesFaded(0)
 		, m_fade(false)
 		, m_rerequestOnNextUpdate(false)
+		, m_requestStop(false)
 	{}
 
 	static_assert(sizeof(m_status) == sizeof(long), "Must be size of long, because it is used with Interlocked functions");

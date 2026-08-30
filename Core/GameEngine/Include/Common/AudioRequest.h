@@ -52,10 +52,12 @@ public:
 		, m_pendingEvent(nullptr)
 		, m_handleToInteractOn(AHSV_Error)
 		, m_requiresCheckForSample(false)
+		, m_requestStop(false)
 	{}
 
 	RequestType m_request;
 	RefCountPtr<DynamicAudioEventRTS> m_pendingEvent;
 	AudioHandle m_handleToInteractOn;
 	Bool m_requiresCheckForSample;
+	Bool m_requestStop; // Let the audio play and finish but stop looping if it is looping
 };
