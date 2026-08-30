@@ -334,7 +334,7 @@ LocomotorTemplate::LocomotorTemplate()
 	m_maxSpeedScaled = 0.0f;
 	m_maxSpeedDamagedScaled = 0.0f;
 	m_minSpeedScaled = 0.0f;
-	m_minTurnSpeedScaled = BIGNUM;
+	m_minTurnSpeedScaled = scaleSpeed2D(BIGNUM);
 #endif
 	m_behaviorZ = Z_NO_Z_MOTIVE_FORCE;
 	m_appearance = LOCO_OTHER;
