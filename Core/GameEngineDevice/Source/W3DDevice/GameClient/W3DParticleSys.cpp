@@ -422,7 +422,7 @@ void W3DParticleSystemManager::initializeBatch(ParticleSystem* system, const Ref
 
 void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount)
 {
-	if (pointCount > 0 && m_batchTexture != nullptr)
+	if (pointCount > 0)
 	{
 		m_pointGroup->Set_Texture(m_batchTexture.Peek());
 
@@ -448,12 +448,14 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 		m_pointGroup->Set_Billboard(m_batchBillboard);
 		m_pointGroup->Set_Point_Frame(0);
 		m_pointGroup->Render(rinfo);
+
+		m_batchBillboard = false;
+		m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
+		pointCount = 0;
 	}
 
 	if (m_batchTexture != nullptr)
 	{
 		m_batchTexture.Clear();
 	}
-
-	pointCount = 0;
 }
