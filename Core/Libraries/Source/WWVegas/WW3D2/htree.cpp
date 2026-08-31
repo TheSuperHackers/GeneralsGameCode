@@ -200,10 +200,6 @@ int HTreeClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	bool pre30 = false;
 	if (header.Version < W3D_MAKE_VERSION(3,0)) {
-		// TheSuperHackers @fix CryoTheRenegade 24/08/2026 Reject UINT32_MAX pivot counts so the pre-3.0 increment cannot wrap to zero, skip allocation, and then write Pivot[0].
-		if (header.NumPivots == 0xffffffffu) {
-			return LOAD_ERROR;
-		}
 		header.NumPivots ++;
 		pre30 = true;
 	}
@@ -213,9 +209,11 @@ int HTreeClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	memcpy(Name,header.Name,W3D_NAME_LEN);
 	NumPivots = header.NumPivots;
-	if (NumPivots > 0) {
-		Pivot = MSGW3DNEWARRAY("HTreeClass::Pivot") PivotClass[NumPivots];
+	// TheSuperHackers @fix CryoTheRenegade 24/08/2026 Reject invalid pivot counts before allocation and use.
+	if (NumPivots < 1) {
+		return LOAD_ERROR;
 	}
+	Pivot = MSGW3DNEWARRAY("HTreeClass::Pivot") PivotClass[NumPivots];
 
 	/*
 	** Now, read in all of the other chunks for this hierarchy.
@@ -271,9 +269,6 @@ bool HTreeClass::read_pivots(ChunkLoadClass & cload,bool pre30)
 	** this so we just put one in.
 	*/
 	if (pre30) {
-		if (Pivot == nullptr || NumPivots < 1) {
-			return false;
-		}
 		Pivot[0].Index = 0;
 		Pivot[0].Parent = nullptr;
 		Pivot[0].BaseTransform.Make_Identity();
