@@ -33,6 +33,20 @@
 #include "WWLib/stringex.h"
 #include <imagehlp.h>
 #include "Lib/BaseTypeCore.h"
+#include "Lib/arch_context.h"
+
+// imagehlp.h (via dbghelp.h's psdk_inc/_dbg_common.h) #defines StackWalk to
+// StackWalk64 on 64-bit builds, because _IMAGEHLP64 is set whenever _WIN64
+// is defined. DebugStackwalk::StackWalk below is our own class method, not
+// a direct call into the Win32 API (that goes through the gDbg._StackWalk
+// function pointer instead), so the platform macro must not be allowed to
+// rewrite its name. debug_stack.h is included above, before this macro
+// exists, so the class declaration is unaffected; without this #undef the
+// out-of-line definition further down would be silently renamed to
+// StackWalk64 and no longer match its own declaration.
+#ifdef StackWalk
+#undef StackWalk
+#endif
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
 
@@ -54,12 +68,53 @@ static union
 } gDbg;
 #undef DBGHELP
 
+// GetProcAddress'd against DBGHELP.DLL by InitDbghelp() below, one name per
+// DBGHELP() entry in debug_stack.inl, in the same order as the gDbg struct
+// above.
+//
+// 64-bit dbghelp.dll only exports the ...64 form of an entry point whose
+// address parameter is DWORD64 -- StackWalk, SymFunctionTableAccess,
+// SymGetModuleBase, SymGetSymFromAddr and SymGetLineFromAddr here.
+// GetProcAddress with the un-suffixed name returns NULL for those on x64,
+// which would leave the matching gDbg._SymXxx pointer null and silently
+// disable that part of the stack walker rather than fail to compile.
+// SymInitialize, SymGetOptions, SymSetOptions and SymCleanup take no address
+// parameter and are exported under the same name on every architecture
+// (verified against mingw-w64's psdk_inc/_dbg_common.h: no #define
+// redirects them under _IMAGEHLP64), so they are unchanged.
+#if defined(_WIN64) || defined(__x86_64__)
+#define DBGHELP(name,ret,par) DBGHELP_APINAME_##name,
+#define DBGHELP_APINAME_SymInitialize          "SymInitialize"
+#define DBGHELP_APINAME_SymGetOptions          "SymGetOptions"
+#define DBGHELP_APINAME_SymSetOptions          "SymSetOptions"
+#define DBGHELP_APINAME_StackWalk              "StackWalk64"
+#define DBGHELP_APINAME_SymFunctionTableAccess "SymFunctionTableAccess64"
+#define DBGHELP_APINAME_SymGetModuleBase       "SymGetModuleBase64"
+#define DBGHELP_APINAME_SymGetSymFromAddr      "SymGetSymFromAddr64"
+#define DBGHELP_APINAME_SymGetLineFromAddr     "SymGetLineFromAddr64"
+#define DBGHELP_APINAME_SymCleanup             "SymCleanup"
+static char const *const DebughelpFunctionNames[] =
+{
+#include "debug_stack.inl"
+	nullptr
+};
+#undef DBGHELP_APINAME_SymInitialize
+#undef DBGHELP_APINAME_SymGetOptions
+#undef DBGHELP_APINAME_SymSetOptions
+#undef DBGHELP_APINAME_StackWalk
+#undef DBGHELP_APINAME_SymFunctionTableAccess
+#undef DBGHELP_APINAME_SymGetModuleBase
+#undef DBGHELP_APINAME_SymGetSymFromAddr
+#undef DBGHELP_APINAME_SymGetLineFromAddr
+#undef DBGHELP_APINAME_SymCleanup
+#else
 #define DBGHELP(name,ret,par) #name,
 static char const *const DebughelpFunctionNames[] =
 {
 #include "debug_stack.inl"
 	nullptr
 };
+#endif
 #undef DBGHELP
 
 // local dbghelp.dll module handle
@@ -360,9 +415,9 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 	// Use the context struct if it was provided.
 	if (ctx)
   {
-		stackFrame.AddrPC.Offset = ctx->Eip;
-		stackFrame.AddrStack.Offset = ctx->Esp;
-		stackFrame.AddrFrame.Offset = ctx->Ebp;
+		stackFrame.AddrPC.Offset = CTX_PC(*ctx);
+		stackFrame.AddrStack.Offset = CTX_STACK(*ctx);
+		stackFrame.AddrFrame.Offset = CTX_FRAME(*ctx);
 	}
   else
   {
@@ -396,7 +451,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 	// Walk the stack by the requested number of return address iterations.
   bool skipFirst=!ctx;
   while (sig.m_numAddr<Signature::MAX_ADDR&&
-		     gDbg._StackWalk(IMAGE_FILE_MACHINE_I386,GetCurrentProcess(),GetCurrentThread(),
+		     gDbg._StackWalk(CTX_STACKWALK_MACHINE,GetCurrentProcess(),GetCurrentThread(),
                          &stackFrame,nullptr,nullptr,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,nullptr))
   {
     if (skipFirst)

@@ -39,6 +39,23 @@ DBGHELP(StackWalk,
         PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
         PTRANSLATE_ADDRESS_ROUTINE TranslateAddress))
 
+// LPSTACKFRAME / PFUNCTION_TABLE_ACCESS_ROUTINE / PGET_MODULE_BASE_ROUTINE
+// above are #defined to their ...64 forms by dbghelp.h on 64-bit builds
+// (_IMAGEHLP64), so StackWalkType's signature already widens for free. These
+// next two entries hand-roll a DWORD address parameter instead of going
+// through those platform names, so gDbg._StackWalk's call site (which does
+// use the widened StackWalkType) rejects them as arguments unless widened to
+// match explicitly. VC6 (1998) predates the ...64 DbgHelp API, so the 32-bit
+// branch is kept exactly as it was.
+#if defined(_WIN64) || defined(__x86_64__)
+DBGHELP(SymFunctionTableAccess,
+        LPVOID,
+        (HANDLE hProcess, DWORD64 AddrBase))
+
+DBGHELP(SymGetModuleBase,
+        DWORD64,
+        (HANDLE hProcess, DWORD64 dwAddr))
+#else
 DBGHELP(SymFunctionTableAccess,
         LPVOID,
         (HANDLE hProcess, DWORD AddrBase))
@@ -46,6 +63,7 @@ DBGHELP(SymFunctionTableAccess,
 DBGHELP(SymGetModuleBase,
         DWORD,
         (HANDLE hProcess, DWORD dwAddr))
+#endif
 
 DBGHELP(SymGetSymFromAddr,
         BOOL,

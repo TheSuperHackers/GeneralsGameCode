@@ -235,7 +235,9 @@ static char regInfo[1024],verInfo[256];
 // and this saves us from doing a stack walk twice
 static DebugStackwalk::Signature sig;
 
-static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+// DLGPROC returns INT_PTR (64-bit on Win64). INT_PTR is plain int on 32-bit
+// Windows, so this is a no-op signature change for the VC6/mingw-i686 builds.
+static INT_PTR CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch(uMsg)
   {

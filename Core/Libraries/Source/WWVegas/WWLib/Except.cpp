@@ -125,8 +125,23 @@ typedef BOOL  (WINAPI *SymLoadModuleType) (HANDLE hProcess, HANDLE hFile, LPSTR 
 typedef DWORD (WINAPI *SymSetOptionsType) (DWORD SymOptions);
 typedef BOOL  (WINAPI *SymUnloadModuleType) (HANDLE hProcess, DWORD BaseOfDll);
 typedef BOOL  (WINAPI *StackWalkType) (DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame, LPVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine, PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine, PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+
+// On 64-bit builds dbghelp.h sets _IMAGEHLP64 and #defines LPSTACKFRAME,
+// PFUNCTION_TABLE_ACCESS_ROUTINE and PGET_MODULE_BASE_ROUTINE (used just
+// above in StackWalkType) to their ...64 forms automatically, so StackWalkType
+// already gets the right ABI on both architectures for free. These next two
+// typedefs don't go through those platform names -- they hand-roll a DWORD
+// address parameter -- so they need an explicit 64-bit branch or _StackWalk's
+// call site below won't accept them as the FunctionTableAccessRoutine /
+// GetModuleBaseRoutine arguments. VC6 (1998) predates the ...64 DbgHelp API,
+// so the 32-bit branch is untouched -- this is not made unconditional.
+#if defined(_WIN64) || defined(__x86_64__)
+typedef PFUNCTION_TABLE_ACCESS_ROUTINE64 SymFunctionTableAccessType;
+typedef PGET_MODULE_BASE_ROUTINE64       SymGetModuleBaseType;
+#else
 typedef LPVOID (WINAPI *SymFunctionTableAccessType) (HANDLE hProcess, DWORD AddrBase);
 typedef DWORD (WINAPI *SymGetModuleBaseType) (HANDLE hProcess, DWORD dwAddr);
+#endif
 
 
 static SymCleanupType							_SymCleanup = nullptr;
@@ -139,6 +154,46 @@ static StackWalkType								_StackWalk = nullptr;
 static SymFunctionTableAccessType	_SymFunctionTableAccess = nullptr;
 static SymGetModuleBaseType				_SymGetModuleBase = nullptr;
 
+// This table is walked in lockstep with the _SymXxx globals above (see the
+// fptr loop in Dump_Exception_Info() / Load_Image_Helper()) to GetProcAddress
+// each name out of IMAGEHLP.DLL / DBGHELP.DLL, so order must stay in sync
+// with the globals' declaration order.
+//
+// 64-bit dbghelp.dll only exports the ...64 forms of the entry points whose
+// address parameter is DWORD64 (SymGetSymFromAddr, SymLoadModule,
+// SymUnloadModule, StackWalk, SymFunctionTableAccess, SymGetModuleBase);
+// GetProcAddress with the un-suffixed name returns NULL for those on x64,
+// which would leave the corresponding _SymXxx pointer null and silently
+// disable that part of the crash handler rather than fail to compile.
+// SymCleanup, SymInitialize and SymSetOptions take no address parameter and
+// are exported under the same name on every architecture (verified against
+// mingw-w64's psdk_inc/_dbg_common.h: no #define redirects them under
+// _IMAGEHLP64), so they are unchanged.
+//
+// Entry 9 is "SymGetModuleBaseType" on the 32-bit side, which is wrong on
+// every architecture: it is the name of this file's local typedef (see
+// SymGetModuleBaseType above), not a DbgHelp export -- the real export is
+// "SymGetModuleBase". That means _SymGetModuleBase has always resolved to
+// nullptr and the stack walker has always run without a module-base
+// callback on 32-bit. Left byte-identical (typo included) here because
+// correcting it would change retail runtime behaviour -- a previously-NULL
+// callback would suddenly be populated in shipping builds. See task-4-report
+// for the writeup; fix is deliberately deferred to a separate decision.
+#if defined(_WIN64) || defined(__x86_64__)
+static char const *const ImagehelpFunctionNames[] =
+{
+	"SymCleanup",
+	"SymGetSymFromAddr64",
+	"SymInitialize",
+	"SymLoadModule64",
+	"SymSetOptions",
+	"SymUnloadModule64",
+	"StackWalk64",
+	"SymFunctionTableAccess64",
+	"SymGetModuleBase64",
+	nullptr
+};
+#else
 static char const *const ImagehelpFunctionNames[] =
 {
 	"SymCleanup",
@@ -152,6 +207,7 @@ static char const *const ImagehelpFunctionNames[] =
 	"SymGetModuleBaseType",
 	nullptr
 };
+#endif
 
 
 
@@ -1335,7 +1391,7 @@ here:
 	** Walk the stack by the requested number of return address iterations.
 	*/
 	for (int i = 0; i < num_addresses + 1; i++) {
-		if (_StackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &stack_frame, nullptr, nullptr, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
+		if (_StackWalk(CTX_STACKWALK_MACHINE, GetCurrentProcess(), GetCurrentThread(), &stack_frame, nullptr, nullptr, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
 
 			/*
 			** First result will always be the return address we were called from.
