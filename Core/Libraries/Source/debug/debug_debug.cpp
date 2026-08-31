@@ -35,6 +35,7 @@
 #include <windows.h>
 #include <WWLib/WWCommon.h>
 #include <new>      // needed for placement new prototype
+#include "Lib/BaseTypeCore.h"
 
 // a little dummy variable that makes the linker actually include
 // us...
@@ -900,7 +901,11 @@ Debug& Debug::operator<<(const void *ptr)
   if (ptr)
   {
     char help[9];
-    (*this) << "0x" << _ultoa((unsigned long)ptr,help,16);
+    // Cast through UnsignedIntPtr (lossless) before narrowing to the
+    // 32-bit type _ultoa requires. On 64-bit this deliberately shows only
+    // the low 32 bits of the address -- acceptable for a debug print, and
+    // keeps 32-bit output byte-identical (UnsignedIntPtr is unsigned int there).
+    (*this) << "0x" << _ultoa((unsigned long)(UnsignedIntPtr)ptr,help,16);
   }
   else
     (*this) << "null";
@@ -932,7 +937,10 @@ Debug& Debug::operator<<(const MemDump &dump)
   {
     // address
     char buf[9];
-    sprintf(buf,"%08x",dump.m_absAddr?unsigned(cur):cur-dump.m_startPtr);
+    // Same low-32-bits-only truncation as the operator<<(const void*) above,
+    // via a lossless pointer->UnsignedIntPtr step so the narrowing is an
+    // explicit int-to-int conversion rather than a flagged pointer truncation.
+    sprintf(buf,"%08x",dump.m_absAddr?(unsigned)(UnsignedIntPtr)cur:(unsigned)(cur-dump.m_startPtr));
     operator<<(buf);
 
     // items
@@ -1010,9 +1018,16 @@ bool Debug::IsLogEnabled(const char *fileOrGroup)
   // to be used from the D_ISLOG macros only and those guarantee
   // that we are having real static strings let's use
   // that strings address as frame address...
-  FrameHashEntry *e=Instance.LookupFrame((unsigned)fileOrGroup);
+  // LookupFrame/AddFrameEntry use the string's address as a hash key, and
+  // are declared to take `unsigned` -- that hashing scheme is already tied
+  // to the 32-bit-only stack-frame capture elsewhere in this file (see the
+  // #error above for non-x86-32 targets), so it is not widened here. Cast
+  // through UnsignedIntPtr so the narrowing is an explicit int-to-int
+  // conversion; 32-bit output/codegen is unchanged since UnsignedIntPtr is
+  // unsigned int there.
+  FrameHashEntry *e=Instance.LookupFrame((unsigned)(UnsignedIntPtr)fileOrGroup);
   if (!e)
-    e=Instance.AddFrameEntry((unsigned)fileOrGroup,FrameTypeLog,fileOrGroup,0);
+    e=Instance.AddFrameEntry((unsigned)(UnsignedIntPtr)fileOrGroup,FrameTypeLog,fileOrGroup,0);
   if (e->status==Unknown)
     Instance.UpdateFrameStatus(*e);
   return e->status==NoSkip;

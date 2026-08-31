@@ -40,6 +40,7 @@
 #include "WWSaveLoad/persist.h"
 #include "WWLib/multilist.h"
 #include "WWLib/mutex.h"
+#include "Lib/BaseTypeCore.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Forward declarations
@@ -123,7 +124,9 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Event handling
 		//////////////////////////////////////////////////////////////////////
-		virtual void			On_Event (AudioCallbackClass::EVENTS event, uint32 param1 = 0, uint32 param2 = 0);
+		// param1/param2 double as pointers smuggled through integer parameters for
+		// EVENT_LOGICAL_HEARD (see the inline definition below); must be pointer-sized.
+		virtual void			On_Event (AudioCallbackClass::EVENTS event, UnsignedIntPtr param1 = 0, UnsignedIntPtr param2 = 0);
 		virtual void			Register_Callback (AudioCallbackClass::EVENTS events, AudioCallbackClass *callback);
 
 		//////////////////////////////////////////////////////////////////////
@@ -225,8 +228,8 @@ __inline void
 SoundSceneObjClass::On_Event
 (
 	AudioCallbackClass::EVENTS	event,
-	uint32							param1,
-	uint32							param2
+	UnsignedIntPtr					param1,
+	UnsignedIntPtr					param2
 )
 {
 	if ((m_pCallback != nullptr) && (m_RegisteredEvents & event)) {

@@ -123,3 +123,11 @@ typedef bool						Bool;					//
 // note, the types below should use "long long", but MSVC doesn't support it yet
 typedef int64_t						Int64;						// 8 bytes
 typedef uint64_t					UnsignedInt64;	  	        // 8 bytes
+
+// Pointer-sized integers. Required for 64-bit targets: Windows is LLP64, so
+// `long` stays 32 bits on x86-64 and cannot hold a pointer. Use these for
+// values that must round-trip through a pointer — never for values that are
+// written to a file, sent over the network, or stored in a savegame, because
+// their width changes with the target.
+typedef uintptr_t					UnsignedIntPtr;			// 4 bytes on 32-bit, 8 on 64-bit
+typedef intptr_t					IntPtr;					// 4 bytes on 32-bit, 8 on 64-bit

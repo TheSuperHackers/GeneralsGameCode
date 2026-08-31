@@ -32,6 +32,7 @@
 #include <windows.h>
 #include "WWLib/stringex.h"
 #include <imagehlp.h>
+#include "Lib/BaseTypeCore.h"
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
 
@@ -46,7 +47,10 @@ static union
   {
 #include "debug_stack.inl"
   };
-  unsigned funcPtr[1];
+  // Overlays the struct above, whose members are actual function pointers
+  // (8 bytes on Win64). Must be pointer-sized or the aliasing/stride used
+  // by InitDbghelp() below only covers half of each slot on 64-bit.
+  UnsignedIntPtr funcPtr[1];
 } gDbg;
 #undef DBGHELP
 
@@ -89,11 +93,11 @@ static void InitDbghelp()
     return;
 
   // Get function addresses
-  unsigned *funcptr=gDbg.funcPtr;
+  UnsignedIntPtr *funcptr=gDbg.funcPtr;
   unsigned k=0;
   for (;DebughelpFunctionNames[k];++k,++funcptr)
   {
-    *funcptr=(unsigned)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
+    *funcptr=(UnsignedIntPtr)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
     if (!*funcptr)
       break;
   }

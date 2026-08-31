@@ -69,7 +69,10 @@ class SoundHandleClass;
 //
 //	Typedefs
 //
-typedef unsigned long MILES_HANDLE;
+// Miles Sound System handles are pointers under the hood; this must be
+// pointer-sized to round-trip through Get_2D_Sample/Get_3D_Sample without
+// truncation on 64-bit targets. Runtime-only, never serialized.
+typedef UnsignedIntPtr MILES_HANDLE;
 
 typedef enum
 {

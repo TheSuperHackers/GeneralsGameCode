@@ -54,6 +54,7 @@
 #include	"assert.h"
 #include "cpudetect.h"
 #include	"Except.h"
+#include "Lib/BaseTypeCore.h"
 //#include "debug.h"
 #include "MPU.h"
 //#include "commando\nat.h"
@@ -355,13 +356,16 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	if (imagehelp != nullptr) {
 		DebugString ("Exception Handler: Found IMAGEHLP.DLL - linking to required functions\n");
 		char const *function_name = nullptr;
-		unsigned long *fptr = (unsigned long*) &_SymCleanup;
+		// fptr walks across the consecutive _SymXxx globals below, each of which
+		// is an actual function pointer (8 bytes on Win64) -- must be
+		// pointer-sized or the stride only covers half of each slot on 64-bit.
+		UnsignedIntPtr *fptr = (UnsignedIntPtr*) &_SymCleanup;
 		int count = 0;
 
 		do {
 			function_name = ImagehelpFunctionNames[count];
 			if (function_name) {
-				*fptr = (unsigned long) GetProcAddress(imagehelp, function_name);
+				*fptr = (UnsignedIntPtr) GetProcAddress(imagehelp, function_name);
 				fptr++;
 				count++;
 			}
@@ -1065,13 +1069,14 @@ void Load_Image_Helper()
 
 		if (ImageHelp != nullptr) {
 			char const *function_name = nullptr;
-			unsigned long *fptr = (unsigned long *) &_SymCleanup;
+			// Same pointer-sized stride requirement as Dump_Exception_Info() above.
+			UnsignedIntPtr *fptr = (UnsignedIntPtr *) &_SymCleanup;
 			int count = 0;
 
 			do {
 				function_name = ImagehelpFunctionNames[count];
 				if (function_name) {
-					*fptr = (unsigned long) GetProcAddress(ImageHelp, function_name);
+					*fptr = (UnsignedIntPtr) GetProcAddress(ImageHelp, function_name);
 					fptr++;
 					count++;
 				}
@@ -1169,12 +1174,17 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 	symbol_struct_ptr->SizeOfStruct = sizeof (symbol_struct_buf);
 	symbol_struct_ptr->MaxNameLength = sizeof(symbol_struct_buf)-sizeof (IMAGEHLP_SYMBOL);
 	symbol_struct_ptr->Size = 0;
-	symbol_struct_ptr->Address = (unsigned long)code_ptr;
+	// IMAGEHLP_SYMBOL::Address and SymGetSymFromAddr's DWORD parameter are
+	// fixed at 32 bits by the (32-bit-only, deprecated on Win64) DbgHelp API
+	// contract -- not ours to widen. Cast through UnsignedIntPtr so the
+	// narrowing is an explicit int-to-int conversion rather than a flagged
+	// pointer truncation; 32-bit codegen is unchanged.
+	symbol_struct_ptr->Address = (unsigned long)(UnsignedIntPtr)code_ptr;
 
 	/*
 	** See if we have the symbol for that address.
 	*/
-	if (_SymGetSymFromAddr(GetCurrentProcess(), (unsigned long)code_ptr, (unsigned long *)&displacement, symbol_struct_ptr)) {
+	if (_SymGetSymFromAddr(GetCurrentProcess(), (unsigned long)(UnsignedIntPtr)code_ptr, (unsigned long *)&displacement, symbol_struct_ptr)) {
 
 		/*
 		** Copy it back into the buffer provided.
