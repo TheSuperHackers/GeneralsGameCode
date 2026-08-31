@@ -427,17 +427,11 @@ private:
 			BitClear(m_modStateBits, 1 << toIndex(modState));
 		}
 
-		void reset()
-		{
-			m_modStateBits = 0;
-		}
-
 	private:
 		UnsignedByte m_modStateBits; ///< Fits all combinations of CTRL+ALT+SHIFT, storing 1 bit for each
 	};
 
 	KeyDownInfo m_keyDownInfos[KEY_COUNT];
-	UnsignedInt m_keyboardResetGeneration;
 
 	enum { NUM_MOUSE_BUTTONS = 3 };
 	ICoord2D m_mouseDownPosition[NUM_MOUSE_BUTTONS];
@@ -451,7 +445,6 @@ public:
 private:
 	void onMouseEvent(const GameMessage *msg);
 
-	void resetKeyDownInfos();
 	void onKeyEvent(const GameMessage *msg, GameMessageDisposition &disp);
 	void onKeyModStateRemoved(GameMessageDisposition &disp, MappableKeyModState keyModState);
 	void onKeyPressed(GameMessageDisposition &disp, Int systemKeyState, MappableKeyType keyType, MappableKeyModState keyModState);

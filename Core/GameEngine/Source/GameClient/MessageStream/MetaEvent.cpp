@@ -49,14 +49,17 @@
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/DebugDisplay.h"	// for AudioDebugDisplay
 #include "GameClient/GameText.h"
-#include "GameClient/HotKey.h"
-#include "GameClient/Keyboard.h"
 #include "GameClient/MetaEvent.h"
 
 #include "GameLogic/GameLogic.h" // for TheGameLogic->getFrame()
 
 
 #define dont_DUMP_ALL_KEYS_TO_LOG
+
+
+#ifdef DUMP_ALL_KEYS_TO_LOG
+#include "GameClient/Keyboard.h"
+#endif
 
 MetaMap *TheMetaMap = nullptr;
 
@@ -379,8 +382,6 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 //-------------------------------------------------------------------------------------------------
 MetaEventTranslator::MetaEventTranslator()
 {
-	m_keyboardResetGeneration = TheKeyboard ? TheKeyboard->getResetGeneration() : 0;
-
 	for (Int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
 		m_nextUpShouldCreateDoubleClick[i] = FALSE;
 	}
@@ -531,30 +532,8 @@ void MetaEventTranslator::onMouseEvent(const GameMessage *msg)
 }
 
 //-------------------------------------------------------------------------------------------------
-void MetaEventTranslator::resetKeyDownInfos()
-{
-	for (Int key = 0; key < ARRAY_SIZE(m_keyDownInfos); ++key)
-	{
-		m_keyDownInfos[key].reset();
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
 void MetaEventTranslator::onKeyEvent(const GameMessage *msg, GameMessageDisposition &disp)
 {
-	if (TheKeyboard)
-	{
-		const UnsignedInt resetGeneration = TheKeyboard->getResetGeneration();
-		if (m_keyboardResetGeneration != resetGeneration)
-		{
-			// Emit UP mappings for any still-held CTRL/SHIFT/ALT combos before dropping tracking.
-			GameMessageDisposition unusedDisp = KEEP_MESSAGE;
-			onKeyModStateRemoved(unusedDisp, NONE);
-			resetKeyDownInfos();
-			m_keyboardResetGeneration = resetGeneration;
-		}
-	}
-
 	const Int systemKey = msg->getArgument(0)->integer;
 	const Int systemKeyState = msg->getArgument(1)->integer;
 
@@ -686,38 +665,20 @@ void MetaEventTranslator::onKeyPressed(GameMessageDisposition &disp, Int systemK
 		DEBUG_LOG(("^%s ", aKey.str()));
 #endif
 
-		if (!(systemKeyState & KEY_STATE_AUTOREPEAT))
+		if (keyModState != NONE)
 		{
-			if (keyType != MK_NONE)
-			{
-				m_keyDownInfos[keyType].reset();
-
-				if (TheHotKeyManager)
-				{
-					// TheSuperHackers @bugfix CryoTheRenegade 18/08/2026
-					// Keep modified key releases from being reinterpreted as plain GUI hotkeys.
-					TheHotKeyManager->setKeyUpSuppressed((KeyDefType)keyType, keyModState != NONE);
-				}
-			}
-
-			if (keyModState != NONE)
-			{
-				// Remember that this key and mod state are pressed.
-				// MK_NONE records CTRL, SHIFT, and ALT themselves so their UP mappings still fire on release.
-				m_keyDownInfos[keyType].setKeyModState(keyModState);
-			}
+			// Remember that this key and mod state are pressed.
+			m_keyDownInfos[keyType].setKeyModState(keyModState);
 		}
 	}
 	else
 	{
-		if (keyType != MK_NONE)
+		if (keyModState != NONE)
 		{
-			// TheSuperHackers @bugfix CryoTheRenegade 19/08/2026
-			// A same-frame modifier release can follow this key-up with the final modifier bits already cleared.
-			if (keyModState != NONE || !m_keyDownInfos[keyType].isKeyDown())
-			{
-				m_keyDownInfos[keyType].reset();
-			}
+			DEBUG_ASSERTCRASH(keyType != MK_NONE, ("Key is expected to be not MK_NONE"));
+
+			// Forget that this key and mod state are pressed.
+			m_keyDownInfos[keyType].clearKeyModState(keyModState);
 		}
 	}
 }

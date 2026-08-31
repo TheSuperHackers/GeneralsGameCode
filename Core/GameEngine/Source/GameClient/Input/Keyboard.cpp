@@ -700,7 +700,6 @@ Keyboard::Keyboard()
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
 	m_modifiers = KEY_STATE_NONE;
-	m_resetGeneration = 0;
 	m_shift2Key = KEY_NONE;
 
 	memset( m_keyNames, 0, sizeof( m_keyNames ) );
@@ -753,8 +752,8 @@ void Keyboard::resetKeys()
 
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
-	refreshModifierKeys();
-	++m_resetGeneration;
+	// CTRL and SHIFT have the same stuck-mode problem (force-attack, prefer-selection).
+	refreshAltKeys();
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
@@ -767,27 +766,27 @@ void Keyboard::resetKeys()
 }
 
 //-------------------------------------------------------------------------------------------------
-// Refresh the state of held modifier keys, necessary after alt tab / focus loss
-//-------------------------------------------------------------------------------------------------
-void Keyboard::refreshModifierKeys() const
+static void emitRawKeyUpIfDown(const KeyboardIO *keyStatus, KeyDefType key)
 {
-	static const KeyDefType modifierKeys[] =
+	if (BitIsSet(keyStatus[key].state, KEY_STATE_DOWN))
 	{
-		KEY_LCTRL, KEY_RCTRL,
-		KEY_LSHIFT, KEY_RSHIFT,
-		KEY_LALT, KEY_RALT
-	};
-
-	for (Int i = 0; i < ARRAY_SIZE(modifierKeys); ++i)
-	{
-		const KeyDefType key = modifierKeys[i];
-		if (BitIsSet(m_keyStatus[key].state, KEY_STATE_DOWN))
-		{
-			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-			msg->appendIntegerArgument(key);
-			msg->appendIntegerArgument(KEY_STATE_UP);
-		}
+		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
+		msg->appendIntegerArgument(key);
+		msg->appendIntegerArgument(KEY_STATE_UP);
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+// Emit RAW_KEY_UP for still-held modifiers so MetaEvent can end force-attack / waypoints / etc.
+//-------------------------------------------------------------------------------------------------
+void Keyboard::refreshAltKeys() const
+{
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LCTRL);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RCTRL);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LSHIFT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RSHIFT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LALT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RALT);
 }
 
 //-------------------------------------------------------------------------------------------------

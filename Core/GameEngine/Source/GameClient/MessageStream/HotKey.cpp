@@ -67,42 +67,37 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+HotKeyTranslator::HotKeyTranslator()
+{
+	memset(m_downWithModifier, 0, sizeof(m_downWithModifier));
+}
+
+//-----------------------------------------------------------------------------
 GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage *msg)
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	if ( t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_RAW_KEY_UP)
 	{
-		KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
-		Int keyState = msg->getArgument(1)->integer;
-		Bool suppressKeyUp = TheHotKeyManager && TheHotKeyManager->consumeKeyUpSuppression(key);
+		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
+		const Int keyState = msg->getArgument(1)->integer;
+		const Bool hasModifier = (keyState & (KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT)) != 0;
 
-		// TheSuperHackers @bugfix CryoTheRenegade 18/08/2026
-		// Suppress only the hotkey action so the raw key release remains visible to later translators.
-		if (suppressKeyUp)
+		if ( t == GameMessage::MSG_RAW_KEY_DOWN)
+		{
+			// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026
+			// CTRL+F must not fire the command-bar F hotkey on release.
+			if( (keyState & KEY_STATE_AUTOREPEAT) == 0 )
+				m_downWithModifier[key] = hasModifier;
+			return disp;
+		}
+
+		const Bool downWithModifier = m_downWithModifier[key];
+		m_downWithModifier[key] = FALSE;
+		if( downWithModifier || hasModifier )
 			return disp;
 
-		// for our purposes here, we don't care to distinguish between right and left keys,
-		// so just fudge a little to simplify things.
-		Int newModState = 0;
-
-		if( keyState & KEY_STATE_CONTROL )
-		{
-			newModState |= CTRL;
-		}
-
-		if( keyState & KEY_STATE_SHIFT )
-		{
-			newModState |= SHIFT;
-		}
-
-		if( keyState & KEY_STATE_ALT )
-		{
-			newModState |= ALT;
-		}
-		if(newModState != 0)
-			return disp;
 		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);
 		UnicodeString uKey;
 		uKey.concat(printableKey);
@@ -124,7 +119,7 @@ HotKey::HotKey()
 //-----------------------------------------------------------------------------
 HotKeyManager::HotKeyManager()
 {
-	clearKeyUpSuppressions();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -137,36 +132,12 @@ HotKeyManager::~HotKeyManager()
 void HotKeyManager::init()
 {
 	m_hotKeyMap.clear();
-	clearKeyUpSuppressions();
 }
 
 //-----------------------------------------------------------------------------
 void HotKeyManager::reset()
 {
 	m_hotKeyMap.clear();
-}
-
-//-----------------------------------------------------------------------------
-void HotKeyManager::setKeyUpSuppressed(KeyDefType key, Bool suppressed)
-{
-	m_suppressKeyUp[key] = suppressed;
-}
-
-//-----------------------------------------------------------------------------
-Bool HotKeyManager::consumeKeyUpSuppression(KeyDefType key)
-{
-	const Bool suppressKeyUp = m_suppressKeyUp[key];
-	m_suppressKeyUp[key] = FALSE;
-	return suppressKeyUp;
-}
-
-//-----------------------------------------------------------------------------
-void HotKeyManager::clearKeyUpSuppressions()
-{
-	for (Int key = 0; key < ARRAY_SIZE(m_suppressKeyUp); ++key)
-	{
-		m_suppressKeyUp[key] = FALSE;
-	}
 }
 
 //-----------------------------------------------------------------------------
