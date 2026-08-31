@@ -237,7 +237,7 @@ class MilesAudioManager : public AudioManager
 		Real getEffectiveVolume(AudioEventRTS *event) const;
 
 		// Looping functions
-		Bool startNextLoop( PlayingAudio *looping );
+		Bool startNextLoop( PlayingAudio *playing );
 
 		void playStream( AudioEventRTS *event, HSTREAM stream );
 		// Returns the file handle for attachment to the PlayingAudio structure
@@ -259,9 +259,9 @@ class MilesAudioManager : public AudioManager
 		void closeFile( void *fileRead );
 
 		PlayingAudio *allocatePlayingAudio();
-		void releaseMilesHandles( PlayingAudio *release );
-		void releasePlayingAudio( PlayingAudio *release );
-		void stopPlayingAudio( PlayingAudio *release );
+		void releaseMilesHandles( PlayingAudio *playing );
+		void releasePlayingAudio( PlayingAudio *playing );
+		void stopPlayingAudio( PlayingAudio *playing );
 		void rerequestPlayingAudio( PlayingAudio *playing );
 		void rerequestPlayingAudioWhenSignalled( PlayingAudio *playing );
 		void fadePlayingAudio( PlayingAudio *playing );
