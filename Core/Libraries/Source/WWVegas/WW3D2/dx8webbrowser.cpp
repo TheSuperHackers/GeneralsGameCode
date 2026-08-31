@@ -33,6 +33,9 @@
 #include "dx8webbrowser.h"
 #include "ww3d.h"
 #include "dx8wrapper.h"
+// Only pulls the pointer-sized-int typedefs (uintptr_t); avoids dragging in
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 
 #if ENABLE_EMBEDDED_BROWSER
 
@@ -193,7 +196,17 @@ void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int 
 	if(pBrowser)
 	{
 		_bstr_t brsname(browsername);
-		pBrowser->CreateBrowser(brsname, _bstr_t(url), reinterpret_cast<long>(hWnd), x, y, w, h, options, gamedispatch);
+		// TODO(x64-hwnd-truncation): IFEBrowserEngine2::CreateBrowser's
+		// parentwindow parameter is `long` per BrowserEngine.idl -- a fixed
+		// COM/oleautomation ABI width we don't control (dual/oleautomation
+		// interfaces cannot carry 64-bit ints as `long`; that's a VT_I4).
+		// On x64, HWND is a full 8-byte handle and this truncates it. NOT
+		// FIXED: the top 32 bits of the window handle are silently dropped
+		// whenever this path runs on a 64-bit target. Widening the local
+		// would not help -- the COM call still narrows to `long` regardless
+		// -- so the truncation is made explicit and legal here instead of
+		// left as a compile error.
+		pBrowser->CreateBrowser(brsname, _bstr_t(url), (long)(uintptr_t)hWnd, x, y, w, h, options, gamedispatch);
 		pBrowser->SetUpdateRate(brsname, updateticks);
 	}
 }

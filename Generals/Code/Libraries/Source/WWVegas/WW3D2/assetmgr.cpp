@@ -794,7 +794,12 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 		char filename [MAX_PATH];
 		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != nullptr) {
-			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
+			// This is pointer subtraction (distance from name to the '.'),
+			// not a wire value -- lstrcpynA's count parameter is `int` on
+			// Win32, and the string length trivially fits. Compute the
+			// difference with proper pointer arithmetic instead of
+			// truncating each 64-bit pointer to `int` before subtracting.
+			::lstrcpyn (filename, name, (int)(mesh_name - name) + 1);
 			::lstrcat (filename, ".w3d");
 		} else {
 			snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", name);

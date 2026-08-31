@@ -53,6 +53,9 @@
 #include "WWMath/vector2i.h"
 #include "colorspace.h"
 #include "WWLib/bound.h"
+// Only pulls the pointer-sized-int typedefs (uintptr_t); avoids dragging in
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 #include <d3dx8.h>
 
 void Convert_Pixel(Vector3 &rgb, const SurfaceClass::SurfaceDescription &sd, const unsigned char * pixel)
@@ -575,7 +578,10 @@ void SurfaceClass::FindBB(Vector2i *min,Vector2i*max)
 		for (x = min->I; x < max->I; x++) {
 
 			// HY - this is not endian safe
-			unsigned char *alpha=(unsigned char*) ((unsigned int)lock_rect.pBits+(y-min->J)*lock_rect.Pitch+(x-min->I)*size);
+			// pBits is a live D3D-locked surface pointer; the arithmetic below
+			// walks it row/column by row/column and stays runtime-only (never
+			// serialized), so widen the holder to pointer size on x64.
+			unsigned char *alpha=(unsigned char*) ((uintptr_t)lock_rect.pBits+(y-min->J)*lock_rect.Pitch+(x-min->I)*size);
 			unsigned char myalpha=alpha[size-1];
 			myalpha=(myalpha>>(8-alphabits)) & mask;
 			if (myalpha) {
@@ -649,7 +655,9 @@ bool SurfaceClass::Is_Transparent_Column(unsigned int column)
 	for (y = 0; y < (int) sd.Height; y++)
 	{
 		// HY - this is not endian safe
-		unsigned char *alpha=(unsigned char*) ((unsigned int)lock_rect.pBits+y*lock_rect.Pitch);
+		// Same live D3D-locked surface pointer as above: runtime-only, widen
+		// the holder to pointer size on x64.
+		unsigned char *alpha=(unsigned char*) ((uintptr_t)lock_rect.pBits+y*lock_rect.Pitch);
 		unsigned char myalpha=alpha[size-1];
 		myalpha=(myalpha>>(8-alphabits)) & mask;
 		if (myalpha) {
