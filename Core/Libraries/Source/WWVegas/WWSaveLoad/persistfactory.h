@@ -42,6 +42,7 @@
 #include "WWDebug/wwdebug.h"
 #include "saveload.h"
 #include "persist.h"
+#include "Lib/BaseTypeCore.h"
 
 /*
 ** PersistFactoryClass
@@ -77,6 +78,10 @@ private:
 ** object.  Simply instantiate a single static instance of this template with the
 ** type and chunkid in the .cpp file of your class.
 */
+// The on-disk width of the object-identity token, fixed by the retail save format.
+// Changing it changes the format.
+static_assert(sizeof(uint32) == 4, "savegame object token must stay 4 bytes on disk");
+
 template <class T,int CHUNKID> class SimplePersistFactoryClass : public PersistFactoryClass
 {
 public:
@@ -100,11 +105,18 @@ template<class T, int CHUNKID> PersistClass *
 SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 {
 	T * new_obj = W3DNEW T;
-	T * old_obj = nullptr;
+
+	// Read exactly what Save wrote: a fixed-width 4-byte identity token, not
+	// sizeof(T *). On x86-64 sizeof(T *) is 8, so reading sizeof(T *) here would
+	// consume four bytes the writer never wrote and desynchronize the chunk
+	// stream. The token is not a real pointer (see the TODO in Save, below); it
+	// is carried through as an opaque value and only ever compared for equality
+	// by Register_Pointer's pointer table.
+	uint32 old_obj_token = 0;
 
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == SIMPLEFACTORY_CHUNKID_OBJPOINTER);
-	cload.Read(&old_obj,sizeof(T *));
+	cload.Read(&old_obj_token,sizeof(uint32));
 	cload.Close_Chunk();
 
 	cload.Open_Chunk();
@@ -112,6 +124,7 @@ SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 	new_obj->Load(cload);
 	cload.Close_Chunk();
 
+	void * old_obj = (void *)(UnsignedIntPtr)old_obj_token;
 	SaveLoadSystemClass::Register_Pointer(old_obj,new_obj);
 	return new_obj;
 }
@@ -120,7 +133,12 @@ SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 template<class T, int CHUNKID> void
 SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass * obj) const
 {
-	uint32 objptr = (uint32)obj;
+	// TODO(x64-savegame-format): on x86-64 this truncates a 64-bit pointer to a
+	// 32-bit on-disk identity token, so two live objects can collide and pointer
+	// fixup can bind the wrong object on load. The on-disk width is fixed by the
+	// retail save format and cannot be widened here without breaking it.
+	// See docs/x64/savegame-format-decision.md (written by the later task).
+	uint32 objptr = (uint32)(UnsignedIntPtr)obj;
 	csave.Begin_Chunk(SIMPLEFACTORY_CHUNKID_OBJPOINTER);
 	csave.Write(&objptr,sizeof(uint32));
 	csave.End_Chunk();
