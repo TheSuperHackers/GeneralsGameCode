@@ -384,7 +384,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	ini.loadFileDirectory( "Data\\Scripts\\Scripts", INI_LOAD_OVERWRITE, nullptr );
 
 	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
-	initSubsystem(TheVideoPlayer, (VideoPlayerInterface*)(new VideoPlayer()));
+	initSubsystem(TheVideoPlayer, (VideoPlayerInterface*)(new NullVideoPlayer()));
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());
 	initSubsystem(TheCaveSystem, new CaveSystem());
