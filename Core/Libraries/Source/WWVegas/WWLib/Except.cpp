@@ -119,22 +119,69 @@ DynamicVectorClass<ThreadInfoType*> ThreadList;
 **
 */
 typedef BOOL  (WINAPI *SymCleanupType) (HANDLE hProcess);
+
+// Correcting the name table below (see ImagehelpFunctionNames) to resolve
+// this to the real 64-bit export, SymGetSymFromAddr64, means the ABI it's
+// actually called through changed too -- every parameter has to be
+// re-checked against psdk_inc/_dbg_common.h, not just the ones the compiler
+// would catch. Real signature: BOOL SymGetSymFromAddr64(HANDLE hProcess,
+// DWORD64 qwAddr, PDWORD64 pdwDisplacement, PIMAGEHLP_SYMBOL64 Symbol).
+// Address and Displacement are hand-rolled DWORD/LPDWORD here and must be
+// widened explicitly on x64, or SymGetSymFromAddr64 writes 8 bytes through
+// a 4-byte Displacement target -- a stack buffer overflow on every
+// successful symbol lookup. Symbol needs no separate widening: dbghelp.h
+// already #defines PIMAGEHLP_SYMBOL to PIMAGEHLP_SYMBOL64 under
+// _IMAGEHLP64 (same mechanism as LPSTACKFRAME above), and <imagehlp.h> is
+// already included above this point in the file, so it widens for free at
+// this typedef's declaration site.
+#if defined(_WIN64) || defined(__x86_64__)
+typedef BOOL  (WINAPI *SymGetSymFromAddrType) (HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement, PIMAGEHLP_SYMBOL Symbol);
+#else
 typedef BOOL  (WINAPI *SymGetSymFromAddrType) (HANDLE hProcess, DWORD Address, LPDWORD Displacement, PIMAGEHLP_SYMBOL Symbol);
+#endif
+
 typedef BOOL  (WINAPI *SymInitializeType) (HANDLE hProcess, LPSTR UserSearchPath, BOOL fInvadeProcess);
+
+// Real SymLoadModule64: DWORD64 SymLoadModule64(HANDLE hProcess, HANDLE
+// hFile, PCSTR ImageName, PCSTR ModuleName, DWORD64 BaseOfDll, DWORD
+// SizeOfDll) -- both the return type and BaseOfDll widen relative to the
+// deprecated 32-bit SymLoadModule. Every call site below passes a literal
+// 0 for BaseOfDll (letting DbgHelp pick the base), so there's no
+// overflow risk there, but the return-type mismatch (BOOL vs DWORD64) is
+// still a real function-pointer-signature mismatch worth correcting, not
+// just a cosmetic one.
+#if defined(_WIN64) || defined(__x86_64__)
+typedef DWORD64 (WINAPI *SymLoadModuleType) (HANDLE hProcess, HANDLE hFile, LPSTR ImageName, LPSTR ModuleName, DWORD64 BaseOfDll, DWORD SizeOfDll);
+#else
 typedef BOOL  (WINAPI *SymLoadModuleType) (HANDLE hProcess, HANDLE hFile, LPSTR ImageName, LPSTR ModuleName, DWORD BaseOfDll, DWORD SizeOfDll);
+#endif
+
 typedef DWORD (WINAPI *SymSetOptionsType) (DWORD SymOptions);
+
+// Real SymUnloadModule64: WINBOOL SymUnloadModule64(HANDLE hProcess,
+// DWORD64 BaseOfDll). Both call sites below pass a literal 0, so no
+// overflow risk, but BaseOfDll still needs widening to match the real
+// export's signature.
+#if defined(_WIN64) || defined(__x86_64__)
+typedef BOOL  (WINAPI *SymUnloadModuleType) (HANDLE hProcess, DWORD64 BaseOfDll);
+#else
 typedef BOOL  (WINAPI *SymUnloadModuleType) (HANDLE hProcess, DWORD BaseOfDll);
+#endif
+
+// StackWalkType needs no architecture-specific branch: every one of its
+// parameter type names (LPSTACKFRAME, PREAD_PROCESS_MEMORY_ROUTINE,
+// PFUNCTION_TABLE_ACCESS_ROUTINE, PGET_MODULE_BASE_ROUTINE,
+// PTRANSLATE_ADDRESS_ROUTINE) is a platform macro that dbghelp.h itself
+// redirects to its ...64 form under _IMAGEHLP64, so this typedef already
+// matches StackWalk64's real signature on x64 and StackWalk's on 32-bit.
 typedef BOOL  (WINAPI *StackWalkType) (DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame, LPVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine, PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine, PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
-// On 64-bit builds dbghelp.h sets _IMAGEHLP64 and #defines LPSTACKFRAME,
-// PFUNCTION_TABLE_ACCESS_ROUTINE and PGET_MODULE_BASE_ROUTINE (used just
-// above in StackWalkType) to their ...64 forms automatically, so StackWalkType
-// already gets the right ABI on both architectures for free. These next two
-// typedefs don't go through those platform names -- they hand-roll a DWORD
-// address parameter -- so they need an explicit 64-bit branch or _StackWalk's
-// call site below won't accept them as the FunctionTableAccessRoutine /
-// GetModuleBaseRoutine arguments. VC6 (1998) predates the ...64 DbgHelp API,
-// so the 32-bit branch is untouched -- this is not made unconditional.
+// Unlike StackWalkType above, these next two typedefs don't go through
+// platform macro names -- they hand-roll a DWORD address parameter -- so
+// they need an explicit 64-bit branch or _StackWalk's call site below
+// won't accept them as the FunctionTableAccessRoutine / GetModuleBaseRoutine
+// arguments. VC6 (1998) predates the ...64 DbgHelp API, so the 32-bit
+// branch is untouched -- this is not made unconditional.
 #if defined(_WIN64) || defined(__x86_64__)
 typedef PFUNCTION_TABLE_ACCESS_ROUTINE64 SymFunctionTableAccessType;
 typedef PGET_MODULE_BASE_ROUTINE64       SymGetModuleBaseType;
@@ -439,7 +486,18 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		_SymSetOptions(SYMOPT_DEFERRED_LOADS);
 	}
 
+	// SymLoadModuleType's return type is DWORD64 on x64 (matching the real
+	// SymLoadModule64 export); UnsignedIntPtr is pointer-width (4 bytes on
+	// 32-bit, 8 on 64-bit) so the assignment below never truncates a
+	// nonzero result down to a false "load failed" reading. Gated (rather
+	// than just widening unconditionally) purely to keep the 32-bit/VC6
+	// codegen for this line textually identical to before -- the 32-bit
+	// return type never changed, so there's nothing to fix on that branch.
+#if defined(_WIN64) || defined(__x86_64__)
+	UnsignedIntPtr symload = 0;
+#else
 	int symload = 0;
+#endif
 	int symbols_available = false;
 
 	if (_SymInitialize != nullptr && _SymInitialize (GetCurrentProcess(), nullptr, false))	{
@@ -529,11 +587,19 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	symptr->Address = CTX_PC(*context);
 
 	if (!IsBadCodePtr((FARPROC)CTX_PC(*context))) {
-		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), CTX_PC(*context), &displacement, symptr)) {
 #if defined(_WIN64) || defined(__x86_64__)
+		// SymGetSymFromAddr64's Displacement out-param is PDWORD64; writing
+		// through &displacement (unsigned long, 4 bytes) here would let the
+		// API write 8 bytes into a 4-byte stack slot. Capture into a
+		// properly sized local and narrow into the display variable only
+		// after the call returns.
+		DWORD64 displacement64;
+		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), CTX_PC(*context), &displacement64, symptr)) {
+			displacement = (unsigned long)displacement64;
 			snprintf(scrap, ARRAY_SIZE(scrap), "Exception occurred at %016llX - %s + %08X\r\n",
 				(unsigned long long)CTX_PC(*context), symptr->Name, displacement);
 #else
+		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), CTX_PC(*context), &displacement, symptr)) {
 			snprintf(scrap, ARRAY_SIZE(scrap), "Exception occurred at %08X - %s + %08X\r\n",
 				context->Eip, symptr->Name, displacement);
 #endif
@@ -578,7 +644,15 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 				symptr->Size = 0;
 				symptr->Address = temp_addr;
 
+#if defined(_WIN64) || defined(__x86_64__)
+				// See the comment on the first _SymGetSymFromAddr call above:
+				// its Displacement out-param is PDWORD64 on x64.
+				DWORD64 displacement64;
+				if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), temp_addr, &displacement64, symptr)) {
+					displacement = (unsigned long)displacement64;
+#else
 				if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), temp_addr, &displacement, symptr)) {
+#endif
 					char symbuf[256];
 					snprintf(symbuf, ARRAY_SIZE(symbuf), "%s + %08X\r\n", symptr->Name, displacement);
 					Add_Txt(symbuf);
@@ -804,7 +878,15 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 					symptr->Size = 0;
 					symptr->Address = *stackptr;
 
+#if defined(_WIN64) || defined(__x86_64__)
+					// See the comment on the first _SymGetSymFromAddr call
+					// above: its Displacement out-param is PDWORD64 on x64.
+					DWORD64 displacement64;
+					if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), *stackptr, &displacement64, symptr)) {
+						displacement = (unsigned long)displacement64;
+#else
 					if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), *stackptr, &displacement, symptr)) {
+#endif
 						char symbuf[256];
 						snprintf(symbuf, ARRAY_SIZE(symbuf), " - %s + %08X", symptr->Name, displacement);
 						strlcat(scrap, symbuf, ARRAY_SIZE(scrap));
@@ -1199,7 +1281,14 @@ void Load_Image_Helper()
 			_SymSetOptions(SYMOPT_DEFERRED_LOADS);
 		}
 
+		// See the comment on Dump_Exception_Info's symload above: pointer-width
+		// so a nonzero DWORD64 result on x64 never truncates to a false 0,
+		// gated to keep 32-bit/VC6 codegen textually unchanged.
+#if defined(_WIN64) || defined(__x86_64__)
+		UnsignedIntPtr symload = 0;
+#else
 		int symload = 0;
+#endif
 
 		if (_SymInitialize != nullptr && _SymInitialize(GetCurrentProcess(), nullptr, FALSE)) {
 
@@ -1282,17 +1371,39 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 	symbol_struct_ptr->SizeOfStruct = sizeof (symbol_struct_buf);
 	symbol_struct_ptr->MaxNameLength = sizeof(symbol_struct_buf)-sizeof (IMAGEHLP_SYMBOL);
 	symbol_struct_ptr->Size = 0;
+#if defined(_WIN64) || defined(__x86_64__)
+	// Correction to the comment this replaced: on x64 IMAGEHLP_SYMBOL is
+	// #defined to IMAGEHLP_SYMBOL64 (dbghelp.h, under _IMAGEHLP64), so
+	// ::Address here is DWORD64, and the name table below resolves
+	// _SymGetSymFromAddr to the real SymGetSymFromAddr64 export, whose
+	// Address parameter is DWORD64 too -- this is not "fixed at 32 bits"
+	// on this architecture. Use the full pointer width, not a narrowed one.
+	symbol_struct_ptr->Address = (UnsignedIntPtr)code_ptr;
+#else
 	// IMAGEHLP_SYMBOL::Address and SymGetSymFromAddr's DWORD parameter are
-	// fixed at 32 bits by the (32-bit-only, deprecated on Win64) DbgHelp API
-	// contract -- not ours to widen. Cast through UnsignedIntPtr so the
-	// narrowing is an explicit int-to-int conversion rather than a flagged
-	// pointer truncation; 32-bit codegen is unchanged.
+	// fixed at 32 bits by the (32-bit-only) DbgHelp API on this
+	// architecture. Cast through UnsignedIntPtr so the narrowing is an
+	// explicit int-to-int conversion rather than a flagged pointer
+	// truncation; 32-bit codegen is unchanged.
 	symbol_struct_ptr->Address = (unsigned long)(UnsignedIntPtr)code_ptr;
+#endif
 
 	/*
 	** See if we have the symbol for that address.
 	*/
+#if defined(_WIN64) || defined(__x86_64__)
+	// SymGetSymFromAddr64's Displacement out-param is PDWORD64; writing
+	// through &displacement (the caller's int&, 4 bytes) would be a stack
+	// buffer overflow -- the API writes 8 bytes through it. Capture into a
+	// properly sized local and narrow into the caller's int& only after
+	// the call returns, so this function's own signature (and every
+	// caller of it) is unaffected.
+	DWORD64 displacement64;
+	if (_SymGetSymFromAddr(GetCurrentProcess(), (DWORD64)(UnsignedIntPtr)code_ptr, &displacement64, symbol_struct_ptr)) {
+		displacement = (int)displacement64;
+#else
 	if (_SymGetSymFromAddr(GetCurrentProcess(), (unsigned long)(UnsignedIntPtr)code_ptr, (unsigned long *)&displacement, symbol_struct_ptr)) {
+#endif
 
 		/*
 		** Copy it back into the buffer provided.

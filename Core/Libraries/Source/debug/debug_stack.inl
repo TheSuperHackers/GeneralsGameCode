@@ -65,15 +65,42 @@ DBGHELP(SymGetModuleBase,
         (HANDLE hProcess, DWORD dwAddr))
 #endif
 
+// Real SymGetSymFromAddr64: BOOL(HANDLE, DWORD64 qwAddr,
+// PDWORD64 pdwDisplacement, PIMAGEHLP_SYMBOL64 Symbol). Address and
+// Displacement are hand-rolled DWORD/LPDWORD, same class of gap as
+// SymFunctionTableAccess/SymGetModuleBase above, and Displacement is a
+// write target: leaving it 32-bit on x64 is a stack buffer overflow every
+// time a symbol is resolved (SymGetSymFromAddr64 writes 8 bytes through
+// it). Symbol needs no separate widening here: PIMAGEHLP_SYMBOL is
+// #defined to PIMAGEHLP_SYMBOL64 under _IMAGEHLP64 (imagehlp.h is already
+// included above this point in debug_stack.cpp), so it widens for free.
+#if defined(_WIN64) || defined(__x86_64__)
+DBGHELP(SymGetSymFromAddr,
+        BOOL,
+        (HANDLE hProcess, DWORD64 Address, PDWORD64 Displacement,
+        PIMAGEHLP_SYMBOL Symbol))
+#else
 DBGHELP(SymGetSymFromAddr,
         BOOL,
         (HANDLE hProcess, DWORD Address, LPDWORD Displacement,
         PIMAGEHLP_SYMBOL Symbol))
+#endif
 
+// Real SymGetLineFromAddr64: BOOL(HANDLE, DWORD64 qwAddr,
+// PDWORD pdwDisplacement, PIMAGEHLP_LINE64 Line64) -- only the address
+// parameter widens; pdwDisplacement genuinely stays PDWORD (not a write
+// overflow), and Line widens for free the same way Symbol does above.
+#if defined(_WIN64) || defined(__x86_64__)
+DBGHELP(SymGetLineFromAddr,
+        BOOL,
+        (HANDLE hProcess, DWORD64 dwAddr, PDWORD pdwDisplacement,
+        PIMAGEHLP_LINE Line))
+#else
 DBGHELP(SymGetLineFromAddr,
         BOOL,
         (HANDLE hProcess, DWORD dwAddr, PDWORD pdwDisplacement,
         PIMAGEHLP_LINE Line))
+#endif
 
 // keep this always as last entry
 DBGHELP(SymCleanup,

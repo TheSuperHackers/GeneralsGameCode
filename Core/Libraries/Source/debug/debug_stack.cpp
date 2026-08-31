@@ -44,6 +44,14 @@
 // exists, so the class declaration is unaffected; without this #undef the
 // out-of-line definition further down would be silently renamed to
 // StackWalk64 and no longer match its own declaration.
+//
+// This fix is order-dependent: it only protects code that appears *after*
+// this point in this translation unit. If a future #include added below
+// this line (directly or transitively) pulls in <imagehlp.h>/<dbghelp.h>
+// again, or otherwise redefines StackWalk, the mismatch this guards
+// against comes back with no compiler warning -- #undef is silent by
+// design. Keep this as the last DbgHelp-related include in the file, or
+// re-apply the #undef immediately after whatever reintroduces the macro.
 #ifdef StackWalk
 #undef StackWalk
 #endif
@@ -244,8 +252,19 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   symPtr->SizeOfStruct=sizeof(IMAGEHLP_SYMBOL);
   symPtr->MaxNameLength=sizeof(symbolBuffer)-sizeof(IMAGEHLP_SYMBOL);
   DWORD displacement;
+#if defined(_WIN64) || defined(__x86_64__)
+  // SymGetSymFromAddr64's Displacement out-param is PDWORD64; &displacement
+  // (DWORD, 4 bytes) would overflow. Capture into a properly sized local
+  // and narrow into displacement, which is then reused below for the
+  // SymGetLineFromAddr call, whose Displacement stays PDWORD on x64.
+  DWORD64 displacement64;
+  if (!gDbg._SymGetSymFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement64,symPtr))
+    return;
+  displacement=(DWORD)displacement64;
+#else
   if (!gDbg._SymGetSymFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement,symPtr))
     return;
+#endif
   if ((unsigned int)(bufEnd-buf)<strlen(symPtr->Name)+16)
     return;
   buf+=wsprintf(buf,", %s+0x%x",symPtr->Name,displacement);
@@ -326,8 +345,17 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     symPtr->SizeOfStruct=sizeof(IMAGEHLP_SYMBOL);
     symPtr->MaxNameLength=sizeof(symbolBuffer)-sizeof(IMAGEHLP_SYMBOL);
     DWORD displacement;
+#if defined(_WIN64) || defined(__x86_64__)
+    // See the comment on the first _SymGetSymFromAddr call above: its
+    // Displacement out-param is PDWORD64 on x64.
+    DWORD64 displacement64;
+    if (gDbg._SymGetSymFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement64,symPtr))
+    {
+      displacement=(DWORD)displacement64;
+#else
     if (gDbg._SymGetSymFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement,symPtr))
     {
+#endif
       strlcpy(bufSym,symPtr->Name,sizeSym);
       if (relSym)
         *relSym=displacement;
