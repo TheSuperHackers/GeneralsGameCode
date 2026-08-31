@@ -202,9 +202,10 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		stream->m_player = this;
 		m_firstStream = stream;
 
-		// TheSuperHackers @bugfix Service Bink before applying the initial speech volume.
+		// TheSuperHackers @bugfix BinkWait must run first or Bink ignores the initial volume.
 		BinkWait( stream->m_handle );
-		BinkSetVolume( stream->m_handle, 0, calculateMovieAudioVolume(TheAudio->getVolume(AudioAffect_Speech)) );
+		Int volume = calculateMovieAudioVolume( TheAudio->getVolume(AudioAffect_Speech) );
+		BinkSetVolume( stream->m_handle, 0, volume );
 	}
 
 	return stream;

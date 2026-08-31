@@ -246,7 +246,7 @@ class VideoPlayerInterface : public SubsystemInterface
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) = 0;		///< Notify the video player that they can now ask for an audio handle, or they need to give theirs up.
 
-		virtual void setVolume( Real ) { }		///< Push a new speech volume to the video player's audio output
+		virtual void setVolume( Real volume ) = 0;		///< Push a new speech volume to the video player's audio output
 };
 
 
@@ -295,6 +295,7 @@ class VideoPlayer : public VideoPlayerInterface
 		virtual const FieldParse *getFieldParse() const override { return m_videoFieldParseTable; }		///< Return the field parse info
 
 		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) override { }
+		virtual void setVolume( Real ) override { }
 
 		// Implementation specific
 		void remove( VideoStream *stream );										///< remove stream from active list
