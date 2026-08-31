@@ -48,8 +48,12 @@ if(MINGW)
     include(cmake/widl.cmake)
 endif()
 
-# Find/Add build dependencies and stubs shared by all projects
-if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
+# Find/Add build dependencies and stubs shared by all projects.
+# Miles and Bink are source-only stubs with no architecture dependency, so they
+# build for any pointer size. DX8 is gated separately inside dx8.cmake: its
+# headers are architecture-independent but MinGW-w64 x86_64 ships no libd3d8.a
+# and no libd3dx8d.a, so the link libraries are 32-bit only.
+if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     include(cmake/miles.cmake)
     include(cmake/bink.cmake)
     include(cmake/dx8.cmake)
