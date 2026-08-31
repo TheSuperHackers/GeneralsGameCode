@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include "Lib/BaseTypeCore.h"
+
 /**
   \class Debug debug.h <rts/debug.h>
 
@@ -872,7 +874,7 @@ private:
   CmdInterfaceListEntry *firstCmdGroup;
 
   /// \internal current stack frame (used by SkipNext)
-  static unsigned curStackFrame;
+  static UnsignedIntPtr curStackFrame;
 
   /** \internal
 
@@ -920,7 +922,7 @@ private:
     FrameHashEntry *next;
 
     /// frame address
-    unsigned frameAddr;
+    UnsignedIntPtr frameAddr;
 
     /// frame type (FrameTypeAssert, FrameTypeCheck, or FrameTypeLog)
     unsigned frameType;
@@ -960,7 +962,7 @@ private:
     \param addr frame address
     \return FrameHashEntry found or 0 if nothing found
   */
-  __forceinline FrameHashEntry *LookupFrame(unsigned addr)
+  __forceinline FrameHashEntry *LookupFrame(UnsignedIntPtr addr)
   {
     for (FrameHashEntry *e=frameHash[addr%FRAME_HASH_SIZE];e;e=e->next)
       if (e->frameAddr==addr)
@@ -980,7 +982,7 @@ private:
     \param line line number
     \return the entry just added
   */
-  FrameHashEntry *AddFrameEntry(unsigned addr, unsigned type,
+  FrameHashEntry *AddFrameEntry(UnsignedIntPtr addr, unsigned type,
                                 const char *fileOrGroup, int line);
 
   /** \internal
@@ -1002,7 +1004,7 @@ private:
     \param line line number
     \return the entry just added (or the already existing entry)
   */
-  FrameHashEntry *GetFrameEntry(unsigned addr, unsigned type,
+  FrameHashEntry *GetFrameEntry(UnsignedIntPtr addr, unsigned type,
                                 const char *fileOrGroup, int line)
   {
     FrameHashEntry *e=LookupFrame(addr);

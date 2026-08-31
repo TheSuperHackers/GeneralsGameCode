@@ -1458,9 +1458,14 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 	STACKFRAME stack_frame;
 	memset(&stack_frame, 0, sizeof(stack_frame));
 
-	unsigned long reg_eip, reg_ebp, reg_esp;
+	// UnsignedIntPtr rather than unsigned long: these feed
+	// stack_frame.AddrPC/AddrFrame/AddrStack.Offset, which are DWORD64 in
+	// STACKFRAME64 (STACKFRAME becomes STACKFRAME64 on x64 -- see
+	// imagehlp.h's _IMAGEHLP64 mechanism), and `unsigned long` stays 32 bits
+	// under Win64's LLP64 model, so it would truncate there.
+	UnsignedIntPtr reg_eip, reg_ebp, reg_esp;
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && defined(_M_IX86)
 	__asm {
 here:
 		lea	eax,here
@@ -1477,7 +1482,16 @@ here:
 		: "=r" (reg_eip), "=r" (reg_ebp), "=r" (reg_esp)
 	);
 #else
-#error "Unsupported compiler or architecture for register capture"
+	// x86-64 and anything else: RtlCaptureContext fills a CONTEXT with the
+	// caller's register state. This is the documented Win64 way to seed a
+	// StackWalk64, and it needs no inline assembly. It also works on 32-bit
+	// Windows, but the __asm/__asm__ arms above are kept for VC6 and 32-bit
+	// GCC/Clang retail-compatibility.
+	CONTEXT capture_ctx;
+	RtlCaptureContext(&capture_ctx);
+	reg_eip = (UnsignedIntPtr)CTX_PC(capture_ctx);
+	reg_ebp = (UnsignedIntPtr)CTX_FRAME(capture_ctx);
+	reg_esp = (UnsignedIntPtr)CTX_STACK(capture_ctx);
 #endif
 
 	stack_frame.AddrPC.Mode = AddrModeFlat;

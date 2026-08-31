@@ -74,7 +74,7 @@ Debug::LogDescription::LogDescription(const char *fileOrGroup, const char *descr
 Debug Debug::Instance;
 
 // more class static members
-unsigned Debug::curStackFrame;
+UnsignedIntPtr Debug::curStackFrame;
 
 // this constructor is empty on purpose because all construction
 // work is done in PreStaticInit (and some in PostStaticInit)
@@ -306,21 +306,21 @@ bool Debug::SkipNext()
 
   // do not implement this function inline, we do need
   // a valid frame pointer here!
-  unsigned help;
-#if defined(_MSC_VER)
+  // UnsignedIntPtr is `unsigned int` (4 bytes) on the VC6 32-bit target, so
+  // the _asm block below -- which needs a 4-byte destination to match eax --
+  // is byte-identical to the original `unsigned help;` version there.
+  UnsignedIntPtr help;
+#if defined(_MSC_VER) && defined(_M_IX86)
   _asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
   };
-#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
-  // GCC/Clang inline assembly for x86-32
-  __asm__ __volatile__(
-    "mov 4(%%ebp), %0"
-    : "=r"(help)
-    :
-    : "memory"
-  );
+#elif defined(__GNUC__) || defined(__clang__)
+  // __builtin_return_address(0) is the portable spelling of [ebp+4] and works
+  // on every architecture GCC/Clang targets, so this replaces both the
+  // x86-32 asm and the #error that followed it.
+  help = (UnsignedIntPtr)__builtin_return_address(0);
 #else
   #error "Unsupported compiler or architecture for inline assembly"
 #endif
@@ -1018,16 +1018,13 @@ bool Debug::IsLogEnabled(const char *fileOrGroup)
   // to be used from the D_ISLOG macros only and those guarantee
   // that we are having real static strings let's use
   // that strings address as frame address...
-  // LookupFrame/AddFrameEntry use the string's address as a hash key, and
-  // are declared to take `unsigned` -- that hashing scheme is already tied
-  // to the 32-bit-only stack-frame capture elsewhere in this file (see the
-  // #error above for non-x86-32 targets), so it is not widened here. Cast
-  // through UnsignedIntPtr so the narrowing is an explicit int-to-int
-  // conversion; 32-bit output/codegen is unchanged since UnsignedIntPtr is
-  // unsigned int there.
-  FrameHashEntry *e=Instance.LookupFrame((unsigned)(UnsignedIntPtr)fileOrGroup);
+  // LookupFrame/AddFrameEntry use the string's address as a hash key and are
+  // declared to take UnsignedIntPtr, so this is a lossless pointer->integer
+  // conversion on every target (it used to truncate through `unsigned` on
+  // x64; that guard is gone now that the hash key is pointer-width).
+  FrameHashEntry *e=Instance.LookupFrame((UnsignedIntPtr)fileOrGroup);
   if (!e)
-    e=Instance.AddFrameEntry((unsigned)(UnsignedIntPtr)fileOrGroup,FrameTypeLog,fileOrGroup,0);
+    e=Instance.AddFrameEntry((UnsignedIntPtr)fileOrGroup,FrameTypeLog,fileOrGroup,0);
   if (e->status==Unknown)
     Instance.UpdateFrameStatus(*e);
   return e->status==NoSkip;
@@ -1210,7 +1207,7 @@ void Debug::Update()
   }
 }
 
-Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
+Debug::FrameHashEntry* Debug::AddFrameEntry(UnsignedIntPtr addr, unsigned type,
                                             const char *fileOrGroup, int line)
 {
   __ASSERT(LookupFrame(addr)==nullptr);

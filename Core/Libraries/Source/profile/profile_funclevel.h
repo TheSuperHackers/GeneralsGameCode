@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include "Lib/BaseTypeCore.h"
+
 /**
   \brief The function level profiler.
 
@@ -182,7 +184,17 @@ public:
     */
     unsigned GetId() const
     {
-      return unsigned(m_threadID);
+      // TODO(x64-profile-id): truncates a 64-bit pointer to a 32-bit
+      // identity token; two tracers can collide on x86-64. Width is fixed
+      // by ProfileResultFileCSV::WriteThread() (profile_result.cpp), which
+      // sprintf()s this value through "prof%08x-all.csv" to name the output
+      // file -- that %08x is the format boundary, so GetId() cannot be
+      // widened without also changing the on-disk file-naming convention.
+      // Cast through UnsignedIntPtr so the narrowing is an explicit
+      // pointer-to-int-to-int conversion rather than a silent pointer
+      // truncation; 32-bit output is unchanged since UnsignedIntPtr is
+      // unsigned int there.
+      return unsigned(UnsignedIntPtr(m_threadID));
     }
 
   private:
