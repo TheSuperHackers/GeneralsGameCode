@@ -50,13 +50,20 @@ public:
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
 private:
+	void initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture);
+	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
+
 	enum { MAX_POINTS_PER_GROUP = 512 };
 
+	RefCountPtr<TextureClass> m_batchTexture;		///< the texture used as the drawing surface for batched particle draws
 	PointGroupClass *m_pointGroup;							///< the point group that contains all of the particles
 	StreakLineClass *m_streakLine;							///< the streak class that contains all of the streaks
 	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
 	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
 	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
 	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
+
+	ParticleSystemInfo::ParticleShaderType m_batchShaderType;
 	Bool m_readyToRender;											///< if true, it is OK to render
+	Bool m_batchBillboard;
 };

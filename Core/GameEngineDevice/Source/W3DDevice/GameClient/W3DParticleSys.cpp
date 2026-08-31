@@ -46,6 +46,9 @@
 
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
+	m_batchBillboard = true;
+	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
+
 	m_pointGroup = nullptr;
 	m_streakLine = nullptr;
 	m_posBuffer = nullptr;
@@ -144,6 +147,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		TheSmudgeManager->resetDraw();
 	}
 
+	// Number of particles/points being rendered.
+	UnsignedInt pointCount = 0;
+
 	ParticleSystemManager::ParticleSystemList &particleSysList = TheParticleSystemManager->getAllParticleSystems();
 	for( ParticleSystemManager::ParticleSystemListIt it = particleSysList.begin(); it != particleSysList.end(); ++it)
 	{
@@ -156,6 +162,31 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		if (sys->isUsingDrawables())
 			continue;
 
+		// TheSuperHackers @performance Mauller 16/08/2026 Test if the particle system has any visible particles that can be drawn.
+		// Earlier visibility testing prevents the particle texture lookup which can cause a batch flush.
+		int particleCount = 0;
+		for (Particle* vp = sys->getFirstParticle(); vp; vp = vp->m_systemNext)
+		{
+			const Coord3D* pos = vp->getPosition();
+			Real psize = vp->getSize();
+
+			//Test if particle is at the screen or terrain edges.
+			if (WWMath::Fabs(pos->x - bcX) > (beX + psize) ||
+				WWMath::Fabs(pos->y - bcY) > (beY + psize) ||
+				WWMath::Fabs(pos->z - bcZ) > (beZ + psize))
+			{
+				vp->setIsCulled(true);
+				continue;
+			}
+
+			vp->setIsCulled(false);
+			particleCount++;
+		}
+
+		// Particle system has no particles on screen
+		if (particleCount == 0)
+			continue;
+
 		// Handle smudge type particles
 		if (sys->isUsingSmudge())
 		{
@@ -164,17 +195,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
 			{
-				const Coord3D *pos = p->getPosition();
-				Real psize = p->getSize();
-
-				//Cull particle to edges of screen and terrain.
-				if (WWMath::Fabs( pos->x - bcX ) > ( beX + psize ) )
-					continue;
-
-				if (WWMath::Fabs( pos->y - bcY ) > ( beY + psize ) )
-					continue;
-
-				if (WWMath::Fabs( pos->z - bcZ ) > ( beZ + psize ) )
+				if (p->isCulled())
 					continue;
 
 				if (Smudge *smudge = TheSmudgeManager->findSmudge(p))
@@ -186,10 +207,28 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			continue;
 		}
 
-		/// @todo lorenzen sez: declare these outside the sys loop, and put some in registers
-		// initialize them here still, of course
+		// TheSuperHackers @performance Ronin/Mauller 09/08/2026 Implement batched rendering for similar particles.
+		// Particles with the same properties will now be batched onto a single texture surface before being drawn.
+		// If a different particle type appears before the batch is filled, the previous batch will be drawn first.
+		RefCountPtr<TextureClass> texture;
+		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
+
+		const Bool canBatch = sys->isUsingParticles();
+		const Bool batchDone = texture.Peek() != m_batchTexture.Peek() || sys->getShaderType() != m_batchShaderType || sys->shouldBillboard() != m_batchBillboard;
+		if (!canBatch || batchDone)
+		{
+			flushParticleBatch(rinfo, pointCount);
+		}
+
+		// setup a new particle batch texture if prior batch was flushed.
+		if (canBatch && m_batchTexture == nullptr)
+		{
+			initializeBatch(sys, texture);
+		}
+
+		Int startCount = pointCount;
+
 		// build W3D particle buffer
-		Int count = 0;
 		Vector3 *posArray = m_posBuffer->Get_Array();
 		Real *sizeArray = m_sizeBuffer->Get_Array();
 		Vector4 *RGBAArray = m_RGBABuffer->Get_Array();
@@ -203,53 +242,58 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		//set-up all the per-particle
 		for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
 		{
+			if (p->isCulled())
+				continue;
+
 			pos = p->getPosition();
 			psize = p->getSize();
-
-			//Cull particle to edges of screen and terrain.
-			if (WWMath::Fabs(pos->x - bcX) > (beX + psize))
-				continue;
-
-			if (WWMath::Fabs(pos->y - bcY) > (beY + psize))
-				continue;
-
-			if (WWMath::Fabs(pos->z - bcZ) > (beZ + psize))
-				continue;
 
 			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && sys->m_isGroundAligned != FALSE );
 
 			//@todo lorenzen sez: use pointer arithmetic for these arrays
-			personalities[count] = p->getPersonality();
+			personalities[pointCount] = p->getPersonality();
 
-			posArray[count].X = pos->x;
-			posArray[count].Y = pos->y;
-			posArray[count].Z = pos->z;
+			posArray[pointCount].X = pos->x;
+			posArray[pointCount].Y = pos->y;
+			posArray[pointCount].Z = pos->z;
 
-			sizeArray[count] = psize;
+			sizeArray[pointCount] = psize;
 
 			color = p->getColor();
-			RGBAArray[count].X = color->red;
-			RGBAArray[count].Y = color->green;
-			RGBAArray[count].Z = color->blue;
-			RGBAArray[count].W = p->getAlpha();
+			RGBAArray[pointCount].X = color->red;
+			RGBAArray[pointCount].Y = color->green;
+			RGBAArray[pointCount].Z = color->blue;
+			RGBAArray[pointCount].W = p->getAlpha();
 
-			angleArray[count] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
+			angleArray[pointCount] = (uint8)(p->getAngle() * 255.0f / (2.0f * PI));
 
-			if (++count == MAX_POINTS_PER_GROUP)
-				break;
+			if (++pointCount == MAX_POINTS_PER_GROUP)
+			{
+				if (!canBatch)
+				{
+					break;
+				}
+
+				// TheSuperHackers @info The Buffer is full mid-system so draw what we have and carry on with the SAME system.
+				// This prevents particles being dropped. Bank the stats first as the flush resets count to 0.
+				m_onScreenParticleCount += (pointCount - startCount);
+				flushParticleBatch(rinfo, pointCount);
+				initializeBatch(sys, texture);
+				startCount = 0;
+			}
 		}
 
-		if ( count == 0 )
+		if (pointCount == startCount)
+		{
 			continue;	//this system has no particles to render
+		}
 
-		TextureClass *texture = W3DDisplay::m_assetManager->Get_Texture( sys->getParticleTypeName().str() );
-
-		if ( m_streakLine && sys->isUsingStreak() && (count >= 2) )
+		// Handle drawing streak type particles.
+		if ( sys->isUsingStreak() && (pointCount >= 2) )
 		{
 			m_streakLine->Reset_Line();
 
-			m_streakLine->Set_Texture( texture );
-			texture->Release_Ref();//release reference since it's held by streakline
+			m_streakLine->Set_Texture( texture.Peek() );
 			switch( sys->getShaderType() )
 			{
 				case ParticleSystemInfo::ADDITIVE:
@@ -268,14 +312,14 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			//UPDATE THE STREAK'S ARRAYS
 			m_streakLine->Set_LocsWidthsColors(
-				count,
+				pointCount,
 				m_posBuffer->Get_Array(),
 				m_sizeBuffer->Get_Array(),
 				m_RGBABuffer->Get_Array(),
 				&personalities[0]
 				);
 
-			//WWASSERT( m_streakLine->Get_Num_Points() == count );
+			//WWASSERT( m_streakLine->Get_Num_Points() == pointCount );
 
 			// This is the happy place for this!
 			RGBAArray[0].X = 0;//eliminates the scissor edge on the trailing edge of the streak
@@ -286,61 +330,51 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 			//RENDER STREAK!
 			m_streakLine->Render( rinfo );
-
+			m_onScreenParticleCount += (pointCount - startCount);
+			pointCount = startCount;
 		}
-		else
+
+		// Handle volumetric type particle systems.
+		const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
+		if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
 		{
+			m_pointGroup->Set_Texture( texture.Peek() );
+			m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
 
-			WWASSERT( m_pointGroup );
-
-			if ( m_pointGroup ) // this catches the particle and volumeparticle cases
+			switch( sys->getShaderType() )
 			{
-				// render all the systems' particles
-				m_pointGroup->Set_Texture( texture );
-				texture->Release_Ref();//release reference since it's held by pointGroup
-				m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
-
-				switch( sys->getShaderType() )
-				{
-					case ParticleSystemInfo::ADDITIVE:
-						m_pointGroup->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
-						break;
-					case ParticleSystemInfo::ALPHA:
-						m_pointGroup->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
-						break;
-					case ParticleSystemInfo::ALPHA_TEST:
-						m_pointGroup->Set_Shader( ShaderClass::_PresetATestSpriteShader );
-						break;
-					case ParticleSystemInfo::MULTIPLY:
-						m_pointGroup->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
-						break;
-				}
-
-				/// @todo Use both QUADS and TRIS for particles
-				m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
-				m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, count );
-				m_pointGroup->Set_Billboard(sys->shouldBillboard());
-
-				/// @todo Support animated texture particles
-				/// @todo lorenzen sez: unimplemented code wastes cpu cycles
-				m_pointGroup->Set_Point_Frame( 0 );
-
-				//RENDER IT!
-				const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
-				if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
-				{
-					m_pointGroup->RenderVolumeParticle( rinfo, volumeParticleDepth);
-				}
-				else
-					m_pointGroup->Render( rinfo );
-
+				case ParticleSystemInfo::ADDITIVE:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetAdditiveSpriteShader );
+					break;
+				case ParticleSystemInfo::ALPHA:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetAlphaSpriteShader );
+					break;
+				case ParticleSystemInfo::ALPHA_TEST:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetATestSpriteShader );
+					break;
+				case ParticleSystemInfo::MULTIPLY:
+					m_pointGroup->Set_Shader( ShaderClass::_PresetMultiplicativeSpriteShader );
+					break;
 			}
+
+			/// @todo Use both QUADS and TRIS for particles
+			m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
+			m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount );
+			m_pointGroup->Set_Billboard(sys->shouldBillboard());
+
+			/// @todo Support animated texture particles
+			/// @todo lorenzen sez: unimplemented code wastes cpu cycles
+			m_pointGroup->Set_Point_Frame( 0 );
+
+			m_pointGroup->RenderVolumeParticle( rinfo, volumeParticleDepth);
+			m_onScreenParticleCount += (pointCount - startCount);
+			pointCount = startCount;
 		}
 
 
 		/// @todo lorenzen sez: this should be debug only:
 		//add particle count to total
-		m_onScreenParticleCount += count;
+		m_onScreenParticleCount += (pointCount - startCount);
 
 	/*
 		// draw the wind vector for this particle system on the screen
@@ -362,6 +396,9 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 	}
 
+	// TheSuperHackers @info Flush the last batch if one is pending.
+	flushParticleBatch(rinfo, pointCount);
+
 		/// @todo lorenzen sez: this should be debug only:
 	TheParticleSystemManager->setOnScreenParticleCount(m_onScreenParticleCount);
 
@@ -373,5 +410,52 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	if(TheSmudgeManager)
 	{
 		((W3DSmudgeManager *)TheSmudgeManager)->render(rinfo);
+	}
+}
+
+void W3DParticleSystemManager::initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture)
+{
+	m_batchTexture = texture;
+	m_batchShaderType = system->getShaderType();
+	m_batchBillboard = system->shouldBillboard();
+}
+
+void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount)
+{
+	if (pointCount > 0)
+	{
+		m_pointGroup->Set_Texture(m_batchTexture.Peek());
+
+		switch (m_batchShaderType)
+		{
+		case ParticleSystemInfo::ADDITIVE:
+			m_pointGroup->Set_Shader(ShaderClass::_PresetAdditiveSpriteShader);
+			break;
+		case ParticleSystemInfo::ALPHA:
+			m_pointGroup->Set_Shader(ShaderClass::_PresetAlphaSpriteShader);
+			break;
+		case ParticleSystemInfo::ALPHA_TEST:
+			m_pointGroup->Set_Shader(ShaderClass::_PresetATestSpriteShader);
+			break;
+		case ParticleSystemInfo::MULTIPLY:
+			m_pointGroup->Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
+			break;
+		}
+
+		m_pointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
+		m_pointGroup->Set_Point_Mode(PointGroupClass::QUADS);
+		m_pointGroup->Set_Arrays(m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount);
+		m_pointGroup->Set_Billboard(m_batchBillboard);
+		m_pointGroup->Set_Point_Frame(0);
+		m_pointGroup->Render(rinfo);
+
+		m_batchBillboard = false;
+		m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
+		pointCount = 0;
+	}
+
+	if (m_batchTexture != nullptr)
+	{
+		m_batchTexture.Clear();
 	}
 }
