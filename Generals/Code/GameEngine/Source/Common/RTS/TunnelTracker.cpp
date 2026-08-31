@@ -231,18 +231,14 @@ void TunnelTracker::onTunnelCreated( const Object *newTunnel )
 // ------------------------------------------------------------------------
 void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 {
-	{
-		std::list<ObjectID>::iterator it = std::find(m_tunnelIDs.begin(), m_tunnelIDs.end(), deadTunnel->getID());
-		if (it == m_tunnelIDs.end())
-		{
-			DEBUG_CRASH(("TunnelTracker::onTunnelDestroyed - Attempting to remove object '%s' that has never been tracked as a tunnel", deadTunnel->getName().str()));
-			return;
-		}
+	DEBUG_ASSERTCRASH(static_cast<Int>(m_tunnelCount) > 0 && m_tunnelCount == m_tunnelIDs.size(),
+		("TunnelTracker::onTunnelDestroyed - Tunnel count is unexpected"));
+	DEBUG_ASSERTCRASH(std::find(m_tunnelIDs.begin(), m_tunnelIDs.end(), deadTunnel->getID()) != m_tunnelIDs.end(),
+		("TunnelTracker::onTunnelDestroyed - Attempting to remove object '%s' that has never been tracked as a tunnel", deadTunnel->getName().str()));
 
-		m_tunnelCount--;
-		m_tunnelIDs.erase(it);
-		m_needsFullHealTimeUpdate = true;
-	}
+	m_tunnelCount--;
+	m_tunnelIDs.remove( deadTunnel->getID() );
+	m_needsFullHealTimeUpdate = true;
 
 	if( m_tunnelCount == 0 )
 	{
@@ -253,7 +249,11 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 	}
 	else
 	{
-		Object *validTunnel = TheGameLogic->findObjectByID( m_tunnelIDs.front() );
+		// TheSuperHackers @bugfix Caball009 01/09/2026 Check if container is empty before accessing it.
+		// The tunnel count may diverge from the container size, because of bugs that cannot be fixed with
+		// retail compatibility enabled. Expected retail behavior: empty container access results in a nullptr.
+		Object *tunnel = m_tunnelIDs.empty() ? nullptr : TheGameLogic->findObjectByID( m_tunnelIDs.front() );
+
 		// Otherwise, make sure nobody inside remembers the dead tunnel as the one they entered
 		// (scripts need to use so there must be something valid here)
 		for(ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); )
@@ -261,7 +261,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 			Object* obj = *it;
 			++it;
 			if( obj->getContainedBy() == deadTunnel )
-				obj->onContainedBy( validTunnel );
+				obj->onContainedBy( tunnel );
 		}
 	}
 }
