@@ -55,6 +55,7 @@
 #include "cpudetect.h"
 #include	"Except.h"
 #include "Lib/BaseTypeCore.h"
+#include "Lib/arch_context.h"
 //#include "debug.h"
 #include "MPU.h"
 //#include "commando\nat.h"
@@ -469,18 +470,27 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	symptr->SizeOfStruct = sizeof (IMAGEHLP_SYMBOL);
 	symptr->MaxNameLength = 256-sizeof (IMAGEHLP_SYMBOL);
 	symptr->Size = 0;
-	symptr->Address = context->Eip;
+	symptr->Address = CTX_PC(*context);
 
-	if (!IsBadCodePtr((FARPROC)context->Eip)) {
-		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), context->Eip, &displacement, symptr)) {
+	if (!IsBadCodePtr((FARPROC)CTX_PC(*context))) {
+		if (_SymGetSymFromAddr != nullptr && _SymGetSymFromAddr (GetCurrentProcess(), CTX_PC(*context), &displacement, symptr)) {
+#if defined(_WIN64) || defined(__x86_64__)
+			snprintf(scrap, ARRAY_SIZE(scrap), "Exception occurred at %016llX - %s + %08X\r\n",
+				(unsigned long long)CTX_PC(*context), symptr->Name, displacement);
+#else
 			snprintf(scrap, ARRAY_SIZE(scrap), "Exception occurred at %08X - %s + %08X\r\n",
 				context->Eip, symptr->Name, displacement);
+#endif
 		} else {
 			DebugString ("Exception Handler: Failed to get symbol for EIP\r\n");
 			if (_SymGetSymFromAddr != nullptr) {
 				DebugString ("Exception Handler: SymGetSymFromAddr failed with code %d - %s\n", GetLastError(), Last_Error_Text());
 			}
+#if defined(_WIN64) || defined(__x86_64__)
+			sprintf (scrap, "Exception occurred at %016llX\r\n", (unsigned long long)CTX_PC(*context));
+#else
 			sprintf (scrap, "Exception occurred at %08X\r\n", context->Eip);
+#endif
 		}
 	} else {
 		DebugString ("Exception Handler: context->Eip is bad code pointer\n");
@@ -589,12 +599,21 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	/*
 	** Dump the registers.
 	*/
+#if defined(_WIN64) || defined(__x86_64__)
+	sprintf(scrap, "Rip:%016llX\tRsp:%016llX\tRbp:%016llX\r\n", (unsigned long long)CTX_PC(*context), (unsigned long long)CTX_STACK(*context), (unsigned long long)CTX_FRAME(*context));
+	Add_Txt(scrap);
+	sprintf(scrap, "Rax:%016llX\tRbx:%016llX\tRcx:%016llX\r\n", (unsigned long long)CTX_AX(*context), (unsigned long long)CTX_BX(*context), (unsigned long long)CTX_CX(*context));
+	Add_Txt(scrap);
+	sprintf(scrap, "Rdx:%016llX\tRsi:%016llX\tRdi:%016llX\r\n", (unsigned long long)CTX_DX(*context), (unsigned long long)CTX_SI(*context), (unsigned long long)CTX_DI(*context));
+	Add_Txt(scrap);
+#else
 	sprintf(scrap, "Eip:%08X\tEsp:%08X\tEbp:%08X\r\n", context->Eip, context->Esp, context->Ebp);
 	Add_Txt(scrap);
 	sprintf(scrap, "Eax:%08X\tEbx:%08X\tEcx:%08X\r\n", context->Eax, context->Ebx, context->Ecx);
 	Add_Txt(scrap);
 	sprintf(scrap, "Edx:%08X\tEsi:%08X\tEdi:%08X\r\n", context->Edx, context->Esi, context->Edi);
 	Add_Txt(scrap);
+#endif
 	sprintf(scrap, "EFlags:%08X \r\n", context->EFlags);
 	Add_Txt(scrap);
 	sprintf(scrap, "CS:%04x  SS:%04x  DS:%04x  ES:%04x  FS:%04x  GS:%04x\r\n", context->SegCs, context->SegSs, context->SegDs, context->SegEs, context->SegFs, context->SegGs);
@@ -624,6 +643,34 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	Add_Txt(scrap);
 #endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	// x86-64: FPU/SSE state is in CONTEXT.FltSave (an XMM_SAVE_AREA32), not
+	// the 32-bit FLOATING_SAVE_AREA, and there is no RegisterArea. Each
+	// ST(i) register instead lives in the low 10 bytes of a 16-byte
+	// FloatRegisters[] slot (the remaining 6 bytes are reserved padding),
+	// so this reports exactly what the 32-bit block below reports, just
+	// addressed through the x86-64 layout.
+	for (int fp=0 ; fp<8 ; fp++) {
+		sprintf(scrap, "ST%d : ", fp);
+		Add_Txt(scrap);
+		BYTE *reg_bytes = (BYTE*)&context->FltSave.FloatRegisters[fp];
+		for (int b=0 ; b<10 ; b++) {
+			sprintf(scrap, "%02X", reg_bytes[b]);
+			Add_Txt(scrap);
+		}
+
+		void *fp_data_ptr = (void*)reg_bytes;
+
+		// TheSuperHackers @refactor Replaced MSVC inline assembly with portable C++ cast for MinGW compatibility
+		/*
+		** Convert FP dump from temporary real value (10 bytes) to double (8 bytes).
+		** On x86, long double is the 10-byte x87 format, so we can just cast.
+		*/
+		double fp_value = (double)(*(long double*)fp_data_ptr);
+		sprintf(scrap, "   %+#.17e\r\n", fp_value);
+		Add_Txt(scrap);
+	}
+#else
 	for (int fp=0 ; fp<SIZE_OF_80387_REGISTERS / 10 ; fp++) {
 		sprintf(scrap, "ST%d : ", fp);
 		Add_Txt(scrap);
@@ -643,14 +690,19 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		sprintf(scrap, "   %+#.17e\r\n", fp_value);
 		Add_Txt(scrap);
 	}
+#endif
 
 	/*
 	** Dump the bytes at EIP. This will make it easier to match the crash address with later versions of the game.
 	*/
 	DebugString("EIP bytes dump...\n");
+#if defined(_WIN64) || defined(__x86_64__)
+	sprintf(scrap, "\r\nBytes at CS:RIP (%016llX)  : ", (unsigned long long)CTX_PC(*context));
+#else
 	sprintf(scrap, "\r\nBytes at CS:EIP (%08X)  : ", context->Eip);
+#endif
 
-	unsigned char *eip_ptr = (unsigned char *) (context->Eip);
+	unsigned char *eip_ptr = (unsigned char *) (CTX_PC(*context));
 	char bytestr[32];
 
 	for (int c = 0 ; c < 32 ; c++) {
@@ -671,7 +723,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	*/
 	DebugString("Stack dump...\n");
 	Add_Txt("Stack dump (* indicates possible code address) :\r\n");
-	unsigned long *stackptr = (unsigned long*) context->Esp;
+	unsigned long *stackptr = (unsigned long*) CTX_STACK(*context);
 
 	for (int j=0 ; j<2048 ; j++) {
 		if (IsBadReadPtr(stackptr, 4)) {
@@ -1272,9 +1324,9 @@ here:
 	** Use the context struct if it was provided.
 	*/
 	if (context) {
-		stack_frame.AddrPC.Offset = context->Eip;
-		stack_frame.AddrStack.Offset = context->Esp;
-		stack_frame.AddrFrame.Offset = context->Ebp;
+		stack_frame.AddrPC.Offset = CTX_PC(*context);
+		stack_frame.AddrStack.Offset = CTX_STACK(*context);
+		stack_frame.AddrFrame.Offset = CTX_FRAME(*context);
 	}
 
 	int pointer_index = 0;

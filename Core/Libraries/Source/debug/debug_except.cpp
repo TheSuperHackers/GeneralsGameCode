@@ -30,6 +30,7 @@
 #include "internal_except.h"
 #include <windows.h>
 #include <commctrl.h>
+#include "Lib/arch_context.h"
 
 DebugExceptionhandler::DebugExceptionhandler()
 {
@@ -110,7 +111,7 @@ void DebugExceptionhandler::LogExceptionLocation(Debug &dbg, struct _EXCEPTION_P
   struct _CONTEXT &ctx=*exptr->ContextRecord;
 
   char buf[512];
-  DebugStackwalk::Signature::GetSymbol(ctx.Eip,buf,sizeof(buf));
+  DebugStackwalk::Signature::GetSymbol(CTX_PC(ctx),buf,sizeof(buf));
   dbg << "Exception occured at\n" << buf << ".";
 }
 
@@ -120,15 +121,15 @@ void DebugExceptionhandler::LogRegisters(Debug &dbg, struct _EXCEPTION_POINTERS 
 
   dbg << Debug::FillChar('0')
       << Debug::Hex()
-      <<  "EAX:" << Debug::Width(8) << ctx.Eax
-      << " EBX:" << Debug::Width(8) << ctx.Ebx
-      << " ECX:" << Debug::Width(8) << ctx.Ecx << "\n"
-      <<  "EDX:" << Debug::Width(8) << ctx.Edx
-      << " ESI:" << Debug::Width(8) << ctx.Esi
-      << " EDI:" << Debug::Width(8) << ctx.Edi << "\n"
-      <<  "EIP:" << Debug::Width(8) << ctx.Eip
-      << " ESP:" << Debug::Width(8) << ctx.Esp
-      << " EBP:" << Debug::Width(8) << ctx.Ebp << "\n"
+      <<  "EAX:" << Debug::Width(CTX_REG_WIDTH) << CTX_AX(ctx)
+      << " EBX:" << Debug::Width(CTX_REG_WIDTH) << CTX_BX(ctx)
+      << " ECX:" << Debug::Width(CTX_REG_WIDTH) << CTX_CX(ctx) << "\n"
+      <<  "EDX:" << Debug::Width(CTX_REG_WIDTH) << CTX_DX(ctx)
+      << " ESI:" << Debug::Width(CTX_REG_WIDTH) << CTX_SI(ctx)
+      << " EDI:" << Debug::Width(CTX_REG_WIDTH) << CTX_DI(ctx) << "\n"
+      <<  "EIP:" << Debug::Width(CTX_REG_WIDTH) << CTX_PC(ctx)
+      << " ESP:" << Debug::Width(CTX_REG_WIDTH) << CTX_STACK(ctx)
+      << " EBP:" << Debug::Width(CTX_REG_WIDTH) << CTX_FRAME(ctx) << "\n"
       <<  "Flags:" << Debug::Bin() << Debug::Width(32) << ctx.EFlags << Debug::Hex() << "\n"
       <<  "CS:" << Debug::Width(4) << ctx.SegCs
       << " DS:" << Debug::Width(4) << ctx.SegDs
@@ -148,6 +149,44 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
     return;
   }
 
+#if defined(_WIN64) || defined(__x86_64__)
+  // x86-64: FPU/SSE state is in CONTEXT.FltSave (an XMM_SAVE_AREA32), not
+  // the 32-bit FLOATING_SAVE_AREA. ControlWord/StatusWord/TagWord/
+  // ErrorOffset/ErrorSelector/DataOffset/DataSelector still exist under
+  // the same names; there is no Cr0NpxState, and each ST(i) register
+  // lives in the low 10 bytes of a 16-byte FloatRegisters[] slot rather
+  // than a flat RegisterArea, mirroring what the 32-bit block below
+  // reports.
+  XMM_SAVE_AREA32 &flt=ctx.FltSave;
+  dbg << Debug::Bin() << Debug::FillChar('0')
+      << "CW:" << Debug::Width(16) << (flt.ControlWord&0xffff) << "\n"
+      << "SW:" << Debug::Width(16) << (flt.StatusWord&0xffff) << "\n"
+      << "TW:" << Debug::Width(16) << (flt.TagWord&0xffff) << "\n"
+      << Debug::Hex()
+      << "ErrOfs:      " << Debug::Width(8) << flt.ErrorOffset
+      << " ErrSel:  "    << Debug::Width(8) << flt.ErrorSelector << "\n"
+      << "DataOfs:     " << Debug::Width(8) << flt.DataOffset
+      << " DataSel: "    << Debug::Width(8) << flt.DataSelector << "\n"
+  ;
+
+  for (unsigned k=0;k<8;++k)
+  {
+    dbg << Debug::Dec() << "ST(" << k << ") ";
+    dbg.SetPrefixAndRadix("",16);
+
+    BYTE *value=(BYTE*)&flt.FloatRegisters[k];
+    for (unsigned i=0;i<10;i++)
+      dbg << Debug::Width(2) << value[i];
+
+    // TheSuperHackers @refactor Replaced MSVC inline assembly with portable C++ cast for MinGW compatibility
+    // Convert from temporary real (10 byte) to double (8 bytes).
+    // On x86, long double is the 10-byte x87 format, so we can just cast.
+    double fpVal = (double)(*(long double*)value);
+    dbg << " " << fpVal;
+
+    dbg << "\n";
+  }
+#else
   FLOATING_SAVE_AREA &flt=ctx.FloatSave;
   dbg << Debug::Bin() << Debug::FillChar('0')
       << "CW:" << Debug::Width(16) << (flt.ControlWord&0xffff) << "\n"
@@ -180,6 +219,7 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
 
     dbg << "\n";
   }
+#endif
   dbg << Debug::FillChar() << Debug::Dec();
 }
 
@@ -240,7 +280,7 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 
   // address
   struct _CONTEXT &ctx=*exPtrs->ContextRecord;
-  DebugStackwalk::Signature::GetSymbol(ctx.Eip,regInfo,sizeof(regInfo));
+  DebugStackwalk::Signature::GetSymbol(CTX_PC(ctx),regInfo,sizeof(regInfo));
   SendDlgItemMessage(hWnd,102,WM_SETTEXT,0,(LPARAM)regInfo);
 
   // stack
@@ -396,7 +436,7 @@ LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS
   dbg.m_stackWalk.StackWalk(sig,pExPtrs->ContextRecord);
   dbg << sig << "\n";
 
-  dbg << "Bytes around EIP:" << Debug::MemDump::Char(((char *)(pExPtrs->ContextRecord->Eip))-32,80);
+  dbg << "Bytes around EIP:" << Debug::MemDump::Char(((char *)(CTX_PC(*pExPtrs->ContextRecord)))-32,80);
 
   dbg.FlushOutput();
 
