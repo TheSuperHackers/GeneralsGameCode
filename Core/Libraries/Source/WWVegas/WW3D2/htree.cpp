@@ -209,7 +209,6 @@ int HTreeClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	memcpy(Name,header.Name,W3D_NAME_LEN);
 	NumPivots = header.NumPivots;
-	// TheSuperHackers @fix CryoTheRenegade 24/08/2026 Reject invalid pivot counts before allocation and use.
 	if (NumPivots < 1) {
 		return LOAD_ERROR;
 	}
