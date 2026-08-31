@@ -52,7 +52,6 @@
 //-----------------------------------------------------------------------------
 #include "GameClient/HotKey.h"
 #include "GameClient/KeyDefs.h"
-#include "GameClient/MetaEvent.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Keyboard.h"
@@ -67,35 +66,17 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-HotKeyTranslator::HotKeyTranslator()
-{
-	memset(m_downWithModifier, 0, sizeof(m_downWithModifier));
-}
-
-//-----------------------------------------------------------------------------
 GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage *msg)
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
 
-	if ( t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_RAW_KEY_UP)
+	if ( t == GameMessage::MSG_RAW_KEY_UP)
 	{
 		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
 		const Int keyState = msg->getArgument(1)->integer;
-		const Bool hasModifier = (keyState & (KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT)) != 0;
-
-		if ( t == GameMessage::MSG_RAW_KEY_DOWN)
-		{
-			// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026
-			// CTRL+F must not fire the command-bar F hotkey on release.
-			if( (keyState & KEY_STATE_AUTOREPEAT) == 0 )
-				m_downWithModifier[key] = hasModifier;
-			return disp;
-		}
-
-		const Bool downWithModifier = m_downWithModifier[key];
-		m_downWithModifier[key] = FALSE;
-		if( downWithModifier || hasModifier )
+		const Int ignoredModifiers = KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT | KEY_STATE_MODIFIER_ON_DOWN;
+		if( keyState & ignoredModifiers )
 			return disp;
 
 		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);

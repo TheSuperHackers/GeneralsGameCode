@@ -55,7 +55,6 @@
 //-----------------------------------------------------------------------------
 #include "Common/SubsystemInterface.h"
 #include "Common/MessageStream.h"
-#include "GameClient/KeyDefs.h"
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -67,13 +66,8 @@ class GameWindow;
 class HotKeyTranslator : public GameMessageTranslator
 {
 public:
-	HotKeyTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 	virtual ~HotKeyTranslator() override { }
-
-private:
-	// True if this key's last real (non-repeat) down included CTRL, SHIFT, or ALT.
-	Bool m_downWithModifier[KEY_COUNT];
 };
 
 //-----------------------------------------------------------------------------
