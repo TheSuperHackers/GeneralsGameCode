@@ -21,37 +21,20 @@
 #include <stddef.h>
 #include <wchar.h>
 
-// UTF-8 <-> wide-character transcoding, hand-rolled per RFC 3629, using no platform text APIs.
-// The wide side is wchar_t, whose width is platform-dependent: on Windows it is a 16-bit UTF-16
-// code unit (astral codepoints use surrogate pairs); on most other platforms it is a 32-bit
-// UTF-32 codepoint. Both are handled transparently based on the width of wchar_t.
+// UTF-8 <-> wide-character conversion backed by ICU4C.
+// Modern toolchains link the ICU C API (Windows SDK or vcpkg). VC6 LoadLibrary's OS icu.dll
+// and falls back to Win32 CP_UTF8 when it is missing. Include WWLib/IcuSupport.h to use the
+// rest of the linked ICU suite from engine code.
 
-// Returned by the decoding functions when the source is not well-formed UTF-8. A return of 0 means
-// an empty result, which is a success and must not be confused with a decoding failure.
+// Returned when UTF-8 input is malformed. Zero is reserved for a successful empty conversion.
 const size_t UTF8_INVALID = (size_t)-1;
 
-// Returns the number of UTF-8 bytes needed for the UTF-8 representation of srcLen wide characters
-// from src, not counting a null terminator. Returns 0 if srcLen is 0. Wide values that have no
-// UTF-8 representation are counted as U+FFFD.
+// Return the required destination length without counting a null terminator.
 size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen);
-
-// Returns the number of wide characters needed for the wide representation of srcLen bytes from the
-// UTF-8 string src, not counting a null terminator. Returns 0 if srcLen is 0, or UTF8_INVALID if
-// src is not well-formed UTF-8.
 size_t Utf8_To_Wide_Len(const char* src, size_t srcLen);
 
-// Converts srcLen wide characters from src to UTF-8. destLen is the destination buffer capacity in
-// bytes. Writes a null terminator if room remains, otherwise not. Wide values that have no UTF-8
-// representation are written as U+FFFD, so the output always decodes back through Utf8_To_Wide.
-// Returns the number of bytes the whole conversion needs, not counting a null terminator. A return
-// greater than destLen means the output was truncated on a codepoint boundary; retry with that many
-// bytes plus one for the terminator. Pass destLen 0 to measure without writing.
+// Convert exactly srcLen source units. The destination is null-terminated when it has spare
+// capacity. Wide input that cannot be represented as Unicode is replaced with U+FFFD. Malformed
+// UTF-8 returns UTF8_INVALID and clears dest when destLen is nonzero.
 size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen);
-
-// Converts srcLen bytes from the UTF-8 string src to wide characters. destLen is the destination
-// buffer capacity in wide characters. Writes a null terminator if room remains, otherwise not.
-// Returns the number of wide characters the whole conversion needs, not counting a null terminator.
-// A return greater than destLen means the output was truncated on a codepoint boundary; retry with
-// that many wide characters plus one for the terminator. Pass destLen 0 to measure without writing.
-// Returns UTF8_INVALID if src is not well-formed UTF-8, setting dest[0] to L'\0' if destLen > 0.
 size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen);

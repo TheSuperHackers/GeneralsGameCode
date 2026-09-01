@@ -48,6 +48,7 @@ set(WWLIB_SRC
     #global.h
     hash.cpp
     hash.h
+    IcuSupport.h
     hashcalc.h
     HASHLIST.h
     #hashtab.h
@@ -187,4 +188,8 @@ target_precompile_headers(core_wwlib PRIVATE
 target_link_libraries(core_wwlib PRIVATE
     core_wwcommon
     corei_always
+)
+
+target_link_libraries(core_wwlib PUBLIC
+    core_icu
 )

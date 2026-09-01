@@ -63,6 +63,7 @@ else()
 endif()
 
 include(cmake/config.cmake)
+include(cmake/icu.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
