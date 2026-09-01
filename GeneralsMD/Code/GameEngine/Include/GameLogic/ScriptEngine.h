@@ -436,7 +436,7 @@ protected:
 	Int								m_numAttackInfo;
 	Int								m_endGameTimer;
 	Int								m_closeWindowTimer;
-	Bool							m_letterBoxActive; ///< A scripted letterbox sequence is running
+	Byte							m_letterBoxActive; ///< A scripted letterbox sequence is running; -1=unknown, 0=false, 1=true
 	Team							*m_callingTeam;					///< Team that is calling script, used for THIS_TEAM
 	Object						*m_callingObject;					///< Object that is calling script, used for THIS_OBJECT
 	Team							*m_conditionTeam;				///< Team that is being used to evaluate conditions, used for THIS_TEAM
