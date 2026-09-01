@@ -60,6 +60,7 @@
 #include "GameLogic/FPUControl.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "Lib/PathUtil.h"
 
 
 //-------------------------------------------------------------------------------
@@ -592,7 +593,7 @@ Bool MapCache::addMap(
 			{
 				// unofficial maps or maps without names
 				AsciiString tempdisplayname;
-				tempdisplayname = fname.reverseFind('\\') + 1;
+				tempdisplayname = getFileName(fname.str());
 				(*this)[lowerFname].m_displayName.translate(tempdisplayname);
 				if (md.m_numPlayers >= 2)
 				{
@@ -654,7 +655,7 @@ Bool MapCache::addMap(
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
 		AsciiString tempdisplayname;
-		tempdisplayname = fname.reverseFind('\\') + 1;
+		tempdisplayname = getFileName(fname.str());
 		md.m_displayName.translate(tempdisplayname);
 		if (md.m_numPlayers >= 2)
 		{
