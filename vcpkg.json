@@ -7,7 +7,7 @@
   ],
   "features": {
     "ffmpeg": {
-      "description": "Use FFMPEG instead of Bink for cutscene rendering",
+      "description": "Use FFmpeg instead of Bink for video rendering",
       "dependencies": [ "ffmpeg" ]
     }
   }

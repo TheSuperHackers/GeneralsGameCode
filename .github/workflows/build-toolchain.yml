@@ -30,7 +30,7 @@ on:
         required: false
         default: false
         type: boolean
-        description: "Build with FFMPEG support"
+        description: "Build with FFmpeg support"
 
 jobs:
   build:

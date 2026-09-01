@@ -30,8 +30,9 @@ if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(FATAL_ERROR "Building in-source is not supported! Create a build dir and remove ${CMAKE_SOURCE_DIR}/CMakeCache.txt")
 endif()
 
-# Define VCPKG feature before `project` block
-include(cmake/vcpkg.cmake)
+# Define VCPKG feature before the project block
+# since they need to be initialized before the toolchain is
+include(cmake/config-vcpkg.cmake)
 
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
