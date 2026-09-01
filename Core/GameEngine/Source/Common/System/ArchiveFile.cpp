@@ -32,6 +32,7 @@
 #include "Common/ArchiveFileSystem.h"
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
+#include "Lib/PathUtil.h"
 
 
 // checks to see if str matches searchString.  Search string is done in the
@@ -79,6 +80,14 @@ static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
 		}
 	}
 	return FALSE;
+}
+
+static void appendPathSeparator(AsciiString &path)
+{
+	if (path.isNotEmpty() && !isPathSeparator(path.getCharAt(path.getLength() - 1)))
+	{
+		path.concat(getNativePathSeparator());
+	}
 }
 
 ArchiveFile::~ArchiveFile()
@@ -157,9 +166,9 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
 		AsciiString tempdirname;
 		tempdirname = currentDirectory;
-		if ((!tempdirname.isEmpty()) && (!tempdirname.endsWith("\\"))) {
-			tempdirname.concat('\\');
-		}
+		// TheSuperHackers @fix bobtista 14/08/2026 Accept either separator, so a caller that
+		// supplies a path ending in '/' does not get a mixed path.
+		appendPathSeparator(tempdirname);
 		tempdirname.concat(tempDirInfo->m_directoryName);
 		getFileListInDirectory(tempDirInfo, tempdirname, searchName, filenameList, searchSubdirectories);
 		diriter++;
@@ -170,9 +179,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 		if (SearchStringMatches(fileiter->second.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			if ((!tempfilename.isEmpty()) && (!tempfilename.endsWith("\\"))) {
-				tempfilename.concat('\\');
-			}
+			appendPathSeparator(tempfilename);
 			tempfilename.concat(fileiter->second.m_filename);
 			if (filenameList.find(tempfilename) == filenameList.end()) {
 				// only insert into the list if its not already in there.
