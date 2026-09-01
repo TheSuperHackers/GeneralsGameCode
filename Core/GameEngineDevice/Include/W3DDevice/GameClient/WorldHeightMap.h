@@ -244,6 +244,16 @@ public:  // height map info.
 	Int getXExtent() const {return m_width;}	///<number of vertices in x
 	Int getYExtent() const {return m_height;}	///<number of vertices in y
 
+	IRegion2D getLogicalBounds() const
+	{
+		IRegion2D bounds;
+		bounds.lo.x = -m_borderSize;
+		bounds.lo.y = -m_borderSize;
+		bounds.hi.x = m_width - m_borderSize;
+		bounds.hi.y = m_height - m_borderSize;
+		return bounds;
+	}
+
 	Region2D getDrawRegion2D();
 
 	Int getDrawOrgX() {return m_drawOriginX;}
@@ -267,6 +277,14 @@ public:  // height map info.
 		else
 			return(0);
 	};
+
+	///Faster version of above function without all the safety checks - For people that do checks externally.
+	UnsignedByte getQuickHeight(Int xIndex, Int yIndex) const
+	{
+		return m_data[yIndex * m_width + xIndex];
+	}
+
+	Bool isTerrainFlat(const IRegion2D& bounds) const;
 
 	void getUVForBlend(Int edgeClass, Region2D *range);
 
