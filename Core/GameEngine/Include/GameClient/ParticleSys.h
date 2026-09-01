@@ -30,6 +30,7 @@
 #pragma once
 
 #include "Common/AsciiString.h"
+#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -516,7 +517,11 @@ public:
 	void validate();
 
 	const AsciiString& getName() const { return m_name; }
+#if ENABLE_TERRAIN_CONFORMING_PARTICLES
 	Bool getIsTerrainConforming() const { return m_isTerrainConforming; }
+#else
+	Bool getIsTerrainConforming() const { return FALSE; }
+#endif
 
 	// This function was made const because of update modules' module data being all const.
 	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-null, it is a slave system for use

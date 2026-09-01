@@ -159,6 +159,11 @@
 #define PRIORITIZE_TEXTURES_BY_SIZE (1)
 #endif
 
+// Enable drawing particles as a terrain-conforming mesh.
+#ifndef ENABLE_TERRAIN_CONFORMING_PARTICLES
+#define ENABLE_TERRAIN_CONFORMING_PARTICLES (1)
+#endif
+
 // Enable obsolete code. This mainly refers to code that existed in Generals but was removed in GeneralsMD.
 // Disable and remove this when Generals and GeneralsMD are merged.
 #if RTS_GENERALS
