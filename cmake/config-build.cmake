@@ -9,6 +9,7 @@ option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
+option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME "Build with retail-compatible game logic." ON)
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
     set(RTS_BUILD_ZEROHOUR TRUE)
@@ -24,6 +25,7 @@ add_feature_info(DebugBuild RTS_BUILD_OPTION_DEBUG "Building as a \"Debug\" buil
 add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address sanitizer")
 add_feature_info(Vc6FullDebug RTS_BUILD_OPTION_VC6_FULL_DEBUG "Building VC6 with full debug info")
 add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
+add_feature_info(RetailCompatibleGame RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME "Building with retail-compatible game logic")
 
 set(RTS_BUILD_OUTPUT_SUFFIX "" CACHE STRING "Suffix appended to output names of installable targets")
 
@@ -82,4 +84,16 @@ if(RTS_BUILD_OPTION_PROFILE_TRACY)
     include(cmake/tracy.cmake)
 else()
     add_library(core_profile_tracy INTERFACE)
+endif()
+
+if(NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME)
+    target_compile_definitions(core_config INTERFACE
+        RETAIL_COMPATIBLE_CRC=0
+        RETAIL_COMPATIBLE_XFER_SAVE=0
+        RETAIL_COMPATIBLE_PATHFINDING=0
+        RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION=0
+        RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM=0
+        RETAIL_COMPATIBLE_NETWORKING=0
+        RETAIL_COMPATIBLE_AIGROUP=0
+    )
 endif()
