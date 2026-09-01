@@ -2063,6 +2063,8 @@ void DozerAIUpdate::cancelAllTasks()
 	for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
 		internalCancelTask((DozerTask)task);
 
+	clearPreviousTask();
+
 	m_dozerMachine->resetToDefaultState();
 }
 
