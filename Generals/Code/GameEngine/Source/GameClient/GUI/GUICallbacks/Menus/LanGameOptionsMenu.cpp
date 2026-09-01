@@ -780,15 +780,18 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		slot->setColor( pref.getPreferredColor() );
 		slot->setPlayerTemplate( pref.getPreferredFaction() );
 		slot->setNATBehavior(FirewallHelperClass::FIREWALL_TYPE_SIMPLE);
-		game->setMap( pref.getPreferredMap() );
-		AsciiString lowerMap = pref.getPreferredMap();
-		lowerMap.toLower();
-		std::map<AsciiString, MapMetaData>::iterator it = TheMapCache->find(lowerMap);
-		if (it != TheMapCache->end())
+		AsciiString mapName = pref.getPreferredMap();
+		const MapMetaData *mapData = TheMapCache->findMap(mapName);
+		if (mapData != nullptr)
+		{
+			mapName = mapData->m_fileName;
+		}
+		game->setMap(mapName);
+		if (mapData != nullptr)
 		{
 			TheLAN->GetMyGame()->getSlot(0)->setMapAvailability(true);
-			TheLAN->GetMyGame()->setMapCRC( it->second.m_CRC );
-			TheLAN->GetMyGame()->setMapSize( it->second.m_filesize );
+			TheLAN->GetMyGame()->setMapCRC( mapData->m_CRC );
+			TheLAN->GetMyGame()->setMapSize( mapData->m_filesize );
 
 			TheLAN->GetMyGame()->adjustSlotsForMap(); // BGC- adjust the slots for the selected map.
 		}

@@ -60,6 +60,7 @@
 #include "GameLogic/FPUControl.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "Lib/PathUtil.h"
 
 
 //-------------------------------------------------------------------------------
@@ -1078,9 +1079,41 @@ Bool isOfficialMap( AsciiString mapName )
 }
 
 
+static AsciiString normalizePathSeparators( const AsciiString &path )
+{
+	const char nativeSeparator = getNativePathSeparator();
+	const char *src = path.str();
+
+	for (; *src != 0; ++src)
+	{
+		if (isPathSeparator(*src) && *src != nativeSeparator)
+		{
+			break;
+		}
+	}
+
+	if (*src == 0)
+	{
+		return path;
+	}
+
+	AsciiString normalized;
+	for (src = path.str(); *src != 0; ++src)
+	{
+		normalized.concat(isPathSeparator(*src) ? nativeSeparator : *src);
+	}
+
+	return normalized;
+}
+
 const MapMetaData *MapCache::findMap(AsciiString mapName)
 {
 	mapName.toLower();
+
+	// TheSuperHackers @bugfix bobtista 28/08/2026 Match whichever separator the cache keys were
+	// built with, so a name stored with the other separator still resolves
+	mapName = normalizePathSeparators(mapName);
+
 	MapCache::iterator it = find(mapName);
 	if (it == end())
 		return nullptr;
