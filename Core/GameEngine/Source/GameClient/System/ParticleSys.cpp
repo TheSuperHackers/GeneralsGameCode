@@ -2912,6 +2912,11 @@ void ParticleSystemTemplate::validate()
 		m_particleType = ParticleSystemInfo::SMUDGE;
 	}
 #endif
+
+#if !ENABLE_TERRAIN_CONFORMING_PARTICLES
+	if (m_particleAlignment == PARTICLE_ALIGNMENT_CONFORMING)
+		m_particleAlignment = PARTICLE_ALIGNMENT_XYPLANAR;
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
