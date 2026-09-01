@@ -2323,6 +2323,35 @@ void DozerAIUpdate::onDelete()
 	}
 }
 
+void DozerAIUpdate::onDisabledEdge(Bool nowDisabled)
+{
+	if (nowDisabled)
+	{
+		// Have to say goodbye to the thing we might be building or repairing so someone else can do it.
+		if (getCurrentTask() != DOZER_TASK_INVALID)
+		{
+			// TheSuperHackers @info We want to explicitly define what types to resume from as some types
+			// are undesirable (e.g. DISABLED_HELD via entering/exiting a container).
+			Bool attemptToResumeTask = getObject()->isDisabledByType(DISABLED_EMP) ||
+				getObject()->isDisabledByType(DISABLED_HACKED) ||
+				getObject()->isDisabledByType(DISABLED_SUBDUED) ||
+				getObject()->isDisabledByType(DISABLED_UNDERPOWERED);
+
+			if (attemptToResumeTask)
+				setPreviousTask(getCurrentTask());
+
+			cancelTask(getCurrentTask());
+		}
+	}
+	else
+	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Stubbjax 17/11/2025 Resume previous task when re-enabled.
+		resumePreviousTask();
+#endif
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Get the most recently issued task */
 //-------------------------------------------------------------------------------------------------

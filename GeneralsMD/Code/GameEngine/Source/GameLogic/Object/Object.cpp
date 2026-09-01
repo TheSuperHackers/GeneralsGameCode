@@ -3908,36 +3908,6 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 	for( BehaviorModule **module = m_behaviors; *module; ++module )
 		(*module)->onDisabledEdge( becomingDisabled );
 
-	DozerAIInterface *dozerAI = getAI() ? getAI()->getDozerAIInterface() : nullptr;
-	if (dozerAI)
-	{
-		if (becomingDisabled)
-		{
-			// Have to say goodbye to the thing we might be building or repairing so someone else can do it.
-			if (dozerAI->getCurrentTask() != DOZER_TASK_INVALID)
-			{
-				// TheSuperHackers @info We want to explicitly define what types to resume from as some types
-				// are undesirable (e.g. DISABLED_HELD via entering/exiting a container).
-				Bool attemptToResumeTask = isDisabledByType(DISABLED_EMP) ||
-					isDisabledByType(DISABLED_HACKED) ||
-					isDisabledByType(DISABLED_SUBDUED) ||
-					isDisabledByType(DISABLED_UNDERPOWERED);
-
-				if (attemptToResumeTask)
-					dozerAI->setPreviousTask(dozerAI->getCurrentTask());
-
-				dozerAI->cancelTask(dozerAI->getCurrentTask());
-			}
-		}
-		else
-		{
-#if !RETAIL_COMPATIBLE_CRC
-			// TheSuperHackers @bugfix Stubbjax 17/11/2025 Resume previous task when re-enabled.
-			dozerAI->resumePreviousTask();
-#endif
-		}
-	}
-
 	Player* controller = getControllingPlayer();
 	// can be called during game teardown, thus controller can be null
 	if (controller)

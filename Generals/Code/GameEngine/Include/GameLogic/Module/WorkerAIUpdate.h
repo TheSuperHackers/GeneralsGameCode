@@ -132,6 +132,7 @@ public:
 
 	// Dozer side
 	virtual void onDelete() override;
+	virtual void onDisabledEdge(Bool nowDisabled) override;
 
 	virtual Real getRepairHealthPerSecond() const override;	///< get health to repair per second
 	virtual Real getBoredTime() const override;							///< how long till we're bored

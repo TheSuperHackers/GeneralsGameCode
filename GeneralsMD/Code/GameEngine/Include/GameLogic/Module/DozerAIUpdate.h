@@ -212,6 +212,7 @@ public:
 	virtual const DozerAIInterface* getDozerAIInterface() const override {return this;}
 
 	virtual void onDelete() override;
+	virtual void onDisabledEdge(Bool nowDisabled) override;
 
 	//
 	// module data methods ... this is LAME, multiple inheritance off an interface with replicated
