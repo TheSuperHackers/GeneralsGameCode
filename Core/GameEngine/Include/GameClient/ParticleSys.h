@@ -30,6 +30,7 @@
 #pragma once
 
 #include "Common/AsciiString.h"
+#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -629,7 +630,11 @@ public:
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	Bool shouldBillboard() const { return m_particleAlignment == PARTICLE_ALIGNMENT_BILLBOARD; }
+#if ENABLE_TERRAIN_CONFORMING_PARTICLES
 	Bool isTerrainConforming() const { return m_particleAlignment == PARTICLE_ALIGNMENT_CONFORMING; }
+#else
+	Bool isTerrainConforming() const { return FALSE; }
+#endif
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
 
