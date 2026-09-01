@@ -159,6 +159,7 @@ public:
 	virtual void cancelAllTasks() override;												///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
 	virtual void setPreviousTask(DozerTask task) override;				///< set the previous task
 	virtual void resumePreviousTask() override;									///< resume the previous task if there was one
+	virtual void clearPreviousTask() override;									///< clear the previous task
 
 	// internal methods to manage behavior from within the dozer state machine
 	virtual void internalTaskComplete( DozerTask task ) override;					///< set a dozer task as successfully completed

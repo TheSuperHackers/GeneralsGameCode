@@ -739,6 +739,11 @@ void WorkerAIUpdate::resumePreviousTask()
 			newTask(m_previousTask, target);
 	}
 
+	clearPreviousTask();
+}
+
+void WorkerAIUpdate::clearPreviousTask()
+{
 	m_previousTask = DOZER_TASK_INVALID;
 	m_previousTaskInfo = DozerTaskInfo();
 }
@@ -799,8 +804,7 @@ void WorkerAIUpdate::internalTaskComplete( DozerTask task )
 	m_task[ task ].m_targetObjectID = INVALID_ID;
 	m_task[ task ].m_taskOrderFrame = 0;
 
-	m_previousTask = DOZER_TASK_INVALID;
-	m_previousTaskInfo = DozerTaskInfo();
+	clearPreviousTask();
 
 	// remove dock point info for this task
 	for( Int i = 0; i < DOZER_NUM_DOCK_POINTS; i++ )
