@@ -34,6 +34,7 @@
 #include "GameClient/Shell.h"
 #include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/networkutil.h"
+#include "Lib/PathUtil.h"
 
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
@@ -137,7 +138,7 @@ static Bool doFileTransfer( AsciiString filename, MapTransferLoadScreen *ls, Int
 
 AsciiString GetBasePathFromPath( AsciiString path )
 {
-	const char *s = path.reverseFind('\\');
+	const char *s = getLastPathSeparator(path.str());
 	if (s)
 	{
 		Int len = s - path.str();
@@ -153,10 +154,7 @@ AsciiString GetBasePathFromPath( AsciiString path )
 
 AsciiString GetFileFromPath( AsciiString path )
 {
-	const char *s = path.reverseFind('\\');
-	if (s)
-		return s+1;
-	return path;
+	return getFileName(path.str());
 }
 
 AsciiString GetExtensionFromFile( AsciiString fname )
@@ -183,59 +181,51 @@ AsciiString GetBaseFileFromFile( AsciiString fname )
 	return AsciiString::TheEmptyString;
 }
 
+static AsciiString GetFileInMapDirectory( const AsciiString &mapPath, const AsciiString &filename )
+{
+	AsciiString base = GetBasePathFromPath(mapPath);
+	if (base.isEmpty())
+	{
+		return filename;
+	}
+
+	const char *separator = getLastPathSeparator(mapPath.str());
+	AsciiString path;
+	path.format("%s%c%s", base.str(), separator ? *separator : getNativePathSeparator(), filename.str());
+	return path;
+}
+
 AsciiString GetPreviewFromMap( AsciiString path )
 {
 	AsciiString fname = GetBaseFileFromFile(GetFileFromPath(path));
-	AsciiString base = GetBasePathFromPath(path);
-
-	AsciiString out;
-	out.format("%s\\%s.tga", base.str(), fname.str());
-	return out;
+	AsciiString preview;
+	preview.format("%s.tga", fname.str());
+	return GetFileInMapDirectory(path, preview);
 }
 
 AsciiString GetINIFromMap( AsciiString path )
 {
-	AsciiString base = GetBasePathFromPath(path);
-
-	AsciiString out;
-	out.format("%s\\map.ini", base.str());
-	return out;
+	return GetFileInMapDirectory(path, "map.ini");
 }
 
 AsciiString GetStrFileFromMap( AsciiString path )
 {
-	AsciiString base = GetBasePathFromPath(path);
-
-	AsciiString out;
-	out.format("%s\\map.str", base.str());
-	return out;
+	return GetFileInMapDirectory(path, "map.str");
 }
 
 AsciiString GetSoloINIFromMap( AsciiString path )
 {
-	AsciiString base = GetBasePathFromPath(path);
-
-	AsciiString out;
-	out.format("%s\\solo.ini", base.str());
-	return out;
+	return GetFileInMapDirectory(path, "solo.ini");
 }
 
 AsciiString GetAssetUsageFromMap( AsciiString path )
 {
-	AsciiString base = GetBasePathFromPath(path);
-
-	AsciiString out;
-	out.format("%s\\assetusage.txt", base.str());
-	return out;
+	return GetFileInMapDirectory(path, "assetusage.txt");
 }
 
 AsciiString GetReadmeFromMap( AsciiString path )
 {
-	AsciiString base = GetBasePathFromPath(path);
-
-	AsciiString out;
-	out.format("%s\\readme.txt", base.str());
-	return out;
+	return GetFileInMapDirectory(path, "readme.txt");
 }
 
 //-------------------------------------------------------------------------------------
