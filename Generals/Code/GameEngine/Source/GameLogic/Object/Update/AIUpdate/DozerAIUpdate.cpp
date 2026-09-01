@@ -2045,8 +2045,10 @@ void DozerAIUpdate::newTask( DozerTask task, Object *target )
 	* re-evaluate what it wants to do if it was working on the task being
 	* cancelled */
 //-------------------------------------------------------------------------------------------------
-void DozerAIUpdate::cancelTask( DozerTask task )
+void DozerAIUpdate::cancelTask( DozerTask task, Bool rememberTask )
 {
+	if (rememberTask)
+		setPreviousTask(task);
 
 	// clear the order
 	internalCancelTask( task );
@@ -2327,15 +2329,12 @@ void DozerAIUpdate::onDisabledEdge(Bool nowDisabled)
 		{
 			// TheSuperHackers @info We want to explicitly define what types to resume from as some types
 			// are undesirable (e.g. DISABLED_HELD via entering/exiting a container).
-			Bool attemptToResumeTask = getObject()->isDisabledByType(DISABLED_EMP) ||
+			Bool rememberTask = getObject()->isDisabledByType(DISABLED_EMP) ||
 				getObject()->isDisabledByType(DISABLED_HACKED) ||
 				getObject()->isDisabledByType(DISABLED_SUBDUED) ||
 				getObject()->isDisabledByType(DISABLED_UNDERPOWERED);
 
-			if (attemptToResumeTask)
-				setPreviousTask(getCurrentTask());
-
-			cancelTask(getCurrentTask());
+			cancelTask(getCurrentTask(), rememberTask);
 		}
 	}
 	else
