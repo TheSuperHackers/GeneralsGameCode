@@ -79,7 +79,7 @@ RegistryClass::RegistryClass( const char * sub_key, bool create ) :
 
 	if (ERROR_SUCCESS == result) {
 		IsValid = true;
-		Key = (UnsignedIntPtr)key;
+		Key = (uintptr_t)key;
 	}
 }
 

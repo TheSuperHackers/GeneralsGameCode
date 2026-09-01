@@ -40,7 +40,9 @@
 #include "WWSaveLoad/persist.h"
 #include "WWLib/multilist.h"
 #include "WWLib/mutex.h"
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 
 /////////////////////////////////////////////////////////////////////////////////
 // Forward declarations
@@ -126,7 +128,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		// param1/param2 double as pointers smuggled through integer parameters for
 		// EVENT_LOGICAL_HEARD (see the inline definition below); must be pointer-sized.
-		virtual void			On_Event (AudioCallbackClass::EVENTS event, UnsignedIntPtr param1 = 0, UnsignedIntPtr param2 = 0);
+		virtual void			On_Event (AudioCallbackClass::EVENTS event, uintptr_t param1 = 0, uintptr_t param2 = 0);
 		virtual void			Register_Callback (AudioCallbackClass::EVENTS events, AudioCallbackClass *callback);
 
 		//////////////////////////////////////////////////////////////////////
@@ -228,8 +230,8 @@ __inline void
 SoundSceneObjClass::On_Event
 (
 	AudioCallbackClass::EVENTS	event,
-	UnsignedIntPtr					param1,
-	UnsignedIntPtr					param2
+	uintptr_t					param1,
+	uintptr_t					param2
 )
 {
 	if ((m_pCallback != nullptr) && (m_RegisteredEvents & event)) {

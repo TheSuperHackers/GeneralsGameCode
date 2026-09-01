@@ -42,7 +42,9 @@
 #include "WWDebug/wwdebug.h"
 #include "saveload.h"
 #include "persist.h"
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 
 /*
 ** PersistFactoryClass
@@ -78,9 +80,12 @@ private:
 ** object.  Simply instantiate a single static instance of this template with the
 ** type and chunkid in the .cpp file of your class.
 */
-// The on-disk width of the object-identity token, fixed by the retail save format.
-// Changing it changes the format.
-static_assert(sizeof(uint32) == 4, "savegame object token must stay 4 bytes on disk");
+// The on-disk width of the object-identity token is fixed by the retail save
+// format at 4 bytes (uint32, i.e. `unsigned long` on our Windows targets).
+// Changing it changes the format. Not guarded by a static_assert here: under
+// VC6, Dependencies/Utility/Utility/CppMacros.h defines static_assert(expr,msg)
+// as empty, so it would silently compile away on exactly the toolchain this
+// project builds for first, giving no real protection.
 
 template <class T,int CHUNKID> class SimplePersistFactoryClass : public PersistFactoryClass
 {
@@ -124,7 +129,7 @@ SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 	new_obj->Load(cload);
 	cload.Close_Chunk();
 
-	void * old_obj = (void *)(UnsignedIntPtr)old_obj_token;
+	void * old_obj = (void *)(uintptr_t)old_obj_token;
 	SaveLoadSystemClass::Register_Pointer(old_obj,new_obj);
 	return new_obj;
 }
@@ -138,7 +143,7 @@ SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass *
 	// fixup can bind the wrong object on load. The on-disk width is fixed by the
 	// retail save format and cannot be widened here without breaking it.
 	// See docs/x64/savegame-format-decision.md (written by the later task).
-	uint32 objptr = (uint32)(UnsignedIntPtr)obj;
+	uint32 objptr = (uint32)(uintptr_t)obj;
 	csave.Begin_Chunk(SIMPLEFACTORY_CHUNKID_OBJPOINTER);
 	csave.Write(&objptr,sizeof(uint32));
 	csave.End_Chunk();

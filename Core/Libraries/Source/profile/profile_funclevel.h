@@ -29,7 +29,9 @@
 
 #pragma once
 
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 
 /**
   \brief The function level profiler.
@@ -190,11 +192,11 @@ public:
       // sprintf()s this value through "prof%08x-all.csv" to name the output
       // file -- that %08x is the format boundary, so GetId() cannot be
       // widened without also changing the on-disk file-naming convention.
-      // Cast through UnsignedIntPtr so the narrowing is an explicit
+      // Cast through uintptr_t so the narrowing is an explicit
       // pointer-to-int-to-int conversion rather than a silent pointer
-      // truncation; 32-bit output is unchanged since UnsignedIntPtr is
+      // truncation; 32-bit output is unchanged since uintptr_t is
       // unsigned int there.
-      return unsigned(UnsignedIntPtr(m_threadID));
+      return unsigned(uintptr_t(m_threadID));
     }
 
   private:

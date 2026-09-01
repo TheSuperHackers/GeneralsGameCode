@@ -29,7 +29,11 @@
 
 #pragma once
 
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+// debug_debug.h is included by nearly every debug translation unit, so any
+// warning-as-error pragma pulled in here becomes effectively global.
+#include <Utility/stdint_adapter.h>
 
 /**
   \class Debug debug.h <rts/debug.h>
@@ -874,7 +878,7 @@ private:
   CmdInterfaceListEntry *firstCmdGroup;
 
   /// \internal current stack frame (used by SkipNext)
-  static UnsignedIntPtr curStackFrame;
+  static uintptr_t curStackFrame;
 
   /** \internal
 
@@ -922,7 +926,7 @@ private:
     FrameHashEntry *next;
 
     /// frame address
-    UnsignedIntPtr frameAddr;
+    uintptr_t frameAddr;
 
     /// frame type (FrameTypeAssert, FrameTypeCheck, or FrameTypeLog)
     unsigned frameType;
@@ -962,7 +966,7 @@ private:
     \param addr frame address
     \return FrameHashEntry found or 0 if nothing found
   */
-  __forceinline FrameHashEntry *LookupFrame(UnsignedIntPtr addr)
+  __forceinline FrameHashEntry *LookupFrame(uintptr_t addr)
   {
     for (FrameHashEntry *e=frameHash[addr%FRAME_HASH_SIZE];e;e=e->next)
       if (e->frameAddr==addr)
@@ -982,7 +986,7 @@ private:
     \param line line number
     \return the entry just added
   */
-  FrameHashEntry *AddFrameEntry(UnsignedIntPtr addr, unsigned type,
+  FrameHashEntry *AddFrameEntry(uintptr_t addr, unsigned type,
                                 const char *fileOrGroup, int line);
 
   /** \internal
@@ -1004,7 +1008,7 @@ private:
     \param line line number
     \return the entry just added (or the already existing entry)
   */
-  FrameHashEntry *GetFrameEntry(UnsignedIntPtr addr, unsigned type,
+  FrameHashEntry *GetFrameEntry(uintptr_t addr, unsigned type,
                                 const char *fileOrGroup, int line)
   {
     FrameHashEntry *e=LookupFrame(addr);

@@ -39,6 +39,7 @@
 #if defined(_WIN32)
 
 #include "win.h"
+#include <Utility/stdint_adapter.h>
 /*
 ** Forward Declarations
 */
@@ -46,7 +47,12 @@ typedef struct _EXCEPTION_POINTERS EXCEPTION_POINTERS;
 typedef struct _CONTEXT CONTEXT;
 
 int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info);
-int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context = nullptr);
+// return_addresses is uintptr_t, not unsigned long: it holds raw return
+// addresses captured off the stack (see Except.cpp's Stack_Walk), and on
+// x86-64 (LLP64) `long` stays 32 bits while an address is 64. Stack_Walk has
+// exactly one call site (Except.cpp), so this is a self-contained widening,
+// not a public-ABI change in practice.
+int Stack_Walk(uintptr_t *return_addresses, int num_addresses, CONTEXT *context = nullptr);
 bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement);
 void Load_Image_Helper();
 void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main = false);

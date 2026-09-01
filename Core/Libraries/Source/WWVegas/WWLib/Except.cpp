@@ -54,7 +54,9 @@
 #include	"assert.h"
 #include "cpudetect.h"
 #include	"Except.h"
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 #include "Lib/arch_context.h"
 //#include "debug.h"
 #include "MPU.h"
@@ -463,13 +465,13 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		// fptr walks across the consecutive _SymXxx globals below, each of which
 		// is an actual function pointer (8 bytes on Win64) -- must be
 		// pointer-sized or the stride only covers half of each slot on 64-bit.
-		UnsignedIntPtr *fptr = (UnsignedIntPtr*) &_SymCleanup;
+		uintptr_t *fptr = (uintptr_t*) &_SymCleanup;
 		int count = 0;
 
 		do {
 			function_name = ImagehelpFunctionNames[count];
 			if (function_name) {
-				*fptr = (UnsignedIntPtr) GetProcAddress(imagehelp, function_name);
+				*fptr = (uintptr_t) GetProcAddress(imagehelp, function_name);
 				fptr++;
 				count++;
 			}
@@ -487,14 +489,14 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	}
 
 	// SymLoadModuleType's return type is DWORD64 on x64 (matching the real
-	// SymLoadModule64 export); UnsignedIntPtr is pointer-width (4 bytes on
+	// SymLoadModule64 export); uintptr_t is pointer-width (4 bytes on
 	// 32-bit, 8 on 64-bit) so the assignment below never truncates a
 	// nonzero result down to a false "load failed" reading. Gated (rather
 	// than just widening unconditionally) purely to keep the 32-bit/VC6
 	// codegen for this line textually identical to before -- the 32-bit
 	// return type never changed, so there's nothing to fix on that branch.
 #if defined(_WIN64) || defined(__x86_64__)
-	UnsignedIntPtr symload = 0;
+	uintptr_t symload = 0;
 #else
 	int symload = 0;
 #endif
@@ -626,12 +628,12 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	DebugString("Stack walk...\n");
 	Add_Txt("\r\n  Stack walk...\r\n");
 
-	unsigned long return_addresses[256];
+	uintptr_t return_addresses[256];
 	int num_addresses = Stack_Walk(return_addresses, 256, context);
 
 	if (num_addresses) {
 		for (int s=0 ; s<num_addresses ; s++) {
-			unsigned long temp_addr = return_addresses[s];
+			uintptr_t temp_addr = return_addresses[s];
 			displacement = 0;
 
 			for (int space = 0 ; space <= s ; space++) {
@@ -659,7 +661,11 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 				}
 			} else {
 				char symbuf[256];
-				sprintf(symbuf, "%08x\r\n", temp_addr);
+#if defined(_WIN64) || defined(__x86_64__)
+				sprintf(symbuf, "%016llX\r\n", (unsigned long long)temp_addr);
+#else
+				sprintf(symbuf, "%08x\r\n", (unsigned)temp_addr);
+#endif
 				Add_Txt(symbuf);
 			}
 		}
@@ -853,10 +859,18 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	*/
 	DebugString("Stack dump...\n");
 	Add_Txt("Stack dump (* indicates possible code address) :\r\n");
-	unsigned long *stackptr = (unsigned long*) CTX_STACK(*context);
+	// Pointer-width, not `unsigned long`: on x86-64 (LLP64) `long` stays 32
+	// bits, but each stack slot is 8 bytes. Reading `unsigned long` here would
+	// walk the stack in 4-byte steps, printing alternating halves of
+	// neighbouring 8-byte slots and resolving symbols against low-32-bit
+	// fragments -- output that looks plausible but points at addresses that
+	// do not exist (see arch_context.h). uintptr_t keeps the 32-bit path
+	// identical (same width as `unsigned long` there) while making the
+	// 64-bit path read whole slots.
+	uintptr_t *stackptr = (uintptr_t*) CTX_STACK(*context);
 
 	for (int j=0 ; j<2048 ; j++) {
-		if (IsBadReadPtr(stackptr, 4)) {
+		if (IsBadReadPtr(stackptr, sizeof(*stackptr))) {
 			/*
 			** The stack contents cannot be read so just print up question marks.
 			*/
@@ -867,10 +881,18 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 			** If this stack address is in our memory space then try to match it with a code symbol.
 			*/
 			if (IsBadCodePtr((FARPROC)*stackptr)) {
-				sprintf(scrap, "%p: %08lX ", static_cast<void*>(stackptr), *stackptr);
+#if defined(_WIN64) || defined(__x86_64__)
+				sprintf(scrap, "%p: %016llX ", static_cast<void*>(stackptr), (unsigned long long)*stackptr);
+#else
+				sprintf(scrap, "%p: %08lX ", static_cast<void*>(stackptr), (unsigned long)*stackptr);
+#endif
 				strlcat(scrap, "DATA_PTR\r\n", ARRAY_SIZE(scrap));
 			} else {
-				sprintf(scrap, "%p: %08lX", static_cast<void*>(stackptr), *stackptr);
+#if defined(_WIN64) || defined(__x86_64__)
+				sprintf(scrap, "%p: %016llX", static_cast<void*>(stackptr), (unsigned long long)*stackptr);
+#else
+				sprintf(scrap, "%p: %08lX", static_cast<void*>(stackptr), (unsigned long)*stackptr);
+#endif
 
 				if (symbols_available) {
 					symptr->SizeOfStruct = sizeof(symbol);
@@ -1260,13 +1282,13 @@ void Load_Image_Helper()
 		if (ImageHelp != nullptr) {
 			char const *function_name = nullptr;
 			// Same pointer-sized stride requirement as Dump_Exception_Info() above.
-			UnsignedIntPtr *fptr = (UnsignedIntPtr *) &_SymCleanup;
+			uintptr_t *fptr = (uintptr_t *) &_SymCleanup;
 			int count = 0;
 
 			do {
 				function_name = ImagehelpFunctionNames[count];
 				if (function_name) {
-					*fptr = (UnsignedIntPtr) GetProcAddress(ImageHelp, function_name);
+					*fptr = (uintptr_t) GetProcAddress(ImageHelp, function_name);
 					fptr++;
 					count++;
 				}
@@ -1285,7 +1307,7 @@ void Load_Image_Helper()
 		// so a nonzero DWORD64 result on x64 never truncates to a false 0,
 		// gated to keep 32-bit/VC6 codegen textually unchanged.
 #if defined(_WIN64) || defined(__x86_64__)
-		UnsignedIntPtr symload = 0;
+		uintptr_t symload = 0;
 #else
 		int symload = 0;
 #endif
@@ -1378,14 +1400,14 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 	// _SymGetSymFromAddr to the real SymGetSymFromAddr64 export, whose
 	// Address parameter is DWORD64 too -- this is not "fixed at 32 bits"
 	// on this architecture. Use the full pointer width, not a narrowed one.
-	symbol_struct_ptr->Address = (UnsignedIntPtr)code_ptr;
+	symbol_struct_ptr->Address = (uintptr_t)code_ptr;
 #else
 	// IMAGEHLP_SYMBOL::Address and SymGetSymFromAddr's DWORD parameter are
 	// fixed at 32 bits by the (32-bit-only) DbgHelp API on this
-	// architecture. Cast through UnsignedIntPtr so the narrowing is an
+	// architecture. Cast through uintptr_t so the narrowing is an
 	// explicit int-to-int conversion rather than a flagged pointer
 	// truncation; 32-bit codegen is unchanged.
-	symbol_struct_ptr->Address = (unsigned long)(UnsignedIntPtr)code_ptr;
+	symbol_struct_ptr->Address = (unsigned long)(uintptr_t)code_ptr;
 #endif
 
 	/*
@@ -1399,10 +1421,10 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
 	// the call returns, so this function's own signature (and every
 	// caller of it) is unaffected.
 	DWORD64 displacement64;
-	if (_SymGetSymFromAddr(GetCurrentProcess(), (DWORD64)(UnsignedIntPtr)code_ptr, &displacement64, symbol_struct_ptr)) {
+	if (_SymGetSymFromAddr(GetCurrentProcess(), (DWORD64)(uintptr_t)code_ptr, &displacement64, symbol_struct_ptr)) {
 		displacement = (int)displacement64;
 #else
-	if (_SymGetSymFromAddr(GetCurrentProcess(), (unsigned long)(UnsignedIntPtr)code_ptr, (unsigned long *)&displacement, symbol_struct_ptr)) {
+	if (_SymGetSymFromAddr(GetCurrentProcess(), (unsigned long)(uintptr_t)code_ptr, (unsigned long *)&displacement, symbol_struct_ptr)) {
 #endif
 
 		/*
@@ -1433,7 +1455,7 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
  * HISTORY:                                                                                    *
  *   6/12/2001 11:57AM ST : Created                                                            *
  *=============================================================================================*/
-int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context)
+int Stack_Walk(uintptr_t *return_addresses, int num_addresses, CONTEXT *context)
 {
 	static HINSTANCE _imagehelp = (HINSTANCE) -1;
 
@@ -1458,12 +1480,12 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 	STACKFRAME stack_frame;
 	memset(&stack_frame, 0, sizeof(stack_frame));
 
-	// UnsignedIntPtr rather than unsigned long: these feed
+	// uintptr_t rather than unsigned long: these feed
 	// stack_frame.AddrPC/AddrFrame/AddrStack.Offset, which are DWORD64 in
 	// STACKFRAME64 (STACKFRAME becomes STACKFRAME64 on x64 -- see
 	// imagehlp.h's _IMAGEHLP64 mechanism), and `unsigned long` stays 32 bits
 	// under Win64's LLP64 model, so it would truncate there.
-	UnsignedIntPtr reg_eip, reg_ebp, reg_esp;
+	uintptr_t reg_eip, reg_ebp, reg_esp;
 
 #if defined(_MSC_VER) && defined(_M_IX86)
 	__asm {
@@ -1489,9 +1511,9 @@ here:
 	// GCC/Clang retail-compatibility.
 	CONTEXT capture_ctx;
 	RtlCaptureContext(&capture_ctx);
-	reg_eip = (UnsignedIntPtr)CTX_PC(capture_ctx);
-	reg_ebp = (UnsignedIntPtr)CTX_FRAME(capture_ctx);
-	reg_esp = (UnsignedIntPtr)CTX_STACK(capture_ctx);
+	reg_eip = (uintptr_t)CTX_PC(capture_ctx);
+	reg_ebp = (uintptr_t)CTX_FRAME(capture_ctx);
+	reg_esp = (uintptr_t)CTX_STACK(capture_ctx);
 #endif
 
 	stack_frame.AddrPC.Mode = AddrModeFlat;
@@ -1524,7 +1546,7 @@ here:
 			if (i==0 && context == nullptr) {
 				continue;
 			}
-			unsigned long return_address = stack_frame.AddrReturn.Offset;
+			uintptr_t return_address = stack_frame.AddrReturn.Offset;
 			return_addresses[pointer_index++] = return_address;
 		} else {
 			break;

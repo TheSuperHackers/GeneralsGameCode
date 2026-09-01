@@ -32,8 +32,15 @@ endif()
 
 # MSVC-specific configuration
 if(MSVC)
-    # Use bundled MSVC-compiled .lib files
-    target_link_libraries(d3d8lib INTERFACE d3dx8)
+    # Use bundled MSVC-compiled .lib files. d3dx8.lib is pe-i386 (32-bit)
+    # only -- there is no 64-bit build of it in the fetched min-dx8-sdk repo
+    # -- so linking it into a 64-bit target would fail, the same reason the
+    # top-level d3d8/dinput8/dxguid link above is gated on
+    # CMAKE_SIZEOF_VOID_P EQUAL 4. No x64 MSVC preset exercises this today
+    # (issue #473), but the condition should match its sibling regardless.
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        target_link_libraries(d3d8lib INTERFACE d3dx8)
+    endif()
     target_link_directories(d3d8lib BEFORE INTERFACE ${dx8_SOURCE_DIR})
     target_link_options(d3d8lib INTERFACE /NODEFAULTLIB:libci.lib)
 

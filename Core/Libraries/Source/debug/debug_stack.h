@@ -29,6 +29,10 @@
 
 #pragma once
 
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
+
 /// \brief stack walker class (singleton)
 class DebugStackwalk
 {
@@ -56,7 +60,11 @@ public:
     unsigned m_numAddr;
 
     /// addresses
-    unsigned m_addr[MAX_ADDR];
+    // Pointer-width, not `unsigned`: callers pass CTX_PC(ctx), a DWORD64 on
+    // x64 (debug_except.cpp), and a 32-bit slot here would silently truncate
+    // every address stored, corrupting both signature dedup and symbol
+    // lookup on x64.
+    uintptr_t m_addr[MAX_ADDR];
 
   public:
     explicit Signature(): m_numAddr(0) {}
@@ -78,7 +86,7 @@ public:
       \param n index, 0..Size()-1
       \return signature address
     */
-    unsigned GetAddress(int n) const;
+    uintptr_t GetAddress(int n) const;
 
     /**
       \brief Strong ordering operator.
@@ -110,7 +118,7 @@ public:
       \param buf return buffer
       \param bufSize size of return buffer, minimum is 64 bytes (256 recommended)
     */
-    static void GetSymbol(unsigned addr, char *buf, unsigned bufSize);
+    static void GetSymbol(uintptr_t addr, char *buf, unsigned bufSize);
 
     /**
       \brief Determines symbol for given address.
@@ -127,7 +135,7 @@ public:
       \param line line number, may be nullptr
       \param relLine relative address within line, may be nullptr
     */
-    static void GetSymbol(unsigned addr,
+    static void GetSymbol(uintptr_t addr,
                           char *bufMod, unsigned sizeMod, unsigned *relMod,
                           char *bufSym, unsigned sizeSym, unsigned *relSym,
                           char *bufFile, unsigned sizeFile, unsigned *line, unsigned *relLine);

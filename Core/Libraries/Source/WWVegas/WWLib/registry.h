@@ -39,7 +39,9 @@
 #include "Vector.h"
 #include "wwstring.h"
 #include "widestring.h"
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 
 class INIClass;
 
@@ -108,7 +110,7 @@ private:
 	static void Save_Registry_Values(HKEY key, char *path, INIClass *ini);
 
 
-	UnsignedIntPtr	Key;
+	uintptr_t	Key;
 	bool	IsValid;
 
 	//

@@ -1712,8 +1712,17 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 
 						case VARID_THIS_PTR:
 						{
-							AudibleSoundClass *old_ptr = nullptr;
-							cload.Read(&old_ptr, sizeof (old_ptr));
+							// Read exactly what Save wrote: a fixed-width 4-byte
+							// identity token, not sizeof(old_ptr). On x86-64
+							// sizeof(AudibleSoundClass*) is 8, so reading
+							// sizeof(old_ptr) here would ask for more bytes than
+							// the legacy 4-byte micro chunk holds; ChunkLoadClass::Read
+							// then refuses to read anything at all and old_ptr
+							// stays null, silently poisoning SaveLoadSystemClass's
+							// pointer remap table. See persistfactory.h.
+							uint32 old_ptr_token = 0;
+							cload.Read(&old_ptr_token, sizeof (old_ptr_token));
+							AudibleSoundClass *old_ptr = (AudibleSoundClass *)(uintptr_t)old_ptr_token;
 							SaveLoadSystemClass::Register_Pointer (old_ptr, this);
 						}
 						break;

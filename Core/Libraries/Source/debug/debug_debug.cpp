@@ -35,7 +35,9 @@
 #include <windows.h>
 #include <WWLib/WWCommon.h>
 #include <new>      // needed for placement new prototype
-#include "Lib/BaseTypeCore.h"
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 
 // a little dummy variable that makes the linker actually include
 // us...
@@ -74,7 +76,7 @@ Debug::LogDescription::LogDescription(const char *fileOrGroup, const char *descr
 Debug Debug::Instance;
 
 // more class static members
-UnsignedIntPtr Debug::curStackFrame;
+uintptr_t Debug::curStackFrame;
 
 // this constructor is empty on purpose because all construction
 // work is done in PreStaticInit (and some in PostStaticInit)
@@ -306,21 +308,40 @@ bool Debug::SkipNext()
 
   // do not implement this function inline, we do need
   // a valid frame pointer here!
-  // UnsignedIntPtr is `unsigned int` (4 bytes) on the VC6 32-bit target, so
+  // uintptr_t is `unsigned int` (4 bytes) on the VC6 32-bit target, so
   // the _asm block below -- which needs a 4-byte destination to match eax --
   // is byte-identical to the original `unsigned help;` version there.
-  UnsignedIntPtr help;
+  uintptr_t help;
 #if defined(_MSC_VER) && defined(_M_IX86)
   _asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
   };
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+  // GCC/Clang inline assembly for x86-32. Kept as its own arm, gated the same
+  // way as the equivalent blocks in Except.cpp and debug_stack.cpp, so 32-bit
+  // GCC/Clang codegen for this function is unchanged from before this x64
+  // port touched it -- an earlier version of this arm covered every
+  // GCC/Clang architecture (including x86-64, where it does not apply) and
+  // was narrowed here to match its siblings rather than left broad.
+  __asm__ __volatile__(
+    "mov 4(%%ebp), %0"
+    : "=r"(help)
+    :
+    : "memory"
+  );
 #elif defined(__GNUC__) || defined(__clang__)
-  // __builtin_return_address(0) is the portable spelling of [ebp+4] and works
-  // on every architecture GCC/Clang targets, so this replaces both the
-  // x86-32 asm and the #error that followed it.
-  help = (UnsignedIntPtr)__builtin_return_address(0);
+  // Everything else GCC/Clang targets (x86-64 in practice): unlike
+  // Except.cpp's Stack_Walk and debug_stack.cpp's captured-register path,
+  // this function only ever needs the immediate caller's return address, not
+  // a full register set to seed a multi-frame StackWalk64. There is no
+  // matching ebp-relative asm trick on x86-64 (no frame-pointer-at-fixed-
+  // offset convention to rely on), so __builtin_return_address(0) -- GCC/
+  // Clang's portable spelling of "caller's return address" on every
+  // architecture they target -- is used directly instead of a CONTEXT-capture
+  // dance that would be overkill for a single value.
+  help = (uintptr_t)__builtin_return_address(0);
 #else
   #error "Unsupported compiler or architecture for inline assembly"
 #endif
@@ -900,12 +921,19 @@ Debug& Debug::operator<<(const void *ptr)
   (*this) << "ptr:";
   if (ptr)
   {
+    // Full pointer width, not the low 32 bits: a crash report's register
+    // dump is already 16 hex digits on x64 (operator<<(unsigned __int64)
+    // below), so an address truncated to 8 digits here would silently drop
+    // the high half next to registers that don't. 32-bit output is
+    // unchanged -- uintptr_t is unsigned int there, so this arm still
+    // resolves to the exact same _ultoa(...,help,16) call as before.
+#if defined(_WIN64) || defined(__x86_64__)
+    char help[64+1]; // sign, 64 digits, NUL -- matches operator<<(unsigned __int64)'s buffer
+    (*this) << "0x" << _ui64toa((unsigned __int64)(uintptr_t)ptr,help,16);
+#else
     char help[9];
-    // Cast through UnsignedIntPtr (lossless) before narrowing to the
-    // 32-bit type _ultoa requires. On 64-bit this deliberately shows only
-    // the low 32 bits of the address -- acceptable for a debug print, and
-    // keeps 32-bit output byte-identical (UnsignedIntPtr is unsigned int there).
-    (*this) << "0x" << _ultoa((unsigned long)(UnsignedIntPtr)ptr,help,16);
+    (*this) << "0x" << _ultoa((unsigned long)(uintptr_t)ptr,help,16);
+#endif
   }
   else
     (*this) << "null";
@@ -936,11 +964,15 @@ Debug& Debug::operator<<(const MemDump &dump)
   for (unsigned i=0;i<dump.m_numItems;i+=itemPerLine,cur+=itemPerLine*dump.m_bytePerItem)
   {
     // address
+    // Same low-32-bits-only truncation as operator<<(const void*) used to
+    // have, and the same fix: full pointer width on x64, unchanged on 32-bit.
+#if defined(_WIN64) || defined(__x86_64__)
+    char buf[17]; // 16 hex digits, NUL
+    sprintf(buf,"%016llx",dump.m_absAddr?(unsigned long long)(uintptr_t)cur:(unsigned long long)(cur-dump.m_startPtr));
+#else
     char buf[9];
-    // Same low-32-bits-only truncation as the operator<<(const void*) above,
-    // via a lossless pointer->UnsignedIntPtr step so the narrowing is an
-    // explicit int-to-int conversion rather than a flagged pointer truncation.
-    sprintf(buf,"%08x",dump.m_absAddr?(unsigned)(UnsignedIntPtr)cur:(unsigned)(cur-dump.m_startPtr));
+    sprintf(buf,"%08x",dump.m_absAddr?(unsigned)(uintptr_t)cur:(unsigned)(cur-dump.m_startPtr));
+#endif
     operator<<(buf);
 
     // items
@@ -1019,12 +1051,12 @@ bool Debug::IsLogEnabled(const char *fileOrGroup)
   // that we are having real static strings let's use
   // that strings address as frame address...
   // LookupFrame/AddFrameEntry use the string's address as a hash key and are
-  // declared to take UnsignedIntPtr, so this is a lossless pointer->integer
+  // declared to take uintptr_t, so this is a lossless pointer->integer
   // conversion on every target (it used to truncate through `unsigned` on
   // x64; that guard is gone now that the hash key is pointer-width).
-  FrameHashEntry *e=Instance.LookupFrame((UnsignedIntPtr)fileOrGroup);
+  FrameHashEntry *e=Instance.LookupFrame((uintptr_t)fileOrGroup);
   if (!e)
-    e=Instance.AddFrameEntry((UnsignedIntPtr)fileOrGroup,FrameTypeLog,fileOrGroup,0);
+    e=Instance.AddFrameEntry((uintptr_t)fileOrGroup,FrameTypeLog,fileOrGroup,0);
   if (e->status==Unknown)
     Instance.UpdateFrameStatus(*e);
   return e->status==NoSkip;
@@ -1207,7 +1239,7 @@ void Debug::Update()
   }
 }
 
-Debug::FrameHashEntry* Debug::AddFrameEntry(UnsignedIntPtr addr, unsigned type,
+Debug::FrameHashEntry* Debug::AddFrameEntry(uintptr_t addr, unsigned type,
                                             const char *fileOrGroup, int line)
 {
   __ASSERT(LookupFrame(addr)==nullptr);

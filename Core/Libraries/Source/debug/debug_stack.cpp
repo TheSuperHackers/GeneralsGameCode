@@ -32,7 +32,10 @@
 #include <windows.h>
 #include "WWLib/stringex.h"
 #include <imagehlp.h>
-#include "Lib/BaseTypeCore.h"
+#include <cstdio>
+// Only pulls the pointer-sized-int typedef (uintptr_t); avoids dragging
+// BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
+#include <Utility/stdint_adapter.h>
 #include "Lib/arch_context.h"
 
 // imagehlp.h (via dbghelp.h's psdk_inc/_dbg_common.h) #defines StackWalk to
@@ -72,7 +75,7 @@ static union
   // Overlays the struct above, whose members are actual function pointers
   // (8 bytes on Win64). Must be pointer-sized or the aliasing/stride used
   // by InitDbghelp() below only covers half of each slot on 64-bit.
-  UnsignedIntPtr funcPtr[1];
+  uintptr_t funcPtr[1];
 } gDbg;
 #undef DBGHELP
 
@@ -156,11 +159,11 @@ static void InitDbghelp()
     return;
 
   // Get function addresses
-  UnsignedIntPtr *funcptr=gDbg.funcPtr;
+  uintptr_t *funcptr=gDbg.funcPtr;
   unsigned k=0;
   for (;DebughelpFunctionNames[k];++k,++funcptr)
   {
-    *funcptr=(UnsignedIntPtr)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
+    *funcptr=(uintptr_t)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
     if (!*funcptr)
       break;
   }
@@ -202,13 +205,13 @@ DebugStackwalk::Signature& DebugStackwalk::Signature::operator=(const Signature&
   return *this;
 }
 
-unsigned DebugStackwalk::Signature::GetAddress(int n) const
+uintptr_t DebugStackwalk::Signature::GetAddress(int n) const
 {
   DFAIL_IF_MSG(n<0||n>=MAX_ADDR,n << "/" << MAX_ADDR) return 0;
   return m_addr[n];
 }
 
-void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned bufSize)
+void DebugStackwalk::Signature::GetSymbol(uintptr_t addr, char *buf, unsigned bufSize)
 {
   DFAIL_IF(!buf) return;
   DFAIL_IF(bufSize<64||bufSize>=0x80000000) return;
@@ -217,10 +220,22 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
 
   char *bufEnd=buf+bufSize;
   *buf=0;
-  buf+=wsprintf(buf,"%08x",addr);
+#if defined(_WIN64) || defined(__x86_64__)
+  // sprintf (CRT), not wsprintf (User32's own limited formatter, used for
+  // every other format string in this function): wsprintf's documented
+  // format support does not include a 64-bit-width specifier, and this is
+  // the one field in this function that can actually need one.
+  buf+=sprintf(buf,"%016llX",(unsigned long long)addr);
+#else
+  buf+=wsprintf(buf,"%08x",(unsigned)addr);
+#endif
 
   // determine module
-  unsigned modBase=gDbg._SymGetModuleBase((HANDLE)GetCurrentProcessId(),addr);
+  // Pointer-width, not `unsigned`: _SymGetModuleBase resolves to
+  // SymGetModuleBase64 on x64 (see debug_stack.inl) and returns a DWORD64;
+  // truncating it here would corrupt every `addr-modBase` relative offset
+  // computed below.
+  uintptr_t modBase=gDbg._SymGetModuleBase((HANDLE)GetCurrentProcessId(),addr);
   if (!modBase)
 	{
 		strcpy(buf," (unknown module)");
@@ -228,7 +243,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
 	}
 
   // illegal code ptr?
-	if (IsBadReadPtr((void *)addr,4)||IsBadCodePtr((FARPROC)addr))
+	if (IsBadReadPtr((void *)addr,sizeof(addr))||IsBadCodePtr((FARPROC)addr))
 	{
 		strcpy(buf," (invalid code addr)");
 		return;
@@ -244,7 +259,12 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   buf+=strlen(buf);
   if (bufEnd-buf<32)
     return;
-  buf+=wsprintf(buf,"+0x%x",addr-modBase);
+  // Cast to unsigned: a module-relative offset is well under 4GB in
+  // practice (it's an offset within a single loaded module, not an
+  // absolute address), and wsprintf's "%x" is a 32-bit format regardless
+  // of argument width -- passing the full uintptr_t here would mismatch
+  // the format on x64.
+  buf+=wsprintf(buf,"+0x%x",(unsigned)(addr-modBase));
 
   // determine symbol
   PIMAGEHLP_SYMBOL symPtr=(PIMAGEHLP_SYMBOL)symbolBuffer;
@@ -284,7 +304,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   buf+=wsprintf(buf,", %s:%i+0x%x",p,line.LineNumber,displacement);
 }
 
-void DebugStackwalk::Signature::GetSymbol(unsigned addr,
+void DebugStackwalk::Signature::GetSymbol(uintptr_t addr,
                                           char *bufMod, unsigned sizeMod, unsigned *relMod,
                                           char *bufSym, unsigned sizeSym, unsigned *relSym,
                                           char *bufFile, unsigned sizeFile, unsigned *linePtr, unsigned *relLine)
@@ -304,8 +324,9 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
   DFAIL_IF(bufSym&&sizeSym<16) return;
   DFAIL_IF(bufFile&&sizeFile<16) return;
 
-  // determine module
-  unsigned modBase=gDbg._SymGetModuleBase((HANDLE)GetCurrentProcessId(),addr);
+  // determine module (see the other GetSymbol overload's comment: pointer-
+  // width, not `unsigned`, since this resolves to SymGetModuleBase64 on x64)
+  uintptr_t modBase=gDbg._SymGetModuleBase((HANDLE)GetCurrentProcessId(),addr);
   if (!modBase)
 	{
     if (bufMod)
@@ -316,7 +337,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
 	}
 
   // illegal code ptr?
-	if (IsBadReadPtr((void *)addr,4)||IsBadCodePtr((FARPROC)addr))
+	if (IsBadReadPtr((void *)addr,sizeof(addr))||IsBadCodePtr((FARPROC)addr))
 	{
     if (bufMod)
 		  strcpy(bufMod,"(inv code addr)");
@@ -334,8 +355,11 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     p=p?p+1:symbolBuffer;
     strlcpy(bufMod,p,sizeMod);
   }
+  // relMod is `unsigned *`, unchanged: a module-relative offset is well
+  // under 4GB in practice, unlike the absolute addr/modBase this is derived
+  // from.
   if (relMod)
-    *relMod=addr-modBase;
+    *relMod=(unsigned)(addr-modBase);
 
   // determine symbol
   if (bufSym)
@@ -450,11 +474,11 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   else
   {
     // walk stack back using current call chain
-	  // UnsignedIntPtr rather than unsigned long: these feed
+	  // uintptr_t rather than unsigned long: these feed
 	  // stackFrame.AddrPC/AddrFrame/AddrStack.Offset, which are DWORD64 in
 	  // STACKFRAME64 (STACKFRAME becomes STACKFRAME64 on x64), and
 	  // `unsigned long` stays 32 bits under Win64's LLP64 model.
-	  UnsignedIntPtr reg_eip, reg_ebp, reg_esp;
+	  uintptr_t reg_eip, reg_ebp, reg_esp;
 #if defined(_MSC_VER) && defined(_M_IX86)
 	  __asm
     {
@@ -481,9 +505,9 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 	  // three fields via CTX_PC/CTX_FRAME/CTX_STACK.
 	  CONTEXT capture_ctx;
 	  RtlCaptureContext(&capture_ctx);
-	  reg_eip = (UnsignedIntPtr)CTX_PC(capture_ctx);
-	  reg_ebp = (UnsignedIntPtr)CTX_FRAME(capture_ctx);
-	  reg_esp = (UnsignedIntPtr)CTX_STACK(capture_ctx);
+	  reg_eip = (uintptr_t)CTX_PC(capture_ctx);
+	  reg_ebp = (uintptr_t)CTX_FRAME(capture_ctx);
+	  reg_esp = (uintptr_t)CTX_STACK(capture_ctx);
 #endif
 	  stackFrame.AddrPC.Offset = reg_eip;
 	  stackFrame.AddrStack.Offset = reg_esp;
