@@ -66,6 +66,7 @@ class CommandLineData
 
 	Bool m_hasParsedCommandLineForStartup;
 	Bool m_hasParsedCommandLineForEngineInit;
+	BoolVector m_startupParsedArguments;
 };
 
 //-------------------------------------------------------------------------------------------------

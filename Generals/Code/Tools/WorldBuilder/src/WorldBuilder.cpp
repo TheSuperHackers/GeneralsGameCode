@@ -165,7 +165,10 @@ public:
 	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
 		if (CommandLine::isCommandLineArgumentParsedForStartup(m_argIndex++))
+		{
+			ParseLast(bLast);
 			return;
+		}
 
 		CCommandLineInfo::ParseParam(pszParam, bFlag, bLast);
 	}
