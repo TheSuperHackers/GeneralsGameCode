@@ -1413,8 +1413,6 @@ char *nextParam(char *newSource, const char *seps)
 	return first;
 }
 
-static std::vector<Bool> s_startupParsedArguments;
-
 static void parseCommandLine(
 	const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
 {
@@ -1484,8 +1482,11 @@ static void parseCommandLine(
 
 bool CommandLine::isCommandLineArgumentParsedForStartup(int argIndex)
 {
-	return argIndex >= 0 && argIndex < static_cast<int>(s_startupParsedArguments.size())
-		&& s_startupParsedArguments[argIndex];
+	if (TheGlobalData == nullptr)
+		return false;
+
+	const BoolVector &parsedArguments = TheGlobalData->m_commandLineData.m_startupParsedArguments;
+	return argIndex >= 0 && argIndex < static_cast<int>(parsedArguments.size()) && parsedArguments[argIndex];
 }
 
 void createGlobalData()
@@ -1504,7 +1505,8 @@ void CommandLine::parseCommandLineForStartup()
 		return;
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
 
-	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup), &s_startupParsedArguments);
+	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup),
+		&TheWritableGlobalData->m_commandLineData.m_startupParsedArguments);
 
 	if (!s_cwdOptionSpecified)
 		rts::setCurrentDirectoryToExecutablePath();
