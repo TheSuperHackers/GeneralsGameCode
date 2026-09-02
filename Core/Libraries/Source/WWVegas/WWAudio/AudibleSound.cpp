@@ -1654,8 +1654,14 @@ AudibleSoundClass::Save (ChunkSaveClass &csave)
 			WRITE_MICRO_CHUNK_STRING (csave, VARID_FILENAME, m_Buffer->Get_Filename ());
 		}
 
+#if defined(_WIN64) || defined(__x86_64__)
+		// TheSuperHackers @fix MeneerHaas 02/09/2026 Write the 4-byte identity token the loader reads; see persistfactory.h.
+		uint32 this_ptr_token = (uint32)(uintptr_t)this;
+		WRITE_MICRO_CHUNK (csave, VARID_THIS_PTR, this_ptr_token);
+#else
 		AudibleSoundClass *this_ptr = this;
 		WRITE_MICRO_CHUNK (csave, VARID_THIS_PTR, this_ptr);
+#endif
 
 	csave.End_Chunk ();
 
@@ -1710,21 +1716,6 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 
 						READ_MICRO_CHUNK_WWSTRING (cload, VARID_FILENAME, filename);
 
-#if defined(_WIN64) || defined(__x86_64__)
-						case VARID_THIS_PTR:
-						{
-							// TheSuperHackers @fix MeneerHaas 02/09/2026 Read the identity at the width the chunk
-							// actually holds, as READ_MICRO_CHUNK_POINTER_TOKEN does; sizeof(old_ptr) is 8 on x64 and
-							// ChunkLoadClass::Read would then read nothing at all from a legacy 4-byte chunk.
-							uintptr_t old_ptr_token = 0;
-							uint32 token_length = cload.Cur_Micro_Chunk_Length ();
-							if (token_length > sizeof (old_ptr_token)) token_length = sizeof (old_ptr_token);
-							cload.Read (&old_ptr_token, token_length);
-							AudibleSoundClass *old_ptr = (AudibleSoundClass *)old_ptr_token;
-							SaveLoadSystemClass::Register_Pointer (old_ptr, this);
-						}
-						break;
-#else
 						case VARID_THIS_PTR:
 						{
 							// Read exactly what Save wrote: a fixed-width 4-byte
@@ -1741,7 +1732,6 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 							SaveLoadSystemClass::Register_Pointer (old_ptr, this);
 						}
 						break;
-#endif
 					}
 
 					cload.Close_Micro_Chunk ();

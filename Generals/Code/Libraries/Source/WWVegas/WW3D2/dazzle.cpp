@@ -1349,7 +1349,6 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	char dazzle_type[256];
 	dazzle_type[0] = 0;
 
-#if !defined(_WIN64) && !defined(__x86_64__)
 	// Read exactly what Save wrote: a fixed-width 4-byte identity token, not
 	// sizeof(old_obj). On x86-64 sizeof(DazzleRenderObjClass*) is 8, so
 	// reading sizeof(old_obj) here (as READ_MICRO_CHUNK would) would ask for
@@ -1357,7 +1356,6 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	// then refuses to read anything at all and old_obj stays null, silently
 	// poisoning SaveLoadSystemClass's pointer remap table. See persistfactory.h.
 	uint32 old_obj_token = 0;
-#endif
 
 	/*
 	** Load the dazzle parameters
@@ -1369,11 +1367,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 
 				while (cload.Open_Micro_Chunk()) {
 					switch(cload.Cur_Micro_Chunk_ID()) {
-#if defined(_WIN64) || defined(__x86_64__)
-						READ_MICRO_CHUNK_POINTER_TOKEN(cload,DAZZLEFACTORY_VARIABLE_OBJPOINTER,old_obj,DazzleRenderObjClass *)
-#else
 						case (DAZZLEFACTORY_VARIABLE_OBJPOINTER): cload.Read(&old_obj_token,sizeof(old_obj_token)); break;
-#endif
 						READ_MICRO_CHUNK(cload,DAZZLEFACTORY_VARIABLE_TRANSFORM,tm);
 						READ_MICRO_CHUNK_STRING(cload,DAZZLEFACTORY_VARIABLE_TYPENAME,dazzle_type,sizeof(dazzle_type));
 					}
@@ -1417,9 +1411,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	/*
 	** Register the old pointer for re-mapping to the new pointer
 	*/
-#if !defined(_WIN64) && !defined(__x86_64__)
 	old_obj = (DazzleRenderObjClass *)(uintptr_t)old_obj_token;
-#endif
 	SaveLoadSystemClass::Register_Pointer(old_obj,new_obj);
 	return new_obj;
 }
@@ -1432,7 +1424,13 @@ void DazzlePersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * obj)	
 	const Matrix3D& tm = robj->Get_Transform();
 
 	csave.Begin_Chunk(DAZZLEFACTORY_CHUNKID_VARIABLES);
+#if defined(_WIN64) || defined(__x86_64__)
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 Write the 4-byte identity token the loader reads; see persistfactory.h.
+	uint32 robj_token = (uint32)(uintptr_t)robj;
+	WRITE_MICRO_CHUNK(csave,DAZZLEFACTORY_VARIABLE_OBJPOINTER,robj_token);
+#else
 	WRITE_MICRO_CHUNK(csave,DAZZLEFACTORY_VARIABLE_OBJPOINTER,robj);
+#endif
 	WRITE_MICRO_CHUNK(csave,DAZZLEFACTORY_VARIABLE_TRANSFORM,tm);
 	WRITE_MICRO_CHUNK_STRING(csave,DAZZLEFACTORY_VARIABLE_TYPENAME,dazzle_type_name);
 
