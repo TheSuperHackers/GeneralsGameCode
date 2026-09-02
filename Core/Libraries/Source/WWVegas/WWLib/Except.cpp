@@ -58,6 +58,15 @@
 // BaseTypeCore.h's warning-as-error pragmas into a file that never had them.
 #include <Utility/stdint_adapter.h>
 #include "Lib/arch_context.h"
+
+// TheSuperHackers @fix MeneerHaas 02/09/2026 StackWalk64 requires a ContextRecord on AMD64 (it is optional on x86) and
+// updates it while unwinding, so the walker below seeds a mutable local walk_ctx and passes it
+// through this macro. On 32-bit it expands to the retail nullptr, leaving that arm unchanged.
+#if defined(_WIN64) || defined(__x86_64__)
+#define RTS_STACKWALK_CONTEXT (&walk_ctx)
+#else
+#define RTS_STACKWALK_CONTEXT nullptr
+#endif
 //#include "debug.h"
 #include "MPU.h"
 //#include "commando\nat.h"
@@ -1532,13 +1541,26 @@ here:
 		stack_frame.AddrFrame.Offset = CTX_FRAME(*context);
 	}
 
+#if defined(_WIN64) || defined(__x86_64__)
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 Walk a mutable copy seeded from the frame this walk
+	// starts at -- StackWalk64 updates it, so never hand it the caller's context.
+	CONTEXT walk_ctx;
+	if (context)
+		walk_ctx = *context;
+	else
+		RtlCaptureContext(&walk_ctx);
+	CTX_PC(walk_ctx) = stack_frame.AddrPC.Offset;
+	CTX_STACK(walk_ctx) = stack_frame.AddrStack.Offset;
+	CTX_FRAME(walk_ctx) = stack_frame.AddrFrame.Offset;
+#endif
+
 	int pointer_index = 0;
 
 	/*
 	** Walk the stack by the requested number of return address iterations.
 	*/
 	for (int i = 0; i < num_addresses + 1; i++) {
-		if (_StackWalk(CTX_STACKWALK_MACHINE, GetCurrentProcess(), GetCurrentThread(), &stack_frame, nullptr, nullptr, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
+		if (_StackWalk(CTX_STACKWALK_MACHINE, GetCurrentProcess(), GetCurrentThread(), &stack_frame, RTS_STACKWALK_CONTEXT, nullptr, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
 
 			/*
 			** First result will always be the return address we were called from.

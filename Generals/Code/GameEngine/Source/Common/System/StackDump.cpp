@@ -37,6 +37,15 @@
 #include <Utility/stdint_adapter.h>
 #include "Lib/arch_context.h"
 
+// TheSuperHackers @fix MeneerHaas 02/09/2026 StackWalk64 requires a ContextRecord on AMD64 (it is optional on x86) and
+// updates it while unwinding, so the walkers below seed a mutable local walk_ctx and pass it
+// through this macro. On 32-bit it expands to the retail nullptr, leaving that arm unchanged.
+#if defined(_WIN64) || defined(__x86_64__)
+#define RTS_STACKWALK_CONTEXT (&walk_ctx)
+#else
+#define RTS_STACKWALK_CONTEXT nullptr
+#endif
+
 //*****************************************************************************
 //	Prototypes
 //*****************************************************************************
@@ -217,6 +226,14 @@ stack_frame.AddrStack.Mode = AddrModeFlat;
 stack_frame.AddrStack.Offset = myesp;
 stack_frame.AddrFrame.Mode = AddrModeFlat;
 stack_frame.AddrFrame.Offset = myebp;
+#if defined(_WIN64) || defined(__x86_64__)
+// TheSuperHackers @fix MeneerHaas 02/09/2026 Seed the walk context from the frame this walk actually starts at.
+CONTEXT walk_ctx;
+RtlCaptureContext(&walk_ctx);
+CTX_PC(walk_ctx) = myeip;
+CTX_STACK(walk_ctx) = myesp;
+CTX_FRAME(walk_ctx) = myebp;
+#endif
 {
 /*
     if(GetThreadContext(thread, &gsContext))
@@ -237,11 +254,11 @@ stack_frame.AddrFrame.Offset = myebp;
 			unsigned int skip = skipFrames;
 			while (b_ret&&skip)
 			{
-					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelpLoader::stackWalk(      CTX_STACKWALK_MACHINE,
 											process,
 											thread,
 											&stack_frame,
-											nullptr, //&gsContext,
+											RTS_STACKWALK_CONTEXT, //&gsContext,
 											nullptr,
 											DbgHelpLoader::symFunctionTableAccess,
 											DbgHelpLoader::symGetModuleBase,
@@ -253,11 +270,11 @@ stack_frame.AddrFrame.Offset = myebp;
 			while(b_ret&&skip)
 			{
 
-					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelpLoader::stackWalk(      CTX_STACKWALK_MACHINE,
 											process,
 											thread,
 											&stack_frame,
-											nullptr, //&gsContext,
+											RTS_STACKWALK_CONTEXT, //&gsContext,
 											nullptr,
 											DbgHelpLoader::symFunctionTableAccess,
 											DbgHelpLoader::symGetModuleBase,
@@ -417,6 +434,14 @@ stack_frame.AddrStack.Offset = myesp;
 stack_frame.AddrFrame.Mode = AddrModeFlat;
 stack_frame.AddrFrame.Offset = myebp;
 
+#if defined(_WIN64) || defined(__x86_64__)
+// TheSuperHackers @fix MeneerHaas 02/09/2026 Seed the walk context from the frame this walk actually starts at.
+CONTEXT walk_ctx;
+RtlCaptureContext(&walk_ctx);
+CTX_PC(walk_ctx) = myeip;
+CTX_STACK(walk_ctx) = myesp;
+CTX_FRAME(walk_ctx) = myebp;
+#endif
 {
 /*
     if(GetThreadContext(thread, &gsContext))
@@ -436,11 +461,11 @@ stack_frame.AddrFrame.Offset = myebp;
 		// Skip some?
 		while (stillgoing&&skip)
 		{
-			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelpLoader::stackWalk(CTX_STACKWALK_MACHINE,
 								process,
 								thread,
 								&stack_frame,
-								nullptr,	//&gsContext,
+								RTS_STACKWALK_CONTEXT,	//&gsContext,
 								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
@@ -450,11 +475,11 @@ stack_frame.AddrFrame.Offset = myebp;
 
 		while(stillgoing&&count)
 		{
-			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelpLoader::stackWalk(CTX_STACKWALK_MACHINE,
 								process,
 								thread,
 								&stack_frame,
-								nullptr, //&gsContext,
+								RTS_STACKWALK_CONTEXT, //&gsContext,
 								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,

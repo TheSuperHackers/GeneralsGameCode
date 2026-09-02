@@ -38,6 +38,15 @@
 #include <Utility/stdint_adapter.h>
 #include "Lib/arch_context.h"
 
+// TheSuperHackers @fix MeneerHaas 02/09/2026 StackWalk64 requires a ContextRecord on AMD64 (it is optional on x86) and
+// updates it while unwinding, so the walker below seeds a mutable local walk_ctx and passes it
+// through this macro. On 32-bit it expands to the retail nullptr, leaving that arm unchanged.
+#if defined(_WIN64) || defined(__x86_64__)
+#define RTS_STACKWALK_CONTEXT (&walk_ctx)
+#else
+#define RTS_STACKWALK_CONTEXT nullptr
+#endif
+
 // imagehlp.h (via dbghelp.h's psdk_inc/_dbg_common.h) #defines StackWalk to
 // StackWalk64 on 64-bit builds, because _IMAGEHLP64 is set whenever _WIN64
 // is defined. DebugStackwalk::StackWalk below is our own class method, not
@@ -514,11 +523,24 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 	  stackFrame.AddrFrame.Offset = reg_ebp;
   }
 
+#if defined(_WIN64) || defined(__x86_64__)
+  // TheSuperHackers @fix MeneerHaas 02/09/2026 Walk a mutable copy seeded from the frame this walk
+  // starts at -- StackWalk64 updates it, so never hand it the caller's context.
+  CONTEXT walk_ctx;
+  if (ctx)
+  	walk_ctx = *ctx;
+  else
+  	RtlCaptureContext(&walk_ctx);
+  CTX_PC(walk_ctx) = stackFrame.AddrPC.Offset;
+  CTX_STACK(walk_ctx) = stackFrame.AddrStack.Offset;
+  CTX_FRAME(walk_ctx) = stackFrame.AddrFrame.Offset;
+#endif
+
 	// Walk the stack by the requested number of return address iterations.
   bool skipFirst=!ctx;
   while (sig.m_numAddr<Signature::MAX_ADDR&&
 		     gDbg._StackWalk(CTX_STACKWALK_MACHINE,GetCurrentProcess(),GetCurrentThread(),
-                         &stackFrame,nullptr,nullptr,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,nullptr))
+                         &stackFrame,RTS_STACKWALK_CONTEXT,nullptr,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,nullptr))
   {
     if (skipFirst)
       skipFirst=false;
