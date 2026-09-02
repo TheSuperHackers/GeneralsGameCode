@@ -464,27 +464,32 @@ Int parseJobs(char *args[], int num)
 	return 1;
 }
 
-// Set when -cwd is present so parseCommandLineForStartup does not force the executable directory.
+// Set when a working-directory option is present so parseCommandLineForStartup
+// does not force the executable directory after parsing.
 static Bool s_cwdOptionSpecified = FALSE;
 
-Int parseCwd(char *[], int)
+Int parseUseCwd(char *[], int)
 {
 	// TheSuperHackers @feature 14/08/2026
-	// -cwd keeps the OS working directory.
+	// -useCwd keeps the OS working directory.
 	s_cwdOptionSpecified = TRUE;
 	return 1;
 }
 
-Int parseCwdOverride(char *args[], int)
+Int parseSetCwd(char *args[], int num)
 {
 	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
-	// -cwd=<path> overrides the working directory. Keeping the path in the same
-	// token prevents -cwd from consuming a positional file argument.
+	// -setCwd <path> overrides the working directory. The separate -useCwd
+	// option keeps the no-argument behavior unambiguous.
 	s_cwdOptionSpecified = TRUE;
-	const char *path = args[0] + strlen("-cwd=");
-	if (!rts::setCurrentDirectoryToPath(path))
+	if (num <= 1 || args[1] == nullptr)
+	{
 		rts::setCurrentDirectoryToExecutablePath();
-	return 1;
+		return 1;
+	}
+	if (!rts::setCurrentDirectoryToPath(args[1]))
+		rts::setCurrentDirectoryToExecutablePath();
+	return 2;
 }
 
 Int parseXRes(char *args[], int num)
@@ -1168,9 +1173,9 @@ static CommandLineParam paramsForStartup[] =
 
 	// TheSuperHackers @feature 14/08/2026
 	// Use the current working directory as provided by the OS, or an explicit path.
-	// Without this flag the working directory is forced to the executable directory.
-	{ "-cwd=", parseCwdOverride },
-	{ "-cwd", parseCwd },
+	// Without either flag the working directory is forced to the executable directory.
+	{ "-setCwd", parseSetCwd },
+	{ "-useCwd", parseUseCwd },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
@@ -1433,8 +1438,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 		{
 			int len = strlen(params[param].name);
 			int len2 = strlen(argv[arg]);
-			const Bool matchPrefix = params[param].name[len - 1] == '=';
-			if ((!matchPrefix && len2 != len) || (matchPrefix && len2 < len))
+			if (len2 != len)
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
@@ -1450,15 +1454,19 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	}
 }
 
-bool CommandLine::isStartupWorkingDirectoryOption(const char *arg)
+int CommandLine::getStartupWorkingDirectoryOptionTokenCount(const char *arg)
 {
 	if (arg == nullptr)
-		return false;
+		return 0;
 
 	if (arg[0] == '-' || arg[0] == '/')
 		++arg;
 
-	return stricmp(arg, "cwd") == 0 || strnicmp(arg, "cwd=", 4) == 0;
+	if (stricmp(arg, "useCwd") == 0)
+		return 1;
+	if (stricmp(arg, "setCwd") == 0)
+		return 2;
+	return 0;
 }
 
 void createGlobalData()

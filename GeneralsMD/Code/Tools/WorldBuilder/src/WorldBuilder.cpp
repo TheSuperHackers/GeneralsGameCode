@@ -153,18 +153,34 @@ FileClass * WB_W3DFileSystem::Get_File( char const *filename )
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Skip the single-token -cwd and -cwd=<path> options during MFC shell processing.
+// MFC parses the command line again to select a document to open. Remove the
+// startup-only options so it does not mistake the -setCwd path for a map.
 
 class WBCommandLineInfo : public CCommandLineInfo
 {
 public:
+	WBCommandLineInfo() : m_skipCwdPath(FALSE) {}
+
 	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
-		if (bFlag && CommandLine::isStartupWorkingDirectoryOption(pszParam))
+		if (m_skipCwdPath)
+		{
+			m_skipCwdPath = FALSE;
 			return;
+		}
+
+		const int cwdTokenCount = bFlag ? CommandLine::getStartupWorkingDirectoryOptionTokenCount(pszParam) : 0;
+		if (cwdTokenCount > 0)
+		{
+			m_skipCwdPath = cwdTokenCount > 1;
+			return;
+		}
 
 		CCommandLineInfo::ParseParam(pszParam, bFlag, bLast);
 	}
+
+private:
+	BOOL m_skipCwdPath;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -341,6 +357,7 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	INI ini;
 
+	DEBUG_ASSERTCRASH(TheWritableGlobalData, ("TheWritableGlobalData expected to be created"));
 	initSubsystem(TheWritableGlobalData, TheWritableGlobalData, "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 
 	TheFramePacer = new FramePacer();

@@ -32,10 +32,10 @@ class CommandLine
 {
 public:
 
-	// Parses startup flags and applies the process working directory (-cwd).
+	// Parses startup flags and applies the process working directory.
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
 
-	// Returns true for the single-token -cwd and -cwd=<path> startup options.
-	static bool isStartupWorkingDirectoryOption(const char *arg);
+	// Returns the number of tokens consumed by -useCwd or -setCwd <path>, or 0.
+	static int getStartupWorkingDirectoryOptionTokenCount(const char *arg);
 };
