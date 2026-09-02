@@ -24,5 +24,5 @@
 // desired for animations that teleport meshes from one location to another, such as blinking lights.
 // @todo Implement a new flag per animation file to opt-out of interpolation.
 #ifndef WW3D_ENABLE_RAW_ANIM_INTERPOLATION
-#define WW3D_ENABLE_RAW_ANIM_INTERPOLATION (1)
+	#define WW3D_ENABLE_RAW_ANIM_INTERPOLATION (1)
 #endif

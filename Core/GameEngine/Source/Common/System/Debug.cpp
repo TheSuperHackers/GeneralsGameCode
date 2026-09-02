@@ -43,8 +43,7 @@
 // ----------------------------------------------------------------------------
 
 // SYSTEM INCLUDES
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES
 
@@ -52,11 +51,11 @@
 // Uncomment this to show normal logging stuff in the crc logging.
 // This can be helpful for context, but can also clutter diffs because normal logs aren't necessarily
 // deterministic or the same on all peers in multiplayer games.
-//#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
+// #define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
-#include "Common/CriticalSection.h"
+	#include "Common/CriticalSection.h"
 #endif
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
@@ -70,15 +69,14 @@
 	#include "Common/StackDump.h"
 #endif
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "Common/MiniDumper.h"
+	#include "Common/MiniDumper.h"
 #endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
-extern const char *gAppPrefix; /// So WB can have a different log file name.
-
+extern const char* gAppPrefix;    /// So WB can have a different log file name.
 
 // ----------------------------------------------------------------------------
 // DEFINES
@@ -86,13 +84,13 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(RTS_DEBUG)
-	#define DEBUG_FILE_NAME				"DebugLogFileD"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
-#else
-	#define DEBUG_FILE_NAME				"DebugLogFile"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev"
-#endif
+	#if defined(RTS_DEBUG)
+		#define DEBUG_FILE_NAME "DebugLogFileD"
+		#define DEBUG_FILE_NAME_PREV "DebugLogFilePrevD"
+	#else
+		#define DEBUG_FILE_NAME "DebugLogFile"
+		#define DEBUG_FILE_NAME_PREV "DebugLogFilePrev"
+	#endif
 
 #endif
 
@@ -106,12 +104,12 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 // TheSuperHackers @info Must not use static RAII types when set in DebugInit,
 // because DebugInit can be called during static module initialization before the main function is called.
 #ifdef DEBUG_LOGGING
-static FILE *theLogFile = nullptr;
-static char theLogFileName[ _MAX_PATH ];
-static char theLogFileNamePrev[ _MAX_PATH ];
+static FILE* theLogFile = nullptr;
+static char theLogFileName[_MAX_PATH];
+static char theLogFileNamePrev[_MAX_PATH];
 #endif
-#define LARGE_BUFFER	8192
-static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
+#define LARGE_BUFFER 8192
+static char theBuffer[LARGE_BUFFER];    // make it big to avoid weird overflow bugs in debug mode
 static int theDebugFlags = 0;
 static DWORD theMainThreadID = 0;
 // ----------------------------------------------------------------------------
@@ -121,7 +119,7 @@ static DWORD theMainThreadID = 0;
 char* TheCurrentIgnoreCrashPtr = nullptr;
 #ifdef DEBUG_LOGGING
 UnsignedInt DebugLevelMask = 0;
-const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
+const char* TheDebugLevels[DEBUG_LEVEL_MAX] = {
 	"NET"
 };
 #endif
@@ -129,17 +127,17 @@ const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
 // ----------------------------------------------------------------------------
 // PRIVATE PROTOTYPES
 // ----------------------------------------------------------------------------
-static const char *getCurrentTimeString();
-static const char *getCurrentTickString();
-static void prepBuffer(char *buffer);
+static const char* getCurrentTimeString();
+static const char* getCurrentTickString();
+static void prepBuffer(char* buffer);
 #ifdef DEBUG_LOGGING
-static void doLogOutput(const char *buffer);
-static void doLogOutput(const char *buffer, const char *endline);
+static void doLogOutput(const char* buffer);
+static void doLogOutput(const char* buffer, const char* endline);
 #endif
 #ifdef DEBUG_CRASHING
-static int doCrashBox(const char *buffer, Bool logResult);
+static int doCrashBox(const char* buffer, Bool logResult);
 #endif
-static void whackFunnyCharacters(char *buf);
+static void whackFunnyCharacters(char* buf);
 #ifdef DEBUG_STACKTRACE
 static void doStackDump();
 #endif
@@ -152,12 +150,18 @@ static void doStackDump();
 inline Bool ignoringAsserts()
 {
 	if (!DX8Wrapper_IsWindowed)
+	{
 		return true;
+	}
 	if (TheGlobalData && TheGlobalData->m_headless)
+	{
 		return true;
+	}
 #ifdef DEBUG_CRASHING
 	if (TheGlobalData && TheGlobalData->m_debugIgnoreAsserts)
+	{
 		return true;
+	}
 #endif
 
 	return false;
@@ -166,12 +170,12 @@ inline Bool ignoringAsserts()
 // ----------------------------------------------------------------------------
 inline HWND getThreadHWND()
 {
-	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:nullptr;
+	return (theMainThreadID == GetCurrentThreadId()) ? ApplicationHWnd : nullptr;
 }
 
 // ----------------------------------------------------------------------------
 
-int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
+int MessageBoxWrapper(LPCSTR lpText, LPCSTR lpCaption, UINT uType)
 {
 	HWND threadHWND = getThreadHWND();
 	return ::MessageBox(threadHWND, lpText, lpCaption, uType);
@@ -180,24 +184,24 @@ int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
 // ----------------------------------------------------------------------------
 // getCurrentTimeString
 /**
-	Return the current time in string form
+  Return the current time in string form
 */
 // ----------------------------------------------------------------------------
-static const char *getCurrentTimeString()
+static const char* getCurrentTimeString()
 {
 	time_t aclock;
 	time(&aclock);
-	struct tm *newtime = localtime(&aclock);
+	struct tm* newtime = localtime(&aclock);
 	return asctime(newtime);
 }
 
 // ----------------------------------------------------------------------------
 // getCurrentTickString
 /**
-	Return the current TickCount in string form
+  Return the current TickCount in string form
 */
 // ----------------------------------------------------------------------------
-static const char *getCurrentTickString()
+static const char* getCurrentTickString()
 {
 	static char TheTickString[32];
 	snprintf(TheTickString, ARRAY_SIZE(TheTickString), "(T=%08lx)", ::GetTickCount());
@@ -209,10 +213,10 @@ static const char *getCurrentTickString()
 // zap the buffer and optionally prepend the tick time.
 // ----------------------------------------------------------------------------
 /**
-	Empty the buffer passed in, then optionally prepend the current TickCount
-	value in string form, depending on the setting of theDebugFlags.
+  Empty the buffer passed in, then optionally prepend the current TickCount
+  value in string form, depending on the setting of theDebugFlags.
 */
-static void prepBuffer(char *buffer)
+static void prepBuffer(char* buffer)
 {
 	buffer[0] = 0;
 #ifdef ALLOW_DEBUG_UTILS
@@ -227,16 +231,16 @@ static void prepBuffer(char *buffer)
 // ----------------------------------------------------------------------------
 // doLogOutput
 /**
-	send a string directly to the log file and/or console without further processing.
+  send a string directly to the log file and/or console without further processing.
 */
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_LOGGING
-static void doLogOutput(const char *buffer)
+static void doLogOutput(const char* buffer)
 {
-		doLogOutput(buffer, "\n");
+	doLogOutput(buffer, "\n");
 }
 
-static void doLogOutput(const char *buffer, const char *endline)
+static void doLogOutput(const char* buffer, const char* endline)
 {
 	// log message to file
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_FILE)
@@ -255,53 +259,62 @@ static void doLogOutput(const char *buffer, const char *endline)
 		::OutputDebugString(endline);
 	}
 
-#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
+	#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
 	addCRCDebugLineNoCounter("%s%s", buffer, endline);
-#endif
+	#endif
 }
-#endif // DEBUG_LOGGING
+#endif    // DEBUG_LOGGING
 
 // ----------------------------------------------------------------------------
 // doCrashBox
 /*
-	present a messagebox with the given message. Depending on user selection,
-	we exit the app, break into debugger, or continue execution.
+  present a messagebox with the given message. Depending on user selection,
+  we exit the app, break into debugger, or continue execution.
 */
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_CRASHING
-static int doCrashBox(const char *buffer, Bool logResult)
+static int doCrashBox(const char* buffer, Bool logResult)
 {
 	int result;
 
-	if (!ignoringAsserts()) {
-		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
-		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
-	}	else {
+	if (!ignoringAsserts())
+	{
+		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE | MB_TASKMODAL | MB_ICONWARNING | MB_DEFBUTTON3);
+		// result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
+	}
+	else
+	{
 		result = IDIGNORE;
 	}
 
-	switch(result)
+	switch (result)
 	{
 		case IDABORT:
-#ifdef DEBUG_LOGGING
+	#ifdef DEBUG_LOGGING
 			if (logResult)
+			{
 				DebugLog("[Abort]");
-#endif
+			}
+	#endif
 			_exit(1);
 			break;
 		case IDRETRY:
-#ifdef DEBUG_LOGGING
+	#ifdef DEBUG_LOGGING
 			if (logResult)
+			{
 				DebugLog("[Retry]");
-#endif
+			}
+	#endif
 			::DebugBreak();
 			break;
 		case IDIGNORE:
-#ifdef DEBUG_LOGGING
+	#ifdef DEBUG_LOGGING
 			// do nothing, just keep going
 			if (logResult)
+			{
 				DebugLog("[Ignore]");
-#endif
+			}
+	#endif
 			break;
 	}
 	return result;
@@ -311,11 +324,11 @@ static int doCrashBox(const char *buffer, Bool logResult)
 #ifdef DEBUG_STACKTRACE
 // ----------------------------------------------------------------------------
 /**
-	Dumps a stack trace (from the current PC) to logfile and/or console.
+  Dumps a stack trace (from the current PC) to logfile and/or console.
 */
 static void doStackDump()
 {
-	const int STACKTRACE_SIZE	= 24;
+	const int STACKTRACE_SIZE = 24;
 	const int STACKTRACE_SKIP = 2;
 	void* stacktrace[STACKTRACE_SIZE];
 
@@ -328,17 +341,19 @@ static void doStackDump()
 // ----------------------------------------------------------------------------
 // whackFunnyCharacters
 /**
-	Eliminates any undesirable nonprinting characters, aside from newline,
-	replacing them with spaces.
+  Eliminates any undesirable nonprinting characters, aside from newline,
+  replacing them with spaces.
 */
 // ----------------------------------------------------------------------------
-static void whackFunnyCharacters(char *buf)
+static void whackFunnyCharacters(char* buf)
 {
-	for (char *p = buf + strlen(buf) - 1; p >= buf; --p)
+	for (char* p = buf + strlen(buf) - 1; p >= buf; --p)
 	{
 		// ok, these are naughty magic numbers, but I'm guessing you know ASCII....
 		if (*p >= 0 && *p < 32 && *p != 10 && *p != 13)
+		{
 			*p = 32;
+		}
 	}
 }
 
@@ -351,14 +366,14 @@ static void whackFunnyCharacters(char *buf)
 // ----------------------------------------------------------------------------
 #ifdef ALLOW_DEBUG_UTILS
 /**
-	Initialize the debug utilities. This should be called once, as near to the
-	start of the app as possible, before anything else (since other code will
-	probably want to make use of it).
+  Initialize the debug utilities. This should be called once, as near to the
+  start of the app as possible, before anything else (since other code will
+  probably want to make use of it).
 */
 void DebugInit(int flags)
 {
-//	if (theDebugFlags != 0)
-//		::MessageBox(nullptr, "Debug already inited", "", MB_OK|MB_APPLMODAL);
+	//	if (theDebugFlags != 0)
+	//		::MessageBox(nullptr, "Debug already inited", "", MB_OK|MB_APPLMODAL);
 
 	// just quietly allow multiple calls to this, so that static ctors can call it.
 	if (theDebugFlags == 0)
@@ -374,11 +389,13 @@ void DebugInit(int flags)
 		CommandLine::parseCommandLineForStartup();
 
 		if (!rts::ClientInstance::initialize())
+		{
 			return;
+		}
 
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
-		if (char *pEnd = strrchr(dirbuf, '\\'))
+		char dirbuf[_MAX_PATH];
+		::GetModuleFileName(nullptr, dirbuf, sizeof(dirbuf));
+		if (char* pEnd = strrchr(dirbuf, '\\'))
 		{
 			*(pEnd + 1) = 0;
 		}
@@ -408,14 +425,14 @@ void DebugInit(int flags)
 		remove(theLogFileNamePrev);
 		if (rename(theLogFileName, theLogFileNamePrev) != 0)
 		{
-#ifdef DEBUG_LOGGING
+		#ifdef DEBUG_LOGGING
 			DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", theLogFileName, theLogFileNamePrev);
-#endif
+		#endif
 			if (remove(theLogFileName) != 0)
 			{
-#ifdef DEBUG_LOGGING
+		#ifdef DEBUG_LOGGING
 				DebugLog("Warning: Failed to remove file '%s'", theLogFileName);
-#endif
+		#endif
 			}
 		}
 
@@ -426,7 +443,6 @@ void DebugInit(int flags)
 		}
 	#endif
 	}
-
 }
 #endif
 
@@ -435,16 +451,18 @@ void DebugInit(int flags)
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_LOGGING
 /**
-	Print a string to the log file and/or console.
+  Print a string to the log file and/or console.
 */
-void DebugLog(const char *format, ...)
+void DebugLog(const char* format, ...)
 {
-#ifdef DEBUG_THREADSAFE
+	#ifdef DEBUG_THREADSAFE
 	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
-#endif
+	#endif
 
 	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+	{
+		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK | MB_TASKMODAL);
+	}
 
 	prepBuffer(theBuffer);
 
@@ -455,23 +473,27 @@ void DebugLog(const char *format, ...)
 	va_end(args);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
-		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
+	{
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK | MB_TASKMODAL);
+	}
 
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
 }
 
 /**
-	Print a string with no modifications to the log file and/or console.
+  Print a string with no modifications to the log file and/or console.
 */
-void DebugLogRaw(const char *format, ...)
+void DebugLogRaw(const char* format, ...)
 {
-#ifdef DEBUG_THREADSAFE
+	#ifdef DEBUG_THREADSAFE
 	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
-#endif
+	#endif
 
 	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLogRaw - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+	{
+		MessageBoxWrapper("DebugLogRaw - Debug not inited properly", "", MB_OK | MB_TASKMODAL);
+	}
 
 	theBuffer[0] = 0;
 
@@ -481,7 +503,9 @@ void DebugLogRaw(const char *format, ...)
 	va_end(args);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
-		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
+	{
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK | MB_TASKMODAL);
+	}
 
 	doLogOutput(theBuffer, "");
 }
@@ -503,27 +527,27 @@ const char* DebugGetLogFileNamePrev()
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_CRASHING
 /**
-	Print a character string to the log file and/or console, then halt execution
-	while presenting the user with an exit/debug/ignore dialog containing the same
-	text message.
+  Print a character string to the log file and/or console, then halt execution
+  while presenting the user with an exit/debug/ignore dialog containing the same
+  text message.
 
-	TheSuperHackers @tweak Now shows a message box without any logging when debug was not yet initialized.
+  TheSuperHackers @tweak Now shows a message box without any logging when debug was not yet initialized.
 */
-void DebugCrash(const char *format, ...)
+void DebugCrash(const char* format, ...)
 {
 	// Note: You might want to make this thread safe, but we cannot. The reason is that
 	// there is an implicit requirement on other threads that the message loop be running.
 
 	// make it not static so that it'll be thread-safe.
 	// make it big to avoid weird overflow bugs in debug mode
-	char theCrashBuffer[ LARGE_BUFFER ];
+	char theCrashBuffer[LARGE_BUFFER];
 
 	prepBuffer(theCrashBuffer);
 	strlcat(theCrashBuffer, "ASSERTION FAILURE: ", ARRAY_SIZE(theCrashBuffer));
 
 	va_list arg;
 	va_start(arg, format);
-	size_t offset =  strlen(theCrashBuffer);
+	size_t offset = strlen(theCrashBuffer);
 	vsnprintf(theCrashBuffer + offset, ARRAY_SIZE(theCrashBuffer) - offset, format, arg);
 	va_end(arg);
 
@@ -533,19 +557,19 @@ void DebugCrash(const char *format, ...)
 
 	if (useLogging)
 	{
-#ifdef DEBUG_LOGGING
+	#ifdef DEBUG_LOGGING
 		if (ignoringAsserts())
 		{
 			doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
 		}
 		doLogOutput(theCrashBuffer);
-#endif
-#ifdef DEBUG_STACKTRACE
+	#endif
+	#ifdef DEBUG_STACKTRACE
 		if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
 		{
 			doStackDump();
 		}
-#endif
+	#endif
 	}
 
 	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", ARRAY_SIZE(theCrashBuffer));
@@ -557,20 +581,25 @@ void DebugCrash(const char *format, ...)
 		int yn;
 		if (!ignoringAsserts())
 		{
-			yn = MessageBoxWrapper("Ignore this crash from now on?", "", MB_YESNO|MB_TASKMODAL);
+			yn = MessageBoxWrapper("Ignore this crash from now on?", "", MB_YESNO | MB_TASKMODAL);
 		}
 		else
 		{
 			yn = IDYES;
 		}
 		if (yn == IDYES)
+		{
 			*TheCurrentIgnoreCrashPtr = 1;
-		if( TheKeyboard )
+		}
+		if (TheKeyboard)
+		{
 			TheKeyboard->resetKeys();
-		if( TheMouse )
+		}
+		if (TheMouse)
+		{
 			TheMouse->reset();
+		}
 	}
-
 }
 #endif
 
@@ -579,20 +608,20 @@ void DebugCrash(const char *format, ...)
 // ----------------------------------------------------------------------------
 #ifdef ALLOW_DEBUG_UTILS
 /**
-	Shut down the debug utilities. This should be called once, as near to the
-	end of the app as possible, after everything else (since other code will
-	probably want to make use of it).
+  Shut down the debug utilities. This should be called once, as near to the
+  end of the app as possible, after everything else (since other code will
+  probably want to make use of it).
 */
 void DebugShutdown()
 {
-#ifdef DEBUG_LOGGING
+	#ifdef DEBUG_LOGGING
 	if (theLogFile)
 	{
 		DebugLog("Log closed: %s", getCurrentTimeString());
 		fclose(theLogFile);
 	}
 	theLogFile = nullptr;
-#endif
+	#endif
 	theDebugFlags = 0;
 }
 
@@ -600,9 +629,9 @@ void DebugShutdown()
 // DebugGetFlags
 // ----------------------------------------------------------------------------
 /**
-	Get the current values for the flags passed to DebugInit. Most code will never
-	need to use this; the most common usage would be to temporarily enable or disable
-	the DEBUG_FLAG_PREPEND_TIME bit for complex logfile messages.
+  Get the current values for the flags passed to DebugInit. Most code will never
+  need to use this; the most common usage would be to temporarily enable or disable
+  the DEBUG_FLAG_PREPEND_TIME bit for complex logfile messages.
 */
 int DebugGetFlags()
 {
@@ -613,16 +642,16 @@ int DebugGetFlags()
 // DebugSetFlags
 // ----------------------------------------------------------------------------
 /**
-	Set the current values for the flags passed to DebugInit. Most code will never
-	need to use this; the most common usage would be to temporarily enable or disable
-	the DEBUG_FLAG_PREPEND_TIME bit for complex logfile messages.
+  Set the current values for the flags passed to DebugInit. Most code will never
+  need to use this; the most common usage would be to temporarily enable or disable
+  the DEBUG_FLAG_PREPEND_TIME bit for complex logfile messages.
 */
 void DebugSetFlags(int flags)
 {
 	theDebugFlags = flags;
 }
 
-#endif	// ALLOW_DEBUG_UTILS
+#endif    // ALLOW_DEBUG_UTILS
 
 #ifdef DEBUG_PROFILE
 // ----------------------------------------------------------------------------
@@ -657,7 +686,7 @@ void SimpleProfiler::stop()
 }
 
 // ----------------------------------------------------------------------------
-void SimpleProfiler::stopAndLog(const char *msg, int howOftenToLog, int howOftenToResetAvg)
+void SimpleProfiler::stopAndLog(const char* msg, int howOftenToLog, int howOftenToResetAvg)
 {
 	stop();
 	// howOftenToResetAvg==0 means "never reset"
@@ -665,9 +694,9 @@ void SimpleProfiler::stopAndLog(const char *msg, int howOftenToLog, int howOften
 	{
 		m_numSessions = 0;
 		m_totalAllSessions = 0;
-		DEBUG_LOG(("%s: reset averages",msg));
+		DEBUG_LOG(("%s: reset averages", msg));
 	}
-	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec",msg,getTime(),getTotalTime(),getAverageTime()));
+	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec", msg, getTime(), getTotalTime(), getAverageTime()));
 }
 
 // ----------------------------------------------------------------------------
@@ -689,7 +718,9 @@ double SimpleProfiler::getTotalTime()
 {
 	stop();
 	if (!m_numSessions)
+	{
 		return 0.0;
+	}
 
 	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq);
 }
@@ -699,36 +730,37 @@ double SimpleProfiler::getAverageTime()
 {
 	stop();
 	if (!m_numSessions)
+	{
 		return 0.0;
+	}
 
 	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq * (double)m_numSessions);
 }
 
-#endif	// DEBUG_PROFILE
+#endif    // DEBUG_PROFILE
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
 // ----------------------------------------------------------------------------
 /**
-	Halt the application, EVEN IN FINAL RELEASE BUILDS. This should be called
-	only when a crash is guaranteed by continuing, and no meaningful continuation
-	of processing is possible, even by throwing an exception.
+  Halt the application, EVEN IN FINAL RELEASE BUILDS. This should be called
+  only when a crash is guaranteed by continuing, and no meaningful continuation
+  of processing is possible, even by throwing an exception.
 */
 
-	#define RELEASECRASH_FILE_NAME				"ReleaseCrashInfo.txt"
-	#define RELEASECRASH_FILE_NAME_PREV		"ReleaseCrashInfoPrev.txt"
+#define RELEASECRASH_FILE_NAME "ReleaseCrashInfo.txt"
+#define RELEASECRASH_FILE_NAME_PREV "ReleaseCrashInfoPrev.txt"
 
-	static FILE *theReleaseCrashLogFile = nullptr;
+static FILE* theReleaseCrashLogFile = nullptr;
 
-	static void releaseCrashLogOutput(const char *buffer)
+static void releaseCrashLogOutput(const char* buffer)
+{
+	if (theReleaseCrashLogFile)
 	{
-		if (theReleaseCrashLogFile)
-		{
-			fprintf(theReleaseCrashLogFile, "%s\n", buffer);
-			fflush(theReleaseCrashLogFile);
-		}
+		fprintf(theReleaseCrashLogFile, "%s\n", buffer);
+		fflush(theReleaseCrashLogFile);
 	}
-
+}
 
 static void TriggerMiniDump()
 {
@@ -744,24 +776,26 @@ static void TriggerMiniDump()
 #endif
 }
 
-
-void ReleaseCrash(const char *reason)
+void ReleaseCrash(const char* reason)
 {
 	/// do additional reporting on the crash, if possible
 
-	if (!DX8Wrapper_IsWindowed) {
-		if (ApplicationHWnd) {
+	if (!DX8Wrapper_IsWindowed)
+	{
+		if (ApplicationHWnd)
+		{
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
 
 	TriggerMiniDump();
 
-	char prevbuf[ _MAX_PATH ];
-	char curbuf[ _MAX_PATH ];
+	char prevbuf[_MAX_PATH];
+	char curbuf[_MAX_PATH];
 
-	if (TheGlobalData==nullptr) {
-		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
+	if (TheGlobalData == nullptr)
+	{
+		return;    // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
 	}
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
@@ -769,7 +803,7 @@ void ReleaseCrash(const char *reason)
 	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
- 	remove(prevbuf);
+	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
 #ifdef DEBUG_LOGGING
@@ -788,7 +822,7 @@ void ReleaseCrash(const char *reason)
 	{
 		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %s\n", getCurrentTimeString(), reason);
 		fprintf(theReleaseCrashLogFile, "\nLast error:\n%s\n\nCurrent stack:\n", g_LastErrorDump.str());
-		const int STACKTRACE_SIZE	= 12;
+		const int STACKTRACE_SIZE = 12;
 		const int STACKTRACE_SKIP = 6;
 		void* stacktrace[STACKTRACE_SIZE];
 		::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
@@ -799,32 +833,33 @@ void ReleaseCrash(const char *reason)
 		theReleaseCrashLogFile = nullptr;
 	}
 
-	if (!DX8Wrapper_IsWindowed) {
-		if (ApplicationHWnd) {
+	if (!DX8Wrapper_IsWindowed)
+	{
+		if (ApplicationHWnd)
+		{
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
 
 #if defined(RTS_DEBUG)
-	/* static */ char buff[8192]; // not so static so we can be threadsafe
+	/* static */ char buff[8192];    // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	if (!(TheGlobalData && TheGlobalData->m_headless))
 	{
-		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}
 #else
-// crash error messaged changed 3/6/03 BGC
-//	::MessageBox(nullptr, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-//	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+	// crash error messaged changed 3/6/03 BGC
+	//	::MessageBox(nullptr, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+	//	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
-// crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
+	// crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
 	if (!(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
-			"Technical Difficulties...",
-			MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+		             "Technical Difficulties...",
+		             MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}
-
 
 #endif
 
@@ -833,7 +868,8 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
-	if (!TheGameText) {
+	if (!TheGameText)
+	{
 		ReleaseCrash(m.str());
 		// This won't ever return
 		return;
@@ -844,11 +880,12 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);
 
-
 	/// do additional reporting on the crash, if possible
 
-	if (!DX8Wrapper_IsWindowed) {
-		if (ApplicationHWnd) {
+	if (!DX8Wrapper_IsWindowed)
+	{
+		if (ApplicationHWnd)
+		{
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
@@ -858,15 +895,15 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}
 
-	char prevbuf[ _MAX_PATH ];
-	char curbuf[ _MAX_PATH ];
+	char prevbuf[_MAX_PATH];
+	char curbuf[_MAX_PATH];
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
 	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
- 	remove(prevbuf);
+	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
 #ifdef DEBUG_LOGGING
@@ -885,7 +922,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	{
 		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %ls\n", getCurrentTimeString(), mesg.str());
 
-		const int STACKTRACE_SIZE	= 12;
+		const int STACKTRACE_SIZE = 12;
 		const int STACKTRACE_SKIP = 6;
 		void* stacktrace[STACKTRACE_SIZE];
 		::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);

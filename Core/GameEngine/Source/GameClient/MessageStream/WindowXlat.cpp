@@ -46,7 +46,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/MessageStream.h"
@@ -55,7 +55,6 @@
 #include "GameClient/WindowXlat.h"
 #include "GameClient/Shell.h"
 #include "GameClient/Display.h"
-
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -71,19 +70,19 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)    // debug hack to view object under mouse stats
 extern ICoord2D TheMousePos;
 #endif
 
 // rawMouseToWindowMessage ====================================================
 /** Translate a raw mouse input event to a game window specific message
-	* for the window system */
+ * for the window system */
 //=============================================================================
-static GameWindowMessage rawMouseToWindowMessage( const GameMessage *msg )
+static GameWindowMessage rawMouseToWindowMessage(const GameMessage* msg)
 {
 	GameWindowMessage gwm = GWM_NONE;
 
-	switch( msg->getType() )
+	switch (msg->getType())
 	{
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
@@ -136,16 +135,18 @@ static GameWindowMessage rawMouseToWindowMessage( const GameMessage *msg )
 
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_WHEEL:
-			if( msg->getArgument( 1 )->real > 0 )
+			if (msg->getArgument(1)->real > 0)
+			{
 				gwm = GWM_WHEEL_UP;
+			}
 			else
+			{
 				gwm = GWM_WHEEL_DOWN;
+			}
 			break;
-
 	}
 
 	return gwm;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -164,9 +165,9 @@ WindowTranslator::~WindowTranslator()
 
 // WindowTranslator ===========================================================
 /** Window translator that monitors raw input messages on the stream and
-	* acts on anything relevant to the windowing system */
+ * acts on anything relevant to the windowing system */
 //=============================================================================
-GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage *msg)
+GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage* msg)
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	Bool forceKeepMessage = FALSE;
@@ -174,20 +175,20 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 	if (TheTacticalView && TheTacticalView->isMouseLocked())
 	{
-		//Kris: Aug 15, 2003
-		//Added the scrolling check that will not return KEEP_MESSAGE if we happen
-		//to in scrolling mode (via keyboard or mouse) and left click in the controlbar.
-		//Without this code, the left click goes through the interface ignoring buttons and blockage
-		//and ends up issuing orders right through the controlbar!
-		if( TheInGameUI->isScrolling() )
+		// Kris: Aug 15, 2003
+		// Added the scrolling check that will not return KEEP_MESSAGE if we happen
+		// to in scrolling mode (via keyboard or mouse) and left click in the controlbar.
+		// Without this code, the left click goes through the interface ignoring buttons and blockage
+		// and ends up issuing orders right through the controlbar!
+		if (TheInGameUI->isScrolling())
 		{
-			if( msg->getType() != GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP &&
-					msg->getType() != GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN )
+			if (msg->getType() != GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP &&
+			    msg->getType() != GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN)
 			{
-				//We're scrolling, but unless we're clicking the left button, get out.
+				// We're scrolling, but unless we're clicking the left button, get out.
 				return KEEP_MESSAGE;
 			}
-			//Pass through and handle button clicks or getting input blocked!
+			// Pass through and handle button clicks or getting input blocked!
 		}
 		else
 		{
@@ -195,7 +196,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		}
 	}
 
-	switch( msg->getType() )
+	switch (msg->getType())
 	{
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_ATTACKMOVE:
@@ -203,8 +204,10 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			// Basically, we're cheating here. The mouse no longer sends us useless spam.
 			ICoord2D mousePos = TheMouse->getMouseStatus()->pos;
 
-			if( TheWindowManager )
-				TheWindowManager->winProcessMouseEvent( GWM_NONE, &mousePos, nullptr );
+			if (TheWindowManager)
+			{
+				TheWindowManager->winProcessMouseEvent(GWM_NONE, &mousePos, nullptr);
+			}
 
 			// Force it to keep the message, regardless of what the window thinks it did with the input.
 			return KEEP_MESSAGE;
@@ -213,12 +216,12 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP:
 		{
-			if( TheInGameUI && TheInGameUI->isPlacementAnchored() )
+			if (TheInGameUI && TheInGameUI->isPlacementAnchored())
 			{
-				//If we release the button outside
+				// If we release the button outside
 				forceKeepMessage = TRUE;
 			}
-			FALLTHROUGH; //FALL THROUGH INTENTIONALLY!
+			FALLTHROUGH;    // FALL THROUGH INTENTIONALLY!
 		}
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
@@ -231,25 +234,30 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
 			// all window events have the position of the mouse as arg 0
-			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
-#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
+			ICoord2D mousePos = msg->getArgument(0)->pixel;
+#if defined(RTS_DEBUG)    // debug hack to view object under mouse stats
 			TheMousePos.x = mousePos.x;
 			TheMousePos.y = mousePos.y;
 #endif
 
 			// process the mouse event position
-			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
-			if( TheWindowManager )
-				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos, nullptr );
+			GameWindowMessage gwm = rawMouseToWindowMessage(msg);
+			if (TheWindowManager)
+			{
+				returnCode = TheWindowManager->winProcessMouseEvent(gwm, &mousePos, nullptr);
+			}
 
-			if( TheShell && TheShell->isShellActive() )
+			if (TheShell && TheShell->isShellActive())
+			{
 				returnCode = WIN_INPUT_USED;
+			}
 
-			if ( TheInGameUI && TheInGameUI->getInputEnabled() == FALSE )
+			if (TheInGameUI && TheInGameUI->getInputEnabled() == FALSE)
+			{
 				returnCode = WIN_INPUT_USED;
+			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -258,49 +266,59 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_DRAG:
 		{
 			// all window events have the position of the mouse as arg 0
-			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
+			ICoord2D mousePos = msg->getArgument(0)->pixel;
 
 			// get delta for drag
-			ICoord2D delta = msg->getArgument( 1 )->pixel;
+			ICoord2D delta = msg->getArgument(1)->pixel;
 
 			// process drag event
-			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
-			if( TheWindowManager )
-				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos, &delta );
+			GameWindowMessage gwm = rawMouseToWindowMessage(msg);
+			if (TheWindowManager)
+			{
+				returnCode = TheWindowManager->winProcessMouseEvent(gwm, &mousePos, &delta);
+			}
 
-			if( TheShell && TheShell->isShellActive() )
+			if (TheShell && TheShell->isShellActive())
+			{
 				returnCode = WIN_INPUT_USED;
+			}
 
-			if ( TheInGameUI && TheInGameUI->getInputEnabled() == FALSE )
+			if (TheInGameUI && TheInGameUI->getInputEnabled() == FALSE)
+			{
 				returnCode = WIN_INPUT_USED;
+			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_WHEEL:
 		{
 			// all window events have the position of the mouse as arg 0
-			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
+			ICoord2D mousePos = msg->getArgument(0)->pixel;
 
 			// get wheel position
-			Real wheelPos = msg->getArgument( 1 )->real;
+			Real wheelPos = msg->getArgument(1)->real;
 
 			// process wheel event
-			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
-			if( TheWindowManager )
-				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos,
-																														 &wheelPos );
+			GameWindowMessage gwm = rawMouseToWindowMessage(msg);
+			if (TheWindowManager)
+			{
+				returnCode = TheWindowManager->winProcessMouseEvent(gwm, &mousePos,
+				                                                    &wheelPos);
+			}
 
-			if( TheShell && TheShell->isShellActive() )
+			if (TheShell && TheShell->isShellActive())
+			{
 				returnCode = WIN_INPUT_USED;
+			}
 
-			if ( TheInGameUI && TheInGameUI->getInputEnabled() == FALSE )
+			if (TheInGameUI && TheInGameUI->getInputEnabled() == FALSE)
+			{
 				returnCode = WIN_INPUT_USED;
+			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -308,18 +326,17 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_RAW_KEY_UP:
 		{
 			// get key and state from args
-			UnsignedByte key		= msg->getArgument( 0 )->integer;
-			UnsignedByte state	= msg->getArgument( 1 )->integer;
+			UnsignedByte key = msg->getArgument(0)->integer;
+			UnsignedByte state = msg->getArgument(1)->integer;
 
 			// process event through window system
-			if( TheWindowManager )
-				returnCode = TheWindowManager->winProcessKey( key, state );
-
+			if (TheWindowManager)
+			{
+				returnCode = TheWindowManager->winProcessKey(key, state);
+			}
 
 			// If we're in a movie, we want to be able to escape out of it
-			if(returnCode != WIN_INPUT_USED
-				&& (key == KEY_ESC)
-				&& (BitIsSet( state, KEY_STATE_UP )) )
+			if (returnCode != WIN_INPUT_USED && (key == KEY_ESC) && (BitIsSet(state, KEY_STATE_UP)))
 			{
 				if (TheGameClient->skipCurrentIntroStage())
 				{
@@ -334,30 +351,25 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 			// TheSuperHackers @bugfix If the input is disabled, then only allow the ESC button to get through.
 			// Otherwise it would be possible to call user camera actions during scripted camera scenes.
-			if(returnCode != WIN_INPUT_USED
-				&& (key != KEY_ESC)
-				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
+			if (returnCode != WIN_INPUT_USED && (key != KEY_ESC) && (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)))
 			{
 				returnCode = WIN_INPUT_USED;
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		default:
 			break;
-
 	}
 
 	// remove event from the stream if the return code specifies to do so
 	// If TheShell doesn't exist, then well, we're not in RTS, we're in GUIEdit
-	if( returnCode == WIN_INPUT_USED && !forceKeepMessage )// || (TheShell && TheShell->isShellActive()))
+	if (returnCode == WIN_INPUT_USED && !forceKeepMessage)    // || (TheShell && TheShell->isShellActive()))
 	{
 		disp = DESTROY_MESSAGE;
 	}
 
 	return disp;
-
 }

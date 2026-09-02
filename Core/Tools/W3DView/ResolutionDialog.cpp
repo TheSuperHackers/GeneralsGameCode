@@ -28,14 +28,11 @@
 #include "Utils.h"
 #include "WW3D2/rddesc.h"
 
-
-
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -43,21 +40,19 @@ static char THIS_FILE[] = __FILE__;
 //
 /////////////////////////////////////////////////////////////////////////////
 ResolutionDialogClass::ResolutionDialogClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(ResolutionDialogClass::IDD, pParent)
+  : CDialog(ResolutionDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ResolutionDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // DoDataExchange
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ResolutionDialogClass::DoDataExchange (CDataExchange* pDX)
+void ResolutionDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ResolutionDialogClass)
@@ -65,92 +60,90 @@ ResolutionDialogClass::DoDataExchange (CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(ResolutionDialogClass, CDialog)
-	//{{AFX_MSG_MAP(ResolutionDialogClass)
-	ON_NOTIFY(NM_DBLCLK, IDC_RESOLUTION_LIST_CTRL, OnDblclkResolutionListCtrl)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ResolutionDialogClass)
+ON_NOTIFY(NM_DBLCLK, IDC_RESOLUTION_LIST_CTRL, OnDblclkResolutionListCtrl)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ResolutionDialogClass::OnInitDialog ()
+BOOL ResolutionDialogClass::OnInitDialog()
 {
-	CDialog::OnInitDialog ();
+	CDialog::OnInitDialog();
 
 	//
 	//	Configure the list control
 	//
-	m_ListCtrl.SetExtendedStyle (LVS_EX_FULLROWSELECT);
-	m_ListCtrl.InsertColumn (0, "Resolution");
-	m_ListCtrl.InsertColumn (1, "Bit Depth");
+	m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+	m_ListCtrl.InsertColumn(0, "Resolution");
+	m_ListCtrl.InsertColumn(1, "Bit Depth");
 
 	//
 	//	Size the columns
 	//
 	CRect rect;
-	m_ListCtrl.GetClientRect (&rect);
-	m_ListCtrl.SetColumnWidth (0, (rect.Width () >> 1) - 4);
-	m_ListCtrl.SetColumnWidth (1, (rect.Width () >> 1) - 4);
+	m_ListCtrl.GetClientRect(&rect);
+	m_ListCtrl.SetColumnWidth(0, (rect.Width() >> 1) - 4);
+	m_ListCtrl.SetColumnWidth(1, (rect.Width() >> 1) - 4);
 
 	//
 	//	Get information about the current render device
 	//
-	const RenderDeviceDescClass &device_info = WW3D::Get_Render_Device_Desc ();
-	const DynamicVectorClass<ResolutionDescClass> &res_list = device_info.Enumerate_Resolutions ();
+	const RenderDeviceDescClass& device_info = WW3D::Get_Render_Device_Desc();
+	const DynamicVectorClass<ResolutionDescClass>& res_list = device_info.Enumerate_Resolutions();
 
 	//
 	//	Get the current resolution
 	//
-	int curr_width			= 0;
-	int curr_height		= 0;
-	int curr_bpp			= 0;
-	bool curr_windowed	= false;
-	WW3D::Get_Device_Resolution (curr_width, curr_height, curr_bpp, curr_windowed);
-	SendDlgItemMessage (IDC_FULLSCREEN_CHECK, BM_SETCHECK, (WPARAM)(curr_windowed == false));
+	int curr_width = 0;
+	int curr_height = 0;
+	int curr_bpp = 0;
+	bool curr_windowed = false;
+	WW3D::Get_Device_Resolution(curr_width, curr_height, curr_bpp, curr_windowed);
+	SendDlgItemMessage(IDC_FULLSCREEN_CHECK, BM_SETCHECK, (WPARAM)(curr_windowed == false));
 
 	//
 	//	Loop over all the resolutions available to us
 	//
 	bool found = false;
-	int index = res_list.Count ();
-	while (index --) {
-
-		int width	= res_list[index].Width;
-		int height	= res_list[index].Height;
-		int bpp		= res_list[index].BitDepth;
+	int index = res_list.Count();
+	while (index--)
+	{
+		int width = res_list[index].Width;
+		int height = res_list[index].Height;
+		int bpp = res_list[index].BitDepth;
 
 		//
 		//	Format description strings for this resolution
 		//
 		CString resolution_string;
 		CString bit_depth_string;
-		resolution_string.Format ("%d x %d", width, height);
-		bit_depth_string.Format ("%d bpp (%d colors)", bpp, 1 << bpp);
+		resolution_string.Format("%d x %d", width, height);
+		bit_depth_string.Format("%d bpp (%d colors)", bpp, 1 << bpp);
 
 		//
 		//	Add this resolution to the list ctrl
 		//
-		int list_index = m_ListCtrl.InsertItem (0, resolution_string, 0);
-		if (list_index >= 0) {
-			m_ListCtrl.SetItemText (list_index, 1, bit_depth_string);
-			m_ListCtrl.SetItemData (list_index, index);
+		int list_index = m_ListCtrl.InsertItem(0, resolution_string, 0);
+		if (list_index >= 0)
+		{
+			m_ListCtrl.SetItemText(list_index, 1, bit_depth_string);
+			m_ListCtrl.SetItemData(list_index, index);
 
 			//
 			//	Is this the current resolution?  If so,
 			// select this entry as the default...
 			//
-			if (	found == false &&
-					curr_width == width &&
-					curr_height == height &&
-					curr_bpp == bpp)
+			if (found == false &&
+			    curr_width == width &&
+			    curr_height == height &&
+			    curr_bpp == bpp)
 			{
-				m_ListCtrl.SetItemState (list_index, LVIS_SELECTED, LVIS_SELECTED);
+				m_ListCtrl.SetItemState(list_index, LVIS_SELECTED, LVIS_SELECTED);
 				found = true;
 			}
 		}
@@ -159,77 +152,73 @@ ResolutionDialogClass::OnInitDialog ()
 	//
 	//	Select the first entry by default (if necessary)
 	//
-	if (found == false) {
-		m_ListCtrl.SetItemState (0, LVIS_SELECTED, LVIS_SELECTED);
+	if (found == false)
+	{
+		m_ListCtrl.SetItemState(0, LVIS_SELECTED, LVIS_SELECTED);
 	}
 
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnOK
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ResolutionDialogClass::OnOK ()
+void ResolutionDialogClass::OnOK()
 {
-	CDialog::OnOK ();
+	CDialog::OnOK();
 
 	//
 	//	Get the current selection
 	//
-	int list_index = m_ListCtrl.GetNextItem (-1, LVNI_ALL | LVNI_SELECTED);
-	if (list_index >= 0) {
-
+	int list_index = m_ListCtrl.GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
+	if (list_index >= 0)
+	{
 		//
 		//	Index into the resolution list for this device...
 		//
-		int index = m_ListCtrl.GetItemData (list_index);
-		if (index >= 0) {
-
+		int index = m_ListCtrl.GetItemData(list_index);
+		if (index >= 0)
+		{
 			//
 			//	Lookup the selected resolution information
 			//
-			const RenderDeviceDescClass &device_info = WW3D::Get_Render_Device_Desc ();
-			const DynamicVectorClass<ResolutionDescClass> &res_list = device_info.Enumerate_Resolutions ();
-			g_iWidth				= res_list[index].Width;
-			g_iHeight			= res_list[index].Height;
-			g_iBitsPerPixel	= res_list[index].BitDepth;
+			const RenderDeviceDescClass& device_info = WW3D::Get_Render_Device_Desc();
+			const DynamicVectorClass<ResolutionDescClass>& res_list = device_info.Enumerate_Resolutions();
+			g_iWidth = res_list[index].Width;
+			g_iHeight = res_list[index].Height;
+			g_iBitsPerPixel = res_list[index].BitDepth;
 
 			//
 			// Cache this information in the registry
 			//
-			theApp.WriteProfileInt ("Config", "DeviceWidth", g_iWidth);
-			theApp.WriteProfileInt ("Config", "DeviceHeight", g_iHeight);
-			theApp.WriteProfileInt ("Config", "DeviceBitsPerPix", g_iBitsPerPixel);
+			theApp.WriteProfileInt("Config", "DeviceWidth", g_iWidth);
+			theApp.WriteProfileInt("Config", "DeviceHeight", g_iHeight);
+			theApp.WriteProfileInt("Config", "DeviceBitsPerPix", g_iBitsPerPixel);
 
 			//
 			//	Reset the display
 			//
-			bool fullscreen = (SendDlgItemMessage (IDC_FULLSCREEN_CHECK, BM_GETCHECK) == 1);
-			::Get_Graphic_View ()->Set_Fullscreen (fullscreen);
+			bool fullscreen = (SendDlgItemMessage(IDC_FULLSCREEN_CHECK, BM_GETCHECK) == 1);
+			::Get_Graphic_View()->Set_Fullscreen(fullscreen);
 		}
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnDblclkResolutionListCtrl
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ResolutionDialogClass::OnDblclkResolutionListCtrl
-(
-	NMHDR *		pNMHDR,
-	LRESULT *	pResult
-)
+void ResolutionDialogClass::OnDblclkResolutionListCtrl(
+  NMHDR* pNMHDR,
+  LRESULT* pResult)
 {
-	int list_index = m_ListCtrl.GetNextItem (-1, LVNI_ALL | LVNI_SELECTED);
-	if (list_index >= 0) {
-		OnOK ();
+	int list_index = m_ListCtrl.GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
+	if (list_index >= 0)
+	{
+		OnOK();
 	}
 
 	(*pResult) = 0;

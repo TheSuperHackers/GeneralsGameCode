@@ -58,7 +58,6 @@
 //-----------------------------------------------------------------------------
 class GameMessage;
 
-
 //-----------------------------------------------------------------------------
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -68,45 +67,43 @@ public:
 	StatsCollector();
 	~StatsCollector();
 
-	void reset();							///< Resets all values and writes the file header
+	void reset();    ///< Resets all values and writes the file header
 
-	void collectMsgStats( const GameMessage *msg );			///< collects Msg Stats if
-	void collectUnitCountStats();									///< cycle through all units and takes count
+	void collectMsgStats(const GameMessage* msg);    ///< collects Msg Stats if
+	void collectUnitCountStats();    ///< cycle through all units and takes count
 	void incrementScrollMoveCount();
 	void incrementBuildCount();
 	void incrementAttackCount();
 	void incrementMoveCount();
-	void startScrollTime();		///< Start our logging on the amount of time we're scrolling
-	void endScrollTime();			///< end our logging on the amount of time we're scrolling
+	void startScrollTime();    ///< Start our logging on the amount of time we're scrolling
+	void endScrollTime();    ///< end our logging on the amount of time we're scrolling
 
-	void update();						///< called once a frame to see if we should poll this frame
+	void update();    ///< called once a frame to see if we should poll this frame
 
-	void writeFileEnd();				///< Write the end of the file
+	void writeFileEnd();    ///< Write the end of the file
 private:
+	void createFileName();    ///< Create a snazzy filename
+	AsciiString m_statsFileName;    ///< store the snazzy filename
 
-	void createFileName();		///< Create a snazzy filename
-	AsciiString m_statsFileName;		///< store the snazzy filename
+	void writeInitialFileInfo();    ///< write the header file info
+	void writeStatInfo();    ///< write the stats we're keeping track of
 
-	void writeInitialFileInfo();		///< write the header file info
-	void writeStatInfo();					///< write the stats we're keeping track of
+	void zeroOutStats();    ///< zero out the stats
+	UnsignedInt m_buildCommands;    ///< count of the build commands the local player issued
+	UnsignedInt m_moveCommands;    ///< count of the move commands
+	UnsignedInt m_attackCommands;    ///< attack commands
+	UnsignedInt m_scrollMapCommands;    ///< scroll map commands
+	UnsignedInt m_AIUnits;    ///< tally of all the AI Units
+	UnsignedInt m_playerUnits;    ///< tally of all the player Units
 
-	void zeroOutStats();			///< zero out the stats
-	UnsignedInt m_buildCommands;		///< count of the build commands the local player issued
-	UnsignedInt m_moveCommands;			///< count of the move commands
-	UnsignedInt m_attackCommands;		///< attack commands
-	UnsignedInt m_scrollMapCommands;///< scroll map commands
-	UnsignedInt m_AIUnits;					///< tally of all the AI Units
-	UnsignedInt m_playerUnits;			///< tally of all the player Units
+	UnsignedInt m_scrollBeginTime;    ///< Begin time in frames
+	UnsignedInt m_scrollTime;    ///< our totals for the scrolltime
+	Bool m_isScrolling;    ///< flag to make sure we are scrolling
 
-	UnsignedInt m_scrollBeginTime;	///< Begin time in frames
-	UnsignedInt m_scrollTime;				///< our totals for the scrolltime
-	Bool m_isScrolling;							///< flag to make sure we are scrolling
-
-	Int m_timeCount;								///< the current timeframe we're on
-	Int m_lastUpdate;								///< last time we updated
-	Int m_startFrame;								///< frame we started on
+	Int m_timeCount;    ///< the current timeframe we're on
+	Int m_lastUpdate;    ///< last time we updated
+	Int m_startFrame;    ///< frame we started on
 };
-
 
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -115,4 +112,4 @@ private:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-extern StatsCollector* TheStatsCollector;			///< we need a singleton
+extern StatsCollector* TheStatsCollector;    ///< we need a singleton

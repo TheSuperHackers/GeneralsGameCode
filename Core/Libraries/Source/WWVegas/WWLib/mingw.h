@@ -31,24 +31,24 @@
 **	which provide all 14 mathematical constants.
 */
 
-#include <math.h>
+	#include <math.h>
 
-/*
-**	M_1_SQRTPI is not defined by MinGW's math.h
-**	Define it to match visualc.h and watcom.h
-*/
-#ifndef M_1_SQRTPI
-#define M_1_SQRTPI  0.564189583547756286948
-#endif
+  /*
+  **	M_1_SQRTPI is not defined by MinGW's math.h
+  **	Define it to match visualc.h and watcom.h
+  */
+	#ifndef M_1_SQRTPI
+		#define M_1_SQRTPI 0.564189583547756286948
+	#endif
 
-/*
-**	MinGW defines M_SQRT1_2 instead of M_SQRT_2
-**	Both represent 1/sqrt(2), just different naming
-**	Create an alias for compatibility
-*/
-#ifndef M_SQRT_2
-#define M_SQRT_2    M_SQRT1_2
-#endif
+  /*
+  **	MinGW defines M_SQRT1_2 instead of M_SQRT_2
+  **	Both represent 1/sqrt(2), just different naming
+  **	Create an alias for compatibility
+  */
+	#ifndef M_SQRT_2
+		#define M_SQRT_2 M_SQRT1_2
+	#endif
 
 /*
 **	At this point, all 14 mathematical constants are available:

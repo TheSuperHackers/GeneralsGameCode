@@ -19,11 +19,11 @@
 #pragma once
 
 #ifdef _WIN32
-#include <process.h>
+	#include <process.h>
 #endif
-//#include <wstring.h>
-//#include <dictionary.h>
-//#include <arraylist.h>
+// #include <wstring.h>
+// #include <dictionary.h>
+// #include <arraylist.h>
 #include "matcher.h"
 #include "global.h"
 
@@ -42,10 +42,10 @@ typedef std::vector<bool> MapBitSet;
 // Here are the states a matcher can be in:
 typedef enum
 {
-    STATUS_INVAL = 0,
-    STATUS_INCHANNEL,  // Just entered the channel
-    STATUS_WORKING,    // Sent info, needs to be matched
-    STATUS_MATCHED,    // Been matched, but is still in the channel
+	STATUS_INVAL = 0,
+	STATUS_INCHANNEL,    // Just entered the channel
+	STATUS_WORKING,    // Sent info, needs to be matched
+	STATUS_MATCHED,    // Been matched, but is still in the channel
 } UserStatus;
 
 class GeneralsUser
@@ -63,7 +63,7 @@ public:
 
 	bool widened;
 	time_t timeToWiden;
-	time_t matchStart; // when did we request a match?
+	time_t matchStart;    // when did we request a match?
 
 	// This is a ping to a designated 3rd-party server who just
 	// responds to pings.  The idea is that if the game server is
@@ -99,13 +99,13 @@ public:
 	virtual void init();
 	virtual void checkMatches();
 
-	virtual void handleDisconnect( const char *reason );
-	virtual void handleRoomMessage( const char *nick, const char *message, MessageType messageType );
-	virtual void handlePlayerMessage( const char *nick, const char *message, MessageType messageType );
-	virtual void handlePlayerJoined( const char *nick );
-	virtual void handlePlayerLeft( const char *nick );
-	virtual void handlePlayerChangedNick( const char *oldNick, const char *newNick );
-	virtual void handlePlayerEnum( bool success, int gameSpyIndex, const char *nick, int flags );
+	virtual void handleDisconnect(const char* reason);
+	virtual void handleRoomMessage(const char* nick, const char* message, MessageType messageType);
+	virtual void handlePlayerMessage(const char* nick, const char* message, MessageType messageType);
+	virtual void handlePlayerJoined(const char* nick);
+	virtual void handlePlayerLeft(const char* nick);
+	virtual void handlePlayerChangedNick(const char* oldNick, const char* newNick);
+	virtual void handlePlayerEnum(bool success, int gameSpyIndex, const char* nick, int flags);
 
 private:
 	LadderMap m_ladders;
@@ -115,7 +115,7 @@ private:
 	UserMap m_nonLadderUsers4v4;
 	UserMap m_nonMatchingUsers;
 
-	double computeMatchFitness(const std::string& i1, const GeneralsUser *u1, const std::string& i2, const GeneralsUser *u2);
+	double computeMatchFitness(const std::string& i1, const GeneralsUser* u1, const std::string& i2, const GeneralsUser* u2);
 
 	GeneralsUser* findUser(const std::string& who);
 	GeneralsUser* findUserInLadder(const std::string& who, int ladderID);
@@ -124,10 +124,10 @@ private:
 	GeneralsUser* findNonMatchingUser(const std::string& who);
 
 	void addUser(const std::string& who);
-	void addUserInLadder(const std::string& who, int ladderID, GeneralsUser *user);
-	void addUserInAnyLadder(const std::string& who, GeneralsUser *user);
-	void addNonLadderUser(const std::string& who, GeneralsUser *user);
-	void addNonMatchingUser(const std::string& who, GeneralsUser *user);
+	void addUserInLadder(const std::string& who, int ladderID, GeneralsUser* user);
+	void addUserInAnyLadder(const std::string& who, GeneralsUser* user);
+	void addNonLadderUser(const std::string& who, GeneralsUser* user);
+	void addNonMatchingUser(const std::string& who, GeneralsUser* user);
 
 	bool removeUser(const std::string& who);
 	GeneralsUser* removeUserInLadder(const std::string& who, int ladderID);
@@ -141,14 +141,14 @@ private:
 
 	void sendMatchInfo(std::string name1, std::string name2, std::string name3, std::string name4,
 	                   std::string name5, std::string name6, std::string name7, std::string name8,
-	                   GeneralsUser *user1, GeneralsUser *user2, GeneralsUser *user3, GeneralsUser *user4,
-	                   GeneralsUser *user5, GeneralsUser *user6, GeneralsUser *user7, GeneralsUser *user8,
+	                   GeneralsUser* user1, GeneralsUser* user2, GeneralsUser* user3, GeneralsUser* user4,
+	                   GeneralsUser* user5, GeneralsUser* user6, GeneralsUser* user7, GeneralsUser* user8,
 	                   int numPlayers, int ladderID);
 
 	// Command handlers for above privmsg commands (offset is the
 	// offset for the getToken() past the command token)
-	bool handleUserInfo(const char *nick, const std::string& msg);
-	bool handleUserWiden(const char *nick);
+	bool handleUserInfo(const char* nick, const std::string& msg);
+	bool handleUserWiden(const char* nick);
 
 	// Weights for various matching parameters
 	int weightLowPing;
@@ -158,10 +158,9 @@ private:
 	time_t m_nextPoolSizeAnnouncement;
 	int m_secondsBetweenPoolSizeAnnouncements;
 
-	//typedef std::vector<std::string> StringVec;
-	//StringVec mapFileList;
-}
-;
+	// typedef std::vector<std::string> StringVec;
+	// StringVec mapFileList;
+};
 
 // =====================================================================
 // TEST Client Matcher class
@@ -177,14 +176,13 @@ public:
 	virtual void init();
 	virtual void checkMatches();
 
-	virtual void handleDisconnect( const char *reason );
-	virtual void handleRoomMessage( const char *nick, const char *message, MessageType messageType );
-	virtual void handlePlayerMessage( const char *nick, const char *message, MessageType messageType );
-	virtual void handlePlayerJoined( const char *nick );
-	virtual void handlePlayerLeft( const char *nick );
-	virtual void handlePlayerChangedNick( const char *oldNick, const char *newNick );
-	virtual void handlePlayerEnum( bool success, int gameSpyIndex, const char *nick, int flags );
+	virtual void handleDisconnect(const char* reason);
+	virtual void handleRoomMessage(const char* nick, const char* message, MessageType messageType);
+	virtual void handlePlayerMessage(const char* nick, const char* message, MessageType messageType);
+	virtual void handlePlayerJoined(const char* nick);
+	virtual void handlePlayerLeft(const char* nick);
+	virtual void handlePlayerChangedNick(const char* oldNick, const char* newNick);
+	virtual void handlePlayerEnum(bool success, int gameSpyIndex, const char* nick, int flags);
 
 private:
-}
-;
+};

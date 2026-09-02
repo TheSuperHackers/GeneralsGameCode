@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -36,47 +36,42 @@
 #include "GameLogic/WeaponStatus.h"
 #include "GameLogic/GameLogic.h"
 
-
-
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 {
 	m_weaponTemplate = nullptr;
-  m_initialDelayFrames = 0;
+	m_initialDelayFrames = 0;
 	m_exclusiveWeaponDelay = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "Weapon",								INI::parseWeaponTemplate,	      nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
-		{ "InitialDelay",					INI::parseDurationUnsignedInt,	nullptr, offsetof( FireWeaponUpdateModuleData, m_initialDelayFrames ) },
-		{ "ExclusiveWeaponDelay",	INI::parseDurationUnsignedInt,	nullptr, offsetof( FireWeaponUpdateModuleData, m_exclusiveWeaponDelay ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "Weapon", INI::parseWeaponTemplate, nullptr, offsetof(FireWeaponUpdateModuleData, m_weaponTemplate) },
+		{ "InitialDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(FireWeaponUpdateModuleData, m_initialDelayFrames) },
+		{ "ExclusiveWeaponDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(FireWeaponUpdateModuleData, m_exclusiveWeaponDelay) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
-	UpdateModule( thing, moduleData ),
-	m_weapon(nullptr)
+FireWeaponUpdate::FireWeaponUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
+  , m_weapon(nullptr)
 {
-	const WeaponTemplate *tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
+	const WeaponTemplate* tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
 	if (tmpl)
 	{
 		m_weapon = TheWeaponStore->allocateNewWeapon(tmpl, PRIMARY_WEAPON);
-		m_weapon->loadAmmoNow( getObject() );
+		m_weapon->loadAmmoNow(getObject());
 	}
 
-
-  m_initialDelayFrame = TheGameLogic->getFrame() + getFireWeaponUpdateModuleData()->m_initialDelayFrames;
-
+	m_initialDelayFrame = TheGameLogic->getFrame() + getFireWeaponUpdateModuleData()->m_initialDelayFrames;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -90,15 +85,15 @@ FireWeaponUpdate::~FireWeaponUpdate()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime FireWeaponUpdate::update()
 {
-
-  if ( TheGameLogic->getFrame() < m_initialDelayFrame )
-    return UPDATE_SLEEP_NONE;
-
+	if (TheGameLogic->getFrame() < m_initialDelayFrame)
+	{
+		return UPDATE_SLEEP_NONE;
+	}
 
 	// If my weapon is ready, shoot it.
-	if( isOkayToFire() )
+	if (isOkayToFire())
 	{
-		m_weapon->forceFireWeapon( getObject(), getObject()->getPosition() );
+		m_weapon->forceFireWeapon(getObject(), getObject()->getPosition());
 	}
 	return UPDATE_SLEEP_NONE;
 }
@@ -107,22 +102,30 @@ UpdateSleepTime FireWeaponUpdate::update()
 //-------------------------------------------------------------------------------------------------
 Bool FireWeaponUpdate::isOkayToFire()
 {
-	const Object *me = getObject();
-	const FireWeaponUpdateModuleData *data = getFireWeaponUpdateModuleData();
+	const Object* me = getObject();
+	const FireWeaponUpdateModuleData* data = getFireWeaponUpdateModuleData();
 
-	if( m_weapon == nullptr )
+	if (m_weapon == nullptr)
+	{
 		return FALSE;
+	}
 
 	// Weapon is reloading
-	if( m_weapon->getStatus() != READY_TO_FIRE )
+	if (m_weapon->getStatus() != READY_TO_FIRE)
+	{
 		return FALSE;
+	}
 
-	if( me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
-		return FALSE; // no hitting with a 0% building, cheater
+	if (me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
+		return FALSE;    // no hitting with a 0% building, cheater
+	}
 
 	// Firing a real weapon suppresses this module
-	if( data->m_exclusiveWeaponDelay > 0  &&  ( TheGameLogic->getFrame() < (me->getLastShotFiredFrame() + data->m_exclusiveWeaponDelay) ) )
+	if (data->m_exclusiveWeaponDelay > 0 && (TheGameLogic->getFrame() < (me->getLastShotFiredFrame() + data->m_exclusiveWeaponDelay)))
+	{
 		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -130,35 +133,34 @@ Bool FireWeaponUpdate::isOkayToFire()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::crc( Xfer *xfer )
+void FireWeaponUpdate::crc(Xfer* xfer)
 {
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::xfer( Xfer *xfer )
+void FireWeaponUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// weapon
-	xfer->xferSnapshot( m_weapon );
+	xfer->xferSnapshot(m_weapon);
 
-  if ( version >= 2 )
-    xfer->xferUnsignedInt( &m_initialDelayFrame );
-
+	if (version >= 2)
+	{
+		xfer->xferUnsignedInt(&m_initialDelayFrame);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -166,8 +168,6 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void FireWeaponUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

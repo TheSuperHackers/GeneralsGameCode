@@ -20,8 +20,8 @@
 
 #ifdef PROFILER_ENABLED
 
-#include "Lib/BaseType.h"
-#include <vector>
+	#include "Lib/BaseType.h"
+	#include <vector>
 
 class W3DProfilerFrameCapture
 {
@@ -40,4 +40,4 @@ private:
 	std::vector<UnsignedByte> m_lastCapturePixels;
 };
 
-#endif // PROFILER_ENABLED
+#endif    // PROFILER_ENABLED

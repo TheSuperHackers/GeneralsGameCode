@@ -55,24 +55,22 @@ class ScriptDialog;
 
 class CMainFrame : public CFrameWnd
 {
-  DECLARE_DYNAMIC(CMainFrame)
+	DECLARE_DYNAMIC(CMainFrame)
 
 public:
 	CMainFrame();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainFrame)
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMainFrame() override;
 #ifdef RTS_DEBUG
@@ -80,62 +78,62 @@ public:
 	virtual void Dump(CDumpContext& dc) const override;
 #endif
 
-	static CMainFrame *GetMainFrame() { return TheMainFrame; }
+	static CMainFrame* GetMainFrame() { return TheMainFrame; }
 
 	void showOptionsDialog(Int dialogID);
 	void OnEditGloballightoptions();
 	void ResetWindowPositions();
 	void adjustWindowSize();
-	Bool isAutoSaving() {return m_autoSaving;};
+	Bool isAutoSaving() { return m_autoSaving; };
 	void handleCameraChange();
 	void onEditScripts();
 
-protected:  // control bar embedded members
-	CStatusBar					m_wndStatusBar;
-	CToolBar						m_wndToolBar;
-	CToolBar						m_floatingToolBar;
-	BrushOptions				m_brushOptions;
-	TerrainMaterial			m_terrainMaterial;
-	BlendMaterial				m_blendMaterial;
-	ObjectOptions				m_objectOptions;
-	FenceOptions				m_fenceOptions;
-	MapObjectProps			m_mapObjectProps;
-	MoundOptions				m_moundOptions;
-	RoadOptions					m_roadOptions;
-	FeatherOptions			m_featherOptions;
-	MeshMoldOptions			m_meshMoldOptions;
-	WaypointOptions			m_waypointOptions;
-	WaterOptions				m_waterOptions;
-	LightOptions				m_lightOptions;
-	BuildList						m_buildListOptions;
-	GroveOptions				m_groveOptions;
-	RampOptions					m_rampOptions;
-	ScorchOptions				m_scorchOptions;
-	COptionsPanel				m_noOptions;
-	GlobalLightOptions	m_globalLightOptions;
-	CameraOptions				m_cameraOptions;
-	LayersList*					m_layersList;
-	ScriptDialog*				m_scriptDialog;
-	RulerOptions				m_rulerOptions;
+protected:    // control bar embedded members
+	CStatusBar m_wndStatusBar;
+	CToolBar m_wndToolBar;
+	CToolBar m_floatingToolBar;
+	BrushOptions m_brushOptions;
+	TerrainMaterial m_terrainMaterial;
+	BlendMaterial m_blendMaterial;
+	ObjectOptions m_objectOptions;
+	FenceOptions m_fenceOptions;
+	MapObjectProps m_mapObjectProps;
+	MoundOptions m_moundOptions;
+	RoadOptions m_roadOptions;
+	FeatherOptions m_featherOptions;
+	MeshMoldOptions m_meshMoldOptions;
+	WaypointOptions m_waypointOptions;
+	WaterOptions m_waterOptions;
+	LightOptions m_lightOptions;
+	BuildList m_buildListOptions;
+	GroveOptions m_groveOptions;
+	RampOptions m_rampOptions;
+	ScorchOptions m_scorchOptions;
+	COptionsPanel m_noOptions;
+	GlobalLightOptions m_globalLightOptions;
+	CameraOptions m_cameraOptions;
+	LayersList* m_layersList;
+	ScriptDialog* m_scriptDialog;
+	RulerOptions m_rulerOptions;
 
-	CWnd							*m_curOptions;
-	Int								m_curOptionsX;
-	Int								m_curOptionsY;
-	Int								m_optionsPanelWidth;
-	Int								m_optionsPanelHeight;
-	Int								m_globalLightOptionsWidth;
-	Int								m_globalLightOptionsHeight;
+	CWnd* m_curOptions;
+	Int m_curOptionsX;
+	Int m_curOptionsY;
+	Int m_optionsPanelWidth;
+	Int m_optionsPanelHeight;
+	Int m_globalLightOptionsWidth;
+	Int m_globalLightOptionsHeight;
 
-	Int								m_3dViewWidth;
+	Int m_3dViewWidth;
 
-	Bool							m_autoSaving;  ///< True if we are autosaving.
-	UINT							m_hAutoSaveTimer;  ///< Timer that triggers for autosave.
-	Bool							m_autoSave;    ///< If true, then do autosaves.
-	Int								m_autoSaveInterval;  ///< Time between autosaves in seconds.
+	Bool m_autoSaving;    ///< True if we are autosaving.
+	UINT m_hAutoSaveTimer;    ///< Timer that triggers for autosave.
+	Bool m_autoSave;    ///< If true, then do autosaves.
+	Int m_autoSaveInterval;    ///< Time between autosaves in seconds.
 
-	static CMainFrame *TheMainFrame;
+	static CMainFrame* TheMainFrame;
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

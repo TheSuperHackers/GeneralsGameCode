@@ -31,7 +31,7 @@ class MPSCIntrusiveQueue
 {
 public:
 	MPSCIntrusiveQueue()
-		: m_head(nullptr)
+	  : m_head(nullptr)
 	{
 	}
 
@@ -47,7 +47,7 @@ public:
 			node->next = head;
 		}
 		while (InterlockedCompareExchangePointer(
-			reinterpret_cast<void* volatile*>(&m_head), node, head) != head);
+		         reinterpret_cast<void* volatile*>(&m_head), node, head) != head);
 	}
 
 	// Detaches all nodes and returns them linked in push order, or null if the queue is
@@ -57,7 +57,7 @@ public:
 	T* Flush()
 	{
 		T* list = static_cast<T*>(InterlockedExchangePointer(
-			reinterpret_cast<void* volatile*>(&m_head), nullptr));
+		  reinterpret_cast<void* volatile*>(&m_head), nullptr));
 
 		// The detached chain is in last-in-first-out order, so reverse it.
 		T* reversed = nullptr;

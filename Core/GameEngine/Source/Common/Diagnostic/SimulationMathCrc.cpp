@@ -26,48 +26,48 @@
 
 #include <math.h>
 
-static void appendSimulationMathCrc(XferCRC &xfer)
+static void appendSimulationMathCrc(XferCRC& xfer)
 {
-    Matrix3D matrix;
-    Matrix3D factorsMatrix;
+	Matrix3D matrix;
+	Matrix3D factorsMatrix;
 
-    matrix.Set(
-        4.1f, 1.2f, 0.3f, 0.4f,
-        0.5f, 3.6f, 0.7f, 0.8f,
-        0.9f, 1.0f, 2.1f, 1.2f);
+	matrix.Set(
+	  4.1f, 1.2f, 0.3f, 0.4f,
+	  0.5f, 3.6f, 0.7f, 0.8f,
+	  0.9f, 1.0f, 2.1f, 1.2f);
 
-    factorsMatrix.Set(
-        WWMath::Sin(0.7f) * log10f(2.3f),
-        WWMath::Cos(1.1f) * powf(1.1f, 2.0f),
-        tanf(0.3f),
-        asinf(0.967302263f),
-        acosf(0.967302263f),
-        atanf(0.967302263f) * powf(1.1f, 2.0f),
-        atan2f(0.4f, 1.3f),
-        sinhf(0.2f),
-        coshf(0.4f) * tanhf(0.5f),
-        sqrtf(55788.84375f),
-        expf(0.1f) * log10f(2.3f),
-        logf(1.4f));
+	factorsMatrix.Set(
+	  WWMath::Sin(0.7f) * log10f(2.3f),
+	  WWMath::Cos(1.1f) * powf(1.1f, 2.0f),
+	  tanf(0.3f),
+	  asinf(0.967302263f),
+	  acosf(0.967302263f),
+	  atanf(0.967302263f) * powf(1.1f, 2.0f),
+	  atan2f(0.4f, 1.3f),
+	  sinhf(0.2f),
+	  coshf(0.4f) * tanhf(0.5f),
+	  sqrtf(55788.84375f),
+	  expf(0.1f) * log10f(2.3f),
+	  logf(1.4f));
 
-    Matrix3D::Multiply(matrix, factorsMatrix, &matrix);
-    matrix.Get_Inverse(matrix);
+	Matrix3D::Multiply(matrix, factorsMatrix, &matrix);
+	matrix.Get_Inverse(matrix);
 
-    xfer.xferMatrix3D(&matrix);
+	xfer.xferMatrix3D(&matrix);
 }
 
 UnsignedInt SimulationMathCrc::calculate()
 {
-    XferCRC xfer;
-    xfer.open("SimulationMathCrc");
+	XferCRC xfer;
+	xfer.open("SimulationMathCrc");
 
-    setFPMode();
+	setFPMode();
 
-    appendSimulationMathCrc(xfer);
+	appendSimulationMathCrc(xfer);
 
-    _fpreset();
+	_fpreset();
 
-    xfer.close();
+	xfer.close();
 
-    return xfer.getCRC();
+	return xfer.getCRC();
 }

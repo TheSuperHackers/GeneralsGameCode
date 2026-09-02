@@ -34,15 +34,14 @@
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
-
 //-------------------------------------------------------------------------------------------------
 class FireWeaponWhenDeadBehaviorModuleData : public BehaviorModuleData
 {
 public:
-	UpgradeMuxData				m_upgradeMuxData;
-	Bool									m_initiallyActive;
-	DieMuxData						m_dieMuxData;
-	const WeaponTemplate* m_deathWeapon;						///< fire this weapon when we are damaged
+	UpgradeMuxData m_upgradeMuxData;
+	Bool m_initiallyActive;
+	DieMuxData m_dieMuxData;
+	const WeaponTemplate* m_deathWeapon;    ///< fire this weapon when we are damaged
 
 	FireWeaponWhenDeadBehaviorModuleData()
 	{
@@ -52,33 +51,30 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "StartsActive",	INI::parseBool, nullptr, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_initiallyActive ) },
-			{ "DeathWeapon", INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponWhenDeadBehaviorModuleData, m_deathWeapon ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "StartsActive", INI::parseBool, nullptr, offsetof(FireWeaponWhenDeadBehaviorModuleData, m_initiallyActive) },
+			{ "DeathWeapon", INI::parseWeaponTemplate, nullptr, offsetof(FireWeaponWhenDeadBehaviorModuleData, m_deathWeapon) },
 			{ 0, 0, 0, 0 }
 		};
 
 		BehaviorModuleData::buildFieldParse(p);
 		p.add(dataFieldParse);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( FireWeaponWhenDeadBehaviorModuleData, m_upgradeMuxData ));
-		p.add(DieMuxData::getFieldParse(), offsetof( FireWeaponWhenDeadBehaviorModuleData, m_dieMuxData ));
+		p.add(UpgradeMuxData::getFieldParse(), offsetof(FireWeaponWhenDeadBehaviorModuleData, m_upgradeMuxData));
+		p.add(DieMuxData::getFieldParse(), offsetof(FireWeaponWhenDeadBehaviorModuleData, m_dieMuxData));
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class FireWeaponWhenDeadBehavior : public BehaviorModule,
-																	 public UpgradeMux,
-																	 public DieModuleInterface
+                                   public UpgradeMux,
+                                   public DieModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireWeaponWhenDeadBehavior, "FireWeaponWhenDeadBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireWeaponWhenDeadBehavior, FireWeaponWhenDeadBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireWeaponWhenDeadBehavior, "FireWeaponWhenDeadBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireWeaponWhenDeadBehavior, FireWeaponWhenDeadBehaviorModuleData)
 
 public:
-
-	FireWeaponWhenDeadBehavior( Thing *thing, const ModuleData* moduleData );
+	FireWeaponWhenDeadBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
@@ -89,10 +85,9 @@ public:
 	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 protected:
-
 	virtual void upgradeImplementation() override
 	{
 		// nothing!
@@ -116,5 +111,4 @@ protected:
 	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
 };

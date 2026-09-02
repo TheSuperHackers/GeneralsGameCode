@@ -43,7 +43,7 @@
 #include "WWDebug/wwdebug.h"
 #include "dx8fvf.h"
 
-const unsigned dynamic_fvf_type=D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE;
+const unsigned dynamic_fvf_type = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2 | D3DFVF_DIFFUSE;
 
 class DX8Wrapper;
 class SortingRendererClass;
@@ -64,7 +64,10 @@ protected:
 	void* Vertices;
 
 	// This class can't be used directly, so constructor as to be protected
-	VertexBufferLockClass(VertexBufferClass* vertex_buffer_) : VertexBuffer(vertex_buffer_) {}
+	VertexBufferLockClass(VertexBufferClass* vertex_buffer_)
+	  : VertexBuffer(vertex_buffer_)
+	{}
+
 public:
 	void* Get_Vertex_Array() { return Vertices; }
 };
@@ -78,8 +81,8 @@ class VertexBufferClass : public RefCountClass
 protected:
 	VertexBufferClass(unsigned type, unsigned FVF, unsigned short VertexCount);
 	virtual ~VertexBufferClass() override;
-public:
 
+public:
 	const FVFInfoClass& FVF_Info() const { return *fvf_info; }
 	unsigned short Get_Vertex_Count() const { return VertexCount; }
 	unsigned Type() const { return type; }
@@ -91,14 +94,14 @@ public:
 	class WriteLockClass : public VertexBufferLockClass
 	{
 	public:
-		WriteLockClass(VertexBufferClass* vertex_buffer, int flags=0);
+		WriteLockClass(VertexBufferClass* vertex_buffer, int flags = 0);
 		~WriteLockClass();
 	};
 
 	class AppendLockClass : public VertexBufferLockClass
 	{
 	public:
-		AppendLockClass(VertexBufferClass* vertex_buffer,unsigned start_index, unsigned index_range);
+		AppendLockClass(VertexBufferClass* vertex_buffer, unsigned start_index, unsigned index_range);
 		~AppendLockClass();
 	};
 
@@ -107,13 +110,11 @@ public:
 	static unsigned Get_Total_Allocated_Memory();
 
 protected:
-	unsigned							type;
-	unsigned short					VertexCount;
-	mutable int						engine_refs;
-	FVFInfoClass*					fvf_info;
+	unsigned type;
+	unsigned short VertexCount;
+	mutable int engine_refs;
+	FVFInfoClass* fvf_info;
 };
-
-
 
 /**
 ** Dynamic vertex buffer access is a wrapper to a single cycled dynamic vertex
@@ -137,17 +138,18 @@ class DynamicVBAccessClass
 	unsigned short VertexCount;
 	unsigned short VertexBufferOffset;
 	VertexBufferClass* VertexBuffer;
-//	static VertexFormatXYZNDUV2* _Get_Sorting_Vertex_Array();
+	//	static VertexFormatXYZNDUV2* _Get_Sorting_Vertex_Array();
 
 	void Allocate_Sorting_Dynamic_Buffer();
 	void Allocate_DX8_Dynamic_Buffer();
+
 public:
 	// Type parameter can be either BUFFER_TYPE_DYNAMIC_DX8 or BUFFER_TYPE_DYNAMIC_SORTING.
 
 	// Note: Even though the constructor takes fvf as a parameter, currently the
 	// only acceptable parameter is "dynamic_fvf_type". Any other type will
 	// result to an assert.
-	DynamicVBAccessClass(unsigned type,unsigned fvf,unsigned short vertex_count);
+	DynamicVBAccessClass(unsigned type, unsigned fvf, unsigned short vertex_count);
 	~DynamicVBAccessClass();
 
 	// Access fvf
@@ -159,14 +161,15 @@ public:
 	// the recycled dynamic vertex buffer.
 	static void _Deinit();
 	static void _Reset(bool frame_changed);
-	static unsigned short Get_Default_Vertex_Count();	///<current size of dynamic vertex buffer
+	static unsigned short Get_Default_Vertex_Count();    ///< current size of dynamic vertex buffer
 
 	// To lock the vertex buffer, create instance of this write class locally.
 	// The buffer is automatically unlocked when you exit the scope.
-	class WriteLockClass// : public VertexBufferLockClass
+	class WriteLockClass    // : public VertexBufferLockClass
 	{
 		DynamicVBAccessClass* DynamicVBAccess;
-		VertexFormatXYZNDUV2 * Vertices;
+		VertexFormatXYZNDUV2* Vertices;
+
 	public:
 		WriteLockClass(DynamicVBAccessClass* vb_access);
 		~WriteLockClass();
@@ -175,17 +178,17 @@ public:
 		// If we ever change the format used by DynamicVBAccessClass, then the
 		// return type of this function will change and we'll easily find all code
 		// using it.
-		VertexFormatXYZNDUV2 * Get_Formatted_Vertex_Array();
+		VertexFormatXYZNDUV2* Get_Formatted_Vertex_Array();
 	};
 	friend WriteLockClass;
 };
 
 // ----------------------------------------------------------------------------
 
-inline VertexFormatXYZNDUV2 * DynamicVBAccessClass::WriteLockClass::Get_Formatted_Vertex_Array()
+inline VertexFormatXYZNDUV2* DynamicVBAccessClass::WriteLockClass::Get_Formatted_Vertex_Array()
 {
 	// assert that the format of the dynamic vertex buffer is still what we think it is.
-	WWASSERT(DynamicVBAccess->VertexBuffer->FVF_Info().Get_FVF() == (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE));
+	WWASSERT(DynamicVBAccess->VertexBuffer->FVF_Info().Get_FVF() == (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2 | D3DFVF_DIFFUSE));
 	return Vertices;
 }
 
@@ -200,19 +203,21 @@ class DX8VertexBufferClass : public VertexBufferClass
 	W3DMPO_CODE(DX8VertexBufferClass)
 protected:
 	virtual ~DX8VertexBufferClass() override;
+
 public:
-	enum UsageType {
-		USAGE_DEFAULT=0,
-		USAGE_DYNAMIC=1,
-		USAGE_SOFTWAREPROCESSING=2,
-		USAGE_NPATCHES=4
+	enum UsageType
+	{
+		USAGE_DEFAULT = 0,
+		USAGE_DYNAMIC = 1,
+		USAGE_SOFTWAREPROCESSING = 2,
+		USAGE_NPATCHES = 4
 	};
 
-	DX8VertexBufferClass(unsigned FVF, unsigned short VertexCount, UsageType usage=USAGE_DEFAULT);
-	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
-	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
-	DX8VertexBufferClass(const Vector3* vertices, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
-	DX8VertexBufferClass(const Vector3* vertices, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
+	DX8VertexBufferClass(unsigned FVF, unsigned short VertexCount, UsageType usage = USAGE_DEFAULT);
+	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector2* tex_coords, unsigned short VertexCount, UsageType usage = USAGE_DEFAULT);
+	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount, UsageType usage = USAGE_DEFAULT);
+	DX8VertexBufferClass(const Vector3* vertices, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount, UsageType usage = USAGE_DEFAULT);
+	DX8VertexBufferClass(const Vector3* vertices, const Vector2* tex_coords, unsigned short VertexCount, UsageType usage = USAGE_DEFAULT);
 
 	IDirect3DVertexBuffer8* Get_DX8_Vertex_Buffer() { return VertexBuffer; }
 
@@ -224,11 +229,10 @@ public:
 	void Copy(const Vector3* loc, const Vector2* uv, const Vector4* diffuse, unsigned first_vertex, unsigned count);
 
 protected:
-	IDirect3DVertexBuffer8*		VertexBuffer;
+	IDirect3DVertexBuffer8* VertexBuffer;
 
 	void Create_Vertex_Buffer(UsageType usage);
 };
-
 
 /**
 ** SortingVertexBufferClass
@@ -248,6 +252,7 @@ class SortingVertexBufferClass : public VertexBufferClass
 
 protected:
 	virtual ~SortingVertexBufferClass() override;
+
 public:
 	SortingVertexBufferClass(unsigned short VertexCount);
 };

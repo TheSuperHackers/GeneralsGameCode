@@ -50,22 +50,18 @@ public:
 //-------------------------------------------------------------------------------------------------
 class UndeadBody : public ActiveBody
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( UndeadBody, "UndeadBody" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( UndeadBody, UndeadBodyModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UndeadBody, "UndeadBody")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(UndeadBody, UndeadBodyModuleData)
 
 public:
-
-	UndeadBody( Thing *thing, const ModuleData* moduleData );
+	UndeadBody(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
+	virtual void attemptDamage(DamageInfo* damageInfo) override;    ///< try to damage this object
 
 protected:
-
-	Bool m_isSecondLife;	/** This is false until I detect death the first time, then I
-														change my Max, Initial, and Current health and stop intercepting anything.
-												*/
-	void startSecondLife(DamageInfo *damageInfo);
-
+	Bool m_isSecondLife; /** This is false until I detect death the first time, then I
+	                         change my Max, Initial, and Current health and stop intercepting anything.
+	                     */
+	void startSecondLife(DamageInfo* damageInfo);
 };

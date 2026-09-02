@@ -39,50 +39,51 @@
 #include "WinMain.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
-enum { KEYBOARD_BUFFER_SIZE = 256 };
+enum
+{
+	KEYBOARD_BUFFER_SIZE = 256
+};
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 struct ErrorLookup
 {
 	HRESULT error;
-	const char *string;
+	const char* string;
 };
-static ErrorLookup errorLookup[] =
-{
-{ (HRESULT)DIERR_ACQUIRED, "DIERR_ACQUIRED" },
-{ (HRESULT)DIERR_ALREADYINITIALIZED, "DIERR_ALREADYINITIALIZED" },
-{ (HRESULT)DIERR_BADDRIVERVER, "DIERR_BADDRIVERVER" },
-{ (HRESULT)DIERR_BETADIRECTINPUTVERSION, "DIERR_BETADIRECTINPUTVERSION" },
-{ (HRESULT)DIERR_DEVICEFULL, "DIERR_DEVICEFULL" },
-{ (HRESULT)DIERR_DEVICENOTREG, "DIERR_DEVICENOTREG" },
-{ (HRESULT)DIERR_EFFECTPLAYING, "DIERR_EFFECTPLAYING" },
-{ (HRESULT)DIERR_GENERIC, "DIERR_GENERIC" },
-{ (HRESULT)DIERR_HANDLEEXISTS, "DIERR_HANDLEEXISTS" },
-{ (HRESULT)DIERR_HASEFFECTS, "DIERR_HASEFFECTS" },
-{ (HRESULT)DIERR_INCOMPLETEEFFECT, "DIERR_INCOMPLETEEFFECT" },
-{ (HRESULT)DIERR_INPUTLOST, "DIERR_INPUTLOST" },
-{ (HRESULT)DIERR_INVALIDPARAM, "DIERR_INVALIDPARAM" },
-{ (HRESULT)DIERR_MAPFILEFAIL, "DIERR_MAPFILEFAIL" },
-{ (HRESULT)DIERR_MOREDATA, "DIERR_MOREDATA" },
-{ (HRESULT)DIERR_NOAGGREGATION, "DIERR_NOAGGREGATION" },
-{ (HRESULT)DIERR_NOINTERFACE, "DIERR_NOINTERFACE" },
-{ (HRESULT)DIERR_NOTACQUIRED, "DIERR_NOTACQUIRED" },
-{ (HRESULT)DIERR_NOTBUFFERED, "DIERR_NOTBUFFERED" },
-{ (HRESULT)DIERR_NOTDOWNLOADED, "DIERR_NOTDOWNLOADED" },
-{ (HRESULT)DIERR_NOTEXCLUSIVEACQUIRED, "DIERR_NOTEXCLUSIVEACQUIRED" },
-{ (HRESULT)DIERR_NOTFOUND, "DIERR_NOTFOUND" },
-{ (HRESULT)DIERR_NOTINITIALIZED, "DIERR_NOTINITIALIZED" },
-{ (HRESULT)DIERR_OBJECTNOTFOUND, "DIERR_OBJECTNOTFOUND" },
-{ (HRESULT)DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION" },
-{ (HRESULT)DIERR_OTHERAPPHASPRIO, "DIERR_OTHERAPPHASPRIO" },
-{ (HRESULT)DIERR_OUTOFMEMORY, "DIERR_OUTOFMEMORY" },
-{ (HRESULT)DIERR_READONLY, "DIERR_READONLY" },
-{ (HRESULT)DIERR_REPORTFULL, "DIERR_REPORTFULL" },
-{ (HRESULT)DIERR_UNPLUGGED, "DIERR_UNPLUGGED" },
-{ (HRESULT)DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED" },
-{ 0, nullptr }
+static ErrorLookup errorLookup[] = {
+	{ (HRESULT)DIERR_ACQUIRED, "DIERR_ACQUIRED" },
+	{ (HRESULT)DIERR_ALREADYINITIALIZED, "DIERR_ALREADYINITIALIZED" },
+	{ (HRESULT)DIERR_BADDRIVERVER, "DIERR_BADDRIVERVER" },
+	{ (HRESULT)DIERR_BETADIRECTINPUTVERSION, "DIERR_BETADIRECTINPUTVERSION" },
+	{ (HRESULT)DIERR_DEVICEFULL, "DIERR_DEVICEFULL" },
+	{ (HRESULT)DIERR_DEVICENOTREG, "DIERR_DEVICENOTREG" },
+	{ (HRESULT)DIERR_EFFECTPLAYING, "DIERR_EFFECTPLAYING" },
+	{ (HRESULT)DIERR_GENERIC, "DIERR_GENERIC" },
+	{ (HRESULT)DIERR_HANDLEEXISTS, "DIERR_HANDLEEXISTS" },
+	{ (HRESULT)DIERR_HASEFFECTS, "DIERR_HASEFFECTS" },
+	{ (HRESULT)DIERR_INCOMPLETEEFFECT, "DIERR_INCOMPLETEEFFECT" },
+	{ (HRESULT)DIERR_INPUTLOST, "DIERR_INPUTLOST" },
+	{ (HRESULT)DIERR_INVALIDPARAM, "DIERR_INVALIDPARAM" },
+	{ (HRESULT)DIERR_MAPFILEFAIL, "DIERR_MAPFILEFAIL" },
+	{ (HRESULT)DIERR_MOREDATA, "DIERR_MOREDATA" },
+	{ (HRESULT)DIERR_NOAGGREGATION, "DIERR_NOAGGREGATION" },
+	{ (HRESULT)DIERR_NOINTERFACE, "DIERR_NOINTERFACE" },
+	{ (HRESULT)DIERR_NOTACQUIRED, "DIERR_NOTACQUIRED" },
+	{ (HRESULT)DIERR_NOTBUFFERED, "DIERR_NOTBUFFERED" },
+	{ (HRESULT)DIERR_NOTDOWNLOADED, "DIERR_NOTDOWNLOADED" },
+	{ (HRESULT)DIERR_NOTEXCLUSIVEACQUIRED, "DIERR_NOTEXCLUSIVEACQUIRED" },
+	{ (HRESULT)DIERR_NOTFOUND, "DIERR_NOTFOUND" },
+	{ (HRESULT)DIERR_NOTINITIALIZED, "DIERR_NOTINITIALIZED" },
+	{ (HRESULT)DIERR_OBJECTNOTFOUND, "DIERR_OBJECTNOTFOUND" },
+	{ (HRESULT)DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION" },
+	{ (HRESULT)DIERR_OTHERAPPHASPRIO, "DIERR_OTHERAPPHASPRIO" },
+	{ (HRESULT)DIERR_OUTOFMEMORY, "DIERR_OUTOFMEMORY" },
+	{ (HRESULT)DIERR_READONLY, "DIERR_READONLY" },
+	{ (HRESULT)DIERR_REPORTFULL, "DIERR_REPORTFULL" },
+	{ (HRESULT)DIERR_UNPLUGGED, "DIERR_UNPLUGGED" },
+	{ (HRESULT)DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED" },
+	{ 0, nullptr }
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
@@ -91,22 +92,19 @@ static ErrorLookup errorLookup[] =
 //-------------------------------------------------------------------------------------------------
 /** For debugging, prints the return code using direct input errors */
 //-------------------------------------------------------------------------------------------------
-static void printReturnCode( char *label, HRESULT hr )
+static void printReturnCode(char* label, HRESULT hr)
 {
-	ErrorLookup *error = errorLookup;
+	ErrorLookup* error = errorLookup;
 
-	while( error->string != nullptr )
+	while (error->string != nullptr)
 	{
-
-		if( error->error == hr )
+		if (error->error == hr)
 		{
-			DEBUG_LOG(( "%s: '%s' - '0x%08x'", label, error->string, hr ));
+			DEBUG_LOG(("%s: '%s' - '0x%08x'", label, error->string, hr));
 			break;
 		}
 		error++;
-
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -114,48 +112,42 @@ static void printReturnCode( char *label, HRESULT hr )
 //-------------------------------------------------------------------------------------------------
 void DirectInputKeyboard::openKeyboard()
 {
-  HRESULT hr;
+	HRESULT hr;
 
 	// create our interface to direct input
-	hr = DirectInput8Create( ApplicationHInstance,
-													 DIRECTINPUT_VERSION,
-													 IID_IDirectInput8,
-													 (void **)&m_pDirectInput,
-													 nullptr );
-	if( FAILED( hr ) )
+	hr = DirectInput8Create(ApplicationHInstance,
+	                        DIRECTINPUT_VERSION,
+	                        IID_IDirectInput8,
+	                        (void**)&m_pDirectInput,
+	                        nullptr);
+	if (FAILED(hr))
 	{
-
-		DEBUG_LOG(( "ERROR - openKeyboard: DirectInputCreate failed" ));
-		assert( 0 );
+		DEBUG_LOG(("ERROR - openKeyboard: DirectInputCreate failed"));
+		assert(0);
 		closeKeyboard();
 		return;
-
 	}
 
 	// obtain an interface to the system keyboard device
-	hr = m_pDirectInput->CreateDevice( GUID_SysKeyboard,
-																		 &m_pKeyboardDevice,
-																		 nullptr );
-	if( FAILED( hr ) )
+	hr = m_pDirectInput->CreateDevice(GUID_SysKeyboard,
+	                                  &m_pKeyboardDevice,
+	                                  nullptr);
+	if (FAILED(hr))
 	{
-
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to create keyboard device" ));
-		assert( 0 );
+		DEBUG_LOG(("ERROR - openKeyboard: Unable to create keyboard device"));
+		assert(0);
 		closeKeyboard();
 		return;
-
 	}
 
 	// set the data format for the keyboard
-	hr = m_pKeyboardDevice->SetDataFormat( &c_dfDIKeyboard );
-	if( FAILED( hr ) )
+	hr = m_pKeyboardDevice->SetDataFormat(&c_dfDIKeyboard);
+	if (FAILED(hr))
 	{
-
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set data format for keyboard" ));
-		assert( 0 );
+		DEBUG_LOG(("ERROR - openKeyboard: Unable to set data format for keyboard"));
+		assert(0);
 		closeKeyboard();
 		return;
-
 	}
 
 	/// @todo Check the cooperative level of keyboard for NT, 2000, DX8 etc ...
@@ -163,52 +155,45 @@ void DirectInputKeyboard::openKeyboard()
 	// NT support, but we should check with the latest versions of DirectX
 	// on 2000 etc
 	//
-	hr = m_pKeyboardDevice->SetCooperativeLevel( ApplicationHWnd,
-																							 DISCL_FOREGROUND |
-																							 DISCL_NONEXCLUSIVE );
-	if( FAILED( hr ) )
+	hr = m_pKeyboardDevice->SetCooperativeLevel(ApplicationHWnd,
+	                                            DISCL_FOREGROUND |
+	                                              DISCL_NONEXCLUSIVE);
+	if (FAILED(hr))
 	{
-
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set cooperative level" ));
-		assert( 0 );
+		DEBUG_LOG(("ERROR - openKeyboard: Unable to set cooperative level"));
+		assert(0);
 		closeKeyboard();
 		return;
-
 	}
 
-  // set the keyboard buffer size
+	// set the keyboard buffer size
 	DIPROPDWORD prop;
-	prop.diph.dwSize = sizeof( DIPROPDWORD );
-	prop.diph.dwHeaderSize = sizeof( DIPROPHEADER );
+	prop.diph.dwSize = sizeof(DIPROPDWORD);
+	prop.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 	prop.diph.dwObj = 0;
 	prop.diph.dwHow = DIPH_DEVICE;
 	prop.dwData = KEYBOARD_BUFFER_SIZE;
-	hr = m_pKeyboardDevice->SetProperty( DIPROP_BUFFERSIZE, &prop.diph );
-	if( FAILED( hr ) )
+	hr = m_pKeyboardDevice->SetProperty(DIPROP_BUFFERSIZE, &prop.diph);
+	if (FAILED(hr))
 	{
-
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set keyboard buffer size property" ));
-		assert( 0 );
+		DEBUG_LOG(("ERROR - openKeyboard: Unable to set keyboard buffer size property"));
+		assert(0);
 		closeKeyboard();
 		return;
-
 	}
 
 	// acquire the keyboard
 	hr = m_pKeyboardDevice->Acquire();
-	if( FAILED( hr ) )
+	if (FAILED(hr))
 	{
-
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to acquire keyboard device" ));
+		DEBUG_LOG(("ERROR - openKeyboard: Unable to acquire keyboard device"));
 		// Note - This can happen in windowed mode, and we can re-acquire later.  So don't
 		// close the keyboard. jba.
 		// closeKeyboard();
 		return;
-
 	}
 
-	DEBUG_LOG(( "OK - Keyboard initialized successfully." ));
-
+	DEBUG_LOG(("OK - Keyboard initialized successfully."));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -216,54 +201,49 @@ void DirectInputKeyboard::openKeyboard()
 //-------------------------------------------------------------------------------------------------
 void DirectInputKeyboard::closeKeyboard()
 {
-
-	if( m_pKeyboardDevice )
+	if (m_pKeyboardDevice)
 	{
-
 		m_pKeyboardDevice->Unacquire();
 		m_pKeyboardDevice->Release();
 		m_pKeyboardDevice = nullptr;
-		DEBUG_LOG(( "OK - Keyboard deviced closed" ));
-
+		DEBUG_LOG(("OK - Keyboard deviced closed"));
 	}
-	if( m_pDirectInput )
+	if (m_pDirectInput)
 	{
-
 		m_pDirectInput->Release();
 		m_pDirectInput = nullptr;
-		DEBUG_LOG(( "OK - Keyboard direct input interface closed" ));
-
+		DEBUG_LOG(("OK - Keyboard direct input interface closed"));
 	}
 
-	DEBUG_LOG(( "OK - Keyboard shutdown complete" ));
-
+	DEBUG_LOG(("OK - Keyboard shutdown complete"));
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Get a single keyboard event from direct input */
 //-------------------------------------------------------------------------------------------------
-void DirectInputKeyboard::getKey( KeyboardIO *key )
+void DirectInputKeyboard::getKey(KeyboardIO* key)
 {
 	static int errs = 0;
 	DIDEVICEOBJECTDATA kbdat;
 	DWORD num = 0;
-//	int done = 0;
+	//	int done = 0;
 	HRESULT hr;
 
-	assert( key );
+	assert(key);
 	key->key = KEY_NONE;
 
-	if( m_pKeyboardDevice )
+	if (m_pKeyboardDevice)
 	{
 		// get 1 key, if available
 		num = 1;
 		hr = m_pKeyboardDevice->Acquire();
 		if (hr == DI_OK || hr == S_FALSE)
-			hr = m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
-																						 &kbdat, &num, 0 );
-		switch( hr )
 		{
-
+			hr = m_pKeyboardDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),
+			                                      &kbdat, &num, 0);
+		}
+		switch (hr)
+		{
 			// ----------------------------------------------------------------------
 			case DI_OK:
 				break;
@@ -274,11 +254,10 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 
 				// if we lost focus, attempt to re-acquire
 				hr = m_pKeyboardDevice->Acquire();
-				switch( hr )
+				switch (hr)
 				{
-
 					// ------------------------------------------------------------------
-					//If an error occurs return KEY_NONE
+					// If an error occurs return KEY_NONE
 					case DIERR_INVALIDPARAM:
 					case DIERR_NOTINITIALIZED:
 					case DIERR_OTHERAPPHASPRIO:
@@ -289,14 +268,11 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 					case DI_OK:
 					case S_FALSE:
 					{
-
 						// this will tell the system to loop again
 						key->key = KEY_LOST;
 
 						break;
-
 					}
-
 				}
 
 				return;
@@ -304,12 +280,13 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 			// ----------------------------------------------------------------------
 			default:
 				return;
-
 		}
 
 		// no keys returned
-		if( num == 0 )
+		if (num == 0)
+		{
 			return;
+		}
 
 		// set the key
 		key->key = (UnsignedByte)(kbdat.dwOfs & 0xFF);
@@ -319,7 +296,7 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 		// and not a bit set of the up/down state, this is the "start"
 		// of building this "key"
 		//
-		if( kbdat.dwData & 0x0080 )
+		if (kbdat.dwData & 0x0080)
 		{
 			key->state = KEY_STATE_DOWN;
 			key->keyDownTimeMsec = kbdat.dwTimeStamp;
@@ -331,9 +308,7 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 
 		// set status as unused (unprocessed)
 		key->status = KeyboardIO::STATUS_UNUSED;
-
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -344,12 +319,10 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 //-------------------------------------------------------------------------------------------------
 DirectInputKeyboard::DirectInputKeyboard()
 {
-
 	m_pDirectInput = nullptr;
 	m_pKeyboardDevice = nullptr;
 
-
-	if( GetKeyState( VK_CAPITAL ) & 0x01 )
+	if (GetKeyState(VK_CAPITAL) & 0x01)
 	{
 		m_modifiers |= KEY_STATE_CAPSLOCK;
 	}
@@ -357,17 +330,14 @@ DirectInputKeyboard::DirectInputKeyboard()
 	{
 		m_modifiers &= ~KEY_STATE_CAPSLOCK;
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 DirectInputKeyboard::~DirectInputKeyboard()
 {
-
 	// close keyboard and release all resource
 	closeKeyboard();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -375,13 +345,11 @@ DirectInputKeyboard::~DirectInputKeyboard()
 //-------------------------------------------------------------------------------------------------
 void DirectInputKeyboard::init()
 {
-
 	// extending functionality
 	Keyboard::init();
 
 	// open the direct input keyboard
 	openKeyboard();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -389,10 +357,8 @@ void DirectInputKeyboard::init()
 //-------------------------------------------------------------------------------------------------
 void DirectInputKeyboard::reset()
 {
-
 	// extend functionality
 	Keyboard::reset();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -400,22 +366,20 @@ void DirectInputKeyboard::reset()
 //-------------------------------------------------------------------------------------------------
 void DirectInputKeyboard::update()
 {
-
 	// extending functionality
 	Keyboard::update();
 
-/*
-	// make sure the keyboard buffer is flushed
-	if( m_pKeyboardDevice )
-	{
-		DWORD items = INFINITE;
+	/*
+	  // make sure the keyboard buffer is flushed
+	  if( m_pKeyboardDevice )
+	  {
+	    DWORD items = INFINITE;
 
-		m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
-																			nullptr, &items, 0 );
+	    m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
+	                                      nullptr, &items, 0 );
 
-	}
-*/
-
+	  }
+	*/
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -423,7 +387,5 @@ void DirectInputKeyboard::update()
 //-------------------------------------------------------------------------------------------------
 Bool DirectInputKeyboard::getCapsState()
 {
-
-	return BitIsSet( GetKeyState( VK_CAPITAL ), 0X01);
-
+	return BitIsSet(GetKeyState(VK_CAPITAL), 0X01);
 }

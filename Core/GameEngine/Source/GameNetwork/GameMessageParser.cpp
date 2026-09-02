@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/GameMessageParser.h"
 
@@ -35,7 +34,7 @@ GameMessageParser::GameMessageParser()
 }
 
 //----------------------------------------------------------------------------
-GameMessageParser::GameMessageParser(const GameMessage *msg)
+GameMessageParser::GameMessageParser(const GameMessage* msg)
 {
 	m_first = nullptr;
 	m_argTypeCount = 0;
@@ -44,10 +43,13 @@ GameMessageParser::GameMessageParser(const GameMessage *msg)
 	GameMessageArgumentDataType lasttype = ARGUMENTDATATYPE_UNKNOWN;
 	Int thisTypeCount = 0;
 
-	for (UnsignedByte i = 0; i < argCount; ++i) {
+	for (UnsignedByte i = 0; i < argCount; ++i)
+	{
 		GameMessageArgumentDataType type = msg->getArgumentDataType(i);
-		if (type != lasttype) {
-			if (thisTypeCount > 0) {
+		if (type != lasttype)
+		{
+			if (thisTypeCount > 0)
+			{
 				addArgType(lasttype, thisTypeCount);
 				++m_argTypeCount;
 			}
@@ -56,7 +58,8 @@ GameMessageParser::GameMessageParser(const GameMessage *msg)
 		}
 		++thisTypeCount;
 	}
-	if (thisTypeCount > 0) {
+	if (thisTypeCount > 0)
+	{
 		addArgType(lasttype, thisTypeCount);
 		++m_argTypeCount;
 	}
@@ -65,8 +68,9 @@ GameMessageParser::GameMessageParser(const GameMessage *msg)
 //----------------------------------------------------------------------------
 GameMessageParser::~GameMessageParser()
 {
-	GameMessageParserArgumentType *temp = nullptr;
-	while (m_first != nullptr) {
+	GameMessageParserArgumentType* temp = nullptr;
+	while (m_first != nullptr)
+	{
 		temp = m_first->getNext();
 		deleteInstance(m_first);
 		m_first = temp;
@@ -76,7 +80,8 @@ GameMessageParser::~GameMessageParser()
 //----------------------------------------------------------------------------
 void GameMessageParser::addArgType(GameMessageArgumentDataType type, Int argCount)
 {
-	if (m_first == nullptr) {
+	if (m_first == nullptr)
+	{
 		m_first = newInstance(GameMessageParserArgumentType)(type, argCount);
 		m_last = m_first;
 		return;
@@ -98,4 +103,3 @@ GameMessageParserArgumentType::GameMessageParserArgumentType(GameMessageArgument
 GameMessageParserArgumentType::~GameMessageParserArgumentType()
 {
 }
-

@@ -34,16 +34,16 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
+#pragma message("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
 #if 0
 
-#include "always.h"
-#include "nvdxtlib.h"
-#include "TARGA.h"
-#include "tgatodxt.h"
-#include "WWDebug/wwdebug.h"
-#include <io.h>
-#include	<stdlib.h>
+	#include "always.h"
+	#include "nvdxtlib.h"
+	#include "TARGA.h"
+	#include "tgatodxt.h"
+	#include "WWDebug/wwdebug.h"
+	#include <io.h>
+	#include <stdlib.h>
 
 // Singletons.
 TGAToDXTClass _TGAToDXTConverter;
@@ -264,6 +264,5 @@ void WriteDTXnFile (DWORD datacount, void *data)
 	memcpy (_TGAToDXTConverter.Buffer + _TGAToDXTConverter.BufferCount, data, datacount);
 	_TGAToDXTConverter.BufferCount += datacount;
 }
-
 
 #endif

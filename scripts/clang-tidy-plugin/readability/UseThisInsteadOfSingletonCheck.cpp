@@ -12,214 +12,265 @@
 using namespace clang;
 using namespace clang::ast_matchers;
 
-namespace clang::tidy::generalsgamecode::readability {
+namespace clang::tidy::generalsgamecode::readability
+{
 
+static const CXXMethodDecl* getEnclosingMethod(ASTContext* Context,
+                                               const Stmt* S)
+{
+	const CXXMethodDecl* Method = nullptr;
 
-static const CXXMethodDecl *getEnclosingMethod(ASTContext *Context,
-                                                const Stmt *S) {
-  const CXXMethodDecl *Method = nullptr;
-  
-  auto Parents = Context->getParents(*S);
-  while (!Parents.empty()) {
-    if (const auto *M = Parents[0].get<CXXMethodDecl>()) {
-      if (!M->isStatic()) {
-        Method = M;
-        break;
-      }
-    }
-    Parents = Context->getParents(Parents[0]);
-  }
-  
-  return Method;
+	auto Parents = Context->getParents(*S);
+	while (!Parents.empty())
+	{
+		if (const auto* M = Parents[0].get<CXXMethodDecl>())
+		{
+			if (!M->isStatic())
+			{
+				Method = M;
+				break;
+			}
+		}
+		Parents = Context->getParents(Parents[0]);
+	}
+
+	return Method;
 }
 
-static bool typesMatch(const QualType &SingletonType,
-                       const CXXRecordDecl *EnclosingClass) {
-  if (!EnclosingClass) {
-    return false;
-  }
+static bool typesMatch(const QualType& SingletonType,
+                       const CXXRecordDecl* EnclosingClass)
+{
+	if (!EnclosingClass)
+	{
+		return false;
+	}
 
-  const Type *TypePtr = SingletonType.getTypePtrOrNull();
-  if (!TypePtr) {
-    return false;
-  }
+	const Type* TypePtr = SingletonType.getTypePtrOrNull();
+	if (!TypePtr)
+	{
+		return false;
+	}
 
-  if (const PointerType *PtrType = TypePtr->getAs<PointerType>()) {
-    QualType PointeeType = PtrType->getPointeeType();
-    if (const RecordType *RecordTy = PointeeType->getAs<RecordType>()) {
-      if (const CXXRecordDecl *RecordDecl =
-              dyn_cast<CXXRecordDecl>(RecordTy->getDecl())) {
-        return RecordDecl->getCanonicalDecl() ==
-               EnclosingClass->getCanonicalDecl();
-      }
-    }
-  }
+	if (const PointerType* PtrType = TypePtr->getAs<PointerType>())
+	{
+		QualType PointeeType = PtrType->getPointeeType();
+		if (const RecordType* RecordTy = PointeeType->getAs<RecordType>())
+		{
+			if (const CXXRecordDecl* RecordDecl =
+			      dyn_cast<CXXRecordDecl>(RecordTy->getDecl()))
+			{
+				return RecordDecl->getCanonicalDecl() ==
+				       EnclosingClass->getCanonicalDecl();
+			}
+		}
+	}
 
-  return false;
+	return false;
 }
 
-void UseThisInsteadOfSingletonCheck::registerMatchers(MatchFinder *Finder) {
-  auto MemberExprMatcher = memberExpr(
-      hasObjectExpression(ignoringParenImpCasts(declRefExpr(to(varDecl(anyOf(hasGlobalStorage(), hasExternalFormalLinkage())).bind("singletonVar"))))),
-      hasDeclaration(fieldDecl()),
-      unless(hasAncestor(cxxMemberCallExpr())))
-      .bind("memberExpr");
+void UseThisInsteadOfSingletonCheck::registerMatchers(MatchFinder* Finder)
+{
+	auto MemberExprMatcher = memberExpr(
+	                           hasObjectExpression(ignoringParenImpCasts(declRefExpr(to(varDecl(anyOf(hasGlobalStorage(), hasExternalFormalLinkage())).bind("singletonVar"))))),
+	                           hasDeclaration(fieldDecl()),
+	                           unless(hasAncestor(cxxMemberCallExpr())))
+	                           .bind("memberExpr");
 
-  auto MemberCallMatcher = cxxMemberCallExpr(
-      on(ignoringParenImpCasts(declRefExpr(to(varDecl(anyOf(hasGlobalStorage(), hasExternalFormalLinkage())).bind("singletonVarCall"))))))
-      .bind("memberCall");
+	auto MemberCallMatcher = cxxMemberCallExpr(
+	                           on(ignoringParenImpCasts(declRefExpr(to(varDecl(anyOf(hasGlobalStorage(), hasExternalFormalLinkage())).bind("singletonVarCall"))))))
+	                           .bind("memberCall");
 
-  Finder->addMatcher(MemberExprMatcher, this);
-  Finder->addMatcher(MemberCallMatcher, this);
+	Finder->addMatcher(MemberExprMatcher, this);
+	Finder->addMatcher(MemberCallMatcher, this);
 }
 
 void UseThisInsteadOfSingletonCheck::check(
-    const MatchFinder::MatchResult &Result) {
-  const auto *MemExpr = Result.Nodes.getNodeAs<clang::MemberExpr>("memberExpr");
-  const auto *MemberCall = Result.Nodes.getNodeAs<CXXMemberCallExpr>("memberCall");
-  
-  if (!MemExpr && !MemberCall) {
-    return;
-  }
+  const MatchFinder::MatchResult& Result)
+{
+	const auto* MemExpr = Result.Nodes.getNodeAs<clang::MemberExpr>("memberExpr");
+	const auto* MemberCall = Result.Nodes.getNodeAs<CXXMemberCallExpr>("memberCall");
 
-  const Stmt *TargetStmt = nullptr;
-  const VarDecl *FoundSingletonVar = nullptr;
-  bool IsCall = false;
+	if (!MemExpr && !MemberCall)
+	{
+		return;
+	}
 
-  if (MemberCall) {
-    IsCall = true;
-    TargetStmt = MemberCall;
-    FoundSingletonVar = Result.Nodes.getNodeAs<VarDecl>("singletonVarCall");
-    if (!FoundSingletonVar) {
-      const Expr *ImplicitObject = MemberCall->getImplicitObjectArgument();
-      if (ImplicitObject) {
-        ImplicitObject = ImplicitObject->IgnoreParenImpCasts();
-        if (const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(ImplicitObject)) {
-          FoundSingletonVar = dyn_cast<VarDecl>(DRE->getDecl());
-        }
-      }
-    }
-  } else if (MemExpr) {
-    TargetStmt = MemExpr;
-    FoundSingletonVar = Result.Nodes.getNodeAs<VarDecl>("singletonVar");
-  }
+	const Stmt* TargetStmt = nullptr;
+	const VarDecl* FoundSingletonVar = nullptr;
+	bool IsCall = false;
 
-  if (!TargetStmt || !FoundSingletonVar) {
-    return;
-  }
+	if (MemberCall)
+	{
+		IsCall = true;
+		TargetStmt = MemberCall;
+		FoundSingletonVar = Result.Nodes.getNodeAs<VarDecl>("singletonVarCall");
+		if (!FoundSingletonVar)
+		{
+			const Expr* ImplicitObject = MemberCall->getImplicitObjectArgument();
+			if (ImplicitObject)
+			{
+				ImplicitObject = ImplicitObject->IgnoreParenImpCasts();
+				if (const DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(ImplicitObject))
+				{
+					FoundSingletonVar = dyn_cast<VarDecl>(DRE->getDecl());
+				}
+			}
+		}
+	}
+	else if (MemExpr)
+	{
+		TargetStmt = MemExpr;
+		FoundSingletonVar = Result.Nodes.getNodeAs<VarDecl>("singletonVar");
+	}
 
-  StringRef SingletonName = FoundSingletonVar->getName();
-  if (!SingletonName.starts_with("The") || SingletonName.size() <= 3 ||
-      (SingletonName[3] < 'A' || SingletonName[3] > 'Z')) {
-    return;
-  }
+	if (!TargetStmt || !FoundSingletonVar)
+	{
+		return;
+	}
 
-  const ASTContext *Context = Result.Context;
+	StringRef SingletonName = FoundSingletonVar->getName();
+	if (!SingletonName.starts_with("The") || SingletonName.size() <= 3 ||
+	    (SingletonName[3] < 'A' || SingletonName[3] > 'Z'))
+	{
+		return;
+	}
 
-  const CXXMethodDecl *EnclosingMethod = getEnclosingMethod(
-      const_cast<ASTContext *>(Context), TargetStmt);
-  if (!EnclosingMethod) {
-    return;
-  }
+	const ASTContext* Context = Result.Context;
 
-  const CXXRecordDecl *EnclosingClass = EnclosingMethod->getParent();
-  if (!EnclosingClass) {
-    return;
-  }
+	const CXXMethodDecl* EnclosingMethod = getEnclosingMethod(
+	  const_cast<ASTContext*>(Context), TargetStmt);
+	if (!EnclosingMethod)
+	{
+		return;
+	}
 
-  QualType SingletonType = FoundSingletonVar->getType();
-  if (!typesMatch(SingletonType, EnclosingClass)) {
-    return;
-  }
+	const CXXRecordDecl* EnclosingClass = EnclosingMethod->getParent();
+	if (!EnclosingClass)
+	{
+		return;
+	}
 
-  const ValueDecl *Member = nullptr;
-  StringRef MemberName;
-  SourceLocation StartLoc, EndLoc;
+	QualType SingletonType = FoundSingletonVar->getType();
+	if (!typesMatch(SingletonType, EnclosingClass))
+	{
+		return;
+	}
 
-  if (IsCall && MemberCall) {
-    const CXXMethodDecl *Method = MemberCall->getMethodDecl();
-    if (!Method) {
-      return;
-    }
-    if (Method->isStatic()) {
-      return;
-    }
-    if (EnclosingMethod->isConst() && !Method->isConst()) {
-      return;
-    }
-    Member = Method;
-    MemberName = Method->getName();
-    StartLoc = MemberCall->getBeginLoc();
-    EndLoc = MemberCall->getEndLoc();
-  } else if (MemExpr) {
-    Member = MemExpr->getMemberDecl();
-    if (!Member) {
-      return;
-    }
-    MemberName = Member->getName();
-    StartLoc = MemExpr->getBeginLoc();
-    EndLoc = MemExpr->getEndLoc();
-  } else {
-    return;
-  }
+	const ValueDecl* Member = nullptr;
+	StringRef MemberName;
+	SourceLocation StartLoc, EndLoc;
 
-  SourceManager &SM = *Result.SourceManager;
+	if (IsCall && MemberCall)
+	{
+		const CXXMethodDecl* Method = MemberCall->getMethodDecl();
+		if (!Method)
+		{
+			return;
+		}
+		if (Method->isStatic())
+		{
+			return;
+		}
+		if (EnclosingMethod->isConst() && !Method->isConst())
+		{
+			return;
+		}
+		Member = Method;
+		MemberName = Method->getName();
+		StartLoc = MemberCall->getBeginLoc();
+		EndLoc = MemberCall->getEndLoc();
+	}
+	else if (MemExpr)
+	{
+		Member = MemExpr->getMemberDecl();
+		if (!Member)
+		{
+			return;
+		}
+		MemberName = Member->getName();
+		StartLoc = MemExpr->getBeginLoc();
+		EndLoc = MemExpr->getEndLoc();
+	}
+	else
+	{
+		return;
+	}
 
-  std::string Replacement = std::string(MemberName);
-  
-  if (IsCall && MemberCall) {
-    SourceLocation RParenLoc = MemberCall->getRParenLoc();
-    const Expr *Callee = MemberCall->getCallee();
-    
-    if (RParenLoc.isValid() && Callee) {
-      SourceLocation CalleeEnd = Lexer::getLocForEndOfToken(
-          Callee->getEndLoc(), 0, SM, Result.Context->getLangOpts());
-      
-      if (CalleeEnd.isValid() && CalleeEnd < RParenLoc) {
-        SourceLocation ArgsStart = CalleeEnd;
-        SourceLocation ArgsEnd = Lexer::getLocForEndOfToken(
-            RParenLoc, 0, SM, Result.Context->getLangOpts());
-        
-        if (ArgsStart.isValid() && ArgsEnd.isValid() && ArgsStart < ArgsEnd) {
-          StringRef ArgsText = Lexer::getSourceText(
-              CharSourceRange::getCharRange(ArgsStart, ArgsEnd), SM,
-              Result.Context->getLangOpts());
-          ArgsText = ArgsText.ltrim();
-          if (!ArgsText.empty()) {
-            Replacement += ArgsText.str();
-          } else {
-            Replacement += "()";
-          }
-        } else {
-          Replacement += "()";
-        }
-      } else {
-        SourceLocation CallEnd = Lexer::getLocForEndOfToken(
-            MemberCall->getEndLoc(), 0, SM, Result.Context->getLangOpts());
-        if (CalleeEnd.isValid() && CallEnd.isValid() && CalleeEnd < CallEnd) {
-          StringRef ArgsText = Lexer::getSourceText(
-              CharSourceRange::getCharRange(CalleeEnd, CallEnd), SM,
-              Result.Context->getLangOpts());
-          ArgsText = ArgsText.ltrim();
-          if (!ArgsText.empty()) {
-            Replacement += ArgsText.str();
-          } else {
-            Replacement += "()";
-          }
-        } else {
-          Replacement += "()";
-        }
-      }
-    } else {
-      Replacement += "()";
-    }
-  }
+	SourceManager& SM = *Result.SourceManager;
 
-  diag(StartLoc, "use '%0' instead of '%1->%2' when inside a member function")
-      << Replacement << FoundSingletonVar->getName() << MemberName
-      << FixItHint::CreateReplacement(
-             CharSourceRange::getTokenRange(StartLoc, EndLoc), Replacement);
+	std::string Replacement = std::string(MemberName);
+
+	if (IsCall && MemberCall)
+	{
+		SourceLocation RParenLoc = MemberCall->getRParenLoc();
+		const Expr* Callee = MemberCall->getCallee();
+
+		if (RParenLoc.isValid() && Callee)
+		{
+			SourceLocation CalleeEnd = Lexer::getLocForEndOfToken(
+			  Callee->getEndLoc(), 0, SM, Result.Context->getLangOpts());
+
+			if (CalleeEnd.isValid() && CalleeEnd < RParenLoc)
+			{
+				SourceLocation ArgsStart = CalleeEnd;
+				SourceLocation ArgsEnd = Lexer::getLocForEndOfToken(
+				  RParenLoc, 0, SM, Result.Context->getLangOpts());
+
+				if (ArgsStart.isValid() && ArgsEnd.isValid() && ArgsStart < ArgsEnd)
+				{
+					StringRef ArgsText = Lexer::getSourceText(
+					  CharSourceRange::getCharRange(ArgsStart, ArgsEnd), SM,
+					  Result.Context->getLangOpts());
+					ArgsText = ArgsText.ltrim();
+					if (!ArgsText.empty())
+					{
+						Replacement += ArgsText.str();
+					}
+					else
+					{
+						Replacement += "()";
+					}
+				}
+				else
+				{
+					Replacement += "()";
+				}
+			}
+			else
+			{
+				SourceLocation CallEnd = Lexer::getLocForEndOfToken(
+				  MemberCall->getEndLoc(), 0, SM, Result.Context->getLangOpts());
+				if (CalleeEnd.isValid() && CallEnd.isValid() && CalleeEnd < CallEnd)
+				{
+					StringRef ArgsText = Lexer::getSourceText(
+					  CharSourceRange::getCharRange(CalleeEnd, CallEnd), SM,
+					  Result.Context->getLangOpts());
+					ArgsText = ArgsText.ltrim();
+					if (!ArgsText.empty())
+					{
+						Replacement += ArgsText.str();
+					}
+					else
+					{
+						Replacement += "()";
+					}
+				}
+				else
+				{
+					Replacement += "()";
+				}
+			}
+		}
+		else
+		{
+			Replacement += "()";
+		}
+	}
+
+	diag(StartLoc, "use '%0' instead of '%1->%2' when inside a member function")
+	  << Replacement << FoundSingletonVar->getName() << MemberName
+	  << FixItHint::CreateReplacement(
+	       CharSourceRange::getTokenRange(StartLoc, EndLoc), Replacement);
 }
 
-} // namespace clang::tidy::generalsgamecode::readability
-
+}    // namespace clang::tidy::generalsgamecode::readability

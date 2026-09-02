@@ -26,34 +26,38 @@
 
 class ContourOptions : public CDialog
 {
-// Construction
+	// Construction
 public:
-	enum {MIN_CONTOUR_STEP=1,
-				MAX_CONTOUR_STEP=10,
-				MIN_CONTOUR_OFFSET=-10,
-				MAX_CONTOUR_OFFSET=+10,
-				MIN_WIDTH=1,
-				MAX_WIDTH=6};
+	enum
+	{
+		MIN_CONTOUR_STEP = 1,
+		MAX_CONTOUR_STEP = 10,
+		MIN_CONTOUR_OFFSET = -10,
+		MAX_CONTOUR_OFFSET = +10,
+		MIN_WIDTH = 1,
+		MAX_WIDTH = 6
+	};
 
-	ContourOptions(CWnd* pParent = nullptr);   // standard constructor
+	ContourOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ContourOptions)
-	enum { IDD = IDD_CONTOUR_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CONTOUR_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ContourOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ContourOptions)
 	virtual BOOL OnInitDialog() override;
@@ -63,21 +67,19 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	static Int m_contourStep;					///< current contour step in the ui.
-	static Int m_contourOffset;				///< current contour offset in the ui.
-	static Int m_contourWidth;				///< current contour offset in the ui.
+	static Int m_contourStep;    ///< current contour step in the ui.
+	static Int m_contourOffset;    ///< current contour offset in the ui.
+	static Int m_contourWidth;    ///< current contour offset in the ui.
 
-	Bool		m_updating; ///<true if the ui is updating itself.
-	CSliderCtrl m_contourStepSlider; ///< Feather slider control.
-	CSliderCtrl m_contourOffsetSlider;		///< Brush width slider control.
-	CSliderCtrl m_contourWidthSlider;		///< Brush width slider control.
+	Bool m_updating;    ///< true if the ui is updating itself.
+	CSliderCtrl m_contourStepSlider;    ///< Feather slider control.
+	CSliderCtrl m_contourOffsetSlider;    ///< Brush width slider control.
+	CSliderCtrl m_contourWidthSlider;    ///< Brush width slider control.
 
 public:
-	static Int getContourWidth() {return m_contourWidth;};  ///<Returns width.
-	static Int getContourOffset() {return m_contourOffset;}; ///<Returns offset.
-	static Int getContourStep() {return m_contourStep;}; ///<Returns step.
-
-
+	static Int getContourWidth() { return m_contourWidth; };    ///< Returns width.
+	static Int getContourOffset() { return m_contourOffset; };    ///< Returns offset.
+	static Int getContourStep() { return m_contourStep; };    ///< Returns step.
 };
 
 //{{AFX_INSERT_LOCATION}}

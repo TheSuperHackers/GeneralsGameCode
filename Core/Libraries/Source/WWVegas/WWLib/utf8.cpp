@@ -23,9 +23,9 @@
 // platforms. WCHAR_MAX lets us distinguish the two at compile time so the surrogate-pair paths
 // are excluded entirely (not just constant-folded) where wchar_t is wide enough to hold a codepoint.
 #if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
-#define UTF8_WCHAR_IS_UTF16 1
+	#define UTF8_WCHAR_IS_UTF16 1
 #else
-#define UTF8_WCHAR_IS_UTF16 0
+	#define UTF8_WCHAR_IS_UTF16 0
 #endif
 
 static const unsigned int UTF8_CODEPOINT_MAX = 0x10FFFF;
@@ -113,26 +113,26 @@ static size_t Utf8_Decode(const char* src, size_t srcLen, unsigned int& cp)
 	}
 	else
 	{
-		return 0; // a continuation byte or a 5/6-byte form cannot start a sequence
+		return 0;    // a continuation byte or a 5/6-byte form cannot start a sequence
 	}
 
 	if (srcLen < count)
 	{
-		return 0; // truncated sequence
+		return 0;    // truncated sequence
 	}
 	for (size_t i = 1; i < count; ++i)
 	{
 		const unsigned char trail = (unsigned char)src[i];
 		if ((trail & 0xC0) != 0x80)
 		{
-			return 0; // not a continuation byte
+			return 0;    // not a continuation byte
 		}
 		cp = (cp << 6) | (trail & 0x3F);
 	}
 
 	if (cp < lowerBound || cp > UTF8_CODEPOINT_MAX || (cp >= UTF8_SURROGATE_MIN && cp <= UTF8_SURROGATE_MAX))
 	{
-		return 0; // overlong, out of range, or a surrogate codepoint
+		return 0;    // overlong, out of range, or a surrogate codepoint
 	}
 	return count;
 }

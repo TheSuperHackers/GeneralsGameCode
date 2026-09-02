@@ -28,37 +28,41 @@ class ScriptProperties : public CPropertyPage
 {
 	DECLARE_DYNCREATE(ScriptProperties)
 
-// Construction
+	// Construction
 public:
 	ScriptProperties();
 	virtual ~ScriptProperties() override;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ScriptProperties)
-	enum { IDD = IDD_ScriptProperties };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	enum
+	{
+		IDD = IDD_ScriptProperties
+	};
+	// NOTE - ClassWizard will add data members here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(ScriptProperties)
-	public:
+public:
 	virtual BOOL OnSetActive() override;
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	void setScript(Script *pScript) {m_script = pScript;}
+	void setScript(Script* pScript) { m_script = pScript; }
+
 protected:
 	void enableControls();
 
 protected:
-	Script *m_script;
-	Bool	 m_updating;
+	Script* m_script;
+	Bool m_updating;
 
 protected:
 	// Generated message map functions
@@ -76,7 +80,6 @@ protected:
 	afx_msg void OnChangeSecondsEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -27,7 +27,7 @@
 // Desc:	 An update that checks for a status bit to stealth the owning object
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_STEALTHLEVEL_NAMES
 
@@ -51,38 +51,37 @@
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
 
-
 //-------------------------------------------------------------------------------------------------
 void StealthDetectorUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "DetectionRate",							INI::parseDurationUnsignedInt,			nullptr, offsetof( StealthDetectorUpdateModuleData, m_updateRate ) },
-		{ "DetectionRange",							INI::parseReal,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_detectionRange ) },
-		{ "InitiallyDisabled",					INI::parseBool,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_initiallyDisabled ) },
-		{ "PingSound",									INI::parseAudioEventRTS,						nullptr, offsetof( StealthDetectorUpdateModuleData, m_pingSound ) },
-		{ "LoudPingSound",							INI::parseAudioEventRTS,						nullptr, offsetof( StealthDetectorUpdateModuleData, m_loudPingSound ) },
-		{ "IRBeaconParticleSysName",		INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRBeaconParticleSysTmpl ) },
-		{ "IRParticleSysName",					INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRParticleSysTmpl ) },
-		{ "IRBrightParticleSysName",		INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRBrightParticleSysTmpl ) },
-		{ "IRGridParticleSysName",			INI::parseParticleSystemTemplate,		nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRGridParticleSysTmpl ) },
-		{ "IRParticleSysBone",					INI::parseAsciiString,							nullptr, offsetof( StealthDetectorUpdateModuleData, m_IRParticleSysBone ) },
-		{ "ExtraRequiredKindOf",				KindOfMaskType::parseFromINI,				nullptr, offsetof( StealthDetectorUpdateModuleData, m_extraDetectKindof ) },
-		{ "ExtraForbiddenKindOf",				KindOfMaskType::parseFromINI,				nullptr, offsetof( StealthDetectorUpdateModuleData, m_extraDetectKindofNot ) },
-		{ "CanDetectWhileGarrisoned",		INI::parseBool,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_canDetectWhileGarrisoned ) },
-		{ "CanDetectWhileContained",		INI::parseBool,											nullptr, offsetof( StealthDetectorUpdateModuleData, m_canDetectWhileTransported ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "DetectionRate", INI::parseDurationUnsignedInt, nullptr, offsetof(StealthDetectorUpdateModuleData, m_updateRate) },
+		{ "DetectionRange", INI::parseReal, nullptr, offsetof(StealthDetectorUpdateModuleData, m_detectionRange) },
+		{ "InitiallyDisabled", INI::parseBool, nullptr, offsetof(StealthDetectorUpdateModuleData, m_initiallyDisabled) },
+		{ "PingSound", INI::parseAudioEventRTS, nullptr, offsetof(StealthDetectorUpdateModuleData, m_pingSound) },
+		{ "LoudPingSound", INI::parseAudioEventRTS, nullptr, offsetof(StealthDetectorUpdateModuleData, m_loudPingSound) },
+		{ "IRBeaconParticleSysName", INI::parseParticleSystemTemplate, nullptr, offsetof(StealthDetectorUpdateModuleData, m_IRBeaconParticleSysTmpl) },
+		{ "IRParticleSysName", INI::parseParticleSystemTemplate, nullptr, offsetof(StealthDetectorUpdateModuleData, m_IRParticleSysTmpl) },
+		{ "IRBrightParticleSysName", INI::parseParticleSystemTemplate, nullptr, offsetof(StealthDetectorUpdateModuleData, m_IRBrightParticleSysTmpl) },
+		{ "IRGridParticleSysName", INI::parseParticleSystemTemplate, nullptr, offsetof(StealthDetectorUpdateModuleData, m_IRGridParticleSysTmpl) },
+		{ "IRParticleSysBone", INI::parseAsciiString, nullptr, offsetof(StealthDetectorUpdateModuleData, m_IRParticleSysBone) },
+		{ "ExtraRequiredKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof(StealthDetectorUpdateModuleData, m_extraDetectKindof) },
+		{ "ExtraForbiddenKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof(StealthDetectorUpdateModuleData, m_extraDetectKindofNot) },
+		{ "CanDetectWhileGarrisoned", INI::parseBool, nullptr, offsetof(StealthDetectorUpdateModuleData, m_canDetectWhileGarrisoned) },
+		{ "CanDetectWhileContained", INI::parseBool, nullptr, offsetof(StealthDetectorUpdateModuleData, m_canDetectWhileTransported) },
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StealthDetectorUpdate::StealthDetectorUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+StealthDetectorUpdate::StealthDetectorUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
-	const StealthDetectorUpdateModuleData *data = getStealthDetectorUpdateModuleData();
+	const StealthDetectorUpdateModuleData* data = getStealthDetectorUpdateModuleData();
 	m_enabled = !data->m_initiallyDisabled;
 	// start these guys with random phasings so that we don't
 	// have all of 'em check on the same frame.
@@ -97,41 +96,43 @@ StealthDetectorUpdate::~StealthDetectorUpdate()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StealthDetectorUpdate::setSDEnabled( Bool enabled )
+void StealthDetectorUpdate::setSDEnabled(Bool enabled)
 {
 	m_enabled = enabled;
 	setWakeFrame(getObject(), m_enabled ? UPDATE_SLEEP_NONE : UPDATE_SLEEP_FOREVER);
 }
-
-
-
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class PartitionFilterStealthedOrStealthGarrisoned : public PartitionFilter
 {
 public:
-	PartitionFilterStealthedOrStealthGarrisoned() { }
+	PartitionFilterStealthedOrStealthGarrisoned() {}
 
-	virtual Bool allow(Object *objOther) override;
+	virtual Bool allow(Object* objOther) override;
 
 #if defined(RTS_DEBUG)
 	virtual const char* debugGetName() override { return "PartitionFilterStealthedOrStealthGarrisoned"; }
 #endif
 };
 
-Bool PartitionFilterStealthedOrStealthGarrisoned::allow( Object *objOther)
+Bool PartitionFilterStealthedOrStealthGarrisoned::allow(Object* objOther)
 {
-	if( ! objOther )
+	if (!objOther)
+	{
 		return FALSE;
+	}
 
-	if( objOther->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
+	if (objOther->getStatusBits().test(OBJECT_STATUS_STEALTHED))
+	{
 		return TRUE;
+	}
 
-	ContainModuleInterface *contain = objOther->getContain();
-	if( contain && contain->isGarrisonable() && contain->getStealthUnitsContained() )
+	ContainModuleInterface* contain = objOther->getContain();
+	if (contain && contain->isGarrisonable() && contain->getStealthUnitsContained())
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -141,72 +142,79 @@ Bool PartitionFilterStealthedOrStealthGarrisoned::allow( Object *objOther)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime StealthDetectorUpdate::update()
 {
-	const StealthDetectorUpdateModuleData *data = getStealthDetectorUpdateModuleData();
+	const StealthDetectorUpdateModuleData* data = getStealthDetectorUpdateModuleData();
 	Object* self = getObject();
 
 	if (self->isEffectivelyDead())
+	{
 		return UPDATE_SLEEP_FOREVER;
+	}
 
 	// We have to wait until we are fully constructed, but we will detect the moment we finish
-	if( self->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
+	if (self->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
 		return UPDATE_SLEEP_NONE;
+	}
 
 	// We turn off forever the moment we are sold.
-	if( self->testStatus(OBJECT_STATUS_SOLD) )
-		return UPDATE_SLEEP_FOREVER;
-
-	//Are we contained by anything?
-	Object *containedBy = self->getContainedBy();
-	if( containedBy )
+	if (self->testStatus(OBJECT_STATUS_SOLD))
 	{
-		ContainModuleInterface *contain = containedBy->getContain();
-		if( contain )
+		return UPDATE_SLEEP_FOREVER;
+	}
+
+	// Are we contained by anything?
+	Object* containedBy = self->getContainedBy();
+	if (containedBy)
+	{
+		ContainModuleInterface* contain = containedBy->getContain();
+		if (contain)
 		{
-			//Are we eligible to detect stealth while in a container?
-			if( contain->isGarrisonable() )
+			// Are we eligible to detect stealth while in a container?
+			if (contain->isGarrisonable())
 			{
-				//We are in a garrisonable structure.
-				if( !data->m_canDetectWhileGarrisoned )
+				// We are in a garrisonable structure.
+				if (!data->m_canDetectWhileGarrisoned)
 				{
-					//But we can't detect stuff while inside.
+					// But we can't detect stuff while inside.
 					return UPDATE_SLEEP(data->m_updateRate);
 				}
 			}
-			else if( !data->m_canDetectWhileTransported )
+			else if (!data->m_canDetectWhileTransported)
 			{
-				//We are in a normal container and can't detect!
+				// We are in a normal container and can't detect!
 				return UPDATE_SLEEP(data->m_updateRate);
 			}
 		}
 	}
 
 	// only consider items that are currently stealthed.
-	PartitionFilterStealthedOrStealthGarrisoned		filterStealthOrStealthGarrisoned;
-	//PartitionFilterAcceptByObjectStatus		filterStatus(OBJECT_STATUS_STEALTHED, 0);
-	PartitionFilterRelationship						filterTeam(self, PartitionFilterRelationship::ALLOW_ENEMIES | PartitionFilterRelationship::ALLOW_NEUTRAL );
-	PartitionFilterAcceptByKindOf					filterKindof(data->m_extraDetectKindof, data->m_extraDetectKindofNot);
-	PartitionFilterSameMapStatus					filterMapStatus(getObject());
-	PartitionFilter*											filters[] = { &filterStealthOrStealthGarrisoned, &filterTeam, &filterKindof, &filterMapStatus, nullptr };
+	PartitionFilterStealthedOrStealthGarrisoned filterStealthOrStealthGarrisoned;
+	// PartitionFilterAcceptByObjectStatus		filterStatus(OBJECT_STATUS_STEALTHED, 0);
+	PartitionFilterRelationship filterTeam(self, PartitionFilterRelationship::ALLOW_ENEMIES | PartitionFilterRelationship::ALLOW_NEUTRAL);
+	PartitionFilterAcceptByKindOf filterKindof(data->m_extraDetectKindof, data->m_extraDetectKindofNot);
+	PartitionFilterSameMapStatus filterMapStatus(getObject());
+	PartitionFilter* filters[] = { &filterStealthOrStealthGarrisoned, &filterTeam, &filterKindof, &filterMapStatus, nullptr };
 
 	Real visionRange = self->getVisionRange();
-	if( data->m_detectionRange > 0.0f )
+	if (data->m_detectionRange > 0.0f)
 	{
 		visionRange = data->m_detectionRange;
 	}
 	Bool foundSomeone = FALSE;
 
-	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(
-								self, visionRange, FROM_CENTER_2D, filters);
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(
+	  self, visionRange, FROM_CENTER_2D, filters);
 	MemoryPoolObjectHolder hold(iter);
-	for (Object *them = iter->first(); them; them = iter->next())
+	for (Object* them = iter->first(); them; them = iter->next())
 	{
-		if ( them->isEffectivelyDead() )
+		if (them->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		StealthUpdate* stealth = them->getStealth();
-		if ( stealth )
+		if (stealth)
 		{
-
 			// we have found someone
 			foundSomeone = TRUE;
 
@@ -214,12 +222,11 @@ UpdateSleepTime StealthDetectorUpdate::update()
 			// if this object was not previously detected it is now being revealed and we
 			// want to do some UI feedback
 			//
-			if( them->testStatus( OBJECT_STATUS_DETECTED ) == FALSE )
+			if (them->testStatus(OBJECT_STATUS_DETECTED) == FALSE)
 			{
-
 				// for the player revealing the stealth unit do some UI feedback
-				if( rts::getObservedOrLocalPlayer() == self->getControllingPlayer() &&
-						self->getRelationship( them ) != ALLIES )
+				if (rts::getObservedOrLocalPlayer() == self->getControllingPlayer() &&
+				    self->getRelationship(them) != ALLIES)
 				{
 					Bool doFeedback = TRUE;
 
@@ -227,195 +234,203 @@ UpdateSleepTime StealthDetectorUpdate::update()
 					// do a radar event, for mines we only make events if there weren't other
 					// mine events within close proximity and time to other mines
 					//
-					if( them->isKindOf( KINDOF_MINE ) )
-						doFeedback = TheRadar->tryEvent( RADAR_EVENT_STEALTH_DISCOVERED, them->getPosition() );
-					else
- 						TheRadar->createEvent( them->getPosition(), RADAR_EVENT_STEALTH_DISCOVERED );
-
-					// do audio and UI message if we need to do feedback
-					if( doFeedback )
+					if (them->isKindOf(KINDOF_MINE))
 					{
-
- 						// audio msg
- 						static AudioEventRTS discoveredSound = TheAudio->getMiscAudio()->m_stealthDiscoveredSound;
- 						discoveredSound.setPlayerIndex( self->getControllingPlayer()->getPlayerIndex() );
- 						TheAudio->addAudioEvent( &discoveredSound );
- 						// ui msg
- 						TheInGameUI->message( TheGameText->fetch( "MESSAGE:StealthDiscovered" ) );
-
+						doFeedback = TheRadar->tryEvent(RADAR_EVENT_STEALTH_DISCOVERED, them->getPosition());
+					}
+					else
+					{
+						TheRadar->createEvent(them->getPosition(), RADAR_EVENT_STEALTH_DISCOVERED);
 					}
 
+					// do audio and UI message if we need to do feedback
+					if (doFeedback)
+					{
+						// audio msg
+						static AudioEventRTS discoveredSound = TheAudio->getMiscAudio()->m_stealthDiscoveredSound;
+						discoveredSound.setPlayerIndex(self->getControllingPlayer()->getPlayerIndex());
+						TheAudio->addAudioEvent(&discoveredSound);
+						// ui msg
+						TheInGameUI->message(TheGameText->fetch("MESSAGE:StealthDiscovered"));
+					}
 				}
 
 				// for the unit being revealed, do some UI feedback
-				if( rts::getObservedOrLocalPlayer() == them->getControllingPlayer() &&
-						self->getRelationship( them ) != ALLIES )
+				if (rts::getObservedOrLocalPlayer() == them->getControllingPlayer() &&
+				    self->getRelationship(them) != ALLIES)
 				{
- 					Bool doFeedback = TRUE;
+					Bool doFeedback = TRUE;
 
 					//
 					// do a radar event, for mines we only make events if there weren't other
 					// mine events within close proximity and time to other mines
 					//
-					if( them->isKindOf( KINDOF_MINE ) )
-						doFeedback = TheRadar->tryEvent( RADAR_EVENT_STEALTH_NEUTRALIZED, them->getPosition() );
-					else
- 						TheRadar->createEvent( them->getPosition(), RADAR_EVENT_STEALTH_NEUTRALIZED );
-
-					// do audio and UI message if we need to do feedback
-					if( doFeedback )
+					if (them->isKindOf(KINDOF_MINE))
 					{
-
- 						// audio msg
- 						static AudioEventRTS neutralizedSound = TheAudio->getMiscAudio()->m_stealthNeutralizedSound;
- 						neutralizedSound.setPlayerIndex( them->getControllingPlayer()->getPlayerIndex() );
- 						TheAudio->addAudioEvent( &neutralizedSound );
- 						// ui msg
- 						TheInGameUI->message( TheGameText->fetch( "MESSAGE:StealthNeutralized" ) );
-
+						doFeedback = TheRadar->tryEvent(RADAR_EVENT_STEALTH_NEUTRALIZED, them->getPosition());
+					}
+					else
+					{
+						TheRadar->createEvent(them->getPosition(), RADAR_EVENT_STEALTH_NEUTRALIZED);
 					}
 
+					// do audio and UI message if we need to do feedback
+					if (doFeedback)
+					{
+						// audio msg
+						static AudioEventRTS neutralizedSound = TheAudio->getMiscAudio()->m_stealthNeutralizedSound;
+						neutralizedSound.setPlayerIndex(them->getControllingPlayer()->getPlayerIndex());
+						TheAudio->addAudioEvent(&neutralizedSound);
+						// ui msg
+						TheInGameUI->message(TheGameText->fetch("MESSAGE:StealthNeutralized"));
+					}
 				}
-
 			}
 
 			// updateRate PLUS 1 is necessary to ensure it stays detected 'till we are called again...
 			stealth->markAsDetected(data->m_updateRate + 1);
 
 			/** @todo srj -- evil hack here... this whole heat-vision thing is fucked.
-				don't want it on mines but no good way to do that. hack for now. */
-			Drawable *theirDraw = them->getDrawable();
-			if ( theirDraw && !them->isKindOf(KINDOF_MINE))
+			  don't want it on mines but no good way to do that. hack for now. */
+			Drawable* theirDraw = them->getDrawable();
+			if (theirDraw && !them->isKindOf(KINDOF_MINE))
 			{
-				theirDraw->setHeatVisionOpacity( 1.0f );
+				theirDraw->setHeatVisionOpacity(1.0f);
 			}
 
-			const ParticleSystemTemplate *gridTemplate = data->m_IRGridParticleSysTmpl;
-			ParticleSystem *sys = TheParticleSystemManager->createParticleSystem( gridTemplate );//GRID
+			const ParticleSystemTemplate* gridTemplate = data->m_IRGridParticleSysTmpl;
+			ParticleSystem* sys = TheParticleSystemManager->createParticleSystem(gridTemplate);    // GRID
 			if (sys)
 			{
 				Coord3D gridPosition = *them->getPosition();
 				gridPosition.z = self->getPosition()->z + 17;
-				gridPosition.x -= ((Int)gridPosition.x)%12;
-				gridPosition.y -= ((Int)gridPosition.y)%12;
+				gridPosition.x -= ((Int)gridPosition.x) % 12;
+				gridPosition.y -= ((Int)gridPosition.y) % 12;
 
-				sys->setPosition( &gridPosition );
+				sys->setPosition(&gridPosition);
 			}
-
 		}
-		else // perhaps they are garrisoning something stealthy, eh?
+		else    // perhaps they are garrisoning something stealthy, eh?
 		{
-			ContainModuleInterface *contain = them->getContain();
-			if( contain && contain->isGarrisonable() && contain->getStealthUnitsContained() )
+			ContainModuleInterface* contain = them->getContain();
+			if (contain && contain->isGarrisonable() && contain->getStealthUnitsContained())
 			{
 				Object* rider = nullptr;
-				for(ContainedItemsList::const_iterator it = contain->getContainedItemsList()->begin(); it != contain->getContainedItemsList()->end(); ++it)
+				for (ContainedItemsList::const_iterator it = contain->getContainedItemsList()->begin(); it != contain->getContainedItemsList()->end(); ++it)
 				{
 					rider = *it;
 
 					StealthUpdate* stealth = rider->getStealth();
-					if ( stealth )
+					if (stealth)
 					{
 						// we have found someone
 						foundSomeone = TRUE;
-						if( self->getControllingPlayer() != rider->getControllingPlayer() && self->getRelationship( rider ) != ALLIES )
+						if (self->getControllingPlayer() != rider->getControllingPlayer() && self->getRelationship(rider) != ALLIES)
 						{
 							stealth->markAsDetected(data->m_updateRate + 2);
 						}
-
 					}
 				}
 			}
 		}
 	}
 
+	const Player* localPlayer = rts::getObservedOrLocalPlayer();
 
-  const Player *localPlayer = rts::getObservedOrLocalPlayer();
-
-	//Make sure the detector is visible to the local player before we add effects or sounds.
+	// Make sure the detector is visible to the local player before we add effects or sounds.
 	if (data->m_IRGridParticleSysTmpl && self->getShroudedStatus(localPlayer->getPlayerIndex()) <= OBJECTSHROUD_PARTIAL_CLEAR)
 	{
-		Drawable *myDraw = self->getDrawable();
-		Coord3D bonePosition = {-1.66f,5.5f,15};//@todo use bone position
+		Drawable* myDraw = self->getDrawable();
+		Coord3D bonePosition = { -1.66f, 5.5f, 15 };    //@todo use bone position
 		if (myDraw)
-			myDraw->getPristineBonePositions( data->m_IRParticleSysBone.str(), 0, &bonePosition, nullptr, 1);
-
-		const ParticleSystemTemplate *pingTemplate;
-		if ( foundSomeone )
-			pingTemplate = data->m_IRBrightParticleSysTmpl;
-		else
-			pingTemplate = data->m_IRParticleSysTmpl;
-
-		ParticleSystem *sys = TheParticleSystemManager->createParticleSystem( pingTemplate );
-		if (sys)
 		{
-			if (myDraw)
-				sys->attachToDrawable( myDraw );
-			else
-				sys->attachToObject( self );
-
-			sys->setPosition( &bonePosition );
+			myDraw->getPristineBonePositions(data->m_IRParticleSysBone.str(), 0, &bonePosition, nullptr, 1);
 		}
 
-		const ParticleSystemTemplate *beaconTemplate = data->m_IRBeaconParticleSysTmpl;
-		sys = TheParticleSystemManager->createParticleSystem( beaconTemplate );//BEACON
+		const ParticleSystemTemplate* pingTemplate;
+		if (foundSomeone)
+		{
+			pingTemplate = data->m_IRBrightParticleSysTmpl;
+		}
+		else
+		{
+			pingTemplate = data->m_IRParticleSysTmpl;
+		}
+
+		ParticleSystem* sys = TheParticleSystemManager->createParticleSystem(pingTemplate);
 		if (sys)
 		{
 			if (myDraw)
-				sys->attachToDrawable( myDraw );
+			{
+				sys->attachToDrawable(myDraw);
+			}
 			else
-				sys->attachToObject( self );
+			{
+				sys->attachToObject(self);
+			}
 
-			sys->setPosition( &bonePosition );
+			sys->setPosition(&bonePosition);
+		}
 
+		const ParticleSystemTemplate* beaconTemplate = data->m_IRBeaconParticleSysTmpl;
+		sys = TheParticleSystemManager->createParticleSystem(beaconTemplate);    // BEACON
+		if (sys)
+		{
+			if (myDraw)
+			{
+				sys->attachToDrawable(myDraw);
+			}
+			else
+			{
+				sys->attachToObject(self);
+			}
+
+			sys->setPosition(&bonePosition);
 		}
 
 		AudioEventRTS IRPingSound;
 		if (foundSomeone)
+		{
 			IRPingSound = data->m_loudPingSound;
+		}
 		else
+		{
 			IRPingSound = data->m_pingSound;
+		}
 
-		IRPingSound.setObjectID( self->getID() );
+		IRPingSound.setObjectID(self->getID());
 		TheAudio->addAudioEvent(&IRPingSound);
-
 	}
 
-
 	return UPDATE_SLEEP(data->m_updateRate);
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void StealthDetectorUpdate::crc( Xfer *xfer )
+void StealthDetectorUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void StealthDetectorUpdate::xfer( Xfer *xfer )
+void StealthDetectorUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// enabled
-	xfer->xferBool( &m_enabled );
-
+	xfer->xferBool(&m_enabled);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -423,8 +438,6 @@ void StealthDetectorUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void StealthDetectorUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

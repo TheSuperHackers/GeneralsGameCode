@@ -27,7 +27,7 @@
 // Author: Chris Huybregts, October 2001
 // Description: LAN API Callbacks
 ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "WWLib/strtok_r.h"
 #include "Common/GameEngine.h"
@@ -47,24 +47,22 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/networkutil.h"
 
-LANAPI *TheLAN = nullptr;
+LANAPI* TheLAN = nullptr;
 extern Bool LANbuttonPushed;
 
+// Colors used for the chat dialogs
+const Color playerColor = GameMakeColor(255, 255, 255, 255);
+const Color gameColor = GameMakeColor(255, 255, 255, 255);
+const Color gameInProgressColor = GameMakeColor(128, 128, 128, 255);
+const Color chatNormalColor = GameMakeColor(50, 215, 230, 255);
+const Color chatActionColor = GameMakeColor(255, 0, 255, 255);
+const Color chatLocalNormalColor = GameMakeColor(255, 128, 0, 255);
+const Color chatLocalActionColor = GameMakeColor(128, 255, 255, 255);
+const Color chatSystemColor = GameMakeColor(255, 255, 255, 255);
+const Color acceptTrueColor = GameMakeColor(0, 255, 0, 255);
+const Color acceptFalseColor = GameMakeColor(255, 0, 0, 255);
 
-//Colors used for the chat dialogs
-const Color playerColor =  GameMakeColor(255,255,255,255);
-const Color gameColor =  GameMakeColor(255,255,255,255);
-const Color gameInProgressColor =  GameMakeColor(128,128,128,255);
-const Color chatNormalColor =  GameMakeColor(50,215,230,255);
-const Color chatActionColor =  GameMakeColor(255,0,255,255);
-const Color chatLocalNormalColor =  GameMakeColor(255,128,0,255);
-const Color chatLocalActionColor =  GameMakeColor(128,255,255,255);
-const Color chatSystemColor =  GameMakeColor(255,255,255,255);
-const Color acceptTrueColor =  GameMakeColor(0,255,0,255);
-const Color acceptFalseColor =  GameMakeColor(255,0,0,255);
-
-
-UnicodeString LANAPIInterface::getErrorStringFromReturnType( ReturnType ret )
+UnicodeString LANAPIInterface::getErrorStringFromReturnType(ReturnType ret)
 {
 	switch (ret)
 	{
@@ -94,7 +92,7 @@ UnicodeString LANAPIInterface::getErrorStringFromReturnType( ReturnType ret )
 }
 
 // TheSuperHackers @feature arcticdolphin 08/08/2026 Adds /me emotes to LAN player chat, consistent with WOL
-void LANAPI::RequestPlayerChat( UnicodeString message )
+void LANAPI::RequestPlayerChat(UnicodeString message)
 {
 	if (message.startsWithNoCase(L"/me "))
 	{
@@ -107,32 +105,36 @@ void LANAPI::RequestPlayerChat( UnicodeString message )
 
 // On functions are (generally) the result of network traffic
 
-void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
+void LANAPI::OnAccept(UnsignedInt playerIP, Bool status)
 {
-	if( AmIHost() )
+	if (AmIHost())
 	{
 		Int i = 0;
 		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
-				if(status)
+				if (status)
+				{
 					m_currentGame->getLANSlot(i)->setAccept();
+				}
 				else
+				{
 					m_currentGame->getLANSlot(i)->unAccept();
+				}
 				break;
 			}
 		}
-		if (i != MAX_SLOTS )
+		if (i != MAX_SLOTS)
 		{
-			RequestGameOptions( GenerateGameOptionsString(), false );
+			RequestGameOptions(GenerateGameOptionsString(), false);
 			lanUpdateSlotList();
 		}
 	}
 	else
 	{
-		//i'm not the host but if the accept came from the host...
-		if( m_currentGame->getIP(0) == playerIP )
+		// i'm not the host but if the accept came from the host...
+		if (m_currentGame->getIP(0) == playerIP)
 		{
 			UnicodeString text;
 			text = TheGameText->fetch("GUI:HostWantsToStart");
@@ -141,29 +143,31 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 	}
 }
 
-void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
+void LANAPI::OnHasMap(UnsignedInt playerIP, Bool status)
 {
-	if( AmIHost() )
+	if (AmIHost())
 	{
 		Int i = 0;
 		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
-				m_currentGame->getLANSlot(i)->setMapAvailability( status );
+				m_currentGame->getLANSlot(i)->setMapAvailability(status);
 				break;
 			}
 		}
-		if (i != MAX_SLOTS )
+		if (i != MAX_SLOTS)
 		{
 			UnicodeString mapDisplayName;
-			const MapMetaData *mapData = TheMapCache->findMap( m_currentGame->getMap() );
+			const MapMetaData* mapData = TheMapCache->findMap(m_currentGame->getMap());
 			Bool willTransfer = TRUE;
 			if (mapData)
 			{
 				mapDisplayName.format(L"%ls", mapData->m_displayName.str());
 				if (mapData->m_isOfficial)
+				{
 					willTransfer = FALSE;
+				}
 			}
 			else
 			{
@@ -174,9 +178,13 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 			{
 				UnicodeString text;
 				if (willTransfer)
+				{
 					text.format(TheGameText->fetch("GUI:PlayerNoMapWillTransfer"), m_currentGame->getLANSlot(i)->getName().str(), mapDisplayName.str());
+				}
 				else
+				{
 					text.format(TheGameText->fetch("GUI:PlayerNoMap"), m_currentGame->getLANSlot(i)->getName().str(), mapDisplayName.str());
+				}
 				OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 			}
 			lanUpdateSlotList();
@@ -184,40 +192,44 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 	}
 }
 
-void LANAPI::OnGameStartTimer( Int seconds )
+void LANAPI::OnGameStartTimer(Int seconds)
 {
 	UnicodeString text;
 	if (seconds == 1)
+	{
 		text.format(TheGameText->fetch("LAN:GameStartTimerSingular"), seconds);
+	}
 	else
+	{
 		text.format(TheGameText->fetch("LAN:GameStartTimerPlural"), seconds);
+	}
 	OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 }
 
 void LANAPI::OnGameStart()
 {
-	//DEBUG_LOG(("Map is '%s', preview is '%s'", m_currentGame->getMap().str(), GetPreviewFromMap(m_currentGame->getMap()).str()));
-	//DEBUG_LOG(("Map is '%s', INI is '%s'", m_currentGame->getMap().str(), GetINIFromMap(m_currentGame->getMap()).str()));
+	// DEBUG_LOG(("Map is '%s', preview is '%s'", m_currentGame->getMap().str(), GetPreviewFromMap(m_currentGame->getMap()).str()));
+	// DEBUG_LOG(("Map is '%s', INI is '%s'", m_currentGame->getMap().str(), GetINIFromMap(m_currentGame->getMap()).str()));
 
 	if (m_currentGame)
 	{
 		LANPreferences pref;
 		AsciiString option;
-		option.format("%d", m_currentGame->getLANSlot( m_currentGame->getLocalSlotNum() )->getPlayerTemplate());
+		option.format("%d", m_currentGame->getLANSlot(m_currentGame->getLocalSlotNum())->getPlayerTemplate());
 		pref["PlayerTemplate"] = option;
-		option.format("%d", m_currentGame->getLANSlot( m_currentGame->getLocalSlotNum() )->getColor());
+		option.format("%d", m_currentGame->getLANSlot(m_currentGame->getLocalSlotNum())->getColor());
 		pref["Color"] = option;
 		if (m_currentGame->amIHost())
-    {
-    	pref["Map"] = AsciiStringToQuotedPrintable(m_currentGame->getMap());
-      pref.setSuperweaponRestricted( m_currentGame->getSuperweaponRestriction() > 0 );
-      pref.setStartingCash( m_currentGame->getStartingCash() );
-    }
+		{
+			pref["Map"] = AsciiStringToQuotedPrintable(m_currentGame->getMap());
+			pref.setSuperweaponRestricted(m_currentGame->getSuperweaponRestriction() > 0);
+			pref.setStartingCash(m_currentGame->getStartingCash());
+		}
 		pref.write();
 
 		m_isInLANMenu = FALSE;
 
-		//m_currentGame->startGame(0);
+		// m_currentGame->startGame(0);
 
 		// Set up the game network
 		DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't null at the start of this game.  Better look into that."));
@@ -234,7 +246,9 @@ void LANAPI::OnGameStart()
 		TheNetwork->parseUserList(m_currentGame);
 
 		if (TheGameLogic->isInGame())
+		{
 			TheGameLogic->clearGameData();
+		}
 
 		Bool filesOk = DoAnyMapTransfers(m_currentGame);
 
@@ -258,59 +272,63 @@ void LANAPI::OnGameStart()
 		m_currentGame->startGame(0);
 
 		// shutdown the top, but do not pop it off the stack
-		//TheShell->hideShell();
+		// TheShell->hideShell();
 		// setup the Global Data with the Map and Seed
 		TheWritableGlobalData->m_pendingFile = m_currentGame->getMap();
 
 		// send a message to the logic for a new game
-		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_NEW_GAME);
 		msg->appendIntegerArgument(GAME_LAN);
 
 		TheWritableGlobalData->m_useFpsLimit = false;
 
 		// Set the seeds
-		InitRandom( m_currentGame->getSeed() );
+		InitRandom(m_currentGame->getSeed());
 		DEBUG_LOG(("InitRandom( %d )", m_currentGame->getSeed()));
 	}
 }
 
-void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString options )
+void LANAPI::OnGameOptions(UnsignedInt playerIP, Int playerSlot, AsciiString options)
 {
 	if (!m_currentGame)
+	{
 		return;
+	}
 
 	if (m_currentGame->getIP(playerSlot) != playerIP)
-		return; // He's not in our game?!?
-
+	{
+		return;    // He's not in our game?!?
+	}
 
 	if (m_currentGame->isGameInProgress())
-		return; // we don't want to process any game options while in game.
+	{
+		return;    // we don't want to process any game options while in game.
+	}
 
 	if (playerSlot == 0 && !m_currentGame->amIHost())
 	{
 		m_currentGame->setLastHeard(timeGetTime());
-		AsciiString oldOptions = GameInfoToAsciiString(m_currentGame); // save these off for if we get booted
-		if(ParseGameOptionsString(m_currentGame,options))
+		AsciiString oldOptions = GameInfoToAsciiString(m_currentGame);    // save these off for if we get booted
+		if (ParseGameOptionsString(m_currentGame, options))
 		{
 			lanUpdateSlotList();
 			updateGameOptions();
 		}
 		Bool booted = true;
-		for(Int player = 1; player< MAX_SLOTS; player++)
+		for (Int player = 1; player < MAX_SLOTS; player++)
 		{
-			if(m_currentGame->getIP(player) == m_localIP)
+			if (m_currentGame->getIP(player) == m_localIP)
 			{
 				booted = false;
 				break;
 			}
 		}
-		if(booted)
+		if (booted)
 		{
 			// restore the options with us in so we can save prefs
 			ParseGameOptionsString(m_currentGame, oldOptions);
 			OnPlayerLeave(m_name);
 		}
-
 	}
 	else
 	{
@@ -319,26 +337,28 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 			AsciiString key;
 			AsciiString munkee = options;
 			munkee.nextToken(&key, "=");
-			//DEBUG_LOG(("GameOpt request: key=%s, val=%s from player %d", key.str(), munkee.str(), playerSlot));
+			// DEBUG_LOG(("GameOpt request: key=%s, val=%s from player %d", key.str(), munkee.str(), playerSlot));
 
-			LANGameSlot *slot = m_currentGame->getLANSlot(playerSlot);
+			LANGameSlot* slot = m_currentGame->getLANSlot(playerSlot);
 			if (!slot)
+			{
 				return;
+			}
 
 			if (key == "User")
 			{
-				slot->setLogin(munkee.str()+1);
+				slot->setLogin(munkee.str() + 1);
 				return;
 			}
 			else if (key == "Host")
 			{
-				slot->setHost(munkee.str()+1);
+				slot->setHost(munkee.str() + 1);
 				return;
 			}
 		}
 
 		// Parse player requests (side, color, etc)
-		if( AmIHost() && m_localIP != playerIP)
+		if (AmIHost() && m_localIP != playerIP)
 		{
 			if (options.compare("HELLO") == 0)
 			{
@@ -351,32 +371,36 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				Bool shouldUnaccept = false;
 				AsciiString key;
 				options.nextToken(&key, "=");
-				Int val = atoi(options.str()+1);
+				Int val = atoi(options.str() + 1);
 				DEBUG_LOG(("GameOpt request: key=%s, val=%s from player %d", key.str(), options.str(), playerSlot));
 
-				LANGameSlot *slot = m_currentGame->getLANSlot(playerSlot);
+				LANGameSlot* slot = m_currentGame->getLANSlot(playerSlot);
 				if (!slot)
+				{
 					return;
+				}
 
 				if (key == "Color")
 				{
 					if (val >= -1 && val < TheMultiplayerSettings->getNumColors() && val != slot->getColor() && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
 					{
 						Bool colorAvailable = TRUE;
-						if(val != -1 )
+						if (val != -1)
 						{
-							for(Int i=0; i <MAX_SLOTS; i++)
+							for (Int i = 0; i < MAX_SLOTS; i++)
 							{
-								LANGameSlot *checkSlot = m_currentGame->getLANSlot(i);
-								if(val == checkSlot->getColor() && slot != checkSlot)
+								LANGameSlot* checkSlot = m_currentGame->getLANSlot(i);
+								if (val == checkSlot->getColor() && slot != checkSlot)
 								{
 									colorAvailable = FALSE;
 									break;
 								}
 							}
 						}
-						if(colorAvailable)
+						if (colorAvailable)
+						{
 							slot->setColor(val);
+						}
 						change = true;
 					}
 					else
@@ -405,22 +429,25 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				}
 				else if (key == "StartPos" && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
 				{
-
 					if (val >= -1 && val < MAX_SLOTS && val != slot->getStartPos())
 					{
 						Bool startPosAvailable = TRUE;
-						if(val != -1)
-							for(Int i=0; i <MAX_SLOTS; i++)
+						if (val != -1)
+						{
+							for (Int i = 0; i < MAX_SLOTS; i++)
 							{
-								LANGameSlot *checkSlot = m_currentGame->getLANSlot(i);
-								if(val == checkSlot->getStartPos() && slot != checkSlot)
+								LANGameSlot* checkSlot = m_currentGame->getLANSlot(i);
+								if (val == checkSlot->getStartPos() && slot != checkSlot)
 								{
 									startPosAvailable = FALSE;
 									break;
 								}
 							}
-						if(startPosAvailable)
+						}
+						if (startPosAvailable)
+						{
 							slot->setStartPos(val);
+						}
 						change = true;
 						shouldUnaccept = true;
 					}
@@ -431,7 +458,7 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				}
 				else if (key == "Team")
 				{
-					if (val >= -1 && val < MAX_SLOTS/2 && val != slot->getTeamNumber() && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
+					if (val >= -1 && val < MAX_SLOTS / 2 && val != slot->getTeamNumber() && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
 					{
 						slot->setTeamNumber(val);
 						change = true;
@@ -445,7 +472,7 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				else if (key == "NAT")
 				{
 					if ((val >= FirewallHelperClass::FIREWALL_TYPE_SIMPLE) &&
-							(val <= FirewallHelperClass::FIREWALL_TYPE_DESTINATION_PORT_DELTA))
+					    (val <= FirewallHelperClass::FIREWALL_TYPE_DESTINATION_PORT_DELTA))
 					{
 						slot->setNATBehavior((FirewallHelperClass::FirewallBehaviorType)val);
 						DEBUG_LOG(("NAT behavior set to %d for player %d", val, playerSlot));
@@ -460,11 +487,13 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				if (change)
 				{
 					if (shouldUnaccept)
+					{
 						m_currentGame->resetAccepted();
+					}
 					RequestGameOptions(GenerateGameOptionsString(), true);
 					lanUpdateSlotList();
 					DEBUG_LOG(("Slot value is color=%d, PlayerTemplate=%d, startPos=%d, team=%d",
-						slot->getColor(), slot->getPlayerTemplate(), slot->getStartPos(), slot->getTeamNumber()));
+					           slot->getColor(), slot->getPlayerTemplate(), slot->getStartPos(), slot->getTeamNumber()));
 					DEBUG_LOG(("Slot list updated to %s", GenerateGameOptionsString().str()));
 				}
 			}
@@ -472,34 +501,33 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 	}
 }
 
-
 /*
 void LANAPI::OnSlotList( ReturnType ret, LANGameInfo *theGame )
 {
-	if (!theGame || theGame != m_currentGame)
-		return;
+  if (!theGame || theGame != m_currentGame)
+    return;
 
-	Bool foundMe = false;
-	for (int player = 0; player < MAX_SLOTS; ++player)
-	{
-		if (m_currentGame->getIP(player) == m_localIP)
-		{
-			foundMe = true;
-			break;
-		}
-	}
-	if (!foundMe)
-	{
-		// I've been kicked - back to the lobby for me!
-		// We're counting on the fact that OnPlayerLeave winds up calling reset on TheLAN.
-		OnPlayerLeave(m_name);
-		return;
-	}
+  Bool foundMe = false;
+  for (int player = 0; player < MAX_SLOTS; ++player)
+  {
+    if (m_currentGame->getIP(player) == m_localIP)
+    {
+      foundMe = true;
+      break;
+    }
+  }
+  if (!foundMe)
+  {
+    // I've been kicked - back to the lobby for me!
+    // We're counting on the fact that OnPlayerLeave winds up calling reset on TheLAN.
+    OnPlayerLeave(m_name);
+    return;
+  }
 
-	lanUpdateSlotList();
+  lanUpdateSlotList();
 }
 */
-void LANAPI::OnPlayerJoin( Int slot, UnicodeString playerName )
+void LANAPI::OnPlayerJoin(Int slot, UnicodeString playerName)
 {
 	if (m_currentGame && m_currentGame->getIP(0) == m_localIP)
 	{
@@ -513,13 +541,13 @@ void LANAPI::OnPlayerJoin( Int slot, UnicodeString playerName )
 	lanUpdateSlotList();
 }
 
-void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
+void LANAPI::OnGameJoin(ReturnType ret, LANGameInfo* theGame)
 {
 	if (ret == RET_OK)
 	{
 		LANbuttonPushed = true;
-		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
-		//lanUpdateSlotList();
+		TheShell->push("Menus/LanGameOptionsMenu.wnd");
+		// lanUpdateSlotList();
 
 		LANPreferences pref;
 		AsciiString options;
@@ -528,11 +556,11 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 		options.format("Color=%d", pref.getPreferredColor());
 		RequestGameOptions(options, true);
 		options.format("User=%s", m_userName.str());
-		RequestGameOptions( options, true );
+		RequestGameOptions(options, true);
 		options.format("Host=%s", m_hostName.str());
-		RequestGameOptions( options, true );
-		options.format("NAT=%d", FirewallHelperClass::FIREWALL_TYPE_SIMPLE); // BGC: This is a LAN game, so there is no firewall.
-		RequestGameOptions( options, true );
+		RequestGameOptions(options, true);
+		options.format("NAT=%d", FirewallHelperClass::FIREWALL_TYPE_SIMPLE);    // BGC: This is a LAN game, so there is no firewall.
+		RequestGameOptions(options, true);
 	}
 	else if (ret != RET_BUSY)
 	{
@@ -548,32 +576,38 @@ void LANAPI::OnHostLeave()
 {
 	DEBUG_ASSERTCRASH(!m_inLobby && m_currentGame, ("Game info is gone!"));
 	if (m_inLobby || !m_currentGame)
+	{
 		return;
+	}
 	LANbuttonPushed = true;
 	DEBUG_LOG(("Host left - popping to lobby"));
 	TheShell->pop();
 }
 
-void LANAPI::OnPlayerLeave( UnicodeString player )
+void LANAPI::OnPlayerLeave(UnicodeString player)
 {
 	DEBUG_ASSERTCRASH(!m_inLobby && m_currentGame, ("Game info is gone!"));
 	if (m_inLobby || !m_currentGame || m_currentGame->isGameInProgress())
+	{
 		return;
+	}
 
 	if (m_name.compare(player) == 0)
 	{
 		// We're leaving.  Save options and Pop the shell up a screen.
-		//DEBUG_CRASH(("Slot is %d", m_currentGame->getLocalSlotNum()));
+		// DEBUG_CRASH(("Slot is %d", m_currentGame->getLocalSlotNum()));
 		if (m_currentGame && m_currentGame->isInGame() && m_currentGame->getLocalSlotNum() >= 0)
 		{
 			LANPreferences pref;
 			AsciiString option;
-			option.format("%d", m_currentGame->getLANSlot( m_currentGame->getLocalSlotNum() )->getPlayerTemplate());
+			option.format("%d", m_currentGame->getLANSlot(m_currentGame->getLocalSlotNum())->getPlayerTemplate());
 			pref["PlayerTemplate"] = option;
-			option.format("%d", m_currentGame->getLANSlot( m_currentGame->getLocalSlotNum() )->getColor());
+			option.format("%d", m_currentGame->getLANSlot(m_currentGame->getLocalSlotNum())->getColor());
 			pref["Color"] = option;
 			if (m_currentGame->amIHost())
+			{
 				pref["Map"] = AsciiStringToQuotedPrintable(m_currentGame->getMap());
+			}
 			pref.write();
 		}
 		LANbuttonPushed = true;
@@ -588,127 +622,134 @@ void LANAPI::OnPlayerLeave( UnicodeString player )
 			m_lastResendTime = 0;
 
 			lanUpdateSlotList();
-			RequestGameOptions( GenerateGameOptionsString(), true );
-
+			RequestGameOptions(GenerateGameOptionsString(), true);
 		}
 	}
 }
 
-void LANAPI::OnGameList( LANGameInfo *gameList )
+void LANAPI::OnGameList(LANGameInfo* gameList)
 {
-
 	if (m_inLobby)
 	{
 		LANDisplayGameList(listboxGames, gameList);
 	}
 }
 
-void LANAPI::OnGameCreate( ReturnType ret )
+void LANAPI::OnGameCreate(ReturnType ret)
 {
 	if (ret == RET_OK)
 	{
-
 		LANbuttonPushed = true;
-		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
+		TheShell->push("Menus/LanGameOptionsMenu.wnd");
 
-		RequestLobbyLeave( false );
-		//RequestGameAnnounce(); // can't do this here, since we don't have a map set
+		RequestLobbyLeave(false);
+		// RequestGameAnnounce(); // can't do this here, since we don't have a map set
 	}
 	else
 	{
-		if(m_inLobby)
+		if (m_inLobby)
 		{
-			switch( ret )
+			switch (ret)
 			{
-			case RET_GAME_EXISTS:
-				GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorGameExists"), chatSystemColor, -1, -1);
-				break;
-			case RET_BUSY:
-				GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorBusy"), chatSystemColor, -1, -1);
-				break;
-			default:
-				GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorUnknown"), chatSystemColor, -1, -1);
+				case RET_GAME_EXISTS:
+					GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorGameExists"), chatSystemColor, -1, -1);
+					break;
+				case RET_BUSY:
+					GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorBusy"), chatSystemColor, -1, -1);
+					break;
+				default:
+					GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorUnknown"), chatSystemColor, -1, -1);
 			}
 		}
 	}
-
 }
 
-void LANAPI::OnPlayerList( LANPlayer *playerList )
+void LANAPI::OnPlayerList(LANPlayer* playerList)
 {
 	if (m_inLobby)
 	{
-
 		UnsignedInt selectedIP = 0;
 		Int selectedIndex = -1;
 		Int indexToSelect = -1;
 		GadgetListBoxGetSelected(listboxPlayers, &selectedIndex);
 
-		if (selectedIndex != -1 )
-			selectedIP = (UnsignedInt) GadgetListBoxGetItemData(listboxPlayers, selectedIndex, 0);
+		if (selectedIndex != -1)
+		{
+			selectedIP = (UnsignedInt)GadgetListBoxGetItemData(listboxPlayers, selectedIndex, 0);
+		}
 
 		GadgetListBoxReset(listboxPlayers);
 
-		LANPlayer *player = m_lobbyPlayers;
+		LANPlayer* player = m_lobbyPlayers;
 		while (player)
 		{
 			Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), playerColor, -1, -1);
-			GadgetListBoxSetItemData(listboxPlayers, (void *)player->getIP(),addedIndex, 0 );
+			GadgetListBoxSetItemData(listboxPlayers, (void*)player->getIP(), addedIndex, 0);
 
 			if (selectedIP == player->getIP())
+			{
 				indexToSelect = addedIndex;
+			}
 
 			player = player->getNext();
 		}
 
 		if (indexToSelect >= 0)
+		{
 			GadgetListBoxSetSelected(listboxPlayers, indexToSelect);
+		}
 	}
 }
 
-void LANAPI::OnNameChange( UnsignedInt IP, UnicodeString newName )
+void LANAPI::OnNameChange(UnsignedInt IP, UnicodeString newName)
 {
 	OnPlayerList(m_lobbyPlayers);
 }
 
-void LANAPI::OnInActive(UnsignedInt IP) {
-
+void LANAPI::OnInActive(UnsignedInt IP)
+{
 }
 
-void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message, ChatType format )
+void LANAPI::OnChat(UnicodeString player, UnsignedInt ip, UnicodeString message, ChatType format)
 {
-	GameWindow *chatWindow = nullptr;
+	GameWindow* chatWindow = nullptr;
 
 	if (m_inLobby)
 	{
 		chatWindow = listboxChatWindow;
 	}
-	else if( m_currentGame && m_currentGame->isGameInProgress() && TheShell->isShellActive())
+	else if (m_currentGame && m_currentGame->isGameInProgress() && TheShell->isShellActive())
 	{
 		chatWindow = listboxChatWindowScoreScreen;
 	}
-	else if( m_currentGame && !m_currentGame->isGameInProgress())
+	else if (m_currentGame && !m_currentGame->isGameInProgress())
 	{
 		chatWindow = listboxChatWindowLanGame;
 	}
 	if (chatWindow == nullptr)
+	{
 		return;
+	}
 	Int index = -1;
 	UnicodeString unicodeChat;
 	switch (format)
 	{
 		case LANAPIInterface::LANCHAT_SYSTEM:
 			unicodeChat = message;
-			index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatSystemColor, -1, -1);
+			index = GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatSystemColor, -1, -1);
 			break;
 		case LANAPIInterface::LANCHAT_EMOTE:
 			unicodeChat = player;
 			unicodeChat.concat(L' ');
 			unicodeChat.concat(message);
 			if (ip == m_localIP)
-				index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatLocalActionColor, -1, -1);
+			{
+				index = GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatLocalActionColor, -1, -1);
+			}
 			else
-				index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatActionColor, -1, -1);
+			{
+				index = GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatActionColor, -1, -1);
+			}
 			break;
 		case LANAPIInterface::LANCHAT_NORMAL:
 		default:
@@ -721,13 +762,17 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 			{
 				Int slotNum = m_currentGame->getSlotNum(player);
 				// it'll be -1 if its invalid.
-				if (slotNum >= 0) {
-					GameSlot *gs = m_currentGame->getSlot(slotNum);
-					if (gs) {
+				if (slotNum >= 0)
+				{
+					GameSlot* gs = m_currentGame->getSlot(slotNum);
+					if (gs)
+					{
 						Int colorIndex = gs->getColor();
-						MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(colorIndex);
+						MultiplayerColorDefinition* def = TheMultiplayerSettings->getColor(colorIndex);
 						if (def)
+						{
 							chatColor = def->getColor();
+						}
 					}
 				}
 			}
@@ -737,11 +782,15 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 			unicodeChat.concat(L"] ");
 			unicodeChat.concat(message);
 			if (ip == m_localIP)
-				index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatColor, -1, -1);
+			{
+				index = GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatColor, -1, -1);
+			}
 			else
-				index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatColor, -1, -1);
+			{
+				index = GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatColor, -1, -1);
+			}
 			break;
 		}
 	}
-	GadgetListBoxSetItemData(chatWindow, (void *)-1, index);
+	GadgetListBoxSetItemData(chatWindow, (void*)-1, index);
 }

@@ -36,7 +36,7 @@
 /* Revision History:                                                         */
 /*		4/19/2002 : Initial creation                                          */
 /*---------------------------------------------------------------------------*/
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Squad.h"
 
@@ -48,50 +48,58 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-
 // addObject //////////////////////////////////////////////////////////////////////////////////////
-void Squad::addObject(Object *objectToAdd)
+void Squad::addObject(Object* objectToAdd)
 {
-	if (objectToAdd) {
+	if (objectToAdd)
+	{
 		m_objectIDs.push_back(objectToAdd->getID());
 	}
 }
 
 // addObjectID ////////////////////////////////////////////////////////////////////////////////////
-void Squad::addObjectID(ObjectID objectID) {
+void Squad::addObjectID(ObjectID objectID)
+{
 	m_objectIDs.push_back(objectID);
 }
 
 // removeObject ///////////////////////////////////////////////////////////////////////////////////
-void Squad::removeObject(Object *objectToRemove)
+void Squad::removeObject(Object* objectToRemove)
 {
-	if (objectToRemove) {
+	if (objectToRemove)
+	{
 		ObjectID objID;
 		objID = objectToRemove->getID();
 		VecObjectIDIt it = std::find(m_objectIDs.begin(), m_objectIDs.end(), objID);
-		if (it != m_objectIDs.end()) {
+		if (it != m_objectIDs.end())
+		{
 			m_objectIDs.erase(it);
 		}
 	}
 }
 
 // clearSquad /////////////////////////////////////////////////////////////////////////////////////
-void Squad::clearSquad() {
+void Squad::clearSquad()
+{
 	m_objectIDs.clear();
 	m_objectsCached.clear();
 }
 
 // getAllObjects //////////////////////////////////////////////////////////////////////////////////
-const VecObjectPtr& Squad::getAllObjects() // Not a const function cause we clear away dead object here too
+const VecObjectPtr& Squad::getAllObjects()    // Not a const function cause we clear away dead object here too
 {
 	// prunes all null objects
 	m_objectsCached.clear();
-	for (VecObjectIDIt it = m_objectIDs.begin(); it != m_objectIDs.end(); ) {
-		Object *obj = TheGameLogic->findObjectByID(*it);
-		if (obj) {
+	for (VecObjectIDIt it = m_objectIDs.begin(); it != m_objectIDs.end();)
+	{
+		Object* obj = TheGameLogic->findObjectByID(*it);
+		if (obj)
+		{
 			m_objectsCached.push_back(obj);
 			++it;
-		} else {
+		}
+		else
+		{
 			it = m_objectIDs.erase(it);
 		}
 	}
@@ -105,10 +113,14 @@ const VecObjectPtr& Squad::getLiveObjects()
 	// first get all the objects.
 	// cheat, since we are a member function, and just use m_objectsCached
 	getAllObjects();
-	for (VecObjectPtrIt it = m_objectsCached.begin(); it != m_objectsCached.end(); ) {
-		if (!(*it)->isSelectable()) {
+	for (VecObjectPtrIt it = m_objectsCached.begin(); it != m_objectsCached.end();)
+	{
+		if (!(*it)->isSelectable())
+		{
 			it = m_objectsCached.erase(it);
-		} else {
+		}
+		else
+		{
 			++it;
 		}
 	}
@@ -123,12 +135,14 @@ Int Squad::getSizeOfGroup() const
 }
 
 // isOnSquad //////////////////////////////////////////////////////////////////////////////////////
-Bool Squad::isOnSquad(const Object *objToTest) const
+Bool Squad::isOnSquad(const Object* objToTest) const
 {
 	// @todo need a faster way to do this. Perhaps a more efficient data structure?
 	ObjectID objID = objToTest->getID();
-	for (VecObjectID::const_iterator cit = m_objectIDs.begin(); cit != m_objectIDs.end(); ++cit) {
-		if (objID == (*cit)) {
+	for (VecObjectID::const_iterator cit = m_objectIDs.begin(); cit != m_objectIDs.end(); ++cit)
+	{
+		if (objID == (*cit))
+		{
 			return true;
 		}
 	}
@@ -145,16 +159,19 @@ Bool Squad::isOnSquad(const Object *objToTest) const
 // squadFromTeam //////////////////////////////////////////////////////////////////////////////////
 void Squad::squadFromTeam(const Team* fromTeam, Bool clearSquadFirst)
 {
-	if (!fromTeam) {
+	if (!fromTeam)
+	{
 		return;
 	}
 
-	if (clearSquadFirst) {
+	if (clearSquadFirst)
+	{
 		m_objectIDs.clear();
 	}
 
-	for (DLINK_ITERATOR<Object> iter = fromTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *obj = iter.cur();
+	for (DLINK_ITERATOR<Object> iter = fromTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* obj = iter.cur();
 		m_objectIDs.push_back(obj->getID());
 	}
 }
@@ -162,11 +179,13 @@ void Squad::squadFromTeam(const Team* fromTeam, Bool clearSquadFirst)
 // squadFromAIGroup ///////////////////////////////////////////////////////////////////////////////
 void Squad::squadFromAIGroup(const AIGroup* fromAIGroup, Bool clearSquadFirst)
 {
-	if (!fromAIGroup) {
+	if (!fromAIGroup)
+	{
 		return;
 	}
 
-	if (clearSquadFirst) {
+	if (clearSquadFirst)
+	{
 		m_objectIDs.clear();
 	}
 
@@ -176,13 +195,15 @@ void Squad::squadFromAIGroup(const AIGroup* fromAIGroup, Bool clearSquadFirst)
 // aiGroupFromSquad ///////////////////////////////////////////////////////////////////////////////
 void Squad::aiGroupFromSquad(AIGroup* aiGroupToFill)
 {
-	if (!aiGroupToFill) {
+	if (!aiGroupToFill)
+	{
 		return;
 	}
 
 	// cheat, since we are a member function, and just use m_objectsCached
 	getLiveObjects();
-	for (VecObjectPtr::iterator it = m_objectsCached.begin(); it != m_objectsCached.end(); ++it) {
+	for (VecObjectPtr::iterator it = m_objectsCached.begin(); it != m_objectsCached.end(); ++it)
+	{
 		aiGroupToFill->add((*it));
 	}
 }
@@ -190,71 +211,58 @@ void Squad::aiGroupFromSquad(AIGroup* aiGroupToFill)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void Squad::crc( Xfer *xfer )
+void Squad::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void Squad::xfer( Xfer *xfer )
+void Squad::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// length of object ID list
 	UnsignedShort objectCount = m_objectIDs.size();
-	xfer->xferUnsignedShort( &objectCount );
+	xfer->xferUnsignedShort(&objectCount);
 
 	// object id elements
 	ObjectID objectID;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// save each object id
 		VecObjectIDIt it;
-		for( it = m_objectIDs.begin(); it != m_objectIDs.end(); ++it )
+		for (it = m_objectIDs.begin(); it != m_objectIDs.end(); ++it)
 		{
-
 			// save object ID
 			objectID = *it;
-			xfer->xferObjectID( &objectID );
-
+			xfer->xferObjectID(&objectID);
 		}
-
 	}
 	else
 	{
-
 		// the cached objects list should be empty
-		if( !m_objectsCached.empty() )
+		if (!m_objectsCached.empty())
 		{
-
-			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be empty, but is not" ));
+			DEBUG_CRASH(("Squad::xfer - m_objectsCached should be empty, but is not"));
 			throw SC_INVALID_DATA;
-
 		}
 
 		// read all items
-		for( UnsignedShort i = 0; i < objectCount; ++i )
+		for (UnsignedShort i = 0; i < objectCount; ++i)
 		{
-
 			// read id
-			xfer->xferObjectID( &objectID );
+			xfer->xferObjectID(&objectID);
 
 			// put on list
-			m_objectIDs.push_back( objectID );
-
+			m_objectIDs.push_back(objectID);
 		}
-
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -262,5 +270,4 @@ void Squad::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Squad::loadPostProcess()
 {
-
 }

@@ -35,16 +35,16 @@
  */
 Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiString& val);
 /**
-	* Get a string from the registry
-	*/
+ * Get a string from the registry
+ */
 Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val);
 
 /**
-	* Get an unsigned int from the registry
-	*/
+ * Get an unsigned int from the registry
+ */
 Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& val);
 
-AsciiString GetRegistryLanguage(); // convenience function
-AsciiString GetRegistryGameName(); // convenience function
-UnsignedInt GetRegistryVersion(); // convenience function
-UnsignedInt GetRegistryMapPackVersion(); // convenience function
+AsciiString GetRegistryLanguage();    // convenience function
+AsciiString GetRegistryGameName();    // convenience function
+UnsignedInt GetRegistryVersion();    // convenience function
+UnsignedInt GetRegistryMapPackVersion();    // convenience function

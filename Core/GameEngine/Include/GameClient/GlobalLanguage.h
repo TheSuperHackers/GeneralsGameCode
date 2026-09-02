@@ -66,21 +66,19 @@ class AsciiString;
 class GlobalLanguage : public SubsystemInterface
 {
 public:
-
 	enum ResolutionFontSizeMethod
 	{
-		ResolutionFontSizeMethod_Classic, // Uses the original scaling method. Scales poorly on wide screens and large resolutions.
-		ResolutionFontSizeMethod_ClassicNoCeiling, // Uses the original scaling method, but without ceiling. Works ok for the original Game UI and with large resolutions. Scales poorly on very wide screens.
-		ResolutionFontSizeMethod_Strict, // Uses a strict scaling method. Width and height are strictly bounded on upscales. Works well for accurate UI layouts and with large resolutions.
-		ResolutionFontSizeMethod_Balanced, // Uses a balanced scaling method. Width and height are evenly weighted for upscales. Works well for the original Game UI and with large resolutions.
+		ResolutionFontSizeMethod_Classic,    // Uses the original scaling method. Scales poorly on wide screens and large resolutions.
+		ResolutionFontSizeMethod_ClassicNoCeiling,    // Uses the original scaling method, but without ceiling. Works ok for the original Game UI and with large resolutions. Scales poorly on very wide screens.
+		ResolutionFontSizeMethod_Strict,    // Uses a strict scaling method. Width and height are strictly bounded on upscales. Works well for accurate UI layouts and with large resolutions.
+		ResolutionFontSizeMethod_Balanced,    // Uses a balanced scaling method. Width and height are evenly weighted for upscales. Works well for the original Game UI and with large resolutions.
 
 		ResolutionFontSizeMethod_Default = ResolutionFontSizeMethod_ClassicNoCeiling,
 	};
 
-	typedef std::list<AsciiString> StringList; // Used for our font file names that we want to load
+	typedef std::list<AsciiString> StringList;    // Used for our font file names that we want to load
 
 public:
-
 	GlobalLanguage();
 	virtual ~GlobalLanguage() override;
 
@@ -89,7 +87,7 @@ public:
 	virtual void update() override {}
 
 	Real getResolutionFontSizeAdjustment() const;
-	Int adjustFontSize(Int theFontSize); // Adjusts font size for resolution. jba.
+	Int adjustFontSize(Int theFontSize);    // Adjusts font size for resolution. jba.
 
 	void parseCustomDefinition();
 
@@ -97,35 +95,35 @@ public:
 	// Defaults to a scaler of 1 for a uniform resolution scale.
 	static Real getResolutionFontSizeScale(ResolutionFontSizeMethod method, Real scaler = 1.0f);
 
-	static void parseFontFileName(INI *ini, void *instance, void *store, const void *userData);
-	static void parseFontDesc(INI *ini, void *instance, void *store, const void *userData);
+	static void parseFontFileName(INI* ini, void* instance, void* store, const void* userData);
+	static void parseFontDesc(INI* ini, void* instance, void* store, const void* userData);
 
 	AsciiString m_unicodeFontName;
 	AsciiString m_unicodeFontFileName;
 	Bool m_useHardWrap;
 	Int m_militaryCaptionSpeed;
 	Int m_militaryCaptionDelayMS;
-	FontDesc	m_copyrightFont;
-	FontDesc	m_messageFont;
-	FontDesc	m_militaryCaptionTitleFont;
-	FontDesc	m_militaryCaptionFont;
-	FontDesc	m_superweaponCountdownNormalFont;
-	FontDesc	m_superweaponCountdownReadyFont;
-	FontDesc	m_namedTimerCountdownNormalFont;
-	FontDesc	m_namedTimerCountdownReadyFont;
-	FontDesc	m_drawableCaptionFont;
-	FontDesc	m_defaultWindowFont;
-	FontDesc	m_defaultDisplayStringFont;
-	FontDesc	m_tooltipFontName;
-	FontDesc	m_nativeDebugDisplay;
-	FontDesc	m_drawGroupInfoFont;
-	FontDesc	m_creditsTitleFont;
-	FontDesc  m_creditsPositionFont;
-	FontDesc  m_creditsNormalFont;
-	Real			m_resolutionFontSizeAdjustment;
-	Real			m_userResolutionFontSizeAdjustment;
+	FontDesc m_copyrightFont;
+	FontDesc m_messageFont;
+	FontDesc m_militaryCaptionTitleFont;
+	FontDesc m_militaryCaptionFont;
+	FontDesc m_superweaponCountdownNormalFont;
+	FontDesc m_superweaponCountdownReadyFont;
+	FontDesc m_namedTimerCountdownNormalFont;
+	FontDesc m_namedTimerCountdownReadyFont;
+	FontDesc m_drawableCaptionFont;
+	FontDesc m_defaultWindowFont;
+	FontDesc m_defaultDisplayStringFont;
+	FontDesc m_tooltipFontName;
+	FontDesc m_nativeDebugDisplay;
+	FontDesc m_drawGroupInfoFont;
+	FontDesc m_creditsTitleFont;
+	FontDesc m_creditsPositionFont;
+	FontDesc m_creditsNormalFont;
+	Real m_resolutionFontSizeAdjustment;
+	Real m_userResolutionFontSizeAdjustment;
 	ResolutionFontSizeMethod m_resolutionFontSizeMethod;
-	StringList m_localFonts; // List of the font filenames that are in our local directory
+	StringList m_localFonts;    // List of the font filenames that are in our local directory
 };
 
 //-----------------------------------------------------------------------------
@@ -135,4 +133,4 @@ public:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-extern GlobalLanguage *TheGlobalLanguageData;
+extern GlobalLanguage* TheGlobalLanguageData;

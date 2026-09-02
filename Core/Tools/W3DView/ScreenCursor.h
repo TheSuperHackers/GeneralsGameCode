@@ -46,61 +46,58 @@ class VertexMaterialClass;
 ///////////////////////////////////////////////////////////////////////////////
 class ScreenCursorClass : public RenderObjClass
 {
-	public:
+public:
+	////////////////////////////////////////////////////////////////////////
+	//	Public constructors/destructors
+	////////////////////////////////////////////////////////////////////////
+	ScreenCursorClass();
+	ScreenCursorClass(const ScreenCursorClass& src);
+	virtual ~ScreenCursorClass() override;
 
-		////////////////////////////////////////////////////////////////////////
-		//	Public constructors/destructors
-		////////////////////////////////////////////////////////////////////////
-		ScreenCursorClass ();
-		ScreenCursorClass (const ScreenCursorClass &src);
-		virtual ~ScreenCursorClass () override;
+	////////////////////////////////////////////////////////////////////////
+	//	Public operators
+	////////////////////////////////////////////////////////////////////////
+	const ScreenCursorClass& operator=(const ScreenCursorClass& src);
 
-		////////////////////////////////////////////////////////////////////////
-		//	Public operators
-		////////////////////////////////////////////////////////////////////////
-		const ScreenCursorClass &operator= (const ScreenCursorClass &src);
+	////////////////////////////////////////////////////////////////////////
+	//	Public methods
+	////////////////////////////////////////////////////////////////////////
+	void Set_Window(HWND hwnd) { m_hWnd = hwnd; }
+	void Set_Texture(TextureClass* texture);
 
-		////////////////////////////////////////////////////////////////////////
-		//	Public methods
-		////////////////////////////////////////////////////////////////////////
-		void						Set_Window (HWND hwnd)						{ m_hWnd = hwnd; }
-		void						Set_Texture (TextureClass *texture);
+	////////////////////////////////////////////////////////////////////////
+	//	Base class overrides
+	////////////////////////////////////////////////////////////////////////
+	RenderObjClass* Clone() const override { return new ScreenCursorClass(*this); }
+	virtual int Class_ID() const override { return CLASSID_LAST + 103L; }
+	virtual void Render(RenderInfoClass& rinfo) override;
+	virtual void On_Frame_Update() override;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& box) const override;
 
-		////////////////////////////////////////////////////////////////////////
-		//	Base class overrides
-		////////////////////////////////////////////////////////////////////////
-		RenderObjClass *		Clone () const override								{ return new ScreenCursorClass (*this); }
-		virtual int				Class_ID() const override								{ return CLASSID_LAST + 103L; }
-		virtual void			Render (RenderInfoClass &rinfo) override;
-		virtual void			On_Frame_Update () override;
-		virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-		virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual void Notify_Added(SceneClass* scene) override;
+	virtual void Notify_Removed(SceneClass* scene) override;
 
-		virtual void			Notify_Added(SceneClass * scene) override;
-		virtual void			Notify_Removed(SceneClass * scene) override;
+protected:
+	////////////////////////////////////////////////////////////////////////
+	//	Protected methods
+	////////////////////////////////////////////////////////////////////////
+	void Initialize();
 
-	protected:
+private:
+	////////////////////////////////////////////////////////////////////////
+	//	Private member data
+	////////////////////////////////////////////////////////////////////////
+	HWND m_hWnd;
+	Vector2 m_ScreenPos;
+	RefCountPtr<TextureClass> m_pTexture;
+	RefCountPtr<VertexMaterialClass> m_pVertMaterial;
 
-		////////////////////////////////////////////////////////////////////////
-		//	Protected methods
-		////////////////////////////////////////////////////////////////////////
-		void						Initialize ();
+	Vector3 m_Verticies[4];
+	Vector3 m_Normals[4];
+	Vector3i m_Triangles[2];
+	Vector2 m_UVs[4];
 
-	private:
-
-		////////////////////////////////////////////////////////////////////////
-		//	Private member data
-		////////////////////////////////////////////////////////////////////////
-		HWND						m_hWnd;
-		Vector2					m_ScreenPos;
-		RefCountPtr<TextureClass>			m_pTexture;
-		RefCountPtr<VertexMaterialClass> m_pVertMaterial;
-
-		Vector3					m_Verticies[4];
-		Vector3					m_Normals[4];
-		Vector3i					m_Triangles[2];
-		Vector2					m_UVs[4];
-
-		int 						m_Width;
-		int						m_Height;
+	int m_Width;
+	int m_Height;
 };

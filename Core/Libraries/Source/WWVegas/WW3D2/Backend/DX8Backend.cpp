@@ -30,85 +30,86 @@
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
 
-IRenderBackend *Create_Render_Backend(void * window, bool lite)
+IRenderBackend* Create_Render_Backend(void* window, bool lite)
 {
-    return DX8Backend::Create(window, lite);
+	return DX8Backend::Create(window, lite);
 }
 
-DX8Backend::DX8Backend(bool lite) : Lite(lite)
+DX8Backend::DX8Backend(bool lite)
+  : Lite(lite)
 {
 }
 
 DX8Backend::~DX8Backend()
 {
-    if (!Lite)
-    {
-        DX8Wrapper::Shutdown();
-    }
+	if (!Lite)
+	{
+		DX8Wrapper::Shutdown();
+	}
 }
 
-DX8Backend *DX8Backend::Create(void * window, bool lite)
+DX8Backend* DX8Backend::Create(void* window, bool lite)
 {
-    Init_D3D_To_WW3_Conversion();
-    WWDEBUG_SAY(("Init DX8Wrapper"));
-    if (!DX8Wrapper::Init(window, lite))
-    {
-        return nullptr;
-    }
+	Init_D3D_To_WW3_Conversion();
+	WWDEBUG_SAY(("Init DX8Wrapper"));
+	if (!DX8Wrapper::Init(window, lite))
+	{
+		return nullptr;
+	}
 
-    return new DX8Backend(lite);
+	return new DX8Backend(lite);
 }
 
 void DX8Backend::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
 {
-    DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
+	DX8Wrapper::Set_Gamma(gamma, bright, contrast, calibrate, uselimit);
 }
 
 void DX8Backend::Begin_Scene()
 {
-    DX8Wrapper::Begin_Scene();
+	DX8Wrapper::Begin_Scene();
 }
 
 void DX8Backend::End_Scene(bool flip_frame)
 {
-    DX8Wrapper::End_Scene(flip_frame);
+	DX8Wrapper::End_Scene(flip_frame);
 }
 
 void DX8Backend::Flip_To_Primary()
 {
-    DX8Wrapper::Flip_To_Primary();
+	DX8Wrapper::Flip_To_Primary();
 }
 
 void DX8Backend::Clear(bool clear_color, bool clear_z_stencil,
-                       const Vector3 & color,
+                       const Vector3& color,
                        float dest_alpha, float z, unsigned int stencil)
 {
-    DX8Wrapper::Clear(clear_color, clear_z_stencil, color, dest_alpha, z, stencil);
+	DX8Wrapper::Clear(clear_color, clear_z_stencil, color, dest_alpha, z, stencil);
 }
 
-void DX8Backend::Set_Viewport(const RenderBackendViewport & viewport)
+void DX8Backend::Set_Viewport(const RenderBackendViewport& viewport)
 {
-    D3DVIEWPORT8 vp;
-    vp.X      = viewport.x;
-    vp.Y      = viewport.y;
-    vp.Width  = viewport.width;
-    vp.Height = viewport.height;
-    vp.MinZ   = viewport.min_z;
-    vp.MaxZ   = viewport.max_z;
-    DX8Wrapper::Set_Viewport(&vp);
+	D3DVIEWPORT8 vp;
+	vp.X = viewport.x;
+	vp.Y = viewport.y;
+	vp.Width = viewport.width;
+	vp.Height = viewport.height;
+	vp.MinZ = viewport.min_z;
+	vp.MaxZ = viewport.max_z;
+	DX8Wrapper::Set_Viewport(&vp);
 }
 
 void DX8Backend::Invalidate_Cached_Render_States()
 {
-    DX8Wrapper::Invalidate_Cached_Render_States();
+	DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
-void DX8Backend::Set_Ambient(const Vector3 & color)
+void DX8Backend::Set_Ambient(const Vector3& color)
 {
-    DX8Wrapper::Set_Ambient(color);
+	DX8Wrapper::Set_Ambient(color);
 }
 
-void DX8Backend::Set_Light_Environment(LightEnvironmentClass * light_env)
+void DX8Backend::Set_Light_Environment(LightEnvironmentClass* light_env)
 {
-    DX8Wrapper::Set_Light_Environment(light_env);
+	DX8Wrapper::Set_Light_Environment(light_env);
 }

@@ -34,25 +34,20 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
 // InputDlg.cpp : implementation file
 //
 
 #include "InputDlg.h"
 #include <assert.h>
 
-
-static BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
+static BOOL CALLBACK _thunk_dialog_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 /////////////////////////////////////////////////////////////////////////////
 // InputDlg dialog
 
-
-InputDlg::InputDlg (HWND hWndParent)
-:	m_hWndParent(hWndParent),
-	m_hWnd(nullptr)
+InputDlg::InputDlg(HWND hWndParent)
+  : m_hWndParent(hWndParent)
+  , m_hWnd(nullptr)
 {
 	// Set the strings to default values.
 	SetCaption("Input Value...");
@@ -60,22 +55,21 @@ InputDlg::InputDlg (HWND hWndParent)
 	SetValue(nullptr);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // InputDlg Methods
 
-int InputDlg::DoModal ()
+int InputDlg::DoModal()
 {
 	// Put up the dialog box.
 	BOOL result = DialogBoxParam(AppInstance, MAKEINTRESOURCE(IDD),
-							m_hWndParent, (DLGPROC)_thunk_dialog_proc,
-							(LPARAM)this);
+	                             m_hWndParent, (DLGPROC)_thunk_dialog_proc,
+	                             (LPARAM)this);
 
 	// Return IDOK if the user accepted the new settings.
 	return (result == 1) ? IDOK : IDCANCEL;
 }
 
-void InputDlg::SetCaption (const char *caption)
+void InputDlg::SetCaption(const char* caption)
 {
 	if (caption)
 	{
@@ -83,10 +77,12 @@ void InputDlg::SetCaption (const char *caption)
 		strcpy(m_Caption, caption);
 	}
 	else
+	{
 		m_Caption[0] = '\0';
+	}
 }
 
-void InputDlg::SetLabel (const char *label)
+void InputDlg::SetLabel(const char* label)
 {
 	if (label)
 	{
@@ -94,10 +90,12 @@ void InputDlg::SetLabel (const char *label)
 		strcpy(m_Label, label);
 	}
 	else
+	{
 		m_Label[0] = '\0';
+	}
 }
 
-void InputDlg::SetValue (const char *value)
+void InputDlg::SetValue(const char* value)
 {
 	if (value)
 	{
@@ -105,16 +103,17 @@ void InputDlg::SetValue (const char *value)
 		strcpy(m_Value, value);
 	}
 	else
+	{
 		m_Value[0] = '\0';
+	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // InputDlg DialogProc
 
-BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK _thunk_dialog_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static InputDlg *dialog = nullptr;
+	static InputDlg* dialog = nullptr;
 
 	if (uMsg == WM_INITDIALOG)
 	{
@@ -123,41 +122,46 @@ BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	}
 
 	if (dialog)
+	{
 		return dialog->DialogProc(hWnd, uMsg, wParam, lParam);
+	}
 	else
+	{
 		return 0;
+	}
 }
 
-BOOL CALLBACK InputDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK InputDlg::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int code = HIWORD(wParam);
 
 	switch (uMsg)
 	{
 		/*******************************************************************
-		* WM_INITDIALOG
-		*
-		* Initialize all of the custom controls for the dialog box
-		*
-		*******************************************************************/
+		 * WM_INITDIALOG
+		 *
+		 * Initialize all of the custom controls for the dialog box
+		 *
+		 *******************************************************************/
 		case WM_INITDIALOG:
 
 			OnInitDialog(wParam, lParam);
 			return TRUE;
 
-
 		/*******************************************************************
-		* WM_COMMAND
-		*
-		*
-		*******************************************************************/
+		 * WM_COMMAND
+		 *
+		 *
+		 *******************************************************************/
 		case WM_COMMAND:
 
 			switch (LOWORD(wParam))
 			{
 				case IDOK:
 					if (!OnOK())
+					{
 						return TRUE;
+					}
 
 					SetCursor(LoadCursor(nullptr, IDC_WAIT));
 					EndDialog(m_hWnd, 1);
@@ -176,7 +180,7 @@ BOOL CALLBACK InputDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 /////////////////////////////////////////////////////////////////////////////
 // InputDlg message handlers
 
-LRESULT InputDlg::OnInitDialog (WPARAM wParam, LPARAM lParam)
+LRESULT InputDlg::OnInitDialog(WPARAM wParam, LPARAM lParam)
 {
 	// Set the cursor to the normal arrow.
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
@@ -200,7 +204,7 @@ LRESULT InputDlg::OnInitDialog (WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-BOOL InputDlg::OnOK ()
+BOOL InputDlg::OnOK()
 {
 	// Update our copy of what the user typed.
 	HWND hEdit = GetDlgItem(m_hWnd, IDC_VALUE);

@@ -34,19 +34,17 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "saveloadsubsystem.h"
 #include "saveload.h"
 
-
-SaveLoadSubSystemClass::SaveLoadSubSystemClass() :
-	NextSubSystem(nullptr)
+SaveLoadSubSystemClass::SaveLoadSubSystemClass()
+  : NextSubSystem(nullptr)
 {
 	// All Sub-Systems are automatically registered with the SaveLoadSystem
-	SaveLoadSystemClass::Register_Sub_System (this);
+	SaveLoadSystemClass::Register_Sub_System(this);
 }
 
-SaveLoadSubSystemClass::~SaveLoadSubSystemClass ()
+SaveLoadSubSystemClass::~SaveLoadSubSystemClass()
 {
-	SaveLoadSystemClass::Unregister_Sub_System (this);
+	SaveLoadSystemClass::Unregister_Sub_System(this);
 }

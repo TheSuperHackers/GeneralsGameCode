@@ -41,17 +41,13 @@
 #include "WWMath/vector3.h"
 #include "w3derr.h"
 
-
 class ChunkLoadClass;
 
 class SnapPointsClass : public DynamicVectorClass<Vector3>, public RefCountClass
 {
 public:
-
-	WW3DErrorType Load_W3D(ChunkLoadClass & cload);
+	WW3DErrorType Load_W3D(ChunkLoadClass& cload);
 
 protected:
-
 	virtual ~SnapPointsClass() override {}
-
 };

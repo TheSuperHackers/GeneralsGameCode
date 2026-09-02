@@ -68,33 +68,35 @@
 
 #include <Utility/interlocked_adapter.h>
 
-
-enum { INFINITE_LOOP_COUNT = 1000000 };
+enum
+{
+	INFINITE_LOOP_COUNT = 1000000
+};
 
 // Callback functions useful for Miles ////////////////////////////////////////////////////////////
-static void AILCALLBACK setSampleCompleted( HSAMPLE sampleCompleted );
-static void AILCALLBACK set3DSampleCompleted( H3DSAMPLE sample3DCompleted );
-static void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted );
+static void AILCALLBACK setSampleCompleted(HSAMPLE sampleCompleted);
+static void AILCALLBACK set3DSampleCompleted(H3DSAMPLE sample3DCompleted);
+static void AILCALLBACK setStreamCompleted(HSTREAM streamCompleted);
 
-static U32 AILCALLBACK streamingFileOpen(char const *fileName, void **file_handle);
-static void AILCALLBACK streamingFileClose(void *fileHandle);
-static S32 AILCALLBACK streamingFileSeek(void *fileHandle, S32 offset, U32 type);
-static U32 AILCALLBACK streamingFileRead(void *fileHandle, void *buffer, U32 bytes);
+static U32 AILCALLBACK streamingFileOpen(char const* fileName, void** file_handle);
+static void AILCALLBACK streamingFileClose(void* fileHandle);
+static S32 AILCALLBACK streamingFileSeek(void* fileHandle, S32 offset, U32 type);
+static U32 AILCALLBACK streamingFileRead(void* fileHandle, void* buffer, U32 bytes);
 
 //-------------------------------------------------------------------------------------------------
-MilesAudioManager::MilesAudioManager() :
-	m_providerCount(0),
-	m_selectedProvider(PROVIDER_ERROR),
-	m_selectedSpeakerType(0),
-	m_lastProvider(PROVIDER_ERROR),
-	m_digitalHandle(nullptr),
-	m_num2DSamples(0),
-	m_num3DSamples(0),
-	m_numStreams(0),
-	m_delayFilter(nullptr),
-	m_binkHandle(nullptr),
-	m_pref3DProvider(AsciiString::TheEmptyString),
-	m_prefSpeaker(AsciiString::TheEmptyString)
+MilesAudioManager::MilesAudioManager()
+  : m_providerCount(0)
+  , m_selectedProvider(PROVIDER_ERROR)
+  , m_selectedSpeakerType(0)
+  , m_lastProvider(PROVIDER_ERROR)
+  , m_digitalHandle(nullptr)
+  , m_num2DSamples(0)
+  , m_num3DSamples(0)
+  , m_numStreams(0)
+  , m_delayFilter(nullptr)
+  , m_binkHandle(nullptr)
+  , m_pref3DProvider(AsciiString::TheEmptyString)
+  , m_prefSpeaker(AsciiString::TheEmptyString)
 {
 	m_audioCache = NEW AudioFileCache;
 }
@@ -113,10 +115,12 @@ MilesAudioManager::~MilesAudioManager()
 
 //-------------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
-AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
+AudioHandle MilesAudioManager::addAudioEvent(const AudioEventRTS* eventToAdd)
 {
-	if (TheGlobalData->m_preloadReport) {
-		if (!eventToAdd->getEventName().isEmpty()) {
+	if (TheGlobalData->m_preloadReport)
+	{
+		if (!eventToAdd->getEventName().isEmpty())
+		{
 			m_allEventsLoaded.insert(eventToAdd->getEventName());
 		}
 	}
@@ -127,36 +131,37 @@ AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 
 #if defined(RTS_DEBUG)
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp )
+void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface* dd, void*, FILE* fp)
 {
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
 	static char buffer[128] = { 0 };
-	if (buffer[0] == 0) {
+	if (buffer[0] == 0)
+	{
 		AIL_MSS_version(buffer, 128);
 	}
 
 	Coord3D lookPos = TheTacticalView->getPosition();
-	const Coord3D *mikePos = TheAudio->getListenerPosition();
+	const Coord3D* mikePos = TheAudio->getListenerPosition();
 	Coord3D distanceVector = TheTacticalView->get3DCameraPosition();
-	distanceVector.sub( *mikePos );
+	distanceVector.sub(*mikePos);
 
 	Int now = TheGameLogic->getFrame();
 	static Int lastCheck = now;
 	const Int frames = 60;
 	static Int latency = 0;
 	static Int worstLatency = 0;
-	if( lastCheck + frames <= now )
+	if (lastCheck + frames <= now)
 	{
 		latency = AIL_get_timer_highest_delay();
-		if( latency > worstLatency )
+		if (latency > worstLatency)
 		{
 			worstLatency = latency;
 		}
 		lastCheck = now;
 	}
 
-	if( dd )
+	if (dd)
 	{
 		dd->printf("Miles Sound System version: %s    ", buffer);
 		dd->printf("Memory Usage : %d/%d\n", m_audioCache->getCurrentlyUsedSize(), m_audioCache->getMaxSize());
@@ -174,73 +179,76 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		dd->printf("Music: %d\n", REAL_TO_INT(m_musicVolume * 100.0f));
 		dd->printf("Current 3D Provider: %s    ",
 
-		TheAudio->getProviderName(m_selectedProvider).str());
+		           TheAudio->getProviderName(m_selectedProvider).str());
 		dd->printf("Current Speaker Type: %s\n", TheAudio->translateUnsignedIntToSpeakerType(TheAudio->getSpeakerType()).str());
 
-		dd->printf( "Looking at: (%d,%d,%d) -- Microphone at: (%d,%d,%d)\n",
-				(Int)lookPos.x, (Int)lookPos.y, (Int)lookPos.z, (Int)mikePos->x, (Int)mikePos->y, (Int)mikePos->z );
-		dd->printf( "Camera distance from microphone: %d -- Zoom Volume: %d%%\n",
-				(Int)distanceVector.length(), (Int)(TheAudio->getZoomVolume()*100.0f) );
-		dd->printf( "Worst latency: %d -- Current latency: %d\n", worstLatency, latency );
+		dd->printf("Looking at: (%d,%d,%d) -- Microphone at: (%d,%d,%d)\n",
+		           (Int)lookPos.x, (Int)lookPos.y, (Int)lookPos.z, (Int)mikePos->x, (Int)mikePos->y, (Int)mikePos->z);
+		dd->printf("Camera distance from microphone: %d -- Zoom Volume: %d%%\n",
+		           (Int)distanceVector.length(), (Int)(TheAudio->getZoomVolume() * 100.0f));
+		dd->printf("Worst latency: %d -- Current latency: %d\n", worstLatency, latency);
 
 		dd->printf("-----------------------------------------------------------\n");
 		dd->printf("Playing Audio\n");
 	}
-	if( fp )
+	if (fp)
 	{
-		fprintf( fp, "Miles Sound System version: %s    ", buffer );
-		fprintf( fp, "Memory Usage : %d/%d\n", m_audioCache->getCurrentlyUsedSize(), m_audioCache->getMaxSize() );
-		fprintf( fp, "Sound: %s    ", (isOn(AudioAffect_Sound) ? "Yes" : "No") );
-		fprintf( fp, "3DSound: %s    ", (isOn(AudioAffect_Sound3D) ? "Yes" : "No") );
-		fprintf( fp, "Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No") );
-		fprintf( fp, "Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No") );
-		fprintf( fp, "Channels Available: " );
-		fprintf( fp, "%u Sounds    ", getNumAvailable2DSamples() );
-		fprintf( fp, "%u 3D Sounds\n", getNumAvailable3DSamples() );
-		fprintf( fp, "Volume: ");
-		fprintf( fp, "Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f) );
-		fprintf( fp, "3DSound: %d    ", REAL_TO_INT(m_sound3DVolume * 100.0f) );
-		fprintf( fp, "Speech: %d    ", REAL_TO_INT(m_speechVolume * 100.0f) );
-		fprintf( fp, "Music: %d\n", REAL_TO_INT(m_musicVolume * 100.0f) );
-		fprintf( fp, "Current 3D Provider: %s    ", TheAudio->getProviderName(m_selectedProvider).str());
-		fprintf( fp, "Current Speaker Type: %s\n", TheAudio->translateUnsignedIntToSpeakerType(TheAudio->getSpeakerType()).str());
+		fprintf(fp, "Miles Sound System version: %s    ", buffer);
+		fprintf(fp, "Memory Usage : %d/%d\n", m_audioCache->getCurrentlyUsedSize(), m_audioCache->getMaxSize());
+		fprintf(fp, "Sound: %s    ", (isOn(AudioAffect_Sound) ? "Yes" : "No"));
+		fprintf(fp, "3DSound: %s    ", (isOn(AudioAffect_Sound3D) ? "Yes" : "No"));
+		fprintf(fp, "Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No"));
+		fprintf(fp, "Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No"));
+		fprintf(fp, "Channels Available: ");
+		fprintf(fp, "%u Sounds    ", getNumAvailable2DSamples());
+		fprintf(fp, "%u 3D Sounds\n", getNumAvailable3DSamples());
+		fprintf(fp, "Volume: ");
+		fprintf(fp, "Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f));
+		fprintf(fp, "3DSound: %d    ", REAL_TO_INT(m_sound3DVolume * 100.0f));
+		fprintf(fp, "Speech: %d    ", REAL_TO_INT(m_speechVolume * 100.0f));
+		fprintf(fp, "Music: %d\n", REAL_TO_INT(m_musicVolume * 100.0f));
+		fprintf(fp, "Current 3D Provider: %s    ", TheAudio->getProviderName(m_selectedProvider).str());
+		fprintf(fp, "Current Speaker Type: %s\n", TheAudio->translateUnsignedIntToSpeakerType(TheAudio->getSpeakerType()).str());
 
-		fprintf( fp, "Looking at: (%d,%d,%d) -- Microphone at: (%d,%d,%d)\n",
-				(Int)lookPos.x, (Int)lookPos.y, (Int)lookPos.z, (Int)mikePos->x, (Int)mikePos->y, (Int)mikePos->z );
-		fprintf( fp, "Camera distance from microphone: %d -- Zoom Volume: %d%%\n",
-				(Int)distanceVector.length(), (Int)(TheAudio->getZoomVolume()*100.0f) );
+		fprintf(fp, "Looking at: (%d,%d,%d) -- Microphone at: (%d,%d,%d)\n",
+		        (Int)lookPos.x, (Int)lookPos.y, (Int)lookPos.z, (Int)mikePos->x, (Int)mikePos->y, (Int)mikePos->z);
+		fprintf(fp, "Camera distance from microphone: %d -- Zoom Volume: %d%%\n",
+		        (Int)distanceVector.length(), (Int)(TheAudio->getZoomVolume() * 100.0f));
 
-		fprintf( fp, "-----------------------------------------------------------\n" );
-		fprintf( fp, "Playing Audio\n" );
+		fprintf(fp, "-----------------------------------------------------------\n");
+		fprintf(fp, "Playing Audio\n");
 	}
 
-	PlayingAudio *playing = nullptr;
+	PlayingAudio* playing = nullptr;
 	Int channel;
 	Int channelCount;
 	Real volume = 0.0f;
 	AsciiString filenameNoSlashes;
 
 	const Int maxChannels = 64;
-	PlayingAudio *playingArray[maxChannels] = { nullptr };
+	PlayingAudio* playingArray[maxChannels] = { nullptr };
 
 	// 2-D Sounds
-	if( dd )
+	if (dd)
 	{
 		dd->printf("-----------------------------------------------------Sounds\n");
 		channelCount = TheAudio->getNum2DSamples();
-		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
 			playing = *it;
 			playingArray[(int)AIL_sample_user_data(playing->m_sample, 0)] = playing;
 		}
 
-		for (Int i = 1; i <= maxChannels && i <= channelCount; ++i) {
+		for (Int i = 1; i <= maxChannels && i <= channelCount; ++i)
+		{
 			playing = playingArray[i];
-			if (!playing) {
+			if (!playing)
+			{
 				dd->printf("%2d: Silence\n", i);
 				continue;
 			}
 
-			AudioEventRTS *event = playing->m_audioEventRTS.Peek();
+			AudioEventRTS* event = playing->m_audioEventRTS.Peek();
 			filenameNoSlashes = event->getFilename();
 			filenameNoSlashes = filenameNoSlashes.reverseFind('\\') + 1;
 
@@ -252,38 +260,39 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 			playingArray[i] = nullptr;
 		}
 	}
-	if( fp )
+	if (fp)
 	{
-		fprintf( fp, "-----------------------------------------------------Sounds\n" );
+		fprintf(fp, "-----------------------------------------------------Sounds\n");
 		channelCount = TheAudio->getNum2DSamples();
 		channel = 1;
-		for( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it )
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
 		{
 			playing = *it;
-			AudioEventRTS *event = playing->m_audioEventRTS.Peek();
+			AudioEventRTS* event = playing->m_audioEventRTS.Peek();
 			filenameNoSlashes = event->getFilename();
-			filenameNoSlashes = filenameNoSlashes.reverseFind( '\\' ) + 1;
+			filenameNoSlashes = filenameNoSlashes.reverseFind('\\') + 1;
 
 			// Calculate Sample volume
 			volume = 100.0f;
-			volume *= getEffectiveVolume( event );
+			volume *= getEffectiveVolume(event);
 
-			fprintf( fp, "%2d: %-20s - (%s) Volume: %d (2D)\n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT( volume ) );
+			fprintf(fp, "%2d: %-20s - (%s) Volume: %d (2D)\n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT(volume));
 		}
-		for( int i = channel; i <= channelCount; ++i )
+		for (int i = channel; i <= channelCount; ++i)
 		{
-			fprintf( fp, "%2d: Silence\n", i );
+			fprintf(fp, "%2d: Silence\n", i);
 		}
 	}
 
-	const Coord3D *microphonePos = TheAudio->getListenerPosition();
+	const Coord3D* microphonePos = TheAudio->getListenerPosition();
 
 	// Now 3D Sounds
-	if( dd )
+	if (dd)
 	{
 		dd->printf("--------------------------------------------------3D Sounds\n");
 		channelCount = TheAudio->getNum3DSamples();
-		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
 			playing = *it;
 			playingArray[(int)AIL_3D_user_data(playing->m_3DSample, 0)] = playing;
 		}
@@ -297,7 +306,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 				continue;
 			}
 
-			AudioEventRTS *event = playing->m_audioEventRTS.Peek();
+			AudioEventRTS* event = playing->m_audioEventRTS.Peek();
 			filenameNoSlashes = event->getFilename();
 			filenameNoSlashes = filenameNoSlashes.reverseFind('\\') + 1;
 
@@ -305,75 +314,75 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 			volume = 100.0f;
 			volume *= getEffectiveVolume(event);
 			Real dist = -1.0f;
-			const Coord3D *pos = event->getPosition();
+			const Coord3D* pos = event->getPosition();
 			char distStr[32];
-			if( pos )
+			if (pos)
 			{
 				Coord3D vector = *microphonePos;
-				vector.sub( *pos );
+				vector.sub(*pos);
 				dist = vector.length();
-				sprintf( distStr, "%d", REAL_TO_INT( dist ) );
+				sprintf(distStr, "%d", REAL_TO_INT(dist));
 			}
 			else
 			{
-				sprintf( distStr, "???" );
+				sprintf(distStr, "???");
 			}
 			char str[32];
-			switch( event->getOwnerType() )
+			switch (event->getOwnerType())
 			{
 				case OT_Positional:
-					sprintf( str, "(3D)" );
+					sprintf(str, "(3D)");
 					break;
 				case OT_Object:
-					sprintf( str, "(3DObj)" );
+					sprintf(str, "(3DObj)");
 					break;
 				case OT_Drawable:
-					sprintf( str, "(3DDraw)" );
+					sprintf(str, "(3DDraw)");
 					break;
 				case OT_Dead:
-					sprintf( str, "(3DDead)" );
+					sprintf(str, "(3DDead)");
 					break;
-
 			}
 
 			dd->printf("%2d: %-20s - (%s) Volume: %d, Dist: %s, %s\n",
-				i, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT(volume), distStr, str );
+			           i, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT(volume), distStr, str);
 			playingArray[i] = nullptr;
 		}
 	}
-	if( fp )
+	if (fp)
 	{
-		fprintf( fp, "--------------------------------------------------3D Sounds\n" );
+		fprintf(fp, "--------------------------------------------------3D Sounds\n");
 		channelCount = TheAudio->getNum3DSamples();
 		channel = 1;
-		for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it )
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
 		{
 			playing = *it;
-			AudioEventRTS *event = playing->m_audioEventRTS.Peek();
+			AudioEventRTS* event = playing->m_audioEventRTS.Peek();
 			filenameNoSlashes = event->getFilename();
 			filenameNoSlashes = filenameNoSlashes.reverseFind('\\') + 1;
 
 			// Calculate Sample volume
 			volume = 100.0f;
-			volume *= getEffectiveVolume( event );
-			fprintf( fp, "%2d: %-24s - (%s) Volume: %d \n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT( volume ) );
+			volume *= getEffectiveVolume(event);
+			fprintf(fp, "%2d: %-24s - (%s) Volume: %d \n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT(volume));
 		}
 
-		for( int i = channel; i <= channelCount; ++i )
+		for (int i = channel; i <= channelCount; ++i)
 		{
-			fprintf( fp, "%2d: Silence\n", i );
+			fprintf(fp, "%2d: Silence\n", i);
 		}
 	}
 
 	// Now Streams
-	if( dd )
+	if (dd)
 	{
 		dd->printf("----------------------------------------------------Streams\n");
 		channelCount = TheAudio->getNumStreams();
 		channel = 1;
-		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+		{
 			playing = *it;
-			AudioEventRTS *event = playing->m_audioEventRTS.Peek();
+			AudioEventRTS* event = playing->m_audioEventRTS.Peek();
 			filenameNoSlashes = event->getFilename();
 			filenameNoSlashes = filenameNoSlashes.reverseFind('\\') + 1;
 
@@ -384,20 +393,21 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 			dd->printf("%2d: %-24s - (%s)  Volume: %d (Stream)\n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT(volume));
 		}
 
-		for ( int i = channel; i <= channelCount; ++i) {
+		for (int i = channel; i <= channelCount; ++i)
+		{
 			dd->printf("%2d: Silence\n", i);
 		}
 		dd->printf("===========================================================\n");
 	}
-	if( fp )
+	if (fp)
 	{
-		fprintf( fp, "----------------------------------------------------Streams\n" );
+		fprintf(fp, "----------------------------------------------------Streams\n");
 		channelCount = TheAudio->getNumStreams();
 		channel = 1;
-		for( it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it )
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
 		{
 			playing = *it;
-			AudioEventRTS *event = playing->m_audioEventRTS.Peek();
+			AudioEventRTS* event = playing->m_audioEventRTS.Peek();
 			filenameNoSlashes = event->getFilename();
 			filenameNoSlashes = filenameNoSlashes.reverseFind('\\') + 1;
 
@@ -405,14 +415,14 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 			volume = 100.0f;
 			volume *= getEffectiveVolume(event);
 
-			fprintf( fp, "%2d: %-24s - (%s)  Volume: %d (Stream)\n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT( volume ) );
+			fprintf(fp, "%2d: %-24s - (%s)  Volume: %d (Stream)\n", channel++, event->getEventName().str(), filenameNoSlashes.str(), REAL_TO_INT(volume));
 		}
 
-		for( int i = channel; i <= channelCount; ++i )
+		for (int i = channel; i <= channelCount; ++i)
 		{
-			fprintf( fp, "%2d: Silence\n", i );
+			fprintf(fp, "%2d: Silence\n", i);
 		}
-		fprintf( fp, "===========================================================\n" );
+		fprintf(fp, "===========================================================\n");
 	}
 }
 #endif
@@ -451,10 +461,10 @@ void MilesAudioManager::reset()
 
 	AudioManager::reset();
 	stopAllAudioImmediately();
-  removeAllAudioRequests();
-  // This must come after stopAllAudioImmediately() and removeAllAudioRequests(), to ensure that
-  // sounds pointing to the temporary AudioEventInfo handles are deleted before their info is deleted
-  removeLevelSpecificAudioEventInfos();
+	removeAllAudioRequests();
+	// This must come after stopAllAudioImmediately() and removeAllAudioRequests(), to ensure that
+	// sounds pointing to the temporary AudioEventInfo handles are deleted before their info is deleted
+	removeLevelSpecificAudioEventInfos();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -468,7 +478,7 @@ void MilesAudioManager::update()
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAudio( AudioAffect which )
+void MilesAudioManager::stopAudio(AudioAffect which)
 {
 	// All we really need to do is:
 	// 1) Remove the EOS callback.
@@ -476,32 +486,43 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 	// 3) Set the status to stopped, so that when we next process the playing list, we will
 	//		correctly clean up the sample.
 
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
-	PlayingAudio *playing = nullptr;
-	if (BitIsSet(which, AudioAffect_Sound)) {
-		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	PlayingAudio* playing = nullptr;
+	if (BitIsSet(which, AudioAffect_Sound))
+	{
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
 			playing = *it;
 			stopPlayingAudio(playing);
 		}
 	}
 
-	if (BitIsSet(which, AudioAffect_Sound3D)) {
-		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	if (BitIsSet(which, AudioAffect_Sound3D))
+	{
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
 			playing = *it;
 			stopPlayingAudio(playing);
 		}
 	}
 
-	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
-		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music))
+	{
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+		{
 			playing = *it;
-			if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-				if (!BitIsSet(which, AudioAffect_Music)) {
+			if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
+			{
+				if (!BitIsSet(which, AudioAffect_Music))
+				{
 					continue;
 				}
-			} else {
-				if (!BitIsSet(which, AudioAffect_Speech)) {
+			}
+			else
+			{
+				if (!BitIsSet(which, AudioAffect_Speech))
+				{
 					continue;
 				}
 			}
@@ -511,36 +532,47 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::pauseAudio( AudioAffect which )
+void MilesAudioManager::pauseAudio(AudioAffect which)
 {
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
-	PlayingAudio *playing = nullptr;
-	if (BitIsSet(which, AudioAffect_Sound)) {
-		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	PlayingAudio* playing = nullptr;
+	if (BitIsSet(which, AudioAffect_Sound))
+	{
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
 			playing = *it;
 			DEBUG_ASSERTCRASH(playing->m_sample, ("Sample is not expected to be null"));
 			AIL_stop_sample(playing->m_sample);
 		}
 	}
 
-	if (BitIsSet(which, AudioAffect_Sound3D)) {
-		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	if (BitIsSet(which, AudioAffect_Sound3D))
+	{
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
 			playing = *it;
 			DEBUG_ASSERTCRASH(playing->m_sample, ("3D Sample is not expected to be null"));
 			AIL_stop_3D_sample(playing->m_3DSample);
 		}
 	}
 
-	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
-		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music))
+	{
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+		{
 			playing = *it;
-			if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-				if (!BitIsSet(which, AudioAffect_Music)) {
+			if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
+			{
+				if (!BitIsSet(which, AudioAffect_Music))
+				{
 					continue;
 				}
-			} else {
-				if (!BitIsSet(which, AudioAffect_Speech)) {
+			}
+			else
+			{
+				if (!BitIsSet(which, AudioAffect_Speech))
+				{
 					continue;
 				}
 			}
@@ -549,12 +581,12 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		}
 	}
 
-	//Get rid of PLAY audio requests when pausing audio.
+	// Get rid of PLAY audio requests when pausing audio.
 	std::list<AudioRequest*>::iterator ait;
-	for (ait = m_audioRequests.begin(); ait != m_audioRequests.end(); )
+	for (ait = m_audioRequests.begin(); ait != m_audioRequests.end();)
 	{
-		AudioRequest *req = (*ait);
-		if( req->m_request == AR_Play )
+		AudioRequest* req = (*ait);
+		if (req->m_request == AR_Play)
 		{
 			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
@@ -566,38 +598,48 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::resumeAudio( AudioAffect which )
+void MilesAudioManager::resumeAudio(AudioAffect which)
 {
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
-	PlayingAudio *playing = nullptr;
-	if (BitIsSet(which, AudioAffect_Sound)) {
-		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	PlayingAudio* playing = nullptr;
+	if (BitIsSet(which, AudioAffect_Sound))
+	{
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
 			playing = *it;
 			DEBUG_ASSERTCRASH(playing->m_sample, ("Sample is not expected to be null"));
 			AIL_resume_sample(playing->m_sample);
 		}
 	}
 
-	if (BitIsSet(which, AudioAffect_Sound3D)) {
-		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	if (BitIsSet(which, AudioAffect_Sound3D))
+	{
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
 			playing = *it;
 			DEBUG_ASSERTCRASH(playing->m_3DSample, ("3D Sample is not expected to be null"));
 			AIL_resume_3D_sample(playing->m_3DSample);
 		}
 	}
 
-	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
-		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music))
+	{
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+		{
 			playing = *it;
-			if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-				if (!BitIsSet(which, AudioAffect_Music)) {
+			if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
+			{
+				if (!BitIsSet(which, AudioAffect_Music))
+				{
 					continue;
 				}
-			} else {
-				if (!BitIsSet(which, AudioAffect_Speech)) {
+			}
+			else
+			{
+				if (!BitIsSet(which, AudioAffect_Speech))
+				{
 					continue;
 				}
 			}
@@ -608,13 +650,12 @@ void MilesAudioManager::resumeAudio( AudioAffect which )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::pauseAmbient( Bool shouldPause )
+void MilesAudioManager::pauseAmbient(Bool shouldPause)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::playAudioEvent( AudioRequest* req )
+void MilesAudioManager::playAudioEvent(AudioRequest* req)
 {
 	DEBUG_ASSERTCRASH(req->m_pendingEvent != nullptr, ("audio request was expected to contain a valid audio event"));
 
@@ -623,39 +664,43 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 #ifdef INTENSIVE_AUDIO_DEBUG
 	DEBUG_LOG(("MILES (%d) - Processing play request: %d (%s)", TheGameLogic->getFrame(), event->getPlayingHandle(), event->getEventName().str()));
 #endif
-	const AudioEventInfo *info = event->getAudioEventInfo();
-	if (!info) {
+	const AudioEventInfo* info = event->getAudioEventInfo();
+	if (!info)
+	{
 		return;
 	}
 
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing = nullptr;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing = nullptr;
 
 	AudioHandle handleToKill = event->getHandleToKill();
 
 	AsciiString fileToPlay = event->getFilename();
-	PlayingAudio *audio = allocatePlayingAudio();
-	switch(info->m_soundType)
+	PlayingAudio* audio = allocatePlayingAudio();
+	switch (info->m_soundType)
 	{
 		case AT_Music:
 		case AT_Streaming:
 		{
-		#ifdef INTENSIVE_AUDIO_DEBUG
+#ifdef INTENSIVE_AUDIO_DEBUG
 			DEBUG_LOG(("- Stream"));
-		#endif
+#endif
 
-			if ((info->m_soundType == AT_Streaming) && event->getUninterruptible()) {
+			if ((info->m_soundType == AT_Streaming) && event->getUninterruptible())
+			{
 				stopAllSpeech();
 			}
 
 			Bool foundSoundToReplace = false;
-			if (handleToKill) {
-				for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+			if (handleToKill)
+			{
+				for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+				{
 					playing = (*it);
 
 					if (playing->m_audioEventRTS && playing->m_audioEventRTS->getPlayingHandle() == handleToKill)
 					{
-						//Release this streaming channel immediately because we are going to play another sound in it's place.
+						// Release this streaming channel immediately because we are going to play another sound in it's place.
 						stopPlayingAudio(playing);
 						foundSoundToReplace = true;
 						break;
@@ -664,9 +709,12 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 			}
 
 			HSTREAM stream;
-			if (!handleToKill || foundSoundToReplace) {
+			if (!handleToKill || foundSoundToReplace)
+			{
 				stream = AIL_open_stream(m_digitalHandle, fileToPlay.str(), 0);
-			} else {
+			}
+			else
+			{
 				stream = nullptr;
 			}
 
@@ -675,10 +723,12 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 			audio->m_stream = stream;
 			audio->m_type = PAT_Stream;
 
-			if (stream) {
-				if ((info->m_soundType == AT_Streaming) && event->getUninterruptible()) {
+			if (stream)
+			{
+				if ((info->m_soundType == AT_Streaming) && event->getUninterruptible())
+				{
 					setDisallowSpeech(TRUE);
-	 			}
+				}
 				AIL_set_stream_volume_pan(stream, getEffectiveVolume(event), 0.5f);
 				playStream(event, stream);
 
@@ -691,25 +741,26 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 
 		case AT_SoundEffect:
 		{
-		#ifdef INTENSIVE_AUDIO_DEBUG
+#ifdef INTENSIVE_AUDIO_DEBUG
 			DEBUG_LOG(("- Sound"));
-		#endif
+#endif
 
-
-			if (event->isPositionalAudio()) {
+			if (event->isPositionalAudio())
+			{
 				// Sounds that are non-global are positional 3-D sounds. Deal with them accordingly
-			#ifdef INTENSIVE_AUDIO_DEBUG
+#ifdef INTENSIVE_AUDIO_DEBUG
 				DEBUG_LOG((" Positional"));
-			#endif
+#endif
 				Bool foundSoundToReplace = false;
 				if (handleToKill)
 				{
-					for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+					for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+					{
 						playing = (*it);
 
-						if( playing->m_audioEventRTS && playing->m_audioEventRTS->getPlayingHandle() == handleToKill )
+						if (playing->m_audioEventRTS && playing->m_audioEventRTS->getPlayingHandle() == handleToKill)
 						{
-							//Release this 3D sound channel immediately because we are going to play another sound in it's place.
+							// Release this 3D sound channel immediately because we are going to play another sound in it's place.
 							stopPlayingAudio(playing);
 							foundSoundToReplace = true;
 							break;
@@ -718,18 +769,18 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				}
 
 				H3DSAMPLE sample3D;
-				if( !handleToKill || foundSoundToReplace )
+				if (!handleToKill || foundSoundToReplace)
 				{
-					sample3D = getAvailable3DSample( event );
-					if( !sample3D )
+					sample3D = getAvailable3DSample(event);
+					if (!sample3D)
 					{
-						//If we don't have an available sample, kill the lowest priority assuming we have one that is lower
-						//than the sound we are trying to add. One possibility for strangeness is when an interrupt sound
-						//that wants to kill a handle to replace it, it's possible that another request already killed it,
-						//in which case we need to attempt to find another sound to kill.
-						if( killLowestPrioritySoundImmediately( event ) )
+						// If we don't have an available sample, kill the lowest priority assuming we have one that is lower
+						// than the sound we are trying to add. One possibility for strangeness is when an interrupt sound
+						// that wants to kill a handle to replace it, it's possible that another request already killed it,
+						// in which case we need to attempt to find another sound to kill.
+						if (killLowestPrioritySoundImmediately(event))
 						{
-							sample3D = getAvailable3DSample( event );
+							sample3D = getAvailable3DSample(event);
 						}
 					}
 				}
@@ -743,24 +794,25 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				audio->m_file = nullptr;
 				audio->m_type = PAT_3DSample;
 
-				if (sample3D) {
+				if (sample3D)
+				{
 					audio->m_file = playSample3D(event, sample3D);
 				}
 
-				if( !audio->m_file )
+				if (!audio->m_file)
 				{
-					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Killed (no handles available)"));
-					#endif
+#ifdef INTENSIVE_AUDIO_DEBUG
+					DEBUG_LOG((" Killed (no handles available)"));
+#endif
 				}
 				else
 				{
 					CriticalSectionClass::LockClass lock(m_playing3DSoundsCS);
 					m_playing3DSounds.push_back(audio);
 					audio = nullptr;
-					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Playing."));
-					#endif
+#ifdef INTENSIVE_AUDIO_DEBUG
+					DEBUG_LOG((" Playing."));
+#endif
 				}
 			}
 			else
@@ -768,13 +820,15 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				// UI sounds are always 2-D. All other sounds should be Positional
 				// Unit acknowledgment, etc, falls into the UI category of sound.
 				Bool foundSoundToReplace = false;
-				if (handleToKill) {
-					for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+				if (handleToKill)
+				{
+					for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+					{
 						playing = (*it);
 
 						if (playing->m_audioEventRTS && playing->m_audioEventRTS->getPlayingHandle() == handleToKill)
 						{
-							//Release this 2D sound channel immediately because we are going to play another sound in it's place.
+							// Release this 2D sound channel immediately because we are going to play another sound in it's place.
 							stopPlayingAudio(playing);
 							foundSoundToReplace = true;
 							break;
@@ -783,21 +837,21 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				}
 
 				HSAMPLE sample;
-				if( !handleToKill || foundSoundToReplace )
+				if (!handleToKill || foundSoundToReplace)
 				{
 					sample = getAvailable2DSample(event);
-					if( !sample )
+					if (!sample)
 					{
-						//If we don't have an available sample, kill the lowest priority assuming we have one that is lower
-						//than the sound we are trying to add. One possibility for strangeness is when an interrupt sound
-						//that wants to kill a handle to replace it, it's possible that another request already killed it,
-						//in which case we need to attempt to find another sound to kill.
-						if( killLowestPrioritySoundImmediately( event ) )
+						// If we don't have an available sample, kill the lowest priority assuming we have one that is lower
+						// than the sound we are trying to add. One possibility for strangeness is when an interrupt sound
+						// that wants to kill a handle to replace it, it's possible that another request already killed it,
+						// in which case we need to attempt to find another sound to kill.
+						if (killLowestPrioritySoundImmediately(event))
 						{
-							sample = getAvailable2DSample( event );
+							sample = getAvailable2DSample(event);
 						}
 					}
-					}
+				}
 				else
 				{
 					sample = nullptr;
@@ -809,21 +863,25 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				audio->m_file = nullptr;
 				audio->m_type = PAT_Sample;
 
-				if (sample) {
+				if (sample)
+				{
 					audio->m_file = playSample(event, sample);
 				}
 
-				if (!audio->m_file) {
-					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Killed (no handles available)"));
-					#endif
-				} else {
+				if (!audio->m_file)
+				{
+#ifdef INTENSIVE_AUDIO_DEBUG
+					DEBUG_LOG((" Killed (no handles available)"));
+#endif
+				}
+				else
+				{
 					CriticalSectionClass::LockClass lock(m_playingSoundsCS);
 					m_playingSounds.push_back(audio);
 					audio = nullptr;
-					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Playing."));
-					#endif
+#ifdef INTENSIVE_AUDIO_DEBUG
+					DEBUG_LOG((" Playing."));
+#endif
 				}
 			}
 			break;
@@ -832,28 +890,31 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 
 	// If we were able to successfully play audio, then we set it to null above. (And it will be freed
 	// later. However, if audio is non-null at this point, then it must be freed.
-	if (audio) {
+	if (audio)
+	{
 		stopPlayingAudio(audio);
 		releasePlayingAudio(audio);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAudioEvent( AudioHandle handle )
+void MilesAudioManager::stopAudioEvent(AudioHandle handle)
 {
 #ifdef INTENSIVE_AUDIO_DEBUG
 	DEBUG_LOG(("MILES (%d) - Processing stop request: %d", TheGameLogic->getFrame(), handle));
 #endif
 
-	std::list<PlayingAudio *>::iterator it;
-	if ( handle == AHSV_StopTheMusic || handle == AHSV_StopTheMusicFade ) {
+	std::list<PlayingAudio*>::iterator it;
+	if (handle == AHSV_StopTheMusic || handle == AHSV_StopTheMusicFade)
+	{
 		// for music, find and stop the currently playing music stream(s).
-		for ( it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it ) {
-			PlayingAudio *audio = (*it);
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+		{
+			PlayingAudio* audio = (*it);
 
-			if( audio->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music )
+			if (audio->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
 			{
-				if( handle == AHSV_StopTheMusicFade )
+				if (handle == AHSV_StopTheMusicFade)
 				{
 					fadePlayingAudio(audio);
 				}
@@ -866,31 +927,37 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 		return;
 	}
 
-	for ( it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it ) {
-		PlayingAudio *audio = (*it);
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
+		PlayingAudio* audio = (*it);
 
-		if (audio->m_audioEventRTS->getPlayingHandle() == handle) {
+		if (audio->m_audioEventRTS->getPlayingHandle() == handle)
+		{
 			stopPlayingAudio(audio);
 			break;
 		}
 	}
 
-	for ( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it ) {
-		PlayingAudio *audio = (*it);
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
+		PlayingAudio* audio = (*it);
 
-		if (audio->m_audioEventRTS->getPlayingHandle() == handle) {
+		if (audio->m_audioEventRTS->getPlayingHandle() == handle)
+		{
 			stopPlayingAudio(audio);
 			break;
 		}
 	}
 
-	for ( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it ) {
-		PlayingAudio *audio = (*it);
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
+		PlayingAudio* audio = (*it);
 
-		if (audio->m_audioEventRTS->getPlayingHandle() == handle) {
-		#ifdef INTENSIVE_AUDIO_DEBUG
+		if (audio->m_audioEventRTS->getPlayingHandle() == handle)
+		{
+#ifdef INTENSIVE_AUDIO_DEBUG
 			DEBUG_LOG((" (%s)", audio->m_audioEventRTS->getEventName()));
-		#endif
+#endif
 			stopPlayingAudio(audio);
 			break;
 		}
@@ -898,14 +965,14 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::killAudioEventImmediately( AudioHandle audioEvent )
+void MilesAudioManager::killAudioEventImmediately(AudioHandle audioEvent)
 {
-	//First look for it in the request list.
+	// First look for it in the request list.
 	std::list<AudioRequest*>::iterator ait;
-	for( ait = m_audioRequests.begin(); ait != m_audioRequests.end(); ait++ )
+	for (ait = m_audioRequests.begin(); ait != m_audioRequests.end(); ait++)
 	{
-		AudioRequest *req = (*ait);
-		if( req->m_pendingEvent && req->m_pendingEvent->getPlayingHandle() == audioEvent )
+		AudioRequest* req = (*ait);
+		if (req->m_pendingEvent && req->m_pendingEvent->getPlayingHandle() == audioEvent)
 		{
 			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
@@ -913,37 +980,37 @@ void MilesAudioManager::killAudioEventImmediately( AudioHandle audioEvent )
 		}
 	}
 
-	//Look for matching 3D sound to kill
-	std::list<PlayingAudio *>::iterator it;
-	for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); it++ )
+	// Look for matching 3D sound to kill
+	std::list<PlayingAudio*>::iterator it;
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); it++)
 	{
-		PlayingAudio *audio = (*it);
+		PlayingAudio* audio = (*it);
 
-		if( audio->m_audioEventRTS->getPlayingHandle() == audioEvent )
+		if (audio->m_audioEventRTS->getPlayingHandle() == audioEvent)
 		{
 			stopPlayingAudio(audio);
 			return;
 		}
 	}
 
-	//Look for matching 2D sound to kill
-	for( it = m_playingSounds.begin(); it != m_playingSounds.end(); it++ )
+	// Look for matching 2D sound to kill
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); it++)
 	{
-		PlayingAudio *audio = (*it);
+		PlayingAudio* audio = (*it);
 
-		if( audio->m_audioEventRTS->getPlayingHandle() == audioEvent )
+		if (audio->m_audioEventRTS->getPlayingHandle() == audioEvent)
 		{
 			stopPlayingAudio(audio);
 			return;
 		}
 	}
 
-	//Look for matching steaming sound to kill
-	for( it = m_playingStreams.begin(); it != m_playingStreams.end(); it++ )
+	// Look for matching steaming sound to kill
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); it++)
 	{
-		PlayingAudio *audio = (*it);
+		PlayingAudio* audio = (*it);
 
-		if( audio->m_audioEventRTS->getPlayingHandle() == audioEvent )
+		if (audio->m_audioEventRTS->getPlayingHandle() == audioEvent)
 		{
 			stopPlayingAudio(audio);
 			return;
@@ -952,39 +1019,38 @@ void MilesAudioManager::killAudioEventImmediately( AudioHandle audioEvent )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::pauseAudioEvent( AudioHandle handle )
+void MilesAudioManager::pauseAudioEvent(AudioHandle handle)
 {
 	// pause audio
 }
 
 //-------------------------------------------------------------------------------------------------
-void *MilesAudioManager::loadFileForRead( AudioEventRTS *eventToLoadFrom )
+void* MilesAudioManager::loadFileForRead(AudioEventRTS* eventToLoadFrom)
 {
 	return m_audioCache->openFile(eventToLoadFrom);
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::closeFile( void *fileRead )
+void MilesAudioManager::closeFile(void* fileRead)
 {
 	m_audioCache->closeFile(fileRead);
 }
 
-
 //-------------------------------------------------------------------------------------------------
-PlayingAudio *MilesAudioManager::allocatePlayingAudio()
+PlayingAudio* MilesAudioManager::allocatePlayingAudio()
 {
-	return NEW PlayingAudio; // poolify
+	return NEW PlayingAudio;    // poolify
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::releaseMilesHandles( PlayingAudio *release )
+void MilesAudioManager::releaseMilesHandles(PlayingAudio* release)
 {
 	switch (release->m_type)
 	{
 		case PAT_Sample:
 		{
-			if (release->m_sample) {
+			if (release->m_sample)
+			{
 				AIL_register_EOS_callback(release->m_sample, nullptr);
 				AIL_stop_sample(release->m_sample);
 				m_availableSamples.push_back(release->m_sample);
@@ -994,7 +1060,8 @@ void MilesAudioManager::releaseMilesHandles( PlayingAudio *release )
 		}
 		case PAT_3DSample:
 		{
-			if (release->m_3DSample) {
+			if (release->m_3DSample)
+			{
 				AIL_register_3D_EOS_callback(release->m_3DSample, nullptr);
 				AIL_stop_3D_sample(release->m_3DSample);
 				m_available3DSamples.push_back(release->m_3DSample);
@@ -1004,7 +1071,8 @@ void MilesAudioManager::releaseMilesHandles( PlayingAudio *release )
 		}
 		case PAT_Stream:
 		{
-			if (release->m_stream) {
+			if (release->m_stream)
+			{
 				AIL_register_stream_callback(release->m_stream, nullptr);
 				AIL_close_stream(release->m_stream);
 				release->m_stream = nullptr;
@@ -1016,12 +1084,13 @@ void MilesAudioManager::releaseMilesHandles( PlayingAudio *release )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::releasePlayingAudio( PlayingAudio *release )
+void MilesAudioManager::releasePlayingAudio(PlayingAudio* release)
 {
 	DEBUG_ASSERTCRASH(release->m_status == PS_Stopped, ("PlayingAudio must be stopped by now"));
 	DEBUG_ASSERTCRASH(release->m_type == PAT_INVALID, ("PlayingAudio must be invalidated by now"));
 
-	if (release->m_file) {
+	if (release->m_file)
+	{
 		closeFile(release->m_file);
 		release->m_file = nullptr;
 	}
@@ -1030,59 +1099,66 @@ void MilesAudioManager::releasePlayingAudio( PlayingAudio *release )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopPlayingAudio( PlayingAudio *release )
+void MilesAudioManager::stopPlayingAudio(PlayingAudio* release)
 {
 	// Advance from Playing to Stopping
 	InterlockedCompareExchange(reinterpret_cast<volatile long*>(&release->m_status), PS_Stopping, PS_Playing);
 	// Advance from Stopping to Stopped
 	const long prevStatus = InterlockedCompareExchange(reinterpret_cast<volatile long*>(&release->m_status), PS_Stopped, PS_Stopping);
-	if (prevStatus != PS_Stopping) {
+	if (prevStatus != PS_Stopping)
+	{
 		return;
 	}
 	releaseMilesHandles(release);
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::rerequestPlayingAudio( PlayingAudio *playing )
+void MilesAudioManager::rerequestPlayingAudio(PlayingAudio* playing)
 {
-	AudioRequest *req = allocateAudioRequest();
+	AudioRequest* req = allocateAudioRequest();
 	req->m_pendingEvent = playing->m_audioEventRTS;
 	req->m_requiresCheckForSample = true;
 	appendAudioRequest(req);
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::rerequestPlayingAudioWhenSignalled( PlayingAudio *playing )
+void MilesAudioManager::rerequestPlayingAudioWhenSignalled(PlayingAudio* playing)
 {
-	if (playing->m_rerequestOnNextUpdate) {
+	if (playing->m_rerequestOnNextUpdate)
+	{
 		rerequestPlayingAudio(playing);
 		playing->m_rerequestOnNextUpdate = false;
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::fadePlayingAudio( PlayingAudio *playing )
+void MilesAudioManager::fadePlayingAudio(PlayingAudio* playing)
 {
 	playing->m_fade = true;
 }
 
 //-------------------------------------------------------------------------------------------------
-PlayingAudio *MilesAudioManager::findActiveMusic( const AsciiString* trackName )
+PlayingAudio* MilesAudioManager::findActiveMusic(const AsciiString* trackName)
 {
-	std::list<PlayingAudio *>::const_iterator it;
-	PlayingAudio *playing;
-	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	std::list<PlayingAudio*>::const_iterator it;
+	PlayingAudio* playing;
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
 		playing = *it;
-		if (playing->m_status != PS_Playing) {
+		if (playing->m_status != PS_Playing)
+		{
 			continue;
 		}
-		if (playing->m_fade) {
+		if (playing->m_fade)
+		{
 			continue;
 		}
-		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType != AT_Music) {
+		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType != AT_Music)
+		{
 			continue;
 		}
-		if (trackName && *trackName != playing->m_audioEventRTS->getEventName()) {
+		if (trackName && *trackName != playing->m_audioEventRTS->getEventName())
+		{
 			continue;
 		}
 		return playing;
@@ -1091,20 +1167,19 @@ PlayingAudio *MilesAudioManager::findActiveMusic( const AsciiString* trackName )
 }
 
 //-------------------------------------------------------------------------------------------------
-const PlayingAudio *MilesAudioManager::findActiveMusic( const AsciiString* trackName ) const
+const PlayingAudio* MilesAudioManager::findActiveMusic(const AsciiString* trackName) const
 {
 	return const_cast<MilesAudioManager*>(this)->findActiveMusic(trackName);
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::releasePlayingAudioInListIfStopped(std::list<PlayingAudio *> &list, CriticalSectionClass &cs)
+void MilesAudioManager::releasePlayingAudioInListIfStopped(std::list<PlayingAudio*>& list, CriticalSectionClass& cs)
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 	CriticalSectionClass::LockClass lock(cs);
 
-	for (it = list.begin(); it != list.end(); )
+	for (it = list.begin(); it != list.end();)
 	{
 		playing = (*it);
 
@@ -1122,28 +1197,32 @@ void MilesAudioManager::releasePlayingAudioInListIfStopped(std::list<PlayingAudi
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::stopAllAudioImmediately()
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 
 	//
 	// Stop audio without locking. Calls into Miles.
 	//
-	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
 		playing = (*it);
 		stopPlayingAudio(playing);
 	}
 
-	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
 		playing = (*it);
 		stopPlayingAudio(playing);
 	}
 
-	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
 		playing = (*it);
 		stopPlayingAudio(playing);
 	}
 
-	for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ++it) {
+	for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ++it)
+	{
 		playing = (*it);
 		stopPlayingAudio(playing);
 	}
@@ -1162,8 +1241,10 @@ void MilesAudioManager::stopAllAudioImmediately()
 	DEBUG_ASSERTCRASH(m_fadingAudio.empty(), ("List is expected to be empty now"));
 
 	std::list<HAUDIO>::iterator hit;
-	for (hit = m_audioForcePlayed.begin(); hit != m_audioForcePlayed.end(); ++hit) {
-		if (*hit) {
+	for (hit = m_audioForcePlayed.begin(); hit != m_audioForcePlayed.end(); ++hit)
+	{
+		if (*hit)
+		{
 			AIL_quick_unload(*hit);
 		}
 	}
@@ -1180,7 +1261,8 @@ void MilesAudioManager::freeAllMilesHandles()
 
 	// Walks through the available 2-D and 3-D handles and releases them
 	std::vector<HSAMPLE>::iterator it;
-	for ( it = m_availableSamples.begin(); it != m_availableSamples.end(); ++it ) {
+	for (it = m_availableSamples.begin(); it != m_availableSamples.end(); ++it)
+	{
 		AIL_release_sample_handle(*it);
 	}
 
@@ -1188,7 +1270,8 @@ void MilesAudioManager::freeAllMilesHandles()
 	m_num2DSamples = 0;
 
 	std::vector<H3DSAMPLE>::iterator it3D;
-	for ( it3D = m_available3DSamples.begin(); it3D != m_available3DSamples.end(); ++it3D ) {
+	for (it3D = m_available3DSamples.begin(); it3D != m_available3DSamples.end(); ++it3D)
+	{
 		AIL_release_3D_sample_handle(*it3D);
 	}
 
@@ -1198,9 +1281,10 @@ void MilesAudioManager::freeAllMilesHandles()
 }
 
 //-------------------------------------------------------------------------------------------------
-HSAMPLE MilesAudioManager::getAvailable2DSample( AudioEventRTS *event )
+HSAMPLE MilesAudioManager::getAvailable2DSample(AudioEventRTS* event)
 {
-	if (!m_availableSamples.empty()) {
+	if (!m_availableSamples.empty())
+	{
 		HSAMPLE retSample = m_availableSamples.back();
 		m_availableSamples.pop_back();
 		return retSample;
@@ -1211,9 +1295,10 @@ HSAMPLE MilesAudioManager::getAvailable2DSample( AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-H3DSAMPLE MilesAudioManager::getAvailable3DSample( AudioEventRTS *event )
+H3DSAMPLE MilesAudioManager::getAvailable3DSample(AudioEventRTS* event)
 {
-	if (!m_available3DSamples.empty()) {
+	if (!m_available3DSamples.empty())
+	{
 		H3DSAMPLE retSample = m_available3DSamples.back();
 		m_available3DSamples.pop_back();
 		return retSample;
@@ -1224,24 +1309,28 @@ H3DSAMPLE MilesAudioManager::getAvailable3DSample( AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::adjustPlayingVolume( PlayingAudio *audio )
+void MilesAudioManager::adjustPlayingVolume(PlayingAudio* audio)
 {
 	Real pan;
-	if (audio->m_type == PAT_Sample) {
+	if (audio->m_type == PAT_Sample)
+	{
 		AIL_sample_volume_pan(audio->m_sample, nullptr, &pan);
 		AIL_set_sample_volume_pan(audio->m_sample, getEffectiveVolume(audio->m_audioEventRTS.Peek()), pan);
-
-	} else if (audio->m_type == PAT_3DSample) {
+	}
+	else if (audio->m_type == PAT_3DSample)
+	{
 		AIL_set_3D_sample_volume(audio->m_3DSample, getEffectiveVolume(audio->m_audioEventRTS.Peek()));
-
-	} else if (audio->m_type == PAT_Stream) {
+	}
+	else if (audio->m_type == PAT_Stream)
+	{
 		AIL_stream_volume_pan(audio->m_stream, nullptr, &pan);
-		if (audio->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music ) {
+		if (audio->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
+		{
 			AIL_set_stream_volume_pan(audio->m_stream, getEffectiveVolume(audio->m_audioEventRTS.Peek()), pan);
-
-		} else {
+		}
+		else
+		{
 			AIL_set_stream_volume_pan(audio->m_stream, getEffectiveVolume(audio->m_audioEventRTS.Peek()), pan);
-
 		}
 	}
 }
@@ -1249,33 +1338,38 @@ void MilesAudioManager::adjustPlayingVolume( PlayingAudio *audio )
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::stopAllSpeech()
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
-	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
 		playing = (*it);
-		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Streaming) {
+		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Streaming)
+		{
 			stopPlayingAudio(playing);
 		}
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::initFilters( HSAMPLE sample, AudioEventRTS *event )
+void MilesAudioManager::initFilters(HSAMPLE sample, AudioEventRTS* event)
 {
 	// set the sample volume
 	AIL_set_sample_volume_pan(sample, getEffectiveVolume(event), 0.5f);
 
 	// pitch shift
 	Real pitchShift = event->getPitchShift();
-	if (pitchShift == 0.0f) {
-		DEBUG_CRASH(("Invalid Pitch shift in sound: '%s'", event->getEventName().str()) );
-	} else {
+	if (pitchShift == 0.0f)
+	{
+		DEBUG_CRASH(("Invalid Pitch shift in sound: '%s'", event->getEventName().str()));
+	}
+	else
+	{
 		AIL_set_sample_playback_rate(sample, REAL_TO_INT(AIL_sample_playback_rate(sample) * pitchShift));
 	}
 
 	// set up delay filter, if applicable
-	if (event->getDelay() > 0.0f) {
+	if (event->getDelay() > 0.0f)
+	{
 		Real value;
 		value = event->getDelay();
 		AIL_set_sample_processor(sample, DP_FILTER, m_delayFilter);
@@ -1288,21 +1382,25 @@ void MilesAudioManager::initFilters( HSAMPLE sample, AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::initFilters3D( H3DSAMPLE sample, AudioEventRTS *event, const Coord3D *pos )
+void MilesAudioManager::initFilters3D(H3DSAMPLE sample, AudioEventRTS* event, const Coord3D* pos)
 {
 	// set the sample volume
 	AIL_set_3D_sample_volume(sample, getEffectiveVolume(event));
 
 	// pitch shift
 	Real pitchShift = event->getPitchShift();
-	if (pitchShift == 0.0f) {
-		DEBUG_CRASH(("Invalid Pitch shift in sound: '%s'", event->getEventName().str()) );
-	} else {
+	if (pitchShift == 0.0f)
+	{
+		DEBUG_CRASH(("Invalid Pitch shift in sound: '%s'", event->getEventName().str()));
+	}
+	else
+	{
 		AIL_set_3D_sample_playback_rate(sample, REAL_TO_INT(AIL_3D_sample_playback_rate(sample) * pitchShift));
 	}
 
 	// Low pass filter
-	if (event->getAudioEventInfo()->m_lowPassFreq > 0 && !isOnScreen(pos) ) {
+	if (event->getAudioEventInfo()->m_lowPassFreq > 0 && !isOnScreen(pos))
+	{
 		AIL_set_3D_sample_occlusion(sample, 1.0f - event->getAudioEventInfo()->m_lowPassFreq);
 	}
 }
@@ -1312,7 +1410,8 @@ AsciiString MilesAudioManager::nextMusicTrack()
 {
 	AsciiString trackName;
 
-	if (PlayingAudio *playing = findActiveMusic()) {
+	if (PlayingAudio* playing = findActiveMusic())
+	{
 		trackName = playing->m_audioEventRTS->getEventName();
 	}
 
@@ -1331,7 +1430,8 @@ AsciiString MilesAudioManager::prevMusicTrack()
 {
 	AsciiString trackName;
 
-	if (PlayingAudio *playing = findActiveMusic()) {
+	if (PlayingAudio* playing = findActiveMusic())
+	{
 		trackName = playing->m_audioEventRTS->getEventName();
 	}
 
@@ -1352,10 +1452,12 @@ Bool MilesAudioManager::isMusicPlaying() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const
+Bool MilesAudioManager::hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const
 {
-	if (const PlayingAudio *playing = findActiveMusic(&trackName)) {
-		if (INFINITE_LOOP_COUNT - AIL_stream_loop_count(playing->m_stream) >= numberOfTimes) {
+	if (const PlayingAudio* playing = findActiveMusic(&trackName))
+	{
+		if (INFINITE_LOOP_COUNT - AIL_stream_loop_count(playing->m_stream) >= numberOfTimes)
+		{
 			return TRUE;
 		}
 	}
@@ -1365,7 +1467,8 @@ Bool MilesAudioManager::hasMusicTrackCompleted( const AsciiString& trackName, In
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::openDevice()
 {
-	if (!TheGlobalData->m_audioOn) {
+	if (!TheGlobalData->m_audioOn)
+	{
 		return;
 	}
 
@@ -1374,7 +1477,7 @@ void MilesAudioManager::openDevice()
 	Int retval = 0;
 
 	// AIL_quick_startup should be replaced later with a call to actually pick which device to use, etc
-	const AudioSettings *audioSettings = getAudioSettings();
+	const AudioSettings* audioSettings = getAudioSettings();
 	m_selectedSpeakerType = TheAudio->translateSpeakerTypeToUnsignedInt(m_prefSpeaker);
 
 	retval = AIL_quick_startup(audioSettings->m_useDigital, audioSettings->m_useMidi, audioSettings->m_outputRate, audioSettings->m_outputBits, audioSettings->m_outputChannels);
@@ -1382,11 +1485,14 @@ void MilesAudioManager::openDevice()
 	// Quick handles tells us where to store the various devices. For now, we're only interested in the digital handle.
 	AIL_quick_handles(&m_digitalHandle, nullptr, nullptr);
 
-	if (retval) {
+	if (retval)
+	{
 		buildProviderList();
-	} else {
+	}
+	else
+	{
 		// if we couldn't initialize any devices, turn sound off (fail silently)
-		setOn( false, AudioAffect_All );
+		setOn(false, AudioAffect_All);
 	}
 
 	selectProvider(TheAudio->getProviderIndex(m_pref3DProvider));
@@ -1394,7 +1500,8 @@ void MilesAudioManager::openDevice()
 	// Now that we're all done, update the cached variables so that everything is in sync.
 	TheAudio->refreshCachedVariables();
 
-	if (!isValidProvider()) {
+	if (!isValidProvider())
+	{
 		return;
 	}
 
@@ -1410,38 +1517,46 @@ void MilesAudioManager::closeDevice()
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::isCurrentlyPlaying( AudioHandle handle )
+Bool MilesAudioManager::isCurrentlyPlaying(AudioHandle handle)
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 
-	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
 		playing = *it;
-		if (playing->m_audioEventRTS->getPlayingHandle() == handle) {
+		if (playing->m_audioEventRTS->getPlayingHandle() == handle)
+		{
 			return true;
 		}
 	}
 
-	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
 		playing = *it;
-		if (playing->m_audioEventRTS->getPlayingHandle() == handle) {
+		if (playing->m_audioEventRTS->getPlayingHandle() == handle)
+		{
 			return true;
 		}
 	}
 
-	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
 		playing = *it;
-		if (playing->m_audioEventRTS->getPlayingHandle() == handle) {
+		if (playing->m_audioEventRTS->getPlayingHandle() == handle)
+		{
 			return true;
 		}
 	}
 
 	// if something is requested, it is also considered playing
-	std::list<AudioRequest *>::iterator ait;
-	AudioRequest *req = nullptr;
-	for (ait = m_audioRequests.begin(); ait != m_audioRequests.end(); ++ait) {
+	std::list<AudioRequest*>::iterator ait;
+	AudioRequest* req = nullptr;
+	for (ait = m_audioRequests.begin(); ait != m_audioRequests.end(); ++ait)
+	{
 		req = *ait;
-		if (req->m_pendingEvent && req->m_pendingEvent->getPlayingHandle() == handle) {
+		if (req->m_pendingEvent && req->m_pendingEvent->getPlayingHandle() == handle)
+		{
 			return true;
 		}
 	}
@@ -1450,58 +1565,72 @@ Bool MilesAudioManager::isCurrentlyPlaying( AudioHandle handle )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt flags )
+void MilesAudioManager::notifyOfAudioCompletion(UnsignedInt handle, UnsignedInt flags)
 {
-	PlayingAudio *playing = findPlayingAudioFrom(handle, flags);
-	if (!playing) {
+	PlayingAudio* playing = findPlayingAudioFrom(handle, flags);
+	if (!playing)
+	{
 		DEBUG_CRASH(("Audio has completed playing, but we can't seem to find it. - jkmcd"));
 		return;
 	}
 
-	if (getDisallowSpeech() && playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Streaming) {
+	if (getDisallowSpeech() && playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Streaming)
+	{
 		setDisallowSpeech(FALSE);
 	}
 
-	if (playing->m_audioEventRTS->getAudioEventInfo()->m_control & AC_LOOP) {
-		if (playing->m_audioEventRTS->getNextPlayPortion() == PP_Attack) {
+	if (playing->m_audioEventRTS->getAudioEventInfo()->m_control & AC_LOOP)
+	{
+		if (playing->m_audioEventRTS->getNextPlayPortion() == PP_Attack)
+		{
 			playing->m_audioEventRTS->setNextPlayPortion(PP_Sound);
 		}
-		if (playing->m_audioEventRTS->getNextPlayPortion() == PP_Sound) {
+		if (playing->m_audioEventRTS->getNextPlayPortion() == PP_Sound)
+		{
 			// First, decrease the loop count.
 			playing->m_audioEventRTS->decreaseLoopCount();
 
 			// Now, try to start the next loop
-			if (startNextLoop(playing)) {
+			if (startNextLoop(playing))
+			{
 				return;
 			}
 		}
 	}
 
 	playing->m_audioEventRTS->advanceNextPlayPortion();
-	if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
-		if (playing->m_type == PAT_Sample) {
-			closeFile(playing->m_file);	// close it so as not to leak it.
+	if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done)
+	{
+		if (playing->m_type == PAT_Sample)
+		{
+			closeFile(playing->m_file);    // close it so as not to leak it.
 			playing->m_file = playSample(playing->m_audioEventRTS.Peek(), playing->m_sample);
 
 			// If we don't have a file now, then we should drop to the stopped status so that
 			// We correctly close this handle.
-			if (playing->m_file) {
+			if (playing->m_file)
+			{
 				return;
 			}
-		} else if (playing->m_type == PAT_3DSample) {
-			closeFile(playing->m_file);	// close it so as not to leak it.
+		}
+		else if (playing->m_type == PAT_3DSample)
+		{
+			closeFile(playing->m_file);    // close it so as not to leak it.
 			playing->m_file = playSample3D(playing->m_audioEventRTS.Peek(), playing->m_3DSample);
 
 			// If we don't have a file now, then we should drop to the stopped status so that
 			// We correctly close this handle.
-			if (playing->m_file) {
+			if (playing->m_file)
+			{
 				return;
 			}
 		}
 	}
 
-	if (playing->m_type == PAT_Stream) {
-		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
+	if (playing->m_type == PAT_Stream)
+	{
+		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
+		{
 			playStream(playing->m_audioEventRTS.Peek(), playing->m_stream);
 			return;
 		}
@@ -1512,49 +1641,60 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 }
 
 //-------------------------------------------------------------------------------------------------
-PlayingAudio *MilesAudioManager::findPlayingAudioFrom( UnsignedInt handle, UnsignedInt flags )
+PlayingAudio* MilesAudioManager::findPlayingAudioFrom(UnsignedInt handle, UnsignedInt flags)
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 
-	if (flags == PAT_Sample) {
-		HSAMPLE sample = (HSAMPLE) handle;
+	if (flags == PAT_Sample)
+	{
+		HSAMPLE sample = (HSAMPLE)handle;
 		CriticalSectionClass::LockClass lock(m_playingSoundsCS);
-		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
 			playing = *it;
-			if (playing->m_sample == sample) {
+			if (playing->m_sample == sample)
+			{
 				return playing;
 			}
 		}
 	}
 
-	if (flags == PAT_3DSample) {
-		H3DSAMPLE sample3D = (H3DSAMPLE) handle;
+	if (flags == PAT_3DSample)
+	{
+		H3DSAMPLE sample3D = (H3DSAMPLE)handle;
 		CriticalSectionClass::LockClass lock(m_playing3DSoundsCS);
-		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
 			playing = *it;
-			if (playing->m_3DSample == sample3D) {
+			if (playing->m_3DSample == sample3D)
+			{
 				return playing;
 			}
 		}
 	}
 
-	if (flags == PAT_Stream) {
-		HSTREAM stream = (HSTREAM) handle;
+	if (flags == PAT_Stream)
+	{
+		HSTREAM stream = (HSTREAM)handle;
 		{
 			CriticalSectionClass::LockClass lock(m_playingStreamsCS);
-			for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+			for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+			{
 				playing = *it;
-				if (playing->m_stream == stream) {
+				if (playing->m_stream == stream)
+				{
 					return playing;
 				}
 			}
 		}
 		{
 			CriticalSectionClass::LockClass lock(m_fadingAudioCS);
-			for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ++it) {
+			for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ++it)
+			{
 				playing = *it;
-				if (playing->m_stream == stream) {
+				if (playing->m_stream == stream)
+				{
 					return playing;
 				}
 			}
@@ -1564,7 +1704,6 @@ PlayingAudio *MilesAudioManager::findPlayingAudioFrom( UnsignedInt handle, Unsig
 	return nullptr;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 UnsignedInt MilesAudioManager::getProviderCount() const
 {
@@ -1572,9 +1711,10 @@ UnsignedInt MilesAudioManager::getProviderCount() const
 }
 
 //-------------------------------------------------------------------------------------------------
-AsciiString MilesAudioManager::getProviderName( UnsignedInt providerNum ) const
+AsciiString MilesAudioManager::getProviderName(UnsignedInt providerNum) const
 {
-	if (isOn(AudioAffect_Sound3D) && providerNum < m_providerCount) {
+	if (isOn(AudioAffect_Sound3D) && providerNum < m_providerCount)
+	{
 		return m_provider3D[providerNum].name;
 	}
 
@@ -1582,10 +1722,12 @@ AsciiString MilesAudioManager::getProviderName( UnsignedInt providerNum ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt MilesAudioManager::getProviderIndex( AsciiString providerName ) const
+UnsignedInt MilesAudioManager::getProviderIndex(AsciiString providerName) const
 {
-	for (UnsignedInt i = 0; i < m_providerCount; ++i) {
-		if (providerName == m_provider3D[i].name) {
+	for (UnsignedInt i = 0; i < m_providerCount; ++i)
+	{
+		if (providerName == m_provider3D[i].name)
+		{
 			return i;
 		}
 	}
@@ -1594,7 +1736,7 @@ UnsignedInt MilesAudioManager::getProviderIndex( AsciiString providerName ) cons
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::selectProvider( UnsignedInt providerNdx )
+void MilesAudioManager::selectProvider(UnsignedInt providerNdx)
 {
 	if (!isOn(AudioAffect_Sound3D))
 	{
@@ -1613,13 +1755,13 @@ void MilesAudioManager::selectProvider( UnsignedInt providerNdx )
 	}
 
 	LPDIRECTSOUND lpDirectSoundInfo;
-	AIL_get_DirectSound_info( nullptr, (void**)&lpDirectSoundInfo, nullptr );
+	AIL_get_DirectSound_info(nullptr, (void**)&lpDirectSoundInfo, nullptr);
 	Bool useDolby = FALSE;
-	if( lpDirectSoundInfo )
+	if (lpDirectSoundInfo)
 	{
 		DWORD speakerConfig;
-		lpDirectSoundInfo->GetSpeakerConfig( &speakerConfig );
-		switch( DSSPEAKER_CONFIG( speakerConfig ) )
+		lpDirectSoundInfo->GetSpeakerConfig(&speakerConfig);
+		switch (DSSPEAKER_CONFIG(speakerConfig))
 		{
 			case DSSPEAKER_DIRECTOUT:
 				m_selectedSpeakerType = AIL_3D_2_SPEAKER;
@@ -1654,32 +1796,30 @@ void MilesAudioManager::selectProvider( UnsignedInt providerNdx )
 	}
 
 	Bool success = FALSE;
-	if( useDolby )
+	if (useDolby)
 	{
-		providerNdx = getProviderIndex( "Dolby Surround" );
+		providerNdx = getProviderIndex("Dolby Surround");
 	}
 	else
 	{
-		providerNdx = getProviderIndex( "Miles Fast 2D Positional Audio" );
+		providerNdx = getProviderIndex("Miles Fast 2D Positional Audio");
 	}
-	success = AIL_open_3D_provider( m_provider3D[providerNdx].id ) == 0;
+	success = AIL_open_3D_provider(m_provider3D[providerNdx].id) == 0;
 
-	//if (providerNdx < m_providerCount)
+	// if (providerNdx < m_providerCount)
 	//{
 	//	failed = AIL_open_3D_provider(m_provider3D[providerNdx].id);
-	//}
+	// }
 
-
-
-	if( !success )
+	if (!success)
 	{
 		m_selectedProvider = PROVIDER_ERROR;
 		// try to select a failsafe
-		providerNdx = getProviderIndex( "Miles Fast 2D Positional Audio" );
-		success = AIL_open_3D_provider( m_provider3D[providerNdx].id ) == 0;
+		providerNdx = getProviderIndex("Miles Fast 2D Positional Audio");
+		success = AIL_open_3D_provider(m_provider3D[providerNdx].id) == 0;
 	}
 
-	if ( success )
+	if (success)
 	{
 		m_selectedProvider = providerNdx;
 
@@ -1697,11 +1837,13 @@ void MilesAudioManager::selectProvider( UnsignedInt providerNdx )
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::unselectProvider()
 {
-	if (!(isOn(AudioAffect_Sound3D) && isValidProvider())) {
+	if (!(isOn(AudioAffect_Sound3D) && isValidProvider()))
+	{
 		return;
 	}
 
-	if (TheVideoPlayer) {
+	if (TheVideoPlayer)
+	{
 		TheVideoPlayer->notifyVideoPlayerOfNewProvider(FALSE);
 	}
 	AIL_close_3D_listener(m_listener);
@@ -1720,20 +1862,22 @@ UnsignedInt MilesAudioManager::getSelectedProvider() const
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::setSpeakerType( UnsignedInt speakerType )
+void MilesAudioManager::setSpeakerType(UnsignedInt speakerType)
 {
-	if (!isValidProvider()) {
+	if (!isValidProvider())
+	{
 		return;
 	}
 
-	AIL_set_3D_speaker_type( m_provider3D[m_selectedProvider].id, speakerType );
+	AIL_set_3D_speaker_type(m_provider3D[m_selectedProvider].id, speakerType);
 	m_selectedSpeakerType = speakerType;
 }
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt MilesAudioManager::getSpeakerType()
 {
-	if (!isValidProvider()) {
+	if (!isValidProvider())
+	{
 		return 0;
 	}
 
@@ -1771,33 +1915,43 @@ UnsignedInt MilesAudioManager::getNumAvailable3DSamples() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::doesViolateLimit( AudioEventRTS *event ) const
+Bool MilesAudioManager::doesViolateLimit(AudioEventRTS* event) const
 {
 	Int limit = event->getAudioEventInfo()->m_limit;
-	if (limit == 0) {
+	if (limit == 0)
+	{
 		return false;
 	}
 
 	Int totalCount = 0;
 	Int totalRequestCount = 0;
 
-	std::list<PlayingAudio *>::const_iterator it;
-	if (!event->isPositionalAudio()) {
+	std::list<PlayingAudio*>::const_iterator it;
+	if (!event->isPositionalAudio())
+	{
 		// 2-D
-		for ( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it ) {
-			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName()) {
-				if (totalCount == 0) {
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
+			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName())
+			{
+				if (totalCount == 0)
+				{
 					// This is the oldest audio of this type playing.
 					event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
 				}
 				++totalCount;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		// 3-D
-		for ( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it ) {
-			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName()) {
-				if (totalCount == 0) {
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
+			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName())
+			{
+				if (totalCount == 0)
+				{
 					// This is the oldest audio of this type playing.
 					event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
 				}
@@ -1808,38 +1962,39 @@ Bool MilesAudioManager::doesViolateLimit( AudioEventRTS *event ) const
 
 	// Also check the request list in case we've requested to play this sound.
 	std::list<AudioRequest*>::const_iterator arIt;
-	for (arIt = m_audioRequests.begin(); arIt != m_audioRequests.end(); ++arIt) {
-		AudioRequest *req = (*arIt);
-		if( req->m_pendingEvent && req->m_pendingEvent->getEventName() == event->getEventName() )
+	for (arIt = m_audioRequests.begin(); arIt != m_audioRequests.end(); ++arIt)
+	{
+		AudioRequest* req = (*arIt);
+		if (req->m_pendingEvent && req->m_pendingEvent->getEventName() == event->getEventName())
 		{
 			totalRequestCount++;
 			totalCount++;
 		}
 	}
 
-	//If our event is an interrupting type, then normally we would always add it. The exception is when we have requested
-	//multiple sounds in the same frame and those requests violate the limit. Because we don't have any "old" sounds to
-	//remove in the case of an interrupt, we need to catch it early and prevent the sound from being added if we already
-	//reached the limit
-	if( event->getAudioEventInfo()->m_control & AC_INTERRUPT )
+	// If our event is an interrupting type, then normally we would always add it. The exception is when we have requested
+	// multiple sounds in the same frame and those requests violate the limit. Because we don't have any "old" sounds to
+	// remove in the case of an interrupt, we need to catch it early and prevent the sound from being added if we already
+	// reached the limit
+	if (event->getAudioEventInfo()->m_control & AC_INTERRUPT)
 	{
-		if( totalRequestCount < limit )
+		if (totalRequestCount < limit)
 		{
 			Int totalPlayingCount = totalCount - totalRequestCount;
-			if( totalRequestCount + totalPlayingCount < limit )
+			if (totalRequestCount + totalPlayingCount < limit)
 			{
-				//We aren't exceeding the actual limit, then clear the kill handle.
+				// We aren't exceeding the actual limit, then clear the kill handle.
 				event->setHandleToKill(0);
 				return false;
 			}
 
-			//We are exceeding the limit - the kill handle will kill the
-			//oldest playing sound to enforce the actual limit.
+			// We are exceeding the limit - the kill handle will kill the
+			// oldest playing sound to enforce the actual limit.
 			return false;
 		}
 	}
 
-	if( totalCount < limit )
+	if (totalCount < limit)
 	{
 		event->setHandleToKill(0);
 		return false;
@@ -1849,20 +2004,27 @@ Bool MilesAudioManager::doesViolateLimit( AudioEventRTS *event ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::isPlayingAlready( AudioEventRTS *event ) const
+Bool MilesAudioManager::isPlayingAlready(AudioEventRTS* event) const
 {
-	std::list<PlayingAudio *>::const_iterator it;
-	if (!event->isPositionalAudio()) {
+	std::list<PlayingAudio*>::const_iterator it;
+	if (!event->isPositionalAudio())
+	{
 		// 2-D
-		for ( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it ) {
-			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName()) {
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
+			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName())
+			{
 				return true;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		// 3-D
-		for ( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it ) {
-			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName()) {
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
+			if ((*it)->m_audioEventRTS->getEventName() == event->getEventName())
+			{
 				return true;
 			}
 		}
@@ -1872,23 +2034,28 @@ Bool MilesAudioManager::isPlayingAlready( AudioEventRTS *event ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::isObjectPlayingVoice( UnsignedInt objID ) const
+Bool MilesAudioManager::isObjectPlayingVoice(UnsignedInt objID) const
 {
-	if (objID == 0) {
+	if (objID == 0)
+	{
 		return false;
 	}
 
-	std::list<PlayingAudio *>::const_iterator it;
-		// 2-D
-	for ( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it ) {
-		if ((*it)->m_audioEventRTS->getObjectID() == objID && (*it)->m_audioEventRTS->getAudioEventInfo()->m_type & ST_VOICE) {
+	std::list<PlayingAudio*>::const_iterator it;
+	// 2-D
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
+		if ((*it)->m_audioEventRTS->getObjectID() == objID && (*it)->m_audioEventRTS->getAudioEventInfo()->m_type & ST_VOICE)
+		{
 			return true;
 		}
 	}
 
 	// 3-D
-	for ( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it ) {
-		if ((*it)->m_audioEventRTS->getObjectID() == objID && (*it)->m_audioEventRTS->getAudioEventInfo()->m_type & ST_VOICE) {
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
+		if ((*it)->m_audioEventRTS->getObjectID() == objID && (*it)->m_audioEventRTS->getAudioEventInfo()->m_type & ST_VOICE)
+		{
 			return true;
 		}
 	}
@@ -1897,33 +2064,33 @@ Bool MilesAudioManager::isObjectPlayingVoice( UnsignedInt objID ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-AudioEventRTS* MilesAudioManager::findLowestPrioritySound( AudioEventRTS *event )
+AudioEventRTS* MilesAudioManager::findLowestPrioritySound(AudioEventRTS* event)
 {
 	AudioPriority priority = event->getAudioEventInfo()->m_priority;
-	if( priority == AP_LOWEST )
+	if (priority == AP_LOWEST)
 	{
-		//If the event we pass in is the lowest priority, don't bother checking because
-		//there is nothing lower priority than lowest.
+		// If the event we pass in is the lowest priority, don't bother checking because
+		// there is nothing lower priority than lowest.
 		return nullptr;
 	}
-	AudioEventRTS *lowestPriorityEvent = nullptr;
+	AudioEventRTS* lowestPriorityEvent = nullptr;
 	AudioPriority lowestPriority;
 
-	std::list<PlayingAudio *>::const_iterator it;
-	if( event->isPositionalAudio() )
+	std::list<PlayingAudio*>::const_iterator it;
+	if (event->isPositionalAudio())
 	{
-		//3D
-		for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it )
+		// 3D
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
 		{
-			AudioEventRTS *itEvent = (*it)->m_audioEventRTS.Peek();
+			AudioEventRTS* itEvent = (*it)->m_audioEventRTS.Peek();
 			AudioPriority itPriority = itEvent->getAudioEventInfo()->m_priority;
-			if( itPriority < priority )
+			if (itPriority < priority)
 			{
-				if( !lowestPriorityEvent || lowestPriority > itPriority )
+				if (!lowestPriorityEvent || lowestPriority > itPriority)
 				{
 					lowestPriorityEvent = itEvent;
 					lowestPriority = itPriority;
-					if( lowestPriority == AP_LOWEST )
+					if (lowestPriority == AP_LOWEST)
 					{
 						return lowestPriorityEvent;
 					}
@@ -1933,18 +2100,18 @@ AudioEventRTS* MilesAudioManager::findLowestPrioritySound( AudioEventRTS *event 
 	}
 	else
 	{
-		//2D
-		for( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it )
+		// 2D
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
 		{
-			AudioEventRTS *itEvent = (*it)->m_audioEventRTS.Peek();
+			AudioEventRTS* itEvent = (*it)->m_audioEventRTS.Peek();
 			AudioPriority itPriority = itEvent->getAudioEventInfo()->m_priority;
-			if( itPriority < priority )
+			if (itPriority < priority)
 			{
-				if( !lowestPriorityEvent || lowestPriority > itPriority )
+				if (!lowestPriorityEvent || lowestPriority > itPriority)
 				{
 					lowestPriorityEvent = itEvent;
 					lowestPriority = itPriority;
-					if( lowestPriority == AP_LOWEST )
+					if (lowestPriority == AP_LOWEST)
 					{
 						return lowestPriorityEvent;
 					}
@@ -1956,31 +2123,38 @@ AudioEventRTS* MilesAudioManager::findLowestPrioritySound( AudioEventRTS *event 
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::isPlayingLowerPriority( AudioEventRTS *event ) const
+Bool MilesAudioManager::isPlayingLowerPriority(AudioEventRTS* event) const
 {
-	//We don't actually want to do anything to this CONST function. Remember, we're
-	//just checking to see if there is a lower priority sound.
+	// We don't actually want to do anything to this CONST function. Remember, we're
+	// just checking to see if there is a lower priority sound.
 	AudioPriority priority = event->getAudioEventInfo()->m_priority;
-	if( priority == AP_LOWEST )
+	if (priority == AP_LOWEST)
 	{
-		//If the event we pass in is the lowest priority, don't bother checking because
-		//there is nothing lower priority than lowest.
+		// If the event we pass in is the lowest priority, don't bother checking because
+		// there is nothing lower priority than lowest.
 		return false;
 	}
-	std::list<PlayingAudio *>::const_iterator it;
-	if (!event->isPositionalAudio()) {
+	std::list<PlayingAudio*>::const_iterator it;
+	if (!event->isPositionalAudio())
+	{
 		// 2-D
-		for ( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it ) {
-			if ((*it)->m_audioEventRTS->getAudioEventInfo()->m_priority < priority) {
-				//event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+		{
+			if ((*it)->m_audioEventRTS->getAudioEventInfo()->m_priority < priority)
+			{
+				// event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
 				return true;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		// 3-D
-		for ( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it ) {
-			if ((*it)->m_audioEventRTS->getAudioEventInfo()->m_priority < priority) {
-				//event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+		{
+			if ((*it)->m_audioEventRTS->getAudioEventInfo()->m_priority < priority)
+			{
+				// event->setHandleToKill((*it)->m_audioEventRTS->getPlayingHandle());
 				return true;
 			}
 		}
@@ -1990,22 +2164,22 @@ Bool MilesAudioManager::isPlayingLowerPriority( AudioEventRTS *event ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::killLowestPrioritySoundImmediately( AudioEventRTS *event )
+Bool MilesAudioManager::killLowestPrioritySoundImmediately(AudioEventRTS* event)
 {
-	//Actually, we want to kill the LOWEST PRIORITY SOUND, not the first "lower" priority
-	//sound we find, because it could easily be
-	AudioEventRTS *lowestPriorityEvent = findLowestPrioritySound( event );
-	if( lowestPriorityEvent )
+	// Actually, we want to kill the LOWEST PRIORITY SOUND, not the first "lower" priority
+	// sound we find, because it could easily be
+	AudioEventRTS* lowestPriorityEvent = findLowestPrioritySound(event);
+	if (lowestPriorityEvent)
 	{
-		std::list<PlayingAudio *>::iterator it;
-		if( event->isPositionalAudio() )
+		std::list<PlayingAudio*>::iterator it;
+		if (event->isPositionalAudio())
 		{
-			for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it )
+			for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
 			{
-				PlayingAudio *playing = (*it);
-				if( playing->m_audioEventRTS.Peek() == lowestPriorityEvent )
+				PlayingAudio* playing = (*it);
+				if (playing->m_audioEventRTS.Peek() == lowestPriorityEvent)
 				{
-					//Release this 3D sound channel immediately because we are going to play another sound in it's place.
+					// Release this 3D sound channel immediately because we are going to play another sound in it's place.
 					stopPlayingAudio(playing);
 					return TRUE;
 				}
@@ -2013,12 +2187,12 @@ Bool MilesAudioManager::killLowestPrioritySoundImmediately( AudioEventRTS *event
 		}
 		else
 		{
-			for( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it )
+			for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
 			{
-				PlayingAudio *playing = (*it);
-				if( playing->m_audioEventRTS.Peek() == lowestPriorityEvent )
+				PlayingAudio* playing = (*it);
+				if (playing->m_audioEventRTS.Peek() == lowestPriorityEvent)
 				{
-					//Release this sound channel immediately because we are going to play another sound in it's place.
+					// Release this sound channel immediately because we are going to play another sound in it's place.
 					stopPlayingAudio(playing);
 					return TRUE;
 				}
@@ -2028,19 +2202,20 @@ Bool MilesAudioManager::killLowestPrioritySoundImmediately( AudioEventRTS *event
 	return FALSE;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume)
 {
 	Real pan;
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
-	PlayingAudio *playing = nullptr;
-	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	PlayingAudio* playing = nullptr;
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
 		playing = *it;
-		AudioEventRTS *itEvent = playing->m_audioEventRTS.Peek();
+		AudioEventRTS* itEvent = playing->m_audioEventRTS.Peek();
 
-		if (itEvent->getEventName() == eventName) {
+		if (itEvent->getEventName() == eventName)
+		{
 			DEBUG_ASSERTCRASH(playing->m_sample, ("Sample is not expected to be null"));
 			itEvent->setVolume(newVolume);
 			AIL_sample_volume_pan(playing->m_sample, nullptr, &pan);
@@ -2048,22 +2223,26 @@ void MilesAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName, Real n
 		}
 	}
 
-	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
 		playing = *it;
-		AudioEventRTS *itEvent = playing->m_audioEventRTS.Peek();
+		AudioEventRTS* itEvent = playing->m_audioEventRTS.Peek();
 
-		if (itEvent->getEventName() == eventName) {
+		if (itEvent->getEventName() == eventName)
+		{
 			DEBUG_ASSERTCRASH(playing->m_3DSample, ("3D Sample is not expected to be null"));
 			itEvent->setVolume(newVolume);
 			AIL_set_3D_sample_volume(playing->m_3DSample, getEffectiveVolume(itEvent));
 		}
 	}
 
-	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
 		playing = *it;
-		AudioEventRTS *itEvent = playing->m_audioEventRTS.Peek();
+		AudioEventRTS* itEvent = playing->m_audioEventRTS.Peek();
 
-		if (itEvent->getEventName() == eventName) {
+		if (itEvent->getEventName() == eventName)
+		{
 			DEBUG_ASSERTCRASH(playing->m_stream, ("Stream is not expected to be null"));
 			itEvent->setVolume(newVolume);
 			AIL_stream_volume_pan(playing->m_stream, nullptr, &pan);
@@ -2072,35 +2251,34 @@ void MilesAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName, Real n
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::removePlayingAudio( AsciiString eventName )
+void MilesAudioManager::removePlayingAudio(AsciiString eventName)
 {
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
-	PlayingAudio *playing = nullptr;
-	for( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it )
+	PlayingAudio* playing = nullptr;
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
 	{
 		playing = *it;
-		if( playing->m_audioEventRTS->getEventName() == eventName )
+		if (playing->m_audioEventRTS->getEventName() == eventName)
 		{
 			stopPlayingAudio(playing);
 		}
 	}
 
-	for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it )
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
 	{
 		playing = *it;
-		if( playing->m_audioEventRTS->getEventName() == eventName )
+		if (playing->m_audioEventRTS->getEventName() == eventName)
 		{
 			stopPlayingAudio(playing);
 		}
 	}
 
-	for( it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it )
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
 	{
 		playing = *it;
-		if( playing->m_audioEventRTS->getEventName() == eventName )
+		if (playing->m_audioEventRTS->getEventName() == eventName)
 		{
 			stopPlayingAudio(playing);
 		}
@@ -2110,31 +2288,31 @@ void MilesAudioManager::removePlayingAudio( AsciiString eventName )
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::removeAllDisabledAudio()
 {
-	std::list<PlayingAudio *>::iterator it;
+	std::list<PlayingAudio*>::iterator it;
 
-	PlayingAudio *playing = nullptr;
-	for( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it )
+	PlayingAudio* playing = nullptr;
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
 	{
 		playing = *it;
-		if( playing->m_audioEventRTS->getVolume() == 0.0f )
+		if (playing->m_audioEventRTS->getVolume() == 0.0f)
 		{
 			stopPlayingAudio(playing);
 		}
 	}
 
-	for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it )
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
 	{
 		playing = *it;
-		if( playing->m_audioEventRTS->getVolume() == 0.0f )
+		if (playing->m_audioEventRTS->getVolume() == 0.0f)
 		{
 			stopPlayingAudio(playing);
 		}
 	}
 
-	for( it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it )
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
 	{
 		playing = *it;
-		if( playing->m_audioEventRTS->getVolume() == 0.0f )
+		if (playing->m_audioEventRTS->getVolume() == 0.0f)
 		{
 			stopPlayingAudio(playing);
 		}
@@ -2145,15 +2323,18 @@ void MilesAudioManager::removeAllDisabledAudio()
 void MilesAudioManager::processRequestList()
 {
 	std::list<AudioRequest*>::iterator it;
-	for (it = m_audioRequests.begin(); it != m_audioRequests.end(); ) {
-		AudioRequest *req = (*it);
-		if (!shouldProcessRequestThisFrame(req)) {
+	for (it = m_audioRequests.begin(); it != m_audioRequests.end();)
+	{
+		AudioRequest* req = (*it);
+		if (!shouldProcessRequestThisFrame(req))
+		{
 			adjustRequest(req);
 			++it;
 			continue;
 		}
 
-		if (!req->m_requiresCheckForSample || checkForSample(req)) {
+		if (!req->m_requiresCheckForSample || checkForSample(req))
+		{
 			processRequest(req);
 		}
 		deleteInstance(req);
@@ -2164,23 +2345,26 @@ void MilesAudioManager::processRequestList()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::processPlayingList()
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 
 	//
 	// Stop audio without locking. Calls into Miles.
 	// Update the position of the audio if it is positional.
 	//
-	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
 		playing = (*it);
 
-		if (playing->m_status == PS_Stopping) {
+		if (playing->m_status == PS_Stopping)
+		{
 			rerequestPlayingAudioWhenSignalled(playing);
 			stopPlayingAudio(playing);
 			continue;
 		}
 
-		if (playing->m_status == PS_Stopped) {
+		if (playing->m_status == PS_Stopped)
+		{
 			continue;
 		}
 
@@ -2190,16 +2374,19 @@ void MilesAudioManager::processPlayingList()
 		}
 	}
 
-	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
 		playing = (*it);
 
-		if (playing->m_status == PS_Stopping) {
+		if (playing->m_status == PS_Stopping)
+		{
 			rerequestPlayingAudioWhenSignalled(playing);
 			stopPlayingAudio(playing);
 			continue;
 		}
 
-		if (playing->m_status == PS_Stopped) {
+		if (playing->m_status == PS_Stopped)
+		{
 			continue;
 		}
 
@@ -2208,20 +2395,19 @@ void MilesAudioManager::processPlayingList()
 			adjustPlayingVolume(playing);
 		}
 
-		const Coord3D *pos = getCurrentPositionFromEvent(playing->m_audioEventRTS.Peek());
+		const Coord3D* pos = getCurrentPositionFromEvent(playing->m_audioEventRTS.Peek());
 		if (pos)
 		{
-			if( playing->m_audioEventRTS->isDead() )
+			if (playing->m_audioEventRTS->isDead())
 			{
-				stopAudioEvent( playing->m_audioEventRTS->getPlayingHandle() );
+				stopAudioEvent(playing->m_audioEventRTS->getPlayingHandle());
 			}
 			else
 			{
 				Real volForConsideration = getEffectiveVolume(playing->m_audioEventRTS.Peek());
 				volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
-				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL)
-					|| playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
-				if( volForConsideration < m_audioSettings->m_minVolume && !playAnyways )
+				Bool playAnyways = BitIsSet(playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) || playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
+				if (volForConsideration < m_audioSettings->m_minVolume && !playAnyways)
 				{
 					stopPlayingAudio(playing);
 				}
@@ -2231,7 +2417,7 @@ void MilesAudioManager::processPlayingList()
 					Real y = pos->y;
 					Real z = pos->z;
 					DEBUG_ASSERTCRASH(playing->m_3DSample, ("3D Sample is not expected to be null"));
-					AIL_set_3D_position( playing->m_3DSample, x, y, z );
+					AIL_set_3D_position(playing->m_3DSample, x, y, z);
 				}
 			}
 		}
@@ -2241,16 +2427,19 @@ void MilesAudioManager::processPlayingList()
 		}
 	}
 
-	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
+	for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
 		playing = (*it);
 
-		if (playing->m_status == PS_Stopping) {
+		if (playing->m_status == PS_Stopping)
+		{
 			rerequestPlayingAudioWhenSignalled(playing);
 			stopPlayingAudio(playing);
 			continue;
 		}
 
-		if (playing->m_status == PS_Stopped) {
+		if (playing->m_status == PS_Stopped)
+		{
 			continue;
 		}
 
@@ -2272,7 +2461,8 @@ void MilesAudioManager::processPlayingList()
 	//
 	{
 		CriticalSectionClass::LockClass lock(m_playingStreamsCS);
-		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ) {
+		for (it = m_playingStreams.begin(); it != m_playingStreams.end();)
+		{
 			playing = (*it);
 
 			if (playing->m_fade)
@@ -2289,69 +2479,74 @@ void MilesAudioManager::processPlayingList()
 		}
 	}
 
-	if (m_volumeHasChanged) {
+	if (m_volumeHasChanged)
+	{
 		m_volumeHasChanged = false;
 
 		// TheSuperHackers @bugfix Push speech volume changes because Bink movie audio bypasses the Miles mixer.
-		if (TheVideoPlayer) {
+		if (TheVideoPlayer)
+		{
 			TheVideoPlayer->setVolume(getVolume(AudioAffect_Speech));
 		}
 	}
 }
 
-//Patch for a rare bug (only on about 5% of in-studio machines suffer, and not all the time) .
-//The actual mechanics of this problem are still elusive as of the date of this comment. 8/21/03
-//but the cause is clear. Some cinematics do a radical change in the microphone position, which
-//calls for a radical 3DSoundVolume adjustment. If this happens while a stereo stream is *ENDING*,
-//low-level code gets caught in a tight loop. (Hangs) on some machines.
-//To prevent this condition, we just suppress the updating of 3DSoundVolume while one of these
-//is on the list. Since the music tracks play continuously, they never *END* during these cinematics.
-//so we filter them out as, *NOT SENSITIVE*... we do want to update 3DSoundVolume during music,
-//which is almost all of the time.
+// Patch for a rare bug (only on about 5% of in-studio machines suffer, and not all the time) .
+// The actual mechanics of this problem are still elusive as of the date of this comment. 8/21/03
+// but the cause is clear. Some cinematics do a radical change in the microphone position, which
+// calls for a radical 3DSoundVolume adjustment. If this happens while a stereo stream is *ENDING*,
+// low-level code gets caught in a tight loop. (Hangs) on some machines.
+// To prevent this condition, we just suppress the updating of 3DSoundVolume while one of these
+// is on the list. Since the music tracks play continuously, they never *END* during these cinematics.
+// so we filter them out as, *NOT SENSITIVE*... we do want to update 3DSoundVolume during music,
+// which is almost all of the time.
 
 Bool MilesAudioManager::has3DSensitiveStreamsPlaying() const
 {
-  if ( m_playingStreams.empty() )
-    return FALSE;
+	if (m_playingStreams.empty())
+	{
+		return FALSE;
+	}
 
-	for ( std::list< PlayingAudio* >::const_iterator it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it )
-  {
-		const PlayingAudio *playing = (*it);
+	for (std::list< PlayingAudio* >::const_iterator it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it)
+	{
+		const PlayingAudio* playing = (*it);
 
-    if ( playing->m_audioEventRTS->getAudioEventInfo()->m_soundType != AT_Music )
-    {
-      return TRUE;
-    }
+		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType != AT_Music)
+		{
+			return TRUE;
+		}
 
-    if ( playing->m_audioEventRTS->getEventName().startsWith("Game_") == FALSE )
-    {
-      return TRUE;
-    }
-  }
+		if (playing->m_audioEventRTS->getEventName().startsWith("Game_") == FALSE)
+		{
+			return TRUE;
+		}
+	}
 
-  return FALSE;
-
+	return FALSE;
 }
-
 
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::processFadingList()
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 
 	//
 	// Stop audio without locking. Calls into Miles.
 	//
-	for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ++it) {
+	for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ++it)
+	{
 		playing = (*it);
 
-		if (playing->m_framesFaded >= getAudioSettings()->m_fadeAudioFrames) {
+		if (playing->m_framesFaded >= getAudioSettings()->m_fadeAudioFrames)
+		{
 			stopPlayingAudio(playing);
 			continue;
 		}
 
-		if (playing->m_status == PS_Stopped) {
+		if (playing->m_status == PS_Stopped)
+		{
 			continue;
 		}
 
@@ -2359,7 +2554,7 @@ void MilesAudioManager::processFadingList()
 		Real volume = getEffectiveVolume(playing->m_audioEventRTS.Peek());
 		volume *= (1.0f - 1.0f * playing->m_framesFaded / getAudioSettings()->m_fadeAudioFrames);
 
-		switch(playing->m_type)
+		switch (playing->m_type)
 		{
 			case PAT_Sample:
 			{
@@ -2388,13 +2583,15 @@ void MilesAudioManager::processFadingList()
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::shouldProcessRequestThisFrame( AudioRequest *req ) const
+Bool MilesAudioManager::shouldProcessRequestThisFrame(AudioRequest* req) const
 {
-	if (req->m_pendingEvent == nullptr) {
+	if (req->m_pendingEvent == nullptr)
+	{
 		return true;
 	}
 
-	if (req->m_pendingEvent->getDelay() < MSEC_PER_LOGICFRAME_REAL) {
+	if (req->m_pendingEvent->getDelay() < MSEC_PER_LOGICFRAME_REAL)
+	{
 		return true;
 	}
 
@@ -2402,9 +2599,10 @@ Bool MilesAudioManager::shouldProcessRequestThisFrame( AudioRequest *req ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::adjustRequest( AudioRequest *req )
+void MilesAudioManager::adjustRequest(AudioRequest* req)
 {
-	if (req->m_pendingEvent == nullptr) {
+	if (req->m_pendingEvent == nullptr)
+	{
 		return;
 	}
 
@@ -2413,20 +2611,21 @@ void MilesAudioManager::adjustRequest( AudioRequest *req )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::checkForSample( AudioRequest *req )
+Bool MilesAudioManager::checkForSample(AudioRequest* req)
 {
-	if (req->m_pendingEvent == nullptr) {
+	if (req->m_pendingEvent == nullptr)
+	{
 		return true;
 	}
 
-  if ( req->m_pendingEvent->getAudioEventInfo() == nullptr )
-  {
-    // Fill in event info
-    getInfoForAudioEvent( req->m_pendingEvent.Peek() );
-  }
+	if (req->m_pendingEvent->getAudioEventInfo() == nullptr)
+	{
+		// Fill in event info
+		getInfoForAudioEvent(req->m_pendingEvent.Peek());
+	}
 
 	if (req->m_pendingEvent->getAudioEventInfo()->m_type != AT_SoundEffect)
-  {
+	{
 		return true;
 	}
 
@@ -2440,15 +2639,19 @@ void MilesAudioManager::setHardwareAccelerated(Bool accel)
 	Bool retEarly = (accel == m_hardwareAccel);
 	AudioManager::setHardwareAccelerated(accel);
 
-	if (retEarly) {
+	if (retEarly)
+	{
 		return;
 	}
 
-	if (m_hardwareAccel) {
-		for (Int i = 0; i < MAX_HW_PROVIDERS; ++i) {
+	if (m_hardwareAccel)
+	{
+		for (Int i = 0; i < MAX_HW_PROVIDERS; ++i)
+		{
 			UnsignedInt providerNdx = TheAudio->getProviderIndex(TheAudio->getAudioSettings()->m_preferred3DProvider[i]);
 			TheAudio->selectProvider(providerNdx);
-			if (getSelectedProvider() == providerNdx) {
+			if (getSelectedProvider() == providerNdx)
+			{
 				return;
 			}
 		}
@@ -2467,14 +2670,18 @@ void MilesAudioManager::setSpeakerSurround(Bool surround)
 	Bool retEarly = (surround == m_surroundSpeakers);
 	AudioManager::setSpeakerSurround(surround);
 
-	if (retEarly) {
+	if (retEarly)
+	{
 		return;
 	}
 
 	UnsignedInt speakerType;
-	if (m_surroundSpeakers) {
+	if (m_surroundSpeakers)
+	{
 		speakerType = TheAudio->getAudioSettings()->m_defaultSpeakerType3D;
-	} else {
+	}
+	else
+	{
 		speakerType = TheAudio->getAudioSettings()->m_defaultSpeakerType2D;
 	}
 
@@ -2482,15 +2689,17 @@ void MilesAudioManager::setSpeakerSurround(Bool surround)
 }
 
 //-------------------------------------------------------------------------------------------------
-Real MilesAudioManager::getFileLengthMS( AsciiString strToLoad ) const
+Real MilesAudioManager::getFileLengthMS(AsciiString strToLoad) const
 {
-	if (strToLoad.isEmpty()) {
+	if (strToLoad.isEmpty())
+	{
 		return 0.0f;
 	}
 
 	// Load it as a stream to get the file info without actually opening the file.
 	HSTREAM stream = AIL_open_stream(m_digitalHandle, strToLoad.str(), 0);
-	if (!stream) {
+	if (!stream)
+	{
 		return 0.0f;
 	}
 
@@ -2503,23 +2712,27 @@ Real MilesAudioManager::getFileLengthMS( AsciiString strToLoad ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::closeAnySamplesUsingFile( const void *fileToClose )
+void MilesAudioManager::closeAnySamplesUsingFile(const void* fileToClose)
 {
-	std::list<PlayingAudio *>::iterator it;
-	PlayingAudio *playing;
+	std::list<PlayingAudio*>::iterator it;
+	PlayingAudio* playing;
 
-	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it ) {
+	for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it)
+	{
 		playing = *it;
 
-		if (playing->m_file == fileToClose) {
+		if (playing->m_file == fileToClose)
+		{
 			stopPlayingAudio(playing);
 		}
 	}
 
-	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it ) {
+	for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it)
+	{
 		playing = *it;
 
-		if (playing->m_file == fileToClose) {
+		if (playing->m_file == fileToClose)
+		{
 			stopPlayingAudio(playing);
 		}
 	}
@@ -2528,20 +2741,22 @@ void MilesAudioManager::closeAnySamplesUsingFile( const void *fileToClose )
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::setDeviceListenerPosition()
 {
-	if (m_listener) {
+	if (m_listener)
+	{
 		AIL_set_3D_orientation(m_listener, m_listenerOrientation.x, m_listenerOrientation.y, m_listenerOrientation.z, 0, 0, -1);
 
 		Real x = m_listenerPosition.x;
 		Real y = m_listenerPosition.y;
 		Real z = m_listenerPosition.z;
-		AIL_set_3D_position( m_listener, x, y, z );
+		AIL_set_3D_position(m_listener, x, y, z);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D *MilesAudioManager::getCurrentPositionFromEvent( AudioEventRTS *event )
+const Coord3D* MilesAudioManager::getCurrentPositionFromEvent(AudioEventRTS* event)
 {
-	if (!event->isPositionalAudio()) {
+	if (!event->isPositionalAudio())
+	{
 		return nullptr;
 	}
 
@@ -2549,7 +2764,7 @@ const Coord3D *MilesAudioManager::getCurrentPositionFromEvent( AudioEventRTS *ev
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::isOnScreen( const Coord3D *pos ) const
+Bool MilesAudioManager::isOnScreen(const Coord3D* pos) const
 {
 	static ICoord2D dummy;
 	// WorldToScreen will return True if the point is onscreen and false if it is offscreen.
@@ -2557,96 +2772,102 @@ Bool MilesAudioManager::isOnScreen( const Coord3D *pos ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
+Real MilesAudioManager::getEffectiveVolume(AudioEventRTS* event) const
 {
 	Real volume = event->getVolume() * event->getVolumeShift();
 
 	switch (event->getAudioEventInfo()->m_soundType)
 	{
-	case AT_Music:
-	{
-		volume *= m_musicVolume;
-		break;
-	}
-	case AT_Streaming:
-	{
-		volume *= m_speechVolume;
-		break;
-	}
-	case AT_SoundEffect:
-	{
-		if (event->isPositionalAudio())
+		case AT_Music:
 		{
-			volume *= m_sound3DVolume;
-			const Coord3D *pos = event->getCurrentPosition();
-			if (pos)
+			volume *= m_musicVolume;
+			break;
+		}
+		case AT_Streaming:
+		{
+			volume *= m_speechVolume;
+			break;
+		}
+		case AT_SoundEffect:
+		{
+			if (event->isPositionalAudio())
 			{
-				Coord3D distance = m_listenerPosition;
-				distance.sub(*pos);
-				Real objMinDistance;
-				Real objMaxDistance;
-
-				const AudioSettings *audioSettings = TheAudio->getAudioSettings();
-
-				if (event->getAudioEventInfo()->m_type & ST_GLOBAL)
+				volume *= m_sound3DVolume;
+				const Coord3D* pos = event->getCurrentPosition();
+				if (pos)
 				{
-					objMinDistance = audioSettings->m_globalMinRange;
-					objMaxDistance = audioSettings->m_globalMaxRange;
-				}
-				else
-				{
-					objMinDistance = event->getAudioEventInfo()->m_minDistance;
-					objMaxDistance = event->getAudioEventInfo()->m_maxDistance;
-				}
+					Coord3D distance = m_listenerPosition;
+					distance.sub(*pos);
+					Real objMinDistance;
+					Real objMaxDistance;
 
-				const Real objDistance = distance.length();
+					const AudioSettings* audioSettings = TheAudio->getAudioSettings();
 
-				if( objDistance >= objMaxDistance )
-				{
-					volume = 0.0f;
-				}
-				else if( audioSettings->m_use3DSoundRangeVolumeFade && objDistance > objMinDistance )
-				{
-					Real attenuation = (objDistance - objMinDistance) / (objMaxDistance - objMinDistance);
-					attenuation = pow(attenuation, audioSettings->m_3DSoundRangeVolumeFadeExponent);
-					volume *= 1.0f - attenuation;
+					if (event->getAudioEventInfo()->m_type & ST_GLOBAL)
+					{
+						objMinDistance = audioSettings->m_globalMinRange;
+						objMaxDistance = audioSettings->m_globalMaxRange;
+					}
+					else
+					{
+						objMinDistance = event->getAudioEventInfo()->m_minDistance;
+						objMaxDistance = event->getAudioEventInfo()->m_maxDistance;
+					}
+
+					const Real objDistance = distance.length();
+
+					if (objDistance >= objMaxDistance)
+					{
+						volume = 0.0f;
+					}
+					else if (audioSettings->m_use3DSoundRangeVolumeFade && objDistance > objMinDistance)
+					{
+						Real attenuation = (objDistance - objMinDistance) / (objMaxDistance - objMinDistance);
+						attenuation = pow(attenuation, audioSettings->m_3DSoundRangeVolumeFadeExponent);
+						volume *= 1.0f - attenuation;
+					}
 				}
 			}
+			else
+			{
+				volume *= m_soundVolume;
+			}
+			break;
 		}
-		else
-		{
-			volume *= m_soundVolume;
-		}
-		break;
-	}
 	}
 
 	return volume;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MilesAudioManager::startNextLoop( PlayingAudio *looping )
+Bool MilesAudioManager::startNextLoop(PlayingAudio* looping)
 {
 	closeFile(looping->m_file);
 	looping->m_file = nullptr;
 
-	if (looping->m_status != PS_Playing) {
+	if (looping->m_status != PS_Playing)
+	{
 		return false;
 	}
 
-	if (looping->m_audioEventRTS->hasMoreLoops()) {
+	if (looping->m_audioEventRTS->hasMoreLoops())
+	{
 		// generate a new filename, and test to see whether we can play with it now
 		looping->m_audioEventRTS->generateFilename();
 
-		if (looping->m_audioEventRTS->getDelay() > MSEC_PER_LOGICFRAME_REAL) {
+		if (looping->m_audioEventRTS->getDelay() > MSEC_PER_LOGICFRAME_REAL)
+		{
 			looping->m_rerequestOnNextUpdate = true;
 			InterlockedCompareExchange(reinterpret_cast<volatile long*>(&looping->m_status), PS_Stopping, PS_Playing);
 			return true;
 		}
 
-		if (looping->m_type == PAT_3DSample) {
+		if (looping->m_type == PAT_3DSample)
+		{
 			looping->m_file = playSample3D(looping->m_audioEventRTS.Peek(), looping->m_3DSample);
-		} else {
+		}
+		else
+		{
 			looping->m_file = playSample(looping->m_audioEventRTS.Peek(), looping->m_sample);
 		}
 
@@ -2656,22 +2877,24 @@ Bool MilesAudioManager::startNextLoop( PlayingAudio *looping )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::playStream( AudioEventRTS *event, HSTREAM stream )
+void MilesAudioManager::playStream(AudioEventRTS* event, HSTREAM stream)
 {
 	// Force it to the beginning
-	if (event->getAudioEventInfo()->m_soundType == AT_Music) {
+	if (event->getAudioEventInfo()->m_soundType == AT_Music)
+	{
 		AIL_set_stream_loop_count(stream, INFINITE_LOOP_COUNT);
 	}
 
 	AIL_register_stream_callback(stream, setStreamCompleted);
 	AIL_start_stream(stream);
-	if (event->getAudioEventInfo()->m_soundType == AT_Music) {
+	if (event->getAudioEventInfo()->m_soundType == AT_Music)
+	{
 		// Need to stop/fade out the old music here.
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void *MilesAudioManager::playSample( AudioEventRTS *event, HSAMPLE sample )
+void* MilesAudioManager::playSample(AudioEventRTS* event, HSAMPLE sample)
 {
 	AIL_init_sample(sample);
 
@@ -2680,9 +2903,10 @@ void *MilesAudioManager::playSample( AudioEventRTS *event, HSAMPLE sample )
 	initFilters(sample, event);
 
 	// Load the file in
-	void *fileBuffer = nullptr;
+	void* fileBuffer = nullptr;
 	fileBuffer = loadFileForRead(event);
-	if (fileBuffer) {
+	if (fileBuffer)
+	{
 		AIL_set_sample_file(sample, fileBuffer, 0);
 
 		// Start playback
@@ -2693,30 +2917,35 @@ void *MilesAudioManager::playSample( AudioEventRTS *event, HSAMPLE sample )
 }
 
 //-------------------------------------------------------------------------------------------------
-void *MilesAudioManager::playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D )
+void* MilesAudioManager::playSample3D(AudioEventRTS* event, H3DSAMPLE sample3D)
 {
-	const Coord3D *pos = getCurrentPositionFromEvent(event);
-	if (pos) {
+	const Coord3D* pos = getCurrentPositionFromEvent(event);
+	if (pos)
+	{
 		// Load the file in
-		void *fileBuffer = loadFileForRead(event);
-		if (fileBuffer) {
+		void* fileBuffer = loadFileForRead(event);
+		if (fileBuffer)
+		{
 			AIL_set_3D_sample_file(sample3D, fileBuffer);
 
 			// Prep any sort of filtering, etc, here
 			AIL_register_3D_EOS_callback(sample3D, set3DSampleCompleted);
 
 			// Set the position values of the sample here
-			if (event->getAudioEventInfo()->m_type & ST_GLOBAL) {
-				AIL_set_3D_sample_distances(sample3D, TheAudio->getAudioSettings()->m_globalMinRange, TheAudio->getAudioSettings()->m_globalMaxRange );
-			} else {
-				AIL_set_3D_sample_distances(sample3D, event->getAudioEventInfo()->m_minDistance, event->getAudioEventInfo()->m_maxDistance );
+			if (event->getAudioEventInfo()->m_type & ST_GLOBAL)
+			{
+				AIL_set_3D_sample_distances(sample3D, TheAudio->getAudioSettings()->m_globalMinRange, TheAudio->getAudioSettings()->m_globalMaxRange);
+			}
+			else
+			{
+				AIL_set_3D_sample_distances(sample3D, event->getAudioEventInfo()->m_minDistance, event->getAudioEventInfo()->m_maxDistance);
 			}
 
 			// Set the position of the sample here
 			Real x = pos->x;
 			Real y = pos->y;
 			Real z = pos->z;
-			AIL_set_3D_position( sample3D, x, y, z );
+			AIL_set_3D_position(sample3D, x, y, z);
 			initFilters3D(sample3D, event, pos);
 
 			// Start playback
@@ -2731,22 +2960,24 @@ void *MilesAudioManager::playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D 
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::buildProviderList()
 {
-   HPROENUM next = HPROENUM_FIRST;
+	HPROENUM next = HPROENUM_FIRST;
 
-	 char *name;
-	 UnsignedInt index = 0;
-	 while (index < MAXPROVIDERS && AIL_enumerate_3D_providers(&next, &m_provider3D[index].id, &name)) {
-		 m_provider3D[index].name.set(name);	// set it to the AsciiString
-		 ++index;
-	 }
+	char* name;
+	UnsignedInt index = 0;
+	while (index < MAXPROVIDERS && AIL_enumerate_3D_providers(&next, &m_provider3D[index].id, &name))
+	{
+		m_provider3D[index].name.set(name);    // set it to the AsciiString
+		++index;
+	}
 
-	 m_providerCount = index;
+	m_providerCount = index;
 }
 
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::createListener()
 {
-	if (!(isOn(AudioAffect_Sound3D) && isValidProvider())) {
+	if (!(isOn(AudioAffect_Sound3D) && isValidProvider()))
+	{
 		return;
 	}
 
@@ -2757,7 +2988,8 @@ void MilesAudioManager::createListener()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::initDelayFilter()
 {
-	if (m_delayFilter != nullptr) {
+	if (m_delayFilter != nullptr)
+	{
 		return;
 	}
 
@@ -2765,8 +2997,10 @@ void MilesAudioManager::initDelayFilter()
 	HPROENUM enumFLTs = HPROENUM_FIRST;
 	HPROVIDER currentProvider;
 
-	while (AIL_enumerate_filters(&enumFLTs, &currentProvider, &filterName )) {
-		if (strcmp(filterName,"Mono Delay Filter") == 0) {
+	while (AIL_enumerate_filters(&enumFLTs, &currentProvider, &filterName))
+	{
+		if (strcmp(filterName, "Mono Delay Filter") == 0)
+		{
 			m_delayFilter = currentProvider;
 			break;
 		}
@@ -2782,7 +3016,8 @@ Bool MilesAudioManager::isValidProvider()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::initSamplePools()
 {
-	if (!(isOn(AudioAffect_Sound3D) && isValidProvider())) {
+	if (!(isOn(AudioAffect_Sound3D) && isValidProvider()))
+	{
 		return;
 	}
 
@@ -2790,22 +3025,26 @@ void MilesAudioManager::initSamplePools()
 	m_available3DSamples.reserve(getAudioSettings()->m_sampleCount3D);
 
 	int i = 0;
-	for (i = 0; i < getAudioSettings()->m_sampleCount2D; ++i) {
+	for (i = 0; i < getAudioSettings()->m_sampleCount2D; ++i)
+	{
 		HSAMPLE sample = AIL_allocate_sample_handle(m_digitalHandle);
 		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 2D samples", i + 1));
-		if (sample) {
+		if (sample)
+		{
 			AIL_init_sample(sample);
-			AIL_set_sample_user_data(sample, 0, (void *)(i + 1));
+			AIL_set_sample_user_data(sample, 0, (void*)(i + 1));
 			m_availableSamples.push_back(sample);
 			++m_num2DSamples;
 		}
 	}
 
-	for (i = 0; i < getAudioSettings()->m_sampleCount3D; ++i) {
+	for (i = 0; i < getAudioSettings()->m_sampleCount3D; ++i)
+	{
 		H3DSAMPLE sample = AIL_allocate_3D_sample_handle(m_provider3D[m_selectedProvider].id);
 		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 3D samples", i + 1));
-		if (sample) {
-			AIL_set_3D_user_data(sample, 0, (void *)(i + 1));
+		if (sample)
+		{
+			AIL_set_3D_user_data(sample, 0, (void*)(i + 1));
 			m_available3DSamples.push_back(sample);
 			++m_num3DSamples;
 		}
@@ -2816,7 +3055,7 @@ void MilesAudioManager::initSamplePools()
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::processRequest( AudioRequest *req )
+void MilesAudioManager::processRequest(AudioRequest* req)
 {
 	switch (req->m_request)
 	{
@@ -2839,16 +3078,18 @@ void MilesAudioManager::processRequest( AudioRequest *req )
 }
 
 //-------------------------------------------------------------------------------------------------
-void *MilesAudioManager::getHandleForBink()
+void* MilesAudioManager::getHandleForBink()
 {
-	if (m_binkHandle == nullptr) {
-		PlayingAudio *aud = allocatePlayingAudio();
+	if (m_binkHandle == nullptr)
+	{
+		PlayingAudio* aud = allocatePlayingAudio();
 		aud->m_audioEventRTS.Assign_No_Add_Ref(newInstance(DynamicAudioEventRTS)("BinkHandle"));
 		getInfoForAudioEvent(aud->m_audioEventRTS.Peek());
 		aud->m_sample = getAvailable2DSample(aud->m_audioEventRTS.Peek());
 		aud->m_type = PAT_Sample;
 
-		if (!aud->m_sample) {
+		if (!aud->m_sample)
+		{
 			stopPlayingAudio(aud);
 			releasePlayingAudio(aud);
 			return nullptr;
@@ -2865,7 +3106,8 @@ void *MilesAudioManager::getHandleForBink()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::releaseHandleForBink()
 {
-	if (m_binkHandle) {
+	if (m_binkHandle)
+	{
 		stopPlayingAudio(m_binkHandle);
 		releasePlayingAudio(m_binkHandle);
 		m_binkHandle = nullptr;
@@ -2875,9 +3117,11 @@ void MilesAudioManager::releaseHandleForBink()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay)
 {
-	if (!eventToPlay->getAudioEventInfo()) {
+	if (!eventToPlay->getAudioEventInfo())
+	{
 		getInfoForAudioEvent(eventToPlay);
-		if (!eventToPlay->getAudioEventInfo()) {
+		if (!eventToPlay->getAudioEventInfo())
+		{
 			DEBUG_CRASH(("No info for forced audio event '%s'", eventToPlay->getEventName().str()));
 			return;
 		}
@@ -2887,15 +3131,21 @@ void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* event
 	{
 		case AT_Music:
 			if (!isOn(AudioAffect_Music))
+			{
 				return;
+			}
 			break;
 		case AT_SoundEffect:
 			if (!isOn(AudioAffect_Sound) || !isOn(AudioAffect_Sound3D))
+			{
 				return;
+			}
 			break;
 		case AT_Streaming:
 			if (!isOn(AudioAffect_Speech))
+			{
 				return;
+			}
 			break;
 	}
 
@@ -2904,9 +3154,11 @@ void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* event
 	event.generateFilename();
 	event.generatePlayInfo();
 
-	std::list<std::pair<AsciiString, Real>/**/>::iterator it;
-	for (it = m_adjustedVolumes.begin(); it != m_adjustedVolumes.end(); ++it) {
-		if (it->first == event.getEventName()) {
+	std::list<std::pair<AsciiString, Real> /**/>::iterator it;
+	for (it = m_adjustedVolumes.begin(); it != m_adjustedVolumes.end(); ++it)
+	{
+		if (it->first == event.getEventName())
+		{
 			event.setVolume(it->second);
 			break;
 		}
@@ -2925,58 +3177,62 @@ void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* event
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void AILCALLBACK setSampleCompleted( HSAMPLE sampleCompleted )
+void AILCALLBACK setSampleCompleted(HSAMPLE sampleCompleted)
 {
-	TheAudio->notifyOfAudioCompletion((UnsignedInt) sampleCompleted, PAT_Sample);
+	TheAudio->notifyOfAudioCompletion((UnsignedInt)sampleCompleted, PAT_Sample);
 }
 
 //-------------------------------------------------------------------------------------------------
-void AILCALLBACK set3DSampleCompleted( H3DSAMPLE sample3DCompleted )
+void AILCALLBACK set3DSampleCompleted(H3DSAMPLE sample3DCompleted)
 {
-	TheAudio->notifyOfAudioCompletion((UnsignedInt) sample3DCompleted, PAT_3DSample);
+	TheAudio->notifyOfAudioCompletion((UnsignedInt)sample3DCompleted, PAT_3DSample);
 }
 
 //-------------------------------------------------------------------------------------------------
-void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
+void AILCALLBACK setStreamCompleted(HSTREAM streamCompleted)
 {
-	TheAudio->notifyOfAudioCompletion((UnsignedInt) streamCompleted, PAT_Stream);
+	TheAudio->notifyOfAudioCompletion((UnsignedInt)streamCompleted, PAT_Stream);
 }
 
 //-------------------------------------------------------------------------------------------------
-U32 AILCALLBACK streamingFileOpen(char const *fileName, void **file_handle)
+U32 AILCALLBACK streamingFileOpen(char const* fileName, void** file_handle)
 {
 #if defined(RTS_DEBUG)
-	if (sizeof(U32) != sizeof(File*)) {
+	if (sizeof(U32) != sizeof(File*))
+	{
 		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms."));
 	}
 #endif
 
-	(*file_handle) = (void *) TheFileSystem->openFile(fileName, File::READ | File::STREAMING);
+	(*file_handle) = (void*)TheFileSystem->openFile(fileName, File::READ | File::STREAMING);
 	return ((*file_handle) != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
-void AILCALLBACK streamingFileClose(void *fileHandle)
+void AILCALLBACK streamingFileClose(void* fileHandle)
 {
-	((File*) fileHandle)->close();
+	((File*)fileHandle)->close();
 }
 
 //-------------------------------------------------------------------------------------------------
-S32 AILCALLBACK streamingFileSeek(void *fileHandle, S32 offset, U32 type)
+S32 AILCALLBACK streamingFileSeek(void* fileHandle, S32 offset, U32 type)
 {
-	return ((File*) fileHandle)->seek(offset, (File::seekMode) type);
+	return ((File*)fileHandle)->seek(offset, (File::seekMode)type);
 }
 
 //-------------------------------------------------------------------------------------------------
-U32 AILCALLBACK streamingFileRead(void *file_handle, void *buffer, U32 bytes)
+U32 AILCALLBACK streamingFileRead(void* file_handle, void* buffer, U32 bytes)
 {
-	return ((File*) file_handle)->read(buffer, bytes);
+	return ((File*)file_handle)->read(buffer, bytes);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AudioFileCache::AudioFileCache() : m_maxSize(0), m_currentlyUsedSize(0), m_mutexName("AudioFileCacheMutex")
+AudioFileCache::AudioFileCache()
+  : m_maxSize(0)
+  , m_currentlyUsedSize(0)
+  , m_mutexName("AudioFileCacheMutex")
 {
 	m_mutex = CreateMutex(nullptr, FALSE, m_mutexName);
 }
@@ -2989,8 +3245,10 @@ AudioFileCache::~AudioFileCache()
 
 		// Free all the samples that are open.
 		OpenFilesHashIt it;
-		for ( it = m_openFiles.begin(); it != m_openFiles.end(); ++it ) {
-			if (it->second.m_openCount > 0) {
+		for (it = m_openFiles.begin(); it != m_openFiles.end(); ++it)
+		{
+			if (it->second.m_openCount > 0)
+			{
 				DEBUG_CRASH(("Sample '%s' is still playing, and we're trying to quit.", it->second.m_eventInfo->m_audioName.str()));
 			}
 
@@ -3004,7 +3262,7 @@ AudioFileCache::~AudioFileCache()
 }
 
 //-------------------------------------------------------------------------------------------------
-void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
+void* AudioFileCache::openFile(AudioEventRTS* eventToOpenFrom)
 {
 	// Protect the entire openFile function
 	ScopedMutex mut(m_mutex);
@@ -3028,14 +3286,16 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 	OpenFilesHash::iterator it;
 	it = m_openFiles.find(strToFind);
 
-	if (it != m_openFiles.end()) {
+	if (it != m_openFiles.end())
+	{
 		++it->second.m_openCount;
 		return it->second.m_file;
 	}
 
 	// Couldn't find the file, so actually open it.
-	File *file = TheFileSystem->openFile(strToFind.str());
-	if (!file) {
+	File* file = TheFileSystem->openFile(strToFind.str());
+	if (!file)
+	{
 		DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'", strToFind.str()));
 		return nullptr;
 	}
@@ -3049,41 +3309,50 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 	AILSOUNDINFO soundInfo;
 	AIL_WAV_info(buffer, &soundInfo);
 
-	if (eventToOpenFrom->isPositionalAudio()) {
-		if (soundInfo.channels > 1) {
+	if (eventToOpenFrom->isPositionalAudio())
+	{
+		if (soundInfo.channels > 1)
+		{
 			DEBUG_CRASH(("Requested Positional Play of audio '%s', but it is in stereo.", strToFind.str()));
-			delete [] buffer;
+			delete[] buffer;
 			return nullptr;
 		}
 	}
 
-	if (soundInfo.format == WAVE_FORMAT_IMA_ADPCM) {
-		void *decompressFileBuffer;
+	if (soundInfo.format == WAVE_FORMAT_IMA_ADPCM)
+	{
+		void* decompressFileBuffer;
 		U32 newFileSize;
 		AIL_decompress_ADPCM(&soundInfo, &decompressFileBuffer, &newFileSize);
 		fileSize = newFileSize;
 		openedAudioFile.m_compressed = TRUE;
-		delete [] buffer;
+		delete[] buffer;
 		openedAudioFile.m_file = decompressFileBuffer;
 		openedAudioFile.m_soundInfo = soundInfo;
 		openedAudioFile.m_openCount = 1;
-	} else if (soundInfo.format == WAVE_FORMAT_PCM) {
+	}
+	else if (soundInfo.format == WAVE_FORMAT_PCM)
+	{
 		openedAudioFile.m_compressed = FALSE;
 		openedAudioFile.m_file = buffer;
 		openedAudioFile.m_soundInfo = soundInfo;
 		openedAudioFile.m_openCount = 1;
-	} else {
+	}
+	else
+	{
 		DEBUG_CRASH(("Unexpected compression type in '%s'", strToFind.str()));
 		// prevent leaks
-		delete [] buffer;
+		delete[] buffer;
 		return nullptr;
 	}
 
 	openedAudioFile.m_fileSize = fileSize;
 	m_currentlyUsedSize += openedAudioFile.m_fileSize;
-	if (m_currentlyUsedSize > m_maxSize) {
+	if (m_currentlyUsedSize > m_maxSize)
+	{
 		// We need to free some samples, or we're not going to be able to play this sound.
-		if (!freeEnoughSpaceForSample(openedAudioFile)) {
+		if (!freeEnoughSpaceForSample(openedAudioFile))
+		{
 			m_currentlyUsedSize -= openedAudioFile.m_fileSize;
 			releaseOpenAudioFile(&openedAudioFile);
 			return nullptr;
@@ -3095,9 +3364,10 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioFileCache::closeFile( void *fileToClose )
+void AudioFileCache::closeFile(void* fileToClose)
 {
-	if (!fileToClose) {
+	if (!fileToClose)
+	{
 		return;
 	}
 
@@ -3105,8 +3375,10 @@ void AudioFileCache::closeFile( void *fileToClose )
 	ScopedMutex mut(m_mutex);
 
 	OpenFilesHash::iterator it;
-	for ( it = m_openFiles.begin(); it != m_openFiles.end(); ++it ) {
-		if ( it->second.m_file == fileToClose ) {
+	for (it = m_openFiles.begin(); it != m_openFiles.end(); ++it)
+	{
+		if (it->second.m_file == fileToClose)
+		{
 			--it->second.m_openCount;
 			return;
 		}
@@ -3114,7 +3386,7 @@ void AudioFileCache::closeFile( void *fileToClose )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioFileCache::setMaxSize( UnsignedInt size )
+void AudioFileCache::setMaxSize(UnsignedInt size)
 {
 	// Protect the function, in case we're trying to use this value elsewhere.
 	ScopedMutex mut(m_mutex);
@@ -3123,20 +3395,25 @@ void AudioFileCache::setMaxSize( UnsignedInt size )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioFileCache::releaseOpenAudioFile( OpenAudioFile *fileToRelease )
+void AudioFileCache::releaseOpenAudioFile(OpenAudioFile* fileToRelease)
 {
-	if (fileToRelease->m_openCount > 0) {
+	if (fileToRelease->m_openCount > 0)
+	{
 		// This thing needs to be terminated IMMEDIATELY.
 		TheAudio->closeAnySamplesUsingFile(fileToRelease->m_file);
 	}
 
-	if (fileToRelease->m_file) {
-		if (fileToRelease->m_compressed) {
+	if (fileToRelease->m_file)
+	{
+		if (fileToRelease->m_compressed)
+		{
 			// Files read in via AIL_decompress_ADPCM must be freed with AIL_mem_free_lock.
 			AIL_mem_free_lock(fileToRelease->m_file);
-		} else {
+		}
+		else
+		{
 			// Otherwise, we read it, we own it, blow it away.
-			delete [] fileToRelease->m_file;
+			delete[] fileToRelease->m_file;
 		}
 		fileToRelease->m_file = nullptr;
 		fileToRelease->m_eventInfo = nullptr;
@@ -3146,7 +3423,6 @@ void AudioFileCache::releaseOpenAudioFile( OpenAudioFile *fileToRelease )
 //-------------------------------------------------------------------------------------------------
 Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace)
 {
-
 	Int spaceRequired = m_currentlyUsedSize - m_maxSize;
 	Int runningTotal = 0;
 
@@ -3154,14 +3430,17 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 	// First, search for any samples that have ref counts of 0. They are low-hanging fruit, and
 	// should be considered immediately.
 	OpenFilesHashIt it;
-	for (it = m_openFiles.begin(); it != m_openFiles.end(); ++it) {
-		if (it->second.m_openCount == 0) {
+	for (it = m_openFiles.begin(); it != m_openFiles.end(); ++it)
+	{
+		if (it->second.m_openCount == 0)
+		{
 			// This is said low-hanging fruit.
 			filesToClose.push_back(it->first);
 
 			runningTotal += it->second.m_fileSize;
 
-			if (runningTotal >= spaceRequired) {
+			if (runningTotal >= spaceRequired)
+			{
 				break;
 			}
 		}
@@ -3171,14 +3450,19 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 	// and who are lower priority than this sound.
 	// Mical said that at this point, sounds shouldn't care if other sounds are interruptable or not.
 	// Kill any files of lower priority necessary to clear our the buffer.
-	if (runningTotal < spaceRequired) {
-		for (it = m_openFiles.begin(); it != m_openFiles.end(); ++it) {
-			if (it->second.m_openCount > 0) {
-				if (it->second.m_eventInfo->m_priority < sampleThatNeedsSpace.m_eventInfo->m_priority) {
+	if (runningTotal < spaceRequired)
+	{
+		for (it = m_openFiles.begin(); it != m_openFiles.end(); ++it)
+		{
+			if (it->second.m_openCount > 0)
+			{
+				if (it->second.m_eventInfo->m_priority < sampleThatNeedsSpace.m_eventInfo->m_priority)
+				{
 					filesToClose.push_back(it->first);
 					runningTotal += it->second.m_fileSize;
 
-					if (runningTotal >= spaceRequired) {
+					if (runningTotal >= spaceRequired)
+					{
 						break;
 					}
 				}
@@ -3187,14 +3471,17 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 	}
 
 	// We weren't able to find enough sounds to truncate. Therefore, this sound is not going to play.
-	if (runningTotal < spaceRequired) {
+	if (runningTotal < spaceRequired)
+	{
 		return FALSE;
 	}
 
 	std::list<AsciiString>::iterator ait;
-	for (ait = filesToClose.begin(); ait != filesToClose.end(); ++ait) {
+	for (ait = filesToClose.begin(); ait != filesToClose.end(); ++ait)
+	{
 		OpenFilesHashIt itToErase = m_openFiles.find(*ait);
-		if (itToErase != m_openFiles.end()) {
+		if (itToErase != m_openFiles.end())
+		{
 			releaseOpenAudioFile(&itToErase->second);
 			m_currentlyUsedSize -= itToErase->second.m_fileSize;
 			m_openFiles.erase(itToErase);
@@ -3204,19 +3491,21 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 	return TRUE;
 }
 
-
 #if defined(RTS_DEBUG)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::dumpAllAssetsUsed()
 {
-	if (!TheGlobalData->m_preloadReport) {
+	if (!TheGlobalData->m_preloadReport)
+	{
 		return;
 	}
 
 	// Dump all the audio assets we've used.
-	FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
+	FILE* logfile = fopen("PreloadedAssets.txt", "a+");    // append to log
 	if (!logfile)
+	{
 		return;
+	}
 
 	std::list<AsciiString> missingEvents;
 	std::list<AsciiString> usedFiles;
@@ -3227,39 +3516,47 @@ void MilesAudioManager::dumpAllAssetsUsed()
 	{
 		SetAsciiStringIt it;
 		std::vector<AsciiString>::iterator asIt;
-		for (it = m_allEventsLoaded.begin(); it != m_allEventsLoaded.end(); ++it) {
+		for (it = m_allEventsLoaded.begin(); it != m_allEventsLoaded.end(); ++it)
+		{
 			AsciiString astr = *it;
-			AudioEventInfo *aei = findAudioEventInfo(astr);
-			if (!aei) {
+			AudioEventInfo* aei = findAudioEventInfo(astr);
+			if (!aei)
+			{
 				missingEvents.push_back(astr);
 				continue;
 			}
 
-			for (asIt = aei->m_attackSounds.begin(); asIt != aei->m_attackSounds.end(); ++asIt) {
+			for (asIt = aei->m_attackSounds.begin(); asIt != aei->m_attackSounds.end(); ++asIt)
+			{
 				usedFiles.push_back(*asIt);
 			}
 
-			for (asIt = aei->m_sounds.begin(); asIt != aei->m_sounds.end(); ++asIt) {
+			for (asIt = aei->m_sounds.begin(); asIt != aei->m_sounds.end(); ++asIt)
+			{
 				usedFiles.push_back(*asIt);
 			}
 
-			for (asIt = aei->m_decaySounds.begin(); asIt != aei->m_decaySounds.end(); ++asIt) {
+			for (asIt = aei->m_decaySounds.begin(); asIt != aei->m_decaySounds.end(); ++asIt)
+			{
 				usedFiles.push_back(*asIt);
 			}
 
-			if (!aei->m_filename.isEmpty()) {
+			if (!aei->m_filename.isEmpty())
+			{
 				usedFiles.push_back(aei->m_filename);
 			}
 		}
 
 		fprintf(logfile, "\nEvents Requested that are missing information - BEGIN\n");
-		for (lit = missingEvents.begin(); lit != missingEvents.end(); ++lit) {
+		for (lit = missingEvents.begin(); lit != missingEvents.end(); ++lit)
+		{
 			fprintf(logfile, "%s\n", (*lit).str());
 		}
 		fprintf(logfile, "\nEvents Requested that are missing information - END\n");
 
 		fprintf(logfile, "\nFiles Used - BEGIN\n");
-		for (lit = usedFiles.begin(); lit != usedFiles.end(); ++lit) {
+		for (lit = usedFiles.begin(); lit != usedFiles.end(); ++lit)
+		{
 			fprintf(logfile, "%s\n", (*lit).str());
 		}
 		fprintf(logfile, "\nFiles Used - END\n");

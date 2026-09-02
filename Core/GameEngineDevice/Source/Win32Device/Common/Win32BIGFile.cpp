@@ -39,10 +39,9 @@
 //============================================================================
 
 Win32BIGFile::Win32BIGFile(AsciiString name, AsciiString path)
-	: m_name(name)
-	, m_path(path)
+  : m_name(name)
+  , m_path(path)
 {
-
 }
 
 //============================================================================
@@ -51,36 +50,42 @@ Win32BIGFile::Win32BIGFile(AsciiString name, AsciiString path)
 
 Win32BIGFile::~Win32BIGFile()
 {
-
 }
 
 //============================================================================
 // Win32BIGFile::openFile
 //============================================================================
 
-File* Win32BIGFile::openFile( const Char *filename, Int access )
+File* Win32BIGFile::openFile(const Char* filename, Int access)
 {
-	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
+	const ArchivedFileInfo* fileInfo = getArchivedFileInfo(AsciiString(filename));
 
-	if (fileInfo == nullptr) {
+	if (fileInfo == nullptr)
+	{
 		return nullptr;
 	}
 
-	RAMFile *ramFile = nullptr;
+	RAMFile* ramFile = nullptr;
 
 	if (BitIsSet(access, File::STREAMING))
-		ramFile = newInstance( StreamingArchiveFile );
+	{
+		ramFile = newInstance(StreamingArchiveFile);
+	}
 	else
-		ramFile = newInstance( RAMFile );
+	{
+		ramFile = newInstance(RAMFile);
+	}
 
 	ramFile->deleteOnClose();
-	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE) {
+	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE)
+	{
 		ramFile->close();
 		ramFile = nullptr;
 		return nullptr;
 	}
 
-	if ((access & File::WRITE) == 0) {
+	if ((access & File::WRITE) == 0)
+	{
 		// requesting read only access. Just return the RAM file.
 		return ramFile;
 	}
@@ -89,8 +94,9 @@ File* Win32BIGFile::openFile( const Char *filename, Int access )
 	// and return that file pointer.
 
 	constexpr size_t bufferSize = 0;
-	File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
-	if (localFile != nullptr) {
+	File* localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
+	if (localFile != nullptr)
+	{
 		ramFile->copyDataToFile(localFile);
 	}
 
@@ -106,7 +112,6 @@ File* Win32BIGFile::openFile( const Char *filename, Int access )
 
 void Win32BIGFile::closeAllFiles()
 {
-
 }
 
 //============================================================================
@@ -131,9 +136,8 @@ AsciiString Win32BIGFile::getPath()
 // Win32BIGFile::setSearchPriority
 //============================================================================
 
-void Win32BIGFile::setSearchPriority( Int new_priority )
+void Win32BIGFile::setSearchPriority(Int new_priority)
 {
-
 }
 
 //============================================================================
@@ -142,18 +146,18 @@ void Win32BIGFile::setSearchPriority( Int new_priority )
 
 void Win32BIGFile::close()
 {
-
 }
 
 //============================================================================
 // Win32BIGFile::getFileInfo
 //============================================================================
 
-Bool Win32BIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+Bool Win32BIGFile::getFileInfo(const AsciiString& filename, FileInfo* fileInfo) const
 {
-	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
+	const ArchivedFileInfo* tempFileInfo = getArchivedFileInfo(filename);
 
-	if (tempFileInfo == nullptr) {
+	if (tempFileInfo == nullptr)
+	{
 		return FALSE;
 	}
 
@@ -165,4 +169,3 @@ Bool Win32BIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) 
 
 	return TRUE;
 }
-

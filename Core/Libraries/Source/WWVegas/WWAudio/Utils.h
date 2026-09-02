@@ -36,20 +36,31 @@
 
 #pragma once
 
-#pragma warning (push, 3)
+#pragma warning(push, 3)
 #include "mss.h"
-#pragma warning (pop)
+#pragma warning(pop)
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Macros
 //
-#define SAFE_DELETE(pobject) { delete pobject; pobject = nullptr; }
+#define SAFE_DELETE(pobject) \
+	{ \
+		delete pobject; \
+		pobject = nullptr; \
+	}
 
-#define SAFE_DELETE_ARRAY(pobject) { delete [] pobject; pobject = nullptr; }
+#define SAFE_DELETE_ARRAY(pobject) \
+	{ \
+		delete[] pobject; \
+		pobject = nullptr; \
+	}
 
-#define SAFE_FREE(pobject) { ::free (pobject); pobject = nullptr; }
-
+#define SAFE_FREE(pobject) \
+	{ \
+		::free(pobject); \
+		pobject = nullptr; \
+	}
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -58,28 +69,29 @@
 /////////////////////////////////////////////////////////////////////////////
 class MMSLockClass
 {
-	public:
-		MMSLockClass () { ::AIL_lock (); }
-		~MMSLockClass () { ::AIL_unlock (); }
-
+public:
+	MMSLockClass() { ::AIL_lock(); }
+	~MMSLockClass() { ::AIL_unlock(); }
 
 	static CRITICAL_SECTION _MSSLockCriticalSection;
 };
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //  Get_Filename_From_Path
 //
 __inline LPCTSTR
-Get_Filename_From_Path (LPCTSTR path)
+Get_Filename_From_Path(LPCTSTR path)
 {
 	// Find the last occurrence of the directory deliminator
-	LPCTSTR filename = ::strrchr (path, '\\');
-	if (filename != nullptr) {
+	LPCTSTR filename = ::strrchr(path, '\\');
+	if (filename != nullptr)
+	{
 		// Increment past the directory deliminator
-		filename ++;
-	} else {
+		filename++;
+	}
+	else
+	{
 		filename = path;
 	}
 

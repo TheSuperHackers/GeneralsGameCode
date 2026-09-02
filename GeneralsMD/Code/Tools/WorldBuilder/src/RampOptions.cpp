@@ -34,9 +34,11 @@
 #include "StdAfx.h"
 #include "RampOptions.h"
 
-RampOptions::RampOptions(CWnd* pParent) : COptionsPanel(RampOptions::IDD, pParent)
+RampOptions::RampOptions(CWnd* pParent)
+  : COptionsPanel(RampOptions::IDD, pParent)
 {
-	if (TheRampOptions) {
+	if (TheRampOptions)
+	{
 		// oh shit.
 		return;
 	}
@@ -53,7 +55,8 @@ RampOptions::~RampOptions()
 
 Bool RampOptions::shouldApplyTheRamp()
 {
-	if (m_shouldApplyTheRamp) {
+	if (m_shouldApplyTheRamp)
+	{
 		m_shouldApplyTheRamp = false;
 		return true;
 	}
@@ -71,7 +74,8 @@ void RampOptions::OnWidthChange()
 {
 	CString str;
 	CWnd* pWnd = GetDlgItem(IDC_RO_WIDTH);
-	if (!pWnd) {
+	if (!pWnd)
+	{
 		return;
 	}
 
@@ -82,6 +86,6 @@ void RampOptions::OnWidthChange()
 RampOptions* TheRampOptions = nullptr;
 
 BEGIN_MESSAGE_MAP(RampOptions, COptionsPanel)
-	ON_BN_CLICKED(IDC_RO_APPLY, OnApply)
-	ON_EN_CHANGE(IDC_RO_WIDTH, OnWidthChange)
+ON_BN_CLICKED(IDC_RO_APPLY, OnApply)
+ON_EN_CHANGE(IDC_RO_WIDTH, OnWidthChange)
 END_MESSAGE_MAP()

@@ -26,39 +26,38 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             MeshMoldTool
-	 Does the Mesh Mold tool operation.
+   Does the Mesh Mold tool operation.
 ***************************************************************************/
 ///  Height brush tool.
 class MeshMoldTool : public Tool
 {
 protected:
-
-	CPoint	m_prevViewPt;	 ///< Previous tracking location in view coords.
-	Bool		m_offsettingZ; ///< True if we are raising or lowering the mesh along z axis.
-	Coord3D m_prevDocPt;	 ///< Previous tracking location in doc coords.
-	static Coord3D m_toolPos;     ///< Current location of the mesh on the terrain.
-	static Bool		m_tracking;    ///< True if we are tracking a mesh on screen.
-	static WorldHeightMapEdit *m_htMapEditCopy; ///< ref counted.
+	CPoint m_prevViewPt;    ///< Previous tracking location in view coords.
+	Bool m_offsettingZ;    ///< True if we are raising or lowering the mesh along z axis.
+	Coord3D m_prevDocPt;    ///< Previous tracking location in doc coords.
+	static Coord3D m_toolPos;    ///< Current location of the mesh on the terrain.
+	static Bool m_tracking;    ///< True if we are tracking a mesh on screen.
+	static WorldHeightMapEdit* m_htMapEditCopy;    ///< ref counted.
 
 public:
 	MeshMoldTool();
 	virtual ~MeshMoldTool() override;
+
 protected:
-	static void applyMesh(CWorldBuilderDoc *pDoc);  ///< Apply the mesh to copy of terrain.
+	static void applyMesh(CWorldBuilderDoc* pDoc);    ///< Apply the mesh to copy of terrain.
 
 public:
-	static void apply(CWorldBuilderDoc *pDoc);  ///< Apply the mesh to the terrain & execute undoable.
+	static void apply(CWorldBuilderDoc* pDoc);    ///< Apply the mesh to the terrain & execute undoable.
 
-public:  //Tool methods.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual WorldHeightMapEdit *getHeightMap() override {return m_htMapEditCopy;};
-	virtual void activate() override; ///< Become the current tool.
-	virtual void deactivate() override; ///< Become the current tool.
-	virtual Bool followsTerrain() override {return false;};
+public:    // Tool methods.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual WorldHeightMapEdit* getHeightMap() override { return m_htMapEditCopy; };
+	virtual void activate() override;    ///< Become the current tool.
+	virtual void deactivate() override;    ///< Become the current tool.
+	virtual Bool followsTerrain() override { return false; };
 
-public:	// Methods specific to MeshMoldTool.
+public:    // Methods specific to MeshMoldTool.
 	static void updateMeshLocation(Bool changePreview);
-
 };

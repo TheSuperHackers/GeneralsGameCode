@@ -37,7 +37,7 @@
 // Forward delcarations
 class TextureClass;
 
-#include "Resource.h"
+	#include "Resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -45,31 +45,32 @@ class TextureClass;
 //
 class TextureSettingsDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	TextureSettingsDialogClass (IndirectTextureClass *ptexture, IndirectTextureClass *poriginal_texture, CWnd *pParent = nullptr);
-	virtual ~TextureSettingsDialogClass ();
+	TextureSettingsDialogClass(IndirectTextureClass* ptexture, IndirectTextureClass* poriginal_texture, CWnd* pParent = nullptr);
+	virtual ~TextureSettingsDialogClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TextureSettingsDialogClass)
-	enum { IDD = IDD_TEXTURE_SETTINGS };
-	CComboBox	m_TypeCombo;
-	CSpinButtonCtrl	m_FrameRateSpin;
-	CSpinButtonCtrl	m_FrameCountSpin;
+	enum
+	{
+		IDD = IDD_TEXTURE_SETTINGS
+	};
+	CComboBox m_TypeCombo;
+	CSpinButtonCtrl m_FrameRateSpin;
+	CSpinButtonCtrl m_FrameCountSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TextureSettingsDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(TextureSettingsDialogClass)
 	virtual BOOL OnInitDialog();
@@ -83,40 +84,37 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	////////////////////////////////////////////////////////////
+	//
+	//	Private methods
+	//
+	bool Were_Settings_Modified() const { return m_bWereSettingsModified; }
 
-		////////////////////////////////////////////////////////////
-		//
-		//	Private methods
-		//
-		bool					Were_Settings_Modified () const { return m_bWereSettingsModified; }
+protected:
+	////////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Fill_Controls(TextureClass* ptexture);
+	void Fill_Animation_Controls(TextureClass* ptexture);
+	void Load_Textures_Into_Combo();
+	void Load_Texture_Settings();
+	void Paint_Thumbnail();
 
-	protected:
-
-		////////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void					Fill_Controls (TextureClass *ptexture);
-		void					Fill_Animation_Controls (TextureClass *ptexture);
-		void					Load_Textures_Into_Combo ();
-		void					Load_Texture_Settings ();
-		void					Paint_Thumbnail ();
-
-	private:
-
-		////////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		IndirectTextureClass *	m_pTexture;
-		IndirectTextureClass *	m_pOriginalTexture;
-		TextureClass *				m_pStartingTexture;
-		HBITMAP						m_hThumbnail;
-		bool							m_bWereSettingsModified;
+private:
+	////////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	IndirectTextureClass* m_pTexture;
+	IndirectTextureClass* m_pOriginalTexture;
+	TextureClass* m_pStartingTexture;
+	HBITMAP m_hThumbnail;
+	bool m_bWereSettingsModified;
 };
 
-#endif //WW3D_DX8
+#endif    // WW3D_DX8
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

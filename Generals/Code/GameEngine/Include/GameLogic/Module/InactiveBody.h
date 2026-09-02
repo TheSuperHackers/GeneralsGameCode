@@ -38,29 +38,27 @@
 //-------------------------------------------------------------------------------------------------
 class InactiveBody : public BodyModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( InactiveBody, "InactiveBody" )
-	MAKE_STANDARD_MODULE_MACRO( InactiveBody )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(InactiveBody, "InactiveBody")
+	MAKE_STANDARD_MODULE_MACRO(InactiveBody)
 
 public:
-
-	InactiveBody( Thing *thing, const ModuleData* moduleData );
+	InactiveBody(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
-	virtual void attemptHealing( DamageInfo *damageInfo ) override;		///< try to heal this object
-	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const override;
-	virtual Real getHealth() const override;													///< get current health
+	virtual void attemptDamage(DamageInfo* damageInfo) override;    ///< try to damage this object
+	virtual void attemptHealing(DamageInfo* damageInfo) override;    ///< try to heal this object
+	virtual Real estimateDamage(DamageInfoInput& damageInfo) const override;
+	virtual Real getHealth() const override;    ///< get current health
 	virtual BodyDamageType getDamageState() const override;
-	virtual void setDamageState( BodyDamageType newState ) override;	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting ) override {}///< This is a major change like a damage state.
+	virtual void setDamageState(BodyDamageType newState) override;    ///< control damage state directly.  Will adjust hitpoints.
+	virtual void setAflame(Bool setting) override {}    ///< This is a major change like a damage state.
 
-	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback ) override { /* nothing */ }
+	virtual void onVeterancyLevelChanged(VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback) override { /* nothing */ }
 
 	virtual void setArmorSetFlag(ArmorSetType ast) override { /* nothing */ }
 	virtual void clearArmorSetFlag(ArmorSetType ast) override { /* nothing */ }
 
-	virtual void internalChangeHealth( Real delta ) override;
+	virtual void internalChangeHealth(Real delta) override;
 
 private:
 	Bool m_dieCalled;

@@ -43,7 +43,7 @@
  *   Random3Class::operator -- Random number generator function.                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
+#include "always.h"
 #include "RANDOM.h"
 
 // Timing tests for random these random number generators in seconds for
@@ -70,7 +70,6 @@ R4 - Ok
 Rand() - starts breaking in 24 dimensions
 */
 
-
 /***********************************************************************************************
  * RandomClass::RandomClass -- Constructor for the random number class.                        *
  *                                                                                             *
@@ -87,11 +86,10 @@ Rand() - starts breaking in 24 dimensions
  * HISTORY:                                                                                    *
  *   02/27/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-RandomClass::RandomClass(unsigned seed) :
-	Seed(seed)
+RandomClass::RandomClass(unsigned seed)
+  : Seed(seed)
 {
 }
-
 
 /***********************************************************************************************
  * RandomClass::operator() -- Fetches the next random number in the sequence.                  *
@@ -109,7 +107,7 @@ RandomClass::RandomClass(unsigned seed) :
  * HISTORY:                                                                                    *
  *   02/27/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RandomClass::operator ()()
+int RandomClass::operator()()
 {
 	/*
 	**	Transform the seed value into the next number in the sequence.
@@ -120,9 +118,8 @@ int RandomClass::operator ()()
 	**	Extract the 'random' bits from the seed and return that value as the
 	**	random number result.
 	*/
-	return((Seed >> THROW_AWAY_BITS) & (~((~0) << SIGNIFICANT_BITS)));
+	return ((Seed >> THROW_AWAY_BITS) & (~((~0) << SIGNIFICANT_BITS)));
 }
-
 
 /***********************************************************************************************
  * RandomClass::operator() -- Ranged random number generator.                                  *
@@ -143,11 +140,10 @@ int RandomClass::operator ()()
  * HISTORY:                                                                                    *
  *   02/27/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RandomClass::operator() (int minval, int maxval)
+int RandomClass::operator()(int minval, int maxval)
 {
-	return(Pick_Random_Number(*this, minval, maxval));
+	return (Pick_Random_Number(*this, minval, maxval));
 }
-
 
 /***********************************************************************************************
  * Random2Class::Random2Class -- Constructor for the random class.                             *
@@ -163,17 +159,17 @@ int RandomClass::operator() (int minval, int maxval)
  * HISTORY:                                                                                    *
  *   05/14/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-Random2Class::Random2Class(unsigned seed) :
-	Index1(0),
-	Index2(103)
+Random2Class::Random2Class(unsigned seed)
+  : Index1(0)
+  , Index2(103)
 {
 	Random3Class random(seed);
 
-	for (int index = 0; index < ARRAY_SIZE(Table); index++) {
+	for (int index = 0; index < ARRAY_SIZE(Table); index++)
+	{
 		Table[index] = random;
 	}
 }
-
 
 /***********************************************************************************************
  * Random2Class::operator -- Randomizer function that returns value.                           *
@@ -190,7 +186,7 @@ Random2Class::Random2Class(unsigned seed) :
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Random2Class::operator() ()
+int Random2Class::operator()()
 {
 	Table[Index1] ^= Table[Index2];
 	int val = Table[Index1];
@@ -198,12 +194,17 @@ int Random2Class::operator() ()
 	Index1++;
 	Index2++;
 
-	if (Index1 >= ARRAY_SIZE(Table)) Index1 = 0;
-	if (Index2 >= ARRAY_SIZE(Table)) Index2 = 0;
+	if (Index1 >= ARRAY_SIZE(Table))
+	{
+		Index1 = 0;
+	}
+	if (Index2 >= ARRAY_SIZE(Table))
+	{
+		Index2 = 0;
+	}
 
-	return(val);
+	return (val);
 }
-
 
 /***********************************************************************************************
  * Random2Class::operator -- Generates a random number between two values.                     *
@@ -222,11 +223,10 @@ int Random2Class::operator() ()
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Random2Class::operator() (int minval, int maxval)
+int Random2Class::operator()(int minval, int maxval)
 {
-	return(Pick_Random_Number(*this, minval, maxval));
+	return (Pick_Random_Number(*this, minval, maxval));
 }
-
 
 /*
 **	This is the seed table for the Random3Class generator. These ensure
@@ -248,7 +248,6 @@ int Random3Class::Mix2[20] = {
 	(int)0xfc8e2263, (int)0x390f5e8c, (int)0x58ffd802, (int)0xac0a5eba,
 	(int)0xac4874f6, (int)0xa9df0913, (int)0x86be4c74, (int)0xed2c123b
 };
-
 
 /***********************************************************************************************
  * Random3Class::Random3Class -- Initializer for the random number generator.                  *
@@ -274,12 +273,11 @@ int Random3Class::Mix2[20] = {
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-Random3Class::Random3Class(unsigned seed1, unsigned seed2) :
-	Seed(seed1),
-	Index(seed2)
+Random3Class::Random3Class(unsigned seed1, unsigned seed2)
+  : Seed(seed1)
+  , Index(seed2)
 {
 }
-
 
 /***********************************************************************************************
  * Random3Class::operator -- Random number generator function.                                 *
@@ -296,23 +294,23 @@ Random3Class::Random3Class(unsigned seed1, unsigned seed2) :
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Random3Class::operator() ()
+int Random3Class::operator()()
 {
 	int loword = Seed;
 	int hiword = Index++;
-	for (int i = 0; i < 4; i++) {
-		int hihold  = hiword;
-		int temp    = hihold ^  Mix1[i];
-		int itmpl   = temp   &  0xffff;
-		int itmph   = temp   >> 16;
-		temp    = itmpl * itmpl + ~(itmph * itmph);
-		temp    = (temp >> 16) | (temp << 16);
-		hiword  = loword ^ ((temp ^ Mix2[i]) + itmpl * itmph);
-		loword  = hihold;
+	for (int i = 0; i < 4; i++)
+	{
+		int hihold = hiword;
+		int temp = hihold ^ Mix1[i];
+		int itmpl = temp & 0xffff;
+		int itmph = temp >> 16;
+		temp = itmpl * itmpl + ~(itmph * itmph);
+		temp = (temp >> 16) | (temp << 16);
+		hiword = loword ^ ((temp ^ Mix2[i]) + itmpl * itmph);
+		loword = hihold;
 	}
-	return(hiword);
+	return (hiword);
 }
-
 
 /***********************************************************************************************
  * Random3Class::operator -- Generates a random number between two values.                     *
@@ -331,9 +329,9 @@ int Random3Class::operator() ()
  * HISTORY:                                                                                    *
  *   05/20/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Random3Class::operator() (int minval, int maxval)
+int Random3Class::operator()(int minval, int maxval)
 {
-	return(Pick_Random_Number(*this, minval, maxval));
+	return (Pick_Random_Number(*this, minval, maxval));
 }
 
 // Random4
@@ -342,75 +340,83 @@ int Random3Class::operator() (int minval, int maxval)
 /* Period parameters */
 #define N 624
 #define M 397
-#define MATRIX_A 0x9908b0df   /* constant vector a */
+#define MATRIX_A 0x9908b0df /* constant vector a */
 #define UPPER_MASK 0x80000000 /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffff /* least significant r bits */
 
 /* Tempering parameters */
 #define TEMPERING_MASK_B 0x9d2c5680
 #define TEMPERING_MASK_C 0xefc60000
-#define TEMPERING_SHIFT_U(y)  (y >> 11)
-#define TEMPERING_SHIFT_S(y)  (y << 7)
-#define TEMPERING_SHIFT_T(y)  (y << 15)
-#define TEMPERING_SHIFT_L(y)  (y >> 18)
+#define TEMPERING_SHIFT_U(y) (y >> 11)
+#define TEMPERING_SHIFT_S(y) (y << 7)
+#define TEMPERING_SHIFT_T(y) (y << 15)
+#define TEMPERING_SHIFT_L(y) (y >> 18)
 
 Random4Class::Random4Class(unsigned int seed)
 {
-    /* setting initial seeds to mt[N] using         */
-    /* the generator Line 25 of Table 1 in          */
-    /* [KNUTH 1981, The Art of Computer Programming */
-    /*    Vol. 2 (2nd Ed.), pp102]                  */
-	if (!seed) seed=4375;
+	/* setting initial seeds to mt[N] using         */
+	/* the generator Line 25 of Table 1 in          */
+	/* [KNUTH 1981, The Art of Computer Programming */
+	/*    Vol. 2 (2nd Ed.), pp102]                  */
+	if (!seed)
+	{
+		seed = 4375;
+	}
 
-    mt[0]= seed & 0xffffffff;
-    for (mti=1; mti<N; mti++)
-        mt[mti] = (69069 * mt[mti-1]) & 0xffffffff;
-	 // mti is N+1 after this
+	mt[0] = seed & 0xffffffff;
+	for (mti = 1; mti < N; mti++)
+	{
+		mt[mti] = (69069 * mt[mti - 1]) & 0xffffffff;
+	}
+	// mti is N+1 after this
 }
 
-int Random4Class::operator() ()
+int Random4Class::operator()()
 {
-    unsigned int y;
-    static unsigned int mag01[2]={0x0, MATRIX_A};
-    /* mag01[x] = x * MATRIX_A  for x=0,1 */
+	unsigned int y;
+	static unsigned int mag01[2] = { 0x0, MATRIX_A };
+	/* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (mti >= N) { /* generate N words at one time */
-        int kk;
+	if (mti >= N)
+	{ /* generate N words at one time */
+		int kk;
 
-        for (kk=0;kk<N-M;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1];
-        }
-        for (;kk<N-1;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1];
-        }
-        y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-        mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
+		for (kk = 0; kk < N - M; kk++)
+		{
+			y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
+			mt[kk] = mt[kk + M] ^ (y >> 1) ^ mag01[y & 0x1];
+		}
+		for (; kk < N - 1; kk++)
+		{
+			y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
+			mt[kk] = mt[kk + (M - N)] ^ (y >> 1) ^ mag01[y & 0x1];
+		}
+		y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
+		mt[N - 1] = mt[M - 1] ^ (y >> 1) ^ mag01[y & 0x1];
 
-        mti = 0;
-    }
+		mti = 0;
+	}
 
-    y = mt[mti++];
-    y ^= TEMPERING_SHIFT_U(y);
-    y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;
-    y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
-    y ^= TEMPERING_SHIFT_L(y);
+	y = mt[mti++];
+	y ^= TEMPERING_SHIFT_U(y);
+	y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;
+	y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
+	y ^= TEMPERING_SHIFT_L(y);
 
-	 int *x=(int *)&y;
+	int* x = (int*)&y;
 
-	 return *x;
+	return *x;
 }
 
-int Random4Class::operator() (int minval, int maxval)
+int Random4Class::operator()(int minval, int maxval)
 {
-	return(Pick_Random_Number(*this, minval, maxval));
+	return (Pick_Random_Number(*this, minval, maxval));
 }
 
 float Random4Class::Get_Float()
 {
-	int x=(*this)();
-	unsigned int *y=(unsigned int *) &x;
+	int x = (*this)();
+	unsigned int* y = (unsigned int*)&x;
 
-	return (*y)*2.3283064370807973754314699618685e-10f;
+	return (*y) * 2.3283064370807973754314699618685e-10f;
 }

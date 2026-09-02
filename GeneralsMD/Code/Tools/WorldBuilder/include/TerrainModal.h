@@ -29,28 +29,29 @@ class WorldHeightMapEdit;
 
 class TerrainModal : public CDialog
 {
-// Construction
+	// Construction
 public:
-	TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent = nullptr);   // standard constructor
+	TerrainModal(AsciiString path, WorldHeightMapEdit* pMap, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TerrainModal)
-	enum { IDD = IDD_TERRAIN_MODAL };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TERRAIN_MODAL
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TerrainModal)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(TerrainModal)
 	virtual BOOL OnInitDialog() override;
@@ -58,22 +59,21 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	Int					m_currentFgTexture;
+	Int m_currentFgTexture;
 	AsciiString m_pathToReplace;
-	CTreeCtrl		m_terrainTreeView;
-	TerrainSwatches		m_terrainSwatches;
-	WorldHeightMapEdit *m_map;
+	CTreeCtrl m_terrainTreeView;
+	TerrainSwatches m_terrainSwatches;
+	WorldHeightMapEdit* m_map;
 
 protected:
-	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
-	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
+	void addTerrain(char* pPath, Int terrainNdx, HTREEITEM parent);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char* pLabel);
 	void updateLabel();
 	void updateTextures();
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);
 
 public:
-	Int getNewNdx() {return m_currentFgTexture;};
-
+	Int getNewNdx() { return m_currentFgTexture; };
 };
 
 //{{AFX_INSERT_LOCATION}}

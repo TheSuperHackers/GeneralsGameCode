@@ -46,42 +46,29 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -93,24 +80,23 @@
 
 StdFileSystem::~StdFileSystem()
 {
-
 }
 
 //=================================================================
 // StdFileSystem::open
 //=================================================================
 /**
-  * This simply creates a StdFile object and calls its open function.
-	*/
+ * This simply creates a StdFile object and calls its open function.
+ */
 //=================================================================
 
-File* StdFileSystem::open( const Char *filename, Int access )
+File* StdFileSystem::open(const Char* filename, Int access)
 {
-	StdFile *file = new StdFile();
+	StdFile* file = new StdFile();
 
-	if( file->open( filename, access ))
+	if (file->open(filename, access))
 	{
-		file->deleteOnClose(); // File object not created by the user so delete it when the user is finished with it
+		file->deleteOnClose();    // File object not created by the user so delete it when the user is finished with it
 	}
 	else
 	{
@@ -118,5 +104,5 @@ File* StdFileSystem::open( const Char *filename, Int access )
 		file = nullptr;
 	}
 
-	return (File*) file;
+	return (File*)file;
 }

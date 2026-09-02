@@ -37,27 +37,26 @@ class Object;
 
 // ------------------------------------------------------------------------------------------------
 class ResourceGatheringManager : public MemoryPoolObject,
-																 public Snapshot
+                                 public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ResourceGatheringManager, "ResourceGatheringManager" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ResourceGatheringManager, "ResourceGatheringManager");
 
 public:
 	ResourceGatheringManager();
 
-	Object *findBestSupplyWarehouse( Object *queryObject );		///< What Warehouse should this truck go to?
-	Object *findBestSupplyCenter( Object *queryObject );			///< What Center should this truck return to?
+	Object* findBestSupplyWarehouse(Object* queryObject);    ///< What Warehouse should this truck go to?
+	Object* findBestSupplyCenter(Object* queryObject);    ///< What Center should this truck return to?
 
-	void addSupplyCenter( Object *newCenter );					///< I captured or built a Supply Center, so record it
-	void removeSupplyCenter( Object *oldCenter );				///< Lost a supply center
+	void addSupplyCenter(Object* newCenter);    ///< I captured or built a Supply Center, so record it
+	void removeSupplyCenter(Object* oldCenter);    ///< Lost a supply center
 
-	void addSupplyWarehouse( Object *newWarehouse );		///< Warehouse created, or this is start of game recording
-	void removeSupplyWarehouse( Object *oldWarehouse );	///< Warehouse that doesn't replenish has run out of Supply
+	void addSupplyWarehouse(Object* newWarehouse);    ///< Warehouse created, or this is start of game recording
+	void removeSupplyWarehouse(Object* oldWarehouse);    ///< Warehouse that doesn't replenish has run out of Supply
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 private:
@@ -67,5 +66,4 @@ private:
 
 	objectIDList m_supplyWarehouses;
 	objectIDList m_supplyCenters;
-
 };

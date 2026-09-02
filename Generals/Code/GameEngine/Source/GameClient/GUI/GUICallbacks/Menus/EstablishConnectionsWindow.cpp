@@ -23,8 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///// EstablishConnectionsWindow.cpp /////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameWindowManager.h"
 #include "Common/NameKeyGenerator.h"
@@ -32,7 +31,7 @@
 #include "GameNetwork/GUIUtil.h"
 #include "GameNetwork/GameSpy/StagingRoomGameInfo.h"
 
-static WindowLayout *establishConnectionsLayout;
+static WindowLayout* establishConnectionsLayout;
 
 static NameKeyType buttonQuitID = NAMEKEY_INVALID;
 static NameKeyType staticPlayer1NameID = NAMEKEY_INVALID;
@@ -51,27 +50,26 @@ static NameKeyType staticPlayer5StatusID = NAMEKEY_INVALID;
 static NameKeyType staticPlayer6StatusID = NAMEKEY_INVALID;
 static NameKeyType staticPlayer7StatusID = NAMEKEY_INVALID;
 
-static GameWindow *buttonQuitWindow = nullptr;
-static GameWindow *staticPlayer1Name = nullptr;
-static GameWindow *staticPlayer2Name = nullptr;
-static GameWindow *staticPlayer3Name = nullptr;
-static GameWindow *staticPlayer4Name = nullptr;
-static GameWindow *staticPlayer5Name = nullptr;
-static GameWindow *staticPlayer6Name = nullptr;
-static GameWindow *staticPlayer7Name = nullptr;
+static GameWindow* buttonQuitWindow = nullptr;
+static GameWindow* staticPlayer1Name = nullptr;
+static GameWindow* staticPlayer2Name = nullptr;
+static GameWindow* staticPlayer3Name = nullptr;
+static GameWindow* staticPlayer4Name = nullptr;
+static GameWindow* staticPlayer5Name = nullptr;
+static GameWindow* staticPlayer6Name = nullptr;
+static GameWindow* staticPlayer7Name = nullptr;
 
-static GameWindow *staticPlayer1Status = nullptr;
-static GameWindow *staticPlayer2Status = nullptr;
-static GameWindow *staticPlayer3Status = nullptr;
-static GameWindow *staticPlayer4Status = nullptr;
-static GameWindow *staticPlayer5Status = nullptr;
-static GameWindow *staticPlayer6Status = nullptr;
-static GameWindow *staticPlayer7Status = nullptr;
+static GameWindow* staticPlayer1Status = nullptr;
+static GameWindow* staticPlayer2Status = nullptr;
+static GameWindow* staticPlayer3Status = nullptr;
+static GameWindow* staticPlayer4Status = nullptr;
+static GameWindow* staticPlayer5Status = nullptr;
+static GameWindow* staticPlayer6Status = nullptr;
+static GameWindow* staticPlayer7Status = nullptr;
 
-static const char *layoutFilename = "GameSpyGameOptionsMenu.wnd";
-static const char *parentName = "GameSpyGameOptionsMenuParent";
-static const char *gadgetsToHide[] =
-{
+static const char* layoutFilename = "GameSpyGameOptionsMenu.wnd";
+static const char* parentName = "GameSpyGameOptionsMenuParent";
+static const char* gadgetsToHide[] = {
 	"MapWindow",
 	"StaticTextGameName",
 	"StaticTextTeam",
@@ -84,8 +82,7 @@ static const char *gadgetsToHide[] =
 	"StaticTextMapPreview",
 	nullptr
 };
-static const char *perPlayerGadgetsToHide[] =
-{
+static const char* perPlayerGadgetsToHide[] = {
 	"ComboBoxTeam",
 	"ComboBoxColor",
 	"ComboBoxPlayerTemplate",
@@ -96,10 +93,9 @@ static const char *perPlayerGadgetsToHide[] =
 	nullptr
 };
 
-static const char *qmlayoutFilename = "WOLQuickMatchMenu.wnd";
-static const char *qmparentName = "WOLQuickMatchMenuParent";
-static const char *qmgadgetsToHide[] =
-{
+static const char* qmlayoutFilename = "WOLQuickMatchMenu.wnd";
+static const char* qmparentName = "WOLQuickMatchMenuParent";
+static const char* qmgadgetsToHide[] = {
 	"StaticTextTitle",
 	"ButtonBack",
 	"ButtonOptions",
@@ -109,30 +105,31 @@ static const char *qmgadgetsToHide[] =
 	"ButtonStart",
 	nullptr
 };
-static const char *qmperPlayerGadgetsToHide[] =
-{
+static const char* qmperPlayerGadgetsToHide[] = {
 	//"ButtonStartPosition",
 	nullptr
 };
 
-static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )
+static void showGameSpyGameOptionsUnderlyingGUIElements(Bool show)
 {
-	ShowUnderlyingGUIElements( show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide );
-
+	ShowUnderlyingGUIElements(show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide);
 }
-static void showGameSpyQMUnderlyingGUIElements( Bool show )
+static void showGameSpyQMUnderlyingGUIElements(Bool show)
 {
-	ShowUnderlyingGUIElements( show, qmlayoutFilename, qmparentName, qmgadgetsToHide, qmperPlayerGadgetsToHide );
+	ShowUnderlyingGUIElements(show, qmlayoutFilename, qmparentName, qmgadgetsToHide, qmperPlayerGadgetsToHide);
 }
 
-static void InitEstablishConnectionsDialog() {
-	buttonQuitID = TheNameKeyGenerator->nameToKey( "EstablishConnectionsScreen.wnd:ButtonQuit" );
+static void InitEstablishConnectionsDialog()
+{
+	buttonQuitID = TheNameKeyGenerator->nameToKey("EstablishConnectionsScreen.wnd:ButtonQuit");
 	buttonQuitWindow = TheWindowManager->winGetWindowFromId(nullptr, buttonQuitID);
 }
 
-void ShowEstablishConnectionsWindow() {
-	if (establishConnectionsLayout == nullptr) {
-		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
+void ShowEstablishConnectionsWindow()
+{
+	if (establishConnectionsLayout == nullptr)
+	{
+		establishConnectionsLayout = TheWindowManager->winCreateLayout("Menus/EstablishConnectionsScreen.wnd");
 		InitEstablishConnectionsDialog();
 	}
 	establishConnectionsLayout->hide(FALSE);
@@ -147,15 +144,17 @@ void ShowEstablishConnectionsWindow() {
 	}
 }
 
-void HideEstablishConnectionsWindow() {
-	if (establishConnectionsLayout == nullptr) {
-//		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
-//		InitEstablishConnectionsDialog();
+void HideEstablishConnectionsWindow()
+{
+	if (establishConnectionsLayout == nullptr)
+	{
+		//		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
+		//		InitEstablishConnectionsDialog();
 		return;
 	}
-//	establishConnectionsLayout->hide(TRUE);
-//	establishConnectionsLayout->hide(TRUE);
-//	TheWindowManager->winDestroy(establishConnectionsLayout);
+	//	establishConnectionsLayout->hide(TRUE);
+	//	establishConnectionsLayout->hide(TRUE);
+	//	TheWindowManager->winDestroy(establishConnectionsLayout);
 	establishConnectionsLayout->destroyWindows();
 	deleteInstance(establishConnectionsLayout);
 	establishConnectionsLayout = nullptr;
@@ -169,26 +168,28 @@ void HideEstablishConnectionsWindow() {
 	}
 }
 
-WindowMsgHandledType EstablishConnectionsControlInput(GameWindow *window, UnsignedInt msg,
-																											WindowMsgData mData1, WindowMsgData mData2) {
-
+WindowMsgHandledType EstablishConnectionsControlInput(GameWindow* window, UnsignedInt msg,
+                                                      WindowMsgData mData1, WindowMsgData mData2)
+{
 	return MSG_IGNORED;
 }
 
-WindowMsgHandledType EstablishConnectionsControlSystem(GameWindow *window, UnsignedInt msg,
-																											 WindowMsgData mData1, WindowMsgData mData2) {
-
-	switch (msg) {
+WindowMsgHandledType EstablishConnectionsControlSystem(GameWindow* window, UnsignedInt msg,
+                                                       WindowMsgData mData1, WindowMsgData mData2)
+{
+	switch (msg)
+	{
 		case GBM_SELECTED:
-			{
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
+		{
+			GameWindow* control = (GameWindow*)mData1;
+			Int controlID = control->winGetWindowId();
 
-				if (controlID == buttonQuitID) {
-					TheEstablishConnectionsMenu->abortGame();
-				}
-				break;
+			if (controlID == buttonQuitID)
+			{
+				TheEstablishConnectionsMenu->abortGame();
 			}
+			break;
+		}
 	}
 	return MSG_HANDLED;
 }

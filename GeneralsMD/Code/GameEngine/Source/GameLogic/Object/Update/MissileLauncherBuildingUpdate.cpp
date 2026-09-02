@@ -27,7 +27,7 @@
 // Desc:   Update will change model state conditions based on special power state
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/GlobalData.h"
@@ -42,9 +42,9 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
 
-
 //-------------------------------------------------------------------------------------------------
-MissileLauncherBuildingUpdate::MissileLauncherBuildingUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
+MissileLauncherBuildingUpdate::MissileLauncherBuildingUpdate(Thing* thing, const ModuleData* moduleData)
+  : SpecialPowerUpdateModule(thing, moduleData)
 {
 	m_doorState = DOOR_CLOSED;
 	m_timeoutState = DOOR_CLOSED;
@@ -66,7 +66,9 @@ MissileLauncherBuildingUpdate::~MissileLauncherBuildingUpdate()
 void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 {
 	if (m_doorState == dst)
+	{
 		return;
+	}
 
 	const MissileLauncherBuildingUpdateModuleData* d = getMissileLauncherBuildingUpdateModuleData();
 	ModelConditionFlags clr, set;
@@ -74,7 +76,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 	switch (dst)
 	{
 		case DOOR_CLOSED:
-			DEBUG_LOG(("switch to state DOOR_CLOSED at %d",now));
+			DEBUG_LOG(("switch to state DOOR_CLOSED at %d", now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -84,7 +86,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			m_timeoutState = DOOR_CLOSED;
 			if (d->m_closedFX)
 			{
-				const Coord3D *pos = getObject()->getPosition();
+				const Coord3D* pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_closedFX, pos);
 			}
 			if (m_openIdleAudio.isCurrentlyPlaying())
@@ -94,7 +96,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_OPENING:
-			DEBUG_LOG(("switch to state DOOR_OPENING at %d",now));
+			DEBUG_LOG(("switch to state DOOR_OPENING at %d", now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -106,7 +108,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			m_timeoutState = DOOR_OPEN;
 			if (d->m_openingFX)
 			{
-				const Coord3D *pos = getObject()->getPosition();
+				const Coord3D* pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_openingFX, pos);
 			}
 			if (m_openIdleAudio.isCurrentlyPlaying())
@@ -116,7 +118,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_OPEN:
-			DEBUG_LOG(("switch to state DOOR_OPEN at %d",now));
+			DEBUG_LOG(("switch to state DOOR_OPEN at %d", now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -126,7 +128,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			m_timeoutState = DOOR_OPEN;
 			if (d->m_openFX)
 			{
-				const Coord3D *pos = getObject()->getPosition();
+				const Coord3D* pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_openFX, pos);
 			}
 			if (!m_openIdleAudio.isCurrentlyPlaying())
@@ -136,7 +138,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_WAITING_TO_CLOSE:
-			DEBUG_LOG(("switch to state DOOR_WAITING_TO_CLOSE at %d",now));
+			DEBUG_LOG(("switch to state DOOR_WAITING_TO_CLOSE at %d", now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
 			clr.set(MODELCONDITION_DOOR_1_OPENING);
@@ -146,7 +148,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			m_timeoutState = DOOR_CLOSING;
 			if (d->m_waitingToCloseFX)
 			{
-				const Coord3D *pos = getObject()->getPosition();
+				const Coord3D* pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_waitingToCloseFX, pos);
 			}
 			if (m_openIdleAudio.isCurrentlyPlaying())
@@ -156,7 +158,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_CLOSING:
-			DEBUG_LOG(("switch to state DOOR_CLOSING at %d",now));
+			DEBUG_LOG(("switch to state DOOR_CLOSING at %d", now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_WAITING_OPEN);
@@ -166,14 +168,16 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 
 			{
 				Int delta = m_specialPowerModule->getReadyFrame() - now;
-				if (m_timeoutFrame > now + delta/2)
-					m_timeoutFrame = now + delta/2;
+				if (m_timeoutFrame > now + delta / 2)
+				{
+					m_timeoutFrame = now + delta / 2;
+				}
 			}
 
 			m_timeoutState = DOOR_CLOSED;
 			if (d->m_closingFX)
 			{
-				const Coord3D *pos = getObject()->getPosition();
+				const Coord3D* pos = getObject()->getPosition();
 				FXList::doFXPos(d->m_closingFX, pos);
 			}
 			if (m_openIdleAudio.isCurrentlyPlaying())
@@ -194,23 +198,26 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 	{
 		Drawable* draw = getObject()->getDrawable();
 		if (draw)
+		{
 			draw->setAnimationLoopDuration(m_timeoutFrame - now);
+		}
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
+Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate* specialPowerTemplate, const Object* targetObj, const Coord3D* targetPos, const Waypoint* way, UnsignedInt commandOptions)
 {
 #if RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @bugfix Mauller 29/06/2025 prevent a game crash when told to launch before ready to do so
-	if (!m_specialPowerModule) {
+	if (!m_specialPowerModule)
+	{
 		Object* us = getObject();
 		us->getSpecialPowerModule(specialPowerTemplate)->setReadyFrame(0xFFFFFFFF);
 		return FALSE;
 	}
 #endif
 
-	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
+	if (m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate)
 	{
 		return FALSE;
 	}
@@ -220,16 +227,16 @@ Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const Specia
 #endif
 
 	switchToState(DOOR_WAITING_TO_CLOSE);
-//	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( specialPowerTemplate );
+	//	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( specialPowerTemplate );
 	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MissileLauncherBuildingUpdate::isPowerCurrentlyInUse( const CommandButton *command ) const
+Bool MissileLauncherBuildingUpdate::isPowerCurrentlyInUse(const CommandButton* command) const
 {
 	//@todo -- Implement me in such a way that it still works with Ctrl+s cheat key...
-	//In fact, this code doesn't really care because in legit mode, the game will
-	//never require this check to disable the cameo button.
+	// In fact, this code doesn't really care because in legit mode, the game will
+	// never require this check to disable the cameo button.
 	return false;
 }
 
@@ -243,8 +250,10 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update()
 	// If we are under construction, any decision we make about door status could be wrong.
 	// Our special power module is randomly going to be initialized or not (which would result
 	// in him reporting a 0 frame ready, which means we will start open).
-	if( getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
+	if (getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
 		return UPDATE_SLEEP_NONE;
+	}
 
 	if (!m_specialPowerModule)
 	{
@@ -289,42 +298,38 @@ SpecialPowerTemplate* MissileLauncherBuildingUpdate::getTemplate() const
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void MissileLauncherBuildingUpdate::crc( Xfer *xfer )
+void MissileLauncherBuildingUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MissileLauncherBuildingUpdate::xfer( Xfer *xfer )
+void MissileLauncherBuildingUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// do not need to tie the m_specialPowerModule pointer cause it gets tied
 	// SpecialPowerModuleInterface *m_specialPowerModule;
 
 	// door state
-	xfer->xferUser( &m_doorState, sizeof( DoorStateType ) );
+	xfer->xferUser(&m_doorState, sizeof(DoorStateType));
 
 	// timeout state
-	xfer->xferUser( &m_timeoutState, sizeof( DoorStateType ) );
+	xfer->xferUser(&m_timeoutState, sizeof(DoorStateType));
 
 	// timeout frame
-	xfer->xferUnsignedInt( &m_timeoutFrame );
-
+	xfer->xferUnsignedInt(&m_timeoutFrame);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -332,8 +337,6 @@ void MissileLauncherBuildingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void MissileLauncherBuildingUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

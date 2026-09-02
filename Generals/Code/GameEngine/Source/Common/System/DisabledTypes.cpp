@@ -30,9 +30,8 @@
 #include "Common/DisabledTypes.h"
 #include "Common/BitFlagsIO.h"
 
-template<>
-const char* const DisabledMaskType::s_bitNameList[] =
-{
+template <>
+const char* const DisabledMaskType::s_bitNameList[] = {
 	"DEFAULT",
 	"DISABLED_HACKED",
 	"DISABLED_EMP",
@@ -42,8 +41,8 @@ const char* const DisabledMaskType::s_bitNameList[] =
 	"DISABLED_UNDERPOWERED",
 	"DISABLED_FREEFALL",
 
-  "DISABLED_AWESTRUCK",
-  "DISABLED_BRAINWASHED",
+	"DISABLED_AWESTRUCK",
+	"DISABLED_BRAINWASHED",
 	"DISABLED_SUBDUED",
 
 	"DISABLED_SCRIPT_DISABLED",
@@ -53,5 +52,5 @@ const char* const DisabledMaskType::s_bitNameList[] =
 };
 static_assert(ARRAY_SIZE(DisabledMaskType::s_bitNameList) == DisabledMaskType::NumBits + 1, "Incorrect array size");
 
-DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
+DisabledMaskType DISABLEDMASK_NONE;    // inits to all zeroes
 DisabledMaskType DISABLEDMASK_ALL(DisabledMaskType::kInitSetAll);

@@ -74,10 +74,10 @@
 // radioButtonPropertiesCallback ==============================================
 /** Dialog callback for properties */
 //=============================================================================
-static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
-																											 UINT message,
-																											 WPARAM wParam,
-																											 LPARAM lParam )
+static LRESULT CALLBACK radioButtonPropertiesCallback(HWND hWndDialog,
+                                                      UINT message,
+                                                      WPARAM wParam,
+                                                      LPARAM lParam)
 {
 	Int returnCode;
 
@@ -86,139 +86,128 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message,
-																	wParam, lParam, &returnCode ) == TRUE )
-		return returnCode;
-
-	switch( message )
+	if (HandleCommonDialogMessages(hWndDialog, message,
+	                               wParam, lParam, &returnCode) == TRUE)
 	{
+		return returnCode;
+	}
 
+	switch (message)
+	{
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
-//			Int notifyCode = HIWORD( wParam );  // notification code
-			Int controlID = LOWORD( wParam );  // control ID
-//			HWND hWndControl = (HWND)lParam;  // control window handle
+		case WM_COMMAND:
+		{
+			//			Int notifyCode = HIWORD( wParam );  // notification code
+			Int controlID = LOWORD(wParam);    // control ID
+			//			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( controlID )
-      {
-
+			switch (controlID)
+			{
 				// --------------------------------------------------------------------
 				case BUTTON_CLEAR_GROUP:
 				{
-
-					SetDlgItemInt( hWndDialog, COMBO_GROUP, 0, FALSE );
+					SetDlgItemInt(hWndDialog, COMBO_GROUP, 0, FALSE);
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
-					GameWindow *window = TheEditor->getPropertyTarget();
+					GameWindow* window = TheEditor->getPropertyTarget();
 
 					// sanity
-					if( window )
+					if (window)
 					{
-						ImageAndColorInfo *info;
+						ImageAndColorInfo* info;
 
 						// save the common properties
-						if( SaveCommonDialogProperties( hWndDialog, window ) == FALSE )
+						if (SaveCommonDialogProperties(hWndDialog, window) == FALSE)
+						{
 							break;
+						}
 
 						// save the image and color data
 						// ----------------------------------------------------------------
-						info = GetStateInfo( RADIO_ENABLED );
-						GadgetRadioSetEnabledImage( window, info->image );
-						GadgetRadioSetEnabledColor( window, info->color );
-						GadgetRadioSetEnabledBorderColor( window, info->borderColor );
+						info = GetStateInfo(RADIO_ENABLED);
+						GadgetRadioSetEnabledImage(window, info->image);
+						GadgetRadioSetEnabledColor(window, info->color);
+						GadgetRadioSetEnabledBorderColor(window, info->borderColor);
 
-						info = GetStateInfo( RADIO_ENABLED_UNCHECKED_BOX );
-						GadgetRadioSetEnabledUncheckedBoxImage( window, info->image );
-						GadgetRadioSetEnabledUncheckedBoxColor( window, info->color );
-						GadgetRadioSetEnabledUncheckedBoxBorderColor( window, info->borderColor );
+						info = GetStateInfo(RADIO_ENABLED_UNCHECKED_BOX);
+						GadgetRadioSetEnabledUncheckedBoxImage(window, info->image);
+						GadgetRadioSetEnabledUncheckedBoxColor(window, info->color);
+						GadgetRadioSetEnabledUncheckedBoxBorderColor(window, info->borderColor);
 
-						info = GetStateInfo( RADIO_ENABLED_CHECKED_BOX );
-						GadgetRadioSetEnabledCheckedBoxImage( window, info->image );
-						GadgetRadioSetEnabledCheckedBoxColor( window, info->color );
-						GadgetRadioSetEnabledCheckedBoxBorderColor( window, info->borderColor );
-
-						// ----------------------------------------------------------------
-						info = GetStateInfo( RADIO_DISABLED );
-						GadgetRadioSetDisabledImage( window, info->image );
-						GadgetRadioSetDisabledColor( window, info->color );
-						GadgetRadioSetDisabledBorderColor( window, info->borderColor );
-
-						info = GetStateInfo( RADIO_DISABLED_UNCHECKED_BOX );
-						GadgetRadioSetDisabledUncheckedBoxImage( window, info->image );
-						GadgetRadioSetDisabledUncheckedBoxColor( window, info->color );
-						GadgetRadioSetDisabledUncheckedBoxBorderColor( window, info->borderColor );
-
-						info = GetStateInfo( RADIO_DISABLED_CHECKED_BOX );
-						GadgetRadioSetDisabledCheckedBoxImage( window, info->image );
-						GadgetRadioSetDisabledCheckedBoxColor( window, info->color );
-						GadgetRadioSetDisabledCheckedBoxBorderColor( window, info->borderColor );
+						info = GetStateInfo(RADIO_ENABLED_CHECKED_BOX);
+						GadgetRadioSetEnabledCheckedBoxImage(window, info->image);
+						GadgetRadioSetEnabledCheckedBoxColor(window, info->color);
+						GadgetRadioSetEnabledCheckedBoxBorderColor(window, info->borderColor);
 
 						// ----------------------------------------------------------------
-						info = GetStateInfo( RADIO_HILITE );
-						GadgetRadioSetHiliteImage( window, info->image );
-						GadgetRadioSetHiliteColor( window, info->color );
-						GadgetRadioSetHiliteBorderColor( window, info->borderColor );
+						info = GetStateInfo(RADIO_DISABLED);
+						GadgetRadioSetDisabledImage(window, info->image);
+						GadgetRadioSetDisabledColor(window, info->color);
+						GadgetRadioSetDisabledBorderColor(window, info->borderColor);
 
-						info = GetStateInfo( RADIO_HILITE_UNCHECKED_BOX );
-						GadgetRadioSetHiliteUncheckedBoxImage( window, info->image );
-						GadgetRadioSetHiliteUncheckedBoxColor( window, info->color );
-						GadgetRadioSetHiliteUncheckedBoxBorderColor( window, info->borderColor );
+						info = GetStateInfo(RADIO_DISABLED_UNCHECKED_BOX);
+						GadgetRadioSetDisabledUncheckedBoxImage(window, info->image);
+						GadgetRadioSetDisabledUncheckedBoxColor(window, info->color);
+						GadgetRadioSetDisabledUncheckedBoxBorderColor(window, info->borderColor);
 
-						info = GetStateInfo( RADIO_HILITE_CHECKED_BOX );
-						GadgetRadioSetHiliteCheckedBoxImage( window, info->image );
-						GadgetRadioSetHiliteCheckedBoxColor( window, info->color );
-						GadgetRadioSetHiliteCheckedBoxBorderColor( window, info->borderColor );
+						info = GetStateInfo(RADIO_DISABLED_CHECKED_BOX);
+						GadgetRadioSetDisabledCheckedBoxImage(window, info->image);
+						GadgetRadioSetDisabledCheckedBoxColor(window, info->color);
+						GadgetRadioSetDisabledCheckedBoxBorderColor(window, info->borderColor);
 
-					// save group
-					Int group = GetDlgItemInt( hWndDialog, COMBO_GROUP, nullptr, FALSE );
-					Int screen = TheNameKeyGenerator->nameToKey( TheEditor->getSaveFilename() );
-						GadgetRadioSetGroup( window, group, screen );
+						// ----------------------------------------------------------------
+						info = GetStateInfo(RADIO_HILITE);
+						GadgetRadioSetHiliteImage(window, info->image);
+						GadgetRadioSetHiliteColor(window, info->color);
+						GadgetRadioSetHiliteBorderColor(window, info->borderColor);
 
+						info = GetStateInfo(RADIO_HILITE_UNCHECKED_BOX);
+						GadgetRadioSetHiliteUncheckedBoxImage(window, info->image);
+						GadgetRadioSetHiliteUncheckedBoxColor(window, info->color);
+						GadgetRadioSetHiliteUncheckedBoxBorderColor(window, info->borderColor);
+
+						info = GetStateInfo(RADIO_HILITE_CHECKED_BOX);
+						GadgetRadioSetHiliteCheckedBoxImage(window, info->image);
+						GadgetRadioSetHiliteCheckedBoxColor(window, info->color);
+						GadgetRadioSetHiliteCheckedBoxBorderColor(window, info->borderColor);
+
+						// save group
+						Int group = GetDlgItemInt(hWndDialog, COMBO_GROUP, nullptr, FALSE);
+						Int screen = TheNameKeyGenerator->nameToKey(TheEditor->getSaveFilename());
+						GadgetRadioSetGroup(window, group, screen);
 					}
 
-          DestroyWindow( hWndDialog );
-          break;
-
+					DestroyWindow(hWndDialog);
+					break;
 				}
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
+				case IDCANCEL:
 				{
-
-          DestroyWindow( hWndDialog );
-          break;
-
+					DestroyWindow(hWndDialog);
+					break;
 				}
+			}
 
-      }
-
-      return 0;
-
-    }
+			return 0;
+		}
 
 		// ------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
-
-      DestroyWindow( hWndDialog );
-      return 0;
-
+			DestroyWindow(hWndDialog);
+			return 0;
 		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
-
-  }
-
+	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -227,134 +216,137 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 // loadExistingGroupsCombo ====================================================
 /** fill the group combo box with all the other groups in the screen */
 //=============================================================================
-static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
+static void loadExistingGroupsCombo(HWND combo, GameWindow* window)
 {
-
 	// sanity
-	if( combo == nullptr )
+	if (combo == nullptr)
+	{
 		return;
+	}
 
 	// end of recursion
-	if( window == nullptr )
+	if (window == nullptr)
+	{
 		return;
+	}
 
 	// if this is a radio button get the group
-	if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	if (BitIsSet(window->winGetStyle(), GWS_RADIO_BUTTON))
 	{
-		RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
-		char buffer[ 64 ];
+		RadioButtonData* radioData = (RadioButtonData*)window->winGetUserData();
+		char buffer[64];
 
 		// convert to string
-		sprintf( buffer, "%d", radioData->group );
+		sprintf(buffer, "%d", radioData->group);
 
 		// only add it not already there
-		if( SendMessage( combo, CB_FINDSTRINGEXACT, -1, (LPARAM)buffer ) == CB_ERR )
-			SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)buffer );
-
+		if (SendMessage(combo, CB_FINDSTRINGEXACT, -1, (LPARAM)buffer) == CB_ERR)
+		{
+			SendMessage(combo, CB_ADDSTRING, 0, (LPARAM)buffer);
+		}
 	}
 
 	// search our children
-	GameWindow *child;
-	for( child = window->winGetChild(); child; child = child->winGetNext() )
-		loadExistingGroupsCombo( combo, child );
+	GameWindow* child;
+	for (child = window->winGetChild(); child; child = child->winGetNext())
+	{
+		loadExistingGroupsCombo(combo, child);
+	}
 
 	// search the next in line
-	loadExistingGroupsCombo( combo, window->winGetNext() );
-
+	loadExistingGroupsCombo(combo, window->winGetNext());
 }
 
 // InitRadioButtonPropertiesDialog ============================================
 /** Bring up the radio button properties dialog */
 //=============================================================================
-HWND InitRadioButtonPropertiesDialog( GameWindow *window )
+HWND InitRadioButtonPropertiesDialog(GameWindow* window)
 {
 	HWND dialog;
 
 	// create the dialog box
-	dialog = CreateDialog( TheEditor->getInstance(),
-												 (LPCTSTR)RADIO_BUTTON_PROPERTIES_DIALOG,
-												 TheEditor->getWindowHandle(),
-												 (DLGPROC)radioButtonPropertiesCallback );
-	if( dialog == nullptr )
+	dialog = CreateDialog(TheEditor->getInstance(),
+	                      (LPCTSTR)RADIO_BUTTON_PROPERTIES_DIALOG,
+	                      TheEditor->getWindowHandle(),
+	                      (DLGPROC)radioButtonPropertiesCallback);
+	if (dialog == nullptr)
+	{
 		return nullptr;
+	}
 
 	// do the common initialization
-	CommonDialogInitialize( window, dialog );
+	CommonDialogInitialize(window, dialog);
 
 	//
 	// store in the image and color table the values for this putton
 	//
-	const Image *image;
+	const Image* image;
 	Color color, borderColor;
 
 	// --------------------------------------------------------------------------
-	image = GadgetRadioGetEnabledImage( window );
-	color = GadgetRadioGetEnabledColor( window );
-	borderColor = GadgetRadioGetEnabledBorderColor( window );
-	StoreImageAndColor( RADIO_ENABLED, image, color, borderColor );
+	image = GadgetRadioGetEnabledImage(window);
+	color = GadgetRadioGetEnabledColor(window);
+	borderColor = GadgetRadioGetEnabledBorderColor(window);
+	StoreImageAndColor(RADIO_ENABLED, image, color, borderColor);
 
-	image = GadgetRadioGetEnabledUncheckedBoxImage( window );
-	color = GadgetRadioGetEnabledUncheckedBoxColor( window );
-	borderColor = GadgetRadioGetEnabledUncheckedBoxBorderColor( window );
-	StoreImageAndColor( RADIO_ENABLED_UNCHECKED_BOX, image, color, borderColor );
+	image = GadgetRadioGetEnabledUncheckedBoxImage(window);
+	color = GadgetRadioGetEnabledUncheckedBoxColor(window);
+	borderColor = GadgetRadioGetEnabledUncheckedBoxBorderColor(window);
+	StoreImageAndColor(RADIO_ENABLED_UNCHECKED_BOX, image, color, borderColor);
 
-	image = GadgetRadioGetEnabledCheckedBoxImage( window );
-	color = GadgetRadioGetEnabledCheckedBoxColor( window );
-	borderColor = GadgetRadioGetEnabledCheckedBoxBorderColor( window );
-	StoreImageAndColor( RADIO_ENABLED_CHECKED_BOX, image, color, borderColor );
-
-	// --------------------------------------------------------------------------
-	image = GadgetRadioGetDisabledImage( window );
-	color = GadgetRadioGetDisabledColor( window );
-	borderColor = GadgetRadioGetDisabledBorderColor( window );
-	StoreImageAndColor( RADIO_DISABLED, image, color, borderColor );
-
-	image = GadgetRadioGetDisabledUncheckedBoxImage( window );
-	color = GadgetRadioGetDisabledUncheckedBoxColor( window );
-	borderColor = GadgetRadioGetDisabledUncheckedBoxBorderColor( window );
-	StoreImageAndColor( RADIO_DISABLED_UNCHECKED_BOX, image, color, borderColor );
-
-	image = GadgetRadioGetDisabledCheckedBoxImage( window );
-	color = GadgetRadioGetDisabledCheckedBoxColor( window );
-	borderColor = GadgetRadioGetDisabledCheckedBoxBorderColor( window );
-	StoreImageAndColor( RADIO_DISABLED_CHECKED_BOX, image, color, borderColor );
+	image = GadgetRadioGetEnabledCheckedBoxImage(window);
+	color = GadgetRadioGetEnabledCheckedBoxColor(window);
+	borderColor = GadgetRadioGetEnabledCheckedBoxBorderColor(window);
+	StoreImageAndColor(RADIO_ENABLED_CHECKED_BOX, image, color, borderColor);
 
 	// --------------------------------------------------------------------------
-	image = GadgetRadioGetHiliteImage( window );
-	color = GadgetRadioGetHiliteColor( window );
-	borderColor = GadgetRadioGetHiliteBorderColor( window );
-	StoreImageAndColor( RADIO_HILITE, image, color, borderColor );
+	image = GadgetRadioGetDisabledImage(window);
+	color = GadgetRadioGetDisabledColor(window);
+	borderColor = GadgetRadioGetDisabledBorderColor(window);
+	StoreImageAndColor(RADIO_DISABLED, image, color, borderColor);
 
-	image = GadgetRadioGetHiliteUncheckedBoxImage( window );
-	color = GadgetRadioGetHiliteUncheckedBoxColor( window );
-	borderColor = GadgetRadioGetHiliteUncheckedBoxBorderColor( window );
-	StoreImageAndColor( RADIO_HILITE_UNCHECKED_BOX, image, color, borderColor );
+	image = GadgetRadioGetDisabledUncheckedBoxImage(window);
+	color = GadgetRadioGetDisabledUncheckedBoxColor(window);
+	borderColor = GadgetRadioGetDisabledUncheckedBoxBorderColor(window);
+	StoreImageAndColor(RADIO_DISABLED_UNCHECKED_BOX, image, color, borderColor);
 
-	image = GadgetRadioGetHiliteCheckedBoxImage( window );
-	color = GadgetRadioGetHiliteCheckedBoxColor( window );
-	borderColor = GadgetRadioGetHiliteCheckedBoxBorderColor( window );
-	StoreImageAndColor( RADIO_HILITE_CHECKED_BOX, image, color, borderColor );
+	image = GadgetRadioGetDisabledCheckedBoxImage(window);
+	color = GadgetRadioGetDisabledCheckedBoxColor(window);
+	borderColor = GadgetRadioGetDisabledCheckedBoxBorderColor(window);
+	StoreImageAndColor(RADIO_DISABLED_CHECKED_BOX, image, color, borderColor);
+
+	// --------------------------------------------------------------------------
+	image = GadgetRadioGetHiliteImage(window);
+	color = GadgetRadioGetHiliteColor(window);
+	borderColor = GadgetRadioGetHiliteBorderColor(window);
+	StoreImageAndColor(RADIO_HILITE, image, color, borderColor);
+
+	image = GadgetRadioGetHiliteUncheckedBoxImage(window);
+	color = GadgetRadioGetHiliteUncheckedBoxColor(window);
+	borderColor = GadgetRadioGetHiliteUncheckedBoxBorderColor(window);
+	StoreImageAndColor(RADIO_HILITE_UNCHECKED_BOX, image, color, borderColor);
+
+	image = GadgetRadioGetHiliteCheckedBoxImage(window);
+	color = GadgetRadioGetHiliteCheckedBoxColor(window);
+	borderColor = GadgetRadioGetHiliteCheckedBoxBorderColor(window);
+	StoreImageAndColor(RADIO_HILITE_CHECKED_BOX, image, color, borderColor);
 
 	// radio data
-	RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
+	RadioButtonData* radioData = (RadioButtonData*)window->winGetUserData();
 
 	// fill the group combo box with all the other groups in the screen
-	loadExistingGroupsCombo( GetDlgItem( dialog, COMBO_GROUP ),
-													 TheWindowManager->winGetWindowList() );
+	loadExistingGroupsCombo(GetDlgItem(dialog, COMBO_GROUP),
+	                        TheWindowManager->winGetWindowList());
 
 	// set the group for this radio button
-	SetDlgItemInt( dialog, COMBO_GROUP, radioData->group, FALSE );
+	SetDlgItemInt(dialog, COMBO_GROUP, radioData->group, FALSE);
 
 	// select the button enabled state for display
-	SwitchToState( RADIO_ENABLED, dialog );
+	SwitchToState(RADIO_ENABLED, dialog);
 
 	//
 	// initialize the dialog with values from the window
 	//
 
 	return dialog;
-
 }
-
-
-

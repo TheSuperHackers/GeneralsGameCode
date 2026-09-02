@@ -38,7 +38,8 @@
 
 #pragma once
 
-template <class T> class DLNodeClass;
+template <class T>
+class DLNodeClass;
 
 template <class T>
 class DLListClass
@@ -48,8 +49,11 @@ class DLListClass
 	DLNodeClass<T>* tail;
 
 public:
-	DLListClass() : head(0), tail(0) {}
-	virtual ~DLListClass() { }
+	DLListClass()
+	  : head(0)
+	  , tail(0)
+	{}
+	virtual ~DLListClass() {}
 
 	void Add_Head(DLNodeClass<T>* node);
 	void Remove_Head();
@@ -72,7 +76,8 @@ class DLDestroyListClass : public DLListClass<T>
 public:
 	virtual ~DLDestroyListClass()
 	{
-		while (T* t=Head()) {
+		while (T* t = Head())
+		{
 			delete t;
 		}
 	}
@@ -85,56 +90,79 @@ class DLNodeClass
 	DLNodeClass<T>* succ;
 	DLNodeClass<T>* pred;
 	DLListClass<T>* list;
+
 public:
-	DLNodeClass() : succ(0), pred(0), list(0) {}
+	DLNodeClass()
+	  : succ(0)
+	  , pred(0)
+	  , list(0)
+	{}
 	~DLNodeClass() { Remove(); }
 
 	void Insert_Before(DLNodeClass<T>* n)
 	{
-		list=n->list;
-		succ=n;
-		pred=n->pred;
-		if (n->pred) n->pred->succ=this;
-		n->pred=this;
+		list = n->list;
+		succ = n;
+		pred = n->pred;
+		if (n->pred)
+		{
+			n->pred->succ = this;
+		}
+		n->pred = this;
 
-		if (list->head==n) {
-			list->head=this;
+		if (list->head == n)
+		{
+			list->head = this;
 		}
 	}
 
 	void Insert_After(DLNodeClass<T>* n)
 	{
-		list=n->list;
-		pred=n;
-		succ=n->succ;
-		if (n->succ) n->succ->pred=this;
-		n->succ=this;
+		list = n->list;
+		pred = n;
+		succ = n->succ;
+		if (n->succ)
+		{
+			n->succ->pred = this;
+		}
+		n->succ = this;
 
-		if (list->tail==n) {
-			list->tail=this;
+		if (list->tail == n)
+		{
+			list->tail = this;
 		}
 	}
 
 	void Remove()
 	{
-		if (!list) return;
-		if (list->Head()==this) {
-			DLListClass<T>* tmp_list=list;
-			list=0;
+		if (!list)
+		{
+			return;
+		}
+		if (list->Head() == this)
+		{
+			DLListClass<T>* tmp_list = list;
+			list = 0;
 			tmp_list->Remove_Head();
 			return;
 		}
-		if (list->Tail()==this) {
-			DLListClass<T>* tmp_list=list;
-			list=0;
+		if (list->Tail() == this)
+		{
+			DLListClass<T>* tmp_list = list;
+			list = 0;
 			tmp_list->Remove_Tail();
 			return;
 		}
-		if (succ) succ->pred=pred;
-		if (pred) pred->succ=succ;
-		list=0;
+		if (succ)
+		{
+			succ->pred = pred;
+		}
+		if (pred)
+		{
+			pred->succ = succ;
+		}
+		list = 0;
 	}
-
 
 	T* Succ() { return static_cast<T*>(succ); }
 	T* Pred() { return static_cast<T*>(pred); }
@@ -144,57 +172,78 @@ public:
 	DLListClass<T>* List() { return list; }
 };
 
-
 template <class T>
 inline void DLListClass<T>::Add_Head(DLNodeClass<T>* n)
 {
-	n->list=this;
-	if (head) {
+	n->list = this;
+	if (head)
+	{
 		n->Insert_Before(head);
-		head=n;
+		head = n;
 	}
-	else {
-		tail=n;
-		head=n;
-		n->succ=0;
-		n->pred=0;
+	else
+	{
+		tail = n;
+		head = n;
+		n->succ = 0;
+		n->pred = 0;
 	}
 }
 
 template <class T>
 inline void DLListClass<T>::Add_Tail(DLNodeClass<T>* n)
 {
-	n->list=this;
-	if (tail) {
+	n->list = this;
+	if (tail)
+	{
 		n->Insert_After(tail);
-		tail=n;
+		tail = n;
 	}
-	else {
-		tail=n;
-		head=n;
-		n->succ=0;
-		n->pred=0;
+	else
+	{
+		tail = n;
+		head = n;
+		n->succ = 0;
+		n->pred = 0;
 	}
 }
 
 template <class T>
 inline void DLListClass<T>::Remove_Head()
 {
-	if (!head) return;
-	DLNodeClass<T>* n=head;
-	head=head->Succ();
-	if (!head) tail=head;
-	else head->pred=0;
+	if (!head)
+	{
+		return;
+	}
+	DLNodeClass<T>* n = head;
+	head = head->Succ();
+	if (!head)
+	{
+		tail = head;
+	}
+	else
+	{
+		head->pred = 0;
+	}
 	n->Remove();
 }
 
 template <class T>
 inline void DLListClass<T>::Remove_Tail()
 {
-	if (!tail) return;
-	DLNodeClass<T>* n=tail;
-	tail=tail->Pred();
-	if (!tail) head=tail;
-	else tail->succ=0;
+	if (!tail)
+	{
+		return;
+	}
+	DLNodeClass<T>* n = tail;
+	tail = tail->Pred();
+	if (!tail)
+	{
+		head = tail;
+	}
+	else
+	{
+		tail->succ = 0;
+	}
 	n->Remove();
 }

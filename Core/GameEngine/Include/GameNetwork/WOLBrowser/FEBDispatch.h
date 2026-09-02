@@ -30,8 +30,8 @@
 #pragma once
 
 #if defined __MINGW32__
-#include "Utility/atl_compat.h"
-#include "Utility/comsupp_compat.h" 
+	#include "Utility/atl_compat.h"
+	#include "Utility/comsupp_compat.h"
 #endif
 
 #include <atlbase.h>
@@ -41,25 +41,23 @@ extern CComModule _Module;
 
 #include "oleauto.h"
 
-template <class T, class C, const IID *I>
-class FEBDispatch :
-public CComObjectRootEx<CComSingleThreadModel>,
-public CComCoClass<T>,
-public C
+template <class T, class C, const IID* I>
+class FEBDispatch : public CComObjectRootEx<CComSingleThreadModel>,
+                    public CComCoClass<T>,
+                    public C
 {
 public:
-
 	BEGIN_COM_MAP(T)
-		COM_INTERFACE_ENTRY(C)
-		COM_INTERFACE_ENTRY_AGGREGATE(IID_IDispatch, m_dispatch)
+	COM_INTERFACE_ENTRY(C)
+	COM_INTERFACE_ENTRY_AGGREGATE(IID_IDispatch, m_dispatch)
 	END_COM_MAP()
 
-		FEBDispatch()
+	FEBDispatch()
 	{
 		m_ptinfo = nullptr;
 		m_dispatch = nullptr;
 
-		ITypeLib *ptlib;
+		ITypeLib* ptlib;
 		HRESULT hr;
 		HRESULT TypeLibraryLoadResult;
 		char filename[256];
@@ -86,7 +84,7 @@ public:
 			}
 		}
 
-		if ( m_dispatch == nullptr )
+		if (m_dispatch == nullptr)
 		{
 			DEBUG_LOG(("Error creating Dispatch for Web interface"));
 		}
@@ -95,14 +93,18 @@ public:
 	virtual ~FEBDispatch()
 	{
 		if (m_ptinfo)
+		{
 			m_ptinfo->Release();
+		}
 
 		if (m_dispatch)
+		{
 			m_dispatch->Release();
+		}
 	}
 
-	IUnknown *m_dispatch;
+	IUnknown* m_dispatch;
 
 private:
-	ITypeInfo *m_ptinfo;
+	ITypeInfo* m_ptinfo;
 };

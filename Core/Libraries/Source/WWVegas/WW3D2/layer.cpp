@@ -44,11 +44,9 @@
  *   LC::Set -- Kinda like an assignment operator.                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "layer.h"
 #include "scene.h"
 #include "camera.h"
-
 
 /***********************************************************************************************
  * LayerClass::LayerClass -- default constructor                                               *
@@ -62,21 +60,21 @@
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LayerClass::LayerClass() :
-	Scene(nullptr),
-	Camera(nullptr),
-	Clear(false),
-	ClearZ(true),
-	ClearColor(0,0,0)
+LayerClass::LayerClass()
+  : Scene(nullptr)
+  , Camera(nullptr)
+  , Clear(false)
+  , ClearZ(true)
+  , ClearColor(0, 0, 0)
 {
 }
 
-LayerClass::LayerClass(const LayerClass &src) :
-	Scene(src.Get_Scene()),
-	Camera(src.Get_Camera()),
-	Clear(src.Clear),
-	ClearZ(src.ClearZ),
-	ClearColor(src.ClearColor)
+LayerClass::LayerClass(const LayerClass& src)
+  : Scene(src.Get_Scene())
+  , Camera(src.Get_Camera())
+  , Clear(src.Clear)
+  , ClearZ(src.ClearZ)
+  , ClearColor(src.ClearColor)
 {
 }
 
@@ -95,26 +93,29 @@ LayerClass::LayerClass(const LayerClass &src) :
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LayerClass::LayerClass
-(
-		SceneClass * scene,
-		CameraClass * cam,
-		bool clear,
-		bool clearz,
-		const Vector3 & color
-)
+LayerClass::LayerClass(
+  SceneClass* scene,
+  CameraClass* cam,
+  bool clear,
+  bool clearz,
+  const Vector3& color)
 {
-	if (scene) scene->Add_Ref();
+	if (scene)
+	{
+		scene->Add_Ref();
+	}
 	Scene = scene;
 
-	if (cam) cam->Add_Ref();
+	if (cam)
+	{
+		cam->Add_Ref();
+	}
 	Camera = cam;
 
 	Clear = clear;
 	ClearZ = clearz;
 	ClearColor = color;
 }
-
 
 /***********************************************************************************************
  * LayerClass::~LayerClass -- destructor                                                       *
@@ -130,16 +131,17 @@ LayerClass::LayerClass
  *=============================================================================================*/
 LayerClass::~LayerClass()
 {
-	if (Scene) {
+	if (Scene)
+	{
 		Scene->Release_Ref();
-		Scene=nullptr;
+		Scene = nullptr;
 	}
-	if (Camera) {
+	if (Camera)
+	{
 		Camera->Release_Ref();
-		Camera=nullptr;
+		Camera = nullptr;
 	}
 }
-
 
 /***********************************************************************************************
  * LayerClass::Set_Scene -- Set the scene used by this layer                                   *
@@ -153,17 +155,18 @@ LayerClass::~LayerClass()
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LayerClass::Set_Scene(SceneClass * scene)
+void LayerClass::Set_Scene(SceneClass* scene)
 {
-	if (Scene) {
+	if (Scene)
+	{
 		Scene->Release_Ref();
 	}
 	Scene = scene;
-	if (Scene) {
+	if (Scene)
+	{
 		Scene->Add_Ref();
 	}
 }
-
 
 /***********************************************************************************************
  * LayerClass::Get_Scene -- get the scene being rendered by this layer                         *
@@ -177,14 +180,14 @@ void LayerClass::Set_Scene(SceneClass * scene)
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass * LayerClass::Get_Scene() const
+SceneClass* LayerClass::Get_Scene() const
 {
-	if (Scene) {
+	if (Scene)
+	{
 		Scene->Add_Ref();
 	}
 	return Scene;
 }
-
 
 /***********************************************************************************************
  * LayerClass::Peek_Scene -- get the scene being rendered by this layer                        *
@@ -198,11 +201,10 @@ SceneClass * LayerClass::Get_Scene() const
  * HISTORY:                                                                                    *
  *   3/8/99    NH : Created.                                                                   *
  *=============================================================================================*/
-SceneClass * LayerClass::Peek_Scene() const
+SceneClass* LayerClass::Peek_Scene() const
 {
 	return Scene;
 }
-
 
 /***********************************************************************************************
  * LayerClass::Set_Camera -- Set the camera being used by this layer                           *
@@ -216,17 +218,18 @@ SceneClass * LayerClass::Peek_Scene() const
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LayerClass::Set_Camera(CameraClass * cam)
+void LayerClass::Set_Camera(CameraClass* cam)
 {
-	if (Camera) {
+	if (Camera)
+	{
 		Camera->Release_Ref();
 	}
 	Camera = cam;
-	if (Camera) {
+	if (Camera)
+	{
 		Camera->Add_Ref();
 	}
 }
-
 
 /***********************************************************************************************
  * LayerClass::Get_Camera -- get the camera being used by this layer                           *
@@ -240,14 +243,14 @@ void LayerClass::Set_Camera(CameraClass * cam)
  * HISTORY:                                                                                    *
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-CameraClass * LayerClass::Get_Camera() const
+CameraClass* LayerClass::Get_Camera() const
 {
-	if (Camera) {
+	if (Camera)
+	{
 		Camera->Add_Ref();
 	}
 	return Camera;
 }
-
 
 /***********************************************************************************************
  * LC::Peek_Camera -- Get copy of camera.                                                      *
@@ -261,11 +264,10 @@ CameraClass * LayerClass::Get_Camera() const
  * HISTORY:                                                                                    *
  *   08/14/2001 SKB : Created.                                                                 *
  *=============================================================================================*/
-CameraClass * LayerClass::Peek_Camera() const
+CameraClass* LayerClass::Peek_Camera() const
 {
 	return Camera;
 }
-
 
 /***********************************************************************************************
  * LC::Set -- Kinda like an assignment operator.                                               *
@@ -279,7 +281,7 @@ CameraClass * LayerClass::Peek_Camera() const
  * HISTORY:                                                                                    *
  *   08/14/2001 SKB : Created.                                                                 *
  *=============================================================================================*/
-void LayerClass::Set(const LayerClass & layer)
+void LayerClass::Set(const LayerClass& layer)
 {
 	Set_Camera(layer.Peek_Camera());
 	Set_Scene(layer.Peek_Scene());

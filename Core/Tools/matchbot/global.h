@@ -19,11 +19,11 @@
 #pragma once
 
 #ifdef _WIN32
-#include <process.h>
-#ifdef IN
-#undef IN
-#endif
-#define IN const
+	#include <process.h>
+	#ifdef IN
+		#undef IN
+	#endif
+	#define IN const
 #endif
 #include <wstypes.h>
 #include <configfile.h>
@@ -39,7 +39,7 @@ public:
 	GlobalClass();
 
 	ConfigFile config;
-	bool ReadFile(const char *fname);
+	bool ReadFile(const char* fname);
 
 	bool GetString(const Wstring& key, Wstring& val);
 

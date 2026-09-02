@@ -44,44 +44,41 @@ class FXList;
 class FXListDieModuleData : public DieModuleData
 {
 public:
-	const FXList					*m_defaultDeathFX;								///< default fx to make
-	UpgradeMuxData				m_upgradeMuxData;
-	Bool									m_orientToObject;
-	Bool									m_initiallyActive;
+	const FXList* m_defaultDeathFX;    ///< default fx to make
+	UpgradeMuxData m_upgradeMuxData;
+	Bool m_orientToObject;
+	Bool m_initiallyActive;
 
 	FXListDieModuleData()
 	{
 		m_defaultDeathFX = nullptr;
 		m_orientToObject = TRUE;
-		m_initiallyActive = TRUE; //Patch 1.02 -- Craptacular HACK -- should default to FALSE but only ONE case sets it false out of 847!
+		m_initiallyActive = TRUE;    // Patch 1.02 -- Craptacular HACK -- should default to FALSE but only ONE case sets it false out of 847!
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DieModuleData::buildFieldParse(p);
+		DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "StartsActive",					INI::parseBool, nullptr, offsetof( FXListDieModuleData, m_initiallyActive ) },
-			{ "DeathFX",							INI::parseFXList,		nullptr, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
-			{ "OrientToObject",				INI::parseBool,		nullptr, offsetof( FXListDieModuleData, m_orientToObject ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "StartsActive", INI::parseBool, nullptr, offsetof(FXListDieModuleData, m_initiallyActive) },
+			{ "DeathFX", INI::parseFXList, nullptr, offsetof(FXListDieModuleData, m_defaultDeathFX) },
+			{ "OrientToObject", INI::parseBool, nullptr, offsetof(FXListDieModuleData, m_orientToObject) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( FXListDieModuleData, m_upgradeMuxData ));
+		p.add(dataFieldParse);
+		p.add(UpgradeMuxData::getFieldParse(), offsetof(FXListDieModuleData, m_upgradeMuxData));
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 class FXListDie : public DieModule, public UpgradeMux
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FXListDie, FXListDieModuleData );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FXListDie, "FXListDie" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FXListDie, FXListDieModuleData);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FXListDie, "FXListDie")
 
 public:
-
-	FXListDie( Thing *thing, const ModuleData* moduleData );
+	FXListDie(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
@@ -91,10 +88,9 @@ public:
 	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 	virtual DieModuleInterface* getDie() override { return this; }
 
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 protected:
-
 	virtual void upgradeImplementation() override
 	{
 		// nothing!
@@ -124,6 +120,4 @@ protected:
 	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
-
 };

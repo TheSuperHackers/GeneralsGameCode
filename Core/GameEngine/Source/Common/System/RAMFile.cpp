@@ -56,42 +56,29 @@
 #include "Common/RAMFile.h"
 #include "Common/PerfTimer.h"
 
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
@@ -102,18 +89,15 @@
 //=================================================================
 
 RAMFile::RAMFile()
-: m_size(0),
-	m_data(nullptr),
-	m_pos(0)
+  : m_size(0)
+  , m_data(nullptr)
+  , m_pos(0)
 {
-
 }
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //=================================================================
 // RAMFile::~RAMFile
@@ -128,27 +112,27 @@ RAMFile::~RAMFile()
 // RAMFile::open
 //=================================================================
 /**
-	* This function opens a file using the standard C open() or
-	* fopen() call. Access flags are mapped to the appropriate flags.
-	* Returns true if file was opened successfully.
-	*/
+ * This function opens a file using the standard C open() or
+ * fopen() call. Access flags are mapped to the appropriate flags.
+ * Returns true if file was opened successfully.
+ */
 //=================================================================
 
-//DECLARE_PERF_TIMER(RAMFile)
-Bool RAMFile::open( const Char *filename, Int access, size_t bufferSize )
+// DECLARE_PERF_TIMER(RAMFile)
+Bool RAMFile::open(const Char* filename, Int access, size_t bufferSize)
 {
-	//USE_PERF_TIMER(RAMFile)
+	// USE_PERF_TIMER(RAMFile)
 
-	bufferSize = 0; // RAM File needs no file buffer because it is read in one go.
+	bufferSize = 0;    // RAM File needs no file buffer because it is read in one go.
 
-	File *file = TheFileSystem->openFile( filename, access, bufferSize );
+	File* file = TheFileSystem->openFile(filename, access, bufferSize);
 
-	if ( file == nullptr )
+	if (file == nullptr)
 	{
 		return FALSE;
 	}
 
-	Bool result = open( file );
+	Bool result = open(file);
 
 	file->close();
 
@@ -159,35 +143,35 @@ Bool RAMFile::open( const Char *filename, Int access, size_t bufferSize )
 // RAMFile::open
 //============================================================================
 
-Bool RAMFile::open( File *file )
+Bool RAMFile::open(File* file)
 {
-	//USE_PERF_TIMER(RAMFile)
-	if ( file == nullptr )
+	// USE_PERF_TIMER(RAMFile)
+	if (file == nullptr)
 	{
 		return FALSE;
 	}
 
 	const Int access = file->getAccess();
 
-	if ( !File::open( file->getName(), access ))
+	if (!File::open(file->getName(), access))
 	{
 		return FALSE;
 	}
 
 	// read whole file in to memory
 	m_size = file->size();
-	m_data = MSGNEW("RAMFILE") char [ m_size ];	// pool[]ify
+	m_data = MSGNEW("RAMFILE") char[m_size];    // pool[]ify
 
-	if ( m_data == nullptr )
+	if (m_data == nullptr)
 	{
 		return FALSE;
 	}
 
-	m_size = file->read( m_data, m_size );
+	m_size = file->read(m_data, m_size);
 
-	if ( m_size < 0 )
+	if (m_size < 0)
 	{
-		delete [] m_data;
+		delete[] m_data;
 		m_data = nullptr;
 		return FALSE;
 	}
@@ -200,25 +184,29 @@ Bool RAMFile::open( File *file )
 //============================================================================
 // RAMFile::openFromArchive
 //============================================================================
-Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size)
+Bool RAMFile::openFromArchive(File* archiveFile, const AsciiString& filename, Int offset, Int size)
 {
-	//USE_PERF_TIMER(RAMFile)
-	if (archiveFile == nullptr) {
+	// USE_PERF_TIMER(RAMFile)
+	if (archiveFile == nullptr)
+	{
 		return FALSE;
 	}
 
-	if (File::open(filename.str(), File::READ | File::BINARY) == FALSE) {
+	if (File::open(filename.str(), File::READ | File::BINARY) == FALSE)
+	{
 		return FALSE;
 	}
 
 	delete[] m_data;
-	m_data = MSGNEW("RAMFILE") Char [size];	// pool[]ify
+	m_data = MSGNEW("RAMFILE") Char[size];    // pool[]ify
 	m_size = size;
 
-	if (archiveFile->seek(offset, File::START) != offset) {
+	if (archiveFile->seek(offset, File::START) != offset)
+	{
 		return FALSE;
 	}
-	if (archiveFile->read(m_data, size) != size) {
+	if (archiveFile->read(m_data, size) != size)
+	{
 		return FALSE;
 	}
 	m_nameStr = filename;
@@ -230,9 +218,9 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 // RAMFile::close
 //=================================================================
 /**
-	* Closes the current file if it is open.
-  * Must call RAMFile::close() for each successful RAMFile::open() call.
-	*/
+ * Closes the current file if it is open.
+ * Must call RAMFile::close() for each successful RAMFile::open() call.
+ */
 //=================================================================
 
 void RAMFile::close()
@@ -245,7 +233,7 @@ void RAMFile::close()
 
 void RAMFile::closeFile()
 {
-	delete [] m_data;
+	delete[] m_data;
 	m_data = nullptr;
 }
 
@@ -253,23 +241,23 @@ void RAMFile::closeFile()
 // RAMFile::read
 //=================================================================
 // if buffer is null, just advance the current position by 'bytes'
-Int RAMFile::read( void *buffer, Int bytes )
+Int RAMFile::read(void* buffer, Int bytes)
 {
-	if( m_data == nullptr )
+	if (m_data == nullptr)
 	{
 		return -1;
 	}
 
-	Int bytesLeft = m_size - m_pos ;
+	Int bytesLeft = m_size - m_pos;
 
-	if ( bytes > bytesLeft )
+	if (bytes > bytesLeft)
 	{
 		bytes = bytesLeft;
 	}
 
-	if (( bytes > 0 ) && ( buffer != nullptr ))
+	if ((bytes > 0) && (buffer != nullptr))
 	{
-		memcpy ( buffer, &m_data[m_pos], bytes );
+		memcpy(buffer, &m_data[m_pos], bytes);
 	}
 
 	m_pos += bytes;
@@ -299,7 +287,7 @@ Int RAMFile::readWideChar()
 // RAMFile::write
 //=================================================================
 
-Int RAMFile::write( const void *buffer, Int bytes )
+Int RAMFile::write(const void* buffer, Int bytes)
 {
 	return -1;
 }
@@ -308,7 +296,7 @@ Int RAMFile::write( const void *buffer, Int bytes )
 // RAMFile::writeFormat - Ascii
 //=================================================================
 
-Int RAMFile::writeFormat( const Char* format, ... )
+Int RAMFile::writeFormat(const Char* format, ...)
 {
 	return -1;
 }
@@ -317,7 +305,7 @@ Int RAMFile::writeFormat( const Char* format, ... )
 // RAMFile::writeFormat - Wide character
 //=================================================================
 
-Int RAMFile::writeFormat( const WideChar* format, ... )
+Int RAMFile::writeFormat(const WideChar* format, ...)
 {
 	return -1;
 }
@@ -326,7 +314,7 @@ Int RAMFile::writeFormat( const WideChar* format, ... )
 // RAMFile::writeChar - Ascii
 //=================================================================
 
-Int RAMFile::writeChar( const Char* character )
+Int RAMFile::writeChar(const Char* character)
 {
 	return EOF;
 }
@@ -335,7 +323,7 @@ Int RAMFile::writeChar( const Char* character )
 // RAMFile::writeChar - Wide character
 //=================================================================
 
-Int RAMFile::writeChar( const WideChar* character )
+Int RAMFile::writeChar(const WideChar* character)
 {
 	return WEOF;
 }
@@ -344,11 +332,11 @@ Int RAMFile::writeChar( const WideChar* character )
 // RAMFile::seek
 //=================================================================
 
-Int RAMFile::seek( Int pos, seekMode mode)
+Int RAMFile::seek(Int pos, seekMode mode)
 {
 	Int newPos;
 
-	switch( mode )
+	switch (mode)
 	{
 		case START:
 			newPos = pos;
@@ -365,11 +353,11 @@ Int RAMFile::seek( Int pos, seekMode mode)
 			return -1;
 	}
 
-	if ( newPos < 0 )
+	if (newPos < 0)
 	{
 		newPos = 0;
 	}
-	else if ( newPos > m_size )
+	else if (newPos > m_size)
 	{
 		newPos = m_size;
 	}
@@ -377,7 +365,6 @@ Int RAMFile::seek( Int pos, seekMode mode)
 	m_pos = newPos;
 
 	return m_pos;
-
 }
 
 //=================================================================
@@ -392,28 +379,32 @@ Bool RAMFile::flush()
 //=================================================================
 // RAMFile::scanInt
 //=================================================================
-Bool RAMFile::scanInt(Int &newInt)
+Bool RAMFile::scanInt(Int& newInt)
 {
 	newInt = 0;
 	AsciiString tempstr;
 
-	while ((m_pos < m_size) && ((m_data[m_pos] < '0') || (m_data[m_pos] > '9')) && (m_data[m_pos] != '-')) {
+	while ((m_pos < m_size) && ((m_data[m_pos] < '0') || (m_data[m_pos] > '9')) && (m_data[m_pos] != '-'))
+	{
 		++m_pos;
 	}
 
-	if (m_pos >= m_size) {
+	if (m_pos >= m_size)
+	{
 		m_pos = m_size;
 		return FALSE;
 	}
 
-	do {
+	do
+	{
 		tempstr.concat(m_data[m_pos]);
 		++m_pos;
-	} while ((m_pos < m_size) && ((m_data[m_pos] >= '0') && (m_data[m_pos] <= '9')));
+	}
+	while ((m_pos < m_size) && ((m_data[m_pos] >= '0') && (m_data[m_pos] <= '9')));
 
-//	if (m_pos < m_size) {
-//		--m_pos;
-//	}
+	//	if (m_pos < m_size) {
+	//		--m_pos;
+	//	}
 
 	newInt = atoi(tempstr.str());
 	return TRUE;
@@ -422,32 +413,37 @@ Bool RAMFile::scanInt(Int &newInt)
 //=================================================================
 // RAMFile::scanInt
 //=================================================================
-Bool RAMFile::scanReal(Real &newReal)
+Bool RAMFile::scanReal(Real& newReal)
 {
 	newReal = 0.0;
 	AsciiString tempstr;
 	Bool sawDec = FALSE;
 
-	while ((m_pos < m_size) && ((m_data[m_pos] < '0') || (m_data[m_pos] > '9')) && (m_data[m_pos] != '-') && (m_data[m_pos] != '.')) {
+	while ((m_pos < m_size) && ((m_data[m_pos] < '0') || (m_data[m_pos] > '9')) && (m_data[m_pos] != '-') && (m_data[m_pos] != '.'))
+	{
 		++m_pos;
 	}
 
-	if (m_pos >= m_size) {
+	if (m_pos >= m_size)
+	{
 		m_pos = m_size;
 		return FALSE;
 	}
 
-	do {
+	do
+	{
 		tempstr.concat(m_data[m_pos]);
-		if (m_data[m_pos] == '.') {
+		if (m_data[m_pos] == '.')
+		{
 			sawDec = TRUE;
 		}
 		++m_pos;
-	} while ((m_pos < m_size) && (((m_data[m_pos] >= '0') && (m_data[m_pos] <= '9')) || ((m_data[m_pos] == '.') && !sawDec)));
+	}
+	while ((m_pos < m_size) && (((m_data[m_pos] >= '0') && (m_data[m_pos] <= '9')) || ((m_data[m_pos] == '.') && !sawDec)));
 
-//	if (m_pos < m_size) {
-//		--m_pos;
-//	}
+	//	if (m_pos < m_size) {
+	//		--m_pos;
+	//	}
 
 	newReal = atof(tempstr.str());
 	return TRUE;
@@ -456,23 +452,27 @@ Bool RAMFile::scanReal(Real &newReal)
 //=================================================================
 // RAMFile::scanString
 //=================================================================
-Bool RAMFile::scanString(AsciiString &newString)
+Bool RAMFile::scanString(AsciiString& newString)
 {
 	newString.clear();
 
-	while ((m_pos < m_size) && isspace(m_data[m_pos])) {
+	while ((m_pos < m_size) && isspace(m_data[m_pos]))
+	{
 		++m_pos;
 	}
 
-	if (m_pos >= m_size) {
+	if (m_pos >= m_size)
+	{
 		m_pos = m_size;
 		return FALSE;
 	}
 
-	do {
+	do
+	{
 		newString.concat(m_data[m_pos]);
 		++m_pos;
-	} while ((m_pos < m_size) && (!isspace(m_data[m_pos])));
+	}
+	while ((m_pos < m_size) && (!isspace(m_data[m_pos])));
 
 	return TRUE;
 }
@@ -480,12 +480,14 @@ Bool RAMFile::scanString(AsciiString &newString)
 //=================================================================
 // RAMFile::nextLine
 //=================================================================
-void RAMFile::nextLine(Char *buf, Int bufSize)
+void RAMFile::nextLine(Char* buf, Int bufSize)
 {
 	Int i = 0;
 	// seek to the next new-line character
-	while ((m_pos < m_size) && (m_data[m_pos] != '\n')) {
-		if ((buf != nullptr) && (i < (bufSize-1))) {
+	while ((m_pos < m_size) && (m_data[m_pos] != '\n'))
+	{
+		if ((buf != nullptr) && (i < (bufSize - 1)))
+		{
 			buf[i] = m_data[m_pos];
 			++i;
 		}
@@ -493,21 +495,28 @@ void RAMFile::nextLine(Char *buf, Int bufSize)
 	}
 
 	// we got to the new-line character, now go one past it.
-	if (m_pos < m_size) {
-		if ((buf != nullptr) && (i < bufSize)) {
+	if (m_pos < m_size)
+	{
+		if ((buf != nullptr) && (i < bufSize))
+		{
 			buf[i] = m_data[m_pos];
 			++i;
 		}
 		++m_pos;
 	}
-	if (buf != nullptr) {
-		if (i < bufSize) {
+	if (buf != nullptr)
+	{
+		if (i < bufSize)
+		{
 			buf[i] = 0;
-		} else {
+		}
+		else
+		{
 			buf[bufSize] = 0;
 		}
 	}
-	if (m_pos >= m_size) {
+	if (m_pos >= m_size)
+	{
 		m_pos = m_size;
 	}
 }
@@ -515,16 +524,17 @@ void RAMFile::nextLine(Char *buf, Int bufSize)
 //=================================================================
 // RAMFile::nextLine
 //=================================================================
-Bool RAMFile::copyDataToFile(File *localFile)
+Bool RAMFile::copyDataToFile(File* localFile)
 {
-	if (localFile == nullptr) {
+	if (localFile == nullptr)
+	{
 		return FALSE;
 	}
 
-	if (localFile->write(m_data, m_size) == m_size) {
+	if (localFile->write(m_data, m_size) == m_size)
+	{
 		return TRUE;
 	}
-
 
 	return FALSE;
 }
@@ -540,23 +550,22 @@ File* RAMFile::convertToRAMFile()
 // RAMFile::readEntireAndClose
 //=================================================================
 /**
-	Allocate a buffer large enough to hold entire file, read
-	the entire file into the buffer, then close the file.
-	the buffer is owned by the caller, who is responsible
-	for freeing is (via delete[]). This is a Good Thing to
-	use because it minimizes memory copies for BIG files.
+  Allocate a buffer large enough to hold entire file, read
+  the entire file into the buffer, then close the file.
+  the buffer is owned by the caller, who is responsible
+  for freeing is (via delete[]). This is a Good Thing to
+  use because it minimizes memory copies for BIG files.
 */
 char* RAMFile::readEntireAndClose()
 {
-
 	if (m_data == nullptr)
 	{
 		DEBUG_CRASH(("m_data is null in RAMFile::readEntireAndClose -- should not happen!"));
-		return NEW char[1];	// just to avoid crashing...
+		return NEW char[1];    // just to avoid crashing...
 	}
 
 	char* tmp = m_data;
-	m_data = nullptr;	// will belong to our caller!
+	m_data = nullptr;    // will belong to our caller!
 
 	close();
 

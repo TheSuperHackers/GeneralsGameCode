@@ -24,15 +24,14 @@
 
 // FILE: SubsystemInterface.cpp
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/SubsystemInterface.h"
 #include "Common/Xfer.h"
 
-
 #ifdef DUMP_PERF_STATS
-#include "GameLogic/GameLogic.h"
-#include "Common/PerfTimer.h"
+	#include "GameLogic/GameLogic.h"
+	#include "Common/PerfTimer.h"
 
 Real SubsystemInterface::s_msConsumed = 0;
 #endif
@@ -40,83 +39,95 @@ Real SubsystemInterface::s_msConsumed = 0;
 //-----------------------------------------------------------------------------
 SubsystemInterface::SubsystemInterface()
 #ifdef DUMP_PERF_STATS
-:m_curDrawTime(0),
-m_startDrawTimeConsumed(0),
-m_startTimeConsumed(0),
-m_curUpdateTime(0),
-m_dumpUpdate(false),
-m_dumpDraw(false)
+  : m_curDrawTime(0)
+  , m_startDrawTimeConsumed(0)
+  , m_startTimeConsumed(0)
+  , m_curUpdateTime(0)
+  , m_dumpUpdate(false)
+  , m_dumpDraw(false)
 #endif
 {
-	if (TheSubsystemList) {
+	if (TheSubsystemList)
+	{
 		TheSubsystemList->addSubsystem(this);
 	}
 }
 
-
 SubsystemInterface::~SubsystemInterface()
 {
-	if (TheSubsystemList) {
+	if (TheSubsystemList)
+	{
 		TheSubsystemList->removeSubsystem(this);
 	}
 }
 
 #ifdef DUMP_PERF_STATS
-static const Real MIN_TIME_THRESHOLD = 0.0002f; // .2 msec. [8/13/2003]
+static const Real MIN_TIME_THRESHOLD = 0.0002f;    // .2 msec. [8/13/2003]
 void SubsystemInterface::UPDATE()
 {
 	__int64 startTime64;
-	__int64 endTime64,freq64;
+	__int64 endTime64, freq64;
 	GetPrecisionTimerTicksPerSec(&freq64);
 	GetPrecisionTimer(&startTime64);
 	m_startTimeConsumed = s_msConsumed;
 	update();
 	GetPrecisionTimer(&endTime64);
-	m_curUpdateTime = ((double)(endTime64-startTime64))/((double)(freq64));
+	m_curUpdateTime = ((double)(endTime64 - startTime64)) / ((double)(freq64));
 	Real subTime = s_msConsumed - m_startTimeConsumed;
-	if (m_name.isEmpty()) return;
-	if (m_curUpdateTime>MIN_TIME_THRESHOLD) {
+	if (m_name.isEmpty())
+	{
+		return;
+	}
+	if (m_curUpdateTime > MIN_TIME_THRESHOLD)
+	{
 		m_dumpUpdate = true;
 	}
-	if (m_curUpdateTime > MIN_TIME_THRESHOLD/10.0f) {
-		//DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n",
+	if (m_curUpdateTime > MIN_TIME_THRESHOLD / 10.0f)
+	{
+		// DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n",
 		//	m_name.str(), m_curUpdateTime*1000, subTime*1000, (m_curUpdateTime-subTime)*1000	));
 
 		m_curUpdateTime -= subTime;
 		s_msConsumed += m_curUpdateTime;
-	} else {
+	}
+	else
+	{
 		m_curUpdateTime = 0;
 	}
-
 }
 void SubsystemInterface::DRAW()
 {
 	__int64 startTime64;
-	__int64 endTime64,freq64;
+	__int64 endTime64, freq64;
 	GetPrecisionTimerTicksPerSec(&freq64);
 	GetPrecisionTimer(&startTime64);
 	m_startDrawTimeConsumed = s_msConsumed;
 	draw();
 	GetPrecisionTimer(&endTime64);
-	m_curDrawTime = ((double)(endTime64-startTime64))/((double)(freq64));
+	m_curDrawTime = ((double)(endTime64 - startTime64)) / ((double)(freq64));
 	Real subTime = s_msConsumed - m_startDrawTimeConsumed;
-	if (m_name.isEmpty()) return;
-	if (m_curDrawTime>MIN_TIME_THRESHOLD) {
+	if (m_name.isEmpty())
+	{
+		return;
+	}
+	if (m_curDrawTime > MIN_TIME_THRESHOLD)
+	{
 		m_dumpDraw = true;
 	}
-	if (m_curDrawTime > MIN_TIME_THRESHOLD/10.0f) {
-		//DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n",
+	if (m_curDrawTime > MIN_TIME_THRESHOLD / 10.0f)
+	{
+		// DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n",
 		//	m_name.str(), m_curUpdateTime*1000, subTime*1000, (m_curUpdateTime-subTime)*1000	));
 
 		m_curDrawTime -= subTime;
 		s_msConsumed += m_curDrawTime;
-	} else {
+	}
+	else
+	{
 		m_curDrawTime = 0;
 	}
-
 }
 #endif
-
 
 //-----------------------------------------------------------------------------
 SubsystemInterfaceList::SubsystemInterfaceList()
@@ -143,7 +154,8 @@ void SubsystemInterfaceList::removeSubsystem(SubsystemInterface* sys)
 #ifdef DUMP_PERF_STATS
 	for (SubsystemList::iterator it = m_allSubsystems.begin(); it != m_allSubsystems.end(); ++it)
 	{
-		if ( (*it) == sys) {
+		if ((*it) == sys)
+		{
 			m_allSubsystems.erase(it);
 			break;
 		}
@@ -151,16 +163,20 @@ void SubsystemInterfaceList::removeSubsystem(SubsystemInterface* sys)
 #endif
 }
 //-----------------------------------------------------------------------------
-void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, Xfer *pXfer, AsciiString name)
+void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, Xfer* pXfer, AsciiString name)
 {
 	sys->setName(name);
 	sys->init();
 
 	INI ini;
 	if (path1)
-		ini.loadFileDirectory(path1, INI_LOAD_OVERWRITE, pXfer );
+	{
+		ini.loadFileDirectory(path1, INI_LOAD_OVERWRITE, pXfer);
+	}
 	if (path2)
-		ini.loadFileDirectory(path2, INI_LOAD_OVERWRITE, pXfer );
+	{
+		ini.loadFileDirectory(path2, INI_LOAD_OVERWRITE, pXfer);
+	}
 
 	m_subsystems.push_back(sys);
 }
@@ -177,7 +193,7 @@ void SubsystemInterfaceList::postProcessLoadAll()
 //-----------------------------------------------------------------------------
 void SubsystemInterfaceList::resetAll()
 {
-//	for (SubsystemList::iterator it = m_subsystems.begin(); it != m_subsystems.end(); ++it)
+	//	for (SubsystemList::iterator it = m_subsystems.begin(); it != m_subsystems.end(); ++it)
 	for (SubsystemList::reverse_iterator it = m_subsystems.rbegin(); it != m_subsystems.rend(); ++it)
 	{
 		(*it)->reset();
@@ -200,10 +216,9 @@ void SubsystemInterfaceList::shutdownAll()
 //-----------------------------------------------------------------------------
 AsciiString SubsystemInterfaceList::dumpTimesForAll()
 {
-
 	AsciiString buffer;
 	buffer = "ALL SUBSYSTEMS:\n";
-	//buffer.format("\nSUBSYSTEMS: total time %.2f MS\n",
+	// buffer.format("\nSUBSYSTEMS: total time %.2f MS\n",
 	//	SubsystemInterface::getTotalTime()*1000.0f);
 	Real misc = 0;
 	Real total = 0;
@@ -212,24 +227,30 @@ AsciiString SubsystemInterfaceList::dumpTimesForAll()
 	{
 		SubsystemInterface* sys = *it;
 		total += sys->getUpdateTime();
-		if (sys->doDumpUpdate()) {
+		if (sys->doDumpUpdate())
+		{
 			AsciiString curLine;
-			curLine.format("  Time %02.2f MS update() %s \n", sys->getUpdateTime()*1000.0f, sys->getName().str());
+			curLine.format("  Time %02.2f MS update() %s \n", sys->getUpdateTime() * 1000.0f, sys->getName().str());
 			buffer.concat(curLine);
-		}	else {
+		}
+		else
+		{
 			misc += sys->getUpdateTime();
 		}
 		total += sys->getDrawTime();
-		if (sys->doDumpDraw()) {
+		if (sys->doDumpDraw())
+		{
 			AsciiString curLine;
-			curLine.format("  Time %02.2f MS  draw () %s \n", sys->getDrawTime()*1000.0f, sys->getName().str());
+			curLine.format("  Time %02.2f MS  draw () %s \n", sys->getDrawTime() * 1000.0f, sys->getName().str());
 			buffer.concat(curLine);
-		}	else {
+		}
+		else
+		{
 			misc += sys->getDrawTime();
 		}
 	}
 	AsciiString tmp;
-	tmp.format("TOTAL %.2f MS, Misc time %.2f MS\n", total*1000.0f, misc*1000.0f);
+	tmp.format("TOTAL %.2f MS, Misc time %.2f MS\n", total * 1000.0f, misc * 1000.0f);
 	buffer.concat(tmp);
 	return buffer;
 }

@@ -47,7 +47,7 @@
 class W3DDynamicLight;
 class LightClass;
 class Drawable;
-enum CustomScenePassModes CPP_11(: Int);
+enum CustomScenePassModes CPP_11( : Int);
 class MaterialPassClass;
 class W3DShroudMaterialPassClass;
 class W3DMaskMaterialPassClass;
@@ -58,85 +58,83 @@ class W3DMaskMaterialPassClass;
 //-----------------------------------------------------------------------------
 class RTS3DScene : public SimpleSceneClass, public SubsystemInterface
 {
-
 public:
-
-	RTS3DScene();  ///< RTSScene constructor
-	virtual ~RTS3DScene() override;  ///< RTSScene destructor
+	RTS3DScene();    ///< RTSScene constructor
+	virtual ~RTS3DScene() override;    ///< RTSScene destructor
 
 	/// ray picking against objects in scene
-	Bool castRay(RayCollisionTestClass & raytest, Bool testAll, Int collisionType);
+	Bool castRay(RayCollisionTestClass& raytest, Bool testAll, Int collisionType);
 
 	/// customizable renderer for the RTS3DScene
-	virtual void	Customized_Render( RenderInfoClass &rinfo ) override;
-	virtual void	Visibility_Check(CameraClass * camera) override;
-	virtual void  Render(RenderInfoClass & rinfo) override;
+	virtual void Customized_Render(RenderInfoClass& rinfo) override;
+	virtual void Visibility_Check(CameraClass* camera) override;
+	virtual void Render(RenderInfoClass& rinfo) override;
 
-	void setCustomPassMode (CustomScenePassModes mode) {m_customPassMode = mode;}
-	CustomScenePassModes getCustomPassMode ()	{return m_customPassMode;}
+	void setCustomPassMode(CustomScenePassModes mode) { m_customPassMode = mode; }
+	CustomScenePassModes getCustomPassMode() { return m_customPassMode; }
 
-	void Flush(RenderInfoClass & rinfo);	//draw queued up models.
+	void Flush(RenderInfoClass& rinfo);    // draw queued up models.
 	/// Drawing control method
-	void drawTerrainOnly(Bool draw) {m_drawTerrainOnly = draw;};
+	void drawTerrainOnly(Bool draw) { m_drawTerrainOnly = draw; };
 
 	/// Drawing control method
-	void renderSpecificDrawables(RenderInfoClass &rinfo, Int numDrawables, Drawable **theDrawables) ;
+	void renderSpecificDrawables(RenderInfoClass& rinfo, Int numDrawables, Drawable** theDrawables);
 
 	/// Lighting methods
-	void addDynamicLight(W3DDynamicLight * obj);
-	void removeDynamicLight(W3DDynamicLight * obj);
-	RefRenderObjListIterator *createLightsIterator();
-	void destroyLightsIterator(RefRenderObjListIterator * it);
-	RefRenderObjListClass *getDynamicLights() {return &m_dynamicLightList;};
-	W3DDynamicLight *getADynamicLight();
-	void setGlobalLight(LightClass *pLight,Int lightIndex=0);
-	LightEnvironmentClass &getDefaultLightEnv() {return m_defaultLightEnv;}
+	void addDynamicLight(W3DDynamicLight* obj);
+	void removeDynamicLight(W3DDynamicLight* obj);
+	RefRenderObjListIterator* createLightsIterator();
+	void destroyLightsIterator(RefRenderObjListIterator* it);
+	RefRenderObjListClass* getDynamicLights() { return &m_dynamicLightList; };
+	W3DDynamicLight* getADynamicLight();
+	void setGlobalLight(LightClass* pLight, Int lightIndex = 0);
+	LightEnvironmentClass& getDefaultLightEnv() { return m_defaultLightEnv; }
 
 	virtual void init() override {}
 	virtual void update() override {}
 	virtual void draw() override;
 	virtual void reset() override {}
-	void doRender(CameraClass * cam);
+	void doRender(CameraClass* cam);
 
 protected:
-	void renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, Int localPlayerIndex);
-	void updateFixedLightEnvironments(RenderInfoClass & rinfo);
-	void flushTranslucentObjects(RenderInfoClass & rinfo);
-	void flushOccludedObjects(RenderInfoClass & rinfo);
-	void flagOccludedObjects(CameraClass * camera);
-	void flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo);
+	void renderOneObject(RenderInfoClass& rinfo, RenderObjClass* robj, Int localPlayerIndex);
+	void updateFixedLightEnvironments(RenderInfoClass& rinfo);
+	void flushTranslucentObjects(RenderInfoClass& rinfo);
+	void flushOccludedObjects(RenderInfoClass& rinfo);
+	void flagOccludedObjects(CameraClass* camera);
+	void flushOccludedObjectsIntoStencil(RenderInfoClass& rinfo);
 	void updatePlayerColorPasses();
 
 protected:
-	RefRenderObjListClass	m_dynamicLightList;
-	Bool									m_drawTerrainOnly;
-	LightClass						*m_globalLight[LightEnvironmentClass::MAX_LIGHTS];				///< The global directional light (sun, moon) Applies to objects.
-	LightClass						*m_scratchLight; ///< a workspace for copying global lights and modifying // MLorenzen
-	Vector3 m_infantryAmbient;	///<scene ambient modified to make infantry easier to see
-	LightClass						*m_infantryLight[LightEnvironmentClass::MAX_LIGHTS];	///< The global direction light modified to make infantry easier to see.
-	Int m_numGlobalLights;			///<number of global lights
-	LightEnvironmentClass	m_defaultLightEnv;		///<default light environment applied to objects without custom/dynamic lighting.
-	LightEnvironmentClass	m_foggedLightEnv;		///<default light environment applied to objects without custom/dynamic lighting.
+	RefRenderObjListClass m_dynamicLightList;
+	Bool m_drawTerrainOnly;
+	LightClass* m_globalLight[LightEnvironmentClass::MAX_LIGHTS];    ///< The global directional light (sun, moon) Applies to objects.
+	LightClass* m_scratchLight;    ///< a workspace for copying global lights and modifying // MLorenzen
+	Vector3 m_infantryAmbient;    ///< scene ambient modified to make infantry easier to see
+	LightClass* m_infantryLight[LightEnvironmentClass::MAX_LIGHTS];    ///< The global direction light modified to make infantry easier to see.
+	Int m_numGlobalLights;    ///< number of global lights
+	LightEnvironmentClass m_defaultLightEnv;    ///< default light environment applied to objects without custom/dynamic lighting.
+	LightEnvironmentClass m_foggedLightEnv;    ///< default light environment applied to objects without custom/dynamic lighting.
 
-	W3DShroudMaterialPassClass	*m_shroudMaterialPass;	///< Custom render pass which applies shrouds to objects
-	W3DMaskMaterialPassClass *m_maskMaterialPass;			///< Custom render pass applied to entire scene used to mask out pixels.
-	MaterialPassClass *m_heatVisionMaterialPass;			///< Custom render passed applied on top of objects with heatvision effect.
-	MaterialPassClass *m_heatVisionOnlyPass;					///< Custom render pass applied in place of regular pass on objects with heat vision effect.
-	MaterialPassClass *m_frenzyMaterialPass;					///< Custom render pass applied in place of regular pass on objects with FRENZY effect.
-	///Custom rendering passes for each possible player color on the map
-	MaterialPassClass *m_occludedMaterialPass[MAX_PLAYER_COUNT];
-	CustomScenePassModes m_customPassMode;					///< flag used to force a non-standard rendering of scene.
-	Int m_translucentObjectsCount;	///< number of translucent objects to render this frame.
-	RenderObjClass **m_translucentObjectsBuffer;	///< queue of current frame's translucent objects.
-	Int m_occludedObjectsCount;	///<number of objects in current frame that need special rendering because occluded.
-	RenderObjClass **m_potentialOccluders;	///<objects which may block other objects from being visible
-	RenderObjClass **m_potentialOccludees;	///<objects which may be blocked from visibility by other objects.
-	RenderObjClass **m_nonOccludersOrOccludees;	///<objects which are neither bockers or blockees (small rocks, shrubs, etc.).
+	W3DShroudMaterialPassClass* m_shroudMaterialPass;    ///< Custom render pass which applies shrouds to objects
+	W3DMaskMaterialPassClass* m_maskMaterialPass;    ///< Custom render pass applied to entire scene used to mask out pixels.
+	MaterialPassClass* m_heatVisionMaterialPass;    ///< Custom render passed applied on top of objects with heatvision effect.
+	MaterialPassClass* m_heatVisionOnlyPass;    ///< Custom render pass applied in place of regular pass on objects with heat vision effect.
+	MaterialPassClass* m_frenzyMaterialPass;    ///< Custom render pass applied in place of regular pass on objects with FRENZY effect.
+	/// Custom rendering passes for each possible player color on the map
+	MaterialPassClass* m_occludedMaterialPass[MAX_PLAYER_COUNT];
+	CustomScenePassModes m_customPassMode;    ///< flag used to force a non-standard rendering of scene.
+	Int m_translucentObjectsCount;    ///< number of translucent objects to render this frame.
+	RenderObjClass** m_translucentObjectsBuffer;    ///< queue of current frame's translucent objects.
+	Int m_occludedObjectsCount;    ///< number of objects in current frame that need special rendering because occluded.
+	RenderObjClass** m_potentialOccluders;    ///< objects which may block other objects from being visible
+	RenderObjClass** m_potentialOccludees;    ///< objects which may be blocked from visibility by other objects.
+	RenderObjClass** m_nonOccludersOrOccludees;    ///< objects which are neither bockers or blockees (small rocks, shrubs, etc.).
 	Int m_numPotentialOccluders;
 	Int m_numPotentialOccludees;
 	Int m_numNonOccluderOrOccludee;
 
-	CameraClass *m_camera;
+	CameraClass* m_camera;
 };
 
 //-----------------------------------------------------------------------------
@@ -147,22 +145,20 @@ protected:
 class RTS2DScene : public SimpleSceneClass, public SubsystemInterface
 {
 public:
-
 	RTS2DScene();
 	virtual ~RTS2DScene() override;
 
 	/// customizable renderer for the RTS2DScene
-	virtual void Customized_Render( RenderInfoClass &rinfo ) override;
+	virtual void Customized_Render(RenderInfoClass& rinfo) override;
 	virtual void init() override {}
 	virtual void update() override {}
 	virtual void draw() override;
 	virtual void reset() override {}
-	void doRender(CameraClass * cam);
+	void doRender(CameraClass* cam);
 
 protected:
-
-	RenderObjClass *m_status;
-	CameraClass *m_camera;
+	RenderObjClass* m_status;
+	CameraClass* m_camera;
 };
 
 //-----------------------------------------------------------------------------
@@ -173,10 +169,9 @@ protected:
 class RTS3DInterfaceScene : public SimpleSceneClass
 {
 public:
-
 	RTS3DInterfaceScene();
 	virtual ~RTS3DInterfaceScene() override;
 
 	/// customizable renderer for the RTS3DInterfaceScene
-	virtual void Customized_Render( RenderInfoClass &rinfo ) override;
+	virtual void Customized_Render(RenderInfoClass& rinfo) override;
 };

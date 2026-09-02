@@ -29,7 +29,6 @@
 class RenderObjClass;
 class AssetInfoClass;
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // CDataTreeView view
@@ -37,26 +36,25 @@ class AssetInfoClass;
 class CDataTreeView : public CTreeView
 {
 protected:
-	CDataTreeView();           // protected constructor used by dynamic creation
+	CDataTreeView();    // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CDataTreeView)
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDataTreeView)
-	public:
+public:
 	virtual void OnInitialUpdate() override;
-	protected:
-	virtual void OnDraw(CDC* pDC) override;      // overridden to draw this view
+
+protected:
+	virtual void OnDraw(CDC* pDC) override;    // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CDataTreeView() override;
 #ifdef RTS_DEBUG
@@ -74,97 +72,94 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////////////////
+	//	Public methods
+	/////////////////////////////////////////////////////////////////////
 
-		/////////////////////////////////////////////////////////////////////
-		//	Public methods
-		/////////////////////////////////////////////////////////////////////
+	//
+	//	Asset insertion methods
+	//
+	bool Add_Asset_To_Tree(LPCTSTR name, ASSET_TYPE type, bool bselect);
+	void LoadAssetsIntoTree();
+	void Refresh_Asset(LPCTSTR new_name, LPCTSTR old_name, ASSET_TYPE type);
 
-		//
-		//	Asset insertion methods
-		//
-		bool					Add_Asset_To_Tree (LPCTSTR name, ASSET_TYPE type, bool bselect);
-		void					LoadAssetsIntoTree ();
-		void					Refresh_Asset (LPCTSTR new_name, LPCTSTR old_name, ASSET_TYPE type);
+	//
+	//	Animation insertion methods
+	//
+	void LoadAnimationsIntoTree();
+	void LoadAnimationsIntoTree(HTREEITEM hItem);
 
-		//
-		//	Animation insertion methods
-		//
-		void					LoadAnimationsIntoTree ();
-		void					LoadAnimationsIntoTree (HTREEITEM hItem);
+	bool Are_Anims_Restricted() const { return m_RestrictAnims; }
+	void Restrict_Anims(bool onoff);
 
-	  bool					Are_Anims_Restricted () const			{ return m_RestrictAnims; }
-	  void					Restrict_Anims (bool onoff);
+	//
+	//	Texture insertion methods
+	//
+	void Load_Materials_Into_Tree();
 
-		//
-		//	Texture insertion methods
-		//
-		void					Load_Materials_Into_Tree ();
+	//
+	//	Display methods
+	//
+	void Display_Asset(HTREEITEM htree_item = nullptr);
+	void Select_Next();
+	void Select_Prev();
+	void Reload_Lightmap_Models();
 
-		//
-		//	Display methods
-		//
-		void					Display_Asset (HTREEITEM htree_item = nullptr);
-		void					Select_Next ();
-		void					Select_Prev ();
-		void					Reload_Lightmap_Models ();
+	//
+	// Information methods
+	//
+	RenderObjClass* Get_Current_Render_Obj() const;
+	AssetInfoClass* Get_Current_Asset_Info() const;
+	LPCTSTR GetCurrentSelectionName();
+	ASSET_TYPE GetCurrentSelectionType();
+	HTREEITEM FindChildItem(HTREEITEM hParentItem, LPCTSTR pszChildItemName);
+	HTREEITEM FindChildItem(HTREEITEM hParentItem, RenderObjClass* prender_obj);
+	HTREEITEM FindFirstChildItemBasedOnHierarchyName(HTREEITEM hParentItem, LPCTSTR pszHierarchyName);
+	HTREEITEM FindSiblingItemBasedOnHierarchyName(HTREEITEM hCurrentItem, LPCTSTR pszHierarchyName);
+	void Build_Render_Object_List(DynamicVectorClass<CString>& asset_list, HTREEITEM hparent = TVI_ROOT);
 
-		//
-		// Information methods
-		//
-		RenderObjClass *	Get_Current_Render_Obj () const;
-		AssetInfoClass *	Get_Current_Asset_Info () const;
-		LPCTSTR				GetCurrentSelectionName ();
-		ASSET_TYPE			GetCurrentSelectionType ();
-		HTREEITEM			FindChildItem (HTREEITEM hParentItem, LPCTSTR pszChildItemName);
-		HTREEITEM			FindChildItem (HTREEITEM hParentItem, RenderObjClass *prender_obj);
-		HTREEITEM			FindFirstChildItemBasedOnHierarchyName (HTREEITEM hParentItem, LPCTSTR pszHierarchyName);
-		HTREEITEM			FindSiblingItemBasedOnHierarchyName (HTREEITEM hCurrentItem, LPCTSTR pszHierarchyName);
-		void					Build_Render_Object_List (DynamicVectorClass <CString> &asset_list, HTREEITEM hparent = TVI_ROOT);
+	//
+	//	Initialization methods
+	//
+	void CreateRootNodes();
 
-		//
-		//	Initialization methods
-		//
-		void					CreateRootNodes ();
+protected:
+	///////////////////////////////////////////////////////////////////////
+	//	Protected methods
+	///////////////////////////////////////////////////////////////////////
+	ASSET_TYPE Determine_Tree_Location(RenderObjClass& render_obj, HTREEITEM& hroot, int& icon_index);
+	void Determine_Tree_Location(ASSET_TYPE type, HTREEITEM& hroot, int& icon_index);
+	RenderObjClass* Create_Render_Obj_To_Display(HTREEITEM htree_item);
+	void Add_Emitters_To_Menu(HMENU hmenu, RenderObjClass& render_obj);
+	void Free_Child_Models(HTREEITEM parent_item);
 
-	protected:
-
-		///////////////////////////////////////////////////////////////////////
-		//	Protected methods
-		///////////////////////////////////////////////////////////////////////
-		ASSET_TYPE			Determine_Tree_Location (RenderObjClass &render_obj, HTREEITEM &hroot, int &icon_index);
-		void					Determine_Tree_Location (ASSET_TYPE type, HTREEITEM &hroot, int &icon_index);
-		RenderObjClass *	Create_Render_Obj_To_Display (HTREEITEM htree_item);
-		void					Add_Emitters_To_Menu (HMENU hmenu, RenderObjClass &render_obj);
-		void					Free_Child_Models (HTREEITEM parent_item);
-
-	private:
-
-		///////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		HTREEITEM	m_hMaterialsRoot;
-		HTREEITEM	m_hMeshRoot;
-		HTREEITEM	m_hAggregateRoot;
-		HTREEITEM	m_hLODRoot;
-		HTREEITEM	m_hMeshCollectionRoot;
-		HTREEITEM	m_hEmitterRoot;
-		HTREEITEM	m_hPrimitivesRoot;
-		HTREEITEM	m_hHierarchyRoot;
-		HTREEITEM	m_hSoundRoot;
-		int			m_iAnimationIcon;
-		int			m_iTCAnimationIcon;
-		int			m_iADAnimationIcon;
-		int			m_iMeshIcon;
-		int			m_iMaterialIcon;
-		int			m_iLODIcon;
-		int			m_iEmitterIcon;
-		int			m_iPrimitivesIcon;
-		int			m_iAggregateIcon;
-		int			m_iHierarchyIcon;
-		int			m_iSoundIcon;
-		bool			m_RestrictAnims;
+private:
+	///////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	HTREEITEM m_hMaterialsRoot;
+	HTREEITEM m_hMeshRoot;
+	HTREEITEM m_hAggregateRoot;
+	HTREEITEM m_hLODRoot;
+	HTREEITEM m_hMeshCollectionRoot;
+	HTREEITEM m_hEmitterRoot;
+	HTREEITEM m_hPrimitivesRoot;
+	HTREEITEM m_hHierarchyRoot;
+	HTREEITEM m_hSoundRoot;
+	int m_iAnimationIcon;
+	int m_iTCAnimationIcon;
+	int m_iADAnimationIcon;
+	int m_iMeshIcon;
+	int m_iMaterialIcon;
+	int m_iLODIcon;
+	int m_iEmitterIcon;
+	int m_iPrimitivesIcon;
+	int m_iAggregateIcon;
+	int m_iHierarchyIcon;
+	int m_iSoundIcon;
+	bool m_RestrictAnims;
 };
 
 /////////////////////////////////////////////////////////////////////////////

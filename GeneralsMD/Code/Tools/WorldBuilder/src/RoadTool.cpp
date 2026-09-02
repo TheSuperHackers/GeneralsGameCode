@@ -40,8 +40,8 @@
 // RoadTool class.
 //
 /// Constructor
-RoadTool::RoadTool() :
-	Tool(ID_ROAD_TOOL, IDC_ROAD)
+RoadTool::RoadTool()
+  : Tool(ID_ROAD_TOOL, IDC_ROAD)
 {
 	m_mapObj = nullptr;
 }
@@ -55,17 +55,21 @@ RoadTool::~RoadTool()
 //         Public Functions
 //-----------------------------------------------------------------------------
 
-MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
+MapObject* RoadTool::findSegment(const Coord3D* pLoc, Coord3D* outLoc)
 {
 	for (MapObject* pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
 		if (pMapObj->getFlag(FLAG_ROAD_POINT1))
 		{
 			MapObject* pMapObj2 = pMapObj->getNext();
-			if (pMapObj2==nullptr)
+			if (pMapObj2 == nullptr)
+			{
 				break;
+			}
 			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2))
+			{
 				continue;
+			}
 			Coord2D start, end, loc, snapLoc;
 			start.x = pMapObj->getLocation()->x;
 			start.y = pMapObj->getLocation()->y;
@@ -77,7 +81,8 @@ MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
 			Real u;
 
 			ShortestDistancePointToSegment2D(&start, &end, &loc, nullptr, &snapLoc, &u);
-			if (u < 0 || u > 1) {
+			if (u < 0 || u > 1)
+			{
 				continue;
 			}
 			Coord2D segment;
@@ -85,12 +90,12 @@ MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
 			segment.y = loc.y - snapLoc.y;
 			dist = segment.length();
 
-			if (dist < ROAD_SNAP_DISTANCE*MAP_XY_FACTOR)
+			if (dist < ROAD_SNAP_DISTANCE * MAP_XY_FACTOR)
 			{
 				outLoc->x = snapLoc.x;
 				outLoc->y = snapLoc.y;
 				outLoc->z = MAGIC_GROUND_Z;
-				return(pMapObj);
+				return (pMapObj);
 			}
 		}
 	}
@@ -102,35 +107,48 @@ MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
 //=============================================================================
 /** Snaps pLoc to another road endpoint if close enough. */
 //=============================================================================
-Bool RoadTool::snap(Coord3D *pLoc, Bool skipFirst)
+Bool RoadTool::snap(Coord3D* pLoc, Bool skipFirst)
 {
-	MapObject *pMapObj;
-	MapObject *pMapObj2;
-	Real snapDist = ROAD_SNAP_DISTANCE*MAP_XY_FACTOR;
+	MapObject* pMapObj;
+	MapObject* pMapObj2;
+	Real snapDist = ROAD_SNAP_DISTANCE * MAP_XY_FACTOR;
 	Coord3D newLoc = *pLoc;
 	Bool snapped = false;
 
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-		if (skipFirst) {
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		if (skipFirst)
+		{
 			skipFirst = false;
 			continue;
 		}
-		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) {
+		if (pMapObj->getFlag(FLAG_ROAD_POINT1))
+		{
 			pMapObj2 = pMapObj->getNext();
-			if (pMapObj2==nullptr) break;
-			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2)) continue;
+			if (pMapObj2 == nullptr)
+			{
+				break;
+			}
+			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2))
+			{
+				continue;
+			}
 			Vector2 dist;
-			if (!pMapObj->isSelected()) {
+			if (!pMapObj->isSelected())
+			{
 				dist.Set(pMapObj->getLocation()->x - pLoc->x, pMapObj->getLocation()->y - pLoc->y);
-				if (dist.Length() < snapDist) {
+				if (dist.Length() < snapDist)
+				{
 					newLoc = *pMapObj->getLocation();
 					snapDist = dist.Length();
 					snapped = true;
 				}
 			}
-			if (!pMapObj2->isSelected()) {
+			if (!pMapObj2->isSelected())
+			{
 				dist.Set(pMapObj2->getLocation()->x - pLoc->x, pMapObj2->getLocation()->y - pLoc->y);
-				if (dist.Length() < snapDist) {
+				if (dist.Length() < snapDist)
+				{
 					newLoc = *pMapObj2->getLocation();
 					snapDist = dist.Length();
 					snapped = true;
@@ -138,13 +156,13 @@ Bool RoadTool::snap(Coord3D *pLoc, Bool skipFirst)
 			}
 		}
 	}
-	newLoc.z = MAGIC_GROUND_Z; // roads always snap to terrain.
-	if (snapped) {
+	newLoc.z = MAGIC_GROUND_Z;    // roads always snap to terrain.
+	if (snapped)
+	{
 		*pLoc = newLoc;
 	}
 	return snapped;
 }
-
 
 /// Shows the road options panel.
 void RoadTool::activate()
@@ -156,9 +174,12 @@ void RoadTool::activate()
 }
 
 /** Execute the tool on mouse up - Place a road segment. */
-void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+	{
+		return;
+	}
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
@@ -166,37 +187,44 @@ void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	Coord3D loc1, loc2, loc3;
 	loc1 = cpt;
 	if (!pDoc->getCellPositionFromCoord(cpt, &loc1))
+	{
 		return;
+	}
 
 	Bool isBridge = RoadOptions::isBridge();
 
-	if (isBridge) {
+	if (isBridge)
+	{
 		Bool isLandmark = false;
-		const ThingTemplate *tt = TheThingFactory->findTemplate(RoadOptions::getCurRoadName());
-		if (tt) {
+		const ThingTemplate* tt = TheThingFactory->findTemplate(RoadOptions::getCurRoadName());
+		if (tt)
+		{
 			isLandmark = tt->isBridge();
 		}
-		if (isLandmark) {
-			MapObject *pNew1 = newInstance(MapObject)(loc1, RoadOptions::getCurRoadName(), 0.0f, 0, nullptr, tt );
+		if (isLandmark)
+		{
+			MapObject* pNew1 = newInstance(MapObject)(loc1, RoadOptions::getCurRoadName(), 0.0f, 0, nullptr, tt);
 			pNew1->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
-			AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew1);
+			AddObjectUndoable* pUndo = new AddObjectUndoable(pDoc, pNew1);
 			pNew1->setSelected(true);
 			pDoc->AddAndDoUndoable(pUndo);
-			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+			REF_PTR_RELEASE(pUndo);    // belongs to pDoc now.
 			m_mapObj = nullptr;
 			return;
 		}
 	}
 
-
 	Bool snapped = false;
 	Bool divideSegment = false;
 	MapObject* pickedSegment = nullptr;
-	if (!isBridge) {
+	if (!isBridge)
+	{
 		snapped = snap(&loc1, false);
-		if (!snapped) {
+		if (!snapped)
+		{
 			pickedSegment = findSegment(&loc1, &loc2);
-			if (pickedSegment) {
+			if (pickedSegment)
+			{
 				snapped = true;
 				divideSegment = true;
 				loc1 = *pickedSegment->getLocation();
@@ -204,60 +232,77 @@ void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 			}
 		}
 	}
-	if (!snapped) {
+	if (!snapped)
+	{
 		pView->snapPoint(&loc1);
 	}
 
-	if (!divideSegment) {
+	if (!divideSegment)
+	{
 		loc2 = loc1;
 	}
 
-	loc1.z = MAGIC_GROUND_Z; // roads stick to terrain anyway.
+	loc1.z = MAGIC_GROUND_Z;    // roads stick to terrain anyway.
 	loc2.z = MAGIC_GROUND_Z;
 	loc3.z = MAGIC_GROUND_Z;
 	AsciiString roadName;
-	if (divideSegment) {
+	if (divideSegment)
+	{
 		roadName = pickedSegment->getName();
-	} else {
+	}
+	else
+	{
 		roadName = RoadOptions::getCurRoadName();
 	}
 
-	MapObject *pNew1 = newInstance(MapObject)(loc1, roadName, 0.0f, 0, nullptr, nullptr );
-	MapObject *pNew2 = newInstance(MapObject)(loc2, roadName, 0.0f, 0, nullptr, nullptr );
-	MapObject *pNew3 = nullptr;
-	MapObject *pNew4 = nullptr;
-	if (divideSegment) {
-		pNew3 = newInstance(MapObject)(loc2, roadName, 0.0f, 0, nullptr, nullptr );
-		pNew4 = newInstance(MapObject)(loc3, roadName, 0.0f, 0, nullptr, nullptr );
+	MapObject* pNew1 = newInstance(MapObject)(loc1, roadName, 0.0f, 0, nullptr, nullptr);
+	MapObject* pNew2 = newInstance(MapObject)(loc2, roadName, 0.0f, 0, nullptr, nullptr);
+	MapObject* pNew3 = nullptr;
+	MapObject* pNew4 = nullptr;
+	if (divideSegment)
+	{
+		pNew3 = newInstance(MapObject)(loc2, roadName, 0.0f, 0, nullptr, nullptr);
+		pNew4 = newInstance(MapObject)(loc3, roadName, 0.0f, 0, nullptr, nullptr);
 	}
 
-	pNew1->setColor(RGB(255,255,0));	// make road endpoints yellow.
-	pNew2->setColor(RGB(255,255,0));	// make road endpoints yellow.
-	if (divideSegment) {
-		pNew3->setColor(RGB(255,255,0));	// make road endpoints yellow.
-		pNew4->setColor(RGB(255,255,0));	// make road endpoints yellow.
+	pNew1->setColor(RGB(255, 255, 0));    // make road endpoints yellow.
+	pNew2->setColor(RGB(255, 255, 0));    // make road endpoints yellow.
+	if (divideSegment)
+	{
+		pNew3->setColor(RGB(255, 255, 0));    // make road endpoints yellow.
+		pNew4->setColor(RGB(255, 255, 0));    // make road endpoints yellow.
 	}
 
-	if (RoadOptions::isBridge()) {
+	if (RoadOptions::isBridge())
+	{
 		pNew1->setFlag(FLAG_BRIDGE_POINT1);
 		pNew2->setFlag(FLAG_BRIDGE_POINT2);
-	} else {
+	}
+	else
+	{
 		pNew1->setFlag(FLAG_ROAD_POINT1);
 		pNew2->setFlag(FLAG_ROAD_POINT2);
-		if (divideSegment) {
+		if (divideSegment)
+		{
 			pNew3->setFlag(FLAG_ROAD_POINT1);
 			pNew4->setFlag(FLAG_ROAD_POINT2);
 		}
 	}
 
-	if (divideSegment) {
+	if (divideSegment)
+	{
 		pNew1->setFlag(pickedSegment->getFlags());
 		pNew4->setFlag(pickedSegment->getNext()->getFlags());
-	} else {
-		if (RoadOptions::isAngled()) {
+	}
+	else
+	{
+		if (RoadOptions::isAngled())
+		{
 			pNew1->setFlag(FLAG_ROAD_CORNER_ANGLED);
 			pNew2->setFlag(FLAG_ROAD_CORNER_ANGLED);
-		} else if (RoadOptions::isTightCurve()) {
+		}
+		else if (RoadOptions::isTightCurve())
+		{
 			pNew1->setFlag(FLAG_ROAD_CORNER_TIGHT);
 			pNew2->setFlag(FLAG_ROAD_CORNER_TIGHT);
 		}
@@ -269,63 +314,73 @@ void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	pNew1->setNextMap(pNew2);
 	m_mapObj = pNew2;
 
-	if (divideSegment) {
+	if (divideSegment)
+	{
 		// Roads belong to the neutral player. :)
 		pNew3->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 		pNew4->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 		pNew3->setNextMap(pNew4);
 	}
 
-	if (divideSegment) {
+	if (divideSegment)
+	{
 		PointerTool::clearSelection();
 		pickedSegment->setSelected(true);
-		DeleteObjectUndoable *pDeleteUndo = new DeleteObjectUndoable(pDoc);
+		DeleteObjectUndoable* pDeleteUndo = new DeleteObjectUndoable(pDoc);
 		pDoc->AddAndDoUndoable(pDeleteUndo);
-		REF_PTR_RELEASE(pDeleteUndo); // belongs to pDoc now.
+		REF_PTR_RELEASE(pDeleteUndo);    // belongs to pDoc now.
 	}
 	// Clear the selection.
 	PointerTool::clearSelection();
 
-	AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew1);
+	AddObjectUndoable* pUndo = new AddObjectUndoable(pDoc, pNew1);
 	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+	REF_PTR_RELEASE(pUndo);    // belongs to pDoc now.
 	m_mapObj->setSelected(true);
 
-	if (divideSegment) {
-		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew3);
+	if (divideSegment)
+	{
+		AddObjectUndoable* pUndo = new AddObjectUndoable(pDoc, pNew3);
 		pDoc->AddAndDoUndoable(pUndo);
-		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+		REF_PTR_RELEASE(pUndo);    // belongs to pDoc now.
 		m_mapObj = nullptr;
 		PointerTool::clearSelection();
 		pNew2->setSelected(true);
 		pNew3->setSelected(true);
 	}
-
 }
 /** Move the end of the road segment. */
-void RoadTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RoadTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+	{
+		return;
+	}
 
-	Coord3D loc1 ;
-	if (m_mapObj == nullptr) {
+	Coord3D loc1;
+	if (m_mapObj == nullptr)
+	{
 		return;
 	}
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
 
-	loc1.x=loc1.y=loc1.z=0;
+	loc1.x = loc1.y = loc1.z = 0;
 	if (!pDoc->getCellPositionFromCoord(cpt, &loc1))
+	{
 		return;
+	}
 
 	Bool isBridge = RoadOptions::isBridge();
 	loc1.z = MAGIC_GROUND_Z;
 	Bool snapped = false;
-	if (!isBridge) {
+	if (!isBridge)
+	{
 		snapped = snap(&loc1, false);
 	}
-	if (!snapped) {
+	if (!snapped)
+	{
 		pView->snapPoint(&loc1);
 	}
 	pDoc->invalObject(m_mapObj);
@@ -333,9 +388,11 @@ void RoadTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	pDoc->invalObject(m_mapObj);
 }
 
-void RoadTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RoadTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+	{
+		return;
+	}
 	m_mapObj = nullptr;
 }
-

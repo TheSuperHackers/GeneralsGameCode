@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Module.h"
 #include "Common/ModuleFactory.h"
@@ -70,9 +70,9 @@
 #include "GameLogic/Module/HelixContain.h"
 #include "GameLogic/Module/ParachuteContain.h"
 #ifdef ALLOW_SURRENDER
-#include "GameLogic/Module/POWTruckBehavior.h"
-#include "GameLogic/Module/PrisonBehavior.h"
-#include "GameLogic/Module/PropagandaCenterBehavior.h"
+	#include "GameLogic/Module/POWTruckBehavior.h"
+	#include "GameLogic/Module/PrisonBehavior.h"
+	#include "GameLogic/Module/PropagandaCenterBehavior.h"
 #endif
 #include "GameLogic/Module/PropagandaTowerBehavior.h"
 #include "GameLogic/Module/BunkerBusterBehavior.h"
@@ -149,7 +149,7 @@
 #include "GameLogic/Module/OCLUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 #ifdef ALLOW_SURRENDER
-#include "GameLogic/Module/POWTruckAIUpdate.h"
+	#include "GameLogic/Module/POWTruckAIUpdate.h"
 #endif
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
@@ -158,7 +158,7 @@
 #include "GameLogic/Module/RadarUpdate.h"
 #include "GameLogic/Module/RepairDockUpdate.h"
 #ifdef ALLOW_SURRENDER
-#include "GameLogic/Module/PrisonDockUpdate.h"
+	#include "GameLogic/Module/PrisonDockUpdate.h"
 #endif
 #include "GameLogic/Module/RailedTransportDockUpdate.h"
 #include "GameLogic/Module/RailedTransportAIUpdate.h"
@@ -263,7 +263,7 @@
 #include "GameLogic/Module/CashHackSpecialPower.h"
 #include "GameLogic/Module/DefectorSpecialPower.h"
 #ifdef ALLOW_DEMORALIZE
-#include "GameLogic/Module/DemoralizeSpecialPower.h"
+	#include "GameLogic/Module/DemoralizeSpecialPower.h"
 #endif
 #include "GameLogic/Module/OCLSpecialPower.h"
 #include "GameLogic/Module/SpecialAbility.h"
@@ -281,10 +281,9 @@
 #include "GameClient/Module/BeaconClientUpdate.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ModuleFactory *TheModuleFactory = nullptr;  ///< the module factory singleton
+ModuleFactory* TheModuleFactory = nullptr;    ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -292,7 +291,6 @@ ModuleFactory::ModuleFactory()
 {
 	m_moduleTemplateMap.clear();
 	m_moduleDataList.clear();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -307,264 +305,263 @@ ModuleFactory::~ModuleFactory()
 		delete data;
 	}
 	m_moduleDataList.clear();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the module factory.  Any class that needs to be attached
-	* to objects or drawables as modules needs to add a template
-	* for that class here */
+ * to objects or drawables as modules needs to add a template
+ * for that class here */
 //-------------------------------------------------------------------------------------------------
 void ModuleFactory::init()
 {
-
 	// behavior modules
-	addModule( AutoHealBehavior );
-	addModule( GrantStealthBehavior );
-	addModule( NeutronBlastBehavior );
-	addModule( BridgeBehavior );
-	addModule( BridgeScaffoldBehavior );
-	addModule( BridgeTowerBehavior );
-	addModule( CountermeasuresBehavior );
-	addModule( DumbProjectileBehavior );
-	addModule( PhysicsBehavior );
-	addModule( InstantDeathBehavior );
-	addModule( SlowDeathBehavior );
-	addModule( HelicopterSlowDeathBehavior );
-	addModule( NeutronMissileSlowDeathBehavior );
-	addModule( CaveContain );
-	addModule( OpenContain );
-	addModule( OverchargeBehavior );
-	addModule( HealContain );
-	addModule( GarrisonContain );
-	addModule( InternetHackContain );
-	addModule( TransportContain );
-	addModule( RiderChangeContain );
-	addModule( RailedTransportContain );
-	addModule( MobNexusContain );
-	addModule( TunnelContain );
-	addModule( OverlordContain );
-	addModule( HelixContain );
-	addModule( ParachuteContain );
+	addModule(AutoHealBehavior);
+	addModule(GrantStealthBehavior);
+	addModule(NeutronBlastBehavior);
+	addModule(BridgeBehavior);
+	addModule(BridgeScaffoldBehavior);
+	addModule(BridgeTowerBehavior);
+	addModule(CountermeasuresBehavior);
+	addModule(DumbProjectileBehavior);
+	addModule(PhysicsBehavior);
+	addModule(InstantDeathBehavior);
+	addModule(SlowDeathBehavior);
+	addModule(HelicopterSlowDeathBehavior);
+	addModule(NeutronMissileSlowDeathBehavior);
+	addModule(CaveContain);
+	addModule(OpenContain);
+	addModule(OverchargeBehavior);
+	addModule(HealContain);
+	addModule(GarrisonContain);
+	addModule(InternetHackContain);
+	addModule(TransportContain);
+	addModule(RiderChangeContain);
+	addModule(RailedTransportContain);
+	addModule(MobNexusContain);
+	addModule(TunnelContain);
+	addModule(OverlordContain);
+	addModule(HelixContain);
+	addModule(ParachuteContain);
 #ifdef ALLOW_SURRENDER
-	addModule( POWTruckBehavior );
-	addModule( PrisonBehavior );
-	addModule( PropagandaCenterBehavior );
+	addModule(POWTruckBehavior);
+	addModule(PrisonBehavior);
+	addModule(PropagandaCenterBehavior);
 #endif
-	addModule( PropagandaTowerBehavior );
-	addModule( BunkerBusterBehavior );
-	addModule( FireWeaponWhenDamagedBehavior );
-	addModule( FireWeaponWhenDeadBehavior );
-	addModule( GenerateMinefieldBehavior );
-	addModule( ParkingPlaceBehavior );
-	addModule( FlightDeckBehavior );
-	addModule( PoisonedBehavior );
-	addModule( RebuildHoleBehavior );
-	addModule( SupplyWarehouseCripplingBehavior );
-	addModule( TechBuildingBehavior );
-	addModule( MinefieldBehavior );
-	addModule( BattleBusSlowDeathBehavior );
-	addModule( JetSlowDeathBehavior );
-	addModule( RailroadBehavior );
-	addModule( SpawnBehavior );
+	addModule(PropagandaTowerBehavior);
+	addModule(BunkerBusterBehavior);
+	addModule(FireWeaponWhenDamagedBehavior);
+	addModule(FireWeaponWhenDeadBehavior);
+	addModule(GenerateMinefieldBehavior);
+	addModule(ParkingPlaceBehavior);
+	addModule(FlightDeckBehavior);
+	addModule(PoisonedBehavior);
+	addModule(RebuildHoleBehavior);
+	addModule(SupplyWarehouseCripplingBehavior);
+	addModule(TechBuildingBehavior);
+	addModule(MinefieldBehavior);
+	addModule(BattleBusSlowDeathBehavior);
+	addModule(JetSlowDeathBehavior);
+	addModule(RailroadBehavior);
+	addModule(SpawnBehavior);
 
 	// die modules
-	addModule( DestroyDie );
-	addModule( FXListDie );
-	addModule( CrushDie );
-	addModule( DamDie );
-	addModule( CreateCrateDie );
-	addModule( CreateObjectDie );
-	addModule( EjectPilotDie );
-	addModule( SpecialPowerCompletionDie );
-	addModule( RebuildHoleExposeDie );
-	addModule( UpgradeDie );
-	addModule( KeepObjectDie );
+	addModule(DestroyDie);
+	addModule(FXListDie);
+	addModule(CrushDie);
+	addModule(DamDie);
+	addModule(CreateCrateDie);
+	addModule(CreateObjectDie);
+	addModule(EjectPilotDie);
+	addModule(SpecialPowerCompletionDie);
+	addModule(RebuildHoleExposeDie);
+	addModule(UpgradeDie);
+	addModule(KeepObjectDie);
 
 	// update modules
-	addModule( AssistedTargetingUpdate );
-	addModule( AutoFindHealingUpdate );
-	addModule( BaseRegenerateUpdate );
-	addModule( StealthDetectorUpdate );
-	addModule( StealthUpdate );
-	addModule( DeletionUpdate );
-	addModule( SmartBombTargetHomingUpdate );
-	addModule( DynamicShroudClearingRangeUpdate );
-	addModule( DeployStyleAIUpdate );
-	addModule( AssaultTransportAIUpdate );
-	addModule( HordeUpdate );
-	addModule( ToppleUpdate );
-	addModule( EnemyNearUpdate );
-	addModule( LifetimeUpdate );
-	addModule( RadiusDecalUpdate );
-	addModule( EMPUpdate );
-  addModule( LeafletDropBehavior );
-	addModule( AutoDepositUpdate );
-	addModule( WeaponBonusUpdate );
-	addModule( MissileAIUpdate );
-	addModule( NeutronMissileUpdate );
-	addModule( FireSpreadUpdate );
-	addModule( FireWeaponUpdate );
-	addModule( FlammableUpdate );
-	addModule( FloatUpdate );
-	addModule( TensileFormationUpdate );
-	addModule( HeightDieUpdate );
-	addModule( ChinookAIUpdate );
-	addModule( JetAIUpdate );
-	addModule( AIUpdateInterface );
-	addModule( SupplyTruckAIUpdate );
-	addModule( DeliverPayloadAIUpdate );
-	addModule( HackInternetAIUpdate );
-	addModule( DynamicGeometryInfoUpdate );
-	addModule( FirestormDynamicGeometryInfoUpdate );
-	addModule( LaserUpdate );
-	addModule( PointDefenseLaserUpdate );
-	addModule( CleanupHazardUpdate );
-	addModule( CommandButtonHuntUpdate );
-	addModule( PilotFindVehicleUpdate );
-	addModule( DemoTrapUpdate );
-	addModule( ParticleUplinkCannonUpdate );
-	addModule( SpectreGunshipUpdate );
-	addModule( SpectreGunshipDeploymentUpdate );
-	addModule( BaikonurLaunchPower );
-	addModule( BattlePlanUpdate );
-	addModule( ProjectileStreamUpdate );
-	addModule( QueueProductionExitUpdate );
-	addModule( RepairDockUpdate );
+	addModule(AssistedTargetingUpdate);
+	addModule(AutoFindHealingUpdate);
+	addModule(BaseRegenerateUpdate);
+	addModule(StealthDetectorUpdate);
+	addModule(StealthUpdate);
+	addModule(DeletionUpdate);
+	addModule(SmartBombTargetHomingUpdate);
+	addModule(DynamicShroudClearingRangeUpdate);
+	addModule(DeployStyleAIUpdate);
+	addModule(AssaultTransportAIUpdate);
+	addModule(HordeUpdate);
+	addModule(ToppleUpdate);
+	addModule(EnemyNearUpdate);
+	addModule(LifetimeUpdate);
+	addModule(RadiusDecalUpdate);
+	addModule(EMPUpdate);
+	addModule(LeafletDropBehavior);
+	addModule(AutoDepositUpdate);
+	addModule(WeaponBonusUpdate);
+	addModule(MissileAIUpdate);
+	addModule(NeutronMissileUpdate);
+	addModule(FireSpreadUpdate);
+	addModule(FireWeaponUpdate);
+	addModule(FlammableUpdate);
+	addModule(FloatUpdate);
+	addModule(TensileFormationUpdate);
+	addModule(HeightDieUpdate);
+	addModule(ChinookAIUpdate);
+	addModule(JetAIUpdate);
+	addModule(AIUpdateInterface);
+	addModule(SupplyTruckAIUpdate);
+	addModule(DeliverPayloadAIUpdate);
+	addModule(HackInternetAIUpdate);
+	addModule(DynamicGeometryInfoUpdate);
+	addModule(FirestormDynamicGeometryInfoUpdate);
+	addModule(LaserUpdate);
+	addModule(PointDefenseLaserUpdate);
+	addModule(CleanupHazardUpdate);
+	addModule(CommandButtonHuntUpdate);
+	addModule(PilotFindVehicleUpdate);
+	addModule(DemoTrapUpdate);
+	addModule(ParticleUplinkCannonUpdate);
+	addModule(SpectreGunshipUpdate);
+	addModule(SpectreGunshipDeploymentUpdate);
+	addModule(BaikonurLaunchPower);
+	addModule(BattlePlanUpdate);
+	addModule(ProjectileStreamUpdate);
+	addModule(QueueProductionExitUpdate);
+	addModule(RepairDockUpdate);
 #ifdef ALLOW_SURRENDER
-	addModule( PrisonDockUpdate );
+	addModule(PrisonDockUpdate);
 #endif
-	addModule( RailedTransportDockUpdate );
-	addModule( DefaultProductionExitUpdate );
-	addModule( SpawnPointProductionExitUpdate );
-	addModule( SpyVisionUpdate );
-	addModule( SlavedUpdate );
-	addModule( MobMemberSlavedUpdate );
-	addModule( OCLUpdate );
-	addModule( SpecialAbilityUpdate );
-	addModule( MissileLauncherBuildingUpdate );
-	addModule( SupplyCenterProductionExitUpdate );
-	addModule( SupplyCenterDockUpdate );
-	addModule( SupplyWarehouseDockUpdate );
-	addModule( DozerAIUpdate );
+	addModule(RailedTransportDockUpdate);
+	addModule(DefaultProductionExitUpdate);
+	addModule(SpawnPointProductionExitUpdate);
+	addModule(SpyVisionUpdate);
+	addModule(SlavedUpdate);
+	addModule(MobMemberSlavedUpdate);
+	addModule(OCLUpdate);
+	addModule(SpecialAbilityUpdate);
+	addModule(MissileLauncherBuildingUpdate);
+	addModule(SupplyCenterProductionExitUpdate);
+	addModule(SupplyCenterDockUpdate);
+	addModule(SupplyWarehouseDockUpdate);
+	addModule(DozerAIUpdate);
 #ifdef ALLOW_SURRENDER
-	addModule( POWTruckAIUpdate );
+	addModule(POWTruckAIUpdate);
 #endif
-	addModule( RailedTransportAIUpdate );
-	addModule( ProductionUpdate );
-	addModule( ProneUpdate );
-	addModule( StickyBombUpdate );
-	addModule( FireOCLAfterWeaponCooldownUpdate );
-	addModule( HijackerUpdate );
-	addModule( StructureToppleUpdate );
-	addModule( StructureCollapseUpdate );
-	addModule( BoneFXUpdate );
-	addModule( RadarUpdate );
-	addModule( AnimationSteeringUpdate );
-	addModule( TransportAIUpdate );
-	addModule( WanderAIUpdate );
-	addModule( WaveGuideUpdate );
-	addModule( WorkerAIUpdate );
-	addModule( PowerPlantUpdate );
-	addModule( CheckpointUpdate );
+	addModule(RailedTransportAIUpdate);
+	addModule(ProductionUpdate);
+	addModule(ProneUpdate);
+	addModule(StickyBombUpdate);
+	addModule(FireOCLAfterWeaponCooldownUpdate);
+	addModule(HijackerUpdate);
+	addModule(StructureToppleUpdate);
+	addModule(StructureCollapseUpdate);
+	addModule(BoneFXUpdate);
+	addModule(RadarUpdate);
+	addModule(AnimationSteeringUpdate);
+	addModule(TransportAIUpdate);
+	addModule(WanderAIUpdate);
+	addModule(WaveGuideUpdate);
+	addModule(WorkerAIUpdate);
+	addModule(PowerPlantUpdate);
+	addModule(CheckpointUpdate);
 
 	// upgrade modules
-	addModule( CostModifierUpgrade );
-	addModule( ActiveShroudUpgrade );
-	addModule( ArmorUpgrade );
-	addModule( CommandSetUpgrade );
-	addModule( GrantScienceUpgrade );
-	addModule( PassengersFireUpgrade );
-	addModule( StatusBitsUpgrade );
-	addModule( SubObjectsUpgrade );
-	addModule( StealthUpgrade );
-	addModule( RadarUpgrade );
-	addModule( PowerPlantUpgrade );
-	addModule( LocomotorSetUpgrade );
-	addModule( ObjectCreationUpgrade );
-	addModule( ReplaceObjectUpgrade );
-	addModule( ModelConditionUpgrade );
-	addModule( UnpauseSpecialPowerUpgrade );
-	addModule( WeaponBonusUpgrade );
-	addModule( WeaponSetUpgrade );
-	addModule( WeaponBonusUpgrade );
-	addModule( ExperienceScalarUpgrade );
-	addModule( MaxHealthUpgrade );
+	addModule(CostModifierUpgrade);
+	addModule(ActiveShroudUpgrade);
+	addModule(ArmorUpgrade);
+	addModule(CommandSetUpgrade);
+	addModule(GrantScienceUpgrade);
+	addModule(PassengersFireUpgrade);
+	addModule(StatusBitsUpgrade);
+	addModule(SubObjectsUpgrade);
+	addModule(StealthUpgrade);
+	addModule(RadarUpgrade);
+	addModule(PowerPlantUpgrade);
+	addModule(LocomotorSetUpgrade);
+	addModule(ObjectCreationUpgrade);
+	addModule(ReplaceObjectUpgrade);
+	addModule(ModelConditionUpgrade);
+	addModule(UnpauseSpecialPowerUpgrade);
+	addModule(WeaponBonusUpgrade);
+	addModule(WeaponSetUpgrade);
+	addModule(WeaponBonusUpgrade);
+	addModule(ExperienceScalarUpgrade);
+	addModule(MaxHealthUpgrade);
 
 	// create modules
-	addModule( LockWeaponCreate );
-	addModule( PreorderCreate );
-	addModule( SupplyCenterCreate );
-	addModule( SupplyWarehouseCreate );
-	addModule( SpecialPowerCreate );
-	addModule( GrantUpgradeCreate );
-	addModule( VeterancyGainCreate );
+	addModule(LockWeaponCreate);
+	addModule(PreorderCreate);
+	addModule(SupplyCenterCreate);
+	addModule(SupplyWarehouseCreate);
+	addModule(SpecialPowerCreate);
+	addModule(GrantUpgradeCreate);
+	addModule(VeterancyGainCreate);
 
 	// damage modules
-	addModule( BoneFXDamage );
-	addModule( TransitionDamageFX );
+	addModule(BoneFXDamage);
+	addModule(TransitionDamageFX);
 
 	// collide modules
-	addModule( FireWeaponCollide );
-	addModule( SquishCollide );
+	addModule(FireWeaponCollide);
+	addModule(SquishCollide);
 
-	addModule( HealCrateCollide );
-	addModule( MoneyCrateCollide );
-	addModule( ShroudCrateCollide );
-	addModule( UnitCrateCollide );
-	addModule( VeterancyCrateCollide );
-	addModule( ConvertToCarBombCrateCollide );
-	addModule( ConvertToHijackedVehicleCrateCollide );
-	addModule( SabotageCommandCenterCrateCollide );
-	addModule( SabotageFakeBuildingCrateCollide );
-	addModule( SabotageInternetCenterCrateCollide );
-	addModule( SabotageMilitaryFactoryCrateCollide );
-	addModule( SabotagePowerPlantCrateCollide );
-	addModule( SabotageSuperweaponCrateCollide );
-	addModule( SabotageSupplyCenterCrateCollide );
-	addModule( SabotageSupplyDropzoneCrateCollide );
-	addModule( SalvageCrateCollide );
+	addModule(HealCrateCollide);
+	addModule(MoneyCrateCollide);
+	addModule(ShroudCrateCollide);
+	addModule(UnitCrateCollide);
+	addModule(VeterancyCrateCollide);
+	addModule(ConvertToCarBombCrateCollide);
+	addModule(ConvertToHijackedVehicleCrateCollide);
+	addModule(SabotageCommandCenterCrateCollide);
+	addModule(SabotageFakeBuildingCrateCollide);
+	addModule(SabotageInternetCenterCrateCollide);
+	addModule(SabotageMilitaryFactoryCrateCollide);
+	addModule(SabotagePowerPlantCrateCollide);
+	addModule(SabotageSuperweaponCrateCollide);
+	addModule(SabotageSupplyCenterCrateCollide);
+	addModule(SabotageSupplyDropzoneCrateCollide);
+	addModule(SalvageCrateCollide);
 
 	// body modules
-	addModule( InactiveBody );
-	addModule( ActiveBody );
-	addModule( HighlanderBody );
-	addModule( ImmortalBody );
-	addModule( StructureBody );
-	addModule( HiveStructureBody );
-	addModule( UndeadBody );
+	addModule(InactiveBody);
+	addModule(ActiveBody);
+	addModule(HighlanderBody);
+	addModule(ImmortalBody);
+	addModule(StructureBody);
+	addModule(HiveStructureBody);
+	addModule(UndeadBody);
 
 	// contain modules
 	// (none)
 
 	// special power modules
-	addModule( CashHackSpecialPower );
-	addModule( DefectorSpecialPower );
+	addModule(CashHackSpecialPower);
+	addModule(DefectorSpecialPower);
 #ifdef ALLOW_DEMORALIZE
-	addModule( DemoralizeSpecialPower );
+	addModule(DemoralizeSpecialPower);
 #endif
-	addModule( OCLSpecialPower );
-	addModule( FireWeaponPower );
-	addModule( SpecialAbility );
-	addModule( SpyVisionSpecialPower );
-	addModule( CashBountyPower );
-	addModule( CleanupAreaPower );
+	addModule(OCLSpecialPower);
+	addModule(FireWeaponPower);
+	addModule(SpecialAbility);
+	addModule(SpyVisionSpecialPower);
+	addModule(CashBountyPower);
+	addModule(CleanupAreaPower);
 
 	// destroy modules
 	// (none)
 
 	// client update modules
-	addModule( AnimatedParticleSysBoneClientUpdate );
-	addModule( SwayClientUpdate );
-	addModule( BeaconClientUpdate );
-
+	addModule(AnimatedParticleSysBoneClientUpdate);
+	addModule(SwayClientUpdate);
+	addModule(BeaconClientUpdate);
 }
 
 //-------------------------------------------------------------------------------------------------
 Int ModuleFactory::findModuleInterfaceMask(const AsciiString& name, ModuleType type)
 {
 	if (name.isEmpty())
+	{
 		return 0;
+	}
 
 	const ModuleTemplate* moduleTemplate = findModuleTemplate(name, type);
 	if (moduleTemplate)
@@ -577,16 +574,18 @@ Int ModuleFactory::findModuleInterfaceMask(const AsciiString& name, ModuleType t
 
 //-------------------------------------------------------------------------------------------------
 ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& name, ModuleType type,
-																								const AsciiString& moduleTag)
+                                                const AsciiString& moduleTag)
 {
 	if (name.isEmpty())
+	{
 		return nullptr;
+	}
 
 	const ModuleTemplate* moduleTemplate = findModuleTemplate(name, type);
 	if (moduleTemplate)
 	{
 		ModuleData* md = (*moduleTemplate->m_createDataProc)(ini);
-		md->setModuleTagNameKey( NAMEKEY( moduleTag ) );
+		md->setModuleTagNameKey(NAMEKEY(moduleTag));
 		m_moduleDataList.push_back(md);
 		return md;
 	}
@@ -610,10 +609,10 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 {
 	NameKeyType namekey = makeDecoratedNameKey(name, type);
 
-  ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
-  if (it == m_moduleTemplateMap.end())
+	ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
+	if (it == m_moduleTemplateMap.end())
 	{
-		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
+		DEBUG_CRASH(("Module name '%s' not found", name.str()));
 		return nullptr;
 	}
 	else
@@ -625,10 +624,10 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new acton class instance given the name */
 //-------------------------------------------------------------------------------------------------
-Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const ModuleData* moduleData, ModuleType type )
+Module* ModuleFactory::newModule(Thing* thing, const AsciiString& name, const ModuleData* moduleData, ModuleType type)
 {
 	// sanity
-	if( name.isEmpty() )
+	if (name.isEmpty())
 	{
 		DEBUG_CRASH(("attempting to create module with empty name"));
 		return nullptr;
@@ -636,7 +635,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	const ModuleTemplate* mt = findModuleTemplate(name, type);
 	if (mt)
 	{
-		Module* mod = (*mt->m_createProc)( thing, moduleData );
+		Module* mod = (*mt->m_createProc)(thing, moduleData);
 
 #ifdef DEBUG_CRASHING
 		if (type == MODULETYPE_BEHAVIOR)
@@ -644,35 +643,35 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 			BehaviorModule* bm = (BehaviorModule*)mod;
 
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != nullptr),
-				("getInterfaceMask bad for MODULE_BODY (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != nullptr),
+			  ("getInterfaceMask bad for MODULE_BODY (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != nullptr),
-				("getInterfaceMask bad for MODULE_COLLIDE (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != nullptr),
+			  ("getInterfaceMask bad for MODULE_COLLIDE (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != nullptr),
-				("getInterfaceMask bad for MODULE_CONTAIN (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != nullptr),
+			  ("getInterfaceMask bad for MODULE_CONTAIN (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != nullptr),
-				("getInterfaceMask bad for MODULE_CREATE (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != nullptr),
+			  ("getInterfaceMask bad for MODULE_CREATE (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != nullptr),
-				("getInterfaceMask bad for MODULE_DAMAGE (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != nullptr),
+			  ("getInterfaceMask bad for MODULE_DAMAGE (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != nullptr),
-				("getInterfaceMask bad for MODULE_DESTROY (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != nullptr),
+			  ("getInterfaceMask bad for MODULE_DESTROY (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != nullptr),
-				("getInterfaceMask bad for MODULE_DIE (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != nullptr),
+			  ("getInterfaceMask bad for MODULE_DIE (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != nullptr),
-				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != nullptr),
+			  ("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != nullptr),
-				("getInterfaceMask bad for MODULE_UPDATE (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != nullptr),
+			  ("getInterfaceMask bad for MODULE_UPDATE (%s)", name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != nullptr),
-				("getInterfaceMask bad for MODULE_UPGRADE (%s)",name.str()));
+			  ((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != nullptr),
+			  ("getInterfaceMask bad for MODULE_UPGRADE (%s)", name.str()));
 		}
 #endif
 
@@ -680,42 +679,40 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	}
 
 	return nullptr;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Add a module template to our list of templates */
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::addModuleInternal( NewModuleProc proc, NewModuleDataProc dataproc, ModuleType type, const AsciiString& name, Int whichIntf )
+void ModuleFactory::addModuleInternal(NewModuleProc proc, NewModuleDataProc dataproc, ModuleType type, const AsciiString& name, Int whichIntf)
 {
 	NameKeyType namekey = makeDecoratedNameKey(name, type);
-	ModuleTemplate& mtm = m_moduleTemplateMap[namekey];	// this creates it if it does not exist already
+	ModuleTemplate& mtm = m_moduleTemplateMap[namekey];    // this creates it if it does not exist already
 	mtm.m_createProc = proc;
 	mtm.m_createDataProc = dataproc;
 	mtm.m_whichInterfaces = whichIntf;
 }
 
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::crc( Xfer *xfer )
+void ModuleFactory::crc(Xfer* xfer)
 {
 	for (ModuleDataList::iterator mdIt = m_moduleDataList.begin(); mdIt != m_moduleDataList.end(); ++mdIt)
 	{
-		((ModuleData *)(*mdIt))->crc(xfer);
+		((ModuleData*)(*mdIt))->crc(xfer);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::xfer( Xfer *xfer )
+void ModuleFactory::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	for (ModuleDataList::iterator mdIt = m_moduleDataList.begin(); mdIt != m_moduleDataList.end(); ++mdIt)
 	{
-		((ModuleData *)(*mdIt))->xfer(xfer);
+		((ModuleData*)(*mdIt))->xfer(xfer);
 	}
 }
 

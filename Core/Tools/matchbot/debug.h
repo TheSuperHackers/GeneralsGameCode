@@ -24,19 +24,19 @@
 
 #ifdef DEBUG
 
-#include <cstdarg>
+	#include <cstdarg>
 
-#ifdef __cplusplus
+	#ifdef __cplusplus
 extern "C" {
-#endif
-void DebugLog( const char *fmt, ... );
-#ifdef __cplusplus
+	#endif
+void DebugLog(const char* fmt, ...);
+	#ifdef __cplusplus
 }
-#endif
-#define DEBUG_LOG(x) DebugLog x
+	#endif
+	#define DEBUG_LOG(x) DebugLog x
 
-#else // DEBUG
+#else    // DEBUG
 
-#define DEBUG_LOG(x)
+	#define DEBUG_LOG(x)
 
-#endif // DEBUG
+#endif    // DEBUG

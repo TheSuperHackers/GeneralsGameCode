@@ -44,8 +44,8 @@
 #include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -54,74 +54,63 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNAMIC(EmitterPropertySheetClass, CPropertySheet)
 
-
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::EmitterPropertySheetClass
-(
-	EmitterInstanceListClass *emitter_list,
-	UINT nIDCaption,
-	CWnd *pParentWnd
-)
-	:  m_pEmitterList (nullptr),
-	   CPropertySheet (nIDCaption, pParentWnd, 0)
+EmitterPropertySheetClass::EmitterPropertySheetClass(
+  EmitterInstanceListClass* emitter_list,
+  UINT nIDCaption,
+  CWnd* pParentWnd)
+  : m_pEmitterList(nullptr)
+  , CPropertySheet(nIDCaption, pParentWnd, 0)
 {
 	m_pEmitterList = emitter_list;
-	Initialize ();
+	Initialize();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::EmitterPropertySheetClass
-(
-	EmitterInstanceListClass *emitter_list,
-	LPCTSTR pszCaption,
-	CWnd *pParentWnd
-)
-	:  m_pEmitterList (nullptr),
-	   CPropertySheet (pszCaption, pParentWnd, 0)
+EmitterPropertySheetClass::EmitterPropertySheetClass(
+  EmitterInstanceListClass* emitter_list,
+  LPCTSTR pszCaption,
+  CWnd* pParentWnd)
+  : m_pEmitterList(nullptr)
+  , CPropertySheet(pszCaption, pParentWnd, 0)
 {
 	m_pEmitterList = emitter_list;
-	Initialize ();
+	Initialize();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::~EmitterPropertySheetClass ()
+EmitterPropertySheetClass::~EmitterPropertySheetClass()
 {
-	SAFE_DELETE (m_pEmitterList);
+	SAFE_DELETE(m_pEmitterList);
 }
-
 
 BEGIN_MESSAGE_MAP(EmitterPropertySheetClass, CPropertySheet)
-	//{{AFX_MSG_MAP(EmitterPropertySheetClass)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterPropertySheetClass)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // EmitterPropertySheetClass message handlers
-
 
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
 LRESULT
-EmitterPropertySheetClass::WindowProc
-(
-	UINT message,
-	WPARAM wParam,
-	LPARAM lParam
-)
+EmitterPropertySheetClass::WindowProc(
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
 {
 	switch (message)
 	{
@@ -129,41 +118,43 @@ EmitterPropertySheetClass::WindowProc
 		case WM_COMMAND:
 		{
 			// What control sent the notification?
-			switch (LOWORD (wParam))
+			switch (LOWORD(wParam))
 			{
 				case IDCANCEL:
 				{
-					::GetCurrentDocument ()->Reload_Displayed_Object ();
+					::GetCurrentDocument()->Reload_Displayed_Object();
 				}
 				break;
 
 				case IDOK:
 				{
 					// If the apply button isn't enabled, then don't do the apply operation.
-					if (::IsWindowEnabled (::GetDlgItem (m_hWnd, ID_APPLY_NOW)) == FALSE) {
+					if (::IsWindowEnabled(::GetDlgItem(m_hWnd, ID_APPLY_NOW)) == FALSE)
+					{
 						break;
 					}
 				}
 				case ID_APPLY_NOW:
 				{
 					// Did the user click the button?
-					if (HIWORD (wParam) == BN_CLICKED) {
-						LRESULT lresult = CPropertySheet::WindowProc (message, wParam, lParam);
+					if (HIWORD(wParam) == BN_CLICKED)
+					{
+						LRESULT lresult = CPropertySheet::WindowProc(message, wParam, lParam);
 
 						// If all the pages contain valid data, then update the emitter
-						if (m_GeneralPage.Is_Data_Valid () &&
-							 m_ParticlePage.Is_Data_Valid () &&
-							 m_PhysicsPage.Is_Data_Valid () &&
-							 m_ColorPage.Is_Data_Valid () &&
-							 m_UserPage.Is_Data_Valid () &&
-							 m_SizePage.Is_Data_Valid () &&
-							 m_LinePage.Is_Data_Valid () &&
-							 m_RotationPage.Is_Data_Valid () &&
-							 m_FramePage.Is_Data_Valid () &&
-							 m_LineGroupPage.Is_Data_Valid () )
+						if (m_GeneralPage.Is_Data_Valid() &&
+						    m_ParticlePage.Is_Data_Valid() &&
+						    m_PhysicsPage.Is_Data_Valid() &&
+						    m_ColorPage.Is_Data_Valid() &&
+						    m_UserPage.Is_Data_Valid() &&
+						    m_SizePage.Is_Data_Valid() &&
+						    m_LinePage.Is_Data_Valid() &&
+						    m_RotationPage.Is_Data_Valid() &&
+						    m_FramePage.Is_Data_Valid() &&
+						    m_LineGroupPage.Is_Data_Valid())
 						{
 							// Update the current emitter to match the data
-							Update_Emitter ();
+							Update_Emitter();
 						}
 
 						return lresult;
@@ -177,79 +168,76 @@ EmitterPropertySheetClass::WindowProc
 	}
 
 	// Allow the base class to process this message
-	return CPropertySheet::WindowProc (message, wParam, lParam);
+	return CPropertySheet::WindowProc(message, wParam, lParam);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Add_Emitter_To_Viewer
 //
-void
-EmitterPropertySheetClass::Add_Emitter_To_Viewer ()
+void EmitterPropertySheetClass::Add_Emitter_To_Viewer()
 {
-	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
-	if ((pdoc != nullptr) && (m_pEmitterList != nullptr)) {
-
+	CW3DViewDoc* pdoc = ::GetCurrentDocument();
+	if ((pdoc != nullptr) && (m_pEmitterList != nullptr))
+	{
 		//
 		// Create a new prototype for this emitter and add it to the asset manager
 		//
-		ParticleEmitterDefClass *pdefinition		= new ParticleEmitterDefClass (*m_pEmitterList);
-		ParticleEmitterPrototypeClass *pprototype	= new ParticleEmitterPrototypeClass (pdefinition);
+		ParticleEmitterDefClass* pdefinition = new ParticleEmitterDefClass(*m_pEmitterList);
+		ParticleEmitterPrototypeClass* pprototype = new ParticleEmitterPrototypeClass(pdefinition);
 
 		//
 		// Update the asset manager with the new prototype
 		//
-		if (m_LastSavedName.GetLength () > 0) {
-			WW3DAssetManager::Get_Instance()->Remove_Prototype (m_LastSavedName);
+		if (m_LastSavedName.GetLength() > 0)
+		{
+			WW3DAssetManager::Get_Instance()->Remove_Prototype(m_LastSavedName);
 		}
-		WW3DAssetManager::Get_Instance()->Add_Prototype (pprototype);
+		WW3DAssetManager::Get_Instance()->Add_Prototype(pprototype);
 
 		//
 		// Add this emitter to the data tree
 		//
-		CDataTreeView *pdata_tree = pdoc->GetDataTreeView ();
-		pdata_tree->Refresh_Asset (m_pEmitterList->Get_Name (), m_LastSavedName, TypeEmitter);
+		CDataTreeView* pdata_tree = pdoc->GetDataTreeView();
+		pdata_tree->Refresh_Asset(m_pEmitterList->Get_Name(), m_LastSavedName, TypeEmitter);
 		/*if (m_LastSavedName.GetLength () > 0) {
-			pdata_tree->Refresh_Asset (m_pEmitterList->Get_Name (), m_LastSavedName, TypeEmitter);
+		  pdata_tree->Refresh_Asset (m_pEmitterList->Get_Name (), m_LastSavedName, TypeEmitter);
 		} else {
-			pdata_tree->Add_Asset_To_Tree (m_pEmitterList->Get_Name (), TypeEmitter, true);
+		  pdata_tree->Add_Asset_To_Tree (m_pEmitterList->Get_Name (), TypeEmitter, true);
 		}*/
 
 		//
 		// Display the emitter
 		//
-		pdoc->Reload_Displayed_Object ();
-		m_LastSavedName = m_pEmitterList->Get_Name ();
+		pdoc->Reload_Displayed_Object();
+		m_LastSavedName = m_pEmitterList->Get_Name();
 
 		//
 		// Regenerate the emitter pointer list
 		//
-		m_pEmitterList->Free_List ();
-		pdoc->Build_Emitter_List (m_pEmitterList, m_pEmitterList->Get_Name ());
+		m_pEmitterList->Free_List();
+		pdoc->Build_Emitter_List(m_pEmitterList, m_pEmitterList->Get_Name());
 	}
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Update_Emitter
 //
-void
-EmitterPropertySheetClass::Update_Emitter ()
+void EmitterPropertySheetClass::Update_Emitter()
 {
 	//
 	//	Update those pages that are dependent on the particle's
 	// lifetime.
 	//
-	float lifetime = m_GeneralPage.Get_Lifetime ();
-	m_ColorPage.On_Lifetime_Changed (lifetime);
-	m_SizePage.On_Lifetime_Changed (lifetime);
-	m_RotationPage.On_Lifetime_Changed (lifetime);
-	m_FramePage.On_Lifetime_Changed (lifetime);
-	m_LineGroupPage.On_Lifetime_Changed (lifetime);
+	float lifetime = m_GeneralPage.Get_Lifetime();
+	m_ColorPage.On_Lifetime_Changed(lifetime);
+	m_SizePage.On_Lifetime_Changed(lifetime);
+	m_RotationPage.On_Lifetime_Changed(lifetime);
+	m_FramePage.On_Lifetime_Changed(lifetime);
+	m_LineGroupPage.On_Lifetime_Changed(lifetime);
 
-	Add_Emitter_To_Viewer ();
+	Add_Emitter_To_Viewer();
 
 	//
 	// Create a new emitter
@@ -272,58 +260,58 @@ EmitterPropertySheetClass::Update_Emitter ()
 	m_SizePage.Set_Emitter (m_pEmitterList);*/
 }
 
-
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
-void
-EmitterPropertySheetClass::Initialize ()
+void EmitterPropertySheetClass::Initialize()
 {
-	if (m_pEmitterList == nullptr) {
-		Create_New_Emitter ();
-	} else {
-		m_LastSavedName = m_pEmitterList->Get_Name ();
+	if (m_pEmitterList == nullptr)
+	{
+		Create_New_Emitter();
+	}
+	else
+	{
+		m_LastSavedName = m_pEmitterList->Get_Name();
 	}
 
 	// Pass the emitter along to the pages
-	m_GeneralPage.Set_Emitter (m_pEmitterList);
-	m_ParticlePage.Set_Emitter (m_pEmitterList);
-	m_PhysicsPage.Set_Emitter (m_pEmitterList);
-	m_ColorPage.Set_Emitter (m_pEmitterList);
-	m_UserPage.Set_Emitter (m_pEmitterList);
-	m_SizePage.Set_Emitter (m_pEmitterList);
-	m_LinePage.Set_Emitter (m_pEmitterList);
-	m_RotationPage.Set_Emitter (m_pEmitterList);
-	m_FramePage.Set_Emitter (m_pEmitterList);
-	m_LineGroupPage.Set_Emitter (m_pEmitterList);
+	m_GeneralPage.Set_Emitter(m_pEmitterList);
+	m_ParticlePage.Set_Emitter(m_pEmitterList);
+	m_PhysicsPage.Set_Emitter(m_pEmitterList);
+	m_ColorPage.Set_Emitter(m_pEmitterList);
+	m_UserPage.Set_Emitter(m_pEmitterList);
+	m_SizePage.Set_Emitter(m_pEmitterList);
+	m_LinePage.Set_Emitter(m_pEmitterList);
+	m_RotationPage.Set_Emitter(m_pEmitterList);
+	m_FramePage.Set_Emitter(m_pEmitterList);
+	m_LineGroupPage.Set_Emitter(m_pEmitterList);
 
 	// Initialize the user page with data from the prototype
 	/*if (m_pEmitter != nullptr) {
-		ParticleEmitterPrototypeClass *proto = nullptr;
-		proto = (ParticleEmitterPrototypeClass *)WW3DAssetManager::Get_Instance ()->Find_Prototype (m_pEmitter->Get_Name ());
-		if (proto != nullptr) {
-			ParticleEmitterDefClass *definition = proto->Get_Definition ();
-			m_UserPage.Set_Type (definition->Get_User_Type ());
-			m_UserPage.Set_String (definition->Get_User_String ());
-		}
+	  ParticleEmitterPrototypeClass *proto = nullptr;
+	  proto = (ParticleEmitterPrototypeClass *)WW3DAssetManager::Get_Instance ()->Find_Prototype (m_pEmitter->Get_Name ());
+	  if (proto != nullptr) {
+	    ParticleEmitterDefClass *definition = proto->Get_Definition ();
+	    m_UserPage.Set_Type (definition->Get_User_Type ());
+	    m_UserPage.Set_String (definition->Get_User_String ());
+	  }
 	}*/
 
 	// Add the pages to the sheet
-	AddPage (&m_GeneralPage);
-	AddPage (&m_ParticlePage);
-	AddPage (&m_PhysicsPage);
-	AddPage (&m_ColorPage);
-	AddPage (&m_SizePage);
-	AddPage (&m_UserPage);
-	AddPage (&m_LinePage);
-	AddPage (&m_RotationPage);
-	AddPage (&m_FramePage);
-	AddPage (&m_LineGroupPage);
+	AddPage(&m_GeneralPage);
+	AddPage(&m_ParticlePage);
+	AddPage(&m_PhysicsPage);
+	AddPage(&m_ColorPage);
+	AddPage(&m_SizePage);
+	AddPage(&m_UserPage);
+	AddPage(&m_LinePage);
+	AddPage(&m_RotationPage);
+	AddPage(&m_FramePage);
+	AddPage(&m_LineGroupPage);
 
 	m_GeneralPage.Set_Parent(this);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
@@ -332,93 +320,91 @@ EmitterPropertySheetClass::Initialize ()
 /*ParticleEmitterClass *
 EmitterPropertySheetClass::Create_Emitter ()
 {
-	//
-	//	Read the particle settings
-	//
-	float rate				= m_ParticlePage.Get_Rate ();
-	int burst				= m_ParticlePage.Get_Burst_Size ();
-	float max_particles	= m_ParticlePage.Get_Max_Particles ();
+  //
+  //	Read the particle settings
+  //
+  float rate				= m_ParticlePage.Get_Rate ();
+  int burst				= m_ParticlePage.Get_Burst_Size ();
+  float max_particles	= m_ParticlePage.Get_Max_Particles ();
 
-	//
-	//	Read the physics settings
-	//
-	Vector3 velocity		= m_PhysicsPage.Get_Velocity ();
-	Vector3 acceleration	= m_PhysicsPage.Get_Acceleration ();
-	float out_factor		= m_PhysicsPage.Get_Out_Factor ();
-	float inherit_factor	= m_PhysicsPage.Get_Inheritance_Factor ();
+  //
+  //	Read the physics settings
+  //
+  Vector3 velocity		= m_PhysicsPage.Get_Velocity ();
+  Vector3 acceleration	= m_PhysicsPage.Get_Acceleration ();
+  float out_factor		= m_PhysicsPage.Get_Out_Factor ();
+  float inherit_factor	= m_PhysicsPage.Get_Inheritance_Factor ();
 
-	//
-	//	Read the general settings
-	//
-	CString name			= m_GeneralPage.Get_Name ();
-	CString texture_name	= m_GeneralPage.Get_Texture_Filename ();
-	float lifetime			= m_GeneralPage.Get_Lifetime ();
-	ShaderClass shader	= m_GeneralPage.Get_Shader ();
+  //
+  //	Read the general settings
+  //
+  CString name			= m_GeneralPage.Get_Name ();
+  CString texture_name	= m_GeneralPage.Get_Texture_Filename ();
+  float lifetime			= m_GeneralPage.Get_Lifetime ();
+  ShaderClass shader	= m_GeneralPage.Get_Shader ();
 
-	//
-	//	Read the keyframe settings
-	//
-	ParticlePropertyStruct<Vector3> colors;
-	ParticlePropertyStruct<float> opacity;
-	ParticlePropertyStruct<float> size;
-	m_ColorPage.Get_Color_Keyframes (colors);
-	m_ColorPage.Get_Opacity_Keyframes (opacity);
-	m_SizePage.Get_Size_Keyframes (size);
+  //
+  //	Read the keyframe settings
+  //
+  ParticlePropertyStruct<Vector3> colors;
+  ParticlePropertyStruct<float> opacity;
+  ParticlePropertyStruct<float> size;
+  m_ColorPage.Get_Color_Keyframes (colors);
+  m_ColorPage.Get_Opacity_Keyframes (opacity);
+  m_SizePage.Get_Size_Keyframes (size);
 
-	//
-	//	Read the randomizers
-	//
-	Vector3Randomizer *creation_vol	= m_ParticlePage.Get_Creation_Volume ();
-	Vector3Randomizer *vel_random		= m_PhysicsPage.Get_Velocity_Random ();
+  //
+  //	Read the randomizers
+  //
+  Vector3Randomizer *creation_vol	= m_ParticlePage.Get_Creation_Volume ();
+  Vector3Randomizer *vel_random		= m_PhysicsPage.Get_Velocity_Random ();
 
-	//
-	//	Load the texture
-	//
-	TextureClass *ptexture = nullptr;
-	if (texture_name.GetLength () > 0) {
-		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture (texture_name);
-	}
+  //
+  //	Load the texture
+  //
+  TextureClass *ptexture = nullptr;
+  if (texture_name.GetLength () > 0) {
+    ptexture = WW3DAssetManager::Get_Instance()->Get_Texture (texture_name);
+  }
 
-	//
-	//	Create the new particle emitter
-	//
-	ParticleEmitterClass *pemitter = new ParticleEmitterClass (rate,
-																					burst,
-																					creation_vol,
-																					velocity,
-																					vel_random,
-																					out_factor,
-																					inherit_factor,
-																					colors,
-																					opacity,
-																					size,
-																					acceleration,
-																					lifetime,
-																					ptexture,
-																					shader,
-																					max_particles);
+  //
+  //	Create the new particle emitter
+  //
+  ParticleEmitterClass *pemitter = new ParticleEmitterClass (rate,
+                                          burst,
+                                          creation_vol,
+                                          velocity,
+                                          vel_random,
+                                          out_factor,
+                                          inherit_factor,
+                                          colors,
+                                          opacity,
+                                          size,
+                                          acceleration,
+                                          lifetime,
+                                          ptexture,
+                                          shader,
+                                          max_particles);
 
 
-	//
-	//	Pass the name onto the emitter
-	//
-	pemitter->Set_Name (name);
+  //
+  //	Pass the name onto the emitter
+  //
+  pemitter->Set_Name (name);
 
-	// Return the emitter
-	return pemitter;
+  // Return the emitter
+  return pemitter;
 }*/
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Create_New_Emitter
 //
-void
-EmitterPropertySheetClass::Create_New_Emitter ()
+void EmitterPropertySheetClass::Create_New_Emitter()
 {
 	ParticlePropertyStruct<Vector3> color;
-	color.Start = Vector3 (1, 1, 1);
-	color.Rand.Set (0,0,0);
+	color.Start = Vector3(1, 1, 1);
+	color.Rand.Set(0, 0, 0);
 	color.NumKeyFrames = 0;
 	color.KeyTimes = nullptr;
 	color.Values = nullptr;
@@ -461,39 +447,39 @@ EmitterPropertySheetClass::Create_New_Emitter ()
 	//
 	//	Create the new emitter
 	//
-	ParticleEmitterClass *emitter = nullptr;
-	emitter = new ParticleEmitterClass (10,
-													1,
-													new Vector3SolidBoxRandomizer(Vector3(0.1F, 0.1F, 0.1F)),
-													Vector3 (0, 0, 1),
-													new Vector3SolidBoxRandomizer(Vector3(0, 0, 0.1F)),
-													0,
-													0,
-													color,
-													opacity,
-													size,
-													rotation,
-													0.0f,
-													frames,
-													blurtimes,
-													Vector3 (0, 0, 0),
-													1.0F,
-													0.0F,
-													nullptr,
-													ShaderClass::_PresetAdditiveSpriteShader,
-													0);
+	ParticleEmitterClass* emitter = nullptr;
+	emitter = new ParticleEmitterClass(10,
+	                                   1,
+	                                   new Vector3SolidBoxRandomizer(Vector3(0.1F, 0.1F, 0.1F)),
+	                                   Vector3(0, 0, 1),
+	                                   new Vector3SolidBoxRandomizer(Vector3(0, 0, 0.1F)),
+	                                   0,
+	                                   0,
+	                                   color,
+	                                   opacity,
+	                                   size,
+	                                   rotation,
+	                                   0.0f,
+	                                   frames,
+	                                   blurtimes,
+	                                   Vector3(0, 0, 0),
+	                                   1.0F,
+	                                   0.0F,
+	                                   nullptr,
+	                                   ShaderClass::_PresetAdditiveSpriteShader,
+	                                   0);
 
 	//
 	//	Create the new emitter list
 	//
 	m_pEmitterList = new EmitterInstanceListClass;
-	m_pEmitterList->Add_Emitter (emitter);
+	m_pEmitterList->Add_Emitter(emitter);
 
 	//
 	//	Display the new emitter
 	//
-	::GetCurrentDocument ()->Display_Emitter (emitter);
-	REF_PTR_RELEASE (emitter);
+	::GetCurrentDocument()->Display_Emitter(emitter);
+	REF_PTR_RELEASE(emitter);
 
 	/*SAFE_DELETE_ARRAY (color.Values);
 	SAFE_DELETE_ARRAY (color.KeyTimes);
@@ -503,11 +489,8 @@ EmitterPropertySheetClass::Create_New_Emitter ()
 	SAFE_DELETE_ARRAY (size.KeyTimes);*/
 }
 
-
-void
-EmitterPropertySheetClass::Notify_Render_Mode_Changed(int new_mode)
+void EmitterPropertySheetClass::Notify_Render_Mode_Changed(int new_mode)
 {
 	bool enable_line_page = (new_mode == W3D_EMITTER_RENDER_MODE_LINE);
-	::Enable_Dialog_Controls(m_LinePage,enable_line_page);
+	::Enable_Dialog_Controls(m_LinePage, enable_line_page);
 }
-

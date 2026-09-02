@@ -25,10 +25,9 @@
 
 char* TheCurrentIgnoreCrashPtr = nullptr;
 
-
 #ifdef DEBUG_LOGGING
 
-void DebugLog(const char *format, ...)
+void DebugLog(const char* format, ...)
 {
 	// Print it to the console
 
@@ -43,7 +42,7 @@ void DebugLog(const char *format, ...)
 
 #ifdef DEBUG_CRASHING
 
-void DebugCrash(const char *format, ...)
+void DebugCrash(const char* format, ...)
 {
 	// Print it to the console
 

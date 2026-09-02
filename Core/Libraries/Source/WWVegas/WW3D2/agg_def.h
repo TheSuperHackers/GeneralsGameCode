@@ -42,31 +42,29 @@
 #include "WWLib/bittype.h"
 
 #ifdef _UNIX
-#include "osdep.h"
+	#include "osdep.h"
 #endif
-
 
 // Forward declarations
 class ChunkLoadClass;
 class ChunkSaveClass;
 class IndirectTextureClass;
 
-
 ///////////////////////////////////////////////////////////////////////////////////
 //
 //	Macros
 //
 #ifndef SAFE_FREE
-#define SAFE_FREE(pointer)	\
-{ \
-	if (pointer) {	\
-		::free (pointer);	\
-		pointer = 0; \
-	} \
-}
+	#define SAFE_FREE(pointer) \
+		{ \
+			if (pointer) \
+			{ \
+				::free(pointer); \
+				pointer = 0; \
+			} \
+		}
 
-#endif //SAFE_FREE
-
+#endif    // SAFE_FREE
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -78,117 +76,114 @@ class IndirectTextureClass;
 //
 class AggregateDefClass
 {
-	public:
+public:
+	///////////////////////////////////////////////////////////
+	//
+	//	Public constructors/destructors
+	//
+	AggregateDefClass();
+	AggregateDefClass(RenderObjClass& base_model);
+	AggregateDefClass(const AggregateDefClass& src);
+	virtual ~AggregateDefClass();
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Public constructors/destructors
-		//
-		AggregateDefClass ();
-		AggregateDefClass (RenderObjClass &base_model);
-		AggregateDefClass (const AggregateDefClass &src);
-		virtual ~AggregateDefClass ();
+	///////////////////////////////////////////////////////////
+	//
+	//	Public operators
+	//
+	const AggregateDefClass& operator=(const AggregateDefClass& src);
 
+	///////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	virtual WW3DErrorType Load_W3D(ChunkLoadClass& chunk_load);
+	virtual WW3DErrorType Save_W3D(ChunkSaveClass& chunk_save);
+	const char* Get_Name() const { return m_pName; }
+	void Set_Name(const char* pname)
+	{
+		SAFE_FREE(m_pName);
+		m_pName = ::_strdup(pname);
+	}
+	RenderObjClass* Create();
+	AggregateDefClass* Clone() const { return W3DNEW AggregateDefClass(*this); }
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Public operators
-		//
-		const AggregateDefClass &operator= (const AggregateDefClass &src);
+	//
+	//	Public accessors
+	//
+	ULONG Class_ID() const { return m_MiscInfo.OriginalClassID; }
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		virtual WW3DErrorType	Load_W3D (ChunkLoadClass &chunk_load);
-		virtual WW3DErrorType	Save_W3D (ChunkSaveClass &chunk_save);
-		const char *				Get_Name () const					{ return m_pName; }
-		void							Set_Name (const char *pname)			{ SAFE_FREE (m_pName); m_pName = ::_strdup (pname); }
-		RenderObjClass *			Create ();
-		AggregateDefClass *		Clone () const						{ return W3DNEW AggregateDefClass (*this); }
+	//
+	//	Initialization
+	//
+	void Initialize(RenderObjClass& base_model);
 
-		//
-		//	Public accessors
-		//
-		ULONG							Class_ID () const					{ return m_MiscInfo.OriginalClassID; }
+protected:
+	///////////////////////////////////////////////////////////
+	//
+	//	Protected data types
+	//
+	typedef struct _TEXTURE_INFO
+	{
+		W3dTextureReplacerStruct names;
+		IndirectTextureClass* pnew_texture;
 
-		//
-		//	Initialization
-		//
-		void							Initialize (RenderObjClass &base_model);
+		bool operator==(_TEXTURE_INFO& src) { return false; }
+		bool operator!=(_TEXTURE_INFO& src) { return true; }
+	} TEXTURE_INFO;
 
-	protected:
+	///////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Protected data types
-		//
-		typedef struct _TEXTURE_INFO
-		{
-			W3dTextureReplacerStruct	names;
-			IndirectTextureClass *		pnew_texture;
+	//
+	//	Loading methods
+	//
+	virtual WW3DErrorType Read_Header(ChunkLoadClass& chunk_load);
+	virtual WW3DErrorType Read_Info(ChunkLoadClass& chunk_load);
+	virtual WW3DErrorType Read_Subobject(ChunkLoadClass& chunk_load);
+	virtual WW3DErrorType Read_Class_Info(ChunkLoadClass& chunk_load);
 
-			bool operator == (_TEXTURE_INFO &src) { return false; }
-			bool operator != (_TEXTURE_INFO &src) { return true; }
-		} TEXTURE_INFO;
+	//
+	//	Saving methods
+	//
+	virtual WW3DErrorType Save_Header(ChunkSaveClass& chunk_save);
+	virtual WW3DErrorType Save_Info(ChunkSaveClass& chunk_save);
+	virtual WW3DErrorType Save_Subobject(ChunkSaveClass& chunk_save, W3dAggregateSubobjectStruct* psubobject);
+	virtual WW3DErrorType Save_Class_Info(ChunkSaveClass& chunk_save);
 
+	//
+	//	Creation methods
+	//
+	virtual void Attach_Subobjects(RenderObjClass& base_model);
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
+	//
+	//	Search methods
+	//
+	virtual RenderObjClass* Find_Subobject(RenderObjClass& model, const char mesh_path[MESH_PATH_ENTRIES][MESH_PATH_ENTRY_LEN], const char bone_path[MESH_PATH_ENTRIES][MESH_PATH_ENTRY_LEN]);
 
-		//
-		//	Loading methods
-		//
-		virtual WW3DErrorType		Read_Header (ChunkLoadClass &chunk_load);
-		virtual WW3DErrorType		Read_Info (ChunkLoadClass &chunk_load);
-		virtual WW3DErrorType		Read_Subobject (ChunkLoadClass &chunk_load);
-		virtual WW3DErrorType		Read_Class_Info (ChunkLoadClass &chunk_load);
+	//
+	//	Misc. methods
+	//
+	virtual void Free_Subobject_List();
+	virtual void Add_Subobject(const W3dAggregateSubobjectStruct& subobj_info);
+	virtual bool Load_Assets(const char* asset_name);
+	virtual RenderObjClass* Create_Render_Object(const char* passet_name);
+	virtual bool Is_Object_In_List(const char* passet_name, DynamicVectorClass<RenderObjClass*>& node_list);
 
-		//
-		//	Saving methods
-		//
-		virtual WW3DErrorType		Save_Header (ChunkSaveClass &chunk_save);
-		virtual WW3DErrorType		Save_Info (ChunkSaveClass &chunk_save);
-		virtual WW3DErrorType		Save_Subobject (ChunkSaveClass &chunk_save, W3dAggregateSubobjectStruct *psubobject);
-		virtual WW3DErrorType		Save_Class_Info (ChunkSaveClass &chunk_save);
+	virtual void Build_Subobject_List(RenderObjClass& original_model, RenderObjClass& model);
 
-		//
-		//	Creation methods
-		//
-		virtual void				Attach_Subobjects (RenderObjClass &base_model);
-
-		//
-		//	Search methods
-		//
-		virtual RenderObjClass *			Find_Subobject (RenderObjClass &model, const char mesh_path[MESH_PATH_ENTRIES][MESH_PATH_ENTRY_LEN], const char bone_path[MESH_PATH_ENTRIES][MESH_PATH_ENTRY_LEN]);
-
-		//
-		//	Misc. methods
-		//
-		virtual void				Free_Subobject_List ();
-		virtual void				Add_Subobject (const W3dAggregateSubobjectStruct &subobj_info);
-		virtual bool				Load_Assets (const char *asset_name);
-		virtual RenderObjClass *Create_Render_Object (const char *passet_name);
-		virtual bool				Is_Object_In_List (const char *passet_name, DynamicVectorClass <RenderObjClass *> &node_list);
-
-		virtual void				Build_Subobject_List (RenderObjClass &original_model, RenderObjClass &model);
-
-
-	private:
-
-		///////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		DWORD																m_Version;
-		DynamicVectorClass<W3dAggregateSubobjectStruct *>	m_SubobjectList;
-		W3dAggregateInfoStruct										m_Info;
-		W3dAggregateMiscInfo											m_MiscInfo;
-		char * 															m_pName;
+private:
+	///////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	DWORD m_Version;
+	DynamicVectorClass<W3dAggregateSubobjectStruct*> m_SubobjectList;
+	W3dAggregateInfoStruct m_Info;
+	W3dAggregateMiscInfo m_MiscInfo;
+	char* m_pName;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -197,37 +192,34 @@ class AggregateDefClass
 class AggregatePrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(AggregatePrototypeClass)
-	public:
+public:
+	///////////////////////////////////////////////////////////
+	//
+	//	Public constructors/destructors
+	//
+	AggregatePrototypeClass(AggregateDefClass* pdef) { m_pDefinition = pdef; }
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Public constructors/destructors
-		//
-		AggregatePrototypeClass (AggregateDefClass *pdef)		{ m_pDefinition = pdef; }
+	///////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	virtual const char* Get_Name() const override { return m_pDefinition->Get_Name(); }
+	virtual int Get_Class_ID() const override { return m_pDefinition->Class_ID(); }
+	virtual RenderObjClass* Create() override { return m_pDefinition->Create(); }
+	virtual void DeleteSelf() override { delete this; }
+	virtual AggregateDefClass* Get_Definition() const { return m_pDefinition; }
+	virtual void Set_Definition(AggregateDefClass* pdef) { m_pDefinition = pdef; }
 
-		///////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		virtual const char *				Get_Name() const override { return m_pDefinition->Get_Name (); }
-		virtual int									Get_Class_ID() const override { return m_pDefinition->Class_ID (); }
-		virtual RenderObjClass *		Create () override								{ return m_pDefinition->Create (); }
-		virtual void								DeleteSelf() override { delete this; }
-		virtual AggregateDefClass	*	Get_Definition () const { return m_pDefinition; }
-		virtual void								Set_Definition (AggregateDefClass *pdef) { m_pDefinition = pdef; }
+protected:
+	virtual ~AggregatePrototypeClass() override { delete m_pDefinition; }
 
-	protected:
-		virtual ~AggregatePrototypeClass () override { delete m_pDefinition; }
-
-	private:
-
-		///////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		AggregateDefClass	*	m_pDefinition;
+private:
+	///////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	AggregateDefClass* m_pDefinition;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -235,15 +227,13 @@ class AggregatePrototypeClass : public PrototypeClass
 //
 class AggregateLoaderClass : public PrototypeLoaderClass
 {
-	public:
-
-		virtual int						Chunk_Type () override { return W3D_CHUNK_AGGREGATE; }
-		virtual PrototypeClass *	Load_W3D (ChunkLoadClass &chunk_load) override;
+public:
+	virtual int Chunk_Type() override { return W3D_CHUNK_AGGREGATE; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& chunk_load) override;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
 //	Global variables
 //
-extern AggregateLoaderClass	_AggregateLoader;
+extern AggregateLoaderClass _AggregateLoader;

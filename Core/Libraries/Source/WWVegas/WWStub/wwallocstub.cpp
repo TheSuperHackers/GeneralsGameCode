@@ -23,49 +23,49 @@
 
 #ifdef _OPERATOR_NEW_DEFINED_
 
-void *operator new(size_t size)
+void* operator new(size_t size)
 {
 	return malloc(size);
 }
 
-void *operator new[](size_t size)
+void* operator new[](size_t size)
 {
 	return malloc(size);
 }
 
-void operator delete(void *p)
+void operator delete(void* p)
 {
 	free(p);
 }
 
-void operator delete[](void *p)
+void operator delete[](void* p)
 {
 	free(p);
 }
 
-void* operator new(size_t size, const char * fname, int)
+void* operator new(size_t size, const char* fname, int)
 {
 	return malloc(size);
 }
 
-void operator delete(void * p, const char *, int)
+void operator delete(void* p, const char*, int)
 {
 	free(p);
 }
 
-void* operator new[](size_t size, const char * fname, int)
+void* operator new[](size_t size, const char* fname, int)
 {
 	return malloc(size);
 }
 
-void operator delete[](void * p, const char *, int)
+void operator delete[](void* p, const char*, int)
 {
 	free(p);
 }
 
 #endif
 
-void* createW3DMemPool(const char *poolName, int allocationSize)
+void* createW3DMemPool(const char* poolName, int allocationSize)
 {
 	return nullptr;
 }

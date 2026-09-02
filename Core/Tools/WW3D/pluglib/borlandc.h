@@ -37,7 +37,7 @@
 #pragma once
 
 #if !defined(BORLANDC_H) && defined(__BORLANDC__)
-#define BORLANDC_H
+	#define BORLANDC_H
 
 /*
 **	Funny, but there are no required overrides to make Borland C match C++ standards. This

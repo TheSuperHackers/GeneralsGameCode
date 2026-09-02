@@ -26,31 +26,36 @@ const unsigned int OLESTRING_DEFAULT_SIZE = 256;
 
 class OLEString
 {
+	OLECHAR* ole;
+	char* sb;
+	unsigned int len;
+	int locked;
 
-	OLECHAR								*ole;
-	char									*sb;
-	unsigned int					len;
-	int										locked;
-
-	public:
-
-	OLEString () ;
-	~OLEString ();
-	void		Set ( OLECHAR *new_ole );
-	void		Set ( const char *new_sb );
-	OLECHAR*Get () { return ole; };
-	int			Len () { return len; };
-	char*		GetSB () { return sb; };
-	void		StripSpaces ();
-	void		FormatMetaString ();
-	void		Lock ()	{ locked = TRUE; };
-	void		Unlock ()	{ locked = FALSE; };
+public:
+	OLEString();
+	~OLEString();
+	void Set(OLECHAR* new_ole);
+	void Set(const char* new_sb);
+	OLECHAR* Get() { return ole; };
+	int Len() { return len; };
+	char* GetSB() { return sb; };
+	void StripSpaces();
+	void FormatMetaString();
+	void Lock() { locked = TRUE; };
+	void Unlock() { locked = FALSE; };
 };
 
-template <typename text> void StripSpaces ( text *string );
-template <typename text> void ConvertMetaChars ( text *string );
-template <typename text> void StripSpacesFromMetaString ( text *string );
-template <typename text> int SameFormat ( text *string1, text *string2 );
-template <typename text> void EncodeFormat ( text *string );
-template <typename text> void DecodeFormat ( text *string );
-template <typename text> int IsFormatTypeChar(  text string1 );
+template <typename text>
+void StripSpaces(text* string);
+template <typename text>
+void ConvertMetaChars(text* string);
+template <typename text>
+void StripSpacesFromMetaString(text* string);
+template <typename text>
+int SameFormat(text* string1, text* string2);
+template <typename text>
+void EncodeFormat(text* string);
+template <typename text>
+void DecodeFormat(text* string);
+template <typename text>
+int IsFormatTypeChar(text string1);

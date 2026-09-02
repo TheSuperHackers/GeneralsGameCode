@@ -35,29 +35,35 @@
 class LANPlayer
 {
 public:
-	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = nullptr; m_IP = 0; }
+	LANPlayer()
+	{
+		m_name = m_login = m_host = L"";
+		m_lastHeard = 0;
+		m_next = nullptr;
+		m_IP = 0;
+	}
 
 	// Access functions
 	UnicodeString getName() { return m_name; }
-	void setName( UnicodeString name ) { m_name = name; }
+	void setName(UnicodeString name) { m_name = name; }
 	UnicodeString getLogin() { return m_login; }
-	void setLogin( UnicodeString name ) { m_login = name; }
-	void setLogin( AsciiString name ) { m_login.translate(name); }
+	void setLogin(UnicodeString name) { m_login = name; }
+	void setLogin(AsciiString name) { m_login.translate(name); }
 	UnicodeString getHost() { return m_host; }
-	void setHost( UnicodeString name ) { m_host = name; }
-	void setHost( AsciiString name ) { m_host.translate(name); }
+	void setHost(UnicodeString name) { m_host = name; }
+	void setHost(AsciiString name) { m_host.translate(name); }
 	UnsignedInt getLastHeard() { return m_lastHeard; }
-	void setLastHeard( UnsignedInt lastHeard ) { m_lastHeard = lastHeard; }
-	LANPlayer *getNext() { return m_next; }
-	void setNext( LANPlayer *next ) { m_next = next; }
+	void setLastHeard(UnsignedInt lastHeard) { m_lastHeard = lastHeard; }
+	LANPlayer* getNext() { return m_next; }
+	void setNext(LANPlayer* next) { m_next = next; }
 	UnsignedInt getIP() { return m_IP; }
-	void setIP( UnsignedInt IP ) { m_IP = IP; }
+	void setIP(UnsignedInt IP) { m_IP = IP; }
 
 protected:
-	UnicodeString m_name;			///< Player name
-	UnicodeString m_login;		///< login name
-	UnicodeString m_host;			///< machine name
-	UnsignedInt m_lastHeard;	///< The last time we heard from this player (for timeout purposes)
-	LANPlayer *m_next;				///< Linked list pointer
-	UnsignedInt m_IP;					///< Player's IP
+	UnicodeString m_name;    ///< Player name
+	UnicodeString m_login;    ///< login name
+	UnicodeString m_host;    ///< machine name
+	UnsignedInt m_lastHeard;    ///< The last time we heard from this player (for timeout purposes)
+	LANPlayer* m_next;    ///< Linked list pointer
+	UnsignedInt m_IP;    ///< Player's IP
 };

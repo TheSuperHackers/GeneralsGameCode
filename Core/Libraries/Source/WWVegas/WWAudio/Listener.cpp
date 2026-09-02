@@ -34,101 +34,86 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "Listener.h"
 #include "WWAudio.h"
 #include "Utils.h"
 #include "soundhandle.h"
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Listener3DClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-Listener3DClass::Listener3DClass ()
+Listener3DClass::Listener3DClass()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	~Listener3DClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-Listener3DClass::~Listener3DClass ()
+Listener3DClass::~Listener3DClass()
 {
-	Free_Miles_Handle ();
+	Free_Miles_Handle();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Initialize_Miles_Handle
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-Listener3DClass::Initialize_Miles_Handle ()
+void Listener3DClass::Initialize_Miles_Handle()
 {
 	MMSLockClass lock;
 
 	// Do we have a valid sample handle from miles?
-	if (m_SoundHandle != nullptr) {
-
-		::AIL_set_3D_position (m_SoundHandle->Get_H3DSAMPLE (), 0.0F, 0.0F, 0.0F);
-		::AIL_set_3D_orientation (m_SoundHandle->Get_H3DSAMPLE (),
-				0.0F, 0.0F, 1.0F,
-				0.0F, 1.0F, 0.0F);
-
+	if (m_SoundHandle != nullptr)
+	{
+		::AIL_set_3D_position(m_SoundHandle->Get_H3DSAMPLE(), 0.0F, 0.0F, 0.0F);
+		::AIL_set_3D_orientation(m_SoundHandle->Get_H3DSAMPLE(),
+		                         0.0F, 0.0F, 1.0F,
+		                         0.0F, 1.0F, 0.0F);
 
 		// Associate this object instance with the handle
-		m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, (void *)this);
+		m_SoundHandle->Set_Sample_User_Data(INFO_OBJECT_PTR, (void*)this);
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Allocate_Miles_Handle
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-Listener3DClass::Allocate_Miles_Handle ()
+void Listener3DClass::Allocate_Miles_Handle()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Free_Miles_Handle
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-Listener3DClass::Free_Miles_Handle ()
+void Listener3DClass::Free_Miles_Handle()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	On_Added_To_Scene
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-Listener3DClass::On_Added_To_Scene ()
+void Listener3DClass::On_Added_To_Scene()
 {
-	Allocate_Miles_Handle ();
+	Allocate_Miles_Handle();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	On_Removed_From_Scene
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-Listener3DClass::On_Removed_From_Scene ()
+void Listener3DClass::On_Removed_From_Scene()
 {
-	Free_Miles_Handle ();
+	Free_Miles_Handle();
 }
-

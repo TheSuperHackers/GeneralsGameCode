@@ -53,7 +53,6 @@
 //           Forward References
 //----------------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------------
 //           Type Defines
 //----------------------------------------------------------------------------
@@ -62,112 +61,103 @@
 // LLNode
 //================================
 /**
-  * Link list node abstraction for WSYS.
-*/
+ * Link list node abstraction for WSYS.
+ */
 //================================
 
-class	LListNode
+class LListNode
 {
 	friend class LList;
 
-	protected:
+protected:
+	LListNode* m_next;    ///< Next node in list
+	LListNode* m_prev;    ///< Previous node in list
+	Int m_pri;    ///< Node's priority, used for sorting
+	void* m_item;    ///< Item we are referencing if any
+	Bool m_autoDelete;    ///< destroy() should call delete
 
-		LListNode			*m_next;				///< Next node in list
-		LListNode			*m_prev;				///< Previous node in list
-		Int						m_pri;					///< Node's priority, used for sorting
-		void					*m_item;				///< Item we are referencing if any
-		Bool					m_autoDelete;		///< destroy() should call delete
-
-	public:
-
-									LListNode();											///< Constructor
-		void					remove();										///< Removes node from list
-		void					insert( LListNode *new_node );		///< Inserts new_node infront of itself
-		void					append( LListNode *new_node );		///< Appends new node after itself
-		LListNode*		next();											///< Returns next node in list
-		LListNode*		prev();											///< Returns previous node in list
-		LListNode*		loopNext();									///< Returns next node in list, wrapping round to start of list if necessary
-		LListNode*		loopPrev();									///< Returns previous node in list, wrapping round to end of list if necessary
-		Bool					inList();										///< Returns whether or not node in list
-		Bool					isHead();										///< Returns whether or not this node is the head/tail node
-		Int						priority();									///< Returns node's priority
-		void					setPriority( Int new_pri );				///< Sets node's priority
-		void*					item();											///< Returns the item this links to, if any
-		void					setItem( void *item );						///< Make node point to an item
-		void					destroy();									///< Delete node
-		void					autoDelete();
-}	;
+public:
+	LListNode();    ///< Constructor
+	void remove();    ///< Removes node from list
+	void insert(LListNode* new_node);    ///< Inserts new_node infront of itself
+	void append(LListNode* new_node);    ///< Appends new node after itself
+	LListNode* next();    ///< Returns next node in list
+	LListNode* prev();    ///< Returns previous node in list
+	LListNode* loopNext();    ///< Returns next node in list, wrapping round to start of list if necessary
+	LListNode* loopPrev();    ///< Returns previous node in list, wrapping round to end of list if necessary
+	Bool inList();    ///< Returns whether or not node in list
+	Bool isHead();    ///< Returns whether or not this node is the head/tail node
+	Int priority();    ///< Returns node's priority
+	void setPriority(Int new_pri);    ///< Sets node's priority
+	void* item();    ///< Returns the item this links to, if any
+	void setItem(void* item);    ///< Make node point to an item
+	void destroy();    ///< Delete node
+	void autoDelete();
+};
 
 //================================
 // LList
 //================================
 /**
-	* Linked list abstraction.
-*/
+ * Linked list abstraction.
+ */
 //================================
 
-
-class	LList
+class LList
 {
-	public:
+public:
+	/// Enumeration of list sorting methods
+	enum SortMode
+	{
+		ASCENDING,    ///< Lower priority numbers to front of list
+		DESCENDING    ///< Higher priority numbers to front of list
+	};
 
-		/// Enumeration of list sorting methods
-		enum SortMode
-			{
-				ASCENDING,  ///< Lower priority numbers to front of list
-				DESCENDING  ///< Higher priority numbers to front of list
-			};
+protected:
+	LListNode m_head;    ///< List head node
+	SortMode m_sortMode;    ///< What sorting method to use for this list's Add() operation
+	Bool m_addToEndOfGroup;    ///< Add nodes to end of group of nodes with same priority
 
-	protected:
+public:
+	LList();
+	void addToHead(LListNode* new_node);    ///< Adds new node to the front of the list
+	void addToTail(LListNode* new_node);    ///< Adds new node to the end of the list
+	void add(LListNode* new_node);    ///< Adds new node to list sorted by priority
 
-		LListNode			m_head;								///< List head node
-		SortMode			m_sortMode;						///< What sorting method to use for this list's Add() operation
-		Bool					m_addToEndOfGroup;		///< Add nodes to end of group of nodes with same priority
+	void addItemToHead(void* item);    ///< Adds new item to the front of the list
+	void addItemToTail(void* item);    ///< Adds new item to the end of the list
+	void addItem(Int pri, void* item);    ///< Adds new item to list sorted by priority
 
-
-	public:
-
-									LList();
-		void					addToHead( LListNode *new_node );				///< Adds new node to the front of the list
-		void					addToTail( LListNode *new_node );				///< Adds new node to the end of the list
-		void					add( LListNode *new_node );							///< Adds new node to list sorted by priority
-
-		void					addItemToHead( void *item );						///< Adds new item to the front of the list
-		void					addItemToTail( void *item );						///< Adds new item to the end of the list
-		void					addItem( Int pri, void *item );					///< Adds new item to list sorted by priority
-
-		Int						nodeCount();											///< Returns number of nodes currently in list
-		LListNode*		firstNode();											///< Returns first node in list
-		LListNode*		lastNode();												///< Returns last node in list
-		LListNode*		getNode( Int index );										///< Returns node in list addressed by the zero-based index passed
-		void					setSortMode( SortMode new_mode );				///< Sets the sorting mode for the Add() operation
-		void					addToEndOfGroup( Bool yes = TRUE );			///< Add node to end or start of group with same priority
-		Bool					isEmpty();												///< Returns whether or not the the list is empty
-		void					clear();													///< Deletes all items in the list. Use with care!!
-		void					merge( LList *list );										///< Move the contents of the specified list in to this list
-		Bool					hasItem( void *item );									///< Tests if list has the specified item
-		LListNode*		findItem( void *item );									///< Returns the LListNode that references item
-		void					destroy();												///< Free up the list items
-
-}	;
+	Int nodeCount();    ///< Returns number of nodes currently in list
+	LListNode* firstNode();    ///< Returns first node in list
+	LListNode* lastNode();    ///< Returns last node in list
+	LListNode* getNode(Int index);    ///< Returns node in list addressed by the zero-based index passed
+	void setSortMode(SortMode new_mode);    ///< Sets the sorting mode for the Add() operation
+	void addToEndOfGroup(Bool yes = TRUE);    ///< Add node to end or start of group with same priority
+	Bool isEmpty();    ///< Returns whether or not the the list is empty
+	void clear();    ///< Deletes all items in the list. Use with care!!
+	void merge(LList* list);    ///< Move the contents of the specified list in to this list
+	Bool hasItem(void* item);    ///< Tests if list has the specified item
+	LListNode* findItem(void* item);    ///< Returns the LListNode that references item
+	void destroy();    ///< Free up the list items
+};
 
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
 
-inline		Bool					LListNode::inList() { return m_prev != this; };
-inline		Bool					LListNode::isHead() { return ( m_item == (void*)&this->m_item ); };
-inline		Int						LListNode::priority() { return m_pri; };
-inline		void					LListNode::setPriority( Int new_pri ) { m_pri = new_pri; };
-inline		void					LListNode::autoDelete() { m_autoDelete = TRUE; };
-inline		void*					LListNode::item() { return m_item; };
-inline		void					LListNode::setItem( void *item ) { m_item = item; };
+inline Bool LListNode::inList() { return m_prev != this; };
+inline Bool LListNode::isHead() { return (m_item == (void*)&this->m_item); };
+inline Int LListNode::priority() { return m_pri; };
+inline void LListNode::setPriority(Int new_pri) { m_pri = new_pri; };
+inline void LListNode::autoDelete() { m_autoDelete = TRUE; };
+inline void* LListNode::item() { return m_item; };
+inline void LListNode::setItem(void* item) { m_item = item; };
 
-
-inline		void					LList::addToHead( LListNode *new_node ) { m_head.append( new_node); };
-inline		void					LList::addToTail( LListNode *new_node ) { m_head.insert( new_node); };
-inline		LListNode*		LList::firstNode() { return m_head.next();} ;
-inline		LListNode*		LList::lastNode() { return m_head.prev();} ;
-inline		void					LList::setSortMode( SortMode new_mode ) { m_sortMode = new_mode; };
-inline		Bool					LList::isEmpty() { return !m_head.inList(); };
-inline		void					LList::destroy() { clear();};
+inline void LList::addToHead(LListNode* new_node) { m_head.append(new_node); };
+inline void LList::addToTail(LListNode* new_node) { m_head.insert(new_node); };
+inline LListNode* LList::firstNode() { return m_head.next(); };
+inline LListNode* LList::lastNode() { return m_head.prev(); };
+inline void LList::setSortMode(SortMode new_mode) { m_sortMode = new_mode; };
+inline Bool LList::isEmpty() { return !m_head.inList(); };
+inline void LList::destroy() { clear(); };

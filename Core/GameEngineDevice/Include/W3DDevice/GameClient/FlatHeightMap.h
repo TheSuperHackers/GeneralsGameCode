@@ -46,48 +46,46 @@ scorchmarks and intersection tests.
 */
 class FlatHeightMapRenderObjClass : public BaseHeightMapRenderObjClass
 {
-
 public:
-
 	FlatHeightMapRenderObjClass();
 	virtual ~FlatHeightMapRenderObjClass() override;
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources() override;	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources() override;  ///< Reacquire all resources after device reset.
-
+	virtual void ReleaseResources() override;    ///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources() override;    ///< Reacquire all resources after device reset.
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo) override;
-	virtual void					On_Frame_Update() override;
+	virtual void Render(RenderInfoClass& rinfo) override;
+	virtual void On_Frame_Update() override;
 
-	///allocate resources needed to render heightmap
-	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator,Bool updateExtraPassTiles=TRUE) override;
-	virtual Int freeMapResources() override;	///< free resources used to render heightmap
-	virtual void updateCenter(CameraClass *camera, const Vector3 *cameraPivot, RefRenderObjListIterator *pLightsIterator) override;
- 	virtual void adjustTerrainLOD(Int adj) override;
+	/// allocate resources needed to render heightmap
+	virtual int initHeightData(Int width, Int height, WorldHeightMap* pMap, RefRenderObjListIterator* pLightsIterator, Bool updateExtraPassTiles = TRUE) override;
+	virtual Int freeMapResources() override;    ///< free resources used to render heightmap
+	virtual void updateCenter(CameraClass* camera, const Vector3* cameraPivot, RefRenderObjListIterator* pLightsIterator) override;
+	virtual void adjustTerrainLOD(Int adj) override;
 	virtual void reset() override;
-	virtual void oversizeTerrain(Int tilesToOversize) override; ///< Oversize the visible terrain area.
-	virtual void setTerrainDrawSize(Int width, Int height) override; ///< Resize the visible terrain area. Always defaults to oversize dimensions when oversize is set.
+	virtual void oversizeTerrain(Int tilesToOversize) override;    ///< Oversize the visible terrain area.
+	virtual void setTerrainDrawSize(Int width, Int height) override;    ///< Resize the visible terrain area. Always defaults to oversize dimensions when oversize is set.
 	virtual void staticLightingChanged() override;
-	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator) override;
-  virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) override {return 0;};
+	virtual void doPartialUpdate(const IRegion2D& partialRange, WorldHeightMap* htMap, RefRenderObjListIterator* pLightsIterator) override;
+	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap* pMap, RefRenderObjListIterator* pLightsIterator) override { return 0; };
 
 protected:
-	W3DTerrainBackground	*m_tiles;
-	Int										m_numTiles;
-	Int										m_tilesWidth;
-	Int										m_tilesHeight;
+	W3DTerrainBackground* m_tiles;
+	Int m_numTiles;
+	Int m_tilesWidth;
+	Int m_tilesHeight;
 
-	enum {	STATE_IDLE,							 // sleeping
-					STATE_MOVING,						 // camera moving, updating visibility.
-					STATE_MOVING2, 					 // second moving state
-					STATE_UPDATE_TEXTURES		 // Camera stopped, updating textures.
+	enum
+	{
+		STATE_IDLE,    // sleeping
+		STATE_MOVING,    // camera moving, updating visibility.
+		STATE_MOVING2,    // second moving state
+		STATE_UPDATE_TEXTURES    // Camera stopped, updating textures.
 	} m_updateState;
 
 protected:
 	void releaseTiles();
-
 };
