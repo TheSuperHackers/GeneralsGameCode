@@ -1289,7 +1289,13 @@ void RenderObjPersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * ob
 	const Matrix3D& tm = robj->Get_Transform();
 
 	csave.Begin_Chunk(RENDOBJFACTORY_CHUNKID_VARIABLES);
+#if defined(_WIN64) || defined(__x86_64__)
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 Write the 4-byte identity token the loader reads; see persistfactory.h.
+	uint32 robj_token = (uint32)(uintptr_t)robj;
+	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_OBJPOINTER,robj_token);
+#else
 	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_OBJPOINTER,robj);
+#endif
 	WRITE_MICRO_CHUNK_STRING(csave,RENDOBJFACTORY_VARIABLE_NAME,name);
 	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_TRANSFORM,tm);
 	csave.End_Chunk();

@@ -1654,8 +1654,14 @@ AudibleSoundClass::Save (ChunkSaveClass &csave)
 			WRITE_MICRO_CHUNK_STRING (csave, VARID_FILENAME, m_Buffer->Get_Filename ());
 		}
 
+#if defined(_WIN64) || defined(__x86_64__)
+		// TheSuperHackers @fix MeneerHaas 02/09/2026 Write the 4-byte identity token the loader reads; see persistfactory.h.
+		uint32 this_ptr_token = (uint32)(uintptr_t)this;
+		WRITE_MICRO_CHUNK (csave, VARID_THIS_PTR, this_ptr_token);
+#else
 		AudibleSoundClass *this_ptr = this;
 		WRITE_MICRO_CHUNK (csave, VARID_THIS_PTR, this_ptr);
+#endif
 
 	csave.End_Chunk ();
 
