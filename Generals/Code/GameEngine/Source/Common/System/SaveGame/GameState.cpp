@@ -656,8 +656,9 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 	//
 	TheGameStateMap->clearScratchPadMaps();
 
-	// construct path to file
-	AsciiString filepath = getFilePathInSaveDirectory(gameInfo.filename);
+	// Relative names come from the save menu. Absolute paths come from the command line
+	// and are opened in place.
+	AsciiString filepath = getSaveGamePathForRead(gameInfo.filename);
 
 	// open the save file
 	XferLoad xferLoad;
@@ -763,8 +764,7 @@ void GameState::loadQueuedSaveGame()
 	// getSaveGameInfoFromFile throws on a malformed file instead of returning a SaveCode
 	try
 	{
-		AsciiString filepath = getFilePathInSaveDirectory( gameInfo.filename );
-		getSaveGameInfoFromFile( filepath, &gameInfo.saveGameInfo );
+		getSaveGameInfoFromFile( gameInfo.filename, &gameInfo.saveGameInfo );
 	}
 	catch( ... )
 	{
@@ -800,6 +800,19 @@ AsciiString GameState::getFilePathInSaveDirectory(const AsciiString& leaf) const
 	AsciiString tmp = getSaveDirectory();
 	tmp.concat(leaf);
 	return tmp;
+}
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature bobtista 08/08/2026 Open explicitly selected save paths in place while
+// preserving the managed Save directory for the relative names the menus use.
+AsciiString GameState::getSaveGamePathForRead(const AsciiString& filenameOrPath) const
+{
+	if (FileSystem::isAbsolutePath(filenameOrPath))
+	{
+		return filenameOrPath;
+	}
+
+	return getFilePathInSaveDirectory(filenameOrPath);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -959,8 +972,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 Bool GameState::doesSaveGameExist( AsciiString filename )
 {
 
-	// construct full path to file
-	AsciiString filepath = getFilePathInSaveDirectory(filename);
+	AsciiString filepath = getSaveGamePathForRead(filename);
 
 	// open file
 	XferLoad xfer;
@@ -1004,6 +1016,8 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 		return;
 
 	}
+
+	filename = getSaveGamePathForRead( filename );
 
 	// open file for partial loading
 	XferLoad xferLoad;

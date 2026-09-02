@@ -157,6 +157,7 @@ public:
 
 	Bool createDirectory(AsciiString directory); ///< create a directory of the given name.
 
+	static Bool isAbsolutePath(const AsciiString& path); ///< determines if a path is absolute on the current platform.
 	static AsciiString normalizePath(const AsciiString& path);	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
 	static Bool isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath);	///< determines if a file path is within a base path. Both paths must be absolute, but do not need to exist.
 
