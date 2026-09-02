@@ -33,11 +33,20 @@
 
 #include "WWLib/DbgHelpLoader.h"
 
+// TheSuperHackers @fix MeneerHaas 02/09/2026 stdint_adapter over BaseTypeCore.h to avoid its warning-as-error pragmas.
+#include <Utility/stdint_adapter.h>
+#include "Lib/arch_context.h"
+
 //*****************************************************************************
 //	Prototypes
 //*****************************************************************************
 BOOL InitSymbolInfo();
+// TheSuperHackers @fix MeneerHaas 02/09/2026 uintptr_t on x64; guarded so the 32-bit mangled name is unchanged.
+#if defined(_WIN64) || defined(__x86_64__)
+void MakeStackTrace(uintptr_t myeip,uintptr_t myesp,uintptr_t myebp, int skipFrames, void (*callback)(const char*));
+#else
 void MakeStackTrace(DWORD myeip,DWORD myesp,DWORD myebp, int skipFrames, void (*callback)(const char*));
+#endif
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address);
 void WriteStackLine(void*address, void (*callback)(const char*));
 
@@ -67,9 +76,14 @@ void StackDump(void (*callback)(const char*))
 	if (!InitSymbolInfo())
 		return;
 
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 uintptr_t on x64; guarded to keep 32-bit codegen identical.
+#if defined(_WIN64) || defined(__x86_64__)
+	uintptr_t myeip,myesp,myebp;
+#else
 	DWORD myeip,myesp,myebp;
+#endif
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && defined(_M_IX86)
 _asm
 {
 MYEIP1:
@@ -91,6 +105,13 @@ MYEIP1:
 		:
 		: "memory"
 	);
+#elif defined(_WIN64) || defined(__x86_64__)
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 RtlCaptureContext seeds the stack walk on x64 (no __asm there), as in debug_stack.cpp.
+	CONTEXT capture_ctx;
+	RtlCaptureContext(&capture_ctx);
+	myeip = (uintptr_t)CTX_PC(capture_ctx);
+	myesp = (uintptr_t)CTX_STACK(capture_ctx);
+	myebp = (uintptr_t)CTX_FRAME(capture_ctx);
 #else
 	#error "Unsupported compiler or architecture for register capture"
 #endif
@@ -102,7 +123,11 @@ MYEIP1:
 
 //*****************************************************************************
 //*****************************************************************************
+#if defined(_WIN64) || defined(__x86_64__)
+void StackDumpFromContext(uintptr_t eip,uintptr_t esp,uintptr_t ebp, void (*callback)(const char*))
+#else
 void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*))
+#endif
 {
 	if (callback == nullptr)
 	{
@@ -170,7 +195,11 @@ BOOL InitSymbolInfo()
 
 //*****************************************************************************
 //*****************************************************************************
+#if defined(_WIN64) || defined(__x86_64__)
+void MakeStackTrace(uintptr_t myeip,uintptr_t myesp,uintptr_t myebp, int skipFrames, void (*callback)(const char*))
+#else
 void MakeStackTrace(DWORD myeip,DWORD myesp,DWORD myebp, int skipFrames, void (*callback)(const char*))
+#endif
 {
 STACKFRAME      stack_frame;
 BOOL            b_ret = TRUE;
@@ -278,8 +307,17 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
     psymbol->SizeOfStruct = sizeof(symbol_buffer);
     psymbol->MaxNameLength = 512;
 
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 (uintptr_t)pointer: a (DWORD) cast would truncate live code addresses on x64.
+#if defined(_WIN64) || defined(__x86_64__)
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 SymGetSymFromAddr64 writes 8 bytes; capture wide, then narrow for SymGetLineFromAddr.
+	DWORD64 displacement64;
+	if (DbgHelpLoader::symGetSymFromAddr(process, (uintptr_t) pointer, &displacement64, psymbol))
+	{
+		displacement = (DWORD)displacement64;
+#else
 	if (DbgHelpLoader::symGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
 	{
+#endif
 		if (name)
 		{
 			strcpy(name, psymbol->Name);
@@ -292,7 +330,11 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		memset(&line,0,sizeof(line));
 		line.SizeOfStruct = sizeof(line);
 
+#if defined(_WIN64) || defined(__x86_64__)
+		if (DbgHelpLoader::symGetLineFromAddr(process, (uintptr_t) pointer, &displacement, &line))
+#else
 		if (DbgHelpLoader::symGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
+#endif
 		{
 			if (filename)
 			{
@@ -328,8 +370,12 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     memset(&gsContext, 0, sizeof(CONTEXT));
     gsContext.ContextFlags = CONTEXT_FULL;
 
+#if defined(_WIN64) || defined(__x86_64__)
+	uintptr_t myeip,myesp,myebp;
+#else
 	DWORD myeip,myesp,myebp;
-#if defined(_MSC_VER)
+#endif
+#if defined(_MSC_VER) && defined(_M_IX86)
 _asm
 {
 MYEIP2:
@@ -353,6 +399,13 @@ MYEIP2:
 		:
 		: "eax", "memory"
 	);
+#elif defined(_WIN64) || defined(__x86_64__)
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 RtlCaptureContext replaces the inline-asm register capture on x64.
+	CONTEXT capture_ctx;
+	RtlCaptureContext(&capture_ctx);
+	myeip = (uintptr_t)CTX_PC(capture_ctx);
+	myesp = (uintptr_t)CTX_STACK(capture_ctx);
+	myebp = (uintptr_t)CTX_FRAME(capture_ctx);
 #else
 	#error "Unsupported compiler or architecture for register capture"
 #endif
@@ -589,7 +642,11 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	}
 
 	DOUBLE_DEBUG (("\nStack Dump:"));
+#if defined(_WIN64) || defined(__x86_64__)
+	StackDumpFromContext(CTX_PC(*context), CTX_STACK(*context), CTX_FRAME(*context), nullptr);
+#else
 	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, nullptr);
+#endif
 
 	DOUBLE_DEBUG (("\nDetails:"));
 
@@ -598,9 +655,15 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	/*
 	** Dump the registers.
 	*/
+#if defined(_WIN64) || defined(__x86_64__)
+	DOUBLE_DEBUG ( ( "Rip:%016llX\tRsp:%016llX\tRbp:%016llX", (unsigned long long)CTX_PC(*context), (unsigned long long)CTX_STACK(*context), (unsigned long long)CTX_FRAME(*context)));
+	DOUBLE_DEBUG ( ( "Rax:%016llX\tRbx:%016llX\tRcx:%016llX", (unsigned long long)CTX_AX(*context), (unsigned long long)CTX_BX(*context), (unsigned long long)CTX_CX(*context)));
+	DOUBLE_DEBUG ( ( "Rdx:%016llX\tRsi:%016llX\tRdi:%016llX", (unsigned long long)CTX_DX(*context), (unsigned long long)CTX_SI(*context), (unsigned long long)CTX_DI(*context)));
+#else
 	DOUBLE_DEBUG ( ( "Eip:%08X\tEsp:%08X\tEbp:%08X", context->Eip, context->Esp, context->Ebp));
 	DOUBLE_DEBUG ( ( "Eax:%08X\tEbx:%08X\tEcx:%08X", context->Eax, context->Ebx, context->Ecx));
 	DOUBLE_DEBUG ( ( "Edx:%08X\tEsi:%08X\tEdi:%08X", context->Edx, context->Esi, context->Edi));
+#endif
 	DOUBLE_DEBUG ( ( "EFlags:%08X ", context->EFlags));
 	DOUBLE_DEBUG ( ( "CS:%04x  SS:%04x  DS:%04x  ES:%04x  FS:%04x  GS:%04x", context->SegCs, context->SegSs, context->SegDs, context->SegEs, context->SegFs, context->SegGs));
 
@@ -609,9 +672,19 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	*/
 	char scrap[512];
 	DOUBLE_DEBUG ( ("EIP bytes dump..."));
+#if defined(_WIN64) || defined(__x86_64__)
+	// wsprintf is Win32's own limited formatter and has no %llX -- sprintf
+	// (CRT) is used here instead, matching Except.cpp's identical case.
+	sprintf (scrap, "\nBytes at CS:RIP (%016llX)  : ", (unsigned long long)CTX_PC(*context));
+#else
 	wsprintf (scrap, "\nBytes at CS:EIP (%08X)  : ", context->Eip);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	unsigned char *eip_ptr = (unsigned char *) (CTX_PC(*context));
+#else
 	unsigned char *eip_ptr = (unsigned char *) (context->Eip);
+#endif
 	char bytestr[32];
 
 	for (int c = 0 ; c < 32 ; c++)

@@ -66,6 +66,17 @@ public:
 	static BOOL WINAPI symCleanup(
 		HANDLE hProcess);
 
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 Widened to the ...64 ABI on x64, audited against
+	// psdk_inc/_dbg_common.h; SymGetLineFromAddr64's pdwDisplacement genuinely stays PDWORD.
+#if defined(_WIN64) || defined(__x86_64__)
+	static DWORD64 WINAPI symLoadModule(
+		HANDLE hProcess,
+		HANDLE hFile,
+		LPSTR ImageName,
+		LPSTR ModuleName,
+		DWORD64 BaseOfDll,
+		DWORD SizeOfDll);
+#else
 	static BOOL WINAPI symLoadModule(
 		HANDLE hProcess,
 		HANDLE hFile,
@@ -73,33 +84,70 @@ public:
 		LPSTR ModuleName,
 		DWORD BaseOfDll,
 		DWORD SizeOfDll);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	static DWORD64 WINAPI symGetModuleBase(
+		HANDLE hProcess,
+		DWORD64 dwAddr);
+#else
 	static DWORD WINAPI symGetModuleBase(
 		HANDLE hProcess,
 		DWORD dwAddr);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	static BOOL WINAPI symUnloadModule(
+		HANDLE hProcess,
+		DWORD64 BaseOfDll);
+#else
 	static BOOL WINAPI symUnloadModule(
 		HANDLE hProcess,
 		DWORD BaseOfDll);
+#endif
 
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 Displacement is a write target: 4-byte slot under an
+	// 8-byte SymGetSymFromAddr64 write is a stack buffer overflow.
+#if defined(_WIN64) || defined(__x86_64__)
+	static BOOL WINAPI symGetSymFromAddr(
+		HANDLE hProcess,
+		DWORD64 Address,
+		PDWORD64 Displacement,
+		PIMAGEHLP_SYMBOL Symbol);
+#else
 	static BOOL WINAPI symGetSymFromAddr(
 		HANDLE hProcess,
 		DWORD Address,
 		LPDWORD Displacement,
 		PIMAGEHLP_SYMBOL Symbol);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	static BOOL WINAPI symGetLineFromAddr(
+		HANDLE hProcess,
+		DWORD64 dwAddr,
+		PDWORD pdwDisplacement,
+		PIMAGEHLP_LINE Line);
+#else
 	static BOOL WINAPI symGetLineFromAddr(
 		HANDLE hProcess,
 		DWORD dwAddr,
 		PDWORD pdwDisplacement,
 		PIMAGEHLP_LINE Line);
+#endif
 
 	static DWORD WINAPI symSetOptions(
 		DWORD SymOptions);
 
+#if defined(_WIN64) || defined(__x86_64__)
+	static LPVOID WINAPI symFunctionTableAccess(
+		HANDLE hProcess,
+		DWORD64 AddrBase);
+#else
 	static LPVOID WINAPI symFunctionTableAccess(
 		HANDLE hProcess,
 		DWORD AddrBase);
+#endif
 
 	static BOOL WINAPI stackWalk(
 		DWORD MachineType,
@@ -135,6 +183,15 @@ private:
 	typedef BOOL (WINAPI *SymCleanup_t) (
 		HANDLE hProcess);
 
+#if defined(_WIN64) || defined(__x86_64__)
+	typedef DWORD64 (WINAPI *SymLoadModule_t) (
+		HANDLE hProcess,
+		HANDLE hFile,
+		LPSTR ImageName,
+		LPSTR ModuleName,
+		DWORD64 BaseOfDll,
+		DWORD SizeOfDll);
+#else
 	typedef BOOL (WINAPI *SymLoadModule_t) (
 		HANDLE hProcess,
 		HANDLE hFile,
@@ -142,33 +199,68 @@ private:
 		LPSTR ModuleName,
 		DWORD BaseOfDll,
 		DWORD SizeOfDll);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	typedef DWORD64 (WINAPI *SymGetModuleBase_t) (
+		HANDLE hProcess,
+		DWORD64 dwAddr);
+#else
 	typedef DWORD (WINAPI *SymGetModuleBase_t) (
 		HANDLE hProcess,
 		DWORD dwAddr);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	typedef BOOL (WINAPI *SymUnloadModule_t) (
+		HANDLE hProcess,
+		DWORD64 BaseOfDll);
+#else
 	typedef BOOL (WINAPI *SymUnloadModule_t) (
 		HANDLE hProcess,
 		DWORD BaseOfDll);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	typedef BOOL (WINAPI *SymGetSymFromAddr_t) (
+		HANDLE hProcess,
+		DWORD64 Address,
+		PDWORD64 Displacement,
+		PIMAGEHLP_SYMBOL Symbol);
+#else
 	typedef BOOL (WINAPI *SymGetSymFromAddr_t) (
 		HANDLE hProcess,
 		DWORD Address,
 		LPDWORD Displacement,
 		PIMAGEHLP_SYMBOL Symbol);
+#endif
 
+#if defined(_WIN64) || defined(__x86_64__)
+	typedef BOOL (WINAPI* SymGetLineFromAddr_t) (
+		HANDLE hProcess,
+		DWORD64 dwAddr,
+		PDWORD pdwDisplacement,
+		PIMAGEHLP_LINE Line);
+#else
 	typedef BOOL (WINAPI* SymGetLineFromAddr_t) (
 		HANDLE hProcess,
 		DWORD dwAddr,
 		PDWORD pdwDisplacement,
 		PIMAGEHLP_LINE Line);
+#endif
 
 	typedef DWORD (WINAPI *SymSetOptions_t) (
 		DWORD SymOptions);
 
+#if defined(_WIN64) || defined(__x86_64__)
+	typedef LPVOID (WINAPI *SymFunctionTableAccess_t) (
+		HANDLE hProcess,
+		DWORD64 AddrBase);
+#else
 	typedef LPVOID (WINAPI *SymFunctionTableAccess_t) (
 		HANDLE hProcess,
 		DWORD AddrBase);
+#endif
 
 	typedef BOOL (WINAPI *StackWalk_t) (
 		DWORD MachineType,

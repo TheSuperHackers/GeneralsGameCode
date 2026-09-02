@@ -111,16 +111,31 @@ bool DbgHelpLoader::load()
 		Inst->m_loadedFromSystem = true;
 	}
 
+	// TheSuperHackers @fix MeneerHaas 02/09/2026 x64 dbghelp.dll only exports the ...64 names for the
+	// address-taking entry points; un-suffixed GetProcAddress returns NULL there. 32-bit order kept (docs/x64).
 	Inst->m_symInitialize = reinterpret_cast<SymInitialize_t>(::GetProcAddress(Inst->m_dllModule, "SymInitialize"));
 	Inst->m_symCleanup = reinterpret_cast<SymCleanup_t>(::GetProcAddress(Inst->m_dllModule, "SymCleanup"));
+#if defined(_WIN64) || defined(__x86_64__)
+	Inst->m_symLoadModule = reinterpret_cast<SymLoadModule_t>(::GetProcAddress(Inst->m_dllModule, "SymLoadModule64"));
+	Inst->m_symUnloadModule = reinterpret_cast<SymUnloadModule_t>(::GetProcAddress(Inst->m_dllModule, "SymUnloadModule64"));
+	Inst->m_symGetModuleBase = reinterpret_cast<SymGetModuleBase_t>(::GetProcAddress(Inst->m_dllModule, "SymGetModuleBase64"));
+	Inst->m_symGetSymFromAddr = reinterpret_cast<SymGetSymFromAddr_t>(::GetProcAddress(Inst->m_dllModule, "SymGetSymFromAddr64"));
+	Inst->m_symGetLineFromAddr = reinterpret_cast<SymGetLineFromAddr_t>(::GetProcAddress(Inst->m_dllModule, "SymGetLineFromAddr64"));
+#else
 	Inst->m_symLoadModule = reinterpret_cast<SymLoadModule_t>(::GetProcAddress(Inst->m_dllModule, "SymLoadModule"));
 	Inst->m_symUnloadModule = reinterpret_cast<SymUnloadModule_t>(::GetProcAddress(Inst->m_dllModule, "SymUnloadModule"));
 	Inst->m_symGetModuleBase = reinterpret_cast<SymGetModuleBase_t>(::GetProcAddress(Inst->m_dllModule, "SymGetModuleBase"));
 	Inst->m_symGetSymFromAddr = reinterpret_cast<SymGetSymFromAddr_t>(::GetProcAddress(Inst->m_dllModule, "SymGetSymFromAddr"));
 	Inst->m_symGetLineFromAddr = reinterpret_cast<SymGetLineFromAddr_t>(::GetProcAddress(Inst->m_dllModule, "SymGetLineFromAddr"));
+#endif
 	Inst->m_symSetOptions = reinterpret_cast<SymSetOptions_t>(::GetProcAddress(Inst->m_dllModule, "SymSetOptions"));
+#if defined(_WIN64) || defined(__x86_64__)
+	Inst->m_symFunctionTableAccess = reinterpret_cast<SymFunctionTableAccess_t>(::GetProcAddress(Inst->m_dllModule, "SymFunctionTableAccess64"));
+	Inst->m_stackWalk = reinterpret_cast<StackWalk_t>(::GetProcAddress(Inst->m_dllModule, "StackWalk64"));
+#else
 	Inst->m_symFunctionTableAccess = reinterpret_cast<SymFunctionTableAccess_t>(::GetProcAddress(Inst->m_dllModule, "SymFunctionTableAccess"));
 	Inst->m_stackWalk = reinterpret_cast<StackWalk_t>(::GetProcAddress(Inst->m_dllModule, "StackWalk"));
+#endif
 #ifdef RTS_ENABLE_CRASHDUMP
 	Inst->m_miniDumpWriteDump = reinterpret_cast<MiniDumpWriteDump_t>(::GetProcAddress(Inst->m_dllModule, "MiniDumpWriteDump"));
 #endif
@@ -232,6 +247,15 @@ BOOL DbgHelpLoader::symCleanup(
 	return FALSE;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+DWORD64 DbgHelpLoader::symLoadModule(
+	HANDLE hProcess,
+	HANDLE hFile,
+	LPSTR ImageName,
+	LPSTR ModuleName,
+	DWORD64 BaseOfDll,
+	DWORD SizeOfDll)
+#else
 BOOL DbgHelpLoader::symLoadModule(
 	HANDLE hProcess,
 	HANDLE hFile,
@@ -239,6 +263,7 @@ BOOL DbgHelpLoader::symLoadModule(
 	LPSTR ModuleName,
 	DWORD BaseOfDll,
 	DWORD SizeOfDll)
+#endif
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
@@ -248,9 +273,15 @@ BOOL DbgHelpLoader::symLoadModule(
 	return FALSE;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+DWORD64 DbgHelpLoader::symGetModuleBase(
+	HANDLE hProcess,
+	DWORD64 dwAddr)
+#else
 DWORD DbgHelpLoader::symGetModuleBase(
 	HANDLE hProcess,
 	DWORD dwAddr)
+#endif
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
@@ -260,9 +291,15 @@ DWORD DbgHelpLoader::symGetModuleBase(
 	return 0u;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+BOOL DbgHelpLoader::symUnloadModule(
+	HANDLE hProcess,
+	DWORD64 BaseOfDll)
+#else
 BOOL DbgHelpLoader::symUnloadModule(
 	HANDLE hProcess,
 	DWORD BaseOfDll)
+#endif
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
@@ -272,11 +309,19 @@ BOOL DbgHelpLoader::symUnloadModule(
 	return FALSE;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+BOOL DbgHelpLoader::symGetSymFromAddr(
+	HANDLE hProcess,
+	DWORD64 Address,
+	PDWORD64 Displacement,
+	PIMAGEHLP_SYMBOL Symbol)
+#else
 BOOL DbgHelpLoader::symGetSymFromAddr(
 	HANDLE hProcess,
 	DWORD Address,
 	LPDWORD Displacement,
 	PIMAGEHLP_SYMBOL Symbol)
+#endif
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
@@ -286,11 +331,19 @@ BOOL DbgHelpLoader::symGetSymFromAddr(
 	return FALSE;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+BOOL DbgHelpLoader::symGetLineFromAddr(
+	HANDLE hProcess,
+	DWORD64 dwAddr,
+	PDWORD pdwDisplacement,
+	PIMAGEHLP_LINE Line)
+#else
 BOOL DbgHelpLoader::symGetLineFromAddr(
 	HANDLE hProcess,
 	DWORD dwAddr,
 	PDWORD pdwDisplacement,
 	PIMAGEHLP_LINE Line)
+#endif
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
@@ -311,9 +364,15 @@ DWORD DbgHelpLoader::symSetOptions(
 	return 0u;
 }
 
+#if defined(_WIN64) || defined(__x86_64__)
+LPVOID DbgHelpLoader::symFunctionTableAccess(
+	HANDLE hProcess,
+	DWORD64 AddrBase)
+#else
 LPVOID DbgHelpLoader::symFunctionTableAccess(
 	HANDLE hProcess,
 	DWORD AddrBase)
+#endif
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
