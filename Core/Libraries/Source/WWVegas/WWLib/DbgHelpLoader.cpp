@@ -112,7 +112,7 @@ bool DbgHelpLoader::load()
 	}
 
 	// TheSuperHackers @fix MeneerHaas 02/09/2026 x64 dbghelp.dll only exports the ...64 names for the
-	// address-taking entry points; un-suffixed GetProcAddress returns NULL there. 32-bit order kept (docs/x64).
+	// address-taking entry points; un-suffixed GetProcAddress returns NULL there. 32-bit call order kept.
 	Inst->m_symInitialize = reinterpret_cast<SymInitialize_t>(::GetProcAddress(Inst->m_dllModule, "SymInitialize"));
 	Inst->m_symCleanup = reinterpret_cast<SymCleanup_t>(::GetProcAddress(Inst->m_dllModule, "SymCleanup"));
 #if defined(_WIN64) || defined(__x86_64__)

@@ -23,7 +23,7 @@ add_library(d3d8lib INTERFACE)
 # scope, see issue #473. This is a precondition for W3D to compile on x64, not
 # a guarantee: W3D also depends on several Core libraries (WWLib, debug,
 # Compression, WWSaveLoad, WWAudio) that fail for unrelated reasons and still
-# block it as of this change. See docs/x64/core-error-catalogue.md.
+# block it as of this change.
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     target_link_libraries(d3d8lib INTERFACE d3d8 dinput8 dxguid)
 else()

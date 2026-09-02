@@ -142,7 +142,7 @@ SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass *
 	// 32-bit on-disk identity token, so two live objects can collide and pointer
 	// fixup can bind the wrong object on load. The on-disk width is fixed by the
 	// retail save format and cannot be widened here without breaking it.
-	// See docs/x64/savegame-format-decision.md (written by the later task).
+	// The write path has no callers in this repository; writer and reader still agree on the width.
 	uint32 objptr = (uint32)(uintptr_t)obj;
 	csave.Begin_Chunk(SIMPLEFACTORY_CHUNKID_OBJPOINTER);
 	csave.Write(&objptr,sizeof(uint32));
