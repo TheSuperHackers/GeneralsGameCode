@@ -32,6 +32,7 @@
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
 #include "GameClient/ClientInstance.h"
+#include "GameClient/MapUtil.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/InGameUI.h"
@@ -847,8 +848,14 @@ void RecorderClass::writeArgument(GameMessageArgumentDataType type, const GameMe
  */
 Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 {
-	AsciiString filepath = getReplayDir();
-	filepath.concat(header.filename.str());
+	// TheSuperHackers @feature bobtista 08/08/2026 Open explicitly selected replay paths in place
+	// while preserving Replay directory lookup for menu filenames and existing command lines.
+	AsciiString filepath = header.filename;
+	if (!FileSystem::isAbsolutePath(filepath))
+	{
+		filepath = getReplayDir();
+		filepath.concat(header.filename.str());
+	}
 
 	// TheSuperHackers @performance More buffered data reduces disk overhead and will improve fast forward playback
 	const UnsignedInt buffersize = header.forPlayback ? replayBufferBytes : File::BUFFERSIZE;
@@ -998,6 +1005,18 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo.GetQueueSize()-1, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo.sawCRCMismatch())
 		{
+			// TheSuperHackers @feature bobtista 08/08/2026 Diagnostic playback continues past a mismatch
+			// without the UI report and the pause that normal playback uses.
+			if (TheDebugIgnoreReplaySyncErrors)
+			{
+				const UnsignedInt ignoredFrame = TheGameLogic->getFrame() - m_crcInfo.GetQueueSize() - 1;
+				DEBUG_LOG(("Replay CRC mismatch ignored\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
+					playbackCRC, newCRC, ignoredFrame));
+				printf("CRC Mismatch in Frame %d (ignored)\n", ignoredFrame);
+				m_crcInfo.setSawCRCMismatch();
+				return;
+			}
+
 			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
 			// tail end of patch season, let's just disable the message, and hope the users believe the
@@ -1074,6 +1093,46 @@ Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
  * Start playback of the file. Return true or false depending on if the file is
  * a valid replay file or not.
  */
+// TheSuperHackers @feature bobtista 08/08/2026 Play the replay requested on startup, once the client
+// has created the shell layout that the playback returns to when it ends.
+void RecorderClass::loadQueuedReplay()
+{
+	const AsciiString filename = TheGlobalData->m_loadReplayGame;
+	TheWritableGlobalData->m_loadReplayGame.clear();
+
+	ReplayHeader header;
+	header.forPlayback = FALSE;
+	header.filename = filename;
+	if (!readReplayHeader(header))
+	{
+		DEBUG_LOG(("Replay '%s' could not be read", filename.str()));
+		TheGameEngine->setQuitting(TRUE);
+		return;
+	}
+
+	// A replay whose map is missing starts a game that cannot load, so reject it here instead
+	ReplayGameInfo gameInfo;
+	if (!ParseAsciiStringToGameInfo(&gameInfo, header.gameOptions))
+	{
+		DEBUG_LOG(("Replay '%s' contains invalid game options", filename.str()));
+		TheGameEngine->setQuitting(TRUE);
+		return;
+	}
+
+	if (TheMapCache == nullptr || TheMapCache->findMap(gameInfo.getMap()) == nullptr)
+	{
+		DEBUG_LOG(("Replay '%s' requires unavailable map '%s'", filename.str(), gameInfo.getMap().str()));
+		TheGameEngine->setQuitting(TRUE);
+		return;
+	}
+
+	if (!playbackFile(filename))
+	{
+		DEBUG_LOG(("Failed to play replay '%s'", filename.str()));
+		TheGameEngine->setQuitting(TRUE);
+	}
+}
+
 Bool RecorderClass::playbackFile(AsciiString filename)
 {
 	if (!m_doingAnalysis)

@@ -332,6 +332,31 @@ Bool FileSystem::createDirectory(AsciiString directory)
 }
 
 //============================================================================
+// FileSystem::isAbsolutePath
+//============================================================================
+// TheSuperHackers @feature bobtista 08/08/2026 Identify absolute paths so callers can distinguish
+// explicitly selected files from names relative to their managed directories.
+Bool FileSystem::isAbsolutePath(const AsciiString& path)
+{
+	const Char *value = path.str();
+	if (value == nullptr || value[0] == 0)
+	{
+		return FALSE;
+	}
+
+#ifdef _WIN32
+	const Bool hasDriveLetter = (value[0] >= 'A' && value[0] <= 'Z') ||
+		(value[0] >= 'a' && value[0] <= 'z');
+	const Bool hasDriveRoot = hasDriveLetter && value[1] == ':' &&
+		(value[2] == '\\' || value[2] == '/');
+	const Bool hasCurrentDriveRoot = value[0] == '\\' || value[0] == '/';
+	return hasDriveRoot || hasCurrentDriveRoot;
+#else
+	return value[0] == '/';
+#endif
+}
+
+//============================================================================
 // FileSystem::normalizePath
 //============================================================================
 AsciiString FileSystem::normalizePath(const AsciiString& path)
