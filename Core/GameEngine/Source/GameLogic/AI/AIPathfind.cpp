@@ -9576,6 +9576,11 @@ Bool Pathfinder::isAttackViewBlockedByObstacle(const Object* attacker, const Coo
 	}
 	if (w)
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		if (w->isContactWeapon())
+			return false;
+#endif
+
 		Bool viewBlocked;
 		if (victim)
 			viewBlocked = !w->isClearGoalFiringLineOfSightTerrain(attacker, attackerPos, victim);
