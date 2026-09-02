@@ -36,6 +36,7 @@ public:
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
 
-	// Returns the number of tokens consumed by -useCwd or -setCwd <path>, or 0.
-	static int getStartupWorkingDirectoryOptionTokenCount(const char *arg);
+	// Returns true if startup parsing consumed the zero-based argument index.
+	// The index excludes the executable name.
+	static bool isCommandLineArgumentParsedForStartup(int argIndex);
 };

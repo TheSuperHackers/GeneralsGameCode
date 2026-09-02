@@ -479,8 +479,7 @@ Int parseUseCwd(char *[], int)
 Int parseSetCwd(char *args[], int num)
 {
 	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
-	// -setCwd <path> overrides the working directory. The separate -useCwd
-	// option keeps the no-argument behavior unambiguous.
+	// -setCwd <path> overrides the working directory.
 	s_cwdOptionSpecified = TRUE;
 	if (num <= 1 || args[1] == nullptr)
 	{
@@ -1414,7 +1413,10 @@ char *nextParam(char *newSource, const char *seps)
 	return first;
 }
 
-static void parseCommandLine(const CommandLineParam* params, int numParams)
+static std::vector<Bool> s_startupParsedArguments;
+
+static void parseCommandLine(
+	const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
 {
 	std::vector<char*> argv;
 
@@ -1426,6 +1428,8 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 		token = nextParam(nullptr, "\" ");
 	}
 	int argc = argv.size();
+	if (parsedArguments != nullptr)
+		parsedArguments->assign(argc > 0 ? argc - 1 : 0, FALSE);
 
 	int arg = 1;
 
@@ -1459,7 +1463,14 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(&argv[0]+arg, argc-arg);
+				const int parsedArg = arg;
+				const int parsedArgCount = params[param].func(&argv[0]+arg, argc-arg);
+				if (parsedArguments != nullptr)
+				{
+					for (int i = 0; i < parsedArgCount && parsedArg + i < argc; ++i)
+						(*parsedArguments)[parsedArg + i - 1] = TRUE;
+				}
+				arg += parsedArgCount;
 				found = true;
 				break;
 			}
@@ -1471,19 +1482,10 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	}
 }
 
-int CommandLine::getStartupWorkingDirectoryOptionTokenCount(const char *arg)
+bool CommandLine::isCommandLineArgumentParsedForStartup(int argIndex)
 {
-	if (arg == nullptr)
-		return 0;
-
-	if (arg[0] == '-' || arg[0] == '/')
-		++arg;
-
-	if (stricmp(arg, "useCwd") == 0)
-		return 1;
-	if (stricmp(arg, "setCwd") == 0)
-		return 2;
-	return 0;
+	return argIndex >= 0 && argIndex < static_cast<int>(s_startupParsedArguments.size())
+		&& s_startupParsedArguments[argIndex];
 }
 
 void createGlobalData()
@@ -1502,7 +1504,7 @@ void CommandLine::parseCommandLineForStartup()
 		return;
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
 
-	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup));
+	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup), &s_startupParsedArguments);
 
 	if (!s_cwdOptionSpecified)
 		rts::setCurrentDirectoryToExecutablePath();
