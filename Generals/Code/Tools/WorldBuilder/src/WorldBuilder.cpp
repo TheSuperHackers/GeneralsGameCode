@@ -153,34 +153,25 @@ FileClass * WB_W3DFileSystem::Get_File( char const *filename )
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// MFC parses the command line again to select a document to open. Remove the
-// startup-only options so it does not mistake the -setCwd path for a map.
+// MFC parses the command line again to select a document to open. Skip the
+// arguments already handled by the startup parser so option values are not
+// mistaken for map filenames.
 
 class WBCommandLineInfo : public CCommandLineInfo
 {
 public:
-	WBCommandLineInfo() : m_skipCwdPath(FALSE) {}
+	WBCommandLineInfo() : m_argIndex(0) {}
 
 	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
-		if (m_skipCwdPath)
-		{
-			m_skipCwdPath = FALSE;
+		if (CommandLine::isCommandLineArgumentParsedForStartup(m_argIndex++))
 			return;
-		}
-
-		const int cwdTokenCount = bFlag ? CommandLine::getStartupWorkingDirectoryOptionTokenCount(pszParam) : 0;
-		if (cwdTokenCount > 0)
-		{
-			m_skipCwdPath = cwdTokenCount > 1;
-			return;
-		}
 
 		CCommandLineInfo::ParseParam(pszParam, bFlag, bLast);
 	}
 
 private:
-	BOOL m_skipCwdPath;
+	int m_argIndex;
 };
 
 /////////////////////////////////////////////////////////////////////////////

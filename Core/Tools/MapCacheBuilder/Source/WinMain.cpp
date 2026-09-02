@@ -228,19 +228,17 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	*/
 	std::list<std::string> argvSet;
 	char *token;
+	int argIndex = 0;
 	token = nextParam(lpCmdLine, "\" ");
 	while (token != nullptr) {
 		char * str = strtrim(token);
-		const int cwdTokenCount = CommandLine::getStartupWorkingDirectoryOptionTokenCount(str);
-		if (cwdTokenCount > 0)
+		if (!CommandLine::isCommandLineArgumentParsedForStartup(argIndex))
 		{
-			for (int i = 0; i < cwdTokenCount; ++i)
-				token = nextParam(nullptr, "\" ");
-			continue;
+			argvSet.push_back(str);
+			DEBUG_LOG(("Adding '%s'", str));
 		}
-		argvSet.push_back(str);
-		DEBUG_LOG(("Adding '%s'", str));
 		token = nextParam(nullptr, "\" ");
+		++argIndex;
 	}
 
 	// not part of the subsystem list, because it should normally never be reset!
