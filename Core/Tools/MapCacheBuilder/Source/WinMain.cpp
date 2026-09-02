@@ -231,9 +231,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	token = nextParam(lpCmdLine, "\" ");
 	while (token != nullptr) {
 		char * str = strtrim(token);
-		if (CommandLine::isStartupWorkingDirectoryOption(str))
+		const int cwdTokenCount = CommandLine::getStartupWorkingDirectoryOptionTokenCount(str);
+		if (cwdTokenCount > 0)
 		{
-			token = nextParam(nullptr, "\" ");
+			for (int i = 0; i < cwdTokenCount; ++i)
+				token = nextParam(nullptr, "\" ");
 			continue;
 		}
 		argvSet.push_back(str);

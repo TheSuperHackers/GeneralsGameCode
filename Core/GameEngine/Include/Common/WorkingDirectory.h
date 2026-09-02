@@ -25,8 +25,8 @@ namespace rts
 
 // TheSuperHackers @feature 14/08/2026
 // Process working directory helpers. CommandLine::parseCommandLineForStartup()
-// applies these: default is the executable directory, -cwd keeps the OS
-// directory, and -cwd=<path> uses that path.
+// applies these: default is the executable directory, -useCwd keeps the OS
+// directory, and -setCwd <path> uses that path.
 
 Bool setCurrentDirectoryToExecutablePath();
 Bool setCurrentDirectoryToPath(const char *path);
