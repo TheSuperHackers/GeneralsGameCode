@@ -1710,6 +1710,7 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 
 						READ_MICRO_CHUNK_WWSTRING (cload, VARID_FILENAME, filename);
 
+#if defined(_WIN64) || defined(__x86_64__)
 						case VARID_THIS_PTR:
 						{
 							// TheSuperHackers @fix MeneerHaas 02/09/2026 Read the identity at the width the chunk
@@ -1723,6 +1724,24 @@ AudibleSoundClass::Load (ChunkLoadClass &cload)
 							SaveLoadSystemClass::Register_Pointer (old_ptr, this);
 						}
 						break;
+#else
+						case VARID_THIS_PTR:
+						{
+							// Read exactly what Save wrote: a fixed-width 4-byte
+							// identity token, not sizeof(old_ptr). On x86-64
+							// sizeof(AudibleSoundClass*) is 8, so reading
+							// sizeof(old_ptr) here would ask for more bytes than
+							// the legacy 4-byte micro chunk holds; ChunkLoadClass::Read
+							// then refuses to read anything at all and old_ptr
+							// stays null, silently poisoning SaveLoadSystemClass's
+							// pointer remap table. See persistfactory.h.
+							uint32 old_ptr_token = 0;
+							cload.Read(&old_ptr_token, sizeof (old_ptr_token));
+							AudibleSoundClass *old_ptr = (AudibleSoundClass *)(uintptr_t)old_ptr_token;
+							SaveLoadSystemClass::Register_Pointer (old_ptr, this);
+						}
+						break;
+#endif
 					}
 
 					cload.Close_Micro_Chunk ();

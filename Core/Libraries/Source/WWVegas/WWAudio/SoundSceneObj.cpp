@@ -294,10 +294,18 @@ SoundSceneObjClass::Load (ChunkLoadClass &cload)
 				while (cload.Open_Micro_Chunk ()) {
 					switch (cload.Cur_Micro_Chunk_ID ()) {
 
+#if defined(_WIN64) || defined(__x86_64__)
 						READ_MICRO_CHUNK_POINTER_TOKEN (cload, VARID_ATTACHED_OBJ, m_AttachedObject, RenderObjClass *)
+#else
+						READ_MICRO_CHUNK (cload, VARID_ATTACHED_OBJ, m_AttachedObject);
+#endif
 						READ_MICRO_CHUNK (cload, VARID_ATTACHED_BONE, m_AttachedBone);
 						READ_MICRO_CHUNK (cload, VARID_USER_DATA, m_UserData);
+#if defined(_WIN64) || defined(__x86_64__)
 						READ_MICRO_CHUNK_POINTER_TOKEN (cload, VARID_USER_OBJ, m_UserObj, RefCountClass *)
+#else
+						READ_MICRO_CHUNK (cload, VARID_USER_OBJ, m_UserObj);
+#endif
 						READ_MICRO_CHUNK (cload, VARID_ID, id);
 					}
 

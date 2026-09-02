@@ -329,6 +329,7 @@ private:
 		break;                                                         \
 	}
 
+#if defined(_WIN64) || defined(__x86_64__)
 // TheSuperHackers @fix MeneerHaas 02/09/2026 Persisted pointer identities are written at the writing build's pointer
 // width: 4 bytes in every file a 32-bit build produced, 8 from an x64 build. Read what the chunk
 // actually holds rather than sizeof(var) -- a plain READ_MICRO_CHUNK would ask for 8 bytes from a
@@ -344,6 +345,7 @@ private:
 		var = (type)temp_token;\
 		break;\
 	}
+#endif
 
 #define READ_MICRO_CHUNK_STRING(cload,id,var,size)		\
 	case (id):	WWASSERT(cload.Cur_Micro_Chunk_Length() <= size); cload.Read(var,cload.Cur_Micro_Chunk_Length()); break;	\
