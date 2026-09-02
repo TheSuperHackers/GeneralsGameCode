@@ -34,6 +34,7 @@
 
 
 #include "SoundSceneObj.h"
+#include <Utility/stdint_adapter.h>
 #include "WW3D2/camera.h"
 #include "WW3D2/rendobj.h"
 #include "WWSaveLoad/persistfactory.h"
@@ -259,10 +260,22 @@ SoundSceneObjClass::Save (ChunkSaveClass &csave)
 	csave.End_Chunk ();
 
 	csave.Begin_Chunk (CHUNKID_VARIABLES);
+#if defined(_WIN64) || defined(__x86_64__)
+		// TheSuperHackers @fix MeneerHaas 02/09/2026 Persisted pointers are 4-byte identity tokens: that is what the
+		// legacy files hold and what RenderObjPersistFactory registers, so the remap below can match.
+		uint32 attached_obj_token = (uint32)(uintptr_t)m_AttachedObject;
+		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_OBJ, attached_obj_token);
+#else
 		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_OBJ, m_AttachedObject);
+#endif
 		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_BONE, m_AttachedBone);
 		WRITE_MICRO_CHUNK (csave, VARID_USER_DATA, m_UserData);
+#if defined(_WIN64) || defined(__x86_64__)
+		uint32 user_obj_token = (uint32)(uintptr_t)m_UserObj;
+		WRITE_MICRO_CHUNK (csave, VARID_USER_OBJ, user_obj_token);
+#else
 		WRITE_MICRO_CHUNK (csave, VARID_USER_OBJ, m_UserObj);
+#endif
 		WRITE_MICRO_CHUNK (csave, VARID_ID, m_ID);
 	csave.End_Chunk ();
 	return true;
@@ -294,10 +307,33 @@ SoundSceneObjClass::Load (ChunkLoadClass &cload)
 				while (cload.Open_Micro_Chunk ()) {
 					switch (cload.Cur_Micro_Chunk_ID ()) {
 
+#if defined(_WIN64) || defined(__x86_64__)
+						// TheSuperHackers @fix MeneerHaas 02/09/2026 Read exactly the 4 bytes Save wrote; sizeof(pointer)
+						// is 8 here, and ChunkLoadClass::Read refuses a short chunk outright, leaving the
+						// member unset and poisoning the pointer remap.
+						case VARID_ATTACHED_OBJ:
+						{
+							uint32 attached_obj_token = 0;
+							cload.Read (&attached_obj_token, sizeof (attached_obj_token));
+							m_AttachedObject = (RenderObjClass *)(uintptr_t)attached_obj_token;
+							break;
+						}
+#else
 						READ_MICRO_CHUNK (cload, VARID_ATTACHED_OBJ, m_AttachedObject);
+#endif
 						READ_MICRO_CHUNK (cload, VARID_ATTACHED_BONE, m_AttachedBone);
 						READ_MICRO_CHUNK (cload, VARID_USER_DATA, m_UserData);
+#if defined(_WIN64) || defined(__x86_64__)
+						case VARID_USER_OBJ:
+						{
+							uint32 user_obj_token = 0;
+							cload.Read (&user_obj_token, sizeof (user_obj_token));
+							m_UserObj = (RefCountClass *)(uintptr_t)user_obj_token;
+							break;
+						}
+#else
 						READ_MICRO_CHUNK (cload, VARID_USER_OBJ, m_UserObj);
+#endif
 						READ_MICRO_CHUNK (cload, VARID_ID, id);
 					}
 
