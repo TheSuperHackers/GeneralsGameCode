@@ -28,27 +28,28 @@
 
 class CTeamsDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CTeamsDialog(CWnd* pParent = nullptr);   // standard constructor
+	CTeamsDialog(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CTeamsDialog)
-	enum { IDD = IDD_TEAMS_DIALOG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TEAMS_DIALOG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTeamsDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CTeamsDialog)
 	virtual BOOL OnInitDialog() override;
@@ -67,9 +68,9 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	Int								m_updating;
-	SidesList						m_sides;
-	Int								m_curTeam;
+	Int m_updating;
+	SidesList m_sides;
+	Int m_curTeam;
 
 	enum
 	{
@@ -83,12 +84,11 @@ protected:
 
 	void updateUI(Int whatToRebuild);
 	void validateTeamOwners();
-	Bool isValidTeamOwner( AsciiString ownerName );
-	void doCorrectTeamOwnerDialog( TeamsInfo *ti );
+	Bool isValidTeamOwner(AsciiString ownerName);
+	void doCorrectTeamOwnerDialog(TeamsInfo* ti);
 
 private:
 	void UpdateTeamsList();
-
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -29,31 +29,32 @@
 
 class PlayerListDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	PlayerListDlg(CWnd* pParent = nullptr);   // standard constructor
+	PlayerListDlg(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(PlayerListDlg)
-	enum { IDD = IDD_PLAYERLIST };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_PLAYERLIST
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PlayerListDlg)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
-	Int					m_updating;
-	SidesList			m_sides;
-	Int					m_curPlayerIdx;
-	CButtonShowColor	m_colorButton;
+	Int m_updating;
+	SidesList m_sides;
+	Int m_curPlayerIdx;
+	CButtonShowColor m_colorButton;
 
 	void updateTheUI();
 	void PopulateColorComboBox();

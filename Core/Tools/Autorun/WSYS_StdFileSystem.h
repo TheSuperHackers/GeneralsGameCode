@@ -42,18 +42,16 @@
 //----------------------------------------------------------------------------
 
 #ifndef __WSYS_FILE_H
-#include "WSYS_file.h"
+	#include "WSYS_file.h"
 #endif
 
 #ifndef __WSYS_FILESYSTEM_H
-#include "WSYS_FileSystem.h"
+	#include "WSYS_FileSystem.h"
 #endif
-
 
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------------
 //           Type Defines
@@ -63,19 +61,15 @@
 // StdFileSystem
 //===============================
 /**
-  *	FileSystem that maps directly to StdFile files.
-	*/
+ *	FileSystem that maps directly to StdFile files.
+ */
 //===============================
 
-class StdFileSystem	: public FileSystem
+class StdFileSystem : public FileSystem
 {
-
-	public:
-
-		virtual					~StdFileSystem();
-		virtual	File*		open( const Char *filename, Int access = 0 );		///< Creates a StdFile object and opens the file with it: See FileSystem::open
-
-
+public:
+	virtual ~StdFileSystem();
+	virtual File* open(const Char* filename, Int access = 0);    ///< Creates a StdFile object and opens the file with it: See FileSystem::open
 };
 
 //----------------------------------------------------------------------------

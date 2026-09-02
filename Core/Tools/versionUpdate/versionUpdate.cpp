@@ -21,7 +21,7 @@
 // Author: Matthew D. Campbell, November 2001
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
+#define WIN32_LEAN_AND_MEAN    // only bare bones windows stuff wanted
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>
@@ -39,9 +39,9 @@
 #define NUMFMT "#define %s %d\n"
 #define STRFMT "#define %s \"%s\"\n"
 
-static void writeVersion(char *file, int build)
+static void writeVersion(char* file, int build)
 {
-	FILE *filePtr = fopen(file, "w");
+	FILE* filePtr = fopen(file, "w");
 	// Clobber the file.  Hey, this is a simple program.
 	if (file)
 	{
@@ -81,27 +81,27 @@ static void writeVersion(char *file, int build)
 	}
 }
 
-static void usage(char *progname)
+static void usage(char* progname)
 {
 	if (progname)
 	{
-		printf ("Usage: %s versionfile.h", progname);
+		printf("Usage: %s versionfile.h", progname);
 	}
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+                     LPSTR lpCmdLine,
+                     int nCmdShow)
 {
 	/*
 	** Convert WinMain arguments to simple main argc and argv
 	*/
 	int argc = 1;
-	char * argv[20];
+	char* argv[20];
 	argv[0] = nullptr;
 
-	char * token = strtok(lpCmdLine, " ");
+	char* token = strtok(lpCmdLine, " ");
 	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
@@ -116,41 +116,43 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 	else
 	{
-		char *target = argv[argc-1];
-		FILE *filePtr;
+		char* target = argv[argc - 1];
+		FILE* filePtr;
 
-		if (target) {
+		if (target)
+		{
 			filePtr = fopen(target, "r+");
 			if (filePtr)
 			{
 				char buffer[256];
-				char *stringPtr = nullptr;
+				char* stringPtr = nullptr;
 
 				while (!feof(filePtr))
 				{
 					fread(buffer, 256, 1, filePtr);
 					if ((stringPtr = strstr(buffer, VERSION_STRING)) != nullptr)
 					{
-						char *ptr;
+						char* ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
-						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(nullptr, "\n");			// The remainder
+						ptr = strtok(stringPtr, " ");    // The VERSION
+						ptr = strtok(nullptr, "\n");    // The remainder
 
 						if (*ptr == '\"')
 						{
-							ptr++; // Inc past the first "
+							ptr++;    // Inc past the first "
 							build = atoi(ptr);
 							fclose(filePtr);
 
 							build++;
 
-							printf ("Local build is %d\n", build);
+							printf("Local build is %d\n", build);
 							writeVersion(target, build);
 							break;
-						} else
+						}
+						else
 						{
-							printf ("Local build is 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
+							printf("Local build is 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
 						}
 					}
 				}
@@ -158,7 +160,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			else
 			{
 				// Didn't find the file, write a new one
-				printf ("Local build is %d\n", build);
+				printf("Local build is %d\n", build);
 				writeVersion(target, build);
 			}
 		}

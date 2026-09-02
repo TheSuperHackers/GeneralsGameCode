@@ -40,18 +40,19 @@
 //-------------------------------------------------------------------------------------------------
 class WorkerStateMachine : public StateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WorkerStateMachine, "WorkerStateMachine" );
-public:
-	WorkerStateMachine( Object *owner );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(WorkerStateMachine, "WorkerStateMachine");
 
-// state transition conditions
-	static Bool supplyTruckSubMachineWantsToEnter( State *thisState, void* userData );
-	static Bool supplyTruckSubMachineReadyToLeave( State *thisState, void* userData );
+public:
+	WorkerStateMachine(Object* owner);
+
+	// state transition conditions
+	static Bool supplyTruckSubMachineWantsToEnter(State* thisState, void* userData);
+	static Bool supplyTruckSubMachineReadyToLeave(State* thisState, void* userData);
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 };
 
@@ -60,20 +61,18 @@ protected:
 // ------------------------------------------------------------------------------------------------
 class WorkerAIUpdateModuleData : public AIUpdateModuleData
 {
-
 public:
-
 	// !!!
 	// !!! NOTE: If you edit module data you must do it in both the Dozer *AND* the Worker !!!
 	// !!!
 	Int m_maxBoxesData;
-	Real m_repairHealthPercentPerSecond;	///< how many health points per second the dozer repairs at
-	Real m_boredTime;											///< after this many frames, a dozer will try to find something to do on its own
-	Real m_boredRange;										///< range the dozers try to auto repair when they're bored
+	Real m_repairHealthPercentPerSecond;    ///< how many health points per second the dozer repairs at
+	Real m_boredTime;    ///< after this many frames, a dozer will try to find something to do on its own
+	Real m_boredRange;    ///< range the dozers try to auto repair when they're bored
 	UnsignedInt m_centerDelay;
 	UnsignedInt m_warehouseDelay;
 	Real m_warehouseScanDistance;
- 	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
+	AudioEventRTS m_suppliesDepletedVoice;    ///< Sound played when I take the last box.
 	Int m_upgradedSupplyBoost;
 
 	WorkerAIUpdateModuleData()
@@ -90,87 +89,84 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    AIUpdateModuleData::buildFieldParse(p);
+		AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "MaxBoxes",					INI::parseInt,		nullptr, offsetof( WorkerAIUpdateModuleData, m_maxBoxesData ) },
-			{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	nullptr, offsetof( WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
-			{ "BoredTime",										INI::parseDurationReal,		nullptr, offsetof( WorkerAIUpdateModuleData, m_boredTime ) },
-			{ "BoredRange",										INI::parseReal,						nullptr, offsetof( WorkerAIUpdateModuleData, m_boredRange ) },
-			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_centerDelay ) },
-			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseDelay ) },
-			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseScanDistance ) },
- 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof( WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
- 			{ "UpgradedSupplyBoost", INI::parseInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_upgradedSupplyBoost) },
+		static const FieldParse dataFieldParse[] = {
+			{ "MaxBoxes", INI::parseInt, nullptr, offsetof(WorkerAIUpdateModuleData, m_maxBoxesData) },
+			{ "RepairHealthPercentPerSecond", INI::parsePercentToReal, nullptr, offsetof(WorkerAIUpdateModuleData, m_repairHealthPercentPerSecond) },
+			{ "BoredTime", INI::parseDurationReal, nullptr, offsetof(WorkerAIUpdateModuleData, m_boredTime) },
+			{ "BoredRange", INI::parseReal, nullptr, offsetof(WorkerAIUpdateModuleData, m_boredRange) },
+			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(WorkerAIUpdateModuleData, m_centerDelay) },
+			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(WorkerAIUpdateModuleData, m_warehouseDelay) },
+			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof(WorkerAIUpdateModuleData, m_warehouseScanDistance) },
+			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof(WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
+			{ "UpgradedSupplyBoost", INI::parseInt, nullptr, offsetof(WorkerAIUpdateModuleData, m_upgradedSupplyBoost) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
 class WorkerAIInterface
 {
-	public:
-		virtual void exitingSupplyTruckState() = 0; ///< This worker is leaving a supply truck task and should go back to Dozer mode.
+public:
+	virtual void exitingSupplyTruckState() = 0;    ///< This worker is leaving a supply truck task and should go back to Dozer mode.
 };
 
 class WorkerAIUpdate : public AIUpdateInterface, public DozerAIInterface, public SupplyTruckAIInterface, public WorkerAIInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WorkerAIUpdate, "WorkerAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( WorkerAIUpdate, WorkerAIUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(WorkerAIUpdate, "WorkerAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(WorkerAIUpdate, WorkerAIUpdateModuleData)
 
 public:
-
-	WorkerAIUpdate( Thing *thing, const ModuleData* moduleData );
+	WorkerAIUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual DozerAIInterface* getDozerAIInterface() override {return this;}
-	virtual const DozerAIInterface* getDozerAIInterface() const override {return this;}
-	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() override {return this;}
-	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const override {return this;}
+	virtual DozerAIInterface* getDozerAIInterface() override { return this; }
+	virtual const DozerAIInterface* getDozerAIInterface() const override { return this; }
+	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() override { return this; }
+	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const override { return this; }
 	virtual WorkerAIInterface* getWorkerAIInterface() override { return this; }
 	virtual const WorkerAIInterface* getWorkerAIInterface() const override { return this; }
 
 	// Dozer side
 	virtual void onDelete() override;
 
-	virtual Real getRepairHealthPerSecond() const override;	///< get health to repair per second
-	virtual Real getBoredTime() const override;							///< how long till we're bored
-	virtual Real getBoredRange() const override;							///< when we're bored, we look this far away to do things
+	virtual Real getRepairHealthPerSecond() const override;    ///< get health to repair per second
+	virtual Real getBoredTime() const override;    ///< how long till we're bored
+	virtual Real getBoredRange() const override;    ///< when we're bored, we look this far away to do things
 
-	virtual Object *construct( const ThingTemplate *what,
-														 const Coord3D *pos, Real angle,
-														 Player *owningPlayer,
-														 Bool isRebuild ) override;			///< construct a building
+	virtual Object* construct(const ThingTemplate* what,
+	                          const Coord3D* pos, Real angle,
+	                          Player* owningPlayer,
+	                          Bool isRebuild) override;    ///< construct a building
 
 	// get task information
-	virtual DozerTask getMostRecentCommand() override;				///< return task that was most recently issued
-	virtual Bool isTaskPending( DozerTask task ) override;					///< is there a desire to do the requested task
-	virtual ObjectID getTaskTarget( DozerTask task ) override;			///< get target of task
-	virtual Bool isAnyTaskPending() override;								///< is there any dozer task pending
-	virtual DozerTask getCurrentTask() const override { return m_currentTask; }	///< return the current task we're doing
-	virtual void setCurrentTask( DozerTask task ) override { m_currentTask = task; }		///< set the current task of the dozer
+	virtual DozerTask getMostRecentCommand() override;    ///< return task that was most recently issued
+	virtual Bool isTaskPending(DozerTask task) override;    ///< is there a desire to do the requested task
+	virtual ObjectID getTaskTarget(DozerTask task) override;    ///< get target of task
+	virtual Bool isAnyTaskPending() override;    ///< is there any dozer task pending
+	virtual DozerTask getCurrentTask() const override { return m_currentTask; }    ///< return the current task we're doing
+	virtual void setCurrentTask(DozerTask task) override { m_currentTask = task; }    ///< set the current task of the dozer
 
-	virtual Bool getIsRebuild() override { return m_isRebuild; } ///< get whether or not our task is a rebuild.
+	virtual Bool getIsRebuild() override { return m_isRebuild; }    ///< get whether or not our task is a rebuild.
 
 	// task actions
-	virtual void newTask( DozerTask task, Object* target ) override;	///< set a desire to do the requested task
-	virtual void cancelTask( DozerTask task ) override;						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
-	virtual void cancelAllTasks() override;												///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask() override;									///< resume the previous task if there was one
+	virtual void newTask(DozerTask task, Object* target) override;    ///< set a desire to do the requested task
+	virtual void cancelTask(DozerTask task) override;    ///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelAllTasks() override;    ///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
+	virtual void resumePreviousTask() override;    ///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
-	virtual void internalTaskComplete( DozerTask task ) override;					///< set a dozer task as successfully completed
-	virtual void internalCancelTask( DozerTask task ) override;						///< cancel this task from the dozer
-	virtual void internalTaskCompleteOrCancelled( DozerTask task ) override;	///< this is called when tasks are cancelled or completed
+	virtual void internalTaskComplete(DozerTask task) override;    ///< set a dozer task as successfully completed
+	virtual void internalCancelTask(DozerTask task) override;    ///< cancel this task from the dozer
+	virtual void internalTaskCompleteOrCancelled(DozerTask task) override;    ///< this is called when tasks are cancelled or completed
 
 	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
-	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point ) override;
+	virtual const Coord3D* getDockPoint(DozerTask task, DozerDockPoint point) override;
 
-	virtual void setBuildSubTask( DozerBuildSubTask subTask ) override { m_buildSubTask = subTask; };
+	virtual void setBuildSubTask(DozerBuildSubTask subTask) override { m_buildSubTask = subTask; };
 	virtual DozerBuildSubTask getBuildSubTask() override { return m_buildSubTask; }
 	//
 	// the following methods must be overridden so that if a player issues a command the dozer
@@ -178,15 +174,15 @@ public:
 	//
 	virtual void aiDoCommand(const AICommandParms* parms) override;
 
-// Supply truck stuff
+	// Supply truck stuff
 	virtual Int getNumberBoxes() const override { return m_numberBoxes; }
 	virtual Int getMaxBoxes() const override { return getWorkerAIUpdateModuleData()->m_maxBoxesData; }
 	virtual Bool loseOneBox() override;
-	virtual Bool gainOneBox( Int remainingStock ) override;
+	virtual Bool gainOneBox(Int remainingStock) override;
 
 	virtual Bool isAvailableForSupplying() const override;
 	virtual Bool isCurrentlyFerryingSupplies() const override;
-	virtual Real getWarehouseScanDistance() const override; ///< How far can I look for a warehouse?
+	virtual Real getWarehouseScanDistance() const override;    ///< How far can I look for a warehouse?
 
 	virtual void setForceBusyState(Bool v) override { m_forcedBusyPending = v; }
 	virtual Bool isForcedIntoBusyState() const override { return m_forcedBusyPending; }
@@ -194,30 +190,29 @@ public:
 	virtual void setForceWantingState(Bool v) override { m_forcePending = v; }
 	virtual Bool isForcedIntoWantingState() const override { return m_forcePending; }
 	virtual ObjectID getPreferredDockID() const override { return m_preferredDock; }
-	virtual UnsignedInt getActionDelayForDock( Object *dock ) override;
+	virtual UnsignedInt getActionDelayForDock(Object* dock) override;
 
-// worker specific
+	// worker specific
 	Bool isSupplyTruckBrainActiveAndBusy();
 	void resetSupplyTruckBrain();
 	void resetDozerBrain();
 
-	virtual void exitingSupplyTruckState() override; ///< This worker is leaving a supply truck task and should go back to Dozer mode.
+	virtual void exitingSupplyTruckState() override;    ///< This worker is leaving a supply truck task and should go back to Dozer mode.
 
-	virtual UpdateSleepTime update() override;				///< the update entry point
+	virtual UpdateSleepTime update() override;    ///< the update entry point
 
 	// repairing
-	virtual Bool canAcceptNewRepair( Object *obj ) override;
-	virtual void createBridgeScaffolding( Object *bridgeTower ) override;
-	virtual void removeBridgeScaffolding( Object *bridgeTower ) override;
+	virtual Bool canAcceptNewRepair(Object* obj) override;
+	virtual void createBridgeScaffolding(Object* bridgeTower) override;
+	virtual void removeBridgeScaffolding(Object* bridgeTower) override;
 
-	virtual void startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID ) override;
+	virtual void startBuildingSound(const AudioEventRTS* sound, ObjectID constructionSiteID) override;
 	virtual void finishBuildingSound() override;
 
 	virtual Int getUpgradedSupplyBoost() const override;
 
 protected:
-
-// Dozer data
+	// Dozer data
 	struct DozerTaskInfo
 	{
 		DozerTaskInfo()
@@ -226,14 +221,13 @@ protected:
 			m_taskOrderFrame = 0;
 		}
 
-		ObjectID m_targetObjectID;				///< target object ID of task
-		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
-	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
+		ObjectID m_targetObjectID;    ///< target object ID of task
+		UnsignedInt m_taskOrderFrame;    ///< logic frame we decided we wanted to do this task
+	} m_task[DOZER_NUM_TASKS];    ///< tasks we want to do indexed by DozerTask
 
-
-	DozerTask m_currentTask;						///< current task the dozer is attending to (if any)
-	DozerTask m_previousTask;						///< previous task the dozer was attending to (if any)
-	DozerTaskInfo m_previousTaskInfo;		///< info on the previous task the dozer was attending to (if any)
+	DozerTask m_currentTask;    ///< current task the dozer is attending to (if any)
+	DozerTask m_previousTask;    ///< previous task the dozer was attending to (if any)
+	DozerTaskInfo m_previousTaskInfo;    ///< info on the previous task the dozer was attending to (if any)
 
 	//
 	// the following info array can be used if we want to have more complicated approaches
@@ -241,38 +235,35 @@ protected:
 	//
 	struct DozerDockPointInfo
 	{
-		Bool valid;						///< this point has been set and is valid
-		Coord3D location;			///< WORLD location
-	} m_dockPoint[ DOZER_NUM_TASKS ][ DOZER_NUM_DOCK_POINTS ];
+		Bool valid;    ///< this point has been set and is valid
+		Coord3D location;    ///< WORLD location
+	} m_dockPoint[DOZER_NUM_TASKS][DOZER_NUM_DOCK_POINTS];
 
-	DozerBuildSubTask m_buildSubTask;		///< for building and actually docking for the build
+	DozerBuildSubTask m_buildSubTask;    ///< for building and actually docking for the build
 
-// Supply Truck data
+	// Supply Truck data
 	Int m_numberBoxes;
-	ObjectID									m_preferredDock;			///< Instead of searching, try this one first
-	Bool m_forcePending; // To prevent a function from doing a setState, forceWanting will latch into here until serviced.
-	Bool m_isRebuild;	// is our current construction task a rebuild?
-	Bool m_forcedBusyPending;	// A supply truck can't tell the difference between Idle since
-														// I'm between docking states, or a Stop command without help.
+	ObjectID m_preferredDock;    ///< Instead of searching, try this one first
+	Bool m_forcePending;    // To prevent a function from doing a setState, forceWanting will latch into here until serviced.
+	Bool m_isRebuild;    // is our current construction task a rebuild?
+	Bool m_forcedBusyPending;    // A supply truck can't tell the difference between Idle since
+	                             // I'm between docking states, or a Stop command without help.
 
-
-	WorkerStateMachine *m_workerMachine;
+	WorkerStateMachine* m_workerMachine;
 	// The two state machines are not in Worker's machine because I need to be able to accept
 	// Dozer like commands while acting as a Supply Truck - that's how I switch.
-	DozerPrimaryStateMachine *m_dozerMachine;  ///< the custom state machine for Dozer behavior
-	SupplyTruckStateMachine *m_supplyTruckStateMachine;
+	DozerPrimaryStateMachine* m_dozerMachine;    ///< the custom state machine for Dozer behavior
+	SupplyTruckStateMachine* m_supplyTruckStateMachine;
 
-	AudioEventRTS	m_buildingSound;			///< sound is pulled from the object we are building!
+	AudioEventRTS m_buildingSound;    ///< sound is pulled from the object we are building!
 
 protected:
-	virtual void privateRepair( Object *obj, CommandSourceType cmdSource ) override;	///< repair the target
-	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource ) override;  ///< resume construction on obj
-	virtual void privateDock( Object *obj, CommandSourceType cmdSource ) override;
-	virtual void privateIdle(CommandSourceType cmdSource) override;						///< Enter idle state.
+	virtual void privateRepair(Object* obj, CommandSourceType cmdSource) override;    ///< repair the target
+	virtual void privateResumeConstruction(Object* obj, CommandSourceType cmdSource) override;    ///< resume construction on obj
+	virtual void privateDock(Object* obj, CommandSourceType cmdSource) override;
+	virtual void privateIdle(CommandSourceType cmdSource) override;    ///< Enter idle state.
 
 private:
-
-	void createMachines();		///< create our behavior machines we need
- 	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
-
+	void createMachines();    ///< create our behavior machines we need
+	AudioEventRTS m_suppliesDepletedVoice;    ///< Sound played when I take the last box.
 };

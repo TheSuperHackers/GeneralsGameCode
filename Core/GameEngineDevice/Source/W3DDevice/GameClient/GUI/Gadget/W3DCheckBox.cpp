@@ -66,28 +66,30 @@
 // drawCheckBoxText ===========================================================
 /** Draw the text for a checkbox */
 //=============================================================================
-static void drawCheckBoxText( GameWindow *window, WinInstanceData *instData )
+static void drawCheckBoxText(GameWindow* window, WinInstanceData* instData)
 {
 	ICoord2D origin, size, textPos;
 	Int width, height;
 	Color textColor, dropColor;
-	DisplayString *text = instData->getTextDisplayString();
+	DisplayString* text = instData->getTextDisplayString();
 
 	// sanity
-	if( text == nullptr || text->getTextLength() == 0 )
+	if (text == nullptr || text->getTextLength() == 0)
+	{
 		return;
+	}
 
 	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// get the right text color
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
 	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
@@ -99,19 +101,20 @@ static void drawCheckBoxText( GameWindow *window, WinInstanceData *instData )
 	}
 
 	// set our font to that of our parent if not the same
-	if( text->getFont() != window->winGetFont() )
-		text->setFont( window->winGetFont() );
+	if (text->getFont() != window->winGetFont())
+	{
+		text->setFont(window->winGetFont());
+	}
 
 	// get text size
-	text->getSize( &width, &height );
+	text->getSize(&width, &height);
 
 	// where to draw
-	textPos.x = origin.x + size.y;//(size.x / 2) - (width / 2);
+	textPos.x = origin.x + size.y;    //(size.x / 2) - (width / 2);
 	textPos.y = origin.y + (size.y / 2) - (height / 2);
 
 	// draw it
-	text->draw( textPos.x, textPos.y, textColor, dropColor );
-
+	text->draw(textPos.x, textPos.y, textColor, dropColor);
 }
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
@@ -123,18 +126,18 @@ static void drawCheckBoxText( GameWindow *window, WinInstanceData *instData )
 // W3DGadgetCheckBoxDraw ======================================================
 /** Draw colored check box using standard graphics */
 //=============================================================================
-void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetCheckBoxDraw(GameWindow* window, WinInstanceData* instData)
 {
 	Int checkOffsetFromLeft;
 	Color backColor,
-				backBorder,
-				boxColor,
-				boxBorder;
+	  backBorder,
+	  boxColor,
+	  boxBorder;
 	ICoord2D origin, size, start, end;
 
 	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// compute start of check offset
 	checkOffsetFromLeft = size.x / 16;
@@ -143,65 +146,59 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// get the colors we should be using to draw, see GadgetCheckBox.h
 	// draw appropriate state, see GadgetCheckBox.h for info
 	//
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
-
 		// disabled background
-		backColor			= GadgetCheckBoxGetDisabledColor( window );
-		backBorder		= GadgetCheckBoxGetDisabledBorderColor( window );
+		backColor = GadgetCheckBoxGetDisabledColor(window);
+		backBorder = GadgetCheckBoxGetDisabledBorderColor(window);
 
 		// check box
-		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
+		if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
 		{
-				boxColor		= GadgetCheckBoxGetDisabledCheckedBoxColor( window );
-				boxBorder		= GadgetCheckBoxGetDisabledCheckedBoxBorderColor( window );
+			boxColor = GadgetCheckBoxGetDisabledCheckedBoxColor(window);
+			boxBorder = GadgetCheckBoxGetDisabledCheckedBoxBorderColor(window);
 		}
 		else
 		{
-				boxColor		= GadgetCheckBoxGetDisabledUncheckedBoxColor( window );
-				boxBorder		= GadgetCheckBoxGetDisabledUncheckedBoxBorderColor( window );
+			boxColor = GadgetCheckBoxGetDisabledUncheckedBoxColor(window);
+			boxBorder = GadgetCheckBoxGetDisabledUncheckedBoxBorderColor(window);
 		}
-
 	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
-
 		// hilited background
-		backColor			= GadgetCheckBoxGetHiliteColor( window );
-		backBorder		= GadgetCheckBoxGetHiliteBorderColor( window );
+		backColor = GadgetCheckBoxGetHiliteColor(window);
+		backBorder = GadgetCheckBoxGetHiliteBorderColor(window);
 
 		// check box
-		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
+		if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
 		{
-			boxColor		= GadgetCheckBoxGetHiliteCheckedBoxColor( window );
-			boxBorder		= GadgetCheckBoxGetHiliteCheckedBoxBorderColor( window );
+			boxColor = GadgetCheckBoxGetHiliteCheckedBoxColor(window);
+			boxBorder = GadgetCheckBoxGetHiliteCheckedBoxBorderColor(window);
 		}
 		else
 		{
-			boxColor		= GadgetCheckBoxGetHiliteUncheckedBoxColor( window );
-			boxBorder		= GadgetCheckBoxGetHiliteUncheckedBoxBorderColor( window );
+			boxColor = GadgetCheckBoxGetHiliteUncheckedBoxColor(window);
+			boxBorder = GadgetCheckBoxGetHiliteUncheckedBoxBorderColor(window);
 		}
-
 	}
 	else
 	{
-
 		// enabled background
-		backColor			= GadgetCheckBoxGetEnabledColor( window );
-		backBorder		= GadgetCheckBoxGetEnabledBorderColor( window );
+		backColor = GadgetCheckBoxGetEnabledColor(window);
+		backBorder = GadgetCheckBoxGetEnabledBorderColor(window);
 
 		// check box
-		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
+		if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
 		{
-			boxColor		= GadgetCheckBoxGetEnabledCheckedBoxColor( window );
-			boxBorder		= GadgetCheckBoxGetEnabledCheckedBoxBorderColor( window );
+			boxColor = GadgetCheckBoxGetEnabledCheckedBoxColor(window);
+			boxBorder = GadgetCheckBoxGetEnabledCheckedBoxBorderColor(window);
 		}
 		else
 		{
-			boxColor		= GadgetCheckBoxGetEnabledUncheckedBoxColor( window );
-			boxBorder		= GadgetCheckBoxGetEnabledUncheckedBoxBorderColor( window );
+			boxColor = GadgetCheckBoxGetEnabledUncheckedBoxColor(window);
+			boxBorder = GadgetCheckBoxGetEnabledUncheckedBoxBorderColor(window);
 		}
-
 	}
 
 	// draw background border
@@ -209,54 +206,53 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	start.y = origin.y;
 	end.x = start.x + size.x;
 	end.y = start.y + size.y;
-	TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
-																 start.x, start.y, end.x, end.y );
+	TheWindowManager->winOpenRect(backBorder, WIN_DRAW_LINE_WIDTH,
+	                              start.x, start.y, end.x, end.y);
 
 	// draw the background
 	start.x++;
 	start.y++;
 	end.x--;
 	end.y--;
-	TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
-																 start.x, start.y, end.x, end.y );
+	TheWindowManager->winFillRect(backColor, WIN_DRAW_LINE_WIDTH,
+	                              start.x, start.y, end.x, end.y);
 
 	// draw box border
 	start.x = origin.x + checkOffsetFromLeft;
 	start.y = origin.y + (size.y / 3);
 	end.x = start.x + (size.y / 3);
 	end.y = start.y + (size.y / 3);
-	TheWindowManager->winOpenRect( boxBorder, WIN_DRAW_LINE_WIDTH,
-																 start.x, start.y, end.x, end.y );
+	TheWindowManager->winOpenRect(boxBorder, WIN_DRAW_LINE_WIDTH,
+	                              start.x, start.y, end.x, end.y);
 
 	// draw "x" for button
-	if( boxColor != WIN_COLOR_UNDEFINED )
+	if (boxColor != WIN_COLOR_UNDEFINED)
 	{
-
-		TheWindowManager->winDrawLine( boxColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-		TheWindowManager->winDrawLine( boxColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, end.y, end.x, start.y );
-
+		TheWindowManager->winDrawLine(boxColor, WIN_DRAW_LINE_WIDTH,
+		                              start.x, start.y, end.x, end.y);
+		TheWindowManager->winDrawLine(boxColor, WIN_DRAW_LINE_WIDTH,
+		                              start.x, end.y, end.x, start.y);
 	}
 
 	// draw the button text
-	if( instData->getTextLength() )
-		drawCheckBoxText( window, instData );
-
+	if (instData->getTextLength())
+	{
+		drawCheckBoxText(window, instData);
+	}
 }
 
 // W3DGadgetCheckBoxImageDraw =================================================
 /** Draw check box with user supplied images */
 //=============================================================================
-void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetCheckBoxImageDraw(GameWindow* window, WinInstanceData* instData)
 {
 	Int checkOffsetFromLeft;
-	const Image  *boxImage = nullptr;//*backgroundImage = nullptr,
+	const Image* boxImage = nullptr;    //*backgroundImage = nullptr,
 	ICoord2D origin, start, end, size;
 
 	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// compute screen coords
 	start.x = origin.x + instData->m_imageOffset.x;
@@ -265,72 +261,77 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	end.y = start.y + size.y;
 
 	// compute start of check offset
-	checkOffsetFromLeft =  0;
+	checkOffsetFromLeft = 0;
 
 	//
 	// get the colors we should be using to draw, see GadgetCheckBoxButton.h
 	// draw appropriate state, see GadgetCheckBoxButton.h for info
 	//
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
-
 		// disabled background
-//		backgroundImage	= GadgetCheckBoxGetDisabledImage( window );
+		//		backgroundImage	= GadgetCheckBoxGetDisabledImage( window );
 
 		// check box
-		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
-				boxImage		= GadgetCheckBoxGetDisabledCheckedBoxImage( window );
+		if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
+		{
+			boxImage = GadgetCheckBoxGetDisabledCheckedBoxImage(window);
+		}
 		else
-				boxImage		= GadgetCheckBoxGetDisabledUncheckedBoxImage( window );
-
+		{
+			boxImage = GadgetCheckBoxGetDisabledUncheckedBoxImage(window);
+		}
 	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
-
 		// hilited background
-//		backgroundImage	= GadgetCheckBoxGetHiliteImage( window );
+		//		backgroundImage	= GadgetCheckBoxGetHiliteImage( window );
 
 		// check box
-		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
-			boxImage		= GadgetCheckBoxGetHiliteCheckedBoxImage( window );
+		if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
+		{
+			boxImage = GadgetCheckBoxGetHiliteCheckedBoxImage(window);
+		}
 		else
-			boxImage		= GadgetCheckBoxGetHiliteUncheckedBoxImage( window );
-
+		{
+			boxImage = GadgetCheckBoxGetHiliteUncheckedBoxImage(window);
+		}
 	}
 	else
 	{
-
 		// enabled background
-//		backgroundImage	= GadgetCheckBoxGetEnabledImage( window );
+		//		backgroundImage	= GadgetCheckBoxGetEnabledImage( window );
 
 		// check box
-		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
-			boxImage		= GadgetCheckBoxGetEnabledCheckedBoxImage( window );
+		if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
+		{
+			boxImage = GadgetCheckBoxGetEnabledCheckedBoxImage(window);
+		}
 		else
-			boxImage		= GadgetCheckBoxGetEnabledUncheckedBoxImage( window );
-
+		{
+			boxImage = GadgetCheckBoxGetEnabledUncheckedBoxImage(window);
+		}
 	}
 
 	// draw background image
-//	if( backgroundImage )
-//		TheWindowManager->winDrawImage( backgroundImage, start.x, start.y,
-//																		end.x, end.y );
+	//	if( backgroundImage )
+	//		TheWindowManager->winDrawImage( backgroundImage, start.x, start.y,
+	//																		end.x, end.y );
 
 	// draw the box image
-	if( boxImage )
+	if (boxImage)
 	{
-
 		start.x = origin.x + instData->m_imageOffset.x + checkOffsetFromLeft;
-		start.y = origin.y +  3;
+		start.y = origin.y + 3;
 		end.x = start.x + (size.y - 6);
 		end.y = start.y + (size.y - 6);
-		TheWindowManager->winDrawImage( boxImage, start.x, start.y,
-																	  end.x, end.y );
-
+		TheWindowManager->winDrawImage(boxImage, start.x, start.y,
+		                               end.x, end.y);
 	}
 
 	// draw the text
-	if( instData->getTextLength() )
-		drawCheckBoxText( window, instData );
-
+	if (instData->getTextLength())
+	{
+		drawCheckBoxText(window, instData);
+	}
 }

@@ -36,22 +36,22 @@ class GameSpyGameSlot : public GameSlot
 public:
 	GameSpyGameSlot();
 	Int getProfileID() const { return m_profileID; }
-	void setProfileID( Int id ) { m_profileID = id; }
+	void setProfileID(Int id) { m_profileID = id; }
 	AsciiString getLoginName() const { return m_gameSpyLogin; }
-	void setLoginName( AsciiString name ) { m_gameSpyLogin = name; }
+	void setLoginName(AsciiString name) { m_gameSpyLogin = name; }
 	AsciiString getLocale() const { return m_gameSpyLocale; }
-	void setLocale( AsciiString name ) { m_gameSpyLocale = name; }
+	void setLocale(AsciiString name) { m_gameSpyLocale = name; }
 	Int getWins() const { return m_wins; }
 	Int getLosses() const { return m_losses; }
-	void setWins( Int wins ) { m_wins = wins; }
-	void setLosses( Int losses ) { m_losses = losses; }
+	void setWins(Int wins) { m_wins = wins; }
+	void setLosses(Int losses) { m_losses = losses; }
 
 	Int getSlotRankPoints() const { return m_rankPoints; }
 	Int getFavoriteSide() const { return m_favoriteSide; }
-	void setSlotRankPoints( Int val ) { m_rankPoints = val; }
-	void setFavoriteSide( Int val ) { m_favoriteSide = val; }
+	void setSlotRankPoints(Int val) { m_rankPoints = val; }
+	void setFavoriteSide(Int val) { m_favoriteSide = val; }
 
-	void setPingString( AsciiString pingStr );
+	void setPingString(AsciiString pingStr);
 	AsciiString getPingString() const { return m_pingStr; }
 	Int getPingAsInt() const { return m_pingInt; }
 
@@ -67,16 +67,16 @@ protected:
 };
 
 /**
-  * GameSpyStagingRoom class - maintains information about the GameSpy game and
-	* the contents of its slot list throughout the game.
-	*/
+ * GameSpyStagingRoom class - maintains information about the GameSpy game and
+ * the contents of its slot list throughout the game.
+ */
 class GameSpyStagingRoom : public GameInfo
 {
 private:
-	GameSpyGameSlot m_GameSpySlot[MAX_SLOTS];											///< The GameSpy Games Slot List
+	GameSpyGameSlot m_GameSpySlot[MAX_SLOTS];    ///< The GameSpy Games Slot List
 	UnicodeString m_gameName;
 	Int m_id;
-	Transport *m_transport;
+	Transport* m_transport;
 	AsciiString m_localName;
 	Bool m_requiresPassword;
 	Bool m_allowObservers;
@@ -123,17 +123,17 @@ public:
 	void setReportedNumObservers(Int val) { m_reportedNumObservers = val; }
 	Int getReportedNumObservers() const { return m_reportedNumObservers; }
 
-	void setLadderIP( AsciiString ladderIP ) { m_ladderIP = ladderIP; }
+	void setLadderIP(AsciiString ladderIP) { m_ladderIP = ladderIP; }
 	AsciiString getLadderIP() const { return m_ladderIP; }
-	void setLadderPort( UnsignedShort ladderPort ) { m_ladderPort = ladderPort; }
+	void setLadderPort(UnsignedShort ladderPort) { m_ladderPort = ladderPort; }
 	UnsignedShort getLadderPort() const { return m_ladderPort; }
-	void setPingString( AsciiString pingStr );
+	void setPingString(AsciiString pingStr);
 	AsciiString getPingString() const { return m_pingStr; }
 	Int getPingAsInt() const { return m_pingInt; }
 
-	virtual Bool amIHost() const override;															///< Convenience function - is the local player the game host?
+	virtual Bool amIHost() const override;    ///< Convenience function - is the local player the game host?
 
-	GameSpyGameSlot *getGameSpySlot( Int index );
+	GameSpyGameSlot* getGameSpySlot(Int index);
 
 	AsciiString generateGameSpyGameResultsPacket();
 	AsciiString generateLadderGameResultsPacket();
@@ -141,16 +141,16 @@ public:
 	Bool isQMGame() { return m_isQM; }
 
 	virtual void init();
-	virtual void resetAccepted() override;															///< Reset the accepted flag on all players
+	virtual void resetAccepted() override;    ///< Reset the accepted flag on all players
 
-	virtual void startGame(Int gameID) override;														///< Mark our game as started and record the game ID.
-	void launchGame();																			///< NAT negotiation has finished - really start
-	virtual Int getLocalSlotNum() const override;										///< Get the local slot number, or -1 if we're not present
+	virtual void startGame(Int gameID) override;    ///< Mark our game as started and record the game ID.
+	void launchGame();    ///< NAT negotiation has finished - really start
+	virtual Int getLocalSlotNum() const override;    ///< Get the local slot number, or -1 if we're not present
 
-	void setGameName( UnicodeString name ) { m_gameName = name; }
+	void setGameName(UnicodeString name) { m_gameName = name; }
 	UnicodeString getGameName() const { return m_gameName; }
 
-	void setLocalName( AsciiString name ) { m_localName = name; }
+	void setLocalName(AsciiString name) { m_localName = name; }
 };
 
-extern GameSpyStagingRoom *TheGameSpyGame;
+extern GameSpyStagingRoom* TheGameSpyGame;

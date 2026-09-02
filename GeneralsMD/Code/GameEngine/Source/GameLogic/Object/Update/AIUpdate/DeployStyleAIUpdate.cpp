@@ -26,7 +26,7 @@
 // Author: Kris Morness, August 2002
 // Desc:   A standard ai update that also handles units that must deploy to attack and pack before moving.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -46,13 +46,13 @@
 #include "GameLogic/Module/DeployStyleAIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-DeployStyleAIUpdate::DeployStyleAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
+DeployStyleAIUpdate::DeployStyleAIUpdate(Thing* thing, const ModuleData* moduleData)
+  : AIUpdateInterface(thing, moduleData)
 {
 	m_state = READY_TO_MOVE;
 	m_frameToWaitForDeploy = 0;
@@ -70,25 +70,27 @@ Bool DeployStyleAIUpdate::isIdle() const
 }
 
 //-------------------------------------------------------------------------------------------------
-void DeployStyleAIUpdate::aiDoCommand( const AICommandParms* parms )
+void DeployStyleAIUpdate::aiDoCommand(const AICommandParms* parms)
 {
 	if (!isAllowedToRespondToAiCommands(parms))
+	{
 		return;
+	}
 
 	/*
 	//Hack code to allow follow waypoint scripts to be converted to attack follow waypoint scripts
 	//for simple-test-map-purposes.
 	switch( parms->m_cmd )
 	{
-		case AICMD_FOLLOW_WAYPOINT_PATH:
-			((AICommandParms*)parms)->m_cmd = AICMD_ATTACKFOLLOW_WAYPOINT_PATH;
-			break;
-		case AICMD_FOLLOW_WAYPOINT_PATH_AS_TEAM:
-			((AICommandParms*)parms)->m_cmd = AICMD_ATTACKFOLLOW_WAYPOINT_PATH_AS_TEAM;
-			break;
+	  case AICMD_FOLLOW_WAYPOINT_PATH:
+	    ((AICommandParms*)parms)->m_cmd = AICMD_ATTACKFOLLOW_WAYPOINT_PATH;
+	    break;
+	  case AICMD_FOLLOW_WAYPOINT_PATH_AS_TEAM:
+	    ((AICommandParms*)parms)->m_cmd = AICMD_ATTACKFOLLOW_WAYPOINT_PATH_AS_TEAM;
+	    break;
 	}
 	*/
-	AIUpdateInterface::aiDoCommand( parms );
+	AIUpdateInterface::aiDoCommand(parms);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -96,49 +98,49 @@ UpdateSleepTime DeployStyleAIUpdate::update()
 {
 	// have to call our parent's isIdle, because we override it to never return true
 	// when we have a pending command...
-	Object *self = getObject();
-	Weapon *weapon = self->getCurrentWeapon();
+	Object* self = getObject();
+	Weapon* weapon = self->getCurrentWeapon();
 	UnsignedInt now = TheGameLogic->getFrame();
-	const DeployStyleAIUpdateModuleData *data = getDeployStyleAIUpdateModuleData();
+	const DeployStyleAIUpdateModuleData* data = getDeployStyleAIUpdateModuleData();
 
-	//Are we attempting to move? If so we can't do it unless we are undeployed.
+	// Are we attempting to move? If so we can't do it unless we are undeployed.
 	Bool isTryingToMove = isWaitingForPath() || getPath();
 
-	//Are we trying to attack something. If so, we need to be in range before we can do so.
+	// Are we trying to attack something. If so, we need to be in range before we can do so.
 	Bool isTryingToAttack = getStateMachine()->isInAttackState();
 	Bool isInRange = FALSE;
 
-	//Are we in guard mode? If so, are we idle... idle guarders deploy for fastest response against attackers.
+	// Are we in guard mode? If so, are we idle... idle guarders deploy for fastest response against attackers.
 	Bool isInGuardIdleState = getStateMachine()->isInGuardIdleState();
 
-	AIUpdateInterface *ai = self->getAI();
+	AIUpdateInterface* ai = self->getAI();
 
-	if( isTryingToAttack && weapon )
+	if (isTryingToAttack && weapon)
 	{
-		Object *victim = ai->getCurrentVictim();
-		if( victim )
+		Object* victim = ai->getCurrentVictim();
+		if (victim)
 		{
-			isInRange = weapon->isWithinAttackRange( self, victim );
+			isInRange = weapon->isWithinAttackRange(self, victim);
 		}
 		else
 		{
-			const Coord3D *pos = ai->getCurrentVictimPos();
-			if( pos )
+			const Coord3D* pos = ai->getCurrentVictimPos();
+			if (pos)
 			{
-				isInRange = weapon->isWithinAttackRange( self, pos );
+				isInRange = weapon->isWithinAttackRange(self, pos);
 			}
 		}
 	}
 
-	if( m_frameToWaitForDeploy != 0 && now >= m_frameToWaitForDeploy)
+	if (m_frameToWaitForDeploy != 0 && now >= m_frameToWaitForDeploy)
 	{
-		switch( m_state )
+		switch (m_state)
 		{
 			case DEPLOY:
-				setMyState( READY_TO_ATTACK );
+				setMyState(READY_TO_ATTACK);
 				break;
 			case UNDEPLOY:
-				setMyState( READY_TO_MOVE );
+				setMyState(READY_TO_MOVE);
 				break;
 		}
 	}
@@ -152,59 +154,59 @@ UpdateSleepTime DeployStyleAIUpdate::update()
 	if (!isTryingToMove && (isInRange || isInGuardIdleState))
 #endif
 	{
-		switch( m_state )
+		switch (m_state)
 		{
 			case READY_TO_MOVE:
-				//We're need to deploy before we can attack.
-				setMyState( DEPLOY );
+				// We're need to deploy before we can attack.
+				setMyState(DEPLOY);
 				break;
 			case READY_TO_ATTACK:
-				//Let the AI handle attacking.
+				// Let the AI handle attacking.
 				break;
 			case DEPLOY:
-				//We can't start attacking until we are fully deployed.
+				// We can't start attacking until we are fully deployed.
 				break;
 			case UNDEPLOY:
-				if( m_frameToWaitForDeploy != 0 )
+				if (m_frameToWaitForDeploy != 0)
 				{
-					//Reverse the undeploy at it's current frame!
-					setMyState( DEPLOY, TRUE );
+					// Reverse the undeploy at it's current frame!
+					setMyState(DEPLOY, TRUE);
 				}
 				break;
 			case ALIGNING_TURRETS:
-				//If turrets are aligning, we are able to attack right now.
-				setMyState( READY_TO_ATTACK );
+				// If turrets are aligning, we are able to attack right now.
+				setMyState(READY_TO_ATTACK);
 				break;
 		}
 	}
-	else if( isTryingToMove )
+	else if (isTryingToMove)
 	{
-		switch( m_state )
+		switch (m_state)
 		{
 			case READY_TO_MOVE:
-				//We're ready... ai will handle moving.
+				// We're ready... ai will handle moving.
 				break;
 			case READY_TO_ATTACK:
 			{
 				WhichTurretType tur = getWhichTurretForCurWeapon();
-				if( tur != TURRET_INVALID )
+				if (tur != TURRET_INVALID)
 				{
-					if( doTurretsHaveToCenterBeforePacking() )
+					if (doTurretsHaveToCenterBeforePacking())
 					{
-						//Turrets need to center before we can undeploy.
-						setMyState( ALIGNING_TURRETS );
+						// Turrets need to center before we can undeploy.
+						setMyState(ALIGNING_TURRETS);
 						break;
 					}
 				}
-				//Start undeploying.
-				setMyState( UNDEPLOY );
+				// Start undeploying.
+				setMyState(UNDEPLOY);
 				break;
 			}
 			case DEPLOY:
-				if( m_frameToWaitForDeploy != 0 )
+				if (m_frameToWaitForDeploy != 0)
 				{
-					//Reverse the deploy at it's current frame!
-					setMyState( UNDEPLOY, TRUE );
+					// Reverse the deploy at it's current frame!
+					setMyState(UNDEPLOY, TRUE);
 				}
 				break;
 			case UNDEPLOY:
@@ -212,12 +214,12 @@ UpdateSleepTime DeployStyleAIUpdate::update()
 			case ALIGNING_TURRETS:
 			{
 				WhichTurretType tur = getWhichTurretForCurWeapon();
-				if( tur != TURRET_INVALID )
+				if (tur != TURRET_INVALID)
 				{
-					if( isTurretInNaturalPosition( tur ) )
+					if (isTurretInNaturalPosition(tur))
 					{
-						//Turrets are centers, so now we can undeploy.
-						setMyState( UNDEPLOY );
+						// Turrets are centers, so now we can undeploy.
+						setMyState(UNDEPLOY);
 					}
 				}
 				break;
@@ -225,12 +227,12 @@ UpdateSleepTime DeployStyleAIUpdate::update()
 		}
 	}
 
-	switch( m_state )
+	switch (m_state)
 	{
 		case READY_TO_MOVE:
-			if( isTryingToMove )
+			if (isTryingToMove)
 			{
-				self->setModelConditionState( MODELCONDITION_MOVING );
+				self->setModelConditionState(MODELCONDITION_MOVING);
 			}
 			break;
 
@@ -238,74 +240,73 @@ UpdateSleepTime DeployStyleAIUpdate::update()
 			break;
 
 		case DEPLOY:
-			if( data->m_manualDeployAnimations )
+			if (data->m_manualDeployAnimations)
 			{
 				UnsignedInt totalFrames = getPackTime();
 				UnsignedInt framesLeft = m_frameToWaitForDeploy - now;
-				Drawable *draw = self->getDrawable();
-				if( draw )
+				Drawable* draw = self->getDrawable();
+				if (draw)
 				{
-					draw->setAnimationFrame( totalFrames - framesLeft );
+					draw->setAnimationFrame(totalFrames - framesLeft);
 				}
 			}
-			getStateMachine()->setTemporaryState( AI_BUSY, UPDATE_SLEEP_NONE );
+			getStateMachine()->setTemporaryState(AI_BUSY, UPDATE_SLEEP_NONE);
 			setLocomotorGoalNone();
 			break;
 		case UNDEPLOY:
-			if( data->m_manualDeployAnimations )
+			if (data->m_manualDeployAnimations)
 			{
 				UnsignedInt framesLeft = m_frameToWaitForDeploy - now;
-				Drawable *draw = self->getDrawable();
-				if( draw )
+				Drawable* draw = self->getDrawable();
+				if (draw)
 				{
-					draw->setAnimationFrame( framesLeft );
+					draw->setAnimationFrame(framesLeft);
 				}
 			}
-			getStateMachine()->setTemporaryState( AI_BUSY, UPDATE_SLEEP_NONE );
+			getStateMachine()->setTemporaryState(AI_BUSY, UPDATE_SLEEP_NONE);
 			setLocomotorGoalNone();
 			break;
 
 		case ALIGNING_TURRETS:
-			getStateMachine()->setTemporaryState( AI_BUSY, UPDATE_SLEEP_NONE );
+			getStateMachine()->setTemporaryState(AI_BUSY, UPDATE_SLEEP_NONE);
 			setLocomotorGoalNone();
 			break;
 	}
 
 	AIUpdateInterface::update();
-	//We can't sleep the deploy AI because any new commands need to be caught and sent
-	//into busy state during the update.
+	// We can't sleep the deploy AI because any new commands need to be caught and sent
+	// into busy state during the update.
 	return UPDATE_SLEEP_NONE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID, Bool reverseDeploy )
+void DeployStyleAIUpdate::setMyState(DeployStateTypes stateID, Bool reverseDeploy)
 {
 	m_state = stateID;
-	Object *self = getObject();
+	Object* self = getObject();
 	UnsignedInt now = TheGameLogic->getFrame();
-	const DeployStyleAIUpdateModuleData *data = getDeployStyleAIUpdateModuleData();
+	const DeployStyleAIUpdateModuleData* data = getDeployStyleAIUpdateModuleData();
 
-	switch( stateID )
+	switch (stateID)
 	{
 		case DEPLOY:
 		{
-			//Tell our object to deploy (so it can continue the same attack later).
-			self->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK( MODELCONDITION_PACKING ),
-																						 MAKE_MODELCONDITION_MASK( MODELCONDITION_UNPACKING ) );
+			// Tell our object to deploy (so it can continue the same attack later).
+			self->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_PACKING),
+			                                     MAKE_MODELCONDITION_MASK(MODELCONDITION_UNPACKING));
 
-			if( reverseDeploy )
+			if (reverseDeploy)
 			{
-				//This is a zero to max animation.
+				// This is a zero to max animation.
 				UnsignedInt totalFrames = getUnpackTime();
 				UnsignedInt framesLeft = m_frameToWaitForDeploy - now;
 				m_frameToWaitForDeploy = now + totalFrames - framesLeft;
-				if( data->m_manualDeployAnimations )
+				if (data->m_manualDeployAnimations)
 				{
-					Drawable *draw = self->getDrawable();
-					if( draw )
+					Drawable* draw = self->getDrawable();
+					if (draw)
 					{
-						draw->setAnimationFrame( totalFrames - framesLeft );
+						draw->setAnimationFrame(totalFrames - framesLeft);
 					}
 				}
 			}
@@ -314,41 +315,41 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID, Bool reverseDepl
 				m_frameToWaitForDeploy = getUnpackTime() + now;
 			}
 
-			//Play deploy sound
-			const ThingTemplate *thing = self->getTemplate();
-			const AudioEventRTS* soundToPlayPtr = thing->getPerUnitSound( "Deploy" );
-			if( soundToPlayPtr )
+			// Play deploy sound
+			const ThingTemplate* thing = self->getTemplate();
+			const AudioEventRTS* soundToPlayPtr = thing->getPerUnitSound("Deploy");
+			if (soundToPlayPtr)
 			{
 				AudioEventRTS soundToPlay = *soundToPlayPtr;
-				soundToPlay.setObjectID( self->getID() );
-				TheAudio->addAudioEvent( &soundToPlay );
+				soundToPlay.setObjectID(self->getID());
+				TheAudio->addAudioEvent(&soundToPlay);
 			}
 
 			break;
 		}
 		case UNDEPLOY:
 		{
-			//This status will tell the approach AI state to succeed automatically. This prevents
-			//twitching on deploy. Make sure we clear it now so when it goes into that state, it'll
-			//actually move.
-			self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DEPLOYED ) );
+			// This status will tell the approach AI state to succeed automatically. This prevents
+			// twitching on deploy. Make sure we clear it now so when it goes into that state, it'll
+			// actually move.
+			self->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_DEPLOYED));
 
-			//Tell our object to pack up (so it can continue the same move later).
-			self->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_UNPACKING, MODELCONDITION_DEPLOYED ),
-																						 MAKE_MODELCONDITION_MASK( MODELCONDITION_PACKING ) );
+			// Tell our object to pack up (so it can continue the same move later).
+			self->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK2(MODELCONDITION_UNPACKING, MODELCONDITION_DEPLOYED),
+			                                     MAKE_MODELCONDITION_MASK(MODELCONDITION_PACKING));
 
-			if( reverseDeploy )
+			if (reverseDeploy)
 			{
-				//This is a max to zero animation.
+				// This is a max to zero animation.
 				UnsignedInt totalFrames = getUnpackTime();
 				UnsignedInt framesLeft = m_frameToWaitForDeploy - now;
 				m_frameToWaitForDeploy = now + totalFrames - framesLeft;
-				if( data->m_manualDeployAnimations )
+				if (data->m_manualDeployAnimations)
 				{
-					Drawable *draw = self->getDrawable();
-					if( draw )
+					Drawable* draw = self->getDrawable();
+					if (draw)
 					{
-						draw->setAnimationFrame( framesLeft );
+						draw->setAnimationFrame(framesLeft);
 					}
 				}
 			}
@@ -357,23 +358,23 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID, Bool reverseDepl
 				m_frameToWaitForDeploy = getPackTime() + now;
 			}
 
-			if( doTurretsFunctionOnlyWhenDeployed() )
+			if (doTurretsFunctionOnlyWhenDeployed())
 			{
 				WhichTurretType tur = getWhichTurretForCurWeapon();
-				if( tur != TURRET_INVALID )
+				if (tur != TURRET_INVALID)
 				{
-					setTurretEnabled( tur, false );
+					setTurretEnabled(tur, false);
 				}
 			}
 
-			//Play undeploy sound
-			const ThingTemplate *thing = self->getTemplate();
-			const AudioEventRTS* soundToPlayPtr = thing->getPerUnitSound( "Undeploy" );
-			if( soundToPlayPtr )
+			// Play undeploy sound
+			const ThingTemplate* thing = self->getTemplate();
+			const AudioEventRTS* soundToPlayPtr = thing->getPerUnitSound("Undeploy");
+			if (soundToPlayPtr)
 			{
 				AudioEventRTS soundToPlay = *soundToPlayPtr;
-				soundToPlay.setObjectID( self->getID() );
-				TheAudio->addAudioEvent( &soundToPlay );
+				soundToPlay.setObjectID(self->getID());
+				TheAudio->addAudioEvent(&soundToPlay);
 			}
 
 			break;
@@ -382,26 +383,26 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID, Bool reverseDepl
 		{
 			m_frameToWaitForDeploy = 0;
 
-			self->clearModelConditionFlags( MAKE_MODELCONDITION_MASK( MODELCONDITION_PACKING ) );
+			self->clearModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_PACKING));
 			break;
 		}
 		case READY_TO_ATTACK:
 		{
-			//This status will tell the approach AI state to succeed automatically. This prevents
-			//twitching on deploy.
-			self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DEPLOYED ) );
+			// This status will tell the approach AI state to succeed automatically. This prevents
+			// twitching on deploy.
+			self->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_DEPLOYED));
 
 			m_frameToWaitForDeploy = 0;
 
-			self->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK( MODELCONDITION_UNPACKING ),
-																						 MAKE_MODELCONDITION_MASK( MODELCONDITION_DEPLOYED) );
+			self->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_UNPACKING),
+			                                     MAKE_MODELCONDITION_MASK(MODELCONDITION_DEPLOYED));
 
-			if( doTurretsFunctionOnlyWhenDeployed() )
+			if (doTurretsFunctionOnlyWhenDeployed())
 			{
 				WhichTurretType tur = getWhichTurretForCurWeapon();
-				if( tur != TURRET_INVALID )
+				if (tur != TURRET_INVALID)
 				{
-					setTurretEnabled( tur, true );
+					setTurretEnabled(tur, true);
 				}
 			}
 
@@ -411,20 +412,19 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID, Bool reverseDepl
 		{
 			m_frameToWaitForDeploy = 0;
 			WhichTurretType tur = getWhichTurretForCurWeapon();
-			if( tur != TURRET_INVALID )
+			if (tur != TURRET_INVALID)
 			{
-				recenterTurret( tur );
+				recenterTurret(tur);
 			}
 			break;
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DeployStyleAIUpdate::crc( Xfer *xfer )
+void DeployStyleAIUpdate::crc(Xfer* xfer)
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
@@ -432,66 +432,65 @@ void DeployStyleAIUpdate::crc( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 2: Added support for attack move
-	* 3: Added improved support for guard, and support for hunt AI
+ * Version Info:
+ * 1: Initial version
+ * 2: Added support for attack move
+ * 3: Added improved support for guard, and support for hunt AI
  **/
 // ------------------------------------------------------------------------------------------------
-void DeployStyleAIUpdate::xfer( Xfer *xfer )
+void DeployStyleAIUpdate::xfer(Xfer* xfer)
 {
-  // version
-  XferVersion currentVersion = 4;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 4;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
-	if( version >= 4 )
+	if (version >= 4)
 	{
 		xfer->xferUser(&m_state, sizeof(m_state));
 		xfer->xferUnsignedInt(&m_frameToWaitForDeploy);
 	}
-	else if( xfer->getXferMode() == XFER_LOAD )
+	else if (xfer->getXferMode() == XFER_LOAD)
 	{
-		//Good riddance!!!
+		// Good riddance!!!
 		Bool obsoleteBool;
 		UnsignedInt obsoleteUnsignedInt;
 		ObjectID obsoleteObjectID;
 		Coord3D obsoleteCoord3D;
-   	AICommandParmsStorage	obsoleteAICommandParmsStorage;
+		AICommandParmsStorage obsoleteAICommandParmsStorage;
 
-		xfer->xferBool( &obsoleteBool );
-		xfer->xferUnsignedInt( &obsoleteUnsignedInt );
+		xfer->xferBool(&obsoleteBool);
+		xfer->xferUnsignedInt(&obsoleteUnsignedInt);
 		xfer->xferUser(&m_state, sizeof(m_state));
 
-		if( version >= 2 )
+		if (version >= 2)
 		{
-			xfer->xferObjectID( &obsoleteObjectID );
-			xfer->xferObjectID( &obsoleteObjectID );
-			xfer->xferCoord3D( &obsoleteCoord3D );
-			xfer->xferBool( &obsoleteBool );
-			xfer->xferBool( &obsoleteBool );
-			xfer->xferBool( &obsoleteBool );
+			xfer->xferObjectID(&obsoleteObjectID);
+			xfer->xferObjectID(&obsoleteObjectID);
+			xfer->xferCoord3D(&obsoleteCoord3D);
+			xfer->xferBool(&obsoleteBool);
+			xfer->xferBool(&obsoleteBool);
+			xfer->xferBool(&obsoleteBool);
 		}
-		if( version >= 3 )
+		if (version >= 3)
 		{
-			xfer->xferBool( &obsoleteBool );
-			xfer->xferBool( &obsoleteBool );
+			xfer->xferBool(&obsoleteBool);
+			xfer->xferBool(&obsoleteBool);
 		}
 
-		obsoleteAICommandParmsStorage.doXfer( xfer );
+		obsoleteAICommandParmsStorage.doXfer(xfer);
 
-		if( version < 2 )
+		if (version < 2)
 		{
 			obsoleteAICommandParmsStorage.doXfer(xfer);
 		}
 
-		//Initialize unit to able to move.
+		// Initialize unit to able to move.
 		m_state = READY_TO_MOVE;
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -499,7 +498,6 @@ void DeployStyleAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeployStyleAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
-

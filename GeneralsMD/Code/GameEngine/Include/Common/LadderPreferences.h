@@ -47,9 +47,9 @@ public:
 	UnsignedShort port;
 	time_t lastPlayDate;
 
-	bool operator== (const LadderPref& other) const
+	bool operator==(const LadderPref& other) const
 	{
-		return ( address==other.address && port==other.port );
+		return (address == other.address && port == other.port);
 	}
 };
 
@@ -64,11 +64,11 @@ public:
 	LadderPreferences();
 	virtual ~LadderPreferences() override;
 
-	Bool loadProfile( Int profileID );
+	Bool loadProfile(Int profileID);
 	virtual bool write() override;
 
 	const LadderPrefMap& getRecentLadders();
-	void addRecentLadder( LadderPref ladder );
+	void addRecentLadder(LadderPref ladder);
 
 private:
 	LadderPrefMap m_ladders;

@@ -17,22 +17,22 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive:  $
-*
-* DESCRIPTION
-*     ANSI <-> Unicode string conversions
-*
-* PROGRAMMER
-*     Denzil E. Long, Jr.
-*     $Author:  $
-*
-* VERSION INFO
-*     $Modtime:  $
-*     $Revision:  $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *     ANSI <-> Unicode string conversions
+ *
+ * PROGRAMMER
+ *     Denzil E. Long, Jr.
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Modtime:  $
+ *     $Revision:  $
+ *
+ ******************************************************************************/
 
 #pragma once
 

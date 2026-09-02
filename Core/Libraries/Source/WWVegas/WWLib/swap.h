@@ -39,8 +39,8 @@
 /**********************************************************************
 **	Swaps two objects.
 */
-template<class T>
-void swap(T & left, T & right)
+template <class T>
+void swap(T& left, T& right)
 {
 	T temp;
 	temp = left;

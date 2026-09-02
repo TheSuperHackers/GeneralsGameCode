@@ -37,26 +37,24 @@
 #include "definitionfactory.h"
 #include "definitionfactorymgr.h"
 
-
 /////////////////////////////////////////////////////////
 //
 //	DefinitionFactoryClass
 //
 /////////////////////////////////////////////////////////
-DefinitionFactoryClass::DefinitionFactoryClass ()
-	:	m_NextFactory (nullptr),
-		m_PrevFactory (nullptr)
+DefinitionFactoryClass::DefinitionFactoryClass()
+  : m_NextFactory(nullptr)
+  , m_PrevFactory(nullptr)
 {
-	DefinitionFactoryMgrClass::Register_Factory (this);
+	DefinitionFactoryMgrClass::Register_Factory(this);
 }
-
 
 /////////////////////////////////////////////////////////
 //
 //	~DefinitionFactoryClass
 //
 /////////////////////////////////////////////////////////
-DefinitionFactoryClass::~DefinitionFactoryClass ()
+DefinitionFactoryClass::~DefinitionFactoryClass()
 {
-	DefinitionFactoryMgrClass::Unregister_Factory (this);
+	DefinitionFactoryMgrClass::Unregister_Factory(this);
 }

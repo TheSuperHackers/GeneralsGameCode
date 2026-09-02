@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/NetCommandMsg.h"
 #include "GameNetwork/NetPacketStructs.h"
@@ -41,34 +40,39 @@ NetCommandMsg::NetCommandMsg()
 	m_id = 0;
 	m_playerID = 0;
 	m_timestamp = 0;
-	m_referenceCount = 1; // start this off as 1.  This means that an "attach" is implied by creating a NetCommandMsg object.
+	m_referenceCount = 1;    // start this off as 1.  This means that an "attach" is implied by creating a NetCommandMsg object.
 	m_commandType = NETCOMMANDTYPE_UNKNOWN;
 }
 
 /**
  * Destructor
  */
-NetCommandMsg::~NetCommandMsg() {
+NetCommandMsg::~NetCommandMsg()
+{
 }
 
 /**
  * Adds one to the reference count.
  */
-void NetCommandMsg::attach() {
+void NetCommandMsg::attach()
+{
 	++m_referenceCount;
 }
 
 /**
  * Subtracts one from the reference count. If the reference count is 0, the this object is destroyed.
  */
-void NetCommandMsg::detach() {
+void NetCommandMsg::detach()
+{
 	--m_referenceCount;
-	if (m_referenceCount == 0) {
+	if (m_referenceCount == 0)
+	{
 		deleteInstance(this);
 		return;
 	}
-	DEBUG_ASSERTCRASH(m_referenceCount > 0, ("Invalid reference count for NetCommandMsg")); // Just to make sure...
-	if (m_referenceCount < 0) {
+	DEBUG_ASSERTCRASH(m_referenceCount > 0, ("Invalid reference count for NetCommandMsg"));    // Just to make sure...
+	if (m_referenceCount < 0)
+	{
 		deleteInstance(this);
 	}
 }
@@ -76,7 +80,8 @@ void NetCommandMsg::detach() {
 /**
  * Returns the value by which this type of message should be sorted.
  */
-Int NetCommandMsg::getSortNumber() const {
+Int NetCommandMsg::getSortNumber() const
+{
 	return m_id;
 }
 
@@ -87,7 +92,8 @@ Int NetCommandMsg::getSortNumber() const {
 /**
  * Constructor with no argument, sets everything to default values.
  */
-NetGameCommandMsg::NetGameCommandMsg() {
+NetGameCommandMsg::NetGameCommandMsg()
+{
 	m_type = (GameMessage::Type)0;
 	m_commandType = NETCOMMANDTYPE_GAMECOMMAND;
 }
@@ -96,14 +102,16 @@ NetGameCommandMsg::NetGameCommandMsg() {
  * Constructor with a GameMessage argument. Sets member variables appropriately for this GameMessage.
  * Also copies all the arguments.
  */
-NetGameCommandMsg::NetGameCommandMsg(GameMessage *msg) {
+NetGameCommandMsg::NetGameCommandMsg(GameMessage* msg)
+{
 	m_commandType = NETCOMMANDTYPE_GAMECOMMAND;
 	m_type = msg->getType();
 
 	const size_t argsCount = msg->getArgumentCount();
 	m_argList.reserve(argsCount);
 
-	for (size_t i = 0; i < argsCount; ++i) {
+	for (size_t i = 0; i < argsCount; ++i)
+	{
 		GameMessageArgumentDataType argType = msg->getArgumentDataType(i);
 		const GameMessageArgumentType* arg = msg->getArgument(i);
 		addArgument(argType, *arg);
@@ -113,8 +121,10 @@ NetGameCommandMsg::NetGameCommandMsg(GameMessage *msg) {
 /**
  * Destructor
  */
-NetGameCommandMsg::~NetGameCommandMsg() {
-	for (size_t i = 0; i < m_argList.size(); ++i) {
+NetGameCommandMsg::~NetGameCommandMsg()
+{
+	for (size_t i = 0; i < m_argList.size(); ++i)
+	{
 		deleteInstance(m_argList[i]);
 	}
 }
@@ -124,7 +134,7 @@ NetGameCommandMsg::~NetGameCommandMsg() {
  */
 void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg)
 {
-	GameMessageArgument *newArg = newInstance(GameMessageArgument);
+	GameMessageArgument* newArg = newInstance(GameMessageArgument);
 	newArg->m_data = arg;
 	newArg->m_type = type;
 	m_argList.push_back(newArg);
@@ -133,14 +143,16 @@ void NetGameCommandMsg::addArgument(const GameMessageArgumentDataType type, Game
 // here's where we figure out which slot corresponds to which player
 static Int indexFromMask(UnsignedInt mask)
 {
-	Player *player = nullptr;
+	Player* player = nullptr;
 	Int i;
 
-	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
+	for (i = 0; i < MAX_PLAYER_COUNT; i++)
 	{
-		player = ThePlayerList->getNthPlayer( i );
-		if( player && player->getPlayerMask() == mask )
+		player = ThePlayerList->getNthPlayer(i);
+		if (player && player->getPlayerMask() == mask)
+		{
 			return i;
+		}
 	}
 
 	return -1;
@@ -149,50 +161,50 @@ static Int indexFromMask(UnsignedInt mask)
 /**
  * Construct a new GameMessage object from the data in this object.
  */
-GameMessage *NetGameCommandMsg::constructGameMessage() const
+GameMessage* NetGameCommandMsg::constructGameMessage() const
 {
-	GameMessage *retval = newInstance(GameMessage)(m_type);
+	GameMessage* retval = newInstance(GameMessage)(m_type);
 
 	retval->friend_setPlayerIndex(ThePlayerList->getPlayerFromSlotIndex(getPlayerID())->getPlayerIndex());
 
-	for (size_t i = 0; i < m_argList.size(); ++i) {
+	for (size_t i = 0; i < m_argList.size(); ++i)
+	{
 		const GameMessageArgument* arg = m_argList[i];
-		switch (arg->m_type) {
-
-		case ARGUMENTDATATYPE_INTEGER:
-			retval->appendIntegerArgument(arg->m_data.integer);
-			break;
-		case ARGUMENTDATATYPE_REAL:
-			retval->appendRealArgument(arg->m_data.real);
-			break;
-		case ARGUMENTDATATYPE_BOOLEAN:
-			retval->appendBooleanArgument(arg->m_data.boolean);
-			break;
-		case ARGUMENTDATATYPE_OBJECTID:
-			retval->appendObjectIDArgument(arg->m_data.objectID);
-			break;
-		case ARGUMENTDATATYPE_DRAWABLEID:
-			retval->appendDrawableIDArgument(arg->m_data.drawableID);
-			break;
-		case ARGUMENTDATATYPE_TEAMID:
-			retval->appendTeamIDArgument(arg->m_data.teamID);
-			break;
-		case ARGUMENTDATATYPE_LOCATION:
-			retval->appendLocationArgument(arg->m_data.location);
-			break;
-		case ARGUMENTDATATYPE_PIXEL:
-			retval->appendPixelArgument(arg->m_data.pixel);
-			break;
-		case ARGUMENTDATATYPE_PIXELREGION:
-			retval->appendPixelRegionArgument(arg->m_data.pixelRegion);
-			break;
-		case ARGUMENTDATATYPE_TIMESTAMP:
-			retval->appendTimestampArgument(arg->m_data.timestamp);
-			break;
-		case ARGUMENTDATATYPE_WIDECHAR:
-			retval->appendWideCharArgument(arg->m_data.wChar);
-			break;
-
+		switch (arg->m_type)
+		{
+			case ARGUMENTDATATYPE_INTEGER:
+				retval->appendIntegerArgument(arg->m_data.integer);
+				break;
+			case ARGUMENTDATATYPE_REAL:
+				retval->appendRealArgument(arg->m_data.real);
+				break;
+			case ARGUMENTDATATYPE_BOOLEAN:
+				retval->appendBooleanArgument(arg->m_data.boolean);
+				break;
+			case ARGUMENTDATATYPE_OBJECTID:
+				retval->appendObjectIDArgument(arg->m_data.objectID);
+				break;
+			case ARGUMENTDATATYPE_DRAWABLEID:
+				retval->appendDrawableIDArgument(arg->m_data.drawableID);
+				break;
+			case ARGUMENTDATATYPE_TEAMID:
+				retval->appendTeamIDArgument(arg->m_data.teamID);
+				break;
+			case ARGUMENTDATATYPE_LOCATION:
+				retval->appendLocationArgument(arg->m_data.location);
+				break;
+			case ARGUMENTDATATYPE_PIXEL:
+				retval->appendPixelArgument(arg->m_data.pixel);
+				break;
+			case ARGUMENTDATATYPE_PIXELREGION:
+				retval->appendPixelRegionArgument(arg->m_data.pixelRegion);
+				break;
+			case ARGUMENTDATATYPE_TIMESTAMP:
+				retval->appendTimestampArgument(arg->m_data.timestamp);
+				break;
+			case ARGUMENTDATATYPE_WIDECHAR:
+				retval->appendWideCharArgument(arg->m_data.wChar);
+				break;
 		}
 	}
 	return retval;
@@ -201,15 +213,18 @@ GameMessage *NetGameCommandMsg::constructGameMessage() const
 /**
  * Sets the type of game message
  */
-void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
+void NetGameCommandMsg::setGameMessageType(GameMessage::Type type)
+{
 	m_type = type;
 }
 
-GameMessage::Type NetGameCommandMsg::getGameMessageType() const {
+GameMessage::Type NetGameCommandMsg::getGameMessageType() const
+{
 	return m_type;
 }
 
-NetCommandMsg::Select NetGameCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetGameCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -226,36 +241,42 @@ NetCommandMsg::Select NetGameCommandMsg::getSmallNetPacketSelect() const {
 /**
  * Returns the command ID of the command being ack'd.
  */
-UnsignedShort NetAckCommandMsg::getCommandID() const {
+UnsignedShort NetAckCommandMsg::getCommandID() const
+{
 	return m_commandID;
 }
 
 /**
  * Set the command ID of the command being ack'd.
  */
-void NetAckCommandMsg::setCommandID(UnsignedShort commandID) {
+void NetAckCommandMsg::setCommandID(UnsignedShort commandID)
+{
 	m_commandID = commandID;
 }
 
 /**
  * Get the player id of the player who originally sent the command.
  */
-UnsignedByte NetAckCommandMsg::getOriginalPlayerID() const {
+UnsignedByte NetAckCommandMsg::getOriginalPlayerID() const
+{
 	return m_originalPlayerID;
 }
 
 /**
  * Set the player id of the player who originally sent the command.
  */
-void NetAckCommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID) {
+void NetAckCommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID)
+{
 	m_originalPlayerID = originalPlayerID;
 }
 
-Int NetAckCommandMsg::getSortNumber() const {
+Int NetAckCommandMsg::getSortNumber() const
+{
 	return m_commandID;
 }
 
-NetCommandMsg::Select NetAckCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetAckCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 0;
@@ -271,21 +292,25 @@ NetCommandMsg::Select NetAckCommandMsg::getSmallNetPacketSelect() const {
 /**
  * Constructor.  Sets the member variables according to the given message.
  */
-NetAckBothCommandMsg::NetAckBothCommandMsg(NetCommandMsg *msg) : NetAckCommandMsg(msg) {
+NetAckBothCommandMsg::NetAckBothCommandMsg(NetCommandMsg* msg)
+  : NetAckCommandMsg(msg)
+{
 	m_commandType = NETCOMMANDTYPE_ACKBOTH;
 }
 
 /**
  * Constructor.  Sets the member variables to default values.
  */
-NetAckBothCommandMsg::NetAckBothCommandMsg() {
+NetAckBothCommandMsg::NetAckBothCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_ACKBOTH;
 }
 
 /**
  * Destructor.
  */
-NetAckBothCommandMsg::~NetAckBothCommandMsg() {
+NetAckBothCommandMsg::~NetAckBothCommandMsg()
+{
 }
 
 //-------------------------
@@ -294,21 +319,25 @@ NetAckBothCommandMsg::~NetAckBothCommandMsg() {
 /**
  * Constructor.  Sets the member variables according to the given message.
  */
-NetAckStage1CommandMsg::NetAckStage1CommandMsg(NetCommandMsg *msg) : NetAckCommandMsg(msg) {
+NetAckStage1CommandMsg::NetAckStage1CommandMsg(NetCommandMsg* msg)
+  : NetAckCommandMsg(msg)
+{
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE1;
 }
 
 /**
  * Constructor.  Sets the member variables to default values.
  */
-NetAckStage1CommandMsg::NetAckStage1CommandMsg() {
+NetAckStage1CommandMsg::NetAckStage1CommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE1;
 }
 
 /**
  * Destructor.
  */
-NetAckStage1CommandMsg::~NetAckStage1CommandMsg() {
+NetAckStage1CommandMsg::~NetAckStage1CommandMsg()
+{
 }
 
 //-------------------------
@@ -317,21 +346,25 @@ NetAckStage1CommandMsg::~NetAckStage1CommandMsg() {
 /**
  * Constructor.  Sets the member variables according to the given message.
  */
-NetAckStage2CommandMsg::NetAckStage2CommandMsg(NetCommandMsg *msg) : NetAckCommandMsg(msg) {
+NetAckStage2CommandMsg::NetAckStage2CommandMsg(NetCommandMsg* msg)
+  : NetAckCommandMsg(msg)
+{
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE2;
 }
 
 /**
  * Constructor.  Sets the member variables to default values.
  */
-NetAckStage2CommandMsg::NetAckStage2CommandMsg() {
+NetAckStage2CommandMsg::NetAckStage2CommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_ACKSTAGE2;
 }
 
 /**
  * Destructor.
  */
-NetAckStage2CommandMsg::~NetAckStage2CommandMsg() {
+NetAckStage2CommandMsg::~NetAckStage2CommandMsg()
+{
 }
 
 //-------------------------
@@ -340,7 +373,8 @@ NetAckStage2CommandMsg::~NetAckStage2CommandMsg() {
 /**
  * Constructor.
  */
-NetFrameCommandMsg::NetFrameCommandMsg() {
+NetFrameCommandMsg::NetFrameCommandMsg()
+{
 	m_commandCount = 0;
 	m_commandType = NETCOMMANDTYPE_FRAMEINFO;
 }
@@ -348,24 +382,28 @@ NetFrameCommandMsg::NetFrameCommandMsg() {
 /**
  * Destructor
  */
-NetFrameCommandMsg::~NetFrameCommandMsg() {
+NetFrameCommandMsg::~NetFrameCommandMsg()
+{
 }
 
 /**
  * Set the command count of this frame.
  */
-void NetFrameCommandMsg::setCommandCount(UnsignedShort commandCount) {
+void NetFrameCommandMsg::setCommandCount(UnsignedShort commandCount)
+{
 	m_commandCount = commandCount;
 }
 
 /**
  * Return the command count of this frame.
  */
-UnsignedShort NetFrameCommandMsg::getCommandCount() const {
+UnsignedShort NetFrameCommandMsg::getCommandCount() const
+{
 	return m_commandCount;
 }
 
-NetCommandMsg::Select NetFrameCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetFrameCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -381,7 +419,8 @@ NetCommandMsg::Select NetFrameCommandMsg::getSmallNetPacketSelect() const {
 /**
  * Constructor
  */
-NetPlayerLeaveCommandMsg::NetPlayerLeaveCommandMsg() {
+NetPlayerLeaveCommandMsg::NetPlayerLeaveCommandMsg()
+{
 	m_leavingPlayerID = 0;
 	m_commandType = NETCOMMANDTYPE_PLAYERLEAVE;
 }
@@ -389,24 +428,28 @@ NetPlayerLeaveCommandMsg::NetPlayerLeaveCommandMsg() {
 /**
  * Destructor
  */
-NetPlayerLeaveCommandMsg::~NetPlayerLeaveCommandMsg() {
+NetPlayerLeaveCommandMsg::~NetPlayerLeaveCommandMsg()
+{
 }
 
 /**
  * Get the id of the player leaving the game.
  */
-UnsignedByte NetPlayerLeaveCommandMsg::getLeavingPlayerID() const {
+UnsignedByte NetPlayerLeaveCommandMsg::getLeavingPlayerID() const
+{
 	return m_leavingPlayerID;
 }
 
 /**
  * Set the id of the player leaving the game.
  */
-void NetPlayerLeaveCommandMsg::setLeavingPlayerID(UnsignedByte id) {
+void NetPlayerLeaveCommandMsg::setLeavingPlayerID(UnsignedByte id)
+{
 	m_leavingPlayerID = id;
 }
 
-NetCommandMsg::Select NetPlayerLeaveCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetPlayerLeaveCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -422,7 +465,8 @@ NetCommandMsg::Select NetPlayerLeaveCommandMsg::getSmallNetPacketSelect() const 
 /**
  * Constructor
  */
-NetRunAheadMetricsCommandMsg::NetRunAheadMetricsCommandMsg() {
+NetRunAheadMetricsCommandMsg::NetRunAheadMetricsCommandMsg()
+{
 	m_averageLatency = 0.0;
 	m_averageFps = 0;
 	m_commandType = NETCOMMANDTYPE_RUNAHEADMETRICS;
@@ -431,38 +475,44 @@ NetRunAheadMetricsCommandMsg::NetRunAheadMetricsCommandMsg() {
 /**
  * Destructor
  */
-NetRunAheadMetricsCommandMsg::~NetRunAheadMetricsCommandMsg() {
+NetRunAheadMetricsCommandMsg::~NetRunAheadMetricsCommandMsg()
+{
 }
 
 /**
  * set the average latency
  */
-void NetRunAheadMetricsCommandMsg::setAverageLatency(Real avgLat) {
+void NetRunAheadMetricsCommandMsg::setAverageLatency(Real avgLat)
+{
 	m_averageLatency = avgLat;
 }
 
 /**
  * get the average latency
  */
-Real NetRunAheadMetricsCommandMsg::getAverageLatency() const {
+Real NetRunAheadMetricsCommandMsg::getAverageLatency() const
+{
 	return m_averageLatency;
 }
 
 /**
  * set the average fps
  */
-void NetRunAheadMetricsCommandMsg::setAverageFps(Int fps) {
+void NetRunAheadMetricsCommandMsg::setAverageFps(Int fps)
+{
 	m_averageFps = fps;
 }
 
 /**
  * get the average fps
  */
-Int NetRunAheadMetricsCommandMsg::getAverageFps() const {
+Int NetRunAheadMetricsCommandMsg::getAverageFps() const
+{
 	return m_averageFps;
 }
 
-NetCommandMsg::Select NetRunAheadMetricsCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetRunAheadMetricsCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -475,32 +525,39 @@ NetCommandMsg::Select NetRunAheadMetricsCommandMsg::getSmallNetPacketSelect() co
 //-------------------------
 // NetRunAheadCommandMsg
 //-------------------------
-NetRunAheadCommandMsg::NetRunAheadCommandMsg() {
-	m_runAhead = min(max(20, MIN_RUNAHEAD), MAX_FRAMES_AHEAD/2);
+NetRunAheadCommandMsg::NetRunAheadCommandMsg()
+{
+	m_runAhead = min(max(20, MIN_RUNAHEAD), MAX_FRAMES_AHEAD / 2);
 	m_frameRate = 30;
 	m_commandType = NETCOMMANDTYPE_RUNAHEAD;
 }
 
-NetRunAheadCommandMsg::~NetRunAheadCommandMsg() {
+NetRunAheadCommandMsg::~NetRunAheadCommandMsg()
+{
 }
 
-UnsignedShort NetRunAheadCommandMsg::getRunAhead() const {
+UnsignedShort NetRunAheadCommandMsg::getRunAhead() const
+{
 	return m_runAhead;
 }
 
-void NetRunAheadCommandMsg::setRunAhead(UnsignedShort runAhead) {
+void NetRunAheadCommandMsg::setRunAhead(UnsignedShort runAhead)
+{
 	m_runAhead = runAhead;
 }
 
-UnsignedByte NetRunAheadCommandMsg::getFrameRate() const {
+UnsignedByte NetRunAheadCommandMsg::getFrameRate() const
+{
 	return m_frameRate;
 }
 
-void NetRunAheadCommandMsg::setFrameRate(UnsignedByte frameRate) {
+void NetRunAheadCommandMsg::setFrameRate(UnsignedByte frameRate)
+{
 	m_frameRate = frameRate;
 }
 
-NetCommandMsg::Select NetRunAheadCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetRunAheadCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -532,7 +589,7 @@ NetDestroyPlayerCommandMsg::~NetDestroyPlayerCommandMsg()
 /**
  * set the CRC
  */
-void NetDestroyPlayerCommandMsg::setPlayerIndex( UnsignedInt playerIndex )
+void NetDestroyPlayerCommandMsg::setPlayerIndex(UnsignedInt playerIndex)
 {
 	m_playerIndex = playerIndex;
 }
@@ -545,7 +602,8 @@ UnsignedInt NetDestroyPlayerCommandMsg::getPlayerIndex() const
 	return m_playerIndex;
 }
 
-NetCommandMsg::Select NetDestroyPlayerCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDestroyPlayerCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -561,14 +619,17 @@ NetCommandMsg::Select NetDestroyPlayerCommandMsg::getSmallNetPacketSelect() cons
 /**
  * Constructor
  */
-NetKeepAliveCommandMsg::NetKeepAliveCommandMsg() {
+NetKeepAliveCommandMsg::NetKeepAliveCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_KEEPALIVE;
 }
 
-NetKeepAliveCommandMsg::~NetKeepAliveCommandMsg() {
+NetKeepAliveCommandMsg::~NetKeepAliveCommandMsg()
+{
 }
 
-NetCommandMsg::Select NetKeepAliveCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetKeepAliveCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -584,14 +645,17 @@ NetCommandMsg::Select NetKeepAliveCommandMsg::getSmallNetPacketSelect() const {
 /**
  * Constructor
  */
-NetDisconnectKeepAliveCommandMsg::NetDisconnectKeepAliveCommandMsg() {
+NetDisconnectKeepAliveCommandMsg::NetDisconnectKeepAliveCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_DISCONNECTKEEPALIVE;
 }
 
-NetDisconnectKeepAliveCommandMsg::~NetDisconnectKeepAliveCommandMsg() {
+NetDisconnectKeepAliveCommandMsg::~NetDisconnectKeepAliveCommandMsg()
+{
 }
 
-NetCommandMsg::Select NetDisconnectKeepAliveCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDisconnectKeepAliveCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -607,7 +671,8 @@ NetCommandMsg::Select NetDisconnectKeepAliveCommandMsg::getSmallNetPacketSelect(
 /**
  * Constructor
  */
-NetDisconnectPlayerCommandMsg::NetDisconnectPlayerCommandMsg() {
+NetDisconnectPlayerCommandMsg::NetDisconnectPlayerCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_DISCONNECTPLAYER;
 	m_disconnectSlot = 0;
 }
@@ -615,38 +680,44 @@ NetDisconnectPlayerCommandMsg::NetDisconnectPlayerCommandMsg() {
 /**
  * Destructor
  */
-NetDisconnectPlayerCommandMsg::~NetDisconnectPlayerCommandMsg() {
+NetDisconnectPlayerCommandMsg::~NetDisconnectPlayerCommandMsg()
+{
 }
 
 /**
  * Returns the disconnecting slot number
  */
-UnsignedByte NetDisconnectPlayerCommandMsg::getDisconnectSlot() const {
+UnsignedByte NetDisconnectPlayerCommandMsg::getDisconnectSlot() const
+{
 	return m_disconnectSlot;
 }
 
 /**
  * Sets the disconnecting slot number
  */
-void NetDisconnectPlayerCommandMsg::setDisconnectSlot(UnsignedByte slot) {
+void NetDisconnectPlayerCommandMsg::setDisconnectSlot(UnsignedByte slot)
+{
 	m_disconnectSlot = slot;
 }
 
 /**
  * Sets the disconnect frame
  */
-void NetDisconnectPlayerCommandMsg::setDisconnectFrame(UnsignedInt frame) {
+void NetDisconnectPlayerCommandMsg::setDisconnectFrame(UnsignedInt frame)
+{
 	m_disconnectFrame = frame;
 }
 
 /**
  * returns the disconnect frame
  */
-UnsignedInt NetDisconnectPlayerCommandMsg::getDisconnectFrame() const {
+UnsignedInt NetDisconnectPlayerCommandMsg::getDisconnectFrame() const
+{
 	return m_disconnectFrame;
 }
 
-NetCommandMsg::Select NetDisconnectPlayerCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDisconnectPlayerCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -662,17 +733,20 @@ NetCommandMsg::Select NetDisconnectPlayerCommandMsg::getSmallNetPacketSelect() c
 /**
  * Constructor
  */
-NetPacketRouterQueryCommandMsg::NetPacketRouterQueryCommandMsg() {
+NetPacketRouterQueryCommandMsg::NetPacketRouterQueryCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_PACKETROUTERQUERY;
 }
 
 /**
  * Destructor
  */
-NetPacketRouterQueryCommandMsg::~NetPacketRouterQueryCommandMsg() {
+NetPacketRouterQueryCommandMsg::~NetPacketRouterQueryCommandMsg()
+{
 }
 
-NetCommandMsg::Select NetPacketRouterQueryCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetPacketRouterQueryCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -688,17 +762,20 @@ NetCommandMsg::Select NetPacketRouterQueryCommandMsg::getSmallNetPacketSelect() 
 /**
  * Constructor
  */
-NetPacketRouterAckCommandMsg::NetPacketRouterAckCommandMsg() {
+NetPacketRouterAckCommandMsg::NetPacketRouterAckCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_PACKETROUTERACK;
 }
 
 /**
  * Destructor
  */
-NetPacketRouterAckCommandMsg::~NetPacketRouterAckCommandMsg() {
+NetPacketRouterAckCommandMsg::~NetPacketRouterAckCommandMsg()
+{
 }
 
-NetCommandMsg::Select NetPacketRouterAckCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetPacketRouterAckCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -714,31 +791,36 @@ NetCommandMsg::Select NetPacketRouterAckCommandMsg::getSmallNetPacketSelect() co
 /**
  * Constructor
  */
-NetDisconnectChatCommandMsg::NetDisconnectChatCommandMsg() {
+NetDisconnectChatCommandMsg::NetDisconnectChatCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_DISCONNECTCHAT;
 }
 
 /**
  * Destructor
  */
-NetDisconnectChatCommandMsg::~NetDisconnectChatCommandMsg() {
+NetDisconnectChatCommandMsg::~NetDisconnectChatCommandMsg()
+{
 }
 
 /**
  * Set the chat text for this message.
  */
-void NetDisconnectChatCommandMsg::setText(UnicodeString text) {
+void NetDisconnectChatCommandMsg::setText(UnicodeString text)
+{
 	m_text = text;
 }
 
 /**
  * Get the chat text for this message.
  */
-UnicodeString NetDisconnectChatCommandMsg::getText() const {
+UnicodeString NetDisconnectChatCommandMsg::getText() const
+{
 	return m_text;
 }
 
-NetCommandMsg::Select NetDisconnectChatCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDisconnectChatCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -794,12 +876,13 @@ Int NetChatCommandMsg::getPlayerMask() const
 /**
  * Set a bitmask of chat recipients in this message.
  */
-void NetChatCommandMsg::setPlayerMask( Int playerMask )
+void NetChatCommandMsg::setPlayerMask(Int playerMask)
 {
 	m_playerMask = playerMask;
 }
 
-NetCommandMsg::Select NetChatCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetChatCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -815,7 +898,8 @@ NetCommandMsg::Select NetChatCommandMsg::getSmallNetPacketSelect() const {
 /**
  * Constructor
  */
-NetDisconnectVoteCommandMsg::NetDisconnectVoteCommandMsg() {
+NetDisconnectVoteCommandMsg::NetDisconnectVoteCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_DISCONNECTVOTE;
 	m_slot = 0;
 }
@@ -823,38 +907,44 @@ NetDisconnectVoteCommandMsg::NetDisconnectVoteCommandMsg() {
 /**
  * Destructor
  */
-NetDisconnectVoteCommandMsg::~NetDisconnectVoteCommandMsg() {
+NetDisconnectVoteCommandMsg::~NetDisconnectVoteCommandMsg()
+{
 }
 
 /**
  * Set the slot that is being voted for.
  */
-void NetDisconnectVoteCommandMsg::setSlot(UnsignedByte slot) {
+void NetDisconnectVoteCommandMsg::setSlot(UnsignedByte slot)
+{
 	m_slot = slot;
 }
 
 /**
  * Get the slot that is being voted for.
  */
-UnsignedByte NetDisconnectVoteCommandMsg::getSlot() const {
+UnsignedByte NetDisconnectVoteCommandMsg::getSlot() const
+{
 	return m_slot;
 }
 
 /**
  * Get the vote frame.
  */
-UnsignedInt NetDisconnectVoteCommandMsg::getVoteFrame() const {
+UnsignedInt NetDisconnectVoteCommandMsg::getVoteFrame() const
+{
 	return m_voteFrame;
 }
 
 /**
  * Set the vote frame.
  */
-void NetDisconnectVoteCommandMsg::setVoteFrame(UnsignedInt voteFrame) {
+void NetDisconnectVoteCommandMsg::setVoteFrame(UnsignedInt voteFrame)
+{
 	m_voteFrame = voteFrame;
 }
 
-NetCommandMsg::Select NetDisconnectVoteCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDisconnectVoteCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -880,12 +970,13 @@ UnsignedByte NetProgressCommandMsg::getPercentage() const
 	return m_percent;
 }
 
-void NetProgressCommandMsg::setPercentage( UnsignedByte percent )
+void NetProgressCommandMsg::setPercentage(UnsignedByte percent)
 {
 	m_percent = percent;
 }
 
-NetCommandMsg::Select NetProgressCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetProgressCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -898,7 +989,8 @@ NetCommandMsg::Select NetProgressCommandMsg::getSmallNetPacketSelect() const {
 //-------------------------
 // NetWrapperCommandMsg
 //-------------------------
-NetWrapperCommandMsg::NetWrapperCommandMsg() {
+NetWrapperCommandMsg::NetWrapperCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_WRAPPER;
 	m_numChunks = 0;
 	m_data = nullptr;
@@ -909,71 +1001,86 @@ NetWrapperCommandMsg::NetWrapperCommandMsg() {
 	m_wrappedCommandID = 0;
 }
 
-NetWrapperCommandMsg::~NetWrapperCommandMsg() {
+NetWrapperCommandMsg::~NetWrapperCommandMsg()
+{
 	delete[] m_data;
 	m_data = nullptr;
 }
 
-const UnsignedByte * NetWrapperCommandMsg::getData() const {
+const UnsignedByte* NetWrapperCommandMsg::getData() const
+{
 	return m_data;
 }
 
-UnsignedByte * NetWrapperCommandMsg::getData() {
+UnsignedByte* NetWrapperCommandMsg::getData()
+{
 	return m_data;
 }
 
-void NetWrapperCommandMsg::setData(NetCommandDataChunk &dataChunk)
+void NetWrapperCommandMsg::setData(NetCommandDataChunk& dataChunk)
 {
 	delete[] m_data;
 	m_dataLength = dataChunk.size();
 	m_data = dataChunk.release();
 }
 
-UnsignedInt NetWrapperCommandMsg::getDataLength() const {
+UnsignedInt NetWrapperCommandMsg::getDataLength() const
+{
 	return m_dataLength;
 }
 
-UnsignedInt NetWrapperCommandMsg::getDataOffset() const {
+UnsignedInt NetWrapperCommandMsg::getDataOffset() const
+{
 	return m_dataOffset;
 }
 
-void NetWrapperCommandMsg::setDataOffset(UnsignedInt offset) {
+void NetWrapperCommandMsg::setDataOffset(UnsignedInt offset)
+{
 	m_dataOffset = offset;
 }
 
-UnsignedInt NetWrapperCommandMsg::getChunkNumber() const {
+UnsignedInt NetWrapperCommandMsg::getChunkNumber() const
+{
 	return m_chunkNumber;
 }
 
-void NetWrapperCommandMsg::setChunkNumber(UnsignedInt chunkNumber) {
+void NetWrapperCommandMsg::setChunkNumber(UnsignedInt chunkNumber)
+{
 	m_chunkNumber = chunkNumber;
 }
 
-UnsignedInt NetWrapperCommandMsg::getNumChunks() const {
+UnsignedInt NetWrapperCommandMsg::getNumChunks() const
+{
 	return m_numChunks;
 }
 
-void NetWrapperCommandMsg::setNumChunks(UnsignedInt numChunks) {
+void NetWrapperCommandMsg::setNumChunks(UnsignedInt numChunks)
+{
 	m_numChunks = numChunks;
 }
 
-UnsignedInt NetWrapperCommandMsg::getTotalDataLength() const {
+UnsignedInt NetWrapperCommandMsg::getTotalDataLength() const
+{
 	return m_totalDataLength;
 }
 
-void NetWrapperCommandMsg::setTotalDataLength(UnsignedInt totalDataLength) {
+void NetWrapperCommandMsg::setTotalDataLength(UnsignedInt totalDataLength)
+{
 	m_totalDataLength = totalDataLength;
 }
 
-UnsignedShort NetWrapperCommandMsg::getWrappedCommandID() const {
+UnsignedShort NetWrapperCommandMsg::getWrappedCommandID() const
+{
 	return m_wrappedCommandID;
 }
 
-void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID) {
+void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID)
+{
 	m_wrappedCommandID = wrappedCommandID;
 }
 
-NetCommandMsg::Select NetWrapperCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetWrapperCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -986,14 +1093,16 @@ NetCommandMsg::Select NetWrapperCommandMsg::getSmallNetPacketSelect() const {
 //-------------------------
 // NetFileCommandMsg
 //-------------------------
-NetFileCommandMsg::NetFileCommandMsg() {
+NetFileCommandMsg::NetFileCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_FILE;
 	m_data = nullptr;
 	m_portableFilename.clear();
 	m_dataLength = 0;
 }
 
-NetFileCommandMsg::~NetFileCommandMsg() {
+NetFileCommandMsg::~NetFileCommandMsg()
+{
 	delete[] m_data;
 	m_data = nullptr;
 }
@@ -1008,26 +1117,30 @@ void NetFileCommandMsg::setRealFilename(AsciiString filename)
 	m_portableFilename = TheGameState->realMapPathToPortableMapPath(filename);
 }
 
-UnsignedInt NetFileCommandMsg::getFileLength() const {
+UnsignedInt NetFileCommandMsg::getFileLength() const
+{
 	return m_dataLength;
 }
 
-const UnsignedByte * NetFileCommandMsg::getFileData() const {
+const UnsignedByte* NetFileCommandMsg::getFileData() const
+{
 	return m_data;
 }
 
-UnsignedByte * NetFileCommandMsg::getFileData() {
+UnsignedByte* NetFileCommandMsg::getFileData()
+{
 	return m_data;
 }
 
-void NetFileCommandMsg::setFileData(NetCommandDataChunk &dataChunk)
+void NetFileCommandMsg::setFileData(NetCommandDataChunk& dataChunk)
 {
 	delete[] m_data;
 	m_dataLength = dataChunk.size();
 	m_data = dataChunk.release();
 }
 
-NetCommandMsg::Select NetFileCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetFileCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1040,14 +1153,16 @@ NetCommandMsg::Select NetFileCommandMsg::getSmallNetPacketSelect() const {
 //-------------------------
 // NetFileAnnounceCommandMsg
 //-------------------------
-NetFileAnnounceCommandMsg::NetFileAnnounceCommandMsg() {
+NetFileAnnounceCommandMsg::NetFileAnnounceCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_FILEANNOUNCE;
 	m_portableFilename.clear();
 	m_fileID = 0;
 	m_playerMask = 0;
 }
 
-NetFileAnnounceCommandMsg::~NetFileAnnounceCommandMsg() {
+NetFileAnnounceCommandMsg::~NetFileAnnounceCommandMsg()
+{
 }
 
 AsciiString NetFileAnnounceCommandMsg::getRealFilename() const
@@ -1060,23 +1175,28 @@ void NetFileAnnounceCommandMsg::setRealFilename(AsciiString filename)
 	m_portableFilename = TheGameState->realMapPathToPortableMapPath(filename);
 }
 
-UnsignedShort NetFileAnnounceCommandMsg::getFileID() const {
+UnsignedShort NetFileAnnounceCommandMsg::getFileID() const
+{
 	return m_fileID;
 }
 
-void NetFileAnnounceCommandMsg::setFileID(UnsignedShort fileID) {
+void NetFileAnnounceCommandMsg::setFileID(UnsignedShort fileID)
+{
 	m_fileID = fileID;
 }
 
-UnsignedByte NetFileAnnounceCommandMsg::getPlayerMask() const {
+UnsignedByte NetFileAnnounceCommandMsg::getPlayerMask() const
+{
 	return m_playerMask;
 }
 
-void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
+void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask)
+{
 	m_playerMask = playerMask;
 }
 
-NetCommandMsg::Select NetFileAnnounceCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetFileAnnounceCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1089,32 +1209,39 @@ NetCommandMsg::Select NetFileAnnounceCommandMsg::getSmallNetPacketSelect() const
 //-------------------------
 // NetFileProgressCommandMsg
 //-------------------------
-NetFileProgressCommandMsg::NetFileProgressCommandMsg() {
+NetFileProgressCommandMsg::NetFileProgressCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_FILEPROGRESS;
 	m_fileID = 0;
 	m_progress = 0;
 }
 
-NetFileProgressCommandMsg::~NetFileProgressCommandMsg() {
+NetFileProgressCommandMsg::~NetFileProgressCommandMsg()
+{
 }
 
-UnsignedShort NetFileProgressCommandMsg::getFileID() const {
+UnsignedShort NetFileProgressCommandMsg::getFileID() const
+{
 	return m_fileID;
 }
 
-void NetFileProgressCommandMsg::setFileID(UnsignedShort val) {
+void NetFileProgressCommandMsg::setFileID(UnsignedShort val)
+{
 	m_fileID = val;
 }
 
-Int NetFileProgressCommandMsg::getProgress() const {
+Int NetFileProgressCommandMsg::getProgress() const
+{
 	return m_progress;
 }
 
-void NetFileProgressCommandMsg::setProgress(Int val) {
+void NetFileProgressCommandMsg::setProgress(Int val)
+{
 	m_progress = val;
 }
 
-NetCommandMsg::Select NetFileProgressCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetFileProgressCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1127,23 +1254,28 @@ NetCommandMsg::Select NetFileProgressCommandMsg::getSmallNetPacketSelect() const
 //-------------------------
 // NetDisconnectFrameCommandMsg
 //-------------------------
-NetDisconnectFrameCommandMsg::NetDisconnectFrameCommandMsg() {
+NetDisconnectFrameCommandMsg::NetDisconnectFrameCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_DISCONNECTFRAME;
 	m_disconnectFrame = 0;
 }
 
-NetDisconnectFrameCommandMsg::~NetDisconnectFrameCommandMsg() {
+NetDisconnectFrameCommandMsg::~NetDisconnectFrameCommandMsg()
+{
 }
 
-UnsignedInt NetDisconnectFrameCommandMsg::getDisconnectFrame() const {
+UnsignedInt NetDisconnectFrameCommandMsg::getDisconnectFrame() const
+{
 	return m_disconnectFrame;
 }
 
-void NetDisconnectFrameCommandMsg::setDisconnectFrame(UnsignedInt disconnectFrame) {
+void NetDisconnectFrameCommandMsg::setDisconnectFrame(UnsignedInt disconnectFrame)
+{
 	m_disconnectFrame = disconnectFrame;
 }
 
-NetCommandMsg::Select NetDisconnectFrameCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDisconnectFrameCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1156,23 +1288,28 @@ NetCommandMsg::Select NetDisconnectFrameCommandMsg::getSmallNetPacketSelect() co
 //-------------------------
 // NetDisconnectScreenOffCommandMsg
 //-------------------------
-NetDisconnectScreenOffCommandMsg::NetDisconnectScreenOffCommandMsg() {
+NetDisconnectScreenOffCommandMsg::NetDisconnectScreenOffCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_DISCONNECTSCREENOFF;
 	m_newFrame = 0;
 }
 
-NetDisconnectScreenOffCommandMsg::~NetDisconnectScreenOffCommandMsg() {
+NetDisconnectScreenOffCommandMsg::~NetDisconnectScreenOffCommandMsg()
+{
 }
 
-UnsignedInt NetDisconnectScreenOffCommandMsg::getNewFrame() const {
+UnsignedInt NetDisconnectScreenOffCommandMsg::getNewFrame() const
+{
 	return m_newFrame;
 }
 
-void NetDisconnectScreenOffCommandMsg::setNewFrame(UnsignedInt newFrame) {
+void NetDisconnectScreenOffCommandMsg::setNewFrame(UnsignedInt newFrame)
+{
 	m_newFrame = newFrame;
 }
 
-NetCommandMsg::Select NetDisconnectScreenOffCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetDisconnectScreenOffCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1185,23 +1322,28 @@ NetCommandMsg::Select NetDisconnectScreenOffCommandMsg::getSmallNetPacketSelect(
 //-------------------------
 // NetFrameResendRequestCommandMsg
 //-------------------------
-NetFrameResendRequestCommandMsg::NetFrameResendRequestCommandMsg() {
+NetFrameResendRequestCommandMsg::NetFrameResendRequestCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_FRAMERESENDREQUEST;
 	m_frameToResend = 0;
 }
 
-NetFrameResendRequestCommandMsg::~NetFrameResendRequestCommandMsg() {
+NetFrameResendRequestCommandMsg::~NetFrameResendRequestCommandMsg()
+{
 }
 
-UnsignedInt NetFrameResendRequestCommandMsg::getFrameToResend() const {
+UnsignedInt NetFrameResendRequestCommandMsg::getFrameToResend() const
+{
 	return m_frameToResend;
 }
 
-void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame) {
+void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame)
+{
 	m_frameToResend = frame;
 }
 
-NetCommandMsg::Select NetFrameResendRequestCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetFrameResendRequestCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1214,14 +1356,17 @@ NetCommandMsg::Select NetFrameResendRequestCommandMsg::getSmallNetPacketSelect()
 //-------------------------
 // NetLoadCompleteCommandMsg
 //-------------------------
-NetLoadCompleteCommandMsg::NetLoadCompleteCommandMsg() {
+NetLoadCompleteCommandMsg::NetLoadCompleteCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_LOADCOMPLETE;
 }
 
-NetLoadCompleteCommandMsg::~NetLoadCompleteCommandMsg() {
+NetLoadCompleteCommandMsg::~NetLoadCompleteCommandMsg()
+{
 }
 
-NetCommandMsg::Select NetLoadCompleteCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetLoadCompleteCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;
@@ -1234,14 +1379,17 @@ NetCommandMsg::Select NetLoadCompleteCommandMsg::getSmallNetPacketSelect() const
 //-------------------------
 // NetTimeOutGameStartCommandMsg
 //-------------------------
-NetTimeOutGameStartCommandMsg::NetTimeOutGameStartCommandMsg() {
+NetTimeOutGameStartCommandMsg::NetTimeOutGameStartCommandMsg()
+{
 	m_commandType = NETCOMMANDTYPE_TIMEOUTSTART;
 }
 
-NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg() {
+NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg()
+{
 }
 
-NetCommandMsg::Select NetTimeOutGameStartCommandMsg::getSmallNetPacketSelect() const {
+NetCommandMsg::Select NetTimeOutGameStartCommandMsg::getSmallNetPacketSelect() const
+{
 	Select select;
 	select.useCommandType = 1;
 	select.useRelay = 1;

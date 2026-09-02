@@ -46,7 +46,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -57,209 +57,202 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/MessageBox.h"
 
-
-GameWindow *MessageBoxYesNo(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc yesCallback,GameWinMsgBoxFunc noCallback)  ///< convenience function for displaying a Message box with Yes and No buttons
+GameWindow* MessageBoxYesNo(UnicodeString titleString, UnicodeString bodyString, GameWinMsgBoxFunc yesCallback, GameWinMsgBoxFunc noCallback)    ///< convenience function for displaying a Message box with Yes and No buttons
 {
-	return TheWindowManager->gogoMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES , titleString, bodyString, yesCallback, noCallback, nullptr, nullptr);
+	return TheWindowManager->gogoMessageBox(-1, -1, -1, -1, MSG_BOX_NO | MSG_BOX_YES, titleString, bodyString, yesCallback, noCallback, nullptr, nullptr);
 }
-GameWindow *QuitMessageBoxYesNo(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc yesCallback,GameWinMsgBoxFunc noCallback)  ///< convenience function for displaying a Message box with Yes and No buttons
+GameWindow* QuitMessageBoxYesNo(UnicodeString titleString, UnicodeString bodyString, GameWinMsgBoxFunc yesCallback, GameWinMsgBoxFunc noCallback)    ///< convenience function for displaying a Message box with Yes and No buttons
 {
-	return TheWindowManager->gogoMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES , titleString, bodyString, yesCallback, noCallback, nullptr, nullptr, TRUE);
-}
-
-
-GameWindow *MessageBoxYesNoCancel(UnicodeString titleString,UnicodeString bodyString, GameWinMsgBoxFunc yesCallback, GameWinMsgBoxFunc noCallback, GameWinMsgBoxFunc cancelCallback)///< convenience function for displaying a Message box with Yes,No and Cancel buttons
-{
-	return TheWindowManager->gogoMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES | MSG_BOX_CANCEL , titleString, bodyString, yesCallback, noCallback, nullptr, cancelCallback);
+	return TheWindowManager->gogoMessageBox(-1, -1, -1, -1, MSG_BOX_NO | MSG_BOX_YES, titleString, bodyString, yesCallback, noCallback, nullptr, nullptr, TRUE);
 }
 
-
-GameWindow *MessageBoxOkCancel(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc okCallback,GameWinMsgBoxFunc cancelCallback)///< convenience function for displaying a Message box with Ok and Cancel buttons
+GameWindow* MessageBoxYesNoCancel(UnicodeString titleString, UnicodeString bodyString, GameWinMsgBoxFunc yesCallback, GameWinMsgBoxFunc noCallback, GameWinMsgBoxFunc cancelCallback)    ///< convenience function for displaying a Message box with Yes,No and Cancel buttons
 {
-	return TheWindowManager->gogoMessageBox(-1,-1,-1,-1,MSG_BOX_OK | MSG_BOX_CANCEL , titleString, bodyString, nullptr, nullptr, okCallback, cancelCallback);
+	return TheWindowManager->gogoMessageBox(-1, -1, -1, -1, MSG_BOX_NO | MSG_BOX_YES | MSG_BOX_CANCEL, titleString, bodyString, yesCallback, noCallback, nullptr, cancelCallback);
 }
 
-GameWindow *MessageBoxOk(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc okCallback)///< convenience function for displaying a Message box with Ok button
+GameWindow* MessageBoxOkCancel(UnicodeString titleString, UnicodeString bodyString, GameWinMsgBoxFunc okCallback, GameWinMsgBoxFunc cancelCallback)    ///< convenience function for displaying a Message box with Ok and Cancel buttons
 {
-	return TheWindowManager->gogoMessageBox(-1,-1,-1,-1,MSG_BOX_OK, titleString, bodyString, nullptr, nullptr, okCallback, nullptr);
+	return TheWindowManager->gogoMessageBox(-1, -1, -1, -1, MSG_BOX_OK | MSG_BOX_CANCEL, titleString, bodyString, nullptr, nullptr, okCallback, cancelCallback);
 }
 
-
-GameWindow *MessageBoxCancel(UnicodeString titleString,UnicodeString bodyString,GameWinMsgBoxFunc cancelCallback)///< convenience function for displaying a Message box with Cancel button
+GameWindow* MessageBoxOk(UnicodeString titleString, UnicodeString bodyString, GameWinMsgBoxFunc okCallback)    ///< convenience function for displaying a Message box with Ok button
 {
-	return TheWindowManager->gogoMessageBox(-1,-1,-1,-1, MSG_BOX_CANCEL, titleString, bodyString, nullptr, nullptr, nullptr, cancelCallback);
+	return TheWindowManager->gogoMessageBox(-1, -1, -1, -1, MSG_BOX_OK, titleString, bodyString, nullptr, nullptr, okCallback, nullptr);
 }
 
+GameWindow* MessageBoxCancel(UnicodeString titleString, UnicodeString bodyString, GameWinMsgBoxFunc cancelCallback)    ///< convenience function for displaying a Message box with Cancel button
+{
+	return TheWindowManager->gogoMessageBox(-1, -1, -1, -1, MSG_BOX_CANCEL, titleString, bodyString, nullptr, nullptr, nullptr, cancelCallback);
+}
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 
-
-
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
-										 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType MessageBoxSystem(GameWindow* window, UnsignedInt msg,
+                                      WindowMsgData mData1, WindowMsgData mData2)
 {
-
-
-	switch( msg )
+	switch (msg)
 	{
-
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			delete (WindowMessageBoxData *)window->winGetUserData();
-			window->winSetUserData( nullptr );
+			delete (WindowMessageBoxData*)window->winGetUserData();
+			window->winSetUserData(nullptr);
 			break;
-
 		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
 		{
-
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = TRUE;
+			if (mData1 == TRUE)
+			{
+				*(Bool*)mData2 = TRUE;
+			}
 
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
-			GameWindow *control = (GameWindow *)mData1;
+			GameWindow* control = (GameWindow*)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonOk" );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonYes" );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonNo" );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonCancel" );
-			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey("MessageBox.wnd:ButtonOk");
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey("MessageBox.wnd:ButtonYes");
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey("MessageBox.wnd:ButtonNo");
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey("MessageBox.wnd:ButtonCancel");
+			WindowMessageBoxData* MsgBoxCallbacks = (WindowMessageBoxData*)window->winGetUserData();
 
-			if( controlID == buttonOkID )
+			if (controlID == buttonOkID)
 			{
-				//simple enough,if we have a callback, call it, if not, then just destroy the window
+				// simple enough,if we have a callback, call it, if not, then just destroy the window
 				if (MsgBoxCallbacks->okCallback)
+				{
 					MsgBoxCallbacks->okCallback();
+				}
 
 				TheWindowManager->winDestroy(window);
-
 			}
-			else if( controlID == buttonYesID )
+			else if (controlID == buttonYesID)
 			{
 				if (MsgBoxCallbacks->yesCallback)
+				{
 					MsgBoxCallbacks->yesCallback();
+				}
 				TheWindowManager->winDestroy(window);
 			}
-			else if( controlID == buttonNoID )
+			else if (controlID == buttonNoID)
 			{
 				if (MsgBoxCallbacks->noCallback)
+				{
 					MsgBoxCallbacks->noCallback();
+				}
 				TheWindowManager->winDestroy(window);
 			}
-			else if( controlID == buttonCancelID )
+			else if (controlID == buttonCancelID)
 			{
 				if (MsgBoxCallbacks->cancelCallback)
+				{
 					MsgBoxCallbacks->cancelCallback();
+				}
 				TheWindowManager->winDestroy(window);
 			}
 
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;
-
 }
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
-										 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType QuitMessageBoxSystem(GameWindow* window, UnsignedInt msg,
+                                          WindowMsgData mData1, WindowMsgData mData2)
 {
-
-
-	switch( msg )
+	switch (msg)
 	{
-
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			delete (WindowMessageBoxData *)window->winGetUserData();
-			window->winSetUserData( nullptr );
+			delete (WindowMessageBoxData*)window->winGetUserData();
+			window->winSetUserData(nullptr);
 			break;
-
 		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
 		{
-
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = TRUE;
+			if (mData1 == TRUE)
+			{
+				*(Bool*)mData2 = TRUE;
+			}
 
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
-			GameWindow *control = (GameWindow *)mData1;
+			GameWindow* control = (GameWindow*)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonOk" );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonYes" );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonNo" );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonCancel" );
-			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey("QuitMessageBox.wnd:ButtonOk");
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey("QuitMessageBox.wnd:ButtonYes");
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey("QuitMessageBox.wnd:ButtonNo");
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey("QuitMessageBox.wnd:ButtonCancel");
+			WindowMessageBoxData* MsgBoxCallbacks = (WindowMessageBoxData*)window->winGetUserData();
 
-			if( controlID == buttonOkID )
+			if (controlID == buttonOkID)
 			{
-				//simple enough,if we have a callback, call it, if not, then just destroy the window
+				// simple enough,if we have a callback, call it, if not, then just destroy the window
 				if (MsgBoxCallbacks->okCallback)
+				{
 					MsgBoxCallbacks->okCallback();
+				}
 
 				TheWindowManager->winDestroy(window);
-
 			}
-			else if( controlID == buttonYesID )
+			else if (controlID == buttonYesID)
 			{
 				if (MsgBoxCallbacks->yesCallback)
+				{
 					MsgBoxCallbacks->yesCallback();
+				}
 				TheWindowManager->winDestroy(window);
 			}
-			else if( controlID == buttonNoID )
+			else if (controlID == buttonNoID)
 			{
 				if (MsgBoxCallbacks->noCallback)
+				{
 					MsgBoxCallbacks->noCallback();
+				}
 				TheWindowManager->winDestroy(window);
 			}
-			else if( controlID == buttonCancelID )
+			else if (controlID == buttonCancelID)
 			{
 				if (MsgBoxCallbacks->cancelCallback)
+				{
 					MsgBoxCallbacks->cancelCallback();
+				}
 				TheWindowManager->winDestroy(window);
 			}
 
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;
-
 }

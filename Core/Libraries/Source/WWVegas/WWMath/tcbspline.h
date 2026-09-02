@@ -45,31 +45,29 @@
 class TCBSpline3DClass : public HermiteSpline3DClass
 {
 public:
+	virtual int Add_Key(const Vector3& point, float t) override;
+	virtual void Remove_Key(int i) override;
+	virtual void Clear_Keys() override;
 
-	virtual int			Add_Key(const Vector3 & point,float t) override;
-	virtual void		Remove_Key(int i) override;
-	virtual void		Clear_Keys() override;
+	virtual void Set_TCB_Params(int i, float tension, float continuity, float bias);
+	virtual void Get_TCB_Params(int i, float* tension, float* continuity, float* bias);
 
-	virtual void		Set_TCB_Params(int i,float tension,float continuity,float bias);
-	virtual void		Get_TCB_Params(int i,float *tension,float *continuity,float *bias);
-
-	virtual void					Update_Tangents() override;
+	virtual void Update_Tangents() override;
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
 
 protected:
-
 	class TCBClass
 	{
 	public:
-		float				Tension;
-		float				Continuity;
-		float				Bias;
-		bool				operator == (const TCBClass & that) { return ((Tension == that.Tension) && (Continuity == that.Continuity) && (Bias == that.Bias)); }
-		bool				operator != (const TCBClass & that) { return !TCBClass::operator == (that); }
+		float Tension;
+		float Continuity;
+		float Bias;
+		bool operator==(const TCBClass& that) { return ((Tension == that.Tension) && (Continuity == that.Continuity) && (Bias == that.Bias)); }
+		bool operator!=(const TCBClass& that) { return !TCBClass::operator==(that); }
 	};
 
 	DynamicVectorClass<TCBClass> Params;

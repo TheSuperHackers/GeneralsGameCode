@@ -36,8 +36,6 @@
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
 
-
-
 extern HWND ApplicationHWnd;
 
 //-------------------------------------------------------------------------------------------------
@@ -45,49 +43,58 @@ static void RTSFlagsToOSFlags(UnsignedInt buttonFlags, UnsignedInt otherFlags, U
 {
 	outWindowsFlags = 0;
 
-	if (BitIsSet(buttonFlags, OSDBT_OK)) {
+	if (BitIsSet(buttonFlags, OSDBT_OK))
+	{
 		outWindowsFlags |= MB_OK;
 	}
 
-	if (BitIsSet(buttonFlags, OSDBT_CANCEL)) {
+	if (BitIsSet(buttonFlags, OSDBT_CANCEL))
+	{
 		outWindowsFlags |= MB_OKCANCEL;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	if (BitIsSet(otherFlags, OSDOF_SYSTEMMODAL)) {
+	if (BitIsSet(otherFlags, OSDOF_SYSTEMMODAL))
+	{
 		outWindowsFlags |= MB_SYSTEMMODAL;
 	}
 
-	if (BitIsSet(otherFlags, OSDOF_APPLICATIONMODAL)) {
+	if (BitIsSet(otherFlags, OSDOF_APPLICATIONMODAL))
+	{
 		outWindowsFlags |= MB_APPLMODAL;
 	}
 
-	if (BitIsSet(otherFlags, OSDOF_TASKMODAL)) {
+	if (BitIsSet(otherFlags, OSDOF_TASKMODAL))
+	{
 		outWindowsFlags |= MB_TASKMODAL;
 	}
 
-	if (BitIsSet(otherFlags, OSDOF_EXCLAMATIONICON)) {
+	if (BitIsSet(otherFlags, OSDOF_EXCLAMATIONICON))
+	{
 		outWindowsFlags |= MB_ICONEXCLAMATION;
 	}
 
-	if (BitIsSet(otherFlags, OSDOF_INFORMATIONICON)) {
+	if (BitIsSet(otherFlags, OSDOF_INFORMATIONICON))
+	{
 		outWindowsFlags |= MB_ICONINFORMATION;
 	}
 
-	if (BitIsSet(otherFlags, OSDOF_ERRORICON)) {
+	if (BitIsSet(otherFlags, OSDOF_ERRORICON))
+	{
 		outWindowsFlags |= MB_ICONERROR;
 	}
 
-	if (BitIsSet(otherFlags, OSDOF_STOPICON)) {
+	if (BitIsSet(otherFlags, OSDOF_STOPICON))
+	{
 		outWindowsFlags |= MB_ICONSTOP;
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags)
 {
-	if (!TheGameText) {
+	if (!TheGameText)
+	{
 		return OSDBT_ERROR;
 	}
 
@@ -100,7 +107,8 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 	// @todo Make this return more than just ok/cancel - jkmcd
 	// (we need a function to translate back the other way.)
 	const Int returnResult = ::MessageBoxW(nullptr, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
-	if (returnResult == IDOK) {
+	if (returnResult == IDOK)
+	{
 		return OSDBT_OK;
 	}
 

@@ -40,7 +40,6 @@ class GameMtl;
 
 class GameMtlPassDlg;
 
-
 ////////////////////////////////////////////////////////////////////////
 // GameMtlDlg
 //
@@ -49,65 +48,65 @@ class GameMtlPassDlg;
 // Max material's dialog.
 //
 ////////////////////////////////////////////////////////////////////////
-class GameMtlDlg: public ParamDlg
+class GameMtlDlg : public ParamDlg
 {
-
 public:
-
 	////////////////////////////////////////////////////////////////////////
 	// Methods
 	////////////////////////////////////////////////////////////////////////
-	GameMtlDlg(HWND hwMtlEdit, IMtlParams *imp, GameMtl *m);
+	GameMtlDlg(HWND hwMtlEdit, IMtlParams* imp, GameMtl* m);
 	~GameMtlDlg();
 
 	// From ParamDlg:
-	Class_ID				ClassID();
-	void					SetThing(ReferenceTarget *m);
-	ReferenceTarget*	GetThing() { return (ReferenceTarget*)TheMtl; }
-	void					DeleteThis() { delete this;  }
-	void					SetTime(TimeValue t);
-	void					ReloadDialog();
-	void					ActivateDlg(BOOL onOff);
+	Class_ID ClassID();
+	void SetThing(ReferenceTarget* m);
+	ReferenceTarget* GetThing() { return (ReferenceTarget*)TheMtl; }
+	void DeleteThis() { delete this; }
+	void SetTime(TimeValue t);
+	void ReloadDialog();
+	void ActivateDlg(BOOL onOff);
 
-	void					Invalidate();
-	void					Update_Display()	{ IParams->MtlChanged(); }
+	void Invalidate();
+	void Update_Display() { IParams->MtlChanged(); }
 
 protected:
+	void Build_Dialog();
 
-	void					Build_Dialog();
+	BOOL DisplacementMapProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+	BOOL SurfaceTypeProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+	BOOL PassCountProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+	void Set_Pass_Count_Dialog();
 
-	BOOL					DisplacementMapProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-	BOOL					SurfaceTypeProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-	BOOL					PassCountProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-	void					Set_Pass_Count_Dialog();
-
-	enum { MAX_PASSES = 4 };
+	enum
+	{
+		MAX_PASSES = 4
+	};
 
 	////////////////////////////////////////////////////////////////////////
 	// Windows handles
 	////////////////////////////////////////////////////////////////////////
-	HWND					HwndEdit;		// window handle of the materials editor dialog
-	HWND					HwndPassCount;	// Rollup pass count panel
-	HWND					HwndSurfaceType;	// Rollup surface type panel
-	HWND					HwndDisplacementMap;
-	HPALETTE				HpalOld;
+	HWND HwndEdit;    // window handle of the materials editor dialog
+	HWND HwndPassCount;    // Rollup pass count panel
+	HWND HwndSurfaceType;    // Rollup surface type panel
+	HWND HwndDisplacementMap;
+	HPALETTE HpalOld;
 
-	GameMtlPassDlg *	PassDialog[MAX_PASSES];
+	GameMtlPassDlg* PassDialog[MAX_PASSES];
 
 	////////////////////////////////////////////////////////////////////////
 	// Material dialog interface
 	////////////////////////////////////////////////////////////////////////
-	IMtlParams *		IParams;			// interface to the material editor
-	GameMtl *			TheMtl;			// current mtl being edited.
+	IMtlParams* IParams;    // interface to the material editor
+	GameMtl* TheMtl;    // current mtl being edited.
 
 	////////////////////////////////////////////////////////////////////////
 	// Member variables
 	////////////////////////////////////////////////////////////////////////
-	TimeValue			CurTime;
-	int					IsActive;
+	TimeValue CurTime;
+	int IsActive;
 
-	friend BOOL CALLBACK DisplacementMapDlgProc(HWND, UINT, WPARAM,LPARAM);
-	friend BOOL CALLBACK SurfaceTypePanelDlgProc(HWND, UINT, WPARAM,LPARAM);
-	friend BOOL CALLBACK PassCountPanelDlgProc(HWND, UINT, WPARAM,LPARAM);
+	friend BOOL CALLBACK DisplacementMapDlgProc(HWND, UINT, WPARAM, LPARAM);
+	friend BOOL CALLBACK SurfaceTypePanelDlgProc(HWND, UINT, WPARAM, LPARAM);
+	friend BOOL CALLBACK PassCountPanelDlgProc(HWND, UINT, WPARAM, LPARAM);
 	friend class GameMtl;
 };

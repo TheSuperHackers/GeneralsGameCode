@@ -34,9 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
-#pragma once
+	#pragma once
 #endif
 
 #include "SnapPoints.h"
@@ -45,52 +44,58 @@
 #include "nodelist.h"
 #include "w3d_file.h"
 
-
 class PointFilterClass : public INodeFilterClass
 {
 public:
-	PointFilterClass() { }
+	PointFilterClass() {}
 
-	virtual BOOL Accept_Node(INode * node, TimeValue time)
+	virtual BOOL Accept_Node(INode* node, TimeValue time)
 	{
-		if (node == nullptr) return FALSE;
-		Object * obj = node->EvalWorldState(time).obj;
-		if (obj == nullptr) return FALSE;
+		if (node == nullptr)
+		{
+			return FALSE;
+		}
+		Object* obj = node->EvalWorldState(time).obj;
+		if (obj == nullptr)
+		{
+			return FALSE;
+		}
 
-		if
-		(
-			obj->ClassID() == Class_ID(POINTHELP_CLASS_ID,0) &&
-			!node->IsHidden()
-		)
+		if (
+		  obj->ClassID() == Class_ID(POINTHELP_CLASS_ID, 0) &&
+		  !node->IsHidden())
 		{
 			return TRUE;
-		} else {
+		}
+		else
+		{
 			return FALSE;
 		}
 	}
 };
 
-
-void SnapPointsClass::Export_Points(INode * scene_root,TimeValue time,ChunkSaveClass & csave)
+void SnapPointsClass::Export_Points(INode* scene_root, TimeValue time, ChunkSaveClass& csave)
 {
-	if (scene_root == nullptr) return;
+	if (scene_root == nullptr)
+	{
+		return;
+	}
 
 	PointFilterClass pointfilter;
-	INodeListClass pointlist(scene_root,time,&pointfilter);
+	INodeListClass pointlist(scene_root, time, &pointfilter);
 
-	if (pointlist.Num_Nodes() > 0) {
-
+	if (pointlist.Num_Nodes() > 0)
+	{
 		csave.Begin_Chunk(W3D_CHUNK_POINTS);
 
-		for (unsigned int ci=0; ci<pointlist.Num_Nodes(); ci++) {
-
+		for (unsigned int ci = 0; ci < pointlist.Num_Nodes(); ci++)
+		{
 			W3dVectorStruct vect;
 			Point3 pos = pointlist[ci]->GetNodeTM(time).GetTrans();
 			vect.X = pos.x;
 			vect.Y = pos.y;
 			vect.Z = pos.z;
-			csave.Write(&vect,sizeof(vect));
-
+			csave.Write(&vect, sizeof(vect));
 		}
 
 		csave.End_Chunk();

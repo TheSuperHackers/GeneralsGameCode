@@ -40,129 +40,125 @@ class AudioEventRTS;
 //-------------------------------------------------------------------------------------------------
 class DozerPrimaryStateMachine : public StateMachine
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DozerPrimaryStateMachine, "DozerPrimaryStateMachine" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DozerPrimaryStateMachine, "DozerPrimaryStateMachine");
 
 public:
-
-  DozerPrimaryStateMachine( Object *owner );
+	DozerPrimaryStateMachine(Object* owner);
 	// virtual destructor prototypes provided by memory pool object
 
 	//-----------------------------------------------------------------------------------------------
 	// state transition conditions
-	static Bool isBuildMostImportant( State *thisState, void* userData );
-	static Bool isRepairMostImportant( State *thisState, void* userData );
-	static Bool isFortifyMostImportant( State *thisState, void* userData );
+	static Bool isBuildMostImportant(State* thisState, void* userData);
+	static Bool isRepairMostImportant(State* thisState, void* userData);
+	static Bool isFortifyMostImportant(State* thisState, void* userData);
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 /** Dozer behaviors that use action sub state machines */
 //-------------------------------------------------------------------------------------------------
-enum DozerTask CPP_11(: Int) // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerTask CPP_11( : Int
+)    // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_TASK_INVALID = -1,
 
-	DOZER_TASK_BUILD,												///< go build something
-	DOZER_TASK_REPAIR,											///< go repair something
-	DOZER_TASK_FORTIFY,											///< go fortify something
+	DOZER_TASK_BUILD,    ///< go build something
+	DOZER_TASK_REPAIR,    ///< go repair something
+	DOZER_TASK_FORTIFY,    ///< go fortify something
 
-	DOZER_NUM_TASKS,												// keep this last
+	DOZER_NUM_TASKS,    // keep this last
 	DOZER_TASK_FIRST = 0,
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum DozerDockPoint CPP_11(: Int)	 // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerDockPoint CPP_11( : Int
+)    // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
-	DOZER_DOCK_POINT_START	= 0,
-	DOZER_DOCK_POINT_ACTION	= 1,
-	DOZER_DOCK_POINT_END		= 2,
+	DOZER_DOCK_POINT_START = 0,
+	DOZER_DOCK_POINT_ACTION = 1,
+	DOZER_DOCK_POINT_END = 2,
 
 	DOZER_NUM_DOCK_POINTS
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum DozerBuildSubTask CPP_11(: Int)  // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerBuildSubTask CPP_11( : Int
+)    // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
-	DOZER_SELECT_BUILD_DOCK_LOCATION		= 0,
-	DOZER_MOVING_TO_BUILD_DOCK_LOCATION	=	1,
-	DOZER_DO_BUILD_AT_DOCK							= 2
+	DOZER_SELECT_BUILD_DOCK_LOCATION = 0,
+	DOZER_MOVING_TO_BUILD_DOCK_LOCATION = 1,
+	DOZER_DO_BUILD_AT_DOCK = 2
 };
 
 // ------------------------------------------------------------------------------------------------
 /** This is no longer a leaf behavior.  Someone else needs to combine this
-	* with another major AIUpdate.  So provide an interface to satisfy the people
-	* who look this up by name. */
+ * with another major AIUpdate.  So provide an interface to satisfy the people
+ * who look this up by name. */
 // ------------------------------------------------------------------------------------------------
 class DozerAIInterface
 {
-
 	// This is no longer a leaf behavior.  Someone else needs to combine this
 	// with another major AIUpdate.  So provide an interface to satisfy the people
 	// who look this up by name.
 
 public:
-
 	virtual void onDelete() = 0;
 
-	virtual Real getRepairHealthPerSecond() const = 0;	///< get health to repair per second
-	virtual Real getBoredTime() const = 0;							///< how long till we're bored
-	virtual Real getBoredRange() const = 0;							///< when we're bored, we look this far away to do things
+	virtual Real getRepairHealthPerSecond() const = 0;    ///< get health to repair per second
+	virtual Real getBoredTime() const = 0;    ///< how long till we're bored
+	virtual Real getBoredRange() const = 0;    ///< when we're bored, we look this far away to do things
 
 	// methods to override for the dozer behaviors
-	virtual Object *construct( const ThingTemplate *what,
-														 const Coord3D *pos, Real angle,
-														 Player *owningPlayer,
-														 Bool isRebuild ) = 0;
-
+	virtual Object* construct(const ThingTemplate* what,
+	                          const Coord3D* pos, Real angle,
+	                          Player* owningPlayer,
+	                          Bool isRebuild) = 0;
 
 	// get task information
-	virtual DozerTask getMostRecentCommand() = 0;				///< return task that was most recently issued
-	virtual Bool isTaskPending( DozerTask task ) = 0;					///< is there a desire to do the requested task
-	virtual ObjectID getTaskTarget( DozerTask task ) = 0;			///< get target of task
-	virtual Bool isAnyTaskPending() = 0;								///< is there any dozer task pending
+	virtual DozerTask getMostRecentCommand() = 0;    ///< return task that was most recently issued
+	virtual Bool isTaskPending(DozerTask task) = 0;    ///< is there a desire to do the requested task
+	virtual ObjectID getTaskTarget(DozerTask task) = 0;    ///< get target of task
+	virtual Bool isAnyTaskPending() = 0;    ///< is there any dozer task pending
 
-	virtual DozerTask getCurrentTask() const = 0;							///< return the current task we're doing
+	virtual DozerTask getCurrentTask() const = 0;    ///< return the current task we're doing
 	// the following should only be used from inside the Dozer state machine!
 	// !!! *DO NOT CALL THIS AND SET THE TASK DIRECTLY TO AFFECT BEHAVIOR* !!! ///
-	virtual void setCurrentTask( DozerTask task ) = 0;				///< set the current task of the dozer
+	virtual void setCurrentTask(DozerTask task) = 0;    ///< set the current task of the dozer
 
-	virtual Bool getIsRebuild() = 0;										///< get whether or not this is a rebuild.
+	virtual Bool getIsRebuild() = 0;    ///< get whether or not this is a rebuild.
 
 	// task actions
-	virtual void newTask( DozerTask task, Object *target ) = 0;	///< set a desire to do the requrested task
-	virtual void cancelTask( DozerTask task ) = 0;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
-	virtual void cancelAllTasks() = 0;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask() = 0;									///< resume the previous task if there was one
+	virtual void newTask(DozerTask task, Object* target) = 0;    ///< set a desire to do the requrested task
+	virtual void cancelTask(DozerTask task) = 0;    ///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelAllTasks() = 0;    ///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
+	virtual void resumePreviousTask() = 0;    ///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
-	virtual void internalTaskComplete( DozerTask task ) = 0;					///< set a dozer task as successfully completed
-	virtual void internalCancelTask( DozerTask task ) = 0;						///< cancel this task from the dozer
-	virtual void internalTaskCompleteOrCancelled( DozerTask task ) = 0;	///< this is called when tasks are cancelled or completed
+	virtual void internalTaskComplete(DozerTask task) = 0;    ///< set a dozer task as successfully completed
+	virtual void internalCancelTask(DozerTask task) = 0;    ///< cancel this task from the dozer
+	virtual void internalTaskCompleteOrCancelled(DozerTask task) = 0;    ///< this is called when tasks are cancelled or completed
 
 	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
-	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point ) = 0;
+	virtual const Coord3D* getDockPoint(DozerTask task, DozerDockPoint point) = 0;
 
-	virtual void setBuildSubTask( DozerBuildSubTask subTask ) = 0;
+	virtual void setBuildSubTask(DozerBuildSubTask subTask) = 0;
 	virtual DozerBuildSubTask getBuildSubTask() = 0;
 
 	// repairing
-	virtual Bool canAcceptNewRepair( Object *obj ) = 0;
-	virtual void createBridgeScaffolding( Object *bridgeTower ) = 0;
-	virtual void removeBridgeScaffolding( Object *bridgeTower ) = 0;
+	virtual Bool canAcceptNewRepair(Object* obj) = 0;
+	virtual void createBridgeScaffolding(Object* bridgeTower) = 0;
+	virtual void removeBridgeScaffolding(Object* bridgeTower) = 0;
 
-	virtual void startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID ) = 0;
+	virtual void startBuildingSound(const AudioEventRTS* sound, ObjectID constructionSiteID) = 0;
 	virtual void finishBuildingSound() = 0;
-
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -170,45 +166,40 @@ public:
 // ------------------------------------------------------------------------------------------------
 class DozerAIUpdateModuleData : public AIUpdateModuleData
 {
-
 public:
-
 	DozerAIUpdateModuleData();
 
 	// !!!
 	// !!! NOTE: If you edit module data you must do it in both the Dozer *AND* the Worker !!!
 	// !!!
 
-	Real m_repairHealthPercentPerSecond;	///< how many health points per second the dozer repairs at
-	Real m_boredTime;											///< after this many frames, a dozer will try to find something to do on its own
-	Real m_boredRange;										///< range the dozers try to auto repair when they're bored
+	Real m_repairHealthPercentPerSecond;    ///< how many health points per second the dozer repairs at
+	Real m_boredTime;    ///< after this many frames, a dozer will try to find something to do on its own
+	Real m_boredRange;    ///< range the dozers try to auto repair when they're bored
 
-	static void buildFieldParse( MultiIniFieldParse &p );
-
+	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
 //-------------------------------------------------------------------------------------------------
 /** The Dozer AI Update interface.  Dozers are workers that are capable of building all the
-	* structures available to a player, as well as repairing building, and fortifying
-	* civilian structures */
+ * structures available to a player, as well as repairing building, and fortifying
+ * civilian structures */
 //-------------------------------------------------------------------------------------------------
 class DozerAIUpdate : public AIUpdateInterface, public DozerAIInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DozerAIUpdate, "DozerAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DozerAIUpdate, DozerAIUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DozerAIUpdate, "DozerAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(DozerAIUpdate, DozerAIUpdateModuleData)
 
 public:
 	static Bool findGoodBuildOrRepairPosition(const Object* me, const Object* target, Coord3D& positionOut);
 	static Object* findGoodBuildOrRepairPositionAndTarget(Object* me, Object* target, Coord3D& positionOut);
 
 public:
-
-	DozerAIUpdate( Thing *thing, const ModuleData* moduleData );
+	DozerAIUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual DozerAIInterface* getDozerAIInterface() override {return this;}
-	virtual const DozerAIInterface* getDozerAIInterface() const override {return this;}
+	virtual DozerAIInterface* getDozerAIInterface() override { return this; }
+	virtual const DozerAIInterface* getDozerAIInterface() const override { return this; }
 
 	virtual void onDelete() override;
 
@@ -217,53 +208,52 @@ public:
 	// data and code, ick!
 	// NOTE: If you edit module data you must do it in both the Dozer *AND* the Worker
 	//
-	virtual Real getRepairHealthPerSecond() const override;	///< get health to repair per second
-	virtual Real getBoredTime() const override;							///< how long till we're bored
-	virtual Real getBoredRange() const override;							///< when we're bored, we look this far away to do things
+	virtual Real getRepairHealthPerSecond() const override;    ///< get health to repair per second
+	virtual Real getBoredTime() const override;    ///< how long till we're bored
+	virtual Real getBoredRange() const override;    ///< when we're bored, we look this far away to do things
 
 	// methods to override for the dozer behaviors
-	virtual Object* construct( const ThingTemplate *what,
-														 const Coord3D *pos, Real angle,
-														 Player *owningPlayer,
-														 Bool isRebuild ) override;								///< construct an object
-
+	virtual Object* construct(const ThingTemplate* what,
+	                          const Coord3D* pos, Real angle,
+	                          Player* owningPlayer,
+	                          Bool isRebuild) override;    ///< construct an object
 
 	// get task information
-	virtual DozerTask getMostRecentCommand() override;				///< return task that was most recently issued
-	virtual Bool isTaskPending( DozerTask task ) override;					///< is there a desire to do the requested task
-	virtual ObjectID getTaskTarget( DozerTask task ) override;			///< get target of task
-	virtual Bool isAnyTaskPending() override;								///< is there any dozer task pending
-	virtual DozerTask getCurrentTask() const override { return m_currentTask; }	///< return the current task we're doing
-	virtual void setCurrentTask( DozerTask task ) override { m_currentTask = task; }	///< set the current task of the dozer
+	virtual DozerTask getMostRecentCommand() override;    ///< return task that was most recently issued
+	virtual Bool isTaskPending(DozerTask task) override;    ///< is there a desire to do the requested task
+	virtual ObjectID getTaskTarget(DozerTask task) override;    ///< get target of task
+	virtual Bool isAnyTaskPending() override;    ///< is there any dozer task pending
+	virtual DozerTask getCurrentTask() const override { return m_currentTask; }    ///< return the current task we're doing
+	virtual void setCurrentTask(DozerTask task) override { m_currentTask = task; }    ///< set the current task of the dozer
 
-	virtual Bool getIsRebuild() override { return m_isRebuild; }	///< get whether or not this building is a rebuild.
+	virtual Bool getIsRebuild() override { return m_isRebuild; }    ///< get whether or not this building is a rebuild.
 
 	// task actions
-	virtual void newTask( DozerTask task, Object *target ) override;	///< set a desire to do the requrested task
-	virtual void cancelTask( DozerTask task ) override;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
-	virtual void cancelAllTasks() override;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask() override;									///< resume the previous task if there was one
+	virtual void newTask(DozerTask task, Object* target) override;    ///< set a desire to do the requrested task
+	virtual void cancelTask(DozerTask task) override;    ///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelAllTasks() override;    ///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
+	virtual void resumePreviousTask() override;    ///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
-	virtual void internalTaskComplete( DozerTask task ) override;					///< set a dozer task as successfully completed
-	virtual void internalCancelTask( DozerTask task ) override;						///< cancel this task from the dozer
-	virtual void internalTaskCompleteOrCancelled( DozerTask task ) override;	///< this is called when tasks are cancelled or completed
+	virtual void internalTaskComplete(DozerTask task) override;    ///< set a dozer task as successfully completed
+	virtual void internalCancelTask(DozerTask task) override;    ///< cancel this task from the dozer
+	virtual void internalTaskCompleteOrCancelled(DozerTask task) override;    ///< this is called when tasks are cancelled or completed
 
 	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
-	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point ) override;
+	virtual const Coord3D* getDockPoint(DozerTask task, DozerDockPoint point) override;
 
-	virtual void setBuildSubTask( DozerBuildSubTask subTask ) override { m_buildSubTask = subTask; };
+	virtual void setBuildSubTask(DozerBuildSubTask subTask) override { m_buildSubTask = subTask; };
 	virtual DozerBuildSubTask getBuildSubTask() override { return m_buildSubTask; }
 
-	virtual UpdateSleepTime update() override;											///< the update entry point
+	virtual UpdateSleepTime update() override;    ///< the update entry point
 
 	// repairing
-	virtual Bool canAcceptNewRepair( Object *obj ) override;
-	virtual void createBridgeScaffolding( Object *bridgeTower ) override;
-	virtual void removeBridgeScaffolding( Object *bridgeTower ) override;
+	virtual Bool canAcceptNewRepair(Object* obj) override;
+	virtual void createBridgeScaffolding(Object* bridgeTower) override;
+	virtual void removeBridgeScaffolding(Object* bridgeTower) override;
 
-	virtual void startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID ) override;
+	virtual void startBuildingSound(const AudioEventRTS* sound, ObjectID constructionSiteID) override;
 	virtual void finishBuildingSound() override;
 
 	//
@@ -272,11 +262,9 @@ public:
 	//
 	virtual void aiDoCommand(const AICommandParms* parms) override;
 
-
 protected:
-
-	virtual void privateRepair( Object *obj, CommandSourceType cmdSource ) override;	///< repair the target
-	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource ) override;  ///< resume construction on obj
+	virtual void privateRepair(Object* obj, CommandSourceType cmdSource) override;    ///< repair the target
+	virtual void privateResumeConstruction(Object* obj, CommandSourceType cmdSource) override;    ///< resume construction on obj
 
 	struct DozerTaskInfo
 	{
@@ -286,16 +274,16 @@ protected:
 			m_taskOrderFrame = 0;
 		}
 
-		ObjectID m_targetObjectID;				///< target object ID of task
-		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
-	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
+		ObjectID m_targetObjectID;    ///< target object ID of task
+		UnsignedInt m_taskOrderFrame;    ///< logic frame we decided we wanted to do this task
+	} m_task[DOZER_NUM_TASKS];    ///< tasks we want to do indexed by DozerTask
 
-	DozerPrimaryStateMachine *m_dozerMachine;  ///< the custom state machine for Dozer behavior
-	DozerTask m_currentTask;						///< current task the dozer is attending to (if any)
-	DozerTask m_previousTask;						///< previous task the dozer was attending to (if any)
-	DozerTaskInfo m_previousTaskInfo;		///< info on the previous task the dozer was attending to (if any)
-	AudioEventRTS	m_buildingSound;			///< sound is pulled from the object we are building!
-	Bool m_isRebuild;										///< is this a rebuild of a previous building?
+	DozerPrimaryStateMachine* m_dozerMachine;    ///< the custom state machine for Dozer behavior
+	DozerTask m_currentTask;    ///< current task the dozer is attending to (if any)
+	DozerTask m_previousTask;    ///< previous task the dozer was attending to (if any)
+	DozerTaskInfo m_previousTaskInfo;    ///< info on the previous task the dozer was attending to (if any)
+	AudioEventRTS m_buildingSound;    ///< sound is pulled from the object we are building!
+	Bool m_isRebuild;    ///< is this a rebuild of a previous building?
 
 	//
 	// the following info array can be used if we want to have more complicated approaches
@@ -303,14 +291,12 @@ protected:
 	//
 	struct DozerDockPointInfo
 	{
-		Bool valid;						///< this point has been set and is valid
-		Coord3D location;			///< WORLD location
-	} m_dockPoint[ DOZER_NUM_TASKS ][ DOZER_NUM_DOCK_POINTS ];
+		Bool valid;    ///< this point has been set and is valid
+		Coord3D location;    ///< WORLD location
+	} m_dockPoint[DOZER_NUM_TASKS][DOZER_NUM_DOCK_POINTS];
 
-	DozerBuildSubTask m_buildSubTask;		///< for building and actually docking for the build
+	DozerBuildSubTask m_buildSubTask;    ///< for building and actually docking for the build
 
 private:
-
-	void createMachines();		///< create our behavior machines we need
-
+	void createMachines();    ///< create our behavior machines we need
 };

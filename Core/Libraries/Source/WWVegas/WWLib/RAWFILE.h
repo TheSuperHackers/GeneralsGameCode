@@ -40,18 +40,17 @@
 
 #pragma once
 
-//#include	<errno.h>
+// #include	<errno.h>
 
 // #include	"win.h"
 
-#define	NULL_HANDLE	 	nullptr
-#define	HANDLE_TYPE		FILE*
+#define NULL_HANDLE nullptr
+#define HANDLE_TYPE FILE*
 #include "WWFILE.h"
 #include "wwstring.h"
 
-
 #ifndef WWERROR
-#define WWERROR	-1
+	#define WWERROR -1
 #endif
 
 /*
@@ -67,83 +66,80 @@
 */
 class RawFileClass : public FileClass
 {
-		typedef FileClass BASECLASS;
+	typedef FileClass BASECLASS;
 
-	public:
+public:
+	/*
+	**	This is a record of the access rights used to open the file. These rights are
+	**	used if the file object is duplicated.
+	*/
+	int Rights;
 
-		/*
-		**	This is a record of the access rights used to open the file. These rights are
-		**	used if the file object is duplicated.
-		*/
-		int Rights;
+	RawFileClass(char const* filename);
+	RawFileClass();
+	RawFileClass(RawFileClass const& f);
+	RawFileClass& operator=(RawFileClass const& f);
+	virtual ~RawFileClass() override;
 
-		RawFileClass(char const *filename);
-		RawFileClass();
-		RawFileClass (RawFileClass const & f);
-		RawFileClass & operator = (RawFileClass const & f);
-		virtual ~RawFileClass() override;
+	virtual char const* File_Name() const override;
+	virtual char const* Set_Name(char const* filename) override;
+	virtual int Create() override;
+	virtual int Delete() override;
+	virtual bool Is_Available(int forced = false) override;
+	virtual bool Is_Open() const override;
+	virtual int Open(char const* filename, int rights = READ) override;
+	virtual int Open(int rights = READ) override;
+	virtual int Read(void* buffer, int size) override;
+	virtual int Seek(int pos, int dir = SEEK_CUR) override;
+	virtual int Size() override;
+	virtual int Write(void const* buffer, int size) override;
+	virtual void Close() override;
+	virtual unsigned long Get_Date_Time() override;
+	virtual bool Set_Date_Time(unsigned long datetime) override;
+	virtual void Error(int error, int canretry = false, char const* filename = nullptr);
+	virtual void Bias(int start, int length = -1);
+	virtual void* Get_File_Handle() override { return Handle; }
 
-		virtual char const * File_Name() const override;
-		virtual char const * Set_Name(char const *filename) override;
-		virtual int Create() override;
-		virtual int Delete() override;
-		virtual bool Is_Available(int forced=false) override;
-		virtual bool Is_Open() const override;
-		virtual int Open(char const *filename, int rights=READ) override;
-		virtual int Open(int rights=READ) override;
-		virtual int Read(void *buffer, int size) override;
-		virtual int Seek(int pos, int dir=SEEK_CUR) override;
-		virtual int Size() override;
-		virtual int Write(void const *buffer, int size) override;
-		virtual void Close() override;
-		virtual unsigned long Get_Date_Time() override;
-		virtual bool Set_Date_Time(unsigned long datetime) override;
-		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
-		virtual void Bias(int start, int length=-1);
-		virtual void * Get_File_Handle() override { return Handle; }
+	virtual void Attach(void* handle, int rights = READ);
+	virtual void Detach();
 
-		virtual void	Attach (void *handle, int rights=READ);
-		virtual void	Detach ();
+	/*
+	**	These bias values enable a sub-portion of a file to appear as if it
+	**	were the whole file. This comes in very handy for multi-part files such as
+	**	mixfiles.
+	*/
+	int BiasStart;
+	int BiasLength;
 
-		/*
-		**	These bias values enable a sub-portion of a file to appear as if it
-		**	were the whole file. This comes in very handy for multi-part files such as
-		**	mixfiles.
-		*/
-		int BiasStart;
-		int BiasLength;
+protected:
+	/*
+	**	This function returns the largest size a low level DOS read or write may
+	**	perform. Larger file transfers are performed in chunks of this size or less.
+	*/
+	int Transfer_Block_Size();
 
-	protected:
+	int Raw_Seek(int pos, int dir = SEEK_CUR);
+	void Reset();
 
-		/*
-		**	This function returns the largest size a low level DOS read or write may
-		**	perform. Larger file transfers are performed in chunks of this size or less.
-		*/
-		int Transfer_Block_Size();
+private:
+	/*
+	**	This is the low level DOS handle. A -1 indicates an empty condition.
+	*/
+	FILE* Handle;
 
-		int Raw_Seek(int pos, int dir=SEEK_CUR);
-		void Reset();
+	StringClass Filename;
 
-	private:
-
-		/*
-		**	This is the low level DOS handle. A -1 indicates an empty condition.
-		*/
-		FILE*  Handle;
-
-		StringClass Filename;
-
-		//
-		// file date and time are in the following formats:
-		//
-		//      date   bits 0-4   day (0-31)
-		//             bits 5-8   month (1-12)
-		//             bits 9-15  year (0-119 representing 1980-2099)
-		//
-		//      time   bits 0-4   second/2 (0-29)
-		//             bits 5-10  minutes (0-59)
-		//             bits 11-15 hours (0-23)
-		//
-		unsigned short Date;
-		unsigned short Time;
+	//
+	// file date and time are in the following formats:
+	//
+	//      date   bits 0-4   day (0-31)
+	//             bits 5-8   month (1-12)
+	//             bits 9-15  year (0-119 representing 1980-2099)
+	//
+	//      time   bits 0-4   second/2 (0-29)
+	//             bits 5-10  minutes (0-59)
+	//             bits 11-15 hours (0-23)
+	//
+	unsigned short Date;
+	unsigned short Time;
 };

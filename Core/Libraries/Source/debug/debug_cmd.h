@@ -47,52 +47,52 @@
 */
 class DebugCmdInterface
 {
-  // no copy/assign op
-  DebugCmdInterface(const DebugCmdInterface&);
-  DebugCmdInterface& operator=(const DebugCmdInterface&);
+	// no copy/assign op
+	DebugCmdInterface(const DebugCmdInterface&);
+	DebugCmdInterface& operator=(const DebugCmdInterface&);
 
 protected:
-  // nobody can call this destructor (except child classes)
-  virtual ~DebugCmdInterface() {}
+	// nobody can call this destructor (except child classes)
+	virtual ~DebugCmdInterface() {}
 
 public:
-  // interface only so no functionality here
-  explicit DebugCmdInterface() {}
+	// interface only so no functionality here
+	explicit DebugCmdInterface() {}
 
-  /// possible command modes
-  enum CommandMode
-  {
-    /// normal command mode
-    Normal,
+	/// possible command modes
+	enum CommandMode
+	{
+		/// normal command mode
+		Normal,
 
-    /// structured command mode
-    Structured,
+		/// structured command mode
+		Structured,
 
-    MAX
-  };
+		MAX
+	};
 
-  /**
-    \brief Execute the given command.
+	/**
+	  \brief Execute the given command.
 
-    This function is called whenever a command has been issued for
-    the command group the interface implements.
+	  This function is called whenever a command has been issued for
+	  the command group the interface implements.
 
-    \param dbg debug instance
-    \param cmd command issued
-    \param cmdmode command mode
-    \param argn number of additional arguments passed in
-    \param argv argument list
-    \return true if command was known, false if not
-  */
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv)=0;
+	  \param dbg debug instance
+	  \param cmd command issued
+	  \param cmdmode command mode
+	  \param argn number of additional arguments passed in
+	  \param argv argument list
+	  \return true if command was known, false if not
+	*/
+	virtual bool Execute(class Debug& dbg, const char* cmd, CommandMode cmdmode,
+	                     unsigned argn, const char* const* argv) = 0;
 
-  /**
-    \brief Destroys the current command interface.
+	/**
+	  \brief Destroys the current command interface.
 
-    Use this function instead of just delete'ing the instance.
-  */
-  virtual void Delete()=0;
+	  Use this function instead of just delete'ing the instance.
+	*/
+	virtual void Delete() = 0;
 };
 
 /**
@@ -114,12 +114,12 @@ public:
                  (without quotes)
     \param type type name of class we're implementing
   */
-  #define DEBUG_CREATE_COMMAND_GROUP(groupname,type)
+	#define DEBUG_CREATE_COMMAND_GROUP(groupname, type)
 
 #else
 
-  #define DEBUG_CREATE_COMMAND_GROUP(groupname,type) \
-    static bool __RegisterDebugCmdGroup_##type=Debug::AddCommands(#groupname,new type);
+	#define DEBUG_CREATE_COMMAND_GROUP(groupname, type) \
+		static bool __RegisterDebugCmdGroup_##type = Debug::AddCommands(#groupname, new type);
 
 #endif
 

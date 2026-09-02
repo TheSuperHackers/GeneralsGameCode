@@ -32,8 +32,8 @@
 #include "WW3D2/assetmgr.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -42,12 +42,12 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(CAnimMixingPage, CPropertyPage)
 
-CAnimMixingPage::CAnimMixingPage(CAdvancedAnimSheet *sheet)
-:	CPropertyPage(CAnimMixingPage::IDD),
-	m_Sheet(sheet)
+CAnimMixingPage::CAnimMixingPage(CAdvancedAnimSheet* sheet)
+  : CPropertyPage(CAnimMixingPage::IDD)
+  , m_Sheet(sheet)
 {
 	//{{AFX_DATA_INIT(CAnimMixingPage)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -63,10 +63,9 @@ void CAnimMixingPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CAnimMixingPage, CPropertyPage)
-	//{{AFX_MSG_MAP(CAnimMixingPage)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAnimMixingPage)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,30 +78,35 @@ BOOL CAnimMixingPage::OnInitDialog()
 	ASSERT(m_Sheet != nullptr);
 	FillListCtrl();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE;    // return TRUE unless you set the focus to a control
+	                // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-void CAnimMixingPage::FillListCtrl ()
+void CAnimMixingPage::FillListCtrl()
 {
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
-	RenderObjClass *robj = ::GetCurrentDocument()->GetDisplayedObject();
+	RenderObjClass* robj = ::GetCurrentDocument()->GetDisplayedObject();
 	if (robj == nullptr)
+	{
 		return;
-	const HTreeClass *htree = robj->Get_HTree();
+	}
+	const HTreeClass* htree = robj->Get_HTree();
 	if (htree == nullptr)
+	{
 		return;
+	}
 
 	// Get a sorted array of animations that affect the currently active object.
-	HAnimClass **anim = m_Sheet->GetAnims();
+	HAnimClass** anim = m_Sheet->GetAnims();
 	int anim_count = m_Sheet->GetAnimCount();
 
 	// Add an item to the list view for each animation.
 	int i;
 	for (i = 0; i < anim_count; i++)
+	{
 		m_AnimList.InsertItem(i, anim[i]->Get_Name());
+	}
 }
 
 void CAnimMixingPage::OnOK()
@@ -111,14 +115,14 @@ void CAnimMixingPage::OnOK()
 	** Create a new HAnimCombo class containing the animations selected by the user.
 	*/
 	int num_selected = m_AnimList.GetSelectedCount();
-	RenderObjClass *current_obj = ::GetCurrentDocument()->GetDisplayedObject();
-	const char *obj_name = current_obj->Get_Name();
-	RenderObjClass *robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(obj_name);
+	RenderObjClass* current_obj = ::GetCurrentDocument()->GetDisplayedObject();
+	const char* obj_name = current_obj->Get_Name();
+	RenderObjClass* robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(obj_name);
 	if (num_selected > 0 && robj != nullptr)
 	{
-		HAnimClass **anim = m_Sheet->GetAnims();
+		HAnimClass** anim = m_Sheet->GetAnims();
 
-		HAnimComboClass *combo = new HAnimComboClass(num_selected);
+		HAnimComboClass* combo = new HAnimComboClass(num_selected);
 		ASSERT(combo != nullptr);
 
 		POSITION pos = m_AnimList.GetFirstSelectedItemPosition();
@@ -150,7 +154,7 @@ BOOL CAnimMixingPage::OnKillActive()
 	m_Sheet->m_SelectedAnims.Clear();
 	m_Sheet->m_SelectedAnims.Resize(m_AnimList.GetSelectedCount());
 
-	int selected_idx, i=0;
+	int selected_idx, i = 0;
 	POSITION pos = m_AnimList.GetFirstSelectedItemPosition();
 	while (pos)
 	{
@@ -158,8 +162,9 @@ BOOL CAnimMixingPage::OnKillActive()
 		if (!m_Sheet->m_SelectedAnims.Add(selected_idx))
 		{
 			char buf[128];
-			sprintf(buf, "Failed to insert item %d! Talk to Andre if "\
-				"you see this message.", i);
+			sprintf(buf, "Failed to insert item %d! Talk to Andre if "
+			             "you see this message.",
+			        i);
 			MessageBox(buf);
 		}
 		i++;

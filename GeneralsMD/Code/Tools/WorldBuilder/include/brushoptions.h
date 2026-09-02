@@ -26,38 +26,42 @@
 /////////////////////////////////////////////////////////////////////////////
 /// BrushOptions modeless (floating) dialog - allows entry and display of brush width and feather.
 
-class BrushOptions : public COptionsPanel	, public PopupSliderOwner
+class BrushOptions : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	enum {MIN_BRUSH_SIZE=1,
-				MAX_BRUSH_SIZE=51,
-				FREQ_BRUSH_TICKS=10,
-				MIN_FEATHER=0,
-				FREQ_FEATHER_TICKS=4,
-				MAX_FEATHER=20};
+	enum
+	{
+		MIN_BRUSH_SIZE = 1,
+		MAX_BRUSH_SIZE = 51,
+		FREQ_BRUSH_TICKS = 10,
+		MIN_FEATHER = 0,
+		FREQ_FEATHER_TICKS = 4,
+		MAX_FEATHER = 20
+	};
 
-	BrushOptions(CWnd* pParent = nullptr);   // standard constructor
+	BrushOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(BrushOptions)
-	enum { IDD = IDD_BRUSH_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_BRUSH_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(BrushOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(BrushOptions)
 	virtual BOOL OnInitDialog() override;
@@ -68,12 +72,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	static BrushOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	static Int m_currentWidth;					///< current brush width in the ui.
-	static Int m_currentFeather;				///< current feather width in the ui.
+	static BrushOptions* m_staticThis;    ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+	static Int m_currentWidth;    ///< current brush width in the ui.
+	static Int m_currentFeather;    ///< current feather width in the ui.
 	static Int m_currentHeight;
 
-	Bool		m_updating; ///<true if the ui is updating itself.
+	Bool m_updating;    ///< true if the ui is updating itself.
 	WBPopupSliderButton m_brushWidthPopup;
 	WBPopupSliderButton m_brushFeatherPopup;
 	WBPopupSliderButton m_brushHeightPopup;
@@ -84,11 +88,9 @@ public:
 	static void setHeight(Int height);
 
 public:
-
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
-
 };
 
 //{{AFX_INSERT_LOCATION}}

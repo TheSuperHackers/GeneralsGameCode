@@ -29,27 +29,22 @@
 #include "WW3D2/htree.h"
 #include "Utils.h"
 
-
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-
 // QSort comparison function for HAnimClass pointers.
 // Will compare their names.
-static int anim_name_compare (const void *arg1, const void *arg2)
+static int anim_name_compare(const void* arg1, const void* arg2)
 {
 	ASSERT(arg1 != nullptr);
 	ASSERT(arg2 != nullptr);
-	HAnimClass *a1 = *(HAnimClass**)arg1;
-	HAnimClass *a2 = *(HAnimClass**)arg2;
-	return _stricmp( a1->Get_Name(), a2->Get_Name() );
+	HAnimClass* a1 = *(HAnimClass**)arg1;
+	HAnimClass* a2 = *(HAnimClass**)arg2;
+	return _stricmp(a1->Get_Name(), a2->Get_Name());
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CAdvancedAnimSheet
@@ -57,11 +52,11 @@ static int anim_name_compare (const void *arg1, const void *arg2)
 IMPLEMENT_DYNAMIC(CAdvancedAnimSheet, CPropertySheet)
 
 CAdvancedAnimSheet::CAdvancedAnimSheet(CWnd* pParentWnd, UINT iSelectPage)
-:	CPropertySheet("Advanced Animation", pParentWnd, iSelectPage),
-	m_MixingPage(this),
-	m_ReportPage(this),
-	AnimsValid(false),
-	AnimCount(0)
+  : CPropertySheet("Advanced Animation", pParentWnd, iSelectPage)
+  , m_MixingPage(this)
+  , m_ReportPage(this)
+  , AnimsValid(false)
+  , AnimCount(0)
 {
 	// Blank out the array of animation pointers.
 	ZeroMemory(Anims, sizeof(Anims));
@@ -84,35 +79,40 @@ CAdvancedAnimSheet::~CAdvancedAnimSheet()
 	}
 }
 
-
 BEGIN_MESSAGE_MAP(CAdvancedAnimSheet, CPropertySheet)
-	//{{AFX_MSG_MAP(CAdvancedAnimSheet)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAdvancedAnimSheet)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CAdvancedAnimSheet message handlers
 
-int CAdvancedAnimSheet::GetAnimCount ()
+int CAdvancedAnimSheet::GetAnimCount()
 {
 	if (AnimsValid)
+	{
 		return AnimCount;
+	}
 
 	LoadAnims();
 
 	if (AnimsValid)
+	{
 		return AnimCount;
+	}
 	else
+	{
 		return 0;
+	}
 }
 
-
-HAnimClass ** CAdvancedAnimSheet::GetAnims ()
+HAnimClass** CAdvancedAnimSheet::GetAnims()
 {
 	if (AnimsValid)
+	{
 		return Anims;
+	}
 
 	LoadAnims();
 
@@ -121,18 +121,21 @@ HAnimClass ** CAdvancedAnimSheet::GetAnims ()
 	return Anims;
 }
 
-
-void CAdvancedAnimSheet::LoadAnims ()
+void CAdvancedAnimSheet::LoadAnims()
 {
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
-	RenderObjClass *robj = ::GetCurrentDocument()->GetDisplayedObject();
+	RenderObjClass* robj = ::GetCurrentDocument()->GetDisplayedObject();
 	if (robj == nullptr)
+	{
 		return;
-	const HTreeClass *htree = robj->Get_HTree();
+	}
+	const HTreeClass* htree = robj->Get_HTree();
 	if (htree == nullptr)
+	{
 		return;
-	const char *htree_name = htree->Get_Name();
+	}
+	const char* htree_name = htree->Get_Name();
 
 	/*
 	** Figure out which animations apply to the current object, and
@@ -141,7 +144,7 @@ void CAdvancedAnimSheet::LoadAnims ()
 
 	// Get an iterator from the asset manager that we can
 	// use to enumerate the currently loaded assets
-	AssetIterator *pAnimEnum = WW3DAssetManager::Get_Instance()->Create_HAnim_Iterator();
+	AssetIterator* pAnimEnum = WW3DAssetManager::Get_Instance()->Create_HAnim_Iterator();
 	ASSERT(pAnimEnum != nullptr);
 	if (pAnimEnum)
 	{
@@ -151,7 +154,7 @@ void CAdvancedAnimSheet::LoadAnims ()
 			LPCTSTR pszAnimName = pAnimEnum->Current_Item_Name();
 
 			// Get an instance of the animation object
-			HAnimClass *pHierarchyAnim = WW3DAssetManager::Get_Instance()->Get_HAnim(pszAnimName);
+			HAnimClass* pHierarchyAnim = WW3DAssetManager::Get_Instance()->Get_HAnim(pszAnimName);
 
 			ASSERT(pHierarchyAnim != nullptr);
 			if (pHierarchyAnim)
@@ -169,7 +172,8 @@ void CAdvancedAnimSheet::LoadAnims ()
 					{
 						char msg[256];
 						sprintf(msg, "Error: Only %d animations are supported in this report. "
-							" There are more than that loaded...", MAX_REPORT_ANIMS);
+						             " There are more than that loaded...",
+						        MAX_REPORT_ANIMS);
 						MessageBox(msg, "Too Many Animations");
 						break;
 					}
@@ -190,8 +194,5 @@ void CAdvancedAnimSheet::LoadAnims ()
 	*/
 	qsort(Anims, AnimCount, sizeof(HAnimClass*), anim_name_compare);
 
-
 	AnimsValid = true;
 }
-
-

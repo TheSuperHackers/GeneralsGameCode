@@ -36,31 +36,30 @@
 #include "Common/INI.h"
 #include "WWMath/matrix3d.h"
 
-enum ParticleSystemID CPP_11(: Int);
+enum ParticleSystemID CPP_11( : Int);
 class FXList;
 
 //-------------------------------------------------------------------------------------------------
 class NeutronMissileUpdateModuleData : public UpdateModuleData
 {
 public:
-	Real					m_initialDist;
-	Real					m_maxTurnRate;
-	Real					m_forwardDamping;
-	Real					m_relativeSpeed;
-	Real					m_targetFromDirectlyAbove;	///< aim first for dest+offset, then dest
-	Real					m_specialAccelFactor;
-	UnsignedInt		m_specialSpeedTime;
-	Real					m_specialSpeedHeight;
-	Real					m_specialJitterDistance;
-	const FXList*	m_launchFX;			///< FXList to do when missile 'launches'
-	const FXList*	m_ignitionFX;			///< FXList to do when missile 'ignites'
-	RadiusDecalTemplate	m_deliveryDecalTemplate;
-	Real					m_deliveryDecalRadius;
+	Real m_initialDist;
+	Real m_maxTurnRate;
+	Real m_forwardDamping;
+	Real m_relativeSpeed;
+	Real m_targetFromDirectlyAbove;    ///< aim first for dest+offset, then dest
+	Real m_specialAccelFactor;
+	UnsignedInt m_specialSpeedTime;
+	Real m_specialSpeedHeight;
+	Real m_specialJitterDistance;
+	const FXList* m_launchFX;    ///< FXList to do when missile 'launches'
+	const FXList* m_ignitionFX;    ///< FXList to do when missile 'ignites'
+	RadiusDecalTemplate m_deliveryDecalTemplate;
+	Real m_deliveryDecalRadius;
 
 	NeutronMissileUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
-
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -68,14 +67,14 @@ public:
  * This module encapsulates missile behavior.
  */
 class NeutronMissileUpdate : public UpdateModule,
-	public DieModuleInterface,
-	public ProjectileUpdateInterface
+                             public DieModuleInterface,
+                             public ProjectileUpdateInterface
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( NeutronMissileUpdate, "NeutronMissileUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( NeutronMissileUpdate, NeutronMissileUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NeutronMissileUpdate, "NeutronMissileUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(NeutronMissileUpdate, NeutronMissileUpdateModuleData);
 
 public:
-	NeutronMissileUpdate( Thing *thing, const ModuleData* moduleData );
+	NeutronMissileUpdate(Thing* thing, const ModuleData* moduleData);
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
@@ -83,55 +82,52 @@ public:
 	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() override { return this; }
 
 	enum MissileStateType
 	{
 		PRELAUNCH,
-		LAUNCH,			///< released from plane, falling
-		ATTACK,			///< fly toward victim
+		LAUNCH,    ///< released from plane, falling
+		ATTACK,    ///< fly toward victim
 		DEAD
 	};
 
-	virtual void projectileLaunchAtObjectOrPosition(const Object *victim, const Coord3D* victimPos, const Object *launcher, WeaponSlotType wslot, Int specificBarrelToUse, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride) override;
-	virtual void projectileFireAtObjectOrPosition( const Object *victim, const Coord3D *victimPos, const WeaponTemplate *detWeap, const ParticleSystemTemplate* exhaustSysOverride ) override;
-	virtual Bool projectileIsArmed() const override { return m_isArmed; }											///< return true if the missile is armed and ready to explode
-	virtual ObjectID projectileGetLauncherID() const override { return m_launcherID; }				///< Return firer of missile. Returns 0 if not yet fired.
-	virtual Bool projectileHandleCollision( Object *other ) override;
-	virtual const Coord3D *getVelocity() const { return &m_vel; }		///< get current velocity
+	virtual void projectileLaunchAtObjectOrPosition(const Object* victim, const Coord3D* victimPos, const Object* launcher, WeaponSlotType wslot, Int specificBarrelToUse, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride) override;
+	virtual void projectileFireAtObjectOrPosition(const Object* victim, const Coord3D* victimPos, const WeaponTemplate* detWeap, const ParticleSystemTemplate* exhaustSysOverride) override;
+	virtual Bool projectileIsArmed() const override { return m_isArmed; }    ///< return true if the missile is armed and ready to explode
+	virtual ObjectID projectileGetLauncherID() const override { return m_launcherID; }    ///< Return firer of missile. Returns 0 if not yet fired.
+	virtual Bool projectileHandleCollision(Object* other) override;
+	virtual const Coord3D* getVelocity() const { return &m_vel; }    ///< get current velocity
 
 	virtual UpdateSleepTime update() override;
 	virtual void onDelete() override;
 
 private:
-
-	MissileStateType m_state;						///< the behavior state of the missile
-	Coord3D m_targetPos;								///< the position of the target
+	MissileStateType m_state;    ///< the behavior state of the missile
+	Coord3D m_targetPos;    ///< the position of the target
 	Coord3D m_intermedPos;
 
-	ObjectID m_launcherID;							///< ID of object that launched us (zero if not yet launched)
-	WeaponSlotType m_attach_wslot;			///< where to fire the missile from
-	Int m_attach_specificBarrelToUse;							///< where to fire the missile from
+	ObjectID m_launcherID;    ///< ID of object that launched us (zero if not yet launched)
+	WeaponSlotType m_attach_wslot;    ///< where to fire the missile from
+	Int m_attach_specificBarrelToUse;    ///< where to fire the missile from
 
 	Coord3D m_accel;
 	Coord3D m_vel;
 
-	UnsignedInt m_stateTimestamp;				///< time of state change
+	UnsignedInt m_stateTimestamp;    ///< time of state change
 	Bool m_isLaunched;
-	Bool m_isArmed;											///< if true, missile will explode on contact
-	Real m_noTurnDistLeft;				///< when zero, ok to start turning
+	Bool m_isArmed;    ///< if true, missile will explode on contact
+	Real m_noTurnDistLeft;    ///< when zero, ok to start turning
 	Bool m_reachedIntermediatePos;
 	UnsignedInt m_frameAtLaunch;
 	Real m_heightAtLaunch;
-	RadiusDecal	m_deliveryDecal;
+	RadiusDecal m_deliveryDecal;
 
 	const ParticleSystemTemplate* m_exhaustSysTmpl;
 
-	void doLaunch();							///< implement LAUNCH state
-	void doAttack();							///< implement ATTACK state
-	void detonate();												///< blow it up. (usually only called by MissileCollide)
-
-
+	void doLaunch();    ///< implement LAUNCH state
+	void doAttack();    ///< implement ATTACK state
+	void detonate();    ///< blow it up. (usually only called by MissileCollide)
 };

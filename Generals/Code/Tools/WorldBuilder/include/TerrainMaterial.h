@@ -30,30 +30,36 @@ class WorldHeightMapEdit;
 
 class TerrainMaterial : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	TerrainMaterial(CWnd* pParent = nullptr);   // standard constructor
+	TerrainMaterial(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TerrainMaterial)
-	enum { IDD = IDD_TERRAIN_MATERIAL };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TERRAIN_MATERIAL
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TerrainMaterial)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    ///< Modeless dialogs don't close on ESC, so eat this for modeless.
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	enum {MIN_TILE_SIZE=2, MAX_TILE_SIZE = 100};
+	enum
+	{
+		MIN_TILE_SIZE = 2,
+		MAX_TILE_SIZE = 100
+	};
 	// Generated message map functions
 	//{{AFX_MSG(TerrainMaterial)
 	virtual BOOL OnInitDialog() override;
@@ -65,44 +71,43 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 protected:
-	static TerrainMaterial	*m_staticThis;
-	Bool										m_updating;
-	static Int							m_currentFgTexture;
-	static Int							m_currentBgTexture;
-	CTreeCtrl								m_terrainTreeView;
-	TerrainSwatches					m_terrainSwatches;
-	WBPopupSliderButton			m_widthPopup;
-	Int											m_currentWidth;
+	static TerrainMaterial* m_staticThis;
+	Bool m_updating;
+	static Int m_currentFgTexture;
+	static Int m_currentBgTexture;
+	CTreeCtrl m_terrainTreeView;
+	TerrainSwatches m_terrainSwatches;
+	WBPopupSliderButton m_widthPopup;
+	Int m_currentWidth;
 
-	static Bool m_paintingPathingInfo;	 // If true, we are painting passable/impassable.  If false, normal texture painting.
+	static Bool m_paintingPathingInfo;    // If true, we are painting passable/impassable.  If false, normal texture painting.
 	static Bool m_paintingPassable;
 
 protected:
-	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
-	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
+	void addTerrain(char* pPath, Int terrainNdx, HTREEITEM parent);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char* pLabel);
 	void updateLabel();
 
 public:
-	static Int getFgTexClass() {return m_currentFgTexture;}
-	static Int getBgTexClass() {return m_currentBgTexture;}
+	static Int getFgTexClass() { return m_currentFgTexture; }
+	static Int getBgTexClass() { return m_currentBgTexture; }
 
 	static void setFgTexClass(Int texClass);
 	static void setBgTexClass(Int texClass);
-	static void updateTextures(WorldHeightMapEdit *pMap);
+	static void updateTextures(WorldHeightMapEdit* pMap);
 	static void updateTextureSelection();
 	static void setToolOptions(Bool singleCell);
 	static void setWidth(Int width);
 
-	static Bool isPaintingPathingInfo() {return m_paintingPathingInfo;}
-	static Bool isPaintingPassable() {return m_paintingPassable;}
+	static Bool isPaintingPathingInfo() { return m_paintingPathingInfo; }
+	static Bool isPaintingPassable() { return m_paintingPassable; }
 
 public:
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);
 
 	// Popup slider interface.
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 };

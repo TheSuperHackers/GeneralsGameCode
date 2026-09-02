@@ -74,192 +74,175 @@ static RGBColorInt gridColor = { 0 };
 // initGridSettings ===========================================================
 /** Initialize the dialog values */
 //=============================================================================
-static void initGridSettings( HWND hWndDialog )
+static void initGridSettings(HWND hWndDialog)
 {
-
 	// set resolution
-	SetDlgItemInt( hWndDialog, EDIT_RESOLUTION,
-								 TheEditor->getGridResolution(), FALSE );
+	SetDlgItemInt(hWndDialog, EDIT_RESOLUTION,
+	              TheEditor->getGridResolution(), FALSE);
 
 	// check box for on/off
-	if( TheEditor->isGridVisible() == TRUE )
-		CheckDlgButton( hWndDialog, CHECK_VISIBLE, BST_CHECKED );
+	if (TheEditor->isGridVisible() == TRUE)
+	{
+		CheckDlgButton(hWndDialog, CHECK_VISIBLE, BST_CHECKED);
+	}
 
 	// check box for grid snap on/off
-	if( TheEditor->isGridSnapOn() == TRUE )
-		CheckDlgButton( hWndDialog, CHECK_SNAP_TO_GRID, BST_CHECKED );
+	if (TheEditor->isGridSnapOn() == TRUE)
+	{
+		CheckDlgButton(hWndDialog, CHECK_SNAP_TO_GRID, BST_CHECKED);
+	}
 
 	// style
-	CheckDlgButton( hWndDialog, RADIO_LINES, BST_CHECKED );
+	CheckDlgButton(hWndDialog, RADIO_LINES, BST_CHECKED);
 
 	// color
-	RGBColorInt *color = TheEditor->getGridColor();
+	RGBColorInt* color = TheEditor->getGridColor();
 	gridColor = *color;
-
 }
 
 // GridSettingsDialogProc =====================================================
 /** Dialog procedure for grid settings dialog */
 //=============================================================================
-BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
-																			WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK GridSettingsDialogProc(HWND hWndDialog, UINT message,
+                                     WPARAM wParam, LPARAM lParam)
 {
-
-	switch( message )
+	switch (message)
 	{
-
 		// ------------------------------------------------------------------------
 		case WM_INITDIALOG:
 		{
-
 			// initialize the values for the the dialog
-			initGridSettings( hWndDialog );
+			initGridSettings(hWndDialog);
 			return TRUE;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
-			RGBColorInt *color = &gridColor;
+			UINT controlID = (UINT)wParam;    // control identifier
+			LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam;    // item drawing
+			RGBColorInt* color = &gridColor;
 
 			// we only care about color button controls
-			if( color )
+			if (color)
 			{
 				HBRUSH hBrushNew, hBrushOld;
 				RECT rect;
-				HWND hWndControl = GetDlgItem( hWndDialog, controlID );
+				HWND hWndControl = GetDlgItem(hWndDialog, controlID);
 
 				// if this control is disabled just let windows handle drawing
-				if( IsWindowEnabled( hWndControl ) == FALSE )
+				if (IsWindowEnabled(hWndControl) == FALSE)
+				{
 					return FALSE;
+				}
 
 				// Get the area we have to draw in
-				GetClientRect( hWndControl, &rect );
+				GetClientRect(hWndControl, &rect);
 
-        // create a new brush and select it into DC
-        hBrushNew = CreateSolidBrush (RGB ((BYTE)color->red,
-                                           (BYTE)color->green,
-                                           (BYTE)color->blue));
-        hBrushOld = (HBRUSH)SelectObject( drawItem->hDC, hBrushNew );
+				// create a new brush and select it into DC
+				hBrushNew = CreateSolidBrush(RGB((BYTE)color->red,
+				                                 (BYTE)color->green,
+				                                 (BYTE)color->blue));
+				hBrushOld = (HBRUSH)SelectObject(drawItem->hDC, hBrushNew);
 
-        // draw the rectangle
-        Rectangle( drawItem->hDC, rect.left, rect.top, rect.right, rect.bottom );
+				// draw the rectangle
+				Rectangle(drawItem->hDC, rect.left, rect.top, rect.right, rect.bottom);
 
-        // put the old brush back and delete the new one
-        SelectObject( drawItem->hDC, hBrushOld );
-        DeleteObject( hBrushNew );
+				// put the old brush back and delete the new one
+				SelectObject(drawItem->hDC, hBrushOld);
+				DeleteObject(hBrushNew);
 
-        // validate this new area
-        ValidateRect( hWndControl, nullptr );
+				// validate this new area
+				ValidateRect(hWndControl, nullptr);
 
 				// we have taken care of it
 				return TRUE;
-
 			}
 
 			return FALSE;
-
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
-//			Int notifyCode = HIWORD( wParam );  // notification code
-//			Int controlID = LOWORD( wParam );  // control ID
-			HWND hWndControl = (HWND)lParam;  // control window handle
+		case WM_COMMAND:
+		{
+			//			Int notifyCode = HIWORD( wParam );  // notification code
+			//			Int controlID = LOWORD( wParam );  // control ID
+			HWND hWndControl = (HWND)lParam;    // control window handle
 
-      switch( LOWORD( wParam ) )
-      {
-
+			switch (LOWORD(wParam))
+			{
 				// --------------------------------------------------------------------
 				case BUTTON_COLOR:
 				{
-					RGBColorInt *currColor = &gridColor;
+					RGBColorInt* currColor = &gridColor;
 
 					// bring up color selector for this color control at the mouse
-					if( currColor )
+					if (currColor)
 					{
-						RGBColorInt *newColor;
+						RGBColorInt* newColor;
 						POINT mouse;
 
-						GetCursorPos( &mouse );
-						newColor = SelectColor( currColor->red, currColor->green,
-																		currColor->blue, currColor->alpha,
-																		mouse.x, mouse.y );
+						GetCursorPos(&mouse);
+						newColor = SelectColor(currColor->red, currColor->green,
+						                       currColor->blue, currColor->alpha,
+						                       mouse.x, mouse.y);
 
-						if( newColor )
+						if (newColor)
 						{
-
 							gridColor = *newColor;
-							InvalidateRect( hWndControl, nullptr, TRUE );
-
+							InvalidateRect(hWndControl, nullptr, TRUE);
 						}
-
 					}
 
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
 					Int value;
 
 					// get the pixels between marks
-					value = GetDlgItemInt( hWndDialog, EDIT_RESOLUTION, nullptr, FALSE );
-					TheEditor->setGridResolution( value );
+					value = GetDlgItemInt(hWndDialog, EDIT_RESOLUTION, nullptr, FALSE);
+					TheEditor->setGridResolution(value);
 
 					// get grid on/off flag
-					value = IsDlgButtonChecked( hWndDialog, CHECK_VISIBLE );
-					TheEditor->setGridVisible( value );
+					value = IsDlgButtonChecked(hWndDialog, CHECK_VISIBLE);
+					TheEditor->setGridVisible(value);
 
 					// get snap on/off flag
-					value = IsDlgButtonChecked( hWndDialog, CHECK_SNAP_TO_GRID );
-					TheEditor->setGridSnap( value );
+					value = IsDlgButtonChecked(hWndDialog, CHECK_SNAP_TO_GRID);
+					TheEditor->setGridSnap(value);
 
 					// grid color
-					TheEditor->setGridColor( &gridColor );
+					TheEditor->setGridColor(&gridColor);
 
 					// end this dialog
-					EndDialog( hWndDialog, TRUE );
+					EndDialog(hWndDialog, TRUE);
 
-          break;
-
+					break;
 				}
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
+				case IDCANCEL:
 				{
-
-					EndDialog( hWndDialog, FALSE );
-          break;
-
+					EndDialog(hWndDialog, FALSE);
+					break;
 				}
+			}
 
-      }
-
-      return 0;
-
-    }
+			return 0;
+		}
 
 		// ------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
-
-			EndDialog( hWndDialog, FALSE );
-      return 0;
-
+			EndDialog(hWndDialog, FALSE);
+			return 0;
 		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
-
-  }
-
+	}
 }
-

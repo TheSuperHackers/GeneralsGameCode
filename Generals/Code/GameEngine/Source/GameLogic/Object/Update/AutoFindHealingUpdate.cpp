@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -49,15 +49,14 @@
 #include "GameLogic/WeaponSet.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 AutoFindHealingUpdateModuleData::AutoFindHealingUpdateModuleData()
 {
-	m_scanFrames				= 0;
-	m_scanRange					= 0.0f;
-	m_neverHeal					= 0.95f;
-	m_alwaysHeal				= 0.25f;
+	m_scanFrames = 0;
+	m_scanRange = 0.0f;
+	m_neverHeal = 0.95f;
+	m_alwaysHeal = 0.25f;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -65,35 +64,32 @@ AutoFindHealingUpdateModuleData::AutoFindHealingUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( AutoFindHealingUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( AutoFindHealingUpdateModuleData, m_scanRange ) },
-		{ "NeverHeal",						INI::parseReal,									nullptr, offsetof( AutoFindHealingUpdateModuleData, m_neverHeal ) },
-		{ "AlwaysHeal",						INI::parseReal,									nullptr, offsetof( AutoFindHealingUpdateModuleData, m_alwaysHeal ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "ScanRate", INI::parseDurationUnsignedInt, nullptr, offsetof(AutoFindHealingUpdateModuleData, m_scanFrames) },
+		{ "ScanRange", INI::parseReal, nullptr, offsetof(AutoFindHealingUpdateModuleData, m_scanRange) },
+		{ "NeverHeal", INI::parseReal, nullptr, offsetof(AutoFindHealingUpdateModuleData, m_neverHeal) },
+		{ "AlwaysHeal", INI::parseReal, nullptr, offsetof(AutoFindHealingUpdateModuleData, m_alwaysHeal) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
-AutoFindHealingUpdate::AutoFindHealingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+AutoFindHealingUpdate::AutoFindHealingUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
-	m_nextScanFrames						= 0;
+	m_nextScanFrames = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 AutoFindHealingUpdate::~AutoFindHealingUpdate()
 {
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 void AutoFindHealingUpdate::onObjectCreated()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -101,79 +97,88 @@ void AutoFindHealingUpdate::onObjectCreated()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime AutoFindHealingUpdate::update()
 {
-/// @todo srj use SLEEPY_UPDATE here
-	Object *obj = getObject();
-	if (obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) {
+	/// @todo srj use SLEEPY_UPDATE here
+	Object* obj = getObject();
+	if (obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN)
+	{
 		return UPDATE_SLEEP_NONE;
 	}
-	const AutoFindHealingUpdateModuleData *data = getAutoFindHealingUpdateModuleData();
+	const AutoFindHealingUpdateModuleData* data = getAutoFindHealingUpdateModuleData();
 
-	//Optimized firing at acquired target
-	if( m_nextScanFrames > 0 )
+	// Optimized firing at acquired target
+	if (m_nextScanFrames > 0)
 	{
 		m_nextScanFrames--;
 		return UPDATE_SLEEP_NONE;
 	}
 	m_nextScanFrames = data->m_scanFrames;
 
-	AIUpdateInterface *ai = obj->getAI();
-	if (ai==nullptr) return UPDATE_SLEEP_NONE;
-
-	// Check health.
-	BodyModuleInterface *body = obj->getBodyModule();
-	if (!body) return UPDATE_SLEEP_NONE;
-	//	If we're real healthy, don't bother looking for healing.
-	if (body->getHealth() > body->getMaxHealth()*data->m_neverHeal) {
+	AIUpdateInterface* ai = obj->getAI();
+	if (ai == nullptr)
+	{
 		return UPDATE_SLEEP_NONE;
 	}
 
-	if(  !ai->isIdle() )
+	// Check health.
+	BodyModuleInterface* body = obj->getBodyModule();
+	if (!body)
+	{
+		return UPDATE_SLEEP_NONE;
+	}
+	//	If we're real healthy, don't bother looking for healing.
+	if (body->getHealth() > body->getMaxHealth() * data->m_neverHeal)
+	{
+		return UPDATE_SLEEP_NONE;
+	}
+
+	if (!ai->isIdle())
 	{
 		// For now, only heal if idle.  jba.
 		return UPDATE_SLEEP_NONE;
 		//	If we're > min health, and busy, keep at it.
-		if (body->getHealth() > body->getMaxHealth()*data->m_alwaysHeal) {
+		if (body->getHealth() > body->getMaxHealth() * data->m_alwaysHeal)
+		{
 			return UPDATE_SLEEP_NONE;
 		}
 	}
 
-	//Periodic scanning (expensive)
-	Object *healUnit = scanClosestTarget();
-	if(healUnit)
+	// Periodic scanning (expensive)
+	Object* healUnit = scanClosestTarget();
+	if (healUnit)
 	{
 		ai->aiGetHealed(healUnit, CMD_FROM_AI);
 	}
 	return UPDATE_SLEEP_NONE;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 Object* AutoFindHealingUpdate::scanClosestTarget()
 {
-	const AutoFindHealingUpdateModuleData *data = getAutoFindHealingUpdateModuleData();
-	Object *me = getObject();
-	Object *bestTarget = nullptr;
-	Real closestDistSqr=0;
+	const AutoFindHealingUpdateModuleData* data = getAutoFindHealingUpdateModuleData();
+	Object* me = getObject();
+	Object* bestTarget = nullptr;
+	Real closestDistSqr = 0;
 
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange, FROM_CENTER_2D );
+	ObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me->getPosition(), data->m_scanRange, FROM_CENTER_2D);
 	MemoryPoolObjectHolder hold(iter);
 
-	for( Object *other = iter->first(); other; other = iter->next() )
+	for (Object* other = iter->first(); other; other = iter->next())
 	{
-		if( !other->isKindOf( KINDOF_HEAL_PAD ) )
+		if (!other->isKindOf(KINDOF_HEAL_PAD))
 		{
-			//Not a valid target.
+			// Not a valid target.
 			continue;
 		}
 
-		Real fDistSqr =  ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) ;
-		if (bestTarget==nullptr) {
+		Real fDistSqr = ThePartitionManager->getDistanceSquared(me, other, FROM_CENTER_2D);
+		if (bestTarget == nullptr)
+		{
 			bestTarget = other;
 			closestDistSqr = fDistSqr;
 			continue;
 		}
 
-		if( fDistSqr < closestDistSqr )
+		if (fDistSqr < closestDistSqr)
 		{
 			bestTarget = other;
 			closestDistSqr = fDistSqr;
@@ -187,33 +192,29 @@ Object* AutoFindHealingUpdate::scanClosestTarget()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AutoFindHealingUpdate::crc( Xfer *xfer )
+void AutoFindHealingUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void AutoFindHealingUpdate::xfer( Xfer *xfer )
+void AutoFindHealingUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// next scan frames
-	xfer->xferInt( &m_nextScanFrames );
-
+	xfer->xferInt(&m_nextScanFrames);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -221,8 +222,6 @@ void AutoFindHealingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AutoFindHealingUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

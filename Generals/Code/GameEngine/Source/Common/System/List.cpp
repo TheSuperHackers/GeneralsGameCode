@@ -56,43 +56,29 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -103,49 +89,47 @@
 //============================================================================
 
 LList::LList()
-: m_sortMode(DESCENDING)
+  : m_sortMode(DESCENDING)
 {
-	m_head.setItem( &m_head.m_item);
+	m_head.setItem(&m_head.m_item);
 };
 
 //=================================================================
 // LList::add
 //=================================================================
 
-void	LList::add( LListNode* new_node )
+void LList::add(LListNode* new_node)
 {
-	LListNode*	node;
-	Int	pri;
+	LListNode* node;
+	Int pri;
 
-	if ( m_addToEndOfGroup )
+	if (m_addToEndOfGroup)
 	{
 		pri = new_node->priority();
 		node = &m_head;
-		while( (node = node->prev() ))
+		while ((node = node->prev()))
 		{
-			if( (m_sortMode == ASCENDING && node->priority() >= pri)
-					|| (m_sortMode == DESCENDING && node->priority() <= pri) )
+			if ((m_sortMode == ASCENDING && node->priority() >= pri) || (m_sortMode == DESCENDING && node->priority() <= pri))
 			{
-				node->append( new_node );
+				node->append(new_node);
 				return;
 			}
 		}
-		m_head.append( new_node );
+		m_head.append(new_node);
 	}
 	else
 	{
 		pri = new_node->priority();
 		node = &m_head;
-		while( (node = node->next() ))
+		while ((node = node->next()))
 		{
-			if( (m_sortMode == ASCENDING && node->priority() <= pri)
-					|| (m_sortMode == DESCENDING && node->priority() >= pri) )
+			if ((m_sortMode == ASCENDING && node->priority() <= pri) || (m_sortMode == DESCENDING && node->priority() >= pri))
 			{
-				node->insert( new_node );
+				node->insert(new_node);
 				return;
 			}
 		}
-		m_head.insert( new_node );
+		m_head.insert(new_node);
 	}
 }
 
@@ -153,16 +137,16 @@ void	LList::add( LListNode* new_node )
 // LList::addGDFNode
 //============================================================================
 
-void	LList::addItem( Int pri, void* item )
+void LList::addItem(Int pri, void* item)
 {
-	LListNode *node = NEW LListNode();	// poolify
+	LListNode* node = NEW LListNode();    // poolify
 
-	if ( node )
+	if (node)
 	{
-		node->setPriority( pri );
-		node->setItem( item );
+		node->setPriority(pri);
+		node->setItem(item);
 		node->autoDelete();
-		add( node );
+		add(node);
 	}
 }
 
@@ -170,15 +154,15 @@ void	LList::addItem( Int pri, void* item )
 // LList::addGDFNodeToHead
 //============================================================================
 
-void	LList::addItemToHead( void *item )
+void LList::addItemToHead(void* item)
 {
-	LListNode *node = NEW LListNode();
+	LListNode* node = NEW LListNode();
 
-	if ( node )
+	if (node)
 	{
-		node->setItem( item );
+		node->setItem(item);
 		node->autoDelete();
-		addToHead( node );
+		addToHead(node);
 	}
 }
 
@@ -186,15 +170,15 @@ void	LList::addItemToHead( void *item )
 // LList::addGDFNodeToTail
 //============================================================================
 
-void	LList::addItemToTail( void *item )
+void LList::addItemToTail(void* item)
 {
-	LListNode *node = NEW LListNode();
+	LListNode* node = NEW LListNode();
 
-	if ( node )
+	if (node)
 	{
-		node->setItem( item );
+		node->setItem(item);
 		node->autoDelete();
-		addToTail( node );
+		addToTail(node);
 	}
 }
 
@@ -204,9 +188,9 @@ void	LList::addItemToTail( void *item )
 
 void LList::clear()
 {
-	LListNode *node;
+	LListNode* node;
 
-	while ( (node = firstNode()) != nullptr )
+	while ((node = firstNode()) != nullptr)
 	{
 		node->remove();
 		node->destroy();
@@ -220,11 +204,11 @@ void LList::clear()
 Int LList::nodeCount()
 {
 	LListNode* node;
-	Int	count = 0;
+	Int count = 0;
 
 	node = firstNode();
 
-	while(node)
+	while (node)
 	{
 		count++;
 		node = node->next();
@@ -237,15 +221,15 @@ Int LList::nodeCount()
 // LList::getNode
 //=================================================================
 
-LListNode*	LList::getNode( Int index )
+LListNode* LList::getNode(Int index)
 {
 	LListNode* node;
 
 	node = firstNode();
 
-	while( node && index >= 0 )
+	while (node && index >= 0)
 	{
-		if( index-- == 0 )
+		if (index-- == 0)
 		{
 			return node;
 		}
@@ -259,12 +243,11 @@ LListNode*	LList::getNode( Int index )
 // LList::merge
 //============================================================================
 
-void LList::merge( LList *list )
+void LList::merge(LList* list)
 {
-
-	if ( list == nullptr || list->isEmpty() )
+	if (list == nullptr || list->isEmpty())
 	{
-			return;
+		return;
 	}
 
 	m_head.m_prev->m_next = list->m_head.m_next;
@@ -273,31 +256,30 @@ void LList::merge( LList *list )
 	m_head.m_prev = list->m_head.m_prev;
 	list->m_head.m_next = &list->m_head;
 	list->m_head.m_prev = &list->m_head;
-
 }
 
 //============================================================================
 // LList::hasReference
 //============================================================================
 
-Bool LList::hasItem( void *item )
+Bool LList::hasItem(void* item)
 {
-	return findItem( item ) != nullptr;
+	return findItem(item) != nullptr;
 }
 
 //============================================================================
 // LList::findReference
 //============================================================================
 
-LListNode* LList::findItem( void *item )
+LListNode* LList::findItem(void* item)
 {
 	LListNode* node;
 
 	node = firstNode();
 
-	while( node )
+	while (node)
 	{
-		if( node->item() == item )
+		if (node->item() == item)
 		{
 			return node;
 		}
@@ -312,9 +294,9 @@ LListNode* LList::findItem( void *item )
 //============================================================================
 
 LListNode::LListNode()
-: m_pri(0),
-	m_item(nullptr),
-	m_autoDelete(FALSE)
+  : m_pri(0)
+  , m_item(nullptr)
+  , m_autoDelete(FALSE)
 {
 	m_next = m_prev = this;
 };
@@ -323,7 +305,7 @@ LListNode::LListNode()
 // LListNode::insert
 //=================================================================
 
-void		 	LListNode::insert( LListNode* new_node )
+void LListNode::insert(LListNode* new_node)
 {
 	new_node->m_prev = m_prev;
 	new_node->m_next = this;
@@ -335,7 +317,7 @@ void		 	LListNode::insert( LListNode* new_node )
 // LListNode::append
 //=================================================================
 
-void 		 	LListNode::append( LListNode* new_node )
+void LListNode::append(LListNode* new_node)
 {
 	new_node->m_prev = this;
 	new_node->m_next = m_next;
@@ -347,21 +329,20 @@ void 		 	LListNode::append( LListNode* new_node )
 // LListNode::remove
 //=================================================================
 
-void 		 	LListNode::remove()
+void LListNode::remove()
 {
 	m_prev->m_next = m_next;
 	m_next->m_prev = m_prev;
-	m_prev = m_next = this;		// so we know that the node is not in a list
+	m_prev = m_next = this;    // so we know that the node is not in a list
 }
 
 //=================================================================
 // LListNode::next
 //=================================================================
 
-LListNode*		LListNode::next()
+LListNode* LListNode::next()
 {
-
-	if( m_next->isHead())
+	if (m_next->isHead())
 	{
 		return nullptr;
 	}
@@ -373,9 +354,9 @@ LListNode*		LListNode::next()
 // LListNode::prev
 //=================================================================
 
-LListNode*		LListNode::prev()
+LListNode* LListNode::prev()
 {
-	if( m_prev->isHead())
+	if (m_prev->isHead())
 	{
 		return nullptr;
 	}
@@ -387,19 +368,19 @@ LListNode*		LListNode::prev()
 // LListNode::loopNext
 //=================================================================
 
-LListNode*		LListNode::loopNext()
+LListNode* LListNode::loopNext()
 {
-	LListNode*	next;
+	LListNode* next;
 
 	next = m_next;
 
-	if( next->isHead())
+	if (next->isHead())
 	{
 		// skip head node
 		next = next->m_next;
-		if( next->isHead())
+		if (next->isHead())
 		{
-			return nullptr;	// it is an empty list
+			return nullptr;    // it is an empty list
 		}
 	}
 
@@ -410,19 +391,19 @@ LListNode*		LListNode::loopNext()
 // LListNode::loopPrev
 //=================================================================
 
-LListNode*		LListNode::loopPrev()
+LListNode* LListNode::loopPrev()
 {
-	LListNode*	prev;
+	LListNode* prev;
 
 	prev = m_prev;
 
-	if( prev->isHead())
+	if (prev->isHead())
 	{
 		// skip head node
 		prev = prev->m_prev;
-		if( prev->isHead())
+		if (prev->isHead())
 		{
-			return nullptr;	// it is an empty list
+			return nullptr;    // it is an empty list
 		}
 	}
 
@@ -433,9 +414,9 @@ LListNode*		LListNode::loopPrev()
 // LListNode::destroy
 //============================================================================
 
-void	LListNode::destroy()
+void LListNode::destroy()
 {
-	if ( m_autoDelete )
+	if (m_autoDelete)
 	{
 		delete this;
 	}
@@ -445,7 +426,7 @@ void	LListNode::destroy()
 // LList::addToEndOfGroup
 //============================================================================
 
-void	LList::addToEndOfGroup( Bool yes )
+void LList::addToEndOfGroup(Bool yes)
 {
 	m_addToEndOfGroup = yes;
 }

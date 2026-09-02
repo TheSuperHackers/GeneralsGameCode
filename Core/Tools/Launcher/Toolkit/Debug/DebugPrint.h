@@ -17,31 +17,30 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive:  $
-*
-* DESCRIPTION
-*     Debug printing mechanism
-*
-* PROGRAMMER
-*     Denzil E. Long, Jr.
-*     $Author:  $
-*
-* VERSION INFO
-*     $Modtime:  $
-*     $Revision:  $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *     Debug printing mechanism
+ *
+ * PROGRAMMER
+ *     Denzil E. Long, Jr.
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Modtime:  $
+ *     $Revision:  $
+ *
+ ******************************************************************************/
 
 #pragma once
 
 #ifdef RTS_DEBUG
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+	#ifdef __cplusplus
+extern "C" {
+	#endif
 
 //! Output debug print messages to the debugger and log file.
 void __cdecl DebugPrint(const char* string, ...);
@@ -49,14 +48,13 @@ void __cdecl PrintWin32Error(const char* string, ...);
 
 extern char debugLogName[];
 
-
-#ifdef __cplusplus
+	#ifdef __cplusplus
 }
-#endif
+	#endif
 
-#else // RTS_DEBUG
+#else    // RTS_DEBUG
 
-#define DebugPrint
-#define PrintWin32Error
+	#define DebugPrint
+	#define PrintWin32Error
 
-#endif // RTS_DEBUG
+#endif    // RTS_DEBUG

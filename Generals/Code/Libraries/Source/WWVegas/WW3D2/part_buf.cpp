@@ -59,7 +59,7 @@ const unsigned int ParticleBufferClass::PermutationArray[16] = {
 };
 
 // Maximum size of randomizer tables
-const static unsigned int MAX_RANDOM_ENTRIES = 32;	// MUST be power of two!
+const static unsigned int MAX_RANDOM_ENTRIES = 32;    // MUST be power of two!
 
 // Total Active Particle Buffer Count
 unsigned int ParticleBufferClass::TotalActiveCount = 0;
@@ -78,105 +78,103 @@ float ParticleBufferClass::LODMaxScreenSizes[17] = {
 static Random4Class rand_gen;
 const float oo_intmax = 1.0f / (float)INT_MAX;
 
-ParticleBufferClass::ParticleBufferClass
-(
-	ParticleEmitterClass *emitter,
-	unsigned int buffer_size,
-	ParticlePropertyStruct<Vector3> &color,
-	ParticlePropertyStruct<float> &opacity,
-	ParticlePropertyStruct<float> &size,
-	ParticlePropertyStruct<float> &rotation,
-	float orient_rnd,
-	ParticlePropertyStruct<float> &frame,
-	ParticlePropertyStruct<float> &blurtime,
-	Vector3 accel,
-	float max_age,
-	TextureClass *tex,
-	ShaderClass shader,
-	bool pingpong,
-	int render_mode,
-	int frame_mode,
-	const W3dEmitterLinePropertiesStruct * line_props
-) :
-	NewParticleQueue(nullptr),
-	NewParticleQueueStart(0U),
-	NewParticleQueueEnd(0U),
-	NewParticleQueueCount(0U),
-	RenderMode(render_mode),
-	FrameMode(frame_mode),
-	MaxAge(1000.0f * max_age),
-	LastUpdateTime(WW3D::Get_Sync_Time()),
-	IsEmitterDead(false),
-	MaxSize(0.0f),
-	MaxNum(buffer_size),
-	Start(0U),
-	End(0U),
-	NewEnd(0U),
-	NonNewNum(0),
-	NewNum(0),
-	BoundingBox(Vector3(0,0,0),Vector3(0,0,0)),
-	BoundingBoxDirty(true),
-	NumColorKeyFrames(0),
-	ColorKeyFrameTimes(nullptr),
-	ColorKeyFrameValues(nullptr),
-	ColorKeyFrameDeltas(nullptr),
-	NumAlphaKeyFrames(0),
-	AlphaKeyFrameTimes(nullptr),
-	AlphaKeyFrameValues(nullptr),
-	AlphaKeyFrameDeltas(nullptr),
-	NumSizeKeyFrames(0),
-	SizeKeyFrameTimes(nullptr),
-	SizeKeyFrameValues(nullptr),
-	SizeKeyFrameDeltas(nullptr),
-	NumRotationKeyFrames(0),
-	RotationKeyFrameTimes(nullptr),
-	RotationKeyFrameValues(nullptr),
-	HalfRotationKeyFrameDeltas(nullptr),
-	OrientationKeyFrameValues(nullptr),
-	NumFrameKeyFrames(0),
-	FrameKeyFrameTimes(nullptr),
-	FrameKeyFrameValues(nullptr),
-	FrameKeyFrameDeltas(nullptr),
-	NumBlurTimeKeyFrames(0),
-	BlurTimeKeyFrameTimes(nullptr),
-	BlurTimeKeyFrameValues(nullptr),
-	BlurTimeKeyFrameDeltas(nullptr),
-	NumRandomColorEntriesMinus1(0),
-	RandomColorEntries(nullptr),
-	NumRandomAlphaEntriesMinus1(0),
-	RandomAlphaEntries(nullptr),
-	NumRandomSizeEntriesMinus1(0),
-	RandomSizeEntries(nullptr),
-	ColorRandom(0, 0, 0),
-	OpacityRandom(0),
-	SizeRandom(0),
-	RotationRandom(0),
-	FrameRandom(0),
-	InitialOrientationRandom(0),
-	NumRandomRotationEntriesMinus1(0),
-	RandomRotationEntries(nullptr),
-	NumRandomOrientationEntriesMinus1(0),
-	RandomOrientationEntries(nullptr),
-	NumRandomFrameEntriesMinus1(0),
-	RandomFrameEntries(nullptr),
-	NumRandomBlurTimeEntriesMinus1(0),
-	RandomBlurTimeEntries(nullptr),
-	PointGroup(nullptr),
-	LineRenderer(nullptr),
-	Diffuse(nullptr),
-	Color(nullptr),
-	Alpha(nullptr),
-	Size(nullptr),
-	Orientation(nullptr),
-	Frame(nullptr),
-	TailPosition(nullptr),
-	APT(nullptr),
-	PingPongPosition(pingpong),
-	Velocity(nullptr),
-	TimeStamp(nullptr),
-	Emitter(emitter),
-	DecimationThreshold(0U),
-	ProjectedArea(0.0f)
+ParticleBufferClass::ParticleBufferClass(
+  ParticleEmitterClass* emitter,
+  unsigned int buffer_size,
+  ParticlePropertyStruct<Vector3>& color,
+  ParticlePropertyStruct<float>& opacity,
+  ParticlePropertyStruct<float>& size,
+  ParticlePropertyStruct<float>& rotation,
+  float orient_rnd,
+  ParticlePropertyStruct<float>& frame,
+  ParticlePropertyStruct<float>& blurtime,
+  Vector3 accel,
+  float max_age,
+  TextureClass* tex,
+  ShaderClass shader,
+  bool pingpong,
+  int render_mode,
+  int frame_mode,
+  const W3dEmitterLinePropertiesStruct* line_props)
+  : NewParticleQueue(nullptr)
+  , NewParticleQueueStart(0U)
+  , NewParticleQueueEnd(0U)
+  , NewParticleQueueCount(0U)
+  , RenderMode(render_mode)
+  , FrameMode(frame_mode)
+  , MaxAge(1000.0f * max_age)
+  , LastUpdateTime(WW3D::Get_Sync_Time())
+  , IsEmitterDead(false)
+  , MaxSize(0.0f)
+  , MaxNum(buffer_size)
+  , Start(0U)
+  , End(0U)
+  , NewEnd(0U)
+  , NonNewNum(0)
+  , NewNum(0)
+  , BoundingBox(Vector3(0, 0, 0), Vector3(0, 0, 0))
+  , BoundingBoxDirty(true)
+  , NumColorKeyFrames(0)
+  , ColorKeyFrameTimes(nullptr)
+  , ColorKeyFrameValues(nullptr)
+  , ColorKeyFrameDeltas(nullptr)
+  , NumAlphaKeyFrames(0)
+  , AlphaKeyFrameTimes(nullptr)
+  , AlphaKeyFrameValues(nullptr)
+  , AlphaKeyFrameDeltas(nullptr)
+  , NumSizeKeyFrames(0)
+  , SizeKeyFrameTimes(nullptr)
+  , SizeKeyFrameValues(nullptr)
+  , SizeKeyFrameDeltas(nullptr)
+  , NumRotationKeyFrames(0)
+  , RotationKeyFrameTimes(nullptr)
+  , RotationKeyFrameValues(nullptr)
+  , HalfRotationKeyFrameDeltas(nullptr)
+  , OrientationKeyFrameValues(nullptr)
+  , NumFrameKeyFrames(0)
+  , FrameKeyFrameTimes(nullptr)
+  , FrameKeyFrameValues(nullptr)
+  , FrameKeyFrameDeltas(nullptr)
+  , NumBlurTimeKeyFrames(0)
+  , BlurTimeKeyFrameTimes(nullptr)
+  , BlurTimeKeyFrameValues(nullptr)
+  , BlurTimeKeyFrameDeltas(nullptr)
+  , NumRandomColorEntriesMinus1(0)
+  , RandomColorEntries(nullptr)
+  , NumRandomAlphaEntriesMinus1(0)
+  , RandomAlphaEntries(nullptr)
+  , NumRandomSizeEntriesMinus1(0)
+  , RandomSizeEntries(nullptr)
+  , ColorRandom(0, 0, 0)
+  , OpacityRandom(0)
+  , SizeRandom(0)
+  , RotationRandom(0)
+  , FrameRandom(0)
+  , InitialOrientationRandom(0)
+  , NumRandomRotationEntriesMinus1(0)
+  , RandomRotationEntries(nullptr)
+  , NumRandomOrientationEntriesMinus1(0)
+  , RandomOrientationEntries(nullptr)
+  , NumRandomFrameEntriesMinus1(0)
+  , RandomFrameEntries(nullptr)
+  , NumRandomBlurTimeEntriesMinus1(0)
+  , RandomBlurTimeEntries(nullptr)
+  , PointGroup(nullptr)
+  , LineRenderer(nullptr)
+  , Diffuse(nullptr)
+  , Color(nullptr)
+  , Alpha(nullptr)
+  , Size(nullptr)
+  , Orientation(nullptr)
+  , Frame(nullptr)
+  , TailPosition(nullptr)
+  , APT(nullptr)
+  , PingPongPosition(pingpong)
+  , Velocity(nullptr)
+  , TimeStamp(nullptr)
+  , Emitter(emitter)
+  , DecimationThreshold(0U)
+  , ProjectedArea(0.0f)
 {
 	LodCount = 17;
 	LodBias = 1.0f;
@@ -216,12 +214,15 @@ ParticleBufferClass::ParticleBufferClass
 	PointGroup = W3DNEW PointGroupClass();
 	PointGroup->Set_Flag(PointGroupClass::TRANSFORM, true);
 	PointGroup->Set_Texture(tex);
-	shader.Enable_Fog ("ParticleBufferClass");
+	shader.Enable_Fog("ParticleBufferClass");
 	PointGroup->Set_Shader(shader);
 
-	if (RenderMode == W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES) {
+	if (RenderMode == W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES)
+	{
 		PointGroup->Set_Point_Mode(PointGroupClass::QUADS);
-	} else {
+	}
+	else
+	{
 		PointGroup->Set_Point_Mode(PointGroupClass::TRIS);
 	}
 
@@ -229,11 +230,12 @@ ParticleBufferClass::ParticleBufferClass
 
 	// Set up circular buffer. Contents are not initialized because the
 	// start/end indices currently indicate the buffer is empty.
-	Position[0] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
-	if (PingPongPosition) {
-		Position[1] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
+	Position[0] = NEW_REF(ShareBufferClass<Vector3>, (MaxNum, "ParticleBufferClass::Position"));
+	if (PingPongPosition)
+	{
+		Position[1] = NEW_REF(ShareBufferClass<Vector3>, (MaxNum, "ParticleBufferClass::Position"));
 	}
-	APT = NEW_REF( ShareBufferClass<unsigned int> , (MaxNum, "ParticleBufferClass::APT") );
+	APT = NEW_REF(ShareBufferClass<unsigned int>, (MaxNum, "ParticleBufferClass::APT"));
 	Velocity = W3DNEWARRAY Vector3[MaxNum];
 	TimeStamp = W3DNEWARRAY unsigned int[MaxNum];
 
@@ -243,107 +245,113 @@ ParticleBufferClass::ParticleBufferClass
 	int minlod = Calculate_Cost_Value_Arrays(1.0f, Value, Cost);
 
 	// Ensure lod is no less than minimum allowed
-	if (Get_LOD_Level() < minlod) Set_LOD_Level(minlod);
+	if (Get_LOD_Level() < minlod)
+	{
+		Set_LOD_Level(minlod);
+	}
 
 	// Update Global Count
 	TotalActiveCount++;
 
-	//lorenzen
-	// If the render mode is W3D_EMITTER_RENDER_MODE_LINE and we are supplied with
-	// a line properties structure, set up a line renderer
-	if (RenderMode == W3D_EMITTER_RENDER_MODE_LINE) {
-		if (line_props != nullptr) {
+	// lorenzen
+	//  If the render mode is W3D_EMITTER_RENDER_MODE_LINE and we are supplied with
+	//  a line properties structure, set up a line renderer
+	if (RenderMode == W3D_EMITTER_RENDER_MODE_LINE)
+	{
+		if (line_props != nullptr)
+		{
 			LineRenderer = W3DNEW SegLineRendererClass;
 			LineRenderer->Init(*line_props);
 			LineRenderer->Set_Texture(tex);
 			LineRenderer->Set_Shader(shader);
 			LineRenderer->Set_Width(Get_Particle_Size());
-		} else {
+		}
+		else
+		{
 			// We were in line mode but didn't get any line properties, drop back to triangles
 			RenderMode = W3D_EMITTER_RENDER_MODE_TRI_PARTICLES;
 		}
 	}
 }
 
-
-ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
-	RenderObjClass(src),
-	NewParticleQueue(nullptr),
-	NewParticleQueueStart(0U),
-	NewParticleQueueEnd(0U),
-	NewParticleQueueCount(0U),
-	RenderMode(src.RenderMode),
-	FrameMode(src.FrameMode),
-	MaxAge(src.MaxAge),
-	LastUpdateTime(WW3D::Get_Sync_Time()),
-	IsEmitterDead(false),
-	MaxSize(src.MaxSize),
-	MaxNum(src.MaxNum),
-	Start(0U),
-	End(0U),
-	NewEnd(0U),
-	NonNewNum(0),
-	NewNum(0),
-	BoundingBox(Vector3(0,0,0),Vector3(0,0,0)),
-	BoundingBoxDirty(true),
-	NumColorKeyFrames(src.NumColorKeyFrames),
-	ColorKeyFrameTimes(nullptr),
-	ColorKeyFrameValues(nullptr),
-	ColorKeyFrameDeltas(nullptr),
-	NumAlphaKeyFrames(src.NumAlphaKeyFrames),
-	AlphaKeyFrameTimes(nullptr),
-	AlphaKeyFrameValues(nullptr),
-	AlphaKeyFrameDeltas(nullptr),
-	NumSizeKeyFrames(src.NumSizeKeyFrames),
-	SizeKeyFrameTimes(nullptr),
-	SizeKeyFrameValues(nullptr),
-	SizeKeyFrameDeltas(nullptr),
-	NumRotationKeyFrames(src.NumRotationKeyFrames),
-	RotationKeyFrameTimes(nullptr),
-	RotationKeyFrameValues(nullptr),
-	HalfRotationKeyFrameDeltas(nullptr),
-	OrientationKeyFrameValues(nullptr),
-	NumFrameKeyFrames(src.NumFrameKeyFrames),
-	FrameKeyFrameTimes(nullptr),
-	FrameKeyFrameValues(nullptr),
-	FrameKeyFrameDeltas(nullptr),
-	NumBlurTimeKeyFrames(src.NumBlurTimeKeyFrames),
-	BlurTimeKeyFrameTimes(nullptr),
-	BlurTimeKeyFrameValues(nullptr),
-	BlurTimeKeyFrameDeltas(nullptr),
-	RandomColorEntries(nullptr),
-	RandomAlphaEntries(nullptr),
-	RandomSizeEntries(nullptr),
-	ColorRandom(src.ColorRandom),
-	OpacityRandom(src.OpacityRandom),
-	SizeRandom(src.SizeRandom),
-	RotationRandom(src.RotationRandom),
-	FrameRandom(src.FrameRandom),
-	InitialOrientationRandom(src.InitialOrientationRandom),
-	NumRandomRotationEntriesMinus1(0),
-	RandomRotationEntries(nullptr),
-	NumRandomOrientationEntriesMinus1(0),
-	RandomOrientationEntries(nullptr),
-	NumRandomFrameEntriesMinus1(0),
-	RandomFrameEntries(nullptr),
-	NumRandomBlurTimeEntriesMinus1(0),
-	RandomBlurTimeEntries(nullptr),
-	PointGroup(nullptr),
-	LineRenderer(nullptr),
-	Diffuse(nullptr),
-	Color(nullptr),
-	Alpha(nullptr),
-	Size(nullptr),
-	Orientation(nullptr),
-	Frame(nullptr),
-	TailPosition(nullptr),
-	APT(nullptr),
-	PingPongPosition(src.PingPongPosition),
-	Velocity(nullptr),
-	TimeStamp(nullptr),
-	Emitter(src.Emitter),
-	DecimationThreshold(src.DecimationThreshold),
-	ProjectedArea(0.0f)
+ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass& src)
+  : RenderObjClass(src)
+  , NewParticleQueue(nullptr)
+  , NewParticleQueueStart(0U)
+  , NewParticleQueueEnd(0U)
+  , NewParticleQueueCount(0U)
+  , RenderMode(src.RenderMode)
+  , FrameMode(src.FrameMode)
+  , MaxAge(src.MaxAge)
+  , LastUpdateTime(WW3D::Get_Sync_Time())
+  , IsEmitterDead(false)
+  , MaxSize(src.MaxSize)
+  , MaxNum(src.MaxNum)
+  , Start(0U)
+  , End(0U)
+  , NewEnd(0U)
+  , NonNewNum(0)
+  , NewNum(0)
+  , BoundingBox(Vector3(0, 0, 0), Vector3(0, 0, 0))
+  , BoundingBoxDirty(true)
+  , NumColorKeyFrames(src.NumColorKeyFrames)
+  , ColorKeyFrameTimes(nullptr)
+  , ColorKeyFrameValues(nullptr)
+  , ColorKeyFrameDeltas(nullptr)
+  , NumAlphaKeyFrames(src.NumAlphaKeyFrames)
+  , AlphaKeyFrameTimes(nullptr)
+  , AlphaKeyFrameValues(nullptr)
+  , AlphaKeyFrameDeltas(nullptr)
+  , NumSizeKeyFrames(src.NumSizeKeyFrames)
+  , SizeKeyFrameTimes(nullptr)
+  , SizeKeyFrameValues(nullptr)
+  , SizeKeyFrameDeltas(nullptr)
+  , NumRotationKeyFrames(src.NumRotationKeyFrames)
+  , RotationKeyFrameTimes(nullptr)
+  , RotationKeyFrameValues(nullptr)
+  , HalfRotationKeyFrameDeltas(nullptr)
+  , OrientationKeyFrameValues(nullptr)
+  , NumFrameKeyFrames(src.NumFrameKeyFrames)
+  , FrameKeyFrameTimes(nullptr)
+  , FrameKeyFrameValues(nullptr)
+  , FrameKeyFrameDeltas(nullptr)
+  , NumBlurTimeKeyFrames(src.NumBlurTimeKeyFrames)
+  , BlurTimeKeyFrameTimes(nullptr)
+  , BlurTimeKeyFrameValues(nullptr)
+  , BlurTimeKeyFrameDeltas(nullptr)
+  , RandomColorEntries(nullptr)
+  , RandomAlphaEntries(nullptr)
+  , RandomSizeEntries(nullptr)
+  , ColorRandom(src.ColorRandom)
+  , OpacityRandom(src.OpacityRandom)
+  , SizeRandom(src.SizeRandom)
+  , RotationRandom(src.RotationRandom)
+  , FrameRandom(src.FrameRandom)
+  , InitialOrientationRandom(src.InitialOrientationRandom)
+  , NumRandomRotationEntriesMinus1(0)
+  , RandomRotationEntries(nullptr)
+  , NumRandomOrientationEntriesMinus1(0)
+  , RandomOrientationEntries(nullptr)
+  , NumRandomFrameEntriesMinus1(0)
+  , RandomFrameEntries(nullptr)
+  , NumRandomBlurTimeEntriesMinus1(0)
+  , RandomBlurTimeEntries(nullptr)
+  , PointGroup(nullptr)
+  , LineRenderer(nullptr)
+  , Diffuse(nullptr)
+  , Color(nullptr)
+  , Alpha(nullptr)
+  , Size(nullptr)
+  , Orientation(nullptr)
+  , Frame(nullptr)
+  , TailPosition(nullptr)
+  , APT(nullptr)
+  , PingPongPosition(src.PingPongPosition)
+  , Velocity(nullptr)
+  , TimeStamp(nullptr)
+  , Emitter(src.Emitter)
+  , DecimationThreshold(src.DecimationThreshold)
+  , ProjectedArea(0.0f)
 {
 	Position[0] = nullptr;
 	Position[1] = nullptr;
@@ -358,99 +366,119 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	*/
 
 	NumRandomColorEntriesMinus1 = src.NumRandomColorEntriesMinus1;
-	if (src.Color) {
+	if (src.Color)
+	{
 		// Create color array
-		Color = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Color") );
+		Color = NEW_REF(ShareBufferClass<Vector3>, (MaxNum, "ParticleBufferClass::Color"));
 
 		// Copy color keyframes
-		ColorKeyFrameTimes = W3DNEWARRAY unsigned int [NumColorKeyFrames];
-		ColorKeyFrameValues = W3DNEWARRAY Vector3 [NumColorKeyFrames];
-		ColorKeyFrameDeltas = W3DNEWARRAY Vector3 [NumColorKeyFrames];
-		for (i = 0; i < NumColorKeyFrames; i++) {
+		ColorKeyFrameTimes = W3DNEWARRAY unsigned int[NumColorKeyFrames];
+		ColorKeyFrameValues = W3DNEWARRAY Vector3[NumColorKeyFrames];
+		ColorKeyFrameDeltas = W3DNEWARRAY Vector3[NumColorKeyFrames];
+		for (i = 0; i < NumColorKeyFrames; i++)
+		{
 			ColorKeyFrameTimes[i] = src.ColorKeyFrameTimes[i];
 			ColorKeyFrameValues[i] = src.ColorKeyFrameValues[i];
 			ColorKeyFrameDeltas[i] = src.ColorKeyFrameDeltas[i];
 		}
 
 		// Copy color randomizer table
-		if (src.RandomColorEntries) {
-			RandomColorEntries = W3DNEWARRAY Vector3 [NumRandomColorEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomColorEntriesMinus1; j++) {
+		if (src.RandomColorEntries)
+		{
+			RandomColorEntries = W3DNEWARRAY Vector3[NumRandomColorEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomColorEntriesMinus1; j++)
+			{
 				RandomColorEntries[j] = src.RandomColorEntries[j];
 			}
 		}
-	} else {
-		ColorKeyFrameValues = W3DNEWARRAY Vector3 [1];
+	}
+	else
+	{
+		ColorKeyFrameValues = W3DNEWARRAY Vector3[1];
 		ColorKeyFrameValues[0] = src.ColorKeyFrameValues[0];
 	}
 
 	NumRandomAlphaEntriesMinus1 = src.NumRandomAlphaEntriesMinus1;
-	if (src.Alpha) {
+	if (src.Alpha)
+	{
 		// Create alpha array
-		Alpha = NEW_REF( ShareBufferClass<float> , (MaxNum, "ParticleBufferClass::Alpha") );
+		Alpha = NEW_REF(ShareBufferClass<float>, (MaxNum, "ParticleBufferClass::Alpha"));
 
 		// Copy alpha keyframes
-		AlphaKeyFrameTimes = W3DNEWARRAY unsigned int [NumAlphaKeyFrames];
-		AlphaKeyFrameValues = W3DNEWARRAY float [NumAlphaKeyFrames];
-		AlphaKeyFrameDeltas = W3DNEWARRAY float [NumAlphaKeyFrames];
-		for (i = 0; i < NumAlphaKeyFrames; i++) {
+		AlphaKeyFrameTimes = W3DNEWARRAY unsigned int[NumAlphaKeyFrames];
+		AlphaKeyFrameValues = W3DNEWARRAY float[NumAlphaKeyFrames];
+		AlphaKeyFrameDeltas = W3DNEWARRAY float[NumAlphaKeyFrames];
+		for (i = 0; i < NumAlphaKeyFrames; i++)
+		{
 			AlphaKeyFrameTimes[i] = src.AlphaKeyFrameTimes[i];
 			AlphaKeyFrameValues[i] = src.AlphaKeyFrameValues[i];
 			AlphaKeyFrameDeltas[i] = src.AlphaKeyFrameDeltas[i];
 		}
 
 		// Copy alpha randomizer table
-		if (src.RandomAlphaEntries) {
-			RandomAlphaEntries = W3DNEWARRAY float [NumRandomAlphaEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomAlphaEntriesMinus1; j++) {
+		if (src.RandomAlphaEntries)
+		{
+			RandomAlphaEntries = W3DNEWARRAY float[NumRandomAlphaEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomAlphaEntriesMinus1; j++)
+			{
 				RandomAlphaEntries[j] = src.RandomAlphaEntries[j];
 			}
 		}
-	} else {
-		AlphaKeyFrameValues = W3DNEWARRAY float [1];
+	}
+	else
+	{
+		AlphaKeyFrameValues = W3DNEWARRAY float[1];
 		AlphaKeyFrameValues[0] = src.AlphaKeyFrameValues[0];
 	}
 
 	NumRandomSizeEntriesMinus1 = src.NumRandomSizeEntriesMinus1;
-	if (src.Size) {
+	if (src.Size)
+	{
 		// Create size array
-		Size = NEW_REF( ShareBufferClass<float> , (MaxNum, "ParticleBufferClass::Size") );
+		Size = NEW_REF(ShareBufferClass<float>, (MaxNum, "ParticleBufferClass::Size"));
 
 		// Copy size keyframes
-		SizeKeyFrameTimes = W3DNEWARRAY unsigned int [NumSizeKeyFrames];
-		SizeKeyFrameValues = W3DNEWARRAY float [NumSizeKeyFrames];
-		SizeKeyFrameDeltas = W3DNEWARRAY float [NumSizeKeyFrames];
-		for (i = 0; i < NumSizeKeyFrames; i++) {
+		SizeKeyFrameTimes = W3DNEWARRAY unsigned int[NumSizeKeyFrames];
+		SizeKeyFrameValues = W3DNEWARRAY float[NumSizeKeyFrames];
+		SizeKeyFrameDeltas = W3DNEWARRAY float[NumSizeKeyFrames];
+		for (i = 0; i < NumSizeKeyFrames; i++)
+		{
 			SizeKeyFrameTimes[i] = src.SizeKeyFrameTimes[i];
 			SizeKeyFrameValues[i] = src.SizeKeyFrameValues[i];
 			SizeKeyFrameDeltas[i] = src.SizeKeyFrameDeltas[i];
 		}
 
 		// Copy size randomizer table
-		if (src.RandomSizeEntries) {
-			RandomSizeEntries = W3DNEWARRAY float [NumRandomSizeEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomSizeEntriesMinus1; j++) {
+		if (src.RandomSizeEntries)
+		{
+			RandomSizeEntries = W3DNEWARRAY float[NumRandomSizeEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomSizeEntriesMinus1; j++)
+			{
 				RandomSizeEntries[j] = src.RandomSizeEntries[j];
 			}
 		}
-	} else {
-		SizeKeyFrameValues = W3DNEWARRAY float [1];
+	}
+	else
+	{
+		SizeKeyFrameValues = W3DNEWARRAY float[1];
 		SizeKeyFrameValues[0] = src.SizeKeyFrameValues[0];
 	}
 
 	// Set up the rotation / orientation keyframes
 	NumRandomRotationEntriesMinus1 = src.NumRandomRotationEntriesMinus1;
 	NumRandomOrientationEntriesMinus1 = src.NumRandomOrientationEntriesMinus1;
-	if (src.Orientation) {
+	if (src.Orientation)
+	{
 		// Create orientation array
-		Orientation = NEW_REF( ShareBufferClass<uint8> , (MaxNum, "ParticleBufferClass::Orientation") );
+		Orientation = NEW_REF(ShareBufferClass<uint8>, (MaxNum, "ParticleBufferClass::Orientation"));
 
 		// Copy rotation / orientation keyframes
-		RotationKeyFrameTimes = W3DNEWARRAY unsigned int [NumRotationKeyFrames];
-		RotationKeyFrameValues = W3DNEWARRAY float [NumRotationKeyFrames];
-		HalfRotationKeyFrameDeltas = W3DNEWARRAY float [NumRotationKeyFrames];
-		OrientationKeyFrameValues = W3DNEWARRAY float [NumRotationKeyFrames];
-		for (i = 0; i < NumRotationKeyFrames; i++) {
+		RotationKeyFrameTimes = W3DNEWARRAY unsigned int[NumRotationKeyFrames];
+		RotationKeyFrameValues = W3DNEWARRAY float[NumRotationKeyFrames];
+		HalfRotationKeyFrameDeltas = W3DNEWARRAY float[NumRotationKeyFrames];
+		OrientationKeyFrameValues = W3DNEWARRAY float[NumRotationKeyFrames];
+		for (i = 0; i < NumRotationKeyFrames; i++)
+		{
 			RotationKeyFrameTimes[i] = src.RotationKeyFrameTimes[i];
 			RotationKeyFrameValues[i] = src.RotationKeyFrameValues[i];
 			HalfRotationKeyFrameDeltas[i] = src.HalfRotationKeyFrameDeltas[i];
@@ -458,80 +486,95 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 		}
 
 		// Copy rotation randomizer table
-		if (src.RandomRotationEntries) {
-			RandomRotationEntries = W3DNEWARRAY float [NumRandomRotationEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomRotationEntriesMinus1; j++) {
+		if (src.RandomRotationEntries)
+		{
+			RandomRotationEntries = W3DNEWARRAY float[NumRandomRotationEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomRotationEntriesMinus1; j++)
+			{
 				RandomRotationEntries[j] = src.RandomRotationEntries[j];
 			}
 		}
 
 		// Copy starting orientation randomizer table
-		if (src.RandomOrientationEntries) {
-			RandomOrientationEntries = W3DNEWARRAY float [NumRandomOrientationEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomOrientationEntriesMinus1; j++) {
+		if (src.RandomOrientationEntries)
+		{
+			RandomOrientationEntries = W3DNEWARRAY float[NumRandomOrientationEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomOrientationEntriesMinus1; j++)
+			{
 				RandomOrientationEntries[j] = src.RandomOrientationEntries[j];
 			}
 		}
-
-	} else {
+	}
+	else
+	{
 		// Unlike other properties, if there is no Orientation array then all the arrays are nullptr
 		// (including the Values array) - there is an implicit starting value of 0.
 	}
 
-
 	// Set up the frame keyframes
 	NumRandomFrameEntriesMinus1 = src.NumRandomFrameEntriesMinus1;
-	if (src.Frame) {
+	if (src.Frame)
+	{
 		// Create frame array
-		Frame = NEW_REF( ShareBufferClass<uint8> , (MaxNum, "ParticleBufferClass::Frame") );
+		Frame = NEW_REF(ShareBufferClass<uint8>, (MaxNum, "ParticleBufferClass::Frame"));
 
 		// Copy frame keyframes
-		FrameKeyFrameTimes = W3DNEWARRAY unsigned int [NumFrameKeyFrames];
-		FrameKeyFrameValues = W3DNEWARRAY float [NumFrameKeyFrames];
-		FrameKeyFrameDeltas = W3DNEWARRAY float [NumFrameKeyFrames];
-		for (i = 0; i < NumFrameKeyFrames; i++) {
+		FrameKeyFrameTimes = W3DNEWARRAY unsigned int[NumFrameKeyFrames];
+		FrameKeyFrameValues = W3DNEWARRAY float[NumFrameKeyFrames];
+		FrameKeyFrameDeltas = W3DNEWARRAY float[NumFrameKeyFrames];
+		for (i = 0; i < NumFrameKeyFrames; i++)
+		{
 			FrameKeyFrameTimes[i] = src.FrameKeyFrameTimes[i];
 			FrameKeyFrameValues[i] = src.FrameKeyFrameValues[i];
 			FrameKeyFrameDeltas[i] = src.FrameKeyFrameDeltas[i];
 		}
 
 		// Copy frame randomizer table
-		if (src.RandomFrameEntries) {
-			RandomFrameEntries = W3DNEWARRAY float [NumRandomFrameEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomFrameEntriesMinus1; j++) {
+		if (src.RandomFrameEntries)
+		{
+			RandomFrameEntries = W3DNEWARRAY float[NumRandomFrameEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomFrameEntriesMinus1; j++)
+			{
 				RandomFrameEntries[j] = src.RandomFrameEntries[j];
 			}
 		}
-	} else {
-		FrameKeyFrameValues = W3DNEWARRAY float [1];
+	}
+	else
+	{
+		FrameKeyFrameValues = W3DNEWARRAY float[1];
 		FrameKeyFrameValues[0] = src.FrameKeyFrameValues[0];
 	}
 
 	// Set up the blur times keyframes
 	NumRandomBlurTimeEntriesMinus1 = src.NumRandomBlurTimeEntriesMinus1;
-	if (NumBlurTimeKeyFrames > 0) {
+	if (NumBlurTimeKeyFrames > 0)
+	{
 		// Copy blur time keyframes
-		BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
-		BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
-		BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];
-		for (i = 0; i < NumBlurTimeKeyFrames; i++) {
+		BlurTimeKeyFrameTimes = new unsigned int[NumBlurTimeKeyFrames];
+		BlurTimeKeyFrameValues = new float[NumBlurTimeKeyFrames];
+		BlurTimeKeyFrameDeltas = new float[NumBlurTimeKeyFrames];
+		for (i = 0; i < NumBlurTimeKeyFrames; i++)
+		{
 			BlurTimeKeyFrameTimes[i] = src.BlurTimeKeyFrameTimes[i];
 			BlurTimeKeyFrameValues[i] = src.BlurTimeKeyFrameValues[i];
 			BlurTimeKeyFrameDeltas[i] = src.BlurTimeKeyFrameDeltas[i];
 		}
 
 		// Copy blur time randomizer table
-		if (src.RandomBlurTimeEntries) {
-			RandomBlurTimeEntries = new float [NumRandomBlurTimeEntriesMinus1 + 1];
-			for (unsigned int j = 0; j <= NumRandomBlurTimeEntriesMinus1; j++) {
+		if (src.RandomBlurTimeEntries)
+		{
+			RandomBlurTimeEntries = new float[NumRandomBlurTimeEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomBlurTimeEntriesMinus1; j++)
+			{
 				RandomBlurTimeEntries[j] = src.RandomBlurTimeEntries[j];
 			}
 		}
-	} else {
-		BlurTimeKeyFrameValues = new float [1];
+	}
+	else
+	{
+		BlurTimeKeyFrameValues = new float[1];
 		BlurTimeKeyFrameValues[0] = src.BlurTimeKeyFrameValues[0];
 	}
-
 
 	// We do not add a ref for the emitter (see DTor for detailed explanation)
 	// if (Emitter) Emitter->Add_Ref();
@@ -550,19 +593,23 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	PointGroup->Set_Shader(src.PointGroup->Get_Shader());
 
 	// Set up the point group render mode
-	if (RenderMode == W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES) {
+	if (RenderMode == W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES)
+	{
 		PointGroup->Set_Point_Mode(PointGroupClass::QUADS);
-	} else {
+	}
+	else
+	{
 		PointGroup->Set_Point_Mode(PointGroupClass::TRIS);
 	}
 
 	// Set up circular buffer. Contents are not initialized because the
 	// start/end indices currently indicate the buffer is empty.
-	Position[0] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
-	if (PingPongPosition) {
-		Position[1] = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Position") );
+	Position[0] = NEW_REF(ShareBufferClass<Vector3>, (MaxNum, "ParticleBufferClass::Position"));
+	if (PingPongPosition)
+	{
+		Position[1] = NEW_REF(ShareBufferClass<Vector3>, (MaxNum, "ParticleBufferClass::Position"));
 	}
-	APT = NEW_REF( ShareBufferClass<unsigned int> , (MaxNum, "ParticleBufferClass::APT") );
+	APT = NEW_REF(ShareBufferClass<unsigned int>, (MaxNum, "ParticleBufferClass::APT"));
 	Velocity = W3DNEWARRAY Vector3[MaxNum];
 	TimeStamp = W3DNEWARRAY unsigned int[MaxNum];
 
@@ -572,62 +619,67 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	int minlod = Calculate_Cost_Value_Arrays(1.0f, Value, Cost);
 
 	// Ensure lod is no less than minimum allowed
-	if (Get_LOD_Level() < minlod) Set_LOD_Level(minlod);
+	if (Get_LOD_Level() < minlod)
+	{
+		Set_LOD_Level(minlod);
+	}
 
 	// Update Global Count
 	TotalActiveCount++;
 
 	// if the source object has a line renderer, set up a copy.
-	if (src.LineRenderer) {
+	if (src.LineRenderer)
+	{
 		assert(RenderMode == W3D_EMITTER_RENDER_MODE_LINE);
 		LineRenderer = W3DNEW SegLineRendererClass(*src.LineRenderer);
-	} else {
+	}
+	else
+	{
 		assert(RenderMode != W3D_EMITTER_RENDER_MODE_LINE);
 	}
 }
 
-
-ParticleBufferClass & ParticleBufferClass::operator = (const ParticleBufferClass & that)
+ParticleBufferClass& ParticleBufferClass::operator=(const ParticleBufferClass& that)
 {
-	RenderObjClass::operator = (that);
+	RenderObjClass::operator=(that);
 
-	if (this != &that) {
-		assert(0);	// TODO: if you hit this assert, please implement me !!!;-)
+	if (this != &that)
+	{
+		assert(0);    // TODO: if you hit this assert, please implement me !!!;-)
 	}
 
-	return * this;
+	return *this;
 }
-
 
 ParticleBufferClass::~ParticleBufferClass()
 {
-	delete [] NewParticleQueue;
-	delete [] ColorKeyFrameTimes;
-	delete [] ColorKeyFrameValues;
-	delete [] ColorKeyFrameDeltas;
-	delete [] AlphaKeyFrameTimes;
-	delete [] AlphaKeyFrameValues;
-	delete [] AlphaKeyFrameDeltas;
-	delete [] SizeKeyFrameTimes;
-	delete [] SizeKeyFrameValues;
-	delete [] SizeKeyFrameDeltas;
-	delete [] RotationKeyFrameTimes;
-	delete [] RotationKeyFrameValues;
-	delete [] HalfRotationKeyFrameDeltas;
-	delete [] OrientationKeyFrameValues;
-	delete [] FrameKeyFrameTimes;
-	delete [] FrameKeyFrameValues;
-	delete [] FrameKeyFrameDeltas;
-	delete [] BlurTimeKeyFrameTimes;
-	delete [] BlurTimeKeyFrameValues;
-	delete [] BlurTimeKeyFrameDeltas;
-	delete [] RandomColorEntries;
-	delete [] RandomAlphaEntries;
-	delete [] RandomSizeEntries;
-	delete [] RandomRotationEntries;
-	delete [] RandomOrientationEntries;
-	delete [] RandomFrameEntries;
-	delete [] RandomBlurTimeEntries;
+	delete[] NewParticleQueue;
+	delete[] ColorKeyFrameTimes;
+	delete[] ColorKeyFrameValues;
+	delete[] ColorKeyFrameDeltas;
+	delete[] AlphaKeyFrameTimes;
+	delete[] AlphaKeyFrameValues;
+	delete[] AlphaKeyFrameDeltas;
+	delete[] SizeKeyFrameTimes;
+	delete[] SizeKeyFrameValues;
+	delete[] SizeKeyFrameDeltas;
+	delete[] RotationKeyFrameTimes;
+	delete[] RotationKeyFrameValues;
+	delete[] HalfRotationKeyFrameDeltas;
+	delete[] OrientationKeyFrameValues;
+	delete[] FrameKeyFrameTimes;
+	delete[] FrameKeyFrameValues;
+	delete[] FrameKeyFrameDeltas;
+	delete[] BlurTimeKeyFrameTimes;
+	delete[] BlurTimeKeyFrameValues;
+	delete[] BlurTimeKeyFrameDeltas;
+	delete[] RandomColorEntries;
+	delete[] RandomAlphaEntries;
+	delete[] RandomSizeEntries;
+	delete[] RandomRotationEntries;
+	delete[] RandomOrientationEntries;
+	delete[] RandomFrameEntries;
+	delete[] RandomBlurTimeEntries;
 
 	delete PointGroup;
 
@@ -641,10 +693,11 @@ ParticleBufferClass::~ParticleBufferClass()
 	REF_PTR_RELEASE(Frame);
 	REF_PTR_RELEASE(APT);
 
-	delete [] Velocity;
-	delete [] TimeStamp;
+	delete[] Velocity;
+	delete[] TimeStamp;
 
-	if (Emitter) {
+	if (Emitter)
+	{
 		// We should not have an emitter at this point, since the emitter
 		// should still have a live ref to us if it still exists which would
 		// prevent us from getting killed.
@@ -664,12 +717,10 @@ ParticleBufferClass::~ParticleBufferClass()
 	TotalActiveCount--;
 }
 
-
-RenderObjClass * ParticleBufferClass::Clone() const
+RenderObjClass* ParticleBufferClass::Clone() const
 {
 	return W3DNEW ParticleBufferClass(*this);
 }
-
 
 int ParticleBufferClass::Get_Num_Polys() const
 {
@@ -682,152 +733,177 @@ int ParticleBufferClass::Get_Particle_Count() const
 	return NonNewNum + NewNum;
 }
 
-void ParticleBufferClass::Render(RenderInfoClass & rinfo)
+void ParticleBufferClass::Render(RenderInfoClass& rinfo)
 {
 	WWPROFILE("ParticleBuffer::Render");
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
 	if (!WW3D::Is_Sorting_Enabled())
-		sort_level=Get_Shader().Guess_Sort_Level();
+	{
+		sort_level = Get_Shader().Guess_Sort_Level();
+	}
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
-
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level != SORT_LEVEL_NONE)
+	{
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
-
-	} else {
+	}
+	else
+	{
 		// Ensure particles' kinematic state is updated
 		Update_Kinematic_Particle_State();
 
 		// Since we are rendering the particles, visual state needs to be updated (but not if the
 		// entire particle buffer is decimated away)
-		if (DecimationThreshold < LodCount - 1) {
+		if (DecimationThreshold < LodCount - 1)
+		{
 			Update_Visual_Particle_State();
 		}
 	}
 
-	switch( RenderMode )
+	switch (RenderMode)
 	{
-	case W3D_EMITTER_RENDER_MODE_TRI_PARTICLES:
-	case W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES:
-		Render_Particles(rinfo);
-		break;
-	case W3D_EMITTER_RENDER_MODE_LINE:
-		Render_Line(rinfo);
-		break;
+		case W3D_EMITTER_RENDER_MODE_TRI_PARTICLES:
+		case W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES:
+			Render_Particles(rinfo);
+			break;
+		case W3D_EMITTER_RENDER_MODE_LINE:
+			Render_Line(rinfo);
+			break;
 	}
 }
 
-void ParticleBufferClass::Render_Particles(RenderInfoClass & rinfo)
+void ParticleBufferClass::Render_Particles(RenderInfoClass& rinfo)
 {
 	// If the number of active points is less than the maximum or we need to decimate particles
 	// (for LOD purposes), build the active point table:
-	ShareBufferClass<unsigned int> *apt = nullptr;
+	ShareBufferClass<unsigned int>* apt = nullptr;
 
 	unsigned int active_point_count = 0;
-	if (NonNewNum < (int)MaxNum || DecimationThreshold > 0) {
+	if (NonNewNum < (int)MaxNum || DecimationThreshold > 0)
+	{
 		// In the general case, a range in a circular buffer can be composed of up
 		// to two subranges. Find the Start - End subranges.
 		// This differs from other similar code segments because we want to access
 		// the subranges in memory order (rather than in queue order) this time.
-		unsigned int sub1_start;	// Start of subrange 1.
-		unsigned int sub1_end;		// End of subrange 1.
-		unsigned int sub2_start;	// Start of subrange 2.
-		unsigned int sub2_end;		// End of subrange 2.
-		unsigned int i;			// Loop index.
-		if ((Start < End) || ((Start == End) && NonNewNum == 0)) {
+		unsigned int sub1_start;    // Start of subrange 1.
+		unsigned int sub1_end;    // End of subrange 1.
+		unsigned int sub2_start;    // Start of subrange 2.
+		unsigned int sub2_end;    // End of subrange 2.
+		unsigned int i;    // Loop index.
+		if ((Start < End) || ((Start == End) && NonNewNum == 0))
+		{
 			sub1_start = Start;
 			sub1_end = End;
 			sub2_start = End;
 			sub2_end = End;
-		} else {
+		}
+		else
+		{
 			sub1_start = 0;
 			sub1_end = End;
 			sub2_start = Start;
 			sub2_end = MaxNum;
 		}
 		// Generate APT:
-		unsigned int *apt_ptr = APT->Get_Array();
-		for (i = sub1_start; i < sub1_end; i++) {
-			if (PermutationArray[i & 0xF] >= DecimationThreshold) {
+		unsigned int* apt_ptr = APT->Get_Array();
+		for (i = sub1_start; i < sub1_end; i++)
+		{
+			if (PermutationArray[i & 0xF] >= DecimationThreshold)
+			{
 				apt_ptr[active_point_count++] = i;
 			}
 		}
-		for (i = sub2_start; i < sub2_end; i++) {
-			if (PermutationArray[i & 0xF] >= DecimationThreshold) {
+		for (i = sub2_start; i < sub2_end; i++)
+		{
+			if (PermutationArray[i & 0xF] >= DecimationThreshold)
+			{
 				apt_ptr[active_point_count++] = i;
 			}
 		}
 		apt = APT;
-	} else {
+	}
+	else
+	{
 		active_point_count = NonNewNum;
 	}
 
 	// Set color, alpha, size defaults if array not present:
-	if (!Color) {
+	if (!Color)
+	{
 		PointGroup->Set_Point_Color(ColorKeyFrameValues[0]);
 	}
-	if (!Alpha) {
+	if (!Alpha)
+	{
 		PointGroup->Set_Point_Alpha(AlphaKeyFrameValues[0]);
 	}
-	if (!Size) {
+	if (!Size)
+	{
 		PointGroup->Set_Point_Size(SizeKeyFrameValues[0]);
 	}
-	if (!Orientation) {
+	if (!Orientation)
+	{
 		// The rotation keyframes are used to derive the orientation indirectly, as well as the
 		// starting orientation randomizer. If there is no Orientation array that means both are
 		// absent so the orientation should just be set to 0.
 		PointGroup->Set_Point_Orientation(0);
 	}
-	if (!Frame) {
+	if (!Frame)
+	{
 		PointGroup->Set_Point_Frame(((int)(FrameKeyFrameValues[0])) & 0xFF);
 	}
-
 
 	// Pass the point buffer to the point group and render it.
 	// If we are using pingpong position buffers pass the right one
 	int pingpong = 0;
-	if (PingPongPosition) {
+	if (PingPongPosition)
+	{
 		pingpong = WW3D::Get_Frame_Count() & 0x1;
 	}
 
 	// Temporary array copying to combine diffuse and alpha to one array.
-	if (Color || Alpha) {
-		unsigned cnt=MaxNum;
-		if (!Diffuse) {
-			Diffuse = NEW_REF( ShareBufferClass<Vector4> , (MaxNum, "ParticleBufferClass::Diffuse") );
+	if (Color || Alpha)
+	{
+		unsigned cnt = MaxNum;
+		if (!Diffuse)
+		{
+			Diffuse = NEW_REF(ShareBufferClass<Vector4>, (MaxNum, "ParticleBufferClass::Diffuse"));
 		}
-		if (Color && Alpha) {
+		if (Color && Alpha)
+		{
 			VectorProcessorClass::Copy(
-				Diffuse->Get_Array(),
-				Color->Get_Array(),
-				Alpha->Get_Array(),
-				cnt);
+			  Diffuse->Get_Array(),
+			  Color->Get_Array(),
+			  Alpha->Get_Array(),
+			  cnt);
 		}
-		else if (Color) {
+		else if (Color)
+		{
 			VectorProcessorClass::Copy(
-				Diffuse->Get_Array(),
-				Color->Get_Array(),
-				1.0f,
-				cnt);
+			  Diffuse->Get_Array(),
+			  Color->Get_Array(),
+			  1.0f,
+			  cnt);
 		}
-		else {
+		else
+		{
 			VectorProcessorClass::Copy(
-				Diffuse->Get_Array(),
-				Vector3(1.0f,1.0f,1.0f),
-				Alpha->Get_Array(),
-				cnt);
+			  Diffuse->Get_Array(),
+			  Vector3(1.0f, 1.0f, 1.0f),
+			  Alpha->Get_Array(),
+			  cnt);
 		}
 		VectorProcessorClass::Clamp(
-			Diffuse->Get_Array(),
-			Diffuse->Get_Array(),
-			0.0f,
-			1.0f,
-			cnt);
+		  Diffuse->Get_Array(),
+		  Diffuse->Get_Array(),
+		  0.0f,
+		  1.0f,
+		  cnt);
 	}
-	else if (Diffuse) {
+	else if (Diffuse)
+	{
 		Diffuse->Release_Ref();
-		Diffuse=nullptr;
+		Diffuse = nullptr;
 	}
 
 	PointGroup->Set_Arrays(Position[pingpong], Diffuse, apt, Size, Orientation, Frame, active_point_count);
@@ -835,65 +911,69 @@ void ParticleBufferClass::Render_Particles(RenderInfoClass & rinfo)
 	PointGroup->Render(rinfo);
 }
 
-
-void ParticleBufferClass::Render_Line(RenderInfoClass & rinfo)
+void ParticleBufferClass::Render_Line(RenderInfoClass& rinfo)
 {
 	// Look up the array to use
 	int pingpong = 0;
-	if (PingPongPosition) {
+	if (PingPongPosition)
+	{
 		pingpong = WW3D::Get_Frame_Count() & 0x1;
 	}
 
 	// Unroll the circular buffer while skipping LOD'd particles
 	static SimpleDynVecClass<Vector3> tmp_points;
-	Vector3 * positions = Position[pingpong]->Get_Array();
+	Vector3* positions = Position[pingpong]->Get_Array();
 
-	unsigned int sub1_end;		// End of subrange 1.
-	unsigned int sub2_start;	// Start of subrange 2.
-	unsigned int i;				// Loop index.
+	unsigned int sub1_end;    // End of subrange 1.
+	unsigned int sub2_start;    // Start of subrange 2.
+	unsigned int i;    // Loop index.
 
-	if ((Start < End) || ((Start == End) && NonNewNum ==0)) {
+	if ((Start < End) || ((Start == End) && NonNewNum == 0))
+	{
 		sub1_end = End;
 		sub2_start = End;
-	} else {
+	}
+	else
+	{
 		sub1_end = MaxNum;
 		sub2_start = 0;
 	}
 
 	tmp_points.Delete_All(false);
 
-	for (i = Start; i < sub1_end; i++) {
-		if (PermutationArray[i & 0xF] >= DecimationThreshold) {
+	for (i = Start; i < sub1_end; i++)
+	{
+		if (PermutationArray[i & 0xF] >= DecimationThreshold)
+		{
 			tmp_points.Add(positions[i]);
 		}
 	}
-	for (i = sub2_start; i < End; i++) {
-		if (PermutationArray[i & 0xF] >= DecimationThreshold) {
+	for (i = sub2_start; i < End; i++)
+	{
+		if (PermutationArray[i & 0xF] >= DecimationThreshold)
+		{
 			tmp_points.Add(positions[i]);
 		}
 	}
 
 	// If we got any points, render them
-	if (tmp_points.Count() > 0) {
+	if (tmp_points.Count() > 0)
+	{
 		SphereClass bounding_sphere;
 		Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
-		TextureClass * tex = PointGroup->Get_Texture();
-		//LineRenderer.Set_Texture(tex);
+		TextureClass* tex = PointGroup->Get_Texture();
+		// LineRenderer.Set_Texture(tex);
 		REF_PTR_RELEASE(tex);
 		LineRenderer->Set_Shader(PointGroup->Get_Shader());
 
 		LineRenderer->Render(rinfo,
-									Transform,
-									tmp_points.Count(),
-									&(tmp_points[0]),
-									bounding_sphere);
+		                     Transform,
+		                     tmp_points.Count(),
+		                     &(tmp_points[0]),
+		                     bounding_sphere);
 	}
 }
-
-
-
-
 
 // Scales the size of the individual particles but doesn't affect their
 // position (and therefore the size of the particle system as a whole)
@@ -902,22 +982,21 @@ void ParticleBufferClass::Scale(float scale)
 	// Scale all size keyframes, keyframe deltas, random size entries,
 	// MaxSize and SizeRandom.
 	unsigned int i;
-	for (i = 0; i < NumSizeKeyFrames; i++) {
+	for (i = 0; i < NumSizeKeyFrames; i++)
+	{
 		SizeKeyFrameValues[i] *= scale;
 		SizeKeyFrameDeltas[i] *= scale;
 	}
-	if (RandomSizeEntries) {
-		for (i = 0; i <= NumRandomSizeEntriesMinus1; i++) {
+	if (RandomSizeEntries)
+	{
+		for (i = 0; i <= NumRandomSizeEntriesMinus1; i++)
+		{
 			RandomSizeEntries[i] *= scale;
 		}
 	}
 	MaxSize *= scale;
 	SizeRandom *= scale;
 }
-
-
-
-
 
 // The particle buffer never receives a Set_Transform/Position call,
 // evem though its bounding volume changes. Since bounding volume
@@ -928,37 +1007,36 @@ void ParticleBufferClass::Scale(float scale)
 void ParticleBufferClass::On_Frame_Update()
 {
 	Invalidate_Cached_Bounding_Volumes();
-	if (Emitter) {
+	if (Emitter)
+	{
 		Emitter->Emit();
 	}
 
-	if (Is_Complete()) {
+	if (Is_Complete())
+	{
 		WWASSERT(Scene);
-		Scene->Register(this,SceneClass::RELEASE);
+		Scene->Register(this, SceneClass::RELEASE);
 	}
 }
 
-
-void ParticleBufferClass::Notify_Added(SceneClass * scene)
+void ParticleBufferClass::Notify_Added(SceneClass* scene)
 {
 	RenderObjClass::Notify_Added(scene);
-	scene->Register(this,SceneClass::ON_FRAME_UPDATE);
+	scene->Register(this, SceneClass::ON_FRAME_UPDATE);
 }
 
-
-void ParticleBufferClass::Notify_Removed(SceneClass * scene)
+void ParticleBufferClass::Notify_Removed(SceneClass* scene)
 {
-	scene->Unregister(this,SceneClass::ON_FRAME_UPDATE);
+	scene->Unregister(this, SceneClass::ON_FRAME_UPDATE);
 	RenderObjClass::Notify_Removed(scene);
 }
 
-
-void ParticleBufferClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
+void ParticleBufferClass::Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const
 {
 	// This ugly cast is done because the alternative is to make everything
 	// in the class mutable, which does not seem like a good solution
 	// (Update_Bounding_Box can potentially update the particle state)
-	((ParticleBufferClass *)this)->Update_Bounding_Box();
+	((ParticleBufferClass*)this)->Update_Bounding_Box();
 
 	// The particle buffer's transform is always identity, so
 	// objspace == worldspace.
@@ -968,23 +1046,22 @@ void ParticleBufferClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) co
 	sphere.Radius = BoundingBox.Extent.Length();
 }
 
-
-void ParticleBufferClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
+void ParticleBufferClass::Get_Obj_Space_Bounding_Box(AABoxClass& box) const
 {
 	// This ugly cast is done because the alternative is to make everything
 	// in the class mutable, which does not seem like a good solution
 	// (Update_Bounding_Box can potentially update the particle state).
-	((ParticleBufferClass *)this)->Update_Bounding_Box();
+	((ParticleBufferClass*)this)->Update_Bounding_Box();
 
 	// The particle buffer's transform is always identity, so
 	// objspace == worldspace.
 	box = BoundingBox;
 }
 
-
-void ParticleBufferClass::Prepare_LOD(CameraClass &camera)
+void ParticleBufferClass::Prepare_LOD(CameraClass& camera)
 {
-	if (Is_Not_Hidden_At_All() == false) {
+	if (Is_Not_Hidden_At_All() == false)
+	{
 		return;
 	}
 
@@ -997,17 +1074,18 @@ void ParticleBufferClass::Prepare_LOD(CameraClass &camera)
 	// treat them as all being the maximum size and being in the center of the bounding sphere).
 
 	Vector3 cam = camera.Get_Position();
-	const ViewportClass &viewport = camera.Get_Viewport();
+	const ViewportClass& viewport = camera.Get_Viewport();
 	Vector2 vpr_min, vpr_max;
 	camera.Get_View_Plane(vpr_min, vpr_max);
 	float width_factor = viewport.Width() / (vpr_max.X - vpr_min.X);
 	float height_factor = viewport.Height() / (vpr_max.Y - vpr_min.Y);
 
-	const SphereClass & sphere = Get_Bounding_Sphere();
+	const SphereClass& sphere = Get_Bounding_Sphere();
 	float dist = (sphere.Center - cam).Length();
 	float bounding_sphere_projected_radius = 0.0f;
 	float particle_projected_radius = 0.0f;
-	if (dist) {
+	if (dist)
+	{
 		float oo_dist = 1.0f / dist;
 		bounding_sphere_projected_radius = sphere.Radius * oo_dist;
 		particle_projected_radius = MaxSize * oo_dist;
@@ -1023,34 +1101,43 @@ void ParticleBufferClass::Prepare_LOD(CameraClass &camera)
 	int minlod = Calculate_Cost_Value_Arrays(ProjectedArea, Value, Cost);
 
 	// Ensure lod is no less than minimum allowed
-	if (Get_LOD_Level() < minlod) Set_LOD_Level(minlod);
+	if (Get_LOD_Level() < minlod)
+	{
+		Set_LOD_Level(minlod);
+	}
 
 	PredictiveLODOptimizerClass::Add_Object(this);
 }
 
 void ParticleBufferClass::Increment_LOD()
 {
-	if (DecimationThreshold > 0) DecimationThreshold--;
+	if (DecimationThreshold > 0)
+	{
+		DecimationThreshold--;
+	}
 }
 
 void ParticleBufferClass::Decrement_LOD()
 {
-	if (DecimationThreshold < LodCount) DecimationThreshold++;
+	if (DecimationThreshold < LodCount)
+	{
+		DecimationThreshold++;
+	}
 }
 
 float ParticleBufferClass::Get_Cost() const
 {
-	return(Cost[(LodCount - 1) - DecimationThreshold]);
+	return (Cost[(LodCount - 1) - DecimationThreshold]);
 }
 
 float ParticleBufferClass::Get_Value() const
 {
-	return(Value[(LodCount - 1) - DecimationThreshold]);
+	return (Value[(LodCount - 1) - DecimationThreshold]);
 }
 
 float ParticleBufferClass::Get_Post_Increment_Value() const
 {
-	return(Value[LodCount - DecimationThreshold]);
+	return (Value[LodCount - DecimationThreshold]);
 }
 
 void ParticleBufferClass::Set_LOD_Level(int lod)
@@ -1061,7 +1148,7 @@ void ParticleBufferClass::Set_LOD_Level(int lod)
 
 int ParticleBufferClass::Get_LOD_Level() const
 {
-	return((LodCount - 1) - DecimationThreshold);
+	return ((LodCount - 1) - DecimationThreshold);
 }
 
 int ParticleBufferClass::Get_LOD_Count() const
@@ -1069,14 +1156,15 @@ int ParticleBufferClass::Get_LOD_Count() const
 	return LodCount;
 }
 
-int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const
+int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float* values, float* costs) const
 {
 	unsigned int lod = 0;
 
 	// Calculate Cost heuristic for each LOD (we currently ignore pixel costs for particle systems)
 	float tris_per_particle = PointGroup->Get_Point_Mode() == PointGroupClass::QUADS ? 2.0f : 1.0f;
-	float cost_factor = (float)MaxNum * tris_per_particle * 0.0625f;	// 1/16
-	for (lod = 0; lod < LodCount; lod++) {
+	float cost_factor = (float)MaxNum * tris_per_particle * 0.0625f;    // 1/16
+	for (lod = 0; lod < LodCount; lod++)
+	{
 		costs[lod] = cost_factor * (float)lod;
 		// If cost is zero set it to a small nonzero amount to avoid divisions by zero.
 		costs[lod] = (costs[lod] != 0) ? costs[lod] : 0.000001f;
@@ -1086,13 +1174,17 @@ int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float *v
 	// MaxScreenSize is smaller than screen_area have their Value set to
 	// AT_MIN_LOD, as well as the first LOD after that (unless there are no
 	// other LODs):
-	for (lod = 0;  lod < LodCount && LODMaxScreenSizes[lod] < screen_area; lod++) {
+	for (lod = 0; lod < LodCount && LODMaxScreenSizes[lod] < screen_area; lod++)
+	{
 		values[lod] = AT_MIN_LOD;
 	}
 
-	if (lod >= LodCount) {
+	if (lod >= LodCount)
+	{
 		lod = LodCount - 1;
-	} else {
+	}
+	else
+	{
 		values[lod] = AT_MIN_LOD;
 	}
 
@@ -1101,7 +1193,8 @@ int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float *v
 
 	// Calculate Value heuristic for any remaining LODs based on normalized screen area:
 	lod++;
-	for (; lod < LodCount; lod++) {
+	for (; lod < LodCount; lod++)
+	{
 		// Currently the cost happens to be equal to the poly count. We use a floating-
 		// point poly count since costs[] contains an approximation to the true polycount which may
 		// be less than one in some cases (we want to avoid 0 polycounts except for true null LODs)
@@ -1109,16 +1202,14 @@ int ParticleBufferClass::Calculate_Cost_Value_Arrays(float screen_area, float *v
 		float benefit_factor = (polycount > WWMATH_EPSILON) ? (1 - (0.5f / (polycount * polycount))) : 0.0f;
 		values[lod] = (benefit_factor * screen_area * LodBias) / costs[lod];
 	}
-	values[LodCount] = AT_MAX_LOD; 	// Post-inc value will flag max LOD.
+	values[LodCount] = AT_MAX_LOD;    // Post-inc value will flag max LOD.
 
 	return minlod;
 }
 
-
-void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_props)
+void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3>& new_props)
 {
-
-	unsigned int i;	// Used in loops
+	unsigned int i;    // Used in loops
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
 
@@ -1127,41 +1218,47 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 	// If the randomizer is effectively zero and there are no keyframes, then we just create a
 	// values array with one entry and store the starting value in it (the keyframes and random
 	// table will not be used in this case).
-	static const float eps_byte = 0.0038f;	// Epsilon value - less than 1/255
-	bool color_rand_zero	= (fabs(new_props.Rand.X) < eps_byte && fabs(new_props.Rand.Y) < eps_byte && fabs(new_props.Rand.Z) < eps_byte);
-	if (color_rand_zero && new_props.NumKeyFrames == 0) {
-
+	static const float eps_byte = 0.0038f;    // Epsilon value - less than 1/255
+	bool color_rand_zero = (fabs(new_props.Rand.X) < eps_byte && fabs(new_props.Rand.Y) < eps_byte && fabs(new_props.Rand.Z) < eps_byte);
+	if (color_rand_zero && new_props.NumKeyFrames == 0)
+	{
 		// Release Color, ColorKeyFrameTimes and ColorKeyFrameDeltas if present. Reuse
 		// ColorKeyFrameValues if the right size, otherwise release and reallocate.
-		if (Color) {
+		if (Color)
+		{
 			Color->Release_Ref();
 			Color = nullptr;
 		}
 
-		delete [] ColorKeyFrameTimes;
+		delete[] ColorKeyFrameTimes;
 		ColorKeyFrameTimes = nullptr;
 
-		delete [] ColorKeyFrameDeltas;
+		delete[] ColorKeyFrameDeltas;
 		ColorKeyFrameDeltas = nullptr;
 
-		if (ColorKeyFrameValues) {
-			if (NumColorKeyFrames > 1) {
-				delete [] ColorKeyFrameValues;
-				ColorKeyFrameValues = W3DNEWARRAY Vector3 [1];
+		if (ColorKeyFrameValues)
+		{
+			if (NumColorKeyFrames > 1)
+			{
+				delete[] ColorKeyFrameValues;
+				ColorKeyFrameValues = W3DNEWARRAY Vector3[1];
 			}
-		} else {
-			ColorKeyFrameValues = W3DNEWARRAY Vector3 [1];
+		}
+		else
+		{
+			ColorKeyFrameValues = W3DNEWARRAY Vector3[1];
 		}
 
 		NumColorKeyFrames = 0;
 		NumRandomColorEntriesMinus1 = 0;
 		ColorKeyFrameValues[0] = new_props.Start;
-
-	} else {
-
+	}
+	else
+	{
 		// Create the color array if not present
-		if (!Color) {
-			Color = NEW_REF( ShareBufferClass<Vector3> , (MaxNum, "ParticleBufferClass::Color") );
+		if (!Color)
+		{
+			Color = NEW_REF(ShareBufferClass<Vector3>, (MaxNum, "ParticleBufferClass::Color"));
 		}
 
 		// Check times of color keyframes (each keytime must be larger than the
@@ -1170,85 +1267,104 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 		// constant during the last segment between last keyframe and MaxAge).
 		ui_previous_key_time = 0;
 		unsigned int ckey = 0;
-		for (; ckey < new_props.NumKeyFrames; ckey++) {
+		for (; ckey < new_props.NumKeyFrames; ckey++)
+		{
 			ui_current_key_time = (unsigned int)(new_props.KeyTimes[ckey] * 1000.0f);
 			WWASSERT(ui_current_key_time > ui_previous_key_time);
-			if (ui_current_key_time >= MaxAge) break;
+			if (ui_current_key_time >= MaxAge)
+			{
+				break;
+			}
 			ui_previous_key_time = ui_current_key_time;
 		}
 		bool color_constant_at_end = (ckey == new_props.NumKeyFrames);
 
 		// Reuse ColorKeyFrameValues, ColorKeyFrameTimes and ColorKeyFrameDeltas if the right size,
 		// otherwise release and reallocate.
-		unsigned int new_num_color_key_frames = ckey + 1;// Includes start keyframe (keytime == 0).
-		if (new_num_color_key_frames != NumColorKeyFrames) {
+		unsigned int new_num_color_key_frames = ckey + 1;    // Includes start keyframe (keytime == 0).
+		if (new_num_color_key_frames != NumColorKeyFrames)
+		{
 			NumColorKeyFrames = new_num_color_key_frames;
-			delete [] ColorKeyFrameTimes;
-			delete [] ColorKeyFrameValues;
-			delete [] ColorKeyFrameDeltas;
-			ColorKeyFrameTimes = W3DNEWARRAY unsigned int [NumColorKeyFrames];
-			ColorKeyFrameValues = W3DNEWARRAY Vector3 [NumColorKeyFrames];
-			ColorKeyFrameDeltas = W3DNEWARRAY Vector3 [NumColorKeyFrames];
+			delete[] ColorKeyFrameTimes;
+			delete[] ColorKeyFrameValues;
+			delete[] ColorKeyFrameDeltas;
+			ColorKeyFrameTimes = W3DNEWARRAY unsigned int[NumColorKeyFrames];
+			ColorKeyFrameValues = W3DNEWARRAY Vector3[NumColorKeyFrames];
+			ColorKeyFrameDeltas = W3DNEWARRAY Vector3[NumColorKeyFrames];
 		}
 
 		// Set color keyframes (deltas will be set later)
 		ColorKeyFrameTimes[0] = 0;
 		ColorKeyFrameValues[0] = new_props.Start;
-		for (i = 1; i < NumColorKeyFrames; i++) {
+		for (i = 1; i < NumColorKeyFrames; i++)
+		{
 			unsigned int im1 = i - 1;
 			ColorKeyFrameTimes[i] = (unsigned int)(new_props.KeyTimes[im1] * 1000.0f);
 			ColorKeyFrameValues[i] = new_props.Values[im1];
 		}
 
 		// Do deltas for all color keyframes except last
-		for (i = 0; i < NumColorKeyFrames - 1; i++) {
-			ColorKeyFrameDeltas[i]	= (ColorKeyFrameValues[i + 1] - ColorKeyFrameValues[i]) /
-				(float)(ColorKeyFrameTimes[i + 1] - ColorKeyFrameTimes[i]);
+		for (i = 0; i < NumColorKeyFrames - 1; i++)
+		{
+			ColorKeyFrameDeltas[i] = (ColorKeyFrameValues[i + 1] - ColorKeyFrameValues[i]) /
+			                         (float)(ColorKeyFrameTimes[i + 1] - ColorKeyFrameTimes[i]);
 		}
 
 		// Do delta for last color keyframe (i is NumColorKeyFrames - 1)
-		if (color_constant_at_end) {
+		if (color_constant_at_end)
+		{
 			ColorKeyFrameDeltas[i].Set(0.0, 0.0, 0.0);
-		} else {
+		}
+		else
+		{
 			// This is OK because if color_constant_at_end is false, NumColorKeyFrames is equal or
 			// smaller than color.NumKeyFrames so color.Values[NumColorKeyFrames - 1] and
 			// color.KeyTimes[NumColorKeyFrames - 1] exist.
-			ColorKeyFrameDeltas[i]	= (new_props.Values[i] - ColorKeyFrameValues[i]) /
-				(new_props.KeyTimes[i] * 1000.0f - (float)ColorKeyFrameTimes[i]);
+			ColorKeyFrameDeltas[i] = (new_props.Values[i] - ColorKeyFrameValues[i]) /
+			                         (new_props.KeyTimes[i] * 1000.0f - (float)ColorKeyFrameTimes[i]);
 		}
 
 		// Set up color randomizer table
 
-		if (color_rand_zero) {
-
-			if (RandomColorEntries) {
+		if (color_rand_zero)
+		{
+			if (RandomColorEntries)
+			{
 				// Reuse RandomColorEntries if the right size, otherwise release and reallocate.
-				if (NumRandomColorEntriesMinus1 != 0) {
-					delete [] RandomColorEntries;
-					RandomColorEntries = W3DNEWARRAY Vector3 [1];
+				if (NumRandomColorEntriesMinus1 != 0)
+				{
+					delete[] RandomColorEntries;
+					RandomColorEntries = W3DNEWARRAY Vector3[1];
 				}
-			} else {
-				RandomColorEntries = W3DNEWARRAY Vector3 [1];
+			}
+			else
+			{
+				RandomColorEntries = W3DNEWARRAY Vector3[1];
 			}
 
 			NumRandomColorEntriesMinus1 = 0;
 			RandomColorEntries[0].X = 0.0f;
 			RandomColorEntries[0].Y = 0.0f;
 			RandomColorEntries[0].Z = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomColorEntries) {
+			if (RandomColorEntries)
+			{
 				// Reuse RandomColorEntries if the right size, otherwise release and reallocate.
-				if (NumRandomColorEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomColorEntries;
-					RandomColorEntries = W3DNEWARRAY Vector3 [default_randomizer_entries];
+				if (NumRandomColorEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomColorEntries;
+					RandomColorEntries = W3DNEWARRAY Vector3[default_randomizer_entries];
 				}
-			} else {
-				RandomColorEntries = W3DNEWARRAY Vector3 [default_randomizer_entries];
+			}
+			else
+			{
+				RandomColorEntries = W3DNEWARRAY Vector3[default_randomizer_entries];
 			}
 
 			NumRandomColorEntriesMinus1 = default_randomizer_entries - 1;
@@ -1256,17 +1372,17 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 			float rscale = new_props.Rand.X * oo_intmax;
 			float gscale = new_props.Rand.Y * oo_intmax;
 			float bscale = new_props.Rand.Z * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomColorEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomColorEntriesMinus1; j++)
+			{
 				RandomColorEntries[j] = Vector3(rand_gen * rscale, rand_gen * gscale, rand_gen * bscale);
 			}
 		}
 	}
 }
 
-
-void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props)
+void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float>& new_props)
 {
-	unsigned int i;	// Used in loops
+	unsigned int i;    // Used in loops
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
 
@@ -1275,41 +1391,47 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 	// If the randomizer is effectively zero and there are no keyframes, then we just create a
 	// values array with one entry and store the starting value in it (the keyframes and random
 	// table will not be used in this case).
-	static const float eps_byte = 0.0038f;	// Epsilon value - less than 1/255
-	bool alpha_rand_zero	= (fabs(new_props.Rand) < eps_byte);
-	if (alpha_rand_zero && new_props.NumKeyFrames == 0) {
-
+	static const float eps_byte = 0.0038f;    // Epsilon value - less than 1/255
+	bool alpha_rand_zero = (fabs(new_props.Rand) < eps_byte);
+	if (alpha_rand_zero && new_props.NumKeyFrames == 0)
+	{
 		// Release Alpha, AlphaKeyFrameTimes and AlphaKeyFrameDeltas if present. Reuse
 		// AlphaKeyFrameValues if the right size, otherwise release and reallocate.
-		if (Alpha) {
+		if (Alpha)
+		{
 			Alpha->Release_Ref();
 			Alpha = nullptr;
 		}
 
-		delete [] AlphaKeyFrameTimes;
+		delete[] AlphaKeyFrameTimes;
 		AlphaKeyFrameTimes = nullptr;
 
-		delete [] AlphaKeyFrameDeltas;
+		delete[] AlphaKeyFrameDeltas;
 		AlphaKeyFrameDeltas = nullptr;
 
-		if (AlphaKeyFrameValues) {
-			if (NumAlphaKeyFrames > 1) {
-				delete [] AlphaKeyFrameValues;
-				AlphaKeyFrameValues = W3DNEWARRAY float [1];
+		if (AlphaKeyFrameValues)
+		{
+			if (NumAlphaKeyFrames > 1)
+			{
+				delete[] AlphaKeyFrameValues;
+				AlphaKeyFrameValues = W3DNEWARRAY float[1];
 			}
-		} else {
-			AlphaKeyFrameValues = W3DNEWARRAY float [1];
+		}
+		else
+		{
+			AlphaKeyFrameValues = W3DNEWARRAY float[1];
 		}
 
 		NumAlphaKeyFrames = 0;
 		NumRandomAlphaEntriesMinus1 = 0;
 		AlphaKeyFrameValues[0] = new_props.Start;
-
-	} else {
-
+	}
+	else
+	{
 		// Create the alpha array if not present
-		if (!Alpha) {
-			Alpha = NEW_REF( ShareBufferClass<float> , (MaxNum, "ParticleBufferClass::Alpha") );
+		if (!Alpha)
+		{
+			Alpha = NEW_REF(ShareBufferClass<float>, (MaxNum, "ParticleBufferClass::Alpha"));
 		}
 
 		// Check times of opacity keyframes (each keytime must be larger than the
@@ -1318,100 +1440,118 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 		// constant during the last segment between last keyframe and MaxAge).
 		ui_previous_key_time = 0;
 		unsigned int akey = 0;
-		for (; akey < new_props.NumKeyFrames; akey++) {
+		for (; akey < new_props.NumKeyFrames; akey++)
+		{
 			ui_current_key_time = (unsigned int)(new_props.KeyTimes[akey] * 1000.0f);
 			WWASSERT(ui_current_key_time > ui_previous_key_time);
-			if (ui_current_key_time >= MaxAge) break;
+			if (ui_current_key_time >= MaxAge)
+			{
+				break;
+			}
 			ui_previous_key_time = ui_current_key_time;
 		}
 		bool alpha_constant_at_end = (akey == new_props.NumKeyFrames);
 
 		// Reuse AlphaKeyFrameValues, AlphaKeyFrameTimes and AlphaKeyFrameDeltas if the right size,
 		// otherwise release and reallocate.
-		unsigned int new_num_alpha_key_frames = akey + 1;// Includes start keyframe (keytime == 0).
-		if (new_num_alpha_key_frames != NumAlphaKeyFrames) {
+		unsigned int new_num_alpha_key_frames = akey + 1;    // Includes start keyframe (keytime == 0).
+		if (new_num_alpha_key_frames != NumAlphaKeyFrames)
+		{
 			NumAlphaKeyFrames = new_num_alpha_key_frames;
-			delete [] AlphaKeyFrameValues;
-			delete [] AlphaKeyFrameTimes;
-			delete [] AlphaKeyFrameDeltas;
-			AlphaKeyFrameTimes = W3DNEWARRAY unsigned int [NumAlphaKeyFrames];
-			AlphaKeyFrameValues = W3DNEWARRAY float [NumAlphaKeyFrames];
-			AlphaKeyFrameDeltas = W3DNEWARRAY float [NumAlphaKeyFrames];
+			delete[] AlphaKeyFrameValues;
+			delete[] AlphaKeyFrameTimes;
+			delete[] AlphaKeyFrameDeltas;
+			AlphaKeyFrameTimes = W3DNEWARRAY unsigned int[NumAlphaKeyFrames];
+			AlphaKeyFrameValues = W3DNEWARRAY float[NumAlphaKeyFrames];
+			AlphaKeyFrameDeltas = W3DNEWARRAY float[NumAlphaKeyFrames];
 		}
 
 		// Set alpha keyframes (deltas will be set later)
 		AlphaKeyFrameTimes[0] = 0;
 		AlphaKeyFrameValues[0] = new_props.Start;
-		for (i = 1; i < NumAlphaKeyFrames; i++) {
+		for (i = 1; i < NumAlphaKeyFrames; i++)
+		{
 			unsigned int im1 = i - 1;
 			AlphaKeyFrameTimes[i] = (unsigned int)(new_props.KeyTimes[im1] * 1000.0f);
 			AlphaKeyFrameValues[i] = new_props.Values[im1];
 		}
 
 		// Do deltas for all alpha keyframes except last
-		for (i = 0; i < NumAlphaKeyFrames - 1; i++) {
-			AlphaKeyFrameDeltas[i]	= (AlphaKeyFrameValues[i + 1] - AlphaKeyFrameValues[i]) /
-				(float)(AlphaKeyFrameTimes[i + 1] - AlphaKeyFrameTimes[i]);
+		for (i = 0; i < NumAlphaKeyFrames - 1; i++)
+		{
+			AlphaKeyFrameDeltas[i] = (AlphaKeyFrameValues[i + 1] - AlphaKeyFrameValues[i]) /
+			                         (float)(AlphaKeyFrameTimes[i + 1] - AlphaKeyFrameTimes[i]);
 		}
 
 		// Do delta for last alpha keyframe (i is NumAlphaKeyFrames - 1)
-		if (alpha_constant_at_end) {
+		if (alpha_constant_at_end)
+		{
 			AlphaKeyFrameDeltas[i] = 0.0f;
-		} else {
+		}
+		else
+		{
 			// This is OK because if alpha_constant_at_end is false, NumAlphaKeyFrames is equal or
 			// smaller than opacity.NumKeyFrames so opacity.Values[NumAlphaKeyFrames - 1] and
 			// opacity.KeyTimes[NumAlphaKeyFrames - 1] exist.
-			AlphaKeyFrameDeltas[i]	= (new_props.Values[i] - AlphaKeyFrameValues[i]) /
-				(new_props.KeyTimes[i] * 1000.0f - (float)AlphaKeyFrameTimes[i]);
+			AlphaKeyFrameDeltas[i] = (new_props.Values[i] - AlphaKeyFrameValues[i]) /
+			                         (new_props.KeyTimes[i] * 1000.0f - (float)AlphaKeyFrameTimes[i]);
 		}
 
 		// Set up alpha randomizer table
 
-		if (alpha_rand_zero) {
-
-			if (RandomAlphaEntries) {
+		if (alpha_rand_zero)
+		{
+			if (RandomAlphaEntries)
+			{
 				// Reuse RandomAlphaEntries if the right size, otherwise release and reallocate.
-				if (NumRandomAlphaEntriesMinus1 != 0) {
-					delete [] RandomAlphaEntries;
-					RandomAlphaEntries = W3DNEWARRAY float [1];
+				if (NumRandomAlphaEntriesMinus1 != 0)
+				{
+					delete[] RandomAlphaEntries;
+					RandomAlphaEntries = W3DNEWARRAY float[1];
 				}
-			} else {
-				RandomAlphaEntries = W3DNEWARRAY float [1];
+			}
+			else
+			{
+				RandomAlphaEntries = W3DNEWARRAY float[1];
 			}
 
 			NumRandomAlphaEntriesMinus1 = 0;
 			RandomAlphaEntries[0] = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomAlphaEntries) {
+			if (RandomAlphaEntries)
+			{
 				// Reuse RandomAlphaEntries if the right size, otherwise release and reallocate.
-				if (NumRandomAlphaEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomAlphaEntries;
-					RandomAlphaEntries = W3DNEWARRAY float [default_randomizer_entries];
+				if (NumRandomAlphaEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomAlphaEntries;
+					RandomAlphaEntries = W3DNEWARRAY float[default_randomizer_entries];
 				}
-			} else {
-				RandomAlphaEntries = W3DNEWARRAY float [default_randomizer_entries];
+			}
+			else
+			{
+				RandomAlphaEntries = W3DNEWARRAY float[default_randomizer_entries];
 			}
 
 			NumRandomAlphaEntriesMinus1 = default_randomizer_entries - 1;
 
 			float ascale = new_props.Rand * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomAlphaEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomAlphaEntriesMinus1; j++)
+			{
 				RandomAlphaEntries[j] = rand_gen * ascale;
 			}
 		}
 	}
 }
 
-
-void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
+void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float>& new_props)
 {
-
-	unsigned int i;	// Used in loops
+	unsigned int i;    // Used in loops
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
 
@@ -1420,41 +1560,48 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 	// If the randomizer is effectively zero and there are no keyframes, then we just create a
 	// values array with one entry and store the starting value in it (the keyframes and random
 	// table will not be used in this case).
-	static const float eps_size = 1.0e-12f;	// Size scale unknown so must use very small epsilon
-	bool size_rand_zero	= (fabs(new_props.Rand) < eps_size);
-	if (size_rand_zero && new_props.NumKeyFrames == 0) {
-
+	static const float eps_size = 1.0e-12f;    // Size scale unknown so must use very small epsilon
+	bool size_rand_zero = (fabs(new_props.Rand) < eps_size);
+	if (size_rand_zero && new_props.NumKeyFrames == 0)
+	{
 		// Release Size, SizeKeyFrameTimes and SizeaKeyFrameDeltas if present. Reuse
 		// SizeKeyFrameValues if the right size, otherwise release and reallocate.
-		if (Size) {
+		if (Size)
+		{
 			Size->Release_Ref();
 			Size = nullptr;
 		}
 
-		delete [] SizeKeyFrameTimes;
+		delete[] SizeKeyFrameTimes;
 		SizeKeyFrameTimes = nullptr;
 
-		delete [] SizeKeyFrameDeltas;
+		delete[] SizeKeyFrameDeltas;
 		SizeKeyFrameDeltas = nullptr;
 
-		if (SizeKeyFrameValues) {
-			if (NumSizeKeyFrames > 1) {
-				delete [] SizeKeyFrameValues;
-				SizeKeyFrameValues = W3DNEWARRAY float [1];
+		if (SizeKeyFrameValues)
+		{
+			if (NumSizeKeyFrames > 1)
+			{
+				delete[] SizeKeyFrameValues;
+				SizeKeyFrameValues = W3DNEWARRAY float[1];
 			}
-		} else {
-			SizeKeyFrameValues = W3DNEWARRAY float [1];
+		}
+		else
+		{
+			SizeKeyFrameValues = W3DNEWARRAY float[1];
 		}
 
 		NumSizeKeyFrames = 0;
 		NumRandomSizeEntriesMinus1 = 0;
 		SizeKeyFrameValues[0] = new_props.Start;
 		MaxSize = SizeKeyFrameValues[0];
-	} else {
-
+	}
+	else
+	{
 		// Create the size array if not present
-		if (!Size) {
-			Size = NEW_REF( ShareBufferClass<float> , (MaxNum, "ParticleBufferClass::Size") );
+		if (!Size)
+		{
+			Size = NEW_REF(ShareBufferClass<float>, (MaxNum, "ParticleBufferClass::Size"));
 		}
 
 		// Check times of size keyframes (each keytime must be larger than the
@@ -1463,113 +1610,132 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 		// constant during the last segment between last keyframe and MaxAge).
 		ui_previous_key_time = 0;
 		unsigned int skey = 0;
-		for (; skey < new_props.NumKeyFrames; skey++) {
+		for (; skey < new_props.NumKeyFrames; skey++)
+		{
 			ui_current_key_time = (unsigned int)(new_props.KeyTimes[skey] * 1000.0f);
 			WWASSERT(ui_current_key_time > ui_previous_key_time);
-			if (ui_current_key_time >= MaxAge) break;
+			if (ui_current_key_time >= MaxAge)
+			{
+				break;
+			}
 			ui_previous_key_time = ui_current_key_time;
 		}
 		bool size_constant_at_end = (skey == new_props.NumKeyFrames);
 
 		// Reuse SizeKeyFrameValues, SizeKeyFrameTimes and SizeKeyFrameDeltas if the right size,
 		// otherwise release and reallocate.
-		unsigned int new_num_size_key_frames = skey + 1;// Includes start keyframe (keytime == 0).
-		if (new_num_size_key_frames != NumSizeKeyFrames) {
+		unsigned int new_num_size_key_frames = skey + 1;    // Includes start keyframe (keytime == 0).
+		if (new_num_size_key_frames != NumSizeKeyFrames)
+		{
 			NumSizeKeyFrames = new_num_size_key_frames;
-			delete [] SizeKeyFrameTimes;
-			delete [] SizeKeyFrameValues;
-			delete [] SizeKeyFrameDeltas;
-			SizeKeyFrameTimes = W3DNEWARRAY unsigned int [NumSizeKeyFrames];
-			SizeKeyFrameValues = W3DNEWARRAY float [NumSizeKeyFrames];
-			SizeKeyFrameDeltas = W3DNEWARRAY float [NumSizeKeyFrames];
+			delete[] SizeKeyFrameTimes;
+			delete[] SizeKeyFrameValues;
+			delete[] SizeKeyFrameDeltas;
+			SizeKeyFrameTimes = W3DNEWARRAY unsigned int[NumSizeKeyFrames];
+			SizeKeyFrameValues = W3DNEWARRAY float[NumSizeKeyFrames];
+			SizeKeyFrameDeltas = W3DNEWARRAY float[NumSizeKeyFrames];
 		}
 
 		// Set size keyframes (deltas will be set later)
 		SizeKeyFrameTimes[0] = 0;
 		SizeKeyFrameValues[0] = new_props.Start;
-		for (i = 1; i < NumSizeKeyFrames; i++) {
+		for (i = 1; i < NumSizeKeyFrames; i++)
+		{
 			unsigned int im1 = i - 1;
 			SizeKeyFrameTimes[i] = (unsigned int)(new_props.KeyTimes[im1] * 1000.0f);
 			SizeKeyFrameValues[i] = new_props.Values[im1];
 		}
 
 		// Do deltas for all size keyframes except last
-		for (i = 0; i < NumSizeKeyFrames - 1; i++) {
-			SizeKeyFrameDeltas[i]	= (SizeKeyFrameValues[i + 1] - SizeKeyFrameValues[i]) /
-				(float)(SizeKeyFrameTimes[i + 1] - SizeKeyFrameTimes[i]);
+		for (i = 0; i < NumSizeKeyFrames - 1; i++)
+		{
+			SizeKeyFrameDeltas[i] = (SizeKeyFrameValues[i + 1] - SizeKeyFrameValues[i]) /
+			                        (float)(SizeKeyFrameTimes[i + 1] - SizeKeyFrameTimes[i]);
 		}
 
 		// Do delta for last size keyframe (i is NumSizeKeyFrames - 1)
-		if (size_constant_at_end) {
+		if (size_constant_at_end)
+		{
 			SizeKeyFrameDeltas[i] = 0.0f;
-		} else {
+		}
+		else
+		{
 			// This is OK because if size_constant_at_end is false, NumSizeKeyFrames is equal or
 			// smaller than new_props.NumKeyFrames so new_props.Values[NumSizeKeyFrames - 1] and
 			// new_props.KeyTimes[NumSizeKeyFrames - 1] exist.
 			SizeKeyFrameDeltas[i] = (new_props.Values[i] - SizeKeyFrameValues[i]) /
-				(new_props.KeyTimes[i] * 1000.0f - (float)SizeKeyFrameTimes[i]);
+			                        (new_props.KeyTimes[i] * 1000.0f - (float)SizeKeyFrameTimes[i]);
 		}
 
 		// Find maximum size (for BBox updates)
 		MaxSize = SizeKeyFrameValues[0];
-		for (i = 1; i < NumSizeKeyFrames; i++) {
+		for (i = 1; i < NumSizeKeyFrames; i++)
+		{
 			MaxSize = MAX(MaxSize, SizeKeyFrameValues[i]);
 		}
 		// If last delta is positive, there may be a larger size keyframe:
 		float last_size = SizeKeyFrameValues[NumSizeKeyFrames - 1] + SizeKeyFrameDeltas[NumSizeKeyFrames - 1] *
-			(float)(MaxAge - SizeKeyFrameTimes[NumSizeKeyFrames - 1]);
+		                                                               (float)(MaxAge - SizeKeyFrameTimes[NumSizeKeyFrames - 1]);
 		MaxSize = MAX(MaxSize, last_size);
 		MaxSize += fabs(new_props.Rand);
 
 		// Set up size randomizer table
 
-		if (size_rand_zero) {
-
-			if (RandomSizeEntries) {
+		if (size_rand_zero)
+		{
+			if (RandomSizeEntries)
+			{
 				// Reuse RandomSizeEntries if the right size, otherwise release and reallocate.
-				if (NumRandomSizeEntriesMinus1 != 0) {
-					delete [] RandomSizeEntries;
-					RandomSizeEntries = W3DNEWARRAY float [1];
+				if (NumRandomSizeEntriesMinus1 != 0)
+				{
+					delete[] RandomSizeEntries;
+					RandomSizeEntries = W3DNEWARRAY float[1];
 				}
-			} else {
-				RandomSizeEntries = W3DNEWARRAY float [1];
+			}
+			else
+			{
+				RandomSizeEntries = W3DNEWARRAY float[1];
 			}
 
 			NumRandomSizeEntriesMinus1 = 0;
 			RandomSizeEntries[0] = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomSizeEntries) {
+			if (RandomSizeEntries)
+			{
 				// Reuse RandomSizeEntries if the right size, otherwise release and reallocate.
-				if (NumRandomSizeEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomSizeEntries;
-					RandomSizeEntries = W3DNEWARRAY float [default_randomizer_entries];
+				if (NumRandomSizeEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomSizeEntries;
+					RandomSizeEntries = W3DNEWARRAY float[default_randomizer_entries];
 				}
-			} else {
-				RandomSizeEntries = W3DNEWARRAY float [default_randomizer_entries];
+			}
+			else
+			{
+				RandomSizeEntries = W3DNEWARRAY float[default_randomizer_entries];
 			}
 
 			NumRandomSizeEntriesMinus1 = default_randomizer_entries - 1;
 
 			float sscale = new_props.Rand * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomSizeEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomSizeEntriesMinus1; j++)
+			{
 				RandomSizeEntries[j] = rand_gen * sscale;
 			}
 		}
 	}
 }
 
-
-void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_props, float orient_rnd)
+void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float>& new_props, float orient_rnd)
 {
-
-	unsigned int i;	// Used in loops
+	unsigned int i;    // Used in loops
 	static Random3Class rand_gen;
-   float oo_intmax = 1.0f / (float)INT_MAX;
+	float oo_intmax = 1.0f / (float)INT_MAX;
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
 
@@ -1581,36 +1747,37 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 	InitialOrientationRandom = orient_rnd;
 
 	// If both randomizers are effectively zero and rotation is constant zero, then all arrays are nullptr.
-	static const float eps_orientation = 2.77777778e-4f;	// Epsilon is equivalent to 0.1 degree
-	static const float eps_rotation = 2.77777778e-4f;	// Epsilon is equivalent to one rotation per hour (in rotations / second)
+	static const float eps_orientation = 2.77777778e-4f;    // Epsilon is equivalent to 0.1 degree
+	static const float eps_rotation = 2.77777778e-4f;    // Epsilon is equivalent to one rotation per hour (in rotations / second)
 	bool orientation_rand_zero = fabs(orient_rnd) < eps_orientation;
 	bool rotation_rand_zero = fabs(new_props.Rand) < eps_rotation;
-	if (orientation_rand_zero && rotation_rand_zero && new_props.NumKeyFrames == 0 && fabs(new_props.Start) < eps_rotation) {
-
+	if (orientation_rand_zero && rotation_rand_zero && new_props.NumKeyFrames == 0 && fabs(new_props.Start) < eps_rotation)
+	{
 		// Release Arrays,
 		REF_PTR_RELEASE(Orientation);
 
-		delete [] RotationKeyFrameTimes;
+		delete[] RotationKeyFrameTimes;
 		RotationKeyFrameTimes = nullptr;
 
-		delete [] HalfRotationKeyFrameDeltas;
+		delete[] HalfRotationKeyFrameDeltas;
 		HalfRotationKeyFrameDeltas = nullptr;
 
-		delete [] RotationKeyFrameValues;
+		delete[] RotationKeyFrameValues;
 		RotationKeyFrameValues = nullptr;
 
-		delete [] OrientationKeyFrameValues;
+		delete[] OrientationKeyFrameValues;
 		OrientationKeyFrameValues = nullptr;
 
 		NumRotationKeyFrames = 0;
 		NumRandomRotationEntriesMinus1 = 0;
 		NumRandomOrientationEntriesMinus1 = 0;
-
-	} else {
-
+	}
+	else
+	{
 		// Create the array if not present
-		if (!Orientation) {
-			Orientation = NEW_REF( ShareBufferClass<uint8> , (MaxNum, "ParticleBufferClass::Orientation") );
+		if (!Orientation)
+		{
+			Orientation = NEW_REF(ShareBufferClass<uint8>, (MaxNum, "ParticleBufferClass::Orientation"));
 		}
 
 		// Check times of the keyframes (each keytime must be larger than the
@@ -1619,151 +1786,179 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 		// constant during the last segment between last keyframe and MaxAge).
 		ui_previous_key_time = 0;
 		unsigned int key = 0;
-		for (; key < new_props.NumKeyFrames; key++) {
+		for (; key < new_props.NumKeyFrames; key++)
+		{
 			ui_current_key_time = (unsigned int)(new_props.KeyTimes[key] * 1000.0f);
 			WWASSERT(ui_current_key_time > ui_previous_key_time);
-			if (ui_current_key_time >= MaxAge) break;
+			if (ui_current_key_time >= MaxAge)
+			{
+				break;
+			}
 			ui_previous_key_time = ui_current_key_time;
 		}
 		bool rotation_constant_at_end = (key == new_props.NumKeyFrames);
 
 		// Reuse RotationKeyFrameValues, RotationKeyFrameTimes, RotationKeyFrameDeltas and
 		// OrientationKeyFrameValues if the right size, otherwise release and reallocate.
-		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
-		if (new_num_key_frames != NumRotationKeyFrames) {
+		unsigned int new_num_key_frames = key + 1;    // Includes start keyframe (keytime == 0).
+		if (new_num_key_frames != NumRotationKeyFrames)
+		{
 			NumRotationKeyFrames = new_num_key_frames;
-			delete [] RotationKeyFrameTimes;
-			delete [] RotationKeyFrameValues;
-			delete [] HalfRotationKeyFrameDeltas;
-			delete [] OrientationKeyFrameValues;
-			RotationKeyFrameTimes = W3DNEWARRAY unsigned int [NumRotationKeyFrames];
-			RotationKeyFrameValues = W3DNEWARRAY float [NumRotationKeyFrames];
-			HalfRotationKeyFrameDeltas = W3DNEWARRAY float [NumRotationKeyFrames];
-			OrientationKeyFrameValues = W3DNEWARRAY float [NumRotationKeyFrames];
+			delete[] RotationKeyFrameTimes;
+			delete[] RotationKeyFrameValues;
+			delete[] HalfRotationKeyFrameDeltas;
+			delete[] OrientationKeyFrameValues;
+			RotationKeyFrameTimes = W3DNEWARRAY unsigned int[NumRotationKeyFrames];
+			RotationKeyFrameValues = W3DNEWARRAY float[NumRotationKeyFrames];
+			HalfRotationKeyFrameDeltas = W3DNEWARRAY float[NumRotationKeyFrames];
+			OrientationKeyFrameValues = W3DNEWARRAY float[NumRotationKeyFrames];
 		}
 
 		// Set rotation keyframes (deltas will be set later)
 		RotationKeyFrameTimes[0] = 0;
 		RotationKeyFrameValues[0] = new_props.Start * 0.001f;
-		for (i = 1; i < NumRotationKeyFrames; i++) {
+		for (i = 1; i < NumRotationKeyFrames; i++)
+		{
 			unsigned int im1 = i - 1;
 			RotationKeyFrameTimes[i] = (unsigned int)(new_props.KeyTimes[im1] * 1000.0f);
 			RotationKeyFrameValues[i] = new_props.Values[im1] * 0.001f;
 		}
 
 		// Do deltas for all rotation keyframes except last
-		for (i = 0; i < NumRotationKeyFrames - 1; i++) {
-			HalfRotationKeyFrameDeltas[i]	= 0.5f * ( (RotationKeyFrameValues[i + 1] - RotationKeyFrameValues[i]) /
-				(float)(RotationKeyFrameTimes[i + 1] - RotationKeyFrameTimes[i]) );
+		for (i = 0; i < NumRotationKeyFrames - 1; i++)
+		{
+			HalfRotationKeyFrameDeltas[i] = 0.5f * ((RotationKeyFrameValues[i + 1] - RotationKeyFrameValues[i]) /
+			                                        (float)(RotationKeyFrameTimes[i + 1] - RotationKeyFrameTimes[i]));
 		}
 
 		// Do delta for last rotation keyframe (i is NumRotationKeyFrames - 1)
-		if (rotation_constant_at_end) {
+		if (rotation_constant_at_end)
+		{
 			HalfRotationKeyFrameDeltas[i] = 0.0f;
-		} else {
+		}
+		else
+		{
 			// This is OK because if rotation_constant_at_end is false, NumRotationKeyFrames is equal or
 			// smaller than new_props.NumKeyFrames so new_props.Values[NumRotationKeyFrames - 1] and
 			// new_props.KeyTimes[NumRotationKeyFrames - 1] exist.
 			HalfRotationKeyFrameDeltas[i] = 0.5f * (new_props.Values[i] * 0.001f - RotationKeyFrameValues[i]) /
-				(new_props.KeyTimes[i] * 1000.0f - (float)RotationKeyFrameTimes[i]);
+			                                (new_props.KeyTimes[i] * 1000.0f - (float)RotationKeyFrameTimes[i]);
 		}
 
 		// Calculate orientation keyframes by integrating the rotation at each keyframe
 		OrientationKeyFrameValues[0] = 0.0f;
-		for (i = 1; i < NumRotationKeyFrames; i++) {
+		for (i = 1; i < NumRotationKeyFrames; i++)
+		{
 			float delta_t = (float)(RotationKeyFrameTimes[i] - RotationKeyFrameTimes[i - 1]);
 			OrientationKeyFrameValues[i] = OrientationKeyFrameValues[i - 1] + delta_t *
-				(RotationKeyFrameValues[i - 1] + HalfRotationKeyFrameDeltas[i - 1] * delta_t);
+			                                                                    (RotationKeyFrameValues[i - 1] + HalfRotationKeyFrameDeltas[i - 1] * delta_t);
 		}
 
 		// Set up rotation randomizer table
-		if (rotation_rand_zero) {
-
-			if (RandomRotationEntries) {
+		if (rotation_rand_zero)
+		{
+			if (RandomRotationEntries)
+			{
 				// Reuse RandomRotationEntries if the right size, otherwise release and reallocate.
-				if (NumRandomRotationEntriesMinus1 != 0) {
-					delete [] RandomRotationEntries;
-					RandomRotationEntries = W3DNEWARRAY float [1];
+				if (NumRandomRotationEntriesMinus1 != 0)
+				{
+					delete[] RandomRotationEntries;
+					RandomRotationEntries = W3DNEWARRAY float[1];
 				}
-			} else {
-				RandomRotationEntries = W3DNEWARRAY float [1];
+			}
+			else
+			{
+				RandomRotationEntries = W3DNEWARRAY float[1];
 			}
 
 			NumRandomRotationEntriesMinus1 = 0;
 			RandomRotationEntries[0] = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomRotationEntries) {
+			if (RandomRotationEntries)
+			{
 				// Reuse RandomRotationEntries if the right size, otherwise release and reallocate.
-				if (NumRandomRotationEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomRotationEntries;
-					RandomRotationEntries = W3DNEWARRAY float [default_randomizer_entries];
+				if (NumRandomRotationEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomRotationEntries;
+					RandomRotationEntries = W3DNEWARRAY float[default_randomizer_entries];
 				}
-			} else {
-				RandomRotationEntries = W3DNEWARRAY float [default_randomizer_entries];
+			}
+			else
+			{
+				RandomRotationEntries = W3DNEWARRAY float[default_randomizer_entries];
 			}
 
 			NumRandomRotationEntriesMinus1 = default_randomizer_entries - 1;
 
 			float scale = new_props.Rand * 0.001f * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomRotationEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomRotationEntriesMinus1; j++)
+			{
 				RandomRotationEntries[j] = rand_gen * scale;
 			}
 		}
 
 		// Set up orientation randomizer table
-		if (orientation_rand_zero) {
-
-			if (RandomOrientationEntries) {
+		if (orientation_rand_zero)
+		{
+			if (RandomOrientationEntries)
+			{
 				// Reuse RandomOrientationEntries if the right size, otherwise release and reallocate.
-				if (NumRandomOrientationEntriesMinus1 != 0) {
-					delete [] RandomOrientationEntries;
-					RandomOrientationEntries = W3DNEWARRAY float [1];
+				if (NumRandomOrientationEntriesMinus1 != 0)
+				{
+					delete[] RandomOrientationEntries;
+					RandomOrientationEntries = W3DNEWARRAY float[1];
 				}
-			} else {
-				RandomOrientationEntries = W3DNEWARRAY float [1];
+			}
+			else
+			{
+				RandomOrientationEntries = W3DNEWARRAY float[1];
 			}
 
 			NumRandomOrientationEntriesMinus1 = 0;
 			RandomOrientationEntries[0] = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomOrientationEntries) {
+			if (RandomOrientationEntries)
+			{
 				// Reuse RandomOrientationEntries if the right size, otherwise release and reallocate.
-				if (NumRandomOrientationEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomOrientationEntries;
-					RandomOrientationEntries = W3DNEWARRAY float [default_randomizer_entries];
+				if (NumRandomOrientationEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomOrientationEntries;
+					RandomOrientationEntries = W3DNEWARRAY float[default_randomizer_entries];
 				}
-			} else {
-				RandomOrientationEntries = W3DNEWARRAY float [default_randomizer_entries];
+			}
+			else
+			{
+				RandomOrientationEntries = W3DNEWARRAY float[default_randomizer_entries];
 			}
 
 			NumRandomOrientationEntriesMinus1 = default_randomizer_entries - 1;
 
 			float scale = orient_rnd * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomOrientationEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomOrientationEntriesMinus1; j++)
+			{
 				RandomOrientationEntries[j] = rand_gen * scale;
 			}
 		}
 	}
 }
 
-
-
-void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
+void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float>& new_props)
 {
-
-	unsigned int i;	// Used in loops
+	unsigned int i;    // Used in loops
 	static Random3Class rand_gen;
-   float oo_intmax = 1.0f / (float)INT_MAX;
+	float oo_intmax = 1.0f / (float)INT_MAX;
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
 
@@ -1772,39 +1967,46 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 	// If the randomizer is effectively zero and there are no keyframes, then we just create a
 	// values array with one entry and store the starting value in it (the keyframes and random
 	// table will not be used in this case).
-	static const float eps_frame = 0.1f;	// Epsilon is equivalent to 0.1 frame
-	bool frame_rand_zero	= (fabs(new_props.Rand) < eps_frame);
-	if (frame_rand_zero && new_props.NumKeyFrames == 0) {
-
+	static const float eps_frame = 0.1f;    // Epsilon is equivalent to 0.1 frame
+	bool frame_rand_zero = (fabs(new_props.Rand) < eps_frame);
+	if (frame_rand_zero && new_props.NumKeyFrames == 0)
+	{
 		// Release Arrays, Reuse KeyFrameValues if the right size,
 		// otherwise release and reallocate.
 		REF_PTR_RELEASE(Frame);
-		if (FrameKeyFrameTimes) {
-			delete [] FrameKeyFrameTimes;
+		if (FrameKeyFrameTimes)
+		{
+			delete[] FrameKeyFrameTimes;
 			FrameKeyFrameTimes = nullptr;
 		}
-		if (FrameKeyFrameDeltas) {
-			delete [] FrameKeyFrameDeltas;
+		if (FrameKeyFrameDeltas)
+		{
+			delete[] FrameKeyFrameDeltas;
 			FrameKeyFrameDeltas = nullptr;
 		}
-		if (FrameKeyFrameValues) {
-			if (NumFrameKeyFrames > 1) {
-				delete [] FrameKeyFrameValues;
-				FrameKeyFrameValues = W3DNEWARRAY float [1];
+		if (FrameKeyFrameValues)
+		{
+			if (NumFrameKeyFrames > 1)
+			{
+				delete[] FrameKeyFrameValues;
+				FrameKeyFrameValues = W3DNEWARRAY float[1];
 			}
-		} else {
-			FrameKeyFrameValues = W3DNEWARRAY float [1];
+		}
+		else
+		{
+			FrameKeyFrameValues = W3DNEWARRAY float[1];
 		}
 
 		NumFrameKeyFrames = 0;
 		NumRandomFrameEntriesMinus1 = 0;
 		FrameKeyFrameValues[0] = new_props.Start;
-
-	} else {
-
+	}
+	else
+	{
 		// Create the array if not present
-		if (!Frame) {
-			Frame = NEW_REF( ShareBufferClass<uint8> , (MaxNum, "ParticleBufferClass::Frame") );
+		if (!Frame)
+		{
+			Frame = NEW_REF(ShareBufferClass<uint8>, (MaxNum, "ParticleBufferClass::Frame"));
 		}
 
 		// Check times of the keyframes (each keytime must be larger than the
@@ -1813,100 +2015,118 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 		// constant during the last segment between last keyframe and MaxAge).
 		ui_previous_key_time = 0;
 		unsigned int key = 0;
-		for (; key < new_props.NumKeyFrames; key++) {
+		for (; key < new_props.NumKeyFrames; key++)
+		{
 			ui_current_key_time = (unsigned int)(new_props.KeyTimes[key] * 1000.0f);
 			WWASSERT(ui_current_key_time > ui_previous_key_time);
-			if (ui_current_key_time >= MaxAge) break;
+			if (ui_current_key_time >= MaxAge)
+			{
+				break;
+			}
 			ui_previous_key_time = ui_current_key_time;
 		}
 		bool frame_constant_at_end = (key == new_props.NumKeyFrames);
 
 		// Reuse FrameKeyFrameValues, FrameKeyFrameTimes and FrameKeyFrameDeltas if the right size,
 		// otherwise release and reallocate.
-		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
-		if (new_num_key_frames != NumFrameKeyFrames) {
+		unsigned int new_num_key_frames = key + 1;    // Includes start keyframe (keytime == 0).
+		if (new_num_key_frames != NumFrameKeyFrames)
+		{
 			NumFrameKeyFrames = new_num_key_frames;
-			delete [] FrameKeyFrameTimes;
-			delete [] FrameKeyFrameValues;
-			delete [] FrameKeyFrameDeltas;
-			FrameKeyFrameTimes = W3DNEWARRAY unsigned int [NumFrameKeyFrames];
-			FrameKeyFrameValues = W3DNEWARRAY float [NumFrameKeyFrames];
-			FrameKeyFrameDeltas = W3DNEWARRAY float [NumFrameKeyFrames];
+			delete[] FrameKeyFrameTimes;
+			delete[] FrameKeyFrameValues;
+			delete[] FrameKeyFrameDeltas;
+			FrameKeyFrameTimes = W3DNEWARRAY unsigned int[NumFrameKeyFrames];
+			FrameKeyFrameValues = W3DNEWARRAY float[NumFrameKeyFrames];
+			FrameKeyFrameDeltas = W3DNEWARRAY float[NumFrameKeyFrames];
 		}
 
 		// Set keyframes (deltas will be set later)
 		FrameKeyFrameTimes[0] = 0;
 		FrameKeyFrameValues[0] = new_props.Start;
-		for (i = 1; i < NumFrameKeyFrames; i++) {
+		for (i = 1; i < NumFrameKeyFrames; i++)
+		{
 			unsigned int im1 = i - 1;
 			FrameKeyFrameTimes[i] = (unsigned int)(new_props.KeyTimes[im1] * 1000.0f);
 			FrameKeyFrameValues[i] = new_props.Values[im1];
 		}
 
 		// Do deltas for all frame keyframes except last
-		for (i = 0; i < NumFrameKeyFrames - 1; i++) {
-			FrameKeyFrameDeltas[i]	= (FrameKeyFrameValues[i + 1] - FrameKeyFrameValues[i]) /
-				(float)(FrameKeyFrameTimes[i + 1] - FrameKeyFrameTimes[i]);
+		for (i = 0; i < NumFrameKeyFrames - 1; i++)
+		{
+			FrameKeyFrameDeltas[i] = (FrameKeyFrameValues[i + 1] - FrameKeyFrameValues[i]) /
+			                         (float)(FrameKeyFrameTimes[i + 1] - FrameKeyFrameTimes[i]);
 		}
 
 		// Do delta for last frame keyframe (i is NumFrameKeyFrames - 1)
-		if (frame_constant_at_end) {
+		if (frame_constant_at_end)
+		{
 			FrameKeyFrameDeltas[i] = 0.0f;
-		} else {
+		}
+		else
+		{
 			// This is OK because if frame_constant_at_end is false, NumFrameKeyFrames is equal or
 			// smaller than new_props.NumKeyFrames so new_props.Values[NumFrameKeyFrames - 1] and
 			// new_props.KeyTimes[NumFrameKeyFrames - 1] exist.
 			FrameKeyFrameDeltas[i] = (new_props.Values[i] - FrameKeyFrameValues[i]) /
-				(new_props.KeyTimes[i] * 1000.0f - (float)FrameKeyFrameTimes[i]);
+			                         (new_props.KeyTimes[i] * 1000.0f - (float)FrameKeyFrameTimes[i]);
 		}
 
 		// Set up frame randomizer table
-		if (frame_rand_zero) {
-
-			if (RandomFrameEntries) {
+		if (frame_rand_zero)
+		{
+			if (RandomFrameEntries)
+			{
 				// Reuse RandomFrameEntries if the right size, otherwise release and reallocate.
-				if (NumRandomFrameEntriesMinus1 != 0) {
-					delete [] RandomFrameEntries;
-					RandomFrameEntries = W3DNEWARRAY float [1];
+				if (NumRandomFrameEntriesMinus1 != 0)
+				{
+					delete[] RandomFrameEntries;
+					RandomFrameEntries = W3DNEWARRAY float[1];
 				}
-			} else {
-				RandomFrameEntries = W3DNEWARRAY float [1];
+			}
+			else
+			{
+				RandomFrameEntries = W3DNEWARRAY float[1];
 			}
 
 			NumRandomFrameEntriesMinus1 = 0;
 			RandomFrameEntries[0] = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomFrameEntries) {
+			if (RandomFrameEntries)
+			{
 				// Reuse RandomFrameEntries if the right size, otherwise release and reallocate.
-				if (NumRandomFrameEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomFrameEntries;
-					RandomFrameEntries = W3DNEWARRAY float [default_randomizer_entries];
+				if (NumRandomFrameEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomFrameEntries;
+					RandomFrameEntries = W3DNEWARRAY float[default_randomizer_entries];
 				}
-			} else {
-				RandomFrameEntries = W3DNEWARRAY float [default_randomizer_entries];
+			}
+			else
+			{
+				RandomFrameEntries = W3DNEWARRAY float[default_randomizer_entries];
 			}
 
 			NumRandomFrameEntriesMinus1 = default_randomizer_entries - 1;
 
 			float scale = new_props.Rand * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomFrameEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomFrameEntriesMinus1; j++)
+			{
 				RandomFrameEntries[j] = rand_gen * scale;
 			}
 		}
 	}
 }
 
-
-void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_blur_times)
+void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float>& new_blur_times)
 {
-
-	unsigned int i;	// Used in loops
-   float oo_intmax = 1.0f / (float)INT_MAX;
+	unsigned int i;    // Used in loops
+	float oo_intmax = 1.0f / (float)INT_MAX;
 	unsigned int ui_previous_key_time = 0;
 	unsigned int ui_current_key_time = 0;
 
@@ -1915,128 +2135,151 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 	// If the randomizer is effectively zero and there are no keyframes, then we just create a
 	// values array with one entry and store the starting value in it (the keyframes and random
 	// table will not be used in this case).
-	static const float eps_blur = 1e-5f;	// Epsilon is equivalent to 1e-5 units per second
-	bool blurtime_rand_zero	= (fabs(new_blur_times.Rand) < eps_blur);
-	if (blurtime_rand_zero && new_blur_times.NumKeyFrames == 0) {
-
+	static const float eps_blur = 1e-5f;    // Epsilon is equivalent to 1e-5 units per second
+	bool blurtime_rand_zero = (fabs(new_blur_times.Rand) < eps_blur);
+	if (blurtime_rand_zero && new_blur_times.NumKeyFrames == 0)
+	{
 		// Release Arrays, Reuse KeyFrameValues if the right size,
 		// otherwise release and reallocate.
 
-		delete [] BlurTimeKeyFrameTimes;
+		delete[] BlurTimeKeyFrameTimes;
 		BlurTimeKeyFrameTimes = nullptr;
 
-		delete [] BlurTimeKeyFrameDeltas;
+		delete[] BlurTimeKeyFrameDeltas;
 		BlurTimeKeyFrameDeltas = nullptr;
 
-		if (BlurTimeKeyFrameValues) {
-			if (NumBlurTimeKeyFrames > 1) {
-				delete [] BlurTimeKeyFrameValues;
-				BlurTimeKeyFrameValues = new float [1];
+		if (BlurTimeKeyFrameValues)
+		{
+			if (NumBlurTimeKeyFrames > 1)
+			{
+				delete[] BlurTimeKeyFrameValues;
+				BlurTimeKeyFrameValues = new float[1];
 			}
-		} else {
-			BlurTimeKeyFrameValues = new float [1];
+		}
+		else
+		{
+			BlurTimeKeyFrameValues = new float[1];
 		}
 
 		NumBlurTimeKeyFrames = 0;
 		NumRandomBlurTimeEntriesMinus1 = 0;
 		BlurTimeKeyFrameValues[0] = new_blur_times.Start;
-
-	} else {
-
+	}
+	else
+	{
 		// Check times of the keyframes (each keytime must be larger than the
 		// previous one by at least a millisecond, and we stop at the first
 		// keytime of MaxAge or larger. (If all keyframes below MaxAge, the value is
 		// constant during the last segment between last keyframe and MaxAge).
 		ui_previous_key_time = 0;
 		unsigned int key = 0;
-		for (; key < new_blur_times.NumKeyFrames; key++) {
+		for (; key < new_blur_times.NumKeyFrames; key++)
+		{
 			ui_current_key_time = (unsigned int)(new_blur_times.KeyTimes[key] * 1000.0f);
 			WWASSERT(ui_current_key_time > ui_previous_key_time);
-			if (ui_current_key_time >= MaxAge) break;
+			if (ui_current_key_time >= MaxAge)
+			{
+				break;
+			}
 			ui_previous_key_time = ui_current_key_time;
 		}
 		bool blurtime_constant_at_end = (key == new_blur_times.NumKeyFrames);
 
 		// Reuse BlurTimeKeyFrameValues, BlurTimeKeyFrameTimes and BlurTimeKeyFrameDeltas if the right size,
 		// otherwise release and reallocate.
-		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
-		if (new_num_key_frames != NumBlurTimeKeyFrames) {
+		unsigned int new_num_key_frames = key + 1;    // Includes start keyframe (keytime == 0).
+		if (new_num_key_frames != NumBlurTimeKeyFrames)
+		{
 			NumBlurTimeKeyFrames = new_num_key_frames;
-			delete [] BlurTimeKeyFrameTimes;
-			delete [] BlurTimeKeyFrameValues;
-			delete [] BlurTimeKeyFrameDeltas;
-			BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
-			BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
-			BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];
+			delete[] BlurTimeKeyFrameTimes;
+			delete[] BlurTimeKeyFrameValues;
+			delete[] BlurTimeKeyFrameDeltas;
+			BlurTimeKeyFrameTimes = new unsigned int[NumBlurTimeKeyFrames];
+			BlurTimeKeyFrameValues = new float[NumBlurTimeKeyFrames];
+			BlurTimeKeyFrameDeltas = new float[NumBlurTimeKeyFrames];
 		}
 
 		// Set keyframes (deltas will be set later)
 		BlurTimeKeyFrameTimes[0] = 0;
 		BlurTimeKeyFrameValues[0] = new_blur_times.Start;
-		for (i = 1; i < NumBlurTimeKeyFrames; i++) {
+		for (i = 1; i < NumBlurTimeKeyFrames; i++)
+		{
 			unsigned int im1 = i - 1;
 			BlurTimeKeyFrameTimes[i] = (unsigned int)(new_blur_times.KeyTimes[im1] * 1000.0f);
 			BlurTimeKeyFrameValues[i] = new_blur_times.Values[im1];
 		}
 
 		// Do deltas for all frame keyframes except last
-		for (i = 0; i < NumBlurTimeKeyFrames - 1; i++) {
-			BlurTimeKeyFrameDeltas[i]	= (BlurTimeKeyFrameValues[i + 1] - BlurTimeKeyFrameValues[i]) /
-				(float)(BlurTimeKeyFrameTimes[i + 1] - BlurTimeKeyFrameTimes[i]);
+		for (i = 0; i < NumBlurTimeKeyFrames - 1; i++)
+		{
+			BlurTimeKeyFrameDeltas[i] = (BlurTimeKeyFrameValues[i + 1] - BlurTimeKeyFrameValues[i]) /
+			                            (float)(BlurTimeKeyFrameTimes[i + 1] - BlurTimeKeyFrameTimes[i]);
 		}
 
 		// Do delta for last frame keyframe (i is NumBlurTimeKeyFrames - 1)
-		if (blurtime_constant_at_end) {
+		if (blurtime_constant_at_end)
+		{
 			BlurTimeKeyFrameDeltas[i] = 0.0f;
-		} else {
+		}
+		else
+		{
 			// This is OK because if frame_constant_at_end is false, NumBlurTimeKeyFrames is equal or
 			// smaller than new_props.NumKeyFrames so new_props.Values[NumBlurTimeKeyFrames - 1] and
 			// new_props.KeyTimes[NumBlurTimeKeyFrames - 1] exist.
 			BlurTimeKeyFrameDeltas[i] = (new_blur_times.Values[i] - BlurTimeKeyFrameValues[i]) /
-				(new_blur_times.KeyTimes[i] * 1000.0f - (float)BlurTimeKeyFrameTimes[i]);
+			                            (new_blur_times.KeyTimes[i] * 1000.0f - (float)BlurTimeKeyFrameTimes[i]);
 		}
 
 		// Set up frame randomizer table
-		if (blurtime_rand_zero) {
-
-			if (RandomBlurTimeEntries) {
+		if (blurtime_rand_zero)
+		{
+			if (RandomBlurTimeEntries)
+			{
 				// Reuse RandomBlurTimeEntries if the right size, otherwise release and reallocate.
-				if (NumRandomBlurTimeEntriesMinus1 != 0) {
-					delete [] RandomBlurTimeEntries;
-					RandomBlurTimeEntries = new float [1];
+				if (NumRandomBlurTimeEntriesMinus1 != 0)
+				{
+					delete[] RandomBlurTimeEntries;
+					RandomBlurTimeEntries = new float[1];
 				}
-			} else {
-				RandomBlurTimeEntries = new float [1];
+			}
+			else
+			{
+				RandomBlurTimeEntries = new float[1];
 			}
 
 			NumRandomBlurTimeEntriesMinus1 = 0;
 			RandomBlurTimeEntries[0] = 0.0f;
-		} else {
-
+		}
+		else
+		{
 			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
 			unsigned int pot_num = Find_POT(MaxNum);
 			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
 
-			if (RandomBlurTimeEntries) {
+			if (RandomBlurTimeEntries)
+			{
 				// Reuse RandomBlurTimeEntries if the right size, otherwise release and reallocate.
-				if (NumRandomBlurTimeEntriesMinus1 != (default_randomizer_entries - 1)) {
-					delete [] RandomBlurTimeEntries;
-					RandomBlurTimeEntries = new float [default_randomizer_entries];
+				if (NumRandomBlurTimeEntriesMinus1 != (default_randomizer_entries - 1))
+				{
+					delete[] RandomBlurTimeEntries;
+					RandomBlurTimeEntries = new float[default_randomizer_entries];
 				}
-			} else {
-				RandomBlurTimeEntries = new float [default_randomizer_entries];
+			}
+			else
+			{
+				RandomBlurTimeEntries = new float[default_randomizer_entries];
 			}
 
 			NumRandomBlurTimeEntriesMinus1 = default_randomizer_entries - 1;
 
 			float scale = new_blur_times.Rand * oo_intmax;
-			for (unsigned int j = 0; j <= NumRandomBlurTimeEntriesMinus1; j++) {
+			for (unsigned int j = 0; j <= NumRandomBlurTimeEntriesMinus1; j++)
+			{
 				RandomBlurTimeEntries[j] = rand_gen * scale;
 			}
 		}
 	}
 }
-
 
 // This informs the buffer that the emitter is dead, so it can release
 // its pointer to it and be removed itself after all its particles dies
@@ -2049,13 +2292,13 @@ void ParticleBufferClass::Emitter_Is_Dead()
 	Emitter = nullptr;
 }
 
-
 // This set's the buffer's current emitter - this should usually be
 // called only by the emitter's copy constructor after it clones a
 // buffer.
-void ParticleBufferClass::Set_Emitter(ParticleEmitterClass *emitter)
+void ParticleBufferClass::Set_Emitter(ParticleEmitterClass* emitter)
 {
-	if (Emitter) {
+	if (Emitter)
+	{
 		// We do not have a ref for the emitter (see DTor for detailed explanation)
 		// Emitter->Release_Ref();
 		Emitter = nullptr;
@@ -2063,14 +2306,14 @@ void ParticleBufferClass::Set_Emitter(ParticleEmitterClass *emitter)
 
 	Emitter = emitter;
 
-	if (Emitter) {
+	if (Emitter)
+	{
 		// We do not add a ref for the emitter (see DTor for detailed explanation)
 		// Emitter->Add_Ref();
 	}
 }
 
-
-NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle()
+NewParticleStruct* ParticleBufferClass::Add_Uninitialized_New_Particle()
 {
 	// Note that this function does not initialize the new particle - it
 	// returns its address to a different function which performs the actual
@@ -2078,24 +2321,30 @@ NewParticleStruct * ParticleBufferClass::Add_Uninitialized_New_Particle()
 
 	// Push new particle on new particle queue. If it overflows, just adjust
 	// queue to remove oldest member (which is the one which was overwritten).
-	NewParticleStruct *ptr = &(NewParticleQueue[NewParticleQueueEnd]);
-   if (++NewParticleQueueEnd == MaxNum) NewParticleQueueEnd = 0;
-	if (++NewParticleQueueCount == (signed)(MaxNum + 1)) {
+	NewParticleStruct* ptr = &(NewParticleQueue[NewParticleQueueEnd]);
+	if (++NewParticleQueueEnd == MaxNum)
+	{
+		NewParticleQueueEnd = 0;
+	}
+	if (++NewParticleQueueCount == (signed)(MaxNum + 1))
+	{
 		// Overflow - advance queue start:
-		if (++NewParticleQueueStart == MaxNum) NewParticleQueueStart = 0;
+		if (++NewParticleQueueStart == MaxNum)
+		{
+			NewParticleQueueStart = 0;
+		}
 		NewParticleQueueCount--;
 	}
 
 	return ptr;
 }
 
-
 void ParticleBufferClass::Update_Cached_Bounding_Volumes() const
 {
 	// This ugly cast is done because the alternative is to make everything
 	// in the class mutable, which does not seem like a good solution
 	// (Update_Bounding_Box can potentially update the particle state).
-	((ParticleBufferClass *)this)->Update_Bounding_Box();
+	((ParticleBufferClass*)this)->Update_Bounding_Box();
 
 	// Update cached bounding box and sphere according to the bounding box:
 	CachedBoundingSphere.Init(BoundingBox.Center, BoundingBox.Extent.Length());
@@ -2103,14 +2352,16 @@ void ParticleBufferClass::Update_Cached_Bounding_Volumes() const
 	Validate_Cached_Bounding_Volumes();
 }
 
-
 void ParticleBufferClass::Update_Kinematic_Particle_State()
 {
 	// Note: elapsed may be very large indeed the first time the object is
 	// updated, but this doesn't matter, since it is actually only used in
 	// Update_Non_New_Particles(), which is never called on the first update.
 	unsigned int elapsed = WW3D::Get_Sync_Time() - LastUpdateTime;
-	if (elapsed == 0U) return;
+	if (elapsed == 0U)
+	{
+		return;
+	}
 
 	// Get new particles from the input buffer and write them into the circular
 	// particle buffer, possibly overwriting older particles. Update each
@@ -2121,7 +2372,10 @@ void ParticleBufferClass::Update_Kinematic_Particle_State()
 	Kill_Old_Particles();
 
 	// Update all living, non-new particles by a uniform time interval.
-	if (NonNewNum > 0) Update_Non_New_Particles(elapsed);
+	if (NonNewNum > 0)
+	{
+		Update_Non_New_Particles(elapsed);
+	}
 
 	// Mark all new particles as non-new.
 	End = NewEnd;
@@ -2133,7 +2387,6 @@ void ParticleBufferClass::Update_Kinematic_Particle_State()
 	BoundingBoxDirty = true;
 }
 
-
 void ParticleBufferClass::Update_Visual_Particle_State()
 {
 	// NOTE: The visual state (color/alpha/size) is "stateless" in that each time it is calculated
@@ -2141,16 +2394,22 @@ void ParticleBufferClass::Update_Visual_Particle_State()
 	// systems/pointgroups in the future to chunk triangles into reusable small buffers.
 
 	// If all visual state is constant do nothing.
-	if (!Color && !Alpha && !Size && !Orientation && !Frame) return;
+	if (!Color && !Alpha && !Size && !Orientation && !Frame)
+	{
+		return;
+	}
 
 	// In the general case, a range in a circular buffer can be composed of up
 	// to two subranges. Find the Start - End subranges.
-	unsigned int sub1_end;		// End of subrange 1.
-	unsigned int sub2_start;	// Start of subrange 2.
-	if ((Start < End) || ((Start == End) && NonNewNum ==0)) {
+	unsigned int sub1_end;    // End of subrange 1.
+	unsigned int sub2_start;    // Start of subrange 2.
+	if ((Start < End) || ((Start == End) && NonNewNum == 0))
+	{
 		sub1_end = End;
 		sub2_start = End;
-	} else {
+	}
+	else
+	{
 		sub1_end = MaxNum;
 		sub2_start = 0;
 	}
@@ -2164,61 +2423,69 @@ void ParticleBufferClass::Update_Visual_Particle_State()
 	unsigned int skey = NumSizeKeyFrames - 1;
 	unsigned int rkey = NumRotationKeyFrames - 1;
 	unsigned int fkey = NumFrameKeyFrames - 1;
-	unsigned int bkey = NumBlurTimeKeyFrames -1;
+	unsigned int bkey = NumBlurTimeKeyFrames - 1;
 
 	unsigned int part;
-	Vector3 *color = Color ? Color->Get_Array(): nullptr;
-	float *alpha = Alpha ? Alpha->Get_Array(): nullptr;
-	float *size = Size ? Size->Get_Array(): nullptr;
-	uint8 *orientation = Orientation ? Orientation->Get_Array(): nullptr;
-	uint8 *frame = Frame ? Frame->Get_Array(): nullptr;
-	Vector3 *tailposition = TailPosition ? TailPosition->Get_Array() : nullptr;
+	Vector3* color = Color ? Color->Get_Array() : nullptr;
+	float* alpha = Alpha ? Alpha->Get_Array() : nullptr;
+	float* size = Size ? Size->Get_Array() : nullptr;
+	uint8* orientation = Orientation ? Orientation->Get_Array() : nullptr;
+	uint8* frame = Frame ? Frame->Get_Array() : nullptr;
+	Vector3* tailposition = TailPosition ? TailPosition->Get_Array() : nullptr;
 
-	Vector3 *position=nullptr;
+	Vector3* position = nullptr;
 
-	if (PingPongPosition) {
+	if (PingPongPosition)
+	{
 		int pingpong = WW3D::Get_Frame_Count() & 0x1;
 		position = Position[pingpong]->Get_Array();
-	} else {
+	}
+	else
+	{
 		position = Position[0]->Get_Array();
 	}
 
-
-	for (part = Start; part < sub1_end; part++) {
-
+	for (part = Start; part < sub1_end; part++)
+	{
 		unsigned int part_age = current_time - TimeStamp[part];
 
 		// Ensure the current color keyframe is correct, and calculate color state
-		if (color) {
+		if (color)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < ColorKeyFrameTimes[ckey]; ckey--);
+			for (; part_age < ColorKeyFrameTimes[ckey]; ckey--)
+				;
 
 			color[part] = ColorKeyFrameValues[ckey] +
-							ColorKeyFrameDeltas[ckey] * (float)(part_age - ColorKeyFrameTimes[ckey]) +
-							RandomColorEntries[part & NumRandomColorEntriesMinus1];
+			              ColorKeyFrameDeltas[ckey] * (float)(part_age - ColorKeyFrameTimes[ckey]) +
+			              RandomColorEntries[part & NumRandomColorEntriesMinus1];
 		}
 
 		// Ensure the current alpha keyframe is correct, and calculate alpha state
-		if (alpha) {
+		if (alpha)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < AlphaKeyFrameTimes[akey]; akey--);
+			for (; part_age < AlphaKeyFrameTimes[akey]; akey--)
+				;
 
 			alpha[part] = AlphaKeyFrameValues[akey] +
-				AlphaKeyFrameDeltas[akey] * (float)(part_age - AlphaKeyFrameTimes[akey]) +
-				RandomAlphaEntries[part & NumRandomAlphaEntriesMinus1];
+			              AlphaKeyFrameDeltas[akey] * (float)(part_age - AlphaKeyFrameTimes[akey]) +
+			              RandomAlphaEntries[part & NumRandomAlphaEntriesMinus1];
 		}
 
 		// Ensure the current size keyframe is correct, and calculate size state
-		if (size) {
+		if (size)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < SizeKeyFrameTimes[skey]; skey--);
+			for (; part_age < SizeKeyFrameTimes[skey]; skey--)
+				;
 
 			size[part] = SizeKeyFrameValues[skey] +
-				SizeKeyFrameDeltas[skey] * (float)(part_age - SizeKeyFrameTimes[skey]) +
-				RandomSizeEntries[part & NumRandomSizeEntriesMinus1];
+			             SizeKeyFrameDeltas[skey] * (float)(part_age - SizeKeyFrameTimes[skey]) +
+			             RandomSizeEntries[part & NumRandomSizeEntriesMinus1];
 
 			// Size (unlike color and alpha) isn't clamped in the engine, so we need to clamp
 			// negative values to zero here:
@@ -2226,83 +2493,96 @@ void ParticleBufferClass::Update_Visual_Particle_State()
 		}
 
 		// Ensure the current rotation keyframe is correct, and calculate orientation state
-		if (orientation) {
+		if (orientation)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < RotationKeyFrameTimes[rkey]; rkey--);
+			for (; part_age < RotationKeyFrameTimes[rkey]; rkey--)
+				;
 
 			float f_delta_t = (float)(part_age - RotationKeyFrameTimes[rkey]);
 			float tmp_orient = OrientationKeyFrameValues[rkey] +
-				(RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
-				RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
-				RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
+			                   (RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
+			                   RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
+			                   RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
 
 			orientation[part] = (uint)(((int)(tmp_orient * 256.0f)) & 0xFF);
 		}
 
 		// Ensure the current frame keyframe is correct, and calculate frame state
-		if (frame) {
+		if (frame)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < FrameKeyFrameTimes[fkey]; fkey--);
+			for (; part_age < FrameKeyFrameTimes[fkey]; fkey--)
+				;
 
 			float tmp_frame = FrameKeyFrameValues[fkey] +
-				FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
-				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
+			                  FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
+			                  RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
 
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
 
-		if (tailposition) {
+		if (tailposition)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
 			float blur_time = BlurTimeKeyFrameValues[0];
-			if (BlurTimeKeyFrameTimes) {
-				for (; part_age < BlurTimeKeyFrameTimes[bkey]; bkey--);
+			if (BlurTimeKeyFrameTimes)
+			{
+				for (; part_age < BlurTimeKeyFrameTimes[bkey]; bkey--)
+					;
 				blur_time = BlurTimeKeyFrameValues[bkey] +
-					BlurTimeKeyFrameDeltas[bkey] * (float)(part_age - BlurTimeKeyFrameTimes[bkey]) +
-					RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
+				            BlurTimeKeyFrameDeltas[bkey] * (float)(part_age - BlurTimeKeyFrameTimes[bkey]) +
+				            RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
 			}
-			tailposition[part]=position[part]-Velocity[part]*blur_time*1000;
+			tailposition[part] = position[part] - Velocity[part] * blur_time * 1000;
 		}
 	}
 
-	for (part = sub2_start; part < End; part++) {
-
+	for (part = sub2_start; part < End; part++)
+	{
 		unsigned int part_age = current_time - TimeStamp[part];
 
 		// Ensure the current color keyframe is correct, and calculate color state
-		if (color) {
+		if (color)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < ColorKeyFrameTimes[ckey]; ckey--);
+			for (; part_age < ColorKeyFrameTimes[ckey]; ckey--)
+				;
 
 			color[part] =
-					ColorKeyFrameValues[ckey] +
-					ColorKeyFrameDeltas[ckey] * (float)(part_age - ColorKeyFrameTimes[ckey]) +
-					RandomColorEntries[part & NumRandomColorEntriesMinus1];
+			  ColorKeyFrameValues[ckey] +
+			  ColorKeyFrameDeltas[ckey] * (float)(part_age - ColorKeyFrameTimes[ckey]) +
+			  RandomColorEntries[part & NumRandomColorEntriesMinus1];
 		}
 
 		// Ensure the current alpha keyframe is correct, and calculate alpha state
-		if (alpha) {
+		if (alpha)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < AlphaKeyFrameTimes[akey]; akey--);
+			for (; part_age < AlphaKeyFrameTimes[akey]; akey--)
+				;
 
 			alpha[part] = AlphaKeyFrameValues[akey] +
-				AlphaKeyFrameDeltas[akey] * (float)(part_age - AlphaKeyFrameTimes[akey]) +
-				RandomAlphaEntries[part & NumRandomAlphaEntriesMinus1];
+			              AlphaKeyFrameDeltas[akey] * (float)(part_age - AlphaKeyFrameTimes[akey]) +
+			              RandomAlphaEntries[part & NumRandomAlphaEntriesMinus1];
 		}
 
 		// Ensure the current size keyframe is correct, and calculate size state
-		if (size) {
+		if (size)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < SizeKeyFrameTimes[skey]; skey--);
+			for (; part_age < SizeKeyFrameTimes[skey]; skey--)
+				;
 
 			size[part] = SizeKeyFrameValues[skey] +
-				SizeKeyFrameDeltas[skey] * (float)(part_age - SizeKeyFrameTimes[skey]) +
-				RandomSizeEntries[part & NumRandomSizeEntriesMinus1];
+			             SizeKeyFrameDeltas[skey] * (float)(part_age - SizeKeyFrameTimes[skey]) +
+			             RandomSizeEntries[part & NumRandomSizeEntriesMinus1];
 
 			// Size (unlike color) isn't clamped in the engine, so we need to
 			// clamp negative values to zero here:
@@ -2310,58 +2590,68 @@ void ParticleBufferClass::Update_Visual_Particle_State()
 		}
 
 		// Ensure the current rotation keyframe is correct, and calculate orientation state
-		if (orientation) {
+		if (orientation)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < RotationKeyFrameTimes[rkey]; rkey--);
+			for (; part_age < RotationKeyFrameTimes[rkey]; rkey--)
+				;
 
 			float f_delta_t = (float)(part_age - RotationKeyFrameTimes[rkey]);
 			float tmp_orient = OrientationKeyFrameValues[rkey] +
-				(RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
-				RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
-				RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
+			                   (RotationKeyFrameValues[rkey] + HalfRotationKeyFrameDeltas[rkey] * f_delta_t) * f_delta_t +
+			                   RandomRotationEntries[part & NumRandomRotationEntriesMinus1] * (float)part_age +
+			                   RandomOrientationEntries[part & NumRandomOrientationEntriesMinus1];
 
 			orientation[part] = (uint)(((int)(tmp_orient * 256.0f)) & 0xFF);
 		}
 
 		// Ensure the current frame keyframe is correct, and calculate frame state
-		if (frame) {
+		if (frame)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
-			for (; part_age < FrameKeyFrameTimes[fkey]; fkey--);
+			for (; part_age < FrameKeyFrameTimes[fkey]; fkey--)
+				;
 
 			float tmp_frame = FrameKeyFrameValues[fkey] +
-				FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
-				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
+			                  FrameKeyFrameDeltas[fkey] * (float)(part_age - FrameKeyFrameTimes[fkey]) +
+			                  RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
 
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
 
-		if (tailposition) {
+		if (tailposition)
+		{
 			// We go from older to younger particles, so we go backwards from the last keyframe until
 			// age >= keytime. This loop must terminate because the 0th keytime is 0.
 			float blur_time = BlurTimeKeyFrameValues[0];
-			if (BlurTimeKeyFrameTimes) {
-				for (; part_age < BlurTimeKeyFrameTimes[bkey]; bkey--);
+			if (BlurTimeKeyFrameTimes)
+			{
+				for (; part_age < BlurTimeKeyFrameTimes[bkey]; bkey--)
+					;
 				blur_time = BlurTimeKeyFrameValues[bkey] +
-					BlurTimeKeyFrameDeltas[bkey] * (float)(part_age - BlurTimeKeyFrameTimes[bkey]) +
-					RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
+				            BlurTimeKeyFrameDeltas[bkey] * (float)(part_age - BlurTimeKeyFrameTimes[bkey]) +
+				            RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
 			}
-			tailposition[part]=position[part]-Velocity[part]*blur_time*1000;
+			tailposition[part] = position[part] - Velocity[part] * blur_time * 1000;
 		}
 	}
 }
-
 
 void ParticleBufferClass::Update_Bounding_Box()
 {
 	// Ensure all particle positions are updated. If bounding box still not
 	// dirty, return.
 	Update_Kinematic_Particle_State();
-	if (!BoundingBoxDirty) return;
+	if (!BoundingBoxDirty)
+	{
+		return;
+	}
 
 	// If there are no particles, generate a dummy bounding box:
-	if (NonNewNum == 0U) {
+	if (NonNewNum == 0U)
+	{
 		BoundingBox.Init(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0));
 		BoundingBoxDirty = false;
 		return;
@@ -2369,26 +2659,31 @@ void ParticleBufferClass::Update_Bounding_Box()
 
 	// Find min/max coord values for all points:
 	int pingpong = 0;
-	if (PingPongPosition) {
+	if (PingPongPosition)
+	{
 		pingpong = WW3D::Get_Frame_Count() & 0x1;
 	}
-	Vector3 *position = Position[pingpong]->Get_Array();
+	Vector3* position = Position[pingpong]->Get_Array();
 	Vector3 max_coords = position[Start];
 	Vector3 min_coords = position[Start];
 
 	// In the general case, a range in a circular buffer can be composed of up
 	// to two subranges. Find the Start - End subranges.
-	unsigned int sub1_end;		// End of subrange 1.
-	unsigned int sub2_start;	// Start of subrange 2.
-	unsigned int i;				// Loop index.
-	if ((Start < End) || ((Start == End) && NonNewNum ==0)) {
+	unsigned int sub1_end;    // End of subrange 1.
+	unsigned int sub2_start;    // Start of subrange 2.
+	unsigned int i;    // Loop index.
+	if ((Start < End) || ((Start == End) && NonNewNum == 0))
+	{
 		sub1_end = End;
 		sub2_start = End;
-	} else {
+	}
+	else
+	{
 		sub1_end = MaxNum;
 		sub2_start = 0;
 	}
-   for (i = Start; i < sub1_end; i++) {
+	for (i = Start; i < sub1_end; i++)
+	{
 		max_coords.X = max_coords.X >= position[i].X ? max_coords.X : position[i].X;
 		max_coords.Y = max_coords.Y >= position[i].Y ? max_coords.Y : position[i].Y;
 		max_coords.Z = max_coords.Z >= position[i].Z ? max_coords.Z : position[i].Z;
@@ -2396,7 +2691,8 @@ void ParticleBufferClass::Update_Bounding_Box()
 		min_coords.Y = min_coords.Y <= position[i].Y ? min_coords.Y : position[i].Y;
 		min_coords.Z = min_coords.Z <= position[i].Z ? min_coords.Z : position[i].Z;
 	}
-   for (i = sub2_start; i < End; i++) {
+	for (i = sub2_start; i < End; i++)
+	{
 		max_coords.X = max_coords.X >= position[i].X ? max_coords.X : position[i].X;
 		max_coords.Y = max_coords.Y >= position[i].Y ? max_coords.Y : position[i].Y;
 		max_coords.Z = max_coords.Z >= position[i].Z ? max_coords.Z : position[i].Z;
@@ -2411,10 +2707,9 @@ void ParticleBufferClass::Update_Bounding_Box()
 	min_coords -= size;
 
 	// Update bounding box:
-	BoundingBox.Init(MinMaxAABoxClass(min_coords,max_coords));
+	BoundingBox.Init(MinMaxAABoxClass(min_coords, max_coords));
 	BoundingBoxDirty = false;
 }
-
 
 // NOTE: typically, the number of new particles created in a frame is small
 // relative to the total number of particles, so this is not the most
@@ -2429,73 +2724,96 @@ void ParticleBufferClass::Get_New_Particles()
 
 	// position is the current frame position, prev_pos is the previous frames position (only if
 	// we have enabled pingpong position buffers)
-	Vector3 *position;
-	Vector3 *prev_pos;
-	if (PingPongPosition) {
+	Vector3* position;
+	Vector3* prev_pos;
+	if (PingPongPosition)
+	{
 		int pingpong = WW3D::Get_Frame_Count() & 0x1;
 		position = Position[pingpong]->Get_Array();
 		prev_pos = Position[pingpong ^ 0x1]->Get_Array();
-	} else {
+	}
+	else
+	{
 		position = Position[0]->Get_Array();
 		prev_pos = nullptr;
 	}
 
-	for (; NewParticleQueueCount;) {
-
+	for (; NewParticleQueueCount;)
+	{
 		// Get particle off new particle queue:
-		NewParticleStruct &new_particle = NewParticleQueue[NewParticleQueueStart];
-		if (++NewParticleQueueStart == MaxNum) NewParticleQueueStart = 0U;
+		NewParticleStruct& new_particle = NewParticleQueue[NewParticleQueueStart];
+		if (++NewParticleQueueStart == MaxNum)
+		{
+			NewParticleQueueStart = 0U;
+		}
 		NewParticleQueueCount--;
 
 		// Get particle birth time stamp, calculate age. If not under maxage
 		// skip this particle.
 		TimeStamp[NewEnd] = new_particle.TimeStamp;
 		unsigned int age = current_time - TimeStamp[NewEnd];
-		if (age >= MaxAge) continue;
+		if (age >= MaxAge)
+		{
+			continue;
+		}
 		float fp_age = (float)age;
 
 		// Apply velocity and acceleration if present. Otherwise, just apply
 		// velocity.
-		if (HasAccel) {
+		if (HasAccel)
+		{
 			position[NewEnd] = new_particle.Position +
-									(new_particle.Velocity + 0.5f * Accel * fp_age) * fp_age;
+			                   (new_particle.Velocity + 0.5f * Accel * fp_age) * fp_age;
 
 			Velocity[NewEnd] = new_particle.Velocity + (Accel * fp_age);
-		} else {
-			position[NewEnd] =new_particle.Position +
-										(new_particle.Velocity * fp_age);
+		}
+		else
+		{
+			position[NewEnd] = new_particle.Position +
+			                   (new_particle.Velocity * fp_age);
 			Velocity[NewEnd] = new_particle.Velocity;
 		}
 
 		// If pingpong enabled, store starting position in prev_pos[].
-		if (PingPongPosition) {
+		if (PingPongPosition)
+		{
 			prev_pos[NewEnd] = new_particle.Position;
 		}
 
 		// Advance the 'end of new particles' index.
 		NewEnd++;
-      if (NewEnd == MaxNum) NewEnd = 0;
+		if (NewEnd == MaxNum)
+		{
+			NewEnd = 0;
+		}
 
-      // Update the new particles count.
-      NewNum++;
+		// Update the new particles count.
+		NewNum++;
 
 		// If we have just overflowed the total buffer, advance Start.
-      if ((NewNum + NonNewNum) == (signed)(MaxNum + 1)) {
-         Start++;
-         if (Start == MaxNum) Start = 0;
-         NonNewNum--;
+		if ((NewNum + NonNewNum) == (signed)(MaxNum + 1))
+		{
+			Start++;
+			if (Start == MaxNum)
+			{
+				Start = 0;
+			}
+			NonNewNum--;
 
-         // If this underflows the 'non-new' buffer, advance End.
-         if (NonNewNum == -1) {
-            End++;
-            if (End == MaxNum) End = 0;
-            NonNewNum = 0;
-            NewNum--;
-         }
-      }
+			// If this underflows the 'non-new' buffer, advance End.
+			if (NonNewNum == -1)
+			{
+				End++;
+				if (End == MaxNum)
+				{
+					End = 0;
+				}
+				NonNewNum = 0;
+				NewNum--;
+			}
+		}
 	}
 }
-
 
 void ParticleBufferClass::Kill_Old_Particles()
 {
@@ -2504,53 +2822,65 @@ void ParticleBufferClass::Kill_Old_Particles()
 
 	// In the general case, a range in a circular buffer can be composed of up
 	// to two subranges. Find the Start - End subranges.
-	unsigned int sub1_end;		// End of subrange 1.
-	unsigned int sub2_start;	// Start of subrange 2.
-	unsigned int i;				// Loop index.
-	if ((Start < End) || ((Start == End) && NonNewNum ==0)) {
+	unsigned int sub1_end;    // End of subrange 1.
+	unsigned int sub2_start;    // Start of subrange 2.
+	unsigned int i;    // Loop index.
+	if ((Start < End) || ((Start == End) && NonNewNum == 0))
+	{
 		sub1_end = End;
 		sub2_start = End;
-	} else {
+	}
+	else
+	{
 		sub1_end = MaxNum;
 		sub2_start = 0;
 	}
 
-   unsigned int current_time = WW3D::Get_Sync_Time();
+	unsigned int current_time = WW3D::Get_Sync_Time();
 
 	// Stop when the current particle is young enough to be alive.
 	bool broke = false;
-   for (i = Start; i < sub1_end; i++) {
-      if ((current_time - TimeStamp[i]) < MaxAge) {
-         broke = true;
-         break;
-      }
-      NonNewNum--;
+	for (i = Start; i < sub1_end; i++)
+	{
+		if ((current_time - TimeStamp[i]) < MaxAge)
+		{
+			broke = true;
+			break;
+		}
+		NonNewNum--;
 	}
-   if (!broke) {
-	   for (i = sub2_start; i < End; i++) {
-		   if ((current_time - TimeStamp[i]) < MaxAge) break;
-         NonNewNum--;
-	   }
-   }
+	if (!broke)
+	{
+		for (i = sub2_start; i < End; i++)
+		{
+			if ((current_time - TimeStamp[i]) < MaxAge)
+			{
+				break;
+			}
+			NonNewNum--;
+		}
+	}
 
 	Start = i;
 
-   // NOTE: we do not scan the new particles, because they have been already
-   // preculled to be under MaxAge.
+	// NOTE: we do not scan the new particles, because they have been already
+	// preculled to be under MaxAge.
 }
-
 
 void ParticleBufferClass::Update_Non_New_Particles(unsigned int elapsed)
 {
 	// In the general case, a range in a circular buffer can be composed of up
 	// to two subranges. Find the Start - End subranges.
-	unsigned int sub1_end;		// End of subrange 1.
-	unsigned int sub2_start;	// Start of subrange 2.
-	unsigned int i;				// Loop index.
-	if ((Start < End) || ((Start == End) && NonNewNum ==0)) {
+	unsigned int sub1_end;    // End of subrange 1.
+	unsigned int sub2_start;    // Start of subrange 2.
+	unsigned int i;    // Loop index.
+	if ((Start < End) || ((Start == End) && NonNewNum == 0))
+	{
 		sub1_end = End;
 		sub2_start = End;
-	} else {
+	}
+	else
+	{
 		sub1_end = MaxNum;
 		sub2_start = 0;
 	}
@@ -2558,58 +2888,73 @@ void ParticleBufferClass::Update_Non_New_Particles(unsigned int elapsed)
 	float fp_elapsed_time = (float)elapsed;
 
 	// Update position and velocity for all particles.
-	if (PingPongPosition) {
-
+	if (PingPongPosition)
+	{
 		int pingpong = WW3D::Get_Frame_Count() & 0x1;
-		Vector3 *position = Position[pingpong]->Get_Array();
-		Vector3 *prev_pos = Position[pingpong ^ 0x1]->Get_Array();
+		Vector3* position = Position[pingpong]->Get_Array();
+		Vector3* prev_pos = Position[pingpong ^ 0x1]->Get_Array();
 
-		if (HasAccel) {
+		if (HasAccel)
+		{
 			Vector3 delta_v = Accel * fp_elapsed_time;
 			Vector3 accel_p = Accel * (0.5f * fp_elapsed_time * fp_elapsed_time);
-			for (i = Start; i < sub1_end; i++) {
+			for (i = Start; i < sub1_end; i++)
+			{
 				position[i] = prev_pos[i] + Velocity[i] * fp_elapsed_time + accel_p;
 				Velocity[i] += delta_v;
 			}
-			for (i = sub2_start; i < End; i++) {
+			for (i = sub2_start; i < End; i++)
+			{
 				position[i] = prev_pos[i] + Velocity[i] * fp_elapsed_time + accel_p;
 				Velocity[i] += delta_v;
 			}
-		} else {
-			for (i = Start; i < sub1_end; i++) {
+		}
+		else
+		{
+			for (i = Start; i < sub1_end; i++)
+			{
 				position[i] += Velocity[i] * fp_elapsed_time;
 			}
-			for (i = sub2_start; i < End; i++) {
+			for (i = sub2_start; i < End; i++)
+			{
 				position[i] += Velocity[i] * fp_elapsed_time;
 			}
 		}
-	} else {
+	}
+	else
+	{
+		Vector3* position = Position[0]->Get_Array();
 
-		Vector3 *position = Position[0]->Get_Array();
-
-		if (HasAccel) {
+		if (HasAccel)
+		{
 			Vector3 delta_v = Accel * fp_elapsed_time;
 			Vector3 accel_p = Accel * (0.5f * fp_elapsed_time * fp_elapsed_time);
-			for (i = Start; i < sub1_end; i++) {
+			for (i = Start; i < sub1_end; i++)
+			{
 				position[i] += Velocity[i] * fp_elapsed_time + accel_p;
 				Velocity[i] += delta_v;
 			}
-			for (i = sub2_start; i < End; i++) {
+			for (i = sub2_start; i < End; i++)
+			{
 				position[i] += Velocity[i] * fp_elapsed_time + accel_p;
 				Velocity[i] += delta_v;
 			}
-		} else {
-			for (i = Start; i < sub1_end; i++) {
+		}
+		else
+		{
+			for (i = Start; i < sub1_end; i++)
+			{
 				position[i] += Velocity[i] * fp_elapsed_time;
 			}
-			for (i = sub2_start; i < End; i++) {
+			for (i = sub2_start; i < End; i++)
+			{
 				position[i] += Velocity[i] * fp_elapsed_time;
 			}
 		}
 	}
 }
 
-void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> &colors) const
+void ParticleBufferClass::Get_Color_Key_Frames(ParticlePropertyStruct<Vector3>& colors) const
 {
 	int real_keyframe_count = (NumColorKeyFrames > 0) ? (NumColorKeyFrames - 1) : 0;
 	bool create_last_keyframe = false;
@@ -2618,10 +2963,11 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
 	if ((ColorKeyFrameDeltas != nullptr) &&
-		 ((ColorKeyFrameDeltas[NumColorKeyFrames - 1].X != 0) ||
-		  (ColorKeyFrameDeltas[NumColorKeyFrames - 1].Y != 0) ||
-		  (ColorKeyFrameDeltas[NumColorKeyFrames - 1].Z != 0))) {
-		real_keyframe_count ++;
+	    ((ColorKeyFrameDeltas[NumColorKeyFrames - 1].X != 0) ||
+	     (ColorKeyFrameDeltas[NumColorKeyFrames - 1].Y != 0) ||
+	     (ColorKeyFrameDeltas[NumColorKeyFrames - 1].Z != 0)))
+	{
+		real_keyframe_count++;
 		create_last_keyframe = true;
 	}
 
@@ -2635,37 +2981,40 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 	//	If we have more than just the start color, build
 	// an array of key times and color vatues
 	//
-	if (real_keyframe_count > 0) {
-		colors.KeyTimes	= W3DNEWARRAY float[real_keyframe_count];
-		colors.Values		= W3DNEWARRAY Vector3[real_keyframe_count];
+	if (real_keyframe_count > 0)
+	{
+		colors.KeyTimes = W3DNEWARRAY float[real_keyframe_count];
+		colors.Values = W3DNEWARRAY Vector3[real_keyframe_count];
 
 		//
 		//	Copy the keytimes and color values
 		//
 		unsigned int index;
-		for (index = 1; index < NumColorKeyFrames; index ++) {
-			colors.KeyTimes[index - 1]	= ((float)ColorKeyFrameTimes[index]) / 1000;
-			colors.Values[index - 1]	= ColorKeyFrameValues[index];
+		for (index = 1; index < NumColorKeyFrames; index++)
+		{
+			colors.KeyTimes[index - 1] = ((float)ColorKeyFrameTimes[index]) / 1000;
+			colors.Values[index - 1] = ColorKeyFrameValues[index];
 		}
 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {
+		if (create_last_keyframe)
+		{
 			colors.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
 			// Determine what the value of the last keyframe should be
 			//
 			Vector3 start_color = ColorKeyFrameValues[index - 1];
-			Vector3 &delta = ColorKeyFrameDeltas[NumColorKeyFrames - 1];
+			Vector3& delta = ColorKeyFrameDeltas[NumColorKeyFrames - 1];
 			float time_delta = MaxAge - ColorKeyFrameTimes[index - 1];
 			colors.Values[index - 1] = start_color + (delta * time_delta);
 		}
 	}
 }
 
-void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> &opacities) const
+void ParticleBufferClass::Get_Opacity_Key_Frames(ParticlePropertyStruct<float>& opacities) const
 {
 	int real_keyframe_count = (NumAlphaKeyFrames > 0) ? (NumAlphaKeyFrames - 1) : 0;
 	bool create_last_keyframe = false;
@@ -2674,8 +3023,9 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
 	if ((AlphaKeyFrameDeltas != nullptr) &&
-		 (AlphaKeyFrameDeltas[NumAlphaKeyFrames - 1] != 0)) {
-		real_keyframe_count ++;
+	    (AlphaKeyFrameDeltas[NumAlphaKeyFrames - 1] != 0))
+	{
+		real_keyframe_count++;
 		create_last_keyframe = true;
 	}
 
@@ -2689,38 +3039,40 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 	//	If we have more than just the start opacity, build
 	// an array of key times and opacity values
 	//
-	if (real_keyframe_count > 0) {
-		opacities.KeyTimes	= W3DNEWARRAY float[real_keyframe_count];
-		opacities.Values		= W3DNEWARRAY float[real_keyframe_count];
+	if (real_keyframe_count > 0)
+	{
+		opacities.KeyTimes = W3DNEWARRAY float[real_keyframe_count];
+		opacities.Values = W3DNEWARRAY float[real_keyframe_count];
 
 		//
 		//	Copy the keytimes and opacity values
 		//
 		unsigned int index;
-		for (index = 1; index < NumAlphaKeyFrames; index ++) {
-			opacities.KeyTimes[index - 1]	= ((float)AlphaKeyFrameTimes[index]) / 1000;
-			opacities.Values[index - 1]	= AlphaKeyFrameValues[index];
+		for (index = 1; index < NumAlphaKeyFrames; index++)
+		{
+			opacities.KeyTimes[index - 1] = ((float)AlphaKeyFrameTimes[index]) / 1000;
+			opacities.Values[index - 1] = AlphaKeyFrameValues[index];
 		}
 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {
+		if (create_last_keyframe)
+		{
 			opacities.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
 			// Determine what the value of the last keyframe should be
 			//
 			float start_alpha = AlphaKeyFrameValues[index - 1];
-			float &delta = AlphaKeyFrameDeltas[NumAlphaKeyFrames - 1];
+			float& delta = AlphaKeyFrameDeltas[NumAlphaKeyFrames - 1];
 			float time_delta = MaxAge - AlphaKeyFrameTimes[index - 1];
 			opacities.Values[index - 1] = start_alpha + (delta * time_delta);
 		}
 	}
 }
 
-
-void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &sizes) const
+void ParticleBufferClass::Get_Size_Key_Frames(ParticlePropertyStruct<float>& sizes) const
 {
 	int real_keyframe_count = (NumSizeKeyFrames > 0) ? (NumSizeKeyFrames - 1) : 0;
 	bool create_last_keyframe = false;
@@ -2729,53 +3081,56 @@ void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &si
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
 	if ((SizeKeyFrameDeltas != nullptr) &&
-		 (SizeKeyFrameDeltas[NumSizeKeyFrames - 1] != 0)) {
-		real_keyframe_count ++;
+	    (SizeKeyFrameDeltas[NumSizeKeyFrames - 1] != 0))
+	{
+		real_keyframe_count++;
 		create_last_keyframe = true;
 	}
 
-	sizes.Start				= SizeKeyFrameValues[0];
-	sizes.Rand				= SizeRandom;
-	sizes.NumKeyFrames	= real_keyframe_count;
-	sizes.KeyTimes			= nullptr;
-	sizes.Values			= nullptr;
+	sizes.Start = SizeKeyFrameValues[0];
+	sizes.Rand = SizeRandom;
+	sizes.NumKeyFrames = real_keyframe_count;
+	sizes.KeyTimes = nullptr;
+	sizes.Values = nullptr;
 
 	//
 	//	If we have more than just the start opacity, build
 	// an array of key times and opacity values
 	//
-	if (real_keyframe_count > 0) {
-		sizes.KeyTimes	= W3DNEWARRAY float[real_keyframe_count];
-		sizes.Values	= W3DNEWARRAY float[real_keyframe_count];
+	if (real_keyframe_count > 0)
+	{
+		sizes.KeyTimes = W3DNEWARRAY float[real_keyframe_count];
+		sizes.Values = W3DNEWARRAY float[real_keyframe_count];
 
 		//
 		//	Copy the keytimes and size values
 		//
 		unsigned int index;
-		for (index = 1; index < NumSizeKeyFrames; index ++) {
-			sizes.KeyTimes[index - 1]	= ((float)SizeKeyFrameTimes[index]) / 1000;
-			sizes.Values[index - 1]	= SizeKeyFrameValues[index];
+		for (index = 1; index < NumSizeKeyFrames; index++)
+		{
+			sizes.KeyTimes[index - 1] = ((float)SizeKeyFrameTimes[index]) / 1000;
+			sizes.Values[index - 1] = SizeKeyFrameValues[index];
 		}
 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {
+		if (create_last_keyframe)
+		{
 			sizes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
 			// Determine what the value of the last keyframe should be
 			//
-			float start_size			= SizeKeyFrameValues[index - 1];
-			float &delta				= SizeKeyFrameDeltas[NumSizeKeyFrames - 1];
-			float time_delta			= MaxAge - SizeKeyFrameTimes[index - 1];
-			sizes.Values[index - 1]	= start_size + (delta * time_delta);
+			float start_size = SizeKeyFrameValues[index - 1];
+			float& delta = SizeKeyFrameDeltas[NumSizeKeyFrames - 1];
+			float time_delta = MaxAge - SizeKeyFrameTimes[index - 1];
+			sizes.Values[index - 1] = start_size + (delta * time_delta);
 		}
 	}
 }
 
-
-void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float> &rotations) const
+void ParticleBufferClass::Get_Rotation_Key_Frames(ParticlePropertyStruct<float>& rotations) const
 {
 	int real_keyframe_count = (NumRotationKeyFrames > 0) ? (NumRotationKeyFrames - 1) : 0;
 	bool create_last_keyframe = false;
@@ -2788,54 +3143,57 @@ void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float>
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
 	if ((HalfRotationKeyFrameDeltas != nullptr) &&
-		 (HalfRotationKeyFrameDeltas[NumRotationKeyFrames - 1] != 0)) {
-		real_keyframe_count ++;
+	    (HalfRotationKeyFrameDeltas[NumRotationKeyFrames - 1] != 0))
+	{
+		real_keyframe_count++;
 		create_last_keyframe = true;
 	}
 
 	// Convert the rotation values from rotations per millisecond to rotations per second.
-	rotations.Start			= RotationKeyFrameValues ? RotationKeyFrameValues[0] * 1000.0f : 0;
-	rotations.Rand				= RotationRandom * 1000.0f;
-	rotations.NumKeyFrames	= real_keyframe_count;
-	rotations.KeyTimes		= nullptr;
-	rotations.Values			= nullptr;
+	rotations.Start = RotationKeyFrameValues ? RotationKeyFrameValues[0] * 1000.0f : 0;
+	rotations.Rand = RotationRandom * 1000.0f;
+	rotations.NumKeyFrames = real_keyframe_count;
+	rotations.KeyTimes = nullptr;
+	rotations.Values = nullptr;
 
 	//
 	//	If we have more than just the start rotation, build
 	// an array of key times and rotation values
 	//
-	if (real_keyframe_count > 0) {
-		rotations.KeyTimes	= W3DNEWARRAY float[real_keyframe_count];
-		rotations.Values		= W3DNEWARRAY float[real_keyframe_count];
+	if (real_keyframe_count > 0)
+	{
+		rotations.KeyTimes = W3DNEWARRAY float[real_keyframe_count];
+		rotations.Values = W3DNEWARRAY float[real_keyframe_count];
 
 		//
 		//	Copy the keytimes and rotation values
 		//
 		unsigned int index;
-		for (index = 1; index < NumRotationKeyFrames; index ++) {
-			rotations.KeyTimes[index - 1]	= ((float)RotationKeyFrameTimes[index]) / 1000;
-			rotations.Values[index - 1]	= RotationKeyFrameValues[index] * 1000.0f;
+		for (index = 1; index < NumRotationKeyFrames; index++)
+		{
+			rotations.KeyTimes[index - 1] = ((float)RotationKeyFrameTimes[index]) / 1000;
+			rotations.Values[index - 1] = RotationKeyFrameValues[index] * 1000.0f;
 		}
 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {
+		if (create_last_keyframe)
+		{
 			rotations.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
 			// Determine what the value of the last keyframe should be
 			//
-			float start_rotation				= RotationKeyFrameValues[index - 1];
-			float delta							= 2.0f * HalfRotationKeyFrameDeltas[NumRotationKeyFrames - 1];
-			float time_delta					= MaxAge - RotationKeyFrameTimes[index - 1];
-			rotations.Values[index - 1]	= (start_rotation + (delta * time_delta)) * 1000.0f;
+			float start_rotation = RotationKeyFrameValues[index - 1];
+			float delta = 2.0f * HalfRotationKeyFrameDeltas[NumRotationKeyFrames - 1];
+			float time_delta = MaxAge - RotationKeyFrameTimes[index - 1];
+			rotations.Values[index - 1] = (start_rotation + (delta * time_delta)) * 1000.0f;
 		}
 	}
 }
 
-
-void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const
+void ParticleBufferClass::Get_Frame_Key_Frames(ParticlePropertyStruct<float>& frames) const
 {
 	int real_keyframe_count = (NumFrameKeyFrames > 0) ? (NumFrameKeyFrames - 1) : 0;
 	bool create_last_keyframe = false;
@@ -2844,52 +3202,56 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
 	if ((FrameKeyFrameDeltas != nullptr) &&
-		 (FrameKeyFrameDeltas[NumFrameKeyFrames - 1] != 0)) {
-		real_keyframe_count ++;
+	    (FrameKeyFrameDeltas[NumFrameKeyFrames - 1] != 0))
+	{
+		real_keyframe_count++;
 		create_last_keyframe = true;
 	}
 
-	frames.Start			= FrameKeyFrameValues[0];
-	frames.Rand				= FrameRandom;
-	frames.NumKeyFrames	= real_keyframe_count;
-	frames.KeyTimes		= nullptr;
-	frames.Values			= nullptr;
+	frames.Start = FrameKeyFrameValues[0];
+	frames.Rand = FrameRandom;
+	frames.NumKeyFrames = real_keyframe_count;
+	frames.KeyTimes = nullptr;
+	frames.Values = nullptr;
 
 	//
 	//	If we have more than just the start rotation, build
 	// an array of key times and frame values
 	//
-	if (real_keyframe_count > 0) {
-		frames.KeyTimes	= W3DNEWARRAY float[real_keyframe_count];
-		frames.Values		= W3DNEWARRAY float[real_keyframe_count];
+	if (real_keyframe_count > 0)
+	{
+		frames.KeyTimes = W3DNEWARRAY float[real_keyframe_count];
+		frames.Values = W3DNEWARRAY float[real_keyframe_count];
 
 		//
 		//	Copy the keytimes and frame values
 		//
 		unsigned int index;
-		for (index = 1; index < NumFrameKeyFrames; index ++) {
-			frames.KeyTimes[index - 1]	= ((float)FrameKeyFrameTimes[index]) / 1000;
-			frames.Values[index - 1]	= FrameKeyFrameValues[index];
+		for (index = 1; index < NumFrameKeyFrames; index++)
+		{
+			frames.KeyTimes[index - 1] = ((float)FrameKeyFrameTimes[index]) / 1000;
+			frames.Values[index - 1] = FrameKeyFrameValues[index];
 		}
 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {
+		if (create_last_keyframe)
+		{
 			frames.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
 			// Determine what the value of the last keyframe should be
 			//
-			float start_frame			= FrameKeyFrameValues[index - 1];
-			float &delta				= FrameKeyFrameDeltas[NumFrameKeyFrames - 1];
-			float time_delta			= MaxAge - FrameKeyFrameTimes[index - 1];
-			frames.Values[index - 1]	= start_frame + (delta * time_delta);
+			float start_frame = FrameKeyFrameValues[index - 1];
+			float& delta = FrameKeyFrameDeltas[NumFrameKeyFrames - 1];
+			float time_delta = MaxAge - FrameKeyFrameTimes[index - 1];
+			frames.Values[index - 1] = start_frame + (delta * time_delta);
 		}
 	}
 }
 
-void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const
+void ParticleBufferClass::Get_Blur_Time_Key_Frames(ParticlePropertyStruct<float>& blurtimes) const
 {
 	int real_keyframe_count = (NumBlurTimeKeyFrames > 0) ? (NumBlurTimeKeyFrames - 1) : 0;
 	bool create_last_keyframe = false;
@@ -2898,72 +3260,77 @@ void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float
 	//	Determine if there is a keyframe at the very end of the particle's lifetime
 	//
 	if ((BlurTimeKeyFrameDeltas != nullptr) &&
-		 (BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1] != 0)) {
-		real_keyframe_count ++;
+	    (BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1] != 0))
+	{
+		real_keyframe_count++;
 		create_last_keyframe = true;
 	}
 
-	blurtimes.Start			= BlurTimeKeyFrameValues[0];
-	blurtimes.Rand				= BlurTimeRandom;
-	blurtimes.NumKeyFrames	= real_keyframe_count;
-	blurtimes.KeyTimes		= nullptr;
-	blurtimes.Values			= nullptr;
+	blurtimes.Start = BlurTimeKeyFrameValues[0];
+	blurtimes.Rand = BlurTimeRandom;
+	blurtimes.NumKeyFrames = real_keyframe_count;
+	blurtimes.KeyTimes = nullptr;
+	blurtimes.Values = nullptr;
 
 	//
 	//	If we have more than just the start rotation, build
 	// an array of key times and blur time values
 	//
-	if (real_keyframe_count > 0) {
-		blurtimes.KeyTimes	= new float[real_keyframe_count];
-		blurtimes.Values		= new float[real_keyframe_count];
+	if (real_keyframe_count > 0)
+	{
+		blurtimes.KeyTimes = new float[real_keyframe_count];
+		blurtimes.Values = new float[real_keyframe_count];
 
 		//
 		//	Copy the keytimes and frame values
 		//
 		unsigned int index;
-		for (index = 1; index < NumBlurTimeKeyFrames; index ++) {
-			blurtimes.KeyTimes[index - 1]	= ((float)BlurTimeKeyFrameTimes[index]) / 1000;
-			blurtimes.Values[index - 1]	= BlurTimeKeyFrameValues[index];
+		for (index = 1; index < NumBlurTimeKeyFrames; index++)
+		{
+			blurtimes.KeyTimes[index - 1] = ((float)BlurTimeKeyFrameTimes[index]) / 1000;
+			blurtimes.Values[index - 1] = BlurTimeKeyFrameValues[index];
 		}
 
 		//
 		//	Add a keyframe at the very end of the timeline if necessary
 		//
-		if (create_last_keyframe) {
+		if (create_last_keyframe)
+		{
 			blurtimes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
 
 			//
 			// Determine what the value of the last keyframe should be
 			//
-			float start_blurtime		= BlurTimeKeyFrameValues[index - 1];
-			float &delta				= BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1];
-			float time_delta			= MaxAge - BlurTimeKeyFrameTimes[index - 1];
-			blurtimes.Values[index - 1]	= start_blurtime + (delta * time_delta);
+			float start_blurtime = BlurTimeKeyFrameValues[index - 1];
+			float& delta = BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1];
+			float time_delta = MaxAge - BlurTimeKeyFrameTimes[index - 1];
+			blurtimes.Values[index - 1] = start_blurtime + (delta * time_delta);
 		}
 	}
 }
 
-void ParticleBufferClass::Set_LOD_Max_Screen_Size(int lod_level,float max_screen_size)
+void ParticleBufferClass::Set_LOD_Max_Screen_Size(int lod_level, float max_screen_size)
 {
-	if ((lod_level <0) || (lod_level > 17)) {
+	if ((lod_level < 0) || (lod_level > 17))
+	{
 		return;
 	}
 	LODMaxScreenSizes[lod_level] = max_screen_size;
 }
 
-
 float ParticleBufferClass::Get_LOD_Max_Screen_Size(int lod_level)
 {
-	if ((lod_level <0) || (lod_level > 17)) {
+	if ((lod_level < 0) || (lod_level > 17))
+	{
 		return NO_MAX_SCREEN_SIZE;
 	}
 	return LODMaxScreenSizes[lod_level];
 }
 
-
 int ParticleBufferClass::Get_Line_Texture_Mapping_Mode() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Get_Texture_Mapping_Mode();
 	}
 	return SegLineRendererClass::UNIFORM_WIDTH_TEXTURE_MAP;
@@ -2971,7 +3338,8 @@ int ParticleBufferClass::Get_Line_Texture_Mapping_Mode() const
 
 int ParticleBufferClass::Is_Merge_Intersections() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Is_Merge_Intersections();
 	}
 	return false;
@@ -2979,7 +3347,8 @@ int ParticleBufferClass::Is_Merge_Intersections() const
 
 int ParticleBufferClass::Is_Freeze_Random() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Is_Freeze_Random();
 	}
 	return false;
@@ -2987,15 +3356,17 @@ int ParticleBufferClass::Is_Freeze_Random() const
 
 int ParticleBufferClass::Is_Sorting_Disabled() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Is_Sorting_Disabled();
 	}
 	return false;
 }
 
-int ParticleBufferClass::Are_End_Caps_Enabled()	const
+int ParticleBufferClass::Are_End_Caps_Enabled() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Are_End_Caps_Enabled();
 	}
 	return false;
@@ -3003,7 +3374,8 @@ int ParticleBufferClass::Are_End_Caps_Enabled()	const
 
 int ParticleBufferClass::Get_Subdivision_Level() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Get_Current_Subdivision_Level();
 	}
 	return 0;
@@ -3011,7 +3383,8 @@ int ParticleBufferClass::Get_Subdivision_Level() const
 
 float ParticleBufferClass::Get_Noise_Amplitude() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Get_Noise_Amplitude();
 	}
 	return 0.0f;
@@ -3019,7 +3392,8 @@ float ParticleBufferClass::Get_Noise_Amplitude() const
 
 float ParticleBufferClass::Get_Merge_Abort_Factor() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Get_Merge_Abort_Factor();
 	}
 	return 0.0f;
@@ -3027,7 +3401,8 @@ float ParticleBufferClass::Get_Merge_Abort_Factor() const
 
 float ParticleBufferClass::Get_Texture_Tile_Factor() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Get_Texture_Tile_Factor();
 	}
 	return 1.0f;
@@ -3035,9 +3410,9 @@ float ParticleBufferClass::Get_Texture_Tile_Factor() const
 
 Vector2 ParticleBufferClass::Get_UV_Offset_Rate() const
 {
-	if (LineRenderer != nullptr) {
+	if (LineRenderer != nullptr)
+	{
 		return LineRenderer->Get_UV_Offset_Rate();
 	}
-	return Vector2(0.0f,0.0f);
+	return Vector2(0.0f, 0.0f);
 }
-

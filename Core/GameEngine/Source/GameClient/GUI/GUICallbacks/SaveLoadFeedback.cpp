@@ -22,32 +22,32 @@
 #include "GameClient/MessageBox.h"
 #include "GameClient/SaveLoadFeedback.h"
 
-static UnicodeString getUnicodeSavePath( const AsciiString &filename )
+static UnicodeString getUnicodeSavePath(const AsciiString& filename)
 {
 	UnicodeString path;
-	path.translate( TheGameState->getFilePathInSaveDirectory(filename) );
+	path.translate(TheGameState->getFilePathInSaveDirectory(filename));
 	return path;
 }
 
-void presentSaveResult( const SaveResult &result )
+void presentSaveResult(const SaveResult& result)
 {
-	switch( result.saveCode )
+	switch (result.saveCode)
 	{
 		case SC_OK:
 		{
-			TheInGameUI->message( TheGameText->fetch("GUI:GameSaveComplete") );
+			TheInGameUI->message(TheGameText->fetch("GUI:GameSaveComplete"));
 			break;
 		}
 		case SC_UNABLE_TO_OPEN_FILE:
 		{
-			TheInGameUI->message( "GUI:Error" );
+			TheInGameUI->message("GUI:Error");
 			break;
 		}
 		case SC_ERROR:
 		{
 			UnicodeString msg;
-			msg.format( TheGameText->fetch("GUI:ErrorSavingGame"), getUnicodeSavePath(result.filename).str() );
-			MessageBoxOk( TheGameText->fetch("GUI:Error"), msg, nullptr );
+			msg.format(TheGameText->fetch("GUI:ErrorSavingGame"), getUnicodeSavePath(result.filename).str());
+			MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 			break;
 		}
 		default:
@@ -57,12 +57,12 @@ void presentSaveResult( const SaveResult &result )
 	}
 }
 
-void presentLoadResult( SaveCode result, const AsciiString &filename )
+void presentLoadResult(SaveCode result, const AsciiString& filename)
 {
-	if( result == SC_INVALID_DATA )
+	if (result == SC_INVALID_DATA)
 	{
 		UnicodeString msg;
-		msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), getUnicodeSavePath(filename).str() );
-		MessageBoxOk( TheGameText->fetch("GUI:Error"), msg, nullptr );
+		msg.format(TheGameText->fetch("GUI:ErrorLoadingGame"), getUnicodeSavePath(filename).str());
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 	}
 }

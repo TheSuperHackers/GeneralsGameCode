@@ -34,28 +34,26 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"stimer.h"
-#include	"win.h"
+#include "always.h"
+#include "stimer.h"
+#include "win.h"
 
 #ifdef _MSC_VER
-#pragma warning (push,3)
+	#pragma warning(push, 3)
 #endif
 
 #include "systimer.h"
 
 #ifdef _MSC_VER
-#pragma warning (pop)
+	#pragma warning(pop)
 #endif
 
-
-long SystemTimerClass::operator () () const
+long SystemTimerClass::operator()() const
 {
-	return TIMEGETTIME()/16;
+	return TIMEGETTIME() / 16;
 }
 
-
-SystemTimerClass::operator long () const
+SystemTimerClass::operator long() const
 {
-	return TIMEGETTIME()/16;
+	return TIMEGETTIME() / 16;
 }

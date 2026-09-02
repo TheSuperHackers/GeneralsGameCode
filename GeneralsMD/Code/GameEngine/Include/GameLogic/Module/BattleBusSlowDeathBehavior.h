@@ -40,48 +40,41 @@ class FXList;
 //-------------------------------------------------------------------------------------------------
 class BattleBusSlowDeathBehaviorModuleData : public SlowDeathBehaviorModuleData
 {
-
 public:
-
 	BattleBusSlowDeathBehaviorModuleData();
 
-	static void buildFieldParse( MultiIniFieldParse &p );
+	static void buildFieldParse(MultiIniFieldParse& p);
 
-	const FXList *m_fxStartUndeath;								///< fx list executed on start of throw
-	const ObjectCreationList *m_oclStartUndeath;	///< ocl list executed on start of throw
+	const FXList* m_fxStartUndeath;    ///< fx list executed on start of throw
+	const ObjectCreationList* m_oclStartUndeath;    ///< ocl list executed on start of throw
 
-	const FXList *m_fxHitGround;									///< FXList for when we land
-	const ObjectCreationList *m_oclHitGround;			///< OCL for when we land
+	const FXList* m_fxHitGround;    ///< FXList for when we land
+	const ObjectCreationList* m_oclHitGround;    ///< OCL for when we land
 
-	Real m_throwForce;														///< How hard we are thrown in to the air
-	Real m_percentDamageToPassengers;							///< At the moment we throw up, how hard the people inside are hit
-	UnsignedInt m_emptyHulkDestructionDelay;			///< Another reason this is a BattleBus module, and not a generic two stage death.  If non-zero, time empty before we kill ourselves.
-
+	Real m_throwForce;    ///< How hard we are thrown in to the air
+	Real m_percentDamageToPassengers;    ///< At the moment we throw up, how hard the people inside are hit
+	UnsignedInt m_emptyHulkDestructionDelay;    ///< Another reason this is a BattleBus module, and not a generic two stage death.  If non-zero, time empty before we kill ourselves.
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class BattleBusSlowDeathBehavior : public SlowDeathBehavior
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BattleBusSlowDeathBehavior, "BattleBusSlowDeathBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BattleBusSlowDeathBehavior, BattleBusSlowDeathBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BattleBusSlowDeathBehavior, "BattleBusSlowDeathBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BattleBusSlowDeathBehavior, BattleBusSlowDeathBehaviorModuleData)
 
 public:
-
-	BattleBusSlowDeathBehavior( Thing *thing, const ModuleData* moduleData );
+	BattleBusSlowDeathBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// slow death methods
-	virtual void onDie( const DamageInfo *damageInfo ) override;
-	virtual void beginSlowDeath( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
+	virtual void beginSlowDeath(const DamageInfo* damageInfo) override;
 	virtual UpdateSleepTime update() override;
 
 protected:
-
-	Bool m_isRealDeath;								///< Flag set by onDie that prevents the alternate processing caused by beginSlowDeath.
-	Bool m_isInFirstDeath;						///< Flag that controls lifetime of alternate processing.  Prevented by RealDeath flag.
-	UnsignedInt m_groundCheckFrame;		///< Don't check for bouncing until at least here.
-	UnsignedInt m_penaltyDeathFrame;	///< If non zero, kill us with Penalty damage at this frame
-
+	Bool m_isRealDeath;    ///< Flag set by onDie that prevents the alternate processing caused by beginSlowDeath.
+	Bool m_isInFirstDeath;    ///< Flag that controls lifetime of alternate processing.  Prevented by RealDeath flag.
+	UnsignedInt m_groundCheckFrame;    ///< Don't check for bouncing until at least here.
+	UnsignedInt m_penaltyDeathFrame;    ///< If non zero, kill us with Penalty damage at this frame
 };

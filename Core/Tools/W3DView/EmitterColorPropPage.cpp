@@ -29,8 +29,8 @@
 #include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -39,60 +39,55 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(EmitterColorPropPageClass, CPropertyPage)
 
-
 /////////////////////////////////////////////////////////////
 //
 //  EmitterColorPropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterColorPropPageClass::EmitterColorPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (nullptr),
-	  m_bValid (true),
-	  m_ColorBar (nullptr),
-	  m_OpacityBar (nullptr),
-	  m_Lifetime (0),
-	  CPropertyPage (EmitterColorPropPageClass::IDD)
+EmitterColorPropPageClass::EmitterColorPropPageClass(EmitterInstanceListClass* pemitter)
+  : m_pEmitterList(nullptr)
+  , m_bValid(true)
+  , m_ColorBar(nullptr)
+  , m_OpacityBar(nullptr)
+  , m_Lifetime(0)
+  , CPropertyPage(EmitterColorPropPageClass::IDD)
 {
-
-  ::memset (&m_OrigColors, 0, sizeof (m_OrigColors));
-  ::memset (&m_OrigOpacities, 0, sizeof (m_OrigOpacities));
-  ::memset (&m_CurrentColors, 0, sizeof (m_CurrentColors));
-  ::memset (&m_CurrentOpacities, 0, sizeof (m_CurrentOpacities));
+	::memset(&m_OrigColors, 0, sizeof(m_OrigColors));
+	::memset(&m_OrigOpacities, 0, sizeof(m_OrigOpacities));
+	::memset(&m_CurrentColors, 0, sizeof(m_CurrentColors));
+	::memset(&m_CurrentOpacities, 0, sizeof(m_CurrentOpacities));
 
 	//{{AFX_DATA_INIT(EmitterColorPropPageClass)
 	//}}AFX_DATA_INIT
-	Initialize ();
+	Initialize();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  ~EmitterColorPropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterColorPropPageClass::~EmitterColorPropPageClass ()
+EmitterColorPropPageClass::~EmitterColorPropPageClass()
 {
 	// Free the original setting arrays
-	SAFE_DELETE_ARRAY (m_OrigColors.KeyTimes);
-	SAFE_DELETE_ARRAY (m_OrigColors.Values);
-	SAFE_DELETE_ARRAY (m_OrigOpacities.KeyTimes);
-	SAFE_DELETE_ARRAY (m_OrigOpacities.Values);
+	SAFE_DELETE_ARRAY(m_OrigColors.KeyTimes);
+	SAFE_DELETE_ARRAY(m_OrigColors.Values);
+	SAFE_DELETE_ARRAY(m_OrigOpacities.KeyTimes);
+	SAFE_DELETE_ARRAY(m_OrigOpacities.Values);
 
 	// Free the current setting arrays
-	SAFE_DELETE_ARRAY (m_CurrentColors.KeyTimes);
-	SAFE_DELETE_ARRAY (m_CurrentColors.Values);
-	SAFE_DELETE_ARRAY (m_CurrentOpacities.KeyTimes);
-	SAFE_DELETE_ARRAY (m_CurrentOpacities.Values);
+	SAFE_DELETE_ARRAY(m_CurrentColors.KeyTimes);
+	SAFE_DELETE_ARRAY(m_CurrentColors.Values);
+	SAFE_DELETE_ARRAY(m_CurrentOpacities.KeyTimes);
+	SAFE_DELETE_ARRAY(m_CurrentOpacities.Values);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  DoDataExchange
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::DoDataExchange (CDataExchange* pDX)
+void EmitterColorPropPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	// Allow the base class to process this message
 	CPropertyPage::DoDataExchange(pDX);
@@ -104,116 +99,113 @@ EmitterColorPropPageClass::DoDataExchange (CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EmitterColorPropPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(EmitterColorPropPageClass)
-	ON_WM_DESTROY()
-	ON_NOTIFY(UDN_DELTAPOS, IDC_RED_RANDOM_SPIN, OnDeltaposRedRandomSpin)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterColorPropPageClass)
+ON_WM_DESTROY()
+ON_NOTIFY(UDN_DELTAPOS, IDC_RED_RANDOM_SPIN, OnDeltaposRedRandomSpin)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::Initialize ()
+void EmitterColorPropPageClass::Initialize()
 {
-	SAFE_DELETE_ARRAY (m_OrigColors.KeyTimes);
-	SAFE_DELETE_ARRAY (m_OrigColors.Values);
-	SAFE_DELETE_ARRAY (m_OrigOpacities.KeyTimes);
-	SAFE_DELETE_ARRAY (m_OrigOpacities.Values);
-	SAFE_DELETE_ARRAY (m_CurrentColors.KeyTimes);
-	SAFE_DELETE_ARRAY (m_CurrentColors.Values);
-	SAFE_DELETE_ARRAY (m_CurrentOpacities.KeyTimes);
-	SAFE_DELETE_ARRAY (m_CurrentOpacities.Values);
+	SAFE_DELETE_ARRAY(m_OrigColors.KeyTimes);
+	SAFE_DELETE_ARRAY(m_OrigColors.Values);
+	SAFE_DELETE_ARRAY(m_OrigOpacities.KeyTimes);
+	SAFE_DELETE_ARRAY(m_OrigOpacities.Values);
+	SAFE_DELETE_ARRAY(m_CurrentColors.KeyTimes);
+	SAFE_DELETE_ARRAY(m_CurrentColors.Values);
+	SAFE_DELETE_ARRAY(m_CurrentOpacities.KeyTimes);
+	SAFE_DELETE_ARRAY(m_CurrentOpacities.Values);
 
-	if (m_pEmitterList != nullptr) {
-
-		m_Lifetime = m_pEmitterList->Get_Lifetime ();
+	if (m_pEmitterList != nullptr)
+	{
+		m_Lifetime = m_pEmitterList->Get_Lifetime();
 
 		//
 		//	Get the initial values from the emitter
 		//
-		m_pEmitterList->Get_Color_Keyframes (m_OrigColors);
-		m_pEmitterList->Get_Color_Keyframes (m_CurrentColors);
-		m_pEmitterList->Get_Opacity_Keyframes (m_OrigOpacities);
-		m_pEmitterList->Get_Opacity_Keyframes (m_CurrentOpacities);
+		m_pEmitterList->Get_Color_Keyframes(m_OrigColors);
+		m_pEmitterList->Get_Color_Keyframes(m_CurrentColors);
+		m_pEmitterList->Get_Opacity_Keyframes(m_OrigOpacities);
+		m_pEmitterList->Get_Opacity_Keyframes(m_CurrentOpacities);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterColorPropPageClass::OnInitDialog ()
+BOOL EmitterColorPropPageClass::OnInitDialog()
 {
 	// Allow the base class to process this message
-	CPropertyPage::OnInitDialog ();
+	CPropertyPage::OnInitDialog();
 
-	m_ColorBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_COLOR_BAR));
-	m_OpacityBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_OPACITY_BAR));
+	m_ColorBar = ColorBarClass::Get_Color_Bar(::GetDlgItem(m_hWnd, IDC_COLOR_BAR));
+	m_OpacityBar = ColorBarClass::Get_Color_Bar(::GetDlgItem(m_hWnd, IDC_OPACITY_BAR));
 
 	//
 	// Setup the color bars
 	//
-	m_ColorBar->Set_Range (0, 1);
-	m_OpacityBar->Set_Range (0, 1);
-	m_OpacityBar->Modify_Point (0, 0, 255, 255, 255);
+	m_ColorBar->Set_Range(0, 1);
+	m_OpacityBar->Set_Range(0, 1);
+	m_OpacityBar->Modify_Point(0, 0, 255, 255, 255);
 
 	//
 	// Setup the spinners
 	//
-	m_OpacityRandomSpin.SetRange (0, 100);
-	m_RedRandomSpin.SetRange (0, 255);
-	m_GreenRandomSpin.SetRange (0, 255);
-	m_BlueRandomSpin.SetRange (0, 255);
+	m_OpacityRandomSpin.SetRange(0, 100);
+	m_RedRandomSpin.SetRange(0, 255);
+	m_GreenRandomSpin.SetRange(0, 255);
+	m_BlueRandomSpin.SetRange(0, 255);
 
-	m_OpacityRandomSpin.SetPos (m_OrigOpacities.Rand * 100);
-	m_RedRandomSpin.SetPos (m_OrigColors.Rand.X * 255);
-	m_GreenRandomSpin.SetPos (m_OrigColors.Rand.Y * 255);
-	m_BlueRandomSpin.SetPos (m_OrigColors.Rand.Z * 255);
+	m_OpacityRandomSpin.SetPos(m_OrigOpacities.Rand * 100);
+	m_RedRandomSpin.SetPos(m_OrigColors.Rand.X * 255);
+	m_GreenRandomSpin.SetPos(m_OrigColors.Rand.Y * 255);
+	m_BlueRandomSpin.SetPos(m_OrigColors.Rand.Z * 255);
 
 	//
 	//	Reset the color bars
 	//
-	m_ColorBar->Clear_Points ();
-	m_OpacityBar->Clear_Points ();
-	m_ColorBar->Modify_Point (0, 0, m_OrigColors.Start.X * 255, m_OrigColors.Start.Y * 255, m_OrigColors.Start.Z * 255);
-	m_OpacityBar->Modify_Point (0, 0, m_OrigOpacities.Start * 255, m_OrigOpacities.Start * 255, m_OrigOpacities.Start * 255);
+	m_ColorBar->Clear_Points();
+	m_OpacityBar->Clear_Points();
+	m_ColorBar->Modify_Point(0, 0, m_OrigColors.Start.X * 255, m_OrigColors.Start.Y * 255, m_OrigColors.Start.Z * 255);
+	m_OpacityBar->Modify_Point(0, 0, m_OrigOpacities.Start * 255, m_OrigOpacities.Start * 255, m_OrigOpacities.Start * 255);
 
 	//
 	//	Setup the ranges
 	//
-	m_ColorBar->Set_Range (0, 1);
-	m_OpacityBar->Set_Range (0, 1);
+	m_ColorBar->Set_Range(0, 1);
+	m_OpacityBar->Set_Range(0, 1);
 
 	//
 	//	Set-up the color bar
 	//
 	UINT index;
-	for (index = 0; index < m_OrigColors.NumKeyFrames; index ++) {
-		m_ColorBar->Modify_Point (index + 1,
-											m_OrigColors.KeyTimes[index] / m_Lifetime,
-											m_OrigColors.Values[index].X * 255,
-											m_OrigColors.Values[index].Y * 255,
-											m_OrigColors.Values[index].Z * 255);
+	for (index = 0; index < m_OrigColors.NumKeyFrames; index++)
+	{
+		m_ColorBar->Modify_Point(index + 1,
+		                         m_OrigColors.KeyTimes[index] / m_Lifetime,
+		                         m_OrigColors.Values[index].X * 255,
+		                         m_OrigColors.Values[index].Y * 255,
+		                         m_OrigColors.Values[index].Z * 255);
 	}
 
 	//
 	//	Set-up the opacity bar
 	//
-	for (index = 0; index < m_OrigOpacities.NumKeyFrames; index ++) {
-		m_OpacityBar->Modify_Point (index + 1,
-											m_OrigOpacities.KeyTimes[index] / m_Lifetime,
-											m_OrigOpacities.Values[index] * 255,
-											m_OrigOpacities.Values[index] * 255,
-											m_OrigOpacities.Values[index] * 255);
+	for (index = 0; index < m_OrigOpacities.NumKeyFrames; index++)
+	{
+		m_OpacityBar->Modify_Point(index + 1,
+		                           m_OrigOpacities.KeyTimes[index] / m_Lifetime,
+		                           m_OrigOpacities.Values[index] * 255,
+		                           m_OrigOpacities.Values[index] * 255,
+		                           m_OrigOpacities.Values[index] * 255);
 	}
 
 	//
@@ -221,19 +213,17 @@ EmitterColorPropPageClass::OnInitDialog ()
 	//
 	m_CurrentColors.Rand = m_OrigColors.Rand;
 	m_CurrentOpacities.Rand = m_OrigOpacities.Rand;
-	Update_Colors ();
-	Update_Opacities ();
+	Update_Colors();
+	Update_Opacities();
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnApply
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterColorPropPageClass::OnApply ()
+BOOL EmitterColorPropPageClass::OnApply()
 {
 	/*SAFE_DELETE_ARRAY (m_OrigColors.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigColors.Values);
@@ -247,36 +237,30 @@ EmitterColorPropPageClass::OnApply ()
 	m_pEmitter->Get_Opacity_Key_Frames (m_OrigOpacities);*/
 
 	// Allow the base class to process this message
-	return CPropertyPage::OnApply ();
+	return CPropertyPage::OnApply();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnDestroy
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::OnDestroy ()
+void EmitterColorPropPageClass::OnDestroy()
 {
 	CPropertyPage::OnDestroy();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnNotify
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterColorPropPageClass::OnNotify
-(
-	WPARAM wParam,
-	LPARAM lParam,
-	LRESULT *pResult
-)
+BOOL EmitterColorPropPageClass::OnNotify(
+  WPARAM wParam,
+  LPARAM lParam,
+  LRESULT* pResult)
 {
-	CBR_NMHDR *color_bar_hdr = (CBR_NMHDR *)lParam;
+	CBR_NMHDR* color_bar_hdr = (CBR_NMHDR*)lParam;
 
 	//
 	//	Which control sent the notification?
@@ -285,64 +269,68 @@ EmitterColorPropPageClass::OnNotify
 	{
 		case IDC_OPACITY_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
-
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT)
+			{
 				//
 				//	Allow the user to edit the keyframe
 				//
-				OpacitySettingsDialogClass dialog (color_bar_hdr->red / 255, this);
-				if (dialog.DoModal () == IDOK) {
-					m_OpacityBar->Modify_Point (color_bar_hdr->key_index,
-														color_bar_hdr->position,
-														dialog.Get_Opacity () * 255,
-														dialog.Get_Opacity () * 255,
-														dialog.Get_Opacity () * 255);
+				OpacitySettingsDialogClass dialog(color_bar_hdr->red / 255, this);
+				if (dialog.DoModal() == IDOK)
+				{
+					m_OpacityBar->Modify_Point(color_bar_hdr->key_index,
+					                           color_bar_hdr->position,
+					                           dialog.Get_Opacity() * 255,
+					                           dialog.Get_Opacity() * 255,
+					                           dialog.Get_Opacity() * 255);
 
 					// Update the emitter
-					Update_Opacities ();
-					m_pEmitterList->Set_Opacity_Keyframes (m_CurrentOpacities);
-					SetModified ();
+					Update_Opacities();
+					m_pEmitterList->Set_Opacity_Keyframes(m_CurrentOpacities);
+					SetModified();
 				}
-			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
-						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {
-
+			}
+			else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
+			         (color_bar_hdr->hdr.code == CBRN_DELETED_POINT))
+			{
 				// Update the emitter
-				Update_Opacities ();
-				m_pEmitterList->Set_Opacity_Keyframes (m_CurrentOpacities);
-				SetModified ();
+				Update_Opacities();
+				m_pEmitterList->Set_Opacity_Keyframes(m_CurrentOpacities);
+				SetModified();
 			}
 		}
 		break;
 
 		case IDC_COLOR_BAR:
 		{
-			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
-
+			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT)
+			{
 				//
 				//	Allow the user to edit the keyframe
 				//
-				int red		= (int)color_bar_hdr->red;
-				int green	= (int)color_bar_hdr->green;
-				int blue		= (int)color_bar_hdr->blue;
-				if (Show_Color_Picker (&red, &green, &blue)) {
-					m_ColorBar->Modify_Point (color_bar_hdr->key_index,
-														color_bar_hdr->position,
-														red,
-														green,
-														blue);
+				int red = (int)color_bar_hdr->red;
+				int green = (int)color_bar_hdr->green;
+				int blue = (int)color_bar_hdr->blue;
+				if (Show_Color_Picker(&red, &green, &blue))
+				{
+					m_ColorBar->Modify_Point(color_bar_hdr->key_index,
+					                         color_bar_hdr->position,
+					                         red,
+					                         green,
+					                         blue);
 
 					// Update the emitter
-					Update_Colors ();
-					m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-					SetModified ();
+					Update_Colors();
+					m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+					SetModified();
 				}
-			} else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
-						  (color_bar_hdr->hdr.code == CBRN_DELETED_POINT)) {
-
+			}
+			else if ((color_bar_hdr->hdr.code == CBRN_MOVING_POINT) ||
+			         (color_bar_hdr->hdr.code == CBRN_DELETED_POINT))
+			{
 				// Update the emitter
-				Update_Colors ();
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				Update_Colors();
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
@@ -350,12 +338,13 @@ EmitterColorPropPageClass::OnNotify
 		case IDC_RED_RANDOM_SPIN:
 		{
 			// Update the emitter
-			NMUPDOWN *pudnotif = (NMUPDOWN *)lParam;
-			if (pudnotif->hdr.code == UDN_DELTAPOS) {
+			NMUPDOWN* pudnotif = (NMUPDOWN*)lParam;
+			if (pudnotif->hdr.code == UDN_DELTAPOS)
+			{
 				float pos = (pudnotif->iPos + pudnotif->iDelta);
 				m_CurrentColors.Rand.X = pos / 255.0F;
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
@@ -363,12 +352,13 @@ EmitterColorPropPageClass::OnNotify
 		case IDC_GREEN_RANDOM_SPIN:
 		{
 			// Update the emitter
-			NMUPDOWN *pudnotif = (NMUPDOWN *)lParam;
-			if (pudnotif->hdr.code == UDN_DELTAPOS) {
+			NMUPDOWN* pudnotif = (NMUPDOWN*)lParam;
+			if (pudnotif->hdr.code == UDN_DELTAPOS)
+			{
 				float pos = (pudnotif->iPos + pudnotif->iDelta);
 				m_CurrentColors.Rand.Y = pos / 255.0F;
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
@@ -376,12 +366,13 @@ EmitterColorPropPageClass::OnNotify
 		case IDC_BLUE_RANDOM_SPIN:
 		{
 			// Update the emitter
-			NMUPDOWN *pudnotif = (NMUPDOWN *)lParam;
-			if (pudnotif->hdr.code == UDN_DELTAPOS) {
+			NMUPDOWN* pudnotif = (NMUPDOWN*)lParam;
+			if (pudnotif->hdr.code == UDN_DELTAPOS)
+			{
 				float pos = (pudnotif->iPos + pudnotif->iDelta);
 				m_CurrentColors.Rand.Z = pos / 255.0F;
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
@@ -389,12 +380,13 @@ EmitterColorPropPageClass::OnNotify
 		case IDC_OPACITY_RANDOM_SPIN:
 		{
 			// Update the emitter
-			NMUPDOWN *pudnotif = (NMUPDOWN *)lParam;
-			if (pudnotif->hdr.code == UDN_DELTAPOS) {
+			NMUPDOWN* pudnotif = (NMUPDOWN*)lParam;
+			if (pudnotif->hdr.code == UDN_DELTAPOS)
+			{
 				float pos = (pudnotif->iPos + pudnotif->iDelta);
 				m_CurrentOpacities.Rand = pos / 100.0F;
-				m_pEmitterList->Set_Opacity_Keyframes (m_CurrentOpacities);
-				SetModified ();
+				m_pEmitterList->Set_Opacity_Keyframes(m_CurrentOpacities);
+				SetModified();
 			}
 		}
 		break;
@@ -403,38 +395,34 @@ EmitterColorPropPageClass::OnNotify
 	return CPropertyPage::OnNotify(wParam, lParam, pResult);
 }
 
-
 /////////////////////////////////////////////////////////////
 //
 //  OnCancel
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::OnCancel ()
+void EmitterColorPropPageClass::OnCancel()
 {
 	//
 	//	Reset the emitter to its original state
 	//
-	m_pEmitterList->Set_Color_Keyframes (m_OrigColors);
-	m_pEmitterList->Set_Opacity_Keyframes (m_OrigOpacities);
+	m_pEmitterList->Set_Color_Keyframes(m_OrigColors);
+	m_pEmitterList->Set_Opacity_Keyframes(m_OrigOpacities);
 
-	CPropertyPage::OnCancel ();
+	CPropertyPage::OnCancel();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Update_Opacities
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::Update_Opacities ()
+void EmitterColorPropPageClass::Update_Opacities()
 {
 	float position = 0;
 	float red = 0;
 	float green = 0;
 	float blue = 0;
-	m_OpacityBar->Get_Point (0, &position, &red, &green, &blue);
+	m_OpacityBar->Get_Point(0, &position, &red, &green, &blue);
 
 	//
 	//	Setup the initial or 'starting' opacity
@@ -444,43 +432,43 @@ EmitterColorPropPageClass::Update_Opacities ()
 	//
 	// Free the current setting arrays
 	//
-	SAFE_DELETE_ARRAY (m_CurrentOpacities.KeyTimes);
-	SAFE_DELETE_ARRAY (m_CurrentOpacities.Values);
+	SAFE_DELETE_ARRAY(m_CurrentOpacities.KeyTimes);
+	SAFE_DELETE_ARRAY(m_CurrentOpacities.Values);
 
 	//
 	//	Determine if we need to build the array of key frames or not
 	//
-	int count = m_OpacityBar->Get_Point_Count ();
+	int count = m_OpacityBar->Get_Point_Count();
 	m_CurrentOpacities.NumKeyFrames = count - 1;
-	if (count > 1) {
+	if (count > 1)
+	{
 		m_CurrentOpacities.KeyTimes = new float[count - 1];
 		m_CurrentOpacities.Values = new float[count - 1];
 
 		//
 		//	Get all the opacity key frames and add them to our structure
 		//
-		for (int index = 1; index < count; index ++) {
-			m_OpacityBar->Get_Point (index, &position, &red, &green, &blue);
+		for (int index = 1; index < count; index++)
+		{
+			m_OpacityBar->Get_Point(index, &position, &red, &green, &blue);
 			m_CurrentOpacities.KeyTimes[index - 1] = position * m_Lifetime;
 			m_CurrentOpacities.Values[index - 1] = red / 255;
 		}
 	}
 }
 
-
 /////////////////////////////////////////////////////////////
 //
 //  Update_Colors
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::Update_Colors ()
+void EmitterColorPropPageClass::Update_Colors()
 {
 	float position = 0;
 	float red = 0;
 	float green = 0;
 	float blue = 0;
-	m_ColorBar->Get_Point (0, &position, &red, &green, &blue);
+	m_ColorBar->Get_Point(0, &position, &red, &green, &blue);
 
 	//
 	//	Setup the initial or 'starting' color
@@ -492,120 +480,126 @@ EmitterColorPropPageClass::Update_Colors ()
 	//
 	// Free the current setting arrays
 	//
-	SAFE_DELETE_ARRAY (m_CurrentColors.KeyTimes);
-	SAFE_DELETE_ARRAY (m_CurrentColors.Values);
+	SAFE_DELETE_ARRAY(m_CurrentColors.KeyTimes);
+	SAFE_DELETE_ARRAY(m_CurrentColors.Values);
 
 	//
 	//	Determine if we need to build the array of key frames or not
 	//
-	int count = m_ColorBar->Get_Point_Count ();
+	int count = m_ColorBar->Get_Point_Count();
 	m_CurrentColors.NumKeyFrames = count - 1;
-	if (count > 1) {
+	if (count > 1)
+	{
 		m_CurrentColors.KeyTimes = new float[count - 1];
 		m_CurrentColors.Values = new Vector3[count - 1];
 
 		//
 		//	Get all the color points and add them to our structure
 		//
-		for (int index = 1; index < count; index ++) {
-			m_ColorBar->Get_Point (index, &position, &red, &green, &blue);
-			m_CurrentColors.KeyTimes[index-1] = position * m_Lifetime;
-			m_CurrentColors.Values[index-1].X	= red / 255;
-			m_CurrentColors.Values[index-1].Y	= green / 255;
-			m_CurrentColors.Values[index-1].Z	= blue / 255;
+		for (int index = 1; index < count; index++)
+		{
+			m_ColorBar->Get_Point(index, &position, &red, &green, &blue);
+			m_CurrentColors.KeyTimes[index - 1] = position * m_Lifetime;
+			m_CurrentColors.Values[index - 1].X = red / 255;
+			m_CurrentColors.Values[index - 1].Y = green / 255;
+			m_CurrentColors.Values[index - 1].Z = blue / 255;
 		}
 	}
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnCommand
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterColorPropPageClass::OnCommand
-(
-	WPARAM wParam,
-	LPARAM lParam
-)
+BOOL EmitterColorPropPageClass::OnCommand(
+  WPARAM wParam,
+  LPARAM lParam)
 {
-	switch (LOWORD (wParam))
+	switch (LOWORD(wParam))
 	{
 		case IDC_RED_RANDOM_EDIT:
 		{
-			if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
 
-				m_CurrentColors.Rand.X = ((float)GetDlgItemInt (IDC_RED_RANDOM_EDIT)) / 255;
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				m_CurrentColors.Rand.X = ((float)GetDlgItemInt(IDC_RED_RANDOM_EDIT)) / 255;
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
 
 		case IDC_GREEN_RANDOM_EDIT:
 		{
-			if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
 
-				m_CurrentColors.Rand.Y = ((float)GetDlgItemInt (IDC_GREEN_RANDOM_EDIT)) / 255;
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				m_CurrentColors.Rand.Y = ((float)GetDlgItemInt(IDC_GREEN_RANDOM_EDIT)) / 255;
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
 
 		case IDC_BLUE_RANDOM_EDIT:
 		{
-			if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
 
-				m_CurrentColors.Rand.Z = ((float)GetDlgItemInt (IDC_BLUE_RANDOM_EDIT)) / 255;
-				m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-				SetModified ();
+				m_CurrentColors.Rand.Z = ((float)GetDlgItemInt(IDC_BLUE_RANDOM_EDIT)) / 255;
+				m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+				SetModified();
 			}
 		}
 		break;
 
 		case IDC_OPACITY_RANDOM_EDIT:
 		{
-			if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
 
-				m_CurrentOpacities.Rand = ((float)GetDlgItemInt (IDC_OPACITY_RANDOM_EDIT)) / 100;
-				m_pEmitterList->Set_Opacity_Keyframes (m_CurrentOpacities);
-				SetModified ();
+				m_CurrentOpacities.Rand = ((float)GetDlgItemInt(IDC_OPACITY_RANDOM_EDIT)) / 100;
+				m_pEmitterList->Set_Opacity_Keyframes(m_CurrentOpacities);
+				SetModified();
 			}
 		}
 		break;
 	}
 
-	return CPropertyPage::OnCommand (wParam, lParam);
+	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
 void EmitterColorPropPageClass::OnDeltaposRedRandomSpin(NMHDR* pNMHDR, LRESULT* pResult)
@@ -617,44 +611,43 @@ void EmitterColorPropPageClass::OnDeltaposRedRandomSpin(NMHDR* pNMHDR, LRESULT* 
 	*pResult = 0;
 }
 
-
 /////////////////////////////////////////////////////////////
 //
 //  On_Lifetime_Changed
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterColorPropPageClass::On_Lifetime_Changed (float lifetime)
+void EmitterColorPropPageClass::On_Lifetime_Changed(float lifetime)
 {
-	if (m_Lifetime != lifetime) {
+	if (m_Lifetime != lifetime)
+	{
 		float conversion = lifetime / m_Lifetime;
 
 		//
 		//	Rescale the colors
 		//
 		UINT index;
-		for (index = 0; index < m_CurrentColors.NumKeyFrames; index ++) {
+		for (index = 0; index < m_CurrentColors.NumKeyFrames; index++)
+		{
 			m_CurrentColors.KeyTimes[index] *= conversion;
 		}
 
 		//
 		//	Rescale the opacities
 		//
-		for (index = 0; index < m_CurrentOpacities.NumKeyFrames; index ++) {
+		for (index = 0; index < m_CurrentOpacities.NumKeyFrames; index++)
+		{
 			m_CurrentOpacities.KeyTimes[index] *= conversion;
 		}
 
 		//
 		//	Update the emitter
 		//
-		m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
-		m_pEmitterList->Set_Opacity_Keyframes (m_CurrentOpacities);
+		m_pEmitterList->Set_Color_Keyframes(m_CurrentColors);
+		m_pEmitterList->Set_Opacity_Keyframes(m_CurrentOpacities);
 		m_Lifetime = lifetime;
 		/*if (m_hWnd != nullptr) {
-			Update_Colors ();
-			Update_Opacities ();
+		  Update_Colors ();
+		  Update_Opacities ();
 		}*/
 	}
 }
-
-

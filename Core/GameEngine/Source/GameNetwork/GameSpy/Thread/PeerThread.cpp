@@ -29,7 +29,7 @@
 // the game.
 // Author: Matthew D. Campbell, June 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Registry.h"
 #include "Common/OptionPreferences.h"
@@ -47,37 +47,35 @@
 
 #include "Common/MiniLog.h"
 
-
 // enable this for trying to track down why SBServers are losing their keyvals  -MDC 2/20/2003
 #undef SERVER_DEBUGGING
 #ifdef SERVER_DEBUGGING
 void CheckServers(PEER peer);
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 
 #ifdef DEBUG_LOGGING
-//#define PING_TEST
+// #define PING_TEST
 static LogClass s_pingLog("Ping.txt");
-#define PING_LOG(x) s_pingLog.log x
-#else // DEBUG_LOGGING
-#define PING_LOG(x)
-#endif // DEBUG_LOGGING
+	#define PING_LOG(x) s_pingLog.log x
+#else    // DEBUG_LOGGING
+	#define PING_LOG(x)
+#endif    // DEBUG_LOGGING
 
 #ifdef DEBUG_LOGGING
 static LogClass s_stateChangedLog("StateChanged.txt");
 
-#define STATECHANGED_LOG(x) s_stateChangedLog.log x
+	#define STATECHANGED_LOG(x) s_stateChangedLog.log x
 
-#else // DEBUG_LOGGING
+#else    // DEBUG_LOGGING
 
-#define STATECHANGED_LOG(x)
+	#define STATECHANGED_LOG(x)
 
-#endif // DEBUG_LOGGING
+#endif    // DEBUG_LOGGING
 
 // we should always be using broadcast keys from now on.  Remove the old code sometime when
 // we're not in a rush, ok?
 // -MDC 2/14/2003
 #define USE_BROADCAST_KEYS
-
 
 int isThreadHosting = 0;
 static UnsignedInt s_lastStateChangedHeartbeat = 0;
@@ -93,7 +91,7 @@ enum
 	PW_KEY,
 	OBS_KEY,
 #if !RTS_GENERALS
-  USE_STATS_KEY,
+	USE_STATS_KEY,
 #endif
 	LADIP_KEY,
 	LADPORT_KEY,
@@ -108,22 +106,22 @@ enum
 	LOSSES__KEY
 };
 
-#define EXECRC_STR		"exeCRC"
-#define INICRC_STR		"iniCRC"
-#define PW_STR				"pw"
-#define OBS_STR				"obs"
+#define EXECRC_STR "exeCRC"
+#define INICRC_STR "iniCRC"
+#define PW_STR "pw"
+#define OBS_STR "obs"
 #define USE_STATS_STR "stat"
-#define LADIP_STR			"ladIP"
-#define LADPORT_STR		"ladPort"
-#define PINGSTR_STR		"pings"
-#define NUMPLAYER_STR	"numRealPlayers"
-#define MAXPLAYER_STR	"maxRealPlayers"
-#define NUMOBS_STR		"numObservers"
-#define NAME__STR			"name"
-#define FACTION__STR	"faction"
-#define COLOR__STR		"color"
-#define WINS__STR			"wins"
-#define LOSSES__STR		"losses"
+#define LADIP_STR "ladIP"
+#define LADPORT_STR "ladPort"
+#define PINGSTR_STR "pings"
+#define NUMPLAYER_STR "numRealPlayers"
+#define MAXPLAYER_STR "maxRealPlayers"
+#define NUMOBS_STR "numObservers"
+#define NAME__STR "name"
+#define FACTION__STR "faction"
+#define COLOR__STR "color"
+#define WINS__STR "wins"
+#define LOSSES__STR "losses"
 
 //-------------------------------------------------------------------------
 
@@ -142,14 +140,14 @@ public:
 	virtual Bool isConnected() override;
 	virtual Bool isConnecting() override;
 
-	virtual void addRequest( const PeerRequest& req ) override;
-	virtual Bool getRequest( PeerRequest& req ) override;
+	virtual void addRequest(const PeerRequest& req) override;
+	virtual Bool getRequest(PeerRequest& req) override;
 
-	virtual void addResponse( const PeerResponse& resp ) override;
-	virtual Bool getResponse( PeerResponse& resp ) override;
+	virtual void addResponse(const PeerResponse& resp) override;
+	virtual Bool getResponse(PeerResponse& resp) override;
 
 	virtual SerialAuthResult getSerialAuthResult() override { return m_serialAuth; }
-	void setSerialAuthResult( SerialAuthResult result ) { m_serialAuth = result; }
+	void setSerialAuthResult(SerialAuthResult result) { m_serialAuth = result; }
 
 	PeerThreadClass* getThread();
 
@@ -158,7 +156,7 @@ private:
 	MutexClass m_responseMutex;
 	RequestQueue m_requests;
 	ResponseQueue m_responses;
-	PeerThreadClass *m_thread;
+	PeerThreadClass* m_thread;
 
 	SerialAuthResult m_serialAuth;
 };
@@ -168,16 +166,16 @@ GameSpyPeerMessageQueueInterface* GameSpyPeerMessageQueueInterface::createNewMes
 	return NEW GameSpyPeerMessageQueue;
 }
 
-GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;
-#define MESSAGE_QUEUE ((GameSpyPeerMessageQueue *)TheGameSpyPeerMessageQueue)
+GameSpyPeerMessageQueueInterface* TheGameSpyPeerMessageQueue;
+#define MESSAGE_QUEUE ((GameSpyPeerMessageQueue*)TheGameSpyPeerMessageQueue)
 
 //-------------------------------------------------------------------------
 
 class PeerThreadClass : public ThreadClass
 {
-
 public:
-	PeerThreadClass() : ThreadClass()
+	PeerThreadClass()
+	  : ThreadClass()
 	{
 		m_roomJoined = m_allowObservers = m_hasPassword = FALSE;
 		m_useStats = TRUE;
@@ -196,7 +194,7 @@ public:
 		m_nextStagingServer = 1;
 		m_stagingServers.clear();
 		m_isHosting = false;
-		for (Int i=0; i<MAX_SLOTS; ++i)
+		for (Int i = 0; i < MAX_SLOTS; ++i)
 		{
 			m_playerColors[i] = 0;
 			m_playerFactions[i] = 0;
@@ -210,24 +208,24 @@ public:
 
 	void markAsDisconnected() { m_isConnecting = m_isConnected = false; }
 
-	void connectCallback( PEER peer, PEERBool success );
-	void nickErrorCallback( PEER peer, Int type, const char *nick );
+	void connectCallback(PEER peer, PEERBool success);
+	void nickErrorCallback(PEER peer, Int type, const char* nick);
 
 	Bool isConnecting() { return m_isConnecting; }
 	Bool isConnected() { return m_isConnected; }
 
-	Int addServerToMap( SBServer server );
-	Int removeServerFromMap( SBServer server );
+	Int addServerToMap(SBServer server);
+	Int removeServerFromMap(SBServer server);
 	void clearServers();
-	SBServer findServerByID( Int id );
-	Int findServer( SBServer server );
+	SBServer findServerByID(Int id);
+	Int findServer(SBServer server);
 
 	// get info about the game we are hosting
 	Bool isHosting() { return m_isHosting; }
 	void stopHostingAlready(PEER peer);
 	Bool hasPassword() { return m_hasPassword; }
 	Bool allowObservers() { return m_allowObservers; }
-  Bool useStats() const { return m_useStats; }
+	Bool useStats() const { return m_useStats; }
 	std::string getMapName() { return m_mapName; }
 	UnsignedInt exeCRC() { return m_exeCRC; }
 	UnsignedInt iniCRC() { return m_iniCRC; }
@@ -247,12 +245,16 @@ public:
 	Int getMaxPlayers() { return m_maxPlayers; }
 	Int getNumObservers() { return m_numObservers; }
 
-	void roomJoined( Bool val ) { m_roomJoined = val; }
-	void setQMGroupRoom( Int groupID ) { m_qmGroupRoom = groupID; }
+	void roomJoined(Bool val) { m_roomJoined = val; }
+	void setQMGroupRoom(Int groupID) { m_qmGroupRoom = groupID; }
 	void sawEndOfEnumPlayers() { m_sawEndOfEnumPlayers = true; }
-	void sawMatchbot( std::string bot ) { m_sawMatchbot = true; m_matchbotName = bot; }
+	void sawMatchbot(std::string bot)
+	{
+		m_sawMatchbot = true;
+		m_matchbotName = bot;
+	}
 	QMStatus getQMStatus() { return m_qmStatus; }
-	void handleQMMatch(PEER peer, Int mapIndex, Int seed, char *playerName[MAX_SLOTS], char *playerIP[MAX_SLOTS], char *playerSide[MAX_SLOTS], char *playerColor[MAX_SLOTS], char *playerNAT[MAX_SLOTS]);
+	void handleQMMatch(PEER peer, Int mapIndex, Int seed, char* playerName[MAX_SLOTS], char* playerIP[MAX_SLOTS], char* playerSide[MAX_SLOTS], char* playerColor[MAX_SLOTS], char* playerNAT[MAX_SLOTS]);
 	std::string getQMBotName() { return m_matchbotName; }
 	Int getQMGroupRoom() { return m_qmGroupRoom; }
 	Int getQMLadder() { return m_qmInfo.QM.ladderID; }
@@ -262,10 +264,10 @@ public:
 #ifdef USE_BROADCAST_KEYS
 	void pushStatsToRoom(PEER peer);
 	void getStatsFromRoom(PEER peer, RoomType roomType);
-	void trackStatsForPlayer(RoomType roomType, const char *nick, const char *key, const char *val);
-	int lookupStatForPlayer(RoomType roomType, const char *nick, const char *key);
+	void trackStatsForPlayer(RoomType roomType, const char* nick, const char* key, const char* val);
+	int lookupStatForPlayer(RoomType roomType, const char* nick, const char* key);
 	void clearPlayerStats(RoomType roomType);
-#endif // USE_BROADCAST_KEYS
+#endif    // USE_BROADCAST_KEYS
 
 	void setSawCompleteGameList(Bool val) { m_sawCompleteGameList = val; }
 	Bool getSawCompleteGameList() { return m_sawCompleteGameList; }
@@ -279,16 +281,20 @@ private:
 	Bool m_sawCompleteGameList;
 
 #ifdef USE_BROADCAST_KEYS
-	enum { NumKeys = 6, ValBufSize = 20 };
-	static const char *s_keys[NumKeys];
+	enum
+	{
+		NumKeys = 6,
+		ValBufSize = 20
+	};
+	static const char* s_keys[NumKeys];
 	static char s_valueBuffers[NumKeys][ValBufSize];
-	static const char *s_values[NumKeys];
+	static const char* s_values[NumKeys];
 
 	typedef std::map<std::string, int> PlayerStatMap;
 	PlayerStatMap m_groupRoomStats;
 	PlayerStatMap m_stagingRoomStats;
-	std::string packStatKey(const char *nick, const char *key);
-#endif // USE_BROADCAST_KEYS
+	std::string packStatKey(const char* nick, const char* key);
+#endif    // USE_BROADCAST_KEYS
 
 	// game-hosting info for GOA callbacks
 	Bool m_isHosting;
@@ -299,7 +305,7 @@ private:
 	UnsignedInt m_iniCRC;
 	UnsignedInt m_gameVersion;
 	Bool m_allowObservers;
-  Bool m_useStats;
+	Bool m_useStats;
 	std::string m_pingStr;
 	std::string m_ladderIP;
 	UnsignedShort m_ladderPort;
@@ -317,7 +323,7 @@ private:
 	std::wstring m_localStagingServerName;
 	Int m_localRoomID;
 
-	void doQuickMatch( PEER peer );
+	void doQuickMatch(PEER peer);
 	QMStatus m_qmStatus;
 	PeerRequest m_qmInfo;
 	Bool m_roomJoined;
@@ -331,9 +337,9 @@ private:
 const char* PeerThreadClass::s_keys[6] = { "b_locale", "b_wins", "b_losses", "b_points", "b_side", "b_pre" };
 char PeerThreadClass::s_valueBuffers[6][20] = { "", "", "", "", "", "" };
 const char* PeerThreadClass::s_values[6] = { s_valueBuffers[0], s_valueBuffers[1], s_valueBuffers[2],
-	s_valueBuffers[3], s_valueBuffers[4], s_valueBuffers[5]};
+	                                           s_valueBuffers[3], s_valueBuffers[4], s_valueBuffers[5] };
 
-void PeerThreadClass::trackStatsForPlayer(RoomType roomType, const char *nick, const char *key, const char *val)
+void PeerThreadClass::trackStatsForPlayer(RoomType roomType, const char* nick, const char* key, const char* val)
 {
 	switch (roomType)
 	{
@@ -346,14 +352,14 @@ void PeerThreadClass::trackStatsForPlayer(RoomType roomType, const char *nick, c
 	}
 }
 
-std::string PeerThreadClass::packStatKey(const char *nick, const char *key)
+std::string PeerThreadClass::packStatKey(const char* nick, const char* key)
 {
 	std::string s = nick;
 	s.append(key);
 	return s;
 }
 
-int PeerThreadClass::lookupStatForPlayer(RoomType roomType, const char *nick, const char *key)
+int PeerThreadClass::lookupStatForPlayer(RoomType roomType, const char* nick, const char* key)
 {
 	std::string fullKey = packStatKey(nick, key);
 	PlayerStatMap::const_iterator it;
@@ -362,12 +368,16 @@ int PeerThreadClass::lookupStatForPlayer(RoomType roomType, const char *nick, co
 		case GroupRoom:
 			it = m_groupRoomStats.find(fullKey);
 			if (it != m_groupRoomStats.end())
+			{
 				return it->second;
+			}
 			break;
 		case StagingRoom:
 			it = m_stagingRoomStats.find(fullKey);
 			if (it != m_stagingRoomStats.end())
+			{
 				return it->second;
+			}
 			break;
 	}
 	return 0;
@@ -389,31 +399,31 @@ void PeerThreadClass::clearPlayerStats(RoomType roomType)
 void PeerThreadClass::pushStatsToRoom(PEER peer)
 {
 	DEBUG_LOG(("PeerThreadClass::pushStatsToRoom(): stats are %s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s",
-		s_keys[0], s_values[0],
-		s_keys[1], s_values[1],
-		s_keys[2], s_values[2],
-		s_keys[3], s_values[3],
-		s_keys[4], s_values[4],
-		s_keys[5], s_values[5]));
+	           s_keys[0], s_values[0],
+	           s_keys[1], s_values[1],
+	           s_keys[2], s_values[2],
+	           s_keys[3], s_values[3],
+	           s_keys[4], s_values[4],
+	           s_keys[5], s_values[5]));
 	peerSetRoomKeys(peer, GroupRoom, m_loginName.c_str(), 6, s_keys, s_values);
 	peerSetRoomKeys(peer, StagingRoom, m_loginName.c_str(), 6, s_keys, s_values);
 }
 
-void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const char *nick, int num, char **keys, char **values, void *param);
+void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const char* nick, int num, char** keys, char** values, void* param);
 void PeerThreadClass::getStatsFromRoom(PEER peer, RoomType roomType)
 {
 	peerGetRoomKeys(peer, GroupRoom, "*", NumKeys, s_keys, getRoomKeysCallback, this, PEERFalse);
 }
-#endif // USE_BROADCAST_KEYS
+#endif    // USE_BROADCAST_KEYS
 
-Int PeerThreadClass::addServerToMap( SBServer server )
+Int PeerThreadClass::addServerToMap(SBServer server)
 {
 	Int val = m_nextStagingServer++;
 	m_stagingServers[val] = server;
 	return val;
 }
 
-Int PeerThreadClass::removeServerFromMap( SBServer server )
+Int PeerThreadClass::removeServerFromMap(SBServer server)
 {
 	for (std::map<Int, SBServer>::iterator it = m_stagingServers.begin(); it != m_stagingServers.end(); ++it)
 	{
@@ -433,7 +443,7 @@ void PeerThreadClass::clearServers()
 	m_stagingServers.clear();
 }
 
-SBServer PeerThreadClass::findServerByID( Int id )
+SBServer PeerThreadClass::findServerByID(Int id)
 {
 	std::map<Int, SBServer>::iterator it = m_stagingServers.find(id);
 	if (it != m_stagingServers.end())
@@ -449,10 +459,10 @@ SBServer PeerThreadClass::findServerByID( Int id )
 	return nullptr;
 }
 
-Int PeerThreadClass::findServer( SBServer server )
+Int PeerThreadClass::findServer(SBServer server)
 {
 	char tmp[10] = "";
-	const char *newName = SBServerGetStringValue(server, "gamename", tmp);
+	const char* newName = SBServerGetStringValue(server, "gamename", tmp);
 	UnsignedInt newPrivateIP = SBServerGetPrivateInetAddress(server);
 	UnsignedShort newPrivatePort = SBServerGetPrivateQueryPort(server);
 	UnsignedInt newPublicIP = SBServerGetPublicInetAddress(server);
@@ -467,14 +477,14 @@ Int PeerThreadClass::findServer( SBServer server )
 		}
 		else
 		{
-			const char *oldName = SBServerGetStringValue(it->second, "gamename", tmp);
+			const char* oldName = SBServerGetStringValue(it->second, "gamename", tmp);
 			UnsignedInt oldPrivateIP = SBServerGetPrivateInetAddress(it->second);
 			UnsignedShort oldPrivatePort = SBServerGetPrivateQueryPort(it->second);
 			UnsignedInt oldPublicIP = SBServerGetPublicInetAddress(it->second);
 			if (strcmp(oldName, newName) == 0 &&
-				oldPrivateIP == newPrivateIP &&
-				oldPublicIP == newPublicIP &&
-				oldPrivatePort == newPrivatePort)
+			    oldPrivateIP == newPrivateIP &&
+			    oldPublicIP == newPublicIP &&
+			    oldPrivatePort == newPrivatePort)
 			{
 				serverToRemove = it->second;
 			}
@@ -486,7 +496,7 @@ Int PeerThreadClass::findServer( SBServer server )
 		// this is the same as another game - it has just migrated to another port.  Remove the old and replace it.
 		PeerResponse resp;
 		resp.peerResponseType = PeerResponse::PEERRESPONSE_STAGINGROOM;
-		resp.stagingRoom.id = removeServerFromMap( serverToRemove );
+		resp.stagingRoom.id = removeServerFromMap(serverToRemove);
 		resp.stagingRoom.action = PEER_REMOVE;
 		resp.stagingRoom.isStaging = TRUE;
 		resp.stagingRoom.percentComplete = -1;
@@ -505,27 +515,27 @@ enum CallbackType
 	CALLBACK_RECVSTATUS,
 };
 
-void connectCallbackWrapper( PEER peer, PEERBool success, int failureReason, void *param )
+void connectCallbackWrapper(PEER peer, PEERBool success, int failureReason, void* param)
 {
 #ifdef SERVER_DEBUGGING
 	DEBUG_LOG(("In connectCallbackWrapper()"));
 	CheckServers(peer);
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 	if (param != nullptr)
 	{
-		((PeerThreadClass *)param)->connectCallback( peer, success );
+		((PeerThreadClass*)param)->connectCallback(peer, success);
 	}
 }
 
-void nickErrorCallbackWrapper( PEER peer, Int type, const char *nick, int numSuggestedNicks, const gsi_char** suggestedNicks, void *param )
+void nickErrorCallbackWrapper(PEER peer, Int type, const char* nick, int numSuggestedNicks, const gsi_char** suggestedNicks, void* param)
 {
 	if (param != nullptr)
 	{
-		((PeerThreadClass *)param)->nickErrorCallback( peer, type, nick );
+		((PeerThreadClass*)param)->nickErrorCallback(peer, type, nick);
 	}
 }
 
-static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomType roomType, void *param);
+static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomType roomType, void* param);
 
 //-------------------------------------------------------------------------
 
@@ -577,50 +587,64 @@ Bool GameSpyPeerMessageQueue::isConnecting()
 	return (m_thread) ? m_thread->isConnecting() : false;
 }
 
-void GameSpyPeerMessageQueue::addRequest( const PeerRequest& req )
+void GameSpyPeerMessageQueue::addRequest(const PeerRequest& req)
 {
 	MutexClass::LockClass m(m_requestMutex);
 	if (m.Failed())
+	{
 		return;
+	}
 
 	m_requests.push(req);
 }
 
-//PeerRequest GameSpyPeerMessageQueue::getRequest()
-Bool GameSpyPeerMessageQueue::getRequest( PeerRequest& req )
+// PeerRequest GameSpyPeerMessageQueue::getRequest()
+Bool GameSpyPeerMessageQueue::getRequest(PeerRequest& req)
 {
 	MutexClass::LockClass m(m_requestMutex, 0);
 	if (m.Failed())
+	{
 		return false;
+	}
 
 	if (m_requests.empty())
+	{
 		return false;
+	}
 	req = m_requests.front();
 	m_requests.pop();
 	return true;
 }
 
-void GameSpyPeerMessageQueue::addResponse( const PeerResponse& resp )
+void GameSpyPeerMessageQueue::addResponse(const PeerResponse& resp)
 {
 	if (resp.nick == "(END)")
+	{
 		return;
+	}
 
 	MutexClass::LockClass m(m_responseMutex);
 	if (m.Failed())
+	{
 		return;
+	}
 
 	m_responses.push(resp);
 }
 
-//PeerResponse GameSpyPeerMessageQueue::getResponse()
-Bool GameSpyPeerMessageQueue::getResponse( PeerResponse& resp )
+// PeerResponse GameSpyPeerMessageQueue::getResponse()
+Bool GameSpyPeerMessageQueue::getResponse(PeerResponse& resp)
 {
 	MutexClass::LockClass m(m_responseMutex, 0);
 	if (m.Failed())
+	{
 		return false;
+	}
 
 	if (m_responses.empty())
+	{
 		return false;
+	}
 	resp = m_responses.front();
 	m_responses.pop();
 	return true;
@@ -632,30 +656,32 @@ PeerThreadClass* GameSpyPeerMessageQueue::getThread()
 }
 
 //-------------------------------------------------------------------------
-static void disconnectedCallback(PEER peer, const char * reason, void * param);
-static void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const char * message, MessageType messageType, void * param);
-static void playerMessageCallback(PEER peer, const char * nick, const char * message, MessageType messageType, void * param);
-static void playerJoinedCallback(PEER peer, RoomType roomType, const char * nick, void * param);
-static void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const char * reason, void * param);
-static void playerChangedNickCallback(PEER peer, RoomType roomType, const char * oldNick, const char * newNick, void * param);
-static void playerInfoCallback(PEER peer, RoomType roomType, const char * nick, unsigned int IP, int profileID, void * param);
-static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char * nick, int oldFlags, int newFlags, void * param);
-static void listingGamesCallback(PEER peer, PEERBool success, const char * name, SBServer server, PEERBool staging, int msg, Int percentListed, void * param);
-static void roomUTMCallback(PEER peer, RoomType roomType, const char * nick, const char * command, const char * parameters, PEERBool authenticated, void * param);
-static void playerUTMCallback(PEER peer, const char * nick, const char * command, const char * parameters, PEERBool authenticated, void * param);
-static void gameStartedCallback(PEER peer, SBServer server, const char *message, void *param);
-static void globalKeyChangedCallback(PEER peer, const char *nick, const char *key, const char *val, void *param);
-static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nick, const char *key, const char *val, void *param);
+static void disconnectedCallback(PEER peer, const char* reason, void* param);
+static void roomMessageCallback(PEER peer, RoomType roomType, const char* nick, const char* message, MessageType messageType, void* param);
+static void playerMessageCallback(PEER peer, const char* nick, const char* message, MessageType messageType, void* param);
+static void playerJoinedCallback(PEER peer, RoomType roomType, const char* nick, void* param);
+static void playerLeftCallback(PEER peer, RoomType roomType, const char* nick, const char* reason, void* param);
+static void playerChangedNickCallback(PEER peer, RoomType roomType, const char* oldNick, const char* newNick, void* param);
+static void playerInfoCallback(PEER peer, RoomType roomType, const char* nick, unsigned int IP, int profileID, void* param);
+static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char* nick, int oldFlags, int newFlags, void* param);
+static void listingGamesCallback(PEER peer, PEERBool success, const char* name, SBServer server, PEERBool staging, int msg, Int percentListed, void* param);
+static void roomUTMCallback(PEER peer, RoomType roomType, const char* nick, const char* command, const char* parameters, PEERBool authenticated, void* param);
+static void playerUTMCallback(PEER peer, const char* nick, const char* command, const char* parameters, PEERBool authenticated, void* param);
+static void gameStartedCallback(PEER peer, SBServer server, const char* message, void* param);
+static void globalKeyChangedCallback(PEER peer, const char* nick, const char* key, const char* val, void* param);
+static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char* nick, const char* key, const char* val, void* param);
 
 // convenience function to set buddy status
-static void updateBuddyStatus( GameSpyBuddyStatus status, Int groupRoom = 0, std::string gameName = "" )
+static void updateBuddyStatus(GameSpyBuddyStatus status, Int groupRoom = 0, std::string gameName = "")
 {
 	if (!TheGameSpyBuddyMessageQueue)
+	{
 		return;
+	}
 
 	BuddyRequest req;
 	req.buddyRequestType = BuddyRequest::BUDDYREQUEST_SETSTATUS;
-	switch(status)
+	switch (status)
 	{
 		case BUDDY_OFFLINE:
 			req.arg.status.status = GP_OFFLINE;
@@ -697,57 +723,57 @@ static void updateBuddyStatus( GameSpyBuddyStatus status, Int groupRoom = 0, std
 	TheGameSpyBuddyMessageQueue->addRequest(req);
 }
 
-static void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomType roomType, void *param)
+static void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomType roomType, void* param)
 {
-	Int *s = (Int *)param;
+	Int* s = (Int*)param;
 	if (s)
+	{
 		*s = result;
+	}
 }
 
-static const char * KeyTypeToString(qr2_key_type type)
+static const char* KeyTypeToString(qr2_key_type type)
 {
-	switch(type)
+	switch (type)
 	{
-	case key_server:
-		return "server";
-	case key_player:
-		return "player";
-	case key_team:
-		return "team";
+		case key_server:
+			return "server";
+		case key_player:
+			return "player";
+		case key_team:
+			return "team";
 	}
 
 	return "Unkown key type";
 }
 
-static const char * ErrorTypeToString(qr2_error_t error)
+static const char* ErrorTypeToString(qr2_error_t error)
 {
-	switch(error)
+	switch (error)
 	{
-	case e_qrnoerror:
-		return "noerror";
-	case e_qrwsockerror:
-		return "wsockerror";
-	case e_qrbinderror:
-		return "rbinderror";
-	case e_qrdnserror:
-		return "dnserror";
-	case e_qrconnerror:
-		return "connerror";
+		case e_qrnoerror:
+			return "noerror";
+		case e_qrwsockerror:
+			return "wsockerror";
+		case e_qrbinderror:
+			return "rbinderror";
+		case e_qrdnserror:
+			return "dnserror";
+		case e_qrconnerror:
+			return "connerror";
 	}
 
 	return "Unknown error type";
 }
 
-static void QRServerKeyCallback
-(
-	PEER peer,
-	int key,
-	qr2_buffer_t buffer,
-	void * param
-)
+static void QRServerKeyCallback(
+  PEER peer,
+  int key,
+  qr2_buffer_t buffer,
+  void* param)
 {
-	//DEBUG_LOG(("QR_SERVER_KEY | %d (%s)", key, qr2_registered_key_list[key]));
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	// DEBUG_LOG(("QR_SERVER_KEY | %d (%s)", key, qr2_registered_key_list[key]));
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t)
 	{
 		DEBUG_LOG(("QRServerKeyCallback: bailing because of no thread info"));
@@ -755,32 +781,48 @@ static void QRServerKeyCallback
 	}
 
 	if (!t->isHosting())
+	{
 		t->stopHostingAlready(peer);
+	}
 
 #ifdef DEBUG_LOGGING
 	AsciiString val;
-#define ADD(x) { qr2_buffer_add(buffer, x); val = x; }
-#define ADDINT(x) { qr2_buffer_add_int(buffer, x); val.format("%d",x); }
+	#define ADD(x) \
+		{ \
+			qr2_buffer_add(buffer, x); \
+			val = x; \
+		}
+	#define ADDINT(x) \
+		{ \
+			qr2_buffer_add_int(buffer, x); \
+			val.format("%d", x); \
+		}
 #else
-#define ADD(x) { qr2_buffer_add(buffer, x); }
-#define ADDINT(x) { qr2_buffer_add_int(buffer, x); }
+	#define ADD(x) \
+		{ \
+			qr2_buffer_add(buffer, x); \
+		}
+	#define ADDINT(x) \
+		{ \
+			qr2_buffer_add_int(buffer, x); \
+		}
 #endif
 
-	switch(key)
+	switch (key)
 	{
-	case HOSTNAME_KEY:
-		ADD(t->getPlayerName(0).c_str());
-		break;
-	case GAMEVER_KEY:
-		ADDINT(t->gameVersion());
-		break;
-	case EXECRC_KEY:
-		ADDINT(t->exeCRC());
-		break;
-	case INICRC_KEY:
-		ADDINT(t->iniCRC());
-		break;
-	case GAMENAME_KEY:
+		case HOSTNAME_KEY:
+			ADD(t->getPlayerName(0).c_str());
+			break;
+		case GAMEVER_KEY:
+			ADDINT(t->gameVersion());
+			break;
+		case EXECRC_KEY:
+			ADDINT(t->exeCRC());
+			break;
+		case INICRC_KEY:
+			ADDINT(t->iniCRC());
+			break;
+		case GAMENAME_KEY:
 		{
 			std::string tmp = t->getPlayerName(0);
 			tmp.append(" ");
@@ -788,58 +830,56 @@ static void QRServerKeyCallback
 			ADD(tmp.c_str());
 		}
 		break;
-	case MAPNAME_KEY:
-		ADD(t->getMapName().c_str());
-		break;
-	case PW_KEY:
-		ADDINT(t->hasPassword());
-		break;
-	case OBS_KEY:
-		ADDINT(t->allowObservers());
-		break;
+		case MAPNAME_KEY:
+			ADD(t->getMapName().c_str());
+			break;
+		case PW_KEY:
+			ADDINT(t->hasPassword());
+			break;
+		case OBS_KEY:
+			ADDINT(t->allowObservers());
+			break;
 #if !RTS_GENERALS
-  case USE_STATS_KEY:
-    ADDINT(t->useStats());
-    break;
+		case USE_STATS_KEY:
+			ADDINT(t->useStats());
+			break;
 #endif
-	case LADIP_KEY:
-		ADD(t->ladderIP().c_str());
-		break;
-	case LADPORT_KEY:
-		ADDINT(t->ladderPort());
-		break;
-	case PINGSTR_KEY:
-		ADD(t->pingStr().c_str());
-		break;
-	case NUMPLAYER_KEY:
-		ADDINT(t->getNumPlayers());
-		break;
-	case MAXPLAYER_KEY:
-		ADDINT(t->getMaxPlayers());
-		break;
-	case NUMOBS_KEY:
-		ADDINT(t->getNumObservers());
-		break;
-	default:
-		ADD("");
-		//DEBUG_LOG(("QR_SERVER_KEY | %d (%s)", key, qr2_registered_key_list[key]));
-		break;
+		case LADIP_KEY:
+			ADD(t->ladderIP().c_str());
+			break;
+		case LADPORT_KEY:
+			ADDINT(t->ladderPort());
+			break;
+		case PINGSTR_KEY:
+			ADD(t->pingStr().c_str());
+			break;
+		case NUMPLAYER_KEY:
+			ADDINT(t->getNumPlayers());
+			break;
+		case MAXPLAYER_KEY:
+			ADDINT(t->getMaxPlayers());
+			break;
+		case NUMOBS_KEY:
+			ADDINT(t->getNumObservers());
+			break;
+		default:
+			ADD("");
+			// DEBUG_LOG(("QR_SERVER_KEY | %d (%s)", key, qr2_registered_key_list[key]));
+			break;
 	}
 
 	DEBUG_LOG(("QR_SERVER_KEY | %d (%s) = [%s]", key, qr2_registered_key_list[key], val.str()));
 }
 
-static void QRPlayerKeyCallback
-(
-	PEER peer,
-	int key,
-	int index,
-	qr2_buffer_t buffer,
-	void * param
-)
+static void QRPlayerKeyCallback(
+  PEER peer,
+  int key,
+  int index,
+  qr2_buffer_t buffer,
+  void* param)
 {
-	//DEBUG_LOG(("QR_PLAYER_KEY | %d | %d (%s)", key, index, qr2_registered_key_list[key]));
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	// DEBUG_LOG(("QR_PLAYER_KEY | %d | %d (%s)", key, index, qr2_registered_key_list[key]));
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t)
 	{
 		DEBUG_LOG(("QRPlayerKeyCallback: bailing because of no thread info"));
@@ -847,79 +887,93 @@ static void QRPlayerKeyCallback
 	}
 
 	if (!t->isHosting())
+	{
 		t->stopHostingAlready(peer);
+	}
 
 #undef ADD
 #undef ADDINT
 #ifdef DEBUG_LOGGING
 	AsciiString val;
-#define ADD(x) { qr2_buffer_add(buffer, x); val = x; }
-#define ADDINT(x) { qr2_buffer_add_int(buffer, x); val.format("%d",x); }
+	#define ADD(x) \
+		{ \
+			qr2_buffer_add(buffer, x); \
+			val = x; \
+		}
+	#define ADDINT(x) \
+		{ \
+			qr2_buffer_add_int(buffer, x); \
+			val.format("%d", x); \
+		}
 #else
-#define ADD(x) { qr2_buffer_add(buffer, x); }
-#define ADDINT(x) { qr2_buffer_add_int(buffer, x); }
+	#define ADD(x) \
+		{ \
+			qr2_buffer_add(buffer, x); \
+		}
+	#define ADDINT(x) \
+		{ \
+			qr2_buffer_add_int(buffer, x); \
+		}
 #endif
 
-	switch(key)
+	switch (key)
 	{
-	case NAME__KEY:
-		ADD(t->getPlayerName(index).c_str());
-		break;
-	case WINS__KEY:
-		ADDINT(t->getPlayerWins(index));
-		break;
-	case LOSSES__KEY:
-		ADDINT(t->getPlayerLosses(index));
-		break;
-	case PID__KEY:
-		ADDINT(t->getPlayerProfileID(index));
-		break;
-	case FACTION__KEY:
-		ADDINT(t->getPlayerLosses(index));
-		break;
-	case COLOR__KEY:
-		ADDINT(t->getPlayerLosses(index));
-		break;
-	default:
-		ADD("");
-		//DEBUG_LOG(("QR_PLAYER_KEY | %d | %d (%s)", key, index, qr2_registered_key_list[key]));
-		break;
+		case NAME__KEY:
+			ADD(t->getPlayerName(index).c_str());
+			break;
+		case WINS__KEY:
+			ADDINT(t->getPlayerWins(index));
+			break;
+		case LOSSES__KEY:
+			ADDINT(t->getPlayerLosses(index));
+			break;
+		case PID__KEY:
+			ADDINT(t->getPlayerProfileID(index));
+			break;
+		case FACTION__KEY:
+			ADDINT(t->getPlayerLosses(index));
+			break;
+		case COLOR__KEY:
+			ADDINT(t->getPlayerLosses(index));
+			break;
+		default:
+			ADD("");
+			// DEBUG_LOG(("QR_PLAYER_KEY | %d | %d (%s)", key, index, qr2_registered_key_list[key]));
+			break;
 	}
 
 	DEBUG_LOG(("QR_PLAYER_KEY | %d | %d (%s) = [%s]", key, index, qr2_registered_key_list[key], val.str()));
 }
 
-static void QRTeamKeyCallback
-(
-	PEER peer,
-	int key,
-	int index,
-	qr2_buffer_t buffer,
-	void * param
-)
+static void QRTeamKeyCallback(
+  PEER peer,
+  int key,
+  int index,
+  qr2_buffer_t buffer,
+  void* param)
 {
-	//DEBUG_LOG(("QR_TEAM_KEY | %d | %d", key, index));
+	// DEBUG_LOG(("QR_TEAM_KEY | %d | %d", key, index));
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t)
 	{
 		DEBUG_LOG(("QRTeamKeyCallback: bailing because of no thread info"));
 		return;
 	}
 	if (!t->isHosting())
+	{
 		t->stopHostingAlready(peer);
+	}
 
 	// we don't report teams, so this shouldn't get called
 	qr2_buffer_add(buffer, "");
 }
 
-static void QRKeyListCallback
-(
-	PEER peer,
-	qr2_key_type type,
-	qr2_keybuffer_t keyBuffer,
-	void * param
-)
+static void QRKeyListCallback(
+  PEER peer,
+  qr2_key_type type,
+  qr2_keybuffer_t keyBuffer,
+  void* param)
 {
 	DEBUG_LOG(("QR_KEY_LIST | %s", KeyTypeToString(type)));
 
@@ -927,71 +981,71 @@ static void QRKeyListCallback
 	PeerThreadClass *t = (PeerThreadClass *)param;
 	if (!t)
 	{
-		DEBUG_LOG(("QRKeyListCallback: bailing because of no thread info"));
-		return;
+	  DEBUG_LOG(("QRKeyListCallback: bailing because of no thread info"));
+	  return;
 	}
 	if (!t->isHosting())
-		t->stopHostingAlready(peer);
-		*/
+	  t->stopHostingAlready(peer);
+	  */
 
 	// register the keys we use
-	switch(type)
+	switch (type)
 	{
-	case key_server:
-		qr2_keybuffer_add(keyBuffer, HOSTNAME_KEY);
-		qr2_keybuffer_add(keyBuffer, GAMEVER_KEY);
-		//qr2_keybuffer_add(keyBuffer, GAMENAME_KEY);
-		qr2_keybuffer_add(keyBuffer, MAPNAME_KEY);
-		qr2_keybuffer_add(keyBuffer, EXECRC_KEY);
-		qr2_keybuffer_add(keyBuffer, INICRC_KEY);
-		qr2_keybuffer_add(keyBuffer, PW_KEY);
-		qr2_keybuffer_add(keyBuffer, OBS_KEY);
+		case key_server:
+			qr2_keybuffer_add(keyBuffer, HOSTNAME_KEY);
+			qr2_keybuffer_add(keyBuffer, GAMEVER_KEY);
+			// qr2_keybuffer_add(keyBuffer, GAMENAME_KEY);
+			qr2_keybuffer_add(keyBuffer, MAPNAME_KEY);
+			qr2_keybuffer_add(keyBuffer, EXECRC_KEY);
+			qr2_keybuffer_add(keyBuffer, INICRC_KEY);
+			qr2_keybuffer_add(keyBuffer, PW_KEY);
+			qr2_keybuffer_add(keyBuffer, OBS_KEY);
 #if !RTS_GENERALS
-    qr2_keybuffer_add(keyBuffer, USE_STATS_KEY);
+			qr2_keybuffer_add(keyBuffer, USE_STATS_KEY);
 #endif
-		qr2_keybuffer_add(keyBuffer, LADIP_KEY);
-		qr2_keybuffer_add(keyBuffer, LADPORT_KEY);
-		qr2_keybuffer_add(keyBuffer, PINGSTR_KEY);
-		qr2_keybuffer_add(keyBuffer, NUMPLAYER_KEY);
-		qr2_keybuffer_add(keyBuffer, MAXPLAYER_KEY);
-		qr2_keybuffer_add(keyBuffer, NUMOBS_KEY);
-		break;
-	case key_player:
-		qr2_keybuffer_add(keyBuffer, NAME__KEY);
-		qr2_keybuffer_add(keyBuffer, WINS__KEY);
-		qr2_keybuffer_add(keyBuffer, LOSSES__KEY);
-		qr2_keybuffer_add(keyBuffer, PID__KEY);
-		qr2_keybuffer_add(keyBuffer, FACTION__KEY);
-		qr2_keybuffer_add(keyBuffer, COLOR__KEY);
-		break;
-	case key_team:
-		// no custom team keys
-		break;
+			qr2_keybuffer_add(keyBuffer, LADIP_KEY);
+			qr2_keybuffer_add(keyBuffer, LADPORT_KEY);
+			qr2_keybuffer_add(keyBuffer, PINGSTR_KEY);
+			qr2_keybuffer_add(keyBuffer, NUMPLAYER_KEY);
+			qr2_keybuffer_add(keyBuffer, MAXPLAYER_KEY);
+			qr2_keybuffer_add(keyBuffer, NUMOBS_KEY);
+			break;
+		case key_player:
+			qr2_keybuffer_add(keyBuffer, NAME__KEY);
+			qr2_keybuffer_add(keyBuffer, WINS__KEY);
+			qr2_keybuffer_add(keyBuffer, LOSSES__KEY);
+			qr2_keybuffer_add(keyBuffer, PID__KEY);
+			qr2_keybuffer_add(keyBuffer, FACTION__KEY);
+			qr2_keybuffer_add(keyBuffer, COLOR__KEY);
+			break;
+		case key_team:
+			// no custom team keys
+			break;
 	}
 }
 
-static int QRCountCallback
-(
-	PEER peer,
-	qr2_key_type type,
-	void * param
-)
+static int QRCountCallback(
+  PEER peer,
+  qr2_key_type type,
+  void* param)
 {
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t)
 	{
 		DEBUG_LOG(("QRCountCallback: bailing because of no thread info"));
 		return 0;
 	}
 	if (!t->isHosting())
+	{
 		t->stopHostingAlready(peer);
+	}
 
-	if(type == key_player)
+	if (type == key_player)
 	{
 		DEBUG_LOG(("QR_COUNT | %s = %d", KeyTypeToString(type), t->getNumPlayers() + t->getNumObservers()));
 		return t->getNumPlayers() + t->getNumObservers();
 	}
-	else if(type == key_team)
+	else if (type == key_team)
 	{
 		DEBUG_LOG(("QR_COUNT | %s = %d", KeyTypeToString(type), 0));
 		return 0;
@@ -1003,7 +1057,7 @@ static int QRCountCallback
 
 void PeerThreadClass::stopHostingAlready(PEER peer)
 {
-	isThreadHosting = 0; // debugging
+	isThreadHosting = 0;    // debugging
 	s_lastStateChangedHeartbeat = 0;
 	s_wantStateChangedHeartbeat = FALSE;
 	peerStopGame(peer);
@@ -1014,13 +1068,11 @@ void PeerThreadClass::stopHostingAlready(PEER peer)
 	}
 }
 
-static void QRAddErrorCallback
-(
-	PEER peer,
-	qr2_error_t error,
-	char * errorString,
-	void * param
-)
+static void QRAddErrorCallback(
+  PEER peer,
+  qr2_error_t error,
+  char* errorString,
+  void* param)
 {
 	DEBUG_LOG(("QR_ADD_ERROR | %s | %s", ErrorTypeToString(error), errorString));
 	PeerResponse resp;
@@ -1028,51 +1080,43 @@ static void QRAddErrorCallback
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-static void QRNatNegotiateCallback
-(
-	PEER peer,
-	int cookie,
-	void * param
-)
+static void QRNatNegotiateCallback(
+  PEER peer,
+  int cookie,
+  void* param)
 {
 	DEBUG_LOG(("QR_NAT_NEGOTIATE | 0x%08X", cookie));
 }
 
-static void KickedCallback
-(
-	PEER peer,
-	RoomType roomType,
-	const char * nick,
-	const char * reason,
-	void * param
-)
+static void KickedCallback(
+  PEER peer,
+  RoomType roomType,
+  const char* nick,
+  const char* reason,
+  void* param)
 {
 	DEBUG_LOG(("Kicked from %d by %s: \"%s\"", roomType, nick, reason));
 }
 
-static void NewPlayerListCallback
-(
-	PEER peer,
-	RoomType roomType,
-	void * param
-)
+static void NewPlayerListCallback(
+  PEER peer,
+  RoomType roomType,
+  void* param)
 {
 	DEBUG_LOG(("NewPlayerListCallback"));
 }
 
-static void AuthenticateCDKeyCallback
-(
-	PEER peer,
-	int result,
-	const char * message,
-	void * param
-)
+static void AuthenticateCDKeyCallback(
+  PEER peer,
+  int result,
+  const char* message,
+  void* param)
 {
 	DEBUG_LOG(("CD Key Result: %s (%d) %X", message, result, param));
 #ifdef SERVER_DEBUGGING
 	CheckServers(peer);
-#endif // SERVER_DEBUGGING
-	SerialAuthResult *val = (SerialAuthResult *)param;
+#endif    // SERVER_DEBUGGING
+	SerialAuthResult* val = (SerialAuthResult*)param;
 	if (val)
 	{
 		if (result >= 1)
@@ -1086,14 +1130,16 @@ static void AuthenticateCDKeyCallback
 	}
 #ifdef SERVER_DEBUGGING
 	CheckServers(peer);
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 }
 
-static SerialAuthResult doCDKeyAuthentication( PEER peer )
+static SerialAuthResult doCDKeyAuthentication(PEER peer)
 {
 	SerialAuthResult retval = SERIAL_NONEXISTENT;
 	if (!peer)
+	{
 		return retval;
+	}
 
 	AsciiString s;
 	if (GetStringFromRegistry("\\ergc", "", s) && s.isNotEmpty())
@@ -1101,12 +1147,12 @@ static SerialAuthResult doCDKeyAuthentication( PEER peer )
 #ifdef SERVER_DEBUGGING
 		DEBUG_LOG(("Before peerAuthenticateCDKey()"));
 		CheckServers(peer);
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 		peerAuthenticateCDKey(peer, s.str(), AuthenticateCDKeyCallback, &retval, PEERTrue);
 #ifdef SERVER_DEBUGGING
 		DEBUG_LOG(("After peerAuthenticateCDKey()"));
 		CheckServers(peer);
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 	}
 
 	if (retval == SERIAL_OK)
@@ -1121,29 +1167,31 @@ static SerialAuthResult doCDKeyAuthentication( PEER peer )
 }
 
 #define INBUF_LEN 256
-void checkQR2Queries( PEER peer, SOCKET sock )
+void checkQR2Queries(PEER peer, SOCKET sock)
 {
 	static char indata[INBUF_LEN];
 	struct sockaddr_in saddr;
 	int saddrlen = sizeof(struct sockaddr_in);
 	fd_set set;
-	struct timeval timeout = {0,0};
+	struct timeval timeout = { 0, 0 };
 	int error;
 
-	FD_ZERO ( &set );
-	FD_SET ( sock, &set );
+	FD_ZERO(&set);
+	FD_SET(sock, &set);
 
 	while (1)
 	{
 		error = select(FD_SETSIZE, &set, nullptr, nullptr, &timeout);
 		if (SOCKET_ERROR == error || 0 == error)
+		{
 			return;
-		//else we have data
-		error = recvfrom(sock, indata, INBUF_LEN - 1, 0, (struct sockaddr *)&saddr, &saddrlen);
+		}
+		// else we have data
+		error = recvfrom(sock, indata, INBUF_LEN - 1, 0, (struct sockaddr*)&saddr, &saddrlen);
 		if (error != SOCKET_ERROR)
 		{
 			indata[error] = '\0';
-			peerParseQuery( peer, indata, error, (sockaddr *)&saddr );
+			peerParseQuery(peer, indata, error, (sockaddr*)&saddr);
 		}
 	}
 }
@@ -1152,396 +1200,628 @@ static UnsignedInt localIP = 0;
 
 void PeerThreadClass::Thread_Function()
 {
-	try {
+	try
+	{
+		PEER peer;
 
-	PEER peer;
+		// Setup the callbacks.
+		///////////////////////
+		PEERCallbacks callbacks;
+		memset(&callbacks, 0, sizeof(PEERCallbacks));
+		callbacks.disconnected = disconnectedCallback;
+		// callbacks.readyChanged = readyChangedCallback;
+		callbacks.roomMessage = roomMessageCallback;
+		callbacks.playerMessage = playerMessageCallback;
+		callbacks.gameStarted = gameStartedCallback;
+		callbacks.playerJoined = playerJoinedCallback;
+		callbacks.playerLeft = playerLeftCallback;
+		callbacks.playerChangedNick = playerChangedNickCallback;
+		callbacks.playerFlagsChanged = playerFlagsChangedCallback;
+		callbacks.playerInfo = playerInfoCallback;
+		callbacks.roomUTM = roomUTMCallback;
+		callbacks.playerUTM = playerUTMCallback;
+		callbacks.globalKeyChanged = globalKeyChangedCallback;
+		callbacks.roomKeyChanged = roomKeyChangedCallback;
 
-	// Setup the callbacks.
-	///////////////////////
-	PEERCallbacks callbacks;
-	memset(&callbacks, 0, sizeof(PEERCallbacks));
-	callbacks.disconnected = disconnectedCallback;
-	//callbacks.readyChanged = readyChangedCallback;
-	callbacks.roomMessage = roomMessageCallback;
-	callbacks.playerMessage = playerMessageCallback;
-	callbacks.gameStarted = gameStartedCallback;
-	callbacks.playerJoined = playerJoinedCallback;
-	callbacks.playerLeft = playerLeftCallback;
-	callbacks.playerChangedNick = playerChangedNickCallback;
-	callbacks.playerFlagsChanged = playerFlagsChangedCallback;
-	callbacks.playerInfo = playerInfoCallback;
-	callbacks.roomUTM = roomUTMCallback;
-	callbacks.playerUTM = playerUTMCallback;
-	callbacks.globalKeyChanged = globalKeyChangedCallback;
-	callbacks.roomKeyChanged = roomKeyChangedCallback;
+		callbacks.qrServerKey = QRServerKeyCallback;
+		callbacks.qrPlayerKey = QRPlayerKeyCallback;
+		callbacks.qrTeamKey = QRTeamKeyCallback;
+		callbacks.qrKeyList = QRKeyListCallback;
+		callbacks.qrCount = QRCountCallback;
+		callbacks.qrAddError = QRAddErrorCallback;
+		callbacks.qrNatNegotiateCallback = QRNatNegotiateCallback;
 
-	callbacks.qrServerKey = QRServerKeyCallback;
-	callbacks.qrPlayerKey = QRPlayerKeyCallback;
-	callbacks.qrTeamKey = QRTeamKeyCallback;
-	callbacks.qrKeyList = QRKeyListCallback;
-	callbacks.qrCount = QRCountCallback;
-	callbacks.qrAddError = QRAddErrorCallback;
-	callbacks.qrNatNegotiateCallback = QRNatNegotiateCallback;
+		callbacks.kicked = KickedCallback;
+		callbacks.newPlayerList = NewPlayerListCallback;
 
-	callbacks.kicked = KickedCallback;
-	callbacks.newPlayerList = NewPlayerListCallback;
+		callbacks.param = this;
 
-	callbacks.param = this;
+		m_qmGroupRoom = 0;
 
-	m_qmGroupRoom = 0;
+		peer = peerInitialize(&callbacks);
+		DEBUG_ASSERTCRASH(peer != nullptr, ("null peer!"));
+		m_isConnected = m_isConnecting = false;
 
-	peer = peerInitialize( &callbacks );
-	DEBUG_ASSERTCRASH( peer != nullptr, ("null peer!") );
-	m_isConnected = m_isConnecting = false;
-
-	qr2_register_key(EXECRC_KEY, EXECRC_STR);
-	qr2_register_key(INICRC_KEY, INICRC_STR);
-	qr2_register_key(PW_KEY, PW_STR);
-	qr2_register_key(OBS_KEY, OBS_STR);
+		qr2_register_key(EXECRC_KEY, EXECRC_STR);
+		qr2_register_key(INICRC_KEY, INICRC_STR);
+		qr2_register_key(PW_KEY, PW_STR);
+		qr2_register_key(OBS_KEY, OBS_STR);
 #if !RTS_GENERALS
-  qr2_register_key(USE_STATS_KEY, USE_STATS_STR);
+		qr2_register_key(USE_STATS_KEY, USE_STATS_STR);
 #endif
-	qr2_register_key(LADIP_KEY, LADIP_STR);
-	qr2_register_key(LADPORT_KEY, LADPORT_STR);
-	qr2_register_key(PINGSTR_KEY, PINGSTR_STR);
-	qr2_register_key(NUMOBS_KEY, NUMOBS_STR);
-	qr2_register_key(NUMPLAYER_KEY, NUMPLAYER_STR);
-	qr2_register_key(MAXPLAYER_KEY, MAXPLAYER_STR);
-	qr2_register_key(NAME__KEY, NAME__STR "_");
-	qr2_register_key(WINS__KEY, WINS__STR "_");
-	qr2_register_key(LOSSES__KEY, LOSSES__STR "_");
-	qr2_register_key(FACTION__KEY, FACTION__STR "_");
-	qr2_register_key(COLOR__KEY, COLOR__STR "_");
+		qr2_register_key(LADIP_KEY, LADIP_STR);
+		qr2_register_key(LADPORT_KEY, LADPORT_STR);
+		qr2_register_key(PINGSTR_KEY, PINGSTR_STR);
+		qr2_register_key(NUMOBS_KEY, NUMOBS_STR);
+		qr2_register_key(NUMPLAYER_KEY, NUMPLAYER_STR);
+		qr2_register_key(MAXPLAYER_KEY, MAXPLAYER_STR);
+		qr2_register_key(NAME__KEY, NAME__STR "_");
+		qr2_register_key(WINS__KEY, WINS__STR "_");
+		qr2_register_key(LOSSES__KEY, LOSSES__STR "_");
+		qr2_register_key(FACTION__KEY, FACTION__STR "_");
+		qr2_register_key(COLOR__KEY, COLOR__STR "_");
 
 #if RTS_GENERALS
-	const Int NumKeys = 14;
+		const Int NumKeys = 14;
 #else
-	const Int NumKeys = 15;
+		const Int NumKeys = 15;
 #endif
-	unsigned char allKeysArray[NumKeys] = {
+		unsigned char allKeysArray[NumKeys] = {
+			/*
+			PID__KEY,
+			NAME__KEY,
+			WINS__KEY,
+			LOSSES__KEY,
+			FACTION__KEY,
+			COLOR__KEY,
+			*/
+			MAPNAME_KEY,
+			GAMEVER_KEY,
+			GAMENAME_KEY,
+			EXECRC_KEY,
+			INICRC_KEY,
+			PW_KEY,
+			OBS_KEY,
+#if !RTS_GENERALS
+			USE_STATS_KEY,
+#endif
+			LADIP_KEY,
+			LADPORT_KEY,
+			PINGSTR_KEY,
+			NUMOBS_KEY,
+			NUMPLAYER_KEY,
+			MAXPLAYER_KEY,
+			HOSTNAME_KEY
+		};
+
 		/*
-		PID__KEY,
-		NAME__KEY,
-		WINS__KEY,
-		LOSSES__KEY,
-		FACTION__KEY,
-		COLOR__KEY,
+		const char *allKeys = "\\pid_\\mapname\\gamever\\gamename" \
+		  "\\" EXECRC_STR "\\" INICRC_STR \
+		  "\\" PW_STR "\\" OBS_STR "\\" USE_STATS_STR "\\" LADIP_STR "\\" LADPORT_STR \
+		  "\\" PINGSTR_STR "\\" NUMOBS_STR \
+		  "\\" NUMPLAYER_STR "\\" MAXPLAYER_STR \
+		  "\\" NAME__STR "_" "\\" WINS__STR "_" "\\" LOSSES__STR "_" "\\" FACTION__STR "_" "\\" COLOR__STR "_";
 		*/
-		MAPNAME_KEY,
-		GAMEVER_KEY,
-		GAMENAME_KEY,
-		EXECRC_KEY,
-		INICRC_KEY,
-		PW_KEY,
-		OBS_KEY,
-#if !RTS_GENERALS
-    USE_STATS_KEY,
-#endif
-		LADIP_KEY,
-		LADPORT_KEY,
-		PINGSTR_KEY,
-		NUMOBS_KEY,
-		NUMPLAYER_KEY,
-		MAXPLAYER_KEY,
-		HOSTNAME_KEY
-	};
 
-	/*
-	const char *allKeys = "\\pid_\\mapname\\gamever\\gamename" \
-		"\\" EXECRC_STR "\\" INICRC_STR \
-		"\\" PW_STR "\\" OBS_STR "\\" USE_STATS_STR "\\" LADIP_STR "\\" LADPORT_STR \
-		"\\" PINGSTR_STR "\\" NUMOBS_STR \
-		"\\" NUMPLAYER_STR "\\" MAXPLAYER_STR \
-		"\\" NAME__STR "_" "\\" WINS__STR "_" "\\" LOSSES__STR "_" "\\" FACTION__STR "_" "\\" COLOR__STR "_";
-	*/
+		const char* key = "username";
+		peerSetRoomWatchKeys(peer, StagingRoom, 1, &key, PEERTrue);
+		peerSetRoomWatchKeys(peer, GroupRoom, 1, &key, PEERTrue);
 
-	const char * key = "username";
-	peerSetRoomWatchKeys(peer, StagingRoom, 1, &key, PEERTrue);
-	peerSetRoomWatchKeys(peer, GroupRoom, 1, &key, PEERTrue);
+		m_localRoomID = 0;
+		m_localStagingServerName = L"";
 
-	m_localRoomID = 0;
-	m_localStagingServerName = L"";
+		m_qmStatus = QM_IDLE;
 
-	m_qmStatus = QM_IDLE;
+		// Setup which rooms to do pings and cross-pings in.
+		////////////////////////////////////////////////////
+		PEERBool pingRooms[NumRooms];
+		PEERBool crossPingRooms[NumRooms];
+		pingRooms[TitleRoom] = PEERFalse;
+		pingRooms[GroupRoom] = PEERFalse;
+		pingRooms[StagingRoom] = PEERFalse;
+		crossPingRooms[TitleRoom] = PEERFalse;
+		crossPingRooms[GroupRoom] = PEERFalse;
+		crossPingRooms[StagingRoom] = PEERFalse;
 
-	// Setup which rooms to do pings and cross-pings in.
-	////////////////////////////////////////////////////
-	PEERBool pingRooms[NumRooms];
-	PEERBool crossPingRooms[NumRooms];
-	pingRooms[TitleRoom] = PEERFalse;
-	pingRooms[GroupRoom] = PEERFalse;
-	pingRooms[StagingRoom] = PEERFalse;
-	crossPingRooms[TitleRoom] = PEERFalse;
-	crossPingRooms[GroupRoom] = PEERFalse;
-	crossPingRooms[StagingRoom] = PEERFalse;
-
-	/*********
-	First step, set our game authentication info
-	We could do:
-	Generals:
-		strcpy(gcd_gamename,"ccgenerals");
-		strcpy(gcd_secret_key,"h5T2f6");
-	ZeroHour:
-		strcpy(gcd_gamename,"ccgenzh");
-		strcpy(gcd_secret_key,"D6s9k3");
-	or
-	Generals:
-		strcpy(gcd_gamename,"ccgeneralsb");
-		strcpy(gcd_secret_key,"g3T9s2");
-	ZeroHour:
-		strcpy(gcd_gamename,"ccgeneralsb");
-		strcpy(gcd_secret_key,"whatever the key is");
-	...but this is more secure:
-	**********/
-	char gameName[12] = {0};
-	char secretKey[7] = {0};
-	/**
-	gameName[0]='c';gameName[1]='c';gameName[2]='g';gameName[3]='e';
-	gameName[4]='n';gameName[5]='e';gameName[6]='r';gameName[7]='a';
-	gameName[8]='l';gameName[9]='s';gameName[10]='b';gameName[11]='\0';
-	secretKey[0]='g';secretKey[1]='3';secretKey[2]='T';secretKey[3]='9';
-	secretKey[4]='s';secretKey[5]='2';secretKey[6]='\0';
-	/**/
+		/*********
+		First step, set our game authentication info
+		We could do:
+		Generals:
+		  strcpy(gcd_gamename,"ccgenerals");
+		  strcpy(gcd_secret_key,"h5T2f6");
+		ZeroHour:
+		  strcpy(gcd_gamename,"ccgenzh");
+		  strcpy(gcd_secret_key,"D6s9k3");
+		or
+		Generals:
+		  strcpy(gcd_gamename,"ccgeneralsb");
+		  strcpy(gcd_secret_key,"g3T9s2");
+		ZeroHour:
+		  strcpy(gcd_gamename,"ccgeneralsb");
+		  strcpy(gcd_secret_key,"whatever the key is");
+		...but this is more secure:
+		**********/
+		char gameName[12] = { 0 };
+		char secretKey[7] = { 0 };
+		/**
+		gameName[0]='c';gameName[1]='c';gameName[2]='g';gameName[3]='e';
+		gameName[4]='n';gameName[5]='e';gameName[6]='r';gameName[7]='a';
+		gameName[8]='l';gameName[9]='s';gameName[10]='b';gameName[11]='\0';
+		secretKey[0]='g';secretKey[1]='3';secretKey[2]='T';secretKey[3]='9';
+		secretKey[4]='s';secretKey[5]='2';secretKey[6]='\0';
+		/**/
 #if RTS_GENERALS
-	gameName[0]='c';gameName[1]='c';gameName[2]='g';gameName[3]='e';
-	gameName[4]='n';gameName[5]='e';gameName[6]='r';gameName[7]='a';
-	gameName[8]='l';gameName[9]='s';gameName[10]='\0';
-	secretKey[0]='h';secretKey[1]='5';secretKey[2]='T';secretKey[3]='2';
-	secretKey[4]='f';secretKey[5]='6';secretKey[6]='\0';
+		gameName[0] = 'c';
+		gameName[1] = 'c';
+		gameName[2] = 'g';
+		gameName[3] = 'e';
+		gameName[4] = 'n';
+		gameName[5] = 'e';
+		gameName[6] = 'r';
+		gameName[7] = 'a';
+		gameName[8] = 'l';
+		gameName[9] = 's';
+		gameName[10] = '\0';
+		secretKey[0] = 'h';
+		secretKey[1] = '5';
+		secretKey[2] = 'T';
+		secretKey[3] = '2';
+		secretKey[4] = 'f';
+		secretKey[5] = '6';
+		secretKey[6] = '\0';
 #elif RTS_ZEROHOUR
-	gameName[0]='c';gameName[1]='c';gameName[2]='g';gameName[3]='e';
-	gameName[4]='n';gameName[5]='z';gameName[6]='h';gameName[7]='\0';
-	secretKey[0]='D';secretKey[1]='6';secretKey[2]='s';secretKey[3]='9';
-	secretKey[4]='k';secretKey[5]='3';secretKey[6]='\0';
+		gameName[0] = 'c';
+		gameName[1] = 'c';
+		gameName[2] = 'g';
+		gameName[3] = 'e';
+		gameName[4] = 'n';
+		gameName[5] = 'z';
+		gameName[6] = 'h';
+		gameName[7] = '\0';
+		secretKey[0] = 'D';
+		secretKey[1] = '6';
+		secretKey[2] = 's';
+		secretKey[3] = '9';
+		secretKey[4] = 'k';
+		secretKey[5] = '3';
+		secretKey[6] = '\0';
 #endif
-	/**/
+		/**/
 
-	// Set the title.
-	/////////////////
-	if(!peerSetTitle( peer , gameName, secretKey, gameName, secretKey, GetRegistryVersion(), 30, PEERTrue, pingRooms, crossPingRooms))
-	{
-		DEBUG_CRASH(("Error setting title"));
-		peerShutdown( peer );
-		peer = nullptr;
-		return;
-	}
-
-	OptionPreferences pref;
-	UnsignedInt preferredIP = INADDR_ANY;
-	UnsignedInt selectedIP = pref.getOnlineIPAddress();
-	DEBUG_LOG(("Looking for IP %X", selectedIP));
-	IPEnumeration IPs;
-	EnumeratedIP *IPlist = IPs.getAddresses();
-	while (IPlist)
-	{
-		DEBUG_LOG(("Looking at IP %s", IPlist->getIPstring().str()));
-		if (selectedIP == IPlist->getIP())
+		// Set the title.
+		/////////////////
+		if (!peerSetTitle(peer, gameName, secretKey, gameName, secretKey, GetRegistryVersion(), 30, PEERTrue, pingRooms, crossPingRooms))
 		{
-			preferredIP = IPlist->getIP();
-			DEBUG_LOG(("Connecting to GameSpy chat server via IP address %8.8X", preferredIP));
-			break;
+			DEBUG_CRASH(("Error setting title"));
+			peerShutdown(peer);
+			peer = nullptr;
+			return;
 		}
-		IPlist = IPlist->getNext();
-	}
-	chatSetLocalIP(preferredIP);
 
-	UnsignedInt preferredQRPort = 0;
-	AsciiString selectedQRPort = pref["GameSpyQRPort"];
-	if (selectedQRPort.isNotEmpty())
-	{
-		preferredQRPort = atoi(selectedQRPort.str());
-	}
-
-	PeerRequest incomingRequest;
-	while ( running )
-	{
-		// deal with requests
-		if (TheGameSpyPeerMessageQueue->getRequest(incomingRequest))
+		OptionPreferences pref;
+		UnsignedInt preferredIP = INADDR_ANY;
+		UnsignedInt selectedIP = pref.getOnlineIPAddress();
+		DEBUG_LOG(("Looking for IP %X", selectedIP));
+		IPEnumeration IPs;
+		EnumeratedIP* IPlist = IPs.getAddresses();
+		while (IPlist)
 		{
-			DEBUG_LOG(("TheGameSpyPeerMessageQueue->getRequest() got request of type %d", incomingRequest.peerRequestType));
-			switch (incomingRequest.peerRequestType)
+			DEBUG_LOG(("Looking at IP %s", IPlist->getIPstring().str()));
+			if (selectedIP == IPlist->getIP())
 			{
-			case PeerRequest::PEERREQUEST_LOGIN:
+				preferredIP = IPlist->getIP();
+				DEBUG_LOG(("Connecting to GameSpy chat server via IP address %8.8X", preferredIP));
+				break;
+			}
+			IPlist = IPlist->getNext();
+		}
+		chatSetLocalIP(preferredIP);
+
+		UnsignedInt preferredQRPort = 0;
+		AsciiString selectedQRPort = pref["GameSpyQRPort"];
+		if (selectedQRPort.isNotEmpty())
+		{
+			preferredQRPort = atoi(selectedQRPort.str());
+		}
+
+		PeerRequest incomingRequest;
+		while (running)
+		{
+			// deal with requests
+			if (TheGameSpyPeerMessageQueue->getRequest(incomingRequest))
+			{
+				DEBUG_LOG(("TheGameSpyPeerMessageQueue->getRequest() got request of type %d", incomingRequest.peerRequestType));
+				switch (incomingRequest.peerRequestType)
 				{
-				m_isConnecting = true;
-				m_originalName = incomingRequest.nick;
-				m_loginName = incomingRequest.nick;
-				m_profileID = incomingRequest.login.profileID;
-				m_password = incomingRequest.password;
-				m_email = incomingRequest.email;
-				peerConnect( peer, incomingRequest.nick.c_str(), incomingRequest.login.profileID, nickErrorCallbackWrapper, connectCallbackWrapper, this, PEERTrue );
+					case PeerRequest::PEERREQUEST_LOGIN:
+					{
+						m_isConnecting = true;
+						m_originalName = incomingRequest.nick;
+						m_loginName = incomingRequest.nick;
+						m_profileID = incomingRequest.login.profileID;
+						m_password = incomingRequest.password;
+						m_email = incomingRequest.email;
+						peerConnect(peer, incomingRequest.nick.c_str(), incomingRequest.login.profileID, nickErrorCallbackWrapper, connectCallbackWrapper, this, PEERTrue);
 #ifdef SERVER_DEBUGGING
-				DEBUG_LOG(("After peerConnect()"));
-				CheckServers(peer);
-#endif // SERVER_DEBUGGING
-				if (m_isConnected)
-				{
-					SerialAuthResult ret = doCDKeyAuthentication( peer );
-					if (ret != SERIAL_OK)
-					{
+						DEBUG_LOG(("After peerConnect()"));
+						CheckServers(peer);
+#endif    // SERVER_DEBUGGING
+						if (m_isConnected)
+						{
+							SerialAuthResult ret = doCDKeyAuthentication(peer);
+							if (ret != SERIAL_OK)
+							{
+								m_isConnecting = m_isConnected = false;
+								MESSAGE_QUEUE->setSerialAuthResult(ret);
+								peerDisconnect(peer);
+							}
+						}
+						m_isConnecting = false;
+
+						// check our connection
+						// if (m_isConnected)
+						//{
+						//	GetLocalChatConnectionAddress("peerchat.gamespy.com", 6667, localIP);
+						//}
+					}
+
+					break;
+
+					case PeerRequest::PEERREQUEST_LOGOUT:
 						m_isConnecting = m_isConnected = false;
-						MESSAGE_QUEUE->setSerialAuthResult( ret );
-						peerDisconnect( peer );
-					}
-				}
-				m_isConnecting = false;
+						peerDisconnect(peer);
+						break;
 
-				// check our connection
-				//if (m_isConnected)
-				//{
-				//	GetLocalChatConnectionAddress("peerchat.gamespy.com", 6667, localIP);
-				//}
-				}
+					case PeerRequest::PEERREQUEST_JOINGROUPROOM:
+						m_groupRoomID = incomingRequest.groupRoom.id;
+						isThreadHosting = 0;    // debugging
+						s_lastStateChangedHeartbeat = 0;
+						s_wantStateChangedHeartbeat = FALSE;
+						peerStopGame(peer);
+						peerLeaveRoom(peer, GroupRoom, nullptr);
+						peerLeaveRoom(peer, StagingRoom, nullptr);
+						if (qr2Sock != INVALID_SOCKET)
+						{
+							closesocket(qr2Sock);
+							qr2Sock = INVALID_SOCKET;
+						}
+						m_isHosting = false;
+						m_localRoomID = m_groupRoomID;
+						DEBUG_LOG(("Requesting to join room %d in thread %X", m_localRoomID, this));
+						peerJoinGroupRoom(peer, incomingRequest.groupRoom.id, joinRoomCallback, (void*)this, PEERTrue);
+						break;
 
-				break;
+					case PeerRequest::PEERREQUEST_LEAVEGROUPROOM:
+						m_groupRoomID = 0;
+						updateBuddyStatus(BUDDY_ONLINE);
+						peerLeaveRoom(peer, GroupRoom, nullptr);
+						peerLeaveRoom(peer, StagingRoom, nullptr);
+						m_isHosting = false;
+						break;
 
-			case PeerRequest::PEERREQUEST_LOGOUT:
-				m_isConnecting = m_isConnected = false;
-				peerDisconnect( peer );
-				break;
-
-			case PeerRequest::PEERREQUEST_JOINGROUPROOM:
-				m_groupRoomID = incomingRequest.groupRoom.id;
-				isThreadHosting = 0; // debugging
-				s_lastStateChangedHeartbeat = 0;
-				s_wantStateChangedHeartbeat = FALSE;
-				peerStopGame( peer );
-				peerLeaveRoom( peer, GroupRoom, nullptr );
-				peerLeaveRoom( peer, StagingRoom, nullptr );
-				if (qr2Sock != INVALID_SOCKET)
-				{
-					closesocket(qr2Sock);
-					qr2Sock = INVALID_SOCKET;
-				}
-				m_isHosting = false;
-				m_localRoomID = m_groupRoomID;
-				DEBUG_LOG(("Requesting to join room %d in thread %X", m_localRoomID, this));
-				peerJoinGroupRoom( peer, incomingRequest.groupRoom.id, joinRoomCallback, (void *)this, PEERTrue );
-				break;
-
-			case PeerRequest::PEERREQUEST_LEAVEGROUPROOM:
-				m_groupRoomID = 0;
-				updateBuddyStatus( BUDDY_ONLINE );
-				peerLeaveRoom( peer, GroupRoom, nullptr );
-				peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
-				break;
-
-			case PeerRequest::PEERREQUEST_JOINSTAGINGROOM:
-				{
-					m_groupRoomID = 0;
-					updateBuddyStatus( BUDDY_ONLINE );
-					peerLeaveRoom( peer, GroupRoom, nullptr );
-					peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
-					SBServer server = findServerByID(incomingRequest.stagingRoom.id);
-					m_localStagingServerName = incomingRequest.text;
-					DEBUG_LOG(("Setting m_localStagingServerName to [%ls]", m_localStagingServerName.c_str()));
-					m_localRoomID = incomingRequest.stagingRoom.id;
-					DEBUG_LOG(("Requesting to join room %d", m_localRoomID));
-					if (server)
+					case PeerRequest::PEERREQUEST_JOINSTAGINGROOM:
 					{
-						peerJoinStagingRoom( peer, server, incomingRequest.password.c_str(), joinRoomCallback, (void *)this, PEERTrue );
+						m_groupRoomID = 0;
+						updateBuddyStatus(BUDDY_ONLINE);
+						peerLeaveRoom(peer, GroupRoom, nullptr);
+						peerLeaveRoom(peer, StagingRoom, nullptr);
+						m_isHosting = false;
+						SBServer server = findServerByID(incomingRequest.stagingRoom.id);
+						m_localStagingServerName = incomingRequest.text;
+						DEBUG_LOG(("Setting m_localStagingServerName to [%ls]", m_localStagingServerName.c_str()));
+						m_localRoomID = incomingRequest.stagingRoom.id;
+						DEBUG_LOG(("Requesting to join room %d", m_localRoomID));
+						if (server)
+						{
+							peerJoinStagingRoom(peer, server, incomingRequest.password.c_str(), joinRoomCallback, (void*)this, PEERTrue);
+						}
+						else
+						{
+							PeerResponse resp;
+							resp.peerResponseType = PeerResponse::PEERRESPONSE_JOINSTAGINGROOM;
+							resp.joinStagingRoom.id = incomingRequest.stagingRoom.id;
+							resp.joinStagingRoom.ok = FALSE;
+							resp.joinStagingRoom.result = PEERJoinFailed;
+							TheGameSpyPeerMessageQueue->addResponse(resp);
+						}
 					}
-					else
+					break;
+
+					case PeerRequest::PEERREQUEST_LEAVESTAGINGROOM:
+						m_groupRoomID = 0;
+						updateBuddyStatus(BUDDY_ONLINE);
+						peerLeaveRoom(peer, GroupRoom, nullptr);
+						peerLeaveRoom(peer, StagingRoom, nullptr);
+						isThreadHosting = 0;    // debugging
+						s_lastStateChangedHeartbeat = 0;
+						s_wantStateChangedHeartbeat = FALSE;
+						if (m_isHosting)
+						{
+							peerStopGame(peer);
+							if (qr2Sock != INVALID_SOCKET)
+							{
+								closesocket(qr2Sock);
+								qr2Sock = INVALID_SOCKET;
+							}
+							m_isHosting = false;
+						}
+						break;
+
+					case PeerRequest::PEERREQUEST_MESSAGEPLAYER:
 					{
-						PeerResponse resp;
-						resp.peerResponseType = PeerResponse::PEERRESPONSE_JOINSTAGINGROOM;
-						resp.joinStagingRoom.id = incomingRequest.stagingRoom.id;
-						resp.joinStagingRoom.ok = FALSE;
-						resp.joinStagingRoom.result = PEERJoinFailed;
-						TheGameSpyPeerMessageQueue->addResponse(resp);
+						std::string s = WideCharStringToMultiByte(incomingRequest.text.c_str());
+						peerMessagePlayer(peer, incomingRequest.nick.c_str(), s.c_str(), (incomingRequest.message.isAction) ? ActionMessage : NormalMessage);
 					}
-				}
-				break;
+					break;
 
-			case PeerRequest::PEERREQUEST_LEAVESTAGINGROOM:
-				m_groupRoomID = 0;
-				updateBuddyStatus( BUDDY_ONLINE );
-				peerLeaveRoom( peer, GroupRoom, nullptr );
-				peerLeaveRoom( peer, StagingRoom, nullptr );
-				isThreadHosting = 0; // debugging
-				s_lastStateChangedHeartbeat = 0;
-				s_wantStateChangedHeartbeat = FALSE;
-				if (m_isHosting)
-				{
-					peerStopGame( peer );
-					if (qr2Sock != INVALID_SOCKET)
+					case PeerRequest::PEERREQUEST_MESSAGEROOM:
 					{
-						closesocket(qr2Sock);
-						qr2Sock = INVALID_SOCKET;
+						std::string s = WideCharStringToMultiByte(incomingRequest.text.c_str());
+						peerMessageRoom(peer, (m_groupRoomID) ? GroupRoom : StagingRoom, s.c_str(), (incomingRequest.message.isAction) ? ActionMessage : NormalMessage);
 					}
-					m_isHosting = false;
-				}
-				break;
+					break;
 
-			case PeerRequest::PEERREQUEST_MESSAGEPLAYER:
-				{
-					std::string s = WideCharStringToMultiByte(incomingRequest.text.c_str());
-					peerMessagePlayer( peer, incomingRequest.nick.c_str(), s.c_str(), (incomingRequest.message.isAction)?ActionMessage:NormalMessage );
-				}
-				break;
+					case PeerRequest::PEERREQUEST_PUSHSTATS:
+					{
+						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats are %d,%d,%d,%d,%d,%d",
+						           incomingRequest.statsToPush.locale, incomingRequest.statsToPush.wins, incomingRequest.statsToPush.losses, incomingRequest.statsToPush.rankPoints, incomingRequest.statsToPush.side, incomingRequest.statsToPush.preorder));
 
-			case PeerRequest::PEERREQUEST_MESSAGEROOM:
-				{
-					std::string s = WideCharStringToMultiByte(incomingRequest.text.c_str());
-					peerMessageRoom( peer, (m_groupRoomID)?GroupRoom:StagingRoom, s.c_str(), (incomingRequest.message.isAction)?ActionMessage:NormalMessage );
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_PUSHSTATS:
-				{
-					DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats are %d,%d,%d,%d,%d,%d",
-						incomingRequest.statsToPush.locale, incomingRequest.statsToPush.wins, incomingRequest.statsToPush.losses, incomingRequest.statsToPush.rankPoints, incomingRequest.statsToPush.side, incomingRequest.statsToPush.preorder));
-
-					// Testing alternate way to push stats
+						// Testing alternate way to push stats
 #ifdef USE_BROADCAST_KEYS
-					snprintf(s_valueBuffers[0], 20, "%d", incomingRequest.statsToPush.locale);
-					snprintf(s_valueBuffers[1], 20, "%d", incomingRequest.statsToPush.wins);
-					snprintf(s_valueBuffers[2], 20, "%d", incomingRequest.statsToPush.losses);
-					snprintf(s_valueBuffers[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
-					snprintf(s_valueBuffers[4], 20, "%d", incomingRequest.statsToPush.side);
-					snprintf(s_valueBuffers[5], 20, "%d", incomingRequest.statsToPush.preorder);
-					pushStatsToRoom(peer);
+						snprintf(s_valueBuffers[0], 20, "%d", incomingRequest.statsToPush.locale);
+						snprintf(s_valueBuffers[1], 20, "%d", incomingRequest.statsToPush.wins);
+						snprintf(s_valueBuffers[2], 20, "%d", incomingRequest.statsToPush.losses);
+						snprintf(s_valueBuffers[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
+						snprintf(s_valueBuffers[4], 20, "%d", incomingRequest.statsToPush.side);
+						snprintf(s_valueBuffers[5], 20, "%d", incomingRequest.statsToPush.preorder);
+						pushStatsToRoom(peer);
 #else
-					const char *keys[6] = { "locale", "wins", "losses", "points", "side", "pre" };
-					char valueStrings[6][20];
-					char *values[6] = { valueStrings[0], valueStrings[1], valueStrings[2],
-						valueStrings[3], valueStrings[4], valueStrings[5]};
-					snprintf(values[0], 20, "%d", incomingRequest.statsToPush.locale);
-					snprintf(values[1], 20, "%d", incomingRequest.statsToPush.wins);
-					snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);
-					snprintf(values[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
-					snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
-					snprintf(values[5], 20, "%d", incomingRequest.statsToPush.preorder);
-					peerSetGlobalKeys(peer, 6, (const char **)keys, (const char **)values);
-					peerSetGlobalWatchKeys(peer, GroupRoom,   0, nullptr, PEERFalse);
-					peerSetGlobalWatchKeys(peer, StagingRoom, 0, nullptr, PEERFalse);
-					peerSetGlobalWatchKeys(peer, GroupRoom,   6, keys, PEERTrue);
-					peerSetGlobalWatchKeys(peer, StagingRoom, 6, keys, PEERTrue);
+						const char* keys[6] = { "locale", "wins", "losses", "points", "side", "pre" };
+						char valueStrings[6][20];
+						char* values[6] = { valueStrings[0], valueStrings[1], valueStrings[2],
+							                  valueStrings[3], valueStrings[4], valueStrings[5] };
+						snprintf(values[0], 20, "%d", incomingRequest.statsToPush.locale);
+						snprintf(values[1], 20, "%d", incomingRequest.statsToPush.wins);
+						snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);
+						snprintf(values[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
+						snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
+						snprintf(values[5], 20, "%d", incomingRequest.statsToPush.preorder);
+						peerSetGlobalKeys(peer, 6, (const char**)keys, (const char**)values);
+						peerSetGlobalWatchKeys(peer, GroupRoom, 0, nullptr, PEERFalse);
+						peerSetGlobalWatchKeys(peer, StagingRoom, 0, nullptr, PEERFalse);
+						peerSetGlobalWatchKeys(peer, GroupRoom, 6, keys, PEERTrue);
+						peerSetGlobalWatchKeys(peer, StagingRoom, 6, keys, PEERTrue);
 #endif
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_SETGAMEOPTIONS:
-				{
-					m_mapName = incomingRequest.gameOptsMapName;
-					m_numPlayers = incomingRequest.gameOptions.numPlayers;
-					m_numObservers = incomingRequest.gameOptions.numObservers;
-					m_maxPlayers = incomingRequest.gameOptions.maxPlayers;
-					DEBUG_LOG(("peerStateChanged(): Marking game options state as changed - %d players, %d observers", m_numPlayers, m_numObservers));
-					for (Int i=0; i<MAX_SLOTS; ++i)
-					{
-						m_playerNames[i] = incomingRequest.gameOptsPlayerNames[i];
-						m_playerWins[i] = incomingRequest.gameOptions.wins[i];
-						m_playerLosses[i] = incomingRequest.gameOptions.losses[i];
-						m_playerProfileID[i] = incomingRequest.gameOptions.profileID[i];
-						m_playerFactions[i] = incomingRequest.gameOptions.faction[i];
-						m_playerColors[i] = incomingRequest.gameOptions.color[i];
 					}
+					break;
 
-					s_wantStateChangedHeartbeat = TRUE;
+					case PeerRequest::PEERREQUEST_SETGAMEOPTIONS:
+					{
+						m_mapName = incomingRequest.gameOptsMapName;
+						m_numPlayers = incomingRequest.gameOptions.numPlayers;
+						m_numObservers = incomingRequest.gameOptions.numObservers;
+						m_maxPlayers = incomingRequest.gameOptions.maxPlayers;
+						DEBUG_LOG(("peerStateChanged(): Marking game options state as changed - %d players, %d observers", m_numPlayers, m_numObservers));
+						for (Int i = 0; i < MAX_SLOTS; ++i)
+						{
+							m_playerNames[i] = incomingRequest.gameOptsPlayerNames[i];
+							m_playerWins[i] = incomingRequest.gameOptions.wins[i];
+							m_playerLosses[i] = incomingRequest.gameOptions.losses[i];
+							m_playerProfileID[i] = incomingRequest.gameOptions.profileID[i];
+							m_playerFactions[i] = incomingRequest.gameOptions.faction[i];
+							m_playerColors[i] = incomingRequest.gameOptions.color[i];
+						}
 
-					/*
-					peerStateChanged( peer );
+						s_wantStateChangedHeartbeat = TRUE;
+
+						/*
+						peerStateChanged( peer );
+
+	#ifdef DEBUG_LOGGING
+						static UnsignedInt prev = 0;
+						UnsignedInt now = timeGetTime();
+						UnsignedInt diff = now - prev;
+						prev = now;
+	#endif
+						STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)", now, diff));
+						*/
+
+						peerUTMRoom(peer, StagingRoom, "SL/", incomingRequest.options.c_str(), PEERFalse);    // send the full string to people in the room
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_GETEXTENDEDSTAGINGROOMINFO:
+					{
+						SBServer server = findServerByID(incomingRequest.stagingRoom.id);
+						if (server)
+						{
+							DEBUG_LOG(("Requesting full update on a game"));
+							peerUpdateGame(peer, server, PEERTrue);
+						}
+						else
+						{
+							DEBUG_LOG(("Tried to update non-existent server!"));
+						}
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_CREATESTAGINGROOM:
+					{
+						Int oldGroupID = m_groupRoomID;
+						m_groupRoomID = 0;
+						updateBuddyStatus(BUDDY_ONLINE);
+						if (!incomingRequest.stagingRoomCreation.restrictGameList)
+						{
+							peerLeaveRoom(peer, GroupRoom, nullptr);
+							peerLeaveRoom(peer, StagingRoom, nullptr);
+						}
+						m_isHosting = TRUE;
+
+						Int res = PEERJoinFailed;
+						if (qr2Sock == INVALID_SOCKET)
+						{
+							// allocate a port
+							if (preferredQRPort < 1024)
+							{
+								preferredQRPort = 6500 + (ntohl(localIP) & 0xff);
+							}
+							DEBUG_LOG(("Using %8.8X:%d for QR2", ntohl(localIP), preferredQRPort));
+						}
+						else
+						{
+							closesocket(qr2Sock);
+							qr2Sock = INVALID_SOCKET;
+						}
+						qr2Sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+						struct sockaddr_in saddr;
+						saddr.sin_port = htons(preferredQRPort);
+						saddr.sin_addr.s_addr = localIP;
+						saddr.sin_family = AF_INET;
+						if (bind(qr2Sock, (sockaddr*)&saddr, sizeof(saddr)) != 0)
+						{
+							DEBUG_LOG(("Could not bind to %d!  Falling back to GameSpy's default port", preferredQRPort));
+							closesocket(qr2Sock);
+							qr2Sock = INVALID_SOCKET;
+							preferredQRPort = 0;
+						}
+						std::string compositeGame = m_loginName;
+						compositeGame.append(" ");
+						compositeGame.append(WideCharStringToMultiByte(incomingRequest.text.c_str()));
+						m_localStagingServerName = incomingRequest.text;
+						m_playerNames[0] = m_loginName;
+						peerCreateStagingRoomWithSocket(peer, compositeGame.c_str(), MAX_SLOTS, incomingRequest.password.c_str(), qr2Sock, preferredQRPort, createRoomCallback, (void*)&res, PEERTrue);
+						// peerCreateStagingRoomWithSocket(peer, WideCharStringToMultiByte(incomingRequest.text.c_str()).c_str(), MAX_SLOTS, incomingRequest.password.c_str(), qr2Sock, preferredQRPort, createRoomCallback, (void *)&res, PEERTrue);
+						DEBUG_LOG(("PEERREQUEST_CREATESTAGINGROOM - creating staging room, name is %ls, passwd is %s, result = %d",
+						           incomingRequest.text.c_str(), incomingRequest.password.c_str(), res));
+
+						PeerResponse resp;
+						resp.peerResponseType = PeerResponse::PEERRESPONSE_CREATESTAGINGROOM;
+						resp.createStagingRoom.result = res;
+						TheGameSpyPeerMessageQueue->addResponse(resp);
+
+						if (res != PEERJoinSuccess && res != PEERAlreadyInRoom)
+						{
+							m_localRoomID = oldGroupID;
+							DEBUG_LOG(("Requesting to join room %d", m_localRoomID));
+							if (incomingRequest.stagingRoomCreation.restrictGameList)
+							{
+								peerLeaveRoom(peer, StagingRoom, nullptr);
+							}
+							else
+							{
+								peerJoinGroupRoom(peer, oldGroupID, joinRoomCallback, (void*)this, PEERTrue);
+							}
+							m_isHosting = FALSE;
+							m_localStagingServerName = L"";
+							m_playerNames[0] = "";
+						}
+						else
+						{
+							if (incomingRequest.stagingRoomCreation.restrictGameList)
+							{
+								peerLeaveRoom(peer, GroupRoom, nullptr);
+							}
+							isThreadHosting = 1;    // debugging
+							s_lastStateChangedHeartbeat = timeGetTime();    // wait the full interval before updating state
+							s_wantStateChangedHeartbeat = FALSE;
+							m_isHosting = TRUE;
+							m_allowObservers = incomingRequest.stagingRoomCreation.allowObservers;
+							m_useStats = incomingRequest.stagingRoomCreation.useStats;
+							m_mapName = "";
+							for (Int i = 0; i < MAX_SLOTS; ++i)
+							{
+								m_playerNames[i] = "";
+								m_playerWins[i] = 0;
+								m_playerLosses[i] = 0;
+								m_playerProfileID[i] = 0;
+								m_playerFactions[i] = 0;
+								m_playerColors[i] = 0;
+							}
+							if (!incomingRequest.password.empty())
+							{
+								m_hasPassword = true;
+							}
+							else
+							{
+								m_hasPassword = false;
+							}
+							m_playerNames[0] = m_loginName;
+							m_exeCRC = incomingRequest.stagingRoomCreation.exeCRC;
+							m_iniCRC = incomingRequest.stagingRoomCreation.iniCRC;
+							m_gameVersion = incomingRequest.stagingRoomCreation.gameVersion;
+							m_localStagingServerName = incomingRequest.text;
+							m_ladderIP = incomingRequest.ladderIP;
+							m_pingStr = incomingRequest.hostPingStr;
+							m_ladderPort = incomingRequest.stagingRoomCreation.ladPort;
+
+#ifdef USE_BROADCAST_KEYS
+							pushStatsToRoom(peer);
+#endif    // USE_BROADCAST_KEYS
+
+							DEBUG_LOG(("Setting m_localStagingServerName to [%ls]", m_localStagingServerName.c_str()));
+							updateBuddyStatus(BUDDY_STAGING, 0, WideCharStringToMultiByte(m_localStagingServerName.c_str()));
+						}
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_STARTGAMELIST:
+					{
+						m_sawCompleteGameList = FALSE;
+						PeerResponse resp;
+						resp.peerResponseType = PeerResponse::PEERRESPONSE_STAGINGROOM;
+						resp.stagingRoom.action = PEER_CLEAR;
+						resp.stagingRoom.isStaging = TRUE;
+						resp.stagingRoom.percentComplete = 0;
+						clearServers();
+						TheGameSpyPeerMessageQueue->addResponse(resp);
+						peerStartListingGames(peer, allKeysArray, NumKeys, (incomingRequest.gameList.restrictGameList ? "~" : nullptr), listingGamesCallback, this);
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_STOPGAMELIST:
+					{
+						peerStopListingGames(peer);
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_STARTGAME:
+					{
+						peerStartGame(peer, nullptr, PEER_STOP_REPORTING);
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_UTMPLAYER:
+					{
+						if (!incomingRequest.nick.empty())
+						{
+							peerUTMPlayer(peer, incomingRequest.nick.c_str(), incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse);
+						}
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_UTMROOM:
+					{
+						peerUTMRoom(peer, (incomingRequest.UTM.isStagingRoom) ? StagingRoom : GroupRoom, incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse);
+					}
+					break;
+
+					case PeerRequest::PEERREQUEST_STARTQUICKMATCH:
+					{
+						m_qmInfo = incomingRequest;
+						doQuickMatch(peer);
+					}
+					break;
+				}
+			}
+
+			if (isThreadHosting && s_wantStateChangedHeartbeat)
+			{
+				UnsignedInt now = timeGetTime();
+				if (now > s_lastStateChangedHeartbeat + s_heartbeatInterval)
+				{
+					s_lastStateChangedHeartbeat = now;
+					s_wantStateChangedHeartbeat = FALSE;
+					peerStateChanged(peer);
 
 #ifdef DEBUG_LOGGING
 					static UnsignedInt prev = 0;
@@ -1550,236 +1830,35 @@ void PeerThreadClass::Thread_Function()
 					prev = now;
 #endif
 					STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)", now, diff));
-					*/
-
-					peerUTMRoom( peer, StagingRoom, "SL/", incomingRequest.options.c_str(), PEERFalse ); // send the full string to people in the room
 				}
-				break;
-
-			case PeerRequest::PEERREQUEST_GETEXTENDEDSTAGINGROOMINFO:
-				{
-					SBServer server = findServerByID( incomingRequest.stagingRoom.id );
-					if (server)
-					{
-						DEBUG_LOG(("Requesting full update on a game"));
-						peerUpdateGame( peer, server, PEERTrue );
-					}
-					else
-					{
-						DEBUG_LOG(("Tried to update non-existent server!"));
-					}
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_CREATESTAGINGROOM:
-				{
-					Int oldGroupID = m_groupRoomID;
-					m_groupRoomID = 0;
-					updateBuddyStatus( BUDDY_ONLINE );
-					if (!incomingRequest.stagingRoomCreation.restrictGameList)
-					{
-						peerLeaveRoom( peer, GroupRoom, nullptr );
-						peerLeaveRoom( peer, StagingRoom, nullptr );
-					}
-					m_isHosting = TRUE;
-
-					Int res = PEERJoinFailed;
-					if (qr2Sock == INVALID_SOCKET)
-					{
-						// allocate a port
-						if (preferredQRPort < 1024)
-						{
-							preferredQRPort = 6500 + (ntohl(localIP) & 0xff);
-						}
-						DEBUG_LOG(("Using %8.8X:%d for QR2", ntohl(localIP), preferredQRPort));
-					}
-					else
-					{
-						closesocket(qr2Sock);
-						qr2Sock = INVALID_SOCKET;
-					}
-					qr2Sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-					struct sockaddr_in saddr;
-					saddr.sin_port=htons(preferredQRPort);
-					saddr.sin_addr.s_addr=localIP;
-					saddr.sin_family=AF_INET;
-					if (bind(qr2Sock, (sockaddr *)&saddr, sizeof(saddr)) != 0)
-					{
-						DEBUG_LOG(("Could not bind to %d!  Falling back to GameSpy's default port", preferredQRPort));
-						closesocket(qr2Sock);
-						qr2Sock = INVALID_SOCKET;
-						preferredQRPort = 0;
-					}
-					std::string compositeGame = m_loginName;
-					compositeGame.append(" ");
-					compositeGame.append(WideCharStringToMultiByte(incomingRequest.text.c_str()));
-					m_localStagingServerName = incomingRequest.text;
-					m_playerNames[0] = m_loginName;
-					peerCreateStagingRoomWithSocket(peer, compositeGame.c_str(), MAX_SLOTS, incomingRequest.password.c_str(), qr2Sock, preferredQRPort, createRoomCallback, (void *)&res, PEERTrue);
-					//peerCreateStagingRoomWithSocket(peer, WideCharStringToMultiByte(incomingRequest.text.c_str()).c_str(), MAX_SLOTS, incomingRequest.password.c_str(), qr2Sock, preferredQRPort, createRoomCallback, (void *)&res, PEERTrue);
-					DEBUG_LOG(("PEERREQUEST_CREATESTAGINGROOM - creating staging room, name is %ls, passwd is %s, result = %d",
-						incomingRequest.text.c_str(), incomingRequest.password.c_str(), res));
-
-					PeerResponse resp;
-					resp.peerResponseType = PeerResponse::PEERRESPONSE_CREATESTAGINGROOM;
-					resp.createStagingRoom.result = res;
-					TheGameSpyPeerMessageQueue->addResponse(resp);
-
-					if (res != PEERJoinSuccess && res != PEERAlreadyInRoom)
-					{
-						m_localRoomID = oldGroupID;
-						DEBUG_LOG(("Requesting to join room %d", m_localRoomID));
-						if (incomingRequest.stagingRoomCreation.restrictGameList)
-						{
-							peerLeaveRoom( peer, StagingRoom, nullptr );
-						}
-						else
-						{
-							peerJoinGroupRoom( peer, oldGroupID, joinRoomCallback, (void *)this, PEERTrue );
-						}
-						m_isHosting = FALSE;
-						m_localStagingServerName = L"";
-						m_playerNames[0] = "";
-					}
-					else
-					{
-						if (incomingRequest.stagingRoomCreation.restrictGameList)
-						{
-							peerLeaveRoom( peer, GroupRoom, nullptr );
-						}
-						isThreadHosting = 1; // debugging
-						s_lastStateChangedHeartbeat = timeGetTime(); // wait the full interval before updating state
-						s_wantStateChangedHeartbeat = FALSE;
-						m_isHosting = TRUE;
-						m_allowObservers = incomingRequest.stagingRoomCreation.allowObservers;
-            m_useStats = incomingRequest.stagingRoomCreation.useStats;
-						m_mapName = "";
-						for (Int i=0; i<MAX_SLOTS; ++i)
-						{
-							m_playerNames[i] = "";
-							m_playerWins[i] = 0;
-							m_playerLosses[i] = 0;
-							m_playerProfileID[i] = 0;
-							m_playerFactions[i] = 0;
-							m_playerColors[i] = 0;
-						}
-						if (!incomingRequest.password.empty())
-							m_hasPassword = true;
-						else
-							m_hasPassword = false;
-						m_playerNames[0] = m_loginName;
-						m_exeCRC = incomingRequest.stagingRoomCreation.exeCRC;
-						m_iniCRC = incomingRequest.stagingRoomCreation.iniCRC;
-						m_gameVersion = incomingRequest.stagingRoomCreation.gameVersion;
-						m_localStagingServerName = incomingRequest.text;
-						m_ladderIP = incomingRequest.ladderIP;
-						m_pingStr = incomingRequest.hostPingStr;
-						m_ladderPort = incomingRequest.stagingRoomCreation.ladPort;
-
-#ifdef USE_BROADCAST_KEYS
-						pushStatsToRoom(peer);
-#endif // USE_BROADCAST_KEYS
-
-						DEBUG_LOG(("Setting m_localStagingServerName to [%ls]", m_localStagingServerName.c_str()));
-						updateBuddyStatus( BUDDY_STAGING, 0, WideCharStringToMultiByte(m_localStagingServerName.c_str()) );
-					}
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_STARTGAMELIST:
-				{
-					m_sawCompleteGameList = FALSE;
-					PeerResponse resp;
-					resp.peerResponseType = PeerResponse::PEERRESPONSE_STAGINGROOM;
-					resp.stagingRoom.action = PEER_CLEAR;
-					resp.stagingRoom.isStaging = TRUE;
-					resp.stagingRoom.percentComplete = 0;
-					clearServers();
-					TheGameSpyPeerMessageQueue->addResponse(resp);
-					peerStartListingGames( peer, allKeysArray, NumKeys, (incomingRequest.gameList.restrictGameList?"~":nullptr), listingGamesCallback, this );
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_STOPGAMELIST:
-				{
-					peerStopListingGames( peer );
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_STARTGAME:
-				{
-					peerStartGame( peer, nullptr, PEER_STOP_REPORTING);
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_UTMPLAYER:
-				{
-					if (!incomingRequest.nick.empty())
-					{
-						peerUTMPlayer( peer, incomingRequest.nick.c_str(), incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse );
-					}
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_UTMROOM:
-				{
-					peerUTMRoom( peer, (incomingRequest.UTM.isStagingRoom)?StagingRoom:GroupRoom, incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse );
-				}
-				break;
-
-			case PeerRequest::PEERREQUEST_STARTQUICKMATCH:
-				{
-					m_qmInfo = incomingRequest;
-					doQuickMatch( peer );
-				}
-				break;
-
 			}
-		}
 
-		if (isThreadHosting && s_wantStateChangedHeartbeat)
-		{
-			UnsignedInt now = timeGetTime();
-			if (now > s_lastStateChangedHeartbeat + s_heartbeatInterval)
+			// update the network
+			PEERBool isConnected = PEERTrue;
+			isConnected = peerIsConnected(peer);
+			if (isConnected == PEERTrue)
 			{
-				s_lastStateChangedHeartbeat = now;
-				s_wantStateChangedHeartbeat = FALSE;
-				peerStateChanged( peer );
-
-#ifdef DEBUG_LOGGING
-				static UnsignedInt prev = 0;
-				UnsignedInt now = timeGetTime();
-				UnsignedInt diff = now - prev;
-				prev = now;
-#endif
-				STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)", now, diff));
+				if (qr2Sock != INVALID_SOCKET)
+				{
+					// check hosting activity
+					checkQR2Queries(peer, qr2Sock);
+				}
+				peerThink(peer);
 			}
+
+			// end our timeslice
+			Switch_Thread();
 		}
 
-		// update the network
-		PEERBool isConnected = PEERTrue;
-		isConnected = peerIsConnected( peer );
-		if ( isConnected == PEERTrue )
-		{
-			if (qr2Sock != INVALID_SOCKET)
-			{
-				// check hosting activity
-				checkQR2Queries( peer, qr2Sock );
-			}
-			peerThink( peer );
-		}
-
-		// end our timeslice
-		Switch_Thread();
+		DEBUG_LOG(("voluntarily ending peer thread %d", running));
+		peerShutdown(peer);
 	}
-
-	DEBUG_LOG(("voluntarily ending peer thread %d", running));
-	peerShutdown( peer );
-
-	} catch ( ... ) {
+	catch (...)
+	{
 		DEBUG_CRASH(("Exception in peer thread!"));
 
-		try {
+		try
+		{
 			PeerResponse resp;
 			resp.peerResponseType = PeerResponse::PEERRESPONSE_DISCONNECT;
 			resp.discon.reason = DISCONNECT_LOSTCON;
@@ -1791,19 +1870,21 @@ void PeerThreadClass::Thread_Function()
 	}
 }
 
-static void qmProfileIDCallback( PEER peer, PEERBool success, const char *nick, int profileID, void *param )
+static void qmProfileIDCallback(PEER peer, PEERBool success, const char* nick, int profileID, void* param)
 {
-	Int *i = (Int *)param;
+	Int* i = (Int*)param;
 	if (!i || !success || !nick)
+	{
 		return;
+	}
 
 	*i = profileID;
 }
 
 static Int matchbotProfileID = 0;
-void quickmatchEnumPlayersCallback( PEER peer, PEERBool success, RoomType roomType, int index, const char * nick, int flags, void * param )
+void quickmatchEnumPlayersCallback(PEER peer, PEERBool success, RoomType roomType, int index, const char* nick, int flags, void* param)
 {
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t || !success || nick == nullptr || nick[0] == '\0')
 	{
 		t->sawEndOfEnumPlayers();
@@ -1828,30 +1909,30 @@ void quickmatchEnumPlayersCallback( PEER peer, PEERBool success, RoomType roomTy
 }
 
 void PeerThreadClass::handleQMMatch(PEER peer, Int mapIndex, Int seed,
-																		char *playerName[MAX_SLOTS],
-																		char *playerIP[MAX_SLOTS],
-																		char *playerSide[MAX_SLOTS],
-																		char *playerColor[MAX_SLOTS],
-																		char *playerNAT[MAX_SLOTS])
+                                    char* playerName[MAX_SLOTS],
+                                    char* playerIP[MAX_SLOTS],
+                                    char* playerSide[MAX_SLOTS],
+                                    char* playerColor[MAX_SLOTS],
+                                    char* playerNAT[MAX_SLOTS])
 {
 	if (m_qmStatus == QM_WORKING)
 	{
 		m_qmStatus = QM_MATCHED;
 		peerLeaveRoom(peer, GroupRoom, "");
 
-		Int i=0;
-		for (; i<MAX_SLOTS; ++i)
+		Int i = 0;
+		for (; i < MAX_SLOTS; ++i)
 		{
 			if (playerName[i] && stricmp(playerName[i], m_loginName.c_str()) != 0)
 			{
-				peerMessagePlayer( peer, playerName[i], "We're matched!", NormalMessage );
+				peerMessagePlayer(peer, playerName[i], "We're matched!", NormalMessage);
 			}
 		}
 
 		PeerResponse resp;
 		resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
 		resp.qmStatus.status = QM_MATCHED;
-		for (i=0; i<MAX_SLOTS; ++i)
+		for (i = 0; i < MAX_SLOTS; ++i)
 		{
 			if (playerName[i])
 			{
@@ -1876,24 +1957,24 @@ void PeerThreadClass::handleQMMatch(PEER peer, Int mapIndex, Int seed,
 	}
 }
 
-void PeerThreadClass::doQuickMatch( PEER peer )
+void PeerThreadClass::doQuickMatch(PEER peer)
 {
 	m_qmStatus = QM_JOININGQMCHANNEL;
 	Bool done = false;
 	matchbotProfileID = m_qmInfo.QM.botID;
-	setQMGroupRoom( m_qmInfo.QM.roomID );
+	setQMGroupRoom(m_qmInfo.QM.roomID);
 	m_sawMatchbot = false;
-	updateBuddyStatus( BUDDY_MATCHING );
+	updateBuddyStatus(BUDDY_MATCHING);
 	while (!done && running)
 	{
-		if (!peerIsConnected( peer ))
+		if (!peerIsConnected(peer))
 		{
 			done = true;
 		}
 		else
 		{
 			// update the network
-			peerThink( peer );
+			peerThink(peer);
 
 			// end our timeslice
 			Switch_Thread();
@@ -1903,41 +1984,41 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 			{
 				switch (incomingRequest.peerRequestType)
 				{
-				case PeerRequest::PEERREQUEST_WIDENQUICKMATCHSEARCH:
+					case PeerRequest::PEERREQUEST_WIDENQUICKMATCHSEARCH:
 					{
 						if (m_qmStatus != QM_IDLE && m_qmStatus != QM_STOPPED && m_sawMatchbot)
 						{
-							peerMessagePlayer( peer, m_matchbotName.c_str(), "\\WIDEN", NormalMessage );
+							peerMessagePlayer(peer, m_matchbotName.c_str(), "\\WIDEN", NormalMessage);
 						}
 					}
 					break;
-				case PeerRequest::PEERREQUEST_STOPQUICKMATCH:
+					case PeerRequest::PEERREQUEST_STOPQUICKMATCH:
 					{
 						m_qmStatus = QM_STOPPED;
 						peerLeaveRoom(peer, GroupRoom, "");
 						done = true;
 					}
 					break;
-				case PeerRequest::PEERREQUEST_LOGOUT:
+					case PeerRequest::PEERREQUEST_LOGOUT:
 					{
 						m_qmStatus = QM_STOPPED;
 						peerLeaveRoom(peer, GroupRoom, "");
 						done = true;
 					}
 					break;
-				case PeerRequest::PEERREQUEST_LEAVEGROUPROOM:
+					case PeerRequest::PEERREQUEST_LEAVEGROUPROOM:
 					{
 						m_qmStatus = QM_STOPPED;
 						peerLeaveRoom(peer, GroupRoom, "");
 						done = true;
 					}
 					break;
-				case PeerRequest::PEERREQUEST_UTMPLAYER:
+					case PeerRequest::PEERREQUEST_UTMPLAYER:
 					{
-						peerUTMPlayer( peer, incomingRequest.nick.c_str(), incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse );
+						peerUTMPlayer(peer, incomingRequest.nick.c_str(), incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse);
 					}
 					break;
-				default:
+					default:
 					{
 						DEBUG_CRASH(("Unanticipated request %d to peer thread!", incomingRequest.peerRequestType));
 					}
@@ -1950,7 +2031,7 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 				// do the next bit of QM
 				switch (m_qmStatus)
 				{
-				case QM_JOININGQMCHANNEL:
+					case QM_JOININGQMCHANNEL:
 					{
 						PeerResponse resp;
 						resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
@@ -1958,12 +2039,13 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 						TheGameSpyPeerMessageQueue->addResponse(resp);
 
 						m_groupRoomID = m_qmGroupRoom;
-						peerLeaveRoom( peer, GroupRoom, nullptr );
-						peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
+						peerLeaveRoom(peer, GroupRoom, nullptr);
+						peerLeaveRoom(peer, StagingRoom, nullptr);
+						m_isHosting = false;
 						m_localRoomID = m_groupRoomID;
 						m_roomJoined = false;
 						DEBUG_LOG(("Requesting to join room %d in thread %X", m_localRoomID, this));
-						peerJoinGroupRoom( peer, m_localRoomID, joinRoomCallback, (void *)this, PEERTrue );
+						peerJoinGroupRoom(peer, m_localRoomID, joinRoomCallback, (void*)this, PEERTrue);
 						if (m_roomJoined)
 						{
 							resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
@@ -1973,7 +2055,7 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 							m_qmStatus = QM_LOOKINGFORBOT;
 							m_sawMatchbot = false;
 							m_sawEndOfEnumPlayers = false;
-							peerEnumPlayers( peer, GroupRoom, quickmatchEnumPlayersCallback, this );
+							peerEnumPlayers(peer, GroupRoom, quickmatchEnumPlayersCallback, this);
 						}
 						else
 						{
@@ -1985,7 +2067,7 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 						}
 					}
 					break;
-				case QM_LOOKINGFORBOT:
+					case QM_LOOKINGFORBOT:
 					{
 						if (m_sawEndOfEnumPlayers)
 						{
@@ -2013,7 +2095,7 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 								msg.append(buf);
 								snprintf(buf, 64, "\\Pings\\%s", m_qmInfo.QM.pings);
 								msg.append(buf);
-								snprintf(buf, 64, "\\IP\\%d", ntohl(peerGetLocalIP(peer)));// not ntohl(localIP), as we need EXTERNAL address for proper NAT negotiation!
+								snprintf(buf, 64, "\\IP\\%d", ntohl(peerGetLocalIP(peer)));    // not ntohl(localIP), as we need EXTERNAL address for proper NAT negotiation!
 								msg.append(buf);
 								snprintf(buf, 64, "\\Side\\%d", m_qmInfo.QM.side);
 								msg.append(buf);
@@ -2027,15 +2109,19 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 								msg.append(buf);
 								buf[0] = 0;
 								msg.append("\\Maps\\");
-								for (size_t i=0; i<m_qmInfo.qmMaps.size(); ++i)
+								for (size_t i = 0; i < m_qmInfo.qmMaps.size(); ++i)
 								{
 									if (m_qmInfo.qmMaps[i])
+									{
 										msg.append("1");
+									}
 									else
+									{
 										msg.append("0");
+									}
 								}
 								DEBUG_LOG(("Sending QM options of [%s] to %s", msg.c_str(), m_matchbotName.c_str()));
-								peerMessagePlayer( peer, m_matchbotName.c_str(), msg.c_str(), NormalMessage );
+								peerMessagePlayer(peer, m_matchbotName.c_str(), msg.c_str(), NormalMessage);
 								m_qmStatus = QM_WORKING;
 								PeerResponse resp;
 								resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
@@ -2057,38 +2143,39 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 						}
 					}
 					break;
-				case QM_WORKING:
+					case QM_WORKING:
 					{
 					}
 					break;
-				case QM_MATCHED:
+					case QM_MATCHED:
 					{
 						// leave QM channel, and clean up.  Our work here is done.
-						peerLeaveRoom( peer, GroupRoom, nullptr );
-						peerLeaveRoom( peer, StagingRoom, nullptr ); m_isHosting = false;
+						peerLeaveRoom(peer, GroupRoom, nullptr);
+						peerLeaveRoom(peer, StagingRoom, nullptr);
+						m_isHosting = false;
 
 						m_qmStatus = QM_STOPPED;
 						peerLeaveRoom(peer, GroupRoom, "");
 						done = true;
 					}
 					break;
-				case QM_INCHANNEL:
+					case QM_INCHANNEL:
 					{
 					}
 					break;
-				case QM_NEGOTIATINGFIREWALLS:
+					case QM_NEGOTIATINGFIREWALLS:
 					{
 					}
 					break;
-				case QM_STARTINGGAME:
+					case QM_STARTINGGAME:
 					{
 					}
 					break;
-				case QM_COULDNOTFINDCHANNEL:
+					case QM_COULDNOTFINDCHANNEL:
 					{
 					}
 					break;
-				case QM_COULDNOTNEGOTIATEFIREWALLS:
+					case QM_COULDNOTNEGOTIATEFIREWALLS:
 					{
 					}
 					break;
@@ -2096,28 +2183,30 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 			}
 		}
 	}
-	updateBuddyStatus( BUDDY_ONLINE );
+	updateBuddyStatus(BUDDY_ONLINE);
 }
 
-static void getPlayerProfileIDCallback(PEER peer,  PEERBool success,  const char * nick,  int profileID,  void * param)
+static void getPlayerProfileIDCallback(PEER peer, PEERBool success, const char* nick, int profileID, void* param)
 {
 	if (success && param != nullptr)
 	{
-		*((Int *)param) = profileID;
+		*((Int*)param) = profileID;
 	}
 }
 
-static void stagingRoomPlayerEnum( PEER peer, PEERBool success, RoomType roomType, int index, const char * nick, int flags, void * param )
+static void stagingRoomPlayerEnum(PEER peer, PEERBool success, RoomType roomType, int index, const char* nick, int flags, void* param)
 {
 	DEBUG_LOG(("Enum: success=%d, index=%d, nick=%s, flags=%d", success, index, nick, flags));
 	if (!nick || !success)
+	{
 		return;
+	}
 
 	Int id = 0;
 	peerGetPlayerProfileID(peer, nick, getPlayerProfileIDCallback, &id, PEERTrue);
 	DEBUG_ASSERTCRASH(id != 0, ("Failed to fetch player ID!"));
 
-	PeerResponse *resp = (PeerResponse *)param;
+	PeerResponse* resp = (PeerResponse*)param;
 	if (flags & PEER_FLAG_OP)
 	{
 		resp->joinStagingRoom.isHostPresent = TRUE;
@@ -2136,12 +2225,14 @@ static void stagingRoomPlayerEnum( PEER peer, PEERBool success, RoomType roomTyp
 	}
 }
 
-static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomType roomType, void *param)
+static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomType roomType, void* param)
 {
 	DEBUG_LOG(("JoinRoomCallback: success==%d, result==%d", success, result));
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t)
+	{
 		return;
+	}
 	DEBUG_LOG(("Room id was %d from thread %X", t->getLocalRoomID(), t));
 	DEBUG_LOG(("Current staging server name is [%ls]", t->getLocalStagingServerName().c_str()));
 	DEBUG_LOG(("Room type is %d (GroupRoom=%d, StagingRoom=%d, TitleRoom=%d)", roomType, GroupRoom, StagingRoom, TitleRoom));
@@ -2152,53 +2243,53 @@ static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result,
 		t->pushStatsToRoom(peer);
 		t->getStatsFromRoom(peer, roomType);
 	}
-#endif // USE_BROADCAST_KEYS
+#endif    // USE_BROADCAST_KEYS
 
 	switch (roomType)
 	{
 		case GroupRoom:
-			{
+		{
 #ifdef USE_BROADCAST_KEYS
-				t->clearPlayerStats(GroupRoom);
-#endif // USE_BROADCAST_KEYS
-				PeerResponse resp;
-				resp.peerResponseType = PeerResponse::PEERRESPONSE_JOINGROUPROOM;
-				resp.joinGroupRoom.id = t->getLocalRoomID();
-				resp.joinGroupRoom.ok = success;
-				TheGameSpyPeerMessageQueue->addResponse(resp);
-				t->roomJoined(success == PEERTrue);
-				DEBUG_LOG(("Entered group room %d, qm is %d", t->getLocalRoomID(), t->getQMGroupRoom()));
-				if ((!t->getQMGroupRoom()) || (t->getQMGroupRoom() != t->getLocalRoomID()))
-				{
-					DEBUG_LOG(("Updating buddy status"));
-					updateBuddyStatus( BUDDY_LOBBY, t->getLocalRoomID() );
-				}
+			t->clearPlayerStats(GroupRoom);
+#endif    // USE_BROADCAST_KEYS
+			PeerResponse resp;
+			resp.peerResponseType = PeerResponse::PEERRESPONSE_JOINGROUPROOM;
+			resp.joinGroupRoom.id = t->getLocalRoomID();
+			resp.joinGroupRoom.ok = success;
+			TheGameSpyPeerMessageQueue->addResponse(resp);
+			t->roomJoined(success == PEERTrue);
+			DEBUG_LOG(("Entered group room %d, qm is %d", t->getLocalRoomID(), t->getQMGroupRoom()));
+			if ((!t->getQMGroupRoom()) || (t->getQMGroupRoom() != t->getLocalRoomID()))
+			{
+				DEBUG_LOG(("Updating buddy status"));
+				updateBuddyStatus(BUDDY_LOBBY, t->getLocalRoomID());
 			}
-			break;
+		}
+		break;
 		case StagingRoom:
-			{
+		{
 #ifdef USE_BROADCAST_KEYS
-				t->clearPlayerStats(StagingRoom);
-#endif // USE_BROADCAST_KEYS
-				PeerResponse resp;
-				resp.peerResponseType = PeerResponse::PEERRESPONSE_JOINSTAGINGROOM;
-				resp.joinStagingRoom.id = t->getLocalRoomID();
-				resp.joinStagingRoom.ok = success;
-				resp.joinStagingRoom.result = result;
-				if (success)
-				{
-					DEBUG_LOG(("joinRoomCallback() - game name is now '%ls'", t->getLocalStagingServerName().c_str()));
-					updateBuddyStatus( BUDDY_STAGING, 0, WideCharStringToMultiByte(t->getLocalStagingServerName().c_str()) );
-				}
-
-				resp.joinStagingRoom.isHostPresent = FALSE;
-				DEBUG_LOG(("Enum of staging room players"));
-				peerEnumPlayers(peer, StagingRoom, stagingRoomPlayerEnum, &resp);
-				DEBUG_LOG(("Host %s present", (resp.joinStagingRoom.isHostPresent)?"is":"is not"));
-
-				TheGameSpyPeerMessageQueue->addResponse(resp);
+			t->clearPlayerStats(StagingRoom);
+#endif    // USE_BROADCAST_KEYS
+			PeerResponse resp;
+			resp.peerResponseType = PeerResponse::PEERRESPONSE_JOINSTAGINGROOM;
+			resp.joinStagingRoom.id = t->getLocalRoomID();
+			resp.joinStagingRoom.ok = success;
+			resp.joinStagingRoom.result = result;
+			if (success)
+			{
+				DEBUG_LOG(("joinRoomCallback() - game name is now '%ls'", t->getLocalStagingServerName().c_str()));
+				updateBuddyStatus(BUDDY_STAGING, 0, WideCharStringToMultiByte(t->getLocalStagingServerName().c_str()));
 			}
-			break;
+
+			resp.joinStagingRoom.isHostPresent = FALSE;
+			DEBUG_LOG(("Enum of staging room players"));
+			peerEnumPlayers(peer, StagingRoom, stagingRoomPlayerEnum, &resp);
+			DEBUG_LOG(("Host %s present", (resp.joinStagingRoom.isHostPresent) ? "is" : "is not"));
+
+			TheGameSpyPeerMessageQueue->addResponse(resp);
+		}
+		break;
 	}
 }
 
@@ -2207,16 +2298,16 @@ static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result,
 // called one more time with groupID==0 and name==nullptr.
 /////////////////////////////////////////////////////////////////
 static void listGroupRoomsCallback(PEER peer, PEERBool success,
-														int groupID, SBServer server,
-														const char * name, int numWaiting,
-														int maxWaiting, int numGames,
-														int numPlaying, void * param)
+                                   int groupID, SBServer server,
+                                   const char* name, int numWaiting,
+                                   int maxWaiting, int numGames,
+                                   int numPlaying, void* param)
 {
 	DEBUG_LOG(("listGroupRoomsCallback, success=%d, server=%X, groupID=%d", success, server, groupID));
 #ifdef SERVER_DEBUGGING
 	CheckServers(peer);
-#endif // SERVER_DEBUGGING
-	PeerThreadClass *t = (PeerThreadClass *)param;
+#endif    // SERVER_DEBUGGING
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t)
 	{
 		DEBUG_LOG(("No thread!  Bailing!"));
@@ -2225,7 +2316,7 @@ static void listGroupRoomsCallback(PEER peer, PEERBool success,
 
 	if (success)
 	{
-		DEBUG_LOG(("Saw group room of %d (%s) at address %X %X", groupID, name, server, (server)?server->keyvals:0));
+		DEBUG_LOG(("Saw group room of %d (%s) at address %X %X", groupID, name, server, (server) ? server->keyvals : 0));
 		PeerResponse resp;
 		resp.peerResponseType = PeerResponse::PEERRESPONSE_GROUPROOM;
 		resp.groupRoom.id = groupID;
@@ -2236,13 +2327,13 @@ static void listGroupRoomsCallback(PEER peer, PEERBool success,
 		if (name)
 		{
 			resp.groupRoomName = name;
-			//t->setQMGroupRoom(groupID);
+			// t->setQMGroupRoom(groupID);
 		}
 		TheGameSpyPeerMessageQueue->addResponse(resp);
 #ifdef SERVER_DEBUGGING
 		CheckServers(peer);
 		DEBUG_LOG((""));
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 	}
 	else
 	{
@@ -2250,19 +2341,19 @@ static void listGroupRoomsCallback(PEER peer, PEERBool success,
 	}
 }
 
-void PeerThreadClass::connectCallback( PEER peer, PEERBool success )
+void PeerThreadClass::connectCallback(PEER peer, PEERBool success)
 {
 	PeerResponse resp;
-	if(!success)
+	if (!success)
 	{
-		//updateBuddyStatus( BUDDY_OFFLINE );
+		// updateBuddyStatus( BUDDY_OFFLINE );
 		resp.peerResponseType = PeerResponse::PEERRESPONSE_DISCONNECT;
 		resp.discon.reason = DISCONNECT_COULDNOTCONNECT;
 		TheGameSpyPeerMessageQueue->addResponse(resp);
 		return;
 	}
 
-	updateBuddyStatus( BUDDY_ONLINE );
+	updateBuddyStatus(BUDDY_ONLINE);
 
 	m_isConnected = true;
 	DEBUG_LOG(("Connected as profile %d (%s)", m_profileID, m_loginName.c_str()));
@@ -2286,25 +2377,25 @@ void PeerThreadClass::connectCallback( PEER peer, PEERBool success )
 #ifdef SERVER_DEBUGGING
 	DEBUG_LOG(("Before peerListGroupRooms()"));
 	CheckServers(peer);
-#endif // SERVER_DEBUGGING
-	peerListGroupRooms( peer, nullptr, listGroupRoomsCallback, this, PEERTrue );
+#endif    // SERVER_DEBUGGING
+	peerListGroupRooms(peer, nullptr, listGroupRoomsCallback, this, PEERTrue);
 #ifdef SERVER_DEBUGGING
 	DEBUG_LOG(("After peerListGroupRooms()"));
 	CheckServers(peer);
-#endif // SERVER_DEBUGGING
+#endif    // SERVER_DEBUGGING
 }
 
-void PeerThreadClass::nickErrorCallback( PEER peer, Int type, const char *nick )
+void PeerThreadClass::nickErrorCallback(PEER peer, Int type, const char* nick)
 {
-	if(type == PEER_IN_USE)
+	if (type == PEER_IN_USE)
 	{
 		Int len = strlen(nick);
 		std::string nickStr = nick;
 		Int newVal = 0;
-		if (nick[len-1] == '}' && nick[len-3] == '{' && isdigit(nick[len-2]))
+		if (nick[len - 1] == '}' && nick[len - 3] == '{' && isdigit(nick[len - 2]))
 		{
-			newVal = nick[len-2] - '0' + 1;
-			nickStr.erase(len-3, 3);
+			newVal = nick[len - 2] - '0' + 1;
+			nickStr.erase(len - 3, 3);
 		}
 
 		DEBUG_LOG(("Nickname taken: was %s, new val = %d, new nick = %s", nick, newVal, nickStr.c_str()));
@@ -2313,7 +2404,7 @@ void PeerThreadClass::nickErrorCallback( PEER peer, Int type, const char *nick )
 		{
 			nickStr.append("{");
 			char tmp[2];
-			tmp[0] = '0'+newVal;
+			tmp[0] = '0' + newVal;
 			tmp[1] = '\0';
 			nickStr.append(tmp);
 			nickStr.append("}");
@@ -2344,14 +2435,16 @@ void PeerThreadClass::nickErrorCallback( PEER peer, Int type, const char *nick )
 	}
 }
 
-void disconnectedCallback(PEER peer, const char * reason, void * param)
+void disconnectedCallback(PEER peer, const char* reason, void* param)
 {
 	DEBUG_LOG(("disconnectedCallback(): reason was '%s'", reason));
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (t)
+	{
 		t->markAsDisconnected();
-	//updateBuddyStatus( BUDDY_OFFLINE );
+	}
+	// updateBuddyStatus( BUDDY_OFFLINE );
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_DISCONNECT;
 	resp.discon.reason = DISCONNECT_LOSTCON;
@@ -2371,7 +2464,7 @@ void disconnectedCallback(PEER peer, const char * reason, void * param)
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const char * message, MessageType messageType, void * param)
+void roomMessageCallback(PEER peer, RoomType roomType, const char* nick, const char* message, MessageType messageType, void* param)
 {
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_MESSAGE;
@@ -2385,22 +2478,22 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 	UnsignedInt IP;
 	peerGetPlayerInfoNoWait(peer, nick, &IP, &resp.message.profileID);
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (t && (t->getQMStatus() != QM_IDLE && t->getQMStatus() != QM_STOPPED))
 	{
 		if (resp.message.profileID == matchbotProfileID)
 		{
-			char *lastStr = nullptr;
-			char *cmd = strtok_r((char *)message, " ", &lastStr);
-			if ( cmd && strcmp(cmd, "MBOT:POOLSIZE") == 0 )
+			char* lastStr = nullptr;
+			char* cmd = strtok_r((char*)message, " ", &lastStr);
+			if (cmd && strcmp(cmd, "MBOT:POOLSIZE") == 0)
 			{
 				Int poolSize = 0;
 
 				while (1)
 				{
-					char *poolStr = strtok_r(nullptr, " ", &lastStr);
-					char *sizeStr = strtok_r(nullptr, " ", &lastStr);
+					char* poolStr = strtok_r(nullptr, " ", &lastStr);
+					char* sizeStr = strtok_r(nullptr, " ", &lastStr);
 					if (poolStr && sizeStr)
 					{
 						Int pool = atoi(poolStr);
@@ -2412,7 +2505,9 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 						}
 					}
 					else
+					{
 						break;
+					}
 				}
 
 				PeerResponse resp;
@@ -2425,14 +2520,14 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 	}
 }
 
-void gameStartedCallback( PEER peer, SBServer server, const char *message, void *param )
+void gameStartedCallback(PEER peer, SBServer server, const char* message, void* param)
 {
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_GAMESTART;
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-void playerMessageCallback(PEER peer, const char * nick, const char * message, MessageType messageType, void * param)
+void playerMessageCallback(PEER peer, const char* nick, const char* message, MessageType messageType, void* param)
 {
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_MESSAGE;
@@ -2444,26 +2539,25 @@ void playerMessageCallback(PEER peer, const char * nick, const char * message, M
 	peerGetPlayerInfoNoWait(peer, nick, &IP, &resp.message.profileID);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 
-
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (t && (t->getQMStatus() != QM_IDLE && t->getQMStatus() != QM_STOPPED))
 	{
 		if (resp.message.isPrivate && resp.message.profileID == matchbotProfileID)
 		{
-			char *lastStr = nullptr;
-			char *cmd = strtok_r((char *)message, " ", &lastStr);
-			if ( cmd && strcmp(cmd, "MBOT:MATCHED") == 0 )
+			char* lastStr = nullptr;
+			char* cmd = strtok_r((char*)message, " ", &lastStr);
+			if (cmd && strcmp(cmd, "MBOT:MATCHED") == 0)
 			{
-				char *mapNumStr = strtok_r(nullptr, " ", &lastStr);
-				char *seedStr = strtok_r(nullptr, " ", &lastStr);
-				char *playerStr[MAX_SLOTS];
-				char *playerIPStr[MAX_SLOTS];
-				char *playerSideStr[MAX_SLOTS];
-				char *playerColorStr[MAX_SLOTS];
-				char *playerNATStr[MAX_SLOTS];
+				char* mapNumStr = strtok_r(nullptr, " ", &lastStr);
+				char* seedStr = strtok_r(nullptr, " ", &lastStr);
+				char* playerStr[MAX_SLOTS];
+				char* playerIPStr[MAX_SLOTS];
+				char* playerSideStr[MAX_SLOTS];
+				char* playerColorStr[MAX_SLOTS];
+				char* playerNATStr[MAX_SLOTS];
 				Int numPlayers = 0;
-				for (Int i=0; i<MAX_SLOTS; ++i)
+				for (Int i = 0; i < MAX_SLOTS; ++i)
 				{
 					playerStr[i] = strtok_r(nullptr, " ", &lastStr);
 					playerIPStr[i] = strtok_r(nullptr, " ", &lastStr);
@@ -2491,19 +2585,21 @@ void playerMessageCallback(PEER peer, const char * nick, const char * message, M
 					t->handleQMMatch(peer, atoi(mapNumStr), atoi(seedStr), playerStr, playerIPStr, playerSideStr, playerColorStr, playerNATStr);
 				}
 			}
-			else if ( cmd && strcmp(cmd, "MBOT:WORKING") == 0 )
+			else if (cmd && strcmp(cmd, "MBOT:WORKING") == 0)
 			{
 				Int poolSize = 0;
-				char *poolStr = strtok_r(nullptr, " ", &lastStr);
+				char* poolStr = strtok_r(nullptr, " ", &lastStr);
 				if (poolStr)
+				{
 					poolSize = atoi(poolStr);
+				}
 				PeerResponse resp;
 				resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
 				resp.qmStatus.status = QM_WORKING;
 				resp.qmStatus.poolSize = poolSize;
 				TheGameSpyPeerMessageQueue->addResponse(resp);
 			}
-			else if ( cmd && strcmp(cmd, "MBOT:WIDENINGSEARCH") == 0 )
+			else if (cmd && strcmp(cmd, "MBOT:WIDENINGSEARCH") == 0)
 			{
 				PeerResponse resp;
 				resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
@@ -2514,11 +2610,13 @@ void playerMessageCallback(PEER peer, const char * nick, const char * message, M
 	}
 }
 
-void roomUTMCallback(PEER peer, RoomType roomType, const char * nick, const char * command, const char * parameters, PEERBool authenticated, void * param)
+void roomUTMCallback(PEER peer, RoomType roomType, const char* nick, const char* command, const char* parameters, PEERBool authenticated, void* param)
 {
 	DEBUG_LOG(("roomUTMCallback: %s says %s = [%s]", nick, command, parameters));
 	if (roomType != StagingRoom)
+	{
 		return;
+	}
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_ROOMUTM;
 	resp.nick = nick;
@@ -2527,7 +2625,7 @@ void roomUTMCallback(PEER peer, RoomType roomType, const char * nick, const char
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-void playerUTMCallback(PEER peer, const char * nick, const char * command, const char * parameters, PEERBool authenticated, void * param)
+void playerUTMCallback(PEER peer, const char* nick, const char* command, const char* parameters, PEERBool authenticated, void* param)
 {
 	DEBUG_LOG(("playerUTMCallback: %s says %s = [%s]", nick, command, parameters));
 	PeerResponse resp;
@@ -2538,15 +2636,17 @@ void playerUTMCallback(PEER peer, const char * nick, const char * command, const
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-static void getPlayerInfo(PeerThreadClass *t, PEER peer, const char *nick, Int& id, UnsignedInt& IP,
-													std::string& locale, Int& wins, Int& losses, Int& rankPoints, Int& side, Int& preorder,
-													RoomType roomType, Int& flags)
+static void getPlayerInfo(PeerThreadClass* t, PEER peer, const char* nick, Int& id, UnsignedInt& IP,
+                          std::string& locale, Int& wins, Int& losses, Int& rankPoints, Int& side, Int& preorder,
+                          RoomType roomType, Int& flags)
 {
 	if (!t || !nick)
+	{
 		return;
+	}
 	peerGetPlayerInfoNoWait(peer, nick, &IP, &id);
 #ifdef USE_BROADCAST_KEYS
-	//locale.printf
+	// locale.printf
 	Int localeIndex = t->lookupStatForPlayer(roomType, nick, "b_locale");
 	AsciiString tmp;
 	tmp.format("%d", localeIndex);
@@ -2557,44 +2657,44 @@ static void getPlayerInfo(PeerThreadClass *t, PEER peer, const char *nick, Int& 
 	rankPoints = t->lookupStatForPlayer(roomType, nick, "b_points");
 	side = t->lookupStatForPlayer(roomType, nick, "b_side");
 	preorder = t->lookupStatForPlayer(roomType, nick, "b_pre");
-#else // USE_BROADCAST_KEYS
-	const char *s;
+#else    // USE_BROADCAST_KEYS
+	const char* s;
 	s = peerGetGlobalWatchKey(peer, nick, "locale");
-	locale = (s)?s:"";
+	locale = (s) ? s : "";
 	s = peerGetGlobalWatchKey(peer, nick, "wins");
-	wins = atoi((s)?s:"");
+	wins = atoi((s) ? s : "");
 	s = peerGetGlobalWatchKey(peer, nick, "losses");
-	losses = atoi((s)?s:"");
+	losses = atoi((s) ? s : "");
 	s = peerGetGlobalWatchKey(peer, nick, "points");
-	rankPoints = atoi((s)?s:"");
+	rankPoints = atoi((s) ? s : "");
 	s = peerGetGlobalWatchKey(peer, nick, "side");
-	side = atoi((s)?s:"");
+	side = atoi((s) ? s : "");
 	s = peerGetGlobalWatchKey(peer, nick, "pre");
-	preorder = atoi((s)?s:"");
-#endif // USE_BROADCAST_KEYS
+	preorder = atoi((s) ? s : "");
+#endif    // USE_BROADCAST_KEYS
 	flags = 0;
 	peerGetPlayerFlags(peer, nick, roomType, &flags);
 	DEBUG_LOG(("getPlayerInfo(%d) - %s has locale %s, wins:%d, losses:%d, rankPoints:%d, side:%d, preorder:%d",
-		id, nick, locale.c_str(), wins, losses, rankPoints, side, preorder));
+	           id, nick, locale.c_str(), wins, losses, rankPoints, side, preorder));
 }
 
-static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nick, const char *key, const char *val, void *param)
+static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char* nick, const char* key, const char* val, void* param)
 {
 #ifdef USE_BROADCAST_KEYS
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t || !nick || !key || !val)
 	{
-		DEBUG_ASSERTCRASH(nick && strcmp(nick,"(END)")==0, ("roomKeyChangedCallback bad values = nick:%X:%s, key:%X:%s, val:%X:%s", nick, nick, key, key, val, val));
+		DEBUG_ASSERTCRASH(nick && strcmp(nick, "(END)") == 0, ("roomKeyChangedCallback bad values = nick:%X:%s, key:%X:%s, val:%X:%s", nick, nick, key, key, val, val));
 		return;
 	}
 
-#ifdef DEBUG_LOGGING
+	#ifdef DEBUG_LOGGING
 	if (strcmp(key, "username") != 0 && strcmp(key, "b_flags") != 0)
 	{
 		DEBUG_LOG(("roomKeyChangedCallback() - %s set %s=%s", nick, key, val));
 	}
-#endif
+	#endif
 
 	t->trackStatsForPlayer(roomType, nick, key, val);
 
@@ -2604,25 +2704,25 @@ static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nic
 	resp.player.roomType = roomType;
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		resp.player.roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              resp.player.roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
-#endif // USE_BROADCAST_KEYS
+#endif    // USE_BROADCAST_KEYS
 }
 
 #ifdef USE_BROADCAST_KEYS
-void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const char *nick, int num, char **keys, char **values, void *param)
+void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const char* nick, int num, char** keys, char** values, void* param)
 {
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t || !nick || !num || !success || !keys || !values)
 	{
-		DEBUG_ASSERTCRASH(!nick || strcmp(nick,"(END)")==0, ("getRoomKeysCallback bad key/value %X/%X, nick=%s", keys, values, nick));
+		DEBUG_ASSERTCRASH(!nick || strcmp(nick, "(END)") == 0, ("getRoomKeysCallback bad key/value %X/%X, nick=%s", keys, values, nick));
 		return;
 	}
 
-	for (Int i=0; i<num; ++i)
+	for (Int i = 0; i < num; ++i)
 	{
 		t->trackStatsForPlayer(roomType, nick, keys[i], values[i]);
 	}
@@ -2633,44 +2733,52 @@ void getRoomKeysCallback(PEER peer, PEERBool success, RoomType roomType, const c
 	resp.player.roomType = roomType;
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		resp.player.roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              resp.player.roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
-#endif // USE_BROADCAST_KEYS
+#endif    // USE_BROADCAST_KEYS
 
-static void globalKeyChangedCallback(PEER peer, const char *nick, const char *key, const char *val, void *param)
+static void globalKeyChangedCallback(PEER peer, const char* nick, const char* key, const char* val, void* param)
 {
 	if (!nick)
+	{
 		return;
+	}
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t)
+	{
 		return;
+	}
 
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_PLAYERINFO;
 	resp.nick = nick;
-	resp.player.roomType = t->getCurrentGroupRoom()?GroupRoom:StagingRoom;
+	resp.player.roomType = t->getCurrentGroupRoom() ? GroupRoom : StagingRoom;
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		resp.player.roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              resp.player.roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-void playerJoinedCallback(PEER peer, RoomType roomType, const char * nick, void * param)
+void playerJoinedCallback(PEER peer, RoomType roomType, const char* nick, void* param)
 {
 	if (!nick)
+	{
 		return;
+	}
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t)
+	{
 		return;
+	}
 
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_PLAYERJOIN;
@@ -2678,13 +2786,13 @@ void playerJoinedCallback(PEER peer, RoomType roomType, const char * nick, void 
 	resp.player.roomType = roomType;
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const char * reason, void * param)
+void playerLeftCallback(PEER peer, RoomType roomType, const char* nick, const char* reason, void* param)
 {
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_PLAYERLEFT;
@@ -2692,15 +2800,17 @@ void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const c
 	resp.player.roomType = roomType;
 	resp.player.profileID = 0;
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t)
+	{
 		return;
+	}
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 
 	if (t->getQMStatus() != QM_IDLE && t->getQMStatus() != QM_STOPPED)
@@ -2720,7 +2830,7 @@ void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const c
 	}
 }
 
-void playerChangedNickCallback(PEER peer, RoomType roomType, const char * oldNick, const char * newNick, void * param)
+void playerChangedNickCallback(PEER peer, RoomType roomType, const char* oldNick, const char* newNick, void* param)
 {
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_PLAYERCHANGEDNICK;
@@ -2728,58 +2838,68 @@ void playerChangedNickCallback(PEER peer, RoomType roomType, const char * oldNic
 	resp.oldNick = oldNick;
 	resp.player.roomType = roomType;
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t)
+	{
 		return;
+	}
 
 	getPlayerInfo(t, peer, newNick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-static void playerInfoCallback(PEER peer, RoomType roomType, const char * nick, unsigned int IP, int profileID, void * param)
+static void playerInfoCallback(PEER peer, RoomType roomType, const char* nick, unsigned int IP, int profileID, void* param)
 {
 	if (!nick)
+	{
 		return;
+	}
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_PLAYERINFO;
 	resp.nick = nick;
 	resp.player.roomType = roomType;
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t)
+	{
 		return;
+	}
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		roomType, resp.player.flags);
-DEBUG_LOG(("**GS playerInfoCallback name=%s, local=%s", nick, resp.locale.c_str() ));
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              roomType, resp.player.flags);
+	DEBUG_LOG(("**GS playerInfoCallback name=%s, local=%s", nick, resp.locale.c_str()));
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
-static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char * nick, int oldFlags, int newFlags, void * param)
+static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char* nick, int oldFlags, int newFlags, void* param)
 {
 	if (!nick)
+	{
 		return;
+	}
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_PLAYERCHANGEDFLAGS;
 	resp.nick = nick;
 	resp.player.roomType = roomType;
 
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t)
+	{
 		return;
+	}
 
 	getPlayerInfo(t, peer, nick, resp.player.profileID, resp.player.IP,
-		resp.locale, resp.player.wins, resp.player.losses,
-		resp.player.rankPoints, resp.player.side, resp.player.preorder,
-		roomType, resp.player.flags);
+	              resp.locale, resp.player.wins, resp.player.losses,
+	              resp.player.rankPoints, resp.player.side, resp.player.preorder,
+	              roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 
@@ -2787,20 +2907,22 @@ static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char 
 /*
 static void enumFunc(char *key, char *val, void *param)
 {
-	DEBUG_LOG(("  [%s] = [%s]", key, val));
+  DEBUG_LOG(("  [%s] = [%s]", key, val));
 }
 */
 #endif
 
-static void listingGamesCallback(PEER peer, PEERBool success, const char * name, SBServer server, PEERBool staging, int msg, Int percentListed, void * param)
+static void listingGamesCallback(PEER peer, PEERBool success, const char* name, SBServer server, PEERBool staging, int msg, Int percentListed, void* param)
 {
-	PeerThreadClass *t = (PeerThreadClass *)param;
+	PeerThreadClass* t = (PeerThreadClass*)param;
 	if (!t || !success)
+	{
 		return;
+	}
 
 #ifdef DEBUG_LOGGING
 	AsciiString cmdStr = "<Unknown>";
-	switch(msg)
+	switch (msg)
 	{
 		case PEER_ADD:
 			cmdStr = "PEER_ADD";
@@ -2819,17 +2941,19 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 			break;
 	}
 	DEBUG_LOG(("listingGamesCallback() - doing command %s on server %X", cmdStr.str(), server));
-#endif // DEBUG_LOGGING
+#endif    // DEBUG_LOGGING
 
-//	PeerThreadClass *t = (PeerThreadClass *)param;
-	DEBUG_ASSERTCRASH(name || msg==PEER_CLEAR || msg==PEER_COMPLETE, ("Game has no name!"));
+	//	PeerThreadClass *t = (PeerThreadClass *)param;
+	DEBUG_ASSERTCRASH(name || msg == PEER_CLEAR || msg == PEER_COMPLETE, ("Game has no name!"));
 	if (!t || !success || (!name && (msg == PEER_ADD || msg == PEER_UPDATE)))
 	{
 		DEBUG_LOG(("Bailing from listingGamesCallback() - success=%d, name=%X, server=%X, msg=%X", success, name, server, msg));
 		return;
 	}
 	if (!name)
+	{
 		name = "bogus";
+	}
 
 	if (server && (msg == PEER_ADD || msg == PEER_UPDATE))
 	{
@@ -2843,7 +2967,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 	if (server && success && (msg == PEER_ADD || msg == PEER_UPDATE))
 	{
 		DEBUG_LOG(("Game name is '%s'", name));
-		const char *newname = SBServerGetStringValue(server, "gamename", (char *)name);
+		const char* newname = SBServerGetStringValue(server, "gamename", (char*)name);
 #if RTS_GENERALS
 		if (strcmp(newname, "ccgenerals") != 0)
 #elif RTS_ZEROHOUR
@@ -2869,11 +2993,11 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 	AsciiString tmp = gameName;
 	AsciiString hostName;
 	tmp.nextToken(&hostName, " ");
-	const char *firstSpace = gameName.find(' ');
-	if(firstSpace)
+	const char* firstSpace = gameName.find(' ');
+	if (firstSpace)
 	{
 		gameName.set(firstSpace + 1);
-		//gameName.trim();
+		// gameName.trim();
 		DEBUG_LOG(("Hostname/Gamename split leaves '%s' hosting '%s'", hostName.str(), gameName.str()));
 	}
 	PeerResponse resp;
@@ -2886,19 +3010,19 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 	{
 		Bool hasPassword = (Bool)SBServerGetIntValue(server, PW_STR, FALSE);
 		Bool allowObservers = (Bool)SBServerGetIntValue(server, OBS_STR, FALSE);
-    Bool usesStats = (Bool)SBServerGetIntValue(server, USE_STATS_STR, TRUE);
-		const char *verStr = SBServerGetStringValue(server, "gamever", "000000");
-		const char *exeStr = SBServerGetStringValue(server, EXECRC_STR, "000000");
-		const char *iniStr = SBServerGetStringValue(server, INICRC_STR, "000000");
-		const char *ladIPStr = SBServerGetStringValue(server, LADIP_STR, "000000");
-		const char *pingStr = SBServerGetStringValue(server, PINGSTR_STR, "FFFFFFFFFFFFFFFF");
+		Bool usesStats = (Bool)SBServerGetIntValue(server, USE_STATS_STR, TRUE);
+		const char* verStr = SBServerGetStringValue(server, "gamever", "000000");
+		const char* exeStr = SBServerGetStringValue(server, EXECRC_STR, "000000");
+		const char* iniStr = SBServerGetStringValue(server, INICRC_STR, "000000");
+		const char* ladIPStr = SBServerGetStringValue(server, LADIP_STR, "000000");
+		const char* pingStr = SBServerGetStringValue(server, PINGSTR_STR, "FFFFFFFFFFFFFFFF");
 		UnsignedShort ladPort = (UnsignedShort)SBServerGetIntValue(server, LADPORT_STR, 0);
 		UnsignedInt verVal = strtoul(verStr, nullptr, 10);
 		UnsignedInt exeVal = strtoul(exeStr, nullptr, 10);
 		UnsignedInt iniVal = strtoul(iniStr, nullptr, 10);
 		resp.stagingRoom.requiresPassword = hasPassword;
 		resp.stagingRoom.allowObservers = allowObservers;
-    resp.stagingRoom.useStats = usesStats;
+		resp.stagingRoom.useStats = usesStats;
 		resp.stagingRoom.version = verVal;
 		resp.stagingRoom.exeCRC = exeVal;
 		resp.stagingRoom.iniCRC = iniVal;
@@ -2909,7 +3033,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 		resp.stagingRoom.numObservers = SBServerGetIntValue(server, NUMOBS_STR, 0);
 		resp.stagingRoom.maxPlayers = SBServerGetIntValue(server, MAXPLAYER_STR, 8);
 		resp.stagingRoomMapName = SBServerGetStringValue(server, "mapname", "");
-		for (Int i=0; i<MAX_SLOTS; ++i)
+		for (Int i = 0; i < MAX_SLOTS; ++i)
 		{
 			resp.stagingRoomPlayerNames[i] = SBServerGetPlayerStringValue(server, i, NAME__STR, "");
 			resp.stagingRoom.wins[i] = SBServerGetPlayerIntValue(server, i, WINS__STR, 0);
@@ -2933,7 +3057,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 		DEBUG_LOG(("Raw stuff: [%s] [%s] [%d]", pingStr, ladIPStr, ladPort));
 		DEBUG_LOG(("Saw game with stuff %s %d %X %X %X %s", resp.stagingRoomMapName.c_str(), hasPassword, verVal, exeVal, iniVal, SBServerGetStringValue(server, "password", "missing")));
 #ifdef PING_TEST
-	PING_LOG(("%s", pingStr));
+		PING_LOG(("%s", pingStr));
 #endif
 	}
 
@@ -2954,12 +3078,12 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 			{
 				PeerRequest req;
 				req.peerRequestType = PeerRequest::PEERREQUEST_GETEXTENDEDSTAGINGROOMINFO;
-				req.stagingRoom.id = t->findServer( server );
+				req.stagingRoom.id = t->findServer(server);
 				DEBUG_LOG(("Add/update a 0/0 server %X (%d, %s) - requesting full update to see if that helps.",
-					server, resp.stagingRoom.id, gameName.str()));
+				           server, resp.stagingRoom.id, gameName.str()));
 				TheGameSpyPeerMessageQueue->addRequest(req);
 			}
-			return; // don't actually try to list it.
+			return;    // don't actually try to list it.
 		}
 	}
 
@@ -2970,17 +3094,17 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 			break;
 		case PEER_ADD:
 		case PEER_UPDATE:
-			resp.stagingRoom.id = t->findServer( server );
+			resp.stagingRoom.id = t->findServer(server);
 			DEBUG_LOG(("Add/update on server %X (%d, %s)", server, resp.stagingRoom.id, gameName.str()));
-			resp.stagingServerName = MultiByteToWideCharSingleLine( gameName.str() );
+			resp.stagingServerName = MultiByteToWideCharSingleLine(gameName.str());
 			DEBUG_LOG(("Server had basic=%d, full=%d", SBServerHasBasicKeys(server), SBServerHasFullKeys(server)));
 #ifdef DEBUG_LOGGING
-			//SBServerEnumKeys(server, enumFunc, nullptr);
+			// SBServerEnumKeys(server, enumFunc, nullptr);
 #endif
 			break;
 		case PEER_REMOVE:
 			DEBUG_LOG(("Removing server %X (%d)", server, resp.stagingRoom.id));
-			resp.stagingRoom.id = t->removeServerFromMap( server );
+			resp.stagingRoom.id = t->removeServerFromMap(server);
 			break;
 	}
 
@@ -2988,4 +3112,3 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 }
 
 //-------------------------------------------------------------------------
-

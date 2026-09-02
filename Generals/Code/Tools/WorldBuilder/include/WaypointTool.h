@@ -27,7 +27,7 @@ class WorldHeightMapEdit;
 class MapObject;
 /*************************************************************************/
 /**                             WaypointTool
-	 Does the add/select waypoint operation.
+   Does the add/select waypoint operation.
 ***************************************************************************/
 ///  Select tile tool.
 class WaypointTool : public Tool
@@ -42,16 +42,16 @@ protected:
 	static Bool m_isActive;
 
 protected:
-	MapObject *pickWaypoint(Coord3D loc);
+	MapObject* pickWaypoint(Coord3D loc);
 
 public:
-	static Bool isActive() {return m_isActive;};
+	static Bool isActive() { return m_isActive; };
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void activate() override; ///< Become the current tool.
-	virtual void deactivate() override; ///< Become not the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void activate() override;    ///< Become the current tool.
+	virtual void deactivate() override;    ///< Become not the current tool.
 };

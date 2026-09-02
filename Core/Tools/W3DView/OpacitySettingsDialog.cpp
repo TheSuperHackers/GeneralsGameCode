@@ -30,88 +30,79 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "OpacitySettingsDialog.h"
 #include "ColorBar.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OpacitySettingsDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-OpacitySettingsDialogClass::OpacitySettingsDialogClass (float opacity, CWnd *pParent)
-	:	m_OpacityBar (nullptr),
-		m_Opacity (opacity),
-		CDialog(OpacitySettingsDialogClass::IDD, pParent)
+OpacitySettingsDialogClass::OpacitySettingsDialogClass(float opacity, CWnd* pParent)
+  : m_OpacityBar(nullptr)
+  , m_Opacity(opacity)
+  , CDialog(OpacitySettingsDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(OpacitySettingsDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // DoDataExchange
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-OpacitySettingsDialogClass::DoDataExchange (CDataExchange* pDX)
+void OpacitySettingsDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(OpacitySettingsDialogClass)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(OpacitySettingsDialogClass, CDialog)
-	//{{AFX_MSG_MAP(OpacitySettingsDialogClass)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(OpacitySettingsDialogClass)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-OpacitySettingsDialogClass::OnInitDialog ()
+BOOL OpacitySettingsDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_OpacityBar = ColorBarClass::Get_Color_Bar (::GetDlgItem (m_hWnd, IDC_OPACITY_BAR));
-	ASSERT (m_OpacityBar);
+	m_OpacityBar = ColorBarClass::Get_Color_Bar(::GetDlgItem(m_hWnd, IDC_OPACITY_BAR));
+	ASSERT(m_OpacityBar);
 
 	//
 	// Setup the opacity bar
 	//
-	m_OpacityBar->Set_Range (0, 1);
-	m_OpacityBar->Modify_Point (0, 0, 0, 0, 0);
-	m_OpacityBar->Insert_Point (1, 1, 255, 255, 255);
-	m_OpacityBar->Set_Selection_Pos (m_Opacity);
+	m_OpacityBar->Set_Range(0, 1);
+	m_OpacityBar->Modify_Point(0, 0, 0, 0, 0);
+	m_OpacityBar->Insert_Point(1, 1, 255, 255, 255);
+	m_OpacityBar->Set_Selection_Pos(m_Opacity);
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnOK
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-OpacitySettingsDialogClass::OnOK ()
+void OpacitySettingsDialogClass::OnOK()
 {
-	m_Opacity = m_OpacityBar->Get_Selection_Pos ();
-	CDialog::OnOK ();
+	m_Opacity = m_OpacityBar->Get_Selection_Pos();
+	CDialog::OnOK();
 }

@@ -29,18 +29,18 @@
 
 class FindDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	FindDialog(CWnd* pParent = nullptr);   // standard constructor
+	FindDialog(CWnd* pParent = nullptr);    // standard constructor
 
-	static const char *String()
+	static const char* String()
 	{
 		return (_FindString);
 	}
 
-	static void Compare (const char *string)
+	static void Compare(const char* string)
 	{
-		_Found |= (strstr (string, _FindString) != nullptr);
+		_Found |= (strstr(string, _FindString) != nullptr);
 	}
 
 	static bool Found()
@@ -48,28 +48,29 @@ public:
 		return (_Found);
 	}
 
-	static void Found (bool found)
+	static void Found(bool found)
 	{
 		_Found = found;
 	}
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(FindDialog)
-	enum { IDD = IDD_TOOLS_FIND };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TOOLS_FIND
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(FindDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(FindDialog)
 	virtual BOOL OnInitDialog() override;
@@ -79,9 +80,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-
-	static bool	_Found;
-	static char _FindString [MAX_FIND_STRING_LENGTH + 1];
+	static bool _Found;
+	static char _FindString[MAX_FIND_STRING_LENGTH + 1];
 };
 
 //{{AFX_INSERT_LOCATION}}

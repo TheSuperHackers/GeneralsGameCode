@@ -35,193 +35,189 @@
 #include <string.h>
 #include <sys/types.h>
 #ifndef _WIN32
-#include <netinet/in.h>
+	#include <netinet/in.h>
 #else
-#define Win32_Winsock
-#include <windows.h>
+	#define Win32_Winsock
+	#include <windows.h>
 #endif
 #include "field.h"
-
 
 // private member func
 void FieldClass::Clear()
 {
-  delete[](Data);
+	delete[] (Data);
 
-  strcpy(ID,"");
-  DataType=0;
-  Size=0;
-  Data=nullptr;
-  Next=nullptr;
+	strcpy(ID, "");
+	DataType = 0;
+	Size = 0;
+	Data = nullptr;
+	Next = nullptr;
 }
 
-
-FieldClass::FieldClass(char *id, char data)
+FieldClass::FieldClass(char* id, char data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, unsigned char data)
+FieldClass::FieldClass(char* id, unsigned char data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, short data)
+FieldClass::FieldClass(char* id, short data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, unsigned short data)
+FieldClass::FieldClass(char* id, unsigned short data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, long data)
+FieldClass::FieldClass(char* id, long data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, unsigned long data)
+FieldClass::FieldClass(char* id, unsigned long data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, char *data)
+FieldClass::FieldClass(char* id, char* data)
 {
-  Data=nullptr;
-  Set(id,data);
+	Data = nullptr;
+	Set(id, data);
 }
 
-FieldClass::FieldClass(char *id, void *data, int length)
+FieldClass::FieldClass(char* id, void* data, int length)
 {
-  Data=nullptr;
-  Set(id,data,length);
+	Data = nullptr;
+	Set(id, data, length);
 }
 
-void FieldClass::Set(char *id, char data)
+void FieldClass::Set(char* id, char data)
 {
-  FieldClass     *Nextsave=Next;
+	FieldClass* Nextsave = Next;
 
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType      = TYPE_CHAR;
-  Size		= sizeof(data);
-  Data		= new char[Size];
-  memcpy(Data, &data, Size);
-  Next		= Nextsave;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_CHAR;
+	Size = sizeof(data);
+	Data = new char[Size];
+	memcpy(Data, &data, Size);
+	Next = Nextsave;
 }
 
-void FieldClass::Set(char *id, unsigned char data)
+void FieldClass::Set(char* id, unsigned char data)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_UNSIGNED_CHAR;
-  Size     = sizeof(data);
-  Data     = new char[Size];
-  memcpy(Data, &data, Size);
-  Next     = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_UNSIGNED_CHAR;
+	Size = sizeof(data);
+	Data = new char[Size];
+	memcpy(Data, &data, Size);
+	Next = Nextsave;
 }
 
-void FieldClass::Set(char *id, short data)
+void FieldClass::Set(char* id, short data)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_SHORT;
-  Size    = sizeof(data);
-  Data    = new char[Size];
-  memcpy(Data, &data, Size);
-  Next    = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_SHORT;
+	Size = sizeof(data);
+	Data = new char[Size];
+	memcpy(Data, &data, Size);
+	Next = Nextsave;
 }
 
-void FieldClass::Set(char *id, unsigned short data)
+void FieldClass::Set(char* id, unsigned short data)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_UNSIGNED_SHORT;
-  Size    = sizeof(data);
-  Data    = new char[Size];
-  memcpy(Data, &data, Size);
-  Next    = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_UNSIGNED_SHORT;
+	Size = sizeof(data);
+	Data = new char[Size];
+	memcpy(Data, &data, Size);
+	Next = Nextsave;
 }
 
-void FieldClass::Set(char *id, long data)
+void FieldClass::Set(char* id, long data)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_LONG;
-  Size    = sizeof(data);
-  Data    = new char[Size];
-  memcpy(Data, &data, Size);
-  Next    = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_LONG;
+	Size = sizeof(data);
+	Data = new char[Size];
+	memcpy(Data, &data, Size);
+	Next = Nextsave;
 }
 
-void FieldClass::Set(char *id, unsigned long data)
+void FieldClass::Set(char* id, unsigned long data)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_UNSIGNED_LONG;
-  Size    = sizeof(data);
-  Data    = new char[Size];
-  memcpy(Data, &data, Size);
-  Next    = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_UNSIGNED_LONG;
+	Size = sizeof(data);
+	Data = new char[Size];
+	memcpy(Data, &data, Size);
+	Next = Nextsave;
 }
 
-void FieldClass::Set(char *id, char *data)
+void FieldClass::Set(char* id, char* data)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_STRING;
-  Size    = (unsigned short)(strlen(data)+1);
-  Data    = new char[Size];
-  memcpy(Data, data, Size);
-  Next    = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_STRING;
+	Size = (unsigned short)(strlen(data) + 1);
+	Data = new char[Size];
+	memcpy(Data, data, Size);
+	Next = Nextsave;
 }
 
-
-void FieldClass::Set(char *id, void *data, int length)
+void FieldClass::Set(char* id, void* data, int length)
 {
-  FieldClass     *Nextsave=Next;
-  Clear();
-  strncpy(ID, id, sizeof(ID));
-  DataType = TYPE_CHUNK;
-  Size    = (unsigned short)length;
-  Data    = new char[Size];
-  memcpy(Data, data, Size);
-  Next    = Nextsave;
+	FieldClass* Nextsave = Next;
+	Clear();
+	strncpy(ID, id, sizeof(ID));
+	DataType = TYPE_CHUNK;
+	Size = (unsigned short)length;
+	Data = new char[Size];
+	memcpy(Data, data, Size);
+	Next = Nextsave;
 }
-
 
 FieldClass::~FieldClass()
 {
-  Clear();
+	Clear();
 }
 
 // Fetch the datatype
 int FieldClass::Get_Type()
 {
-  return(DataType);
+	return (DataType);
 }
 
-void *FieldClass::Get_Data()
+void* FieldClass::Get_Data()
 {
-return(Data);
+	return (Data);
 }
 
-char *FieldClass::Get_ID()
+char* FieldClass::Get_ID()
 {
-return(ID);
+	return (ID);
 }
 
 /**************************************************************************
@@ -236,38 +232,39 @@ return(ID);
  *========================================================================*/
 void FieldClass::Host_To_Net()
 {
-  //
-  // Before we convert the data type, we should convert the actual data
-  //  sent.
-  //
-  switch (DataType) {
-    case TYPE_CHAR:
-    case TYPE_UNSIGNED_CHAR:
-    case TYPE_STRING:
-      break;
+	//
+	// Before we convert the data type, we should convert the actual data
+	//  sent.
+	//
+	switch (DataType)
+	{
+		case TYPE_CHAR:
+		case TYPE_UNSIGNED_CHAR:
+		case TYPE_STRING:
+			break;
 
-    case TYPE_SHORT:
-    case TYPE_UNSIGNED_SHORT:
-      *((unsigned short *)Data) = htons(*((unsigned short *)Data));
-      break;
+		case TYPE_SHORT:
+		case TYPE_UNSIGNED_SHORT:
+			*((unsigned short*)Data) = htons(*((unsigned short*)Data));
+			break;
 
-    case TYPE_LONG:
-    case TYPE_UNSIGNED_LONG:
-      *((unsigned long *)Data) = htonl(*((unsigned long *)Data));
-      break;
+		case TYPE_LONG:
+		case TYPE_UNSIGNED_LONG:
+			*((unsigned long*)Data) = htonl(*((unsigned long*)Data));
+			break;
 
-    //
-    // Might be good to insert some type of error message here for unknown
-    //   datatypes -- but will leave that for later.
-    //
-    default:
-      break;
-  }
-  //
-  // Finally convert over the data type and the size of the packet.
-  //
-  DataType = htons(DataType);
-  Size      = htons(Size);
+		//
+		// Might be good to insert some type of error message here for unknown
+		//   datatypes -- but will leave that for later.
+		//
+		default:
+			break;
+	}
+	//
+	// Finally convert over the data type and the size of the packet.
+	//
+	DataType = htons(DataType);
+	Size = htons(Size);
 }
 
 /**************************************************************************
@@ -282,38 +279,38 @@ void FieldClass::Host_To_Net()
  *========================================================================*/
 void FieldClass::Net_To_Host()
 {
-  //
-  // Finally convert over the data type and the size of the packet.
-  //
-  DataType = ntohs(DataType);
-  Size      = ntohs(Size);
+	//
+	// Finally convert over the data type and the size of the packet.
+	//
+	DataType = ntohs(DataType);
+	Size = ntohs(Size);
 
-  //
-  // Before we convert the data type, we should convert the actual data
-  //  sent.
-  //
-  switch (DataType) {
-    case TYPE_CHAR:
-    case TYPE_UNSIGNED_CHAR:
-    case TYPE_STRING:
-      break;
+	//
+	// Before we convert the data type, we should convert the actual data
+	//  sent.
+	//
+	switch (DataType)
+	{
+		case TYPE_CHAR:
+		case TYPE_UNSIGNED_CHAR:
+		case TYPE_STRING:
+			break;
 
-    case TYPE_SHORT:
-    case TYPE_UNSIGNED_SHORT:
-      *((unsigned short *)Data) = ntohs(*((unsigned short *)Data));
-      break;
+		case TYPE_SHORT:
+		case TYPE_UNSIGNED_SHORT:
+			*((unsigned short*)Data) = ntohs(*((unsigned short*)Data));
+			break;
 
-    case TYPE_LONG:
-    case TYPE_UNSIGNED_LONG:
-      *((unsigned long *)Data) = ntohl(*((unsigned long *)Data));
-      break;
+		case TYPE_LONG:
+		case TYPE_UNSIGNED_LONG:
+			*((unsigned long*)Data) = ntohl(*((unsigned long*)Data));
+			break;
 
-    //
-    // Might be good to insert some type of error message here for unknown
-    //   datatypes -- but will leave that for later.
-    //
-    default:
-      break;
-  }
+		//
+		// Might be good to insert some type of error message here for unknown
+		//   datatypes -- but will leave that for later.
+		//
+		default:
+			break;
+	}
 }
-

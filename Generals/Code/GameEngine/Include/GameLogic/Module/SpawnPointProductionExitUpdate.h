@@ -38,7 +38,7 @@ class Object;
 
 enum
 {
-	MAX_SPAWN_POINTS = 10	///< Size the array that holds the bone positions
+	MAX_SPAWN_POINTS = 10    ///< Size the array that holds the bone positions
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -49,51 +49,48 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "SpawnPointBoneName",		INI::parseAsciiString,		nullptr, offsetof( SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "SpawnPointBoneName", INI::parseAsciiString, nullptr, offsetof(SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 class SpawnPointProductionExitUpdate : public UpdateModule, public ExitInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpawnPointProductionExitUpdate, "SpawnPointProductionExitUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpawnPointProductionExitUpdate, SpawnPointProductionExitUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpawnPointProductionExitUpdate, "SpawnPointProductionExitUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpawnPointProductionExitUpdate, SpawnPointProductionExitUpdateModuleData)
 
 public:
-
 	virtual ExitInterface* getUpdateExitInterface() override { return this; }
 
-	SpawnPointProductionExitUpdate( Thing *thing, const ModuleData* moduleData );
+	SpawnPointProductionExitUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// Required funcs to fulfill interface requirements
-	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
-	virtual void setRallyPoint( const Coord3D * ) override {}
-	virtual const Coord3D *getRallyPoint() const override { return nullptr; }
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
+	virtual Bool isExitBusy() const override { return FALSE; }    ///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit(const ThingTemplate* objType, Object* specificObject) override;
+	virtual void exitObjectViaDoor(Object* newObj, ExitDoorType exitDoor) override;
+	virtual void unreserveDoorForExit(ExitDoorType exitDoor) override;
+	virtual void setRallyPoint(const Coord3D*) override {}
+	virtual const Coord3D* getRallyPoint() const override { return nullptr; }
+	virtual void exitObjectByBudding(Object* newObj, Object* budHost) override { return; }
 
-	virtual UpdateSleepTime update() override										{ return UPDATE_SLEEP_FOREVER; }
+	virtual UpdateSleepTime update() override { return UPDATE_SLEEP_FOREVER; }
 
 protected:
-	Bool m_bonesInitialized;													///< To prevent creation bugs, only init the World coords when first asked for one
-	Int m_spawnPointCount;														///< How many in the array are actually live and valid
-	Coord3D m_worldCoordSpawnPoints[MAX_SPAWN_POINTS];///< Where my little friends will be created
-	Real m_worldAngleSpawnPoints[MAX_SPAWN_POINTS];		///< And what direction they should face
-	ObjectID m_spawnPointOccupier[MAX_SPAWN_POINTS];	///< Who I think is in each spot.  I can validate their existence to see if I am free to exit something.
+	Bool m_bonesInitialized;    ///< To prevent creation bugs, only init the World coords when first asked for one
+	Int m_spawnPointCount;    ///< How many in the array are actually live and valid
+	Coord3D m_worldCoordSpawnPoints[MAX_SPAWN_POINTS];    ///< Where my little friends will be created
+	Real m_worldAngleSpawnPoints[MAX_SPAWN_POINTS];    ///< And what direction they should face
+	ObjectID m_spawnPointOccupier[MAX_SPAWN_POINTS];    ///< Who I think is in each spot.  I can validate their existence to see if I am free to exit something.
 
 	// Required func to fulfill Module requirement
 
 private:
-	void initializeBonePositions();	///< Look up the bone positions and store them in world space coords
-	void revalidateOccupiers();			///< Do a lookup on all our ID's and clear the dead ones.
+	void initializeBonePositions();    ///< Look up the bone positions and store them in world space coords
+	void revalidateOccupiers();    ///< Do a lookup on all our ID's and clear the dead ones.
 };

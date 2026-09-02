@@ -25,7 +25,7 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
+#include "resource.h"    // main symbols
 #include "TransDB.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -38,14 +38,14 @@ class CBabylonApp : public CWinApp
 public:
 	CBabylonApp();
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBabylonApp)
-	public:
+public:
 	virtual BOOL InitInstance();
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 
 	//{{AFX_MSG(CBabylonApp)
 	//}}AFX_MSG
@@ -53,13 +53,13 @@ public:
 };
 
 int ExcelRunning();
-extern TransDB				*BabylonstrDB;
-extern TransDB				*MainDB;
-extern char						BabylonstrFilename[];
-extern char						MainXLSFilename[];
-extern char						RootPath[];
-extern char						DialogPath[];
-extern LangID					CurrentLanguage;
+extern TransDB* BabylonstrDB;
+extern TransDB* MainDB;
+extern char BabylonstrFilename[];
+extern char MainXLSFilename[];
+extern char RootPath[];
+extern char DialogPath[];
+extern LangID CurrentLanguage;
 
 /////////////////////////////////////////////////////////////////////////////
 

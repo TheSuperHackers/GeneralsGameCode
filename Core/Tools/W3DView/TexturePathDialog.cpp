@@ -27,11 +27,10 @@
 #include "DirectoryDialog.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -39,108 +38,98 @@ static char THIS_FILE[] = __FILE__;
 //
 /////////////////////////////////////////////////////////////////////////////
 TexturePathDialogClass::TexturePathDialogClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(TexturePathDialogClass::IDD, pParent)
+  : CDialog(TexturePathDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TexturePathDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // DoDataExchange
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-TexturePathDialogClass::DoDataExchange (CDataExchange* pDX)
+void TexturePathDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(TexturePathDialogClass)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(TexturePathDialogClass, CDialog)
-	//{{AFX_MSG_MAP(TexturePathDialogClass)
-	ON_BN_CLICKED(IDC_BROWSE1, OnBrowse1)
-	ON_BN_CLICKED(IDC_BROWSE2, OnBrowse2)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(TexturePathDialogClass)
+ON_BN_CLICKED(IDC_BROWSE1, OnBrowse1)
+ON_BN_CLICKED(IDC_BROWSE2, OnBrowse2)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-TexturePathDialogClass::OnInitDialog ()
+BOOL TexturePathDialogClass::OnInitDialog()
 {
-	CDialog::OnInitDialog ();
+	CDialog::OnInitDialog();
 
-	CW3DViewDoc *doc = ::GetCurrentDocument ();
+	CW3DViewDoc* doc = ::GetCurrentDocument();
 
-	SetDlgItemText (IDC_PATH1, doc->Get_Texture_Path1 ());
-	SetDlgItemText (IDC_PATH2, doc->Get_Texture_Path2 ());
+	SetDlgItemText(IDC_PATH1, doc->Get_Texture_Path1());
+	SetDlgItemText(IDC_PATH2, doc->Get_Texture_Path2());
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnOK
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-TexturePathDialogClass::OnOK ()
+void TexturePathDialogClass::OnOK()
 {
 	CString path1;
 	CString path2;
-	GetDlgItemText (IDC_PATH1, path1);
-	GetDlgItemText (IDC_PATH2, path2);
+	GetDlgItemText(IDC_PATH1, path1);
+	GetDlgItemText(IDC_PATH2, path2);
 
-	CW3DViewDoc *doc = ::GetCurrentDocument ();
-	doc->Set_Texture_Path1 (path1);
-	doc->Set_Texture_Path2 (path2);
+	CW3DViewDoc* doc = ::GetCurrentDocument();
+	doc->Set_Texture_Path1(path1);
+	doc->Set_Texture_Path2(path2);
 
-	CDialog::OnOK ();
+	CDialog::OnOK();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnBrowse1
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-TexturePathDialogClass::OnBrowse1 ()
+void TexturePathDialogClass::OnBrowse1()
 {
 	CString initial_path;
-	GetDlgItemText (IDC_PATH1, initial_path);
+	GetDlgItemText(IDC_PATH1, initial_path);
 
 	CString path;
-	if (::Browse_For_Folder (m_hWnd, initial_path, path)) {
-		SetDlgItemText (IDC_PATH1, path);
+	if (::Browse_For_Folder(m_hWnd, initial_path, path))
+	{
+		SetDlgItemText(IDC_PATH1, path);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnBrowse2
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-TexturePathDialogClass::OnBrowse2 ()
+void TexturePathDialogClass::OnBrowse2()
 {
 	CString initial_path;
-	GetDlgItemText (IDC_PATH2, initial_path);
+	GetDlgItemText(IDC_PATH2, initial_path);
 
 	CString path;
-	if (::Browse_For_Folder (m_hWnd, initial_path, path)) {
-		SetDlgItemText (IDC_PATH2, path);
+	if (::Browse_For_Folder(m_hWnd, initial_path, path))
+	{
+		SetDlgItemText(IDC_PATH2, path);
 	}
 }
-

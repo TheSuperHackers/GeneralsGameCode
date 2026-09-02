@@ -19,9 +19,9 @@
 #pragma once
 
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "WWLib/DbgHelpLoader.h"
+	#include "WWLib/DbgHelpLoader.h"
 
-enum DumpType CPP_11(: Char)
+enum DumpType CPP_11( : Char)
 {
 	// Smallest dump type with call stacks and some supporting variables
 	DumpType_Minimal = 'M',
@@ -31,7 +31,7 @@ enum DumpType CPP_11(: Char)
 
 class MiniDumper
 {
-	enum MiniDumperExitCode CPP_11(: Int)
+	enum MiniDumperExitCode CPP_11( : Int)
 	{
 		MiniDumperExitCode_Success = 0x0,
 		MiniDumperExitCode_FailureWait = 0x37DA1040,

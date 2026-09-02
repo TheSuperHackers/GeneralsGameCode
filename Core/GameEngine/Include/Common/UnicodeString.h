@@ -54,190 +54,187 @@ class AsciiString;
 
 // -----------------------------------------------------
 /**
-	UnicodeString is the fundamental double-byte string type used in the Generals
-	code base, and should be preferred over all other string constructions
-	(e.g., array of WideChar, STL string<>, WWVegas StringClass, etc.)
+  UnicodeString is the fundamental double-byte string type used in the Generals
+  code base, and should be preferred over all other string constructions
+  (e.g., array of WideChar, STL string<>, WWVegas StringClass, etc.)
 
-	Of course, other string setups may be used when necessary or appropriate!
+  Of course, other string setups may be used when necessary or appropriate!
 
-	UnicodeString is modeled after the MFC CString class, with some minor
-	syntactic differences to keep in line with our coding conventions.
+  UnicodeString is modeled after the MFC CString class, with some minor
+  syntactic differences to keep in line with our coding conventions.
 
-	Basically, UnicodeString allows you to treat a string as an intrinsic
-	type, rather analogous to 'int' -- when passed by value, a new string
-	is created, and modifying the new string doesn't modify the original.
-	This is done fairly efficiently, so that no new memory allocation is done
-	unless the string is actually modified.
+  Basically, UnicodeString allows you to treat a string as an intrinsic
+  type, rather analogous to 'int' -- when passed by value, a new string
+  is created, and modifying the new string doesn't modify the original.
+  This is done fairly efficiently, so that no new memory allocation is done
+  unless the string is actually modified.
 
-	Naturally, UnicodeString handles all memory issues, so there's no need
-	to do anything to free memory... just allow the UnicodeString's
-	destructor to run.
+  Naturally, UnicodeString handles all memory issues, so there's no need
+  to do anything to free memory... just allow the UnicodeString's
+  destructor to run.
 
-	UnicodeStrings are suitable for use as automatic, member, or static variables.
+  UnicodeStrings are suitable for use as automatic, member, or static variables.
 */
 
 class UnicodeString
 {
 private:
-
 	// Note, this is a Plain Old Data Structure... don't
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct UnicodeStringData
 	{
 #if defined(RTS_DEBUG)
-		const WideChar* m_debugptr;	// just makes it easier to read in the debugger
+		const WideChar* m_debugptr;    // just makes it easier to read in the debugger
 #endif
-		unsigned short	m_refCount;						// reference count
-		unsigned short	m_numCharsAllocated;  // length of data allocated
+		unsigned short m_refCount;    // reference count
+		unsigned short m_numCharsAllocated;    // length of data allocated
 		// WideChar m_stringdata[];
 
-		WideChar* peek() { return (WideChar*)(this+1); }
+		WideChar* peek() { return (WideChar*)(this + 1); }
 	};
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	void validate() const;
-	#else
-	void validate() const { }
-	#endif
+#else
+	void validate() const {}
+#endif
 
 protected:
-	UnicodeStringData* m_data;   // pointer to ref counted string data
+	UnicodeStringData* m_data;    // pointer to ref counted string data
 
 	WideChar* peek() const;
 	void releaseBuffer();
 	void ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData, const WideChar* strToCpy, const WideChar* strToCat);
 
 public:
-
 	typedef WideChar value_type;
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
 
 	enum
 	{
-		MAX_FORMAT_BUF_LEN = 2048,		///< max total len of string created by format/format_va
-		MAX_LEN = 32767							///< max total len of any UnicodeString, in chars
+		MAX_FORMAT_BUF_LEN = 2048,    ///< max total len of string created by format/format_va
+		MAX_LEN = 32767    ///< max total len of any UnicodeString, in chars
 	};
 
-
 	/**
-		This is a convenient global used to indicate the empty
-		string, so we don't need to construct temporaries
-		for such a common thing.
+	  This is a convenient global used to indicate the empty
+	  string, so we don't need to construct temporaries
+	  for such a common thing.
 	*/
 	static const UnicodeString TheEmptyString;
 
 	/**
-		Default constructor -- construct a new, empty UnicodeString.
+	  Default constructor -- construct a new, empty UnicodeString.
 	*/
 	UnicodeString();
 	/**
-		Copy constructor -- make this UnicodeString identical to the
-		other UnicodeString. (This is actually quite efficient, because
-		they will simply share the same string and increment the
-		refcount.)
+	  Copy constructor -- make this UnicodeString identical to the
+	  other UnicodeString. (This is actually quite efficient, because
+	  they will simply share the same string and increment the
+	  refcount.)
 	*/
 	UnicodeString(const UnicodeString& stringSrc);
 	/**
-		Constructor -- from a literal string. Constructs an UnicodeString
-		with the given string. Note that a copy of the string is made;
-		the input ptr is not saved.
-		Note that this is no longer explicit, as the conversion is almost
-		always wanted, anyhow.
+	  Constructor -- from a literal string. Constructs an UnicodeString
+	  with the given string. Note that a copy of the string is made;
+	  the input ptr is not saved.
+	  Note that this is no longer explicit, as the conversion is almost
+	  always wanted, anyhow.
 	*/
 	UnicodeString(const WideChar* s);
 
 	/**
-		Constructs an UnicodeString with the given string and length.
-		The length must not be larger than the actual string length.
+	  Constructs an UnicodeString with the given string and length.
+	  The length must not be larger than the actual string length.
 	*/
 	UnicodeString(const WideChar* s, int len);
 
 	/**
-		Destructor. Not too exciting... clean up the works and such.
+	  Destructor. Not too exciting... clean up the works and such.
 	*/
 	~UnicodeString();
 
 	/**
-		Return the length, in characters, of the string up to the first zero or null terminator.
+	  Return the length, in characters, of the string up to the first zero or null terminator.
 	*/
 	int getLength() const;
 
 	/**
-		Return the number of bytes used by the string up to the first zero or null terminator.
+	  Return the number of bytes used by the string up to the first zero or null terminator.
 	*/
 	int getByteCount() const;
 	/**
-		Return true iff the length of the string is zero. Equivalent
-		to (getLength() == 0) but slightly more efficient.
+	  Return true iff the length of the string is zero. Equivalent
+	  to (getLength() == 0) but slightly more efficient.
 	*/
 	Bool isEmpty() const;
 	/**
-		Make the string empty. Equivalent to (str = "") but slightly more efficient.
+	  Make the string empty. Equivalent to (str = "") but slightly more efficient.
 	*/
 	void clear();
 
 	/**
-		Return the character and the given (zero-based) index into the string.
-		No range checking is done (except in debug mode).
+	  Return the character and the given (zero-based) index into the string.
+	  No range checking is done (except in debug mode).
 	*/
 	WideChar getCharAt(int index) const;
 	/**
-		Return a pointer to the (null-terminated) string. Note that this is
-		a const pointer: do NOT change this! It is imperative that it be
-		impossible (or at least, really difficuly) for someone to change our
-		private data, since it might be shared amongst other UnicodeStrings.
+	  Return a pointer to the (null-terminated) string. Note that this is
+	  a const pointer: do NOT change this! It is imperative that it be
+	  impossible (or at least, really difficuly) for someone to change our
+	  private data, since it might be shared amongst other UnicodeStrings.
 	*/
 	const WideChar* str() const;
 
 	/**
-		Makes sure there is room for a string of len+1 characters, and
-		returns a pointer to the string buffer.  This ensures that the
-		string buffer is NOT shared.  This is intended for the file reader,
-		that is reading new strings in from a file. jba.
+	  Makes sure there is room for a string of len+1 characters, and
+	  returns a pointer to the string buffer.  This ensures that the
+	  string buffer is NOT shared.  This is intended for the file reader,
+	  that is reading new strings in from a file. jba.
 	*/
 	WideChar* getBufferForRead(Int len);
 
 	/**
-		Replace the contents of self with the given string.
-		(This is actually quite efficient, because
-		they will simply share the same string and increment the
-		refcount.)
+	  Replace the contents of self with the given string.
+	  (This is actually quite efficient, because
+	  they will simply share the same string and increment the
+	  refcount.)
 	*/
 	void set(const UnicodeString& stringSrc);
 
 	/**
-		Replace the contents of self with the given string.
-		Note that a copy of the string is made; the input ptr is not saved.
+	  Replace the contents of self with the given string.
+	  Note that a copy of the string is made; the input ptr is not saved.
 	*/
 	void set(const WideChar* s);
 
 	/**
-		Replace the contents of self with the given string and length.
-		Note that a copy of the string is made; the input ptr is not saved.
-		The length must not be larger than the actual string length.
+	  Replace the contents of self with the given string and length.
+	  Note that a copy of the string is made; the input ptr is not saved.
+	  The length must not be larger than the actual string length.
 	*/
 	void set(const WideChar* s, int len);
 
 	/**
-		replace contents of self with the given string. Note the
-		nomenclature is translate rather than set; this is because
-		not all single-byte strings translate one-for-one into
-		UnicodeStrings, so some data manipulation may be necessary,
-		and the resulting strings may not be equivalent.
+	  replace contents of self with the given string. Note the
+	  nomenclature is translate rather than set; this is because
+	  not all single-byte strings translate one-for-one into
+	  UnicodeStrings, so some data manipulation may be necessary,
+	  and the resulting strings may not be equivalent.
 	*/
 	void translate(const AsciiString& stringSrc);
 
 	/**
-		Concatenate the given string onto self.
+	  Concatenate the given string onto self.
 	*/
 	void concat(const UnicodeString& stringSrc);
 	/**
-		Concatenate the given string onto self.
+	  Concatenate the given string onto self.
 	*/
 	void concat(const WideChar* s);
 	/**
-		Concatenate the given character onto self.
+	  Concatenate the given character onto self.
 	*/
 	void concat(const WideChar c);
 
@@ -257,113 +254,112 @@ public:
 	void trimEnd(const WideChar c);
 
 	/**
-		Remove the final character in the string. If the string is empty,
-		do nothing. (This is a rather dorky method, but used a lot in
-		text editing, thus its presence here.)
+	  Remove the final character in the string. If the string is empty,
+	  do nothing. (This is a rather dorky method, but used a lot in
+	  text editing, thus its presence here.)
 	*/
 	void removeLastChar();
 
 	/**
-		Remove the final charCount characters in the string. If the string is empty,
-		do nothing.
+	  Remove the final charCount characters in the string. If the string is empty,
+	  do nothing.
 	*/
 	void truncateBy(const Int charCount);
 
 	/**
-		Truncate the string to a length of maxLength characters, not including null termination,
-		by removing from the end. If the string is empty or shorter than maxLength, do nothing.
+	  Truncate the string to a length of maxLength characters, not including null termination,
+	  by removing from the end. If the string is empty or shorter than maxLength, do nothing.
 	*/
 	void truncateTo(const Int maxLength);
 
 	/**
-		Analogous to sprintf() -- this formats a string according to the
-		given sprintf-style format string (and the variable argument list)
-		and stores the result in self.
+	  Analogous to sprintf() -- this formats a string according to the
+	  given sprintf-style format string (and the variable argument list)
+	  and stores the result in self.
 	*/
 	void format(UnicodeString format, ...);
 	void format(const WideChar* format, ...);
 	/**
-		Identical to format(), but takes a va_list rather than
-		a variable argument list. (i.e., analogous to vsprintf.)
+	  Identical to format(), but takes a va_list rather than
+	  a variable argument list. (i.e., analogous to vsprintf.)
 	*/
 	void format_va(const UnicodeString& format, va_list args);
 	void format_va(const WideChar* format, va_list args);
 
 	/**
-		Conceptually identical to wsccmp().
+	  Conceptually identical to wsccmp().
 	*/
 	int compare(const UnicodeString& stringSrc) const;
 	/**
-		Conceptually identical to wsccmp().
+	  Conceptually identical to wsccmp().
 	*/
 	int compare(const WideChar* s) const;
 	/**
-		Conceptually identical to _wcsicmp().
+	  Conceptually identical to _wcsicmp().
 	*/
 	int compareNoCase(const UnicodeString& stringSrc) const;
 	/**
-		Conceptually identical to _wcsicmp().
+	  Conceptually identical to _wcsicmp().
 	*/
 	int compareNoCase(const WideChar* s) const;
 
 	/**
-		Conceptually identical to wcschr().
+	  Conceptually identical to wcschr().
 	*/
 	const WideChar* find(WideChar c) const;
 
 	/**
-		Conceptually identical to wcsrchr().
+	  Conceptually identical to wcsrchr().
 	*/
 	const WideChar* reverseFind(WideChar c) const;
 
 	/**
-		return true iff self starts with the given string.
+	  return true iff self starts with the given string.
 	*/
 	Bool startsWith(const WideChar* p) const;
 	Bool startsWith(const UnicodeString& stringSrc) const { return startsWith(stringSrc.str()); }
 
 	/**
-		return true iff self starts with the given string. (case insensitive)
+	  return true iff self starts with the given string. (case insensitive)
 	*/
 	Bool startsWithNoCase(const WideChar* p) const;
 	Bool startsWithNoCase(const UnicodeString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
 
 	/**
-		return true iff self ends with the given string.
+	  return true iff self ends with the given string.
 	*/
 	Bool endsWith(const WideChar* p) const;
 	Bool endsWith(const UnicodeString& stringSrc) const { return endsWith(stringSrc.str()); }
 
 	/**
-		return true iff self ends with the given string. (case insensitive)
+	  return true iff self ends with the given string. (case insensitive)
 	*/
 	Bool endsWithNoCase(const WideChar* p) const;
 	Bool endsWithNoCase(const UnicodeString& stringSrc) const { return endsWithNoCase(stringSrc.str()); }
 
 	/**
-		conceptually similar to strtok():
+	  conceptually similar to strtok():
 
-		extract the next whitespace-delimited token from the front
-		of 'this' and copy it into 'token', returning true if a nonempty
-		token was found. (note that this modifies 'this' as well, stripping
-		the token off!)
+	  extract the next whitespace-delimited token from the front
+	  of 'this' and copy it into 'token', returning true if a nonempty
+	  token was found. (note that this modifies 'this' as well, stripping
+	  the token off!)
 	*/
 	Bool nextToken(UnicodeString* token, UnicodeString delimiters = UnicodeString::TheEmptyString);
 
-//
-// You might think it would be a good idea to overload the * operator
-// to allow for an implicit conversion to an WideChar*. This is
-// in theory a good idea, but in practice, there's lots of code
-// that assumes it should check text fields for null, which
-// is meaningless for us, since we never return a null ptr.
-//
-//	operator const WideChar*() const { return str(); }
-//
+	//
+	// You might think it would be a good idea to overload the * operator
+	// to allow for an implicit conversion to an WideChar*. This is
+	// in theory a good idea, but in practice, there's lots of code
+	// that assumes it should check text fields for null, which
+	// is meaningless for us, since we never return a null ptr.
+	//
+	//	operator const WideChar*() const { return str(); }
+	//
 
-	UnicodeString& operator=(const UnicodeString& stringSrc);	///< the same as set()
-	UnicodeString& operator=(const WideChar* s);				///< the same as set()
+	UnicodeString& operator=(const UnicodeString& stringSrc);    ///< the same as set()
+	UnicodeString& operator=(const WideChar* s);    ///< the same as set()
 };
-
 
 // -----------------------------------------------------
 inline WideChar* UnicodeString::peek() const
@@ -374,7 +370,8 @@ inline WideChar* UnicodeString::peek() const
 }
 
 // -----------------------------------------------------
-inline UnicodeString::UnicodeString() : m_data(0)
+inline UnicodeString::UnicodeString()
+  : m_data(0)
 {
 	validate();
 }

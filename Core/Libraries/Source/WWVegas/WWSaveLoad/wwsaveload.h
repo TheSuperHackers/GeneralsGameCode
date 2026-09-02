@@ -46,6 +46,6 @@
 class WWSaveLoad
 {
 public:
-	static void		Init();
-	static void		Shutdown();
+	static void Init();
+	static void Shutdown();
 };

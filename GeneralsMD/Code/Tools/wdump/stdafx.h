@@ -23,21 +23,20 @@
 
 #pragma once
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN    // Exclude rarely-used stuff from Windows headers
 
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
+#include <afxwin.h>    // MFC core and standard components
+#include <afxext.h>    // MFC extensions
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
-#include <afxcview.h> // treeview class
-#include <afxtempl.h> // CList class
-#include <afxdlgs.h> // FileDialog class
+	#include <afxcmn.h>    // MFC support for Windows Common Controls
+#endif    // _AFX_NO_AFXCMN_SUPPORT
+#include <afxcview.h>    // treeview class
+#include <afxtempl.h>    // CList class
+#include <afxdlgs.h>    // FileDialog class
 
 #include "WWLib/chunkio.h"
 #include "WWMath/Vector3i.h"
 #include "WW3D2/w3d_file.h"
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.

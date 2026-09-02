@@ -27,40 +27,40 @@ class SidesList;
 
 class EditObjectParameter : public CDialog
 {
-friend class EditParameter;
-// Construction
+	friend class EditParameter;
+	// Construction
 public:
-	EditObjectParameter(CWnd* pParent = nullptr);   // standard constructor
+	EditObjectParameter(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EditObjectParameter)
-	enum { IDD = IDD_EDIT_OBJECT_PARAMETER };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EDIT_OBJECT_PARAMETER
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditObjectParameter)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
-
-
-protected:
-	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
-	void addObject( const ThingTemplate *thingTemplate  );
-	void addObjectLists( );
+	// Implementation
 
 protected:
-	Parameter		*m_parameter;
-	CTreeCtrl					m_objectTreeView;
+	HTREEITEM findOrAdd(HTREEITEM parent, const char* pLabel);
+	void addObject(const ThingTemplate* thingTemplate);
+	void addObjectLists();
 
 protected:
+	Parameter* m_parameter;
+	CTreeCtrl m_objectTreeView;
 
+protected:
 	// Generated message map functions
 	//{{AFX_MSG(EditObjectParameter)
 	virtual BOOL OnInitDialog() override;

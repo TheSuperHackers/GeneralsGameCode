@@ -63,8 +63,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-static const char *noNameWindowString = "Un-named Window";
-static GameWindow *currentWindow = nullptr;  ///< current window we're editing
+static const char* noNameWindowString = "Un-named Window";
+static GameWindow* currentWindow = nullptr;    ///< current window we're editing
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -76,70 +76,76 @@ static GameWindow *currentWindow = nullptr;  ///< current window we're editing
 
 // SaveCallbacks ==============================================================
 /** save the current callbacks for the selected window */
-void SaveCallbacks( GameWindow *window, HWND dialog )
+void SaveCallbacks(GameWindow* window, HWND dialog)
 {
-
 	// sanity
-	if( window == nullptr || dialog == nullptr )
+	if (window == nullptr || dialog == nullptr)
+	{
 		return;
+	}
 
 	// get edit data for window
-	GameWindowEditData *editData = window->winGetEditData();
-	DEBUG_ASSERTCRASH( editData, ("No edit data for window saving callbacks!") );
+	GameWindowEditData* editData = window->winGetEditData();
+	DEBUG_ASSERTCRASH(editData, ("No edit data for window saving callbacks!"));
 
 	// get the currently selected item from each of the combos and save
 	Int index;
-	char buffer[ 256 ];
+	char buffer[256];
 
 	// system
-	index = SendDlgItemMessage( dialog, COMBO_SYSTEM, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_SYSTEM, CB_GETLBTEXT, index, (LPARAM)buffer );
+	index = SendDlgItemMessage(dialog, COMBO_SYSTEM, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_SYSTEM, CB_GETLBTEXT, index, (LPARAM)buffer);
 	editData->systemCallbackString = buffer;
 
 	// input
-	index = SendDlgItemMessage( dialog, COMBO_INPUT, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_INPUT, CB_GETLBTEXT, index, (LPARAM)buffer );
+	index = SendDlgItemMessage(dialog, COMBO_INPUT, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_INPUT, CB_GETLBTEXT, index, (LPARAM)buffer);
 	editData->inputCallbackString = buffer;
 
 	// tooltip
-	index = SendDlgItemMessage( dialog, COMBO_TOOLTIP, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_TOOLTIP, CB_GETLBTEXT, index, (LPARAM)buffer );
+	index = SendDlgItemMessage(dialog, COMBO_TOOLTIP, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_TOOLTIP, CB_GETLBTEXT, index, (LPARAM)buffer);
 	editData->tooltipCallbackString = buffer;
 
 	// draw
-	index = SendDlgItemMessage( dialog, COMBO_DRAW, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_DRAW, CB_GETLBTEXT, index, (LPARAM)buffer );
+	index = SendDlgItemMessage(dialog, COMBO_DRAW, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_DRAW, CB_GETLBTEXT, index, (LPARAM)buffer);
 	editData->drawCallbackString = buffer;
 
 	// if there was a window we have a change
-	if( window )
-		TheEditor->setUnsaved( TRUE );
-
+	if (window)
+	{
+		TheEditor->setUnsaved(TRUE);
+	}
 }
 
 // setCurrentWindow ===========================================================
 /** Set the window passed in as the active window for editing */
 //=============================================================================
-static void setCurrentWindow( GameWindow *window, HWND dialog )
+static void setCurrentWindow(GameWindow* window, HWND dialog)
 {
-	GameWindowEditData *editData = nullptr;
+	GameWindowEditData* editData = nullptr;
 
 	// get edit data from window if present
-	if( window )
+	if (window)
+	{
 		editData = window->winGetEditData();
+	}
 
 	// save window
 	currentWindow = window;
 
 	// sanity
-	if( dialog == nullptr )
+	if (dialog == nullptr)
+	{
 		return;
+	}
 
 	// enable the callback combo boxes
-	EnableWindow( GetDlgItem( dialog, COMBO_SYSTEM ), TRUE );
-	EnableWindow( GetDlgItem( dialog, COMBO_INPUT ), TRUE );
-	EnableWindow( GetDlgItem( dialog, COMBO_TOOLTIP ), TRUE );
-	EnableWindow( GetDlgItem( dialog, COMBO_DRAW ), TRUE );
+	EnableWindow(GetDlgItem(dialog, COMBO_SYSTEM), TRUE);
+	EnableWindow(GetDlgItem(dialog, COMBO_INPUT), TRUE);
+	EnableWindow(GetDlgItem(dialog, COMBO_TOOLTIP), TRUE);
+	EnableWindow(GetDlgItem(dialog, COMBO_DRAW), TRUE);
 
 	//
 	// select the assigned callbacks, if no callback is assigned
@@ -148,74 +154,93 @@ static void setCurrentWindow( GameWindow *window, HWND dialog )
 	AsciiString name;
 
 	// system
-	if( editData )
+	if (editData)
+	{
 		name = editData->systemCallbackString;
-	if( name.isEmpty() )
+	}
+	if (name.isEmpty())
+	{
 		name = GUIEDIT_NONE_STRING;
-	SendDlgItemMessage( dialog, COMBO_SYSTEM,
-											CB_SELECTSTRING, -1, (LPARAM)name.str() );
+	}
+	SendDlgItemMessage(dialog, COMBO_SYSTEM,
+	                   CB_SELECTSTRING, -1, (LPARAM)name.str());
 
 	// input
 	name = nullptr;
-	if( editData )
+	if (editData)
+	{
 		name = editData->inputCallbackString;
-	if( name.isEmpty() )
+	}
+	if (name.isEmpty())
+	{
 		name = GUIEDIT_NONE_STRING;
-	SendDlgItemMessage( dialog, COMBO_INPUT,
-											CB_SELECTSTRING, -1, (LPARAM)name.str() );
+	}
+	SendDlgItemMessage(dialog, COMBO_INPUT,
+	                   CB_SELECTSTRING, -1, (LPARAM)name.str());
 
 	// tooltip
 	name = nullptr;
-	if( editData )
+	if (editData)
+	{
 		name = editData->tooltipCallbackString;
-	if( name.isEmpty() )
+	}
+	if (name.isEmpty())
+	{
 		name = GUIEDIT_NONE_STRING;
-	SendDlgItemMessage( dialog, COMBO_TOOLTIP,
-											CB_SELECTSTRING, -1, (LPARAM)name.str() );
+	}
+	SendDlgItemMessage(dialog, COMBO_TOOLTIP,
+	                   CB_SELECTSTRING, -1, (LPARAM)name.str());
 
 	// draw
 	name = nullptr;
-	if( editData )
+	if (editData)
+	{
 		name = editData->drawCallbackString;
-	if( name.isEmpty() )
+	}
+	if (name.isEmpty())
+	{
 		name = GUIEDIT_NONE_STRING;
-	SendDlgItemMessage( dialog, COMBO_DRAW,
-											CB_SELECTSTRING, -1, (LPARAM)name.str() );
+	}
+	SendDlgItemMessage(dialog, COMBO_DRAW,
+	                   CB_SELECTSTRING, -1, (LPARAM)name.str());
 
 	//
 	// set the name of the window in the static control above
 	// the callback editor boxes
 	//
 	name = GUIEDIT_NONE_STRING;
-	if( window )
+	if (window)
 	{
-		WinInstanceData *instData = window->winGetInstanceData();
+		WinInstanceData* instData = window->winGetInstanceData();
 
-		if( !instData->m_decoratedNameString.isEmpty() )
+		if (!instData->m_decoratedNameString.isEmpty())
+		{
 			name = instData->m_decoratedNameString;
+		}
 		else
+		{
 			name = noNameWindowString;
-
+		}
 	}
-	SetWindowText( GetDlgItem( dialog, STATIC_WINDOW ), name.str() );
-
+	SetWindowText(GetDlgItem(dialog, STATIC_WINDOW), name.str());
 }
 
 // loadUserWindows ============================================================
 /** Given the window list passed in, load the list box passed with the
-	* names of USER windows found in the hierarchy. */
+ * names of USER windows found in the hierarchy. */
 //=============================================================================
-static void loadUserWindows( HWND listbox, GameWindow *root )
+static void loadUserWindows(HWND listbox, GameWindow* root)
 {
-
 	// end recursion
-	if( root == nullptr )
+	if (root == nullptr)
+	{
 		return;
+	}
 
 	// is this a candidate
-	if( TheEditor->windowIsGadget( root ) == FALSE )
+	if (TheEditor->windowIsGadget(root) == FALSE)
 	{
-		WinInstanceData *instData = root->winGetInstanceData();
+		WinInstanceData* instData = root->winGetInstanceData();
 		Int index;
 
 		AsciiString name;
@@ -223,48 +248,49 @@ static void loadUserWindows( HWND listbox, GameWindow *root )
 		// add name to the listbox, if there is no name we can only put
 		// an unnamed label in there
 		//
-		if( !instData->m_decoratedNameString.isEmpty() )
+		if (!instData->m_decoratedNameString.isEmpty())
+		{
 			name = instData->m_decoratedNameString;
+		}
 		else
+		{
 			name = noNameWindowString;
-		index = SendMessage( listbox, LB_ADDSTRING, 0, (LPARAM)name.str() );
+		}
+		index = SendMessage(listbox, LB_ADDSTRING, 0, (LPARAM)name.str());
 
 		// add data pointer to the window at the index just added
-		SendMessage( listbox, LB_SETITEMDATA, index, (LPARAM)root );
+		SendMessage(listbox, LB_SETITEMDATA, index, (LPARAM)root);
 
 		// check the children
-		loadUserWindows( listbox, root->winGetChild() );
-
+		loadUserWindows(listbox, root->winGetChild());
 	}
 
 	// check the rest of the list
-	loadUserWindows( listbox, root->winGetNext() );
-
+	loadUserWindows(listbox, root->winGetNext());
 }
 
 //-------------------------------------------------------------------------------------------------
 /** save the layout callbacks */
 //-------------------------------------------------------------------------------------------------
-static void saveLayoutCallbacks( HWND dialog )
+static void saveLayoutCallbacks(HWND dialog)
 {
-	char buffer[ MAX_LAYOUT_FUNC_LEN ];
+	char buffer[MAX_LAYOUT_FUNC_LEN];
 	Int sel;
 
 	// layout init
-	sel = SendDlgItemMessage( dialog, COMBO_INIT, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_INIT, CB_GETLBTEXT, sel, (LPARAM)buffer );
-	TheEditor->setLayoutInit( AsciiString(buffer) );
+	sel = SendDlgItemMessage(dialog, COMBO_INIT, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_INIT, CB_GETLBTEXT, sel, (LPARAM)buffer);
+	TheEditor->setLayoutInit(AsciiString(buffer));
 
 	// layout update
-	sel = SendDlgItemMessage( dialog, COMBO_UPDATE, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_UPDATE, CB_GETLBTEXT, sel, (LPARAM)buffer );
-	TheEditor->setLayoutUpdate( AsciiString(buffer) );
+	sel = SendDlgItemMessage(dialog, COMBO_UPDATE, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_UPDATE, CB_GETLBTEXT, sel, (LPARAM)buffer);
+	TheEditor->setLayoutUpdate(AsciiString(buffer));
 
 	// layout shutdown
-	sel = SendDlgItemMessage( dialog, COMBO_SHUTDOWN, CB_GETCURSEL, 0, 0 );
-	SendDlgItemMessage( dialog, COMBO_SHUTDOWN, CB_GETLBTEXT, sel, (LPARAM)buffer );
-	TheEditor->setLayoutShutdown( AsciiString(buffer) );
-
+	sel = SendDlgItemMessage(dialog, COMBO_SHUTDOWN, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(dialog, COMBO_SHUTDOWN, CB_GETLBTEXT, sel, (LPARAM)buffer);
+	TheEditor->setLayoutShutdown(AsciiString(buffer));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -274,117 +300,98 @@ static void saveLayoutCallbacks( HWND dialog )
 // CallbackEditorDialogProc ===================================================
 /** Dialog procedure for grid settings dialog */
 //=============================================================================
-BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
-																				WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK CallbackEditorDialogProc(HWND hWndDialog, UINT message,
+                                       WPARAM wParam, LPARAM lParam)
 {
-
-	switch( message )
+	switch (message)
 	{
-
 		// ------------------------------------------------------------------------
 		case WM_INITDIALOG:
 		{
-
 			// load the combos with the callbacks
-			InitCallbackCombos( hWndDialog, nullptr );
+			InitCallbackCombos(hWndDialog, nullptr);
 
 			// select the none string at the top index in each combo
-			SendDlgItemMessage( hWndDialog, COMBO_SYSTEM, CB_SETCURSEL, 0, 0 );
-			SendDlgItemMessage( hWndDialog, COMBO_INPUT, CB_SETCURSEL, 0, 0 );
-			SendDlgItemMessage( hWndDialog, COMBO_TOOLTIP, CB_SETCURSEL, 0, 0 );
-			SendDlgItemMessage( hWndDialog, COMBO_DRAW, CB_SETCURSEL, 0, 0 );
+			SendDlgItemMessage(hWndDialog, COMBO_SYSTEM, CB_SETCURSEL, 0, 0);
+			SendDlgItemMessage(hWndDialog, COMBO_INPUT, CB_SETCURSEL, 0, 0);
+			SendDlgItemMessage(hWndDialog, COMBO_TOOLTIP, CB_SETCURSEL, 0, 0);
+			SendDlgItemMessage(hWndDialog, COMBO_DRAW, CB_SETCURSEL, 0, 0);
 
 			// load the listbox with all the USER windows in the edit window
-			loadUserWindows( GetDlgItem( hWndDialog, LIST_WINDOWS ),
-											 TheWindowManager->winGetWindowList() );
+			loadUserWindows(GetDlgItem(hWndDialog, LIST_WINDOWS),
+			                TheWindowManager->winGetWindowList());
 
 			// no current window
-			setCurrentWindow( nullptr, hWndDialog );
+			setCurrentWindow(nullptr, hWndDialog);
 
 			return TRUE;
-
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
-			Int notifyCode = HIWORD( wParam );  // notification code
-//			Int controlID = LOWORD( wParam );  // control ID
-			HWND hWndControl = (HWND)lParam;  // control window handle
+		case WM_COMMAND:
+		{
+			Int notifyCode = HIWORD(wParam);    // notification code
+			//			Int controlID = LOWORD( wParam );  // control ID
+			HWND hWndControl = (HWND)lParam;    // control window handle
 
-      switch( LOWORD( wParam ) )
-      {
-
+			switch (LOWORD(wParam))
+			{
 				// --------------------------------------------------------------------
 				case LIST_WINDOWS:
 				{
-
-					switch( notifyCode )
+					switch (notifyCode)
 					{
-
 						// ----------------------------------------------------------------
 						case LBN_SELCHANGE:
 						{
 							Int selected;
-							GameWindow *win;
+							GameWindow* win;
 
 							// get the current selection of the window list
-							selected = SendMessage( hWndControl, LB_GETCURSEL, 0, 0 );
+							selected = SendMessage(hWndControl, LB_GETCURSEL, 0, 0);
 
 							// get the window of the selected listbox item
-							win = (GameWindow *)SendMessage( hWndControl, LB_GETITEMDATA,
-																							 selected, 0 );
-
+							win = (GameWindow*)SendMessage(hWndControl, LB_GETITEMDATA,
+							                               selected, 0);
 
 							// sanity
-							DEBUG_ASSERTCRASH( win, ("null window set in listbox item data") );
+							DEBUG_ASSERTCRASH(win, ("null window set in listbox item data"));
 
 							// save the callbacks for the curent window selected
-							SaveCallbacks( currentWindow, hWndDialog );
+							SaveCallbacks(currentWindow, hWndDialog);
 
 							// set the current window to the new selection
-							setCurrentWindow( win, hWndDialog );
+							setCurrentWindow(win, hWndDialog);
 
 							break;
-
 						}
-
 					}
 
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
-
 					// save callbacks, set current window to empty and end dialog
-					SaveCallbacks( currentWindow, hWndDialog );
-					setCurrentWindow( nullptr, hWndDialog );
+					SaveCallbacks(currentWindow, hWndDialog);
+					setCurrentWindow(nullptr, hWndDialog);
 
 					// save the layout callbacks
-					saveLayoutCallbacks( hWndDialog );
+					saveLayoutCallbacks(hWndDialog);
 
 					// end dialog
-					EndDialog( hWndDialog, TRUE );
+					EndDialog(hWndDialog, TRUE);
 
-          break;
-
+					break;
 				}
+			}
 
-      }
-
-      return 0;
-
-    }
+			return 0;
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
-
-  }
-
+	}
 }
-
-

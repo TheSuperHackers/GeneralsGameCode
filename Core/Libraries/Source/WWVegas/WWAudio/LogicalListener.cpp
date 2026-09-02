@@ -38,152 +38,139 @@
 #include "SoundChunkIDs.h"
 #include "WWSaveLoad/persistfactory.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //	Static member initialization
 //////////////////////////////////////////////////////////////////////////////////
-uint32		LogicalListenerClass::m_OldestTimestamp	= 0;
-uint32		LogicalListenerClass::m_NewestTimestamp	= 1;
-float			LogicalListenerClass::m_GlobalScale			= 1.0F;
-
+uint32 LogicalListenerClass::m_OldestTimestamp = 0;
+uint32 LogicalListenerClass::m_NewestTimestamp = 1;
+float LogicalListenerClass::m_GlobalScale = 1.0F;
 
 //////////////////////////////////////////////////////////////////////////////////
 //	Static factories
 //////////////////////////////////////////////////////////////////////////////////
 SimplePersistFactoryClass<LogicalListenerClass, CHUNKID_LOGICALLISTENER> _LogicalListenerPersistFactory;
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //	Save/Load constants
 //////////////////////////////////////////////////////////////////////////////////
 enum
 {
-	CHUNKID_VARIABLES			= 0x03270542,
+	CHUNKID_VARIABLES = 0x03270542,
 	CHUNKID_BASE_CLASS
 };
 
 enum
 {
-	XXXVARID_DROP_OFF_RADIUS		= 0x01,
+	XXXVARID_DROP_OFF_RADIUS = 0x01,
 	VARID_TYPE_MASK,
 	VARID_XXX1,
 	VARID_POSITION,
 	VARID_SCALE
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	LogicalListenerClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalListenerClass::LogicalListenerClass ()
-	:	m_Scale (1),
-		m_TypeMask (0),
-		m_Position (0, 0, 0),
-		m_Timestamp (0)
+LogicalListenerClass::LogicalListenerClass()
+  : m_Scale(1)
+  , m_TypeMask(0)
+  , m_Position(0, 0, 0)
+  , m_Timestamp(0)
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	~LogicalListenerClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalListenerClass::~LogicalListenerClass ()
+LogicalListenerClass::~LogicalListenerClass()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Add_To_Scene
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
+void LogicalListenerClass::Add_To_Scene(bool /*start_playing*/)
 {
-	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
-	if ((scene != nullptr) && (m_Scene == nullptr)) {
-
+	SoundSceneClass* scene = WWAudioClass::Get_Instance()->Get_Sound_Scene();
+	if ((scene != nullptr) && (m_Scene == nullptr))
+	{
 		//
 		//	Add this listener to the culling system
 		//
 		m_Scene = scene;
-		scene->Add_Logical_Listener (this);
+		scene->Add_Logical_Listener(this);
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Remove_From_Scene
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void
-LogicalListenerClass::Remove_From_Scene ()
+void LogicalListenerClass::Remove_From_Scene()
 {
-	if (m_Scene != nullptr) {
-
+	if (m_Scene != nullptr)
+	{
 		//
 		//	Remove this listener from the culling system
 		//
-		m_Scene->Remove_Logical_Listener (this);
+		m_Scene->Remove_Logical_Listener(this);
 		m_Scene = nullptr;
 		m_PhysWrapper = nullptr;
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Factory
 //
 /////////////////////////////////////////////////////////////////////////////////
-const PersistFactoryClass &
-LogicalListenerClass::Get_Factory () const
+const PersistFactoryClass&
+LogicalListenerClass::Get_Factory() const
 {
 	return _LogicalListenerPersistFactory;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Save
 //
 //////////////////////////////////////////////////////////////////////////////////
-bool
-LogicalListenerClass::Save (ChunkSaveClass &csave)
+bool LogicalListenerClass::Save(ChunkSaveClass& csave)
 {
-	csave.Begin_Chunk (CHUNKID_BASE_CLASS);
-		SoundSceneObjClass::Save (csave);
-	csave.End_Chunk ();
+	csave.Begin_Chunk(CHUNKID_BASE_CLASS);
+	SoundSceneObjClass::Save(csave);
+	csave.End_Chunk();
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);
+	csave.Begin_Chunk(CHUNKID_VARIABLES);
 
-		WRITE_MICRO_CHUNK (csave, VARID_SCALE, m_Scale);
-		WRITE_MICRO_CHUNK (csave, VARID_TYPE_MASK, m_TypeMask);
-		WRITE_MICRO_CHUNK (csave, VARID_POSITION, m_Position);
+	WRITE_MICRO_CHUNK(csave, VARID_SCALE, m_Scale);
+	WRITE_MICRO_CHUNK(csave, VARID_TYPE_MASK, m_TypeMask);
+	WRITE_MICRO_CHUNK(csave, VARID_POSITION, m_Position);
 
-	csave.End_Chunk ();
+	csave.End_Chunk();
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Load
 //
 //////////////////////////////////////////////////////////////////////////////////
-bool
-LogicalListenerClass::Load (ChunkLoadClass &cload)
+bool LogicalListenerClass::Load(ChunkLoadClass& cload)
 {
-	while (cload.Open_Chunk ()) {
-		switch (cload.Cur_Chunk_ID ()) {
-
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case CHUNKID_BASE_CLASS:
-				PersistClass::Load (cload);
+				PersistClass::Load(cload);
 				break;
 
 			case CHUNKID_VARIABLES:
@@ -191,23 +178,23 @@ LogicalListenerClass::Load (ChunkLoadClass &cload)
 				//
 				//	Read all the variables from their micro-chunks
 				//
-				while (cload.Open_Micro_Chunk ()) {
-					switch (cload.Cur_Micro_Chunk_ID ()) {
-
-						READ_MICRO_CHUNK (cload, VARID_SCALE, m_Scale);
-						READ_MICRO_CHUNK (cload, VARID_TYPE_MASK, m_TypeMask);
-						READ_MICRO_CHUNK (cload, VARID_POSITION, m_Position);
+				while (cload.Open_Micro_Chunk())
+				{
+					switch (cload.Cur_Micro_Chunk_ID())
+					{
+						READ_MICRO_CHUNK(cload, VARID_SCALE, m_Scale);
+						READ_MICRO_CHUNK(cload, VARID_TYPE_MASK, m_TypeMask);
+						READ_MICRO_CHUNK(cload, VARID_POSITION, m_Position);
 					}
 
-					cload.Close_Micro_Chunk ();
+					cload.Close_Micro_Chunk();
 				}
 			}
 			break;
 		}
 
-		cload.Close_Chunk ();
+		cload.Close_Chunk();
 	}
 
 	return true;
 }
-

@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -42,87 +42,90 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpecialAbility::SpecialAbility( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+SpecialAbility::SpecialAbility(Thing* thing, const ModuleData* moduleData)
+  : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SpecialAbility::~SpecialAbility()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void SpecialAbility::doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
+	{
 		return;
+	}
 
 	// sanity
-	if( loc == nullptr )
+	if (loc == nullptr)
+	{
 		return;
+	}
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
+void SpecialAbility::doSpecialPowerAtObject(Object* obj, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
+	{
 		return;
+	}
 
 	if (!obj)
+	{
 		return;
+	}
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtObject( obj, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject(obj, commandOptions);
 }
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::doSpecialPower( UnsignedInt commandOptions )
+void SpecialAbility::doSpecialPower(UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
+	{
 		return;
+	}
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPower( commandOptions );
+	SpecialPowerModule::doSpecialPower(commandOptions);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::crc( Xfer *xfer )
+void SpecialAbility::crc(Xfer* xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
-
+	SpecialPowerModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::xfer( Xfer *xfer )
+void SpecialAbility::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
+	SpecialPowerModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -130,8 +133,6 @@ void SpecialAbility::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SpecialAbility::loadPostProcess()
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
-
 }

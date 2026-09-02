@@ -49,61 +49,63 @@ class W3DExclusionListClass;
 /*
 ** An entry for a table of anims not found, so we can quickly determine their loss
 */
-class MissingAnimClass : public HashableClass {
-
+class MissingAnimClass : public HashableClass
+{
 public:
-	MissingAnimClass( const char * name ) : Name( name ) {}
-	virtual	~MissingAnimClass() override {}
+	MissingAnimClass(const char* name)
+	  : Name(name)
+	{}
+	virtual ~MissingAnimClass() override {}
 
-	virtual	const char * Get_Key() override { return Name;	}
+	virtual const char* Get_Key() override { return Name; }
 
 private:
-	StringClass	Name;
-
+	StringClass Name;
 };
 
 /*
-	HAnimManagerClass
+  HAnimManagerClass
 
-	This class is used to keep track of all of the motion data.
+  This class is used to keep track of all of the motion data.
 */
 
 class HAnimManagerClass
 {
-
 public:
 	HAnimManagerClass();
 	~HAnimManagerClass();
 
-	int			 		Load_Anim(ChunkLoadClass & cload);
-	HAnimClass *		Get_Anim(const char * name);
-	HAnimClass *		Peek_Anim(const char * name);
-	bool					Add_Anim(HAnimClass *new_anim);
-	void			 		Free_All_Anims();
-	void			 		Free_All_Anims_With_Exclusion_List(const W3DExclusionListClass & exclusion_list);
-	void					Create_Asset_List(DynamicVectorClass<StringClass> & exclusion_list);
+	int Load_Anim(ChunkLoadClass& cload);
+	HAnimClass* Get_Anim(const char* name);
+	HAnimClass* Peek_Anim(const char* name);
+	bool Add_Anim(HAnimClass* new_anim);
+	void Free_All_Anims();
+	void Free_All_Anims_With_Exclusion_List(const W3DExclusionListClass& exclusion_list);
+	void Create_Asset_List(DynamicVectorClass<StringClass>& exclusion_list);
 
-	void					Register_Missing( const char * name );
-	bool					Is_Missing( const char * name );
-	void					Reset_Missing();
+	void Register_Missing(const char* name);
+	bool Is_Missing(const char* name);
+	void Reset_Missing();
 
 private:
-	int					Load_Compressed_Anim(ChunkLoadClass & cload);
-	int					Load_Raw_Anim(ChunkLoadClass & cload);
-	int					Load_Morph_Anim(ChunkLoadClass & cload);
+	int Load_Compressed_Anim(ChunkLoadClass& cload);
+	int Load_Raw_Anim(ChunkLoadClass& cload);
+	int Load_Morph_Anim(ChunkLoadClass& cload);
 
-	HashTableClass	*	AnimPtrTable;
-	HashTableClass	*	MissingAnimTable;
+	HashTableClass* AnimPtrTable;
+	HashTableClass* MissingAnimTable;
 
-	friend	class		HAnimManagerIterator;
+	friend class HAnimManagerIterator;
 };
-
 
 /*
 ** An Iterator to get to all loaded HAnims in a HAnimManager
 */
-class HAnimManagerIterator : public HashTableIteratorClass {
+class HAnimManagerIterator : public HashTableIteratorClass
+{
 public:
-	HAnimManagerIterator( HAnimManagerClass & manager ) : HashTableIteratorClass( *manager.AnimPtrTable ) {}
-	HAnimClass * Get_Current_Anim();
+	HAnimManagerIterator(HAnimManagerClass& manager)
+	  : HashTableIteratorClass(*manager.AnimPtrTable)
+	{}
+	HAnimClass* Get_Current_Anim();
 };

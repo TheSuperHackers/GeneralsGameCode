@@ -51,8 +51,6 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-
-
 /**********************************************************************************************
 ** ObjectPoolClass
 **
@@ -68,31 +66,26 @@
 ** NodePool.Free_Object(node);
 **
 **********************************************************************************************/
-template<class T,int BLOCK_SIZE = 64>
+template <class T, int BLOCK_SIZE = 64>
 class ObjectPoolClass
 {
 public:
-
 	ObjectPoolClass();
 	~ObjectPoolClass();
 
-	T *		Allocate_Object();
-	void		Free_Object(T * obj);
+	T* Allocate_Object();
+	void Free_Object(T* obj);
 
-	T *		Allocate_Object_Memory();
-	void		Free_Object_Memory(T * obj);
+	T* Allocate_Object_Memory();
+	void Free_Object_Memory(T* obj);
 
 protected:
-
-	T	*		FreeListHead;
-	uint32 *	BlockListHead;
-	int		FreeObjectCount;
-	int		TotalObjectCount;
+	T* FreeListHead;
+	uint32* BlockListHead;
+	int FreeObjectCount;
+	int TotalObjectCount;
 	FastCriticalSectionClass ObjectPoolCS;
-
 };
-
-
 
 /**********************************************************************************************
 ** AutoPoolClass
@@ -127,23 +120,20 @@ protected:
 ** }
 **
 **********************************************************************************************/
-template<class T, int BLOCK_SIZE = 64>
+template <class T, int BLOCK_SIZE = 64>
 class AutoPoolClass
 {
 public:
-
-	static void *	operator new(size_t size);
-	static void		operator delete(void * memory);
+	static void* operator new(size_t size);
+	static void operator delete(void* memory);
 
 private:
-
 	// not implemented
-	static void *	operator new [] (size_t size);
-	static void		operator delete[] (void * memory);
+	static void* operator new[](size_t size);
+	static void operator delete[](void* memory);
 
 	// This must be staticly declared by user
-	static ObjectPoolClass<T,BLOCK_SIZE>	Allocator;
-
+	static ObjectPoolClass<T, BLOCK_SIZE> Allocator;
 };
 
 /*
@@ -152,14 +142,13 @@ private:
 ** the class.
 */
 #if defined(_MSC_VER) && _MSC_VER < 1300
-#define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
-ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
+	#define DEFINE_AUTO_POOL(T, BLOCKSIZE) \
+		ObjectPoolClass<T, BLOCKSIZE> AutoPoolClass<T, BLOCKSIZE>::Allocator;
 #else
-#define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
-template<>\
-ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
+	#define DEFINE_AUTO_POOL(T, BLOCKSIZE) \
+		template <> \
+		ObjectPoolClass<T, BLOCKSIZE> AutoPoolClass<T, BLOCKSIZE>::Allocator = {}
 #endif
-
 
 /***********************************************************************************************
  * ObjectPoolClass::ObjectPoolClass -- constructor for ObjectPoolClass                         *
@@ -174,12 +163,12 @@ ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-template<class T,int BLOCK_SIZE>
-ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
-	FreeListHead(nullptr),
-	BlockListHead(nullptr),
-	FreeObjectCount(0),
-	TotalObjectCount(0)
+template <class T, int BLOCK_SIZE>
+ObjectPoolClass<T, BLOCK_SIZE>::ObjectPoolClass()
+  : FreeListHead(nullptr)
+  , BlockListHead(nullptr)
+  , FreeObjectCount(0)
+  , TotalObjectCount(0)
 {
 }
 
@@ -196,24 +185,23 @@ ObjectPoolClass<T,BLOCK_SIZE>::ObjectPoolClass() :
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-template<class T,int BLOCK_SIZE>
-ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass()
+template <class T, int BLOCK_SIZE>
+ObjectPoolClass<T, BLOCK_SIZE>::~ObjectPoolClass()
 {
 	// assert that the user gave back all of the memory he was using
 	WWASSERT(FreeObjectCount == TotalObjectCount);
 
 	// delete all of the blocks we allocated
 	int block_count = 0;
-	while (BlockListHead != nullptr) {
-		uint32 * next_block = *(uint32 **)BlockListHead;
+	while (BlockListHead != nullptr)
+	{
+		uint32* next_block = *(uint32**)BlockListHead;
 		::operator delete(BlockListHead);
 		BlockListHead = next_block;
 		block_count++;
 	}
 	WWASSERT(block_count == TotalObjectCount / BLOCK_SIZE);
 }
-
-
 
 /***********************************************************************************************
  * ObjectPoolClass::Allocate_Object -- allocates an object for the user                        *
@@ -229,11 +217,11 @@ ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass()
  * HISTORY:                                                                                    *
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-template<class T,int BLOCK_SIZE>
-T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object()
+template <class T, int BLOCK_SIZE>
+T* ObjectPoolClass<T, BLOCK_SIZE>::Allocate_Object()
 {
 	// allocate memory for the object
-	T * obj = Allocate_Object_Memory();
+	T* obj = Allocate_Object_Memory();
 
 	// construct the object in-place
 	return new (obj) T;
@@ -251,8 +239,8 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object()
  * HISTORY:                                                                                    *
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-template<class T,int BLOCK_SIZE>
-void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
+template <class T, int BLOCK_SIZE>
+void ObjectPoolClass<T, BLOCK_SIZE>::Free_Object(T* obj)
 {
 	// destruct the object
 	obj->T::~T();
@@ -273,37 +261,37 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
  * HISTORY:                                                                                    *
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-template<class T,int BLOCK_SIZE>
-T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
+template <class T, int BLOCK_SIZE>
+T* ObjectPoolClass<T, BLOCK_SIZE>::Allocate_Object_Memory()
 {
 	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
 
-	if ( FreeListHead == nullptr ) {
-
+	if (FreeListHead == nullptr)
+	{
 		// No free objects, allocate another block
-		uint32 * tmp_block_head = BlockListHead;
-		BlockListHead = (uint32*)::operator new( sizeof(T) * BLOCK_SIZE + sizeof(uint32 *));
+		uint32* tmp_block_head = BlockListHead;
+		BlockListHead = (uint32*)::operator new(sizeof(T) * BLOCK_SIZE + sizeof(uint32*));
 		// Link this block into the block list
-		*(void **)BlockListHead = tmp_block_head;
+		*(void**)BlockListHead = tmp_block_head;
 
 		// Link the objects in the block into the free object list
 		FreeListHead = (T*)(BlockListHead + 1);
-		for ( int i = 0; i < BLOCK_SIZE; i++ ) {
-			*(T**)(&(FreeListHead[i])) = &(FreeListHead[i+1]);	// link up the elements
+		for (int i = 0; i < BLOCK_SIZE; i++)
+		{
+			*(T**)(&(FreeListHead[i])) = &(FreeListHead[i + 1]);    // link up the elements
 		}
-		*(T**)(&(FreeListHead[BLOCK_SIZE-1])) = nullptr;				// Mark the end
+		*(T**)(&(FreeListHead[BLOCK_SIZE - 1])) = nullptr;    // Mark the end
 
 		FreeObjectCount += BLOCK_SIZE;
 		TotalObjectCount += BLOCK_SIZE;
 	}
 
-	T * obj = FreeListHead;						// Get the next free object
-	FreeListHead = *(T**)(FreeListHead);	// Bump the Head
+	T* obj = FreeListHead;    // Get the next free object
+	FreeListHead = *(T**)(FreeListHead);    // Bump the Head
 	FreeObjectCount--;
 
 	return obj;
 }
-
 
 /***********************************************************************************************
  * ObjectPoolClass::Free_Object_Memory -- internal function, returns object's memory to the po *
@@ -317,17 +305,16 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory()
  * HISTORY:                                                                                    *
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-template<class T,int BLOCK_SIZE>
-void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
+template <class T, int BLOCK_SIZE>
+void ObjectPoolClass<T, BLOCK_SIZE>::Free_Object_Memory(T* obj)
 {
 	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
 
 	WWASSERT(obj != nullptr);
-	*(T**)(obj) = FreeListHead;		// Link to the Head
-	FreeListHead = obj;					// Set the Head
+	*(T**)(obj) = FreeListHead;    // Link to the Head
+	FreeListHead = obj;    // Set the Head
 	FreeObjectCount++;
 }
-
 
 /***********************************************************************************************
  * AutoPoolClass::operator new -- overridden new which calls the internal ObjectPool            *
@@ -341,13 +328,12 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
  * HISTORY:                                                                                    *
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int BLOCK_SIZE>
-void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
+template <class T, int BLOCK_SIZE>
+void* AutoPoolClass<T, BLOCK_SIZE>::operator new(size_t size)
 {
 	WWASSERT(size == sizeof(T));
-	return (void *)(Allocator.Allocate_Object_Memory());
+	return (void*)(Allocator.Allocate_Object_Memory());
 }
-
 
 /***********************************************************************************************
  * AutoPoolClass::operator delete -- overridden delete which calls the internal ObjectPool      *
@@ -361,9 +347,12 @@ void * AutoPoolClass<T,BLOCK_SIZE>::operator new( size_t size )
  * HISTORY:                                                                                    *
  *   7/29/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int BLOCK_SIZE>
-void AutoPoolClass<T,BLOCK_SIZE>::operator delete( void * memory )
+template <class T, int BLOCK_SIZE>
+void AutoPoolClass<T, BLOCK_SIZE>::operator delete(void* memory)
 {
-	if ( memory == nullptr ) return;
+	if (memory == nullptr)
+	{
+		return;
+	}
 	Allocator.Free_Object_Memory((T*)memory);
 }

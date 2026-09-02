@@ -54,18 +54,15 @@ public:
 //-------------------------------------------------------------------------------------------------
 class EjectPilotDie : public DieModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( EjectPilotDie, "EjectPilotDie"  )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( EjectPilotDie, EjectPilotDieModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EjectPilotDie, "EjectPilotDie")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(EjectPilotDie, EjectPilotDieModuleData);
 
 public:
-
-	EjectPilotDie( Thing *thing, const ModuleData* moduleData );
+	EjectPilotDie(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static void ejectPilot(const ObjectCreationList* ocl, const Object* dyingObject, const Object* damageDealer);
 
-	virtual void onDie( const DamageInfo *damageInfo ) override;
-	virtual DieModuleInterface* getEjectPilotDieInterface() override {return this; }
-
+	virtual void onDie(const DamageInfo* damageInfo) override;
+	virtual DieModuleInterface* getEjectPilotDieInterface() override { return this; }
 };

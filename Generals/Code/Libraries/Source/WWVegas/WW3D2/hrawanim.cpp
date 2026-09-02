@@ -67,18 +67,17 @@
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-NodeMotionStruct::NodeMotionStruct() :
-	X(nullptr),
-	Y(nullptr),
-	Z(nullptr),
-	XR(nullptr),
-	YR(nullptr),
-	ZR(nullptr),
-	Q(nullptr),
-	Vis(nullptr)
+NodeMotionStruct::NodeMotionStruct()
+  : X(nullptr)
+  , Y(nullptr)
+  , Z(nullptr)
+  , XR(nullptr)
+  , YR(nullptr)
+  , ZR(nullptr)
+  , Q(nullptr)
+  , Vis(nullptr)
 {
 }
-
 
 /***********************************************************************************************
  * NodeMotionStruct::~NodeMotionStruct -- destructor                                           *
@@ -104,7 +103,6 @@ NodeMotionStruct::~NodeMotionStruct()
 	delete Vis;
 }
 
-
 /***********************************************************************************************
  * HRawAnimClass::HRawAnimClass -- constructor                                                       *
  *                                                                                             *
@@ -117,16 +115,15 @@ NodeMotionStruct::~NodeMotionStruct()
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HRawAnimClass::HRawAnimClass() :
-	NumFrames(0),
-	NumNodes(0),
-	FrameRate(0),
-	NodeMotion(nullptr)
+HRawAnimClass::HRawAnimClass()
+  : NumFrames(0)
+  , NumNodes(0)
+  , FrameRate(0)
+  , NodeMotion(nullptr)
 {
-	memset(Name,0,W3D_NAME_LEN);
-	memset(HierarchyName,0,W3D_NAME_LEN);
+	memset(Name, 0, W3D_NAME_LEN);
+	memset(HierarchyName, 0, W3D_NAME_LEN);
 }
-
 
 /***********************************************************************************************
  * HRawAnimClass::~HRawAnimClass -- Destructor                                                       *
@@ -144,7 +141,6 @@ HRawAnimClass::~HRawAnimClass()
 {
 	Free();
 }
-
 
 /***********************************************************************************************
  * HRawAnimClass::Free -- De-allocates all memory in use                                          *
@@ -164,7 +160,6 @@ void HRawAnimClass::Free()
 	NodeMotion = nullptr;
 }
 
-
 /***********************************************************************************************
  * HRawAnimClass::Load -- Loads hierarchy animation from a file                                   *
  *                                                                                             *
@@ -177,7 +172,7 @@ void HRawAnimClass::Free()
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
+int HRawAnimClass::Load_W3D(ChunkLoadClass& cload)
 {
 	bool pre30 = false;
 
@@ -189,15 +184,20 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	**	Open the first chunk, it should be the animation header
 	*/
-	if (!cload.Open_Chunk()) return LOAD_ERROR;
+	if (!cload.Open_Chunk())
+	{
+		return LOAD_ERROR;
+	}
 
-	if (cload.Cur_Chunk_ID() != W3D_CHUNK_ANIMATION_HEADER) {
+	if (cload.Cur_Chunk_ID() != W3D_CHUNK_ANIMATION_HEADER)
+	{
 		// ERROR: Expected Animation Header!
 		return LOAD_ERROR;
 	}
 
 	W3dAnimHeaderStruct aheader;
-	if (cload.Read(&aheader,sizeof(W3dAnimHeaderStruct)) != sizeof(W3dAnimHeaderStruct)) {
+	if (cload.Read(&aheader, sizeof(W3dAnimHeaderStruct)) != sizeof(W3dAnimHeaderStruct))
+	{
 		return LOAD_ERROR;
 	}
 
@@ -207,7 +207,8 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 	** Check if the animation version is pre-3.0.  If so, we need to add 1 to all of the
 	** bone indexes.  In version 3.0 onward, all htree's use bone 0 as the root node.
 	*/
-	if (aheader.Version < W3D_MAKE_VERSION(3,0)) {
+	if (aheader.Version < W3D_MAKE_VERSION(3, 0))
+	{
 		pre30 = true;
 	}
 
@@ -219,8 +220,9 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 	static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(aheader.HierarchyName), "Incorrect array size");
 	strcpy(HierarchyName, aheader.HierarchyName);
 
-	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
-	if (base_pose == nullptr) {
+	HTreeClass* base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
+	if (base_pose == nullptr)
+	{
 		goto Error;
 	}
 	NumNodes = base_pose->Num_Pivots();
@@ -228,32 +230,37 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 	NumFrames = aheader.NumFrames;
 	FrameRate = aheader.FrameRate;
 
-	NodeMotion = W3DNEWARRAY NodeMotionStruct[ NumNodes ];
-	if (NodeMotion == nullptr) {
+	NodeMotion = W3DNEWARRAY NodeMotionStruct[NumNodes];
+	if (NodeMotion == nullptr)
+	{
 		goto Error;
 	}
 
 	/*
 	** Now, read in all of the other chunks (motion channels).
 	*/
-	while (cload.Open_Chunk()) {
-
-		switch (cload.Cur_Chunk_ID()) {
-
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case W3D_CHUNK_ANIMATION_CHANNEL:
 			{
 				MotionChannelClass* newchan = nullptr;
-				if (!read_channel(cload,&newchan,pre30)) {
+				if (!read_channel(cload, &newchan, pre30))
+				{
 					goto Error;
 				}
 
 				// (gth) if the channel is referring to a node which is outside the range,
 				// just throw away the channel.  This probably means the animation must
 				// be re-exported
-				if (newchan->Get_Pivot() < NumNodes) {
+				if (newchan->Get_Pivot() < NumNodes)
+				{
 					add_channel(newchan);
-				} else {
-					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.",Name));
+				}
+				else
+				{
+					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.", Name));
 					delete newchan;
 				}
 				break;
@@ -262,17 +269,21 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 			case W3D_CHUNK_BIT_CHANNEL:
 			{
 				BitChannelClass* newbitchan = nullptr;
-				if (!read_bit_channel(cload,&newbitchan,pre30)) {
+				if (!read_bit_channel(cload, &newbitchan, pre30))
+				{
 					goto Error;
 				}
 
 				// (gth) if the channel is referring to a node which is outside the range,
 				// just throw away the channel.  This probably means the animation must
 				// be re-exported
-				if (newbitchan->Get_Pivot() < NumNodes) {
+				if (newbitchan->Get_Pivot() < NumNodes)
+				{
 					add_bit_channel(newbitchan);
-				} else {
-					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.",Name));
+				}
+				else
+				{
+					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.", Name));
 					delete newbitchan;
 				}
 				break;
@@ -290,7 +301,6 @@ Error:
 
 	Free();
 	return LOAD_ERROR;
-
 }
 
 /***********************************************************************************************
@@ -305,7 +315,7 @@ Error:
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HRawAnimClass::read_channel(ChunkLoadClass & cload,MotionChannelClass * * newchan,bool pre30)
+bool HRawAnimClass::read_channel(ChunkLoadClass& cload, MotionChannelClass** newchan, bool pre30)
 {
 	MotionChannelClass* channel = W3DNEW MotionChannelClass;
 	if (channel->Load_W3D(cload))
@@ -337,7 +347,7 @@ bool HRawAnimClass::read_channel(ChunkLoadClass & cload,MotionChannelClass * * n
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HRawAnimClass::add_channel(MotionChannelClass * newchan)
+void HRawAnimClass::add_channel(MotionChannelClass* newchan)
 {
 	int idx = newchan->Get_Pivot();
 
@@ -371,9 +381,7 @@ void HRawAnimClass::add_channel(MotionChannelClass * newchan)
 			NodeMotion[idx].Q = newchan;
 			break;
 	}
-
 }
-
 
 /***********************************************************************************************
  * HRawAnimClass::read_bit_channel -- read a bit channel from the file                            *
@@ -387,7 +395,7 @@ void HRawAnimClass::add_channel(MotionChannelClass * newchan)
  * HISTORY:                                                                                    *
  *   1/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool HRawAnimClass::read_bit_channel(ChunkLoadClass & cload,BitChannelClass * * newchan,bool pre30)
+bool HRawAnimClass::read_bit_channel(ChunkLoadClass& cload, BitChannelClass** newchan, bool pre30)
 {
 	BitChannelClass* channel = W3DNEW BitChannelClass;
 	if (channel->Load_W3D(cload))
@@ -407,7 +415,6 @@ bool HRawAnimClass::read_bit_channel(ChunkLoadClass & cload,BitChannelClass * * 
 	}
 }
 
-
 /***********************************************************************************************
  * HRawAnimClass::add_bit_channel -- install a bit channel into the animation                     *
  *                                                                                             *
@@ -420,7 +427,7 @@ bool HRawAnimClass::read_bit_channel(ChunkLoadClass & cload,BitChannelClass * * 
  * HISTORY:                                                                                    *
  *   1/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void HRawAnimClass::add_bit_channel(BitChannelClass * newchan)
+void HRawAnimClass::add_bit_channel(BitChannelClass* newchan)
 {
 	int idx = newchan->Get_Pivot();
 
@@ -444,57 +451,66 @@ void HRawAnimClass::add_bit_channel(BitChannelClass * newchan)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame ) const
+void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame) const
 {
-	struct NodeMotionStruct * motion = &NodeMotion[pividx];
+	struct NodeMotionStruct* motion = &NodeMotion[pividx];
 
-	if ( (motion->X == nullptr) && (motion->Y == nullptr) && (motion->Z == nullptr) ) {
-		 trans.Set(0.0f,0.0f,0.0f);
+	if ((motion->X == nullptr) && (motion->Y == nullptr) && (motion->Z == nullptr))
+	{
+		trans.Set(0.0f, 0.0f, 0.0f);
 		return;
 	}
 
-//	int frame0 = (int)frame;
-	int frame0=WWMath::Float_To_Long(frame-0.499999f);
+	//	int frame0 = (int)frame;
+	int frame0 = WWMath::Float_To_Long(frame - 0.499999f);
 
 	int frame1 = frame0 + 1;
 
 	float ratio = frame - (float)frame0;
-	WWASSERT( (ratio >= -WWMATH_EPSILON) && (ratio < 1.0f + WWMATH_EPSILON) );
+	WWASSERT((ratio >= -WWMATH_EPSILON) && (ratio < 1.0f + WWMATH_EPSILON));
 
-	if ( frame1 >= NumFrames ) {
+	if (frame1 >= NumFrames)
+	{
 		frame1 = 0;
 	}
 
-	Vector3 trans0(0.0f,0.0f,0.0f);
+	Vector3 trans0(0.0f, 0.0f, 0.0f);
 
-	if (motion->X != nullptr) {
-		motion->X->Get_Vector((int)frame0,&(trans0[0]));
+	if (motion->X != nullptr)
+	{
+		motion->X->Get_Vector((int)frame0, &(trans0[0]));
 	}
-	if (motion->Y != nullptr) {
-		motion->Y->Get_Vector((int)frame0,&(trans0[1]));
+	if (motion->Y != nullptr)
+	{
+		motion->Y->Get_Vector((int)frame0, &(trans0[1]));
 	}
-	if (motion->Z != nullptr) {
-		motion->Z->Get_Vector((int)frame0,&(trans0[2]));
+	if (motion->Z != nullptr)
+	{
+		motion->Z->Get_Vector((int)frame0, &(trans0[2]));
 	}
 
-	if ( ratio == 0.0f ) {
-		trans=trans0;
+	if (ratio == 0.0f)
+	{
+		trans = trans0;
 		return;
 	}
 
-	Vector3 trans1(0.0f,0.0f,0.0f);
+	Vector3 trans1(0.0f, 0.0f, 0.0f);
 
-	if (motion->X != nullptr) {
-		motion->X->Get_Vector((int)frame1,&(trans1[0]));
+	if (motion->X != nullptr)
+	{
+		motion->X->Get_Vector((int)frame1, &(trans1[0]));
 	}
-	if (motion->Y != nullptr) {
-		motion->Y->Get_Vector((int)frame1,&(trans1[1]));
+	if (motion->Y != nullptr)
+	{
+		motion->Y->Get_Vector((int)frame1, &(trans1[1]));
 	}
-	if (motion->Z != nullptr) {
-		motion->Z->Get_Vector((int)frame1,&(trans1[2]));
+	if (motion->Z != nullptr)
+	{
+		motion->Z->Get_Vector((int)frame1, &(trans1[2]));
 	}
 
-	Vector3::Lerp( trans0, trans1, ratio, &trans );
+	Vector3::Lerp(trans0, trans1, ratio, &trans);
 }
 
 /***********************************************************************************************
@@ -509,16 +525,16 @@ void HRawAnimClass::Get_Translation(Vector3& trans, int pividx, float frame ) co
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
+void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx, float frame) const
 {
-//	int frame0 = (int)frame;
-	int frame0 = WWMath::Float_To_Long(frame-0.499999f);
+	//	int frame0 = (int)frame;
+	int frame0 = WWMath::Float_To_Long(frame - 0.499999f);
 	int frame1 = frame0 + 1;
 
 	float ratio = frame - (float)frame0;
-	WWASSERT( (ratio >= -WWMATH_EPSILON) && (ratio < 1.0f + WWMATH_EPSILON) );
+	WWASSERT((ratio >= -WWMATH_EPSILON) && (ratio < 1.0f + WWMATH_EPSILON));
 
-	if ( frame1 >= NumFrames )
+	if (frame1 >= NumFrames)
 	{
 		frame1 = 0;
 	}
@@ -539,11 +555,11 @@ void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 		q1.Set();
 	}
 
-	if ( ratio == 0.0f )
+	if (ratio == 0.0f)
 	{
 		q = q0;
 	}
-	else if ( ratio == 1.0f )
+	else if (ratio == 1.0f)
 	{
 		q = q1;
 	}
@@ -556,23 +572,26 @@ void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
 	float vals[4];
 
 	Quaternion q0(1);
-	if (NodeMotion[pividx].Q != nullptr) {
-		NodeMotion[pividx].Q->Get_Vector((int)frame0,vals);
-		q0.Set(vals[0],vals[1],vals[2],vals[3]);
+	if (NodeMotion[pividx].Q != nullptr)
+	{
+		NodeMotion[pividx].Q->Get_Vector((int)frame0, vals);
+		q0.Set(vals[0], vals[1], vals[2], vals[3]);
 	}
 
-	if ( ratio == 0.0f ) {
-		q=q0;
+	if (ratio == 0.0f)
+	{
+		q = q0;
 		return;
 	}
 
 	Quaternion q1(1);
-	if (NodeMotion[pividx].Q != nullptr) {
-		NodeMotion[pividx].Q->Get_Vector((int)frame1,vals);
-		q1.Set(vals[0],vals[1],vals[2],vals[3]);
+	if (NodeMotion[pividx].Q != nullptr)
+	{
+		NodeMotion[pividx].Q->Get_Vector((int)frame1, vals);
+		q1.Set(vals[0], vals[1], vals[2], vals[3]);
 	}
 
-	Fast_Slerp(q, q0, q1, ratio );
+	Fast_Slerp(q, q0, q1, ratio);
 #endif
 }
 
@@ -588,63 +607,94 @@ void HRawAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
+void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame) const
 {
-	struct NodeMotionStruct * motion = &NodeMotion[pividx];
+	struct NodeMotionStruct* motion = &NodeMotion[pividx];
 
-//	if ( (motion->X == nullptr) && (motion->Y == nullptr) && (motion->Z == nullptr) ) {
-//		 trans.Set(0.0f,0.0f,0.0f);
-//		return;
-//	}
+	//	if ( (motion->X == nullptr) && (motion->Y == nullptr) && (motion->Z == nullptr) ) {
+	//		 trans.Set(0.0f,0.0f,0.0f);
+	//		return;
+	//	}
 
-	int frame0=WWMath::Float_To_Long(frame-0.499999f);
+	int frame0 = WWMath::Float_To_Long(frame - 0.499999f);
 
 	int frame1 = frame0 + 1;
 
 	float ratio = frame - (float)frame0;
-	WWASSERT( (ratio >= -WWMATH_EPSILON) && (ratio < 1.0f + WWMATH_EPSILON) );
+	WWASSERT((ratio >= -WWMATH_EPSILON) && (ratio < 1.0f + WWMATH_EPSILON));
 
-	if ( frame1 >= NumFrames ) {
+	if (frame1 >= NumFrames)
+	{
 		frame1 = 0;
 	}
 
 	float vals[4];
 	Quaternion q0(1);
-	if (NodeMotion[pividx].Q != nullptr) {
-		NodeMotion[pividx].Q->Get_Vector((int)frame0,vals);
-		q0.Set(vals[0],vals[1],vals[2],vals[3]);
+	if (NodeMotion[pividx].Q != nullptr)
+	{
+		NodeMotion[pividx].Q->Get_Vector((int)frame0, vals);
+		q0.Set(vals[0], vals[1], vals[2], vals[3]);
 	}
 
-	if ( ratio == 0.0f ) {
-		::Build_Matrix3D(q0,mtx);
-		if (motion->X != nullptr) motion->X->Get_Vector((int)frame0,&(mtx[0][3]));
-		if (motion->Y != nullptr) motion->Y->Get_Vector((int)frame0,&(mtx[1][3]));
-		if (motion->Z != nullptr) motion->Z->Get_Vector((int)frame0,&(mtx[2][3]));
+	if (ratio == 0.0f)
+	{
+		::Build_Matrix3D(q0, mtx);
+		if (motion->X != nullptr)
+		{
+			motion->X->Get_Vector((int)frame0, &(mtx[0][3]));
+		}
+		if (motion->Y != nullptr)
+		{
+			motion->Y->Get_Vector((int)frame0, &(mtx[1][3]));
+		}
+		if (motion->Z != nullptr)
+		{
+			motion->Z->Get_Vector((int)frame0, &(mtx[2][3]));
+		}
 		return;
 	}
 
 	Quaternion q1(1);
-	if (NodeMotion[pividx].Q != nullptr) {
-		NodeMotion[pividx].Q->Get_Vector((int)frame1,vals);
-		q1.Set(vals[0],vals[1],vals[2],vals[3]);
+	if (NodeMotion[pividx].Q != nullptr)
+	{
+		NodeMotion[pividx].Q->Get_Vector((int)frame1, vals);
+		q1.Set(vals[0], vals[1], vals[2], vals[3]);
 	}
 
 	Quaternion q;
-	Fast_Slerp(q, q0, q1, ratio );
-	::Build_Matrix3D(q,mtx);
+	Fast_Slerp(q, q0, q1, ratio);
+	::Build_Matrix3D(q, mtx);
 
-	Vector3 trans0(0.0f,0.0f,0.0f);
-	if (motion->X != nullptr) motion->X->Get_Vector((int)frame0,&(trans0[0]));
-	if (motion->Y != nullptr) motion->Y->Get_Vector((int)frame0,&(trans0[1]));
-	if (motion->Z != nullptr) motion->Z->Get_Vector((int)frame0,&(trans0[2]));
+	Vector3 trans0(0.0f, 0.0f, 0.0f);
+	if (motion->X != nullptr)
+	{
+		motion->X->Get_Vector((int)frame0, &(trans0[0]));
+	}
+	if (motion->Y != nullptr)
+	{
+		motion->Y->Get_Vector((int)frame0, &(trans0[1]));
+	}
+	if (motion->Z != nullptr)
+	{
+		motion->Z->Get_Vector((int)frame0, &(trans0[2]));
+	}
 
-	Vector3 trans1(0.0f,0.0f,0.0f);
-	if (motion->X != nullptr) motion->X->Get_Vector((int)frame1,&(trans1[0]));
-	if (motion->Y != nullptr) motion->Y->Get_Vector((int)frame1,&(trans1[1]));
-	if (motion->Z != nullptr) motion->Z->Get_Vector((int)frame1,&(trans1[2]));
+	Vector3 trans1(0.0f, 0.0f, 0.0f);
+	if (motion->X != nullptr)
+	{
+		motion->X->Get_Vector((int)frame1, &(trans1[0]));
+	}
+	if (motion->Y != nullptr)
+	{
+		motion->Y->Get_Vector((int)frame1, &(trans1[1]));
+	}
+	if (motion->Z != nullptr)
+	{
+		motion->Z->Get_Vector((int)frame1, &(trans1[2]));
+	}
 
 	Vector3 trans;
-	Vector3::Lerp( trans0, trans1, ratio, &trans );
+	Vector3::Lerp(trans0, trans1, ratio, &trans);
 
 	mtx.Set_Translation(trans);
 }
@@ -661,16 +711,16 @@ void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
  * HISTORY:                                                                                    *
  *   1/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool HRawAnimClass::Get_Visibility(int pividx,float frame)
+bool HRawAnimClass::Get_Visibility(int pividx, float frame)
 {
-	if (NodeMotion[pividx].Vis != nullptr) {
+	if (NodeMotion[pividx].Vis != nullptr)
+	{
 		return (NodeMotion[pividx].Vis->Get_Bit((int)frame) == 1);
 	}
 
 	// default to always visible...
 	return 1;
 }
-
 
 /***********************************************************************************************
  * HRawAnimClass::Is_Node_Motion_Present -- return true if there is motion defined for this frame *
@@ -688,46 +738,68 @@ bool HRawAnimClass::Is_Node_Motion_Present(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));
 
-	if (NodeMotion[pividx].X != nullptr) return true;
-	if (NodeMotion[pividx].Y != nullptr) return true;
-	if (NodeMotion[pividx].Z != nullptr) return true;
-	if (NodeMotion[pividx].XR != nullptr) return true;
-	if (NodeMotion[pividx].YR != nullptr) return true;
-	if (NodeMotion[pividx].ZR != nullptr) return true;
-	if (NodeMotion[pividx].Q  != nullptr) return true;
-	if (NodeMotion[pividx].Vis != nullptr) return true;
+	if (NodeMotion[pividx].X != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].Y != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].Z != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].XR != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].YR != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].ZR != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].Q != nullptr)
+	{
+		return true;
+	}
+	if (NodeMotion[pividx].Vis != nullptr)
+	{
+		return true;
+	}
 
 	return false;
 }
 
-bool HRawAnimClass::Has_X_Translation (int pividx)
+bool HRawAnimClass::Has_X_Translation(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));
 	return NodeMotion[pividx].X != nullptr;
 }
 
-bool HRawAnimClass::Has_Y_Translation (int pividx)
+bool HRawAnimClass::Has_Y_Translation(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));
 	return NodeMotion[pividx].Y != nullptr;
 }
 
-bool HRawAnimClass::Has_Z_Translation (int pividx)
+bool HRawAnimClass::Has_Z_Translation(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));
 	return NodeMotion[pividx].Z != nullptr;
 }
 
-bool HRawAnimClass::Has_Rotation (int pividx)
+bool HRawAnimClass::Has_Rotation(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));
 	return NodeMotion[pividx].Q != nullptr;
 }
 
-bool HRawAnimClass::Has_Visibility (int pividx)
+bool HRawAnimClass::Has_Visibility(int pividx)
 {
 	WWASSERT((pividx >= 0) && (pividx < NumNodes));
 	return NodeMotion[pividx].Vis != nullptr;
 }
-
-

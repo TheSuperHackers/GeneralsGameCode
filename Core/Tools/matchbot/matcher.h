@@ -19,7 +19,7 @@
 #pragma once
 
 #ifdef _WIN32
-#include <process.h>
+	#include <process.h>
 #endif
 #include <configfile.h>
 #include <critsec.h>
@@ -45,30 +45,29 @@ public:
 	virtual void checkMatches()
 	{}
 
-	virtual void handleDisconnect( const char *reason )
+	virtual void handleDisconnect(const char* reason)
 	{}
-	virtual void handleRoomMessage( const char *nick, const char *message, MessageType messageType )
+	virtual void handleRoomMessage(const char* nick, const char* message, MessageType messageType)
 	{}
-	virtual void handlePlayerMessage( const char *nick, const char *message, MessageType messageType )
+	virtual void handlePlayerMessage(const char* nick, const char* message, MessageType messageType)
 	{}
-	virtual void handlePlayerJoined( const char *nick )
+	virtual void handlePlayerJoined(const char* nick)
 	{}
-	virtual void handlePlayerLeft( const char *nick )
+	virtual void handlePlayerLeft(const char* nick)
 	{}
-	virtual void handlePlayerChangedNick( const char *oldNick, const char *newNick )
+	virtual void handlePlayerChangedNick(const char* oldNick, const char* newNick)
 	{}
-	virtual void handlePlayerEnum( bool success, int gameSpyIndex, const char *nick, int flags )
+	virtual void handlePlayerEnum(bool success, int gameSpyIndex, const char* nick, int flags)
 	{}
 
-	void handleConnect( bool success );
-	void handleGroupRoomList( bool success, int groupID, const char *name );
-	void handleJoin( bool success );
-	void handleNickError( const char *badNick );
+	void handleConnect(bool success);
+	void handleGroupRoomList(bool success, int groupID, const char* name);
+	void handleJoin(bool success);
+	void handleNickError(const char* badNick);
 
 	void connectAndLoop();
 
 protected:
-
 	Wstring getString(const Wstring& key);
 
 	Wstring m_baseNick;
@@ -79,11 +78,10 @@ protected:
 	bool m_joinSuccess;
 	void readLoop();
 
-	int done;  // 0=no, neg=quit;error, pos=quit;success
+	int done;    // 0=no, neg=quit;error, pos=quit;success
 	bool quiet;
 	int m_groupID;
 
-	bool m_rotateLogs; // check for log rotation in this thread?
+	bool m_rotateLogs;    // check for log rotation in this thread?
 	time_t m_lastRotation;
-
 };

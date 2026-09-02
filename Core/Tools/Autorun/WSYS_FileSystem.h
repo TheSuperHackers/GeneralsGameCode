@@ -42,14 +42,12 @@
 //----------------------------------------------------------------------------
 
 #ifndef __WSYS_FILE_H
-#include "WSYS_file.h"
+	#include "WSYS_file.h"
 #endif
-
 
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------------
 //           Type Defines
@@ -59,28 +57,22 @@
 // FileSystem
 //===============================
 /**
-  * FileSystem is an interface class for creating specific FileSystem objects.
-  *
-	* A FileSystem object's implemenation decides what derivative of File object needs to be
-	* created when FileSystem::Open() gets called.
-	*/
+ * FileSystem is an interface class for creating specific FileSystem objects.
+ *
+ * A FileSystem object's implemenation decides what derivative of File object needs to be
+ * created when FileSystem::Open() gets called.
+ */
 //===============================
 
 class FileSystem
 {
-	protected:
-
-	public:
-
-		virtual					~FileSystem() {};
-		virtual	File*		open( const Char *filename, Int access = 0 ) = 0 ;		///< opens a File interface to the specified file
-
-
+protected:
+public:
+	virtual ~FileSystem() {};
+	virtual File* open(const Char* filename, Int access = 0) = 0;    ///< opens a File interface to the specified file
 };
 
-extern FileSystem*	TheFileSystem;
-
-
+extern FileSystem* TheFileSystem;
 
 //----------------------------------------------------------------------------
 //           Inlining

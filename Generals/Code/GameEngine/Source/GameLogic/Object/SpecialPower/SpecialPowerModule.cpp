@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/GlobalData.h"
@@ -53,39 +53,33 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/ControlBar.h"
 
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpecialPowerModuleData::SpecialPowerModuleData()
 {
-
 	m_specialPowerTemplate = nullptr;
 	m_updateModuleStartsAttack = false;
 	m_startsPaused = FALSE;
 	m_startsReady = FALSE;
 	m_scriptedSpecialPowerOnly = FALSE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 /* static */ void SpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-	BehaviorModuleData::buildFieldParse( p );
+	BehaviorModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "SpecialPowerTemplate",			INI::parseSpecialPowerTemplate, nullptr, offsetof( SpecialPowerModuleData, m_specialPowerTemplate ) },
-		{ "UpdateModuleStartsAttack", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_updateModuleStartsAttack ) },
-		{ "StartsPaused",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_startsPaused ) },
-		{ "StartsReady",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_startsReady ) },
-		{ "InitiateSound",						INI::parseAudioEventRTS,				nullptr, offsetof( SpecialPowerModuleData, m_initiateSound ) },
-		{ "ScriptedSpecialPowerOnly", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_scriptedSpecialPowerOnly ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, nullptr, offsetof(SpecialPowerModuleData, m_specialPowerTemplate) },
+		{ "UpdateModuleStartsAttack", INI::parseBool, nullptr, offsetof(SpecialPowerModuleData, m_updateModuleStartsAttack) },
+		{ "StartsPaused", INI::parseBool, nullptr, offsetof(SpecialPowerModuleData, m_startsPaused) },
+		{ "StartsReady", INI::parseBool, nullptr, offsetof(SpecialPowerModuleData, m_startsReady) },
+		{ "InitiateSound", INI::parseAudioEventRTS, nullptr, offsetof(SpecialPowerModuleData, m_initiateSound) },
+		{ "ScriptedSpecialPowerOnly", INI::parseBool, nullptr, offsetof(SpecialPowerModuleData, m_scriptedSpecialPowerOnly) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,10 +88,9 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleData )
-									: BehaviorModule( thing, moduleData )
+SpecialPowerModule::SpecialPowerModule(Thing* thing, const ModuleData* moduleData)
+  : BehaviorModule(thing, moduleData)
 {
-
 #if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
 #else
@@ -110,25 +103,29 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// we won't be able to use the power for X number of frames now
 
 	// if we're pre-built, start counting down
-	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (!getObject()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 	{
-		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
-		//Since a new module with same SPTemplates may construct at any time.
-		if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
+		// A sharedNSync special only startPowerRecharges when first scienced or when executed,
+		// Since a new module with same SPTemplates may construct at any time.
+		if (getSpecialPowerTemplate()->isSharedNSync() == FALSE)
 		{
 			startPowerRecharge();
 
 			if (startsReady())
+			{
 				m_availableOnFrame = TheGameLogic->getFrame();
+			}
 		}
 	}
 	// WE USED TO DO THE POLL-EVERYBODY-AND-VOTE-ON-WHO-TO-SYNC-TO THING HERE,
 	// BUT NO MORE, NOW IT IS HANDLED IN PLAYER
 
 	// Some Special powers need to be activated by an Upgrade, so prevent the timer from going until then
-	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
-	if( md->m_startsPaused )
-		pauseCountdown( TRUE );
+	const SpecialPowerModuleData* md = (const SpecialPowerModuleData*)moduleData;
+	if (md->m_startsPaused)
+	{
+		pauseCountdown(TRUE);
+	}
 
 	resolveSpecialPower();
 
@@ -136,19 +133,17 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// but there is already a science granted for our shared superweapon,
 	// lets make sure TheIngameUI knows about our public timer
 	// add this weapon to the UI if it has a public timer for all to see
-	if( m_pausedCount == 0 &&
-			getSpecialPowerTemplate()->isSharedNSync() == TRUE &&
-			getSpecialPowerTemplate()->hasPublicTimer() == TRUE &&
-			getObject()->getControllingPlayer() &&
-			getObject()->isKindOf( KINDOF_STRUCTURE ) )
+	if (m_pausedCount == 0 &&
+	    getSpecialPowerTemplate()->isSharedNSync() == TRUE &&
+	    getSpecialPowerTemplate()->hasPublicTimer() == TRUE &&
+	    getObject()->getControllingPlayer() &&
+	    getObject()->isKindOf(KINDOF_STRUCTURE))
 	{
-		TheInGameUI->addSuperweapon( getObject()->getControllingPlayer()->getPlayerIndex(),
-																 getPowerName(),
-																 getObject()->getID(),
-																 getSpecialPowerModuleData()->m_specialPowerTemplate );
+		TheInGameUI->addSuperweapon(getObject()->getControllingPlayer()->getPlayerIndex(),
+		                            getPowerName(),
+		                            getObject()->getID(),
+		                            getSpecialPowerModuleData()->m_specialPowerTemplate);
 	}
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -161,14 +156,14 @@ const AudioEventRTS& SpecialPowerModule::getInitiateSound() const
 //-------------------------------------------------------------------------------------------------
 SpecialPowerModule::~SpecialPowerModule()
 {
-
- 	if( getSpecialPowerModuleData()->m_specialPowerTemplate->hasPublicTimer() == TRUE &&
-			getObject()->getControllingPlayer() )
- 		TheInGameUI->removeSuperweapon( getObject()->getControllingPlayer()->getPlayerIndex(),
-																		getPowerName(),
-																		getObject()->getID(),
-																		getSpecialPowerModuleData()->m_specialPowerTemplate );
-
+	if (getSpecialPowerModuleData()->m_specialPowerTemplate->hasPublicTimer() == TRUE &&
+	    getObject()->getControllingPlayer())
+	{
+		TheInGameUI->removeSuperweapon(getObject()->getControllingPlayer()->getPlayerIndex(),
+		                               getPowerName(),
+		                               getObject()->getID(),
+		                               getSpecialPowerModuleData()->m_specialPowerTemplate);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -179,16 +174,16 @@ void SpecialPowerModule::resolveSpecialPower()
 
 	// if we're pre-built, and not from a command center, and a building register us with the UI
 	if( getSpecialPowerModuleData()->m_specialPowerTemplate->hasPublicTimer() == TRUE &&
-			TheGameLogic->getFrame() == 0 && getObject()->getControllingPlayer() &&
-		  getObject()->isKindOf( KINDOF_COMMANDCENTER ) == FALSE &&
-			getObject()->isKindOf( KINDOF_STRUCTURE ) )
+	    TheGameLogic->getFrame() == 0 && getObject()->getControllingPlayer() &&
+	    getObject()->isKindOf( KINDOF_COMMANDCENTER ) == FALSE &&
+	    getObject()->isKindOf( KINDOF_STRUCTURE ) )
 	{
-		//KM: The KINDOF_STRUCTURE check was made to prevent scripted bombers from registering their
-		//    special powers as public timers.
-		TheInGameUI->addSuperweapon( getObject()->getControllingPlayer()->getPlayerIndex(),
-																 getPowerName(),
-																 getObject()->getID(),
-																 getSpecialPowerModuleData()->m_specialPowerTemplate );
+	  //KM: The KINDOF_STRUCTURE check was made to prevent scripted bombers from registering their
+	  //    special powers as public timers.
+	  TheInGameUI->addSuperweapon( getObject()->getControllingPlayer()->getPlayerIndex(),
+	                               getPowerName(),
+	                               getObject()->getID(),
+	                               getSpecialPowerModuleData()->m_specialPowerTemplate );
 	}
 	*/
 }
@@ -205,30 +200,32 @@ void SpecialPowerModule::onSpecialPowerCreation()
 
 	// Dustin wants these special powers to start ready to fire,
 	// so here (and only here) we will expressly set them to ready-now.
-	if ( getSpecialPowerTemplate()->isSharedNSync())
+	if (getSpecialPowerTemplate()->isSharedNSync())
 	{
-		Player *player = getObject()->getControllingPlayer();
-		if ( player )
+		Player* player = getObject()->getControllingPlayer();
+		if (player)
 		{
-			player->expressSpecialPowerReadyFrame( getSpecialPowerTemplate(), TheGameLogic->getFrame() );
-			m_availableOnFrame = player->getOrStartSpecialPowerReadyFrame( getSpecialPowerTemplate() );
+			player->expressSpecialPowerReadyFrame(getSpecialPowerTemplate(), TheGameLogic->getFrame());
+			m_availableOnFrame = player->getOrStartSpecialPowerReadyFrame(getSpecialPowerTemplate());
 		}
 	}
 
 	// Some Special powers need to be activated by an Upgrade, so prevent the timer from going until then
-	const SpecialPowerModuleData *md = getSpecialPowerModuleData();
-	if( md->m_startsPaused )
-		pauseCountdown( TRUE );
+	const SpecialPowerModuleData* md = getSpecialPowerModuleData();
+	if (md->m_startsPaused)
+	{
+		pauseCountdown(TRUE);
+	}
 
 	// add this weapon to the UI if it has a public timer for all to see
-	if( getSpecialPowerModuleData()->m_specialPowerTemplate->hasPublicTimer() == TRUE &&
-			getObject()->getControllingPlayer() &&
-			getObject()->isKindOf( KINDOF_STRUCTURE ) )
+	if (getSpecialPowerModuleData()->m_specialPowerTemplate->hasPublicTimer() == TRUE &&
+	    getObject()->getControllingPlayer() &&
+	    getObject()->isKindOf(KINDOF_STRUCTURE))
 	{
-		TheInGameUI->addSuperweapon( getObject()->getControllingPlayer()->getPlayerIndex(),
-																 getPowerName(),
-																 getObject()->getID(),
-																 getSpecialPowerModuleData()->m_specialPowerTemplate );
+		TheInGameUI->addSuperweapon(getObject()->getControllingPlayer()->getPlayerIndex(),
+		                            getPowerName(),
+		                            getObject()->getID(),
+		                            getSpecialPowerModuleData()->m_specialPowerTemplate);
 	}
 }
 
@@ -236,15 +233,13 @@ void SpecialPowerModule::onSpecialPowerCreation()
 //-------------------------------------------------------------------------------------------------
 ScienceType SpecialPowerModule::getRequiredScience() const
 {
-
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getRequiredScience();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate() const
+const SpecialPowerTemplate* SpecialPowerModule::getSpecialPowerTemplate() const
 {
-
 	return getSpecialPowerModuleData()->m_specialPowerTemplate;
 }
 
@@ -252,25 +247,22 @@ const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate() const
 //-------------------------------------------------------------------------------------------------
 AsciiString SpecialPowerModule::getPowerName() const
 {
-
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getName();
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Is this module designed for the power identifier template passed in? */
 //-------------------------------------------------------------------------------------------------
-Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const
+Bool SpecialPowerModule::isModuleForPower(const SpecialPowerTemplate* specialPowerTemplate) const
 {
-
 	// get the module data
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 
 	//
 	// if the special power template defined in the module data matches the template we want
 	// to check then we are for it!
 	//
 	return modData->m_specialPowerTemplate == specialPowerTemplate;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -280,74 +272,85 @@ Bool SpecialPowerModule::isReady() const
 {
 #if defined(RTS_DEBUG)
 	// this is a cheat ... remove this for release!
-	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
+	if (TheGlobalData->m_specialPowerUsesDelay == FALSE)
+	{
 		return TRUE;
+	}
 #endif
 
 	const Object* obj = getObject();
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 
-	if ( obj && modData )
+	if (obj && modData)
 	{
-		Player *player = getObject()->getControllingPlayer();
-		if ( player )
+		Player* player = getObject()->getControllingPlayer();
+		if (player)
 		{
-			if ( modData->m_specialPowerTemplate->isSharedNSync())
-				return (TheGameLogic->getFrame() >= player->getOrStartSpecialPowerReadyFrame( modData->m_specialPowerTemplate ) );
+			if (modData->m_specialPowerTemplate->isSharedNSync())
+			{
+				return (TheGameLogic->getFrame() >= player->getOrStartSpecialPowerReadyFrame(modData->m_specialPowerTemplate));
+			}
 		}
 	}
 
 	return (m_pausedCount == 0) && (TheGameLogic->getFrame() >= m_availableOnFrame);
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Get the percentage ready a special power is to use
-	* 1.0f = ready now
-	* 0.5f = 50% ready
-	* 0.2f = 20% ready
-	* etc ... */
+ * 1.0f = ready now
+ * 0.5f = 50% ready
+ * 0.2f = 20% ready
+ * etc ... */
 //-------------------------------------------------------------------------------------------------
 Real SpecialPowerModule::getPercentReady() const
 {
 #if defined(RTS_DEBUG)
-	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
+	if (TheGlobalData->m_specialPowerUsesDelay == FALSE)
+	{
 		return 1.0f;
+	}
 #endif
 
 	// easy case ... is ready
-	if( isReady() )
+	if (isReady())
+	{
 		return 1.0f;
+	}
 
-	if ( m_pausedCount > 0 )
+	if (m_pausedCount > 0)
+	{
 		return m_pausedPercent;
+	}
 
 	// get the module data
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 
 	// sanity
-	if( modData->m_specialPowerTemplate == nullptr )
+	if (modData->m_specialPowerTemplate == nullptr)
+	{
 		return 0.0f;
+	}
 
 	UnsignedInt readyFrame = m_availableOnFrame;
 
-	//unless
+	// unless
 	const Object* obj = getObject();
-	if ( obj )
+	if (obj)
 	{
-		Player *player = getObject()->getControllingPlayer();
-		if ( player )
+		Player* player = getObject()->getControllingPlayer();
+		if (player)
 		{
-			if ( modData->m_specialPowerTemplate->isSharedNSync())
+			if (modData->m_specialPowerTemplate->isSharedNSync())
 			{
-				readyFrame = player->getOrStartSpecialPowerReadyFrame( getSpecialPowerTemplate() );
+				readyFrame = player->getOrStartSpecialPowerReadyFrame(getSpecialPowerTemplate());
 			}
 		}
 	}
 
 	// calculate the percent
 	Real percent = 1.0f - ((readyFrame - TheGameLogic->getFrame()) /
-												 (Real)modData->m_specialPowerTemplate->getReloadTime());
+	                       (Real)modData->m_specialPowerTemplate->getReloadTime());
 
 	return percent;
 }
@@ -369,27 +372,28 @@ Bool SpecialPowerModule::startsReady() const
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isScriptOnly() const
 {
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 	return modData->m_scriptedSpecialPowerOnly;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** A special power has been used ... start the recharge process by computing the frame
-	* we will become fully available on in the future again */
+ * we will become fully available on in the future again */
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::startPowerRecharge()
 {
 #if defined(RTS_DEBUG)
 	// this is a cheat ... remove this for release!
-	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
+	if (TheGlobalData->m_specialPowerUsesDelay == FALSE)
+	{
 		return;
+	}
 #endif
 
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 
 	// sanity
-	if( modData->m_specialPowerTemplate == nullptr )
+	if (modData->m_specialPowerTemplate == nullptr)
 	{
 		DEBUG_CRASH(("special power not found"));
 		return;
@@ -397,18 +401,22 @@ void SpecialPowerModule::startPowerRecharge()
 
 	Object* obj = getObject();
 	if (!obj)
+	{
 		return;
+	}
 
 	Player* player = getObject()->getControllingPlayer();
 	if (!player)
-		return;
-
-	//Here, we make sure that general specials work as one between command centers
-	// only factory type faction buildings should do this, and only with generals powers (in general)
-	// but there are no restrictions on the use of SharedNSync on specialPowerTemplates at large
-	if ( modData->m_specialPowerTemplate->isSharedNSync() )
 	{
-		player->resetOrStartSpecialPowerReadyFrame( modData->m_specialPowerTemplate );
+		return;
+	}
+
+	// Here, we make sure that general specials work as one between command centers
+	//  only factory type faction buildings should do this, and only with generals powers (in general)
+	//  but there are no restrictions on the use of SharedNSync on specialPowerTemplates at large
+	if (modData->m_specialPowerTemplate->isSharedNSync())
+	{
+		player->resetOrStartSpecialPowerReadyFrame(modData->m_specialPowerTemplate);
 	}
 	else
 	{
@@ -419,30 +427,30 @@ void SpecialPowerModule::startPowerRecharge()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
+Bool SpecialPowerModule::initiateIntentToDoSpecialPower(const Object* targetObj, const Coord3D* targetPos, const Waypoint* way, UnsignedInt commandOptions)
 {
 	Bool valid = false;
 	// tell our update modules that we intend to do this special power.
-	for( BehaviorModule** u = getObject()->getBehaviorModules(); *u; ++u )
+	for (BehaviorModule** u = getObject()->getBehaviorModules(); *u; ++u)
 	{
 		SpecialPowerUpdateInterface* spu = (*u)->getSpecialPowerUpdateInterface();
-		if( spu )
+		if (spu)
 		{
-			//Validate that we are calling the correct module!
-			if( isModuleForPower( getSpecialPowerModuleData()->m_specialPowerTemplate ) )
+			// Validate that we are calling the correct module!
+			if (isModuleForPower(getSpecialPowerModuleData()->m_specialPowerTemplate))
 			{
-				spu->initiateIntentToDoSpecialPower( getSpecialPowerModuleData()->m_specialPowerTemplate, targetObj, targetPos, way, commandOptions );
+				spu->initiateIntentToDoSpecialPower(getSpecialPowerModuleData()->m_specialPowerTemplate, targetObj, targetPos, way, commandOptions);
 				valid = true;
 			}
 		}
 	}
 
-	//If we depend on our update module to trigger the special power, make sure we have the
-	//appropriate update module!
-	if( !valid && getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	// If we depend on our update module to trigger the special power, make sure we have the
+	// appropriate update module!
+	if (!valid && getSpecialPowerModuleData()->m_updateModuleStartsAttack)
 	{
-		DEBUG_CRASH( ("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?"));
-		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
+		DEBUG_CRASH(("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?"));
+		// DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
 		//							command->m_specialPower->getName().str() ));
 	}
 
@@ -451,9 +459,9 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::triggerSpecialPower( const Coord3D *location )
+void SpecialPowerModule::triggerSpecialPower(const Coord3D* location)
 {
-	aboutToDoSpecialPower( location );	// do BEFORE recharge
+	aboutToDoSpecialPower(location);    // do BEFORE recharge
 
 	createViewObject(location);
 
@@ -463,61 +471,70 @@ void SpecialPowerModule::triggerSpecialPower( const Coord3D *location )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::createViewObject( const Coord3D *location )
+void SpecialPowerModule::createViewObject(const Coord3D* location)
 {
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
-	const SpecialPowerTemplate *powerTemplate = modData->m_specialPowerTemplate;
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
+	const SpecialPowerTemplate* powerTemplate = modData->m_specialPowerTemplate;
 
-	if( modData == nullptr  ||  powerTemplate == nullptr )
+	if (modData == nullptr || powerTemplate == nullptr)
+	{
 		return;
+	}
 
 	Real visionRange = powerTemplate->getViewObjectRange();
 	UnsignedInt visionDuration = powerTemplate->getViewObjectDuration();
 
-	if( visionRange == 0 || visionDuration == 0 )
-		return; // We don't want a view object at all.
+	if (visionRange == 0 || visionDuration == 0)
+	{
+		return;    // We don't want a view object at all.
+	}
 
 	AsciiString objectName = TheGlobalData->m_specialPowerViewObjectName;
-	if( objectName.isEmpty() )
+	if (objectName.isEmpty())
+	{
 		return;
+	}
 
-	const ThingTemplate *viewObjectTemplate = TheThingFactory->findTemplate( objectName );
-	if( viewObjectTemplate == nullptr )
+	const ThingTemplate* viewObjectTemplate = TheThingFactory->findTemplate(objectName);
+	if (viewObjectTemplate == nullptr)
+	{
 		return;
+	}
 
-	Object *viewObject = TheThingFactory->newObject( viewObjectTemplate, getObject()->getControllingPlayer()->getDefaultTeam() );
+	Object* viewObject = TheThingFactory->newObject(viewObjectTemplate, getObject()->getControllingPlayer()->getDefaultTeam());
 
-	if( viewObject == nullptr )
+	if (viewObject == nullptr)
+	{
 		return;
+	}
 
-	viewObject->setPosition( location );
-	viewObject->setShroudClearingRange( visionRange );
+	viewObject->setPosition(location);
+	viewObject->setShroudClearingRange(visionRange);
 
 	static NameKeyType key_DeletionUpdate = NAMEKEY("DeletionUpdate");
 	DeletionUpdate* dup = (DeletionUpdate*)viewObject->findUpdateModule(key_DeletionUpdate);
-	if( dup )
+	if (dup)
 	{
-		dup->setLifetimeRange( visionDuration, visionDuration );
+		dup->setLifetimeRange(visionDuration, visionDuration);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::markSpecialPowerTriggered( const Coord3D *location )
+void SpecialPowerModule::markSpecialPowerTriggered(const Coord3D* location)
 {
 	triggerSpecialPower(location);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
+void SpecialPowerModule::aboutToDoSpecialPower(const Coord3D* location)
 {
 	// Tell the scripting engine!
 	TheScriptEngine->notifyOfTriggeredSpecialPower(
-		getObject()->getControllingPlayer()->getPlayerIndex(),
-		getSpecialPowerModuleData()->m_specialPowerTemplate->getName(),
-		getObject()->getID());
+	  getObject()->getControllingPlayer()->getPlayerIndex(),
+	  getSpecialPowerModuleData()->m_specialPowerTemplate->getName(),
+	  getObject()->getID());
 
 	// Let EVA do her thing
 	SpecialPowerType type = getSpecialPowerModuleData()->m_specialPowerTemplate->getSpecialPowerType();
@@ -525,136 +542,143 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 	// Only play the EVA sounds if this is not the local player, and the local player doesn't consider the
 	// person an enemy.
 	// Kris: Actually, all players need to hear these warnings.
-	//Player *localPlayer = ThePlayerList->getLocalPlayer();
-	//if (localPlayer != getObject()->getControllingPlayer() && localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES) {
-		if (type == SPECIAL_PARTICLE_UPLINK_CANNON)
-			TheEva->setShouldPlay(EVA_SuperweaponLaunched_ParticleCannon);
-		else if (type == SPECIAL_NEUTRON_MISSILE)
-			TheEva->setShouldPlay(EVA_SuperweaponLaunched_Nuke);
-		else if (type == SPECIAL_SCUD_STORM)
-			TheEva->setShouldPlay(EVA_SuperweaponLaunched_ScudStorm);
+	// Player *localPlayer = ThePlayerList->getLocalPlayer();
+	// if (localPlayer != getObject()->getControllingPlayer() && localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES) {
+	if (type == SPECIAL_PARTICLE_UPLINK_CANNON)
+	{
+		TheEva->setShouldPlay(EVA_SuperweaponLaunched_ParticleCannon);
+	}
+	else if (type == SPECIAL_NEUTRON_MISSILE)
+	{
+		TheEva->setShouldPlay(EVA_SuperweaponLaunched_Nuke);
+	}
+	else if (type == SPECIAL_SCUD_STORM)
+	{
+		TheEva->setShouldPlay(EVA_SuperweaponLaunched_ScudStorm);
+	}
 	//}
 
 	// get module data
-	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
+	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
 
 	// play our initiate sound if we have one
 	AudioEventRTS audioEvent = *modData->m_specialPowerTemplate->getInitiateSound();
 	audioEvent.setObjectID(getObject()->getID());
-	TheAudio->addAudioEvent( &audioEvent );
+	TheAudio->addAudioEvent(&audioEvent);
 
 	// play sound at target location if specified
-	if( location )
+	if (location)
 	{
-
 		AudioEventRTS soundAtLocation = *modData->m_specialPowerTemplate->getInitiateAtTargetSound();
-		soundAtLocation.setPosition( location );
+		soundAtLocation.setPosition(location);
 		soundAtLocation.setPlayerIndex(getObject()->getControllingPlayer()->getPlayerIndex());
-		TheAudio->addAudioEvent( &soundAtLocation );
-
+		TheAudio->addAudioEvent(&soundAtLocation);
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
-//By default, special powers are not triggered by it's update module -- in which case
-//it triggers it and resets its timer immediately. When the update module triggers it,
-//then all we do is initiate the special power, and trust that the update module will
-//do the rest.
+// By default, special powers are not triggered by it's update module -- in which case
+// it triggers it and resets its timer immediately. When the update module triggers it,
+// then all we do is initiate the special power, and trust that the update module will
+// do the rest.
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::doSpecialPower( UnsignedInt commandOptions )
+void SpecialPowerModule::doSpecialPower(UnsignedInt commandOptions)
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+	if (m_pausedCount > 0 || getObject()->isDisabled())
+	{
 		return;
 	}
 
-	//This tells the update module that we want to do our special power. The update modules
-	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( nullptr, nullptr, nullptr, commandOptions );
+	// This tells the update module that we want to do our special power. The update modules
+	// will then start processing each frame.
+	initiateIntentToDoSpecialPower(nullptr, nullptr, nullptr, commandOptions);
 
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	// Only trigger the special power immediately if the updatemodule doesn't start the attack.
+	// An example of a case that wouldn't trigger immediately is for a unit that needs to
+	// close to range before firing the special attack. A case that would trigger immediately
+	// is the napalm strike. If we don't call this now, it's up to the update module to do so.
+	if (!getSpecialPowerModuleData()->m_updateModuleStartsAttack)
 	{
-		triggerSpecialPower( nullptr );// Location-less trigger
+		triggerSpecialPower(nullptr);    // Location-less trigger
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
+void SpecialPowerModule::doSpecialPowerAtObject(Object* obj, UnsignedInt commandOptions)
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+	if (m_pausedCount > 0 || getObject()->isDisabled())
+	{
 		return;
 	}
 
-	//This tells the update module that we want to do our special power. The update modules
-	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( obj, nullptr, nullptr, commandOptions );
+	// This tells the update module that we want to do our special power. The update modules
+	// will then start processing each frame.
+	initiateIntentToDoSpecialPower(obj, nullptr, nullptr, commandOptions);
 
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	// Only trigger the special power immediately if the updatemodule doesn't start the attack.
+	// An example of a case that wouldn't trigger immediately is for a unit that needs to
+	// close to range before firing the special attack. A case that would trigger immediately
+	// is the napalm strike. If we don't call this now, it's up to the update module to do so.
+	if (!getSpecialPowerModuleData()->m_updateModuleStartsAttack)
 	{
-		triggerSpecialPower( obj->getPosition() );
+		triggerSpecialPower(obj->getPosition());
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void SpecialPowerModule::doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions)
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+	if (m_pausedCount > 0 || getObject()->isDisabled())
+	{
 		return;
 	}
 
-	//This tells the update module that we want to do our special power. The update modules
-	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( nullptr, loc, nullptr, commandOptions );
+	// This tells the update module that we want to do our special power. The update modules
+	// will then start processing each frame.
+	initiateIntentToDoSpecialPower(nullptr, loc, nullptr, commandOptions);
 
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	// Only trigger the special power immediately if the updatemodule doesn't start the attack.
+	// An example of a case that wouldn't trigger immediately is for a unit that needs to
+	// close to range before firing the special attack. A case that would trigger immediately
+	// is the napalm strike. If we don't call this now, it's up to the update module to do so.
+	if (!getSpecialPowerModuleData()->m_updateModuleStartsAttack)
 	{
-		triggerSpecialPower( loc );
+		triggerSpecialPower(loc);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions )
+void SpecialPowerModule::doSpecialPowerUsingWaypoints(const Waypoint* way, UnsignedInt commandOptions)
 {
-	if (m_pausedCount > 0 || getObject()->isDisabled()) {
+	if (m_pausedCount > 0 || getObject()->isDisabled())
+	{
 		return;
 	}
 
-	//This tells the update module that we want to do our special power. The update modules
-	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( nullptr, nullptr, way, commandOptions );
+	// This tells the update module that we want to do our special power. The update modules
+	// will then start processing each frame.
+	initiateIntentToDoSpecialPower(nullptr, nullptr, way, commandOptions);
 
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	// Only trigger the special power immediately if the updatemodule doesn't start the attack.
+	// An example of a case that wouldn't trigger immediately is for a unit that needs to
+	// close to range before firing the special attack. A case that would trigger immediately
+	// is the napalm strike. If we don't call this now, it's up to the update module to do so.
+	if (!getSpecialPowerModuleData()->m_updateModuleStartsAttack)
 	{
-		triggerSpecialPower( nullptr );// This type doesn't create view objects
+		triggerSpecialPower(nullptr);    // This type doesn't create view objects
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::pauseCountdown( Bool pause )
+void SpecialPowerModule::pauseCountdown(Bool pause)
 {
-	if (pause)// If pausing
+	if (pause)    // If pausing
 	{
-		if( m_pausedCount == 0 )
+		if (m_pausedCount == 0)
 		{
 			// Only record this with the first pausing, otherwise upon final unpausing you would get credited the time
 			// between pauses as time served.
@@ -664,12 +688,12 @@ void SpecialPowerModule::pauseCountdown( Bool pause )
 
 		++m_pausedCount;
 	}
-	else if( m_pausedCount > 0 )//Else if unpausing, but only if I am in fact paused, so multiple unpauses don't break.
+	else if (m_pausedCount > 0)    // Else if unpausing, but only if I am in fact paused, so multiple unpauses don't break.
 	{
 		--m_pausedCount;
 
 		// And only update the ready time if we are fully unpaused now.
-		if( m_pausedCount == 0 )
+		if (m_pausedCount == 0)
 		{
 			m_availableOnFrame += (TheGameLogic->getFrame() - m_pausedOnFrame);
 		}
@@ -680,14 +704,16 @@ void SpecialPowerModule::pauseCountdown( Bool pause )
 //-------------------------------------------------------------------------------------------------
 UnsignedInt SpecialPowerModule::getReadyFrame() const
 {
-	if ( getSpecialPowerTemplate()->isSharedNSync() )
+	if (getSpecialPowerTemplate()->isSharedNSync())
 	{
 		const Object* obj = getObject();
-		if ( obj )
+		if (obj)
 		{
-			Player *player = getObject()->getControllingPlayer();
-			if ( player )
-				return player->getOrStartSpecialPowerReadyFrame( getSpecialPowerTemplate() );
+			Player* player = getObject()->getControllingPlayer();
+			if (player)
+			{
+				return player->getOrStartSpecialPowerReadyFrame(getSpecialPowerTemplate());
+			}
 		}
 	}
 
@@ -705,42 +731,38 @@ UnsignedInt SpecialPowerModule::getReadyFrame() const
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerModule::crc( Xfer *xfer )
+void SpecialPowerModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
-
+	BehaviorModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerModule::xfer( Xfer *xfer )
+void SpecialPowerModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	BehaviorModule::xfer( xfer );
+	BehaviorModule::xfer(xfer);
 
 	// available on frame
-	xfer->xferUnsignedInt( &m_availableOnFrame );
+	xfer->xferUnsignedInt(&m_availableOnFrame);
 
 	// paused by script
-	xfer->xferInt( &m_pausedCount );
+	xfer->xferInt(&m_pausedCount);
 
 	// paused on frame
-	xfer->xferUnsignedInt( &m_pausedOnFrame );
+	xfer->xferUnsignedInt(&m_pausedOnFrame);
 
 	// paused percent
-	xfer->xferReal( &m_pausedPercent );
-
+	xfer->xferReal(&m_pausedPercent);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -748,31 +770,22 @@ void SpecialPowerModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SpecialPowerModule::loadPostProcess()
 {
-
 	// extend base class
 	BehaviorModule::loadPostProcess();
-
-
 
 	// Now, if we find that we have just come into being,
 	// but there is already a science granted for our shared superweapon,
 	// lets make sure TheIngameUI knows about our public timer
 	// add this weapon to the UI if it has a public timer for all to see
-	if( m_pausedCount == 0 &&
-			getSpecialPowerTemplate()->isSharedNSync() == TRUE &&
-			getSpecialPowerTemplate()->hasPublicTimer() == TRUE &&
-			getObject()->getControllingPlayer() &&
-			getObject()->isKindOf( KINDOF_STRUCTURE ) )
+	if (m_pausedCount == 0 &&
+	    getSpecialPowerTemplate()->isSharedNSync() == TRUE &&
+	    getSpecialPowerTemplate()->hasPublicTimer() == TRUE &&
+	    getObject()->getControllingPlayer() &&
+	    getObject()->isKindOf(KINDOF_STRUCTURE))
 	{
-		TheInGameUI->addSuperweapon( getObject()->getControllingPlayer()->getPlayerIndex(),
-																 getPowerName(),
-																 getObject()->getID(),
-																 getSpecialPowerModuleData()->m_specialPowerTemplate );
+		TheInGameUI->addSuperweapon(getObject()->getControllingPlayer()->getPlayerIndex(),
+		                            getPowerName(),
+		                            getObject()->getID(),
+		                            getSpecialPowerModuleData()->m_specialPowerTemplate);
 	}
-
-
-
-
-
-
 }

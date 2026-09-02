@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <stdio.h>
 #include <string.h>
 #include "encrypt.h"
@@ -24,10 +23,10 @@
 #define MAX_CHARS 65
 static char Base_String[MAX_CHARS] =
 
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
 static char Return_Buffer[MAX_ENCRYPTED_STRING + 1];
-static char Temp_Buffer [MAX_ENCRYPTED_STRING + 1];
+static char Temp_Buffer[MAX_ENCRYPTED_STRING + 1];
 
 /*******************************************************/
 /* This function is a simple one-way encryption that   */
@@ -40,15 +39,15 @@ static char Temp_Buffer [MAX_ENCRYPTED_STRING + 1];
 
 /* String is the original string to encrypt */
 /* Seed is the string to encrypt            */
-//char *encrypt(char  *String, char  *Seed)
-char *do_encrypt(char *String)
+// char *encrypt(char  *String, char  *Seed)
+char* do_encrypt(char* String)
 {
 	/* We need a 56 bit key, so use two 32 bit values                 */
 	/* and we'll strip off the high order 8 bits                      */
-	//unsigned long Random_Seed_Value_high = 0; /* 32 bit seed value    */
-	//unsigned long Random_Seed_Value_low  = 0; /* 32 bit seed value    */
-	//unsigned long Temp_high = 0;              /* 32 bit storage value */
-	//unsigned long Temp_low  = 0;              /* 32 bit storage value */
+	// unsigned long Random_Seed_Value_high = 0; /* 32 bit seed value    */
+	// unsigned long Random_Seed_Value_low  = 0; /* 32 bit seed value    */
+	// unsigned long Temp_high = 0;              /* 32 bit storage value */
+	// unsigned long Temp_low  = 0;              /* 32 bit storage value */
 	unsigned int UpCnt = 0, DnCnt = 0, Cnt = 0;
 	unsigned int Length = strlen(String);
 
@@ -56,34 +55,42 @@ char *do_encrypt(char *String)
 	/*                                               */
 
 	if (Length > MAX_ENCRYPTED_STRING)
+	{
 		Length = MAX_ENCRYPTED_STRING;
+	}
 
 	for (UpCnt = 0, DnCnt = Length; UpCnt < Length; UpCnt++, DnCnt--)
+	{
 		if (String[UpCnt] & 0x01)
+		{
 			Temp_Buffer[UpCnt] = (String[UpCnt] << (String[UpCnt] & 0x01)) &
 			                     String[DnCnt];
+		}
 		else
+		{
 			Temp_Buffer[UpCnt] = (String[UpCnt] << (String[UpCnt] & 0x01)) ^
 			                     String[DnCnt];
+		}
+	}
 
 	for (Cnt = 0; Cnt < MAX_ENCRYPTED_STRING; Cnt++)
+	{
 		Return_Buffer[Cnt] = Base_String[Temp_Buffer[Cnt] & 0x3F];
+	}
 
 	Return_Buffer[Cnt] = '\0';
 	return (Return_Buffer);
-
 }
-
 
 #ifdef UNIT_TEST
 void main()
 {
 	char Input_String[9];
-	char *new_string;
+	char* new_string;
 
 	while (1)
 	{
-		printf ("Enter a string to encrypt:");
+		printf("Enter a string to encrypt:");
 		gets(Input_String);
 		printf("\nString enterred was: %s", Input_String);
 		new_string = encrypt(Input_String, "ab");
@@ -92,4 +99,3 @@ void main()
 }
 
 #endif
-

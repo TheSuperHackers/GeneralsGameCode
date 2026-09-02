@@ -27,9 +27,8 @@
 // Desc:   Weapon descriptions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #define DEFINE_COMMANDSOURCEMASK_NAMES
@@ -52,15 +51,12 @@
 
 #include "GameLogic/Weapon.h"
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-const char* const WeaponSetFlags::s_bitNameList[] =
-{
+template <>
+const char* const WeaponSetFlags::s_bitNameList[] = {
 	"VETERAN",
 	"ELITE",
 	"HERO",
@@ -96,8 +92,8 @@ void WeaponTemplateSet::clear()
 	for (int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
 		m_template[i] = nullptr;
-		m_autoChooseMask[i] = 0xffffffff;					// by default, allow autochoosing from any CommandSource
-		CLEAR_KINDOFMASK(m_preferredAgainst[i]);	// by default, weapon isn't preferred against anything in particular
+		m_autoChooseMask[i] = 0xffffffff;    // by default, allow autochoosing from any CommandSource
+		CLEAR_KINDOFMASK(m_preferredAgainst[i]);    // by default, weapon isn't preferred against anything in particular
 	}
 }
 
@@ -107,13 +103,15 @@ Bool WeaponTemplateSet::hasAnyWeapons() const
 	for (int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
 		if (m_template[i])
+		{
 			return true;
+		}
 	}
 	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
-void WeaponTemplateSet::parseWeapon(INI* ini, void *instance, void * /*store*/, const void* userData)
+void WeaponTemplateSet::parseWeapon(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
@@ -121,7 +119,7 @@ void WeaponTemplateSet::parseWeapon(INI* ini, void *instance, void * /*store*/, 
 }
 
 //-------------------------------------------------------------------------------------------------
-void WeaponTemplateSet::parseAutoChoose(INI* ini, void *instance, void * /*store*/, const void* userData)
+void WeaponTemplateSet::parseAutoChoose(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
@@ -129,7 +127,7 @@ void WeaponTemplateSet::parseAutoChoose(INI* ini, void *instance, void * /*store
 }
 
 //-------------------------------------------------------------------------------------------------
-void WeaponTemplateSet::parsePreferredAgainst(INI* ini, void *instance, void * /*store*/, const void* userData)
+void WeaponTemplateSet::parsePreferredAgainst(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
@@ -137,16 +135,15 @@ void WeaponTemplateSet::parsePreferredAgainst(INI* ini, void *instance, void * /
 }
 
 //-------------------------------------------------------------------------------------------------
-void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* tt )
+void WeaponTemplateSet::parseWeaponTemplateSet(INI* ini, const ThingTemplate* tt)
 {
-	static const FieldParse myFieldParse[] =
-	{
-		{ "Conditions", WeaponSetFlags::parseFromINI, nullptr, offsetof( WeaponTemplateSet, m_types ) },
-		{ "Weapon",	WeaponTemplateSet::parseWeapon,	nullptr, 0 },
-		{ "AutoChooseSources",	WeaponTemplateSet::parseAutoChoose, nullptr, 0 },
+	static const FieldParse myFieldParse[] = {
+		{ "Conditions", WeaponSetFlags::parseFromINI, nullptr, offsetof(WeaponTemplateSet, m_types) },
+		{ "Weapon", WeaponTemplateSet::parseWeapon, nullptr, 0 },
+		{ "AutoChooseSources", WeaponTemplateSet::parseAutoChoose, nullptr, 0 },
 		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, nullptr, 0 },
-		{ "ShareWeaponReloadTime", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
-		{ "WeaponLockSharedAcrossSets", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
+		{ "ShareWeaponReloadTime", INI::parseBool, nullptr, offsetof(WeaponTemplateSet, m_isReloadTimeShared) },
+		{ "WeaponLockSharedAcrossSets", INI::parseBool, nullptr, offsetof(WeaponTemplateSet, m_isWeaponLockSharedAcrossSets) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
@@ -155,9 +152,9 @@ void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* t
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool WeaponTemplateSet::testWeaponSetFlag( WeaponSetType wst ) const
+Bool WeaponTemplateSet::testWeaponSetFlag(WeaponSetType wst) const
 {
-	return m_types.test( wst );
+	return m_types.test(wst);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -176,33 +173,36 @@ WeaponSet::WeaponSet()
 	m_hasPitchLimit = false;
 	m_hasDamageWeapon = false;
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
+	{
 		m_weapons[i] = nullptr;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 WeaponSet::~WeaponSet()
 {
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
+	{
 		deleteInstance(m_weapons[i]);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void WeaponSet::crc( Xfer *xfer )
+void WeaponSet::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 2: TheSuperHackers @tweak Upgrade damage type flags from integer to BitFlags for Generals.
-	*    Zero Hour already had this at version 1.
-	*/
+ * Version Info:
+ * 1: Initial version
+ * 2: TheSuperHackers @tweak Upgrade damage type flags from integer to BitFlags for Generals.
+ *    Zero Hour already had this at version 1.
+ */
 // ------------------------------------------------------------------------------------------------
-void WeaponSet::xfer( Xfer *xfer )
+void WeaponSet::xfer(Xfer* xfer)
 {
 	// version
 #if RETAIL_COMPATIBLE_XFER_SAVE
@@ -211,7 +211,7 @@ void WeaponSet::xfer( Xfer *xfer )
 	const XferVersion currentVersion = 2;
 #endif
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	if (xfer->getXferMode() == XFER_LOAD)
 	{
@@ -219,7 +219,7 @@ void WeaponSet::xfer( Xfer *xfer )
 		WeaponSetFlags wsFlags;
 
 		xfer->xferAsciiString(&ttName);
-		wsFlags.xfer( xfer );
+		wsFlags.xfer(xfer);
 
 		if (ttName.isEmpty())
 		{
@@ -229,31 +229,37 @@ void WeaponSet::xfer( Xfer *xfer )
 		{
 			const ThingTemplate* tt = TheThingFactory->findTemplate(ttName);
 			if (tt == nullptr)
+			{
 				throw INI_INVALID_DATA;
+			}
 
 			// TheSuperHackers @fix bobtista 27/01/2026 Use the same final override as Object.
 			tt = static_cast<const ThingTemplate*>(tt->getFinalOverride());
 
 			m_curWeaponTemplateSet = tt->findWeaponTemplateSet(wsFlags);
 			if (m_curWeaponTemplateSet == nullptr)
+			{
 				throw INI_INVALID_DATA;
+			}
 		}
 	}
 	else if (xfer->getXferMode() == XFER_SAVE)
 	{
-		AsciiString ttName;				// leave 'em empty in case we're null
+		AsciiString ttName;    // leave 'em empty in case we're null
 		WeaponSetFlags wsFlags;
 		if (m_curWeaponTemplateSet != nullptr)
 		{
 			const ThingTemplate* tt = m_curWeaponTemplateSet->friend_getThingTemplate();
 			if (tt == nullptr)
+			{
 				throw INI_INVALID_DATA;
+			}
 
 			ttName = tt->getName();
 			wsFlags = m_curWeaponTemplateSet->friend_getWeaponSetFlags();
 		}
 		xfer->xferAsciiString(&ttName);
-		wsFlags.xfer( xfer );
+		wsFlags.xfer(xfer);
 	}
 
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
@@ -265,7 +271,8 @@ void WeaponSet::xfer( Xfer *xfer )
 			if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] == nullptr)
 			{
 				const WeaponTemplate* wt = m_curWeaponTemplateSet->getNth((WeaponSlotType)i);
-				if (wt==nullptr) {
+				if (wt == nullptr)
+				{
 					DEBUG_CRASH(("xfer backwards compatibility code - old save file??? jba."));
 					wt = m_curWeaponTemplateSet->getNth((WeaponSlotType)0);
 				}
@@ -295,7 +302,7 @@ void WeaponSet::xfer( Xfer *xfer )
 	if (version >= 2)
 #endif
 	{
-		m_totalDamageTypeMask.xfer(xfer);// BitSet has built in xfer
+		m_totalDamageTypeMask.xfer(xfer);    // BitSet has built in xfer
 	}
 }
 
@@ -304,7 +311,6 @@ void WeaponSet::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WeaponSet::loadPostProcess()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -314,10 +320,10 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 	DEBUG_ASSERTCRASH(set, ("findWeaponSet should never return null"));
 	if (set && set != m_curWeaponTemplateSet)
 	{
-		if( ! set->isWeaponLockSharedAcrossSets() )
+		if (!set->isWeaponLockSharedAcrossSets())
 		{
 			DEBUG_ASSERTLOG(!isCurWeaponLocked(), ("changing WeaponSet while Weapon is Locked... implicit unlock occurring!"));
-			releaseWeaponLock(LOCKED_PERMANENTLY);	// release all locks. sorry!
+			releaseWeaponLock(LOCKED_PERMANENTLY);    // release all locks. sorry!
 			m_curWeapon = PRIMARY_WEAPON;
 		}
 		m_filledWeaponSlotMask = 0;
@@ -325,7 +331,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		m_totalDamageTypeMask.clear();
 		m_hasPitchLimit = false;
 		m_hasDamageWeapon = false;
-		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
+		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON; --i)
 		{
 			deleteInstance(m_weapons[i]);
 			m_weapons[i] = nullptr;
@@ -333,14 +339,18 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 			if (set->getNth((WeaponSlotType)i))
 			{
 				m_weapons[i] = TheWeaponStore->allocateNewWeapon(set->getNth((WeaponSlotType)i), (WeaponSlotType)i);
-				m_weapons[i]->loadAmmoNow(obj);	// start 'em all with full clips.
+				m_weapons[i]->loadAmmoNow(obj);    // start 'em all with full clips.
 				m_filledWeaponSlotMask |= (1 << i);
 				m_totalAntiMask |= m_weapons[i]->getAntiMask();
 				m_totalDamageTypeMask.set(m_weapons[i]->getDamageType());
 				if (m_weapons[i]->isPitchLimited())
+				{
 					m_hasPitchLimit = true;
+				}
 				if (m_weapons[i]->isDamageWeapon())
+				{
 					m_hasDamageWeapon = true;
+				}
 
 				// no, do NOT do this; always start with the cur weapon being primary, even if there is no primary
 				// weapon. this is by design, to allow us to have units that have only "spell" weapons and no
@@ -349,7 +359,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 			}
 		}
 		m_curWeaponTemplateSet = set;
-		//DEBUG_LOG(("WeaponSet::updateWeaponSet -- changed curweapon to %s",getCurWeapon()->getName().str()));
+		// DEBUG_LOG(("WeaponSet::updateWeaponSet -- changed curweapon to %s",getCurWeapon()->getName().str()));
 	}
 }
 
@@ -363,15 +373,19 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 	static const ModelConditionFlagType PreAttack[WEAPONSLOT_COUNT] = { MODELCONDITION_PREATTACK_A, MODELCONDITION_PREATTACK_B, MODELCONDITION_PREATTACK_C };
 	static const ModelConditionFlagType* Lookup[WSF_COUNT] = { Nothing, Firing, Betweening, Reloading, PreAttack };
 
-	ModelConditionFlags flags;	// defaults to all clear
+	ModelConditionFlags flags;    // defaults to all clear
 
 	ModelConditionFlagType f = Lookup[a][wslot];
 	if (f != MODELCONDITION_INVALID)
+	{
 		flags.set(f);
+	}
 
 	static const ModelConditionFlagType Using[WEAPONSLOT_COUNT] = { MODELCONDITION_USING_WEAPON_A, MODELCONDITION_USING_WEAPON_B, MODELCONDITION_USING_WEAPON_C };
 	if (a != WSF_NONE)
+	{
 		flags.set(Using[wslot]);
+	}
 
 	return flags;
 }
@@ -379,40 +393,40 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 //-------------------------------------------------------------------------------------------------
 static Int getVictimAntiMask(const Object* victim)
 {
-	if( victim->isKindOf( KINDOF_MINE ) )
+	if (victim->isKindOf(KINDOF_MINE))
 	{
 		return WEAPON_ANTI_MINE | WEAPON_ANTI_GROUND;
 	}
-	else if( victim->isKindOf( KINDOF_SMALL_MISSILE ) )
+	else if (victim->isKindOf(KINDOF_SMALL_MISSILE))
 	{
-		//All missiles are also projectiles!
+		// All missiles are also projectiles!
 		return WEAPON_ANTI_SMALL_MISSILE;
 	}
-	else if( victim->isKindOf( KINDOF_BALLISTIC_MISSILE ) )
+	else if (victim->isKindOf(KINDOF_BALLISTIC_MISSILE))
 	{
 		return WEAPON_ANTI_BALLISTIC_MISSILE;
 	}
-	else if( victim->isKindOf( KINDOF_PROJECTILE ) )
+	else if (victim->isKindOf(KINDOF_PROJECTILE))
 	{
 		return WEAPON_ANTI_PROJECTILE;
 	}
-	else if( victim->isAirborneTarget() )
+	else if (victim->isAirborneTarget())
 	{
-		if( victim->isKindOf( KINDOF_VEHICLE ) )
+		if (victim->isKindOf(KINDOF_VEHICLE))
 		{
 			return WEAPON_ANTI_AIRBORNE_VEHICLE;
 		}
-		else if( victim->isKindOf( KINDOF_INFANTRY ) )
+		else if (victim->isKindOf(KINDOF_INFANTRY))
 		{
 			return WEAPON_ANTI_AIRBORNE_INFANTRY;
 		}
-		else if( victim->isKindOf( KINDOF_PARACHUTE ) )
+		else if (victim->isKindOf(KINDOF_PARACHUTE))
 		{
 			return WEAPON_ANTI_PARACHUTE;
 		}
-		else if( !victim->isKindOf( KINDOF_UNATTACKABLE ) )
+		else if (!victim->isKindOf(KINDOF_UNATTACKABLE))
 		{
-			DEBUG_CRASH( ("Object %s is being targeted as airborne, but is not infantry, nor vehicle. Is this legit? -- tell Kris", victim->getTemplate()->getName().str() ) );
+			DEBUG_CRASH(("Object %s is being targeted as airborne, but is not infantry, nor vehicle. Is this legit? -- tell Kris", victim->getTemplate()->getName().str()));
 		}
 		return 0;
 	}
@@ -426,11 +440,13 @@ static Int getVictimAntiMask(const Object* victim)
 Bool WeaponSet::isAnyWithinTargetPitch(const Object* obj, const Object* victim) const
 {
 	if (!m_hasPitchLimit)
-		return true;
-
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 	{
-		const Weapon* weapon = m_weapons[ i ];
+		return true;
+	}
+
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
+	{
+		const Weapon* weapon = m_weapons[i];
 		if (weapon && weapon->isWithinTargetPitch(obj, victim))
 		{
 			return true;
@@ -440,22 +456,23 @@ Bool WeaponSet::isAnyWithinTargetPitch(const Object* obj, const Object* victim) 
 }
 
 //-------------------------------------------------------------------------------------------------
-CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attackType, const Object* source, const Object* victim, CommandSourceType commandSource ) const
+CanAttackResult WeaponSet::getAbleToAttackSpecificObject(AbleToAttackType attackType, const Object* source, const Object* victim, CommandSourceType commandSource) const
 {
-
 	// basic sanity checks.
 	if (!source ||
-			!victim ||
-			source->isEffectivelyDead() ||
-			victim->isEffectivelyDead() ||
-			source->isDestroyed() ||
-			victim->isDestroyed() ||
-			victim == source)
+	    !victim ||
+	    source->isEffectivelyDead() ||
+	    victim->isEffectivelyDead() ||
+	    source->isDestroyed() ||
+	    victim->isDestroyed() ||
+	    victim == source)
+	{
 		return ATTACKRESULT_NOT_POSSIBLE;
+	}
 
 	Bool sameOwnerForceAttack = ((source->getControllingPlayer() == victim->getControllingPlayer()) && isForcedAttack(attackType));
 
-// ----- examine VICTIM to determine legality of attack
+	// ----- examine VICTIM to determine legality of attack
 
 	//
 	// an "OBJECT_STATUS_MASKED" object is not really a valid target for attacking, this masked
@@ -464,53 +481,63 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 	// being able to attack stuff
 	//
 	if (victim->testStatus(OBJECT_STATUS_MASKED))
+	{
 		return ATTACKRESULT_NOT_POSSIBLE;
+	}
 
 	// And this is the KINDOF version, for things that aren't really game objects, but need to have "life"
 	// so they can have lifetimeupdates and vision
 	if (victim->isKindOf(KINDOF_UNATTACKABLE))
+	{
 		return ATTACKRESULT_NOT_POSSIBLE;
+	}
 
 	// this object is not currently auto-acquireable
 	if (victim->testStatus(OBJECT_STATUS_NO_ATTACK_FROM_AI) && commandSource == CMD_FROM_AI)
+	{
 		return ATTACKRESULT_NOT_POSSIBLE;
+	}
 
-  Bool allowStealthToPreventAttacks = TRUE;
+	Bool allowStealthToPreventAttacks = TRUE;
 	if (source->testStatus(OBJECT_STATUS_IGNORING_STEALTH) || sameOwnerForceAttack)
+	{
 		allowStealthToPreventAttacks = FALSE;
-  if( isForcedAttack( attackType ) && victim->isKindOf( KINDOF_DISGUISER ) )
-  {
-    // force-attack allows you to attack disguised things, which also happen to be stealthed.
-    // since we normally disallow attacking stealthed things (even via force-fire), we check
-    // for disguised and explicitly ignore stealth in that case
-	  StealthUpdate *update = victim->getStealth();
-    if (update && update->isDisguised())
-  	  allowStealthToPreventAttacks = FALSE;
-  }
+	}
+	if (isForcedAttack(attackType) && victim->isKindOf(KINDOF_DISGUISER))
+	{
+		// force-attack allows you to attack disguised things, which also happen to be stealthed.
+		// since we normally disallow attacking stealthed things (even via force-fire), we check
+		// for disguised and explicitly ignore stealth in that case
+		StealthUpdate* update = victim->getStealth();
+		if (update && update->isDisguised())
+		{
+			allowStealthToPreventAttacks = FALSE;
+		}
+	}
 
 	// If an object is stealthed and hasn't been detected yet, then it is not a valid target to fire
 	// on.
 	if (allowStealthToPreventAttacks &&
-				victim->testStatus(OBJECT_STATUS_STEALTHED) &&
-				!victim->testStatus(OBJECT_STATUS_DETECTED))
+	    victim->testStatus(OBJECT_STATUS_STEALTHED) &&
+	    !victim->testStatus(OBJECT_STATUS_DETECTED))
 	{
-		if( !victim->isKindOf( KINDOF_DISGUISER ) )
+		if (!victim->isKindOf(KINDOF_DISGUISER))
 		{
 			return ATTACKRESULT_NOT_POSSIBLE;
 		}
 		else
 		{
-			//Exception case -- don't return false if we are a bomb truck disguised as an enemy vehicle.
-			StealthUpdate *update = victim->getStealth();
-			if( update && update->isDisguised() )
+			// Exception case -- don't return false if we are a bomb truck disguised as an enemy vehicle.
+			StealthUpdate* update = victim->getStealth();
+			if (update && update->isDisguised())
 			{
-				Player *ourPlayer = source->getControllingPlayer();
-				Player *otherPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
-				if( ourPlayer && otherPlayer )
+				Player* ourPlayer = source->getControllingPlayer();
+				Player* otherPlayer = ThePlayerList->getNthPlayer(update->getDisguisedPlayerIndex());
+				if (ourPlayer && otherPlayer)
 				{
-					if( ourPlayer->getRelationship( otherPlayer->getDefaultTeam() ) != ENEMIES )
+					if (ourPlayer->getRelationship(otherPlayer->getDefaultTeam()) != ENEMIES)
 					{
-						//Our stealthed & undetected object is disguised as a unit not perceived to be our enemy.
+						// Our stealthed & undetected object is disguised as a unit not perceived to be our enemy.
 						return ATTACKRESULT_NOT_POSSIBLE;
 					}
 				}
@@ -527,16 +554,16 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 
 	// GS -- Fog no longer prevents attacking at all.  it prevents targeting in findClosestEnemy.  Leaving this
 	// here commented out to show that shroud should not be checked.
-//  const Player* sourceController = source->getControllingPlayer();
-//	if( sourceController
- //   && sourceController->getPlayerType() == PLAYER_HUMAN
-//		&& commandSource != CMD_FROM_SCRIPT
-//		&& !(isContinuedAttack(attackType) && victim->isKindOf(KINDOF_IMMOBILE))
-//		&&  victim->getShroudedStatus(sourceController->getPlayerIndex()) >= OBJECTSHROUD_FOGGED
-//		)
-//	{
-//		return ATTACKRESULT_NOT_POSSIBLE;
-//	}
+	//  const Player* sourceController = source->getControllingPlayer();
+	//	if( sourceController
+	//   && sourceController->getPlayerType() == PLAYER_HUMAN
+	//		&& commandSource != CMD_FROM_SCRIPT
+	//		&& !(isContinuedAttack(attackType) && victim->isKindOf(KINDOF_IMMOBILE))
+	//		&&  victim->getShroudedStatus(sourceController->getPlayerIndex()) >= OBJECTSHROUD_FOGGED
+	//		)
+	//	{
+	//		return ATTACKRESULT_NOT_POSSIBLE;
+	//	}
 
 	//
 	// At least one of the following must be true:
@@ -550,15 +577,15 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 	//
 	Relationship r = source->getRelationship(victim);
 	if (r != ENEMIES &&
-			!isForcedAttack(attackType) &&
-// GS			!victim->isKindOf( KINDOF_BRIDGE_TOWER ) && // Repairing bridges cut 12/12/02, so attacking is too
-			!(victim->isKindOf( KINDOF_MINE ) && r != ALLIES))
+	    !isForcedAttack(attackType) &&
+	    // GS			!victim->isKindOf( KINDOF_BRIDGE_TOWER ) && // Repairing bridges cut 12/12/02, so attacking is too
+	    !(victim->isKindOf(KINDOF_MINE) && r != ALLIES))
 	{
-		//Only reject this if the command is from a player. If scripts or AI order attacks, they don't
-		//care about relationships (and fixes broken scripts).
-		if( commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit( OBJECT_STATUS_SCRIPT_TARGETABLE ) || r == ALLIES) )
+		// Only reject this if the command is from a player. If scripts or AI order attacks, they don't
+		// care about relationships (and fixes broken scripts).
+		if (commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit(OBJECT_STATUS_SCRIPT_TARGETABLE) || r == ALLIES))
 		{
-			//Unless the object has a map property that sets it to be targetable (and not allied), then give up.
+			// Unless the object has a map property that sets it to be targetable (and not allied), then give up.
 			return ATTACKRESULT_NOT_POSSIBLE;
 		}
 	}
@@ -580,50 +607,48 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 			const Player* victimApparentController = victimContain->getApparentControllingPlayer(source->getControllingPlayer());
 			if (victimApparentController && source->getTeam()->getRelationship(victimApparentController->getDefaultTeam()) != ENEMIES)
 			{
-				//Only reject this if the command is from a player. If scripts or AI order attacks, they don't
-				//care about relationships (and fixes broken scripts).
-				if( commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit( OBJECT_STATUS_SCRIPT_TARGETABLE ) || r == ALLIES) )
+				// Only reject this if the command is from a player. If scripts or AI order attacks, they don't
+				// care about relationships (and fixes broken scripts).
+				if (commandSource == CMD_FROM_PLAYER && (!victim->testScriptStatusBit(OBJECT_STATUS_SCRIPT_TARGETABLE) || r == ALLIES))
 				{
-					//Unless the object has a map property that sets it to be targetable (and not allied), then give up.
+					// Unless the object has a map property that sets it to be targetable (and not allied), then give up.
 					return ATTACKRESULT_NOT_POSSIBLE;
 				}
 			}
 		}
 	}
 
-	//Check if the shot itself is valid!
-	return getAbleToUseWeaponAgainstTarget( attackType, source, victim, victim->getPosition(), commandSource );
+	// Check if the shot itself is valid!
+	return getAbleToUseWeaponAgainstTarget(attackType, source, victim, victim->getPosition(), commandSource);
 }
 
 //-------------------------------------------------------------------------------------------------
-//This is formerly the 2nd half of getAbleToAttackSpecificObject
-//This function is responsible for determining if our object is physically capable of attacking the target and it
-//supports both victim or position.
-CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType attackType, const Object *source, const Object *victim, const Coord3D *pos, CommandSourceType commandSource ) const
+// This is formerly the 2nd half of getAbleToAttackSpecificObject
+// This function is responsible for determining if our object is physically capable of attacking the target and it
+// supports both victim or position.
+CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget(AbleToAttackType attackType, const Object* source, const Object* victim, const Coord3D* pos, CommandSourceType commandSource) const
 {
-
-	//First determine if we are attacking an object or the ground and get the
-	//appropriate weapon anti mask.
+	// First determine if we are attacking an object or the ground and get the
+	// appropriate weapon anti mask.
 	WeaponAntiMaskType targetAntiMask;
-	if( victim )
+	if (victim)
 	{
-		//Attacking a specific object -- get the victim's anti weapon mask!
-		targetAntiMask = (WeaponAntiMaskType)getVictimAntiMask( victim );
+		// Attacking a specific object -- get the victim's anti weapon mask!
+		targetAntiMask = (WeaponAntiMaskType)getVictimAntiMask(victim);
 
-		//Make sure that the pos matches the victim!
+		// Make sure that the pos matches the victim!
 		pos = victim->getPosition();
 	}
 	else
 	{
-		//Attacking the ground so this is obvious.
+		// Attacking the ground so this is obvious.
 		targetAntiMask = WEAPON_ANTI_GROUND;
 	}
 
-
 	// Special Case test for turreted weapons on buildings... since they cannot move, they must be within range of target
-	//Kris: Actually -- let's just do this for all immobile objects. If we can give it orders to attack, then we must check
+	// Kris: Actually -- let's just do this for all immobile objects. If we can give it orders to attack, then we must check
 	// the range anyways. This will also fix stinger soldiers.
-	//Kris: ***NOTE*** KINDOF_SPAWNS_ARE_THE_WEAPONS was added here because initially I tried to get this to work by
+	// Kris: ***NOTE*** KINDOF_SPAWNS_ARE_THE_WEAPONS was added here because initially I tried to get this to work by
 	//      making stinger soldiers immobile. However, doing so prevents them from attacking because they can't turn without
 	//      a locomotor! In anycase, the stinger site when ordered to attack will pass the spawn member closest to the target
 	//      to this function for evaluation in it's place. So to get that code into this area, giving it the kindof bit will
@@ -633,40 +658,46 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 	// srj sez: contained soldiers are a lot like turrets in this sense. they should only attempt to acquire targets
 	// within range, even if their container is mobile. otherwise they end up resetting their mood-check
 	// times in odd ways in some cases. hence the getContainedBy() check.
-	//Kris: Dec 28 -- Now we're testing this for ALL objects, but we only abort if the object is immobile. We'll use the
+	// Kris: Dec 28 -- Now we're testing this for ALL objects, but we only abort if the object is immobile. We'll use the
 	//		  information later to determine if the unit must move before firing (cursor reasons).
 	Bool withinAttackRange = FALSE;
-	const Object *containedBy = source->getContainedBy();
+	const Object* containedBy = source->getContainedBy();
 	Bool hasAWeaponInRange = FALSE;
-	Bool hasAWeapon				 = FALSE;
+	Bool hasAWeapon = FALSE;
 	for (Int slot = 0; slot < WEAPONSLOT_COUNT - 1; ++slot)
 	{
-		Weapon *weaponToTestForRange = m_weapons[ m_curWeapon ];
-		if ( weaponToTestForRange )
+		Weapon* weaponToTestForRange = m_weapons[m_curWeapon];
+		if (weaponToTestForRange)
 		{
 			hasAWeapon = TRUE;
-			if ((m_totalAntiMask & targetAntiMask) == 0)//we don't care to check for this weapon
+			if ((m_totalAntiMask & targetAntiMask) == 0)    // we don't care to check for this weapon
+			{
 				continue;
+			}
 
 			Bool handled = FALSE;
-			ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
-			if( contain && contain->isGarrisonable() )
+			ContainModuleInterface* contain = containedBy ? containedBy->getContain() : nullptr;
+			if (contain && contain->isGarrisonable())
 			{
-				//For contained things, we need to fake-move objects to the best garrison point in order
-				//to get precise range checks.
+				// For contained things, we need to fake-move objects to the best garrison point in order
+				// to get precise range checks.
 				Coord3D targetPos = *pos;
 				Coord3D goalPos;
-				if( contain->calcBestGarrisonPosition( &goalPos, &targetPos ) )
+				if (contain->calcBestGarrisonPosition(&goalPos, &targetPos))
 				{
-					withinAttackRange = weaponToTestForRange->isSourceObjectWithGoalPositionWithinAttackRange( source, &goalPos, victim, &targetPos );
+					withinAttackRange = weaponToTestForRange->isSourceObjectWithGoalPositionWithinAttackRange(source, &goalPos, victim, &targetPos);
 					handled = TRUE;
 				}
 			}
-			else if( victim )
-				withinAttackRange = weaponToTestForRange->isWithinAttackRange( source, victim );
+			else if (victim)
+			{
+				withinAttackRange = weaponToTestForRange->isWithinAttackRange(source, victim);
+			}
 			else
-				withinAttackRange = weaponToTestForRange->isWithinAttackRange( source, pos );
-			if( withinAttackRange )
+			{
+				withinAttackRange = weaponToTestForRange->isWithinAttackRange(source, pos);
+			}
+			if (withinAttackRange)
 			{
 				hasAWeaponInRange = TRUE;
 				break;
@@ -674,33 +705,39 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 		}
 	}
 
-	if( source->isKindOf( KINDOF_IMMOBILE ) || source->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ) || containedBy )
+	if (source->isKindOf(KINDOF_IMMOBILE) || source->isKindOf(KINDOF_SPAWNS_ARE_THE_WEAPONS) || containedBy)
 	{
-		if ( hasAWeapon && !hasAWeaponInRange && attackType != ATTACK_TUNNEL_NETWORK_GUARD )
+		if (hasAWeapon && !hasAWeaponInRange && attackType != ATTACK_TUNNEL_NETWORK_GUARD)
+		{
 			return ATTACKRESULT_INVALID_SHOT;
-
+		}
 	}
 
 	CanAttackResult okResult = withinAttackRange ? ATTACKRESULT_POSSIBLE : ATTACKRESULT_POSSIBLE_AFTER_MOVING;
 
-
-// ----- things we examine about SOURCE to determine legality of attack
+	// ----- things we examine about SOURCE to determine legality of attack
 
 	if (hasAnyDamageWeapon())
 	{
 		if ((m_totalAntiMask & targetAntiMask) == 0)
+		{
 			return ATTACKRESULT_INVALID_SHOT;
+		}
 
-		//If we don't have a victim, we are force attacking a position. Because
-		//of the weapon mask check preceding this, the attack is possible!
-		if( !victim )
+		// If we don't have a victim, we are force attacking a position. Because
+		// of the weapon mask check preceding this, the attack is possible!
+		if (!victim)
+		{
 			return okResult;
+		}
 
 		if (!isAnyWithinTargetPitch(source, victim))
+		{
 			return ATTACKRESULT_INVALID_SHOT;
+		}
 
 		Int first, last;
-		if( isCurWeaponLocked() )
+		if (isCurWeaponLocked())
 		{
 			first = m_curWeapon;
 			last = m_curWeapon;
@@ -711,11 +748,11 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 			last = PRIMARY_WEAPON;
 		}
 
-		//Check each weapon, until we find one that can do damage (or fail)
-		for( Int i = first; i >= last ; --i )
+		// Check each weapon, until we find one that can do damage (or fail)
+		for (Int i = first; i >= last; --i)
 		{
-			Weapon *weapon = m_weapons[ i ];
-			if (weapon && weapon->estimateWeaponDamage( source, victim ))
+			Weapon* weapon = m_weapons[i];
+			if (weapon && weapon->estimateWeaponDamage(source, victim))
 			{
 				return okResult;
 			}
@@ -723,7 +760,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 	}
 
 	// Do a check to see if we have an occupied container (garrisoned building, transport that allows passengers to fire).
-	ContainModuleInterface *contain = source->getContain();
+	ContainModuleInterface* contain = source->getContain();
 	if (contain && contain->isPassengerAllowedToFire())
 	{
 		// Loop through each member and if just one of them can attack the specific target, then
@@ -734,10 +771,10 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 			for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
 			{
 				Object* garrisonedMember = *it;
-				if( garrisonedMember->isAbleToAttack() )
+				if (garrisonedMember->isAbleToAttack())
 				{
-					CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget( attackType, victim, pos, commandSource );
-					if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
+					CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget(attackType, victim, pos, commandSource);
+					if (result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
 					{
 						return result;
 					}
@@ -746,21 +783,19 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 		}
 	}
 
-
 	// Do a check to see if we have a hive object that has slaved objects.
 	SpawnBehaviorInterface* spawnInterface = source->getSpawnBehaviorInterface();
-	if( spawnInterface &&
-		spawnInterface->getCanAnySlavesUseWeaponAgainstTarget( attackType, victim, pos, commandSource ) == ATTACKRESULT_POSSIBLE )
+	if (spawnInterface &&
+	    spawnInterface->getCanAnySlavesUseWeaponAgainstTarget(attackType, victim, pos, commandSource) == ATTACKRESULT_POSSIBLE)
 	{
-
-// srj sez: this bit is intended to fix the situation where you have a stinger site
-// selected and get the "attack if I move" cursor against an enemy. since the stinger site can't
-// move or fire, you shouldn't really EVER get this cursor for it. and since we just verified above
-// that our slaves (the soldiers) can attack correctly, just nork it.
-		if (source->isKindOf( KINDOF_IMMOBILE )
-				&& source->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS )
-				&& okResult == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
+		// srj sez: this bit is intended to fix the situation where you have a stinger site
+		// selected and get the "attack if I move" cursor against an enemy. since the stinger site can't
+		// move or fire, you shouldn't really EVER get this cursor for it. and since we just verified above
+		// that our slaves (the soldiers) can attack correctly, just nork it.
+		if (source->isKindOf(KINDOF_IMMOBILE) && source->isKindOf(KINDOF_SPAWNS_ARE_THE_WEAPONS) && okResult == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
+		{
 			okResult = ATTACKRESULT_POSSIBLE;
+		}
 
 		return okResult;
 	}
@@ -773,29 +808,33 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victim, WeaponChoiceCriteria criteria, CommandSourceType cmdSource)
 {
 	/*
-		1) The first criteria is weapon fitness.  If the object has two weapons that can fire concurrently,
-			find the set of weapons that can hit the given target.  If two weapons can hit the given target,
-		2) Figure potential damage. If both weapons have the same potential damage (should never happen) then,
-		3) Pick one.
+	  1) The first criteria is weapon fitness.  If the object has two weapons that can fire concurrently,
+	    find the set of weapons that can hit the given target.  If two weapons can hit the given target,
+	  2) Figure potential damage. If both weapons have the same potential damage (should never happen) then,
+	  3) Pick one.
 
-		Another consideration is reloading.  A weapon that is not ready to fire right this moment should
-		never be returned if there is another weapon that could be fired.  Readiness trumps Criteria.
+	  Another consideration is reloading.  A weapon that is not ready to fire right this moment should
+	  never be returned if there is another weapon that could be fired.  Readiness trumps Criteria.
 
-		Note that this will never result in being locked into a wrong choice (ie "If only I had waited one
-		more frame, I would have gotten the better weapon") because the AI is recomputing this choice
-		every frame.  Picture a tank with a slow reloading missile and a fast low damage gun.  This function
-		will choose the missile, then choose the gun, then want to choose the missile until the gun reloads,
-		then choose the gun and go back to wanting to choose the missile, etc
+	  Note that this will never result in being locked into a wrong choice (ie "If only I had waited one
+	  more frame, I would have gotten the better weapon") because the AI is recomputing this choice
+	  every frame.  Picture a tank with a slow reloading missile and a fast low damage gun.  This function
+	  will choose the missile, then choose the gun, then want to choose the missile until the gun reloads,
+	  then choose the gun and go back to wanting to choose the missile, etc
 	*/
 
 	if (victim == nullptr)
-		return false; // Usually cause victim just got killed.  jba.
+	{
+		return false;    // Usually cause victim just got killed.  jba.
+	}
 
-	if( isCurWeaponLocked() )
-		return TRUE; // I have been forced into choosing a specific weapon, so it is right until someone says otherwise
+	if (isCurWeaponLocked())
+	{
+		return TRUE;    // I have been forced into choosing a specific weapon, so it is right until someone says otherwise
+	}
 
-	Bool found = FALSE;				// A Ready weapon has been found
-	Bool foundBackup = FALSE;	// An unready, but valid weapon has been found
+	Bool found = FALSE;    // A Ready weapon has been found
+	Bool foundBackup = FALSE;    // An unready, but valid weapon has been found
 
 	Real longestRange = 0.0f;
 	Real bestDamage = 0.0f;
@@ -806,39 +845,53 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 	WeaponSlotType currentDecisionBackup = PRIMARY_WEAPON;
 
 	// go backwards, so that in the event of ties, the primary weapon is preferred
-	for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
+	for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON; --i)
 	{
 		/*
-			First: eliminate the weapons that cannot be used.
+		  First: eliminate the weapons that cannot be used.
 		*/
 
 		// no weapon in this slot.
 		if (!m_weapons[i])
+		{
 			continue;
+		}
 
 		// weapon not allowed to be specified via this command source.
 		CommandSourceMask okSrcs = m_curWeaponTemplateSet->getNthCommandSourceMask((WeaponSlotType)i);
 		if ((okSrcs & (1 << cmdSource)) == 0)
+		{
 			continue;
+		}
 
 		Weapon* weapon = m_weapons[i];
 		if (weapon == nullptr)
+		{
 			continue;
+		}
 
 		// weapon out of range.
 		if (!weapon->isWithinAttackRange(obj, victim))
+		{
 			continue;
+		}
 
 		// weapon out of ammo.
 		if (weapon->getStatus() == OUT_OF_AMMO && !weapon->getAutoReloadsClip())
+		{
 			continue;
+		}
 
 		// weapon not allowed to target this kind of thing.
 		if (!(weapon->getAntiMask() & getVictimAntiMask(victim)))
+		{
 			continue;
+		}
 
 		if (!weapon->isWithinTargetPitch(obj, victim))
+		{
 			continue;
+		}
 
 		Real damage = weapon->estimateWeaponDamage(obj, victim);
 		Real attackRange = weapon->getAttackRange(obj);
@@ -846,28 +899,32 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 
 		const AIUpdateInterface* ai = obj->getAI();
 		if (ai && ai->isWeaponSlotOnTurretAndAimingAtTarget((WeaponSlotType)i, victim))
+		{
 			weaponIsReady = false;
+		}
 
 		// weapon would do no damage against this target.
 		// exception: 'unresistable' weapons are allowed to do zero damage.
 		if (damage <= 0.0f && weapon->getDamageType() != DAMAGE_UNRESISTABLE)
+		{
 			continue;
+		}
 
 		/*
-			now that we've eliminated the impossible ones, let's decide which
-			one we will prefer.
+		  now that we've eliminated the impossible ones, let's decide which
+		  one we will prefer.
 		*/
 
 		/*
-			if a weapon matches the magic "preferred" bits, it's ALWAYS preferred over other weapons, regardless
-			of actual damage/range. (eg, the Comanche cannon, which is always preferred against infantry, rather
-			than its antitank missiles.) we accomplish this cheesily, by magnifying the damage/range, and by declaring
-			the weapon "ready" in a more liberal manner.
+		  if a weapon matches the magic "preferred" bits, it's ALWAYS preferred over other weapons, regardless
+		  of actual damage/range. (eg, the Comanche cannon, which is always preferred against infantry, rather
+		  than its antitank missiles.) we accomplish this cheesily, by magnifying the damage/range, and by declaring
+		  the weapon "ready" in a more liberal manner.
 		*/
 		const KindOfMaskType& preferredAgainst = m_curWeaponTemplateSet->getNthPreferredAgainstMask((WeaponSlotType)i);
 		if (KINDOFMASK_ANY_SET(preferredAgainst) && victim->isKindOfMulti(preferredAgainst, KINDOFMASK_NONE))
 		{
-			const Real HUGE_DAMAGE = 1e10;		// wow, that's a lot of damage.
+			const Real HUGE_DAMAGE = 1e10;    // wow, that's a lot of damage.
 			const Real HUGE_RANGE = 1e10;
 			damage = HUGE_DAMAGE;
 			attackRange = HUGE_RANGE;
@@ -878,7 +935,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		switch (criteria)
 		{
 			case PREFER_MOST_DAMAGE:
-				if( !weaponIsReady )
+				if (!weaponIsReady)
 				{
 					// If this weapon is not ready, the best it can do is qualify as the Best Backup choice
 					if (damage >= bestDamageBackup)
@@ -899,36 +956,36 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 				}
 				break;
 			case PREFER_LONGEST_RANGE:
+			{
+				if (!weaponIsReady)
 				{
-					if( !weaponIsReady )
+					if (attackRange > longestRangeBackup)
 					{
-						if (attackRange > longestRangeBackup)
-						{
-							longestRangeBackup = attackRange;
-							currentDecisionBackup = (WeaponSlotType)i;
-							foundBackup = true;
-						}
-					}
-					else
-					{
-						if (attackRange > longestRange)
-						{
-							longestRange = attackRange;
-							currentDecision = (WeaponSlotType)i;
-							found = true;
-						}
+						longestRangeBackup = attackRange;
+						currentDecisionBackup = (WeaponSlotType)i;
+						foundBackup = true;
 					}
 				}
-				break;
+				else
+				{
+					if (attackRange > longestRange)
+					{
+						longestRange = attackRange;
+						currentDecision = (WeaponSlotType)i;
+						found = true;
+					}
+				}
+			}
+			break;
 		}
 	}
 
-	if ( found )
+	if (found)
 	{
 		// If we found a good best one, then just use it
 		m_curWeapon = currentDecision;
 	}
-	else if ( foundBackup )
+	else if (foundBackup)
 	{
 		// No ready weapon was found, so return the most suitable unready one.
 		m_curWeapon = currentDecisionBackup;
@@ -940,24 +997,27 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		m_curWeapon = PRIMARY_WEAPON;
 	}
 
-	//DEBUG_LOG(("WeaponSet::chooseBestWeaponForTarget -- changed curweapon to %s",getCurWeapon()->getName().str()));
+	// DEBUG_LOG(("WeaponSet::chooseBestWeaponForTarget -- changed curweapon to %s",getCurWeapon()->getName().str()));
 
 	return found;
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void WeaponSet::reloadAllAmmo(const Object *obj, Bool now)
+void WeaponSet::reloadAllAmmo(const Object* obj, Bool now)
 {
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 	{
 		Weapon* weapon = m_weapons[i];
 		if (weapon != nullptr)
 		{
 			if (now)
+			{
 				weapon->loadAmmoNow(obj);
+			}
 			else
+			{
 				weapon->reloadAmmo(obj);
+			}
 		}
 	}
 }
@@ -965,11 +1025,13 @@ void WeaponSet::reloadAllAmmo(const Object *obj, Bool now)
 //-------------------------------------------------------------------------------------------------
 Bool WeaponSet::isOutOfAmmo() const
 {
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 	{
 		const Weapon* weapon = m_weapons[i];
 		if (weapon == nullptr)
+		{
 			continue;
+		}
 		if (weapon->getStatus() != OUT_OF_AMMO)
 		{
 			return false;
@@ -981,9 +1043,9 @@ Bool WeaponSet::isOutOfAmmo() const
 //-------------------------------------------------------------------------------------------------
 const Weapon* WeaponSet::findAmmoPipShowingWeapon() const
 {
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 	{
-		const Weapon *weapon = m_weapons[ i ];
+		const Weapon* weapon = m_weapons[i];
 		if (weapon && weapon->isShowsAmmoPips())
 		{
 			return weapon;
@@ -995,9 +1057,9 @@ const Weapon* WeaponSet::findAmmoPipShowingWeapon() const
 //-------------------------------------------------------------------------------------------------
 Weapon* WeaponSet::findWaypointFollowingCapableWeapon()
 {
-	for( Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON; i-- )
+	for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON; i--)
 	{
-		if( m_weapons[i] && m_weapons[i]->isCapableOfFollowingWaypoint() )
+		if (m_weapons[i] && m_weapons[i]->isCapableOfFollowingWaypoint())
 		{
 			return m_weapons[i];
 		}
@@ -1009,16 +1071,16 @@ Weapon* WeaponSet::findWaypointFollowingCapableWeapon()
 UnsignedInt WeaponSet::getMostPercentReadyToFireAnyWeapon() const
 {
 	UnsignedInt mostReady = 0;
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 	{
-		if( m_weapons[ i ] )
+		if (m_weapons[i])
 		{
-			UnsignedInt percentage = (UnsignedInt)(m_weapons[ i ]->getPercentReadyToFire() * 100.0f);
-			if( percentage > mostReady )
+			UnsignedInt percentage = (UnsignedInt)(m_weapons[i]->getPercentReadyToFire() * 100.0f);
+			if (percentage > mostReady)
 			{
 				mostReady = percentage;
 			}
-			if( mostReady >= 100 )
+			if (mostReady >= 100)
 			{
 				return mostReady;
 			}
@@ -1030,7 +1092,7 @@ UnsignedInt WeaponSet::getMostPercentReadyToFireAnyWeapon() const
 //-------------------------------------------------------------------------------------------------
 // A special type of command demands that you use this (normally unchooseable) weapon
 // until told otherwise.
-Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockType )
+Bool WeaponSet::setWeaponLock(WeaponSlotType weaponSlot, WeaponLockType lockType)
 {
 	if (lockType == NOT_LOCKED)
 	{
@@ -1042,17 +1104,17 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 	// the old code was just plain wrong. (look at it in perforce and you'll see...)
 	if (m_weapons[weaponSlot] != nullptr)
 	{
-		if( lockType == LOCKED_PERMANENTLY )
+		if (lockType == LOCKED_PERMANENTLY)
 		{
 			m_curWeapon = weaponSlot;
 			m_curWeaponLockedStatus = lockType;
-			//DEBUG_LOG(("WeaponSet::setWeaponLock permanently -- changed curweapon to %s",getCurWeapon()->getName().str()));
+			// DEBUG_LOG(("WeaponSet::setWeaponLock permanently -- changed curweapon to %s",getCurWeapon()->getName().str()));
 		}
-		else if( lockType == LOCKED_TEMPORARILY && m_curWeaponLockedStatus != LOCKED_PERMANENTLY )
+		else if (lockType == LOCKED_TEMPORARILY && m_curWeaponLockedStatus != LOCKED_PERMANENTLY)
 		{
 			m_curWeapon = weaponSlot;
 			m_curWeaponLockedStatus = lockType;
-			//DEBUG_LOG(("WeaponSet::setWeaponLock temporarily -- changed curweapon to %s",getCurWeapon()->getName().str()));
+			// DEBUG_LOG(("WeaponSet::setWeaponLock temporarily -- changed curweapon to %s",getCurWeapon()->getName().str()));
 		}
 
 		return true;
@@ -1067,8 +1129,10 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 // weaponsets entirely, or any Player issued command besides special attack has been given.
 void WeaponSet::releaseWeaponLock(WeaponLockType lockType)
 {
-	if( m_curWeaponLockedStatus == NOT_LOCKED )
-		return;// Nothing to do
+	if (m_curWeaponLockedStatus == NOT_LOCKED)
+	{
+		return;    // Nothing to do
+	}
 
 	if (lockType == LOCKED_PERMANENTLY)
 	{
@@ -1079,7 +1143,9 @@ void WeaponSet::releaseWeaponLock(WeaponLockType lockType)
 	{
 		// only unlocked if the current lock is temporary.
 		if (m_curWeaponLockedStatus == LOCKED_TEMPORARILY)
+		{
 			m_curWeaponLockedStatus = NOT_LOCKED;
+		}
 	}
 	else
 	{
@@ -1094,17 +1160,17 @@ Weapon* WeaponSet::getWeaponInWeaponSlot(WeaponSlotType wslot) const
 }
 
 //-------------------------------------------------------------------------------------------------
-	//When an AIAttackState is over, it needs to clean up any weapons that might be in leech range mode
-	//or else those weapons will have unlimited range!
+// When an AIAttackState is over, it needs to clean up any weapons that might be in leech range mode
+// or else those weapons will have unlimited range!
 void WeaponSet::clearLeechRangeModeForAllWeapons()
 {
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 	{
-		Weapon* weapon = m_weapons[ i ];
-		if( weapon )
+		Weapon* weapon = m_weapons[i];
+		if (weapon)
 		{
-			//Just clear the leech range active flag.
-			weapon->setLeechRangeActive( FALSE );
+			// Just clear the leech range active flag.
+			weapon->setLeechRangeActive(FALSE);
 		}
 	}
 }
@@ -1113,7 +1179,8 @@ void WeaponSet::clearLeechRangeModeForAllWeapons()
 Bool WeaponSet::isSharedReloadTime() const
 {
 	if (m_curWeaponTemplateSet)
+	{
 		return m_curWeaponTemplateSet->isSharedReloadTime();
+	}
 	return false;
 }
-

@@ -22,7 +22,7 @@
 #ifdef __cplusplus
 extern "C" {
 #else
-#include <stdbool.h>
+	#include <stdbool.h>
 #endif
 
 extern const char GitSHA1[];
@@ -36,5 +36,5 @@ extern bool GitHaveInfo;
 extern int GitRevision;
 
 #ifdef __cplusplus
-} // extern "C"
+}    // extern "C"
 #endif

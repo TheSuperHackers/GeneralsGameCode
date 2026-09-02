@@ -51,24 +51,21 @@ public:
 //-------------------------------------------------------------------------------------------------
 class W3DPropDraw : public DrawModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DPropDraw, "W3DPropDraw" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DPropDraw, W3DPropDrawModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DPropDraw, "W3DPropDraw")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(W3DPropDraw, W3DPropDrawModuleData)
 
 public:
-
-	W3DPropDraw( Thing *thing, const ModuleData* moduleData );
+	W3DPropDraw(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void doDrawModule(const Matrix3D* transformMtx) override;
-	virtual void setShadowsEnabled(Bool enable) override { }
-	virtual void releaseShadows() override {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows() override {};	///< we don't care about preserving temporary shadows.
-	virtual void setFullyObscuredByShroud(Bool fullyObscured) override { }
+	virtual void setShadowsEnabled(Bool enable) override {}
+	virtual void releaseShadows() override {};    ///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows() override {};    ///< we don't care about preserving temporary shadows.
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override {}
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override;
-	virtual void reactToGeometryChange() override { }
+	virtual void reactToGeometryChange() override {}
 
 protected:
 	Bool m_propAdded;
-
 };

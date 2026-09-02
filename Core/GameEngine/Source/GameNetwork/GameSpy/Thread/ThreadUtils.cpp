@@ -26,19 +26,21 @@
 // GameSpy thread utils
 // Author: Matthew D. Campbell, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "WWLib/utf8.h"
 
 //-------------------------------------------------------------------------
 
 // TheSuperHackers @refactor bobtista 02/04/2026 Use WWLib UTF-8 functions instead of raw Win32 API calls
-std::wstring MultiByteToWideCharSingleLine( const char *orig )
+std::wstring MultiByteToWideCharSingleLine(const char* orig)
 {
 	const size_t srcLen = strlen(orig);
 	const size_t dstLen = Utf8_To_Wide_Len(orig, srcLen);
 	if (dstLen == 0)
+	{
 		return std::wstring();
+	}
 	std::wstring ret;
 	if (dstLen == UTF8_INVALID)
 	{
@@ -55,7 +57,7 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 		ret.resize(dstLen);
 		Utf8_To_Wide(&ret[0], dstLen, orig, srcLen);
 	}
-	WideChar *c = nullptr;
+	WideChar* c = nullptr;
 	do
 	{
 		c = wcschr(&ret[0], L'\n');
@@ -64,7 +66,7 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 			*c = L' ';
 		}
 	}
-	while ( c != nullptr );
+	while (c != nullptr);
 	do
 	{
 		c = wcschr(&ret[0], L'\r');
@@ -73,17 +75,19 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 			*c = L' ';
 		}
 	}
-	while ( c != nullptr );
+	while (c != nullptr);
 
 	return ret;
 }
 
-std::string WideCharStringToMultiByte( const WideChar *orig )
+std::string WideCharStringToMultiByte(const WideChar* orig)
 {
 	const size_t srcLen = wcslen(orig);
 	const size_t dstLen = Wide_To_Utf8_Len(orig, srcLen);
 	if (dstLen == 0)
+	{
 		return std::string();
+	}
 	std::string ret;
 	ret.resize(dstLen);
 	Wide_To_Utf8(&ret[0], dstLen, orig, srcLen);
@@ -91,4 +95,3 @@ std::string WideCharStringToMultiByte( const WideChar *orig )
 }
 
 //-------------------------------------------------------------------------
-

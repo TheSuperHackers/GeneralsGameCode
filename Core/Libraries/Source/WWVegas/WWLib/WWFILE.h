@@ -36,64 +36,61 @@
 
 #pragma once
 
-#define YEAR(dt)	(((dt & 0xFE000000) >> (9 + 16)) + 1980)
-#define MONTH(dt)	 ((dt & 0x01E00000) >> (5 + 16))
-#define DAY(dt)	 ((dt & 0x001F0000) >> (0 + 16))
-#define HOUR(dt)	 ((dt & 0x0000F800) >> 11)
+#define YEAR(dt) (((dt & 0xFE000000) >> (9 + 16)) + 1980)
+#define MONTH(dt) ((dt & 0x01E00000) >> (5 + 16))
+#define DAY(dt) ((dt & 0x001F0000) >> (0 + 16))
+#define HOUR(dt) ((dt & 0x0000F800) >> 11)
 #define MINUTE(dt) ((dt & 0x000007E0) >> 5)
 #define SECOND(dt) ((dt & 0x0000001F) << 1)
 
 #ifndef SEEK_SET
-#define SEEK_SET					0	// Seek from start of file.
-#define SEEK_CUR					1	// Seek relative from current location.
-#define SEEK_END					2	// Seek from end of file.
+	#define SEEK_SET 0    // Seek from start of file.
+	#define SEEK_CUR 1    // Seek relative from current location.
+	#define SEEK_END 2    // Seek from end of file.
 #endif
-
 
 class FileClass
 {
-	public:
+public:
+	enum
+	{
+		READ = 1,
+		WRITE = 2,
+		PRINTF_BUFFER_SIZE = 1024
+	};
 
-		enum
-		{
-			READ = 1,
-			WRITE = 2,
-			PRINTF_BUFFER_SIZE = 1024
-		};
+	virtual ~FileClass() {};
+	virtual char const* File_Name() const = 0;
+	virtual char const* Set_Name(char const* filename) = 0;
+	virtual int Create() = 0;
+	virtual int Delete() = 0;
+	virtual bool Is_Available(int forced = false) = 0;
+	virtual bool Is_Open() const = 0;
+	virtual int Open(char const* filename, int rights = READ) = 0;
+	virtual int Open(int rights = READ) = 0;
+	virtual int Read(void* buffer, int size) = 0;
+	virtual int Seek(int pos, int dir = SEEK_CUR) = 0;
+	virtual int Tell() { return Seek(0); }
+	virtual int Size() = 0;
+	virtual int Write(void const* buffer, int size) = 0;
+	virtual void Close() = 0;
+	virtual unsigned long Get_Date_Time() { return (0); }
+	virtual bool Set_Date_Time(unsigned long) { return (false); }
+	//		virtual void Error(int error, int canretry = false, char const * filename=nullptr) = 0;
+	virtual void* Get_File_Handle() { return reinterpret_cast<void*>(-1); }
+	//		virtual void Bias(int start, int length=-1) = 0;
 
-		virtual ~FileClass() {};
-		virtual char const * File_Name() const = 0;
-		virtual char const * Set_Name(char const *filename) = 0;
-		virtual int Create() = 0;
-		virtual int Delete() = 0;
-		virtual bool Is_Available(int forced=false) = 0;
-		virtual bool Is_Open() const = 0;
-		virtual int Open(char const *filename, int rights=READ) = 0;
-		virtual int Open(int rights=READ) = 0;
-		virtual int Read(void *buffer, int size) = 0;
-		virtual int Seek(int pos, int dir=SEEK_CUR) = 0;
-		virtual int Tell() { return Seek(0); }
-		virtual int Size() = 0;
-		virtual int Write(void const *buffer, int size) = 0;
-		virtual void Close() = 0;
-		virtual unsigned long Get_Date_Time() {return(0);}
-		virtual bool Set_Date_Time(unsigned long ) {return(false);}
-//		virtual void Error(int error, int canretry = false, char const * filename=nullptr) = 0;
-		virtual void * Get_File_Handle() { return reinterpret_cast<void *>(-1); }
-//		virtual void Bias(int start, int length=-1) = 0;
+	operator char const*()
+	{
+		return File_Name();
+	}
 
-		operator char const * ()
-		{
-			return File_Name();
-		}
+	// this form uses a stack buffer of PRINTF_BUFFER_SIZE
+	int Printf(char* str, ...);
 
-		// this form uses a stack buffer of PRINTF_BUFFER_SIZE
-		int Printf(char *str, ...);
+	// this form uses the supplied buffer if PRINTF_BUFFER_SIZE is expected to be too small.
+	int Printf(char* buffer, int bufferSize, char* str, ...);
 
-		// this form uses the supplied buffer if PRINTF_BUFFER_SIZE is expected to be too small.
-		int Printf(char *buffer, int bufferSize, char *str, ...);
-
-		// this form uses the stack buffer but will prepend any output with the indicated number of tab characters '\t'
-		int Printf_Indented(unsigned depth, char *str, ...);
-
+	// this form uses the stack buffer but will prepend any output with the indicated number of tab characters '\t'
+	int Printf_Indented(unsigned depth, char* str, ...);
 };
