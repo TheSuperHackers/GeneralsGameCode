@@ -1219,14 +1219,6 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 	char name[64];
 	name[0] = '\0';
 
-	// Read exactly what Save wrote: a fixed-width 4-byte identity token, not
-	// sizeof(old_obj). On x86-64 sizeof(RenderObjClass*) is 8, so reading
-	// sizeof(old_obj) here (as READ_MICRO_CHUNK would) would ask for more
-	// bytes than the legacy 4-byte micro chunk holds; ChunkLoadClass::Read
-	// then refuses to read anything at all and old_obj stays null, silently
-	// poisoning SaveLoadSystemClass's pointer remap table. See persistfactory.h.
-	uint32 old_obj_token = 0;
-
 	while (cload.Open_Chunk()) {
 		switch (cload.Cur_Chunk_ID()) {
 
@@ -1234,7 +1226,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 
 				while (cload.Open_Micro_Chunk()) {
 					switch(cload.Cur_Micro_Chunk_ID()) {
-						case (RENDOBJFACTORY_VARIABLE_OBJPOINTER): cload.Read(&old_obj_token,sizeof(old_obj_token)); break;
+						READ_MICRO_CHUNK_POINTER_TOKEN(cload,RENDOBJFACTORY_VARIABLE_OBJPOINTER,old_obj,RenderObjClass *)
 						READ_MICRO_CHUNK(cload,RENDOBJFACTORY_VARIABLE_TRANSFORM,tm);
 						READ_MICRO_CHUNK_STRING(cload,RENDOBJFACTORY_VARIABLE_NAME,name,sizeof(name));
 					}
@@ -1277,7 +1269,6 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 		new_obj->Set_Transform(tm);
 	}
 
-	old_obj = (RenderObjClass *)(uintptr_t)old_obj_token;
 	SaveLoadSystemClass::Register_Pointer(old_obj,new_obj);
 	return new_obj;
 }
@@ -1289,13 +1280,7 @@ void RenderObjPersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * ob
 	const Matrix3D& tm = robj->Get_Transform();
 
 	csave.Begin_Chunk(RENDOBJFACTORY_CHUNKID_VARIABLES);
-#if defined(_WIN64) || defined(__x86_64__)
-	// TheSuperHackers @fix MeneerHaas 02/09/2026 Write the 4-byte identity token the loader reads; see persistfactory.h.
-	uint32 robj_token = (uint32)(uintptr_t)robj;
-	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_OBJPOINTER,robj_token);
-#else
 	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_OBJPOINTER,robj);
-#endif
 	WRITE_MICRO_CHUNK_STRING(csave,RENDOBJFACTORY_VARIABLE_NAME,name);
 	WRITE_MICRO_CHUNK(csave,RENDOBJFACTORY_VARIABLE_TRANSFORM,tm);
 	csave.End_Chunk();

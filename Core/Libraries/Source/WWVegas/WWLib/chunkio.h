@@ -329,6 +329,22 @@ private:
 		break;                                                         \
 	}
 
+// TheSuperHackers @fix MeneerHaas 02/09/2026 Persisted pointer identities are written at the writing build's pointer
+// width: 4 bytes in every file a 32-bit build produced, 8 from an x64 build. Read what the chunk
+// actually holds rather than sizeof(var) -- a plain READ_MICRO_CHUNK would ask for 8 bytes from a
+// legacy 4-byte chunk, and ChunkLoadClass::Read then reads nothing at all, silently leaving the
+// identity null and poisoning the pointer remap. Reading by length also means no address ever has
+// to be truncated into a token, so two objects cannot collide on one identity.
+#define READ_MICRO_CHUNK_POINTER_TOKEN(cload,id,var,type)\
+	case (id): {\
+		uintptr_t temp_token = 0;\
+		uint32 temp_length = cload.Cur_Micro_Chunk_Length();\
+		if (temp_length > sizeof(temp_token)) temp_length = sizeof(temp_token);\
+		cload.Read(&temp_token,temp_length);\
+		var = (type)temp_token;\
+		break;\
+	}
+
 #define READ_MICRO_CHUNK_STRING(cload,id,var,size)		\
 	case (id):	WWASSERT(cload.Cur_Micro_Chunk_Length() <= size); cload.Read(var,cload.Cur_Micro_Chunk_Length()); break;	\
 
