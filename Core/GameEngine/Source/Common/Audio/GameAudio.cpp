@@ -708,7 +708,12 @@ void AudioManager::setVolume( Real volume, AudioAffect whichToAffect )
 			m_scriptMusicVolume = volume;
 		}
 
-		m_musicVolume = m_scriptMusicVolume * m_systemMusicVolume;
+		const Real newVolume = m_scriptMusicVolume * m_systemMusicVolume;
+		if (m_musicVolume != newVolume)
+		{
+			m_musicVolume = newVolume;
+			m_volumeHasChanged = true;
+		}
 	}
 
 	if (whichToAffect & AudioAffect_Sound) {
@@ -718,7 +723,12 @@ void AudioManager::setVolume( Real volume, AudioAffect whichToAffect )
 			m_scriptSoundVolume = volume;
 		}
 
-		m_soundVolume = m_scriptSoundVolume * m_systemSoundVolume;
+		const Real newVolume = m_scriptSoundVolume * m_systemSoundVolume;
+		if (m_soundVolume != newVolume)
+		{
+			m_soundVolume = newVolume;
+			m_volumeHasChanged = true;
+		}
 	}
 
 	if (whichToAffect & AudioAffect_Sound3D) {
@@ -727,7 +737,13 @@ void AudioManager::setVolume( Real volume, AudioAffect whichToAffect )
 		} else {
 			m_scriptSound3DVolume = volume;
 		}
-		m_sound3DVolume = m_scriptSound3DVolume * m_systemSound3DVolume;
+
+		const Real newVolume = m_scriptSound3DVolume * m_systemSound3DVolume;
+		if (m_sound3DVolume != newVolume)
+		{
+			m_sound3DVolume = newVolume;
+			m_volumeHasChanged = true;
+		}
 	}
 
 	if (whichToAffect & AudioAffect_Speech) {
@@ -736,10 +752,14 @@ void AudioManager::setVolume( Real volume, AudioAffect whichToAffect )
 		} else {
 			m_scriptSpeechVolume = volume;
 		}
-		m_speechVolume = m_scriptSpeechVolume * m_systemSpeechVolume;
-	}
 
-	m_volumeHasChanged = true;
+		const Real newVolume = m_scriptSpeechVolume * m_systemSpeechVolume;
+		if (m_speechVolume != newVolume)
+		{
+			m_speechVolume = newVolume;
+			m_volumeHasChanged = true;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -760,16 +780,13 @@ Real AudioManager::getVolume( AudioAffect whichToGet )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::set3DVolumeAdjustment( Real volumeAdjustment )
 {
-	m_sound3DVolume = volumeAdjustment * m_scriptSound3DVolume * m_systemSound3DVolume;
+	const Real newVolume = clamp(0.0f, volumeAdjustment * m_scriptSound3DVolume * m_systemSound3DVolume, 1.0f);
 
-	// clamp
-	if (m_sound3DVolume < 0.0f)
-		m_sound3DVolume = 0.0f;
-
-	if (m_sound3DVolume > 1.0f)
-		m_sound3DVolume = 1.0f;
-
-	m_volumeHasChanged = TRUE;
+	if (m_sound3DVolume != newVolume)
+	{
+		m_sound3DVolume = newVolume;
+		m_volumeHasChanged = true;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
