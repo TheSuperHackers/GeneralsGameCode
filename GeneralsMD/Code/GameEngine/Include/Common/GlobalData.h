@@ -51,6 +51,8 @@ enum AIDebugOptions CPP_11(: Int);
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
 constexpr const Int MAX_GLOBAL_LIGHTS = 3;
+constexpr const Int MAX_TANK_TRACK_EDGES = 100;
+constexpr const Int ROAD_BUFFER_PADDING = 4;
 constexpr const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 
 //-------------------------------------------------------------------------------------------------
