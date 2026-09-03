@@ -1478,8 +1478,12 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 	}
 
 	playing->m_audioEventRTS->advanceNextPlayPortion();
-	if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
-		if (playing->m_type == PAT_Sample) {
+
+	switch (playing->m_type)
+	{
+	case PAT_Sample:
+	{
+		if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
 			closeFile(playing->m_file);	// close it so as not to leak it.
 			playing->m_file = playSample(playing->m_audioEventRTS.Peek(), playing->m_sample);
 
@@ -1488,7 +1492,12 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 			if (playing->m_file) {
 				return;
 			}
-		} else if (playing->m_type == PAT_3DSample) {
+		}
+		break;
+	}
+	case PAT_3DSample:
+	{
+		if (playing->m_audioEventRTS->getNextPlayPortion() != PP_Done) {
 			closeFile(playing->m_file);	// close it so as not to leak it.
 			playing->m_file = playSample3D(playing->m_audioEventRTS.Peek(), playing->m_3DSample);
 
@@ -1498,13 +1507,16 @@ void MilesAudioManager::notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt
 				return;
 			}
 		}
+		break;
 	}
-
-	if (playing->m_type == PAT_Stream) {
+	case PAT_Stream:
+	{
 		if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
 			playStream(playing->m_audioEventRTS.Peek(), playing->m_stream);
 			return;
 		}
+		break;
+	}
 	}
 
 	// it will be cleaned up on the next frame update
