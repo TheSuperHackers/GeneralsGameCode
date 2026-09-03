@@ -162,13 +162,12 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		if (sys->isUsingDrawables())
 			continue;
 
-		// TheSuperHackers @performance Mauller 16/08/2026 Test if the particle system has any visible particles that can be drawn.
-		// Earlier visibility testing prevents the particle texture lookup which can cause a batch flush.
-		int particleCount = 0;
+		// TheSuperHackers @performance Mauller 16/08/2026 Skip processing particle system if no particles are in view.
+		UnsignedInt particleCount = 0;
 		for (Particle* vp = sys->getFirstParticle(); vp; vp = vp->m_systemNext)
 		{
 			const Coord3D* pos = vp->getPosition();
-			Real psize = vp->getSize();
+			const Real psize = vp->getSize();
 
 			//Test if particle is at the screen or terrain edges.
 			if (WWMath::Fabs(pos->x - bcX) > (beX + psize) ||
@@ -214,7 +213,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
 
 		const Bool canBatch = sys->isUsingParticles();
-		const Bool batchDone = texture.Peek() != m_batchTexture.Peek() || sys->getShaderType() != m_batchShaderType || sys->shouldBillboard() != m_batchBillboard;
+		const Bool batchDone = finishedBatch(sys, texture);
 		if (!canBatch || batchDone)
 		{
 			flushParticleBatch(rinfo, pointCount);
@@ -226,7 +225,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			initializeBatch(sys, texture);
 		}
 
-		Int startCount = pointCount;
+		UnsignedInt startCount = pointCount;
 
 		// build W3D particle buffer
 		Vector3 *posArray = m_posBuffer->Get_Array();
@@ -413,6 +412,13 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	}
 }
 
+Bool W3DParticleSystemManager::finishedBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture)
+{
+	return texture.Peek() != m_batchTexture.Peek() ||
+		system->getShaderType() != m_batchShaderType ||
+		system->shouldBillboard() != m_batchBillboard;
+}
+
 void W3DParticleSystemManager::initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture)
 {
 	m_batchTexture = texture;
@@ -449,13 +455,10 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 		m_pointGroup->Set_Point_Frame(0);
 		m_pointGroup->Render(rinfo);
 
-		m_batchBillboard = false;
-		m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
 		pointCount = 0;
 	}
 
-	if (m_batchTexture != nullptr)
-	{
-		m_batchTexture.Clear();
-	}
+	m_batchTexture.Clear();
+	m_batchBillboard = false;
+	m_batchShaderType = ParticleSystemInfo::INVALID_SHADER;
 }

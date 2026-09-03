@@ -50,6 +50,7 @@ public:
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
 private:
+	Bool finishedBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture);
 	void initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture);
 	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
 
