@@ -324,9 +324,7 @@ public:
 	Int m_netMinPlayers;					///< Min players needed to start a net game
 
 	UnsignedInt m_defaultIP;			///< preferred IP address for LAN
-	UnsignedInt m_firewallBehavior;	///< Last detected firewall behavior
 	UnsignedInt m_firewallPortOverride;	///< User-specified port to be used
-	Short m_firewallPortAllocationDelta; ///< the port allocation delta last detected.
 
 	Int m_baseValuePerSupplyBox;
 	Real m_BuildSpeed;
