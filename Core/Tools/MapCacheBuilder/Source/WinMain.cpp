@@ -103,7 +103,6 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
-#include "WWLib/trim.h"
 
 
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -142,65 +141,6 @@ const Char *g_csfFile = "data\\%s\\Generals.csf";
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-static char *nextParam(char *newSource, const char *seps)
-{
-	static char *source = nullptr;
-	if (newSource)
-	{
-		source = newSource;
-	}
-	if (!source)
-	{
-		return nullptr;
-	}
-
-	// find first separator
-	char *first = source;//strpbrk(source, seps);
-	if (first)
-	{
-		// go past initial spaces
-		char *firstNonSpace = first;
-		while (*firstNonSpace == ' ')
-			++firstNonSpace;
-		first = firstNonSpace;
-
-		// go past separator
-		char *firstSep = strpbrk(first, seps);
-		char firstChar[2] = {0,0};
-		if (firstSep == first)
-		{
-			firstChar[0] = *first;
-			while (*first == firstChar[0]) first++;
-		}
-
-		// find end
-		char *end;
-		if (firstChar[0])
-			end = strpbrk(first, firstChar);
-		else
-			end = strpbrk(first, seps);
-
-		// trim string & save next start pos
-		if (end)
-		{
-			source = end+1;
-			*end = 0;
-
-			if (!*source)
-				source = nullptr;
-		}
-		else
-		{
-			source = nullptr;
-		}
-
-		if (first && !*first)
-			first = nullptr;
-	}
-
-	return first;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -223,22 +163,15 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	CommandLine::parseCommandLineForStartup();
 
-	/*
-	** Convert WinMain arguments to simple main argc and argv
-	*/
+	// Collect CRT arguments not handled during startup parsing.
 	std::list<std::string> argvSet;
-	char *token;
-	int argIndex = 0;
-	token = nextParam(lpCmdLine, "\" ");
-	while (token != nullptr) {
-		char * str = strtrim(token);
-		if (!CommandLine::isCommandLineArgumentParsedForStartup(argIndex))
+	for (int arg = 1; arg < __argc; ++arg)
+	{
+		if (!CommandLine::isCommandLineArgumentParsedForStartup(arg - 1))
 		{
-			argvSet.push_back(str);
-			DEBUG_LOG(("Adding '%s'", str));
+			argvSet.push_back(__argv[arg]);
+			DEBUG_LOG(("Adding '%s'", __argv[arg]));
 		}
-		token = nextParam(nullptr, "\" ");
-		++argIndex;
 	}
 
 	// not part of the subsystem list, because it should normally never be reset!

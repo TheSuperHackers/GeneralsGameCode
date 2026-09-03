@@ -36,7 +36,6 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
-#include "WWLib/trim.h"
 
 
 
@@ -481,7 +480,7 @@ Int parseSetCwd(char *args[], int num)
 	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
 	// -setCwd <path> overrides the working directory.
 	s_cwdOptionSpecified = TRUE;
-	if (num <= 1 || args[1] == nullptr)
+	if (num <= 1 || args[1] == nullptr || args[1][0] == '-' || args[1][0] == '/')
 	{
 		rts::setCurrentDirectoryToExecutablePath();
 		return 1;
@@ -1343,72 +1342,11 @@ static CommandLineParam paramsForEngineInit[] =
 
 };
 
-char *nextParam(char *newSource, const char *seps)
-{
-	static char *source = nullptr;
-	if (newSource)
-	{
-		source = newSource;
-	}
-	if (!source)
-	{
-		return nullptr;
-	}
-
-	// find first separator
-	char *first = source;//strpbrk(source, seps);
-	if (first)
-	{
-		// go past separator
-		char *firstSep = strpbrk(first, seps);
-		char firstChar[2] = {0,0};
-		if (firstSep == first)
-		{
-			firstChar[0] = *first;
-			while (*first == firstChar[0]) first++;
-		}
-
-		// find end
-		char *end;
-		if (firstChar[0])
-			end = strpbrk(first, firstChar);
-		else
-			end = strpbrk(first, seps);
-
-		// trim string & save next start pos
-		if (end)
-		{
-			source = end+1;
-			*end = 0;
-
-			if (!*source)
-				source = nullptr;
-		}
-		else
-		{
-			source = nullptr;
-		}
-
-		if (first && !*first)
-			first = nullptr;
-	}
-
-	return first;
-}
-
 static void parseCommandLine(
 	const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
 {
-	std::vector<char*> argv;
-
-	std::string cmdLine = GetCommandLineA();
-	char *token = nextParam(&cmdLine[0], "\" ");
-	while (token != nullptr)
-	{
-		argv.push_back(strtrim(token));
-		token = nextParam(nullptr, "\" ");
-	}
-	int argc = argv.size();
+	const int argc = __argc;
+	char **argv = __argv;
 	if (parsedArguments != nullptr)
 		parsedArguments->assign(argc > 0 ? argc - 1 : 0, FALSE);
 
