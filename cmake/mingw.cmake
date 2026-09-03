@@ -9,7 +9,8 @@ if(MINGW)
         set(IS_MINGW32 TRUE)
         message(STATUS "MinGW-w64 32-bit (i686) detected")
     else()
-        message(FATAL_ERROR "MinGW-w64 64-bit (x86_64) detected, but this project only supports 32-bit builds. Use the i686-w64-mingw32 toolchain.")
+        set(IS_MINGW64 TRUE)
+        message(STATUS "MinGW-w64 64-bit (x86_64) detected — experimental, see issue #473")
     endif()
     
     # Windows subsystem
@@ -53,7 +54,8 @@ if(MINGW)
         )
     endif()
     
-    # Required Windows libraries for DX8 + COM
+    # Required Windows libraries for DX8 + COM. d3d8 is gated to 32-bit because
+    # link_libraries() is directory-scoped and would also hit the Miles/Bink stubs.
     link_libraries(
         uuid        # COM GUIDs
         ole32       # COM runtime
@@ -63,7 +65,7 @@ if(MINGW)
         comctl32    # Common controls
         winmm       # Multimedia (timeGetTime, etc.)
         vfw32       # Video for Windows (AVIFile functions)
-        d3d8        # Direct3D 8
+        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:d3d8>  # Direct3D 8 — 32-bit only
         dinput8     # DirectInput 8
         dsound      # DirectSound
         imm32       # Input Method Manager (IME)
@@ -78,8 +80,9 @@ if(MINGW)
     # MinGW-w64 only provides libd3dx8d.a (debug library), not libd3dx8.a
     # The min-dx8-sdk (dx8.cmake) handles this correctly via d3d8lib interface target,
     # but for compatibility with direct library references in main executables,
-    # we create an alias so that linking to d3dx8 automatically uses d3dx8d
-    if(NOT TARGET d3dx8)
+    # we create an alias so that linking to d3dx8 automatically uses d3dx8d.
+    # 32-bit only: x86_64 MinGW-w64 ships neither libd3dx8.a nor libd3dx8d.a.
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT TARGET d3dx8)
         add_library(d3dx8 INTERFACE IMPORTED GLOBAL)
         set_target_properties(d3dx8 PROPERTIES
             INTERFACE_LINK_LIBRARIES "d3dx8d"
