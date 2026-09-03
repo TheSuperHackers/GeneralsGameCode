@@ -139,7 +139,7 @@ public:
 
 	// task actions
 	virtual void newTask( DozerTask task, Object *target ) = 0;	///< set a desire to do the requested task
-	virtual void cancelTask( DozerTask task, Bool rememberTask = false ) = 0;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelTask( DozerTask task, Bool rememberTask = false ) = 0;	///< cancel this task from the queue, if it's the current task the dozer will stop working on it. Can remember the cancelled task for resumption.
 	virtual void cancelAllTasks() = 0;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
 	virtual void setPreviousTask(DozerTask task) = 0;						///< set the previous task
 	virtual void resumePreviousTask() = 0;									///< resume the previous task if there was one
