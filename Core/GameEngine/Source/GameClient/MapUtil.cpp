@@ -902,6 +902,16 @@ static Bool addMapCollectionToMapListbox(
 	return true;
 }
 
+#if ENABLE_GUI_HACKS
+// TheSuperHackers @feature pberthold 24/08/2026 Grow the map list to the cached map count, overriding the window's LISTBOXDATA LENGTH.
+static void growMapListboxToCachedMapCount( GameWindow *listbox )
+{
+	const Int neededListLength = (Int)TheMapCache->size();
+	if( neededListLength > GadgetListBoxGetListLength( listbox ) )
+		GadgetListBoxSetListLength( listbox, neededListLength );
+}
+#endif
+
 //-------------------------------------------------------------------------------------------------
 /** Load the listbox with all the map files available to play */
 //-------------------------------------------------------------------------------------------------
@@ -912,6 +922,10 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 
 	if (!listbox)
 		return -1;
+
+#if ENABLE_GUI_HACKS
+	growMapListboxToCachedMapCount( listbox );
+#endif
 
 	MapListBoxData lbData;
 	lbData.listbox = listbox;
