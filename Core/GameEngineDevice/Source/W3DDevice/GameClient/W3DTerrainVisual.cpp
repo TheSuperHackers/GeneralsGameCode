@@ -606,27 +606,39 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 		pMapObj = pMapObj->getNext();
 	}
 
-
-	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : nullptr;
 	// apply the heightmap to the terrain render object
+	if (W3DDisplay::m_3DScene != nullptr)
+	{
+		RefRenderObjListClass* lightlist = W3DDisplay::m_3DScene->getLightList();
+		RefRenderObjListIterator it(lightlist);
 
 #ifdef DO_SEISMIC_SIMULATIONS
-	m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(),
-																				 m_clientHeightMap->getDrawHeight(),
-																				 m_clientHeightMap,
-																				 it);
+		m_terrainRenderObject->initHeightData(m_clientHeightMap->getDrawWidth(),
+			m_clientHeightMap->getDrawHeight(),
+			m_clientHeightMap,
+			&it);
 #else
-	m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(),
-																				 m_logicHeightMap->getDrawHeight(),
-																				 m_logicHeightMap,
-																				 it);
+		m_terrainRenderObject->initHeightData(m_logicHeightMap->getDrawWidth(),
+			m_logicHeightMap->getDrawHeight(),
+			m_logicHeightMap,
+			&it);
 #endif
-
-
-	if (it) {
-	 W3DDisplay::m_3DScene->destroyLightsIterator(it);
-	 it = nullptr;
 	}
+	else
+	{
+#ifdef DO_SEISMIC_SIMULATIONS
+		m_terrainRenderObject->initHeightData(m_clientHeightMap->getDrawWidth(),
+			m_clientHeightMap->getDrawHeight(),
+			m_clientHeightMap,
+			nullptr);
+#else
+		m_terrainRenderObject->initHeightData(m_logicHeightMap->getDrawWidth(),
+			m_logicHeightMap->getDrawHeight(),
+			m_logicHeightMap,
+			nullptr);
+#endif
+	}
+
 	// add our terrain render object to the scene
 	if (W3DDisplay::m_3DScene != nullptr)
 		W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
