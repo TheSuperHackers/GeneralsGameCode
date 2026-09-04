@@ -826,6 +826,17 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 	const LocomotorTemplateVector* set = getAIUpdateModuleData()->findLocomotorTemplateVector(wst);
 	if (set)
 	{
+		// TheSuperHackers @bugfix wh1ter0se69 10/08/2026 Do not rebuild the locomotor set of a dead
+		// aircraft. Rebuilding discards the Locomotor instance that a slow death module mutated to
+		// ground it, so the wreck regains full lift from template and keeps flying.
+#if !RETAIL_COMPATIBLE_CRC
+		Object* obj = getObject();
+		// LOCOMOTORSET_INVALID means no set has been built yet, so this refuses rebuilds only.
+		if (obj != nullptr && obj->isEffectivelyDead() && obj->isKindOf(KINDOF_AIRCRAFT)
+				&& m_curLocomotorSet != LOCOMOTORSET_INVALID)
+			return FALSE;
+#endif
+
 		m_locomotorSet.clear();
 		m_curLocomotor = nullptr;
 		for (size_t i = 0; i < set->size(); ++i)
