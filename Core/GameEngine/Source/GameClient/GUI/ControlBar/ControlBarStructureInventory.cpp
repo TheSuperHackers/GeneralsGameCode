@@ -82,7 +82,7 @@ void ControlBar::populateButtonProc( Object *obj, void *userData )
 	GadgetButtonDrawOverlayImage( info->inventoryButtons[ info->buttonIndex ], image );
 
 	// Enable the button
-	info->inventoryButtons[ info->buttonIndex ]->winEnable( !info->self->m_isReadOnly );
+	info->inventoryButtons[ info->buttonIndex ]->winEnable( !info->self->isObserverControlBarOn() );
 
 	// move to the next button index
 	info->buttonIndex++;
@@ -169,7 +169,7 @@ void ControlBar::populateStructureInventory( Object *building )
 	m_commandWindows[ STOP_ID ]->winHide( FALSE );
 
 	// if there is at least one item in there enable the evacuate and stop buttons
-	if(!m_isReadOnly && contain->getContainCount() != 0 )
+	if( !isObserverControlBarOn() && contain->getContainCount() != 0 )
 	{
 		m_commandWindows[ EVACUATE_ID ]->winEnable( TRUE );
 		m_commandWindows[ STOP_ID ]->winEnable( TRUE );
