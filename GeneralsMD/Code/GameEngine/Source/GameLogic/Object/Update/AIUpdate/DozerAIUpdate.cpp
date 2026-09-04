@@ -2054,6 +2054,8 @@ void DozerAIUpdate::cancelTask( DozerTask task, Bool rememberTask )
 {
 	if (rememberTask)
 		setPreviousTask(task);
+	else
+		clearPreviousTask();
 
 	// clear the order
 	internalCancelTask( task );
