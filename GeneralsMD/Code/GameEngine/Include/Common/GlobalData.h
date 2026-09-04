@@ -54,6 +54,8 @@ constexpr const Int MAX_GLOBAL_LIGHTS = 3;
 constexpr const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 
 //-------------------------------------------------------------------------------------------------
+// Command-line parsing state is stored here instead of in CommandLine because
+// the parsing result belongs to the GlobalData instance created during startup.
 class CommandLineData
 {
 	friend class CommandLine;
@@ -66,7 +68,7 @@ class CommandLineData
 
 	Bool m_hasParsedCommandLineForStartup;
 	Bool m_hasParsedCommandLineForEngineInit;
-	BoolVector m_startupParsedArguments;
+	BoolVector m_parsedArguments;
 };
 
 //-------------------------------------------------------------------------------------------------

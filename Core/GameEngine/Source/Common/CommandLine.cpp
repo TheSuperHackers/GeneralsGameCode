@@ -463,15 +463,11 @@ Int parseJobs(char *args[], int num)
 	return 1;
 }
 
-// Set when a working-directory option is present so parseCommandLineForStartup
-// does not force the executable directory after parsing.
-static Bool s_cwdOptionSpecified = FALSE;
-
 Int parseUseCwd(char *[], int)
 {
 	// TheSuperHackers @feature 14/08/2026
 	// -useCwd keeps the OS working directory.
-	s_cwdOptionSpecified = TRUE;
+	rts::keepCurrentDirectory();
 	return 1;
 }
 
@@ -479,7 +475,6 @@ Int parseSetCwd(char *args[], int num)
 {
 	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
 	// -setCwd <path> overrides the working directory.
-	s_cwdOptionSpecified = TRUE;
 	if (num <= 1 || args[1] == nullptr || args[1][0] == '-' || args[1][0] == '/')
 	{
 		rts::setCurrentDirectoryToExecutablePath();
@@ -1342,13 +1337,12 @@ static CommandLineParam paramsForEngineInit[] =
 
 };
 
-static void parseCommandLine(
-	const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
+static void parseCommandLine(const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
 {
 	const int argc = __argc;
 	char **argv = __argv;
-	if (parsedArguments != nullptr)
-		parsedArguments->assign(argc > 0 ? argc - 1 : 0, FALSE);
+	if (parsedArguments != nullptr && parsedArguments->size() < static_cast<size_t>(argc > 0 ? argc - 1 : 0))
+		parsedArguments->resize(argc - 1, FALSE);
 
 	int arg = 1;
 
@@ -1401,12 +1395,12 @@ static void parseCommandLine(
 	}
 }
 
-bool CommandLine::isCommandLineArgumentParsedForStartup(int argIndex)
+bool CommandLine::wasCommandLineArgumentParsed(int argIndex)
 {
 	if (TheGlobalData == nullptr)
 		return false;
 
-	const BoolVector &parsedArguments = TheGlobalData->m_commandLineData.m_startupParsedArguments;
+	const BoolVector &parsedArguments = TheGlobalData->m_commandLineData.m_parsedArguments;
 	return argIndex >= 0 && argIndex < static_cast<int>(parsedArguments.size()) && parsedArguments[argIndex];
 }
 
@@ -1427,10 +1421,9 @@ void CommandLine::parseCommandLineForStartup()
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
 
 	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup),
-		&TheWritableGlobalData->m_commandLineData.m_startupParsedArguments);
+		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
 
-	if (!s_cwdOptionSpecified)
-		rts::setCurrentDirectoryToExecutablePath();
+	rts::setCurrentDirectoryToExecutablePathIfNotSet();
 }
 
 void CommandLine::parseCommandLineForEngineInit()
@@ -1443,5 +1436,6 @@ void CommandLine::parseCommandLineForEngineInit()
 		("parseCommandLineForEngineInit is expected to be called once only\n"));
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit = true;
 
-	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit));
+	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit),
+		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
 }

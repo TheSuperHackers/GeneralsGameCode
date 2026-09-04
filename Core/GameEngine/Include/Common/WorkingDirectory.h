@@ -30,5 +30,7 @@ namespace rts
 
 Bool setCurrentDirectoryToExecutablePath();
 Bool setCurrentDirectoryToPath(const char *path);
+void keepCurrentDirectory();
+void setCurrentDirectoryToExecutablePathIfNotSet();
 
 } // namespace rts
