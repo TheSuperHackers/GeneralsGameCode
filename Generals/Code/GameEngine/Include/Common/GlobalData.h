@@ -349,6 +349,10 @@ public:
 	Bool m_enforceMaxCameraHeight;		///< Enforce max camera height while scrolling?
 	Bool m_buildMapCache;
 	AsciiString m_initialFile;				///< If this is specified, load a specific map from the command-line
+#if defined(RTS_DEBUG)
+	Int m_saveAtFrame;						///< If greater than zero, write a save when this logic frame is reached
+	AsciiString m_saveToFile;				///< Filename written to by m_saveAtFrame
+#endif
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
 	AsciiString m_loadSaveGame;				///< If this is specified, load a save game file from the command-line
 

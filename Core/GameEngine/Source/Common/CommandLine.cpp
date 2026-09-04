@@ -679,6 +679,26 @@ Int parseDisplayDebug(char *args[], int)
 	return 1;
 }
 
+// TheSuperHackers @feature bobtista 14/08/2026 Write a save at a chosen logic frame so a save
+// and load round trip can be run without a person at the keyboard.
+Int parseSaveAtFrame(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_saveAtFrame = atoi(args[1]);
+	}
+	return 2;
+}
+
+Int parseSaveTo(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_saveToFile = args[1];
+	}
+	return 2;
+}
+
 Int parseFile(char *args[], int num)
 {
 	if (num > 1)
@@ -1271,6 +1291,8 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
+	{ "-saveatframe", parseSaveAtFrame },
+	{ "-saveto", parseSaveTo },
 
 //	{ "-preload", parsePreload },
 
