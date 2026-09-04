@@ -64,11 +64,10 @@ void ControlBar::populateButtonProc( Object *obj, void *userData )
 {
 	PopulateButtonInfo* info = (PopulateButtonInfo*)userData;
 
-	// sanity
-	DEBUG_ASSERTCRASH( info->buttonIndex < MAX_STRUCTURE_INVENTORY_BUTTONS,
-										 ("Too many objects inside '%s' for the inventory buttons to hold",
-											info->source->getTemplate()->getName().str()) );
-
+	
+	if (info->buttonIndex>= MAX_STRUCTURE_INVENTORY_BUTTONS) {
+		return;
+	}
 	// put object in inventory data
 	info->self->m_containData[ info->buttonIndex ].control = info->inventoryButtons[ info->buttonIndex ];
 	info->self->m_containData[ info->buttonIndex ].objectID = obj->getID();
