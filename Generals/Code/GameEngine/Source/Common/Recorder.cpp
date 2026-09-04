@@ -1149,15 +1149,20 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	}
 #endif
 
-	Bool isMultiplayer = m_gameInfo.getSlot(header.localPlayerIndex)->getIP() != 0;
-	m_crcInfo = CRCInfo(header.localPlayerIndex, isMultiplayer);
 	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
-	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", m_crcInfo.getLocalPlayer(), REPLAY_CRC_INTERVAL));
 
 	Int difficulty = 0;
 	m_file->read(&difficulty, sizeof(difficulty));
 
 	m_file->read(&m_originalGameMode, sizeof(m_originalGameMode));
+
+	// TheSuperHackers @bugfix bobtista 30/08/2026 A replay header is allowed to carry a local player
+	// index of -1 and getSlot returns NULL for it, so reading the slot to tell a network game from a
+	// local one dereferenced NULL. The recorded game mode answers the same question directly, so the
+	// crc queue is now primed from the mode and the local slot is no longer read here.
+	const Bool isMultiplayer = m_originalGameMode == GAME_LAN || m_originalGameMode == GAME_INTERNET;
+	m_crcInfo = CRCInfo(header.localPlayerIndex, isMultiplayer);
+	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", m_crcInfo.getLocalPlayer(), REPLAY_CRC_INTERVAL));
 
 	Int rankPoints = 0;
 	m_file->read(&rankPoints, sizeof(rankPoints));
