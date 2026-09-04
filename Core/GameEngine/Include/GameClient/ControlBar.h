@@ -849,6 +849,7 @@ protected:
 	void populateUnderConstruction( Object *objectUnderConstruction );
 	void populateOCLTimer( Object *creatorObject );
 	void doTransportInventoryUI( Object *transport, const CommandSet *commandSet );
+	void populateTransportInventoryReadOnly(Object* transport);
 	static void populateInvDataCallback( Object *obj, void *userData );
 
 	// the following methods are for updating the currently showing context

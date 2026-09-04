@@ -77,6 +77,7 @@ struct PopulateInvButtonData
 	Int maxIndex;					   ///< this is the last valid control we can use
 	GameWindow **controls;   ///< the controls
 	Object *transport;			 ///< the transport
+	ControlBar* self;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -124,7 +125,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	GadgetButtonDrawOverlayImage( control, image );
 
 	// enable the control
-	control->winEnable( TRUE );
+	control->winEnable(!data->self->isObserverControlBarOn());
 
 }
 
@@ -244,6 +245,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 		data.currIndex = firstInventoryIndex;
 		data.maxIndex = lastInventoryIndex;
 		data.transport = transport;
+		data.self = this;
 		contain->iterateContained( populateInvDataCallback, &data, FALSE );
 
 	}
@@ -332,7 +334,7 @@ void ControlBar::populateCommand( Object *obj )
 				m_commandWindows[ i ]->winHide( FALSE );
 
 				// enable by default
-				m_commandWindows[ i ]->winEnable( TRUE );
+				m_commandWindows[ i ]->winEnable( !isObserverControlBarOn() );
 
 				// populate the visible button with data from the command button
 				setControlCommand( m_commandWindows[ i ], commandButton );
@@ -622,7 +624,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 			m_queueData[ windowIndex ].productionID = production->getProductionID();
 
 			// set the images
-			m_queueData[ windowIndex ].control->winEnable( TRUE );
+			m_queueData[ windowIndex ].control->winEnable( !isObserverControlBarOn() );
 			m_queueData[ windowIndex ].control->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 			image = production->getProductionObject()->getButtonImage();
 			GadgetButtonSetEnabledImage( m_queueData[ windowIndex ].control, image );
@@ -655,7 +657,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 			m_queueData[ windowIndex ].upgradeToResearch = production->getProductionUpgrade();
 
 			// set the images
-			m_queueData[ windowIndex ].control->winEnable( TRUE );
+			m_queueData[ windowIndex ].control->winEnable( !isObserverControlBarOn() );
 			m_queueData[ windowIndex ].control->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 			image = ut->getButtonImage();
 			GadgetButtonSetEnabledImage( m_queueData[ windowIndex ].control, image );
@@ -861,7 +863,7 @@ void ControlBar::updateContextCommand()
 				win->winSetStatus( WIN_STATUS_ALWAYS_COLOR );
 				break;
 			default:
-				win->winEnable( TRUE );
+				win->winEnable( !isObserverControlBarOn() );
 				break;
 		}
 

@@ -1488,11 +1488,20 @@ void ControlBar::update()
 
 		if (showObserverInventory)
 		{
-
-			if (m_currContext != CB_CONTEXT_STRUCTURE_INVENTORY || m_currentSelectedDrawable != drawToEvaluateFor)
-				switchToContext(CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor);
-			else
-				updateContextStructureInventory();
+			
+			if (observerContain->isGarrisonable() && obj->getCommandSetString().isEmpty())
+			{
+				if (m_currContext != CB_CONTEXT_STRUCTURE_INVENTORY || m_currentSelectedDrawable != drawToEvaluateFor)
+					switchToContext(CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor);
+				else
+					updateContextStructureInventory();
+			}
+			else {
+				if (m_currContext != CB_CONTEXT_COMMAND || m_currentSelectedDrawable != drawToEvaluateFor)
+					switchToContext(CB_CONTEXT_COMMAND, drawToEvaluateFor);
+				else
+					updateContextCommand();
+			}
 		}
 		else if (m_currContext != CB_CONTEXT_OBSERVER_LIST)
 		{
