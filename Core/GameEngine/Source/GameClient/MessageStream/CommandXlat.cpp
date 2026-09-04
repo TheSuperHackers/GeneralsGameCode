@@ -59,6 +59,8 @@
 #include "GameClient/GameClient.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GameText.h"
+// TheSuperHackers @feature for the health bar display mode cycle
+#include "Common/OptionPreferences.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/Shell.h"
@@ -3454,6 +3456,44 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			}
 			break;
 		}
+
+		//-----------------------------------------------------------------------------------------
+#if RTS_ZEROHOUR
+		// TheSuperHackers @feature Cycle the health bar display mode in game, so the player can
+		// switch between Classic, Damaged and Always without leaving to edit Options.ini. Purely a
+		// client side display setting -- nothing here reaches the simulation, so it is safe in
+		// multiplayer and replays. The change is not written back to Options.ini, so it lasts for
+		// the session only and the configured mode returns next launch.
+		case GameMessage::MSG_META_CYCLE_HEALTH_BAR_MODE:
+		{
+			if( TheWritableGlobalData )
+			{
+				Int mode = TheGlobalData->m_healthBarDisplayMode + 1;
+				if( mode >= HealthBarDisplayMode_Count || mode < 0 )
+					mode = HealthBarDisplayMode_Classic;
+
+				TheWritableGlobalData->m_healthBarDisplayMode = mode;
+
+				switch( mode )
+				{
+					case HealthBarDisplayMode_Damaged:
+						TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE(
+								"GUI:HealthBarModeDamaged", L"Health bars: damaged only" ) );
+						break;
+					case HealthBarDisplayMode_Always:
+						TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE(
+								"GUI:HealthBarModeAlways", L"Health bars: always" ) );
+						break;
+					default:
+						TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE(
+								"GUI:HealthBarModeClassic", L"Health bars: classic" ) );
+						break;
+				}
+			}
+			disp = DESTROY_MESSAGE;
+			break;
+		}
+#endif // RTS_ZEROHOUR
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_ATTACKMOVE:

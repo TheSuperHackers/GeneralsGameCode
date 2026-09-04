@@ -216,6 +216,59 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Health bar display mode, read from Options.ini as
+// HealthBarDisplayMode = Classic | Damaged | Always (a plain index also works).
+HealthBarDisplayMode OptionPreferences::getHealthBarDisplayMode() const
+{
+	OptionPreferences::const_iterator it = find("HealthBarDisplayMode");
+	if (it == end())
+		return HealthBarDisplayMode_Default;
+
+	if (stricmp(it->second.str(), "Always") == 0)
+		return HealthBarDisplayMode_Always;
+	if (stricmp(it->second.str(), "Damaged") == 0)
+		return HealthBarDisplayMode_Damaged;
+	if (stricmp(it->second.str(), "Classic") == 0)
+		return HealthBarDisplayMode_Classic;
+
+	// also accept the raw index, so the value round trips if it is ever written numerically
+	Int mode = atoi(it->second.str());
+	if (mode >= 0 && mode < HealthBarDisplayMode_Count)
+		return (HealthBarDisplayMode)mode;
+
+	return HealthBarDisplayMode_Default;
+}
+
+// TheSuperHackers @feature Options.ini: NumericalHealth = Yes prints the hit points beside the
+// health bar. Follows HealthBarDisplayMode, so the number appears exactly where a bar does.
+Bool OptionPreferences::getNumericalHealthEnabled() const
+{
+	OptionPreferences::const_iterator it = find("NumericalHealth");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+// TheSuperHackers @feature Options.ini: SmartPips = Yes keeps ammo and passenger pips on screen
+// instead of showing them only while the unit is selected or moused over. Own units only -- not
+// allies, not enemies. Nothing is drawn when there is nothing to report: no shots left, or no
+// one aboard. So the pips read as "still loaded" and "carrying someone" at a glance.
+Bool OptionPreferences::getSmartPipsEnabled() const
+{
+	OptionPreferences::const_iterator it = find("SmartPips");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

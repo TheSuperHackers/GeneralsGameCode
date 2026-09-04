@@ -228,6 +228,10 @@ GameClient::~GameClient()
 	delete TheKeyboard;
 	TheKeyboard = nullptr;
 
+	// TheSuperHackers @feature The shared numerical health string must go back to the manager
+	// while the manager is still alive; its destructor asserts on any string left registered.
+	Drawable::killStaticDisplayStrings();
+
 	delete TheDisplayStringManager;
 	TheDisplayStringManager = nullptr;
 
