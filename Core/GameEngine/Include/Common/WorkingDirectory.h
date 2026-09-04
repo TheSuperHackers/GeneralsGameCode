@@ -24,13 +24,12 @@ namespace rts
 {
 
 // TheSuperHackers @feature 14/08/2026
-// Process working directory helpers. CommandLine::parseCommandLineForStartup()
-// applies these: default is the executable directory, -useCwd keeps the OS
-// directory, and -setCwd <path> uses that path.
+// Command-line parsing records the last working directory option here, then
+// applies it after parsing. The default is the executable directory.
 
-Bool setCurrentDirectoryToExecutablePath();
-Bool setCurrentDirectoryToPath(const char *path);
-void keepCurrentDirectory();
-void setCurrentDirectoryToExecutablePathIfNotSet();
+void selectCurrentWorkingDirectory();
+void selectExecutableWorkingDirectory();
+void selectWorkingDirectoryPath(const char *path);
+void applySelectedWorkingDirectory();
 
 } // namespace rts

@@ -23,9 +23,17 @@
 namespace rts
 {
 
-static Bool s_workingDirectorySet = FALSE;
+enum WorkingDirectorySelection
+{
+	WORKING_DIRECTORY_EXECUTABLE,
+	WORKING_DIRECTORY_CURRENT,
+	WORKING_DIRECTORY_PATH,
+};
 
-Bool setCurrentDirectoryToExecutablePath()
+static WorkingDirectorySelection s_workingDirectorySelection = WORKING_DIRECTORY_EXECUTABLE;
+static const Char *s_workingDirectoryPath = nullptr;
+
+static Bool setCurrentDirectoryToExecutablePath()
 {
 	Char buffer[_MAX_PATH];
 	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
@@ -46,11 +54,10 @@ Bool setCurrentDirectoryToExecutablePath()
 		return FALSE;
 	}
 
-	s_workingDirectorySet = TRUE;
 	return TRUE;
 }
 
-Bool setCurrentDirectoryToPath(const char *path)
+static Bool setCurrentDirectoryToPath(const char *path)
 {
 	if (path == nullptr || path[0] == '\0')
 		return FALSE;
@@ -61,19 +68,36 @@ Bool setCurrentDirectoryToPath(const char *path)
 		return FALSE;
 	}
 
-	s_workingDirectorySet = TRUE;
 	return TRUE;
 }
 
-void keepCurrentDirectory()
+void selectCurrentWorkingDirectory()
 {
-	s_workingDirectorySet = TRUE;
+	s_workingDirectorySelection = WORKING_DIRECTORY_CURRENT;
+	s_workingDirectoryPath = nullptr;
 }
 
-void setCurrentDirectoryToExecutablePathIfNotSet()
+void selectExecutableWorkingDirectory()
 {
-	if (!s_workingDirectorySet)
-		setCurrentDirectoryToExecutablePath();
+	s_workingDirectorySelection = WORKING_DIRECTORY_EXECUTABLE;
+	s_workingDirectoryPath = nullptr;
+}
+
+void selectWorkingDirectoryPath(const char *path)
+{
+	s_workingDirectorySelection = WORKING_DIRECTORY_PATH;
+	s_workingDirectoryPath = path;
+}
+
+void applySelectedWorkingDirectory()
+{
+	if (s_workingDirectorySelection == WORKING_DIRECTORY_CURRENT)
+		return;
+
+	if (s_workingDirectorySelection == WORKING_DIRECTORY_PATH && setCurrentDirectoryToPath(s_workingDirectoryPath))
+		return;
+
+	setCurrentDirectoryToExecutablePath();
 }
 
 } // namespace rts
