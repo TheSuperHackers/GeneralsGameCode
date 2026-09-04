@@ -167,7 +167,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	std::list<std::string> argvSet;
 	for (int arg = 1; arg < __argc; ++arg)
 	{
-		if (!CommandLine::isCommandLineArgumentParsedForStartup(arg - 1))
+		if (!CommandLine::wasCommandLineArgumentParsed(arg - 1))
 		{
 			argvSet.push_back(__argv[arg]);
 			DEBUG_LOG(("Adding '%s'", __argv[arg]));

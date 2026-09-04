@@ -36,7 +36,7 @@ public:
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
 
-	// Returns true if startup parsing consumed the zero-based argument index.
+	// Returns true if command-line parsing consumed the zero-based argument index.
 	// The index excludes the executable name.
-	static bool isCommandLineArgumentParsedForStartup(int argIndex);
+	static bool wasCommandLineArgumentParsed(int argIndex);
 };

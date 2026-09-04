@@ -23,6 +23,8 @@
 namespace rts
 {
 
+static Bool s_workingDirectorySet = FALSE;
+
 Bool setCurrentDirectoryToExecutablePath()
 {
 	Char buffer[_MAX_PATH];
@@ -44,6 +46,7 @@ Bool setCurrentDirectoryToExecutablePath()
 		return FALSE;
 	}
 
+	s_workingDirectorySet = TRUE;
 	return TRUE;
 }
 
@@ -58,7 +61,19 @@ Bool setCurrentDirectoryToPath(const char *path)
 		return FALSE;
 	}
 
+	s_workingDirectorySet = TRUE;
 	return TRUE;
+}
+
+void keepCurrentDirectory()
+{
+	s_workingDirectorySet = TRUE;
+}
+
+void setCurrentDirectoryToExecutablePathIfNotSet()
+{
+	if (!s_workingDirectorySet)
+		setCurrentDirectoryToExecutablePath();
 }
 
 } // namespace rts

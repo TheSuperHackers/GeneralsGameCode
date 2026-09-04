@@ -164,8 +164,9 @@ public:
 
 	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
-		if (CommandLine::isCommandLineArgumentParsedForStartup(m_argIndex++))
+		if (CommandLine::wasCommandLineArgumentParsed(m_argIndex++))
 		{
+			// MFC uses bLast to finalize its shell command, even when the final argument is skipped.
 			ParseLast(bLast);
 			return;
 		}
