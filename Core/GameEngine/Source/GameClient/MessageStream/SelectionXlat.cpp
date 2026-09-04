@@ -740,6 +740,49 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 	pds.isPointSelection = isPoint;
 	TheTacticalView->iterateDrawablesInRegion(&selectionRegion, addDrawableToList, &pds);
 
+	// TheSuperHackers @feature EasyMilitaryDrag drops builders from a drag, but if that leaves
+	// no actual units then the box held only builders, and refusing to select them is just an
+	// unresponsive click. Run the region again with the filter suspended so they are selected
+	// after all.
+	//
+	// The test is "no units survived", not "the list is empty", because structures are never
+	// filtered and so stay in the list. Dragging over workers standing next to a building left
+	// the building as the only survivor, and the selection logic below has a branch that hands
+	// you a building when it is the only selectable thing in the box -- so the drag silently
+	// grabbed the building instead of the workers.
+	//
+	// Deliberately not done for the Ctrl inverted drag: there the player has explicitly asked
+	// for the builders, so grabbing the army instead would be the opposite of the request.
+	if (pds.easyMilitaryDrag)
+	{
+		Bool anyNonStructure = FALSE;
+		for (DrawableListIt it = drawablesThatWillSelect.begin();
+					it != drawablesThatWillSelect.end(); ++it)
+		{
+			// Only units the final selection loop will actually keep count: a foreign drawable
+			// is rejected by the ownership filtering downstream, and a rider inside a container
+			// such as the Overlord's bunker is discarded as contained - letting either satisfy
+			// this test would suppress the builders-only pass and leave the drag selecting
+			// nothing.
+			const Drawable *d = *it;
+			if (d && !d->isKindOf(KINDOF_STRUCTURE) &&
+					d->getObject() && d->getObject()->isLocallyControlled() &&
+					d->getObject()->getContainedBy() == nullptr)
+			{
+				anyNonStructure = TRUE;
+				break;
+			}
+		}
+
+		if (!anyNonStructure)
+		{
+			// start clean, or the structures already gathered would be listed twice
+			drawablesThatWillSelect.clear();
+			pds.easyMilitaryDragDisabled = TRUE;
+			TheTacticalView->iterateDrawablesInRegion(&selectionRegion, addDrawableToList, &pds);
+		}
+	}
+
 	if (drawablesThatWillSelect.empty())
 	{
 		return KEEP_MESSAGE;
