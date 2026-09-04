@@ -703,6 +703,7 @@ public:
 	Bool hasAnyShortcutSelection() const;
 	Bool canShowSpecialPowerShortcut() const;
 	Bool isApparentControllingPlayerNeutral(const Object* obj) const;
+	Bool isControllingPlayerNeutral(const Object* obj) const;
 	void showSpecialPowerShortcut();
 	void hideSpecialPowerShortcut();
 	void animateSpecialPowerShortcut( Bool isOn );

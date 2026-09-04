@@ -1484,7 +1484,7 @@ void ControlBar::update()
 		Bool showObserverInventory = observerContain != nullptr
 			&& observerContain->getContainMax() > 0
 			&& m_observerLookAtPlayer == nullptr
-			&& isApparentControllingPlayerNeutral(obj);
+			&& isControllingPlayerNeutral(obj);
 
 		if (showObserverInventory)
 		{
@@ -1920,12 +1920,9 @@ void ControlBar::evaluateContextUI()
 				//a commandset defined. If we do, then trust that the commandset will
 				//handle it!
 
-				Player *localPlayer = ThePlayerList->getLocalPlayer();
-				Relationship relationship;
-
 				// we cannot select objects that are controlled by our enemies
-				relationship = localPlayer->getRelationship( obj->getTeam() );
-				if( obj->isLocallyControlled() == TRUE || relationship == NEUTRAL )
+				bool isRelationshipNeutral = isControllingPlayerNeutral(obj);
+				if( obj->isLocallyControlled() == TRUE || isRelationshipNeutral )
 					switchToContext( CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor );
 
 			}
@@ -3606,6 +3603,13 @@ Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
 	}
 
 	Relationship relation = player->getRelationship(otherPlayer->getDefaultTeam());
+	return relation == NEUTRAL;
+}
+
+Bool ControlBar::isControllingPlayerNeutral(const Object* obj) const
+{
+	const Player* player = ThePlayerList->getLocalPlayer();
+	Relationship relation = player->getRelationship(obj->getTeam());
 	return relation == NEUTRAL;
 }
 
