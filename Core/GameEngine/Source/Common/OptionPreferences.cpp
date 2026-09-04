@@ -216,6 +216,20 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Options.ini: SelectionCircle = Yes draws a green ring on the ground
+// under every selected object, so the current selection reads at a glance.
+Bool OptionPreferences::getSelectionCircleEnabled() const
+{
+	OptionPreferences::const_iterator it = find("SelectionCircle");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

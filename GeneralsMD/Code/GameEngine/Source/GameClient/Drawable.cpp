@@ -979,8 +979,50 @@ void Drawable::colorTint( const RGBColor* color )
 //-------------------------------------------------------------------------------------------------
 /** Gathering point for all things besides actual selection that must happen on selection */
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Selection ring decal.
+//-------------------------------------------------------------------------------------------------
+/** Show or hide the green selection ring, following the SelectionCircle option.
+	*
+	* Only the first draw module gets one, matching how terrain decals avoid stacking. */
+//-------------------------------------------------------------------------------------------------
+void Drawable::updateSelectionDecal( void )
+{
+	Bool wanted = TheGlobalData && TheGlobalData->m_selectionCircleEnabled && isSelected();
+
+	const Object *obj = getObject();
+	if( obj == nullptr || obj->isEffectivelyDead() || obj->isKindOf( KINDOF_IGNORED_IN_GUI ) )
+		wanted = FALSE;
+
+	Real radius = 0.0f;
+	if( wanted )
+	{
+		// The bounding circle encloses the whole model, so it reads as too big drawn at full
+		// size. How much too big depends on the shape: a building fills its circle, a soldier
+		// barely occupies the middle of one, so scale per kind.
+		Real scale;
+		if( obj->isKindOf( KINDOF_STRUCTURE ) )
+			scale = 1.0f;
+		else if( obj->isKindOf( KINDOF_INFANTRY ) )
+			scale = 0.7f;
+		else
+			scale = 0.85f;	// vehicles, aircraft and everything else
+
+		radius = getDrawableGeometryInfo().getBoundingCircleRadius() * scale;
+		if( radius < 1.0f )
+			radius = 1.0f;
+	}
+
+	for( DrawModule **dm = getDrawModules(); *dm; ++dm )
+	{
+		(*dm)->setSelectionDecal( wanted, radius );
+		break;	// first draw module only, so rings do not stack
+	}
+}
+
 void Drawable::onSelected()
 {
+	// TheSuperHackers @feature put the selection ring up straight away rather than waiting a frame
+	updateSelectionDecal();
 
 	flashAsSelected();//much simpler
 
@@ -1001,7 +1043,8 @@ void Drawable::onSelected()
 //-------------------------------------------------------------------------------------------------
 void Drawable::onUnselected()
 {
-	// nothing
+	// TheSuperHackers @feature take the selection ring down
+	updateSelectionDecal();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4161,6 +4204,9 @@ void Drawable::reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* old
 //-------------------------------------------------------------------------------------------------
 void Drawable::reactToGeometryChange()
 {
+	// TheSuperHackers @fix resize the selection ring along with the geometry it is derived from
+	updateSelectionDecal();
+
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{
 		(*dm)->reactToGeometryChange();
