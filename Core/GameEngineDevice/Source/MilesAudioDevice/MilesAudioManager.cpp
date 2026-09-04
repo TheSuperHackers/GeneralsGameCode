@@ -1911,15 +1911,16 @@ Bool MilesAudioManager::isObjectPlayingVoice( UnsignedInt objID ) const
 //-------------------------------------------------------------------------------------------------
 AudioEventRTS* MilesAudioManager::findLowestPrioritySound( AudioEventRTS *event )
 {
-	AudioPriority priority = event->getAudioEventInfo()->m_priority;
+	const AudioPriority priority = event->getAudioEventInfo()->m_priority;
 	if( priority == AP_LOWEST )
 	{
 		//If the event we pass in is the lowest priority, don't bother checking because
 		//there is nothing lower priority than lowest.
 		return nullptr;
 	}
+
 	AudioEventRTS *lowestPriorityEvent = nullptr;
-	AudioPriority lowestPriority;
+	AudioPriority lowestPriority = priority;
 
 	std::list<PlayingAudio *>::const_iterator it;
 	if( event->isPositionalAudio() )
@@ -1928,17 +1929,14 @@ AudioEventRTS* MilesAudioManager::findLowestPrioritySound( AudioEventRTS *event 
 		for( it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it )
 		{
 			AudioEventRTS *itEvent = (*it)->m_audioEventRTS.Peek();
-			AudioPriority itPriority = itEvent->getAudioEventInfo()->m_priority;
-			if( itPriority < priority )
+			const AudioPriority itPriority = itEvent->getAudioEventInfo()->m_priority;
+			if( itPriority < lowestPriority )
 			{
-				if( !lowestPriorityEvent || lowestPriority > itPriority )
+				lowestPriorityEvent = itEvent;
+				lowestPriority = itPriority;
+				if( lowestPriority == AP_LOWEST )
 				{
-					lowestPriorityEvent = itEvent;
-					lowestPriority = itPriority;
-					if( lowestPriority == AP_LOWEST )
-					{
-						return lowestPriorityEvent;
-					}
+					return lowestPriorityEvent;
 				}
 			}
 		}
@@ -1949,17 +1947,14 @@ AudioEventRTS* MilesAudioManager::findLowestPrioritySound( AudioEventRTS *event 
 		for( it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it )
 		{
 			AudioEventRTS *itEvent = (*it)->m_audioEventRTS.Peek();
-			AudioPriority itPriority = itEvent->getAudioEventInfo()->m_priority;
-			if( itPriority < priority )
+			const AudioPriority itPriority = itEvent->getAudioEventInfo()->m_priority;
+			if( itPriority < lowestPriority )
 			{
-				if( !lowestPriorityEvent || lowestPriority > itPriority )
+				lowestPriorityEvent = itEvent;
+				lowestPriority = itPriority;
+				if( lowestPriority == AP_LOWEST )
 				{
-					lowestPriorityEvent = itEvent;
-					lowestPriority = itPriority;
-					if( lowestPriority == AP_LOWEST )
-					{
-						return lowestPriorityEvent;
-					}
+					return lowestPriorityEvent;
 				}
 			}
 		}
