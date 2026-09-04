@@ -38,6 +38,18 @@
 typedef UnsignedInt CursorCaptureMode;
 typedef UnsignedInt ScreenEdgeScrollMode;
 
+// TheSuperHackers @feature How remaining time is shown on build queue and cooldown cameos.
+// Purely a client side display preference.
+enum BuildTimerDisplayMode CPP_11(: Int)
+{
+	BuildTimerDisplayMode_None = 0,		///< no numbers, just the existing clock sweep (retail behavior)
+	BuildTimerDisplayMode_Seconds,		///< always plain seconds, however large
+	BuildTimerDisplayMode_Auto,				///< seconds under a minute, M:SS above it
+
+	BuildTimerDisplayMode_Count,
+	BuildTimerDisplayMode_Default = BuildTimerDisplayMode_None
+};
+
 //-----------------------------------------------------------------------------
 // OptionsPreferences options menu class
 //-----------------------------------------------------------------------------
@@ -76,6 +88,7 @@ public:
 	Real getScrollFactor();
 	Bool getDrawScrollAnchor();
 	Bool getMoveScrollAnchor();
+	BuildTimerDisplayMode getBuildTimerDisplayMode() const;
 	Bool getCursorCaptureEnabledInWindowedGame() const;
 	Bool getCursorCaptureEnabledInWindowedMenu() const;
 	Bool getCursorCaptureEnabledInFullscreenGame() const;

@@ -142,6 +142,9 @@ public:
 	Bool m_useAlternateMouse;
 	Bool m_useRightMouseScrollWithAlternateMouse; // TheSuperHackers @feature User option for RMB scroll in Alternate Mouse mode.
 	Bool m_clientRetaliationModeEnabled;
+	// TheSuperHackers @feature Countdown numbers on build queue and cooldown cameos.
+	// Holds a BuildTimerDisplayMode; stored as Int to avoid pulling OptionPreferences.h in here.
+	Int m_buildTimerDisplayMode;
 	Bool m_doubleClickAttackMove;
 	Bool m_rightMouseAlwaysScrolls;
 	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.
