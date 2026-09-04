@@ -143,6 +143,12 @@ public:
 	Bool m_useRightMouseScrollWithAlternateMouse; // TheSuperHackers @feature User option for RMB scroll in Alternate Mouse mode.
 	Bool m_clientRetaliationModeEnabled;
 	Bool m_doubleClickAttackMove;
+	// TheSuperHackers @feature Command bar keys by slot position instead of by string file.
+	Bool m_gridHotkeysEnabled;
+	AsciiString m_gridHotkeyLayout;
+	Int m_gridHotkeyColumns;
+	// Keys the player asked to leave out of the grid; those slots keep their string file letter.
+	AsciiString m_nonGridHotkeys;
 	Bool m_rightMouseAlwaysScrolls;
 	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.
 	Bool m_useWaterPlane;
