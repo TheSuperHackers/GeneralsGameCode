@@ -1286,21 +1286,22 @@ static void renderAIDebug()
 Bool W3DView::updateCameraMovements()
 {
 	Bool didUpdate = false;
+	const Real milliseconds = TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime);
 
 	if (hasScriptedState(Scripted_Zoom))
 	{
-		zoomCameraOneFrame();
+		zoomCameraOneFrame(milliseconds);
 		didUpdate = true;
 	}
 	if (hasScriptedState(Scripted_Pitch))
 	{
-		pitchCameraOneFrame();
+		pitchCameraOneFrame(milliseconds);
 		didUpdate = true;
 	}
 	if (hasScriptedState(Scripted_Rotate))
 	{
 		m_previousLookAtPosition = getPosition();
-		rotateCameraOneFrame();
+		rotateCameraOneFrame(milliseconds);
 		didUpdate = true;
 	}
 	else if (hasScriptedState(Scripted_MoveOnWaypointPath))
@@ -1308,7 +1309,7 @@ Bool W3DView::updateCameraMovements()
 		m_previousLookAtPosition = getPosition();
 		// TheSuperHackers @tweak The scripted camera movement is now decoupled from the render update.
 		// The scripted camera will still move when the time is frozen, but not when the game is halted.
-		moveAlongWaypointPath(TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime));
+		moveAlongWaypointPath(milliseconds);
 		didUpdate = true;
 	}
 	if (hasScriptedState(Scripted_CameraLock))
@@ -3268,9 +3269,11 @@ static Real makeQuadraticS(Real t)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::rotateCameraOneFrame()
+void W3DView::rotateCameraOneFrame(Real milliseconds)
 {
-	m_rcInfo.curFrame++;
+	// TheSuperHackers @bugfix bobtista 14/08/2026 Advance by the elapsed logic time rather than by
+	// one render frame, so the movement takes the authored duration at any render frame rate
+	m_rcInfo.curFrame += milliseconds / TheW3DFrameLengthInMsec;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_rcInfo.curFrame >= m_rcInfo.numFrames + m_rcInfo.numHoldFrames) {
 			removeScriptedState(Scripted_Rotate);
@@ -3339,9 +3342,9 @@ void W3DView::rotateCameraOneFrame()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::zoomCameraOneFrame()
+void W3DView::zoomCameraOneFrame(Real milliseconds)
 {
-	m_zcInfo.curFrame++;
+	m_zcInfo.curFrame += milliseconds / TheW3DFrameLengthInMsec;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_zcInfo.curFrame >= m_zcInfo.numFrames) {
 			removeScriptedState(Scripted_Zoom);
@@ -3365,9 +3368,9 @@ void W3DView::zoomCameraOneFrame()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::pitchCameraOneFrame()
+void W3DView::pitchCameraOneFrame(Real milliseconds)
 {
-	m_pcInfo.curFrame++;
+	m_pcInfo.curFrame += milliseconds / TheW3DFrameLengthInMsec;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_pcInfo.curFrame >= m_pcInfo.numFrames) {
 			removeScriptedState(Scripted_Pitch);
