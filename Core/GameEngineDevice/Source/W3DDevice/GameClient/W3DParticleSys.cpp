@@ -213,7 +213,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		texture.Assign_No_Add_Ref(W3DDisplay::m_assetManager->Get_Texture(sys->getParticleTypeName().str()));
 
 		const Bool canBatch = sys->isUsingParticles();
-		const Bool batchDone = finishedBatch(sys, texture);
+		const Bool batchDone = finishedBatch(*sys, texture);
 		if (!canBatch || batchDone)
 		{
 			flushParticleBatch(rinfo, pointCount);
@@ -222,7 +222,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// setup a new particle batch texture if prior batch was flushed.
 		if (canBatch && m_batchTexture == nullptr)
 		{
-			initializeBatch(sys, texture);
+			initializeBatch(*sys, texture);
 		}
 
 		UnsignedInt startCount = pointCount;
@@ -277,7 +277,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				// This prevents particles being dropped. Bank the stats first as the flush resets count to 0.
 				m_onScreenParticleCount += (pointCount - startCount);
 				flushParticleBatch(rinfo, pointCount);
-				initializeBatch(sys, texture);
+				initializeBatch(*sys, texture);
 				startCount = 0;
 			}
 		}
@@ -412,18 +412,18 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	}
 }
 
-Bool W3DParticleSystemManager::finishedBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture)
+Bool W3DParticleSystemManager::finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
 {
 	return texture.Peek() != m_batchTexture.Peek() ||
-		system->getShaderType() != m_batchShaderType ||
-		system->shouldBillboard() != m_batchBillboard;
+		system.getShaderType() != m_batchShaderType ||
+		system.shouldBillboard() != m_batchBillboard;
 }
 
-void W3DParticleSystemManager::initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture)
+void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
 {
 	m_batchTexture = texture;
-	m_batchShaderType = system->getShaderType();
-	m_batchBillboard = system->shouldBillboard();
+	m_batchShaderType = system.getShaderType();
+	m_batchBillboard = system.shouldBillboard();
 }
 
 void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount)

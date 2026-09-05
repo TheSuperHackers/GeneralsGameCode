@@ -50,8 +50,8 @@ public:
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
 private:
-	Bool finishedBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture);
-	void initializeBatch(ParticleSystem* system, const RefCountPtr<TextureClass>& texture);
+	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
+	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
 	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
 
 	enum { MAX_POINTS_PER_GROUP = 512 };

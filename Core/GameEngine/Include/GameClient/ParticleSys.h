@@ -614,9 +614,9 @@ public:
 	Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
-	Bool shouldBillboard() { return !m_isGroundAligned; }
+	Bool shouldBillboard() const { return !m_isGroundAligned; }
 
-	ParticleShaderType getShaderType() { return m_shaderType; }
+	ParticleShaderType getShaderType() const { return m_shaderType; }
 
 	void setSlave( ParticleSystem *slave );			///< set a slave system for us
 	ParticleSystem *getSlave() { return m_slaveSystem; }
