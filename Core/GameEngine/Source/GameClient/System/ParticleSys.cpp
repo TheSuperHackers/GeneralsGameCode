@@ -2757,6 +2757,7 @@ const FieldParse ParticleSystemTemplate::m_fieldParseTable[] =
 
 	{ "IsHollow",								INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isEmissionVolumeHollow ) },
 	{ "IsGroundAligned",				INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isGroundAligned ) },
+	{ "IsTerrainConforming",		INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isTerrainConforming ) },
 	{ "IsEmitAboveGroundOnly",	INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isEmitAboveGroundOnly) },
 	{ "IsParticleUpTowardsEmitter",	INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isParticleUpTowardsEmitter) },
 
@@ -2862,6 +2863,7 @@ ParticleSystemTemplate::ParticleSystemTemplate( const AsciiString &name ) :
 	m_name(name)
 {
 	m_slaveTemplate = nullptr;
+	m_isTerrainConforming = FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------

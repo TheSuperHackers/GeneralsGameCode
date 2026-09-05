@@ -498,6 +498,18 @@ struct IRegion2D
 {
 	ICoord2D lo, hi;					// bounds of 2D rectangular region
 
+	void intersect(const IRegion2D &other)
+	{
+		if (lo.x < other.lo.x)
+			lo.x = other.lo.x;
+		if (lo.y < other.lo.y)
+			lo.y = other.lo.y;
+		if (hi.x > other.hi.x)
+			hi.x = other.hi.x;
+		if (hi.y > other.hi.y)
+			hi.y = other.hi.y;
+	}
+
 	void zero()
 	{
 		lo.zero();

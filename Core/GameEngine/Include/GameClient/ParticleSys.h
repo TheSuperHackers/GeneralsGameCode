@@ -30,6 +30,7 @@
 #pragma once
 
 #include "Common/AsciiString.h"
+#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -515,7 +516,12 @@ public:
 
 	void validate();
 
-	AsciiString getName() const { return m_name; }
+	const AsciiString& getName() const { return m_name; }
+#if ENABLE_TERRAIN_CONFORMING_PARTICLES
+	Bool getIsTerrainConforming() const { return m_isTerrainConforming; }
+#else
+	Bool getIsTerrainConforming() const { return FALSE; }
+#endif
 
 	// This function was made const because of update modules' module data being all const.
 	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-null, it is a slave system for use
@@ -543,6 +549,7 @@ protected:
 
 	// This has to be mutable because of the delayed initialization thing in createSlaveSystem
 	mutable const ParticleSystemTemplate *m_slaveTemplate;		///< if non-null, use this to create a slave system
+	Bool m_isTerrainConforming;														///< render ground-aligned particles conforming to the terrain
 
 	// template attribute data inherited from ParticleSystemInfo class
 };
@@ -607,6 +614,7 @@ public:
 	void setInitialDelay( UnsignedInt delay ) { m_delayLeft = delay; }
 
 	const AsciiString& getParticleTypeName() const { return m_particleTypeName; }	///< return the name of the particles
+	const Bool isUsingParticles() const { return m_particleType == PARTICLE; }
 	const Bool isUsingDrawables() const { return m_particleType == DRAWABLE; }
 	const Bool isUsingStreak() const { return m_particleType == STREAK; }
 	const Bool isUsingSmudge() const { return m_particleType == SMUDGE; }
@@ -614,6 +622,7 @@ public:
 	const UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	Bool shouldBillboard() { return !m_isGroundAligned; }
+	Bool isTerrainConforming() { return m_template->getIsTerrainConforming(); }
 
 	ParticleShaderType getShaderType() { return m_shaderType; }
 

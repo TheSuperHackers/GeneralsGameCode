@@ -1472,6 +1472,14 @@ void W3DDisplay::gatherDebugStats()
 		unibuffer.format( L"Particles: %d in world, %d being displayed", totalParticles, onScreenParticleCount );
 		m_displayStrings[Particles]->setText( unibuffer );
 
+		//display the terrain-conforming particle load, split by render path
+		unibuffer.format( L"Terrain Particles: %d quad, %d mesh, %d tris, %d draws",
+			Debug_Statistics::Get_Terrain_Particle_Quads(),
+			Debug_Statistics::Get_Terrain_Particle_Meshes(),
+			Debug_Statistics::Get_Terrain_Particle_Triangles(),
+			Debug_Statistics::Get_Terrain_Particle_Batches() );
+		m_displayStrings[TerrainParticles]->setText( unibuffer );
+
 		//display the number of objects in the world
 		UnsignedInt objCount = TheGameLogic->getObjectCount();
 		UnsignedInt objScreenCount = TheGameClient->getRenderedObjectCount();
