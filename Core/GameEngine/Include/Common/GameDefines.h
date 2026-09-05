@@ -91,9 +91,7 @@
 #define PRESERVE_RETAIL_PARTICLES (1) // Preserve original look of particles present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
-#ifndef RETAIL_COMPATIBLE_CRC
-#define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
-#endif
+// RETAIL_COMPATIBLE_CRC is default defined in BaseDefines.h
 
 #ifndef RETAIL_COMPATIBLE_XFER_SAVE
 #define RETAIL_COMPATIBLE_XFER_SAVE (1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04

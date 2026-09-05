@@ -362,7 +362,7 @@ void StreakLineClass::Set_Opacity(float opacity)
 
 void StreakLineClass::Set_Noise_Amplitude(float amplitude)
 {
-	LineRenderer.Set_Noise_Amplitude(WWMath::Fabs(amplitude));
+	LineRenderer.Set_Noise_Amplitude(WWMath::Fabsf_Legacy(amplitude));
 
 	Invalidate_Cached_Bounding_Volumes();
 }

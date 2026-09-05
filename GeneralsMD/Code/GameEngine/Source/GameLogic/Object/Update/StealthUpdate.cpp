@@ -670,7 +670,7 @@ UpdateSleepTime StealthUpdate::update()
 				m_disguiseHalfpointReached = true;
 			}
 			//Opacity ranges from full to none at midpoint and full again at the end
-			Real opacity = fabs( 1.0f - (factor * 2.0f) );
+			Real opacity = WWMath::Fabs( 1.0f - (factor * 2.0f) );
 			Real overrideOpacity = opacity < 1.0f ? 0.0f : 1.0f;
 			draw->setEffectiveOpacity( opacity, overrideOpacity );
 			if( !m_disguiseTransitionFrames && !m_transitioningToDisguise )

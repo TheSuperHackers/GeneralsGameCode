@@ -29,8 +29,9 @@
 
 #pragma once
 
-#include "Lib/BaseTypeCore.h"
-#include "Lib/trig.h"
+#include "BaseDefines.h"
+#include "BaseTypeCore.h"
+#include "trig.h"
 
 //-----------------------------------------------------------------------------
 typedef wchar_t WideChar;  ///< multi-byte character representations
@@ -224,7 +225,7 @@ __forceinline float fast_float_ceil(float f)
 #define INT_TO_REAL(x)						((Real)(x))
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
-#if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 #define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
 #define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
 #else
@@ -283,7 +284,7 @@ struct Coord2D
 		return x == value && y == value;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y ); }
+	Real length() const { return Sqrt( x*x + y*y ); }
 	Real lengthSqr() const { return x*x + y*y; }
 
 	void normalize()
@@ -355,7 +356,7 @@ inline Real Coord2D::toAngle() const
 	vector.x = x;
 	vector.y = y;
 
-	Real dist = (Real)sqrt(vector.x * vector.x + vector.y * vector.y);
+	Real dist = Sqrt(vector.x * vector.x + vector.y * vector.y);
 
 	// normalize
 	if (dist == 0.0f)
@@ -422,7 +423,7 @@ struct ICoord2D
 		return x == value && y == value;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
+	Int length() const { return (Int)Sqrt( (double)(x*x + y*y) ); }
 	Int lengthSqr() const { return x*x + y*y; }
 
 	void add( const ICoord2D &a )
@@ -519,7 +520,16 @@ struct Coord3D
 {
 	Real x, y, z;
 
-	Real length() const { return (Real)sqrt( x*x + y*y + z*z ); }
+	Real length() const
+	{
+#if RETAIL_COMPATIBLE_CRC
+		// Must not touch this function because it affects its inline-ability
+		// and therefore changes the logic at an unknown call site that relies on it. It is a bug.
+		return (Real)sqrt( x*x + y*y + z*z );
+#else
+		return Sqrt( x*x + y*y + z*z );
+#endif
+	}
 	Real lengthSqr() const { return ( x*x + y*y + z*z ); }
 
 	void normalize()
@@ -631,7 +641,7 @@ struct ICoord3D
 {
 	Int x, y, z;
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
+	Int length() const { return (Int)Sqrt( (double)(x*x + y*y + z*z) ); }
 	Int lengthSqr() const { return x*x + y*y + z*z; }
 
 	void zero()
