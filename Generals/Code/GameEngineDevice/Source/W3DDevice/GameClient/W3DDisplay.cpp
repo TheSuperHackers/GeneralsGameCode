@@ -2169,6 +2169,8 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 	theDynamicLight->setDecayRange();
 	theDynamicLight->setDecayColor();
 	//theDynamicLight->setDonut(donut);
+	// (gth) CNC3 enable far attenuation.  C&C3 defaults to disabled.  Must enable to match Generals. MW 8-06-03
+	theDynamicLight->Set_Flag(LightClass::FAR_ATTENUATION,true);
 }
 
 void W3DDisplay::toggleLetterBox()
