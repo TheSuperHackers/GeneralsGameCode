@@ -25,7 +25,7 @@
 // FILE: W3DDisplay.cpp ///////////////////////////////////////////////////////
 //
 // W3D Implementation for the Game Display which is responsible for creating
-// and maintaning the entire visual display
+// and maintaining the entire visual display
 //
 // Author: Colin Day, April 2001
 //
@@ -199,7 +199,7 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "Average FPS: %.1f (%.5f msec)\n", fps, 1000.0f / fps );
 
 	//Rendering stats
-	fprintf( m_fp, "Draws: %d Skins: %d SortedPolys: %d SkinPolys: %d\n",(Int)Debug_Statistics::Get_Draw_Calls(),
+	fprintf( m_fp, "Draws: %d \nSkins: %d \nSortedPolys: %d \nSkinPolys: %d\n",(Int)Debug_Statistics::Get_Draw_Calls(),
 		(Int)Debug_Statistics::Get_DX8_Skin_Renders(),
 		(Int)Debug_Statistics::Get_Sorting_Polygons(), (Int)Debug_Statistics::Get_DX8_Skin_Polygons());
 
@@ -226,7 +226,7 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "\n" );
 	fprintf( m_fp, "Script Engine Statistics:\n" );
 	fprintf( m_fp, "  Total time last frame: %.5f msec\n", timeLastFrame*1000 );
-	fprintf( m_fp, "    -Slowest 2 scripts %s\n", slowScripts.str() );
+	fprintf( m_fp, "    -Slowest 2 scripts      %s\n", slowScripts.str() );
 	fprintf( m_fp, "    -Slowest 2 script times %.5f msec, %.5f msec \n", slowScript1*1000, slowScript2*1000 );
 	fprintf( m_fp, "\n" );
 
@@ -278,7 +278,7 @@ void StatDumpClass::dumpStats()
 	//Report memory usage.
 	TheMemoryPoolFactory->debugMemoryReport( REPORT_FACTORYINFO | REPORT_POOLINFO, 0, 0, m_fp );
 #else
-	fprintf( m_fp, "Memory Report -- unavailable (build doesn't have MEMORYPOOL_DEBUG defined)\n" );
+	fprintf( m_fp, "Memory Report -- unavailable \n(build doesn't have MEMORYPOOL_DEBUG defined)\n" );
 #endif
 	fprintf( m_fp, "\n" );
 
@@ -286,7 +286,9 @@ void StatDumpClass::dumpStats()
 
 	fprintf( m_fp, "----------------------------------------------------------------\n" );
 	fprintf( m_fp, "END -- Frame %d\n", TheGameLogic->getFrame() );
-	fprintf( m_fp, "----------------------------------------------------------------\n\n\n" );
+	fprintf( m_fp, "----------------------------------------------------------------\n" );
+
+	fprintf( m_fp, "\n\n" );
 	fflush(m_fp);
 }
 
@@ -2182,11 +2184,11 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
+
 	if (!m_isBatching)
 	{
 		m_2DRender->Render();
 	}
-
 }
 
 // W3DDisplay::drawLine =======================================================
@@ -2287,7 +2289,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 
 	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-// The rectanges are numberd as follows
+// The rectangles are numberd as follows
 //(x,y)	|---------|
 //			| 4  | 1  |
 //			|----+----|
@@ -2370,7 +2372,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	}
 	else if(percent > 25)
 	{
-		// rectangel #1
+		// rectangle #1
 		m_2DRender->Add_Rect(RectClass( startX + width/2, startY,
 																		startX + width, startY + height/2), 0,0, color);
 		// draw the part of rectangle 2
@@ -2451,7 +2453,7 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 
 	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-// The rectanges are numbered as follows
+// The rectangles are numbered as follows
 //(x,y)	|---------|
 //			| 4  | 1  |
 //			|----+----|
