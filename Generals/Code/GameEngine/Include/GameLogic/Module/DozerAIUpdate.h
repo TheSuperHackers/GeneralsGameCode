@@ -139,9 +139,8 @@ public:
 
 	// task actions
 	virtual void newTask( DozerTask task, Object *target ) = 0;	///< set a desire to do the requrested task
-	virtual void cancelTask( DozerTask task ) = 0;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelTask( DozerTask task, Bool rememberTask = false ) = 0;	///< cancel this task from the queue, if it's the current task the dozer will stop working on it. Can remember the cancelled task for resumption.
 	virtual void cancelAllTasks() = 0;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask() = 0;									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
 	virtual void internalTaskComplete( DozerTask task ) = 0;					///< set a dozer task as successfully completed
@@ -211,6 +210,7 @@ public:
 	virtual const DozerAIInterface* getDozerAIInterface() const override {return this;}
 
 	virtual void onDelete() override;
+	virtual void onDisabledEdge(Bool nowDisabled) override;
 
 	//
 	// module data methods ... this is LAME, multiple inheritance off an interface with replicated
@@ -240,9 +240,8 @@ public:
 
 	// task actions
 	virtual void newTask( DozerTask task, Object *target ) override;	///< set a desire to do the requrested task
-	virtual void cancelTask( DozerTask task ) override;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelTask( DozerTask task, Bool rememberTask = false ) override;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
 	virtual void cancelAllTasks() override;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask() override;									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
 	virtual void internalTaskComplete( DozerTask task ) override;					///< set a dozer task as successfully completed
@@ -277,6 +276,10 @@ protected:
 
 	virtual void privateRepair( Object *obj, CommandSourceType cmdSource ) override;	///< repair the target
 	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource ) override;  ///< resume construction on obj
+
+	virtual void setPreviousTask(DozerTask task);					///< set the previous task
+	virtual void resumePreviousTask();									///< resume the previous task if there was one
+	virtual void clearPreviousTask();									///< clear the previous task
 
 	struct DozerTaskInfo
 	{

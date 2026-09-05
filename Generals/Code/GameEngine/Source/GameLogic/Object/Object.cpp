@@ -3374,6 +3374,10 @@ void Object::friend_adjustPowerForPlayer( Bool incoming )
 //-------------------------------------------------------------------------------------------------
 void Object::onDisabledEdge(Bool becomingDisabled)
 {
+	// rip through the behavior modules and call the onDisabledEdge for any modules that care
+	for( BehaviorModule **module = m_behaviors; *module; ++module )
+		(*module)->onDisabledEdge( becomingDisabled );
+
 	Player* controller = getControllingPlayer();
 	// can be called during game teardown, thus controller can be null
 	if (controller)

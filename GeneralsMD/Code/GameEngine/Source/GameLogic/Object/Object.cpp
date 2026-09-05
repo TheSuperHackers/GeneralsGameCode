@@ -3867,24 +3867,6 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 	for( BehaviorModule **module = m_behaviors; *module; ++module )
 		(*module)->onDisabledEdge( becomingDisabled );
 
-	DozerAIInterface *dozerAI = getAI() ? getAI()->getDozerAIInterface() : nullptr;
-	if (dozerAI)
-	{
-		if (becomingDisabled)
-		{
-			// Have to say goodbye to the thing we might be building or repairing so someone else can do it.
-			if (dozerAI->getCurrentTask() != DOZER_TASK_INVALID)
-				dozerAI->cancelTask(dozerAI->getCurrentTask());
-		}
-		else
-		{
-#if !RETAIL_COMPATIBLE_CRC
-			// TheSuperHackers @bugfix Stubbjax 17/11/2025 Resume previous task when re-enabled.
-			dozerAI->resumePreviousTask();
-#endif
-		}
-	}
-
 	Player* controller = getControllingPlayer();
 	// can be called during game teardown, thus controller can be null
 	if (controller)
