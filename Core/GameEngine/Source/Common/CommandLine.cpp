@@ -28,6 +28,7 @@
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
+#include "Common/WorkingDirectory.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
@@ -35,7 +36,6 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
-#include "WWLib/trim.h"
 
 
 
@@ -461,6 +461,27 @@ Int parseJobs(char *args[], int num)
 		return 2;
 	}
 	return 1;
+}
+
+Int parseUseCwd(char *[], int)
+{
+	// TheSuperHackers @feature 14/08/2026
+	// -useCwd keeps the OS working directory.
+	rts::selectCurrentWorkingDirectory();
+	return 1;
+}
+
+Int parseSetCwd(char *args[], int num)
+{
+	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
+	// -setCwd <path> overrides the working directory.
+	if (num <= 1 || args[1] == nullptr || args[1][0] == '-' || args[1][0] == '/')
+	{
+		rts::selectExecutableWorkingDirectory();
+		return 1;
+	}
+	rts::selectWorkingDirectoryPath(args[1]);
+	return 2;
 }
 
 Int parseXRes(char *args[], int num)
@@ -1155,6 +1176,12 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// TheSuperHackers @feature 14/08/2026
+	// Use the current working directory as provided by the OS, or an explicit path.
+	// Without either flag the working directory is forced to the executable directory.
+	{ "-setCwd", parseSetCwd },
+	{ "-useCwd", parseUseCwd },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
@@ -1326,71 +1353,12 @@ static CommandLineParam paramsForEngineInit[] =
 
 };
 
-char *nextParam(char *newSource, const char *seps)
+static void parseCommandLine(const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
 {
-	static char *source = nullptr;
-	if (newSource)
-	{
-		source = newSource;
-	}
-	if (!source)
-	{
-		return nullptr;
-	}
-
-	// find first separator
-	char *first = source;//strpbrk(source, seps);
-	if (first)
-	{
-		// go past separator
-		char *firstSep = strpbrk(first, seps);
-		char firstChar[2] = {0,0};
-		if (firstSep == first)
-		{
-			firstChar[0] = *first;
-			while (*first == firstChar[0]) first++;
-		}
-
-		// find end
-		char *end;
-		if (firstChar[0])
-			end = strpbrk(first, firstChar);
-		else
-			end = strpbrk(first, seps);
-
-		// trim string & save next start pos
-		if (end)
-		{
-			source = end+1;
-			*end = 0;
-
-			if (!*source)
-				source = nullptr;
-		}
-		else
-		{
-			source = nullptr;
-		}
-
-		if (first && !*first)
-			first = nullptr;
-	}
-
-	return first;
-}
-
-static void parseCommandLine(const CommandLineParam* params, int numParams)
-{
-	std::vector<char*> argv;
-
-	std::string cmdLine = GetCommandLineA();
-	char *token = nextParam(&cmdLine[0], "\" ");
-	while (token != nullptr)
-	{
-		argv.push_back(strtrim(token));
-		token = nextParam(nullptr, "\" ");
-	}
-	int argc = argv.size();
+	const int argc = __argc;
+	char **argv = __argv;
+	if (parsedArguments != nullptr && parsedArguments->size() < static_cast<size_t>(argc > 0 ? argc - 1 : 0))
+		parsedArguments->resize(argc - 1, FALSE);
 
 	int arg = 1;
 
@@ -1424,7 +1392,14 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(&argv[0]+arg, argc-arg);
+				const int parsedArg = arg;
+				const int parsedArgCount = params[param].func(&argv[0]+arg, argc-arg);
+				if (parsedArguments != nullptr)
+				{
+					for (int i = 0; i < parsedArgCount && parsedArg + i < argc; ++i)
+						(*parsedArguments)[parsedArg + i - 1] = TRUE;
+				}
+				arg += parsedArgCount;
 				found = true;
 				break;
 			}
@@ -1434,6 +1409,15 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 			arg++;
 		}
 	}
+}
+
+bool CommandLine::wasCommandLineArgumentParsed(int argIndex)
+{
+	if (TheGlobalData == nullptr)
+		return false;
+
+	const BoolVector &parsedArguments = TheGlobalData->m_commandLineData.m_parsedArguments;
+	return argIndex >= 0 && argIndex < static_cast<int>(parsedArguments.size()) && parsedArguments[argIndex];
 }
 
 void createGlobalData()
@@ -1452,7 +1436,10 @@ void CommandLine::parseCommandLineForStartup()
 		return;
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
 
-	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup));
+	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup),
+		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
+
+	rts::applySelectedWorkingDirectory();
 }
 
 void CommandLine::parseCommandLineForEngineInit()
@@ -1465,5 +1452,6 @@ void CommandLine::parseCommandLineForEngineInit()
 		("parseCommandLineForEngineInit is expected to be called once only\n"));
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit = true;
 
-	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit));
+	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit),
+		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
 }

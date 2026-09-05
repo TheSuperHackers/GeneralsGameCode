@@ -32,6 +32,11 @@ class CommandLine
 {
 public:
 
+	// Parses startup flags and applies the process working directory.
 	static void parseCommandLineForStartup();
 	static void parseCommandLineForEngineInit();
+
+	// Returns true if command-line parsing consumed the zero-based argument index.
+	// The index excludes the executable name.
+	static bool wasCommandLineArgumentParsed(int argIndex);
 };
