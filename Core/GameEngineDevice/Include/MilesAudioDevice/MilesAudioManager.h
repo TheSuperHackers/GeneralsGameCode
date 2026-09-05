@@ -69,6 +69,7 @@ struct PlayingAudio
 	Short m_framesFaded;
 	Bool m_fade;
 	volatile Bool m_rerequestOnNextUpdate;
+	volatile Bool m_requestStop; // Let the audio finish but stop looping if it is looping
 
 	PlayingAudio()
 		: m_sample(nullptr)
@@ -79,7 +80,13 @@ struct PlayingAudio
 		, m_framesFaded(0)
 		, m_fade(false)
 		, m_rerequestOnNextUpdate(false)
+		, m_requestStop(false)
 	{}
+
+	Bool isPlayingOrRequested() const
+	{
+		return m_status == PS_Playing || m_rerequestOnNextUpdate;
+	}
 
 	static_assert(sizeof(m_status) == sizeof(long), "Must be size of long, because it is used with Interlocked functions");
 };
@@ -237,7 +244,7 @@ class MilesAudioManager : public AudioManager
 		Real getEffectiveVolume(AudioEventRTS *event) const;
 
 		// Looping functions
-		Bool startNextLoop( PlayingAudio *looping );
+		Bool startNextLoop( PlayingAudio *playing );
 
 		void playStream( AudioEventRTS *event, HSTREAM stream );
 		// Returns the file handle for attachment to the PlayingAudio structure
@@ -259,9 +266,9 @@ class MilesAudioManager : public AudioManager
 		void closeFile( void *fileRead );
 
 		PlayingAudio *allocatePlayingAudio();
-		void releaseMilesHandles( PlayingAudio *release );
-		void releasePlayingAudio( PlayingAudio *release );
-		void stopPlayingAudio( PlayingAudio *release );
+		void releaseMilesHandles( PlayingAudio *playing );
+		void releasePlayingAudio( PlayingAudio *playing );
+		void stopPlayingAudio( PlayingAudio *playing );
 		void rerequestPlayingAudio( PlayingAudio *playing );
 		void rerequestPlayingAudioWhenSignalled( PlayingAudio *playing );
 		void fadePlayingAudio( PlayingAudio *playing );
