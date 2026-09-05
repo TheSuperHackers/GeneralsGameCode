@@ -77,6 +77,47 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+
+// TheSuperHackers @bugfix xezon 30/07/2026 The compensation that equalizes straight and diagonal
+// movement speeds by the arithmetic mean.
+//
+// Retail measured forward speed as sqrt(sum of (vi * di)^2) rather than the true projection of the
+// velocity onto the heading, sum of (vi * di). For a unit heading d that understates the speed by
+// sqrt(sum of di^4), which is 1 on an axis aligned heading and falls to 1/sqrt(2) on a 2d diagonal
+// and 1/sqrt(3) on a 3d body diagonal. The Locomotor therefore kept accelerating until the real
+// speed was between 1x and sqrt(2)x (2d), or between 1x and sqrt(3)x (3d), the authored speed,
+// decided by nothing but which way the object happened to face.
+//
+// getForwardSpeed2D and getForwardSpeed3D now report the true projection, so the real speed equals
+// the commanded speed on every heading. The speeds commanded by the Locomotor are scaled by a single
+// constant per dimension, which picks where inside the old range that now uniform speed sits.
+//
+// Each constant is the mean of the old factor over the headings the movers actually take, so the
+// average movement speed of the game is preserved and only the spread between headings collapses.
+// It is deliberately not the midpoint of the old range. The factor is weighted heavily toward its
+// low end, spending far more of the circle near 1x than near sqrt(2)x, so the midpoint sits above
+// the mean and would quietly speed the whole game up.
+//
+// 2d movers take an arbitrary heading, so the mean is taken over a uniformly random angle. It has a
+// closed form as a complete elliptic integral of the first kind, and equals 1.18034060.
+//
+// 3d movers are THRUST only, which in practice means missiles. Those fly level most of the time and
+// use all three axes only while arcing, so the mean is taken over a mix assumed to be 80% level
+// flight and 20% an arbitrary 3d direction. Level flight has dz = 0, which makes the 3d factor
+// degenerate to the 2d one exactly, so the level part contributes the 2d constant unchanged. The
+// mean over a uniformly random direction on the sphere is 1.33122576. The result barely depends on
+// the assumed split: anything from 90/10 to 70/30 lands between 1.195 and 1.226, and even spending
+// the whole 20% at the worst possible heading would only reach 1.291.
+
+constexpr const Real DiagonalCompensation2D = 1.18034060f; // (2/pi)*K(1/2) = Gamma(1/4)^2 / (2*pi^(3/2))
+constexpr const Real DiagonalCompensation3D = 1.21051763f; // 0.8 * 1.18034060 + 0.2 * 1.33122576
+
+static Real scaleSpeed2D(Real iniSpeed) { return iniSpeed * DiagonalCompensation2D; }
+static Real scaleSpeed3D(Real iniSpeed) { return iniSpeed * DiagonalCompensation3D; }
+
+#endif
+
 //-------------------------------------------------------------------------------------------------
 static Real calcSlowDownDist(Real curSpeed, Real desiredSpeed, Real maxBraking)
 {
@@ -289,6 +330,12 @@ LocomotorTemplate::LocomotorTemplate()
 	m_braking = BIGNUM;
 	m_minSpeed = 0.0f;
 	m_minTurnSpeed = BIGNUM;
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	m_maxSpeedScaled = 0.0f;
+	m_maxSpeedDamagedScaled = 0.0f;
+	m_minSpeedScaled = 0.0f;
+	m_minTurnSpeedScaled = scaleSpeed2D(BIGNUM);
+#endif
 	m_behaviorZ = Z_NO_Z_MOTIVE_FORCE;
 	m_appearance = LOCO_OTHER;
 	m_movePriority = LOCO_MOVES_MIDDLE;
@@ -429,7 +476,104 @@ void LocomotorTemplate::validate()
 	if (m_decelPitchLimit == 0.0f)
 		m_decelPitchLimit = m_accelPitchLimit;
 #endif
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	// TheSuperHackers @info THRUST is the only appearance whose mover measures itself with getForwardSpeed3D,
+	// so the dimension is decided here, once, rather than every time a speed is read. This runs last so that
+	// the twins are computed from the healed and defaulted values above, and it is safe to run again on an
+	// INI override because each twin is assigned from its untouched source rather than multiplied in place.
+	if (m_appearance == LOCO_THRUST)
+	{
+		m_maxSpeedScaled = scaleSpeed3D(m_maxSpeed);
+		m_maxSpeedDamagedScaled = scaleSpeed3D(m_maxSpeedDamaged);
+		m_minSpeedScaled = scaleSpeed3D(m_minSpeed);
+		m_minTurnSpeedScaled = scaleSpeed3D(m_minTurnSpeed);
+	}
+	else
+	{
+		m_maxSpeedScaled = scaleSpeed2D(m_maxSpeed);
+		m_maxSpeedDamagedScaled = scaleSpeed2D(m_maxSpeedDamaged);
+		m_minSpeedScaled = scaleSpeed2D(m_minSpeed);
+		m_minTurnSpeedScaled = scaleSpeed2D(m_minTurnSpeed);
+	}
+#endif
 }
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getActualMaxSpeed() const
+{
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	return m_maxSpeed;
+#else
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	if (PhysicsBehavior::useLegacyForwardSpeed())
+		return m_maxSpeed;
+#endif
+
+	return m_maxSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getActualMaxSpeedDamaged() const
+{
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	return m_maxSpeedDamaged;
+#else
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	if (PhysicsBehavior::useLegacyForwardSpeed())
+		return m_maxSpeedDamaged;
+#endif
+
+	return m_maxSpeedDamagedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getActualMinSpeed() const
+{
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	return m_minSpeed;
+#else
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	if (PhysicsBehavior::useLegacyForwardSpeed())
+		return m_minSpeed;
+#endif
+
+	return m_minSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::getActualMinTurnSpeed() const
+{
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	return m_minTurnSpeed;
+#else
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	if (PhysicsBehavior::useLegacyForwardSpeed())
+		return m_minTurnSpeed;
+#endif
+
+	return m_minTurnSpeedScaled;
+#endif
+}
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+//-------------------------------------------------------------------------------------------------
+Real LocomotorTemplate::scaleSpeed(Real speed) const
+{
+	if (m_appearance == LOCO_THRUST)
+	{
+		return scaleSpeed3D(speed);
+	}
+	return scaleSpeed2D(speed);
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------
 static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
@@ -658,6 +802,9 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 	m_brakingFactor = 1.0f;
 	m_maxLift = BIGNUM;
 	m_maxSpeed = BIGNUM;
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	m_maxSpeedScaled = m_template->scaleSpeed(BIGNUM);
+#endif
 	m_maxAccel = BIGNUM;
 	m_maxBraking = BIGNUM;
 	m_maxTurnRate = BIGNUM;
@@ -685,6 +832,9 @@ Locomotor::Locomotor(const Locomotor& that)
 	m_brakingFactor = that.m_brakingFactor;
 	m_maxLift = that.m_maxLift;
 	m_maxSpeed = that.m_maxSpeed;
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	m_maxSpeedScaled = that.m_maxSpeedScaled;
+#endif
 	m_maxAccel = that.m_maxAccel;
 	m_maxBraking = that.m_maxBraking;
 	m_maxTurnRate = that.m_maxTurnRate;
@@ -708,6 +858,9 @@ Locomotor& Locomotor::operator=(const Locomotor& that)
 		m_brakingFactor = that.m_brakingFactor;
 		m_maxLift = that.m_maxLift;
 		m_maxSpeed = that.m_maxSpeed;
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+		m_maxSpeedScaled = that.m_maxSpeedScaled;
+#endif
 		m_maxAccel = that.m_maxAccel;
 		m_maxBraking = that.m_maxBraking;
 		m_maxTurnRate = that.m_maxTurnRate;
@@ -755,6 +908,9 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_brakingFactor);
 	xfer->xferReal(&m_maxLift);
 	xfer->xferReal(&m_maxSpeed);
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	m_maxSpeedScaled = m_template->scaleSpeed(m_maxSpeed);
+#endif
 	xfer->xferReal(&m_maxAccel);
 	xfer->xferReal(&m_maxBraking);
 	xfer->xferReal(&m_maxTurnRate);
@@ -791,14 +947,43 @@ Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition) const
 	Real speed;
 
 	if( IS_CONDITION_BETTER( condition, TheGlobalData->m_movementPenaltyDamageState ) )
-		speed = m_template->m_maxSpeed;
+		speed = m_template->getActualMaxSpeed();
 	else
-		speed = m_template->m_maxSpeedDamaged;
+		speed = m_template->getActualMaxSpeedDamaged();
 
-	if (speed > m_maxSpeed)
-		speed = m_maxSpeed;
+	Real maxSpeed = getMaxSpeedOverride();
+	if (speed > maxSpeed)
+		speed = maxSpeed;
 
 	return speed;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real Locomotor::getMaxSpeedOverride() const
+{
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY() || !USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	return m_maxSpeed;
+#else
+
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	if (PhysicsBehavior::useLegacyForwardSpeed())
+		return m_maxSpeed;
+#endif
+
+	return m_maxSpeedScaled;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+Real Locomotor::getMinSpeed() const
+{
+	return m_template->getActualMinSpeed();
+}
+
+//-------------------------------------------------------------------------------------------------
+Real Locomotor::getMinTurnSpeed() const
+{
+	return m_template->getActualMinTurnSpeed();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1291,7 +1476,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	//
 	// See if we are turning.  If so, use the min turn speed.
 	//
-	Real turnSpeed = m_template->m_minTurnSpeed;
+	Real turnSpeed = getMinTurnSpeed();
 	Real angle = obj->getOrientation();
 //	Real relAngle = ThePartitionManager->getRelativeAngle2D( obj, &goalPos );
 //	Real desiredAngle = angle + relAngle;
@@ -1667,10 +1852,10 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 	Real goalSpeed = (1.0f - angleCoeff) * desiredSpeed;
 
 	//Real slowDownDist = (actualSpeed - m_template->m_minSpeed) / getBraking();
-	Real slowDownDist = calcSlowDownDist(actualSpeed, m_template->m_minSpeed, getBraking());
+	Real slowDownDist = calcSlowDownDist(actualSpeed, getMinSpeed(), getBraking());
 	if (onPathDistToGoal < slowDownDist && !getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
 	{
-		goalSpeed = m_template->m_minSpeed;
+		goalSpeed = getMinSpeed();
 	}
 
 
@@ -1794,10 +1979,10 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 	}
 
 	//Real slowDownDist = (actualSpeed - m_template->m_minSpeed) / getBraking();
-	Real slowDownDist = calcSlowDownDist(actualSpeed, m_template->m_minSpeed, getBraking());
+	Real slowDownDist = calcSlowDownDist(actualSpeed, getMinSpeed(), getBraking());
 	if (onPathDistToGoal < slowDownDist && !getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
 	{
-		goalSpeed = m_template->m_minSpeed;
+		goalSpeed = getMinSpeed();
 	}
 
 	//
@@ -1914,15 +2099,15 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();
 
 	Real maxForwardSpeed = getMaxSpeedForCondition(bdt);
-	desiredSpeed = clamp(m_template->m_minSpeed, desiredSpeed, maxForwardSpeed);
+	desiredSpeed = clamp(getMinSpeed(), desiredSpeed, maxForwardSpeed);
 	Real actualForwardSpeed = physics->getForwardSpeed3D();
 
 	if (getBraking() > 0)
 	{
 		//Real slowDownDist = (actualForwardSpeed - m_template->m_minSpeed) / getBraking();
-		Real slowDownDist = calcSlowDownDist(actualForwardSpeed, m_template->m_minSpeed, getBraking());
+		Real slowDownDist = calcSlowDownDist(actualForwardSpeed, getMinSpeed(), getBraking());
 		if (onPathDistToGoal < slowDownDist && !getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
-			desiredSpeed = m_template->m_minSpeed;
+			desiredSpeed = getMinSpeed();
 	}
 
 	Coord3D localGoalPos = goalPos;
@@ -2388,10 +2573,10 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 
 	if (!getFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST))
 	{
-		Real slowDownDist = calcSlowDownDist(actualSpeed, m_template->m_minSpeed, getBraking());
+		Real slowDownDist = calcSlowDownDist(actualSpeed, getMinSpeed(), getBraking());
 		if (onPathDistToGoal < slowDownDist)
 		{
-			goalSpeed = m_template->m_minSpeed;
+			goalSpeed = getMinSpeed();
 		}
 	}
 
@@ -2540,7 +2725,7 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 		Coord3D desiredPos = m_maintainPos;
 		desiredPos.x += Cos(angleTowardMaintainPos) * turnRadius;
 		desiredPos.y += Sin(angleTowardMaintainPos) * turnRadius;
-		moveTowardsPositionWings(obj, physics, desiredPos, 0, m_template->m_minSpeed);
+		moveTowardsPositionWings(obj, physics, desiredPos, 0, getMinSpeed());
 	}
 }
 
@@ -2558,7 +2743,7 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 		//
 		// Stop
 		//
-		Real minSpeed = max( 1.0E-10f, m_template->m_minSpeed );
+		Real minSpeed = max( 1.0E-10f, getMinSpeed() );
 		Real speedDelta = minSpeed - actualSpeed;
 		if (fabs(speedDelta) > minSpeed)
 		{
