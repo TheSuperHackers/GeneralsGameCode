@@ -1149,7 +1149,9 @@ void Drawable::updateDrawable()
 			Real numer = (m_fadeMode == FADING_IN) ? (m_timeElapsedFade) : (m_timeToFade-m_timeElapsedFade);
 
 			setDrawableOpacity(numer/(Real)m_timeToFade);
-			++m_timeElapsedFade;
+			// TheSuperHackers @tweak Drawable fade is now decoupled from the render update.
+			const Real fadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_timeElapsedFade += fadeTimeScale;
 
 			if (m_timeElapsedFade > m_timeToFade)
 				m_fadeMode = FADING_NONE;
@@ -1167,7 +1169,9 @@ void Drawable::updateDrawable()
 			{
 				//LERP
 				(*dm)->setTerrainDecalOpacity(m_decalOpacity);
-				m_decalOpacity += m_decalOpacityFadeRate;
+				// TheSuperHackers @tweak Decal opacity fade is now decoupled from the render update.
+				const Real decalFadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+				m_decalOpacity += m_decalOpacityFadeRate * decalFadeTimeScale;
 			}
 			//---------------
 
@@ -1351,17 +1355,32 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 {
 	if (m_physicsXform != nullptr)
 	{
-		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
-		// All calculations are originally catered to a 30 fps logic step.
+		// TheSuperHackers @tweak Run physics on logic frames only, interpolate for rendering.
+		// This provides stable physics at any framerate without numerical integration issues.
 		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
+			m_physicsXform->m_prevTotalPitch = m_physicsXform->m_totalPitch;
+			m_physicsXform->m_prevTotalRoll = m_physicsXform->m_totalRoll;
+			m_physicsXform->m_prevTotalYaw = m_physicsXform->m_totalYaw;
+			m_physicsXform->m_prevTotalZ = m_physicsXform->m_totalZ;
+
 			calcPhysicsXform(*m_physicsXform);
 		}
 
-		mtx->Translate(0.0f, 0.0f, m_physicsXform->m_totalZ);
-		mtx->Rotate_Y( m_physicsXform->m_totalPitch );
-		mtx->Rotate_X( -m_physicsXform->m_totalRoll );
-		mtx->Rotate_Z( m_physicsXform->m_totalYaw );
+		// Interpolate between previous and current state based on fractional sync time.
+		// The fractional sync time accumulates in logic time, so a full logic step is always MSEC_PER_LOGICFRAME_REAL.
+		const Real fractionalMs = (Real)WW3D::Get_Fractional_Sync_Milliseconds();
+		const Real t = clamp(0.0f, fractionalMs / MSEC_PER_LOGICFRAME_REAL, 1.0f);
+
+		const Real interpPitch = m_physicsXform->m_prevTotalPitch + t * (m_physicsXform->m_totalPitch - m_physicsXform->m_prevTotalPitch);
+		const Real interpRoll = m_physicsXform->m_prevTotalRoll + t * (m_physicsXform->m_totalRoll - m_physicsXform->m_prevTotalRoll);
+		const Real interpYaw = m_physicsXform->m_prevTotalYaw + t * (m_physicsXform->m_totalYaw - m_physicsXform->m_prevTotalYaw);
+		const Real interpZ = m_physicsXform->m_prevTotalZ + t * (m_physicsXform->m_totalZ - m_physicsXform->m_prevTotalZ);
+
+		mtx->Translate(0.0f, 0.0f, interpZ);
+		mtx->Rotate_Y( interpPitch );
+		mtx->Rotate_X( -interpRoll );
+		mtx->Rotate_Z( interpYaw );
 	}
 }
 
@@ -4850,6 +4869,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	* 6: Added m_ambientSoundEnabledFromScript flag (Added in Zero Hour)
 	* 7: Save the customize ambient sound info (Added in Zero Hour)
 	* 8: TheSuperHackers @bugfix Removed m_prevTintStatus because loading its value is unnecessary and undesirable
+	* 9: TheSuperHackers @tweak Changed m_timeElapsedFade from UnsignedInt to Real for frame-rate independent fading
 	*/
 // ------------------------------------------------------------------------------------------------
 void Drawable::xfer( Xfer *xfer )
@@ -4861,7 +4881,7 @@ void Drawable::xfer( Xfer *xfer )
 #elif RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
-	const XferVersion currentVersion = 8;
+	const XferVersion currentVersion = 9;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -5035,7 +5055,16 @@ void Drawable::xfer( Xfer *xfer )
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
 
 	// time elapsed fade
-	xfer->xferUnsignedInt( &m_timeElapsedFade );
+	if (version >= 9)
+	{
+		xfer->xferReal( &m_timeElapsedFade );
+	}
+	else
+	{
+		UnsignedInt timeElapsedFadeFrames = static_cast<UnsignedInt>(m_timeElapsedFade);
+		xfer->xferUnsignedInt( &timeElapsedFadeFrames );
+		m_timeElapsedFade = static_cast<Real>(timeElapsedFadeFrames);
+	}
 
 	// time to fade
 	xfer->xferUnsignedInt( &m_timeToFade );
