@@ -25,6 +25,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <limits.h>
+
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
@@ -35,6 +37,7 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "GameNetwork/NetworkAutoStart.h"
 #include "WWLib/trim.h"
 
 
@@ -484,6 +487,101 @@ Int parseYRes(char *args[], int num)
 }
 
 #if defined(RTS_DEBUG)
+static Bool parsePositiveInt(const char *text, Int &result)
+{
+	if (text == nullptr || *text < '0' || *text > '9')
+		return false;
+
+	UnsignedInt value = 0;
+	do
+	{
+		const UnsignedInt digit = *text - '0';
+		if (value > ((UnsignedInt)INT_MAX - digit) / 10u)
+			return false;
+		value = value * 10u + digit;
+		++text;
+	} while (*text >= '0' && *text <= '9');
+
+	if (*text != '\0')
+		return false;
+
+	result = (Int)value;
+	return true;
+}
+
+Int parseAutoNetworkMode(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setMode(args[1]))
+		return 2;
+
+	printf("Invalid -autoNetworkMode. Supported value: direct\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkHost(char *args[], int num)
+{
+	Int expectedPlayers = 0;
+	if (num > 1 && parsePositiveInt(args[1], expectedPlayers) && NetworkAutoStart::setHost(expectedPlayers))
+		return 2;
+
+	printf("Invalid -autoNetworkHost. Pass an expected player count from %d to %d and do not combine it with -autoNetworkJoin.\n",
+		NetworkAutoStart::MIN_EXPECTED_PLAYERS, MAX_SLOTS);
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkJoin(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setJoin(args[1]))
+		return 2;
+
+	printf("Invalid -autoNetworkJoin. Pass a dotted IPv4 host address and do not combine it with -autoNetworkHost.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkLocalAddress(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setLocalAddress(args[1]))
+		return 2;
+
+	printf("Invalid -autoNetworkLocalAddress. Pass a dotted IPv4 local address.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkName(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setPlayerName(args[1]))
+		return 2;
+
+	printf("Invalid -autoNetworkName. Pass a non-empty player name.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkMap(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setMapName(args[1]))
+		return 2;
+
+	printf("Invalid -autoNetworkMap. Pass a non-empty map path.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkTimeout(char *args[], int num)
+{
+	Int timeoutSeconds = 0;
+	if (num > 1 && parsePositiveInt(args[1], timeoutSeconds) && NetworkAutoStart::setTimeoutSeconds(timeoutSeconds))
+		return 2;
+
+	printf("Invalid -autoNetworkTimeout. Pass a positive number of seconds.\n");
+	exit(1);
+	return 1;
+}
+
 //=============================================================================
 //=============================================================================
 Int parseLatencyAverage(char *args[], int num)
@@ -1155,11 +1253,23 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+#if defined(RTS_DEBUG)
+	{ "-autoNetworkMode", parseAutoNetworkMode },
+#endif
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
 static CommandLineParam paramsForEngineInit[] =
 {
+#if defined(RTS_DEBUG)
+	{ "-autoNetworkHost", parseAutoNetworkHost },
+	{ "-autoNetworkJoin", parseAutoNetworkJoin },
+	{ "-autoNetworkLocalAddress", parseAutoNetworkLocalAddress },
+	{ "-autoNetworkName", parseAutoNetworkName },
+	{ "-autoNetworkMap", parseAutoNetworkMap },
+	{ "-autoNetworkTimeout", parseAutoNetworkTimeout },
+#endif
 	{ "-nologo", parseNoLogo }, // TheSuperHackers @tweak Is now available in Release builds.
 	{ "-noshellmap", parseNoShellMap },
 	{ "-noShellAnim", parseNoWindowAnimation }, // TheSuperHackers @tweak Is now available in Release builds.

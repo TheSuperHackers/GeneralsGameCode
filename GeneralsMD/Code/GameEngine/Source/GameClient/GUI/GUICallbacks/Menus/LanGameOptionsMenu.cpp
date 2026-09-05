@@ -56,6 +56,7 @@
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/NetworkAutoStart.h"
 #include "Common/MultiplayerSettings.h"
 #include "GameClient/GameText.h"
 #include "GameNetwork/GUIUtil.h"
@@ -218,7 +219,7 @@ static void playerTooltip(GameWindow *window,
 	setLANPlayerTooltip(player);
 }
 
-void StartPressed()
+void StartLANGame()
 {
 	LANGameInfo *myGame = TheLAN->GetMyGame();
 
@@ -856,10 +857,15 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		slot->setColor( pref.getPreferredColor() );
 		slot->setPlayerTemplate( pref.getPreferredFaction() );
 		slot->setNATBehavior(FirewallHelperClass::FIREWALL_TYPE_SIMPLE);
-		game->setMap( pref.getPreferredMap() );
+		AsciiString mapName = pref.getPreferredMap();
+#if defined(RTS_DEBUG)
+		if (NetworkAutoStart::isEnabled() && NetworkAutoStart::getMapName().isNotEmpty())
+			mapName = NetworkAutoStart::getMapName();
+#endif
+		game->setMap(mapName);
     game->setStartingCash( pref.getStartingCash() );
     game->setSuperweaponRestriction( pref.getSuperweaponRestricted() ? 1 : 0 );
-		AsciiString lowerMap = pref.getPreferredMap();
+		AsciiString lowerMap = mapName;
 		lowerMap.toLower();
 		std::map<AsciiString, MapMetaData>::iterator it = TheMapCache->find(lowerMap);
 		if (it != TheMapCache->end())
@@ -1070,6 +1076,14 @@ void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 {
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::isEnabled() && TheLAN != nullptr)
+	{
+		TheLAN->update();
+		NetworkAutoStart::updateGameOptions();
+	}
+#endif
+
 	if(LANisShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 	//TheLAN->update(); // this is handled in the lobby
@@ -1263,7 +1277,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				{
 					if (TheLAN->AmIHost())
 					{
-						StartPressed();
+						StartLANGame();
 						//TheLAN->RequestGameStart();
 					}
 					else
