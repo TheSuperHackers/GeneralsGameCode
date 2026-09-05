@@ -214,6 +214,7 @@ public:
 	virtual UnsignedInt getActionDelayForDock( Object *dock ) override;
 
 	virtual UpdateSleepTime update() override;
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 protected:
 
