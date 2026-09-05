@@ -2175,6 +2175,12 @@ void W3DDisplay::toggleLetterBox()
 {
 	m_letterBoxEnabled = !m_letterBoxEnabled;
 	m_letterBoxFadeStartTime = timeGetTime();
+
+	//WST  9/18/2002 This is not a script api to prevent cheat. JSC Integrated 5/20/03
+	if( TheTacticalView )
+	{
+		TheTacticalView->setZoomLimited( !m_letterBoxEnabled );
+	}
 }
 
 void W3DDisplay::enableLetterBox(Bool enable)
@@ -2185,6 +2191,12 @@ void W3DDisplay::enableLetterBox(Bool enable)
 		{	//letterbox mode not previously enabled
 			m_letterBoxEnabled = TRUE;
 			m_letterBoxFadeStartTime = timeGetTime();
+
+			//WST  9/18/2002 - This is not a script api to prevent cheat.  JSC Integrated 5/20/03
+			if( TheTacticalView )
+			{
+				TheTacticalView->setZoomLimited( 0 );
+			}
 		}
 	}
 	else
@@ -2193,6 +2205,12 @@ void W3DDisplay::enableLetterBox(Bool enable)
 		{	//letterbox mode no previously disabled
 			m_letterBoxEnabled = FALSE;
 			m_letterBoxFadeStartTime = timeGetTime();
+
+			//WST  9/18/2002. JSC Integrated 5/20/03
+			if( TheTacticalView )
+			{
+				TheTacticalView->setZoomLimited( 1 );
+			}
 		}
 	}
 }
