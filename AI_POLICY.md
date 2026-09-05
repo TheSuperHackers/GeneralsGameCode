@@ -21,9 +21,9 @@ Autonomous AI agents may not submit pull requests, nor comments in other pull re
 
 ## 2. Disclosure
 
-If an LLM was used to generate a significant portion of your contribution, we require you to **disclose it** in the pull request description. You should clarify to what extent the code was polished by human intervention.
+If an LLM was used to generate a significant portion of your contribution, we require you to **disclose it** in the pull request description. You must clarify to what extent the generated content was polished by human intervention.
 
-Note that you should not use AI to create the pull request description itself (unless you’ve used it for translation) - as discussed above, we expect pull requests to be submitted by humans.
+You must not use AI to create the pull request description itself (unless you’ve used it for translation) - as discussed above, we expect pull requests to be submitted by humans.
 
 ## 3. Intentionality
 
@@ -39,7 +39,7 @@ New contributors are discouraged from submitting pull requests with thousands of
 
 The following are strictly prohibited and will result in immediate closure of a pull request or issue and potentially a block from the organization:
 
-- **Automated Pull Request Descriptions:** Using AI to write pull request descriptions that are vague, overly elaborate, or fail to accurately describe the technical changes. We want to hear from *you* - the developer - why this change matters (see points 1 & 2).
+- **Automated Pull Request Description:** Using AI to write the entire pull request description. The description the AI generates is often vague, overly elaborate, or fails to accurately describe the technical changes. We want to hear from *you* - the developer - why this change matters (see points 1 & 2).
 - **Unvetted Boilerplate:** Submitting large blocks of LLM-generated boilerplate that haven't been trimmed to what's actually necessary. If you don't understand what the code does, don't submit the pull request.
 - **Hallucinated Features:** Submitting pull requests for features or bug fixes that don't exist, based on AI hallucinations about the project's capabilities.
 
