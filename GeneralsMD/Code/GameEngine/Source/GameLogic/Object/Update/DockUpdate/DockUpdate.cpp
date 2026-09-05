@@ -615,8 +615,10 @@ void DockUpdate::xfer( Xfer *xfer )
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
 	{
 		// Vector of Bool gets packed as bitfield internally
+		// TheSuperHackers @fix bobtista 12/08/2026 Write the unpacked value back so the load takes effect
 		Bool unpack = m_approachPositionReached[vectorIndex];
 		xfer->xferBool( &unpack );
+		m_approachPositionReached[vectorIndex] = unpack;
 	}
 
 	// active docker
