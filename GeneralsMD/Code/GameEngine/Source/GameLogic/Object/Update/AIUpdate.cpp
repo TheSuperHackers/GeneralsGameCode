@@ -3554,7 +3554,13 @@ void AIUpdateInterface::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 	// this fixes an obscure bug with mine-clearing: if you tell someone to clear mines and put the centerpoint
 	// inside a building, the dozer/worker will just go thru the building to that spot. ick. so if you find that
 	// this clause (below) is problematic, you'll probably have to find another way to fix this mine-clearing bug. (srj)
+#if RETAIL_COMPATIBLE_CRC
 	if (weapon && weapon->isContactWeapon() && !isPathAvailable(&localPos))
+#else
+  // TheSuperHackers @bugfix Stubbjax 23/08/2026 Only find a new position if the target is not within the attack range of the weapon.
+	// This allows contact weapons such as suicide bombs to immediately detonate without first pathing to a nearby position.
+	if (weapon && weapon->isContactWeapon() && !weapon->isWithinAttackRange(getObject(), &localPos) && !isPathAvailable(&localPos))
+#endif
 	{
 		FindPositionOptions fpOptions;
 		fpOptions.minRadius = 0.0f;
