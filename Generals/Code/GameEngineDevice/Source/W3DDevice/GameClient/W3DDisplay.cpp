@@ -53,6 +53,7 @@ static void drawFramerateBar();
 #include "Common/GameLOD.h"
 #include "Common/DrawModule.h"
 #include "GameLogic/AIPathfind.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
 
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
@@ -1544,7 +1545,26 @@ void W3DDisplay::gatherDebugStats()
 												objectName.str(),
 												draw->getPosition()->x,
 												draw->getPosition()->y,
-												draw->getPosition()->z );
+												draw->getPosition()->z
+											);
+
+			const PhysicsBehavior *physics = obj->getPhysics();
+			PhysicsTurningType turnType = physics ? physics->getTurning() : TURN_NONE;
+
+			const DrawableLocoInfo *locoInfo = draw->getLocoInfo();
+			if( locoInfo )
+			{
+				unibuffer2.format( L"\nPhysics Info -- Turn: %d, Pitch(accel): %.3f(%.3f), Roll(accel): %.3f(%.3f)",
+													 turnType,
+													 locoInfo->m_accelerationPitch, locoInfo->m_accelerationPitchRate,
+													 locoInfo->m_accelerationRoll, locoInfo->m_accelerationRollRate );
+				unibuffer.concat( unibuffer2 );
+			}
+
+
+
+
+
 
 			// (gth) compute some stats about the rendering cost of this drawable
 #if defined(RTS_DEBUG)
