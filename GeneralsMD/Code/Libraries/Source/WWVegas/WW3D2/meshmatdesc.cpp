@@ -695,9 +695,9 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 		bool emissive_used=false;
 		bool opacity_used=false;
 
-		Vector3 mtl_diffuse;
-		Vector3 mtl_ambient;
-		Vector3 mtl_emissive;
+		Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
+		Vector3 mtl_ambient(0.0f,0.0f,0.0f);
+		Vector3 mtl_emissive(0.0f,0.0f,0.0f);
 		float mtl_opacity = 1.0f;
 
 		VertexMaterialClass * prev_mtl = nullptr;
@@ -716,6 +716,11 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 
 		for (int vidx=0; vidx<VertexCount; vidx++) {
 			mtl = Peek_Material(vidx,pass);
+			// TheSuperHackers @bugfix Cryo 01/09/2026 A material array can contain null entries.
+			if (mtl == nullptr) {
+				continue;
+			}
+
 			if (mtl != prev_mtl) {
 				prev_mtl = mtl;
 				mtl->Get_Diffuse(&mtl_diffuse);
@@ -772,6 +777,11 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 			for (int vidx=0; vidx<VertexCount; vidx++) {
 
 				mtl = Peek_Material(vidx,pass);
+				// TheSuperHackers @bugfix Cryo 01/09/2026 Do not apply material colors through a null entry.
+				if (mtl == nullptr) {
+					continue;
+				}
+
 				if (mtl != prev_mtl) {
 					prev_mtl = mtl;
 					mtl->Get_Diffuse(&mtl_diffuse);
