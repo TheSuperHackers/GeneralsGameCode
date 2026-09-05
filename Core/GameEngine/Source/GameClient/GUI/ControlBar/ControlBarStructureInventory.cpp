@@ -175,6 +175,11 @@ void ControlBar::populateStructureInventory( Object *building )
 		m_commandWindows[ STOP_ID ]->winEnable( TRUE );
 	}
 
+	if(isObserverControlBarOn())
+	{
+		m_commandWindows[ EVACUATE_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+		m_commandWindows[ STOP_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+	}
 	//
 	// iterate each of the objects inside the container and put them in a button, note
 	// we're iterating in reverse order here
