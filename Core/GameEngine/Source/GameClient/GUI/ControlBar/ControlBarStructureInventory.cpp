@@ -64,11 +64,10 @@ void ControlBar::populateButtonProc( Object *obj, void *userData )
 {
 	PopulateButtonInfo* info = (PopulateButtonInfo*)userData;
 
-	// sanity
-	DEBUG_ASSERTCRASH( info->buttonIndex < MAX_STRUCTURE_INVENTORY_BUTTONS,
-										 ("Too many objects inside '%s' for the inventory buttons to hold",
-											info->source->getTemplate()->getName().str()) );
-
+	
+	if (info->buttonIndex>= MAX_STRUCTURE_INVENTORY_BUTTONS) {
+		return;
+	}
 	// put object in inventory data
 	info->self->m_containData[ info->buttonIndex ].control = info->inventoryButtons[ info->buttonIndex ];
 	info->self->m_containData[ info->buttonIndex ].objectID = obj->getID();
@@ -83,7 +82,7 @@ void ControlBar::populateButtonProc( Object *obj, void *userData )
 	GadgetButtonDrawOverlayImage( info->inventoryButtons[ info->buttonIndex ], image );
 
 	// Enable the button
-	info->inventoryButtons[ info->buttonIndex ]->winEnable( TRUE );
+	info->inventoryButtons[ info->buttonIndex ]->winEnable( !info->self->isObserverControlBarOn() );
 
 	// move to the next button index
 	info->buttonIndex++;
@@ -170,12 +169,17 @@ void ControlBar::populateStructureInventory( Object *building )
 	m_commandWindows[ STOP_ID ]->winHide( FALSE );
 
 	// if there is at least one item in there enable the evacuate and stop buttons
-	if( contain->getContainCount() != 0 )
+	if( !isObserverControlBarOn() && contain->getContainCount() != 0 )
 	{
 		m_commandWindows[ EVACUATE_ID ]->winEnable( TRUE );
 		m_commandWindows[ STOP_ID ]->winEnable( TRUE );
 	}
 
+	if(isObserverControlBarOn())
+	{
+		m_commandWindows[ EVACUATE_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+		m_commandWindows[ STOP_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+	}
 	//
 	// iterate each of the objects inside the container and put them in a button, note
 	// we're iterating in reverse order here

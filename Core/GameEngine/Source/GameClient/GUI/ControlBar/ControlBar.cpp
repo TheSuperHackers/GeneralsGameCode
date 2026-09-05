@@ -1479,6 +1479,35 @@ void ControlBar::update()
 			exitPosition = obj->getObjectExitInterface()->getRallyPoint();
 
 		showRallyPoint(exitPosition);
+
+		ContainModuleInterface* observerContain = obj ? obj->getContain() : nullptr;
+		Bool showObserverInventory = observerContain != nullptr
+			&& observerContain->getContainMax() > 0
+			&& m_observerLookAtPlayer == nullptr
+			&& isControllingPlayerNeutral(obj);
+
+		if (showObserverInventory)
+		{
+			
+			if (observerContain->isGarrisonable() && obj->getCommandSetString().isEmpty())
+			{
+				if (m_currContext != CB_CONTEXT_STRUCTURE_INVENTORY || m_currentSelectedDrawable != drawToEvaluateFor)
+					switchToContext(CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor);
+				else
+					updateContextStructureInventory();
+			}
+			else {
+				if (m_currContext != CB_CONTEXT_COMMAND || m_currentSelectedDrawable != drawToEvaluateFor)
+					switchToContext(CB_CONTEXT_COMMAND, drawToEvaluateFor);
+				else
+					updateContextCommand();
+			}
+		}
+		else if (m_currContext != CB_CONTEXT_OBSERVER_LIST)
+		{
+			switchToContext(CB_CONTEXT_OBSERVER_LIST, nullptr);
+		}
+
 		return;
 	}
 
@@ -1805,24 +1834,12 @@ void ControlBar::evaluateContextUI()
 		ContainModuleInterface *contain = obj->getContain();
 		if( contain && contain->getContainMax() > 0 )
 		{
-
-			const Player *otherPlayer = contain->getApparentControllingPlayer(ThePlayerList->getLocalPlayer());
-			if (!otherPlayer)
-				otherPlayer = obj->getControllingPlayer();
-			Player *player = ThePlayerList->getLocalPlayer();
-
-			if( !player || !otherPlayer )
-			{
-				//Sanity.
-				return;
-			}
-			Relationship relation = player->getRelationship( otherPlayer->getDefaultTeam() );
-
+			Bool apparentControllingPlayerNeutral = isApparentControllingPlayerNeutral(obj);
 			//Note: All following checks already account for the fact that this object
 			//isn't ours.
 
 			//The only case we can actually see a non-controlled controlbar is a neutral garrisonable structure.
-			if( !contain->isGarrisonable() || relation != NEUTRAL )
+			if( !contain->isGarrisonable() || !apparentControllingPlayerNeutral)
 			{
 				//Can't peek inside enemy/allied containers period!
 				return;
@@ -1912,12 +1929,9 @@ void ControlBar::evaluateContextUI()
 				//a commandset defined. If we do, then trust that the commandset will
 				//handle it!
 
-				Player *localPlayer = ThePlayerList->getLocalPlayer();
-				Relationship relationship;
-
 				// we cannot select objects that are controlled by our enemies
-				relationship = localPlayer->getRelationship( obj->getTeam() );
-				if( obj->isLocallyControlled() == TRUE || relationship == NEUTRAL )
+				bool isRelationshipNeutral = isControllingPlayerNeutral(obj);
+				if( obj->isLocallyControlled() == TRUE || isRelationshipNeutral )
 					switchToContext( CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor );
 
 			}
@@ -3580,6 +3594,32 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 		return true;
 
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
+{
+	ContainModuleInterface* contain = obj->getContain();
+	const Player* otherPlayer = contain->getApparentControllingPlayer(ThePlayerList->getLocalPlayer());
+	if (!otherPlayer)
+		otherPlayer = obj->getControllingPlayer();
+	const Player* player = ThePlayerList->getLocalPlayer();
+
+	if (!player || !otherPlayer)
+	{
+		//Sanity.
+		return FALSE;
+	}
+
+	Relationship relation = player->getRelationship(otherPlayer->getDefaultTeam());
+	return relation == NEUTRAL;
+}
+
+Bool ControlBar::isControllingPlayerNeutral(const Object* obj) const
+{
+	const Player* player = ThePlayerList->getLocalPlayer();
+	Relationship relation = player->getRelationship(obj->getTeam());
+	return relation == NEUTRAL;
 }
 
 //-------------------------------------------------------------------------------------------------

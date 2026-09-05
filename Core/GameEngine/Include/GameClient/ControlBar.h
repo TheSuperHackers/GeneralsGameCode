@@ -702,6 +702,8 @@ public:
 
 	Bool hasAnyShortcutSelection() const;
 	Bool canShowSpecialPowerShortcut() const;
+	Bool isApparentControllingPlayerNeutral(const Object* obj) const;
+	Bool isControllingPlayerNeutral(const Object* obj) const;
 	void showSpecialPowerShortcut();
 	void hideSpecialPowerShortcut();
 	void animateSpecialPowerShortcut( Bool isOn );
@@ -847,6 +849,7 @@ protected:
 	void populateUnderConstruction( Object *objectUnderConstruction );
 	void populateOCLTimer( Object *creatorObject );
 	void doTransportInventoryUI( Object *transport, const CommandSet *commandSet );
+	void populateTransportInventoryReadOnly(Object* transport);
 	static void populateInvDataCallback( Object *obj, void *userData );
 
 	// the following methods are for updating the currently showing context
