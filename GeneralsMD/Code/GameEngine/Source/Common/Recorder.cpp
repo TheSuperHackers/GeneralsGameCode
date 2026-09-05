@@ -1273,8 +1273,19 @@ AsciiString RecorderClass::readAsciiString() {
  */
 void RecorderClass::readNextFrame() {
 	Int bytesRead = m_file->read(&m_nextFrame, sizeof(m_nextFrame));
-	if (bytesRead != sizeof(m_nextFrame)) {
-		DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
+
+	// TheSuperHackers @bugfix Check whether the next frame value is within a reasonable range
+	// to avoid prolonging playback due to potentially corrupted data.
+	const Bool validFrameValue = (m_mode == RECORDERMODETYPE_NONE
+		|| (m_nextFrame >= TheGameLogic->getFrame() && m_nextFrame < TheGameLogic->getFrame() + 3600 * LOGICFRAMES_PER_SECOND));
+
+	if (bytesRead != sizeof(m_nextFrame) || !validFrameValue) {
+		if (bytesRead != sizeof(m_nextFrame)) {
+			DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
+		} else {
+			DEBUG_CRASH(("RecorderClass::readNextFrame - current frame %d, next frame %d in the replay appears invalid",
+				TheGameLogic->getFrame(), m_nextFrame));
+		}
 		m_nextFrame = -1;
 		stopPlayback();
 	}
