@@ -674,7 +674,7 @@ Real W3DView::getCameraOffsetZ() const
 	}
 #endif
 
-	return m_pos.z + TheGlobalData->m_maxCameraHeight;
+	return m_pos.z + m_maxHeightAboveGround;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2233,10 +2233,24 @@ void W3DView::setPitchToDefault()
 //-------------------------------------------------------------------------------------------------
 void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 {
+	// TheSuperHackers @fix Mauller 08/05/2026 Adjust the maximum camera height to compensate for screen aspect ratio
+	Real baseAspectRatio = (Real)DEFAULT_DISPLAY_WIDTH / (Real)DEFAULT_DISPLAY_HEIGHT;
+	Real currentAspectRatio = (Real)TheTacticalView->getWidth() / (Real)TheTacticalView->getHeight();
+	Real aspectRatioScale = 1.0f;
+
+	if (currentAspectRatio > baseAspectRatio)
+	{
+		aspectRatioScale = fabs((1.0f + (currentAspectRatio - baseAspectRatio)));
+		const float nerf = 1.0f - (currentAspectRatio - baseAspectRatio) / 12.0f;
+
+		aspectRatioScale *= nerf;
+	}
+
 	// MDC - we no longer want to rotate maps (design made all of them right to begin with)
 	//	m_defaultAngle = angle * M_PI/180.0f;
 	setDefaultPitch(pitch);
-	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight*maxHeight;
+	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight * aspectRatioScale * maxHeight;
+	m_minHeightAboveGround = TheGlobalData->m_minCameraHeight * aspectRatioScale;
 	if (m_minHeightAboveGround > m_maxHeightAboveGround)
 		m_maxHeightAboveGround = m_minHeightAboveGround;
 }
@@ -2278,7 +2292,6 @@ void W3DView::setZoomToDefault()
 	m_heightAboveGround = m_maxHeightAboveGround;
 	m_zoom = getMaxZoom(m_pos.x, m_pos.y);
 
-	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 	m_cameraAreaConstraintsValid = false;
 	m_recalcCamera = true;
