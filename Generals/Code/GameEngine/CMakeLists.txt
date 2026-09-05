@@ -1098,3 +1098,8 @@ target_precompile_headers(g_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
 #    Include/Precompiled/PreRTS.h
 )
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(TARGET core_d3dxcompat)
+    target_link_libraries(g_gameengine PRIVATE core_d3dxcompat)
+endif()

@@ -256,3 +256,8 @@ target_link_libraries(corei_ww3d2 INTERFACE
     core_wwlib
     core_wwmath
 )
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(TARGET core_d3dxcompat)
+    target_link_libraries(corei_ww3d2 INTERFACE core_d3dxcompat)
+endif()
