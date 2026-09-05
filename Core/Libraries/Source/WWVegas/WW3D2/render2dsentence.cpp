@@ -40,6 +40,9 @@
 #include "WWDebug/wwprofile.h"
 #include "WWDebug/wwmemlog.h"
 #include "dx8wrapper.h"
+#if defined(_WIN32)
+#include "WWLib/Usp10Loader.h"
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +65,7 @@ Render2DSentenceClass::Render2DSentenceClass () :
 	CurSurface (nullptr),
 	CurrTextureSize (0),
 	MonoSpaced (false),
+	ComplexTextEnabled (true),
 	IsClippedEnabled (false),
 	ClipRect (0, 0, 0, 0),
 	BaseLocation (0, 0),
@@ -148,7 +152,6 @@ Render2DSentenceClass::Reset ()
 
 	Cursor.Set (0, 0);
 	MonoSpaced = false;
-	ParseHotKey = false;
 
 	Release_Pending_Surfaces ();
 	Reset_Sentence_Data ();
@@ -250,6 +253,11 @@ Render2DSentenceClass::Set_Location (const Vector2 &loc)
 Vector2
 Render2DSentenceClass::Get_Text_Extents (const WCHAR *text)
 {
+	Vector2 complex_extent;
+	if (Get_Complex_Text_Extents(text, &complex_extent)) {
+		return complex_extent;
+	}
+
 	Vector2 extent (0, Font->Get_Char_Height());
 
 	while (*text) {
@@ -270,8 +278,20 @@ Render2DSentenceClass::Get_Text_Extents (const WCHAR *text)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 Vector2
-Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text)
+Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text, bool *used_complex_text)
 {
+	if (used_complex_text != nullptr) {
+		*used_complex_text = false;
+	}
+
+	Vector2 complex_extent;
+	if (Get_Complex_Text_Extents(text, &complex_extent)) {
+		if (used_complex_text != nullptr) {
+			*used_complex_text = true;
+		}
+		return complex_extent;
+	}
+
 	return Build_Sentence_Not_Centered(text, nullptr, nullptr, true);
 }
 
@@ -564,14 +584,16 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Record_Sentence_Chunk ()
+Render2DSentenceClass::Record_Sentence_Chunk (int char_height)
 {
 	//
 	//	Do we have anything to store?
 	//
 	int width = TextureOffset.I - TextureStartX;
 	if (width > 0) {
-		float char_height = Font->Get_Char_Height ();
+		if (char_height <= 0) {
+			char_height = Font->Get_Char_Height ();
+		}
 
 		//
 		//	Build a structure that contains enough information
@@ -599,11 +621,138 @@ Render2DSentenceClass::Record_Sentence_Chunk ()
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
+//	Is_Single_Line_Complex_Text
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Is_Single_Line_Complex_Text (const WCHAR *text) const
+{
+	// TheSuperHackers @feature Omar Aglan 28/08/2026 Shape eligible complex single-line text
+	// as one paragraph to preserve contextual forms and bidirectional order.
+	if (!ComplexTextEnabled || Font == nullptr || text == nullptr || text[0] == 0 || wcschr(text, L'\n') != nullptr ||
+		ParseHotKey || MonoSpaced)
+	{
+		return false;
+	}
+
+	return Font->Is_Complex_Text(text);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Is_Complex_Text_Size_Supported
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Is_Complex_Text_Size_Supported (int width, int height) const
+{
+	return width > 0 && height > 0 && height < max(TextureSizeHint, 256) &&
+		(WrapWidth <= 0 || width < WrapWidth);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Get_Complex_Text_Extents
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Get_Complex_Text_Extents (const WCHAR *text, Vector2 *extents)
+{
+	if (extents == nullptr || !Is_Single_Line_Complex_Text(text)) {
+		return false;
+	}
+
+	int width = 0;
+	int height = 0;
+	if (!Font->Get_Complex_Text_Extents(text, &width, &height) ||
+		!Is_Complex_Text_Size_Supported(width, height))
+	{
+		return false;
+	}
+
+	extents->Set((float)width, (float)height);
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Build_Complex_Sentence
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Build_Complex_Sentence (const WCHAR *text)
+{
+	// TheSuperHackers @bugfix Omar Aglan 28/08/2026 Build one bounded raster
+	// before splitting it across sentence textures.
+	uint16 *raster = nullptr;
+	int text_width = 0;
+	int text_height = 0;
+	const int maximum_width = WrapWidth > 0 ? (int)WrapWidth : 0;
+	const int maximum_height = max(TextureSizeHint, 256);
+	if (!Font->Rasterize_Complex_Text(text, &raster, &text_width, &text_height,
+		maximum_width, maximum_height))
+	{
+		return false;
+	}
+
+	Reset_Sentence_Data ();
+	Cursor.Set (0, 0);
+
+	if (CurSurface == nullptr) {
+		Allocate_New_Surface (text, false, text_height);
+	}
+
+	int source_x = 0;
+
+	while (source_x < text_width) {
+		if ((TextureOffset.J + text_height) >= CurrTextureSize) {
+			Allocate_New_Surface (text, false, text_height);
+			if (text_height >= CurrTextureSize) {
+				delete [] raster;
+				Reset_Sentence_Data ();
+				return false;
+			}
+		}
+
+		TextureOffset.I = TEXTURE_OFFSET;
+		TextureStartX = TEXTURE_OFFSET;
+		const int available_width = CurrTextureSize - TEXTURE_OFFSET - 1;
+		const int chunk_width = min(text_width - source_x, available_width);
+
+		if (LockedPtr == nullptr) {
+			LockedPtr = (uint16 *)CurSurface->Lock (&LockedStride);
+			WWASSERT (LockedPtr != nullptr);
+		}
+
+		const int dest_inc = LockedStride >> 1;
+		for (int row = 0; row < text_height; ++row) {
+			const uint16 *source = raster + row * text_width + source_x;
+			uint16 *destination = LockedPtr + (TextureOffset.J + row) * dest_inc + TextureOffset.I;
+			::memcpy(destination, source, chunk_width * sizeof(uint16));
+		}
+
+		TextureOffset.I += chunk_width;
+		Record_Sentence_Chunk (text_height);
+		Cursor.X += chunk_width;
+		source_x += chunk_width;
+		TextureOffset.J += text_height;
+	}
+
+	delete [] raster;
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
 //	Allocate_New_Surface
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExtents)
+Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExtents, int min_texture_size)
 {
 	if (!justCalcExtents)
 	{
@@ -634,6 +783,9 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 	for (int pow2 = 6; pow2 <= 8; pow2 ++) {
 
 		int size					= 1 << pow2;
+		if (size <= min_texture_size) {
+			continue;
+		}
 		int row_count			= (text_width / size) + 1;
 		int rows_per_texture	= size / (char_height + 1);
 
@@ -704,7 +856,7 @@ float FindStartingXPos( const WCHAR *text )
 //	Build_Sentence_Centered
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY)
+Vector2	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY)
 {
 	float char_height = Font->Get_Char_Height ();
 	int		wordWidth = 0;
@@ -944,6 +1096,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			*hkX = hotKeyPosX;
 		if(hkX)
 			*hkY = hotKeyPosY;
+
+	return extent;
 }
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1140,6 +1294,26 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 void
 Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 {
+	Build_Sentence(text, hkX, hkY, nullptr, nullptr);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Build_Sentence
+//
+////////////////////////////////////////////////////////////////////////////////////
+void
+Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY, bool *used_complex_text,
+	Vector2 *legacy_extents)
+{
+	if (used_complex_text != nullptr) {
+		*used_complex_text = false;
+	}
+	if (legacy_extents != nullptr) {
+		legacy_extents->Set(0, 0);
+	}
+
 	if (text == nullptr) {
 		return ;
 	}
@@ -1147,10 +1321,22 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 	if (Font == nullptr)
 		return;
 
+	if (Is_Single_Line_Complex_Text(text) && Build_Complex_Sentence(text)) {
+		if (used_complex_text != nullptr) {
+			*used_complex_text = true;
+		}
+		return;
+	}
+
+	Vector2 extents;
 	if(Centered && (WrapWidth > 0 || wcschr(text,L'\n')))
-		Build_Sentence_Centered(text, hkX, hkY);
+		extents = Build_Sentence_Centered(text, hkX, hkY);
 	else
-		Build_Sentence_Not_Centered(text, hkX, hkY);
+		extents = Build_Sentence_Not_Centered(text, hkX, hkY);
+
+	if (legacy_extents != nullptr) {
+		*legacy_extents = extents;
+	}
 
 }
 
@@ -1271,6 +1457,255 @@ FontCharsClass::Get_Char_Spacing (WCHAR ch)
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
+//	Is_Complex_Text
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+FontCharsClass::Is_Complex_Text (const WCHAR *text)
+{
+#if defined(_WIN32)
+	if (text == nullptr || text[0] == 0) {
+		return false;
+	}
+
+	return Usp10Loader::ScriptIsComplex(text, (int)wcslen(text), Usp10Loader::SIC_COMPLEX) == S_OK;
+#else
+	return false;
+#endif
+}
+
+
+#if defined(_WIN32)
+static bool Is_Complex_Text_Right_To_Left (const WCHAR *text, int text_length)
+{
+	for (int index = 0; index < text_length; ++index) {
+		WORD character_type = C2_NOTAPPLICABLE;
+		if (::GetStringTypeW(CT_CTYPE2, &text[index], 1, &character_type)) {
+			if (character_type == C2_RIGHTTOLEFT) {
+				return true;
+			}
+			if (character_type == C2_LEFTTORIGHT) {
+				return false;
+			}
+		}
+	}
+
+	return false;
+}
+
+
+struct ComplexTextRun
+{
+	ComplexTextRun () :
+		Analysis(nullptr),
+		Font(nullptr),
+		CharacterPosition(0),
+		CharacterCount(0),
+		Width(0),
+		Ascent(0),
+		BidiLevel(0)
+	{
+	}
+
+	Usp10Loader::ScriptStringAnalysis Analysis;
+	HFONT Font;
+	int CharacterPosition;
+	int CharacterCount;
+	int Width;
+	int Ascent;
+	BYTE BidiLevel;
+};
+
+
+struct ComplexTextLayout
+{
+	ComplexTextLayout () : Runs(nullptr), VisualToLogical(nullptr), RunCount(0), Width(0), Height(0), Ascent(0), Descent(0) {}
+	~ComplexTextLayout () { Clear(); }
+
+	void Clear ()
+	{
+		if (Runs != nullptr) {
+			for (int index = 0; index < RunCount; ++index) {
+				if (Runs[index].Analysis != nullptr) {
+					Usp10Loader::ScriptStringFree(&Runs[index].Analysis);
+				}
+			}
+		}
+
+		delete [] Runs;
+		delete [] VisualToLogical;
+		Runs = nullptr;
+		VisualToLogical = nullptr;
+		RunCount = 0;
+	}
+
+	ComplexTextRun *Runs;
+	int *VisualToLogical;
+	int RunCount;
+	int Width;
+	int Height;
+	int Ascent;
+	int Descent;
+};
+
+
+static bool Uses_Alternate_Unicode_Font (const WCHAR *text, int character_position, HFONT alternate_font)
+{
+	return alternate_font != nullptr && text[character_position] >= 256;
+}
+
+
+static bool Build_Complex_Text_Layout (HDC dc, const WCHAR *text, int text_length,
+	HFONT primary_font, HFONT alternate_font, ComplexTextLayout *layout)
+{
+	Usp10Loader::ScriptState initial_state = { 0 };
+	initial_state.bidi_level = Is_Complex_Text_Right_To_Left(text, text_length) ? 1 : 0;
+
+	Usp10Loader::ScriptItem *items = W3DNEWARRAY Usp10Loader::ScriptItem[text_length + 1];
+	int item_count = 0;
+	if (Usp10Loader::ScriptItemize(text, text_length, text_length + 1, nullptr, &initial_state, items, &item_count) != S_OK ||
+		item_count <= 0)
+	{
+		delete [] items;
+		return false;
+	}
+
+	Usp10Loader::ScriptLogAttr *attributes = W3DNEWARRAY Usp10Loader::ScriptLogAttr[text_length];
+	for (int break_item_index = 0; break_item_index < item_count; ++break_item_index) {
+		const int item_start = items[break_item_index].character_position;
+		const int item_length = items[break_item_index + 1].character_position - item_start;
+		if (Usp10Loader::ScriptBreak(text + item_start, item_length, &items[break_item_index].analysis,
+			attributes + item_start) != S_OK)
+		{
+			delete [] attributes;
+			delete [] items;
+			return false;
+		}
+	}
+
+	layout->Runs = W3DNEWARRAY ComplexTextRun[text_length];
+
+	int run_index = 0;
+	for (int run_item_index = 0; run_item_index < item_count; ++run_item_index) {
+		const int item_end = items[run_item_index + 1].character_position;
+		int run_start = items[run_item_index].character_position;
+		bool uses_alternate_font = Uses_Alternate_Unicode_Font(text, run_start, alternate_font);
+		for (int run_end = run_start + 1; run_end <= item_end; ++run_end) {
+			const bool run_ends = run_end == item_end ||
+				(attributes[run_end].char_stop &&
+					uses_alternate_font != Uses_Alternate_Unicode_Font(text, run_end, alternate_font));
+			if (run_ends) {
+				ComplexTextRun &run = layout->Runs[run_index++];
+				run.Font = uses_alternate_font ? alternate_font : primary_font;
+				run.CharacterPosition = run_start;
+				run.CharacterCount = run_end - run_start;
+				run.BidiLevel = (BYTE)items[run_item_index].analysis.state.bidi_level;
+				run_start = run_end;
+				if (run_end < item_end) {
+					uses_alternate_font = Uses_Alternate_Unicode_Font(text, run_end, alternate_font);
+				}
+			}
+		}
+	}
+	delete [] attributes;
+	delete [] items;
+	layout->RunCount = run_index;
+	layout->VisualToLogical = W3DNEWARRAY int[run_index];
+
+	BYTE *bidi_levels = W3DNEWARRAY BYTE[run_index];
+	HFONT old_font = (HFONT)::GetCurrentObject(dc, OBJ_FONT);
+	bool success = true;
+	for (int index = 0; index < run_index; ++index) {
+		ComplexTextRun &run = layout->Runs[index];
+		::SelectObject(dc, run.Font);
+
+		const int glyph_count = run.CharacterCount + run.CharacterCount / 2 + 16;
+		DWORD flags = Usp10Loader::SSA_GLYPHS | Usp10Loader::SSA_FALLBACK;
+		if ((run.BidiLevel & 1) != 0) {
+			flags |= Usp10Loader::SSA_RTL;
+		}
+
+		const HRESULT analysis_result = Usp10Loader::ScriptStringAnalyse(dc,
+			text + run.CharacterPosition, run.CharacterCount, glyph_count, -1, flags, 0,
+			nullptr, nullptr, nullptr, nullptr, nullptr, &run.Analysis);
+		const SIZE *run_size = analysis_result == S_OK ? Usp10Loader::ScriptString_pSize(run.Analysis) : nullptr;
+		TEXTMETRIC text_metrics = { 0 };
+		if (run_size == nullptr || run_size->cx < 0 || run_size->cy <= 0 || !::GetTextMetrics(dc, &text_metrics)) {
+			success = false;
+			break;
+		}
+
+		run.Width = run_size->cx;
+		run.Ascent = min((int)text_metrics.tmAscent, (int)run_size->cy);
+		bidi_levels[index] = run.BidiLevel;
+		layout->Width += run.Width;
+		layout->Ascent = max(layout->Ascent, run.Ascent);
+		layout->Descent = max(layout->Descent, (int)run_size->cy - run.Ascent);
+	}
+	layout->Height = layout->Ascent + layout->Descent;
+
+	if (success) {
+		success = Usp10Loader::ScriptLayout(run_index, bidi_levels, layout->VisualToLogical, nullptr) == S_OK &&
+			layout->Width > 0 && layout->Height > 0;
+	}
+
+	::SelectObject(dc, old_font);
+	delete [] bidi_levels;
+	return success;
+}
+#endif
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Get_Complex_Text_Extents
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+FontCharsClass::Get_Complex_Text_Extents (const WCHAR *text, int *width, int *height)
+{
+	if (width == nullptr || height == nullptr) {
+		return false;
+	}
+
+	*width = 0;
+	*height = 0;
+
+#if defined(_WIN32)
+	const int text_length = text == nullptr ? 0 : (int)wcslen(text);
+	if (text_length == 0 || MemDC == nullptr) {
+		return false;
+	}
+
+	HDC text_dc = ::CreateCompatibleDC(MemDC);
+	if (text_dc == nullptr) {
+		return false;
+	}
+
+	bool success = false;
+	{
+		// TheSuperHackers @bugfix Omar Aglan 02/09/2026 Preserve the primary font for
+		// Latin runs and use the configured Unicode font for the remaining runs.
+		ComplexTextLayout layout;
+		HFONT alternate_font = AlternateUnicodeFont != nullptr && AlternateUnicodeFont != this ?
+			AlternateUnicodeFont->GDIFont : nullptr;
+		success = Build_Complex_Text_Layout(text_dc, text, text_length, GDIFont, alternate_font, &layout);
+		if (success) {
+			*width = layout.Width;
+			*height = layout.Height;
+		}
+	}
+
+	::DeleteDC(text_dc);
+	return success;
+#else
+	return false;
+#endif
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
 //	Blit_Char
 //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1302,6 +1737,125 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 			dest_ptr	+= dest_inc;
 		}
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Rasterize_Complex_Text
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+FontCharsClass::Rasterize_Complex_Text (const WCHAR *text, uint16 **raster, int *width, int *height,
+	int maximum_width, int maximum_height)
+{
+	if (raster == nullptr || width == nullptr || height == nullptr) {
+		return false;
+	}
+
+	*raster = nullptr;
+	*width = 0;
+	*height = 0;
+
+#if defined(_WIN32)
+	const int text_length = text == nullptr ? 0 : (int)wcslen(text);
+	if (text_length == 0 || MemDC == nullptr) {
+		return false;
+	}
+
+	HDC text_dc = ::CreateCompatibleDC(MemDC);
+	if (text_dc == nullptr) {
+		return false;
+	}
+
+	::SetBkColor(text_dc, RGB(0, 0, 0));
+	::SetTextColor(text_dc, RGB(255, 255, 255));
+	::SetBkMode(text_dc, TRANSPARENT);
+
+	ComplexTextLayout layout;
+	HFONT alternate_font = AlternateUnicodeFont != nullptr && AlternateUnicodeFont != this ?
+		AlternateUnicodeFont->GDIFont : nullptr;
+	if (!Build_Complex_Text_Layout(text_dc, text, text_length, GDIFont, alternate_font, &layout)) {
+		layout.Clear();
+		::DeleteDC(text_dc);
+		return false;
+	}
+
+	const int text_width = layout.Width;
+	const int text_height = layout.Height;
+	if ((maximum_width > 0 && text_width >= maximum_width) ||
+		(maximum_height > 0 && text_height >= maximum_height))
+	{
+		layout.Clear();
+		::DeleteDC(text_dc);
+		return false;
+	}
+
+	BITMAPINFO bitmap_info = { 0 };
+	bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmap_info.bmiHeader.biWidth = text_width;
+	bitmap_info.bmiHeader.biHeight = -text_height;
+	bitmap_info.bmiHeader.biPlanes = 1;
+	bitmap_info.bmiHeader.biBitCount = 24;
+	bitmap_info.bmiHeader.biCompression = BI_RGB;
+
+	uint8 *bitmap_bits = nullptr;
+	HBITMAP bitmap = ::CreateDIBSection(MemDC, &bitmap_info, DIB_RGB_COLORS,
+		(void **)&bitmap_bits, nullptr, 0L);
+	if (bitmap == nullptr || bitmap_bits == nullptr) {
+		if (bitmap != nullptr) {
+			::DeleteObject(bitmap);
+		}
+		layout.Clear();
+		::DeleteDC(text_dc);
+		return false;
+	}
+
+	HBITMAP old_bitmap = (HBITMAP)::SelectObject(text_dc, bitmap);
+
+	const int bitmap_stride = ((text_width * 3) + 3) & ~3;
+	::memset(bitmap_bits, 0, bitmap_stride * text_height);
+
+	HFONT old_font = (HFONT)::GetCurrentObject(text_dc, OBJ_FONT);
+	int x = 0;
+	bool success = true;
+	for (int visual_index = 0; visual_index < layout.RunCount; ++visual_index) {
+		ComplexTextRun &run = layout.Runs[layout.VisualToLogical[visual_index]];
+		::SelectObject(text_dc, run.Font);
+		if (Usp10Loader::ScriptStringOut(run.Analysis, x, layout.Ascent - run.Ascent,
+			0, nullptr, 0, 0, FALSE) != S_OK)
+		{
+			success = false;
+			break;
+		}
+		x += run.Width;
+	}
+	::SelectObject(text_dc, old_font);
+
+	if (success) {
+		uint16 *pixels = W3DNEWARRAY uint16[text_width * text_height];
+		for (int row = 0; row < text_height; ++row) {
+			const uint8 *source = bitmap_bits + row * bitmap_stride;
+			uint16 *destination = pixels + row * text_width;
+			for (int column = 0; column < text_width; ++column) {
+				const uint8 pixel_value = source[column * 3];
+				const uint16 pixel_color = pixel_value == 0 ? 0 : 0x0FFF;
+				destination[column] = pixel_color | (((pixel_value >> 4) & 0xF) << 12);
+			}
+		}
+		*raster = pixels;
+		*width = text_width;
+		*height = text_height;
+	}
+
+	::SelectObject(text_dc, old_bitmap);
+	::DeleteObject(bitmap);
+	layout.Clear();
+	::DeleteDC(text_dc);
+	return success;
+#else
+	return false;
+#endif
 }
 
 

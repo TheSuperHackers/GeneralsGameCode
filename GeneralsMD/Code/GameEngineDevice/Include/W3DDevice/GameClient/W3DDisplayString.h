@@ -79,6 +79,7 @@ public:
 	virtual void draw( Int x, Int y, Color color, Color dropColor, Int xDrop, Int yDrop ) override;  ///< render text with the drop shadow being at the offsets passed in
 	virtual void getSize( Int *width, Int *height ) override;		///< get render size
 	virtual Int	getWidth( Int charPos = -1) override;
+	virtual void setComplexTextEnabled( Bool enabled ) override;
 	virtual void setWordWrap( Int wordWrap ) override;						///< set the word wrap width
 	virtual void setWordWrapCentered( Bool isCentered ) override; ///< If this is set to true, the text on a new line is centered
 	virtual void setFont( GameFont *font ) override;							///< set a font for display
@@ -97,6 +98,8 @@ protected:
 	Render2DSentenceClass m_textRendererHotKey;  ///< for drawing text
 	Bool m_textChanged;  ///< when contents of string change this is TRUE
 	Bool m_fontChanged;  ///< when font has changed this is TRUE
+	Bool m_sentenceChanged;  ///< when the rendered sentence needs new polygons
+	Bool m_hasComplexTextExtents;  ///< cached size uses shaped complex-text metrics
 	UnicodeString m_hotkey;		///< holds the current hotkey marker.
 	Bool m_useHotKey;
 	ICoord2D m_hotKeyPos;

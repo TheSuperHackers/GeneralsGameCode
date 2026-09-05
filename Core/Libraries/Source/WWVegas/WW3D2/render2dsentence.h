@@ -89,6 +89,10 @@ public:
 	int	Get_Char_Height()			{ return CharHeight; }
 	int	Get_Char_Width( WCHAR ch );
 	int	Get_Char_Spacing( WCHAR ch );
+	bool	Is_Complex_Text( const WCHAR *text );
+	bool	Get_Complex_Text_Extents( const WCHAR *text, int *width, int *height );
+	bool	Rasterize_Complex_Text( const WCHAR *text, uint16 **raster, int *width, int *height,
+		int maximum_width, int maximum_height );
 
 	int Get_Extra_Overlap() {return PixelOverlap;}
 
@@ -182,12 +186,15 @@ public:
 //	const Vector2 & Get_Cursor()						{ return Cursor; }
 
 	Vector2	Get_Text_Extents( const WCHAR * text );
-	Vector2	Get_Formatted_Text_Extents( const WCHAR * text );
+	Vector2	Get_Formatted_Text_Extents( const WCHAR * text, bool *used_complex_text = nullptr );
+	bool	Get_Complex_Text_Extents( const WCHAR *text, Vector2 *extents );
 
 	//
 	//	Sentence control
 	//
 	void	Build_Sentence (const WCHAR *text, int *hkX, int *hkY);
+	void	Build_Sentence (const WCHAR *text, int *hkX, int *hkY, bool *used_complex_text,
+		Vector2 *legacy_extents);
 	void	Draw_Sentence (uint32 color = 0xFFFFFFFF);
 
 	//
@@ -197,6 +204,14 @@ public:
 	int	Get_Texture_Size_Hint() const				{ return TextureSizeHint; }
 
 	void	Set_Mono_Spaced( bool onoff )						{ MonoSpaced = onoff; }
+	bool	Set_Complex_Text_Enabled( bool enabled )		{
+		if (ComplexTextEnabled == enabled) {
+			return false;
+		}
+
+		ComplexTextEnabled = enabled;
+		return true;
+	}
 
 private:
 
@@ -233,11 +248,14 @@ private:
 	//
 	void	Reset_Sentence_Data ();
 	void	Build_Textures ();
-	void	Record_Sentence_Chunk ();
-	void	Allocate_New_Surface (const WCHAR *text, bool justCalcExtents = false);
+	void	Record_Sentence_Chunk (int char_height = 0);
+	void	Allocate_New_Surface (const WCHAR *text, bool justCalcExtents = false, int min_texture_size = 0);
 	void	Release_Pending_Surfaces ();
-	void	Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY);
+	Vector2	Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY);
 	Vector2	Build_Sentence_Not_Centered (const WCHAR *text, int *hkX, int *hkY,bool justCalcExtents = false );
+	bool	Is_Single_Line_Complex_Text (const WCHAR *text) const;
+	bool	Is_Complex_Text_Size_Supported (int width, int height) const;
+	bool	Build_Complex_Sentence (const WCHAR *text);
 	//
 	//	Private member data
 	//
@@ -254,6 +272,7 @@ private:
 	int													TextureSizeHint;
 	SurfaceClass *							CurSurface;
 	bool												MonoSpaced;
+	bool												ComplexTextEnabled;
 	float												WrapWidth;
 	bool												Centered;			// Determines whether or not to center each line
 	RectClass										ClipRect;

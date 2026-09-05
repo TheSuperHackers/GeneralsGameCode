@@ -2718,6 +2718,11 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 	data->text = TheDisplayStringManager->newDisplayString();
 	data->sText = TheDisplayStringManager->newDisplayString();
 	data->constructText = TheDisplayStringManager->newDisplayString();
+	// TheSuperHackers @bugfix Omar Aglan 28/08/2026 Keep editable strings on
+	// the legacy path until shaped caret metrics are supported.
+	data->text->setComplexTextEnabled(FALSE);
+	data->sText->setComplexTextEnabled(FALSE);
+	data->constructText->setComplexTextEnabled(FALSE);
 
 	// set the max for the text lengths
 //	data->text->allocateFixed( ENTRY_TEXT_LEN );
