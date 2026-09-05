@@ -44,6 +44,9 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // SYSTEM INCLUDES
+#include <ctype.h>
+#include <errno.h>
+#include <stdlib.h>
 
 // USER INCLUDES
 #include "Lib/BaseType.h"
@@ -102,6 +105,56 @@ static Int roundUpMemBound(Int i)
 }
 
 //-----------------------------------------------------------------------------
+static Bool parseMemoryPoolOverrideLine(const char* line, char* poolName, size_t poolNameSize, Int* initial, Int* overflow)
+{
+	if (line == nullptr || poolName == nullptr || poolNameSize == 0 || initial == nullptr || overflow == nullptr)
+		return false;
+
+	if (line[0] == ';')
+		return false;
+
+	const char* cursor = line;
+	while (isspace(static_cast<unsigned char>(*cursor)))
+		++cursor;
+
+	if (*cursor == '\0')
+		return false;
+
+	const char* poolNameBegin = cursor;
+	while (*cursor != '\0' && !isspace(static_cast<unsigned char>(*cursor)))
+		++cursor;
+
+	const size_t poolNameLength = cursor - poolNameBegin;
+	if (poolNameLength == 0 || poolNameLength >= poolNameSize)
+		return false;
+
+	char* end = nullptr;
+	errno = 0;
+	const long parsedInitial = strtol(cursor, &end, 10);
+	if (end == cursor || errno == ERANGE)
+		return false;
+
+	cursor = end;
+	errno = 0;
+	const long parsedOverflow = strtol(cursor, &end, 10);
+	if (end == cursor || errno == ERANGE)
+		return false;
+
+	memcpy(poolName, poolNameBegin, poolNameLength);
+	poolName[poolNameLength] = '\0';
+	*initial = static_cast<Int>(parsedInitial);
+	*overflow = static_cast<Int>(parsedOverflow);
+	return true;
+}
+
+#ifdef MEMORY_MANAGER_HARDENING_TESTS
+Bool userMemoryManagerParsePoolOverrideLineForTest(const char* line, char* poolName, size_t poolNameSize, Int* initial, Int* overflow)
+{
+	return parseMemoryPoolOverrideLine(line, poolName, poolNameSize, initial, overflow);
+}
+#endif
+
+//-----------------------------------------------------------------------------
 void userMemoryManagerInitPools()
 {
 	// note that we MUST use stdio stuff here, and not the normal game file system
@@ -123,12 +176,10 @@ void userMemoryManagerInitPools()
 	if (fp)
 	{
 		char poolName[256];
-		int initial, overflow;
+		Int initial, overflow;
 		while (fgets(buf, _MAX_PATH, fp))
 		{
-			if (buf[0] == ';')
-				continue;
-			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow ) == 3)
+			if (parseMemoryPoolOverrideLine(buf, poolName, ARRAY_SIZE(poolName), &initial, &overflow))
 			{
 				for (PoolSizeRec* p = PoolSizes; p->name != nullptr; ++p)
 				{
