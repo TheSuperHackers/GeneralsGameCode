@@ -837,9 +837,14 @@ void ControlBar::updateContextCommand()
 //			continue;
 //		}
 //		else
+		if (isObserverControlBarOn())
 		{
-			win->winClearStatus( WIN_STATUS_NOT_READY );
-			win->winClearStatus( WIN_STATUS_ALWAYS_COLOR );
+			win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+		}
+		else
+		{
+			win->winClearStatus(WIN_STATUS_NOT_READY);
+			win->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
 		}
 
 		// is the command available
