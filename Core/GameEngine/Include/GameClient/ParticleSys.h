@@ -180,9 +180,12 @@ public:
 
 	Particle( ParticleSystem *system, const ParticleInfo *data );
 
-	Bool update();												///< update this particle's behavior - return false if dead
-	void doWindMotion();									///< do wind motion (if present) from particle system
+	Bool update(); ///< update this particle's behavior - return false if dead
 
+	void draw( Real timeScale ); ///< render update
+	void doWindMotion( Real timeScale ); ///< do wind motion (if present) from particle system
+
+	// TheSuperHackers @info The force must be applied at full magnitude on every render step.
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 
 	const Coord3D *getPosition() { return &m_pos; }
@@ -205,6 +208,8 @@ public:
 	UnsignedInt getPersonality() { return m_personality; };
 	void setPersonality(UnsignedInt p) { m_personality = p; };
 
+	UnsignedInt getElapsedFrames() const;
+
 protected:
 
 	// snapshot methods
@@ -212,7 +217,10 @@ protected:
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
 
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	void computeAlphaRate();							///< compute alpha rate to get to next key
+#endif
+	Real computeKeyframeAlpha( Real elapsedFrames ) const;	///< compute the alpha that the key frames describe for the current age of this particle
 	void computeColorRate();							///< compute color change to get to next key
 
 public:
@@ -228,12 +236,13 @@ protected:
 	// most of the particle data is derived from ParticleInfo
 
 	Coord3D						m_accel;														///< current acceleration
-	Coord3D						m_lastPos;													///< previous position
 	UnsignedInt				m_lifetimeLeft;									///< lifetime remaining, if zero -> destroy
 	UnsignedInt				m_createTimestamp;							///< frame this particle was created
 
 	Real							m_alpha;																///< current alpha of this particle
-	Real							m_alphaRate;														///< current rate of alpha change
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	Real							m_alphaRate;														///< current rate of alpha change (LEGACY)
+#endif
 	Int								m_alphaTargetKey;												///< next index into key array
 
 	RGBColor					m_color;														///< current color of this particle
@@ -269,6 +278,8 @@ public:
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
+
+	void validate(const char *systemName);
 
 	Bool m_isOneShot;														///< if true, destroy system after one burst has occurred
 
@@ -320,7 +331,7 @@ public:
 	};
 
 
-	RandomKeyframe m_alphaKey[ MAX_KEYFRAMES ];
+	RandomKeyframe m_alphaKey[ MAX_KEYFRAMES ];	///< alpha of particle
 	RGBColorKeyframe m_colorKey[ MAX_KEYFRAMES ];	///< color of particle
 
 	typedef Int Color;
@@ -457,6 +468,11 @@ public:
 	Real m_windMotionEndAngleMax;						///< (for ping pong) max angel for angle 2
 	Byte m_windMotionMovingToEndAngle;			///< (for ping pong) TRUE if we're moving "towards" the end angle
 
+private:
+
+	template <typename KeyframeType>
+	static void validateKeyframes(KeyframeType *keys, Int keysSize, const char *keyName, const char *systemName);
+	static void validateDampingValue(GameClientRandomVariable &value, const char *systemName);
 };
 
 //--------------------------------------------------------------------------------------------------------------
@@ -581,7 +597,9 @@ public:
 	void attachToObject( const Object *obj );									///< attach this particle system to an Object
 
 	virtual Bool update( Int localPlayerIndex );								///< update this particle system, return false if dead
-	void updateWindMotion();							///< update wind motion
+
+	void draw( Real timeScale ); ///< render update
+	void updateWindMotion( Real timeScale ); ///< update wind motion
 
 	void setControlParticle( Particle *p );			///< set control particle
 
@@ -666,6 +684,12 @@ public:
 
 protected:
 
+	struct VisibilityState
+	{
+		VisibilityState() : isShrouded(false) {}
+		Bool isShrouded;
+	};
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
@@ -675,6 +699,11 @@ protected:
 																		ParticlePriorityType priority,
 																		Bool forceCreate = FALSE );	///< factory method for particles
 
+	void updateTransform();
+	void applyParentTransform(const Matrix3D &parentXfrm);
+	void applyLocalTransform();
+
+	VisibilityState updateVisibility( Int localPlayerIndex );
 
 	const ParticleInfo *generateParticleInfo( Int particleNum, Int particleCount );	///< generate a new, random set of ParticleInfo
 	const Coord3D *computeParticlePosition();		///< compute a position based on emission properties
@@ -740,6 +769,9 @@ protected:
 /**
  * The particle system manager, responsible for maintaining all ParticleSystems
  */
+// TheSuperHackers @tweak The particle render update is now decoupled from the logic step.
+// The lifetime management remains coupled to the logic step.
+//
 class ParticleSystemManager : public SubsystemInterface,
 															public Snapshot
 {
@@ -756,7 +788,8 @@ public:
 
 	virtual void init() override;									///< initialize the manager
 	virtual void reset() override;									///< reset the manager and all particle systems
-	virtual void update() override;								///< update all particle systems
+	virtual void update() override;								///< logic update for all particle systems
+	virtual void draw() override;									///< render update for all particle systems
 
 	virtual Bool isDummy() const { return false; }
 
@@ -837,7 +870,6 @@ protected:
 	UnsignedInt m_fieldParticleCount; ///< this does not need to be xfered, since it is evaluated every frame
 	UnsignedInt m_particleSystemCount;
 	Int m_onScreenParticleCount;                ///< number of particles displayed on screen per frame
-	UnsignedInt m_lastLogicFrameUpdate;
 	Int m_localPlayerIndex;	///<used to tell particle systems which particles can be skipped due to player shroud status
 
 private:
@@ -864,6 +896,7 @@ public:
 	virtual void reset() override {}
 #endif
 	virtual void update() override {}
+	virtual void draw() override {}
 
 	virtual Bool isDummy() const override { return true; }
 
@@ -884,3 +917,11 @@ extern ParticleSystemManager *TheParticleSystemManager;
 
 class DebugDisplayInterface;
 extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
+
+namespace pfx
+{
+inline Real clampDampingValue(Real value)
+{
+	return std::max(0.0f, value);
+}
+} // namespace pfx
