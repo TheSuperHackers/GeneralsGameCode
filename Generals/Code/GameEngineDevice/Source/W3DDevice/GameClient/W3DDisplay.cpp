@@ -3012,6 +3012,9 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 			TheTerrainRenderObject->getShroud()->setShroudLevel(x, y, (W3DShroudLevel)TheGlobalData->m_clearAlpha );
 		//Logic is saying shroud.  We can add alpha levels here in client if needed.
 		// W3DShroud is a 0-255 alpha byte.  Logic shroud is a double reference count.
+
+		TheTerrainRenderObject->notifyShroudChanged();
+
 	}
 }
 
