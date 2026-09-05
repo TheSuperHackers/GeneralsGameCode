@@ -138,17 +138,20 @@ void Keyboard::updateKeys()
 		/** @todo -- if we don't have focus, we could destroy all the keys retrieved
 		here so that we don't process anything */
 
-		m_keyStatus[ m_keys[ index ].key ].state = m_keys[ index ].state;
-		m_keyStatus[ m_keys[ index ].key ].status = m_keys[ index ].status;
+		const KeyDefType key = (KeyDefType)m_keys[ index ].key;
+		const Bool pressedWithModifier = m_pressedWithModifier[key];
+
+		m_keyStatus[ key ].state = m_keys[ index ].state;
+		m_keyStatus[ key ].status = m_keys[ index ].status;
 
 		// Update key down time for new key presses
 		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
 		{
-			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
+			m_keyStatus[ key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
 		}
 
 		// prevent ALT-TAB from causing a TAB event
-		if( m_keys[ index ].key == KEY_TAB )
+		if( key == KEY_TAB )
 		{
 			if( BitIsSet( m_keyStatus[ KEY_LALT ].state, KEY_STATE_DOWN ) ||
 					BitIsSet( m_keyStatus[ KEY_RALT ].state, KEY_STATE_DOWN ) )
@@ -156,13 +159,13 @@ void Keyboard::updateKeys()
 				m_keys[index].status = KeyboardIO::STATUS_USED;
 			}
 		}
-		else if( m_keys[ index ].key == KEY_CAPS	 ||
-						 m_keys[ index ].key == KEY_LCTRL  ||
-						 m_keys[ index ].key == KEY_RCTRL	 ||
-						 m_keys[ index ].key == KEY_LSHIFT ||
-						 m_keys[ index ].key == KEY_RSHIFT ||
-						 m_keys[ index ].key == KEY_LALT	 ||
-						 m_keys[ index ].key == KEY_RALT )
+		else if( key == KEY_CAPS	 ||
+						 key == KEY_LCTRL  ||
+						 key == KEY_RCTRL	 ||
+						 key == KEY_LSHIFT ||
+						 key == KEY_RSHIFT ||
+						 key == KEY_LALT	 ||
+						 key == KEY_RALT )
 
 		{
 
@@ -170,8 +173,27 @@ void Keyboard::updateKeys()
 			// this keeps our internal key state accurate event though we don't
 			// use the returned translation ... kinda weird I think
 			//
-			translateKey( m_keys[ index ].key );
+			translateKey( key );
 
+		}
+
+		// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026 Preserve modifier state for
+		// each buffered event and carry it from a key-down to its matching key-up.
+		BitSet( m_keys[ index ].state, m_modifiers );
+		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
+		{
+			const Int keyModifiers = KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT;
+			m_pressedWithModifier[key] = (m_modifiers & keyModifiers) != 0;
+			if( m_pressedWithModifier[key] )
+			{
+				BitSet( m_keys[ index ].state, KEY_STATE_MODIFIER_ON_DOWN );
+			}
+		}
+		else
+		{
+			m_pressedWithModifier[key] = FALSE;
+			if( pressedWithModifier )
+				BitSet( m_keys[ index ].state, KEY_STATE_MODIFIER_ON_DOWN );
 		}
 
 		index++;
@@ -180,22 +202,6 @@ void Keyboard::updateKeys()
 
 	// check for key repeats
 	checkKeyRepeat();
-
-	if( m_modifiers )
-	{
-		index = 0;
-		while( m_keys[ index ].key != KEY_NONE )
-		{
-
-			// set in the modifier data into the already existing up/down state
-			BitSet( m_keys[ index ].state, m_modifiers );
-
-			// next key
-			index++;
-
-		}
-
-	}
 
 }
 
@@ -233,7 +239,9 @@ Bool Keyboard::checkKeyRepeat()
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
-				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT;  // note: not a bitset; this is an assignment
+				// This is an assignment, not a bit set.
+				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers
+						| (m_pressedWithModifier[key] ? KEY_STATE_MODIFIER_ON_DOWN : 0);
 				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
 
 				// Set End Flag
@@ -699,6 +707,7 @@ Keyboard::Keyboard()
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
+	memset( m_pressedWithModifier, 0, sizeof( m_pressedWithModifier ) );
 	m_modifiers = KEY_STATE_NONE;
 	m_shift2Key = KEY_NONE;
 
@@ -749,13 +758,15 @@ void Keyboard::update()
 //-------------------------------------------------------------------------------------------------
 void Keyboard::resetKeys()
 {
-
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
-	refreshAltKeys();
+	// CTRL and SHIFT have the same stuck-mode problem (force-attack, prefer-selection).
+	emitModifierKeyUps();
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
+	// A held key can still report its release after focus returns. Do not clear
+	// m_pressedWithModifier until that release or a new press arrives.
 	m_modifiers = KEY_STATE_NONE;
 	if( getCapsState() )
 	{
@@ -765,22 +776,27 @@ void Keyboard::resetKeys()
 }
 
 //-------------------------------------------------------------------------------------------------
-// Refresh the state of the alt keys, necessary after alt tab
-//-------------------------------------------------------------------------------------------------
-void Keyboard::refreshAltKeys() const
+static void emitRawKeyUpIfDown(const KeyboardIO *keyStatus, KeyDefType key)
 {
-	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
+	if (BitIsSet(keyStatus[key].state, KEY_STATE_DOWN))
 	{
 		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_LALT);
+		msg->appendIntegerArgument(key);
 		msg->appendIntegerArgument(KEY_STATE_UP);
 	}
-	if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
-	{
-		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_RALT);
-		msg->appendIntegerArgument(KEY_STATE_UP);
-	}
+}
+
+//-------------------------------------------------------------------------------------------------
+// Emit RAW_KEY_UP for still-held modifiers so MetaEvent can end force-attack / waypoints / etc.
+//-------------------------------------------------------------------------------------------------
+void Keyboard::emitModifierKeyUps() const
+{
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LCTRL);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RCTRL);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LSHIFT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RSHIFT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LALT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RALT);
 }
 
 //-------------------------------------------------------------------------------------------------
