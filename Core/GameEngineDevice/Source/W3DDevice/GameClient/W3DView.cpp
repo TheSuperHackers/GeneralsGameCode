@@ -3730,25 +3730,10 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCente
 	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
 		return true;
 
-	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
-	ICoord2D minimumSize;
-	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
-	{
-		minimumSize.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
-		minimumSize.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
-	}
-	else
-	{
-		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
-		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
-		minimumSize.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
-		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
-	}
-
 	// TheSuperHackers @bugfix sailro 06/09/2026 Cover the visible terrain without yaw-dependent buffer
 	// reallocations. The two cached terrain height limits also cover valleys and nearby higher ground.
 	const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
-	const Vector3 cameraLocation = m_3DCamera->Get_Position();
+	const Vector3 cameraLocation = cameraTransform.Get_Translation();
 	const Real groundZ[2] = {
 		TheTerrainRenderObject->getMinHeight(),
 		std::min(TheTerrainRenderObject->getMaxHeight(), cameraLocation.Z)
@@ -3781,10 +3766,8 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCente
 				cameraTransform[1][0]*corner.X + cameraTransform[1][1]*corner.Y + cameraTransform[1][2]*corner.Z);
 			if (i == 0 && plane == 0)
 				footprintMin = footprintMax = offset;
-			footprintMin.X = std::min(footprintMin.X, offset.X);
-			footprintMin.Y = std::min(footprintMin.Y, offset.Y);
-			footprintMax.X = std::max(footprintMax.X, offset.X);
-			footprintMax.Y = std::max(footprintMax.Y, offset.Y);
+			footprintMin.Update_Min(offset);
+			footprintMax.Update_Max(offset);
 		}
 	}
 
@@ -3805,8 +3788,24 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCente
 		}
 	}
 
-	// CENTER_LIMIT permits two cells of origin drift per axis; nearest-cell centering adds half a cell.
-	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + 5;
+	const Real cameraPitch = asin(fabs(cameraTransform[2][2]));
+	ICoord2D minimumSize;
+	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
+	{
+		minimumSize.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+	}
+	else
+	{
+		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
+		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
+		minimumSize.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	}
+
+	// Reserve the renderer's origin drift on both sides, plus half a cell per side for center rounding.
+	const Int centeringMargin = 2*HeightMapRenderObjClass::CENTER_LIMIT + 1;
+	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + centeringMargin;
 	const Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1)/VERTEX_BUFFER_TILE_LENGTH;
 	const Int drawSize = 1 + blocks*VERTEX_BUFFER_TILE_LENGTH;
 	dimensions.x = std::min(map->getXExtent(), std::max(minimumSize.x, drawSize));

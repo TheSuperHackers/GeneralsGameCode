@@ -1539,7 +1539,6 @@ void HeightMapRenderObjClass::staticLightingChanged()
 	BaseHeightMapRenderObjClass::staticLightingChanged();
 }
 
-#define CENTER_LIMIT 2
 #define BIG_JUMP 16
 #define WIDE_STEP 32
 

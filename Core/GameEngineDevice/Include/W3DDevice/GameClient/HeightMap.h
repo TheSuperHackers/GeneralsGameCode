@@ -56,6 +56,8 @@ class HeightMapRenderObjClass : public BaseHeightMapRenderObjClass
 
 public:
 
+	enum { CENTER_LIMIT = 2 }; ///< Maximum draw-origin drift, in terrain cells.
+
 	HeightMapRenderObjClass();
 	virtual ~HeightMapRenderObjClass() override;
 
