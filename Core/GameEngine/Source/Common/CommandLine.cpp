@@ -28,10 +28,10 @@
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
-#include "Common/WorkingDirectory.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
+#include "Common/WorkingDirectory.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
@@ -466,7 +466,7 @@ Int parseJobs(char *args[], int num)
 Int parseUseCwd(char *[], int)
 {
 	// TheSuperHackers @feature 14/08/2026
-	// -useCwd keeps the OS working directory.
+	// -useCwd restores the startup working directory.
 	if (!rts::WorkingDirectory::setStartupWorkingDirectory())
 		rts::WorkingDirectory::setExecutableWorkingDirectory();
 	return 1;
@@ -476,8 +476,9 @@ Int parseSetCwd(char *args[], int num)
 {
 	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
 	// -setCwd <path> overrides the working directory.
-	if (num <= 1 || args[1] == nullptr || args[1][0] == '-' || args[1][0] == '/')
+	if (num <= 1 || args[1][0] == '-' || args[1][0] == '/')
 	{
+		DEBUG_LOG(("-setCwd requires a directory path"));
 		rts::WorkingDirectory::setExecutableWorkingDirectory();
 		return 1;
 	}
@@ -1355,12 +1356,12 @@ static CommandLineParam paramsForEngineInit[] =
 
 };
 
-static void parseCommandLine(const CommandLineParam* params, int numParams, std::vector<Bool> *parsedArguments = nullptr)
+static void parseCommandLine(const CommandLineParam* params, int numParams, BoolVector &parsedArguments)
 {
 	const int argc = __argc;
 	char **argv = __argv;
-	if (parsedArguments != nullptr && parsedArguments->size() < static_cast<size_t>(argc > 0 ? argc - 1 : 0))
-		parsedArguments->resize(argc - 1, FALSE);
+	// Preserve arguments recorded by the earlier parsing phase.
+	parsedArguments.resize(argc > 0 ? argc - 1 : 0, FALSE);
 
 	int arg = 1;
 
@@ -1377,39 +1378,22 @@ static void parseCommandLine(const CommandLineParam* params, int numParams, std:
 	arg = 1;
 #endif // DEBUG_LOGGING
 
-	// To parse command-line parameters, we loop through a table holding arguments
-	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
-	// can check the entire string (for testing the presence of a flag) or check
-	// just the start (for a key=val argument).  The handling function can also
-	// look at the next argument(s), to accommodate multi-arg parameters, e.g. "-p 1234".
-	while (arg<argc)
+	// Match complete option names without case sensitivity. Each handler returns
+	// the number of arguments consumed, including the option itself.
+	while (arg < argc)
 	{
-		// Look at arg #i
-		Bool found = false;
-		for (int param=0; !found && param<numParams; ++param)
+		int parsedArgCount = 1;
+		for (int param = 0; param < numParams; ++param)
 		{
-			int len = strlen(params[param].name);
-			int len2 = strlen(argv[arg]);
-			if (len2 != len)
+			if (stricmp(argv[arg], params[param].name) != 0)
 				continue;
-			if (strnicmp(argv[arg], params[param].name, len) == 0)
-			{
-				const int parsedArg = arg;
-				const int parsedArgCount = params[param].func(&argv[0]+arg, argc-arg);
-				if (parsedArguments != nullptr)
-				{
-					for (int i = 0; i < parsedArgCount && parsedArg + i < argc; ++i)
-						(*parsedArguments)[parsedArg + i - 1] = TRUE;
-				}
-				arg += parsedArgCount;
-				found = true;
-				break;
-			}
+
+			parsedArgCount = params[param].func(argv + arg, argc - arg);
+			for (int i = 0; i < parsedArgCount && arg + i < argc; ++i)
+				parsedArguments[arg + i - 1] = TRUE;
+			break;
 		}
-		if (!found)
-		{
-			arg++;
-		}
+		arg += parsedArgCount;
 	}
 }
 
@@ -1430,6 +1414,8 @@ void createGlobalData()
 
 void CommandLine::parseCommandLineForStartup()
 {
+	rts::WorkingDirectory::saveStartupWorkingDirectory();
+
 	// We need the GlobalData initialized before parsing the command line.
 	// Note that this function is potentially called multiple times and only initializes the first time.
 	createGlobalData();
@@ -1439,7 +1425,7 @@ void CommandLine::parseCommandLineForStartup()
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
 
 	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup),
-		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
+		TheWritableGlobalData->m_commandLineData.m_parsedArguments);
 
 	if (!rts::WorkingDirectory::hasSetWorkingDirectory())
 		rts::WorkingDirectory::setExecutableWorkingDirectory();
@@ -1456,5 +1442,5 @@ void CommandLine::parseCommandLineForEngineInit()
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit = true;
 
 	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit),
-		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
+		TheWritableGlobalData->m_commandLineData.m_parsedArguments);
 }

@@ -33,9 +33,14 @@ Bool WorkingDirectory::saveStartupWorkingDirectory()
 		return TRUE;
 
 	const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
-	if (len == 0 || len >= ARRAY_SIZE(s_startupWorkingDirectory))
+	if (len == 0)
 	{
 		DEBUG_LOG(("Failed to get startup working directory (error %d)", GetLastError()));
+		return FALSE;
+	}
+	if (len >= ARRAY_SIZE(s_startupWorkingDirectory))
+	{
+		DEBUG_LOG(("Startup working directory exceeds the path buffer (%d characters required)", len));
 		return FALSE;
 	}
 
@@ -46,7 +51,10 @@ Bool WorkingDirectory::saveStartupWorkingDirectory()
 Bool WorkingDirectory::setWorkingDirectory(const char *path)
 {
 	if (path == nullptr || path[0] == '\0')
+	{
+		DEBUG_LOG(("Cannot set an empty working directory"));
 		return FALSE;
+	}
 
 	if (::SetCurrentDirectory(path) == 0)
 	{
@@ -66,20 +74,30 @@ Bool WorkingDirectory::setStartupWorkingDirectory()
 Bool WorkingDirectory::setExecutableWorkingDirectory()
 {
 	s_hasSetWorkingDirectory = TRUE;
-	saveStartupWorkingDirectory();
+	if (!saveStartupWorkingDirectory())
+		return FALSE;
 
 	Char buffer[_MAX_PATH];
 	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
-	if (len == 0 || len >= ARRAY_SIZE(buffer))
+	if (len == 0)
 	{
 		DEBUG_LOG(("Failed to get executable path for working directory (error %d)", GetLastError()));
 		return FALSE;
 	}
-
-	if (Char *pEnd = strrchr(buffer, '\\'))
+	if (len >= ARRAY_SIZE(buffer))
 	{
-		*pEnd = 0;
+		DEBUG_LOG(("Executable path exceeds the working directory path buffer"));
+		return FALSE;
 	}
+
+	Char *pEnd = strrchr(buffer, '\\');
+	if (pEnd == nullptr)
+	{
+		DEBUG_LOG(("Executable path has no directory: '%s'", buffer));
+		return FALSE;
+	}
+	// TheSuperHackers @bugfix Keep the separator so drive roots remain absolute.
+	pEnd[1] = '\0';
 
 	return setWorkingDirectory(buffer);
 }
@@ -87,8 +105,7 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
 {
 	s_hasSetWorkingDirectory = TRUE;
-	saveStartupWorkingDirectory();
-	return setWorkingDirectory(path);
+	return saveStartupWorkingDirectory() && setWorkingDirectory(path);
 }
 
 Bool WorkingDirectory::hasSetWorkingDirectory()

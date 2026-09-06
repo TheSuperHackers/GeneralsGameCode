@@ -24,17 +24,23 @@ namespace rts
 {
 
 // TheSuperHackers @feature 14/08/2026
-// Saves the inherited working directory before changing it so it can be restored.
+// Saves and restores the process working directory.
 class WorkingDirectory
 {
 public:
+	// Call at application startup, before other code changes the directory.
+	// Repeated calls preserve the first successful capture.
+	static Bool saveStartupWorkingDirectory();
+
+	// Setters also capture the startup directory if it has not been saved yet.
 	static Bool setStartupWorkingDirectory();
 	static Bool setExecutableWorkingDirectory();
+	// Relative paths are resolved from the current working directory.
 	static Bool setCustomWorkingDirectory(const char *path);
+	// Returns true after any setter call, including a failed attempt.
 	static Bool hasSetWorkingDirectory();
 
 private:
-	static Bool saveStartupWorkingDirectory();
 	static Bool setWorkingDirectory(const char *path);
 
 	static Bool s_hasSetWorkingDirectory;
