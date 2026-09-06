@@ -476,15 +476,18 @@ Int parseSetCwd(char *args[], int num)
 {
 	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
 	// -setCwd <path> overrides the working directory.
-	if (num <= 1 || args[1][0] == '-' || args[1][0] == '/')
+	if (num <= 1)
 	{
 		DEBUG_LOG(("-setCwd requires a directory path"));
 		rts::WorkingDirectory::setExecutableWorkingDirectory();
 		return 1;
 	}
-	if (!rts::WorkingDirectory::setCustomWorkingDirectory(args[1]))
-		rts::WorkingDirectory::setExecutableWorkingDirectory();
-	return 2;
+	if (rts::WorkingDirectory::setCustomWorkingDirectory(args[1]))
+		return 2;
+
+	rts::WorkingDirectory::setExecutableWorkingDirectory();
+	// Leave a failed option-like value available for subsequent argument parsing.
+	return args[1][0] == '-' || args[1][0] == '/' ? 1 : 2;
 }
 
 Int parseXRes(char *args[], int num)
@@ -1414,8 +1417,6 @@ void createGlobalData()
 
 void CommandLine::parseCommandLineForStartup()
 {
-	rts::WorkingDirectory::saveStartupWorkingDirectory();
-
 	// We need the GlobalData initialized before parsing the command line.
 	// Note that this function is potentially called multiple times and only initializes the first time.
 	createGlobalData();

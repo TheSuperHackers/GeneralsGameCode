@@ -20,35 +20,24 @@
 
 #include "Common/WorkingDirectory.h"
 
+// Capture before static constructors can reach startup parsing through DebugInit.
+#pragma warning(push)
+#pragma warning(disable : 4073)
+#pragma init_seg(lib)
+#pragma warning(pop)
+
 namespace rts
 {
 
 Bool WorkingDirectory::s_hasSetWorkingDirectory = FALSE;
-WorkingDirectory::StartupDirectoryState WorkingDirectory::s_startupDirectoryState = STARTUP_DIRECTORY_UNSAVED;
 Char WorkingDirectory::s_startupWorkingDirectory[_MAX_PATH] = "";
+const Bool WorkingDirectory::s_hasStartupWorkingDirectory = WorkingDirectory::saveStartupWorkingDirectory();
 
 Bool WorkingDirectory::saveStartupWorkingDirectory()
 {
-	if (s_startupDirectoryState != STARTUP_DIRECTORY_UNSAVED)
-		return s_startupDirectoryState == STARTUP_DIRECTORY_SAVED;
-
-	// TheSuperHackers @bugfix Do not capture a changed directory after an earlier failure.
-	s_startupDirectoryState = STARTUP_DIRECTORY_UNAVAILABLE;
-
+	// Runs during static initialization, before the engine's memory manager and logging.
 	const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
-	if (len == 0)
-	{
-		DEBUG_LOG(("Failed to get startup working directory (error %d)", GetLastError()));
-		return FALSE;
-	}
-	if (len >= ARRAY_SIZE(s_startupWorkingDirectory))
-	{
-		DEBUG_LOG(("Startup working directory exceeds the path buffer (%d characters required)", len));
-		return FALSE;
-	}
-
-	s_startupDirectoryState = STARTUP_DIRECTORY_SAVED;
-	return TRUE;
+	return len > 0 && len < ARRAY_SIZE(s_startupWorkingDirectory);
 }
 
 Bool WorkingDirectory::setWorkingDirectory(const char *path)
@@ -71,13 +60,17 @@ Bool WorkingDirectory::setWorkingDirectory(const char *path)
 Bool WorkingDirectory::setStartupWorkingDirectory()
 {
 	s_hasSetWorkingDirectory = TRUE;
-	return saveStartupWorkingDirectory() && setWorkingDirectory(s_startupWorkingDirectory);
+	if (!s_hasStartupWorkingDirectory)
+	{
+		DEBUG_LOG(("Startup working directory is unavailable"));
+		return FALSE;
+	}
+	return setWorkingDirectory(s_startupWorkingDirectory);
 }
 
 Bool WorkingDirectory::setExecutableWorkingDirectory()
 {
 	s_hasSetWorkingDirectory = TRUE;
-	saveStartupWorkingDirectory();
 
 	Char buffer[_MAX_PATH];
 	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
@@ -107,7 +100,6 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
 {
 	s_hasSetWorkingDirectory = TRUE;
-	saveStartupWorkingDirectory();
 	return setWorkingDirectory(path);
 }
 
