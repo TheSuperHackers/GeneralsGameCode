@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ class WorkingDirectory
 {
 public:
 	// Call at application startup, before other code changes the directory.
-	// Repeated calls preserve the first successful capture.
+	// Capture is attempted once; repeated calls return the saved result.
 	static Bool saveStartupWorkingDirectory();
 
-	// Setters also capture the startup directory if it has not been saved yet.
+	// Setters also attempt capture if startup initialization has not run yet.
 	static Bool setStartupWorkingDirectory();
 	static Bool setExecutableWorkingDirectory();
 	// Relative paths are resolved from the current working directory.
@@ -41,10 +41,17 @@ public:
 	static Bool hasSetWorkingDirectory();
 
 private:
+	enum StartupDirectoryState
+	{
+		STARTUP_DIRECTORY_UNSAVED,
+		STARTUP_DIRECTORY_SAVED,
+		STARTUP_DIRECTORY_UNAVAILABLE
+	};
+
 	static Bool setWorkingDirectory(const char *path);
 
 	static Bool s_hasSetWorkingDirectory;
-	static Bool s_hasSavedStartupWorkingDirectory;
+	static StartupDirectoryState s_startupDirectoryState;
 	static Char s_startupWorkingDirectory[];
 };
 

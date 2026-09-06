@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -24,13 +24,16 @@ namespace rts
 {
 
 Bool WorkingDirectory::s_hasSetWorkingDirectory = FALSE;
-Bool WorkingDirectory::s_hasSavedStartupWorkingDirectory = FALSE;
+WorkingDirectory::StartupDirectoryState WorkingDirectory::s_startupDirectoryState = STARTUP_DIRECTORY_UNSAVED;
 Char WorkingDirectory::s_startupWorkingDirectory[_MAX_PATH] = "";
 
 Bool WorkingDirectory::saveStartupWorkingDirectory()
 {
-	if (s_hasSavedStartupWorkingDirectory)
-		return TRUE;
+	if (s_startupDirectoryState != STARTUP_DIRECTORY_UNSAVED)
+		return s_startupDirectoryState == STARTUP_DIRECTORY_SAVED;
+
+	// TheSuperHackers @bugfix Do not capture a changed directory after an earlier failure.
+	s_startupDirectoryState = STARTUP_DIRECTORY_UNAVAILABLE;
 
 	const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
 	if (len == 0)
@@ -44,7 +47,7 @@ Bool WorkingDirectory::saveStartupWorkingDirectory()
 		return FALSE;
 	}
 
-	s_hasSavedStartupWorkingDirectory = TRUE;
+	s_startupDirectoryState = STARTUP_DIRECTORY_SAVED;
 	return TRUE;
 }
 
@@ -74,8 +77,7 @@ Bool WorkingDirectory::setStartupWorkingDirectory()
 Bool WorkingDirectory::setExecutableWorkingDirectory()
 {
 	s_hasSetWorkingDirectory = TRUE;
-	if (!saveStartupWorkingDirectory())
-		return FALSE;
+	saveStartupWorkingDirectory();
 
 	Char buffer[_MAX_PATH];
 	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
@@ -105,7 +107,8 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
 {
 	s_hasSetWorkingDirectory = TRUE;
-	return saveStartupWorkingDirectory() && setWorkingDirectory(path);
+	saveStartupWorkingDirectory();
+	return setWorkingDirectory(path);
 }
 
 Bool WorkingDirectory::hasSetWorkingDirectory()
