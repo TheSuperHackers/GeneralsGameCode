@@ -3803,9 +3803,8 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCente
 		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
 	}
 
-	// Reserve the renderer's origin drift on both sides, plus half a cell per side for center rounding.
-	const Int centeringMargin = 2*HeightMapRenderObjClass::CENTER_LIMIT + 1;
-	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + centeringMargin;
+	// CENTER_LIMIT permits two cells of origin drift per axis; nearest-cell centering adds half a cell.
+	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + 5;
 	const Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1)/VERTEX_BUFFER_TILE_LENGTH;
 	const Int drawSize = 1 + blocks*VERTEX_BUFFER_TILE_LENGTH;
 	dimensions.x = std::min(map->getXExtent(), std::max(minimumSize.x, drawSize));
