@@ -41,7 +41,7 @@ private:
 
 	static Bool s_hasSetWorkingDirectory;
 	static Char s_startupWorkingDirectory[];
-	static const Bool s_hasStartupWorkingDirectory;
+	static const Bool s_startupWorkingDirectoryInitializer;
 };
 
 } // namespace rts

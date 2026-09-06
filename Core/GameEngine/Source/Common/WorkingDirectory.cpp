@@ -20,23 +20,19 @@
 
 #include "Common/WorkingDirectory.h"
 
-// Capture before static constructors can reach startup parsing through DebugInit.
-#pragma warning(push)
-#pragma warning(disable : 4073)
-#pragma init_seg(lib)
-#pragma warning(pop)
-
 namespace rts
 {
 
 Bool WorkingDirectory::s_hasSetWorkingDirectory = FALSE;
 Char WorkingDirectory::s_startupWorkingDirectory[_MAX_PATH] = "";
-const Bool WorkingDirectory::s_hasStartupWorkingDirectory = WorkingDirectory::saveStartupWorkingDirectory();
+// Request capture at startup, even if no setter is called.
+const Bool WorkingDirectory::s_startupWorkingDirectoryInitializer = WorkingDirectory::saveStartupWorkingDirectory();
 
 Bool WorkingDirectory::saveStartupWorkingDirectory()
 {
-	// Runs during static initialization, before the engine's memory manager and logging.
-	const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
+	// An earlier static constructor may call a setter before our initializer runs.
+	// Cache the first capture, including failure, without logging or allocating.
+	static const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
 	return len > 0 && len < ARRAY_SIZE(s_startupWorkingDirectory);
 }
 
@@ -60,7 +56,7 @@ Bool WorkingDirectory::setWorkingDirectory(const char *path)
 Bool WorkingDirectory::setStartupWorkingDirectory()
 {
 	s_hasSetWorkingDirectory = TRUE;
-	if (!s_hasStartupWorkingDirectory)
+	if (!saveStartupWorkingDirectory())
 	{
 		DEBUG_LOG(("Startup working directory is unavailable"));
 		return FALSE;
@@ -71,6 +67,7 @@ Bool WorkingDirectory::setStartupWorkingDirectory()
 Bool WorkingDirectory::setExecutableWorkingDirectory()
 {
 	s_hasSetWorkingDirectory = TRUE;
+	saveStartupWorkingDirectory();
 
 	Char buffer[_MAX_PATH];
 	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
@@ -100,6 +97,7 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
 {
 	s_hasSetWorkingDirectory = TRUE;
+	saveStartupWorkingDirectory();
 	return setWorkingDirectory(path);
 }
 
