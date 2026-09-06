@@ -23,41 +23,27 @@
 namespace rts
 {
 
-enum WorkingDirectorySelection
-{
-	WORKING_DIRECTORY_EXECUTABLE,
-	WORKING_DIRECTORY_CURRENT,
-	WORKING_DIRECTORY_PATH,
-};
+Bool WorkingDirectory::s_hasSetWorkingDirectory = FALSE;
+Bool WorkingDirectory::s_hasSavedStartupWorkingDirectory = FALSE;
+Char WorkingDirectory::s_startupWorkingDirectory[_MAX_PATH] = "";
 
-static WorkingDirectorySelection s_workingDirectorySelection = WORKING_DIRECTORY_EXECUTABLE;
-static const Char *s_workingDirectoryPath = nullptr;
-
-static Bool setCurrentDirectoryToExecutablePath()
+Bool WorkingDirectory::saveStartupWorkingDirectory()
 {
-	Char buffer[_MAX_PATH];
-	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
-	if (len == 0 || len >= ARRAY_SIZE(buffer))
+	if (s_hasSavedStartupWorkingDirectory)
+		return TRUE;
+
+	const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
+	if (len == 0 || len >= ARRAY_SIZE(s_startupWorkingDirectory))
 	{
-		DEBUG_LOG(("Failed to get executable path for working directory (error %d)", GetLastError()));
+		DEBUG_LOG(("Failed to get startup working directory (error %d)", GetLastError()));
 		return FALSE;
 	}
 
-	if (Char *pEnd = strrchr(buffer, '\\'))
-	{
-		*pEnd = 0;
-	}
-
-	if (::SetCurrentDirectory(buffer) == 0)
-	{
-		DEBUG_LOG(("Failed to set working directory to executable path '%s' (error %d)", buffer, GetLastError()));
-		return FALSE;
-	}
-
+	s_hasSavedStartupWorkingDirectory = TRUE;
 	return TRUE;
 }
 
-static Bool setCurrentDirectoryToPath(const char *path)
+Bool WorkingDirectory::setWorkingDirectory(const char *path)
 {
 	if (path == nullptr || path[0] == '\0')
 		return FALSE;
@@ -71,33 +57,43 @@ static Bool setCurrentDirectoryToPath(const char *path)
 	return TRUE;
 }
 
-void selectCurrentWorkingDirectory()
+Bool WorkingDirectory::setStartupWorkingDirectory()
 {
-	s_workingDirectorySelection = WORKING_DIRECTORY_CURRENT;
-	s_workingDirectoryPath = nullptr;
+	s_hasSetWorkingDirectory = TRUE;
+	return saveStartupWorkingDirectory() && setWorkingDirectory(s_startupWorkingDirectory);
 }
 
-void selectExecutableWorkingDirectory()
+Bool WorkingDirectory::setExecutableWorkingDirectory()
 {
-	s_workingDirectorySelection = WORKING_DIRECTORY_EXECUTABLE;
-	s_workingDirectoryPath = nullptr;
+	s_hasSetWorkingDirectory = TRUE;
+	saveStartupWorkingDirectory();
+
+	Char buffer[_MAX_PATH];
+	const DWORD len = GetModuleFileName(nullptr, buffer, ARRAY_SIZE(buffer));
+	if (len == 0 || len >= ARRAY_SIZE(buffer))
+	{
+		DEBUG_LOG(("Failed to get executable path for working directory (error %d)", GetLastError()));
+		return FALSE;
+	}
+
+	if (Char *pEnd = strrchr(buffer, '\\'))
+	{
+		*pEnd = 0;
+	}
+
+	return setWorkingDirectory(buffer);
 }
 
-void selectWorkingDirectoryPath(const char *path)
+Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
 {
-	s_workingDirectorySelection = WORKING_DIRECTORY_PATH;
-	s_workingDirectoryPath = path;
+	s_hasSetWorkingDirectory = TRUE;
+	saveStartupWorkingDirectory();
+	return setWorkingDirectory(path);
 }
 
-void applySelectedWorkingDirectory()
+Bool WorkingDirectory::hasSetWorkingDirectory()
 {
-	if (s_workingDirectorySelection == WORKING_DIRECTORY_CURRENT)
-		return;
-
-	if (s_workingDirectorySelection == WORKING_DIRECTORY_PATH && setCurrentDirectoryToPath(s_workingDirectoryPath))
-		return;
-
-	setCurrentDirectoryToExecutablePath();
+	return s_hasSetWorkingDirectory;
 }
 
 } // namespace rts

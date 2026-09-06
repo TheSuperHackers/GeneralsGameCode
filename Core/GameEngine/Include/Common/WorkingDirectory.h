@@ -24,12 +24,22 @@ namespace rts
 {
 
 // TheSuperHackers @feature 14/08/2026
-// Command-line parsing records the last working directory option here, then
-// applies it after parsing. The default is the executable directory.
+// Saves the inherited working directory before changing it so it can be restored.
+class WorkingDirectory
+{
+public:
+	static Bool setStartupWorkingDirectory();
+	static Bool setExecutableWorkingDirectory();
+	static Bool setCustomWorkingDirectory(const char *path);
+	static Bool hasSetWorkingDirectory();
 
-void selectCurrentWorkingDirectory();
-void selectExecutableWorkingDirectory();
-void selectWorkingDirectoryPath(const char *path);
-void applySelectedWorkingDirectory();
+private:
+	static Bool saveStartupWorkingDirectory();
+	static Bool setWorkingDirectory(const char *path);
+
+	static Bool s_hasSetWorkingDirectory;
+	static Bool s_hasSavedStartupWorkingDirectory;
+	static Char s_startupWorkingDirectory[];
+};
 
 } // namespace rts

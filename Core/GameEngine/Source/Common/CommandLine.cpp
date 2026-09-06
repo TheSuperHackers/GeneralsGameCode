@@ -467,7 +467,8 @@ Int parseUseCwd(char *[], int)
 {
 	// TheSuperHackers @feature 14/08/2026
 	// -useCwd keeps the OS working directory.
-	rts::selectCurrentWorkingDirectory();
+	if (!rts::WorkingDirectory::setStartupWorkingDirectory())
+		rts::WorkingDirectory::setExecutableWorkingDirectory();
 	return 1;
 }
 
@@ -477,10 +478,11 @@ Int parseSetCwd(char *args[], int num)
 	// -setCwd <path> overrides the working directory.
 	if (num <= 1 || args[1] == nullptr || args[1][0] == '-' || args[1][0] == '/')
 	{
-		rts::selectExecutableWorkingDirectory();
+		rts::WorkingDirectory::setExecutableWorkingDirectory();
 		return 1;
 	}
-	rts::selectWorkingDirectoryPath(args[1]);
+	if (!rts::WorkingDirectory::setCustomWorkingDirectory(args[1]))
+		rts::WorkingDirectory::setExecutableWorkingDirectory();
 	return 2;
 }
 
@@ -1439,7 +1441,8 @@ void CommandLine::parseCommandLineForStartup()
 	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup),
 		&TheWritableGlobalData->m_commandLineData.m_parsedArguments);
 
-	rts::applySelectedWorkingDirectory();
+	if (!rts::WorkingDirectory::hasSetWorkingDirectory())
+		rts::WorkingDirectory::setExecutableWorkingDirectory();
 }
 
 void CommandLine::parseCommandLineForEngineInit()
