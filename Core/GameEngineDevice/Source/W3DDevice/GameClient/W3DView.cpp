@@ -3717,149 +3717,102 @@ void W3DView::Add_Camera_Shake (const Coord3D & position,float radius,float dura
 	CameraShakerSystem.Add_Camera_Shake(vpos,radius,duration,power);
 }
 
-bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
+bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions, Vector2 &drawCenter) const
 {
-	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
-	{
-		DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
-
-		if (const WorldHeightMap *heightMap = TheTerrainRenderObject->getMap())
-		{
-			dimensions.x = heightMap->getXExtent();
-			dimensions.y = heightMap->getYExtent();
-			return true;
-		}
-
+	const WorldHeightMap *map = TheTerrainRenderObject->getMap();
+	if (!map)
 		return false;
-	}
+
+	// A horizon-crossing or invalid projection has no finite footprint. Keep the map-sized fallback.
+	dimensions.x = map->getXExtent();
+	dimensions.y = map->getYExtent();
+	drawCenter.Set(0.0f, 0.0f);
+	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
+		return true;
 
 	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
-
+	ICoord2D minimumSize;
 	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
 	{
-		// TheSuperHackers @info The scripted camera always uses the regular draw sizes
-		// and uses terrain oversize if it needs to enlarge.
-		dimensions.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
-		dimensions.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+		minimumSize.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
 	}
 	else
 	{
 		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
 		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
-		dimensions.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
-		dimensions.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+		minimumSize.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+		minimumSize.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
 	}
 
-	// TheSuperHackers @bugfix sailro 13/06/2026 Grow the terrain draw window to cover the visible ground
-	// when the camera is zoomed far out, for all maps.
-	//
-	// Terrain is only drawn within a window of tiles around the view center (the NORMAL/LOW_ANGLE sizes
-	// chosen above). When the camera is zoomed far out the visible ground reaches past that window, so the
-	// terrain there is not drawn and any map water shows through behind it. Many maps that have no real
-	// water still keep a map-sized "Default Water" polygon, which then makes the whole map look flooded.
-	// The legacy workaround was DrawEntireTerrain=Yes, which always draws the entire map and is very slow
-	// even at normal zoom (see TheSuperHackers/GeneralsGameCode#2743).
-	//
-	// Instead we size the window to the actual visible footprint: project the four view corners onto the
-	// ground plane (the same method updateCenter() uses to position the window) and grow the draw size just
-	// enough to span them. At normal zoom the footprint is smaller than the normal window, so this is a
-	// no-op and behavior is unchanged; the window only grows - bounded by the map extent - as the camera
-	// zooms out. The size is snapped to whole vertex-buffer tiles so the terrain reallocates only when a
-	// zoom threshold is crossed, and a single square size avoids swapping the draw dimensions as the
-	// camera rotates.
-	//
-	// This also applies to the scripted camera (for example the main menu shell map), whose view can reach
-	// past the regular draw window and would otherwise leave the ground uncovered.
-	const WorldHeightMap *map = TheTerrainRenderObject->getMap();
-	if (map)
+	// TheSuperHackers @bugfix sailro 06/09/2026 Cover the visible terrain without yaw-dependent buffer
+	// reallocations. The two cached terrain height limits also cover valleys and nearby higher ground.
+	const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
+	const Vector3 cameraLocation = m_3DCamera->Get_Position();
+	const Real groundZ[2] = {
+		TheTerrainRenderObject->getMinHeight(),
+		std::min(TheTerrainRenderObject->getMaxHeight(), cameraLocation.Z)
+	};
+	if (!cameraLocation.Is_Valid() || cameraLocation.Z <= groundZ[0])
+		return true;
+
+	Vector2 viewPlaneMin, viewPlaneMax;
+	m_3DCamera->Get_View_Plane(viewPlaneMin, viewPlaneMax);
+	const Int planeCount = groundZ[0] < groundZ[1] ? 2 : 1;
+	Vector3 corners[8];
+	Vector2 footprintMin, footprintMax;
+	for (Int i = 0; i < 4; ++i)
 	{
-		const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
-		const Vector3 cameraLocation = m_3DCamera->Get_Position();
-		Vector2 viewPlaneMin, viewPlaneMax;
-		m_3DCamera->Get_View_Plane(viewPlaneMin, viewPlaneMax);
-		Vector2 viewportMin, viewportMax;
-		m_3DCamera->Get_Viewport(viewportMin, viewportMax);
+		const Vector3 ray((i & 1) ? viewPlaneMax.X : viewPlaneMin.X,
+			(i & 2) ? viewPlaneMax.Y : viewPlaneMin.Y, -1.0f);
+		const Real rayZ = cameraTransform[2][0]*ray.X + cameraTransform[2][1]*ray.Y - cameraTransform[2][2];
+		if (!(rayZ < 0.0f))
+			return true;
 
-		const Real viewPlaneScaleX = viewPlaneMax.X - viewPlaneMin.X;
-		const Real viewPlaneScaleY = viewPlaneMax.Y - viewPlaneMin.Y;
-		const Real viewPlaneDist = -1.0f; // The view plane is always 1.0 from the camera, looking down -Z.
-		const Real groundZ = m_pos.z;
-
-		// Bound the projected corners to the map extent so a near horizontal corner ray - which meets the
-		// ground far away, behind the camera, or not at all - cannot produce a degenerate draw size.
-		const Int mapExtent = (map->getXExtent() > map->getYExtent()) ? map->getXExtent() : map->getYExtent();
-		const Real worldBound = (Real)mapExtent * MAP_XY_FACTOR;
-		const Real worldMinX = cameraLocation.X - worldBound;
-		const Real worldMaxX = cameraLocation.X + worldBound;
-		const Real worldMinY = cameraLocation.Y - worldBound;
-		const Real worldMaxY = cameraLocation.Y + worldBound;
-
-		Real footprintMinX = cameraLocation.X, footprintMaxX = cameraLocation.X;
-		Real footprintMinY = cameraLocation.Y, footprintMaxY = cameraLocation.Y;
-
-		for (Int i = 0; i < 2; ++i)
+		const Real inverseRayZ = 1.0f/rayZ;
+		for (Int plane = 0; plane < planeCount; ++plane)
 		{
-			for (Int j = 0; j < 2; ++j)
-			{
-				const Real xMod = (-i + 0.5f + viewportMin.X) * viewPlaneDist * viewPlaneScaleX;
-				const Real yMod = ( j - 0.5f - viewportMin.Y) * viewPlaneDist * viewPlaneScaleY;
-
-				const Vector3 rayDirection(
-					viewPlaneDist * cameraTransform[0][2] + xMod * cameraTransform[0][0] + yMod * cameraTransform[0][1],
-					viewPlaneDist * cameraTransform[1][2] + xMod * cameraTransform[1][0] + yMod * cameraTransform[1][1],
-					viewPlaneDist * cameraTransform[2][2] + xMod * cameraTransform[2][0] + yMod * cameraTransform[2][1]);
-
-				// A ray's scale does not affect its intersection with the ground plane. Reuse one division
-				// for both coordinates instead of normalizing the ray and solving X and Y independently.
-				const Real rayScale = (groundZ - cameraLocation.Z) / rayDirection.Z;
-				Real groundX = cameraLocation.X + rayDirection.X * rayScale;
-				Real groundY = cameraLocation.Y + rayDirection.Y * rayScale;
-
-				// clamp() leaves NaN unchanged, so replace NaN from a parallel ray with the existing
-				// conservative fallback first. Infinite intersections are handled by clamp().
-				if (_isnan(groundX))
-					groundX = worldMinX;
-				if (_isnan(groundY))
-					groundY = worldMinY;
-				groundX = clamp(worldMinX, groundX, worldMaxX);
-				groundY = clamp(worldMinY, groundY, worldMaxY);
-
-				if (groundX < footprintMinX)
-					footprintMinX = groundX;
-				if (groundX > footprintMaxX)
-					footprintMaxX = groundX;
-				if (groundY < footprintMinY)
-					footprintMinY = groundY;
-				if (groundY > footprintMaxY)
-					footprintMaxY = groundY;
-			}
+			Vector3 &corner = corners[plane*4 + i];
+			corner = ray * ((groundZ[plane] - cameraLocation.Z)*inverseRayZ);
+			if (!corner.Is_Valid())
+				return true;
+			const Vector2 offset(
+				cameraTransform[0][0]*corner.X + cameraTransform[0][1]*corner.Y + cameraTransform[0][2]*corner.Z,
+				cameraTransform[1][0]*corner.X + cameraTransform[1][1]*corner.Y + cameraTransform[1][2]*corner.Z);
+			if (i == 0 && plane == 0)
+				footprintMin = footprintMax = offset;
+			footprintMin.X = std::min(footprintMin.X, offset.X);
+			footprintMin.Y = std::min(footprintMin.Y, offset.Y);
+			footprintMax.X = std::max(footprintMax.X, offset.X);
+			footprintMax.Y = std::max(footprintMax.Y, offset.Y);
 		}
-
-		// Use a single square size (the larger footprint dimension) so the window covers the footprint at
-		// any camera yaw without swapping its X and Y extents. Add a small margin for the centering
-		// tolerance: updateCenter() only recenters the window once it has drifted by more than a couple of
-		// tiles (CENTER_LIMIT), so the drawn window can trail the footprint by that much.
-		const Real footprintSpanX = footprintMaxX - footprintMinX;
-		const Real footprintSpanY = footprintMaxY - footprintMinY;
-		const Real footprintSpan = (footprintSpanX > footprintSpanY) ? footprintSpanX : footprintSpanY;
-		const Int centeringMarginTiles = 4;
-		const Int footprintTiles = (Int)(footprintSpan / MAP_XY_FACTOR) + centeringMarginTiles;
-
-		// Snap up to the smallest tile-based draw size (1 + N * VERTEX_BUFFER_TILE_LENGTH) that still covers
-		// the footprint. Growing only to the required block count - rather than always adding a whole spare
-		// block - keeps this a no-op at normal zoom and avoids drawing an extra ring of terrain blocks.
-		Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1) / VERTEX_BUFFER_TILE_LENGTH;
-		if (blocks < 1)
-			blocks = 1;
-		Int zoomDrawSize = 1 + blocks * VERTEX_BUFFER_TILE_LENGTH;
-		if (zoomDrawSize > mapExtent)
-			zoomDrawSize = mapExtent;
-		if (zoomDrawSize > dimensions.x)
-			dimensions.x = zoomDrawSize;
-		if (zoomDrawSize > dimensions.y)
-			dimensions.y = zoomDrawSize;
 	}
 
+	// The maximum pairwise XY distance bounds every rotated span. Compute it in camera space to avoid
+	// yaw-dependent rounding at allocation thresholds; remove the height difference between planes.
+	Real diameterSquared = 0.0f;
+	const Real worldBound = std::max(map->getXExtent(), map->getYExtent())*MAP_XY_FACTOR;
+	for (Int i = 0; i < planeCount*4; ++i)
+	{
+		for (Int j = 0; j < i; ++j)
+		{
+			const Vector3 delta = corners[i] - corners[j];
+			const Real deltaZ = groundZ[i/4] - groundZ[j/4];
+			const Real distanceSquared = delta.Length2() - deltaZ*deltaZ;
+			if (!(distanceSquared < worldBound*worldBound))
+				return true;
+			diameterSquared = std::max(diameterSquared, distanceSquared);
+		}
+	}
+
+	// CENTER_LIMIT permits two cells of origin drift per axis; nearest-cell centering adds half a cell.
+	const Int footprintTiles = (Int)ceil(WWMath::Sqrt(diameterSquared)/MAP_XY_FACTOR) + 5;
+	const Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1)/VERTEX_BUFFER_TILE_LENGTH;
+	const Int drawSize = 1 + blocks*VERTEX_BUFFER_TILE_LENGTH;
+	dimensions.x = std::min(map->getXExtent(), std::max(minimumSize.x, drawSize));
+	dimensions.y = std::min(map->getYExtent(), std::max(minimumSize.y, drawSize));
+	drawCenter.Set(cameraLocation.X + (footprintMin.X + footprintMax.X)*0.5f,
+		cameraLocation.Y + (footprintMin.Y + footprintMax.Y)*0.5f);
 	return true;
 }
 
@@ -3868,8 +3821,9 @@ void W3DView::updateTerrain()
 	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
 
 	ICoord2D drawSize;
-
-	if (getDesiredTerrainDrawSize(drawSize))
+	Vector2 drawCenter;
+	const bool hasDrawCenter = getDesiredTerrainDrawSize(drawSize, drawCenter);
+	if (hasDrawCenter)
 	{
 		TheTerrainRenderObject->setTerrainDrawSize(drawSize.x, drawSize.y);
 	}
@@ -3877,7 +3831,7 @@ void W3DView::updateTerrain()
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
 
 	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
-	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);
+	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it, hasDrawCenter ? &drawCenter : nullptr);
 
 	if (it)
 	{
