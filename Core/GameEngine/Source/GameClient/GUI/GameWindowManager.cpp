@@ -103,9 +103,6 @@ void GameWindowManager::processDestroyList()
 		if( m_keyboardFocus == doDestroy )
 			winSetFocus( nullptr );
 
-		if( (m_modalHead != nullptr) && (doDestroy == m_modalHead->window) )
-			winUnsetModal( m_modalHead->window );
-
 		if( m_currMouseRgn == doDestroy )
 			m_currMouseRgn = nullptr;
 
@@ -1422,8 +1419,7 @@ Int GameWindowManager::winDestroy( GameWindow *window )
 	if( m_keyboardFocus == window )
 		winSetFocus( nullptr );
 
-	if( (m_modalHead != nullptr) && (window == m_modalHead->window) )
-		winUnsetModal( m_modalHead->window );
+	winUnsetModal( window );
 
 	if( m_currMouseRgn == window )
 		m_currMouseRgn = nullptr;
@@ -1525,33 +1521,41 @@ Int GameWindowManager::winSetModal( GameWindow *window )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** pops window off of the modal stack.  If this window is not the top
-	* of the modal stack an error will occur. */
+/** takes the window off the modal stack from anywhere in the stack */
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix arcticdolphin 07/09/2026 Remove the window from anywhere in the modal stack, not just the top, so a destroyed window cannot leave a dangling entry behind.
 Int GameWindowManager::winUnsetModal( GameWindow *window )
 {
-	ModalWindow *next;
-
 	if( window == nullptr )
 		return WIN_ERR_INVALID_WINDOW;
 
-	// verify entry is at top of list
-	if( (m_modalHead == nullptr) || (m_modalHead->window != window) )
+	ModalWindow *previous = nullptr;
+	ModalWindow *modal = m_modalHead;
+	Bool found = FALSE;
+
+	while( modal != nullptr )
 	{
+		ModalWindow *next = modal->next;
 
-		// return error if not
-		DEBUG_LOG(( "WinUnsetModal: Invalid window attempting to unset modal (%d)",
-								window->winGetWindowId() ));
-		return WIN_ERR_GENERAL_FAILURE;
+		if( modal->window == window )
+		{
+			if( previous != nullptr )
+				previous->next = next;
+			else
+				m_modalHead = next;
 
+			deleteInstance(modal);
+			found = TRUE;
+		}
+		else
+		{
+			previous = modal;
+		}
+
+		modal = next;
 	}
 
-	// remove from top of list
-	next = m_modalHead->next;
-	deleteInstance(m_modalHead);
-	m_modalHead = next;
-
-	return WIN_ERR_OK;
+	return found ? WIN_ERR_OK : WIN_ERR_GENERAL_FAILURE;
 
 }
 
