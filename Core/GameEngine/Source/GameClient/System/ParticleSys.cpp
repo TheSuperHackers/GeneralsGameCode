@@ -2985,6 +2985,8 @@ ParticleSystem *ParticleSystemTemplate::createSlaveSystem( Bool createSlaves ) c
 ParticleSystemManager::ParticleSystemManager()
 {
 
+	for (Int alignment = 0; alignment < ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT; ++alignment)
+		m_alignmentSystemsTail[alignment] = m_allParticleSystemList.end();
 	m_uniqueSystemID = INVALID_PARTICLE_SYSTEM_ID;
 
 	m_onScreenParticleCount = 0;
@@ -3374,7 +3376,26 @@ void ParticleSystemManager::removeParticle( Particle *particleToRemove)
 void ParticleSystemManager::friend_addParticleSystem( ParticleSystem *particleSystemToAdd )
 {
 	DEBUG_ASSERTCRASH(particleSystemToAdd != nullptr, ("ParticleSystemManager::friend_addParticleSystem: ParticleSystem is null"));
-	m_allParticleSystemList.push_back(particleSystemToAdd);
+	// Group particle systems by alignment
+	const ParticleSystemInfo::ParticleAlignmentType alignment = particleSystemToAdd->getParticleAlignment();
+	if (particleSystemToAdd->isUsingParticles() && alignment != ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD)
+	{
+		ParticleSystemListIt position = m_allParticleSystemList.begin();
+		for (Int group = alignment; group < ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT; ++group)
+		{
+			if (m_alignmentSystemsTail[group] != m_allParticleSystemList.end())
+			{
+				position = m_alignmentSystemsTail[group];
+				++position;
+				break;
+			}
+		}
+		m_alignmentSystemsTail[alignment] = m_allParticleSystemList.insert(position, particleSystemToAdd);
+	}
+	else
+	{
+		m_allParticleSystemList.push_back(particleSystemToAdd);
+	}
 	m_systemMap[particleSystemToAdd->getSystemID()] = particleSystemToAdd;
 	++m_particleSystemCount;
 }
@@ -3387,6 +3408,20 @@ void ParticleSystemManager::friend_removeParticleSystem( ParticleSystem *particl
 	ParticleSystemListIt it = std::find(m_allParticleSystemList.begin(), m_allParticleSystemList.end(), particleSystemToRemove);
 	if (it != m_allParticleSystemList.end()) {
 		m_systemMap.erase((*it)->getSystemID());
+		for (Int alignment = 0; alignment < ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT; ++alignment)
+		{
+			if (it != m_alignmentSystemsTail[alignment])
+				continue;
+			m_alignmentSystemsTail[alignment] = m_allParticleSystemList.end();
+			if (it != m_allParticleSystemList.begin())
+			{
+				ParticleSystemListIt previous = it;
+				--previous;
+				if ((*previous)->isUsingParticles() && (*previous)->getParticleAlignment() == alignment)
+					m_alignmentSystemsTail[alignment] = previous;
+			}
+			break;
+		}
 		m_allParticleSystemList.erase(it);
 		--m_particleSystemCount;
 	} else {

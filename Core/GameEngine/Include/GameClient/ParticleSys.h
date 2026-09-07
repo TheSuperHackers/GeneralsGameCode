@@ -856,6 +856,7 @@ protected:
 	ParticleSystemID m_uniqueSystemID;					///< unique system ID to assign to each system created
 
 	ParticleSystemList m_allParticleSystemList;
+	ParticleSystemListIt m_alignmentSystemsTail[ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT]; ///< last system per grouped alignment, or end if none
 
 	UnsignedInt m_particleCount;
 	TerrainParticleRenderMode m_terrainParticleRenderMode; ///< Local runtime rendering preference; not serialized
