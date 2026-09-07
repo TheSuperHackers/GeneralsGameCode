@@ -247,7 +247,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			pos = p->getPosition();
 			psize = p->getSize();
 
-			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && sys->m_particleAlignment != FALSE );
+			m_fieldParticleCount += ( sys->getPriority() == AREA_EFFECT && !sys->shouldBillboard() );
 
 			//@todo lorenzen sez: use pointer arithmetic for these arrays
 			personalities[pointCount] = p->getPersonality();
