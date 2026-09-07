@@ -36,12 +36,13 @@ public:
 	static Bool hasSetWorkingDirectory();
 
 private:
+	friend struct WorkingDirectoryInitializer;
+
 	static Bool saveStartupWorkingDirectory();
 	static Bool setWorkingDirectory(const char *path);
 
 	static Bool s_hasSetWorkingDirectory;
 	static Char s_startupWorkingDirectory[];
-	static const Bool s_startupWorkingDirectoryInitializer;
 };
 
 } // namespace rts

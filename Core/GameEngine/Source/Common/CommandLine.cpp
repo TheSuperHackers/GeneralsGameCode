@@ -473,16 +473,12 @@ Int parseUseCwd(char *[], int)
 Int parseSetCwd(char *args[], int num)
 {
 	// -setCwd <path> overrides the working directory.
-	if (num <= 1)
+	if (num > 1)
 	{
-		DEBUG_LOG(("-setCwd requires a directory path"));
-		return 1;
-	}
-	if (rts::WorkingDirectory::setCustomWorkingDirectory(args[1]))
+		rts::WorkingDirectory::setCustomWorkingDirectory(args[1]);
 		return 2;
-
-	// Leave a failed option-like value available for subsequent argument parsing.
-	return args[1][0] == '-' || args[1][0] == '/' ? 1 : 2;
+	}
+	return 1;
 }
 
 Int parseXRes(char *args[], int num)

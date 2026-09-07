@@ -25,8 +25,17 @@ namespace rts
 
 Bool WorkingDirectory::s_hasSetWorkingDirectory = FALSE;
 Char WorkingDirectory::s_startupWorkingDirectory[_MAX_PATH] = "";
+
+struct WorkingDirectoryInitializer
+{
+	WorkingDirectoryInitializer()
+	{
+		WorkingDirectory::saveStartupWorkingDirectory();
+	}
+};
+
 // Request capture at startup, even if no setter is called.
-const Bool WorkingDirectory::s_startupWorkingDirectoryInitializer = WorkingDirectory::saveStartupWorkingDirectory();
+static WorkingDirectoryInitializer s_workingDirectoryInitializer;
 
 Bool WorkingDirectory::saveStartupWorkingDirectory()
 {
@@ -87,7 +96,8 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 		DEBUG_LOG(("Executable path has no directory: '%s'", buffer));
 		return FALSE;
 	}
-	// TheSuperHackers @bugfix Keep the separator so drive roots remain absolute.
+	// TheSuperHackers @bugfix For "C:\game.exe", retain "C:\" as the directory.
+	// Removing the backslash leaves "C:", which refers to that drive's current directory.
 	pEnd[1] = '\0';
 
 	return setWorkingDirectory(buffer);
