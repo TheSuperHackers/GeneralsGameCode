@@ -3326,6 +3326,8 @@ void *operator new[](size_t size)
 void operator delete(void *p)
 {
 	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
@@ -3338,6 +3340,8 @@ void operator delete(void *p)
 void operator delete[](void *p)
 {
 	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
@@ -3366,6 +3370,8 @@ void* operator new(size_t size, const char * fname, int)
 void operator delete(void * p, const char *, int)
 {
 	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
@@ -3394,6 +3400,8 @@ void* operator new[](size_t size, const char * fname, int)
 void operator delete[](void * p, const char *, int)
 {
 	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
@@ -3415,6 +3423,8 @@ void *calloc(size_t a, size_t b)
 void  free(void * p)
 {
 	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	TheDynamicMemoryAllocator->freeBytes(p);
