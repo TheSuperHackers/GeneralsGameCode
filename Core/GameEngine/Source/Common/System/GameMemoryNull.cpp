@@ -65,7 +65,7 @@ void *DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes)
 /**
 	free a chunk-o-bytes allocated by this dma. it's ok to pass null.
 */
-void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
+void DynamicMemoryAllocator::freeBytes(void* pBlockPtr) noexcept
 {
 	free(pBlockPtr);
 }

@@ -448,7 +448,7 @@ public:
 #endif
 
 	/// free the bytes. (assumes allocated by this dma.)
-	void freeBytes(void* pMem);
+	void freeBytes(void* pMem) noexcept;
 
 	/**
 		return the actual number of bytes that would be allocated
