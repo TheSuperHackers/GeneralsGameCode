@@ -431,7 +431,7 @@ public:
 	m_emissionVolume;														///< the dimensions of the emission volume
 
 	Bool m_isEmissionVolumeHollow;							///< if true, only create particles at boundary of volume
-	Bool m_isGroundAligned;											///< if true, align with the ground. if false, then do the normal billboarding.
+	Bool m_particleAlignment;											///< if true, align with the ground. if false, then do the normal billboarding.
 	Bool m_isEmitAboveGroundOnly;								///< if true, only emit particles when the system is above ground.
 	Bool m_isParticleUpTowardsEmitter;					///< if true, align the up direction to be towards the emitter.
 
@@ -614,7 +614,7 @@ public:
 	Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
-	Bool shouldBillboard() const { return !m_isGroundAligned; }
+	Bool shouldBillboard() const { return !m_particleAlignment; }
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
 

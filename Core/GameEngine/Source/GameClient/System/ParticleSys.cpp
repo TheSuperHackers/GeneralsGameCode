@@ -752,7 +752,7 @@ void Particle::loadPostProcess()
 ParticleSystemInfo::ParticleSystemInfo()
 {
 	m_priority = PARTICLE_PRIORITY_LOWEST;
-	m_isGroundAligned = false;
+	m_particleAlignment = false;
 	m_isEmitAboveGroundOnly = false;
 	m_isParticleUpTowardsEmitter = false;
 
@@ -1002,7 +1002,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 	xfer->xferBool( &m_isEmissionVolumeHollow );
 
 	// is ground aligned
-	xfer->xferBool( &m_isGroundAligned );
+	xfer->xferBool( &m_particleAlignment );
 
 	// emit above ground only
 	xfer->xferBool( &m_isEmitAboveGroundOnly );
@@ -1168,7 +1168,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_emissionVolume = sysTemplate->m_emissionVolume;
 
 	m_isEmissionVolumeHollow = sysTemplate->m_isEmissionVolumeHollow;
-	m_isGroundAligned = sysTemplate->m_isGroundAligned;
+	m_particleAlignment = sysTemplate->m_particleAlignment;
 	m_isEmitAboveGroundOnly = sysTemplate->m_isEmitAboveGroundOnly;
 	m_isParticleUpTowardsEmitter = sysTemplate->m_isParticleUpTowardsEmitter;
 
@@ -1749,7 +1749,7 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 				 TheGameLODManager->isParticleSkipped()) )
 			return nullptr;
 
-		if ( getParticleCount() > 0 && priority == AREA_EFFECT && m_isGroundAligned && TheParticleSystemManager->getFieldParticleCount() > (UnsignedInt)TheGlobalData->m_maxFieldParticleCount )
+		if ( getParticleCount() > 0 && priority == AREA_EFFECT && m_particleAlignment && TheParticleSystemManager->getFieldParticleCount() > (UnsignedInt)TheGlobalData->m_maxFieldParticleCount )
 			return nullptr;
 
 		// ALWAYS_RENDER particles are exempt from all count limits, and are always created, regardless of LOD issues.
@@ -2756,7 +2756,7 @@ const FieldParse ParticleSystemTemplate::m_fieldParseTable[] =
 	{ "VolCylinderLength",			INI::parseReal,																nullptr,		offsetof( ParticleSystemTemplate, m_emissionVolume.cylinder.length ) },
 
 	{ "IsHollow",								INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isEmissionVolumeHollow ) },
-	{ "IsGroundAligned",				INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isGroundAligned ) },
+	{ "IsGroundAligned",				INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_particleAlignment ) },
 	{ "IsEmitAboveGroundOnly",	INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isEmitAboveGroundOnly) },
 	{ "IsParticleUpTowardsEmitter",	INI::parseBool,																nullptr,		offsetof( ParticleSystemTemplate, m_isParticleUpTowardsEmitter) },
 

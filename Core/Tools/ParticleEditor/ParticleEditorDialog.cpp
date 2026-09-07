@@ -1092,7 +1092,7 @@ void DebugWindowDialog::getSwitchFromSystem( IN SwitchType switchType, OUT Bool&
 	{
 		case ST_HOLLOW: switchVal = m_particleSystem->m_isEmissionVolumeHollow; break;
 		case ST_ONESHOT: switchVal = m_particleSystem->m_isOneShot; break;
-		case ST_ALIGNXY: switchVal = m_particleSystem->m_isGroundAligned; break;
+		case ST_ALIGNXY: switchVal = m_particleSystem->m_particleAlignment; break;
 		case ST_EMITABOVEGROUNDONLY: switchVal = m_particleSystem->m_isEmitAboveGroundOnly; break;
 		case ST_PARTICLEUPTOWARDSEMITTER: switchVal = m_particleSystem->m_isParticleUpTowardsEmitter; break;
 	};
@@ -1108,7 +1108,7 @@ void DebugWindowDialog::updateSwitchToSystem( IN SwitchType switchType, IN const
 	{
 		case ST_HOLLOW: m_particleSystem->m_isEmissionVolumeHollow = switchVal; break;
 		case ST_ONESHOT: m_particleSystem->m_isOneShot = switchVal; break;
-		case ST_ALIGNXY: m_particleSystem->m_isGroundAligned = switchVal; break;
+		case ST_ALIGNXY: m_particleSystem->m_particleAlignment = switchVal; break;
 		case ST_EMITABOVEGROUNDONLY: m_particleSystem->m_isEmitAboveGroundOnly = switchVal; break;
 		case ST_PARTICLEUPTOWARDSEMITTER: m_particleSystem->m_isParticleUpTowardsEmitter = switchVal; break;
 	};
