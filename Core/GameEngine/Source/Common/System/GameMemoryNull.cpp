@@ -172,6 +172,11 @@ extern void __cdecl operator delete(void *p)
 	free(p);
 }
 
+extern void __cdecl operator delete(void *p, size_t)
+{
+	free(p);
+}
+
 extern void * __cdecl operator new[](size_t size)
 {
 	void *p = malloc(size);
@@ -182,6 +187,11 @@ extern void * __cdecl operator new[](size_t size)
 }
 
 extern void __cdecl operator delete[](void *p)
+{
+	free(p);
+}
+
+extern void __cdecl operator delete[](void *p, size_t)
 {
 	free(p);
 }

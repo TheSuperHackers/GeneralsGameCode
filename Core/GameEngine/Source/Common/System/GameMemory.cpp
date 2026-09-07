@@ -3338,11 +3338,31 @@ void operator delete(void *p)
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
 
+void operator delete(void *p, size_t)
+{
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
+	preMainInitMemoryManager();
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
+	TheDynamicMemoryAllocator->freeBytes(p);
+}
+
 //-----------------------------------------------------------------------------
 /**
 	overload for global operator delete[]; send requests to TheDynamicMemoryAllocator.
 */
 void operator delete[](void *p)
+{
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
+	preMainInitMemoryManager();
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
+	TheDynamicMemoryAllocator->freeBytes(p);
+}
+
+void operator delete[](void *p, size_t)
 {
 	LINK_TESTER_INCREMENT();
 	if (p == nullptr)
