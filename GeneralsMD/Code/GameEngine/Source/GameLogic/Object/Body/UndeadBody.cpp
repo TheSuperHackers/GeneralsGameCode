@@ -96,6 +96,11 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 
 	ActiveBody::attemptDamage(damageInfo);
 
+#if !RETAIL_COMPATIBLE_CRC
+	if (getObject()->isEffectivelyDead())
+		return;
+#endif
+
 	// After we take it (which allows for damaging special effects), we will do our modifications to the body module
 	if( shouldStartSecondLife )
 		startSecondLife(damageInfo);
@@ -141,6 +146,17 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 			roll -= sdu->getProbabilityModifier( damageInfo );
 			if (roll <= 0)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix Stubbjax 07/09/2026 Ensure the object's die modules trigger their
+				// onDie events if there is no SlowDeathBehavior to handle the second life logic.
+				if (sdu->isRealDeath())
+				{
+					damageInfo->in.m_kill = true;
+					ActiveBody::attemptDamage(damageInfo);
+					break;
+				}
+#endif
+
 				sdu->beginSlowDeath(damageInfo);
 				return;
 			}
