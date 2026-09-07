@@ -744,8 +744,8 @@ public:
 	void initObserverControls();
 	void populateObserverInfoWindow ();
 	void populateObserverList();
-	Bool isObserverControlBarOn() { return m_isObserverCommandBar;}
-	Bool isControlEnabled() { return !isObserverControlBarOn();}
+	Bool isObserverControlBarOn() const { return m_isObserverCommandBar;}
+	Bool isControlEnabled() const { return !isObserverControlBarOn();}
 
 	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
 	Player *getObserverLookAtPlayer () const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.

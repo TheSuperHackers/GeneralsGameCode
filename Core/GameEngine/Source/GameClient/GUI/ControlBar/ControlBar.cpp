@@ -1914,7 +1914,7 @@ void ControlBar::evaluateContextUI()
 				//handle it!
 
 				// we cannot select objects that are controlled by our enemies
-				if( obj->isLocallyControlled() == TRUE || isControllingPlayerNeutral(obj))
+				if( obj->isLocallyControlled() == TRUE || isObserverControlBarOn() || isControllingPlayerNeutral(obj))
 					switchToContext( CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor );
 
 			}
@@ -1924,7 +1924,7 @@ void ControlBar::evaluateContextUI()
 			}
 			else if( obj->getCommandSetString().isEmpty() == FALSE )
 			{
-				if (obj->isLocallyControlled() == TRUE || isControllingPlayerNeutral(obj))
+				if (obj->isLocallyControlled() == TRUE || isObserverControlBarOn() || isControllingPlayerNeutral(obj))
 					switchToContext( CB_CONTEXT_COMMAND, drawToEvaluateFor );
 
 			}

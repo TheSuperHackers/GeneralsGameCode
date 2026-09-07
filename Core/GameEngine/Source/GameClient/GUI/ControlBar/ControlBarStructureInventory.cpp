@@ -212,7 +212,7 @@ void ControlBar::updateContextStructureInventory()
 	//
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 	if( source->isLocallyControlled() == FALSE &&
-			localPlayer->getRelationship( source->getTeam() ) != NEUTRAL )
+		(localPlayer->getRelationship(source->getTeam()) != NEUTRAL && !isObserverControlBarOn()) )
 	{
 		Drawable *draw = source->getDrawable();
 

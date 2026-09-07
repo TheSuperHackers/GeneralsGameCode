@@ -703,7 +703,7 @@ void ControlBar::updateContextCommand()
 
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 	if (obj->isLocallyControlled() == FALSE &&
-			localPlayer->getRelationship(obj->getTeam()) != NEUTRAL)
+		(localPlayer->getRelationship(obj->getTeam()) != NEUTRAL && !isObserverControlBarOn()) )
 	{
 		Drawable *draw = obj->getDrawable();
 
