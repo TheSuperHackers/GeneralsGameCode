@@ -210,7 +210,12 @@ static void memset32(void* ptr, Int value, Int bytesToFill);
 static void doStackDumpOutput(const char* m);
 static void doStackDump(void **stacktrace, int size);
 #endif
-static void preMainInitMemoryManager();
+static NOINLINE void preMainInitMemoryManagerImpl();
+static inline void preMainInitMemoryManager()
+{
+	if (TheDynamicMemoryAllocator == nullptr)
+		preMainInitMemoryManagerImpl();
+}
 
 // ----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS
@@ -3501,11 +3506,13 @@ Bool isMemoryManagerOfficiallyInited()
 	This is only called if memory is allocated prior to the normal call to initMemoryManager
 	(generally via a static C++ ctor).
 */
-static void preMainInitMemoryManager()
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static NOINLINE void preMainInitMemoryManagerImpl()
 {
 	if (TheMemoryPoolFactory == nullptr)
 	{
-
 		Int numSubPools;
 		const PoolInitRec *pParms;
 		userMemoryManagerGetDmaParms(&numSubPools, &pParms);
@@ -3520,6 +3527,9 @@ static void preMainInitMemoryManager()
 		DEBUG_LOG(("*** Initialized the Memory Manager prior to main!"));
 	}
 }
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
 
 //-----------------------------------------------------------------------------
 /**
