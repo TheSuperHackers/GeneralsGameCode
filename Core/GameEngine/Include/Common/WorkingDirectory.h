@@ -23,7 +23,7 @@
 namespace rts
 {
 
-// TheSuperHackers @feature 14/08/2026
+// TheSuperHackers @feature CryoTheRenegade 14/08/2026
 // Saves and restores the process working directory.
 class WorkingDirectory
 {
@@ -32,7 +32,7 @@ public:
 	static Bool setExecutableWorkingDirectory();
 	// Relative paths are resolved from the current working directory.
 	static Bool setCustomWorkingDirectory(const char *path);
-	// Returns true after any setter call, including a failed attempt.
+	// Returns true after a setter successfully changes the working directory.
 	static Bool hasSetWorkingDirectory();
 
 private:

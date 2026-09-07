@@ -32,7 +32,7 @@ Bool WorkingDirectory::saveStartupWorkingDirectory()
 {
 	// An earlier static constructor may call a setter before our initializer runs.
 	// Cache the first capture, including failure, without logging or allocating.
-	static const DWORD len = GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
+	static const DWORD len = ::GetCurrentDirectory(ARRAY_SIZE(s_startupWorkingDirectory), s_startupWorkingDirectory);
 	return len > 0 && len < ARRAY_SIZE(s_startupWorkingDirectory);
 }
 
@@ -50,12 +50,12 @@ Bool WorkingDirectory::setWorkingDirectory(const char *path)
 		return FALSE;
 	}
 
+	s_hasSetWorkingDirectory = TRUE;
 	return TRUE;
 }
 
 Bool WorkingDirectory::setStartupWorkingDirectory()
 {
-	s_hasSetWorkingDirectory = TRUE;
 	if (!saveStartupWorkingDirectory())
 	{
 		DEBUG_LOG(("Startup working directory is unavailable"));
@@ -66,7 +66,6 @@ Bool WorkingDirectory::setStartupWorkingDirectory()
 
 Bool WorkingDirectory::setExecutableWorkingDirectory()
 {
-	s_hasSetWorkingDirectory = TRUE;
 	saveStartupWorkingDirectory();
 
 	Char buffer[_MAX_PATH];
@@ -96,7 +95,6 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 
 Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
 {
-	s_hasSetWorkingDirectory = TRUE;
 	saveStartupWorkingDirectory();
 	return setWorkingDirectory(path);
 }

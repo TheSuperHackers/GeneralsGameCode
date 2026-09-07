@@ -465,27 +465,22 @@ Int parseJobs(char *args[], int num)
 
 Int parseUseCwd(char *[], int)
 {
-	// TheSuperHackers @feature 14/08/2026
 	// -useCwd restores the startup working directory.
-	if (!rts::WorkingDirectory::setStartupWorkingDirectory())
-		rts::WorkingDirectory::setExecutableWorkingDirectory();
+	rts::WorkingDirectory::setStartupWorkingDirectory();
 	return 1;
 }
 
 Int parseSetCwd(char *args[], int num)
 {
-	// TheSuperHackers @bugfix CryoTheRenegade 29/08/2026
 	// -setCwd <path> overrides the working directory.
 	if (num <= 1)
 	{
 		DEBUG_LOG(("-setCwd requires a directory path"));
-		rts::WorkingDirectory::setExecutableWorkingDirectory();
 		return 1;
 	}
 	if (rts::WorkingDirectory::setCustomWorkingDirectory(args[1]))
 		return 2;
 
-	rts::WorkingDirectory::setExecutableWorkingDirectory();
 	// Leave a failed option-like value available for subsequent argument parsing.
 	return args[1][0] == '-' || args[1][0] == '/' ? 1 : 2;
 }
@@ -1183,9 +1178,9 @@ static CommandLineParam paramsForStartup[] =
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
 
-	// TheSuperHackers @feature 14/08/2026
+	// TheSuperHackers @feature CryoTheRenegade 14/08/2026
 	// Use the current working directory as provided by the OS, or an explicit path.
-	// Without either flag the working directory is forced to the executable directory.
+	// The last successful selection wins; otherwise use the executable directory.
 	{ "-setCwd", parseSetCwd },
 	{ "-useCwd", parseUseCwd },
 };
