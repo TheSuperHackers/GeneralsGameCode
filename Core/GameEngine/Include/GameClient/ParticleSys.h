@@ -436,6 +436,7 @@ public:
 	{
 		PARTICLE_ALIGNMENT_BILLBOARD = 0,
 		PARTICLE_ALIGNMENT_XYPLANAR,
+		PARTICLE_ALIGNMENT_CONFORMING,
 		PARTICLE_ALIGNMENT_TYPE_COUNT
 	};
 	ParticleAlignmentType m_particleAlignment;		///< align particles toward the camera or with the XY plane.
@@ -504,7 +505,7 @@ static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, 
 
 static const char *const GroundAlignmentTypeNames[] =
 {
-	"No", "Yes", nullptr
+	"No", "Yes", "Conforming", nullptr
 };
 static_assert(ARRAY_SIZE(GroundAlignmentTypeNames) == ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT + 1, "Incorrect array size");
 
