@@ -62,11 +62,15 @@ public:
 
 enum { CHAR_BUFFER_LEN		= 32768 };
 
+// TheSuperHackers @fix arcticdolphin 07/09/2026 Buffer length matches the glyph so a large glyph cannot overrun it.
 class FontCharsBuffer
 {
-	W3DMPO_CODE(FontCharsBuffer)
 public:
-	uint16			Buffer[CHAR_BUFFER_LEN];
+	FontCharsBuffer( int length );
+	~FontCharsBuffer();
+
+	int				Length;
+	uint16 *		Buffer;
 };
 
 

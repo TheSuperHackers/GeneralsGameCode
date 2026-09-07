@@ -34,6 +34,8 @@
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 
+enum { FONT_POINT_SIZE_MAX = 512 };
+
 //-------------------------------------------------------------------------------------------------
 /** A font for use in the device independent game */
 //-------------------------------------------------------------------------------------------------

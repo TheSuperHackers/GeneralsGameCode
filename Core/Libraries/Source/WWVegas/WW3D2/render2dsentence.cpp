@@ -1155,6 +1155,18 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 }
 
 
+FontCharsBuffer::FontCharsBuffer (int length) :
+	Length( length ),
+	Buffer( W3DNEWARRAY uint16[length] )
+{
+}
+
+FontCharsBuffer::~FontCharsBuffer ()
+{
+	delete [] Buffer;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 //
 //	FontCharsClass
@@ -1441,6 +1453,8 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 void
 FontCharsClass::Update_Current_Buffer (int char_width)
 {
+	const int char_len = char_width * CharHeight;
+
 	//
 	//	Check to see if we need to allocate a new buffer
 	//
@@ -1450,7 +1464,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 		//
 		//	Would we extend past this buffer?
 		//
-		if ( (CurrPixelOffset + (char_width * CharHeight)) > CHAR_BUFFER_LEN ) {
+		if ( (CurrPixelOffset + char_len) > BufferList[BufferList.Count () - 1]->Length ) {
 			needs_new_buffer = true;
 		}
 	}
@@ -1460,7 +1474,9 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 	//
 	if (needs_new_buffer)
 	{
-		FontCharsBuffer* new_buffer = W3DNEW FontCharsBuffer;
+		// TheSuperHackers @fix arcticdolphin 07/09/2026 Length may exceed CHAR_BUFFER_LEN to fit this glyph.
+		const int length = (char_len > CHAR_BUFFER_LEN) ? char_len : CHAR_BUFFER_LEN;
+		FontCharsBuffer* new_buffer = W3DNEW FontCharsBuffer( length );
 		BufferList.Add( new_buffer );
 		CurrPixelOffset = 0;
 	}
