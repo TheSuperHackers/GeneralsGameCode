@@ -180,26 +180,9 @@ void GameWindow::unlinkFromTransitionWindows()
 //=============================================================================
 void GameWindow::normalizeWindowRegion()
 {
-	Int temp;
-
-	if( m_region.lo.x > m_region.hi.x)
-	{
-
-		temp = m_region.lo.x;
-		m_region.lo.x = m_region.hi.x;
-		m_region.hi.x = temp;
-
-	}
-
-	if( m_region.lo.y > m_region.hi.y )
-	{
-
-		temp = m_region.lo.y;
-		m_region.lo.y = m_region.hi.y;
-		m_region.hi.y = temp;
-
-	}
-
+	const ICoord2D lo = m_region.lo;
+	m_region.lo.min(m_region.hi);
+	m_region.hi.max(lo);
 }
 
 // GameWindow::findFirstLeaf ==================================================

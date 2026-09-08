@@ -840,18 +840,8 @@ struct Region3D
 		hi = points[0];
 		for (Int i = 1; i < count; ++i)
 		{
-			if (points[i].x < lo.x)
-				lo.x = points[i].x;
-			if (points[i].y < lo.y)
-				lo.y = points[i].y;
-			if (points[i].z < lo.z)
-				lo.z = points[i].z;
-			if (points[i].x > hi.x)
-				hi.x = points[i].x;
-			if (points[i].y > hi.y)
-				hi.y = points[i].y;
-			if (points[i].z > hi.z)
-				hi.z = points[i].z;
+			lo.min(points[i]);
+			hi.max(points[i]);
 		}
 	}
 
