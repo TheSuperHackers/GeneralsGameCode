@@ -331,6 +331,22 @@ struct Coord2D
 		x = ax;
 		y = ay;
 	}
+
+	void min( const Coord2D &other )
+	{
+		if (x > other.x)
+			x = other.x;
+		if (y > other.y)
+			y = other.y;
+	}
+
+	void max( const Coord2D &other )
+	{
+		if (x < other.x)
+			x = other.x;
+		if (y < other.y)
+			y = other.y;
+	}
 };
 
 inline Coord2D operator+( const Coord2D &a, const Coord2D &b )
@@ -458,6 +474,22 @@ struct ICoord2D
 		x = ax;
 		y = ay;
 	}
+
+	void min( const ICoord2D &other )
+	{
+		if (x > other.x)
+			x = other.x;
+		if (y > other.y)
+			y = other.y;
+	}
+
+	void max( const ICoord2D &other )
+	{
+		if (x < other.x)
+			x = other.x;
+		if (y < other.y)
+			y = other.y;
+	}
 };
 
 inline ICoord2D operator+( const ICoord2D &a, const ICoord2D &b )
@@ -478,6 +510,12 @@ struct Region2D
 {
 	Coord2D lo, hi;						// bounds of 2D rectangular region
 
+	void intersect( const Region2D &other )
+	{
+		lo.max(other.lo);
+		hi.min(other.hi);
+	}
+
 	void zero()
 	{
 		lo.zero();
@@ -497,6 +535,12 @@ struct Region2D
 struct IRegion2D
 {
 	ICoord2D lo, hi;					// bounds of 2D rectangular region
+
+	void intersect( const IRegion2D &other )
+	{
+		lo.max(other.lo);
+		hi.min(other.hi);
+	}
 
 	void zero()
 	{
@@ -611,6 +655,26 @@ struct Coord3D
 						y == r.y &&
 						z == r.z);
 	}
+
+	void min( const Coord3D &other )
+	{
+		if (x > other.x)
+			x = other.x;
+		if (y > other.y)
+			y = other.y;
+		if (z > other.z)
+			z = other.z;
+	}
+
+	void max( const Coord3D &other )
+	{
+		if (x < other.x)
+			x = other.x;
+		if (y < other.y)
+			y = other.y;
+		if (z < other.z)
+			z = other.z;
+	}
 };
 
 inline Coord3D operator+( const Coord3D &a, const Coord3D &b )
@@ -683,6 +747,26 @@ struct ICoord3D
 		y = ay;
 		z = az;
 	}
+
+	void min( const ICoord3D &other )
+	{
+		if (x > other.x)
+			x = other.x;
+		if (y > other.y)
+			y = other.y;
+		if (z > other.z)
+			z = other.z;
+	}
+
+	void max( const ICoord3D &other )
+	{
+		if (x < other.x)
+			x = other.x;
+		if (y < other.y)
+			y = other.y;
+		if (z < other.z)
+			z = other.z;
+	}
 };
 
 inline ICoord3D operator+( const ICoord3D &a, const ICoord3D &b )
@@ -703,6 +787,12 @@ inline ICoord3D operator-( const ICoord3D &a, const ICoord3D &b )
 struct Region3D
 {
 	Coord3D lo, hi;						// axis-aligned bounding box
+
+	void intersect( const Region3D &other )
+	{
+		lo.max(other.lo);
+		hi.min(other.hi);
+	}
 
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
@@ -782,6 +872,12 @@ struct Region3D
 struct IRegion3D
 {
 	ICoord3D lo, hi;					// axis-aligned bounding box
+
+	void intersect( const IRegion3D &other )
+	{
+		lo.max(other.lo);
+		hi.min(other.hi);
+	}
 
 	void zero()
 	{
