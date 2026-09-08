@@ -171,6 +171,7 @@ private:
 
 void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList );	///< Displays the list of games in a listbox, preserving selections
 void LANEnableStartButton(Bool enabled);
+void LANDisableButtons();
 
 void LANDisplaySlotList();		///< Displays the slot list according to TheLANGameInfo
 void LANDisplayGameOptions();	///< Displays the game options according to TheLANGameInfo
