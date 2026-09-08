@@ -1149,7 +1149,13 @@ void ProductionUpdate::cancelAndRefundAllProduction()
     ProductionEntry *nextProduction = production->m_next;
 
     if( production->getProductionType() == PRODUCTION_UNIT )
-      cancelUnitCreate( production->getProductionID() );
+    {
+      if( !cancelUnitCreate( production->getProductionID() ) )
+      {
+        removeFromProductionQueue( production );
+        deleteInstance( production );
+      }
+    }
     else if( production->getProductionType() == PRODUCTION_UPGRADE )
       cancelUpgrade( production->getProductionUpgrade() );
     else
