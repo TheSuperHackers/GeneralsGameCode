@@ -1503,6 +1503,24 @@ Int GameWindowManager::winSetModal( GameWindow *window )
 		DEBUG_LOG(( "WinSetModal: Non Root window attempted to go modal." ));
 		return WIN_ERR_INVALID_PARAMETER;			// return error if not
 	}
+
+	// TheSuperHackers @bugfix arcticdolphin 08/09/2026 If already modal, move to the top instead of duplicating.
+	ModalWindow *previous = nullptr;
+	for( ModalWindow *existing = m_modalHead; existing != nullptr; previous = existing, existing = existing->next )
+	{
+		if( existing->window != window )
+			continue;
+
+		if( previous != nullptr )
+		{
+			previous->next = existing->next;
+			existing->next = m_modalHead;
+			m_modalHead = existing;
+		}
+
+		return WIN_ERR_OK;
+	}
+
 	// Allocate new Modal Window Entry
 	modal = newInstance(ModalWindow);
 	if( modal == nullptr )
@@ -1531,31 +1549,25 @@ Int GameWindowManager::winUnsetModal( GameWindow *window )
 
 	ModalWindow *previous = nullptr;
 	ModalWindow *modal = m_modalHead;
-	Bool found = FALSE;
 
 	while( modal != nullptr )
 	{
-		ModalWindow *next = modal->next;
-
 		if( modal->window == window )
 		{
 			if( previous != nullptr )
-				previous->next = next;
+				previous->next = modal->next;
 			else
-				m_modalHead = next;
+				m_modalHead = modal->next;
 
 			deleteInstance(modal);
-			found = TRUE;
-		}
-		else
-		{
-			previous = modal;
+			return WIN_ERR_OK;
 		}
 
-		modal = next;
+		previous = modal;
+		modal = modal->next;
 	}
 
-	return found ? WIN_ERR_OK : WIN_ERR_GENERAL_FAILURE;
+	return WIN_ERR_GENERAL_FAILURE;
 
 }
 
