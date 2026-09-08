@@ -1352,31 +1352,36 @@ static CommandLineParam paramsForEngineInit[] =
 
 static void parseCommandLine(const CommandLineParam* params, int numParams, BoolVector &parsedArguments)
 {
-	const int argc = __argc;
+	// Startup parsing can run from static constructors, before WinMain.
+	int argc = __argc;
 	char **argv = __argv;
+	if (argc > 0)
+	{
+		// Skip the first argument which is the executable file name.
+		argc -= 1;
+		argv += 1;
+	}
 	// Preserve arguments recorded by the earlier parsing phase.
-	parsedArguments.resize(argc > 0 ? argc - 1 : 0, FALSE);
-
-	int arg = 1;
+	parsedArguments.resize(argc, FALSE);
 
 #ifdef DEBUG_LOGGING
 	DEBUG_LOG(("Command-line args:"));
 	int debugFlags = DebugGetFlags();
 	DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
-	for (arg=1; arg<argc; arg++)
+	for (int debugArg = 0; debugArg < argc; ++debugArg)
 	{
-		DEBUG_LOG((" %s", argv[arg]));
+		DEBUG_LOG((" %s", argv[debugArg]));
 	}
 	DEBUG_LOG_RAW(("\n"));
 	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
-	arg = 1;
 #endif // DEBUG_LOGGING
 
 	// Match complete option names without case sensitivity. Each handler returns
 	// the number of arguments consumed, including the option itself.
-	while (arg < argc)
+	int parsedArgCount = 1;
+	for (int arg = 0; arg < argc; arg += parsedArgCount)
 	{
-		int parsedArgCount = 1;
+		parsedArgCount = 1;
 		for (int param = 0; param < numParams; ++param)
 		{
 			if (stricmp(argv[arg], params[param].name) != 0)
@@ -1384,10 +1389,9 @@ static void parseCommandLine(const CommandLineParam* params, int numParams, Bool
 
 			parsedArgCount = params[param].func(argv + arg, argc - arg);
 			for (int i = 0; i < parsedArgCount && arg + i < argc; ++i)
-				parsedArguments[arg + i - 1] = TRUE;
+				parsedArguments[arg + i] = TRUE;
 			break;
 		}
-		arg += parsedArgCount;
 	}
 }
 
