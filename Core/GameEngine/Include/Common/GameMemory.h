@@ -837,6 +837,10 @@ extern void userMemoryManagerGetDmaParms(Int *numSubPools, const PoolInitRec **p
 */
 extern void userMemoryManagerInitPools();
 
+#ifdef MEMORY_MANAGER_HARDENING_TESTS
+extern Bool userMemoryManagerParsePoolOverrideLineForTest(const char* line, char* poolName, size_t poolNameSize, Int* initial, Int* overflow);
+#endif
+
 /**
 	This function is declared in this header, but is not defined anywhere -- you must provide
 	it in your code. It is called by createMemoryPool to adjust the allocation size(s) for a
