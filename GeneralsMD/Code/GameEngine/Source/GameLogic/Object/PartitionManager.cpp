@@ -4737,10 +4737,8 @@ void PartitionManager::xfer( Xfer *xfer )
 
 		if(xfer->getXferMode() == XFER_LOAD)
 		{
-			// have to remove this assert, because during load there is a setTeam call for each guy on a sub-team, and that results
-			// in a queued unlook, so we actually have stuff in here at the start.  I am fairly certain that setTeam should wait
-			// until loadPostProcess, but I ain't gonna change it now.
-//			DEBUG_ASSERTCRASH(m_pendingUndoShroudReveals.empty(), ("At load, we appear to not be in a reset state.") );
+			DEBUG_ASSERTCRASH(m_pendingUndoShroudReveals.empty(),
+				("There should be no pending undo shround reveals during loading; check if battle plan bonuses were applied."));
 
 			// I have to split this up though, since on Load I need to make new instances.
 			for( Int infoIndex = 0; infoIndex < queueSize; infoIndex++ )
