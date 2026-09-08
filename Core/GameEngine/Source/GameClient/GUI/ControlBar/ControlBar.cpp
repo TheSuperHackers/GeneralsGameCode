@@ -3591,20 +3591,14 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
 {
 	ContainModuleInterface* contain = obj->getContain();
-	if(!contain)
+	if (!contain)
 		return FALSE;
 
 	Player* localPlayer = ThePlayerList->getLocalPlayer();
-	const Player* otherPlayer = contain->getApparentControllingPlayer(localPlayer);
+	if (const Player* otherPlayer = contain->getApparentControllingPlayer(localPlayer))
+		return localPlayer->getRelationship(otherPlayer->getDefaultTeam()) == NEUTRAL;
 
-	if (!otherPlayer)
-	{
-		otherPlayer = obj->getControllingPlayer();
-		//Sanity.
-		if (!otherPlayer)
-			return FALSE;
-	}
-	return localPlayer->getRelationship(otherPlayer->getDefaultTeam()) == NEUTRAL;
+	return isControllingPlayerNeutral(obj);
 }
 
 Bool ControlBar::isControllingPlayerNeutral(const Object* obj) const
