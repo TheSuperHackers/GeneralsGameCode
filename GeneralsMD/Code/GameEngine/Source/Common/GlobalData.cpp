@@ -1199,6 +1199,25 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	// parse the ini weapon definition
 	ini->initFromINI( TheWritableGlobalData, s_GlobalDataFieldParseTable );
 
+	// TheSuperHackers @fix Sanitize values that are used as loop bounds or allocation sizes.
+	TheWritableGlobalData->m_numGlobalLights = std::clamp(TheWritableGlobalData->m_numGlobalLights, 0, MAX_GLOBAL_LIGHTS);
+	TheWritableGlobalData->m_maxVisibleTranslucentObjects = std::max(TheWritableGlobalData->m_maxVisibleTranslucentObjects, 0);
+	TheWritableGlobalData->m_maxVisibleOccluderObjects = std::max(TheWritableGlobalData->m_maxVisibleOccluderObjects, 0);
+	TheWritableGlobalData->m_maxVisibleOccludeeObjects = std::max(TheWritableGlobalData->m_maxVisibleOccludeeObjects, 0);
+	TheWritableGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects = std::max(TheWritableGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects, 0);
+	TheWritableGlobalData->m_maxLineBuildObjects = std::max(TheWritableGlobalData->m_maxLineBuildObjects, 0);
+	TheWritableGlobalData->m_maxRoadSegments = std::max(TheWritableGlobalData->m_maxRoadSegments, 0);
+	// Capped because DX8 vertex/index buffers use 16-bit indices and allocate size + ROAD_BUFFER_PADDING.
+	static constexpr Int MAX_ROAD_BUFFER_SIZE = 65535 - ROAD_BUFFER_PADDING;
+	static_assert(MAX_ROAD_BUFFER_SIZE > 0, "ROAD_BUFFER_PADDING must be less than 65535");
+	TheWritableGlobalData->m_maxRoadVertex = std::clamp(TheWritableGlobalData->m_maxRoadVertex, 0, MAX_ROAD_BUFFER_SIZE);
+	TheWritableGlobalData->m_maxRoadIndex = std::clamp(TheWritableGlobalData->m_maxRoadIndex, 0, MAX_ROAD_BUFFER_SIZE);
+	TheWritableGlobalData->m_maxRoadTypes = std::max(TheWritableGlobalData->m_maxRoadTypes, 0);
+	// Capped because TerrainTracksRenderObjClass has a fixed-size m_edges[MAX_TANK_TRACK_EDGES] array.
+	TheWritableGlobalData->m_maxTankTrackEdges = std::clamp(TheWritableGlobalData->m_maxTankTrackEdges, 1, MAX_TANK_TRACK_EDGES);
+	TheWritableGlobalData->m_networkFPSHistoryLength = std::max(TheWritableGlobalData->m_networkFPSHistoryLength, 1u);
+	TheWritableGlobalData->m_networkLatencyHistoryLength = std::max(TheWritableGlobalData->m_networkLatencyHistoryLength, 1u);
+	TheWritableGlobalData->m_networkCushionHistoryLength = std::max(TheWritableGlobalData->m_networkCushionHistoryLength, 1u);
 
 	// override INI values with user preferences
 	OptionPreferences optionPref;
