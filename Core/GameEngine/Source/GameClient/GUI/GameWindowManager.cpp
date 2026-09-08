@@ -96,21 +96,12 @@ void GameWindowManager::processDestroyList()
 
 		next = doDestroy->m_next;
 
-		// Check to see if this window is "special"
-		if( m_mouseCaptor == doDestroy )
-			winRelease( doDestroy );
-
-		if( m_keyboardFocus == doDestroy )
-			winSetFocus( nullptr );
-
-		if( m_currMouseRgn == doDestroy )
-			m_currMouseRgn = nullptr;
-
-		if( m_grabWindow == doDestroy )
-			m_grabWindow = nullptr;
-
 		// send the destroy message to the window we're about to kill
 		winSendSystemMsg( doDestroy, GWM_DESTROY, 0, 0 );
+
+		DEBUG_ASSERTCRASH( m_mouseCaptor != doDestroy && m_keyboardFocus != doDestroy
+			&& m_currMouseRgn != doDestroy && m_grabWindow != doDestroy,
+			("processDestroyList: manager still points at a window being destroyed") );
 
 		DEBUG_ASSERTCRASH(doDestroy->winGetUserData() == nullptr, ("Win user data is expected to be deleted now"));
 
