@@ -1382,6 +1382,10 @@ static void parseCommandLine(const CommandLineParam* params, int numParams, Bool
 	for (int arg = 0; arg < argc; arg += parsedArgCount)
 	{
 		parsedArgCount = 1;
+		// TheSuperHackers @bugfix Do not reinterpret startup option values as engine options.
+		if (parsedArguments[arg])
+			continue;
+
 		for (int param = 0; param < numParams; ++param)
 		{
 			if (stricmp(argv[arg], params[param].name) != 0)
