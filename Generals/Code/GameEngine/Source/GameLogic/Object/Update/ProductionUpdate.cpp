@@ -458,7 +458,7 @@ Bool ProductionUpdate::queueCreateUnit( const ThingTemplate *unitType, Productio
 //-------------------------------------------------------------------------------------------------
 /** Cancel the construction of the unit with the matching production ID */
 //-------------------------------------------------------------------------------------------------
-void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
+Bool ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 {
 
 	// search for the production entry in our queue
@@ -475,7 +475,7 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 #if !RETAIL_COMPATIBLE_CRC
 			// TheSuperHackers @bugfix arcticdolphin 07/09/2026 No cancel once the batch has started producing.
 			if( production->getProductionQuantityRemaining() < production->getProductionQuantity() )
-				return;
+				return FALSE;
 #endif
 
 			// give the player the cost of the object back
@@ -488,11 +488,13 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 			// delete the production entry
 			deleteInstance(production);
 
-			return;
+			return TRUE;
 
 		}
 
 	}
+
+	return FALSE;
 
 }
 
@@ -700,21 +702,8 @@ UpdateSleepTime ProductionUpdate::update()
 		// Don't cancel dozers in the queue.  jba.
 		if (!production->getProductionObject()->isKindOf(KINDOF_DOZER))
 		{
-<<<<<<< Updated upstream
-#if RETAIL_COMPATIBLE_CRC
-			cancelUnitCreate(production->getProductionID());
-			return UPDATE_SLEEP_NONE;
-#else
-			// TheSuperHackers @bugfix arcticdolphin 07/09/2026 Only cancel an untouched batch.
-			if( production->getProductionQuantityRemaining() == production->getProductionQuantity() )
-			{
-				cancelUnitCreate(production->getProductionID());
-=======
 			if( cancelUnitCreate(production->getProductionID()) )
->>>>>>> Stashed changes
 				return UPDATE_SLEEP_NONE;
-			}
-#endif
 		}
 
 	}
@@ -1153,7 +1142,6 @@ void ProductionUpdate::cancelAndRefundAllProduction()
   // Empirically, in release the code can loop forever.  So we limit to 100 passes. jba. [8/31/2003]
   const Int productionLimit = 100;// With luck, we never queue up 100 units. [8/31/2003]
 
-  // TheSuperHackers @bugfix arcticdolphin 07/09/2026 Walk entries so a non-cancellable partial batch does not stall the loop.
   Int i = 0;
   ProductionEntry *production = m_productionQueue;
   while( production != nullptr && i < productionLimit )
