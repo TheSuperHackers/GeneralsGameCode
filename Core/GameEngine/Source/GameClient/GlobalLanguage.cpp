@@ -59,7 +59,6 @@
 #include "Common/OptionPreferences.h"
 
 #include "GameClient/Display.h"
-#include "GameClient/GameFont.h"
 #include "GameClient/GlobalLanguage.h"
 
 //-----------------------------------------------------------------------------
@@ -282,13 +281,7 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 	// Therefore cache the adjustFactor on resolution change to not recompute it on every call.
 	const Real resolutionScaler = getResolutionFontSizeAdjustment();
 	const Real adjustFactor = getResolutionFontSizeScale(m_resolutionFontSizeMethod, resolutionScaler);
-	Int pointSize = REAL_TO_INT_FLOOR(theFontSize * adjustFactor);
-
-	// TheSuperHackers @fix arcticdolphin 07/09/2026 Keep the scaled size within what getFont can build.
-	if (pointSize > FONT_POINT_SIZE_MAX)
-	{
-		pointSize = FONT_POINT_SIZE_MAX;
-	}
+	const Int pointSize = REAL_TO_INT_FLOOR(theFontSize * adjustFactor);
 
 	return pointSize;
 }

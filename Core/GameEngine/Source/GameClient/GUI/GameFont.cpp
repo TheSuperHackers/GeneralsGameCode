@@ -179,6 +179,8 @@ void FontLibrary::reset()
 GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 {
 	// TheSuperHackers @fix No longer creates fonts with zero size and clamps oversized fonts.
+	// The upper bound caps glyph buffer memory when a resolution-scaled point size gets very large.
+	enum { FONT_POINT_SIZE_MAX = 512 };
 	if (pointSize < 1)
 	{
 		return nullptr;

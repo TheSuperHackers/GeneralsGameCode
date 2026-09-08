@@ -62,12 +62,14 @@ public:
 
 enum { CHAR_BUFFER_LEN		= 32768 };
 
-// TheSuperHackers @fix arcticdolphin 07/09/2026 Buffer length matches the glyph so a large glyph cannot overrun it.
 class FontCharsBuffer
 {
 public:
-	FontCharsBuffer( int length );
-	~FontCharsBuffer();
+	FontCharsBuffer() : Length( 0 ), Buffer( nullptr ) {}
+	FontCharsBuffer( int length, uint16 *buffer ) : Length( length ), Buffer( buffer ) {}
+
+	bool operator== (const FontCharsBuffer &src) const { return Length == src.Length && Buffer == src.Buffer; }
+	bool operator!= (const FontCharsBuffer &src) const { return !(*this == src); }
 
 	int				Length;
 	uint16 *		Buffer;
@@ -116,7 +118,7 @@ private:
 	//	Private member data
 	//
 	StringClass							Name;
-	DynamicVectorClass<FontCharsBuffer*>	BufferList;
+	DynamicVectorClass<FontCharsBuffer>	BufferList;
 	int									CurrPixelOffset;
 	int									CharHeight;
 	int									CharAscent;
