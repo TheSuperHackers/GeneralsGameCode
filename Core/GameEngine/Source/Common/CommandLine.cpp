@@ -1378,11 +1378,10 @@ static void parseCommandLine(const CommandLineParam* params, int numParams, Bool
 
 	// Match complete option names without case sensitivity. Each handler returns
 	// the number of arguments consumed, including the option itself.
-	int parsedArgCount = 1;
-	for (int arg = 0; arg < argc; arg += parsedArgCount)
+	for (int parsedArgCount, arg = 0; arg < argc; arg += parsedArgCount)
 	{
 		parsedArgCount = 1;
-		// TheSuperHackers @bugfix Do not reinterpret startup option values as engine options.
+		// Skip when already parsed by another pass.
 		if (parsedArguments[arg])
 			continue;
 
