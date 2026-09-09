@@ -193,7 +193,7 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 	dz = dia2.Z - center.Z;
 
 	double radsqr = dx*dx + dy*dy + dz*dz;
-	double radius = sqrt(radsqr);
+	double radius = WWMath::Sqrt(radsqr);
 
 
 	// SECOND PASS:
@@ -210,7 +210,7 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 
 			// this point was outside the old sphere, compute a new
 			// center point and radius which contains this point
-			double testrad = sqrt(testrad2);
+			double testrad = WWMath::Sqrt(testrad2);
 
 			// adjust center and radius
 			radius = (radius + testrad) / 2.0;

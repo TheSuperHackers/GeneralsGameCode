@@ -269,9 +269,9 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
 
 	// the 3 offsets in view space
-	const static Vector3 offset_a = Vector3(WWMath::Cos(WWMATH_PI / 2),			WWMath::Sin(WWMATH_PI /2 ), 0);
-	const static Vector3 offset_b = Vector3(WWMath::Cos(7 * WWMATH_PI / 6),		WWMath::Sin(7 * WWMATH_PI / 6), 0);
-	const static Vector3 offset_c = Vector3(WWMath::Cos(11 * WWMATH_PI / 6),	WWMath::Sin(11 * WWMATH_PI / 6), 0);
+	const static Vector3 offset_a = Vector3(WWMath::Cosf_Legacy(WWMATH_PI / 2),			WWMath::Sinf_Legacy(WWMATH_PI /2 ), 0);
+	const static Vector3 offset_b = Vector3(WWMath::Cosf_Legacy(7 * WWMATH_PI / 6),		WWMath::Sinf_Legacy(7 * WWMATH_PI / 6), 0);
+	const static Vector3 offset_c = Vector3(WWMath::Cosf_Legacy(11 * WWMATH_PI / 6),	WWMath::Sinf_Legacy(11 * WWMATH_PI / 6), 0);
 
 	static Vector3 offset[3];
 

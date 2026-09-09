@@ -55,13 +55,22 @@ void		WWMath::Init()
 	int a=0;
 	for (;a<ARC_TABLE_SIZE;++a) {
 		float cv=float(a-ARC_TABLE_SIZE/2)*(1.0f/(ARC_TABLE_SIZE/2));
+#if RETAIL_COMPATIBLE_CRC
 		_FastAcosTable[a]=acos(cv);
 		_FastAsinTable[a]=asin(cv);
+#else
+		_FastAcosTable[a]=Acosf(cv);
+		_FastAsinTable[a]=Asinf(cv);
+#endif
 	}
 
 	for (a=0;a<SIN_TABLE_SIZE;++a) {
 		float cv= (float)a * 2.0f * WWMATH_PI / SIN_TABLE_SIZE; //float(a-SIN_TABLE_SIZE/2)*(1.0f/(SIN_TABLE_SIZE/2));
+#if RETAIL_COMPATIBLE_CRC
 		_FastSinTable[a]=sin(cv);
+#else
+		_FastSinTable[a]=Sinf(cv);
+#endif
 
 		if (a>0) {
 			_FastInvSinTable[a]=1.0f/_FastSinTable[a];
