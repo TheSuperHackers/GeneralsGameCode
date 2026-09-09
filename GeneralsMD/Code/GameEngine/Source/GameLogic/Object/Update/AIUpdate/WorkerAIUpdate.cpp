@@ -718,6 +718,8 @@ void WorkerAIUpdate::setPreviousTask(DozerTask task)
 	if (task == DOZER_TASK_INVALID)
 		return;
 
+	DEBUG_ASSERTCRASH(m_previousTask == DOZER_TASK_INVALID, ("Worker already remembers a previous task"));
+
 	m_previousTask = task;
 	m_previousTaskInfo = m_task[task];
 }
