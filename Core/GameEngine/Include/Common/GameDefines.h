@@ -118,6 +118,11 @@
 #define RETAIL_COMPATIBLE_NETWORKING (1)
 #endif
 
+// Retail compatible scripting disables improved or fixed behaviour when handling scripts
+#ifndef RETAIL_COMPATIBLE_SCRIPTING
+#define RETAIL_COMPATIBLE_SCRIPTING (1)
+#endif
+
 // This is essentially synonymous for RETAIL_COMPATIBLE_CRC. There is a lot wrong with AIGroup, such as use-after-free, double-free, leaks,
 // but we cannot touch it much without breaking retail compatibility. Do not shy away from using massive hacks when fixing issues with AIGroup,
 // but put them behind this macro.
