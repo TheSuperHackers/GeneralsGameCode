@@ -110,16 +110,17 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 {
-	const UndeadBodyModuleData *data = getUndeadBodyModuleData();
-
+#if RETAIL_COMPATIBLE_CRC
 	// Flag module as no longer intercepting damage
 	m_isSecondLife = TRUE;
 
 	// Modify ActiveBody's max health and initial health
+	const UndeadBodyModuleData* data = getUndeadBodyModuleData();
 	setMaxHealth(data->m_secondLifeMaxHealth, FULLY_HEAL);
 
 	// Set Armor set flag to use second life armor
 	setArmorSetFlag(ARMORSET_SECOND_LIFE);
+#endif
 
 	// Fire the Slow Death module.  The fact that this is not the result of an onDie will cause the special behavior
 	Int total = 0;
@@ -155,6 +156,16 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 					ActiveBody::attemptDamage(damageInfo);
 					break;
 				}
+
+				// Flag module as no longer intercepting damage
+				m_isSecondLife = TRUE;
+
+				// Modify ActiveBody's max health and initial health
+				const UndeadBodyModuleData* data = getUndeadBodyModuleData();
+				setMaxHealth(data->m_secondLifeMaxHealth, FULLY_HEAL);
+
+				// Set Armor set flag to use second life armor
+				setArmorSetFlag(ARMORSET_SECOND_LIFE);
 #endif
 
 				sdu->beginSlowDeath(damageInfo);
@@ -162,7 +173,6 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 			}
 		}
 	}
-
 }
 
 
