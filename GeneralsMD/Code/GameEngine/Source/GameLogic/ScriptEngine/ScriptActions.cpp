@@ -33,6 +33,7 @@
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
+#include "Common/GameUtility.h"
 #include "Common/MapObject.h"							// For MAP_XY_FACTOR
 #include "Common/PartitionSolver.h"
 #include "Common/Player.h"
@@ -3834,16 +3835,8 @@ void ScriptActions::doPlayerExitAllBuildings(const AsciiString& playerName)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doLetterBoxMode(Bool startLetterbox)
 {
-	if (startLetterbox)
-	{
-		HideControlBar(TRUE);
-		TheDisplay->enableLetterBox(TRUE);
-	}
-	else
-	{
-		ShowControlBar(FALSE);
-		TheDisplay->enableLetterBox(FALSE);
-	}
+	TheScriptEngine->friend_notifyLetterBoxActive(startLetterbox);
+	rts::enableLetterBox(startLetterbox);
 }
 
 //-------------------------------------------------------------------------------------------------
