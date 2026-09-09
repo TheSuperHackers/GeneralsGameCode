@@ -30,98 +30,98 @@
 namespace
 {
 
-typedef float (__stdcall *AIL_3D_sample_volume_t)(H3DSAMPLE sample);
-typedef void (__stdcall *AIL_set_3D_sample_volume_t)(H3DSAMPLE sample, float volume);
+typedef F32 (__stdcall *AIL_3D_sample_volume_t)(H3DSAMPLE sample);
+typedef void (__stdcall *AIL_set_3D_sample_volume_t)(H3DSAMPLE sample, F32 volume);
 typedef void (__stdcall *AIL_end_3D_sample_t)(H3DSAMPLE sample);
 typedef void (__stdcall *AIL_resume_3D_sample_t)(H3DSAMPLE sample);
 typedef void (__stdcall *AIL_stop_3D_sample_t)(H3DSAMPLE sample);
 typedef void (__stdcall *AIL_start_3D_sample_t)(H3DSAMPLE sample);
-typedef unsigned int (__stdcall *AIL_3D_sample_loop_count_t)(H3DSAMPLE sample);
-typedef void (__stdcall *AIL_set_3D_sample_offset_t)(H3DSAMPLE sample, unsigned int offset);
-typedef int (__stdcall *AIL_3D_sample_length_t)(H3DSAMPLE sample);
-typedef unsigned int (__stdcall *AIL_3D_sample_offset_t)(H3DSAMPLE sample);
-typedef int (__stdcall *AIL_3D_sample_playback_rate_t)(H3DSAMPLE sample);
-typedef void (__stdcall *AIL_set_3D_sample_playback_rate_t)(H3DSAMPLE sample, int playback_rate);
-typedef int (__stdcall *AIL_set_3D_sample_file_t)(H3DSAMPLE sample, const void* file_image);
+typedef U32 (__stdcall *AIL_3D_sample_loop_count_t)(H3DSAMPLE sample);
+typedef void (__stdcall *AIL_set_3D_sample_offset_t)(H3DSAMPLE sample, U32 offset);
+typedef U32 (__stdcall *AIL_3D_sample_length_t)(H3DSAMPLE sample);
+typedef U32 (__stdcall *AIL_3D_sample_offset_t)(H3DSAMPLE sample);
+typedef S32 (__stdcall *AIL_3D_sample_playback_rate_t)(H3DSAMPLE sample);
+typedef void (__stdcall *AIL_set_3D_sample_playback_rate_t)(H3DSAMPLE sample, S32 playback_rate);
+typedef S32 (__stdcall *AIL_set_3D_sample_file_t)(H3DSAMPLE sample, const void* file_image);
 typedef HPROVIDER (__stdcall *AIL_set_sample_processor_t)(HSAMPLE sample, SAMPLESTAGE pipeline_stage, HPROVIDER provider);
 typedef void (__stdcall *AIL_set_filter_sample_preference_t)(HSAMPLE sample, const char* name, const void* val);
 typedef void (__stdcall *AIL_release_sample_handle_t)(HSAMPLE sample);
 typedef void (__stdcall *AIL_close_3D_provider_t)(HPROVIDER lib);
-typedef int (__stdcall *AIL_set_preference_t)(unsigned int number, int value);
-typedef int (__stdcall *AIL_waveOutOpen_t)(HDIGDRIVER* driver, LPHWAVEOUT* waveout, int id, LPWAVEFORMAT format);
+typedef S32 (__stdcall *AIL_set_preference_t)(U32 number, S32 value);
+typedef S32 (__stdcall *AIL_waveOutOpen_t)(HDIGDRIVER* driver, LPHWAVEOUT* waveout, S32 id, LPWAVEFORMAT format);
 typedef void (__stdcall *AIL_waveOutClose_t)(HDIGDRIVER driver);
-typedef void (__stdcall *AIL_set_3D_sample_loop_count_t)(H3DSAMPLE sample, unsigned int count);
-typedef void (__stdcall *AIL_set_stream_playback_rate_t)(HSTREAM stream, int rate);
-typedef int (__stdcall *AIL_stream_playback_rate_t)(HSTREAM stream);
+typedef void (__stdcall *AIL_set_3D_sample_loop_count_t)(H3DSAMPLE sample, U32 count);
+typedef void (__stdcall *AIL_set_stream_playback_rate_t)(HSTREAM stream, S32 rate);
+typedef S32 (__stdcall *AIL_stream_playback_rate_t)(HSTREAM stream);
 typedef void (__stdcall *AIL_stream_ms_position_t)(HSTREAM sample, S32* total_milliseconds, S32* current_milliseconds);
-typedef void (__stdcall *AIL_set_stream_ms_position_t)(HSTREAM stream, int pos);
-typedef int (__stdcall *AIL_stream_loop_count_t)(HSTREAM stream);
-typedef void (__stdcall *AIL_set_stream_loop_block_t)(HSTREAM stream, int loop_start, int loop_end);
-typedef void (__stdcall *AIL_set_stream_loop_count_t)(HSTREAM stream, int count);
+typedef void (__stdcall *AIL_set_stream_ms_position_t)(HSTREAM stream, S32 pos);
+typedef S32 (__stdcall *AIL_stream_loop_count_t)(HSTREAM stream);
+typedef void (__stdcall *AIL_set_stream_loop_block_t)(HSTREAM stream, S32 loop_start, S32 loop_end);
+typedef void (__stdcall *AIL_set_stream_loop_count_t)(HSTREAM stream, S32 count);
 typedef void (__stdcall *AIL_close_stream_t)(HSTREAM stream);
-typedef void (__stdcall *AIL_pause_stream_t)(HSTREAM stream, int onoff);
+typedef void (__stdcall *AIL_pause_stream_t)(HSTREAM stream, S32 onoff);
 typedef AIL_stream_callback (__stdcall *AIL_register_stream_callback_t)(HSTREAM stream, AIL_stream_callback callback);
 typedef AIL_3dsample_callback (__stdcall *AIL_register_3D_EOS_callback_t)(H3DSAMPLE sample, AIL_3dsample_callback EOS);
 typedef AIL_sample_callback (__stdcall *AIL_register_EOS_callback_t)(HSAMPLE sample, AIL_sample_callback EOS);
 typedef void (__stdcall *AIL_start_stream_t)(HSTREAM stream);
-typedef void (__stdcall *AIL_set_sample_playback_rate_t)(HSAMPLE sample, int playback_rate);
-typedef int (__stdcall *AIL_sample_playback_rate_t)(HSAMPLE sample);
-typedef void (__stdcall *AIL_sample_ms_position_t)(HSAMPLE sample, long* total_ms, long* current_ms);
-typedef void (__stdcall *AIL_set_sample_ms_position_t)(HSAMPLE sample, int pos);
-typedef int (__stdcall *AIL_sample_loop_count_t)(HSAMPLE sample);
-typedef void (__stdcall *AIL_set_sample_loop_count_t)(HSAMPLE sample, int count);
+typedef void (__stdcall *AIL_set_sample_playback_rate_t)(HSAMPLE sample, S32 playback_rate);
+typedef S32 (__stdcall *AIL_sample_playback_rate_t)(HSAMPLE sample);
+typedef void (__stdcall *AIL_sample_ms_position_t)(HSAMPLE sample, S32* total_ms, S32* current_ms);
+typedef void (__stdcall *AIL_set_sample_ms_position_t)(HSAMPLE sample, S32 pos);
+typedef S32 (__stdcall *AIL_sample_loop_count_t)(HSAMPLE sample);
+typedef void (__stdcall *AIL_set_sample_loop_count_t)(HSAMPLE sample, S32 count);
 typedef void (__stdcall *AIL_end_sample_t)(HSAMPLE sample);
 typedef void (__stdcall *AIL_resume_sample_t)(HSAMPLE sample);
 typedef void (__stdcall *AIL_stop_sample_t)(HSAMPLE sample);
 typedef void (__stdcall *AIL_start_sample_t)(HSAMPLE sample);
 typedef void (__stdcall *AIL_init_sample_t)(HSAMPLE sample);
-typedef int (__stdcall *AIL_set_named_sample_file_t)(HSAMPLE sample, const char* file_name, const void* file_image, int file_size, int block);
-typedef void (__stdcall *AIL_set_3D_sample_effects_level_t)(H3DSAMPLE sample, float effect_level);
-typedef void (__stdcall *AIL_set_3D_sample_distances_t)(H3DSAMPLE sample, float max_dist, float min_dist);
-typedef void (__stdcall *AIL_set_3D_velocity_vector_t)(H3DSAMPLE sample, float x, float y, float z);
-typedef void (__stdcall *AIL_set_3D_position_t)(H3DPOBJECT obj, float X, float Y, float Z);
-typedef void (__stdcall *AIL_set_3D_orientation_t)(H3DPOBJECT obj, float X_face, float Y_face, float Z_face, float X_up, float Y_up, float Z_up);
-typedef int (__stdcall *AIL_WAV_info_t)(const void* data, AILSOUNDINFO* info);
+typedef S32 (__stdcall *AIL_set_named_sample_file_t)(HSAMPLE sample, const char* file_name, const void* file_image, S32 file_size, S32 block);
+typedef void (__stdcall *AIL_set_3D_sample_effects_level_t)(H3DSAMPLE sample, F32 effect_level);
+typedef void (__stdcall *AIL_set_3D_sample_distances_t)(H3DSAMPLE sample, F32 max_dist, F32 min_dist);
+typedef void (__stdcall *AIL_set_3D_velocity_vector_t)(H3DPOBJECT obj, F32 x, F32 y, F32 z);
+typedef void (__stdcall *AIL_set_3D_position_t)(H3DPOBJECT obj, F32 X, F32 Y, F32 Z);
+typedef void (__stdcall *AIL_set_3D_orientation_t)(H3DPOBJECT obj, F32 X_face, F32 Y_face, F32 Z_face, F32 X_up, F32 Y_up, F32 Z_up);
+typedef S32 (__stdcall *AIL_WAV_info_t)(const void* data, AILSOUNDINFO* info);
 typedef void (__stdcall *AIL_stop_timer_t)(HTIMER timer);
 typedef void (__stdcall *AIL_release_timer_handle_t)(HTIMER timer);
 typedef void (__stdcall *AIL_shutdown_t)(void);
-typedef int (__stdcall *AIL_enumerate_filters_t)(HPROENUM* next, HPROVIDER* dest, char** name);
+typedef S32 (__stdcall *AIL_enumerate_filters_t)(HPROENUM* next, HPROVIDER* dest, char** name);
 typedef void (__stdcall *AIL_set_file_callbacks_t)(AIL_file_open_callback opencb, AIL_file_close_callback closecb, AIL_file_seek_callback seekcb, AIL_file_read_callback readcb);
 typedef void (__stdcall *AIL_release_3D_sample_handle_t)(H3DSAMPLE sample);
 typedef H3DSAMPLE (__stdcall *AIL_allocate_3D_sample_handle_t)(HPROVIDER lib);
-typedef void (__stdcall *AIL_set_3D_user_data_t)(H3DPOBJECT obj, unsigned int index, void *value);
+typedef void (__stdcall *AIL_set_3D_user_data_t)(H3DPOBJECT obj, U32 index, S32 value);
 typedef void (__stdcall *AIL_unlock_t)(void);
 typedef void (__stdcall *AIL_unlock_mutex_t)(void);
 typedef void (__stdcall *AIL_lock_t)(void);
 typedef void (__stdcall *AIL_lock_mutex_t)(void);
-typedef void (__stdcall *AIL_set_3D_speaker_type_t)(HPROVIDER lib, int speaker_type);
+typedef void (__stdcall *AIL_set_3D_speaker_type_t)(HPROVIDER lib, S32 speaker_type);
 typedef void (__stdcall *AIL_close_3D_listener_t)(H3DPOBJECT listener);
-typedef int (__stdcall *AIL_enumerate_3D_providers_t)(HPROENUM* next, HPROVIDER* dest, char** name);
+typedef S32 (__stdcall *AIL_enumerate_3D_providers_t)(HPROENUM* next, HPROVIDER* dest, char** name);
 typedef M3DRESULT (__stdcall *AIL_open_3D_provider_t)(HPROVIDER lib);
 typedef char* (__stdcall *AIL_last_error_t)(void);
 typedef H3DPOBJECT (__stdcall *AIL_open_3D_listener_t)(HPROVIDER lib);
-typedef void * (__stdcall *AIL_3D_user_data_t)(H3DSAMPLE sample, unsigned int index);
-typedef void * (__stdcall *AIL_sample_user_data_t)(HSAMPLE sample, unsigned int index);
+typedef S32 (__stdcall *AIL_3D_user_data_t)(H3DPOBJECT obj, U32 index);
+typedef S32 (__stdcall *AIL_sample_user_data_t)(HSAMPLE sample, U32 index);
 typedef HSAMPLE (__stdcall *AIL_allocate_sample_handle_t)(HDIGDRIVER dig);
-typedef void (__stdcall *AIL_set_sample_user_data_t)(HSAMPLE sample, unsigned int index, void *value);
-typedef int (__stdcall *AIL_decompress_ADPCM_t)(const AILSOUNDINFO *info, void **outdata, unsigned long *outsize);
+typedef void (__stdcall *AIL_set_sample_user_data_t)(HSAMPLE sample, U32 index, S32 value);
+typedef S32 (__stdcall *AIL_decompress_ADPCM_t)(const AILSOUNDINFO *info, void **outdata, U32 *outsize);
 typedef void (__stdcall *AIL_get_DirectSound_info_t)(HSAMPLE sample, AILLPDIRECTSOUND *lplpDS, AILLPDIRECTSOUNDBUFFER *lplpDSB);
 typedef void (__stdcall *AIL_mem_free_lock_t)(void *ptr);
-typedef HSTREAM (__stdcall *AIL_open_stream_t)(HDIGDRIVER dig, const char *filename, int stream_mem);
-typedef int (__stdcall *AIL_startup_t)(void);
+typedef HSTREAM (__stdcall *AIL_open_stream_t)(HDIGDRIVER dig, const char *filename, S32 stream_mem);
+typedef S32 (__stdcall *AIL_startup_t)(void);
 typedef void (__stdcall *AIL_quick_unload_t)(HAUDIO audio);
-typedef HAUDIO (__stdcall *AIL_quick_load_and_play_t)(const char *filename, unsigned int loop_count, int wait_request);
-typedef void (__stdcall *AIL_quick_set_volume_t)(HAUDIO audio, float volume, float extravol);
-typedef int (__stdcall *AIL_quick_startup_t)(int use_digital, int use_MIDI, unsigned int output_rate, int output_bits, int output_channels);
+typedef HAUDIO (__stdcall *AIL_quick_load_and_play_t)(const char *filename, U32 loop_count, S32 wait_request);
+typedef void (__stdcall *AIL_quick_set_volume_t)(HAUDIO audio, F32 volume, F32 extravol);
+typedef S32 (__stdcall *AIL_quick_startup_t)(S32 use_digital, S32 use_MIDI, U32 output_rate, S32 output_bits, S32 output_channels);
 typedef void (__stdcall *AIL_quick_handles_t)(HDIGDRIVER *pdig, HMDIDRIVER *pmdi, HDLSDEVICE *pdls);
-typedef void (__stdcall *AIL_sample_volume_pan_t)(HSAMPLE sample, float *volume, float *pan);
-typedef void (__stdcall *AIL_set_3D_sample_occlusion_t)(H3DSAMPLE sample, float occlusion);
+typedef void (__stdcall *AIL_sample_volume_pan_t)(HSAMPLE sample, F32 *volume, F32 *pan);
+typedef void (__stdcall *AIL_set_3D_sample_occlusion_t)(H3DSAMPLE sample, F32 occlusion);
 typedef char * (__stdcall *AIL_set_redist_directory_t)(const char *dir);
-typedef int (__stdcall *AIL_set_sample_file_t)(HSAMPLE sample, const void *file_image, int block);
-typedef void (__stdcall *AIL_set_sample_volume_pan_t)(HSAMPLE sample, float volume, float pan);
-typedef void (__stdcall *AIL_set_stream_volume_pan_t)(HSTREAM stream, float volume, float pan);
-typedef void (__stdcall *AIL_stream_volume_pan_t)(HSTREAM stream, float *volume, float *pan);
-typedef unsigned long (__stdcall *AIL_get_timer_highest_delay_t)(void);
+typedef S32 (__stdcall *AIL_set_sample_file_t)(HSAMPLE sample, const void *file_image, S32 block);
+typedef void (__stdcall *AIL_set_sample_volume_pan_t)(HSAMPLE sample, F32 volume, F32 pan);
+typedef void (__stdcall *AIL_set_stream_volume_pan_t)(HSTREAM stream, F32 volume, F32 pan);
+typedef void (__stdcall *AIL_stream_volume_pan_t)(HSTREAM stream, F32 *volume, F32 *pan);
+typedef U32 (__stdcall *AIL_get_timer_highest_delay_t)(void);
 
 AIL_3D_sample_volume_t AIL_3D_sample_volumePtr = nullptr;
 AIL_set_3D_sample_volume_t AIL_set_3D_sample_volumePtr = nullptr;
@@ -503,12 +503,12 @@ void MilesLoader::unload()
 // the same neutral value the Miles SDK stub library returned.
 
 
-float __stdcall AIL_3D_sample_volume(H3DSAMPLE sample)
+F32 __stdcall AIL_3D_sample_volume(H3DSAMPLE sample)
 {
 	return AIL_3D_sample_volumePtr != nullptr ? AIL_3D_sample_volumePtr(sample) : 0.0f;
 }
 
-void __stdcall AIL_set_3D_sample_volume(H3DSAMPLE sample, float volume)
+void __stdcall AIL_set_3D_sample_volume(H3DSAMPLE sample, F32 volume)
 {
 	if (AIL_set_3D_sample_volumePtr != nullptr)
 		AIL_set_3D_sample_volumePtr(sample, volume);
@@ -538,39 +538,39 @@ void __stdcall AIL_start_3D_sample(H3DSAMPLE sample)
 		AIL_start_3D_samplePtr(sample);
 }
 
-unsigned int __stdcall AIL_3D_sample_loop_count(H3DSAMPLE sample)
+U32 __stdcall AIL_3D_sample_loop_count(H3DSAMPLE sample)
 {
 	return AIL_3D_sample_loop_countPtr != nullptr ? AIL_3D_sample_loop_countPtr(sample) : 0;
 }
 
-void __stdcall AIL_set_3D_sample_offset(H3DSAMPLE sample, unsigned int offset)
+void __stdcall AIL_set_3D_sample_offset(H3DSAMPLE sample, U32 offset)
 {
 	if (AIL_set_3D_sample_offsetPtr != nullptr)
 		AIL_set_3D_sample_offsetPtr(sample, offset);
 }
 
-int __stdcall AIL_3D_sample_length(H3DSAMPLE sample)
+U32 __stdcall AIL_3D_sample_length(H3DSAMPLE sample)
 {
 	return AIL_3D_sample_lengthPtr != nullptr ? AIL_3D_sample_lengthPtr(sample) : 0;
 }
 
-unsigned int __stdcall AIL_3D_sample_offset(H3DSAMPLE sample)
+U32 __stdcall AIL_3D_sample_offset(H3DSAMPLE sample)
 {
 	return AIL_3D_sample_offsetPtr != nullptr ? AIL_3D_sample_offsetPtr(sample) : 0;
 }
 
-int __stdcall AIL_3D_sample_playback_rate(H3DSAMPLE sample)
+S32 __stdcall AIL_3D_sample_playback_rate(H3DSAMPLE sample)
 {
 	return AIL_3D_sample_playback_ratePtr != nullptr ? AIL_3D_sample_playback_ratePtr(sample) : 0;
 }
 
-void __stdcall AIL_set_3D_sample_playback_rate(H3DSAMPLE sample, int playback_rate)
+void __stdcall AIL_set_3D_sample_playback_rate(H3DSAMPLE sample, S32 playback_rate)
 {
 	if (AIL_set_3D_sample_playback_ratePtr != nullptr)
 		AIL_set_3D_sample_playback_ratePtr(sample, playback_rate);
 }
 
-int __stdcall AIL_set_3D_sample_file(H3DSAMPLE sample, const void* file_image)
+S32 __stdcall AIL_set_3D_sample_file(H3DSAMPLE sample, const void* file_image)
 {
 	return AIL_set_3D_sample_filePtr != nullptr ? AIL_set_3D_sample_filePtr(sample, file_image) : 0;
 }
@@ -600,12 +600,12 @@ void __stdcall AIL_close_3D_provider(HPROVIDER lib)
 		AIL_close_3D_providerPtr(lib);
 }
 
-int __stdcall AIL_set_preference(unsigned int number, int value)
+S32 __stdcall AIL_set_preference(U32 number, S32 value)
 {
 	return AIL_set_preferencePtr != nullptr ? AIL_set_preferencePtr(number, value) : 0;
 }
 
-int __stdcall AIL_waveOutOpen(HDIGDRIVER* driver, LPHWAVEOUT* waveout, int id, LPWAVEFORMAT format)
+S32 __stdcall AIL_waveOutOpen(HDIGDRIVER* driver, LPHWAVEOUT* waveout, S32 id, LPWAVEFORMAT format)
 {
 	if (AIL_waveOutOpenPtr != nullptr)
 		return AIL_waveOutOpenPtr(driver, waveout, id, format);
@@ -623,19 +623,19 @@ void __stdcall AIL_waveOutClose(HDIGDRIVER driver)
 		AIL_waveOutClosePtr(driver);
 }
 
-void __stdcall AIL_set_3D_sample_loop_count(H3DSAMPLE sample, unsigned int count)
+void __stdcall AIL_set_3D_sample_loop_count(H3DSAMPLE sample, U32 count)
 {
 	if (AIL_set_3D_sample_loop_countPtr != nullptr)
 		AIL_set_3D_sample_loop_countPtr(sample, count);
 }
 
-void __stdcall AIL_set_stream_playback_rate(HSTREAM stream, int rate)
+void __stdcall AIL_set_stream_playback_rate(HSTREAM stream, S32 rate)
 {
 	if (AIL_set_stream_playback_ratePtr != nullptr)
 		AIL_set_stream_playback_ratePtr(stream, rate);
 }
 
-int __stdcall AIL_stream_playback_rate(HSTREAM stream)
+S32 __stdcall AIL_stream_playback_rate(HSTREAM stream)
 {
 	return AIL_stream_playback_ratePtr != nullptr ? AIL_stream_playback_ratePtr(stream) : 0;
 }
@@ -654,24 +654,24 @@ void __stdcall AIL_stream_ms_position(HSTREAM sample, S32* total_milliseconds, S
 		*current_milliseconds = 0;
 }
 
-void __stdcall AIL_set_stream_ms_position(HSTREAM stream, int pos)
+void __stdcall AIL_set_stream_ms_position(HSTREAM stream, S32 pos)
 {
 	if (AIL_set_stream_ms_positionPtr != nullptr)
 		AIL_set_stream_ms_positionPtr(stream, pos);
 }
 
-int __stdcall AIL_stream_loop_count(HSTREAM stream)
+S32 __stdcall AIL_stream_loop_count(HSTREAM stream)
 {
 	return AIL_stream_loop_countPtr != nullptr ? AIL_stream_loop_countPtr(stream) : 0;
 }
 
-void __stdcall AIL_set_stream_loop_block(HSTREAM stream, int loop_start, int loop_end)
+void __stdcall AIL_set_stream_loop_block(HSTREAM stream, S32 loop_start, S32 loop_end)
 {
 	if (AIL_set_stream_loop_blockPtr != nullptr)
 		AIL_set_stream_loop_blockPtr(stream, loop_start, loop_end);
 }
 
-void __stdcall AIL_set_stream_loop_count(HSTREAM stream, int count)
+void __stdcall AIL_set_stream_loop_count(HSTREAM stream, S32 count)
 {
 	if (AIL_set_stream_loop_countPtr != nullptr)
 		AIL_set_stream_loop_countPtr(stream, count);
@@ -683,7 +683,7 @@ void __stdcall AIL_close_stream(HSTREAM stream)
 		AIL_close_streamPtr(stream);
 }
 
-void __stdcall AIL_pause_stream(HSTREAM stream, int onoff)
+void __stdcall AIL_pause_stream(HSTREAM stream, S32 onoff)
 {
 	if (AIL_pause_streamPtr != nullptr)
 		AIL_pause_streamPtr(stream, onoff);
@@ -710,18 +710,18 @@ void __stdcall AIL_start_stream(HSTREAM stream)
 		AIL_start_streamPtr(stream);
 }
 
-void __stdcall AIL_set_sample_playback_rate(HSAMPLE sample, int playback_rate)
+void __stdcall AIL_set_sample_playback_rate(HSAMPLE sample, S32 playback_rate)
 {
 	if (AIL_set_sample_playback_ratePtr != nullptr)
 		AIL_set_sample_playback_ratePtr(sample, playback_rate);
 }
 
-int __stdcall AIL_sample_playback_rate(HSAMPLE sample)
+S32 __stdcall AIL_sample_playback_rate(HSAMPLE sample)
 {
 	return AIL_sample_playback_ratePtr != nullptr ? AIL_sample_playback_ratePtr(sample) : 0;
 }
 
-void __stdcall AIL_sample_ms_position(HSAMPLE sample, long* total_ms, long* current_ms)
+void __stdcall AIL_sample_ms_position(HSAMPLE sample, S32* total_ms, S32* current_ms)
 {
 	if (AIL_sample_ms_positionPtr != nullptr)
 	{
@@ -735,18 +735,18 @@ void __stdcall AIL_sample_ms_position(HSAMPLE sample, long* total_ms, long* curr
 		*current_ms = 0;
 }
 
-void __stdcall AIL_set_sample_ms_position(HSAMPLE sample, int pos)
+void __stdcall AIL_set_sample_ms_position(HSAMPLE sample, S32 pos)
 {
 	if (AIL_set_sample_ms_positionPtr != nullptr)
 		AIL_set_sample_ms_positionPtr(sample, pos);
 }
 
-int __stdcall AIL_sample_loop_count(HSAMPLE sample)
+S32 __stdcall AIL_sample_loop_count(HSAMPLE sample)
 {
 	return AIL_sample_loop_countPtr != nullptr ? AIL_sample_loop_countPtr(sample) : 0;
 }
 
-void __stdcall AIL_set_sample_loop_count(HSAMPLE sample, int count)
+void __stdcall AIL_set_sample_loop_count(HSAMPLE sample, S32 count)
 {
 	if (AIL_set_sample_loop_countPtr != nullptr)
 		AIL_set_sample_loop_countPtr(sample, count);
@@ -782,44 +782,44 @@ void __stdcall AIL_init_sample(HSAMPLE sample)
 		AIL_init_samplePtr(sample);
 }
 
-int __stdcall AIL_set_named_sample_file(HSAMPLE sample, const char* file_name, const void* file_image, int file_size, int block)
+S32 __stdcall AIL_set_named_sample_file(HSAMPLE sample, const char* file_name, const void* file_image, S32 file_size, S32 block)
 {
 	return AIL_set_named_sample_filePtr != nullptr
 		? AIL_set_named_sample_filePtr(sample, file_name, file_image, file_size, block)
 		: 0;
 }
 
-void __stdcall AIL_set_3D_sample_effects_level(H3DSAMPLE sample, float effect_level)
+void __stdcall AIL_set_3D_sample_effects_level(H3DSAMPLE sample, F32 effect_level)
 {
 	if (AIL_set_3D_sample_effects_levelPtr != nullptr)
 		AIL_set_3D_sample_effects_levelPtr(sample, effect_level);
 }
 
-void __stdcall AIL_set_3D_sample_distances(H3DSAMPLE sample, float max_dist, float min_dist)
+void __stdcall AIL_set_3D_sample_distances(H3DSAMPLE sample, F32 max_dist, F32 min_dist)
 {
 	if (AIL_set_3D_sample_distancesPtr != nullptr)
 		AIL_set_3D_sample_distancesPtr(sample, max_dist, min_dist);
 }
 
-void __stdcall AIL_set_3D_velocity_vector(H3DSAMPLE sample, float x, float y, float z)
+void __stdcall AIL_set_3D_velocity_vector(H3DPOBJECT obj, F32 x, F32 y, F32 z)
 {
 	if (AIL_set_3D_velocity_vectorPtr != nullptr)
-		AIL_set_3D_velocity_vectorPtr(sample, x, y, z);
+		AIL_set_3D_velocity_vectorPtr(obj, x, y, z);
 }
 
-void __stdcall AIL_set_3D_position(H3DPOBJECT obj, float X, float Y, float Z)
+void __stdcall AIL_set_3D_position(H3DPOBJECT obj, F32 X, F32 Y, F32 Z)
 {
 	if (AIL_set_3D_positionPtr != nullptr)
 		AIL_set_3D_positionPtr(obj, X, Y, Z);
 }
 
-void __stdcall AIL_set_3D_orientation(H3DPOBJECT obj, float X_face, float Y_face, float Z_face, float X_up, float Y_up, float Z_up)
+void __stdcall AIL_set_3D_orientation(H3DPOBJECT obj, F32 X_face, F32 Y_face, F32 Z_face, F32 X_up, F32 Y_up, F32 Z_up)
 {
 	if (AIL_set_3D_orientationPtr != nullptr)
 		AIL_set_3D_orientationPtr(obj, X_face, Y_face, Z_face, X_up, Y_up, Z_up);
 }
 
-int __stdcall AIL_WAV_info(const void* data, AILSOUNDINFO* info)
+S32 __stdcall AIL_WAV_info(const void* data, AILSOUNDINFO* info)
 {
 	if (AIL_WAV_infoPtr != nullptr)
 		return AIL_WAV_infoPtr(data, info);
@@ -857,7 +857,7 @@ void __stdcall AIL_shutdown(void)
 		AIL_shutdownPtr();
 }
 
-int __stdcall AIL_enumerate_filters(HPROENUM* next, HPROVIDER* dest, char** name)
+S32 __stdcall AIL_enumerate_filters(HPROENUM* next, HPROVIDER* dest, char** name)
 {
 	if (AIL_enumerate_filtersPtr != nullptr)
 		return AIL_enumerate_filtersPtr(next, dest, name);
@@ -886,7 +886,7 @@ H3DSAMPLE __stdcall AIL_allocate_3D_sample_handle(HPROVIDER lib)
 	return AIL_allocate_3D_sample_handlePtr != nullptr ? AIL_allocate_3D_sample_handlePtr(lib) : nullptr;
 }
 
-void __stdcall AIL_set_3D_user_data(H3DPOBJECT obj, unsigned int index, void *value)
+void __stdcall AIL_set_3D_user_data(H3DPOBJECT obj, U32 index, S32 value)
 {
 	if (AIL_set_3D_user_dataPtr != nullptr)
 		AIL_set_3D_user_dataPtr(obj, index, value);
@@ -916,7 +916,7 @@ void __stdcall AIL_lock_mutex(void)
 		AIL_lock_mutexPtr();
 }
 
-void __stdcall AIL_set_3D_speaker_type(HPROVIDER lib, int speaker_type)
+void __stdcall AIL_set_3D_speaker_type(HPROVIDER lib, S32 speaker_type)
 {
 	if (AIL_set_3D_speaker_typePtr != nullptr)
 		AIL_set_3D_speaker_typePtr(lib, speaker_type);
@@ -928,7 +928,7 @@ void __stdcall AIL_close_3D_listener(H3DPOBJECT listener)
 		AIL_close_3D_listenerPtr(listener);
 }
 
-int __stdcall AIL_enumerate_3D_providers(HPROENUM* next, HPROVIDER* dest, char** name)
+S32 __stdcall AIL_enumerate_3D_providers(HPROENUM* next, HPROVIDER* dest, char** name)
 {
 	if (AIL_enumerate_3D_providersPtr != nullptr)
 		return AIL_enumerate_3D_providersPtr(next, dest, name);
@@ -955,14 +955,14 @@ H3DPOBJECT __stdcall AIL_open_3D_listener(HPROVIDER lib)
 	return AIL_open_3D_listenerPtr != nullptr ? AIL_open_3D_listenerPtr(lib) : nullptr;
 }
 
-void * __stdcall AIL_3D_user_data(H3DSAMPLE sample, unsigned int index)
+S32 __stdcall AIL_3D_user_data(H3DPOBJECT obj, U32 index)
 {
-	return AIL_3D_user_dataPtr != nullptr ? AIL_3D_user_dataPtr(sample, index) : nullptr;
+	return AIL_3D_user_dataPtr != nullptr ? AIL_3D_user_dataPtr(obj, index) : 0;
 }
 
-void * __stdcall AIL_sample_user_data(HSAMPLE sample, unsigned int index)
+S32 __stdcall AIL_sample_user_data(HSAMPLE sample, U32 index)
 {
-	return AIL_sample_user_dataPtr != nullptr ? AIL_sample_user_dataPtr(sample, index) : nullptr;
+	return AIL_sample_user_dataPtr != nullptr ? AIL_sample_user_dataPtr(sample, index) : 0;
 }
 
 HSAMPLE __stdcall AIL_allocate_sample_handle(HDIGDRIVER dig)
@@ -970,13 +970,13 @@ HSAMPLE __stdcall AIL_allocate_sample_handle(HDIGDRIVER dig)
 	return AIL_allocate_sample_handlePtr != nullptr ? AIL_allocate_sample_handlePtr(dig) : nullptr;
 }
 
-void __stdcall AIL_set_sample_user_data(HSAMPLE sample, unsigned int index, void *value)
+void __stdcall AIL_set_sample_user_data(HSAMPLE sample, U32 index, S32 value)
 {
 	if (AIL_set_sample_user_dataPtr != nullptr)
 		AIL_set_sample_user_dataPtr(sample, index, value);
 }
 
-int __stdcall AIL_decompress_ADPCM(const AILSOUNDINFO *info, void **outdata, unsigned long *outsize)
+S32 __stdcall AIL_decompress_ADPCM(const AILSOUNDINFO *info, void **outdata, U32 *outsize)
 {
 	if (AIL_decompress_ADPCMPtr != nullptr)
 		return AIL_decompress_ADPCMPtr(info, outdata, outsize);
@@ -1008,12 +1008,12 @@ void __stdcall AIL_mem_free_lock(void *ptr)
 		AIL_mem_free_lockPtr(ptr);
 }
 
-HSTREAM __stdcall AIL_open_stream(HDIGDRIVER dig, const char *filename, int stream_mem)
+HSTREAM __stdcall AIL_open_stream(HDIGDRIVER dig, const char *filename, S32 stream_mem)
 {
 	return AIL_open_streamPtr != nullptr ? AIL_open_streamPtr(dig, filename, stream_mem) : nullptr;
 }
 
-int __stdcall AIL_startup(void)
+S32 __stdcall AIL_startup(void)
 {
 	return AIL_startupPtr != nullptr ? AIL_startupPtr() : 0;
 }
@@ -1024,20 +1024,20 @@ void __stdcall AIL_quick_unload(HAUDIO audio)
 		AIL_quick_unloadPtr(audio);
 }
 
-HAUDIO __stdcall AIL_quick_load_and_play(const char *filename, unsigned int loop_count, int wait_request)
+HAUDIO __stdcall AIL_quick_load_and_play(const char *filename, U32 loop_count, S32 wait_request)
 {
 	return AIL_quick_load_and_playPtr != nullptr
 		? AIL_quick_load_and_playPtr(filename, loop_count, wait_request)
 		: nullptr;
 }
 
-void __stdcall AIL_quick_set_volume(HAUDIO audio, float volume, float extravol)
+void __stdcall AIL_quick_set_volume(HAUDIO audio, F32 volume, F32 extravol)
 {
 	if (AIL_quick_set_volumePtr != nullptr)
 		AIL_quick_set_volumePtr(audio, volume, extravol);
 }
 
-int __stdcall AIL_quick_startup(int use_digital, int use_MIDI, unsigned int output_rate, int output_bits, int output_channels)
+S32 __stdcall AIL_quick_startup(S32 use_digital, S32 use_MIDI, U32 output_rate, S32 output_bits, S32 output_channels)
 {
 	return AIL_quick_startupPtr != nullptr
 		? AIL_quick_startupPtr(use_digital, use_MIDI, output_rate, output_bits, output_channels)
@@ -1060,7 +1060,7 @@ void __stdcall AIL_quick_handles(HDIGDRIVER *pdig, HMDIDRIVER *pmdi, HDLSDEVICE 
 		*pdls = nullptr;
 }
 
-void __stdcall AIL_sample_volume_pan(HSAMPLE sample, float *volume, float *pan)
+void __stdcall AIL_sample_volume_pan(HSAMPLE sample, F32 *volume, F32 *pan)
 {
 	if (AIL_sample_volume_panPtr != nullptr)
 	{
@@ -1074,7 +1074,7 @@ void __stdcall AIL_sample_volume_pan(HSAMPLE sample, float *volume, float *pan)
 		*pan = 0.5f;
 }
 
-void __stdcall AIL_set_3D_sample_occlusion(H3DSAMPLE sample, float occlusion)
+void __stdcall AIL_set_3D_sample_occlusion(H3DSAMPLE sample, F32 occlusion)
 {
 	if (AIL_set_3D_sample_occlusionPtr != nullptr)
 		AIL_set_3D_sample_occlusionPtr(sample, occlusion);
@@ -1085,24 +1085,24 @@ char * __stdcall AIL_set_redist_directory(const char *dir)
 	return AIL_set_redist_directoryPtr != nullptr ? AIL_set_redist_directoryPtr(dir) : nullptr;
 }
 
-int __stdcall AIL_set_sample_file(HSAMPLE sample, const void *file_image, int block)
+S32 __stdcall AIL_set_sample_file(HSAMPLE sample, const void *file_image, S32 block)
 {
 	return AIL_set_sample_filePtr != nullptr ? AIL_set_sample_filePtr(sample, file_image, block) : 0;
 }
 
-void __stdcall AIL_set_sample_volume_pan(HSAMPLE sample, float volume, float pan)
+void __stdcall AIL_set_sample_volume_pan(HSAMPLE sample, F32 volume, F32 pan)
 {
 	if (AIL_set_sample_volume_panPtr != nullptr)
 		AIL_set_sample_volume_panPtr(sample, volume, pan);
 }
 
-void __stdcall AIL_set_stream_volume_pan(HSTREAM stream, float volume, float pan)
+void __stdcall AIL_set_stream_volume_pan(HSTREAM stream, F32 volume, F32 pan)
 {
 	if (AIL_set_stream_volume_panPtr != nullptr)
 		AIL_set_stream_volume_panPtr(stream, volume, pan);
 }
 
-void __stdcall AIL_stream_volume_pan(HSTREAM stream, float *volume, float *pan)
+void __stdcall AIL_stream_volume_pan(HSTREAM stream, F32 *volume, F32 *pan)
 {
 	if (AIL_stream_volume_panPtr != nullptr)
 	{
@@ -1116,7 +1116,7 @@ void __stdcall AIL_stream_volume_pan(HSTREAM stream, float *volume, float *pan)
 		*pan = 0.5f;
 }
 
-unsigned long __stdcall AIL_get_timer_highest_delay(void)
+U32 __stdcall AIL_get_timer_highest_delay(void)
 {
 	return AIL_get_timer_highest_delayPtr != nullptr ? AIL_get_timer_highest_delayPtr() : 0;
 }

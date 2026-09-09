@@ -242,11 +242,10 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 	AIL_set_preference (AIL_LOCK_PROTECTION, NO);
 
 	// Try to use DirectSound if possible
-	S32 success = ::AIL_set_preference (DIG_USE_WAVEOUT, FALSE);
-	WWASSERT (success == AIL_NO_ERROR);
+	::AIL_set_preference (DIG_USE_WAVEOUT, FALSE);
 
 	// Open the driver
-	success = ::AIL_waveOutOpen (&m_Driver2D, nullptr, 0, format);
+	S32 success = ::AIL_waveOutOpen (&m_Driver2D, nullptr, 0, format);
 
 	// Do we need to switch from direct sound to waveout?
 	if ((success == AIL_NO_ERROR) &&
@@ -262,8 +261,7 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 	if (success != AIL_NO_ERROR) {
 
 		// Try to use the default wave out driver
-		success = ::AIL_set_preference (DIG_USE_WAVEOUT, TRUE);
-		WWASSERT (success == AIL_NO_ERROR);
+		::AIL_set_preference (DIG_USE_WAVEOUT, TRUE);
 
 		// Open the driver
 		success = ::AIL_waveOutOpen (&m_Driver2D, nullptr, 0, format);
@@ -1385,7 +1383,7 @@ WWAudioClass::Allocate_2D_Handles ()
 		for (int index = 0; index < m_Max2DSamples; index ++) {
 			HSAMPLE sample = ::AIL_allocate_sample_handle (m_Driver2D);
 			if (sample != nullptr) {
-				::AIL_set_sample_user_data (sample, INFO_OBJECT_PTR, nullptr);
+				::AIL_set_sample_user_data (sample, INFO_OBJECT_PTR, 0);
 				m_2DSampleHandles.Add (sample);
 			}
 		}
@@ -1830,7 +1828,7 @@ WWAudioClass::Allocate_3D_Handles ()
 		for (int index = 0; index < m_Max3DSamples; index ++) {
 			H3DSAMPLE sample = ::AIL_allocate_3D_sample_handle (m_Driver3D);
 			if (sample != nullptr) {
-				::AIL_set_3D_object_user_data (sample, INFO_OBJECT_PTR, nullptr);
+				::AIL_set_3D_object_user_data (sample, INFO_OBJECT_PTR, 0);
 				m_3DSampleHandles.Add (sample);
 			}
 		}
