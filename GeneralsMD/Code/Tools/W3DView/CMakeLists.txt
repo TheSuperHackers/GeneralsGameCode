@@ -7,7 +7,7 @@ target_link_libraries(z_w3dview PRIVATE
     d3d8lib
     d3dx8
     imm32
-    milesstub
+    milesloader
     Version
     vfw32
     winmm

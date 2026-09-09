@@ -230,7 +230,7 @@ target_link_libraries(corei_gameenginedevice_public INTERFACE
     binkloader
     corei_gameengine_public
     d3d8lib
-    milesstub
+    milesloader
 )
 
 if(RTS_BUILD_OPTION_FFMPEG)

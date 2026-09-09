@@ -328,6 +328,9 @@ class MilesAudioManager : public AudioManager
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
 
+		Bool m_deviceOpened;
+		Bool m_milesLoaded;
+
 #if defined(RTS_DEBUG)
 		typedef std::set<AsciiString> SetAsciiString;
 		typedef SetAsciiString::iterator SetAsciiStringIt;

@@ -10,7 +10,7 @@ target_link_libraries(g_w3dview PRIVATE
     g_wwvegas
     gi_always
     imm32
-    milesstub
+    milesloader
     Version
     vfw32
     winmm

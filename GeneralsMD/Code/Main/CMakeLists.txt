@@ -15,7 +15,7 @@ target_link_libraries(z_generals PRIVATE
     dinput8
     dxguid
     imm32
-    milesstub
+    milesloader
     vfw32
     winmm
     z_gameengine
