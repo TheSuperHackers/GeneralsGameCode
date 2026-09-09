@@ -901,9 +901,9 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 			bool ambient_used=false;
 			bool emissive_used=false;
 
-			Vector3 mtl_diffuse;
-			Vector3 mtl_ambient;
-			Vector3 mtl_emissive;
+			Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
+			Vector3 mtl_ambient(0.0f,0.0f,0.0f);
+			Vector3 mtl_emissive(0.0f,0.0f,0.0f);
 
 			VertexMaterialClass * prev_mtl = nullptr;
 			VertexMaterialClass * mtl = Peek_Material(0, pass);
@@ -919,6 +919,12 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 
 			for (int vidx=0; vidx<VertexCount; vidx++) {
 				mtl = Peek_Material(vidx,pass);
+				// TheSuperHackers @bugfix Cryo 09/09/2026 Skip null materials in the final lighting analysis too.
+				if (mtl == nullptr)
+				{
+					continue;
+				}
+
 				if (mtl != prev_mtl) {
 					prev_mtl = mtl;
 					mtl->Get_Diffuse(&mtl_diffuse);
@@ -936,6 +942,12 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				VertexMaterialClass * mtl = Peek_Material(0,pass);
 				for (int vidx=0; vidx<VertexCount; vidx++) {
 					mtl = Peek_Material(vidx,pass);
+					// TheSuperHackers @bugfix Cryo 09/09/2026 Apply lighting only to existing materials.
+					if (mtl == nullptr)
+					{
+						continue;
+					}
+
 					if (mtl != prev_mtl) {
 						prev_mtl = mtl;
 						// If only emissive is used apply emissive to color channel, set diffuse source to color 1, and turn off lighting
