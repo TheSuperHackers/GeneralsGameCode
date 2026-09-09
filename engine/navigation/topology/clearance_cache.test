@@ -1,0 +1,79 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <vector>
+#include <cstdint>
+import engine.navigation.topology.clearance_cache;
+import engine.navigation.jump_grid;
+
+BOOST_AUTO_TEST_SUITE(clearance_cache)
+
+BOOST_AUTO_TEST_CASE(local_edits_preserve_every_footprint_and_deterministic_search)
+{
+    constexpr int width = 41, height = 35;
+    std::vector<std::uint8_t> map(width * height, 0);
+    auto read = [&](int x, int y) { return map[y * width + x]; };
+    navigation::ClearanceCache warm;
+    warm.setShape(width, height);
+    for (int r = 0; r <= 2; ++r)
+        for (bool center : {false, true}) BOOST_REQUIRE(warm.prepare(r, center, read));
+    // Include borders, insert/remove, multiple outstanding edits, and a variant
+    // prepared between edits. Compare masks and complete deterministic searches.
+    for (int round = 0; round < 16; ++round) {
+        for (int edit = 0; edit < 3; ++edit) {
+            const int x = (round * 11 + edit * 19) % width;
+            const int y = (round * 7 + edit * 13) % height;
+            map[y * width + x] ^= 1;
+            warm.invalidate({x, y, x, y});
+            if (edit == 1) BOOST_REQUIRE(warm.prepare(1, false, read));
+        }
+        navigation::ClearanceCache cold;
+        cold.setShape(width, height);
+        for (int r = 2; r >= 0; --r) {
+            for (bool center : {true, false}) {
+                BOOST_REQUIRE(warm.prepare(r, center, read));
+                BOOST_REQUIRE(cold.prepare(r, center, read));
+                auto a = warm.snapshot(r, center), b = cold.snapshot(r, center);
+                for (int y = 0; y < height; ++y)
+                    for (int x = 0; x < width; ++x)
+                        BOOST_CHECK_EQUAL(a.isBlocked(x, y), b.isBlocked(x, y));
+                navigation::JumpGridWorkspace wa, wb;
+                const auto ra = wa.find(a, {4, 4}, {36, 30});
+                const auto rb = wb.find(b, {4, 4}, {36, 30});
+                BOOST_CHECK_EQUAL(ra.found, rb.found);
+                BOOST_CHECK_EQUAL(ra.cost, rb.cost);
+                BOOST_CHECK_EQUAL(ra.expanded, rb.expanded);
+                BOOST_CHECK_EQUAL(ra.scanned, rb.scanned);
+                BOOST_REQUIRE_EQUAL(ra.path.size(), rb.path.size());
+                for (std::size_t i = 0; i < ra.path.size(); ++i)
+                    BOOST_CHECK(ra.path[i] == rb.path[i]);
+            }
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(one_cell_edit_rechecks_one_base_cell_and_56_clearance_anchors)
+{
+    navigation::ClearanceCache cache;
+    cache.setShape(100, 100);
+    bool blocked = false;
+    auto read = [&](int x, int y) { return blocked && x == 50 && y == 50; };
+    for (int r = 0; r <= 2; ++r)
+        for (bool center : {false, true}) BOOST_REQUIRE(cache.prepare(r, center, read));
+    const auto base = cache.baseCells(), clearance = cache.clearanceCells();
+    blocked = true;
+    cache.invalidate({50, 50, 50, 50});
+    for (int r = 0; r <= 2; ++r)
+        for (bool center : {false, true}) BOOST_REQUIRE(cache.prepare(r, center, read));
+    BOOST_CHECK_EQUAL(cache.baseCells() - base, 1);
+    BOOST_CHECK_EQUAL(cache.clearanceCells() - clearance, 1 + 1 + 4 + 9 + 16 + 25);
+    const auto unchanged = cache.clearanceCells();
+    for (int r = 0; r <= 2; ++r)
+        for (bool center : {false, true}) BOOST_REQUIRE(cache.prepare(r, center, read));
+    BOOST_CHECK_EQUAL(cache.clearanceCells(), unchanged);
+    cache.reset();
+    cache.setShape(7, 9);
+    BOOST_REQUIRE(cache.prepare(0, true, read));
+    BOOST_CHECK_EQUAL(cache.baseCells(), 63);
+    BOOST_CHECK(!cache.snapshot(0, true).isBlocked(6, 8));
+}
+BOOST_AUTO_TEST_SUITE_END()

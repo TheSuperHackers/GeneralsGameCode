@@ -1,0 +1,202 @@
+#include <boost/test/unit_test.hpp>
+
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <cstdlib>
+#include <limits>
+#include <vector>
+
+import engine.navigation.reference.search_lists;
+
+namespace {
+
+// Historical characterization fixture. These linked-list operations are kept
+// in the test-only reference library and are no longer used by GeneralsMD.
+struct Cell;
+struct Info {
+    Info* m_nextOpen = nullptr;
+    Info* m_prevOpen = nullptr;
+    Cell* m_cell = nullptr;
+    std::uint16_t m_totalCost = 0;
+    unsigned int m_open : 1;
+    unsigned int m_closed : 1;
+
+    Info() : m_open(0), m_closed(0) {}
+};
+
+struct Cell {
+    Info storage;
+    Info* m_info = &storage;
+
+    Cell() { storage.m_cell = this; }
+    Cell(const Cell&) = delete;
+    Cell& operator=(const Cell&) = delete;
+    Cell* getNextOpen() { return m_info->m_nextOpen ? m_info->m_nextOpen->m_cell : nullptr; }
+    Cell* getPrevOpen() { return m_info->m_prevOpen ? m_info->m_prevOpen->m_cell : nullptr; }
+    unsigned int getTotalCostDifference(Cell& other) const
+    {
+        if (!m_info || !other.m_info) return std::numeric_limits<unsigned int>::max();
+        return std::abs(int(m_info->m_totalCost) - int(other.m_info->m_totalCost));
+    }
+};
+
+struct List {
+    Cell* m_head = nullptr;
+    Cell* m_tail = nullptr;
+};
+
+using Lists = navigation::reference::SearchLists;
+
+void verify(List& list, const std::vector<Cell*>& expected, bool checkTail = true)
+{
+    Cell* cell = list.m_head;
+    Cell* previous = nullptr;
+    for (Cell* wanted : expected) {
+        BOOST_REQUIRE_MESSAGE(cell == wanted, "open-list order changed");
+        BOOST_REQUIRE_MESSAGE(cell->getPrevOpen() == previous, "broken reverse link");
+        BOOST_REQUIRE_MESSAGE(cell->m_info->m_open && !cell->m_info->m_closed, "invalid open-list flags");
+        previous = cell;
+        cell = cell->getNextOpen();
+    }
+    BOOST_REQUIRE_MESSAGE(cell == nullptr, "unexpected trailing cell or cycle");
+    if (checkTail) BOOST_REQUIRE_MESSAGE(list.m_tail == previous, "wrong tail");
+}
+
+
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(reference_search_lists)
+
+BOOST_AUTO_TEST_CASE(stableInsertion)
+{
+    // Exhaust every insertion order, including ties. Forward and reverse scans
+    // must produce the same stable ordering as an independent stable sort.
+    std::array<int, 6> order = {{0, 1, 2, 3, 4, 5}};
+    const std::uint16_t costs[] = {0, 10, 10, 30, 65535, 30};
+    do {
+        for (int mode = 0; mode < 4; ++mode) {
+            std::array<Cell, 6> cells;
+            List list;
+            std::vector<Cell*> expected;
+            for (int index : order) {
+                Cell* cell = &cells[index];
+                cell->m_info->m_totalCost = costs[index];
+                if (mode == 0) Lists::forwardInsertionSort(cell, list);
+                else if (mode == 1) Lists::reverseInsertionSort(cell, list);
+                else if (mode == 2) {
+                    if (Lists::canReverseSort(*cell, list)) Lists::reverseInsertionSort(cell, list);
+                    else Lists::forwardInsertionSort(cell, list);
+                } else Lists::forwardInsertionSortRetailCompatible(cell, list, 5000);
+                expected.push_back(cell);
+                std::stable_sort(expected.begin(), expected.end(), [](Cell* a, Cell* b) {
+                    return a->m_info->m_totalCost < b->m_info->m_totalCost;
+                });
+                verify(list, expected, mode != 3);
+            }
+            // Exercise middle, head, tail and singleton removal in every order.
+            for (int index : order) {
+                Cell* cell = &cells[index];
+                Lists::removeFromOpenList(cell, list);
+                expected.erase(std::find(expected.begin(), expected.end(), cell));
+                verify(list, expected, mode != 3);
+                BOOST_REQUIRE_MESSAGE(!cell->m_info->m_open && !cell->getNextOpen() && !cell->getPrevOpen(),
+                        "removal must detach and clear open flag");
+            }
+        }
+    } while (std::next_permutation(order.begin(), order.end()));
+}
+
+BOOST_AUTO_TEST_CASE(directionChoice)
+{
+    Cell low, high, middle;
+    low.m_info->m_totalCost = 10;
+    high.m_info->m_totalCost = 30;
+    middle.m_info->m_totalCost = 20;
+    List list;
+    BOOST_REQUIRE_MESSAGE(!Lists::canReverseSort(middle, list), "empty list scans forward");
+    Lists::forwardInsertionSort(&low, list);
+    BOOST_REQUIRE_MESSAGE(!Lists::canReverseSort(middle, list), "singleton scans forward");
+    Lists::forwardInsertionSort(&high, list);
+    BOOST_REQUIRE_MESSAGE(!Lists::canReverseSort(middle, list), "equal distance scans forward");
+    middle.m_info->m_totalCost = 21;
+    BOOST_REQUIRE_MESSAGE(Lists::canReverseSort(middle, list), "closer to tail scans backward");
+    middle.m_info = nullptr;
+    BOOST_REQUIRE_MESSAGE(!Lists::canReverseSort(middle, list), "missing info scans forward");
+}
+
+BOOST_AUTO_TEST_CASE(decreaseKey)
+{
+    Cell first, second, third;
+    first.m_info->m_totalCost = 10;
+    second.m_info->m_totalCost = 20;
+    third.m_info->m_totalCost = 30;
+    List list;
+    Lists::forwardInsertionSort(&first, list);
+    Lists::forwardInsertionSort(&second, list);
+    Lists::forwardInsertionSort(&third, list);
+    Lists::removeFromOpenList(&third, list);
+    third.m_info->m_totalCost = 10;
+    Lists::reverseInsertionSort(&third, list);
+    verify(list, {&first, &third, &second});
+}
+
+BOOST_AUTO_TEST_CASE(retailScanLimit)
+{
+    // Build the starting storage directly to isolate the scan boundary.
+    std::array<Cell, 5002> cells;
+    for (std::size_t i = 0; i < cells.size(); ++i) {
+        cells[i].m_info->m_totalCost = 10;
+        cells[i].m_info->m_open = true;
+        if (i) cells[i].m_info->m_prevOpen = cells[i - 1].m_info;
+        if (i + 1 < cells.size()) cells[i].m_info->m_nextOpen = cells[i + 1].m_info;
+    }
+    List list;
+    list.m_head = &cells.front();
+    Cell expensive;
+    expensive.m_info->m_totalCost = 20;
+    Lists::forwardInsertionSortRetailCompatible(&expensive, list, 5000);
+    BOOST_REQUIRE_MESSAGE(cells[4999].getNextOpen() == &expensive, "retail scan stops at 5000 cells");
+    BOOST_REQUIRE_MESSAGE(expensive.getNextOpen() == &cells[5000], "retail scan cap can break cost ordering");
+    BOOST_REQUIRE_MESSAGE(cells[5000].getPrevOpen() == &expensive, "retail scan cap reverse link");
+    BOOST_REQUIRE_MESSAGE(list.m_tail == nullptr, "retail insertion deliberately leaves tail untouched");
+}
+
+BOOST_AUTO_TEST_CASE(retailDanglingInfo)
+{
+    Cell head, orphan, incoming;
+    List list;
+    list.m_head = &head;
+    head.m_info->m_totalCost = 10;
+    head.m_info->m_open = true;
+    head.m_info->m_nextOpen = orphan.m_info;
+    orphan.m_info->m_prevOpen = head.m_info;
+    orphan.m_info = nullptr;
+    incoming.m_info->m_totalCost = 20;
+    Lists::forwardInsertionSortRetailCompatible(&incoming, list, 5000);
+    BOOST_REQUIRE_MESSAGE(orphan.storage.m_cell == nullptr, "retail dangling-info recovery clears backpointer");
+    verify(list, {&head, &incoming}, false);
+}
+
+BOOST_AUTO_TEST_CASE(closedRemoval)
+{
+    std::array<Cell, 3> cells;
+    List list;
+    list.m_head = &cells[0];
+    for (int i = 0; i < 3; ++i) {
+        cells[i].m_info->m_closed = true;
+        if (i) cells[i].m_info->m_prevOpen = cells[i - 1].m_info;
+        if (i < 2) cells[i].m_info->m_nextOpen = cells[i + 1].m_info;
+    }
+    Lists::removeFromClosedList(&cells[1], list);
+    BOOST_REQUIRE_MESSAGE(cells[0].getNextOpen() == &cells[2] && cells[2].getPrevOpen() == &cells[0], "closed middle removal");
+    Lists::removeFromClosedList(&cells[0], list);
+    BOOST_REQUIRE_MESSAGE(list.m_head == &cells[2] && !cells[2].getPrevOpen(), "closed head removal");
+    Lists::removeFromClosedList(&cells[2], list);
+    BOOST_REQUIRE_MESSAGE(list.m_head == nullptr, "closed singleton removal");
+    for (Cell& cell : cells) {
+        BOOST_REQUIRE_MESSAGE(!cell.m_info->m_closed && !cell.getNextOpen() && !cell.getPrevOpen(), "closed removal detaches cell");
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()

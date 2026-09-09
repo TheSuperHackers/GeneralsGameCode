@@ -46,6 +46,8 @@
 
 #pragma once
 
+#include <vector>
+
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -82,6 +84,7 @@ struct Coord3D;
 class CellAndObjectIntersection;
 class Object;
 class PartitionManager;
+class PartitionManagerTestProbe;
 class PartitionData;
 class PartitionFilter;
 class PartitionCell;
@@ -292,7 +295,31 @@ struct ShroudStatusStoreRestore
 class PartitionCell : public Snapshot	// not MPO: allocated in an array
 {
 private:
+	friend class PartitionData;
+	friend class PartitionManager;
+	friend class PartitionManagerTestProbe;
+
+	struct CompactMember
+	{
+		PartitionData *module;
+		Object *object;
+	};
+	typedef std::vector<CompactMember> CompactMemberVec;
+
 	CellAndObjectIntersection*		m_firstCoiInCell;	///< list of COIs in this cell (may be null).
+	CompactMemberVec					m_compactMembers;	///< transient ordered view of the COI list for closest-object queries.
+	Bool									m_compactMembersDirty;	///< true when the transient ordered view needs rebuilding.
+
+	void invalidateCompactMembers() { m_compactMembersDirty = true; }
+	void rebuildCompactMembers();
+	// The returned view is invalidated by membership or object-pointer changes;
+	// callers must not mutate or re-enter membership updates while traversing it.
+	const CompactMemberVec& getCompactMembers()
+	{
+		if (m_compactMembersDirty)
+			rebuildCompactMembers();
+		return m_compactMembers;
+	}
 	ShroudLevel										m_shroudLevel[MAX_PLAYER_COUNT];
 #ifdef PM_CACHE_TERRAIN_HEIGHT
 	Real													m_loTerrainZ;			///< lowest terrain-pt in this cell
@@ -372,6 +399,7 @@ class PartitionData : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PartitionData, "PartitionDataPool" )
 
 private:
+	friend class PartitionManagerTestProbe;
 
 	enum DirtyStatus
 	{
@@ -539,7 +567,7 @@ public:
 
 	Object *getObject() { return m_object; }				///< return the Object that owns this module
 	const Object *getObject() const { return m_object; }				///< return the Object that owns this module
-	void friend_setObject(Object *object) { m_object = object;}	///< to be used only by the partition manager.
+	void friend_setObject(Object *object);	///< to be used only by the partition manager.
 	GhostObject *getGhostObject() const { return m_ghostObject; }	///< return the ghost object that serves as fogged memory of object.
 	void friend_setGhostObject(GhostObject *object) {m_ghostObject=object;}	///<used by ghost object manager to free link to partition data.
 	void friend_setShroudednessPrevious(Int playerIndex,ObjectShroudStatus status); ///<only used to restore state after map border resizing and/or xfer!
@@ -1234,9 +1262,16 @@ class PartitionManager : public SubsystemInterface, public Snapshot
 
 private:
 
+	friend class PartitionManagerTestProbe;
+
 #ifdef FASTER_GCO
+	struct RadiusSpan
+	{
+		Int begin;
+		Int end;
+	};
 	typedef std::vector<ICoord2D>		OffsetVec;
-	typedef std::vector<OffsetVec>	RadiusVec;
+	typedef std::vector<RadiusSpan>	RadiusVec;
 #endif
 
 	PartitionData		*m_moduleList;		///< master partition module list
@@ -1256,6 +1291,7 @@ private:
 #ifdef FASTER_GCO
 	Int							m_maxGcoRadius;
 	RadiusVec				m_radiusVec;
+	OffsetVec				m_radiusOffsets;
 #endif
 
 protected:

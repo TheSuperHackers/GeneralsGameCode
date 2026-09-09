@@ -1,0 +1,246 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+import engine.navigation.partition_fixture;
+
+using navigation::testing::DistanceMode;
+using navigation::testing::MembershipEntry;
+using navigation::testing::PartitionFixture;
+using navigation::testing::PartitionMembershipFixture;
+using navigation::testing::Point3;
+using navigation::testing::RadiusGridSnapshot;
+
+namespace {
+
+int legacyRealToIntCeil(float value)
+{
+	// The Zero Hour build uses BaseType.h's positive fast_float_ceil path.
+	// For these nonnegative radii, adding almost-one and truncating reproduces
+	// its add-before-trunc behavior, including its integral-boundary quirk.
+	return static_cast<int>(value + 0x1.fffffep-1f);
+}
+
+int legacyRadius(int x, int y, float cellSize)
+{
+	const float halfCell = static_cast<float>(static_cast<double>(cellSize) * 0.5);
+	const std::array<std::array<float, 2>, 4> centerPos = {{
+		{{-halfCell, -halfCell}},
+		{{halfCell, -halfCell}},
+		{{-halfCell, halfCell}},
+		{{halfCell, halfCell}},
+	}};
+
+	const float otherX = static_cast<float>(x) * cellSize;
+	const float otherY = static_cast<float>(y) * cellSize;
+	const std::array<std::array<float, 2>, 4> otherPos = {{
+		{{otherX - halfCell, otherY - halfCell}},
+		{{otherX + halfCell, otherY - halfCell}},
+		{{otherX - halfCell, otherY + halfCell}},
+		{{otherX + halfCell, otherY + halfCell}},
+	}};
+
+	double minDistSqr = 1e12;
+	for (const auto& center : centerPos)
+	{
+		for (const auto& other : otherPos)
+		{
+			const double dx = static_cast<double>(center[0] - other[0]);
+			const double dy = static_cast<double>(center[1] - other[1]);
+			const double distanceSqr = dx * dx + dy * dy;
+			if (minDistSqr > distanceSqr)
+				minDistSqr = distanceSqr;
+		}
+	}
+
+	const float distance = std::sqrt(static_cast<float>(minDistSqr));
+	const float ratio = static_cast<float>(static_cast<double>(distance) / static_cast<double>(cellSize));
+	return legacyRealToIntCeil(ratio);
+}
+
+int legacyMaxRadius(int cellCountX, int cellCountY, float cellSize)
+{
+	const double dx = static_cast<double>(cellCountX) * static_cast<double>(cellSize);
+	const double dy = static_cast<double>(cellCountY) * static_cast<double>(cellSize);
+	const double maximumDistance = std::sqrt(dx * dx + dy * dy);
+	const float ratio = static_cast<float>(maximumDistance / static_cast<double>(cellSize));
+	return legacyRealToIntCeil(ratio);
+}
+
+void checkRadiusGrid(int cellCountX, int cellCountY, float cellSize)
+{
+	const PartitionFixture fixture(cellCountX, cellCountY, cellSize);
+	const RadiusGridSnapshot& actual = fixture.radiusGrid();
+	const int expectedMaxRadius = legacyMaxRadius(cellCountX, cellCountY, cellSize);
+
+	BOOST_REQUIRE_EQUAL(actual.maxRadius, expectedMaxRadius);
+	BOOST_REQUIRE_EQUAL(actual.spans.size(), static_cast<std::size_t>(expectedMaxRadius + 1));
+
+	std::vector<std::vector<navigation::testing::RadiusOffset>> expected(
+		static_cast<std::size_t>(expectedMaxRadius + 1));
+	for (int y = -cellCountY + 1; y < cellCountY; ++y)
+	{
+		for (int x = -cellCountX + 1; x < cellCountX; ++x)
+		{
+			const int radius = legacyRadius(x, y, cellSize);
+			BOOST_REQUIRE_MESSAGE(radius >= 0, "legacy radius is negative");
+			BOOST_REQUIRE_MESSAGE(radius <= expectedMaxRadius, "legacy radius exceeds maximum radius");
+			expected[static_cast<std::size_t>(radius)].push_back({x, y});
+		}
+	}
+
+	BOOST_REQUIRE_EQUAL(actual.offsets.size(),
+		static_cast<std::size_t>((2 * cellCountX - 1) * (2 * cellCountY - 1)));
+
+	int previousEnd = 0;
+	for (int radius = 0; radius <= expectedMaxRadius; ++radius)
+	{
+		const auto& span = actual.spans[static_cast<std::size_t>(radius)];
+		BOOST_REQUIRE_EQUAL(span.begin, previousEnd);
+		BOOST_REQUIRE_GE(span.end, span.begin);
+		BOOST_REQUIRE_LE(span.end, static_cast<int>(actual.offsets.size()));
+		BOOST_REQUIRE_EQUAL(span.end - span.begin, static_cast<int>(expected[radius].size()));
+
+		for (int index = span.begin; index < span.end; ++index)
+		{
+			const auto& expectedOffset = expected[static_cast<std::size_t>(radius)][static_cast<std::size_t>(index - span.begin)];
+			const auto& actualOffset = actual.offsets[static_cast<std::size_t>(index)];
+			BOOST_TEST(actualOffset.x == expectedOffset.x);
+			BOOST_TEST(actualOffset.y == expectedOffset.y);
+		}
+		previousEnd = span.end;
+	}
+
+	BOOST_TEST(previousEnd == static_cast<int>(actual.offsets.size()));
+}
+
+void checkMembershipMatchesLinkedList(
+	PartitionMembershipFixture& fixture,
+	std::size_t cellIndex,
+	std::size_t expectedCount)
+{
+	const std::vector<MembershipEntry> linked = fixture.linkedSequence(cellIndex);
+	const std::vector<MembershipEntry> packed = fixture.packedSequence(cellIndex);
+	BOOST_REQUIRE_EQUAL(linked.size(), expectedCount);
+	BOOST_REQUIRE_EQUAL(packed.size(), linked.size());
+	for (std::size_t index = 0; index < linked.size(); ++index)
+	{
+		BOOST_TEST(packed[index].module == linked[index].module);
+		BOOST_TEST(packed[index].object == linked[index].object);
+	}
+}
+
+} // namespace
+
+BOOST_AUTO_TEST_CASE(packed_radius_spans_match_legacy_grid_order)
+{
+	checkRadiusGrid(1, 1, 1.0f);
+	checkRadiusGrid(2, 3, 7.5f);
+	checkRadiusGrid(3, 2, 10.0f);
+	checkRadiusGrid(5, 4, 13.25f);
+	checkRadiusGrid(11, 7, 1.0f);
+}
+
+BOOST_AUTO_TEST_CASE(optional_distance_vector_matches_original_geometry)
+{
+	const std::array<DistanceMode, 4> modes = {{
+		DistanceMode::Center2D,
+		DistanceMode::Center3D,
+		DistanceMode::Boundary2D,
+		DistanceMode::Boundary3D,
+	}};
+	const std::array<std::array<Point3, 2>, 3> cases = {{
+		{{{1.25f, -2.5f, 7.0f}, {8.75f, 4.5f, -1.0f}}},
+		{{{-12.0f, 3.0f, -4.0f}, {-12.0f, 3.0f, 9.0f}}},
+		{{{0.0f, 0.0f, 0.0f}, {-0.125f, 0.25f, 0.5f}}},
+	}};
+
+	for (const auto mode : modes)
+	{
+		const bool is3D = mode == DistanceMode::Center3D || mode == DistanceMode::Boundary3D;
+		for (const auto& testCase : cases)
+		{
+			const Point3& goal = testCase[0];
+			const Point3& other = testCase[1];
+			const auto actual = navigation::testing::compareGoalDistance(mode, goal, other);
+			const float expectedX = other.x - goal.x;
+			const float expectedY = other.y - goal.y;
+			const float expectedZ = is3D ? other.z - goal.z : 0.0f;
+			const float expectedDistance = expectedX * expectedX + expectedY * expectedY + expectedZ * expectedZ;
+
+			BOOST_TEST(std::fabs(actual.withoutVector - expectedDistance) < 1.0e-5f);
+			BOOST_TEST(std::fabs(actual.withVector - expectedDistance) < 1.0e-5f);
+			BOOST_TEST(std::fabs(actual.withVector - actual.withoutVector) < 1.0e-5f);
+			BOOST_TEST(std::fabs(actual.vector.x - expectedX) < 1.0e-5f);
+			BOOST_TEST(std::fabs(actual.vector.y - expectedY) < 1.0e-5f);
+			BOOST_TEST(std::fabs(actual.vector.z - expectedZ) < 1.0e-5f);
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(compact_membership_preserves_order_and_reuses_storage)
+{
+	PartitionMembershipFixture fixture(3);
+	checkMembershipMatchesLinkedList(fixture, 0, 0);
+
+	fixture.add(0, 0);
+	fixture.add(1, 0);
+	checkMembershipMatchesLinkedList(fixture, 0, 2);
+	const std::uintptr_t storageBeforeGrowth = fixture.packedStorageAddress(0);
+	BOOST_TEST(storageBeforeGrowth != static_cast<std::uintptr_t>(0));
+
+	// The third insertion exercises vector growth while retaining the linked
+	// list's head insertion order.
+	fixture.add(2, 0);
+	checkMembershipMatchesLinkedList(fixture, 0, 3);
+	const std::uintptr_t storageAfterGrowth = fixture.packedStorageAddress(0);
+	BOOST_TEST(storageAfterGrowth != static_cast<std::uintptr_t>(0));
+
+	// Exercise middle removal, tail removal, head reinsertion and head
+	// removal while comparing every rebuilt view with the linked authority.
+	fixture.remove(1);
+	checkMembershipMatchesLinkedList(fixture, 0, 2);
+	BOOST_TEST(fixture.packedStorageAddress(0) == storageAfterGrowth);
+
+	fixture.remove(0);
+	checkMembershipMatchesLinkedList(fixture, 0, 1);
+
+	fixture.add(0, 0);
+	checkMembershipMatchesLinkedList(fixture, 0, 2);
+
+	fixture.remove(0);
+	checkMembershipMatchesLinkedList(fixture, 0, 1);
+
+	fixture.remove(2);
+	checkMembershipMatchesLinkedList(fixture, 0, 0);
+
+	fixture.add(1, 0);
+	checkMembershipMatchesLinkedList(fixture, 0, 1);
+	BOOST_TEST(fixture.packedStorageAddress(0) == storageAfterGrowth);
+}
+
+BOOST_AUTO_TEST_CASE(compact_membership_invalidates_each_touched_cell_on_object_detach)
+{
+	PartitionMembershipFixture fixture(1);
+	fixture.add(0, 0);
+	fixture.add(0, 1);
+
+	// Build both cached views before changing the object pointer.
+	checkMembershipMatchesLinkedList(fixture, 0, 1);
+	checkMembershipMatchesLinkedList(fixture, 1, 1);
+
+	fixture.setObjectNull(0);
+	for (std::size_t cellIndex = 0; cellIndex < 2; ++cellIndex)
+	{
+		const std::vector<MembershipEntry> linked = fixture.linkedSequence(cellIndex);
+		const std::vector<MembershipEntry> packed = fixture.packedSequence(cellIndex);
+		BOOST_REQUIRE_EQUAL(linked.size(), 1u);
+		BOOST_REQUIRE_EQUAL(packed.size(), 1u);
+		BOOST_TEST(linked[0].object == static_cast<std::uintptr_t>(0));
+		BOOST_TEST(packed[0].module == linked[0].module);
+		BOOST_TEST(packed[0].object == static_cast<std::uintptr_t>(0));
+	}
+}

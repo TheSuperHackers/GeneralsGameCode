@@ -1,0 +1,429 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <algorithm>
+#include <cstdint>
+#include <string>
+#include <vector>
+
+import engine.navigation.world_fixture;
+
+namespace {
+
+using Map = std::vector<std::string>;
+using navigation::testing::JpsStats;
+using navigation::testing::Result;
+using navigation::testing::World;
+
+Map openMap(int size = 32)
+{
+    return Map(static_cast<std::size_t>(size),
+        std::string(static_cast<std::size_t>(size), '.'));
+}
+
+void requireAccepted(const Result& result)
+{
+    BOOST_REQUIRE(result.found);
+    BOOST_TEST(result.legal);
+    BOOST_TEST(result.clean);
+    BOOST_TEST(result.cells > 0);
+}
+
+void requireAcceptedDelta(const JpsStats& before, const JpsStats& after)
+{
+    BOOST_TEST(after.attempted == before.attempted + 1);
+    BOOST_TEST(after.accepted == before.accepted + 1);
+    BOOST_TEST(after.validationRejected == before.validationRejected);
+    BOOST_TEST(after.unavailableFallback == before.unavailableFallback);
+}
+
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(navigation_jps_adapter)
+
+BOOST_AUTO_TEST_CASE(direct_ground_routes_keep_avoidance_cells_without_preparing_topology)
+{
+    World world(openMap(64));
+    world.setJpsAdapterEnabled(true);
+    const auto cold = world.normal(4, 32, 58, 32);
+    requireAccepted(cold);
+    BOOST_TEST(!cold.macroEdges);
+    BOOST_TEST(cold.optimizedEdges);
+    BOOST_TEST(world.jpsStats().directAccepted == 1U);
+    BOOST_TEST(world.jpsStats().topologyRebuilds == 0U);
+    for (int x = 5; x < 58; ++x)
+        BOOST_CHECK(std::find(cold.rawGroundCells.begin(), cold.rawGroundCells.end(),
+                              std::array<int, 2>{x, 32}) != cold.rawGroundCells.end());
+    const auto warm = world.normal(4, 32, 58, 32);
+    BOOST_TEST(warm.raw == cold.raw);
+    BOOST_TEST(warm.optimized == cold.optimized);
+    BOOST_TEST(warm.cells == cold.cells);
+    BOOST_TEST(world.jpsStats().topologyRebuilds == 0U);
+
+    world.setCell(30, 32, '#');
+    const auto before = world.jpsStats();
+    const auto detour = world.normal(4, 32, 58, 32);
+    requireAccepted(detour);
+    BOOST_TEST(world.jpsStats().directAccepted == before.directAccepted);
+    BOOST_TEST(world.jpsStats().accepted == before.accepted + 1);
+    BOOST_TEST(world.jpsStats().topologyRebuilds == 1U);
+}
+
+BOOST_AUTO_TEST_CASE(direct_routes_check_full_footprints_and_pinched_cells)
+{
+    World world(openMap(48));
+    world.setJpsAdapterEnabled(true);
+    // The center line is clear, but a wide unit would overlap the obstacle.
+    world.setCell(24, 21, '#');
+    const auto wide = world.jpsGround(6, 20, 40, 20, 2, true);
+    requireAccepted(wide);
+    BOOST_TEST(world.jpsStats().directAccepted == 0U);
+    world.setCell(24, 21, '.');
+    world.setPinched(24, 20, true);
+    const auto before = world.jpsStats();
+    const auto rejected = world.jpsGround(6, 20, 40, 20, 0, true);
+    BOOST_TEST(!rejected.found);
+    BOOST_TEST(world.jpsStats().directAccepted == before.directAccepted);
+    world.setPinched(24, 20, false);
+    requireAccepted(world.jpsGround(6, 20, 40, 20, 2, true));
+    BOOST_TEST(world.jpsStats().directAccepted == before.directAccepted + 1);
+}
+
+BOOST_AUTO_TEST_CASE(jps_turns_do_not_validate_past_the_segment_endpoint)
+{
+    auto map = openMap(48);
+    for (int y = 12; y < 36; y += 16)
+        for (int x = 12; x < 36; x += 16)
+            for (int dy = 0; dy < 8; ++dy)
+                for (int dx = 0; dx < 8; ++dx) map[y + dy][x + dx] = '#';
+    World world(map);
+    world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+    const auto path = world.normal(2, 2, 44, 43);
+    requireAccepted(path);
+    BOOST_TEST(world.jpsStats().accepted == 1U);
+    BOOST_TEST(world.jpsStats().validationRejected == 0U);
+}
+
+BOOST_AUTO_TEST_CASE(ground_routes_keep_nearby_cells_for_avoidance_and_rejoining)
+{
+    for (const bool jps : {false, true}) {
+        World world(openMap(96));
+        world.setMacroEdgesEnabled(true);
+        world.setJpsAdapterEnabled(jps);
+        // A unit interrupted in the middle of a long route must be able to
+        // rejoin nearby. patchPath matches raw node coordinates, and moveAllies
+        // inspects occupancy at those same nodes, even when movement is optimized.
+        world.movingUnit(40, 48, true);
+        for (const bool group : {false, true}) {
+            const auto before = world.jpsStats();
+            const auto path = group ? world.ground(4, 48, 88, 48)
+                                    : world.normal(4, 48, 88, 48);
+            requireAccepted(path);
+            BOOST_TEST(!path.macroEdges);
+            BOOST_TEST(path.optimizedEdges);
+            if (jps) BOOST_TEST(world.jpsStats().accepted == before.accepted + 1);
+            for (int x = 5; x < 88; ++x) {
+                // Group goals use the legacy corner alignment and can shift
+                // by one cell. Both APIs must retain nearby raw rejoin points.
+                BOOST_TEST_CONTEXT("jps=" << jps << ", group=" << group << ", x=" << x) {
+                    BOOST_CHECK(std::any_of(path.rawGroundCells.begin(), path.rawGroundCells.end(),
+                        [&](const auto& cell) {
+                            return cell[0] == x && (group ? abs(cell[1] - 48) <= 1 : cell[1] == 48);
+                        }));
+                }
+            }
+            BOOST_TEST(world.hasMovingUnit(40, 48));
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(queued_routes_and_budget_boundaries_ignore_cache_warmth)
+{
+    const auto run = [](bool warm, bool jps, int budget) {
+        auto map = openMap(48);
+        for (int y = 0; y < 40; ++y) map[y][24] = '#';
+        World world(map);
+        world.setMacroEdgesEnabled(true);
+        world.setJpsAdapterEnabled(jps);
+        std::vector<std::array<int, 4>> queries;
+        for (int i = 0; i < 32; ++i) {
+            queries.push_back({3, 3 + i, 43, 42 - i});
+            queries.push_back({43, 42 - i, 3, 3 + i});
+        }
+        return world.queuedGroundTrace(queries, budget, warm);
+    };
+    for (const bool jps : {false, true}) {
+        for (const int budget : {500, 50000}) {
+            const auto cold = run(false, jps, budget);
+            BOOST_REQUIRE(!cold.empty());
+            BOOST_TEST(run(true, jps, budget) == cold);
+            BOOST_TEST(run(false, jps, budget) == cold);
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(normal_and_ground_paths_are_accepted_by_the_live_adapter)
+{
+    World world(openMap());
+    world.setMacroEdgesEnabled(true);
+    world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+
+    const auto initial = world.jpsStats();
+    const auto normal = world.normal(3, 3, 26, 25);
+    const auto afterNormal = world.jpsStats();
+    requireAccepted(normal);
+    requireAcceptedDelta(initial, afterNormal);
+
+    const auto ground = world.ground(3, 3, 26, 25);
+    const auto afterGround = world.jpsStats();
+    requireAccepted(ground);
+    requireAcceptedDelta(afterNormal, afterGround);
+}
+
+BOOST_AUTO_TEST_CASE(all_supported_radius_and_center_variants_are_deterministic)
+{
+    for (const int radius : {0, 1, 2}) {
+        for (const bool center : {false, true}) {
+            BOOST_TEST_CONTEXT("radius=" << radius << ", center=" << center) {
+                World world(openMap(48));
+                world.setMacroEdgesEnabled(true);
+                world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+
+                const auto initial = world.jpsStats();
+                const auto cold = world.jpsGround(8, 8, 30, 28, radius, center);
+                const auto afterCold = world.jpsStats();
+                requireAccepted(cold);
+                requireAcceptedDelta(initial, afterCold);
+                BOOST_TEST(afterCold.topologyRebuilds == initial.topologyRebuilds + 1);
+
+                const auto warm = world.jpsGround(8, 8, 30, 28, radius, center);
+                const auto afterWarm = world.jpsStats();
+                requireAccepted(warm);
+                BOOST_TEST(warm.raw == cold.raw);
+                BOOST_TEST(warm.optimized == cold.optimized);
+                BOOST_TEST(warm.cells == cold.cells);
+                BOOST_TEST(afterWarm.attempted == afterCold.attempted + 1);
+                BOOST_TEST(afterWarm.accepted == afterCold.accepted + 1);
+                BOOST_TEST(afterWarm.topologyRebuilds == afterCold.topologyRebuilds);
+            }
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(static_edit_restore_and_fixture_reset_rebuild_transient_topology)
+{
+    const auto map = openMap();
+    {
+        World world(map);
+        world.setMacroEdgesEnabled(true);
+        world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+
+        const auto original = world.normal(3, 16, 28, 16);
+        requireAccepted(original);
+        const auto warmStats = world.jpsStats();
+
+        world.setCell(16, 16, '#');
+        const auto edited = world.normal(3, 16, 28, 16);
+        const auto editedStats = world.jpsStats();
+        requireAccepted(edited);
+        BOOST_TEST(editedStats.attempted == warmStats.attempted + 1);
+        BOOST_TEST(editedStats.accepted == warmStats.accepted + 1);
+        BOOST_TEST(editedStats.topologyRebuilds > warmStats.topologyRebuilds);
+
+        world.setCell(16, 16, '.');
+        const auto restored = world.normal(3, 16, 28, 16);
+        const auto restoredStats = world.jpsStats();
+        requireAccepted(restored);
+        BOOST_TEST(restored.raw == original.raw);
+        BOOST_TEST(restored.optimized == original.optimized);
+        BOOST_TEST(restored.cells == original.cells);
+        BOOST_TEST(restoredStats.topologyRebuilds > editedStats.topologyRebuilds);
+    }
+
+    // The first fixture is fully torn down before this construction because
+    // native globals require isolation. A fresh Pathfinder must start with no
+    // adapter topology or counters from the prior fixture lifetime.
+    {
+        World reset(map);
+        reset.setMacroEdgesEnabled(true);
+        reset.setJpsAdapterEnabled(true);
+        reset.setDirectGroundPathEnabled(false);
+        const auto resetPath = reset.normal(3, 16, 28, 16);
+        const auto resetStats = reset.jpsStats();
+        requireAccepted(resetPath);
+        BOOST_TEST(resetStats.attempted == 1U);
+        BOOST_TEST(resetStats.accepted == 1U);
+        BOOST_TEST(resetStats.topologyRebuilds == 1U);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(ground_diameter_and_narrow_clearance_follow_native_footprint_rules)
+{
+    // A four-cell doorway admits a diameter-four unit when the footprint is
+    // edge-centered. The same map must reject a five-cell center footprint.
+    Map doorway = openMap(48);
+    for (int y = 0; y < 48; ++y)
+        doorway[static_cast<std::size_t>(y)][24] = '#';
+    for (int y = 18; y <= 21; ++y)
+        doorway[static_cast<std::size_t>(y)][24] = '.';
+
+    {
+        World world(doorway);
+        world.setMacroEdgesEnabled(true);
+        world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+
+        const auto beforeDoorway = world.jpsStats();
+        const auto edgeCentered = world.jpsGround(8, 20, 39, 20, 2, false);
+        const auto afterEdgeCentered = world.jpsStats();
+        requireAccepted(edgeCentered);
+        BOOST_TEST(afterEdgeCentered.accepted == beforeDoorway.accepted + 1);
+        BOOST_TEST(afterEdgeCentered.topologyRebuilds == beforeDoorway.topologyRebuilds + 1);
+
+        const auto centerFootprint = world.jpsGround(8, 20, 39, 20, 2, true);
+        const auto afterCenterFootprint = world.jpsStats();
+        BOOST_TEST(!centerFootprint.found);
+        BOOST_TEST(centerFootprint.clean);
+        BOOST_TEST(afterCenterFootprint.accepted == afterEdgeCentered.accepted);
+        BOOST_TEST(afterCenterFootprint.topologyRebuilds ==
+                   afterEdgeCentered.topologyRebuilds + 1);
+    }
+
+    // The supported production ground helper carries the actual diameter
+    // through its segment validator. Exercise both nontrivial diameters on a
+    // clear map so acceptance cannot be satisfied by the radius-zero route.
+    for (const int diameter : {2, 4}) {
+        World clear(openMap(48));
+        clear.setMacroEdgesEnabled(true);
+        clear.setJpsAdapterEnabled(true);
+        clear.setDirectGroundPathEnabled(false);
+        const auto before = clear.jpsStats();
+        const auto result = clear.ground(8, 20, 39, 20, diameter, false);
+        const auto after = clear.jpsStats();
+        BOOST_TEST_CONTEXT("diameter=" << diameter) {
+            requireAccepted(result);
+            BOOST_TEST(after.attempted == before.attempted + 1);
+            BOOST_TEST(after.accepted == before.accepted + 1);
+            BOOST_TEST(after.topologyRebuilds == before.topologyRebuilds + 1);
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(pinched_candidate_falls_back_without_static_rebuild)
+{
+    World world(openMap());
+    world.setMacroEdgesEnabled(true);
+    world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+
+    const auto original = world.normal(3, 16, 28, 16);
+    requireAccepted(original);
+    const auto beforePinch = world.jpsStats();
+
+    world.setPinched(16, 16, true);
+    const auto rejected = world.jpsGround(3, 16, 28, 16, 0, true);
+    const auto afterRejected = world.jpsStats();
+    BOOST_TEST(!rejected.found);
+    BOOST_TEST(rejected.clean);
+    BOOST_TEST(afterRejected.attempted == beforePinch.attempted + 1);
+    BOOST_TEST(afterRejected.accepted == beforePinch.accepted);
+    BOOST_TEST(afterRejected.validationRejected > beforePinch.validationRejected);
+    BOOST_TEST(afterRejected.topologyRebuilds == beforePinch.topologyRebuilds);
+
+    // The public normal() path must retain its fallback when the immutable
+    // candidate is rejected by the native pinched-cell validation.
+    const auto fallback = world.normal(3, 16, 28, 16);
+    const auto afterFallback = world.jpsStats();
+    requireAccepted(fallback);
+    BOOST_TEST(afterFallback.attempted == afterRejected.attempted + 1);
+    BOOST_TEST(afterFallback.accepted == afterRejected.accepted);
+    BOOST_TEST(afterFallback.validationRejected > afterRejected.validationRejected);
+    BOOST_TEST(afterFallback.topologyRebuilds == afterRejected.topologyRebuilds);
+
+    world.setPinched(16, 16, false);
+    const auto restored = world.normal(3, 16, 28, 16);
+    const auto afterRestore = world.jpsStats();
+    requireAccepted(restored);
+    BOOST_TEST(restored.raw == original.raw);
+    BOOST_TEST(afterRestore.accepted == afterFallback.accepted + 1);
+    BOOST_TEST(afterRestore.topologyRebuilds == afterFallback.topologyRebuilds);
+
+    const auto beforeUnsupported = world.jpsStats();
+    const auto unsupported = world.jpsGround(3, 16, 28, 16, 3, true);
+    const auto afterUnsupported = world.jpsStats();
+    BOOST_TEST(!unsupported.found);
+    BOOST_TEST(unsupported.clean);
+    BOOST_TEST(afterUnsupported.unavailableFallback ==
+               beforeUnsupported.unavailableFallback + 1);
+}
+
+BOOST_AUTO_TEST_CASE(moving_flags_do_not_rebuild_static_topology)
+{
+    World world(openMap());
+    world.setMacroEdgesEnabled(true);
+    world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+
+    const auto first = world.normal(3, 3, 28, 28);
+    requireAccepted(first);
+    const auto warm = world.normal(3, 3, 28, 28);
+    requireAccepted(warm);
+    const auto beforeMoving = world.jpsStats();
+
+    world.movingUnit(16, 16, true);
+    BOOST_TEST(world.hasMovingUnit(16, 16));
+    const auto occupied = world.normal(3, 3, 28, 28);
+    const auto afterOccupied = world.jpsStats();
+    requireAccepted(occupied);
+    BOOST_TEST(occupied.raw == warm.raw);
+    BOOST_TEST(occupied.optimized == warm.optimized);
+    BOOST_TEST(occupied.cells == warm.cells);
+    BOOST_TEST(afterOccupied.attempted == beforeMoving.attempted + 1);
+    BOOST_TEST(afterOccupied.accepted == beforeMoving.accepted + 1);
+    BOOST_TEST(afterOccupied.topologyRebuilds == beforeMoving.topologyRebuilds);
+
+    world.movingUnit(16, 16, false);
+    BOOST_TEST(!world.hasMovingUnit(16, 16));
+    const auto cleared = world.normal(3, 3, 28, 28);
+    const auto afterCleared = world.jpsStats();
+    requireAccepted(cleared);
+    BOOST_TEST(cleared.raw == warm.raw);
+    BOOST_TEST(cleared.optimized == warm.optimized);
+    BOOST_TEST(cleared.cells == warm.cells);
+    BOOST_TEST(afterCleared.attempted == afterOccupied.attempted + 1);
+    BOOST_TEST(afterCleared.accepted == afterOccupied.accepted + 1);
+    BOOST_TEST(afterCleared.topologyRebuilds == afterOccupied.topologyRebuilds);
+}
+
+BOOST_AUTO_TEST_CASE(local_static_edit_updates_all_live_footprints_without_a_map_scan)
+{
+    World world(openMap());
+    world.setJpsAdapterEnabled(true);
+    world.setDirectGroundPathEnabled(false);
+    for (int radius = 0; radius <= 2; ++radius)
+        for (bool center : {false, true})
+            requireAccepted(world.jpsGround(6, 16, 25, 16, radius, center));
+    const auto before = world.jpsStats();
+    world.setCell(16, 16, '#');
+    for (int radius = 2; radius >= 0; --radius)
+        for (bool center : {true, false})
+            requireAccepted(world.jpsGround(6, 16, 25, 16, radius, center));
+    const auto after = world.jpsStats();
+    BOOST_TEST(after.baseCellsExamined == before.baseCellsExamined + 1);
+    BOOST_TEST(after.clearanceCellsExamined == before.clearanceCellsExamined + 56);
+    BOOST_TEST(after.validationRejected == before.validationRejected);
+    world.setCell(16, 16, '.');
+    for (int radius = 0; radius <= 2; ++radius)
+        for (bool center : {false, true})
+            requireAccepted(world.jpsGround(6, 16, 25, 16, radius, center));
+    const auto restored = world.jpsStats();
+    BOOST_TEST(restored.baseCellsExamined == after.baseCellsExamined + 1);
+    BOOST_TEST(restored.clearanceCellsExamined == after.clearanceCellsExamined + 56);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+

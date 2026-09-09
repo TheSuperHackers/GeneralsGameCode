@@ -1,0 +1,99 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <deque>
+#include <set>
+#include <vector>
+
+import engine.navigation.dynamic_request_queue;
+
+BOOST_AUTO_TEST_SUITE(navigation_growing_request_queue)
+
+BOOST_AUTO_TEST_CASE(accepts_one_hundred_thousand_units_without_dropping_requests)
+{
+    navigation::PathRequestQueue queue;
+    for (std::uint32_t id = 1; id <= 100000; ++id) BOOST_REQUIRE(queue.push(id));
+    for (std::uint32_t id = 1; id <= 100000; ++id) BOOST_TEST(!queue.push(id));
+    BOOST_TEST(queue.size() == 100000U);
+    for (std::uint32_t id = 1; id <= 100000; ++id) BOOST_TEST(queue.pop() == id);
+    BOOST_TEST(queue.empty());
+}
+
+BOOST_AUTO_TEST_CASE(wrap_growth_and_tombstone_reuse_match_fifo_reference)
+{
+    navigation::PathRequestQueue queue;
+    std::deque<std::uint32_t> fifo;
+    std::set<std::uint32_t> membership;
+    std::uint32_t random = 0x782192ab;
+    for (int operation = 0; operation < 100000; ++operation) {
+        random ^= random << 13; random ^= random >> 17; random ^= random << 5;
+        if ((random & 3) && !fifo.empty()) {
+            const auto id = fifo.front();
+            fifo.pop_front();
+            membership.erase(id);
+            BOOST_TEST(queue.pop() == id);
+        } else {
+            const auto id = (random >> 8) % 1000;
+            const bool added = membership.insert(id).second;
+            if (added) fifo.push_back(id);
+            BOOST_TEST(queue.push(id) == added);
+        }
+        BOOST_TEST(queue.size() == fifo.size());
+    }
+    for (auto id : fifo) BOOST_TEST(queue.pop() == id);
+    queue.clear();
+    for (std::uint32_t id = 1; id <= 64; ++id) queue.push(id);
+    for (std::uint32_t id = 1; id <= 48; ++id) BOOST_TEST(queue.pop() == id);
+    for (std::uint32_t id = 65; id <= 200; ++id) queue.push(id);
+    for (std::uint32_t id = 49; id <= 200; ++id) BOOST_TEST(queue.pop() == id);
+    for (auto id : {0U, 0xffffffffU, 0x80000000U, 1U}) BOOST_TEST(queue.push(id));
+    for (auto id : {0U, 0xffffffffU, 0x80000000U, 1U}) BOOST_TEST(queue.pop() == id);
+}
+
+BOOST_AUTO_TEST_CASE(ten_thousand_requests_are_serviced_in_deterministic_budgeted_batches)
+{
+    navigation::PathRequestQueue queue;
+    std::vector<int> objects(10001);
+    for (std::uint32_t id = 1; id <= 10000; ++id) { objects[id] = id; queue.push(id); }
+    std::vector<int> processed;
+    for (int frame = 0; frame < 2; ++frame) {
+        int work = 0;
+        const auto count = navigation::processRequests(queue, work,
+            [&](std::uint32_t id) { return &objects[id]; },
+            [&](int* object) { processed.push_back(*object); return true; }, 5000);
+        BOOST_TEST(count == 5000);
+        BOOST_TEST(work == 5000);
+    }
+    BOOST_TEST(queue.empty());
+    BOOST_REQUIRE(processed.size() == 10000U);
+    for (int i = 0; i < 10000; ++i) BOOST_TEST(processed[i] == i + 1);
+}
+
+BOOST_AUTO_TEST_CASE(reentrant_zero_work_requests_do_not_spin_forever)
+{
+    navigation::PathRequestQueue queue;
+    int object = 7, work = 0;
+    queue.push(7);
+    const auto count = navigation::processRequests(queue, work,
+        [&](std::uint32_t) { return &object; },
+        [&](int*) { BOOST_TEST(queue.push(7)); return true; });
+    BOOST_TEST(count == 1);
+    BOOST_TEST(work == 1);
+    BOOST_TEST(queue.size() == 1U);
+}
+
+BOOST_AUTO_TEST_CASE(deleted_objects_and_expensive_searches_respect_batch_budget)
+{
+    navigation::PathRequestQueue queue;
+    queue.push(1); queue.push(2); queue.push(3);
+    int object = 2, work = 0;
+    const auto count = navigation::processRequests(queue, work,
+        [&](std::uint32_t id) { return id == 1 ? nullptr : &object; },
+        [&](int*) { work += 6000; return true; }, 5000);
+    BOOST_TEST(count == 1);
+    BOOST_TEST(work == 6001);
+    BOOST_TEST(queue.size() == 1U);
+    BOOST_TEST(queue.pop() == 3U);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

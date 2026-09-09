@@ -16,6 +16,7 @@ target_compile_definitions(zi_always_no_pch INTERFACE
     RTS_ZEROHOUR=1
 )
 target_link_libraries(zi_gameengine_include INTERFACE
+    engine_navigation
     corei_gameengine_include
 )
 target_link_libraries(zi_always INTERFACE
@@ -36,6 +37,8 @@ add_subdirectory(GameEngineDevice)
 
 # Contains the main game exe target.
 add_subdirectory(Main)
+
+engine_navigation_add_world_tests()
 
 if (RTS_BUILD_ZEROHOUR_TOOLS OR RTS_BUILD_ZEROHOUR_EXTRAS)
     add_subdirectory(Tools)

@@ -1,0 +1,428 @@
+#include <boost/test/unit_test.hpp>
+
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <functional>
+#include <limits>
+#include <memory>
+#include <ostream>
+#include <queue>
+#include <thread>
+#include <utility>
+#include <vector>
+
+import engine.navigation.jump_grid;
+
+namespace navigation {
+
+std::ostream& operator<<(std::ostream& output, const JumpGridCell& cell) {
+    return output << '(' << cell.x << ',' << cell.y << ')';
+}
+
+} // namespace navigation
+
+namespace {
+
+using navigation::JumpGridCell;
+using navigation::JumpGridEdit;
+using navigation::JumpGridSearchResult;
+using navigation::JumpGridSnapshot;
+using navigation::JumpGridTopology;
+using navigation::JumpGridWorkspace;
+
+struct ObservedResult {
+    bool found = false;
+    std::vector<JumpGridCell> path;
+    std::uint64_t expanded = 0;
+    std::uint64_t scanned = 0;
+    std::uint64_t cost = 0;
+};
+
+ObservedResult observe(JumpGridWorkspace& workspace, const JumpGridSnapshot& map,
+                       JumpGridCell start, JumpGridCell goal) {
+    const auto result = workspace.find(map, start, goal);
+    return {result.found, {result.path.begin(), result.path.end()}, result.expanded,
+            result.scanned, result.cost};
+}
+
+std::uint32_t nextRandom(std::uint32_t& state) {
+    state ^= state << 13;
+    state ^= state >> 17;
+    state ^= state << 5;
+    return state;
+}
+
+std::size_t gridIndex(int width, int x, int y) {
+    return static_cast<std::size_t>(y) * static_cast<std::size_t>(width) +
+           static_cast<std::size_t>(x);
+}
+
+bool walkable(const JumpGridSnapshot& map, int x, int y) {
+    return !map.isBlocked(x, y);
+}
+
+std::uint64_t dijkstraCost(const JumpGridSnapshot& map, JumpGridCell start,
+                           JumpGridCell goal, bool& found) {
+    const int width = map.width();
+    const int height = map.height();
+    const auto cellCount = static_cast<std::size_t>(width) * height;
+    constexpr std::uint64_t infinity = std::numeric_limits<std::uint64_t>::max();
+    std::vector<std::uint64_t> distance(cellCount, infinity);
+    using QueueEntry = std::pair<std::uint64_t, std::size_t>;
+    std::priority_queue<QueueEntry, std::vector<QueueEntry>, std::greater<>> queue;
+    const auto startId = gridIndex(width, start.x, start.y);
+    const auto goalId = gridIndex(width, goal.x, goal.y);
+    distance[startId] = 0;
+    queue.emplace(0, startId);
+
+    constexpr std::array<JumpGridCell, 8> directions{{
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+        {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+    }};
+    while (!queue.empty()) {
+        const auto [cost, id] = queue.top();
+        queue.pop();
+        if (cost != distance[id])
+            continue;
+        if (id == goalId) {
+            found = true;
+            return cost;
+        }
+        const auto x = static_cast<int>(id % static_cast<std::size_t>(width));
+        const auto y = static_cast<int>(id / static_cast<std::size_t>(width));
+        for (const auto direction : directions) {
+            const bool diagonal = direction.x != 0 && direction.y != 0;
+            const auto nx = x + direction.x;
+            const auto ny = y + direction.y;
+            if (!walkable(map, nx, ny))
+                continue;
+            if (diagonal && (!walkable(map, x + direction.x, y) ||
+                             !walkable(map, x, y + direction.y)))
+                continue;
+            const auto nextId = gridIndex(width, nx, ny);
+            const auto nextCost = cost + (diagonal ? 1414U : 1000U);
+            if (nextCost >= distance[nextId])
+                continue;
+            distance[nextId] = nextCost;
+            queue.emplace(nextCost, nextId);
+        }
+    }
+    found = false;
+    return 0;
+}
+
+bool legalSegment(const JumpGridSnapshot& map, JumpGridCell from,
+                  JumpGridCell to) {
+    const auto deltaX = static_cast<std::int64_t>(to.x) - from.x;
+    const auto deltaY = static_cast<std::int64_t>(to.y) - from.y;
+    const auto absX = deltaX < 0 ? -deltaX : deltaX;
+    const auto absY = deltaY < 0 ? -deltaY : deltaY;
+    if (absX != 0 && absY != 0 && absX != absY)
+        return false;
+    const auto stepX = (deltaX > 0) - (deltaX < 0);
+    const auto stepY = (deltaY > 0) - (deltaY < 0);
+    const auto steps = std::max(absX, absY);
+    auto x = from.x;
+    auto y = from.y;
+    for (std::int64_t i = 0; i < steps; ++i) {
+        const auto nx = static_cast<std::int64_t>(x) + stepX;
+        const auto ny = static_cast<std::int64_t>(y) + stepY;
+        if (!walkable(map, static_cast<int>(nx), static_cast<int>(ny)))
+            return false;
+        if (stepX != 0 && stepY != 0 &&
+            (!walkable(map, static_cast<int>(nx), y) ||
+             !walkable(map, x, static_cast<int>(ny))))
+            return false;
+        x = static_cast<int>(nx);
+        y = static_cast<int>(ny);
+    }
+    return x == to.x && y == to.y;
+}
+
+void checkPath(const JumpGridSnapshot& map, const ObservedResult& observed,
+               JumpGridCell start, JumpGridCell goal, bool expectedFound,
+               std::uint64_t expectedCost) {
+    BOOST_TEST(observed.found == expectedFound);
+    if (!expectedFound) {
+        BOOST_TEST(observed.path.empty());
+        BOOST_TEST(observed.cost == 0U);
+        return;
+    }
+    BOOST_REQUIRE(!observed.path.empty());
+    BOOST_TEST(observed.path.front() == start);
+    BOOST_TEST(observed.path.back() == goal);
+    for (std::size_t i = 1; i < observed.path.size(); ++i)
+        BOOST_TEST(legalSegment(map, observed.path[i - 1], observed.path[i]));
+    BOOST_TEST(observed.cost == expectedCost);
+}
+
+void checkEquivalent(const ObservedResult& left, const ObservedResult& right) {
+    BOOST_TEST(left.found == right.found);
+    BOOST_TEST(left.path == right.path, boost::test_tools::per_element());
+    BOOST_TEST(left.expanded == right.expanded);
+    BOOST_TEST(left.scanned == right.scanned);
+    BOOST_TEST(left.cost == right.cost);
+}
+
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(navigation_jump_grid)
+
+BOOST_AUTO_TEST_CASE(rejects_invalid_shapes_and_handles_small_maps) {
+    JumpGridTopology map;
+    BOOST_TEST(!map.configure(0, 4));
+    BOOST_TEST(!map.configure(4, 0));
+    BOOST_TEST(!map.configure(4, 4, std::vector<std::uint8_t>(3)));
+    BOOST_TEST(!map.configured());
+
+    BOOST_REQUIRE(map.configure(1, 1));
+    const auto snapshot = map.snapshot();
+    JumpGridWorkspace workspace;
+    auto result = observe(workspace, snapshot, {0, 0}, {0, 0});
+    checkPath(snapshot, result, {0, 0}, {0, 0}, true, 0);
+    BOOST_TEST(result.expanded == 1U);
+    BOOST_TEST(result.scanned == 0U);
+
+    BOOST_TEST(map.setBlocked(0, 0, true));
+    BOOST_REQUIRE(map.synchronize());
+    result = observe(workspace, map.snapshot(), {0, 0}, {0, 0});
+    checkPath(map.snapshot(), result, {0, 0}, {0, 0}, false, 0);
+    BOOST_TEST(map.setBlocked(-1, 0, true) == false);
+    BOOST_TEST(map.setBlocked(0, 1, true) == false);
+}
+
+BOOST_AUTO_TEST_CASE(cross_word_boundaries_and_narrow_rows_match_dijkstra) {
+    constexpr int width = 130;
+    constexpr int height = 5;
+    std::vector<std::uint8_t> cells(static_cast<std::size_t>(width) * height, 0);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            if ((x == 63 || x == 64 || x == 127) && y != 0 && y != height - 1)
+                cells[gridIndex(width, x, y)] = 1;
+        }
+    }
+    JumpGridTopology map;
+    BOOST_REQUIRE(map.configure(width, height, cells));
+    const auto snapshot = map.snapshot();
+    JumpGridWorkspace workspace;
+    bool found = false;
+    const auto expected = dijkstraCost(snapshot, {2, 2}, {125, 2}, found);
+    const auto observed = observe(workspace, snapshot, {2, 2}, {125, 2});
+    checkPath(snapshot, observed, {2, 2}, {125, 2}, found, expected);
+    BOOST_TEST(map.storageBytes() > 0U);
+
+    std::vector<std::uint8_t> narrow(129, 0);
+    JumpGridTopology narrowMap;
+    BOOST_REQUIRE(narrowMap.configure(1, 129, narrow));
+    const auto narrowSnapshot = narrowMap.snapshot();
+    const auto narrowExpected = dijkstraCost(narrowSnapshot, {0, 0}, {0, 128}, found);
+    const auto narrowObserved = observe(workspace, narrowSnapshot, {0, 0}, {0, 128});
+    checkPath(narrowSnapshot, narrowObserved, {0, 0}, {0, 128}, found, narrowExpected);
+}
+
+BOOST_AUTO_TEST_CASE(randomized_shortest_paths_and_legality) {
+    std::uint32_t state = 0x7e31a9d5U;
+    JumpGridWorkspace workspace;
+    for (int iteration = 0; iteration < 180; ++iteration) {
+        const int width = 2 + static_cast<int>(nextRandom(state) % 15);
+        const int height = 2 + static_cast<int>(nextRandom(state) % 15);
+        std::vector<std::uint8_t> cells(static_cast<std::size_t>(width) * height, 0);
+        for (auto& cell : cells)
+            cell = static_cast<std::uint8_t>((nextRandom(state) % 100) < 27);
+
+        const JumpGridCell start{
+            static_cast<std::int32_t>(nextRandom(state) % width),
+            static_cast<std::int32_t>(nextRandom(state) % height)};
+        const JumpGridCell goal{
+            static_cast<std::int32_t>(nextRandom(state) % width),
+            static_cast<std::int32_t>(nextRandom(state) % height)};
+        // Explicitly open the endpoints. This keeps the randomized oracle
+        // bounded even if a future density change produces an all-blocked map.
+        cells[gridIndex(width, start.x, start.y)] = 0;
+        cells[gridIndex(width, goal.x, goal.y)] = 0;
+
+        JumpGridTopology map;
+        BOOST_REQUIRE(map.configure(width, height, cells));
+        const auto snapshot = map.snapshot();
+        bool expectedFound = false;
+        const auto expectedCost = dijkstraCost(snapshot, start, goal, expectedFound);
+        const auto first = observe(workspace, snapshot, start, goal);
+        const auto second = observe(workspace, snapshot, start, goal);
+        checkPath(snapshot, first, start, goal, expectedFound, expectedCost);
+        checkEquivalent(first, second);
+    }
+
+    // Exercise larger layouts as well as the small dense cases above. The
+    // endpoints are selected before being cleared, so this remains bounded at
+    // every obstacle density and map size.
+    for (int iteration = 0; iteration < 48; ++iteration) {
+        const int width = 17 + static_cast<int>(nextRandom(state) % 32);
+        const int height = 17 + static_cast<int>(nextRandom(state) % 32);
+        std::vector<std::uint8_t> cells(static_cast<std::size_t>(width) * height, 0);
+        for (auto& cell : cells)
+            cell = static_cast<std::uint8_t>((nextRandom(state) % 100) < 31);
+
+        const JumpGridCell start{
+            static_cast<std::int32_t>(nextRandom(state) % width),
+            static_cast<std::int32_t>(nextRandom(state) % height)};
+        const JumpGridCell goal{
+            static_cast<std::int32_t>(nextRandom(state) % width),
+            static_cast<std::int32_t>(nextRandom(state) % height)};
+        cells[gridIndex(width, start.x, start.y)] = 0;
+        cells[gridIndex(width, goal.x, goal.y)] = 0;
+
+        JumpGridTopology map;
+        BOOST_REQUIRE(map.configure(width, height, cells));
+        const auto snapshot = map.snapshot();
+        bool expectedFound = false;
+        const auto expectedCost = dijkstraCost(snapshot, start, goal, expectedFound);
+        const auto first = observe(workspace, snapshot, start, goal);
+        const auto second = observe(workspace, snapshot, start, goal);
+        checkPath(snapshot, first, start, goal, expectedFound, expectedCost);
+        checkEquivalent(first, second);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(exhaustive_three_by_three_masks_match_dijkstra) {
+    constexpr int width = 3;
+    constexpr int height = 3;
+    constexpr std::size_t cellCount = width * height;
+    std::vector<std::uint8_t> cells(cellCount, 0);
+    JumpGridTopology map;
+    JumpGridWorkspace workspace;
+
+    for (std::uint32_t mask = 0; mask < (std::uint32_t{1} << cellCount); ++mask) {
+        for (std::size_t i = 0; i < cellCount; ++i)
+            cells[i] = static_cast<std::uint8_t>((mask >> i) & 1U);
+        BOOST_REQUIRE(map.configure(width, height, cells));
+        const auto snapshot = map.snapshot();
+
+        for (int startId = 0; startId < static_cast<int>(cellCount); ++startId) {
+            if (cells[static_cast<std::size_t>(startId)] != 0)
+                continue;
+            const JumpGridCell start{
+                startId % width, startId / width};
+            for (int goalId = 0; goalId < static_cast<int>(cellCount); ++goalId) {
+                if (cells[static_cast<std::size_t>(goalId)] != 0)
+                    continue;
+                const JumpGridCell goal{
+                    goalId % width, goalId / width};
+                bool expectedFound = false;
+                const auto expectedCost = dijkstraCost(snapshot, start, goal,
+                                                       expectedFound);
+                const auto observed = observe(workspace, snapshot, start, goal);
+                checkPath(snapshot, observed, start, goal, expectedFound,
+                          expectedCost);
+            }
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(sparse_edits_restore_fresh_snapshot_and_preserve_work_counts) {
+    constexpr int width = 17;
+    constexpr int height = 19;
+    std::vector<std::uint8_t> base(static_cast<std::size_t>(width) * height, 0);
+    for (int y = 3; y < height - 3; ++y)
+        if (y != 9)
+            base[gridIndex(width, 8, y)] = 1;
+
+    JumpGridTopology map;
+    JumpGridTopology fresh;
+    BOOST_REQUIRE(map.configure(width, height, base));
+    BOOST_REQUIRE(fresh.configure(width, height, base));
+    const JumpGridCell start{2, 9};
+    const JumpGridCell goal{14, 9};
+    JumpGridWorkspace workspace;
+    const auto original = observe(workspace, map.snapshot(), start, goal);
+    const auto originalFresh = observe(workspace, fresh.snapshot(), start, goal);
+    checkEquivalent(original, originalFresh);
+
+    const std::array<JumpGridEdit, 4> edits{{
+        {8, 9, 1}, {4, 4, 1}, {13, 13, 1}, {8, 10, 0}
+    }};
+    BOOST_TEST(map.applyEdits(edits) == edits.size());
+    BOOST_REQUIRE(map.synchronize());
+    auto editedCells = base;
+    for (const auto& edit : edits)
+        editedCells[gridIndex(width, edit.x, edit.y)] = edit.blocked;
+    BOOST_REQUIRE(fresh.configure(width, height, editedCells));
+    const auto edited = observe(workspace, map.snapshot(), start, goal);
+    const auto editedFresh = observe(workspace, fresh.snapshot(), start, goal);
+    checkEquivalent(edited, editedFresh);
+
+    std::array<JumpGridEdit, 4> restore = edits;
+    for (auto& edit : restore)
+        edit.blocked = base[gridIndex(width, edit.x, edit.y)];
+    BOOST_TEST(map.applyEdits(restore) == restore.size());
+    BOOST_REQUIRE(map.synchronize());
+    BOOST_REQUIRE(fresh.configure(width, height, base));
+    const auto restored = observe(workspace, map.snapshot(), start, goal);
+    const auto restoredFresh = observe(workspace, fresh.snapshot(), start, goal);
+    checkEquivalent(restored, restoredFresh);
+    checkEquivalent(restored, original);
+}
+
+BOOST_AUTO_TEST_CASE(concurrent_workspaces_share_one_immutable_snapshot_exactly) {
+    constexpr int width = 130;
+    constexpr int height = 130;
+    std::vector<std::uint8_t> cells(static_cast<std::size_t>(width) * height, 0);
+    for (int y = 8; y < height - 8; y += 11)
+        for (int x = 7; x < width - 7; x += 13)
+            for (int yy = y; yy < std::min(y + 4, height); ++yy)
+                for (int xx = x; xx < std::min(x + 5, width); ++xx)
+                    cells[gridIndex(width, xx, yy)] = 1;
+
+    JumpGridTopology map;
+    BOOST_REQUIRE(map.configure(width, height, cells));
+    const auto snapshot = map.snapshot();
+    struct Query {
+        JumpGridCell start;
+        JumpGridCell goal;
+    };
+    constexpr std::array<Query, 8> queries{{
+        {{2, 2}, {122, 126}}, {{122, 2}, {2, 126}},
+        {{3, 40}, {120, 40}}, {{40, 3}, {40, 124}},
+        {{12, 124}, {120, 12}}, {{2, 68}, {122, 68}},
+        {{64, 2}, {64, 126}}, {{18, 18}, {104, 104}}
+    }};
+    for (const auto& query : queries) {
+        BOOST_REQUIRE(!snapshot.isBlocked(query.start.x, query.start.y));
+        BOOST_REQUIRE(!snapshot.isBlocked(query.goal.x, query.goal.y));
+    }
+    JumpGridWorkspace baselineWorkspace;
+    std::vector<ObservedResult> baseline;
+    baseline.reserve(queries.size());
+    for (const auto& query : queries)
+        baseline.push_back(observe(baselineWorkspace, snapshot,
+                                   query.start, query.goal));
+
+    for (const int workerCount : {1, 2, 4}) {
+        std::vector<std::unique_ptr<JumpGridWorkspace>> workspaces;
+        workspaces.reserve(workerCount);
+        for (int i = 0; i < workerCount; ++i)
+            workspaces.emplace_back(std::make_unique<JumpGridWorkspace>());
+        std::vector<std::vector<ObservedResult>> results(
+            static_cast<std::size_t>(workerCount),
+            std::vector<ObservedResult>(queries.size()));
+        std::vector<std::thread> workers;
+        workers.reserve(workerCount);
+        for (int i = 0; i < workerCount; ++i) {
+            workers.emplace_back([&, i] {
+                auto& workspace = *workspaces[static_cast<std::size_t>(i)];
+                for (std::size_t queryIndex = 0; queryIndex < queries.size(); ++queryIndex) {
+                    const auto& query = queries[queryIndex];
+                    results[static_cast<std::size_t>(i)][queryIndex] =
+                        observe(workspace, snapshot, query.start, query.goal);
+                }
+            });
+        }
+        for (auto& worker : workers)
+            worker.join();
+        for (const auto& workerResults : results)
+            for (std::size_t queryIndex = 0; queryIndex < queries.size(); ++queryIndex)
+                checkEquivalent(workerResults[queryIndex], baseline[queryIndex]);
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()

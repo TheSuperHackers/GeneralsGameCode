@@ -1,0 +1,136 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <vector>
+
+import engine.navigation.reference.request_queue;
+
+BOOST_AUTO_TEST_SUITE(reference_request_queue)
+
+BOOST_AUTO_TEST_CASE(duplicate_requests_keep_their_original_position)
+{
+    int requests[512] = {};
+    int head = 0, tail = 0;
+    BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, 10));
+    BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, 20));
+    BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, 10));
+    BOOST_TEST(tail == 2);
+    BOOST_TEST(requests[0] == 10);
+    BOOST_TEST(requests[1] == 20);
+}
+
+BOOST_AUTO_TEST_CASE(queue_has_511_usable_slots_and_accepts_existing_ids_when_full)
+{
+    int requests[512] = {};
+    int head = 0, tail = 0;
+    for (int id = 1; id <= 511; ++id)
+        BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, id));
+    BOOST_TEST(!navigation::reference::queueRequest(requests, head, tail, 512));
+    BOOST_TEST(tail == 511);
+    BOOST_TEST(requests[511] == 0);
+    BOOST_TEST(navigation::reference::queueRequest(requests, head, tail, 1));
+    BOOST_TEST(tail == 511);
+}
+
+BOOST_AUTO_TEST_CASE(queue_wraps_and_drains_in_fifo_order)
+{
+    int requests[512] = {};
+    int head = 510, tail = 510;
+    int cells = 0;
+    std::vector<int> processed;
+    for (int id : {1, 2, 3, 4})
+        BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, id));
+    BOOST_TEST(tail == 2);
+    std::array<int, 5> objects = {{0, 1, 2, 3, 4}};
+    int count = navigation::reference::processRequests(requests, head, tail, cells, 0,
+        [&](int id) { return &objects[id]; },
+        [&](int* object) { processed.push_back(*object); return true; });
+    BOOST_TEST(count == 4);
+    BOOST_TEST(head == tail);
+    BOOST_TEST(processed == std::vector<int>({1, 2, 3, 4}), boost::test_tools::per_element());
+    BOOST_TEST(requests[510] == 0);
+    BOOST_TEST(requests[511] == 0);
+    BOOST_TEST(requests[0] == 0);
+    BOOST_TEST(requests[1] == 0);
+}
+
+BOOST_AUTO_TEST_CASE(budget_is_checked_between_requests_and_can_be_exceeded)
+{
+    int requests[512] = {};
+    int head = 0, tail = 0;
+    int cells = 0;
+    std::array<int, 4> objects = {{0, 1, 2, 3}};
+    for (int id : {1, 2, 3}) BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, id));
+    int count = navigation::reference::processRequests(requests, head, tail, cells, 0,
+        [&](int id) { return &objects[id]; },
+        [&](int* object) { cells += *object == 1 ? 4999 : 2000; return true; });
+    BOOST_TEST(count == 2);
+    BOOST_TEST(cells == 6999u);
+    BOOST_TEST(head == 2);
+    BOOST_TEST(requests[2] == 3);
+    // A new frame resets the counter in the game adapter and resumes the queue.
+    cells = 0;
+    count = navigation::reference::processRequests(requests, head, tail, cells, 0,
+        [&](int id) { return &objects[id]; },
+        [&](int*) { cells += 6000; return true; });
+    BOOST_TEST(count == 1);
+    BOOST_TEST(cells == 6000u);
+    BOOST_TEST(head == tail);
+}
+
+BOOST_AUTO_TEST_CASE(exact_budget_defers_even_a_zero_cost_request)
+{
+    int requests[512] = {1};
+    int head = 0, tail = 1;
+    int cells = 5000;
+    int object = 1;
+    int resolves = 0;
+    int count = navigation::reference::processRequests(requests, head, tail, cells, 0,
+        [&](int) { ++resolves; return &object; }, [](int*) { return true; });
+    BOOST_TEST(count == 0);
+    BOOST_TEST(resolves == 0);
+    BOOST_TEST(head == 0);
+    BOOST_TEST(requests[0] == 1);
+}
+
+BOOST_AUTO_TEST_CASE(missing_objects_and_objects_without_ai_are_consumed)
+{
+    int requests[512] = {1, 2};
+    int head = 0, tail = 2;
+    int cells = 0;
+    int object = 2;
+    int calls = 0;
+    int count = navigation::reference::processRequests(requests, head, tail, cells, 0,
+        [&](int id) { return id == 1 ? nullptr : &object; },
+        [&](int*) { ++calls; return false; });
+    BOOST_TEST(count == 0);
+    BOOST_TEST(calls == 1);
+    BOOST_TEST(head == tail);
+    BOOST_TEST(cells == 0u);
+    BOOST_TEST(requests[0] == 0);
+    BOOST_TEST(requests[1] == 0);
+}
+
+BOOST_AUTO_TEST_CASE(callback_can_requeue_current_id_after_slot_is_cleared)
+{
+    int requests[512] = {1};
+    int head = 0, tail = 1;
+    int cells = 0;
+    int object = 1;
+    int calls = 0;
+    int count = navigation::reference::processRequests(requests, head, tail, cells, 0,
+        [&](int id) {
+            BOOST_TEST(requests[head] == id);
+            return &object;
+        },
+        [&](int*) {
+            BOOST_TEST(requests[head] == 0);
+            if (++calls == 1) BOOST_REQUIRE(navigation::reference::queueRequest(requests, head, tail, 1));
+            return true;
+        });
+    BOOST_TEST(count == 2);
+    BOOST_TEST(calls == 2);
+    BOOST_TEST(head == tail);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

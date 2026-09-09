@@ -1,0 +1,299 @@
+#define BOOST_TEST_MODULE EngineNavigationWorldTests
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <iterator>
+#include "test/pathfinder_golden.h"
+#include <string>
+#include <vector>
+
+import engine.navigation.world_fixture;
+using navigation::testing::World;
+using navigation::testing::Result;
+using Map = std::vector<std::string>;
+
+void check(const char* name, const Result& result) {
+    const auto expected = std::find_if(std::begin(goldenPaths), std::end(goldenPaths),
+        [name](const GoldenPath& value) { return std::string(value.name) == name; });
+    BOOST_REQUIRE(expected != std::end(goldenPaths));
+    BOOST_TEST_CONTEXT(name) {
+        BOOST_TEST(result.found == expected->found);
+        BOOST_TEST(result.raw == expected->raw);
+        BOOST_TEST(result.optimized == expected->optimized);
+        BOOST_TEST(result.cells == expected->cells);
+        const bool legal = !result.found || result.legal;
+        BOOST_TEST(legal);
+        BOOST_TEST(result.clean);
+    }
+}
+// Re-run the actual query to catch stale search lists, zones and occupancy state.
+#define CHECK_PATH(name, expression) do { \
+    world.setMacroEdgesEnabled(false); \
+    for (int repetition = 0; repetition < 4; ++repetition) check(name, expression); \
+} while (false)
+
+Map openMap() { return Map(12, std::string(12, '.')); }
+Map wallMap(bool gap) {
+    auto map = openMap();
+    for (int y = 0; y < 12; ++y) map[y][6] = '#';
+    if (gap) map[3][6] = '.';
+    return map;
+}
+Map riverMap(char surface) {
+    Map map(14, std::string(16, '.'));
+    for (auto& row : map) for (int x = 6; x <= 8; ++x) row[x] = surface;
+    return map;
+}
+BOOST_AUTO_TEST_CASE(open_ground) {
+    World world(openMap());
+    CHECK_PATH("open_ground", world.ground(2,2,9,8));
+    CHECK_PATH("same_cell", world.ground(2,2,2,2));
+    CHECK_PATH("clipped", world.ground(-2,2,15,8));
+}
+BOOST_AUTO_TEST_CASE(narrow_passage_width_and_dynamic_obstruction) {
+    World world(wallMap(true));
+    CHECK_PATH("gap", world.ground(2,6,9,6));
+    CHECK_PATH("gap_wide", world.ground(2,6,9,6,4));
+    world.setCell(6,3,'#');
+    CHECK_PATH("closed", world.ground(2,6,9,6));
+    world.setCell(6,3,'.');
+    CHECK_PATH("reopened", world.ground(2,6,9,6));
+}
+BOOST_AUTO_TEST_CASE(obstacle_detour_and_blocked_goal_adjustment) {
+    auto map = openMap();
+    for (int y = 4; y <= 8; ++y) for (int x = 5; x <= 7; ++x) map[y][x] = '#';
+    World world(map);
+    CHECK_PATH("obstacle", world.ground(2,6,9,6));
+    CHECK_PATH("goal_adjusted", world.ground(2,6,6,6));
+}
+BOOST_AUTO_TEST_CASE(ground_cannot_cross_water_cliff_or_rubble) {
+    for (char surface : std::string("~^r")) {
+        World world(riverMap(surface));
+        CHECK_PATH(surface=='~'?"water_ground":surface=='^'?"cliff_ground":"rubble_ground", world.ground(2,6,12,6));
+    }
+}
+BOOST_AUTO_TEST_CASE(bridge_layer_destroy_and_repair) {
+    World world(riverMap('~'));
+    world.addBridge();
+    CHECK_PATH("bridge", world.ground(2,6,12,6));
+    world.bridgeDestroyed(true);
+    CHECK_PATH("bridge_broken", world.ground(2,6,12,6));
+    world.bridgeDestroyed(false);
+    CHECK_PATH("bridge_repaired", world.ground(2,6,12,6));
+}
+
+BOOST_AUTO_TEST_CASE(ground_plan_preserves_but_ignores_moving_occupancy) {
+    World world(openMap());
+    world.movingUnit(5,5,true);
+    CHECK_PATH("moving_occupancy", world.ground(2,2,9,8));
+    BOOST_TEST(world.hasMovingUnit(5,5));
+    world.movingUnit(5,5,false);
+    world.movingUnit(7,6,true);
+    CHECK_PATH("moved_occupancy", world.ground(2,2,9,8));
+    BOOST_TEST(!world.hasMovingUnit(5,5));
+    BOOST_TEST(world.hasMovingUnit(7,6));
+    world.movingUnit(7,6,false);
+    CHECK_PATH("removed_occupancy", world.ground(2,2,9,8));
+}
+
+BOOST_AUTO_TEST_CASE(occupied_search_slots_keep_parent_and_cost_when_reinserted)
+{
+    World world(openMap());
+    BOOST_TEST(world.occupiedSearchMutation(true));
+    BOOST_TEST(world.occupiedSearchMutation(false));
+}
+
+BOOST_AUTO_TEST_CASE(maze_crosses_hierarchical_zone_blocks) {
+    Map map(24, std::string(24, '.'));
+    for (int y=0; y<20; ++y) map[y][8]='#';
+    for (int y=4; y<24; ++y) map[y][15]='#';
+    World world(map);
+    CHECK_PATH("maze", world.ground(2,2,21,21));
+}
+BOOST_AUTO_TEST_CASE(no_clear_goal) {
+    Map map(24, std::string(24, '#'));
+    map[2][2]='.';
+    World world(map);
+    CHECK_PATH("no_clear_goal", world.ground(2,2,20,20));
+}
+BOOST_AUTO_TEST_CASE(corner_squeeze) {
+    Map map(12, std::string(12, '#'));
+    for (int y=1; y<6; ++y) for(int x=1; x<6; ++x) map[y][x]='.';
+    for (int y=6; y<11; ++y) for(int x=6; x<11; ++x) map[y][x]='.';
+    World world(map);
+    CHECK_PATH("corner_squeeze", world.ground(2,2,9,9));
+}
+
+BOOST_AUTO_TEST_CASE(macro_ground_edges_are_legal_repeatable_and_work_accounted)
+{
+    const std::array<std::array<int, 4>, 3> queries = {{
+        {{2, 2, 9, 8}},
+        {{2, 6, 9, 6}},
+        {{1, 1, 10, 10}}
+    }};
+
+    for (const auto& query : queries) {
+        World world(openMap());
+        world.setMacroEdgesEnabled(true);
+        const auto first = world.ground(query[0], query[1], query[2], query[3]);
+        const auto repeated = world.ground(query[0], query[1], query[2], query[3]);
+        BOOST_REQUIRE(first.found);
+        BOOST_TEST(!first.macroEdges);
+        BOOST_TEST(first.optimizedEdges);
+        BOOST_TEST(first.legal);
+        BOOST_TEST(first.clean);
+        BOOST_TEST(first.cells > 0);
+        BOOST_TEST(repeated.found == first.found);
+        BOOST_TEST(repeated.macroEdges == first.macroEdges);
+        BOOST_TEST(repeated.legal);
+        BOOST_TEST(repeated.raw == first.raw);
+        BOOST_TEST(repeated.optimized == first.optimized);
+        BOOST_TEST(repeated.cells == first.cells);
+        BOOST_TEST(repeated.clean);
+
+        // The fixture switch is only a comparison oracle.  Reachability and
+        // legality must agree even when macro edges choose a shorter trace.
+        world.setMacroEdgesEnabled(false);
+        const auto baseline = world.ground(query[0], query[1], query[2], query[3]);
+        BOOST_TEST(baseline.found == first.found);
+        BOOST_TEST(baseline.legal);
+        BOOST_TEST(baseline.clean);
+        BOOST_TEST(baseline.cells > 0);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(macro_edges_survive_static_obstacle_changes)
+{
+    World world(wallMap(true));
+    world.setMacroEdgesEnabled(true);
+    const auto throughGap = world.ground(2, 6, 9, 6);
+    BOOST_REQUIRE(throughGap.found);
+    BOOST_TEST(!throughGap.macroEdges);
+    BOOST_TEST(throughGap.optimizedEdges);
+    BOOST_TEST(throughGap.legal);
+    BOOST_TEST(throughGap.clean);
+
+    world.setCell(6, 3, '#');
+    const auto closed = world.ground(2, 6, 9, 6);
+    BOOST_TEST(closed.legal);
+    BOOST_TEST(closed.clean);
+
+    world.setCell(6, 3, '.');
+    const auto reopened = world.ground(2, 6, 9, 6);
+    BOOST_TEST(reopened.found == throughGap.found);
+    BOOST_TEST(reopened.legal);
+    BOOST_TEST(reopened.clean);
+}
+
+BOOST_AUTO_TEST_CASE(normal_find_path_macro_edges_keep_reachability_and_legality)
+{
+    World world(openMap());
+    world.setMacroEdgesEnabled(true);
+    const auto macro = world.normal(2, 2, 9, 8);
+    BOOST_REQUIRE(macro.found);
+    BOOST_TEST(macro.legal);
+    BOOST_TEST(macro.clean);
+    BOOST_TEST(macro.cells > 0);
+
+    const auto repeated = world.normal(2, 2, 9, 8);
+    BOOST_TEST(repeated.found == macro.found);
+    BOOST_TEST(repeated.legal);
+    BOOST_TEST(repeated.raw == macro.raw);
+    BOOST_TEST(repeated.optimized == macro.optimized);
+    BOOST_TEST(repeated.cells == macro.cells);
+    BOOST_TEST(repeated.clean);
+
+    world.setMacroEdgesEnabled(false);
+    const auto baseline = world.normal(2, 2, 9, 8);
+    BOOST_TEST(baseline.found == macro.found);
+    BOOST_TEST(baseline.legal);
+    BOOST_TEST(baseline.clean);
+    BOOST_TEST(baseline.cells > 0);
+}
+
+BOOST_AUTO_TEST_CASE(soa_game_adapter_keeps_forty_thousand_moving_occupants)
+{
+    World world(Map(256, std::string(256, '.')));
+    world.populateMovingUnits(40000);
+    BOOST_REQUIRE(world.movingUnitCount() == 40000);
+    const auto first = world.ground(2, 2, 240, 230);
+    BOOST_REQUIRE(first.found);
+    BOOST_TEST(first.clean);
+    BOOST_TEST(world.movingUnitCount() == 40000);
+    const auto second = world.ground(2, 2, 240, 230);
+    BOOST_TEST(second.raw == first.raw);
+    BOOST_TEST(second.optimized == first.optimized);
+    BOOST_TEST(second.cells == first.cells);
+    BOOST_TEST(second.clean);
+    BOOST_TEST(world.movingUnitCount() == 40000);
+}
+
+BOOST_AUTO_TEST_CASE(game_queue_accepts_one_hundred_thousand_and_drains_deleted_units)
+{
+    World world(openMap());
+    world.enqueue(100000);
+    world.enqueue(100000);
+    BOOST_TEST(world.pendingRequests() == 100000U);
+    world.processMissingRequests();
+    BOOST_TEST(world.pendingRequests() == 50000U);
+    world.processMissingRequests();
+    BOOST_TEST(world.pendingRequests() == 0U);
+}
+
+BOOST_AUTO_TEST_CASE(goal_ray_memo_preserves_trace_result_and_reuses_verdicts)
+{
+    World world(openMap());
+    const auto uncached = world.goalRayProbe(1, 1, 10, 8, false);
+    const auto cached = world.goalRayProbe(1, 1, 10, 8, true);
+    BOOST_TEST(uncached.hits == 0U);
+    BOOST_TEST(uncached.entries == 0U);
+    BOOST_TEST(cached.firstResult == uncached.firstResult);
+    BOOST_TEST(cached.secondResult == uncached.secondResult);
+    BOOST_TEST(cached.hits > 0U);
+    BOOST_TEST(cached.entries > 0U);
+    BOOST_TEST(cached.allocatedCells == uncached.allocatedCells);
+    BOOST_REQUIRE(!uncached.firstSearchSnapshot.empty());
+    BOOST_REQUIRE(!uncached.secondSearchSnapshot.empty());
+    BOOST_TEST(uncached.firstSearchSnapshot == uncached.secondSearchSnapshot);
+    BOOST_TEST(cached.firstSearchSnapshot == cached.secondSearchSnapshot);
+    BOOST_TEST(cached.firstSearchSnapshot == uncached.firstSearchSnapshot);
+    BOOST_TEST(cached.secondSearchSnapshot == uncached.secondSearchSnapshot);
+}
+
+BOOST_AUTO_TEST_CASE(goal_ray_specialized_iterator_matches_legacy_oracle)
+{
+    World world(Map(16, std::string(16, '.')));
+    const std::array<std::array<int, 4>, 16> rays = {{
+        // All eight octants from the same origin.
+        {{7, 7, 12, 10}}, {{7, 7, 12, 4}}, {{7, 7, 2, 10}}, {{7, 7, 2, 4}},
+        {{7, 7, 10, 12}}, {{7, 7, 4, 12}}, {{7, 7, 10, 2}}, {{7, 7, 4, 2}},
+        // Horizontal and vertical axes exercise the zero-minor cases.
+        {{0, 7, 15, 7}}, {{15, 7, 0, 7}}, {{7, 0, 7, 15}}, {{7, 15, 7, 0}},
+        // Unequal slopes exercise both endpoint phases and extra callbacks.
+        {{1, 1, 14, 8}}, {{1, 1, 8, 14}}, {{14, 14, 2, 5}}, {{14, 2, 5, 14}}
+    }};
+
+    for (const auto& ray : rays) {
+        const auto observed = world.goalRayTraversalProbe(ray[0], ray[1], ray[2], ray[3]);
+        BOOST_TEST(observed.legacyResult == observed.specializedResult);
+        BOOST_TEST(observed.legacySnapshot == observed.specializedSnapshot);
+    }
+
+    // A blocked cell must stop both iterators at the same callback boundary.
+    world.setCell(8, 8, '#');
+    const auto blockedRay = world.goalRayTraversalProbe(1, 1, 14, 14);
+    BOOST_TEST(blockedRay.legacyResult == blockedRay.specializedResult);
+    BOOST_TEST(blockedRay.legacySnapshot == blockedRay.specializedSnapshot);
+    world.setCell(8, 8, '.');
+
+    // Keep a moving occupancy record across the oracle runs, then seed it
+    // with a cheaper active route. Both paths must clear blocked-by-ally and
+    // retain the existing g/frontier state when the ray revisits it.
+    world.movingUnit(2, 2, true);
+    const auto dominated = world.goalRayTraversalProbe(1, 1, 14, 8, 2, 2);
+    BOOST_TEST(dominated.legacyResult == dominated.specializedResult);
+    BOOST_TEST(dominated.legacySnapshot == dominated.specializedSnapshot);
+    const std::string expectedSeed = "2,2:1:O:0:0:0:";
+    BOOST_TEST(dominated.specializedSnapshot.find(expectedSeed) != std::string::npos);
+    world.movingUnit(2, 2, false);
+}

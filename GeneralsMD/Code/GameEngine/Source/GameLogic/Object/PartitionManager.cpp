@@ -163,6 +163,7 @@ static int cellValueProc(PartitionCell* cell, void* userData);
 typedef Bool (*CollideTestProc)(const CollideInfo *a, const CollideInfo *b, CollideLocAndNormal *cinfo);
 
 // if the dist is greater than maxDist, return false, and the output stuff is undefined.
+// abVec may be null when the caller only needs the distance.
 typedef Bool (*DistCalcProc)
 (
 	const Coord3D *posA,
@@ -170,7 +171,7 @@ typedef Bool (*DistCalcProc)
 	const Coord3D *posB,
 	const Object *objB,
 	Real& abDistSqr,
-	Coord3D& abVec,
+	Coord3D *abVec,
 	Real maxDistSqr
 );
 
@@ -370,10 +371,10 @@ static Bool collideTest_Box_Sphere(const CollideInfo *a, const CollideInfo *b, C
 static Bool collideTest_Box_Cylinder(const CollideInfo *a, const CollideInfo *b, CollideLocAndNormal *cinfo);
 static Bool collideTest_Box_Box(const CollideInfo *a, const CollideInfo *b, CollideLocAndNormal *cinfo);
 
-static Bool distCalcProc_CenterAndCenter_2D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D& abVec, Real maxDistSqr);
-static Bool distCalcProc_BoundaryAndBoundary_2D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D& abVec, Real maxDistSqr);
-static Bool distCalcProc_CenterAndCenter_3D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D& abVec, Real maxDistSqr);
-static Bool distCalcProc_BoundaryAndBoundary_3D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D& abVec, Real maxDistSqr);
+static Bool distCalcProc_CenterAndCenter_2D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D *abVec, Real maxDistSqr);
+static Bool distCalcProc_BoundaryAndBoundary_2D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D *abVec, Real maxDistSqr);
+static Bool distCalcProc_CenterAndCenter_3D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D *abVec, Real maxDistSqr);
+static Bool distCalcProc_BoundaryAndBoundary_3D(const Coord3D *posA, const Object *objA, const Coord3D *posB, const Object *objB, Real& abDistSqr, Coord3D *abVec, Real maxDistSqr);
 
 static Bool doesCircleOverlapCell(Real centerX, Real centerY, Real radius, Real cellX, Real cellY, Real cellSize);
 
@@ -778,7 +779,7 @@ static Bool distCalcProc_CenterAndCenter_2D(
 	const Coord3D *posB,
 	const Object *objB,
 	Real& abDistSqr,
-	Coord3D& abVec,
+	Coord3D *abVec,
 	Real maxDistSqr
 )
 {
@@ -794,9 +795,9 @@ static Bool distCalcProc_CenterAndCenter_2D(
 		abDistSqr = sqr(diff.x) + sqr(diff.y);
 	}
 
-	//if (abVec)
+	if (abVec)
 	{
-		abVec = diff;
+		*abVec = diff;
 	}
 
 	return abDistSqr < maxDistSqr;
@@ -809,7 +810,7 @@ static Bool distCalcProc_BoundaryAndBoundary_2D(
 	const Coord3D *posB,
 	const Object *objB,
 	Real& abDistSqr,
-	Coord3D& abVec,
+	Coord3D *abVec,
 	Real maxDistSqr
 )
 {
@@ -822,21 +823,25 @@ static Bool distCalcProc_BoundaryAndBoundary_2D(
 
 	Real shrinkFactor = 1.0f;
 	Real shrunkenDistSqr = actualDistSqr;
+	Real actualDist = 0.0f;
+	Real shrunkenDist = 0.0f;
 	Real totalRad = (objA ? objA->getGeometryInfo().getBoundingCircleRadius() : 0.0f) +
 							(objB ? objB->getGeometryInfo().getBoundingCircleRadius() : 0.0f);
 
 	if (totalRad > 0.0f)
 	{
-		Real actualDist = sqrtf(actualDistSqr);
-		Real shrunkenDist = actualDist - totalRad;
+		actualDist = sqrtf(actualDistSqr);
+		shrunkenDist = actualDist - totalRad;
 		if (shrunkenDist <= 0.0f)
 		{
-			shrinkFactor = 0.0f;
+			if (abVec)
+				shrinkFactor = 0.0f;
 			shrunkenDistSqr = 0.0f;	// sorry, distances can't be negative
 		}
 		else
 		{
-			shrinkFactor = shrunkenDist / actualDist;
+			if (abVec)
+				shrinkFactor = shrunkenDist / actualDist;
 			shrunkenDistSqr = sqr(shrunkenDist);
 		}
 	}
@@ -846,12 +851,12 @@ static Bool distCalcProc_BoundaryAndBoundary_2D(
 		abDistSqr = shrunkenDistSqr;
 	}
 
-	//if (abVec)
+	if (abVec)
 	{
 		DEBUG_ASSERTCRASH(shrinkFactor >= 0.0f && shrinkFactor <= 1.0f, ("Hmm, this should not be possible."));
 		diff.x *= shrinkFactor;
 		diff.y *= shrinkFactor;
-		abVec = diff;
+		*abVec = diff;
 	}
 	return abDistSqr < maxDistSqr;
 }
@@ -863,7 +868,7 @@ static Bool distCalcProc_CenterAndCenter_3D(
 	const Coord3D *posB,
 	const Object *objB,
 	Real& abDistSqr,
-	Coord3D& abVec,
+	Coord3D *abVec,
 	Real maxDistSqr
 )
 {
@@ -879,9 +884,9 @@ static Bool distCalcProc_CenterAndCenter_3D(
 		abDistSqr = sqr(diff.x) + sqr(diff.y) + sqr(diff.z);
 	}
 
-	//if (abVec)
+	if (abVec)
 	{
-		abVec = diff;
+		*abVec = diff;
 	}
 	return abDistSqr < maxDistSqr;
 }
@@ -893,7 +898,7 @@ static Bool distCalcProc_BoundaryAndBoundary_3D(
 	const Coord3D *posB,
 	const Object *objB,
 	Real& abDistSqr,
-	Coord3D& abVec,
+	Coord3D *abVec,
 	Real maxDistSqr
 )
 {
@@ -912,19 +917,23 @@ static Bool distCalcProc_BoundaryAndBoundary_3D(
 
 	Real shrinkFactor = 1.0f;
 	Real shrunkenDistSqr = actualDistSqr;
+	Real actualDist = 0.0f;
+	Real shrunkenDist = 0.0f;
 	Real totalRad = (geomA?geomA->getBoundingSphereRadius():0) + (geomB?geomB->getBoundingSphereRadius():0);
 	if (totalRad > 0.0f)
 	{
-		Real actualDist = sqrtf(actualDistSqr);
-		Real shrunkenDist = actualDist - totalRad;
+		actualDist = sqrtf(actualDistSqr);
+		shrunkenDist = actualDist - totalRad;
 		if (shrunkenDist <= 0.0f)
 		{
-			shrinkFactor = 0.0f;
+			if (abVec)
+				shrinkFactor = 0.0f;
 			shrunkenDistSqr = 0.0f;	// sorry, distances can't be negative
 		}
 		else
 		{
-			shrinkFactor = shrunkenDist / actualDist;
+			if (abVec)
+				shrinkFactor = shrunkenDist / actualDist;
 			shrunkenDistSqr = sqr(shrunkenDist);
 		}
 	}
@@ -934,13 +943,13 @@ static Bool distCalcProc_BoundaryAndBoundary_3D(
 		abDistSqr = shrunkenDistSqr;
 	}
 
-	//if (abVec)
+	if (abVec)
 	{
 		DEBUG_ASSERTCRASH(shrinkFactor >= 0.0f && shrinkFactor <= 1.0f, ("Hmm, this should not be possible."));
 		diff.x *= shrinkFactor;
 		diff.y *= shrinkFactor;
 		diff.z *= shrinkFactor;
-		abVec = diff;
+		*abVec = diff;
 	}
 	return abDistSqr < maxDistSqr;
 }
@@ -1229,6 +1238,7 @@ PartitionCell::PartitionCell()
 {
 	m_cellX = m_cellY = 0;
 	m_firstCoiInCell = nullptr;
+	m_compactMembersDirty = true;
 	m_coiCount = 0;
 #ifdef PM_CACHE_TERRAIN_HEIGHT
 	m_loTerrainZ = HUGE_DIST;		// huge positive
@@ -1259,6 +1269,28 @@ PartitionCell::~PartitionCell()
 {
 	DEBUG_ASSERTCRASH(m_firstCoiInCell == nullptr && m_coiCount == 0, ("destroying a nonempty PartitionCell"));
 	// but don't destroy the Cois; they don't belong to us
+}
+
+//-----------------------------------------------------------------------------
+void PartitionCell::rebuildCompactMembers()
+{
+	if (!m_compactMembersDirty)
+		return;
+
+	m_compactMembers.clear();
+	if (m_coiCount > 0 && m_compactMembers.capacity() == 0)
+		m_compactMembers.reserve(static_cast<std::size_t>(m_coiCount));
+
+	for (CellAndObjectIntersection *coi = m_firstCoiInCell; coi; coi = coi->getNextCoi())
+	{
+		PartitionData *module = coi->getModule();
+		DEBUG_ASSERTCRASH(module != nullptr, ("a cell COI must have a module when its compact view is rebuilt"));
+		m_compactMembers.push_back({ module, module ? module->getObject() : nullptr });
+	}
+
+	DEBUG_ASSERTCRASH(m_compactMembers.size() == static_cast<std::size_t>(m_coiCount),
+		("compact cell membership count mismatch"));
+	m_compactMembersDirty = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1466,6 +1498,7 @@ void PartitionCell::friend_addToCellList(CellAndObjectIntersection *coi)
 	{
 		coi->friend_addToCellList(&m_firstCoiInCell);
 		++m_coiCount;
+		m_compactMembersDirty = true;
 	}
 }
 
@@ -1476,6 +1509,7 @@ void PartitionCell::friend_removeFromCellList(CellAndObjectIntersection *coi)
 	{
 		coi->friend_removeFromCellList(&m_firstCoiInCell);
 		--m_coiCount;
+		m_compactMembersDirty = true;
 	}
 }
 
@@ -1534,7 +1568,9 @@ void PartitionCell::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void PartitionCell::loadPostProcess()
 {
-
+	// The packed view is transient and is rebuilt from the authoritative COI list.
+	m_compactMembers.clear();
+	m_compactMembersDirty = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1578,6 +1614,24 @@ PartitionData::~PartitionData()
 		ThePartitionManager->removeFromDirtyModules(this);
 		//DEBUG_ASSERTCRASH(!ThePartitionManager->isInListDirtyModules(this), ("hmm"));
 	}
+}
+
+//-----------------------------------------------------------------------------
+void PartitionData::friend_setObject(Object *object)
+{
+	if (m_object == object)
+		return;
+
+	// A fogged-memory module keeps its COIs while its live object is detached.
+	// Invalidate every affected cell before changing the cached object pointer.
+	for (Int i = 0; i < m_coiInUseCount; ++i)
+	{
+		PartitionCell *cell = m_coiArray[i].getCell();
+		if (cell)
+			cell->invalidateCompactMembers();
+	}
+
+	m_object = object;
 }
 
 //-----------------------------------------------------------------------------
@@ -2303,7 +2357,7 @@ void PartitionData::attachToObject(Object* object)
 {
 
 	// remember who contains us
-	m_object = object;
+	friend_setObject(object);
 
 	// we only snapshot things that are immobile and have something to draw.  Don't need ghostobjects for others.
 	if (object->isKindOf(KINDOF_IMMOBILE))
@@ -2356,7 +2410,7 @@ void PartitionData::detachFromObject()
 	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx",this,m_object));
 
 	// no longer attached to object
-	m_object = nullptr;
+	friend_setObject(nullptr);
 	TheGhostObjectManager->removeGhostObject(m_ghostObject);
 	m_ghostObject = nullptr;
 }
@@ -2366,7 +2420,7 @@ void PartitionData::attachToGhostObject(GhostObject* object)
 {
 
 	// remember who contains us
-	m_object = nullptr;	//it's only attached to a ghost object, no parent object.
+	friend_setObject(nullptr);	//it's only attached to a ghost object, no parent object.
 	m_ghostObject = object;
 
 	// (re)calc maxCoi and (re)alloc cois
@@ -2402,7 +2456,7 @@ void PartitionData::detachFromGhostObject()
 	//DEBUG_LOG(("detach pd for pd %08lx obj %08lx",this,m_object));
 
 	// no longer attached to object
-	m_object = nullptr;
+	friend_setObject(nullptr);
 	m_ghostObject = nullptr;
 }
 
@@ -2767,6 +2821,7 @@ void PartitionManager::shutdown()
 
 #ifdef FASTER_GCO
 	m_radiusVec.clear();
+	m_radiusOffsets.clear();
 #endif
 
 	resetPendingUndoShroudRevealQueue();
@@ -3240,7 +3295,12 @@ void PartitionManager::calcRadiusVec()
 	m_maxGcoRadius = REAL_TO_INT_CEIL(maxPossibleDist / cellSize);
 
 	m_radiusVec.clear();
-	m_radiusVec.resize(m_maxGcoRadius+1, OffsetVec());
+	m_radiusVec.resize(m_maxGcoRadius+1);
+	for (Int i = 0; i <= m_maxGcoRadius; ++i)
+	{
+		m_radiusVec[i].begin = 0;
+		m_radiusVec[i].end = 0;
+	}
 
 	ICoord2D cur;
 	for (cur.y = -cy+1; cur.y < cy; ++cur.y)
@@ -3248,13 +3308,37 @@ void PartitionManager::calcRadiusVec()
 		for (cur.x = -cx+1; cur.x < cx; ++cur.x)
 		{
 			/*
-				m_radiusVec[curRadius] contains a list of the cells (foo) that could
+				The span for curRadius describes the cells in m_radiusOffsets that could
 				contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
 			*/
 			Int curRadius = calcMinRadius(cur);
 			DEBUG_ASSERTCRASH(curRadius <= m_maxGcoRadius, ("expected max of %d but got %d",m_maxGcoRadius,curRadius));
 			if (curRadius <= m_maxGcoRadius)
-				m_radiusVec[curRadius].push_back(cur);
+				++m_radiusVec[curRadius].end;
+		}
+	}
+
+	Int totalOffsets = 0;
+	for (Int i = 0; i <= m_maxGcoRadius; ++i)
+	{
+		Int count = m_radiusVec[i].end;
+		m_radiusVec[i].begin = totalOffsets;
+		m_radiusVec[i].end = totalOffsets + count;
+		totalOffsets += count;
+	}
+
+	m_radiusOffsets.resize(totalOffsets);
+	std::vector<Int> nextOffset(m_maxGcoRadius + 1);
+	for (Int i = 0; i <= m_maxGcoRadius; ++i)
+		nextOffset[i] = m_radiusVec[i].begin;
+
+	for (cur.y = -cy+1; cur.y < cy; ++cur.y)
+	{
+		for (cur.x = -cx+1; cur.x < cx; ++cur.x)
+		{
+			Int curRadius = calcMinRadius(cur);
+			if (curRadius <= m_maxGcoRadius)
+				m_radiusOffsets[nextOffset[curRadius]++] = cur;
 		}
 	}
 
@@ -3262,7 +3346,7 @@ void PartitionManager::calcRadiusVec()
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{
-		total += m_radiusVec[i].size();
+		total += m_radiusVec[i].end - m_radiusVec[i].begin;
 		//DEBUG_LOG(("radius %d has %d entries",i,m_radiusVec[i].size()));
 	}
 	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d",(cx*2-1)*(cy*2-1),total));
@@ -3359,24 +3443,30 @@ Object *PartitionManager::getClosestObjects(
 	++theIterFlag;
 
 	/*
-		m_radiusVec[curRadius] contains a list of the cells (foo) that could
+		The span for curRadius describes the cells in m_radiusOffsets that could
 		contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
 	*/
   for (Int curRadius = 0; curRadius <= maxRadiusLimit; ++curRadius)
   {
-    const OffsetVec& offsets = m_radiusVec[curRadius];
-		if (offsets.empty())
+		const RadiusSpan& span = m_radiusVec[curRadius];
+		if (span.begin == span.end)
 			continue;
-    for (OffsetVec::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
+		for (Int offsetIndex = span.begin; offsetIndex < span.end; ++offsetIndex)
 		{
-			PartitionCell* thisCell = getCellAt(cellCenterX + it->x, cellCenterY + it->y);
+			const ICoord2D& offset = m_radiusOffsets[offsetIndex];
+			PartitionCell* thisCell = getCellAt(cellCenterX + offset.x, cellCenterY + offset.y);
 			if (thisCell == nullptr)
 				continue;
 
-			for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = thisCoi->getNextCoi())
+			// Keep the empty-cell path as cheap as the authoritative linked-list scan.
+			if (thisCell->getFirstCoiInCell() == nullptr)
+				continue;
+
+			const auto& compactMembers = thisCell->getCompactMembers();
+			for (auto member = compactMembers.begin(); member != compactMembers.end(); ++member)
 			{
-				PartitionData *thisMod = thisCoi->getModule();
-				Object *thisObj = thisMod->getObject();
+				PartitionData *thisMod = member->module;
+				Object *thisObj = member->object;
 
 				// never compare against ourself.
 				if (thisObj == obj || thisObj == nullptr)
@@ -3390,7 +3480,7 @@ Object *PartitionManager::getClosestObjects(
 
 				Real thisDistSqr;
 				Coord3D distVec;
-				if (!(*distProc)(objPos, objToUse, thisObj->getPosition(), thisObj, thisDistSqr, distVec, closestDistSqr))
+				if (!(*distProc)(objPos, objToUse, thisObj->getPosition(), thisObj, thisDistSqr, closestVecArg ? &distVec : nullptr, closestDistSqr))
 					continue;
 
 				if (!filtersAllow(filters, thisObj))
@@ -3409,7 +3499,8 @@ Object *PartitionManager::getClosestObjects(
 					// rest of curRadius)
 					closestObj = thisObj;
 					closestDistSqr = thisDistSqr;
-					closestVec = distVec;
+					if (closestVecArg)
+						closestVec = distVec;
 
 					if (!foundAny)
 					{
@@ -3465,7 +3556,7 @@ Object *PartitionManager::getClosestObjects(
 			// hmm, ok, calc the distance.
 			Real thisDistSqr;
 			Coord3D distVec;
-			if (!(*distProc)(objPos, objToUse, thisObj->getPosition(), thisObj, &thisDistSqr, &distVec, closestDistSqr))
+			if (!(*distProc)(objPos, objToUse, thisObj->getPosition(), thisObj, thisDistSqr, closestVecArg ? &distVec : nullptr, closestDistSqr))
 				continue;
 
 			// check the filters now
@@ -3481,7 +3572,8 @@ Object *PartitionManager::getClosestObjects(
 			{
 				closestObj = thisObj;
 				closestDistSqr = thisDistSqr;
-				closestVec = distVec;
+				if (closestVecArg)
+					closestVec = distVec;
 
 				if (!foundAny)
 				{
@@ -3554,7 +3646,7 @@ void PartitionManager::getVectorTo(const Object *obj, const Object *otherObj, Di
 {
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real distSqr;
-	(*distProc)(obj->getPosition(), obj, otherObj->getPosition(), otherObj, distSqr, vec, HUGE_DIST_SQR);
+	(*distProc)(obj->getPosition(), obj, otherObj->getPosition(), otherObj, distSqr, &vec, HUGE_DIST_SQR);
 }
 
 //-----------------------------------------------------------------------------
@@ -3562,7 +3654,7 @@ void PartitionManager::getVectorTo(const Object *obj, const Coord3D *pos, Distan
 {
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real distSqr;
-	(*distProc)(obj->getPosition(), obj, pos, nullptr, distSqr, vec, HUGE_DIST_SQR);
+	(*distProc)(obj->getPosition(), obj, pos, nullptr, distSqr, &vec, HUGE_DIST_SQR);
 }
 
 //-----------------------------------------------------------------------------
@@ -3571,7 +3663,7 @@ Real PartitionManager::getDistanceSquared(const Object *obj, const Object *other
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real thisDistSqr;
 	Coord3D thisVec;
-	(*distProc)(obj->getPosition(), obj, otherObj->getPosition(), otherObj, thisDistSqr, thisVec, HUGE_DIST_SQR);
+	(*distProc)(obj->getPosition(), obj, otherObj->getPosition(), otherObj, thisDistSqr, vec ? &thisVec : nullptr, HUGE_DIST_SQR);
 	if (vec)
 		*vec = thisVec;
 	return thisDistSqr;
@@ -3583,7 +3675,7 @@ Real PartitionManager::getDistanceSquared(const Object *obj, const Coord3D *pos,
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real thisDistSqr;
 	Coord3D thisVec;
-	(*distProc)(obj->getPosition(), obj, pos, nullptr, thisDistSqr, thisVec, HUGE_DIST_SQR);
+	(*distProc)(obj->getPosition(), obj, pos, nullptr, thisDistSqr, vec ? &thisVec : nullptr, HUGE_DIST_SQR);
 	if (vec)
 		*vec = thisVec;
 	return thisDistSqr;
@@ -3596,7 +3688,7 @@ Real PartitionManager::getGoalDistanceSquared(const Object *obj, const Coord3D *
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real thisDistSqr;
 	Coord3D thisVec;
-	(*distProc)(goalPos, obj, otherObj->getPosition(), otherObj, thisDistSqr, thisVec, HUGE_DIST_SQR);
+	(*distProc)(goalPos, obj, otherObj->getPosition(), otherObj, thisDistSqr, vec ? &thisVec : nullptr, HUGE_DIST_SQR);
 	if (vec)
 		*vec = thisVec;
 	return thisDistSqr;
@@ -3609,7 +3701,7 @@ Real PartitionManager::getGoalDistanceSquared(const Object *obj, const Coord3D *
 	DistCalcProc distProc = theDistCalcProcs[dc];
 	Real thisDistSqr;
 	Coord3D thisVec;
-	(*distProc)(goalPos, obj, otherPos, nullptr, thisDistSqr, thisVec, HUGE_DIST_SQR);
+	(*distProc)(goalPos, obj, otherPos, nullptr, thisDistSqr, vec ? &thisVec : nullptr, HUGE_DIST_SQR);
 	if (vec)
 		*vec = thisVec;
 	return thisDistSqr;

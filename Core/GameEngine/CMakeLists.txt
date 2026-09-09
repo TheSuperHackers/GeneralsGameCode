@@ -846,7 +846,8 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/AI/AIGroup.cpp
 #    Source/GameLogic/AI/AIGuard.cpp
 #    Source/GameLogic/AI/AIGuardRetaliate.cpp
-    Source/GameLogic/AI/AIPathfind.cpp
+    # GeneralsMD supplies its extracted implementation with the same compile context.
+    "$<$<NOT:$<BOOL:$<TARGET_PROPERTY:ENGINE_NAVIGATION_EXTRACTED>>>:${CMAKE_CURRENT_SOURCE_DIR}/Source/GameLogic/AI/AIPathfind.cpp>"
 #    Source/GameLogic/AI/AIPlayer.cpp
 #    Source/GameLogic/AI/AISkirmishPlayer.cpp
 #    Source/GameLogic/AI/AIStates.cpp

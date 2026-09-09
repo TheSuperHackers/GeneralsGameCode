@@ -37,6 +37,7 @@
 
 class Locomotor;
 class LocomotorTemplate;
+namespace navigation::testing { class World; }
 
 //-------------------------------------------------------------------------------------------------
 //
@@ -76,6 +77,7 @@ typedef std::vector< Locomotor* > LocomotorVector;
 //-------------------------------------------------------------------------------------------------
 class LocomotorSet : public Snapshot
 {
+    friend class navigation::testing::World;
 private:
 	LocomotorVector						m_locomotors;
 	LocomotorSurfaceTypeMask	m_validLocomotorSurfaces;

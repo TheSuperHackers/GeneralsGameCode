@@ -1,0 +1,165 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+
+import engine.navigation.querymemo;
+
+BOOST_AUTO_TEST_SUITE(navigation_goal_ray_query_memo)
+
+BOOST_AUTO_TEST_CASE(caches_positive_and_negative_verdicts_by_layer)
+{
+    navigation::GoalRayQueryMemo memo;
+    BOOST_TEST(memo.configureGrid(10, 15, 8, 8, 4));
+    memo.beginQuery(1, 0x100, 2, false, 0x03, 7);
+
+    bool verdict = false;
+    BOOST_TEST(!memo.find(12, 18, 1, verdict));
+    memo.store(12, 18, 1, true);
+    memo.store(12, 18, 2, false);
+
+    BOOST_TEST(memo.find(12, 18, 1, verdict));
+    BOOST_TEST(verdict);
+    BOOST_TEST(memo.find(12, 18, 2, verdict));
+    BOOST_TEST(!verdict);
+    BOOST_TEST(memo.size() == 2U);
+    BOOST_TEST(memo.stats().hits == 2U);
+    BOOST_TEST(memo.stats().misses == 1U);
+}
+
+BOOST_AUTO_TEST_CASE(grows_and_reuses_contiguous_storage)
+{
+    navigation::GoalRayQueryMemo memo;
+    BOOST_TEST(memo.configureGrid(0, 0, 100, 100, 4));
+    memo.beginQuery(3, 0x200, 1, true, 0x10, 0);
+    for (std::int32_t y = 0; y < 100; ++y)
+        for (std::int32_t x = 0; x < 100; ++x)
+            memo.store(x, y, 1, ((x + y) & 1) == 0);
+
+    const auto capacity = memo.capacity();
+    BOOST_TEST(memo.size() == 10000U);
+    BOOST_TEST(capacity == 10000U);
+    BOOST_TEST(memo.storageBytes() == 10000U * sizeof(std::uint32_t));
+    bool verdict = false;
+    BOOST_TEST(memo.find(99, 99, 1, verdict));
+    BOOST_TEST(verdict);
+
+    memo.beginQuery(4, 0x200, 1, true, 0x10, 0);
+    BOOST_TEST(memo.size() == 0U);
+    BOOST_TEST(memo.capacity() == capacity);
+    BOOST_TEST(!memo.find(99, 99, 1, verdict));
+    memo.store(99, 99, 1, false);
+    BOOST_TEST(memo.find(99, 99, 1, verdict));
+    BOOST_TEST(!verdict);
+
+    memo.store(0, 0, 2, true);
+    BOOST_TEST(memo.capacity() == 20000U);
+}
+
+BOOST_AUTO_TEST_CASE(epoch_and_invalidate_never_reuse_old_entries)
+{
+    navigation::GoalRayQueryMemo memo;
+    bool verdict = false;
+    BOOST_TEST(memo.configureGrid(0, 0, 4, 4, 4));
+    memo.beginQuery(7, 0x300, 1, false, 1, 2);
+    memo.store(1, 2, 1, true);
+    BOOST_TEST(memo.find(1, 2, 1, verdict));
+    BOOST_TEST(verdict);
+
+    memo.beginQuery(8, 0x300, 1, false, 1, 2);
+    BOOST_TEST(!memo.find(1, 2, 1, verdict));
+    memo.store(1, 2, 1, false);
+    memo.invalidate();
+    memo.beginQuery(8, 0x300, 1, false, 1, 2);
+    BOOST_TEST(!memo.find(1, 2, 1, verdict));
+}
+
+BOOST_AUTO_TEST_CASE(all_movement_context_fields_invalidate_scope)
+{
+    bool verdict = false;
+    const auto checkChanged = [&](std::uintptr_t object, std::int32_t radius,
+                                  bool center, std::uint32_t surfaces,
+                                  std::uint64_t ignored) {
+        navigation::GoalRayQueryMemo memo;
+        BOOST_TEST(memo.configureGrid(0, 0, 8, 8, 4));
+        memo.beginQuery(11, 0x400, 2, false, 3, 4);
+        memo.store(4, 5, 1, true);
+        memo.beginQuery(11, object, radius, center, surfaces, ignored);
+        BOOST_TEST(!memo.find(4, 5, 1, verdict));
+    };
+
+    checkChanged(0x401, 2, false, 3, 4);
+    checkChanged(0x400, 3, false, 3, 4);
+    checkChanged(0x400, 2, true, 3, 4);
+    checkChanged(0x400, 2, false, 5, 4);
+    checkChanged(0x400, 2, false, 3, 9);
+}
+
+BOOST_AUTO_TEST_CASE(grid_resize_reuse_and_scope_reset_are_bounded)
+{
+    navigation::GoalRayQueryMemo memo;
+    bool verdict = false;
+    BOOST_TEST(memo.configureGrid(100, 200, 4, 3, 3));
+    memo.beginQuery(21, 0x500, 1, false, 1, 0);
+    memo.store(100, 200, 1, true);
+    BOOST_TEST(memo.find(100, 200, 1, verdict));
+    BOOST_TEST(verdict);
+    BOOST_TEST(memo.capacity() == 12U);
+
+    // Rebinding the same map shape retains the plane allocation but invalidates
+    // the previous scope, including an entry at the same coordinate.
+    BOOST_TEST(memo.configureGrid(100, 200, 4, 3, 3));
+    BOOST_TEST(memo.size() == 0U);
+    BOOST_TEST(memo.capacity() == 12U);
+    BOOST_TEST(!memo.find(100, 200, 1, verdict));
+
+    // A different origin/shape discards the old plane instead of allowing an
+    // entry from the old map to alias a new local index.
+    BOOST_TEST(memo.configureGrid(30000, 40000, 2, 2, 3));
+    BOOST_TEST(memo.capacity() == 0U);
+    BOOST_TEST(!memo.find(100, 200, 1, verdict));
+    memo.beginQuery(22, 0x500, 1, false, 1, 0);
+    memo.store(30001, 40001, 1, false);
+    BOOST_TEST(memo.find(30001, 40001, 1, verdict));
+    BOOST_TEST(!verdict);
+}
+
+BOOST_AUTO_TEST_CASE(boundaries_layers_and_sparse_high_origin_do_not_alias)
+{
+    navigation::GoalRayQueryMemo memo;
+    bool verdict = false;
+    BOOST_TEST(memo.configureGrid(65000, 65000, 4, 3, 3));
+    memo.beginQuery(31, 0x600, 0, false, 0, 0);
+
+    memo.store(65000, 65000, 1, true);
+    memo.store(65003, 65002, 1, false);
+    memo.store(65000, 65000, 2, false);
+    BOOST_TEST(memo.capacity() == 24U);
+    BOOST_TEST(memo.size() == 3U);
+
+    BOOST_TEST(memo.find(65000, 65000, 1, verdict));
+    BOOST_TEST(verdict);
+    BOOST_TEST(memo.find(65003, 65002, 1, verdict));
+    BOOST_TEST(!verdict);
+    BOOST_TEST(memo.find(65000, 65000, 2, verdict));
+    BOOST_TEST(!verdict);
+
+    BOOST_TEST(!memo.find(64999, 65000, 1, verdict));
+    BOOST_TEST(!memo.find(65004, 65000, 1, verdict));
+    BOOST_TEST(!memo.find(65000, 65003, 1, verdict));
+    BOOST_TEST(!memo.find(65000, 65000, 3, verdict));
+}
+
+BOOST_AUTO_TEST_CASE(rejects_coordinate_ranges_that_would_overflow_lookup)
+{
+    navigation::GoalRayQueryMemo memo;
+    bool verdict = false;
+    BOOST_TEST(!memo.configureGrid(std::numeric_limits<std::int32_t>::max() - 1,
+                                   0, 4, 1, 1));
+    memo.beginQuery(41, 0, 0, false, 0, 0);
+    BOOST_TEST(!memo.find(std::numeric_limits<std::int32_t>::max(), 0, 0, verdict));
+    memo.store(std::numeric_limits<std::int32_t>::max(), 0, 0, true);
+    BOOST_TEST(memo.size() == 0U);
+    BOOST_TEST(memo.capacity() == 0U);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -1,0 +1,39 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.navigation.costs;
+
+BOOST_AUTO_TEST_SUITE(navigation_costs)
+
+BOOST_AUTO_TEST_CASE(legacy_integer_costs_and_turn_penalties)
+{
+    BOOST_REQUIRE_MESSAGE(navigation::estimateGoalCost(0, 0) == 0, "goal cost at origin");
+    for (int signX : {-1, 1}) {
+        for (int signY : {-1, 1}) {
+            BOOST_REQUIRE_MESSAGE(navigation::estimateGoalCost(signX * 4, signY * 2) == 50, "goal estimate quadrant");
+            BOOST_REQUIRE_MESSAGE(navigation::estimateGoalCost(signX * 2, signY * 4) == 50, "goal estimate symmetry");
+            BOOST_REQUIRE_MESSAGE(navigation::estimateGoalCost(signX, signY) == 15, "legacy diagonal estimate is 15");
+            BOOST_REQUIRE_MESSAGE(navigation::stepCost(20, signX, signY, false) == 34, "diagonal step is 14");
+            BOOST_REQUIRE_MESSAGE(navigation::stepCost(20, signX, signY, true) == 48, "pinched diagonal penalty");
+        }
+    }
+    BOOST_REQUIRE_MESSAGE(navigation::estimateGoalCost(0, -7) == 70, "vertical estimate");
+    BOOST_REQUIRE_MESSAGE(navigation::estimateGoalCost(-7, 0) == 70, "horizontal estimate");
+    BOOST_REQUIRE_MESSAGE(navigation::stepCost(20, 0, 1, false) == 30, "orthogonal step");
+    BOOST_REQUIRE_MESSAGE(navigation::stepCost(20, 1, 0, true) == 44, "pinched orthogonal penalty");
+    BOOST_REQUIRE_MESSAGE(navigation::stepCost(20, 0, 0, false) == 30, "legacy zero-length step still costs 10");
+    BOOST_REQUIRE_MESSAGE(navigation::stepCost(65530, 1, 0, false) == 65540, "step calculation precedes 16-bit storage");
+
+    const int directions[8][2] = {{1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};
+    const int penalties[8] = {0, 4, 8, 16, 16, 16, 8, 4};
+    for (int from = 0; from < 8; ++from) {
+        for (int turn = 0; turn < 8; ++turn) {
+            const auto& before = directions[from];
+            const auto& after = directions[(from + turn) % 8];
+            BOOST_REQUIRE_MESSAGE(navigation::turnCost(before[0], before[1], after[0], after[1]) == penalties[turn],
+                    "legacy turn penalty changed");
+        }
+    }
+}
+
+
+BOOST_AUTO_TEST_SUITE_END()

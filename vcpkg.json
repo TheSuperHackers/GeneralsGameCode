@@ -4,6 +4,7 @@
     "dependencies": [
       "zlib",
       "ffmpeg",
-      "stb"
+      "stb",
+      "boost-test"
     ]
   }

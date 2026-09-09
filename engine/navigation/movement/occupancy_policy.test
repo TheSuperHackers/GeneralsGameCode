@@ -1,0 +1,117 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+import engine.navigation.movement.occupancy_policy;
+
+namespace {
+struct Unit {
+    bool ally = false, movable = false, infantry = false, crushable = false;
+};
+struct Units {
+    std::array<Unit, 4> values{};
+    const Unit* find(std::uint32_t id) const { return id && id <= values.size() ? &values[id-1] : nullptr; }
+    bool allied(const Unit* p) const { return p->ally; }
+    bool canMoveAside(const Unit* p) const { return p->movable; }
+    bool infantry(const Unit* p) const { return p->infantry; }
+    bool canCrush(const Unit* p) const { return p->crushable; }
+};
+struct Scene {
+    Units units;
+    std::array<navigation::OccupancyCell, 25> cells{};
+    navigation::OccupancyQuery query{99, 0, 2, 2, 1, 2, false, false};
+    navigation::OccupancyResult result;
+    bool check() {
+        return navigation::checkOccupancy(query, result, [this](int x, int y) {
+            if (x < 0 || y < 0 || x >= 5 || y >= 5) {
+                navigation::OccupancyCell invalid; invalid.valid = false; return invalid;
+            }
+            return cells[y * 5 + x];
+        }, units);
+    }
+    void fixed(int x, int y, int id) { cells[y * 5 + x] = {static_cast<std::uint32_t>(id), true, false, false, false, true}; }
+    void moving(int x, int y, int id) { cells[y * 5 + x] = {static_cast<std::uint32_t>(id), true, false, false, true, false}; }
+};
+}
+
+BOOST_AUTO_TEST_SUITE(movement_occupancy)
+BOOST_AUTO_TEST_CASE(stationary_units_block_the_entire_vehicle_footprint)
+{
+    Scene scene;
+    scene.fixed(3, 3, 1); // Adjacent footprint corner, not just the anchor cell.
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(scene.result.enemyFixed);
+    scene.units.values[0].ally = true;
+    BOOST_CHECK(!scene.check()); // A friendly unit without move-aside capability.
+    scene.units.values[0].movable = true;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK_EQUAL(scene.result.allyFixedCount, 1);
+    scene.fixed(2, 2, 1);
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK_EQUAL(scene.result.allyFixedCount, 1); // One large ally occupies two cells.
+    scene.query.x = 0;
+    BOOST_CHECK(!scene.check()); // Footprint cannot extend beyond the map.
+}
+
+BOOST_AUTO_TEST_CASE(crossing_units_are_checked_when_transient_occupancy_is_requested)
+{
+    Scene scene;
+    scene.moving(2, 2, 1);
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.enemyFixed); // Long-term route planning permits moving traffic.
+    scene.query.considerTransient = true;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(scene.result.enemyFixed);
+    scene.units.values[0] = {true, true, false, false};
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(scene.result.allyMoving);
+    BOOST_CHECK_EQUAL(scene.result.allyFixedCount, 1);
+    scene.query.considerTransient = false;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(scene.result.allyMoving);
+    BOOST_CHECK_EQUAL(scene.result.allyFixedCount, 0);
+}
+
+BOOST_AUTO_TEST_CASE(intentional_infantry_crushing_self_and_ignore_rules_are_preserved)
+{
+    Scene scene;
+    scene.fixed(2, 2, 1);
+    scene.units.values[0].infantry = true;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(scene.result.enemyFixed); // Vehicles still see infantry.
+    scene.query.infantryPassThrough = true;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.enemyFixed);
+    scene.query.infantryPassThrough = false;
+    scene.units.values[0].crushable = true;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.enemyFixed);
+    scene.units.values[0].crushable = false;
+    scene.query.self = 1;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.enemyFixed);
+    scene.query.self = 99;
+    scene.query.ignored = 1;
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.enemyFixed);
+    scene.query.ignored = 0;
+    scene.fixed(2, 2, 500); // Destroyed or stale object ID does not remain an obstacle.
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.enemyFixed);
+}
+
+BOOST_AUTO_TEST_CASE(goal_and_occupancy_outputs_do_not_leak_between_queries)
+{
+    Scene scene;
+    scene.cells[12] = {1, true, false, true, true, false};
+    scene.units.values[0] = {true, true, false, false};
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(scene.result.allyGoal);
+    BOOST_CHECK(scene.result.allyMoving);
+    scene.cells[12] = {};
+    BOOST_REQUIRE(scene.check());
+    BOOST_CHECK(!scene.result.allyGoal);
+    BOOST_CHECK(!scene.result.allyMoving);
+    BOOST_CHECK(!scene.result.enemyFixed);
+    BOOST_CHECK_EQUAL(scene.result.allyFixedCount, 0);
+}
+BOOST_AUTO_TEST_SUITE_END()

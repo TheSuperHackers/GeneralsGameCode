@@ -1,0 +1,154 @@
+#include <boost/test/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <set>
+#include <tuple>
+#include <vector>
+
+import engine.navigation.search_workspace;
+
+BOOST_AUTO_TEST_SUITE(navigation_soa_search)
+
+BOOST_AUTO_TEST_CASE(indexed_heap_matches_ordered_reference_during_updates_and_removals)
+{
+    navigation::IndexedMinHeap<4> heap;
+    using Entry = std::tuple<std::uint32_t, std::uint32_t, std::uint32_t>;
+    std::set<Entry> ordered;
+    std::array<Entry, 512> entries{};
+    std::array<bool, 512> present{};
+    std::uint32_t sequence = 0, random = 0x13279abc;
+    for (int operation = 0; operation < 100000; ++operation) {
+        random ^= random << 13; random ^= random >> 17; random ^= random << 5;
+        const auto id = random % present.size();
+        const auto cost = (random >> 12) % 193; // Many deliberate ties.
+        if (!present[id]) {
+            entries[id] = {cost, sequence++, static_cast<std::uint32_t>(id)};
+            ordered.insert(entries[id]);
+            heap.push(static_cast<std::uint32_t>(id), cost);
+            present[id] = true;
+        } else if (random & 1) {
+            ordered.erase(entries[id]);
+            std::get<0>(entries[id]) = cost;
+            const bool renew = (random & 4) != 0;
+            if (renew) std::get<1>(entries[id]) = sequence++;
+            ordered.insert(entries[id]);
+            heap.update(static_cast<std::uint32_t>(id), cost, renew);
+        } else {
+            ordered.erase(entries[id]);
+            heap.erase(static_cast<std::uint32_t>(id));
+            present[id] = false;
+        }
+        BOOST_TEST(heap.contains(static_cast<std::uint32_t>(id)) == present[id]);
+        BOOST_TEST(heap.size() == ordered.size());
+        BOOST_TEST(heap.top() == (ordered.empty() ? navigation::NoSearchIndex : std::get<2>(*ordered.begin())));
+    }
+    for (const auto& entry : ordered) BOOST_TEST(heap.pop() == std::get<2>(entry));
+    BOOST_TEST(heap.empty());
+}
+
+BOOST_AUTO_TEST_CASE(heap_uses_full_width_costs_and_fifo_ties)
+{
+    navigation::IndexedMinHeap<4> heap;
+    heap.push(8, 0xffffffffU);
+    heap.push(6, 70000);
+    heap.push(4, 70000);
+    heap.push(2, 65535);
+    heap.push(0, 0);
+    for (auto expected : {0U, 2U, 6U, 4U, 8U}) BOOST_TEST(heap.pop() == expected);
+    heap.push(1, 1);
+    heap.clear();
+    BOOST_TEST(!heap.contains(1));
+    heap.push(1, 3);
+    BOOST_TEST(heap.pop() == 1U);
+    heap.push(1, 9);
+    heap.push(2, 7);
+    heap.update(1, 7, true);
+    BOOST_TEST(heap.pop() == 2U);
+    BOOST_TEST(heap.pop() == 1U);
+}
+
+BOOST_AUTO_TEST_CASE(workspace_grows_beyond_legacy_pool_and_preserves_indices)
+{
+    struct Cell { int value; };
+    std::vector<Cell> cells(70000);
+    navigation::SearchWorkspace<Cell> search;
+    std::vector<navigation::SearchIndex> ids;
+    for (std::uint32_t i = 0; i < cells.size(); ++i) {
+        cells[i].value = i;
+        ids.push_back(search.acquire(&cells[i], i % 1000, i / 1000));
+        search.g[ids.back()] = i + 70000;
+        search.parent[ids.back()] = i ? ids[i - 1] : navigation::NoSearchIndex;
+        if (i % 257 == 0) { search.f[ids.back()] = i; search.pushOpen(ids.back()); }
+    }
+    BOOST_TEST(search.allocatedCount() == cells.size());
+    for (std::uint32_t i = 0; i < cells.size(); ++i) {
+        BOOST_TEST(search.owner[ids[i]] == &cells[i]);
+        BOOST_TEST(search.g[ids[i]] == i + 70000);
+        BOOST_TEST(search.parentOf(ids[i]) == (i ? ids[i - 1] : navigation::NoSearchIndex));
+    }
+    for (std::uint32_t i = 0; i < cells.size(); i += 257) {
+        BOOST_TEST(search.open.top() == ids[i]);
+        search.eraseOpen(ids[i]);
+    }
+    for (auto id : ids) search.release(id);
+    BOOST_TEST(search.allocatedCount() == 0U);
+    const auto oldCapacity = search.capacity();
+    for (auto& cell : cells) search.acquire(&cell, 0, 0);
+    BOOST_TEST(search.capacity() == oldCapacity);
+}
+
+BOOST_AUTO_TEST_CASE(generations_reset_search_state_without_erasing_occupancy)
+{
+    navigation::SearchWorkspace<int> search;
+    int a = 1, b = 2;
+    const auto first = search.acquire(&a, 2, 3);
+    const auto second = search.acquire(&b, 4, 5);
+    search.positionUnit[first] = 10000;
+    search.g[first] = 123;
+    search.f[first] = 456;
+    search.parent[first] = second;
+    search.pushOpen(first);
+    BOOST_TEST(search.isOpen(first));
+    search.eraseOpen(first);
+    search.close(first);
+    BOOST_TEST(search.isClosed(first));
+    search.eraseClosed(first);
+    search.beginSearch();
+    BOOST_TEST(!search.isOpen(first));
+    BOOST_TEST(!search.isClosed(first));
+    BOOST_TEST(search.parentOf(first) == navigation::NoSearchIndex);
+    BOOST_TEST(search.positionUnit[first] == 10000U);
+    search.touch(first);
+    BOOST_TEST(search.g[first] == 0U);
+    BOOST_TEST(search.f[first] == 0U);
+    BOOST_TEST(search.x[first] == 2U);
+}
+
+BOOST_AUTO_TEST_CASE(dense_closed_storage_supports_reopening_and_complete_traversal)
+{
+    navigation::SearchWorkspace<int> search;
+    std::array<int, 1000> cells{};
+    std::vector<navigation::SearchIndex> ids;
+    for (auto& cell : cells) {
+        ids.push_back(search.acquire(&cell, 0, 0));
+        search.close(ids.back());
+    }
+    for (std::size_t i = 0; i < ids.size(); i += 3) {
+        search.eraseClosed(ids[i]);
+        search.pushOpen(ids[i]);
+    }
+    std::set<navigation::SearchIndex> seen;
+    for (auto id = search.closedHead(); id != navigation::NoSearchIndex; id = search.nextClosed(id))
+        BOOST_TEST(seen.insert(id).second);
+    BOOST_TEST(seen.size() == 666U);
+    while (!search.open.empty()) search.release(search.drainOpen());
+    while (search.closedHead() != navigation::NoSearchIndex) {
+        const auto id = search.closedHead();
+        search.eraseClosed(id);
+        search.release(id);
+    }
+    BOOST_TEST(search.allocatedCount() == 0U);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
