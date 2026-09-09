@@ -8,7 +8,7 @@ else()
 endif()
 
 target_link_libraries(g_generals PRIVATE
-    binkstub
+    binkloader
     comctl32
     d3d8
     d3dx8
