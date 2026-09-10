@@ -510,6 +510,7 @@ struct Region2D
 {
 	Coord2D lo, hi;						// bounds of 2D rectangular region
 
+	// Keep only the overlapping portion of both regions.
 	void intersect( const Region2D &other )
 	{
 		lo.max(other.lo);
@@ -536,6 +537,7 @@ struct IRegion2D
 {
 	ICoord2D lo, hi;					// bounds of 2D rectangular region
 
+	// Keep only the overlapping portion of both regions.
 	void intersect( const IRegion2D &other )
 	{
 		lo.max(other.lo);
@@ -788,6 +790,7 @@ struct Region3D
 {
 	Coord3D lo, hi;						// axis-aligned bounding box
 
+	// Keep only the overlapping portion of both regions.
 	void intersect( const Region3D &other )
 	{
 		lo.max(other.lo);
@@ -863,6 +866,7 @@ struct IRegion3D
 {
 	ICoord3D lo, hi;					// axis-aligned bounding box
 
+	// Keep only the overlapping portion of both regions.
 	void intersect( const IRegion3D &other )
 	{
 		lo.max(other.lo);
