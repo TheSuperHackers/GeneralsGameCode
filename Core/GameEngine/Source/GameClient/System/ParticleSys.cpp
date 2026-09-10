@@ -808,7 +808,9 @@ void ParticleSystemInfo::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @refactor Serialize particle alignment as an enum instead of a boolean.
+	*/
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemInfo::xfer( Xfer *xfer )
 {
@@ -1005,11 +1007,10 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 	// is emission volume hollow
 	xfer->xferBool( &m_isEmissionVolumeHollow );
 
-	// TheSuperHackers @refactor stephanmeesters 07/09/2026
-	// Replace the original ground-alignment boolean with an enum to support additional particle alignments.
-	// Preserve save compatibility by mapping all non-billboard alignments to ground-aligned particles.
+	// particle alignment
 	if (version <= 1)
 	{
+		// TheSuperHackers @info Preserve save compatibility by mapping all non-billboard alignments to ground-aligned particles.
 		Bool groundAligned = m_particleAlignment > PARTICLE_ALIGNMENT_BILLBOARD;
 		xfer->xferBool( &groundAligned );
 		if (xfer->getXferMode() == XFER_LOAD)

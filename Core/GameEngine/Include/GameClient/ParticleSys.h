@@ -437,7 +437,7 @@ public:
 		PARTICLE_ALIGNMENT_XYPLANAR,
 		PARTICLE_ALIGNMENT_TYPE_COUNT
 	};
-	ParticleAlignmentType m_particleAlignment;
+	ParticleAlignmentType m_particleAlignment;		///< align particles toward the camera or with the XY plane.
 	Bool m_isEmitAboveGroundOnly;								///< if true, only emit particles when the system is above ground.
 	Bool m_isParticleUpTowardsEmitter;					///< if true, align the up direction to be towards the emitter.
 
