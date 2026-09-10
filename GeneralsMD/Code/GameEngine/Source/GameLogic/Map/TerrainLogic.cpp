@@ -224,18 +224,12 @@ m_bridgeInfo(theInfo)
 	m_bounds.lo.x = m_bridgeInfo.fromLeft.x;
 	m_bounds.lo.y = m_bridgeInfo.fromLeft.y;
 	m_bounds.hi = m_bounds.lo;
-	if (m_bounds.lo.x > m_bridgeInfo.fromRight.x) m_bounds.lo.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.fromRight.y) m_bounds.lo.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.fromRight.x) m_bounds.hi.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.fromRight.y) m_bounds.hi.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toLeft.x) m_bounds.lo.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toLeft.y) m_bounds.lo.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toLeft.x) m_bounds.hi.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toLeft.y) m_bounds.hi.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toRight.x) m_bounds.lo.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toRight.y) m_bounds.lo.y = m_bridgeInfo.toRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toRight.x) m_bounds.hi.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toRight.y) m_bounds.hi.y = m_bridgeInfo.toRight.y;
+	m_bounds.lo.min(m_bridgeInfo.fromRight.xy());
+	m_bounds.hi.max(m_bridgeInfo.fromRight.xy());
+	m_bounds.lo.min(m_bridgeInfo.toLeft.xy());
+	m_bounds.hi.max(m_bridgeInfo.toLeft.xy());
+	m_bounds.lo.min(m_bridgeInfo.toRight.xy());
+	m_bounds.hi.max(m_bridgeInfo.toRight.xy());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 
@@ -360,18 +354,12 @@ Bridge::Bridge(Object *bridgeObj)
 	m_bounds.lo.x = m_bridgeInfo.fromLeft.x;
 	m_bounds.lo.y = m_bridgeInfo.fromLeft.y;
 	m_bounds.hi = m_bounds.lo;
-	if (m_bounds.lo.x > m_bridgeInfo.fromRight.x) m_bounds.lo.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.fromRight.y) m_bounds.lo.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.fromRight.x) m_bounds.hi.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.fromRight.y) m_bounds.hi.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toLeft.x) m_bounds.lo.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toLeft.y) m_bounds.lo.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toLeft.x) m_bounds.hi.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toLeft.y) m_bounds.hi.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toRight.x) m_bounds.lo.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toRight.y) m_bounds.lo.y = m_bridgeInfo.toRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toRight.x) m_bounds.hi.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toRight.y) m_bounds.hi.y = m_bridgeInfo.toRight.y;
+	m_bounds.lo.min(m_bridgeInfo.fromRight.xy());
+	m_bounds.hi.max(m_bridgeInfo.fromRight.xy());
+	m_bounds.lo.min(m_bridgeInfo.toLeft.xy());
+	m_bounds.hi.max(m_bridgeInfo.toLeft.xy());
+	m_bounds.lo.min(m_bridgeInfo.toRight.xy());
+	m_bounds.hi.max(m_bridgeInfo.toRight.xy());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 

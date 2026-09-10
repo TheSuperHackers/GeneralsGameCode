@@ -244,14 +244,8 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 		for( i = 1; i < yardBones; i++ )
 		{
 
-			if( yardPositions[ i ].x < yardRegion.lo.x )
-				yardRegion.lo.x = yardPositions[ i ].x;
-			if( yardPositions[ i ].y < yardRegion.lo.y )
-				yardRegion.lo.y = yardPositions[ i ].y;
-			if( yardPositions[ i ].x > yardRegion.hi.x )
-				yardRegion.hi.x = yardPositions[ i ].x;
-			if( yardPositions[ i ].y > yardRegion.hi.y )
-				yardRegion.hi.y = yardPositions[ i ].y;
+			yardRegion.lo.min(yardPositions[ i ].xy());
+			yardRegion.hi.max(yardPositions[ i ].xy());
 
 		}
 

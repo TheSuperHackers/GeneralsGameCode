@@ -261,10 +261,8 @@ void PolygonTrigger::updateBounds()	const
 	m_bounds.hi.x = m_bounds.hi.y = -BIG_INT;
 	Int i;
 	for (i=0; i<m_numPoints; i++) {
-		if (m_points[i].x < m_bounds.lo.x) m_bounds.lo.x = m_points[i].x;
-		if (m_points[i].y < m_bounds.lo.y) m_bounds.lo.y = m_points[i].y;
-		if (m_points[i].x > m_bounds.hi.x) m_bounds.hi.x = m_points[i].x;
-		if (m_points[i].y > m_bounds.hi.y) m_bounds.hi.y = m_points[i].y;
+		m_bounds.lo.min(m_points[i].xy());
+		m_bounds.hi.max(m_points[i].xy());
 	}
 	m_boundsNeedsUpdate = 0;
 	Real halfWidth = (m_bounds.hi.x - m_bounds.lo.x) / 2.0f;

@@ -565,6 +565,12 @@ struct Coord3D
 {
 	Real x, y, z;
 
+	Coord2D xy() const
+	{
+		const Coord2D xy = { x, y };
+		return xy;
+	}
+
 	Real length() const { return (Real)sqrt( x*x + y*y + z*z ); }
 	Real lengthSqr() const { return ( x*x + y*y + z*z ); }
 
@@ -696,6 +702,12 @@ inline Coord3D operator-( const Coord3D &a, const Coord3D &b )
 struct ICoord3D
 {
 	Int x, y, z;
+
+	ICoord2D xy() const
+	{
+		const ICoord2D xy = { x, y };
+		return xy;
+	}
 
 	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
 	Int lengthSqr() const { return x*x + y*y + z*z; }
