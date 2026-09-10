@@ -91,7 +91,7 @@ ColorControl colorControlTable[] =
 	{ BUTTON_HILITE_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_HILITE_BORDER_COLOR, { 255, 255, 255, 255 } },
 
-	{ BUTTON_COLOR, 0, },
+	{ BUTTON_COLOR, 0 },
 	{ BUTTON_BORDER_COLOR, 0 },
 
 	{ 0, { 0, 0, 0, 0 } }
