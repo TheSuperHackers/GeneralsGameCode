@@ -680,71 +680,35 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 
 		if (!ColorArray[0] && !ColorArray[1]) continue;	// If no color arrays, we don't have a problem
 
-		Vector3 single_diffuse(0.0f,0.0f,0.0f);
-		Vector3 single_ambient(0.0f,0.0f,0.0f);
-		Vector3 single_emissive(0.0f,0.0f,0.0f);
-		float single_opacity=1.0f;
-		bool single_diffuse_used=true;
-		bool single_ambient_used=true;
-		bool single_emissive_used=true;
-		bool single_opacity_used=true;
+		// Aggregate color usage across valid materials; no first-material baseline is needed.
 		bool diffuse_used=false;
 		bool ambient_used=false;
 		bool emissive_used=false;
-		bool opacity_used=false;
 
-		Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
-		Vector3 mtl_ambient(0.0f,0.0f,0.0f);
-		Vector3 mtl_emissive(0.0f,0.0f,0.0f);
-		float mtl_opacity = 1.0f;
-
-		VertexMaterialClass * prev_mtl = nullptr;
-		VertexMaterialClass * mtl = Peek_Material(0, pass);
-		if (mtl) {
-			mtl->Get_Diffuse(&single_diffuse);
-			single_opacity = mtl->Get_Opacity();
-			mtl->Get_Ambient(&single_ambient);
-			mtl->Get_Emissive(&single_emissive);
-
-			if (single_diffuse.X || single_diffuse.Y || single_diffuse.Z) diffuse_used=true;
-			if (single_ambient.X || single_ambient.Y || single_ambient.Z) ambient_used=true;
-			if (single_emissive.X || single_emissive.Y || single_emissive.Z) emissive_used=true;
-			if (single_opacity!=1.0f) opacity_used=true;
-		}
-
-		for (int vidx=0; vidx<VertexCount; vidx++) {
-			mtl = Peek_Material(vidx,pass);
+		VertexMaterialClass* prev_mtl = nullptr;
+		for (int vidx=0; vidx<VertexCount; vidx++)
+		{
+			VertexMaterialClass* mtl = Peek_Material(vidx,pass);
 			// TheSuperHackers @bugfix Cryo 01/09/2026 A material array can contain null entries.
-			if (mtl == nullptr) {
+			if (mtl == nullptr)
+			{
 				continue;
 			}
 
-			if (mtl != prev_mtl) {
+			if (mtl != prev_mtl)
+			{
 				prev_mtl = mtl;
+				Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
+				Vector3 mtl_ambient(0.0f,0.0f,0.0f);
+				Vector3 mtl_emissive(0.0f,0.0f,0.0f);
 				mtl->Get_Diffuse(&mtl_diffuse);
-				mtl_opacity = mtl->Get_Opacity();
 				mtl->Get_Ambient(&mtl_ambient);
 				mtl->Get_Emissive(&mtl_emissive);
-			}
 
-			if (mtl_diffuse.X!=single_diffuse.X || mtl_diffuse.Y!=single_diffuse.Y || mtl_diffuse.Z!=single_diffuse.Z) {
-				single_diffuse_used=false;
+				diffuse_used = diffuse_used || mtl_diffuse.X || mtl_diffuse.Y || mtl_diffuse.Z;
+				ambient_used = ambient_used || mtl_ambient.X || mtl_ambient.Y || mtl_ambient.Z;
+				emissive_used = emissive_used || mtl_emissive.X || mtl_emissive.Y || mtl_emissive.Z;
 			}
-			if (mtl_ambient.X!=single_ambient.X || mtl_ambient.Y!=single_ambient.Y || mtl_ambient.Z!=single_ambient.Z) {
-				single_ambient_used=false;
-			}
-			if (mtl_emissive.X!=single_emissive.X || mtl_emissive.Y!=single_emissive.Y || mtl_emissive.Z!=single_emissive.Z) {
-				single_emissive_used=false;
-			}
-			if (mtl_opacity!=single_opacity) {
-				single_opacity_used=false;
-			}
-
-			if (mtl_diffuse.X || mtl_diffuse.Y || mtl_diffuse.Z) diffuse_used=true;
-			if (mtl_ambient.X || mtl_ambient.Y || mtl_ambient.Z) ambient_used=true;
-			if (mtl_emissive.X || mtl_emissive.Y || mtl_emissive.Z) emissive_used=true;
-			if (mtl_opacity!=1.0f) opacity_used=true;
-
 		}
 
 		// If both DCG and DIG arrays are submitted, multiply them together to DCG channel
@@ -766,7 +730,9 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 
 		if ((DCGSource[pass] != VertexMaterialClass::MATERIAL) && (ColorArray[0] != nullptr)) {
 			unsigned * diffuse_array = ColorArray[0]->Get_Array();
-			Vector3 mtl_diffuse;
+			Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
+			Vector3 mtl_ambient(0.0f,0.0f,0.0f);
+			Vector3 mtl_emissive(0.0f,0.0f,0.0f);
 			float mtl_opacity = 1.0f;
 
 			VertexMaterialClass * prev_mtl = nullptr;
@@ -783,6 +749,9 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				if (mtl != prev_mtl) {
 					prev_mtl = mtl;
 					mtl->Get_Diffuse(&mtl_diffuse);
+					// TheSuperHackers @bugfix Cryo 10/09/2026 Use this vertex's material colors, not the last analyzed material.
+					mtl->Get_Ambient(&mtl_ambient);
+					mtl->Get_Emissive(&mtl_emissive);
 					mtl_opacity = mtl->Get_Opacity();
 				}
 
