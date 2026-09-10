@@ -161,9 +161,9 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 		pDoc->getCoordFromCellIndex(indices[i], &pt);
 
 		Real uVal;
-		Coord2D start = { mStartPoint.x, mStartPoint.y };
-		Coord2D end = { mEndPoint.x, mEndPoint.y };
-		Coord2D pt2D = { pt.x, pt.y };
+		Coord2D start = mStartPoint.xy();
+		Coord2D end = mEndPoint.xy();
+		Coord2D pt2D = pt.xy();
 
 		ShortestDistancePointToSegment2D(&start, &end, &pt2D, nullptr, nullptr, &uVal);
 		Real height = mStartPoint.z + uVal * (mEndPoint.z - mStartPoint.z);

@@ -2625,8 +2625,7 @@ void W3DView::lookAt( const Coord3D *o )
 		}
 	}
 
-	Coord2D pos2D = { pos.x, pos.y };
-	setPosition2D(pos2D);
+	setPosition2D(pos.xy());
 
 	resetPivotToGround();
 
