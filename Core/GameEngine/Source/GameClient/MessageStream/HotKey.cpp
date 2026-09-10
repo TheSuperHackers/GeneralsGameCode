@@ -75,8 +75,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 	{
 		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
 		const Int keyState = msg->getArgument(1)->integer;
-		const Int ignoredModifiers = KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT | KEY_STATE_MODIFIER_ON_DOWN;
-		if( keyState & ignoredModifiers )
+		if( keyState & KEY_STATE_MODIFIERS )
 			return disp;
 
 		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);

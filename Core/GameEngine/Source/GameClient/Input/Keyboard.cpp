@@ -97,6 +97,23 @@ void Keyboard::createStreamMessages()
 }
 
 //-------------------------------------------------------------------------------------------------
+static Bool isCtrlShiftAltKey(KeyDefType key)
+{
+	switch (key)
+	{
+		case KEY_LCTRL:
+		case KEY_RCTRL:
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+		case KEY_LALT:
+		case KEY_RALT:
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** update all our key state data */
 //-------------------------------------------------------------------------------------------------
 void Keyboard::updateKeys()
@@ -139,7 +156,8 @@ void Keyboard::updateKeys()
 		here so that we don't process anything */
 
 		const KeyDefType key = (KeyDefType)m_keys[ index ].key;
-		const Bool pressedWithModifier = m_pressedWithModifier[key];
+		const Bool isModifier = isCtrlShiftAltKey(key) || key == m_shift2Key;
+		const UnsignedShort lastPressedKeyState = m_lastPressedKeyState[key];
 
 		m_keyStatus[ key ].state = m_keys[ index ].state;
 		m_keyStatus[ key ].status = m_keys[ index ].status;
@@ -159,13 +177,7 @@ void Keyboard::updateKeys()
 				m_keys[index].status = KeyboardIO::STATUS_USED;
 			}
 		}
-		else if( key == KEY_CAPS	 ||
-						 key == KEY_LCTRL  ||
-						 key == KEY_RCTRL	 ||
-						 key == KEY_LSHIFT ||
-						 key == KEY_RSHIFT ||
-						 key == KEY_LALT	 ||
-						 key == KEY_RALT )
+		else if( key == KEY_CAPS || isModifier )
 
 		{
 
@@ -178,22 +190,20 @@ void Keyboard::updateKeys()
 		}
 
 		// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026 Preserve modifier state for
-		// each buffered event and carry it from a key-down to its matching key-up.
+		// each buffered event and reuse an action key's press state on its release.
 		BitSet( m_keys[ index ].state, m_modifiers );
 		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
 		{
-			const Int keyModifiers = KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT;
-			m_pressedWithModifier[key] = (m_modifiers & keyModifiers) != 0;
-			if( m_pressedWithModifier[key] )
-			{
-				BitSet( m_keys[ index ].state, KEY_STATE_MODIFIER_ON_DOWN );
-			}
+			m_lastPressedKeyState[key] = isModifier ? KEY_STATE_NONE : m_modifiers & KEY_STATE_MODIFIERS;
 		}
 		else
 		{
-			m_pressedWithModifier[key] = FALSE;
-			if( pressedWithModifier )
-				BitSet( m_keys[ index ].state, KEY_STATE_MODIFIER_ON_DOWN );
+			if( !isModifier )
+			{
+				BitClear( m_keys[ index ].state, KEY_STATE_MODIFIERS );
+				BitSet( m_keys[ index ].state, lastPressedKeyState );
+			}
+			m_lastPressedKeyState[key] = KEY_STATE_NONE;
 		}
 
 		index++;
@@ -240,8 +250,7 @@ Bool Keyboard::checkKeyRepeat()
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
 				// This is an assignment, not a bit set.
-				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers
-						| (m_pressedWithModifier[key] ? KEY_STATE_MODIFIER_ON_DOWN : 0);
+				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers;
 				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
 
 				// Set End Flag
@@ -707,7 +716,7 @@ Keyboard::Keyboard()
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
-	memset( m_pressedWithModifier, 0, sizeof( m_pressedWithModifier ) );
+	memset( m_lastPressedKeyState, 0, sizeof( m_lastPressedKeyState ) );
 	m_modifiers = KEY_STATE_NONE;
 	m_shift2Key = KEY_NONE;
 
@@ -766,7 +775,7 @@ void Keyboard::resetKeys()
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
 	// A held key can still report its release after focus returns. Do not clear
-	// m_pressedWithModifier until that release or a new press arrives.
+	// m_lastPressedKeyState until that release or a new press arrives.
 	m_modifiers = KEY_STATE_NONE;
 	if( getCapsState() )
 	{
@@ -797,6 +806,8 @@ void Keyboard::emitModifierKeyUps() const
 	emitRawKeyUpIfDown(m_keyStatus, KEY_RSHIFT);
 	emitRawKeyUpIfDown(m_keyStatus, KEY_LALT);
 	emitRawKeyUpIfDown(m_keyStatus, KEY_RALT);
+	if (m_shift2Key != KEY_NONE && !isCtrlShiftAltKey(m_shift2Key))
+		emitRawKeyUpIfDown(m_keyStatus, m_shift2Key);
 }
 
 //-------------------------------------------------------------------------------------------------

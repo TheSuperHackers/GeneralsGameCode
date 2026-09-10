@@ -248,12 +248,12 @@ enum
 	KEY_STATE_AUTOREPEAT					= 0x0100,	// Key is down due to autorepeat (only seen in conjunction with KEY_STATE_DOWN)
 	KEY_STATE_CAPSLOCK						= 0x0200, // Caps Lock key is on.
 	KEY_STATE_SHIFT2							= 0x0400, // Alternate shift key is pressed (I think this is for foreign keyboards..)
-	KEY_STATE_MODIFIER_ON_DOWN			= 0x0800, // CTRL, SHIFT, or ALT was held when this key was pressed.
 
 	// modifier combinations when left/right isn't a factor
 	KEY_STATE_CONTROL		= (KEY_STATE_LCONTROL | KEY_STATE_RCONTROL),
 	KEY_STATE_SHIFT			= (KEY_STATE_LSHIFT | KEY_STATE_RSHIFT | KEY_STATE_SHIFT2 ),
-	KEY_STATE_ALT				= (KEY_STATE_LALT | KEY_STATE_RALT)
+	KEY_STATE_ALT				= (KEY_STATE_LALT | KEY_STATE_RALT),
+	KEY_STATE_MODIFIERS	= (KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT)
 
 };
 

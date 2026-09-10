@@ -140,7 +140,7 @@ protected:
 	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state
 
 	UnsignedShort m_modifiers;
-	Bool m_pressedWithModifier[KEY_COUNT];
+	UnsignedShort m_lastPressedKeyState[KEY_COUNT];
 	// internal keyboard data members
 	//Bool m_capsState;			// 1 if caps lock is on
 	//Bool m_shiftState;		// 1 if either shift key is pressed
