@@ -39,7 +39,7 @@
 
 #include <max.h>
 #include "w3dmtl.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 
 
 // GameMtl flags values

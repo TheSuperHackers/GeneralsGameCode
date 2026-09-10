@@ -1,223 +1,179 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+** Command & Conquer Generals Zero Hour(tm)
+** Copyright 2025 Electronic Arts Inc.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#include "Precompiled/PreRTS.h"
 
-// FILE: W3DComboBox.cpp ///////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-//
-//                       Westwood Studios Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2001 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: W3DComboBox.cpp
-//
-// Created:   Colin Day, June 2001
-//
-// Desc:      W3D implementation for the Combo box control
-//
-//-----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include <stdlib.h>
-
-// USER INCLUDES //////////////////////////////////////////////////////////////
+#include "GameClient/GadgetComboBox.h"
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/GameWindowManager.h"
-#include "GameClient/GadgetComboBox.h"
-#include "GameClient/GadgetListBox.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
+#include "W3DDevice/GameClient/W3DDisplayString.h"
 
-// DEFINES ////////////////////////////////////////////////////////////////////
+import Engine.UI.WND;
 
-// PRIVATE TYPES //////////////////////////////////////////////////////////////
-
-// PRIVATE DATA ///////////////////////////////////////////////////////////////
-
-// PUBLIC DATA ////////////////////////////////////////////////////////////////
-
-// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// W3DGadgetComboBoxDraw =======================================================
-/** Draw colored list box using standard graphics */
-//=============================================================================
-void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
+namespace
 {
-	Int width, height, fontHeight, x, y;
-	Color background, border, titleColor, titleBorder;
-//	ComboBoxData *combo = (ComboBoxData *)window->winGetUserData();
+
+Graphics::Color2D To_UI_Color(Color color) noexcept
+{
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
+}
+
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image)
+{
+	if (image == nullptr || image->getUV() == nullptr)
+		return {};
+	Engine::UI::WND::ImageRef reference =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	const Region2D *uv = image->getUV();
+	if (uv != nullptr)
+		reference.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return reference;
+}
+
+void Select_Visual(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	Color &background,
+	Color &border,
+	Color &text_color,
+	Color &text_border,
+	const Image *&image)
+{
+	if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)) {
+		background = GadgetComboBoxGetDisabledColor(window);
+		border = GadgetComboBoxGetDisabledBorderColor(window);
+		text_color = window->winGetDisabledTextColor();
+		text_border = window->winGetDisabledTextBorderColor();
+		image = GadgetComboBoxGetDisabledImage(window);
+	}
+	else if (BitIsSet(instance_data->getState(), WIN_STATE_HILITED)) {
+		background = GadgetComboBoxGetHiliteColor(window);
+		border = GadgetComboBoxGetHiliteBorderColor(window);
+		text_color = window->winGetHiliteTextColor();
+		text_border = window->winGetHiliteTextBorderColor();
+		image = GadgetComboBoxGetHiliteImage(window);
+	}
+	else {
+		background = GadgetComboBoxGetEnabledColor(window);
+		border = GadgetComboBoxGetEnabledBorderColor(window);
+		text_color = window->winGetEnabledTextColor();
+		text_border = window->winGetEnabledTextBorderColor();
+		image = GadgetComboBoxGetEnabledImage(window);
+	}
+}
+
+bool Append_Title(
+	Engine::UI::WND::DrawList &draw_list,
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	Color text_color,
+	Color text_border,
+	Int x,
+	Int y)
+{
+	DisplayString *title = instance_data->getTextDisplayString();
+	if (title == nullptr || title->getTextLength() == 0)
+		return true;
+	if (title->getFont() != window->winGetFont())
+		title->setFont(window->winGetFont());
+	return static_cast<W3DDisplayString *>(title)->appendDrawData(
+		draw_list, x, y, text_color, text_border);
+}
+
+Int Get_Title_Height(GameWindow *window, WinInstanceData *instance_data)
+{
+	DisplayString *title = instance_data->getTextDisplayString();
+	if (title != nullptr && title->getTextLength() != 0) {
+		if (title->getFont() != window->winGetFont())
+			title->setFont(window->winGetFont());
+		Int width = 0;
+		Int height = 0;
+		title->getSize(&width, &height);
+		return height;
+	}
+	return TheWindowManager->winFontHeight(instance_data->getFont());
+}
+
+Bool Append_Combo_Box_Draw_Data(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	void *opaque_draw_list,
+	bool image_visual)
+{
+	if (window == nullptr || instance_data == nullptr || opaque_draw_list == nullptr)
+		return FALSE;
+	Engine::UI::WND::DrawList &draw_list =
+		*static_cast<Engine::UI::WND::DrawList *>(opaque_draw_list);
+
+	ICoord2D origin;
 	ICoord2D size;
-	DisplayString *title = instData->getTextDisplayString();
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
+	Color background = WIN_COLOR_UNDEFINED;
+	Color border = WIN_COLOR_UNDEFINED;
+	Color text_color = WIN_COLOR_UNDEFINED;
+	Color text_border = WIN_COLOR_UNDEFINED;
+	const Image *image = nullptr;
+	Select_Visual(window, instance_data, background, border, text_color, text_border, image);
 
-	// get window position and size
-	window->winGetScreenPosition( &x, &y );
-	window->winGetSize( &size.x, &size.y );
-
-	// get font height
-	fontHeight = TheWindowManager->winFontHeight( instData->getFont() );
-
-	// alias width and height from size
-	width = size.x;
-	height = size.y;
-
-	// get the right colors
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-		background		= GadgetComboBoxGetDisabledColor( window );
-		border				= GadgetComboBoxGetDisabledBorderColor( window );
-		titleColor		= window->winGetDisabledTextColor();
-		titleBorder		= window->winGetDisabledTextBorderColor();
+	if (image_visual) {
+		if (image != nullptr) {
+			const float x = static_cast<float>(origin.x + instance_data->m_imageOffset.x);
+			const float y = static_cast<float>(origin.y + instance_data->m_imageOffset.y);
+			if (!draw_list.Add_Image(
+					To_WND_Image(image), {x, y, x + size.x, y + size.y}))
+				return FALSE;
+		}
 	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
-		background		= GadgetComboBoxGetHiliteColor( window );
-		border				= GadgetComboBoxGetHiliteBorderColor( window );
-		titleColor		= window->winGetHiliteTextColor();
-		titleBorder		= window->winGetHiliteTextBorderColor();
-	}
-	else
-	{
-		background		= GadgetComboBoxGetEnabledColor( window );
-		border				= GadgetComboBoxGetEnabledBorderColor( window );
-		titleColor		= window->winGetEnabledTextColor();
-		titleBorder		= window->winGetEnabledTextBorderColor();
-	}
-
-	// Draw the title
-	if( title && title->getTextLength() )
-	{
-
-		// set the font of this text to that of the window if not already
-		if( title->getFont() != window->winGetFont() )
-			title->setFont( window->winGetFont() );
-
-		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );
-
-		y += fontHeight + 1;
-		height -= fontHeight + 1;
-
+	else {
+		const Int title_height = Get_Title_Height(window, instance_data);
+		const float top = static_cast<float>(origin.y
+			+ (instance_data->getTextDisplayString() != nullptr
+				&& instance_data->getTextDisplayString()->getTextLength() != 0
+				? title_height + 1 : 0));
+		if (!draw_list.Add_Window_Background(
+				{static_cast<float>(origin.x), top,
+				 static_cast<float>(origin.x + size.x), static_cast<float>(origin.y + size.y)},
+				false,
+				{},
+				border != WIN_COLOR_UNDEFINED,
+				To_UI_Color(border),
+				background != WIN_COLOR_UNDEFINED,
+				To_UI_Color(background)))
+			return FALSE;
 	}
 
-	// draw the back border
-	if( border != WIN_COLOR_UNDEFINED )
-		TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																	 x, y, x + width, y + height );
-
-	// draw background
-	if( background != WIN_COLOR_UNDEFINED )
-		TheWindowManager->winFillRect( background, WIN_DRAW_LINE_WIDTH,
-																	 x + 1, y + 1,
-																	 x + width - 1, y + height - 1 );
+	const Int title_height = Get_Title_Height(window, instance_data);
+	if (!Append_Title(
+			draw_list,
+			window,
+			instance_data,
+			text_color,
+			text_border,
+			origin.x + 1,
+			origin.y))
+		return FALSE;
+	(void)title_height;
+	return TRUE;
+}
 
 }
 
-// W3DGadgetComboBoxImageDraw ==================================================
-/** Draw combo box with user supplied images */
-//=============================================================================
-void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DGadgetComboBoxDrawData(
+	GameWindow *window, WinInstanceData *instance_data, void *draw_list)
 {
-	Int width, height, x, y;
-	const Image *image;
-//	ComboBoxData *combo = (ComboBoxData *)window->winGetUserData();
-	ICoord2D size;
-	Color titleColor, titleBorder;
-	DisplayString *title = instData->getTextDisplayString();
-
-	// get window position and size
-	window->winGetScreenPosition( &x, &y );
-	window->winGetSize( &size.x, &size.y );
-
-	// save off width and height so we can change them
-	width = size.x;
-	height = size.y;
-
-	// get the image
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-		image				= GadgetComboBoxGetDisabledImage( window );
-		titleColor	= window->winGetDisabledTextColor();
-		titleBorder = window->winGetDisabledTextBorderColor();
-	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
-		image				= GadgetComboBoxGetHiliteImage( window );
-		titleColor	= window->winGetHiliteTextColor();
-		titleBorder = window->winGetHiliteTextBorderColor();
-	}
-	else
-	{
-		image				= GadgetComboBoxGetEnabledImage( window );
-		titleColor	= window->winGetEnabledTextColor();
-		titleBorder = window->winGetEnabledTextBorderColor();
-	}
-
-	// draw the back image
-	if( image )
-	{
-		ICoord2D start, end;
-
-		start.x = x + instData->m_imageOffset.x;
-		start.y = y + instData->m_imageOffset.y;
-		end.x = start.x + width;
-		end.y = start.y + height;
-		TheWindowManager->winDrawImage( image,
-																		start.x, start.y,
-																		end.x, end.y );
-
-	}
-
-	// Draw the title
-	if( title && title->getTextLength() )
-	{
-
-		// set font to font of the window if not already
-		if( title->getFont() != window->winGetFont() )
-			title->setFont( window->winGetFont() );
-
-		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );
-
-		y += TheWindowManager->winFontHeight( instData->getFont() );
-		height -= TheWindowManager->winFontHeight( instData->getFont() ) + 1;
-
-	}
-
-
+	return Append_Combo_Box_Draw_Data(window, instance_data, draw_list, false);
 }
 
+Bool W3DGadgetComboBoxImageDrawData(
+	GameWindow *window, WinInstanceData *instance_data, void *draw_list)
+{
+	return Append_Combo_Box_Draw_Data(window, instance_data, draw_list, true);
+}

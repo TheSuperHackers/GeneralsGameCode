@@ -38,13 +38,86 @@
 
 #include "always.h"
 #include "mutex.h"
-#include "win.h"
 #include <stdarg.h>
 #include "trim.h"
 #include "WWDebug/wwdebug.h"
-#ifdef _WIN32
-#include <tchar.h>
+#include <cctype>
+#include <cstring>
+#include <cwchar>
+#include <cwctype>
+#include <string>
+
+#ifndef _TCHAR_DEFINED
+#if defined(_UNICODE) || defined(UNICODE)
+typedef wchar_t TCHAR;
+#else
+typedef char TCHAR;
 #endif
+#define _TCHAR_DEFINED
+#endif
+
+// Keep the string interfaces independent from the platform window headers.
+// Windows defines this alias in its global headers, but the graphics engine
+// must not need those headers just to use StringClass.
+typedef wchar_t WCHAR;
+
+namespace WWStringDetail
+{
+	template <typename Character>
+	inline std::size_t Length(const Character *string)
+	{
+		return std::char_traits<Character>::length(string);
+	}
+
+	inline int Compare(const char *left, const char *right)
+	{
+		return std::strcmp(left, right);
+	}
+
+	inline int Compare(const wchar_t *left, const wchar_t *right)
+	{
+		return std::wcscmp(left, right);
+	}
+
+	inline int Compare_No_Case(const char *left, const char *right)
+	{
+		while (*left != '\0' && *right != '\0')
+		{
+			const int left_character = std::tolower(static_cast<unsigned char>(*left));
+			const int right_character = std::tolower(static_cast<unsigned char>(*right));
+			if (left_character != right_character)
+			{
+				return left_character - right_character;
+			}
+			++left;
+			++right;
+		}
+
+		return static_cast<unsigned char>(*left) - static_cast<unsigned char>(*right);
+	}
+
+	inline int Compare_No_Case(const wchar_t *left, const wchar_t *right)
+	{
+		while (*left != L'\0' && *right != L'\0')
+		{
+			const wchar_t left_character = std::towlower(*left);
+			const wchar_t right_character = std::towlower(*right);
+			if (left_character != right_character)
+			{
+				return left_character < right_character ? -1 : 1;
+			}
+			++left;
+			++right;
+		}
+
+		if (*left == *right)
+		{
+			return 0;
+		}
+
+		return *left == L'\0' ? -1 : 1;
+	}
+}
 
 
 
@@ -210,7 +283,7 @@ StringClass::operator= (const TCHAR *string)
 {
 	if (string != 0) {
 
-		int len = _tcslen (string);
+		int len = static_cast<int>(WWStringDetail::Length(string));
 		Uninitialised_Grow (len+1);
 		Store_Length (len);
 
@@ -304,7 +377,7 @@ inline
 StringClass::StringClass (const TCHAR *string, bool hint_temporary)
 	:	m_Buffer (m_EmptyString)
 {
-	int len=string ? _tcsclen(string) : 0;
+	int len=string ? static_cast<int>(WWStringDetail::Length(string)) : 0;
 	if (hint_temporary || len>0) {
 		Get_String (len+1, hint_temporary);
 	}
@@ -352,7 +425,7 @@ StringClass::Is_Empty () const
 inline int
 StringClass::Compare (const TCHAR *string) const
 {
-	return _tcscmp (m_Buffer, string);
+	return WWStringDetail::Compare (m_Buffer, string);
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -361,7 +434,7 @@ StringClass::Compare (const TCHAR *string) const
 inline int
 StringClass::Compare_No_Case (const TCHAR *string) const
 {
-	return _tcsicmp (m_Buffer, string);
+	return WWStringDetail::Compare_No_Case (m_Buffer, string);
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -417,7 +490,7 @@ StringClass::operator!= (const TCHAR *rvalue) const
 inline bool
 StringClass::operator < (const TCHAR *string) const
 {
-	return (_tcscmp (m_Buffer, string) < 0);
+	return (WWStringDetail::Compare (m_Buffer, string) < 0);
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -426,7 +499,7 @@ StringClass::operator < (const TCHAR *string) const
 inline bool
 StringClass::operator <= (const TCHAR *string) const
 {
-	return (_tcscmp (m_Buffer, string) <= 0);
+	return (WWStringDetail::Compare (m_Buffer, string) <= 0);
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -435,7 +508,7 @@ StringClass::operator <= (const TCHAR *string) const
 inline bool
 StringClass::operator > (const TCHAR *string) const
 {
-	return (_tcscmp (m_Buffer, string) > 0);
+	return (WWStringDetail::Compare (m_Buffer, string) > 0);
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -444,7 +517,7 @@ StringClass::operator > (const TCHAR *string) const
 inline bool
 StringClass::operator >= (const TCHAR *string) const
 {
-	return (_tcscmp (m_Buffer, string) >= 0);
+	return (WWStringDetail::Compare (m_Buffer, string) >= 0);
 }
 
 
@@ -489,7 +562,7 @@ StringClass::operator+= (const TCHAR *string)
 	WWASSERT (string != nullptr);
 
 	int cur_len = Get_Length ();
-	int src_len = _tcslen (string);
+	int src_len = static_cast<int>(WWStringDetail::Length(string));
 	int new_len = cur_len + src_len;
 
 	//
@@ -660,7 +733,7 @@ StringClass::Get_Length () const
 		// we better manually get the string length.
 		//
 		if (length == 0) {
-			length = _tcslen (m_Buffer);
+			length = static_cast<int>(WWStringDetail::Length(m_Buffer));
 			((StringClass *)this)->Store_Length (length);
 		}
 	}

@@ -52,10 +52,15 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameClient/DisplayString.h"
-#include "WW3D2/render2dsentence.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 class W3DDisplayStringManager;
+namespace Engine::UI::WND
+{
+class FontFace;
+class DrawList;
+struct StaticTextVisual;
+}
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
@@ -84,28 +89,31 @@ public:
 	virtual void setFont( GameFont *font ) override;							///< set a font for display
 	virtual void setUseHotkey( Bool useHotkey, Color hotKeyColor = 0xffffffff ) override;
 	virtual void setClipRegion( IRegion2D *region ) override;		///< clip text in this region
+	bool appendDrawData( Engine::UI::WND::DrawList &drawList,
+		Int x, Int y, Color color, Color dropColor, Int xDrop = 1, Int yDrop = 1,
+		const IRegion2D *clipRegion = nullptr );
+	bool appendStaticTextDrawData( Engine::UI::WND::DrawList &drawList,
+		const Engine::UI::WND::StaticTextVisual &visual,
+		Color color, Color dropColor );
+	const WideChar *getTextData() const noexcept { return m_textString.str(); }
 
 protected:
 
-	void checkForChangedTextData();  /**< called when we need to update our
-																				 render sentence and update extents */
 	void usingResources( UnsignedInt frame );  /**< call this whenever display
 																						 resources are in use */
 	void computeExtents();  ///< compupte text width and height
 
-	Render2DSentenceClass m_textRenderer;  ///< for drawing text
-	Render2DSentenceClass m_textRendererHotKey;  ///< for drawing text
 	Bool m_textChanged;  ///< when contents of string change this is TRUE
 	Bool m_fontChanged;  ///< when font has changed this is TRUE
+	Engine::UI::WND::FontFace *m_hotKeyFont;
 	UnicodeString m_hotkey;		///< holds the current hotkey marker.
 	Bool m_useHotKey;
-	ICoord2D m_hotKeyPos;
 	Color m_hotKeyColor;
-	ICoord2D m_textPos;  ///< current text pos set in text renderer
-	Color m_currTextColor,  ///< current color used in text renderer
-				m_currDropColor;  ///< current color used for shadow in text
 	ICoord2D m_size;				///< (width,height) size of rendered text
 	IRegion2D m_clipRegion; ///< the clipping region for text
+	Int m_wordWrap;
+	Bool m_wordWrapCentered;
+	Bool m_hasClipRegion;
 	UnsignedInt m_lastResourceFrame;  ///< last frame resources were used on
 
 };

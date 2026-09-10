@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "WW3D2/sphereobj.h"
+#include "WW3D2/SphereObj.h"
 
 /////////////////////////////////////////////////////////////
 //

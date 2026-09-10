@@ -76,7 +76,6 @@ WinInstanceData::WinInstanceData()
 	// we don't allocate strings unless we need them
 	m_text = nullptr;
 	m_tooltip = nullptr;
-	m_videoBuffer = nullptr;
 	init();
 
 }
@@ -92,7 +91,6 @@ WinInstanceData::~WinInstanceData()
 	if( m_tooltip )
 		TheDisplayStringManager->freeDisplayString( m_tooltip );
 
-	m_videoBuffer = nullptr; //Video Buffer needs to be clean up by the control that is in charge of the video.
 
 }
 
@@ -159,8 +157,6 @@ void WinInstanceData::init()
 
 	}
 
-	m_videoBuffer = nullptr;
-
 
 }
 
@@ -193,12 +189,4 @@ void WinInstanceData::setText( UnicodeString text )
 	// set the text
 	m_text->setText( text );
 
-}
-
-// WinInstanceData:setText ====================================================
-/** Set the text for this window instance data */
-//=============================================================================
-void WinInstanceData::setVideoBuffer( VideoBuffer * videoBuffer )
-{
-	m_videoBuffer = videoBuffer;
 }

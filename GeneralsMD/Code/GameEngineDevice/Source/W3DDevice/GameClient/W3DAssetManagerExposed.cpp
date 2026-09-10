@@ -24,11 +24,12 @@
 
 
 #include "W3DDevice/GameClient/W3DAssetManagerExposed.h"
-#include "W3DDevice/GameClient/W3DAssetManager.h"
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
 
 void ReloadAllTextures()
 {
-	W3DAssetManager::Get_Instance()->Release_All_Textures();
+	if (auto *catalog = W3DAssetCatalog::Get_Instance())
+		catalog->Release_All_Textures();
 }
 
 

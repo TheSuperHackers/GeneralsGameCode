@@ -41,7 +41,7 @@
 #include "simpobj.h"
 #include "bpick.h"
 #include "namedsel.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 
 
 #define SKIN_OBJ_CLASS_ID		Class_ID(0x32b37e0c, 0x5a9612e4)

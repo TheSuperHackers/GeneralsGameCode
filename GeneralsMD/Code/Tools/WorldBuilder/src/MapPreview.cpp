@@ -52,7 +52,7 @@
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "MapPreview.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "WWLib/TARGA.h"
@@ -205,7 +205,7 @@ Bool MapPreview::mapPreviewToWorld(const ICoord2D *radar, Coord3D *world)
 
 void MapPreview::buildMapPreviewTexture( CString tgaName )
 {
-//	SurfaceClass *surface;
+//	Graphics::TextureEdit *surface;
 	RGBColor waterColor;
 
 	// we will want to reconstruct our new view box now

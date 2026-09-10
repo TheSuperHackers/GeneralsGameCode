@@ -45,7 +45,7 @@
 //	Browse_For_Folder_Hook_Proc
 //
 ////////////////////////////////////////////////////////////////////////////
-UINT CALLBACK Browse_For_Folder_Hook_Proc
+UINT_PTR CALLBACK Browse_For_Folder_Hook_Proc
 (
 	HWND		hdlg,
 	UINT		message,

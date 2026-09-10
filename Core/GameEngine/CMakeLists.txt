@@ -838,7 +838,6 @@ set(GAMEENGINE_SRC
     Source/GameClient/Terrain/TerrainRoads.cpp
     Source/GameClient/Terrain/TerrainVisual.cpp
     Source/GameClient/VideoPlayer.cpp
-    Source/GameClient/VideoStream.cpp
     Source/GameClient/View.cpp
     Source/GameClient/Water.cpp
 #    Source/GameLogic/AI/AI.cpp

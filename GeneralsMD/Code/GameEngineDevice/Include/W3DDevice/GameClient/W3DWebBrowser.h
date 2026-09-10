@@ -29,7 +29,7 @@
 
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
-class TextureClass;
+class W3DTextureHandle;
 class Image;
 class GameWindow;
 

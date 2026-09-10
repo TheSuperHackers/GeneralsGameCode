@@ -31,6 +31,7 @@
 
 #include "GameClient/TerrainVisual.h"
 #include "W3DDevice/GameClient/W3DWater.h"
+#include "W3DDevice/GameClient/WaterGridSimulation.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Matrix3D;
@@ -152,6 +153,9 @@ protected:
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
 
+	void refreshWaterSurfaceGeometry();
+	void syncWaterGridRenderData();
+
 #ifdef DO_SEISMIC_SIMULATIONS
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
@@ -166,7 +170,8 @@ protected:
 #endif
 
 	BaseHeightMapRenderObjClass *m_terrainRenderObject;  ///< W3D render object for terrain
-	WaterRenderObjClass	*m_waterRenderObject;	///< W3D render object for water plane
+	WaterRenderSystem	*m_waterRenderSystem;	///< modern water render system
+	WaterGridSimulation m_waterGridSimulation;	///< gameplay-owned water grid state
 
   WorldHeightMap *m_logicHeightMap;  ///< height map used for render obj building
 

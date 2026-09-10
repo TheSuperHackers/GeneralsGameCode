@@ -19,7 +19,7 @@
 #pragma once
 
 #include "resource.h"
-#include "WW3D2/sphereobj.h"
+#include "WW3D2/SphereObj.h"
 
 // Forward declarations
 class ColorBarClass;

@@ -178,7 +178,7 @@ fnColorPickerProc
 
 				WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 				if (pOldWndProc) {
-					WNDPROC pold_proc = (WNDPROC)::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)::AfxGetAfxWndProc ());
+					WNDPROC pold_proc = (WNDPROC)::SetWindowLongPtr (hwnd, GWLP_WNDPROC, (LONG_PTR)::AfxGetAfxWndProc ());
 					ASSERT (pold_proc != nullptr);
 					(*pOldWndProc) = pold_proc;
 				}
@@ -196,7 +196,7 @@ fnColorPickerProc
 
 			WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 			if (pOldWndProc) {
-				::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
+				::SetWindowLongPtr (hwnd, GWLP_WNDPROC, (LONG_PTR)(*pOldWndProc));
 				(*pOldWndProc) = nullptr;
 			}
 
@@ -214,7 +214,7 @@ fnColorPickerProc
 
 				WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 				if (pOldWndProc) {
-					::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
+					::SetWindowLongPtr (hwnd, GWLP_WNDPROC, (LONG_PTR)(*pOldWndProc));
 					(*pOldWndProc) = nullptr;
 				}
 

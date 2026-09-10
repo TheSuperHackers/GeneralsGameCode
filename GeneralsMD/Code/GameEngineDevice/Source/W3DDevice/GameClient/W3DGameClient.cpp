@@ -1,3 +1,5 @@
+#include "W3DDevice/GameClient/W3DRenderServices.h"
+import Graphics.Resources.Textures.Quality;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -53,11 +55,9 @@
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/HeightMap.h"
-#include "WW3D2/part_emt.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/htree.h"
-#include "WW3D2/animobj.h"  ///< @todo superhack for demo, remove!
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
+#include "W3DDevice/GameClient/W3DAnimatedModelRenderObject.h"  ///< @todo superhack for demo, remove!
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -175,8 +175,8 @@ void W3DGameClient::setTimeOfDay( TimeOfDay tod )
 	GameClient::setTimeOfDay(tod);
 
 	//tell cloud/water plane to update its lighting/texture
-	if (TheWaterRenderObj)
-		TheWaterRenderObj->setTimeOfDay(tod);
+	if (TheWaterRenderSystem)
+		TheWaterRenderSystem->setTimeOfDay(tod);
 	if (TheW3DShadowManager)
 		TheW3DShadowManager->setTimeOfDay(tod);
 
@@ -199,9 +199,11 @@ void W3DGameClient::setTeamColor(Int red, Int green, Int blue)
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::setTextureLOD( Int level )
 {
-	if (WW3D::Get_Texture_Reduction() != level)
+	if (Graphics::Get_Texture_Quality_Settings().mip_reduction != level)
 	{
-		WW3D::Set_Texture_Reduction(level, 32);
+		Graphics::Get_Texture_Quality_Settings().mip_reduction = level;
+		Graphics::Get_Texture_Quality_Settings().minimum_dimension = 32;
+		Get_W3D_Render_Services().Invalidate_Textures();
 
 		if( TheTerrainRenderObject )
 			TheTerrainRenderObject->setTextureLOD(level);

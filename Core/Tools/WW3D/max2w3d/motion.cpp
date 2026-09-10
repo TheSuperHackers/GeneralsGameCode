@@ -50,7 +50,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "motion.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "vchannel.h"
 #include "bchannel.h"
 #include "EULER.h"

@@ -39,14 +39,15 @@
 #include "GameClient/FXList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "WW3D2/hanim.h"
-#include "WW3D2/hlod.h"
-#include "WW3D2/rendobj.h"
+#include "W3DDevice/GameClient/W3DHierarchyRenderObject.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
 #include "W3DDevice/GameClient/Module/W3DDebrisDraw.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
+import Assets.Identity;
+import Assets.Cache.Animations;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -80,7 +81,7 @@ W3DDebrisDraw::~W3DDebrisDraw()
 	}
 	for (int i = 0; i < STATECOUNT; ++i)
 	{
-		REF_PTR_RELEASE(m_anims[i]);
+		Assets::Release_Animation(m_anims[i]);
 		m_anims[i] = nullptr;
 	}
 }
@@ -153,13 +154,13 @@ void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiS
 	int i;
 	for (i = 0; i < STATECOUNT; ++i)
 	{
-		REF_PTR_RELEASE(m_anims[i]);
+		Assets::Release_Animation(m_anims[i]);
 		m_anims[i] = nullptr;
 	}
 
-	m_anims[INITIAL] = initial.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(initial.str());
-	m_anims[FLYING] = flying.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(flying.str());
-	if (stricmp(finalAnim.str(), "STOP") == 0)
+	m_anims[INITIAL] = initial.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Catalog().Acquire_Animation(initial.str());
+	m_anims[FLYING] = flying.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Catalog().Acquire_Animation(flying.str());
+	if (Assets::Asset_Name_Equals_No_Case(finalAnim.str(), "STOP"))
 	{
 		m_finalStop = true;
 		finalAnim = flying;
@@ -168,7 +169,7 @@ void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiS
 	{
 		m_finalStop = false;
 	}
-	m_anims[FINAL] = finalAnim.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(finalAnim.str());
+	m_anims[FINAL] = finalAnim.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Catalog().Acquire_Animation(finalAnim.str());
 	m_state = 0;
 	m_frames = 0;
 	m_fxFinal = finalFX;
@@ -180,11 +181,11 @@ void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiS
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool isAnimationComplete(RenderObjClass* r)
+static Bool isAnimationComplete(W3DRenderObject* r)
 {
-	if (r->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (r->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
-		HLodClass *hlod = (HLodClass*)r;
+		W3DHierarchyRenderObject *hlod = (W3DHierarchyRenderObject*)r;
 		return hlod->Is_Animation_Complete();
 	}
 
@@ -225,11 +226,11 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 		m_renderObject->Set_Transform(*transformMtx);
 
-		static const RenderObjClass::AnimMode TheAnimModes[STATECOUNT] =
+		static const W3DRenderObject::AnimMode TheAnimModes[STATECOUNT] =
 		{
-			RenderObjClass::ANIM_MODE_ONCE,
-			RenderObjClass::ANIM_MODE_LOOP,
-			RenderObjClass::ANIM_MODE_ONCE
+			W3DRenderObject::ANIM_MODE_ONCE,
+			W3DRenderObject::ANIM_MODE_LOOP,
+			W3DRenderObject::ANIM_MODE_ONCE
 		};
 
 		Int oldState = m_state;
@@ -243,15 +244,15 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		{
 			++m_state;
 		}
-		HAnimClass* hanim = m_anims[m_state];
+		Assets::AnimationAssetHandle hanim = m_anims[m_state];
 		if (hanim != nullptr && (hanim != m_renderObject->Peek_Animation() || oldState != m_state))
 		{
-			RenderObjClass::AnimMode m = TheAnimModes[m_state];
+			W3DRenderObject::AnimMode m = TheAnimModes[m_state];
 			if (m_state == FINAL)
 			{
 				FXList::doFXPos(m_fxFinal, getDrawable()->getPosition(), getDrawable()->getTransformMatrix(), 0, nullptr, 0.0f);
 				if (m_finalStop)
-					m = RenderObjClass::ANIM_MODE_MANUAL;
+					m = W3DRenderObject::ANIM_MODE_MANUAL;
 			}
 			m_renderObject->Set_Animation(hanim, 0, m);
 		}

@@ -42,7 +42,7 @@
 #include "MeshDeformSaveSet.h"
 #include "util.h"
 #include "modstack.h"
-#include "meshbuild.h"
+#include "MeshBuild.h"
 #include "meshsave.h"
 
 ///////////////////////////////////////////////////////////////////////////

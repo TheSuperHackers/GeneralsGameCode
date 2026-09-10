@@ -33,9 +33,9 @@
 #include "WorldBuilder.h"
 #include "DrawObject.h"
 #include "wbview3d.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/meshmdl.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshResource.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 //
 // MeshMoldTool class.
 //
@@ -204,7 +204,7 @@ void MeshMoldTool::applyMesh(CWorldBuilderDoc *pDoc)
 	if (p3View) {
 		DrawObject *pDraw = p3View->getDrawObject();
 		if (pDraw) {
-			MeshClass *pMesh = pDraw->peekMesh();
+			W3DMeshRenderObject *pMesh = pDraw->peekMesh();
 			if (pMesh) {
 				SphereClass bounds;
 				pDraw->getMeshBounds(&bounds);

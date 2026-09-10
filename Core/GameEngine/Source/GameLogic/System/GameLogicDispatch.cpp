@@ -882,9 +882,9 @@ bool GameLogic::onNewGame(MAYBE_UNUSED GameMessage *msg)
 		Int maxFPS = msg->getArgument( 3 )->integer;
 		if (maxFPS < 1 || maxFPS > 1000)
 			maxFPS = TheGlobalData->m_framesPerSecondLimit;
-		DEBUG_LOG(("Setting max FPS limit to %d FPS", maxFPS));
-		TheFramePacer->setFramesPerSecondLimit(maxFPS);
-		TheWritableGlobalData->m_useFpsLimit = true;
+		DEBUG_LOG(("Setting logic time scale to %d FPS", maxFPS));
+		TheFramePacer->setLogicTimeScaleFps(maxFPS);
+		TheFramePacer->enableLogicTimeScale(TRUE);
 	}
 
 	// prepare for new game

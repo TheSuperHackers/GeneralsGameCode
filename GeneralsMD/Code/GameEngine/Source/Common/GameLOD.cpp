@@ -38,6 +38,8 @@
 #include "GameClient/GameClient.h"
 #include "Common/OptionPreferences.h"
 
+import Graphics.Resources.Textures.Sampling;
+
 #define DEFINE_PARTICLE_SYSTEM_NAMES
 #include "GameClient/ParticleSys.h"
 
@@ -585,6 +587,15 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_useShadowDecals=lodInfo->m_useShadowDecals;
 
 		TheWritableGlobalData->m_textureReductionFactor = requestedTextureReduction;
+
+		if (level == STATIC_GAME_LOD_HIGH || level == STATIC_GAME_LOD_VERY_HIGH)
+		{
+			TheWritableGlobalData->m_textureFilteringMode =
+				static_cast<UnsignedInt>(Graphics::TextureSamplingMode::Anisotropic);
+			TheWritableGlobalData->m_textureAnisotropyLevel = 16;
+			Graphics::Set_Texture_Sampling_Mode(TheWritableGlobalData->m_textureFilteringMode);
+			Graphics::Set_Texture_Anisotropy(TheWritableGlobalData->m_textureAnisotropyLevel);
+		}
 
 		//Check if shadow state changed
 		if (m_currentStaticLOD == STATIC_GAME_LOD_UNKNOWN	||

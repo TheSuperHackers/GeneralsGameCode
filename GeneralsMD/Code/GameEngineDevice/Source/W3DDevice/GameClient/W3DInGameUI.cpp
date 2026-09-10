@@ -44,22 +44,26 @@
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DGUICallbacks.h"
 #include "W3DDevice/GameClient/W3DInGameUI.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/Common/W3DConvert.h"
-#include "WW3D2/ww3d.h"
-#include "WW3D2/hanim.h"
+
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
 
 
+#include "W3DDevice/GameClient/W3DGraphicsResources.h"
+import Graphics.Frame.Runtime;
+import Graphics.Scene.Debug.Renderer;
+import Graphics.Diagnostics.Render;
+
 #ifdef RTS_DEBUG
-#include "W3DDevice/GameClient/HeightMap.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/vertmaterial.h"
-class DebugHintObject : public RenderObjClass
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
+import Assets.Cache.Animations;
+class DebugHintObject : public W3DRenderObject
 {
 
 public:
@@ -69,10 +73,10 @@ public:
 	DebugHintObject & operator = (const DebugHintObject &);
 	~DebugHintObject();
 
-	virtual RenderObjClass *	Clone() const;
+	virtual W3DRenderObject *	Clone() const;
 	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
+	virtual void					Render(W3DRenderContext & rinfo);
+	virtual Bool					Cast_Ray(W3DRayCastQuery & raytest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
@@ -87,37 +91,17 @@ protected:
 	Int m_myColor;	// argb
 	Int m_mySize;
 
-	DX8IndexBufferClass				*m_indexBuffer;
-	ShaderClass								m_shaderClass; //shader or rendering state for heightmap
-	VertexMaterialClass	  	  *m_vertexMaterialClass;
-	DX8VertexBufferClass			*m_vertexBufferTile;	//First vertex buffer.
-
-	void initData();
+    Graphics::SurfaceMeshHandle m_mesh;
 };
-
-// Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
-
 
 DebugHintObject::~DebugHintObject()
 {
 	freeMapResources();
 }
 
-DebugHintObject::DebugHintObject() :
-	m_indexBuffer(nullptr),
-	m_vertexMaterialClass(nullptr),
-	m_vertexBufferTile(nullptr),
-	m_myColor(0),
-	m_mySize(0)
-{
-	initData();
-}
+DebugHintObject::DebugHintObject() : m_myColor(0), m_mySize(0) {}
 
-Bool DebugHintObject::Cast_Ray(RayCollisionTestClass & raytest)
+Bool DebugHintObject::Cast_Ray(W3DRayCastQuery & raytest)
 {
 	return false;
 }
@@ -149,10 +133,10 @@ void DebugHintObject::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 
 Int DebugHintObject::Class_ID() const
 {
-	return RenderObjClass::CLASSID_UNKNOWN;
+	return W3DRenderObject::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * DebugHintObject::Clone() const
+W3DRenderObject * DebugHintObject::Clone() const
 {
 	DEBUG_CRASH(("oops"));
 	return NEW DebugHintObject(*this);
@@ -161,98 +145,35 @@ RenderObjClass * DebugHintObject::Clone() const
 
 void DebugHintObject::freeMapResources()
 {
-	REF_PTR_RELEASE(m_indexBuffer);
-	REF_PTR_RELEASE(m_vertexBufferTile);
-	REF_PTR_RELEASE(m_vertexMaterialClass);
-}
-
-//Allocate a heightmap of x by y vertices.
-//data must be an array matching this size.
-void DebugHintObject::initData()
-{
-	freeMapResources();	//free old data and ib/vb
-
-	m_indexBuffer = NEW_REF(DX8IndexBufferClass,(3));
-
-	// Fill up the IB
-	{
-		DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
-		UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-		ib[0]=0;
-		ib[1]=1;
-		ib[2]=2;
-	}
-
-	m_vertexBufferTile = NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,3,DX8VertexBufferClass::USAGE_DEFAULT));
-
-	//go with a preset material for now.
-	m_vertexMaterialClass = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-
-	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass(SC_ALPHA);
+    Graphics::Get_Surface_Renderer().Destroy_Mesh(m_mesh);
+    m_mesh={};
 }
 
 void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int size)
 {
-	m_myLoc = *loc;
-	m_myColor = argb;
-	m_mySize = size;
-
-	if (m_myLoc.z < 0 && TheTerrainRenderObject)
-	{
-		m_myLoc.z = TheTerrainRenderObject->getHeightMapHeight(m_myLoc.x, m_myLoc.y, nullptr);
-	}
-
-	if (m_vertexBufferTile)
-	{
-		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexBufferTile);
-		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-
-		Real x1 = m_mySize * 0.866;	// cos(30)
-		Real y1 = m_mySize * 0.5;		// sin(30)
-
-		// note, pts must go in a counterclockwise order!
-		vb[0].x = 0;
-		vb[0].y = m_mySize;
-		vb[0].z = 0;
-		vb[0].diffuse = m_myColor;
-		vb[0].u1 = 0;
-		vb[0].v1 = 0;
-
-		vb[1].x = -x1;
-		vb[1].y = -y1;
-		vb[1].z = 0;
-		vb[1].diffuse = m_myColor;
-		vb[1].u1 = 0;
-		vb[1].v1 = 0;
-
-		vb[2].x = x1;
-		vb[2].y = -y1;
-		vb[2].z = 0;
-		vb[2].diffuse = m_myColor;
-		vb[2].u1 = 0;
-		vb[2].v1 = 0;
-	}
+    m_myLoc=*loc; m_myColor=argb; m_mySize=size;
+    if (m_myLoc.z < 0 && TheTerrainRenderObject)
+        m_myLoc.z=TheTerrainRenderObject->getHeightMapHeight(m_myLoc.x,m_myLoc.y,nullptr);
 }
 
-void DebugHintObject::Render(RenderInfoClass & rinfo)
+void DebugHintObject::Render(W3DRenderContext& info)
 {
-	SphereClass bounds(Vector3(m_myLoc.x, m_myLoc.y, m_myLoc.z), m_mySize);
-	if (!rinfo.Camera.Cull_Sphere(bounds))
-	{
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, nullptr);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile);
-
-		Matrix3D tm(Transform);
-		Vector3 vec(m_myLoc.x, m_myLoc.y, m_myLoc.z);
-		tm.Set_Translation(vec);
-		DX8Wrapper::Set_Transform(D3DTS_WORLD, tm);
-
-		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
-	}
+    const SphereClass bounds(Vector3(m_myLoc.x,m_myLoc.y,m_myLoc.z),m_mySize);
+    auto* device=Graphics::Shared_Frame_Device();
+    if (!device || info.Camera.Cull_Sphere(bounds)) return;
+    const float x=m_mySize*0.866f, y=m_mySize*0.5f;
+    const std::array<Vector3,3> positions{Vector3(0,float(m_mySize),0),Vector3(-x,-y,0),Vector3(x,-y,0)};
+    Matrix3D transform(Get_Transform()); transform.Set_Translation(Vector3(m_myLoc.x,m_myLoc.y,m_myLoc.z));
+    std::array<Graphics::SurfaceVertex,3> vertices{};
+    for (unsigned i=0;i<3;++i) {
+        Vector3 point; Matrix3D::Transform_Vector(transform,positions[i],&point);
+        vertices[i].position={point.X,point.Y,point.Z};
+        const unsigned color=static_cast<unsigned>(m_myColor);
+        vertices[i].color={float((color>>16)&255)/255,float((color>>8)&255)/255,float(color&255)/255,float(color>>24)/255};
+    }
+    const std::array<std::uint32_t,3> indices{0,1,2};
+    Graphics::Draw_Debug_Geometry(Graphics::Get_Surface_Renderer(),device->Immediate_Command_List(),
+        m_mesh,vertices,indices,Make_Surface_Parameters(info.Camera));
 }
 #endif // RTS_DEBUG
 
@@ -291,7 +212,7 @@ W3DInGameUI::~W3DInGameUI()
 	{
 
 		REF_PTR_RELEASE( m_moveHintRenderObj[ i ] );
-		REF_PTR_RELEASE( m_moveHintAnim[ i ] );
+		Assets::Release_Animation(m_moveHintAnim[ i ]);
 
 	}
 
@@ -421,7 +342,7 @@ void W3DInGameUI::draw()
 	// repaint all our windows
 
 #ifdef EXTENDED_STATS
-	if (!DX8Wrapper::stats.m_disableConsole) {
+	if (!Graphics::Get_Render_Diagnostics().disable_console) {
 #endif
 
 #ifdef DO_UNIT_TIMINGS
@@ -477,8 +398,6 @@ void W3DInGameUI::drawMoveHints( View *view )
 
 		if( elapsed <= 40 )
 		{
-			RectClass rect;
-
 			// if this hint is not in this view ignore it
 			/// @todo write this to check if point is visible in view
 //			if( view->pointInView( &m_moveHint[ i ].pos == FALSE )
@@ -487,15 +406,15 @@ void W3DInGameUI::drawMoveHints( View *view )
 			// create render object and add to scene of needed
 			if( m_moveHintRenderObj[ i ] == nullptr )
 			{
-				RenderObjClass *hint;
-				HAnimClass *anim;
+				W3DRenderObject *hint;
+				Assets::AnimationAssetHandle anim;
 
 				// create hint object
-				hint = W3DDisplay::m_assetManager->Create_Render_Obj(TheGlobalData->m_moveHintName.str());
+				hint = W3DDisplay::m_assetManager->Catalog().Create_Render_Obj(TheGlobalData->m_moveHintName.str());
 
 				AsciiString animName;
 				animName.format("%s.%s", TheGlobalData->m_moveHintName.str(), TheGlobalData->m_moveHintName.str());
-				anim = W3DDisplay::m_assetManager->Get_HAnim(animName.str());
+				anim = W3DDisplay::m_assetManager->Catalog().Acquire_Animation(animName.str());
 
 				// sanity
 				if( hint == nullptr )
@@ -509,9 +428,9 @@ void W3DInGameUI::drawMoveHints( View *view )
 				// assign render objects to GUI data
 				m_moveHintRenderObj[ i ] = hint;
 
-				// note that 'anim' is returned from Get_HAnim with an AddRef, so we don't need to addref it again.
+				// note that 'anim' is returned from Acquire_Animation with an AddRef, so we don't need to addref it again.
 				// however, we do need to release the contents of moveHintAnim (if any)
-				REF_PTR_RELEASE(m_moveHintAnim[i]);
+				Assets::Release_Animation(m_moveHintAnim[i]);
 				m_moveHintAnim[i] = anim;
 
 			}
@@ -522,7 +441,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 				// add to scene
 				W3DDisplay::m_3DScene->Add_Render_Object( m_moveHintRenderObj[ i ] );
 				if (m_moveHintAnim[i])
-					m_moveHintRenderObj[i]->Set_Animation(m_moveHintAnim[i], 0, RenderObjClass::ANIM_MODE_ONCE);
+					m_moveHintRenderObj[i]->Set_Animation(m_moveHintAnim[i], 0, W3DRenderObject::ANIM_MODE_ONCE);
 			}
 
 			// move this hint render object to the position and align with terrain
@@ -603,7 +522,7 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 	//Create the anchor & arrow if not already created!
 	if( !m_buildingPlacementAnchor )
 	{
-		m_buildingPlacementAnchor = W3DDisplay::m_assetManager->Create_Render_Obj( "Locater01" );
+		m_buildingPlacementAnchor = W3DDisplay::m_assetManager->Catalog().Create_Render_Obj( "Locater01" );
 
 		// sanity
 		if( !m_buildingPlacementAnchor )
@@ -614,7 +533,7 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 	}
 	if( !m_buildingPlacementArrow )
 	{
-		m_buildingPlacementArrow = W3DDisplay::m_assetManager->Create_Render_Obj( "Locater02" );
+		m_buildingPlacementArrow = W3DDisplay::m_assetManager->Catalog().Create_Render_Obj( "Locater02" );
 
 		// sanity
 		if( !m_buildingPlacementArrow )
@@ -733,4 +652,3 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 	//TheDisplay->drawLine( start.x, start.y, end.x, end.y, width, color );
 
 }
-

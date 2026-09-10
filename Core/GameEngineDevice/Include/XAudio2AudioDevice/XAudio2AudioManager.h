@@ -102,9 +102,6 @@ public:
 
 	Bool has3DSensitiveStreamsPlaying() const override;
 
-	void *getHandleForVideo() override;
-	void releaseHandleForVideo() override;
-
 	void friend_forcePlayAudioEventRTS(const AudioEventRTS *eventToPlay) override;
 
 	void setPreferredProvider(AsciiString providerNdx) override;
@@ -168,6 +165,5 @@ private:
 	UnsignedInt m_selectedSpeakerType = 0;
 	Bool m_hardwareAccel = FALSE;
 	Bool m_surroundSpeakers = FALSE;
-	class AudioVideoStream *m_videoStream = nullptr;
 	RTSAudioFileProvider m_fileProvider;
 };

@@ -1,3 +1,8 @@
+import Graphics.Renderer2D;
+import Engine.UI.WND;
+import Graphics.Frame.Runtime;
+import Graphics.Resources.Textures.Quality;
+import Graphics.Diagnostics.Render;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -58,8 +63,8 @@
 #include "WinMain.h"
 #include "HierarchyView.h"
 #include "Properties.h"
-#include "WW3D2/ww3d.h"
-#include "WW3D2/render2d.h"
+#include "WW3D2/WW3D.h"
+import Graphics.Frame.ToolFrame;
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -354,7 +359,6 @@ EditWindow::EditWindow()
 	m_bitDepth = 32;
 	m_editWindowHWnd = nullptr;
 	m_assetManager = nullptr;
-	m_2DRender = nullptr;
 	m_w3dInitialized = FALSE;
 
 	m_popupMenuClickPos.x = 0;
@@ -417,8 +421,6 @@ void EditWindow::init( UnsignedInt clientWidth, UnsignedInt clientHeight )
 	if( m_classRegistered == FALSE )
 		registerEditWindowClass();
 
-	// create 2D renderer
-	m_2DRender = new Render2DClass;
 
 	// save width and height
 	size.x = clientWidth;
@@ -459,20 +461,18 @@ void EditWindow::init( UnsignedInt clientWidth, UnsignedInt clientHeight )
 
 	// initialize W3D
 	WWMath::Init();
-	WW3D::Init( m_editWindowHWnd );
-	WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
-	if( WW3D::Set_Render_Device( 0,
-															 m_size.x,
-															 m_size.y,
-															 m_bitDepth,
-															 TRUE ) != WW3D_ERROR_OK )
-	{
-
-		assert( 0 );
-		shutdown();
-		return;
-
-	}
+	Graphics::Get_Render_Diagnostics() = {};
+	Graphics::Get_Texture_Quality_Settings().prefer_16_bits = true;
+	WW3D::Init();
+    Graphics::FrameDeviceOptions options;
+    options.window = m_editWindowHWnd;
+    options.width = m_size.x; options.height = m_size.y;
+    options.backbuffer_format = Graphics::RHITextureFormat::BGRA8_UNorm;
+    if (!Graphics::Initialize_Frame_Device(options)) {
+        assert(0);
+        shutdown();
+        return;
+    }
 
 	// create asset manager
 	m_assetManager = new WW3DAssetManager;
@@ -493,9 +493,6 @@ void EditWindow::init( UnsignedInt clientWidth, UnsignedInt clientHeight )
 void EditWindow::shutdown()
 {
 
-	// delete 2d renderer
-	delete m_2DRender;
-	m_2DRender = nullptr;
 
 	// delete asset manager
 	m_assetManager->Free_Assets();
@@ -503,7 +500,9 @@ void EditWindow::shutdown()
 	m_assetManager = nullptr;
 
 	// shutdown WW3D
+	Graphics::Shutdown_Tool_Frame();
 	WW3D::Shutdown();
+	Graphics::Graphics_Shutdown_Shared_Frame();
 	WWMath::Shutdown();
 
 	// delete the w3d file system
@@ -1474,10 +1473,14 @@ void EditWindow::draw()
 	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
 	WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
 
+	if (!Graphics::Begin_Tool_Frame()) return;
 	// start render block
-	WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red,
+	if (WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red,
 																					 m_backgroundColor.green,
-																					 m_backgroundColor.blue ) );
+																					 m_backgroundColor.blue ) ) != WW3D_ERROR_OK) {
+        Graphics::Abort_Tool_Frame();
+        return;
+    }
 
 	// draw the windows
 	TheWindowManager->winRepaint();
@@ -1488,6 +1491,7 @@ void EditWindow::draw()
 
 	// render is all done!
 	WW3D::End_Render();
+	Graphics::End_Tool_Frame();
 
 	TheFramePacer->update();
 }
@@ -1510,12 +1514,6 @@ void EditWindow::setSize( ICoord2D *size )
 
 	}
 
-	// set the extents for our 2D renderer
-	if( m_2DRender )
-		m_2DRender->Set_Coordinate_Range( RectClass( 0,
-																								 0,
-																								 m_size.x,
-																								 m_size.y ) );
 
 }
 
@@ -1574,13 +1572,9 @@ void EditWindow::drawLine( Int startX, Int startY,
 													 Int endX, Int endY,
 													 Real lineWidth, UnsignedInt lineColor )
 {
-
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
-	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
-												lineWidth, lineColor );
-	m_2DRender->Render();
-
+    Graphics::Get_Renderer2D().Add_Line(
+        {startX - 0.5f, startY - 0.5f}, {endX - 0.5f, endY - 0.5f},
+        lineWidth, Graphics::Color2D::From_ARGB(lineColor));
 }
 
 // EditWindow::drawOpenRect ===================================================
@@ -1591,16 +1585,9 @@ void EditWindow::drawOpenRect( Int startX, Int startY,
 															 Int width, Int height,
 															 Real lineWidth, UnsignedInt lineColor )
 {
-
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
-	m_2DRender->Add_Outline( RectClass( startX, startY,
-																			startX + width, startY + height ),
-													 lineWidth, lineColor );
-
-	// render it now!
-	m_2DRender->Render();
-
+    Graphics::Get_Renderer2D().Add_Outline(
+        {startX - 0.5f, startY - 0.5f, startX + width - 0.5f, startY + height - 0.5f},
+        lineWidth, Graphics::Color2D::From_ARGB(lineColor));
 }
 
 // EditWindow::drawFillRect ===================================================
@@ -1611,16 +1598,9 @@ void EditWindow::drawFillRect( Int startX, Int startY,
 															 Int width, Int height,
 															 UnsignedInt color )
 {
-
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
-	m_2DRender->Add_Rect( RectClass( startX, startY,
-																	 startX + width, startY + height ),
-												0, 0, color );
-
-	// render it now!
-	m_2DRender->Render();
-
+    Graphics::Get_Renderer2D().Add_Rect(
+        {startX - 0.5f, startY - 0.5f, startX + width - 0.5f, startY + height - 0.5f},
+        Graphics::Color2D::From_ARGB(color));
 }
 
 // EditWindow::drawImage ======================================================
@@ -1631,96 +1611,28 @@ void EditWindow::drawImage( const Image *image,
 														Int endX, Int endY,
 														Color color )
 {
+    if (!image || endX <= startX || endY <= startY) return;
+    auto& renderer = Graphics::Get_Renderer2D();
+    const auto reference = Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+    const auto texture = Engine::UI::WND::Resolve_Image_Texture(reference.texture, renderer);
+    if (!texture.index.Is_Valid()) return;
 
-	// sanity
-	if( image == nullptr )
-		return;
-
-	const Region2D *uv = image->getUV();
-
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( TRUE );
-	m_2DRender->Set_Texture( image->getFilename().str() );
-
-	RectClass screen_rect(startX,startY,endX,endY);
-	RectClass uv_rect(uv->lo.x,uv->lo.y,uv->hi.x,uv->hi.y);
-
-	if (m_isClippedEnabled)
-	{	//need to clip this quad to clip rectangle
-
-		//
-		//	Check for completely clipped
-		//
-		if (	endX <= m_clipRegion.lo.x ||
-				endY <= m_clipRegion.lo.y)
-		{
-			return;	//nothing to render
-		} else {
-
-			//
-			//	Clip the polygons to the specified area
-			//
-			RectClass clipped_rect;
-			clipped_rect.Left		= __max (screen_rect.Left, m_clipRegion.lo.x);
-			clipped_rect.Right	= __min (screen_rect.Right, m_clipRegion.hi.x);
-			clipped_rect.Top		= __max (screen_rect.Top, m_clipRegion.lo.y);
-			clipped_rect.Bottom	= __min (screen_rect.Bottom, m_clipRegion.hi.y);
-
-			//
-			//	Clip the texture to the specified area
-			//
-			RectClass clipped_uv_rect;
-			float percent				= ((clipped_rect.Left - screen_rect.Left) / screen_rect.Width ());
-			clipped_uv_rect.Left		= uv_rect.Left + (uv_rect.Width () * percent);
-
-			percent						= ((clipped_rect.Right - screen_rect.Left) / screen_rect.Width ());
-			clipped_uv_rect.Right	= uv_rect.Left + (uv_rect.Width () * percent);
-
-			percent						= ((clipped_rect.Top - screen_rect.Top) / screen_rect.Height ());
-			clipped_uv_rect.Top		= uv_rect.Top + (uv_rect.Height () * percent);
-
-			percent						= ((clipped_rect.Bottom - screen_rect.Top) / screen_rect.Height ());
-			clipped_uv_rect.Bottom	= uv_rect.Top + (uv_rect.Height () * percent);
-
-			//
-			//	Use the clipped rectangles to render
-			//
-			screen_rect = clipped_rect;
-			uv_rect		= clipped_uv_rect;
-		}
-	}
-
-	// if rotated 90 degrees clockwise we have to adjust the uv coords
-	if( BitIsSet( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
-	{
-
-		m_2DRender->Add_Tri( Vector2( screen_rect.Left, screen_rect.Top ),
-												 Vector2( screen_rect.Left, screen_rect.Bottom ),
-												 Vector2( screen_rect.Right, screen_rect.Top ),
-												 Vector2( uv_rect.Right, uv_rect.Top),
-												 Vector2( uv_rect.Left, uv_rect.Top),
-												 Vector2( uv_rect.Right, uv_rect.Bottom ),
-												 color );
-
-		m_2DRender->Add_Tri( Vector2( screen_rect.Right, screen_rect.Bottom ),
-												 Vector2( screen_rect.Right, screen_rect.Top ),
-												 Vector2( screen_rect.Left, screen_rect.Bottom ),
-												 Vector2( uv_rect.Left, uv_rect.Bottom ),
-												 Vector2( uv_rect.Right, uv_rect.Bottom ),
-												 Vector2( uv_rect.Left, uv_rect.Top ),
-												 color );
-
-	}
-	else
-	{
-
-		// just draw as normal
-		m_2DRender->Add_Quad( screen_rect, uv_rect, color );
-
-	}
-
-	m_2DRender->Render();
-
+    const auto previous_clip = renderer.Get_Clip();
+    renderer.Set_Clip(m_isClippedEnabled, {float(m_clipRegion.lo.x), float(m_clipRegion.lo.y),
+        float(m_clipRegion.hi.x), float(m_clipRegion.hi.y)});
+    const Graphics::Rect2D screen{startX - 0.5f, startY - 0.5f, endX - 0.5f, endY - 0.5f};
+    const auto* uv = image->getUV();
+    const auto tint = Graphics::Color2D::From_ARGB(color);
+    if (BitIsSet(image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE)) {
+        renderer.Add_Quad(
+            {{{screen.left, screen.top}, {screen.left, screen.bottom},
+                {screen.right, screen.top}, {screen.right, screen.bottom}}},
+            {{{uv->hi.x, uv->lo.y}, {uv->lo.x, uv->lo.y},
+                {uv->hi.x, uv->hi.y}, {uv->lo.x, uv->hi.y}}}, texture, tint);
+    } else {
+        renderer.Add_Quad(screen, {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y}, texture, tint);
+    }
+    renderer.Set_Clip(previous_clip.enabled, previous_clip.rectangle);
 }
 
 // EditWindow::getBackgroundColor =============================================

@@ -1,0 +1,18 @@
+cbuffer WaterConstants : register(b0)
+{
+    row_major float4x4 World;
+    row_major float4x4 View;
+    row_major float4x4 Projection;
+    float4 WaterShroudProjection;
+    float4 WaterAnimation;
+    float4 WaterCameraPosition;
+    float4 WaterDisplacementDomain;
+    float4 WaterTint;
+    float4 WaterEffects;
+    float4 WaterSurfaceOptions;
+    float4 FogColor;
+    float4 WaterFogState;
+    float4 WaterSunColor;
+    float4 WaterEnvironmentFrame[3];
+    row_major float4x4 WaterInverseViewProjection;
+};

@@ -399,8 +399,8 @@ public:
 																			 smaller area within the rectangle to order the gather. */
 
 	UnsignedInt m_antiAliasLevel;          ///< value of selected antialias level in the game options
-	UnsignedInt m_textureFilteringMode;       ///< value related to TextureFilterClass::TextureFilterModeEnum
-	UnsignedInt m_textureAnisotropyLevel;     ///< value related to TextureFilterClass::AnisotropicFilterMode
+	UnsignedInt m_textureFilteringMode;       ///< Graphics::TextureSamplingMode preference value
+	UnsignedInt m_textureAnisotropyLevel;     ///< anisotropy sample limit
 
 	Bool m_languageFilterPref;        ///< Bool if user wants to filter language
 	Bool m_loadScreenDemo;						///< Bool if true, run the loadscreen demo movie

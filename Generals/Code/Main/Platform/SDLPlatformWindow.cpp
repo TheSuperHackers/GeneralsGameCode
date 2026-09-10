@@ -19,23 +19,37 @@
 
 extern CComModule _Module;
 
-HWND ApplicationHWnd = nullptr;
-
 namespace
 {
 SDL_Window *s_platformWindow = nullptr;
+HWND s_nativeWindowHandle = nullptr;
+Uint32 s_fullscreenToggleEventType = 0;
 
 // Direct3D 9 examines the native Alt+Enter message before the window
 // procedure sees it. SDL3 owns fullscreen transitions for GeneralsMD, so
-// present the key to SDL as a normal key message and prevent the D3D runtime
-// from performing a second, independent transition.
+// consume the native message and enqueue one SDL event. This prevents the
+// D3D runtime from performing a second, independent transition and avoids
+// relying on SDL's modifier state after the native message has been handled.
 bool SDLCALL s_windowsMessageHook(void *, MSG *message)
 {
-	if (message != nullptr && message->hwnd == ApplicationHWnd &&
+	if (message != nullptr && message->hwnd == s_nativeWindowHandle &&
 		(message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP) &&
 		message->wParam == VK_RETURN && (message->lParam & (1L << 29)) != 0)
 	{
-		message->message = message->message == WM_SYSKEYDOWN ? WM_KEYDOWN : WM_KEYUP;
+		if (message->message == WM_SYSKEYDOWN &&
+			(message->lParam & (1L << 30)) == 0 &&
+			s_fullscreenToggleEventType != 0 && s_fullscreenToggleEventType != 0xFFFFFFFFu)
+		{
+			SDL_Event event{};
+			event.type = s_fullscreenToggleEventType;
+			event.user.windowID = s_platformWindow != nullptr ?
+				SDL_GetWindowID(s_platformWindow) : 0;
+			SDL_PushEvent(&event);
+		}
+
+		// Returning false tells SDL not to dispatch this message to the window
+		// procedure, which also blocks Direct3D's automatic Alt+Enter handling.
+		return false;
 	}
 
 	return true;
@@ -69,13 +83,14 @@ bool SDLPlatformWindow::initialize(int width, int height, bool fullscreen)
 	if (!SDL_Init(SDL_INIT_VIDEO))
 		return false;
 
+	if (s_fullscreenToggleEventType == 0)
+		s_fullscreenToggleEventType = SDL_RegisterEvents(1);
+
 	// Let SDL select the appropriate custom cursor representation for the
 	// monitor's content scale. SDL3Mouse supplies the high-DPI images.
 	SDL_SetHint(SDL_HINT_MOUSE_DPI_SCALE_CURSORS, "1");
 
 	SDL_WindowFlags flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
-	if (fullscreen)
-		flags |= SDL_WINDOW_FULLSCREEN;
 
 	m_window = SDL_CreateWindow("Command and Conquer Generals", width, height, flags);
 	if (m_window == nullptr)
@@ -84,16 +99,18 @@ bool SDLPlatformWindow::initialize(int width, int height, bool fullscreen)
 		return false;
 	}
 
-	if (!fullscreen)
-	{
-		SDL_SetWindowBordered(m_window, true);
-		SDL_SetWindowResizable(m_window, true);
-	}
+	// Create the window in its normal decorated state first. This gives SDL a
+	// real windowed size to restore when a borderless fullscreen transition is
+	// reversed; creating it directly fullscreen makes SDL fall back to its
+	// minimum size (640x480) on some Win32 drivers.
+	SDL_SetWindowBordered(m_window, true);
+	SDL_SetWindowResizable(m_window, true);
 	SDL_SetWindowMinimumSize(m_window, 640, 480);
 
 	const SDL_PropertiesID properties = SDL_GetWindowProperties(m_window);
-	m_nativeHandle = SDL_GetPointerProperty(properties, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
-	if (m_nativeHandle == nullptr)
+	s_nativeWindowHandle = static_cast<HWND>(SDL_GetPointerProperty(
+		properties, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr));
+	if (s_nativeWindowHandle == nullptr)
 	{
 		SDL_DestroyWindow(m_window);
 		m_window = nullptr;
@@ -101,9 +118,15 @@ bool SDLPlatformWindow::initialize(int width, int height, bool fullscreen)
 		return false;
 	}
 
-	ApplicationHWnd = static_cast<HWND>(m_nativeHandle);
 	s_platformWindow = m_window;
 	SDL_SetWindowsMessageHook(s_windowsMessageHook, nullptr);
+
+	if (fullscreen && !setFullscreen(true))
+	{
+		shutdown();
+		return false;
+	}
+
 	return true;
 }
 
@@ -165,8 +188,7 @@ void SDLPlatformWindow::shutdown()
 		SDL_DestroyWindow(m_window);
 
 	m_window = nullptr;
-	m_nativeHandle = nullptr;
-	ApplicationHWnd = nullptr;
+	s_nativeWindowHandle = nullptr;
 	s_platformWindow = nullptr;
 	SDL_SetWindowsMessageHook(nullptr, nullptr);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -184,6 +206,41 @@ void *SDLPlatformWindow::nativeHandle()
 
 	const SDL_PropertiesID properties = SDL_GetWindowProperties(s_platformWindow);
 	return SDL_GetPointerProperty(properties, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
+}
+
+bool SDLPlatformWindow::isFullscreen()
+{
+	return s_platformWindow != nullptr &&
+		(SDL_GetWindowFlags(s_platformWindow) & SDL_WINDOW_FULLSCREEN) != 0;
+}
+
+bool SDLPlatformWindow::setFullscreen(bool fullscreen)
+{
+	if (s_platformWindow == nullptr)
+		return false;
+
+	const bool currentFullscreen = isFullscreen();
+	if (currentFullscreen == fullscreen)
+		return true;
+
+	if (!SDL_SetWindowFullscreen(s_platformWindow, fullscreen) ||
+		!SDL_SyncWindow(s_platformWindow) ||
+		isFullscreen() != fullscreen)
+	{
+		// Keep the SDL window state transactional. The renderer is reset only
+		// after SDL confirms the requested mode, so a failed transition cannot
+		// leave the two state machines disagreeing.
+		SDL_SetWindowFullscreen(s_platformWindow, currentFullscreen);
+		SDL_SyncWindow(s_platformWindow);
+		return false;
+	}
+
+	return true;
+}
+
+Uint32 SDLPlatformWindow::fullscreenToggleEventType()
+{
+	return s_fullscreenToggleEventType;
 }
 
 void *SDLPlatformWindow::nativeInstance() const

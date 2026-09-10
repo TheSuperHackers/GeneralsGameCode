@@ -49,8 +49,6 @@ class Drawable;
 class Object;
 class ThingTemplate;
 class GameWindow;
-class VideoBuffer;
-class VideoStreamInterface;
 class CommandButton;
 class SpecialPowerTemplate;
 class WindowLayout;
@@ -477,12 +475,11 @@ public:  // ********************************************************************
 	/// Ingame video playback
 	virtual void playMovie( const AsciiString& movieName );
 	virtual void stopMovie();
-	virtual VideoBuffer* videoBuffer();
 
 	/// Ingame cameo video playback
 	virtual void playCameoMovie( const AsciiString& movieName );
 	virtual void stopCameoMovie();
-	virtual VideoBuffer* cameoVideoBuffer();
+	virtual Bool isCameoMoviePlaying() const;
 
   // mouse over information
 	virtual DrawableID getMousedOverDrawableID() const;	///< Get drawble ID of drawable under cursor
@@ -748,14 +745,6 @@ protected:
 
   Int                         m_duringDoubleClickAttackMoveGuardHintTimer; ///< Frames left to draw the doubleClickFeedbackTimer
   Coord3D                     m_duringDoubleClickAttackMoveGuardHintStashedPosition;
-
-	// Video playback data
-	VideoBuffer*								m_videoBuffer;			///< video playback buffer
-	VideoStreamInterface*				m_videoStream;			///< Video stream;
-
-	// Video playback data
-	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
-	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
 
 	// Network Latency Counter
 	DisplayString *							m_networkLatencyString;

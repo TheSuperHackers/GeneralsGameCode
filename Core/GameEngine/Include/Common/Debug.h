@@ -94,6 +94,8 @@ class AsciiString;
 	#define DEBUG_EXTERN_C extern
 #endif
 
+DEBUG_EXTERN_C void DebugSetHeadlessMode(bool headless);
+
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 

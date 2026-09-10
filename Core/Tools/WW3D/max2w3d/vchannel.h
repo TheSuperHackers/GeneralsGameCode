@@ -50,7 +50,7 @@
 #endif
 
 #ifndef W3D_FILE_H
-#include "w3d_file.h"
+#include "W3DFile.h"
 #endif
 
 

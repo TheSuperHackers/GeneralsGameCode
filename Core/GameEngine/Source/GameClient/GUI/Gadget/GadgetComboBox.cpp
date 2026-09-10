@@ -47,6 +47,8 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+import Engine.UI.WND.Layout;
+
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
 #include "Common/AudioEventRTS.h"
@@ -560,33 +562,26 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GGM_RESIZED:
 		{
-			Int width = (Int)mData1;
-			Int height = (Int)mData2;
-			ICoord2D dropDownSize;
-
-			// get needed window sizes
-
-			comboData->dropDownButton->winGetSize( &dropDownSize.x, &dropDownSize.y );
-
+			const Int width = static_cast<Int>(mData1);
+			const Int height = static_cast<Int>(mData2);
 			GameWindow *listBox = GadgetComboBoxGetListBox(window);
-			if (listBox->winIsHidden())
+			if (listBox != nullptr && listBox->winIsHidden())
 			{
-				if (listBox)
-					listBox->winSetSize(width,height);
-
-				if( comboData->dropDownButton )
+				const auto layout = Engine::UI::WND::Layout_Combo_Box_Children(
+					width, height, TheWindowManager->winGetLayoutScale(window));
+				listBox->winSetSize(width, height);
+				if (comboData->dropDownButton != nullptr)
 				{
-					comboData->dropDownButton->winSetPosition( width - dropDownSize.x, 0 );
+					comboData->dropDownButton->winSetPosition(layout.button.x, layout.button.y);
+					comboData->dropDownButton->winSetSize(layout.button.width, layout.button.height);
 				}
-
-				if( comboData->editBox )
+				if (comboData->editBox != nullptr)
 				{
-					comboData->editBox->winSetPosition(  0,  0 );
-					comboData->editBox->winSetSize( width - dropDownSize.x, height );
+					comboData->editBox->winSetPosition(layout.entry.x, layout.entry.y);
+					comboData->editBox->winSetSize(layout.entry.width, layout.entry.height);
 				}
 			}
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------

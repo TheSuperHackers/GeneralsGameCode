@@ -15,6 +15,9 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
             VERBATIM
         )
         add_library(core_browserdispatchwin STATIC BrowserDispatch_i.c)
+        target_link_libraries(core_browserdispatchwin PUBLIC
+            $<IF:$<CONFIG:Debug>,comsuppwd,comsuppw>
+        )
     else()
         message(FATAL_ERROR 
             "EABrowserDispatch requires an IDL compiler for Windows builds:\n"

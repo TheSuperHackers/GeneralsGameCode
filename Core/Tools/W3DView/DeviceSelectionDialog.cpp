@@ -23,11 +23,10 @@
 
 #include "W3DView.h"
 #include "DeviceSelectionDialog.h"
-#include "WW3D2/ww3d.h"
+#include "WW3D2/WW3D.h"
 #include "resource.h"
 #include "Globals.h"
 #include "Utils.h"
-#include "WW3D2/rddesc.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
@@ -94,14 +93,14 @@ CDeviceSelectionDialog::OnInitDialog ()
 	//
 	// Loop through all the devices and add them to the combobox
 	//
-	int device_count = WW3D::Get_Render_Device_Count ();
+	int device_count = 1;
 	int selected_index = 0;
 	for (int index = 0; index < device_count; index ++) {
 
 		//
 		// Add this device to the combobox
 		//
-		const char *name = WW3D::Get_Render_Device_Name(index);
+		const char *name = "Direct3D 11";
 		int combo_index = m_deviceListComboBox.InsertString (index, name);
 		if (m_DriverName.CompareNoCase (name) == 0) {
 			selected_index = combo_index;
@@ -133,7 +132,6 @@ CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo ()
 {
 	int index = m_deviceListComboBox.GetCurSel ();
 	if (index != CB_ERR) {
-		//WW3D::Set_Render_Device ();
 
 		// Update the static controls with the information from the device
 		UpdateDeviceDescription ();
@@ -148,21 +146,20 @@ CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo ()
 void
 CDeviceSelectionDialog::UpdateDeviceDescription ()
 {
-	const RenderDeviceDescClass &device_desc = WW3D::Get_Render_Device_Desc ();
 
 	//
 	// Reload the static text controls on the dialog
 	//
 	SetDlgItemText (IDC_DRIVER_NAME, m_DriverName);
-	SetDlgItemText (IDC_DEVICE_NAME_STATIC, device_desc.Get_Device_Name());
-	SetDlgItemText (IDC_DEVICE_VENDOR_STATIC, device_desc.Get_Device_Vendor());
-	SetDlgItemText (IDC_DEVICE_PLATFORM_STATIC, device_desc.Get_Device_Platform());
-	SetDlgItemText (IDC_DRIVER_NAME_STATIC, device_desc.Get_Driver_Name());
-	SetDlgItemText (IDC_DRIVER_VENDOR_STATIC, device_desc.Get_Driver_Vendor());
-	SetDlgItemText (IDC_DRIVER_VERSION_STATIC, device_desc.Get_Driver_Version());
-	SetDlgItemText (IDC_HARDWARE_NAME_STATIC, device_desc.Get_Hardware_Name());
-	SetDlgItemText (IDC_HARDWARE_VENDOR_STATIC, device_desc.Get_Hardware_Vendor());
-	SetDlgItemText (IDC_HARDWARE_CHIPSET_STATIC, device_desc.Get_Hardware_Chipset());
+	SetDlgItemText (IDC_DEVICE_NAME_STATIC, "Direct3D 11");
+	SetDlgItemText (IDC_DEVICE_VENDOR_STATIC, "");
+	SetDlgItemText (IDC_DEVICE_PLATFORM_STATIC, "");
+	SetDlgItemText (IDC_DRIVER_NAME_STATIC, "D3D11");
+	SetDlgItemText (IDC_DRIVER_VENDOR_STATIC, "");
+	SetDlgItemText (IDC_DRIVER_VERSION_STATIC, "Shader Model 5.0 / Slang DXBC");
+	SetDlgItemText (IDC_HARDWARE_NAME_STATIC, "");
+	SetDlgItemText (IDC_HARDWARE_VENDOR_STATIC, "");
+	SetDlgItemText (IDC_HARDWARE_CHIPSET_STATIC, "");
 }
 
 
@@ -195,11 +192,11 @@ CDeviceSelectionDialog::OnOK ()
 //
 //  DoModal
 //
-int
+INT_PTR
 CDeviceSelectionDialog::DoModal ()
 {
 	BOOL bFoundDevice = FALSE;
-	int iReturn = IDOK;
+	INT_PTR iReturn = IDOK;
 
 	// Get the name of the last used device driver from the registry
 	m_DriverName = theApp.GetProfileString ("Config", "DeviceName");
@@ -210,13 +207,13 @@ CDeviceSelectionDialog::DoModal ()
 		//
 		// Loop through all the devices and see if we can find the right one
 		//
-		int device_count = WW3D::Get_Render_Device_Count ();
+		int device_count = 1;
 		for (int index = 0; (index < device_count) && !bFoundDevice; index ++) {
 
 			//
 			// Is this the device we are looking for?
 			//
-			const char *name = WW3D::Get_Render_Device_Name (index);
+			const char *name = "Direct3D 11";
 			if (m_DriverName.CompareNoCase (name) == 0) {
 
 				//

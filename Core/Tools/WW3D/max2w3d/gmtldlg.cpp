@@ -65,7 +65,7 @@
 #include "gamemaps.h"
 #include "dllmain.h"
 #include "resource.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 
 
 

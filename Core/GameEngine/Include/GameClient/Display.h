@@ -49,8 +49,6 @@ struct ShroudLevel
 	Short m_activeShroudLevel;///< A Value of 0 means passive shroud.  Positive is the count of people shrouding.
 };
 
-class VideoBuffer;
-class VideoStreamInterface;
 class DebugDisplayInterface;
 class Radar;
 class Image;
@@ -115,8 +113,6 @@ public:
 	virtual void updateViews ();															///< Updates state of world views
 	virtual void stepViews(); ///< Update views for every fixed time step
 
-	virtual VideoBuffer*	createVideoBuffer() = 0;							///< Create a video buffer that can be used for this display
-
 	//---------------------------------------------------------------------------------------
 	// Drawing management
 	virtual void setClipRegion( IRegion2D *region ) = 0;	///< Set clip rectangle for 2D draw operations.
@@ -156,11 +152,6 @@ public:
 	/// draw an image fit within the screen coordinates
 	virtual void drawImage( const Image *image, Int startX, Int startY,
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) = 0;
-
-	/// draw a video buffer fit within the screen coordinates
-	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-													Int endX, Int endY ) = 0;
 
 	/// FullScreen video playback
 	virtual void playMovie( AsciiString movieName );
@@ -213,9 +204,7 @@ protected:
 	GameFont *m_cinematicFont;           ///< font for cinematic text
 	Int m_cinematicTextFrames;          ///< count of how long the cinematic text should be displayed
 
-	// Video playback data
-	VideoBuffer						*m_videoBuffer;						///< Video playback buffer
-	VideoStreamInterface	*m_videoStream;						///< Video stream;
+	// Video playback notification data. Playback and frame ownership live in engine/video.
 	AsciiString						 m_currentlyPlayingMovie;	///< The currently playing video. Used to notify TheScriptEngine of completed videos.
 
 	// Debug display data

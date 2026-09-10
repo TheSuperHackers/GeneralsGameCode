@@ -34,8 +34,8 @@
 
 
 #include "SoundSceneObj.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/rendobj.h"
+#include "WW3D2/Camera.h"
+#include "WW3D2/RendObj.h"
 #include "WWSaveLoad/persistfactory.h"
 #include "SoundChunkIDs.h"
 #include "Utils.h"

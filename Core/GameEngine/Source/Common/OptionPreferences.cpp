@@ -67,36 +67,36 @@ Bool OptionPreferences::loadFromIniFile()
 	return load("Options.ini");
 }
 
-WW3D::MultiSampleModeEnum OptionPreferences::getAntiAliasing() const
+UnsignedInt OptionPreferences::getAntiAliasing() const
 {
 	OptionPreferences::const_iterator it = find("AntiAliasing");
 	if (it == end())
-		return WW3D::MULTISAMPLE_MODE_NONE;
+		return 0;
 
-	WW3D::MultiSampleModeEnum level = (WW3D::MultiSampleModeEnum)atoi(it->second.str());
-	level = clamp(WW3D::MULTISAMPLE_MODE_NONE, level, WW3D::MULTISAMPLE_MODE_8X);
+	Int level = atoi(it->second.str());
+	level = clamp(0, level, 8);
 	level = highestBit(level);
 
 	return level;
 }
 
-TextureFilterClass::TextureFilterMode OptionPreferences::getTextureFilterMode() const
+Graphics::TextureSamplingMode OptionPreferences::getTextureFilterMode() const
 {
 	OptionPreferences::const_iterator it = find("TextureFilter");
 	if (it == end())
-		return TextureFilterClass::TEXTURE_FILTER_BILINEAR;
+		return Graphics::TextureSamplingMode::Bilinear;
 
-	return TextureFilterClass::getTextureFilterMode(it->second.str());
+	return Graphics::Parse_Texture_Sampling_Mode(it->second.str());
 }
 
-TextureFilterClass::AnisotropicFilterMode OptionPreferences::getTextureAnisotropyLevel() const
+int OptionPreferences::getTextureAnisotropyLevel() const
 {
 	OptionPreferences::const_iterator it = find("AnisotropyLevel");
 	if (it == end())
-		return TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X;
+		return 2;
 
-	TextureFilterClass::AnisotropicFilterMode level = (TextureFilterClass::AnisotropicFilterMode)atoi(it->second.str());
-	level = clamp(TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X, level, TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_16X);
+	int level = (int)atoi(it->second.str());
+	level = clamp(2, level, 16);
 	level = highestBit(level);
 
 	return level;

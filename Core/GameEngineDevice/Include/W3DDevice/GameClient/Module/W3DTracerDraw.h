@@ -29,9 +29,11 @@
 
 #pragma once
 
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
-#include "WW3D2/line3d.h"
+
+class W3DTracerRenderObject;
 
 //-------------------------------------------------------------------------------------------------
 /** W3D tracer draw */
@@ -61,8 +63,9 @@ public:
 	virtual const TracerDrawInterface* getTracerDrawInterface() const override { return this; }
 
 protected:
+	void createTracer(const Matrix3D& transform);
 
-	Line3DClass *m_theTracer;			///< the tracer render object in the W3D scene
+	W3DTracerRenderObject *m_theTracer;		///< the tracer render object in the W3D scene
 	Real m_length;								///< length of tracer
 	Real m_width;									///< width of tracer
 	RGBColor m_color;							///< color of tracer

@@ -27,8 +27,6 @@
 #include "Common/BezierSegment.h"
 #include "Common/BezFwdIterator.h"
 
-#include <d3dx9math.h>
-
 //-------------------------------------------------------------------------------------------------
 BezierSegment::BezierSegment()
 {
@@ -102,18 +100,29 @@ void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D *outResult) const
 	if (!outResult)
 		return;
 
-	D3DXVECTOR4	tVec(tValue * tValue * tValue, tValue * tValue, tValue, 1);
+	// Evaluate the cubic in Bernstein form. This is the same curve as the
+	// original basis-matrix implementation, but keeps this general engine
+	// utility independent of a rendering API.
+	const Real inverse_t = 1.0f - tValue;
+	const Real inverse_t2 = inverse_t * inverse_t;
+	const Real t2 = tValue * tValue;
+	const Real weight0 = inverse_t2 * inverse_t;
+	const Real weight1 = 3.0f * inverse_t2 * tValue;
+	const Real weight2 = 3.0f * inverse_t * t2;
+	const Real weight3 = t2 * tValue;
 
-	D3DXVECTOR4 xCoords(m_controlPoints[0].x, m_controlPoints[1].x, m_controlPoints[2].x, m_controlPoints[3].x);
-	D3DXVECTOR4 yCoords(m_controlPoints[0].y, m_controlPoints[1].y, m_controlPoints[2].y, m_controlPoints[3].y);
-	D3DXVECTOR4 zCoords(m_controlPoints[0].z, m_controlPoints[1].z, m_controlPoints[2].z, m_controlPoints[3].z);
-
-	D3DXVECTOR4 tResult;
-	D3DXVec4Transform(&tResult, &tVec, &BezierSegment::s_bezBasisMatrix);
-
-	outResult->x = D3DXVec4Dot(&xCoords, &tResult);
-	outResult->y = D3DXVec4Dot(&yCoords, &tResult);
-	outResult->z = D3DXVec4Dot(&zCoords, &tResult);
+	outResult->x = weight0 * m_controlPoints[0].x +
+		weight1 * m_controlPoints[1].x +
+		weight2 * m_controlPoints[2].x +
+		weight3 * m_controlPoints[3].x;
+	outResult->y = weight0 * m_controlPoints[0].y +
+		weight1 * m_controlPoints[1].y +
+		weight2 * m_controlPoints[2].y +
+		weight3 * m_controlPoints[3].y;
+	outResult->z = weight0 * m_controlPoints[0].z +
+		weight1 * m_controlPoints[1].z +
+		weight2 * m_controlPoints[2].z +
+		weight3 * m_controlPoints[3].z;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -236,11 +245,3 @@ void BezierSegment::splitSegmentAtT(Real tValue, BezierSegment &outSeg1, BezierS
 	outSeg2.m_controlPoints[3] = m_controlPoints[3];
 }
 
-//-------------------------------------------------------------------------------------------------
-// The Basis Matrix for a bezier segment
-const D3DXMATRIX BezierSegment::s_bezBasisMatrix(
-	-1.0f,  3.0f, -3.0f,  1.0f,
-	 3.0f, -6.0f,  3.0f,  0.0f,
-	-3.0f,  3.0f,  0.0f,  0.0f,
-	 1.0f,  0.0f,  0.0f,  0.0f
-);

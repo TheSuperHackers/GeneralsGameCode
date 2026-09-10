@@ -24,13 +24,12 @@
 
 #pragma once
 
+#include <array>
+#include <span>
+import Graphics.Scene.Surfaces.Renderer;
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+import Graphics.Materials.State;
 #include "Lib/BaseType.h"
 
 #define MAX_TRACK_EDGE_COUNT	100	//maximum number of edges or divisions in track mark
@@ -44,7 +43,7 @@ class Drawable;
 /**
 This render object handles drawing tracks left by objects moving on the terrain.
 */
-class TerrainTracksRenderObjClass : public RenderObjClass
+class TerrainTracksRenderObjClass : public W3DRenderObject
 {
 	W3DMPO_CODE(TerrainTracksRenderObjClass)
 
@@ -58,9 +57,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const override;
+	virtual W3DRenderObject *	Clone() const override;
 	virtual int						Class_ID() const override;
-	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					Render(W3DRenderContext & rinfo) override;
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 
@@ -72,7 +71,7 @@ public:
 	void setOwnerDrawable(const Drawable *owner) {m_ownerDrawable = owner;}
 
 protected:
-	TextureClass *m_stageZeroTexture;	///<primary texture
+	W3DTextureHandle *m_stageZeroTexture;	///<primary texture
 	SphereClass	m_boundingSphere;		///<bounding sphere of TerrainTracks
 	AABoxClass	m_boundingBox;			///<bounding box of TerrainTracks
 	Int			m_activeEdgeCount;			///<number of active edges in segment list
@@ -116,30 +115,27 @@ public:
 	TerrainTracksRenderObjClassSystem();
 	~TerrainTracksRenderObjClassSystem();
 
-	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	void ReleaseResources();	///< Release all dx9 resources so the device can be reset.
 	void ReAcquireResources();  ///< Reacquire all resources after device reset.
 
 	void setDetail();
 
-	void flush ();	///<draw all tracks that were requested for rendering.
+	void flush (W3DCamera& camera);	///<draw all tracks that were requested for rendering.
 	void update();	///<update the state of all edges (fade alpha, remove old, etc.)
 
-	void init( SceneClass *TerrainTracksScene);	///< pre-allocate track objects
+	void init( W3DScene *TerrainTracksScene);	///< pre-allocate track objects
 	void shutdown();		///< release all pre-allocated track objects, called by destructor
 	void Reset();	///<empties the system, ready for a new scene.
 
-	TerrainTracksRenderObjClass *bindTrack(RenderObjClass *renderObject, Real length, const Char *texturename);	///<track object to be controlled by owner
+	TerrainTracksRenderObjClass *bindTrack(W3DRenderObject *renderObject, Real length, const Char *texturename);	///<track object to be controlled by owner
 	void unbindTrack( TerrainTracksRenderObjClass *mod );	///<releases control of track object
 
 protected:
-	DX8VertexBufferClass		*m_vertexBuffer;	///<vertex buffer used to draw all tracks
-	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in maximum length track
-	VertexMaterialClass	  	  *m_vertexMaterialClass;	///< vertex lighting material
-	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
+	Graphics::SurfaceMeshHandle m_graphicsMesh;
 
 	TerrainTracksRenderObjClass *m_usedModules;	///<active objects being rendered in the scene
 	TerrainTracksRenderObjClass *m_freeModules;	//<unused modules that are free to use again
-	SceneClass	*m_TerrainTracksScene;		///<scene that will contain all the TerrainTracks
+	W3DScene	*m_TerrainTracksScene;		///<scene that will contain all the TerrainTracks
 
 	Int	m_edgesToFlush;			///< number of edges to flush on next render.
 

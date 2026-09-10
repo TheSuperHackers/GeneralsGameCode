@@ -18,14 +18,12 @@
 
 #pragma once
 
-// Requires <windows.h> to be included first for the Interlocked intrinsics.
-#include "Utility/interlocked_adapter.h"
+#include <atomic>
+
 #include "Utility/CppMacros.h"
 
-// Lock-free intrusive queue for multiple producer threads and a single consumer thread,
-// using the same algorithm as the Win32 InterlockedPushEntrySList/InterlockedFlushSList
-// pair. The node type T must have a T* next member, which the queue owns while the node
-// is queued.
+	// Lock-free intrusive queue for multiple producer threads and a single consumer thread.
+	// The node type T must have a T* next member, which the queue owns while the node is queued.
 template <typename T>
 class MPSCIntrusiveQueue
 {
@@ -43,11 +41,11 @@ public:
 		T* head;
 		do
 		{
-			head = m_head;
+			head = m_head.load(std::memory_order_relaxed);
 			node->next = head;
 		}
-		while (InterlockedCompareExchangePointer(
-			reinterpret_cast<void* volatile*>(&m_head), node, head) != head);
+		while (!m_head.compare_exchange_weak(head, node,
+			std::memory_order_release, std::memory_order_relaxed));
 	}
 
 	// Detaches all nodes and returns them linked in push order, or null if the queue is
@@ -56,8 +54,7 @@ public:
 	// suffer ABA.
 	T* Flush()
 	{
-		T* list = static_cast<T*>(InterlockedExchangePointer(
-			reinterpret_cast<void* volatile*>(&m_head), nullptr));
+		T* list = m_head.exchange(nullptr, std::memory_order_acquire);
 
 		// The detached chain is in last-in-first-out order, so reverse it.
 		T* reversed = nullptr;
@@ -75,5 +72,5 @@ private:
 	MPSCIntrusiveQueue(const MPSCIntrusiveQueue&) CPP_11(= delete);
 	MPSCIntrusiveQueue& operator=(const MPSCIntrusiveQueue&) CPP_11(= delete);
 
-	T* volatile m_head;
+	std::atomic<T*> m_head;
 };

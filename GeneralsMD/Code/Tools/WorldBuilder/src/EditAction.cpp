@@ -446,7 +446,7 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
 /** Not actually a timer - just used to send a delayed message to self because rich
 edit control is stupid.  jba. */
-void EditAction::OnTimer(UINT nIDEvent)
+void EditAction::OnTimer(UINT_PTR nIDEvent)
 {
 	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	formatScriptActionText(m_curEditParameter);

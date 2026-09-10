@@ -30,7 +30,7 @@
 
 //#define DO_8STAGE_TERRAIN_PASS		//optimized terrain rendering for Nvidia based cards
 
-#include "WW3D2/texture.h"
+#include "W3DDevice/GameClient/W3DTextureHandle.h"
 #include "WWMath/matrix3d.h"
 #include "Common/AsciiString.h"
 #include "W3DDevice/GameClient/TileData.h"
@@ -43,11 +43,18 @@ class WorldHeightMap;
 /** ***********************************************************************
 **                             TerrainTextureClass
 ***************************************************************************/
-class TerrainTextureClass : public TextureClass
+class TerrainTextureClass : public W3DTextureHandle
 {
 	W3DMPO_CODE(TerrainTextureClass)
 protected:
-	virtual void Apply(unsigned int stage) override;
+	virtual bool Recreate_Procedural_Texture() override;
+
+	WorldHeightMap *m_sourceHeightMap;
+	bool m_isFlatTexture;
+	Int m_flatXCell;
+	Int m_flatYCell;
+	Int m_flatCellWidth;
+	Int m_flatPixelsPerCell;
 
 public:
 		/// Create texture for a height map.
@@ -60,18 +67,22 @@ public:
 public:
 	int update(WorldHeightMap *htMap); ///< Sets the pixels, and returns the actual height of the texture.
 	Bool updateFlat(WorldHeightMap *htMap, Int xCell, Int yCell, Int cellWidth, Int pixelsPerCell); ///< Sets the pixels.
-	void setLOD(Int LOD);
+	void Clear_Source_Height_Map() { m_sourceHeightMap = nullptr; }
 };
 
 
-class AlphaTerrainTextureClass : public TextureClass
+class AlphaTerrainTextureClass : public W3DTextureHandle
 {
 	W3DMPO_CODE(AlphaTerrainTextureClass)
 protected:
-		virtual void Apply(unsigned int stage) override;
+		virtual bool Recreate_Procedural_Texture() override;
+
+	W3DTextureHandle *m_baseTexture;
+
 public:
 		// Create texture for a height map.
-		AlphaTerrainTextureClass(TextureClass *pBaseTex );
+		AlphaTerrainTextureClass(W3DTextureHandle *pBaseTex );
+		virtual ~AlphaTerrainTextureClass() override;
 
 		// just use default destructor. ~TerrainTextureClass();
 
@@ -80,12 +91,14 @@ public:
 /** ***********************************************************************
 **                             AlphaEdgeTextureClass
 ***************************************************************************/
-class AlphaEdgeTextureClass : public TextureClass
+class AlphaEdgeTextureClass : public W3DTextureHandle
 {
 	W3DMPO_CODE(AlphaEdgeTextureClass)
 protected:
-	virtual void Apply(unsigned int stage) override;
+	virtual bool Recreate_Procedural_Texture() override;
 	int update256(WorldHeightMap *htMap);///< Sets the pixels, and returns the actual height of the texture.
+
+	WorldHeightMap *m_sourceHeightMap;
 
 public:
 		/// Create texture for a height map.
@@ -94,14 +107,14 @@ public:
 		// just use default destructor. ~TerrainTextureClass();
 public:
 	int update(WorldHeightMap *htMap); ///< Sets the pixels, and returns the actual height of the texture.
+	void Clear_Source_Height_Map() { m_sourceHeightMap = nullptr; }
 
 };
 
-class LightMapTerrainTextureClass : public TextureClass
+class LightMapTerrainTextureClass : public W3DTextureHandle
 {
 	W3DMPO_CODE(LightMapTerrainTextureClass)
 protected:
-		virtual void Apply(unsigned int stage) override;
 
 public:
 		// Create texture from a height map.
@@ -110,11 +123,10 @@ public:
 		// just use default destructor.
 };
 
-class ScorchTextureClass : public TextureClass
+class ScorchTextureClass : public W3DTextureHandle
 {
 	W3DMPO_CODE(ScorchTextureClass)
 protected:
-		virtual void Apply(unsigned int stage) override;
 
 public:
 		// Create texture.
@@ -123,11 +135,10 @@ public:
 		// just use default destructor. ~ScorchTextureClass();
 };
 
-class CloudMapTerrainTextureClass : public TextureClass
+class CloudMapTerrainTextureClass : public W3DTextureHandle
 {
 	W3DMPO_CODE(CloudMapTerrainTextureClass)
 protected:
-		virtual void Apply(unsigned int stage) override;
 
 protected:
 		float m_xSlidePerSecond ;	 ///< How far the clouds move per second.
@@ -143,5 +154,7 @@ public:
 
 		// just use default destructor. ~TerrainTextureClass();
 
-		void restore();
+		void Update_Animation(float frame_seconds);
+		float Get_X_Offset() const { return m_xOffset; }
+		float Get_Y_Offset() const { return m_yOffset; }
 };

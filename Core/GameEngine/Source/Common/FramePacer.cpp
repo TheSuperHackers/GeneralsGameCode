@@ -35,11 +35,11 @@ FramePacer::FramePacer()
 	// Set the time slice size to 1 ms.
 	timeBeginPeriod(1);
 
-	m_maxFPS = BaseFps;
+	m_maxFPS = RenderFpsPreset::UncappedFpsValue;
 	m_logicTimeScaleFPS = LOGICFRAMES_PER_SECOND;
 	m_updateTime = 1.0f / (Real)BaseFps; // initialized to something to avoid division by zero on first use
 	m_enableFpsLimit = FALSE;
-	m_enableLogicTimeScale = FALSE;
+	m_enableLogicTimeScale = TRUE;
 	m_isTimeFrozen = FALSE;
 	m_isGameHalted = FALSE;
 }

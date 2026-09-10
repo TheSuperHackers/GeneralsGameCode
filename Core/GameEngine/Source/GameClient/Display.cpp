@@ -30,7 +30,6 @@
 
 #include "GameClient/Display.h"
 #include "GameClient/Mouse.h"
-#include "GameClient/VideoPlayer.h"
 #include "GameClient/DisplayStringManager.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GlobalLanguage.h"
@@ -48,8 +47,6 @@ Display::Display()
 	m_height = 0;
 	m_bitDepth = 0;
 	m_windowed = FALSE;
-	m_videoBuffer = nullptr;
-	m_videoStream = nullptr;
 	m_debugDisplayCallback = nullptr;
 	m_debugDisplayUserData = nullptr;
 	m_debugDisplay = nullptr;
@@ -202,32 +199,7 @@ void Display::setHeight( UnsignedInt height )
 
 void Display::playMovie( AsciiString movieName)
 {
-	if (TheGlobalData->m_headless)
-		return;
-
-	stopMovie();
-
-
-
-	m_videoStream = TheVideoPlayer->open( movieName );
-
-	if ( m_videoStream == nullptr )
-	{
-		return;
-	}
-
-	m_currentlyPlayingMovie = movieName;
-
-	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
-	{
-		stopMovie();
-		return;
-	}
-
+	(void)movieName;
 }
 
 //============================================================================
@@ -236,19 +208,7 @@ void Display::playMovie( AsciiString movieName)
 
 void Display::stopMovie()
 {
-	delete m_videoBuffer;
-	m_videoBuffer = nullptr;
-
-	if ( m_videoStream )
-	{
-		m_videoStream->close();
-		m_videoStream = nullptr;
-	}
-
-	if (!m_currentlyPlayingMovie.isEmpty()) {
-		//TheScriptEngine->notifyOfCompletedVideo(m_currentlyPlayingMovie); // Removing this sync-error cause MDC
-		m_currentlyPlayingMovie = AsciiString::TheEmptyString;
-	}
+	m_currentlyPlayingMovie = AsciiString::TheEmptyString;
 }
 
 //============================================================================
@@ -257,22 +217,6 @@ void Display::stopMovie()
 
 void Display::update()
 {
-	if ( m_videoStream && m_videoBuffer )
-	{
-		if ( m_videoStream->isFrameReady())
-		{
-			m_videoStream->frameDecompress();
-			m_videoStream->frameRender( m_videoBuffer );
-			if( m_videoStream->frameIndex() != m_videoStream->frameCount() - 1)
-			{
-				m_videoStream->frameNext();
-			}
-			else
-			{
-				stopMovie();
-			}
-		}
-	}
 }
 
 //============================================================================
@@ -297,7 +241,7 @@ void Display::reset()
 
 Bool Display::isMoviePlaying()
 {
-	return m_videoStream != nullptr && m_videoBuffer != nullptr;
+	return FALSE;
 }
 
 //============================================================================

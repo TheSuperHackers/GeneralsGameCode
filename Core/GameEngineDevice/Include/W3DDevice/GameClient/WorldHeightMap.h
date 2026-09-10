@@ -85,7 +85,7 @@ typedef struct {
 #define NUM_TEXTURE_CLASSES 256
 
 
-class TextureClass;
+class W3DTextureHandle;
 class ChunkInputStream;
 class InputStream;
 class OutputStream;
@@ -281,10 +281,9 @@ public:  // height map info.
 	TXTextureClass getTextureFromIndex( Int textureIndex );
 
 public:  // tile and texture info.
-	void setTextureLOD(Int lod);	///< set maximum lod level sent to the hardware.
-	TextureClass *getTerrainTexture();  //< generates if needed and returns the terrain texture
-	TextureClass *getAlphaTerrainTexture(); //< generates if needed and returns alpha terrain texture
-	TextureClass *getEdgeTerrainTexture(); //< generates if needed and returns blend edge texture
+	W3DTextureHandle *getTerrainTexture();  //< generates if needed and returns the terrain texture
+	W3DTextureHandle *getAlphaTerrainTexture(); //< generates if needed and returns alpha terrain texture
+	W3DTextureHandle *getEdgeTerrainTexture(); //< generates if needed and returns blend edge texture
 	/// UV mapping data for a cell to map into the terrain texture.  Returns true if the textures had to be stretched for cliffs.
 	Bool getUVData(Int xIndex, Int yIndex, float U[4], float V[4]);
 	Bool getFlipState(Int xIndex, Int yIndex) const;

@@ -1,3 +1,4 @@
+import Graphics.Resources.Textures.Quality;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -74,8 +75,8 @@
 #include "WWDownload/Registry.h"
 #include "GameClient/MessageBox.h"
 
-#include "WW3D2/ww3d.h"
-#include "WW3D2/texturefilter.h"
+
+import Graphics.Resources.Textures.Sampling;
 
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
@@ -525,9 +526,9 @@ static void saveOptions()
   GadgetComboBoxGetSelectedPos(comboBoxAntiAliasing, &index);
   if( index >= 0 )
   {
-		Int mode = WW3D::MULTISAMPLE_MODE_NONE;
+		Int mode = 0;
 
-		// TheSuperHackers @info We are converting comboBox entry position to MultiSampleModeEnum values
+		// TheSuperHackers @info We are converting comboBox entry position to sample-count values
 		index = clamp((int)OptionPreferences::AntiAliasingMode_OFF, index, (int)OptionPreferences::AntiAliasingMode_MSAA_8X);
 		mode = (index > 0) ? 1 << index : 0;
 
@@ -539,25 +540,28 @@ static void saveOptions()
 
 	//-------------------------------------------------------------------------------------------------
 	// texture filter mode
-	val = pref->getTextureFilterMode();
+	// Save the applied preset's values instead of restoring stale preferences.
+	val = TheWritableGlobalData->m_textureFilteringMode;
 	if (val >= 0)
 	{
-		val = clamp((int)TextureFilterClass::TEXTURE_FILTER_NONE, val, (int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC);
+		val = clamp((int)Graphics::TextureSamplingMode::None, val, (int)Graphics::TextureSamplingMode::Anisotropic);
 
 		TheWritableGlobalData->m_textureFilteringMode = val;
+		Graphics::Set_Texture_Sampling_Mode(val);
 		AsciiString prefString;
-		prefString = TextureFilterClass::TextureFilterModeString[val];
+		prefString = Graphics::TextureSamplingModeNames[val];
 		(*pref)["TextureFilter"] = prefString;
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	// anisotropy level
-	val = pref->getTextureAnisotropyLevel();
+	val = TheWritableGlobalData->m_textureAnisotropyLevel;
 	if (val >= 0)
 	{
-		val = clamp((int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X, val, (int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_16X);
+		val = clamp((int)2, val, (int)16);
 
 		TheWritableGlobalData->m_textureAnisotropyLevel = val;
+		Graphics::Set_Texture_Anisotropy(val);
 		AsciiString prefString;
 		prefString.format("%d", val);
 		(*pref)["AnisotropyLevel"] = prefString;
@@ -1178,16 +1182,16 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	// TheSuperHackers @info We are converting from human readable value to comboBox entry position
 	val = highestBit(val);
 
-	if (val == WW3D::MULTISAMPLE_MODE_NONE)
+	if (val == 0)
 		pos = OptionPreferences::AntiAliasingMode_OFF;
-	else if (val == WW3D::MULTISAMPLE_MODE_2X)
+	else if (val == 2)
 		pos = OptionPreferences::AntiAliasingMode_MSAA_2X;
-	else if (val == WW3D::MULTISAMPLE_MODE_4X)
+	else if (val == 4)
 		pos = OptionPreferences::AntiAliasingMode_MSAA_4X;
-	else if (val == WW3D::MULTISAMPLE_MODE_8X)
+	else if (val == 8)
 		pos = OptionPreferences::AntiAliasingMode_MSAA_8X;
 
-	if (val < 0 || val > WW3D::MULTISAMPLE_MODE_8X)
+	if (val < 0 || val > 8)
 	{
 		TheWritableGlobalData->m_antiAliasLevel = pos = 0;
 	}
@@ -1261,7 +1265,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	GadgetComboBoxSetSelectedPos(comboBoxDetail, (Int)TheGameLODManager->getStaticLODLevel());
 
-	GadgetSliderSetPosition( sliderTextureResolution, 2-WW3D::Get_Texture_Reduction());
+	GadgetSliderSetPosition( sliderTextureResolution, 2-Graphics::Get_Texture_Quality_Settings().mip_reduction);
 
 	GadgetCheckBoxSetChecked( check3DShadows, TheGlobalData->m_useShadowVolumes);
 

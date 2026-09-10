@@ -21,6 +21,7 @@
 #include "Lib/BaseType.h"
 #include "XAudio2AudioSystem.h"
 #include "XAudio2Voice.h"
+#include "XAudio2PcmStream.h"
 #include "XAudio2Decoder.h"
 #include "AudioFileProvider.h"
 
@@ -481,6 +482,15 @@ float XAudio2AudioSystem::getFileDurationMs(const char *filename) const
 	return XAudio2Decoder::getDurationMs(filename, getFileProvider());
 }
 
+std::unique_ptr<AudioStream> XAudio2AudioSystem::createAudioStream(AudioBus bus)
+{
+	if (m_xaudio == nullptr)
+		return nullptr;
+
+	XAudio2Mastering::Bus mastering_bus = audioBusToMasteringBus(bus, false);
+	return std::make_unique<XAudio2PcmStream>(m_xaudio, m_mastering.getSubmixVoice(mastering_bus));
+}
+
 void XAudio2AudioSystem::setBusVolume(AudioBus bus, float volume)
 {
 	m_busVolume[static_cast<int>(bus)] = volume;
@@ -610,31 +620,6 @@ void XAudio2AudioSystem::updateDirectPlayingSounds()
 
 		++it;
 	}
-}
-
-// ─── Video stream ───────────────────────────────────────────────
-
-#include "XAudio2VideoStream.h"
-
-AudioVideoStream *XAudio2AudioSystem::createVideoStream()
-{
-	if (!m_xaudio)
-		return nullptr;
-
-	// Route video audio through the Speech submix voice
-	IXAudio2SubmixVoice *speechSubmix = m_mastering.getSubmixVoice(XAudio2Mastering::BUS_SPEECH);
-	auto *stream = new XAudio2VideoStream(m_xaudio, speechSubmix);
-	if (!stream->init())
-	{
-		delete stream;
-		return nullptr;
-	}
-	return stream;
-}
-
-void XAudio2AudioSystem::releaseVideoStream(AudioVideoStream *stream)
-{
-	delete stream;
 }
 
 #endif // _WIN32

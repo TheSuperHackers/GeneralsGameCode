@@ -1,3 +1,4 @@
+
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -34,12 +35,12 @@
 #include "Common/GameMemory.h"
 #include "GameClient/View.h"
 #include "GameClient/Display.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/sortingrenderer.h"
+#include "W3DDevice/GameClient/W3DTextureHandle.h"
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
+
+#include <cstddef>
+#include <span>
 
 
 SmudgeManager *TheSmudgeManager=nullptr;
@@ -66,8 +67,6 @@ void W3DSmudgeManager::reset ()
 
 void W3DSmudgeManager::ReleaseResources()
 {
-	REF_PTR_RELEASE(m_backgroundTexture);
-	REF_PTR_RELEASE(m_indexBuffer);
 }
 
 
@@ -78,479 +77,34 @@ static_assert(SMUDGE_DRAW_SIZE * 5 < 0x10000, "Vertex index exceeds 16-bit limit
 
 void W3DSmudgeManager::ReAcquireResources()
 {
-	ReleaseResources();
-
-	SurfaceClass *surface=DX8Wrapper::_Get_DX8_Back_Buffer();
-	SurfaceClass::SurfaceDescription surface_desc;
-
-	surface->Get_Description(surface_desc);
-	REF_PTR_RELEASE(surface);
-
-	m_backgroundTexture = MSGNEW("TextureClass") TextureClass(surface_desc.Width,surface_desc.Height,surface_desc.Format,MIP_LEVELS_1,TextureClass::POOL_DEFAULT, true);
-
-	m_backBufferWidth = surface_desc.Width;
-	m_backBufferHeight = surface_desc.Height;
-
-	m_indexBuffer=NEW_REF(DX8IndexBufferClass,(SMUDGE_DRAW_SIZE*4*3));	//allocate 4 triangles per smudge, each with 3 indices.
-
-	// Fill up the IB with static vertex indices that will be used for all smudges.
-	{
-		DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
-		UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-		//quad of 4 triangles:
-		//	0-----3
-		//  |\   /|
-		//  |  4  |
-		//	|/   \|
-		//  1-----2
-		Int vbCount=0;
-		for (Int i=0; i<SMUDGE_DRAW_SIZE; i++)
-		{
-			//Top
-			ib[0]=vbCount;
-			ib[1]=vbCount+4;
-			ib[2]=vbCount+3;
-			//Right
-			ib[3]=vbCount+3;
-			ib[4]=vbCount+4;
-			ib[5]=vbCount+2;
-			//Bottom
-			ib[6]=vbCount+2;
-			ib[7]=vbCount+4;
-			ib[8]=vbCount+1;
-			//Left
-			ib[9]=vbCount+1;
-			ib[10]=vbCount+4;
-			ib[11]=vbCount+0;
-
-			vbCount += 5;
-			ib+=12;
-		}
-	}
 }
 
-/*Copies a portion of the current render target into a specified buffer*/
-Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int height)
+std::size_t W3DSmudgeManager::Collect_Graphics_Smudges(std::span<float> position_x, std::span<float> position_y,
+	std::span<float> position_z, std::span<float> offset_x, std::span<float> offset_y,
+	std::span<float> sizes, std::span<float> opacities) const noexcept
 {
- 	IDirect3DSurface9 *surface=nullptr;	///<previous render target
- 	IDirect3DSurface9 *tempSurface=nullptr;
-	Int result = 0;
-	Int copySize = 0;
-	HRESULT hr = S_OK;
+	const std::size_t capacity = position_x.size();
+	if (position_y.size() != capacity || position_z.size() != capacity || offset_x.size() != capacity
+		|| offset_y.size() != capacity || sizes.size() != capacity || opacities.size() != capacity)
+		return 0;
 
- 	LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
-
-	if (!m_pDev)
-		goto error;
-
- 	m_pDev->GetRenderTarget(0, &surface);
-
-	if (!surface)
-		goto error;
-
- 	D3DSURFACE_DESC desc;
-
- 	surface->GetDesc(&desc);
-
-	RECT srcRect;
-	srcRect.left=oX;
-	srcRect.top=oY;
-	srcRect.right=oX+width;
-	srcRect.bottom=oY+height;
-
-	POINT dstPoint;
-	dstPoint.x=0;
-	dstPoint.y=0;
-
- 	hr=m_pDev->CreateOffscreenPlainSurface(width, height, desc.Format, D3DPOOL_SCRATCH, &tempSurface, nullptr);
-
-	if (hr != S_OK)
-		goto error;
-
- 	hr=m_pDev->UpdateSurface(surface, &srcRect, tempSurface, &dstPoint);
-
-	if (hr != S_OK)
-		goto error;
-
- 	D3DLOCKED_RECT lrect;
-
- 	hr=tempSurface->LockRect(&lrect,nullptr,D3DLOCK_READONLY);
-
-	if (hr != S_OK)
-		goto error;
-
- 	tempSurface->GetDesc(&desc);
-
-	copySize = lrect.Pitch * height;
-	if (copySize < bufSize)
-		bufSize = copySize;
-
-	memcpy(buf,lrect.pBits,bufSize);
-	result = bufSize;
-
-	tempSurface->UnlockRect();
-
-error:
-	if (surface)
-		surface->Release();
-	if (tempSurface)
-		tempSurface->Release();
-
-	return result;
-}
-
-#define UNIQUE_COLOR	(0x12345678)
-#define BLOCK_SIZE	(8)
-
-Bool W3DSmudgeManager::testHardwareSupport()
-{
-	if (m_hardwareSupportStatus == SMUDGE_SUPPORT_UNKNOWN)
-	{	//we have not done the test yet.
-
-		IDirect3DTexture9 *backTexture=W3DShaderManager::getRenderTexture();
-		if (!backTexture)
-		{	//do trivial test first to see if render target exists.
-			m_hardwareSupportStatus = SMUDGE_SUPPORT_NO;
-			return FALSE;
-		}
-
-		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
-		REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-
-		ShaderClass shader=ShaderClass::_PresetOpaqueShader;
-		shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
-		shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
-		DX8Wrapper::Set_Shader(shader);
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
-
-		struct _TRANS_LIT_TEX_VERTEX {
-			Vector4 p;
-			DWORD color;   // diffuse color
-			float	u;
-			float	v;
-		} v[4];
-
-		//bottom right
-		v[0].p = Vector4( BLOCK_SIZE-0.5f, BLOCK_SIZE-0.5f, 0.0f, 1.0f );
-		v[0].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();
-		v[0].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
-		//top right
-		v[1].p = Vector4( BLOCK_SIZE-0.5f, 0-0.5f, 0.0f, 1.0f );
-		v[1].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();
-		v[1].v = 0;
-		//bottom left
-		v[2].p = Vector4(  0-0.5f, BLOCK_SIZE-0.5f, 0.0f, 1.0f );
-		v[2].u = 0;
-		v[2].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
-		//top left
-		v[3].p = Vector4(  0-0.5f,  0-0.5f, 0.0f, 1.0f );
-		v[3].u = 0;
-		v[3].v = 0;
-
-		v[0].color = UNIQUE_COLOR;
-		v[1].color = UNIQUE_COLOR;
-		v[2].color = UNIQUE_COLOR;
-		v[3].color = UNIQUE_COLOR;
-
-		LPDIRECT3DDEVICE9 pDev=DX8Wrapper::_Get_D3D_Device8();
-
-		//draw polygons like this is very inefficient but for only 2 triangles, it's
-		//not worth bothering with index/vertex buffers.
-		pDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
-
-		pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
-
-		DWORD refData[BLOCK_SIZE*BLOCK_SIZE];
-		memset(refData,0,sizeof(refData));
-		Int bufSize=copyRect((unsigned char *)refData,sizeof(refData),0,0,BLOCK_SIZE,BLOCK_SIZE);	//copy area we just rendered using solid color
-		if (!bufSize)
-		{
-			m_hardwareSupportStatus = SMUDGE_SUPPORT_NO;
-			return FALSE;
-		}
-
-		DX8Wrapper::Set_DX8_Texture(0,backTexture);
-
-		DWORD testData[BLOCK_SIZE*BLOCK_SIZE];
-		memset(testData,0xff,sizeof(testData));
-
-		v[0].color = 0xffffffff;
-		v[1].color = 0xffffffff;
-		v[2].color = 0xffffffff;
-		v[3].color = 0xffffffff;
-
-		pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
-		bufSize=copyRect((unsigned char *)testData,sizeof(testData),0,0,BLOCK_SIZE,BLOCK_SIZE);
-
-		if (!bufSize)
-		{
-			m_hardwareSupportStatus = SMUDGE_SUPPORT_NO;
-			return FALSE;
-		}
-
-		//compare the 2 buffers to see if they match.
-		if (memcmp(testData,refData,bufSize) == 0)
-		{
-			m_hardwareSupportStatus = SMUDGE_SUPPORT_YES;
-			return TRUE;
-		}
-		m_hardwareSupportStatus = SMUDGE_SUPPORT_NO;
-	}
-
-	return (SMUDGE_SUPPORT_YES == m_hardwareSupportStatus);
-}
-
-void W3DSmudgeManager::render(RenderInfoClass &rinfo)
-{
-	//Verify that the card supports the effect.
-	if (!testHardwareSupport())
-		return;
-
-	// TheSuperHackers @performance stephanmeesters 14/08/2026 Early return when we have no smudge sets
-	// or if the global smudge set is the only set and contains no smudges.
-	if (m_usedSmudgeSetList.empty() || (m_usedSmudgeSetList.size() == 1 && m_usedSmudgeSetList.front()->getUsedSmudgeCount() == 0))
-	{
-		m_smudgeCountLastFrame = 0;
-		return;
-	}
-
-	SurfaceClass *backBuffer = DX8Wrapper::_Get_DX8_Back_Buffer();
-
-	if (!backBuffer)
-		return;
-
-	SurfaceClass *background=m_backgroundTexture ? m_backgroundTexture->Get_Surface_Level() : nullptr;
-
-	if (!background)
-	{
-		REF_PTR_RELEASE(backBuffer);
-		return;
-	}
-
-	SurfaceClass::SurfaceDescription surface_desc;
-	backBuffer->Get_Description(surface_desc);
-
-	CameraClass &camera=rinfo.Camera;
-	Vector3 vsVert;
-	Vector4 ssVert;
-	Real uvSpanX,uvSpanY;
-	Vector3 vertex_offsets[4] = {
-		Vector3(-0.5f, 0.5f, 0.0f),
-		Vector3(-0.5f, -0.5f, 0.0f),
-		Vector3(0.5f, -0.5f, 0.0f),
-		Vector3(0.5f, 0.5f, 0.0f)
-	};
-
-#define THE_COLOR (0x00ffeedd)
-
-	UnsignedInt vertexDiffuse[5]={THE_COLOR,THE_COLOR,THE_COLOR,THE_COLOR,THE_COLOR};
-
-	Matrix4x4 proj;
-	Matrix3D view;
-
-	camera.Get_View_Matrix(&view);
-	camera.Get_Projection_Matrix(&proj);
-
-	Real texClampX = (Real)TheTacticalView->getWidth()/(Real)surface_desc.Width;
-	Real texClampY = (Real)TheTacticalView->getHeight()/(Real)surface_desc.Height;
-
-	Real texScaleX = texClampX*0.5f;
-	Real texScaleY = texClampY*0.5f;
-
-	//Do a first pass over the smudges to determine how many are visible
-	//and to fill in their world-space positions and screen uv coordinates.
-	//TODO: Optimize out this extra pass!
-	//TODO: Find size of screen rectangle that actually needs copying.
-
-	SmudgeSetDeque::iterator setIt=m_usedSmudgeSetList.begin();	//first set that didn't fit into render batch.
-	Int count = 0;
-
-	// make sure background particles have finished drawing.
-	SortingRendererClass::Flush();	//draw sorted translucent polys like particles.
-
-	for(; setIt != m_usedSmudgeSetList.end(); ++setIt)
-	{
-		SmudgeSet* set=*setIt;
-		SmudgeDeque::iterator smudgeIt=set->getUsedSmudgeList().begin();
-
-		for (; smudgeIt != set->getUsedSmudgeList().end(); ++smudgeIt)
-		{
-			Smudge* smudge=*smudgeIt;
-			if (!smudge->m_draw)
+	std::size_t count = 0;
+	for (SmudgeSet *set : m_usedSmudgeSetList) {
+		if (set == nullptr)
+			continue;
+		for (Smudge *smudge : set->getUsedSmudgeList()) {
+			if (smudge == nullptr || !smudge->m_draw || count >= capacity)
 				continue;
-
-			//Get view-space center
-			Matrix3D::Transform_Vector(view,smudge->m_pos,&vsVert);
-
-			//Get 5 view-space vertices
-			Smudge::smudgeVertex *verts=smudge->m_verts;
-
-			//Do center vertex outside 'for' loop since it's different.
-			verts[4].pos = vsVert;
-
-			Vector2 offset = smudge->m_offset;
-
-			for (Int i=0; i<4; i++)
-			{
-				verts[i].pos = vsVert + vertex_offsets[i] * smudge->m_size;
-				//Ge uv coordinates for each vertex
-				ssVert = proj * verts[i].pos;
-				Real oow = 1.0f/ssVert.W;
-				ssVert *= oow;	//returned in camera space which is -1,-1 (bottom-left) to 1,1 (top-right)
-				//convert camera space to uv space: 0,0 (top-left), 1,1 (bottom-right)
-				verts[i].uv.Set((ssVert.X+1.0f)*texScaleX,(1.0f-ssVert.Y)*texScaleY);
-
-				Vector2 &thisUV=verts[i].uv;
-
-				// Zero coordinates that fall outside valid texel bounds
-				if (thisUV.X < 0 || thisUV.X > texClampX)
-					offset.X = 0;
-
-				if (thisUV.Y < 0 || thisUV.Y > texClampY)
-					offset.Y = 0;
-			}
-
-			//Finish center vertex
-			//Ge uv coordinates by interpolating corner uv coordinates and applying desired offset.
-			uvSpanX=verts[3].uv.X - verts[0].uv.X;
-			uvSpanY=verts[1].uv.Y - verts[0].uv.Y;
-			verts[4].uv.X=verts[0].uv.X+uvSpanX*(0.5f+offset.X);
-			verts[4].uv.Y=verts[0].uv.Y+uvSpanY*(0.5f+offset.Y);
-
-			count++;	//increment visible smudge count.
+			position_x[count] = smudge->m_pos.X;
+			position_y[count] = smudge->m_pos.Y;
+			position_z[count] = smudge->m_pos.Z;
+			offset_x[count] = smudge->m_offset.X;
+			offset_y[count] = smudge->m_offset.Y;
+			sizes[count] = smudge->m_size*0.5f;
+			opacities[count] = smudge->m_opacity;
+			++count;
 		}
 	}
-
-	m_smudgeCountLastFrame = count;
-
-	if (!count)
-	{
-		REF_PTR_RELEASE(background);
-		REF_PTR_RELEASE(backBuffer);
-		return;	//nothing to render.
-	}
-
-	//Copy the area of backbuffer occupied by smudges into an alternate buffer.
-	background->Copy(0,0,0,0,surface_desc.Width,surface_desc.Height,backBuffer);
-
-	REF_PTR_RELEASE(background);
-	REF_PTR_RELEASE(backBuffer);
-
-	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
-
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-	//DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueSpriteShader);
-
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
-
-	DX8Wrapper::Set_Texture(0,m_backgroundTexture);
-	//Need these states in case texture is non-power-of-2
-	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSW, D3DTADDRESS_CLAMP);
-	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
-	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
-	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
-	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Apply_Render_State_Changes();
-
-	//Disable reading texture alpha since it's undefined.
-	//DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG1);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_SELECTARG2);
-
-	Int smudgesRemaining=count;
-	setIt=m_usedSmudgeSetList.begin();	//first smudge set that needs rendering.
-	SmudgeDeque::iterator smudgeIt = (*setIt)->getUsedSmudgeList().begin();	//first smudge that needs rendering.
-
-	while (smudgesRemaining)	//keep drawing smudges until we run out.
-	{
-		//Now that we know how many smudges need rendering, allocate vertex buffer space and copy verts.
-		count=smudgesRemaining;
-
-		if (count > SMUDGE_DRAW_SIZE)
-			count = SMUDGE_DRAW_SIZE;
-
-		Int smudgesInRenderBatch=0;
-
-		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,count*5);	//allocate 5 verts per smudge.
-		{
-			DynamicVBAccessClass::WriteLockClass lock(&vb_access);
-			VertexFormatXYZNDUV2* verts=lock.Get_Formatted_Vertex_Array();
-
-			while (setIt != m_usedSmudgeSetList.end())
-			{
-				SmudgeDeque& smudgeList = (*setIt)->getUsedSmudgeList();
-
-				for(; smudgeIt != smudgeList.end(); ++smudgeIt)
-				{
-					Smudge* smudge = *smudgeIt;
-					if (!smudge->m_draw)
-					{
-						continue;
-					}
-
-					Smudge::smudgeVertex *smVerts = smudge->m_verts;
-
-					//Check if we exceeded maximum number of smudges allowed per draw call.
-					if (smudgesInRenderBatch >= count)
-					{
-						goto flushSmudges;
-					}
-
-					//Set center vertex opacity.
-					vertexDiffuse[4] = ((Int)(smudge->m_opacity * 255.0f) << 24) | THE_COLOR;
-
-					for (Int i=0; i<5; i++)
-					{
-						verts->x=smVerts->pos.X;
-						verts->y=smVerts->pos.Y;
-						verts->z=smVerts->pos.Z;
-						verts->nx=0;	//keep AGP write-combining active
-						verts->ny=0;
-						verts->nz=0;
-						verts->diffuse=vertexDiffuse[i];	//set to transparent
-						verts->u1=smVerts->uv.X;
-						verts->v1=smVerts->uv.Y;
-						verts->u2=0;	//keep AGP write-combining active
-						verts->v2=0;
-						verts++;
-						smVerts++;
-					}
-
-					smudgesInRenderBatch++;
-				}
-
-				++setIt;	//advance to next node.
-
-				if (setIt != m_usedSmudgeSetList.end())	//start next batch at beginning of set.
-					smudgeIt = (*setIt)->getUsedSmudgeList().begin();
-			}
-		}
-
-flushSmudges:
-		DX8Wrapper::Set_Vertex_Buffer(vb_access);
-
-		DX8Wrapper::Draw_Triangles(0,smudgesInRenderBatch*4, 0, smudgesInRenderBatch*5);
-
-//Debug Code which draws outline around smudge
-/*		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ALPHABLENDENABLE,FALSE);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG2);
-		DX8Wrapper::Draw_Triangles(	0,smudgesInRenderBatch*4, 0, smudgesInRenderBatch*5);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ALPHABLENDENABLE,TRUE);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG1);
-*/
-		smudgesRemaining -= smudgesInRenderBatch;
-	}
-
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_MODULATE);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
-
+	return count;
 }
+

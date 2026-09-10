@@ -1,3 +1,5 @@
+import Graphics.Frame.RenderClock;
+#include "W3DDevice/GameClient/W3DRenderServices.h"
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -43,19 +45,26 @@
 //			  moves.
 //-----------------------------------------------------------------------------
 
+#include <array>
+#include <span>
+#include <vector>
+import Graphics.Scene.Tracks.Geometry;
+import Graphics.Frame.Runtime;
+#include "W3DDevice/GameClient/W3DGraphicsResources.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "Common/PerfTimer.h"
 #include "Common/GlobalData.h"
 #include "Common/Debug.h"
-#include "WW3D2/texture.h"
+#include "W3DDevice/GameClient/W3DTextureHandle.h"
 #include "WWMath/colmath.h"
-#include "WW3D2/coltest.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/scene.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
+
+#include "W3DDevice/GameClient/W3DSceneClass.h"
 #include "GameLogic/TerrainLogic.h"
 #include "GameLogic/Object.h"
 #include "GameClient/Drawable.h"
@@ -118,7 +127,7 @@ void TerrainTracksRenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) c
 //=============================================================================
 Int TerrainTracksRenderObjClass::Class_ID() const
 {
-	return RenderObjClass::CLASSID_IMAGE3D;
+	return W3DRenderObject::CLASSID_IMAGE3D;
 }
 
 //=============================================================================
@@ -126,7 +135,7 @@ Int TerrainTracksRenderObjClass::Class_ID() const
 //=============================================================================
 /** Not used, but required virtual method. */
 //=============================================================================
-RenderObjClass *	 TerrainTracksRenderObjClass::Clone() const
+W3DRenderObject *	 TerrainTracksRenderObjClass::Clone() const
 {
 	assert(false);
 	return nullptr;
@@ -168,7 +177,7 @@ void TerrainTracksRenderObjClass::init( Real width, Real length, const Char *tex
 	//no sense culling these things since they have very irregular shape and fade
 	//out over time.
 	Set_Force_Visible(TRUE);
-	m_stageZeroTexture=WW3DAssetManager::Get_Instance()->Get_Texture(texturename);
+	m_stageZeroTexture=W3DAssetCatalog::Get_Instance()->Get_Texture(texturename);
 }
 
 //=============================================================================
@@ -284,7 +293,7 @@ void TerrainTracksRenderObjClass::addCapEdgeToTrack(Real x, Real y)
 		topEdge.endPointUV[1].Y=1.0f;
 	}
 
-	topEdge.timeAdded=WW3D::Get_Sync_Time();
+	topEdge.timeAdded=Graphics::Get_Render_Clock().Sync_Time();
 	topEdge.alpha=0.0f;	//fully transparent at cap.
 	m_lastAnchor=vPos;
 	m_activeEdgeCount++;
@@ -401,7 +410,7 @@ void TerrainTracksRenderObjClass::addEdgeToTrack(Real x, Real y)
 		topEdge.endPointUV[1].Y=1.0f;
 	}
 
-	topEdge.timeAdded=WW3D::Get_Sync_Time();
+	topEdge.timeAdded=Graphics::Get_Render_Clock().Sync_Time();
 	topEdge.alpha=1.0f;	//fully opaque at start.
 	if (m_airborne || m_activeEdgeCount <= 1) {
 		topEdge.alpha=0.0f;	//smooth out track restarts by setting transparent
@@ -421,7 +430,7 @@ void TerrainTracksRenderObjClass::addEdgeToTrack(Real x, Real y)
 *  requested for rendering this frame.  Actual rendering is done in flush().
 */
 //=============================================================================
-void TerrainTracksRenderObjClass::Render(RenderInfoClass & rinfo)
+void TerrainTracksRenderObjClass::Render(W3DRenderContext & rinfo)
 {	///@todo: After adding track mark visibility tests, add visible marks to another list.
 	if (TheGlobalData->m_makeTrackMarks && m_activeEdgeCount >= 2)
 		TheTerrainTracksRenderObjClassSystem->m_edgesToFlush += m_activeEdgeCount;
@@ -433,7 +442,7 @@ void TerrainTracksRenderObjClass::Render(RenderInfoClass & rinfo)
 /**Find distance between the "trackfx" bones of the model.  This tells us the correct
    width for the trackmarks.
 */
-static Real computeTrackSpacing(RenderObjClass *renderObj)
+static Real computeTrackSpacing(W3DRenderObject *renderObj)
 {
 	Real trackSpacing = DEFAULT_TRACK_SPACING;
 	Int leftTrack;
@@ -466,7 +475,7 @@ static Real computeTrackSpacing(RenderObjClass *renderObj)
 		   texture to use for the tracks - image should be symetrical and include alpha channel.
 */
 //=============================================================================
-TerrainTracksRenderObjClass *TerrainTracksRenderObjClassSystem::bindTrack( RenderObjClass *renderObject, Real length, const Char *texturename)
+TerrainTracksRenderObjClass *TerrainTracksRenderObjClassSystem::bindTrack( W3DRenderObject *renderObject, Real length, const Char *texturename)
 {
 	TerrainTracksRenderObjClass *mod;
 
@@ -554,9 +563,6 @@ TerrainTracksRenderObjClassSystem::TerrainTracksRenderObjClassSystem()
 	m_freeModules = nullptr;
 	m_TerrainTracksScene = nullptr;
 	m_edgesToFlush = 0;
-	m_indexBuffer = nullptr;
-	m_vertexMaterialClass = nullptr;
-	m_vertexBuffer = nullptr;
 
 	m_maxTankTrackEdges=TheGlobalData->m_maxTankTrackEdges;
 	m_maxTankTrackOpaqueEdges=TheGlobalData->m_maxTankTrackOpaqueEdges;
@@ -574,7 +580,6 @@ TerrainTracksRenderObjClassSystem::~TerrainTracksRenderObjClassSystem()
 	// free all data
 	shutdown();
 
-	m_vertexMaterialClass=nullptr;
 	m_TerrainTracksScene=nullptr;
 
 }
@@ -586,34 +591,7 @@ TerrainTracksRenderObjClassSystem::~TerrainTracksRenderObjClassSystem()
 //=============================================================================
 void TerrainTracksRenderObjClassSystem::ReAcquireResources()
 {
-	Int i;
-	const Int numModules=TheGlobalData->m_maxTerrainTracks;
-
-	// just for paranoia's sake.
-	REF_PTR_RELEASE(m_indexBuffer);
-	REF_PTR_RELEASE(m_vertexBuffer);
-
-	//Create static index buffers.  These will index the vertex buffers holding the track segments
-	m_indexBuffer=NEW_REF(DX8IndexBufferClass,((m_maxTankTrackEdges-1)*6));
-
-	// Fill up the IB
-	{
-		DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
-		UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-
-		for (i=0; i<(m_maxTankTrackEdges-1); i++)
-		{
-			ib[3]=ib[0]=i*2;
-			ib[1]=i*2+1;
-			ib[4]=ib[2]=(i+1)*2+1;
-			ib[5]=(i+1)*2;
-			ib+=6;	//skip the 6 indices we just filled
-		}
-	}
-
-	DEBUG_ASSERTCRASH(numModules*m_maxTankTrackEdges*2 < 65535, ("Too many terrain track edges"));
-
-	m_vertexBuffer=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,numModules*m_maxTankTrackEdges*2,DX8VertexBufferClass::USAGE_DYNAMIC));
+    // The graphics renderer recreates GPU resources lazily after device reset.
 }
 
 //=============================================================================
@@ -623,10 +601,8 @@ void TerrainTracksRenderObjClassSystem::ReAcquireResources()
 //=============================================================================
 void TerrainTracksRenderObjClassSystem::ReleaseResources()
 {
-	REF_PTR_RELEASE(m_indexBuffer);
-	REF_PTR_RELEASE(m_vertexBuffer);
-	// Note - it is ok to not release the material, as it is a w3d object that
-	// has no dx8 resources. jba.
+    Graphics::Get_Surface_Renderer().Destroy_Mesh(m_graphicsMesh);
+    m_graphicsMesh = {};
 }
 
 //=============================================================================
@@ -634,7 +610,7 @@ void TerrainTracksRenderObjClassSystem::ReleaseResources()
 //=============================================================================
 /**  initialize the system, allocate all the render objects we will need */
 //=============================================================================
-void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
+void TerrainTracksRenderObjClassSystem::init( W3DScene *TerrainTracksScene )
 {
 	const Int numModules=TheGlobalData->m_maxTerrainTracks;
 
@@ -645,10 +621,8 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 
 	ReAcquireResources();
 	//go with a preset material for now.
-	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::_PresetAlphaShader;//_PresetATestSpriteShader;//_PresetOpaqueShader;
 
 	// we cannot initialize a system that is already initialized
 	if( m_freeModules || m_usedModules )
@@ -692,6 +666,7 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 //=============================================================================
 void TerrainTracksRenderObjClassSystem::shutdown()
 {
+    ReleaseResources();
 	TerrainTracksRenderObjClass *nextMod,*mod;
 
 	//release unbound tracks that may still be fading out
@@ -721,9 +696,6 @@ void TerrainTracksRenderObjClassSystem::shutdown()
 
 	}
 
-	REF_PTR_RELEASE(m_indexBuffer);
-	REF_PTR_RELEASE(m_vertexMaterialClass);
-	REF_PTR_RELEASE(m_vertexBuffer);
 
 }
 
@@ -735,7 +707,7 @@ void TerrainTracksRenderObjClassSystem::shutdown()
 void TerrainTracksRenderObjClassSystem::update()
 {
 
-	Int		iTime=WW3D::Get_Sync_Time();
+	Int		iTime=Graphics::Get_Render_Clock().Sync_Time();
 	Real	iDiff;
 	TerrainTracksRenderObjClass *mod=m_usedModules,*nextMod;
 
@@ -787,130 +759,50 @@ void TerrainTracksRenderObjClassSystem::update()
 //=============================================================================
 /** Draw all active track marks for this frame */
 //=============================================================================
-void TerrainTracksRenderObjClassSystem::flush()
+void TerrainTracksRenderObjClassSystem::flush(W3DCamera& camera)
 {
-/** @todo: Optimize system by drawing tracks as triangle strips and use dynamic vertex buffer access.
-May also try rendering all tracks with one call to W3D/D3D by grouping them by texture.
-Try improving the fit to vertical surfaces like cliffs.
-*/
-
-	Int	diffuseLight;
-	TerrainTracksRenderObjClass *mod=m_usedModules;
-	if (!mod)
-		return;	//nothing to render
-
-	Int	trackStartIndex;
-	Real distanceFade;
-
-	if (ShaderClass::Is_Backface_Culling_Inverted())
-		return;	//don't render track marks in reflections.
-
-	// adjust shading for time of day.
-	Real shadeR, shadeG, shadeB;
-	shadeR = TheGlobalData->m_terrainAmbient[0].red;
-	shadeG = TheGlobalData->m_terrainAmbient[0].green;
-	shadeB = TheGlobalData->m_terrainAmbient[0].blue;
-	shadeR += TheGlobalData->m_terrainDiffuse[0].red/2;
-	shadeG += TheGlobalData->m_terrainDiffuse[0].green/2;
-	shadeB += TheGlobalData->m_terrainDiffuse[0].blue/2;
-	shadeR*=255.0f;
-	shadeG*=255.0f;
-	shadeB*=255.0f;
-
-	diffuseLight = REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16);
-	Real numFadedEdges=m_maxTankTrackEdges-m_maxTankTrackOpaqueEdges;
-
-	//check if there is anything to draw and fill vertex buffer
-	if (m_edgesToFlush >= 2)
-	{
-		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexBuffer);
-		VertexFormatXYZDUV1 *verts = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-		trackStartIndex=0;
-
-		mod=m_usedModules;
-		//Fill our vertex buffer with all the tracks
-		while( mod )
-		{
-			Int i,index;
-			Vector3 *endPoint;
-			Vector2 *endPointUV;
-
-			if (mod->m_activeEdgeCount >= 2 && mod->Is_Really_Visible())
-			{
-				for (i=0,index=mod->m_bottomIndex; i<mod->m_activeEdgeCount; i++,index++)
-				{
-					if (index >= m_maxTankTrackEdges)
-						index=0;
-
-					endPoint=&mod->m_edges[index].endPointPos[0];	//left endpoint
-					endPointUV=&mod->m_edges[index].endPointUV[0];
-
-					distanceFade=1.0f;
-
-					if ((mod->m_activeEdgeCount -1 -i) >= m_maxTankTrackOpaqueEdges)// && i < (MAX_PER_TRACK_EDGE_COUNT-FORCE_FADE_AT_EDGE))
-					{	//we're getting close to the limit on the number of track pieces allowed
-						//so force it to fade out.
-						distanceFade=1.0f-(float)((mod->m_activeEdgeCount -i)-m_maxTankTrackOpaqueEdges)/numFadedEdges;
-					}
-
-					distanceFade *= mod->m_edges[index].alpha;	//adjust fade with distance from start of track
-
-					verts->x=endPoint->X;
-					verts->y=endPoint->Y;
-					verts->z=endPoint->Z;
-
-					verts->u1=endPointUV->X;
-					verts->v1=endPointUV->Y;
-
-					//fade the alpha channel with distance
-					verts->diffuse=diffuseLight | ( REAL_TO_INT(distanceFade*255.0f) <<24);
-					verts++;
-
-					endPoint=&mod->m_edges[index].endPointPos[1];	//right endpoint
-					endPointUV=&mod->m_edges[index].endPointUV[1];
-
-					verts->x=endPoint->X;
-					verts->y=endPoint->Y;
-					verts->z=endPoint->Z;
-
-					verts->u1=endPointUV->X;
-					verts->v1=endPointUV->Y;			///@todo: Add diffuse lighting.
-
-					verts->diffuse=diffuseLight | ( REAL_TO_INT(distanceFade*255.0f) <<24);
-					verts++;
-				}
-			}
-			mod = mod->m_nextSystem;
-		}
-	}
-
-	//draw the filled vertex buffers
-	if (m_edgesToFlush >= 2)
-	{
-		ShaderClass::Invalidate();
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexBuffer);
-
-		trackStartIndex=0;
-		mod=m_usedModules;
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,mod->Transform);
-		while (mod)
-		{
-			if (mod->m_activeEdgeCount >= 2 && mod->Is_Really_Visible())
-			{
-				DX8Wrapper::Set_Texture(0,mod->m_stageZeroTexture);
-				DX8Wrapper::Set_Index_Buffer_Index_Offset(trackStartIndex);
-				DX8Wrapper::Draw_Triangles(	0,(mod->m_activeEdgeCount-1)*2, 0, mod->m_activeEdgeCount*2);
-
-				trackStartIndex += mod->m_activeEdgeCount*2;
-			}
-			mod=mod->m_nextSystem;
-		}
-	}
-
-	m_edgesToFlush=0;	//reset count for next flush
+    if (Get_W3D_Render_Services().Is_Reflection_Render_Pass()) return;
+    auto* device = Graphics::Shared_Frame_Device();
+    if (!device || !m_usedModules || m_edgesToFlush < 2) {
+        m_edgesToFlush = 0;
+        return;
+    }
+    const auto& ambient = TheGlobalData->m_terrainAmbient[0];
+    const auto& diffuse = TheGlobalData->m_terrainDiffuse[0];
+    const UnsignedInt packed = REAL_TO_INT((ambient.blue + diffuse.blue/2)*255)
+        | (REAL_TO_INT((ambient.green + diffuse.green/2)*255) << 8)
+        | (REAL_TO_INT((ambient.red + diffuse.red/2)*255) << 16);
+    const std::array<float,3> color{((packed>>16)&255)/255.0f,((packed>>8)&255)/255.0f,(packed&255)/255.0f};
+    const auto parameters = Make_Surface_Parameters(camera);
+    Graphics::SurfaceStyle style;
+    style.cull = Graphics::RHICullMode::Back;
+    style.front_counter_clockwise = true;
+    auto& renderer = Graphics::Get_Surface_Renderer();
+    std::vector<Graphics::TrackEdge> edges;
+    Graphics::TrackGeometry geometry;
+    for (auto* mod=m_usedModules; mod; mod=mod->m_nextSystem) {
+        if (mod->m_activeEdgeCount < 2 || !mod->Is_Really_Visible()) continue;
+        edges.clear();
+        for (Int i=0,index=mod->m_bottomIndex; i<mod->m_activeEdgeCount; ++i,++index) {
+            if (index >= m_maxTankTrackEdges) index=0;
+            const auto& source = mod->m_edges[index];
+            Graphics::TrackEdge edge;
+            edge.alpha = source.alpha;
+            for (unsigned side=0; side<2; ++side) {
+                Vector3 position;
+                Matrix3D::Transform_Vector(mod->Transform, source.endPointPos[side], &position);
+                edge.positions[side] = {position.X,position.Y,position.Z};
+                edge.uv[side] = {source.endPointUV[side].X,source.endPointUV[side].Y};
+            }
+            edges.push_back(edge);
+        }
+        geometry.Build(edges,m_maxTankTrackEdges,m_maxTankTrackOpaqueEdges,color);
+        if (m_graphicsMesh.Is_Valid()) renderer.Update_Mesh(m_graphicsMesh,geometry.vertices,geometry.indices);
+        else m_graphicsMesh = renderer.Create_Mesh(geometry.vertices,geometry.indices);
+        const std::array<Graphics::RHITextureHandle,4> textures{Resolve_Graphics_Texture(mod->m_stageZeroTexture),{},{},{}};
+        renderer.Draw(device->Immediate_Command_List(),m_graphicsMesh,style,parameters,textures);
+    }
+    m_edgesToFlush = 0;
 }
 
 /**Removes all remaining tracks from the rendering system*/

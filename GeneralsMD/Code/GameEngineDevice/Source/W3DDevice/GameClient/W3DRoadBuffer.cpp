@@ -1,3 +1,4 @@
+import Assets.Math;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -46,26 +47,32 @@
 //         Includes
 //-----------------------------------------------------------------------------
 
+import Assets.Images.PixelEncoding;
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
+#include "W3DDevice/GameClient/W3DGraphicsResources.h"
+import Graphics.Frame.Runtime;
+import Graphics.Scene.Roads.Renderer;
 
-#include <WW3D2/assetmgr.h>
-#include <WW3D2/texture.h>
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
+#include <W3DDevice/GameClient/W3DTextureHandle.h>
 #include "Common/GlobalData.h"
 #include "Common/RandomValue.h"
 //#include "Common/GameFileSystem.h"
 #include "Common/FileSystem.h" // for LOAD_TEST_ASSETS
 #include "GameClient/TerrainRoads.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
+#include "W3DDevice/GameClient/W3DLight.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
-#include "W3DDevice/GameClient/W3DShaderManager.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8renderer.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/meshmdl.h"
+
+#include "W3DDevice/GameClient/W3DCamera.h"
+import Graphics.Scene.Surfaces.Geometry;
+
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshResource.h"
 
 static const Real TEE_WIDTH_ADJUSTMENT = 1.03f;
 
@@ -74,44 +81,11 @@ static const Real TEE_WIDTH_ADJUSTMENT = 1.03f;
 //         Private Data
 //-----------------------------------------------------------------------------
 
-// A W3D shader that does alpha, texturing, tests zbuffer, doesn't update zbuffer.
-#define SC_ALPHA_DETAIL ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_SCALE, ShaderClass::DETAILALPHA_DISABLE) )
-
-static ShaderClass detailAlphaShader(SC_ALPHA_DETAIL);
-
-
-#define SC_ALPHA_MIRROR ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
-
-static ShaderClass detailShader(SC_ALPHA_MIRROR);
-
-
-// The radius of the center of the road is 1.5 - outer radius 2.0, inner radius 1.0.
+// Road center radii for ordinary and tight corners.
 static const Real CORNER_RADIUS = 1.5f;
-
-
-// The radius of the center of the road is 0.5 - outer radius 1.0, inner radius 0.0.
 static const Real TIGHT_CORNER_RADIUS = 0.5f;
-/*
 
-// ShaderClass::PASS_ALWAYS,
-
-#define SC_ALPHA_2D ( SHADE_CNST(PASS_ALWAYS, DEPTH_WRITE_DISABLE, COLOR_WRITE_ENABLE, \
-	SRCBLEND_SRC_ALPHA, DSTBLEND_ONE_MINUS_SRC_ALPHA, FOG_DISABLE, GRADIENT_DISABLE, \
-	SECONDARY_GRADIENT_DISABLE, TEXTURING_ENABLE, DETAILCOLOR_DISABLE, DETAILALPHA_DISABLE, \
-	ALPHATEST_DISABLE, CULL_MODE_ENABLE, DETAILCOLOR_DISABLE, DE AILALPHA_DISABLE) )
-ShaderClass ShaderClass::_PresetAlpha2DShader(SC_ALPHA_2D);
-*/
-
-/** Calculate the sign of the cross product.  If the tails of the vectors are both placed
-at 0,0, then the cross product can be interpreted as -1 means v2 is to the right of v1,
-1 means v2 is to the left of v1, and 0 means v2 is parallel to v1. */
-
+/** Sign of the 2D cross product: negative is right, positive is left. */
 static Int xpSign(const Vector2 &v1, const Vector2 &v2) {
 	Real xpdct = v1.X*v2.Y - v1.Y*v2.X;
 	if (xpdct<0) return -1;
@@ -119,7 +93,7 @@ static Int xpSign(const Vector2 &v1, const Vector2 &v2) {
 	return 0;
 }
 
-static Bool s_dynamic = false;
+
 
 //-----------------------------------------------------------------------------
 //         Private Class
@@ -132,8 +106,8 @@ static Bool s_dynamic = false;
 //=============================================================================
 RoadType::RoadType():
 m_roadTexture(nullptr),
-m_vertexRoad(nullptr),
-m_indexRoad(nullptr),
+m_numRoadVertices(0),
+m_numRoadIndices(0),
 m_stackingOrder(0),
 m_uniqueID(-1)
 {
@@ -147,20 +121,22 @@ m_uniqueID(-1)
 RoadType::~RoadType()
 {
 	REF_PTR_RELEASE(m_roadTexture);
-	REF_PTR_RELEASE(m_vertexRoad);
-	REF_PTR_RELEASE(m_indexRoad);
+	Graphics::Get_Surface_Renderer().Destroy_Mesh(m_mesh);
 }
 
 //=============================================================================
-// RoadType applyTexture
+// RoadType uploadGeometry
 //=============================================================================
-/** Sets the W3D texture. */
+/** Translates the existing segment data into a graphics-owned surface mesh. */
 //=============================================================================
-void RoadType::applyTexture()
+bool RoadType::uploadGeometry()
 {
- 	W3DShaderManager::setTexture(0,m_roadTexture);
-	DX8Wrapper::Set_Index_Buffer(m_indexRoad,0);
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexRoad);
+    const auto vertices = std::span<const Graphics::SurfaceVertex>(m_vertices).first(m_numRoadVertices);
+    std::vector<std::uint32_t> indices(m_indices.begin(), m_indices.begin() + m_numRoadIndices);
+    auto &renderer = Graphics::Get_Surface_Renderer();
+    if (m_mesh.Is_Valid()) return renderer.Update_Mesh(m_mesh, vertices, indices);
+    m_mesh = renderer.Create_Mesh(vertices, indices);
+    return m_mesh.Is_Valid();
 }
 
 
@@ -172,19 +148,23 @@ void RoadType::applyTexture()
 void RoadType::loadTexture(AsciiString path, Int ID)
 {
 	/// @todo - delay loading textures and only load textures referenced by map.
-	WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
+	W3DAssetCatalog *catalog = W3DAssetCatalog::Get_Instance();
+	if (catalog == nullptr)
+		return;
 
-	m_roadTexture = pMgr->Get_Texture(path.str(), MIP_LEVELS_3);
+	m_roadTexture = catalog->Get_Texture(path.str(), MIP_LEVELS_3);
 	//Hack to disable texture reduction
-	//m_roadTexture = pMgr->Get_Texture(path.str(), MIP_LEVELS_3, WW3D_FORMAT_UNKNOWN,true,TextureBaseClass::TEX_REGULAR, false);
+	//m_roadTexture = pMgr->Get_Texture(path.str(), MIP_LEVELS_3, Assets::PixelEncoding::Unknown,true,W3DTextureHandle::TEX_REGULAR, false);
 
-	m_roadTexture->Get_Filter().Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
+	m_roadTexture->Get_Sampling().mipmap =  Graphics::SamplingFilter::Best ;
 
-	m_roadTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
-	m_roadTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
+	m_roadTexture->Get_Sampling().address[0] = Graphics::RHISamplerAddress::Wrap;
+	m_roadTexture->Get_Sampling().address[1] = Graphics::RHISamplerAddress::Wrap;
 
-	m_vertexRoad=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,TheGlobalData->m_maxRoadVertex+4, (s_dynamic?DX8VertexBufferClass::USAGE_DYNAMIC:DX8VertexBufferClass::USAGE_DEFAULT)));
-	m_indexRoad=NEW_REF(DX8IndexBufferClass,(TheGlobalData->m_maxRoadIndex+4, (s_dynamic?DX8IndexBufferClass::USAGE_DYNAMIC:DX8IndexBufferClass::USAGE_DEFAULT)));
+    m_vertices.resize(TheGlobalData->m_maxRoadVertex + 4);
+    m_indices.resize(TheGlobalData->m_maxRoadIndex + 4);
+    Graphics::Get_Surface_Renderer().Destroy_Mesh(m_mesh);
+    m_mesh = {};
 	m_numRoadVertices=0;
 	m_numRoadIndices=0;
 
@@ -204,11 +184,11 @@ void RoadType::loadTestTexture()
 {
 	if (m_isAutoLoaded && m_uniqueID>0 && !m_texturePath.isEmpty()) {
 		/// @todo - delay loading textures and only load textures referenced by map.
-		m_roadTexture = NEW_REF(TextureClass, (m_texturePath.str(), m_texturePath.str(), MIP_LEVELS_3));
-		m_roadTexture->Get_Filter().Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
+		m_roadTexture = NEW_REF(W3DTextureHandle, (m_texturePath.str(), m_texturePath.str(), MIP_LEVELS_3));
+		m_roadTexture->Get_Sampling().mipmap =  Graphics::SamplingFilter::Best ;
 
-		m_roadTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
-		m_roadTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
+		m_roadTexture->Get_Sampling().address[0] = Graphics::RHISamplerAddress::Wrap;
+		m_roadTexture->Get_Sampling().address[1] = Graphics::RHISamplerAddress::Wrap;
 	}
 }
 #endif
@@ -256,7 +236,7 @@ RoadSegment::~RoadSegment()
 //=============================================================================
 /** Allocates & sets the vertex entries. */
 //=============================================================================
-void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
+void RoadSegment::SetVertexBuffer(Graphics::SurfaceVertex *vb, Int numVertex)
 {
 	delete[] m_vb;
 	m_vb = nullptr;
@@ -266,17 +246,17 @@ void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 	if (numVertex<1 || numVertex > MAX_SEG_VERTEX)
 		return;
 
-	m_vb = NEW VertexFormatXYZDUV1[numVertex];	// pool[]ify
+	m_vb = NEW Graphics::SurfaceVertex[numVertex];	// pool[]ify
 	if (!m_vb)
 		return;
 
 	m_numVertex = numVertex;
-	memcpy(m_vb, vb, numVertex*sizeof(VertexFormatXYZDUV1));
+	memcpy(m_vb, vb, numVertex*sizeof(Graphics::SurfaceVertex));
 	Int i;
 	for (i=0; i<numVertex; i++) {
-		verts[i].X = m_vb[i].x;
-		verts[i].Y = m_vb[i].y;
-		verts[i].Z = m_vb[i].z;
+		verts[i].X = m_vb[i].position[0];
+		verts[i].Y = m_vb[i].position[1];
+		verts[i].Z = m_vb[i].position[2];
 	}
 	SphereClass bounds(verts, numVertex);
 	m_bounds = bounds;
@@ -309,11 +289,11 @@ void RoadSegment::SetIndexBuffer(UnsignedShort *ib, Int numIndex)
 //=============================================================================
 /** Copies vertex entries into destination_vb. */
 //=============================================================================
-Int RoadSegment::GetVertices(VertexFormatXYZDUV1 *destination_vb, Int numToCopy)
+Int RoadSegment::GetVertices(Graphics::SurfaceVertex *destination_vb, Int numToCopy)
 {
 	if (m_vb == nullptr || numToCopy<1) return	(0);
 	if (numToCopy > m_numVertex) return(0);
-	memcpy(destination_vb, m_vb, numToCopy*sizeof(VertexFormatXYZDUV1));
+	memcpy(destination_vb, m_vb, numToCopy*sizeof(Graphics::SurfaceVertex));
 	return(numToCopy);
 }
 
@@ -343,11 +323,11 @@ void RoadSegment::updateSegLighting()
 	Int i;
 	Int borderSizeInLine=TheTerrainRenderObject->getMap()->getBorderSizeInline();
 	for (i=0; i<m_numVertex; i++) {
-		Int x = m_vb[i].x/MAP_XY_FACTOR+0.5;
-		Int y = m_vb[i].y/MAP_XY_FACTOR+0.5;
+		Int x = m_vb[i].position[0]/MAP_XY_FACTOR+0.5;
+		Int y = m_vb[i].position[1]/MAP_XY_FACTOR+0.5;
 		x += borderSizeInLine;
 		y += borderSizeInLine;
-		m_vb[i].diffuse = (255<<24)|TheTerrainRenderObject->getStaticDiffuse(x, y);
+		m_vb[i].color = Assets::Color_From_ARGB((255<<24)|TheTerrainRenderObject->getStaticDiffuse(x, y)).To_Array();
 	}
 }
 
@@ -570,7 +550,7 @@ void W3DRoadBuffer::loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc,
 	const Real FLOAT_AMOUNT = MAP_HEIGHT_SCALE/8;
 	const Real MAX_ERROR = MAP_HEIGHT_SCALE*1.1f;
 	UnsignedShort ib[MAX_SEG_INDEX];
-	VertexFormatXYZDUV1 vb[MAX_SEG_VERTEX];
+	Graphics::SurfaceVertex vb[MAX_SEG_VERTEX];
 	Int numRoadVertices = 0;
 	Int numRoadIndices = 0;
 
@@ -710,12 +690,12 @@ void W3DRoadBuffer::loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc,
 			#ifdef RTS_DEBUG
 				//diffuse &= 0xFFFF00FF; // strip out green.
 			#endif
-				vb[numRoadVertices].u1 = uOffset+U/(uScale*4);
-				vb[numRoadVertices].v1 = vOffset-V/(vScale*4);	// Road is 1/16 texture height.
-				vb[numRoadVertices].x = curColumn.vtx[j].X;
-				vb[numRoadVertices].y = curColumn.vtx[j].Y;
-				vb[numRoadVertices].z = curColumn.vtx[j].Z+FLOAT_AMOUNT;
-				vb[numRoadVertices].diffuse = diffuse;
+				vb[numRoadVertices].uv[0] = uOffset+U/(uScale*4);
+				vb[numRoadVertices].uv[1] = vOffset-V/(vScale*4);	// Road is 1/16 texture height.
+				vb[numRoadVertices].position[0] = curColumn.vtx[j].X;
+				vb[numRoadVertices].position[1] = curColumn.vtx[j].Y;
+				vb[numRoadVertices].position[2] = curColumn.vtx[j].Z+FLOAT_AMOUNT;
+				vb[numRoadVertices].color = Assets::Color_From_ARGB(diffuse).To_Array();
 				curColumn.vertexIndex[j] = numRoadVertices;
 				numRoadVertices++;
 				if (j==1 && curColumn.collapsed) {
@@ -783,7 +763,7 @@ terrain.  The road is loaded into the quadrilateral defined by the
 the road vector gives the direction of the road, and the road normal is perpendicular
 to the road normal.  */
 //=============================================================================
-void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RefRenderObjListIterator *pDynamicLightsIterator)
+void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Graphics::SurfaceVertex *vb, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pDynamicLightsIterator)
 {
 
 	const Real FLOAT_AMOUNT = MAP_HEIGHT_SCALE/8;
@@ -798,10 +778,10 @@ void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Ver
 	}
 	Int numLights = 0;
 	const Int maxLights = 8;
-	LightClass *lights[maxLights];
+	W3DLight *lights[maxLights];
 
 	for (pDynamicLightsIterator->First(); !pDynamicLightsIterator->Is_Done(); pDynamicLightsIterator->Next()) {
-			LightClass *pLight = (LightClass*)pDynamicLightsIterator->Peek_Obj();
+			W3DLight *pLight = (W3DLight*)pDynamicLightsIterator->Peek_Obj();
 			SphereClass bounds = pLight->Get_Bounding_Sphere();
 			if (Spheres_Intersect(pRoad->getBounds(), bounds)) {
 				lights[numLights] = pLight;
@@ -937,7 +917,7 @@ void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Ver
 				Int k;
 				for (k=0; k<numLights; k++) {
 					Real factor;
-					if (lights[k]->Get_Type() == LightClass::POINT) {
+					if (lights[k]->Get_Type() == W3DLight::POINT) {
 						Vector3 lightLoc = lights[k]->Get_Position();
 						Vector3 vtx = curColumn.vtx[j];
 						Vector3 offset = vtx - lightLoc;
@@ -992,12 +972,12 @@ void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Ver
 			#ifdef RTS_DEBUG
 				//diffuse &= 0xFFFF00FF; // strip out green.
 			#endif
-				vb[m_curNumRoadVertices].u1 = info.uOffset+U/(info.scale*4);
-				vb[m_curNumRoadVertices].v1 = info.vOffset-V/(info.scale*4);	// Road is 1/16 texture height.
-				vb[m_curNumRoadVertices].x = curColumn.vtx[j].X;
-				vb[m_curNumRoadVertices].y = curColumn.vtx[j].Y;
-				vb[m_curNumRoadVertices].z = curColumn.vtx[j].Z+FLOAT_AMOUNT;
-				vb[m_curNumRoadVertices].diffuse = diffuse;
+				vb[m_curNumRoadVertices].uv[0] = info.uOffset+U/(info.scale*4);
+				vb[m_curNumRoadVertices].uv[1] = info.vOffset-V/(info.scale*4);	// Road is 1/16 texture height.
+				vb[m_curNumRoadVertices].position[0] = curColumn.vtx[j].X;
+				vb[m_curNumRoadVertices].position[1] = curColumn.vtx[j].Y;
+				vb[m_curNumRoadVertices].position[2] = curColumn.vtx[j].Z+FLOAT_AMOUNT;
+				vb[m_curNumRoadVertices].color = Assets::Color_From_ARGB(diffuse).To_Array();
 				curColumn.vertexIndex[j] = m_curNumRoadVertices;
 				m_curNumRoadVertices++;
 				if (j==1 && curColumn.collapsed) {
@@ -1228,20 +1208,8 @@ void W3DRoadBuffer::loadRoadsInVertexAndIndexBuffers()
 	}
 	m_curNumRoadVertices = 0;
 	m_curNumRoadIndices = 0;
-	VertexFormatXYZDUV1 *vb;
-	UnsignedShort *ib;
-	// Lock the buffers.
-	if (m_roadTypes[m_curRoadType].getIB() == nullptr) {
-		this->m_roadTypes[m_curRoadType].setNumVertices(0);
-		this->m_roadTypes[m_curRoadType].setNumIndices(0);
-		return;
-	}
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_roadTypes[m_curRoadType].getIB(), s_dynamic?D3DLOCK_DISCARD:0);
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_roadTypes[m_curRoadType].getVB(), s_dynamic?D3DLOCK_DISCARD:0);
-	vb=(VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	ib = lockIdxBuffer.Get_Index_Array();
-	// Add to the index buffer & vertex buffer.
-
+    Graphics::SurfaceVertex *vb = m_roadTypes[m_curRoadType].getVB();
+    UnsignedShort *ib = m_roadTypes[m_curRoadType].getIB();
 	Int curRoad;
 
 	// Do road segments.
@@ -1255,6 +1223,10 @@ void W3DRoadBuffer::loadRoadsInVertexAndIndexBuffers()
 	}
 	this->m_roadTypes[m_curRoadType].setNumVertices(m_curNumRoadVertices);
 	this->m_roadTypes[m_curRoadType].setNumIndices(m_curNumRoadIndices);
+    if (!m_roadTypes[m_curRoadType].uploadGeometry()) {
+        m_roadTypes[m_curRoadType].setNumIndices(0);
+        DEBUG_LOG(("Road geometry upload failed.\n"));
+    }
 }
 
 //=============================================================================
@@ -1305,44 +1277,14 @@ Bool W3DRoadBuffer::visibilityChanged(const IRegion2D &bounds)
 //=============================================================================
 /** Loads the roads into the vertex buffer for drawing. */
 //=============================================================================
-void W3DRoadBuffer::loadLitRoadsInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator)
-{
-	if ( !m_initialized) {
-		return;
-	}
-	m_curNumRoadVertices = 0;
-	m_curNumRoadIndices = 0;
-	VertexFormatXYZDUV1 *vb;
-	UnsignedShort *ib;
-	// Lock the buffers.
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_roadTypes[m_curRoadType].getIB());
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_roadTypes[m_curRoadType].getVB());
-	vb=(VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	ib = lockIdxBuffer.Get_Index_Array();
-	// Add to the index buffer & vertex buffer.
 
-	Int curRoad;
-	if (true) {
-		// Do road segments.
-		TCorner corner;
-		for (corner = SEGMENT; corner < NUM_JOINS; corner = (TCorner)(corner+1)) {
-			for (curRoad=0; curRoad<m_numRoads; curRoad++) {
-				if (m_roads[curRoad].m_type == corner) {
-					loadLit4PtSection(&m_roads[curRoad], ib, vb, pDynamicLightsIterator);
-				}
-			}
-		}
-	}
-	this->m_roadTypes[m_curRoadType].setNumVertices(m_curNumRoadVertices);
-	this->m_roadTypes[m_curRoadType].setNumIndices(m_curNumRoadIndices);
-}
 
 //=============================================================================
 // W3DRoadBuffer::loadRoadSegment
 //=============================================================================
 /** Loads a road segment into the vertex buffer for drawing. */
 //=============================================================================
-void W3DRoadBuffer::loadRoadSegment(UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RoadSegment *pRoad)
+void W3DRoadBuffer::loadRoadSegment(UnsignedShort *ib, Graphics::SurfaceVertex *vb, RoadSegment *pRoad)
 {
 	if (pRoad->m_uniqueID != m_curUniqueID) {
 		return;
@@ -1426,9 +1368,6 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 			endOfCurSeg++;
 		} else if (m_roads[checkNdx].m_pt2.loc == loc2) {
 #ifdef RTS_DEBUG
-			if (m_roads[checkNdx].m_pt2.count!=1) {
-				::OutputDebugString("fooey.\n");
-			}
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count"));
 #endif
 			flipTheRoad(&m_roads[checkNdx]);
@@ -1479,9 +1418,6 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 		} else if (m_roads[checkNdx].m_pt1.loc == loc1) {
 #ifdef RTS_DEBUG
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Wrong m_pt1.count."));
-			if ( m_roads[checkNdx].m_pt1.count!=1) {
-				::OutputDebugString("Wrong m_pt1.count.\n");
-			}
 #endif
 			flipTheRoad(&m_roads[checkNdx]);
 			ndx++;
@@ -3197,7 +3133,7 @@ void W3DRoadBuffer::loadRoads()
 	}
 	// Free any existing road segments.
 	clearAllRoads();
-	//Int ticks = ::GetTickCount();
+	//Int ticks = SDL_GetTicks();
 	addMapObjects();
 	updateCountsAndFlags();
 	insertTeeIntersections();
@@ -3205,10 +3141,10 @@ void W3DRoadBuffer::loadRoads()
 	insertCrossTypeJoins();
 	preloadRoadsInVertexAndIndexBuffers();
 	m_updateBuffers = true;
-	//ticks = ::GetTickCount() - ticks;
+	//ticks = SDL_GetTicks() - ticks;
 	//char buf[256];
 	//sprintf(buf, "%d road segs, %d milisec.\n", m_numRoads, ticks);
-	//::OutputDebugString(buf);
+	//SDL_Log("%s", buf);
 }
 
 //=============================================================================
@@ -3268,125 +3204,50 @@ void W3DRoadBuffer::updateCenter()
 //=============================================================================
 /** Draws the roads.   */
 //=============================================================================
-void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, TextureClass *noiseTexture, Bool wireframe,
-															Int minX, Int maxX, Int minY, Int maxY, RefRenderObjListIterator *pDynamicLightsIterator)
+void W3DRoadBuffer::drawRoads(W3DCamera *camera, W3DTextureHandle *cloudTexture,
+    W3DTextureHandle *noiseTexture, Bool wireframe, Int minX, Int maxX, Int minY, Int maxY,
+    Graphics::SceneObjectList<W3DRenderObject>::Cursor *)
 {
-	IRegion2D bounds;
-	bounds.lo.x = minX*MAP_XY_FACTOR;
-	bounds.hi.x = maxX*MAP_XY_FACTOR;
-	bounds.lo.y = minY*MAP_XY_FACTOR;
-	bounds.hi.y = maxY*MAP_XY_FACTOR;
-
-#define NO_TEST_CULL 1
-#ifdef TEST_CULL
-	bounds.lo.x += 32*MAP_XY_FACTOR;
-	bounds.hi.x -= 32*MAP_XY_FACTOR;
-#endif
-#define noLOG_STATS
-#ifdef LOG_STATS
-	Int polys = 0;
-#endif
-
-	Int i;
-
-	Int maxStacking = 0;
-	for (i=0; i<m_maxRoadTypes; i++) {
-		if (m_roadTypes[i].getStacking() > maxStacking) {
-			maxStacking = m_roadTypes[i].getStacking();
-		}
-	}
-	Int stacking;
-	W3DShaderManager::ShaderTypes st=W3DShaderManager::ST_ROAD_BASE; //set default shader
-	if (cloudTexture) {
-		st=W3DShaderManager::ST_ROAD_BASE_NOISE1;
-		if (noiseTexture)
-			st=W3DShaderManager::ST_ROAD_BASE_NOISE12;
-	}
-	else
-	if (noiseTexture)
-		st=W3DShaderManager::ST_ROAD_BASE_NOISE2;
-
-	Int devicePasses = 1;	//assume regular rendering
- 	//Find number of passes required to render current shader
-	devicePasses=W3DShaderManager::getShaderPasses(st);
-
-	W3DShaderManager::setTexture(1,cloudTexture);	//cloud
-	W3DShaderManager::setTexture(2,noiseTexture);	//noise/lightmap
-
-
-	Bool loadBuffers = false;
-	if (m_updateBuffers) {
-		if (visibilityChanged(bounds)) {
-			loadBuffers = true;
-		}
-	}
-	m_updateBuffers = false;
-
-	for (stacking=0; stacking <= maxStacking; stacking++) {
-		for (i=0; i<m_maxRoadTypes; i++) {
-			if (stacking != m_roadTypes[i].getStacking()) {
-				continue;
-			}
-			m_curUniqueID = m_roadTypes[i].getUniqueID();
-			m_curRoadType = i;
-			if (loadBuffers) loadRoadsInVertexAndIndexBuffers();
-			if (m_roadTypes[i].getNumIndices() == 0) continue;
-			if (wireframe) {
-				m_roadTypes[i].applyTexture();
-				DX8Wrapper::Set_Texture(0,nullptr);
-			} else {
-				m_roadTypes[i].applyTexture();
-			}
-	#ifdef RTS_DEBUG
-			//DX8Wrapper::Set_Shader(detailShader); // shows clipping.
-	#endif
-			for (Int pass=0; pass < devicePasses; pass++)
-			{
-				if (!wireframe)
-		 			W3DShaderManager::setShader(st, pass);
-				//Draw all this road type.
-				DX8Wrapper::Draw_Triangles(	0, m_roadTypes[i].getNumIndices()/3, 0,	m_roadTypes[i].getNumVertices());
-#ifdef LOG_STATS
-				polys += m_roadTypes[i].getNumIndices()/3;
-#endif
-			}
-
-			if (!wireframe)	//shader was applied at least once?
- 				W3DShaderManager::resetShader(st);
-		}
-	}
-#ifdef LOG_STATS
-	if (loadBuffers) {
-		DEBUG_LOG(("Road poly count %d", polys));
-	}
-#endif
-
-#if 0
-	// Need to use a separate set of index & vertex buffers for this.  jba.
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);
-	if (pDynamicLightsIterator) {
-		for (i=0; i<m_maxRoadTypes; i++) {
-			m_curRoadType = i;
-			m_curUniqueID = m_roadTypes[i].getUniqueID();
-			if (m_curUniqueID < 0 || m_curUniqueID >= m_maxRoadTypes) continue;
-			loadLitRoadsInVertexAndIndexBuffers(pDynamicLightsIterator);
-			if (this->m_curNumRoadIndices == 0) continue;
-			if (wireframe) {
-					DX8Wrapper::Set_Texture(0,nullptr);
-			} else {
-				m_roadTypes[i].applyTexture();
-				if (cloudTexture) {
-					DX8Wrapper::Set_Texture(1,cloudTexture);
-				}
-			}
-			DX8Wrapper::Set_Shader(detailAlphaShader);
-			//Draw all the roads.
-			DX8Wrapper::Draw_Triangles(	0, m_curNumRoadIndices/3, 0,	m_curNumRoadVertices);
-		}
-	}
-#endif
-	m_curRoadType = 0;
+    if (camera == nullptr || !m_initialized) return;
+    auto *device = Graphics::Shared_Frame_Device();
+    if (device == nullptr) return;
+    IRegion2D bounds;
+    bounds.lo.x = minX * MAP_XY_FACTOR;
+    bounds.hi.x = maxX * MAP_XY_FACTOR;
+    bounds.lo.y = minY * MAP_XY_FACTOR;
+    bounds.hi.y = maxY * MAP_XY_FACTOR;
+    const bool loadBuffers = m_updateBuffers && visibilityChanged(bounds);
+    m_updateBuffers = false;
+    Int maxStacking = 0;
+    for (Int index = 0; index < m_maxRoadTypes; ++index)
+        maxStacking = std::max(maxStacking, m_roadTypes[index].getStacking());
+    auto parameters = Make_Surface_Parameters(*camera);
+    constexpr float stretch = 1.0f / (63.0f * MAP_XY_FACTOR / 2.0f);
+    parameters.lightmap_projection = {stretch, stretch, 0, 0};
+    if (cloudTexture != nullptr) {
+        const auto *cloud = static_cast<CloudMapTerrainTextureClass *>(cloudTexture);
+        parameters.cloud_projection = {stretch, stretch, cloud->Get_X_Offset(), cloud->Get_Y_Offset()};
+    }
+    parameters.textured = wireframe ? 0 : 1;
+    parameters.cloud = !wireframe && cloudTexture != nullptr ? 1 : 0;
+    parameters.lightmap = !wireframe && noiseTexture != nullptr ? 1 : 0;
+    std::array<Graphics::RHITextureHandle, 3> textures{
+        Graphics::RHITextureHandle{}, Resolve_Graphics_Texture(cloudTexture), Resolve_Graphics_Texture(noiseTexture)};
+    const bool filtered = TheGlobalData->m_bilinearTerrainTex || TheGlobalData->m_trilinearTerrainTex;
+    auto &renderer = Graphics::Get_Surface_Renderer();
+    auto &commands = device->Immediate_Command_List();
+    for (Int stacking = 0; stacking <= maxStacking; ++stacking) {
+        for (Int index = 0; index < m_maxRoadTypes; ++index) {
+            RoadType &road = m_roadTypes[index];
+            if (road.getStacking() != stacking) continue;
+            m_curUniqueID = road.getUniqueID();
+            m_curRoadType = index;
+            if (loadBuffers) loadRoadsInVertexAndIndexBuffers();
+            if (road.getNumIndices() == 0) continue;
+            textures[0] = Resolve_Graphics_Texture(road.getTexture());
+            const bool drawn = Graphics::Draw_Road(renderer, commands, road.getMesh(), parameters, textures, filtered);
+            if (!drawn) DEBUG_LOG(("Road graphics submission failed.\n"));
+        }
+    }
+    m_curRoadType = 0;
 }
-
-

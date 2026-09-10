@@ -60,7 +60,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hiersave.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "nodefilt.h"
 #include "EULER.h"
 #include "util.h"

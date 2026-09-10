@@ -23,7 +23,6 @@ set(WW3D2_SRC
     #bwrender.h
     camera.cpp
     camera.h
-    #classid.h
     #collect.cpp
     #collect.h
     #colorspace.h
@@ -149,7 +148,6 @@ set(WW3D2_SRC
     #projector.h
     #proto.cpp
     #proto.h
-    #proxy.h
     #rddesc.h
     render2d.cpp
     render2d.h
@@ -225,7 +223,6 @@ set(WW3D2_SRC
     #ww3dformat.cpp
     #ww3dformat.h
     #ww3dids.h
-    #ww3dtrig.h
 )
 
 add_library(g_ww3d2 STATIC)
@@ -254,7 +251,6 @@ target_precompile_headers(g_ww3d2 PRIVATE
 
 target_link_libraries(g_ww3d2 PRIVATE
     core_wwdebug
-    corei_ww3d2
     g_wwcommon
     gi_always
 )

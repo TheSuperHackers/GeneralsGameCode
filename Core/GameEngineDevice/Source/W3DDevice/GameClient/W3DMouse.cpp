@@ -1,3 +1,4 @@
+#include "W3DDevice/GameClient/W3DRenderServices.h"
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -28,13 +29,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#include <span>
 #include "Common/GameMemory.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/camera.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
 
-#include "WW3D2/assetmgr.h"
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
 
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DMouse.h"
@@ -44,94 +44,45 @@
 #include "GameClient/Display.h"
 #include "GameClient/Image.h"
 #include "GameClient/InGameUI.h"
-#include "WWLib/mutex.h"
-#include "WWLib/thread.h"
 #include <SDL3/SDL.h>
+#include "WWLib/ffactory.h"
+#include <string>
+#include <vector>
+import Assets.Cache.Animations;
+import Graphics.Cursors.Load;
 
 
 //Since there can't be more than 1 mouse, might as well keep these static.
-static CriticalSectionClass mutex;
-static Bool isThread;
-static TextureClass *cursorTextures[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_ANIM_FRAMES];	///<Textures for each cursor type
 static const Image *cursorImages[Mouse::NUM_MOUSE_CURSORS];			///<Images for use with the RM_POLYGON method.
-static RenderObjClass *cursorModels[Mouse::NUM_MOUSE_CURSORS];	///< W3D models for each cursor type
-static HAnimClass			*cursorAnims[Mouse::NUM_MOUSE_CURSORS];		///< W3D animations for each cursor type
-
-///Mouse polling/update thread function
-static class MouseThreadClass : public ThreadClass
-{
-
-public:
-	MouseThreadClass() : ThreadClass() {}
-
-	virtual void Thread_Function() override;
-
-} thread;
-
-void MouseThreadClass::Thread_Function()
-{
-
-	//poll mouse and update position
-
-	while (running)
-	{
-		isThread=TRUE;
-		if (TheMouse)
-			TheMouse->draw();
-		isThread=FALSE;
-		Switch_Thread();
-	}
-}
+static W3DRenderObject *cursorModels[Mouse::NUM_MOUSE_CURSORS];	///< W3D models for each cursor type
+static Assets::AnimationAssetHandle cursorAnims[Mouse::NUM_MOUSE_CURSORS];		///< W3D animations for each cursor type
 
 W3DMouse::W3DMouse()
 {
 	// zero our event list
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 	{
-		for (Int j=0; j<MAX_2D_CURSOR_ANIM_FRAMES; j++)
-			cursorTextures[i][j]=nullptr;
 		cursorModels[i]=nullptr;
 		cursorAnims[i]=nullptr;
 	}
 
-	m_currentD3DCursor=NONE;
+	m_currentHardwareCursor=NONE;
 	m_currentW3DCursor=NONE;
 	m_currentPolygonCursor=NONE;
-	m_currentAnimFrame = 0;
-	m_currentD3DFrame = 0;
-	m_currentFrames = 0;
-	m_currentFMS= 1.0f/1000.0f;
-
 	m_camera = nullptr;
-	m_drawing = FALSE;
 
 }
 
 W3DMouse::~W3DMouse()
 {
-	LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
-
-	if (m_pDev)
-	{
-		m_pDev->ShowCursor(FALSE);	//kill DX8 cursor
-		SDL3Mouse::setCursor(ARROW);
-	}
-
-	freeD3DAssets();
+	SDL_HideCursor();
+	m_hardwareCursor.Reset();
 	freeW3DAssets();
-
-	thread.Stop();
-
 }
 
 void W3DMouse::initPolygonAssets()
 {
-	CriticalSectionClass::LockClass m(mutex);
 
-	//don't allow the mouse thread to initialize
-	//wait for main app to do initialization.
-	if (isThread)
-		return;
 
 	//Check if texture assets already loaded
 	if (m_currentRedrawMode == RM_POLYGON && cursorImages[1] == nullptr)
@@ -154,115 +105,38 @@ void W3DMouse::freePolygonAssets()
 	}
 }
 
-/**Release the textures required to display the selected cursor*/
-Bool W3DMouse::releaseD3DCursorTextures(MouseCursor cursor)
+Bool W3DMouse::loadHardwareCursor(MouseCursor cursor)
 {
-	if (cursor == NONE || !cursorTextures[cursor][0])
-		return TRUE;	//no texture for this cursor or texture never loaded
-
-	for (Int i=0; i<MAX_2D_CURSOR_ANIM_FRAMES; i++)
-	{
-		REF_PTR_RELEASE(m_currentD3DSurface[i]);
-		REF_PTR_RELEASE(cursorTextures[cursor][i]);
-	}
-
-	return TRUE;
+	const auto& info = m_cursorInfo[cursor];
+	return Graphics::Load_Cursor(m_hardwareCursor,
+		{info.textureName.str(), info.numFrames, info.fps, info.hotSpotPosition.x, info.hotSpotPosition.y},
+		[](std::string_view path, std::vector<std::byte>& bytes) {
+			if (!_TheFileFactory) return false;
+			const std::string name(path);
+			file_auto_ptr file(_TheFileFactory, name.c_str());
+			if (!file.get() || !file->Is_Available() || !file->Open()) return false;
+			const int size = file->Size();
+			if (size <= 0) return false;
+			bytes.resize(size);
+			return file->Read(bytes.data(), size) == size;
+		});
 }
 
-/**Load the textures required to display the selected cursor*/
-Bool W3DMouse::loadD3DCursorTextures(MouseCursor cursor)
+void W3DMouse::applyCursor()
 {
-	if (cursor == NONE || cursorTextures[cursor][0])
-		return TRUE;	//no texture for this cursor or texture already loaded
-
-	WW3DAssetManager *am=WW3DAssetManager::Get_Instance();
-	Int animFrames=m_cursorInfo[cursor].numFrames;
-
-	if (!animFrames)
-		return FALSE;	//no animation frames defined.
-
-	const char *baseName=m_cursorInfo[cursor].textureName.str();
-	char FrameName[64];
-
-	//Clamp to reasonable number
-	if (animFrames > MAX_2D_CURSOR_ANIM_FRAMES)
-		animFrames = MAX_2D_CURSOR_ANIM_FRAMES;
-
-	m_currentFrames=0;
-
-	if (animFrames == 1)
-	{	//single animation frame without trailing numbers
-		snprintf(FrameName, ARRAY_SIZE(FrameName), "%s.tga", baseName);
-		cursorTextures[cursor][0]=	am->Get_Texture(FrameName);
-		m_currentD3DSurface[0]=cursorTextures[cursor][0]->Get_Surface_Level();
-		m_currentFrames = 1;
-	}
-	else
-	for (Int i=0; i<animFrames; i++)
+	if (m_currentRedrawMode == RM_SYSTEM)
 	{
-		snprintf(FrameName, ARRAY_SIZE(FrameName), "%s%04d.tga", baseName, i);
-		if ((cursorTextures[cursor][i]=am->Get_Texture(FrameName)) != nullptr)
-		{	m_currentD3DSurface[m_currentFrames]=cursorTextures[cursor][i]->Get_Surface_Level();
-			m_currentFrames++;
-		}
-	}
-	return TRUE;
-}
-
-void W3DMouse::initD3DAssets()
-{
-	//Nothing to do here unless we want to preload all possible cursors which would
-	//probably not be practical for memory reasons.
-
-	CriticalSectionClass::LockClass m(mutex);
-
-	//don't allow the mouse thread to initialize
-	//wait for main app to do initialization.
-	if (isThread)
+		SDL3Mouse::applyCursor();
 		return;
-
-	WW3DAssetManager *am=WW3DAssetManager::Get_Instance();
-
-	//Check if texture assets already loaded
-	if (m_currentRedrawMode == RM_DX8 && cursorTextures[1] == nullptr && am)
-	{
-		for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
-		{
-			for (Int j=0; j < MAX_2D_CURSOR_ANIM_FRAMES; j++)
-			{
-				cursorTextures[i][j]=nullptr;//am->Get_Texture(m_cursorInfo[i].textureName.str());
-			}
-		}
-
-		for (Int x = 0; x < MAX_2D_CURSOR_ANIM_FRAMES; x++)
-			m_currentD3DSurface[x]=nullptr;
 	}
-}
-
-void W3DMouse::freeD3DAssets()
-{
-	//free pointers to texture surfaces.
-	Int i=0;
-	for (; i<MAX_2D_CURSOR_ANIM_FRAMES; i++)
-		REF_PTR_RELEASE(m_currentD3DSurface[i]);
-
-	//free textures.
-	for (i=0; i<NUM_MOUSE_CURSORS; i++)
-	{
-		for (Int j=0; j<MAX_2D_CURSOR_ANIM_FRAMES; j++)
-			REF_PTR_RELEASE(cursorTextures[i][j]);
-	}
-
+	if (m_currentRedrawMode == RM_HARDWARE && m_currentHardwareCursor != NONE
+		&& m_visible && m_cursorFocused && m_hardwareCursor.Show()) return;
+	SDL_HideCursor();
 }
 
 void W3DMouse::initW3DAssets()
 {
-	CriticalSectionClass::LockClass m(mutex);
 
-	//don't allow the mouse thread to initialize
-	//wait for main app to do initialization.
-	if (isThread)
-		return;
 
 	//Check if model assets already loaded
 	if ((cursorModels[1] == nullptr && W3DDisplay::m_assetManager))
@@ -290,24 +164,24 @@ void W3DMouse::initW3DAssets()
 			if (!m_cursorInfo[i].W3DAnimName.isEmpty())
 			{
 				DEBUG_ASSERTCRASH(cursorAnims[i] == nullptr, ("hmm, leak festival"));
-				cursorAnims[i] = W3DDisplay::m_assetManager->Get_HAnim(m_cursorInfo[i].W3DAnimName.str());
+					cursorAnims[i] = W3DDisplay::m_assetManager->Catalog().Acquire_Animation(m_cursorInfo[i].W3DAnimName.str());
 				if (cursorAnims[i] && cursorModels[i])
 				{
-					cursorModels[i]->Set_Animation(cursorAnims[i], 0, (m_cursorInfo[i].loop) ? RenderObjClass::ANIM_MODE_LOOP : RenderObjClass::ANIM_MODE_ONCE);
+					cursorModels[i]->Set_Animation(cursorAnims[i], 0, (m_cursorInfo[i].loop) ? W3DRenderObject::ANIM_MODE_LOOP : W3DRenderObject::ANIM_MODE_ONCE);
 				}
 			}
 		}
 	}
 
 	// create the camera
-	m_camera = NEW_REF( CameraClass, () );
+	m_camera = NEW_REF( W3DCamera, () );
 	m_camera->Set_Position( Vector3( 0, 1, 1 ) );
 	Vector2 min = Vector2( -1, -1 );
 	Vector2 max = Vector2( +1, +1 );
 	m_camera->Set_View_Plane( min, max );
 	m_camera->Set_Clip_Planes( 0.995f, 20.0f );
 	if (m_orthoCamera)
-		m_camera->Set_Projection_Type( CameraClass::ORTHO );
+		m_camera->Set_Projection_Type( W3DCamera::ORTHO );
 }
 
 void W3DMouse::freeW3DAssets()
@@ -320,7 +194,7 @@ void W3DMouse::freeW3DAssets()
 			W3DDisplay::m_3DInterfaceScene->Remove_Render_Object(cursorModels[i]);
 		}
 		REF_PTR_RELEASE(cursorModels[i]);
-		REF_PTR_RELEASE(cursorAnims[i]);
+		Assets::Release_Animation(cursorAnims[i]);
 	}
 
 	REF_PTR_RELEASE(m_camera);
@@ -336,13 +210,6 @@ void W3DMouse::init()
 	SDL3Mouse::init();
 	setCursor(ARROW);	//set default starting cursor image
 
-	WWASSERT(!thread.Is_Running());
-
-
-	isThread=FALSE;
-	if (m_currentRedrawMode == RM_DX8)
-		thread.Execute();
-	thread.Set_Priority(0);
 
 }
 
@@ -363,18 +230,16 @@ void W3DMouse::reset()
 void W3DMouse::setCursor( MouseCursor cursor )
 {
 
-	CriticalSectionClass::LockClass m(mutex);
 
 	m_directionFrame=0;
-	if (m_currentRedrawMode == RM_WINDOWS)
-	{	//Windows default cursor needs to refreshed whenever we get a WM_SETCURSOR
-		m_currentD3DCursor=NONE;
+	if (m_currentRedrawMode == RM_SYSTEM)
+	{	//The system cursor is refreshed whenever its selection changes.
+		m_currentHardwareCursor=NONE;
 		m_currentW3DCursor=NONE;
 		m_currentPolygonCursor=NONE;
 		setCursorDirection(cursor);
 		// SDL owns the system cursor, so it is safe to apply the selection
-		// immediately. The old drawing guard only worked around Win32
-		// WM_SETCURSOR flicker.
+		// immediately.
 		SDL3Mouse::setCursorWithDirection(cursor, m_directionFrame);
 		m_currentCursor = cursor;
 		return;
@@ -384,50 +249,26 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	Mouse::setCursor( cursor );
 
 	// if we're already on this cursor ignore the rest of code to stop cursor flickering.
-	if( m_currentCursor == cursor && m_currentD3DCursor == cursor)
-		return;
-
-	//make sure Windows didn't reset our cursor
-	if (m_currentRedrawMode == RM_DX8)
+	if( m_currentCursor == cursor && m_currentHardwareCursor == cursor)
 	{
-		SDL_HideCursor();	//Kill the SDL cursor while the DX8 cursor is active.
+		applyCursor();
+		return;
+	}
 
-		LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
-		Bool doImageChange=FALSE;
-
-		if (m_pDev != nullptr)
+	if (m_currentRedrawMode == RM_HARDWARE)
+	{
+		m_hardwareCursor.Reset();
+		m_currentHardwareCursor = NONE;
+		if (cursor != NONE)
 		{
-			m_pDev->ShowCursor(FALSE);	//disable DX8 cursor
-			if (cursor != m_currentD3DCursor)
-			{	if (!isThread)
-				{	releaseD3DCursorTextures(m_currentD3DCursor);
-					//Since this type of cursor is updated from a non-D3D thread, we need
-					//to preallocate all surfaces in main thread.
-					loadD3DCursorTextures(cursor);
-				}
-			}
-			if (m_currentD3DSurface[0])
-				doImageChange=TRUE;
-		}
-		//For DX8 Cursors, we continually set the image on every call even when
-		//it didn't change.  This is needed to prevent the cursor from flickering.
-		if (doImageChange)
-		{
-			HRESULT res;
-			m_currentHotSpot = m_cursorInfo[cursor].hotSpotPosition;
-			m_currentFMS = m_cursorInfo[cursor].fps/1000.0f;
-			m_currentAnimFrame = 0;	//reset animation when cursor changes
-			res = m_pDev->SetCursorProperties(m_currentHotSpot.x,m_currentHotSpot.y,m_currentD3DSurface[(Int)m_currentAnimFrame]->Peek_D3D_Surface());
-			m_pDev->ShowCursor(TRUE);	//Enable DX8 cursor
-			m_currentD3DFrame=(Int)m_currentAnimFrame;
-			m_currentD3DCursor = cursor;
-			m_lastAnimTime=timeGetTime();
+			m_currentHardwareCursor = cursor;
+			if (!loadHardwareCursor(cursor)) DEBUG_LOG(("Unable to load hardware cursor %s", m_cursorInfo[cursor].textureName.str()));
 		}
 	}
 	else if (m_currentRedrawMode == RM_POLYGON)
 	{
 		SDL_HideCursor();	//Kill the SDL cursor while the polygon cursor is active.
-		m_currentD3DCursor=NONE;
+		m_currentHardwareCursor=NONE;
 		m_currentW3DCursor=NONE;
 		m_currentPolygonCursor = cursor;
 		m_currentHotSpot = m_cursorInfo[cursor].hotSpotPosition;
@@ -435,7 +276,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	else if (m_currentRedrawMode == RM_W3D)
 	{
 		SDL_HideCursor();	//Kill the SDL cursor while the W3D cursor is active.
-		m_currentD3DCursor=NONE;
+		m_currentHardwareCursor=NONE;
 		m_currentPolygonCursor=NONE;
 		if (cursor != m_currentW3DCursor)
 		{
@@ -457,7 +298,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 					W3DDisplay::m_3DInterfaceScene->Add_Render_Object(cursorModels[m_currentW3DCursor]);
 					if (m_cursorInfo[m_currentW3DCursor].loop == FALSE && cursorAnims[m_currentW3DCursor])
 					{
-						cursorModels[m_currentW3DCursor]->Set_Animation(cursorAnims[m_currentW3DCursor], 0, RenderObjClass::ANIM_MODE_ONCE);
+						cursorModels[m_currentW3DCursor]->Set_Animation(cursorAnims[m_currentW3DCursor], 0, W3DRenderObject::ANIM_MODE_ONCE);
 					}
 				}
 			}
@@ -470,50 +311,18 @@ void W3DMouse::setCursor( MouseCursor cursor )
 
 	// save current cursor
 	m_currentCursor = cursor;
+	applyCursor();
 
 }
 
 void W3DMouse::draw()
 {
-	CriticalSectionClass::LockClass m(mutex);
 
-	m_drawing = TRUE;
 
 	//make sure the correct cursor image is selected
 	setCursor(m_currentCursor);
 
-	if (m_currentRedrawMode == RM_DX8 && m_currentD3DCursor != NONE)
-	{
-		//called from update thread or rendering loop.  Tells D3D where
-		//to draw the mouse cursor.
-		LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
-		if (m_pDev)
-		{	m_pDev->ShowCursor(TRUE);	//Enable DX8 cursor
-
-			if (TheDisplay && !TheDisplay->getWindowed())
-			{	//if we're full-screen, need to manually move cursor image
-				float cursorX = 0.0f;
-				float cursorY = 0.0f;
-				SDL_GetMouseState(&cursorX, &cursorY);
-				m_pDev->SetCursorPosition(static_cast<int>(cursorX), static_cast<int>(cursorY), D3DCURSOR_IMMEDIATE_UPDATE);
-			}
-			//Check if animated cursor and new frame
-			if (m_currentFrames > 1)
-			{
-				Int msTime=timeGetTime();
-				m_currentAnimFrame += (msTime-m_lastAnimTime) * m_currentFMS;
-				m_currentAnimFrame=fmod(m_currentAnimFrame,m_currentFrames);
-				m_lastAnimTime=msTime;
-
-				if ((Int)m_currentAnimFrame != m_currentD3DFrame)
-				{
-					m_currentD3DFrame=(Int)m_currentAnimFrame;
-					m_pDev->SetCursorProperties(m_currentHotSpot.x,m_currentHotSpot.y,m_currentD3DSurface[m_currentD3DFrame]->Peek_D3D_Surface());
-				}
-			}
-		}
-	}
-	else if (m_currentRedrawMode == RM_POLYGON)
+	if (m_currentRedrawMode == RM_POLYGON)
 	{
 		const Image *image=cursorImages[m_currentPolygonCursor];
 		if (image)
@@ -522,7 +331,7 @@ void W3DMouse::draw()
 				m_currMouse.pos.x+image->getImageWidth()-m_currentHotSpot.x, m_currMouse.pos.y+image->getImageHeight()-m_currentHotSpot.y);
 		}
 	}
-	else if (m_currentRedrawMode == RM_WINDOWS)
+	else if (m_currentRedrawMode == RM_SYSTEM)
 	{
 	}
 	else if (m_currentRedrawMode == RM_W3D)
@@ -573,22 +382,14 @@ void W3DMouse::draw()
 				}
 				cursorModels[m_currentW3DCursor]->Set_Transform(tm);
 
-				WW3D::Render( W3DDisplay::m_3DInterfaceScene, m_camera );
+				Get_W3D_Render_Services().Render( W3DDisplay::m_3DInterfaceScene, m_camera );
 			}
 		}
 	}
 
-	//@todo: In DX8 mode the mouse is drawn in another thread which isn't allowed
-	//access to D3D so we can't do any drawing here.
-	// draw the cursor text
-	if (!isThread)
-		drawCursorText();
+	drawCursorText();
+	if (m_visible) drawTooltip();
 
-	// draw tooltip text
-	if (m_visible && !isThread)
-		drawTooltip();
-
-	m_drawing = FALSE;
 }
 
 void W3DMouse::setRedrawMode(RedrawMode mode)
@@ -600,62 +401,14 @@ void W3DMouse::setRedrawMode(RedrawMode mode)
 
 	m_currentRedrawMode=mode;
 
-	switch (mode)
-	{
-		case RM_WINDOWS:
-		{	//Windows mouse doesn't need an update thread.
-			if (thread.Is_Running())
-				thread.Stop();
-			freeD3DAssets();	//using Windows resources
-			freeW3DAssets();
-			freePolygonAssets();
-			m_currentD3DCursor = NONE;
-			m_currentW3DCursor = NONE;
-			m_currentPolygonCursor = NONE;
-		}
-		break;
-
-		case RM_W3D:
-		{	//Model mouse updated only at render time so doesn't
-			//require thread.
-			if (thread.Is_Running())
-				thread.Stop();
-			freeD3DAssets();	//using packed Image data, not textures.
-			freePolygonAssets();
-			m_currentD3DCursor = NONE;
-			m_currentPolygonCursor = NONE;
-			initW3DAssets();
-		}
-		break;
-
-		case RM_POLYGON:
-		{	//Polygon mouse updated only at render time so doesn't
-			//require thread.
-			if (thread.Is_Running())
-				thread.Stop();
-			freeD3DAssets();	//using packed Image data, not textures.
-			freeW3DAssets();
-			m_currentD3DCursor = NONE;
-			m_currentW3DCursor = NONE;
-			m_currentPolygonCursor = NONE;
-			initPolygonAssets();
-		}
-		break;
-
-		case RM_DX8:
-		{	//this cursor type is drawn by DX8 and can be refreshed
-			//independent of rendering rate.  Uses another thread to do
-			//position updates.
-			initD3DAssets();	//make sure textures loaded.
-			freeW3DAssets();
-			freePolygonAssets();
-			if (!thread.Is_Running())
-				thread.Execute();
-			m_currentW3DCursor = NONE;
-			m_currentPolygonCursor = NONE;
-			break;
-		}
-	}
+	m_hardwareCursor.Reset();
+	freeW3DAssets();
+	freePolygonAssets();
+	m_currentHardwareCursor = NONE;
+	m_currentW3DCursor = NONE;
+	m_currentPolygonCursor = NONE;
+	if (mode == RM_W3D) initW3DAssets();
+	else if (mode == RM_POLYGON) initPolygonAssets();
 
 	setCursor(NONE);
 	setCursor(cursor);

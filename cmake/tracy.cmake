@@ -1,3 +1,8 @@
+# An unattended game must not retain every profiling event while waiting for
+# a capture connection. Apply this to the client and all instrumented callers,
+# including existing build directories that cached the upstream OFF default.
+set(TRACY_ON_DEMAND ON CACHE BOOL "Record Tracy events only while connected." FORCE)
+
 find_package(Tracy CONFIG QUIET)
 if(NOT Tracy_FOUND)
     FetchContent_Declare(
@@ -10,6 +15,11 @@ endif()
 
 if(NOT TARGET TracyClient)
     message(FATAL_ERROR "Tracy is enabled but TracyClient was not found.")
+endif()
+
+get_target_property(tracy_client_definitions TracyClient INTERFACE_COMPILE_DEFINITIONS)
+if(NOT "TRACY_ON_DEMAND" IN_LIST tracy_client_definitions)
+    message(FATAL_ERROR "TracyClient must be built with TRACY_ON_DEMAND=ON. Rebuild the installed Tracy package or use the fetched client.")
 endif()
 
 target_compile_definitions(TracyClient INTERFACE

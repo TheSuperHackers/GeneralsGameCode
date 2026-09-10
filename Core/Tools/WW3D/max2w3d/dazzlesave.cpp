@@ -38,7 +38,7 @@
 
 
 #include "dazzlesave.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "util.h"
 #include "w3dappdata.h"
 #include "errclass.h"

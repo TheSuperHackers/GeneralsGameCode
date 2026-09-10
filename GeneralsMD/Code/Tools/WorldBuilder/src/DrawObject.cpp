@@ -1,3 +1,7 @@
+import Assets.Math;
+import Graphics.Renderer2D;
+import Graphics.Frame.AttachmentBindings;
+import Graphics.Frame.Runtime;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -17,27 +21,33 @@
 */
 
 #include "StdAfx.h"
+#include <algorithm>
+import Graphics.Scene.Views.CameraMatrices;
+import Graphics.Scene.DrawParameters;
 
 #include "DrawObject.h"
+#include <span>
+#include "WWMath/matrix4.h"
+import Graphics.Scene.Surfaces.Geometry;
 
 #include <stdlib.h>
-#include <WW3D2/assetmgr.h>
-#include <WW3D2/texture.h>
+#include <WW3D2/AssetMgr.h>
+#include <WW3D2/Texture.h>
 #include <WWMath/tri.h>
 #include <WWMath/colmath.h>
-#include <WW3D2/coltest.h>
-#include <WW3D2/rinfo.h>
-#include <WW3D2/camera.h>
+#include <WW3D2/ColTest.h>
+#include <WW3D2/RInfo.h>
+#include <WW3D2/Camera.h>
 #include "Common/GlobalData.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DWater.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/meshmdl.h"
-#include "WW3D2/shader.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshResource.h"
+import Graphics.Materials.State;
+#include "WW3D2/WW3D.h"
 #include "Common/MapObject.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
@@ -53,7 +63,6 @@
 #include "Common/BorderColors.h"
 #include "Common/ThingTemplate.h"
 #include "W3DDevice/Common/W3DConvert.h"
-#include "WW3D2/render2d.h"
 #include "GameLogic/Weapon.h"
 #include "Common/AudioEventInfo.h"
 
@@ -66,28 +75,28 @@ const Real HANDLE_SIZE = (2.0f) * LINE_THICKNESS;
 
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_OPAQUE ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_DISABLE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_OPAQUE ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_ALWAYS, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_ONE, \
+	Graphics::MaterialState::DSTBLEND_ZERO, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_DISABLE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_DISABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_ALPHA ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_ALWAYS, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_SRC_ALPHA, \
+	Graphics::MaterialState::DSTBLEND_ONE_MINUS_SRC_ALPHA, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_MODULATE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_ENABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA_Z ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_ALPHA_Z ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_LEQUAL, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_SRC_ALPHA, \
+	Graphics::MaterialState::DSTBLEND_ONE_MINUS_SRC_ALPHA, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_MODULATE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_DISABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_OPAQUE_Z ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_DISABLE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_OPAQUE_Z ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_LEQUAL, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_ONE, \
+	Graphics::MaterialState::DSTBLEND_ZERO, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_DISABLE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_DISABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 
 Bool DrawObject::m_squareFeedback = false;
@@ -134,31 +143,23 @@ void DrawObject::stopWaypointDragFeedback()
 DrawObject::~DrawObject()
 {
 	freeMapResources();
-	REF_PTR_RELEASE(m_waterDrawObject);
-	TheWaterRenderObj = nullptr;
+	delete m_waterDrawObject;
+	m_waterDrawObject = nullptr;
+	TheWaterRenderSystem = nullptr;
 }
 
 DrawObject::DrawObject() :
 	m_drawObjects(true),
 	m_drawPolygonAreas(true),
-	m_indexBuffer(nullptr),
-	m_vertexMaterialClass(nullptr),
-	m_vertexBufferTile1(nullptr),
-	m_vertexBufferTile2(nullptr),
-	m_vertexBufferWater(nullptr),
-	m_vertexFeedback(nullptr),
-	m_indexFeedback(nullptr),
-	m_indexWater(nullptr),
 	m_moldMesh(nullptr),
-	m_lineRenderer(nullptr),
   m_drawSoundRanges(false)
 {
 	m_feedbackPoint.x = 20;
 	m_feedbackPoint.y = 20;
 	initData();
-	m_waterDrawObject = new WaterRenderObjClass;
-	m_waterDrawObject->init(0, 0, 0, nullptr, WaterRenderObjClass::WATER_TYPE_0_TRANSLUCENT);
-	TheWaterRenderObj=m_waterDrawObject;
+	m_waterDrawObject = new WaterRenderSystem;
+	m_waterDrawObject->init(0, 0, 0, nullptr, WaterRenderSystem::WATER_TYPE_SURFACE);
+	TheWaterRenderSystem=m_waterDrawObject;
 
 	//(gth) this was needed to fix the extents bug that is based off water and too small for our maps
 	Set_Force_Visible(true);
@@ -219,18 +220,16 @@ RenderObjClass * DrawObject::Clone() const
 Int DrawObject::freeMapResources()
 {
 
-	REF_PTR_RELEASE(m_indexBuffer);
-	REF_PTR_RELEASE(m_vertexBufferTile1);
-	REF_PTR_RELEASE(m_vertexBufferTile2);
-	REF_PTR_RELEASE(m_vertexBufferWater);
-	REF_PTR_RELEASE(m_vertexMaterialClass);
-	REF_PTR_RELEASE(m_vertexFeedback);
-	REF_PTR_RELEASE(m_indexFeedback);
-	REF_PTR_RELEASE(m_indexWater);
+	m_indexBuffer.clear();
+	m_vertexBufferTile1.clear();
+	m_vertexBufferTile2.clear();
+
+
+	m_vertexFeedback.clear();
+	m_indexFeedback.clear();
+
 	REF_PTR_RELEASE(m_moldMesh);
 
-	delete m_lineRenderer;
-	m_lineRenderer = nullptr;
 
 	return 0;
 }
@@ -252,11 +251,10 @@ Int DrawObject::initData()
 	freeMapResources();	//free old data and ib/vb
 
 	m_numTriangles = 2*NUM_TRI;
-	m_indexBuffer=NEW_REF(DX8IndexBufferClass,(m_numTriangles*3, DX8IndexBufferClass::USAGE_DYNAMIC));
+	m_indexBuffer.resize(m_numTriangles*3);
 
 	// Fill up the IB
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
+	unsigned *ib=m_indexBuffer.data();
 
 	for (i=0; i<3*m_numTriangles; i+=3)
 	{
@@ -267,19 +265,18 @@ Int DrawObject::initData()
 		ib+=3;	//skip the 3 indices we just filled
 	}
 
-	m_vertexBufferTile1=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,m_numTriangles*3,DX8VertexBufferClass::USAGE_DYNAMIC));
-	m_vertexBufferTile2=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,m_numTriangles*3,DX8VertexBufferClass::USAGE_DYNAMIC));
+	m_vertexBufferTile1.resize(m_numTriangles*3);
+	m_vertexBufferTile2.resize(m_numTriangles*3);
 
-	m_vertexFeedback=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,NUM_FEEDBACK_VERTEX,DX8VertexBufferClass::USAGE_DYNAMIC));
-	m_indexFeedback=NEW_REF(DX8IndexBufferClass,(NUM_FEEDBACK_INDEX,DX8IndexBufferClass::USAGE_DYNAMIC));
+	m_vertexFeedback.resize(NUM_FEEDBACK_VERTEX);
+	m_indexFeedback.resize(NUM_FEEDBACK_INDEX);
 
 	//go with a preset material for now.
-	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass(SC_OPAQUE);//_PresetOpaque2DShader;//ShaderClass(SC_OPAQUE); //_PresetOpaqueShader;
+	m_shaderClass = Graphics::MaterialState(SC_OPAQUE);//_PresetOpaque2DShader;//Graphics::MaterialState(SC_OPAQUE); //_PresetOpaqueShader;
 
-	m_shaderClass = ShaderClass::_PresetOpaque2DShader;
+	m_shaderClass = Graphics::MaterialState::Opaque2D();
 	updateForWater();
 	updateVB(m_vertexBufferTile1, 255<<8, true, false);
 
@@ -300,14 +297,14 @@ void DrawObject::updateMeshVB()
 	if (m_moldMesh == nullptr) {
  		WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 		pMgr->Set_WW3D_Load_On_Demand(false);	 // We don't want it fishing for these assets in the game assets.
-		m_moldMesh = (MeshClass*)pMgr->Create_Render_Obj(m_curMeshModelName.str());
+		m_moldMesh = (W3DMeshRenderObject*)pMgr->Create_Render_Obj(m_curMeshModelName.str());
 		if (m_moldMesh == nullptr) {
 			// Try loading the mold asset.
 			AsciiString path("data\\editor\\molds\\");
 			path.concat(m_curMeshModelName);
 			path.concat(".w3d");
 			pMgr->Load_3D_Assets(path.str());
-			m_moldMesh = (MeshClass*)pMgr->Create_Render_Obj(m_curMeshModelName.str());
+			m_moldMesh = (W3DMeshRenderObject*)pMgr->Create_Render_Obj(m_curMeshModelName.str());
 		}
 		if (m_moldMesh) {
 			m_moldMeshBounds = m_moldMesh->Get_Bounding_Sphere();
@@ -321,13 +318,11 @@ void DrawObject::updateMeshVB()
 
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
 	if (m_moldMesh == nullptr) {
 		return;
@@ -349,65 +344,55 @@ void DrawObject::updateMeshVB()
 #endif
 
 	for (i=0; i<numVertex; i++) {
-		curVb->u1 = 0;
-		curVb->v1 = 0;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
 		Vector3 vLoc(pVert[i]);
 		vLoc *= MeshMoldOptions::getScale();
 		vLoc.Rotate_Z(MeshMoldOptions::getAngle()*PI/180.0f);
 		vLoc.X += m_feedbackPoint.x;
 		vLoc.Y += m_feedbackPoint.y;
 		vLoc.Z += m_feedbackPoint.z;
-		curVb->x = vLoc.X;
-		curVb->y = vLoc.Y;
-		curVb->z = vLoc.Z;
+		curVb->position[0] = vLoc.X;
+		curVb->position[1] = vLoc.Y;
+		curVb->position[2] = vLoc.Z;
 
-		VertexFormatXYZDUV2 vb;
-		vb.x = vLoc.X;
-		vb.y = vLoc.Y;
-		vb.z = vLoc.Z;
+		curVb->color = Assets::Color_From_ARGB(0x0000ffff | (theAlpha << 24)).To_Array(); // bright cyan.
 
-#if 1
-		curVb->diffuse = 0x0000ffff | (theAlpha << 24);		// bright cyan.
-#else
-		TheTerrainRenderObject->doTheLight(&vb, &lightRay, (Vector3 *)(&pNormal[i]), nullptr, 1.0f);
-		vb.diffuse &= 0x0000ffff;
-		curVb->diffuse = vb.diffuse | (theAlpha << 24);
-#endif
 		curVb++;
 		m_feedbackVertexCount++;
 	}
 	// Put in the "center anchor"
 
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x;
-	curVb->y = m_feedbackPoint.y;
-	curVb->z = 0;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x;
+	curVb->position[1] = m_feedbackPoint.y;
+	curVb->position[2] = 0;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x+1;
-	curVb->y = m_feedbackPoint.y+1;
-	curVb->z = m_feedbackPoint.z;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x+1;
+	curVb->position[1] = m_feedbackPoint.y+1;
+	curVb->position[2] = m_feedbackPoint.z;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x;
-	curVb->y = m_feedbackPoint.y;
-	curVb->z = m_feedbackPoint.z-500;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x;
+	curVb->position[1] = m_feedbackPoint.y;
+	curVb->position[2] = m_feedbackPoint.z-500;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x+1;
-	curVb->y = m_feedbackPoint.y+1;
-	curVb->z = m_feedbackPoint.z-500;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x+1;
+	curVb->position[1] = m_feedbackPoint.y+1;
+	curVb->position[2] = m_feedbackPoint.z-500;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
 
@@ -449,13 +434,11 @@ void DrawObject::updateRampVB()
 
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
 	Int i, j;
 	Int widthVerts = 8;
@@ -483,10 +466,10 @@ void DrawObject::updateRampVB()
 	Vector3 tr(coordTR.x, coordTR.y, coordTR.z);
 
 	for (i = 0; i < numVertex; i++) {
-		curVb->u1 = INT_TO_REAL(i % widthVerts) / widthVerts;
-		curVb->v1 = INT_TO_REAL(i / lengthVerts) / lengthVerts;
+		curVb->uv[0] = INT_TO_REAL(i % widthVerts) / widthVerts;
+		curVb->uv[1] = INT_TO_REAL(i / lengthVerts) / lengthVerts;
 
-		curVb->diffuse = curVb->diffuse = 0x0000ffff | (theAlpha << 24);		// bright cyan.
+		curVb->color = Assets::Color_From_ARGB(curVb->diffuse = 0x0000ffff | (theAlpha << 24)).To_Array();		// bright cyan.
 
 		Vector3 vLoc;
 		vLoc.X = (br.X - bl.X) * INT_TO_REAL(i % widthVerts) / (widthVerts  - 1) +
@@ -498,9 +481,9 @@ void DrawObject::updateRampVB()
 		vLoc.Z = (br.Z - bl.Z) * INT_TO_REAL(i % widthVerts) / (widthVerts - 1) +
 						 (tl.Z - bl.Z) * INT_TO_REAL(i / lengthVerts) / (lengthVerts - 1) + bl.Z;
 
-		curVb->x = vLoc.X;
-		curVb->y = vLoc.Y;
-		curVb->z = vLoc.Z;
+		curVb->position[0] = vLoc.X;
+		curVb->position[1] = vLoc.Y;
+		curVb->position[2] = vLoc.Z;
 
 		curVb++;
 		m_feedbackVertexCount++;
@@ -523,36 +506,36 @@ void DrawObject::updateRampVB()
 #if 0
 	// Put in the "center anchor"
 
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x;
-	curVb->y = m_feedbackPoint.y;
-	curVb->z = 0;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x;
+	curVb->position[1] = m_feedbackPoint.y;
+	curVb->position[2] = 0;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x+1;
-	curVb->y = m_feedbackPoint.y+1;
-	curVb->z = m_feedbackPoint.z;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x+1;
+	curVb->position[1] = m_feedbackPoint.y+1;
+	curVb->position[2] = m_feedbackPoint.z;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x;
-	curVb->y = m_feedbackPoint.y;
-	curVb->z = m_feedbackPoint.z-500;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x;
+	curVb->position[1] = m_feedbackPoint.y;
+	curVb->position[2] = m_feedbackPoint.z-500;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
-	curVb->u1 = 0;
-	curVb->v1 = 0;
-	curVb->x = m_feedbackPoint.x+1;
-	curVb->y = m_feedbackPoint.y+1;
-	curVb->z = m_feedbackPoint.z-500;
-	curVb->diffuse = 0xFFFF0000;  // red.
+	curVb->uv[0] = 0;
+	curVb->uv[1] = 0;
+	curVb->position[0] = m_feedbackPoint.x+1;
+	curVb->position[1] = m_feedbackPoint.y+1;
+	curVb->position[2] = m_feedbackPoint.z-500;
+	curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 	curVb++;
 	m_feedbackVertexCount++;
 #endif
@@ -565,13 +548,11 @@ void DrawObject::updateBoundaryVB()
 
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
  	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Int numBoundaries = pDoc->getNumBoundaries();
@@ -634,36 +615,36 @@ void DrawObject::updateBoundaryVB()
 			normal *= LINE_THICKNESS;
 			normal.Rotate_Z(PI/2);
 
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x+normal.X;
-			curVb->y = startPt.y+normal.Y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = startPt.x+normal.X;
+			curVb->position[1] = startPt.y+normal.Y;
+			curVb->position[2] = startPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x-normal.X;
-			curVb->y = startPt.y-normal.Y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = startPt.x-normal.X;
+			curVb->position[1] = startPt.y-normal.Y;
+			curVb->position[2] = startPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = endPt.x+normal.X;
-			curVb->y = endPt.y+normal.Y;
-			curVb->z = endPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = endPt.x+normal.X;
+			curVb->position[1] = endPt.y+normal.Y;
+			curVb->position[2] = endPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = endPt.x-normal.X;
-			curVb->y = endPt.y-normal.Y;
-			curVb->z = endPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = endPt.x-normal.X;
+			curVb->position[1] = endPt.y-normal.Y;
+			curVb->position[2] = endPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
 
@@ -676,39 +657,39 @@ void DrawObject::updateBoundaryVB()
 			m_feedbackIndexCount+=6;
 
 			// draw a little nugget
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x;
-			curVb->y = startPt.y - HANDLE_SIZE;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = startPt.x;
+			curVb->position[1] = startPt.y - HANDLE_SIZE;
+			curVb->position[2] = startPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
 
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x - HANDLE_SIZE;
-			curVb->y = startPt.y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = startPt.x - HANDLE_SIZE;
+			curVb->position[1] = startPt.y;
+			curVb->position[2] = startPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
 
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x;
-			curVb->y = startPt.y + HANDLE_SIZE;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = startPt.x;
+			curVb->position[1] = startPt.y + HANDLE_SIZE;
+			curVb->position[2] = startPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
 
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x + HANDLE_SIZE;
-			curVb->y = startPt.y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = startPt.x + HANDLE_SIZE;
+			curVb->position[1] = startPt.y;
+			curVb->position[2] = startPt.z;
+			curVb->color = Assets::Color_From_ARGB(BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor).To_Array();
 			curVb++;
 			m_feedbackVertexCount++;
 
@@ -741,13 +722,11 @@ void DrawObject::updateAmbientSoundVB()
 {
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
 	MapObject* mo = MapObject::getFirstMapObject();
 
@@ -768,57 +747,57 @@ void DrawObject::updateAmbientSoundVB()
 			return;
 		}
 
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = startPt.x;
-		curVb->y = startPt.y;
-		curVb->z = startPt.z;
-		curVb->diffuse = 0xFF2525EF;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = startPt.x;
+		curVb->position[1] = startPt.y;
+		curVb->position[2] = startPt.z;
+		curVb->color = Assets::Color_From_ARGB(0xFF2525EF).To_Array();
 		++curVb;
 		++m_feedbackVertexCount;
 
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = startPt.x;
-		curVb->y = startPt.y;
-		curVb->z = startPt.z + poleHeight;
-		curVb->diffuse = 0xFF2525EF;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = startPt.x;
+		curVb->position[1] = startPt.y;
+		curVb->position[2] = startPt.z + poleHeight;
+		curVb->color = Assets::Color_From_ARGB(0xFF2525EF).To_Array();
 		++curVb;
 		++m_feedbackVertexCount;
 
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = startPt.x + poleWidth;
-		curVb->y = startPt.y;
-		curVb->z = startPt.z + poleHeight;
-		curVb->diffuse = 0xFF2525EF;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = startPt.x + poleWidth;
+		curVb->position[1] = startPt.y;
+		curVb->position[2] = startPt.z + poleHeight;
+		curVb->color = Assets::Color_From_ARGB(0xFF2525EF).To_Array();
 		++curVb;
 		++m_feedbackVertexCount;
 
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = startPt.x + poleWidth;
-		curVb->y = startPt.y;
-		curVb->z = startPt.z;
-		curVb->diffuse = 0xFF2525EF;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = startPt.x + poleWidth;
+		curVb->position[1] = startPt.y;
+		curVb->position[2] = startPt.z;
+		curVb->color = Assets::Color_From_ARGB(0xFF2525EF).To_Array();
 		++curVb;
 		++m_feedbackVertexCount;
 
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = startPt.x;
-		curVb->y = startPt.y;
-		curVb->z = startPt.z + poleHeight + flagHeight;
-		curVb->diffuse = 0xFF2525EF;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = startPt.x;
+		curVb->position[1] = startPt.y;
+		curVb->position[2] = startPt.z + poleHeight + flagHeight;
+		curVb->color = Assets::Color_From_ARGB(0xFF2525EF).To_Array();
 		++curVb;
 		++m_feedbackVertexCount;
 
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = startPt.x + flagWidth;
-		curVb->y = startPt.y;
-		curVb->z = startPt.z + poleHeight + (flagHeight / 2);
-		curVb->diffuse = 0xFF2525EF;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = startPt.x + flagWidth;
+		curVb->position[1] = startPt.y;
+		curVb->position[2] = startPt.z + poleHeight + (flagHeight / 2);
+		curVb->color = Assets::Color_From_ARGB(0xFF2525EF).To_Array();
 		++curVb;
 		++m_feedbackVertexCount;
 
@@ -851,13 +830,11 @@ void DrawObject::updateWaypointVB()
 
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
  	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Int i;
@@ -924,36 +901,36 @@ void DrawObject::updateWaypointVB()
 				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
 					return;
 				}
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x+normal.X;
-				curVb->y = loc1.y+normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFF000000;  // black.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc1.x+normal.X;
+				curVb->position[1] = loc1.y+normal.Y;
+				curVb->position[2] = loc1.z;
+				curVb->color = Assets::Color_From_ARGB(0xFF000000).To_Array();  // black.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x-normal.X;
-				curVb->y = loc1.y-normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFF000000;  // black.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc1.x-normal.X;
+				curVb->position[1] = loc1.y-normal.Y;
+				curVb->position[2] = loc1.z;
+				curVb->color = Assets::Color_From_ARGB(0xFF000000).To_Array();  // black.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x+normal.X;
-				curVb->y = loc2.y+normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc2.x+normal.X;
+				curVb->position[1] = loc2.y+normal.Y;
+				curVb->position[2] = loc2.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x-normal.X;
-				curVb->y = loc2.y-normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc2.x-normal.X;
+				curVb->position[1] = loc2.y-normal.Y;
+				curVb->position[2] = loc2.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
 
@@ -981,36 +958,36 @@ void DrawObject::updateWaypointVB()
 				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
 					return;
 				}
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x+NORMAL_SHIFT*normal.X+normal.X;
-				curVb->y = loc1.y+NORMAL_SHIFT*normal.Y+normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc1.x+NORMAL_SHIFT*normal.X+normal.X;
+				curVb->position[1] = loc1.y+NORMAL_SHIFT*normal.Y+normal.Y;
+				curVb->position[2] = loc1.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x+NORMAL_SHIFT*normal.X;
-				curVb->y = loc1.y+NORMAL_SHIFT*normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc1.x+NORMAL_SHIFT*normal.X;
+				curVb->position[1] = loc1.y+NORMAL_SHIFT*normal.Y;
+				curVb->position[2] = loc1.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x+normal.X;
-				curVb->y = loc2.y+normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc2.x+normal.X;
+				curVb->position[1] = loc2.y+normal.Y;
+				curVb->position[2] = loc2.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x-normal.X;
-				curVb->y = loc2.y-normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc2.x-normal.X;
+				curVb->position[1] = loc2.y-normal.Y;
+				curVb->position[2] = loc2.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
 
@@ -1028,36 +1005,36 @@ void DrawObject::updateWaypointVB()
 				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
 					return;
 				}
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x-NORMAL_SHIFT*normal.X;
-				curVb->y = loc1.y-NORMAL_SHIFT*normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc1.x-NORMAL_SHIFT*normal.X;
+				curVb->position[1] = loc1.y-NORMAL_SHIFT*normal.Y;
+				curVb->position[2] = loc1.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x-NORMAL_SHIFT*normal.X-normal.X;
-				curVb->y = loc1.y-NORMAL_SHIFT*normal.Y-normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc1.x-NORMAL_SHIFT*normal.X-normal.X;
+				curVb->position[1] = loc1.y-NORMAL_SHIFT*normal.Y-normal.Y;
+				curVb->position[2] = loc1.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x+normal.X;
-				curVb->y = loc2.y+normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc2.x+normal.X;
+				curVb->position[1] = loc2.y+normal.Y;
+				curVb->position[2] = loc2.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x-normal.X;
-				curVb->y = loc2.y-normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
+				curVb->uv[0] = 0;
+				curVb->uv[1] = 0;
+				curVb->position[0] = loc2.x-normal.X;
+				curVb->position[1] = loc2.y-normal.Y;
+				curVb->position[2] = loc2.z;
+				curVb->color = Assets::Color_From_ARGB(0xFFFF0000).To_Array();  // red.
 				curVb++;
 				m_feedbackVertexCount++;
 
@@ -1089,13 +1066,11 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 	green = green<<8;
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
 	Int i;
 	for (i=0; i<pTrig->getNumPoints(); i++) {
@@ -1128,36 +1103,36 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		if (pTrig->isWaterArea()) {
 			diffuse = 0xFF0000FF+green;
 		}
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc1.x+normal.X;
-		curVb->y = loc1.y+normal.Y;
-		curVb->z = loc1.z;
-		curVb->diffuse = diffuse;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = loc1.x+normal.X;
+		curVb->position[1] = loc1.y+normal.Y;
+		curVb->position[2] = loc1.z;
+		curVb->color = Assets::Color_From_ARGB(diffuse).To_Array();
 		curVb++;
 		m_feedbackVertexCount++;
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc1.x-normal.X;
-		curVb->y = loc1.y-normal.Y;
-		curVb->z = loc1.z;
-		curVb->diffuse = diffuse;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = loc1.x-normal.X;
+		curVb->position[1] = loc1.y-normal.Y;
+		curVb->position[2] = loc1.z;
+		curVb->color = Assets::Color_From_ARGB(diffuse).To_Array();
 		curVb++;
 		m_feedbackVertexCount++;
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc2.x+normal.X;
-		curVb->y = loc2.y+normal.Y;
-		curVb->z = loc2.z;
-		curVb->diffuse = diffuse;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = loc2.x+normal.X;
+		curVb->position[1] = loc2.y+normal.Y;
+		curVb->position[2] = loc2.z;
+		curVb->color = Assets::Color_From_ARGB(diffuse).To_Array();
 		curVb++;
 		m_feedbackVertexCount++;
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc2.x-normal.X;
-		curVb->y = loc2.y-normal.Y;
-		curVb->z = loc2.z;
-		curVb->diffuse = diffuse;
+		curVb->uv[0] = 0;
+		curVb->uv[1] = 0;
+		curVb->position[0] = loc2.x-normal.X;
+		curVb->position[1] = loc2.y-normal.Y;
+		curVb->position[2] = loc2.z;
+		curVb->color = Assets::Color_From_ARGB(diffuse).To_Array();
 		curVb++;
 		m_feedbackVertexCount++;
 
@@ -1183,13 +1158,11 @@ void DrawObject::updateFeedbackVB()
 	const Int theAlpha = 64;
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-	UnsignedShort *curIb = ib;
+	unsigned *ib=m_indexFeedback.data();
+	unsigned *curIb = ib;
 
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
-	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-	VertexFormatXYZDUV1 *curVb = vb;
+	Graphics::SurfaceVertex *vb = m_vertexFeedback.data();
+	Graphics::SurfaceVertex *curVb = vb;
 
 	Bool doubleResolution = 0;
 	Int brushWidth = m_brushWidth;
@@ -1232,15 +1205,15 @@ void DrawObject::updateFeedbackVB()
 		for (i=minX; i<maxX; i++) {
 			if (m_feedbackVertexCount >= NUM_FEEDBACK_VERTEX) return;
 			if (m_squareFeedback) {
-				curVb->diffuse = diffuse;
+				curVb->color = Assets::Color_From_ARGB(diffuse).To_Array();
 			} else {
 				Real blendFactor = Tool::calcRoundBlendFactor(m_cellCenter, i, j, brushWidth, featherWidth);
 				if (blendFactor > 0.99) {
-					curVb->diffuse = diffuse;
+					curVb->color = Assets::Color_From_ARGB(diffuse).To_Array();
 				} else if (blendFactor > 0.05) {
-					curVb->diffuse = featherDiffuse | (theAlpha<<24);
+					curVb->color = Assets::Color_From_ARGB(featherDiffuse | (theAlpha<<24)).To_Array();
 				}	else {
-					curVb->diffuse = 0;
+					curVb->color = Assets::Color_From_ARGB(0).To_Array();
 				}
 			}
 			Real X, Y, theZ;
@@ -1253,11 +1226,11 @@ void DrawObject::updateFeedbackVB()
 				Y = ADJUST_FROM_INDEX_TO_REAL(j);
 				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, nullptr);
 			}
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = X;
-			curVb->y = Y;
-			curVb->z = theZ;
+			curVb->uv[0] = 0;
+			curVb->uv[1] = 0;
+			curVb->position[0] = X;
+			curVb->position[1] = Y;
+			curVb->position[2] = theZ;
 			curVb++;
 			m_feedbackVertexCount++;
 		}
@@ -1370,7 +1343,7 @@ but doesn't, really.
 
 /** updateVB puts a circle with an arrow into the vertex buffer. */
 
-Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Bool doDiamond)
+Int DrawObject::updateVB(std::vector<Graphics::SurfaceVertex>& pVB, Int color, Bool doArrow, Bool doDiamond)
 {
 	Int i, k;
 
@@ -1389,11 +1362,10 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 	static const Int highlightColors[NUM_HIGHLIGHT] = { ((255<<8) + (255<<16)) ,
 				((255<<16)), (255<<8) };
 	Int diffuse =  b + (g<<8) + (r<<16) + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
-	if (pVB )
+	if (!pVB.empty())
 	{
 
-		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB, D3DLOCK_DISCARD);
-		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
+	Graphics::SurfaceVertex *vb = pVB.data();
 
 		const Real theZ = 0.0f;
 		Real theRadius = THE_RADIUS;
@@ -1415,20 +1387,20 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 		for (i=0; i<limit; i++)
 		{
 			for (k=0; k<3; k++) {
-				vb->z=  theZ;
+				vb->position[2]=  theZ;
 				if (k==0) {
-					vb->x=	0;
-					vb->y=	0;
+					vb->position[0]=	0;
+					vb->position[1]=	0;
 
 					Vector3 vec(0,0,theZ);
 					vec.Rotate_Z(curAngle+(deltaAngle/2));
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
+					vb->position[0]=	vec.X;
+					vb->position[1]=	vec.Y;
 				} else if (k==1) {
 					Vector3 vec(theRadius/10,0,theZ);
 					vec.Rotate_Z(curAngle);
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
+					vb->position[0]=	vec.X;
+					vb->position[1]=	vec.Y;
 				} else if (k==2) {
 					Real angle = curAngle+deltaAngle;
 					if (i==limit-1) {
@@ -1436,16 +1408,16 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 					}
 					Vector3 vec(theRadius/10,0,theZ);
 					vec.Rotate_Z(angle);
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
+					vb->position[0]=	vec.X;
+					vb->position[1]=	vec.Y;
 				}
-				vb->diffuse=diffuse;
-				vb->u1=0;
-				vb->v1=0;
+				vb->color = Assets::Color_From_ARGB(diffuse).To_Array();
+				vb->uv[0]=0;
+				vb->uv[1]=0;
 				vb[3*NUM_TRI] = *vb;
 				if (k==0) {
-					vb[3*NUM_TRI].z += 3.0;
-					vb[3*NUM_TRI].diffuse = diffuse;
+					vb[3*NUM_TRI].position[2] += 3.0;
+					vb[3*NUM_TRI].color = Assets::Color_From_ARGB(diffuse).To_Array();
 				}
 				vb++;
 			}
@@ -1462,43 +1434,43 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 		}
 		/* Now do the arrow. */
 		for (k=0; k<3; k++) {
-			vb->x=	(k&1)?2*theRadius:0.0f;
-			vb->y=	-halfLineWidth + ((k&2)?2*halfLineWidth:0);
-			vb->z=  theZ;
-			vb->diffuse=highlightColors[curHighlight] + (theAlpha<<24);
-			vb->u1=0;
-			vb->v1=0;
+			vb->position[0]=	(k&1)?2*theRadius:0.0f;
+			vb->position[1]=	-halfLineWidth + ((k&2)?2*halfLineWidth:0);
+			vb->position[2]=  theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			vb->x=	(k&1)?0.0f:2*theRadius;
-			vb->y=	halfLineWidth - ((k&2)?2*halfLineWidth:0);
-			vb->z=  theZ;
-			vb->diffuse=highlightColors[curHighlight] + (theAlpha<<24);
-			vb->u1=0;
-			vb->v1=0;
+			vb->position[0]=	(k&1)?0.0f:2*theRadius;
+			vb->position[1]=	halfLineWidth - ((k&2)?2*halfLineWidth:0);
+			vb->position[2]=  theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			if (k==0) { vb->x=theRadius; vb->y = 0;}
-			else if (k==1) { vb->x=2*theRadius + 2*halfLineWidth; vb->y = 0;}
-			else { vb->x=theRadius; vb->y = 2*halfLineWidth;}
-			vb->z=  theZ;
-			vb->diffuse=highlightColors[curHighlight] + (theAlpha<<24);
-			vb->u1=0;
-			vb->v1=0;
+			if (k==0) { vb->position[0]=theRadius; vb->position[1] = 0;}
+			else if (k==1) { vb->position[0]=2*theRadius + 2*halfLineWidth; vb->position[1] = 0;}
+			else { vb->position[0]=theRadius; vb->position[1] = 2*halfLineWidth;}
+			vb->position[2]=  theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			if (k==0) { vb->x=theRadius; vb->y = 0;}
-			else if (k==1) { vb->x=theRadius; vb->y = -2*halfLineWidth;}
-			else { vb->x=2*theRadius + 2*halfLineWidth; vb->y = 0;}
-			vb->z=  theZ;
-			vb->diffuse=highlightColors[curHighlight] + (theAlpha<<24);
-			vb->u1=0;
-			vb->v1=0;
+			if (k==0) { vb->position[0]=theRadius; vb->position[1] = 0;}
+			else if (k==1) { vb->position[0]=theRadius; vb->position[1] = -2*halfLineWidth;}
+			else { vb->position[0]=2*theRadius + 2*halfLineWidth; vb->position[1] = 0;}
+			vb->position[2]=  theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
@@ -1518,20 +1490,20 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 		for (i=0; i<limit; i++)
 		{
 			for (k=0; k<3; k++) {
-				vb->z=  theZ;
+				vb->position[2]=  theZ;
 				if (k==0) {
-					vb->x=	0;
-					vb->y=	0;
+					vb->position[0]=	0;
+					vb->position[1]=	0;
 
 					Vector3 vec(theRadius*4/5,0,theZ);
 					vec.Rotate_Z(curAngle+(deltaAngle/2));
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
+					vb->position[0]=	vec.X;
+					vb->position[1]=	vec.Y;
 				} else if (k==1) {
 					Vector3 vec(theRadius,0,theZ);
 					vec.Rotate_Z(curAngle);
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
+					vb->position[0]=	vec.X;
+					vb->position[1]=	vec.Y;
 				} else if (k==2) {
 					Real angle = curAngle+deltaAngle;
 					if (i==limit-1) {
@@ -1539,16 +1511,16 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 					}
 					Vector3 vec(theRadius,0,theZ);
 					vec.Rotate_Z(angle);
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
+					vb->position[0]=	vec.X;
+					vb->position[1]=	vec.Y;
 				}
-				vb->diffuse = highlightColors[curHighlight] + (theAlpha<<24);
-				vb->u1=0;
-				vb->v1=0;
+				vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();
+				vb->uv[0]=0;
+				vb->uv[1]=0;
 				vb[3*NUM_TRI] = *vb;
 				if (k==0) {
-					vb[3*NUM_TRI].z += 3.0;
-					vb[3*NUM_TRI].diffuse = highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
+					vb[3*NUM_TRI].position[2] += 3.0;
+					vb[3*NUM_TRI].color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();	 // b g<<8 r<<16 a<<24.
 				}
 				vb++;
 			}
@@ -1559,43 +1531,43 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 #if 0
 		// Now do the highlight triangle.  This is in yellow.
 		for (k=0; k<3; k++) {
-			vb->x = k==0?theRadius:0;
-			vb->y = k==1?theRadius:0;
-			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
-			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
-			vb->u1=0;
-			vb->v1=0;
+			vb->position[0] = k==0?theRadius:0;
+			vb->position[1] = k==1?theRadius:0;
+			vb->position[2]=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();	 // b g<<8 r<<16 a<<24.
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			vb->x = k==1?-theRadius:0;
-			vb->y = k==0?theRadius:0;
-			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
-			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
-			vb->u1=0;
-			vb->v1=0;
+			vb->position[0] = k==1?-theRadius:0;
+			vb->position[1] = k==0?theRadius:0;
+			vb->position[2]=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();	 // b g<<8 r<<16 a<<24.
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
 
 		for (k=0; k<3; k++) {
-			vb->x = k==1?theRadius:0;
-			vb->y = k==0?-theRadius:0;
-			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
-			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
-			vb->u1=0;
-			vb->v1=0;
+			vb->position[0] = k==1?theRadius:0;
+			vb->position[1] = k==0?-theRadius:0;
+			vb->position[2]=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();	 // b g<<8 r<<16 a<<24.
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
 		for (k=0; k<3; k++) {
-			vb->x = k==0?-theRadius:0;
-			vb->y = k==1?-theRadius:0;
-			vb->z=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
-			vb->diffuse= highlightColors[curHighlight] + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
-			vb->u1=0;
-			vb->v1=0;
+			vb->position[0] = k==0?-theRadius:0;
+			vb->position[1] = k==1?-theRadius:0;
+			vb->position[2]=  k==2?theZ+SELECT_PYRAMID_HEIGHT:theZ;
+			vb->color = Assets::Color_From_ARGB(highlightColors[curHighlight] + (theAlpha<<24)).To_Array();	 // b g<<8 r<<16 a<<24.
+			vb->uv[0]=0;
+			vb->uv[1]=0;
 			vb[3*NUM_TRI] = *vb;
 			vb++;
 		}
@@ -1610,7 +1582,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 // MLL C&C3
 void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera)
 {
-	if (!pMapObj || !m_lineRenderer || !pMapObj->getThingTemplate()) {
+	if (!pMapObj || !pMapObj->getThingTemplate()) {
 		return;
 	}
 
@@ -1658,7 +1630,8 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 					bool shouldStart = worldToScreen(&pts[corner], &start, camera);
 					bool shouldEnd = worldToScreen(&pts[(corner+1)&3], &end, camera);
 					if (shouldStart && shouldEnd) {
-						m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, color);
+						Graphics::Get_Renderer2D().Add_Line({start.x - 0.5f, start.y - 0.5f},
+                        {end.x - 0.5f, end.y - 0.5f}, BOUNDING_BOX_LINE_WIDTH, Graphics::Color2D::From_ARGB(color));
 					}
 				}
 
@@ -1692,7 +1665,8 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 					pnt.z = z;
 					shouldStart = worldToScreen(&pnt, &start, camera);
 					if (shouldStart && shouldEnd) {
-						m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, color);
+						Graphics::Get_Renderer2D().Add_Line({start.x - 0.5f, start.y - 0.5f},
+                        {end.x - 0.5f, end.y - 0.5f}, BOUNDING_BOX_LINE_WIDTH, Graphics::Color2D::From_ARGB(color));
 					}
 					lastPnt = pnt;
 					end = start;
@@ -1711,14 +1685,15 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 			pnt.z = pos.z + ginfo.getMaxHeightAbovePosition();
 			shouldEnd = worldToScreen( &pnt, &end, camera);
 			if (shouldStart && shouldEnd) {
-				m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, color);
+				Graphics::Get_Renderer2D().Add_Line({start.x - 0.5f, start.y - 0.5f},
+                        {end.x - 0.5f, end.y - 0.5f}, BOUNDING_BOX_LINE_WIDTH, Graphics::Color2D::From_ARGB(color));
 			}
 			break;
 		}
 	}
 }
 
-/** Draw a "circle" into the m_lineRenderer, e.g. to visualize weapon range, sight range, sound range **/
+/** Draw a "circle" into the graphics overlay batch, e.g. to visualize weapon range, sight range, sound range **/
 void DrawObject::addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera )
 {
   Real angle, inc = PI/4.0f;
@@ -1740,7 +1715,8 @@ void DrawObject::addCircleToLineRenderer( const Coord3D & center, Real radius, R
 
     bool shouldStart = worldToScreen(&pnt, &start, camera);
     if (shouldStart && shouldEnd) {
-      m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), width, color);
+      Graphics::Get_Renderer2D().Add_Line({start.x - 0.5f, start.y - 0.5f},
+                        {end.x - 0.5f, end.y - 0.5f}, width, Graphics::Color2D::From_ARGB(color));
     }
 
     lastPnt = pnt;
@@ -1755,7 +1731,7 @@ void DrawObject::addCircleToLineRenderer( const Coord3D & center, Real radius, R
 // MLL C&C3
 void DrawObject::updateVBWithSightRange(MapObject *pMapObj, CameraClass* camera)
 {
-	if (!pMapObj || !m_lineRenderer || !pMapObj->getThingTemplate()) {
+	if (!pMapObj || !pMapObj->getThingTemplate()) {
 		return;
 	}
 
@@ -1777,7 +1753,7 @@ void DrawObject::updateVBWithSightRange(MapObject *pMapObj, CameraClass* camera)
 // MLL C&C3
 void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera)
 {
-	if (!pMapObj || !m_lineRenderer || !pMapObj->getThingTemplate()) {
+	if (!pMapObj || !pMapObj->getThingTemplate()) {
 		return;
 	}
 
@@ -1816,7 +1792,7 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 // MLL C&C3
 void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera)
 {
-  if (!pMapObj || !m_lineRenderer) {
+  if (!pMapObj) {
     return;
   }
 
@@ -1940,7 +1916,7 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
 // MLL C&C3
 void DrawObject::updateVBWithTestArtHighlight(MapObject *pMapObj, CameraClass* camera)
 {
-	if (!pMapObj || !m_lineRenderer || pMapObj->getThingTemplate() || pMapObj->isScorch()) {
+	if (!pMapObj || pMapObj->getThingTemplate() || pMapObj->isScorch()) {
 		// It is test art if it doesn't have a ThingTemplate.
 		return;
 	}
@@ -1974,7 +1950,8 @@ void DrawObject::updateVBWithTestArtHighlight(MapObject *pMapObj, CameraClass* c
 
 		bool shouldStart = worldToScreen(&pnt, &start, camera);
 		if (shouldStart && shouldEnd) {
-			m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), TEST_ART_HIGHLIGHT_LINE_WIDTH, color);
+			Graphics::Get_Renderer2D().Add_Line({start.x - 0.5f, start.y - 0.5f},
+                        {end.x - 0.5f, end.y - 0.5f}, TEST_ART_HIGHLIGHT_LINE_WIDTH, Graphics::Color2D::From_ARGB(color));
 		}
 
 		lastPnt = pnt;
@@ -2064,37 +2041,41 @@ if (_skip_drawobject_render) {
 	return;
 }
 
-	if (m_lineRenderer == nullptr) {
-		// This can't be created in init because the doc hasn't been created yet.
-		m_lineRenderer = new Render2DClass();
-		ASSERT(m_lineRenderer);
-		CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-		ASSERT(pDoc);
-		WbView3d *pView = pDoc->Get3DView();
-		ASSERT(pView);
-		m_winSize = pView->getActualWinSize();
-		m_lineRenderer->Set_Coordinate_Range(RectClass(0, 0, m_winSize.x, m_winSize.y));
-		m_lineRenderer->Reset();
-		m_lineRenderer->Enable_Texturing(FALSE);
-	}
+	if (Graphics::Shared_Frame_Device() == nullptr)
+		return;
 
-	DX8Wrapper::Apply_Render_State_Changes();
+	const auto viewport = Graphics::Get_Attachment_Bindings().Default().viewport;
+	m_winSize = CPoint(static_cast<int>(viewport.width), static_cast<int>(viewport.height));
 
-	DX8Wrapper::Set_Material(m_vertexMaterialClass);
-	DX8Wrapper::Set_Shader(m_shaderClass);
-	DX8Wrapper::Set_Texture(0, nullptr);
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-	DX8Wrapper::Apply_Render_State_Changes();
+
+	std::span<const Graphics::SurfaceVertex> vertices;
+    std::span<const unsigned> indices;
+    Graphics::MaterialState shader = m_shaderClass;
+    Matrix4x4 world(Transform), view, projection;
+    std::copy_n(Graphics::Get_Camera_Matrices().view.values.data(), 16, &view[0][0]);
+    std::copy_n(Graphics::Get_Camera_Matrices().projection.values.data(), 16, &projection[0][0]);
+    const auto draw = [&](unsigned vertex_count, unsigned first_index, unsigned triangle_count) {
+        if (vertex_count > vertices.size() || first_index > indices.size()
+            || triangle_count > (indices.size() - first_index) / 3) {
+            DEBUG_CRASH(("Editor overlay geometry exceeds its CPU batch."));
+            return;
+        }
+        if (!Draw_Graphics_Prelit_Geometry(vertices.first(vertex_count),
+            indices.subspan(first_index, triangle_count * 3), projection * view * world, shader, nullptr))
+            DEBUG_LOG(("Editor overlay graphics submission failed.\n"));
+    };
+	shader = Graphics::MaterialState(m_shaderClass);
+	indices = m_indexBuffer;
+
 	Int count=0;
 	Int i;
-	bool linesToRender = false;
 
 	curHighlight++;
 	if (curHighlight >= NUM_HIGHLIGHT) {
 		curHighlight = 0;
 	}
 	m_waterDrawObject->update();
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+	vertices = m_vertexBufferTile1;
   if (m_drawObjects || m_drawWaypoints || m_drawBoundingBoxes || m_drawSightRanges || m_drawWeaponRanges || m_drawSoundRanges || m_drawTestArtHighlight) {
 		//Apply the shader and material
 
@@ -2138,25 +2119,20 @@ if (pMapObj->isSelected()) {
 				// MLL C&C3
 				if (pMapObj->isSelected()) {
 					if (doArrow && m_drawBoundingBoxes) {
-						linesToRender = true;
 						updateVBWithBoundingBox(pMapObj, &rinfo.Camera);
 					}
 					if (doArrow && m_drawSightRanges) {
-						linesToRender = true;
 						updateVBWithSightRange(pMapObj, &rinfo.Camera);
 					}
 					if (doArrow && m_drawWeaponRanges) {
-						linesToRender = true;
 						updateVBWithWeaponRange(pMapObj, &rinfo.Camera);
 					}
           if (doArrow && m_drawSoundRanges) {
-            linesToRender = true;
             updateVBWithSoundRanges(pMapObj, &rinfo.Camera);
           }
 				}
 
 				if (doArrow && m_drawTestArtHighlight) {
-					linesToRender = true;
 					updateVBWithTestArtHighlight(pMapObj, &rinfo.Camera);
 				}
 
@@ -2182,7 +2158,7 @@ if (pMapObj->isSelected()) {
 					rememberLastSettingVB1 = setting;
 					updateVB(m_vertexBufferTile1,pMapObj->getColor(), doArrow, doDiamond);
 				}
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+				vertices = m_vertexBufferTile1;
 
 			} else {
 				int setting = pMapObj->getColor();
@@ -2198,7 +2174,7 @@ if (pMapObj->isSelected()) {
 					rememberLastSettingVB2 = setting;
 					updateVB(m_vertexBufferTile2, pMapObj->getColor(), doArrow, doDiamond);
 				}
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
+				vertices = m_vertexBufferTile2;
 			}
 
 			///@todo - remove the istree stuff, or get the info from the thing template.  jba.
@@ -2216,22 +2192,22 @@ if (pMapObj->isSelected()) {
 				polyCount -= NUM_ARROW_TRI+NUM_SELECT_TRI;
 			}
 
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+			world = Matrix4x4(tm);
 			if (isTree) {
-				DX8Wrapper::Draw_Triangles(	NUM_TRI*3,polyCount, 0,	(m_numTriangles*3));
+				draw(m_numTriangles * 3, NUM_TRI * 3, polyCount);
 			} else {
-				DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
+				draw(m_numTriangles * 3, 0, polyCount);
 			}
 
 			count++;
 		}
 	}
 	if (m_drawPolygonAreas) {
- 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+		vertices = {};
 		Int selected;
 		for (selected = 0; selected < 2; selected++) {
 			for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
-				DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+				indices = m_indexBuffer;
 				if (!pTrig->getShouldRender()) continue;
 				Bool polySelected = PolygonTool::isSelected(pTrig);
 				if (polySelected && !selected) continue;
@@ -2257,10 +2233,10 @@ if (pMapObj->isSelected()) {
 					}
 					if (count&1) {
 						updateVB(m_vertexBufferTile1, color, ARROW, DIAMOND);
-						DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+						vertices = m_vertexBufferTile1;
 					} else {
 						updateVB(m_vertexBufferTile2, color, ARROW, DIAMOND);
-						DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
+						vertices = m_vertexBufferTile2;
 					}
 					count++;
 
@@ -2273,21 +2249,21 @@ if (pMapObj->isSelected()) {
 						polyCount -= NUM_ARROW_TRI+NUM_SELECT_TRI;
 					}
 
-					DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-					DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-					DX8Wrapper::Draw_Triangles(	0,polyCount, 0,	(m_numTriangles*3));
+					indices = m_indexBuffer;
+					world = Matrix4x4(tm);
+					draw(m_numTriangles * 3, 0, polyCount);
 				}
 				Matrix3D tmReset(Transform);
-				DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+				world = Matrix4x4(tmReset);
+				vertices = m_vertexBufferTile1;
 				updatePolygonVB(pTrig, polySelected, polySelected && PolygonTool::isSelectedOpen());
- 				DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+				vertices = m_vertexFeedback;
 				if (m_feedbackIndexCount>0) {
-					DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-					DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+					indices = m_indexFeedback;
+					draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
 				}
 			}
-			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+			indices = m_indexBuffer;
 		}
 	}
 
@@ -2310,10 +2286,10 @@ if (pMapObj->isSelected()) {
 			const Int GREEN = 0x00FF00; // GREEN in BGR.
 			if (count&1) {
 				updateVB(m_vertexBufferTile1, GREEN, true, false);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
+				vertices = m_vertexBufferTile1;
 			} else {
 				updateVB(m_vertexBufferTile2, GREEN, true, false);
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
+				vertices = m_vertexBufferTile2;
 			}
 			count++;
 // ok to here.
@@ -2330,27 +2306,27 @@ if (pMapObj->isSelected()) {
 			}
 
 #if 1
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,tmXX);
-			DX8Wrapper::Draw_Triangles(	0,polyCountA, 0,	(m_numTriangles*3));
+			world = Matrix4x4(tmXX);
+			draw(m_numTriangles * 3, 0, polyCountA);
 #endif
 
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+	indices = m_indexBuffer;
+	vertices = {};
 	Matrix3D tmReset(Transform);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
+	world = Matrix4x4(tmReset);
 
 	if (m_drawWaypoints) {
 		updateWaypointVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(m_shaderClass);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
-			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+				vertices = m_vertexFeedback;
+			indices = m_indexFeedback;
+			shader = Graphics::MaterialState(m_shaderClass);
+			draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
+			indices = m_indexBuffer;
+			vertices = {};
 		}
 	}
 
@@ -2360,19 +2336,19 @@ if (pMapObj->isSelected()) {
 	if (m_meshFeedback) {
 		updateMeshVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+				vertices = m_vertexFeedback;
+			indices = m_indexFeedback;
+			shader = Graphics::MaterialState(SC_OPAQUE_Z);
+			Graphics::Get_Scene_Draw_Parameters().wireframe = true;
+			draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
 		}
 	} else if (m_toolWantsFeedback && !m_disableFeedback) {
 		updateFeedbackVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(ShaderClass::_PresetAlpha2DShader);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+				vertices = m_vertexFeedback;
+			indices = m_indexFeedback;
+			shader = Graphics::MaterialState(Graphics::MaterialState::Alpha2D());
+			draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
 		}
 	}
 #endif
@@ -2381,12 +2357,11 @@ if (pMapObj->isSelected()) {
 	if (m_rampFeedback) {
 		updateRampVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);	// we want a solid ramp
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+				vertices = m_vertexFeedback;
+			indices = m_indexFeedback;
+			shader = Graphics::MaterialState(SC_OPAQUE_Z);
+			Graphics::Get_Scene_Draw_Parameters().wireframe = true;	// we want a solid ramp
+			draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
 		}
 	}
 #endif
@@ -2395,36 +2370,34 @@ if (pMapObj->isSelected()) {
 	if (m_boundaryFeedback) {
 		updateBoundaryVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(m_shaderClass);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+				vertices = m_vertexFeedback;
+			indices = m_indexFeedback;
+			shader = Graphics::MaterialState(m_shaderClass);
+			shader.Set_Cull_Mode(Graphics::MaterialState::CULL_MODE_DISABLE);
+			Graphics::Get_Scene_Draw_Parameters().wireframe = false;	// we want a solid ramp
+			draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
 		}
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
+	vertices = {};	//release reference to vertex buffer
+	indices = {};	//release reference to vertex buffer
 
 
 	if (m_ambientSoundFeedback) {
 		updateAmbientSoundVB();
 		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(m_shaderClass);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+				vertices = m_vertexFeedback;
+			indices = m_indexFeedback;
+			shader = Graphics::MaterialState(m_shaderClass);
+			shader.Set_Cull_Mode(Graphics::MaterialState::CULL_MODE_DISABLE);
+			Graphics::Get_Scene_Draw_Parameters().wireframe = false;	// we want a solid ramp
+			draw(m_feedbackVertexCount, 0, m_feedbackIndexCount / 3);
 		}
 	}
 
-  DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+	  indices = m_indexBuffer;
+		vertices = {};
 
 	if (m_waterDrawObject) {
 		m_waterDrawObject->renderWater();
@@ -2434,20 +2407,12 @@ if (pMapObj->isSelected()) {
 		int w = m_winSize.x;
 		int h = m_winSize.y;
 		int size = (int)((h - (9.0f / 16.0f * w)) * 0.5f);
-		RectClass rect(0, 0, w, size);
-		m_lineRenderer->Add_Quad(rect, 0xFF000000);
-		rect.Set(0, h - size, w, h);
-		m_lineRenderer->Add_Quad(rect, 0xFF000000);
-		linesToRender = true;
+		if (size > 0) {
+			Graphics::Get_Renderer2D().Add_Rect({-0.5f, -0.5f, w - 0.5f, size - 0.5f}, {0, 0, 0, 1});
+			Graphics::Get_Renderer2D().Add_Rect({-0.5f, h - size - 0.5f, w - 0.5f, h - 0.5f}, {0, 0, 0, 1});
+		}
 	}
 
-	// Render any lines that have been added, like bounding boxes.
-	// MLL C&C3
-	if (linesToRender && m_lineRenderer) {
-		m_lineRenderer->Render();
-		// Clear the old lines.
-		m_lineRenderer->Reset();
-	}
 }
 
 

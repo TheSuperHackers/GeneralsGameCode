@@ -36,7 +36,7 @@
 
 #include "WWLib/chunkio.h"
 #include "WWMath/Vector3i.h"
-#include "WW3D2/w3d_file.h"
+#include "WW3D2/W3DFile.h"
 
 
 //{{AFX_INSERT_LOCATION}}

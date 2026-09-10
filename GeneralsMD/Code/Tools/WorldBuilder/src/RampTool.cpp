@@ -48,7 +48,7 @@
 #include "GameClient/Line2D.h"
 
 
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 
 RampTool::RampTool() : Tool(ID_RAMPTOOL, IDC_RAMP )
 {

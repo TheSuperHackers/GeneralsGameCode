@@ -27,7 +27,7 @@
 #include "CUndoable.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "Common/FileSystem.h"
 #include "GameClient/TerrainRoads.h"
 

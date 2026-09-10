@@ -32,6 +32,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <memory>
+#include <span>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+import Assets.Cache.Animations;
+
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -39,11 +47,8 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/View.h"
 #include "W3DDevice/GameClient/W3DView.h"
-#include "WW3D2/render2d.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/line3d.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
 
-class HAnimClass;
 
 // W3DInGameUI ----------------------------------------------------------------
 /** Implementation for the W3D game user interface.  This singleton is
@@ -81,9 +86,9 @@ protected:
 	virtual void drawAttackHints( View *view );		///< draw attack hint visual feedback
 	virtual void drawPlaceAngle( View *view ); 		///< draw place building angle if needed
 
-	RenderObjClass *m_moveHintRenderObj[ MAX_MOVE_HINTS ];
-	HAnimClass		 *m_moveHintAnim[ MAX_MOVE_HINTS ];
-	RenderObjClass *m_buildingPlacementAnchor;
-	RenderObjClass *m_buildingPlacementArrow;
+	W3DRenderObject *m_moveHintRenderObj[ MAX_MOVE_HINTS ];
+	Assets::AnimationAssetHandle m_moveHintAnim[ MAX_MOVE_HINTS ];
+	W3DRenderObject *m_buildingPlacementAnchor;
+	W3DRenderObject *m_buildingPlacementArrow;
 
 };

@@ -384,3 +384,6 @@ extern WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg, Win
 // Message Box --------------------------------------------------------------------------------
 extern WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
+
+extern Bool IMECandidateMainDrawData(GameWindow*, WinInstanceData*, void*);
+extern Bool IMECandidateTextAreaDrawData(GameWindow*, WinInstanceData*, void*);

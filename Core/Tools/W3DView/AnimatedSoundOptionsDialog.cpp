@@ -24,7 +24,7 @@
 #include "Globals.h"
 #include "AnimatedSoundOptionsDialog.h"
 #include "WWLib/ffactory.h"
-#include "WW3D2/animatedsoundmgr.h"
+#include "WW3D2/AnimatedSoundMgr.h"
 #include "WWSaveLoad/wwsaveload.h"
 #include "WWSaveLoad/definitionmgr.h"
 #include "WWLib/WWFILE.h"

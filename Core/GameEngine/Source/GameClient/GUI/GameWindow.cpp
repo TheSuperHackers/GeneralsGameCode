@@ -1070,9 +1070,6 @@ Int GameWindow::winSetInstanceData( WinInstanceData *data )
 	m_instData.m_text = text;
 	m_instData.m_tooltip = tooltipText;
 
-	// make sure we didn't try to copy over a video buffer.
-	m_instData.m_videoBuffer = nullptr;
-
 	// set our text display instance text if present
 	if( data->getTextLength() )
 		m_instData.setText( data->getText() );
@@ -1408,19 +1405,6 @@ Int GameWindow::winSetCallbacks( GameWinInputFunc input,
 
 }
 
-// GameWindow::winDrawWindow ==================================================
-/** Draws the default background for the specified window. */
-//=============================================================================
-Int GameWindow::winDrawWindow()
-{
-
-	if( BitIsSet( m_status, WIN_STATUS_HIDDEN ) == FALSE && m_draw )
-		m_draw( this, &m_instData );
-
-	return WIN_ERR_OK;
-
-}
-
 // GameWindow::winPointInChild ================================================
 /** Given a window and the mouse coordinates, return the child
 	* window which contains the mouse pointer.  Child windows are
@@ -1582,13 +1566,7 @@ void GameWinDefaultTooltip( GameWindow *window,
 
 }
 
-// GameWinDefaultDraw =========================================================
-/** Default draw, does nothing */
-//=============================================================================
-void GameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
-{
-
-}
+Bool GameWinDefaultDraw(GameWindow*, WinInstanceData*, void*) { return TRUE; }
 
 // GameWindow::winSetEnabledImage =============================================
 /** Set an enabled image into the draw data for the enabled state */

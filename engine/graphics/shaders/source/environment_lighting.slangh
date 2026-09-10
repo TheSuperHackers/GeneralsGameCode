@@ -1,0 +1,110 @@
+#include "resource_access.slangh"
+#ifndef GRAPHICS_ENVIRONMENT_LIGHTING
+#define GRAPHICS_ENVIRONMENT_LIGHTING
+cbuffer EnvironmentLightingConstants : register(b7)
+{
+    float4 CloudWorldMultiplier;
+    float4 CloudOffsetStrength;
+    float4 EnvironmentAmbient;
+    float4 EnvironmentClipPlane;
+    row_major float4x4 ShadowViewProjection[4];
+    float4 ShadowSplits;
+    float4 ShadowViewDepth;
+    float4 ShadowOptions;
+};
+GRAPHICS_TEXTURE_ARRAY(EnvironmentShadowTextures, float, 11, 4)
+GRAPHICS_TEXTURE_2D(EnvironmentCloudTexture, float4, 15)
+GRAPHICS_SAMPLER(EnvironmentCloudSampler, 15)
+
+float3 CloudVisibility(float3 world_position)
+{
+    if (CloudOffsetStrength.w <= 0) return float3(1,1,1);
+    float2 uv = world_position.xy * CloudWorldMultiplier.xy
+        - world_position.z * CloudWorldMultiplier.zw + CloudOffsetStrength.xy;
+    return lerp(float3(1,1,1), EnvironmentCloudTexture().SampleLevel(
+        EnvironmentCloudSampler(), uv, 0).rgb, saturate(CloudOffsetStrength.z));
+}
+
+float FilterShadow(Texture2D<float> shadow_map, float3 projected, float3 projected_dx, float3 projected_dy)
+{
+    float2 uv = projected.xy * float2(0.5,-0.5) + 0.5;
+    if (any(uv < 0) || any(uv > 1) || projected.z < 0 || projected.z > 1) return 1;
+    uint width = 0, height = 0;
+    shadow_map.GetDimensions(width,height);
+    if (width == 0 || height == 0) return 1;
+    float receiver_depth = projected.z - ShadowOptions.y
+        - ShadowOptions.z * max(abs(projected_dx.z),abs(projected_dy.z));
+    float2 uv_dx = projected_dx.xy * float2(0.5,-0.5);
+    float2 uv_dy = projected_dy.xy * float2(0.5,-0.5);
+    float determinant = uv_dx.x * uv_dy.y - uv_dx.y * uv_dy.x;
+    float2 depth_gradient = float2(0,0);
+    if (abs(determinant) > 1e-12)
+        depth_gradient = float2(uv_dy.y * projected_dx.z - uv_dx.y * projected_dy.z,
+            uv_dx.x * projected_dy.z - uv_dy.x * projected_dx.z) / determinant;
+    int2 texel = int2(uv * float2(width,height));
+    float visibility = 0;
+    [unroll] for (int y=-1;y<=1;++y) {
+        [unroll] for (int x=-1;x<=1;++x) {
+            int2 sample_texel = clamp(texel+int2(x,y),int2(0,0),int2(width-1,height-1));
+            float2 sample_uv = (float2(sample_texel) + 0.5) / float2(width,height);
+            float sample_depth = receiver_depth + dot(depth_gradient,sample_uv-uv);
+            visibility += sample_depth <= shadow_map.Load(int3(sample_texel,0)) ? 1.0 : 0.0;
+        }
+    }
+    return visibility / 9.0;
+}
+
+float CascadeVisibility(uint cascade, float3 world_position, float3 world_dx, float3 world_dy)
+{
+    float4 clip_position = mul(ShadowViewProjection[cascade],float4(world_position,1));
+    float3 projected = clip_position.xyz / max(clip_position.w,0.000001);
+    float4 clip_dx = mul(ShadowViewProjection[cascade],float4(world_dx,0));
+    float4 clip_dy = mul(ShadowViewProjection[cascade],float4(world_dy,0));
+    float3 projected_dx = (clip_dx.xyz-projected*clip_dx.w) / max(clip_position.w,0.000001);
+    float3 projected_dy = (clip_dy.xyz-projected*clip_dy.w) / max(clip_position.w,0.000001);
+#if defined(GRAPHICS_DX12)
+    // DX12 keeps the cascade SRV lookup divergent-safe instead of expanding
+    // it into one literal sample per cascade.
+    const uint shadow_index = cascade < 4u ? cascade : 3u;
+    return FilterShadow(EnvironmentShadowTextures[NonUniformResourceIndex(shadow_index)], projected, projected_dx, projected_dy);
+#else
+    // SM5 supports dynamic matrix indexing but requires literal SRV indices.
+    if (cascade == 0) return FilterShadow(EnvironmentShadowTextures[0],projected,projected_dx,projected_dy);
+    if (cascade == 1) return FilterShadow(EnvironmentShadowTextures[1],projected,projected_dx,projected_dy);
+    if (cascade == 2) return FilterShadow(EnvironmentShadowTextures[2],projected,projected_dx,projected_dy);
+    return FilterShadow(EnvironmentShadowTextures[3],projected,projected_dx,projected_dy);
+#endif
+}
+
+float ShadowVisibility(float3 world_position)
+{
+    uint count = uint(ShadowOptions.x);
+    if (count == 0) return 1;
+    // Derivatives must be evaluated before per-pixel cascade selection.
+    float3 world_dx = ddx(world_position);
+    float3 world_dy = ddy(world_position);
+    float depth = dot(ShadowViewDepth,float4(world_position,1));
+    uint cascade = 0;
+    while (cascade+1 < count && depth > ShadowSplits[cascade]) ++cascade;
+    if (depth > ShadowSplits[count-1]) return 1;
+    float visibility = CascadeVisibility(cascade,world_position,world_dx,world_dy);
+    float split_near = cascade == 0 ? 0 : ShadowSplits[cascade-1];
+    float blend_width = (ShadowSplits[cascade]-split_near)*ShadowOptions.w;
+    if (blend_width > 0 && depth > ShadowSplits[cascade]-blend_width) {
+        float next = cascade+1 < count ? CascadeVisibility(cascade+1,world_position,world_dx,world_dy) : 1;
+        visibility = lerp(visibility,next,saturate((depth-ShadowSplits[cascade]+blend_width)/blend_width));
+    }
+    return visibility;
+}
+
+float3 DirectionalVisibility(float3 world_position)
+{
+    return CloudVisibility(world_position) * ShadowVisibility(world_position);
+}
+
+void ClipEnvironment(float3 world_position)
+{
+    // A zero plane disables clipping without a separate shader variant.
+    clip(dot(float4(world_position,1), EnvironmentClipPlane));
+}
+#endif

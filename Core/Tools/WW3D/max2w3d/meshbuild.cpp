@@ -58,7 +58,7 @@
  *   MeshBuilderClass::Sort_Vertices_By_Vertex_Material -- sorts verts by vertex mtl in pass0  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "meshbuild.h"
+#include "MeshBuild.h"
 #include "uarray.h"
 #include <stdlib.h>
 #include <string.h>

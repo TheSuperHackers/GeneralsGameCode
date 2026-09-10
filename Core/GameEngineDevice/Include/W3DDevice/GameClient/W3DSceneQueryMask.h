@@ -1,0 +1,21 @@
+#pragma once
+
+// Authored collision groups used when querying game scene objects.
+enum
+{
+    SCENE_QUERY_MASK = 0xff,
+    SCENE_QUERY_ALL = 0x01,
+    SCENE_QUERY_0 = 0x02,
+    SCENE_QUERY_1 = 0x04,
+    SCENE_QUERY_2 = 0x08,
+    SCENE_QUERY_3 = 0x10,
+    SCENE_QUERY_4 = 0x20,
+    SCENE_QUERY_5 = 0x40,
+    SCENE_QUERY_6 = 0x80,
+    SCENE_QUERY_PHYSICAL = SCENE_QUERY_0,
+    SCENE_QUERY_PROJECTILE = SCENE_QUERY_1,
+    SCENE_QUERY_VIS = SCENE_QUERY_2,
+    SCENE_QUERY_CAMERA = SCENE_QUERY_3,
+    SCENE_QUERY_VEHICLE = SCENE_QUERY_4
+};
+

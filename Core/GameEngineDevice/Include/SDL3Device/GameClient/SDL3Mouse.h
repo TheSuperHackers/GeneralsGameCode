@@ -19,6 +19,8 @@ public:
 	void loseFocus() override;
 	void regainFocus() override;
 protected:
+	virtual void applyCursor();
+	Bool m_cursorFocused = TRUE;
 	void capture() override;
 	void releaseCapture() override;
 	UnsignedByte getMouseEvent(MouseIO *result, Bool flush) override;
@@ -26,7 +28,6 @@ protected:
 private:
 	static SDL_SystemCursor systemCursorFor(MouseCursor cursor);
 	Bool loadCursorResource(MouseCursor cursor, Int direction);
-	void applyCursor();
 
 	Uint32 m_previousButtons = 0;
 	Int m_previousX = 0;

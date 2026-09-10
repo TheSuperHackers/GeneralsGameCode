@@ -249,12 +249,6 @@ public:
 	uint32_t getNum3DSamples() const;
 	uint32_t getNumStreams() const;
 
-	/// Create a video audio stream (delegated to backend).
-	class AudioVideoStream *createVideoStream();
-
-	/// Release a video audio stream (delegated to backend).
-	void releaseVideoStream(class AudioVideoStream *stream);
-
 private:
 	static AudioEngine *s_instance;
 

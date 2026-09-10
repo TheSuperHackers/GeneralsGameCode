@@ -44,6 +44,7 @@
 
 // SYSTEM INCLUDES
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include <SDL3/SDL.h>
 
 
 // USER INCLUDES
@@ -67,15 +68,13 @@
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
 #include "Platform/SDLPlatformWindow.h"
+
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
 #endif
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
-
-// Horrible reference, but we really, really need to know if we are windowed.
-extern bool DX8Wrapper_IsWindowed;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
@@ -114,6 +113,7 @@ static char theLogFileNamePrev[ _MAX_PATH ];
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
 static int theDebugFlags = 0;
 static DWORD theMainThreadID = 0;
+static bool theHeadlessMode = false;
 // ----------------------------------------------------------------------------
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
@@ -151,9 +151,11 @@ static void doStackDump();
 // ----------------------------------------------------------------------------
 inline Bool ignoringAsserts()
 {
-	if (!DX8Wrapper_IsWindowed)
+	if (theHeadlessMode)
 		return true;
 	if (TheGlobalData && TheGlobalData->m_headless)
+		return true;
+	if (SDLPlatformWindow::isFullscreen())
 		return true;
 #ifdef DEBUG_CRASHING
 	if (TheGlobalData && TheGlobalData->m_debugIgnoreAsserts)
@@ -161,6 +163,11 @@ inline Bool ignoringAsserts()
 #endif
 
 	return false;
+}
+
+DEBUG_EXTERN_C void DebugSetHeadlessMode(bool headless)
+{
+	theHeadlessMode = headless;
 }
 
 // ----------------------------------------------------------------------------
@@ -196,7 +203,7 @@ static const char *getCurrentTimeString()
 static const char *getCurrentTickString()
 {
 	static char TheTickString[32];
-	snprintf(TheTickString, ARRAY_SIZE(TheTickString), "(T=%08lx)", ::GetTickCount());
+	snprintf(TheTickString, ARRAY_SIZE(TheTickString), "(T=%08lx)", SDL_GetTicks());
 	return TheTickString;
 }
 
@@ -247,8 +254,8 @@ static void doLogOutput(const char *buffer, const char *endline)
 	// log message to dev studio output window
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_CONSOLE)
 	{
-		::OutputDebugString(buffer);
-		::OutputDebugString(endline);
+		SDL_Log("%s", buffer);
+		SDL_Log("%s", endline);
 	}
 
 #ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
@@ -745,7 +752,7 @@ void ReleaseCrash(const char *reason)
 {
 	/// do additional reporting on the crash, if possible
 
-	if (!DX8Wrapper_IsWindowed) {
+	if (SDLPlatformWindow::isFullscreen()) {
 		SDLPlatformWindow::hide();
 	}
 
@@ -793,7 +800,7 @@ void ReleaseCrash(const char *reason)
 		theReleaseCrashLogFile = nullptr;
 	}
 
-	if (!DX8Wrapper_IsWindowed) {
+	if (SDLPlatformWindow::isFullscreen()) {
 		SDLPlatformWindow::hide();
 	}
 
@@ -839,7 +846,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 
 	/// do additional reporting on the crash, if possible
 
-	if (!DX8Wrapper_IsWindowed) {
+	if (SDLPlatformWindow::isFullscreen()) {
 		SDLPlatformWindow::hide();
 	}
 

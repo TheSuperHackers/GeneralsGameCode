@@ -1,0 +1,1 @@
+RHI rule: engine/graphics/rhi exposes only generic GPU capabilities. Feature-specific APIs such as RenderBeams, RenderParticles, RenderTerrain, RenderWater, etc. are prohibited. Consult the graphics RHI architecture skill before modifying the RHI.

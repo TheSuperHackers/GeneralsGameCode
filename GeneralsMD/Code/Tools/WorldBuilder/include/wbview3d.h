@@ -27,19 +27,19 @@
 //
 
 #include "Lib/BaseType.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/robjlist.h"
+#include "WW3D2/RendObj.h"
+import Graphics.Scene.ObjectList;
+class RenderObjClass;
 #include "wbview.h"
+#include "ViewportLabels.h"
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
 #include "Common/ModelState.h"
-#include "WW3D2/dx8wrapper.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
 enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
 
 class WorldHeightMap;
-class LayerClass;
 class IntersectionClass;
 class W3DAssetManager;
 class SkeletonSceneClass;
@@ -51,13 +51,15 @@ class DrawObject;
 class CWorldBuilderView;
 class BuildListInfo;
 class TransRenderObj;
-struct ID3DXFont;
 
 /////////////////////////////////////////////////////////////////////////////
 // WbView3d view
 
-class WbView3d : public WbView, public DX8_CleanupHook
+import Graphics.Frame.ResourceLifecycle;
+
+class WbView3d : public WbView
 {
+    Graphics::FrameResourceRegistration m_resourceRegistration;
 protected:
 	WbView3d();           // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(WbView3d)
@@ -65,9 +67,8 @@ protected:
 // Attributes
 public:
 
-	// DX8_CleanupHook methods
-	virtual void ReleaseResources() override;	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources() override;  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources(); ///< Release render resources before device reset.
+	virtual void ReAcquireResources(); ///< Reacquire resources after device reset.
 
 // Operations
 public:
@@ -94,7 +95,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnDestroy();
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnViewShowwireframe();
@@ -182,9 +183,7 @@ private:
 	Int											m_updateCount;
 	UINT										m_timer;
 	DrawObject							*m_drawObject;
-	RefRenderObjListClass		m_lightList;
-	LayerClass							*m_layer;
-	LayerClass							*m_buildLayer;
+	Graphics::SceneObjectList<RenderObjClass>		m_lightList;
 	IntersectionClass				*m_intersector;
 	Bool										m_showWireframe;
 	Bool										m_ww3dInited;
@@ -212,7 +211,7 @@ private:
 	Bool										m_showLetterbox;
 
 
-	ID3DXFont*							m3DFont;
+	ViewportLabels m_labels;
 	Int											m_pickPixels;
 	Int											m_partialMapSize;
 

@@ -244,8 +244,8 @@ Bool View::isUserControlLocked() const
 		the world points are at the requested Z */
 //-------------------------------------------------------------------------------------------------
 PlaneClass::IntersectionResType View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
-																					Coord3D *bottomRight, Coord3D *bottomLeft,
-																					Real z, ViewportClass viewPort )
+																																					Coord3D *bottomRight, Coord3D *bottomLeft,
+																																					Real z, Graphics::CameraViewport viewPort )
 {
 	if( topLeft == nullptr || topRight == nullptr || bottomRight == nullptr || bottomLeft == nullptr)
 		return PlaneClass::NO_INTERSECTION;
@@ -261,14 +261,14 @@ PlaneClass::IntersectionResType View::getScreenCornerWorldPointsAtZ( Coord3D *to
 	// setup the screen coords for the 4 corners of the viewable display
 	getOrigin( &origin.x, &origin.y );
 
-	screenTopLeft.x = origin.x + viewWidth * viewPort.Min.X;
-	screenTopLeft.y = origin.y + viewHeight * viewPort.Min.Y;
-	screenTopRight.x = origin.x + viewWidth * viewPort.Max.X;
-	screenTopRight.y = origin.y + viewHeight * viewPort.Min.Y;
-	screenBottomRight.x = origin.x + viewWidth * viewPort.Max.X;
-	screenBottomRight.y = origin.y + viewHeight * viewPort.Max.Y;
-	screenBottomLeft.x = origin.x + viewWidth * viewPort.Min.X;
-	screenBottomLeft.y = origin.y + viewHeight * viewPort.Max.Y;
+	screenTopLeft.x = origin.x + viewWidth * viewPort.min.x;
+	screenTopLeft.y = origin.y + viewHeight * viewPort.min.y;
+	screenTopRight.x = origin.x + viewWidth * viewPort.max.x;
+	screenTopRight.y = origin.y + viewHeight * viewPort.min.y;
+	screenBottomRight.x = origin.x + viewWidth * viewPort.max.x;
+	screenBottomRight.y = origin.y + viewHeight * viewPort.max.y;
+	screenBottomLeft.x = origin.x + viewWidth * viewPort.min.x;
+	screenBottomLeft.y = origin.y + viewHeight * viewPort.max.y;
 
 	PlaneClass::IntersectionResType combinedResult = PlaneClass::INSIDE_SEGMENT;
 	PlaneClass::IntersectionResType individualResults[4];

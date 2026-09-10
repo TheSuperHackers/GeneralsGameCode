@@ -43,7 +43,7 @@
 #include "Common/GlobalData.h"
 #include <WWMath/tri.h>
 #include <WWMath/colmath.h>
-#include <WW3D2/coltest.h>
+#include <WW3D2/ColTest.h>
 
 #define dontUSE_FLAT_HEIGHT_MAP
 //-----------------------------------------------------------------------------
@@ -68,11 +68,7 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 {
 	if (m_flattenHeights != flat) {
 		m_flattenHeights = flat;
-#ifndef USE_FLAT_HEIGHT_MAP
-		m_originX = 0;
-		m_originY = 0;
- 		updateBlock(0, 0, m_x-1, m_y-1, m_map, nullptr);
-#endif
+        scheduleFullUpdate();
 	}
 }
 
@@ -84,22 +80,9 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 //=============================================================================
 /** Flattens the terrain for the top down view.. */
 //=============================================================================
-void WBHeightMap::flattenHeights() {
-#ifndef USE_FLAT_HEIGHT_MAP
-	Real theZ = THE_Z;
-	Int i, j;
-	for (j=0; j<m_numVBTilesY; j++)
-		for (i=0; i<m_numVBTilesX; i++)
-		{
-			DX8VertexBufferClass::WriteLockClass lockVtxBuffer(getVertexBufferTile(i, j));
-			VERTEX_FORMAT *vbHardware = (VERTEX_FORMAT*)lockVtxBuffer.Get_Vertex_Array();
-			Int vtx;
-			for (vtx=0; vtx<HEIGHTMAP_VERTEX_NUM; vtx++) {
-				vbHardware->z = theZ;
-				vbHardware++;
-			}
-		}
-#endif
+float WBHeightMap::Get_Surface_Height(int x, int y) const
+{
+    return m_flattenHeights ? THE_Z : W3DTerrainGraphics::Get_Surface_Height(x, y);
 }
 
 //=============================================================================
@@ -301,14 +284,5 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 //=============================================================================
 void WBHeightMap::Render(RenderInfoClass & rinfo)
 {
-	if (m_flattenHeights) {
-		flattenHeights();
-	}
-#ifdef USE_FLAT_HEIGHT_MAP
-	FlatHeightMapRenderObjClass::Render(rinfo);
-#else
-	HeightMapRenderObjClass::Render(rinfo);
-#endif
+    W3DTerrainGraphics::Render(rinfo);
 }
-
-

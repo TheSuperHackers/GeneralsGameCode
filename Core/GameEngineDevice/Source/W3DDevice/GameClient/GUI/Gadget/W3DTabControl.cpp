@@ -1,652 +1,160 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+** Command & Conquer Generals Zero Hour(tm)
+** Copyright 2025 Electronic Arts Inc.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#include "Precompiled/PreRTS.h"
 
-// FILE: W3DTabControl.cpp ///////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-//
-//                       Westwood Studios Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2001 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: projects\RTS\code\gameenginedevice\Source\W3DDevice\GameClient\GUI\Gadget\W3DTabControl.cpp
-//
-// Created:   Graham Smallwood, November 2001
-//
-// Desc:      W3D methods needed to implement the TabControl UI control
-//
-//-----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include <stdlib.h>
-
-// USER INCLUDES //////////////////////////////////////////////////////////////
-#include "GameClient/GameWindowGlobal.h"
-#include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetTabControl.h"
-#include "W3DDevice/GameClient/W3DGameWindow.h"
+#include "GameClient/GameWindowGlobal.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
 
-// DEFINES ////////////////////////////////////////////////////////////////////
+#include <algorithm>
 
-// PRIVATE TYPES //////////////////////////////////////////////////////////////
+import Engine.UI.WND;
 
-// PRIVATE DATA ///////////////////////////////////////////////////////////////
-
-// PUBLIC DATA ////////////////////////////////////////////////////////////////
-
-// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
-
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// W3DGadgetRadioButtonDraw ===================================================
-/** Draw tabs with standard graphics */
-//=============================================================================
-void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData )
+namespace
 {
-	ICoord2D origin, size;
 
-	// get window position and size
-	tabControl->winGetScreenPosition( &origin.x, &origin.y );
-	tabControl->winGetSize( &size.x, &size.y );
+Graphics::Color2D To_UI_Color(Color color) noexcept
+{
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
+}
 
-	W3DGameWinDefaultDraw(tabControl, instData);//draw the background
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image)
+{
+	if (image == nullptr || image->getUV() == nullptr)
+		return {};
+	Engine::UI::WND::ImageRef reference =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	const Region2D *uv = image->getUV();
+	if (uv != nullptr)
+		reference.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return reference;
+}
 
-	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
-			!BitIsSet( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
-	{//draw border if desired
-		tabControl->winDrawBorder();
-	}
+Engine::UI::WND::TabControlVisual Build_Visual(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	bool image_visual)
+{
+	ICoord2D origin;
+	ICoord2D size;
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
-	TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
-
-	Int tabX, tabY, tabWidth, tabHeight, tabDeltaX, tabDeltaY;
-	tabX = origin.x + tabData->tabsLeftLimit;
-	tabY = origin.y + tabData->tabsTopLimit;
-	tabWidth = tabData->tabWidth;
-	tabHeight = tabData->tabHeight;
-	if( (tabData->tabEdge == TP_TOP_SIDE)  ||  (tabData->tabEdge == TP_BOTTOM_SIDE) )
-	{
-		tabDeltaX = tabWidth;
-		tabDeltaY = 0;
-	}
-	else
-	{
-		tabDeltaX = 0;
-		tabDeltaY = tabHeight;
-	}
-
-	Color color, border;
-
-	if( tabData->tabCount >= 1 )//Does exist
-	{
-		if( tabData->subPaneDisabled[0] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabZero( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabZero( tabControl );
-		}
-		else if( tabData->activeTab == 0 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabZero( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabZero( tabControl );
-		}
+	Engine::UI::WND::TabControlVisual visual;
+	visual.background_image_rectangle = {
+		static_cast<float>(origin.x), static_cast<float>(origin.y),
+		static_cast<float>(origin.x + size.x), static_cast<float>(origin.y + size.y)};
+	if (image_visual) {
+		const Image *background = nullptr;
+		if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED))
+			background = window->winGetDisabledImage(0);
+		else if (BitIsSet(instance_data->getState(), WIN_STATE_HILITED))
+			background = window->winGetHiliteImage(0);
 		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabZero( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabZero( tabControl );
+			background = window->winGetEnabledImage(0);
+		visual.has_background_image = background != nullptr;
+		visual.background_image = To_WND_Image(background);
+	}
+	else {
+		Color fill = WIN_COLOR_UNDEFINED;
+		Color border = WIN_COLOR_UNDEFINED;
+		if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)) {
+			fill = window->winGetDisabledColor(0);
+			border = window->winGetDisabledBorderColor(0);
 		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
+		else if (BitIsSet(instance_data->getState(), WIN_STATE_HILITED)) {
+			fill = window->winGetHiliteColor(0);
+			border = window->winGetHiliteBorderColor(0);
 		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
+		else {
+			fill = window->winGetEnabledColor(0);
+			border = window->winGetEnabledBorderColor(0);
 		}
+		visual.has_background_fill = fill != WIN_COLOR_UNDEFINED;
+		visual.background_fill = To_UI_Color(fill);
+		visual.has_background_border = border != WIN_COLOR_UNDEFINED;
+		visual.background_border = To_UI_Color(border);
 	}
 
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 2 )//Does exist
-	{
-		if( tabData->subPaneDisabled[1] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabOne( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabOne( tabControl );
+	TabControlData *data = static_cast<TabControlData *>(window->winGetUserData());
+	if (data == nullptr)
+		return visual;
+	visual.count = static_cast<std::size_t>(std::clamp(data->tabCount, 0, 8));
+	Int tab_x = origin.x + data->tabsLeftLimit;
+	Int tab_y = origin.y + data->tabsTopLimit;
+	const Int tab_delta_x = (data->tabEdge == TP_TOP_SIDE || data->tabEdge == TP_BOTTOM_SIDE)
+		? data->tabWidth : 0;
+	const Int tab_delta_y = (data->tabEdge == TP_TOP_SIDE || data->tabEdge == TP_BOTTOM_SIDE)
+		? 0 : data->tabHeight;
+	for (std::size_t index = 0; index < visual.count; ++index) {
+		visual.rectangles[index] = {
+			static_cast<float>(tab_x), static_cast<float>(tab_y),
+			static_cast<float>(tab_x + data->tabWidth),
+			static_cast<float>(tab_y + data->tabHeight)};
+		const bool disabled = data->subPaneDisabled[index];
+		const bool active = data->activeTab == static_cast<Int>(index);
+		const Image *image = nullptr;
+		Color fill = WIN_COLOR_UNDEFINED;
+		Color border = WIN_COLOR_UNDEFINED;
+		if (disabled) {
+			image = window->winGetDisabledImage(static_cast<Int>(index));
+			fill = window->winGetDisabledColor(static_cast<Int>(index));
+			border = window->winGetDisabledBorderColor(static_cast<Int>(index));
 		}
-		else if( tabData->activeTab == 1 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabOne( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabOne( tabControl );
+		else if (active) {
+			image = window->winGetHiliteImage(static_cast<Int>(index));
+			fill = window->winGetHiliteColor(static_cast<Int>(index));
+			border = window->winGetHiliteBorderColor(static_cast<Int>(index));
 		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabOne( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabOne( tabControl );
+		else {
+			image = window->winGetEnabledImage(static_cast<Int>(index));
+			fill = window->winGetEnabledColor(static_cast<Int>(index));
+			border = window->winGetEnabledBorderColor(static_cast<Int>(index));
 		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
+		visual.has_images[index] = image_visual && image != nullptr;
+		visual.images[index] = To_WND_Image(image);
+		visual.has_fills[index] = !image_visual && fill != WIN_COLOR_UNDEFINED;
+		visual.fills[index] = To_UI_Color(fill);
+		visual.has_borders[index] = !image_visual && border != WIN_COLOR_UNDEFINED;
+		visual.borders[index] = To_UI_Color(border);
+		tab_x += tab_delta_x;
+		tab_y += tab_delta_y;
 	}
+	return visual;
+}
 
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 3 )//Does exist
-	{
-		if( tabData->subPaneDisabled[2] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabTwo( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabTwo( tabControl );
-		}
-		else if( tabData->activeTab == 2 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabTwo( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabTwo( tabControl );
-		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabTwo( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabTwo( tabControl );
-		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 4 )//Does exist
-	{
-		if( tabData->subPaneDisabled[3] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabThree( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabThree( tabControl );
-		}
-		else if( tabData->activeTab == 3 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabThree( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabThree( tabControl );
-		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabThree( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabThree( tabControl );
-		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 5 )//Does exist
-	{
-		if( tabData->subPaneDisabled[4] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabFour( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabFour( tabControl );
-		}
-		else if( tabData->activeTab == 4 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabFour( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabFour( tabControl );
-		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabFour( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabFour( tabControl );
-		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 6 )//Does exist
-	{
-		if( tabData->subPaneDisabled[5] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabFive( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabFive( tabControl );
-		}
-		else if( tabData->activeTab == 5 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabFive( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabFive( tabControl );
-		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabFive( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabFive( tabControl );
-		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 7 )//Doesn't exist
-	{
-		if( tabData->subPaneDisabled[6] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabSix( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabSix( tabControl );
-		}
-		else if( tabData->activeTab == 6 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabSix( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabSix( tabControl );
-		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabSix( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabSix( tabControl );
-		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 8 )//Doesn't exist
-	{
-		if( tabData->subPaneDisabled[7] )
-		{//Disabled
-			color			= GadgetTabControlGetDisabledColorTabSeven( tabControl );
-			border		= GadgetTabControlGetDisabledBorderColorTabSeven( tabControl );
-		}
-		else if( tabData->activeTab == 7 )
-		{//Hilited/Active
-			color			= GadgetTabControlGetHiliteColorTabSeven( tabControl );
-			border		= GadgetTabControlGetHiliteBorderColorTabSeven( tabControl );
-		}
-		else
-		{//Just enabled
-			color			= GadgetTabControlGetEnabledColorTabSeven( tabControl );
-			border		= GadgetTabControlGetEnabledBorderColorTabSeven( tabControl );
-		}
-
-		// box and border
-		if( border != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																		 tabX, tabY, tabX + tabWidth, tabY + tabHeight );
-		}
-		if( color != WIN_COLOR_UNDEFINED )
-		{
-			TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
-																		 tabX + 1, tabY + 1, tabX + tabWidth - 1, tabY + tabHeight - 1 );
-		}
-	}
+Bool Append_Tab_Control_Draw_Data(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	void *opaque_draw_list,
+	bool image_visual)
+{
+	if (window == nullptr || instance_data == nullptr || opaque_draw_list == nullptr)
+		return FALSE;
+	Engine::UI::WND::DrawList &draw_list =
+		*static_cast<Engine::UI::WND::DrawList *>(opaque_draw_list);
+	const Engine::UI::WND::TabControlVisual visual =
+		Build_Visual(window, instance_data, image_visual);
+	return Engine::UI::WND::Add_Tab_Control_Visual(draw_list, visual) ? TRUE : FALSE;
+}
 
 }
 
-// W3DGadgetRadioButtonImageDraw ==============================================
-/** Draw tabs with user supplied images */
-//=============================================================================
-void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
-																	WinInstanceData *instData )
+Bool W3DGadgetTabControlDrawData(
+	GameWindow *window, WinInstanceData *instance_data, void *draw_list)
 {
-	ICoord2D origin, size;
+	return Append_Tab_Control_Draw_Data(window, instance_data, draw_list, false);
+}
 
-	// get window position and size
-	tabControl->winGetScreenPosition( &origin.x, &origin.y );
-	tabControl->winGetSize( &size.x, &size.y );
-
-	W3DGameWinDefaultDraw(tabControl, instData);//draw the background
-
-	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
-			!BitIsSet( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
-	{//draw border if desired
-		tabControl->winDrawBorder();
-	}
-
-	TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
-
-	Int tabX, tabY, tabWidth, tabHeight, tabDeltaX, tabDeltaY;
-	tabX = origin.x + tabData->tabsLeftLimit;
-	tabY = origin.y + tabData->tabsTopLimit;
-	tabWidth = tabData->tabWidth;
-	tabHeight = tabData->tabHeight;
-	if( (tabData->tabEdge == TP_TOP_SIDE)  ||  (tabData->tabEdge == TP_BOTTOM_SIDE) )
-	{
-		tabDeltaX = tabWidth;
-		tabDeltaY = 0;
-	}
-	else
-	{
-		tabDeltaX = 0;
-		tabDeltaY = tabHeight;
-	}
-
-	const Image *image = nullptr;
-
-	if( tabData->tabCount >= 1 )//Does exist
-	{
-		if( tabData->subPaneDisabled[0] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabZero( tabControl );
-		}
-		else if( tabData->activeTab == 0 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabZero( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabZero( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 2 )//Does exist
-	{
-		if( tabData->subPaneDisabled[1] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabOne( tabControl );
-		}
-		else if( tabData->activeTab == 1 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabOne( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabOne( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 3 )//Does exist
-	{
-		if( tabData->subPaneDisabled[2] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabTwo( tabControl );
-		}
-		else if( tabData->activeTab == 2 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabTwo( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabTwo( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 4 )//Does exist
-	{
-		if( tabData->subPaneDisabled[3] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabThree( tabControl );
-		}
-		else if( tabData->activeTab == 3 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabThree( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabThree( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 5 )//Does exist
-	{
-		if( tabData->subPaneDisabled[4] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabFour( tabControl );
-		}
-		else if( tabData->activeTab == 4 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabFour( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabFour( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 6 )//Does exist
-	{
-		if( tabData->subPaneDisabled[5] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabFive( tabControl );
-		}
-		else if( tabData->activeTab == 5 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabFive( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabFive( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 7 )//Doesn't exist
-	{
-		if( tabData->subPaneDisabled[6] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabSix( tabControl );
-		}
-		else if( tabData->activeTab == 6 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabSix( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabSix( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
-	tabX += tabDeltaX;
-	tabY += tabDeltaY;
-
-	if( tabData->tabCount >= 8 )//Doesn't exist
-	{
-		if( tabData->subPaneDisabled[7] )
-		{//Disabled
-			image			= GadgetTabControlGetDisabledImageTabSeven( tabControl );
-		}
-		else if( tabData->activeTab == 7 )
-		{//Hilited/Active
-			image			= GadgetTabControlGetHiliteImageTabSeven( tabControl );
-		}
-		else
-		{//Just enabled
-			image			= GadgetTabControlGetEnabledImageTabSeven( tabControl );
-		}
-
-		if( image != nullptr )
-		{
-			TheWindowManager->winDrawImage( image,
-																			tabX,
-																			tabY,
-																			tabX + tabWidth,
-																			tabY + tabHeight
-																			);
-		}
-	}
-
+Bool W3DGadgetTabControlImageDrawData(
+	GameWindow *window, WinInstanceData *instance_data, void *draw_list)
+{
+	return Append_Tab_Control_Draw_Data(window, instance_data, draw_list, true);
 }

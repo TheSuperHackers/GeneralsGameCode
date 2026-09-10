@@ -19,6 +19,9 @@ public:
 
 	static void *window();
 	static void *nativeHandle();
+	static bool isFullscreen();
+	static bool setFullscreen(bool fullscreen);
+	static Uint32 fullscreenToggleEventType();
 	void *nativeInstance() const;
 	static void setTitle(const char *title);
 	static bool isMinimized();
@@ -29,5 +32,4 @@ public:
 
 private:
 	SDL_Window *m_window = nullptr;
-	void *m_nativeHandle = nullptr;
 };

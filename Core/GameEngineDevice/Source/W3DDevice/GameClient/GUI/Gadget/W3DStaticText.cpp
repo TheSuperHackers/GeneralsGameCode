@@ -1,264 +1,149 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+** Command & Conquer Generals Zero Hour(tm)
+** Copyright 2025 Electronic Arts Inc.
 **
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
+** This program is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
 **
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#include "Precompiled/PreRTS.h"
 
-// FILE: W3DStaticText.cpp ////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-//
-//                       Westwood Studios Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2001 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: W3DStaticText.cpp
-//
-// Created:   Colin Day, June 2001
-//
-// Desc:      W3D implementation of the static text GUI control
-//
-//-----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include <stdlib.h>
-
-// USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/GlobalData.h"
 #include "GameClient/GameWindowGlobal.h"
-#include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetStaticText.h"
-#include "W3DDevice/GameClient/W3DGameWindow.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
+#include "W3DDevice/GameClient/W3DDisplayString.h"
 
-// DEFINES ////////////////////////////////////////////////////////////////////
+import Engine.UI.WND;
 
-// PRIVATE TYPES //////////////////////////////////////////////////////////////
-
-// PRIVATE DATA ///////////////////////////////////////////////////////////////
-//enum { DRAW_BUF_LEN = 2048 };
-//static WideChar drawBuf[ DRAW_BUF_LEN ];
-
-// PUBLIC DATA ////////////////////////////////////////////////////////////////
-
-// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// drawStaticTextText =========================================================
-/** Draw the text for a static text window */
-//=============================================================================
-static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
-																Color textColor, Color textDropColor )
+namespace
 {
-	TextData *tData = (TextData *)window->winGetUserData();
-	Int textWidth, textHeight, wordWrap;
-	DisplayString *text = tData->text;
-	ICoord2D origin, size, textPos;
-	IRegion2D clipRegion;
-	// sanity
-	if( text == nullptr || text->getTextLength() == 0 )
-		return;
 
-	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+Graphics::Color2D To_UI_Color(Color color) noexcept
+{
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
+}
 
-	// Set the text Wrap width
-	wordWrap = size.x - 10;
-	//if(wordWrap == 89)
-	//	wordWrap = 95;
-	text->setWordWrap(wordWrap);
-	if( BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
-		text->setWordWrapCentered(TRUE);
-	else
-		text->setWordWrapCentered(FALSE);
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_HOTKEY_TEXT ) && TheGlobalData)
-		text->setUseHotkey(TRUE, TheGlobalData->m_hotKeyTextColor);
-	else
-		text->setUseHotkey(FALSE, 0);
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image)
+{
+	if (image == nullptr || image->getUV() == nullptr)
+		return {};
+	const Region2D *uv = image->getUV();
+	Engine::UI::WND::ImageRef reference =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	if (uv != nullptr)
+		reference.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return reference;
+}
 
+Graphics::Rect2D To_Rect(const ICoord2D &origin, const ICoord2D &size) noexcept
+{
+	return {
+		static_cast<float>(origin.x), static_cast<float>(origin.y),
+		static_cast<float>(origin.x + size.x), static_cast<float>(origin.y + size.y)};
+}
 
-	// how much space will this text take up
-	text->getSize( &textWidth, &textHeight );
+bool Append_Static_Text_Draw_Data(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	void *opaque_draw_list,
+	bool image_background)
+{
+	if (window == nullptr || instance_data == nullptr || opaque_draw_list == nullptr)
+		return false;
 
-	//Init the clip region
-	clipRegion.lo.x = origin.x ;
-	clipRegion.lo.y = origin.y ;
-	clipRegion.hi.x = origin.x + size.x ;
-	clipRegion.hi.y = origin.y + size.y;
+	TextData *text_data = static_cast<TextData *>(window->winGetUserData());
+	if (text_data == nullptr)
+		return true;
 
-	// horizontal centering?
-	if( tData->centered )
-	{
-		textPos.x = origin.x + (size.x / 2) - (textWidth / 2);
+	ICoord2D origin;
+	ICoord2D size;
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
+
+	Engine::UI::WND::StaticTextVisual visual;
+	visual.rectangle = To_Rect(origin, size);
+	visual.centered = text_data->centered != FALSE;
+	visual.centered_vertically = text_data->centeredVertically != FALSE;
+	visual.left_margin = static_cast<float>(text_data->leftMargin);
+	visual.top_margin = static_cast<float>(text_data->topMargin);
+
+	Color text_color = WIN_COLOR_UNDEFINED;
+	Color drop_color = WIN_COLOR_UNDEFINED;
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE) {
+		text_color = window->winGetDisabledTextColor();
+		drop_color = window->winGetDisabledTextBorderColor();
 	}
-	else
-	{
-		textPos.x = origin.x + tData->leftMargin;
+	else {
+		text_color = window->winGetEnabledTextColor();
+		drop_color = window->winGetEnabledTextBorderColor();
 	}
 
-	// vertical centering?
-	if ( tData->centeredVertically )
-	{
-		textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
+	if (image_background) {
+		const Image *image = BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)
+			? GadgetStaticTextGetEnabledImage(window)
+			: GadgetStaticTextGetDisabledImage(window);
+		if (image != nullptr) {
+			visual.has_image = true;
+			visual.image = To_WND_Image(image);
+			visual.image_rectangle = {
+				visual.rectangle.left + instance_data->m_imageOffset.x,
+				visual.rectangle.top + instance_data->m_imageOffset.y,
+				visual.rectangle.right + instance_data->m_imageOffset.x,
+				visual.rectangle.bottom + instance_data->m_imageOffset.y};
+		}
 	}
-	else
-	{
-		textPos.y = origin.y + tData->topMargin;
+	else {
+		const Color fill = BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)
+			? GadgetStaticTextGetEnabledColor(window)
+			: GadgetStaticTextGetDisabledColor(window);
+		const Color border = BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)
+			? GadgetStaticTextGetEnabledBorderColor(window)
+			: GadgetStaticTextGetDisabledBorderColor(window);
+		visual.has_fill = fill != WIN_COLOR_UNDEFINED;
+		visual.fill_color = To_UI_Color(fill);
+		visual.has_border = border != WIN_COLOR_UNDEFINED;
+		visual.border_color = To_UI_Color(border);
 	}
 
-	// draw the text
-	text->setClipRegion(&clipRegion);
-	text->draw( textPos.x, textPos.y, textColor, textDropColor );
+	Engine::UI::WND::DrawList &draw_list =
+		*static_cast<Engine::UI::WND::DrawList *>(opaque_draw_list);
+	if (text_data->text == nullptr || text_color == WIN_COLOR_UNDEFINED)
+		return Engine::UI::WND::Add_Static_Text_Background(draw_list, visual) ? true : false;
+
+	text_data->text->setWordWrap(size.x - 10);
+	text_data->text->setWordWrapCentered(
+		BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED));
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_HOTKEY_TEXT) && TheGlobalData != nullptr)
+		text_data->text->setUseHotkey(TRUE, TheGlobalData->m_hotKeyTextColor);
+	else
+		text_data->text->setUseHotkey(FALSE, 0);
+
+	return static_cast<W3DDisplayString *>(text_data->text)->appendStaticTextDrawData(
+		draw_list, visual, text_color, drop_color);
+}
 
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// W3DGadgetStaticTextDraw ====================================================
-/** Draw colored text field using standard graphics */
-//=============================================================================
-void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DGadgetStaticTextDrawData(
+	GameWindow *window, WinInstanceData *instance_data, void *draw_list)
 {
-	TextData *tData = (TextData *)window->winGetUserData();
-	Color backColor, backBorder, textColor, textOutlineColor;
-	ICoord2D size, origin, start, end;
-
-	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
-
-	// get the colors we will use
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-
-		backColor					= GadgetStaticTextGetDisabledColor( window );
-		backBorder				= GadgetStaticTextGetDisabledBorderColor( window );
-		textColor					= window->winGetDisabledTextColor();
-		textOutlineColor	= window->winGetDisabledTextBorderColor();
-
-	}
-	else
-	{
-
-		backColor					= GadgetStaticTextGetEnabledColor( window );
-		backBorder				= GadgetStaticTextGetEnabledBorderColor( window );
-		textColor					= window->winGetEnabledTextColor();
-		textOutlineColor	= window->winGetEnabledTextBorderColor();
-
-	}
-
-	// draw the back border
-	if( backBorder != WIN_COLOR_UNDEFINED )
-	{
-
-		start.x = origin.x;
-		start.y = origin.y;
-		end.x = start.x + size.x;
-		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-
-	}
-
-	// draw the back fill area
-	if( backColor != WIN_COLOR_UNDEFINED )
-	{
-
-		start.x = origin.x + 1;
-		start.y = origin.y + 1;
-		end.x = start.x + size.x - 2;
-		end.y = start.y + size.y - 2;
-		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-	}
-
-	// draw the text
-  if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
-		drawStaticTextText( window, instData, textColor, textOutlineColor );
-
-
-
+	return Append_Static_Text_Draw_Data(window, instance_data, draw_list, false) ? TRUE : FALSE;
 }
 
-// W3DGadgetStaticTextImageDraw ===============================================
-/** Draw colored text field with user supplied images */
-//=============================================================================
-void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DGadgetStaticTextImageDrawData(
+	GameWindow *window, WinInstanceData *instance_data, void *draw_list)
 {
-	TextData *tData = (TextData *)window->winGetUserData();
-	Color textColor, textOutlineColor;
-	ICoord2D size, origin, start, end;
-	const Image *image;
-
-	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
-
-	// get the colors we will use
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-
-		image							= GadgetStaticTextGetDisabledImage( window );
-		textColor					= window->winGetDisabledTextColor();
-		textOutlineColor	= window->winGetDisabledTextBorderColor();
-
-	}
-	else
-	{
-
-		image							= GadgetStaticTextGetEnabledImage( window );
-		textColor					= window->winGetEnabledTextColor();
-		textOutlineColor	= window->winGetEnabledTextBorderColor();
-
-	}
-
-	// draw the back image
-	if( image )
-	{
-
-		start.x = origin.x + instData->m_imageOffset.x;
-		start.y = origin.y + instData->m_imageOffset.y;
-		end.x = start.x + size.x;
-		end.y = start.y + size.y;
-		TheWindowManager->winDrawImage( image, start.x, start.y, end.x, end.y );
-
-	}
-
-	// draw the text
-  if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
-		drawStaticTextText( window, instData, textColor, textOutlineColor );
-
-
-
+	return Append_Static_Text_Draw_Data(window, instance_data, draw_list, true) ? TRUE : FALSE;
 }
-

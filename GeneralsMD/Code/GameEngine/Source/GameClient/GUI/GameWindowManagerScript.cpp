@@ -495,7 +495,7 @@ static Bool parseTooltip( const char *token, WinInstanceData *instData,
 	* if present */
 //=============================================================================
 static Bool parseScreenRect( const char *token, char *buffer,
-														 Int *x, Int *y, Int *width, Int *height )
+														 Int *x, Int *y, Int *width, Int *height, ICoord2D *authoredResolution )
 {
 	GameWindow *parent = peekWindow();
 	IRegion2D screenRegion;
@@ -520,6 +520,7 @@ static Bool parseScreenRect( const char *token, char *buffer,
 	scanInt( c, createRes.x );
 	c = strtok( nullptr, seps );  // y creation resolution
 	scanInt( c, createRes.y );
+	*authoredResolution = createRes;
 
 	//
 	// shrink or expand the screen region by the ratio of the current
@@ -2319,6 +2320,8 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 	char token[ 256 ];
 	char *c;
 	Int x, y, width, height;
+	ICoord2D authoredResolution{};
+	AsciiString layoutAnchors;
 	void *data = nullptr;
 	ICoord2D parentSize;
 	AsciiString asciibuf;
@@ -2382,7 +2385,7 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 	readUntilSemicolon( inFile, buffer, WIN_BUFFER_LENGTH );
 	c = strtok( buffer, seps );
 	assert( strcmp( c, "SCREENRECT" ) == 0 );
-	if( parseScreenRect( c, buffer, &x, &y, &width, &height ) == FALSE )
+	if( parseScreenRect( c, buffer, &x, &y, &width, &height, &authoredResolution ) == FALSE )
 		goto cleanupAndExit;
 
 	// parse all the field definitions
@@ -2436,6 +2439,12 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 				}
 
 			}
+			else if (asciibuf.compare("LAYOUTANCHOR") == 0)
+			{
+				inFile->scanString(asciibuf); // eat '='
+				readUntilSemicolon(inFile, buffer, WIN_BUFFER_LENGTH);
+				layoutAnchors = buffer;
+			}
 			else if (asciibuf.compare("END") == 0)
 			{
 				// Check to see if we have a header template, if so, set the font equal to that.
@@ -2487,6 +2496,13 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 	}
 
 cleanupAndExit:
+	if (window != nullptr && !TheWindowManager->winRegisterScriptGeometry(
+		window, authoredResolution.x, authoredResolution.y, layoutAnchors.str()))
+	{
+		DEBUG_LOG(("parseWindow: Invalid LAYOUTANCHOR"));
+		TheWindowManager->winDestroy(window);
+		window = nullptr;
+	}
 
 	//
 	// this should be true since we should never set the text in
@@ -2873,6 +2889,9 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 	// close the file
 	inFile->close();
 	inFile = nullptr;
+
+	for (GameWindow *root : scriptInfo.windows)
+		winArrangeScript(root);
 
 	// if info parameter is provided, copy info to the param
 	if( info )

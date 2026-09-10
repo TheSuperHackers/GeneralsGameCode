@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDeviceSelectionDialog)
 	public:
-	virtual int DoModal() override;
+	virtual INT_PTR DoModal() override;
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL

@@ -1,3 +1,5 @@
+import Graphics.Frame.Runtime;
+import Graphics.Frame.AttachmentBindings;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -19,11 +21,14 @@
 // ObjectPreview.cpp : implementation file
 //
 
-#include <WW3D2/rinfo.h>
-#include <WW3D2/camera.h>
-#include <WW3D2/light.h>
+#include <WW3D2/RInfo.h>
+#include <WW3D2/Camera.h>
+#include <WW3D2/Light.h>
+#include <WW3D2/WW3D.h>
 
 #include "StdAfx.h"
+import Graphics.Scene.Lighting.Local;
+import Graphics.Frame.ToolFrame;
 #include "resource.h"
 
 #include "Lib/BaseType.h"
@@ -35,7 +40,7 @@
 #include "addplayerdialog.h"
 #include "CUndoable.h"
 #include "wbview3d.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
@@ -46,7 +51,6 @@
 #include "GameClient/Color.h"
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"
-#include "WW3D2/dx8wrapper.h"
 #include "WWLib/TARGA.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -78,27 +82,52 @@ END_MESSAGE_MAP()
 #define PREVIEW_WIDTH 128
 #define PREVIEW_HEIGHT 128
 
-static UnsignedByte * saveSurface(IDirect3DSurface9 *surface)
+static UnsignedByte * saveSurface(Graphics::TextureEdit *surface)
 {
-	D3DSURFACE_DESC desc;
-	IDirect3DSurface9 *tempSurface;
+	if (surface == nullptr)
+	{
+		return nullptr;
+	}
 
-	surface->GetDesc(&desc);
+	Assets::ImageDescription desc = {};
+	desc=surface->Image().Description();
 
-	LPDIRECT3DDEVICE9 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+	if (Graphics::Shared_Frame_Device() == nullptr)
+	{
+		return nullptr;
+	}
 
-	HRESULT hr=m_pDev->CreateImageSurface(  desc.Width,desc.Height,desc.Format, &tempSurface);
+	Graphics::TextureEdit *tempSurface = Graphics::TextureEdit::Create(
+		desc.width, desc.height, desc.encoding);
+	if (tempSurface == nullptr)
+	{
+		return nullptr;
+	}
 
-	hr=m_pDev->CopyRects(surface,nullptr,0,tempSurface,nullptr);
+	const Assets::ImageRegion sourceRect =
+	{
+		0,
+		0,
+		static_cast<int>(desc.width),
+		static_cast<int>(desc.height)
+	};
+	if (!tempSurface->Copy_From(*surface, sourceRect, sourceRect))
+	{
+		delete tempSurface;
+		return nullptr;
+	}
 
-	D3DLOCKED_RECT lrect;
-
-	DX8_ErrorCode(tempSurface->LockRect(&lrect,nullptr,D3DLOCK_READONLY));
+	const auto lrect = tempSurface->Map();
+	if (lrect.bytes.empty())
+	{
+		delete tempSurface;
+		return nullptr;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
-	width=desc.Width;
-	height=desc.Height;
+	width=desc.width;
+	height=desc.height;
 
 #ifdef CAPTURE_TO_TARGA
 	char image[3*PREVIEW_WIDTH*PREVIEW_HEIGHT];
@@ -110,11 +139,11 @@ static UnsignedByte * saveSurface(IDirect3DSurface9 *surface)
 			// index for image
 			index=3*(x+y*width);
 			// index for fb
-			index2=y*lrect.Pitch+4*x;
+			index2=y*lrect.row_pitch+4*x;
 
-			image[index]=*((char *) lrect.pBits + index2+2);
-			image[index+1]=*((char *) lrect.pBits + index2+1);
-			image[index+2]=*((char *) lrect.pBits + index2+0);
+			image[index]=*((char *) lrect.bytes.data() + index2+2);
+			image[index+1]=*((char *) lrect.bytes.data() + index2+1);
+			image[index+2]=*((char *) lrect.bytes.data() + index2+0);
 		}
 	}
 
@@ -129,6 +158,8 @@ static UnsignedByte * saveSurface(IDirect3DSurface9 *surface)
 
 	targ.Save("ObjectPreview.tga",TGAF_IMAGE,false);
 
+	tempSurface->Unmap();
+	delete tempSurface;
 	return nullptr;
 
 #else
@@ -142,11 +173,11 @@ static UnsignedByte * saveSurface(IDirect3DSurface9 *surface)
 			// index for image
 			index=3*(x+y*width);
 			// index for fb
-			index2=y*lrect.Pitch+4*x;
+			index2=y*lrect.row_pitch+4*x;
 
-			bgraImage[index]=*((UnsignedByte *) lrect.pBits + index2+0);
-			bgraImage[index+1]=*((UnsignedByte *) lrect.pBits + index2+1);
-			bgraImage[index+2]=*((UnsignedByte *) lrect.pBits + index2+2);
+			bgraImage[index]=*((UnsignedByte *) lrect.bytes.data() + index2+0);
+			bgraImage[index+1]=*((UnsignedByte *) lrect.bytes.data() + index2+1);
+			bgraImage[index+2]=*((UnsignedByte *) lrect.bytes.data() + index2+2);
 			//bgraImage[index+3]=0;
 		}
 	}
@@ -174,7 +205,8 @@ static UnsignedByte * saveSurface(IDirect3DSurface9 *surface)
 			}
 	}
 
-	tempSurface->Release();
+	tempSurface->Unmap();
+	delete tempSurface;
 
 	return bgraImage;
 #endif
@@ -210,15 +242,29 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			model->Set_Position(Vector3(-sphere.Center.X, -sphere.Center.Y, -sphere.Center.Z));
 
 			// Create reflection texture
-			TextureClass *objectTexture = DX8Wrapper::Create_Render_Target (PREVIEW_WIDTH, PREVIEW_HEIGHT);
+
+			TextureClass *objectTexture = Graphics::Shared_Frame_Device() != nullptr ?
+				new TextureClass(PREVIEW_WIDTH,PREVIEW_HEIGHT,Assets::PixelEncoding::BGRA8,
+                    MIP_LEVELS_1,TextureBaseClass::POOL_DEFAULT,true,false) : nullptr;
 			if (!objectTexture)
 			{
 				model->Release_Ref();
 				return nullptr;
 			}
 
-			// Set the render target
-			DX8Wrapper::Set_Render_Target_With_Z(objectTexture);
+			if (!Graphics::Begin_Tool_Frame()) {
+                objectTexture->Release_Ref();
+                model->Release_Ref();
+                return nullptr;
+            }
+
+            // Set the render target
+            if (!Graphics::Get_Attachment_Bindings().Bind(objectTexture->Peek_Render_Backend_Texture())) {
+                Graphics::Abort_Tool_Frame();
+                REF_PTR_RELEASE(objectTexture);
+                REF_PTR_RELEASE(model);
+                return nullptr;
+            }
 
 			// create the camera
 			Bool orthoCamera = false;
@@ -235,28 +281,37 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 				camera->Set_Projection_Type( CameraClass::ORTHO );
 
 			// Clear the backbuffer
-			WW3D::Begin_Render(true,true,Vector3(0.5f,0.5f,0.5f));
-			//WW3D::Begin_Render(true,true,Vector3(1.0f,1.0f,1.0f));
+            if (WW3D::Begin_Render(true, true, Vector3(0.5f, 0.5f, 0.5f)) != WW3D_ERROR_OK) {
+                Graphics::Get_Attachment_Bindings().Restore_Default();
+                Graphics::Abort_Tool_Frame();
+                REF_PTR_RELEASE(objectTexture);
+                REF_PTR_RELEASE(camera);
+                REF_PTR_RELEASE(model);
+                return nullptr;
+            }
 
 			RenderInfoClass rinfo(*camera);
-			LightEnvironmentClass lightEnv;
+			Graphics::LocalLighting lightEnv;
 			rinfo.light_environment = &lightEnv;
-			lightEnv.Reset(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f));
+			lightEnv.Reset({0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f});
 
 			WW3D::Render(*model, rinfo);
 
-			WW3D::End_Render(false);
+			WW3D::End_Render();
 
 			// Change the rendertarget back to the main backbuffer
-			DX8Wrapper::Set_Render_Target((IDirect3DSurface9 *)nullptr);
+			Graphics::Get_Attachment_Bindings().Restore_Default();
+            // End the offscreen frame without presenting the editor window.
+            Graphics::Abort_Tool_Frame();
 
-			SurfaceClass *surface = objectTexture->Get_Surface_Level();
-			UnsignedByte *data = saveSurface(surface->Peek_D3D_Surface());
+			Graphics::TextureEdit *surface = objectTexture->Get_Surface_Level();
+			UnsignedByte *data = saveSurface(surface);
 
-			REF_PTR_RELEASE(surface);
+			delete surface; surface = nullptr;
 
 			REF_PTR_RELEASE(objectTexture);
 			REF_PTR_RELEASE(camera);
+            REF_PTR_RELEASE(model);
 			return data;
 		}
 	}

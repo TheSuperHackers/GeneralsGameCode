@@ -74,9 +74,8 @@ public:
 		ResolutionFontSizeMethod_Strict, // Uses a strict scaling method. Width and height are strictly bounded on upscales. Works well for accurate UI layouts and with large resolutions.
 		ResolutionFontSizeMethod_Balanced, // Uses a balanced scaling method. Width and height are evenly weighted for upscales. Works well for the original Game UI and with large resolutions.
 
-		// Keep the legacy 2x ceiling so the 4K SDL3 UI does not grow to several
-		// times its intended size when the user preference is set to automatic.
-		ResolutionFontSizeMethod_Default = ResolutionFontSizeMethod_Classic,
+		// Follow the aspect-preserving control scale at every drawable size.
+		ResolutionFontSizeMethod_Default = ResolutionFontSizeMethod_Strict,
 	};
 
 	typedef std::list<AsciiString> StringList; // Used for our font file names that we want to load

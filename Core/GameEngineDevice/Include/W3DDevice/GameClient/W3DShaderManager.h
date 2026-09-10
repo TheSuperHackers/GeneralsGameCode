@@ -35,7 +35,7 @@
 
 #include <cstdint>
 
-#include "WW3D2/texture.h"
+#include "W3DDevice/GameClient/W3DTextureHandle.h"
 enum FilterTypes CPP_11(: Int);
 enum FilterModes CPP_11(: Int);
 enum CustomScenePassModes CPP_11(: Int);
@@ -44,7 +44,7 @@ enum ChipsetType CPP_11(: Int);
 enum CpuType CPP_11(: Int);
 enum GraphicsVenderID CPP_11(: Int);
 
-class TextureClass;	///forward reference
+class W3DTextureHandle;	///forward reference
 /** System for managing complex rendering settings which are either not handled by
 	WW3D2 or need custom paths depending on the video card.  This system will determine
 	the proper shader given video card limitations and also allow the app to query the
@@ -80,23 +80,9 @@ public:
 	W3DShaderManager();	///<constructor
 	static void init();	///<determine optimal shaders for current device.
 	static void shutdown();	///<release resources used by shaders
-	static void updateCloud();	///<update the cloud position once every render frame.
-
 	static ChipsetType getChipset();	///<return current device chipset.
 	static GraphicsVenderID getCurrentVendor() {return m_currentVendor;}	///<return current card vendor.
-	static __int64 getCurrentDriverVersion() {return m_driverVersion; }	///<return current driver version.
-	static Int getShaderPasses(ShaderTypes shader);	///<rendering passes required for shader
-	static Int setShader(ShaderTypes shader, Int pass);	///<enable specific shader pass.
-	static Int setShroudTex(Int stage);	///<Set shroud in a texture stage.
-	static void resetShader(ShaderTypes shader);	///<make sure W3D2 gets restored to normal
-	///Specify all textures (up to 8) which can be accessed by the shaders.
-	static void setTexture(Int stage,TextureClass* texture) {m_Textures[stage]=texture;}
-	///Return current texture available to shaders.
-	static TextureClass *getShaderTexture(Int stage) { return m_Textures[stage];}	///<returns currently selected texture for given stage
-	///Return last activated shader.
-	static ShaderTypes getCurrentShader() {return m_currentShader;}
-	/// Loads a .vso file and creates a vertex shader for it
-	static HRESULT LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, uintptr_t* pHandle);
+	static std::int64_t getCurrentDriverVersion() {return m_driverVersion; }	///<return current driver version.
 
 	static Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
 	static StaticGameLODLevel getGPUPerformanceIndex();
@@ -108,29 +94,23 @@ public:
 	static Bool filterSetup(FilterTypes filter, FilterModes mode);
 
 	// Support routines for filter methods.
-	static Bool canRenderToTexture(void) { return (m_oldRenderSurface && m_newRenderSurface);}
+	static Bool canRenderToTexture(void) { return m_renderTexture != nullptr;}
 	static void startRenderToTexture(void); ///< Sets render target to texture.
-	static IDirect3DTexture9 * endRenderToTexture(void); ///< Ends render to texture, & returns texture.
-	static IDirect3DTexture9 * getRenderTexture(void);	///< returns last used render target texture
+	static W3DTextureHandle * endRenderToTexture(void); ///< Ends render to texture, & returns texture.
+	static W3DTextureHandle * getRenderTexture(void);	///< returns last used render target texture
 	static Bool isRenderingToTexture(void) {return m_renderingToTexture; }
 	static void drawViewport(Int color);	///<draws 2 triangles covering the current tactical viewport
 
 
 protected:
-	static TextureClass *m_Textures[8];	///textures assigned to each of the possible stages
 	static ChipsetType m_currentChipset;	///<last video card chipset that was detected.
 	static GraphicsVenderID m_currentVendor;	///<last video card vendor
-	static __int64 m_driverVersion;			///<driver version of last chipset.
-	static ShaderTypes m_currentShader;	///<last shader that was set.
-	static Int m_currentShaderPass;		///<pass of last shader that was set.
+	static std::int64_t m_driverVersion;			///<driver version of last chipset.
 
 	static FilterTypes m_currentFilter; ///< Last filter that was set.
 	// Info for a render to texture surface for special effects.
 	static Bool m_renderingToTexture;
-	static IDirect3DSurface9 *m_oldRenderSurface;	///<previous render target
-	static IDirect3DTexture9 *m_renderTexture;		///<texture into which rendering will be redirected.
-	static IDirect3DSurface9 *m_newRenderSurface;	///<new render target inside m_renderTexture
-	static IDirect3DSurface9 *m_oldDepthSurface;	///<previous depth buffer surface
+	static W3DTextureHandle *m_renderTexture;		///<texture into which rendering will be redirected.
 
 
 };
@@ -189,7 +169,6 @@ protected:
 ///converts viewport to black & white.
 class ScreenBWFilter : public W3DFilterInterface
 {
-	uintptr_t	m_dwBWPixelShader;		///<D3D handle to pixel shader which tints texture to black & white.
 public:
 	virtual Int init() override;			///<perform any one time initialization and validation
 	virtual Int shutdown() override;		///<release resources used by shader
@@ -211,18 +190,7 @@ protected:
 	static Real m_curFadeValue;
 };
 
-class ScreenBWFilterDOT3 : public ScreenBWFilter
-{
-public:
-	virtual Int init() override;			///<perform any one time initialization and validation
-	virtual Int shutdown() override;		///<release resources used by shader
-	virtual Bool preRender(Bool &skipRender, CustomScenePassModes &scenePassMode) override; ///< Set up at start of render.  Only applies to screen filter shaders.
-	virtual Bool postRender(FilterModes mode, Coord2D &scrollDelta,Bool &doExtraRender) override; ///< Called after render.  Only applies to screen filter shaders.
-	virtual Bool setup(FilterModes mode) override {return true;} ///< Called when the filter is started, one time before the first prerender.
-protected:
-	virtual Int set(FilterModes mode) override;		///<setup shader for the specified rendering pass.
-	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
-};
+
 
 /*=========  ScreenCrossFadeFilter	=============================================================*/
 ///Fades between 2 different rendered frames.
@@ -241,7 +209,7 @@ public:
 		m_fadeDirection = direction;
 	}
 	static Real getCurrentFadeValue()	{ return m_curFadeValue;}
-	static TextureClass *getCurrentMaskTexture() { return m_fadePatternTexture;}
+	static W3DTextureHandle *getCurrentMaskTexture() { return m_fadePatternTexture;}
 protected:
 	virtual Int set(FilterModes mode) override;		///<setup shader for the specified rendering pass.
 	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
@@ -251,5 +219,5 @@ protected:
 	static Int m_curFadeFrame;
 	static Real m_curFadeValue;
 	static Bool m_skipRender;
-	static TextureClass *m_fadePatternTexture;	///<shape/pattern of the fade
+	static W3DTextureHandle *m_fadePatternTexture;	///<shape/pattern of the fade
 };

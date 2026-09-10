@@ -24,12 +24,20 @@
 
 #pragma once
 
+#include <array>
+#include <span>
+#include <vector>
+#include "W3DDevice/GameClient/WaterMaterial.h"
+#include "WWMath/aabox.h"
+#include "WWMath/sphere.h"
+#include "WWMath/vector2.h"
+
 enum waveType CPP_11(: Int);	//forward reference
 
 /// Custom render object that draws animated tracks/waves on the water.
 /**
 	This is an object which draws a small breaking wave or splash animation.  These objects are
-	to be managed/accessed only by the WaterTracksRenderObjClassSystem
+	to be managed/accessed only by the WaterTracksRenderSystem
 */
 class WaterTracksObj
 {
@@ -40,21 +48,15 @@ public:
 	WaterTracksObj();
 	~WaterTracksObj();
 
-	virtual void					Render() {};	///<draw this object
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;	///<bounding sphere of this object
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;		///<bounding box of this object
-
 	Int freeWaterTracksResources();	///<free W3D assets used for this track
 	void init( Real width, Real length, const Vector2 &start, const Vector2 &end, const Char *texturename, Int waveTimeOffset);	///<allocate W3D resources and set size
 	void init( Real width, const Vector2 &start, const Vector2 &end, const Char *texturename);	///<allocate W3D resources and set size
 	Int	update(Int msElapsed);	///< update animation state
-	Int render(DX8VertexBufferClass	*vertexBuffer, Int batchStart);	///<draw this object
+	void render(WaterMaterialClass& material, Graphics::WaterMeshHandle& mesh,
+        std::vector<WaterSurfaceVertex>& vertices, std::span<const unsigned short> indices);	///<draw this object
 
 protected:
-	TextureClass *m_stageZeroTexture;	///<primary texture
-	SphereClass	m_boundingSphere;		///<bounding sphere of WaterTracks
-	AABoxClass	m_boundingBox;			///<bounding box of WaterTracks
-
+	W3DTextureHandle *m_stageZeroTexture;	///<primary texture
 	waveType	m_type;					///<used for render state sorting (set this to texture pointer for now).
 	Int			m_x;					///<vertex count
 	Int			m_y;					///<vertex count
@@ -107,10 +109,10 @@ public:
 	WaterTracksRenderSystem();
 	~WaterTracksRenderSystem();
 
-	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
+	void ReleaseResources();	///< Release all backend resources so the device can be reset.
 	void ReAcquireResources();  ///< Reacquire all resources after device reset.
 
-	void flush (RenderInfoClass & rinfo);	///<draw all tracks that were requested for rendering.
+	void flush (W3DRenderContext & rinfo);	///<draw all tracks that were requested for rendering.
 	void update();	///<update the state of all edges (fade alpha, remove old, etc.)
 
 	void init();	///< pre-allocate track objects
@@ -124,17 +126,16 @@ public:
 	WaterTracksObj *findTrack(Vector2 &start, Vector2 &end, waveType type);
 
 protected:
-	DX8VertexBufferClass		*m_vertexBuffer;	///<vertex buffer used to draw all tracks
-	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in maximum length track
-	VertexMaterialClass	  	  *m_vertexMaterialClass;	///< vertex lighting material
-	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
+    std::vector<WaterSurfaceVertex> m_vertices;
+    std::vector<UnsignedShort> m_indices;
+    Graphics::WaterMeshHandle m_graphicsMesh;
+	WaterMaterialClass m_material;	///<explicit programmable track material
 
 	WaterTracksObj *m_usedModules;	///<active objects being rendered in the scene
 	WaterTracksObj *m_freeModules;	//<unused modules that are free to use again
 
 	Int		m_stripSizeX;			///< resolution (vertex count) of wave strip
 	Int		m_stripSizeY;			///< resolution (vertex count) of wave strip
-	Int		m_batchStart;			///< start of unused vertices in vertex buffer
 	Real	m_level;				///< water level
 	void releaseTrack( WaterTracksObj *mod );	///<returns track object to free store.
 };

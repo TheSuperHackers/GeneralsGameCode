@@ -1,3 +1,4 @@
+import Graphics.Frame.AttachmentBindings;
 /*
 **	Command & Conquer Renegade(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -22,11 +23,10 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "ResolutionDialog.h"
-#include "WW3D2/ww3d.h"
+#include "WW3D2/WW3D.h"
 #include "Globals.h"
 #include "GraphicView.h"
 #include "Utils.h"
-#include "WW3D2/rddesc.h"
 
 
 
@@ -101,29 +101,29 @@ ResolutionDialogClass::OnInitDialog ()
 	//
 	//	Get information about the current render device
 	//
-	const RenderDeviceDescClass &device_info = WW3D::Get_Render_Device_Desc ();
-	const DynamicVectorClass<ResolutionDescClass> &res_list = device_info.Enumerate_Resolutions ();
+	m_resolutions = Graphics::Enumerate_Display_Resolutions();
+	const auto& res_list = m_resolutions;
 
 	//
 	//	Get the current resolution
 	//
-	int curr_width			= 0;
-	int curr_height		= 0;
-	int curr_bpp			= 0;
-	bool curr_windowed	= false;
-	WW3D::Get_Device_Resolution (curr_width, curr_height, curr_bpp, curr_windowed);
+	const auto& screen = Graphics::Get_Attachment_Bindings().Default().viewport;
+	const unsigned curr_width = screen.width;
+	const unsigned curr_height = screen.height;
+	const int curr_bpp = 32;
+	const bool curr_windowed = !::Get_Graphic_View()->Is_Fullscreen();
 	SendDlgItemMessage (IDC_FULLSCREEN_CHECK, BM_SETCHECK, (WPARAM)(curr_windowed == false));
 
 	//
 	//	Loop over all the resolutions available to us
 	//
 	bool found = false;
-	int index = res_list.Count ();
+	int index = static_cast<int>(res_list.size());
 	while (index --) {
 
-		int width	= res_list[index].Width;
-		int height	= res_list[index].Height;
-		int bpp		= res_list[index].BitDepth;
+		int width	= res_list[index].width;
+		int height	= res_list[index].height;
+		int bpp		= 32;
 
 		//
 		//	Format description strings for this resolution
@@ -131,7 +131,7 @@ ResolutionDialogClass::OnInitDialog ()
 		CString resolution_string;
 		CString bit_depth_string;
 		resolution_string.Format ("%d x %d", width, height);
-		bit_depth_string.Format ("%d bpp (%d colors)", bpp, 1 << bpp);
+		bit_depth_string.Format ("%d bpp", bpp);
 
 		//
 		//	Add this resolution to the list ctrl
@@ -192,11 +192,11 @@ ResolutionDialogClass::OnOK ()
 			//
 			//	Lookup the selected resolution information
 			//
-			const RenderDeviceDescClass &device_info = WW3D::Get_Render_Device_Desc ();
-			const DynamicVectorClass<ResolutionDescClass> &res_list = device_info.Enumerate_Resolutions ();
-			g_iWidth				= res_list[index].Width;
-			g_iHeight			= res_list[index].Height;
-			g_iBitsPerPixel	= res_list[index].BitDepth;
+			const auto& res_list = m_resolutions;
+			if (static_cast<std::size_t>(index) >= res_list.size()) return;
+			g_iWidth				= res_list[index].width;
+			g_iHeight			= res_list[index].height;
+			g_iBitsPerPixel	= 32;
 
 			//
 			// Cache this information in the registry

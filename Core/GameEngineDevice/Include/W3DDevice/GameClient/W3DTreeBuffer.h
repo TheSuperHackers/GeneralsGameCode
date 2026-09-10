@@ -44,34 +44,34 @@
 
 #pragma once
 
-#include <cstdint>
+#include <array>
+#include <span>
+#include <vector>
+import Graphics.Scene.Trees.Renderer;
+import Graphics.Scene.Surfaces.Renderer;
+#include <vector>
 
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DTextureHandle.h"
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/AsciiString.h"
 #include "Common/GlobalData.h"
+import Graphics.Scene.Trees.Geometry;
 
 //-----------------------------------------------------------------------------
 //           Forward References
 //-----------------------------------------------------------------------------
-class MeshClass;
+class W3DMeshRenderObject;
 class W3DTreeBuffer;
 class TileData;
 class W3DTreeDrawModuleData;
 struct BreezeInfo;
 class GeometryInfo;
-class W3DProjectedShadow;
 
 //-----------------------------------------------------------------------------
 //           Type Defines
@@ -126,7 +126,7 @@ typedef struct {
 
 /// The individual data for a tree type.
 typedef struct {
-	MeshClass * m_mesh;			///< Mesh for this kind of tree.
+	W3DMeshRenderObject * m_mesh;			///< Mesh for this kind of tree.
 	SphereClass m_bounds;		///< Bounding boxes for the base tree models.
 	const W3DTreeDrawModuleData *m_data;
 	ICoord2D		m_textureOrigin; ///< Texture origin in the mega texture.
@@ -135,7 +135,6 @@ typedef struct {
 	Int					m_tileWidth;///< Width in tiles of texture;
 	Bool				m_halfTile; ///< Tiles are 64x64 pixels, half tile supports a 32x32 bit texture.  Have to adjust the uv values.
 	Vector3			m_offset;
-	Real				m_shadowSize; ///< Shadow radius.
 	Bool				m_doShadow; ///< Draw shadow.
 
 } TTreeType;
@@ -153,12 +152,9 @@ class W3DTreeBuffer : public Snapshot
 	//-----------------------------------------------------------------------------
 	//                             W3DTreeTextureClass
 	//-----------------------------------------------------------------------------
-	class W3DTreeTextureClass : public TextureClass
+	class W3DTreeTextureClass : public W3DTextureHandle
 	{
 		W3DMPO_CODE(W3DTreeTextureClass)
-	protected:
-		virtual void Apply(unsigned int stage) override;
-
 	public:
 			/// Create texture.
 			W3DTreeTextureClass(unsigned width, unsigned height);
@@ -166,7 +162,6 @@ class W3DTreeBuffer : public Snapshot
 			// just use default destructor. ~TerrainTextureClass();
 	public:
 		int update(W3DTreeBuffer *buffer); ///< Sets the pixels, and returns the actual height of the texture.
-		void setLOD(Int LOD) const;
 	};
 
 public:
@@ -193,13 +188,14 @@ public:
 		Real angle
 	);
 
-	void setTextureLOD(Int lod);	///<used to adjust maximum mip level sent to hardware.
 	/// Empties the tree buffer.
 	void clearAllTrees();
 	/// Empties the tree buffer.
 	void setBounds(const Region2D &bounds) {m_bounds = bounds;}
 	/// Draws the trees.  Uses camera for culling.
-	void drawTrees(CameraClass * camera, RefRenderObjListIterator *pDynamicLightsIterator);
+	void drawTrees(W3DCamera * camera, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pDynamicLightsIterator);
+    void prepareFrame();
+    Bool collectShadowCasters();
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a tree becomes visible.
 	void doFullUpdate() {m_updateAllKeys = true;};
@@ -222,15 +218,17 @@ private:
 				MAX_BUFFERS = 1,
 				SORT_ITERATIONS_PER_FRAME=10};
 	enum {PARTITION_WIDTH_HEIGHT = 100};
-	DX8VertexBufferClass	*m_vertexTree[MAX_BUFFERS];	///<Tree vertex buffer.
-	DX8IndexBufferClass			*m_indexTree[MAX_BUFFERS];	///<indices defining a triangles for the tree drawing.
-	uintptr_t				m_dwTreePixelShader;	///<handle to D3D pixel shader
-	uintptr_t				m_dwTreeVertexShader;	///<handle to D3D vertex shader
+    std::vector<Graphics::TreeVertex> m_vertexTree[MAX_BUFFERS];
+    std::vector<UnsignedShort> m_indexTree[MAX_BUFFERS];
+    Graphics::TreeMeshHandle m_graphicsMeshes[MAX_BUFFERS];
+    bool m_graphicsGeometryDirty = true;
+    UnsignedInt m_preparedFrame = ~0u;
+
 
 	Short		m_areaPartition[PARTITION_WIDTH_HEIGHT*PARTITION_WIDTH_HEIGHT];
 	Region2D m_bounds;
 
-	TextureClass *m_treeTexture;	///<Trees texture
+	W3DTextureHandle *m_treeTexture;	///<Trees texture
 	Int			m_textureWidth;				///<Width in pixels m_treeTexture;
 	Int			m_textureHeight;				///<Width in pixels m_treeTexture;
 	Int			m_curNumTreeVertices[MAX_BUFFERS]; ///<Number of vertices used in m_vertexTree.
@@ -250,13 +248,13 @@ private:
 	TileData			*m_sourceTiles[MAX_TILES];	///< Tiles for m_textureClasses
 	Vector3 m_cameraLookAtVector;
 	Vector3 m_swayOffsets[NUM_SWAY_ENTRIES];
+	Vector3 m_currentSwayFactor[MAX_SWAY_TYPES];
 	Int			m_curSwayVersion;
 
 	Real		m_curSwayOffset[MAX_SWAY_TYPES];
 	Real		m_curSwayStep[MAX_SWAY_TYPES];
 	Real		m_curSwayFactor[MAX_SWAY_TYPES];
 
-	W3DProjectedShadow *m_shadow;
 
 protected:
 	// snapshot methods
@@ -267,9 +265,9 @@ protected:
 protected:
 	/// Updates the sway offsets.
 	void updateSway(const BreezeInfo& info);
-	void loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
+	void loadTreesInVertexAndIndexBuffers(Graphics::SceneObjectList<W3DRenderObject>::Cursor *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
 	void updateVertexBuffer(); ///< Fills the index and vertex buffers for drawing.
-	void cull(const CameraClass * camera);						 ///< Culls the trees.
+	void cull(const W3DCamera * camera);						 ///< Culls the trees.
 	UnsignedInt  doLighting(const Vector3 *normal,
 		const GlobalData::TerrainLighting	*objectLighting,
 		const Vector3 *emissive, UnsignedInt vertexDiffuse, Real scale) const;

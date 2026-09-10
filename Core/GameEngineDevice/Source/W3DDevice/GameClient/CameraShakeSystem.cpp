@@ -37,14 +37,12 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include <stdlib.h>
-#include <WW3D2/assetmgr.h>
-#include <WW3D2/texture.h>
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
+#include <W3DDevice/GameClient/W3DTextureHandle.h>
 #include <WWMath/tri.h>
 #include <WWMath/colmath.h>
-#include <WW3D2/coltest.h>
-#include <WW3D2/rinfo.h>
-#include <WW3D2/camera.h>
-#include <d3dx9core.h>
+#include <W3DDevice/GameClient/W3DCastQuery.h>
+#include "W3DDevice/GameClient/W3DCamera.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 
@@ -68,14 +66,11 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/light.h"
-#include "WW3D2/scene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
-#include "WW3D2/camera.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
 
 //#include "W3DDevice/GameClient/camera.h"
 //#include "W3DDevice/GameClient/wwmemlog.h"
@@ -88,7 +83,6 @@
 ** - The camera should pitch up and down a lot more than it yaws left and right.
 */
 
-DEFINE_AUTO_POOL(CameraShakeSystemClass::CameraShakerClass,256);
 
 const float MIN_OMEGA			= DEG_TO_RADF(12.5f*360.0f);
 const float MAX_OMEGA			= DEG_TO_RADF(15.0f*360.0f);
@@ -206,8 +200,7 @@ void CameraShakeSystemClass::Add_Camera_Shake
 {
 	//WWMEMLOG(MEM_PHYSICSDATA);
 	/*
-	** Allocate a new camera shaker object.  Note that these are mem-pooled so the allocation
-	** is very cheap.
+	** Allocate the visual state owned by the active shaker collection.
 	*/
 
 	//Power is in degrees of amplitude.
@@ -222,7 +215,7 @@ bool CameraShakeSystemClass::IsCameraShaking()
 	/*
 	** Loop through to find if there is any active camera shakers
 	*/
-	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
+	Graphics::SceneObjectList<CameraShakerClass,false>::Cursor iterator(&CameraShakerList);
 	for (iterator.First(); !iterator.Is_Done(); iterator.Next()) {
 		CameraShakerClass * obj = iterator.Peek_Obj();
 		if (obj){
@@ -239,8 +232,8 @@ void CameraShakeSystemClass::Timestep(float dt)
 	** Allow each camera shaker to timestep.  Any that expire are added to a temporary
 	** list for deletion.
 	*/
-	MultiListClass<CameraShakerClass> deletelist;
-	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
+	Graphics::SceneObjectList<CameraShakerClass,false> deletelist;
+	Graphics::SceneObjectList<CameraShakerClass,false>::Cursor iterator(&CameraShakerList);
 	for (iterator.First(); !iterator.Is_Done(); iterator.Next()) {
 		CameraShakerClass * obj = iterator.Peek_Obj();
 		obj->Timestep(dt);
@@ -261,7 +254,7 @@ void CameraShakeSystemClass::Timestep(float dt)
 
 void CameraShakeSystemClass::Update_Camera_Shaker(Vector3 camera_position, Vector3 *shaker_angle)
 {
-	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
+	Graphics::SceneObjectList<CameraShakerClass,false>::Cursor iterator(&CameraShakerList);
 
 	Vector3 angles(0,0,0);
 	Matrix3D camera_transform;

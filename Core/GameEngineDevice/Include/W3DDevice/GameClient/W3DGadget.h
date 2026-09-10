@@ -64,25 +64,25 @@
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-extern void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetPushButtonImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetRadioButtonImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetTabControlDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetTabControlImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetHorizontalSliderDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetHorizontalSliderImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetVerticalSliderDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetVerticalSliderImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData );
+extern Bool W3DGadgetPushButtonDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetPushButtonImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetRadioButtonDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetRadioButtonImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetTabControlDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetTabControlImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetListBoxDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetListBoxImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetComboBoxDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetComboBoxImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetHorizontalSliderDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetHorizontalSliderImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetVerticalSliderDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetVerticalSliderImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetProgressBarDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetProgressBarImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetStaticTextDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetStaticTextImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetCheckBoxDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetCheckBoxImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetTextEntryDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DGadgetTextEntryImageDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );

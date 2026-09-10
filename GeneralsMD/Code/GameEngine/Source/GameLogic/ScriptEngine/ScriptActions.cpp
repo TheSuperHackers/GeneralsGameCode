@@ -7128,14 +7128,14 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 		case ScriptAction::SET_FPS_LIMIT:
 			if (!pAction->getParameter(0)->getInt())
 			{
-				TheFramePacer->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
+				TheFramePacer->setLogicTimeScaleFps(TheGlobalData->m_framesPerSecondLimit);
 			}
 			else
 			{
-				TheFramePacer->setFramesPerSecondLimit(pAction->getParameter(0)->getInt());
+				TheFramePacer->setLogicTimeScaleFps(pAction->getParameter(0)->getInt());
 			}
-			// Setting the fps limit doesn't do much good if we don't use it.  jba.
-			TheWritableGlobalData->m_useFpsLimit = true;
+			// Scripted game speed controls simulation independently of rendering.
+			TheFramePacer->enableLogicTimeScale(TRUE);
 			return;
 
 		case ScriptAction::DISABLE_SPECIAL_POWER_DISPLAY:

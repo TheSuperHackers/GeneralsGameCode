@@ -20,9 +20,21 @@
 #pragma once
 
 // TCHAR
+#ifndef _TCHAR_DEFINED
 typedef char TCHAR;
+#define _TCHAR_DEFINED
+#endif
+
+#ifndef _LPCTSTR_DEFINED
 typedef const TCHAR* LPCTSTR;
+#define _LPCTSTR_DEFINED
+#endif
+
+#ifndef _LPTSTR_DEFINED
 typedef TCHAR* LPTSTR;
+#define _LPTSTR_DEFINED
+#endif
+
 #define _tcslen strlen
 #define _tcscmp strcmp
 #define _tcsicmp strcasecmp

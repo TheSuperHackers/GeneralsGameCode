@@ -54,7 +54,6 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 class GameWindow;
-class VideoBuffer;
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
 #define WIN_STATE_HILITED 	0x00000002	// Mouse is over window or has focus
@@ -124,8 +123,6 @@ public:
 	DisplayString *getTextDisplayString();			///< return the text display string
 	DisplayString *getTooltipDisplayString();		///< return the tooltip display string
 
-	void setVideoBuffer( VideoBuffer * videoBuffer );	///< set the videobuffer to display a video frame
-
 // NOTE if you add data to this make sure you update winSetInstanceData()
 // NOTE if you add data to this make sure you update winSetInstanceData()
 // NOTE if you add data to this make sure you update winSetInstanceData()
@@ -164,9 +161,6 @@ public:
 
 	DisplayString *m_text;				 ///< generic text for any window to display
 	DisplayString *m_tooltip;		 ///< tooltip for display
-
-	//NOTE Video Buffer cannot be transferred to another window.
-	VideoBuffer *m_videoBuffer;			///< Each window can be made to play a video in it.
 
 // NOTE if you add data to this make sure you update winSetInstanceData()
 // NOTE if you add data to this make sure you update winSetInstanceData()

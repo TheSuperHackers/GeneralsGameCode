@@ -48,7 +48,7 @@
 #endif
 
 #ifndef VXLLAYER_H
-#include "vxllayer.h"
+#include "vxlLayer.h"
 #endif
 
 #ifndef PROGRESS_H

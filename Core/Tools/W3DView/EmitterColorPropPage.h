@@ -24,7 +24,7 @@
 #include "resource.h"
 #include "WWMath/vector3.h"
 #include "ColorBar.h"
-#include "WW3D2/part_emt.h"
+#include "WW3D2/PartEmt.h"
 
 // Forward declarations
 class EmitterInstanceListClass;

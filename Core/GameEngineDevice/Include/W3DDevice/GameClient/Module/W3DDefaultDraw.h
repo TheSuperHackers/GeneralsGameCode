@@ -34,9 +34,10 @@
 #include "Common/DrawModule.h"
 #include "Common/FileSystem.h"	// this is only here to pull in LOAD_TEST_ASSETS
 
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
-class RenderObjClass;
+class W3DRenderObject;
 class FXList;
 
 //-------------------------------------------------------------------------------------------------
@@ -68,7 +69,8 @@ public:
 private:
 
 #ifdef LOAD_TEST_ASSETS
-	RenderObjClass*		m_renderObject;										///< W3D Render object for this drawable
+
+	W3DRenderObject*		m_renderObject;										///< W3D Render object for this drawable
 	Shadow*				m_shadow;													///< Updates/Renders shadows of this object
 #endif
 };

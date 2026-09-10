@@ -33,7 +33,7 @@
 #include "MainFrm.h"
 #include "DrawObject.h"
 #include "GameLogic/PolygonTrigger.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 
 //
 // PolygonTool class.

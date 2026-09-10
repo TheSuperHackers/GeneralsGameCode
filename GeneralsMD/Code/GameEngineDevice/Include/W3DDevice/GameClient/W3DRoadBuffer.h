@@ -43,17 +43,18 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
+#include <array>
+#include <span>
+#include <vector>
+import Graphics.Scene.Surfaces.Renderer;
 
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+import Graphics.Scene.Surfaces.Geometry;
+import Graphics.Materials.State;
 //#include "common/GameFileSystem.h"
 #include "Common/FileSystem.h" // for LOAD_TEST_ASSETS
 #include "Lib/BaseType.h"
@@ -126,7 +127,7 @@ public:
 	Bool			m_visible;
 protected:
 	Int										m_numVertex;
-	VertexFormatXYZDUV1*	m_vb;
+	Graphics::SurfaceVertex*	m_vb;
 	Int										m_numIndex;
 	UnsignedShort*				m_ib;
 	TRoadSegInfo					m_info;
@@ -135,14 +136,14 @@ public:
 	RoadSegment();
 	~RoadSegment();
 public:
-	void SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex);
+	void SetVertexBuffer(Graphics::SurfaceVertex *vb, Int numVertex);
 	void SetIndexBuffer(UnsignedShort *ib, Int numIndex);
 	void SetRoadSegInfo(TRoadSegInfo *pInfo) {m_info = *pInfo;};
 	void GetRoadSegInfo(TRoadSegInfo *pInfo) {*pInfo = m_info;};
 	const SphereClass &getBounds() {return m_bounds;};
 	Int GetNumVertex() {return m_numVertex;};
 	Int GetNumIndex() {return m_numIndex;};
-	Int GetVertices(VertexFormatXYZDUV1 *destination_vb, Int numToCopy);
+	Int GetVertices(Graphics::SurfaceVertex *destination_vb, Int numToCopy);
 	Int GetIndices(UnsignedShort *destination_ib, Int numToCopy, Int offset);
 	void updateSegLighting();
 } ;
@@ -152,9 +153,10 @@ public:
 	RoadType();
 	~RoadType();
 protected:
-	TextureClass *m_roadTexture;	///<Roads texture
-	DX8VertexBufferClass	*m_vertexRoad;	///<Road vertex buffer.
-	DX8IndexBufferClass			*m_indexRoad;	///<indices defining a triangles for the road drawing.
+	W3DTextureHandle *m_roadTexture;	///<Roads texture
+	std::vector<Graphics::SurfaceVertex> m_vertices;
+	std::vector<UnsignedShort> m_indices;
+	Graphics::SurfaceMeshHandle m_mesh;
 	Int			m_numRoadVertices; ///<Number of vertices used in m_vertexRoad.
 	Int			m_numRoadIndices;	///<Number of indices used in b_indexRoad;
 	Int					  m_uniqueID;     ///< ID of the road type in INI.
@@ -166,12 +168,14 @@ protected:
 #endif
 public:
 	void loadTexture(AsciiString path, Int id);
-	void applyTexture();
+	bool uploadGeometry();
+	W3DTextureHandle *getTexture() const { return m_roadTexture; }
+	Graphics::SurfaceMeshHandle getMesh() const { return m_mesh; }
 	Int getStacking() {return m_stackingOrder;}
 	void setStacking(Int order) {m_stackingOrder = order;}
 	Int getUniqueID() {return m_uniqueID;};
-	DX8VertexBufferClass	*getVB() {return m_vertexRoad;};
-	DX8IndexBufferClass		*getIB() {return m_indexRoad;}
+	Graphics::SurfaceVertex *getVB() { return m_vertices.data(); }
+	UnsignedShort *getIB() { return m_indices.data(); }
 	Int getNumVertices() {return m_numRoadVertices;}
 	void setNumIndices(Int num) {m_numRoadIndices=num;}
 	void setNumVertices(Int num) {m_numRoadVertices=num;}
@@ -201,8 +205,8 @@ public:
 	/// Empties the road buffer.
 	void clearAllRoads();
 	/// Draws the roads.  Uses terrain bounds for culling.
-	void drawRoads(CameraClass * camera, TextureClass *cloudTexture, TextureClass *noiseTexture, Bool wireframe,
-																	Int minX, Int maxX, Int minY, Int maxY, RefRenderObjListIterator *pDynamicLightsIterator);
+	void drawRoads(W3DCamera * camera, W3DTextureHandle *cloudTexture, W3DTextureHandle *noiseTexture, Bool wireframe,
+																	Int minX, Int maxX, Int minY, Int maxY, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pDynamicLightsIterator);
 	/// Sets the map pointer.
 	void setMap(WorldHeightMap *pMap);
 	/// Updates the diffuse lighting in the buffers.
@@ -216,7 +220,7 @@ protected:
 	Int			m_numRoads;						///< Number of roads used in m_roads.
 	Bool		m_initialized;		///< True if the subsystem initialized.
 	WorldHeightMap *m_map;		///< Pointer to the height map data.
-	RefRenderObjListIterator *m_lightsIterator;	///< Lighting iterator.
+	Graphics::SceneObjectList<W3DRenderObject>::Cursor *m_lightsIterator;	///< Lighting iterator.
 	Int m_curUniqueID;				///< Road type we are rendering at this pass.
 	Int m_curRoadType;
 #ifdef LOAD_TEST_ASSETS
@@ -269,10 +273,9 @@ protected:
 														Vector2 roadNormal, Vector2 roadVector,
 														Vector2 *cornersP,
 														Real uOffset, Real vOffset, Real uScale, Real vScale);
-	void loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RefRenderObjListIterator *pDynamicLightsIterator);
+	void loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Graphics::SurfaceVertex *vb, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pDynamicLightsIterator);
 	void loadRoadsInVertexAndIndexBuffers(); ///< Fills the index and vertex buffers for drawing.
-	void loadLitRoadsInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
-	void loadRoadSegment(UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RoadSegment *pRoad); ///< Fills the index and vertex buffers for drawing 1 segment.
+	void loadRoadSegment(UnsignedShort *ib, Graphics::SurfaceVertex *vb, RoadSegment *pRoad); ///< Fills the index and vertex buffers for drawing 1 segment.
 	void allocateRoadBuffers();							 ///< Allocates the buffers.
 	void freeRoadBuffers();									 ///< Frees the index and vertex buffers.
 	Bool visibilityChanged(const IRegion2D &bounds);								///< Returns true if some roads are now visible that weren't, or vice versa.

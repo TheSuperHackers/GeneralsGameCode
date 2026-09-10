@@ -28,7 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Common/GameMemory.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameLogic/W3DTerrainLogic.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "Common/PerfTimer.h"

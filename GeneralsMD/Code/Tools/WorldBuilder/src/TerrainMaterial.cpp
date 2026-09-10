@@ -31,7 +31,7 @@
 #include "wbview3d.h"
 #include "Common/TerrainTypes.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 
 TerrainMaterial *TerrainMaterial::m_staticThis = nullptr;
 

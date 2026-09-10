@@ -24,9 +24,9 @@
 #include "W3DViewDoc.h"
 #include "AdvancedAnimSheet.h"
 
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/htree.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/HAnim.h"
+#include "WW3D2/HTree.h"
 #include "Utils.h"
 
 

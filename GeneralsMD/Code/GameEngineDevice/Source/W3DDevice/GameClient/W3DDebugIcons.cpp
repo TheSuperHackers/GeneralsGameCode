@@ -47,37 +47,44 @@
 //-----------------------------------------------------------------------------
 
 #include "W3DDevice/GameClient/W3DDebugIcons.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
+#include "W3DDevice/GameClient/W3DGraphicsResources.h"
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+#include <vector>
+import Graphics.Frame.Runtime;
+import Graphics.Scene.Debug.Renderer;
 
 #include "Common/GlobalData.h"
 #include "GameLogic/GameLogic.h"
 #include "Common/MapObject.h"
-#include "WW3D2/dx8wrapper.h"
+import Graphics.Materials.State;
+
 
 #if defined(RTS_DEBUG)
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_OPAQUE ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_DISABLE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_OPAQUE ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_ALWAYS, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_ONE, \
+	Graphics::MaterialState::DSTBLEND_ZERO, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_DISABLE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_DISABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_ALPHA ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_ALWAYS, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_SRC_ALPHA, \
+	Graphics::MaterialState::DSTBLEND_ONE_MINUS_SRC_ALPHA, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_MODULATE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_ENABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA_Z ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_ALPHA_Z ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_LEQUAL, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_SRC_ALPHA, \
+	Graphics::MaterialState::DSTBLEND_ONE_MINUS_SRC_ALPHA, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_MODULATE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_DISABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_OPAQUE_Z ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_DISABLE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_DISABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_OPAQUE_Z ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_LEQUAL, Graphics::MaterialState::DEPTH_WRITE_DISABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_ONE, \
+	Graphics::MaterialState::DSTBLEND_ZERO, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_DISABLE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_DISABLE, \
+	Graphics::MaterialState::DETAILCOLOR_DISABLE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 
 void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color)
@@ -99,7 +106,7 @@ Int				 W3DDebugIcons::m_maxDebugIcons = 0;
 
 W3DDebugIcons::~W3DDebugIcons()
 {
-	REF_PTR_RELEASE(m_vertexMaterialClass);
+	Graphics::Get_Surface_Renderer().Destroy_Mesh(m_mesh);
 	delete[] m_debugIcons;
 	m_debugIcons = nullptr;
 	m_numDebugIcons = 0;
@@ -109,12 +116,12 @@ W3DDebugIcons::W3DDebugIcons(Int mapWidth, Int mapHeight)
 {
 	m_maxDebugIcons = mapWidth * mapHeight;
 	//go with a preset material for now.
-	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
+	
 	allocateIconsArray();
 }
 
 
-bool W3DDebugIcons::Cast_Ray(RayCollisionTestClass & raytest)
+bool W3DDebugIcons::Cast_Ray(W3DRayCastQuery & raytest)
 {
 
 	return false;
@@ -151,10 +158,10 @@ void W3DDebugIcons::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 
 Int W3DDebugIcons::Class_ID() const
 {
-	return RenderObjClass::CLASSID_UNKNOWN;
+	return W3DRenderObject::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * W3DDebugIcons::Clone() const
+W3DRenderObject * W3DDebugIcons::Clone() const
 {
 	return NEW W3DDebugIcons(*this);	// poolify
 }
@@ -205,113 +212,41 @@ void W3DDebugIcons::addIcon(const Coord3D *pos, Real width, Int numFramesDuratio
 }
 
 /** Render draws into the current 3d context. */
-void W3DDebugIcons::Render(RenderInfoClass & rinfo)
+void W3DDebugIcons::Render(W3DRenderContext& info)
 {
-	//
-	if (WW3D::Are_Static_Sort_Lists_Enabled()) {
-		WW3D::Add_To_Static_Sort_List(this, 1);
-		return;
-	}
-	//
-	Bool anyVanished = false;
-	if (m_numDebugIcons==0) return;
-	DX8Wrapper::Apply_Render_State_Changes();
-
-	DX8Wrapper::Set_Material(m_vertexMaterialClass);
-	DX8Wrapper::Set_Texture(0, nullptr);
-	DX8Wrapper::Apply_Render_State_Changes();
-
-	Matrix3D tm(Transform);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-
-	Int numRect = m_numDebugIcons;
-	static Real offset = 30;
-	const Int MAX_RECT = 5000;  // cap drawing n rects.
-	if (numRect > MAX_RECT) numRect = MAX_RECT;
-	offset+= 0.5f;
-	Int k;
-	for (k=0; k<m_numDebugIcons;) {
-		Int curIndex = 0;
-		Int	numVertex = 0;
-		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,DX8_FVF_XYZNDUV2,numRect*4);
-		DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,numRect*6);
-		{
-		DynamicVBAccessClass::WriteLockClass lock(&vb_access);
-		VertexFormatXYZNDUV2* vb= lock.Get_Formatted_Vertex_Array();
-		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
-		if (!vb) return;
-
-		UnsignedShort *ib=lockib.Get_Index_Array();
-		UnsignedShort *curIb = ib;
-
-//		VertexFormatXYZNDUV2 *curVb = vb;
- 		Real shadeR, shadeG, shadeB;
-		shadeR = 0;
-		shadeG = 0;
-		shadeB = 255;
-		for(;  numVertex<numRect*4 && k<m_numDebugIcons; k++) {
-			Int theAlpha = 64;
-			const Int FADE_FRAMES = 100;
-			Int framesLeft = m_debugIcons[k].endFrame - TheGameLogic->getFrame();
-			if (framesLeft < 1) {
-				anyVanished = true;
-				continue;
-			}
-			if (framesLeft<FADE_FRAMES) {
-				theAlpha *= (Real)framesLeft/FADE_FRAMES;
-			}
-			RGBColor clr = m_debugIcons[k].color;
-			Real halfWidth = m_debugIcons[k].width/2;
-			Int diffuse = clr.getAsInt() | ((int)theAlpha << 24);
-			Coord3D pt1 = m_debugIcons[k].position;
-			vb->x=	pt1.x-halfWidth;
-			vb->y=	pt1.y-halfWidth;
-			vb->z=  pt1.z;
-			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
-			vb->u1=0 ;
-			vb->v1=0 ;
-			vb++;
-			vb->x=	pt1.x+halfWidth;
-			vb->y=	pt1.y-halfWidth;
-			vb->z=  pt1.z;
-			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
-			vb->u1=0 ;
-			vb->v1=0 ;
-			vb++;
-			vb->x=	pt1.x+halfWidth;
-			vb->y=	pt1.y+halfWidth;
-			vb->z=  pt1.z;
-			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
-			vb->u1=0 ;
-			vb->v1=0 ;
-			vb++;
-			vb->x=	pt1.x-halfWidth;
-			vb->y=	pt1.y+halfWidth;
-			vb->z=  pt1.z;
-			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
-			vb->u1=0 ;
-			vb->v1=0 ;
-			vb++;
-			*curIb++ = numVertex;
-			*curIb++ = numVertex+1;
-			*curIb++ = numVertex+2;
-			*curIb++ = numVertex;
-			*curIb++ = numVertex+2;
-			*curIb++ = numVertex+3;
-			curIndex += 6;
-			numVertex += 4;
-		}
-		}
-		if (numVertex == 0) break;
-		DX8Wrapper::Set_Shader(ShaderClass(SC_ALPHA));
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Vertex_Buffer(vb_access);
-		DX8Wrapper::Draw_Triangles(	0,curIndex/3, 0,	numVertex);	//draw a quad, 2 triangles, 4 verts
-	}
-
-	if (anyVanished) {
-		compressIconsArray();
-	}
+    if (Graphics::Get_Scene_Draw_Queue().Is_Enabled()) {
+        Graphics::Get_Scene_Draw_Queue().Enqueue<Extract_Ordered_Draw>(1, *this); return;
+    }
+    auto* device=Graphics::Shared_Frame_Device();
+    if (!device || !m_numDebugIcons) return;
+    std::vector<Graphics::SurfaceVertex> vertices;
+    std::vector<std::uint32_t> indices;
+    bool vanished=false;
+    for (int k=0;k<m_numDebugIcons;++k) {
+        const auto& icon=m_debugIcons[k];
+        const int frames=icon.endFrame-TheGameLogic->getFrame();
+        if (frames<1) { vanished=true; continue; }
+        const unsigned alpha=frames<100 ? static_cast<unsigned>(64.0f*frames/100) : 64;
+        const unsigned color=icon.color.getAsInt() | (alpha<<24);
+        const float width=icon.width*0.5f;
+        const std::array<Vector3,4> corners{
+            Vector3(icon.position.x-width,icon.position.y-width,icon.position.z),
+            Vector3(icon.position.x+width,icon.position.y-width,icon.position.z),
+            Vector3(icon.position.x+width,icon.position.y+width,icon.position.z),
+            Vector3(icon.position.x-width,icon.position.y+width,icon.position.z)};
+        const auto base=static_cast<std::uint32_t>(vertices.size());
+        for (const auto& corner : corners) {
+            Vector3 point; Matrix3D::Transform_Vector(Get_Transform(),corner,&point);
+            Graphics::SurfaceVertex vertex;
+            vertex.position={point.X,point.Y,point.Z};
+            vertex.color={float((color>>16)&255)/255,float((color>>8)&255)/255,float(color&255)/255,float(color>>24)/255};
+            vertices.push_back(vertex);
+        }
+        indices.insert(indices.end(),{base,base+1,base+2,base,base+2,base+3});
+    }
+    if (!indices.empty()) Graphics::Draw_Debug_Geometry(Graphics::Get_Surface_Renderer(),
+        device->Immediate_Command_List(),m_mesh,vertices,indices,Make_Surface_Parameters(info.Camera));
+    if (vanished) compressIconsArray();
 }
 
 #endif // RTS_DEBUG

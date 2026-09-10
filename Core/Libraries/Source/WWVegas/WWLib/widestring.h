@@ -39,7 +39,6 @@
 #include <stdarg.h>
 #include "always.h"
 #include "WWDebug/wwdebug.h"
-#include "win.h"
 #include "wwstring.h"
 #include "trim.h"
 #include <wchar.h>
@@ -288,7 +287,7 @@ inline int
 WideStringClass::Compare_No_Case (const WCHAR *string) const
 {
 	if (string) {
-		return _wcsicmp (m_Buffer, string);
+		return WWStringDetail::Compare_No_Case (m_Buffer, string);
 	}
 
 	return -1;

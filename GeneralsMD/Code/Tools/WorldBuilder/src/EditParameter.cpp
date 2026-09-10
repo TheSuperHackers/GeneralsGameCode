@@ -62,7 +62,7 @@
 #include "GameLogic/ScriptEngine.h"
 
 #include "W3DDevice/GameClient/W3DGameFont.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////////////////////////

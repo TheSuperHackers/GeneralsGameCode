@@ -19,6 +19,8 @@
 #pragma once
 
 #include "resource.h"
+#include <vector>
+import Graphics.Presentation.DisplayModes;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -48,6 +50,7 @@ public:
 
 // Implementation
 protected:
+	std::vector<Graphics::DisplayResolution> m_resolutions;
 
 	// Generated message map functions
 	//{{AFX_MSG(ResolutionDialogClass)

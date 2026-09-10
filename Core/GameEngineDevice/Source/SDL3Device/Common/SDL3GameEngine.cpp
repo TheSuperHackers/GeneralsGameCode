@@ -5,6 +5,7 @@
 #include "GameClient/IMEManager.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
+#include "Platform/SDLPlatformWindow.h"
 
 namespace
 {
@@ -65,14 +66,14 @@ DisplaySizeChange synchronizeDisplayToWindow(SDL_Window *window)
 	}
 
 	const Bool windowed = (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) == 0 ? TRUE : FALSE;
-	if (TheWritableGlobalData != nullptr)
-		TheWritableGlobalData->m_windowed = windowed;
 	const UnsignedInt bitDepth = TheDisplay->getBitDepth() != 0 ?
 		TheDisplay->getBitDepth() : DEFAULT_DISPLAY_BIT_DEPTH;
 	if (TheDisplay->getWidth() == static_cast<UnsignedInt>(pixelWidth) &&
 		TheDisplay->getHeight() == static_cast<UnsignedInt>(pixelHeight) &&
 		TheDisplay->getWindowed() == windowed)
 	{
+		if (TheWritableGlobalData != nullptr)
+			TheWritableGlobalData->m_windowed = windowed;
 		return {};
 	}
 
@@ -84,36 +85,23 @@ DisplaySizeChange synchronizeDisplayToWindow(SDL_Window *window)
 		return {};
 	}
 
+	if (TheWritableGlobalData != nullptr)
+		TheWritableGlobalData->m_windowed = windowed;
+
 	return { true, oldWidth, oldHeight, TheDisplay->getWidth(), TheDisplay->getHeight() };
 }
 
-void restoreWindowedChrome(SDL_Window *window)
+DisplaySizeChange toggleFullscreen()
 {
-	if (window == nullptr)
-		return;
-
-	// SDL restores the native window style when leaving fullscreen. Reassert the
-	// normal decorated/resizable state without passing through a borderless style;
-	// that transient style is what causes the compatibility-looking frame flash.
-	SDL_SetWindowBordered(window, true);
-	SDL_SetWindowResizable(window, true);
-	SDL_SyncWindow(window);
-}
-
-DisplaySizeChange toggleFullscreen(SDL_Window *window)
-{
-	if (window == nullptr)
+	SDL_Window *platformWindow = static_cast<SDL_Window *>(SDLPlatformWindow::window());
+	if (platformWindow == nullptr)
 		return {};
 
-	const bool fullscreen = (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) != 0;
-	if (!SDL_SetWindowFullscreen(window, !fullscreen))
+	const bool fullscreen = SDLPlatformWindow::isFullscreen();
+	if (!SDLPlatformWindow::setFullscreen(!fullscreen))
 		return {};
 
-	if (fullscreen)
-		restoreWindowedChrome(window);
-	else
-		SDL_SyncWindow(window);
-	return synchronizeDisplayToWindow(window);
+	return synchronizeDisplayToWindow(platformWindow);
 }
 }
 
@@ -128,6 +116,17 @@ void SDL3GameEngine::serviceSDL3()
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
+		if (event.type == SDLPlatformWindow::fullscreenToggleEventType())
+		{
+			const DisplaySizeChange displayChange = toggleFullscreen();
+			if (displayChange.changed)
+				onDisplaySizeChanged(displayChange.oldWidth, displayChange.oldHeight,
+					displayChange.newWidth, displayChange.newHeight);
+			if (TheKeyboard)
+				TheKeyboard->resetKeys();
+			continue;
+		}
+
 		if (event.type == SDL_EVENT_MOUSE_WHEEL && TheMouse != nullptr)
 		{
 			Real wheelDelta = static_cast<Real>(event.wheel.y);
@@ -140,7 +139,7 @@ void SDL3GameEngine::serviceSDL3()
 			(event.key.scancode == SDL_SCANCODE_RETURN || event.key.scancode == SDL_SCANCODE_KP_ENTER) &&
 			!event.key.repeat && (event.key.mod & SDL_KMOD_ALT) != 0)
 		{
-			const DisplaySizeChange displayChange = toggleFullscreen(windowForEvent(event));
+			const DisplaySizeChange displayChange = toggleFullscreen();
 			if (displayChange.changed)
 				onDisplaySizeChanged(displayChange.oldWidth, displayChange.oldHeight,
 					displayChange.newWidth, displayChange.newHeight);
@@ -157,14 +156,10 @@ void SDL3GameEngine::serviceSDL3()
 			event.type == SDL_EVENT_WINDOW_LEAVE_FULLSCREEN)
 		{
 			SDL_Window *window = windowForEvent(event);
-			if (event.type == SDL_EVENT_WINDOW_LEAVE_FULLSCREEN)
-				restoreWindowedChrome(window);
 			const DisplaySizeChange displayChange = synchronizeDisplayToWindow(window);
 			if (displayChange.changed)
 				onDisplaySizeChanged(displayChange.oldWidth, displayChange.oldHeight,
 					displayChange.newWidth, displayChange.newHeight);
-			if (event.type == SDL_EVENT_WINDOW_LEAVE_FULLSCREEN)
-				restoreWindowedChrome(window);
 			continue;
 		}
 

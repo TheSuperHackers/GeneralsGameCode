@@ -291,3 +291,16 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 	}
 }
 
+
+#ifdef RTS_ZEROHOUR
+Bool IMECandidateMainDrawData(GameWindow* window, WinInstanceData* data, void*)
+{
+    IMECandidateMainDraw(window,data);
+    return TRUE;
+}
+Bool IMECandidateTextAreaDrawData(GameWindow* window, WinInstanceData* data, void*)
+{
+    IMECandidateTextAreaDraw(window,data);
+    return TRUE;
+}
+#endif

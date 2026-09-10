@@ -36,14 +36,14 @@
 
 #include "StdAfx.h"
 #include "SoundEditDialog.h"
-#include "WW3D2/soundrobj.h"
+#include "WW3D2/SoundRObj.h"
 #include "WWAudio/AudibleSound.h"
 #include "Utils.h"
 #include "WWAudio/Sound3D.h"
 #include "PlaySoundDialog.h"
 #include "W3DViewDoc.h"
 #include "DataTreeView.h"
-#include "WW3D2/assetmgr.h"
+#include "WW3D2/AssetMgr.h"
 
 
 #ifdef RTS_DEBUG

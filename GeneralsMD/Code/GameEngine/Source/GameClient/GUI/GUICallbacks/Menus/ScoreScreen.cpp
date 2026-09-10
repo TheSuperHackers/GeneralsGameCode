@@ -61,6 +61,7 @@
 #include "Common/GameState.h"
 #include "Common/GameSpyMiscPreferences.h"
 #include "Common/GlobalData.h"
+#include "Common/FramePacer.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -91,7 +92,6 @@
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/CampaignManager.h"
 #include "GameClient/GameWindowTransitions.h"
-#include "GameClient/VideoPlayer.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -101,6 +101,7 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/ChallengeGenerals.h"
+#include "GameClient/VideoRuntime.h"
 
 
 //-----------------------------------------------------------------------------
@@ -707,37 +708,15 @@ void initSkirmish()
 
 void PlayMovieAndBlock(AsciiString movieTitle)
 {
-	VideoStreamInterface *videoStream = TheVideoPlayer->open( movieTitle );
-	if ( videoStream == nullptr )
-	{
+	TheDisplay->playMovie(movieTitle);
+	if (!TheDisplay->isMoviePlaying())
 		return;
-	}
-
-	// Create the new buffer
-	VideoBuffer *videoBuffer = TheDisplay->createVideoBuffer();
-	if (	videoBuffer == nullptr ||
-				!videoBuffer->allocate(	videoStream->width(),
-													videoStream->height())
-		)
-	{
-		delete videoBuffer;
-		videoBuffer = nullptr;
-
-		if ( videoStream )
-		{
-			videoStream->close();
-			videoStream = nullptr;
-		}
-
-		return;
-	}
 
 	// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
 	// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
 
-	GameWindow *movieWindow = s_blankLayout->getFirstWindow();
 	TheWritableGlobalData->m_loadScreenRender = TRUE;
-	while (videoStream->frameIndex() < videoStream->frameCount() - 1)
+	while (TheDisplay->isMoviePlaying())
 	{
 		// TheSuperHackers @feature User can now skip video by pressing ESC
 		if (TheKeyboard)
@@ -753,34 +732,14 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 
 		TheGameEngine->serviceSDL3();
 
-		if(!videoStream->isFrameReady())
-		{
-			Sleep(1);
-			continue;
-		}
-
-		videoStream->frameDecompress();
-		videoStream->frameRender(videoBuffer);
-		videoStream->frameNext();
-
-		if(videoBuffer)
-			movieWindow->winGetInstanceData()->setVideoBuffer(videoBuffer);
+		Update_Videos(TheFramePacer != nullptr ? TheFramePacer->getUpdateTime() : 1.0 / 60.0);
 
 		//TheWindowManager->update();
 
 		TheDisplay->draw();
 	}
 	TheWritableGlobalData->m_loadScreenRender = FALSE;
-	movieWindow->winGetInstanceData()->setVideoBuffer(nullptr);
-
-	delete videoBuffer;
-	videoBuffer = nullptr;
-
-	if (videoStream)
-	{
-		videoStream->close();
-		videoStream = nullptr;
-	}
+	TheDisplay->stopMovie();
 
 	setFPMode();
 }

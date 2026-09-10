@@ -44,15 +44,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include <stdlib.h>
+#include <cstdint>
+
+import Engine.UI.WND;
+import Assets.Cache;
+import Assets.Runtime;
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
-#include "WW3D2/ww3d.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/render2dsentence.h"
-#include "GameClient/GlobalLanguage.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -62,10 +62,6 @@
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
-// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 // W3DFontLibrary::loadFontData ===============================================
@@ -77,26 +73,36 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	if( font == nullptr )
 		return FALSE;
 
-	const char* name = font->nameString.str();
-	const Int size = font->pointSize;
-	const Bool bold = font->bold;
+	Assets::AssetCache *cache = Assets::Try_Get_Asset_Cache();
+	if (cache == nullptr)
+		return FALSE;
 
-	// get the font data from the asset manager
-	FontCharsClass *fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
-
-	if( fontChar == nullptr )
-	{
-		DEBUG_CRASH(( "Unable to find font '%s' in Asset Manager", name ));
+	// The authored menu face uses Arial with a constrained average character
+	// width, matching the original font request at 96 DPI.
+	const bool condensed = font->nameString == "Generals";
+	const std::uint32_t pixelHeight = static_cast<std::uint32_t>(font->pointSize) * 96u / 72u;
+	const Assets::FontAssetHandle handle = cache->Request_Font(
+		condensed ? "Arial" : font->nameString.str(),
+		static_cast<std::uint32_t>(font->pointSize),
+		font->bold != FALSE,
+		condensed ? pixelHeight * 2u / 5u : 0u);
+	if (!handle.Is_Valid())
+		return FALSE;
+	cache->Wait(handle);
+	const Assets::FontAsset *font_asset = cache->Try_Get_Font(handle);
+	if (font_asset == nullptr) {
+		DEBUG_CRASH(( "Unable to load font asset '%s'", font->nameString.str() ));
 		return FALSE;
 	}
 
-	// assign font data
-	font->fontData = fontChar;
-	font->height = fontChar->Get_Char_Height();
+	Engine::UI::WND::FontFace *font_face = new Engine::UI::WND::FontFace;
+	if (!font_face->Build(*font_asset)) {
+		delete font_face;
+		return FALSE;
+	}
 
-	// load Unicode of same point size
-	name = TheGlobalLanguageData ? TheGlobalLanguageData->m_unicodeFontName.str() : "Arial Unicode MS";
-	fontChar->AlternateUnicodeFont = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
+	font->fontData = font_face;
+	font->height = font_face->Height();
 
 	return TRUE;
 }
@@ -107,14 +113,9 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 void W3DFontLibrary::releaseFontData( GameFont *font )
 {
 
-	// presently we don't need to do anything because fonts are handled in
-	// the W3D asset manager which is all taken for of us
 	if (font && font->fontData)
 	{
-		if(((FontCharsClass *)(font->fontData))->AlternateUnicodeFont)
-			((FontCharsClass *)(font->fontData))->AlternateUnicodeFont->Release_Ref();
-		((FontCharsClass *)(font->fontData))->Release_Ref();
-
+		delete static_cast<Engine::UI::WND::FontFace *>(font->fontData);
 		font->fontData = nullptr;
 	}
 

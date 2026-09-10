@@ -28,6 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Common/GameDateTime.h"
+#include <SDL3/SDL.h>
 
 #define DEFINE_SHADOW_NAMES
 
@@ -63,12 +65,12 @@
 #include "GameClient/GameWindowID.h"
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/InGameUI.h"
-#include "GameClient/VideoPlayer.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/View.h"
 #include "GameClient/TerrainVisual.h"
 #include "GameClient/Display.h"
+#include "GameClient/VideoRuntime.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/LookAtXlat.h"
 #include "GameClient/SelectionXlat.h"
@@ -92,6 +94,8 @@
 #include "GameNetwork/NetworkInterface.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
+
+import Video.Runtime;
 
 
 
@@ -1133,11 +1137,6 @@ InGameUI::InGameUI()
 	m_placeAnchorEnd.x = m_placeAnchorEnd.y = 0;
 	m_placeAnchorInProgress = FALSE;
 
-	m_videoStream = nullptr;
-	m_videoBuffer = nullptr;
-	m_cameoVideoStream = nullptr;
-	m_cameoVideoBuffer = nullptr;
-
 	// message info
 	for( i = 0; i < MAX_UI_MESSAGES; i++ )
 	{
@@ -1845,35 +1844,6 @@ void InGameUI::update()
 {
 	//USE_PERF_TIMER(InGameUI_update)
 	Int i;
-
-	/// @todo make sure this code gets called even when the UI is not being drawn
-	if ( m_videoStream && m_videoBuffer )
-	{
-		if ( m_videoStream->isFrameReady())
-		{
-			m_videoStream->frameDecompress();
-			m_videoStream->frameRender( m_videoBuffer );
-			m_videoStream->frameNext();
-			if ( m_videoStream->frameIndex() == 0 )
-			{
-				stopMovie();
-			}
-		}
-	}
-
-	if ( m_cameoVideoStream && m_cameoVideoBuffer )
-	{
-		if ( m_cameoVideoStream->isFrameReady())
-		{
-			m_cameoVideoStream->frameDecompress();
-			m_cameoVideoStream->frameRender( m_cameoVideoBuffer );
-			m_cameoVideoStream->frameNext();
-//			if ( m_cameoVideoStream->frameIndex() == 0 )
-//			{
-//				stopMovie();
-//			}
-		}
-	}
 
 	//
 	// remove any message strings that have expired, note that the oldest strings are
@@ -4253,52 +4223,21 @@ void InGameUI::playMovie( const AsciiString& movieName )
 		return;
 
 	stopMovie();
-
-	m_videoStream = TheVideoPlayer->open( movieName );
-
-	if ( m_videoStream == nullptr )
-	{
+	if (!Open_Video(Engine::Video::PlaybackSlot::Fullscreen, movieName))
 		return;
-	}
-
 	m_currentlyPlayingMovie = movieName;
-	m_videoBuffer = TheDisplay->createVideoBuffer();
-
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
-	{
-		stopMovie();
-		return;
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void InGameUI::stopMovie()
 {
-	delete m_videoBuffer;
-	m_videoBuffer = nullptr;
-
-	if ( m_videoStream )
-	{
-		m_videoStream->close();
-		m_videoStream = nullptr;
-	}
+	Close_Video(Engine::Video::PlaybackSlot::Fullscreen);
 
 	if (!m_currentlyPlayingMovie.isEmpty()) {
 		//TheScriptEngine->notifyOfCompletedVideo(m_currentlyPlayingMovie); // removing sync error source -MDC
 		m_currentlyPlayingMovie = AsciiString::TheEmptyString;
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-// InGameUI::videoBuffer
-// ------------------------------------------------------------------------------------------------
-VideoBuffer* InGameUI::videoBuffer()
-{
-	return m_videoBuffer;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4310,58 +4249,21 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 		return;
 
 	stopCameoMovie();
-
-	m_cameoVideoStream = TheVideoPlayer->open( movieName );
-
-	if ( m_cameoVideoStream == nullptr )
-	{
-		return;
-	}
-
-	m_cameoVideoBuffer = TheDisplay->createVideoBuffer();
-
-	if (	m_cameoVideoBuffer == nullptr ||
-				!m_cameoVideoBuffer->allocate(	m_cameoVideoStream->width(),
-													m_cameoVideoStream->height())
-		)
-	{
-		stopCameoMovie();
-		return;
-	}
-	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
-	WinInstanceData *winData = window->winGetInstanceData();
-	winData->setVideoBuffer(m_cameoVideoBuffer);
-//	window->winHide(FALSE);
+	Open_Video(Engine::Video::PlaybackSlot::Cameo, movieName);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void InGameUI::stopCameoMovie()
 {
-//RightHUD
-	//GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
-	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
-//	window->winHide(FALSE);
-	WinInstanceData *winData = window->winGetInstanceData();
-	winData->setVideoBuffer(nullptr);
-
-	delete m_cameoVideoBuffer;
-	m_cameoVideoBuffer = nullptr;
-
-	if ( m_cameoVideoStream )
-	{
-		m_cameoVideoStream->close();
-		m_cameoVideoStream = nullptr;
-	}
+	Close_Video(Engine::Video::PlaybackSlot::Cameo);
 
 }
 
-// ------------------------------------------------------------------------------------------------
-// InGameUI::videoBuffer
-// ------------------------------------------------------------------------------------------------
-VideoBuffer* InGameUI::cameoVideoBuffer()
+Bool InGameUI::isCameoMoviePlaying() const
 {
-	return m_cameoVideoBuffer;
+	const Engine::Video::PlaybackState state = Get_Video_State(Engine::Video::PlaybackSlot::Cameo);
+	return state == Engine::Video::PlaybackState::Playing || state == Engine::Video::PlaybackState::Paused;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -6201,7 +6103,7 @@ void InGameUI::drawRenderFps(Int &x, Int &y)
 {
 	if (m_renderFpsRefreshMs > 0u)
 	{
-		const UnsignedInt nowMs = timeGetTime();
+		const UnsignedInt nowMs = static_cast<UnsignedInt>(SDL_GetTicks());
 		const UnsignedInt deltaMs = nowMs - m_lastRenderFpsUpdateMs;
 		if (deltaMs >= m_renderFpsRefreshMs)
 		{
@@ -6251,11 +6153,11 @@ void InGameUI::drawRenderFps(Int &x, Int &y)
 void InGameUI::drawSystemTime(Int &x, Int &y)
 {
 	// current system time
-	SYSTEMTIME systemTime;
-	GetLocalTime( &systemTime );
+	GameDateTime GameDateTime;
+	Get_Local_Game_Date_Time(&GameDateTime);
 
 	UnicodeString TimeString;
-	TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+	TimeString.format(L"%2.2d:%2.2d:%2.2d", GameDateTime.wHour, GameDateTime.wMinute, GameDateTime.wSecond);
 	m_systemTimeString->setText(TimeString);
 
 	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position

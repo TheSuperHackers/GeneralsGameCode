@@ -37,13 +37,14 @@
 
 #include "StdAfx.h"
 #include "ViewerScene.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/ww3d.h"
+#include "WW3D2/Camera.h"
+#include "WW3D2/WW3D.h"
 
-#include "WW3D2/rendobj.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/lightenvironment.h"
+#include "WW3D2/RendObj.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/RInfo.h"
+import Graphics.Scene.Lighting.Local;
+#include "WW3D2/Light.h"
 
 /*
 ** ViewerSceneIterator
@@ -60,14 +61,14 @@ public:
 
 protected:
 
-	ViewerSceneIterator(RefRenderObjListClass * renderlist);
+	ViewerSceneIterator(Graphics::SceneObjectList<RenderObjClass> * renderlist);
 
-	RefRenderObjListIterator	RobjIterator;
+	Graphics::SceneObjectList<RenderObjClass>::Cursor	RobjIterator;
 
 	friend class ViewerSceneClass;
 };
 
-ViewerSceneIterator::ViewerSceneIterator(RefRenderObjListClass *list)
+ViewerSceneIterator::ViewerSceneIterator(Graphics::SceneObjectList<RenderObjClass> *list)
 :	RobjIterator(list)
 {
 }
@@ -112,7 +113,7 @@ RenderObjClass * ViewerSceneIterator::Current_Item()
 void
 ViewerSceneClass::Visibility_Check (CameraClass *camera)
 {
-	RefRenderObjListIterator it(&RenderList);
+	Graphics::SceneObjectList<RenderObjClass>::Cursor it(&RenderList);
 
 	// Loop over all top-level RenderObjects in this scene. If the bounding sphere is not in front
 	// of all the frustum planes, it is invisible.
@@ -336,7 +337,7 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
 
 	// Install the vertex processors.  Derived scenes may want to use some
 	// form of spatial subdivision to only insert the needed vps...
-	RefRenderObjListIterator it(&LightList);
+	Graphics::SceneObjectList<RenderObjClass>::Cursor it(&LightList);
 	for (it.First(); !it.Is_Done(); it.Next()) {
 		it.Peek_Obj()->Vertex_Processor_Push(rinfo);
 	}
@@ -345,15 +346,15 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
 
 	// make a light environmemt class
 
-	LightEnvironmentClass lenv;
+	Graphics::LocalLighting lenv;
 
-	lenv.Reset(Vector3(0,0,0),AmbientLight);
-	RefRenderObjListIterator it(&LightList);
+	lenv.Reset({0,0,0}, {(AmbientLight).X,(AmbientLight).Y,(AmbientLight).Z});
+	Graphics::SceneObjectList<RenderObjClass>::Cursor it(&LightList);
 
 	for (it.First(&LightList); !it.Is_Done(); it.Next()) {
-		lenv.Add_Light(*(LightClass*)it.Peek_Obj());
+		lenv.Add(Describe_Material_Light(*(LightClass*)it.Peek_Obj()));
 	}
-	lenv.Pre_Render_Update(rinfo.Camera.Get_Transform());
+	lenv.Finalize();
 
 	rinfo.light_environment=&lenv;
 

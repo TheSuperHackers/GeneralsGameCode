@@ -38,11 +38,10 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "TextureMgrDialog.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/matinfo.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
 #include "TextureSettingsDialog.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/texture.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/Texture.h"
 
 
 #ifdef RTS_DEBUG
@@ -291,7 +290,7 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 		m_NodeList.Add (pnode);
 
 		// Add all the mesh's textures to this list
-		Add_Textures_To_Node ((MeshClass *)prender_obj, pnode);
+		Add_Textures_To_Node ((W3DMeshRenderObject *)prender_obj, pnode);
 	}
 }
 
@@ -303,16 +302,16 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 void
 TextureMgrDialogClass::Add_Textures_To_Node
 (
-	MeshClass *pmesh,
+	W3DMeshRenderObject *pmesh,
 	TextureListNodeClass *pmesh_node
 )
 {
-	MaterialInfoClass *pmat_info = pmesh->Get_Material_Info ();
+	auto pmat_info = pmesh->Get_Material_Info ();
 	if (pmat_info != nullptr) {
 
 		// Loop through all the textures and add them as subobjs
-		for (int index = 0; index < pmat_info->Texture_Count (); index ++) {
-			TextureClass *ptexture = pmat_info->Get_Texture (index);
+		for (int index = 0; index < static_cast<int>(pmat_info->textures.size()); index ++) {
+			TextureClass *ptexture = RefCountPtr<TextureClass>(pmat_info->textures[index]).Release();
 			if (ptexture != nullptr) {
 
 				// Create a node from this texture and add it to the mesh
@@ -330,7 +329,7 @@ TextureMgrDialogClass::Add_Textures_To_Node
 		}
 
 		// Release our hold on this pointer
-		REF_PTR_RELEASE (pmat_info);
+		pmat_info.reset();
 	}
 }
 
@@ -419,16 +418,16 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 					if (prender_obj != nullptr) {
 
 						// Get the material information for this render object
-						MaterialInfoClass *pmat_info = prender_obj->Get_Material_Info ();
+						auto pmat_info = prender_obj->Get_Material_Info ();
 						if (pmat_info != nullptr) {
 
 							// Attempt to find the original texture
-							poriginal_texture = pmat_info->Get_Texture (pnode->Get_Texture_Index ());
+							poriginal_texture = RefCountPtr<TextureClass>(pmat_info->textures[pnode->Get_Texture_Index ()]).Release();
 							if (poriginal_texture->getClassID () != ID_INDIRECT_TEXTURE_CLASS) {
 								SR_RELEASE (poriginal_texture);
 							}
 
-							REF_PTR_RELEASE (pmat_info);
+							pmat_info.reset();
 						}
 					}
 
@@ -645,10 +644,10 @@ TextureMgrDialogClass::Insert_Texture_Details
 								  0, 0, 0);
 
 		// Insert the texture dimensions in the second column
-		SurfaceClass::SurfaceDescription surface_desc;
+		Assets::ImageDescription surface_desc;
 		ptexture->Get_Level_Description(surface_desc);
 		CString dimension_string;
-		dimension_string.Format ("(%dx%d)", surface_desc.Width, surface_desc.Height);
+		dimension_string.Format ("(%dx%d)", surface_desc.width, surface_desc.height);
 		m_ListCtrl.SetItemText (index, COL_DIMENSIONS, dimension_string);
 
 		// Determine what type the texture is

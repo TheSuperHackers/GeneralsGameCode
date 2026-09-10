@@ -1,3 +1,4 @@
+import Graphics.Frame.Runtime;
 /*
 **	Command & Conquer Renegade(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -33,12 +34,15 @@
 #include "ViewerAssetMgr.h"
 #include "Globals.h"
 #include "AnimatedSoundOptionsDialog.h"
-#include "WW3D2/animatedsoundmgr.h"
+#include "WW3D2/AnimatedSoundMgr.h"
 
 
 #undef STRICT
-#include "WW3D2/ww3d.h"
-#include "WW3D2/assetmgr.h"
+#include "WW3D2/WW3D.h"
+#ifdef RTS_ZEROHOUR
+import Graphics.Frame.ToolFrame;
+#endif
+#include "WW3D2/AssetMgr.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
@@ -391,7 +395,11 @@ CW3DViewApp::ExitInstance()
 		//	Shutdown W3D
 		//
 		WW3DAssetManager::Get_Instance()->Free_Assets ();
-		WW3D::Shutdown ();
+#ifdef RTS_ZEROHOUR
+        Graphics::Shutdown_Tool_Frame();
+#endif
+		WW3D::Shutdown();
+		Graphics::Graphics_Shutdown_Shared_Frame();
 
 		//
 		//	Shutdown the libraries

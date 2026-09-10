@@ -33,11 +33,10 @@
 #pragma once
 
 #include "resource.h"
-#include "WW3D2/rendobj.h"
+#include "WW3D2/RendObj.h"
 #include "WWMath/Vector3i.h"
 
 // Forward declarations
-class VertexMaterialClass;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -94,7 +93,6 @@ class ScreenCursorClass : public RenderObjClass
 		HWND						m_hWnd;
 		Vector2					m_ScreenPos;
 		RefCountPtr<TextureClass>			m_pTexture;
-		RefCountPtr<VertexMaterialClass> m_pVertMaterial;
 
 		Vector3					m_Verticies[4];
 		Vector3					m_Normals[4];

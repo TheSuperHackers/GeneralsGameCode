@@ -1,4 +1,5 @@
 add_executable(z_generals)
+set_property(TARGET z_generals PROPERTY CXX_SCAN_FOR_MODULES ON)
 
 # Use a binary name that doesn't conflict with original game.
 if("${CMAKE_SYSTEM}" MATCHES "Windows")
@@ -9,7 +10,6 @@ endif()
 
 target_link_libraries(z_generals PRIVATE
     comctl32
-    d3d9lib
     imm32
     SDL3::SDL3
     vfw32
@@ -17,7 +17,10 @@ target_link_libraries(z_generals PRIVATE
     z_gameengine
     z_gameenginedevice
     zi_always
+    generals_graphics
 )
+
+get_target_property(GRAPHICS_SHADER_ASSET_DIRECTORY generals_graphics GRAPHICS_SHADER_ASSET_DIRECTORY)
 
 # TODO Originally referred to build host and user, replace with git info perhaps?
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
@@ -58,6 +61,18 @@ add_custom_command(TARGET z_generals POST_BUILD
         "$<TARGET_FILE:SDL3::SDL3>"
         "$<TARGET_FILE_DIR:z_generals>"
 )
+
+if(GRAPHICS_SHADER_ASSET_DIRECTORY)
+    add_custom_command(TARGET z_generals POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:z_generals>/GraphicsShaders"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${GRAPHICS_SHADER_ASSET_DIRECTORY}"
+            "$<TARGET_FILE_DIR:z_generals>/GraphicsShaders"
+        VERBATIM
+    )
+endif()
+
+
 
 target_include_directories(z_generals PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

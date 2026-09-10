@@ -1,463 +1,286 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+** Command & Conquer Generals Zero Hour(tm)
+** Copyright 2025 Electronic Arts Inc.
 **
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+** This program is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#include "Precompiled/PreRTS.h"
 
-// FILE: W3DTextEntry.cpp /////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-//
-//                       Westwood Studios Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2001 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: W3DTextEntry.cpp
-//
-// Created:   Colin Day, June 2001
-//
-// Desc:      W3D implementation for the text entry gadget
-//
-//-----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
+#include <cstdint>
 
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include <stdlib.h>
-
-// USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GameWindowGlobal.h"
+#include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetTextEntry.h"
 #include "GameClient/IMEManager.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
+#include "W3DDevice/GameClient/W3DDisplayString.h"
 
+import Engine.UI.WND;
 
-// DEFINES ////////////////////////////////////////////////////////////////////
-
-// PRIVATE TYPES //////////////////////////////////////////////////////////////
-
-// PRIVATE DATA ///////////////////////////////////////////////////////////////
-
-// PUBLIC DATA ////////////////////////////////////////////////////////////////
-
-// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// drawTextEntryText ==========================================================
-//=============================================================================
-static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
-															 Color textColor, Color textDropColor,
-															 Color compositeColor, Color compositeDropColor,
-															 Int x, Int y, Int width, Int fontHeight )
+namespace
 {
-	static Byte drawCnt = 0;
-	EntryData *e = (EntryData *)window->winGetUserData();
-//	Int charPos = e->charPos;
-	Int cursorPos;
 
-//	WideChar buffer[ ENTRY_TEXT_LEN + 1 ];
-//	WideChar *bufptr = buffer;
-//	Color constructColor = TheWindowManager->winMakeColor( 192, 0, 192, 255 );
-	DisplayString *text = e->text;
-	IRegion2D clipRegion;
-	ICoord2D origin, size;
-	Int compositeCursorPos = 0;
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image) noexcept
+{
+	if (image == nullptr || image->getUV() == nullptr)
+		return {};
+	const Region2D *uv = image->getUV();
+	Engine::UI::WND::ImageRef result =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	result.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return result;
+}
 
-	// Check to see if the IME manager is composing text
-	e->constructText->setText(UnicodeString::TheEmptyString);
-	if ( TheIMEManager && TheIMEManager->isAttachedTo( window) && TheIMEManager->isComposing())
-	{
-		// The user is composing a string.
-		// Show the composition in the text gadget.
+Graphics::Color2D To_WND_Color(Color color) noexcept
+{
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
+}
+
+Engine::UI::WND::FontFace *Get_Font_Face(GameFont *font) noexcept
+{
+	return font != nullptr
+		? static_cast<Engine::UI::WND::FontFace *>(font->fontData)
+		: nullptr;
+}
+
+void Select_Colors(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	Color &text,
+	Color &text_border,
+	Color &composite,
+	Color &composite_border,
+	Color &background,
+	Color &background_border) noexcept
+{
+	if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)) {
+		composite = window->winGetDisabledTextColor();
+		composite_border = window->winGetDisabledTextBorderColor();
+		text = window->winGetDisabledTextColor();
+		text_border = window->winGetDisabledTextBorderColor();
+		background = GadgetTextEntryGetDisabledColor(window);
+		background_border = GadgetTextEntryGetDisabledBorderColor(window);
+	}
+	else if (instance_data != nullptr && BitIsSet(instance_data->getState(), WIN_STATE_HILITED)) {
+		composite = window->winGetIMECompositeTextColor();
+		composite_border = window->winGetIMECompositeBorderColor();
+		text = window->winGetHiliteTextColor();
+		text_border = window->winGetHiliteTextBorderColor();
+		background = GadgetTextEntryGetHiliteColor(window);
+		background_border = GadgetTextEntryGetHiliteBorderColor(window);
+	}
+	else {
+		composite = window->winGetIMECompositeTextColor();
+		composite_border = window->winGetIMECompositeBorderColor();
+		text = window->winGetEnabledTextColor();
+		text_border = window->winGetEnabledTextBorderColor();
+		background = GadgetTextEntryGetEnabledColor(window);
+		background_border = GadgetTextEntryGetEnabledBorderColor(window);
+	}
+}
+
+void Select_Images(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	const Image *&left,
+	const Image *&right,
+	const Image *&center,
+	const Image *&small_center) noexcept
+{
+	if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)) {
+		left = GadgetTextEntryGetDisabledImageLeft(window);
+		right = GadgetTextEntryGetDisabledImageRight(window);
+		center = GadgetTextEntryGetDisabledImageCenter(window);
+		small_center = GadgetTextEntryGetDisabledImageSmallCenter(window);
+	}
+	else if (instance_data != nullptr && BitIsSet(instance_data->getState(), WIN_STATE_HILITED)) {
+		left = GadgetTextEntryGetHiliteImageLeft(window);
+		right = GadgetTextEntryGetHiliteImageRight(window);
+		center = GadgetTextEntryGetHiliteImageCenter(window);
+		small_center = GadgetTextEntryGetHiliteImageSmallCenter(window);
+	}
+	else {
+		left = GadgetTextEntryGetEnabledImageLeft(window);
+		right = GadgetTextEntryGetEnabledImageRight(window);
+		center = GadgetTextEntryGetEnabledImageCenter(window);
+		small_center = GadgetTextEntryGetEnabledImageSmallCenter(window);
+	}
+}
+
+bool Extract_Text_Entry(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	Engine::UI::WND::DrawList &draw_list,
+	Bool use_images) noexcept
+{
+	if (window == nullptr || instance_data == nullptr)
+		return false;
+	EntryData *entry = static_cast<EntryData *>(window->winGetUserData());
+	if (entry == nullptr || entry->text == nullptr || entry->sText == nullptr
+		|| entry->constructText == nullptr)
+		return true;
+
+	entry->receivedUnichar = FALSE;
+	entry->constructText->setText(UnicodeString::TheEmptyString);
+	Int composition_cursor = 0;
+	if (TheIMEManager != nullptr && TheIMEManager->isAttachedTo(window)
+		&& TheIMEManager->isComposing()) {
 		UnicodeString composition;
-
-		TheIMEManager->getCompositionString( composition );
-
-		if ( e->secretText )
-		{
-			e->sText->setText( UnicodeString::TheEmptyString );
-			Int len = composition.getLength() + e->text->getTextLength();
-			for ( int i = 0; i < len; i++ )
-			{
-				e->sText->appendChar( '*' );
-			}
+		TheIMEManager->getCompositionString(composition);
+		if (entry->secretText) {
+			entry->sText->setText(UnicodeString::TheEmptyString);
+			const Int length = composition.getLength() + entry->text->getTextLength();
+			for (Int index = 0; index < length; ++index)
+				entry->sText->appendChar('*');
 		}
-		else
-		{
-			e->constructText->setText( composition );
-			compositeCursorPos = TheIMEManager->getCompositionCursorPosition();
+		else {
+			entry->constructText->setText(composition);
+			composition_cursor = TheIMEManager->getCompositionCursorPosition();
 		}
-
 	}
 
+	Int origin_x = 0;
+	Int origin_y = 0;
+	ICoord2D size;
+	window->winGetScreenPosition(&origin_x, &origin_y);
+	window->winGetSize(&size.x, &size.y);
 
-	// get out of here if no text color to show up
-	if( textColor == WIN_COLOR_UNDEFINED )
-		return;
+	Color text_color = WIN_COLOR_UNDEFINED;
+	Color text_border = WIN_COLOR_UNDEFINED;
+	Color composite_color = WIN_COLOR_UNDEFINED;
+	Color composite_border = WIN_COLOR_UNDEFINED;
+	Color background = WIN_COLOR_UNDEFINED;
+	Color background_border = WIN_COLOR_UNDEFINED;
+	Select_Colors(window, instance_data, text_color, text_border,
+		composite_color, composite_border, background, background_border);
 
-	// if our text is "secret" we will print only '*' characters
-	if( e->secretText )
-		text = e->sText;
-
-	// make sure our font is the same as our parents
-	if( text->getFont() != window->winGetFont() )
-		text->setFont( window->winGetFont() );
-	if( e->constructText->getFont() != window->winGetFont() )
-		e->constructText->setFont( window->winGetFont() );
-
-	// get the size of our text, and construct text
-	Int textWidth = text->getWidth();
-
-	if (!e->drawTextFromStart)
-	{
-		// clip the text to the edit window size
-		window->winGetScreenPosition( &origin.x, &origin.y );
-		window->winGetSize( &size.x, &size.y );
-		clipRegion.lo.x = x;
-		clipRegion.hi.x = x + width ;
-		clipRegion.lo.y = y;
-		clipRegion.hi.y = y + fontHeight;
-		text->setClipRegion( &clipRegion );
-		e->constructText->setClipRegion( &clipRegion );
-
-		// set construct window position if needed
-		//if( e->constructList && e->constructText->getTextLength() )
-		//	e->constructList->winSetPosition( (x + textWidth1), (y + fontHeight) );
-
-		x+= 2;
-		// draw the text
-		if(textWidth < width)
-		{
-			text->draw( x, y, textColor, textDropColor );
-			cursorPos = textWidth + x;
+	Engine::UI::WND::TextEntryVisual background_visual;
+	background_visual.rectangle = {
+		static_cast<float>(origin_x), static_cast<float>(origin_y),
+		static_cast<float>(origin_x + size.x), static_cast<float>(origin_y + size.y)};
+	background_visual.has_fill = background != WIN_COLOR_UNDEFINED;
+	background_visual.fill = To_WND_Color(background);
+	background_visual.has_border = background_border != WIN_COLOR_UNDEFINED;
+	background_visual.border = To_WND_Color(background_border);
+	if (use_images) {
+		const Image *left = nullptr;
+		const Image *right = nullptr;
+		const Image *center = nullptr;
+		const Image *small_center = nullptr;
+		Select_Images(window, instance_data, left, right, center, small_center);
+		if (left != nullptr && right != nullptr && center != nullptr && small_center != nullptr) {
+			background_visual.segmented_image = true;
+			background_visual.left_image = To_WND_Image(left);
+			background_visual.right_image = To_WND_Image(right);
+			background_visual.center_image = To_WND_Image(center);
+			background_visual.small_center_image = To_WND_Image(small_center);
+			background_visual.image_offset_x = static_cast<float>(instance_data->m_imageOffset.x);
+			background_visual.image_offset_y = static_cast<float>(instance_data->m_imageOffset.y);
+			background_visual.left_width = static_cast<float>(left->getImageWidth());
+			background_visual.right_width = static_cast<float>(right->getImageWidth());
+			background_visual.center_width = static_cast<float>(center->getImageWidth());
+			background_visual.small_center_width = static_cast<float>(small_center->getImageWidth());
 		}
-		else
-		{
-			Int div = textWidth / (width / 2) - 1;
-			text->draw(x - (div * (width/2)), y, textColor, textDropColor);
-			cursorPos = textWidth - (div * (width/2)) + x;
-		}
-
-		//cursorPos = x + textWidth;
 	}
-	else
-	{
-		window->winGetScreenPosition( &origin.x, &origin.y );
-		window->winGetSize( &size.x, &size.y );
-		clipRegion.lo.x = origin.x;
-		clipRegion.hi.x = origin.x + size.x;
-		clipRegion.lo.y = origin.y;
-		clipRegion.hi.y = origin.y + size.y;
-		text->setClipRegion( &clipRegion );
-		e->constructText->setClipRegion( &clipRegion );
+	if (!Engine::UI::WND::Add_Text_Entry_Background(draw_list, background_visual))
+		return false;
+	if (text_color == WIN_COLOR_UNDEFINED || sizeof(WideChar) != sizeof(std::uint16_t))
+		return true;
 
-		// set construct window position if needed
-		//if( e->constructList && e->constructText->getTextLength() )
-		//	e->constructList->winSetPosition( (x + textWidth1), (y + fontHeight) );
+	DisplayString *text = entry->secretText ? entry->sText : entry->text;
+	if (text->getFont() != window->winGetFont())
+		text->setFont(window->winGetFont());
+	if (entry->constructText->getFont() != window->winGetFont())
+		entry->constructText->setFont(window->winGetFont());
+	const Int font_height = TheWindowManager->winFontHeight(instance_data->getFont());
+	const Int start_offset = 5;
+	const Int visible_width = size.x - (2 * start_offset);
+	const Int text_x = origin_x + start_offset;
+	const Int text_y = BitIsSet(window->winGetStatus(), WIN_STATUS_ONE_LINE)
+		? size.y / 2 - font_height / 2
+		: origin_y + start_offset;
+	const Int text_width = text->getWidth();
 
-		x+= 5;
-		// draw the text
-		text->draw( x, y, textColor, textDropColor );
-		cursorPos = textWidth + x;
+	Engine::UI::WND::TextEntryTextVisual text_visual;
+	text_visual.font = Get_Font_Face(text->getFont());
+	text_visual.text = reinterpret_cast<const std::uint16_t *>(
+		static_cast<W3DDisplayString *>(text)->getTextData());
+	text_visual.composite_font = Get_Font_Face(entry->constructText->getFont());
+	text_visual.composite_text = reinterpret_cast<const std::uint16_t *>(
+		static_cast<W3DDisplayString *>(entry->constructText)->getTextData());
+	text_visual.text_color = To_WND_Color(text_color);
+	text_visual.text_drop_color = To_WND_Color(text_border);
+	text_visual.composite_color = To_WND_Color(composite_color);
+	text_visual.composite_drop_color = To_WND_Color(composite_border);
+	text_visual.x = static_cast<float>(text_x);
+	text_visual.y = static_cast<float>(text_y);
+	text_visual.visible_width = static_cast<float>(visible_width);
+	text_visual.font_height = static_cast<float>(font_height);
+	text_visual.text_width = text_width;
+	text_visual.draw_from_start = entry->drawTextFromStart != FALSE;
+	text_visual.has_composite = entry->constructText->getTextLength() > 0;
+	text_visual.composite_width = entry->constructText->getWidth();
+	text_visual.composite_cursor_width = entry->constructText->getWidth(composition_cursor);
+	if (!text_visual.draw_from_start) {
+		text_visual.clip_rectangle = {
+			static_cast<float>(text_x), static_cast<float>(text_y),
+			static_cast<float>(text_x + visible_width),
+			static_cast<float>(text_y + font_height)};
+	}
+	else {
+		text_visual.clip_rectangle = {
+			static_cast<float>(origin_x), static_cast<float>(origin_y),
+			static_cast<float>(origin_x + size.x), static_cast<float>(origin_y + size.y)};
 	}
 
-	if (e->constructText->getTextLength() > 0 )
-	{
-		e->constructText->draw( x + textWidth, y, compositeColor, compositeDropColor );
-		cursorPos += e->constructText->getWidth( compositeCursorPos );
+	Int cursor_x = text_x;
+	if (text_visual.draw_from_start) {
+		cursor_x += 5 + text_width;
 	}
+	else if (text_width < visible_width) {
+		cursor_x += 2 + text_width;
+	}
+	else if (visible_width > 1) {
+		const Int half_width = visible_width / 2;
+		const Int divisor = text_width / half_width - 1;
+		cursor_x += 2 + text_width - divisor * half_width;
+	}
+	cursor_x += text_visual.composite_cursor_width;
 
-	// draw blinking cursor
-	GameWindow *parent;
-	parent = window->winGetParent();
-	if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
+	static Byte draw_count = 0;
+	GameWindow *parent = window->winGetParent();
+	if (parent != nullptr && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 		parent = nullptr;
-
-	if( (window == TheWindowManager->winGetFocus() || (parent && parent == TheWindowManager->winGetFocus())) && ((drawCnt++ >> 3) & 0x1) )
-		TheWindowManager->winFillRect( textColor, WIN_DRAW_LINE_WIDTH,
-																	 cursorPos, origin.y + 3,
-																	 cursorPos + 2, origin.y + size.y - 3 );
-	window->winSetCursorPosition( cursorPos + 2 - origin.x, 0 );
-
+	text_visual.show_cursor = (window == TheWindowManager->winGetFocus()
+		|| (parent != nullptr && parent == TheWindowManager->winGetFocus()))
+		&& ((draw_count++ >> 3) & 0x1);
+	text_visual.cursor_rectangle = {
+		static_cast<float>(cursor_x), static_cast<float>(origin_y + 3),
+		static_cast<float>(cursor_x + 2), static_cast<float>(origin_y + size.y - 3)};
+	text_visual.cursor_color = To_WND_Color(text_color);
+	window->winSetCursorPosition(cursor_x + 2 - origin_x, 0);
+	return Engine::UI::WND::Add_Text_Entry_Text(draw_list, text_visual);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+} // namespace
 
-// W3DGadgetTextEntryDraw =====================================================
-/** Draw colored entry field using standard graphics */
-//=============================================================================
-void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DGadgetTextEntryDrawData(GameWindow *window, WinInstanceData *instData, void *drawList)
 {
-	EntryData *e = (EntryData *)window->winGetUserData();
-	ICoord2D origin, size, start, end;
-	Color backBorder, backColor, textColor, textBorder,
-			compositeColor, compositeBorder;
-
-	// cancel unichar flag
-	e->receivedUnichar = FALSE;
-
-	// get size and position of window
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
-
-	// get the right colors
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-
-		compositeColor	= window->winGetDisabledTextColor();
-		compositeBorder	= window->winGetDisabledTextBorderColor();
-		textColor		= window->winGetDisabledTextColor();
-		textBorder	= window->winGetDisabledTextBorderColor();
-		backColor		= GadgetTextEntryGetDisabledColor( window );
-		backBorder	= GadgetTextEntryGetDisabledBorderColor( window );
-
-	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
-
-		compositeColor	= window->winGetIMECompositeTextColor();
-		compositeBorder	= window->winGetIMECompositeBorderColor();
-		textColor		= window->winGetHiliteTextColor();
-		textBorder	= window->winGetHiliteTextBorderColor();
-		backColor		= GadgetTextEntryGetHiliteColor( window );
-		backBorder	= GadgetTextEntryGetHiliteBorderColor( window );
-
-	}
-	else
-	{
-
-		compositeColor	= window->winGetIMECompositeTextColor();
-		compositeBorder	= window->winGetIMECompositeBorderColor();
-		textColor		= window->winGetEnabledTextColor();
-		textBorder	= window->winGetEnabledTextBorderColor();
-		backColor		= GadgetTextEntryGetEnabledColor( window );
-		backBorder	= GadgetTextEntryGetEnabledBorderColor( window );
-
-	}
-
-	// draw the back border
-	if( backBorder != WIN_COLOR_UNDEFINED )
-	{
-
-		start.x = origin.x;
-		start.y = origin.y;
-		end.x = start.x + size.x;
-		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-
-	}
-
-	// draw the filled back
-	if( backColor != WIN_COLOR_UNDEFINED )
-	{
-
-		start.x = origin.x + 1;
-		start.y = origin.y + 1;
-		end.x = start.x + size.x - 2;
-		end.y = start.y + size.y - 2;
-		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-
-	}
-
-	// draw the text
-	Int fontHeight = TheWindowManager->winFontHeight( instData->getFont() );
-	Int startOffset = 5;
-	Int width;
-
-	width = size.x - (2 * startOffset);
-	start.x = origin.x + startOffset;  // offset a little bit into the entry
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
-		start.y = size.y / 2 - fontHeight / 2;
-	else
-		start.y = origin.y + startOffset;  // offset a little bit into the entry
-
-	// draw the edit text
-	drawTextEntryText( window, instData, textColor, textBorder, compositeColor, compositeBorder,
-										 start.x, start.y, width, fontHeight );
-
-
-
+	return Extract_Text_Entry(
+		window, instData, *static_cast<Engine::UI::WND::DrawList *>(drawList), FALSE) ? TRUE : FALSE;
 }
 
-// W3DGadgetTextEntryImageDraw ================================================
-/** Draw horizontal slider with user supplied images */
-//=============================================================================
-void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DGadgetTextEntryImageDrawData(GameWindow *window, WinInstanceData *instData, void *drawList)
 {
-	EntryData *e = (EntryData *)window->winGetUserData();
-	ICoord2D origin, size, start, end;
-	Color textColor, textBorder;
-	Color compositeColor, compositeBorder;
-	const Image *leftImage, *rightImage, *centerImage, *smallCenterImage;
-	Int xOffset, yOffset;
-	Int i;
-
-	// cancel unichar flag
-	e->receivedUnichar = FALSE;
-
-	// get size and position of window
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
-
-	// get image offset
-	xOffset = instData->m_imageOffset.x;
-	yOffset = instData->m_imageOffset.y;
-
-	// get the right colors
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-
-		textColor					= window->winGetDisabledTextColor();
-		textBorder				= window->winGetDisabledTextBorderColor();
-		compositeColor		= window->winGetDisabledTextColor();
-		compositeBorder		= window->winGetDisabledTextBorderColor();
-		leftImage					= GadgetTextEntryGetDisabledImageLeft( window );
-		rightImage				= GadgetTextEntryGetDisabledImageRight( window );
-		centerImage				= GadgetTextEntryGetDisabledImageCenter( window );
-		smallCenterImage	= GadgetTextEntryGetDisabledImageSmallCenter( window );
-
-	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
-
-		textColor					= window->winGetHiliteTextColor();
-		textBorder				= window->winGetHiliteTextBorderColor();
-		compositeColor		= window->winGetIMECompositeTextColor();
-		compositeBorder		= window->winGetIMECompositeBorderColor();
-		leftImage					= GadgetTextEntryGetHiliteImageLeft( window );
-		rightImage				= GadgetTextEntryGetHiliteImageRight( window );
-		centerImage				= GadgetTextEntryGetHiliteImageCenter( window );
-		smallCenterImage	= GadgetTextEntryGetHiliteImageSmallCenter( window );
-
-	}
-	else
-	{
-
-		textColor					= window->winGetEnabledTextColor();
-		textBorder				= window->winGetEnabledTextBorderColor();
-		compositeColor		= window->winGetIMECompositeTextColor();
-		compositeBorder		= window->winGetIMECompositeBorderColor();
-		leftImage					= GadgetTextEntryGetEnabledImageLeft( window );
-		rightImage				= GadgetTextEntryGetEnabledImageRight( window );
-		centerImage				= GadgetTextEntryGetEnabledImageCenter( window );
-		smallCenterImage	= GadgetTextEntryGetEnabledImageSmallCenter( window );
-
-	}
-
-	// get image sizes for the ends
-	ICoord2D leftSize, rightSize;
-	leftSize.x = leftImage->getImageWidth();
-	leftSize.y = leftImage->getImageHeight();
-	rightSize.x = rightImage->getImageWidth();
-	rightSize.y = rightImage->getImageHeight();
-
-	// get two key points used in the end drawing
-	ICoord2D leftEnd, rightStart;
-	leftEnd.x = origin.x + leftSize.x + xOffset;
-	leftEnd.y = origin.y + size.y + yOffset;
-	rightStart.x = origin.x + size.x - rightSize.x + xOffset;
-	rightStart.y = origin.y + yOffset;
-
-	// draw the center repeating bar
-	Int centerWidth, pieces;
-
-	// get width we have to draw our repeating center in
-	centerWidth = rightStart.x - leftEnd.x;
-
-	// how many whole repeating pieces will fit in that width
-	pieces = centerWidth / centerImage->getImageWidth();
-
-	// draw the pieces
-	start.x = leftEnd.x;
-	start.y = origin.y + yOffset;
-	end.y = start.y + size.y;
-	for( i = 0; i < pieces; i++ )
-	{
-
-		end.x = start.x + centerImage->getImageWidth();
-		TheWindowManager->winDrawImage( centerImage,
-																		start.x, start.y,
-																		end.x, end.y );
-		start.x += centerImage->getImageWidth();
-
-	}
-
-	//
-	// how many small repeating pieces will fit in the gap from where the
-	// center repeating bar stopped and the right image, draw them
-	// and overlapping underneath where the right end will go
-	//
-	centerWidth = rightStart.x - start.x;
-	pieces = centerWidth / smallCenterImage->getImageWidth() + 1;
-	end.y = start.y + size.y;
-	for( i = 0; i < pieces; i++ )
-	{
-
-		end.x = start.x + smallCenterImage->getImageWidth();
-		TheWindowManager->winDrawImage( smallCenterImage,
-																		start.x, start.y,
-																		end.x, end.y );
-		start.x += smallCenterImage->getImageWidth();
-
-	}
-
-	// draw left end
-	start.x = origin.x + xOffset;
-	start.y = origin.y + yOffset;
-	end = leftEnd;
-	TheWindowManager->winDrawImage(leftImage, start.x, start.y, end.x, end.y);
-
-	// draw right end
-	start = rightStart;
-	end.x = start.x + rightSize.x;
-	end.y = start.y + size.y;
-	TheWindowManager->winDrawImage(rightImage, start.x, start.y, end.x, end.y);
-
-	// draw the text
-	Int fontHeight = TheWindowManager->winFontHeight( instData->getFont() );
-	Int startOffset = 5;
-	Int width;
-
-	width = size.x - (2 * startOffset);
-	start.x = origin.x + startOffset;  // offset a little bit into the entry
-		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
-		start.y = size.y / 2 - fontHeight / 2;
-	else
-		start.y = origin.y + startOffset;  // offset a little bit into the entry
-
-	// draw the edit text
-	drawTextEntryText( window, instData, textColor, textBorder, compositeColor, compositeBorder,
-										 start.x, start.y, width, fontHeight );
-
-
-
+	return Extract_Text_Entry(
+		window, instData, *static_cast<Engine::UI::WND::DrawList *>(drawList), TRUE) ? TRUE : FALSE;
 }
+

@@ -50,7 +50,7 @@ class Object;
 struct FieldParse;
 class INI;
 class DebugWindowDialog;		// really ParticleEditorDialog
-class RenderInfoClass;			// ick
+class W3DRenderContext;			// ick
 
 enum ParticleSystemID CPP_11(: Int)
 {
@@ -810,7 +810,7 @@ public:
 	// @todo const this jkmcd
 	ParticleSystemList &getAllParticleSystems() { return m_allParticleSystemList; }
 
-	virtual void doParticles(RenderInfoClass &rinfo) = 0;
+	virtual void doParticles(W3DRenderContext &rinfo) = 0;
 	virtual void queueParticleRender() = 0;
 
 	virtual void preloadAssets( TimeOfDay timeOfDay );
@@ -870,7 +870,7 @@ public:
 	virtual Bool isXferEnabled() const override { return FALSE; }
 
 	virtual Int getOnScreenParticleCount() override { return 0; }
-	virtual void doParticles(RenderInfoClass &rinfo) override {}
+	virtual void doParticles(W3DRenderContext &rinfo) override {}
 	virtual void queueParticleRender() override {}
 
 protected:

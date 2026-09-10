@@ -47,11 +47,16 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <cstdint>
+
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/Image.h"
 #include "GameClient/Display.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GameFont.h"
+
+import Engine.UI.WND;
+import Graphics.Renderer2D;
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -65,6 +70,31 @@
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 
+namespace
+{
+
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image) noexcept
+{
+	if (image == nullptr)
+		return {};
+	const Region2D *uv = image->getUV();
+	Engine::UI::WND::ImageRef reference =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	reference.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return reference;
+}
+
+Graphics::Color2D To_UI_Color(Color color) noexcept
+{
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
+}
+
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,10 +104,16 @@
 	* that box specified */
 //=============================================================================
 void GameWindowManager::winDrawImage( const Image *image, Int startX, Int startY,
-																			Int endX, Int endY, Color color )
+																																					Int endX, Int endY, Color color )
 {
-
-	TheDisplay->drawImage( image, startX, startY, endX, endY, color );
+	if (image == nullptr)
+		return;
+	Engine::UI::WND::Draw_Image(
+		Graphics::Get_Renderer2D(),
+		To_WND_Image(image),
+		{static_cast<float>(startX), static_cast<float>(startY),
+		 static_cast<float>(endX), static_cast<float>(endY)},
+		To_UI_Color(color));
 
 }
 
@@ -88,10 +124,10 @@ void GameWindowManager::winFillRect( Color color, Real width,
 																		 Int startX, Int startY,
 																		 Int endX, Int endY )
 {
-
-	TheDisplay->drawFillRect( startX, startY,
-														endX - startX, endY - startY,
-														color );
+	Graphics::Get_Renderer2D().Add_Rect(
+		{static_cast<float>(startX), static_cast<float>(startY),
+		 static_cast<float>(endX), static_cast<float>(endY)},
+		To_UI_Color(color));
 
 }
 
@@ -102,10 +138,11 @@ void GameWindowManager::winOpenRect( Color color, Real width,
 																		 Int startX, Int startY,
 																		 Int endX, Int endY )
 {
-
-	TheDisplay->drawOpenRect( startX, startY,
-														endX - startX, endY - startY,
-														width, color );
+	Graphics::Get_Renderer2D().Add_Outline(
+		{static_cast<float>(startX), static_cast<float>(startY),
+		 static_cast<float>(endX), static_cast<float>(endY)},
+		width,
+		To_UI_Color(color));
 
 }
 
@@ -116,8 +153,11 @@ void GameWindowManager::winDrawLine( Color color, Real width,
 																		 Int startX, Int startY,
 																		 Int endX, Int endY )
 {
-
-	TheDisplay->drawLine( startX, startY, endX, endY, width, color );
+	Graphics::Get_Renderer2D().Add_Line(
+		{static_cast<float>(startX), static_cast<float>(startY)},
+		{static_cast<float>(endX), static_cast<float>(endY)},
+		width,
+		To_UI_Color(color));
 
 }
 
@@ -158,7 +198,25 @@ void GameWindowManager::winFormatText( GameFont *font, UnicodeString text, Color
 																			 Int x, Int y, Int width, Int height )
 {
 
-	/// @todo make all display string rendering go through here!
+	if (font == nullptr || font->fontData == nullptr || sizeof(WideChar) != sizeof(std::uint16_t))
+		return;
+	const Engine::UI::WND::FontFace *font_face =
+		static_cast<const Engine::UI::WND::FontFace *>(font->fontData);
+	Engine::UI::WND::TextStyle style;
+	style.color = To_UI_Color(color);
+	style.drop_color = {};
+	style.hotkey_color = style.color;
+	style.x_drop = 0;
+	style.y_drop = 0;
+	Engine::UI::WND::Get_Text_Renderer().Draw(
+		Graphics::Get_Renderer2D(),
+		*font_face,
+		nullptr,
+		reinterpret_cast<const std::uint16_t *>(text.str()),
+		static_cast<float>(x),
+		static_cast<float>(y),
+		{width, false, false, 0, false},
+		style);
 
 }
 
@@ -169,13 +227,29 @@ void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
 																				Int *width, Int *height, Int maxWidth )
 {
 
-	/// @todo make display string size stuff go through here
-
 	if( width )
 		*width = 0;
 
 	if( height )
 		*height = 0;
+
+	if (font == nullptr || font->fontData == nullptr || sizeof(WideChar) != sizeof(std::uint16_t))
+		return;
+	const Engine::UI::WND::FontFace *font_face =
+		static_cast<const Engine::UI::WND::FontFace *>(font->fontData);
+	std::uint32_t measured_width = 0;
+	std::uint32_t measured_height = 0;
+	if (!Engine::UI::WND::Get_Text_Renderer().Measure(
+			*font_face,
+			reinterpret_cast<const std::uint16_t *>(text.str()),
+			{maxWidth, false, false, 0, false},
+			measured_width,
+			measured_height))
+		return;
+	if (width)
+		*width = static_cast<Int>(measured_width);
+	if (height)
+		*height = static_cast<Int>(measured_height);
 
 }
 

@@ -28,7 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
-#include <windows.h>
 
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -46,24 +45,24 @@
 
 #include "GameLogic/Object.h"
 #include "GameLogic/GameLogic.h"
+#include "GameLogic/PolygonTrigger.h"
 
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DTerrainVisual.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
+#include "W3DDevice/GameClient/W3DLight.h"
 #include "W3DDevice/GameClient/W3DDebugIcons.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/HeightMap.h"
-#include "W3DDevice/GameClient/FlatHeightMap.h"
+#include "W3DDevice/GameClient/W3DTerrainGraphics.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
-#include "WW3D2/light.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/coltype.h"
-#include "WW3D2/coltest.h"
-#include "WW3D2/assetmgr.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DSceneQueryMask.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
 
 
 
@@ -161,8 +160,8 @@ W3DTerrainVisual::W3DTerrainVisual()
 {
 
 	m_terrainRenderObject = nullptr;
-	m_waterRenderObject = nullptr;
-	TheWaterRenderObj = nullptr;
+	m_waterRenderSystem = nullptr;
+	TheWaterRenderSystem = nullptr;
 
   m_logicHeightMap   = nullptr;
 
@@ -190,8 +189,9 @@ W3DTerrainVisual::~W3DTerrainVisual()
 	delete TheSmudgeManager;
 	TheSmudgeManager=nullptr;
 
-	REF_PTR_RELEASE( m_waterRenderObject );
-	TheWaterRenderObj=nullptr;
+	delete m_waterRenderSystem;
+	m_waterRenderSystem = nullptr;
+	TheWaterRenderSystem=nullptr;
 	REF_PTR_RELEASE( m_terrainRenderObject );
 	REF_PTR_RELEASE( m_logicHeightMap );
 
@@ -209,7 +209,7 @@ void W3DTerrainVisual::init()
 	// extend
 	TerrainVisual::init();
 	// create a new render object for W3D
-	m_terrainRenderObject = NEW_REF( HeightMapRenderObjClass, () );
+	m_terrainRenderObject = NEW_REF(W3DTerrainGraphics, ());
 	m_terrainRenderObject->Set_Collision_Type( PICK_TYPE_TERRAIN );
 	TheTerrainRenderObject = m_terrainRenderObject;
 
@@ -224,9 +224,10 @@ void W3DTerrainVisual::init()
  		TheW3DShadowManager->init();
 
 		// create a water plane render object
-		TheWaterRenderObj=m_waterRenderObject = NEW_REF( WaterRenderObjClass, () );
-		m_waterRenderObject->init(TheGlobalData->m_waterPositionZ, TheGlobalData->m_waterExtentX, TheGlobalData->m_waterExtentY, W3DDisplay::m_3DScene, (WaterRenderObjClass::WaterType)TheGlobalData->m_waterType);	//create a water plane that's 128x128 units
-		m_waterRenderObject->Set_Position(Vector3(TheGlobalData->m_waterPositionX,TheGlobalData->m_waterPositionY,TheGlobalData->m_waterPositionZ));	//place water in world
+		TheWaterRenderSystem=m_waterRenderSystem = NEW WaterRenderSystem;
+		m_waterRenderSystem->init(TheGlobalData->m_waterPositionZ, TheGlobalData->m_waterExtentX, TheGlobalData->m_waterExtentY, W3DDisplay::m_3DScene, (WaterRenderSystem::WaterType)TheGlobalData->m_waterType);	//create the modern water render system
+		m_waterRenderSystem->Set_World_Position(TheGlobalData->m_waterPositionX,
+			TheGlobalData->m_waterPositionY, TheGlobalData->m_waterPositionZ);
 
 		// create smudge rendering system.
 		TheSmudgeManager = NEW(W3DSmudgeManager);
@@ -235,19 +236,14 @@ void W3DTerrainVisual::init()
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
 #else
-		if (TheGlobalData->m_waterType == WaterRenderObjClass::WATER_TYPE_1_FB_REFLECTION)
-		{	// add water render object to the pre-pass scene (to be rendered before main scene)
- 			//W3DDisplay::m_prePass3DScene->Add_Render_Object( m_waterRenderObject);
-		}
-		else
-		{	// add water render object to the post-pass scene (to be rendered after main scene)
-			W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
-		}
+		// All water modes are post-scene modern shader passes. Reflection is
+		// rendered before the main pass, then this material consumes it here.
+		// Water is submitted explicitly by RTS3DScene after opaque scene draws.
 #endif
 		if (TheGlobalData->m_useCloudPlane)
-			m_waterRenderObject->toggleCloudLayer(true);
+			m_waterRenderSystem->toggleCloudLayer(true);
 		else
-			m_waterRenderObject->toggleCloudLayer(false);
+			m_waterRenderSystem->toggleCloudLayer(false);
 	}
 
 	// set the vertex animated water properties
@@ -297,20 +293,23 @@ void W3DTerrainVisual::reset()
 	if (TheTerrainTracksRenderObjClassSystem)
 		TheTerrainTracksRenderObjClassSystem->Reset();
 
+	m_waterGridSimulation.Reset();
+	syncWaterGridRenderData();
+
 	// reset water render object if present
-	if( m_waterRenderObject )
+	if( m_waterRenderSystem )
 	{
 		for (Int i=0; i<5; i++)
 		{
 			//check if this texture was ever changed from default
 			if (m_currentSkyboxTexNames[i] != m_initialSkyboxTexNames[i])
 			{
-				m_waterRenderObject->replaceSkyboxTexture(m_currentSkyboxTexNames[i], m_initialSkyboxTexNames[i]);
+				m_waterRenderSystem->replaceSkyboxTexture(m_currentSkyboxTexNames[i], m_initialSkyboxTexNames[i]);
 				m_currentSkyboxTexNames[i]=m_initialSkyboxTexNames[i];	//update current state to new texture
 			}
 		}
 
-		m_waterRenderObject->reset();
+		m_waterRenderSystem->reset();
 	}
 
 #ifdef DO_SEISMIC_SIMULATIONS
@@ -331,9 +330,12 @@ void W3DTerrainVisual::update()
 #ifdef DO_SEISMIC_SIMULATIONS
   handleSeismicSimulations();
 #endif
-	// if we have a water render object, it has an update method
-	if( m_waterRenderObject )
-		m_waterRenderObject->update();
+	// Gameplay owns the simulation.  Publish only its neutral render snapshot.
+	m_waterGridSimulation.Update();
+	syncWaterGridRenderData();
+
+	if( m_waterRenderSystem )
+		m_waterRenderSystem->update();
 
 }
 
@@ -513,31 +515,56 @@ void W3DTerrainVisual::updateSeismicSimulations()
 
 
 
+void W3DTerrainVisual::refreshWaterSurfaceGeometry()
+{
+	if (m_waterRenderSystem == nullptr)
+		return;
+
+	WaterGeometry geometry;
+	for (PolygonTrigger *trigger = PolygonTrigger::getFirstPolygonTrigger();
+		trigger != nullptr; trigger = trigger->getNext())
+	{
+		if (!trigger->isWaterArea() || trigger->getNumPoints() <= 2)
+			continue;
+
+		WaterSurfacePolygon polygon;
+		polygon.river = trigger->isRiver();
+		polygon.river_start = trigger->getRiverStart();
+		polygon.points.reserve(static_cast<std::size_t>(trigger->getNumPoints()));
+		for (Int i = 0; i < trigger->getNumPoints(); ++i)
+		{
+			const ICoord3D *point = trigger->getPoint(i);
+			if (point != nullptr)
+			{
+				polygon.points.push_back({
+					static_cast<float>(point->x),
+					static_cast<float>(point->y),
+					static_cast<float>(point->z)});
+			}
+		}
+
+		if (polygon.points.size() > 2)
+			geometry.polygons.push_back(std::move(polygon));
+	}
+
+	m_waterRenderSystem->Set_Surface_Geometry(geometry);
+}
+
+void W3DTerrainVisual::syncWaterGridRenderData()
+{
+	if (m_waterRenderSystem == nullptr)
+		return;
+
+	WaterGridRenderData data;
+	m_waterGridSimulation.Build_Render_Data(&data);
+	m_waterRenderSystem->Set_Grid_Render_Data(data);
+}
+
 //-------------------------------------------------------------------------------------------------
 /** load method for W3D visual terrain */
 //-------------------------------------------------------------------------------------------------
 Bool W3DTerrainVisual::load( AsciiString filename )
 {
-
-#if 0
-	// (gth) Testing exclusion list asset releasing
-	DynamicVectorClass<StringClass> exclusion_list(8000);
-
-	WW3DAssetManager::Get_Instance()->Create_Asset_List(exclusion_list);
-
-	exclusion_list.Add(StringClass("avcomanche"));
-	exclusion_list.Add(StringClass("avcomanche_d"));
-	exclusion_list.Add(StringClass("ptdogwood08"));
-	exclusion_list.Add(StringClass("ptdogwood01_b"));
-	exclusion_list.Add(StringClass("ptpalm01"));
-	exclusion_list.Add(StringClass("ptpalm01_b"));
-	exclusion_list.Add(StringClass("avhummer"));
-	exclusion_list.Add(StringClass("avhummer_d"));
-	exclusion_list.Add(StringClass("avleopard"));
-	exclusion_list.Add(StringClass("avleopard_d"));
-
-	WW3DAssetManager::Get_Instance()->Free_Assets_With_Exclusion_List(exclusion_list);
-#endif
 
 	// enhancing functionality specific for W3D terrain
 	if( TerrainVisual::load( filename ) == FALSE )
@@ -588,7 +615,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 				loc.z += d->getReal(TheKey_lightHeightAboveTerrain);
 			}
 			// It is a light, and handled at the device level.  jba.
-			LightClass* lightP = NEW_REF(LightClass, (LightClass::POINT));
+			W3DLight* lightP = NEW_REF(W3DLight, (W3DLight::POINT));
 
 			RGBColor c;
 			c.setFromInt(d->getInt(TheKey_lightAmbientColor));
@@ -607,16 +634,20 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	}
 
 
-	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : nullptr;
+	Graphics::SceneObjectList<W3DRenderObject>::Cursor *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : nullptr;
+	// Preparation evaluates the map's static lights through the owning scene.
+	if (W3DDisplay::m_3DScene != nullptr)
+		W3DDisplay::m_3DScene->Add_Render_Object(m_terrainRenderObject);
 	// apply the heightmap to the terrain render object
+	Int terrainResult;
 
 #ifdef DO_SEISMIC_SIMULATIONS
-	m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(),
+	terrainResult = m_terrainRenderObject->initHeightData( m_clientHeightMap->getDrawWidth(),
 																				 m_clientHeightMap->getDrawHeight(),
 																				 m_clientHeightMap,
 																				 it);
 #else
-	m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(),
+	terrainResult = m_terrainRenderObject->initHeightData( m_logicHeightMap->getDrawWidth(),
 																				 m_logicHeightMap->getDrawHeight(),
 																				 m_logicHeightMap,
 																				 it);
@@ -627,9 +658,11 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	 W3DDisplay::m_3DScene->destroyLightsIterator(it);
 	 it = nullptr;
 	}
-	// add our terrain render object to the scene
-	if (W3DDisplay::m_3DScene != nullptr)
-		W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
+	if (terrainResult != 0) {
+		if (W3DDisplay::m_3DScene != nullptr)
+			W3DDisplay::m_3DScene->Remove_Render_Object(m_terrainRenderObject);
+		return FALSE;
+	}
 
 #if defined(RTS_DEBUG)
 	// Icon drawing utility object for pathfinding.
@@ -644,11 +677,11 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
 #else
-	if (m_waterRenderObject)
+	if (m_waterRenderSystem)
 	{
-		W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
-		m_waterRenderObject->enableWaterGrid(false);
-		m_waterRenderObject->updateMapOverrides();
+		refreshWaterSurfaceGeometry();
+		enableWaterGrid(false);
+		m_waterRenderSystem->updateMapOverrides();
 	}
 #endif
 
@@ -667,9 +700,9 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	}
 
 	// reset water render object if present
-	if( m_waterRenderObject )
+	if( m_waterRenderSystem )
 	{
-		m_waterRenderObject->load();
+		m_waterRenderSystem->load();
 	}
 
 	return TRUE;  // success
@@ -685,8 +718,8 @@ void W3DTerrainVisual::enableWaterGrid( Bool enable )
 	m_isWaterGridRenderingEnabled = enable;
 
 	// make the changes in the water render object
-	if( m_waterRenderObject )
-		m_waterRenderObject->enableWaterGrid( enable );
+	m_waterGridSimulation.Set_Enabled(enable);
+	syncWaterGridRenderData();
 
 }
 
@@ -709,7 +742,7 @@ Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart,
 		CastResultStruct res;
 		LineSegClass lineSeg( Vector3( rayStart->x, rayStart->y, rayStart->z ),
 													Vector3( rayEnd->x, rayEnd->y, rayEnd->z ) );
-		RayCollisionTestClass rayTest( lineSeg, &res );
+		W3DRayCastQuery rayTest( lineSeg, &res );
 
 		hit = m_terrainRenderObject->Cast_Ray( rayTest );
 		if( hit && result )
@@ -774,8 +807,8 @@ void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable,
 																								 Real minZ, Real maxZ )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->setGridHeightClamps( minZ, maxZ );
+	m_waterGridSimulation.Set_Height_Clamps(minZ, maxZ);
+	syncWaterGridRenderData();
 
 }
 
@@ -786,8 +819,8 @@ void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable
 																									 Real a, Real b, Real c, Real range )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->setGridChangeAttenuationFactors( a, b, c, range );
+	m_waterGridSimulation.Set_Change_Attenuation(a, b, c, range);
+	syncWaterGridRenderData();
 
 }
 
@@ -798,8 +831,8 @@ void W3DTerrainVisual::setWaterTransform( const WaterHandle *waterTable,
 																					Real angle, Real x, Real y, Real z )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->setGridTransform( angle, x, y, z );
+	m_waterGridSimulation.Set_Transform(angle, x, y, z);
+	syncWaterGridRenderData();
 
 }
 
@@ -809,8 +842,11 @@ void W3DTerrainVisual::setWaterTransform( const WaterHandle *waterTable,
 void W3DTerrainVisual::setWaterTransform( const Matrix3D *transform )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->setGridTransform( transform );
+	if (transform)
+	{
+		m_waterGridSimulation.Set_Transform(*transform);
+		syncWaterGridRenderData();
+	}
 
 }
 
@@ -820,8 +856,8 @@ void W3DTerrainVisual::setWaterTransform( const Matrix3D *transform )
 void W3DTerrainVisual::getWaterTransform( const WaterHandle *waterTable, Matrix3D *transform )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->getGridTransform( transform );
+	if (transform)
+		*transform = m_waterGridSimulation.Get_Transform();
 
 }
 
@@ -832,8 +868,8 @@ void W3DTerrainVisual::setWaterGridResolution( const WaterHandle *waterTable,
 																							 Real gridCellsX, Real gridCellsY, Real cellSize )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->setGridResolution( gridCellsX, gridCellsY, cellSize );
+	m_waterGridSimulation.Set_Resolution(gridCellsX, gridCellsY, cellSize);
+	syncWaterGridRenderData();
 
 }
 
@@ -844,8 +880,7 @@ void W3DTerrainVisual::getWaterGridResolution( const WaterHandle *waterTable,
 																							 Real *gridCellsX, Real *gridCellsY, Real *cellSize )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->getGridResolution( gridCellsX, gridCellsY, cellSize );
+	m_waterGridSimulation.Get_Resolution(gridCellsX, gridCellsY, cellSize);
 
 }
 
@@ -855,8 +890,8 @@ void W3DTerrainVisual::getWaterGridResolution( const WaterHandle *waterTable,
 void W3DTerrainVisual::changeWaterHeight( Real x, Real y, Real delta )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->changeGridHeight( x, y, delta );
+	m_waterGridSimulation.Change_Height(x, y, delta);
+	syncWaterGridRenderData();
 
 }
 
@@ -866,8 +901,8 @@ void W3DTerrainVisual::addWaterVelocity( Real worldX, Real worldY,
 																				 Real velocity, Real preferredHeight )
 {
 
-	if( m_waterRenderObject )
-		m_waterRenderObject->addVelocity( worldX, worldY, velocity, preferredHeight );
+	m_waterGridSimulation.Add_Velocity(worldX, worldY, velocity, preferredHeight);
+	syncWaterGridRenderData();
 
 }
 
@@ -877,10 +912,12 @@ Bool W3DTerrainVisual::getWaterGridHeight( Real worldX, Real worldY, Real *heigh
 {
 	Real gridX, gridY;
 
-	if (m_isWaterGridRenderingEnabled && m_waterRenderObject &&
-		m_waterRenderObject->worldToGridSpace(worldX, worldY, gridX, gridY))
+	if (m_isWaterGridRenderingEnabled &&
+		m_waterGridSimulation.World_To_Grid(worldX, worldY, gridX, gridY))
 	{	//point falls within grid, return correct height
-		m_waterRenderObject->getGridVertexHeight(REAL_TO_INT(gridX),REAL_TO_INT(gridY),height);
+		if (height)
+			*height = m_waterGridSimulation.Get_Vertex_Height(
+				REAL_TO_INT(gridX), REAL_TO_INT(gridY));
 		return TRUE;
 	}
 	return FALSE;
@@ -1116,7 +1153,7 @@ void W3DTerrainVisual::setShoreLineDetail()
 /// Replace the skybox texture
 void W3DTerrainVisual::replaceSkyboxTextures(const AsciiString *oldTexName[5], const AsciiString *newTexName[5])
 {
-	if (m_waterRenderObject)
+	if (m_waterRenderSystem)
 	{
 		for (Int i=0; i<5; i++)
 		{
@@ -1127,7 +1164,8 @@ void W3DTerrainVisual::replaceSkyboxTextures(const AsciiString *oldTexName[5], c
 			}
 
 			if (m_currentSkyboxTexNames[i] != *newTexName[i])
-			{	m_waterRenderObject->replaceSkyboxTexture(m_currentSkyboxTexNames[i], *newTexName[i]);
+			{
+				m_waterRenderSystem->replaceSkyboxTexture(m_currentSkyboxTexNames[i], *newTexName[i]);
 				m_currentSkyboxTexNames[i]=*newTexName[i];	//update current state to new texture
 			}
 		}
@@ -1189,7 +1227,8 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 
 	// xfer grid data if enabled
 	if( gridEnabled )
-		xfer->xferSnapshot( m_waterRenderObject );
+		xfer->xferSnapshot( &m_waterGridSimulation );
+	syncWaterGridRenderData();
 
 /*
 	{

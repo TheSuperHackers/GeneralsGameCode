@@ -195,9 +195,9 @@ void W3DDisplayStringManager::update()
 				currFrame - string->m_lastResourceFrame > w3dCleanupTime )
 		{
 
-			// free the resources
-			string->m_textRenderer.Reset();
-			string->m_textRendererHotKey.Reset();
+			// The graphics text atlas is cached by W3DDisplay and rebuilt lazily
+			// when the font is next submitted.  Keep the string dirty so the
+			// resource-use accounting remains unchanged.
 			//
 			// mark data in the string as changed so that if it needs to
 			// be drawn again it will know to reconstruct the render data

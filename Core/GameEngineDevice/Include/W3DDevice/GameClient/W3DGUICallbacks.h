@@ -37,30 +37,28 @@ class WinInstanceData;
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 
 // Message of the day message window --------------------------------------------------------------
-extern void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DCameoMovieDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DPowerDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DMainMenuDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DMainMenuFourDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DMetalBarMenuDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DCreditsMenuDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DClockDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData );
-extern void W3DMainMenuButtonDropShadowDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DMainMenuRandomTextDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DThinBorderDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DShellMenuSchemeDraw( GameWindow *window, WinInstanceData *instData );
+extern Bool W3DMainMenuDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DMainMenuFourDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DMainMenuMapBorderDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DMainMenuButtonDropShadowDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DMainMenuRandomTextDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DThinBorderDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DLeftHUDDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DRightHUDDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DPowerDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DMetalBarMenuDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCreditsMenuDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DClockDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DShellMenuSchemeDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
 
-extern void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData );
-
-extern void W3DCommandBarBackgroundDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DCommandBarForegroundDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DCommandBarTopDraw( GameWindow *window, WinInstanceData *instData );
-
-extern void W3DNoDraw( GameWindow *window, WinInstanceData *instData );
-extern void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData );
+extern Bool W3DCameoMovieDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCommandBarGridDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCommandBarTopDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCommandBarBackgroundDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCommandBarForegroundDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCommandBarGenExpDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DCommandBarHelpPopupDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DDrawMapPreviewData( GameWindow *window, WinInstanceData *instData, void *drawList );
+extern Bool W3DNoDrawData( GameWindow *window, WinInstanceData *instData, void *drawList );
 
 void W3DMainMenuInit( WindowLayout *layout, void *userData );

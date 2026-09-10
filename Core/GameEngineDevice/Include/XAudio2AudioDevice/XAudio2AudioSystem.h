@@ -69,12 +69,10 @@ public:
 	void setBusEnabled(AudioBus bus, bool enabled) override;
 	bool isBusEnabled(AudioBus bus) const override;
 	float getFileDurationMs(const char *filename) const override;
+	std::unique_ptr<AudioStream> createAudioStream(AudioBus bus) override;
 	void setListenerPosition(float posX, float posY, float posZ,
 		float fwdX, float fwdY, float fwdZ,
 		float upX, float upY, float upZ) override;
-
-	AudioVideoStream *createVideoStream() override;
-	void releaseVideoStream(AudioVideoStream *stream) override;
 
 	void precacheFile(const char *filename) override;
 

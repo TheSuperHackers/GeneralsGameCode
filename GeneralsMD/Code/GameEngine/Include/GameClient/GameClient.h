@@ -293,7 +293,6 @@ extern GameClient *TheGameClient;
 //			TheTerrainVisual is partially disabled:
 //				TheTerrainTracksRenderObjClassSystem = nullptr
 //				TheW3DShadowManager = nullptr
-//				TheWaterRenderObj = nullptr
 //				TheSmudgeManager = nullptr
 //				TheTerrainRenderObject is partially disabled:
 //					m_treeBuffer = nullptr

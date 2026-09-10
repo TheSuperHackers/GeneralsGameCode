@@ -5261,9 +5261,9 @@ void ScriptEngine::init()
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::reset()
 {
-	// setting FPS limit in case a script had changed it
+	// Restore the configured simulation speed after a script changed it.
 	if (TheFramePacer && TheGlobalData)
-		TheFramePacer->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
+		TheFramePacer->setLogicTimeScaleFps(TheGlobalData->m_framesPerSecondLimit);
 
 	if (TheScriptActions) {
 		TheScriptActions->reset();

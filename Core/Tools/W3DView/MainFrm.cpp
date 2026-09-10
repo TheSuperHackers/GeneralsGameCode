@@ -1,3 +1,5 @@
+import Graphics.Resources.Textures.Quality;
+import Graphics.Diagnostics.Render;
 /*
 **	Command & Conquer Renegade(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -34,28 +36,28 @@
 #include "AnimationPropPage.h"
 #include "HierarchyPropPage.h"
 #include "resource.h"
-#include "WW3D2/distlod.h"
+#include "WW3D2/DistLod.h"
 #include "AnimationSpeed.h"
 #include "AmbientLightDialog.h"
 #include "SceneLightDialog.h"
 #include "BackgroundColorDialog.h"
 #include "SaveSettingsDialog.h"
 #include "EditLODDialog.h"
-#include "WW3D2/w3derr.h"
+#include "WW3D2/W3DErr.h"
 #include "BackgroundObjectDialog.h"
 #include "BackgroundBMPDialog.h"
 #include "Toolbar.h"
 #include "EmitterPropertySheet.h"
-#include "WW3D2/part_ldr.h"
-#include "WW3D2/agg_def.h"
+#include "WW3D2/PartLdr.h"
+#include "WW3D2/AggDef.h"
 #include "BoneMgrDialog.h"
 #include "Utils.h"
-#include "WW3D2/light.h"
+#include "WW3D2/Light.h"
 #include "AggregateNameDialog.h"
 #include "LODDefs.h"
-#include "WW3D2/part_emt.h"
+#include "WW3D2/PartEmt.h"
 #include "RestrictedFileDialog.h"
-#include "WW3D2/hlod.h"
+#include "WW3D2/HLOD.h"
 #include "ViewerScene.h"
 #include "EmitterInstanceList.h"
 #include "mmsystem.h"
@@ -70,15 +72,22 @@
 #include "CameraDistanceDialog.h"
 #include "SoundEditDialog.h"
 #include "WWAudio/WWAudio.h"
-#include "WW3D2/soundrobj.h"
-#include "WW3D2/rddesc.h"
+#include "WW3D2/SoundRObj.h"
 #include "ScaleDialog.h"
 #include "GammaDialog.h"
 #include "AnimatedSoundOptionsDialog.h"
 
 
 //#undef STRICT
-#include "WW3D2/ww3d.h"
+#include "WW3D2/WW3D.h"
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <system_error>
+
+import Graphics.Frame.Runtime;
+import Graphics.Capture.FrameCapture;
+import Video.Capture.ImageWriter;
 
 
 #ifdef RTS_DEBUG
@@ -543,7 +552,7 @@ CMainFrame::OnCreateClient
 				// the graphic viewer class.
 				bReturn = (WW3D::Init ((HWND)*pCGraphicView) == WW3D_ERROR_OK);
 				ASSERT (bReturn);
-				WW3D::Enable_Static_Sort_Lists(true);
+				Graphics::Get_Scene_Draw_Queue().Set_Enabled(true);
 
 				//
 				//	Initialize the device
@@ -580,15 +589,6 @@ CMainFrame::OnCreateClient
 				int sort=::AfxGetApp()->GetProfileInt("Config", "EnableSorting",1);
 				WW3D::Enable_Sorting(sort==1?true:false);
 
-				// restore gamma settings
-				int setting=::AfxGetApp()->GetProfileInt("Config","EnableGamma",0);
-				if (setting) {
-					float gamma=::AfxGetApp()->GetProfileInt("Config","Gamma",10);
-					gamma=gamma/10.0f;
-					if (gamma<1.0) gamma=1.0;
-					if (gamma>3.0) gamma=3.0;
-					DX8Wrapper::Set_Gamma(gamma,0.0f,1.0f);
-				}
 			}
 		}
 	}
@@ -2097,39 +2097,7 @@ CMainFrame::Select_Device (bool show_dlg)
             BOOL bReturn = pCGraphicView->InitializeGraphicView ();
             ASSERT (bReturn);
 
-				if (bReturn) {
 
-					//
-					//	Get information about the current device
-					//
-					const RenderDeviceDescClass &device_desc = WW3D::Get_Render_Device_Desc ();
-					CString driver_name = deviceSelDialog.GetDriverName ();
-					CString chipset = device_desc.Get_Hardware_Chipset ();
-					CString string_version = device_desc.Get_Driver_Version ();
-					chipset.MakeUpper ();
-					driver_name.MakeLower ();
-
-					//
-					//	Check to ensure the drivers are valid if the user choose glide
-					//
-					if (::strstr (driver_name, "glide2") != nullptr) {
-
-						// Is this glide driver an acceptable version?
-						float driver_version = ::atof (string_version);
-						bool is_voodoo2 = (::strstr (chipset , "VOODOO2") != nullptr);
-						if ((is_voodoo2 && (driver_version < 2.54F)) ||
-							 ((is_voodoo2 == false) && (driver_version < 2.46F))) {
-
-							// Let the user know we can't use these drivers
-							CString message;
-							message.LoadString (IDS_UNACCEPTABLE_GLIDE_MSG);
-							::MessageBox (nullptr, message, "Invalid Device", MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
-
-							// Force the user to choose a new device
-							Select_Device (true);
-						}
-					}
-				}
         }
     }
 }
@@ -3110,7 +3078,26 @@ CMainFrame::OnSaveScreenshot ()
 	bool cursor_shown = GetCurrentDocument ()->Is_Cursor_Shown ();
 	GetCurrentDocument ()->Show_Cursor (false);
 	Get_Graphic_View ()->RepaintView ();
-	WW3D::Make_Screen_Shot (full_path);
+	if (auto* device = Graphics::Shared_Frame_Device()) {
+		Graphics::FrameCapture capture;
+		const auto target = device->Get_Swap_Chain().Backbuffer();
+		const auto frame = capture.Read(*device, target.texture, target.width, target.height,
+			Graphics::RHITextureFormat::BGRA8_UNorm);
+		if (frame.Is_Valid()) {
+			static unsigned sequence = 1;
+			for (;;) {
+				const unsigned number = sequence++;
+				auto path = std::filesystem::path(static_cast<const char*>(full_path));
+				path += (number < 10 ? "0" : "") + std::to_string(number) + ".tga";
+				std::error_code error;
+				const bool exists = std::filesystem::exists(path, error);
+				if (error) break;
+				if (exists) continue;
+				Engine::Video::Write_Frame_Image(path, frame, {Engine::Video::FrameImageFormat::TGA, 90, 1.3f});
+				break;
+			}
+		}
+	}
 	GetCurrentDocument ()->Show_Cursor (cursor_shown);
 }
 
@@ -4203,15 +4190,6 @@ void CMainFrame::OnEnableGammaCorrection()
 	bool enable_gamma=(setting?true:false);
 	enable_gamma=!enable_gamma;
 	::AfxGetApp()->WriteProfileInt("Config", "EnableGamma", enable_gamma?1:0);
-	if (enable_gamma) {
-		float gamma=::AfxGetApp()->GetProfileInt("Config","Gamma",10);
-		gamma=gamma/10.0f;
-		if (gamma<1.0) gamma=1.0;
-		if (gamma>3.0) gamma=3.0;
-		DX8Wrapper::Set_Gamma(gamma,0.0f,1.0f);
-	} else {
-		DX8Wrapper::Set_Gamma(1.0,0.0f,1.0f);
-	}
 }
 
 void CMainFrame::OnUpdateEnableGammaCorrection(CCmdUI* pCmdUI)

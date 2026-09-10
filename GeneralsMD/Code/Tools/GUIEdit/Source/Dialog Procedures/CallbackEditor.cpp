@@ -274,7 +274,7 @@ static void saveLayoutCallbacks( HWND dialog )
 // CallbackEditorDialogProc ===================================================
 /** Dialog procedure for grid settings dialog */
 //=============================================================================
-BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
+INT_PTR CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 																				WPARAM wParam, LPARAM lParam )
 {
 

@@ -38,8 +38,8 @@
 #include "StdAfx.h"
 
 #include "ViewerAssetMgr.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/ww3d.h"
+#include "WW3D2/Texture.h"
+#include "WW3D2/WW3D.h"
 #include "Utils.h"
 
 

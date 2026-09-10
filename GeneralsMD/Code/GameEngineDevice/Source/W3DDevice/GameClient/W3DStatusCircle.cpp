@@ -25,48 +25,30 @@
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 
+#include <algorithm>
 #include <stdlib.h>
-#include <WW3D2/assetmgr.h>
-#include <WW3D2/texture.h>
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
+#include <W3DDevice/GameClient/W3DTextureHandle.h>
 #include <WWMath/tri.h>
 #include <WWMath/colmath.h>
-#include <WW3D2/coltest.h>
-#include <WW3D2/rinfo.h>
-#include <WW3D2/camera.h>
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/shader.h"
+#include <W3DDevice/GameClient/W3DCastQuery.h>
+#include "W3DDevice/GameClient/W3DCamera.h"
+
+import Graphics.Materials.State;
 #include "Common/GlobalData.h"
 #include "Common/MapObject.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
-#define SC_DETAIL_BLEND ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_ENABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::DETAILCOLOR_SCALE, ShaderClass::DETAILALPHA_DISABLE, ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_SCALE, ShaderClass::DETAILALPHA_DISABLE) )
+import Graphics.Scene.Ring;
+import Graphics.Scene.Screen.FullscreenOverlay;
+
+#define SC_DETAIL_BLEND ( Graphics::MaterialState::Make_Bits(Graphics::MaterialState::PASS_LEQUAL, Graphics::MaterialState::DEPTH_WRITE_ENABLE, Graphics::MaterialState::COLOR_WRITE_ENABLE, Graphics::MaterialState::SRCBLEND_ONE, \
+	Graphics::MaterialState::DSTBLEND_ZERO, Graphics::MaterialState::FOG_DISABLE, Graphics::MaterialState::GRADIENT_MODULATE, Graphics::MaterialState::SECONDARY_GRADIENT_DISABLE, Graphics::MaterialState::TEXTURING_ENABLE, \
+	Graphics::MaterialState::DETAILCOLOR_SCALE, Graphics::MaterialState::DETAILALPHA_DISABLE, Graphics::MaterialState::ALPHATEST_DISABLE, Graphics::MaterialState::CULL_MODE_ENABLE, \
+	Graphics::MaterialState::DETAILCOLOR_SCALE, Graphics::MaterialState::DETAILALPHA_DISABLE) )
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
-
-// Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
-#define SC_ALPHA_Z ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_SRC_ALPHA, \
-	ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE, ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
-
-// Texturing, no zbuffer, disabled zbuffer write, no gradient, add src to dest.
-#define SC_ADD ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ONE, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_DISABLE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
-	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
-
-
-
-static ShaderClass detailOpaqueShader(SC_ALPHA);
-Bool W3DStatusCircle::m_needUpdate;
 Int W3DStatusCircle::m_diffuse=255; // blue.
 
 W3DStatusCircle::~W3DStatusCircle()
@@ -74,16 +56,9 @@ W3DStatusCircle::~W3DStatusCircle()
 	freeMapResources();
 }
 
-W3DStatusCircle::W3DStatusCircle()
-{
-	m_indexBuffer=nullptr;
-	m_vertexMaterialClass=nullptr;
-	m_vertexBufferCircle=nullptr;
-	m_vertexBufferScreen=nullptr;
-}
+W3DStatusCircle::W3DStatusCircle() {}
 
-
-bool W3DStatusCircle::Cast_Ray(RayCollisionTestClass & raytest)
+bool W3DStatusCircle::Cast_Ray(W3DRayCastQuery & raytest)
 {
 
 	return false;
@@ -120,10 +95,10 @@ void W3DStatusCircle::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 
 Int W3DStatusCircle::Class_ID() const
 {
-	return RenderObjClass::CLASSID_UNKNOWN;
+	return W3DRenderObject::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * W3DStatusCircle::Clone() const
+W3DRenderObject * W3DStatusCircle::Clone() const
 {
 	return NEW W3DStatusCircle(*this);
 }
@@ -131,252 +106,71 @@ RenderObjClass * W3DStatusCircle::Clone() const
 
 Int W3DStatusCircle::freeMapResources()
 {
-
-	REF_PTR_RELEASE(m_indexBuffer);
-	REF_PTR_RELEASE(m_vertexBufferScreen);
-	REF_PTR_RELEASE(m_vertexBufferCircle);
-	REF_PTR_RELEASE(m_vertexMaterialClass);
-	return 0;
+    Graphics::GetRingRenderer().Clear();
+    Graphics::GetFullscreenOverlayRenderer().Clear();
+    return 0;
 }
 
-#define NUM_TRI 20
-//Allocate a heightmap of x by y vertices.
-//data must be an array matching this size.
-Int W3DStatusCircle::initData()
+bool W3DStatusCircle::queueGraphics()
 {
-	Int i;
+	Graphics::RingRenderer &ring_renderer = Graphics::GetRingRenderer();
+	Graphics::FullscreenOverlayRenderer &overlay_renderer = Graphics::GetFullscreenOverlayRenderer();
+	if (!ring_renderer.Is_Initialized() || !overlay_renderer.Is_Initialized())
+		return false;
 
-	m_needUpdate = true;
-	freeMapResources();	//free old data and ib/vb
-
-	m_numTriangles = NUM_TRI;
-	m_indexBuffer=NEW_REF(DX8IndexBufferClass,(m_numTriangles*3));
-
-	// Fill up the IB
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-
-	for (i=0; i<3*m_numTriangles; i+=3)
-	{
-		ib[0]=i;
-		ib[1]=i+1;
-		ib[2]=i+2;
-
-		ib+=3;	//skip the 3 indices we just filled
+	ring_renderer.Clear();
+	overlay_renderer.Clear();
+	if (TheGlobalData->m_showTeamDot) {
+		const float red = static_cast<float>((m_diffuse >> 16) & 0xff) / 255.0f;
+		const float green = static_cast<float>((m_diffuse >> 8) & 0xff) / 255.0f;
+		const float blue = static_cast<float>(m_diffuse & 0xff) / 255.0f;
+		const Graphics::RingDescription description{
+			0.95f,
+			0.67f,
+			0.0f,
+			0.0f,
+			0.02f,
+			{red, green, blue, 127.0f / 255.0f},
+			20};
+		if (!ring_renderer.Set_Ring(description))
+			return false;
 	}
 
-	m_vertexBufferCircle=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,m_numTriangles*3,DX8VertexBufferClass::USAGE_DEFAULT));
-	m_vertexBufferScreen=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,2*3,DX8VertexBufferClass::USAGE_DEFAULT));
+	const ScriptEngine::TFade fade = TheScriptEngine->getFade();
+	if (fade == ScriptEngine::FADE_NONE)
+		return true;
 
-	//go with a preset material for now.
-	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-
-	m_shaderClass = ShaderClass(SC_ALPHA);// _PresetOpaque2DShader;//; //_PresetOpaqueShader;
-
-
-	return 0;
-}
-
-
-/** updateCircleVB puts a circle with a team color vertex buffer. */
-
-Int W3DStatusCircle::updateCircleVB()
-{
-	Int i, k;
-	Real shade;
-	DX8VertexBufferClass	*pVB = m_vertexBufferCircle;
-	if (m_vertexBufferCircle )
-	{
-		m_needUpdate = false;
-		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
-		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-
-		const Real theZ = 0.0f;
-		const Real theRadius = 0.02f;
-		const Int theAlpha = 127;
-	  Int diffuse = m_diffuse + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
-		Int limit = m_numTriangles;
-		float curAngle = 0;
-		float deltaAngle = 2*PI/limit;
-		for (i=0; i<limit; i++)
-		{
-
-			shade=0.7f*255.0f;
-			for (k=0; k<3; k++) {
-				vb->z=  theZ;
-				if (k==0) {
-					vb->x=	0;
-					vb->y=	0;
-				} else if (k==1) {
-					Vector3 vec(theRadius,0,theZ);
-					vec.Rotate_Z(curAngle);
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
-				} else if (k==2) {
-					Real angle = curAngle+deltaAngle;
-					if (i==limit-1) {
-						angle = 0;
-					}
-					Vector3 vec(theRadius,0,theZ);
-					vec.Rotate_Z(angle);
-					vb->x=	vec.X;
-					vb->y=	vec.Y;
-				}
-				vb->diffuse = diffuse;
-				vb->u1=0;
-				vb->v1=0;
-				vb++;
-			}
-			curAngle += deltaAngle;
-
-		}
-		return 0; //success.
-	}
-	return -1;
-}
-
-/** updateCircleVB puts a circle with a team color vertex buffer. */
-
-Int W3DStatusCircle::updateScreenVB(Int diffuse)
-{
-	DX8VertexBufferClass	*pVB = m_vertexBufferScreen;
-	if (m_vertexBufferScreen )
-	{
-		m_needUpdate = false;
-		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
-		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-
-		vb->x =	-1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse;
-		vb->u1=0;
-		vb->v1=0;
-		vb++;
-
-		vb->x =	1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse;
-		vb->u1=0;
-		vb->v1=0;
-		vb++;
-
-		vb->x =	-1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse;
-		vb->u1=0;
-		vb->v1=0;
-		vb++;
-
-		vb->x =	-1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse;
-		vb->u1=0;
-		vb->v1=0;
-		vb++;
-
-		vb->x =	1;
-		vb->y =	-1;
-		vb->z = 0;
-		vb->diffuse = diffuse;
-		vb->u1=0;
-		vb->v1=0;
-		vb++;
-
-		vb->x =	1;
-		vb->y =	1;
-		vb->z = 0;
-		vb->diffuse = diffuse;
-		vb->u1=0;
-		vb->v1=0;
-		vb++;
-		return 0; //success.
-	}
-	return -1;
-}
-
-void W3DStatusCircle::Render(RenderInfoClass & rinfo)
-{
-	if (!TheGameLogic->isInGame() || TheGameLogic->getGameMode() == GAME_SHELL)
-		return;
-
-	if (m_indexBuffer == nullptr) {
-		initData();
-	}
-	if (m_indexBuffer == nullptr) {
-		return;
-	}
-	Bool setIndex = false;
-	Matrix3D tm(true);
-	if( TheGlobalData->m_showTeamDot )
-	{
-		if (m_needUpdate) {
-			updateCircleVB();
-		}
-		//Apply the shader and material
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, nullptr);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferCircle);
-		setIndex = true;
-
-		Vector3 vec(0.95f, 0.67f, 0);
-		Matrix3x3 rot(true);
-
-		tm.Set_Translation(vec);
-
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-		DX8Wrapper::Draw_Triangles(	0,NUM_TRI, 0,	(m_numTriangles*3));
-	}
-
-
-	ScriptEngine::TFade fade = TheScriptEngine->getFade();
-	if (fade == ScriptEngine::FADE_NONE) {
-		return;
-	}
-
-	if (!setIndex) {
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Texture(0, nullptr);
-	}
-
-	tm.Make_Identity();
-	Real intensity = TheScriptEngine->getFadeValue();
-	Int clr = 255*intensity;
-	Int diffuse = (0xff<<24)|(clr<<16)|(clr<<8)|clr;	 // b g<<8 r<<16 a<<24.
-	updateScreenVB(diffuse);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-	DX8Wrapper::Set_Shader(ShaderClass(SC_ADD));
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferScreen);
-	DX8Wrapper::Apply_Render_State_Changes();
+	const float intensity = std::clamp(static_cast<float>(TheScriptEngine->getFadeValue()), 0.0f, 1.0f);
+	Graphics::FullscreenOverlayDescription overlay;
+	overlay.color = {intensity, intensity, intensity, 1.0f};
 	switch (fade) {
-		default:
-		case ScriptEngine::FADE_ADD:
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
-			break;
-		case ScriptEngine::FADE_SUBTRACT:
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT );
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, D3DBLENDOP_ADD );
-			break;
-		case ScriptEngine::FADE_SATURATE:
-			// 4x multiply
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_DESTCOLOR);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND,D3DBLEND_SRCCOLOR);
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
-			break;
-		case ScriptEngine::FADE_MULTIPLY:
-			// Straight multiply
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_ZERO);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND,D3DBLEND_SRCCOLOR);
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
-			break;
+	default:
+	case ScriptEngine::FADE_ADD:
+		overlay.blend_mode = Graphics::RHIBlendMode::Additive;
+		overlay.blend_operation = Graphics::RHIBlendOperation::Add;
+		overlay.draw_count = 1;
+		break;
+	case ScriptEngine::FADE_SUBTRACT:
+		overlay.blend_mode = Graphics::RHIBlendMode::Additive;
+		overlay.blend_operation = Graphics::RHIBlendOperation::ReverseSubtract;
+		overlay.draw_count = 1;
+		break;
+	case ScriptEngine::FADE_SATURATE:
+		overlay.blend_mode = Graphics::RHIBlendMode::ColorMultiply;
+		overlay.blend_operation = Graphics::RHIBlendOperation::Add;
+		overlay.draw_count = 2;
+		break;
+	case ScriptEngine::FADE_MULTIPLY:
+		overlay.blend_mode = Graphics::RHIBlendMode::Multiply;
+		overlay.blend_operation = Graphics::RHIBlendOperation::Add;
+		overlay.draw_count = 1;
+		break;
 	}
-	ShaderClass::Invalidate();
+	return overlay_renderer.Set_Overlay(overlay);
+}
+
+void W3DStatusCircle::Render(W3DRenderContext &)
+{
+    if (!TheGameLogic->isInGame() || TheGameLogic->getGameMode() == GAME_SHELL) return;
+    queueGraphics();
 }

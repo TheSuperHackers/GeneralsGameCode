@@ -18,14 +18,8 @@
 
 #pragma once
 
-#include "W3DDevice/GameClient/FlatHeightMap.h"
-#include "W3DDevice/GameClient/HeightMap.h"
-#define dont_USE_FLAT_HEIGHT_MAP // Use the original height map for mission disk. jba. [4/15/2003]
-#ifdef USE_FLAT_HEIGHT_MAP
-class WBHeightMap : public FlatHeightMapRenderObjClass
-#else
-class WBHeightMap : public HeightMapRenderObjClass
-#endif
+#include "W3DDevice/GameClient/W3DTerrainGraphics.h"
+class WBHeightMap : public W3DTerrainGraphics
 {
 
 public:
@@ -45,7 +39,7 @@ public:
 	void setFlattenHeights(Bool flat);
 
 protected:
-	void flattenHeights();
+	float Get_Surface_Height(int x, int y) const override;
 protected:
 	Bool m_drawEntireMap;
 	Bool m_flattenHeights;

@@ -29,9 +29,10 @@
 
 #pragma once
 
+import Graphics.Scene.Beams;
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
-#include "WW3D2/line3d.h"
 
 //-------------------------------------------------------------------------------------------------
 /** W3D rope draw */
@@ -66,13 +67,13 @@ private:
 
 	struct SegInfo
 	{
-		Line3DClass* line;
-		Line3DClass* softLine;
-		Real wobbleAxisX;
-		Real wobbleAxisY;
+		Graphics::BeamHandle graphicsLine{};
+		Graphics::BeamHandle graphicsSoftLine{};
+		Real wobbleAxisX = 0.0f;
+		Real wobbleAxisY = 0.0f;
 	};
 
-	std::vector<SegInfo> m_segments;			///< the rope render object in the W3D scene
+	std::vector<SegInfo> m_segments;			///< generic beam handles and stable wobble axes
 	Real m_curLen;								///< length of rope
 	Real m_maxLen;								///< length of rope
 	Real m_width;									///< width of rope
@@ -85,8 +86,12 @@ private:
 	Real m_wobbleRate;
 	Real m_curWobblePhase;
 	Real m_curZOffset;
+	Bool m_graphicsEnabled;
+	Bool m_graphicsAttempted;
 
 	void tossSegments();
 	void buildSegments();
+	bool createGraphicsSegments() noexcept;
+	void disableGraphicsSegments() noexcept;
 
 };

@@ -16,7 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <array>
+#include <span>
+#include <vector>
+import Graphics.Scene.Scorches.Geometry;
+import Graphics.Frame.Runtime;
+import Assets.Math;
 #include "W3DDevice/GameClient/W3DScorch.h"
+#include "W3DDevice/GameClient/W3DGraphicsResources.h"
 
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
@@ -24,12 +31,11 @@
 #include "Common/MapObject.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
-#include "WW3D2/dx8wrapper.h"
+import Graphics.Materials.State;
+
 
 W3DScorch::W3DScorch(bool deduplicateScorches)
-  : m_vertexScorch(nullptr)
-  , m_indexScorch(nullptr)
-  , m_scorchTexture(nullptr)
+  : m_scorchTexture(nullptr)
   , m_curNumScorchVertices(0)
   , m_curNumScorchIndices(0)
   , m_needBufferRecompute(true)
@@ -41,16 +47,14 @@ W3DScorch::~W3DScorch() { freeBuffers(); }
 void W3DScorch::allocateBuffers()
 {
 	freeBuffers();
-	m_vertexScorch = NEW_REF(DX8VertexBufferClass, (DX8_FVF_XYZDUV1, MAX_SCORCH_VERTEX, DX8VertexBufferClass::USAGE_DEFAULT));
-	m_indexScorch = NEW_REF(DX8IndexBufferClass, (MAX_SCORCH_INDEX));
 	m_scorchTexture = NEW ScorchTextureClass;
 	invalidateBuffers();
 }
 
 void W3DScorch::freeBuffers()
 {
-	REF_PTR_RELEASE(m_vertexScorch);
-	REF_PTR_RELEASE(m_indexScorch);
+	Graphics::Get_Surface_Renderer().Destroy_Mesh(m_graphicsMesh);
+	m_graphicsMesh = {};
 	REF_PTR_RELEASE(m_scorchTexture);
 }
 
@@ -115,147 +119,45 @@ Bool W3DScorch::isDuplicate(const TScorch& scorch) const
 	return false;
 }
 
-void W3DScorch::drawScorches(WorldHeightMap& map)
+void W3DScorch::drawScorches(WorldHeightMap& map, W3DCamera& camera)
 {
-	updateScorches(map);
-	if (m_curNumScorchIndices == 0)
-	{
-		return;
-	}
-	DX8Wrapper::Set_Index_Buffer(m_indexScorch, 0);
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexScorch);
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
-
-	DX8Wrapper::Set_Texture(0, m_scorchTexture);
-	DX8Wrapper::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
-}
-
-static Real getMapHeight(WorldHeightMap& map, Int x, Int y)
-{
-	x += map.getBorderSizeInline();
-	y += map.getBorderSizeInline();
-	return map.getDataPtr()[x + y * map.getXExtent()] * MAP_HEIGHT_SCALE;
+    updateScorches(map);
+    auto* device = Graphics::Shared_Frame_Device();
+    if (!device || m_curNumScorchIndices == 0) return;
+    Graphics::SurfaceStyle style;
+    style.cull = Graphics::RHICullMode::Back;
+    const auto texture = Resolve_Graphics_Texture(m_scorchTexture);
+    Graphics::Get_Surface_Renderer().Draw(device->Immediate_Command_List(), m_graphicsMesh,
+        style, Make_Surface_Parameters(camera), std::array<Graphics::RHITextureHandle, 4>{texture, {}, {}, {}});
 }
 
 void W3DScorch::updateScorches(WorldHeightMap& map)
 {
-	if (!m_needBufferRecompute || m_scorches.empty() || !m_indexScorch || !m_vertexScorch)
-	{
-		return;
-	}
-
-	m_needBufferRecompute = false;
-	m_curNumScorchVertices = 0;
-	m_curNumScorchIndices = 0;
-
-	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexScorch);
-	UnsignedShort* ib = lockIdxBuffer.Get_Index_Array();
-
-	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexScorch);
-	VertexFormatXYZDUV1* vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
-
-	Real shadeR = (TheGlobalData->m_terrainAmbient[0].red + TheGlobalData->m_terrainDiffuse[0].red) / 2.0f;
-	Real shadeG = (TheGlobalData->m_terrainAmbient[0].green + TheGlobalData->m_terrainDiffuse[0].green) / 2.0f;
-	Real shadeB = (TheGlobalData->m_terrainAmbient[0].blue + TheGlobalData->m_terrainDiffuse[0].blue) / 2.0f;
-	UnsignedInt diffuse = DX8Wrapper::Convert_Color_Clamp(Vector4(shadeR, shadeG, shadeB, 1.0f));
-
-	// TheSuperHackers @info Scorches are written in reverse order to ensure that the last added scorches fit in the buffers.
-	for (std::deque<TScorch>::reverse_iterator it = m_scorches.rbegin(); it != m_scorches.rend(); ++it)
-	{
-		if (!writeScorchToBuffer(*it, map, diffuse,
-		                         vb + m_curNumScorchVertices, ib + m_curNumScorchIndices))
-		{
-			return;
-		}
-	}
+    if (!m_needBufferRecompute || !m_scorchTexture) return;
+    Graphics::ScorchGeometry geometry;
+    const Graphics::ScorchGrid grid{map.getXExtent(), map.getYExtent(), map.getBorderSizeInline(),
+        MAP_XY_FACTOR, MAP_HEIGHT_SCALE / 10};
+    const auto& ambient = TheGlobalData->m_terrainAmbient[0];
+    const auto& diffuse = TheGlobalData->m_terrainDiffuse[0];
+    const auto packed = Assets::Color_To_ARGB({
+        (ambient.red + diffuse.red) / 2, (ambient.green + diffuse.green) / 2,
+        (ambient.blue + diffuse.blue) / 2, 1});
+    const std::array<float, 4> color{((packed >> 16) & 255) / 255.0f,
+        ((packed >> 8) & 255) / 255.0f, (packed & 255) / 255.0f, 1};
+    for (auto it = m_scorches.rbegin(); it != m_scorches.rend(); ++it) {
+        if (!geometry.Append({{it->location.X, it->location.Y}, it->radius, unsigned(it->scorchType)}, grid, color,
+            [&](int x, int y) { return map.getDataPtr()[x + y * map.getXExtent()] * MAP_HEIGHT_SCALE; },
+            [&](int x, int y) { return map.getFlipState(x, y); })) break;
+    }
+    auto& renderer = Graphics::Get_Surface_Renderer();
+    if (m_graphicsMesh.Is_Valid()) {
+        if (!renderer.Update_Mesh(m_graphicsMesh, geometry.vertices, geometry.indices)) return;
+    } else {
+        m_graphicsMesh = renderer.Create_Mesh(geometry.vertices, geometry.indices);
+        if (!m_graphicsMesh.Is_Valid()) return;
+    }
+    m_curNumScorchVertices = static_cast<Int>(geometry.vertices.size());
+    m_curNumScorchIndices = static_cast<Int>(geometry.indices.size());
+    m_needBufferRecompute = false;
 }
 
-Bool W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map, UnsignedInt diffuse,
-                                    VertexFormatXYZDUV1* curVb, UnsignedShort* curIb)
-{
-	Real radius = scorch.radius;
-	Vector3 loc = scorch.location;
-	Int type = scorch.scorchType;
-	Real amtToFloat = MAP_HEIGHT_SCALE / 10;
-
-	Int minX = REAL_TO_INT_FLOOR((loc.X - radius) / MAP_XY_FACTOR);
-	Int minY = REAL_TO_INT_FLOOR((loc.Y - radius) / MAP_XY_FACTOR);
-	if (minX < -map.getBorderSizeInline())
-		minX = -map.getBorderSizeInline();
-	if (minY < -map.getBorderSizeInline())
-		minY = -map.getBorderSizeInline();
-	Int maxX = REAL_TO_INT_CEIL((loc.X + radius) / MAP_XY_FACTOR);
-	Int maxY = REAL_TO_INT_CEIL((loc.Y + radius) / MAP_XY_FACTOR);
-	maxX++;
-	maxY++;
-	if (maxX > map.getXExtent() - map.getBorderSizeInline())
-	{
-		maxX = map.getXExtent() - map.getBorderSizeInline();
-	}
-	if (maxY > map.getYExtent() - map.getBorderSizeInline())
-	{
-		maxY = map.getYExtent() - map.getBorderSizeInline();
-	}
-	Int startVertex = m_curNumScorchVertices;
-	Int i, j;
-	for (j = minY; j < maxY; j++)
-	{
-		for (i = minX; i < maxX; i++)
-		{
-			if (m_curNumScorchVertices >= MAX_SCORCH_VERTEX)
-				return false;
-			curVb->diffuse = diffuse;
-			Real theZ = amtToFloat + getMapHeight(map, i, j);
-			// The scorchmarks are spaced out by 1.5 in the texture.
-			Real uOffset = (type % SCORCH_PER_ROW) * 1.5f;
-			Real vOffset = (type / SCORCH_PER_ROW) * 1.5f;
-			Real X = i * MAP_XY_FACTOR;
-			Real Y = j * MAP_XY_FACTOR;
-			curVb->u1 = (uOffset + 0.5f + (X - loc.X) / (2 * radius)) / (SCORCH_PER_ROW + 1);
-			curVb->v1 = (vOffset + 0.5f + (Y - loc.Y) / (2 * radius)) / (SCORCH_PER_ROW + 1);
-			curVb->x = X;
-			curVb->y = Y;
-			curVb->z = theZ;
-			curVb++;
-			m_curNumScorchVertices++;
-		}
-	}
-	Int yOffset = maxX - minX;
-	for (j = 0; j < maxY - minY - 1; j++)
-	{
-		for (i = 0; i < maxX - minX - 1; i++)
-		{
-			if (m_curNumScorchIndices + 6 > MAX_SCORCH_INDEX)
-				return false;
-			Int xNdx = i + minX + map.getBorderSizeInline();
-			Int yNdx = j + minY + map.getBorderSizeInline();
-			Bool flipForBlend = map.getFlipState(xNdx, yNdx);
-#if 0
-			UnsignedByte alpha[4];
-			float UA[4], VA[4];
-			map.getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
-#endif
-			if (flipForBlend)
-			{
-				*curIb++ = startVertex + j * yOffset + i + 1;
-				*curIb++ = startVertex + j * yOffset + i + yOffset;
-				*curIb++ = startVertex + j * yOffset + i;
-				*curIb++ = startVertex + j * yOffset + i + 1;
-				*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
-				*curIb++ = startVertex + j * yOffset + i + yOffset;
-			}
-			else
-			{
-				*curIb++ = startVertex + j * yOffset + i;
-				*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
-				*curIb++ = startVertex + j * yOffset + i + yOffset;
-				*curIb++ = startVertex + j * yOffset + i;
-				*curIb++ = startVertex + j * yOffset + i + 1;
-				*curIb++ = startVertex + j * yOffset + i + 1 + yOffset;
-			}
-			m_curNumScorchIndices += 6;
-		}
-	}
-
-	return true;
-}

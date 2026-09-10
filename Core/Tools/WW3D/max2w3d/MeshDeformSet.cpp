@@ -37,7 +37,7 @@
 #include "MeshDeformSet.h"
 #include "util.h"
 #include "MeshDeformSaveSet.h"
-#include "meshbuild.h"
+#include "MeshBuild.h"
 #include "MeshDeformSaveDefs.h"
 #include "MeshDeformDefs.h"
 

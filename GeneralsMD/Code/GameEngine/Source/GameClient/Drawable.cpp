@@ -1,3 +1,4 @@
+import Graphics.Frame.RenderClock;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -79,7 +80,7 @@
 #include "GameClient/Shadow.h"
 #include "GameClient/GameText.h"
 
-#include "WW3D2/ww3d.h"
+
 
 #define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
 #define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
@@ -1353,7 +1354,7 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 	{
 		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
 		// All calculations are originally catered to a 30 fps logic step.
-		if (WW3D::Get_Sync_Frame_Time() != 0)
+		if (Graphics::Get_Render_Clock().Sync_Delta() != 0)
 		{
 			calcPhysicsXform(*m_physicsXform);
 		}

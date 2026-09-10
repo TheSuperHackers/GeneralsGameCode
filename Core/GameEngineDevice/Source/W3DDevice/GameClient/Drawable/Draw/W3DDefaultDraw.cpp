@@ -29,6 +29,13 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <vector>
+
 #include "Common/FileSystem.h"	// this is only here to pull in LOAD_TEST_ASSETS
 #include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
@@ -39,14 +46,18 @@
 #include "GameClient/FXList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "WW3D2/hanim.h"
-#include "WW3D2/hlod.h"
-#include "WW3D2/rendobj.h"
+#include "W3DDevice/GameClient/W3DHierarchyRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshResource.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "WWMath/sphere.h"
 #include "W3DDevice/GameClient/Module/W3DDefaultDraw.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
+
+
 
 
 //-------------------------------------------------------------------------------------------------
@@ -145,15 +156,14 @@ void W3DDefaultDraw::doDrawModule(const Matrix3D* transformMtx)
 			scaledTransform=*transformMtx;
 			scaledTransform.Scale(getDrawable()->getInstanceScale());
 			transformMtx = &scaledTransform;
-			m_renderObject->Set_ObjectScale(getDrawable()->getInstanceScale());
 		}
-		else
-		{
-			m_renderObject->Set_Transform(*transformMtx);
-		}
+		m_renderObject->Set_ObjectScale(getDrawable()->getInstanceScale());
+		m_renderObject->Set_Transform(*transformMtx);
 	}
 #endif
 }
+
+
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

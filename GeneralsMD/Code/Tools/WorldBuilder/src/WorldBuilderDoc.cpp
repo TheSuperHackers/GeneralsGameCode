@@ -51,7 +51,7 @@
 #include "SaveMap.h"
 #include "ScriptDialog.h"
 #include "TerrainMaterial.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "wbview3d.h"
 #include "wbview.h"
 #include "WHeightMapEdit.h"

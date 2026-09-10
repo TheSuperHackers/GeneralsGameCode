@@ -40,13 +40,13 @@
 #include "rawfile.h"	// have to include this before Max.h
 #include <max.h>
 #include "BITTYPE.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "chunkio.h"
 #include "PROGRESS.h"
 #include "nodelist.h"
 #include "util.h"
 #include "w3dmtl.h"
-#include "meshbuild.h"
+#include "MeshBuild.h"
 #include "MeshDeformSave.h"
 #include "w3dappdata.h"
 

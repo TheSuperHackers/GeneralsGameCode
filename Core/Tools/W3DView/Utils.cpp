@@ -29,10 +29,10 @@
 #include "MainFrm.h"
 #include "DataTreeView.h"
 #include "Utils.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/agg_def.h"
-#include "WW3D2/hlod.h"
+#include "WW3D2/Texture.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/AggDef.h"
+#include "WW3D2/HLOD.h"
 #include <VFW.h>
 #include "WWLib/rcfile.h"
 

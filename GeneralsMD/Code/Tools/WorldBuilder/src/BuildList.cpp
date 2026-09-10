@@ -29,7 +29,7 @@
 #include "PointerTool.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GameLogic/SidesList.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/ThingFactory.h"

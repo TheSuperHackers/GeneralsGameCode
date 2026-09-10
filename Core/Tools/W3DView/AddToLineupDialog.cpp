@@ -24,8 +24,8 @@
 #include "AddToLineupDialog.h"
 
 #include "ViewerScene.h"
-#include <WW3D2/rendobj.h>
-#include <WW3D2/assetmgr.h>
+#include <WW3D2/RendObj.h>
+#include <WW3D2/AssetMgr.h>
 
 
 #ifdef RTS_DEBUG

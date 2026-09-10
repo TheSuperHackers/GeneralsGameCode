@@ -1,3 +1,4 @@
+import Graphics.Frame.AttachmentBindings;
 /*
 **	Command & Conquer Renegade(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -34,16 +35,14 @@
 #include "StdAfx.h"
 #include "ScreenCursor.h"
 #include "Utils.h"
-#include "WW3D2/ww3d.h"
-#include "WW3D2/vertmaterial.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/scene.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/sortingrenderer.h"
+#include "WW3D2/WW3D.h"
+import Graphics.Materials.State;
+#include "WW3D2/Scene.h"
+#include "WW3D2/RInfo.h"
+#include "WW3D2/Texture.h"
+#include <array>
+#include "WWMath/matrix4.h"
+import Graphics.Scene.Surfaces.Geometry;
 
 
 ///////////////////////////////////////////////////////////////////
@@ -96,11 +95,6 @@ void
 ScreenCursorClass::Initialize ()
 {
 	// Create default vertex material
-	m_pVertMaterial.Assign_No_Add_Ref (NEW_REF( VertexMaterialClass, ()));
-	m_pVertMaterial->Set_Diffuse (1.0F, 1.0F, 1.0F);
-	m_pVertMaterial->Set_Emissive (0.0F, 0.0F, 0.0F);
-	m_pVertMaterial->Set_Specular (1.0F, 1.0F, 1.0F);
-	m_pVertMaterial->Set_Ambient (1.0F, 1.0F, 1.0F);
 
 	m_Triangles[0].I = 0;
 	m_Triangles[0].J = 1;
@@ -188,11 +182,9 @@ ScreenCursorClass::On_Frame_Update ()
 	//
 	//	Determine the current display resolution
 	//
-	int screen_cx = 0;
-	int screen_cy = 0;
-	int bits = 0;
-	bool windowed = false;
-	WW3D::Get_Device_Resolution (screen_cx, screen_cy, bits, windowed);
+	const auto& screen = Graphics::Get_Attachment_Bindings().Default().viewport;
+	const unsigned screen_cx = screen.width;
+	const unsigned screen_cy = screen.height;
 
 	//
 	//	Calculate the 3D position
@@ -241,69 +233,24 @@ ScreenCursorClass::On_Frame_Update ()
 void
 ScreenCursorClass::Render (RenderInfoClass &rinfo)
 {
-	const int VERTEX_COUNT = 4;
-	const int FACE_COUNT = 2;
-	/*
-	** Dump the vertices into the dynamic sorting vertex buffer.
-	*/
-	DynamicVBAccessClass vbaccess(BUFFER_TYPE_DYNAMIC_SORTING,dynamic_fvf_type,VERTEX_COUNT);
-	{
-		DynamicVBAccessClass::WriteLockClass lock(&vbaccess);
-		VertexFormatXYZNDUV2* vb=lock.Get_Formatted_Vertex_Array();
+    std::array<Graphics::SurfaceVertex, 4> vertices{};
+    std::array<unsigned, 6> indices{};
+    for (unsigned i = 0; i < vertices.size(); ++i) {
+        auto& vertex = vertices[i];
+        vertex.position[0] = m_Verticies[i].X;
+        vertex.position[1] = m_Verticies[i].Y;
+        vertex.position[2] = m_Verticies[i].Z;
+        vertex.color = {1,1,1,1};
+        vertex.uv[0] = m_UVs[i].X;
+        vertex.uv[1] = m_UVs[i].Y;
+    }
+    for (unsigned i = 0; i < 2; ++i)
+        for (unsigned corner = 0; corner < 3; ++corner)
+            indices[i * 3 + corner] = m_Triangles[i][corner];
+    if (!Draw_Graphics_Prelit_Geometry(vertices, indices, Matrix4x4(true),
+        Graphics::MaterialState::ATestBlend2D(), m_pTexture.Peek()))
+        DEBUG_LOG(("Viewer cursor graphics submission failed.\n"));
 
-		for (int i=0; i<VERTEX_COUNT; i++) {
-
-			// Locations
-			vb->x=m_Verticies[i].X;
-			vb->y=m_Verticies[i].Y;
-			vb->z=m_Verticies[i].Z;
-
-			// Normals
-			vb->nx=m_Normals[i].X;
-			vb->ny=m_Normals[i].Y;
-			vb->nz=m_Normals[i].Z;
-
-			// UV coordinates
-			vb->u1=m_UVs[i].X;
-			vb->v1=m_UVs[i].Y;
-
-			vb++;
-		}
-	}
-
-	/*
-	** Dump the faces into the dynamic sorting index buffer.
-	*/
-	DynamicIBAccessClass ibaccess(BUFFER_TYPE_DYNAMIC_SORTING,FACE_COUNT*3);
-	{
-		DynamicIBAccessClass::WriteLockClass lock(&ibaccess);
-		unsigned short * indices = lock.Get_Index_Array();
-		for (int i=0; i<FACE_COUNT; i++) {
-			indices[3*i+0] = m_Triangles[i][0];
-			indices[3*i+1] = m_Triangles[i][1];
-			indices[3*i+2] = m_Triangles[i][2];
-		}
-	}
-
-	/*
-	** Apply the shader and material
-	*/
-	DX8Wrapper::Set_Material(m_pVertMaterial.Peek());
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
-	DX8Wrapper::Set_Texture(0,m_pTexture.Peek());
-
-	DX8Wrapper::Set_Vertex_Buffer(vbaccess);
-	DX8Wrapper::Set_Index_Buffer(ibaccess,0);
-
-	SphereClass sphere;
-	Get_Obj_Space_Bounding_Sphere(sphere);
-
-	SortingRendererClass::Insert_Triangles(
-		sphere,
-		0,
-		FACE_COUNT*3,
-		0,
-		VERTEX_COUNT*2);
 }
 
 

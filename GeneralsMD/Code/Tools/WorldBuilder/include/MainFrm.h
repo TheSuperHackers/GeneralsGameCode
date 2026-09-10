@@ -143,7 +143,7 @@ protected:
 	afx_msg void OnViewBrushfeedback();
 	afx_msg void OnUpdateViewBrushfeedback(CCmdUI* pCmdUI);
 	afx_msg void OnDestroy();
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnEditCameraoptions();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

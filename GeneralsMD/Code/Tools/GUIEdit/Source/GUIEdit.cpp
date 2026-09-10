@@ -79,6 +79,8 @@
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
+#include "W3DDevice/GameClient/W3DAssetRuntime.h"
+#include <stdexcept>
 #include "GameClient/Keyboard.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/GameClient/Win32DIKeyboard.h"
@@ -529,6 +531,9 @@ void GUIEdit::init()
 	TheFunctionLexicon->init();
 	TheFunctionLexicon->validate();
 
+	if (!W3DAssetRuntime::Initialize())
+        throw std::runtime_error("Unable to initialize GUIEdit graphics assets");
+
 	// create the font library
 	TheFontLibrary = new W3DFontLibrary;
 	TheFontLibrary->init();
@@ -678,6 +683,8 @@ void GUIEdit::shutdown()
 
 	delete TheGlobalLanguageData;
 	TheGlobalLanguageData = nullptr;
+
+	W3DAssetRuntime::Shutdown();
 
 	// delete file system
 	delete TheFileSystem;

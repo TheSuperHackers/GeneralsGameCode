@@ -34,19 +34,18 @@
 #pragma once
 
 #include "GameClient/Display.h"
-#include "WW3D2/lightenvironment.h"
-#include "W3DDevice/GameClient/W3DProfilerFrameCapture.h"
+#include <vector>
+import Graphics.Presentation.DisplayModes;
+import Graphics.Scene.Lighting.Local;
 
-class VideoBuffer;
 class W3DDebugDisplay;
 class DisplayString;
 class W3DAssetManager;
-class LightClass;
-class Render2DClass;
+class W3DLight;
 class RTS3DScene;
 class RTS2DScene;
 class RTS3DInterfaceScene;
-class TextureClass;
+class W3DTextureHandle;
 
 
 //=============================================================================
@@ -78,9 +77,10 @@ public:
 	// Drawing management
 	virtual void setClipRegion( IRegion2D *region ) override;	///< Set clip rectangle for 2D draw operations.
 	virtual Bool	isClippingEnabled() override { return m_isClippedEnabled; }
-	virtual void	enableClipping( Bool onoff ) override { m_isClippedEnabled = onoff; }
+	virtual void	enableClipping( Bool onoff ) override;
 
 	virtual void step() override; ///< Do one fixed time step
+	virtual void update() override; ///< Update display-owned presentation state
 	virtual void draw() override;  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
@@ -113,14 +113,11 @@ public:
 
 	/// draw an image fit within the screen coordinates
 	virtual void drawImage( const Image *image, Int startX, Int startY,
-													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) override;
+																										Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) override;
 
-	/// draw a video buffer fit within the screen coordinates
-	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) override;
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-													Int endX, Int endY ) override;
-
-	virtual VideoBuffer*	createVideoBuffer() override;							///< Create a video buffer that can be used for this display
+	virtual void playMovie( AsciiString movieName) override;
+	virtual void stopMovie() override;
+	virtual Bool isMoviePlaying() override;
 
 	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality) override;	//save screenshot in specified format
 	virtual void toggleMovieCapture() override;			//enable AVI or frame capture mode.
@@ -162,31 +159,23 @@ protected:
 	void calculateTerrainLOD();						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
 	void updateAverageFPS();	///< calculate the average fps over the last 30 frames.
-	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale);
 	virtual void onBeginBatch() override;
 	virtual void onEndBatch() override;
 	virtual void onFlush() override;
 
+	std::vector<Graphics::DisplayResolution> m_displayResolutions;
 	Byte m_initialized;												///< TRUE when system is initialized
-	LightClass *m_myLight[LightEnvironmentClass::MAX_LIGHTS];										///< light hack for now
-	Render2DClass *m_2DRender;								///< interface for common 2D functions
+	W3DLight *m_myLight[Graphics::Material_Light_Count];										///< light hack for now
 	IRegion2D m_clipRegion;									///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 	Real m_averageFPS;		///<average fps over the last 30 frames.
 	Real m_currentFPS;		///<current fps value.
 
-	TextureClass *m_batchTexture;
-	DrawImageMode m_batchMode;
-	Bool m_batchGrayscale;
-	Bool m_batchNeedsInit;
 
 #if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;
 #endif
 
-#ifdef PROFILER_ENABLED
-	W3DProfilerFrameCapture *m_profilerFrameCapture;
-#endif
 
 	enum
 	{

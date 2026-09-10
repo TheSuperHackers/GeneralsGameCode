@@ -22,8 +22,8 @@
 //
 
 #include "resource.h"
-#include "WW3D2/ringobj.h"
-#include "WW3D2/shader.h"
+#include "WW3D2/RingObj.h"
+import Graphics.Materials.State;
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -89,7 +89,7 @@ public:
 	const CString &		Get_Name () const					{ return m_Name; }
 	const CString &		Get_Texture_Filename () const	{ return m_TextureFilename; }
 	float						Get_Lifetime () const				{ return m_Lifetime; }
-	const ShaderClass &	Get_Shader () const					{ return m_Shader; }
+	const Graphics::MaterialState &	Get_Shader () const					{ return m_Shader; }
 
 protected:
 
@@ -97,7 +97,7 @@ protected:
 	//	Protected methods
 	/////////////////////////////////////////////////////////
 	void						Initialize ();
-	void						Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
+	void						Add_Shader_To_Combo (Graphics::MaterialState &shader, LPCTSTR name);
 
 private:
 
@@ -107,7 +107,7 @@ private:
 	RingRenderObjClass *		m_RenderObj;
 	CString						m_Name;
 	CString						m_TextureFilename;
-	ShaderClass					m_Shader;
+	Graphics::MaterialState					m_Shader;
 	float							m_Lifetime;
 	bool							m_bValid;
 };

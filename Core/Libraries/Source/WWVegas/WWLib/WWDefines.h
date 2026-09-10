@@ -18,7 +18,7 @@
 
 #pragma once
 
-// Enable translation and rotation interpolation for raw animation (HRawAnimClass) updates.
+// Enable translation and rotation interpolation for raw animation channel updates.
 // This was intentionally disabled in the retail version, but likely not fully thought through.
 // Interpolation is certainly desired for animations that move and rotate meshes, but may not be
 // desired for animations that teleport meshes from one location to another, such as blinking lights.

@@ -40,7 +40,7 @@ class ParticleEmitterClass;
 /////////////////////////////////////////////////////////////////////////////
 // CGraphicView view
 
-#include "WW3D2/camera.h"
+#include "WW3D2/Camera.h"
 
 class CGraphicView : public CView
 {

@@ -35,7 +35,7 @@ so forth is all handled in the object options panel.  jba. */
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "CUndoable.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"

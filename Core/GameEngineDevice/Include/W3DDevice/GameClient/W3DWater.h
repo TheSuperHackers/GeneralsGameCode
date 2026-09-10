@@ -6,289 +6,163 @@
 **	it under the terms of the GNU General Public License as published by
 **	the Free Software Foundation, either version 3 of the License, or
 **	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// FILE: W3DWater.h ///////////////////////////////////////////////////
 
 #pragma once
 
-#include <cstdint>
-
-static_assert(sizeof(uintptr_t) == sizeof(void*), "uintptr_t must hold Win64 shader pointers");
-
+#include <array>
+#include <span>
+#include <vector>
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
-#include "WW3D2/light.h"
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
-#include "Common/Snapshot.h"
+#include "W3DDevice/GameClient/WaterMaterial.h"
+#include "W3DDevice/GameClient/WaterGeometry.h"
+#include "W3DDevice/GameClient/WaterReflectionRenderer.h"
 
-#define INVALID_WATER_HEIGHT 0.0f	///water height guaranteed to be below all terrain.
+#define INVALID_WATER_HEIGHT 0.0f
 
-#define NUM_BUMP_FRAMES 32	///number of animation frames in bump map
-//Offsets in constant register file to Vertex shader constants
-#define CV_ZERO 0
-#define CV_ONE 1
-#define CV_WORLDVIEWPROJ_0 2
-#define CV_TEXPROJ_0 6
-#define CV_PATCH_SCALE_OFFSET 10
-
-class PolygonTrigger;
+class W3DCamera;
+class AABoxClass;
+class W3DRenderContext;
+class W3DTextureHandle;
 class WaterTracksRenderSystem;
-class Xfer;
-/// Custom render object that draws mirrors, water, and skies.
-/**
-This render object handles drawing reflected W3D scenes.  It will only work
-with rectangular planar surfaces and was tuned with an emphasis on water.
-Since skies are only visible in reflections, this code will also
-render clouds and sky bodies.
-*/
-class WaterRenderObjClass : public Snapshot,
-														public RenderObjClass
+class WaterSkyboxSystem;
+
+// Water render system. It is submitted explicitly by RTS3DScene after
+// opaque scene rendering; it is not a legacy W3DRenderObject scene node.
+class WaterRenderSystem
 {
-
 public:
-
 	enum WaterType
 	{
-		WATER_TYPE_0_TRANSLUCENT = 0,	//translucent water, no reflection
-		WATER_TYPE_1_FB_REFLECTION,		//legacy frame buffer reflection (non translucent)
-		WATER_TYPE_2_PVSHADER,		//pixel/vertex shader, texture reflection
-		WATER_TYPE_3_GRIDMESH,		//3D Mesh based water
+		WATER_TYPE_SURFACE = 0,
+		WATER_TYPE_SURFACE_VARIANT,
+		WATER_TYPE_OCEAN,
+		WATER_TYPE_GRID,
 	};
 
-	WaterRenderObjClass();
-	virtual ~WaterRenderObjClass() override;
+	WaterRenderSystem();
+	~WaterRenderSystem();
 
-	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface (W3D methods)
-	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const override;
-	virtual int						Class_ID() const override;
-	virtual void					Render(RenderInfoClass & rinfo) override;
-/// @todo: Add methods for collision detection with water surface
-//	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
-//	virtual Bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-//	virtual Bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-//	virtual Bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-//	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
-
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
-	// Get and set static sort level
-	virtual int		Get_Sort_Level() const override { return m_sortLevel; }
-  	virtual void	Set_Sort_Level(int level) override { m_sortLevel = level;}
-
-	///allocate W3D resources needed to render water
-	void renderWater();				///<draw the water surface (flat)
-	Int init(Real waterLevel, Real dx, Real dy, SceneClass *parentScene, WaterType type);
-	void reset();  ///< reset any resources we need to
-	void load();	///< load/setup any map dependent features
-	void update(); ///< update phase of the water
-	void enableWaterGrid(Bool state);	///< used to active custom water for special maps. (i.e DAM).
-	void updateMapOverrides();	///< used to update any map specific map overrides for water appearance.
-	void setTimeOfDay(TimeOfDay tod); ///<change sky/water for time of day
-	void toggleCloudLayer(Bool state)	{	m_useCloudLayer=state;}	///<enables/disables the cloud layer
-	void updateRenderTargetTextures(CameraClass *cam);	///< renders into any required textures.
-	void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
-	void ReAcquireResources();  ///< Reacquire all resources after device reset.
-	Real getWaterHeight(Real x, Real y);	///<return water height at given point - for use by WB.
-	void setGridHeightClamps(Real minz, Real maxz);	///<set min/max height values alllowed in grid
-	void addVelocity( Real worldX, Real worldY, Real zVelocity, Real preferredHeight );	///< add velocity value
-	void changeGridHeight(Real x, Real y, Real delta);	///<change height of grid at world point including neighbors within falloff.
-	void setGridChangeAttenuationFactors(Real a, Real b, Real c, Real range);	///<adjust falloff parameters for grid change method.
-	void setGridTransform(Real angle, Real x, Real y, Real z);	///<positoin/orientation of grid in space
-	void setGridTransform(const Matrix3D *transform);	///< set transform by matrix
-	void getGridTransform(Matrix3D *transform);	///< get grid transform matrix
-	void setGridResolution(Real gridCellsX, Real gridCellsY, Real cellSize);	///<grid resolution and spacing
-	void getGridResolution(Real *gridCellsX, Real *gridCellsY, Real *cellSize);  ///<get grid resolution params
-	inline void setGridVertexHeight(Int x, Int y, Real value);
-	void getGridVertexHeight(Int x, Int y, Real *value)
-	{	if (m_meshData)	*value=m_meshData[(y+1)*(m_gridCellsX+1+2)+x+1].height+ Get_Position().Z;}
-	inline Bool worldToGridSpace(Real worldX, Real worldY, Real &gridX, Real &gridY);	///<convert from world coordinates to grid's local coordinate system.
-
-	void replaceSkyboxTexture(const AsciiString& oldTexName, const AsciiString& newTextName);
+	void Render(W3DRenderContext &rinfo);
+	void renderWater();
+	void Set_Surface_Geometry(const WaterGeometry &geometry);
+	void Set_Grid_Render_Data(const WaterGridRenderData &data);
+	void Set_World_Position(Real x, Real y, Real z);
+	void Rebuild_Grid_Geometry();
+	Int init(Real waterLevel, Real dx, Real dy,
+		WaterReflectionRenderer *reflectionRenderer, WaterType type);
+	void reset();
+	void load();
+	void update();
+	void updateMapOverrides();
+	void setTimeOfDay(TimeOfDay tod);
+	void toggleCloudLayer(Bool state) { m_useCloudLayer = state; }
+	void updateRenderTargetTextures(W3DCamera *cam);
+	void Capture_Refraction_Texture();
+	void ReleaseResources();
+	void ReAcquireResources();
+	Real getWaterHeight(Real x, Real y);
+	void replaceSkyboxTexture(const AsciiString &oldTexName,
+		const AsciiString &newTextName);
 
 protected:
-	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining quad
-	SceneClass							*m_parentScene;	///<scene to be reflected
-	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
-	VertexMaterialClass	  		*m_vertexMaterialClass;	///<vertex lighting material
-	VertexMaterialClass			*m_meshVertexMaterialClass; ///<vertex lighting marial for 3D water.
-	LightClass					*m_meshLight;				///<light used for 3D Mesh Water.
-	TextureClass *m_alphaClippingTexture;	///<used for faked clipping using alpha
-	Real	m_dx;	///<x extent of water surface (offset from local center)
-	Real	m_dy;	///<y extent of water surface (offset from local center)
-	Vector3 m_planeNormal;		///<water plane normal
-	Real		m_planeDistance;	///<water plane distance
-	Real		m_level;			///<level of water (hack for water)
-	Real		m_uOffset;			///<current texture offset on u axis
-	Real		m_vOffset;			///<current texture offset on v axis
-	Real		m_uScrollPerMs;		///<texels per/ms scroll rate in u direction
-	Real		m_vScrollPerMs;		///<texels per/ms scroll rate in v direction
-	Int			m_LastUpdateTime;	///<time of last cloud update
-	Bool		m_useCloudLayer;	///<flag if clouds are on/off
-	WaterType	m_waterType;		///<type of water being used
-	Int			m_sortLevel;		///<sort order after main scene is rendered
+	WaterReflectionRenderer *m_reflectionRenderer;
+	W3DTextureHandle *m_skyBodyTexture;
+	Real m_dx;
+	Real m_dy;
+	Real m_level;
+    Real m_reflectionHeight = 0;
+	Real m_worldPositionX;
+	Real m_worldPositionY;
+	Real m_worldPositionZ;
+	Real m_uOffset;
+	Real m_vOffset;
+	Real m_uScrollPerMs;
+	Real m_vScrollPerMs;
+	Int m_LastUpdateTime;
+	Bool m_useCloudLayer;
+	WaterType m_waterType;
 
-	//Data used in GeForce3 bump-mapped water (uses direct D3D resources for better
-	//performance and compatibility (most of these featues are not supported by W3D).
-	struct SEA_PATCH_VERTEX	//vertex structure passed to D3D
-	{
-		float x,y,z;
-		unsigned int c;
-		float tu, tv;
-	};
+    std::vector<WaterSurfaceVertex> m_gridVertices;
+    std::vector<UnsignedShort> m_gridIndices;
+    Graphics::WaterMeshHandle m_gridMesh;
+    Graphics::WaterMeshHandle m_surfaceMesh;
 
-	LPDIRECT3DDEVICE9 m_pDev;						///<pointer to D3D Device
-	LPDIRECT3DVERTEXBUFFER9 m_vertexBufferD3D;		///<D3D vertex buffer
-	LPDIRECT3DINDEXBUFFER9	m_indexBufferD3D;	///<D3D index buffer
-	Int						m_vertexBufferD3DOffset;	///<location to start writing vertices
-	uintptr_t				m_dwWavePixelShader;	///<handle to D3D pixel shader
-	uintptr_t				m_dwWaveVertexShader;	///<handle to D3D vertex shader
-	Int	m_numVertices;				///<number of vertices in D3D vertex buffer
-	Int m_numIndices;				///<number of indices in D3D index buffer
-	LPDIRECT3DTEXTURE9 m_pBumpTexture[NUM_BUMP_FRAMES]; ///<animation frames
-	LPDIRECT3DTEXTURE9 m_pBumpTexture2[NUM_BUMP_FRAMES]; ///<animation frames
-	Real				m_fBumpFrame;	///<current animation frame
-	Real				m_fBumpScale;	///<scales bump map uv perturbation
-	TextureClass * m_pReflectionTexture;	///<render target for reflection
-	RenderObjClass	*m_skyBox;		///<box around level
-	WaterTracksRenderSystem *m_waterTrackSystem;	///<object responsible for rendering water wakes
-
-	enum WaterMeshStatus
-	{
-		AT_REST = 0x00,
-		IN_MOTION = 0x01
-	};
-	struct WaterMeshData
-	{
-		Real height;										///< height of the 3D mesh at this point
-		Real velocity;									///< velocity in Z that this point is moving up and down
-		UnsignedByte status;						///< status for this grid point
-		UnsignedByte preferredHeight;		///< the hight we prefer to be
-	};
-	WaterMeshData *m_meshData;  ///< heightmap data for 3D Mesh based water.
-	UnsignedInt m_meshDataSize;	///< size of m_meshData
-	Bool m_meshInMotion;				///< TRUE once we've messed with velocities and are in motion
-	Bool m_doWaterGrid;	///< allows/prevents water grid rendering.
-
-	Vector2	m_gridDirectionX;			///<vector along water grid's x-axis (scaled to world-space)
-	Vector2	m_gridDirectionY;			///<vector along water grid's y-axis (scaled to world-space)
-	Vector2	m_gridOrigin;				///<unit vector along water grid's x-axis
-	Real m_gridWidth;					///<object-space width of water grid
-	Real m_gridHeight;					///<object-space width of water grid
-	Real m_minGridHeight;				///<minimum height value allowed for water mesh
-	Real m_maxGridHeight;				///<maximum height value allowed for water mesh
-	Real m_gridChangeMaxRange;			///<maximum range of changeGridHeight() method
-	Real m_gridChangeAtt0;
-	Real m_gridChangeAtt1;
-	Real m_gridChangeAtt2;
-	Real m_gridCellSize;				///<world-space width/height of each cell.
-	Int  m_gridCellsX;					///<number of cells along width
-	Int  m_gridCellsY;					///<number of cells along height
+	Int m_numVertices;
+	Int m_numIndices;
+	W3DTextureHandle *m_pReflectionTexture;
+	Graphics::RHITextureHandle m_sceneColorTexture;
+	Graphics::RHITextureHandle m_sceneDepthTexture{};
+	WaterSkyboxSystem *m_skyBox;
+	WaterTracksRenderSystem *m_waterTrackSystem;
 
 	Real m_riverVOrigin;
-	TextureClass *m_riverTexture;
-	TextureClass *m_whiteTexture;		///< a texture containing only white used for null pixel shader stages.
-	TextureClass *m_waterNoiseTexture;
-	uintptr_t	m_waterPixelShader;		///<D3D handle to pixel shader.
-	uintptr_t	m_riverWaterPixelShader;		///<D3D handle to pixel shader.
-	uintptr_t	m_trapezoidWaterPixelShader;	///<handle to D3D vertex shader
-	TextureClass *m_waterSparklesTexture;
+	Real m_waterTime;
+	W3DTextureHandle *m_riverTexture;
+	W3DTextureHandle *m_whiteTexture;
+	W3DTextureHandle *m_waterNoiseTexture;
+	W3DTextureHandle *m_waterOceanHeightTexture;
+	W3DTextureHandle *m_waterOceanNormalTexture;
+	W3DTextureHandle *m_waterEnvironmentTexture;
+	W3DTextureHandle *m_waterCausticsTexture;
+	W3DTextureHandle *m_waterDepthLutTexture;
+	W3DTextureHandle *m_waterSparklesTexture;
 	Real m_riverXOffset;
 	Real m_riverYOffset;
-	Bool m_drawingRiver;
-	Bool m_disableRiver;
-	TextureClass *m_riverAlphaEdge;
+	Bool m_drawingRiver = false;
+	Bool m_renderingOffscreen;
+	W3DTextureHandle *m_riverAlphaEdge;
+	WaterGeometry m_surfaceGeometry;
+    Vector4 m_surfaceDomain{0,0,0,0};
+    std::vector<std::vector<Graphics::WaterMeshHandle>> m_surfaceMeshes;
+    std::vector<Graphics::WaterBodyMotion> m_waterBodies;
+	WaterGridRenderData m_gridRenderData;
+	WaterMaterialClass m_waterMaterial;
 
-	TimeOfDay m_tod;	///<time of day setting for reflected cloud layer
+	TimeOfDay m_tod;
 
 	struct Setting
 	{
-		TextureClass	*skyTexture;
-		TextureClass	*waterTexture;
-		Int				waterRepeatCount;
-		Real			skyTexelsPerUnit;	//texel density of sky plane (higher value repeats texture more).
-		DWORD			vertex00Diffuse;
-		DWORD			vertex10Diffuse;
-		DWORD			vertex11Diffuse;
-		DWORD			vertex01Diffuse;
-		DWORD			waterDiffuse;
-		DWORD			transparentWaterDiffuse;
-		Real			uScrollPerMs;
-		Real			vScrollPerMs;
+		W3DTextureHandle *skyTexture;
+		W3DTextureHandle *waterTexture;
+		Int waterRepeatCount;
+		Real skyTexelsPerUnit;
+		std::uint32_t vertex00Diffuse;
+		std::uint32_t vertex10Diffuse;
+		std::uint32_t vertex11Diffuse;
+		std::uint32_t vertex01Diffuse;
+		std::uint32_t waterDiffuse;
+		std::uint32_t transparentWaterDiffuse;
+		Real uScrollPerMs;
+		Real vScrollPerMs;
 	};
 
-	Setting m_settings[ TIME_OF_DAY_COUNT ];	///< settings for each time of day
-	void drawRiverWater(PolygonTrigger *pTrig);
-	void drawTrapezoidWater(Vector3 points[4]);
-	void loadSetting ( Setting *skySetting, TimeOfDay timeOfDay );	///<init sky/water settings from GDF
-	void renderSky();	///<draw the sky layer (clouds, stars, etc.)
-	void testCurvedWater();	///<draw the sky layer (clouds, stars, etc.)
-	void renderSkyBody(Matrix3D *mat);	///<draw the sky body (sun, moon, etc.)
-	void renderWaterMesh(void);			///<draw the water surface mesh (deformed 3d mesh).
-	HRESULT initBumpMap(LPDIRECT3DTEXTURE9 *pTex, TextureClass *pBumpSource);	///<copies data into bump-map format.
-	void renderMirror(CameraClass *cam);	///< Draw reflected scene into texture
-	void drawSea(RenderInfoClass & rinfo);	///< Draw the surface of the water
-	///bounding box of frustum clipped polygon plane
-	Bool getClippedWaterPlane(CameraClass *cam, AABoxClass *box);
+	Setting m_settings[TIME_OF_DAY_COUNT];
+	void drawRiverWater(const WaterSurfacePolygon &polygon);
+    void rebuildSurfaceMeshes();
+    Vector4 getDisplacementDomain() const;
+    void updateWaterBodies();
+    void drawSurfaceMesh(Graphics::WaterMeshHandle mesh);
+	void loadSetting(Setting *skySetting, TimeOfDay timeOfDay);
+	void updateTextureAnimation();
+	void renderUnderwater(W3DRenderContext &rinfo, bool draw_grid);
+	void testCurvedWater();
+	bool updateGridGeometry();
+	void renderWaterMesh();
+	void renderMirror(W3DCamera *cam);
+	void drawSea(W3DRenderContext &rinfo);
+	bool updateDisplacementTexture();
+	Bool getClippedWaterPlane(W3DCamera *cam, AABoxClass *box);
+	WaterMaterialParameters makeWaterMaterialParameters(bool river,
+		bool reflection, bool underwater) const;
 
-	void setupFlatWaterShader();
-	void setupJbaWaterShader();
-	void cleanupJbaWaterShader();
-
-	//Methods used for GeForce3 specific water
-	HRESULT generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
-	HRESULT generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
-
-	// snapshot methods for save/load
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
-	virtual void loadPostProcess() override;
-
+	bool generateIndexBuffer(int sizeX, int sizeY);
+	bool generateVertexBuffer(Int sizeX, Int sizeY, Bool doFill);
+	std::uint32_t getSurfaceDiffuse(bool reduce_alpha) const;
+	bool uploadSurfaceGeometry(const WaterSurfaceVertex *vertices,
+		unsigned vertex_count, const UnsignedShort *indices, unsigned index_count);
 };
 
-//Public inline function declarations
-inline Bool WaterRenderObjClass::worldToGridSpace(Real worldX, Real worldY, Real &gridX, Real &gridY)
-{
-	Real dx,dy;
-	Real ooGridCellSize = 1.0f/m_gridCellSize;
-
-	dx=worldX - m_gridOrigin.X;
-	dy=worldY - m_gridOrigin.Y;
-	gridX = ooGridCellSize * (dx * m_gridDirectionX.X + dy * m_gridDirectionX.Y);
-	gridY = ooGridCellSize * (dx * m_gridDirectionY.X + dy * m_gridDirectionY.Y);
-
-	if (gridX < 0)
-		return FALSE;
-	if (gridX > m_gridCellsX-1 )
-		return FALSE;
-	if (gridY < 0)
-		return FALSE;
-	if (gridY > m_gridCellsY-1 )
-		return FALSE;
-
-	return TRUE;
-}
-
-extern WaterRenderObjClass *TheWaterRenderObj; ///<global water rendering object
+extern WaterRenderSystem *TheWaterRenderSystem;

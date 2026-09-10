@@ -25,17 +25,18 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/vertmaterial.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
 #include "Lib/BaseType.h"
 
 #if defined(RTS_DEBUG)
+import Graphics.Scene.Surfaces.Renderer;
 struct DebugIcon;
 //
 /// W3DDebugIcons: Draws huge numbers of debug icons for pathfinding quickly.
 //
 //
-class W3DDebugIcons : public RenderObjClass
+class W3DDebugIcons : public W3DRenderObject
 {
 
 public:
@@ -48,17 +49,17 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
+	virtual W3DRenderObject *	Clone() const;
 	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
+	virtual void					Render(W3DRenderContext & rinfo);
 
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
+	virtual bool					Cast_Ray(W3DRayCastQuery & raytest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 protected:
-	VertexMaterialClass	  	*m_vertexMaterialClass;
+	Graphics::SurfaceMeshHandle m_mesh;
 
 protected:
 	static DebugIcon        *m_debugIcons;

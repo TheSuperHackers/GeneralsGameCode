@@ -30,8 +30,7 @@
 
 #pragma once
 
-#include "WW3D2/ww3d.h"
-#include "WW3D2/texturefilter.h"
+import Graphics.Resources.Textures.Sampling;
 
 #include "Common/UserPreferences.h"
 
@@ -58,9 +57,9 @@ public:
 
 	Bool loadFromIniFile();
 
-	WW3D::MultiSampleModeEnum getAntiAliasing() const;
-	TextureFilterClass::TextureFilterMode getTextureFilterMode() const;
-	TextureFilterClass::AnisotropicFilterMode getTextureAnisotropyLevel() const;
+	UnsignedInt getAntiAliasing() const;
+	Graphics::TextureSamplingMode getTextureFilterMode() const;
+	int getTextureAnisotropyLevel() const;
 	UnsignedInt getLANIPAddress();
 	UnsignedInt getOnlineIPAddress();
 	void setLANIPAddress(AsciiString IP);

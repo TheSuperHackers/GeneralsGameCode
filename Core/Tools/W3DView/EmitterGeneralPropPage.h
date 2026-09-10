@@ -22,7 +22,7 @@
 //
 
 #include "resource.h"
-#include "WW3D2/shader.h"
+import Graphics.Materials.State;
 
 // Forward delcarations
 class EmitterInstanceListClass;
@@ -95,8 +95,8 @@ protected:
 		const CString &				Get_Name () const					{ return m_EmitterName; }
 		const CString &				Get_Texture_Filename () const	{ return m_TextureFilename; }
 		float								Get_Lifetime () const				{ return m_Lifetime; }
-		const ShaderClass &			Get_Shader () const					{ return m_Shader; }
-		//void								Get_Shader (ShaderClass &shader);
+		const Graphics::MaterialState &			Get_Shader () const					{ return m_Shader; }
+		//void								Get_Shader (Graphics::MaterialState &shader);
 
 	protected:
 
@@ -105,7 +105,7 @@ protected:
 		//	Protected methods
 		//
 		void								Initialize ();
-		void								Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
+		void								Add_Shader_To_Combo (Graphics::MaterialState &shader, LPCTSTR name);
 
 	private:
 
@@ -118,7 +118,7 @@ protected:
 
 		CString							m_EmitterName;
 		CString							m_TextureFilename;
-		ShaderClass						m_Shader;
+		Graphics::MaterialState						m_Shader;
 		//int								m_ShaderType;
 		float								m_Lifetime;
 		bool								m_bValid;

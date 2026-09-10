@@ -1,3 +1,4 @@
+import Graphics.Frame.RenderClock;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -361,7 +362,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	// TheSuperHackers @tweak Update the draw on every WW Sync only.
 	// All calculations are originally catered to a 30 fps logic step.
-	if (WW3D::Get_Sync_Frame_Time() == 0)
+	if (Graphics::Get_Render_Clock().Sync_Delta() == 0)
 		return;
 
 	const Real ACCEL_THRESHOLD = 0.01f;

@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "GammaDialog.h"
-#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/WW3D.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
@@ -94,7 +94,6 @@ void GammaDialogClass::OnOK()
 	if (m_gamma<10) m_gamma=10;
 	if (m_gamma>30) m_gamma=30;
 	::AfxGetApp()->WriteProfileInt("Config","Gamma",m_gamma);
-	DX8Wrapper::Set_Gamma(m_gamma/10.0f,0.0f,1.0f);
 
 	CDialog::OnOK();
 }
@@ -103,7 +102,6 @@ void GammaDialogClass::OnReleasedcaptureGammaSlider(NMHDR* pNMHDR, LRESULT* pRes
 {
 	// TODO: Add your control notification handler code here
 	m_gamma=m_gammaslider.GetPos();
-	DX8Wrapper::Set_Gamma(m_gamma/10.0f,0.0f,1.0f);
 	CString string;
 	string.Format("%3.2f",m_gamma/10.0f);
 	SetDlgItemText(IDC_GAMMA_DISPLAY,string);

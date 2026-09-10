@@ -19,7 +19,6 @@
 #include "AudioEngine.h"
 #include "core/AudioSystem.h"
 #include "core/AudioFactory.h"
-#include "core/AudioVideoStream.h"
 
 #include <algorithm>
 #include <cstring>
@@ -641,19 +640,6 @@ uint32_t AudioEngine::getNum3DSamples() const
 uint32_t AudioEngine::getNumStreams() const
 {
 	return m_backend ? m_backend->getNumStreams() : 0;
-}
-
-AudioVideoStream *AudioEngine::createVideoStream()
-{
-	return m_backend ? m_backend->createVideoStream() : nullptr;
-}
-
-void AudioEngine::releaseVideoStream(AudioVideoStream *stream)
-{
-	if (m_backend)
-		m_backend->releaseVideoStream(stream);
-	else
-		delete stream;
 }
 
 // ── Internal helpers ────────────────────────────────────────────

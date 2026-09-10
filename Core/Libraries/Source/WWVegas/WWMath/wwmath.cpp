@@ -37,7 +37,6 @@
 
 #include "wwmath.h"
 #include "WWDebug/wwhack.h"
-#include "lookuptable.h"
 #include <stdlib.h>
 #include "WWDebug/wwdebug.h"
 #include "WWDebug/wwprofile.h"
@@ -50,8 +49,6 @@ float _FastInvSinTable[SIN_TABLE_SIZE];
 
 void		WWMath::Init()
 {
-	LookupTableMgrClass::Init();
-
 	int a=0;
 	for (;a<ARC_TABLE_SIZE;++a) {
 		float cv=float(a-ARC_TABLE_SIZE/2)*(1.0f/(ARC_TABLE_SIZE/2));
@@ -73,7 +70,6 @@ void		WWMath::Init()
 
 void		WWMath::Shutdown()
 {
-	LookupTableMgrClass::Shutdown();
 }
 
 float		WWMath::Random_Float()

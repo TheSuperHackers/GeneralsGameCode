@@ -52,6 +52,9 @@
 #include "Common/Errors.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
+#ifdef RTS_ZEROHOUR
+#include <malloc.h>
+#endif
 #ifdef MEMORYPOOL_DEBUG
 #include "GameClient/ClientRandomValue.h"
 #endif
@@ -231,9 +234,24 @@ static Int roundUpMemBound(Int i)
 
 	note: throws ERROR_OUT_OF_MEMORY on failure; never returns null
 */
+#ifdef MEMORYPOOL_DEBUG
+static size_t sysAllocationSize(void* p)
+{
+#ifdef RTS_ZEROHOUR
+    return ::_aligned_msize(p, 16, 0);
+#else
+    return ::GlobalSize(p);
+#endif
+}
+#endif
+
 static void* sysAllocateDoNotZero(Int numBytes)
 {
-	void* p = ::GlobalAlloc(GMEM_FIXED, numBytes);
+#ifdef RTS_ZEROHOUR
+    void* p = ::_aligned_malloc(numBytes, 16);
+#else
+    void* p = ::GlobalAlloc(GMEM_FIXED, numBytes);
+#endif
 	if (!p)
 		throw ERROR_OUT_OF_MEMORY;
 #ifdef MEMORYPOOL_DEBUG
@@ -242,10 +260,10 @@ static void* sysAllocateDoNotZero(Int numBytes)
 		#ifdef USE_FILLER_VALUE
 		{
 			USE_PERF_TIMER(MemoryPoolInitFilling)
-			::memset32(p, s_initFillerValue, ::GlobalSize(p));
+			::memset32(p, s_initFillerValue, sysAllocationSize(p));
 		}
 		#endif
-		theTotalSystemAllocationInBytes += ::GlobalSize(p);
+		theTotalSystemAllocationInBytes += sysAllocationSize(p);
 		if (thePeakSystemAllocationInBytes < theTotalSystemAllocationInBytes)
 			thePeakSystemAllocationInBytes = theTotalSystemAllocationInBytes;
 	}
@@ -265,11 +283,15 @@ static void sysFree(void* p)
 #ifdef MEMORYPOOL_DEBUG
 		{
 			USE_PERF_TIMER(MemoryPoolDebugging)
-			::memset32(p, GARBAGE_FILL_VALUE, ::GlobalSize(p));
-			theTotalSystemAllocationInBytes -= ::GlobalSize(p);
+			::memset32(p, GARBAGE_FILL_VALUE, sysAllocationSize(p));
+			theTotalSystemAllocationInBytes -= sysAllocationSize(p);
 		}
 #endif
-		::GlobalFree(p);
+#ifdef RTS_ZEROHOUR
+        ::_aligned_free(p);
+#else
+        ::GlobalFree(p);
+#endif
 	}
 }
 
@@ -429,6 +451,7 @@ private:
 public:
 
 	static Int calcRawBlockSize(Int logicalSize);
+	static Int userDataOffset();
 	static MemoryPoolSingleBlock *rawAllocateSingleBlock(MemoryPoolSingleBlock **pRawListHead, Int logicalSize, MemoryPoolFactory *owningFactory DECLARE_LITERALSTRING_ARG2);
 	void removeBlockFromList(MemoryPoolSingleBlock **pHead);
 
@@ -529,13 +552,21 @@ inline void **BlockCheckpointInfo::getStacktraceInfo() { return m_stacktrace; }
 	return a ptr to the user-data area of the block (ie, the part the enduser can deal with).
 	this call does NO debug verification and is for internal use of class MemoryPoolSingleBlock only.
 */
+inline Int MemoryPoolSingleBlock::userDataOffset()
+{
+    Int offset = sizeof(MemoryPoolSingleBlock);
+#ifdef MEMORYPOOL_BOUNDINGWALL
+    offset += WALLSIZE;
+#endif
+#ifdef RTS_ZEROHOUR
+    offset = (offset + 15) & ~15;
+#endif
+    return offset;
+}
+
 inline void* MemoryPoolSingleBlock::getUserDataNoDbg()
 {
-	char* p = ((char*)this) + sizeof(MemoryPoolSingleBlock);
-	#ifdef MEMORYPOOL_BOUNDINGWALL
-	p += WALLSIZE;
-	#endif
-	return (void*)p;
+    return reinterpret_cast<char*>(this) + userDataOffset();
 }
 
 /**
@@ -557,11 +588,14 @@ inline void* MemoryPoolSingleBlock::getUserData()
 */
 inline /*static*/ Int MemoryPoolSingleBlock::calcRawBlockSize(Int logicalSize)
 {
-	Int s = ::roundUpMemBound(logicalSize) + sizeof(MemoryPoolSingleBlock);
+	Int s = ::roundUpMemBound(logicalSize) + userDataOffset();
 	#ifdef MEMORYPOOL_BOUNDINGWALL
-	s += WALLSIZE*2;
+	s += WALLSIZE;
 	#endif
-	return s;
+#ifdef RTS_ZEROHOUR
+    s = (s + 15) & ~15;
+#endif
+    return s;
 }
 
 /**
@@ -903,10 +937,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	DEBUG_ASSERTCRASH(pUserData, ("null pUserData"));
 	if (!pUserData)
 		return nullptr;
-	char* p = ((char*)pUserData) - sizeof(MemoryPoolSingleBlock);
-	#ifdef MEMORYPOOL_BOUNDINGWALL
-	p -= WALLSIZE;
-	#endif
+	char* p = static_cast<char*>(pUserData) - userDataOffset();
 	MemoryPoolSingleBlock *block = (MemoryPoolSingleBlock *)p;
 // yes, verify the block in this case for plain debug mode (not intense-verify mode)
 #ifdef MEMORYPOOL_DEBUG

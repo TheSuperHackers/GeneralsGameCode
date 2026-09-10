@@ -23,10 +23,10 @@
 #include "W3DView.h"
 #include "EmitterGeneralPropPage.h"
 #include "EmitterPropertySheet.h"
-#include "WW3D2/part_emt.h"
+#include "WW3D2/PartEmt.h"
 #include "Utils.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/shader.h"
+#include "WW3D2/Texture.h"
+import Graphics.Materials.State;
 #include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
@@ -123,7 +123,7 @@ EmitterGeneralPropPageClass::Initialize ()
 void
 EmitterGeneralPropPageClass::Add_Shader_To_Combo
 (
-	ShaderClass &shader,
+	Graphics::MaterialState &shader,
 	LPCTSTR name
 )
 {
@@ -157,13 +157,13 @@ EmitterGeneralPropPageClass::OnInitDialog ()
 	//
 	//	Add the known shaders to the combobox
 	//
-	Add_Shader_To_Combo (ShaderClass::_PresetAdditiveSpriteShader, "Additive");
-	Add_Shader_To_Combo (ShaderClass::_PresetAlphaSpriteShader, "Alpha");
-	Add_Shader_To_Combo (ShaderClass::_PresetATestSpriteShader, "Alpha-Test");
-	Add_Shader_To_Combo (ShaderClass::_PresetATestBlendSpriteShader, "Alpha-Test-Blend");
-	Add_Shader_To_Combo (ShaderClass::_PresetScreenSpriteShader, "Screen");
-	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeSpriteShader, "Multiplicative");
-	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueSpriteShader, "Opaque");
+	Add_Shader_To_Combo (Graphics::MaterialState::AdditiveSprite(), "Additive");
+	Add_Shader_To_Combo (Graphics::MaterialState::AlphaSprite(), "Alpha");
+	Add_Shader_To_Combo (Graphics::MaterialState::ATestSprite(), "Alpha-Test");
+	Add_Shader_To_Combo (Graphics::MaterialState::ATestBlendSprite(), "Alpha-Test-Blend");
+	Add_Shader_To_Combo (Graphics::MaterialState::ScreenSprite(), "Screen");
+	Add_Shader_To_Combo (Graphics::MaterialState::MultiplicativeSprite(), "Multiplicative");
+	Add_Shader_To_Combo (Graphics::MaterialState::OpaqueSprite(), "Opaque");
 
 	//
 	// Fill the edit controls with the default values
@@ -211,7 +211,7 @@ EmitterGeneralPropPageClass::OnApply ()
 	//
 	int index = SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETCURSEL);
 	if (index != CB_ERR) {
-		ShaderClass *shader = (ShaderClass *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
+		Graphics::MaterialState *shader = (Graphics::MaterialState *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
 		if (shader != nullptr) {
 			m_Shader = (*shader);
 		}

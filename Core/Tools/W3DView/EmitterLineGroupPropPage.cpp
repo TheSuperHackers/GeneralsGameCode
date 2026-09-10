@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "EmitterLineGroupPropPage.h"
-#include "WW3D2/w3d_file.h"
+#include "WW3D2/W3DFile.h"
 #include "EmitterInstanceList.h"
 #include "Utils.h"
 #include "ColorBar.h"

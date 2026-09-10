@@ -22,8 +22,8 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "HierarchyPropPage.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/rendobj.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/RendObj.h"
 #include "AssetPropertySheet.h"
 #include "MeshPropPage.h"
 

@@ -37,12 +37,12 @@ public:
 
 	W3DShadowManager();
 	~W3DShadowManager();
-	Bool init();	///<initialize resources used by manager, must have valid D3D device.
+	Bool init();	///<initialize resources used by manager, must have a valid renderer.
 	void queueShadows(Bool state) {m_isShadowScene=state;}	///<flags system to process shadows on next render call.
 
 	// shadow list management
 	void Reset();
-	Shadow* addShadow( RenderObjClass *robj,Shadow::ShadowTypeInfo *shadowInfo=nullptr, Drawable *draw=nullptr);	///< adds shadow caster to rendering system.
+	Shadow* addShadow( W3DRenderObject *robj,Shadow::ShadowTypeInfo *shadowInfo=nullptr, Drawable *draw=nullptr);	///< adds shadow caster to rendering system.
 	void removeShadow(Shadow *shadow);	///< removed shadow from rendering system and frees its resources.
 	void removeAllShadows(); ///< Remove all shadows.
 	void setShadowColor(UnsignedInt color) { m_shadowColor=color;}	///<sets the shadow color and alpha, value in ARGB format.

@@ -1,3 +1,4 @@
+import Graphics.Frame.RenderClock;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -28,6 +29,8 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <cstring>
+import Assets.Identity;
 
 #include "Common/Thing.h"
 #include "Common/ThingFactory.h"
@@ -45,7 +48,6 @@
 #include "GameClient/ParticleSys.h"
 #include "W3DDevice/GameClient/W3DGameClient.h"
 #include "W3DDevice/GameClient/Module/W3DTankTruckDraw.h"
-#include "WW3D2/matinfo.h"
 
 // TheSuperHackers @info Is disabled by default and therefore compatible with the Retail INI setups.
 #define SHOW_DEFAULT_TANK_DEBRIS (0)
@@ -412,7 +414,7 @@ void W3DTankTruckDraw::updateTreadPositions(Real uvDelta)
 /**Grab pointers to the sub-meshes for each tread*/
 void W3DTankTruckDraw::updateTreadObjects()
 {
-	RenderObjClass *robj=getRenderObject();
+	W3DRenderObject *robj=getRenderObject();
 
 	//clear all previous tread pointers
 	for (Int i=0; i<m_treadCount; i++)
@@ -424,21 +426,21 @@ void W3DTankTruckDraw::updateTreadObjects()
 	{
 		for (Int i=0; i < robj->Get_Num_Sub_Objects() && m_treadCount < MAX_TREADS_PER_TANK; i++)
 		{
-			RenderObjClass *subObj=robj->Get_Sub_Object(i);
+			W3DRenderObject *subObj=robj->Get_Sub_Object(i);
 			const char *meshName;
 			//Check if subobject name starts with "TREADS".
-			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH && subObj->Get_Name()
+			if (subObj && subObj->Class_ID() == W3DRenderObject::CLASSID_MESH && subObj->Get_Name()
 				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != nullptr && *(meshName++))
-				&&_strnicmp(meshName,"TREADS", 6) == 0)
+				&&Assets::Asset_Name_Prefix_Equals_No_Case(meshName,"TREADS", 6))
 			{	//check if sub-object has the correct material to do texture scrolling.
-				MaterialInfoClass *mat=subObj->Get_Material_Info();
+				auto mat = subObj->Get_Material_Info();
 				if (mat)
-				{	for (Int j=0; j<mat->Vertex_Material_Count(); j++)
+				{	for (Int j=0; j<static_cast<int>(mat->materials.size()); j++)
 					{
-						VertexMaterialClass *vmaterial=mat->Peek_Vertex_Material(j);
-						LinearOffsetTextureMapperClass *mapper=(LinearOffsetTextureMapperClass *)vmaterial->Peek_Mapper();
-						if (mapper && mapper->Mapper_ID() == TextureMapperClass::MAPPER_ID_LINEAR_OFFSET)
-						{	mapper->Set_UV_Offset_Delta(Vector2(0,0));	//disable automatic scrolling
+						Graphics::MeshMaterial *vmaterial=mat->materials[j].get();
+						auto* mapper=vmaterial->mappings[0].get();
+						if (mapper && mapper->Linear_Scroll())
+						{	mapper->Linear_Scroll()->rate_per_millisecond={};	//disable automatic scrolling
 							subObj->Add_Ref();	//increase reference since we're storing the pointer
 							m_treads[m_treadCount].m_robj=subObj;
 							m_treads[m_treadCount].m_type = TREAD_MIDDLE;	//default type
@@ -457,7 +459,7 @@ void W3DTankTruckDraw::updateTreadObjects()
 							m_treadCount++;
 						}
 					}
-					REF_PTR_RELEASE(mat);
+					mat.reset();
 				}
 			}
 			REF_PTR_RELEASE(subObj);
@@ -499,7 +501,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	// TheSuperHackers @tweak Update the draw on every WW Sync only.
 	// All calculations are originally catered to a 30 fps logic step.
-	if (WW3D::Get_Sync_Frame_Time() == 0)
+	if (Graphics::Get_Render_Clock().Sync_Delta() == 0)
 		return;
 
 	const Real ACCEL_THRESHOLD = 0.01f;

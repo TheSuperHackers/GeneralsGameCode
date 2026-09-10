@@ -16,14 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /VSS_Sync/ww3d2/w3d_file.h 16    8/29/01 9:49p Vss_sync $ */
+/* $Header: /VSS_Sync/ww3d2/W3DFile.h 16    8/29/01 9:49p Vss_sync $ */
 /***********************************************************************************************
  ***                            Confidential - Westwood Studios                              ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Commando / G 3D Library                                      *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/w3d_file.h                                  $*
+ *                     $Archive:: /VSS_Sync/ww3d2/W3DFile.h                                  $*
  *                                                                                             *
  *                      $Author:: Vss_sync                                                    $*
  *                                                                                             *
@@ -2069,4 +2069,4 @@ struct W3dSoundRObjHeaderStruct
 /*
 ** Include the obsolete structures and chunk ID's
 */
-#include "w3d_obsolete.h"
+#include "W3DObsolete.h"

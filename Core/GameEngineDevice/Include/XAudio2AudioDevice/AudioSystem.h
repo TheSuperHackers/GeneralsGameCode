@@ -21,8 +21,10 @@
 #include "AudioEvent.h"
 #include "AudioHandle.h"
 #include "AudioTypes.h"
+#include "core/AudioStream.h"
 
 #include <cstdint>
+#include <memory>
 
 class AudioFileProvider;
 
@@ -114,14 +116,9 @@ public:
 	/// Check if an audio bus is enabled.
 	virtual bool isBusEnabled(AudioBus bus) const = 0;
 
-	// ── Video stream ────────────────────────────────────────
-
-	/// Create a streaming audio channel for video playback.
-	/// Returns an AudioVideoStream pointer (caller must release via releaseVideoStream).
-	virtual class AudioVideoStream *createVideoStream() { return nullptr; }
-
-	/// Release a previously created video stream.
-	virtual void releaseVideoStream(class AudioVideoStream *stream) { (void)stream; }
+	/// Create a generic streaming PCM output routed to the requested bus.
+	/// The caller owns the returned stream.
+	virtual std::unique_ptr<AudioStream> createAudioStream(AudioBus /*bus*/) { return nullptr; }
 
 	// ── Utility ─────────────────────────────────────────────
 

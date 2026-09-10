@@ -60,7 +60,6 @@ void XAudio2AudioManager::postProcessLoad()
 
 void XAudio2AudioManager::reset()
 {
-	releaseHandleForVideo();
 	removeAllAudioRequests();
 	theAudio().reset();
 	m_playingEvents.clear();
@@ -544,24 +543,6 @@ void XAudio2AudioManager::removeAllDisabledAudio()
 Bool XAudio2AudioManager::has3DSensitiveStreamsPlaying() const
 {
 	return FALSE;
-}
-
-// ── Video ───────────────────────────────────────────────────────
-
-void *XAudio2AudioManager::getHandleForVideo()
-{
-	if (!m_videoStream)
-		m_videoStream = theAudio().createVideoStream();
-	return m_videoStream;
-}
-
-void XAudio2AudioManager::releaseHandleForVideo()
-{
-	if (m_videoStream)
-	{
-		theAudio().releaseVideoStream(m_videoStream);
-		m_videoStream = nullptr;
-	}
 }
 
 // ── Force play ──────────────────────────────────────────────────

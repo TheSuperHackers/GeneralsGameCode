@@ -33,10 +33,11 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
+#include "W3DDevice/GameClient/W3DSceneQueryMask.h"			///< we don't generally do this, but we need the W3D collision types
 #include "WWMath/plane.h"
 #include "WWMath/wwmath.h"
+
+import Graphics.Scene.Views.CameraProjection;
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480
@@ -61,11 +62,11 @@ constexpr const Real ViewDefaultMaxHeightAboveTerrain = 310.0f;
 // ------------------------------------------------------------------------------------------------
 enum PickType CPP_11(: Int)
 {
-	PICK_TYPE_TERRAIN						= COLL_TYPE_0,
-	PICK_TYPE_SELECTABLE				= COLL_TYPE_1,
-	PICK_TYPE_SHRUBBERY					= COLL_TYPE_2,
-	PICK_TYPE_MINES							= COLL_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
-	PICK_TYPE_FORCEATTACKABLE		= COLL_TYPE_4,
+	PICK_TYPE_TERRAIN						= SCENE_QUERY_0,
+	PICK_TYPE_SELECTABLE				= SCENE_QUERY_1,
+	PICK_TYPE_SHRUBBERY					= SCENE_QUERY_2,
+	PICK_TYPE_MINES							= SCENE_QUERY_3,	// mines aren't normally selectable, but workers/dozers need to
+	PICK_TYPE_FORCEATTACKABLE		= SCENE_QUERY_4,
 	PICK_TYPE_ALL_DRAWABLES			= (PICK_TYPE_SELECTABLE | PICK_TYPE_SHRUBBERY | PICK_TYPE_MINES | PICK_TYPE_FORCEATTACKABLE)
 };
 
@@ -126,8 +127,8 @@ public:
 	/// the world points are at the requested Z. Returns whether all corner view rays intersect
 	/// with the Z plane.
 	virtual PlaneClass::IntersectionResType getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
-																							Coord3D *bottomRight, Coord3D *bottomLeft,
-																							Real z, ViewportClass viewPort = ViewportClass() );
+																																					Coord3D *bottomRight, Coord3D *bottomLeft,
+																																					Real z, Graphics::CameraViewport viewPort = Graphics::CameraViewport() );
 
 	virtual void setWidth( Int width ) { m_width = width; }
 	virtual Int getWidth() { return m_width; }

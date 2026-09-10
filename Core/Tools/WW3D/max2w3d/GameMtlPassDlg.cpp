@@ -54,7 +54,7 @@
 #include "PS2GameMtlShaderDlg.h"
 #include "GameMtlTextureDlg.h"
 #include "GameMtlVertexMaterialDlg.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 
 
 static int _Pass_Index_To_Flag[] =

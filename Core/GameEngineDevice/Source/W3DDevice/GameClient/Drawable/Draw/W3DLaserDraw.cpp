@@ -29,7 +29,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+import Graphics.Materials.State;
 #include <stdlib.h>
+
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -45,13 +47,11 @@
 #include "W3DDevice/GameClient/Module/W3DLaserDraw.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/segline.h"
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
+#include "W3DDevice/GameClient/W3DSegmentedLineRenderObject.h"
 #include "WWMath/vector3.h"
-#include "WW3D2/assetmgr.h"
-
-
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -120,16 +120,15 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 	Int i;
 
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
-
-	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( data->m_textureName.str() );
+	m_texture = W3DAssetCatalog::Get_Instance()->Get_Texture( data->m_textureName.str() );
 	if (m_texture)
 	{
 		if (!m_texture->Is_Initialized())
 			m_texture->Init();	//make sure texture is actually loaded before accessing surface.
 
-		SurfaceClass::SurfaceDescription surfaceDesc;
+		Assets::ImageDescription surfaceDesc;
 		m_texture->Get_Level_Description(surfaceDesc);
-		m_textureAspectRatio = (Real)surfaceDesc.Width/(Real)surfaceDesc.Height;
+		m_textureAspectRatio = (Real)surfaceDesc.width/(Real)surfaceDesc.height;
 	}
 
 	//Get the color components for calculation purposes.
@@ -149,7 +148,7 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 #endif
 
 	//Allocate an array of lines equal to the number of beams * segments
-	m_line3D = NEW SegmentedLineClass *[ data->m_numBeams * data->m_segments ];
+	m_line3D = NEW W3DSegmentedLineRenderObject *[ data->m_numBeams * data->m_segments ];
 
 	for( UnsignedInt segment = 0; segment < data->m_segments; segment++ )
 	{
@@ -184,19 +183,19 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				blue		= innerBlue								+ scale * (outerBlue - innerBlue) * innerAlpha;
 			}
 
-			m_line3D[ index ] = NEW SegmentedLineClass;
+			m_line3D[ index ] = NEW W3DSegmentedLineRenderObject;
 
-			SegmentedLineClass *line = m_line3D[ index ];
+			W3DSegmentedLineRenderObject *line = m_line3D[ index ];
 			if( line )
 			{
 				line->Set_Texture( m_texture );
-				line->Set_Shader( ShaderClass::_PresetAdditiveShader );	//pick the alpha blending mode you want - see shader.h for others.
+				line->Set_Shader( Graphics::MaterialState::Additive() );	//pick the alpha blending mode you want - see shader.h for others.
 				line->Set_Width( width );
 				line->Set_Color( Vector3( red, green, blue ) );
 				line->Set_UV_Offset_Rate( Vector2(0.0f, data->m_scrollRate) );	//amount to scroll texture on each draw
 				if( m_texture )
 				{
-					line->Set_Texture_Mapping_Mode(SegLineRendererClass::TILED_TEXTURE_MAP);	//this tiles the texture across the line
+					line->Set_Texture_Mapping_Mode(Graphics::RibbonTextureMapping::Tiled);	//this tiles the texture across the line
 				}
 
 				// add to scene
@@ -214,6 +213,12 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 	}
 
 }
+
+
+
+
+
+
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -270,6 +275,9 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 		m_selfDirty = false;
 
 		Vector3 laserPoints[ 2 ];
+		Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
+		GameGetColorComponentsReal( data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha );
+		GameGetColorComponentsReal( data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha );
 
 		for( UnsignedInt segment = 0; segment < data->m_segments; segment++ )
 		{
@@ -369,21 +377,19 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				laserPoints[ 1 ].Set( update->getEndPos()->x, update->getEndPos()->y, update->getEndPos()->z );
 			}
 
-			//Get the color components for calculation purposes.
-			Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
-			GameGetColorComponentsReal( data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha );
-			GameGetColorComponentsReal( data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha );
-
 			for( Int i = data->m_numBeams - 1; i >= 0; i-- )
 			{
 
-				Real alpha, width;
+				Real alpha, width, red, green, blue;
 				int index = segment * data->m_numBeams + i;
 
 				if( data->m_numBeams == 1 )
 				{
 					width = data->m_innerBeamWidth * update->getWidthScale();
 					alpha = innerAlpha;
+					red = innerRed * innerAlpha;
+					green = innerGreen * innerAlpha;
+					blue = innerBlue * innerAlpha;
 				}
 				else
 				{
@@ -395,6 +401,9 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 					width		= (data->m_innerBeamWidth	+ scale * (data->m_outerBeamWidth - data->m_innerBeamWidth));
 					width *= ultimateScale;
 					alpha		= innerAlpha							+ scale * (outerAlpha - innerAlpha);
+					red = innerRed + scale * (outerRed - innerRed) * innerAlpha;
+					green = innerGreen + scale * (outerGreen - innerGreen) * innerAlpha;
+					blue = innerBlue + scale * (outerBlue - innerBlue) * innerAlpha;
 				}
 
 
@@ -415,6 +424,9 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 				m_line3D[ index ]->Set_Width( width );
 				m_line3D[ index ]->Set_Points( 2, &laserPoints[0] );
+
+				m_line3D[index]->Set_Color(Vector3(red,green,blue));
+				m_line3D[index]->Set_Visible(width > 0.0f && alpha > 0.0f);
 			}
 		}
 	}

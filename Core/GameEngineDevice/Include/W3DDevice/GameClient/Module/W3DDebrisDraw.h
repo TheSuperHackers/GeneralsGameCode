@@ -28,6 +28,14 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <memory>
+#include <span>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+import Assets.Cache.Animations;
+
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
@@ -36,8 +44,7 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
-class RenderObjClass;
-class HAnimClass;
+class W3DRenderObject;
 class Shadow;
 class FXList;
 
@@ -86,8 +93,8 @@ private:
 	AsciiString								m_animInitial;
 	AsciiString								m_animFlying;
 	AsciiString								m_animFinal;
-	RenderObjClass*						m_renderObject;										///< W3D Render object for this drawable
-	HAnimClass*								m_anims[STATECOUNT];
+	W3DRenderObject*						m_renderObject;										///< W3D Render object for this drawable
+	Assets::AnimationAssetHandle m_anims[STATECOUNT];
 	const FXList*							m_fxFinal;
 	Int												m_state;
 	Int												m_frames;

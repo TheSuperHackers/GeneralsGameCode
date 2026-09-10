@@ -40,7 +40,7 @@
 
 #include <string.h>
 #include <max.h>
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "Vector.h"
 
 

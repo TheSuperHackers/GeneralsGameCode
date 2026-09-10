@@ -23,11 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"
+import Graphics.Frame.RenderSettings;
 
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
+#include "Common/Debug.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
@@ -40,8 +42,8 @@
 
 
 
+
 Bool TheDebugIgnoreSyncErrors = FALSE;
-extern Int DX8Wrapper_PreserveFPU;
 
 #ifdef DEBUG_CRC
 Int TheCRCFirstFrameToLog = -1;
@@ -147,7 +149,7 @@ Int parseFPUPreserve(char *args[], int argc)
 {
 	if (argc > 1)
 	{
-		DX8Wrapper_PreserveFPU = atoi(args[1]);
+		Graphics::Get_Render_Settings().Set_Preserve_FPU(atoi(args[1]) != 0);
 	}
 	return 2;
 }
@@ -404,6 +406,12 @@ Int parseMapName(char *args[], int num)
 	{
 		TheWritableGlobalData->m_mapName.set( args[ 1 ] );
 		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_mapName);
+	#if !defined(RTS_DEBUG)
+		// Release builds use the same direct-load handoff as -file.  Without
+		// this, -map only initializes the legacy map-name field and no new-game
+		// message is queued by GameEngine::init.
+		TheWritableGlobalData->m_initialFile = TheWritableGlobalData->m_mapName;
+	#endif
 	}
 	return 1;
 }
@@ -414,11 +422,8 @@ Int parseHeadless(char *args[], int num)
 	TheWritableGlobalData->m_playIntro = FALSE;
 	TheWritableGlobalData->m_playSizzle = FALSE;
 
-	// TheSuperHackers @fix bobtista 03/02/2026 Set DX8Wrapper_IsWindowed to false in headless
-	// mode so that ignoringAsserts() works correctly throughout the entire process lifetime,
-	// including during shutdown after TheGlobalData has been destroyed.
-	extern bool DX8Wrapper_IsWindowed;
-	DX8Wrapper_IsWindowed = false;
+	// Keep assert handling in headless mode after TheGlobalData has been destroyed.
+	DebugSetHeadlessMode(true);
 
 	return 1;
 }
@@ -679,17 +684,6 @@ Int parseDisplayDebug(char *args[], int)
 	return 1;
 }
 
-Int parseFile(char *args[], int num)
-{
-	if (num > 1)
-	{
-		TheWritableGlobalData->m_initialFile = args[1];
-		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_initialFile);
-	}
-	return 2;
-}
-
-
 Int parsePreloadEverything( char *args[], int num )
 {
 	TheWritableGlobalData->m_preloadAssets = TRUE;
@@ -727,6 +721,17 @@ Int parseLoadSave(char *args[], int num)
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 		TheWritableGlobalData->m_playIntro = FALSE;
 		TheWritableGlobalData->m_playSizzle = FALSE;
+	}
+	return 2;
+}
+
+// Allow a map to be launched directly in every build configuration.
+Int parseFile(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_initialFile = args[1];
+		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_initialFile);
 	}
 	return 2;
 }
@@ -1159,6 +1164,7 @@ static CommandLineParam paramsForStartup[] =
 static CommandLineParam paramsForEngineInit[] =
 {
 	{ "-nologo", parseNoLogo }, // TheSuperHackers @tweak Is now available in Release builds.
+	{ "-novideo", parseNoVideo },
 	{ "-noshellmap", parseNoShellMap },
 	{ "-noShellAnim", parseNoWindowAnimation }, // TheSuperHackers @tweak Is now available in Release builds.
 	{ "-xres", parseXRes },
@@ -1170,6 +1176,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-mod", parseMod },
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
+	{ "-file", parseFile },
 	{ "-useWaveEditor", parseUseWaveEditor },
 
 	// TheSuperHackers @feature bobtista 22/07/2026 Load a save game file from the command line.
@@ -1177,12 +1184,13 @@ static CommandLineParam paramsForEngineInit[] =
 
 	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
 	{ "-forcefullviewport", parseFullViewport },
-
+	// Allow direct map selection in Release builds as well as debug builds.
+	// parseMapName is configuration-independent; keeping this registration
+	// outside RTS_DEBUG makes -map usable for the win64 GeneralsMD executable.
+	{ "-map", parseMapName },
 #if defined(RTS_DEBUG)
 	{ "-noaudio", parseNoAudio },
-	{ "-map", parseMapName },
 	{ "-nomusic", parseNoMusic },
-	{ "-novideo", parseNoVideo },
 	{ "-noLogOrCrash", parseNoLogOrCrash },
 	{ "-FPUPreserve", parseFPUPreserve },
 	{ "-benchmark", parseBenchmark },
@@ -1268,7 +1276,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-jabber", parseJabber },
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
-	{ "-file", parseFile },
 
 //	{ "-preload", parsePreload },
 

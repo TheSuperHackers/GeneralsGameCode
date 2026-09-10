@@ -43,7 +43,7 @@
 #include "chunkio.h"
 #include "max.h"
 #include "nodelist.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 
 
 class PointFilterClass : public INodeFilterClass

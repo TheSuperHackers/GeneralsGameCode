@@ -82,8 +82,8 @@ enum WindowMsgHandledType CPP_11(: Int) { MSG_IGNORED, MSG_HANDLED };
 
 // callback types -------------------------------------------------------------
 typedef void (*GameWinMsgBoxFunc)(); //used for the Message box callbacks.
-typedef void (*GameWinDrawFunc)( GameWindow *,
-																 WinInstanceData * );
+// A callback extracts drawing commands; its address is never used as a type ID.
+using GameWinDrawFunc = Bool (*)(GameWindow*, WinInstanceData*, void* drawList);
 typedef void (*GameWinTooltipFunc)( GameWindow *,
 																		WinInstanceData *,
 																		UnsignedInt );
@@ -294,7 +294,6 @@ public:
 
 	// --------------------------------------------------------------------------
 	// draw methods and data
-	Int winDrawWindow();  ///< draws the default background
 	void winSetDrawOffset( Int x, Int y );  ///< set offset for drawing background image data
 	void winGetDrawOffset( Int *x, Int *y );  ///< get draw offset
 	void winSetHiliteState( Bool state );  ///< set hilite state
@@ -483,8 +482,7 @@ enum
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern void GameWinDefaultDraw( GameWindow *window,
-																WinInstanceData *instData );
+extern Bool GameWinDefaultDraw(GameWindow*, WinInstanceData*, void*);
 extern WindowMsgHandledType GameWinDefaultSystem( GameWindow *window,
 																	UnsignedInt msg,
 																  WindowMsgData mData1,

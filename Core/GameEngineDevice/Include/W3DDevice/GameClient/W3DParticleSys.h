@@ -1,62 +1,114 @@
-/*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// FILE: W3DParticleSys.h /////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
 #pragma once
 
-#include "GameClient/ParticleSys.h"
-#include "WW3D2/pointgr.h"
-#include "WW3D2/streak.h"
-#include "WW3D2/rinfo.h"
-#include "WWLib/bittype.h"
+#include <array>
+#include <cstdint>
+#include <span>
+#include <string>
+#include <vector>
 
-//=============================================================================
-/** W3D implementation of the game display which is responsible for creating
-  * all interaction with the screen and updating the display
-	*/
+#include "GameClient/ParticleSys.h"
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+
+import Graphics.Scene.Particles.Renderer;
+import Graphics.Scene.Beams;
+import Graphics.FrameTargets;
+
 class W3DParticleSystemManager : public ParticleSystemManager
 {
-
 public:
 	W3DParticleSystemManager();
 	virtual ~W3DParticleSystemManager() override;
 
-	virtual void doParticles(RenderInfoClass &rinfo) override;
+	virtual void doParticles(W3DRenderContext &rinfo) override;
 	virtual void queueParticleRender() override;
-	///< returns the number of particles shown on screen per frame
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
-private:
-	enum { MAX_POINTS_PER_GROUP = 512 };
+	void Reset_Graphics_Particle_Bindings() noexcept;
+	bool Set_Graphics_Particle_View(const Graphics::View &view) noexcept;
+	bool Render_Graphics_Particles(Graphics::CommandList &commands, const Graphics::FrameTargets &targets) noexcept;
 
-	PointGroupClass *m_pointGroup;							///< the point group that contains all of the particles
-	StreakLineClass *m_streakLine;							///< the streak class that contains all of the streaks
-	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
-	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
-	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
-	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
-	Bool m_readyToRender;											///< if true, it is OK to render
+private:
+	static constexpr std::size_t MAX_PARTICLES_PER_SYSTEM = 512;
+	static constexpr std::size_t MAX_VOLUME_PARTICLES_PER_SYSTEM = MAX_PARTICLES_PER_SYSTEM * 16;
+	static constexpr std::size_t MAX_GRAPHICS_SMUDGES = 512;
+
+	struct GraphicsEmitterBinding final
+	{
+		ParticleSystem *legacy_system = nullptr;
+		Graphics::ParticleEmitterHandle graphics_emitter{};
+		std::uint32_t sync_stamp = 0;
+	};
+
+	struct GraphicsStreakBinding final
+	{
+		ParticleSystem *legacy_system = nullptr;
+		std::string texture_name;
+		Graphics::TextureHandle texture{};
+		Graphics::MaterialHandle material{};
+		std::vector<Graphics::BeamHandle> beams;
+		std::uint32_t sync_stamp = 0;
+	};
+
+	struct GraphicsMaterialBinding final
+	{
+		std::string texture_name;
+		Graphics::TextureHandle texture{};
+		Graphics::MaterialHandle material{};
+	};
+
+	void Prepare_Graphics_Particles();
+	bool Is_Graphics_Particle_System(const ParticleSystem &system) const noexcept;
+	Graphics::ParticleEmitterHandle Find_Graphics_Emitter(ParticleSystem *system) const noexcept;
+	Graphics::ParticleEmitterHandle Ensure_Graphics_Emitter(ParticleSystem &system);
+	GraphicsStreakBinding *Find_Graphics_Streak(ParticleSystem *system) noexcept;
+	GraphicsStreakBinding *Ensure_Graphics_Streak(ParticleSystem &system);
+	Graphics::BeamFlags Graphics_Streak_Flags(const ParticleSystem &system) const noexcept;
+	void Update_Graphics_Streak(ParticleSystem &system, GraphicsStreakBinding &binding) noexcept;
+	Graphics::MaterialHandle Ensure_Graphics_Material(const char *texture_name);
+	Graphics::ParticleEmitterFlags Graphics_Particle_Flags(const ParticleSystem &system) const noexcept;
+	bool Passes_Terrain_Bounds(float x, float y, float z, float radius) const noexcept;
+	bool Prepare_Weather_Snow();
+	void Prepare_Graphics_Smudges();
+
+	std::vector<GraphicsEmitterBinding> m_graphicsEmitters;
+	std::vector<GraphicsStreakBinding> m_graphicsStreaks;
+	std::vector<GraphicsMaterialBinding> m_graphicsMaterials;
+	std::uint32_t m_graphicsSyncStamp = 0;
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsPositionX{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsPositionY{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsPositionZ{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsVelocityX{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsVelocityY{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsVelocityZ{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsLifetimes{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsSizes{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsColorR{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsColorG{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsColorB{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsColorA{};
+	std::array<float, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsAngles{};
+	std::array<Graphics::MaterialHandle, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsParticleMaterials{};
+	std::array<Graphics::ParticleEmitterFlags, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsEmitterFlags{};
+	std::array<Graphics::PipelineHandle, MAX_VOLUME_PARTICLES_PER_SYSTEM> m_graphicsPipelines{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgePositionX{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgePositionY{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgePositionZ{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgeOffsetX{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgeOffsetY{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgeSizes{};
+	std::array<float, MAX_GRAPHICS_SMUDGES> m_graphicsSmudgeOpacities{};
+	std::size_t m_graphicsSmudgeCount = 0;
+	Graphics::View m_graphicsView{};
+	bool m_graphicsViewValid = false;
+	float m_terrainCenterX = 0.0f;
+	float m_terrainCenterY = 0.0f;
+	float m_terrainCenterZ = 0.0f;
+	float m_terrainExtentX = 0.0f;
+	float m_terrainExtentY = 0.0f;
+	float m_terrainExtentZ = 0.0f;
+	bool m_terrainBoundsValid = false;
+	Int m_onScreenParticleCount = 0;
+	Bool m_readyToRender = false;
+	Bool m_graphicsParticlesPrepared = false;
+	bool m_weatherParticlesReady = false;
 };

@@ -1,3 +1,7 @@
+#include "W3DDevice/GameClient/W3DRenderServices.h"
+import Graphics.Frame.Runtime;
+import Assets.Images.PixelEncoding;
+
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -47,14 +51,13 @@
 //-----------------------------------------------------------------------------
 
 #include <stdlib.h>
-#include <WW3D2/assetmgr.h>
-#include <WW3D2/texture.h>
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
+#include <W3DDevice/GameClient/W3DTextureHandle.h>
 #include <WWMath/tri.h>
 #include <WWMath/colmath.h>
-#include <WW3D2/coltest.h>
-#include <WW3D2/rinfo.h>
-#include <WW3D2/camera.h>
-#include <d3dx9core.h>
+#include <W3DDevice/GameClient/W3DCastQuery.h>
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
 
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
@@ -68,6 +71,7 @@
 #include "GameLogic/TerrainLogic.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
+#include "W3DDevice/GameClient/W3DLight.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/W3DBibBuffer.h"
@@ -82,32 +86,18 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/light.h"
-#include "WW3D2/scene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 
-#include "W3DDevice/GameClient/HeightMap.h"
-#include "W3DDevice/GameClient/FlatHeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/W3DSnow.h"
+import Graphics.Diagnostics.Render;
 
-
-extern FlatHeightMapRenderObjClass *TheFlatHeightMap;
-extern HeightMapRenderObjClass *TheHeightMap;
-
-//-----------------------------------------------------------------------------
-//         Private Data
-//-----------------------------------------------------------------------------
-#define SC_DETAIL_BLEND ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_ENABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, ShaderClass::DETAILCOLOR_SCALE, ShaderClass::DETAILALPHA_DISABLE) )
-
-static ShaderClass detailOpaqueShader(SC_DETAIL_BLEND);
 
 //-----------------------------------------------------------------------------
 //         Global Functions & Data
@@ -117,7 +107,7 @@ BaseHeightMapRenderObjClass *TheTerrainRenderObject=nullptr;
 
 /** Entry point so that trees can be drawn at the appropriate point in the rendering pipe for
     transparent objects. */
-void DoTrees(RenderInfoClass & rinfo)
+void DoTrees(W3DRenderContext & rinfo)
 {
 	if (TheTerrainRenderObject) {
 		TheTerrainRenderObject->renderTrees(&rinfo.Camera);
@@ -152,7 +142,6 @@ Int BaseHeightMapRenderObjClass::freeMapResources()
 	m_scorches->freeBuffers();
 	m_staticScorches->freeBuffers();
 
-	REF_PTR_RELEASE(m_vertexMaterialClass);
 	REF_PTR_RELEASE(m_stageZeroTexture);
 	REF_PTR_RELEASE(m_stageOneTexture);
 	REF_PTR_RELEASE(m_stageTwoTexture);
@@ -168,12 +157,11 @@ Int BaseHeightMapRenderObjClass::freeMapResources()
 //=============================================================================
 /** Draws the scorch marks. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::drawScorches()
+void BaseHeightMapRenderObjClass::drawScorches(W3DCamera& camera)
 {
-	ShaderClass::Invalidate();
-	if (m_map && Is_Hidden() == 0 && !ShaderClass::Is_Backface_Culling_Inverted()) {
-		m_staticScorches->drawScorches(*m_map);
-		m_scorches->drawScorches(*m_map);
+	if (m_map && Is_Hidden() == 0 && !Get_W3D_Render_Services().Is_Reflection_Render_Pass()) {
+		m_staticScorches->drawScorches(*m_map, camera);
+		m_scorches->drawScorches(*m_map, camera);
 	}
 }
 
@@ -188,6 +176,7 @@ void BaseHeightMapRenderObjClass::drawScorches()
 //=============================================================================
 BaseHeightMapRenderObjClass::~BaseHeightMapRenderObjClass()
 {
+    m_resourceRegistration.Reset();
 	freeMapResources();
 
 	delete m_treeBuffer;
@@ -253,7 +242,6 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass()
 	m_shoreLineTilePositionsSize=0;
 	m_currentMinWaterOpacity = -1.0f;
 
-	m_vertexMaterialClass=nullptr;
 	m_stageZeroTexture=nullptr;
 	m_stageOneTexture=nullptr;
 	m_stageTwoTexture=nullptr;
@@ -306,7 +294,8 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass()
 #else
 	m_shroud = NEW W3DShroud;
 #endif
-	DX8Wrapper::SetCleanupHook(this);
+    m_resourceRegistration = Graphics::Get_Frame_Resource_Lifecycle().Register(
+        [this] { ReleaseResources(); },[this] { ReAcquireResources(); });
 }
 
 void BaseHeightMapRenderObjClass::scheduleFullUpdate()
@@ -319,10 +308,6 @@ void BaseHeightMapRenderObjClass::scheduleFullUpdate()
 
 void BaseHeightMapRenderObjClass::setTextureLOD(Int lod)
 {
-	if (m_treeBuffer)
-		m_treeBuffer->setTextureLOD(lod);
-	if (m_map)
-		m_map->setTextureLOD(lod);
 	m_scorches->invalidateTexture();
 	m_staticScorches->invalidateTexture();
 }
@@ -342,44 +327,30 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 		TheWritableGlobalData->m_terrainLOD=TERRAIN_LOD_MAX;
 	}
 
-	if (m_map==nullptr) return;
-	if (m_shroud)
-		m_shroud->reset();	//need reset here since initHeightData will load new shroud.
-
-	BaseHeightMapRenderObjClass *newROBJ = nullptr;
-	if (TheGlobalData->m_terrainLOD == TERRAIN_LOD_MAX) {
-		newROBJ = TheHeightMap;
-		if (newROBJ==nullptr) {
-			newROBJ = NEW_REF( HeightMapRenderObjClass, () );
-		}
-	}	else {
-		newROBJ = TheFlatHeightMap;
-		if (newROBJ==nullptr) {
-			newROBJ = NEW_REF( FlatHeightMapRenderObjClass, () );
-		}
+	// LOD is a material feature selection in the modern terrain pipeline.  The
+	// render object, atlas textures, vertex buffers, and scene registration are
+	// persistent; changing LOD must not replace or reinitialize any of them.
+	switch (TheGlobalData->m_terrainLOD)
+	{
+		case TERRAIN_LOD_MIN:
+		case TERRAIN_LOD_NO_CLOUDS:
+			TheWritableGlobalData->m_useCloudMap = false;
+			TheWritableGlobalData->m_useLightMap = false;
+			TheWritableGlobalData->m_useWaterPlane = false;
+			break;
+		case TERRAIN_LOD_NO_WATER:
+			TheWritableGlobalData->m_useCloudMap = true;
+			TheWritableGlobalData->m_useLightMap = true;
+			TheWritableGlobalData->m_useWaterPlane = false;
+			break;
+		case TERRAIN_LOD_MAX:
+		default:
+			TheWritableGlobalData->m_useCloudMap = true;
+			TheWritableGlobalData->m_useLightMap = true;
+			TheWritableGlobalData->m_useWaterPlane = true;
+			break;
 	}
 
-	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
-	if (pMyScene) {
-		pMyScene->Remove_Render_Object(this);
-		pMyScene->Unregister(this, SceneClass::ON_FRAME_UPDATE);
-		// add our terrain render object to the scene
-		if (newROBJ) {
-			pMyScene->Add_Render_Object( newROBJ );
-			pMyScene->Register(newROBJ,SceneClass::ON_FRAME_UPDATE);
-		}
-	}
-
-	if (newROBJ) {
-		// apply the heightmap to the terrain render object
-		newROBJ->initHeightData( m_map->getDrawWidth(),
-																					 m_map->getDrawHeight(),
-																					 m_map,
-																					 nullptr);
-		TheTerrainRenderObject = newROBJ;
-		newROBJ->staticLightingChanged();
-		newROBJ->m_roadBuffer->loadRoads();
-	}
 	if (TheTacticalView) {
 		TheTacticalView->forceRedraw();
 	}
@@ -411,8 +382,8 @@ void BaseHeightMapRenderObjClass::ReleaseResources()
 	REF_PTR_SET(pMap, m_map);
 	freeMapResources();
 	m_map = pMap; // ref_ptr_set has already incremented the ref count.
-	if (TheWaterRenderObj)
-		TheWaterRenderObj->ReleaseResources();
+	if (TheWaterRenderSystem)
+		TheWaterRenderSystem->ReleaseResources();
 	if (TheTerrainTracksRenderObjClassSystem)
 		TheTerrainTracksRenderObjClassSystem->ReleaseResources();
 	if (TheW3DShadowManager)
@@ -446,8 +417,8 @@ void BaseHeightMapRenderObjClass::ReAcquireResources()
 {
 	W3DShaderManager::init();	//reaquire resources which may be needed by custom shaders
 
-	if (TheWaterRenderObj)
-		TheWaterRenderObj->ReAcquireResources();
+	if (TheWaterRenderSystem)
+		TheWaterRenderSystem->ReAcquireResources();
 
 	if (TheTerrainTracksRenderObjClassSystem)
 		TheTerrainTracksRenderObjClassSystem->ReAcquireResources();
@@ -496,20 +467,13 @@ void BaseHeightMapRenderObjClass::ReAcquireResources()
 }
 
 //=============================================================================
-// BaseHeightMapRenderObjClass::doTheLight
+// BaseHeightMapRenderObjClass::computeVertexLighting
 //=============================================================================
 /** Calculates the diffuse lighting for a vertex in the terrain, taking all of the
-static lights into account as well.  It is possible to just use the normal in the
-vertex and let D3D do the lighting, but it is slower to render, and can only
-handle 4 lights at this point. */
+static lights into account as well. Returns the retained packed color value. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, const Vector3*light, Vector3*normal, RefRenderObjListIterator *pLightsIterator, UnsignedByte alpha)
+UnsignedInt BaseHeightMapRenderObjClass::computeVertexLighting(const Vector3& position, const Vector3*light, const Vector3*normal, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pLightsIterator, UnsignedByte alpha)
 {
-#ifdef USE_NORMALS
-	vb->nx = normal->X;
-	vb->ny = normal->Y;
-	vb->nz = normal->Z;
-#else
 	Real shadeR, shadeG, shadeB;
 	Real shade;
 	shadeR = TheGlobalData->m_terrainAmbient[0].red;	//only the first terrain light contributes to ambient
@@ -519,38 +483,29 @@ void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, const Vector3*li
 	if (pLightsIterator) {
 		for (pLightsIterator->First(); !pLightsIterator->Is_Done(); pLightsIterator->Next())
 		{
-			LightClass *pLight = (LightClass*)pLightsIterator->Peek_Obj();
-			Vector3 lightDirection(vb->x, vb->y, vb->z);
+			W3DLight *pLight = (W3DLight*)pLightsIterator->Peek_Obj();
+			Vector3 lightDirection(position.X, position.Y, position.Z);
 			Real factor = 1.0f;
 			switch(pLight->Get_Type()) {
-			case LightClass::POINT:
-			case LightClass::SPOT: {
+			case W3DLight::POINT:
+			case W3DLight::SPOT: {
 					Vector3 lightLoc = pLight->Get_Position();
 					lightDirection -= lightLoc;
 					double range, midRange;
 					pLight->Get_Far_Attenuation_Range(midRange, range);
-					if (vb->x < lightLoc.X-range) continue;
-					if (vb->x > lightLoc.X+range) continue;
-					if (vb->y < lightLoc.Y-range) continue;
-					if (vb->y > lightLoc.Y+range) continue;
+					if (position.X < lightLoc.X-range) continue;
+					if (position.X > lightLoc.X+range) continue;
+					if (position.Y < lightLoc.Y-range) continue;
+					if (position.Y > lightLoc.Y+range) continue;
 					Real dist = lightDirection.Length();
 					if (dist >= range) continue;
 					if (midRange < 0.1) continue;
-#if 1
 					factor = 1.0f - (dist - midRange) / (range - midRange);
-#else
-					// f = 1.0 / (atten0 + d*atten1 + d*d/atten2);
-					if (fabs(range-midRange)<1e-5)	{
-						// if the attenuation range is too small assume uniform with cutoff
-						factor = 1.0;
-					}	else  {
-						factor = 1.0f/(0.1+dist/midRange + 5.0f*dist*dist/(range*range));
-					}
-#endif
+
 					factor = WWMath::Clamp(factor,0.0f,1.0f);
 				}
 				break;
-			case LightClass::DIRECTIONAL:
+			case W3DLight::DIRECTIONAL:
 				lightDirection = pLight->Get_Transform().Get_Z_Vector();
 				factor = 1.0;
 				break;
@@ -594,10 +549,10 @@ void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, const Vector3*li
 	if (shadeB > 1.0) shadeB = 1.0;
 	if(shadeB < 0.0f) shadeB = 0.0f;
 
-	if (m_useDepthFade && vb->z <= TheGlobalData->m_waterPositionZ)
+	if (m_useDepthFade && position.Z <= TheGlobalData->m_waterPositionZ)
 	{	//height is below water level
 		//reduce lighting values based on light fall off as it travels through water.
-		float depthScale = (1.4f - vb->z)/TheGlobalData->m_waterPositionZ;
+		float depthScale = (1.4f - position.Z)/TheGlobalData->m_waterPositionZ;
 		shadeR *= 1.0f - depthScale * (1.0f-m_depthFade.X);
 		shadeG *= 1.0f - depthScale * (1.0f-m_depthFade.Y);
 		shadeB *= 1.0f - depthScale * (1.0f-m_depthFade.Z);
@@ -606,8 +561,7 @@ void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, const Vector3*li
 	shadeR*=255.0f;
 	shadeG*=255.0f;
 	shadeB*=255.0f;
-	vb->diffuse = REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | ((Int)alpha << 24);
-#endif
+	return REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | ((Int)alpha << 24);
 }
 
 //=============================================================================
@@ -678,7 +632,7 @@ relative to the ray so we can early exit as soon as we have a hit.
 // hit boxes even if the ray starts inside of it and no longer falls back to an
 // infinitely large search region if the initial boxes cannot be collided with.
 //=============================================================================
-bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
+bool BaseHeightMapRenderObjClass::Cast_Ray(W3DRayCastQuery & raytest)
 {
 	if (!m_map)
 		return false;	//need valid pointer to heightmap samples
@@ -849,7 +803,7 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 				hit = hit || (Bool)CollisionMath::Collide(raytest.Ray, tri, raytest.Result);
 
 				if (hit)
-					raytest.Result->SurfaceType = SURFACE_TYPE_DEFAULT;	///@todo: WW3D uses this to return dirt, grass, etc.  Do we need this?
+					raytest.Result->SurfaceType = 0;	// Terrain uses the default collision surface.
 			}
 			// Don't break.  It is possible to intersect 2 triangles, and the second is closer. if (hit) break;
 		}
@@ -1424,7 +1378,7 @@ Bool BaseHeightMapRenderObjClass::getMaximumVisibleBox(const FrustumClass &frust
 //=============================================================================
 Int BaseHeightMapRenderObjClass::Class_ID() const
 {
-	return RenderObjClass::CLASSID_TILEMAP;
+	return W3DRenderObject::CLASSID_TILEMAP;
 }
 
 //=============================================================================
@@ -1432,7 +1386,7 @@ Int BaseHeightMapRenderObjClass::Class_ID() const
 //=============================================================================
 /** Not used, but required virtual method. */
 //=============================================================================
-RenderObjClass *	 BaseHeightMapRenderObjClass::Clone() const
+W3DRenderObject *	 BaseHeightMapRenderObjClass::Clone() const
 {
 	assert(false);
 	return nullptr;
@@ -1445,7 +1399,7 @@ RenderObjClass *	 BaseHeightMapRenderObjClass::Clone() const
 //=============================================================================
 void BaseHeightMapRenderObjClass::loadRoadsAndBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 {
-	if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
+	if (!Graphics::Frame_Device_Ready())
 		return;	//device not ready to render anything
 
 #ifdef DO_ROADS
@@ -1465,7 +1419,7 @@ void BaseHeightMapRenderObjClass::loadRoadsAndBridges(W3DTerrainLogic *pTerrainL
 	* of the bridge towers */
 // ============================================================================
 void BaseHeightMapRenderObjClass::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetManager,
-																															SimpleSceneClass *scene )
+																															W3DSimpleScene *scene )
 {
 
 	if( m_bridgeBuffer )
@@ -1601,12 +1555,12 @@ void BaseHeightMapRenderObjClass::updateShorelineTile(Int i, Int j, Int border, 
 
 	Real X0=(i-border)*MAP_XY_FACTOR;
 	Real Y0=(j-border)*MAP_XY_FACTOR;
-	waterSide=(waterZ0=TheWaterRenderObj->getWaterHeight(X0,Y0)) > ((terrainZ0=MAP_HEIGHT_SCALE*pMap->getHeight(i,j)));
+	waterSide=(waterZ0=TheWaterRenderSystem->getWaterHeight(X0,Y0)) > ((terrainZ0=MAP_HEIGHT_SCALE*pMap->getHeight(i,j)));
 	Real X1=(i-border+1)*MAP_XY_FACTOR;
 	Real Y1=(j-border+1)*MAP_XY_FACTOR;
-	waterSide |=((waterZ1=TheWaterRenderObj->getWaterHeight(X1,Y0)) > ((terrainZ1=MAP_HEIGHT_SCALE*pMap->getHeight(i+1,j)))) << 1;
-	waterSide |=((waterZ2=TheWaterRenderObj->getWaterHeight(X1,Y1)) > ((terrainZ2=MAP_HEIGHT_SCALE*pMap->getHeight(i+1,j+1)))) << 2;
-	waterSide |=((waterZ3=TheWaterRenderObj->getWaterHeight(X0,Y1)) > ((terrainZ3=MAP_HEIGHT_SCALE*pMap->getHeight(i,j+1)))) << 3;
+	waterSide |=((waterZ1=TheWaterRenderSystem->getWaterHeight(X1,Y0)) > ((terrainZ1=MAP_HEIGHT_SCALE*pMap->getHeight(i+1,j)))) << 1;
+	waterSide |=((waterZ2=TheWaterRenderSystem->getWaterHeight(X1,Y1)) > ((terrainZ2=MAP_HEIGHT_SCALE*pMap->getHeight(i+1,j+1)))) << 2;
+	waterSide |=((waterZ3=TheWaterRenderSystem->getWaterHeight(X0,Y1)) > ((terrainZ3=MAP_HEIGHT_SCALE*pMap->getHeight(i,j+1)))) << 3;
 
 	if (!waterSide || (waterZ0*waterZ1*waterZ2*waterZ3) <= 0)
 		return;	//all verts are on positive (surface) side of water so don't need blending.  Or one of them is outside the water plane bounds (waterHeight <= 0!)
@@ -1738,12 +1692,12 @@ void BaseHeightMapRenderObjClass::initDestAlphaLUT()
 	if (!m_destAlphaTexture)
 		return;
 
-	SurfaceClass *surf=m_destAlphaTexture->Get_Surface_Level();
+	Graphics::TextureEdit *surf=m_destAlphaTexture->Get_Surface_Level();
 
 	if (surf)
 	{
-		Int pitch;
-		UnsignedInt *pData=(UnsignedInt*)surf->Lock(&pitch);
+		const auto mapping=surf->Map();
+        UnsignedInt *pData=reinterpret_cast<UnsignedInt*>(mapping.bytes.data());
 
 		Int maxOpacity=(Int)(TheWaterTransparency->m_minWaterOpacity * 255.0f);
 		Int alpha;
@@ -1759,12 +1713,12 @@ void BaseHeightMapRenderObjClass::initDestAlphaLUT()
 				*pData=(alpha<<24)|0x00ffffff;
 				pData++;
 			}
-			surf->Unlock();
+			surf->Unmap();
 		}
 
-		m_destAlphaTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		m_destAlphaTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		REF_PTR_RELEASE(surf);
+		m_destAlphaTexture->Get_Sampling().address[0] = Graphics::RHISamplerAddress::Clamp;
+		m_destAlphaTexture->Get_Sampling().address[1] = Graphics::RHISamplerAddress::Clamp;
+		delete surf; surf = nullptr;
 		m_currentMinWaterOpacity = TheWaterTransparency->m_minWaterOpacity;
 	}
 }
@@ -1776,7 +1730,7 @@ void BaseHeightMapRenderObjClass::initDestAlphaLUT()
 Also allocates all rendering resources such as vertex buffers, index buffers,
 shaders, and materials.*/
 //=============================================================================
-Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIteratork, Bool updateExtraPassTiles)
+Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pLightsIteratork, Bool updateExtraPassTiles)
 {
 
 	REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
@@ -1850,14 +1804,11 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 		REF_PTR_SET(m_map,pMap);	//update our heightmap pointer in case it changed since last call.
 		m_stageTwoTexture=NEW CloudMapTerrainTextureClass;
 		m_stageThreeTexture=NEW LightMapTerrainTextureClass(m_macroTextureName);
-		m_destAlphaTexture=MSGNEW("TextureClass") TextureClass(256,1,WW3D_FORMAT_A8R8G8B8,MIP_LEVELS_1);
+		m_destAlphaTexture=MSGNEW("W3DTextureHandle") W3DTextureHandle(256,1,Assets::PixelEncoding::BGRA8,MIP_LEVELS_1);
 		initDestAlphaLUT();
 		m_scorches->allocateBuffers();
 		m_staticScorches->allocateBuffers();
 
-		m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-
-		m_shaderClass = detailOpaqueShader;	//		ShaderClass::_PresetOpaqueShader;
 	}
 
 	return 0;
@@ -1945,28 +1896,22 @@ Int BaseHeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 
 	Vector3::Normalized_Cross_Product(l2r,n2f, &normalAtTexel);
 
-	VERTEX_FORMAT vertex;
-	vertex.x=ADJUST_FROM_INDEX_TO_REAL(x);
-	vertex.y=ADJUST_FROM_INDEX_TO_REAL(y);
-
-	vertex.z=  ((float)m_map->getHeight(x,y))*MAP_HEIGHT_SCALE;
-	vertex.u1=0;
-	vertex.v1=0;
-	vertex.u2=1;
-	vertex.v2=1;
+    const Vector3 position(ADJUST_FROM_INDEX_TO_REAL(x),ADJUST_FROM_INDEX_TO_REAL(y),
+        static_cast<float>(m_map->getHeight(x,y))*MAP_HEIGHT_SCALE);
+    UnsignedInt diffuse;
 
 	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 	if (pMyScene) {
-		RefRenderObjListIterator *it = pMyScene->createLightsIterator();
-		doTheLight(&vertex, lightRay, &normalAtTexel, it, 1.0f);
+		Graphics::SceneObjectList<W3DRenderObject>::Cursor *it = pMyScene->createLightsIterator();
+		diffuse = computeVertexLighting(position, lightRay, &normalAtTexel, it, 1);
 		if (it) {
 		 pMyScene->destroyLightsIterator(it);
 		 it = nullptr;
 		}
 	} else {
-		doTheLight(&vertex, lightRay, &normalAtTexel, nullptr, 1.0f);
+		diffuse = computeVertexLighting(position, lightRay, &normalAtTexel, nullptr, 1);
 	}
-	return vertex.diffuse;
+	return diffuse;
 }
 
 //=============================================================================
@@ -2209,10 +2154,10 @@ void BaseHeightMapRenderObjClass::setTimeOfDay( TimeOfDay tod )
 /** W3D render object method, we use it to add ourselves to tthe update
 list, so On_Frame_Update gets called. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::Notify_Added(SceneClass * scene)
+void BaseHeightMapRenderObjClass::Notify_Added(W3DScene * scene)
 {
-	RenderObjClass::Notify_Added(scene);
-	scene->Register(this,SceneClass::ON_FRAME_UPDATE);
+	W3DRenderObject::Notify_Added(scene);
+	scene->Register(this,W3DScene::ON_FRAME_UPDATE);
 }
 
 //=============================================================================
@@ -2224,7 +2169,7 @@ rendered portion of the terrain.  Only a 96x96 section is rendered at any time,
 even though maps can be up to 1024x1024.  This function determines which subset
 is rendered. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *cameraPivot, RefRenderObjListIterator *pLightsIterator)
+void BaseHeightMapRenderObjClass::updateCenter(W3DCamera *camera, const Vector3 *cameraPivot, Graphics::SceneObjectList<W3DRenderObject>::Cursor *pLightsIterator)
 {
 	if (m_map==nullptr) {
 		return;
@@ -2262,517 +2207,11 @@ void BaseHeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector
 //=============================================================================
 //DECLARE_PERF_TIMER(Terrain_Render)
 
-void BaseHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
+void BaseHeightMapRenderObjClass::Render(W3DRenderContext & rinfo)
 {
 
 }
 
-/**Render parts of terrain that are along the coast line and have vertices directly under the
-water plane.  Applying a custom render to these polygons allows for a smoother land->water
-transition*/
-void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
-{
-	if (!TheGlobalData->m_isWorldBuilder)	//use faster version optimized for game and not world builder?
-	{	renderShoreLinesSorted(pCamera);
-		return;
-	}
-
-	m_numVisibleShoreLineTiles=0;
-
-	if (!TheGlobalData->m_showSoftWaterEdge || TheWaterTransparency->m_transparentWaterDepth==0 || m_numShoreLineTiles == 0)
-		return;
-
-	//Check if video card is capable of using this effect
-	if (DX8Wrapper::getBackBufferFormat() != WW3D_FORMAT_A8R8G8B8)
-		return;	//can't apply effect on cards without destination alpha
-
-	Int vertexCount = 0;
-	Int indexCount = 0;
-	Int drawEdgeY=m_map->getDrawOrgY()+m_map->getDrawHeight()-1;
-	Int drawEdgeX=m_map->getDrawOrgX()+m_map->getDrawWidth()-1;
-	if (drawEdgeX > (m_map->getXExtent()-1))
-		drawEdgeX = m_map->getXExtent()-1;
-	if (drawEdgeY > (m_map->getYExtent()-1))
-		drawEdgeY = m_map->getYExtent()-1;
-	Int drawStartX=m_map->getDrawOrgX();
-	Int drawStartY=m_map->getDrawOrgY();
-	Int j=0;
-
-	ShaderClass unlitShader=ShaderClass::_PresetOpaque2DShader;
-	unlitShader.Set_Depth_Compare(ShaderClass::PASS_LEQUAL);
-	DX8Wrapper::Set_Shader(unlitShader);
-	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
-	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Set_Texture(0,m_destAlphaTexture);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(true));
-	//Enabled writes to destination alpha only
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
-
-
-	while (j != m_numShoreLineTiles)
-	{
-		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,DEFAULT_MAX_BATCH_SHORELINE_TILES*4);
-		DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,DEFAULT_MAX_BATCH_SHORELINE_TILES*6);
-
-		{	//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
-			DynamicVBAccessClass::WriteLockClass lock(&vb_access);
-			VertexFormatXYZNDUV2 *vb= lock.Get_Formatted_Vertex_Array();
-			DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
-			UnsignedShort *ib=lockib.Get_Index_Array();
-			if (!ib || !vb)
-			{	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
-				return;
-			}
-
-			//Loop over visible terrain and extract all the tiles that need shoreline blend
-			for (; j<m_numShoreLineTiles; j++)
-			{
-				if (vertexCount >= (DEFAULT_MAX_BATCH_SHORELINE_TILES*4))
-					break;	//no room in vertex buffer
-
-				shoreLineTileInfo *shoreInfo=&m_shoreLineTilePositions[j];
-
-				Int x = shoreInfo->m_xy & 0xffff;
-				Int y = shoreInfo->m_xy >> 16;
-
-				if (x >= drawStartX && x < drawEdgeX &&	y >= drawStartY && y < drawEdgeY)
-				{	//this tile is inside visible region
-
-					vb->x = shoreInfo->verts[0];
-					vb->y = shoreInfo->verts[1];
-					vb->z = shoreInfo->verts[2];
-					vb->nx=0;	//filling these to keep AGP write buffer happy.
-					vb->ny=0;
-					vb->nz=0;
-					vb->diffuse=0;
-					vb->u1=shoreInfo->t0;
-					vb->v1=0;
-					vb->u2=0;
-					vb->v2=0;
-					vb++;
-
-					vb->x = shoreInfo->verts[3];
-					vb->y = shoreInfo->verts[4];
-					vb->z = shoreInfo->verts[5];
-					vb->nx=0;	//filling these to keep AGP write buffer happy.
-					vb->ny=0;
-					vb->nz=0;
-					vb->diffuse=0;
-					vb->u1=shoreInfo->t1;
-					vb->v1=0;
-					vb->u2=0;
-					vb->v2=0;
-					vb++;
-
-					vb->x = shoreInfo->verts[6];
-					vb->y = shoreInfo->verts[7];
-					vb->z = shoreInfo->verts[8];
-					vb->nx=0;	//filling these to keep AGP write buffer happy.
-					vb->ny=0;
-					vb->nz=0;
-					vb->diffuse=0;
-					vb->u1=shoreInfo->t2;
-					vb->v1=0;
-					vb->u2=0;
-					vb->v2=0;
-					vb++;
-
-					vb->x = shoreInfo->verts[9];
-					vb->y = shoreInfo->verts[10];
-					vb->z = shoreInfo->verts[11];
-					vb->nx=0;	//filling these to keep AGP write buffer happy.
-					vb->ny=0;
-					vb->nz=0;
-					vb->diffuse=0;
-					vb->u1=shoreInfo->t3;
-					vb->v1=0;
-					vb->u2=0;
-					vb->v2=0;
-					vb++;
-
-					if (m_map->getQuickFlipState(x,y))
-					{
-						ib[0]=1+vertexCount;
-						ib[1]=3+vertexCount;
-						ib[2]=0+vertexCount;
-						ib[3]=1+vertexCount;
-						ib[4]=2+vertexCount;
-						ib[5]=3+vertexCount;
-					}
-					else
-					{
-						ib[0]=0+vertexCount;
-						ib[1]=2+vertexCount;
-						ib[2]=3+vertexCount;
-						ib[3]=0+vertexCount;
-						ib[4]=1+vertexCount;
-						ib[5]=2+vertexCount;
-					}
-					ib += 6;
-					vertexCount +=4;
-					indexCount +=6;
-				}
-			}
-		}
-
-		if (indexCount > 0 && vertexCount > 0)
-		{
-			DX8Wrapper::Set_Index_Buffer(ib_access,0);
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
-			m_numVisibleShoreLineTiles += indexCount/6;
-		}
-
-		vertexCount=0;
-		indexCount=0;
-	}
-
-	//Disable writes to destination alpha
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
-	ShaderClass::Invalidate();
-}
-
-/**Render parts of terrain that are along the coast line and have vertices directly under the
-water plane.  Applying a custom render to these polygons allows for a smoother land->water
-transition.  This version is exactly like the one above but optimized for the case where tiles
-are assumed to be sorted.  Not used by World Builder. */
-void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
-{
-	m_numVisibleShoreLineTiles=0;
-
-	if (!TheGlobalData->m_showSoftWaterEdge || TheWaterTransparency->m_transparentWaterDepth==0 || m_numShoreLineTiles == 0)
-		return;
-
-	//Check if video card is capable of using this effect
-	if (DX8Wrapper::getBackBufferFormat() != WW3D_FORMAT_A8R8G8B8)
-		return;	//can't apply effect on cards without destination alpha
-
-	Int vertexCount = 0;
-	Int indexCount = 0;
-	Int drawEdgeY=m_map->getDrawOrgY()+m_map->getDrawHeight()-1;
-	Int drawEdgeX=m_map->getDrawOrgX()+m_map->getDrawWidth()-1;
-	if (drawEdgeX > (m_map->getXExtent()-1))
-		drawEdgeX = m_map->getXExtent()-1;
-	if (drawEdgeY > (m_map->getYExtent()-1))
-		drawEdgeY = m_map->getYExtent()-1;
-	Int drawStartX=m_map->getDrawOrgX();
-	Int drawStartY=m_map->getDrawOrgY();
-
-	if (m_shoreLineSortInfosXMajor)	//map is wider than taller.
-	{
-		//Clamp the major map axis to available shoreline tiles.
-		if (m_shoreLineTileSortMinCoordinate > drawStartX)
-			drawStartX=m_shoreLineTileSortMinCoordinate;
-		if ((m_shoreLineTileSortMaxCoordinate+1) < drawEdgeX)
-			drawEdgeX=(m_shoreLineTileSortMaxCoordinate+1);
-		if ((drawEdgeX-drawStartX) <= 0)
-			return;	//nothing to draw
-	}
-	else
-	{
-		//Clamp the major map axis to available shoreline tiles.
-		if (m_shoreLineTileSortMinCoordinate > drawStartY)
-			drawStartY=m_shoreLineTileSortMinCoordinate;
-		if ((m_shoreLineTileSortMaxCoordinate+1) < drawEdgeY)
-			drawEdgeY=(m_shoreLineTileSortMaxCoordinate+1);
-
-		if ((drawEdgeY-drawStartY) <= 0)
-			return;	//nothing to draw
-	}
-
-	ShaderClass unlitShader=ShaderClass::_PresetOpaque2DShader;
-	unlitShader.Set_Depth_Compare(ShaderClass::PASS_LEQUAL);
-	DX8Wrapper::Set_Shader(unlitShader);
-	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
-	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Set_Texture(0,m_destAlphaTexture);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Matrix3D(true));
-	//Enabled writes to destination alpha only
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_ALPHA);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
-
-	Bool isDone=FALSE;
-	Int lastRenderedTile=0;
-
-	while (!isDone)
-	{
-		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,DEFAULT_MAX_BATCH_SHORELINE_TILES*4);
-		DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,DEFAULT_MAX_BATCH_SHORELINE_TILES*6);
-
-		{	//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
-			DynamicVBAccessClass::WriteLockClass lock(&vb_access);
-			VertexFormatXYZNDUV2 *vb= lock.Get_Formatted_Vertex_Array();
-			DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
-			UnsignedShort *ib=lockib.Get_Index_Array();
-			if (!ib || !vb)
-			{	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
-				return;
-			}
-
-			//Loop over visible terrain and extract all the tiles that need shoreline blend
-			if (m_shoreLineSortInfosXMajor)	//map is wider than taller.
-			{
-				Int x=drawStartX;
-				for (; x<drawEdgeX; x++)
-				{	//figure out how many tiles are available in this column
-					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[x];
-
-					if (!sortInfo->numTiles)
-						continue;	//no tiles in this column.
-
-					//Clamp visible area to actual tiles in this column
-					Int startY=drawStartY;
-					if (sortInfo->minTileCoordinate > startY)
-						startY = sortInfo->minTileCoordinate;
-					Int edgeY=drawEdgeY;
-					if ((sortInfo->maxTileCoordinate+1) < edgeY)
-						edgeY = sortInfo->maxTileCoordinate+1;
-
-					if ((edgeY-startY) <= 0)
-						continue;	//no tiles visible in this column.
-
-					//Pointer to first tile in this column
-					shoreLineTileInfo *shoreInfo=m_shoreLineTilePositions+sortInfo->tileStartIndex+lastRenderedTile;
-					//Loop over tiles in this column and render visible ones
-					for (Int k=lastRenderedTile; k<sortInfo->numTiles; k++)
-					{
-						Int tileY = shoreInfo->m_xy >> 16;
-						if (tileY < startY)
-						{	shoreInfo++;	//advance to next tile.
-							continue;	//this tile is not visible
-						}
-
-						if (tileY >= edgeY)
-							break;	//since tiles are x-sorted, there will not be any visible ones after this one.
-
-						if (vertexCount >= (DEFAULT_MAX_BATCH_SHORELINE_TILES*4))
-						{	lastRenderedTile=k;
-							goto flushVertexBuffer0;
-						}
-
-						vb->x = shoreInfo->verts[0];
-						vb->y = shoreInfo->verts[1];
-						vb->z = shoreInfo->verts[2];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t0;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						vb->x = shoreInfo->verts[3];
-						vb->y = shoreInfo->verts[4];
-						vb->z = shoreInfo->verts[5];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t1;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						vb->x = shoreInfo->verts[6];
-						vb->y = shoreInfo->verts[7];
-						vb->z = shoreInfo->verts[8];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t2;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						vb->x = shoreInfo->verts[9];
-						vb->y = shoreInfo->verts[10];
-						vb->z = shoreInfo->verts[11];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t3;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						if (m_map->getQuickFlipState(x,tileY))
-						{
-							ib[0]=1+vertexCount;
-							ib[1]=3+vertexCount;
-							ib[2]=0+vertexCount;
-							ib[3]=1+vertexCount;
-							ib[4]=2+vertexCount;
-							ib[5]=3+vertexCount;
-						}
-						else
-						{
-							ib[0]=0+vertexCount;
-							ib[1]=2+vertexCount;
-							ib[2]=3+vertexCount;
-							ib[3]=0+vertexCount;
-							ib[4]=1+vertexCount;
-							ib[5]=2+vertexCount;
-						}
-						ib += 6;
-						vertexCount +=4;
-						indexCount +=6;
-						shoreInfo++;	//advance to next tile.
-					}
-					lastRenderedTile=0;
-				}
-flushVertexBuffer0:
-				drawStartX = x;	//record how far we've moved so far
-				isDone = x >= drawEdgeX;
-			}
-			else
-			{
-				Int y=drawStartY;
-				for (; y<drawEdgeY; y++)
-				{	//figure out how many tiles are available in this row
-					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[y];
-
-					if (!sortInfo->numTiles)
-						continue;	//no tiles in this row.
-
-					//Clamp visible area to actual tiles in this row
-					Int startX=drawStartX;
-					if (sortInfo->minTileCoordinate > startX)
-						startX = sortInfo->minTileCoordinate;
-					Int edgeX=drawEdgeX;
-					if ((sortInfo->maxTileCoordinate+1) < edgeX)
-						edgeX = sortInfo->maxTileCoordinate+1;
-
-					if ((edgeX-startX) <= 0)
-						continue;	//no tiles visible in this row.
-
-					//Pointer to first tile in this row
-					shoreLineTileInfo *shoreInfo=m_shoreLineTilePositions+sortInfo->tileStartIndex+lastRenderedTile;
-					//Loop over tiles in this row and render visible ones
-					for (Int k=lastRenderedTile; k<sortInfo->numTiles; k++)
-					{
-						Int tileX = shoreInfo->m_xy & 0xffff;
-						if (tileX < startX)
-						{	shoreInfo++;	//advance to next tile.
-							continue;	//this tile is not visible
-						}
-
-						if (tileX >= edgeX)
-							break;	//since tiles are x-sorted, there will not be any visible ones after this one.
-
-						if (vertexCount >= (DEFAULT_MAX_BATCH_SHORELINE_TILES*4))
-						{	lastRenderedTile=k;
-							goto flushVertexBuffer1;
-						}
-
-						vb->x = shoreInfo->verts[0];
-						vb->y = shoreInfo->verts[1];
-						vb->z = shoreInfo->verts[2];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t0;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						vb->x = shoreInfo->verts[3];
-						vb->y = shoreInfo->verts[4];
-						vb->z = shoreInfo->verts[5];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t1;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						vb->x = shoreInfo->verts[6];
-						vb->y = shoreInfo->verts[7];
-						vb->z = shoreInfo->verts[8];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t2;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						vb->x = shoreInfo->verts[9];
-						vb->y = shoreInfo->verts[10];
-						vb->z = shoreInfo->verts[11];
-						vb->nx=0;	//filling these to keep AGP write buffer happy.
-						vb->ny=0;
-						vb->nz=0;
-						vb->diffuse=0;
-						vb->u1=shoreInfo->t3;
-						vb->v1=0;
-						vb->u2=0;
-						vb->v2=0;
-						vb++;
-
-						if (m_map->getQuickFlipState(tileX,y))
-						{
-							ib[0]=1+vertexCount;
-							ib[1]=3+vertexCount;
-							ib[2]=0+vertexCount;
-							ib[3]=1+vertexCount;
-							ib[4]=2+vertexCount;
-							ib[5]=3+vertexCount;
-						}
-						else
-						{
-							ib[0]=0+vertexCount;
-							ib[1]=2+vertexCount;
-							ib[2]=3+vertexCount;
-							ib[3]=0+vertexCount;
-							ib[4]=1+vertexCount;
-							ib[5]=2+vertexCount;
-						}
-						ib += 6;
-						vertexCount +=4;
-						indexCount +=6;
-						shoreInfo++;	//advance to next tile.
-					}
-					lastRenderedTile=0;
-				}
-flushVertexBuffer1:
-				drawStartY = y;	//record how far we've moved so far
-				isDone = y >= drawEdgeY;
-			}
-		}
-
-		if (indexCount > 0 && vertexCount > 0)
-		{
-			DX8Wrapper::Set_Index_Buffer(ib_access,0);
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
-			m_numVisibleShoreLineTiles += indexCount/6;
-		}
-
-		vertexCount=0;
-		indexCount=0;
-	}
-
-	//Disable writes to destination alpha
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
-	ShaderClass::Invalidate();
-}
 
 //=============================================================================
 // BaseHeightMapRenderObjClass::renderTrees
@@ -2780,23 +2219,32 @@ flushVertexBuffer1:
 /** Renders (draws) the trees. Since the trees are transparent, this has to be
 called after flush. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::renderTrees(CameraClass * camera)
+void BaseHeightMapRenderObjClass::renderTrees(W3DCamera * camera)
 {
 #ifdef EXTENDED_STATS
-	if (DX8Wrapper::stats.m_disableObjects) {
+	if (Graphics::Get_Render_Diagnostics().disable_objects) {
 		return;
 	}
 #endif
 	if (m_map==nullptr) return;
 	if (Scene==nullptr) return;
 	if (m_treeBuffer) {
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		RTS3DScene *pMyScene = (RTS3DScene *)Scene;
-		RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
+		Graphics::SceneObjectList<W3DRenderObject>::Cursor pDynamicLightsIterator(pMyScene->getDynamicLights());
 		m_treeBuffer->drawTrees(camera, &pDynamicLightsIterator);
 	}
 }
+
+
+
+Bool BaseHeightMapRenderObjClass::collectShadowCasters()
+{
+    return m_treeBuffer == nullptr || m_treeBuffer->collectShadowCasters();
+}
+
+
+
+
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

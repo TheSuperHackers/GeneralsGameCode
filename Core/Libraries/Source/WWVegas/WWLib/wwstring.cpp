@@ -145,7 +145,8 @@ StringClass::Resize (int new_len)
 		// string.
 		//
 		TCHAR *new_buffer = Allocate_Buffer (new_len);
-		_tcscpy (new_buffer, m_Buffer);
+		const std::size_t length = WWStringDetail::Length(m_Buffer) + 1;
+		std::memcpy(new_buffer, m_Buffer, length * sizeof(TCHAR));
 
 		//
 		//	Switch to the new buffer
@@ -242,7 +243,7 @@ StringClass::Format_Args (const TCHAR *format, va_list arg_list )
 	//
 	//	Format the string
 	//
-	#ifdef _UNICODE
+	#if defined(_UNICODE) || defined(UNICODE)
 		retval = vswprintf (temp_buffer, 512, format, arg_list);
 	#else
 		retval = vsnprintf (temp_buffer, 512, format, arg_list);
@@ -277,7 +278,7 @@ StringClass::Format (const TCHAR *format, ...)
 	//
 	//	Format the string
 	//
-	#ifdef _UNICODE
+	#if defined(_UNICODE) || defined(UNICODE)
 		retval = vswprintf (temp_buffer, 512, format, arg_list);
 	#else
 		retval = vsnprintf (temp_buffer, 512, format, arg_list);

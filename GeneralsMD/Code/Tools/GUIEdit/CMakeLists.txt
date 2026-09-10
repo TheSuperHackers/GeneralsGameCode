@@ -36,6 +36,12 @@ set(GUIEDIT_SRC
 )
 
 add_executable(z_guiedit WIN32)
+set_property(TARGET z_guiedit PROPERTY CXX_SCAN_FOR_MODULES ON)
+add_dependencies(z_guiedit generals_graphics_shaders)
+add_custom_command(TARGET z_guiedit POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_BINARY_DIR}/engine/graphics/shaders/$<CONFIG>"
+        "$<TARGET_FILE_DIR:z_guiedit>/GraphicsShaders")
 set_target_properties(z_guiedit PROPERTIES OUTPUT_NAME "guiedit${RTS_BUILD_OUTPUT_SUFFIX}")
 
 target_sources(z_guiedit PRIVATE ${GUIEDIT_SRC})
@@ -46,9 +52,10 @@ target_include_directories(z_guiedit PRIVATE
 )
 
 target_link_libraries(z_guiedit PRIVATE
+    generals_graphics
+    SDL3::SDL3
     comctl32
     core_debug
-    core_profile
     d3d9lib
     imm32
     stlport

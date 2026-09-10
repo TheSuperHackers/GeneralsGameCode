@@ -19,23 +19,22 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
+#include "WW3D2/RendObj.h"
+#include "WW3D2/W3DFile.h"
+#include <vector>
+import Graphics.Scene.Surfaces.Geometry;
+
+import Graphics.Materials.State;
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 
 // The draw objects draw a circle of diameter 1.0 cells.
 #define THE_RADIUS (0.8f*MAP_XY_FACTOR)
 
-class MeshClass;
+class W3DMeshRenderObject;
 class PolygonTrigger;
-class WaterRenderObjClass;
+class WaterRenderSystem;
 class MapObject;
-class Render2DClass;
 //
 // DrawObject: Draws 3d feedback for tools & objects.
 //
@@ -56,7 +55,6 @@ public:
 	virtual RenderObjClass *	Clone() const override;
 	virtual int						Class_ID() const override;
 	virtual void					Render(RenderInfoClass & rinfo) override;
-//	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 //	virtual void 					Set_Transform(const Matrix3D &m);
 //	virtual void 					Set_Position(const Vector3 &v);
 //TODO: MW: do these later - only needed for collision detection
@@ -104,24 +102,21 @@ public:
 
 
 
-	MeshClass *peekMesh() {return m_moldMesh;};
+	W3DMeshRenderObject *peekMesh() {return m_moldMesh;};
 	void getMeshBounds(SphereClass *pSphere) {*pSphere = m_moldMeshBounds;};
 
 protected:
 	enum {MAX_RADIUS = 50, NUM_FEEDBACK_VERTEX = 201*201, NUM_FEEDBACK_INDEX = 101*101*6};
 	Int	m_numTriangles;	//dimensions of list
 
-	DX8IndexBufferClass				*m_indexBuffer;	///< indices defining a object icon
-	ShaderClass								m_shaderClass; ///< shader or rendering state for heightmap
-	VertexMaterialClass	  	  *m_vertexMaterialClass;
-	DX8VertexBufferClass			*m_vertexBufferTile1;	///< First vertex buffer.
-	DX8VertexBufferClass			*m_vertexBufferTile2;	///< Second vertex buffer.
+	std::vector<unsigned> m_indexBuffer;	///< indices defining a object icon
+	Graphics::MaterialState								m_shaderClass; ///< shader or rendering state for heightmap
+	std::vector<Graphics::SurfaceVertex> m_vertexBufferTile1;	///< First vertex buffer.
+	std::vector<Graphics::SurfaceVertex> m_vertexBufferTile2;	///< Second vertex buffer.
 
-	DX8VertexBufferClass			*m_vertexBufferWater;	///< Vertex buffer for the water plane.
-	DX8IndexBufferClass				*m_indexWater;	///< indices defining a triangle strip for the water on terrain
 	Int												m_waterVertexCount;
 
-	WaterRenderObjClass				*m_waterDrawObject;
+	WaterRenderSystem				*m_waterDrawObject;
 
 	Bool											m_drawObjects;
 	Bool											m_drawWaypoints;
@@ -133,16 +128,15 @@ protected:
 	Bool											m_drawTestArtHighlight;
 	Bool											m_drawLetterbox;
 
-	DX8VertexBufferClass			*m_vertexFeedback;	///< Vertex buffer for brush feedback.
-	DX8IndexBufferClass				*m_indexFeedback;	///< indices defining a triangle strip for the feedback on terrain
+	std::vector<Graphics::SurfaceVertex> m_vertexFeedback;	///< Vertex buffer for brush feedback.
+	std::vector<unsigned> m_indexFeedback;	///< indices defining a triangle strip for the feedback on terrain
 	Int												m_feedbackIndexCount;
 	Int												m_feedbackVertexCount;
 
 	AsciiString								m_curMeshModelName;  ///< Model name of m_moldMesh.
 
-	MeshClass									*m_moldMesh;		///< W3D mesh model for the mold.
+	W3DMeshRenderObject									*m_moldMesh;		///< W3D mesh model for the mold.
 	SphereClass								m_moldMeshBounds;				///< Bounding sphere for mold mesh.
-	Render2DClass							*m_lineRenderer;		//< Used to render 2D lines for bounding boxes.
 	CPoint										m_winSize;				//< Holds the size of the window.
 
 protected: // static state vars.
@@ -168,7 +162,7 @@ protected: // static state vars.
 
 protected:
   void addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera );
-	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
+	Int updateVB(std::vector<Graphics::SurfaceVertex>& vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
 	void updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOpen);
 	void updateFeedbackVB();
 	void updateMeshVB();

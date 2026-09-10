@@ -36,6 +36,7 @@
 #include "WWLib/ffactory.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/file.h"
+#include <string>
 
 //-------------------------------------------------------------------------------------------------
 /** Game file access.  At present this allows us to access test assets, assets from
@@ -71,8 +72,8 @@ protected:
 
 	File					*m_theFile; /// < The file
 	Bool					m_fileExists;		///< TRUE if the file exists
-	char					m_filePath[_MAX_PATH];  ///< the file name *and* path (relative)
-	char					m_filename[_MAX_PATH];	///< The file name only
+	std::string				m_filePath;  ///< the file name *and* path (relative)
+	std::string				m_filename;	///< The file name only
 
 };
 

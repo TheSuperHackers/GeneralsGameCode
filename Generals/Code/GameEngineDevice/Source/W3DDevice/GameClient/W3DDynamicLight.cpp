@@ -29,22 +29,72 @@
 
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
 
+namespace
+{
+Graphics::RenderLight Make_Modern_Light(const W3DDynamicLight &light) noexcept
+{
+	const Vector3 position = light.Get_Position();
+	Vector3 diffuse;
+	light.Get_Diffuse(&diffuse);
+	return {
+		Graphics::RenderLightType::Point,
+		light.isEnabled() ? Graphics::RenderLightFlags::Enabled : Graphics::RenderLightFlags::None,
+		{position.X, position.Y, position.Z},
+		{0.0f, 0.0f, -1.0f},
+		{diffuse.X, diffuse.Y, diffuse.Z},
+		light.Get_Intensity(),
+		light.Get_Attenuation_Range(),
+		0.0f,
+		0.0f
+	};
+}
+}
+
 W3DDynamicLight::W3DDynamicLight():
 LightClass(LightClass::POINT)
 {
-
 	m_priorEnable = false;
+	m_processMe = false;
+	m_prevMinX = 0;
+	m_prevMinY = 0;
+	m_prevMaxX = 0;
+	m_prevMaxY = 0;
+	m_minX = 0;
+	m_minY = 0;
+	m_maxX = 0;
+	m_maxY = 0;
 	m_enabled = true;
-
+	m_decayRange = false;
+	m_decayColor = false;
+	m_curDecayFrameCount = 0;
+	m_curIncreaseFrameCount = 0;
+	m_decayFrameCount = 0;
+	m_increaseFrameCount = 0;
+	m_targetRange = 0.0f;
+	m_targetAmbient = {};
+	m_targetDiffuse = {};
+	m_modernLight = Graphics::CreatePointLight(Make_Modern_Light(*this));
 }
 
 W3DDynamicLight::~W3DDynamicLight()
 {
+	Graphics::DestroyPointLight(m_modernLight);
+}
+
+void W3DDynamicLight::setEnabled(Bool enabled)
+{
+	m_enabled = enabled;
+	m_decayRange = false;
+	m_decayFrameCount = 0;
+	m_decayColor = false;
+	m_increaseFrameCount = 0;
+	Graphics::UpdatePointLight(m_modernLight, Make_Modern_Light(*this));
 }
 
 void W3DDynamicLight::On_Frame_Update()
 {
 	if (!m_enabled) {
+		Graphics::UpdatePointLight(m_modernLight, Make_Modern_Light(*this));
 		return;
 	}
 	Real factor = 1.0f;
@@ -59,6 +109,7 @@ void W3DDynamicLight::On_Frame_Update()
 		m_curDecayFrameCount--;
 		if (m_curDecayFrameCount == 0) {
 			m_enabled = false;
+			Graphics::UpdatePointLight(m_modernLight, Make_Modern_Light(*this));
 			return;
 		}
 		factor = m_curDecayFrameCount/(Real)m_decayFrameCount;
@@ -73,6 +124,7 @@ void W3DDynamicLight::On_Frame_Update()
 		this->Ambient = m_targetAmbient*factor;
 		this->Diffuse = m_targetDiffuse*factor;
 	}
+	Graphics::UpdatePointLight(m_modernLight, Make_Modern_Light(*this));
 }
 
 void W3DDynamicLight::setFrameFade(UnsignedInt frameIncreaseTime, UnsignedInt decayFrameTime)
@@ -84,4 +136,5 @@ void W3DDynamicLight::setFrameFade(UnsignedInt frameIncreaseTime, UnsignedInt de
 	m_targetAmbient = Ambient;
 	m_targetDiffuse = Diffuse;
 	m_targetRange = FarAttenEnd;
+	Graphics::UpdatePointLight(m_modernLight, Make_Modern_Light(*this));
 }

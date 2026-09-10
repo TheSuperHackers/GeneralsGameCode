@@ -1,3 +1,7 @@
+import Graphics.Materials.State;
+#include <array>
+#include <span>
+#include <vector>
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -54,8 +58,8 @@
 
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
-#include <WW3D2/assetmgr.h>
-#include <WW3D2/texture.h>
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
+#include <W3DDevice/GameClient/W3DTextureHandle.h>
 
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
@@ -73,14 +77,18 @@
 #include "GameLogic/Module/AIUpdate.h"
 
 #include "W3DDevice/GameClient/TerrainTex.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/W3DGraphicsResources.h"
+#include <algorithm>
+#include <cstdint>
+import Graphics.Scene.Views.CameraMatrices;
+import Graphics.Scene.Lines.Drawing;
+import Graphics.Frame.Runtime;
 
-#include "WW3D2/camera.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8renderer.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/meshmdl.h"
-#include "WW3D2/segline.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshResource.h"
+#include "W3DDevice/GameClient/W3DSegmentedLineRenderObject.h"
 
 
 #define MAX_DISPLAY_NODES 512
@@ -97,10 +105,10 @@ for the bibs. */
 //=============================================================================
 W3DWaypointBuffer::W3DWaypointBuffer()
 {
-	m_waypointNodeRobj = WW3DAssetManager::Get_Instance()->Create_Render_Obj( "SCMNode" );
-	m_line = new SegmentedLineClass;
+	m_waypointNodeRobj = W3DAssetCatalog::Get_Instance()->Create_Render_Obj( "SCMNode" );
+	m_line = new W3DSegmentedLineRenderObject;
 
-	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( "EXLaser.tga" );
+	m_texture = W3DAssetCatalog::Get_Instance()->Get_Texture( "EXLaser.tga" );
 
 
   setDefaultLineStyle();
@@ -113,6 +121,7 @@ W3DWaypointBuffer::W3DWaypointBuffer()
 //=============================================================================
 W3DWaypointBuffer::~W3DWaypointBuffer()
 {
+    freeWaypointBuffers();
 	REF_PTR_RELEASE( m_waypointNodeRobj );
 	REF_PTR_RELEASE( m_texture );
 	REF_PTR_RELEASE( m_line );
@@ -125,6 +134,8 @@ W3DWaypointBuffer::~W3DWaypointBuffer()
 //=============================================================================
 void W3DWaypointBuffer::freeWaypointBuffers()
 {
+    Graphics::Get_Surface_Renderer().Destroy_Mesh(m_lineMesh);
+    m_lineMesh = {};
 }
 
 
@@ -134,12 +145,12 @@ void W3DWaypointBuffer::setDefaultLineStyle()
 	{
 		m_line->Set_Texture( m_texture );
 	}
-	ShaderClass lineShader=ShaderClass::_PresetAdditiveShader;
-	lineShader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
+	Graphics::MaterialState lineShader=Graphics::MaterialState::Additive();
+	lineShader.Set_Depth_Compare(Graphics::MaterialState::PASS_ALWAYS);
 	m_line->Set_Shader( lineShader );	//pick the alpha blending mode you want - see shader.h for others.
 	m_line->Set_Width( 1.5f );
 	m_line->Set_Color( Vector3( 0.25f, 0.5f, 1.0f ) );
-	m_line->Set_Texture_Mapping_Mode( SegLineRendererClass::TILED_TEXTURE_MAP );	//this tiles the texture across the line
+	m_line->Set_Texture_Mapping_Mode( Graphics::RibbonTextureMapping::Tiled );	//this tiles the texture across the line
 }
 
 
@@ -148,7 +159,7 @@ void W3DWaypointBuffer::setDefaultLineStyle()
 //=============================================================================
 /** Draws the waypoints. Uses camera to cull */
 //=============================================================================
-void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
+void W3DWaypointBuffer::drawWaypoints(W3DRenderContext &rinfo)
 {
 
   if ( ! TheInGameUI )
@@ -163,10 +174,10 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 	{
 		//Create a default light environment with no lights and only full ambient.
 		//@todo: Fix later by copying default scene light environment from W3DScene.cpp.
-		LightEnvironmentClass lightEnv;
-		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
-		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
-		RenderInfoClass localRinfo(rinfo.Camera);
+		Graphics::LocalLighting lightEnv;
+		lightEnv.Reset({0,0,0}, {1.0f,1.0f,1.0f});
+		lightEnv.Finalize();
+		W3DRenderContext localRinfo(rinfo.Camera);
 		localRinfo.light_environment=&lightEnv;
 		Vector3 points[ MAX_DISPLAY_NODES + 1 ]; //Lines have nodes + 1 points.
 
@@ -201,12 +212,12 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 							}
 
 							m_waypointNodeRobj->Set_Position(Vector3(waypoint->x,waypoint->y,waypoint->z));
-							WW3D::Render(*m_waypointNodeRobj,localRinfo);
+							m_nodeGraphics.Render(*m_waypointNodeRobj,localRinfo,Graphics::PropLighting{{1,1,1}},nullptr);
 						}
 					}
 					//Now render the lines in one pass!
 					m_line->Set_Points( numPoints, points );
-					m_line->Render( localRinfo );
+					drawLine(localRinfo);
 				}
 			}
 		}
@@ -215,10 +226,10 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 	{
 		//Create a default light environment with no lights and only full ambient.
 		//@todo: Fix later by copying default scene light environment from W3DScene.cpp.
-		LightEnvironmentClass lightEnv;
-		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
-		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
-		RenderInfoClass localRinfo(rinfo.Camera);
+		Graphics::LocalLighting lightEnv;
+		lightEnv.Reset({0,0,0}, {1.0f,1.0f,1.0f});
+		lightEnv.Finalize();
+		W3DRenderContext localRinfo(rinfo.Camera);
 		localRinfo.light_environment=&lightEnv;
 		Vector3 points[ MAX_DISPLAY_NODES + 1 ]; //Lines have nodes + 1 points.
 
@@ -285,7 +296,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 							            }
 
 							            m_waypointNodeRobj->Set_Position(Vector3(waypoint->x,waypoint->y,waypoint->z));
-							            WW3D::Render(*m_waypointNodeRobj,localRinfo);
+							            m_nodeGraphics.Render(*m_waypointNodeRobj,localRinfo,Graphics::PropLighting{{1,1,1}},nullptr);
                           lineExists = TRUE;
 						            }
 					            }
@@ -297,7 +308,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
                       {
 								        points[ numPoints++ ].Set( Vector3( destinationPoint->x, destinationPoint->y, destinationPoint->z ) );
 							          m_waypointNodeRobj->Set_Position(Vector3(destinationPoint->x,destinationPoint->y,destinationPoint->z));
-							          WW3D::Render(*m_waypointNodeRobj,localRinfo);
+							          m_nodeGraphics.Render(*m_waypointNodeRobj,localRinfo,Graphics::PropLighting{{1,1,1}},nullptr);
                         lineExists = TRUE;
                       }
                     }
@@ -310,7 +321,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
                       m_line->Set_Width( 3.0f );
 
 					            m_line->Set_Points( numPoints, points );
-					            m_line->Render( localRinfo );
+					            drawLine(localRinfo);
                     }
                   }
                   //////////////////////////////////////////////////////////////////////
@@ -470,7 +481,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									if (pNearElbow)//did we find a nearest corner?
 									{
 										m_waypointNodeRobj->Set_Position(Vector3(pNearElbow->x,pNearElbow->y,ctr->z));
-										WW3D::Render(*m_waypointNodeRobj,localRinfo); //The little hockey puck
+										m_nodeGraphics.Render(*m_waypointNodeRobj,localRinfo,Graphics::PropLighting{{1,1,1}},nullptr); //The little hockey puck
 										points[ numPoints ].Set( Vector3( pNearElbow->x, pNearElbow->y, ctr->z ) );
 										numPoints++;
 
@@ -496,7 +507,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 											if (dot < 0)// we have a second elbow
 											{
 												m_waypointNodeRobj->Set_Position(Vector3(pFarElbow->x,pFarElbow->y,ctr->z));
-												WW3D::Render(*m_waypointNodeRobj,localRinfo); //The little hockey puck
+												m_nodeGraphics.Render(*m_waypointNodeRobj,localRinfo,Graphics::PropLighting{{1,1,1}},nullptr); //The little hockey puck
 												points[ numPoints ].Set( Vector3( pFarElbow->x, pFarElbow->y, ctr->z ) );
 												numPoints++;
 											}
@@ -518,11 +529,11 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 						continue;
 
 					m_waypointNodeRobj->Set_Position(Vector3(naturalRallyPoint.x,naturalRallyPoint.y,naturalRallyPoint.z));
-					WW3D::Render(*m_waypointNodeRobj,localRinfo); //The little hockey puck
+					m_nodeGraphics.Render(*m_waypointNodeRobj,localRinfo,Graphics::PropLighting{{1,1,1}},nullptr); //The little hockey puck
 
 
 					m_line->Set_Points( numPoints, points );
-					m_line->Render( localRinfo );
+					drawLine(localRinfo);
 
 				}
 
@@ -533,3 +544,27 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 }
 
 
+
+void W3DWaypointBuffer::drawLine(W3DRenderContext &info)
+{
+    struct Submission {
+        Graphics::SurfaceMeshHandle &mesh;
+        std::array<float,16> projection;
+        Graphics::RHITextureHandle texture;
+    } submission{m_lineMesh,{},Resolve_Graphics_Texture(m_texture)};
+    submission.projection = Graphics::Get_Camera_Matrices().projection.values;
+    W3DSegmentedLineGeometrySink sink;
+    sink.context = &submission;
+    sink.submit = [](void* context, const Graphics::PropVertex* source, unsigned vertex_count,
+        const std::uint32_t* indices, unsigned index_count) {
+        auto& submission = *static_cast<Submission*>(context);
+        auto* device = Graphics::Shared_Frame_Device();
+        if (!device) return;
+        auto& renderer = Graphics::Get_Surface_Renderer();
+        if (!Graphics::Update_Navigation_Line(renderer,submission.mesh,{source,vertex_count},
+            {indices,index_count})) return;
+        Graphics::Draw_Navigation_Line(renderer,device->Immediate_Command_List(),submission.mesh,
+            submission.projection,submission.texture);
+    };
+    m_line->Extract_Geometry(info,sink);
+}

@@ -86,6 +86,8 @@ protected:
 	void onDisplaySizeChanged(UnsignedInt oldWidth, UnsignedInt oldHeight,
 		UnsignedInt newWidth, UnsignedInt newHeight) override
 	{
+		if (TheHeaderTemplateManager != nullptr)
+			TheHeaderTemplateManager->onResolutionChanged();
 		// Keep the active match and all existing window objects alive. The layout
 		// manager scales the current tree in place, which is the same coordinate
 		// result that reparsing .wnd files would produce.
@@ -96,8 +98,6 @@ protected:
 
 		// These refresh only resolution-dependent resources; they do not recreate
 		// the shell stack or the in-game control bar.
-		if (TheHeaderTemplateManager != nullptr)
-			TheHeaderTemplateManager->onResolutionChanged();
 		if (TheMouse != nullptr)
 		{
 			TheMouse->setMouseLimits();

@@ -55,7 +55,6 @@
 #include "Common/INI.h"
 #include "GameClient/ShellMenuScheme.h"
 #include "GameClient/Shell.h"
-#include "GameClient/Display.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -167,37 +166,6 @@ void ShellMenuScheme::addImage( ShellMenuSchemeImage* schemeImage )
 	m_imageList.push_back( schemeImage );
 }
 
-void ShellMenuScheme::draw()
-{
-
-	ShellMenuSchemeImageListIt imageIt = m_imageList.begin();
-	while(imageIt != m_imageList.end())
-	{
-		ShellMenuSchemeImage *image = *imageIt;
-		if(image && image->m_image)
-		{
-			TheDisplay->drawImage(image->m_image, image->m_position.x, image->m_position.y,
-														image->m_position.x + image->m_size.x , image->m_position.y + image->m_size.y);
-		}
-		++imageIt;
-	}
-
-	ShellMenuSchemeLineListIt it = m_lineList.begin();
-	while(it != m_lineList.end())
-	{
-		ShellMenuSchemeLine *line = *it;
-
-		if(line)
-		{
-			TheDisplay->drawLine(line->m_startPos.x, line->m_startPos.y, line->m_endPos.x,
-														line->m_endPos.y,line->m_width, line->m_color);
-		}
-		++it;
-	}
-
-
-}
-
 ShellMenuSchemeManager::ShellMenuSchemeManager()
 {
 	m_currentScheme = nullptr;
@@ -307,11 +275,6 @@ void ShellMenuSchemeManager::setShellMenuScheme( AsciiString name )
 	}
 }
 
-void ShellMenuSchemeManager::draw()
-{
-	if(m_currentScheme)
-		m_currentScheme->draw();
-}
 
 void ShellMenuSchemeManager::update()
 {

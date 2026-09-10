@@ -3116,15 +3116,8 @@ void ControlBar::onDisplaySizeChanged( UnsignedInt oldWidth, UnsignedInt oldHeig
 		return;
 	}
 
-	if (oldWidth != newWidth || oldHeight != newHeight)
-	{
-		const Real scaleX = static_cast<Real>(newWidth) / static_cast<Real>(oldWidth);
-		const Real scaleY = static_cast<Real>(newHeight) / static_cast<Real>(oldHeight);
-		const Real scaledX = static_cast<Real>(m_defaultControlBarPosition.x) * scaleX;
-		const Real scaledY = static_cast<Real>(m_defaultControlBarPosition.y) * scaleY;
-		m_defaultControlBarPosition.x = scaledX >= 0.0f ? static_cast<Int>(scaledX + 0.5f) : static_cast<Int>(scaledX - 0.5f);
-		m_defaultControlBarPosition.y = scaledY >= 0.0f ? static_cast<Int>(scaledY + 0.5f) : static_cast<Int>(scaledY - 0.5f);
-	}
+	TheWindowManager->winGetAuthoredPosition(m_contextParent[CP_MASTER],
+		&m_defaultControlBarPosition.x, &m_defaultControlBarPosition.y);
 
 	// winScaleToResolution has already scaled the entire tree. These stage
 	// adjustments update the control bar's own baseline, which is used later

@@ -19,12 +19,13 @@
 // RingGeneralPropPage.cpp : implementation file
 //
 
+import Graphics.Materials.State;
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "RingGeneralPropPage.h"
 #include "Utils.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/texture.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/Texture.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
@@ -122,7 +123,7 @@ RingGeneralPropPageClass::Initialize ()
 void
 RingGeneralPropPageClass::Add_Shader_To_Combo
 (
-	ShaderClass &	shader,
+	Graphics::MaterialState &	shader,
 	LPCTSTR			name
 )
 {
@@ -158,10 +159,10 @@ RingGeneralPropPageClass::OnInitDialog ()
 	//
 	//	Add the known shaders to the combobox
 	//
-	Add_Shader_To_Combo (ShaderClass::_PresetAdditiveShader, "Additive");
-	Add_Shader_To_Combo (ShaderClass::_PresetAlphaShader, "Alpha");
-	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueShader, "Opaque");
-	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeShader, "Multiplicative");
+	Add_Shader_To_Combo (Graphics::MaterialState::Additive(), "Additive");
+	Add_Shader_To_Combo (Graphics::MaterialState::Alpha(), "Alpha");
+	Add_Shader_To_Combo (Graphics::MaterialState::Opaque(), "Opaque");
+	Add_Shader_To_Combo (Graphics::MaterialState::Multiplicative(), "Multiplicative");
 
 	CheckDlgButton (IDC_CAMERA_ALIGNED_CHECK, (m_RenderObj->Get_Flags () & RingRenderObjClass::USE_CAMERA_ALIGN) != 0);
 	CheckDlgButton (IDC_LOOPING_CHECK, (m_RenderObj->Get_Flags () & RingRenderObjClass::USE_ANIMATION_LOOP) != 0);
@@ -204,7 +205,7 @@ RingGeneralPropPageClass::OnApply ()
 	//
 	int index = SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETCURSEL);
 	if (index != CB_ERR) {
-		ShaderClass *shader = (ShaderClass *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
+		Graphics::MaterialState *shader = (Graphics::MaterialState *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
 		if (shader != nullptr) {
 			m_Shader = (*shader);
 		}

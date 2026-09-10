@@ -30,7 +30,7 @@
 #include "WorldBuilderDoc.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "Common/Debug.h"
 #include "mapobjectprops.h"
 #include "ObjectOptions.h"

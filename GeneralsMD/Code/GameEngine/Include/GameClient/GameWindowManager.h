@@ -39,6 +39,8 @@
 
 class GameWindow;
 
+typedef Bool (*GameWinDrawDataFunc)( GameWindow *, WinInstanceData *, void *drawList );
+
 //-------------------------------------------------------------------------------------------------
 /** Window layout info is a structure that can be passed to the load function of
 	* a window script.  After the script is loaded, this parameter (if present)
@@ -113,6 +115,7 @@ public:
 	virtual GameWinDrawFunc getStaticTextDrawFunc() = 0;
 	virtual GameWinDrawFunc getTextEntryImageDrawFunc() = 0;
 	virtual GameWinDrawFunc getTextEntryDrawFunc() = 0;
+	virtual GameWinDrawDataFunc getBorderDrawDataFunc() { return nullptr; }
 
 	//---------------------------------------------------------------------------
 
@@ -221,6 +224,10 @@ public:
 	/// This keeps window state and callbacks alive while updating layout geometry.
 	virtual void winScaleToResolution( UnsignedInt oldWidth, UnsignedInt oldHeight,
 		UnsignedInt newWidth, UnsignedInt newHeight );
+	Bool winRegisterScriptGeometry(GameWindow *window, Int authoredWidth, Int authoredHeight, const char *anchors);
+	void winArrangeScript(GameWindow *window);
+	Bool winGetAuthoredPosition(GameWindow *window, Int *x, Int *y);
+	Real winGetLayoutScale(GameWindow *window) const;
 
 	/// hide all windows in a certain range of id's (inclusive );
 	virtual void hideWindowsInRange( GameWindow *baseWindow, Int first, Int last,
@@ -341,8 +348,6 @@ protected:
 
 	void processDestroyList();  ///< process windows waiting to be killed
 
-	Int drawWindow( GameWindow *window );  ///< draw this window
-
 	void dumpWindow( GameWindow *window );  ///< for debugging
 
 	GameWindow *m_windowList;			// list of all top level windows
@@ -359,7 +364,6 @@ protected:
 	GameWindowList m_tabList;			// we have to register a tab list to make a tab list.
 	const Image *m_cursorBitmap;
 	UnsignedInt m_captureFlags;
-
 };
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////

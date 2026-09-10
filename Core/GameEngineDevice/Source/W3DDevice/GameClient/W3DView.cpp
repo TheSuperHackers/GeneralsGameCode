@@ -1,3 +1,4 @@
+#include "W3DDevice/GameClient/W3DRenderServices.h"
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -34,7 +35,8 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <windows.h>
+import Graphics.Frame.AttachmentBindings;
+#include <SDL3/SDL.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
@@ -79,21 +81,21 @@
 #include "Common/AudioEventInfo.h"
 
 #include "W3DDevice/Common/W3DConvert.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DView.h"
-#include "d3dx9math.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
+#include "W3DDevice/GameClient/W3DSceneQueryMask.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
-#include "WW3D2/dx8renderer.h"
-#include "WW3D2/light.h"
-#include "WW3D2/predlod.h"
-#include "WW3D2/ww3d.h"
+
+
 
 #include "W3DDevice/GameClient/CameraShakeSystem.h"
 
@@ -869,10 +871,10 @@ void W3DView::init()
 	setPosition(pos);
 
 	// create our 3D camera
-	m_3DCamera = NEW_REF( CameraClass, () );
+	m_3DCamera = NEW_REF( W3DCamera, () );
 
 	// create our 2D camera for the GUI overlay
-	m_2DCamera = NEW_REF( CameraClass, () );
+	m_2DCamera = NEW_REF( W3DCamera, () );
 	m_2DCamera->Set_Position( Vector3( 0, 0, 1 ) );
 	Vector2 min = Vector2( -1, -0.75f );
 	Vector2 max = Vector2( +1, +0.75f );
@@ -1209,7 +1211,7 @@ static void drawAudioRadii( const Drawable * drawable )
     if ( ambientInfo == nullptr )
     {
       // I don't think that's right...
-      OutputDebugString( ("Playing sound has null AudioEventInfo?\n" ) );
+      SDL_Log("%s", "Playing sound has null AudioEventInfo?\n");
 
       if ( TheAudio != nullptr )
       {
@@ -1812,13 +1814,13 @@ void W3DView::calcDeltaScroll(Coord2D &screenDelta)
 	screenDelta.y = 0;
 	Vector3 prevPos(m_previousLookAtPosition.x, m_previousLookAtPosition.y, m_pos.z);
 	Vector3 prevScreen;
-	if (m_3DCamera->Project( prevScreen, prevPos ) != CameraClass::INSIDE_FRUSTUM)
+	if (m_3DCamera->Project( prevScreen, prevPos ) != W3DCamera::INSIDE_FRUSTUM)
 	{
 		return;
 	}
 	Vector3 pos(m_pos.x, m_pos.y, m_pos.z);
 	Vector3 screen;
-	if (m_3DCamera->Project( screen, pos ) != CameraClass::INSIDE_FRUSTUM)
+	if (m_3DCamera->Project( screen, pos ) != W3DCamera::INSIDE_FRUSTUM)
 	{
 		return;
 	}
@@ -1867,9 +1869,9 @@ void W3DView::draw()
 		// Render 3D scene from our camera
 		W3DDisplay::m_3DScene->setCustomPassMode(customScenePassMode);
 		if (m_isWireFrameEnabled)
-			W3DDisplay::m_3DScene->Set_Extra_Pass_Polygon_Mode(SceneClass::EXTRA_PASS_CLEAR_LINE);
+			W3DDisplay::m_3DScene->Set_Extra_Pass_Polygon_Mode(W3DScene::EXTRA_PASS_CLEAR_LINE);
 		W3DDisplay::m_3DScene->doRender( m_3DCamera );
-		W3DDisplay::m_3DScene->Set_Extra_Pass_Polygon_Mode(SceneClass::EXTRA_PASS_DISABLE);
+		W3DDisplay::m_3DScene->Set_Extra_Pass_Polygon_Mode(W3DScene::EXTRA_PASS_DISABLE);
 		m_isWireFrameEnabled = m_nextWireFrameEnabled;
 	}
 
@@ -1889,12 +1891,11 @@ void W3DView::draw()
 			{
 				Drawable *drawable = cameraLockObj->getDrawable();
 				drawable->setDrawableHidden(false);
-				RenderInfoClass rinfo(*m_3DCamera);
+				W3DRenderContext rinfo(*m_3DCamera);
 				// Apply the camera and viewport (including depth range)
 				m_3DCamera->Apply();
-				TheDX8MeshRenderer.Set_Camera(&rinfo.Camera);
 				W3DDisplay::m_3DScene->renderSpecificDrawables(rinfo, 1, &drawable);
-				WW3D::Flush(rinfo);
+				Get_W3D_Render_Services().Flush(rinfo);
 			}
 		}
 		if (!continueTheEffect)
@@ -1914,7 +1915,7 @@ void W3DView::draw()
 		//The pass that rendered into a texture may have left the z-buffer in a weird state
 		//so clear it before rendering normal scene.
 		///@todo: Don't clear z-buffer unless shader uses z-bias or anything else that would cause <= z to fail on normal render.
-		DX8Wrapper::Clear(false, true, Vector3(0.0f,0.0f,0.0f), TheWaterTransparency->m_minWaterOpacity);	// Clear z but not color
+		Graphics::Get_Attachment_Bindings().Clear(false, true, {0,0,0,TheWaterTransparency->m_minWaterOpacity});	// Clear z but not color
 		W3DDisplay::m_3DScene->setCustomPassMode(SCENE_PASS_DEFAULT);
 		W3DDisplay::m_3DScene->doRender( m_3DCamera );
 		Coord2D deltaScroll;
@@ -2316,8 +2317,8 @@ View::WorldToScreenReturn W3DView::worldToScreenTriReturn( const Coord3D *w, ICo
 		Vector3 screen;
 
 		world.Set( w->x, w->y, w->z );
-		enum CameraClass::ProjectionResType projection = m_3DCamera->Project( screen, world );
-		if (projection != CameraClass::INSIDE_FRUSTUM && projection!=CameraClass::OUTSIDE_FRUSTUM)
+		enum W3DCamera::ProjectionResType projection = m_3DCamera->Project( screen, world );
+		if (projection != W3DCamera::INSIDE_FRUSTUM && projection!=W3DCamera::OUTSIDE_FRUSTUM)
 		{
 			// Can't get a valid number if it's beyond the clip planes.  jba
 			s->x = 0;
@@ -2339,7 +2340,7 @@ View::WorldToScreenReturn W3DView::worldToScreenTriReturn( const Coord3D *w, ICo
 
 //		s->x = (getWidth()  * (screen.X + 1.0f)) / 2.0f;
 //		s->y = (getHeight() * (-screen.Y + 1.0f)) / 2.0f;
-		if (projection != CameraClass::INSIDE_FRUSTUM)
+		if (projection != W3DCamera::INSIDE_FRUSTUM)
 		{
       return WTS_OUTSIDE_FRUSTUM;
 		}
@@ -2435,7 +2436,7 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 				world.Z = pos.z;
 
 				// project the world point to the screen
-				if( m_3DCamera->Project( screen, world ) == CameraClass::INSIDE_FRUSTUM &&
+				if( m_3DCamera->Project( screen, world ) == W3DCamera::INSIDE_FRUSTUM &&
 						screen.X >= normalizedRegion.lo.x &&
 						screen.X <= normalizedRegion.hi.x &&
 						screen.Y >= normalizedRegion.lo.y &&
@@ -2475,7 +2476,7 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 //-------------------------------------------------------------------------------------------------
 Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType )
 {
-	RenderObjClass *renderObj = nullptr;
+	W3DRenderObject *renderObj = nullptr;
 	Drawable *draw = nullptr;
 	DrawableInfo *drawInfo = nullptr;
 
@@ -2509,7 +2510,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 		result.ComputeContactPoint = true;
 
 	//Don't check against translucent or hidden objects
-	RayCollisionTestClass raytest(lineseg,&result,COLL_TYPE_ALL,false,false);
+	W3DRayCastQuery raytest(lineseg,&result,SCENE_QUERY_ALL,false,false);
 
 	if( W3DDisplay::m_3DScene->castRay( raytest, false, (Int)pickType ) )
 		renderObj = raytest.CollidedRenderObj;
@@ -2555,7 +2556,7 @@ Bool W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 
 	lineseg.Set(rayStart,rayEnd);
 
-	RayCollisionTestClass raytest(lineseg,&result);
+	W3DRayCastQuery raytest(lineseg,&result);
 
 	// Get the point of intersection according to W3D
 	if( TheTerrainRenderObject->Cast_Ray(raytest) )
@@ -2614,7 +2615,7 @@ void W3DView::lookAt( const Coord3D *o )
 		rayEnd += rayStart;	//get point on far clip plane along ray from camera.
 		lineseg.Set(rayStart,rayEnd);
 
-		RayCollisionTestClass raytest(lineseg,&result);
+		W3DRayCastQuery raytest(lineseg,&result);
 
 		if( TheTerrainRenderObject->Cast_Ray(raytest) )
 		{
@@ -3749,7 +3750,7 @@ void W3DView::updateTerrain()
 		TheTerrainRenderObject->setTerrainDrawSize(drawSize.x, drawSize.y);
 	}
 
-	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
+	Graphics::SceneObjectList<W3DRenderObject>::Cursor *it = W3DDisplay::m_3DScene->createLightsIterator();
 
 	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
 	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);

@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "WW3D2/rendobj.h"
+#include "WW3D2/RendObj.h"
 #include "AssetTypes.h"
 
 

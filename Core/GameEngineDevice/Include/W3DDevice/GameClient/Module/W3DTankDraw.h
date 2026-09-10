@@ -33,9 +33,7 @@
 #include "Common/DrawModule.h"
 #include "GameClient/ParticleSys.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/part_emt.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
 
 //-------------------------------------------------------------------------------------------------
 class W3DTankDrawModuleData : public W3DModelDrawModuleData
@@ -77,16 +75,16 @@ protected:
 	/// left and right debris emitters for when tank is moving
 	ParticleSystemID m_treadDebrisIDs[2];
 
-	RenderObjClass *m_prevRenderObj;
+	W3DRenderObject *m_prevRenderObj;
 
 	enum TreadType { TREAD_LEFT, TREAD_RIGHT, TREAD_MIDDLE };	//types of treads for different vehicles
 	enum {MAX_TREADS_PER_TANK=4};
 
 	struct TreadObjectInfo
 	{
-		RenderObjClass	*m_robj;	///<sub-object for tread
+		W3DRenderObject	*m_robj;	///<sub-object for tread
 		TreadType	m_type;			///<kind of tread
-		RenderObjClass::Material_Override m_materialSettings;	///<used to set current uv scroll amount.
+		W3DRenderObject::Material_Override m_materialSettings;	///<used to set current uv scroll amount.
 	};
 
 	TreadObjectInfo m_treads[MAX_TREADS_PER_TANK];

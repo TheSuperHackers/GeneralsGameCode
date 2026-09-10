@@ -31,7 +31,7 @@
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"

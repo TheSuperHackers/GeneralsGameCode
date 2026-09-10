@@ -28,6 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include <SDL3/SDL.h>
 
 #include "Common/Debug.h"
 #include "Common/MessageStream.h"
@@ -54,10 +55,10 @@
 Mouse *TheMouse = nullptr;
 
 const char *const Mouse::RedrawModeName[] = {
-	"Mouse:Windows",
+	"Mouse:System",
 	"Mouse:W3D",
 	"Mouse:Poly",
-	"Mouse:DX8",
+	"Mouse:Hardware",
 };
 
 const char *const Mouse::CursorCaptureBlockReasonNames[] = {
@@ -331,7 +332,7 @@ void Mouse::processMouseEvent( Int index )
 //			if (!m_displayTooltip)
 //			{
 //				m_highlightPos = 0;
-//				m_highlightUpdateStart = timeGetTime();
+//				m_highlightUpdateStart = SDL_GetTicks();
 //			}
 //
 //			// display tooltip for current window
@@ -491,9 +492,9 @@ Mouse::Mouse()
 
 	m_currentCursor = ARROW;
 	if (TheGlobalData && TheGlobalData->m_winCursors)
-		m_currentRedrawMode = RM_WINDOWS;
+		m_currentRedrawMode = RM_SYSTEM;
 	else
-		m_currentRedrawMode = RM_W3D;//RM_WINDOWS;
+		m_currentRedrawMode = RM_W3D;//RM_SYSTEM;
 	m_visible = FALSE;
 	m_isCursorCaptured = FALSE;
 	m_tooltipFontName = "Times New Roman";
@@ -566,8 +567,8 @@ Mouse::~Mouse()
 
 }
 
-/**Had to move this out of main init() because I need this data to properly initialize
-the Win32 version of the mouse (by preloading resources before D3D device is created).*/
+/**Had to move this out of main init() because this data is needed to initialize
+the cursor before the rendering device is created.*/
 void Mouse::parseIni()
 {
 	INI ini;
@@ -580,7 +581,7 @@ void Mouse::parseIni()
 void Mouse::init()
 {
 	if (TheGlobalData && TheGlobalData->m_winCursors)
-		m_currentRedrawMode = RM_WINDOWS;
+		m_currentRedrawMode = RM_SYSTEM;
 
 	// device info
 	m_numButtons = 2;  // by default just have 2 buttons
@@ -699,7 +700,7 @@ void Mouse::createStreamMessages()
 		return;  // no place to put messages
 
 	GameMessage *msg = nullptr;
-	UnsignedInt now = timeGetTime();
+	UnsignedInt now = SDL_GetTicks();
 
 	// basic position messages are always created
 	msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_MOUSE_POSITION );
@@ -720,7 +721,7 @@ void Mouse::createStreamMessages()
 		if (!m_displayTooltip)
 		{
 			m_highlightPos = 0;
-			m_highlightUpdateStart = timeGetTime();
+			m_highlightUpdateStart = SDL_GetTicks();
 		}
 
 		// display tooltip for current window
@@ -1155,7 +1156,7 @@ void Mouse::draw()
 // ------------------------------------------------------------------------------------------------
 void Mouse::resetTooltipDelay()
 {
-	m_stillTime = timeGetTime();
+	m_stillTime = SDL_GetTicks();
 	m_displayTooltip = FALSE;
 }
 
@@ -1216,7 +1217,7 @@ void Mouse::drawTooltip()
 		// get ready for the next part of the anim
 		if (m_highlightPos < width + HIGHLIGHT_WIDTH)
 		{
-			UnsignedInt now = timeGetTime();
+			UnsignedInt now = SDL_GetTicks();
 			m_highlightPos = (width*(now-m_highlightUpdateStart))/m_tooltipFillTime;
 		}
 	}

@@ -2,6 +2,16 @@
 # Ignore RUNable folder
 [Rr]un
 
+# Water material assets supplied by this renderer; retail data stays ignored.
+!/Run/
+/Run/*
+!/Run/Art/
+/Run/Art/*
+!/Run/Art/Textures/
+/Run/Art/Textures/*
+!/Run/Art/Textures/WaterOceanFoam.dds
+!/Run/Art/Textures/WaterOceanEnvironment.tga
+
 # Build output folders
 [Rr]elease*
 #[Pp]rofile*

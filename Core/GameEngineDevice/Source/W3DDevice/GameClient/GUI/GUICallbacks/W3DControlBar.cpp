@@ -27,6 +27,8 @@
 // Desc: Control bar callbacks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
+
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Radar.h"
@@ -41,60 +43,132 @@
 #include "GameClient/ControlBarScheme.h"
 #include "GameClient/MapUtil.h"
 #include "GameLogic/GameLogic.h"
+#include "Common/NameKeyGenerator.h"
 
-//-------------------------------------------------------------------------------------------------
-void W3DCameoMovieDraw( GameWindow *window, WinInstanceData *instData )
+import Engine.UI.WND;
+
+namespace
 {
-	// draw video buffer
-	VideoBuffer *video = TheInGameUI->cameoVideoBuffer();
-	if ( video )
-	{
-		ICoord2D pos, size;
-		window->winGetScreenPosition( &pos.x, &pos.y );
-		window->winGetSize( &size.x, &size.y );
 
-		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
-	}
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image)
+{
+	if (image == nullptr || image->getUV() == nullptr)
+		return {};
+	const Region2D *uv = image->getUV();
+	Engine::UI::WND::ImageRef result =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	result.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return result;
 }
 
-
-//-------------------------------------------------------------------------------------------------
-void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
+Graphics::Color2D To_WND_Color(Color color)
 {
-	// draw the default stuff
-	// draw video buffer
-	VideoBuffer *video = TheInGameUI->videoBuffer();
-	if ( video )
-	{
-		ICoord2D pos, size;
-		window->winGetScreenPosition( &pos.x, &pos.y );
-		window->winGetSize( &size.x, &size.y );
-
-		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
-	}
-	else if( rts::localPlayerHasRadar() )
-	{
-		ICoord2D pos, size;
-		//W3DGameWinDefaultDraw( window, instData );
-		// window position and size on the display
-		window->winGetScreenPosition( &pos.x, &pos.y );
-		window->winGetSize( &size.x, &size.y );
-		//TheDisplay->drawOpenRect(pos.x, pos.y, size.x,size.y, 1,GameMakeColor(100,100,255,255));
-		// draw the radar on the screen now
-		TheRadar->draw( pos.x + 1, pos.y + 1, size.x - 2, size.y - 2 );
-
-	}
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
 }
 
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData )
+Bool Add_WND_Image(
+	Engine::UI::WND::DrawList &draw_list,
+	const Image *image,
+	Int left,
+	Int top,
+	Int right,
+	Int bottom)
 {
+	if (image == nullptr)
+		return TRUE;
+	return draw_list.Add_Image(
+		To_WND_Image(image),
+		{static_cast<float>(left), static_cast<float>(top),
+			static_cast<float>(right), static_cast<float>(bottom)}) ? TRUE : FALSE;
+}
 
-	// draw the default stuff
-	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
-		W3DGameWinDefaultDraw( window, instData );
+Bool Add_WND_Tiled_Image(
+	Engine::UI::WND::DrawList &draw_list,
+	const Image *image,
+	Int left,
+	Int top,
+	Int right,
+	Int bottom,
+	Bool vertical = FALSE)
+{
+	if (image == nullptr)
+		return TRUE;
+	const Engine::UI::WND::ImageRef image_ref = To_WND_Image(image);
+	float cursor = 0.0f;
+	if (vertical) {
+		return Engine::UI::WND::Add_Vertical_Tiled_Image(
+			draw_list,
+			image_ref,
+			{static_cast<float>(left), static_cast<float>(top),
+				static_cast<float>(right), static_cast<float>(bottom)},
+			static_cast<float>(image->getImageHeight()), cursor) ? TRUE : FALSE;
+	}
+	return Engine::UI::WND::Add_Tiled_Image(
+		draw_list,
+		image_ref,
+		{static_cast<float>(left), static_cast<float>(top),
+			static_cast<float>(right), static_cast<float>(bottom)},
+		static_cast<float>(image->getImageWidth()), cursor) ? TRUE : FALSE;
+}
 
+Bool Add_Control_Bar_Scheme_Layer(
+	Engine::UI::WND::DrawList &draw_list,
+	Bool foreground)
+{
+	if (TheControlBar == nullptr || TheWindowManager == nullptr || TheNameKeyGenerator == nullptr)
+		return FALSE;
+	ControlBarSchemeManager *manager = TheControlBar->getControlBarSchemeManager();
+	ControlBarScheme *scheme = manager != nullptr ? manager->getCurrentScheme() : nullptr;
+	if (scheme == nullptr)
+		return TRUE;
+
+	const NameKeyType marker_key = TheNameKeyGenerator->nameToKey(
+		"ControlBar.wnd:BackgroundMarker");
+	GameWindow *marker = TheWindowManager->winGetWindowFromId(nullptr, marker_key);
+	if (marker == nullptr)
+		return TRUE;
+
+	ICoord2D marker_position;
+	marker->winGetScreenPosition(&marker_position.x, &marker_position.y);
+	ICoord2D base_position;
+	if (foreground)
+		TheControlBar->getForegroundMarkerPos(&base_position.x, &base_position.y);
+	else
+		TheControlBar->getBackgroundMarkerPos(&base_position.x, &base_position.y);
+	const Coord2D screen_offset = manager->getScreenOffset();
+	const Coord2D offset{
+		marker_position.x - base_position.x + screen_offset.x,
+		marker_position.y - base_position.y + screen_offset.y};
+	const Coord2D multiplier = manager->getMultiplier();
+	const Int first_layer = foreground ? CONTROL_BAR_SCHEME_FOREGROUND_IMAGE_LAYERS - 1
+		: MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS - 1;
+	const Int last_layer = foreground ? 0 : CONTROL_BAR_SCHEME_FOREGROUND_IMAGE_LAYERS;
+	for (Int layer = first_layer; layer >= last_layer; --layer) {
+		for (ControlBarSchemeImage *image : scheme->m_layer[layer]) {
+			if (image == nullptr || image->m_image == nullptr)
+				continue;
+			const Int left = static_cast<Int>(image->m_position.x * multiplier.x + offset.x);
+			const Int top = static_cast<Int>(image->m_position.y * multiplier.y + offset.y);
+			const Int right = static_cast<Int>(
+				(image->m_position.x + image->m_size.x) * multiplier.x + offset.x);
+			const Int bottom = static_cast<Int>(
+				(image->m_position.y + image->m_size.y) * multiplier.y + offset.y);
+			if (!Add_WND_Image(draw_list, image->m_image, left, top, right, bottom))
+				return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+}
+
+Bool W3DCameoMovieDrawData(GameWindow *, WinInstanceData *, void *)
+{
+	return TRUE;
 }
 
 Real logN(Real value, Real logBase)
@@ -102,913 +176,394 @@ Real logN(Real value, Real logBase)
 	return (Real)log10(value)/ log10(logBase);
 }
 
-//-------------------------------------------------------------------------------------------------
-/** Temporary power meter drawing ... there are some problems with this meter, that is
-	* what to do when the player doesn't have power, builds a building before a power plant
-	* etc, but I don't want to spend time on this since it's not a task right now and I'm
-	* sure it will be in the future.  This is just down and dirty to see SOMETHING  (CD) */
-//-------------------------------------------------------------------------------------------------
-void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DCommandBarGridDrawData(GameWindow *window, WinInstanceData *instData, void *drawList)
 {
-	//static const Image *endBarYellow = TheMappedImageCollection->findImageByName("PowerBarYellowEndR");
-	//static const Image *beginBarYellow = TheMappedImageCollection->findImageByName("PowerBarYellowEndL");
-	static const Image *centerBarYellow = TheMappedImageCollection->findImageByName("PowerPointY");
-	//static const Image *endBarRed = TheMappedImageCollection->findImageByName("PowerBarRedEndR");
-	//static const Image *beginBarRed = TheMappedImageCollection->findImageByName("PowerBarRedEndL");
-	static const Image *centerBarRed = TheMappedImageCollection->findImageByName("PowerPointR");
-	//static const Image *endBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndR");
-	//static const Image *beginBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndL");
-	static const Image *centerBarGreen = TheMappedImageCollection->findImageByName("PowerPointG");
-	//const Image *endBar = nullptr;
-	//const Image *beginBar = nullptr;
-	const Image *centerBar = nullptr;
-	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player* player = TheControlBar->getCurrentlyViewedPlayer();
+	if (window == nullptr || instData == nullptr || drawList == nullptr || TheControlBar == nullptr)
+		return FALSE;
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE))
+		return W3DGameWinDefaultDrawData(window, instData, drawList);
 
-	if(!player || !TheGlobalData)
-		return;
-	Energy *energy = player->getEnergy();
-	if( energy == nullptr )
-		return;
-
-	Int consumption = energy->getConsumption();
-	Int production = energy->getProduction();
-
-	ICoord2D pos, size;
-	window->winGetScreenPosition( &pos.x, &pos.y );
-	window->winGetSize( &size.x, &size.y );
-
-	static Real pixelsPerInterval = size.x / TheGlobalData->m_powerBarIntervals;
-	Int delta = TheGlobalData->m_powerBarYellowRange;
-
-	if((consumption > energy->getProduction() - delta) && (consumption <= energy->getProduction()))
-	{
-		// 6 and 1 is Green, 6 and 2 is yellow, 6 and 6 is yellow
-		//endBar = endBarYellow;
-		//beginBar = beginBarYellow;
-		centerBar = centerBarYellow;
-	}
-	else if( consumption > production)
-	{
-	//	endBar = endBarRed;
-//		beginBar = beginBarRed;
-		centerBar = centerBarRed;
-	}
-	else
-	{
-	//	endBar = endBarGreen;
-//		beginBar = beginBarGreen;
-		centerBar = centerBarGreen;
-	}
-	//slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	if( !slider || !centerBar)
-		return;
-
-	Int range;
-	range = logN(production, TheGlobalData->m_powerBarBase) * (size.x / TheGlobalData->m_powerBarIntervals);
-	if(range >= size.x)
-		range = size.x;
-//	if(range < endBar->getImageWidth() + beginBar->getImageWidth())
-//		range = endBar->getImageWidth() + beginBar->getImageWidth();
-
-
-
-//	// get image sizes for the ends
-//	ICoord2D leftSize, rightSize, start, end;
-//	leftSize.x = beginBar->getImageWidth();
-//	leftSize.y = beginBar->getImageHeight();
-//	rightSize.x = endBar->getImageWidth();
-//	rightSize.y = endBar->getImageHeight();
-//
-//	// get two key points used in the end drawing
-//	ICoord2D leftEnd, rightStart;
-//	leftEnd.x = pos.x + leftSize.x;
-//	leftEnd.y = pos.y + size.y;
-//	rightStart.x = pos.x + range - rightSize.x;
-//	rightStart.y = pos.y;
-
-	// draw the center repeating bar
-	Int centerWidth, pieces;
-
-	// get width we have to draw our repeating center in
-	centerWidth = range; //rightStart.x - leftEnd.x;
-
-	if( centerWidth > 0)
-	{
-
-		// how many whole repeating pieces will fit in that width
-		pieces = centerWidth / centerBar->getImageWidth();
-		ICoord2D start, end;
-		// draw the pieces
-		start.x = pos.x;
-		start.y = pos.y;
-		end.y = start.y + size.y;// + yOffset;
-		for( Int i = 0; i < pieces; i++ )
-		{
-
-			end.x = start.x + centerBar->getImageWidth();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			start.x += centerBar->getImageWidth();
-
-		}
-
-		// we will draw the image but clip the parts we don't want to show
-		IRegion2D reg;
-		reg.lo.x = start.x;
-		reg.lo.y = start.y;
-		reg.hi.x = pos.x + size.x;//rightStart.x;
-		reg.hi.y = pos.y + size.y;
-		centerWidth = pos.x +size.x  - start.x;
-		if( centerWidth > 0)
-		{
-			TheDisplay->setClipRegion(&reg);
-			end.x = start.x + centerBar->getImageWidth();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			TheDisplay->enableClipping(FALSE);
-		}
-
-//		// draw left end
-//		start.x = pos.x;
-//		start.y = pos.y;
-//		end = leftEnd;
-//		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-//
-//		// draw right end
-//		start = rightStart;
-//		end.x = start.x + rightSize.x;
-//		end.y = start.y + size.y;
-//		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
-	}
-	Int posXstart;
-	Int posXend;
-	Real consumptionForNeedle = (consumption == 1) ? 1.5f : INT_TO_REAL(consumption);//Log(1) == 0, but we need to show something for 1 power used.
-	range = logN(consumptionForNeedle, TheGlobalData->m_powerBarBase) * (size.x / TheGlobalData->m_powerBarIntervals);
-	if(centerWidth <= 0 && range <= 0)
-		return;
-	if(range >= size.x)
-	{
-		posXstart = pos.x + size.x - slider->getImageWidth();
-		posXend = pos.x + size.x;
-	}
-	else
-	{
-		posXstart = pos.x + range - slider->getImageWidth()/2;
-		posXend = pos.x + range + slider->getImageWidth()/2;
-	}
-	if(posXstart <=pos.x)
-	{
-		posXstart	 = pos.x;
-		posXend	= pos.x + slider->getImageWidth();
-	}
-	TheWindowManager->winDrawImage(slider, posXstart, pos.y + size.y - slider->getImageHeight(), posXend, pos.y + size.y);
-}
-
-void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
-{
-	static const Image *endBarYellow = TheMappedImageCollection->findImageByName("PowerBarYellowEndR");
-	static const Image *beginBarYellow = TheMappedImageCollection->findImageByName("PowerBarYellowEndL");
-	static const Image *centerBarYellow = TheMappedImageCollection->findImageByName("PowerBarYellow");
-	static const Image *endBarRed = TheMappedImageCollection->findImageByName("PowerBarRedEndR");
-	static const Image *beginBarRed = TheMappedImageCollection->findImageByName("PowerBarRedEndL");
-	static const Image *centerBarRed = TheMappedImageCollection->findImageByName("PowerBarRed");
-	static const Image *endBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndR");
-	static const Image *beginBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndL");
-	static const Image *centerBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreen");
-	const Image *endBar = nullptr;
-	const Image *beginBar = nullptr;
-	const Image *centerBar = nullptr;
-	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player* player = TheControlBar->getCurrentlyViewedPlayer();
-
-	if(!player || !TheGlobalData)
-		return;
-	Energy *energy = player->getEnergy();
-	if( energy == nullptr )
-		return;
-
-	Int consumption = energy->getConsumption();
-	Int production = energy->getProduction();
-
-	ICoord2D pos, size;
-	window->winGetScreenPosition( &pos.x, &pos.y );
-	window->winGetSize( &size.x, &size.y );
-
-	static Real pixelsPerInterval = size.x / TheGlobalData->m_powerBarIntervals;
-	Int delta = TheGlobalData->m_powerBarYellowRange;
-
-	if((consumption > energy->getProduction() - delta) && (consumption <= energy->getProduction()))
-	{
-		// 6 and 1 is Green, 6 and 2 is yellow, 6 and 6 is yellow
-		endBar = endBarYellow;
-		beginBar = beginBarYellow;
-		centerBar = centerBarYellow;
-	}
-	else if( consumption > production)
-	{
-		endBar = endBarRed;
-		beginBar = beginBarRed;
-		centerBar = centerBarRed;
-	}
-	else
-	{
-		endBar = endBarGreen;
-		beginBar = beginBarGreen;
-		centerBar = centerBarGreen;
-	}
-	//slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	if( !slider || !endBar || !beginBar || !centerBar)
-		return;
-
-	Int range;
-	range = logN(production, TheGlobalData->m_powerBarBase) * (size.x / TheGlobalData->m_powerBarIntervals);
-	if(range >= size.x)
-		range = size.x;
-	if(range < endBar->getImageWidth() + beginBar->getImageWidth())
-		range = endBar->getImageWidth() + beginBar->getImageWidth();
-
-
-
-	// get image sizes for the ends
-	ICoord2D leftSize, rightSize, start, end;
-	leftSize.x = beginBar->getImageWidth();
-	leftSize.y = beginBar->getImageHeight();
-	rightSize.x = endBar->getImageWidth();
-	rightSize.y = endBar->getImageHeight();
-
-	// get two key points used in the end drawing
-	ICoord2D leftEnd, rightStart;
-	leftEnd.x = pos.x + leftSize.x;
-	leftEnd.y = pos.y + size.y;
-	rightStart.x = pos.x + range - rightSize.x;
-	rightStart.y = pos.y;
-
-	// draw the center repeating bar
-	Int centerWidth, pieces;
-
-	// get width we have to draw our repeating center in
-	centerWidth = rightStart.x - leftEnd.x;
-
-	if( centerWidth <= 0)
-	{
-		// draw left end
-		start.x = pos.x;
-		start.y = pos.y;
-		end.y = leftEnd.y;
-		end.x = pos.x + range/2;
-		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-
-		// draw right end
-		start.y = rightStart.y;
-		start.x = end.x;
-		end.x = pos.x + range;
-		end.y = start.y + size.y;
-		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
-	}
-	else
-	{
-
-		// how many whole repeating pieces will fit in that width
-		pieces = centerWidth / centerBar->getImageWidth();
-
-		// draw the pieces
-		start.x = leftEnd.x;
-		start.y = pos.y;
-		end.y = start.y + size.y; //centerImage->getImageHeight() + yOffset;
-		for( Int i = 0; i < pieces; i++ )
-		{
-
-			end.x = start.x + centerBar->getImageWidth();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			start.x += centerBar->getImageWidth();
-
-		}
-
-		// we will draw the image but clip the parts we don't want to show
-		IRegion2D reg;
-		reg.lo.x = start.x;
-		reg.lo.y = start.y;
-		reg.hi.x = rightStart.x;
-		reg.hi.y = end.y;
-		centerWidth = rightStart.x - start.x;
-		if( centerWidth > 0)
-		{
-			TheDisplay->setClipRegion(&reg);
-			end.x = start.x + centerBar->getImageWidth();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			TheDisplay->enableClipping(FALSE);
-		}
-
-		// draw left end
-		start.x = pos.x;
-		start.y = pos.y;
-		end = leftEnd;
-		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-
-		// draw right end
-		start = rightStart;
-		end.x = start.x + rightSize.x;
-		end.y = start.y + size.y;
-		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
-	}
-	Int posXstart;
-	Int posXend;
-	Real consumptionForNeedle = (consumption == 1) ? 1.5f : INT_TO_REAL(consumption);//Log(1) == 0, but we need to show something for 1 power used.
-	range = logN(consumptionForNeedle, TheGlobalData->m_powerBarBase) * (size.x / TheGlobalData->m_powerBarIntervals);
-	if(range >= size.x)
-	{
-		posXstart = pos.x + size.x - slider->getImageWidth();
-		posXend = pos.x + size.x;
-	}
-	else
-	{
-		posXstart = pos.x + range - slider->getImageWidth()/2;
-		posXend = pos.x + range + slider->getImageWidth()/2;
-	}
-	if(posXstart <=pos.x)
-	{
-		posXstart	 = pos.x;
-		posXend	= pos.x + slider->getImageWidth();
-	}
-	TheWindowManager->winDrawImage(slider, posXstart, pos.y + size.y - slider->getImageHeight(), posXend, pos.y + size.y);
-}
-
-void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
-{
-	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
-	{
-		W3DGameWinDefaultDraw( window, instData );
-		return;
-	}
-
-	ICoord2D pos, size;
-	window->winGetScreenPosition( &pos.x, &pos.y );
-	window->winGetSize( &size.x, &size.y );
-
-	Color color = TheControlBar->getBorderColor();
+	ICoord2D position, size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	const Color color = TheControlBar->getBorderColor();
 	window->winSetEnabledBorderColor(0, color);
-	W3DGameWinDefaultDraw( window, instData );
-
-	TheDisplay->drawLine(pos.x, pos.y + size.y * .33, pos.x + size.x, pos.y+ size.y*.33, 1,color);
-	TheDisplay->drawLine(pos.x, pos.y + size.y * .66, pos.x + size.x, pos.y+ size.y*.66, 1,color);
-	TheDisplay->drawLine(pos.x + size.x * .33, pos.y, pos.x + size.x *.33, pos.y +size.y, 1,color);
-	TheDisplay->drawLine(pos.x + size.x  * .66, pos.y, pos.x + size.x *.66, pos.y + size.y, 1,color);
-
-
-
-
+	Engine::UI::WND::DrawList &list = *static_cast<Engine::UI::WND::DrawList *>(drawList);
+	if (!W3DGameWinDefaultDrawData(window, instData, drawList))
+		return FALSE;
+	return list.Add_Line(
+		{static_cast<float>(position.x), position.y + size.y * .33f},
+		{static_cast<float>(position.x + size.x), position.y + size.y * .33f},
+		1.0f, {static_cast<float>((color >> 16) & 0xff) / 255.0f,
+			static_cast<float>((color >> 8) & 0xff) / 255.0f,
+			static_cast<float>(color & 0xff) / 255.0f,
+			static_cast<float>((color >> 24) & 0xff) / 255.0f})
+		&& list.Add_Line(
+			{static_cast<float>(position.x), position.y + size.y * .66f},
+			{static_cast<float>(position.x + size.x), position.y + size.y * .66f},
+			1.0f, {static_cast<float>((color >> 16) & 0xff) / 255.0f,
+				static_cast<float>((color >> 8) & 0xff) / 255.0f,
+				static_cast<float>(color & 0xff) / 255.0f,
+				static_cast<float>((color >> 24) & 0xff) / 255.0f})
+		&& list.Add_Line(
+			{position.x + size.x * .33f, static_cast<float>(position.y)},
+			{position.x + size.x * .33f, static_cast<float>(position.y + size.y)},
+			1.0f, {static_cast<float>((color >> 16) & 0xff) / 255.0f,
+				static_cast<float>((color >> 8) & 0xff) / 255.0f,
+				static_cast<float>(color & 0xff) / 255.0f,
+				static_cast<float>((color >> 24) & 0xff) / 255.0f})
+		&& list.Add_Line(
+			{position.x + size.x * .66f, static_cast<float>(position.y)},
+			{position.x + size.x * .66f, static_cast<float>(position.y + size.y)},
+			1.0f, {static_cast<float>((color >> 16) & 0xff) / 255.0f,
+				static_cast<float>((color >> 8) & 0xff) / 255.0f,
+				static_cast<float>(color & 0xff) / 255.0f,
+			static_cast<float>((color >> 24) & 0xff) / 255.0f}) ? TRUE : FALSE;
 }
 
-void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DPowerDrawData(GameWindow *window, WinInstanceData *, void *drawList)
 {
-	// TheSuperHackers @bugfix Stubbjax 08/08/2025 Show the experience bar for observers
-	Player* player = TheControlBar->getCurrentlyViewedPlayer();
+	if (window == nullptr || drawList == nullptr || TheMappedImageCollection == nullptr
+		|| TheControlBar == nullptr || TheGlobalData == nullptr)
+		return FALSE;
+	Player *player = TheControlBar->getCurrentlyViewedPlayer();
+	if (player == nullptr)
+		return TRUE;
+	Energy *energy = player->getEnergy();
+	if (energy == nullptr)
+		return TRUE;
 
-	if (!player)
-		return;
-
-	static const Image *endBar = TheMappedImageCollection->findImageByName("GenExpBarTop1");
-	static const Image *beginBar = TheMappedImageCollection->findImageByName("GenExpBarBottom1");
-	static const Image *centerBar = TheMappedImageCollection->findImageByName("GenExpBar1");
-	Int progress = 0;
-	Int skillPointsRequired = player->getSkillPointsLevelUp() - player->getSkillPointsLevelDown();
-
-	// TheSuperHackers @bugfix Mauller 04/05/2025 Prevent possible division by zero
-	if ( skillPointsRequired > 0)
-	{
-		progress = ( ((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) / skillPointsRequired );
-	}
-
-	if(progress <= 0)
-		return;
-
-	// GS This should never be necessary, but scripts can change the points required or even disable a level.
-	// A disabled level will be -1 for points required.  Just be totally safe and bind to 100, and we will
-	// fix the scripts to bind the points gained later.
-	if( progress > 100 )
-		progress = 100;
-
-	ICoord2D pos, size;
-	window->winGetScreenPosition( &pos.x, &pos.y );
-	window->winGetSize( &size.x, &size.y );
-
-
-
-	if( !endBar || !beginBar || !centerBar)
-		return;
-
-	Int range;
-	range = size.y * progress / 100;
-
-
-	// get image sizes for the ends
-	ICoord2D topSize, bottomSize, start, end;
-	bottomSize.x = beginBar->getImageWidth();
-	bottomSize.y = beginBar->getImageHeight();
-	topSize.x = endBar->getImageWidth();
-	topSize.y = endBar->getImageHeight();
-
-	// get two key points used in the end drawing
-	ICoord2D bottomEnd, topStart;
-	bottomEnd.x = pos.x + size.x;
-	bottomEnd.y = pos.y + size.y - bottomSize.y;
-	topStart.x = pos.x;
-	topStart.y = pos.y +size.y - range - topSize.y;
-
-	// draw the center repeating bar
-	Int centerWidth, pieces;
-
-	// get width we have to draw our repeating center in
-	centerWidth = bottomEnd.y - topStart.y;
-
-	if( centerWidth <= 0)
-	{
-		// draw left end
-		start.x = pos.x;
-		start.y = pos.y + size.y - bottomSize.y;
-		end.y = pos.y + size.y;
-		end.x = pos.x + size.x;
-		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-
-		// draw right end
-		start.y = pos.y + size.y - bottomSize.y - topSize.y;
-		start.x = pos.x;
-		end.x = pos.x + size.x;
-		end.y = start.y + topSize.y;
-		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
-	}
+	const Image *center_bar = nullptr;
+	const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
+	const Int consumption = energy->getConsumption();
+	const Int production = energy->getProduction();
+	const Int delta = TheGlobalData->m_powerBarYellowRange;
+	if (consumption > production - delta && consumption <= production)
+		center_bar = TheMappedImageCollection->findImageByName("PowerPointY");
+	else if (consumption > production)
+		center_bar = TheMappedImageCollection->findImageByName("PowerPointR");
 	else
-	{
+		center_bar = TheMappedImageCollection->findImageByName("PowerPointG");
+	if (center_bar == nullptr || slider == nullptr || production <= 0
+		|| TheGlobalData->m_powerBarIntervals <= 0)
+		return TRUE;
 
-		// how many whole repeating pieces will fit in that width
-		pieces = centerWidth / centerBar->getImageHeight();
+	ICoord2D position, size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	const Int range = std::min(
+		size.x,
+		static_cast<Int>(logN(production, TheGlobalData->m_powerBarBase)
+			* (size.x / TheGlobalData->m_powerBarIntervals)));
+	Engine::UI::WND::DrawList &list =
+		*static_cast<Engine::UI::WND::DrawList *>(drawList);
+	if (range > 0 && !Add_WND_Tiled_Image(
+		list, center_bar, position.x, position.y, position.x + range, position.y + size.y))
+		return FALSE;
 
-		// draw the pieces
-		start.x = pos.x;
-		start.y = topStart.y;
-		end.x = start.x + size.x; //centerImage->getImageHeight() + yOffset;
-		for( Int i = 0; i < pieces; i++ )
-		{
-
-			end.y = start.y + centerBar->getImageHeight();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			start.y += centerBar->getImageHeight();
-
-		}
-
-		// we will draw the image but clip the parts we don't want to show
-		IRegion2D reg;
-		reg.lo.x = start.x;
-		reg.lo.y = start.y;
-		reg.hi.x = bottomEnd.x;
-		reg.hi.y = bottomEnd.y;
-		centerWidth = bottomEnd.y - start.y;
-		if( centerWidth > 0)
-		{
-			TheDisplay->setClipRegion(&reg);
-			end.y = start.y + centerBar->getImageHeight();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			TheDisplay->enableClipping(FALSE);
-		}
-
-		// draw left end
-		end.x = pos.x + size.x;
-		end.y = pos.y + size.y;
-		start.x = pos.x;
-		start.y = bottomEnd.y;
-		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-
-		// draw right end
-		start.x = pos.x;
-		start.y = pos.y +size.y - range;
-		end.x = pos.x + size.x;
-		end.y = pos.y +size.y - range - topSize.y;
-		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
+	const Real consumption_for_needle = consumption == 1 ? 1.5f : INT_TO_REAL(consumption);
+	const Int needle_range = consumption_for_needle > 0.0f
+		? static_cast<Int>(logN(consumption_for_needle, TheGlobalData->m_powerBarBase)
+			* (size.x / TheGlobalData->m_powerBarIntervals))
+		: 0;
+	Int needle_left = position.x + needle_range - slider->getImageWidth() / 2;
+	Int needle_right = needle_left + slider->getImageWidth();
+	if (needle_range >= size.x) {
+		needle_left = position.x + size.x - slider->getImageWidth();
+		needle_right = position.x + size.x;
 	}
-
+	if (needle_left <= position.x) {
+		needle_left = position.x;
+		needle_right = position.x + slider->getImageWidth();
+	}
+	return Add_WND_Image(
+		list,
+		slider,
+		needle_left,
+		position.y + size.y - slider->getImageHeight(),
+		needle_right,
+		position.y + size.y);
 }
 
-void W3DCommandBarTopDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DCommandBarGenExpDrawData(GameWindow *window, WinInstanceData *, void *drawList)
 {
-	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
-	if(!win || win->winIsHidden() || !ThePlayerList->getLocalPlayer()->isPlayerActive())
-		return;
-
-//	TheControlBar->drawTransitionHandler();
-
-//	ICoord2D pos, size, imageStart, imageEnd;
-//	win->winGetScreenPosition(&pos.x, &pos.y);
-//	win->winGetSize(&size.x, &size.y);
-////	const Image *image =TheControlBar->getStarImage();
-//	imageStart.x = pos.x	+ size.x/2 - image->getImageWidth()/2;
-//	imageStart.y = pos.y	+ size.y/2 - image->getImageHeight()/2;
-//	imageEnd.x = imageStart.x + image->getImageWidth();
-//	imageEnd.y = imageStart.y + image->getImageHeight();
-//	TheDisplay->drawImage(TheControlBar->getStarImage(), imageStart.x, imageStart.y, imageEnd.x, imageEnd.y);
+	if (window == nullptr || drawList == nullptr || TheMappedImageCollection == nullptr
+		|| TheControlBar == nullptr)
+		return FALSE;
+	Player *player = TheControlBar->getCurrentlyViewedPlayer();
+	if (player == nullptr)
+		return TRUE;
+	const Image *top = TheMappedImageCollection->findImageByName("GenExpBarTop1");
+	const Image *bottom = TheMappedImageCollection->findImageByName("GenExpBarBottom1");
+	const Image *center = TheMappedImageCollection->findImageByName("GenExpBar1");
+	const Int required = player->getSkillPointsLevelUp() - player->getSkillPointsLevelDown();
+	if (top == nullptr || bottom == nullptr || center == nullptr || required <= 0)
+		return TRUE;
+	const Int progress = std::clamp(
+		((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) / required,
+		0,
+		100);
+	if (progress <= 0)
+		return TRUE;
+	ICoord2D position, size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	const Int range = size.y * progress / 100;
+	const Int bottom_y = position.y + size.y - bottom->getImageHeight();
+	const Int top_y = position.y + size.y - range - top->getImageHeight();
+	Engine::UI::WND::DrawList &list =
+		*static_cast<Engine::UI::WND::DrawList *>(drawList);
+	if (bottom_y <= top_y) {
+		return Add_WND_Image(list, bottom, position.x, position.y + size.y - bottom->getImageHeight(),
+			position.x + size.x, position.y + size.y)
+			&& Add_WND_Image(list, top, position.x, top_y, position.x + size.x,
+				top_y + top->getImageHeight());
+	}
+	float cursor = 0.0f;
+	if (!Engine::UI::WND::Add_Vertical_Tiled_Image(
+			list,
+			To_WND_Image(center),
+			{static_cast<float>(position.x), static_cast<float>(top_y),
+				static_cast<float>(position.x + size.x), static_cast<float>(bottom_y)},
+			static_cast<float>(center->getImageHeight()), cursor))
+		return FALSE;
+	return Add_WND_Image(list, bottom, position.x, bottom_y, position.x + size.x, position.y + size.y)
+		&& Add_WND_Image(list, top, position.x, position.y + size.y - range - top->getImageHeight(),
+			position.x + size.x, position.y + size.y - range);
 }
 
-
-void W3DCommandBarBackgroundDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DCommandBarHelpPopupDrawData(GameWindow *window, WinInstanceData *, void *drawList)
 {
-
-	ControlBarSchemeManager *man = TheControlBar->getControlBarSchemeManager();
-	if(!man)
-		return;
-	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
-	GameWindow *win =  TheWindowManager->winGetWindowFromId(nullptr,winNamekey);
-	static ICoord2D basePos;
-	if(!win)
-	{
-		return;
-		//win = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
-	}
-	TheControlBar->getBackgroundMarkerPos(&basePos.x, &basePos.y);
-	ICoord2D pos, offset;
-	win->winGetScreenPosition(&pos.x,&pos.y);
-	offset.x = pos.x - basePos.x;
-	offset.y = pos.y - basePos.y;
-
-	man->drawBackground(offset);
+	if (window == nullptr || drawList == nullptr || TheMappedImageCollection == nullptr)
+		return FALSE;
+	const Image *top = TheMappedImageCollection->findImageByName("Helpbox-top");
+	const Image *bottom = TheMappedImageCollection->findImageByName("Helpbox-bottom");
+	const Image *center = TheMappedImageCollection->findImageByName("Helpbox-middle");
+	if (top == nullptr || bottom == nullptr || center == nullptr)
+		return TRUE;
+	ICoord2D position, size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	Engine::UI::WND::DrawList &list =
+		*static_cast<Engine::UI::WND::DrawList *>(drawList);
+	const Int center_top = position.y + top->getImageHeight();
+	const Int center_bottom = position.y + size.y - bottom->getImageHeight();
+	float cursor = 0.0f;
+	if (!Engine::UI::WND::Add_Vertical_Tiled_Image(
+			list,
+			To_WND_Image(center),
+			{static_cast<float>(position.x), static_cast<float>(center_top),
+				static_cast<float>(position.x + size.x), static_cast<float>(center_bottom)},
+			static_cast<float>(center->getImageHeight()), cursor))
+		return FALSE;
+	return Add_WND_Image(list, bottom, position.x, center_bottom, position.x + size.x, position.y + size.y)
+		&& Add_WND_Image(list, top, position.x, position.y, position.x + size.x,
+			position.y + top->getImageHeight());
 }
 
-
-void W3DCommandBarForegroundDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DLeftHUDDrawData(GameWindow *window, WinInstanceData *, void *drawList)
 {
-
-	ControlBarSchemeManager *man = TheControlBar->getControlBarSchemeManager();
-	if(!man)
-		return;
-
-	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
-	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr,winNamekey);
-	static ICoord2D basePos;
-	if(!win)
-	{
-		return;
-		//win = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
-	}
-	TheControlBar->getForegroundMarkerPos(&basePos.x, &basePos.y);
-	ICoord2D pos, offset;
-	win->winGetScreenPosition(&pos.x,&pos.y);
-	offset.x = pos.x - basePos.x;
-	offset.y = pos.y - basePos.y;
-
-	man->drawForeground(offset);
-
+	if (window == nullptr || drawList == nullptr) return FALSE;
+	if (TheRadar == nullptr || !rts::localPlayerHasRadar()) return TRUE;
+	ICoord2D position, size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	return TheRadar->drawData(position.x + 1, position.y + 1, size.x - 2, size.y - 2, drawList);
 }
 
-void W3DNoDraw( GameWindow *window, WinInstanceData *instData )
+Bool W3DRightHUDDrawData(GameWindow *window, WinInstanceData *instance_data, void *drawList)
 {
-
-	// draw the default stuff
-//	W3DGameWinDefaultDraw( window, instData );
-
+	if (window == nullptr || instance_data == nullptr || drawList == nullptr)
+		return FALSE;
+	if (!BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE))
+		return TRUE;
+	return W3DGameWinDefaultDrawData(window, instance_data, drawList);
 }
 
-void drawSkinnyBorder( Int x, Int y, Int width, Int height);
-void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
+Bool W3DCommandBarBackgroundDrawData(GameWindow *, WinInstanceData *, void *drawList)
 {
-	MapMetaData *mmData = (MapMetaData *)window->winGetUserData();
-	Int pixelX, pixelY, width, height;
-	// if the local player does not have a radar then we can't draw anything
-	window->winGetScreenPosition(&pixelX, &pixelY);
-	window->winGetSize(&width, &height);
-	if(!mmData)
-	{
-		W3DGameWinDefaultDraw( window, instData );
-		drawSkinnyBorder(pixelX - 1, pixelY - 1, width + 2, height + 2);
-		return;
-	}
-
-
-
-
-	//
-	// given a upper left corner at pixelX|Y and a width and height to draw into, figure out
-	// where we should start and end the image so that the final drawn image has the
-	// same ratio as the map and isn't stretched or distorted
-	//
-	ICoord2D ul, lr;
-	findDrawPositions( pixelX, pixelY, width, height, mmData->m_extent, &ul, &lr );
-
-//	Int scaledWidth = lr.x - ul.x;
-//	Int scaledHeight = lr.y - ul.y;
-
-	// draw black border areas where we need map
-	Color fillColor = GameMakeColor( 0, 0, 0, 255 );
-	Color lineColor = GameMakeColor( 50, 50, 50, 255 );
-
-	if( mmData->m_extent.width()/width >= mmData->m_extent.height()/height )
-	{
-
-		// draw horizontal bars at top and bottom
-		TheDisplay->drawFillRect( pixelX, pixelY, width, ul.y - pixelY - 1, fillColor );
-		TheDisplay->drawFillRect( pixelX, lr.y + 1, width, pixelY + height - lr.y - 1, fillColor);
-		TheDisplay->drawLine(pixelX, ul.y, pixelX + width, ul.y, 1, lineColor);
-		TheDisplay->drawLine(pixelX, lr.y + 1, pixelX + width, lr.y + 1, 1, lineColor);
-
-	}
-	else
-	{
-
-		// draw vertical bars to the left and right
-		TheDisplay->drawFillRect( pixelX, pixelY, ul.x - pixelX - 1, height, fillColor );
-		TheDisplay->drawFillRect( lr.x + 1, pixelY, width - (lr.x - pixelX) - 1, height, fillColor );
-		TheDisplay->drawLine(ul.x, pixelY, ul.x, pixelY + height, 1, lineColor);
-		TheDisplay->drawLine(lr.x + 1, pixelY, lr.x + 1, pixelY + height, 1, lineColor);
-
-	}
-
-	if(!BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
-		TheDisplay->drawFillRect(ul.x, ul.y, lr.x -ul.x, lr.y-ul.y, lineColor);
-	else
-		TheDisplay->drawImage(window->winGetEnabledImage(0) , ul.x, ul.y, lr.x, lr.y );
-
-	const Image *image = TheMappedImageCollection->findImageByName("TecBuilding");
-	ICoord2DList::iterator it = TheSupplyAndTechImageLocations.m_techPosList.begin();
-	if(image)
-		while(it != TheSupplyAndTechImageLocations.m_techPosList.end())
-		{
-			TheDisplay->drawImage(image, pixelX + it->x, pixelY + it->y, pixelX + it->x + SUPPLY_TECH_SIZE, pixelY + it->y +SUPPLY_TECH_SIZE);
-			it++;
-		}
-
-	image = TheMappedImageCollection->findImageByName("Cash");
-	it = TheSupplyAndTechImageLocations.m_supplyPosList.begin();
-	if(image)
-		while(it != TheSupplyAndTechImageLocations.m_supplyPosList.end())
-		{
-			TheDisplay->drawImage(image, pixelX + it->x, pixelY + it->y, pixelX + it->x + SUPPLY_TECH_SIZE, pixelY + it->y +SUPPLY_TECH_SIZE);
-			it++;
-		}
-	drawSkinnyBorder(pixelX - 1, pixelY - 1, width + 2, height + 2);
+	return drawList != nullptr
+		&& Add_Control_Bar_Scheme_Layer(
+			*static_cast<Engine::UI::WND::DrawList *>(drawList), FALSE);
 }
 
-void drawSkinnyBorder( Int x, Int y, Int width, Int height)
+Bool W3DCommandBarForegroundDrawData(GameWindow *, WinInstanceData *, void *drawList)
 {
-
-	enum
-	{
-		BORDER_CORNER_SIZE	= 5,
-		BORDER_LINE_SIZE		= 5,
-	};
-	Int Offset = 2;
-	Int OffsetLower = 5;
-
-	// save original x, y
-	Int originalX = x;
-	Int originalY = y;
-	Int maxX = x + width;
-	Int maxY = y + height;
-	Int x2, y2;			// used for simultaneous drawing of line pairs
-	Int size = 5;
-	Int halfSize = size / 2;
-	const Image *image1, *image2;
-	// Draw Horizontal Lines
-	// All border pieces are based on a 10 pixel offset from the centerline
-	y = originalY - Offset;
-	y2 = maxY - OffsetLower;
-	x2 = maxX - (OffsetLower + BORDER_LINE_SIZE);
-	image1 = TheMappedImageCollection->findImageByName("FrameT");
-	image2 = TheMappedImageCollection->findImageByName("FrameB");
-	for( x=(originalX + 3); x <= x2; x += BORDER_LINE_SIZE )
-	{
-
-		TheDisplay->drawImage( image1,
-													 x, y, x + size, y + size );
-		TheDisplay->drawImage( image2,
-													 x, y2, x + size, y2 + size );
-
-	}
-
-	x2 = maxX - 5;//BORDER_CORNER_SIZE;
-
-	// x == place to draw remainder if any
-	if( (x2 - x) >= (BORDER_LINE_SIZE / 2) )
-	{
-
-		//Blit Half piece
-		TheDisplay->drawImage( image1,
-													 x, y, x + halfSize, y + size );
-		TheDisplay->drawImage( image2,
-													 x, y2, x + halfSize, y2 + size );
-
-		x += (BORDER_LINE_SIZE / 2);
-
-	}
-
-	// x2 - x ... must now be less than a half piece
-	// check for equals and if not blit an adjusted half piece border pieces have
-	// a two pixel repeat so we will blit one pixel over if necessary to line up
-	// the art, but we'll cover-up the overlap with the corners
-	if( x < x2 )
-	{
-		x -= ((BORDER_LINE_SIZE / 2) - (((x2 - x) + 1) & ~1));
-
-		//Blit Half piece
-		TheDisplay->drawImage(image1,
-													 x, y, x + halfSize, y + size );
-		TheDisplay->drawImage( image2,
-													 x, y2, x + halfSize, y2 + size );
-
-	}
-
-	// Draw Vertical Lines
-	// All border pieces are based on a 10 pixel offset from the centerline
-	image1 = TheMappedImageCollection->findImageByName("FrameL");
-	image2 = TheMappedImageCollection->findImageByName("FrameR");
-
-	x = originalX - Offset;
-	x2 = maxX - OffsetLower;
-	y2 = maxY - (OffsetLower + BORDER_LINE_SIZE);
-
-	for( y=(originalY + 3); y <= y2; y += BORDER_LINE_SIZE )
-	{
-
-		TheDisplay->drawImage( image1,
-													 x, y, x + size, y + size );
-		TheDisplay->drawImage( image2,
-													 x2, y, x2 + size, y + size );
-
-	}
-
-	y2 = maxY - OffsetLower;//BORDER_CORNER_SIZE;
-
-	// y == place to draw remainder if any
-	if( (y2 - y) >= (BORDER_LINE_SIZE / 2) )
-	{
-
-		//Blit Half piece
-		TheDisplay->drawImage( image1,
-													 x, y, x + size, y + halfSize );
-		TheDisplay->drawImage( image2,
-													 x2, y, x2 + size, y + halfSize );
-
-		y += (BORDER_LINE_SIZE / 2);
-	}
-
-	// y2 - y ... must now be less than a half piece
-	// check for equals and if not blit an adjusted half piece border pieces have
-	// a two pixel repeat so we will blit one pixel over if necessary to line up
-	// the art, but we'll cover-up the overlap with the corners
-	if( y < y2 )
-	{
-		y -= ((BORDER_LINE_SIZE / 2) - (((y2 - y) + 1) & ~1));
-
-		//Blit Half piece
-		TheDisplay->drawImage( image1,
-													 x, y, x + size, y + halfSize );
-		TheDisplay->drawImage( image2,
-													 x2, y, x2 + size, y + halfSize );
-
-	}
-
-	// Draw Corners
-	x = originalX - 2;//BORDER_CORNER_SIZE ;
-	y = originalY - 2;//BORDER_CORNER_SIZE;
-	image1 = TheMappedImageCollection->findImageByName("FrameCornerUL");
-	TheDisplay->drawImage( image1,
-												 x, y, x + size, y + size );
-	x = maxX - 5;//BORDER_CORNER_SIZE;
-	y = originalY - 2;//BORDER_CORNER_SIZE;
-	image1 = TheMappedImageCollection->findImageByName("FrameCornerUR");
-	TheDisplay->drawImage(image1,
-												 x, y, x + size, y + size );
-	x = originalX - 2;//BORDER_CORNER_SIZE;
-	y = maxY - 5;//BORDER_CORNER_SIZE;
-	image1 = TheMappedImageCollection->findImageByName("FrameCornerLL");
-	TheDisplay->drawImage( image1,
-												 x, y, x + size, y + size );
-	x = maxX - 5;//BORDER_CORNER_SIZE;
-	y = maxY - 5;//BORDER_CORNER_SIZE;
-	image1 = TheMappedImageCollection->findImageByName("FrameCornerLR");
-	TheDisplay->drawImage(image1,
-												 x, y, x + size, y + size );
-
-
+	return drawList != nullptr
+		&& Add_Control_Bar_Scheme_Layer(
+			*static_cast<Engine::UI::WND::DrawList *>(drawList), TRUE);
 }
 
-
-void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
+Bool Add_WND_Skinny_Border(
+	Engine::UI::WND::DrawList &list,
+	Int x,
+	Int y,
+	Int width,
+	Int height)
 {
-
-	static const Image *endBar = TheMappedImageCollection->findImageByName("Helpbox-top");
-	static const Image *beginBar = TheMappedImageCollection->findImageByName("Helpbox-bottom");
-	static const Image *centerBar = TheMappedImageCollection->findImageByName("Helpbox-middle");
-
-	ICoord2D pos, size;
-	window->winGetScreenPosition( &pos.x, &pos.y );
-	window->winGetSize( &size.x, &size.y );
-
-
-
-	if( !endBar || !beginBar || !centerBar)
-		return;
-
-
-//	Int range;
-//	range = size.y;
-
-
-	// get image sizes for the ends
-	ICoord2D topSize, bottomSize, start, end;
-	bottomSize.x = beginBar->getImageWidth();
-	bottomSize.y = beginBar->getImageHeight();
-	topSize.x = endBar->getImageWidth();
-	topSize.y = endBar->getImageHeight();
-
-	// get two key points used in the end drawing
-	ICoord2D bottomEnd, topStart;
-	bottomEnd.x = pos.x + size.x;
-	bottomEnd.y = pos.y + size.y - bottomSize.y;
-	topStart.x = pos.x;
-	topStart.y = pos.y +size.y - topSize.y;
-
-	// draw the center repeating bar
-	Int centerWidth, pieces;
-
-	// get width we have to draw our repeating center in
-	centerWidth = size.y - topSize.y - bottomSize.y;
-
-	if( centerWidth <= 0)
-	{
-		// draw left end
-		start.x = pos.x;
-		start.y = pos.y + size.y - bottomSize.y;
-		end.y = pos.y + size.y;
-		end.x = pos.x + size.x;
-		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-
-		// draw right end
-		start.y = pos.y + size.y - bottomSize.y - topSize.y;
-		start.x = pos.x;
-		end.x = pos.x + size.x;
-		end.y = start.y + topSize.y;
-		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
+	if (TheMappedImageCollection == nullptr)
+		return FALSE;
+	const Int original_x = x;
+	const Int original_y = y;
+	const Int maximum_x = x + width;
+	const Int maximum_y = y + height;
+	const Int size = 5;
+	const Int half_size = size / 2;
+	const Int offset = 2;
+	const Int lower_offset = 5;
+	const Image *top = TheMappedImageCollection->findImageByName("FrameT");
+	const Image *bottom = TheMappedImageCollection->findImageByName("FrameB");
+	const Int horizontal_end = maximum_x - (lower_offset + size);
+	for (x = original_x + 3; x <= horizontal_end; x += size) {
+		if (!Add_WND_Image(list, top, x, original_y - offset, x + size, original_y - offset + size)
+			|| !Add_WND_Image(list, bottom, x, maximum_y - lower_offset,
+				x + size, maximum_y - lower_offset + size))
+			return FALSE;
 	}
-	else
-	{
-
-		// how many whole repeating pieces will fit in that width
-		pieces = centerWidth / centerBar->getImageHeight();
-
-		// draw the pieces
-		start.x = pos.x;
-		start.y = pos.y + topSize.y ;
-		end.x = start.x + size.x; //centerImage->getImageHeight() + yOffset;
-		for( Int i = 0; i < pieces; i++ )
-		{
-
-			end.y = start.y + centerBar->getImageHeight();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			start.y += centerBar->getImageHeight();
-
-		}
-
-		// we will draw the image but clip the parts we don't want to show
-		IRegion2D reg;
-		reg.lo.x = start.x;
-		reg.lo.y = start.y;
-		reg.hi.x = pos.x + size.x;
-		reg.hi.y = pos.y + size.y - bottomSize.y;
-		centerWidth = pos.y + size.y - bottomSize.y - start.y;
-		if( centerWidth > 0)
-		{
-			TheDisplay->setClipRegion(&reg);
-			end.y = start.y + centerBar->getImageHeight();
-			TheWindowManager->winDrawImage( centerBar,
-																			start.x, start.y,
-																			end.x, end.y );
-			TheDisplay->enableClipping(FALSE);
-		}
-
-		// draw left end
-		end.x = pos.x + size.x;
-		end.y = pos.y + size.y;
-		start.x = pos.x;
-		start.y = pos.y + size.y - bottomSize.y;
-		TheWindowManager->winDrawImage(beginBar, start.x, start.y, end.x, end.y);
-
-		// draw right end
-		start.x = pos.x;
-		start.y = pos.y ;
-		end.x = pos.x + size.x;
-		end.y = pos.y + topSize.y;
-		TheWindowManager->winDrawImage(endBar, start.x, start.y, end.x, end.y);
+	Int remainder = maximum_x - 5;
+	if (remainder - x >= half_size) {
+		if (!Add_WND_Image(list, top, x, original_y - offset, x + half_size, original_y - offset + size)
+			|| !Add_WND_Image(list, bottom, x, maximum_y - lower_offset,
+				x + half_size, maximum_y - lower_offset + size))
+			return FALSE;
+		x += half_size;
+	}
+	if (x < remainder) {
+		x -= half_size - (((remainder - x) + 1) & ~1);
+		if (!Add_WND_Image(list, top, x, original_y - offset, x + half_size, original_y - offset + size)
+			|| !Add_WND_Image(list, bottom, x, maximum_y - lower_offset,
+				x + half_size, maximum_y - lower_offset + size))
+			return FALSE;
 	}
 
+	const Image *left = TheMappedImageCollection->findImageByName("FrameL");
+	const Image *right = TheMappedImageCollection->findImageByName("FrameR");
+	const Int vertical_end = maximum_y - (lower_offset + size);
+	for (y = original_y + 3; y <= vertical_end; y += size) {
+		if (!Add_WND_Image(list, left, original_x - offset, y,
+			original_x - offset + size, y + size)
+			|| !Add_WND_Image(list, right, maximum_x - lower_offset, y,
+				maximum_x - lower_offset + size, y + size))
+			return FALSE;
+	}
+	remainder = maximum_y - lower_offset;
+	if (remainder - y >= half_size) {
+		if (!Add_WND_Image(list, left, original_x - offset, y,
+			original_x - offset + size, y + half_size)
+			|| !Add_WND_Image(list, right, maximum_x - lower_offset, y,
+				maximum_x - lower_offset + size, y + half_size))
+			return FALSE;
+		y += half_size;
+	}
+	if (y < remainder) {
+		y -= half_size - (((remainder - y) + 1) & ~1);
+		if (!Add_WND_Image(list, left, original_x - offset, y,
+			original_x - offset + size, y + half_size)
+			|| !Add_WND_Image(list, right, maximum_x - lower_offset, y,
+				maximum_x - lower_offset + size, y + half_size))
+			return FALSE;
+	}
 
+	return Add_WND_Image(list, TheMappedImageCollection->findImageByName("FrameCornerUL"),
+		original_x - 2, original_y - 2, original_x + 3, original_y + 3)
+		&& Add_WND_Image(list, TheMappedImageCollection->findImageByName("FrameCornerUR"),
+			maximum_x - 5, original_y - 2, maximum_x, original_y + 3)
+		&& Add_WND_Image(list, TheMappedImageCollection->findImageByName("FrameCornerLL"),
+			original_x - 2, maximum_y - 5, original_x + 3, maximum_y)
+		&& Add_WND_Image(list, TheMappedImageCollection->findImageByName("FrameCornerLR"),
+			maximum_x - 5, maximum_y - 5, maximum_x, maximum_y);
+}
+
+Bool W3DDrawMapPreviewData(GameWindow *window, WinInstanceData *instance_data, void *drawList)
+{
+	if (window == nullptr || instance_data == nullptr || drawList == nullptr)
+		return FALSE;
+	MapMetaData *map_data = static_cast<MapMetaData *>(window->winGetUserData());
+	ICoord2D position, size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	Engine::UI::WND::DrawList &list =
+		*static_cast<Engine::UI::WND::DrawList *>(drawList);
+	if (size.x <= 0 || size.y <= 0)
+		return TRUE;
+	if (map_data == nullptr) {
+		return W3DGameWinDefaultDrawData(window, instance_data, drawList)
+			&& Add_WND_Skinny_Border(list, position.x - 1, position.y - 1, size.x + 2, size.y + 2);
+	}
+
+	ICoord2D upper_left, lower_right;
+	findDrawPositions(position.x, position.y, size.x, size.y, map_data->m_extent,
+		&upper_left, &lower_right);
+	const Graphics::Color2D fill_color{0.0f, 0.0f, 0.0f, 1.0f};
+	const Graphics::Color2D line_color{
+		50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f, 1.0f};
+	if (map_data->m_extent.width() / size.x >= map_data->m_extent.height() / size.y) {
+		if (upper_left.y > position.y && !list.Add_Rect(
+			{static_cast<float>(position.x), static_cast<float>(position.y),
+				static_cast<float>(position.x + size.x), static_cast<float>(upper_left.y)}, fill_color))
+			return FALSE;
+		if (lower_right.y < position.y + size.y && !list.Add_Rect(
+			{static_cast<float>(position.x), static_cast<float>(lower_right.y),
+				static_cast<float>(position.x + size.x), static_cast<float>(position.y + size.y)}, fill_color))
+			return FALSE;
+		if (!list.Add_Line({static_cast<float>(position.x), static_cast<float>(upper_left.y)},
+			{static_cast<float>(position.x + size.x), static_cast<float>(upper_left.y)}, 1.0f, line_color)
+			|| !list.Add_Line({static_cast<float>(position.x), static_cast<float>(lower_right.y + 1)},
+				{static_cast<float>(position.x + size.x), static_cast<float>(lower_right.y + 1)}, 1.0f, line_color))
+			return FALSE;
+	}
+	else {
+		if (upper_left.x > position.x && !list.Add_Rect(
+			{static_cast<float>(position.x), static_cast<float>(position.y),
+				static_cast<float>(upper_left.x), static_cast<float>(position.y + size.y)}, fill_color))
+			return FALSE;
+		if (lower_right.x < position.x + size.x && !list.Add_Rect(
+			{static_cast<float>(lower_right.x), static_cast<float>(position.y),
+				static_cast<float>(position.x + size.x), static_cast<float>(position.y + size.y)}, fill_color))
+			return FALSE;
+		if (!list.Add_Line({static_cast<float>(upper_left.x), static_cast<float>(position.y)},
+			{static_cast<float>(upper_left.x), static_cast<float>(position.y + size.y)}, 1.0f, line_color)
+			|| !list.Add_Line({static_cast<float>(lower_right.x + 1), static_cast<float>(position.y)},
+				{static_cast<float>(lower_right.x + 1), static_cast<float>(position.y + size.y)}, 1.0f, line_color))
+			return FALSE;
+	}
+	const Image *map_image = BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE)
+		? window->winGetEnabledImage(0) : nullptr;
+	if (map_image != nullptr) {
+		if (!Add_WND_Image(list, map_image, upper_left.x, upper_left.y,
+			lower_right.x, lower_right.y))
+			return FALSE;
+	}
+	else if (!list.Add_Rect(
+		{static_cast<float>(upper_left.x), static_cast<float>(upper_left.y),
+			static_cast<float>(lower_right.x), static_cast<float>(lower_right.y)}, line_color))
+		return FALSE;
+
+	const Image *marker = TheMappedImageCollection != nullptr
+		? TheMappedImageCollection->findImageByName("TecBuilding") : nullptr;
+	for (ICoord2DList::const_iterator it = TheSupplyAndTechImageLocations.m_techPosList.begin();
+		marker != nullptr && it != TheSupplyAndTechImageLocations.m_techPosList.end(); ++it) {
+		if (!Add_WND_Image(list, marker, position.x + it->x, position.y + it->y,
+			position.x + it->x + SUPPLY_TECH_SIZE, position.y + it->y + SUPPLY_TECH_SIZE))
+			return FALSE;
+	}
+	marker = TheMappedImageCollection != nullptr
+		? TheMappedImageCollection->findImageByName("Cash") : nullptr;
+	for (ICoord2DList::const_iterator it = TheSupplyAndTechImageLocations.m_supplyPosList.begin();
+		marker != nullptr && it != TheSupplyAndTechImageLocations.m_supplyPosList.end(); ++it) {
+		if (!Add_WND_Image(list, marker, position.x + it->x, position.y + it->y,
+			position.x + it->x + SUPPLY_TECH_SIZE, position.y + it->y + SUPPLY_TECH_SIZE))
+			return FALSE;
+	}
+	return Add_WND_Skinny_Border(list, position.x - 1, position.y - 1, size.x + 2, size.y + 2);
+}
+
+Bool W3DCommandBarTopDrawData(GameWindow *, WinInstanceData *, void *)
+{
+	return TRUE;
+}
+
+Bool W3DNoDrawData(GameWindow *, WinInstanceData *, void *)
+{
+	return TRUE;
 }

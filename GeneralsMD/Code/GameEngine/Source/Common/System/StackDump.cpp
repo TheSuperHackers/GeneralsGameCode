@@ -45,6 +45,12 @@ void MakeStackTrace(DWORD myeip,DWORD myesp,DWORD myebp, int skipFrames, void (*
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address);
 void WriteStackLine(void*address, void (*callback)(const char*));
 
+// The SDL3 entry point is defined by the executable target rather than this
+// library translation unit.  Keep the declaration here so the 32-bit stack
+// trace diagnostic can record its address without depending on the executable
+// implementation header.
+extern int main(int argc, char **argv);
+
 //*****************************************************************************
 //	Mis-named globals :-)
 //*****************************************************************************

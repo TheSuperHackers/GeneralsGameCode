@@ -41,15 +41,15 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
-#include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
+#include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameLogic/W3DGhostObject.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/hlod.h"
-#include "WW3D2/scene.h"
-#include "WW3D2/matinfo.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DHierarchyRenderObject.h"
+#include "W3DDevice/GameClient/W3DSceneClass.h"
+import Assets.Cache.Animations;
 
 
 
@@ -59,10 +59,10 @@ class W3DRenderObjectSnapshot : public Snapshot
 {
 	friend W3DGhostObject;
 
-	W3DRenderObjectSnapshot(RenderObjClass *m_parentRobj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);
+	W3DRenderObjectSnapshot(W3DRenderObject *m_parentRobj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);
 	~W3DRenderObjectSnapshot() {REF_PTR_RELEASE(m_robj);}
 
-	inline void update(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);	///<refresh the current snapshot with latest state
+	inline void update(W3DRenderObject *robj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);	///<refresh the current snapshot with latest state
 	inline Bool addToScene(); ///< add this fogged render object to the scene.
 	inline Bool removeFromScene(); ///< remove this fogged render object from the scene.
 
@@ -75,40 +75,40 @@ protected:
 #ifdef DEBUG_FOG_MEMORY
 	const char *m_robjName;		///<debug pointer so we know what this is a snapshot of.
 #endif
-	RenderObjClass *m_robj;		///<render object representing state at time of snapshot
+	W3DRenderObject *m_robj;		///<render object representing state at time of snapshot
 	W3DRenderObjectSnapshot *m_next;	///<snapshot of next render object belonging to same drawable
 };
 
 //Dummy material override which we assign to all ghost objects to disable their
 //texture animation.
-static RenderObjClass::Material_Override animationDisableOverride;
+static W3DRenderObject::Material_Override animationDisableOverride;
 
 //Helper function used to disable all UV mapper animations on a given model.
 //Also use this pass to disable muzzle effects.
-void disableUVAnimations(RenderObjClass *robj)
+void disableUVAnimations(W3DRenderObject *robj)
 {
-	if (robj && robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (robj && robj->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
 		//Also disable any animations that may be playing using mappers (texture scrolling)
 		for (Int i=0; i < robj->Get_Num_Sub_Objects(); i++)
 		{
-			RenderObjClass *subObj = robj->Get_Sub_Object(i);
-			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH)
+			W3DRenderObject *subObj = robj->Get_Sub_Object(i);
+			if (subObj && subObj->Class_ID() == W3DRenderObject::CLASSID_MESH)
 			{
 				//check if sub-object has the correct material to do texture scrolling.
-				MaterialInfoClass *mat = subObj->Get_Material_Info();
+				auto mat = subObj->Get_Material_Info();
 				if (mat)
 				{
-					for (Int j=0; j<mat->Vertex_Material_Count(); j++)
+					for (Int j=0; j<static_cast<int>(mat->materials.size()); j++)
 					{
-						VertexMaterialClass *vmaterial = mat->Peek_Vertex_Material(j);
-						LinearOffsetTextureMapperClass *mapper = (LinearOffsetTextureMapperClass *)vmaterial->Peek_Mapper();
-						if (mapper && mapper->Mapper_ID() == TextureMapperClass::MAPPER_ID_LINEAR_OFFSET)
+						Graphics::MeshMaterial *vmaterial = mat->materials[j].get();
+						auto* mapper=vmaterial->mappings[0].get();
+						if (mapper && mapper->Linear_Scroll())
 						{
 							subObj->Set_User_Data(&animationDisableOverride);	//tell W3D about custom material settings
 						}
 					}
-					REF_PTR_RELEASE(mat);
+					mat.reset();
 				}
 				//We don't want muzzle flashes visible inside fog, so turn them off.
 				if (subObj->Get_Name() && strstr(subObj->Get_Name(),"MUZZLEFX"))
@@ -121,7 +121,7 @@ void disableUVAnimations(RenderObjClass *robj)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInfo,
+void W3DRenderObjectSnapshot::update(W3DRenderObject *robj, DrawableInfo *drawInfo,
 																		 Bool cloneParentRobj)
 {
 	REF_PTR_RELEASE(m_robj);
@@ -135,12 +135,12 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 #endif
 		//Set cloned object to same state as original object.
 		m_robj->Set_Transform(robj->Get_Transform());
-		if (robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
+		if (robj->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 		{
 			float frame,mult;
 			int mode,numFrames;
 
-			HAnimClass *hanim = ((HLodClass *)robj)->Peek_Animation_And_Info(frame,numFrames,mode,mult);
+			Assets::AnimationAssetHandle hanim = ((W3DHierarchyRenderObject *)robj)->Peek_Animation_And_Info(frame,numFrames,mode,mult);
 			m_robj->Set_Animation(hanim,frame);
 			disableUVAnimations(m_robj);
 		}
@@ -157,24 +157,22 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 Bool W3DRenderObjectSnapshot::addToScene()
 {
-	if (!m_robj->Is_In_Scene())
-	{
-		W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
-		return true;
-	}
-	return false;
+	if (m_robj == nullptr || m_robj->Is_In_Scene() || W3DDisplay::m_3DScene == nullptr)
+		return false;
+	W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
+	return true;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 Bool W3DRenderObjectSnapshot::removeFromScene()
 {
-	return m_robj->Remove();
+	return m_robj != nullptr && m_robj->Remove();
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-W3DRenderObjectSnapshot::W3DRenderObjectSnapshot(RenderObjClass *robj, DrawableInfo *drawInfo,
+W3DRenderObjectSnapshot::W3DRenderObjectSnapshot(W3DRenderObject *robj, DrawableInfo *drawInfo,
 																								 Bool cloneParentRobj)
 {
 	m_robj = nullptr;
@@ -216,7 +214,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 	xfer->xferInt( &subObjectCount );
 
 	Bool visible;
-	RenderObjClass *subObject;
+	W3DRenderObject *subObject;
 	AsciiString subObjectName;
 
 	for( Int i = 0; i < subObjectCount; ++i )
@@ -271,8 +269,8 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 		if( subObject )
 		{
 			// need to cast to HLod if we can to validate the hierarchy
-			if( subObject->Class_ID() == RenderObjClass::CLASSID_HLOD )
-				((HLodClass *)subObject)->Friend_Set_Hierarchy_Valid( TRUE );
+			if( subObject->Class_ID() == W3DRenderObject::CLASSID_HLOD )
+				((W3DHierarchyRenderObject *)subObject)->Friend_Set_Hierarchy_Valid( TRUE );
 		}
 
 		// release reference to sub object
@@ -360,7 +358,7 @@ void W3DGhostObject::snapShot(int playerIndex)
 		if (di)
 		{
 			W3DModelDraw *w3dDraw = (W3DModelDraw *)di;
-			RenderObjClass *robj = w3dDraw->getRenderObject();
+			W3DRenderObject *robj = w3dDraw->getRenderObject();
 
 			//robj may be null for modules which have no render objects such
 			//as for build-ups that are currently disabled.
@@ -438,7 +436,7 @@ void W3DGhostObject::removeParentObject()
 		if (di)
 		{
 			W3DModelDraw *w3dDraw = (W3DModelDraw *)di;
-			RenderObjClass *robj = w3dDraw->getRenderObject();
+			W3DRenderObject *robj = w3dDraw->getRenderObject();
 			if (robj)
 			{
 				DEBUG_ASSERTCRASH(robj->Peek_Scene() != nullptr, ("Removing GhostObject parent not in scene"));
@@ -473,7 +471,7 @@ void W3DGhostObject::restoreParentObject()
 		if (di)
 		{
 			W3DModelDraw *w3dDraw = (W3DModelDraw *)di;
-			RenderObjClass *robj = w3dDraw->getRenderObject();
+			W3DRenderObject *robj = w3dDraw->getRenderObject();
 
 			//robj may be null for modules which have no render objects such
 			//as for build-ups that are currently disabled.
@@ -699,7 +697,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		}
 		else
 		{
-			RenderObjClass *renderObject;
+			W3DRenderObject *renderObject;
 			W3DRenderObjectSnapshot *prevObjectSnapshot = nullptr;
 
 			for( UnsignedByte j = 0; j < snapshotCount; ++j )

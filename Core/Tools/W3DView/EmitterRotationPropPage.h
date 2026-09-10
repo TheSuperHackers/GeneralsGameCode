@@ -22,7 +22,7 @@
 //
 
 #include "ColorBar.h"
-#include "WW3D2/part_emt.h"
+#include "WW3D2/PartEmt.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

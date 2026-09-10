@@ -44,7 +44,7 @@
 #include "GameMtlPassDlg.h"
 #include "dllmain.h"
 #include "resource.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 
 static BOOL CALLBACK DisplacementMapDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);
 static BOOL CALLBACK SurfaceTypePanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wPara,LPARAM lParam);

@@ -1,0 +1,11 @@
+---
+# Build-time analysis only; no instrumentation or runtime assertions.
+InheritParentConfig: false
+Checks: '-*,clang-analyzer-*,cppcoreguidelines-owning-memory,cppcoreguidelines-no-malloc,cppcoreguidelines-special-member-functions'
+WarningsAsErrors: 'clang-analyzer-*,cppcoreguidelines-owning-memory,cppcoreguidelines-no-malloc,cppcoreguidelines-special-member-functions'
+HeaderFilterRegex: '.*engine[/\\]graphics[/\\].*'
+FormatStyle: none
+CheckOptions:
+  cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true
+  cppcoreguidelines-special-member-functions.AllowMissingMoveFunctionsWhenCopyIsDeleted: true
+  cppcoreguidelines-special-member-functions.AllowImplicitlyDeletedCopyOrMove: true

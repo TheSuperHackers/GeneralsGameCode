@@ -62,7 +62,7 @@ static const char* const TheShadowNames[] =
 
 #define MAX_SHADOW_LIGHTS 1	//maximum number of shadow casting light sources in scene - support for more than 1 has been dropped from most code.
 
-class RenderObjClass; //forward reference
+class W3DRenderObject; //forward reference
 class RenderCost;	//forward reference
 
 //Interface to all shadow objects.
@@ -217,7 +217,7 @@ class ProjectedShadowManager
 {
 public:
 	virtual ~ProjectedShadowManager() { };
-	virtual Shadow	*addDecal(RenderObjClass *, Shadow::ShadowTypeInfo *shadowInfo)=0;	///<add a non-shadow decal
+	virtual Shadow	*addDecal(W3DRenderObject *, Shadow::ShadowTypeInfo *shadowInfo)=0;	///<add a non-shadow decal
 	virtual Shadow	*addDecal(Shadow::ShadowTypeInfo *shadowInfo)=0;	///<add a non-shadow decal which does not follow an object.
 };
 

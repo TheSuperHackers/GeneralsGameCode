@@ -25,8 +25,8 @@
 #include "Utils.h"
 #include "MainFrm.h"
 #include "W3DViewDoc.h"
-#include "WW3D2/scene.h"
-#include "WW3D2/light.h"
+#include "WW3D2/Scene.h"
+#include "WW3D2/Light.h"
 
 
 #ifdef RTS_DEBUG

@@ -34,9 +34,7 @@
 #include "Common/AudioEventRTS.h"
 #include "GameClient/ParticleSys.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/part_emt.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
 
 //-------------------------------------------------------------------------------------------------
 // TheSuperHackers @fix xezon 01/02/2026 The Tread Effects are now usable in W3DTankTruckDraw.
@@ -131,15 +129,15 @@ protected:
 
 	struct TreadObjectInfo
 	{
-		RenderObjClass	*m_robj;	///<sub-object for tread
+		W3DRenderObject	*m_robj;	///<sub-object for tread
 		TreadType	m_type;			///<kind of tread
-		RenderObjClass::Material_Override m_materialSettings;	///<used to set current uv scroll amount.
+		W3DRenderObject::Material_Override m_materialSettings;	///<used to set current uv scroll amount.
 	};
 
 	TreadObjectInfo m_treads[MAX_TREADS_PER_TANK];
 	Int m_treadCount;
 
-	RenderObjClass *m_prevRenderObj;
+	W3DRenderObject *m_prevRenderObj;
 
 	void createTreadEmitters(); ///< Create particle effects for treads.
 	void tossTreadEmitters(); ///< Destroy particle effects for treads.

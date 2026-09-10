@@ -29,12 +29,13 @@
 
 #pragma once
 
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h" // I am the draw module for this update.  Very tight.
 
-class SegmentedLineClass;
-class TextureClass;
+class W3DSegmentedLineRenderObject;
+class W3DTextureHandle;
 class Vector3;
 
 //-------------------------------------------------------------------------------------------------
@@ -74,9 +75,11 @@ public:
 	virtual void reactToGeometryChange() override { }
 
 protected:
-	void makeOrUpdateLine( Vector3 *points, UnsignedInt pointCount, Int lineIndex );
+	void makeOrUpdateLine(Vector3 *points, UnsignedInt pointCount, Int lineIndex);
+	void removeLines(Int firstUnusedLine);
 
-	TextureClass *m_texture;
-	SegmentedLineClass *m_allLines[MAX_PROJECTILE_STREAM];	///< Persist, so I can ensure they live a full cycle, and minimize re-creates by holding on
+	W3DTextureHandle *m_texture;
+	W3DSegmentedLineRenderObject *m_allLines[MAX_PROJECTILE_STREAM];	///< Persist, so I can ensure they live a full cycle, and minimize re-creates by holding on
 	Int m_linesValid;
+	Bool m_obscured;
 };

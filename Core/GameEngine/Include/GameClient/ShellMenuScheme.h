@@ -93,7 +93,6 @@ public:
 	ShellMenuScheme();
 	~ShellMenuScheme();
 
-	void draw();
 	void addImage( ShellMenuSchemeImage* schemeImage );
 	void addLine( ShellMenuSchemeLine* schemeLine );
 
@@ -123,8 +122,7 @@ public:
 	void update();
 
 	void setShellMenuScheme( AsciiString name );
-
-	void draw();
+	ShellMenuScheme *getCurrentScheme() const { return m_currentScheme; }
 
 	// parse Functions for the INI file
 	const FieldParse *getFieldParse() const { return m_shellMenuSchemeFieldParseTable; }								///< returns the parsing fields

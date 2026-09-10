@@ -38,8 +38,8 @@
 #include "StdAfx.h"
 #include "AssetInfo.h"
 //#include "HModel.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/htree.h"
+#include "WW3D2/AssetMgr.h"
+#include "WW3D2/HTree.h"
 
 /////////////////////////////////////////////////////////////////
 //

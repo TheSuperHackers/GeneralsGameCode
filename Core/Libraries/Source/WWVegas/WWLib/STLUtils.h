@@ -85,7 +85,7 @@ bool find_and_erase_unordered(Container& container, const typename Container::va
 	{
 		if (*it == value)
 		{
-			*it = CPP_11(std::move)(container.back());
+			*it = std::move(container.back());
 			container.pop_back();
 			return true;
 		}

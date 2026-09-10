@@ -1,3 +1,4 @@
+import Graphics.Frame.Runtime;
 /*
 **	Command & Conquer Renegade(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -22,7 +23,10 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "GraphicView.h"
-#include "WW3D2/ww3d.h"
+#include "WW3D2/WW3D.h"
+#ifdef RTS_ZEROHOUR
+import Graphics.Frame.ToolFrame;
+#endif
 #include "Globals.h"
 #include "W3DViewDoc.h"
 #include <process.h>
@@ -30,22 +34,21 @@
 #include "MainFrm.h"
 #include "Utils.h"
 #include "mmsystem.h"
-#include "WW3D2/light.h"
+#include "WW3D2/Light.h"
 #include "ViewerAssetMgr.h"
 #include "WWLib/rcfile.h"
-#include "WW3D2/part_emt.h"
-#include "WW3D2/part_buf.h"
-#include "WW3D2/hlod.h"
+#include "WW3D2/PartEmt.h"
+#include "WW3D2/PartBuf.h"
+#include "WW3D2/HLOD.h"
 #include "ViewerScene.h"
 #include "ScreenCursor.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/coltest.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "WW3D2/ColTest.h"
 #include "WWLib/MPU.h"
-#include "WW3D2/dazzle.h"
+#include "W3DDevice/GameClient/W3DDazzleRenderObject.h"
 #include "WWAudio/SoundScene.h"
 #include "WWAudio/WWAudio.h"
-#include "WW3D2/metalmap.h"
-#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/MetalMap.h"
 #include "WWMath/matrix3.h"
 
 #ifdef RTS_DEBUG
@@ -58,7 +61,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////
 //  Local Prototypes
 /////////////////////////////////////////////////////////////////////////
-void CALLBACK fnTimerCallback (UINT, UINT, DWORD, DWORD, DWORD);
+void CALLBACK fnTimerCallback (UINT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 
 
 IMPLEMENT_DYNCREATE(CGraphicView, CView)
@@ -200,11 +203,14 @@ CGraphicView::InitializeGraphicView ()
 		((CW3DViewDoc *)GetDocument())->Show_Cursor (false);
 	}
 
-	bReturn = (WW3D::Set_Render_Device (g_iDeviceIndex,
-													cx,
-													cy,
-													g_iBitsPerPixel,
-													m_iWindowed) == WW3D_ERROR_OK);
+    if (Graphics::Shared_Frame_Device()) {
+        bReturn = Graphics::Resize_Frame_Device(cx,cy,false);
+    } else {
+        Graphics::FrameDeviceOptions options;
+        options.window = m_hWnd; options.width = cx; options.height = cy;
+        options.backbuffer_format = Graphics::RHITextureFormat::BGRA8_UNorm;
+        bReturn = Graphics::Initialize_Frame_Device(options);
+    }
 
     ASSERT (bReturn);
     if (bReturn && (m_pCamera == nullptr))
@@ -257,7 +263,7 @@ CGraphicView::InitializeGraphicView ()
 		m_TimerID = (UINT)::timeSetEvent (freq,
 													 freq,
 													 fnTimerCallback,
-													 (DWORD)m_hWnd,
+													 (DWORD_PTR)m_hWnd,
 													 TIME_PERIODIC);
     }
 
@@ -292,7 +298,7 @@ CGraphicView::OnSize
 		// Change the resolution of the rendering device to
 		// match that of the view's current dimensions
 		if (m_iWindowed == 1) {
-			WW3D::Set_Device_Resolution (cx, cy, g_iBitsPerPixel, m_iWindowed);
+			Graphics::Resize_Frame_Device(cx, cy, false);
 		}
 
 		// Force a repaint of the screen
@@ -500,7 +506,12 @@ CGraphicView::RepaintView
 		//
 		//	Render the background BMP
 		//
-		WW3D::Begin_Render (TRUE, TRUE, doc->GetBackgroundColor ());
+        if (!Graphics::Begin_Tool_Frame()) return;
+        if (WW3D::Begin_Render(TRUE, TRUE, doc->GetBackgroundColor()) != WW3D_ERROR_OK) {
+            Graphics::Abort_Tool_Frame();
+            return;
+        }
+
 		WW3D::Render (doc->Get2DScene (), doc->Get2DCamera (), FALSE, FALSE);
 
 		//
@@ -531,8 +542,10 @@ CGraphicView::RepaintView
 		// Render the dazzles
 		doc->Render_Dazzles(m_pCamera.Peek());
 
-		// Finish out the rendering process
-		WW3D::End_Render ();
+        // Finish out the rendering process
+        WW3D::End_Render();
+        if (!Graphics::End_Tool_Frame()) DEBUG_LOG(("Viewer frame submission failed.\n"));
+
 
 		//
 		//	Let the audio class think
@@ -670,9 +683,9 @@ fnTimerCallback
 (
 	UINT uID,
 	UINT uMsg,
-	DWORD dwUser,
-	DWORD dw1,
-	DWORD dw2
+	DWORD_PTR dwUser,
+	DWORD_PTR dw1,
+	DWORD_PTR dw2
 )
 {
 	HWND hwnd = (HWND)dwUser;

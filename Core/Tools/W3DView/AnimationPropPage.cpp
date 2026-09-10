@@ -22,9 +22,9 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "AnimationPropPage.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/mesh.h"
+#include "WW3D2/RendObj.h"
+#include "WW3D2/AssetMgr.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
 #include "W3DViewDoc.h"
 #include "Utils.h"
 

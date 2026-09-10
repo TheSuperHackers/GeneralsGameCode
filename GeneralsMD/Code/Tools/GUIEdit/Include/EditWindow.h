@@ -54,8 +54,7 @@
 #include "Lib/BaseType.h"
 #include "GameClient/Image.h"
 #include "GameClient/GameWindow.h"
-#include "WW3D2/assetmgr.h"
-#include "WW3D2/render2d.h"
+#include "WW3D2/AssetMgr.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
@@ -164,7 +163,6 @@ protected:
 
 	Bool m_w3dInitialized;  ///< TRUE once W3D is up
 	WW3DAssetManager *m_assetManager;  ///< asset manager for WW3D
-	Render2DClass *m_2DRender;  ///< our 2D renderer
 
 	ICoord2D m_popupMenuClickPos;  ///< position where popup menu was created at
 	GameWindow *m_pickedWindow;  ///< picked window from mouse click editing

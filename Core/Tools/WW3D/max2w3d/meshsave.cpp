@@ -72,9 +72,9 @@
 #include "w3dappdata.h"
 #include "skin.h"
 #include "skindata.h"
-#include "meshbuild.h"
+#include "MeshBuild.h"
 #include "AlphaModifier.h"
-#include "aabtreebuilder.h"
+#include "AABTreeBuilder.h"
 #include "exportlog.h"
 
 

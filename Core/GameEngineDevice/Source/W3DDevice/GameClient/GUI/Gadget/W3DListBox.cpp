@@ -1,671 +1,391 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+** Command & Conquer Generals Zero Hour(tm)
+** Copyright 2025 Electronic Arts Inc.
 **
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+** This program is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#include "Precompiled/PreRTS.h"
 
+#include <algorithm>
+#include <cstdint>
 
-// FILE: W3DListBox.cpp ///////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-//
-//                       Westwood Studios Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2001 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: W3DListBox.cpp
-//
-// Created:   Colin Day, June 2001
-//
-// Desc:      W3D implementation for the list box control
-//
-//-----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include <stdlib.h>
-
-// USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetListBox.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
+#include "W3DDevice/GameClient/W3DDisplayString.h"
 
-// DEFINES ////////////////////////////////////////////////////////////////////
+import Engine.UI.WND;
 
-// PRIVATE TYPES //////////////////////////////////////////////////////////////
-
-// PRIVATE DATA ///////////////////////////////////////////////////////////////
-
-// PUBLIC DATA ////////////////////////////////////////////////////////////////
-
-// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// drawHiliteBar ==============================================================
-/** Draw image for the hilite bar */
-//=============================================================================
-static void drawHiliteBar( const Image *left, const Image *right,
-													 const Image *center, const Image *smallCenter,
-													 Int startX, Int startY,
-													 Int endX, Int endY )
+namespace
 {
-	ICoord2D barWindowSize;  // end point of bar from window origin
-	Int xOffset = 0, yOffset = 0;  // incase we want this functionality later
-	ICoord2D start, end;
-	Int i;
-	IRegion2D clipRegion;
 
-
-
-	barWindowSize.x = endX - startX;
-	barWindowSize.y = endY - startY;
-
-	//
-	// the bar window size will always be at least big enough to accommodate
-	// the left and right ends
-	//
-	if( barWindowSize.x < left->getImageWidth() + right->getImageWidth() )
-		barWindowSize.x = left->getImageWidth() + right->getImageWidth();
-
-	// get image sizes for the ends
-	ICoord2D leftSize, rightSize;
-	leftSize.x = left->getImageWidth();
-	leftSize.y = left->getImageHeight();
-	rightSize.x = right->getImageWidth();
-	rightSize.y = right->getImageHeight();
-
-	// get two key points used in the end drawing
-	ICoord2D leftEnd, rightStart;
-	leftEnd.x = startX + leftSize.x + xOffset;
-	leftEnd.y = startY + barWindowSize.y + yOffset;
-	rightStart.x = startX + barWindowSize.x - rightSize.x + xOffset;
-	rightStart.y = startY + yOffset;
-
-	// draw the center repeating bar
-	Int centerWidth, pieces;
-
-	// get width we have to draw our repeating center in
-	centerWidth = rightStart.x - leftEnd.x;
-
-	// how many whole repeating pieces will fit in that width
-	pieces = centerWidth / center->getImageWidth();
-
-
-
-	// draw the pieces
-	start.x = leftEnd.x;
-	start.y = startY + yOffset;
-	end.y = start.y + barWindowSize.y;
-	for( i = 0; i < pieces; i++ )
-	{
-
-		end.x = start.x + center->getImageWidth();
-		TheWindowManager->winDrawImage( center,
-																		start.x, start.y,
-																		end.x, end.y );
-		start.x += center->getImageWidth();
-
-	}
-
-	//
-	// how many small repeating pieces will fit in the gap from where the
-	// center repeating bar stopped and the right image, draw them
-	// and overlapping underneath where the right end will go
-	//
-		// set the text clip region to the outline of the listbox
-	clipRegion.lo.x = leftEnd.x;
-	clipRegion.lo.y = startY + yOffset;
-	clipRegion.hi.x = leftEnd.x + centerWidth;
-	clipRegion.hi.y = start.y + barWindowSize.y;
-	TheDisplay->setClipRegion(&clipRegion);
-	centerWidth = rightStart.x - start.x;
-	if( centerWidth )
-	{
-
-		pieces = centerWidth / smallCenter->getImageWidth() + 1;
-		end.y = start.y + barWindowSize.y;
-		for( i = 0; i < pieces; i++ )
-		{
-
-			end.x = start.x + smallCenter->getImageWidth();
-			TheWindowManager->winDrawImage( smallCenter,
-																			start.x, start.y,
-																			end.x, end.y );
-			start.x += smallCenter->getImageWidth();
-
-		}
-
-	}
-	TheDisplay->enableClipping(FALSE);
-	// draw left end
-	start.x = startX + xOffset;
-	start.y = startY + yOffset;
-	end = leftEnd;
-	TheWindowManager->winDrawImage(left, start.x, start.y, end.x, end.y);
-
-	// draw right end
-	start = rightStart;
-	end.x = start.x + rightSize.x;
-	end.y = start.y + barWindowSize.y;
-	TheWindowManager->winDrawImage(right, start.x, start.y, end.x, end.y);
-
+Engine::UI::WND::ImageRef To_WND_Image(const Image *image) noexcept
+{
+	if (image == nullptr || image->getUV() == nullptr)
+		return {};
+	const Region2D *uv = image->getUV();
+	Engine::UI::WND::ImageRef result =
+		Engine::UI::WND::Resolve_Image_Reference(image->getFilename().str());
+	result.uv = {uv->lo.x, uv->lo.y, uv->hi.x, uv->hi.y};
+	return result;
 }
 
-// drawListBoxText ============================================================
-/** Draw the text for a listbox */
-//=============================================================================
-static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
-														 Int x, Int y, Int width, Int height,
-														 Bool useImages )
+Graphics::Color2D To_WND_Color(Color color) noexcept
 {
-	Int drawY;
-	ListboxData *list = (ListboxData *)window->winGetUserData();
-	Int i;
-	Bool selected;
-	Int listLineHeight;
-	Color textColor;
-//	W3DGameWindow *w3dWindow = static_cast<W3DGameWindow *>(window);
-	IRegion2D clipRegion;
-	ICoord2D start, end;
-
-	//
-	// save the clipping information region cause we're going to use it here
-	// in drawing the text
-	//
-//	TheWindowManager->winGetClipRegion( &clipRegion );
-
-	// set clip region to inside the outline box.
-//	TheWindowManager->winSetClipRegion( x, y, width, height );
-
-	// set the text clip region to the outline of the listbox
-	clipRegion.lo.x = x + 1;
-	clipRegion.lo.y = y -3;
-	clipRegion.hi.x = x + width - 1;
-	clipRegion.hi.y = y + height - 1;
-
-	drawY = y - list->displayPos;
-
-	for( i = 0; ; i++ )
-	{
-
-		if( i > 0 )
-			if( list->listData[(i - 1)].listHeight >
-					(list->displayPos + list->displayHeight) )
-				break;
-
-		if( i == list->endPos )
-			break;
-
-		if( list->listData[i].listHeight < list->displayPos )
-		{
-			drawY += (list->listData[i].height + 1);
-			continue;
-		}
-
-		listLineHeight = list->listData[i].height + 1;
-		//textColor =  list->listData[i].textColor;
-		selected = FALSE;
-
-		if( list->multiSelect )
-		{
-			Int j = 0;
-
-			while( list->selections[j] >= 0 )
-			{
-				if( i == list->selections[j] )
-				{
-					selected = TRUE;
-					break;
-				}
-
-				j++;
-			}
-		}
-		else
-		{
-			if( i == list->selectPos )
-				selected = TRUE;
-		}
-
-		// this item is selected, draw the selection color or image
-		if( selected )
-		{
-
-			if( useImages )
-			{
-				const Image *left, *right, *center, *smallCenter;
-
-				if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-				{
-
-					left				= GadgetListBoxGetDisabledSelectedItemImageLeft( window );
-					right				= GadgetListBoxGetDisabledSelectedItemImageRight( window );
-					center			= GadgetListBoxGetDisabledSelectedItemImageCenter( window );
-					smallCenter = GadgetListBoxGetDisabledSelectedItemImageSmallCenter( window );
-
-				}
-				else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-				{
-
-					left				= GadgetListBoxGetHiliteSelectedItemImageLeft( window );
-					right				= GadgetListBoxGetHiliteSelectedItemImageRight( window );
-					center			= GadgetListBoxGetHiliteSelectedItemImageCenter( window );
-					smallCenter = GadgetListBoxGetHiliteSelectedItemImageSmallCenter( window );
-
-				}
-				else
-				{
-
-					left				= GadgetListBoxGetEnabledSelectedItemImageLeft( window );
-					right				= GadgetListBoxGetEnabledSelectedItemImageRight( window );
-					center			= GadgetListBoxGetEnabledSelectedItemImageCenter( window );
-					smallCenter = GadgetListBoxGetEnabledSelectedItemImageSmallCenter( window );
-
-				}
-
-				// draw select image across area
-
-				//
-				// where are we going to draw ... taking into account the clipping
-				// region of the edge of the listbox
-				//
-				start.x = x;
-				start.y = drawY;
-				end.x = start.x + width;
-				end.y = start.y + listLineHeight;
-
-				if( end.y > clipRegion.hi.y )
-					end.y = clipRegion.hi.y;
-				if( start.y < clipRegion.lo.y )
-					start.y = clipRegion.lo.y;
-
-				if( left && right && center && smallCenter )
-					drawHiliteBar( left, right, center, smallCenter, start.x + 1, start.y, end.x , end.y );
-
-			}
-			else
-			{
-				Color selectColor = WIN_COLOR_UNDEFINED,
-							selectBorder = WIN_COLOR_UNDEFINED;
-
-				if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-				{
-					selectColor  = GadgetListBoxGetDisabledSelectedItemColor( window );
-					selectBorder = GadgetListBoxGetDisabledSelectedItemBorderColor( window );
-				}
-				else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-				{
-					selectColor  = GadgetListBoxGetHiliteSelectedItemColor( window );
-					selectBorder = GadgetListBoxGetHiliteSelectedItemBorderColor( window );
-				}
-				else
-				{
-					selectColor  = GadgetListBoxGetEnabledSelectedItemColor( window );
-					selectBorder = GadgetListBoxGetEnabledSelectedItemBorderColor( window );
-				}
-
-				// draw border
-
-				//
-				// where are we going to draw ... taking into account the clipping
-				// region of the edge of the listbox
-				//
-				start.x = x;
-				start.y = drawY;
-				end.x = start.x + width;
-				end.y = start.y + listLineHeight;
-
-				if( end.y > clipRegion.hi.y )
-					end.y = clipRegion.hi.y;
-				if( start.y < clipRegion.lo.y )
-					start.y = clipRegion.lo.y;
-
-				if( selectBorder != WIN_COLOR_UNDEFINED )
-					TheWindowManager->winOpenRect( selectBorder,
-																				 WIN_DRAW_LINE_WIDTH,
-																				 start.x, start.y,
-																				 end.x, end.y );
-
-				// draw filled inner rect
-
-				//
-				// where are we going to draw ... taking into account the clipping
-				// region of the edge of the listbox
-				//
-				start.x = x + 1;
-				start.y = drawY + 1;
-				end.x = start.x + width - 2;
-				end.y = start.y + listLineHeight - 2;
-
-				if( end.y > clipRegion.hi.y )
-					end.y = clipRegion.hi.y;
-				if( start.y < clipRegion.lo.y )
-					start.y = clipRegion.lo.y;
-
-				if( selectColor != WIN_COLOR_UNDEFINED )
-					TheWindowManager->winFillRect( selectColor,
-																				 WIN_DRAW_LINE_WIDTH,
-																				 start.x, start.y,
-																				 end.x, end.y );
-
-			}
-
-		}
-
-
-
-
-		Color dropColor = TheWindowManager->winMakeColor( 0, 0, 0, 255 );
-		DisplayString *string;
-
-		ListEntryCell *cells = list->listData[i].cell;
-		Int columnX = x;
-		IRegion2D columnRegion;
-		if( cells )
-		{
-			// loop through all the cells
-			for( Int j = 0; j < list->columns; j++ )
-			{
-				// setup the Clip Region size
-
-				columnRegion.lo.x = columnX;
-				columnRegion.lo.y = drawY;
-				if(list->columns == 1 && list->slider && list->slider->winIsHidden())
-					columnRegion.hi.x = columnX + width-3;
-				else
-					columnRegion.hi.x = columnX + list->columnWidth[j];
-				columnRegion.hi.y = drawY + list->listData[i].height;
-				if(columnRegion.lo.y < clipRegion.lo.y )
-					columnRegion.lo.y = clipRegion.lo.y;
-				if( columnRegion.hi.y > clipRegion.hi.y )
-					columnRegion.hi.y = clipRegion.hi.y;
-
-				// Display the Text Case;
-				if(cells[j].cellType == LISTBOX_TEXT)
-				{
-					textColor = cells[j].color;
-					string = (DisplayString *)cells[j].data;
-					if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) == TRUE )
-					{
-						string->setWordWrap(0);
-						// make sure the font of the text is the same as the windows
-						if( string->getFont() != window->winGetFont() )
-							string->setFont( window->winGetFont() );
-
-						// draw this text after setting the clip region for it
-						string->setClipRegion( &columnRegion );
-						string->draw( columnX + TEXT_X_OFFSET,
-													drawY,
-													textColor,
-													dropColor );
-
-					}
-					else
-					{
-
-						// make sure the font of the text is the same as the windows
-						if( string->getFont() != window->winGetFont() )
-							string->setFont( window->winGetFont() );
-
-						// set clip region and draw
-						string->setClipRegion( &columnRegion );
-						string->draw( columnX + TEXT_X_OFFSET,
-													drawY,
-													textColor,
-													dropColor );
-					}
-				}
-				else if(cells[j].cellType == LISTBOX_IMAGE && cells[j].data)
-				{
-					Int width, height;
-					if (cells[j].width > 0)
-						width = cells[j].width;
-					else
-						width = list->columnWidth[j];
-					if(cells[j].height > 0)
-						height = cells[j].height;
-					else
-						height = list->listData[i].height;
-					if(j == 0)
-						width--;
-					Int offsetX,offsetY;
-					if(width < list->columnWidth[j])
-						offsetX = columnX + ((list->columnWidth[j] - width) / 2);
-					else
-						offsetX = columnX;
-					if(height < list->listData[i].height)
-						offsetY = drawY + ((list->listData[i].height - height) / 2);
-					else
-						offsetY = drawY;
-
-					offsetY++;
-					if(offsetX <x+1)
-						offsetX = x+1;
-					TheDisplay->setClipRegion( &columnRegion );
-					TheWindowManager->winDrawImage( (const Image *)cells[j].data,
-																offsetX, offsetY,
-																offsetX + width, offsetY + height,cells[j].color );
-
-				}
-				columnX = columnX + list->columnWidth[j];
-			}
-		}
-
-
-		drawY += listLineHeight;
-		TheDisplay->enableClipping(FALSE);
-	}
-
-//	TheWindowManager->winSetClipRegion( clipRegion.lo.x, clipRegion.lo.y,
-//																			clipRegion.hi.x, clipRegion.hi.y );
-
+	return {
+		static_cast<float>((color >> 16) & 0xff) / 255.0f,
+		static_cast<float>((color >> 8) & 0xff) / 255.0f,
+		static_cast<float>(color & 0xff) / 255.0f,
+		static_cast<float>((color >> 24) & 0xff) / 255.0f};
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-// W3DGadgetListBoxDraw =======================================================
-/** Draw colored list box using standard graphics */
-//=============================================================================
-void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
+struct ListBoxRenderContext final
 {
-	Int width, height, fontHeight, x, y;
-	Color background, border, titleColor, titleBorder;
-	ListboxData *list = (ListboxData *)window->winGetUserData();
+	GameWindow *window = nullptr;
+	ListboxData *list = nullptr;
+	Int x = 0;
+	Int content_width = 0;
+	Int next_row_y = 0;
+};
+
+bool Is_Row_Selected(const ListboxData &list, Int row) noexcept
+{
+	if (list.multiSelect) {
+		if (list.selections == nullptr)
+			return false;
+		for (Int index = 0; list.selections[index] >= 0; ++index) {
+			if (list.selections[index] == row)
+				return true;
+		}
+		return false;
+	}
+	return row == list.selectPos;
+}
+
+bool Query_List_Box_Row(
+	void *context_pointer,
+	std::uint32_t row_index,
+	Engine::UI::WND::ListBoxRowVisual &row) noexcept
+{
+	ListBoxRenderContext &context = *static_cast<ListBoxRenderContext *>(context_pointer);
+	if (context.list == nullptr || row_index >= static_cast<std::uint32_t>(context.list->endPos)
+		|| context.list->listData == nullptr)
+		return false;
+
+	const Int row_number = static_cast<Int>(row_index);
+	const Int row_height = context.list->listData[row_number].height + 1;
+	row.rectangle = {
+		static_cast<float>(context.x),
+		static_cast<float>(context.next_row_y),
+		static_cast<float>(context.x + context.content_width),
+		static_cast<float>(context.next_row_y + row_height)};
+	row.selected = Is_Row_Selected(*context.list, row_number);
+	context.next_row_y += row_height;
+	return true;
+}
+
+void Select_Images(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	const Image *&left,
+	const Image *&right,
+	const Image *&center,
+	const Image *&small_center) noexcept
+{
+	if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)) {
+		left = GadgetListBoxGetDisabledSelectedItemImageLeft(window);
+		right = GadgetListBoxGetDisabledSelectedItemImageRight(window);
+		center = GadgetListBoxGetDisabledSelectedItemImageCenter(window);
+		small_center = GadgetListBoxGetDisabledSelectedItemImageSmallCenter(window);
+	}
+	else if (instance_data != nullptr && BitIsSet(instance_data->getState(), WIN_STATE_HILITED)) {
+		left = GadgetListBoxGetHiliteSelectedItemImageLeft(window);
+		right = GadgetListBoxGetHiliteSelectedItemImageRight(window);
+		center = GadgetListBoxGetHiliteSelectedItemImageCenter(window);
+		small_center = GadgetListBoxGetHiliteSelectedItemImageSmallCenter(window);
+	}
+	else {
+		left = GadgetListBoxGetEnabledSelectedItemImageLeft(window);
+		right = GadgetListBoxGetEnabledSelectedItemImageRight(window);
+		center = GadgetListBoxGetEnabledSelectedItemImageCenter(window);
+		small_center = GadgetListBoxGetEnabledSelectedItemImageSmallCenter(window);
+	}
+}
+
+Engine::UI::WND::ListBoxSelectionVisual Build_Selection(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	Bool use_images) noexcept
+{
+	Engine::UI::WND::ListBoxSelectionVisual selection;
+	if (use_images) {
+		const Image *left = nullptr;
+		const Image *right = nullptr;
+		const Image *center = nullptr;
+		const Image *small_center = nullptr;
+		Select_Images(window, instance_data, left, right, center, small_center);
+		if (left != nullptr && right != nullptr && center != nullptr && small_center != nullptr) {
+			selection.segmented_image = true;
+			selection.left_image = To_WND_Image(left);
+			selection.center_image = To_WND_Image(center);
+			selection.small_center_image = To_WND_Image(small_center);
+			selection.right_image = To_WND_Image(right);
+			selection.left_width = static_cast<float>(left->getImageWidth());
+			selection.right_width = static_cast<float>(right->getImageWidth());
+			selection.center_width = static_cast<float>(center->getImageWidth());
+			selection.small_center_width = static_cast<float>(small_center->getImageWidth());
+		}
+		return selection;
+	}
+
+	Color fill = WIN_COLOR_UNDEFINED;
+	Color border = WIN_COLOR_UNDEFINED;
+	if (!BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED)) {
+		fill = GadgetListBoxGetDisabledSelectedItemColor(window);
+		border = GadgetListBoxGetDisabledSelectedItemBorderColor(window);
+	}
+	else if (instance_data != nullptr && BitIsSet(instance_data->getState(), WIN_STATE_HILITED)) {
+		fill = GadgetListBoxGetHiliteSelectedItemColor(window);
+		border = GadgetListBoxGetHiliteSelectedItemBorderColor(window);
+	}
+	else {
+		fill = GadgetListBoxGetEnabledSelectedItemColor(window);
+		border = GadgetListBoxGetEnabledSelectedItemBorderColor(window);
+	}
+	selection.has_fill = fill != WIN_COLOR_UNDEFINED;
+	selection.fill = To_WND_Color(fill);
+	selection.has_border = border != WIN_COLOR_UNDEFINED;
+	selection.border = To_WND_Color(border);
+	return selection;
+}
+
+bool Emit_List_Box_Cell(
+	void *context_pointer,
+	Engine::UI::WND::DrawList &draw_list,
+	std::uint32_t row_index,
+	std::uint32_t column_index,
+	Graphics::Rect2D row_rectangle,
+	Graphics::Rect2D cell_clip) noexcept
+{
+	ListBoxRenderContext &context = *static_cast<ListBoxRenderContext *>(context_pointer);
+	if (context.list == nullptr || context.list->listData == nullptr
+		|| column_index >= static_cast<std::uint32_t>(context.list->columns))
+		return true;
+
+	const Int row = static_cast<Int>(row_index);
+	const Int column = static_cast<Int>(column_index);
+	ListEntryCell *cells = context.list->listData[row].cell;
+	if (cells == nullptr)
+		return true;
+
+	Int column_x = context.x;
+	for (Int index = 0; index < column; ++index)
+		column_x += context.list->columnWidth[index];
+	Int column_width = context.list->columnWidth[column];
+	if (context.list->columns == 1 && context.list->slider != nullptr
+		&& context.list->slider->winIsHidden())
+		column_width = context.content_width - (column_x - context.x) - 3;
+
+	const Graphics::Rect2D column_rectangle{
+		static_cast<float>(column_x), row_rectangle.top,
+		static_cast<float>(column_x + column_width), row_rectangle.bottom};
+	const Graphics::Rect2D clip{
+		std::max(column_rectangle.left, cell_clip.left),
+		std::max(column_rectangle.top, cell_clip.top),
+		std::min(column_rectangle.right, cell_clip.right),
+		std::min(column_rectangle.bottom, cell_clip.bottom)};
+	if (clip.right <= clip.left || clip.bottom <= clip.top)
+		return true;
+
+	ListEntryCell &cell = cells[column];
+	if (cell.cellType == LISTBOX_TEXT && cell.data != nullptr) {
+		W3DDisplayString *text = static_cast<W3DDisplayString *>(
+			static_cast<DisplayString *>(cell.data));
+		if (text->getFont() != context.window->winGetFont())
+			text->setFont(context.window->winGetFont());
+		if (BitIsSet(context.window->winGetStatus(), WIN_STATUS_ONE_LINE))
+			text->setWordWrap(0);
+		IRegion2D text_clip{
+			{static_cast<Int>(clip.left), static_cast<Int>(clip.top)},
+			{static_cast<Int>(clip.right), static_cast<Int>(clip.bottom)}};
+		return text->appendDrawData(
+			draw_list,
+			column_x + TEXT_X_OFFSET,
+			static_cast<Int>(row_rectangle.top),
+			cell.color,
+			GameMakeColor(0, 0, 0, 255),
+			1,
+			1,
+			&text_clip);
+	}
+
+	if (cell.cellType != LISTBOX_IMAGE || cell.data == nullptr)
+		return true;
+	const Image *image = static_cast<const Image *>(cell.data);
+	Int width = cell.width > 0 ? cell.width : column_width;
+	Int height = cell.height > 0 ? cell.height : context.list->listData[row].height;
+	if (column == 0)
+		--width;
+	Int offset_x = width < column_width
+		? column_x + (column_width - width) / 2
+		: column_x;
+	Int offset_y = height < context.list->listData[row].height
+		? static_cast<Int>(row_rectangle.top) +
+			(context.list->listData[row].height - height) / 2
+		: static_cast<Int>(row_rectangle.top);
+	++offset_y;
+	if (offset_x < context.x + 1)
+		offset_x = context.x + 1;
+	const Graphics::Rect2D source_rectangle{
+		static_cast<float>(offset_x), static_cast<float>(offset_y),
+		static_cast<float>(offset_x + width), static_cast<float>(offset_y + height)};
+	return Engine::UI::WND::Add_Clipped_Image(
+		draw_list, To_WND_Image(image), source_rectangle, clip, To_WND_Color(cell.color));
+}
+
+bool Add_List_Box_Rows(
+	Engine::UI::WND::DrawList &draw_list,
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	ListboxData *list,
+	Int x,
+	Int y,
+	Int width,
+	Int height,
+	Bool use_images) noexcept
+{
+	if (list == nullptr || list->listData == nullptr || list->endPos <= 0)
+		return true;
+
+	ListBoxRenderContext context;
+	context.window = window;
+	context.list = list;
+	context.x = x;
+	context.content_width = width;
+	context.next_row_y = y - list->displayPos;
+
+	Engine::UI::WND::ListBoxVisual visual;
+	visual.clip_rectangle = {
+		static_cast<float>(x + 1), static_cast<float>(y - 3),
+		static_cast<float>(x + width - 1), static_cast<float>(y + height - 1)};
+	visual.row_count = static_cast<std::uint32_t>(list->endPos);
+	visual.column_count = static_cast<std::uint32_t>(std::max<Int>(list->columns, 0));
+	visual.selection = Build_Selection(window, instance_data, use_images);
+	visual.context = &context;
+	visual.query_row = &Query_List_Box_Row;
+	visual.emit_cell = &Emit_List_Box_Cell;
+	return Engine::UI::WND::Add_List_Box_Visual(draw_list, visual);
+}
+
+bool Extract_List_Box(
+	GameWindow *window,
+	WinInstanceData *instance_data,
+	Engine::UI::WND::DrawList &draw_list,
+	Bool use_images) noexcept
+{
+	if (window == nullptr || instance_data == nullptr)
+		return false;
+	ListboxData *list = static_cast<ListboxData *>(window->winGetUserData());
+	if (list == nullptr)
+		return true;
+
+	Int width = 0;
+	Int height = 0;
+	Int x = 0;
+	Int y = 0;
 	ICoord2D size;
-	DisplayString *title = instData->getTextDisplayString();
-
-	// get window position and size
-	window->winGetScreenPosition( &x, &y );
-	window->winGetSize( &size.x, &size.y );
-
-	// get font height
-	fontHeight = TheWindowManager->winFontHeight( instData->getFont() );
-
-	// alias width and height from size
+	window->winGetScreenPosition(&x, &y);
+	window->winGetSize(&size.x, &size.y);
 	width = size.x;
 	height = size.y;
 
-	// get the right colors
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-		background		= GadgetListBoxGetDisabledColor( window );
-		border				= GadgetListBoxGetDisabledBorderColor( window );
-		titleColor		= window->winGetDisabledTextColor();
-		titleBorder		= window->winGetDisabledTextBorderColor();
+	const Bool enabled = BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED);
+	const Bool highlighted = BitIsSet(instance_data->getState(), WIN_STATE_HILITED);
+	Color title_color = enabled
+		? (highlighted ? window->winGetHiliteTextColor() : window->winGetEnabledTextColor())
+		: window->winGetDisabledTextColor();
+	Color title_border = enabled
+		? (highlighted ? window->winGetHiliteTextBorderColor() : window->winGetEnabledTextBorderColor())
+		: window->winGetDisabledTextBorderColor();
+	DisplayString *title = instance_data->getTextDisplayString();
+	const Int font_height = TheWindowManager->winFontHeight(instance_data->getFont());
+	if (use_images) {
+		const Image *image = !enabled
+			? GadgetListBoxGetDisabledImage(window)
+			: highlighted ? GadgetListBoxGetHiliteImage(window) : GadgetListBoxGetEnabledImage(window);
+		if (image != nullptr && !draw_list.Add_Image(To_WND_Image(image), {
+			static_cast<float>(x + instance_data->m_imageOffset.x),
+			static_cast<float>(y + instance_data->m_imageOffset.y),
+			static_cast<float>(x + instance_data->m_imageOffset.x + width),
+			static_cast<float>(y + instance_data->m_imageOffset.y + height)}))
+			return false;
+		if (list->slider != nullptr) {
+			ICoord2D slider_size;
+			list->slider->winGetSize(&slider_size.x, &slider_size.y);
+			width -= slider_size.x;
+		}
 	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
-		background		= GadgetListBoxGetHiliteColor( window );
-		border				= GadgetListBoxGetHiliteBorderColor( window );
-		titleColor		= window->winGetHiliteTextColor();
-		titleBorder		= window->winGetHiliteTextBorderColor();
-	}
-	else
-	{
-		background		= GadgetListBoxGetEnabledColor( window );
-		border				= GadgetListBoxGetEnabledBorderColor( window );
-		titleColor		= window->winGetEnabledTextColor();
-		titleBorder		= window->winGetEnabledTextBorderColor();
-	}
-
-	// Draw the title
-	if( title && title->getTextLength() )
-	{
-
-		// set the font of this text to that of the window if not already
-		if( title->getFont() != window->winGetFont() )
-			title->setFont( window->winGetFont() );
-
-		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );
-
-		y += fontHeight + 1;
-		height -= fontHeight + 1;
-
+	if (title != nullptr && title->getTextLength() != 0) {
+		if (title->getFont() != window->winGetFont())
+			title->setFont(window->winGetFont());
+		W3DDisplayString *display_title = static_cast<W3DDisplayString *>(title);
+		if (!display_title->appendDrawData(draw_list, x + 1, y, title_color, title_border))
+			return false;
+		y += font_height + 1;
+		height -= font_height + 1;
 	}
 
-	// draw the back border
-	if( border != WIN_COLOR_UNDEFINED )
-		TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
-																	 x, y, x + width, y + height );
-
-	// draw background
-	if( background != WIN_COLOR_UNDEFINED )
-		TheWindowManager->winFillRect( background, WIN_DRAW_LINE_WIDTH,
-																	 x + 1, y + 1,
-																	 x + width - 1, y + height - 1 );
-
-	// If ScrollBar was requested ... adjust width.
-	if( list->slider  && !list->slider->winIsHidden())
-	{
-		ICoord2D sliderSize;
-
-		list->slider->winGetSize( &sliderSize.x, &sliderSize.y );
-		width -= (sliderSize.x +3);
-
+	if (!use_images) {
+		Color background = WIN_COLOR_UNDEFINED;
+		Color border = WIN_COLOR_UNDEFINED;
+		if (!enabled) {
+			background = GadgetListBoxGetDisabledColor(window);
+			border = GadgetListBoxGetDisabledBorderColor(window);
+		}
+		else if (highlighted) {
+			background = GadgetListBoxGetHiliteColor(window);
+			border = GadgetListBoxGetHiliteBorderColor(window);
+		}
+		else {
+			background = GadgetListBoxGetEnabledColor(window);
+			border = GadgetListBoxGetEnabledBorderColor(window);
+		}
+		if (border != WIN_COLOR_UNDEFINED && !draw_list.Add_Outline(
+			{static_cast<float>(x), static_cast<float>(y),
+			 static_cast<float>(x + width), static_cast<float>(y + height)},
+			WIN_DRAW_LINE_WIDTH, To_WND_Color(border)))
+			return false;
+		if (background != WIN_COLOR_UNDEFINED && !draw_list.Add_Rect(
+			{static_cast<float>(x + 1), static_cast<float>(y + 1),
+			 static_cast<float>(x + width - 1), static_cast<float>(y + height - 1)},
+			To_WND_Color(background)))
+			return false;
+		if (list->slider != nullptr && !list->slider->winIsHidden()) {
+			ICoord2D slider_size;
+			list->slider->winGetSize(&slider_size.x, &slider_size.y);
+			width -= slider_size.x + 3;
+		}
 	}
 
-	// draw the text
-	drawListBoxText( window, instData, x, y + 4 , width, height-4, TRUE );
-
-
-
+	return Add_List_Box_Rows(draw_list, window, instance_data, list, x, y + 4, width, height - 4, use_images);
 }
 
-// W3DGadgetListBoxImageDraw ==================================================
-/** Draw list box with user supplied images */
-//=============================================================================
-void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
+} // namespace
+
+Bool W3DGadgetListBoxDrawData(GameWindow *window, WinInstanceData *instData, void *drawList)
 {
-	Int width, height, x, y;
-	const Image *image;
-	ListboxData *list = (ListboxData *)window->winGetUserData();
-	ICoord2D size;
-	Color titleColor, titleBorder;
-	DisplayString *title = instData->getTextDisplayString();
+	return Extract_List_Box(
+		window, instData, *static_cast<Engine::UI::WND::DrawList *>(drawList), FALSE) ? TRUE : FALSE;
+}
 
-	// get window position and size
-	window->winGetScreenPosition( &x, &y );
-	window->winGetSize( &size.x, &size.y );
-
-	// save off width and height so we can change them
-	width = size.x;
-	height = size.y;
-
-	// If ScrollBar was requested ... adjust width.
-	if( list->slider )
-	{
-		ICoord2D sliderSize;
-
-		list->slider->winGetSize( &sliderSize.x, &sliderSize.y );
-		width -= sliderSize.x;
-
-	}
-
-	// get the image
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
-	{
-		image				= GadgetListBoxGetDisabledImage( window );
-		titleColor	= window->winGetDisabledTextColor();
-		titleBorder = window->winGetDisabledTextBorderColor();
-	}
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
-	{
-		image				= GadgetListBoxGetHiliteImage( window );
-		titleColor	= window->winGetHiliteTextColor();
-		titleBorder = window->winGetHiliteTextBorderColor();
-	}
-	else
-	{
-		image				= GadgetListBoxGetEnabledImage( window );
-		titleColor	= window->winGetEnabledTextColor();
-		titleBorder = window->winGetEnabledTextBorderColor();
-	}
-
-	// draw the back image
-	if( image )
-	{
-		ICoord2D start, end;
-
-		start.x = x + instData->m_imageOffset.x;
-		start.y = y + instData->m_imageOffset.y;
-		end.x = start.x + width;
-		end.y = start.y + height;
-		TheWindowManager->winDrawImage( image,
-																		start.x, start.y,
-																		end.x, end.y );
-
-	}
-
-	// Draw the title
-	if( title && title->getTextLength() )
-	{
-
-		// set font to font of the window if not already
-		if( title->getFont() != window->winGetFont() )
-			title->setFont( window->winGetFont() );
-
-		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );
-
-		y += TheWindowManager->winFontHeight( instData->getFont() );
-		height -= TheWindowManager->winFontHeight( instData->getFont() ) + 1;
-
-	}
-
-	// draw the listbox text
-	drawListBoxText( window, instData, x, y+4, width, height-4, TRUE );
-
-
-
+Bool W3DGadgetListBoxImageDrawData(GameWindow *window, WinInstanceData *instData, void *drawList)
+{
+	return Extract_List_Box(
+		window, instData, *static_cast<Engine::UI::WND::DrawList *>(drawList), TRUE) ? TRUE : FALSE;
 }
 

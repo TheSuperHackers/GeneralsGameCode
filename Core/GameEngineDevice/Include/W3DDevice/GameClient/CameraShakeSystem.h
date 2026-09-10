@@ -40,10 +40,9 @@
 
 #include "WWLib/always.h"
 #include "WWMath/vector3.h"
-#include "WWLib/multilist.h"
-#include "WWLib/mempool.h"
+import Graphics.Scene.ObjectList;
 
-class CameraClass;
+class W3DCamera;
 
 /**
 ** CameraShakeSystemClass
@@ -73,10 +72,10 @@ public:
 
 	/**
 	** CameraShakerClass
-	** This class encapsulates the current state of a camera shaker.  It is a multi-list object
-	** and is allocated in pools.
+	** This class encapsulates the current state of a camera shaker.  It participates in the graphics-owned
+	** active and pending-removal collections.
 	*/
-	class CameraShakerClass : public MultiListObjectClass, public AutoPoolClass<CameraShakerClass,256>
+	class CameraShakerClass : public Graphics::SceneListMember
 	{
 	public:
 		CameraShakerClass(const Vector3 & position,float radius,float duration,float power);
@@ -100,7 +99,7 @@ public:
 
 protected:
 
-	MultiListClass<CameraShakerClass>	CameraShakerList;
+	Graphics::SceneObjectList<CameraShakerClass,false>	CameraShakerList;
 
 };
 

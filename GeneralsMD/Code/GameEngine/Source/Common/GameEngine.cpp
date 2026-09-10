@@ -662,7 +662,7 @@ void GameEngine::init()
 
 		TheSubsystemList->postProcessLoadAll();
 
-		TheFramePacer->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
+		TheFramePacer->setLogicTimeScaleFps(TheGlobalData->m_framesPerSecondLimit);
 
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_musicOn, AudioAffect_Music);
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_soundsOn, AudioAffect_Sound);
@@ -923,9 +923,6 @@ void GameEngine::update()
 		}
 	}
 }
-
-// Horrible reference, but we really, really need to know if we are windowed.
-extern bool DX8Wrapper_IsWindowed;
 
 /** -----------------------------------------------------------------------------------------------
  * The "main loop" of the game engine. It will not return until the game exits.

@@ -33,6 +33,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/ActionManager.h"
+#include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/GameUtility.h"
@@ -78,6 +79,7 @@
 #include "GameClient/TerrainVisual.h"
 #include "GameClient/View.h"
 #include "GameClient/VideoPlayer.h"
+#include "GameClient/VideoRuntime.h"
 #include "GameClient/WindowXlat.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/GhostObject.h"
@@ -201,6 +203,7 @@ GameClient::~GameClient()
 	TheTerrainVisual = nullptr;
 
 	// destroy the display
+	Close_All_Videos();
 	delete TheDisplay;
 	TheDisplay = nullptr;
 
@@ -472,7 +475,9 @@ void GameClient::reset()
 	TheDisplay->reset();
 	TheTerrainVisual->reset();
 	TheRayEffects->reset();
-	TheVideoPlayer->reset();
+	Close_All_Videos();
+	if (TheVideoPlayer != nullptr)
+		TheVideoPlayer->reset();
 	TheEva->reset();
 	if (TheSnowManager)
 		TheSnowManager->reset();
@@ -520,6 +525,11 @@ void GameClient::update()
 	USE_PERF_TIMER(GameClient_update)
 	PROFILER_FRAME_MARK;
 	PROFILER_SECTION_COLOR(0x2196F3);
+
+	// Video playback owns its timing in engine/video. Advance it before the
+	// intro early-return path as well as the normal gameplay path.
+	Update_Videos(TheFramePacer != nullptr ? TheFramePacer->getUpdateTime() : 0.0);
+
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
@@ -593,11 +603,6 @@ void GameClient::update()
 	// update the window system itself
 	{
 		TheWindowManager->UPDATE();
-	}
-
-	// update the video player
-	{
-		TheVideoPlayer->UPDATE();
 	}
 
 	const Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();

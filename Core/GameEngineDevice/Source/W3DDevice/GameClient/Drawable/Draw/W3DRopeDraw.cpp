@@ -29,7 +29,6 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <windows.h>
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -38,11 +37,22 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/Module/W3DRopeDraw.h"
-#include "WW3D2/line3d.h"
-#include "W3DDevice/GameClient/W3DScene.h"
-#include "Common/GameState.h"
+
+namespace
+{
+Graphics::BeamDescription Make_Graphics_Rope_Beam(const Vector3 &start, const Vector3 &end, Real width, Real opacity, const RGBColor &color) noexcept
+{
+	Graphics::BeamDescription description;
+	description.start = {start.X, start.Y, start.Z};
+	description.end = {end.X, end.Y, end.Z};
+	description.width = width;
+	description.color = {color.red, color.green, color.blue, 1.0f};
+	description.opacity = opacity;
+	description.flags = width > 0.0f && opacity > 0.0f ? Graphics::BeamFlags::Enabled : Graphics::BeamFlags::None;
+	return description;
+}
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +77,8 @@ W3DRopeDraw::W3DRopeDraw( Thing *thing, const ModuleData* moduleData ) : DrawMod
 	m_segments.clear();
 	m_curWobblePhase = 0.0f;
 	m_curZOffset = 0.0f;
+	m_graphicsEnabled = FALSE;
+	m_graphicsAttempted = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -77,37 +89,22 @@ void W3DRopeDraw::buildSegments()
 	m_segments.clear();
 
 	Int numSegs = ceil(m_maxLen / m_wobbleLen);
-	Real eachLen = m_maxLen / (Real)numSegs;
-	Coord3D pos = *getDrawable()->getPosition();
-	for (int i = 0; i < numSegs; ++i, pos.z += eachLen)
+	for (int i = 0; i < numSegs; ++i)
 	{
 		SegInfo info;
 
 		Real axis = GameClientRandomValueReal(0, 2*PI);
 		info.wobbleAxisX = Cos(axis);
 		info.wobbleAxisY = Sin(axis);
-		info.line = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
-																	 Vector3(pos.x,pos.y,pos.z+eachLen),
-																	 m_width * 0.5f,  // width
-																	 m_color.red,  // red
-																	 m_color.green,  // green
-																	 m_color.blue,  // blue
-																	 1.0f );  // transparency
-
-		info.softLine = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
-																	 Vector3(pos.x,pos.y,pos.z+eachLen),
-																	 m_width,  // width
-																	 m_color.red,  // red
-																	 m_color.green,  // green
-																	 m_color.blue,  // blue
-																	 0.5f );  // transparency
-
-		if (W3DDisplay::m_3DScene)
-		{
-			W3DDisplay::m_3DScene->Add_Render_Object( info.line );
-			W3DDisplay::m_3DScene->Add_Render_Object( info.softLine );
-		}
 		m_segments.push_back(info);
+	}
+
+	if (Graphics::GetBeamRenderer().Is_Initialized())
+	{
+		m_graphicsAttempted = TRUE;
+		m_graphicsEnabled = createGraphicsSegments() ? TRUE : FALSE;
+		if (!m_graphicsEnabled)
+			disableGraphicsSegments();
 	}
 }
 
@@ -115,23 +112,46 @@ void W3DRopeDraw::buildSegments()
 //-------------------------------------------------------------------------------------------------
 void W3DRopeDraw::tossSegments()
 {
-	// remove tracer from the scene and delete
-	for (std::vector<SegInfo>::iterator it = m_segments.begin(); it != m_segments.end(); ++it)
-	{
-		if (it->line)
-		{
-			if (W3DDisplay::m_3DScene)
-				W3DDisplay::m_3DScene->Remove_Render_Object(it->line);
-			REF_PTR_RELEASE((it->line));
-		}
-		if (it->softLine)
-		{
-			if (W3DDisplay::m_3DScene)
-				W3DDisplay::m_3DScene->Remove_Render_Object(it->softLine);
-			REF_PTR_RELEASE((it->softLine));
-		}
-	}
+	disableGraphicsSegments();
 	m_segments.clear();
+	m_graphicsEnabled = FALSE;
+	m_graphicsAttempted = FALSE;
+}
+
+bool W3DRopeDraw::createGraphicsSegments() noexcept
+{
+	if (!Graphics::GetBeamRenderer().Is_Initialized())
+		return false;
+
+	Coord3D pos = *getDrawable()->getPosition();
+	const Int numSegs = static_cast<Int>(m_segments.size());
+	const Real eachLen = numSegs > 0 ? m_maxLen / static_cast<Real>(numSegs) : 0.0f;
+	for (SegInfo &segment : m_segments)
+	{
+		const Vector3 start(pos.x, pos.y, pos.z);
+		const Vector3 end(pos.x, pos.y, pos.z + eachLen);
+		segment.graphicsLine = Graphics::CreateBeam(Make_Graphics_Rope_Beam(start, end, m_width * 0.5f, 1.0f, m_color));
+		segment.graphicsSoftLine = Graphics::CreateBeam(Make_Graphics_Rope_Beam(start, end, m_width, 0.5f, m_color));
+		if (!segment.graphicsLine.Is_Valid() || !segment.graphicsSoftLine.Is_Valid())
+			return false;
+		pos.z += eachLen;
+	}
+
+	return true;
+}
+
+void W3DRopeDraw::disableGraphicsSegments() noexcept
+{
+	for (SegInfo &segment : m_segments)
+	{
+		if (segment.graphicsLine.Is_Valid())
+			Graphics::DestroyBeam(segment.graphicsLine);
+		if (segment.graphicsSoftLine.Is_Valid())
+			Graphics::DestroyBeam(segment.graphicsSoftLine);
+		segment.graphicsLine = {};
+		segment.graphicsSoftLine = {};
+	}
+	m_graphicsEnabled = FALSE;
 }
 
 
@@ -183,6 +203,14 @@ void W3DRopeDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		buildSegments();
 	}
+	else if (!m_graphicsAttempted && Graphics::GetBeamRenderer().Is_Initialized())
+	{
+		m_graphicsAttempted = TRUE;
+		if (createGraphicsSegments())
+			m_graphicsEnabled = TRUE;
+		else
+			disableGraphicsSegments();
+	}
 
 	if (!m_segments.empty())
 	{
@@ -193,10 +221,12 @@ void W3DRopeDraw::doDrawModule(const Matrix3D* transformMtx)
 		for (std::vector<SegInfo>::iterator it = m_segments.begin(); it != m_segments.end(); ++it)
 		{
 			Vector3 end(pos->x + deflection*it->wobbleAxisX, pos->y + deflection*it->wobbleAxisY, start.Z - eachLen);
-			if (it->line)
-				(it->line)->Reset(start, end);
-			if (it->softLine)
-				(it->softLine)->Reset(start, end);
+			if (m_graphicsEnabled)
+			{
+				if (!Graphics::UpdateBeam(it->graphicsLine, Make_Graphics_Rope_Beam(start, end, m_width * 0.5f, 1.0f, m_color))
+					|| !Graphics::UpdateBeam(it->graphicsSoftLine, Make_Graphics_Rope_Beam(start, end, m_width, 0.5f, m_color)))
+					disableGraphicsSegments();
+			}
 			start = end;
 		}
 	}

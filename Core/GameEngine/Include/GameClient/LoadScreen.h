@@ -42,8 +42,6 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
-class VideoBuffer;
-class VideoStreamInterface;
 class WindowVideoManager;
 
 
@@ -110,9 +108,6 @@ private:
 
 	UnicodeString m_unicodeObjectiveLines[MAX_OBJECTIVE_LINES];
 
-	VideoBuffer *m_videoBuffer;
-	VideoStreamInterface *m_videoStream;
-
 	void moveWindows( Int frame );
 
 	AudioEventRTS m_ambientLoop;
@@ -146,9 +141,6 @@ public:
 
 private:
 	GameWindow *m_progressBar;				///< Pointer to the Progress Bar on the window
-
-	VideoBuffer *m_videoBuffer;
-	VideoStreamInterface *m_videoStream;
 
 	WindowVideoManager *m_wndVideoManager;
 

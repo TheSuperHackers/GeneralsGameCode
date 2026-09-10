@@ -22,12 +22,12 @@
 
 #pragma once
 
-#include "WW3D2/scene.h"
+#include "WW3D2/Scene.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/hcanim.h"
-#include "WW3D2/dynamesh.h"
-#include "WW3D2/rendobj.h"
+#include "WW3D2/HAnim.h"
+#include "WW3D2/HCAnim.h"
+#include "WW3D2/DynaMesh.h"
+#include "WW3D2/RendObj.h"
 #include "LODDefs.h"
 
 
@@ -57,7 +57,7 @@ class HLodClass;
 class ViewerSceneClass;
 class EmitterInstanceListClass;
 class ScreenCursorClass;
-class DazzleLayerClass;
+class W3DDazzleLayer;
 
 
 /////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ private:
 	RefCountPtr<SceneClass>			m_pC2DScene;
 	RefCountPtr<SceneClass>			m_pCursorScene;
 	RefCountPtr<SceneClass>			m_pCBackObjectScene;
-	DazzleLayerClass *	m_pDazzleLayer;
+	W3DDazzleLayer *	m_pDazzleLayer;
 	RefCountPtr<RenderObjClass>		m_pCRenderObj;
 	RefCountPtr<RenderObjClass>		m_pCBackgroundObject;
 	RefCountPtr<HAnimClass>			m_pCAnimation;

@@ -49,7 +49,6 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GameWindow.h"
-#include "WW3D2/render2dsentence.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
@@ -70,30 +69,12 @@ public:
 
 	/// draw borders for this window only, NO child windows or anything else
 	virtual void winDrawBorder() override;
-
-	Int winSetPosition( Int x, Int y );  ///< set window position
-	virtual Int winSetText( UnicodeString newText ) override;  ///< set text string
-	virtual void winSetFont( GameFont *font ) override;  ///< set font for window
-
-	void getTextSize( Int *width, Int *height );  ///< get size of text
-	void setTextLoc( Int x, Int y );  ///< set text screen coord loc
-	void drawText( Color color );  ///< draw text in the text renderer
-
-protected:
-
-	/// helper function to draw borders
-	void blitBorderRect( Int x, Int y, Int width, Int height );
-
-	Render2DSentenceClass m_textRenderer;  ///< for drawing text
-	ICoord2D m_textPos;  ///< current text pos set in text renderer
-	Color m_currTextColor;  ///< current color used in text renderer
-	Bool m_needPolyDraw;  ///< TRUE need to redo the text polys
-	Bool m_newTextPos;  ///< TRUE when our window has moved and we need a new text pos
-
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern void W3DGameWinDefaultDraw( GameWindow *window,
-																	 WinInstanceData *instData );
+extern Bool W3DGameWinDefaultDrawData( GameWindow *window,
+																					 WinInstanceData *instData, void *drawList );
+extern Bool W3DGameWinBorderDrawData( GameWindow *window,
+																					 WinInstanceData *instData, void *drawList );

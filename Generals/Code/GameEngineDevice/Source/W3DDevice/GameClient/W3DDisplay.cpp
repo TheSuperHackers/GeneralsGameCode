@@ -113,6 +113,11 @@ static void drawFramerateBar();
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
 
+#include <fstream>
+import Graphics.Capture.MovieCapture;
+import Graphics.Backends.DX11.Coexistence;
+static Graphics::MovieCapture displayMovieCapture;
+
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
 static W3DDynamicLight * theDynamicLight = nullptr;
@@ -129,6 +134,7 @@ static Int theFlashCount = 0;
 #ifdef DUMP_PERF_STATS
 
 #include <cstdarg>
+
 
 class StatDumpClass
 {
@@ -371,6 +377,7 @@ W3DDisplay::W3DDisplay()
 //=============================================================================
 W3DDisplay::~W3DDisplay()
 {
+	displayMovieCapture.Stop();
 #ifdef PROFILER_ENABLED
 	delete m_profilerFrameCapture;
 	m_profilerFrameCapture = nullptr;
@@ -1661,6 +1668,15 @@ void W3DDisplay::calculateTerrainLOD()
 			{	// draw all views of the world
 				drawViews();
 				// render is all done!
+				
+	if (displayMovieCapture.Is_Active()) {
+		auto* device = Graphics::Shared_Frame_Device();
+		if (device == nullptr || !displayMovieCapture.Capture(*device, device->Get_Swap_Chain().Backbuffer(), Graphics::RHITextureFormat::BGRA8_UNorm)) {
+			displayMovieCapture.Stop();
+			DEBUG_LOG(("Movie capture stopped: frame readback or AVI write failed.\n"));
+		}
+	}
+
 				WW3D::End_Render();
 			}
 			Int64 time64 = getPerformanceCounter();
@@ -1898,7 +1914,16 @@ AGAIN:
 					TheInGameUI->draw();
 					if( TheMouse )
 						TheMouse->draw();	//keep applying the current cursor style so it remains hidden if needed.
-					WW3D::End_Render();
+					
+	if (displayMovieCapture.Is_Active()) {
+		auto* device = Graphics::Shared_Frame_Device();
+		if (device == nullptr || !displayMovieCapture.Capture(*device, device->Get_Swap_Chain().Backbuffer(), Graphics::RHITextureFormat::BGRA8_UNorm)) {
+			displayMovieCapture.Stop();
+			DEBUG_LOG(("Movie capture stopped: frame readback or AVI write failed.\n"));
+		}
+	}
+
+				WW3D::End_Render();
 					continue;
 				}
 				couldRender = true;
@@ -1989,6 +2014,15 @@ AGAIN:
 				}
 #endif
 				// render is all done!
+				
+	if (displayMovieCapture.Is_Active()) {
+		auto* device = Graphics::Shared_Frame_Device();
+		if (device == nullptr || !displayMovieCapture.Capture(*device, device->Get_Swap_Chain().Backbuffer(), Graphics::RHITextureFormat::BGRA8_UNorm)) {
+			displayMovieCapture.Stop();
+			DEBUG_LOG(("Movie capture stopped: frame readback or AVI write failed.\n"));
+		}
+	}
+
 				WW3D::End_Render();
 			}
 			else
@@ -2941,7 +2975,7 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 /** Start/Stop capturing an AVI movie*/
 void W3DDisplay::toggleMovieCapture()
 {
-	WW3D::Toggle_Movie_Capture("Movie",30);
+	displayMovieCapture.Toggle("Movie",30);
 }
 
 void W3DDisplay::takeScreenShot(ScreenshotFormat format, Int jpegQuality)

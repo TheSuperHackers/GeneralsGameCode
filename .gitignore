@@ -5,6 +5,11 @@
 !.gitattributes
 !.github
 !.gitmodules
+!.codex
+!.codex/
+!.codex/skills
+!.codex/skills/
+!.codex/skills/*
 
 *.user
 *.ncb
@@ -48,6 +53,7 @@ thumbs.db
 /.vscode
 /Dependencies/MaxSDK/maxsdk
 /tmp/
+/vcpkg_installed/
 
 ## AI assistant config (user-specific)
 /.claude/

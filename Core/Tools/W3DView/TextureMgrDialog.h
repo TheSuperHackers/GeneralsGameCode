@@ -37,14 +37,14 @@
 #pragma once
 
 #include "WWLib/Vector.h"
-#include "WW3D2/rendobj.h"
+#include "WW3D2/RendObj.h"
 #include "Utils.h"
 #include "Resource.h"
 #include "DialogToolbar.h"
-#include "WW3D2/texture.h"
+#include "WW3D2/Texture.h"
 
 // Forward declarations
-class MeshClass;
+class W3DMeshRenderObject;
 
 #ifdef WW3D_DX8
 
@@ -217,7 +217,7 @@ protected:
 		//	Protected methosd
 		//
 		void						Add_Subobjs_To_List (RenderObjClass *prender_obj);
-		void						Add_Textures_To_Node (MeshClass *pmesh, TextureListNodeClass *pmesh_node);
+		void						Add_Textures_To_Node (W3DMeshRenderObject *pmesh, TextureListNodeClass *pmesh_node);
 		void						Fill_List_Ctrl_With_Meshes ();
 		void						Fill_List_Ctrl_With_Textures (TextureListNodeClass &pparent);
 		int						Find_Texture_Thumbnail (LPCTSTR name);

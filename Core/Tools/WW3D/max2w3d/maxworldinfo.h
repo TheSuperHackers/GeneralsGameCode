@@ -39,7 +39,7 @@
 #pragma once
 
 #include <max.h>
-#include "meshbuild.h"
+#include "MeshBuild.h"
 #include "nodelist.h"
 #include "Vector.h"
 

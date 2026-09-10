@@ -68,7 +68,7 @@ typedef MultiListClass<LogicalListenerClass>					LOGICAL_LISTENER_LIST;
 //
 //	SoundSceneClass
 //
-//	Mimics the 'SceneClass' for render objects.  Used to insert 3D sounds into
+//	Mimics the game render scene for render objects.  Used to insert 3D sounds into
 // a virtual world.  Used to efficiently cull sounds that are too far away
 // from the listner to be heard.
 //

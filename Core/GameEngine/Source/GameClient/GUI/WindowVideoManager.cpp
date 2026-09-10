@@ -1,418 +1,239 @@
-/*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// FILE: WindowVideoManager.cpp /////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-//
-//                       Electronic Arts Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2002 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-//	created:	Apr 2002
-//
-//	Filename: 	WindowVideoManager.cpp
-//
-//	author:		Chris Huybregts
-//
-//	purpose:	Every window is setup to be able to draw a movie.  The
-//						WindowVideoManager will take care of setting up the window,
-//						creating/destroying the buffers, and the ability to pause/stop
-//						movies.
-//
-//	To Use:		Create a manager and initialize it. Make sure the manager's Update
-//						is called every frame or how ever often it needs to be updated.
-//						Call reset if the manager needs to be cleared.
-//						Play a movie in a window by passing a window pointer, a movie name,
-//						and the playtype.
-//						If a user trys to play a two different movies on the same window,
-//						only the last one added will play.
-//						It's important when destroying a window, that window is removed
-//						from the manager (Or call Reset if you know no other windows are
-//						playing a movie).
-//
-//-----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------------
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// USER INCLUDES //////////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"
 
 #include "GameClient/WindowVideoManager.h"
 #include "GameClient/GameWindow.h"
-#include "GameClient/VideoPlayer.h"
-#include "GameClient/Display.h"
+#include "GameClient/VideoRuntime.h"
 
-//-----------------------------------------------------------------------------
-// DEFINES ////////////////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
+import Video.Runtime;
 
-//-----------------------------------------------------------------------------
-// WindowVideo PUBLIC FUNCTIONS ///////////////////////////////////////////////
-//-----------------------------------------------------------------------------
 WindowVideo::WindowVideo()
+	: m_playType(WINDOW_PLAY_MOVIE_ONCE),
+	  m_win(nullptr),
+	  m_state(WINDOW_VIDEO_STATE_STOP),
+	  m_presentationId(Invalid_Video_Presentation)
 {
-
-	m_playType = WINDOW_PLAY_MOVIE_ONCE;
-	m_win = nullptr;
-	m_videoBuffer = nullptr;
-	m_videoStream = nullptr;
-	m_movieName.clear();
-	m_state = WINDOW_VIDEO_STATE_STOP;
-
 }
 
 WindowVideo::~WindowVideo()
 {
-	// Don't Delete the window, only set it's video buffer to null
-	if(m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( nullptr );
+	if (m_presentationId != Invalid_Video_Presentation)
+		Close_Window_Video(m_presentationId);
+	m_presentationId = Invalid_Video_Presentation;
 	m_win = nullptr;
-
-	delete m_videoBuffer;
-	m_videoBuffer = nullptr;
-
-	if ( m_videoStream )
-	{
-		m_videoStream->close();
-		m_videoStream = nullptr;
-	}
 }
 
-void WindowVideo::init( GameWindow *win, AsciiString movieName,
-												WindowVideoPlayType playType,
-												VideoBuffer *videoBuffer, VideoStreamInterface *videoStream)
+void WindowVideo::init(
+	GameWindow *win,
+	AsciiString movieName,
+	WindowVideoPlayType playType,
+	std::uint64_t presentationId)
 {
 	m_win = win;
 	m_movieName = movieName;
 	m_playType = playType;
-	m_videoBuffer = videoBuffer;
-	m_videoStream = videoStream;
-	m_state = WINDOW_VIDEO_STATE_PLAY;
-	if(m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( m_videoBuffer );
+	m_state = presentationId == Invalid_Video_Presentation
+		? WINDOW_VIDEO_STATE_STOP
+		: WINDOW_VIDEO_STATE_PLAY;
+	m_presentationId = presentationId;
 }
 
-void WindowVideo::setWindowState( WindowVideoStates state )
+void WindowVideo::setWindowState(WindowVideoStates state)
 {
 	m_state = state;
-
-	if(m_state == WINDOW_VIDEO_STATE_STOP && m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( nullptr );
-
-	if((m_state == WINDOW_VIDEO_STATE_PLAY || m_state == WINDOW_VIDEO_STATE_PAUSE )&& m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( m_videoBuffer );
+	if (m_presentationId != Invalid_Video_Presentation)
+		Set_Window_Video_Visible(
+			m_presentationId,
+			state != WINDOW_VIDEO_STATE_STOP && state != WINDOW_VIDEO_STATE_HIDDEN);
 }
 
-//-----------------------------------------------------------------------------
-// WindowVideoManager PUBLIC FUNCTIONS ////////////////////////////////////////
-//-----------------------------------------------------------------------------
 WindowVideoManager::WindowVideoManager()
+	: m_stopAllMovies(FALSE),
+	  m_pauseAllMovies(FALSE)
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		delete winVid;
-		it++;
-	}
-	m_playingVideos.clear();
-
-	m_stopAllMovies = FALSE;
-	m_pauseAllMovies = FALSE;
-
 }
 
 WindowVideoManager::~WindowVideoManager()
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		delete winVid;
-		it++;
-	}
-	m_playingVideos.clear();
-
+	reset();
 }
-
 
 void WindowVideoManager::init()
 {
-	m_playingVideos.clear();
-
+	reset();
 	m_stopAllMovies = FALSE;
 	m_pauseAllMovies = FALSE;
 }
 
 void WindowVideoManager::reset()
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		delete winVid;
-		it++;
-	}
+	for (WindowVideoMap::iterator it = m_playingVideos.begin(); it != m_playingVideos.end(); ++it)
+		delete it->second;
 	m_playingVideos.clear();
-
 	m_stopAllMovies = FALSE;
 	m_pauseAllMovies = FALSE;
 }
 
 void WindowVideoManager::update()
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-
-	if(m_pauseAllMovies || m_stopAllMovies)
+	if (m_pauseAllMovies || m_stopAllMovies)
 		return;
 
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-
-		if(!winVid)
-		{
-			DEBUG_CRASH(("There's No WindowVideo in the m_playignVideos list"));
-			return;
-		}
-		GameWindow *win = winVid->getWin();
-
-		if(winVid->getState() == WINDOW_VIDEO_STATE_HIDDEN && (win->winIsHidden() == FALSE))
-		{
-			resumeMovie(win);
-		}
-
-		if(winVid->getState() == WINDOW_VIDEO_STATE_PLAY && win->winIsHidden())
-		{
-			hideMovie(win);
-		}
-
-		// Only advance the frame if we're playing
-		if(winVid->getState() != WINDOW_VIDEO_STATE_PLAY)
-		{
-			it++;
+	for (WindowVideoMap::iterator it = m_playingVideos.begin(); it != m_playingVideos.end();) {
+		WindowVideo *video = it->second;
+		if (video == nullptr || video->getWin() == nullptr) {
+			delete video;
+			it = m_playingVideos.erase(it);
 			continue;
 		}
 
-		// Get the Stream and the buffer to update for each animation
-		VideoStreamInterface *videoStream = winVid->getVideoStream();
-		VideoBuffer *videoBuffer = winVid->getVideoBuffer();
+		GameWindow *window = video->getWin();
+		if (video->getState() == WINDOW_VIDEO_STATE_HIDDEN && !window->winIsHidden())
+			resumeMovie(window);
+		if (video->getState() == WINDOW_VIDEO_STATE_PLAY && window->winIsHidden())
+			hideMovie(window);
 
-		if ( videoStream && videoBuffer )
-		{
-			if ( videoStream->isFrameReady())
-			{
-				videoStream->frameDecompress();
-				videoStream->frameRender( videoBuffer );
-				videoStream->frameNext();
+		if (video->getState() != WINDOW_VIDEO_STATE_PLAY) {
+			++it;
+			continue;
+		}
 
-				// If we reach frame Index of 0, we might have to pause, or loop.
-				if ( videoStream->frameIndex() == 0 )
-				{
-					if(winVid->getPlayType() == WINDOW_PLAY_MOVIE_ONCE)
-						stopMovie(win);
-					else if (winVid->getPlayType() == WINDOW_PLAY_MOVIE_SHOW_LAST_FRAME)
-						pauseMovie(win);
-				}
+		const Engine::Video::PlaybackState state = Get_Window_Video_State(video->getPresentationId());
+		if (state == Engine::Video::PlaybackState::Finished) {
+			if (video->getPlayType() == WINDOW_PLAY_MOVIE_ONCE) {
+				stopAndRemoveMovie(window);
+				it = m_playingVideos.begin();
+				continue;
 			}
-		}
+			if (video->getPlayType() == WINDOW_PLAY_MOVIE_SHOW_LAST_FRAME) {
+				video->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
+				++it;
+				continue;
+			}
 
-		it++;
+			stopAndRemoveMovie(window);
+			it = m_playingVideos.begin();
+			continue;
+		} else if (state == Engine::Video::PlaybackState::Closed || state == Engine::Video::PlaybackState::Error) {
+			stopAndRemoveMovie(window);
+			it = m_playingVideos.begin();
+			continue;
+		}
+		++it;
 	}
 }
 
-void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, WindowVideoPlayType playType )
+void WindowVideoManager::playMovie(GameWindow *win, AsciiString movieName, WindowVideoPlayType playType)
 {
-	// if we already have a movie playing for that window, kill it.
-	stopAndRemoveMovie( win );
-
-	// create the new stream
-	VideoStreamInterface *videoStream = TheVideoPlayer->open( movieName );
-	if ( videoStream == nullptr )
-	{
+	if (win == nullptr)
 		return;
-	}
 
-	// Create the new buffer
-	VideoBuffer *videoBuffer = TheDisplay->createVideoBuffer();
-	if (	videoBuffer == nullptr ||
-				!videoBuffer->allocate(	videoStream->width(),
-													videoStream->height())
-		)
-	{
-		// If we failed to create the buffer...
-		delete videoBuffer;
-		videoBuffer = nullptr;
+	stopAndRemoveMovie(win);
+	WindowVideoMode mode = WindowVideoMode::Once;
+	if (playType == WINDOW_PLAY_MOVIE_LOOP)
+		mode = WindowVideoMode::Loop;
+	else if (playType == WINDOW_PLAY_MOVIE_SHOW_LAST_FRAME)
+		mode = WindowVideoMode::ShowLastFrame;
 
-		if ( videoStream )
-		{
-			videoStream->close();
-			videoStream = nullptr;
-		}
-
+	const VideoPresentationId id = Open_Window_Video(win, movieName, mode);
+	if (id == Invalid_Video_Presentation)
 		return;
-	}
 
-	// now that we have everything, create the new WindowVideo Structure
-	WindowVideo *winVid = NEW WindowVideo;
-
-	// init it.
-	winVid->init( win, movieName,playType,videoBuffer,videoStream);
-
-	// add it to our map.
-	m_playingVideos[win] = winVid;
-
+	WindowVideo *video = NEW WindowVideo;
+	video->init(win, movieName, playType, id);
+	m_playingVideos[win] = video;
 	m_pauseAllMovies = FALSE;
 	m_stopAllMovies = FALSE;
 }
 
-
-void WindowVideoManager::pauseMovie( GameWindow *win )
+void WindowVideoManager::pauseMovie(GameWindow *win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-		winVid->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
-	}
-
-}
-void WindowVideoManager::hideMovie( GameWindow *win )
-{
-	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-		winVid->setWindowState(WINDOW_VIDEO_STATE_HIDDEN);
-	}
+	if (it == m_playingVideos.end() || it->second == nullptr)
+		return;
+	Engine::Video::PlaybackState state = Get_Window_Video_State(it->second->getPresentationId());
+	if (state == Engine::Video::PlaybackState::Playing)
+		Pause_Window_Video(it->second->getPresentationId());
+	it->second->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
 }
 
-void WindowVideoManager::resumeMovie( GameWindow *win )
+void WindowVideoManager::hideMovie(GameWindow *win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-			winVid->setWindowState(WINDOW_VIDEO_STATE_PLAY);
+	if (it == m_playingVideos.end() || it->second == nullptr)
+		return;
+	Pause_Window_Video(it->second->getPresentationId());
+	it->second->setWindowState(WINDOW_VIDEO_STATE_HIDDEN);
+}
+
+void WindowVideoManager::resumeMovie(GameWindow *win)
+{
+	WindowVideoMap::iterator it = m_playingVideos.find(win);
+	if (it != m_playingVideos.end() && it->second != nullptr) {
+		Play_Window_Video(it->second->getPresentationId());
+		it->second->setWindowState(WINDOW_VIDEO_STATE_PLAY);
 	}
 	m_pauseAllMovies = FALSE;
 	m_stopAllMovies = FALSE;
 }
 
-void WindowVideoManager::stopMovie( GameWindow *win )
+void WindowVideoManager::stopMovie(GameWindow *win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-			winVid->setWindowState(WINDOW_VIDEO_STATE_STOP);
-	}
+	if (it == m_playingVideos.end() || it->second == nullptr)
+		return;
+	Pause_Window_Video(it->second->getPresentationId());
+	it->second->setWindowState(WINDOW_VIDEO_STATE_STOP);
 }
 
-void WindowVideoManager::stopAndRemoveMovie( GameWindow *win )
+void WindowVideoManager::stopAndRemoveMovie(GameWindow *win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		delete winVid;
-		m_playingVideos.erase(it);
-	}
+	if (it == m_playingVideos.end())
+		return;
+	delete it->second;
+	m_playingVideos.erase(it);
 }
 
 void WindowVideoManager::stopAllMovies()
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-			winVid->setWindowState(WINDOW_VIDEO_STATE_STOP);
-		it++;
+	for (WindowVideoMap::iterator it = m_playingVideos.begin(); it != m_playingVideos.end(); ++it) {
+		if (it->second != nullptr) {
+			Pause_Window_Video(it->second->getPresentationId());
+			it->second->setWindowState(WINDOW_VIDEO_STATE_STOP);
+		}
 	}
-
 	m_stopAllMovies = TRUE;
 	m_pauseAllMovies = FALSE;
 }
 
 void WindowVideoManager::pauseAllMovies()
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-			winVid->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
-		it++;
+	for (WindowVideoMap::iterator it = m_playingVideos.begin(); it != m_playingVideos.end(); ++it) {
+		if (it->second != nullptr) {
+			Pause_Window_Video(it->second->getPresentationId());
+			it->second->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
+		}
 	}
-
 	m_pauseAllMovies = TRUE;
 	m_stopAllMovies = FALSE;
 }
 
 void WindowVideoManager::resumeAllMovies()
 {
-	WindowVideoMap::iterator it = m_playingVideos.begin();
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-			winVid->setWindowState(WINDOW_VIDEO_STATE_PLAY);
-		it++;
+	for (WindowVideoMap::iterator it = m_playingVideos.begin(); it != m_playingVideos.end(); ++it) {
+		if (it->second != nullptr) {
+			Play_Window_Video(it->second->getPresentationId());
+			it->second->setWindowState(WINDOW_VIDEO_STATE_PLAY);
+		}
 	}
 	m_stopAllMovies = FALSE;
 	m_pauseAllMovies = FALSE;
 }
 
-Int WindowVideoManager::getWinState( GameWindow *win )
+Int WindowVideoManager::getWinState(GameWindow *win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
-	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-			return winVid->getState();
-	}
+	if (it != m_playingVideos.end() && it->second != nullptr)
+		return it->second->getState();
 	return WINDOW_VIDEO_STATE_STOP;
 }
-
-//-----------------------------------------------------------------------------
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------

@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "WW3D2/scene.h"
+#include "WW3D2/Scene.h"
 #include "WWMath/aabox.h"
 #include "WWMath/sphere.h"
 
@@ -103,6 +103,6 @@ class ViewerSceneClass : public SimpleSceneClass
 		//	Private member data
 		//
 		bool							m_AllowLODSwitching;
-		RefRenderObjListClass	LineUpList;
-		RefRenderObjListClass	LightList;
+		Graphics::SceneObjectList<RenderObjClass>	LineUpList;
+		Graphics::SceneObjectList<RenderObjClass>	LightList;
 };

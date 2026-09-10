@@ -502,7 +502,7 @@ void CMainFrame::OnDestroy()
 	CFrameWnd::OnDestroy();
 }
 
-void CMainFrame::OnTimer(UINT nIDEvent)
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (pDoc && pDoc->needAutoSave()) {

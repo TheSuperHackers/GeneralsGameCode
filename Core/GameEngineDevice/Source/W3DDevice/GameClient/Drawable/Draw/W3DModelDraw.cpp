@@ -29,12 +29,21 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
-#define DEFINE_W3DANIMMODE_NAMES
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
 #define NO_DEBUG_CRC
 
-#include <windows.h>
+#include <SDL3/SDL.h>
+
+#include <array>
+#include <cctype>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <limits>
+#include <span>
+#include <vector>
 
 #include "Common/crc.h"
 #include "Common/CRCDebug.h"
@@ -47,7 +56,6 @@
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
-#include "GameClient/Shadow.h"
 #include "GameLogic/GameLogic.h"		// for real-time frame
 #include "GameLogic/Object.h"
 #include "GameLogic/WeaponSet.h"
@@ -59,14 +67,52 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
+#include "W3DDevice/GameClient/W3DProjectedShadow.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/hlod.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/mesh.h"
-#include "WW3D2/meshmdl.h"
+#include "W3DDevice/GameClient/W3DHierarchyRenderObject.h"
+import Graphics.Scene.Models.Hierarchy;
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshRenderObject.h"
+#include "W3DDevice/GameClient/W3DMeshResource.h"
+import Graphics.Resources.Textures.Edit;
+import Assets.Identity;
+#include "W3DDevice/GameClient/W3DTextureHandle.h"
 #include "Common/BitFlagsIO.h"
+#include "WWMath/sphere.h"
+#ifdef RTS_ZEROHOUR
+#include "W3DDevice/GameClient/W3DObjectGraphics.h"
+#endif
+
+static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
+{
+#ifdef ALLOW_DEMORALIZE
+	"DM_RING",//demoralized
+#else
+	"TERRAIN_DECAL_DEMORALIZED_OBSOLETE",
+#endif
+	"EXHorde",//enthusiastic
+	"EXHorde_UP", //enthusiastic with nationalism
+	"EXHordeB",//enthusiastic vehicle
+	"EXHordeB_UP", //enthusiastic vehicle with nationalism
+	"EXJunkCrate",//Marks a crate as special
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+	"", //dummy entry for TERRAIN_DECAL_NONE
+	"EXHordeC_UP", //enthusiastic with fanaticism
+	"EXChemSuit", //Marks a unit as having chemical suit on
+#else
+	"EXHordeC_UP", //enthusiastic with fanaticism
+	"EXChemSuit", //Marks a unit as having chemical suit on
+	"", //dummy entry for TERRAIN_DECAL_NONE
+#endif
+	"" //dummy entry for TERRAIN_DECAL_SHADOW_TEXTURE
+};
+
+import Assets.Models;
+import Assets.Cache;
+import Assets.Runtime;
+
+
 
 
 //-------------------------------------------------------------------------------------------------
@@ -82,6 +128,7 @@ static inline Bool isValidTimeToCalcLogicStuff()
 
 #if defined(DEBUG_CRC) && defined(RTS_DEBUG)
 #include <cstdarg>
+import Assets.Cache.Animations;
 class LogClass
 {
 public:
@@ -97,14 +144,10 @@ protected:
 
 LogClass::LogClass(const char *fname)
 {
-	char buffer[ _MAX_PATH ];
-	GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
-	if (char *pEnd = strrchr(buffer, '\\'))
-	{
-		*pEnd = 0;
-	}
+	const char *basePath = SDL_GetBasePath();
+	const char *path = basePath != nullptr ? basePath : "";
 	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
-	const std::string fullPath = std::string(buffer) + "\\" + fname;
+	const std::string fullPath = std::string(path) + fname;
 	m_fp = fopen(fullPath.c_str(), "wt");
 }
 
@@ -266,30 +309,6 @@ inline Bool isCommonMaintainFrameFlagSet(Int a, Int b)
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
-{
-#ifdef ALLOW_DEMORALIZE
-	"DM_RING",//demoralized
-#else
-	"TERRAIN_DECAL_DEMORALIZED_OBSOLETE",
-#endif
-	"EXHorde",//enthusiastic
-	"EXHorde_UP", //enthusiastic with nationalism
-	"EXHordeB",//enthusiastic vehicle
-	"EXHordeB_UP", //enthusiastic vehicle with nationalism
-	"EXJunkCrate",//Marks a crate as special
-#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
-	"", //dummy entry for TERRAIN_DECAL_NONE
-	"EXHordeC_UP", //enthusiastic with fanaticism
-	"EXChemSuit", //Marks a unit as having chemical suit on
-#else
-	"EXHordeC_UP", //enthusiastic with fanaticism
-	"EXChemSuit", //Marks a unit as having chemical suit on
-	"", //dummy entry for TERRAIN_DECAL_NONE
-#endif
-	"" //dummy entry for TERRAIN_DECAL_SHADOW_TEXTURE
-};
-
 const UnsignedInt NO_NEXT_DURATION = 0xffffffff;
 
 //-------------------------------------------------------------------------------------------------
@@ -318,7 +337,7 @@ W3DAnimationInfo::W3DAnimationInfo( const W3DAnimationInfo &r ) :
 {
 #ifdef RETAIN_ANIM_HANDLES
 	if (m_handle)
-		m_handle->Add_Ref();
+		Assets::Get_Animation_Cache().Retain(m_handle);
 #endif
 }
 
@@ -331,10 +350,10 @@ W3DAnimationInfo& W3DAnimationInfo::operator=(const W3DAnimationInfo &r)
 	m_isIdleAnim = r.m_isIdleAnim;
 
 #ifdef RETAIN_ANIM_HANDLES
-	REF_PTR_RELEASE(m_handle);
+	Assets::Release_Animation(m_handle);
 	m_handle = r.m_handle;
 	if (m_handle)
-		m_handle->Add_Ref();
+		Assets::Get_Animation_Cache().Retain(m_handle);
 #endif
 
 	return (*this);
@@ -343,33 +362,33 @@ W3DAnimationInfo& W3DAnimationInfo::operator=(const W3DAnimationInfo &r)
 
 //-------------------------------------------------------------------------------------------------
 // note that this now returns an ADDREFED handle, which must be released by the caller!
-HAnimClass* W3DAnimationInfo::getAnimHandle() const
+Assets::AnimationAssetHandle W3DAnimationInfo::getAnimHandle() const
 {
 #ifdef RETAIN_ANIM_HANDLES
 	if (m_handle == nullptr)
 	{
-		// Get_HAnim addrefs it, so we'll have to release it in our dtor.
-		m_handle = W3DDisplay::m_assetManager->Get_HAnim(m_name.str());
+		// Acquire_Animation addrefs it, so we'll have to release it in our dtor.
+		m_handle = W3DDisplay::m_assetManager->Catalog().Acquire_Animation(m_name.str());
 		DEBUG_ASSERTCRASH(m_handle, ("*** ASSET ERROR: animation %s not found",m_name.str()));
 		if (m_handle)
 		{
-			m_naturalDurationInMsec = m_handle->Get_Num_Frames() * 1000.0f / m_handle->Get_Frame_Rate();
+			m_naturalDurationInMsec = static_cast<int>(Assets::Get_Animation_Cache().Resolve(m_handle)->frame_count) * 1000.0f / Assets::Get_Animation_Cache().Resolve(m_handle)->frame_rate;
 		}
 	}
 	// since we have it locally, must addref.
 	if (m_handle)
-		m_handle->Add_Ref();
+		Assets::Get_Animation_Cache().Retain(m_handle);
 	return m_handle;
 #else
-	HAnimClass* handle = W3DDisplay::m_assetManager->Get_HAnim(m_name.str());
+	Assets::AnimationAssetHandle handle = W3DDisplay::m_assetManager->Catalog().Acquire_Animation(m_name.str());
 	DEBUG_ASSERTCRASH(handle, ("*** ASSET ERROR: animation %s not found",m_name.str()));
 	if (handle != nullptr && m_naturalDurationInMsec < 0)
 	{
-		m_naturalDurationInMsec = handle->Get_Num_Frames() * 1000.0f / handle->Get_Frame_Rate();
+		m_naturalDurationInMsec = static_cast<int>(Assets::Get_Animation_Cache().Resolve(handle)->frame_count) * 1000.0f / Assets::Get_Animation_Cache().Resolve(handle)->frame_rate;
 	}
-	// since Get_HAnim() returns an addrefed handle, we must NOT addref here.
+	// since Acquire_Animation() returns an addrefed handle, we must NOT addref here.
 	//if (handle)
-	//	handle->Add_Ref();
+	//	Assets::Get_Animation_Cache().Retain(handle);
 	return handle;
 #endif
 }
@@ -378,7 +397,7 @@ HAnimClass* W3DAnimationInfo::getAnimHandle() const
 W3DAnimationInfo::~W3DAnimationInfo()
 {
 #ifdef RETAIN_ANIM_HANDLES
-	REF_PTR_RELEASE(m_handle);
+	Assets::Release_Animation(m_handle);
 	m_handle = nullptr;
 #endif
 }
@@ -436,7 +455,7 @@ inline Bool testFlagBit(Int flags, Int bit)
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool findSingleBone(RenderObjClass* robj, const AsciiString& boneName, Matrix3D& mtx, Int& boneIndex)
+static Bool findSingleBone(W3DRenderObject* robj, const AsciiString& boneName, Matrix3D& mtx, Int& boneIndex)
 {
 	if (boneName.isNone() || boneName.isEmpty())
 		return false;
@@ -454,12 +473,12 @@ static Bool findSingleBone(RenderObjClass* robj, const AsciiString& boneName, Ma
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, Matrix3D& mtx, Int& boneIndex)
+static Bool findSingleSubObj(W3DRenderObject* robj, const AsciiString& boneName, Matrix3D& mtx, Int& boneIndex)
 {
 	if (boneName.isNone() || boneName.isEmpty())
 		return false;
 
-	RenderObjClass* childObject = robj->Get_Sub_Object_By_Name(boneName.str());
+	W3DRenderObject* childObject = robj->Get_Sub_Object_By_Name(boneName.str());
 	if (childObject)
 	{
 		mtx = childObject->Get_Transform();
@@ -469,7 +488,7 @@ static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, 
 
 		for (Int subObj = 0; subObj < robj->Get_Num_Sub_Objects(); subObj++)
 		{
-			RenderObjClass* test = robj->Get_Sub_Object(subObj);
+			W3DRenderObject* test = robj->Get_Sub_Object(subObj);
 			if (test == childObject)
 			{
 				boneIndex = robj->Get_Sub_Object_Bone_Index(0, subObj);
@@ -493,7 +512,7 @@ static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, 
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, PristineBoneInfoMap& map)
+static Bool doSingleBoneName(W3DRenderObject* robj, const AsciiString& boneName, PristineBoneInfoMap& map)
 {
 	Bool foundAsBone = false;
 	Bool foundAsSubObj = false;
@@ -565,8 +584,10 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 	return foundAsBone || foundAsSubObj;
 }
 
+
+
 //-------------------------------------------------------------------------------------------------
-void ModelConditionInfo::validateStuff(RenderObjClass* robj, Real scale, const std::vector<AsciiString>& extraPublicBones) const
+void ModelConditionInfo::validateStuff(W3DRenderObject* robj, Real scale, const std::vector<AsciiString>& extraPublicBones) const
 {
 // srj sez: hm, this doesn't make sense; I think we really do need to validate transition states.
 //	if (m_transition != NO_TRANSITION)
@@ -587,7 +608,7 @@ void ModelConditionInfo::validateStuff(RenderObjClass* robj, Real scale, const s
 }
 
 //-------------------------------------------------------------------------------------------------
-void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) const
+void ModelConditionInfo::validateCachedBones(W3DRenderObject* robj, Real scale) const
 {
 	//DEBUG_ASSERTCRASH(isValidTimeToCalcLogicStuff(), ("calling validateCachedBones() from in GameClient!"));
 	if (m_validStuff & PRISTINE_BONES_VALID)
@@ -631,22 +652,22 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	}
 
 	Matrix3D			originalTransform = robj->Get_Transform();	// save the transform
-	HLodClass*		hlod = nullptr;
-	HAnimClass*		curAnim = nullptr;
+	W3DHierarchyRenderObject*		hlod = nullptr;
+	Assets::AnimationAssetHandle curAnim = nullptr;
 	int						numFrames = 0;
 	float					frame = 0.0f;
 	int						mode = 0;
 	float					mult = 1.0f;
 
-	if (robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (robj->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
-		hlod = (HLodClass*)robj;
+		hlod = (W3DHierarchyRenderObject*)robj;
 		curAnim = hlod->Peek_Animation_And_Info(frame, numFrames, mode, mult);
 	}
 
 	// if we have any animations in this state, always choose the first, since the animations
 	// vary on a per-client basis.
-	HAnimClass* animToUse;
+	Assets::AnimationAssetHandle animToUse;
 	if (!m_animations.empty())
 	{
 		animToUse = m_animations.front().getAnimHandle();	// return an AddRef'ed handle
@@ -655,15 +676,15 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	{
 		animToUse = curAnim;	// Peek_Animation_And_Info does not addref, so we must do so here
 		if (animToUse)
-			animToUse->Add_Ref();
+			Assets::Get_Animation_Cache().Retain(animToUse);
 	}
 	if (animToUse != nullptr)
 	{
 		// make sure we're in frame zero.
-		Int whichFrame = testFlagBit(m_flags, PRISTINE_BONE_POS_IN_FINAL_FRAME) ? animToUse->Get_Num_Frames()-1 : 0;
-		robj->Set_Animation(animToUse, whichFrame, RenderObjClass::ANIM_MODE_MANUAL);
+		Int whichFrame = testFlagBit(m_flags, PRISTINE_BONE_POS_IN_FINAL_FRAME) ? static_cast<int>(Assets::Get_Animation_Cache().Resolve(animToUse)->frame_count)-1 : 0;
+		robj->Set_Animation(animToUse, whichFrame, W3DRenderObject::ANIM_MODE_MANUAL);
 		// must balance the addref, above
-		REF_PTR_RELEASE(animToUse);
+		Assets::Release_Animation(animToUse);
 		animToUse = nullptr;
 	}
 
@@ -968,8 +989,8 @@ void ModelConditionInfo::loadAnimations() const
 #ifdef RETAIN_ANIM_HANDLES
 	for (W3DAnimationVector::const_iterator it2 = m_animations.begin(); it2 != m_animations.end(); ++it2)
 	{
-		HAnimClass* h = it2->getAnimHandle();	// just force it to get loaded
-		REF_PTR_RELEASE(h);
+		Assets::AnimationAssetHandle h = it2->getAnimHandle();	// just force it to get loaded
+		Assets::Release_Animation(h);
 		h = nullptr;
 	}
 #else
@@ -1008,7 +1029,7 @@ void ModelConditionInfo::clear()
 	m_transitionKey = NAMEKEY_INVALID;
 	m_allowToFinishKey = NAMEKEY_INVALID;
 	m_iniReadFlags = 0;
-	m_mode = RenderObjClass::ANIM_MODE_ONCE;
+	m_mode = W3DRenderObject::ANIM_MODE_ONCE;
 	m_transitionSig = NO_TRANSITION;
 	m_animMinSpeedFactor = 1.0f;
 	m_animMaxSpeedFactor = 1.0f;
@@ -1286,7 +1307,7 @@ static void parseShowHideSubObject(INI* ini, void *instance, void *store, const 
 		Bool found = false;
 		for (std::vector<ModelConditionInfo::HideShowSubObjInfo>::iterator it = vec->begin(); it != vec->end(); ++it)
 		{
-			if (stricmp(it->subObjName.str(), subObjName.str()) == 0)
+			if (Assets::Asset_Name_Equals_No_Case(it->subObjName.str(), subObjName.str()))
 			{
 				it->hide = (userData != nullptr);
 				found = true;
@@ -1313,7 +1334,7 @@ void W3DModelDraw::showSubObject( const AsciiString& name, Bool show )
 		Bool found = false;
 		for( std::vector<ModelConditionInfo::HideShowSubObjInfo>::iterator it = m_subObjectVec.begin(); it != m_subObjectVec.end(); ++it )
 		{
-			if( stricmp( it->subObjName.str(), name.str() ) == 0 )
+			if( Assets::Asset_Name_Equals_No_Case( it->subObjName.str(), name.str() ) )
 			{
 				it->hide = !show;
 				found = true;
@@ -1327,6 +1348,8 @@ void W3DModelDraw::showSubObject( const AsciiString& name, Bool show )
 			info.hide = !show;
 			m_subObjectVec.push_back( info );
 		}
+
+		doHideShowSubObjs(&m_subObjectVec);
 	}
 }
 
@@ -1416,6 +1439,10 @@ static Bool doesStateExist(const ModelConditionVector& v, const ModelConditionFl
 //-------------------------------------------------------------------------------------------------
 void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void * /*store*/, const void* userData)
 {
+	static const char* const TheAnimModeNames[] = {
+		"MANUAL", "LOOP", "ONCE", "LOOP_PINGPONG", "LOOP_BACKWARDS", "ONCE_BACKWARDS", nullptr
+	};
+	static_assert(std::size(TheAnimModeNames) == W3DRenderObject::ANIM_MODE_COUNT + 1);
 	static const FieldParse myFieldParse[] =
 	{
 		{ "Model",	parseAsciiStringLC, nullptr, offsetof(ModelConditionInfo, m_modelName) },
@@ -1650,7 +1677,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 		throw INI_INVALID_DATA;
 	}
 
-	if ((info.m_iniReadFlags & (1<<GOT_IDLE_ANIMS)) && (info.m_mode != RenderObjClass::ANIM_MODE_ONCE && info.m_mode != RenderObjClass::ANIM_MODE_ONCE_BACKWARDS))
+	if ((info.m_iniReadFlags & (1<<GOT_IDLE_ANIMS)) && (info.m_mode != W3DRenderObject::ANIM_MODE_ONCE && info.m_mode != W3DRenderObject::ANIM_MODE_ONCE_BACKWARDS))
 	{
 		DEBUG_CRASH(("*** ASSET ERROR: Idle Anims should always use ONCE or ONCE_BACKWARDS (%s)",TheThingTemplateBeingParsedName.str()));
 		throw INI_INVALID_DATA;
@@ -1674,7 +1701,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			throw INI_INVALID_DATA;
 		}
 
-		if (info.m_mode != RenderObjClass::ANIM_MODE_ONCE && info.m_mode != RenderObjClass::ANIM_MODE_ONCE_BACKWARDS)
+		if (info.m_mode != W3DRenderObject::ANIM_MODE_ONCE && info.m_mode != W3DRenderObject::ANIM_MODE_ONCE_BACKWARDS)
 		{
 			DEBUG_CRASH(("*** ASSET ERROR: Transition States should always use ONCE or ONCE_BACKWARDS"));
 			throw INI_INVALID_DATA;
@@ -1723,19 +1750,20 @@ const ModelConditionInfo* W3DModelDrawModuleData::findBestInfo(const ModelCondit
 W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
 {
 	int i;
-	m_animationMode = RenderObjClass::ANIM_MODE_LOOP;
+	m_animationMode = W3DRenderObject::ANIM_MODE_LOOP;
 	m_hideHeadlights = true;
 	m_pauseAnimation = false;
 	m_curState = nullptr;
 	m_hexColor = 0;
 	m_renderObject = nullptr;
-	m_shadow = nullptr;
 	m_shadowEnabled = TRUE;
-	m_terrainDecal = nullptr;
-	m_trackRenderObject = nullptr;
 	m_whichAnimInCurState = -1;
 	m_nextState = nullptr;
 	m_nextStateAnimLoopDuration = NO_NEXT_DURATION;
+	m_inGraphicsScene=false;
+	m_shadow=nullptr;
+	m_terrainDecal=nullptr;
+	m_trackRenderObject=nullptr;
 	for (i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
 		m_weaponRecoilInfoVec[i].clear();
@@ -1802,6 +1830,24 @@ W3DModelDraw::~W3DModelDraw()
 	nukeCurrentRender(nullptr);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::doStartOrStopParticleSys()
 {
@@ -1825,23 +1871,14 @@ void W3DModelDraw::doStartOrStopParticleSys()
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setHidden(Bool hidden)
 {
-	if (m_renderObject)
-		m_renderObject->Set_Hidden(hidden);
-
-	if (m_shadow)
-		m_shadow->enableShadowRender(!hidden);
-
-	m_shadowEnabled = hidden;
-
-	if (m_terrainDecal)
-		m_terrainDecal->enableShadowRender(!hidden);
-
-	if (m_trackRenderObject && hidden)
-	{	const Coord3D* pos = getDrawable()->getPosition();
-		m_trackRenderObject->addCapEdgeToTrack(pos->x,pos->y);
-	}
-
-	doStartOrStopParticleSys();
+    if (m_renderObject) m_renderObject->Set_Hidden(hidden);
+    if (m_shadow) m_shadow->enableShadowRender(!hidden && m_shadowEnabled);
+    if (m_terrainDecal) m_terrainDecal->enableShadowRender(!hidden && m_shadowEnabled);
+    if (m_trackRenderObject && hidden) {
+        const auto* position=getDrawable()->getPosition();
+        m_trackRenderObject->addCapEdgeToTrack(position->x,position->y);
+    }
+    doStartOrStopParticleSys();
 }
 
 /**Free all data used by this model's shadow.  This is used to dynamically enable/disable shadows by the options screen*/
@@ -1878,13 +1915,10 @@ void W3DModelDraw::allocateShadows()
 		}
 	}
 }
-
-//-------------------------------------------------------------------------------------------------
-void W3DModelDraw::setShadowsEnabled(Bool enable)
+void W3DModelDraw::setShadowsEnabled(Bool enabled)
 {
-	if (m_shadow)
-		m_shadow->enableShadowRender(enable);
-	m_shadowEnabled = enable;
+    m_shadowEnabled=enabled;
+    if (m_shadow) m_shadow->enableShadowRender(enabled && m_renderObject && !m_renderObject->Is_Hidden());
 }
 
 /**collect some stats about the rendering cost of this draw module */
@@ -1892,21 +1926,19 @@ void W3DModelDraw::setShadowsEnabled(Bool enable)
 void W3DModelDraw::getRenderCost(RenderCost & rc) const
 {
 	getRenderCostRecursive(rc,m_renderObject);
-	if (m_shadow)
-		m_shadow->getRenderCost(rc);
 }
 #endif //RTS_DEBUG
 
 
 /**recurse through sub-objs to collect stats about the rendering cost of this draw module */
 #if defined(RTS_DEBUG)
-void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const
+void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,W3DRenderObject * robj) const
 {
 	if (robj == nullptr) return;
 
 	// recurse through sub-objects
 	for (int i=0; i<robj->Get_Num_Sub_Objects(); i++) {
-		RenderObjClass * sub_obj = robj->Get_Sub_Object(i);
+		W3DRenderObject * sub_obj = robj->Get_Sub_Object(i);
 		getRenderCostRecursive(rc,sub_obj);
 		REF_PTR_RELEASE(sub_obj);
 	}
@@ -1916,13 +1948,13 @@ void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj)
 	if (robj->Is_Not_Hidden_At_All()) {
 
 		// collect stats from meshes
-		if (robj->Class_ID() == RenderObjClass::CLASSID_MESH) {
-			MeshClass * mesh = (MeshClass*)robj;
-			MeshModelClass * model = mesh->Peek_Model();
+		if (robj->Class_ID() == W3DRenderObject::CLASSID_MESH) {
+			W3DMeshRenderObject * mesh = (W3DMeshRenderObject*)robj;
+			W3DMeshResource * model = mesh->Peek_Model();
 			if (model != nullptr)
-			{	if (model->Get_Flag(MeshGeometryClass::SORT))
+			{	if (model->Get_Flag(W3DMeshGeometry::SORT))
 					rc.addSortedMeshes(1);
-				if (model->Get_Flag(MeshGeometryClass::SKIN))
+				if (model->Get_Flag(W3DMeshGeometry::SKIN))
 					rc.addSkinMeshes(1);
 			}
 
@@ -1930,9 +1962,9 @@ void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj)
 		}
 
 		// collect bone stats.
-		const HTreeClass * htree = robj->Get_HTree();
+		const Graphics::ModelHierarchy * htree = robj->Get_Model_Hierarchy();
 		if (htree != nullptr) {
-			rc.addBones(htree->Num_Pivots());
+			rc.addBones(htree->Bone_Count());
 		}
 	}
 }
@@ -1955,11 +1987,11 @@ void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool isAnimationComplete(RenderObjClass* r)
+static Bool isAnimationComplete(W3DRenderObject* r)
 {
-	if (r && r->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (r && r->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
-		HLodClass *hlod = (HLodClass*)r;
+		W3DHierarchyRenderObject *hlod = (W3DHierarchyRenderObject*)r;
 		return hlod->Is_Animation_Complete();
 	}
 
@@ -2132,13 +2164,13 @@ Real W3DModelDraw::getCurrentAnimFraction() const
 	if (m_curState != nullptr
 			&& isAnyMaintainFrameFlagSet(m_curState->m_flags)
 			&& m_renderObject != nullptr
-			&& m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+			&& m_renderObject->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
 		float framenum, dummy;
 		int mode, numFrames;
 
-		HLodClass* hlod = (HLodClass*)m_renderObject;
-		/*HAnimClass* anim =*/ hlod->Peek_Animation_And_Info(framenum, numFrames, mode, dummy);
+		W3DHierarchyRenderObject* hlod = (W3DHierarchyRenderObject*)m_renderObject;
+		/*Assets::AnimationAssetHandle anim =*/ hlod->Peek_Animation_And_Info(framenum, numFrames, mode, dummy);
 		if (framenum < 0.0)
 			return 0.0;
 		else if (framenum >= numFrames)
@@ -2182,19 +2214,19 @@ void W3DModelDraw::adjustAnimation(const ModelConditionInfo* prevState, Real pre
 
 		if (m_renderObject)
 		{
-			HAnimClass* animHandle = animInfo.getAnimHandle();	// note that this now returns an ADDREFED handle, which must be released by the caller!
+			Assets::AnimationAssetHandle animHandle = animInfo.getAnimHandle();	// note that this now returns an ADDREFED handle, which must be released by the caller!
 			if (animHandle)
 			{
 				Int startFrame = 0;
-				if (m_curState->m_mode == RenderObjClass::ANIM_MODE_ONCE_BACKWARDS ||
-						m_curState->m_mode == RenderObjClass::ANIM_MODE_LOOP_BACKWARDS)
+				if (m_curState->m_mode == W3DRenderObject::ANIM_MODE_ONCE_BACKWARDS ||
+						m_curState->m_mode == W3DRenderObject::ANIM_MODE_LOOP_BACKWARDS)
 				{
-					startFrame = animHandle->Get_Num_Frames()-1;
+					startFrame = static_cast<int>(Assets::Get_Animation_Cache().Resolve(animHandle)->frame_count)-1;
 				}
 
 				if (testFlagBit(m_curState->m_flags, RANDOMIZE_START_FRAME))
 				{
-					startFrame = GameClientRandomValue(0, animHandle->Get_Num_Frames()-1);
+					startFrame = GameClientRandomValue(0, static_cast<int>(Assets::Get_Animation_Cache().Resolve(animHandle)->frame_count)-1);
 				}
 				else if (testFlagBit(m_curState->m_flags, START_FRAME_FIRST))
 				{
@@ -2202,7 +2234,7 @@ void W3DModelDraw::adjustAnimation(const ModelConditionInfo* prevState, Real pre
 				}
 				else if (testFlagBit(m_curState->m_flags, START_FRAME_LAST))
 				{
-					startFrame = animHandle->Get_Num_Frames()-1;
+					startFrame = static_cast<int>(Assets::Get_Animation_Cache().Resolve(animHandle)->frame_count)-1;
 				}
 				// order is important here: MAINTAIN_FRAME_ACROSS_STATES is overridden by the other bits, above.
 				else if (isAnyMaintainFrameFlagSet(m_curState->m_flags) &&
@@ -2212,16 +2244,16 @@ void W3DModelDraw::adjustAnimation(const ModelConditionInfo* prevState, Real pre
 						isCommonMaintainFrameFlagSet(m_curState->m_flags, prevState->m_flags) &&
 						prevAnimFraction >= 0.0)
 				{
-					startFrame = REAL_TO_INT(prevAnimFraction * animHandle->Get_Num_Frames()-1);
+					startFrame = REAL_TO_INT(prevAnimFraction * static_cast<int>(Assets::Get_Animation_Cache().Resolve(animHandle)->frame_count)-1);
 				}
 
 				m_renderObject->Set_Animation(animHandle, startFrame, m_curState->m_mode);
-				REF_PTR_RELEASE(animHandle);
+				Assets::Release_Animation(animHandle);
 				animHandle = nullptr;
 
-				if (m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+				if (m_renderObject->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 				{
-					HLodClass *hlod = (HLodClass*)m_renderObject;
+					W3DHierarchyRenderObject *hlod = (W3DHierarchyRenderObject*)m_renderObject;
 					Real factor = GameClientRandomValueReal( m_curState->m_animMinSpeedFactor, m_curState->m_animMaxSpeedFactor );
 					hlod->Set_Animation_Frame_Rate_Multiplier( factor );
 				}
@@ -2238,13 +2270,13 @@ void W3DModelDraw::adjustAnimation(const ModelConditionInfo* prevState, Real pre
 //-------------------------------------------------------------------------------------------------
 Bool W3DModelDraw::setCurAnimDurationInMsec(Real desiredDurationInMsec)
 {
-	if (m_renderObject && m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (m_renderObject && m_renderObject->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
-		HLodClass* hlod = (HLodClass*)m_renderObject;
-		HAnimClass* anim = hlod->Peek_Animation();
+		W3DHierarchyRenderObject* hlod = (W3DHierarchyRenderObject*)m_renderObject;
+		Assets::AnimationAssetHandle anim = hlod->Peek_Animation();
 		if (anim)
 		{
-			Real naturalDurationInMsec = anim->Get_Num_Frames() * 1000.0f / anim->Get_Frame_Rate();
+			Real naturalDurationInMsec = static_cast<int>(Assets::Get_Animation_Cache().Resolve(anim)->frame_count) * 1000.0f / Assets::Get_Animation_Cache().Resolve(anim)->frame_rate;
 			if (naturalDurationInMsec > 0.0f && desiredDurationInMsec > 0.0f)
 			{
 				Real multiplier = naturalDurationInMsec / desiredDurationInMsec;
@@ -2277,7 +2309,7 @@ Real W3DModelDraw::getCurAnimDistanceCovered() const
 	Utility function to make it easier to recursively hide all objects connected to a certain bone.
 	We will hide all objects connected to bones which are children of boneIdx
 */
-static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, RenderObjClass *fullObject, const HTreeClass *htree)
+static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, W3DRenderObject *fullObject, const Graphics::ModelHierarchy *htree)
 {
 #if 1	//(gth) fixed and tested this version
 	for (Int i=0; i < numSubObjects; i++)
@@ -2287,7 +2319,7 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
 
 		while (parentBoneIndex != 0)
 		{
-			parentBoneIndex = htree->Get_Parent_Index(parentBoneIndex);
+			parentBoneIndex = htree->Parent_Index(parentBoneIndex);
 
 			if (parentBoneIndex == boneIdx)
 			{
@@ -2298,7 +2330,7 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
 
 		if (is_child)
 		{
-			RenderObjClass* childObject = fullObject->Get_Sub_Object(i);
+			W3DRenderObject* childObject = fullObject->Get_Sub_Object(i);
 			childObject->Set_Hidden(state);
 			childObject->Release_Ref();
 		}
@@ -2309,13 +2341,13 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
   for (Int i=0; i < numSubObjects; i++)
   {
   	Int childBoneIndex = fullObject->Get_Sub_Object_Bone_Index(0, i);
-  	Int parentIndex = htree->Get_Parent_Index(childBoneIndex);
+	Int parentIndex = htree->Parent_Index(childBoneIndex);
   	if (childBoneIndex == parentIndex)
   		continue;
 
   	if (parentIndex == boneIdx)	// this object has our subobject as parent so copy hide state
   	{
-  		RenderObjClass* childObject = fullObject->Get_Sub_Object(i);
+		W3DRenderObject* childObject = fullObject->Get_Sub_Object(i);
   		// recurse down the hierarchy to hide all sub-children
   		doHideShowBoneSubObjs(state, numSubObjects, childBoneIndex, fullObject, htree);
 		childObject->Set_Hidden(state);
@@ -2326,14 +2358,17 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
 }
 
 //-------------------------------------------------------------------------------------------------
-void ModelConditionInfo::WeaponBarrelInfo::setMuzzleFlashHidden(RenderObjClass *fullObject, Bool hide) const
+void ModelConditionInfo::WeaponBarrelInfo::setMuzzleFlashHidden(W3DRenderObject *fullObject, Bool hide) const
 {
 	if (fullObject)
 	{
-		RenderObjClass* childObject = fullObject->Get_Sub_Object_On_Bone(0, m_muzzleFlashBone);
+		W3DRenderObject* childObject = fullObject->Get_Sub_Object_On_Bone(0, m_muzzleFlashBone);
 		if (childObject)
 		{
 			childObject->Set_Hidden(hide);
+#ifdef RTS_ZEROHOUR
+			W3DObjectGraphics::Mark_Muzzle_Flash(*childObject);
+#endif
 			childObject->Release_Ref();
 		}
 		else
@@ -2354,13 +2389,13 @@ void W3DModelDraw::doHideShowSubObjs(const std::vector<ModelConditionInfo::HideS
 		for (std::vector<ModelConditionInfo::HideShowSubObjInfo>::const_iterator it = vec->begin(); it != vec->end(); ++it)
 		{
 			Int objIndex;
-			RenderObjClass* subObj;
+			W3DRenderObject* subObj;
 
 			if ((subObj = m_renderObject->Get_Sub_Object_By_Name(it->subObjName.str(), &objIndex)) != nullptr)
 			{
 				subObj->Set_Hidden(it->hide);
 
-				const HTreeClass *htree = m_renderObject->Get_HTree();
+				const Graphics::ModelHierarchy *htree = m_renderObject->Get_Model_Hierarchy();
 				if (htree)
 				{
 					//get the bone of this subobject so we can hide all other child objects that use this bone
@@ -2690,7 +2725,8 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 			Int boneIndex = (*it).boneIndex;
 			if ( (sys != nullptr) && (boneIndex != 0)  )
 			{
-    		const Matrix3D boneTransform = m_renderObject->Get_Bone_Transform(boneIndex);// just a little worried about state changes
+			Matrix3D boneTransform;
+				boneTransform = m_renderObject->Get_Bone_Transform(boneIndex);// just a little worried about state changes
 
         Vector3 vpos = boneTransform.Get_Translation();
 
@@ -2756,7 +2792,6 @@ void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 		m_terrainDecal->enableShadowRender(m_shadowEnabled);
 	}
 }
-
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setTerrainDecalSize(Real x, Real y)
 {
@@ -2773,8 +2808,6 @@ void W3DModelDraw::setTerrainDecalOpacity(Real o)
 		m_terrainDecal->setOpacity((Int)(255.0f * o));
 	}
 }
-
-
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 {
@@ -2796,8 +2829,10 @@ void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 		// save the transform for the new model
 		if (xform)
 			*xform = m_renderObject->Get_Transform();
-		if (W3DDisplay::m_3DScene != nullptr)
+		if (W3DDisplay::m_3DScene != nullptr && m_inGraphicsScene) {
 			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
+			m_inGraphicsScene = false;
+		}
 		REF_PTR_RELEASE(m_renderObject);
 		m_renderObject = nullptr;
 	}
@@ -2818,13 +2853,13 @@ void W3DModelDraw::hideGarrisonFlags(Bool hide)
 		return;
 
 	Int objIndex;
-	RenderObjClass* subObj;
+	W3DRenderObject* subObj;
 
 	if ((subObj = m_renderObject->Get_Sub_Object_By_Name("POLE", &objIndex)) != nullptr)
 	{
 		subObj->Set_Hidden(hide);
 
-		const HTreeClass *htree = m_renderObject->Get_HTree();
+		const Graphics::ModelHierarchy *htree = m_renderObject->Get_Model_Hierarchy();
 		if (htree)
 		{
 			//get the bone of this subobject so we can hide all other child objects that use this bone
@@ -2845,7 +2880,7 @@ void W3DModelDraw::hideAllHeadlights(Bool hide)
 	{
 		for (Int subObj = 0; subObj < m_renderObject->Get_Num_Sub_Objects(); subObj++)
 		{
-			RenderObjClass* test = m_renderObject->Get_Sub_Object(subObj);
+			W3DRenderObject* test = m_renderObject->Get_Sub_Object(subObj);
 			if (strstr(test->Get_Name(),"HEADLIGHT"))
 			{
 				test->Set_Hidden(hide);
@@ -2856,7 +2891,7 @@ void W3DModelDraw::hideAllHeadlights(Bool hide)
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DModelDraw::hideAllMuzzleFlashes(const ModelConditionInfo* state, RenderObjClass* renderObject)
+void W3DModelDraw::hideAllMuzzleFlashes(const ModelConditionInfo* state, W3DRenderObject* renderObject)
 {
 	if (!state || !renderObject)
 		return;
@@ -2904,6 +2939,10 @@ static Bool turretNamesDiffer(const ModelConditionInfo* a, const ModelConditionI
 void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 {
 	DEBUG_ASSERTCRASH(newState, ("invalid state in W3DModelDraw::setModelState"));
+	Assets::AssetCache *asset_cache = Assets::Try_Get_Asset_Cache();
+	m_modelAsset = asset_cache != nullptr && newState != nullptr && !newState->m_modelName.isEmpty()
+		? asset_cache->Request_Model(newState->m_modelName.str())
+		: Assets::ModelAssetHandle{};
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
 	if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
@@ -3078,6 +3117,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			}
 		}
 
+
 		if( m_renderObject )
 		{
 			// set collision type for render object.  Used by WW3D2 collision code.
@@ -3125,22 +3165,8 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 				}
    		}
 
-			// add render object to our scene
-			if (W3DDisplay::m_3DScene != nullptr)
-				W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
-
 			// tie in our drawable as the user data pointer in the render object
 			m_renderObject->Set_User_Data(draw->getDrawableInfo());
-
-			//We created a new render object so we need to preserve the visibility state
-			//of the previous render object.
-			if (draw->isDrawableEffectivelyHidden())
-			{
-				m_renderObject->Set_Hidden(TRUE);
-				if (m_shadow)
-					m_shadow->enableShadowRender(FALSE);
-				m_shadowEnabled = FALSE;
-			}
 
 			//
 			// set the transform for the new model to that we saved before, we do this so that the
@@ -3148,12 +3174,17 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			// as the previous one
 			//
 			m_renderObject->Set_Transform(transform);
+            m_renderObject->Set_Hidden(draw->isDrawableEffectivelyHidden());
+            if (m_shadow && m_renderObject->Is_Hidden()) m_shadow->enableShadowRender(FALSE);
+            if (W3DDisplay::m_3DScene) {
+                W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
+                m_inGraphicsScene=true;
+            }
 			onRenderObjRecreated();
 		}
 	}
 	else
 	{
-
 		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()"));
 		//BONEPOS_DUMPREAL(getDrawable()->getScale());
 
@@ -3229,6 +3260,8 @@ void W3DModelDraw::replaceIndicatorColor(Color color)
 // this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
 Bool W3DModelDraw::clientOnly_getRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform) const
 {
+	
+
 	if (!m_renderObject)
 		return false;
 
@@ -3536,6 +3569,7 @@ Bool W3DModelDraw::clientOnly_getRenderObjBoneTransform(const AsciiString & bone
 	}
 
 	int idx = m_renderObject->Get_Bone_Index(boneName.str());
+	
 	if (idx == 0) {
 		set_tm->Make_Identity();
 		return false;
@@ -3553,6 +3587,7 @@ Bool W3DModelDraw::getCurrentWorldspaceClientBonePositions(const char* boneName,
 		return false;
 
 	Int boneIndex = m_renderObject->Get_Bone_Index(boneName);
+	
 	if (boneIndex == 0)
 		return false;
 
@@ -3660,7 +3695,7 @@ void W3DModelDraw::reactToTransformChange( const Matrix3D* oldMtx,
 		Object *obj = getDrawable()->getObject();
 		const Coord3D* pos = getDrawable()->getPosition();
 
-		if ( m_fullyObscuredByShroud || obj->testStatus( OBJECT_STATUS_STEALTHED ) == TRUE )
+		if ( m_fullyObscuredByShroud || (obj && obj->testStatus( OBJECT_STATUS_STEALTHED ) == TRUE) )
 		{
 				m_trackRenderObject->addCapEdgeToTrack(pos->x, pos->y);
 		}
@@ -3717,10 +3752,11 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 		if (info.m_fxBone && m_renderObject)
 		{
 			const Object *logicObject = getDrawable()->getObject();// This is slow, so store it
-			if( ! m_renderObject->Is_Hidden() || (logicObject == nullptr) )
+			if (!m_renderObject->Is_Hidden() || logicObject == nullptr)
 			{
 				// I can ask the drawable's bone position if I am not hidden (if I have no object I have no choice)
-				Matrix3D mtx = m_renderObject->Get_Bone_Transform(info.m_fxBone);
+				Matrix3D mtx;
+					mtx = m_renderObject->Get_Bone_Transform(info.m_fxBone);
 				Coord3D pos;
 				pos.x = mtx.Get_X_Translation();
 				pos.y = mtx.Get_Y_Translation();
@@ -3819,9 +3855,9 @@ void W3DModelDraw::setAnimationFrame( int frame )
 	if( m_renderObject && m_whichAnimInCurState >= 0 )
 	{
 		const W3DAnimationInfo& animInfo = m_curState->m_animations[ m_whichAnimInCurState ];
-		HAnimClass* animHandle = animInfo.getAnimHandle();	// note that this now returns an ADDREFED handle, which must be released by the caller!
+		Assets::AnimationAssetHandle animHandle = animInfo.getAnimHandle();	// note that this now returns an ADDREFED handle, which must be released by the caller!
 		m_renderObject->Set_Animation( animHandle, frame );
-		REF_PTR_RELEASE(animHandle);
+		Assets::Release_Animation(animHandle);
 	}
 }
 
@@ -3835,19 +3871,19 @@ void W3DModelDraw::setPauseAnimation(Bool pauseAnim)
 
 	m_pauseAnimation = pauseAnim;
 
-	if (m_renderObject && m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (m_renderObject && m_renderObject->Class_ID() == W3DRenderObject::CLASSID_HLOD)
 	{
 		float framenum, dummy;
 		int mode, numFrames;
 
-		HLodClass* hlod = (HLodClass*)m_renderObject;
-		HAnimClass* anim = hlod->Peek_Animation_And_Info(framenum, numFrames, mode, dummy);
+		W3DHierarchyRenderObject* hlod = (W3DHierarchyRenderObject*)m_renderObject;
+		Assets::AnimationAssetHandle anim = hlod->Peek_Animation_And_Info(framenum, numFrames, mode, dummy);
 		if (anim)
 		{
 			if (m_pauseAnimation)
 			{
 				m_animationMode = mode;
-				hlod->Set_Animation(anim, framenum, RenderObjClass::ANIM_MODE_MANUAL);
+				hlod->Set_Animation(anim, framenum, W3DRenderObject::ANIM_MODE_MANUAL);
 			}
 			else
 			{
@@ -3911,7 +3947,7 @@ void W3DModelDraw::preloadAssets( TimeOfDay timeOfDay )
 //-------------------------------------------------------------------------------------------------
 Bool W3DModelDraw::isVisible() const
 {
-	return (m_renderObject && m_renderObject->Is_Really_Visible());
+    return m_renderObject && m_renderObject->Is_Really_Visible();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3981,13 +4017,13 @@ void W3DModelDraw::updateSubObjects()
 		for (std::vector<ModelConditionInfo::HideShowSubObjInfo>::const_iterator it = m_subObjectVec.begin(); it != m_subObjectVec.end(); ++it)
 		{
 			Int objIndex;
-			RenderObjClass* subObj;
+			W3DRenderObject* subObj;
 
 			if ((subObj = m_renderObject->Get_Sub_Object_By_Name(it->subObjName.str(), &objIndex)) != nullptr)
 			{
 				subObj->Set_Hidden(it->hide);
 
-				const HTreeClass *htree = m_renderObject->Get_HTree();
+				const Graphics::ModelHierarchy *htree = m_renderObject->Get_Model_Hierarchy();
 				if (htree)
 				{
 					//get the bone of this subobject so we can hide all other child objects that use this bone
@@ -4147,18 +4183,18 @@ void W3DModelDraw::xfer( Xfer *xfer )
 				// srj sez: don't save info for transition states, since we can't really
 				// restore them effectively.
 			if ( m_renderObject
-					&& m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD
+					&& m_renderObject->Class_ID() == W3DRenderObject::CLASSID_HLOD
 					&& m_curState
 					&& m_curState->m_transitionSig == NO_TRANSITION )
 			{
 
 				// cast to HLod
-				HLodClass *hlod = (HLodClass*)m_renderObject;
+				W3DHierarchyRenderObject *hlod = (W3DHierarchyRenderObject*)m_renderObject;
 
 				// get animation info
 				Int mode, numFrames;
 				Real frame, dummy;
-				HAnimClass *anim = hlod->Peek_Animation_And_Info( frame, numFrames, mode, dummy );
+				Assets::AnimationAssetHandle anim = hlod->Peek_Animation_And_Info( frame, numFrames, mode, dummy );
 
 				// animation data is present
 				Bool present = anim ? TRUE : FALSE;
@@ -4175,7 +4211,7 @@ void W3DModelDraw::xfer( Xfer *xfer )
 					// xfer frame as a fraction (this will allow the animations to change
 					// in future patches but will still be mostly correct)
 					//
-					Real percent = frame / INT_TO_REAL( anim->Get_Num_Frames()-1 );
+					Real percent = frame / INT_TO_REAL( static_cast<int>(Assets::Get_Animation_Cache().Resolve(anim)->frame_count)-1 );
 					xfer->xferReal( &percent );
 
 				}
@@ -4215,19 +4251,19 @@ void W3DModelDraw::xfer( Xfer *xfer )
 				// cast render object to HLod, if this is no longer possible we have read the
 				// data already and can just ignore it
 				//
-				if( m_renderObject && m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD )
+				if( m_renderObject && m_renderObject->Class_ID() == W3DRenderObject::CLASSID_HLOD )
 				{
-					HLodClass *hlod = (HLodClass *)m_renderObject;
+					W3DHierarchyRenderObject *hlod = (W3DHierarchyRenderObject *)m_renderObject;
 
 					// get anim
-					HAnimClass *anim = hlod->Peek_Animation();
+					Assets::AnimationAssetHandle anim = hlod->Peek_Animation();
 
 					// set animation data
 					if( anim )
 					{
 
 						// figure out frame number given percent written in file and total frames on anim
-						Real frame = percent * INT_TO_REAL( anim->Get_Num_Frames()-1 );
+						Real frame = percent * INT_TO_REAL( static_cast<int>(Assets::Get_Animation_Cache().Resolve(anim)->frame_count)-1 );
 
 						float dummy1, dummy2;
 						int curMode, dummy3;
@@ -4320,4 +4356,3 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 void W3DModelDrawModuleData::loadPostProcess()
 {
 }
-

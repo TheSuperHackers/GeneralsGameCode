@@ -25,12 +25,10 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/dx8vertexbuffer.h"
-#include "WW3D2/dx8indexbuffer.h"
-#include "WW3D2/shader.h"
-#include "WW3D2/vertmaterial.h"
+#include "W3DDevice/GameClient/W3DRenderObject.h"
+#include "W3DDevice/GameClient/W3DCastQuery.h"
+#include "W3DDevice/GameClient/W3DIntersectionQuery.h"
+import Graphics.Materials.State;
 #include "Lib/BaseType.h"
 
 
@@ -38,7 +36,7 @@
 // W3DStatusCircle: Object generated from 2D Height grid
 //
 //
-class W3DStatusCircle : public RenderObjClass
+class W3DStatusCircle : public W3DRenderObject
 {
 
 public:
@@ -51,18 +49,17 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const override;
+	virtual W3DRenderObject *	Clone() const override;
 	virtual int						Class_ID() const override;
-	virtual void					Render(RenderInfoClass & rinfo) override;
-//	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
+	virtual void					Render(W3DRenderContext & rinfo) override;
 //	virtual void 					Set_Transform(const Matrix3D &m);
 //	virtual void 					Set_Position(const Vector3 &v);
 //TODO: MW: do these later - only needed for collision detection
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
-//	virtual Bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-//	virtual Bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-//	virtual Bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-//	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
+	virtual bool					Cast_Ray(W3DRayCastQuery & raytest) override;
+//	virtual Bool					Cast_AABox(W3DBoxCastQuery & boxtest);
+//	virtual Bool					Cast_OBBox(W3DOrientedBoxCastQuery & boxtest);
+//	virtual Bool					Intersect_AABox(W3DBoxIntersectionQuery & boxtest);
+//	virtual Bool					Intersect_OBBox(W3DOrientedBoxIntersectionQuery & boxtest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
@@ -78,19 +75,8 @@ public:
 
 	int updateBlock();
 	Int freeMapResources();
-	void static setColor(Int r, Int g, Int b) {m_needUpdate = true; m_diffuse = (b) + (g<<8) + (r<<16);};
+	void static setColor(Int r, Int g, Int b) {m_diffuse = (b) + (g<<8) + (r<<16);};
 protected:
-	Int	m_numTriangles;	//dimensions of list
-	static Int m_diffuse;
-	static Bool			 m_needUpdate;
-
-	DX8IndexBufferClass			*m_indexBuffer;	//indices defining a triangle strip the covers full terrain
-	ShaderClass m_shaderClass; //shader or rendering state for heightmap
-	VertexMaterialClass	  	  *m_vertexMaterialClass;
-	DX8VertexBufferClass	*m_vertexBufferCircle;	//collection of vertexes that make the circle.
-	DX8VertexBufferClass	*m_vertexBufferScreen;	//2 triangle quad that covers the screen.
-
-	int initData();
-	Int updateCircleVB();
-	Int updateScreenVB(Int diffuse);
+    static Int m_diffuse;
+    bool queueGraphics();
 };

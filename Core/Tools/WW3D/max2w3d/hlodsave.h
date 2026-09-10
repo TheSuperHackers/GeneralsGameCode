@@ -41,7 +41,7 @@
 #include <max.h>
 #include <stdio.h>
 
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "PROGRESS.h"
 #include "chunkio.h"
 #include "meshcon.h"

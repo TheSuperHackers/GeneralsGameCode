@@ -45,7 +45,7 @@
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
-#include "VideoDevice/FFmpeg/FFmpegVideoPlayer.h"
+#include "GameClient/VideoPlayer.h"
 #include "SDL3Device/GameClient/SDL3Keyboard.h"
 #include "SDL3Device/GameClient/SDL3Mouse.h"
 #include "W3DDevice/GameClient/W3DMouse.h"
@@ -106,7 +106,7 @@ protected:
 
   /// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager() override { return NEW W3DDisplayStringManager; }
-	virtual VideoPlayerInterface *createVideoPlayer() { return NEW FFmpegVideoPlayer; }
+	virtual VideoPlayerInterface *createVideoPlayer() { return NEW VideoPlayer; }
 	/// factory for creating the TerrainVisual
 	virtual TerrainVisual *createTerrainVisual() override { return NEW W3DTerrainVisual; }
 

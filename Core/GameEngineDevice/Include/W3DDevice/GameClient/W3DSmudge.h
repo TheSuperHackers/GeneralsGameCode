@@ -20,15 +20,16 @@
 
 #pragma once
 
+#include <span>
+
 #include "GameClient/Smudge.h"
 #include "WWLib/sharebuf.h"
 
 class SmudgeGroupClass;	//forward reference.
 class Vector3;
 class Vector4;
-class TextureClass;
-class RenderInfoClass;
-class DX8IndexBufferClass;
+class W3DTextureHandle;
+class W3DRenderContext;
 
 //#define USE_COPY_RECTS	1	//this was the old method that didn't render to texture. Just copied backbuffer into texture. Slow on Nvidia.
 
@@ -41,22 +42,12 @@ public:
 	virtual void init() override;
 	virtual void reset () override;
 
-	void render (RenderInfoClass &rinfo);
 	virtual void ReleaseResources() override;
 	virtual void ReAcquireResources() override;
 
+	std::size_t Collect_Graphics_Smudges(std::span<float> position_x, std::span<float> position_y,
+		std::span<float> position_z, std::span<float> offset_x, std::span<float> offset_y,
+		std::span<float> sizes, std::span<float> opacities) const noexcept;
+
 private:
-	Bool testHardwareSupport();		///<test if video card supports the effect.
-
-	enum { MAX_POINTS_PER_GROUP = 512 };
-
-	SmudgeGroupClass *m_smudgeGroup;							///< the point group that contains all of the particles
-	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
-	ShareBufferClass<unsigned int> *m_RGBABuffer;		///< array of particle color and alpha
-	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
-
-	TextureClass *m_backgroundTexture;
-	DX8IndexBufferClass	*m_indexBuffer;
-	Int m_backBufferWidth;
-	Int m_backBufferHeight;
 };

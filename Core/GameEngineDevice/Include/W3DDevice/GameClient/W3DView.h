@@ -41,7 +41,7 @@
 #include "Common/STLTypedefs.h"
 #include "GameClient/ParabolicEase.h"
 #include "GameClient/View.h"
-#include "WW3D2/camera.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Drawable;
@@ -223,7 +223,7 @@ public:
 	virtual Bool screenToTerrain( const ICoord2D *screen, Coord3D *world ) override;
 	virtual PlaneClass::IntersectionResType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) override;
 
-	CameraClass *get3DCamera() const { return m_3DCamera; }
+	W3DCamera *get3DCamera() const { return m_3DCamera; }
 
 	virtual Coord3D get3DCameraPosition() const override; ///< Returns the actual camera position
 	virtual Coord3D get3DCameraDirection() const override; ///< Returns the actual camera view direction
@@ -252,8 +252,8 @@ public:
 
 private:
 
-	CameraClass *m_3DCamera;												///< camera representation for 3D scene
-	CameraClass *m_2DCamera;												///< camera for UI overlayed on top of 3D scene
+	W3DCamera *m_3DCamera;												///< camera representation for 3D scene
+	W3DCamera *m_2DCamera;												///< camera for UI overlayed on top of 3D scene
 	FilterModes m_viewFilterMode;
 	FilterTypes m_viewFilter;
 	Bool m_isWireFrameEnabled;

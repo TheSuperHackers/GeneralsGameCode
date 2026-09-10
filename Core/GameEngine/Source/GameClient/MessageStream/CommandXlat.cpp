@@ -1,3 +1,4 @@
+import Graphics.Resources.Textures.Quality;
 /*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
@@ -89,7 +90,7 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
-#include "WW3D2/ww3d.h"
+
 
 #if defined(RTS_DEBUG)
 /*non-static*/ Real TheSkateDistOverride = 0.0f;
@@ -4211,7 +4212,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_LOD_DECREASE:
 		{
-			const Int level = clamp(0, WW3D::Get_Texture_Reduction() - 1, 4);
+			const Int level = clamp(0, Graphics::Get_Texture_Quality_Settings().mip_reduction - 1, 4);
 			TheGameClient->setTextureLOD(level);
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugDecreaseLOD", L"Decrease LOD") );
 			disp = DESTROY_MESSAGE;
@@ -4222,7 +4223,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_LOD_INCREASE:
 		{
-			const Int level = clamp(0, WW3D::Get_Texture_Reduction() + 1, 4);
+			const Int level = clamp(0, Graphics::Get_Texture_Quality_Settings().mip_reduction + 1, 4);
 			TheGameClient->setTextureLOD(level);
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugIncreaseLOD", L"Increase LOD") );
 			disp = DESTROY_MESSAGE;
@@ -5301,7 +5302,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		{
 			if (TheGameLogic->isInGame())
 			{
-				if(TheInGameUI->cameoVideoBuffer() == nullptr)
+				if(!TheInGameUI->isCameoMoviePlaying())
 					TheInGameUI->playCameoMovie("CameoMovie");
 				else
 					TheInGameUI->stopCameoMovie();

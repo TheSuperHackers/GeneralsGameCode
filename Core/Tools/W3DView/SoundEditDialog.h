@@ -20,7 +20,7 @@
 
 #include "WWLib/wwstring.h"
 #include "resource.h"
-#include "WW3D2/soundrobj.h"
+#include "WW3D2/SoundRObj.h"
 
 /////////////////////////////////////////////////////////////////////
 //	Forward declarations

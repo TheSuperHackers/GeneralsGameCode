@@ -49,6 +49,9 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <algorithm>
+#include <cstdint>
+
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -78,7 +81,7 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/Shell.h"
-#include "GameClient/VideoPlayer.h"
+#include "GameClient/VideoRuntime.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/WindowVideoManager.h"
 #include "GameClient/ChallengeGenerals.h"
@@ -88,6 +91,10 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/RankPointValue.h"
+
+import Video.Frame;
+import Video.Decoder;
+import Video.Runtime;
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -163,6 +170,7 @@ void LoadScreen::update( Int percent )
 		return;	//don't bother with any of this if the player is exiting game.
 
 	TheWindowManager->update();
+	Update_Videos(1.0 / 60.0);
 	TheDisplay->update();
 	// redraw all views, update the GUI
 	TheDisplay->draw();
@@ -181,8 +189,6 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen()
 	m_currentObjectiveWidthOffset = 0;
 	m_progressBar = nullptr;
 	m_percent = nullptr;
-	m_videoStream = nullptr;
-	m_videoBuffer = nullptr;
 	m_objectiveWin = nullptr;
 	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
 		m_objectiveLines[i] = nullptr;
@@ -191,13 +197,6 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen()
 
 SinglePlayerLoadScreen::~SinglePlayerLoadScreen()
 {
-	delete m_videoBuffer;
-
-	if ( m_videoStream )
-	{
-		m_videoStream->close();
-	}
-
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
 }
 
@@ -465,30 +464,10 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 */
 	m_ambientLoop.setEventName("LoadScreenAmbient");
-	// create the new stream
-	m_videoStream = TheVideoPlayer->open( TheCampaignManager->getCurrentMission()->m_movieLabel );
-	if ( m_videoStream == nullptr )
-	{
+	// The display owns presentation; engine/video owns decoding and timing.
+	TheDisplay->playMovie(TheCampaignManager->getCurrentMission()->m_movieLabel);
+	if (!TheDisplay->isMoviePlaying()) {
 		m_percent->winHide(TRUE);
-		return;
-	}
-
-	// Create the new buffer
-	m_videoBuffer = TheDisplay->createVideoBuffer();
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
-	{
-		delete m_videoBuffer;
-		m_videoBuffer = nullptr;
-
-		if ( m_videoStream )
-		{
-			m_videoStream->close();
-			m_videoStream = nullptr;
-		}
-
 		return;
 	}
 
@@ -532,117 +511,34 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	// else leave the default background screen
 
 
-	if(TheGameLODManager && TheGameLODManager->didMemPass())
+	Int lastFrame = -1;
+	const Engine::Video::StreamInfo video_info = Get_Video_Info(Engine::Video::PlaybackSlot::Fullscreen);
+	while (TheDisplay->isMoviePlaying())
 	{
-		// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
-		// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
+		if (GameClient::isMovieAbortRequested())
+			break;
 
-		Int progressUpdateCount = m_videoStream->frameCount() / FRAME_FUDGE_ADD;
-		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
-		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
-		{
-			if (GameClient::isMovieAbortRequested())
-			{
-				break;
-			}
-
-			if(!m_videoStream->isFrameReady())
-			{
-				Sleep(1);
-				continue;
-			}
-
-			m_videoStream->frameDecompress();
-			m_videoStream->frameRender(m_videoBuffer);
-
+		Update_Videos(1.0 / 60.0);
+		const Engine::Video::DecodedVideoFrame *frame = Get_Video_Frame(Engine::Video::PlaybackSlot::Fullscreen);
+		if (frame != nullptr && static_cast<Int>(frame->frame_index) != lastFrame) {
+			lastFrame = static_cast<Int>(frame->frame_index);
 #if RTS_GENERALS
-			moveWindows( m_videoStream->frameIndex());
+			moveWindows(lastFrame);
 #endif
-
-			m_videoStream->frameNext();
-
-			if(m_videoBuffer)
-				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-			if(m_videoStream->frameIndex() % progressUpdateCount == 0)
-			{
-				shiftedPercent++;
-				if(shiftedPercent >0)
-					shiftedPercent = 0;
-				Int percent = (shiftedPercent + FRAME_FUDGE_ADD)/1.3;
-				UnicodeString per;
-				per.format(L"%d%%",percent);
-				TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
-				GadgetProgressBarSetProgress(m_progressBar, percent);
-				GadgetStaticTextSetText(m_percent, per);
-
-			}
-			TheWindowManager->update();
-
-			// redraw all views, update the GUI
-			TheDisplay->draw();
+			const std::uint64_t frame_count = video_info.frame_count == 0 ? 1 : video_info.frame_count;
+			const Int percent = static_cast<Int>(std::min<std::uint64_t>(
+				FRAME_FUDGE_ADD,
+				static_cast<std::uint64_t>(lastFrame) * FRAME_FUDGE_ADD / frame_count));
+			GadgetProgressBarSetProgress(m_progressBar, percent);
+			UnicodeString per;
+			per.format(L"%d%%", percent);
+			GadgetStaticTextSetText(m_percent, per);
 		}
-
-#if !RTS_GENERALS
-		// let the background image show through
-		m_videoStream->close();
-		m_videoStream = nullptr;
-		m_loadScreen->winGetInstanceData()->setVideoBuffer( nullptr );
-		TheDisplay->draw();
-#endif
-	}
-	else
-	{
-#if RTS_GENERALS
-		// if we're min speced
-		m_videoStream->frameGoto(m_videoStream->frameCount()); // zero based
-		while(!m_videoStream->isFrameReady())
-			Sleep(1);
-		m_videoStream->frameDecompress();
-		m_videoStream->frameRender(m_videoBuffer);
-		if(m_videoBuffer)
-				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-
-		m_objectiveWin->winHide(FALSE);
-		for(i = 0; i < MAX_DISPLAYED_UNITS; ++i)
-			m_unitDesc[i]->winHide(FALSE);
-		m_location->winHide(FALSE);
-
-		// Audio was choppy so, I chopped it out!
-		TheAudio->friend_forcePlayAudioEventRTS(&TheCampaignManager->getCurrentMission()->m_briefingVoice);
-
-		for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
-		{
-			GadgetStaticTextSetText(m_objectiveLines[i], m_unicodeObjectiveLines[i]);
-		}
-#else
-		// if we're min spec'ed don't play a movie
-#endif
-
-		Int delay = mission->m_voiceLength * 1000;
-		Int begin = timeGetTime();
-		Int currTime = begin;
-		Int fudgeFactor = 0;
-		while(begin + delay > currTime )
-		{
-			fudgeFactor = 30 * ((currTime - begin)/ INT_TO_REAL(delay ));
-			GadgetProgressBarSetProgress(m_progressBar, fudgeFactor);
-
-			if (GameClient::isMovieAbortRequested())
-			{
-				break;
-			}
-
-			TheWindowManager->update();
-			TheDisplay->draw();
-			Sleep(100);
-			currTime = timeGetTime();
-		}
-
 
 		TheWindowManager->update();
 		TheDisplay->draw();
-
 	}
+	TheDisplay->stopMovie();
 	setFPMode();
 	m_percent->winHide(TRUE);
 	m_ambientLoopHandle = TheAudio->addAudioEvent(&m_ambientLoop);
@@ -678,8 +574,6 @@ void SinglePlayerLoadScreen::setProgressRange( Int min, Int max )
 ChallengeLoadScreen::ChallengeLoadScreen()
 {
 	m_progressBar = nullptr;
-	m_videoStream = nullptr;
-	m_videoBuffer = nullptr;
 
 	m_bioNameLeft = nullptr;
 	m_bioAgeLeft = nullptr;
@@ -717,13 +611,6 @@ ChallengeLoadScreen::ChallengeLoadScreen()
 
 ChallengeLoadScreen::~ChallengeLoadScreen()
 {
-	delete m_videoBuffer;
-
-	if ( m_videoStream )
-	{
-		m_videoStream->close();
-	}
-
 	delete m_wndVideoManager;
 
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
@@ -948,23 +835,9 @@ void ChallengeLoadScreen::init( GameInfo *game )
 	m_ambientLoop.setEventName("LoadScreenAmbient");
 
 	// create the new background video stream
-	m_videoStream = TheVideoPlayer->open( TheCampaignManager->getCurrentMission()->m_movieLabel );
-
-	// Create the new buffer
-	m_videoBuffer = TheDisplay->createVideoBuffer();
-	if (m_videoBuffer == nullptr || !m_videoBuffer->allocate(	m_videoStream->width(), m_videoStream->height() ))
-	{
-		delete m_videoBuffer;
-		m_videoBuffer = nullptr;
-
-		if ( m_videoStream )
-		{
-			m_videoStream->close();
-			m_videoStream = nullptr;
-		}
-
+	TheDisplay->playMovie(TheCampaignManager->getCurrentMission()->m_movieLabel);
+	if (!TheDisplay->isMoviePlaying())
 		return;
-	}
 
 	// init overlays
 	NameKeyType namekey = TheNameKeyGenerator->nameToKey( "ChallengeLoadScreen.wnd:PortraitLeft");
@@ -1043,99 +916,30 @@ void ChallengeLoadScreen::init( GameInfo *game )
 	m_wndVideoManager = NEW WindowVideoManager;
 	m_wndVideoManager->init();
 
-	if(TheGameLODManager && TheGameLODManager->didMemPass())
+	Int lastFrame = -1;
+	const Engine::Video::StreamInfo video_info = Get_Video_Info(Engine::Video::PlaybackSlot::Fullscreen);
+	while (TheDisplay->isMoviePlaying())
 	{
-		// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
-		// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
+		if (GameClient::isMovieAbortRequested())
+			break;
 
-		Int progressUpdateCount = m_videoStream->frameCount() / FRAME_FUDGE_ADD;
-		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
-		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
-		{
-			if (GameClient::isMovieAbortRequested())
-			{
-				break;
-			}
-
-			if(!m_videoStream->isFrameReady())
-			{
-				Sleep(1);
-				continue;
-			}
-
-			m_videoStream->frameDecompress();
-			m_videoStream->frameRender(m_videoBuffer);
-			m_videoStream->frameNext();
-
-			if(m_videoBuffer)
-				m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-
-			Int frame = m_videoStream->frameIndex();
-			if(frame % progressUpdateCount == 0)
-			{
-				shiftedPercent++;
-				if(shiftedPercent >0)
-					shiftedPercent = 0;
-				Int percent = (shiftedPercent + FRAME_FUDGE_ADD)/1.3;
-				UnicodeString per;
-				per.format(L"%d%%",percent);
-				TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
-				GadgetProgressBarSetProgress(m_progressBar, percent);
-			}
-			TheWindowManager->update();
-
-			activatePieces(frame, generalPlayer, generalOpponent);
-			m_wndVideoManager->update();
-
-			// redraw all views, update the GUI
-			TheDisplay->draw();
-
-			TheAudio->update();
+		Update_Videos(1.0 / 60.0);
+		const Engine::Video::DecodedVideoFrame *frame = Get_Video_Frame(Engine::Video::PlaybackSlot::Fullscreen);
+		if (frame != nullptr && static_cast<Int>(frame->frame_index) != lastFrame) {
+			lastFrame = static_cast<Int>(frame->frame_index);
+			activatePieces(lastFrame, generalPlayer, generalOpponent);
+			const std::uint64_t frame_count = video_info.frame_count == 0 ? 1 : video_info.frame_count;
+			const Int percent = static_cast<Int>(std::min<std::uint64_t>(
+				FRAME_FUDGE_ADD,
+				static_cast<std::uint64_t>(lastFrame) * FRAME_FUDGE_ADD / frame_count));
+			GadgetProgressBarSetProgress(m_progressBar, percent);
 		}
-	}
-	else
-	{
-		// if we're min speced
-		m_videoStream->frameGoto(m_videoStream->frameCount()); // zero based
-		while(!m_videoStream->isFrameReady())
-		{
-			if (GameClient::isMovieAbortRequested())
-			{
-				return;
-			}
-			Sleep(1);
-		}
-		m_videoStream->frameDecompress();
-		m_videoStream->frameRender(m_videoBuffer);
-		if(m_videoBuffer)
-			m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-
-		activatePiecesMinSpec(generalPlayer, generalOpponent);
-
-		Int delay = mission->m_voiceLength * 1000;
-		Int begin = timeGetTime();
-		Int currTime = begin;
-		Int fudgeFactor = 0;
-		while(begin + delay > currTime )
-		{
-			fudgeFactor = 30 * ((currTime - begin)/ INT_TO_REAL(delay ));
-			GadgetProgressBarSetProgress(m_progressBar, fudgeFactor);
-
-			if (GameClient::isMovieAbortRequested())
-			{
-				break;
-			}
-
-			TheWindowManager->update();
-			TheDisplay->draw();
-			Sleep(100);
-			currTime = timeGetTime();
-		}
-
-		m_wndVideoManager->update();
 		TheWindowManager->update();
+		m_wndVideoManager->update();
 		TheDisplay->draw();
+		TheAudio->update();
 	}
+	TheDisplay->stopMovie();
 	setFPMode();
 
 

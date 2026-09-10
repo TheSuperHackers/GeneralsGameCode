@@ -625,12 +625,14 @@ void SDL3Mouse::setVisibility(Bool visible)
 void SDL3Mouse::loseFocus()
 {
 	Mouse::loseFocus();
+	m_cursorFocused = FALSE;
 	SDL_HideCursor();
 }
 
 void SDL3Mouse::regainFocus()
 {
 	Mouse::regainFocus();
+	m_cursorFocused = TRUE;
 	applyCursor();
 }
 
@@ -678,7 +680,7 @@ void SDL3Mouse::setCursorWithDirection(MouseCursor cursor, Int directionFrame)
 
 void SDL3Mouse::applyCursor()
 {
-	if (m_currentCursor == NONE)
+	if (m_currentCursor == NONE || !m_cursorFocused)
 	{
 		SDL_HideCursor();
 		return;

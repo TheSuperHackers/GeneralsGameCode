@@ -21,7 +21,7 @@
 // EmitterLineGroupPropPage.h : header file
 //
 
-#include "WW3D2/part_emt.h"
+#include "WW3D2/PartEmt.h"
 
 // Forward declarations
 

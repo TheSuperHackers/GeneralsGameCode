@@ -158,7 +158,7 @@ void DirectInputKeyboard::openKeyboard()
 
 	}
 
-	/// @todo Check the cooperative level of keyboard for NT, 2000, DX8 etc ...
+	/// @todo Check the cooperative level of keyboard for NT, 2000, DX9 etc ...
 	// set the cooperative level for the keyboard, must be non-exclusive for
 	// NT support, but we should check with the latest versions of DirectX
 	// on 2000 etc

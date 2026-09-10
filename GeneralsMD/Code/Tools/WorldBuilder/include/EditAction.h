@@ -70,7 +70,7 @@ protected:
 	//{{AFX_MSG(EditAction)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeScriptActionType();
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

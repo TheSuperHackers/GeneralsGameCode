@@ -51,7 +51,6 @@
 #include "GameClient/Display.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
-class VideoBuffer;
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
@@ -92,15 +91,6 @@ public:
 	virtual Bool isClippingEnabled() override;
 	virtual void enableClipping( Bool onoff ) override;
 
-	// These are stub functions to allow compilation:
-
-	/// Create a video buffer that can be used for this display
-	virtual VideoBuffer*	createVideoBuffer() override { return nullptr; }
-
-	/// draw a video buffer fit within the screen coordinates
-	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) override { }
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-																Int endX, Int endY ) override { }
 	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality) override { }
 	virtual void toggleMovieCapture() override {}
 

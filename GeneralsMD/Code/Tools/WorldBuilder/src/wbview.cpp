@@ -30,7 +30,7 @@
 #include "MainFrm.h"
 #include "Common/Debug.h"
 #include "Common/ThingTemplate.h"
-#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GlobalLightOptions.h"
 #include "playerlistdlg.h"
 #include "teamsdialog.h"

@@ -566,9 +566,9 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	m_file->writeChar(L"\0");
 
 	// Date and Time
-	SYSTEMTIME systemTime;
-	GetLocalTime( &systemTime );
-	m_file->write(&systemTime, sizeof(systemTime));
+	GameDateTime GameDateTime;
+	Get_Local_Game_Date_Time(&GameDateTime);
+	m_file->write(&GameDateTime, sizeof(GameDateTime));
 
 	// write out version info
 	UnicodeString versionString = TheVersion->getUnicodeVersion();
@@ -715,8 +715,8 @@ void RecorderClass::stopRecording() {
  */
 void RecorderClass::archiveReplay(AsciiString fileName)
 {
-	SYSTEMTIME st;
-	GetLocalTime(&st);
+	GameDateTime st;
+	Get_Local_Game_Date_Time(&st);
 
 	AsciiString archiveFileName;
 	// Use a standard YYYYMMDD_HHMMSS format for simplicity and to avoid conflicts.

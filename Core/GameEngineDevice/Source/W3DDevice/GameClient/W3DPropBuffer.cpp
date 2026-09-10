@@ -46,19 +46,22 @@
 //         Includes
 //-----------------------------------------------------------------------------
 
+#include <array>
+#include <span>
+#include <memory>
+#include <unordered_map>
 #include "W3DDevice/GameClient/W3DPropBuffer.h"
+#include "W3DDevice/GameClient/W3DLight.h"
 
-#include <WW3D2/assetmgr.h>
+#include "W3DDevice/GameClient/W3DAssetCatalog.h"
 #include "Common/GameUtility.h"
 #include "Common/Geometry.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
-#include "WW3D2/camera.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/light.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8renderer.h"
+#include "W3DDevice/GameClient/W3DCamera.h"
+#include "W3DDevice/GameClient/W3DRenderContext.h"
+import Graphics.Scene.Lighting.Local;
 #include "W3DDevice/GameClient/Module/W3DPropDraw.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/BaseHeightMap.h"
@@ -78,7 +81,7 @@
 /** Culls the props, marking the visible flag.  If a prop becomes visible, it sets
 it's sortKey */
 //=============================================================================
-void W3DPropBuffer::cull(CameraClass * camera)
+void W3DPropBuffer::cull(W3DCamera * camera)
 {
 	Int curProp;
 
@@ -103,7 +106,6 @@ W3DPropBuffer::~W3DPropBuffer()
 {
 	clearAllProps();
 	REF_PTR_RELEASE(m_light);
-	REF_PTR_RELEASE(m_propShroudMaterialPass);
 }
 
 //=============================================================================
@@ -117,8 +119,7 @@ W3DPropBuffer::W3DPropBuffer()
 	m_initialized = false;
 	m_numProps = 0;
 	m_numPropTypes = 0;
-	m_light = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
-	m_propShroudMaterialPass = NEW_REF(W3DShroudMaterialPassClass,());
+	m_light = NEW_REF( W3DLight, (W3DLight::DIRECTIONAL) );
 	m_initialized = true;
 }
 
@@ -133,13 +134,15 @@ W3DPropBuffer::W3DPropBuffer()
 //=============================================================================
 void W3DPropBuffer::clearAllProps()
 {
+    m_graphics.clear();
 	Int i;
 	for (i=0; i<m_numPropTypes; i++) {
 		REF_PTR_RELEASE(m_propTypes[i].m_robj);
 		m_propTypes[i].m_robjName.clear();
 	}
 	for (i=0; i<m_numProps; i++) {
-		REF_PTR_RELEASE(m_props[i].m_robj);
+		m_graphics.erase(m_props[i].m_robj);
+        REF_PTR_RELEASE(m_props[i].m_robj);
 	}
 	m_numPropTypes = 0;
 	m_numProps = 0;
@@ -157,7 +160,7 @@ Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 		return 0;
 	}
 
-	m_propTypes[m_numPropTypes].m_robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(modelName.str());
+	m_propTypes[m_numPropTypes].m_robj = W3DAssetCatalog::Get_Instance()->Create_Render_Obj(modelName.str());
 	if (m_propTypes[m_numPropTypes].m_robj==nullptr) {
 		DEBUG_CRASH(("Unable to find model for prop %s", modelName.str()));
 		return -1;
@@ -259,7 +262,8 @@ void W3DPropBuffer::removeProp(Int id)
 		if (m_props[i].id == id) {
 			m_props[i].location.set(0,0,0);
 			m_props[i].propType = -1;
-			REF_PTR_RELEASE(m_props[i].m_robj);
+			m_graphics.erase(m_props[i].m_robj);
+        REF_PTR_RELEASE(m_props[i].m_robj);
 			// Translate the bounding sphere of the model.
 			m_props[i].bounds.Center = Vector3(0,0,0);
 			m_props[i].bounds.Radius = 1;
@@ -287,7 +291,8 @@ void W3DPropBuffer::removePropsForConstruction(const Coord3D* pos, const Geometr
 			// remove it [7/11/2003]
 			m_props[i].location.set(0,0,0);
 			m_props[i].propType = -1;
-			REF_PTR_RELEASE(m_props[i].m_robj);
+			m_graphics.erase(m_props[i].m_robj);
+        REF_PTR_RELEASE(m_props[i].m_robj);
 			// Translate the bounding sphere of the model.
 			m_props[i].bounds.Center = Vector3(0,0,0);
 			m_props[i].bounds.Radius = 1;
@@ -319,7 +324,7 @@ DECLARE_PERF_TIMER(Prop_Render)
 //=============================================================================
 /** Draws the props.  Uses camera to cull. */
 //=============================================================================
-void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
+void W3DPropBuffer::drawProps(W3DRenderContext &rinfo)
 {
 	USE_PERF_TIMER(Prop_Render)
 
@@ -329,10 +334,10 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 	}
 	const GlobalData::TerrainLighting *objectLighting = TheGlobalData->m_terrainObjectsLighting[TheGlobalData->m_timeOfDay];
 
-	LightEnvironmentClass lightEnv;
+	Graphics::LocalLighting lightEnv;
 	Vector3 center(0,0,0); // arbitrary center point. [6/6/2003]
 	Vector3 ambient(objectLighting[0].ambient.red, objectLighting[0].ambient.green, objectLighting[0].ambient.blue);
-	lightEnv.Reset(center, ambient);
+	lightEnv.Reset({(center).X,(center).Y,(center).Z}, {(ambient).X,(ambient).Y,(ambient).Z});
 
 	Matrix3D mtx;
 	const Vector3 zeroVector(0.0f, 0.0f, 0.0f);
@@ -348,10 +353,23 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 			m_light->Set_Specular(zeroVector);
 			mtx.Set(xVector, yVector, Vector3(objectLighting[i].lightPos.x, objectLighting[i].lightPos.y, objectLighting[i].lightPos.z), zeroVector);
 			m_light->Set_Transform(mtx);
-			lightEnv.Add_Light(*m_light);
+			Graphics::MaterialLightSource source;
+			m_light->Get_Light_Description(source);
+			lightEnv.Add(source);
 	}
 
-	rinfo.light_environment = &lightEnv;
+    lightEnv.Finalize();
+    Graphics::PropLighting lighting;
+    const auto& equivalent = lightEnv.ambient;
+    lighting.ambient = equivalent;
+    for (int light=0;light<lightEnv.count && light<4;++light) {
+        const auto& direction = lightEnv.lights[light].direction;
+        const auto& diffuse = lightEnv.lights[light].diffuse;
+        lighting.lights[light].direction = direction;
+        lighting.lights[light].diffuse = diffuse;
+        if (light==0) lighting.lights[light].specular = {1,1,1};
+    }
+
 	for	(i=0; i<m_numProps; i++) {
 		if (!m_props[i].visible) {
 			continue;
@@ -373,15 +391,13 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 		if (m_props[i].ss <= OBJECTSHROUD_INVALID) {
 			continue;
 		}
-		if (TheTerrainRenderObject->getShroud() && m_props[i].ss != CELLSHROUD_CLEAR) {
-			rinfo.Push_Material_Pass(m_propShroudMaterialPass);
-			m_props[i].m_robj->Render(rinfo);
-			rinfo.Pop_Material_Pass();
-		} else {
-			m_props[i].m_robj->Render(rinfo);
-		}
+        auto& graphics = m_graphics[m_props[i].m_robj];
+        if (!graphics) graphics = std::make_unique<W3DObjectGraphics>();
+        graphics->Render(*m_props[i].m_robj,rinfo,lighting,
+            m_props[i].ss != CELLSHROUD_CLEAR ? TheTerrainRenderObject->getShroud() : nullptr);
+
 	}
-	rinfo.light_environment = nullptr;
+
 
 }
 

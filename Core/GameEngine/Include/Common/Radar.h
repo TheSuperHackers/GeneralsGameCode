@@ -212,7 +212,7 @@ public:
 
 	virtual void newMap( TerrainLogic *terrain );	///< reset radar for new map
 
-	virtual void draw( Int pixelX, Int pixelY, Int width, Int height ) = 0;	///< draw the radar
+	virtual Bool drawData(Int pixelX, Int pixelY, Int width, Int height, void *drawList) = 0;	///< draw the radar
 
 	/// empty the entire shroud
 	virtual void clearShroud() = 0;
@@ -304,7 +304,7 @@ extern Radar *TheRadar;  ///< the radar singleton extern
 class RadarDummy : public Radar
 {
 public:
-	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) override { }
+	virtual Bool drawData(Int pixelX, Int pixelY, Int width, Int height, void *drawList) override { return TRUE; }
 	virtual void clearShroud() override { }
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) override { }
 };

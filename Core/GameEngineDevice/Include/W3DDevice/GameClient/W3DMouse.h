@@ -34,7 +34,7 @@
 //
 // Project:    RTS3
 //
-// File name:  Win32Mouse.h
+// File name:  W3DMouse.h
 //
 // Created:    Mark Wilczynski, Jan 2002
 //
@@ -51,13 +51,13 @@
 #include "SDL3Device/GameClient/SDL3Mouse.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
-class CameraClass;
-class SurfaceClass;
+class W3DCamera;
+import Graphics.Cursors.Cursor;
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
 // W3DMouse -----------------------------------------------------------------
-/** Mouse interface for when using only the Win32 messages and W3D for cursor */
+/** Mouse interface for rendering the cursor through W3D. */
 //-----------------------------------------------------------------------------
 class W3DMouse : public SDL3Mouse
 {
@@ -75,24 +75,15 @@ public:
 	virtual void setRedrawMode(RedrawMode mode) override;	///<set cursor drawing method.
 
 private:
-	MouseCursor m_currentD3DCursor;	///< keep track of last cursor image sent to D3D.
-	SurfaceClass *m_currentD3DSurface[MAX_2D_CURSOR_ANIM_FRAMES];
+	MouseCursor m_currentHardwareCursor;
+	Graphics::Cursor m_hardwareCursor;
 	ICoord2D m_currentHotSpot;
-	Int	m_currentFrames;	///< total number of frames in current 2D cursor animation.
-	Real m_currentAnimFrame;///< current frame of 2D cursor animation.
-	Int m_currentD3DFrame;	///< current frame actually sent to the hardware.
-	Int m_directionFrame;	///< selected frame for oriented cursors.
-	Int m_lastAnimTime;		///< ms at last animation update.
-	Real m_currentFMS;		///< frames per ms.
-	Bool m_drawing;			///< flag to indicate mouse cursor is currently in the act of drawing.
-///@todo: remove the textures if we only need surfaces
-	void initD3DAssets();		///< load textures for mouse cursors, etc.
-	void freeD3DAssets();		///< unload textures used by mouse cursors.
-	Bool loadD3DCursorTextures(MouseCursor cursor);	///<load the textures/animation for given cursor.
-	Bool releaseD3DCursorTextures(MouseCursor cursor);	///<release loaded textures for cursor.
+	Int m_directionFrame;
+	Bool loadHardwareCursor(MouseCursor cursor);
+	void applyCursor() override;
 
 	// W3D animated model cursor
-	CameraClass *m_camera;								///< our camera
+	W3DCamera *m_camera;								///< our camera
 	MouseCursor m_currentW3DCursor;
 	void initW3DAssets();		///< load models for mouse cursors, etc.
 	void freeW3DAssets();		///< unload models used by mouse cursors.

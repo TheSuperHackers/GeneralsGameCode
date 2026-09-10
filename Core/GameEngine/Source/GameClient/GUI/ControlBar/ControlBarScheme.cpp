@@ -53,6 +53,8 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+import Engine.UI.WND.Layout;
+
 #include "Common/Player.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/Recorder.h"
@@ -417,9 +419,10 @@ void ControlBarScheme::init()
 		TheControlBar->setArrowImage( m_genArrow);
 	}
 	GameWindow *win = nullptr;
-	Coord2D resMultiplier;
-	resMultiplier.x = TheDisplay->getWidth()/INT_TO_REAL(m_ScreenCreationRes.x) ;
-	resMultiplier.y = TheDisplay->getHeight()/INT_TO_REAL(m_ScreenCreationRes.y);
+	const auto transform = Engine::UI::WND::Fit_Viewport(
+		m_ScreenCreationRes.x, m_ScreenCreationRes.y, TheDisplay->getWidth(), TheDisplay->getHeight(),
+		Engine::UI::WND::LayoutAnchor::Center, Engine::UI::WND::LayoutAnchor::End);
+	const Coord2D resMultiplier{static_cast<Real>(transform.scale), static_cast<Real>(transform.scale)};
 
 	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" ) );
 	if(win)
@@ -438,13 +441,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_chatUL.x * resMultiplier.x - parX;
-			y = m_chatUL.y * resMultiplier.y - parY;
+			x = m_chatUL.x * resMultiplier.x + transform.x - parX;
+			y = m_chatUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_chatUL.x * resMultiplier.x;
-			y = m_chatUL.y * resMultiplier.y;
+			x = m_chatUL.x * resMultiplier.x + transform.x;
+			y = m_chatUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_chatLR.x - m_chatUL.x)*resMultiplier.x + COMMAND_BAR_SIZE_OFFSET,(m_chatLR.y - m_chatUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -463,13 +466,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_workerUL.x * resMultiplier.x - parX;
-			y = m_workerUL.y * resMultiplier.y - parY;
+			x = m_workerUL.x * resMultiplier.x + transform.x - parX;
+			y = m_workerUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_workerUL.x * resMultiplier.x;
-			y = m_workerUL.y * resMultiplier.y;
+			x = m_workerUL.x * resMultiplier.x + transform.x;
+			y = m_workerUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 
@@ -494,13 +497,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_optionsUL.x * resMultiplier.x - parX;
-			y = m_optionsUL.y * resMultiplier.y - parY;
+			x = m_optionsUL.x * resMultiplier.x + transform.x - parX;
+			y = m_optionsUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_optionsUL.x * resMultiplier.x;
-			y = m_optionsUL.y * resMultiplier.y;
+			x = m_optionsUL.x * resMultiplier.x + transform.x;
+			y = m_optionsUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_optionsLR.x - m_optionsUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_optionsLR.y - m_optionsUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -519,13 +522,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_beaconUL.x * resMultiplier.x - parX;
-			y = m_beaconUL.y * resMultiplier.y - parY;
+			x = m_beaconUL.x * resMultiplier.x + transform.x - parX;
+			y = m_beaconUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_beaconUL.x * resMultiplier.x;
-			y = m_beaconUL.y * resMultiplier.y;
+			x = m_beaconUL.x * resMultiplier.x + transform.x;
+			y = m_beaconUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_beaconLR.x - m_beaconUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_beaconLR.y - m_beaconUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -541,13 +544,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_moneyUL.x * resMultiplier.x - parX;
-			y = m_moneyUL.y * resMultiplier.y - parY;
+			x = m_moneyUL.x * resMultiplier.x + transform.x - parX;
+			y = m_moneyUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_moneyUL.x * resMultiplier.x;
-			y = m_moneyUL.y * resMultiplier.y;
+			x = m_moneyUL.x * resMultiplier.x + transform.x;
+			y = m_moneyUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_moneyLR.x - m_moneyUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_moneyLR.y - m_moneyUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -563,13 +566,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_powerBarUL.x * resMultiplier.x - parX;
-			y = m_powerBarUL.y * resMultiplier.y - parY;
+			x = m_powerBarUL.x * resMultiplier.x + transform.x - parX;
+			y = m_powerBarUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_powerBarUL.x * resMultiplier.x;
-			y = m_powerBarUL.y * resMultiplier.y;
+			x = m_powerBarUL.x * resMultiplier.x + transform.x;
+			y = m_powerBarUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -591,13 +594,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_generalUL.x * resMultiplier.x - parX;
-			y = m_generalUL.y * resMultiplier.y - parY;
+			x = m_generalUL.x * resMultiplier.x + transform.x - parX;
+			y = m_generalUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_generalUL.x * resMultiplier.x;
-			y = m_generalUL.y * resMultiplier.y;
+			x = m_generalUL.x * resMultiplier.x + transform.x;
+			y = m_generalUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_generalLR.x - m_generalUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_generalLR.y - m_generalUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -617,13 +620,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_minMaxUL.x * resMultiplier.x - parX;
-			y = m_minMaxUL.y * resMultiplier.y - parY;
+			x = m_minMaxUL.x * resMultiplier.x + transform.x - parX;
+			y = m_minMaxUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_minMaxUL.x * resMultiplier.x;
-			y = m_minMaxUL.y * resMultiplier.y;
+			x = m_minMaxUL.x * resMultiplier.x + transform.x;
+			y = m_minMaxUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_minMaxLR.x - m_minMaxUL.x)*resMultiplier.x + COMMAND_BAR_SIZE_OFFSET,(m_minMaxLR.y - m_minMaxUL.y)*resMultiplier.y + COMMAND_BAR_SIZE_OFFSET);
@@ -641,13 +644,13 @@ void ControlBarScheme::init()
 		{
 			Int parX, parY;
 			parent->winGetScreenPosition(&parX, &parY);
-			x = m_uAttackUL.x * resMultiplier.x - parX;
-			y = m_uAttackUL.y * resMultiplier.y - parY;
+			x = m_uAttackUL.x * resMultiplier.x + transform.x - parX;
+			y = m_uAttackUL.y * resMultiplier.y + transform.y - parY;
 		}
 		else
 		{
-			x = m_uAttackUL.x * resMultiplier.x;
-			y = m_uAttackUL.y * resMultiplier.y;
+			x = m_uAttackUL.x * resMultiplier.x + transform.x;
+			y = m_uAttackUL.y * resMultiplier.y + transform.y;
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_uAttackLR.x - m_uAttackUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_uAttackLR.y - m_uAttackUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
@@ -740,87 +743,13 @@ void ControlBarScheme::update()
 }
 
 //
-// Loop through the proper lists and draw everything for the foreground
-//-----------------------------------------------------------------------------
-void ControlBarScheme::drawForeground( Coord2D multi, ICoord2D offset )
-{
-	for(Int i = CONTROL_BAR_SCHEME_FOREGROUND_IMAGE_LAYERS - 1; i >= 0; i--)
-	{
-		ControlBarSchemeImageList::iterator it = m_layer[i].begin();
-		while (it != m_layer[i].end())
-		{
-			ControlBarSchemeImage *schemeImage = *it;
-			if( !schemeImage )
-			{
-				DEBUG_CRASH(("There is no ControlBarSchemeImage found in the m_layer list"));
-				it++;
-				continue;
-			}
-
-			// if we dont' have an image, don't try to draw it
-			if(!schemeImage->m_image)
-			{
-				it++;
-				continue;
-			}
-
-			// draw the image
-			TheDisplay->drawImage(schemeImage->m_image, schemeImage->m_position.x * multi.x + offset.x,
-														schemeImage->m_position.y * multi.y + offset.y,
-														(schemeImage->m_position.x + schemeImage->m_size.x) * multi.x + offset.x,
-														(schemeImage->m_position.y + schemeImage->m_size.y) * multi.y + offset.y);
-
-			it ++;
-		}
-	}
-}
-
-//
-// Add an image to the proper layer list
-//-----------------------------------------------------------------------------
-void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
-{
-
-	for(Int i = MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS - 1; i >= CONTROL_BAR_SCHEME_FOREGROUND_IMAGE_LAYERS; i--)
-	{
-		ControlBarSchemeImageList::iterator it = m_layer[i].begin();
-		while (it != m_layer[i].end())
-		{
-			ControlBarSchemeImage *schemeImage = *it;
-			if( !schemeImage )
-			{
-				DEBUG_CRASH(("There is no ControlBarSchemeImage found in the m_layer list"));
-				it++;
-				continue;
-			}
-
-			// if we don't have an image, don't try to draw it
-			if(!schemeImage->m_image)
-			{
-				it++;
-				continue;
-			}
-
-			// draw it
-			TheDisplay->drawImage(schemeImage->m_image, schemeImage->m_position.x * multi.x + offset.x,
-														schemeImage->m_position.y * multi.y + offset.y,
-														(schemeImage->m_position.x + schemeImage->m_size.x) * multi.x + offset.x,
-														(schemeImage->m_position.y + schemeImage->m_size.y) * multi.y + offset.y);
-
-			it ++;
-		}
-	}
-}
-
-
-//
 // Constructor for the manager
 //-----------------------------------------------------------------------------
 ControlBarSchemeManager::ControlBarSchemeManager()
 {
 	m_currentScheme = nullptr;
 	m_schemeList.clear();
-	m_multiplier.x = m_multiplier.y = 1;
+
 }
 
 //
@@ -1040,8 +969,8 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 	if(tempScheme)
 	{
 		// setup the multiplier value
-		m_multiplier.x = TheDisplay->getWidth() / tempScheme->m_ScreenCreationRes.x;
-		m_multiplier.y = TheDisplay->getHeight() / tempScheme->m_ScreenCreationRes.y;
+
+
 		m_currentScheme = tempScheme;
 	}
 	else
@@ -1062,20 +991,6 @@ void ControlBarSchemeManager::update()
 		m_currentScheme->update();
 }
 
-//-----------------------------------------------------------------------------
-void ControlBarSchemeManager::drawForeground( ICoord2D offset )
-{
-	if(m_currentScheme)
-		m_currentScheme->drawForeground( m_multiplier, offset);
-}
-//-----------------------------------------------------------------------------
-void ControlBarSchemeManager::drawBackground( ICoord2D offset )
-{
-	if(m_currentScheme)
-		m_currentScheme->drawBackground( m_multiplier, offset );
-}
-
-//-----------------------------------------------------------------------------
 void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt, Bool useSmall)
 {
 	if(!pt)
@@ -1122,8 +1037,8 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 	if(tempScheme)
 	{
 		// setup the multiplier value
-		m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
-		m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
+
+
 		m_currentScheme = tempScheme;
 	}
 	else
@@ -1190,8 +1105,8 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	if(tempScheme)
 	{
 		// setup the multiplier value
-		m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
-		m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
+
+
 		m_currentScheme = tempScheme;
 	}
 	else
@@ -1244,3 +1159,25 @@ static void animSlideRight( ControlBarSchemeAnimation *anim )
 
 }
 
+
+Coord2D ControlBarSchemeManager::getMultiplier() const
+{
+	if (m_currentScheme == nullptr || TheDisplay == nullptr)
+		return {1.0f, 1.0f};
+	const auto transform = Engine::UI::WND::Fit_Viewport(
+		m_currentScheme->m_ScreenCreationRes.x, m_currentScheme->m_ScreenCreationRes.y,
+		TheDisplay->getWidth(), TheDisplay->getHeight(),
+		Engine::UI::WND::LayoutAnchor::Center, Engine::UI::WND::LayoutAnchor::End);
+	return {static_cast<Real>(transform.scale), static_cast<Real>(transform.scale)};
+}
+
+Coord2D ControlBarSchemeManager::getScreenOffset() const
+{
+	if (m_currentScheme == nullptr || TheDisplay == nullptr)
+		return {0.0f, 0.0f};
+	const auto transform = Engine::UI::WND::Fit_Viewport(
+		m_currentScheme->m_ScreenCreationRes.x, m_currentScheme->m_ScreenCreationRes.y,
+		TheDisplay->getWidth(), TheDisplay->getHeight(),
+		Engine::UI::WND::LayoutAnchor::Center, Engine::UI::WND::LayoutAnchor::End);
+	return {static_cast<Real>(transform.x), static_cast<Real>(transform.y)};
+}

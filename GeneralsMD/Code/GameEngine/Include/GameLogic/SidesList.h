@@ -40,7 +40,7 @@ class DataChunkInput;
 struct DataChunkInfo;
 class DataChunkOutput;
 class BuildListInfo;
-class RenderObjClass;
+class W3DRenderObject;
 class ScriptList;
 class Shadow;
 
@@ -290,7 +290,7 @@ protected:
 
 
 	// For WorldBuilder use only:
-	RenderObjClass	*m_renderObj;				///< object that renders in the 3d scene.
+	W3DRenderObject	*m_renderObj;				///< object that renders in the 3d scene.
 	Shadow			*m_shadowObj;				///< object that renders shadows in the 3d scane.
 	Bool				m_selected;					///< True if the obj is selected in the editor.
 
@@ -336,8 +336,8 @@ public:
 	Bool getUnsellable() {return m_unsellable;}
 	Bool getRepairable() {return m_repairable;}
 
-	void setRenderObj(RenderObjClass *pObj) {m_renderObj = pObj;}
-	RenderObjClass *getRenderObj() {return m_renderObj;}
+	void setRenderObj(W3DRenderObject *pObj) {m_renderObj = pObj;}
+	W3DRenderObject *getRenderObj() {return m_renderObj;}
 	void setShadowObj(Shadow *pObj) {m_shadowObj = pObj;}
 	Shadow *getShadowObj() {return m_shadowObj;}
 

@@ -35,7 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "bchannel.h"
-#include "w3d_file.h"
+#include "W3DFile.h"
 #include "logdlg.h"
 #include "exportlog.h"
 

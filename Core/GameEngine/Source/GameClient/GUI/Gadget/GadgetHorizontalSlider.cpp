@@ -46,6 +46,8 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+import Engine.UI.WND.Layout;
+
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
 #include "GameClient/GameWindowManager.h"
@@ -460,15 +462,18 @@ WindowMsgHandledType GadgetHorizontalSliderSystem( GameWindow *window, UnsignedI
 		// ------------------------------------------------------------------------
 		case GGM_RESIZED:
 		{
-//			Int width = (Int)mData1;
-			Int height = (Int)mData2;
 			GameWindow *thumb = window->winGetChild();
-
-			if( thumb )
-				thumb->winSetSize( GADGET_SIZE, height );
-
+			if (thumb != nullptr)
+			{
+				const auto layout = Engine::UI::WND::Layout_Slider_Thumb(
+					static_cast<Int>(mData1), static_cast<Int>(mData2), TheWindowManager->winGetLayoutScale(window),
+					HORIZONTAL_SLIDER_THUMB_WIDTH, HORIZONTAL_SLIDER_THUMB_POSITION,
+					s->minVal, s->maxVal, s->position);
+				s->numTicks = layout.pixels_per_step;
+				thumb->winSetSize(layout.bounds.width, layout.bounds.height);
+				thumb->winSetPosition(layout.bounds.x, layout.bounds.y);
+			}
 			break;
-
 		}
 
 		default:

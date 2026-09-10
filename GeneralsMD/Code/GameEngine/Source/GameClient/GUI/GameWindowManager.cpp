@@ -31,7 +31,11 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include <vector>
+#include <cstdint>
+
+import Engine.UI.WND;
+import Engine.UI.WND.Layout;
+import Graphics.Renderer2D;
 
 #include "Common/Debug.h"
 #include "Common/Language.h"
@@ -53,6 +57,7 @@
 #include "GameClient/GadgetRadioButton.h"
 #include "GameClient/GadgetCheckBox.h"
 #include "GameClient/GlobalLanguage.h"
+#include "GameClient/HeaderTemplate.h"
 #include "GameClient/GameWindowTransitions.h"
 #include "Common/NameKeyGenerator.h"
 
@@ -74,35 +79,143 @@ UnsignedInt WindowLayoutCurrentVersion = 2;
 //
 static Bool sendMousePosMessages = TRUE;
 
-struct WindowSizeSnapshot
+namespace
 {
-	GameWindow *window;
-	Int x;
-	Int y;
-	Int width;
-	Int height;
-	GameFont *font;
-};
 
-static Int scaleWindowValue(Int value, Real scale)
+Engine::UI::WND::RenderList wndRenderList(WIN_MAX_WINDOWS);
+Engine::UI::WND::Renderer wndRenderer;
+Engine::UI::WND::Layout wndLayout;
+
+bool invokeWNDDataBorder(
+	void *,
+	void *windowPointer,
+	void *instanceDataPointer,
+	Engine::UI::WND::DrawList &draw_list) noexcept
 {
-	const Real scaled = static_cast<Real>(value) * scale;
-	return scaled >= 0.0f ? static_cast<Int>(scaled + 0.5f) : static_cast<Int>(scaled - 0.5f);
+	if (TheWindowManager == nullptr || windowPointer == nullptr)
+		return false;
+	const GameWinDrawDataFunc extract = TheWindowManager->getBorderDrawDataFunc();
+	return extract != nullptr
+		&& extract(
+			static_cast<GameWindow *>(windowPointer),
+			static_cast<WinInstanceData *>(instanceDataPointer),
+			&draw_list) != FALSE;
 }
 
-static void collectWindowSizeSnapshots(GameWindow *window, std::vector<WindowSizeSnapshot> &snapshots)
+bool invokeWNDExtract(
+	void *,
+	void *windowPointer,
+	void *instanceDataPointer,
+	Engine::UI::WND::DrawList &draw_list) noexcept
 {
-	for (GameWindow *current = window; current != nullptr; current = current->winGetNext())
-	{
-		WindowSizeSnapshot snapshot;
-		snapshot.window = current;
-		current->winGetPosition(&snapshot.x, &snapshot.y);
-		current->winGetSize(&snapshot.width, &snapshot.height);
-		snapshot.font = current->winGetFont();
-		snapshots.push_back(snapshot);
+	if (TheWindowManager == nullptr || windowPointer == nullptr)
+		return false;
+	GameWindow *window = static_cast<GameWindow *>(windowPointer);
+	const GameWinDrawDataFunc extract =
+		window->winGetDrawFunc();
+	return extract != nullptr
+		&& extract(window, static_cast<WinInstanceData *>(instanceDataPointer), &draw_list) != FALSE;
+}
 
-		collectWindowSizeSnapshots(current->winGetChild(), snapshots);
+void *nextWNDWindow(void *, void *window) noexcept
+{
+	return window != nullptr ? static_cast<GameWindow *>(window)->winGetNext() : nullptr;
+}
+
+void *childWNDWindow(void *, void *window) noexcept
+{
+	return window != nullptr ? static_cast<GameWindow *>(window)->winGetChild() : nullptr;
+}
+
+Engine::UI::WND::LayoutBounds readWNDLayout(void *, void *pointer) noexcept
+{
+	GameWindow *window = static_cast<GameWindow *>(pointer);
+	Engine::UI::WND::LayoutBounds bounds;
+	window->winGetPosition(&bounds.x, &bounds.y);
+	window->winGetSize(&bounds.width, &bounds.height);
+	return bounds;
+}
+
+bool preserveWNDAspect(void *, void *) noexcept
+{
+	return true;
+}
+
+bool managedWNDChild(void *, void *pointer) noexcept
+{
+	GameWindow *parent = static_cast<GameWindow *>(pointer)->winGetParent();
+	return parent != nullptr && (parent->winGetStyle() &
+		(GWS_COMBO_BOX | GWS_HORZ_SLIDER | GWS_VERT_SLIDER | GWS_SCROLL_LISTBOX)) != 0;
+}
+
+void applyWNDLayout(void *, void *pointer, Engine::UI::WND::LayoutBounds bounds) noexcept
+{
+	GameWindow *window = static_cast<GameWindow *>(pointer);
+	window->winSetPosition(bounds.x, bounds.y);
+	window->winSetSize(bounds.width, bounds.height);
+	const AsciiString &header = window->winGetInstanceData()->m_headerTemplateName;
+	if (TheHeaderTemplateManager != nullptr && header.isNotEmpty())
+	{
+		GameFont *font = TheHeaderTemplateManager->getFontFromTemplate(header);
+		if (font != nullptr && font != window->winGetFont())
+			window->winSetFont(font);
 	}
+}
+
+const Engine::UI::WND::LayoutSource wndLayoutSource{
+	nullptr, &nextWNDWindow, &childWNDWindow, &readWNDLayout, &preserveWNDAspect, &applyWNDLayout, &managedWNDChild};
+
+bool describeWNDWindow(
+	void *,
+	void *windowPointer,
+	Engine::UI::WND::RenderNode &node) noexcept
+{
+	GameWindow *window = static_cast<GameWindow *>(windowPointer);
+	if (window == nullptr)
+		return false;
+
+	node.instance_data = window->winGetInstanceData();
+	// The device adapter resolves every production callback to WND draw data.
+	node.extract = &invokeWNDExtract;
+	if (TheWindowManager != nullptr && TheWindowManager->getBorderDrawDataFunc() != nullptr)
+		node.extract_border = &invokeWNDDataBorder;
+	node.layer = BitIsSet(window->winGetStatus(), WIN_STATUS_BELOW)
+		? Engine::UI::WND::Layer::Below
+		: BitIsSet(window->winGetStatus(), WIN_STATUS_ABOVE)
+		? Engine::UI::WND::Layer::Above
+			: Engine::UI::WND::Layer::Normal;
+	WinInstanceData *instance_data = window->winGetInstanceData();
+	node.visual_state = Engine::UI::WND::Resolve_Visual_State(
+		BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED),
+		instance_data != nullptr && BitIsSet(instance_data->getState(), WIN_STATE_HILITED),
+		instance_data != nullptr && BitIsSet(instance_data->getState(), WIN_STATE_SELECTED));
+
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_HIDDEN))
+		node.flags |= static_cast<std::uint32_t>(Engine::UI::WND::WindowFlag::Hidden);
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_SEE_THRU))
+		node.flags |= static_cast<std::uint32_t>(Engine::UI::WND::WindowFlag::SeeThrough);
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_BORDER))
+		node.flags |= static_cast<std::uint32_t>(Engine::UI::WND::WindowFlag::Border);
+	if (BitIsSet(window->winGetStyle(), GWS_SCROLL_LISTBOX)
+		|| (TheWindowManager != nullptr
+			&& (window->winGetDrawFunc() == TheWindowManager->getTabControlDrawFunc()
+				|| window->winGetDrawFunc() == TheWindowManager->getTabControlImageDrawFunc())))
+		node.flags |= static_cast<std::uint32_t>(Engine::UI::WND::WindowFlag::BorderBeforeChildren);
+
+	ICoord2D position;
+	ICoord2D size;
+	window->winGetScreenPosition(&position.x, &position.y);
+	window->winGetSize(&size.x, &size.y);
+	node.screen_region = {position.x, position.y, position.x + size.x, position.y + size.y};
+	return true;
+}
+
+bool buildWNDRenderList(Engine::UI::WND::RenderList &list, GameWindow *window_head) noexcept
+{
+	return Engine::UI::WND::Build_Render_List(list, window_head,
+		{nullptr, &nextWNDWindow, &childWNDWindow, &describeWNDWindow});
+}
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -151,6 +264,7 @@ void GameWindowManager::processDestroyList()
 		DEBUG_ASSERTCRASH(doDestroy->winGetUserData() == nullptr, ("Win user data is expected to be deleted now"));
 
 		// free the memory
+		wndLayout.Forget(doDestroy);
 		deleteInstance(doDestroy);
 
 	}
@@ -226,7 +340,6 @@ GameWindowManager::GameWindowManager()
 
 	m_cursorBitmap = nullptr;
 	m_captureFlags = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -732,42 +845,29 @@ void GameWindowManager::winScaleToResolution( UnsignedInt oldWidth, UnsignedInt 
 		return;
 	}
 
-	const Real scaleX = static_cast<Real>(newWidth) / static_cast<Real>(oldWidth);
-	const Real scaleY = static_cast<Real>(newHeight) / static_cast<Real>(oldHeight);
-	std::vector<WindowSizeSnapshot> snapshots;
-	for (GameWindow *window = m_windowList; window != nullptr; window = window->winGetNext())
-		collectWindowSizeSnapshots(window, snapshots);
+	wndLayout.Apply(m_windowList, true, oldWidth, oldHeight, newWidth, newHeight, wndLayoutSource);
+}
 
-	// Take the snapshot first. Resize messages from a parent gadget are allowed
-	// to adjust its children, but those children must still end at the scaled
-	// coordinates captured from the pre-resize layout.
-	for (const WindowSizeSnapshot &snapshot : snapshots)
-	{
-		const Int x = scaleWindowValue(snapshot.x, scaleX);
-		const Int y = scaleWindowValue(snapshot.y, scaleY);
-		const Int width = scaleWindowValue(snapshot.width, scaleX);
-		const Int height = scaleWindowValue(snapshot.height, scaleY);
-		snapshot.window->winSetPosition(x, y);
-		snapshot.window->winSetSize(width, height);
+Bool GameWindowManager::winRegisterScriptGeometry(GameWindow *window, Int authoredWidth, Int authoredHeight, const char *anchors)
+{
+	return wndLayout.Register(window, authoredWidth, authoredHeight, anchors);
+}
 
-		// Fonts are part of the live window state rather than the layout
-		// geometry. Replace the font object so every existing gadget and its
-		// display strings use the new point size without rebuilding the window.
-		if (TheFontLibrary != nullptr && snapshot.font != nullptr && snapshot.font->pointSize > 0)
-		{
-			Int pointSize = scaleWindowValue(snapshot.font->pointSize, scaleY);
-			if (pointSize < 1)
-				pointSize = 1;
+void GameWindowManager::winArrangeScript(GameWindow *window)
+{
+	const Int width = TheDisplay->getWidth();
+	const Int height = TheDisplay->getHeight();
+	wndLayout.Apply(window, false, width, height, width, height, wndLayoutSource);
+}
 
-			if (pointSize != snapshot.font->pointSize)
-			{
-				GameFont *font = TheFontLibrary->getFont(snapshot.font->nameString,
-					pointSize, snapshot.font->bold);
-				if (font != nullptr)
-					snapshot.window->winSetFont(font);
-			}
-		}
-	}
+Bool GameWindowManager::winGetAuthoredPosition(GameWindow *window, Int *x, Int *y)
+{
+	return wndLayout.Default_Position(window, TheDisplay->getWidth(), TheDisplay->getHeight(), *x, *y);
+}
+
+Real GameWindowManager::winGetLayoutScale(GameWindow *window) const
+{
+	return static_cast<Real>(wndLayout.Scale(window, TheDisplay->getWidth(), TheDisplay->getHeight()));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1295,90 +1395,15 @@ GameWindow* GameWindowManager::findWindowUnderMouse(GameWindow*& toolTipWindow, 
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Draw a window and its children, in parent-first order.
-	* Children's coordinates are relative to their parents.
-	* Note that hidden windows automatically will not draw any
-	* of their children ... but see-thru windows only will not
-	* draw themselves, but will give their children an
-	* opportunity to draw */
-//-------------------------------------------------------------------------------------------------
-Int GameWindowManager::drawWindow( GameWindow *window )
-{
-	GameWindow *child;
-
-	if( window == nullptr )
-		return WIN_ERR_INVALID_WINDOW;
-
-	if( BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) == FALSE )
-	{
-
-		if( !BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ) && window->m_draw )
-			window->m_draw( window, &window->m_instData );
-
-		/// @todo visit list boxes and borders, this is stupid!
-		// for list boxes only draw the borders BEFORE the children
-		if( BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
-			if( BitIsSet( window->m_status, WIN_STATUS_BORDER ) == TRUE &&
-					!BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ) )
-				window->winDrawBorder();
-
-		// draw children in reverse order just like the window list
-		child = window->m_child;
-		while( child && child->m_next )
-			child = child->m_next;
-
-		for( ; child; child = child->m_prev )
-				drawWindow( child );
-
-		//
-		// draw the border for the window AFTER the window contents AND the
-		// children contents have drawn
-		//
-		if( !BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
-			if( BitIsSet( window->m_status, WIN_STATUS_BORDER ) == TRUE &&
-					!BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ) )
-				window->winDrawBorder();
-
-	}
-
-	return WIN_ERR_OK;
-
-}
-
-//-------------------------------------------------------------------------------------------------
 /** Draw the GUI in reverse order to correlate with clicking priority */
 //-------------------------------------------------------------------------------------------------
 void GameWindowManager::winRepaint()
 {
-	GameWindow *window, *next;
+	if (!buildWNDRenderList(wndRenderList, m_windowList))
+		return;
 
-	// draw below windows
-	for( window = m_windowTail; window; window = next )
-	{
-		next = window->m_prev;
-
-		if( BitIsSet( window->m_status, WIN_STATUS_BELOW ) )
-			drawWindow( window );
-	}
-
-	// draw non-above and non-below windows
-	for( window = m_windowTail; window; window = next )
-	{
-		next = window->m_prev;
-
-		if (BitIsSet( window->m_status, WIN_STATUS_ABOVE |
-																	 WIN_STATUS_BELOW ) == FALSE)
-			drawWindow( window );
-	}
-
-	// draw above windows
-	for( window = m_windowTail; window; window = next )
-	{
-		next = window->m_prev;
-
-		if( BitIsSet( window->m_status, WIN_STATUS_ABOVE ) )
-			drawWindow( window );
-	}
+	if (!wndRenderer.Render(wndRenderList, Graphics::Get_Renderer2D()))
+		return;
 
 	if(TheTransitionHandler)
 		TheTransitionHandler->draw();

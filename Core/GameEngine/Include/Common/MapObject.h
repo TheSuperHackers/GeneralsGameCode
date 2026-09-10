@@ -49,7 +49,7 @@ public:
 /** MapObject class
 Not ref counted.  Do not store pointers to this class.  */
 class WorldHeightMap;
-class RenderObjClass;
+class W3DRenderObject;
 class ThingTemplate;
 class Shadow;
 enum WaypointID CPP_11(: Int);
@@ -101,9 +101,9 @@ class MapObject : public MemoryPoolObject
 	// This data is runtime data that is used by the worldbuider editor, but
 	// not saved in the map file.
 	Int										m_color;		 ///< Display color.
-	RenderObjClass*				m_renderObj; ///< object that renders in the 3d scene.
+	W3DRenderObject*				m_renderObj; ///< object that renders in the 3d scene.
 	Shadow*								m_shadowObj; ///< object that renders shadow in the 3d scene.
-	RenderObjClass*				m_bridgeTowers[ BRIDGE_MAX_TOWERS ];		///< for bridge towers
+	W3DRenderObject*				m_bridgeTowers[ BRIDGE_MAX_TOWERS ];		///< for bridge towers
 	Int										m_runtimeFlags;
 
 public:
@@ -149,13 +149,13 @@ public:
 	void setIsWaypoint() { m_runtimeFlags |= MO_WAYPOINT; }
 	void setIsScorch() { m_runtimeFlags |= MO_SCORCH; }
 
-	void setRenderObj(RenderObjClass *pObj);
-	RenderObjClass *getRenderObj() const {return m_renderObj;}
+	void setRenderObj(W3DRenderObject *pObj);
+	W3DRenderObject *getRenderObj() const {return m_renderObj;}
 	void setShadowObj(Shadow *pObj)	{m_shadowObj=pObj;}
 	Shadow *getShadowObj() const {return m_shadowObj;}
 
-	RenderObjClass* getBridgeRenderObject( BridgeTowerType type );
-	void setBridgeRenderObject( BridgeTowerType type, RenderObjClass* renderObj );
+	W3DRenderObject* getBridgeRenderObject( BridgeTowerType type );
+	void setBridgeRenderObject( BridgeTowerType type, W3DRenderObject* renderObj );
 
 	WaypointID getWaypointID();
 	AsciiString getWaypointName();

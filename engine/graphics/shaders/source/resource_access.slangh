@@ -1,0 +1,60 @@
+#ifndef GRAPHICS_RESOURCE_ACCESS
+#define GRAPHICS_RESOURCE_ACCESS
+
+#if defined(GRAPHICS_DX12)
+// Each shader stage receives its own compact map into the persistent GPU heap.
+cbuffer GraphicsResourceIndices : register(b0, space1)
+{
+    uint4 GraphicsResourceIndex[32];
+}
+
+cbuffer GraphicsSamplerIndices : register(b1, space1)
+{
+    uint4 GraphicsSamplerIndex[4];
+}
+
+SamplerState GraphicsSampler(uint slot)
+{
+    uint index = GraphicsSamplerIndex[slot / 4][slot % 4];
+    return *DescriptorHandle<SamplerState>(uint2(index, 0));
+}
+
+#define GRAPHICS_SAMPLER(name, slot) \
+    SamplerState name() { return GraphicsSampler(slot); }
+
+T GraphicsResource<T : IOpaqueDescriptor>(uint slot)
+{
+    uint index = GraphicsResourceIndex[slot / 4][slot % 4];
+    return *DescriptorHandle<T>(uint2(NonUniformResourceIndex(index), 0));
+}
+
+struct GraphicsResourceArray<T : IOpaqueDescriptor>
+{
+    uint base;
+    __subscript(uint index) -> T
+    {
+        get { return GraphicsResource<T>(base + index); }
+    }
+}
+
+#define GRAPHICS_TEXTURE_2D(name, type, slot) \
+    Texture2D<type> name() { return GraphicsResource<Texture2D<type>>(slot); }
+#define GRAPHICS_TEXTURE_ARRAY(name, type, slot, count) \
+    static const GraphicsResourceArray<Texture2D<type>> name = {slot};
+#define GRAPHICS_STORAGE_BUFFER(name, type, slot) \
+    StructuredBuffer<type> name() { return GraphicsResource<StructuredBuffer<type>>(slot); }
+#else
+#define GRAPHICS_SAMPLER(name, slot) \
+    SamplerState name##Resource : register(s##slot); \
+    SamplerState name() { return name##Resource; }
+#define GRAPHICS_TEXTURE_2D(name, type, slot) \
+    Texture2D<type> name##Resource : register(t##slot); \
+    Texture2D<type> name() { return name##Resource; }
+#define GRAPHICS_TEXTURE_ARRAY(name, type, slot, count) \
+    Texture2D<type> name[count] : register(t##slot);
+#define GRAPHICS_STORAGE_BUFFER(name, type, slot) \
+    StructuredBuffer<type> name##Resource : register(t##slot); \
+    StructuredBuffer<type> name() { return name##Resource; }
+#endif
+
+#endif

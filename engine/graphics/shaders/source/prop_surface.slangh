@@ -1,0 +1,128 @@
+#include "resource_access.slangh"
+// Surface maps are linear data except base colour and emissive RGB, which
+// are uploaded as UNorm and explicitly decoded here. Alpha remains linear.
+GRAPHICS_TEXTURE_2D(SurfaceNormalTexture, float4, 4)
+GRAPHICS_TEXTURE_2D(SurfaceSpecularTexture, float4, 5)
+GRAPHICS_TEXTURE_2D(SurfaceEmissiveTexture, float4, 6)
+GRAPHICS_TEXTURE_2D(SurfaceRoughnessTexture, float4, 7)
+GRAPHICS_TEXTURE_2D(SurfaceMetallicTexture, float4, 8)
+GRAPHICS_TEXTURE_2D(SurfaceOcclusionTexture, float4, 9)
+GRAPHICS_TEXTURE_2D(SurfaceTeamTexture, float4, 10)
+
+float3 Surface_Linear(float3 color)
+{
+    return select(color<=.04045,color/12.92,pow(max((color+.055)/1.055,0),2.4));
+}
+float3 Surface_Encoded(float3 color)
+{
+    color=max(color,0);
+    return select(color<=.0031308,color*12.92,1.055*pow(color,1.0/2.4)-.055);
+}
+float3 Surface_Normalize(float3 vector,float3 fallback)
+{
+    const float squared=dot(vector,vector);
+    return squared>1e-12 ? vector*rsqrt(squared) : fallback;
+}
+float Surface_Channel(float4 value,uint channel)
+{
+    if (channel==0) return value.r;
+    if (channel==1) return value.g;
+    if (channel==2) return value.b;
+    return value.a;
+}
+float3 Surface_Normal(PropOutput input,float2 uv)
+{
+    const float3 normal=Surface_Normalize(input.normal,float3(0,0,1));
+    if ((SurfaceMaps&1u)==0) return normal;
+    float3 tangent=input.tangent.xyz-normal*dot(normal,input.tangent.xyz);
+    float handedness=input.tangent.w;
+    if (dot(tangent,tangent)<1e-10) {
+        const float3 dx=ddx(input.world_position),dy=ddy(input.world_position);
+        const float2 ux=ddx(uv),uy=ddy(uv);
+        const float determinant=ux.x*uy.y-ux.y*uy.x;
+        if (abs(determinant)<1e-10) return normal;
+        tangent=(dx*uy.y-dy*ux.y)/determinant;
+        const float3 bitangent=(dy*ux.x-dx*uy.x)/determinant;
+        tangent-=normal*dot(normal,tangent);
+        handedness=dot(cross(normal,tangent),bitangent)<0 ? -1 : 1;
+    }
+    tangent=Surface_Normalize(tangent,float3(1,0,0));
+    const float3 bitangent=cross(normal,tangent)*(handedness<0 ? -1 : 1);
+    float3 bump=SurfaceNormalTexture().Sample(BaseSampler(),uv).xyz*2-1;
+    bump.xy*=SurfaceNormalScale;
+    if (SurfaceNormalFlipGreen>.5) bump.y=-bump.y;
+    return Surface_Normalize(tangent*bump.x+bitangent*bump.y+normal*bump.z,normal);
+}
+
+float3 Surface_PBR(float3 albedo,float3 normal,float3 view,float3 light,float roughness,float metallic)
+{
+    const float3 half_vector=Surface_Normalize(view+light,normal);
+    const float nl=saturate(dot(normal,light)),nv=max(saturate(dot(normal,view)),.0001);
+    const float nh=saturate(dot(normal,half_vector)),vh=saturate(dot(view,half_vector));
+    const float alpha=max(roughness*roughness,.0025),a2=alpha*alpha;
+    const float denominator=nh*nh*(a2-1)+1;
+    const float distribution=a2/max(3.14159265*denominator*denominator,1e-7);
+    const float k=(roughness+1)*(roughness+1)/8;
+    const float geometry=(nv/(nv*(1-k)+k))*(nl/max(nl*(1-k)+k,.0001));
+    const float3 f0=lerp(float3(.04,.04,.04),albedo,metallic);
+    const float3 fresnel=f0+(1-f0)*pow(1-vh,5);
+    const float3 specular=distribution*geometry*fresnel/max(4*nv*nl,.0001);
+    return ((1-fresnel)*(1-metallic)*albedo/3.14159265+specular*SurfaceSpecularScale)*nl;
+}
+
+float4 Shade_Prop_Surface(PropOutput input, PropLightingData lighting)
+{
+    const float2 uv=Prop_Coordinate(0,input);
+    float4 base=Textured>.5 ? BaseTexture().Sample(BaseSampler(),uv) : float4(1,1,1,1);
+    if ((SurfaceMaps&64u)!=0 && SurfaceTeamColor.a>.5) {
+        const float mask=Surface_Channel(SurfaceTeamTexture().Sample(BaseSampler(),uv),SurfaceTeamChannel);
+        base.rgb=lerp(base.rgb,base.rgb*SurfaceTeamColor.rgb*SurfaceTeamMultiplier,saturate(mask));
+    }
+    const float3 albedo=Surface_Linear(base.rgb)*input.material_diffuse.rgb*input.color.rgb;
+    const float3 normal=Surface_Normal(input,uv);
+    const float3 view=Surface_Normalize(CameraPosition.xyz-input.world_position,normal);
+    float3 specular_mask=float3(1,1,1);
+    if ((SurfaceMaps&2u)!=0) {
+        const float4 sampled=SurfaceSpecularTexture().Sample(BaseSampler(),uv);
+        specular_mask=SurfaceSpecularChannel==4 ? sampled.rgb : Surface_Channel(sampled,SurfaceSpecularChannel).xxx;
+    }
+    float roughness=SurfaceRoughness,metallic=SurfaceMetallic,occlusion=1;
+    if ((SurfaceMaps&8u)!=0) roughness*=SurfaceRoughnessTexture().Sample(BaseSampler(),uv).r;
+    if ((SurfaceMaps&16u)!=0) metallic*=SurfaceMetallicTexture().Sample(BaseSampler(),uv).r;
+    if ((SurfaceMaps&32u)!=0) occlusion=lerp(1,SurfaceOcclusionTexture().Sample(BaseSampler(),uv).r,SurfaceOcclusionStrength);
+    roughness=clamp(roughness,.05,1); metallic=saturate(metallic);
+    float3 emission=input.material_emissive.rgb;
+    if ((SurfaceMaps&4u)!=0) emission+=Surface_Linear(SurfaceEmissiveTexture().Sample(BaseSampler(),uv).rgb);
+    float3 color=lighting.SceneAmbient.rgb*input.material_ambient.rgb*albedo*occlusion+emission*SurfaceEmissiveScale;
+    const float3 cloud_visibility=DirectionalVisibility(input.world_position);
+    for (uint index=0;index<4;++index) {
+        if (lighting.LightDirection[index].w<.5) continue;
+        float3 light=Surface_Normalize(lighting.LightDirection[index].xyz,normal);
+        float attenuation=1;
+        if (lighting.LightPosition[index].w>.5) {
+            const float3 delta=lighting.LightPosition[index].xyz-input.world_position;
+            const float distance=length(delta);
+            light=Surface_Normalize(delta,normal);
+            const float4 coefficients=lighting.LightAttenuation[index];
+            attenuation=1/max(coefficients.x+coefficients.y*distance+coefficients.z*distance*distance,.0001);
+            if (coefficients.w>0 && distance>coefficients.w) attenuation=0;
+            if (lighting.LightPosition[index].w>1.5) {
+                const float cosine=dot(-light,Surface_Normalize(lighting.LightDirection[index].xyz,normal));
+                const float inner=cos(.5*lighting.LightSpot[index].y),outer=cos(.5*lighting.LightSpot[index].z);
+                attenuation*=pow(saturate((cosine-outer)/max(inner-outer,.0001)),max(lighting.LightSpot[index].x,0));
+            }
+        }
+        const float3 visibility=lighting.LightPosition[index].w<.5 ? cloud_visibility : float3(1,1,1);
+        const float nl=saturate(dot(normal,light));
+        color+=attenuation*lighting.LightAmbient[index].rgb*input.material_ambient.rgb*albedo*occlusion;
+        if (SurfaceModel>1.5) {
+            color+=Surface_PBR(albedo,normal,view,light,roughness,metallic)*lighting.LightDiffuse[index].rgb*attenuation*visibility;
+        } else {
+            const float3 half_vector=Surface_Normalize(light+view,normal);
+            const float highlight=nl>0 ? pow(saturate(dot(normal,half_vector)),max(input.material_specular.w,1)) : 0;
+            color+=(albedo*nl*lighting.LightDiffuse[index].rgb+highlight*input.material_specular.rgb
+                *specular_mask*SurfaceSpecularScale*lighting.LightSpecular[index].rgb)*attenuation*visibility;
+        }
+    }
+    return float4(Surface_Encoded(color),base.a*input.color.a*input.material_diffuse.a);
+}
