@@ -243,8 +243,10 @@ Bool Keyboard::checkKeyRepeat()
 				for( index = 0; index< NUM_KEYS; index++ )
 					m_keyStatus[ index ].keyDownTimeMsec = now;
 
-				// Set repeated key so it will repeat again after the interval
-				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + Keyboard::KEY_REPEAT_INTERVAL_MSEC);
+				// Preserve the delay threshold while scheduling the next repeat after
+				// the interval.  Using '+' here leaves the key past the threshold and
+				// causes a repeat on every update once autorepeat begins.
+				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC - Keyboard::KEY_REPEAT_INTERVAL_MSEC);
 
 				retVal = TRUE;
 				break;  // exit for key

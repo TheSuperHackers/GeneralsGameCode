@@ -12,6 +12,8 @@
 
 #include <cstdint>
 
+#include <SDL3/SDL.h>
+
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetTextEntry.h"
@@ -255,13 +257,16 @@ bool Extract_Text_Entry(
 	}
 	cursor_x += text_visual.composite_cursor_width;
 
-	static Byte draw_count = 0;
 	GameWindow *parent = window->winGetParent();
 	if (parent != nullptr && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 		parent = nullptr;
+	// The caret is rendered every present, but its phase is wall-clock based.
+	// A render-frame counter makes the blink frequency change with uncapped FPS
+	// and is especially visible in text fields on high-refresh displays.
+	const Bool cursorVisible = (SDL_GetTicks() % 1000u) >= 500u;
 	text_visual.show_cursor = (window == TheWindowManager->winGetFocus()
 		|| (parent != nullptr && parent == TheWindowManager->winGetFocus()))
-		&& ((draw_count++ >> 3) & 0x1);
+		&& cursorVisible;
 	text_visual.cursor_rectangle = {
 		static_cast<float>(cursor_x), static_cast<float>(origin_y + 3),
 		static_cast<float>(cursor_x + 2), static_cast<float>(origin_y + size.y - 3)};
