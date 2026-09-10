@@ -93,7 +93,7 @@
 #endif
 
 #ifndef PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE
-#define PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE (1)
+#define PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 // Note: Retail compatibility must not be broken before this project officially does.
