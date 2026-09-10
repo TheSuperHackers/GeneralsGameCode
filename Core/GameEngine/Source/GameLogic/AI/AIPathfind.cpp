@@ -3882,8 +3882,8 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 		// check against the end lines.
 
 		Region2D cellBounds;
-		cellBounds.lo = topLeftCorner.xy();
-		cellBounds.hi = bottomRightCorner.xy();
+		cellBounds.lo = topLeftCorner.getXY();
+		cellBounds.hi = bottomRightCorner.getXY();
 
 #if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 		if (m_bridge->isCellOnEnd(&cellBounds)) {
@@ -10441,8 +10441,8 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 
 		for( node = pathToAvoid->getFirstNode(); node && node->getNextOptimized(); node = node->getNextOptimized() )	{
 			Coord2D start, end;
-			start = node->getPosition()->xy();
-			end = node->getNextOptimized()->getPosition()->xy();
+			start = node->getPosition()->getXY();
+			end = node->getNextOptimized()->getPosition()->getXY();
 			if (LineInRegion(&start, &end, &bounds)) {
 				overlap = true;
 				break;
@@ -10452,8 +10452,8 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 		if (!overlap && pathToAvoid2) {
 			for( node = pathToAvoid2->getFirstNode(); node && node->getNextOptimized(); node = node->getNextOptimized() )	{
 				Coord2D start, end;
-				start = node->getPosition()->xy();
-				end = node->getNextOptimized()->getPosition()->xy();
+				start = node->getPosition()->getXY();
+				end = node->getNextOptimized()->getPosition()->getXY();
 				if (LineInRegion(&start, &end, &bounds)) {
 					overlap = true;
 					break;

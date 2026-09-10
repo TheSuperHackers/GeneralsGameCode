@@ -565,7 +565,7 @@ struct Coord3D
 {
 	Real x, y, z;
 
-	Coord2D xy() const
+	Coord2D getXY() const
 	{
 		const Coord2D xy = { x, y };
 		return xy;
@@ -703,7 +703,7 @@ struct ICoord3D
 {
 	Int x, y, z;
 
-	ICoord2D xy() const
+	ICoord2D getXY() const
 	{
 		const ICoord2D xy = { x, y };
 		return xy;

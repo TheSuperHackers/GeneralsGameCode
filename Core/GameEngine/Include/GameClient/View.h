@@ -197,7 +197,7 @@ public:
 	void setPosition( const Coord3D &pos ) { m_pos = pos; }
 	void setPosition2D( const Coord2D &pos ) { m_pos.x = pos.x; m_pos.y = pos.y; }
 	const Coord3D &getPosition() const { return m_pos; } ///< Returns position camera is looking at
-	Coord2D getPosition2D() const { return m_pos.xy(); } ///< Returns position camera is looking at
+	Coord2D getPosition2D() const { return m_pos.getXY(); } ///< Returns position camera is looking at
 
 	virtual Coord3D get3DCameraPosition() const { Coord3D c={0,0,0}; return c; } ///< Returns the actual camera position
 	virtual Coord3D get3DCameraDirection() const { Coord3D c={0,0,0}; return c; } ///< Returns the actual camera view direction
