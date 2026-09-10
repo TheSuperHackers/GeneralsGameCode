@@ -890,22 +890,23 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				}
 			}
 
-			if ((DCGSource[pass] != VertexMaterialClass::MATERIAL) && (ColorArray[0] != nullptr)) {
-				VertexMaterialClass * prev_mtl = nullptr;
-				VertexMaterialClass * mtl = Peek_Material(0,pass);
-				for (int vidx=0; vidx<VertexCount; vidx++) {
-					mtl = Peek_Material(vidx,pass);
+			// Turn off lighting only for emissive-only materials using vertex colors.
+			if (!diffuse_used && !ambient_used && emissive_used &&
+				(DCGSource[pass] != VertexMaterialClass::MATERIAL) && (ColorArray[0] != nullptr))
+			{
+				VertexMaterialClass* prev_mtl = nullptr;
+				for (int vidx=0; vidx<VertexCount; vidx++)
+				{
+					VertexMaterialClass* mtl = Peek_Material(vidx,pass);
 					if (mtl == nullptr)
 					{
 						continue;
 					}
 
-					if (mtl != prev_mtl) {
+					if (mtl != prev_mtl)
+					{
 						prev_mtl = mtl;
-						// If only emissive is used apply emissive to color channel, set diffuse source to color 1, and turn off lighting
-						if (!diffuse_used && !ambient_used && emissive_used) {
-							mtl->Set_Lighting(false);
-						}
+						mtl->Set_Lighting(false);
 					}
 				}
 			}
