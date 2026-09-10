@@ -10,7 +10,6 @@
 #include "W3DDevice/Common/W3DModuleFactory.h"
 #include "W3DDevice/GameLogic/W3DGameLogic.h"
 #include "W3DDevice/GameClient/W3DGameClient.h"
-#include "W3DDevice/GameClient/W3DWebBrowser.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DRadar.h"
 #include "W3DDevice/Common/W3DThingFactory.h"
@@ -46,7 +45,6 @@ protected:
 	ArchiveFileSystem *createArchiveFileSystem() override { return NEW SDL3BIGFileSystem; }
 	NetworkInterface *createNetwork() { return NetworkInterface::createNetwork(); }
 	Radar *createRadar(Bool) override { return NEW W3DRadar; }
-	WebBrowser *createWebBrowser() override { return NEW CComObject<W3DWebBrowser>; }
 	ParticleSystemManager *createParticleSystemManager(Bool dummy) override
 	{
 		if (dummy)

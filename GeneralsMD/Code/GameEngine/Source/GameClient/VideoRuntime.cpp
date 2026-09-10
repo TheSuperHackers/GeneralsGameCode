@@ -18,7 +18,7 @@ import Graphics.Video.Renderer;
 #include "Common/FileSystem.h"
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "XAudio2AudioDevice/AudioEngine.h"
 #include "XAudio2AudioDevice/core/AudioStream.h"
 #include "XAudio2AudioDevice/core/AudioSystem.h"
@@ -230,7 +230,7 @@ File *Open_Movie_File(const AsciiString &movie_title)
 		return nullptr;
 
 	const std::string file_name = Movie_File_Name(movie_title);
-	const std::string localized_path = std::string("Data/") + GetRegistryLanguage().str()
+	const std::string localized_path = std::string("Data/") + GetGameLanguage().str()
 		+ "/Movies/" + file_name;
 	const std::string game_path = std::string("Data\\Movies\\") + file_name;
 	const std::string mod_path = TheGlobalData != nullptr && TheGlobalData->m_modDir.isNotEmpty()

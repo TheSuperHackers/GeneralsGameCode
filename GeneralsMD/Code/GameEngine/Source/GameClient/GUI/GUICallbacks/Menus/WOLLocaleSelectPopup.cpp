@@ -134,7 +134,6 @@ WindowMsgHandledType WOLLocaleSelectInput( GameWindow *window, UnsignedInt msg,
 	return MSG_IGNORED;
 }
 
-//Int getRegistryNicknameOffset(AsciiString nick); /// @todo: mdc remove this once we can save ini pref files
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------

@@ -160,8 +160,6 @@ if(WIN32)
         MPU.h
         rcfile.cpp
         rcfile.h
-        registry.cpp
-        registry.h
         verchk.cpp
         verchk.h
         WWCOMUtil.cpp

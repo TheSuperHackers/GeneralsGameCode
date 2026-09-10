@@ -118,29 +118,9 @@ bool Prepare_Directories(const char *rootdir, const char *filename);
 //
 static bool Use_Non_Blocking_Mode()
 {
-	HKEY regKey;
-	LONG regRetval;
-	DWORD bufsiz=0;
-	DWORD type=0;
-	DWORD value=0;
-
-
-	// Try and open the named key
-	regRetval=RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\Westwood\\Earth And Beyond Beta 2",0,KEY_READ,&regKey);
-	if (regRetval!=ERROR_SUCCESS)
-		return(TRUE);		// default TRUE
-
-	// Fetch the flag
-	bufsiz=sizeof(value);
-	type=REG_DWORD;
-	regRetval=RegQueryValueEx(regKey, "UseNonBlockingFTP", nullptr, &type, (BYTE*) &value, &bufsiz);
-
-	RegCloseKey(regKey);
-
-	if ((regRetval!=ERROR_SUCCESS) || (type != REG_DWORD))
-		return(TRUE);
-
-	return bool(value);
+	// The old override was for an unrelated Earth & Beyond installation.
+	// GeneralsMD always uses non-blocking FTP.
+	return true;
 }
 
 
@@ -1685,7 +1665,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 // Do we have this file in the download directory?  If so then it's a partial download.
 //
 //
-HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRoot )
+HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR /*unusedDownloadMetadata*/ )
 {
 	char downloadfilename[256];
 	GetDownloadFilename(szLocalFileName, downloadfilename, ARRAY_SIZE(downloadfilename));
@@ -1704,89 +1684,6 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 	return( m_iFilePos );
 }
 
-/*************8
-	FILE * testfp;
-	HKEY hkey;
-	unsigned char regfilename[ 256 ];
-	char regkey[ 512 ];
-	unsigned long t1, t2;
-
-	if( ( szRegistryRoot == nullptr ) || ( szLocalFileName == nullptr ) )
-	{
-		// Bail out
-		return( 0 );
-	}
-
-	// Concatenate the registry key together
-
-	strlcpy(regkey, szRegistryRoot, ARRAY_SIZE(regkey));
-	if( regkey[ strlen( regkey ) - 1 ] != '\\' )
-	{
-		strlcat(regkey, "\\Download", ARRAY_SIZE(regkey));
-	}
-	else
-	{
-		strlcat(regkey, "Download", ARRAY_SIZE(regkey));
-	}
-
-	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey,
-		0, KEY_ALL_ACCESS, &hkey ) != ERROR_SUCCESS )
-	{
-		// Key doesn't exist, create it
-		if( RegCreateKey( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey,
-			&hkey ) != ERROR_SUCCESS )
-		{
-			// Error, bail out
-			return( 0 );
-		}
-
-		RegSetValueEx( hkey, (LPCTSTR)"File", 0, REG_SZ, (const unsigned char *)szLocalFileName, strlen( szLocalFileName ) + 1 );
-		RegCloseKey(hkey);
-
-		return( 0 );
-	}
-
-	t2 = 256;
-
-	if( RegQueryValueEx( hkey, (LPCTSTR)"File", 0, &t1, regfilename, &t2 ) != ERROR_SUCCESS )
-	{
-		RegSetValueEx( hkey, (LPCTSTR)"File", 0, REG_SZ, (const unsigned char *)szLocalFileName, strlen( szLocalFileName ) + 1 );
-		RegCloseKey(hkey);
-		return( 0 );
-	}
-
-	if( strcmp( szLocalFileName, (const char *)regfilename ) == 0 )
-	{
-		// File previously downloaded
-		testfp = fopen( FTP_TEMPFILENAME, "rb" );
-
-		if( testfp == nullptr )
-		{
-			m_iFilePos = 0;
-			RegCloseKey(hkey);
-			return 0;
-		}
-
-		fseek( testfp, 0, SEEK_END );
-
-		m_iFilePos = ftell( testfp );
-
-		fclose( testfp );
-
-		RegCloseKey(hkey);
-		return( m_iFilePos );
-	}
-
-	// Download file doesn't exist
-	RegSetValueEx( hkey, (LPCTSTR)"File", 0, REG_SZ, (const unsigned char *)szLocalFileName, strlen( szLocalFileName ) + 1 );
-	RegCloseKey(hkey);
-
-	// get rid of any temp downloads
-	_unlink(FTP_TEMPFILENAME);
-
-	return( 0 );
-}
-**************************************/
 
 
 

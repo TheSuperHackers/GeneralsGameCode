@@ -11,7 +11,7 @@ import Assets.Importers.Models;
 import Assets.Runtime;
 
 #include "Common/FileSystem.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 #ifdef _WIN32
 #include "Win32Device/FontSource.h"
@@ -83,7 +83,7 @@ std::vector<std::byte> Read_Font_Source(const Assets::AssetIdentity &identity)
 	const std::size_t width_start = identity.canonical_name.find('/', size_end + 1);
 	const bool bold = identity.canonical_name.substr(size_end + 1, width_start - size_end - 1) == "1";
 	const std::string weight_suffix = bold ? " Bold" : "";
-	const std::string language_directory = std::string("Data/") + GetRegistryLanguage().str() + "/Language/";
+	const std::string language_directory = std::string("Data/") + GetGameLanguage().str() + "/Language/";
 	const std::array<std::string, 8> candidates = {
 		family + weight_suffix + ".ttf",
 		family + weight_suffix + ".otf",

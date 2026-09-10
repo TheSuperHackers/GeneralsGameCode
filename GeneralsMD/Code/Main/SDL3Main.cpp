@@ -46,7 +46,6 @@
 #include "Common/GameMemory.h"
 #include "Common/MessageStream.h"
 #include "Common/PlayerList.h"
-#include "Common/Registry.h"
 #include "Common/Team.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/ControlBar.h"

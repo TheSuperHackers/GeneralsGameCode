@@ -107,16 +107,12 @@ public:
 		PSREQUEST_READPLAYERSTATS,			// read stats for a player
 		PSREQUEST_UPDATEPLAYERSTATS,		// update stats on the server
 		PSREQUEST_UPDATEPLAYERLOCALE,		// update locale on the server
-		PSREQUEST_READCDKEYSTATS,				// read stats for a cdkey
 		PSREQUEST_SENDGAMERESTOGAMESPY,	// report game results to GameSpy
 		PSREQUEST_MAX
 	} requestType;
 
 	// player stats for the *PLAYERSTATS
 	PSPlayerStats player;
-
-	// cdkey for READCDKEYSTATS;
-	std::string cdkey;
 
 	// our info for UPDATEPLAYERSTATS
 	std::string nick;
@@ -140,15 +136,12 @@ public:
 	{
 		PSRESPONSE_PLAYERSTATS,
 		PSRESPONSE_COULDNOTCONNECT,
-		PSRESPONSE_PREORDER,
 		PSRESPONSE_MAX
 	} responseType;
 
 	// player stats for the *PLAYERSTATS
 	PSPlayerStats player;
 
-	// preorder flag
-	Bool preorder;
 };
 
 //-------------------------------------------------------------------------

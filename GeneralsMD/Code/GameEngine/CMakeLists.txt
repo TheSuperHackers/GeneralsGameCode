@@ -94,8 +94,8 @@ set(GAMEENGINE_SRC
 #    Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
-    Include/Common/Registry.h
     Include/Common/ResourceGatheringManager.h
+    Include/Common/RuntimeConfig.h
     Include/Common/Science.h
     Include/Common/ScopedMutex.h
     Include/Common/ScoreKeeper.h
@@ -543,8 +543,6 @@ set(GAMEENGINE_SRC
 #    Include/GameNetwork/Transport.h
 #    Include/GameNetwork/udp.h
 #    Include/GameNetwork/User.h
-#    Include/GameNetwork/WOLBrowser/FEBDispatch.h
-#    Include/GameNetwork/WOLBrowser/WebBrowser.h
 #    Include/Precompiled/PreRTS.h
 #    Source/Common/Audio/AudioEventRTS.cpp
 #    Source/Common/Audio/AudioRequest.cpp
@@ -593,7 +591,6 @@ set(GAMEENGINE_SRC
 #    Source/Common/INI/INIUpgrade.cpp
 #    Source/Common/INI/INIWater.cpp
 #    Source/Common/INI/INIWeapon.cpp
-#    Source/Common/INI/INIWebpageURL.cpp
 #    Source/Common/Language.cpp
 #    Source/Common/MessageStream.cpp
 #    Source/Common/MiniLog.cpp
@@ -649,7 +646,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/QuotedPrintable.cpp
 #    Source/Common/System/Radar.cpp
 #    Source/Common/System/RAMFile.cpp
-    Source/Common/System/registry.cpp
     Source/Common/System/SaveGame/GameState.cpp
     Source/Common/System/SaveGame/GameStateMap.cpp
 #    Source/Common/System/Snapshot.cpp
@@ -1123,7 +1119,6 @@ set(GAMEENGINE_SRC
 #    Source/GameNetwork/Transport.cpp
 #    Source/GameNetwork/udp.cpp
 #    Source/GameNetwork/User.cpp
-#    Source/GameNetwork/WOLBrowser/WebBrowser.cpp
 #    Source/Precompiled/PreRTS.cpp
 )
 
@@ -1154,6 +1149,7 @@ set_property(TARGET z_gameengine PROPERTY ENGINE_NAVIGATION_EXTRACTED TRUE)
 
 target_sources(z_gameengine PRIVATE
     ${GAMEENGINE_SRC}
+    Source/Common/RuntimeModule.cpp
     ../../../Core/GameEngineDevice/Source/SDL3Device/Common/SDL3GameEngine.cpp
     ../../../Generals/Code/Main/Platform/SDLPlatformWindow.cpp
 )
@@ -1172,6 +1168,7 @@ target_include_directories(z_gameengine PRIVATE
 target_link_libraries(z_gameengine PRIVATE
     corei_gameengine_private
     zi_always
+    shell32
     SDL3::SDL3
 )
 

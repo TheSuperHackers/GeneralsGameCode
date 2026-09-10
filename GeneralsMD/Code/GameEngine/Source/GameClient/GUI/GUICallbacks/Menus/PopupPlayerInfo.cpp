@@ -58,9 +58,6 @@
 #include "GameNetwork/GameSpy/GSConfig.h"
 #include "GameNetwork/GameSpy/LobbyUtils.h"
 
-#include "WWDownload/Registry.h"
-
-
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
 static NameKeyType parentID = NAMEKEY_INVALID;
@@ -1116,21 +1113,6 @@ void HandlePersistentStorageResponses()
 					// message box & hide the window
 					GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:PSCannotConnect"), nullptr);
 					GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
-				}
-				break;
-			case PSResponse::PSRESPONSE_PREORDER:
-				{
-					if (resp.preorder)
-					{
-						SetUnsignedIntInRegistry("", "Preorder", 1);
-						TheGameSpyInfo->markPlayerAsPreorder( TheGameSpyInfo->getLocalProfileID() );
-
-						// force an update of our shtuff
-						PSResponse newResp;
-						newResp.responseType = PSResponse::PSRESPONSE_PLAYERSTATS;
-						newResp.player = TheGameSpyPSMessageQueue->findPlayerStatsByID(TheGameSpyInfo->getLocalProfileID());
-						TheGameSpyPSMessageQueue->addResponse(newResp);
-					}
 				}
 				break;
 			case PSResponse::PSRESPONSE_PLAYERSTATS:

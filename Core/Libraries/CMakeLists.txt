@@ -7,6 +7,4 @@ add_subdirectory(Source/profile)
 # debugging library
 add_subdirectory(Source/debug)
 
-add_subdirectory(Source/EABrowserDispatch)
-add_subdirectory(Source/EABrowserEngine)
 add_subdirectory(Source/Compression)

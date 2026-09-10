@@ -31,14 +31,6 @@
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
-enum SerialAuthResult CPP_11(: Int)
-{
-	SERIAL_NONEXISTENT,
-	SERIAL_AUTHFAILED,
-	SERIAL_BANNED,
-	SERIAL_OK
-};
-
 // this class encapsulates a request for the peer thread
 class PeerRequest
 {
@@ -187,9 +179,6 @@ enum DisconnectReason CPP_11(: Int)
 	DISCONNECT_GP_LOGIN_PROFILE_DELETED,
 	DISCONNECT_GP_LOGIN_CONNECTION_FAILED,
 	DISCONNECT_GP_LOGIN_SERVER_AUTH_FAILED,
-	DISCONNECT_SERIAL_INVALID,
-	DISCONNECT_SERIAL_NOT_PRESENT,
-	DISCONNECT_SERIAL_BANNED,
 	DISCONNECT_GP_NEWUSER_BAD_NICK,
 	DISCONNECT_GP_NEWUSER_BAD_PASSWORD,
 	DISCONNECT_GP_NEWPROFILE_BAD_NICK,
@@ -377,8 +366,6 @@ public:
 
 	virtual void addResponse( const PeerResponse& resp ) = 0;
 	virtual Bool getResponse( PeerResponse& resp ) = 0;
-
-	virtual SerialAuthResult getSerialAuthResult() = 0;
 
 	static GameSpyPeerMessageQueueInterface* createNewMessageQueue();
 };

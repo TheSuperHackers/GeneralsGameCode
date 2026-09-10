@@ -33,7 +33,6 @@
 
 #include <fcntl.h>
 
-//#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
 #include "Common/version.h"
 #include "GameClient/GameText.h"
@@ -51,7 +50,6 @@
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
 
-#include "WWDownload/Registry.h"
 #include "WWDownload/urlBuilder.h"
 
 
@@ -156,17 +154,6 @@ static Bool hasWriteAccess()
 
 	_close(handle);
 	remove(filename);
-
-	unsigned int val;
-	if (!GetUnsignedIntFromRegistry("", "Version", val))
-	{
-		return false;
-	}
-
-	if (!SetUnsignedIntInRegistry("", "Version", val))
-	{
-		return false;
-	}
 
 	return true;
 }
@@ -480,7 +467,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 	// we need to download the MOTD again
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
-	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
+	FormatURL(gameURL, mapURL, configURL, motdURL);
 	ghttpGet( configURL.c_str(), GHTTPFalse, configCallback, param );
 
 	return GHTTPTrue;
@@ -852,7 +839,7 @@ static void reallyStartPatchCheck()
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
 
-	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
+	FormatURL(gameURL, mapURL, configURL, motdURL);
 
 	// check for a patch first
 	DEBUG_LOG(("Game patch check: [%s]", gameURL.c_str()));

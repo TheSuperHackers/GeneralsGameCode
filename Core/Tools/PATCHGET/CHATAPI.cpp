@@ -38,7 +38,7 @@
 #include "WINBLOWS.h"
 #include <crtdbg.h>
 #include "process.h"
-#include "WWDownload/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "WWDownload/urlBuilder.h"
 #include "debug.h"
 
@@ -449,7 +449,7 @@ static void StartPatchCheck()
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
 
-	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
+	FormatURL(gameURL, mapURL, configURL, motdURL);
 
 	// check for a patch first
 	checksLeft = 2;
@@ -680,79 +680,8 @@ int main(int argc, char *argv[])
   DispatchEvents();  // process some win messages
 	*/
 
-/*
-  // Check if they've registered before, if not ask them if they want to
-  bool have_registered=false;
-  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,REGISTER_REG_KEY,0,KEY_READ,&rKey)==ERROR_SUCCESS)
-  {
-    char username[64];
-    valuesize=sizeof(username);
-    if (RegQueryValueEx(rKey,"UserName",nullptr,&type,(uint8 *)username,&valuesize)==ERROR_SUCCESS)
-      have_registered=true;
-    RegCloseKey(rKey);
-  }
-  if (!have_registered)
-  {
-    if (RegOpenKeyEx(HKEY_CLASSES_ROOT,NICK_REG_KEY,0,KEY_READ,&rKey)==ERROR_SUCCESS)
-    {
-      have_registered=true;
-      RegCloseKey(rKey);
-    }
-  }
-
-  if (!have_registered)
-  {
-    if (MessageBox(nullptr,Fetch_String(TXT_REGNOW),Fetch_String(TXT_TITLE),MB_YESNO)==IDNO)
-      have_registered=true;  // pretend they've alredy registered
-  }
-
-  if (!have_registered)
-  {
-    // figure out where the registration app is installed & launch it, continue
-    //    after it exits.
-    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,REGISTER_REG_APP,0,KEY_READ,&rKey)==ERROR_SUCCESS)
-    {
-      char regapp[300];
-      valuesize=sizeof(regapp);
-      if ((RegQueryValueEx(rKey,"InstallPath",nullptr,&type,(uint8 *)regapp,&valuesize)==ERROR_SUCCESS)&&
-             (strlen(regapp) > 8))
-      {
-        // Launch the process
-        SHELLEXECUTEINFO info;
-        memset(&info,0,sizeof(info));
-        info.cbSize=sizeof(info);
-        info.fMask=SEE_MASK_NOCLOSEPROCESS;
-        info.hwnd=g_PrimaryWindow;
-        info.lpVerb=nullptr;
-        info.lpFile=regapp;
-        info.lpParameters=nullptr;
-        info.lpDirectory=".";
-        info.nShow=SW_SHOW;
-        ShellExecuteEx(&info);
-
-        // Can't wait infinite or the other process will never create its window
-        //   Only Bill himself knows why this is happening
-        while(1)  // Wait for completion
-        {
-          DispatchEvents();
-          if (WaitForSingleObject(info.hProcess,500)!=WAIT_TIMEOUT)
-            break;
-        }
-      }
-      RegCloseKey(rKey);
-    }
-  }
-  // OK, done with that crap go on to the task at hand now....
-*/
-
-
-  // Find the game version
-  g_AppVer = -1;
-	if (!GetUnsignedIntFromRegistry("", "Version", g_AppVer))
-	{
-    MessageBox(g_PrimaryWindow,Fetch_String(TXT_INSTALL_PROBLEM),Fetch_String(TXT_ERROR),MB_OK);
-    exit(0);
-	}
+// Find the game version
+  g_AppVer = GetGameVersion();
   // OK, have the current game version now
 
   g_PrimaryWindow=CreatePrimaryWin();  // Create the main window

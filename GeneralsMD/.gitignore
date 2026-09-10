@@ -36,9 +36,6 @@ Max4Hybrid
 /Code/gameenginedevice/Lib/GameEngineDeviceProfile.lib
 /Code/Libraries/Lib/Benchmark.lib
 /Code/Libraries/Lib/BenchmarkD.lib
-/Code/Libraries/Lib/EABrowserDispatch.lib
-/Code/Libraries/Lib/EABrowserDispatchD.lib
-/Code/Libraries/Lib/EABrowserDispatchI.lib
 /Code/Libraries/Lib/GameSpyHTTP.lib
 /Code/Libraries/Lib/GameSpyHTTPDebug.lib
 /Code/Libraries/Lib/GameSpyHTTPInternal.lib
@@ -98,9 +95,6 @@ Max4Hybrid
 /Code/Libraries/Lib/WWUtilProfile.lib
 
 # Generated files
-BrowserDispatch_i.c
-BrowserDispatch.h
-BrowserDispatch.tlb
 generatedVersion.h
 
 # Generated shader headers

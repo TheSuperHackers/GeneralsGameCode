@@ -581,8 +581,14 @@ Bool AsciiString::isNone() const
 //-----------------------------------------------------------------------------
 Bool AsciiString::nextToken(AsciiString* tok, const char* seps)
 {
-	if (this->isEmpty() || tok == this)
+	if (tok == this)
 		return false;
+
+	if (this->isEmpty())
+	{
+		tok->clear();
+		return false;
+	}
 
 	if (seps == nullptr)
 		seps = " \n\r\t";

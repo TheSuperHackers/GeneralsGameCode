@@ -103,7 +103,7 @@ public:
 
 	HRESULT FindFile( LPCSTR szRemoteFileName, int * piSize );
 
-	HRESULT FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRoot );
+	HRESULT FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR unusedDownloadMetadata );
 	HRESULT RestartFrom( int i ) { m_iFilePos = i; return FTP_SUCCEEDED;  };
 
 	HRESULT GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead );

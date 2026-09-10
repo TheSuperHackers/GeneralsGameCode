@@ -54,7 +54,7 @@
 
 #include "Common/AddonCompat.h"
 #include "Common/INI.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "Common/FileSystem.h"
 #include "Common/OptionPreferences.h"
 
@@ -150,7 +150,7 @@ void GlobalLanguage::init()
 {
 	{
 		AsciiString fname;
-		fname.format("Data\\%s\\Language", GetRegistryLanguage().str());
+		fname.format("Data\\%s\\Language", GetGameLanguage().str());
 
 		INI ini;
 		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );

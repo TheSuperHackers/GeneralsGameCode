@@ -6,8 +6,6 @@ set(WWDOWNLOAD_SRC
     FTP.cpp
     ftp.h
     ftpdefs.h
-    registry.cpp
-    Registry.h
     urlBuilder.cpp
     urlBuilder.h
 )

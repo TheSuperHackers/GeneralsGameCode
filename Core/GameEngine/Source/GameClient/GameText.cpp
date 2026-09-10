@@ -47,7 +47,7 @@
 
 #include "GameClient/GameText.h"
 #include "Common/Language.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "GameClient/LanguageFilter.h"
 #include "Common/Debug.h"
 #include "Common/UnicodeString.h"
@@ -287,7 +287,7 @@ extern const Char *g_csfFile;
 void GameTextManager::init()
 {
 	AsciiString csfFile;
-	csfFile.format(g_csfFile, GetRegistryLanguage().str());
+	csfFile.format(g_csfFile, GetGameLanguage().str());
 	Int format;
 
 	if ( m_initialized )

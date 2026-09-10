@@ -9,8 +9,6 @@ set(PATCHGET_SRC
     "DownloadManager.h"
     "PROCESS.cpp"
     "PROCESS.h"
-    "registry.cpp"
-    "Registry.h"
     "RESOURCE.h"
     "WINBLOWS.cpp"
     "WINBLOWS.h"

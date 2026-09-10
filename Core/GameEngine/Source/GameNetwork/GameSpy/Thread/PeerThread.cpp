@@ -31,7 +31,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
 #include "GameNetwork/IPEnumeration.h"
@@ -148,9 +148,6 @@ public:
 	virtual void addResponse( const PeerResponse& resp ) override;
 	virtual Bool getResponse( PeerResponse& resp ) override;
 
-	virtual SerialAuthResult getSerialAuthResult() override { return m_serialAuth; }
-	void setSerialAuthResult( SerialAuthResult result ) { m_serialAuth = result; }
-
 	PeerThreadClass* getThread();
 
 private:
@@ -160,7 +157,6 @@ private:
 	ResponseQueue m_responses;
 	PeerThreadClass *m_thread;
 
-	SerialAuthResult m_serialAuth;
 };
 
 GameSpyPeerMessageQueueInterface* GameSpyPeerMessageQueueInterface::createNewMessageQueue()
@@ -532,7 +528,6 @@ static void joinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result,
 GameSpyPeerMessageQueue::GameSpyPeerMessageQueue()
 {
 	m_thread = nullptr;
-	m_serialAuth = SERIAL_OK;
 }
 
 GameSpyPeerMessageQueue::~GameSpyPeerMessageQueue()
@@ -1060,66 +1055,6 @@ static void NewPlayerListCallback
 	DEBUG_LOG(("NewPlayerListCallback"));
 }
 
-static void AuthenticateCDKeyCallback
-(
-	PEER peer,
-	int result,
-	const char * message,
-	void * param
-)
-{
-	DEBUG_LOG(("CD Key Result: %s (%d) %X", message, result, param));
-#ifdef SERVER_DEBUGGING
-	CheckServers(peer);
-#endif // SERVER_DEBUGGING
-	SerialAuthResult *val = (SerialAuthResult *)param;
-	if (val)
-	{
-		if (result >= 1)
-		{
-			*val = SERIAL_OK;
-		}
-		else
-		{
-			*val = SERIAL_AUTHFAILED;
-		}
-	}
-#ifdef SERVER_DEBUGGING
-	CheckServers(peer);
-#endif // SERVER_DEBUGGING
-}
-
-static SerialAuthResult doCDKeyAuthentication( PEER peer )
-{
-	SerialAuthResult retval = SERIAL_NONEXISTENT;
-	if (!peer)
-		return retval;
-
-	AsciiString s;
-	if (GetStringFromRegistry("\\ergc", "", s) && s.isNotEmpty())
-	{
-#ifdef SERVER_DEBUGGING
-		DEBUG_LOG(("Before peerAuthenticateCDKey()"));
-		CheckServers(peer);
-#endif // SERVER_DEBUGGING
-		peerAuthenticateCDKey(peer, s.str(), AuthenticateCDKeyCallback, &retval, PEERTrue);
-#ifdef SERVER_DEBUGGING
-		DEBUG_LOG(("After peerAuthenticateCDKey()"));
-		CheckServers(peer);
-#endif // SERVER_DEBUGGING
-	}
-
-	if (retval == SERIAL_OK)
-	{
-		PSRequest req;
-		req.requestType = PSRequest::PSREQUEST_READCDKEYSTATS;
-		req.cdkey = s.str();
-		TheGameSpyPSMessageQueue->addRequest(req);
-	}
-
-	return retval;
-}
-
 #define INBUF_LEN 256
 void checkQR2Queries( PEER peer, SOCKET sock )
 {
@@ -1318,7 +1253,7 @@ void PeerThreadClass::Thread_Function()
 
 	// Set the title.
 	/////////////////
-	if(!peerSetTitle( peer , gameName, secretKey, gameName, secretKey, GetRegistryVersion(), 30, PEERTrue, pingRooms, crossPingRooms))
+	if(!peerSetTitle( peer , gameName, secretKey, gameName, secretKey, GetGameVersion(), 30, PEERTrue, pingRooms, crossPingRooms))
 	{
 		DEBUG_CRASH(("Error setting title"));
 		peerShutdown( peer );
@@ -1374,16 +1309,6 @@ void PeerThreadClass::Thread_Function()
 				DEBUG_LOG(("After peerConnect()"));
 				CheckServers(peer);
 #endif // SERVER_DEBUGGING
-				if (m_isConnected)
-				{
-					SerialAuthResult ret = doCDKeyAuthentication( peer );
-					if (ret != SERIAL_OK)
-					{
-						m_isConnecting = m_isConnected = false;
-						MESSAGE_QUEUE->setSerialAuthResult( ret );
-						peerDisconnect( peer );
-					}
-				}
 				m_isConnecting = false;
 
 				// check our connection
@@ -2355,19 +2280,6 @@ void disconnectedCallback(PEER peer, const char * reason, void * param)
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_DISCONNECT;
 	resp.discon.reason = DISCONNECT_LOSTCON;
-	SerialAuthResult res = TheGameSpyPeerMessageQueue->getSerialAuthResult();
-	switch (res)
-	{
-		case SERIAL_NONEXISTENT:
-			resp.discon.reason = DISCONNECT_SERIAL_NOT_PRESENT;
-			break;
-		case SERIAL_AUTHFAILED:
-			resp.discon.reason = DISCONNECT_SERIAL_INVALID;
-			break;
-		case SERIAL_BANNED:
-			resp.discon.reason = DISCONNECT_SERIAL_BANNED;
-			break;
-	}
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 

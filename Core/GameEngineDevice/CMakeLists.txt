@@ -88,7 +88,6 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/WaterSkyboxSystem.h
     Include/W3DDevice/GameClient/W3DWaterTracks.h
 #    Include/W3DDevice/GameClient/W3DWaypointBuffer.h
-#    Include/W3DDevice/GameClient/W3DWebBrowser.h
     Include/W3DDevice/GameClient/WorldHeightMap.h
 #    Include/W3DDevice/GameLogic/W3DGameLogic.h
 #    Include/W3DDevice/GameLogic/W3DGhostObject.h
@@ -189,7 +188,6 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DView.cpp
     Source/W3DDevice/GameClient/W3DScreenshot.cpp
 #    Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
-#    Source/W3DDevice/GameClient/W3DWebBrowser.cpp
     Source/W3DDevice/GameClient/Water/W3DWater.cpp
     Source/W3DDevice/GameClient/Water/WaterInteractionInputs.cpp
     Source/W3DDevice/GameClient/WaterResources.cpp

@@ -28,7 +28,6 @@
 
 #include "Common/crc.h"
 #include "Common/GameState.h"
-#include "Common/Registry.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/networkutil.h"
 #include "Common/GlobalData.h"
@@ -641,9 +640,9 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 	msg.GameToJoin.exeCRC = TheGlobalData->m_exeCRC;
 	msg.GameToJoin.iniCRC = TheGlobalData->m_iniCRC;
 
-	AsciiString s;
-	GetStringFromRegistry("\\ergc", "", s);
-	strlcpy(msg.GameToJoin.serial, s.str(), ARRAY_SIZE(msg.GameToJoin.serial));
+	// The serial field remains in the wire message for compatibility, but is
+	// intentionally empty because LAN games no longer use CD keys.
+	msg.GameToJoin.serial[0] = '\0';
 
 	sendMessage(&msg, ip);
 

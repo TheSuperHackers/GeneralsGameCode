@@ -67,7 +67,6 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/GUIUtil.h"
 #include "GameNetwork/IPEnumeration.h"
-#include "WWDownload/Registry.h"
 
 
 SkirmishGameInfo *TheSkirmishGameInfo = nullptr;
@@ -1309,13 +1308,6 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	ParseAsciiStringToGameInfo(TheSkirmishGameInfo, prefs.getSlotList());
 	TheSkirmishGameInfo->setSeed(GetTickCount());
 
-	UnsignedInt isPreorder = 0;
-	GetUnsignedIntFromRegistry("", "Preorder", isPreorder);
-	if (isPreorder != 0)
-	{
-		TheSkirmishGameInfo->markPlayerAsPreorder(0);
-	}
-
   TheSkirmishGameInfo->setStartingCash( prefs.getStartingCash() );
   TheSkirmishGameInfo->setSuperweaponRestriction( prefs.getSuperweaponRestricted() ? 1 : 0 );
 
@@ -2120,11 +2112,4 @@ void populateSkirmishBattleHonors()
 	}
 	*/
 
-	UnsignedInt isPreorder = 0;
-	GetUnsignedIntFromRegistry("", "Preorder", isPreorder);
-	if (isPreorder != 0)
-	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("OfficersClub"), TRUE,
-			BATTLE_HONOR_OFFICERSCLUB, row, column);
-	}
 }

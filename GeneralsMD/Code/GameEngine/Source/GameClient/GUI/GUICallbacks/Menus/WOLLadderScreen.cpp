@@ -36,18 +36,15 @@
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/MessageBox.h"
-#include "GameNetwork/WOLBrowser/WebBrowser.h"
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType parentWindowID = NAMEKEY_INVALID;
 static NameKeyType buttonBackID = NAMEKEY_INVALID;
-static NameKeyType windowLadderID = NAMEKEY_INVALID;
 
 
 // window pointers --------------------------------------------------------------------------------
 static GameWindow *parentWindow = nullptr;
 static GameWindow *buttonBack = nullptr;
-static GameWindow *windowLadder = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -60,20 +57,12 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 	// get ids for our children controls
 	parentWindowID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:LadderParent" );
 	buttonBackID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:ButtonBack" );
-	windowLadderID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:WindowLadder" );
 
 	parentWindow = TheWindowManager->winGetWindowFromId( nullptr, parentWindowID );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentWindow, buttonBackID );
-	windowLadder = TheWindowManager->winGetWindowFromId( parentWindow, windowLadderID );
 
 	//Load the listbox shiznit
 //	PopulateReplayFileListbox(listboxReplayFiles);
-
-	//TheWebBrowser->createBrowserWindow("Westwood", windowLadder);
-	if (TheWebBrowser != nullptr)
-	{
-		TheWebBrowser->createBrowserWindow("MessageBoard", windowLadder);
-	}
 
 	// show menu
 	layout->hide( FALSE );
@@ -88,11 +77,6 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void WOLLadderScreenShutdown( WindowLayout *layout, void *userData )
 {
-
-	if (TheWebBrowser != nullptr)
-	{
-		TheWebBrowser->closeBrowserWindow(windowLadder);
-	}
 
 	// hide menu
 	layout->hide( TRUE );

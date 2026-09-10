@@ -32,7 +32,6 @@
 
 #include "Common/crc.h"
 #include "Common/GameState.h"
-#include "Common/Registry.h"
 #include "Common/GlobalData.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
@@ -294,45 +293,6 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			}
 #endif
 #if defined(RTS_DEBUG)
-			}
-#endif
-
-// TheSuperHackers @tweak Disables the duplicate serial check
-#if 0
-			// check for a duplicate serial
-			AsciiString s;
-			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
-			{
-				LANGameSlot *slot = m_currentGame->getLANSlot(player);
-				s.clear();
-				if (player == 0)
-				{
-					GetStringFromRegistry("\\ergc", "", s);
-				}
-				else if (slot->isHuman())
-				{
-					s = slot->getSerial();
-					if (s.isEmpty())
-						s = "<Munkee>";
-				}
-
-				if (s.isNotEmpty())
-				{
-					DEBUG_LOG(("Checking serial '%s' in slot %d", s.str(), player));
-
-					if (!strncmp(s.str(), msg->GameToJoin.serial, g_maxSerialLength))
-					{
-						// serials match!  kick the punk!
-						reply.messageType = LANMessage::MSG_JOIN_DENY;
-						reply.GameNotJoined.reason = LANAPIInterface::RET_SERIAL_DUPE;
-						reply.GameNotJoined.gameIP = m_localIP;
-						reply.GameNotJoined.playerIP = senderIP;
-						canJoin = false;
-
-						DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of duplicate serial # (%s).", s.str()));
-						break;
-					}
-				}
 			}
 #endif
 

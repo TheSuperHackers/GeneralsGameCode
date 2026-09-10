@@ -18,5 +18,5 @@
 
 #pragma once
 
-void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
+void FormatURL( std::string& gamePatchURL, std::string& mapPatchURL,
 													 std::string& configURL, std::string& motdURL );

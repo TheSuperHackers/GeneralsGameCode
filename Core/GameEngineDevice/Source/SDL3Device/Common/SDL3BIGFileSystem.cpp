@@ -32,8 +32,8 @@ void SDL3BIGFileSystem::init()
 		return;
 
 	// SDL3LocalFileSystem roots relative paths at SDL_GetBasePath(), so the
-	// executable directory is the complete asset root. No registry lookup or
-	// second Win32 install path is needed.
+	// executable directory is the complete asset root. Preserve the original
+	// recursive archive discovery behavior without registry lookup.
 	loadBigFilesFromDirectory("", "*.big");
 }
 

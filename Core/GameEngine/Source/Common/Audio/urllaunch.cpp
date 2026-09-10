@@ -19,6 +19,8 @@
 
 #include "Common/urllaunch.h"
 
+#include <shellapi.h>
+
 #define FILE_PREFIX     L"file://"
 
 
@@ -123,216 +125,18 @@ HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL )
 
 
 ///////////////////////////////////////////////////////////////////////////////
-HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenCommand )
-{
-    LONG lResult;
-
-    HKEY hKey = nullptr;
-    HKEY hFileKey = nullptr;
-
-    BOOL fFoundExtensionCommand = FALSE;
-
-    do
-    {
-        //
-        // Look for the file type associated with .html files
-        //
-        TCHAR szFileType[ MAX_PATH ];
-
-        lResult = RegOpenKeyEx( HKEY_CLASSES_ROOT, _T( ".html" ), 0, KEY_READ, &hKey );
-
-        if( ERROR_SUCCESS != lResult )
-        {
-            break;
-        }
-
-        DWORD dwLength = sizeof( szFileType );
-
-        lResult = RegQueryValueEx( hKey, nullptr, 0, nullptr, (BYTE *)szFileType, &dwLength );
-
-        if( ERROR_SUCCESS != lResult )
-        {
-            break;
-        }
-
-        //
-        // Find the command for the shell's open verb associated with this file type
-        //
-        TCHAR szKeyName[ MAX_PATH + 20 ];
-
-        wsprintf( szKeyName, _T( "%s\\shell\\open\\command" ), szFileType );
-
-        lResult = RegOpenKeyEx( HKEY_CLASSES_ROOT, szKeyName, 0, KEY_READ, &hFileKey );
-
-        if( ERROR_SUCCESS != lResult )
-        {
-            break;
-        }
-
-        dwLength = cbShellOpenCommand;
-
-        lResult = RegQueryValueEx( hFileKey, nullptr, 0, nullptr, (BYTE *)ptszShellOpenCommand, &dwLength );
-
-        if( 0 == lResult )
-        {
-            fFoundExtensionCommand = TRUE;
-        }
-    }
-    while( FALSE );
-
-    //
-    // If there was no application associated with .html files by extension, look for
-    // an application associated with the http protocol
-    //
-    if( !fFoundExtensionCommand )
-    {
-        if( nullptr != hKey )
-        {
-            RegCloseKey( hKey );
-        }
-
-        do
-        {
-            //
-            // Find the command for the shell's open verb associated with the http protocol
-            //
-            lResult = RegOpenKeyEx( HKEY_CLASSES_ROOT, _T( "http\\shell\\open\\command" ), 0, KEY_READ, &hKey );
-
-            if( ERROR_SUCCESS != lResult )
-            {
-                break;
-            }
-
-            DWORD dwLength = cbShellOpenCommand;
-
-            lResult = RegQueryValueEx( hKey, nullptr, 0, nullptr, (BYTE *)ptszShellOpenCommand, &dwLength );
-        }
-        while( FALSE );
-    }
-
-    if( nullptr != hKey )
-    {
-        RegCloseKey( hKey );
-    }
-
-    if( nullptr != hFileKey )
-    {
-        RegCloseKey( hFileKey );
-    }
-
-    return( HRESULT_FROM_WIN32( lResult ) );
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 HRESULT LaunchURL( LPCWSTR pszURL )
 {
-    HRESULT hr;
-
-    //
-    // Find the appropriate command to launch URLs with
-    //
-    TCHAR szShellOpenCommand[ MAX_PATH * 2 ];
-
-    hr = GetShellOpenCommand( szShellOpenCommand, sizeof( szShellOpenCommand ) );
-
-    if( FAILED( hr ) )
+    if( pszURL == nullptr || pszURL[ 0 ] == L'\0' )
     {
-        return( hr );
+        return E_INVALIDARG;
     }
 
-    //
-    // Build the appropriate command line, substituting our URL parameter
-    //
-    TCHAR szLaunchCommand[ 2000 ];
-
-    LPTSTR pszParam = _tcsstr( szShellOpenCommand, _T( "\"%1\"" ) );
-
-    if( nullptr == pszParam )
+    HINSTANCE result = ShellExecuteW( nullptr, L"open", pszURL, nullptr, nullptr, SW_SHOWNORMAL );
+    if( reinterpret_cast<INT_PTR>( result ) <= 32 )
     {
-        pszParam = _tcsstr( szShellOpenCommand, _T( "\"%*\"" ) );
+        return HRESULT_FROM_WIN32( GetLastError() );
     }
 
-    if( nullptr != pszParam )
-    {
-        *pszParam = _T( '\0' ) ;
-
-        wsprintf( szLaunchCommand, _T( "%s%ws%s" ), szShellOpenCommand, pszURL, pszParam + 4 );
-    }
-    else
-    {
-        wsprintf( szLaunchCommand, _T( "%s %ws" ), szShellOpenCommand, pszURL );
-    }
-
-    //
-    // Find the application name, stripping quotes if necessary
-    //
-    TCHAR szExe[ MAX_PATH * 2 ];
-    LPTSTR pchFirst = szShellOpenCommand;
-    LPTSTR pchNext = nullptr;
-
-    while( _T( ' ' ) == *pchFirst )
-    {
-        pchFirst++;
-    }
-
-    if( _T( '"' ) == *pchFirst )
-    {
-        pchFirst++;
-
-        pchNext = _tcschr( pchFirst, _T( '"' ) );
-    }
-    else
-    {
-        pchNext = _tcschr( pchFirst + 1, _T( ' ' ) );
-    }
-
-    if( nullptr == pchNext )
-    {
-        pchNext = szShellOpenCommand + _tcslen( szShellOpenCommand );
-    }
-
-    _tcsncpy( szExe, pchFirst, pchNext - pchFirst );
-    szExe[ pchNext - pchFirst ] = _T( '\0' ) ;
-
-    //
-    // Because of the extremely long length of the URLs, neither
-    // WinExec, nor ShellExecute, were working correctly.  For this reason
-    // we use CreateProcess.  The CreateProcess documentation in MSDN says
-    // that the most robust way to call CreateProcess is to pass the full
-    // command line, where the first element is the application name, in the
-    // lpCommandLine parameter.  In our case this is necesssary to get Netscape
-    // to function properly.
-    //
-    PROCESS_INFORMATION ProcInfo;
-    ZeroMemory( (LPVOID)&ProcInfo, sizeof( PROCESS_INFORMATION ) );
-
-    STARTUPINFO StartUp;
-    ZeroMemory( (LPVOID)&StartUp, sizeof( STARTUPINFO ) );
-
-    StartUp.cb = sizeof(STARTUPINFO);
-
-    if( !CreateProcess( szExe, szLaunchCommand, nullptr, nullptr,
-                        FALSE, 0, nullptr, nullptr, &StartUp, &ProcInfo) )
-    {
-        hr = HRESULT_FROM_WIN32( GetLastError() );
-    }
-    else
-    {
-        //
-        // CreateProcess succeeded and we do not need the handles to the thread
-        // or the process, so close them now.
-        //
-        if( nullptr != ProcInfo.hThread )
-        {
-            CloseHandle( ProcInfo.hThread );
-        }
-
-        if( nullptr != ProcInfo.hProcess )
-        {
-            CloseHandle( ProcInfo.hProcess );
-        }
-    }
-
-    return( hr );
+    return S_OK;
 }

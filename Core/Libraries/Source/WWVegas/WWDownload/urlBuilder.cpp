@@ -18,9 +18,9 @@
 
 #include <string>
 #include <Utility/stdio_adapter.h>
-#include "Registry.h"
+#include "Common/RuntimeConfig.h"
 
-void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
+void FormatURL( std::string& gamePatchURL, std::string& mapPatchURL,
 													 std::string& configURL, std::string& motdURL )
 {
 #if RTS_GENERALS
@@ -28,17 +28,12 @@ void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
 #elif RTS_ZEROHOUR
 	std::string sku = "GeneralsZH";
 #endif
-	std::string language = "english";
-	unsigned int version = 0; // invalid version - can't get on with a corrupt reg.
-	unsigned int mapVersion = 0; // invalid version - can't get on with a corrupt reg.
+	std::string language = GetGameLanguage().str();
+	unsigned int version = GetGameVersion();
+	unsigned int mapVersion = GetGameVersion();
 	std::string baseURL = "http://servserv.generals.ea.com/servserv/";
 	baseURL.append(sku);
 	baseURL.append("/");
-
-	GetStringFromRegistry("", "BaseURL", baseURL);
-	GetStringFromRegistry("", "Language", language);
-	GetUnsignedIntFromRegistry("", "Version", version);
-	GetUnsignedIntFromRegistry("", "MapPackVersion", mapVersion);
 
 	char buf[256];
 	snprintf(buf, 256, "%s%s-%d.txt", baseURL.c_str(), language.c_str(), version);

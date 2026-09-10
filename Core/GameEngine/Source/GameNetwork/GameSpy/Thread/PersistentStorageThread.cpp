@@ -763,46 +763,6 @@ static void setPersistentDataCallback(int localid, int profileid, persisttype_t 
 	t->decrOpCount();
 }
 
-struct CDAuthInfo
-{
-	Bool success;
-	Bool done;
-	Int id;
-};
-
-void preAuthCDCallback(int localid, int profileid, int authenticated, char *errmsg, void *instance)
-{
-	DEBUG_LOG(("preAuthCDCallback(): profileid: %d auth: %d err: %s", profileid, authenticated, errmsg));
-
-	CDAuthInfo *authInfo = (CDAuthInfo *)instance;
-	authInfo->success = authenticated;
-	authInfo->done = TRUE;
-	authInfo->id = profileid;
-}
-
-static void getPreorderCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, char *data, int len, void *instance)
-{
-	PSThreadClass *t = (PSThreadClass *)instance;
-	if (!t)
-		return;
-
-	t->decrOpCount();
-
-	PSResponse resp;
-
-	if (!success)
-	{
-		DEBUG_LOG(("Failed getPreorderCallback()"));
-		return;
-	}
-
-	resp.responseType = PSResponse::PSRESPONSE_PREORDER;
-	resp.preorder = (data && strcmp(data, "\\preorder\\1") == 0);
-	DEBUG_LOG(("getPreorderCallback() - data was '%s'", data));
-
-	TheGameSpyPSMessageQueue->addResponse(resp);
-}
-
 void PSThreadClass::Thread_Function()
 {
 	try {
@@ -1011,42 +971,6 @@ void PSThreadClass::Thread_Function()
 						DEBUG_LOG(("Cannot connect!"));
 						//if (IsStatsConnected())
 							//CloseStatsConnection();
-					}
-				}
-				break;
-			case PSRequest::PSREQUEST_READCDKEYSTATS:
-				{
-					DEBUG_LOG(("Processing PSRequest::PSREQUEST_READCDKEYSTATS"));
-					if (tryConnect())
-					{
-						incrOpCount();
-						CDAuthInfo cdAuthInfo;
-						cdAuthInfo.done = FALSE;
-						cdAuthInfo.success = FALSE;
-						cdAuthInfo.id = 0;
-						char cdkeyHash[33] = "";
-						char validationToken[33] = "";
-						char *munkeeHack = strdup(req.cdkey.c_str()); // GenerateAuth takes a char*, not a const char* :P
-
-						GenerateAuth(GetChallenge(nullptr), munkeeHack, validationToken); // validation token
-						GenerateAuth("", munkeeHack, cdkeyHash); // cdkey hash
-
-						free (munkeeHack);
-
-						PreAuthenticatePlayerCD( 0, "preorder", cdkeyHash, validationToken, preAuthCDCallback , &cdAuthInfo);
-
-						while (running && IsStatsConnected() && !cdAuthInfo.done)
-							PersistThink();
-
-						DEBUG_LOG(("Looking for preorder status for %d (success=%d, done=%d) from CDKey %s with hash %s",
-							cdAuthInfo.id, cdAuthInfo.success, cdAuthInfo.done, req.cdkey.c_str(), cdkeyHash));
-						if (cdAuthInfo.done && cdAuthInfo.success)
-						{
-							gsi_char keys[] = "\\preorder";
-							GetPersistDataValues(0, cdAuthInfo.id, pd_public_ro, 0, keys, getPreorderCallback, this);
-						}
-						else
-							decrOpCount();
 					}
 				}
 				break;

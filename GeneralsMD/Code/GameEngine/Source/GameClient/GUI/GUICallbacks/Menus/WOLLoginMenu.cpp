@@ -38,7 +38,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GameSpyMiscPreferences.h"
 #include "Common/QuotedPrintable.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "Common/OptionPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/ClientInstance.h"
@@ -67,15 +67,10 @@
 
 #include "GameNetwork/GameSpyOverlay.h"
 
-#include "GameNetwork/WOLBrowser/WebBrowser.h"
-
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
 Bool GameSpyUseProfiles = false;
 #endif // ALLOW_NON_PROFILED_LOGIN
-
-static Bool webBrowserActive = FALSE;
-static Bool useWebBrowserForTOS = FALSE;
 
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
@@ -605,7 +600,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	if (GameSpyUseProfiles)
 	{
 #endif // ALLOW_NON_PROFILED_LOGIN
-		// Read login names from registry...
+		// Read cached login names from user preferences.
 		GadgetComboBoxReset(comboBoxEmail);
 		GadgetTextEntrySetText(textEntryPassword, UnicodeString::TheEmptyString);
 
@@ -688,7 +683,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	}
 	else
 	{
-		// Read login names from registry...
+		// Read cached login names from user preferences.
 		GadgetComboBoxReset(comboBoxLoginName);
 		UnicodeString nick;
 
@@ -737,15 +732,6 @@ void WOLLoginMenuShutdown( WindowLayout *layout, void *userData )
 	isShuttingDown = true;
 	loggedInOK = false;
 	TheWindowManager->clearTabList();
-	if (webBrowserActive)
-	{
-		if (TheWebBrowser != nullptr)
-		{
-			TheWebBrowser->closeBrowserWindow(listboxTOS);
-		}
-		webBrowserActive = FALSE;
-	}
-
 	// if we are shutting down for an immediate pop, skip the animations
 	Bool popImmediate = *(Bool *)userData;
 	if( popImmediate )
@@ -1432,49 +1418,38 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if ( controlID == buttonTOSID )
 				{
 					parentTOS->winHide(FALSE);
-					useWebBrowserForTOS = FALSE;//loginPref->getBool("UseTOSBrowser", TRUE);
-					if (useWebBrowserForTOS && (TheWebBrowser != nullptr))
+					GadgetListBoxReset(listboxTOS);
+					AsciiString fileName;
+					fileName.format("Data\\%s\\TOS.txt", GetGameLanguage().str());
+					File *theFile = TheFileSystem->openFile(fileName.str(), File::READ);
+					if (theFile)
 					{
-						TheWebBrowser->createBrowserWindow("TermsOfService", listboxTOS);
-						webBrowserActive = TRUE;
-					}
-					else
-					{
-						// Okay, no web browser.  This means we're looking at a UTF-8 text file.
-						GadgetListBoxReset(listboxTOS);
-						AsciiString fileName;
-						fileName.format("Data\\%s\\TOS.txt", GetRegistryLanguage().str());
-						File *theFile = TheFileSystem->openFile(fileName.str(), File::READ);
-						if (theFile)
+						Int size = theFile->size();
+
+						char *fileBuf = new char[size];
+						Color tosColor = GameMakeColor(255, 255, 255, 255);
+
+						Int bytesRead = theFile->read(fileBuf, size);
+						if (bytesRead == size && size > 2)
 						{
-							Int size = theFile->size();
-
-							char *fileBuf = new char[size];
-							Color tosColor = GameMakeColor(255, 255, 255, 255);
-
-							Int bytesRead = theFile->read(fileBuf, size);
-							if (bytesRead == size && size > 2)
+							fileBuf[size-1] = 0; // just to be safe
+							AsciiString asciiBuf = fileBuf+2;
+							AsciiString asciiLine;
+							while (asciiBuf.nextToken(&asciiLine, "\r\n"))
 							{
-								fileBuf[size-1] = 0; // just to be safe
-								AsciiString asciiBuf = fileBuf+2;
-								AsciiString asciiLine;
-								while (asciiBuf.nextToken(&asciiLine, "\r\n"))
-								{
-									UnicodeString uniLine;
-									uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
-									uniLine.trimEnd();
-									DEBUG_LOG(("adding TOS line: [%ls]", uniLine.str()));
-									GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
-								}
-
+								UnicodeString uniLine;
+								uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
+								uniLine.trimEnd();
+								DEBUG_LOG(("adding TOS line: [%ls]", uniLine.str()));
+								GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
 							}
-
-							delete[] fileBuf;
-							fileBuf = nullptr;
-
-							theFile->close();
-							theFile = nullptr;
 						}
+
+						delete[] fileBuf;
+						fileBuf = nullptr;
+
+						theFile->close();
+						theFile = nullptr;
 					}
 					EnableLoginControls( FALSE );
 					buttonBack->winEnable(FALSE);
@@ -1485,18 +1460,10 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					EnableLoginControls( TRUE );
 
 					parentTOS->winHide(TRUE);
-					if (useWebBrowserForTOS && (TheWebBrowser != nullptr))
-					{
-						if (listboxTOS != nullptr)
-						{
-							TheWebBrowser->closeBrowserWindow(listboxTOS);
-						}
-					}
 
 					OptionPreferences optionPref;
 					optionPref["SawTOS"] = "yes";
 					optionPref.write();
-					webBrowserActive = FALSE;
 					buttonBack->winEnable(TRUE);
 				}
 				break;

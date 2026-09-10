@@ -40,7 +40,6 @@ import Graphics.Resources.Textures.Quality;
 #include "Common/OptionPreferences.h"
 #include "Common/GameLOD.h"
 #include "Common/Recorder.h"
-#include "Common/Registry.h"
 #include "Common/version.h"
 
 #include "GameClient/ClientInstance.h"
@@ -72,7 +71,6 @@ import Graphics.Resources.Textures.Quality;
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
-#include "WWDownload/Registry.h"
 #include "GameClient/MessageBox.h"
 
 

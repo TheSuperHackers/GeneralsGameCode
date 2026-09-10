@@ -56,7 +56,7 @@
 
 #include "Common/INI.h"
 #include "Common/FileSystem.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "GameClient/HeaderTemplate.h"
 #include "GameClient/GameFont.h"
 #include "GameClient/GlobalLanguage.h"
@@ -132,7 +132,7 @@ void HeaderTemplateManager::init()
 {
 	{
 		AsciiString fname;
-		fname.format("Data\\%s\\HeaderTemplate", GetRegistryLanguage().str());
+		fname.format("Data\\%s\\HeaderTemplate", GetGameLanguage().str());
 
 		INI ini;
 		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );

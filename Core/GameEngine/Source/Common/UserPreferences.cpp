@@ -41,7 +41,7 @@
 #include "Common/LadderPreferences.h"
 #include "Common/Player.h"
 #include "Common/PlayerTemplate.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "Common/QuickmatchPreferences.h"
 #include "Common/CustomMatchPreferences.h"
 #include "Common/IgnorePreferences.h"
@@ -619,7 +619,7 @@ Bool CustomMatchPreferences::getDisallowAsianText()
 	{
 		// since English Win98 machines don't have a Unicode font installed by default,
 		// we're forced to disable asian chat by default for English builds.
-		if (GetRegistryLanguage().compareNoCase("chinese") == 0 || GetRegistryLanguage().compareNoCase("korean") == 0 )
+		if (GetGameLanguage().compareNoCase("chinese") == 0 || GetGameLanguage().compareNoCase("korean") == 0 )
 			return FALSE;
 		else
 			return TRUE;

@@ -1788,20 +1788,9 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					if (stats.id == 0)
 					{
 						// we haven't gotten stats for ourselves yet.  Bummer.
-						// what we'll do is just update our disconnects in the registry if we disconnected.
-						// other than that, there's not much we can do.  :P
+						// Update the server-side stats when the game ended abnormally.
 						if (gameEndedInDisconnect || TheNetwork->sawCRCMismatch())
 						{
-							/* @todo: this the right way
-							UnsignedInt discons = 0;
-							UnsignedInt syncs = 0;
-							GetUnsignedIntFromRegistry("", "dc", discons);
-							GetUnsignedIntFromRegistry("", "se", sync);
-							++discons;
-							++syncs;
-							SetUnsignedIntInRegistry("", "dc", discons);
-							SetUnsignedIntInRegistry("", "se", syncs);
-							*/
 							DEBUG_LOG(("populatePlayerInfo() - need to save off info for disconnect games!"));
 
 							PSRequest req;

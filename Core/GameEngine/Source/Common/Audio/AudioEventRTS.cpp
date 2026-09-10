@@ -48,7 +48,7 @@
 #include "Common/GameSounds.h"
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 
 #include "GameLogic/GameLogic.h"	// For getObjectByID
 #include "GameLogic/LogicRandomValue.h"
@@ -774,7 +774,7 @@ AsciiString AudioEventRTS::generateFilenamePrefix( AudioType audioTypeToPlay, Bo
 	retStr.concat("\\");
 
 	if (localized) {
-		retStr.concat(GetRegistryLanguage());
+		retStr.concat(GetGameLanguage());
 		retStr.concat("\\");
 	}
 

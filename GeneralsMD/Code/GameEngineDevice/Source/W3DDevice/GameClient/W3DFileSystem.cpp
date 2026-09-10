@@ -47,7 +47,7 @@
 #include "Common/FileSystem.h"
 #include "Common/GlobalData.h"
 #include "Common/MapObject.h"
-#include "Common/Registry.h"
+#include "Common/RuntimeConfig.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 
 import Assets.Identity;
@@ -170,7 +170,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 	if( fileType == FILE_TYPE_W3D )
 	{
 		m_filePath = "Data/";
-		m_filePath += GetRegistryLanguage().str();
+		m_filePath += GetGameLanguage().str();
 		m_filePath += "/Art/W3D/";
 		m_filePath += filename;
 
@@ -179,7 +179,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 	else if( isImageFileType(fileType) )
 	{
 		m_filePath = "Data/";
-		m_filePath += GetRegistryLanguage().str();
+		m_filePath += GetGameLanguage().str();
 		m_filePath += "/Art/Textures/";
 		m_filePath += filename;
 

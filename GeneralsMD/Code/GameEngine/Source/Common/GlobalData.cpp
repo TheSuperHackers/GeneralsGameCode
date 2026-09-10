@@ -49,7 +49,6 @@ import Graphics.Resources.Textures.Sampling;
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
-#include "Common/Registry.h"
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
 
@@ -1046,9 +1045,9 @@ GlobalData::GlobalData()
 
 	m_keyboardCameraRotateSpeed = 0.1f;
 
-	// Set user data directory based on registry settings instead of INI parameters.
-	// This allows us to localize the leaf name.
-	m_userDataDir = BuildUserDataPathFromRegistry();
+	// Keep user data in the normal Documents folder using the fixed Zero Hour
+	// data directory name.
+	m_userDataDir = BuildUserDataPath();
 	CreateDirectory(m_userDataDir.str(), nullptr);
 
 	//-allAdvice feature
@@ -1342,7 +1341,7 @@ UnsignedInt GlobalData::generateExeCRC()
 	return exeCRC.get();
 }
 
-AsciiString GlobalData::BuildUserDataPathFromRegistry()
+AsciiString GlobalData::BuildUserDataPath()
 {
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 	// VC6 lacks FOLDERID_Documents and KF_FLAG_DEFAULT
@@ -1384,15 +1383,7 @@ AsciiString GlobalData::BuildUserDataPathFromRegistry()
 		if (!myDocumentsDirectory.endsWith("\\"))
 			myDocumentsDirectory.concat('\\');
 
-		AsciiString leafName;
-		if (!GetStringFromRegistry("", "UserDataLeafName", leafName))
-		{
-			// Use something, anything
-			// [MH] had to remove this, otherwise mapcache build step won't run... DEBUG_CRASH( ( "Could not find registry key UserDataLeafName; defaulting to \"Command and Conquer Generals Zero Hour Data\" " ) );
-			leafName = "Command and Conquer Generals Zero Hour Data";
-		}
-
-		myDocumentsDirectory.concat(leafName);
+		myDocumentsDirectory.concat("Command and Conquer Generals Zero Hour Data");
 		if (!myDocumentsDirectory.endsWith("\\"))
 			myDocumentsDirectory.concat('\\');
 	}
