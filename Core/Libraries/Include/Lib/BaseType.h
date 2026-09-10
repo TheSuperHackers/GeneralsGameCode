@@ -517,6 +517,20 @@ struct Region2D
 		hi.min(other.hi);
 	}
 
+	// Expand to include both regions.
+	void unite( const Region2D &other )
+	{
+		lo.min(other.lo);
+		hi.max(other.hi);
+	}
+
+	// Expand to include the point.
+	void unite( const Coord2D &point )
+	{
+		lo.min(point);
+		hi.max(point);
+	}
+
 	void zero()
 	{
 		lo.zero();
@@ -542,6 +556,20 @@ struct IRegion2D
 	{
 		lo.max(other.lo);
 		hi.min(other.hi);
+	}
+
+	// Expand to include both regions.
+	void unite( const IRegion2D &other )
+	{
+		lo.min(other.lo);
+		hi.max(other.hi);
+	}
+
+	// Expand to include the point.
+	void unite( const ICoord2D &point )
+	{
+		lo.min(point);
+		hi.max(point);
 	}
 
 	void zero()
@@ -809,6 +837,20 @@ struct Region3D
 		hi.min(other.hi);
 	}
 
+	// Expand to include both regions.
+	void unite( const Region3D &other )
+	{
+		lo.min(other.lo);
+		hi.max(other.hi);
+	}
+
+	// Expand to include the point.
+	void unite( const Coord3D &point )
+	{
+		lo.min(point);
+		hi.max(point);
+	}
+
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
 	Real depth() const { return hi.z - lo.z; }
@@ -855,8 +897,7 @@ struct Region3D
 		hi = points[0];
 		for (Int i = 1; i < count; ++i)
 		{
-			lo.min(points[i]);
-			hi.max(points[i]);
+			unite(points[i]);
 		}
 	}
 
@@ -883,6 +924,20 @@ struct IRegion3D
 	{
 		lo.max(other.lo);
 		hi.min(other.hi);
+	}
+
+	// Expand to include both regions.
+	void unite( const IRegion3D &other )
+	{
+		lo.min(other.lo);
+		hi.max(other.hi);
+	}
+
+	// Expand to include the point.
+	void unite( const ICoord3D &point )
+	{
+		lo.min(point);
+		hi.max(point);
 	}
 
 	void zero()

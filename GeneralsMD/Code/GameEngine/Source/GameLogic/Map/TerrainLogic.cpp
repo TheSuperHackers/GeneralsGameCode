@@ -223,12 +223,9 @@ m_bridgeInfo(theInfo)
 	//Coord3D fromLeft, fromRight, toLeft, toRight; /// The 4 corners of the rectangle that the bridge covers.
 	m_bounds.lo = m_bridgeInfo.fromLeft.getXY();
 	m_bounds.hi = m_bounds.lo;
-	m_bounds.lo.min(m_bridgeInfo.fromRight.getXY());
-	m_bounds.hi.max(m_bridgeInfo.fromRight.getXY());
-	m_bounds.lo.min(m_bridgeInfo.toLeft.getXY());
-	m_bounds.hi.max(m_bridgeInfo.toLeft.getXY());
-	m_bounds.lo.min(m_bridgeInfo.toRight.getXY());
-	m_bounds.hi.max(m_bridgeInfo.toRight.getXY());
+	m_bounds.unite(m_bridgeInfo.fromRight.getXY());
+	m_bounds.unite(m_bridgeInfo.toLeft.getXY());
+	m_bounds.unite(m_bridgeInfo.toRight.getXY());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 
@@ -352,12 +349,9 @@ Bridge::Bridge(Object *bridgeObj)
 	//Coord3D fromLeft, fromRight, toLeft, toRight; /// The 4 corners of the rectangle that the bridge covers.
 	m_bounds.lo = m_bridgeInfo.fromLeft.getXY();
 	m_bounds.hi = m_bounds.lo;
-	m_bounds.lo.min(m_bridgeInfo.fromRight.getXY());
-	m_bounds.hi.max(m_bridgeInfo.fromRight.getXY());
-	m_bounds.lo.min(m_bridgeInfo.toLeft.getXY());
-	m_bounds.hi.max(m_bridgeInfo.toLeft.getXY());
-	m_bounds.lo.min(m_bridgeInfo.toRight.getXY());
-	m_bounds.hi.max(m_bridgeInfo.toRight.getXY());
+	m_bounds.unite(m_bridgeInfo.fromRight.getXY());
+	m_bounds.unite(m_bridgeInfo.toLeft.getXY());
+	m_bounds.unite(m_bridgeInfo.toRight.getXY());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 

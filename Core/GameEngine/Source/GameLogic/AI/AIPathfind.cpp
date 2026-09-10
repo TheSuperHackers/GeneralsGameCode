@@ -3591,8 +3591,7 @@ void PathfindLayer::allocateCellsForWallLayer(const IRegion2D *extent, ObjectID 
 			bridgeBounds = objBounds;
 			first = false;
 		} else {
-			bridgeBounds.lo.min(objBounds.lo);
-			bridgeBounds.hi.max(objBounds.hi);
+			bridgeBounds.unite(objBounds);
 		}
 	}
 
