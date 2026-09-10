@@ -53,7 +53,6 @@ target_link_libraries(g_guiedit PRIVATE
     g_wwvegas
     gi_always
     imm32
-    stlport
     vfw32
     winmm
 )

@@ -236,7 +236,7 @@ target_sources(generals_graphics
             video/VideoRenderer.cppm
 )
 
-target_compile_features(generals_graphics PUBLIC cxx_std_20)
+target_compile_features(generals_graphics PUBLIC cxx_std_23)
 
 if(NOT TARGET SDL3::SDL3)
     find_package(SDL3 CONFIG REQUIRED)
@@ -613,7 +613,7 @@ if(RTS_BUILD_GRAPHICS_TESTS)
                 FILES
                     tests/GraphicsTestDevice.cppm
         )
-        target_compile_features(generals_graphics_test_support PUBLIC cxx_std_20)
+        target_compile_features(generals_graphics_test_support PUBLIC cxx_std_23)
         target_link_libraries(generals_graphics_test_support PUBLIC generals_graphics)
         include("${CMAKE_CURRENT_SOURCE_DIR}/shaders/TestShaders.cmake")
     endif()
@@ -629,7 +629,7 @@ if(RTS_BUILD_GRAPHICS_TESTS)
                     ${test_source}
         )
 
-        target_compile_features(${test_name} PRIVATE cxx_std_20)
+        target_compile_features(${test_name} PRIVATE cxx_std_23)
         target_include_directories(${test_name} PRIVATE ${Boost_INCLUDE_DIRS})
         target_link_libraries(${test_name} PRIVATE generals_graphics)
         if(TARGET generals_graphics_test_support)

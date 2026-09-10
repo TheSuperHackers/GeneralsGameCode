@@ -3,14 +3,12 @@ add_library(z_wwcommon INTERFACE)
 
 target_link_libraries(z_wwcommon INTERFACE
     core_wwcommon
-    stlport
 )
 
 target_include_directories(z_wwcommon INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(WWAudio)
 add_subdirectory(WWDownload)
 
 # Helpful interface to bundle the ww modules together.

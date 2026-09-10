@@ -1,4 +1,4 @@
-name: Build Toolchain
+name: Build GeneralsMD Toolchain
 
 permissions:
   contents: read
@@ -7,204 +7,94 @@ permissions:
 on:
   workflow_call:
     inputs:
-      game:
-        required: true
-        type: string
-        description: "Game to build (Generals, GeneralsMD)"
-      preset:
-        required: true
-        type: string
-        description: "CMake preset"
       tools:
         required: false
         default: true
         type: boolean
-        description: "Build tools"
+        description: "Build GeneralsMD tools"
       extras:
         required: false
         default: false
         type: boolean
-        description: "Build extras"
+        description: "Build GeneralsMD extras"
 
 jobs:
   build:
-    name: ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+    name: clang-windows-x64${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
     runs-on: windows-2022
-    timeout-minutes: 30
-
-    env:
-      VCPKG_FILE_CACHE: ${{ github.workspace }}\vcpkg-bincache
-      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}\vcpkg-bincache,readwrite
-      VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching
+    timeout-minutes: 45
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Cache VC6 Installation
-        if: startsWith(inputs.preset, 'vc6')
-        id: cache-vc6
+      - name: Install LLVM
+        shell: pwsh
+        run: |
+          choco install llvm --yes --no-progress
+          $clang = Get-Command clang++.exe -ErrorAction SilentlyContinue
+          if (-not $clang) {
+              $clang = Get-ChildItem -Path $env:ProgramFiles,${env:ProgramFiles(x86)} -Filter clang++.exe -Recurse -ErrorAction SilentlyContinue |
+                  Select-Object -First 1
+          }
+          if (-not $clang) {
+              throw "clang++.exe was not found after installing LLVM"
+          }
+          $llvmRoot = Split-Path (Split-Path $clang.Source -Parent) -Parent
+          "$llvmRoot\bin" >> $env:GITHUB_PATH
+          "LLVM_ROOT=$llvmRoot" >> $env:GITHUB_ENV
+          Write-Host "Using LLVM at $llvmRoot"
+
+      - name: Install vcpkg
+        shell: pwsh
+        run: |
+          $vcpkgRoot = Join-Path $env:RUNNER_TEMP 'vcpkg'
+          git clone --filter=blob:none https://github.com/microsoft/vcpkg.git $vcpkgRoot
+          git -C $vcpkgRoot checkout --detach 3d33b7f7a8121da6e4fa80b35618fc8e960be686
+          & (Join-Path $vcpkgRoot 'bootstrap-vcpkg.bat') -disableMetrics
+          "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
+          "$vcpkgRoot" >> $env:GITHUB_PATH
+          Write-Host "Using vcpkg at $vcpkgRoot"
+
+      - name: Cache vcpkg packages
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
-          path: C:\VC6
-          key: vc6-permanent-cache-v2
+          path: build\clang-windows-x64\vcpkg_installed
+          key: vcpkg-clang-windows-x64-${{ hashFiles('vcpkg.json','vcpkg-lock.json','CMakePresets.json','cmake/toolchains/clang-windows-x64.cmake') }}
 
       - name: Cache CMake Dependencies
-        id: cache-cmake-deps
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
-          path: build\${{ inputs.preset }}\_deps
-          key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
+          path: build\clang-windows-x64\_deps
+          key: cmake-deps-clang-windows-x64-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
-      - name: Download VC6 Portable from itsmattkc repo
-        if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
-        env:
-          EXPECTED_HASH: "D0EE1F6DCEF7DB3AD703120D9FB4FAD49EBCA28F44372E40550348B1C00CA583"
-          COMMIT: "001c4bafdcf2ef4b474d693acccd35a91e848f40"
+      - name: Configure GeneralsMD
         shell: pwsh
         run: |
-          Write-Host "Downloading VC6 Portable Installation" -ForegroundColor Cyan
-          Invoke-WebRequest -Uri https://github.com/itsmattkc/MSVC600/archive/$env:COMMIT.zip -OutFile VS6_VisualStudio6.zip
+          cmake --preset clang-windows-x64 `
+            "-DRTS_BUILD_CORE_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}" `
+            "-DRTS_BUILD_ZEROHOUR_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}" `
+            "-DRTS_BUILD_CORE_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}" `
+            "-DRTS_BUILD_ZEROHOUR_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
 
-          Write-Host "Verifying File Integrity" -ForegroundColor Cyan
-          $fileHash = (Get-FileHash -Path VS6_VisualStudio6.zip -Algorithm SHA256).Hash
-          Write-Host "Downloaded file SHA256: $fileHash"
-          Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
-          if ($fileHash -ne $env:EXPECTED_HASH) {
-              Write-Error "Hash verification failed! File may be corrupted or tampered with."
-              exit 1
-          }
+      - name: Build GeneralsMD
+        shell: pwsh
+        run: cmake --build --preset clang-windows-x64 --parallel
 
-          Write-Host "Extracting Archive" -ForegroundColor Cyan
-          & Expand-Archive -Path VS6_VisualStudio6.zip -DestinationPath C:\VC6
-          Move-Item -Path C:\VC6\MSVC600-$env:COMMIT -Destination C:\VC6\VC6SP6
-          Remove-Item VS6_VisualStudio6.zip -Verbose
-
-      - name: Set Up VC6 Environment
-        if: startsWith(inputs.preset, 'vc6')
+      - name: Collect GeneralsMD Artifact
         shell: pwsh
         run: |
-          # Define the base directories as local variables first
-          $VSCommonDir = "C:\VC6\VC6SP6\Common"
-          $MSDevDir = "C:\VC6\VC6SP6\Common\msdev98"
-          $MSVCDir = "C:\VC6\VC6SP6\VC98"
-          $VcOsDir = "WINNT"
+          $artifactDir = New-Item -ItemType Directory -Force -Path build\GeneralsMD\artifacts
+          Get-ChildItem -Path build\clang-windows-x64\GeneralsMD -Recurse -File |
+              Where-Object { $_.Extension -in @('.exe', '.dll', '.pdb') } |
+              Copy-Item -Destination $artifactDir -Force
+          Get-ChildItem -Path build\clang-windows-x64\vcpkg_installed\x64-windows\bin -File -Filter '*.dll' |
+              Copy-Item -Destination $artifactDir -Force
 
-          # Set the variables in GitHub environment
-          "VSCommonDir=$VSCommonDir" >> $env:GITHUB_ENV
-          "MSDevDir=$MSDevDir" >> $env:GITHUB_ENV
-          "MSVCDir=$MSVCDir" >> $env:GITHUB_ENV
-          "VcOsDir=$VcOsDir" >> $env:GITHUB_ENV
-          "PATH=$MSDevDir\BIN;$MSVCDir\BIN;$VSCommonDir\TOOLS\$VcOsDir;$VSCommonDir\TOOLS;$env:PATH" >> $env:GITHUB_ENV
-          "INCLUDE=$MSVCDir\ATL\INCLUDE;$MSVCDir\INCLUDE;$MSVCDir\MFC\INCLUDE;$env:INCLUDE" >> $env:GITHUB_ENV
-          "LIB=$MSVCDir\LIB;$MSVCDir\MFC\LIB;$env:LIB" >> $env:GITHUB_ENV
-
-      - name: Set Up VC2022 Environment
-        if: startsWith(inputs.preset, 'win32')
-        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
-        with:
-          arch: x86
-
-      - name: Compute vcpkg cache key parts
-        if: contains(inputs.preset, 'vcpkg')
-        id: vcpkg_key
-        shell: pwsh
-        run: |
-          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
-
-          $triplet = "x86-windows"
-          if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
-
-          "baseline=$baseline" >> $env:GITHUB_OUTPUT
-          "triplet=$triplet" >> $env:GITHUB_OUTPUT
-
-          Write-Host "vcpkg cache key parts: baseline=$baseline, triplet=$triplet"
-
-      - name: Restore vcpkg binary cache
-        if: contains(inputs.preset, 'vcpkg')
-        id: vcpkg_cache
-        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-v3-${{ runner.os }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}-${{ hashFiles('triplets/*.cmake') }}
-          restore-keys: |
-            vcpkg-bincache-v3-${{ runner.os }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
-            vcpkg-bincache-v3-${{ runner.os }}-
-
-      - name: Setup vcpkg
-        if: contains(inputs.preset, 'vcpkg')
-        uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 # v11.6
-        with:
-          runVcpkgInstall: false
-          doNotCache: false
-
-      - name: Configure vcpkg to use cached directory
-        if: contains(inputs.preset, 'vcpkg')
-        shell: pwsh
-        run: |
-          $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
-          New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
-
-          # lukka/run-vcpkg sets its own temp cache dir; override to force our cached dir
-          $env:VCPKG_DEFAULT_BINARY_CACHE = $cacheDir
-          $env:VCPKG_BINARY_SOURCES = "clear;files,$cacheDir,readwrite"
-
-          "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
-          "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" >> $env:GITHUB_ENV
-          "VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}\triplets" >> $env:GITHUB_ENV
-          "VCPKG_INSTALL_OPTIONS=--x-abi-tools-use-exact-versions" >> $env:GITHUB_ENV
-
-      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
-        shell: pwsh
-        run: |
-          $buildFlags = @(
-            "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
-            "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
-          )
-
-          $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
-          $buildFlags += "-DRTS_BUILD_CORE_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
-          $buildFlags += "-DRTS_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
-          $buildFlags += "-DRTS_BUILD_CORE_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
-          $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
-
-          Write-Host "Build flags: $($buildFlags -join ' | ')"
-          cmake --preset ${{ inputs.preset }} $buildFlags
-
-      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
-        shell: pwsh
-        run: |
-          cmake --build --preset ${{ inputs.preset }}
-
-      - name: Save vcpkg binary cache
-        # Only one job should save to avoid "Unable to reserve cache" conflicts.
-        if: ${{ contains(inputs.preset, 'vcpkg') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
-        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-v3-${{ runner.os }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}-${{ hashFiles('triplets/*.cmake') }}
-
-      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
-        shell: pwsh
-        run: |
-          $buildDir = "build\${{ inputs.preset }}"
-          $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
-
-          if ("${{ inputs.preset }}" -like "win32*") {
-            $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
-            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File |
-              Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
-          } else {
-            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File |
-              Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
-          }
-
-          $files | Move-Item -Destination $artifactsDir -Verbose -Force
-
-      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+      - name: Upload GeneralsMD Artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
-          path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
+          name: GeneralsMD-clang-windows-x64${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+          path: build\GeneralsMD\artifacts
           retention-days: 30
           if-no-files-found: error

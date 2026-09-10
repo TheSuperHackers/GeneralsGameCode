@@ -232,7 +232,7 @@ target_include_directories(z_gameenginedevice PUBLIC
 )
 
 target_precompile_headers(z_gameenginedevice PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Utility/CppMacros.h"]] # Legacy source compatibility macros
     <functional>
     <span>
     [["Common/STLTypedefs.h"]]
@@ -240,6 +240,12 @@ target_precompile_headers(z_gameenginedevice PRIVATE
     [["WWLib/INI.h"]]
     [["WWLib/WWCommon.h"]]
 )
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set_target_properties(z_gameenginedevice PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
+    target_compile_options(z_gameenginedevice PRIVATE
+        "-include${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h")
+endif()
 
 target_link_libraries(z_gameenginedevice PRIVATE
     corei_gameenginedevice_private

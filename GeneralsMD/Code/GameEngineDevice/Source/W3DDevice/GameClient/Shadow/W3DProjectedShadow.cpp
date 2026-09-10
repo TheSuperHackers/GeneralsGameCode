@@ -1,8 +1,11 @@
 #include <functional>
 #include <functional>
 import Graphics.Frame.RenderClock;
+import Graphics.Frame.AttachmentBindings;
 import Graphics.Scene.Views.CameraMatrices;
 import Graphics.Materials.MeshTextureMapping;
+import Graphics.Materials.TextureCoordinates;
+import Graphics.Scene.Shadows.ProjectedCapture;
 import Assets.Images.PixelEncoding;
 #include "WWMath/matrix4.h"
 import Graphics.Scene.Props.Renderer;

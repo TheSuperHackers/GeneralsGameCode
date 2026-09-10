@@ -5,7 +5,7 @@ target_sources(generals_geometry PUBLIC
     FILE_SET CXX_MODULES
     BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
     FILES QueryBounds.cppm)
-target_compile_features(generals_geometry PUBLIC cxx_std_20)
+target_compile_features(generals_geometry PUBLIC cxx_std_23)
 target_link_libraries(generals_geometry PUBLIC generals_assets)
 
 if(BUILD_TESTING)

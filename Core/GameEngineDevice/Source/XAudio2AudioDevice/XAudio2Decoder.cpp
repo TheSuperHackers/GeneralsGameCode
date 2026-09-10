@@ -19,6 +19,7 @@
 #if defined(_WIN32) && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0602)
 
 #include "Lib/BaseType.h"
+#include "Common/Debug.h"
 #include "XAudio2Decoder.h"
 #include "AudioFileProvider.h"
 

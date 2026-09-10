@@ -1,7 +1,10 @@
 {
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-    "builtin-baseline": "b02e341c927f16d991edbd915d8ea43eac52096c",
+    "builtin-baseline": "3d33b7f7a8121da6e4fa80b35618fc8e960be686",
     "dependencies": [
+      "sdl3",
+      "shader-slang",
+      "directx-dxc",
       "zlib",
       "ffmpeg",
       "stb",

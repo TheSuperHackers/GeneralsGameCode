@@ -9,17 +9,9 @@ if(WIN32 AND TARGET slang-bootstrap AND DEFINED GRAPHICS_SHADER_ASSET_DIRECTORY)
     set(GRAPHICS_DX12_DXC_DIRECTORY "" CACHE PATH
         "Directory containing dxcompiler.dll and dxil.dll for DXIL shader compilation")
     if(NOT GRAPHICS_DX12_DXC_DIRECTORY)
-        if(CMAKE_GENERATOR_PLATFORM MATCHES "^(ARM64|ARM64EC)$"
-            OR CMAKE_VS_PLATFORM_NAME MATCHES "^(ARM64|ARM64EC)$"
-            OR CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|aarch64)$")
-            set(_GRAPHICS_DX12_DXC_ARCHITECTURE windows-aarch64)
-        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set(_GRAPHICS_DX12_DXC_ARCHITECTURE windows-x86)
-        else()
-            set(_GRAPHICS_DX12_DXC_ARCHITECTURE windows-x64)
-        endif()
-        set(GRAPHICS_DX12_DXC_DIRECTORY
-            "${slang_SOURCE_DIR}/external/slang-binaries/bin/${_GRAPHICS_DX12_DXC_ARCHITECTURE}")
+        find_package(directx-dxc CONFIG REQUIRED)
+        get_filename_component(GRAPHICS_DX12_DXC_DIRECTORY
+            "${DIRECTX_DXC_TOOL}" DIRECTORY)
     endif()
     set(_GRAPHICS_DX12_DXC_RUNTIME_FILES
         "${GRAPHICS_DX12_DXC_DIRECTORY}/dxcompiler.dll"

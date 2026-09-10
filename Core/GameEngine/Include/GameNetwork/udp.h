@@ -29,7 +29,7 @@
 #endif
 
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #include <io.h>
 //#define close _close
 //#define read  _read

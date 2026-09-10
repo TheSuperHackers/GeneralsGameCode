@@ -5,7 +5,6 @@ target_link_libraries(g_wwcommon INTERFACE
     core_wwcommon
     d3d8lib
     milesstub
-    stlport
 )
 
 target_include_directories(g_wwcommon INTERFACE

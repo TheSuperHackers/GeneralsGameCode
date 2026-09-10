@@ -23,8 +23,8 @@ INI scripts, GUI, AI, maps, models, textures, audio, localization. You can find 
 
 ## Project Overview
 
-The game was originally developed using Visual Studio 6 and C++98. We've updated the code to be compatible with Visual
-Studio 2022 and C++20.
+The game was originally developed using Visual Studio 6 and C++98. The supported build is now GeneralsMD with
+Clang/LLVM, C++23, and Windows x64.
 
 The initial goal of this project is to fix critical bugs and implement improvements while maintaining compatibility with
 the original *Generals* version 1.08 and *Zero Hour* version 1.04. Once we can break retail compatibility, more fixes
@@ -61,36 +61,40 @@ report bugs, and contribute to the project!
 
 ## Building the Game Yourself
 
-We provide support for building the project on Windows and Linux. For detailed build instructions, check the
-[Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which includes guides for VS6, VS2022,
-Docker, CLion, and links to forks supporting additional versions.
+The supported developer build is Windows x64 with LLVM/Clang installed. For detailed build instructions, check the
+[Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides).
 
 ### Quick Start
 
-**Windows (Visual Studio 2022)**
+**Windows (Clang/LLVM)**
 ```bash
-cmake --preset win32
-cmake --build build/win32 --config Release
+cmake --preset clang-windows-x64
+cmake --build --preset clang-windows-x64
 ```
 
-**Linux (via Docker)**
-```bash
-./scripts/docker-build.sh              # Build using Docker
-./scripts/docker-install.sh --detect # Install to your game
+Install LLVM/Clang, the Windows SDK, and vcpkg. A Windows SDK with `midl.exe`
+is required for the browser interface sources. The CMake toolchain discovers
+all of these tools without embedding a machine-specific path in the project.
+
+Set the vcpkg root in your shell before configuring. Set `LLVM_ROOT` only when
+LLVM is not already on `PATH`:
+
+```powershell
+$env:VCPKG_ROOT = "C:\path\to\vcpkg"
+$env:LLVM_ROOT = "C:\path\to\LLVM" # optional
 ```
 
 ### Dependency management
 
-The repository uses a vcpkg manifest (`vcpkg.json`) paired with a lockfile (`vcpkg-lock.json`). When you add or upgrade
-dependencies, run `vcpkg install --x-manifest-root . --triplet <triplet>` with `VCPKG_FEATURE_FLAGS=versions` so the
-lockfile picks up the new versions and include the updated lockfile in your change. GitHub Actions consumes these ports
-through `VCPKG_BINARY_SOURCES=clear;files,<workspace>/vcpkg-bincache,readwrite` (paired with an `actions/cache` entry for
-that folder), so the first CI build warms the cache and subsequent builds pull prebuilt binaries instead of
-re-compiling everything.
+The repository uses the vcpkg manifest (`vcpkg.json`) and lockfile
+(`vcpkg-lock.json`) for all third-party build dependencies. The preset selects
+the `x64-windows` triplet and vcpkg installs the manifest dependencies during
+configuration. No manually downloaded SDL, FFmpeg, Slang, zlib, stb, Boost,
+or DirectX Shader Compiler package is needed.
 
 ### Profiling
 
-Tracy profiling is supported in the CMake preset `win32-profile`.
+Tracy profiling can be enabled through the CMake cache options.
 Use `tracy-profiler.exe` from [Tracy v0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1).
 If you get an error when using Tracy, try removing `dbghelp.dll` from the game binary directory.
 

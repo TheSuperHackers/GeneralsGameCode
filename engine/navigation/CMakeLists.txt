@@ -21,7 +21,7 @@ target_sources(engine_navigation PUBLIC
         movement/occupancy_policy.cppm
 )
 target_include_directories(engine_navigation PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../..")
-target_compile_features(engine_navigation PUBLIC cxx_std_20)
+target_compile_features(engine_navigation PUBLIC cxx_std_23)
 set_property(TARGET engine_navigation PROPERTY CXX_SCAN_FOR_MODULES ON)
 if(TARGET core_config)
     target_link_libraries(engine_navigation PUBLIC core_config)
@@ -45,10 +45,11 @@ function(engine_navigation_attach_generalsmd game_target)
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../Core/GameEngine/Include/Precompiled"
     )
     target_compile_definitions(engine_navigation_generalsmd PRIVATE IG_DEBUG_STACKTRACE)
-    target_compile_features(engine_navigation_generalsmd PUBLIC cxx_std_20)
+    target_compile_features(engine_navigation_generalsmd PUBLIC cxx_std_23)
     set_property(TARGET engine_navigation_generalsmd PROPERTY CXX_SCAN_FOR_MODULES ON)
     target_link_libraries(engine_navigation_generalsmd PUBLIC engine_navigation)
     target_link_libraries(engine_navigation_generalsmd PRIVATE
+        generals_graphics
         zi_always
         corei_gameengine_public
         core_profile_legacy
@@ -93,7 +94,9 @@ function(engine_navigation_add_world_tests)
         set_property(TARGET ${world_target} PROPERTY CXX_SCAN_FOR_MODULES ON)
         add_custom_command(TARGET ${world_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:SDL3::SDL3>" "$<TARGET_FILE_DIR:${world_target}>"
-            COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ffmpeg_SOURCE_DIR}/bin" "$<TARGET_FILE_DIR:${world_target}>")
+        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "$<IF:$<CONFIG:Debug>,${FFMPEG_DEBUG_RUNTIME_DIRECTORY},${FFMPEG_RUNTIME_DIRECTORY}>"
+            "$<TARGET_FILE_DIR:${world_target}>")
     endforeach()
     add_test(NAME engine_navigation_world_tests COMMAND engine_navigation_world_tests)
 endfunction()

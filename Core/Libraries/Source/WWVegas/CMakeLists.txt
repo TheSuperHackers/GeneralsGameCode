@@ -8,14 +8,12 @@ target_compile_definitions(core_wwcommon INTERFACE
 
 target_link_libraries(core_wwcommon INTERFACE
     milesstub
-    stlport
 )
 
 target_include_directories(core_wwcommon INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(WWAudio)
 add_subdirectory(WWDebug)
 add_subdirectory(WWDownload)
 add_subdirectory(WWLib)

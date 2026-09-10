@@ -23,7 +23,7 @@
 //#include "../resource.h"       // main symbols
 
 #include <cstddef>
-#include <winsock.h>
+#include <winsock2.h>
 #include <Utility/stdio_adapter.h>
 
 #include "ftpdefs.h"

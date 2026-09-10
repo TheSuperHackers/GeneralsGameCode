@@ -13,6 +13,7 @@
 #include "WWSaveLoad/persist.h"
 
 import Assets.Cache.Animations;
+import Graphics.Scene.Lighting.Local;
 import Graphics.Scene.Models.Hierarchy;
 import Graphics.Scene.Models.Materials;
 import Graphics.Scene.ObjectList;
@@ -37,11 +38,6 @@ class W3DBoxIntersectionQuery;
 class W3DOrientedBoxIntersectionQuery;
 
 template<class T> class DynamicVectorClass;
-
-namespace Graphics
-{
-struct MaterialLightSource;
-}
 
 // Application-owned render hooks remain at the game boundary. The generic
 // graphics extraction helper invokes these hooks without knowing their policy.

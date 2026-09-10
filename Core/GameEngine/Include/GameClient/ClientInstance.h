@@ -15,8 +15,17 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "Lib/BaseType.h"
+#ifdef __debugbreak
+#pragma push_macro("__debugbreak")
+#undef __debugbreak
+#define RTS_CLIENT_INSTANCE_RESTORE_DEBUGBREAK
+#endif
 #include <SDL3/SDL.h>
+#ifdef RTS_CLIENT_INSTANCE_RESTORE_DEBUGBREAK
+#pragma pop_macro("__debugbreak")
+#undef RTS_CLIENT_INSTANCE_RESTORE_DEBUGBREAK
+#endif
+#include "Lib/BaseType.h"
 
 namespace rts
 {

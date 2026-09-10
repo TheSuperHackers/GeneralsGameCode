@@ -96,6 +96,11 @@ using PathfindZoneManager = ::PathfindZoneManager;
 using PathfindServicesInterface = ::PathfindServicesInterface;
 }
 
+// The game-facing navigation declarations come from legacy headers included
+// in the global module fragment. Keep their out-of-line implementations in
+// the global C++ linkage domain so Clang does not treat them as redeclarations
+// in the named module.
+extern "C++" {
 
 //-------------------------------------------------------------------------------------------------
 
@@ -7208,3 +7213,5 @@ void Pathfinder::loadPostProcess()
 {
 
 }
+
+} // extern "C++"

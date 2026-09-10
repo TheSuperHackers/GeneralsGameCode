@@ -45,6 +45,7 @@ class STLSpecialAlloc;
     #include <Utility/atl_compat.h>
 #endif
 #include <atlbase.h>
+#include <winsock2.h>
 #include <windows.h>
 
 #include <assert.h>

@@ -21,7 +21,7 @@ add_definitions(${LLVM_DEFINITIONS})
 add_definitions(${CLANG_DEFINITIONS})
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Source files

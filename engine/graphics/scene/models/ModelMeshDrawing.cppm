@@ -1,5 +1,6 @@
 module;
 #include "../../profiling/Tracy.h"
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstddef>
@@ -61,7 +62,15 @@ struct ModelMaterialGroups final {
         std::size_t triangle_count = 0;
         std::uint64_t topology_revision = 0;
         std::uint32_t single_shader = 0;
-        bool operator==(const Key&) const = default;
+        bool operator==(const Key& other) const noexcept
+        {
+            return std::equal(versions.begin(), versions.end(), other.versions.begin())
+                && std::equal(single_resources.begin(), single_resources.end(), other.single_resources.begin())
+                && triangles == other.triangles
+                && triangle_count == other.triangle_count
+                && topology_revision == other.topology_revision
+                && single_shader == other.single_shader;
+        }
     };
     Key key;
     struct Packet final {
@@ -83,7 +92,18 @@ struct ModelMaterialGroups final {
         bool lighting = true;
         bool additive = false;
         std::uint64_t bone_revision = 0;
-        bool operator==(const GeometryKey&) const = default;
+        bool operator==(const GeometryKey& other) const noexcept
+        {
+            return std::equal(sources.begin(), sources.end(), other.sources.begin())
+                && std::equal(revisions.begin(), revisions.end(), other.revisions.begin())
+                && vertices == other.vertices
+                && normals == other.normals
+                && opacity == other.opacity
+                && sorted == other.sorted
+                && lighting == other.lighting
+                && additive == other.additive
+                && bone_revision == other.bone_revision;
+        }
     };
     GeometryKey geometry_key;
     std::vector<Packet> packets;

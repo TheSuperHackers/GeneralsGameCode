@@ -23,4 +23,4 @@ target_compile_definitions(z_patchgrabber_de PRIVATE AFX_TARG_DEU AFX_RESOURCE_D
 target_compile_definitions(z_patchgrabber_fr PRIVATE AFX_TARG_FRA AFX_RESOURCE_DLL)
 target_compile_definitions(z_patchgrabber_es PRIVATE AFX_TARG_ESN AFX_RESOURCE_DLL)
 
-# TODO: Add language codes with MSVC
+# TODO: Add language codes for the Windows toolchain

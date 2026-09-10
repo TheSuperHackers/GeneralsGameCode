@@ -26,6 +26,7 @@
 
 #include <memory>
 
+#include "Common/GameType.h"
 #include "W3DDevice/GameClient/W3DRenderContext.h"
 import Graphics.Resources.Textures.Sampling;
 import Graphics.Resources.Textures.Edit;

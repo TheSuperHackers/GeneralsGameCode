@@ -1185,8 +1185,17 @@ target_link_libraries(z_gameengine PUBLIC
 )
 
 target_precompile_headers(z_gameengine PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Utility/CppMacros.h"]] # Legacy source compatibility macros
 #    Include/Precompiled/PreRTS.h
 )
+
+# Clang's PCH import does not preserve the Windows SDK's pragma-once state
+# for the UCRT headers included by legacy game headers. The game sources
+# already include PreRTS explicitly, so compile them without a PCH on Clang.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set_target_properties(z_gameengine PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
+    target_compile_options(z_gameengine PRIVATE
+        "-include${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h")
+endif()
 
 engine_navigation_attach_generalsmd(z_gameengine)

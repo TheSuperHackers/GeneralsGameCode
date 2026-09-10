@@ -28,6 +28,7 @@ import Graphics.Frame.RenderSettings;
 
 import Graphics.Materials.Ordering;
 import Graphics.Frame.Runtime;
+import Graphics.Scene.Beams.RibbonSubdivision;
 import Graphics.Scene.Beams.SegmentedLine;
 import Graphics.Scene.DrawParameters;
 import Graphics.Scene.OrderedDraws;

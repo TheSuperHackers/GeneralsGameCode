@@ -42,7 +42,6 @@ target_link_libraries(core_particleeditor PRIVATE
     corei_always_no_pch
     corei_gameengine_include
     corei_libraries_source_wwvegas
-    stlport
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

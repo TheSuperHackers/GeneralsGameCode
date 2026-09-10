@@ -73,10 +73,9 @@ target_sources(generals_assets
             adapters/w3d/model/W3DAnimationChannels.cppm
             adapters/w3d/W3DAdapter.cppm
             adapters/w3d/W3DRequestPolicy.cppm
-            adapters/w3d/W3DRequestPolicy.cppm
 )
 
-target_compile_features(generals_assets PUBLIC cxx_std_20)
+target_compile_features(generals_assets PUBLIC cxx_std_23)
 
 if(TARGET stb)
     target_link_libraries(generals_assets PUBLIC stb)
@@ -97,7 +96,7 @@ if(RTS_BUILD_ASSET_TESTS)
                 FILES
                     "${source_file}"
         )
-        target_compile_features(${target_name} PRIVATE cxx_std_20)
+        target_compile_features(${target_name} PRIVATE cxx_std_23)
         target_include_directories(${target_name} PRIVATE ${Boost_INCLUDE_DIRS})
         target_link_libraries(${target_name} PRIVATE generals_assets)
         add_test(NAME ${target_name} COMMAND ${target_name})

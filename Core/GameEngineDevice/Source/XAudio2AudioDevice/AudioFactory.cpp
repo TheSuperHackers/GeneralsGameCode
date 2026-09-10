@@ -18,6 +18,7 @@
 
 #include "AudioFactory.h"
 
+#include "Common/Debug.h"
 #include "Lib/BaseType.h"
 
 // Include all backends

@@ -54,7 +54,6 @@
 #pragma once
 
 #include "always.h"
-#include	<assert.h>
 #include	<stdlib.h>
 #include <new>
 

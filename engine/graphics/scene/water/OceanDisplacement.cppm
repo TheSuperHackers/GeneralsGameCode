@@ -115,7 +115,9 @@ public:
         if (!particles.empty()) {
             if (particles.size() > m_particle_capacity) {
                 const auto capacity = std::bit_ceil(static_cast<std::uint32_t>(particles.size()));
-                const auto replacement = m_device->Create_Buffer({capacity*sizeof(OceanWaveParticle),
+                const auto byte_size = capacity * sizeof(OceanWaveParticle);
+                if (byte_size > std::numeric_limits<std::uint32_t>::max()) return false;
+                const auto replacement = m_device->Create_Buffer({static_cast<std::uint32_t>(byte_size),
                     RHIBufferUsage::Storage,sizeof(OceanWaveParticle)});
                 if (!replacement.Is_Valid()) return false;
                 if (m_particles.Is_Valid()) m_device->Destroy_Buffer(m_particles);

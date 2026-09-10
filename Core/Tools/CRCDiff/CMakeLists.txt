@@ -16,7 +16,6 @@ target_sources(core_crcdiff PRIVATE ${CRCDIFF_SRC})
 
 target_link_libraries(core_crcdiff PRIVATE
     corei_always
-    stlport
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

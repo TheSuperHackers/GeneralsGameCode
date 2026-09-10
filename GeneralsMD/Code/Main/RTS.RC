@@ -58,11 +58,6 @@ IDI_ApplicationIcon     ICON    DISCARDABLE     "GENERALS.ICO"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
-// Add the SDL3 executable manifest for DPI awareness, Windows 10/11 support,
-// and the normal Windows common-control window styling.
-1 24 "app.manifest"
-
-
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //

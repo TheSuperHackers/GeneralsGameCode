@@ -3,6 +3,7 @@
 */
 
 import Assets.Images.PixelEncoding;
+#include "Common/GameMemory.h"
 #include "W3DDevice/GameClient/WaterResources.h"
 
 #include "W3DDevice/GameClient/W3DAssetCatalog.h"

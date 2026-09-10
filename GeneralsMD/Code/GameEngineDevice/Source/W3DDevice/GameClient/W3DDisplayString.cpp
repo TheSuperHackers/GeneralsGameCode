@@ -100,7 +100,7 @@ void W3DDisplayString::draw(Int x, Int y, Color color, Color dropColor, Int xDro
 		m_wordWrap,
 		m_wordWrapCentered,
 		m_useHotKey != FALSE,
-		m_hotkey.isEmpty() ? 0 : static_cast<std::uint16_t>(m_hotkey.str()[0]),
+		static_cast<std::uint16_t>(m_hotkey.isEmpty() ? 0 : m_hotkey.str()[0]),
 		TheGlobalLanguageData != nullptr && TheGlobalLanguageData->m_useHardWrap == TRUE};
 	const Engine::UI::WND::TextStyle style{
 		To_UI_Color(color), To_UI_Color(dropColor), To_UI_Color(m_hotKeyColor), xDrop, yDrop};
@@ -145,7 +145,7 @@ bool W3DDisplayString::appendDrawData(
 		m_wordWrap,
 		m_wordWrapCentered,
 		m_useHotKey != FALSE,
-		m_hotkey.isEmpty() ? 0 : static_cast<std::uint16_t>(m_hotkey.str()[0]),
+		static_cast<std::uint16_t>(m_hotkey.isEmpty() ? 0 : m_hotkey.str()[0]),
 		TheGlobalLanguageData != nullptr && TheGlobalLanguageData->m_useHardWrap == TRUE};
 	const Engine::UI::WND::TextStyle style{
 		To_UI_Color(color), To_UI_Color(dropColor), To_UI_Color(m_hotKeyColor), xDrop, yDrop};
@@ -201,7 +201,7 @@ bool W3DDisplayString::appendStaticTextDrawData(
 		m_wordWrap,
 		m_wordWrapCentered,
 		m_useHotKey != FALSE,
-		m_hotkey.isEmpty() ? 0 : static_cast<std::uint16_t>(m_hotkey.str()[0]),
+		static_cast<std::uint16_t>(m_hotkey.isEmpty() ? 0 : m_hotkey.str()[0]),
 		TheGlobalLanguageData != nullptr && TheGlobalLanguageData->m_useHardWrap == TRUE};
 	const Engine::UI::WND::StaticTextContent content{
 		font,

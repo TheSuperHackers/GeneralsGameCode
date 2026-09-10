@@ -42,6 +42,12 @@
 
 #pragma once
 
+#include <cstdarg>
+#include <vector>
+
+#include "Common/SubsystemInterface.h"
+#include "Lib/BaseType.h"
+
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------

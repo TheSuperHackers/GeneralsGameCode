@@ -34,8 +34,6 @@
 
 
 #include "SoundSceneObj.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/RendObj.h"
 #include "WWSaveLoad/persistfactory.h"
 #include "SoundChunkIDs.h"
 #include "Utils.h"
@@ -134,7 +132,6 @@ SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
 SoundSceneObjClass::~SoundSceneObjClass ()
 {
 	REF_PTR_RELEASE (m_UserObj);
-	REF_PTR_RELEASE (m_AttachedObject);
 	Unregister_Sound_Object (this);
 }
 
@@ -170,13 +167,11 @@ SoundSceneObjClass::Attach_To_Object
 	const char *		bone_name
 )
 {
-	REF_PTR_SET (m_AttachedObject, render_obj);
-
-	if (m_AttachedObject != nullptr && bone_name != nullptr) {
-		m_AttachedBone = m_AttachedObject->Get_Bone_Index (bone_name);
-	} else {
-		m_AttachedBone = -1;
-	}
+	// GeneralsMD no longer has the legacy WW3D2 render-object hierarchy. Keep
+	// this old API source-compatible for tools that still include WWAudio, but
+	// do not retain or dereference the obsolete renderer object.
+	m_AttachedObject = render_obj;
+	m_AttachedBone = -1;
 }
 
 
@@ -192,19 +187,11 @@ SoundSceneObjClass::Attach_To_Object
 	int					bone_index
 )
 {
-	if (m_AttachedObject != render_obj || m_AttachedBone != bone_index) {
-
-		//
-		//	Record the attachment
-		//
-		REF_PTR_SET (m_AttachedObject, render_obj);
-		m_AttachedBone = bone_index;
-
-		//
-		//	Update the transform
-		//
-		Apply_Auto_Position ();
-	}
+	// The renderer object is intentionally opaque in GeneralsMD. The modern
+	// renderer owns transform updates, so this legacy attachment is metadata
+	// only and must not call methods on the removed WW3D2 type.
+	m_AttachedObject = render_obj;
+	m_AttachedBone = bone_index;
 }
 
 
@@ -216,33 +203,8 @@ SoundSceneObjClass::Attach_To_Object
 void
 SoundSceneObjClass::Apply_Auto_Position ()
 {
-	// If the sound is attached to an object, then update its transform
-	// based on this link.
-	if (m_AttachedObject != nullptr) {
-
-		// Determine which transform to use
-		Matrix3D transform (1);
-		if (m_AttachedBone >= 0) {
-			transform = m_AttachedObject->Get_Bone_Transform (m_AttachedBone);
-		} else {
-			transform = m_AttachedObject->Get_Transform ();
-
-			//
-			//	Convert the camera's transform to an object transform
-			//
-			if (m_AttachedObject->Class_ID () == RenderObjClass::CLASSID_CAMERA) {
-				Matrix3D cam_to_world (Vector3 (0, 0, -1), Vector3 (-1, 0, 0), Vector3 (0, 1, 0), Vector3 (0, 0, 0));
-#ifdef ALLOW_TEMPORARIES
-				transform = transform * cam_to_world;
-#else
-				transform.postMul(cam_to_world);
-#endif
-			}
-		}
-
-		// Update the sound's transform
-		Set_Transform (transform);
-	}
+	// Object-following audio was part of WW3D2 and has no implementation in
+	// the GeneralsMD renderer. Modern callers set the sound transform directly.
 }
 
 
@@ -327,10 +289,6 @@ SoundSceneObjClass::Load (ChunkLoadClass &cload)
 	//	We need to 'swizzle' the attached object pointer.  We saved the pointer's
 	// value, and need to map it (hopefully) to the new value.
 	//
-	if (m_AttachedObject != nullptr) {
-		SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap ((RefCountClass **)&m_AttachedObject);
-	}
-
 	return true;
 }
 

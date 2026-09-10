@@ -11,4 +11,5 @@ START /B /W generalszh.exe -jobs 4 -headless -replay subfolder/*.rep > replay_ch
 echo %errorlevel%
 PAUSE
 ```
-It will run the game in the background and check that each replay is compatible. You need to use a VC6 build with optimizations and RTS_BUILD_OPTION_DEBUG = OFF, otherwise the game won't be compatible.
+It will run the game in the background and check that each replay is compatible. Use the optimized GeneralsMD
+Clang/LLVM Windows x64 build with `RTS_BUILD_OPTION_DEBUG=OFF` for compatibility checks.

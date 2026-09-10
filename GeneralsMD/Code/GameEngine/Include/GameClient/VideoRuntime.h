@@ -5,20 +5,9 @@
 
 #include "Common/AsciiString.h"
 
-namespace Engine::Video
-{
-enum class PlaybackSlot : std::uint8_t;
-enum class PlaybackState : std::uint8_t;
-struct StreamInfo;
-struct DecodedVideoFrame;
-}
-
-namespace Graphics
-{
-class CommandList;
-class Device;
-struct FrameTargets;
-}
+import Video.Decoder;
+import Video.Runtime;
+import Graphics.FrameTargets;
 
 class GameWindow;
 

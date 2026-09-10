@@ -42,10 +42,6 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "
 )
 
-if(MSVC)
-    target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
-endif()
-
 # Copy runtime game data next to the built executable.
 # The game sets working directory to the executable directory on startup,
 # so required data must exist directly under that directory (for example Data/...).
@@ -55,7 +51,7 @@ add_custom_command(TARGET z_generals POST_BUILD
         "${CMAKE_SOURCE_DIR}/GeneralsMD/Run"
         "$<TARGET_FILE_DIR:z_generals>"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${ffmpeg_SOURCE_DIR}/bin"
+        "$<IF:$<CONFIG:Debug>,${FFMPEG_DEBUG_RUNTIME_DIRECTORY},${FFMPEG_RUNTIME_DIRECTORY}>"
         "$<TARGET_FILE_DIR:z_generals>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:SDL3::SDL3>"
@@ -85,24 +81,16 @@ target_sources(z_generals PRIVATE
     ../../../Generals/Code/Main/Platform/SDLPlatformWindow.h
 )
 
-# RC files optional for MinGW builds
-# Icon: LoadIcon() handles missing resource gracefully (uses default system icon)
-# Manifest: DPI awareness metadata (nice to have but not essential)
-if(MSVC)
-    # VS2005 and later adds default manifest, we need to turn it off to prevent conflict with custom manifest
-    if(NOT IS_VS6_BUILD)
-        target_link_options(z_generals PRIVATE
-            "/MANIFEST:NO"
-        )
-    endif()
-
-    target_sources(z_generals PRIVATE
-        RTS.RC
-    )
+# The legacy engine interface publishes a PCH containing Windows/intrinsic
+# macros. Clang must parse SDL headers before those macros are active.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set_target_properties(z_generals PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
+    target_compile_options(z_generals PRIVATE
+        "-include${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h")
 endif()
 
-# Strip debug symbols to separate file for MinGW Release builds
-# This creates generalszh${RTS_BUILD_OUTPUT_SUFFIX}.exe.debug (similar to MSVC .pdb files)
-if(MINGW AND COMMAND add_debug_strip_target)
-    add_debug_strip_target(z_generals)
+if(WIN32)
+    target_link_options(z_generals PRIVATE
+        "LINKER:/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
+    target_sources(z_generals PRIVATE RTS.RC)
 endif()

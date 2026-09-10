@@ -58,7 +58,6 @@ target_link_libraries(z_guiedit PRIVATE
     core_debug
     d3d9lib
     imm32
-    stlport
     vfw32
     winmm
     z_gameengine

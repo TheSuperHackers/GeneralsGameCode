@@ -51,8 +51,8 @@
 
 #include "Common/ThingFactory.h"
 #include "Common/FileSystem.h"
-#include "Win32Device/Common/Win32LocalFileSystem.h"
-#include "Win32Device/Common/Win32BIGFileSystem.h"
+#include "SDL3Device/Common/SDL3LocalFileSystem.h"
+#include "SDL3Device/Common/SDL3BIGFileSystem.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/MapUtil.h"
 #include "W3DDevice/Common/W3DModuleFactory.h"
@@ -99,9 +99,6 @@
 #include "XAudio2AudioDevice/XAudio2AudioManager.h"
 
 #include <io.h>
-#include "Win32Device/GameClient/Win32Mouse.h"
-#include "Win32Device/Common/Win32LocalFileSystem.h"
-#include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "WWLib/trim.h"
 
 
@@ -248,8 +245,8 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	TheFileSystem = new FileSystem;
 
-	initSubsystem(TheLocalFileSystem, (LocalFileSystem*)new Win32LocalFileSystem);
-	initSubsystem(TheArchiveFileSystem, (ArchiveFileSystem*)new Win32BIGFileSystem);
+	initSubsystem(TheLocalFileSystem, (LocalFileSystem*)new SDL3LocalFileSystem);
+	initSubsystem(TheArchiveFileSystem, (ArchiveFileSystem*)new SDL3BIGFileSystem);
 	INI ini;
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 	initSubsystem(TheGameText, CreateGameTextInterface());

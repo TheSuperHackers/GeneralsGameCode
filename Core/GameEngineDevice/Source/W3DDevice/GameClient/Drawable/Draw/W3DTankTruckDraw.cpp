@@ -31,6 +31,7 @@ import Graphics.Frame.RenderClock;
 #include <math.h>
 #include <cstring>
 import Assets.Identity;
+import Graphics.Materials.MeshMaterial;
 
 #include "Common/Thing.h"
 #include "Common/ThingFactory.h"

@@ -2,13 +2,12 @@
 
 ## Project Overview
 
-This is the **GeneralsGameCode** project - a community-driven effort to fix and improve the classic RTS games *Command & Conquer: Generals* and *Zero Hour*. The codebase has been modernized from Visual Studio 6/C++98 to Visual Studio 2022/C++20 while maintaining retail compatibility.
+This is the **GeneralsGameCode** project - a community-driven effort focused on improving *Command & Conquer: Generals Zero Hour*. The supported build is GeneralsMD with Clang/LLVM, C++23, and Windows x64.
 
 ## Architecture
 
-### Dual Game Structure
-- **Generals/**: Original C&C Generals (v1.08) codebase
-- **GeneralsMD/**: Zero Hour expansion (v1.04) codebase - **primary focus**
+### Game Structure
+- **GeneralsMD/**: Zero Hour expansion (v1.04) codebase - **supported target**
 - **Core/**: Shared game engine and libraries used by both games
 
 ### Key Components
@@ -16,31 +15,25 @@ This is the **GeneralsGameCode** project - a community-driven effort to fix and 
 - **Core/Libraries/**: Internal libraries including WWVegas graphics framework
 - **Core/GameEngineDevice/**: Platform-specific rendering (DirectX 8)
 - **Core/Tools/**: Development tools (W3DView, texture compression, etc.)
-- **Dependencies/**: External dependencies (MaxSDK for VC6, utilities)
+- **Dependencies/**: External dependencies and utilities
 
 ## Build System
 
-### CMake Presets (Critical)
-- **vc6**: Visual Studio 6 compatible build (retail compatibility required)
-- **win32**: Modern Visual Studio 2022 build
-- **vc6-debug/vc6-profile**: Debug/profiling variants
-- Use `cmake --preset <preset-name>` followed by `cmake --build build/<preset>`
+### CMake Preset (Critical)
+- **clang-windows-x64**: GeneralsMD, Clang/LLVM, Windows x64, C++23
+- Use `cmake --preset clang-windows-x64` followed by `cmake --build --preset clang-windows-x64`
 
 ### Build Commands
 ```bash
-# Configure with specific preset
-cmake --preset vc6
+# Configure with the supported toolchain
+cmake --preset clang-windows-x64
 
 # Build (from project root)
-cmake --build build/vc6
-
-# Build with tools and extras
-cmake --build build/vc6 --target <game>_tools <game>_extras
+cmake --build --preset clang-windows-x64
 ```
 
 ### Retail Compatibility
-- VC6 builds are required for replay compatibility testing
-- Debug builds break retail compatibility
+- Release builds are used for replay compatibility testing
 - Use RTS_BUILD_OPTION_DEBUG=OFF for compatibility testing
 
 ## Development Workflow
@@ -72,12 +65,12 @@ Located in `GeneralsReplays/` - critical for ensuring retail compatibility:
 ```bash
 generalszh.exe -jobs 4 -headless -replay subfolder/*.rep
 ```
-- Requires VC6 optimized build with RTS_BUILD_OPTION_DEBUG=OFF
+- Requires an optimized Clang/LLVM build with RTS_BUILD_OPTION_DEBUG=OFF
 - Copies replays to `%USERPROFILE%/Documents/Command and Conquer Generals Zero Hour Data/Replays`
 - CI automatically tests GeneralsMD builds against known replays
 
 ### Build Validation
-- CI tests multiple presets: vc6, vc6-profile, vc6-debug, win32 variants
+- CI tests the Clang/LLVM Windows x64 preset
 - Path-based change detection triggers relevant builds
 - Tools and extras are built with `+t+e` flags
 
@@ -85,7 +78,7 @@ generalszh.exe -jobs 4 -headless -replay subfolder/*.rep
 
 ### Memory Management
 - Manual memory management (delete/delete[]) - this is legacy C++98 code
-- STLPort for VC6 compatibility (see `cmake/stlport.cmake`)
+- The legacy STLPort/VC6 compatibility layer is no longer part of the build
 
 ### Game Engine Separation
 - **GameLogic**: Game state, rules, simulation
@@ -105,12 +98,12 @@ Core/
 ## External Dependencies
 
 ### Required for Building
-- **VC6 builds**: Requires MSVC 6.0 toolchain (automated in CI via itsmattkc/MSVC600)
-- **Modern builds**: Visual Studio 2022, Ninja generator
-- **vcpkg** (optional): zlib, ffmpeg for enhanced builds
+- **LLVM/Clang**: `clang`, `clang++`, `lld-link`, `llvm-rc`, and LLVM archiving tools
+- **Windows SDK**: headers/libraries and `midl.exe`
+- **vcpkg**: manifest dependencies, using the `x64-windows` triplet
 
 ### Platform-Specific
-- **Windows**: DirectX 8, Miles Sound System, Bink Video
+- **Windows x64**: DirectX 8, Miles Sound System, Bink Video
 - **Registry detection**: Automatic game install path detection from EA registry keys
 
 ## Tools and Utilities
@@ -126,7 +119,8 @@ Core/
 - MapCacheBuilder: Map preprocessing
 
 ## Key Files to Understand
-- `CMakePresets.json`: All build configurations
+- `CMakePresets.json`: Supported build configuration
+- `cmake/toolchains/clang-windows-x64.cmake`: Environment-safe LLVM tool discovery
 - `cmake/config-build.cmake`: Build options and feature flags
 - `Core/GameEngine/Include/`: Core engine interfaces
 - `**/Code/Main/WinMain.cpp`: Application entry points

@@ -25,7 +25,7 @@ target_include_directories(core_profile_legacy INTERFACE
 )
 
 target_precompile_headers(core_profile_legacy PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Utility/CppMacros.h"]] # Legacy source compatibility macros
     "profile.h"
     "internal.h"
     <windows.h>

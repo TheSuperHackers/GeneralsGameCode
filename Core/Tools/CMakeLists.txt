@@ -22,15 +22,14 @@ if(RTS_BUILD_CORE_EXTRAS)
     add_subdirectory(WW3D)
 endif()
 
-# Add library interfaces here
-if(RTS_BUILD_GENERALS_TOOLS OR RTS_BUILD_ZEROHOUR_TOOLS)
+# Add the GeneralsMD tools that are supported by the active build.
+if(RTS_BUILD_ZEROHOUR_TOOLS)
     add_subdirectory(ImagePacker)
     add_subdirectory(MapCacheBuilder)
-    add_subdirectory(W3DView)
 endif()
 
-# Add library interfaces here
-if(RTS_BUILD_GENERALS_EXTRAS OR RTS_BUILD_ZEROHOUR_EXTRAS)
+# Add GeneralsMD extra tools when requested.
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
     add_subdirectory(Autorun)
     add_subdirectory(Launcher)
     add_subdirectory(PATCHGET)

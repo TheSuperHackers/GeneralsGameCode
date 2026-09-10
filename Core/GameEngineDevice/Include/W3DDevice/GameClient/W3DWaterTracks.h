@@ -27,6 +27,7 @@
 #include <array>
 #include <span>
 #include <vector>
+#include "Lib/BaseType.h"
 #include "W3DDevice/GameClient/WaterMaterial.h"
 #include "WWMath/aabox.h"
 #include "WWMath/sphere.h"

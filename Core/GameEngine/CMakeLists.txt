@@ -1202,10 +1202,4 @@ target_link_libraries(corei_gameengine_public INTERFACE
     #core_wwvegas
     d3d9lib
     gamespy::gamespy
-    stlport
 )
-
-# ReactOS ATL for MinGW-w64 only (MSVC uses native ATL)
-if(MINGW)
-    target_link_libraries(corei_gameengine_public INTERFACE reactos_atl)
-endif()

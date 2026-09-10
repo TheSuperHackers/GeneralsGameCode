@@ -12,7 +12,7 @@ target_sources(generals_ui_wnd
             WNDLayout.cppm
 )
 
-target_compile_features(generals_ui_wnd PUBLIC cxx_std_20)
+target_compile_features(generals_ui_wnd PUBLIC cxx_std_23)
 target_link_libraries(generals_ui_wnd PUBLIC generals_graphics generals_assets)
 
 if(RTS_BUILD_GRAPHICS_TESTS)
@@ -26,7 +26,7 @@ if(RTS_BUILD_GRAPHICS_TESTS)
             FILES
                 WNDRenderer.test.cppm
     )
-    target_compile_features(generals_ui_wnd_renderer_test PRIVATE cxx_std_20)
+    target_compile_features(generals_ui_wnd_renderer_test PRIVATE cxx_std_23)
     target_include_directories(generals_ui_wnd_renderer_test PRIVATE ${Boost_INCLUDE_DIRS})
     target_link_libraries(generals_ui_wnd_renderer_test PRIVATE generals_ui_wnd)
 
@@ -69,7 +69,7 @@ if(RTS_BUILD_GRAPHICS_TESTS AND WIN32)
     add_executable(generals_ui_wnd_texture_drawing_test)
     target_sources(generals_ui_wnd_texture_drawing_test PRIVATE
         FILE_SET CXX_MODULES FILES WNDTextureDrawing.test.cppm)
-    target_compile_features(generals_ui_wnd_texture_drawing_test PRIVATE cxx_std_20)
+    target_compile_features(generals_ui_wnd_texture_drawing_test PRIVATE cxx_std_23)
     target_include_directories(generals_ui_wnd_texture_drawing_test PRIVATE ${Boost_INCLUDE_DIRS})
     target_link_libraries(generals_ui_wnd_texture_drawing_test PRIVATE
         generals_ui_wnd

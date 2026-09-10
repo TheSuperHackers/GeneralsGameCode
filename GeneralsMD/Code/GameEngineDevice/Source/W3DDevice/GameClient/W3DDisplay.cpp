@@ -1,3 +1,4 @@
+#include <winsock2.h>
 #include <functional>
 import Graphics.Frame.RenderClock;
 import Graphics.Scene.OrderedDraws;

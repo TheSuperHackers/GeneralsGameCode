@@ -175,7 +175,7 @@ set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_precompile_headers(core_wwlib PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Utility/CppMacros.h"]] # Legacy source compatibility macros
     [["WWLib/always.h"]]
     [["WWLib/STLUtils.h"]]
     [["WWLib/win.h"]]

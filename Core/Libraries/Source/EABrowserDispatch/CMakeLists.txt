@@ -1,15 +1,17 @@
 add_library(core_browserdispatch INTERFACE)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    if(MINGW AND IDL_COMPILER_FOUND)
-        # Use widl for MinGW builds
-        add_idl_file(browserdispatch_idl "${CMAKE_CURRENT_LIST_DIR}/BrowserDispatch.idl")
-        add_library(core_browserdispatchwin STATIC ${browserdispatch_idl_IID} ${browserdispatch_idl_HEADER})
-    elseif(MSVC)
-        # Use midl for MSVC builds
+    if(WIN32)
         add_custom_command(
             OUTPUT BrowserDispatch_i.c BrowserDispatch.h
-            COMMAND midl.exe "${CMAKE_CURRENT_LIST_DIR}\\BrowserDispatch.idl" /header BrowserDispatch.h /iid BrowserDispatch_i.c
+            COMMAND ${CMAKE_COMMAND} -E env
+                "PATH=${LLVM_BIN_DIRECTORY};$ENV{PATH}"
+                "${MIDL_EXECUTABLE}" "${CMAKE_CURRENT_LIST_DIR}\\BrowserDispatch.idl"
+                /cpp_cmd clang-cl.exe
+                /I "${WINDOWS_SDK_UM_INCLUDE_DIRECTORY}"
+                /I "${WINDOWS_SDK_SHARED_INCLUDE_DIRECTORY}"
+                /header BrowserDispatch.h
+                /iid BrowserDispatch_i.c
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             DEPENDS "${CMAKE_CURRENT_LIST_DIR}/BrowserDispatch.idl"
             VERBATIM
@@ -18,12 +20,6 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
         target_link_libraries(core_browserdispatchwin PUBLIC
             $<IF:$<CONFIG:Debug>,comsuppwd,comsuppw>
         )
-    else()
-        message(FATAL_ERROR 
-            "EABrowserDispatch requires an IDL compiler for Windows builds:\n"
-            "  - For MinGW: Install widl (apt-get install wine-stable-dev)\n"
-            "  - For MSVC: midl.exe should be in PATH\n"
-            "  - For other compilers: Not currently supported")
     endif()
     
     if(TARGET core_browserdispatchwin)
