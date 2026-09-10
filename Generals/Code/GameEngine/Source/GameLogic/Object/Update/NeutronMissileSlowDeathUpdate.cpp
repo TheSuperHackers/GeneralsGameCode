@@ -394,7 +394,7 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 			const Coord3D missileToObjectCenter = *otherPos - *missilePos;
 
 			Coord3D missileToObjectEdge;
-			ThePartitionManager->getVectorTo(other, missilePos, dc, missileToObjectEdge);
+			ThePartitionManager->getVectorTo(other, missilePos, FROM_BOUNDINGSPHERE_3D, missileToObjectEdge);
 
 			// flip direction
 			missileToObjectEdge = -missileToObjectEdge;
