@@ -458,7 +458,7 @@ Bool ProductionUpdate::queueCreateUnit( const ThingTemplate *unitType, Productio
 //-------------------------------------------------------------------------------------------------
 /** Cancel the construction of the unit with the matching production ID */
 //-------------------------------------------------------------------------------------------------
-void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
+Bool ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 {
 
 	// search for the production entry in our queue
@@ -470,8 +470,15 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 		if( production->m_productionID == productionID )
 		{
 
-			// give the player the cost of the object back
 			Player *player = getObject()->getControllingPlayer();
+
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix arcticdolphin 07/09/2026 No cancel once the batch has started producing.
+			if( production->getProductionQuantityRemaining() < production->getProductionQuantity() )
+				return FALSE;
+#endif
+
+			// give the player the cost of the object back
 			Money *money = player->getMoney();
 			money->deposit( production->m_objectToProduce->calcCostToBuild( player ), TRUE, FALSE );
 
@@ -481,11 +488,13 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 			// delete the production entry
 			deleteInstance(production);
 
-			return;
+			return TRUE;
 
 		}
 
 	}
+
+	return FALSE;
 
 }
 
@@ -659,7 +668,7 @@ UpdateSleepTime ProductionUpdate::update()
 	// if we've become OBJECT_STATUS_SOLD, halt all production ... leave things in the
 	// queue because if the sell process completes we get money back for them, for now we
 	// will be just frozen in time
-	// Actually, there will be nothing in the queue since everything gets cancel/refunded
+	// Actually, there will usually be nothing in the queue since everything gets cancel/refunded
 	// at the start of sell, but we still don't want to do anything here.
 	//
 	if( us->getStatusBits().test( OBJECT_STATUS_SOLD ) )
@@ -693,10 +702,8 @@ UpdateSleepTime ProductionUpdate::update()
 		// Don't cancel dozers in the queue.  jba.
 		if (!production->getProductionObject()->isKindOf(KINDOF_DOZER))
 		{
-
-			cancelUnitCreate(production->getProductionID());
-			return UPDATE_SLEEP_NONE;
-
+			if( cancelUnitCreate(production->getProductionID()) )
+				return UPDATE_SLEEP_NONE;
 		}
 
 	}
@@ -1134,24 +1141,33 @@ void ProductionUpdate::cancelAndRefundAllProduction()
 {
   // Empirically, in release the code can loop forever.  So we limit to 100 passes. jba. [8/31/2003]
   const Int productionLimit = 100;// With luck, we never queue up 100 units. [8/31/2003]
-  Int i;
-  for (i=0; i<productionLimit; i++)
+
+  Int i = 0;
+  ProductionEntry *production = m_productionQueue;
+  while( production != nullptr && i < productionLimit )
   {
-    // iterate through our production queue
-    if( m_productionQueue )
+    ProductionEntry *nextProduction = production->m_next;
+
+    if( production->getProductionType() == PRODUCTION_UNIT )
     {
-      if( m_productionQueue->getProductionType() == PRODUCTION_UNIT )
-        cancelUnitCreate( m_productionQueue->getProductionID() );
-      else if( m_productionQueue->getProductionType() == PRODUCTION_UPGRADE )
-        cancelUpgrade( m_productionQueue->getProductionUpgrade() );
-      else
+      if( !cancelUnitCreate( production->getProductionID() ) )
       {
-        // unknown production type
-        DEBUG_CRASH(( "ProductionUpdate::cancelAndRefundAllProduction - Unknown production type '%d'",
-                      m_productionQueue->getProductionType() ));
-        return;
+        removeFromProductionQueue( production );
+        deleteInstance( production );
       }
     }
+    else if( production->getProductionType() == PRODUCTION_UPGRADE )
+      cancelUpgrade( production->getProductionUpgrade() );
+    else
+    {
+      // unknown production type
+      DEBUG_CRASH(( "ProductionUpdate::cancelAndRefundAllProduction - Unknown production type '%d'",
+                    production->getProductionType() ));
+      return;
+    }
+
+    production = nextProduction;
+    ++i;
   }
 }
 

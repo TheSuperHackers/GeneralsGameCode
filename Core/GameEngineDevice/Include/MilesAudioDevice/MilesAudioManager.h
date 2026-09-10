@@ -229,10 +229,6 @@ class MilesAudioManager : public AudioManager
 
 		virtual void closeAnySamplesUsingFile( const void *fileToClose ) override;
 
-
-    virtual Bool has3DSensitiveStreamsPlaying() const override;
-
-
 	protected:
 		// 3-D functions
 		virtual void setDeviceListenerPosition() override;
@@ -382,7 +378,6 @@ class MilesAudioManagerDummy : public MilesAudioManager
 	virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) override {}
 	virtual void removePlayingAudio(AsciiString eventName) override {}
 	virtual void removeAllDisabledAudio() override {}
-	virtual Bool has3DSensitiveStreamsPlaying() const override { return false; }
 	virtual void* getHandleForBink() override { return nullptr; }
 	virtual void releaseHandleForBink() override {}
 	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) override {}

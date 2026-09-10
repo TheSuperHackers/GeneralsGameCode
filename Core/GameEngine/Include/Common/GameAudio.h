@@ -244,8 +244,6 @@ class AudioManager : public SubsystemInterface
 		// on zoom.
 		virtual void set3DVolumeAdjustment( Real volumeAdjustment );
 
-    virtual Bool has3DSensitiveStreamsPlaying() const = 0;
-
  		virtual void *getHandleForBink() = 0;
  		virtual void releaseHandleForBink() = 0;
 

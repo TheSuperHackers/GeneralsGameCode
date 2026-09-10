@@ -320,6 +320,19 @@ struct Coord2D
 		sub(a);
 	}
 
+	Coord2D operator+() const
+	{
+		return *this;
+	}
+
+	Coord2D operator-() const
+	{
+		Coord2D c;
+		c.x = -x;
+		c.y = -y;
+		return c;
+	}
+
 	void set( const Coord2D &a )
 	{
 		x = a.x;
@@ -445,6 +458,19 @@ struct ICoord2D
 	void operator-=( const ICoord2D &a )
 	{
 		sub(a);
+	}
+
+	ICoord2D operator+() const
+	{
+		return *this;
+	}
+
+	ICoord2D operator-() const
+	{
+		ICoord2D c;
+		c.x = -x;
+		c.y = -y;
+		return c;
 	}
 
 	void set( const ICoord2D &a )
@@ -577,6 +603,20 @@ struct Coord3D
 		sub(a);
 	}
 
+	Coord3D operator+() const
+	{
+		return *this;
+	}
+
+	Coord3D operator-() const
+	{
+		Coord3D c;
+		c.x = -x;
+		c.y = -y;
+		c.z = -z;
+		return c;
+	}
+
 	void set( const Coord3D &a )
 	{
 		x = a.x;
@@ -668,6 +708,20 @@ struct ICoord3D
 	void operator-=( const ICoord3D &a )
 	{
 		sub(a);
+	}
+
+	ICoord3D operator+() const
+	{
+		return *this;
+	}
+
+	ICoord3D operator-() const
+	{
+		ICoord3D c;
+		c.x = -x;
+		c.y = -y;
+		c.z = -z;
+		return c;
 	}
 
 	void set( const ICoord3D &a )

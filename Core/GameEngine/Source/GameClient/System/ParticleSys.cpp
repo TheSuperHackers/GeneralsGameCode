@@ -2125,9 +2125,15 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	// If we have been "destroyed", wait for all of our particles to die off,
 	// then destroy ourselves (return false).
 	//
+	// TheSuperHackers @bugfix Mauller 30/08/2026 Delay destruction to prevent finite-lifetime slave particle systems being orphaned.
+	// Orphaned particle systems lack positional data, render at the world origin and do not complete their full lifecycle.
 	if (m_isDestroyed && !m_systemParticlesHead)
-		return false;
+	{
+		if (m_slaveSystem && !m_slaveSystem->isSystemForever())
+			return true;
 
+		return false;
+	}
 
 	// monitor particle system lifetime
 	if (m_isForever == false)
@@ -2142,7 +2148,12 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 
 		// check if time is up
 		if (m_systemLifetimeLeft == 0)
-			return false;
+		{
+			if (m_slaveSystem && !m_slaveSystem->isSystemForever())
+				m_isDestroyed = true;
+			else
+				return false;
+		}
 	}
 
 	return true;

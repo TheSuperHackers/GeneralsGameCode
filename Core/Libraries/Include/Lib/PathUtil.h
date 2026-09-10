@@ -23,6 +23,38 @@
 #include "BaseType.h"
 #include <string.h>
 
+inline bool isPathSeparator(char ch)
+{
+#ifdef _WIN32
+	return ch == '\\' || ch == '/';
+#else
+	return ch == '/';
+#endif
+}
+
+inline bool isAbsolutePath(const char* path)
+{
+	if (path == nullptr)
+	{
+		return false;
+	}
+
+	if (isPathSeparator(path[0]))
+	{
+		return true;
+	}
+
+#ifdef _WIN32
+	const bool hasDriveLetter = (path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z');
+	if (hasDriveLetter && path[1] == ':' && isPathSeparator(path[2]))
+	{
+		return true;
+	}
+#endif
+
+	return false;
+}
+
 inline const char* getExtension(const char* path)
 {
 	const char* lastDot = strrchr(path, '.');

@@ -696,6 +696,14 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ShellMenuScheme.h", Game.CORE, "GameEngine/Include/GameClient/ShellMenuScheme.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/Shell/ShellMenuScheme.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/Shell/ShellMenuScheme.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/AnimateWindowManager.h", Game.CORE, "GameEngine/Include/GameClient/AnimateWindowManager.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/GameWindowID.h", Game.CORE, "GameEngine/Include/GameClient/GameWindowID.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/GameWindowManager.h", Game.CORE, "GameEngine/Include/GameClient/GameWindowManager.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/AnimateWindowManager.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/AnimateWindowManager.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GameWindowManager.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GameWindowManager.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GameWindowManagerScript.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GameWindowManagerScript.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GameWindowTransitionsStyles.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GameWindowTransitionsStyles.cpp")
+
     return
 
 

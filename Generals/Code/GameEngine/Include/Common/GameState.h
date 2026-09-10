@@ -191,6 +191,7 @@ public:
 
 	AsciiString getSaveDirectory() const;
 	AsciiString getFilePathInSaveDirectory(const AsciiString& leaf) const;
+	AsciiString getSaveGamePathForRead(const AsciiString& filenameOrPath) const;
 	Bool isInSaveDirectory(const AsciiString& path) const;
 
 	AsciiString realMapPathToPortableMapPath(const AsciiString& in) const;

@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -278,8 +278,7 @@ public:
 	virtual GameWindow *winGetCapture();  ///< current mouse capture settings
 
 	virtual Int winSetModal( GameWindow *window );  ///< put at top of modal stack
-	virtual Int winUnsetModal( GameWindow *window );  /**< take window off modal stack, if window is
-																										not at top of stack and error will occur */
+	virtual Int winUnsetModal( GameWindow *window );  ///< take window off the modal stack from anywhere in the stack
 
 	//---------------------------------------------------------------------------
 	/////////////////////////////////////////////////////////////////////////////

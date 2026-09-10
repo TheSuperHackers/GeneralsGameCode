@@ -96,24 +96,12 @@ void GameWindowManager::processDestroyList()
 
 		next = doDestroy->m_next;
 
-		// Check to see if this window is "special"
-		if( m_mouseCaptor == doDestroy )
-			winRelease( doDestroy );
-
-		if( m_keyboardFocus == doDestroy )
-			winSetFocus( nullptr );
-
-		if( (m_modalHead != nullptr) && (doDestroy == m_modalHead->window) )
-			winUnsetModal( m_modalHead->window );
-
-		if( m_currMouseRgn == doDestroy )
-			m_currMouseRgn = nullptr;
-
-		if( m_grabWindow == doDestroy )
-			m_grabWindow = nullptr;
-
 		// send the destroy message to the window we're about to kill
 		winSendSystemMsg( doDestroy, GWM_DESTROY, 0, 0 );
+
+		DEBUG_ASSERTCRASH( m_mouseCaptor != doDestroy && m_keyboardFocus != doDestroy
+			&& m_currMouseRgn != doDestroy && m_grabWindow != doDestroy,
+			("processDestroyList: manager still points at a window being destroyed") );
 
 		DEBUG_ASSERTCRASH(doDestroy->winGetUserData() == nullptr, ("Win user data is expected to be deleted now"));
 
@@ -1422,8 +1410,7 @@ Int GameWindowManager::winDestroy( GameWindow *window )
 	if( m_keyboardFocus == window )
 		winSetFocus( nullptr );
 
-	if( (m_modalHead != nullptr) && (window == m_modalHead->window) )
-		winUnsetModal( m_modalHead->window );
+	winUnsetModal( window );
 
 	if( m_currMouseRgn == window )
 		m_currMouseRgn = nullptr;
@@ -1507,6 +1494,24 @@ Int GameWindowManager::winSetModal( GameWindow *window )
 		DEBUG_LOG(( "WinSetModal: Non Root window attempted to go modal." ));
 		return WIN_ERR_INVALID_PARAMETER;			// return error if not
 	}
+
+	// TheSuperHackers @bugfix arcticdolphin 08/09/2026 If already modal, move to the top instead of duplicating.
+	ModalWindow *previous = nullptr;
+	for( ModalWindow *existing = m_modalHead; existing != nullptr; previous = existing, existing = existing->next )
+	{
+		if( existing->window != window )
+			continue;
+
+		if( previous != nullptr )
+		{
+			previous->next = existing->next;
+			existing->next = m_modalHead;
+			m_modalHead = existing;
+		}
+
+		return WIN_ERR_OK;
+	}
+
 	// Allocate new Modal Window Entry
 	modal = newInstance(ModalWindow);
 	if( modal == nullptr )
@@ -1525,33 +1530,35 @@ Int GameWindowManager::winSetModal( GameWindow *window )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** pops window off of the modal stack.  If this window is not the top
-	* of the modal stack an error will occur. */
+/** takes the window off the modal stack from anywhere in the stack */
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix arcticdolphin 07/09/2026 Remove the window from anywhere in the modal stack, not just the top, so a destroyed window cannot leave a dangling entry behind.
 Int GameWindowManager::winUnsetModal( GameWindow *window )
 {
-	ModalWindow *next;
-
 	if( window == nullptr )
 		return WIN_ERR_INVALID_WINDOW;
 
-	// verify entry is at top of list
-	if( (m_modalHead == nullptr) || (m_modalHead->window != window) )
+	ModalWindow *previous = nullptr;
+	ModalWindow *modal = m_modalHead;
+
+	while( modal != nullptr )
 	{
+		if( modal->window == window )
+		{
+			if( previous != nullptr )
+				previous->next = modal->next;
+			else
+				m_modalHead = modal->next;
 
-		// return error if not
-		DEBUG_LOG(( "WinUnsetModal: Invalid window attempting to unset modal (%d)",
-								window->winGetWindowId() ));
-		return WIN_ERR_GENERAL_FAILURE;
+			deleteInstance(modal);
+			return WIN_ERR_OK;
+		}
 
+		previous = modal;
+		modal = modal->next;
 	}
 
-	// remove from top of list
-	next = m_modalHead->next;
-	deleteInstance(m_modalHead);
-	m_modalHead = next;
-
-	return WIN_ERR_OK;
+	return WIN_ERR_GENERAL_FAILURE;
 
 }
 

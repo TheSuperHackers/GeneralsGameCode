@@ -149,6 +149,7 @@ jobs:
           - preset: "win32-vcpkg"
             tools: true
             extras: true
+            ffmpeg: true
           - preset: "win32-vcpkg-profile"
             tools: true
             extras: true
@@ -162,6 +163,7 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
+      ffmpeg: ${{ matrix.ffmpeg || false}}
     secrets: inherit
 
   replaycheck-generalsmd:
