@@ -640,6 +640,8 @@ void MeshMatDescClass::Install_UV_Array(int pass,int stage,Vector2 * uvs,int cou
 }
 
 
+// TheSuperHackers @bugfix Cryo 10/09/2026 Skip null materials to prevent crashes and
+// use each vertex's material colors to avoid incorrect ambient/emissive vertex colors.
 void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * parent)
 {
 	/*
@@ -682,7 +684,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 
 		if (!ColorArray[0] && !ColorArray[1]) continue;	// If no color arrays, we don't have a problem
 
-		// Aggregate color usage across valid materials; no first-material baseline is needed.
 		bool diffuse_used=false;
 		bool ambient_used=false;
 		bool emissive_used=false;
@@ -691,7 +692,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 		for (int vidx=0; vidx<VertexCount; vidx++)
 		{
 			VertexMaterialClass* mtl = Peek_Material(vidx,pass);
-			// TheSuperHackers @bugfix Cryo 01/09/2026 A material array can contain null entries.
 			if (mtl == nullptr)
 			{
 				continue;
@@ -700,9 +700,9 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 			if (mtl != prev_mtl)
 			{
 				prev_mtl = mtl;
-				Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
-				Vector3 mtl_ambient(0.0f,0.0f,0.0f);
-				Vector3 mtl_emissive(0.0f,0.0f,0.0f);
+				Vector3 mtl_diffuse;
+				Vector3 mtl_ambient;
+				Vector3 mtl_emissive;
 				mtl->Get_Diffuse(&mtl_diffuse);
 				mtl->Get_Ambient(&mtl_ambient);
 				mtl->Get_Emissive(&mtl_emissive);
@@ -732,10 +732,10 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 
 		if ((DCGSource[pass] != VertexMaterialClass::MATERIAL) && (ColorArray[0] != nullptr)) {
 			unsigned * diffuse_array = ColorArray[0]->Get_Array();
-			Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
-			Vector3 mtl_ambient(0.0f,0.0f,0.0f);
-			Vector3 mtl_emissive(0.0f,0.0f,0.0f);
-			float mtl_opacity = 1.0f;
+			Vector3 mtl_diffuse;
+			Vector3 mtl_ambient;
+			Vector3 mtl_emissive;
+			float mtl_opacity;
 
 			VertexMaterialClass * prev_mtl = nullptr;
 			VertexMaterialClass * mtl = Peek_Material(0,pass);
@@ -743,7 +743,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 			for (int vidx=0; vidx<VertexCount; vidx++) {
 
 				mtl = Peek_Material(vidx,pass);
-				// TheSuperHackers @bugfix Cryo 01/09/2026 Do not apply material colors through a null entry.
 				if (mtl == nullptr) {
 					continue;
 				}
@@ -751,7 +750,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				if (mtl != prev_mtl) {
 					prev_mtl = mtl;
 					mtl->Get_Diffuse(&mtl_diffuse);
-					// TheSuperHackers @bugfix Cryo 10/09/2026 Use this vertex's material colors, not the last analyzed material.
 					mtl->Get_Ambient(&mtl_ambient);
 					mtl->Get_Emissive(&mtl_emissive);
 					mtl_opacity = mtl->Get_Opacity();
@@ -863,7 +861,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 		}
 		// Set lighting to false if requested in all passes...
 		else if (set_lighting_to_false) {
-			// Aggregate color usage across valid materials; no first-material baseline is needed.
 			bool diffuse_used=false;
 			bool ambient_used=false;
 			bool emissive_used=false;
@@ -872,7 +869,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 			for (int vidx=0; vidx<VertexCount; vidx++)
 			{
 				VertexMaterialClass* mtl = Peek_Material(vidx,pass);
-				// TheSuperHackers @bugfix Cryo 09/09/2026 Skip null materials in the final lighting analysis too.
 				if (mtl == nullptr)
 				{
 					continue;
@@ -881,9 +877,9 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				if (mtl != prev_mtl)
 				{
 					prev_mtl = mtl;
-					Vector3 mtl_diffuse(0.0f,0.0f,0.0f);
-					Vector3 mtl_ambient(0.0f,0.0f,0.0f);
-					Vector3 mtl_emissive(0.0f,0.0f,0.0f);
+					Vector3 mtl_diffuse;
+					Vector3 mtl_ambient;
+					Vector3 mtl_emissive;
 					mtl->Get_Diffuse(&mtl_diffuse);
 					mtl->Get_Ambient(&mtl_ambient);
 					mtl->Get_Emissive(&mtl_emissive);
@@ -899,7 +895,6 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				VertexMaterialClass * mtl = Peek_Material(0,pass);
 				for (int vidx=0; vidx<VertexCount; vidx++) {
 					mtl = Peek_Material(vidx,pass);
-					// TheSuperHackers @bugfix Cryo 09/09/2026 Apply lighting only to existing materials.
 					if (mtl == nullptr)
 					{
 						continue;
