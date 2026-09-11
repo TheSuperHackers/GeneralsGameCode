@@ -517,7 +517,7 @@ struct Region2D
 		hi.min(other.hi);
 	}
 
-	// Expand to include both regions.
+	// Expand to include the other region.
 	void unite( const Region2D &other )
 	{
 		lo.min(other.lo);
@@ -558,7 +558,7 @@ struct IRegion2D
 		hi.min(other.hi);
 	}
 
-	// Expand to include both regions.
+	// Expand to include the other region.
 	void unite( const IRegion2D &other )
 	{
 		lo.min(other.lo);
@@ -837,7 +837,7 @@ struct Region3D
 		hi.min(other.hi);
 	}
 
-	// Expand to include both regions.
+	// Expand to include the other region.
 	void unite( const Region3D &other )
 	{
 		lo.min(other.lo);
@@ -926,7 +926,7 @@ struct IRegion3D
 		hi.min(other.hi);
 	}
 
-	// Expand to include both regions.
+	// Expand to include the other region.
 	void unite( const IRegion3D &other )
 	{
 		lo.min(other.lo);
