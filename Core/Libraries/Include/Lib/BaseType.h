@@ -336,6 +336,7 @@ struct Coord2D
 	{
 		if (x > other.x)
 			x = other.x;
+
 		if (y > other.y)
 			y = other.y;
 	}
@@ -344,6 +345,7 @@ struct Coord2D
 	{
 		if (x < other.x)
 			x = other.x;
+
 		if (y < other.y)
 			y = other.y;
 	}
@@ -479,6 +481,7 @@ struct ICoord2D
 	{
 		if (x > other.x)
 			x = other.x;
+
 		if (y > other.y)
 			y = other.y;
 	}
@@ -487,6 +490,7 @@ struct ICoord2D
 	{
 		if (x < other.x)
 			x = other.x;
+
 		if (y < other.y)
 			y = other.y;
 	}
@@ -696,8 +700,10 @@ struct Coord3D
 	{
 		if (x > other.x)
 			x = other.x;
+
 		if (y > other.y)
 			y = other.y;
+
 		if (z > other.z)
 			z = other.z;
 	}
@@ -706,8 +712,10 @@ struct Coord3D
 	{
 		if (x < other.x)
 			x = other.x;
+
 		if (y < other.y)
 			y = other.y;
+
 		if (z < other.z)
 			z = other.z;
 	}
@@ -794,8 +802,10 @@ struct ICoord3D
 	{
 		if (x > other.x)
 			x = other.x;
+
 		if (y > other.y)
 			y = other.y;
+
 		if (z > other.z)
 			z = other.z;
 	}
@@ -804,8 +814,10 @@ struct ICoord3D
 	{
 		if (x < other.x)
 			x = other.x;
+
 		if (y < other.y)
 			y = other.y;
+
 		if (z < other.z)
 			z = other.z;
 	}
