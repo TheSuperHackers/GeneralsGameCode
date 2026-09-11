@@ -86,6 +86,8 @@ void Keyboard::createStreamMessages()
 		{
 			msg->appendIntegerArgument( key->key );
 			msg->appendIntegerArgument( key->state );
+			if( BitIsSet( key->state, KEY_STATE_UP ) )
+				msg->appendIntegerArgument( key->pressedState );
 		}
 
 		// next key please
@@ -157,7 +159,6 @@ void Keyboard::updateKeys()
 
 		const KeyDefType key = (KeyDefType)m_keys[ index ].key;
 		const Bool isModifier = isCtrlShiftAltKey(key) || key == m_shift2Key;
-		const UnsignedShort lastPressedKeyState = m_lastPressedKeyState[key];
 
 		m_keyStatus[ key ].state = m_keys[ index ].state;
 		m_keyStatus[ key ].status = m_keys[ index ].status;
@@ -189,21 +190,22 @@ void Keyboard::updateKeys()
 
 		}
 
-		// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026 Preserve modifier state for
-		// each buffered event and reuse an action key's press state on its release.
+		// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026 Preserve the current
+		// modifier state for each buffered event.
 		BitSet( m_keys[ index ].state, m_modifiers );
-		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
+		m_keys[ index ].pressedState = KEY_STATE_NONE;
+		if( !isModifier )
 		{
-			m_lastPressedKeyState[key] = isModifier ? KEY_STATE_NONE : m_modifiers & KEY_STATE_MODIFIERS;
-		}
-		else
-		{
-			if( !isModifier )
+			if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
 			{
-				BitClear( m_keys[ index ].state, KEY_STATE_MODIFIERS );
-				BitSet( m_keys[ index ].state, lastPressedKeyState );
+				m_lastPressedKeyState[key] = m_modifiers;
 			}
-			m_lastPressedKeyState[key] = KEY_STATE_NONE;
+			else
+			{
+				// Keep the press state separate so a modified release cannot fire a plain hotkey.
+				m_keys[ index ].pressedState = m_lastPressedKeyState[key];
+				m_lastPressedKeyState[key] = KEY_STATE_NONE;
+			}
 		}
 
 		index++;
@@ -251,6 +253,7 @@ Bool Keyboard::checkKeyRepeat()
 				m_keys[ index ].key = (UnsignedByte)key;
 				// This is an assignment, not a bit set.
 				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers;
+				m_keys[ index ].pressedState = KEY_STATE_NONE;
 				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
 
 				// Set End Flag
@@ -792,6 +795,7 @@ static void emitRawKeyUpIfDown(const KeyboardIO *keyStatus, KeyDefType key)
 		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
 		msg->appendIntegerArgument(key);
 		msg->appendIntegerArgument(KEY_STATE_UP);
+		msg->appendIntegerArgument(KEY_STATE_NONE);
 	}
 }
 

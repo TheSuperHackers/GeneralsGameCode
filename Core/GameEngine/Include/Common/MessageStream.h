@@ -133,8 +133,8 @@ public:
 		MSG_RAW_MOUSE_WHEEL,												///< (Real spin, + is away, - is toward user)
 		MSG_RAW_MOUSE_END,
 
-		MSG_RAW_KEY_DOWN,														///< (KeyDefType) the given key was pressed (uses Microsoft VK_ codes)
-		MSG_RAW_KEY_UP,															///< (KeyDefType) the given key was released
+		MSG_RAW_KEY_DOWN,														///< (KeyDefType, current KEY_STATE_* flags) the given key was pressed
+		MSG_RAW_KEY_UP,															///< (KeyDefType, current KEY_STATE_* flags, modifier flags from the matching press) the given key was released
 
 		// Refined Mouse messages
 		// NOTE: All processing should attempt to use these refined mouse messages, rather than the

@@ -609,10 +609,7 @@ void MetaEventTranslator::onKeyPressed(GameMessageDisposition &disp, Int systemK
 			continue;
 
 		const Bool isMatchingKeyCombo = map->m_key == keyType && map->m_modState == keyModState;
-		// A modifier release can end this mapping before the action key is released.
-		// Do not generate the same UP event again when the action key arrives.
-		const Bool isMatchingTransitionUp = map->m_transition == UP && (systemKeyState & KEY_STATE_UP) != 0
-				&& (keyModState == NONE || m_keyDownInfos[keyType].hasKeyModState(keyModState));
+		const Bool isMatchingTransitionUp = map->m_transition == UP && (systemKeyState & KEY_STATE_UP) != 0;
 		const Bool isMatchingTransitionDown = map->m_transition == DOWN && (systemKeyState & KEY_STATE_DOWN) != 0;
 		//const Bool isMatchingTransitionDoubleDown = map->m_transition == DOUBLEDOWN && (systemKeyState & KEY_STATE_DOWN) && m_lastKeyDown == key;
 
