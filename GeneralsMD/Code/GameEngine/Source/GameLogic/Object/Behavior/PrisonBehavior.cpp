@@ -242,7 +242,7 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 		for( i = 1; i < yardBones; i++ )
 		{
 
-			yardRegion.unite(yardPositions[ i ].asCoord2D());
+			yardRegion.expandWith(yardPositions[ i ].asCoord2D());
 
 		}
 
