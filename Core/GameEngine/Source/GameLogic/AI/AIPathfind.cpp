@@ -2726,7 +2726,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			bounds.lo.y = globalBounds.lo.y + yBlock*ZONE_BLOCK_SIZE;
 			bounds.hi.x = bounds.lo.x + ZONE_BLOCK_SIZE - 1; // bounds are inclusive.
 			bounds.hi.y = bounds.lo.y + ZONE_BLOCK_SIZE - 1; // bounds are inclusive.
-			bounds.hi.min(globalBounds.hi);
+			bounds.hi.minimize(globalBounds.hi);
 #if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 			if (bounds.lo.x>bounds.hi.x || bounds.lo.y>bounds.hi.y) {
 				DEBUG_CRASH(("Incorrect bounds calculation. Logic error, fix me. jba."));
@@ -2823,7 +2823,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 			bounds.hi.x = bounds.lo.x + ZONE_BLOCK_SIZE - 1; // bounds are inclusive.
 			bounds.hi.y = bounds.lo.y + ZONE_BLOCK_SIZE - 1; // bounds are inclusive.
 
-			bounds.hi.min(globalBounds.hi);
+			bounds.hi.minimize(globalBounds.hi);
 #if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 			if (bounds.lo.x>bounds.hi.x || bounds.lo.y>bounds.hi.y) {
 				DEBUG_CRASH(("Incorrect bounds calculation. Logic error, fix me. jba."));
@@ -3042,7 +3042,7 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 	IRegion2D bounds = structureBounds;
 	bounds.hi.x++;
 	bounds.hi.y++;
-	bounds.hi.min(globalBounds.hi);
+	bounds.hi.minimize(globalBounds.hi);
 
 	Int xBlock, yBlock;
 	for (xBlock = 0; xBlock<m_zoneBlockExtent.x; xBlock++) {

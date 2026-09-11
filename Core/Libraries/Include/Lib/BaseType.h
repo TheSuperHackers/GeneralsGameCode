@@ -332,7 +332,7 @@ struct Coord2D
 		y = ay;
 	}
 
-	void min( const Coord2D &other )
+	void minimize( const Coord2D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -340,7 +340,7 @@ struct Coord2D
 			y = other.y;
 	}
 
-	void max( const Coord2D &other )
+	void maximize( const Coord2D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -475,7 +475,7 @@ struct ICoord2D
 		y = ay;
 	}
 
-	void min( const ICoord2D &other )
+	void minimize( const ICoord2D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -483,7 +483,7 @@ struct ICoord2D
 			y = other.y;
 	}
 
-	void max( const ICoord2D &other )
+	void maximize( const ICoord2D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -513,22 +513,22 @@ struct Region2D
 	// Keep only the overlapping portion of both regions.
 	void intersect( const Region2D &other )
 	{
-		lo.max(other.lo);
-		hi.min(other.hi);
+		lo.maximize(other.lo);
+		hi.minimize(other.hi);
 	}
 
 	// Expand to include the other region.
 	void unite( const Region2D &other )
 	{
-		lo.min(other.lo);
-		hi.max(other.hi);
+		lo.minimize(other.lo);
+		hi.maximize(other.hi);
 	}
 
 	// Expand to include the point.
 	void unite( const Coord2D &point )
 	{
-		lo.min(point);
-		hi.max(point);
+		lo.minimize(point);
+		hi.maximize(point);
 	}
 
 	void zero()
@@ -554,22 +554,22 @@ struct IRegion2D
 	// Keep only the overlapping portion of both regions.
 	void intersect( const IRegion2D &other )
 	{
-		lo.max(other.lo);
-		hi.min(other.hi);
+		lo.maximize(other.lo);
+		hi.minimize(other.hi);
 	}
 
 	// Expand to include the other region.
 	void unite( const IRegion2D &other )
 	{
-		lo.min(other.lo);
-		hi.max(other.hi);
+		lo.minimize(other.lo);
+		hi.maximize(other.hi);
 	}
 
 	// Expand to include the point.
 	void unite( const ICoord2D &point )
 	{
-		lo.min(point);
-		hi.max(point);
+		lo.minimize(point);
+		hi.maximize(point);
 	}
 
 	void zero()
@@ -692,7 +692,7 @@ struct Coord3D
 						z == r.z);
 	}
 
-	void min( const Coord3D &other )
+	void minimize( const Coord3D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -702,7 +702,7 @@ struct Coord3D
 			z = other.z;
 	}
 
-	void max( const Coord3D &other )
+	void maximize( const Coord3D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -790,7 +790,7 @@ struct ICoord3D
 		z = az;
 	}
 
-	void min( const ICoord3D &other )
+	void minimize( const ICoord3D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -800,7 +800,7 @@ struct ICoord3D
 			z = other.z;
 	}
 
-	void max( const ICoord3D &other )
+	void maximize( const ICoord3D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -833,22 +833,22 @@ struct Region3D
 	// Keep only the overlapping portion of both regions.
 	void intersect( const Region3D &other )
 	{
-		lo.max(other.lo);
-		hi.min(other.hi);
+		lo.maximize(other.lo);
+		hi.minimize(other.hi);
 	}
 
 	// Expand to include the other region.
 	void unite( const Region3D &other )
 	{
-		lo.min(other.lo);
-		hi.max(other.hi);
+		lo.minimize(other.lo);
+		hi.maximize(other.hi);
 	}
 
 	// Expand to include the point.
 	void unite( const Coord3D &point )
 	{
-		lo.min(point);
-		hi.max(point);
+		lo.minimize(point);
+		hi.maximize(point);
 	}
 
 	Real width() const { return hi.x - lo.x; }
@@ -922,22 +922,22 @@ struct IRegion3D
 	// Keep only the overlapping portion of both regions.
 	void intersect( const IRegion3D &other )
 	{
-		lo.max(other.lo);
-		hi.min(other.hi);
+		lo.maximize(other.lo);
+		hi.minimize(other.hi);
 	}
 
 	// Expand to include the other region.
 	void unite( const IRegion3D &other )
 	{
-		lo.min(other.lo);
-		hi.max(other.hi);
+		lo.minimize(other.lo);
+		hi.maximize(other.hi);
 	}
 
 	// Expand to include the point.
 	void unite( const ICoord3D &point )
 	{
-		lo.min(point);
-		hi.max(point);
+		lo.minimize(point);
+		hi.maximize(point);
 	}
 
 	void zero()
