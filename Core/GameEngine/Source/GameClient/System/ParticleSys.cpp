@@ -194,11 +194,38 @@ void ParticleInfo::xfer( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix A key frame that does not come after its predecessor has no interval to ramp over. Its infinite
+// rate would remain in the alpha, because the alpha reaches its key frame values without being set to them. Such a key
+// frame is therefore moved to the frame after its predecessor. Only the key frames behind the first one end the sequence
+// with frame zero. The color key frames are not validated, to keep their original look.
+// ------------------------------------------------------------------------------------------------
+template <typename KeyframeType>
+static void validateAlphaKeyframes(KeyframeType *keys, Int keysSize)
+{
+	for (Int i = 1; i < keysSize; ++i)
+	{
+		UnsignedInt &prevFrame = keys[i - 1].frame;
+		UnsignedInt &currFrame = keys[i].frame;
+
+		if (currFrame == 0)
+			break;
+
+		if (currFrame <= prevFrame)
+		{
+			DEBUG_LOG(("validateAlphaKeyframes - Alpha%d is on frame %u and does not follow frame %u. It is moved to frame %u",
+				i + 1, currFrame, prevFrame, prevFrame + 1));
+
+			currFrame = prevFrame + 1;
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void ParticleInfo::loadPostProcess()
 {
-
+	validateAlphaKeyframes(m_alphaKey, ARRAY_SIZE(m_alphaKey));
 }
 
 /** Load post process */
@@ -226,10 +253,7 @@ static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB);
 // ------------------------------------------------------------------------------------------------
 void Particle::computeAlphaRate()
 {
-	// TheSuperHackers @bugfix A key frame that does not come after its predecessor has no interval to ramp over.
-	// The render update applies the rate before the next logic update overwrites the alpha with the key frame value,
-	// so it must be finite.
-	if (m_alphaKey[ m_alphaTargetKey ].frame <= m_alphaKey[ m_alphaTargetKey-1 ].frame)
+	if (m_alphaKey[ m_alphaTargetKey ].frame == 0)
 	{
 		m_alphaRate = 0.0f;
 		return;
@@ -441,9 +465,9 @@ Bool Particle::update()
 	m_sizeRate *= m_sizeRateDamping;
 
 	// TheSuperHackers @info A key frame is passed in the logic frame after its frame, because the render update after
-	// this logic update applies the next rate. This ends every key frame interval exactly on its key frame, like the
-	// original update did by accumulating the rate before it advanced the key frames. Only the key frames behind the
-	// first one end the sequence with frame zero.
+	// this logic update applies the next rate. This ends every key frame interval exactly on its key frame, as in the
+	// original update, so the alpha reaches its key frame values without being set to them. Only the key frames behind
+	// the first one end the sequence with frame zero.
 
 	//
 	// Update alpha (if used)
@@ -464,7 +488,6 @@ Bool Particle::update()
 		{
 			if (frameCount > m_alphaKey[ m_alphaTargetKey ].frame)
 			{
-				m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
 				m_alphaTargetKey++;
 				computeAlphaRate();
 			}
@@ -473,8 +496,6 @@ Bool Particle::update()
 		{
 			m_alphaRate = 0.0f;
 		}
-
-		m_alpha = clamp(0.0f, m_alpha, 1.0f);
 	}
 
 	//
@@ -1168,6 +1189,8 @@ void ParticleSystemInfo::validate()
 		m_particleType = ParticleSystemInfo::SMUDGE;
 	}
 #endif
+
+	validateAlphaKeyframes(m_alphaKey, ARRAY_SIZE(m_alphaKey));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
