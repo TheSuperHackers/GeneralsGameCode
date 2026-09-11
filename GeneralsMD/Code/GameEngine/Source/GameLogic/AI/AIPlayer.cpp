@@ -3848,7 +3848,7 @@ void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool c
 					}
 					else
 					{
-						objBounds.unite(pos.getXY());
+						objBounds.unite(pos.asCoord2D());
 					}
 					if (firstStructure)
 					{
@@ -3858,7 +3858,7 @@ void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool c
 					}
 					else
 					{
-						bounds->unite(pos.getXY());
+						bounds->unite(pos.asCoord2D());
 					}
 				}
 			}

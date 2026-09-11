@@ -2625,7 +2625,7 @@ void W3DView::lookAt( const Coord3D *o )
 		}
 	}
 
-	setPosition2D(pos.getXY());
+	setPosition2D(pos.asCoord2D());
 
 	resetPivotToGround();
 

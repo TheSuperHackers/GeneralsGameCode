@@ -593,7 +593,7 @@ struct Coord3D
 {
 	Real x, y, z;
 
-	Coord2D getXY() const
+	Coord2D asCoord2D() const
 	{
 		const Coord2D xy = { x, y };
 		return xy;

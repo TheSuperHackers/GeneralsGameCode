@@ -67,9 +67,9 @@ MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
 			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2))
 				continue;
 			Coord2D start, end, loc, snapLoc;
-			start = pMapObj->getLocation()->getXY();
-			end = pMapObj2->getLocation()->getXY();
-			loc = pLoc->getXY();
+			start = pMapObj->getLocation()->asCoord2D();
+			end = pMapObj2->getLocation()->asCoord2D();
+			loc = pLoc->asCoord2D();
 			Real dist;
 			Real u;
 

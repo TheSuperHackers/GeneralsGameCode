@@ -237,12 +237,12 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 
 		// find the bounding region of the yard area
 		Region2D yardRegion;
-		yardRegion.lo = yardPositions[ 0 ].getXY();
-		yardRegion.hi = yardPositions[ 0 ].getXY();
+		yardRegion.lo = yardPositions[ 0 ].asCoord2D();
+		yardRegion.hi = yardPositions[ 0 ].asCoord2D();
 		for( i = 1; i < yardBones; i++ )
 		{
 
-			yardRegion.unite(yardPositions[ i ].getXY());
+			yardRegion.unite(yardPositions[ i ].asCoord2D());
 
 		}
 

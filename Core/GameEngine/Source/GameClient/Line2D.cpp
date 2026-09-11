@@ -289,12 +289,12 @@ Bool PointInsideRect3D(const Coord3D *bl, const Coord3D *tl, const Coord3D *br, 
 											 const Coord3D *inputPoint)
 {
 	Coord2D bl2d, tl2d, br2d, tr2d, pt;
-	bl2d = bl->getXY();
-	tl2d = tl->getXY();
-	br2d = br->getXY();
-	tr2d = tr->getXY();
+	bl2d = bl->asCoord2D();
+	tl2d = tl->asCoord2D();
+	br2d = br->asCoord2D();
+	tr2d = tr->asCoord2D();
 
-	pt = inputPoint->getXY();
+	pt = inputPoint->asCoord2D();
 
 	return PointInsideRect2D(&bl2d, &br2d, &tl2d, &tr2d, &pt);
 }
@@ -317,11 +317,11 @@ Bool PointInsideArea2D( const Coord3D *ptToTest, const Coord3D *area, Int numPoi
 {
 	int numIntersections = 0;
 	Coord2D pt2D, area2D1, area2D2;
-	pt2D = ptToTest->getXY();
+	pt2D = ptToTest->asCoord2D();
 
 	for (int i = 0; i < numPointsInArea; ++i) {
-		area2D1 = area[i].getXY();
-		area2D2 = area[(i + 1) % numPointsInArea].getXY();
+		area2D1 = area[i].asCoord2D();
+		area2D2 = area[(i + 1) % numPointsInArea].asCoord2D();
 		if (IntersectLine2D(&pt2D, &reallyFarPoint, &area2D1, &area2D2)) {
 			++numIntersections;
 		}
