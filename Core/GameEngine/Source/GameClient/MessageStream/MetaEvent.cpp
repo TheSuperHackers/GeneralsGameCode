@@ -159,6 +159,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "TOGGLE_LOWER_DETAILS",											GameMessage::MSG_META_TOGGLE_LOWER_DETAILS },
 	{ "TOGGLE_CONTROL_BAR",												GameMessage::MSG_META_TOGGLE_CONTROL_BAR },
 	{ "TOGGLE_PLAYER_OBSERVER",										GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER },
+	{ "CYCLE_HEALTH_BAR_MODE",										GameMessage::MSG_META_CYCLE_HEALTH_BAR_MODE },
 	{ "BEGIN_PATH_BUILD",													GameMessage::MSG_META_BEGIN_PATH_BUILD },
 	{ "END_PATH_BUILD",														GameMessage::MSG_META_END_PATH_BUILD },
 	{ "BEGIN_FORCEATTACK",												GameMessage::MSG_META_BEGIN_FORCEATTACK },
@@ -860,6 +861,23 @@ void MetaMap::generateMetaMap()
 			map->m_usableIn = COMMANDUSABLE_OBSERVER;
 		}
 	}
+#if RTS_ZEROHOUR
+	{
+		// TheSuperHackers @feature Cycle the health bar display mode. Ctrl+` is unbound in
+		// retail and in the debug and demo command maps, so this takes a key nothing else wants.
+		// Note the tick key is layout dependent -- it is ` on a US keyboard but prints something
+		// else elsewhere -- however the binding is by scancode, so the same physical key works.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_CYCLE_HEALTH_BAR_MODE);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_TICK;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			// in game and while observing, but not in the menus, where health bars mean nothing
+			map->m_usableIn = (CommandUsableInType)(COMMANDUSABLE_GAME | COMMANDUSABLE_OBSERVER);
+		}
+	}
+#endif // RTS_ZEROHOUR
 	{
 		// Is mostly useful for Generals.
 		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY);
