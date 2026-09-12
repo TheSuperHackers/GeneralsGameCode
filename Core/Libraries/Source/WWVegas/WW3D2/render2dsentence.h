@@ -60,7 +60,17 @@ public:
 	uint8 *			Buffer;
 };
 
-enum { CHAR_BUFFER_LEN		= 32768 };
+// TheSuperHackers @tweak Glyph blocks are sized from the font's own glyph cell so that both the
+// relative waste and the allocation count stay bounded at any point size. GLYPH_BLOCK_MIN_BYTES
+// holds as many glyphs as the original fixed 64KB block did at one texel (2 bytes) per pixel,
+// which keeps Arial up to roughly 19 point at the original density. GLYPH_BLOCK_MAX_BYTES
+// bounds the allocation count for very large fonts, and only engages for Arial above roughly 80 point.
+enum
+{
+	GLYPH_BLOCK_MIN_BYTES = 32768,
+	GLYPH_BLOCK_MAX_BYTES = 524288,
+	GLYPH_BLOCK_TARGET_CELLS = 16
+};
 
 class FontCharsBuffer
 {
@@ -126,6 +136,8 @@ private:
 	int									PixelOverlap;
 	int									GlyphBitmapWidth; // extents of the GDI scratch bitmap, derived from the font metrics
 	int									GlyphBitmapHeight;
+	int									GlyphCellBytes; // worst case bytes for one glyph of this font
+	int									GlyphBlockBytes; // size the glyph blocks ramp up to
 	int									PointSize;
 	StringClass							GDIFontName;
 	HFONT									OldGDIFont;
