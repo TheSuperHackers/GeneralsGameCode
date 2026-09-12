@@ -1286,15 +1286,17 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 		//	Setup the src and destination pointers
 		//
 		int dest_inc		= (dest_stride >> 1);
-		uint16 *src_ptr	= data->Buffer;
+		const uint8 *src_ptr = data->Buffer;
 		dest_ptr				+= (dest_inc * y) + x;
 
 		//
-		//	Simply copy the data from the src buffer to the destination
+		//	Copy the data from the src buffer to the destination, rebuilding the A4R4G4B4 texel
+		//	from the stored coverage value the same way Store_GDI_Char used to compose it.
 		//
 		for ( int row = 0; row < CharHeight; row ++ ) {
 			for ( int col = 0; col < data->Width; col ++ ) {
-				uint16 curData = *src_ptr;
+				const uint8 coverage = *src_ptr;
+				uint16 curData = (coverage != 0 ? 0x0FFF : 0) | ((uint16)(coverage >> 4) << 12);
 				if (col<PixelOverlap) {
 					curData |= dest_ptr[col];
 				}
@@ -1347,8 +1349,8 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	//	Get a pointer to the surface that this character should use
 	//
 	Update_Current_Buffer( char_size.cx );
-	uint16* glyph_buffer_p = BufferList[BufferList.Count () - 1].Buffer + CurrPixelOffset;
-	uint16* curr_buffer_p = glyph_buffer_p;
+	uint8* glyph_buffer_p = BufferList[BufferList.Count () - 1].Buffer + CurrPixelOffset;
+	uint8* curr_buffer_p = glyph_buffer_p;
 
 	//
 	//	Copy the BMP contents to the buffer
@@ -1401,17 +1403,13 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
  			}
 #endif
 
-			uint16 pixel_color = 0;
-			if (pixel_value != 0) {
-				pixel_color = 0x0FFF;
-			}
-
 			//
-			//	Convert the pixel intensity from 8bit to 4bit and
-			// store it in our buffer
+			//	Store the raw intensity.
+			//	TheSuperHackers @tweak The glyph is cached as one byte of GDI coverage per pixel.
+			//	Blit_Char rebuilds the A4R4G4B4 texel from it, which is exact because the stored
+			//	color only ever depends on whether the coverage is zero.
 			//
-			uint8 alpha_value	= ((pixel_value >> 4) & 0xF);
-			*curr_buffer_p++	= pixel_color | (alpha_value << 12);
+			*curr_buffer_p++ = pixel_value;
 		}
 	}
 
@@ -1420,7 +1418,7 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	//	report must not be left at whatever the freshly allocated block happened to contain.
 	//
 	if (char_size.cy < CharHeight) {
-		::memset (curr_buffer_p, 0, (CharHeight - char_size.cy) * char_size.cx * sizeof (uint16));
+		::memset (curr_buffer_p, 0, (CharHeight - char_size.cy) * char_size.cx);
 	}
 
 	//
@@ -1484,7 +1482,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 	{
 		// TheSuperHackers @fix arcticdolphin 07/09/2026 Length may exceed CHAR_BUFFER_LEN to fit this glyph.
 		const int length = max( (int)CHAR_BUFFER_LEN, char_len );
-		BufferList.Add( FontCharsBuffer( length, W3DNEWARRAY uint16[length] ) );
+		BufferList.Add( FontCharsBuffer( length, W3DNEWARRAY uint8[length] ) );
 		CurrPixelOffset = 0;
 	}
 }
