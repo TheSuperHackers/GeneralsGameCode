@@ -96,7 +96,11 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		{
 			newModState |= ALT;
 		}
-		if(newModState != 0)
+
+		// TheSuperHackers @feature Let Shift through so shift+hotkey batches production the same
+		// way shift+clicking the cameo does. Ctrl and Alt still bail, since those carry their own
+		// bindings (control groups and so on) that must not be shadowed by command hotkeys.
+		if( (newModState & ~SHIFT) != 0 )
 			return disp;
 		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
 		UnicodeString uKey;
@@ -155,6 +159,31 @@ void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
 	newHK.m_key.set(key);
 	newHK.m_win = win;
 	m_hotKeyMap[key] = newHK;
+}
+
+// TheSuperHackers @feature See HotKey.h.
+//-----------------------------------------------------------------------------
+Bool HotKeyManager::isHotKeyClaimed( const AsciiString& keyIn ) const
+{
+	AsciiString key = keyIn;
+	key.toLower();
+
+	HotKeyMap::const_iterator it = m_hotKeyMap.find(key);
+	if( it == m_hotKeyMap.end() )
+		return FALSE;
+
+	GameWindow *win = it->second.m_win;
+	if( win == nullptr )
+		return FALSE;
+
+	// Only a visible button counts as claiming the key. A visible but currently disabled
+	// button claims it deliberately: the player pressing a greyed out cameo's key should get
+	// the disabled click feedback from executeHotKey, not have the press fall through to a
+	// meta event bound to the same letter and do something unrelated to the button they see.
+	if( BitIsSet( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
+		return FALSE;
+
+	return TRUE;
 }
 
 //-----------------------------------------------------------------------------

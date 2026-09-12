@@ -216,6 +216,96 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Grid hotkeys assign a command bar key by slot position rather than
+// by whatever letter the string file marked with an ampersand.
+// Options.ini: GridHotkeys = Yes
+Bool OptionPreferences::getGridHotkeysEnabled() const
+{
+	OptionPreferences::const_iterator it = find("GridHotkeys");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+// TheSuperHackers @feature The key for each slot, in reading order. Defaults to two rows of
+// nine, matching a command bar that is two rows deep. Mods with a different bar can set their
+// own; slots past the end of the layout simply get no grid key. The layout should cover whole
+// rows -- pad any slot that should stay keyless with a non letter, e.g. "QWERT....", since the
+// row shape is derived from the layout's length.
+// Options.ini: GridHotkeyLayout = QWERTYUIOASDFGHJKL
+AsciiString OptionPreferences::getGridHotkeyLayout() const
+{
+	OptionPreferences::const_iterator it = find("GridHotkeyLayout");
+	if (it == end() || it->second.isEmpty())
+		return AsciiString("QWERTYUIOASDFGHJKL");
+
+	return it->second;
+}
+
+// TheSuperHackers @feature How many columns the command bar is wide. The engine numbers command
+// slots down each column rather than across each row, so the layout string -- which is written in
+// reading order -- has to be mapped through this to land the right key on the right button.
+// 0 means do not remap, i.e. the layout string is already in slot order.
+// Options.ini: GridHotkeyColumns = 9
+Int OptionPreferences::getGridHotkeyColumns() const
+{
+	OptionPreferences::const_iterator it = find("GridHotkeyColumns");
+	if (it == end())
+		return 9;	// two rows of nine, matching a bar two rows deep
+
+	Int columns = atoi(it->second.str());
+	if (columns < 0)
+		columns = 0;
+
+	return columns;
+}
+
+// TheSuperHackers @feature Keys listed here opt out of the grid entirely. The slot that would
+// have taken such a key falls back to its string file letter, and the key keeps whatever it
+// normally does -- so a mod can leave S, G and friends on their usual bindings while everything
+// else grids. Letters only, case insensitive, separators optional: "SG" and "S,G" both work.
+// Options.ini: NonGridHotkeys = SG
+AsciiString OptionPreferences::getNonGridHotkeys() const
+{
+	OptionPreferences::const_iterator it = find("NonGridHotkeys");
+	if (it == end())
+		return AsciiString::TheEmptyString;
+
+	return it->second;
+}
+
+// TheSuperHackers @feature Is this key one the player asked to keep out of the grid?
+Bool OptionPreferences::isNonGridHotkey(const AsciiString& key) const
+{
+	if (key.isEmpty())
+		return FALSE;
+
+	return isNonGridHotkeyInList(getNonGridHotkeys(), key);
+}
+
+// TheSuperHackers @feature Shared by the option lookup above and by GlobalData's cached copy,
+// so both read the exclusion list exactly the same way.
+Bool OptionPreferences::isNonGridHotkeyInList(const AsciiString& list, const AsciiString& key)
+{
+	if (list.isEmpty() || key.isEmpty())
+		return FALSE;
+
+	const char wanted = tolower(key.getCharAt(0));
+	const char *c = list.str();
+	for (; *c; ++c)
+	{
+		// a plain scan, so commas, spaces or nothing at all all work as separators
+		if (tolower(*c) == wanted)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");
