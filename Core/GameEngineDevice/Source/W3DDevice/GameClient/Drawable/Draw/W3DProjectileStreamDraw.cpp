@@ -132,6 +132,10 @@ void W3DProjectileStreamDraw::doDrawModule(const Matrix3D* )
 	static NameKeyType key_ProjectileStreamUpdate = NAMEKEY("ProjectileStreamUpdate");
 	ProjectileStreamUpdate* update = (ProjectileStreamUpdate*)me->findUpdateModule(key_ProjectileStreamUpdate);
 
+	// Requires ProjectileStreamUpdate for getting Vector Points
+	if(!update)
+		return;
+
 	const W3DProjectileStreamDrawModuleData *data = getW3DProjectileStreamDrawModuleData();
 
 	Vector3 allPoints[MAX_PROJECTILE_STREAM];
@@ -140,7 +144,6 @@ void W3DProjectileStreamDraw::doDrawModule(const Matrix3D* )
 	update->getAllPoints( allPoints, &pointsUsed );
 
 	Vector3 stagingPoints[MAX_PROJECTILE_STREAM];
-	Vector3 zeroVector(0, 0, 0);
 
 	Int linesMade = 0;
 	Int currentMasterPoint = 0;
@@ -159,7 +162,10 @@ void W3DProjectileStreamDraw::doDrawModule(const Matrix3D* )
 	// I'll keep doing this until I run out of valid points.
 	while( currentMasterPoint < pointsUsed )
 	{
-		while( currentMasterPoint < pointsUsed  &&  allPoints[currentMasterPoint] != zeroVector )
+		// TheSuperHackers @ performance IamInnocent 03/01/26 - Changes ProjectileStreamDraw Update Requirement Vector from being equal zero Vector to any Vector above near zero.
+		while( currentMasterPoint < pointsUsed  &&
+			   (fabs(allPoints[currentMasterPoint].X) > WWMATH_EPSILON || fabs(allPoints[currentMasterPoint].Y) > WWMATH_EPSILON || fabs(allPoints[currentMasterPoint].Z) > WWMATH_EPSILON)
+			 )
 		{
 			// While I am not looking at a bad point (off edge or zero)
 			stagingPoints[currentStagingPoint] = allPoints[currentMasterPoint];// copy to the staging
