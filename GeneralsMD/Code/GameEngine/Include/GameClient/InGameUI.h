@@ -769,16 +769,19 @@ protected:
 
 	// Render FPS Counter
 	DisplayString *							m_renderFpsString;
+	DisplayString *							m_renderFpsLowString;
 	DisplayString *							m_renderFpsLimitString;
 	AsciiString									m_renderFpsFont;
 	Int													m_renderFpsPointSize;
 	Bool												m_renderFpsBold;
 	Coord2D											m_renderFpsPosition;
 	Color												m_renderFpsColor;
+	Color												m_renderFpsLowColor;
 	Color												m_renderFpsLimitColor;
 	Color												m_renderFpsDropColor;
 	UnsignedInt									m_renderFpsRefreshMs;
 	UnsignedInt									m_lastRenderFps;
+	UnsignedInt									m_lastRenderFpsLow;
 	UnsignedInt									m_lastRenderFpsLimit;
 	UnsignedInt									m_lastRenderFpsUpdateMs;
 
