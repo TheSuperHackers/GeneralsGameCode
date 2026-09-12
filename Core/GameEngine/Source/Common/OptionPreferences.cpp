@@ -216,6 +216,27 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Options.ini: CastMode = Normal | QuickCast | QuickCastWithIndicator
+CastMode OptionPreferences::getCastMode() const
+{
+	OptionPreferences::const_iterator it = find("CastMode");
+	if (it == end())
+		return CastMode_Default;
+
+	if (stricmp(it->second.str(), "QuickCastWithIndicator") == 0)
+		return CastMode_QuickCastWithIndicator;
+	if (stricmp(it->second.str(), "QuickCast") == 0)
+		return CastMode_QuickCast;
+	if (stricmp(it->second.str(), "Normal") == 0)
+		return CastMode_Normal;
+
+	Int mode = atoi(it->second.str());
+	if (mode >= 0 && mode < CastMode_Count)
+		return (CastMode)mode;
+
+	return CastMode_Default;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");

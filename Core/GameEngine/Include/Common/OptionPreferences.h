@@ -38,6 +38,19 @@
 typedef UnsignedInt CursorCaptureMode;
 typedef UnsignedInt ScreenEdgeScrollMode;
 
+// TheSuperHackers @feature How targeted commands (guard, attack move, abilities) are triggered.
+// Only affects hotkey activation -- a mouse click on a cameo leaves the cursor over the control
+// bar, where there is no world position to cast at, so it always uses the normal two step flow.
+enum CastMode CPP_11(: Int)
+{
+	CastMode_Normal = 0,				///< click the button, then click the world (retail behavior)
+	CastMode_QuickCast,					///< hotkey fires immediately at the cursor
+	CastMode_QuickCastWithIndicator,	///< as above, but flash the targeting decal where it fired
+
+	CastMode_Count,
+	CastMode_Default = CastMode_Normal
+};
+
 //-----------------------------------------------------------------------------
 // OptionsPreferences options menu class
 //-----------------------------------------------------------------------------
@@ -76,6 +89,7 @@ public:
 	Real getScrollFactor();
 	Bool getDrawScrollAnchor();
 	Bool getMoveScrollAnchor();
+	CastMode getCastMode() const;
 	Bool getCursorCaptureEnabledInWindowedGame() const;
 	Bool getCursorCaptureEnabledInWindowedMenu() const;
 	Bool getCursorCaptureEnabledInFullscreenGame() const;
