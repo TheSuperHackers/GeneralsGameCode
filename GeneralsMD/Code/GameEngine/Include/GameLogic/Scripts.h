@@ -624,9 +624,9 @@ protected:	// Note - If you add any member vars, you must take them into account
 	ScriptAction *m_action;			///< First in a list of actions executed if the conditions are true.
 	ScriptAction *m_actionFalse;///< First in a list of actions executed if the conditions are false.
 	Script			*m_nextScript;	///< Next in the list of scripts.
+	UnsignedInt m_frameToEvaluateAt; ///< When to evaluate the conditions next, if m_delayEvaluationSeconds>0.
 
 // Runtime fields - not saved or read.
-	UnsignedInt m_frameToEvaluateAt; ///< When to evaluate the conditions next, if m_delayEvaluationSeconds>0.
 	Bool				m_hasWarnings; ///< Runtime flag used by the editor only.
 	AsciiString	m_conditionTeamName; ///< Runtime name used by ScriptEngine only.
 	Real				m_conditionTime;		///< Amount of time (cum) to evaluate conditions.
