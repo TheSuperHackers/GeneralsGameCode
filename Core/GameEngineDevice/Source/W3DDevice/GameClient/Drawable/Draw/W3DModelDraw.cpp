@@ -1732,6 +1732,10 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	m_shadow = nullptr;
 	m_shadowEnabled = TRUE;
 	m_terrainDecal = nullptr;
+	// TheSuperHackers @feature no selection ring until one is asked for
+	m_selectionDecal = nullptr;
+	m_selectionDecalWanted = FALSE;
+	m_selectionDecalRadius = 0.0f;
 	m_trackRenderObject = nullptr;
 	m_whichAnimInCurState = -1;
 	m_nextState = nullptr;
@@ -1835,6 +1839,10 @@ void W3DModelDraw::setHidden(Bool hidden)
 
 	if (m_terrainDecal)
 		m_terrainDecal->enableShadowRender(!hidden);
+
+	// TheSuperHackers @fix the ring must not keep rendering under a hidden drawable
+	if (m_selectionDecal)
+		m_selectionDecal->enableShadowRender(!hidden);
 
 	if (m_trackRenderObject && hidden)
 	{	const Coord3D* pos = getDrawable()->getPosition();
@@ -1949,6 +1957,9 @@ void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)
 			m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
 		if (m_terrainDecal)
 			m_terrainDecal->enableShadowInvisible(m_fullyObscuredByShroud);
+		// TheSuperHackers @fix the ring must not expose a fully shrouded unit
+		if (m_selectionDecal)
+			m_selectionDecal->enableShadowInvisible(m_fullyObscuredByShroud);
 
 		doStartOrStopParticleSys();
 	}
@@ -2720,6 +2731,53 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Selection ring decal.
+//-------------------------------------------------------------------------------------------------
+/** Put a green ring on the ground under this object, or take it away.
+	*
+	* Uses the projected shadow system rather than screen space lines, so the ring is genuinely
+	* projected onto the terrain and the model draws over it. It lives in its own slot rather than
+	* sharing m_terrainDecal, so selecting a horde unit does not evict its horde ring.
+	*
+	* Expects a PlainRingSelection.tga in the mod's assets. The engine appends the extension, and
+	* the art is tinted green at runtime, so a plain white or greyscale ring works. */
+//-------------------------------------------------------------------------------------------------
+void W3DModelDraw::setSelectionDecal(Bool enable, Real radius)
+{
+	// remembered so the ring can be recreated after a model swap tears the render object down
+	m_selectionDecalWanted = enable;
+	m_selectionDecalRadius = radius;
+
+	if (m_selectionDecal)
+	{
+		m_selectionDecal->release();
+		m_selectionDecal = nullptr;
+	}
+
+	if (!enable || m_renderObject == nullptr || TheProjectedShadowManager == nullptr)
+		return;
+
+	Shadow::ShadowTypeInfo decalInfo;
+	decalInfo.allowUpdates = FALSE;		//the ring never needs regenerating
+	decalInfo.allowWorldAlign = TRUE;	//wrap it around terrain and world objects
+	decalInfo.m_type = SHADOW_ALPHA_DECAL;
+	strlcpy(decalInfo.m_ShadowName, "PlainRingSelection", ARRAY_SIZE(decalInfo.m_ShadowName));
+	decalInfo.m_sizeX = radius * 2.0f;
+	decalInfo.m_sizeY = radius * 2.0f;
+	decalInfo.m_offsetX = 0.0f;
+	decalInfo.m_offsetY = 0.0f;
+
+	m_selectionDecal = TheProjectedShadowManager->addDecal(m_renderObject, &decalInfo);
+	if (m_selectionDecal)
+	{
+		m_selectionDecal->enableShadowInvisible(m_fullyObscuredByShroud);
+		m_selectionDecal->enableShadowRender(TRUE);
+		//the art is a plain ring, so tint it to the selection green
+		m_selectionDecal->setColor(GameMakeColor(0, 255, 0, 255));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 {
 	if (m_terrainDecal)
@@ -2789,6 +2847,14 @@ void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 	if(m_terrainDecal)
 		m_terrainDecal->release();
 	m_terrainDecal = nullptr;
+
+	// TheSuperHackers @fix The selection ring is bound to the render object about to be torn down
+	// here, exactly like the shadow and the terrain decal above, so it has to go with them. Left
+	// behind it stayed registered with the projected shadow manager while the render object it
+	// points at was freed, and the next renderShadows walked that dangling entry into the driver.
+	if (m_selectionDecal)
+		m_selectionDecal->release();
+	m_selectionDecal = nullptr;
 
 	// remove existing render object from the scene
 	if (m_renderObject)
@@ -3077,6 +3143,11 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 				m_shadow->enableShadowRender(m_shadowEnabled);
 			}
 		}
+
+		// TheSuperHackers @fix The selection ring was bound to the render object that was just
+		// torn down; the object is still selected, so put the ring back on the new one.
+		if (m_selectionDecalWanted)
+			setSelectionDecal(TRUE, m_selectionDecalRadius);
 
 		if( m_renderObject )
 		{
