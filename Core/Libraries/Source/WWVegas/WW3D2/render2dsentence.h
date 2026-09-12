@@ -124,6 +124,8 @@ private:
 	int									CharAscent;
 	int									CharOverhang;
 	int									PixelOverlap;
+	int									GlyphBitmapWidth; // extents of the GDI scratch bitmap, derived from the font metrics
+	int									GlyphBitmapHeight;
 	int									PointSize;
 	StringClass							GDIFontName;
 	HFONT									OldGDIFont;
