@@ -186,12 +186,14 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			loc.z = file.readInt();
 			pTrig->addPoint(loc);
 		}
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 		if (numPoints<2) {
 			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.",
 					pTrig->getTriggerName().str(), numPoints));
 			deleteInstance(pTrig);
 			continue;
 		}
+#endif
 		if (pPrevTrig) {
 			pPrevTrig->setNextPoly(pTrig);
 		} else {
@@ -239,7 +241,12 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 */
 void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
 {
-	chunkWriter.openDataChunk("PolygonTriggers", 	K_TRIGGERS_VERSION_4);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	const DataChunkVersionType version = K_TRIGGERS_VERSION_3;
+#else
+	const DataChunkVersionType version = K_TRIGGERS_VERSION_4;
+#endif
+	chunkWriter.openDataChunk("PolygonTriggers", version);
 
 		PolygonTrigger *pTrig;
 		Int count = 0;
@@ -249,7 +256,9 @@ void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
 		chunkWriter.writeInt(count);
 		for (pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 			chunkWriter.writeAsciiString(pTrig->getTriggerName());
-			chunkWriter.writeAsciiString(pTrig->getLayerName());
+			if (version >= K_TRIGGERS_VERSION_4) {
+				chunkWriter.writeAsciiString(pTrig->getLayerName());
+			}
 			chunkWriter.writeInt(pTrig->getID());
 			chunkWriter.writeByte(pTrig->isWaterArea());
 			chunkWriter.writeByte(pTrig->isRiver());
