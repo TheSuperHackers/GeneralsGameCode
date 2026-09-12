@@ -221,21 +221,11 @@ m_bridgeInfo(theInfo)
 	m_templateName = bridgeTemplateName;
 
 	//Coord3D fromLeft, fromRight, toLeft, toRight; /// The 4 corners of the rectangle that the bridge covers.
-	m_bounds.lo.x = m_bridgeInfo.fromLeft.x;
-	m_bounds.lo.y = m_bridgeInfo.fromLeft.y;
+	m_bounds.lo = m_bridgeInfo.fromLeft.asCoord2D();
 	m_bounds.hi = m_bounds.lo;
-	if (m_bounds.lo.x > m_bridgeInfo.fromRight.x) m_bounds.lo.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.fromRight.y) m_bounds.lo.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.fromRight.x) m_bounds.hi.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.fromRight.y) m_bounds.hi.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toLeft.x) m_bounds.lo.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toLeft.y) m_bounds.lo.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toLeft.x) m_bounds.hi.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toLeft.y) m_bounds.hi.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toRight.x) m_bounds.lo.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toRight.y) m_bounds.lo.y = m_bridgeInfo.toRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toRight.x) m_bounds.hi.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toRight.y) m_bounds.hi.y = m_bridgeInfo.toRight.y;
+	m_bounds.uniteWith(m_bridgeInfo.fromRight.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toLeft.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toRight.asCoord2D());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 
@@ -357,21 +347,11 @@ Bridge::Bridge(Object *bridgeObj)
 	m_bridgeInfo.to.z = (m_bridgeInfo.toLeft.z + m_bridgeInfo.toRight.z)/2.0f;
 
 	//Coord3D fromLeft, fromRight, toLeft, toRight; /// The 4 corners of the rectangle that the bridge covers.
-	m_bounds.lo.x = m_bridgeInfo.fromLeft.x;
-	m_bounds.lo.y = m_bridgeInfo.fromLeft.y;
+	m_bounds.lo = m_bridgeInfo.fromLeft.asCoord2D();
 	m_bounds.hi = m_bounds.lo;
-	if (m_bounds.lo.x > m_bridgeInfo.fromRight.x) m_bounds.lo.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.fromRight.y) m_bounds.lo.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.fromRight.x) m_bounds.hi.x = m_bridgeInfo.fromRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.fromRight.y) m_bounds.hi.y = m_bridgeInfo.fromRight.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toLeft.x) m_bounds.lo.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toLeft.y) m_bounds.lo.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toLeft.x) m_bounds.hi.x = m_bridgeInfo.toLeft.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toLeft.y) m_bounds.hi.y = m_bridgeInfo.toLeft.y;
-	if (m_bounds.lo.x > m_bridgeInfo.toRight.x) m_bounds.lo.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.lo.y > m_bridgeInfo.toRight.y) m_bounds.lo.y = m_bridgeInfo.toRight.y;
-	if (m_bounds.hi.x < m_bridgeInfo.toRight.x) m_bounds.hi.x = m_bridgeInfo.toRight.x;
-	if (m_bounds.hi.y < m_bridgeInfo.toRight.y) m_bounds.hi.y = m_bridgeInfo.toRight.y;
+	m_bounds.uniteWith(m_bridgeInfo.fromRight.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toLeft.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toRight.asCoord2D());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 
@@ -673,17 +653,13 @@ Bool Bridge::isCellOnEnd(const Region2D *cell)
 	if (PointInRegion2D(&toLeft, cell)) return false;
 	if (PointInRegion2D(&toRight, cell)) return false; */
 	Coord2D line1, line2;
-	line1.x = fromLeft.x;
-	line1.y = fromLeft.y;
-	line2.x = fromRight.x;
-	line2.y = fromRight.y;
+	line1 = fromLeft.asCoord2D();
+	line2 = fromRight.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
-	line1.x = toLeft.x;
-	line1.y = toLeft.y;
-	line2.x = toRight.x;
-	line2.y = toRight.y;
+	line1 = toLeft.asCoord2D();
+	line2 = toRight.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
@@ -721,17 +697,13 @@ Bool Bridge::isCellOnSide(const Region2D *cell)
 	toRight.y += endVector.y;
 
 	Coord2D line1, line2;
-	line1.x = fromLeft.x;
-	line1.y = fromLeft.y;
-	line2.x = toLeft.x;
-	line2.y = toLeft.y;
+	line1 = fromLeft.asCoord2D();
+	line2 = toLeft.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
-	line1.x = fromRight.x;
-	line1.y = fromRight.y;
-	line2.x = toRight.x;
-	line2.y = toRight.y;
+	line1 = fromRight.asCoord2D();
+	line2 = toRight.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
@@ -747,17 +719,13 @@ Bool Bridge::isCellOnSide(const Region2D *cell)
 	toRight.x += endVector.x;
 	toRight.y += endVector.y;
 
-	line1.x = fromLeft.x;
-	line1.y = fromLeft.y;
-	line2.x = toLeft.x;
-	line2.y = toLeft.y;
+	line1 = fromLeft.asCoord2D();
+	line2 = toLeft.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
-	line1.x = fromRight.x;
-	line1.y = fromRight.y;
-	line2.x = toRight.x;
-	line2.y = toRight.y;
+	line1 = fromRight.asCoord2D();
+	line2 = toRight.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
@@ -816,17 +784,13 @@ Bool Bridge::isCellEntryPoint(const Region2D *cell)
 	if (PointInRegion2D(&toRight, cell)) return false;
 	*/
 	Coord2D line1, line2;
-	line1.x = fromLeft.x;
-	line1.y = fromLeft.y;
-	line2.x = fromRight.x;
-	line2.y = fromRight.y;
+	line1 = fromLeft.asCoord2D();
+	line2 = fromRight.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
-	line1.x = toLeft.x;
-	line1.y = toLeft.y;
-	line2.x = toRight.x;
-	line2.y = toRight.y;
+	line1 = toLeft.asCoord2D();
+	line2 = toRight.asCoord2D();
 	if (LineInRegion(&line1, &line2, cell)) {
 		return true;
 	}
@@ -1781,8 +1745,7 @@ Bool TerrainLogic::objectInteractsWithBridgeLayer(Object *obj, Int layer, Bool c
 			Real radius = obj->getGeometryInfo().getMinorRadius();
 			radius += PATHFIND_CELL_SIZE_F/2.0f;
 			Region2D bounds;
-			bounds.lo.x = obj->getPosition()->x;
-			bounds.lo.y = obj->getPosition()->y;
+			bounds.lo = obj->getPosition()->asCoord2D();
 			bounds.hi = bounds.lo;
 			bounds.lo.x -= radius;
 			bounds.lo.y -= radius;
@@ -1830,8 +1793,7 @@ Bool TerrainLogic::objectInteractsWithBridgeEnd(Object *obj, Int layer) const
 			Real radius = obj->getGeometryInfo().getMinorRadius();
 			radius += PATHFIND_CELL_SIZE_F/2.0f;
 			Region2D bounds;
-			bounds.lo.x = obj->getPosition()->x;
-			bounds.lo.y = obj->getPosition()->y;
+			bounds.lo = obj->getPosition()->asCoord2D();
 			bounds.hi = bounds.lo;
 			bounds.lo.x -= radius;
 			bounds.lo.y -= radius;
