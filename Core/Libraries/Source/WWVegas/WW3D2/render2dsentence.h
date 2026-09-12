@@ -57,7 +57,7 @@ class FontCharsClassCharDataStruct
 public:
 	WCHAR				Value;
 	short				Width;
-	uint16 *		Buffer;
+	uint8 *			Buffer;
 };
 
 enum { CHAR_BUFFER_LEN		= 32768 };
@@ -66,13 +66,13 @@ class FontCharsBuffer
 {
 public:
 	FontCharsBuffer() : Length( 0 ), Buffer( nullptr ) {}
-	FontCharsBuffer( int length, uint16 *buffer ) : Length( length ), Buffer( buffer ) {}
+	FontCharsBuffer( int length, uint8 *buffer ) : Length( length ), Buffer( buffer ) {}
 
 	bool operator== (const FontCharsBuffer &src) const { return Length == src.Length && Buffer == src.Buffer; }
 	bool operator!= (const FontCharsBuffer &src) const { return !(*this == src); }
 
 	int				Length;
-	uint16 *		Buffer;
+	uint8 *			Buffer;
 };
 
 
