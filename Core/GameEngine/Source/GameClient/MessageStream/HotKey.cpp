@@ -52,7 +52,6 @@
 //-----------------------------------------------------------------------------
 #include "GameClient/HotKey.h"
 #include "GameClient/KeyDefs.h"
-#include "GameClient/MetaEvent.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Keyboard.h"
@@ -74,33 +73,15 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 
 	if ( t == GameMessage::MSG_RAW_KEY_UP)
 	{
-
-		//char key = msg->getArgument(0)->integer;
-		Int keyState = msg->getArgument(1)->integer;
-
-		// for our purposes here, we don't care to distinguish between right and left keys,
-		// so just fudge a little to simplify things.
-		Int newModState = 0;
-
-		if( keyState & KEY_STATE_CONTROL )
-		{
-			newModState |= CTRL;
-		}
-
-		if( keyState & KEY_STATE_SHIFT )
-		{
-			newModState |= SHIFT;
-		}
-
-		if( keyState & KEY_STATE_ALT )
-		{
-			newModState |= ALT;
-		}
-		if(newModState != 0)
+		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
+		const Int keyState = msg->getArgument(1)->integer;
+		const Int pressedKeyState = msg->getArgument(2)->integer;
+		if( (keyState | pressedKeyState) & KEY_STATE_MODIFIERS )
 			return disp;
-		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
+
+		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);
 		UnicodeString uKey;
-		uKey.concat(key);
+		uKey.concat(printableKey);
 		AsciiString aKey;
 		aKey.translate(uKey);
 		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
