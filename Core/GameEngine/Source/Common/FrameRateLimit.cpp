@@ -67,12 +67,14 @@ void FrameRateLimit::reset()
 
 
 const UnsignedInt RenderFpsPreset::s_fpsValues[] = {
-	30, 50, 56, 60, 65, 70, 72, 75, 80, 85, 90, 100, 110, 120, 144, 240, 480, UncappedFpsValue };
+	15, 30, 50, 56, 60, 70, 72, 75, 85, 90, 100, 120, 144, 240, 480, UncappedFpsValue };
 
-static_assert(LOGICFRAMES_PER_SECOND <= 30, "Min FPS values need to be revisited!");
+const UnsignedInt LogicTimeScaleFpsPreset::s_fpsValues[] = {
+	1, 5, 15, 30, 45, 60, 75, 90, 105, 120, 240, 480, 960, RenderFpsPreset::UncappedFpsValue };
 
 UnsignedInt RenderFpsPreset::getNextFpsValue(UnsignedInt value)
 {
+	assert(std::is_sorted(std::begin(s_fpsValues), std::end(s_fpsValues)));
 	const Int first = 0;
 	const Int last = ARRAY_SIZE(s_fpsValues) - 1;
 	for (Int i = first; i < last; ++i)
@@ -109,30 +111,77 @@ UnsignedInt RenderFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange ch
 	}
 }
 
-
-UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value)
+UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
-	return value + StepFpsValue;
+	assert(std::is_sorted(std::begin(s_fpsValues), std::end(s_fpsValues)));
+	UnsignedInt nextValue = RenderFpsPreset::UncappedFpsValue;
+
+	// Check if snapValue (e.g. current render FPS) is the next closest candidate
+	if (snapValue > value && snapValue < nextValue)
+	{
+		nextValue = snapValue;
+	}
+
+	// Check predefined steps
+	for (size_t i = 0; i < ARRAY_SIZE(s_fpsValues); ++i)
+	{
+		const UnsignedInt fpsValue = s_fpsValues[i];
+		if (fpsValue > value)
+		{
+			if (fpsValue < nextValue)
+			{
+				nextValue = fpsValue;
+			}
+
+			break;
+		}
+	}
+
+	return nextValue;
 }
 
-UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value)
+UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
-	if (value - StepFpsValue < MinFpsValue)
+	UnsignedInt prevValue = s_fpsValues[0]; // Floor/seed for the search loop
+
+	// Check if snapValue (e.g. current render FPS) is the previous closest candidate.
+	// Note: if snapValue == value, neither branch below fires and the snap point is
+	// intentionally skipped — the caller must step to a different preset.
+	if (snapValue > prevValue && snapValue < value)
 	{
-		return MinFpsValue;
+		prevValue = snapValue;
 	}
-	else
+
+	// Check predefined steps
+	for (int i = (int)ARRAY_SIZE(s_fpsValues) - 1; i >= 0; --i)
 	{
-		return value - StepFpsValue;
+		const UnsignedInt fpsValue = s_fpsValues[i];
+		if (fpsValue < value)
+		{
+			if (fpsValue > prevValue)
+			{
+				prevValue = fpsValue;
+			}
+
+			break;
+		}
 	}
+
+	return prevValue;
 }
 
-UnsignedInt LogicTimeScaleFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange change)
+UnsignedInt LogicTimeScaleFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange change, UnsignedInt snapValue)
 {
 	switch (change)
 	{
-	default:
-	case FpsValueChange_Increase: return getNextFpsValue(value);
-	case FpsValueChange_Decrease: return getPrevFpsValue(value);
+		case FpsValueChange_Increase:
+			return getNextFpsValue(value, snapValue);
+
+		case FpsValueChange_Decrease:
+			return getPrevFpsValue(value, snapValue);
+
+		default:
+			assert(false);
+			return value;
 	}
 }
