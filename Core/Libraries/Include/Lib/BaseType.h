@@ -332,7 +332,7 @@ struct Coord2D
 		y = ay;
 	}
 
-	void minimize( const Coord2D &other )
+	void updateMin( const Coord2D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -341,7 +341,7 @@ struct Coord2D
 			y = other.y;
 	}
 
-	void maximize( const Coord2D &other )
+	void updateMax( const Coord2D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -477,7 +477,7 @@ struct ICoord2D
 		y = ay;
 	}
 
-	void minimize( const ICoord2D &other )
+	void updateMin( const ICoord2D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -486,7 +486,7 @@ struct ICoord2D
 			y = other.y;
 	}
 
-	void maximize( const ICoord2D &other )
+	void updateMax( const ICoord2D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -517,22 +517,22 @@ struct Region2D
 	// Keep only the overlapping portion of both regions.
 	void clipTo( const Region2D &other )
 	{
-		lo.maximize(other.lo);
-		hi.minimize(other.hi);
+		lo.updateMax(other.lo);
+		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
 	void expandWith( const Region2D &other )
 	{
-		lo.minimize(other.lo);
-		hi.maximize(other.hi);
+		lo.updateMin(other.lo);
+		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
 	void expandWith( const Coord2D &point )
 	{
-		lo.minimize(point);
-		hi.maximize(point);
+		lo.updateMin(point);
+		hi.updateMax(point);
 	}
 
 	void zero()
@@ -558,22 +558,22 @@ struct IRegion2D
 	// Keep only the overlapping portion of both regions.
 	void clipTo( const IRegion2D &other )
 	{
-		lo.maximize(other.lo);
-		hi.minimize(other.hi);
+		lo.updateMax(other.lo);
+		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
 	void expandWith( const IRegion2D &other )
 	{
-		lo.minimize(other.lo);
-		hi.maximize(other.hi);
+		lo.updateMin(other.lo);
+		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
 	void expandWith( const ICoord2D &point )
 	{
-		lo.minimize(point);
-		hi.maximize(point);
+		lo.updateMin(point);
+		hi.updateMax(point);
 	}
 
 	void zero()
@@ -696,7 +696,7 @@ struct Coord3D
 						z == r.z);
 	}
 
-	void minimize( const Coord3D &other )
+	void updateMin( const Coord3D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -708,7 +708,7 @@ struct Coord3D
 			z = other.z;
 	}
 
-	void maximize( const Coord3D &other )
+	void updateMax( const Coord3D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -798,7 +798,7 @@ struct ICoord3D
 		z = az;
 	}
 
-	void minimize( const ICoord3D &other )
+	void updateMin( const ICoord3D &other )
 	{
 		if (x > other.x)
 			x = other.x;
@@ -810,7 +810,7 @@ struct ICoord3D
 			z = other.z;
 	}
 
-	void maximize( const ICoord3D &other )
+	void updateMax( const ICoord3D &other )
 	{
 		if (x < other.x)
 			x = other.x;
@@ -845,22 +845,22 @@ struct Region3D
 	// Keep only the overlapping portion of both regions.
 	void clipTo( const Region3D &other )
 	{
-		lo.maximize(other.lo);
-		hi.minimize(other.hi);
+		lo.updateMax(other.lo);
+		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
 	void expandWith( const Region3D &other )
 	{
-		lo.minimize(other.lo);
-		hi.maximize(other.hi);
+		lo.updateMin(other.lo);
+		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
 	void expandWith( const Coord3D &point )
 	{
-		lo.minimize(point);
-		hi.maximize(point);
+		lo.updateMin(point);
+		hi.updateMax(point);
 	}
 
 	Real width() const { return hi.x - lo.x; }
@@ -934,22 +934,22 @@ struct IRegion3D
 	// Keep only the overlapping portion of both regions.
 	void clipTo( const IRegion3D &other )
 	{
-		lo.maximize(other.lo);
-		hi.minimize(other.hi);
+		lo.updateMax(other.lo);
+		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
 	void expandWith( const IRegion3D &other )
 	{
-		lo.minimize(other.lo);
-		hi.maximize(other.hi);
+		lo.updateMin(other.lo);
+		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
 	void expandWith( const ICoord3D &point )
 	{
-		lo.minimize(point);
-		hi.maximize(point);
+		lo.updateMin(point);
+		hi.updateMax(point);
 	}
 
 	void zero()
