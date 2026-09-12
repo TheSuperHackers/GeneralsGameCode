@@ -573,13 +573,27 @@ void GameClient::update()
 
   if (TheInGameUI->isCameraTrackingDrawable())
   {
+    // TheSuperHackers @bugfix Omar Aglan 12/08/2026 Stop tracking a selected drawable
+    // as soon as it is no longer visible.
     Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-    if ( draw )
+    Object *object = draw ? draw->getObject() : nullptr;
+    Bool isVisible = object && !draw->isDrawableEffectivelyHidden();
+
+#if ENABLE_CONFIGURABLE_SHROUD
+    if (isVisible && TheGlobalData->m_shroudOn)
+#else
+    if (isVisible)
+#endif
     {
-      TheTacticalView->userLookAt( draw->getPosition() );
+      const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+      const ObjectShroudStatus shroudStatus = object->getShroudedStatus(playerIndex);
+      isVisible = shroudStatus == OBJECTSHROUD_CLEAR || shroudStatus == OBJECTSHROUD_PARTIAL_CLEAR;
     }
+
+    if (isVisible)
+      TheTacticalView->userLookAt(draw->getPosition());
     else
-      TheInGameUI->setCameraTrackingDrawable( FALSE );
+      TheInGameUI->setCameraTrackingDrawable(FALSE);
   }
 
 	if (m_intro != nullptr)
