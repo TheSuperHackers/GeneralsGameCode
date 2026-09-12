@@ -65,6 +65,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 extern void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData );
+// TheSuperHackers @feature Free the countdown text's display string; must run before
+// TheDisplayStringManager is destroyed.
+extern void W3DGadgetPushButtonFreeCountdownString( void );
 extern void W3DGadgetPushButtonImageDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData );
