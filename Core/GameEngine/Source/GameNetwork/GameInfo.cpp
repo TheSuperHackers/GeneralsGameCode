@@ -953,8 +953,19 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 			int lenRem = m_lanMaxOptionsLength - lenCur;  //length remaining before overflowing
 			int lenMax = lenRem / (MAX_SLOTS-i);  //share lenRem with all remaining slots
 			AsciiString name = WideCharStringToMultiByte(slot->getName().str()).c_str();
-			while( name.getLength() > lenMax )
-				name.removeLastChar();  //what a horrible way to truncate.  I hate AsciiString.
+			if (name.getLength() > lenMax)
+			{
+				// TheSuperHackers @bugfix CryoTheRenegade 04/08/2026 Truncate UTF-8 only at a code-point boundary.
+				Int truncatedLength = lenMax > 0 ? lenMax : 0;
+				while (truncatedLength > 0
+					&& (static_cast<unsigned char>(name.getCharAt(truncatedLength)) & 0xC0) == 0x80)
+				{
+					--truncatedLength;
+				}
+
+				AsciiString truncatedName(name.str(), truncatedLength);
+				name = truncatedName;
+			}
 
 			str.format( "H%s%s", name.str(), tmp.str() );
 		}
