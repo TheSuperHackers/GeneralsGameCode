@@ -1476,7 +1476,11 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			d.setInt(TheKey_multiplayerStartIndex, slot->getStartPos());
 //			d.setBool(TheKey_multiplayerIsLocal, slot->isLocalPlayer());
 //			d.setBool(TheKey_multiplayerIsLocal, slot->getIP() == game->getLocalIP());
-			d.setBool(TheKey_multiplayerIsLocal, slot->isHuman() && (slot->getName().compare(TheGameInfo->getSlot(TheGameInfo->getLocalSlotNum())->getName().str()) == 0));
+			// TheSuperHackers @bugfix bobtista 30/08/2026 A replay recorded without a local player has no
+			// local slot number and getSlot returns NULL for it, so no slot can be the local one.
+			const Int localSlotNum = TheGameInfo->getLocalSlotNum();
+			const GameSlot *localGameSlot = localSlotNum >= 0 ? TheGameInfo->getSlot(localSlotNum) : nullptr;
+			d.setBool(TheKey_multiplayerIsLocal, slot->isHuman() && localGameSlot != nullptr && (slot->getName().compare(localGameSlot->getName().str()) == 0));
 
 /*
 			if (slot->getIP() == game->getLocalIP())
