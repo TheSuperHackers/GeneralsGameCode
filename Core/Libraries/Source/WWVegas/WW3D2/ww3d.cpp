@@ -115,6 +115,9 @@
 #include "sortingrenderer.h"
 #include "WWLib/thread.h"
 #include "WWLib/cpudetect.h"
+#if defined(_WIN32)
+#include "WWLib/Usp10Loader.h"
+#endif
 #include "dx8texman.h"
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
@@ -384,6 +387,9 @@ WW3DErrorType WW3D::Shutdown()
 	** Release the animation-triggered sound data
 	*/
 	AnimatedSoundMgrClass::Shutdown ();
+#if defined(_WIN32)
+	Usp10Loader::unload();
+#endif
 
 	IsInitted = false;
 	return WW3D_ERROR_OK;
