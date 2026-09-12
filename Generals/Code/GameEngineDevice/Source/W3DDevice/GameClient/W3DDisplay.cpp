@@ -25,7 +25,7 @@
 // FILE: W3DDisplay.cpp ///////////////////////////////////////////////////////
 //
 // W3D Implementation for the Game Display which is responsible for creating
-// and maintaning the entire visual display
+// and maintaining the entire visual display
 //
 // Author: Colin Day, April 2001
 //
@@ -53,6 +53,7 @@ static void drawFramerateBar();
 #include "Common/GameLOD.h"
 #include "Common/DrawModule.h"
 #include "GameLogic/AIPathfind.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
 
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
@@ -135,7 +136,7 @@ class StatDumpClass
 public:
 	StatDumpClass( const char *fname );
 	~StatDumpClass();
-	void dumpStats();
+	void dumpStats( Bool brief = FALSE, Bool flagSpikes = FALSE );
 
 protected:
 	FILE *m_fp;
@@ -179,34 +180,63 @@ static const char *getCurrentTimeString()
 //=============================================================================
 //Dump the stats
 //=============================================================================
-void StatDumpClass::dumpStats()
+
+
+static Bool s_notFirstDump = FALSE;
+
+void StatDumpClass::dumpStats( Bool brief, Bool flagSpikes )
 {
 	if( !m_fp )
 	{
 		return;
 	}
 
-	//static char buf[1024];
+
+  Bool beBrief = brief & s_notFirstDump;
+  s_notFirstDump = TRUE;
+
 	fprintf( m_fp, "----------------------------------------------------------------\n" );
 	fprintf( m_fp, "Performance Statistical Dump -- Frame %d\n", TheGameLogic->getFrame() );
-	fprintf( m_fp, "Time:\t%s", getCurrentTimeString() );
-	fprintf( m_fp, "Map:\t%s\n", TheGlobalData->m_mapName.str());
-	fprintf( m_fp, "Side:\t%s\n", ThePlayerList->getLocalPlayer()->getSide().str());
-	fprintf( m_fp, "----------------------------------------------------------------\n" );
+  if ( ! beBrief )
+  {
+	  //static char buf[1024];
+	  fprintf( m_fp, "Time:\t%s", getCurrentTimeString() );
+	  fprintf( m_fp, "Map:\t%s\n", TheGlobalData->m_mapName.str());
+	  fprintf( m_fp, "Side:\t%s\n", ThePlayerList->getLocalPlayer()->getSide().str());
+	  fprintf( m_fp, "----------------------------------------------------------------\n" );
+  }
 
 	//FPS
 	Real fps = TheDisplay->getAverageFPS();
 	fprintf( m_fp, "Average FPS: %.1f (%.5f msec)\n", fps, 1000.0f / fps );
+  if ( flagSpikes && fps<20.0f )
+  	fprintf( m_fp, "                                                                      FPS OUT OF TOLERANCE\n" );
+
 
 	//Rendering stats
-	fprintf( m_fp, "Draws: %d Skins: %d SortedPolys: %d SkinPolys: %d\n",(Int)Debug_Statistics::Get_Draw_Calls(),
+	fprintf( m_fp, "Draws: %d \nSkins: %d \nSortedPolys: %d \nSkinPolys: %d\n",(Int)Debug_Statistics::Get_Draw_Calls(),
 		(Int)Debug_Statistics::Get_DX8_Skin_Renders(),
 		(Int)Debug_Statistics::Get_Sorting_Polygons(), (Int)Debug_Statistics::Get_DX8_Skin_Polygons());
+
+	Int onScreenParticleCount = TheParticleSystemManager->getOnScreenParticleCount();
+
+  if ( flagSpikes )
+  {
+    if ( Debug_Statistics::Get_Draw_Calls()>2000 )
+  	  fprintf( m_fp, "                                                                      DRAWS OUT OF TOLERANCE(2000)\n" );
+    if ( Debug_Statistics::Get_Sorting_Polygons() > (onScreenParticleCount*2) + 300 )
+  	  fprintf( m_fp, "                                                                      NON-PARTICLE-SORTS OUT OF TOLERANCE(300)\n" );
+    if ( Debug_Statistics::Get_DX8_Skin_Renders()>100 )
+  	  fprintf( m_fp, "                                                                      SKINS OUT OF TOLERANCE(100)\n" );
+  }
+
 
 	//Object stats
 	UnsignedInt objCount = TheGameLogic->getObjectCount();
 	UnsignedInt objScreenCount = TheGameClient->getRenderedObjectCount();
 	fprintf( m_fp, "Objects: %d in world (%d onscreen)\n", objCount, objScreenCount );
+  if ( flagSpikes && objCount > 800 )
+  	fprintf( m_fp, "                                                                      OBJS OUT OF TOLERANCE(800)\n" );
 
 	//AI stats
 	UnsignedInt numAI, numMoving, numAttacking, numWaitingForPath, overallFailedPathfinds;
@@ -218,6 +248,8 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "    -attacking: %d\n", numAttacking );
 	fprintf( m_fp, "    -waiting for path: %d\n", numWaitingForPath );
 	fprintf( m_fp, "  Total failed pathfinds: %d\n", overallFailedPathfinds );
+  if ( flagSpikes && overallFailedPathfinds > 0 )
+  	fprintf( m_fp, "                                                                      FAILEDPATHFINDS OUT OF TOLERANCE(0)\n" );
 	fprintf( m_fp, "\n" );
 
 	// Script stats
@@ -226,8 +258,10 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "\n" );
 	fprintf( m_fp, "Script Engine Statistics:\n" );
 	fprintf( m_fp, "  Total time last frame: %.5f msec\n", timeLastFrame*1000 );
-	fprintf( m_fp, "    -Slowest 2 scripts %s\n", slowScripts.str() );
+	fprintf( m_fp, "    -Slowest 2 scripts      %s\n", slowScripts.str() );
 	fprintf( m_fp, "    -Slowest 2 script times %.5f msec, %.5f msec \n", slowScript1*1000, slowScript2*1000 );
+  if ( flagSpikes && slowScript1*1000 > 0.2f || slowScript2*1000 > 0.2f )
+  	fprintf( m_fp, "                                                                      SLOW SCRIPT OUT OF TOLERANCE(0.2)\n" );
 	fprintf( m_fp, "\n" );
 
 
@@ -247,8 +281,13 @@ void StatDumpClass::dumpStats()
 	//Particle system stats
 	fprintf( m_fp, "  Particle Systems: %d\n", TheParticleSystemManager->getParticleSystemCount() );
 	Int totalParticles = TheParticleSystemManager->getParticleCount();
-	Int onScreenParticleCount = TheParticleSystemManager->getOnScreenParticleCount();
 	fprintf( m_fp, "  Particles: %d in world (%d onscreen)\n", totalParticles, onScreenParticleCount );
+
+  if ( flagSpikes && totalParticles > TheGlobalData->m_maxParticleCount - 10 )
+  	fprintf( m_fp, "                                                                      PARTICLES OUT OF TOLERANCE(CAP-10)\n" );
+  if ( flagSpikes && onScreenParticleCount > TheGlobalData->m_maxParticleCount - 10 )
+  	fprintf( m_fp, "                                                                      ON_SCREEN_PARTICLES OUT OF TOLERANCE(CAP-10)\n" );
+
 
 	// polygons this frame
 	Int polyPerFrame = Debug_Statistics::Get_DX8_Polygons();
@@ -266,27 +305,38 @@ void StatDumpClass::dumpStats()
 
 	// terrain stats
 	fprintf( m_fp, "  3-Way Blends: %d/%d, \n Shoreline Blends: %d/%d\n", TheTerrainRenderObject->getNumExtraBlendTiles(TRUE),TheTerrainRenderObject->getNumExtraBlendTiles(FALSE), TheTerrainRenderObject->getNumShoreLineTiles(TRUE),TheTerrainRenderObject->getNumShoreLineTiles(FALSE));
+  if ( flagSpikes && TheTerrainRenderObject->getNumExtraBlendTiles(TRUE) > 2000 )
+  	fprintf( m_fp, "                                                                      3-WAYS OUT OF TOLERANCE(2000)\n" );
+  if ( flagSpikes && TheTerrainRenderObject->getNumShoreLineTiles(TRUE) > 2000 )
+  	fprintf( m_fp, "                                                                      SHORELINES OUT OF TOLERANCE(2000)\n" );
 
 	fprintf( m_fp, "\n" );
 
 #if defined(RTS_DEBUG)
-	TheAudio->audioDebugDisplay( nullptr, nullptr, m_fp );
-	fprintf( m_fp, "\n" );
+  if ( ! beBrief )
+  {
+    TheAudio->audioDebugDisplay( nullptr, nullptr, m_fp );
+	  fprintf( m_fp, "\n" );
+  }
 #endif
 
 #ifdef MEMORYPOOL_DEBUG
 	//Report memory usage.
 	TheMemoryPoolFactory->debugMemoryReport( REPORT_FACTORYINFO | REPORT_POOLINFO, 0, 0, m_fp );
 #else
-	fprintf( m_fp, "Memory Report -- unavailable (build doesn't have MEMORYPOOL_DEBUG defined)\n" );
+	fprintf( m_fp, "Memory Report -- unavailable \n(build doesn't have MEMORYPOOL_DEBUG defined)\n" );
 #endif
 	fprintf( m_fp, "\n" );
 
 	fprintf( m_fp, "%s", TheSubsystemList->dumpTimesForAll().str());
 
-	fprintf( m_fp, "----------------------------------------------------------------\n" );
-	fprintf( m_fp, "END -- Frame %d\n", TheGameLogic->getFrame() );
-	fprintf( m_fp, "----------------------------------------------------------------\n\n\n" );
+  if ( ! beBrief )
+  {
+	  fprintf( m_fp, "----------------------------------------------------------------\n" );
+	  fprintf( m_fp, "END -- Frame %d\n", TheGameLogic->getFrame() );
+	  fprintf( m_fp, "----------------------------------------------------------------\n" );
+  }
+	fprintf( m_fp, "\n\n" );
 	fflush(m_fp);
 }
 
@@ -1098,15 +1148,15 @@ void W3DDisplay::gatherDebugStats()
 		double cumuFPS = (numFrames > 0 && cumuTime > 0.0) ? (numFrames / cumuTime) : 0.0;
 		double skinPolysPerFrame = Debug_Statistics::Get_DX8_Skin_Polygons();
 
-		//Int LOD = TheGlobalData->m_terrainLOD;
+		Int LOD = TheGlobalData->m_terrainLOD;
 		//unibuffer.format( L"FPS: %.2f, %.2fms mapLOD=%d [cumu FPS=%.2f] draws: %.2f sort: %.2f", fps, ms, LOD, cumuFPS, drawsPerFrame,sortPolysPerFrame);
 		if (TheGlobalData->m_useFpsLimit)
 				unibuffer.format( L"%.2f/%d FPS, ", fps, TheFramePacer->getFramesPerSecondLimit());
 		else
 				unibuffer.format( L"%.2f FPS, ", fps);
 
-				unibuffer2.format( L"%.2fms [cumuFPS=%.2f] draws: %d skins: %d sortP: %d skinP: %d", ms, cumuFPS, (Int)drawsPerFrame,(Int)skinDrawsPerFrame,(Int)sortPolysPerFrame, (Int)skinPolysPerFrame);
-				unibuffer.concat(unibuffer2);
+		unibuffer2.format( L"%.2fms [cumuFPS=%.2f] draws: %d skins: %d sortP: %d skinP: %d LOD %d", ms, cumuFPS, (Int)drawsPerFrame,(Int)skinDrawsPerFrame,(Int)sortPolysPerFrame, (Int)skinPolysPerFrame, LOD);
+		unibuffer.concat(unibuffer2);
 #else
 		//Int LOD = TheGlobalData->m_terrainLOD;
 		//unibuffer.format( L"FPS: %.2f, %.2fms mapLOD=%d draws: %.2f sort %.2f", fps, ms, LOD, drawsPerFrame,sortPolysPerFrame);
@@ -1495,7 +1545,26 @@ void W3DDisplay::gatherDebugStats()
 												objectName.str(),
 												draw->getPosition()->x,
 												draw->getPosition()->y,
-												draw->getPosition()->z );
+												draw->getPosition()->z
+											);
+
+			const PhysicsBehavior *physics = obj->getPhysics();
+			PhysicsTurningType turnType = physics ? physics->getTurning() : TURN_NONE;
+
+			const DrawableLocoInfo *locoInfo = draw->getLocoInfo();
+			if( locoInfo )
+			{
+				unibuffer2.format( L"\nPhysics Info -- Turn: %d, Pitch(accel): %.3f(%.3f), Roll(accel): %.3f(%.3f)",
+													 turnType,
+													 locoInfo->m_accelerationPitch, locoInfo->m_accelerationPitchRate,
+													 locoInfo->m_accelerationRoll, locoInfo->m_accelerationRollRate );
+				unibuffer.concat( unibuffer2 );
+			}
+
+
+
+
+
 
 			// (gth) compute some stats about the rendering cost of this drawable
 #if defined(RTS_DEBUG)
@@ -1760,9 +1829,19 @@ AGAIN:
 #ifdef DUMP_PERF_STATS
 	if( TheGlobalData->m_dumpPerformanceStatistics )
 	{
-		TheStatDump.dumpStats();
+		TheStatDump.dumpStats( FALSE, TRUE );
 		TheWritableGlobalData->m_dumpPerformanceStatistics = FALSE;
 	}
+  //The <= GAME_REPLAY essentially means, GAME_SINGLE_PLAYER || GAME_LAN || GAME_SKIRMISH || GAME_REPLAY
+  else if ( TheGlobalData->m_dumpStatsAtInterval && TheGameLogic->getGameMode() <= GAME_REPLAY )
+  {
+    Int interval = TheGlobalData->m_statsInterval;
+    if ( TheGameLogic->getFrame() > 0 && (TheGameLogic->getFrame() % interval) == 0 )
+    {
+  	  TheStatDump.dumpStats( TRUE, TRUE );
+    	TheInGameUI->message( L"-stats is running, at interval: %d.", TheGlobalData->m_statsInterval );
+    }
+  }
 #endif
 
 	// compute debug statistics for display later
@@ -2110,12 +2189,20 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 	theDynamicLight->setDecayRange();
 	theDynamicLight->setDecayColor();
 	//theDynamicLight->setDonut(donut);
+	// (gth) CNC3 enable far attenuation.  C&C3 defaults to disabled.  Must enable to match Generals. MW 8-06-03
+	theDynamicLight->Set_Flag(LightClass::FAR_ATTENUATION,true);
 }
 
 void W3DDisplay::toggleLetterBox()
 {
 	m_letterBoxEnabled = !m_letterBoxEnabled;
 	m_letterBoxFadeStartTime = timeGetTime();
+
+	//WST  9/18/2002 This is not a script api to prevent cheat. JSC Integrated 5/20/03
+	if( TheTacticalView )
+	{
+		TheTacticalView->setZoomLimited( !m_letterBoxEnabled );
+	}
 }
 
 void W3DDisplay::enableLetterBox(Bool enable)
@@ -2126,6 +2213,12 @@ void W3DDisplay::enableLetterBox(Bool enable)
 		{	//letterbox mode not previously enabled
 			m_letterBoxEnabled = TRUE;
 			m_letterBoxFadeStartTime = timeGetTime();
+
+			//WST  9/18/2002 - This is not a script api to prevent cheat.  JSC Integrated 5/20/03
+			if( TheTacticalView )
+			{
+				TheTacticalView->setZoomLimited( 0 );
+			}
 		}
 	}
 	else
@@ -2134,6 +2227,12 @@ void W3DDisplay::enableLetterBox(Bool enable)
 		{	//letterbox mode no previously disabled
 			m_letterBoxEnabled = FALSE;
 			m_letterBoxFadeStartTime = timeGetTime();
+
+			//WST  9/18/2002. JSC Integrated 5/20/03
+			if( TheTacticalView )
+			{
+				TheTacticalView->setZoomLimited( 1 );
+			}
 		}
 	}
 }
@@ -2182,11 +2281,11 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
+
 	if (!m_isBatching)
 	{
 		m_2DRender->Render();
 	}
-
 }
 
 // W3DDisplay::drawLine =======================================================
@@ -2287,7 +2386,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 
 	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-// The rectanges are numberd as follows
+// The rectangles are numberd as follows
 //(x,y)	|---------|
 //			| 4  | 1  |
 //			|----+----|
@@ -2370,7 +2469,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	}
 	else if(percent > 25)
 	{
-		// rectangel #1
+		// rectangle #1
 		m_2DRender->Add_Rect(RectClass( startX + width/2, startY,
 																		startX + width, startY + height/2), 0,0, color);
 		// draw the part of rectangle 2
@@ -2451,7 +2550,7 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 
 	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-// The rectanges are numbered as follows
+// The rectangles are numbered as follows
 //(x,y)	|---------|
 //			| 4  | 1  |
 //			|----+----|
@@ -2935,6 +3034,9 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 			TheTerrainRenderObject->getShroud()->setShroudLevel(x, y, (W3DShroudLevel)TheGlobalData->m_clearAlpha );
 		//Logic is saying shroud.  We can add alpha levels here in client if needed.
 		// W3DShroud is a 0-255 alpha byte.  Logic shroud is a double reference count.
+
+		TheTerrainRenderObject->notifyShroudChanged();
+
 	}
 }
 
