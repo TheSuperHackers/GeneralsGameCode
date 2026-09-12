@@ -95,7 +95,7 @@ target_include_directories(z_generals PRIVATE
 target_sources(z_generals PRIVATE
     SDL3Main.cpp
     SDL3Main.h
-    ../../../Generals/Code/Main/Platform/SDLPlatformWindow.h
+    Platform/SDLPlatformWindow.h
 )
 
 # The legacy engine interface publishes a PCH containing Windows/intrinsic

@@ -10,11 +10,7 @@ set(_wnd_legacy_roots
     "${PROJECT_SOURCE_DIR}/GeneralsMD/Code/GameEngine/Include/GameClient"
     "${PROJECT_SOURCE_DIR}/GeneralsMD/Code/GameEngine/Source/GameClient/GUI"
     "${PROJECT_SOURCE_DIR}/GeneralsMD/Code/GameEngineDevice/Include/W3DDevice/GameClient"
-    "${PROJECT_SOURCE_DIR}/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/GUI"
-    "${PROJECT_SOURCE_DIR}/Generals/Code/GameEngine/Include/GameClient"
-    "${PROJECT_SOURCE_DIR}/Generals/Code/GameEngine/Source/GameClient/GUI"
-    "${PROJECT_SOURCE_DIR}/Generals/Code/GameEngineDevice/Include/W3DDevice/GameClient"
-    "${PROJECT_SOURCE_DIR}/Generals/Code/GameEngineDevice/Source/W3DDevice/GameClient/GUI")
+    "${PROJECT_SOURCE_DIR}/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/GUI")
 set(_wnd_legacy_patterns
     "Gadget*.h"
     "Gadget/*.cpp"

@@ -261,7 +261,7 @@ set_source_files_properties(
 
 target_include_directories(z_gameenginedevice PUBLIC
     Include
-    ../../../Generals/Code/Main
+    ../Main
 )
 
 target_precompile_headers(z_gameenginedevice PRIVATE

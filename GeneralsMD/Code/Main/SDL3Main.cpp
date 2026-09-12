@@ -56,7 +56,7 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/IMEManager.h"
 #include "SDL3Device/Common/SDL3GameEngine.h"
-#include "../../../Generals/Code/Main/Platform/SDLPlatformWindow.h"
+#include "Platform/SDLPlatformWindow.h"
 #include "Common/version.h"
 #include "BuildVersion.h"
 #include "GeneratedVersion.h"

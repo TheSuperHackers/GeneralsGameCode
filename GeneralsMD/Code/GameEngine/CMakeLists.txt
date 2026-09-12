@@ -1148,7 +1148,7 @@ target_sources(z_gameengine PRIVATE
     ${GAMEENGINE_SRC}
     Source/Common/RuntimeModule.cpp
     ../../../Core/GameEngineDevice/Source/SDL3Device/Common/SDL3GameEngine.cpp
-    ../../../Generals/Code/Main/Platform/SDLPlatformWindow.cpp
+    ../Main/Platform/SDLPlatformWindow.cpp
     ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameFont.cppm
     ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindow.cppm
     ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowGlobal.cppm
@@ -1197,7 +1197,7 @@ set_source_files_properties(
 
 target_include_directories(z_gameengine PUBLIC
     Include
-    ../../../Generals/Code/Main
+    ../Main
     ../../../Core/GameEngineDevice/Include
     ../GameEngineDevice/Include
     ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include
