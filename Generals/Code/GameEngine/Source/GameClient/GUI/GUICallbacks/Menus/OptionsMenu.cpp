@@ -118,8 +118,6 @@ static GameWindow *		checkDrawAnchor			= nullptr;
 static NameKeyType		checkMoveAnchorID		= NAMEKEY_INVALID;
 static GameWindow *		checkMoveAnchor			= nullptr;
 
-static NameKeyType		buttonFirewallRefreshID	= NAMEKEY_INVALID;
-static GameWindow *		buttonFirewallRefresh		= nullptr;
 //
 //static NameKeyType    checkAudioHardwareID = NAMEKEY_INVALID;
 //static GameWindow *   checkAudioHardware   = nullptr;
@@ -937,8 +935,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	checkLanguageFilterID  = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckLanguageFilter" );
 	checkLanguageFilter    = TheWindowManager->winGetWindowFromId( nullptr, checkLanguageFilterID );
-	buttonFirewallRefreshID	= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonFirewallRefresh" );
-	buttonFirewallRefresh		= TheWindowManager->winGetWindowFromId( nullptr, buttonFirewallRefreshID);
 
 #if ENABLE_GUI_HACKS
 	// TheSuperHackers @tweak 26/07/2026 The Send Delay feature was obsoleted because it only worked around
@@ -946,8 +942,12 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GameWindow *checkSendDelay = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:CheckSendDelay"));
 	if (checkSendDelay)
 		checkSendDelay->winHide(TRUE);
-#endif
 
+	// TheSuperHackers @tweak 25/07/2026 Hide the obsolete Refresh NAT button, because NAT detection is now self-healing
+	GameWindow *buttonFirewallRefresh = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:ButtonFirewallRefresh"));
+	if (buttonFirewallRefresh)
+		buttonFirewallRefresh->winHide(TRUE);
+#endif
 	checkDrawAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxDrawAnchor" );
 	checkDrawAnchor				 = TheWindowManager->winGetWindowFromId( nullptr, checkDrawAnchorID);
 	checkMoveAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxMoveAnchor" );
@@ -1365,8 +1365,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		if (comboBoxOnlineIP)
 			comboBoxOnlineIP->winEnable(FALSE);
 
-		buttonFirewallRefresh->winEnable(FALSE);
-
 		if (comboBoxDetail)
 			comboBoxDetail->winEnable(FALSE);
 
@@ -1667,18 +1665,6 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
           	(*pref)["UseCameraInReplays"] = "no";
         }
       }
-			else if (controlID == buttonFirewallRefreshID)
-			{
-				// setting the behavior to unknown will force the firewall helper to detect the firewall behavior
-				// the next time we log into gamespy/WOL/whatever.
-				char num[16];
-				num[0] = 0;
-				TheWritableGlobalData->m_firewallBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
-				itoa(TheGlobalData->m_firewallBehavior, num, 10);
-				AsciiString numstr;
-				numstr = num;
-				(*pref)["FirewallBehavior"] = numstr;
-			}
 			break;
 
 		}

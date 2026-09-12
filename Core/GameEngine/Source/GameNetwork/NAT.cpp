@@ -210,9 +210,6 @@ NATStateType NAT::update() {
 		{
 			m_NATState = NATSTATE_DONE;
 			TheEstablishConnectionsMenu->endMenu();
-
-			delete TheFirewallHelper;
-			TheFirewallHelper = nullptr;
 		}
 	} else if (m_NATState == NATSTATE_DOCONNECTIONPATHS) {
 		if (allConnectionsDoneThisRound() == TRUE) {
@@ -226,10 +223,6 @@ NATStateType NAT::update() {
 			if (allConnectionsDone() == TRUE) {
 				// we're all done, time to go back home.
 				m_NATState = NATSTATE_WAITFORSTATS;
-
-				// 2/19/03 BGC - we have successfully negotaited a NAT thingy, so our behavior must be correct
-				// so therefore we don't need to refresh our NAT even if we previously thought we had to.
-				TheFirewallHelper->flagNeedToRefresh(FALSE);
 
 				s_startStatWaitTime = timeGetTime();
 				DEBUG_LOG(("NAT::update - done with all connections, woohoo!!"));
@@ -257,18 +250,7 @@ NATStateType NAT::update() {
 			m_NATState = NATSTATE_FAILED;
 			TheEstablishConnectionsMenu->endMenu();
 			if (TheFirewallHelper != nullptr) {
-				// we failed NAT negotiation, perhaps we need to redetect our firewall settings.
-				// We don't trust the user to do it for themselves so we force them to do it next time
-				// the log in.
-				// 2/19/03 - ok, we don't want to do this right away, if the user tries to play in another game
-				// before they log out and log back in the game won't have a chance at working.
-				// so we need to simply flag it so that when they log out the firewall behavior gets blown away.
-				TheFirewallHelper->flagNeedToRefresh(TRUE);
-//				TheWritableGlobalData->m_firewallBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
-//				TheFirewallHelper->writeFirewallBehavior();
-
-				delete TheFirewallHelper;
-				TheFirewallHelper = nullptr;
+				TheFirewallHelper->detectFirewallBehavior();
 			}
 			// we failed to connect, so we don't have to pass on the transport to the network.
 			delete m_transport;
@@ -711,7 +693,7 @@ void NAT::sendMangledSourcePort() {
 	}
 
 	// check to see if we are NAT'd at all.
-	if ((fwType == 0) || (fwType == FirewallHelperClass::FIREWALL_TYPE_SIMPLE)) {
+	if (fwType == FirewallHelperClass::FIREWALL_TYPE_SIMPLE) {
 		// no mangling, just return the source port
 		DEBUG_LOG(("NAT::sendMangledSourcePort - no mangling, just using the source port"));
 		sendMangledPortNumberToTarget(sourcePort, targetSlot);
@@ -790,7 +772,7 @@ void NAT::processManglerResponse(UnsignedShort mangledPort) {
 		return;
 	}
 
-	Short delta = TheGlobalData->m_firewallPortAllocationDelta;
+	Short delta = (TheFirewallHelper != nullptr) ? TheFirewallHelper->getSourcePortAllocationDelta() : 0;
 	UnsignedShort sourcePort = getSlotPort(m_connectionNodes[m_localNodeNumber].m_slotIndex);
 	UnsignedShort returnPort = 0;
 
