@@ -1,0 +1,63 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.gameplay.crates.components.crate_state;
+
+namespace crates = generalszh::crates;
+
+BOOST_AUTO_TEST_CASE(crate_state_schema_is_stable_and_serializable)
+{
+	static_assert(std::is_standard_layout_v<crates::CrateState>);
+	static_assert(std::is_trivially_copyable_v<crates::CrateState>);
+
+	BOOST_TEST(ecs::ComponentTraits<crates::CrateState>::StableName ==
+		"games.generalszh.crates.state");
+	BOOST_TEST(ecs::ComponentTraits<crates::CrateState>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<crates::CrateState>::Persistence ==
+		ecs::PersistencePolicy::Serializable);
+
+	ecs::ComponentRegistry registry;
+	const auto component = registry.Register<crates::CrateState>();
+	BOOST_TEST(component == ecs::InvalidComponentId);
+	registry.Finalize();
+
+	const auto id = registry.TryGet<crates::CrateState>();
+	const auto &schema = registry.Get(id);
+	BOOST_TEST(schema.stableName == "games.generalszh.crates.state");
+	BOOST_TEST(schema.version == 1u);
+	BOOST_TEST(schema.size == sizeof(crates::CrateState));
+	BOOST_TEST(schema.alignment == alignof(crates::CrateState));
+	BOOST_CHECK(schema.persistence == ecs::PersistencePolicy::Serializable);
+}
+
+BOOST_AUTO_TEST_CASE(crate_state_keeps_generation_safe_owner_and_recipient_identity)
+{
+	const ecs::Entity owner{11u, 4u};
+	const ecs::Entity recipient{11u, 9u};
+	const crates::CrateState state{
+		73u, owner, recipient, crates::CratePlacement::Airborne, 2u};
+
+	BOOST_TEST(state.definition == 73u);
+	BOOST_CHECK(state.ownerAccount == owner);
+	BOOST_TEST(state.ownerAccount.index == 11u);
+	BOOST_TEST(state.ownerAccount.generation == 4u);
+	BOOST_CHECK(state.intendedRecipient == recipient);
+	BOOST_TEST(state.intendedRecipient.index == 11u);
+	BOOST_TEST(state.intendedRecipient.generation == 9u);
+	BOOST_CHECK(state.placement == crates::CratePlacement::Airborne);
+	BOOST_TEST(state.veterancyLevel == 2u);
+}
+
+BOOST_AUTO_TEST_CASE(crate_state_defaults_to_grounded_without_an_owner_or_recipient)
+{
+	const crates::CrateState state{};
+
+	BOOST_TEST(state.definition == 0u);
+	BOOST_CHECK(state.ownerAccount == ecs::Entity::Null());
+	BOOST_CHECK(state.intendedRecipient == ecs::Entity::Null());
+	BOOST_CHECK(state.placement == crates::CratePlacement::Grounded);
+	BOOST_TEST(state.veterancyLevel == 0u);
+}

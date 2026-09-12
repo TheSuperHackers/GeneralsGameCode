@@ -1,0 +1,38 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.gameplay.power.components.power_suppression;
+
+BOOST_AUTO_TEST_CASE(component_metadata_is_explicit_and_serializable)
+{
+	using Component = generalszh::power::PowerSuppression;
+	static_assert(sizeof(Component) == sizeof(std::uint64_t));
+	static_assert(alignof(Component) == alignof(std::uint64_t));
+	static_assert(std::is_standard_layout_v<Component>);
+	static_assert(std::is_trivially_copyable_v<Component>);
+	static_assert(ecs::ComponentTraits<Component>::StableName
+		== std::string_view{"games.generalszh.power.suppression"});
+	static_assert(ecs::ComponentTraits<Component>::Version == 1u);
+	static_assert(ecs::ComponentTraits<Component>::Persistence
+		== ecs::PersistencePolicy::Serializable);
+
+	BOOST_TEST(ecs::ComponentTraits<Component>::StableName
+		== "games.generalszh.power.suppression");
+	BOOST_TEST(ecs::ComponentTraits<Component>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<Component>::Persistence
+		== ecs::PersistencePolicy::Serializable);
+
+	ecs::ComponentRegistry registry;
+	BOOST_TEST(registry.Register<Component>() == ecs::InvalidComponentId);
+	registry.Finalize();
+	const auto id = registry.TryGet<Component>();
+	const auto &info = registry.Get(id);
+	BOOST_TEST(info.stableKey == ecs::HashComponentKey(ecs::ComponentTraits<Component>::StableName));
+	BOOST_TEST(info.stableName == ecs::ComponentTraits<Component>::StableName);
+	BOOST_TEST(info.version == 1u);
+	BOOST_CHECK(info.persistence == ecs::PersistencePolicy::Serializable);
+	BOOST_TEST(info.size == sizeof(Component));
+	BOOST_TEST(info.alignment == alignof(Component));
+}

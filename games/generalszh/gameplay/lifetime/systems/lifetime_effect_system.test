@@ -1,0 +1,35 @@
+#include <boost/test/unit_test.hpp>
+#include <string_view>
+import games.generalszh.gameplay.lifetime.systems.lifetime_effect_system;
+import engine.ecs.scheduler.scheduler;
+
+BOOST_AUTO_TEST_CASE(effect_system_observes_expiration_in_a_later_wave_and_does_not_redeliver)
+{
+	using namespace generalszh::lifetime;
+	using namespace engine::gameplay::lifetime;
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.RegisterComponent<LifetimeDispatch>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<Expiration, LifetimeDispatch>();
+	ArmAfter(*world.Get<Expiration>(entity), 0, 1);
+	ExpirationSystem expiration;
+	LifetimeEffectSystem effects;
+	ecs::SystemRegistry registry;
+	registry.Register(effects);
+	registry.Register(expiration);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_TEST(scheduler.Graph().HasPath(registry.TryGet<ExpirationSystem>(), registry.TryGet<LifetimeEffectSystem>()));
+	scheduler.Execute({0, step});
+	BOOST_TEST(!world.Get<LifetimeDispatch>(entity)->ready);
+	scheduler.Execute({1, step});
+	BOOST_TEST(world.Get<LifetimeDispatch>(entity)->ready);
+	world.Get<Expiration>(entity)->state = ExpirationState::Inactive;
+	scheduler.Execute({2, step});
+	BOOST_TEST(!world.Get<LifetimeDispatch>(entity)->ready);
+	BOOST_TEST(world.IsAlive(entity));
+}

@@ -1,0 +1,36 @@
+#include <boost/test/unit_test.hpp>
+
+#include <stdexcept>
+
+import engine.gameplay.rts.bounty.algorithms.bounty_amount;
+
+using engine::gameplay::rts::bounty::BountyRate;
+using engine::gameplay::rts::bounty::CalculateBounty;
+using engine::gameplay::rts::bounty::GreaterBountyRate;
+using engine::gameplay::rts::bounty::NormalizeBountyRate;
+
+BOOST_AUTO_TEST_CASE(authored_rates_reduce_without_float_rounding)
+{
+	const auto five = BountyRate{1, 20};
+	const auto ten = BountyRate{1, 10};
+	const auto twenty = BountyRate{1, 5};
+	BOOST_CHECK(NormalizeBountyRate(5, 100) == five);
+	BOOST_CHECK(NormalizeBountyRate(10, 100) == ten);
+	BOOST_CHECK(NormalizeBountyRate(20, 100) == twenty);
+	BOOST_CHECK(GreaterBountyRate(BountyRate{1, 5}, BountyRate{1, 10}));
+}
+
+BOOST_AUTO_TEST_CASE(bounty_uses_exact_integer_ceiling)
+{
+	BOOST_CHECK(CalculateBounty(100, BountyRate{1, 20}) == 5u);
+	BOOST_CHECK(CalculateBounty(101, BountyRate{1, 20}) == 6u);
+	BOOST_CHECK(CalculateBounty(10, BountyRate{1, 10}) == 1u);
+	BOOST_CHECK(CalculateBounty(1, BountyRate{1, 5}) == 1u);
+	BOOST_CHECK(CalculateBounty(0, BountyRate{1, 5}) == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(invalid_rates_are_rejected_at_definition_boundary)
+{
+	BOOST_CHECK_THROW(NormalizeBountyRate(1, 0), std::invalid_argument);
+	BOOST_CHECK_THROW(NormalizeBountyRate(101, 100), std::invalid_argument);
+}

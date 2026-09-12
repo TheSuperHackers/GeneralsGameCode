@@ -1,0 +1,37 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionPrerequisiteEvaluation
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <span>
+
+import games.generalszh.gameplay.production.algorithms.production_prerequisite_evaluation;
+
+using namespace generalszh::production;
+using namespace engine::gameplay::rts::unlocks;
+using namespace std::chrono_literals;
+
+BOOST_AUTO_TEST_CASE(object_and_science_requirements_are_evaluated_as_one_gate)
+{
+	ecs::World world;
+	world.FinalizeComponents();
+	UnlockCatalog science;
+	science.Register(UnlockDefinition{"SCIENCE_TEST"});
+	science.Finalize();
+
+	BuildDefinition authored{1, 0, 0ms};
+	authored.sciencePrerequisiteIds = {science.Find(MakeUnlockKey("SCIENCE_TEST"))};
+	authored.scienceSchemaHash = science.SchemaHash();
+	const std::array source{authored};
+	const BuildCatalog catalog(world, source, engine::time::FixedStep{20},
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+		nullptr, nullptr, nullptr, nullptr, &science);
+
+	UnlockState state;
+	BOOST_CHECK(!SatisfiesProductionPrerequisites(catalog, 0,
+		std::span<const std::uint32_t>{}, state));
+	BOOST_CHECK(state.SetOwned(catalog.SciencePrerequisites(0).front()));
+	BOOST_CHECK(SatisfiesProductionPrerequisites(catalog, 0,
+		std::span<const std::uint32_t>{}, state));
+}

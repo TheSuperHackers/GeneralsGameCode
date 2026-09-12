@@ -1,0 +1,77 @@
+#define BOOST_TEST_MODULE GeneralsZHScienceContent
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+#include <string_view>
+#include <utility>
+
+import games.generalszh.adapters.content.science.science_definition;
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+
+using namespace generalszh::content;
+using namespace engine::gameplay::rts::unlocks;
+
+BOOST_AUTO_TEST_CASE(science_decoder_preserves_cost_prerequisites_and_source_defaults)
+{
+	constexpr std::string_view text = R"(
+Science ROOT
+  PrerequisiteSciences = None
+  SciencePurchasePointCost = 0
+End
+
+Science CHILD
+  PrerequisiteSciences = ROOT
+  SciencePurchasePointCost = 2
+End
+
+Science DIRECT_GRANT
+  PrerequisiteSciences = None
+  IsGrantable = No
+End
+)";
+	const auto decoded = DecodeScienceDefinitions(text);
+	BOOST_REQUIRE_EQUAL(decoded.definitions.size(), 3u);
+	BOOST_TEST(decoded.definitions[0].name == "ROOT");
+	BOOST_TEST(decoded.definitions[0].creditCost == 0u);
+	BOOST_TEST(decoded.definitions[0].grantable);
+	BOOST_REQUIRE_EQUAL(decoded.definitions[1].prerequisiteNames.size(), 1u);
+	BOOST_TEST(decoded.definitions[1].prerequisiteNames[0] == "ROOT");
+	BOOST_TEST(decoded.definitions[1].creditCost == 2u);
+	BOOST_TEST(decoded.definitions[2].grantable == false);
+	BOOST_TEST(decoded.definitions[2].creditCost == 0u);
+
+	const auto definitions = BindScienceDefinitions(decoded);
+	UnlockCatalog catalog;
+	for (auto definition : definitions)
+		catalog.Register(std::move(definition));
+	catalog.Finalize();
+	const auto child = catalog.Find(MakeUnlockKey("CHILD"));
+	const auto root = catalog.Find(MakeUnlockKey("ROOT"));
+	BOOST_REQUIRE_EQUAL(catalog.Prerequisites(child).size(), 1u);
+	BOOST_TEST(catalog.Prerequisites(child).front().value == root.value);
+}
+
+BOOST_AUTO_TEST_CASE(science_decoder_rejects_duplicate_or_unknown_references)
+{
+	constexpr std::string_view duplicate = R"(
+Science ROOT
+End
+Science ROOT
+End
+)";
+	BOOST_CHECK_THROW(DecodeScienceDefinitions(duplicate), std::invalid_argument);
+
+	constexpr std::string_view unknown = R"(
+Science ROOT
+  PrerequisiteSciences = MISSING
+End
+)";
+	const auto decoded = DecodeScienceDefinitions(unknown);
+	BOOST_CHECK_THROW(BindScienceDefinitions(decoded), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(science_capacity_is_checked_against_the_inspected_catalog)
+{
+	BOOST_TEST(InspectedZeroHourScienceDefinitionCount == 95u);
+	BOOST_TEST(MaxUnlockDefinitions >= InspectedZeroHourScienceDefinitionCount);
+}

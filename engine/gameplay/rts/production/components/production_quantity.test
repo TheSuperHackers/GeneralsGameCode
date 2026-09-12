@@ -1,0 +1,115 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import engine.ecs.core.world;
+import engine.ecs.query.query;
+import engine.gameplay.rts.production.algorithms.production_quantity;
+import engine.gameplay.rts.production.components.production_quantity;
+
+using engine::gameplay::rts::production::ProductionQuantity;
+using engine::gameplay::rts::production::SetQuantity;
+
+namespace production_quantity_test
+{
+struct Marker
+{
+	std::int32_t value{0};
+};
+} // namespace production_quantity_test
+
+namespace ecs
+{
+template<> struct ComponentTraits<production_quantity_test::Marker>
+{
+	static constexpr std::string_view StableName = "tests.rts.production_quantity.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+} // namespace ecs
+
+BOOST_AUTO_TEST_CASE(component_layout_metadata_and_chunk_rows_are_plain_and_contiguous)
+{
+	using Component = ProductionQuantity;
+	static_assert(std::is_standard_layout_v<Component>);
+	static_assert(std::is_trivially_copyable_v<Component>);
+
+	BOOST_TEST(sizeof(Component) == 2 * sizeof(std::int32_t));
+	BOOST_TEST(alignof(Component) == alignof(std::int32_t));
+	BOOST_TEST(offsetof(Component, total) == 0u);
+	BOOST_TEST(offsetof(Component, completed) == sizeof(std::int32_t));
+	BOOST_TEST(ecs::ComponentTraits<Component>::StableName ==
+		"engine.gameplay.rts.production.production_quantity");
+	BOOST_TEST(ecs::ComponentTraits<Component>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<Component>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+
+	ecs::World world{ecs::WorldConfig{64}};
+	world.RegisterComponent<Component>();
+	world.FinalizeComponents();
+	for (std::size_t index = 0; index < 12; ++index)
+		world.Create<Component>();
+
+	std::size_t rowsSeen = 0;
+	std::size_t chunksSeen = 0;
+	ecs::Query<ecs::Read<Component>> query(world);
+	query.ForEachChunk([&](auto chunk) {
+		++chunksSeen;
+		const auto rows = chunk.template Get<Component>();
+		BOOST_TEST(rows.size() > 0u);
+		for (std::size_t row = 1; row < rows.size(); ++row)
+			BOOST_CHECK(&rows[row] == &rows[row - 1] + 1);
+		rowsSeen += rows.size();
+	});
+	BOOST_TEST(rowsSeen == 12u);
+	BOOST_TEST(chunksSeen > 1u);
+}
+
+BOOST_AUTO_TEST_CASE(archetype_transitions_preserve_quantity_data)
+{
+	ecs::World world;
+	world.RegisterComponent<ProductionQuantity>();
+	world.RegisterComponent<production_quantity_test::Marker>();
+	world.FinalizeComponents();
+
+	const ecs::Entity entity = world.Create<ProductionQuantity>();
+	SetQuantity(*world.Get<ProductionQuantity>(entity), 73, -5);
+
+	BOOST_TEST(world.Add<production_quantity_test::Marker>(entity));
+	BOOST_TEST(world.Has<production_quantity_test::Marker>(entity));
+	BOOST_TEST(world.Get<ProductionQuantity>(entity)->total == 73);
+	BOOST_TEST(world.Get<ProductionQuantity>(entity)->completed == -5);
+	world.Get<production_quantity_test::Marker>(entity)->value = 11;
+
+	BOOST_TEST(world.Remove<production_quantity_test::Marker>(entity));
+	BOOST_TEST(!world.Has<production_quantity_test::Marker>(entity));
+	BOOST_TEST(world.Get<ProductionQuantity>(entity)->total == 73);
+	BOOST_TEST(world.Get<ProductionQuantity>(entity)->completed == -5);
+}
+
+BOOST_AUTO_TEST_CASE(stale_handles_do_not_access_reused_quantity_storage)
+{
+	ecs::World world;
+	world.RegisterComponent<ProductionQuantity>();
+	world.FinalizeComponents();
+
+	const ecs::Entity stale = world.Create<ProductionQuantity>();
+	SetQuantity(*world.Get<ProductionQuantity>(stale), 19, 4);
+	BOOST_TEST(world.Destroy(stale));
+	BOOST_TEST(!world.IsAlive(stale));
+	BOOST_TEST(world.Get<ProductionQuantity>(stale) == nullptr);
+	BOOST_TEST(!world.Has<ProductionQuantity>(stale));
+	BOOST_TEST(!world.Destroy(stale));
+
+	const ecs::Entity replacement = world.Create<ProductionQuantity>();
+	BOOST_TEST(replacement.index == stale.index);
+	BOOST_TEST(replacement.generation != stale.generation);
+	BOOST_TEST(world.IsAlive(replacement));
+	BOOST_TEST(!world.IsAlive(stale));
+	BOOST_TEST(world.Get<ProductionQuantity>(stale) == nullptr);
+	BOOST_TEST(world.Get<ProductionQuantity>(replacement)->total == 0);
+	BOOST_TEST(world.Destroy(replacement));
+}

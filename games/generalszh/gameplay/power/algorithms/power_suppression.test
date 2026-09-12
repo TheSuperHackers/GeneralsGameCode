@@ -1,0 +1,210 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <limits>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.power.algorithms.power_suppression;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::power::ArmSuppressionAfter;
+using generalszh::power::ConsumeSuppressionRecovery;
+using generalszh::power::IsSuppressed;
+using generalszh::power::PowerSuppression;
+using generalszh::power::SetSuppressionUntil;
+using namespace std::chrono_literals;
+
+namespace suppression_test
+{
+struct RecoveryCount { std::uint32_t value{0}; };
+struct DeterministicSuppressionStep
+{
+	using Query = ecs::Query<ecs::Write<PowerSuppression>, ecs::Write<RecoveryCount>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		auto suppressions = chunk.Get<PowerSuppression>();
+		auto recoveries = chunk.Get<RecoveryCount>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			const auto entity = chunk.Entities()[row];
+			const auto offset = static_cast<std::uint64_t>((entity.index % 7u) + 1u);
+			if (context.Tick() == 1) SetSuppressionUntil(suppressions[row], offset);
+			recoveries[row].value += ConsumeSuppressionRecovery(suppressions[row], context.Tick());
+		}
+	}
+};
+}
+
+namespace ecs
+{
+template<> struct ComponentTraits<suppression_test::RecoveryCount>
+{
+	static constexpr std::string_view StableName = "tests.power.suppression.recovery_count";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+template<> struct SystemTraits<suppression_test::DeterministicSuppressionStep>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.power.suppression.step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace suppression_test
+{
+using EntityState = std::array<std::uint64_t, 4>;
+std::vector<EntityState> RunDeterministicWorkload(std::size_t workerCount)
+{
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<PowerSuppression>();
+	world.RegisterComponent<RecoveryCount>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(4096);
+	for (std::uint32_t index = 0; index < 4096; ++index)
+	{
+		const auto entity = world.Create<PowerSuppression, RecoveryCount>();
+		SetSuppressionUntil(*world.Get<PowerSuppression>(entity), index);
+		entities.push_back(entity);
+	}
+
+	DeterministicSuppressionStep system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workerCount});
+	const engine::time::FixedStep step{60};
+	scheduler.Finalize(step);
+	for (std::uint64_t tick = 1; tick <= 4; ++tick)
+		scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+	ecs::Query<ecs::Read<PowerSuppression>> query(world);
+	BOOST_TEST(query.PrepareChunks() > 1u);
+
+	std::vector<EntityState> state;
+	state.reserve(entities.size());
+	for (const auto entity : entities)
+	{
+		const auto *suppression = world.Get<PowerSuppression>(entity);
+		BOOST_REQUIRE(suppression != nullptr);
+		const auto count = world.Get<RecoveryCount>(entity)->value;
+		const auto deadline = (entity.index % 7u) + 1u;
+		BOOST_TEST(suppression->untilTick == (deadline < 4 ? 0u : deadline));
+		BOOST_TEST(count == (deadline < 4 ? 1u : 0u));
+		BOOST_TEST(IsSuppressed(*suppression, 4) == (deadline > 4));
+		state.push_back({entity.index, entity.generation, suppression->untilTick, count});
+	}
+	return state;
+}
+}
+
+BOOST_AUTO_TEST_CASE(recovery_visibility_is_false_at_the_deadline_and_strictly_after_it)
+{
+	PowerSuppression suppression;
+	SetSuppressionUntil(suppression, 100);
+
+	BOOST_CHECK(IsSuppressed(suppression, 99));
+	BOOST_CHECK(!IsSuppressed(suppression, 100));
+	BOOST_CHECK(!ConsumeSuppressionRecovery(suppression, 100));
+	BOOST_TEST(suppression.untilTick == 100u);
+	BOOST_CHECK(ConsumeSuppressionRecovery(suppression, 101));
+	BOOST_TEST(suppression.untilTick == 0u);
+	BOOST_CHECK(!ConsumeSuppressionRecovery(suppression, 102));
+}
+
+BOOST_AUTO_TEST_CASE(zero_deadline_cancels_pending_recovery)
+{
+	PowerSuppression suppression;
+	SetSuppressionUntil(suppression, 100);
+	SetSuppressionUntil(suppression, 0);
+
+	BOOST_CHECK(!IsSuppressed(suppression, 0));
+	BOOST_CHECK(!IsSuppressed(suppression, 100));
+	BOOST_CHECK(!ConsumeSuppressionRecovery(suppression, 101));
+	BOOST_TEST(suppression.untilTick == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(rearming_replaces_the_previous_deadline)
+{
+	PowerSuppression suppression;
+	SetSuppressionUntil(suppression, 100);
+	ArmSuppressionAfter(suppression,
+		engine::time::SimulationTime{50, engine::time::FixedStep{30}},
+		100ms);
+
+	BOOST_TEST(suppression.untilTick == 53u);
+	BOOST_CHECK(!ConsumeSuppressionRecovery(suppression, 53));
+	BOOST_TEST(suppression.untilTick == 53u);
+	BOOST_CHECK(ConsumeSuppressionRecovery(suppression, 54));
+	BOOST_TEST(suppression.untilTick == 0u);
+
+	// Zero duration is an absolute deadline at 'now', not a second implicit
+	// cancellation policy. Only absolute tick zero is the cancellation sentinel.
+	ArmSuppressionAfter(suppression,
+		engine::time::SimulationTime{50, engine::time::FixedStep{30}}, 0ns);
+	BOOST_TEST(suppression.untilTick == 50u);
+	BOOST_CHECK(!IsSuppressed(suppression, 50));
+	BOOST_CHECK(!ConsumeSuppressionRecovery(suppression, 50));
+	BOOST_CHECK(ConsumeSuppressionRecovery(suppression, 51));
+	ArmSuppressionAfter(suppression,
+		engine::time::SimulationTime{0, engine::time::FixedStep{30}}, 0ns);
+	BOOST_TEST(suppression.untilTick == 0u);
+	BOOST_CHECK(!ConsumeSuppressionRecovery(suppression, 1));
+}
+
+BOOST_AUTO_TEST_CASE(typed_durations_round_up_at_thirty_and_sixty_hz)
+{
+	PowerSuppression atThirty;
+	ArmSuppressionAfter(atThirty,
+		engine::time::SimulationTime{100, engine::time::FixedStep{30}},
+		100ms);
+	BOOST_TEST(atThirty.untilTick == 103u);
+
+	PowerSuppression atSixty;
+	ArmSuppressionAfter(atSixty,
+		engine::time::SimulationTime{100, engine::time::FixedStep{60}},
+		100ms);
+	BOOST_TEST(atSixty.untilTick == 106u);
+
+	PowerSuppression belowOneTick;
+	ArmSuppressionAfter(belowOneTick,
+		engine::time::SimulationTime{10, engine::time::FixedStep{30}},
+		33'333'333ns);
+	BOOST_TEST(belowOneTick.untilTick == 11u);
+
+	PowerSuppression aboveOneTick;
+	ArmSuppressionAfter(aboveOneTick,
+		engine::time::SimulationTime{10, engine::time::FixedStep{30}},
+		33'333'334ns);
+	BOOST_TEST(aboveOneTick.untilTick == 12u);
+}
+
+BOOST_AUTO_TEST_CASE(wide_typed_duration_and_tick_identity_exceed_legacy_frame_range)
+{
+	const auto initialTick = std::uint64_t{1} << 40;
+	const engine::time::SimulationTime now{initialTick, engine::time::FixedStep{30}};
+	const engine::time::Duration duration{
+		(std::numeric_limits<std::int64_t>::max)()};
+	PowerSuppression suppression;
+
+	ArmSuppressionAfter(suppression, now, duration);
+
+	const auto ticks = now.Step().TicksFor(duration);
+	BOOST_TEST(suppression.untilTick == initialTick + ticks);
+	BOOST_TEST(suppression.untilTick > (std::numeric_limits<std::uint32_t>::max)());
+	BOOST_CHECK(IsSuppressed(suppression, initialTick));
+}
+
+BOOST_AUTO_TEST_CASE(component_and_entity_state_is_identical_for_one_two_and_four_workers)
+{
+	const auto oneWorker = suppression_test::RunDeterministicWorkload(1);
+	BOOST_CHECK(suppression_test::RunDeterministicWorkload(2) == oneWorker);
+	BOOST_CHECK(suppression_test::RunDeterministicWorkload(4) == oneWorker);
+}

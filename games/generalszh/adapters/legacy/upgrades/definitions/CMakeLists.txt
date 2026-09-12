@@ -1,0 +1,18 @@
+add_library(generalszh_upgrade_build_adapter STATIC)
+target_sources(generalszh_upgrade_build_adapter PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	build_definition.cppm)
+target_compile_features(generalszh_upgrade_build_adapter PUBLIC cxx_std_23)
+set_property(TARGET generalszh_upgrade_build_adapter PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_include_directories(generalszh_upgrade_build_adapter PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../..")
+target_link_libraries(generalszh_upgrade_build_adapter PUBLIC generalszh_upgrade_definitions)
+
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(build_definition.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_upgrade_build_adapter_tests build_definition.test)
+	set_property(TARGET generalszh_upgrade_build_adapter_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_upgrade_build_adapter_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_upgrade_build_adapter_tests PRIVATE
+		generalszh_upgrade_build_adapter Boost::included_unit_test_framework)
+	add_test(NAME generalszh_upgrade_build_adapter_tests COMMAND generalszh_upgrade_build_adapter_tests)
+endif()

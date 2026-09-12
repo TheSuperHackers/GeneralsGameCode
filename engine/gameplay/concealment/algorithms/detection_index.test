@@ -1,0 +1,101 @@
+#include <boost/test/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <utility>
+import engine.ecs.core.world;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.concealment.algorithms.detection_index;
+import engine.gameplay.concealment.algorithms.detection_lease;
+import engine.gameplay.concealment.components.concealment_binding;
+import engine.gameplay.concealment.components.concealment_state;
+import engine.gameplay.concealment.components.detection_state;
+import engine.gameplay.concealment.definitions.detection_definition;
+import engine.gameplay.containment.components.passenger_membership;
+import engine.gameplay.navigation.components.movement;
+
+BOOST_AUTO_TEST_CASE(detection_index_reduces_two_detector_observations_independent_of_creation_order)
+{
+    using namespace engine::gameplay;
+    using namespace engine::gameplay::concealment;
+    using namespace std::chrono_literals;
+    const auto run=[](const bool reverseCreationOrder) {
+        const std::array<std::uint8_t, 5> terrain{1, 1, 1, 1, 1};
+        navigation::NavigationGrid grid(5, 1, terrain);
+        // Distinct scan rates produce distinct leases. Both detectors observe
+        // the same target, so the joined reduction must retain the longer one.
+        const std::array authored{DetectionDefinition{50ms, 2, false}, DetectionDefinition{100ms, 2, false}};
+        DetectionDefinitions definitions(engine::time::FixedStep{20}, authored);
+
+        ecs::World world;
+        world.RegisterComponent<combat::LifeState>();
+        world.RegisterComponent<navigation::GridPosition>();
+        world.RegisterComponent<ConcealmentBinding>();
+        world.RegisterComponent<ConcealmentState>();
+        world.RegisterComponent<ConcealmentGroup>();
+        world.RegisterComponent<DetectionBinding>();
+        world.RegisterComponent<DetectionState>();
+        world.RegisterComponent<containment::PassengerMembership>();
+        world.FinalizeComponents();
+
+        const auto targetGroup = world.Create();
+        const auto firstDetectorGroup = world.Create();
+        const auto secondDetectorGroup = world.Create();
+        const auto target = world.Create<combat::LifeState, navigation::GridPosition, ConcealmentBinding,
+            ConcealmentState, ConcealmentGroup, containment::PassengerMembership>();
+        world.Get<navigation::GridPosition>(target)->cell = 0;
+        world.Get<ConcealmentState>(target)->concealed = true;
+        world.Get<ConcealmentGroup>(target)->value = targetGroup;
+        world.Get<ConcealmentBinding>(target)->definition = ConcealmentDefinitionId{};
+
+        const auto makeDetector=[&](const navigation::Cell cell, const std::uint32_t definition,
+            const ecs::Entity group) {
+            const auto detector = world.Create<combat::LifeState, navigation::GridPosition, DetectionBinding,
+                DetectionState, ConcealmentGroup, containment::PassengerMembership>();
+            world.Get<navigation::GridPosition>(detector)->cell = cell;
+            world.Get<ConcealmentGroup>(detector)->value = group;
+            world.Get<DetectionBinding>(detector)->definition = definitions.Id(definition);
+            return detector;
+        };
+        const auto first = reverseCreationOrder
+            ? makeDetector(2, 1, secondDetectorGroup) : makeDetector(1, 0, firstDetectorGroup);
+        const auto second = reverseCreationOrder
+            ? makeDetector(1, 0, firstDetectorGroup) : makeDetector(2, 1, secondDetectorGroup);
+        DetectionIndex index(world, grid, 16);
+        const auto resetScans=[&] {
+            world.Get<DetectionState>(first)->nextScanTick = 0;
+            world.Get<DetectionState>(second)->nextScanTick = 0;
+        };
+
+        index.Rebuild(0, definitions);
+        const auto firstLease=index.DetectedUntil(target);
+        const auto expectedLease=(std::max)(
+            DetectionLeaseDeadline(0, definitions.Get(definitions.Id(0)).detectionRateTicks),
+            DetectionLeaseDeadline(0, definitions.Get(definitions.Id(1)).detectionRateTicks));
+        BOOST_TEST(firstLease == expectedLease);
+
+        world.Get<containment::PassengerMembership>(target)->phase = containment::ContainmentPhase::Inside;
+        world.Get<containment::PassengerMembership>(target)->owner = containment::PassengerContainmentOwner::Transport;
+        resetScans(); index.Rebuild(0, definitions);
+        BOOST_TEST(index.DetectedUntil(target) == 0u);
+
+        world.Get<containment::PassengerMembership>(target)->phase = containment::ContainmentPhase::Outside;
+        world.Get<containment::PassengerMembership>(first)->phase = containment::ContainmentPhase::Inside;
+        world.Get<containment::PassengerMembership>(first)->owner = containment::PassengerContainmentOwner::Transport;
+        world.Get<containment::PassengerMembership>(second)->phase = containment::ContainmentPhase::Inside;
+        world.Get<containment::PassengerMembership>(second)->owner = containment::PassengerContainmentOwner::Transport;
+        resetScans(); index.Rebuild(0, definitions);
+        BOOST_TEST(index.DetectedUntil(target) == 0u);
+
+        world.Get<containment::PassengerMembership>(first)->phase = containment::ContainmentPhase::Outside;
+        world.Get<containment::PassengerMembership>(second)->phase = containment::ContainmentPhase::Outside;
+        resetScans(); index.Rebuild(0, definitions);
+        return std::pair{firstLease, index.DetectedUntil(target)};
+    };
+
+    const auto forward=run(false), reverse=run(true);
+    BOOST_TEST(forward.first == forward.second);
+    BOOST_TEST(reverse.first == forward.first);
+    BOOST_TEST(reverse.second == forward.second);
+}

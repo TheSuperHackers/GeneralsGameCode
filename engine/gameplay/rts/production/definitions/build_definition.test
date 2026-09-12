@@ -1,0 +1,8 @@
+#include <boost/test/unit_test.hpp>
+#include <chrono>
+import engine.gameplay.rts.production.definitions.build_definition;
+BOOST_AUTO_TEST_CASE(build_authoring_rounds_up_duration_and_starts_without_credit)
+{
+    const auto work=engine::gameplay::rts::production::AuthorBuild(std::chrono::milliseconds{101},engine::time::FixedStep{20});
+    BOOST_TEST(work.required==3u);BOOST_TEST(work.elapsed==0u);BOOST_TEST(work.remainder==0u);
+}

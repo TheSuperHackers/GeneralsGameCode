@@ -1,0 +1,59 @@
+#include <boost/test/unit_test.hpp>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+import games.generalszh.adapters.content.rules.game_rules;
+using namespace generalszh::content;
+namespace
+{
+// Actual untouched Zero Hour GameData.ini lines 248 and 258-260. Unrelated
+// fields demonstrate that this adapter decodes only the selected rules.
+constexpr std::string_view shipped = R"(
+GameData
+  ValuePerSupplyBox = 75
+  SupplyBuildBorder = 50.0
+  MinLowEnergyProductionSpeed = 0.5
+  MaxLowEnergyProductionSpeed = 0.8
+  LowEnergyPenaltyModifier = 1.0
+End
+)";
+std::string Replace(std::string_view from, std::string_view to)
+{
+    std::string text{shipped};
+    text.replace(text.find(from), from.size(), to);
+    return text;
+}
+}
+BOOST_AUTO_TEST_CASE(shipped_game_rules_decode_exact_integer_definitions)
+{
+    const auto rules = DecodeGameRules(shipped);
+    BOOST_TEST(rules.valuePerSupplyBox == 75u);
+    BOOST_TEST(rules.power.minimumSpeed == 5000u);
+    BOOST_TEST(rules.power.maximumSpeed == 8000u);
+    BOOST_TEST(rules.power.penaltyModifier == 10000u);
+    const auto alternate = DecodeGameRules(R"(
+gamedata
+ ValuePerSupplyBox = 125.0 ; exact integer
+ MinLowEnergyProductionSpeed = .2501
+ MaxLowEnergyProductionSpeed = .9000
+ LowEnergyPenaltyModifier = 2.1250
+End
+)");
+    BOOST_TEST(alternate.valuePerSupplyBox == 125u);
+    BOOST_TEST(alternate.power.minimumSpeed == 2501u);
+    BOOST_TEST(alternate.power.maximumSpeed == 9000u);
+    BOOST_TEST(alternate.power.penaltyModifier == 21250u);
+}
+BOOST_AUTO_TEST_CASE(game_rules_reject_missing_invalid_and_inexact_content)
+{
+    BOOST_CHECK_THROW(DecodeGameRules("GameData\nEnd"), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("0.5", "0.50001")), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("75", "75.5")), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("75", "-1")), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("75", "4294967296")), std::out_of_range);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("1.0", "429496.7296")), std::out_of_range);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("0.5", "0.9")), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("0.8", "1.0001")), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("0.5", "nan")), std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeGameRules(Replace("0.5", "5e-1")), std::invalid_argument);
+}

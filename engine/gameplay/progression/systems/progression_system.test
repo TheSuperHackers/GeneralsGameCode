@@ -1,0 +1,107 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <vector>
+import engine.gameplay.progression.systems.progression_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::progression;
+namespace {
+void Register(ecs::World &world) {
+ world.RegisterComponent<ProgressionState>(); world.RegisterComponent<ProgressionDefinitionRef>();
+ world.RegisterComponent<ProgressionEligibility>(); world.RegisterComponent<ProgressionInbox>(); world.FinalizeComponents();
+}
+ecs::Entity Create(ecs::World &world,bool trainable=true) {
+ const auto entity=world.Create<ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,ProgressionInbox>();
+ world.Get<ProgressionEligibility>(entity)->trainable=trainable; return entity;
+}
+}
+BOOST_AUTO_TEST_CASE(progression_orders_awards_and_handles_lifecycle_and_caps)
+{
+ ecs::World world; Register(world);
+ const auto entity=Create(world),disabled=Create(world,false),stale=Create(world),invalid=Create(world);
+ world.Destroy(stale);
+ const auto replacement=Create(world);
+ world.Get<ProgressionDefinitionRef>(invalid)->index=9;
+ std::array definitions{ProgressionDefinition{{0,10,20,30},35}};
+ const ProgressionCatalog catalog(definitions); ProgressionBatch batch(8); ProgressionSystem system(catalog,batch);
+ ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+ ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(engine::time::FixedStep{30});
+ const std::array inputs{AcceptedExperience{entity,10},AcceptedExperience{disabled,20},AcceptedExperience{entity,20},
+  AcceptedExperience{stale,10},AcceptedExperience{entity,UINT64_MAX},AcceptedExperience{invalid,10}};
+ batch.SetInputs(inputs); scheduler.Execute({1,engine::time::FixedStep{30}});
+ const auto results=batch.Results(); BOOST_REQUIRE_EQUAL(results.size(),inputs.size());
+ BOOST_TEST(results[0].oldLevel==0u); BOOST_TEST(results[0].newLevel==1u);
+ BOOST_TEST(results[2].oldLevel==1u); BOOST_TEST(results[2].newLevel==3u);
+ BOOST_CHECK(results[1].outcome==ExperienceOutcome::NotTrainable);
+ BOOST_CHECK(results[3].outcome==ExperienceOutcome::InvalidTarget);
+ BOOST_CHECK(results[4].outcome==ExperienceOutcome::Clamped); BOOST_TEST(results[4].applied==5u);
+ BOOST_CHECK(!results[4].LevelChanged());
+ BOOST_CHECK(results[5].outcome==ExperienceOutcome::InvalidState);
+ BOOST_TEST(world.Get<ProgressionState>(replacement)->experience==0u);
+ scheduler.Execute({2,engine::time::FixedStep{30}});
+ BOOST_TEST(batch.Results().empty()); BOOST_TEST(world.Get<ProgressionState>(entity)->experience==35u);
+ const std::array nextInputs{AcceptedExperience{replacement,10}};
+ batch.SetInputs(nextInputs); scheduler.Execute({3,engine::time::FixedStep{30}});
+ BOOST_REQUIRE_EQUAL(batch.Results().size(),1u);
+ BOOST_TEST(batch.Results()[0].tick==3u);
+ BOOST_TEST(batch.Results()[0].newLevel==1u);
+ BOOST_TEST(world.Get<ProgressionState>(entity)->experience==35u);
+ BOOST_TEST(world.Get<ProgressionState>(replacement)->experience==10u);
+}
+BOOST_AUTO_TEST_CASE(progression_zero_thresholds_and_non_generals_cap)
+{
+ ecs::World world; Register(world); const auto entity=Create(world);
+ std::array definitions{ProgressionDefinition{{0,0,0,0,0},UINT64_MAX}};
+ const ProgressionCatalog catalog(definitions); ProgressionBatch batch(2); ProgressionSystem system(catalog,batch);
+ ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+ ecs::Scheduler scheduler(world,registry); scheduler.Finalize(engine::time::FixedStep{30});
+ const std::array inputs{AcceptedExperience{entity,0},AcceptedExperience{entity,UINT64_MAX}};
+ batch.SetInputs(inputs); scheduler.Execute({1,engine::time::FixedStep{30}});
+ BOOST_REQUIRE_EQUAL(batch.Results().size(),2u);
+ BOOST_TEST(batch.Results()[0].newLevel==4u);
+ BOOST_TEST(batch.Results()[1].experience==UINT64_MAX);
+ BOOST_CHECK(batch.Results()[1].outcome==ExperienceOutcome::Applied);
+}
+BOOST_AUTO_TEST_CASE(progression_empty_catalog_and_zero_rows_are_legal)
+{
+ ecs::World world; Register(world);
+ const ProgressionCatalog catalog(std::span<const ProgressionDefinition>{}); ProgressionBatch batch(1); ProgressionSystem system(catalog,batch);
+ ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+ ecs::Scheduler scheduler(world,registry); scheduler.Finalize(engine::time::FixedStep{30});
+ scheduler.Execute({1,engine::time::FixedStep{30}}); BOOST_TEST(batch.Results().empty());
+ const std::array absentInputs{AcceptedExperience{ecs::Entity{123,1},10}};
+ batch.SetInputs(absentInputs); scheduler.Execute({2,engine::time::FixedStep{30}});
+ BOOST_REQUIRE_EQUAL(batch.Results().size(),1u);
+ BOOST_CHECK(batch.Results()[0].outcome==ExperienceOutcome::InvalidTarget);
+ const auto entity=Create(world);
+ const std::array inputs{AcceptedExperience{entity,1}};
+ batch.SetInputs(inputs); scheduler.Execute({3,engine::time::FixedStep{30}});
+ BOOST_REQUIRE_EQUAL(batch.Results().size(),1u);
+ BOOST_CHECK(batch.Results()[0].outcome==ExperienceOutcome::InvalidState);
+ BOOST_TEST(world.Get<ProgressionState>(entity)->experience==0u);
+}
+BOOST_AUTO_TEST_CASE(progression_parallel_state_and_ordered_results_match)
+{
+ auto run=[](std::size_t workers) {
+  ecs::World world(ecs::WorldConfig{256}); Register(world);
+  std::vector<ecs::Entity> entities; std::vector<AcceptedExperience> inputs;
+  for(unsigned i=0;i<512;++i) entities.push_back(Create(world));
+  for(unsigned pass=0;pass<3;++pass) for(auto entity:entities) inputs.push_back({entity,10});
+  std::array definitions{ProgressionDefinition{{0,10,20,30},100}};
+  const ProgressionCatalog catalog(definitions); ProgressionBatch batch(inputs.size()); ProgressionSystem system(catalog,batch);
+  ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+  ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers}); scheduler.Finalize(engine::time::FixedStep{30});
+  batch.SetInputs(inputs); scheduler.Execute({7,engine::time::FixedStep{30}});
+  BOOST_REQUIRE_EQUAL(batch.Results().size(),inputs.size());
+  std::vector<std::array<std::uint64_t,9>> snapshot;
+  for(const auto &r:batch.Results()) snapshot.push_back({r.entity.index,r.entity.generation,r.tick,r.requested,r.applied,
+   r.experience,r.oldLevel,r.newLevel,static_cast<std::uint64_t>(r.outcome)});
+  for(auto entity:entities) {const auto &s=*world.Get<ProgressionState>(entity);
+   BOOST_TEST(s.experience==30u); BOOST_TEST(s.level==3u);
+   snapshot.push_back({entity.index,entity.generation,s.experience,s.level});}
+  return snapshot;
+ };
+ const auto expected=run(1); BOOST_CHECK(expected==run(2)); BOOST_CHECK(expected==run(4));
+}

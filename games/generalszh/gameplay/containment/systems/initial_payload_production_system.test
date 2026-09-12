@@ -1,0 +1,169 @@
+#define BOOST_TEST_MODULE GeneralsZHInitialPayloadProductionSystem
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <tuple>
+#include <vector>
+import games.generalszh.gameplay.containment.systems.initial_payload_production_system;
+import games.generalszh.gameplay.production.registration.production_registration;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+using namespace std::chrono_literals;
+namespace c = engine::gameplay::containment;
+namespace n = engine::gameplay::navigation;
+namespace p = generalszh::production;
+
+std::vector<std::uint64_t> RunPositive(std::size_t workers)
+{
+    constexpr std::size_t carrierCount = 600;
+    constexpr std::uint32_t payloadCount = 2;
+    p::BuildDefinition carrier{};
+    carrier.key = 11; carrier.duration = 0ms; carrier.quantity = 1; carrier.cellsPerSecond = 10;
+    carrier.transportDefinition = 0; carrier.initialPayload = p::InitialPayloadDefinition{22,payloadCount};
+    p::BuildDefinition passenger{};
+    passenger.key = 22; passenger.duration = 0ms; passenger.quantity = 1; passenger.cellsPerSecond = 10;
+    passenger.passenger = c::PassengerSlots{1};
+    const std::array definitions{carrier,passenger};
+    const std::array transports{c::TransportDefinition{4,0ms,1,10}};
+    const engine::time::FixedStep step{10};
+
+    ecs::World world; p::RegisterProductionComponents(world); world.FinalizeComponents();
+    c::TransportDefinitions transportCatalog(step,transports);
+    p::BuildCatalog catalog(world,definitions,step,nullptr,nullptr,&transportCatalog);
+    generalszh::containment::InitialPayloadProductionSystem payload(catalog);
+    engine::jobs::JobSystem jobs({workers}); ecs::SystemRegistry registry;
+    registry.Register(payload); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,jobs); scheduler.Finalize(step);
+
+    const auto account = ecs::Entity{700,2};
+    for (std::size_t i = 0; i != carrierCount; ++i)
+    {
+        const auto carrierEntity = world.Create<p::ProducedUnit,c::TransportBinding,
+            engine::gameplay::combat::LifeState,n::GridPosition,generalszh::containment::InitialPayloadBinding>();
+        *world.Get<p::ProducedUnit>(carrierEntity) = {ecs::Entity{42,1},account,11};
+        *world.Get<c::TransportBinding>(carrierEntity) = {0};
+        *world.Get<n::GridPosition>(carrierEntity) = {static_cast<n::Cell>(i % 8)};
+        *world.Get<generalszh::containment::InitialPayloadBinding>(carrierEntity) = {22,payloadCount};
+    }
+    generalszh::containment::InitialPayloadProductionSystem::Query carrierChunks(world);
+    BOOST_REQUIRE(carrierChunks.PrepareChunks() > 1u);
+
+    scheduler.Execute({0,step});
+    std::vector<ecs::Entity> carriers;
+    std::vector<std::array<std::uint64_t,6>> carrierRecords;
+    ecs::Query<ecs::Read<p::ProducedUnit>,ecs::Read<generalszh::containment::InitialPayloadBinding>> carrierQuery(world);
+    carrierQuery.ForEachChunk([&](auto chunk) {
+        const auto values=chunk.template Get<p::ProducedUnit>(); const auto bindings=chunk.template Get<generalszh::containment::InitialPayloadBinding>();
+        for(std::size_t row=0;row!=chunk.Count();++row) {
+            carriers.push_back(chunk.Entities()[row]); BOOST_CHECK(values[row].definition==11u);
+            BOOST_CHECK(bindings[row].phase==generalszh::containment::InitialPayloadPhase::Consumed);
+            BOOST_TEST(bindings[row].count==payloadCount);
+            carrierRecords.push_back({chunk.Entities()[row].index,chunk.Entities()[row].generation,
+                values[row].account.index,values[row].account.generation,
+                static_cast<std::uint64_t>(bindings[row].phase),bindings[row].count});
+        }
+    });
+    BOOST_REQUIRE_EQUAL(carriers.size(),carrierCount);
+    std::sort(carriers.begin(),carriers.end(),[](auto left,auto right) {
+        return std::tie(left.index,left.generation)<std::tie(right.index,right.generation);
+    });
+    std::sort(carrierRecords.begin(),carrierRecords.end(),[](const auto &left,const auto &right) {
+        return std::tie(left[0],left[1])<std::tie(right[0],right[1]);
+    });
+    BOOST_REQUIRE_EQUAL(carrierRecords.size(),carrierCount);
+
+    std::vector<std::array<std::uint64_t,10>> passengerRecords;
+    ecs::Query<ecs::Read<p::ProducedUnit>,ecs::Read<c::PassengerMembership>,ecs::Read<c::PassengerSlots>> query(world);
+    query.ForEachChunk([&](auto chunk) {
+        const auto values = chunk.template Get<p::ProducedUnit>();
+        const auto memberships = chunk.template Get<c::PassengerMembership>();
+        for (std::size_t row = 0; row != chunk.Count(); ++row)
+        {
+            BOOST_CHECK(values[row].definition == 22u);
+            BOOST_CHECK(values[row].account == account);
+            BOOST_CHECK(std::binary_search(carriers.begin(),carriers.end(),values[row].producer,[](auto left,auto right) {
+                return std::tie(left.index,left.generation)<std::tie(right.index,right.generation);
+            }));
+            BOOST_CHECK(c::IsContained(memberships[row]));
+            BOOST_CHECK(memberships[row].carrier == values[row].producer);
+            BOOST_CHECK(memberships[row].owner == c::PassengerContainmentOwner::Transport);
+            BOOST_CHECK(memberships[row].combat == c::PassengerCombatPolicy::Blocked);
+            passengerRecords.push_back({chunk.Entities()[row].index,chunk.Entities()[row].generation,
+                values[row].account.index,values[row].account.generation,values[row].producer.index,
+                values[row].producer.generation,memberships[row].carrier.index,memberships[row].carrier.generation,
+                values[row].definition,static_cast<std::uint64_t>(memberships[row].phase)});
+        }
+    });
+    std::sort(passengerRecords.begin(),passengerRecords.end(),[](const auto &left,const auto &right) {
+        return std::tie(left[0],left[1]) < std::tie(right[0],right[1]);
+    });
+    BOOST_REQUIRE_EQUAL(passengerRecords.size(),carrierCount*payloadCount);
+
+    std::size_t firstCount = 0;
+    ecs::Query<ecs::Read<p::ProducedUnit>> allUnits(world);
+    allUnits.ForEachChunk([&](auto chunk) { firstCount += chunk.Count(); });
+    BOOST_TEST(firstCount == carrierCount + carrierCount*payloadCount);
+    scheduler.Execute({1,step});
+    std::size_t secondCount = 0;
+    allUnits.ForEachChunk([&](auto chunk) { secondCount += chunk.Count(); });
+    BOOST_TEST(secondCount == firstCount);
+    std::vector<std::uint64_t> result;
+    for(const auto &record:carrierRecords) result.insert(result.end(),record.begin(),record.end());
+    for(const auto &record:passengerRecords) result.insert(result.end(),record.begin(),record.end());
+    return result;
+}
+
+void RunTerminalCase(bool alive, std::uint32_t count)
+{
+    p::BuildDefinition carrier{};
+    carrier.key = 11; carrier.duration = 0ms; carrier.quantity = 1; carrier.transportDefinition = 0;
+    carrier.initialPayload = p::InitialPayloadDefinition{22,count};
+    p::BuildDefinition passenger{};
+    passenger.key = 22; passenger.duration = 0ms; passenger.quantity = 1; passenger.passenger = c::PassengerSlots{1};
+    const std::array definitions{carrier,passenger};
+    const std::array transports{c::TransportDefinition{4,0ms,1,10}};
+    const engine::time::FixedStep step{10};
+    ecs::World world; p::RegisterProductionComponents(world); world.FinalizeComponents();
+    c::TransportDefinitions transportCatalog(step,transports);
+    p::BuildCatalog catalog(world,definitions,step,nullptr,nullptr,&transportCatalog);
+    generalszh::containment::InitialPayloadProductionSystem payload(catalog);
+    engine::jobs::JobSystem jobs({2}); ecs::SystemRegistry registry; registry.Register(payload);
+    registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry,jobs); scheduler.Finalize(step);
+    const auto carrierEntity = world.Create<p::ProducedUnit,c::TransportBinding,
+        engine::gameplay::combat::LifeState,n::GridPosition,generalszh::containment::InitialPayloadBinding>();
+    *world.Get<p::ProducedUnit>(carrierEntity) = {ecs::Entity{42,1},ecs::Entity{700,2},11};
+    *world.Get<c::TransportBinding>(carrierEntity) = {0};
+    *world.Get<generalszh::containment::InitialPayloadBinding>(carrierEntity) = {22,count};
+    world.Get<engine::gameplay::combat::LifeState>(carrierEntity)->alive = alive;
+    scheduler.Execute({0,step});
+    const auto binding = world.Get<generalszh::containment::InitialPayloadBinding>(carrierEntity);
+    BOOST_REQUIRE(binding);
+    BOOST_CHECK(binding->phase == (alive ? generalszh::containment::InitialPayloadPhase::Consumed
+        : generalszh::containment::InitialPayloadPhase::Aborted));
+    std::size_t passengers = 0;
+    ecs::Query<ecs::Read<p::ProducedUnit>,ecs::Read<c::PassengerMembership>> query(world);
+    query.ForEachChunk([&](auto chunk) { passengers += chunk.Count(); });
+    BOOST_TEST(passengers == 0u);
+}
+}
+
+BOOST_AUTO_TEST_CASE(initial_payload_spawns_once_with_owner_membership_and_stable_ids_across_workers)
+{
+    const auto expected = RunPositive(1);
+    BOOST_CHECK(RunPositive(2) == expected);
+    BOOST_CHECK(RunPositive(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(dead_carrier_aborts_without_commands)
+{
+    RunTerminalCase(false,2);
+}
+
+BOOST_AUTO_TEST_CASE(zero_count_consumes_without_commands)
+{
+    RunTerminalCase(true,0);
+}

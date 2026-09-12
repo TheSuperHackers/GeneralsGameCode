@@ -1,0 +1,290 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory_resource>
+#include <stdexcept>
+#include <vector>
+
+import engine.ecs.core.world;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.spatial.contacts.algorithms.contact_geometry;
+import engine.gameplay.spatial.contacts.algorithms.contact_participation;
+import engine.gameplay.spatial.contacts.components.contact_geometry;
+import engine.gameplay.spatial.contacts.events.contact_pair;
+import engine.gameplay.spatial.contacts.systems.contact_system;
+
+namespace c = engine::gameplay::spatial::contacts;
+namespace combat = engine::gameplay::combat;
+namespace navigation = engine::gameplay::navigation;
+
+namespace
+{
+struct RunResult final
+{
+	std::vector<c::ContactPair> pairs;
+	std::size_t preparedChunks{};
+};
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<navigation::GridPosition>();
+	world.RegisterComponent<c::ContactGeometry>();
+	world.RegisterComponent<c::ContactParticipation>();
+	world.RegisterComponent<combat::LifeState>();
+	world.FinalizeComponents();
+}
+
+ecs::Entity CreateBody(ecs::World &world, const navigation::Cell cell,
+	const c::ContactGeometry geometry, const c::ContactParticipation participation,
+	const bool withLife, const bool alive = true)
+{
+	ecs::Entity entity;
+	if (withLife)
+		entity = world.Create<navigation::GridPosition, c::ContactGeometry,
+			c::ContactParticipation, combat::LifeState>();
+	else
+		entity = world.Create<navigation::GridPosition, c::ContactGeometry,
+			c::ContactParticipation>();
+	*world.Get<navigation::GridPosition>(entity) = {cell};
+	*world.Get<c::ContactGeometry>(entity) = geometry;
+	*world.Get<c::ContactParticipation>(entity) = participation;
+	if (withLife)
+		world.Get<combat::LifeState>(entity)->alive = alive;
+	return entity;
+}
+
+RunResult RunManyChunks(const std::size_t workers)
+{
+	constexpr c::ContactLimits limits{96, 1024, 64, 8, 16};
+	std::pmr::unsynchronized_pool_resource memory;
+	engine::events::PublishedBatch<c::ContactPair> published{limits.totalPublishedPairs, 1, memory};
+	ecs::World world{ecs::WorldConfig{1024}};
+	RegisterComponents(world);
+
+	const auto circle = c::Circle(c::MicroCells{250000});
+	const auto first = CreateBody(world, 0, circle, {}, false);
+	const auto second = CreateBody(world, 0, circle, {}, true);
+	const auto third = CreateBody(world, 128, c::AxisAlignedBox(250000, 250000), {}, false);
+	const auto fourth = CreateBody(world, 128, circle, {}, true);
+	(void)CreateBody(world, 0, circle, {}, true, false);
+	for (std::size_t index = 0; index != 64; ++index)
+	{
+		const auto x = static_cast<std::uint32_t>(10 + 3 * (index % 30));
+		const auto y = static_cast<std::uint32_t>(2 + index / 30);
+		(void)CreateBody(world, x + 128 * y, circle, {}, (index % 2) == 0);
+	}
+
+	ecs::Query<ecs::Read<navigation::GridPosition>, ecs::Read<c::ContactGeometry>,
+		ecs::Read<c::ContactParticipation>, ecs::Optional<combat::LifeState>> countQuery(world);
+	const auto preparedChunks = countQuery.PrepareChunks();
+	BOOST_REQUIRE_GT(preparedChunks, 2u);
+
+	engine::gameplay::spatial::PointGrid grid{128, 16, limits.entityIndexCapacity};
+	c::ContactSystem system{grid, limits, published, memory};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{workers}};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute({7, step});
+
+	const auto values = published.Values();
+	RunResult result{{values.begin(), values.end()}, preparedChunks};
+	BOOST_REQUIRE_EQUAL(published.Segments().size(), 1u);
+	published.Release();
+	BOOST_CHECK(first.index < second.index);
+	BOOST_CHECK(third.index < fourth.index);
+	return result;
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(pair_results_are_identical_for_one_two_and_four_workers)
+{
+	const auto one = RunManyChunks(1);
+	const auto two = RunManyChunks(2);
+	const auto four = RunManyChunks(4);
+	const std::vector<c::ContactPair> expected{{{0, 1}, {1, 1}}, {{2, 1}, {3, 1}}};
+	BOOST_CHECK(one.pairs == expected);
+	BOOST_CHECK(two.pairs == expected);
+	BOOST_CHECK(four.pairs == expected);
+	BOOST_CHECK(one.pairs == two.pairs);
+	BOOST_CHECK(two.pairs == four.pairs);
+}
+
+BOOST_AUTO_TEST_CASE(empty_disabled_and_dead_ticks_publish_empty_contact_batches)
+{
+	const auto run = [](const bool addDisabled, const bool addDead) {
+		constexpr c::ContactLimits limits{8, 8, 8, 8, 8};
+		std::pmr::unsynchronized_pool_resource memory;
+		engine::events::PublishedBatch<c::ContactPair> published{limits.totalPublishedPairs, 1, memory};
+		ecs::World world;
+		RegisterComponents(world);
+		if (addDisabled)
+			(void)CreateBody(world, 0, c::Circle(500000), {false, 1u, 1u}, true);
+		if (addDead)
+			(void)CreateBody(world, 0, c::Circle(500000), {true, 1u, 1u}, true, false);
+
+		engine::gameplay::spatial::PointGrid grid{8, 8, limits.entityIndexCapacity};
+		c::ContactSystem system{grid, limits, published, memory};
+		ecs::SystemRegistry registry;
+		registry.Register(system);
+		registry.Finalize(world.Components());
+		ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{2}};
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		scheduler.Execute({1, step});
+
+		BOOST_REQUIRE(published.IsPublished());
+		BOOST_CHECK(published.Values().empty());
+		published.Release();
+	};
+
+	run(false, false);
+	run(true, false);
+	run(false, true);
+}
+
+BOOST_AUTO_TEST_CASE(sparse_entity_indices_use_declared_grid_index_capacity)
+{
+	constexpr c::ContactLimits limits{2, 512, 8, 8, 4};
+	std::pmr::unsynchronized_pool_resource memory;
+	engine::events::PublishedBatch<c::ContactPair> published{limits.totalPublishedPairs, 1, memory};
+	ecs::World world{ecs::WorldConfig{1024}};
+	RegisterComponents(world);
+	for (std::size_t index = 0; index != 300; ++index)
+		(void)world.Create<>();
+	const auto first = CreateBody(world, 0, c::Circle(500000), {}, true);
+	const auto second = CreateBody(world, 0, c::Circle(500000), {}, true);
+	BOOST_REQUIRE_GE(first.index, 300u);
+
+	engine::gameplay::spatial::PointGrid grid{8, 8, limits.entityIndexCapacity};
+	c::ContactSystem system{grid, limits, published, memory};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{2}};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute({1, step});
+	BOOST_REQUIRE_EQUAL(published.Values().size(), 1u);
+	BOOST_CHECK((published.Values()[0] == c::ContactPair{first, second}));
+	published.Release();
+
+	constexpr c::ContactLimits narrowLimits{2, 128, 8, 8, 4};
+	engine::gameplay::spatial::PointGrid undersizedGrid{8, 8, limits.bodyCount};
+	const auto constructWithUndersizedGrid = [&] {
+		c::ContactSystem undersized{undersizedGrid, limits, published, memory};
+	};
+	BOOST_CHECK_THROW(constructWithUndersizedGrid(), std::invalid_argument);
+
+	// A larger injected grid must not silently widen the declared logical
+	// entity-index contract used by the contact system.
+	engine::gameplay::spatial::PointGrid oversizedGrid{8, 8, limits.entityIndexCapacity};
+	c::ContactSystem narrowSystem{oversizedGrid, narrowLimits, published, memory};
+	ecs::SystemRegistry narrowRegistry;
+	narrowRegistry.Register(narrowSystem);
+	narrowRegistry.Finalize(world.Components());
+	ecs::Scheduler narrowScheduler{world, narrowRegistry, engine::jobs::JobSystemConfig{2}};
+	narrowScheduler.Finalize(step);
+	BOOST_CHECK_THROW(narrowScheduler.Execute({2, step}), std::length_error);
+	BOOST_CHECK(!published.IsPublished());
+}
+
+BOOST_AUTO_TEST_CASE(masks_and_shape_boundaries_filter_candidates_before_publication)
+{
+	constexpr c::ContactLimits limits{8, 8, 8, 8, 8};
+	std::pmr::unsynchronized_pool_resource memory;
+	engine::events::PublishedBatch<c::ContactPair> published{limits.totalPublishedPairs, 1, memory};
+	ecs::World world;
+	RegisterComponents(world);
+	const auto first = CreateBody(world, 0, c::Circle(500000), {true, 1u, 2u}, true);
+	const auto second = CreateBody(world, 0, c::AxisAlignedBox(500000, 500000), {true, 2u, 1u}, true);
+	(void)CreateBody(world, 0, c::Circle(500000), {true, 4u, 4u}, true);
+	(void)CreateBody(world, 2, c::Circle(500000), {}, true);
+
+	engine::gameplay::spatial::PointGrid grid{8, 8, limits.entityIndexCapacity};
+	c::ContactSystem system{grid, limits, published, memory};
+	ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{2}};
+	const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({1, step});
+	const auto values = published.Values();
+	BOOST_REQUIRE_EQUAL(values.size(), 1u);
+	BOOST_CHECK((values[0] == c::ContactPair{first, second}));
+	published.Release();
+}
+
+BOOST_AUTO_TEST_CASE(per_chunk_and_publication_limits_reject_without_a_partial_batch)
+{
+	const auto executeExact = [] {
+		constexpr c::ContactLimits limits{4, 4, 4, 1, 1};
+		std::pmr::unsynchronized_pool_resource memory;
+		engine::events::PublishedBatch<c::ContactPair> published{limits.totalPublishedPairs, 1, memory};
+		ecs::World world; RegisterComponents(world);
+		(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+		(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+		engine::gameplay::spatial::PointGrid grid{8, 8, limits.entityIndexCapacity};
+		c::ContactSystem system{grid, limits, published, memory};
+		ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+		ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{1}};
+		const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({1, step});
+		BOOST_REQUIRE(published.IsPublished());
+		BOOST_REQUIRE_EQUAL(published.Values().size(), 1u);
+		published.Release();
+	};
+
+	executeExact();
+
+	const auto execute = [](const std::size_t pairsPerChunk, const std::size_t publishedLimit) {
+		constexpr std::size_t bodyCapacity = 8;
+		c::ContactLimits limits{bodyCapacity, bodyCapacity, 8, pairsPerChunk, publishedLimit};
+		std::pmr::unsynchronized_pool_resource memory;
+		engine::events::PublishedBatch<c::ContactPair> published{publishedLimit, 1, memory};
+		ecs::World world; RegisterComponents(world);
+		(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+		(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+		(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+		engine::gameplay::spatial::PointGrid grid{8, 8, limits.entityIndexCapacity};
+		c::ContactSystem system{grid, limits, published, memory};
+		ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+		ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{2}};
+		const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+		bool failed = false;
+		try { scheduler.Execute({1, step}); } catch (const std::length_error &) { failed = true; }
+		BOOST_TEST(failed);
+		BOOST_TEST(!published.IsPublished());
+	};
+
+	// Three coincident circles need three pairs; one pair per logical chunk is
+	// therefore a terminal scratch overflow with no published prefix.
+	execute(1, 8);
+	// The scratch succeeds, but the independent publication quota rejects the
+	// complete set rather than silently publishing its first pair.
+	execute(8, 1);
+}
+
+BOOST_AUTO_TEST_CASE(consumed_batches_reuse_only_after_explicit_release)
+{
+	constexpr c::ContactLimits limits{4, 4, 4, 1, 1};
+	std::pmr::unsynchronized_pool_resource memory;
+	engine::events::PublishedBatch<c::ContactPair> published{limits.totalPublishedPairs, 1, memory};
+	ecs::World world; RegisterComponents(world);
+	(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+	(void)CreateBody(world, 0, c::Circle(500000), {}, true);
+	engine::gameplay::spatial::PointGrid grid{8, 8, limits.entityIndexCapacity};
+	c::ContactSystem system{grid, limits, published, memory};
+	ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{1}};
+	const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+	scheduler.Execute({1, step});
+	BOOST_REQUIRE_EQUAL(published.Values().size(), 1u);
+	const auto first = published.Values()[0];
+	published.Release();
+	scheduler.Execute({2, step});
+	BOOST_REQUIRE_EQUAL(published.Values().size(), 1u);
+	BOOST_CHECK(published.Values()[0] == first);
+	published.Release();
+}

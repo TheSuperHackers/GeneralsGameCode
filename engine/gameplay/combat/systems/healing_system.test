@@ -1,0 +1,22 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.inputs.health_input_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(healing_clamps_and_cannot_revive_dead_entities)
+{
+    ecs::World world; RegisterHealthComponents(world); world.FinalizeComponents();
+    const auto live=world.Create<Health,HealthCapacity,LifeState,PendingHealing,HealingResult>();
+    const auto dead=world.Create<Health,HealthCapacity,LifeState,PendingHealing,HealingResult>();
+    world.Get<Health>(live)->current=7; world.Get<HealthCapacity>(live)->maximum=10;
+    world.Get<PendingHealing>(live)->quantity=20;
+    world.Get<LifeState>(dead)->alive=false; world.Get<HealthCapacity>(dead)->maximum=10;
+    world.Get<PendingHealing>(dead)->quantity=20;
+    HealthSystem health; HealingSystem system; ecs::SystemRegistry registry;
+    registry.Register(health); registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<Health>(live)->current==10u); BOOST_TEST(world.Get<HealingResult>(live)->applied==3u);
+    BOOST_TEST(world.Get<Health>(dead)->current==0u); BOOST_TEST(world.Get<HealingResult>(dead)->applied==0u);
+    BOOST_TEST(world.Get<PendingHealing>(live)->quantity==0u); BOOST_TEST(world.Get<PendingHealing>(dead)->quantity==0u);
+    scheduler.Execute({1,step}); BOOST_TEST(world.Get<HealingResult>(live)->applied==0u);
+}

@@ -1,0 +1,11 @@
+#define BOOST_TEST_MODULE GenericDamage
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.combat.damage.components.damage_packet;
+BOOST_AUTO_TEST_CASE(damage_packet_preserves_authored_identity_and_provenance) {
+    using namespace engine::gameplay::combat::damage;
+    const DamagePacket packet{{7},{3},90,{{4,2},{1,8},42}};
+    BOOST_TEST(packet.type.value==7u);BOOST_TEST(packet.channel.value==3u);
+    BOOST_TEST(packet.attribution.source.generation==2u);BOOST_TEST(packet.attribution.sourceAccount.generation==8u);
+    BOOST_CHECK(DamageTypePolicy{}.armor==ArmorApplication::Unsupported);
+    BOOST_CHECK(ecs::ComponentTraits<ArmorBinding>::Persistence==ecs::PersistencePolicy::Serializable);
+}

@@ -1,0 +1,18 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+import engine.gameplay.rts.power.algorithms.power_projection;
+BOOST_AUTO_TEST_CASE(pure_power_projection_signed_limits_and_eligibility)
+{
+    using namespace engine::gameplay::rts::power;
+    PowerSource source{{7, 2}, (std::numeric_limits<std::int32_t>::min)()};
+    BOOST_TEST(ProjectPower(source).consumption == 2147483648u);
+    BOOST_TEST(ProjectPower(source, false).consumption == 0u);
+    source.authoredPower = (std::numeric_limits<std::int32_t>::max)();
+    BOOST_TEST(ProjectPower(source).production == 2147483647u);
+    source.eligible = false;
+    BOOST_TEST(ProjectPower(source).production == 0u);
+    source = {};
+    BOOST_TEST(ProjectPower(source).production == 0u);
+    BOOST_TEST(ProjectPower(source).consumption == 0u);
+}

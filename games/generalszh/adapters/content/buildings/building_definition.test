@@ -1,0 +1,370 @@
+#define BOOST_TEST_MODULE GeneralsZHBuildingContent
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <vector>
+import games.generalszh.adapters.content.buildings.building_definition;
+import games.generalszh.composition.game_session;
+import games.generalszh.gameplay.harvesting.revenue.harvest_revenue;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.construction.components.structure;
+import games.generalszh.gameplay.capture.components.capture_state;
+import games.generalszh.gameplay.power.systems.power_system;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.rts.economy.components.resource_balance;
+using namespace generalszh;
+namespace
+{
+// Extracted fields from Object/FactionBuilding.ini, inspected 2026-09-06:
+// AmericaPowerPlant 4817-4882; AmericaSupplyCenter 18710-18777.
+// Unrelated art/modules are omitted from these field fixtures, not claimed ported.
+constexpr std::string_view PowerPlant=R"(Object AmericaPowerPlant
+ BuildCost = 800
+ BuildTime = 10.0
+ EnergyProduction = 5
+ EnergyBonus = 5
+ Body = StructureBody ModuleTag_06
+  MaxHealth = 800.0
+  InitialHealth = 800.0
+ End
+ Behavior = ProductionUpdate ModuleTag_14
+ End
+End
+)";
+constexpr std::string_view SupplyCenter=R"(Object AmericaSupplyCenter
+ BuildCost = 2000
+ BuildTime = 10.0
+ EnergyProduction = -1
+ Body = StructureBody ModuleTag_05
+  MaxHealth = 2000.0
+  InitialHealth = 2000.0
+ End
+ Behavior = ProductionUpdate ModuleTag_09
+ End
+ Behavior = SupplyCenterDockUpdate ModuleTag_13
+  NumberApproachPositions = 9
+ End
+ Behavior = SpawnBehavior ModuleTag_12
+  SpawnNumber = 1
+  SpawnTemplateName = AmericaVehicleChinook
+  OneShot = Yes
+ End
+End
+)";
+constexpr std::string_view GarrisonBuilding=R"(Object GarrisonHouse
+ KindOf = STRUCTURE CAPTURABLE
+ Body = StructureBody BodyTag
+  MaxHealth = 100
+  InitialHealth = 100
+ End
+ Behavior = GarrisonContain GarrisonTag
+  ContainMax = 1
+  AllowInsideKindOf = INFANTRY
+  ForbidInsideKindOf = NONE
+  IsEnclosingContainer = Yes
+  MobileGarrison = No
+  HealObjects = No
+  TimeForFullHeal = 0
+  DamagePercentToUnits = 0
+  PassengersAllowedToFire = Yes
+ End
+End
+)";
+content::DecodedGameRules Rules()
+{
+ return content::DecodeGameRules(R"(GameData
+ ValuePerSupplyBox = 75
+ MinLowEnergyProductionSpeed = 0.5
+ MaxLowEnergyProductionSpeed = 0.8
+ LowEnergyPenaltyModifier = 1.0
+End
+)");
+}
+bool Omitted(const content::DecodedBuilding &building,std::string_view text)
+{
+ return std::any_of(building.omissions.begin(),building.omissions.end(),
+  [&](const auto &value){return value.find(text)!=std::string::npos;});
+}
+}
+BOOST_AUTO_TEST_CASE(extracted_building_fields_decode_without_upgrade_or_spawn_inference)
+{
+ const auto rules=Rules();
+ const auto power=content::DecodeBuilding(PowerPlant,"AmericaPowerPlant",rules);
+ BOOST_TEST(power.definition.key==content::DefinitionKey("AmericaPowerPlant"));
+ BOOST_TEST(power.definition.cost==800u); BOOST_TEST(power.definition.duration.count()==10000000000ll);
+ BOOST_TEST(power.definition.health==800000u); BOOST_TEST(power.definition.energy==5);
+ BOOST_TEST(power.definition.queueLimit==9u); BOOST_TEST(!power.definition.supplyDropoff);
+ BOOST_TEST(Omitted(power,"EnergyBonus")); BOOST_TEST(Omitted(power,"inheritance"));
+ const auto supply=content::DecodeBuilding(SupplyCenter,"AmericaSupplyCenter",rules);
+ BOOST_TEST(supply.definition.cost==2000u); BOOST_TEST(supply.definition.health==2000000u);
+ BOOST_TEST(supply.definition.energy==-1); BOOST_TEST(supply.definition.queueLimit==9u);
+ BOOST_TEST(supply.definition.supplyDropoff); BOOST_TEST(supply.definition.supplyBoxValue==75u);
+ BOOST_TEST(Omitted(supply,"docking geometry")); BOOST_TEST(Omitted(supply,"SpawnBehavior"));
+ auto alternate=rules; alternate.valuePerSupplyBox=125;
+ BOOST_TEST(content::DecodeBuilding(SupplyCenter,"AmericaSupplyCenter",alternate).definition.supplyBoxValue==125u);
+}
+BOOST_AUTO_TEST_CASE(building_defaults_explicit_queue_and_boundary_validation)
+{
+ const auto rules=Rules();
+ const std::string body="Body = ActiveBody BodyTag\nMaxHealth = 100\nInitialHealth = 50\nEnd\n";
+ auto decode=[&](const std::string &fields){return content::DecodeBuilding("Object Fixture\n"+body+fields+"End\n","Fixture",rules);};
+ const auto defaults=decode("");
+ BOOST_TEST(defaults.definition.cost==0u); BOOST_TEST(defaults.definition.duration.count()==1000000000ll);
+ BOOST_TEST(defaults.definition.energy==0); BOOST_TEST(defaults.definition.queueLimit==0u);
+ BOOST_TEST(!defaults.definition.supplyDropoff); BOOST_TEST(Omitted(defaults,"InitialHealth"));
+ const auto queue=decode("Behavior = ProductionUpdate Queue\nMaxQueueEntries = 3\nQuantityModifier = SomeUnit 2\nEnd\n");
+ BOOST_TEST(queue.definition.queueLimit==3u); BOOST_TEST(Omitted(queue,"QuantityModifier"));
+ BOOST_CHECK_THROW(decode("BuildCost = 65536\n"),std::out_of_range);
+ BOOST_CHECK_THROW(decode("EnergyProduction = 2147483648\n"),std::invalid_argument);
+ BOOST_CHECK_THROW(decode("BuildTime = -1\n"),std::invalid_argument);
+ BOOST_CHECK_THROW(decode("Behavior = ProductionUpdate A\nEnd\nBehavior = ProductionUpdate B\nEnd\n"),std::invalid_argument);
+ BOOST_CHECK_THROW(content::DecodeBuilding("Object Empty\nEnd\n","Empty",rules),std::invalid_argument);
+ BOOST_CHECK_THROW(content::DecodeBuilding(PowerPlant,"AmericaPowerPlant",rules,0),std::invalid_argument);
+ BOOST_CHECK_THROW(content::DecodeBuilding("ChildObject Child Parent\nEnd\n","Child",rules),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(building_kindof_decodes_ignored_in_gui_without_inventing_eligibility)
+{
+ const auto decoded=content::DecodeBuilding(R"(Object HiddenBuilding
+ KindOf = STRUCTURE IGNORED_IN_GUI
+ BuildCost = 100
+ Body = StructureBody Body
+  MaxHealth = 100
+ End
+End
+)","HiddenBuilding",Rules());
+ BOOST_CHECK(decoded.ignoredInGui);
+ BOOST_TEST(decoded.definition.cost==100u);
+}
+BOOST_AUTO_TEST_CASE(garrison_adapter_binds_capacity_and_exposes_bounded_omissions)
+{
+ const auto decoded=content::DecodeBuilding(GarrisonBuilding,"GarrisonHouse",Rules());
+ BOOST_REQUIRE(decoded.definition.garrison);
+ BOOST_TEST(decoded.definition.garrison->capacity==1u);
+ BOOST_CHECK(Omitted(decoded,"BODY_REALLYDAMAGED"));
+ BOOST_CHECK(Omitted(decoded,"DISABLED_SUBDUED"));
+ BOOST_CHECK(Omitted(decoded,"same-owner, same-cell"));
+ auto unsupported=std::string{GarrisonBuilding};
+ const auto position=unsupported.find("PassengersAllowedToFire = Yes");
+ unsupported.replace(position,std::string{"PassengersAllowedToFire = Yes"}.size(),"PassengersAllowedToFire = No");
+ const auto rejected=content::DecodeBuilding(unsupported,"GarrisonHouse",Rules());
+ BOOST_CHECK(!rejected.definition.garrison);
+ BOOST_CHECK(Omitted(rejected,"PassengersAllowedToFire=No"));
+}
+
+BOOST_AUTO_TEST_CASE(decoded_building_and_units_reach_the_composed_garrison_transport_and_combat_path)
+{
+ namespace n=engine::gameplay::navigation;
+ namespace h=engine::gameplay::combat;
+ namespace c=engine::gameplay::containment;
+ namespace p=generalszh::production;
+ namespace cap=generalszh::capture;
+ const auto run=[](unsigned workers) {
+  const auto rules=Rules();
+  const auto decodeInfantry=[](std::string_view name) {
+   const std::string object="Object "+std::string{name}+R"(
+ KindOf = INFANTRY
+ BuildCost = 0
+ BuildTime = 0
+ TransportSlotCount = 1
+ Body = ActiveBody BodyTag
+  MaxHealth = 100
+  InitialHealth = 100
+ End
+ WeaponSet
+  Conditions = None
+  Weapon = PRIMARY Rifle
+ End
+ Locomotor = SET_NORMAL Walk
+End
+)";
+   return content::DecodeUnit(object,"Weapon Rifle\n PrimaryDamage = 10\n AttackRange = 10\n ClipSize = 3\n DelayBetweenShots = 0\n ClipReloadTime = 1000\nEnd\n",
+    "Locomotor Walk\n Speed = 10\nEnd\n",name);
+  };
+  const auto decodeCarrier=[] {
+   constexpr std::string_view object=R"(Object GroundTransport
+ KindOf = VEHICLE
+ BuildCost = 0
+ BuildTime = 0
+ Body = ActiveBody BodyTag
+  MaxHealth = 100
+  InitialHealth = 100
+ End
+ Behavior = TransportContain TransportTag
+  Slots = 1
+  AllowInsideKindOf = INFANTRY
+  ForbidInsideKindOf = NONE
+  PassengersAllowedToFire = No
+ End
+ Locomotor = SET_NORMAL Drive
+End
+)";
+   return content::DecodeUnit(object,"","Locomotor Drive\n Speed = 10\nEnd\n","GroundTransport");
+  }();
+  const auto source=decodeInfantry("GarrisonSource");
+  const auto transportPassenger=decodeInfantry("TransportPassenger");
+  const auto target=decodeInfantry("EnemyTarget");
+  const auto attacker=decodeInfantry("EnemyAttacker");
+  auto carrier=decodeCarrier;
+  BOOST_REQUIRE(carrier.transport);
+  carrier.definition.transportDefinition=0;
+  const std::array units{source.definition,transportPassenger.definition,target.definition,attacker.definition,carrier.definition};
+  const std::array transports{*carrier.transport};
+  const std::array buildings{content::DecodeBuilding(GarrisonBuilding,"GarrisonHouse",rules).definition};
+  const std::array captures{cap::CaptureDefinition{{},{},{},{},true}};
+  const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1};
+  n::NavigationGrid grid(8,1,terrain);ecs::World world;GameSession::RegisterComponents(world);world.FinalizeComponents();
+  engine::jobs::JobSystem jobs({workers});GameSession game(world,jobs,units,grid,128,{},{},buildings,{},{},transports,captures);
+  const engine::time::FixedStep step{10};game.Finalize(step);
+  const auto red=game.CreateAccount(1000),blue=game.CreateAccount(1000);
+  const auto building=game.CreateCompletedStructure(red,buildings[0].key,0);
+  const auto sourceProducer=game.CreateProducer(red,9,1000,0);
+  const auto passengerProducer=game.CreateProducer(red,9,1000,0);
+  const auto carrierProducer=game.CreateProducer(red,9,1000,0);
+  const auto targetProducer=game.CreateProducer(blue,9,1000,3);
+  const auto attackerProducer=game.CreateProducer(blue,9,1000,1);
+  const std::array builds{BuildInput{sourceProducer,source.definition.key},BuildInput{passengerProducer,transportPassenger.definition.key},
+   BuildInput{carrierProducer,carrier.definition.key},BuildInput{targetProducer,target.definition.key},BuildInput{attackerProducer,attacker.definition.key}};
+  GameInputs inputs{};inputs.builds=builds;game.Execute({0,step},inputs);
+  const auto findProduced=[&](ecs::Entity producer) {
+   ecs::Entity result{};ecs::Query<ecs::Read<p::ProducedUnit>> query(world);
+   query.ForEachChunk([&](auto chunk) {const auto values=chunk.template Get<p::ProducedUnit>();
+    for(std::size_t row=0;row!=chunk.Count();++row) if(values[row].producer==producer) result=chunk.Entities()[row];});
+   return result;
+  };
+  const auto sourceEntity=findProduced(sourceProducer),transportPassengerEntity=findProduced(passengerProducer);
+  const auto carrierEntity=findProduced(carrierProducer),targetEntity=findProduced(targetProducer),attackerEntity=findProduced(attackerProducer);
+  BOOST_REQUIRE(sourceEntity.IsValid());BOOST_REQUIRE(transportPassengerEntity.IsValid());BOOST_REQUIRE(carrierEntity.IsValid());
+  BOOST_REQUIRE(targetEntity.IsValid());BOOST_REQUIRE(attackerEntity.IsValid());
+  // This decoded infantry is enrolled as a capture actor at the setup
+  // boundary so the later owner write is performed by the real CaptureSystem.
+  BOOST_REQUIRE(world.Add<cap::CaptureCapability>(attackerEntity));
+  BOOST_REQUIRE(world.Add<cap::CaptureActorState>(attackerEntity));
+  BOOST_REQUIRE(world.Add<cap::CaptureRecharge>(attackerEntity));
+  *world.Get<cap::CaptureCapability>(attackerEntity)={0,true};
+  *world.Get<cap::CaptureActorState>(attackerEntity)={};
+  *world.Get<cap::CaptureRecharge>(attackerEntity)={0,true};
+  *world.Get<n::GridPosition>(sourceEntity)={0};*world.Get<n::GridPosition>(transportPassengerEntity)={0};
+  *world.Get<n::GridPosition>(carrierEntity)={0};*world.Get<n::GridPosition>(targetEntity)={3};*world.Get<n::GridPosition>(attackerEntity)={1};
+  const std::array transportEntry{c::ContainmentInput{c::ContainmentAction::Enter,transportPassengerEntity,carrierEntity}};
+  const std::array garrisonEntries{c::ContainmentInput{c::ContainmentAction::Enter,sourceEntity,building},
+   c::ContainmentInput{c::ContainmentAction::Enter,transportPassengerEntity,building}};
+  inputs={};inputs.containment=transportEntry;inputs.garrison=garrisonEntries;game.Execute({1,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.ContainmentResults().size(),1u);BOOST_CHECK(game.ContainmentResults()[0].outcome==c::ContainmentOutcome::Entered);
+  BOOST_REQUIRE_EQUAL(game.GarrisonResults().size(),2u);BOOST_CHECK(game.GarrisonResults()[0].outcome==c::ContainmentOutcome::Entered);
+  BOOST_CHECK(game.GarrisonResults()[1].outcome==c::ContainmentOutcome::AlreadyContained);
+  BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(sourceEntity)));
+  BOOST_CHECK(world.Get<c::PassengerMembership>(sourceEntity)->combat==c::PassengerCombatPolicy::Allowed);
+  BOOST_CHECK(c::IsTransportOwned(*world.Get<c::PassengerMembership>(transportPassengerEntity)));
+  BOOST_CHECK(world.Get<c::PassengerMembership>(transportPassengerEntity)->combat==c::PassengerCombatPolicy::Blocked);
+  game.Execute({2,step});game.Execute({3,step});
+  BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(sourceEntity)));
+  BOOST_CHECK(c::IsTransportOwned(*world.Get<c::PassengerMembership>(transportPassengerEntity)));
+  const auto targetHealth=world.Get<h::Health>(sourceEntity)->current;
+  const auto blockedAmmo=world.Get<h::WeaponState>(transportPassengerEntity)->ammo;
+  const std::array farAttacks{AttackInput{sourceEntity,targetEntity},AttackInput{transportPassengerEntity,targetEntity},AttackInput{attackerEntity,sourceEntity}};
+  inputs={};inputs.attacks=farAttacks;game.Execute({4,step},inputs);
+  BOOST_TEST(world.Get<n::GridPosition>(sourceEntity)->cell==0u);
+  BOOST_TEST(world.Get<n::MoveGoal>(sourceEntity)->cell==n::InvalidCell);
+  BOOST_TEST(world.Get<h::WeaponState>(transportPassengerEntity)->ammo==blockedAmmo);
+  BOOST_TEST(world.Get<h::Health>(sourceEntity)->current==targetHealth);
+  *world.Get<n::GridPosition>(targetEntity)={1};
+  std::vector<std::uint64_t> state;
+  for(std::uint64_t tick=5;tick!=11;++tick) game.Execute({tick,step});
+  BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(sourceEntity)));
+  BOOST_CHECK(world.Get<h::WeaponState>(sourceEntity)->lastFireTickValid);
+  BOOST_TEST(world.Get<h::WeaponState>(transportPassengerEntity)->ammo==blockedAmmo);
+  BOOST_TEST(world.Get<h::Health>(sourceEntity)->current==targetHealth);
+  BOOST_TEST(world.Get<n::MoveGoal>(sourceEntity)->cell==n::InvalidCell);
+  BOOST_TEST(world.Get<h::Health>(targetEntity)->current<world.Get<h::Health>(sourceEntity)->current);
+  // CaptureSystem owns the authoritative Structure.account write. Garrison
+  // observes that prepared owner snapshot on the same tick and releases the
+  // retained passenger; no per-row World.Get lookup is needed in Execute.
+  *world.Get<n::GridPosition>(attackerEntity)={0};
+  const std::array capture{cap::CaptureInput{cap::CaptureAction::Start,blue,attackerEntity,building}};
+  inputs={};inputs.capture=capture;game.Execute({11,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.CaptureResults().size(),2u);
+  BOOST_CHECK(game.CaptureResults()[0].outcome==cap::CaptureOutcome::Started);
+  BOOST_CHECK(game.CaptureResults()[1].outcome==cap::CaptureOutcome::Captured);
+  BOOST_CHECK(world.Get<construction::Structure>(building)->account==blue);
+  BOOST_CHECK(!c::IsContained(*world.Get<c::PassengerMembership>(sourceEntity)));
+  state.insert(state.end(),{sourceEntity.index,sourceEntity.generation,transportPassengerEntity.index,transportPassengerEntity.generation,
+   static_cast<std::uint64_t>(world.Get<c::PassengerMembership>(sourceEntity)->owner),
+   static_cast<std::uint64_t>(world.Get<c::PassengerMembership>(transportPassengerEntity)->owner),
+   static_cast<std::uint64_t>(world.Get<c::PassengerMembership>(sourceEntity)->phase),
+   world.Get<h::Health>(targetEntity)->current,world.Get<h::Health>(sourceEntity)->current,
+   world.Get<h::WeaponState>(transportPassengerEntity)->ammo,world.Get<n::GridPosition>(sourceEntity)->cell,
+   world.Get<n::MoveGoal>(sourceEntity)->cell});
+  return state;
+ };
+ const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(produced_builder_constructs_decoded_buildings_in_actual_game_session)
+{
+ namespace navigation=engine::gameplay::navigation;
+ namespace combat=engine::gameplay::combat;
+ namespace harvest=engine::gameplay::rts::harvesting;
+ namespace powerComponents=engine::gameplay::rts::power;
+ const auto run=[](unsigned workers) {
+  const auto rules=Rules();
+  const std::array buildings{content::DecodeBuilding(PowerPlant,"AmericaPowerPlant",rules).definition,
+   content::DecodeBuilding(SupplyCenter,"AmericaSupplyCenter",rules).definition};
+  // Small authored production fixture; the builder is created by the real
+  // production path, not directly inserted or activated by the test.
+  const auto dozer=content::DecodeUnit("Object BuilderFixture\nBuildCost = 1\nBuildTime = 0\nBody = ActiveBody BodyTag\nMaxHealth = 100\nEnd\nBehavior = DozerAIUpdate AI\nEnd\nLocomotor = SET_NORMAL Walk\nEnd\n",
+   "","Locomotor Walk\nSpeed = 10\nEnd\n","BuilderFixture");
+  const std::array units{dozer.definition};
+  const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1}; navigation::NavigationGrid grid(8,1,terrain);
+  ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents();
+  engine::jobs::JobSystem jobs({workers}); GameSession game(world,jobs,units,grid,64,{},{},buildings);
+  const engine::time::FixedStep step{1}; game.Finalize(step);
+  const auto account=game.CreateAccount(10000),base=game.CreateProducer(account);
+  const std::array build{BuildInput{base,dozer.definition.key}}; GameInputs inputs; inputs.builds=build;
+  game.Execute({0,step},inputs);
+  ecs::Entity builder; ecs::Query<ecs::Read<production::ProducedUnit>> produced(world);
+  produced.ForEachChunk([&](auto chunk){BOOST_REQUIRE_EQUAL(chunk.Count(),1u);builder=chunk.Entities()[0];});
+  BOOST_REQUIRE(builder.IsValid()); BOOST_REQUIRE(world.Has<construction::Builder>(builder));
+  std::uint64_t tick=1; std::vector<std::uint64_t> state{builder.index,builder.generation};
+  for(std::size_t index=0;index<buildings.size();++index)
+  {
+   const auto &definition=buildings[index];
+   const std::array placement{construction::ConstructionInput{builder,definition.key,static_cast<std::uint32_t>(2+index*2)}};
+   inputs={};inputs.construction=placement;game.Execute({tick++,step},inputs);
+   BOOST_REQUIRE_EQUAL(game.ConstructionResults().size(),1u);
+   BOOST_CHECK(game.ConstructionResults()[0].status==construction::ConstructionAcceptance::Accepted);
+   const auto site=game.ConstructionResults()[0].site; BOOST_REQUIRE(world.IsAlive(site));
+   BOOST_TEST(!world.Get<construction::Structure>(site)->complete);
+   BOOST_TEST(!world.Has<production::Producer>(site)); BOOST_TEST(!world.Has<powerComponents::PowerSource>(site));
+   BOOST_TEST(!world.Has<harvest::SupplyDropoff>(site));
+   for(unsigned wait=0;wait<32&&!world.Get<construction::Structure>(site)->complete;++wait) game.Execute({tick++,step});
+   BOOST_REQUIRE(world.Get<construction::Structure>(site)->complete);
+   BOOST_TEST(world.Get<combat::Health>(site)->current==definition.health);
+   BOOST_REQUIRE(world.Has<production::Producer>(site)); BOOST_TEST(world.Get<production::Producer>(site)->active);
+   BOOST_TEST(world.Get<production::Producer>(site)->queueLimit==9u);
+   BOOST_REQUIRE(world.Has<powerComponents::PowerSource>(site));
+   BOOST_TEST(world.Get<powerComponents::PowerSource>(site)->authoredPower==definition.energy);
+   BOOST_TEST(world.Has<harvest::SupplyDropoff>(site)==definition.supplyDropoff);
+   if(definition.supplyDropoff) {
+    BOOST_REQUIRE(world.Has<harvesting::SupplyDropoffOwner>(site));
+    BOOST_CHECK(world.Get<harvesting::SupplyDropoffOwner>(site)->account==account);
+    BOOST_TEST(world.Get<harvesting::SupplyDropoffOwner>(site)->valuePerBox==rules.valuePerSupplyBox);
+    BOOST_TEST(world.Get<harvest::SupplyDropoff>(site)->available);
+   }
+   // Power's earlier wave sees completion-created sources on the next tick.
+   game.Execute({tick++,step});
+   const auto contribution=*world.Get<powerComponents::PowerContribution>(site);
+   BOOST_TEST(contribution.production==(index==0?5u:0u)); BOOST_TEST(contribution.consumption==(index==0?0u:1u));
+   state.insert(state.end(),{site.index,site.generation,definition.key,tick,world.Get<combat::Health>(site)->current,
+    world.Get<production::Producer>(site)->queueLimit,contribution.production,contribution.consumption,
+    world.Has<harvest::SupplyDropoff>(site),definition.supplyDropoff?world.Get<harvesting::SupplyDropoffOwner>(site)->valuePerBox:0u});
+  }
+  const auto balance=world.Get<engine::gameplay::rts::economy::ResourceBalance>(account)->quantity;
+  BOOST_TEST(balance==7199u); state.push_back(balance); state.push_back(world.EntityCount());
+  return state;
+ };
+ const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}

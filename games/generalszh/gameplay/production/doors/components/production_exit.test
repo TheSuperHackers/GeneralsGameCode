@@ -1,0 +1,26 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionExitComponents
+#include <boost/test/included/unit_test.hpp>
+#include <type_traits>
+import engine.ecs.query.query;
+import games.generalszh.gameplay.production.doors.components.production_exit;
+using namespace generalszh::production;
+BOOST_AUTO_TEST_CASE(exit_state_and_timing_are_separate_persistent_contiguous_columns)
+{
+    static_assert(std::is_trivially_copyable_v<ProductionExitState>);
+    static_assert(std::is_trivially_copyable_v<ProductionExitTiming>);
+    BOOST_CHECK(ecs::ComponentTraits<ProductionExitState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<ProductionExitTiming>::Persistence==ecs::PersistencePolicy::Serializable);
+    ecs::World world;world.RegisterComponent<ProductionExitState>();world.RegisterComponent<ProductionExitTiming>();world.FinalizeComponents();
+    const auto first=world.Create<ProductionExitState,ProductionExitTiming>();
+    const auto second=world.Create<ProductionExitState,ProductionExitTiming>();
+    world.Get<ProductionExitState>(first)->phase=ExitDoorPhase::Opening;
+    world.Get<ProductionExitState>(first)->since=0;
+    ecs::Query<ecs::Read<ProductionExitState>,ecs::Read<ProductionExitTiming>> query(world);
+    query.ForEachChunk([&](auto chunk) {
+        const auto state=chunk.template Get<ProductionExitState>();const auto timing=chunk.template Get<ProductionExitTiming>();
+        BOOST_REQUIRE(state.size()==2u); BOOST_TEST(&state[1]==&state[0]+1);BOOST_TEST(&timing[1]==&timing[0]+1);
+    });
+    world.Remove<ProductionExitTiming>(first);
+    BOOST_CHECK(world.Get<ProductionExitState>(first)->phase==ExitDoorPhase::Opening);
+    BOOST_TEST(world.IsAlive(second));
+}

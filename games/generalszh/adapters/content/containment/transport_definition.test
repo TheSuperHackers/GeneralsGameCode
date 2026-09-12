@@ -1,0 +1,196 @@
+#define BOOST_TEST_MODULE GeneralsZHTransportContent
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <vector>
+import games.generalszh.adapters.content.containment.transport_definition;
+import games.generalszh.gameplay.containment.systems.transport_containment_system;
+import engine.ecs.scheduler.scheduler;
+namespace content=generalszh::content;
+namespace production=generalszh::production;
+namespace construction=generalszh::construction;
+namespace containment=generalszh::containment;
+namespace ct=engine::gameplay::containment;
+namespace combat=engine::gameplay::combat;
+namespace nav=engine::gameplay::navigation;
+namespace
+{
+// Extracted GLAVehicle.ini chassis-one TransportContain fields (4823 onward).
+// This is not the GLAVehicleTechnical BuildVariations shell. Unrelated weapons,
+// locomotion and presentation are omitted from the characterization fixture.
+constexpr std::string_view Technical=R"(Object GLAVehicleTechnicalChassisOne
+ KindOf = VEHICLE TRANSPORT CAN_ATTACK
+ Behavior = TransportContain ModuleTag_16
+  Slots = 5
+  AllowInsideKindOf = INFANTRY
+  DamagePercentToUnits = 10%
+  GoAggressiveOnExit = Yes
+ End
+End
+)";
+// GLAInfantry.ini Rebel uses TransportSlotCount=1 and INFANTRY (armed is valid).
+constexpr std::string_view Rebel=R"(Object GLAInfantryRebel
+ KindOf = PRELOAD SELECTABLE CAN_ATTACK INFANTRY SALVAGER SCORE
+ TransportSlotCount = 1
+End
+)";
+std::string Carrier(std::string_view fields,std::string_view kinds="VEHICLE TRANSPORT",std::string_view module="TransportContain")
+{return "Object Fixture\nKindOf = "+std::string(kinds)+"\nBehavior = "+std::string(module)+" Tag\n"+std::string(fields)+"\nEnd\nEnd\n";}
+bool Omitted(const content::DecodedTransport &value,std::string_view part)
+{return std::any_of(value.omissions.begin(),value.omissions.end(),[&](const auto &text){return text.find(part)!=text.npos;});}
+}
+BOOST_AUTO_TEST_CASE(extracted_technical_and_rebel_decode_without_invented_defaults)
+{
+ const auto carrier=content::DecodeTransport(Technical,"GLAVehicleTechnicalChassisOne");
+ BOOST_REQUIRE(carrier.carrier); BOOST_CHECK(!carrier.passenger);
+ BOOST_TEST(carrier.carrier->slots==5u); BOOST_TEST(carrier.carrier->exitDelay.count()==0);
+ BOOST_TEST(carrier.carrier->deathDamageNumerator==1u); BOOST_TEST(carrier.carrier->deathDamageDenominator==10u);
+ BOOST_TEST(Omitted(carrier,"GoAggressiveOnExit")); BOOST_TEST(Omitted(carrier,"maximum health"));
+ const auto passenger=content::DecodeTransport(Rebel,"GLAInfantryRebel");
+ BOOST_REQUIRE(passenger.passenger);BOOST_TEST(passenger.passenger->slots==1u);BOOST_CHECK(!passenger.carrier);
+ const auto defaults=content::DecodeTransport(Carrier("Slots = 5\n"),"Fixture");
+ BOOST_REQUIRE(defaults.carrier); BOOST_TEST(defaults.carrier->deathDamageNumerator==0u);
+ BOOST_TEST(defaults.carrier->exitDelay.count()==0);
+ const auto timed=content::DecodeTransport(Carrier("Slots = 5\nExitDelay = 250\nDamagePercentToUnits = 12.5%\n"),"Fixture");
+ BOOST_REQUIRE(timed.carrier);BOOST_TEST(timed.carrier->exitDelay.count()==250000000ll);
+ BOOST_TEST(Omitted(timed,"non-30-Hz deadlines can differ"));
+ const ct::TransportDefinitions compiled(engine::time::FixedStep{30},std::span{&*timed.carrier,1});
+ BOOST_TEST(compiled.Get(0).exitTicks==8u); BOOST_TEST(ct::PassengerDeathDamage(800,compiled.Get(0))==100u);
+ for(auto fields:{"","Slots = 0\n"}) BOOST_CHECK(!content::DecodeTransport(Carrier(fields),"Fixture").carrier);
+ for(auto fields:{"","TransportSlotCount = 0\n"})
+  BOOST_CHECK(!content::DecodeTransport("Object Rider\nKindOf = INFANTRY\n"+std::string(fields)+"End\n","Rider").passenger);
+ BOOST_CHECK(!content::DecodeTransport("Object Rider\nTransportSlotCount = 1\nEnd\n","Rider").passenger);
+ const auto shell=content::DecodeTransport("Object Shell\nKindOf = VEHICLE TRANSPORT\nBuildVariations = A B C\nEnd\n","Shell");
+ BOOST_CHECK(!shell.carrier);BOOST_TEST(Omitted(shell,"shell"));
+}
+BOOST_AUTO_TEST_CASE(unsupported_containment_never_silently_activates)
+{
+ for(auto field:{"PassengersAllowedToFire = Yes","PassengersInTurret = Yes","WeaponBonusPassedToPassengers = Yes",
+   "ArmedRidersUpgradeMyWeaponSet = Yes","HealthRegen%PerSec = 1",
+   "AllowInsideKindOf = INFANTRY VEHICLE","ForbidInsideKindOf = INFANTRY","AllowAlliesInside = No",
+   "DelayExitInAir = Yes","NumberOfExitPaths = 2","ExitBone = Exit","UnknownField = 1"})
+ {
+  const auto decoded=content::DecodeTransport(Carrier("Slots = 5\n"+std::string(field)+"\n"),"Fixture");
+  BOOST_CHECK(!decoded.carrier);BOOST_TEST(Omitted(decoded,"Unsupported"));
+ }
+ for(auto module:{"TunnelContain","GarrisonContain","OpenContain","OverlordContain"})
+  BOOST_CHECK(!content::DecodeTransport(Carrier("Slots = 5\n","VEHICLE",module),"Fixture").carrier);
+ for(auto kinds:{"","AIRCRAFT VEHICLE","STRUCTURE","INFANTRY"})
+  BOOST_CHECK(!content::DecodeTransport(Carrier("Slots = 5\n",kinds),"Fixture").carrier);
+ const auto nested=content::DecodeTransport("Object Rider\nKindOf = INFANTRY\nTransportSlotCount = 1\nBehavior = TransportContain Tag\nSlots = 1\nEnd\nEnd\n","Rider");
+ BOOST_CHECK(!nested.passenger);BOOST_CHECK(!nested.carrier);
+ const auto builder=content::DecodeTransport("Object Rider\nKindOf = INFANTRY\nTransportSlotCount = 1\nBehavior = DozerAIUpdate Tag\nEnd\nEnd\n","Rider");
+ BOOST_CHECK(!builder.passenger);
+}
+BOOST_AUTO_TEST_CASE(initial_payload_decodes_as_unresolved_name_and_typed_count)
+{
+ const auto explicitCount=content::DecodeTransport(Carrier("Slots = 5\nInitialPayload = GLAInfantryRebel 3\n"),"Fixture");
+ BOOST_REQUIRE(explicitCount.carrier);BOOST_REQUIRE(explicitCount.initialPayload);
+ BOOST_TEST(explicitCount.initialPayload->passengerName=="GLAInfantryRebel");
+ BOOST_TEST(explicitCount.initialPayload->count==3u);
+ BOOST_TEST(Omitted(explicitCount,"complete unit-catalog binding"));
+ const auto defaultCount=content::DecodeTransport(Carrier("Slots = 5\nInitialPayload = GLAInfantryRebel\n"),"Fixture");
+ BOOST_REQUIRE(defaultCount.initialPayload);BOOST_TEST(defaultCount.initialPayload->count==1u);
+ const auto zeroCount=content::DecodeTransport(Carrier("Slots = 5\nInitialPayload = GLAInfantryRebel 0\n"),"Fixture");
+ BOOST_REQUIRE(zeroCount.initialPayload);BOOST_TEST(zeroCount.initialPayload->count==0u);
+ const auto duplicate=content::DecodeTransport(Carrier("Slots = 5\nInitialPayload = A 1\nInitialPayload = B 2\n"),"Fixture");
+ BOOST_CHECK(!duplicate.carrier);BOOST_TEST(Omitted(duplicate,"Unsupported"));
+}
+BOOST_AUTO_TEST_CASE(transport_numeric_and_boolean_boundaries)
+{
+ for(auto field:{"Slots = -1","Slots = 1.5","Slots = ","ExitDelay = -1","ExitDelay = 0.5",
+   "PassengersAllowedToFire = Maybe","DamagePercentToUnits = NaN","DamagePercentToUnits = 0.0000001%"})
+  BOOST_CHECK_THROW(content::DecodeTransport(Carrier(field),"Fixture"),std::invalid_argument);
+ for(auto field:{"Slots = 2147483648","ExitDelay = 4294967296","DamagePercentToUnits = 101%"})
+  BOOST_CHECK_THROW(content::DecodeTransport(Carrier(field),"Fixture"),std::out_of_range);
+ for(auto field:{"InitialPayload = ","InitialPayload = Rebel -1","InitialPayload = Rebel 1.5",
+   "InitialPayload = Rebel 1 2"})
+  BOOST_CHECK_THROW(content::DecodeTransport(Carrier(field),"Fixture"),std::invalid_argument);
+ BOOST_CHECK_THROW(content::DecodeTransport(Carrier("InitialPayload = Rebel 4294967296"),"Fixture"),std::out_of_range);
+ BOOST_CHECK_THROW(content::DecodeTransport("Object Rider\nKindOf = INFANTRY\nTransportSlotCount = 256\nEnd\n","Rider"),std::out_of_range);
+ BOOST_CHECK_THROW(content::DecodeTransport("ChildObject Rider Parent\nEnd\n","Rider"),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(decoded_transport_executes_real_chunk_system_and_health_across_workers)
+{
+ const auto run=[](unsigned workers) {
+  // Explicit alternate delay exercises the decoder-to-runtime cooldown path;
+  // the extracted Technical default remains zero in the characterization above.
+  std::string timedTechnical{Technical};timedTechnical.insert(timedTechnical.find("  Slots"),"  ExitDelay = 250\n");
+  const auto carrier=content::DecodeTransport(timedTechnical,"GLAVehicleTechnicalChassisOne");
+  const auto passenger=content::DecodeTransport(Rebel,"GLAInfantryRebel");
+  BOOST_REQUIRE(carrier.carrier);BOOST_REQUIRE(passenger.passenger);
+  const engine::time::FixedStep step{10};const ct::TransportDefinitions definitions(step,std::span{&*carrier.carrier,1});
+  ecs::World world;
+  world.RegisterComponent<ct::PassengerMembership>();world.RegisterComponent<ct::PassengerSlots>();
+  world.RegisterComponent<ct::ContainmentTask>();
+  world.RegisterComponent<ct::TransportBinding>();world.RegisterComponent<ct::TransportState>();
+  world.RegisterComponent<nav::GridPosition>();world.RegisterComponent<nav::MoveGoal>();
+  world.RegisterComponent<nav::MoveCredit>();world.RegisterComponent<nav::MoveRangeGoal>();
+  world.RegisterComponent<combat::LifeState>();
+  world.RegisterComponent<combat::Health>();world.RegisterComponent<combat::HealthCapacity>();
+  world.RegisterComponent<combat::PendingDamage>();world.RegisterComponent<combat::DamageResult>();
+  world.RegisterComponent<production::ProducedUnit>();world.RegisterComponent<construction::Builder>();
+  world.RegisterComponent<engine::gameplay::rts::harvesting::HarvestPolicy>();
+  world.RegisterComponent<generalszh::capture::CaptureActorState>();world.FinalizeComponents();
+  ct::ContainmentBatch batch(1024);containment::TransportContainmentSystem system(world,definitions,batch,2048);
+  combat::HealthSystem health;ecs::SystemRegistry registry;
+  registry.Register(health,ecs::SystemPhase::Simulation);registry.Register(system);registry.Finalize(world.Components());
+  ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers});scheduler.Finalize(step);
+  // Fixtures enroll decoded values; execution uses the production-intended
+  // systems and scheduler, not scalar stand-ins or a private feature executor.
+  const auto owner=world.Create<production::ProducedUnit>();
+  std::vector<ecs::Entity> carriers,riders;std::vector<ct::ContainmentInput> inputs;
+  for(unsigned group=0;group<120;++group)
+  {
+   const auto vehicle=world.Create<ct::TransportBinding,ct::TransportState,nav::GridPosition,combat::LifeState,
+    combat::Health,combat::PendingDamage,combat::DamageResult,production::ProducedUnit>();
+   world.Get<combat::Health>(vehicle)->current=100;world.Get<production::ProducedUnit>(vehicle)->account=owner;
+   world.Get<nav::GridPosition>(vehicle)->cell=group;carriers.push_back(vehicle);
+   for(unsigned i=0;i<5;++i)
+   {
+    const auto rider=world.Create<ct::PassengerMembership,ct::PassengerSlots,nav::GridPosition,combat::LifeState,
+     combat::Health,combat::HealthCapacity,combat::PendingDamage,combat::DamageResult,production::ProducedUnit>();
+    *world.Get<ct::PassengerSlots>(rider)=*passenger.passenger;world.Get<nav::GridPosition>(rider)->cell=group;
+    world.Get<combat::Health>(rider)->current=50;world.Get<combat::HealthCapacity>(rider)->maximum=100;
+    world.Get<production::ProducedUnit>(rider)->account=owner;riders.push_back(rider);
+    inputs.push_back({ct::ContainmentAction::Enter,rider,vehicle});
+   }
+  }
+  batch.SetInputs(inputs);scheduler.Execute({0,step});std::vector<std::uint64_t> state;
+  BOOST_REQUIRE_EQUAL(batch.Results().size(),600u);
+  for(const auto &result:batch.Results())
+  {
+   BOOST_CHECK(result.outcome==ct::ContainmentOutcome::Entered);
+   state.insert(state.end(),{result.passenger.index,result.passenger.generation,result.carrier.index,result.carrier.generation,result.tick});
+  }
+  const std::array exit{ct::ContainmentInput{ct::ContainmentAction::Exit,riders[0],carriers[0]},
+   ct::ContainmentInput{ct::ContainmentAction::Exit,riders[1],carriers[0]}};
+  batch.SetInputs(exit);scheduler.Execute({1,step});BOOST_CHECK(batch.Results()[0].outcome==ct::ContainmentOutcome::Exited);
+  BOOST_CHECK(batch.Results()[1].outcome==ct::ContainmentOutcome::ExitBusy);
+  BOOST_TEST(world.Get<ct::TransportState>(carriers[0])->nextExitTick==4u);
+  BOOST_CHECK(!ct::IsContained(*world.Get<ct::PassengerMembership>(riders[0])));
+  const std::array enter{inputs[0]};batch.SetInputs(enter);scheduler.Execute({2,step});
+  for(auto vehicle:carriers) world.Get<combat::PendingDamage>(vehicle)->quantity=100;
+  scheduler.Execute({3,step});
+  for(auto rider:riders)
+  {
+   BOOST_CHECK(world.Get<ct::PassengerMembership>(rider)->phase==ct::ContainmentPhase::AwaitingEvacuation);
+   BOOST_TEST(world.Get<combat::Health>(rider)->current==50u);BOOST_TEST(world.Get<combat::PendingDamage>(rider)->quantity==10u);
+  }
+  scheduler.Execute({4,step});scheduler.Execute({5,step});
+  for(auto rider:riders)
+  {
+   BOOST_CHECK(!ct::IsContained(*world.Get<ct::PassengerMembership>(rider)));
+   BOOST_TEST(world.Get<combat::Health>(rider)->current==40u);
+   state.insert(state.end(),{rider.index,rider.generation,world.Get<nav::GridPosition>(rider)->cell,
+    world.Get<combat::Health>(rider)->current,world.Get<combat::LifeState>(rider)->alive});
+  }
+  return state;
+ };
+ const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}

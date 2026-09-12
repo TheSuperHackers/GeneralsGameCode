@@ -1,0 +1,256 @@
+#define BOOST_TEST_MODULE GeneralsZHBuildInputs
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+import games.generalszh.gameplay.production.inputs.build_inputs;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+struct Marker
+{
+	std::uint64_t payload[128]{};
+};
+}
+
+namespace ecs
+{
+template<> struct ComponentTraits<Marker>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.build_inputs.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+}
+
+namespace
+{
+class GeneratedInputProbe final
+{
+public:
+	using Query = ecs::Query<ecs::Read<Marker>>;
+
+	GeneratedInputProbe(generalszh::BuildBatch &batch, std::span<const generalszh::BuildInput> generated) :
+		batch(batch), generated(generated) {}
+
+	void Execute(Query::Chunk, ecs::SystemContext &)
+	{
+	}
+
+	void AfterChunks(Query &, ecs::SystemContext &context)
+	{
+		batch.AppendGenerated(context.GetWorld(), generated);
+		called = true;
+	}
+
+	bool called{};
+
+private:
+	generalszh::BuildBatch &batch;
+	std::span<const generalszh::BuildInput> generated;
+};
+}
+
+namespace ecs
+{
+template<> struct SystemTraits<GeneratedInputProbe>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.build_inputs.generated_probe";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace
+{
+class ScheduledStageInputsProbe final
+{
+public:
+	using Query = ecs::Query<ecs::Read<Marker>>;
+
+	ScheduledStageInputsProbe(generalszh::BuildBatch &batch, std::span<const generalszh::BuildInput> replacement) :
+		batch(batch), replacement(replacement) {}
+
+	void Execute(Query::Chunk, ecs::SystemContext &context)
+	{
+		batch.StageInputs(context.GetWorld(), generalszh::ProductionBoundaryState::Ready, replacement);
+	}
+
+private:
+	generalszh::BuildBatch &batch;
+	std::span<const generalszh::BuildInput> replacement;
+};
+}
+
+namespace ecs
+{
+template<> struct SystemTraits<ScheduledStageInputsProbe>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.build_inputs.scheduled_stage_probe";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace
+{
+struct GeneratedJoinResult
+{
+	std::array<std::uint32_t, 2> definitions{};
+	std::size_t externalCount{};
+	std::size_t generatedCount{};
+	bool usesOwnedInputs{};
+	bool called{};
+};
+
+GeneratedJoinResult RunGeneratedJoin(const std::size_t workers)
+{
+	ecs::World world;
+	world.RegisterComponent<Marker>();
+	world.FinalizeComponents();
+	for (std::size_t index = 0; index != 64; ++index)
+		world.Create<Marker>();
+
+	generalszh::BuildBatch batch(4);
+	const std::array external{generalszh::BuildInput{ecs::Entity{1, 1}, 10}};
+	const std::array generated{generalszh::BuildInput{ecs::Entity{2, 1}, 20}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, external);
+	BOOST_CHECK_THROW(batch.AppendGenerated(world, generated), std::logic_error);
+
+	GeneratedInputProbe probe(batch, generated);
+	ecs::SystemRegistry registry;
+	registry.Register(probe);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	scheduler.Finalize(engine::time::FixedStep{20});
+	scheduler.Execute({0, engine::time::FixedStep{20}});
+
+	BOOST_CHECK(probe.called);
+	BOOST_TEST(batch.ExternalInputCount() == 1u);
+	BOOST_TEST(batch.GeneratedInputCount() == 1u);
+	BOOST_CHECK(batch.UsesOwnedInputs());
+	BOOST_REQUIRE_EQUAL(batch.inputs.size(), 2u);
+	BOOST_CHECK(batch.inputs[0].producer.index == external[0].producer.index &&
+		batch.inputs[0].producer.generation == external[0].producer.generation);
+	BOOST_TEST(batch.inputs[0].definition == 10u);
+	BOOST_CHECK(batch.inputs[1].producer.index == generated[0].producer.index &&
+		batch.inputs[1].producer.generation == generated[0].producer.generation);
+	BOOST_TEST(batch.inputs[1].definition == 20u);
+
+	return GeneratedJoinResult{{batch.inputs[0].definition, batch.inputs[1].definition},
+		batch.ExternalInputCount(), batch.GeneratedInputCount(), batch.UsesOwnedInputs(), probe.called};
+}
+}
+
+BOOST_AUTO_TEST_CASE(generated_join_is_caller_side_and_worker_independent)
+{
+	const auto one = RunGeneratedJoin(1);
+	const auto two = RunGeneratedJoin(2);
+	const auto four = RunGeneratedJoin(4);
+	for (const auto *result : {&one, &two, &four})
+	{
+		BOOST_CHECK(result->called);
+		BOOST_TEST(result->externalCount == 1u);
+		BOOST_TEST(result->generatedCount == 1u);
+		BOOST_CHECK(result->usesOwnedInputs);
+		BOOST_TEST(result->definitions[0] == 10u);
+		BOOST_TEST(result->definitions[1] == 20u);
+	}
+	BOOST_CHECK(one.definitions == two.definitions);
+	BOOST_CHECK(one.definitions == four.definitions);
+}
+
+BOOST_AUTO_TEST_CASE(stage_inputs_rejects_scheduled_execution)
+{
+	ecs::World world;
+	world.RegisterComponent<Marker>();
+	world.FinalizeComponents();
+	world.Create<Marker>();
+
+	generalszh::BuildBatch batch(4);
+	const std::array external{generalszh::BuildInput{ecs::Entity{1, 1}, 10}};
+	const std::array replacement{generalszh::BuildInput{ecs::Entity{2, 1}, 20}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, external);
+
+	ScheduledStageInputsProbe probe(batch, replacement);
+	ecs::SystemRegistry registry;
+	registry.Register(probe);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(engine::time::FixedStep{20});
+	BOOST_CHECK_THROW(scheduler.Execute({0, engine::time::FixedStep{20}}), std::logic_error);
+	BOOST_REQUIRE_EQUAL(batch.inputs.size(), 1u);
+	BOOST_TEST(batch.inputs[0].definition == 10u);
+}
+
+BOOST_AUTO_TEST_CASE(consumed_inputs_cannot_be_republished_and_next_stage_resets)
+{
+	ecs::World world;
+	world.RegisterComponent<Marker>();
+	world.FinalizeComponents();
+	world.Create<Marker>();
+
+	generalszh::BuildBatch batch(4);
+	const std::array external{generalszh::BuildInput{ecs::Entity{1, 1}, 10}};
+	const std::array generated{generalszh::BuildInput{ecs::Entity{2, 1}, 20}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, external);
+
+	GeneratedInputProbe probe(batch, generated);
+	ecs::SystemRegistry registry;
+	registry.Register(probe);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(engine::time::FixedStep{20});
+	scheduler.Execute({0, engine::time::FixedStep{20}});
+	BOOST_REQUIRE(probe.called);
+	BOOST_REQUIRE_EQUAL(batch.inputs.size(), 2u);
+
+	const auto consumed = batch.ConsumeInputs();
+	BOOST_REQUIRE_EQUAL(consumed.size(), 2u);
+	BOOST_TEST(consumed[0].definition == 10u);
+	BOOST_TEST(consumed[1].definition == 20u);
+	BOOST_CHECK(batch.inputs.empty());
+	BOOST_TEST(batch.ExternalInputCount() == 1u);
+	BOOST_TEST(batch.GeneratedInputCount() == 1u);
+	probe.called = false;
+	BOOST_CHECK_THROW(scheduler.Execute({1, engine::time::FixedStep{20}}), std::logic_error);
+	BOOST_CHECK(!probe.called);
+	BOOST_CHECK(batch.inputs.empty());
+
+	const std::array nextExternal{generalszh::BuildInput{ecs::Entity{3, 1}, 30}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, nextExternal);
+	BOOST_TEST(batch.ExternalInputCount() == 1u);
+	BOOST_TEST(batch.GeneratedInputCount() == 0u);
+	BOOST_CHECK(!batch.UsesOwnedInputs());
+	BOOST_REQUIRE_EQUAL(batch.inputs.size(), 1u);
+	BOOST_TEST(batch.inputs[0].definition == 30u);
+}
+
+BOOST_AUTO_TEST_CASE(generated_capacity_failure_does_not_partially_replace_external_inputs)
+{
+	ecs::World world;
+	world.RegisterComponent<Marker>();
+	world.FinalizeComponents();
+	world.Create<Marker>();
+	generalszh::BuildBatch batch(2);
+	const std::array external{generalszh::BuildInput{ecs::Entity{1, 1}, 10}};
+	const std::array tooMany{generalszh::BuildInput{ecs::Entity{2, 1}, 20},
+		generalszh::BuildInput{ecs::Entity{3, 1}, 30}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, external);
+
+	GeneratedInputProbe probe(batch, tooMany);
+	ecs::SystemRegistry registry;
+	registry.Register(probe);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(engine::time::FixedStep{20});
+	BOOST_CHECK_THROW(scheduler.Execute({0, engine::time::FixedStep{20}}), std::length_error);
+	BOOST_TEST(batch.inputs.size() == 1u);
+	BOOST_TEST(batch.inputs[0].definition == 10u);
+}

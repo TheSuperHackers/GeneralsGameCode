@@ -1172,6 +1172,10 @@ target_link_libraries(z_gameengine PRIVATE
     SDL3::SDL3
 )
 
+if(TARGET engine_ecs)
+    target_link_libraries(z_gameengine PRIVATE engine_ecs)
+endif()
+
 target_link_libraries(z_gameengine PUBLIC
     engine_navigation
     corei_gameengine_public

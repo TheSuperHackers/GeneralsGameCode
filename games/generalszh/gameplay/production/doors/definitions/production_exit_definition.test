@@ -1,0 +1,12 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionExitDefinition
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+import games.generalszh.gameplay.production.doors.definitions.production_exit_definition;
+using namespace generalszh::production;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(exit_durations_are_compiled_at_explicit_fixed_step)
+{
+    const auto timing=AuthorProductionExit({100ms,250ms,0ms},engine::time::FixedStep{20});
+    BOOST_TEST(timing.opening==2u);BOOST_TEST(timing.waiting==5u);BOOST_TEST(timing.closing==0u);
+    BOOST_CHECK_THROW(AuthorProductionExit({-1ms,0ms,0ms},engine::time::FixedStep{20}),std::invalid_argument);
+}

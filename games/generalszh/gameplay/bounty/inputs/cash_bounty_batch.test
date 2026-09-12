@@ -1,0 +1,41 @@
+#define BOOST_TEST_MODULE GeneralsZHCashBountyBatch
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <stdexcept>
+
+import games.generalszh.gameplay.bounty.inputs.cash_bounty_batch;
+
+BOOST_AUTO_TEST_CASE(batch_converts_one_award_to_one_income_tracked_deposit)
+{
+	using generalszh::bounty::CashBountyAward;
+	using generalszh::bounty::CashBountyBatch;
+	const ecs::Entity victim{1, 1}, source{2, 1}, account{3, 1};
+	CashBountyBatch batch(2);
+	batch.BeginTick();
+	const std::array awards{CashBountyAward{victim, source, account, 5}};
+	batch.Publish(awards);
+	const auto requests = batch.Requests();
+	BOOST_REQUIRE(requests.size() == 1u);
+	BOOST_CHECK(requests[0].account == account);
+	BOOST_CHECK(requests[0].command.operation == generalszh::economy::AccountOperation::Deposit);
+	BOOST_TEST(requests[0].command.amount == 5u);
+	BOOST_CHECK(!requests[0].command.playSound);
+	BOOST_CHECK(requests[0].command.trackIncome);
+	batch.Consume();
+	BOOST_CHECK(batch.Requests().empty());
+	BOOST_REQUIRE(batch.SettledAwards().size() == 1u);
+	BOOST_CHECK(batch.SettledAwards()[0].victim == victim);
+	BOOST_TEST(batch.SettledAwards()[0].amount == 5u);
+}
+
+BOOST_AUTO_TEST_CASE(batch_rejects_unconsumed_previous_publication)
+{
+	using generalszh::bounty::CashBountyAward;
+	using generalszh::bounty::CashBountyBatch;
+	CashBountyBatch batch(1);
+	batch.BeginTick();
+	const std::array awards{CashBountyAward{ecs::Entity{1, 1}, ecs::Entity{2, 1}, ecs::Entity{3, 1}, 1}};
+	batch.Publish(awards);
+	BOOST_CHECK_THROW(batch.BeginTick(), std::logic_error);
+}

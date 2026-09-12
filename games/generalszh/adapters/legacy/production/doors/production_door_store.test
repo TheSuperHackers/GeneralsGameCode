@@ -1,0 +1,334 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionDoorAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "production_door_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.gameplay.production.doors.production_door;
+import games.generalszh.simulation.gameplay_state;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::legacy::ProductionDoorChanges;
+using generalszh::legacy::ProductionDoorLease;
+using generalszh::legacy::ProductionDoorState;
+using generalszh::legacy::ProductionDoorStore;
+using generalszh::production::DoorClosing;
+using generalszh::production::DoorHold;
+using generalszh::production::DoorOpening;
+using generalszh::production::DoorWaiting;
+
+namespace production_door_adapter_test
+{
+constexpr std::uint8_t OpeningBit = generalszh::production::DoorOpeningFlag;
+constexpr std::uint8_t WaitingBit = generalszh::production::DoorWaitingFlag;
+constexpr std::uint8_t ClosingBit = generalszh::production::DoorClosingFlag;
+
+ecs::Entity OnlyEntity(GameplayState &state)
+{
+	ecs::Entity entity{};
+	std::size_t count = 0;
+	ecs::Query<ecs::Read<DoorOpening>, ecs::Read<DoorWaiting>,
+		ecs::Read<DoorClosing>, ecs::Read<DoorHold>> query(state.World());
+	query.ForEachChunk([&](const auto chunk) {
+		for (const auto id : chunk.Entities())
+		{
+			entity = id;
+			++count;
+		}
+	});
+	BOOST_REQUIRE_EQUAL(count, 1u);
+	return entity;
+}
+
+struct ScheduledBypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<DoorOpening>>;
+	ProductionDoorLease &lease;
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		lease.Advance(0, 1, 1, 1);
+	}
+};
+}
+
+namespace ecs
+{
+template<>
+struct SystemTraits<production_door_adapter_test::ScheduledBypassAttempt>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.production.door.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(default_stores_are_isolated_and_leases_have_normal_lifecycle)
+{
+	ProductionDoorStore first;
+	ProductionDoorStore second;
+	BOOST_TEST(first.Count() == 0u);
+	BOOST_TEST(second.Count() == 0u);
+
+	{
+		ProductionDoorLease firstLease(first);
+		ProductionDoorLease secondLease(second);
+		firstLease.RestoreLegacy({1, 2, 3, true});
+		secondLease.RestoreLegacy({4, 5, 6, false});
+		BOOST_TEST(first.Count() == 1u);
+		BOOST_TEST(second.Count() == 1u);
+		BOOST_TEST(firstLease.ReadLegacy().opening == 1u);
+		BOOST_TEST(secondLease.ReadLegacy().opening == 4u);
+	}
+
+	BOOST_TEST(first.Count() == 0u);
+	BOOST_TEST(second.Count() == 0u);
+	BOOST_CHECK_NO_THROW(first.Reset());
+	BOOST_CHECK_NO_THROW(second.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(one_lease_owns_one_entity_with_four_authoritative_columns)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ProductionDoorLease lease(store);
+	BOOST_TEST(store.Count() == 1u);
+	BOOST_TEST(state.Count() == 1u);
+
+	const ecs::Entity entity = production_door_adapter_test::OnlyEntity(state);
+	auto *opening = state.World().Get<DoorOpening>(entity);
+	auto *waiting = state.World().Get<DoorWaiting>(entity);
+	auto *closing = state.World().Get<DoorClosing>(entity);
+	auto *hold = state.World().Get<DoorHold>(entity);
+	BOOST_REQUIRE(opening != nullptr);
+	BOOST_REQUIRE(waiting != nullptr);
+	BOOST_REQUIRE(closing != nullptr);
+	BOOST_REQUIRE(hold != nullptr);
+
+	opening->tick = 17;
+	waiting->tick = 23;
+	closing->tick = 29;
+	hold->value = true;
+	const ProductionDoorState observed = lease.ReadLegacy();
+	BOOST_TEST(observed.opening == 17u);
+	BOOST_TEST(observed.waiting == 23u);
+	BOOST_TEST(observed.closing == 29u);
+	BOOST_TEST(observed.held);
+
+	lease.RestoreLegacy({31, 37, 41, false});
+	BOOST_TEST(opening->tick == 31u);
+	BOOST_TEST(waiting->tick == 37u);
+	BOOST_TEST(closing->tick == 41u);
+	BOOST_TEST(!hold->value);
+	BOOST_TEST(state.Count() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(restored_overlap_waiting_hold_and_transition_flags_match_legacy_clock)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ProductionDoorLease lease(store);
+
+	// Legacy transfer keeps the three independent markers, including an
+	// overlapping input, and Waiting observes only the waiting marker.
+	lease.RestoreLegacy({7, 11, 13, true});
+	const auto overlap = lease.ReadLegacy();
+	BOOST_TEST(overlap.opening == 7u);
+	BOOST_TEST(overlap.waiting == 11u);
+	BOOST_TEST(overlap.closing == 13u);
+	BOOST_TEST(overlap.held);
+	BOOST_TEST(lease.Waiting());
+
+	const ProductionDoorChanges requested = lease.RequestExit(20);
+	BOOST_TEST(requested.clear == 0u);
+	BOOST_TEST(requested.set == 0u);
+
+	// Explicit uint32_t clock arithmetic preserves the original wrap behavior:
+	// (1 - (UINT32_MAX - 2)) wraps to 4, which is greater than 2.
+	lease.RestoreLegacy({(std::numeric_limits<std::uint32_t>::max)() - 2u, 0, 0, false});
+	const ProductionDoorChanges opened = lease.Advance(1, 2, 5, 7);
+	BOOST_TEST((opened.clear & production_door_adapter_test::OpeningBit) != 0u);
+	BOOST_TEST((opened.set & production_door_adapter_test::WaitingBit) != 0u);
+	BOOST_TEST((opened.clear & production_door_adapter_test::WaitingBit) == 0u);
+	BOOST_TEST(lease.Waiting());
+	BOOST_TEST(lease.ReadLegacy().waiting == 1u);
+
+	const ProductionDoorChanges heldOpen = lease.SetHeld(true, 30);
+	BOOST_TEST(heldOpen.clear == 0u);
+	BOOST_TEST(lease.ReadLegacy().held);
+}
+
+BOOST_AUTO_TEST_CASE(request_and_hold_start_opening_and_waiting_respects_hold)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ProductionDoorLease lease(store);
+
+	const ProductionDoorChanges requested = lease.RequestExit(9);
+	BOOST_TEST(requested.clear == 0u);
+	BOOST_TEST((requested.set & production_door_adapter_test::OpeningBit) != 0u);
+	BOOST_TEST(lease.ReadLegacy().opening == 9u);
+
+	lease.RestoreLegacy({0, 4, 0, true});
+	const ProductionDoorChanges held = lease.Advance(10, 2, 2, 2);
+	BOOST_TEST(held.clear == 0u);
+	BOOST_TEST(held.set == 0u);
+	BOOST_TEST(lease.Waiting());
+
+	const ProductionDoorChanges released = lease.SetHeld(false, 10);
+	BOOST_TEST(released.clear == 0u);
+	BOOST_TEST(released.set == 0u);
+	const ProductionDoorChanges closing = lease.Advance(10, 2, 2, 2);
+	BOOST_TEST((closing.clear & production_door_adapter_test::WaitingBit) != 0u);
+	BOOST_TEST((closing.set & production_door_adapter_test::ClosingBit) != 0u);
+	BOOST_TEST(!lease.Waiting());
+}
+
+BOOST_AUTO_TEST_CASE(read_legacy_rejects_each_wide_timestamp_at_the_cold_boundary)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ProductionDoorLease lease(store);
+	const ecs::Entity entity = production_door_adapter_test::OnlyEntity(state);
+	const auto tooWide = static_cast<std::uint64_t>((std::numeric_limits<std::uint32_t>::max)()) + 1u;
+
+	lease.RestoreLegacy({0, 0, 0, false});
+	state.World().Get<DoorOpening>(entity)->tick = tooWide;
+	BOOST_CHECK_THROW(lease.ReadLegacy(), std::overflow_error);
+	state.World().Get<DoorOpening>(entity)->tick = 0;
+
+	state.World().Get<DoorWaiting>(entity)->tick = tooWide;
+	BOOST_CHECK_THROW(lease.ReadLegacy(), std::overflow_error);
+	state.World().Get<DoorWaiting>(entity)->tick = 0;
+
+	state.World().Get<DoorClosing>(entity)->tick = tooWide;
+	BOOST_CHECK_THROW(lease.ReadLegacy(), std::overflow_error);
+}
+
+BOOST_AUTO_TEST_CASE(missing_component_preflight_is_nondestructive)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ProductionDoorLease lease(store);
+	lease.RestoreLegacy({10, 20, 30, true});
+	const ecs::Entity entity = production_door_adapter_test::OnlyEntity(state);
+
+	BOOST_TEST(state.World().Remove<DoorWaiting>(entity));
+	BOOST_CHECK_THROW(lease.RestoreLegacy({99, 98, 97, false}), std::logic_error);
+	BOOST_TEST(state.World().Get<DoorOpening>(entity)->tick == 10u);
+	BOOST_TEST(state.World().Get<DoorClosing>(entity)->tick == 30u);
+	BOOST_TEST(state.World().Get<DoorHold>(entity)->value);
+	BOOST_TEST(state.World().Add<DoorWaiting>(entity));
+
+	BOOST_TEST(state.World().Remove<DoorClosing>(entity));
+	BOOST_CHECK_THROW(lease.Advance(11, 1, 1, 1), std::logic_error);
+	BOOST_TEST(state.World().Get<DoorOpening>(entity)->tick == 10u);
+	BOOST_TEST(state.World().Add<DoorClosing>(entity));
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_execution_cannot_bypass_typed_column_access)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ProductionDoorLease lease(store);
+	lease.RestoreLegacy({4, 0, 0, false});
+
+	production_door_adapter_test::ScheduledBypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(engine::time::FixedStep{30});
+
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, engine::time::FixedStep{30}}),
+		std::logic_error);
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_TEST(lease.ReadLegacy().opening == 4u);
+}
+
+BOOST_AUTO_TEST_CASE(reset_rejects_live_leases_and_generation_reuse_does_not_resurrect_them)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	ecs::Entity old{};
+	{
+		ProductionDoorLease lease(store);
+		old = production_door_adapter_test::OnlyEntity(state);
+		BOOST_CHECK_THROW(store.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	}
+
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(!state.World().IsAlive(old));
+	{
+		ProductionDoorLease next(store);
+		const auto current = production_door_adapter_test::OnlyEntity(state);
+		BOOST_TEST(current.index == old.index);
+		BOOST_TEST(current.generation != old.generation);
+		BOOST_TEST(!state.World().IsAlive(old));
+		BOOST_TEST(state.World().IsAlive(current));
+	}
+	BOOST_CHECK_NO_THROW(state.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(large_lease_churn_preserves_count_and_cleans_up_every_entity)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	constexpr std::size_t leaseCount = 8192;
+	std::vector<std::unique_ptr<ProductionDoorLease>> leases;
+	leases.reserve(leaseCount);
+	for (std::size_t index = 0; index < leaseCount; ++index)
+	{
+		auto lease = std::make_unique<ProductionDoorLease>(store);
+		lease->RestoreLegacy({static_cast<std::uint32_t>(index), 0, 0, index % 2 == 0});
+		leases.push_back(std::move(lease));
+	}
+
+	for (std::size_t index = 0; index < leaseCount; index += 2)
+		leases[index].reset();
+	for (std::size_t index = 0; index < leaseCount; index += 2)
+	{
+		leases[index] = std::make_unique<ProductionDoorLease>(store);
+		leases[index]->RestoreLegacy({7, 1, 0, false});
+	}
+
+	BOOST_TEST(store.Count() == leaseCount);
+	BOOST_TEST(state.Count() == leaseCount);
+	leases.clear();
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_NO_THROW(store.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(persistent_reset_rejects_unclaimed_doors_before_releasing_any_state)
+{
+	GameplayState state;
+	ProductionDoorStore store(state);
+	{
+		ProductionDoorLease lease(store);
+		lease.RestoreLegacy({10, 20, 30, true});
+		const auto entity = production_door_adapter_test::OnlyEntity(state);
+		BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, {}), std::logic_error);
+		BOOST_TEST(state.World().IsAlive(entity));
+		BOOST_TEST(store.Count() == 1u);
+		const auto unchanged = lease.ReadLegacy();
+		BOOST_TEST(unchanged.opening == 10u);
+		BOOST_TEST(unchanged.waiting == 20u);
+		BOOST_TEST(unchanged.closing == 30u);
+		BOOST_TEST(unchanged.held);
+	}
+	BOOST_CHECK_NO_THROW(generalszh::PersistentWorldReset::Execute(state, {}));
+	BOOST_TEST(state.Count() == 0u);
+}

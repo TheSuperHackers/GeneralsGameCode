@@ -1,0 +1,85 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+import engine.ecs.core.world;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.concealment.algorithms.detection_index;
+import engine.gameplay.concealment.components.concealment_binding;
+import engine.gameplay.concealment.components.concealment_eligibility;
+import engine.gameplay.concealment.components.concealment_state;
+import engine.gameplay.concealment.components.detection_state;
+import engine.gameplay.concealment.definitions.concealment_definition;
+import engine.gameplay.concealment.definitions.detection_definition;
+import engine.gameplay.concealment.inputs.uncloak_input;
+import engine.gameplay.concealment.systems.concealment_system;
+import engine.gameplay.containment.components.passenger_membership;
+import engine.gameplay.navigation.components.movement;
+
+BOOST_AUTO_TEST_CASE(concealment_system_applies_global_detection_and_source_backed_uncloak_lease)
+{
+    using namespace engine::gameplay;
+    using namespace engine::gameplay::concealment;
+    using namespace std::chrono_literals;
+    const std::array<std::uint8_t, 3> terrain{1, 1, 1};
+    navigation::NavigationGrid grid(3, 1, terrain);
+    const std::array concealAuth{ConcealmentDefinition{100ms, true}};
+    const std::array detectAuth{DetectionDefinition{50ms, 2, false}};
+    ConcealmentDefinitions concealmentDefinitions(engine::time::FixedStep{20}, concealAuth);
+    DetectionDefinitions detectionDefinitions(engine::time::FixedStep{20}, detectAuth);
+
+    ecs::World world;
+    world.RegisterComponent<combat::LifeState>();
+    world.RegisterComponent<navigation::GridPosition>();
+    world.RegisterComponent<ConcealmentBinding>();
+    world.RegisterComponent<ConcealmentState>();
+    world.RegisterComponent<ConcealmentEligibility>();
+    world.RegisterComponent<ConcealmentGroup>();
+    world.RegisterComponent<DetectionBinding>();
+    world.RegisterComponent<DetectionState>();
+    world.RegisterComponent<containment::PassengerMembership>();
+    world.FinalizeComponents();
+
+    const auto targetGroup = world.Create();
+    const auto detectorGroup = world.Create();
+    const auto target = world.Create<combat::LifeState, navigation::GridPosition, ConcealmentBinding,
+        ConcealmentState, ConcealmentEligibility, ConcealmentGroup>();
+    const auto detector = world.Create<combat::LifeState, navigation::GridPosition, DetectionBinding,
+        DetectionState, ConcealmentGroup>();
+    world.Get<navigation::GridPosition>(target)->cell = 0;
+    world.Get<navigation::GridPosition>(detector)->cell = 1;
+    world.Get<ConcealmentBinding>(target)->definition = concealmentDefinitions.Id(0);
+    // Enrollment starts uninitialized and uncloaked; concealment applies only
+    // after the authored startup delay has elapsed.
+    world.Get<ConcealmentState>(target)->concealed = false;
+    world.Get<ConcealmentGroup>(target)->value = targetGroup;
+    world.Get<ConcealmentGroup>(detector)->value = detectorGroup;
+    world.Get<DetectionBinding>(detector)->definition = detectionDefinitions.Id(0);
+
+    DetectionIndex index(world, grid, 16);
+    ConcealmentSystem system(world, concealmentDefinitions, detectionDefinitions, index, 8);
+    ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+
+    scheduler.Execute({0, step});
+    BOOST_TEST(world.Get<ConcealmentState>(target)->detectedUntilTick == 0u);
+    BOOST_TEST(!world.Get<ConcealmentState>(target)->concealed);
+    scheduler.Execute({1, step});
+    BOOST_TEST(!world.Get<ConcealmentState>(target)->concealed);
+    scheduler.Execute({2, step});
+    BOOST_TEST(world.Get<ConcealmentState>(target)->concealed);
+    scheduler.Execute({3, step});
+    BOOST_TEST(world.Get<ConcealmentState>(target)->detectedUntilTick == 5u);
+    world.Get<DetectionState>(detector)->enabled = false;
+    scheduler.Execute({5, step});
+    BOOST_TEST(world.Get<ConcealmentState>(target)->detectedUntilTick == 0u);
+
+    const std::array reveal{UncloakInput{target}};
+    system.SetInputs(reveal);
+    scheduler.Execute({6, step});
+    BOOST_TEST(world.Get<ConcealmentState>(target)->detectedUntilTick == 8u);
+    scheduler.Execute({8, step});
+    BOOST_TEST(world.Get<ConcealmentState>(target)->detectedUntilTick == 0u);
+}

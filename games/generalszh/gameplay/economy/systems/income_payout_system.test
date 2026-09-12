@@ -1,0 +1,30 @@
+#include <boost/test/unit_test.hpp>
+#include <string_view>
+import games.generalszh.gameplay.economy.systems.income_payout_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(payout_system_observes_due_wave_initializes_once_and_uses_boost_only_for_money)
+{
+	using namespace generalszh::economy;
+	using namespace engine::gameplay::rts::economy;
+	ecs::World world;
+	world.RegisterComponent<IncomeSchedule>(); world.RegisterComponent<IncomeRate>(); world.RegisterComponent<IncomeEligibility>();
+	world.RegisterComponent<IncomeDispatch>(); world.RegisterComponent<IncomePulse>(); world.RegisterComponent<IncomeDefinition>();
+	world.RegisterComponent<IncomeObservation>(); world.RegisterComponent<CaptureRewardState>(); world.RegisterComponent<IncomePayout>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<IncomeSchedule, IncomeRate, IncomeEligibility, IncomePulse, IncomeDefinition, IncomeObservation, CaptureRewardState, IncomePayout>();
+	*world.Get<IncomeRate>(entity) = {5, 100}; world.Get<IncomeEligibility>(entity)->enabled = true;
+	*world.Get<IncomeDefinition>(entity) = {100, 0, true};
+	*world.Get<IncomeObservation>(entity) = {0, 25, true, false, true, true};
+	IncomeSystem income; IncomePayoutSystem payout;
+	ecs::SystemRegistry registry; registry.Register(payout); registry.Register(income); registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({0, step});
+	BOOST_TEST(world.Get<IncomePayout>(entity)->value.money == 125u);
+	BOOST_TEST(world.Get<IncomePayout>(entity)->value.score == 100);
+	BOOST_TEST(world.Get<CaptureRewardState>(entity)->available);
+	world.Get<CaptureRewardState>(entity)->available = false;
+	scheduler.Execute({5, step});
+	BOOST_TEST(!world.Get<CaptureRewardState>(entity)->available);
+	scheduler.Execute({6, step});
+	BOOST_TEST(!world.Get<IncomePayout>(entity)->value.pay);
+}

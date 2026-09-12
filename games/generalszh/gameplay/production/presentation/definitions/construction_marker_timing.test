@@ -1,0 +1,39 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionMarkerTiming
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.production.presentation.definitions.construction_marker_timing;
+import games.generalszh.gameplay.production.presentation.algorithms.construction_marker;
+import games.generalszh.gameplay.production.presentation.components.construction_marker;
+
+using generalszh::production::AdvanceConstructionMarker;
+using generalszh::production::AuthorConstructionMarkerTiming;
+using generalszh::production::ConstructionMarker;
+using generalszh::production::ConstructionMarkerTiming;
+
+BOOST_AUTO_TEST_CASE(typed_duration_authoring_uses_the_selected_fixed_step)
+{
+	using namespace std::chrono_literals;
+
+	const auto at30 = AuthorConstructionMarkerTiming(2s, engine::time::FixedStep{30});
+	const auto at60 = AuthorConstructionMarkerTiming(2s, engine::time::FixedStep{60});
+
+	BOOST_TEST(at30.duration == 60u);
+	BOOST_TEST(at60.duration == 120u);
+	BOOST_TEST(at30.duration * 2 == at60.duration);
+	BOOST_TEST(AuthorConstructionMarkerTiming(1ns, engine::time::FixedStep{30}).duration == 1u);
+	BOOST_TEST(AuthorConstructionMarkerTiming(0ns, engine::time::FixedStep{30}).duration == 0u);
+
+	const std::uint64_t markerTick = (std::uint64_t{1} << 40) + 10;
+	ConstructionMarker marker{markerTick};
+	BOOST_TEST(AdvanceConstructionMarker<std::uint64_t>(marker, markerTick + at60.duration,
+		ConstructionMarkerTiming{at60.duration - 1}));
+	BOOST_TEST(marker.tick == 0u);
+}

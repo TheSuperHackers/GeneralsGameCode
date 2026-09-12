@@ -1,0 +1,14 @@
+#define BOOST_TEST_MODULE BuilderFrame
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.rts.construction.observations.builder_frame;
+import engine.ecs.scheduler.scheduler;
+namespace c=engine::gameplay::rts::construction;
+namespace p=engine::gameplay::rts::production;
+namespace n=engine::gameplay::navigation;
+namespace h=engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(snapshot_checks_generation_and_reports_capacity)
+{
+    c::BuilderFrame frame(1); frame.Append({{7,2},{9,1},4,true}); frame.Finalize();
+    BOOST_TEST(frame.Find({7,2})!=nullptr); BOOST_TEST(frame.Find({7,3})==nullptr);
+    BOOST_CHECK_THROW(frame.Append({}),std::length_error);
+}

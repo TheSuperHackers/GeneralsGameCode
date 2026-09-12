@@ -1,0 +1,11 @@
+#include <boost/test/unit_test.hpp>
+#include <chrono>
+import engine.gameplay.combat.definitions.periodic_damage_definition;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(periodic_damage_authoring_requires_consistent_durations)
+{
+    using namespace std::chrono_literals;const engine::time::FixedStep step{20};
+    const auto value=AuthorPeriodicDamage({100ms,1s},step);BOOST_TEST(value.interval==2u);BOOST_TEST(value.duration==20u);
+    BOOST_TEST(AuthorPeriodicDamage({},step).interval==0u);
+    BOOST_CHECK_THROW(AuthorPeriodicDamage({0ms,1s},step),std::invalid_argument);
+}

@@ -1,0 +1,172 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <memory>
+#include <span>
+
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.combat.systems.health_system;
+import engine.gameplay.rts.bounty.components.bounty_policy;
+import engine.gameplay.rts.unlocks.components.unlock_state;
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+import engine.gameplay.rts.unlocks.inputs.unlock_batch;
+import engine.gameplay.rts.unlocks.systems.unlock_system;
+import games.generalszh.gameplay.bounty.components.cash_bounty_cost_binding;
+import games.generalszh.gameplay.bounty.definitions.cash_bounty_catalog;
+import games.generalszh.gameplay.bounty.inputs.cash_bounty_batch;
+import games.generalszh.gameplay.bounty.systems.cash_bounty_award_system;
+import games.generalszh.gameplay.bounty.systems.cash_bounty_policy_system;
+
+namespace
+{
+using Health = engine::gameplay::combat::Health;
+using LifeState = engine::gameplay::combat::LifeState;
+using PendingDamage = engine::gameplay::combat::PendingDamage;
+using DamageResult = engine::gameplay::combat::DamageResult;
+using Policy = engine::gameplay::rts::bounty::BountyPolicy;
+using ProducedUnit = generalszh::production::ProducedUnit;
+using Structure = generalszh::construction::Structure;
+using MatchMember = generalszh::match::MatchMember;
+using CostBinding = generalszh::bounty::CashBountyCostBinding;
+
+struct Fixture
+{
+    ecs::World world;
+    engine::jobs::JobSystem jobs{engine::jobs::JobSystemConfig{1}};
+    ecs::SystemRegistry registry;
+    engine::gameplay::rts::unlocks::UnlockCatalog unlocks;
+    engine::gameplay::rts::unlocks::UnlockBatch unlockBatch{4};
+    engine::gameplay::rts::unlocks::UnlockSystem unlockSystem;
+    std::unique_ptr<generalszh::bounty::CashBountyCatalog> catalog;
+    generalszh::bounty::CashBountyBatch batch{4};
+    engine::gameplay::combat::HealthSystem health;
+    std::unique_ptr<generalszh::bounty::CashBountyPolicySystem> policy;
+    std::unique_ptr<generalszh::bounty::CashBountyAwardSystem> awards;
+    std::unique_ptr<ecs::Scheduler> scheduler;
+    ecs::Entity match{};
+    ecs::Entity sourceAccount{}, victimAccount{}, source{}, victim{};
+
+    Fixture()
+        : unlockSystem(unlocks, unlockBatch)
+    {
+        world.RegisterComponent<Health>();
+        world.RegisterComponent<LifeState>();
+        world.RegisterComponent<PendingDamage>();
+        world.RegisterComponent<DamageResult>();
+        world.RegisterComponent<Policy>();
+        world.RegisterComponent<engine::gameplay::rts::unlocks::UnlockState>();
+        world.RegisterComponent<engine::gameplay::rts::unlocks::UnlockInbox>();
+        world.RegisterComponent<MatchMember>();
+        world.RegisterComponent<ProducedUnit>();
+        world.RegisterComponent<Structure>();
+        world.RegisterComponent<CostBinding>();
+        world.FinalizeComponents();
+        unlocks.Finalize();
+        catalog = std::make_unique<generalszh::bounty::CashBountyCatalog>(
+            std::span<const generalszh::bounty::CashBountyDefinition>{}, unlocks);
+        policy = std::make_unique<generalszh::bounty::CashBountyPolicySystem>(*catalog);
+        sourceAccount = world.Create<Policy, MatchMember>();
+        // Match membership is sufficient for a victim account. Bounty policy
+        // is an explicit killer enrollment, not a prerequisite on every
+        // participant.
+        victimAccount = world.Create<MatchMember>();
+        world.Get<Policy>(sourceAccount)->maximum = {1, 5};
+        source = world.Create<ProducedUnit, LifeState>();
+        victim = world.Create<ProducedUnit, CostBinding, Health, LifeState, PendingDamage, DamageResult>();
+        *world.Get<ProducedUnit>(source) = {ecs::Entity{}, sourceAccount, 1};
+        *world.Get<LifeState>(source) = {true};
+        *world.Get<ProducedUnit>(victim) = {ecs::Entity{}, victimAccount, 2};
+        *world.Get<CostBinding>(victim) = {100, generalszh::bounty::CashBountyCostBasis::DecodedBuildCost, true};
+        *world.Get<Health>(victim) = {100};
+        *world.Get<LifeState>(victim) = {true};
+        *world.Get<PendingDamage>(victim) = {100,
+            {victim, source, sourceAccount, 0, 100, 0, 100, true}};
+        awards = std::make_unique<generalszh::bounty::CashBountyAwardSystem>(
+            world, match, batch, 64, 4);
+        // The root constructs systems before BeginMatch publishes the stable
+        // identity. The award system must observe this later assignment via
+        // its non-owning reference, just like KillExperienceSystem.
+        match = {1, 1};
+        *world.Get<MatchMember>(sourceAccount) = {match, 0};
+        *world.Get<MatchMember>(victimAccount) = {match, 1};
+        registry.Register(health);
+        registry.Register(unlockSystem);
+        registry.Register(*policy);
+        registry.Register(*awards);
+        registry.OrderBefore<generalszh::bounty::CashBountyPolicySystem,
+            engine::gameplay::rts::unlocks::UnlockSystem>();
+        awards->Configure();
+        registry.Finalize(world.Components());
+        scheduler = std::make_unique<ecs::Scheduler>(world, registry, jobs);
+        scheduler->Finalize(engine::time::FixedStep{30});
+    }
+};
+}
+
+BOOST_AUTO_TEST_CASE(lethal_proof_creates_one_bounded_account_request)
+{
+    // This test is intentionally limited to the award consumer's owned graph;
+    // the full root wiring remains Hubble-reserved for the connected test.
+    // The HealthSystem registration above is only a local proof producer.
+    Fixture fixture;
+    fixture.scheduler->Execute({0, engine::time::FixedStep{30}});
+    const auto requests = fixture.batch.Requests();
+    BOOST_REQUIRE(requests.size() == 1u);
+    BOOST_CHECK(requests[0].account == fixture.sourceAccount);
+    BOOST_TEST(requests[0].command.amount == 20u);
+    BOOST_CHECK(requests[0].command.trackIncome);
+    BOOST_CHECK(!requests[0].command.playSound);
+}
+
+BOOST_AUTO_TEST_CASE(enemy_participant_without_bounty_policy_remains_a_valid_victim)
+{
+    Fixture fixture;
+    fixture.scheduler->Execute({0, engine::time::FixedStep{30}});
+    BOOST_REQUIRE(fixture.batch.Requests().size() == 1u);
+    BOOST_CHECK(fixture.batch.Requests()[0].account == fixture.sourceAccount);
+}
+
+BOOST_AUTO_TEST_CASE(source_and_victim_account_ownership_must_be_distinct)
+{
+    Fixture fixture;
+    fixture.world.Get<ProducedUnit>(fixture.victim)->account = fixture.sourceAccount;
+    fixture.scheduler->Execute({0, engine::time::FixedStep{30}});
+    BOOST_CHECK(fixture.batch.Requests().empty());
+}
+
+BOOST_AUTO_TEST_CASE(lethal_evidence_with_a_mismatched_source_account_is_rejected)
+{
+    Fixture fixture;
+    fixture.world.Get<PendingDamage>(fixture.victim)->lethalSource.sourceAccount = fixture.victimAccount;
+    fixture.scheduler->Execute({0, engine::time::FixedStep{30}});
+    BOOST_CHECK(fixture.batch.Requests().empty());
+}
+
+BOOST_AUTO_TEST_CASE(under_construction_structure_is_not_a_bounty_victim)
+{
+    Fixture fixture;
+    const auto underConstruction = fixture.world.Create<Structure, CostBinding, Health,
+        LifeState, PendingDamage, DamageResult>();
+    *fixture.world.Get<Structure>(underConstruction) = {};
+    fixture.world.Get<Structure>(underConstruction)->account = fixture.victimAccount;
+    *fixture.world.Get<CostBinding>(underConstruction) = {
+        100, generalszh::bounty::CashBountyCostBasis::DecodedBuildCost, true};
+    *fixture.world.Get<Health>(underConstruction) = {100};
+    *fixture.world.Get<LifeState>(underConstruction) = {true};
+    *fixture.world.Get<PendingDamage>(underConstruction) = {100,
+        {underConstruction, fixture.source, fixture.sourceAccount, 0, 100, 0, 100, true}};
+
+    fixture.scheduler->Execute({0, engine::time::FixedStep{30}});
+    const auto awards = fixture.batch.Awards();
+    BOOST_REQUIRE(awards.size() == 1u);
+    BOOST_CHECK(awards.front().victim == fixture.victim);
+}
+
+BOOST_AUTO_TEST_CASE(explicit_ineligible_cost_binding_rejects_ignored_gui_victim)
+{
+    Fixture fixture;
+    fixture.world.Get<CostBinding>(fixture.victim)->eligible = false;
+    fixture.scheduler->Execute({0, engine::time::FixedStep{30}});
+    BOOST_CHECK(fixture.batch.Requests().empty());
+}

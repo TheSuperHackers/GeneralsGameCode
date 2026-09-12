@@ -1,0 +1,24 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+
+import engine.gameplay.rts.visibility.algorithms.visibility_query;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_query)
+
+BOOST_AUTO_TEST_CASE(fog_history_does_not_make_hidden_entities_targetable)
+{
+	const ParticipantHandle observer{2, 1};
+	const auto bit = ObserverBit(observer.slot);
+	BOOST_CHECK(StatusFor(bit, 0, observer.slot) == VisibilityStatus::Fogged);
+	BOOST_CHECK(StatusFor(0, 0, observer.slot) == VisibilityStatus::Shrouded);
+	BOOST_CHECK(StatusFor(bit, bit, observer.slot) == VisibilityStatus::Clear);
+	BOOST_CHECK(!CanTargetEntity(0, observer.slot));
+	BOOST_CHECK(CanTargetEntity(bit, observer.slot));
+	BOOST_CHECK(CanTargetPosition(true));
+	BOOST_CHECK(!CanTargetPosition(false));
+}
+
+BOOST_AUTO_TEST_SUITE_END()

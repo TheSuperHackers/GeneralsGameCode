@@ -1,0 +1,83 @@
+#define BOOST_TEST_MODULE EngineSpatialGrid
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <limits>
+import engine.gameplay.spatial.grid.point_grid;
+using namespace engine::gameplay::spatial;
+BOOST_AUTO_TEST_CASE(nearest_group_category_range_and_ties_do_not_depend_on_insertion_order)
+{
+    const ecs::Entity observer{0,1}, enemy{1,1};
+    const std::array points{SpatialPoint{{8,1},enemy,9,8,1},SpatialPoint{{3,1},enemy,7,8,1},
+        SpatialPoint{{2,1},enemy,8,8,2},SpatialPoint{{1,1},observer,8,8,1}};
+    PointGrid grid(32,32,9,4);
+    for (const auto &point : points) grid.Add(point); grid.Publish();
+    BOOST_CHECK(grid.Nearest(8,8,2,observer,1) == ecs::Entity(3,1));
+    BOOST_CHECK(grid.Nearest(8,8,2,observer,2) == ecs::Entity(2,1));
+    BOOST_TEST(!grid.Nearest(8,8,0,observer,1).IsValid());
+    BOOST_TEST(!grid.Nearest(31,31,2,observer,3).IsValid());
+    grid.Clear(); for (auto it=points.rbegin(); it!=points.rend(); ++it) grid.Add(*it); grid.Publish();
+    BOOST_CHECK(grid.Nearest(8,8,2,observer,1) == ecs::Entity(3,1));
+    grid.Clear(); grid.Publish(); BOOST_TEST(!grid.Nearest(8,8,32,observer,3).IsValid());
+}
+BOOST_AUTO_TEST_CASE(full_width_integer_coordinates_do_not_overflow_distance_sum)
+{
+    constexpr auto maximum = (std::numeric_limits<std::uint32_t>::max)();
+    PointGrid grid(maximum,maximum,4,maximum);
+    grid.Add({{1,1},{2,1},maximum-1,maximum-1,1}); grid.Add({{3,1},{2,1},1,0,1}); grid.Publish();
+    BOOST_CHECK(grid.Nearest(0,0,maximum,{0,1},1) == ecs::Entity(3,1));
+    std::array<SpatialPoint,2> results{};
+    BOOST_TEST(grid.EnumerateWithinRadius(0,0,maximum,results)==1u);
+    BOOST_CHECK(results[0].entity==ecs::Entity(3,1));
+}
+BOOST_AUTO_TEST_CASE(point_capacity_and_publication_are_explicit)
+{
+    PointGrid grid(8,8,1); grid.Add({{0,1},{2,1},0,0,1});
+    BOOST_CHECK_THROW(grid.Add({{3,1},{2,1},1,0,1}),std::length_error);
+    grid.Publish(); BOOST_CHECK_THROW(grid.Add({{3,1},{2,1},1,0,1}),std::logic_error);
+}
+BOOST_AUTO_TEST_CASE(radius_enumeration_is_inclusive_sorted_and_never_truncated)
+{
+    PointGrid grid(9,1,8,4); const ecs::Entity group{90,1};
+    grid.Add({{7,1},group,6,0,1}); grid.Add({{3,1},group,2,0,1}); grid.Add({{5,1},group,4,0,1});
+    grid.Publish(); std::array<SpatialPoint,3> results{};
+    const auto count=grid.EnumerateWithinRadius(4,0,2,results);
+    BOOST_TEST(count==3u); BOOST_CHECK(results[0].entity==ecs::Entity(3,1));
+    BOOST_CHECK(results[1].entity==ecs::Entity(5,1)); BOOST_CHECK(results[2].entity==ecs::Entity(7,1));
+    std::array<SpatialPoint,2> tooSmall{};
+    BOOST_CHECK_THROW(grid.EnumerateWithinRadius(4,0,2,tooSmall),std::length_error);
+}
+BOOST_AUTO_TEST_CASE(radius_visitor_is_inclusive_filtered_and_order_independent_without_result_storage)
+{
+    PointGrid grid(9,1,8,4); const ecs::Entity group{90,1};
+    grid.Add({{7,1},group,6,0,1}); grid.Add({{3,1},group,2,0,1}); grid.Add({{5,1},group,4,0,2});
+    grid.Publish();
+    const auto summarize=[](const PointGrid &value) {
+        std::size_t count{}; bool sawCategoryOne{}, sawCategoryTwo{};
+        value.VisitWithinRadius(4,0,2,[&](const SpatialPoint point) {
+            ++count; sawCategoryOne |= point.category == 1; sawCategoryTwo |= point.category == 2;
+        });
+        return std::array<std::size_t,3>{count,sawCategoryOne,sawCategoryTwo};
+    };
+    const auto forward=summarize(grid);
+    const auto points=std::array{
+        SpatialPoint{{7,1},group,6,0,1},
+        SpatialPoint{{3,1},group,2,0,1},
+        SpatialPoint{{5,1},group,4,0,2}};
+    grid.Clear();
+    for (auto it=points.rbegin(); it!=points.rend(); ++it) grid.Add(*it);
+    grid.Publish(); const auto reverse=summarize(grid);
+    BOOST_TEST(forward[0]==3u); BOOST_CHECK(forward[1]); BOOST_CHECK(forward[2]);
+    BOOST_TEST(forward[0]==reverse[0]); BOOST_TEST(forward[1]==reverse[1]); BOOST_TEST(forward[2]==reverse[2]);
+
+    std::size_t filteredCount{};
+    grid.VisitWithinRadius(4,0,2,[&](const SpatialPoint) { ++filteredCount; },2);
+    BOOST_TEST(filteredCount==1u);
+}
+BOOST_AUTO_TEST_CASE(entity_index_capacity_and_generation_lookup_are_explicit)
+{
+    PointGrid grid(4,1,4); grid.Add({{2,1},{9,1},2,0,1}); grid.Publish();
+    SpatialPoint point{}; const ecs::Entity old{2,1}; BOOST_CHECK(grid.TryGet(old,point));
+    grid.Clear(); grid.Add({{2,2},{9,1},3,0,1}); grid.Publish();
+    BOOST_CHECK(!grid.TryGet(old,point)); BOOST_CHECK(grid.TryGet(ecs::Entity{2,2},point));
+    PointGrid bounded(4,1,2); BOOST_CHECK_THROW(bounded.Add({{4,1},{9,1},2,0,1}),std::length_error);
+}

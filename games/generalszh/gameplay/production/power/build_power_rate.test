@@ -1,0 +1,29 @@
+#define BOOST_TEST_MODULE GeneralsZHBuildPowerRate
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.production.power.build_power_rate;
+using namespace generalszh;
+using namespace generalszh::production;
+using engine::gameplay::rts::production::BuildWork;
+BOOST_AUTO_TEST_CASE(unit_rate_rescales_credit_and_paused_orders_preserve_it)
+{
+    power::PowerState state{}; state.speedNumerator = 7500; state.speedDenominator = 10000;
+    BuildWork work{10, 0, 1, 2, 1};
+    ApplyBuildPowerRate(work, false, EntryKind::Unit, &state);
+    BOOST_TEST(work.speedNumerator == 1u); BOOST_TEST(work.speedDenominator == 2u);
+    BOOST_TEST(work.remainder == 1u);
+    ApplyBuildPowerRate(work, true, EntryKind::Unit, &state);
+    BOOST_TEST(work.speedNumerator == 7500u); BOOST_TEST(work.speedDenominator == 10000u);
+    BOOST_TEST(work.remainder == 5000u);
+    engine::gameplay::rts::production::BuildReady ready{};
+    engine::gameplay::rts::production::AdvanceBuild(work, {true}, ready);
+    BOOST_TEST(work.elapsed == 1u); BOOST_TEST(work.remainder == 2500u);
+}
+BOOST_AUTO_TEST_CASE(upgrades_and_absent_accounts_receive_full_speed)
+{
+    power::PowerState state{}; state.speedNumerator = 5000;
+    BuildWork upgrade{10, 0, 1, 2, 1}, missing = upgrade;
+    ApplyBuildPowerRate(upgrade, true, EntryKind::Upgrade, &state);
+    ApplyBuildPowerRate(missing, true, EntryKind::Unit, nullptr);
+    BOOST_TEST(upgrade.speedNumerator == 10000u); BOOST_TEST(missing.speedNumerator == 10000u);
+    BOOST_TEST(upgrade.remainder == 5000u); BOOST_TEST(missing.remainder == 5000u);
+}

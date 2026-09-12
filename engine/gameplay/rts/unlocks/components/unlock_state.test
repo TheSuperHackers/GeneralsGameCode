@@ -1,0 +1,32 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+
+import engine.gameplay.rts.unlocks.components.unlock_state;
+
+using namespace engine::gameplay::rts::unlocks;
+
+BOOST_AUTO_TEST_CASE(unlock_state_owns_inline_multiword_masks_and_runtime_flags)
+{
+	UnlockState state;
+	const UnlockId bitZero{0};
+	const UnlockId bitSixtyFour{64};
+	const UnlockId bitLast{static_cast<std::uint32_t>(MaxUnlockDefinitions - 1)};
+
+	BOOST_CHECK(state.SetOwned(bitZero));
+	BOOST_CHECK(state.SetOwned(bitSixtyFour));
+	BOOST_CHECK(state.SetHidden(bitLast));
+	BOOST_CHECK(state.SetDisabled(bitSixtyFour));
+	BOOST_TEST(state.IsOwned(bitZero));
+	BOOST_TEST(state.IsOwned(bitSixtyFour));
+	BOOST_TEST(state.IsHidden(bitLast));
+	BOOST_TEST(state.IsDisabled(bitSixtyFour));
+	BOOST_CHECK(state.SetOwned(bitSixtyFour, false));
+	BOOST_CHECK(!state.IsOwned(bitSixtyFour));
+	BOOST_CHECK(!state.SetOwned(InvalidUnlockId));
+}
+
+BOOST_AUTO_TEST_CASE(unlock_state_has_explicit_persistence_policy)
+{
+	BOOST_CHECK(ecs::ComponentTraits<UnlockState>::Persistence == ecs::PersistencePolicy::Serializable);
+	BOOST_TEST(ecs::ComponentTraits<UnlockState>::Version == 1u);
+}

@@ -1,0 +1,205 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <limits>
+#include <stdexcept>
+import games.generalszh.gameplay.production.systems.build_completion_system;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.navigation.systems.movement_system;
+BOOST_AUTO_TEST_CASE(unit_pack_is_created_at_completion_barrier_once)
+{
+    using namespace engine::gameplay::rts::production;
+    using namespace generalszh::production;
+    namespace regen=engine::gameplay::combat::regeneration;
+    namespace xp=engine::gameplay::progression;
+    namespace manual=engine::gameplay::rts::repair;
+    const engine::time::FixedStep step{30};
+    const std::array regenerationDefinitions{regen::RegenerationDefinition{4,std::chrono::seconds{1}}};
+    const regen::RegenerationDefinitions regeneration(step,regenerationDefinitions);
+    ecs::World world;
+    world.RegisterComponent<regen::RegenerationBinding>(); world.RegisterComponent<regen::RegenerationState>();
+    world.RegisterComponent<xp::ProgressionState>(); world.RegisterComponent<xp::ProgressionDefinitionRef>();
+    world.RegisterComponent<xp::ProgressionEligibility>(); world.RegisterComponent<xp::ProgressionInbox>();
+    world.RegisterComponent<generalszh::progression::VeterancyAwardBinding>();
+    using namespace engine::gameplay::rts::harvesting;
+    world.RegisterComponent<HarvestPolicy>(); world.RegisterComponent<HarvestState>(); world.RegisterComponent<HarvestCargo>();
+    world.RegisterComponent<HarvestIntent>(); world.RegisterComponent<HarvestDelivery>(); world.RegisterComponent<generalszh::construction::Builder>();
+    world.RegisterComponent<BuildWork>(); world.RegisterComponent<BuildEnabled>(); world.RegisterComponent<BuildReady>();
+    world.RegisterComponent<ProductionQuantity>(); world.RegisterComponent<BuildOrder>(); world.RegisterComponent<ProducedUnit>();
+    world.RegisterComponent<generalszh::bounty::CashBountyCostBinding>();
+    world.RegisterComponent<ResearchedUpgrade>(); world.RegisterComponent<generalszh::upgrades::UpgradeInstanceStatus>();
+    world.RegisterComponent<engine::gameplay::combat::Health>(); world.RegisterComponent<engine::gameplay::combat::LifeState>();
+    world.RegisterComponent<engine::gameplay::combat::PendingDamage>(); world.RegisterComponent<engine::gameplay::combat::DamageResult>();
+    world.RegisterComponent<engine::gameplay::combat::HealthCapacity>();world.RegisterComponent<engine::gameplay::combat::PendingHealing>();world.RegisterComponent<engine::gameplay::combat::HealingResult>();
+    world.RegisterComponent<engine::gameplay::combat::PeriodicDamagePolicy>();world.RegisterComponent<engine::gameplay::combat::PeriodicDamage>();
+    world.RegisterComponent<engine::gameplay::rts::orders::UnitOrder>();
+    world.RegisterComponent<engine::gameplay::rts::orders::EngagementObservation>(); world.RegisterComponent<engine::gameplay::rts::orders::EngagementResult>();
+    world.RegisterComponent<manual::ManualRepairRateBinding>(); world.RegisterComponent<manual::ManualRepairProgress>();
+    world.RegisterComponent<manual::ManualRepairAssignment>();
+    engine::gameplay::navigation::RegisterMovementComponents(world); world.FinalizeComponents();
+    const auto order = world.Create<BuildWork, BuildEnabled, BuildReady, ProductionQuantity, BuildOrder>();
+    *world.Get<ProductionQuantity>(order) = {2, 0}; world.Get<BuildEnabled>(order)->value = true;
+    world.Get<BuildOrder>(order)->harvest=HarvestPolicy{4,30,12};
+    world.Get<BuildOrder>(order)->builder=true; world.Get<BuildOrder>(order)->account={77,2};
+    world.Get<BuildOrder>(order)->manualRepairDefinition=7;
+    world.Get<BuildOrder>(order)->regeneration=RegenerationSpawn{regeneration.Id(0),3,true};
+    world.Get<BuildOrder>(order)->progression=ProgressionSpawn{{0},false};
+    world.Get<BuildOrder>(order)->veterancy=VeterancySpawn{7,true};
+    world.Get<BuildOrder>(order)->cashBountyCost=generalszh::bounty::CashBountyCostBinding{
+        100,generalszh::bounty::CashBountyCostBasis::DecodedBuildCost,true};
+    BuildSystem build; BuildCompletionSystem completion; ecs::SystemRegistry registry;
+    registry.Register(completion); registry.Register(build); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    ecs::Query<ecs::Read<ProducedUnit>> units(world);
+    std::size_t count = 0; units.ForEachChunk([&](auto chunk) { count += chunk.Count(); }); BOOST_TEST(count==0u);
+    scheduler.Execute({50, step});
+    units.ForEachChunk([&](auto chunk) { count += chunk.Count(); }); BOOST_TEST(count == 2u);
+    units.ForEachChunk([&](auto chunk) { for(auto entity:chunk.Entities()) {
+        BOOST_REQUIRE(world.Get<HarvestPolicy>(entity)); BOOST_TEST(world.Get<HarvestPolicy>(entity)->pickupTicks==30u);
+        BOOST_TEST(world.Get<HarvestPolicy>(entity)->unloadTicks==12u); BOOST_TEST(world.Get<HarvestPolicy>(entity)->capacity==4u);
+        BOOST_REQUIRE(world.Get<HarvestState>(entity)); BOOST_REQUIRE(world.Get<HarvestCargo>(entity));
+        BOOST_REQUIRE(world.Get<HarvestIntent>(entity)); BOOST_REQUIRE(world.Get<HarvestDelivery>(entity));
+        BOOST_REQUIRE(world.Get<generalszh::construction::Builder>(entity));
+        BOOST_CHECK(world.Get<generalszh::construction::Builder>(entity)->account==(ecs::Entity{77,2}));
+        BOOST_REQUIRE(world.Get<manual::ManualRepairRateBinding>(entity));
+        BOOST_TEST(world.Get<manual::ManualRepairRateBinding>(entity)->definition==7u);
+        BOOST_REQUIRE(world.Get<manual::ManualRepairProgress>(entity));
+        BOOST_REQUIRE(world.Get<manual::ManualRepairAssignment>(entity));
+        BOOST_REQUIRE(world.Get<regen::RegenerationBinding>(entity));
+        BOOST_CHECK(world.Get<regen::RegenerationBinding>(entity)->definition==regeneration.Id(0));
+        const auto *state=world.Get<regen::RegenerationState>(entity); BOOST_REQUIRE(state);
+        BOOST_TEST(state->nextPulse==53u); BOOST_TEST(state->soonestDamageWake==0u);
+        BOOST_TEST(state->active); BOOST_TEST(state->armed); BOOST_TEST(!state->stopped);
+        BOOST_REQUIRE(world.Get<xp::ProgressionState>(entity));
+        BOOST_TEST(world.Get<xp::ProgressionState>(entity)->experience==0u);
+        BOOST_TEST(world.Get<xp::ProgressionState>(entity)->level==0u);
+        BOOST_REQUIRE(world.Get<xp::ProgressionDefinitionRef>(entity));
+        BOOST_TEST(world.Get<xp::ProgressionDefinitionRef>(entity)->index==0u);
+        BOOST_REQUIRE(world.Get<xp::ProgressionEligibility>(entity));
+        BOOST_TEST(!world.Get<xp::ProgressionEligibility>(entity)->trainable);
+        BOOST_REQUIRE(world.Get<xp::ProgressionInbox>(entity));
+        BOOST_TEST(world.Get<xp::ProgressionInbox>(entity)->count==0u);
+        BOOST_REQUIRE(world.Get<generalszh::progression::VeterancyAwardBinding>(entity));
+        BOOST_TEST(world.Get<generalszh::progression::VeterancyAwardBinding>(entity)->definition==7u);
+        BOOST_TEST(world.Get<generalszh::progression::VeterancyAwardBinding>(entity)->awardable);
+        const auto *bounty=world.Get<generalszh::bounty::CashBountyCostBinding>(entity);
+        BOOST_REQUIRE(bounty);
+        BOOST_TEST(bounty->authoredBuildCost==100u);
+        BOOST_CHECK(bounty->basis==generalszh::bounty::CashBountyCostBasis::DecodedBuildCost);
+        BOOST_CHECK(bounty->eligible);
+    }});
+    scheduler.Execute({51, step}); count = 0;
+    units.ForEachChunk([&](auto chunk) { count += chunk.Count(); }); BOOST_TEST(count == 2u);
+}
+BOOST_AUTO_TEST_CASE(completion_phase_overflow_records_no_partial_pack_and_does_not_wrap)
+{
+    using namespace generalszh::production;
+    namespace regen=engine::gameplay::combat::regeneration;
+    const std::array definitions{regen::RegenerationDefinition{1,std::chrono::seconds{1}}};
+    const regen::RegenerationDefinitions catalog(engine::time::FixedStep{30},definitions);
+    BuildOrder order; order.regeneration=RegenerationSpawn{catalog.Id(0),2,true};
+    engine::gameplay::rts::production::ProductionQuantity quantity{2,0};
+    ecs::CommandBuffer commands;
+    const auto last=(std::numeric_limits<std::uint64_t>::max)();
+    BOOST_CHECK_THROW(CompleteBuild(order,quantity,commands,last-1),std::overflow_error);
+    BOOST_TEST(commands.Empty()); BOOST_TEST(quantity.completed==0);
+    // Even an inactive configured timer receives a checked creation deadline.
+    order.regeneration->active=false;
+    BOOST_CHECK_THROW(CompleteBuild(order,quantity,commands,last),std::overflow_error);
+    BOOST_TEST(commands.Empty()); BOOST_TEST(quantity.completed==0);
+    quantity.completed=quantity.total;
+    BOOST_CHECK_NO_THROW(CompleteBuild(order,quantity,commands,last));
+    BOOST_TEST(commands.Empty());
+}
+BOOST_AUTO_TEST_CASE(completion_horizon_failure_is_terminal_in_the_real_scheduler)
+{
+    using namespace generalszh::production;
+    using namespace engine::gameplay::rts::production;
+    namespace regen=engine::gameplay::combat::regeneration;
+    const engine::time::FixedStep step{30};
+    const std::array definitions{regen::RegenerationDefinition{1,std::chrono::seconds{1}}};
+    const regen::RegenerationDefinitions catalog(step,definitions);
+    ecs::World world;
+    world.RegisterComponent<BuildWork>(); world.RegisterComponent<BuildEnabled>(); world.RegisterComponent<BuildReady>();
+    world.RegisterComponent<BuildOrder>(); world.RegisterComponent<ProductionQuantity>(); world.RegisterComponent<ProducedUnit>();
+    world.FinalizeComponents();
+    const auto order=world.Create<BuildOrder,BuildReady,ProductionQuantity>();
+    world.Get<BuildReady>(order)->value=true;
+    *world.Get<ProductionQuantity>(order)={2,0};
+    world.Get<BuildOrder>(order)->regeneration=RegenerationSpawn{catalog.Id(0),2,true};
+    BuildSystem build; BuildCompletionSystem completion; ecs::SystemRegistry registry;
+    registry.Register(build); registry.Register(completion); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    const auto tick=(std::numeric_limits<std::uint64_t>::max)()-1;
+    BOOST_CHECK_THROW(scheduler.Execute({tick,step}),std::overflow_error);
+    BOOST_TEST(scheduler.IsFailed()); BOOST_TEST(world.Get<ProductionQuantity>(order)->completed==0);
+    ecs::Query<ecs::Read<ProducedUnit>> units(world); std::size_t count=0;
+    units.ForEachChunk([&](auto chunk){count+=chunk.Count();}); BOOST_TEST(count==0u);
+    BOOST_CHECK_THROW(scheduler.Execute({tick+1,step}),std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(payload_completion_enrolls_existing_carrier_membership_without_a_second_recipe)
+{
+    using namespace generalszh::production;
+    namespace c = engine::gameplay::containment;
+    namespace combat = engine::gameplay::combat;
+    namespace n = engine::gameplay::navigation;
+    namespace orders = engine::gameplay::rts::orders;
+    ecs::World world;
+    world.RegisterComponent<BuildOrder>(); world.RegisterComponent<ProducedUnit>();
+    world.RegisterComponent<engine::gameplay::rts::production::ProductionQuantity>();
+    world.RegisterComponent<combat::Health>(); world.RegisterComponent<combat::HealthCapacity>();
+    world.RegisterComponent<combat::PendingHealing>(); world.RegisterComponent<combat::HealingResult>();
+    world.RegisterComponent<combat::PeriodicDamagePolicy>(); world.RegisterComponent<combat::PeriodicDamage>();
+    world.RegisterComponent<combat::LifeState>(); world.RegisterComponent<combat::PendingDamage>();
+    world.RegisterComponent<combat::DamageResult>();
+    world.RegisterComponent<c::PassengerSlots>(); world.RegisterComponent<c::PassengerMembership>();
+    world.RegisterComponent<c::ContainmentTask>(); world.RegisterComponent<c::TransportBinding>();
+    world.RegisterComponent<c::TransportState>(); world.RegisterComponent<generalszh::containment::InitialPayloadBinding>();
+    world.RegisterComponent<orders::UnitOrder>(); world.RegisterComponent<orders::EngagementObservation>();
+    world.RegisterComponent<orders::EngagementResult>(); n::RegisterMovementComponents(world);
+    world.FinalizeComponents();
+
+    const ecs::Entity account{91,3};
+    BuildOrder carrierOrder{}; carrierOrder.producer={10,1}; carrierOrder.account=account;
+    carrierOrder.definition=11; carrierOrder.health=100; carrierOrder.maximumHealth=100;
+    carrierOrder.transport=c::TransportBinding{0}; carrierOrder.initialPayload=generalszh::production::InitialPayloadDefinition{22,0};
+    engine::gameplay::rts::production::ProductionQuantity carrierQuantity{1,0};
+    ecs::CommandBuffer carrierCommands;
+    CompleteBuild(carrierOrder,carrierQuantity,carrierCommands,5);
+    world.Commit(carrierCommands);
+
+    ecs::Entity carrier{};
+    ecs::Query<ecs::Read<ProducedUnit>,ecs::Read<generalszh::containment::InitialPayloadBinding>> carriers(world);
+    carriers.ForEachChunk([&](auto chunk) {
+        const auto values=chunk.template Get<ProducedUnit>();
+        for(std::size_t row=0;row!=chunk.Count();++row) if(values[row].definition==11) carrier=chunk.Entities()[row];
+    });
+    BOOST_REQUIRE(carrier.IsValid());
+    BOOST_REQUIRE(world.Get<generalszh::containment::InitialPayloadBinding>(carrier));
+    BOOST_CHECK(world.Get<generalszh::containment::InitialPayloadBinding>(carrier)->phase==
+                generalszh::containment::InitialPayloadPhase::Pending);
+    BOOST_TEST(world.Get<generalszh::containment::InitialPayloadBinding>(carrier)->count==0u);
+
+    BuildOrder passengerOrder{}; passengerOrder.producer=carrier; passengerOrder.account=account;
+    passengerOrder.definition=22; passengerOrder.health=100; passengerOrder.maximumHealth=100;
+    passengerOrder.passenger=c::PassengerSlots{1};
+    engine::gameplay::rts::production::ProductionQuantity passengerQuantity{1,0};
+    ecs::CommandBuffer passengerCommands;
+    CompleteBuild(passengerOrder,passengerQuantity,passengerCommands,6,{},carrier);
+    world.Commit(passengerCommands);
+
+    ecs::Query<ecs::Read<ProducedUnit>,ecs::Read<c::PassengerMembership>,ecs::Read<c::PassengerSlots>> passengers(world);
+    std::size_t count=0;
+    passengers.ForEachChunk([&](auto chunk) {
+        const auto values=chunk.template Get<ProducedUnit>(); const auto members=chunk.template Get<c::PassengerMembership>();
+        for(std::size_t row=0;row!=chunk.Count();++row) {
+            ++count; BOOST_CHECK(values[row].producer==carrier); BOOST_CHECK(values[row].account==account);
+            BOOST_CHECK(c::IsContained(members[row])); BOOST_CHECK(members[row].carrier==carrier);
+            BOOST_CHECK(members[row].owner==c::PassengerContainmentOwner::Transport);
+            BOOST_CHECK(members[row].combat==c::PassengerCombatPolicy::Blocked);
+            BOOST_REQUIRE(world.Get<n::MoveRangeGoal>(chunk.Entities()[row]));
+        }
+    });
+    BOOST_TEST(count==1u);
+}

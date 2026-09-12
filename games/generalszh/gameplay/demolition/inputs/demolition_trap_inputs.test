@@ -1,0 +1,45 @@
+#define BOOST_TEST_MODULE GeneralsZHDemolitionInputs
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+import games.generalszh.gameplay.demolition.inputs.demolition_trap_inputs;
+
+BOOST_AUTO_TEST_CASE(mode_reduction_keeps_original_local_order_and_explicit_detonation_is_independent)
+{
+    using namespace generalszh::demolition;
+    const ecs::Entity trap{3,1};
+    DemolitionTrapInputBatch batch(8);
+    const std::array inputs{
+        DemolitionTrapInput{trap,DemolitionTrapCommand::SetManualMode},
+        DemolitionTrapInput{trap,DemolitionTrapCommand::SetProximityMode},
+        DemolitionTrapInput{trap,DemolitionTrapCommand::Detonate}};
+    batch.SetInputs(inputs);
+    DemolitionDetonationMode mode{};
+    BOOST_REQUIRE(batch.ModeCommand(trap,mode));
+    BOOST_CHECK(mode==DemolitionDetonationMode::Proximity);
+    BOOST_CHECK(batch.Requested(trap));
+
+    const std::array reversed{
+        DemolitionTrapInput{trap,DemolitionTrapCommand::SetProximityMode},
+        DemolitionTrapInput{trap,DemolitionTrapCommand::SetManualMode}};
+    batch.SetInputs(reversed);
+    BOOST_REQUIRE(batch.ModeCommand(trap,mode));
+    BOOST_CHECK(mode==DemolitionDetonationMode::Manual);
+    BOOST_CHECK(!batch.Requested(trap));
+    batch.Clear();
+    BOOST_CHECK(!batch.ModeCommand(trap,mode));
+    BOOST_CHECK(!batch.Requested(trap));
+}
+
+BOOST_AUTO_TEST_CASE(input_boundary_rejects_unknown_commands_and_capacity_overflow)
+{
+    using namespace generalszh::demolition;
+    const ecs::Entity trap{4,1};
+    DemolitionTrapInputBatch batch(1);
+    const std::array tooMany{DemolitionTrapInput{trap,DemolitionTrapCommand::Detonate},
+        DemolitionTrapInput{trap,DemolitionTrapCommand::Detonate}};
+    BOOST_CHECK_THROW(batch.SetInputs(tooMany),std::length_error);
+    const std::array invalid{DemolitionTrapInput{trap,static_cast<DemolitionTrapCommand>(99)}};
+    BOOST_CHECK_THROW(batch.SetInputs(invalid),std::invalid_argument);
+}

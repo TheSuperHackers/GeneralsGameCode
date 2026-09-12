@@ -1,0 +1,65 @@
+#define BOOST_TEST_MODULE EngineGameplayLifetime
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+#include <chrono>
+#include <limits>
+#include <stdexcept>
+import engine.gameplay.lifetime.components.expiration;
+
+using namespace engine::gameplay::lifetime;
+
+BOOST_AUTO_TEST_SUITE(ExpirationComponent)
+
+BOOST_AUTO_TEST_CASE(default_is_inactive)
+{
+	const Expiration expiration;
+	BOOST_CHECK(expiration.state == ExpirationState::Inactive);
+}
+
+BOOST_AUTO_TEST_CASE(rearm_replaces_elapsed_state_and_uses_current_tick)
+{
+	Expiration expiration{1, ExpirationState::Elapsed};
+	ArmAfter(expiration, 100, 7);
+	BOOST_TEST(expiration.deadline == 107u);
+	BOOST_CHECK(expiration.state == ExpirationState::Armed);
+	ArmAfter(expiration, 103, 0);
+	BOOST_TEST(expiration.deadline == 103u);
+}
+
+BOOST_AUTO_TEST_CASE(ticks_are_not_limited_to_legacy_32_bit_frames)
+{
+	Expiration expiration;
+	const std::uint64_t now = std::uint64_t{1} << 40;
+	ArmAfter(expiration, now, 10);
+	BOOST_TEST(expiration.deadline == now + 10);
+}
+
+BOOST_AUTO_TEST_CASE(overflow_fails_without_altering_existing_timer)
+{
+	Expiration expiration{55, ExpirationState::Elapsed};
+	BOOST_CHECK_THROW(ArmAfter(expiration, (std::numeric_limits<std::uint64_t>::max)(), 1), std::overflow_error);
+	BOOST_TEST(expiration.deadline == 55u);
+	BOOST_CHECK(expiration.state == ExpirationState::Elapsed);
+	ArmAfter(expiration, (std::numeric_limits<std::uint64_t>::max)(), 0);
+	BOOST_TEST(expiration.deadline == (std::numeric_limits<std::uint64_t>::max)());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_CASE(typed_durations_quantize_once_and_preserve_state_on_failure)
+{
+	using namespace std::chrono_literals;
+	const engine::time::SimulationTime now{100, engine::time::FixedStep{30}};
+	Expiration expiration;
+	ArmAfter(expiration, now, 100ms);
+	BOOST_TEST(expiration.deadline == 103u);
+	ArmAfter(expiration, now, 1ns);
+	BOOST_TEST(expiration.deadline == 101u);
+	BOOST_CHECK_THROW(ArmAfter(expiration, now, -1ns), std::invalid_argument);
+	BOOST_TEST(expiration.deadline == 101u);
+	const engine::time::SimulationTime end{(std::numeric_limits<std::uint64_t>::max)(), now.Step()};
+	BOOST_CHECK_THROW(ArmAfter(expiration, end, 1ns), std::overflow_error);
+	BOOST_TEST(expiration.deadline == 101u);
+	ArmAfter(expiration, now, 0ns);
+	BOOST_TEST(expiration.deadline == 100u);
+}

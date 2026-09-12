@@ -1,0 +1,228 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionProgressAlgorithms
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <bit>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <string_view>
+#include <vector>
+
+import games.generalszh.gameplay.production.progress.algorithms.production_progress;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::production::AdvanceOneStep;
+using generalszh::production::ProductionElapsed;
+using generalszh::production::ProductionProgress;
+using generalszh::production::ProductionRequirement;
+using generalszh::production::RefreshProgress;
+
+namespace production_progress_algorithms_test
+{
+struct ProgressStep
+{
+	ProductionRequirement requirement;
+
+	using Query = ecs::Query<ecs::Write<ProductionElapsed>,
+		ecs::Write<ProductionProgress>>;
+
+	explicit ProgressStep(const ProductionRequirement initialRequirement) noexcept :
+		requirement(initialRequirement)
+	{
+	}
+
+	void Execute(const Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		const auto elapsed = chunk.Get<ProductionElapsed>();
+		const auto progress = chunk.Get<ProductionProgress>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			AdvanceOneStep(elapsed[row]);
+			RefreshProgress(elapsed[row], progress[row], requirement);
+		}
+	}
+};
+
+using Snapshot = std::vector<std::array<std::uint64_t, 8>>;
+
+Snapshot RunScheduledProgress(std::size_t workers);
+} // namespace production_progress_algorithms_test
+
+namespace ecs
+{
+template<>
+struct SystemTraits<production_progress_algorithms_test::ProgressStep>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.progress.step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace
+{
+std::uint32_t FloatBits(const float value) noexcept
+{
+	return std::bit_cast<std::uint32_t>(value);
+}
+} // namespace
+
+namespace production_progress_algorithms_test
+{
+Snapshot RunScheduledProgress(const std::size_t workers)
+{
+	constexpr std::size_t entityCount = 4096;
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<ProductionElapsed>();
+	world.RegisterComponent<ProductionProgress>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(entityCount);
+	std::vector<std::array<std::uint64_t, 5>> inputs;
+	inputs.reserve(entityCount);
+	const ProductionRequirement requirement{11};
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<ProductionElapsed, ProductionProgress>();
+		auto *elapsed = world.Get<ProductionElapsed>(entity);
+		auto *progress = world.Get<ProductionProgress>(entity);
+		elapsed->ticks = static_cast<std::int64_t>(index * 3);
+		progress->percent = static_cast<float>(index) + 0.25f;
+		entities.push_back(entity);
+		inputs.push_back({
+			static_cast<std::uint64_t>(elapsed->ticks),
+			static_cast<std::uint64_t>(requirement.ticks),
+			FloatBits(progress->percent),
+			static_cast<std::uint64_t>(entity.index),
+			static_cast<std::uint64_t>(entity.generation)});
+	}
+
+	ProgressStep system{requirement};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute(engine::time::SimulationTime{1, step});
+
+	Snapshot result;
+	result.reserve(entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = entities[index];
+		const auto *elapsed = world.Get<ProductionElapsed>(entity);
+		const auto *progress = world.Get<ProductionProgress>(entity);
+		BOOST_REQUIRE(elapsed != nullptr);
+		BOOST_REQUIRE(progress != nullptr);
+		result.push_back({
+			inputs[index][0],
+			inputs[index][1],
+			inputs[index][2],
+			static_cast<std::uint64_t>(elapsed->ticks),
+			FloatBits(progress->percent),
+			static_cast<std::uint64_t>(system.requirement.ticks),
+			static_cast<std::uint64_t>(entity.index),
+			static_cast<std::uint64_t>(entity.generation)});
+	}
+
+	ecs::Query<ecs::Read<ProductionElapsed>,
+		ecs::Read<ProductionProgress>> query(world);
+	BOOST_TEST(query.PrepareChunks() > 1u);
+	return result;
+}
+} // namespace production_progress_algorithms_test
+
+BOOST_AUTO_TEST_CASE(advance_changes_elapsed_but_leaves_cached_percent_untouched)
+{
+	ProductionElapsed elapsed{4};
+	ProductionProgress progress{42.5f};
+	const auto cachedBits = FloatBits(progress.percent);
+
+	static_assert(noexcept(AdvanceOneStep(elapsed)));
+	AdvanceOneStep(elapsed);
+
+	BOOST_TEST(elapsed.ticks == 5);
+	BOOST_TEST(FloatBits(progress.percent) == cachedBits);
+}
+
+BOOST_AUTO_TEST_CASE(refresh_recomputes_against_the_current_requirement_without_clamping)
+{
+	ProductionElapsed elapsed{3};
+	ProductionProgress progress{0};
+
+	RefreshProgress(elapsed, progress, ProductionRequirement{6});
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(50.0f));
+
+	RefreshProgress(elapsed, progress, ProductionRequirement{2});
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(150.0f));
+
+	RefreshProgress(ProductionElapsed{8}, progress, ProductionRequirement{4});
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(200.0f));
+}
+
+BOOST_AUTO_TEST_CASE(zero_and_negative_signed_counts_preserve_ieee_results)
+{
+	ProductionProgress progress{};
+
+	RefreshProgress(ProductionElapsed{0}, progress, ProductionRequirement{0});
+	BOOST_TEST(std::isnan(progress.percent));
+
+	RefreshProgress(ProductionElapsed{1}, progress, ProductionRequirement{0});
+	BOOST_TEST(std::isinf(progress.percent));
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(std::numeric_limits<float>::infinity()));
+
+	RefreshProgress(ProductionElapsed{-3}, progress, ProductionRequirement{2});
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(-150.0f));
+
+	RefreshProgress(ProductionElapsed{3}, progress, ProductionRequirement{-2});
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(-150.0f));
+}
+
+BOOST_AUTO_TEST_CASE(wide_signed_counters_are_not_narrowed)
+{
+	constexpr std::int64_t start = std::int64_t{1} << 40;
+	ProductionElapsed elapsed{start};
+	ProductionProgress progress{};
+
+	AdvanceOneStep(elapsed);
+	BOOST_TEST(elapsed.ticks == start + 1);
+	RefreshProgress(elapsed, progress, ProductionRequirement{std::int64_t{1} << 41});
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(50.0f));
+}
+
+BOOST_AUTO_TEST_CASE(release_overflow_has_defined_unsigned_bit_cast_behavior)
+{
+#if defined(NDEBUG)
+	ProductionElapsed elapsed{(std::numeric_limits<std::int64_t>::max)()};
+	AdvanceOneStep(elapsed);
+	BOOST_TEST(elapsed.ticks == (std::numeric_limits<std::int64_t>::min)());
+#else
+	ProductionElapsed elapsed{(std::numeric_limits<std::int64_t>::max)() - 1};
+	AdvanceOneStep(elapsed);
+	BOOST_TEST(elapsed.ticks == (std::numeric_limits<std::int64_t>::max)());
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_const_chunks_refresh_and_advance_identically_for_one_two_and_four_workers)
+{
+	const auto oneWorker = production_progress_algorithms_test::RunScheduledProgress(1);
+	const auto twoWorkers = production_progress_algorithms_test::RunScheduledProgress(2);
+	const auto fourWorkers = production_progress_algorithms_test::RunScheduledProgress(4);
+
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+	for (std::size_t index = 0; index < oneWorker.size(); ++index)
+	{
+		BOOST_TEST(oneWorker[index][3] == oneWorker[index][0] + 1);
+		const float expected = float(static_cast<std::int64_t>(oneWorker[index][0]) + 1) /
+			float(static_cast<std::int64_t>(oneWorker[index][1])) * 100.0f;
+		BOOST_TEST(oneWorker[index][4] == FloatBits(expected));
+		BOOST_TEST(oneWorker[index][5] == oneWorker[index][1]);
+	}
+}

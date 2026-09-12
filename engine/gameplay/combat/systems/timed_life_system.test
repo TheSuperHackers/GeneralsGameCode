@@ -1,0 +1,34 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <vector>
+import engine.gameplay.combat.systems.timed_life_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(timed_life_kills_through_health_once_and_retains_generation_safe_corpse)
+{
+    using namespace engine::gameplay::combat;
+    using namespace engine::gameplay::lifetime;
+    const auto run=[](std::size_t workers) {
+        ecs::World world; world.RegisterComponent<Expiration>(); world.RegisterComponent<Health>();
+        world.RegisterComponent<LifeState>(); world.RegisterComponent<PendingDamage>(); world.RegisterComponent<DamageResult>();
+        world.FinalizeComponents(); std::vector<ecs::Entity> entities;
+        for(unsigned i=0;i<1200;++i) {
+            const auto entity=world.Create<Expiration,Health,LifeState,PendingDamage,DamageResult>(); entities.push_back(entity);
+            ArmAfter(*world.Get<Expiration>(entity),0,2); world.Get<Health>(entity)->current=100;
+        }
+        TimedLifeSystem expiry; HealthSystem health; ecs::SystemRegistry registry;
+        registry.Register(expiry,ecs::SystemPhase::Simulation); registry.Register(health,ecs::SystemPhase::Simulation);
+        registry.Finalize(world.Components()); const engine::time::FixedStep step{20};
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers}); scheduler.Finalize(step);
+        scheduler.Execute({1,step}); for(auto e:entities) BOOST_TEST(world.Get<LifeState>(e)->alive);
+        scheduler.Execute({2,step}); std::vector<std::array<std::uint64_t,5>> result;
+        for(auto e:entities) {
+            BOOST_TEST(world.IsAlive(e)); BOOST_TEST(!world.Get<LifeState>(e)->alive);
+            BOOST_TEST(world.Get<DamageResult>(e)->killed); BOOST_TEST(world.Get<DamageResult>(e)->applied==100u);
+            BOOST_CHECK(world.Get<Expiration>(e)->state==ExpirationState::Elapsed);
+            result.push_back({e.index,e.generation,world.Get<Health>(e)->current,world.Get<DamageResult>(e)->applied,world.Get<Expiration>(e)->deadline});
+        }
+        scheduler.Execute({3,step}); for(auto e:entities) { BOOST_TEST(!world.Get<DamageResult>(e)->killed); BOOST_TEST(world.Get<PendingDamage>(e)->quantity==0u); }
+        return result;
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}

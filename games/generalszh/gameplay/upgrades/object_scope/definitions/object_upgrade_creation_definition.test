@@ -1,0 +1,24 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <type_traits>
+
+import games.generalszh.gameplay.upgrades.object_scope.definitions.object_upgrade_creation_definition;
+
+using generalszh::upgrades::object_scope::ObjectUpgradeCreationDefinition;
+using generalszh::upgrades::object_scope::ObjectUpgradeCreationPolicy;
+
+BOOST_AUTO_TEST_CASE(authored_object_upgrade_definition_is_plain_entity_free_policy_data)
+{
+	static_assert(std::is_standard_layout_v<ObjectUpgradeCreationPolicy>);
+	static_assert(std::is_trivially_copyable_v<ObjectUpgradeCreationPolicy>);
+	static_assert(std::is_standard_layout_v<ObjectUpgradeCreationDefinition>);
+	static_assert(std::is_trivially_copyable_v<ObjectUpgradeCreationDefinition>);
+
+	const ObjectUpgradeCreationDefinition definition{
+		{7, 0, std::uint64_t{1} << 7, 33}, {true}};
+	BOOST_TEST(definition.binding.definitionId == 7u);
+	BOOST_TEST(definition.binding.wordOrdinal == 0u);
+	BOOST_TEST(definition.binding.bitMask == (std::uint64_t{1} << 7));
+	BOOST_TEST(definition.policy.exemptUnderConstruction);
+}

@@ -1,0 +1,116 @@
+#define BOOST_TEST_MODULE GeneralsZHObjectUpgradeContent
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+
+import games.generalszh.adapters.content.ini.named_block;
+import games.generalszh.adapters.content.upgrades.object_scope.object_upgrade_definition;
+
+using namespace generalszh::content;
+using namespace generalszh::content::object_scope;
+using generalszh::content::UpgradeIdentity;
+using generalszh::content::UpgradeScope;
+using generalszh::upgrades::MakeUpgradeKey;
+using generalszh::upgrades::UpgradeCatalog;
+
+namespace
+{
+IniBlock AmericaCommandCenterObject()
+{
+	return ReadNamedBlock(R"ini(
+Object AmericaCommandCenter
+  Behavior = GrantUpgradeCreate ModuleTag_AmericaRadar
+    UpgradeToGrant = Upgrade_AmericaRadar
+    ExemptStatus = UNDER_CONSTRUCTION
+  End
+  Behavior = RadarUpgrade ModuleTag_AmericaRadarUpgrade
+    TriggeredBy = Upgrade_AmericaRadar
+    DisableProof = No
+  End
+End
+)ini", "Object", "AmericaCommandCenter");
+}
+}
+
+BOOST_AUTO_TEST_CASE(actual_america_grant_upgrade_create_binds_frozen_object_catalog_id)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_AmericaRadar");
+	catalog.Register("Upgrade_PlayerOnly");
+	catalog.Finalize();
+	const std::array identities{
+		UpgradeIdentity{"Upgrade_AmericaRadar", 9001, UpgradeScope::Object},
+		UpgradeIdentity{"Upgrade_PlayerOnly", 9002, UpgradeScope::Player}};
+
+	const auto definition = BindObjectUpgradeDefinition(
+		AmericaCommandCenterObject(), catalog, identities);
+	const auto id = catalog.Find(MakeUpgradeKey("Upgrade_AmericaRadar"));
+	BOOST_TEST(definition.binding.definitionId == id.value);
+	BOOST_TEST(definition.binding.wordOrdinal == id.value / 64u);
+	BOOST_TEST(definition.binding.bitMask == (std::uint64_t{1} << (id.value % 64u)));
+	BOOST_TEST(definition.binding.schemaHash == catalog.SchemaHash());
+	BOOST_TEST(definition.policy.exemptUnderConstruction);
+}
+
+BOOST_AUTO_TEST_CASE(actual_gla_grant_upgrade_create_preserves_absent_exemption)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_GLARadar");
+	catalog.Finalize();
+	const std::array identity{
+		UpgradeIdentity{"Upgrade_GLARadar", 9003, UpgradeScope::Object}};
+	const auto gla = ReadNamedBlock(R"ini(
+Object GLARadarVan
+  Behavior = GrantUpgradeCreate ModuleTag_GLARadar
+    UpgradeToGrant = Upgrade_GLARadar
+  End
+  Behavior = RadarUpgrade ModuleTag_GLARadarUpgrade
+    TriggeredBy = Upgrade_GLARadar
+    DisableProof = Yes
+  End
+End
+)ini", "Object", "GLARadarVan");
+
+	const auto definition = BindObjectUpgradeDefinition(gla, catalog, identity);
+	BOOST_TEST(definition.binding.definitionId ==
+		catalog.Find(MakeUpgradeKey("Upgrade_GLARadar")).value);
+	BOOST_TEST(!definition.policy.exemptUnderConstruction);
+}
+
+BOOST_AUTO_TEST_CASE(adapter_rejects_player_identity_and_unrepresented_exemptions)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_AmericaRadar");
+	catalog.Finalize();
+	const std::array playerIdentity{
+		UpgradeIdentity{"Upgrade_AmericaRadar", 77, UpgradeScope::Player}};
+	BOOST_CHECK_THROW(BindObjectUpgradeDefinition(
+		AmericaCommandCenterObject(), catalog, playerIdentity), std::invalid_argument);
+
+	const auto unsupported = ReadNamedBlock(R"(
+Object AmericaCommandCenter
+  Behavior = GrantUpgradeCreate ModuleTag_AmericaRadar
+    UpgradeToGrant = Upgrade_AmericaRadar
+    ExemptStatus = DAMAGED
+  End
+End
+)", "Object", "AmericaCommandCenter");
+	const std::array objectIdentity{
+		UpgradeIdentity{"Upgrade_AmericaRadar", 77, UpgradeScope::Object}};
+	BOOST_CHECK_THROW(BindObjectUpgradeDefinition(
+		unsupported, catalog, objectIdentity), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(adapter_requires_the_actual_creation_behavior)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_AmericaRadar");
+	catalog.Finalize();
+	const std::array identity{
+		UpgradeIdentity{"Upgrade_AmericaRadar", 77, UpgradeScope::Object}};
+	const auto noGrant = ReadNamedBlock(
+		"Object AmericaCommandCenter\nEnd\n", "Object", "AmericaCommandCenter");
+	BOOST_CHECK_THROW(BindObjectUpgradeDefinition(noGrant, catalog, identity), std::invalid_argument);
+}

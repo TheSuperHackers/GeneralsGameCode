@@ -1,0 +1,57 @@
+#define BOOST_TEST_MODULE GeneralsZHRegenerationContent
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import games.generalszh.adapters.content.regeneration.auto_heal_definition;
+using namespace generalszh::content;
+namespace
+{
+IniBlock AutoHealBlock()
+{
+    // GLAVehicle.ini ModuleTag_05: source-backed self repair configuration.
+    return ReadNamedBlock(R"(Object RepairFixture
+      Behavior = AutoHealBehavior ModuleTag_05
+        HealingAmount = 2
+        HealingDelay = 1000 ; msec
+        TriggeredBy = Upgrade_GLAJunkRepair
+      End
+    End)","Object","RepairFixture").children.at(0);
+}
+}
+BOOST_AUTO_TEST_CASE(auto_heal_decodes_reference_self_repair_and_reports_upgrade_gap)
+{
+    const auto decoded=DecodeAutoHeal(AutoHealBlock(),1000);
+    BOOST_TEST(decoded.definition.quantity==2000u); BOOST_TEST(!decoded.startsActive);
+    BOOST_REQUIRE_EQUAL(decoded.unimplementedFields.size(),1u);
+    BOOST_TEST(decoded.unimplementedFields[0]=="TriggeredBy");
+    const std::array entries{decoded.definition};
+    const engine::gameplay::combat::regeneration::RegenerationDefinitions definitions(engine::time::FixedStep{30},entries);
+    const auto &compiled=definitions.Get(definitions.Id(0));
+    BOOST_TEST(compiled.interval==30u); BOOST_TEST(compiled.damageWakeLatency==1u);
+    BOOST_TEST(compiled.strictDamageWakeCooldown);
+    auto block=AutoHealBlock(); block.fields.push_back({"StartHealingDelay","500"});
+    block.fields.push_back({"StartsActive","Yes"}); block.fields.push_back({"Radius","0.0f"});
+    const auto delayed=DecodeAutoHeal(block,1);
+    BOOST_TEST(delayed.startsActive); BOOST_TEST(delayed.definition.damageDelay.count()==500000000);
+    block.fields.push_back({"StartHealingDelay","1"});
+    const auto quantized=DecodeAutoHeal(block,1);
+    const std::array quantizedEntries{quantized.definition};
+    const engine::gameplay::combat::regeneration::RegenerationDefinitions atSixty(engine::time::FixedStep{60},quantizedEntries);
+    BOOST_TEST(atSixty.Get(atSixty.Id(0)).damageDelay==2u);
+}
+BOOST_AUTO_TEST_CASE(auto_heal_rejects_unsupported_scope_and_invalid_configuration)
+{
+    auto block=AutoHealBlock(); block.fields.push_back({"Radius","100.0f"});
+    BOOST_CHECK_THROW(DecodeAutoHeal(block,1),std::invalid_argument);
+    block=AutoHealBlock(); block.fields.push_back({"AffectsWholePlayer","Yes"});
+    BOOST_CHECK_THROW(DecodeAutoHeal(block,1),std::invalid_argument);
+    block=AutoHealBlock(); block.fields.push_back({"HealingDelay","0"});
+    BOOST_CHECK_THROW(DecodeAutoHeal(block,1),std::invalid_argument);
+    block=AutoHealBlock(); block.fields.push_back({"HealingAmount","-1"});
+    BOOST_CHECK_THROW(DecodeAutoHeal(block,1),std::invalid_argument);
+    block=AutoHealBlock(); block.fields.push_back({"HealingAmount","1.5"});
+    BOOST_CHECK_THROW(DecodeAutoHeal(block,1),std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeAutoHeal(AutoHealBlock(),0),std::invalid_argument);
+    block=AutoHealBlock(); block.fields.push_back({"StartHealingDelay","0.5"});
+    BOOST_CHECK_THROW(DecodeAutoHeal(block,1),std::invalid_argument);
+}

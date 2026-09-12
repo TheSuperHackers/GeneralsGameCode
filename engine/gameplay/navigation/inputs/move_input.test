@@ -1,0 +1,8 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.navigation.inputs.move_input;
+BOOST_AUTO_TEST_CASE(move_request_has_explicit_actor_and_destination)
+{
+    using namespace engine::gameplay::navigation;
+    const MoveInput input{{4,7},11};BOOST_CHECK(input.actor==ecs::Entity(4,7));BOOST_TEST(input.destination==11u);
+    BOOST_TEST(MoveInput{}.destination==InvalidCell);
+}

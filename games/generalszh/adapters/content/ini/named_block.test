@@ -1,0 +1,47 @@
+#define BOOST_TEST_MODULE GeneralsZHContent
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.adapters.content.ini.named_block;
+using namespace generalszh::content;
+BOOST_AUTO_TEST_CASE(named_blocks_preserve_repeated_fields_and_nested_assignment_blocks)
+{
+    const auto block=ReadNamedBlock(R"(
+Object First
+  BuildCost = 10
+End
+Object Selected
+  Draw = W3DModelDraw Tag
+    DefaultConditionState
+      Model = "name;not comment"
+    End
+  End
+  WeaponSet
+    Conditions = None
+    Weapon = PRIMARY Rifle
+    Weapon = SECONDARY Grenade ; actual comment
+  End
+  BuildCost = 225 ; comment
+End
+Object Last
+End
+)","Object","Selected");
+    BOOST_TEST(block.Require("BuildCost")=="225"); BOOST_REQUIRE(block.children.size()==2u);
+    BOOST_TEST(block.children[0].children[0].Require("Model")=="\"name;not comment\"");
+    BOOST_TEST(block.children[1].fields.size()==3u);
+    BOOST_CHECK_THROW(ReadNamedBlock("Object A\nEnd\nObject A\nEnd","Object","A"),std::invalid_argument);
+    BOOST_CHECK_THROW(ReadNamedBlock("Object A\nBody = ActiveBody\nEnd","Object","A"),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(decimal_conversion_is_exact_and_rejects_nonfinite_fraction_loss_and_exponents)
+{
+    BOOST_TEST(ScaledDecimal("5.125",1000)==5125u); BOOST_TEST(ScaledDecimal(".5",1000)==500u);
+    BOOST_CHECK_THROW(ScaledDecimal("0.0001",1000),std::invalid_argument);
+    BOOST_CHECK_THROW(ScaledDecimal("nan",1000),std::invalid_argument);
+    BOOST_CHECK_THROW(ScaledDecimal("1e3",1000),std::invalid_argument);
+    BOOST_CHECK_THROW(ScaledDecimal("-2",1000),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(unnamed_global_content_blocks_are_explicit_and_unique)
+{
+    const auto block=ReadNamedBlock("GameData\n ValuePerSupplyBox = 75\nEnd", "GameData", "");
+    BOOST_TEST(block.Require("ValuePerSupplyBox")=="75");
+    BOOST_CHECK_THROW(ReadNamedBlock("GameData\nEnd\nGameData\nEnd", "GameData", ""),std::invalid_argument);
+    BOOST_CHECK_THROW(ReadNamedBlock("GameData Named\nEnd", "GameData", ""),std::invalid_argument);
+}

@@ -1,0 +1,213 @@
+#define BOOST_TEST_MODULE GeneralsZHCaptureContent
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <vector>
+import games.generalszh.adapters.content.capture.capture_definition;
+import games.generalszh.composition.game_session;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.construction.components.structure;
+import games.generalszh.gameplay.capture.components.capture_state;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+namespace content=generalszh::content;
+namespace cap=generalszh::capture;
+namespace prod=generalszh::production;
+using namespace std::chrono_literals;
+namespace
+{
+// Extracted AmericaInfantry.ini:1026-1046 and SpecialPower.ini:491-495.
+// These are selected resolved fields, not a complete Ranger content port.
+constexpr std::string_view Ranger=R"(Object AmericaInfantryRanger
+ KindOf = INFANTRY CAN_ATTACK
+ Behavior = SpecialAbility ModuleTag_18
+  SpecialPowerTemplate = SpecialAbilityRangerCaptureBuilding
+  UpdateModuleStartsAttack = Yes
+  StartsPaused = Yes
+  InitiateSound = RangerVoiceCapture
+ End
+ Behavior = SpecialAbilityUpdate ModuleTag_19
+  SpecialPowerTemplate = SpecialAbilityRangerCaptureBuilding
+  StartAbilityRange = 5.0
+  UnpackTime = 3000
+  PreparationTime = 20000
+  PackTime = 2000
+  DoCaptureFX = Yes
+  AwardXPForTriggering = 15
+ End
+ Behavior = UnpauseSpecialPowerUpgrade ModuleTag_20
+  SpecialPowerTemplate = SpecialAbilityRangerCaptureBuilding
+  TriggeredBy = Upgrade_InfantryCaptureBuilding
+ End
+End
+)";
+constexpr std::string_view RangerPower=R"(SpecialPower SpecialAbilityRangerCaptureBuilding
+ Enum = SPECIAL_INFANTRY_CAPTURE_BUILDING
+ ReloadTime = 15000
+ PublicTimer = No
+End
+)";
+std::string Actor(std::string_view updateFields="",std::string_view abilityFields="",std::string_view updateName="CustomCapture")
+{
+ return "Object Fixture\nKindOf = INFANTRY\nBehavior = SpecialAbility Ability\nSpecialPowerTemplate = CustomCapture\nUpdateModuleStartsAttack = Yes\n"
+  +std::string(abilityFields)+"\nEnd\nBehavior = SpecialAbilityUpdate Update\nSpecialPowerTemplate = "+std::string(updateName)+"\n"
+  +std::string(updateFields)+"\nEnd\nEnd\n";
+}
+std::string Power(std::string_view fields="ReloadTime = 0",std::string_view type="SPECIAL_INFANTRY_CAPTURE_BUILDING")
+{return "SpecialPower CustomCapture\nEnum = "+std::string(type)+"\n"+std::string(fields)+"\nEnd\n";}
+bool Omitted(const content::DecodedCapture &value,std::string_view part)
+{return std::any_of(value.omissions.begin(),value.omissions.end(),[&](const auto &text){return text.find(part)!=text.npos;});}
+}
+BOOST_AUTO_TEST_CASE(paused_ranger_preserves_timing_without_granting_upgrade_or_conflating_recharge)
+{
+ const auto decoded=content::DecodeCapture(Ranger,RangerPower,"AmericaInfantryRanger",content::CapturePermission::Allowed);
+ BOOST_REQUIRE(decoded.definition);BOOST_TEST(!decoded.enabled);
+ BOOST_TEST(decoded.specialPower=="SpecialAbilityRangerCaptureBuilding");
+ BOOST_TEST(decoded.definition->unpack.count()==3000000000ll);
+ BOOST_TEST(decoded.definition->preparation.count()==20000000000ll);
+ BOOST_TEST(decoded.definition->recovery.count()==2000000000ll);
+ BOOST_TEST(decoded.definition->recharge.count()==15000000000ll);BOOST_TEST(!decoded.definition->startsReady);
+ BOOST_TEST(Omitted(decoded,"Upgrade_InfantryCaptureBuilding"));BOOST_TEST(Omitted(decoded,"AwardXPForTriggering"));
+ const cap::CaptureDefinitions definitions(engine::time::FixedStep{10},std::span{&*decoded.definition,1});
+ BOOST_TEST(definitions.Get(0).captureTicks==230u);BOOST_TEST(definitions.Get(0).recoveryTicks==20u);
+ for(auto permission:{content::CapturePermission::Unresolved,content::CapturePermission::Denied}) {
+  const auto blocked=content::DecodeCapture(Ranger,RangerPower,"AmericaInfantryRanger",permission);
+  BOOST_CHECK(!blocked.definition);BOOST_TEST(!blocked.enabled);
+ }
+}
+BOOST_AUTO_TEST_CASE(bound_player_upgrade_activates_ranger_while_unsupported_bindings_fail_closed)
+{
+ const std::array playerUpgrade{content::UpgradeIdentity{"Upgrade_InfantryCaptureBuilding",7001,content::UpgradeScope::Player}};
+ const auto bound=content::DecodeCapture(Ranger,RangerPower,"AmericaInfantryRanger",content::CapturePermission::Allowed,playerUpgrade);
+ BOOST_REQUIRE(bound.definition);BOOST_CHECK(!bound.enabled);BOOST_REQUIRE(bound.definition->activationUpgrade);
+ BOOST_CHECK(bound.definition->activationUpgrade->definition==7001u);
+ const std::array objectUpgrade{content::UpgradeIdentity{"Upgrade_InfantryCaptureBuilding",7001,content::UpgradeScope::Object}};
+ const auto object=content::DecodeCapture(Ranger,RangerPower,"AmericaInfantryRanger",content::CapturePermission::Allowed,objectUpgrade);
+ BOOST_REQUIRE(object.definition);BOOST_CHECK(!object.definition->activationUpgrade);BOOST_TEST(Omitted(object,"Object-scoped"));
+ auto multiple=std::string(Ranger);
+ multiple.insert(multiple.rfind("End"),"Behavior = UnpauseSpecialPowerUpgrade ModuleTag_21\n SpecialPowerTemplate = SpecialAbilityRangerCaptureBuilding\n TriggeredBy = Upgrade_InfantryCaptureBuilding\nEnd\n");
+ const auto conflict=content::DecodeCapture(multiple,RangerPower,"AmericaInfantryRanger",content::CapturePermission::Allowed,playerUpgrade);
+ BOOST_REQUIRE(conflict.definition);BOOST_CHECK(!conflict.definition->activationUpgrade);BOOST_TEST(Omitted(conflict,"Multiple UnpauseSpecialPowerUpgrade"));
+}
+BOOST_AUTO_TEST_CASE(template_enum_and_exact_pairing_not_name_spelling_select_capture)
+{
+ const auto decoded=content::DecodeCapture(Actor(),Power(),"Fixture",content::CapturePermission::Allowed);
+ BOOST_REQUIRE(decoded.definition);BOOST_TEST(decoded.enabled);BOOST_TEST(decoded.specialPower=="CustomCapture");
+ BOOST_TEST(decoded.definition->unpack.count()==0);BOOST_TEST(decoded.definition->preparation.count()==0);BOOST_TEST(decoded.definition->recovery.count()==0);
+ for(auto type:{"SPECIAL_BLACKLOTUS_CAPTURE_BUILDING","SPECIAL_OTHER",""})
+  BOOST_CHECK(!content::DecodeCapture(Actor(),Power("ReloadTime = 0",type),"Fixture",content::CapturePermission::Allowed).definition);
+ BOOST_CHECK(!content::DecodeCapture(Actor(),"","Fixture",content::CapturePermission::Allowed).definition);
+ BOOST_CHECK(!content::DecodeCapture(Actor("","","OtherTemplate"),Power(),"Fixture",content::CapturePermission::Allowed).definition);
+ const auto counterfeit=content::DecodeCapture(Ranger,"SpecialPower SpecialAbilityRangerCaptureBuilding\nEnum = SPECIAL_BLACKLOTUS_CAPTURE_BUILDING\nEnd\n",
+  "AmericaInfantryRanger",content::CapturePermission::Allowed);BOOST_CHECK(!counterfeit.definition);
+ auto duplicate=Actor();duplicate.insert(duplicate.rfind("End"),"Behavior = SpecialAbilityUpdate Duplicate\nSpecialPowerTemplate = CustomCapture\nEnd\n");
+ BOOST_CHECK(!content::DecodeCapture(duplicate,Power(),"Fixture",content::CapturePermission::Allowed).definition);
+ auto mismatch=Actor();mismatch.insert(mismatch.rfind("End"),"Behavior = UnpauseSpecialPowerUpgrade Upgrade\nSpecialPowerTemplate = Missing\nTriggeredBy = Upgrade_Test\nEnd\n");
+ BOOST_CHECK(!content::DecodeCapture(mismatch,Power(),"Fixture",content::CapturePermission::Allowed).definition);
+}
+BOOST_AUTO_TEST_CASE(recharge_is_decoded_but_unsupported_behavior_still_fails_closed)
+{
+ const auto unpaused=content::DecodeCapture(Actor(),Power("ReloadTime = 15000"),"Fixture",content::CapturePermission::Allowed);
+ BOOST_REQUIRE(unpaused.definition);BOOST_TEST(unpaused.enabled);
+ BOOST_TEST(unpaused.definition->recharge.count()==15000000000ll);
+ const auto ready=content::DecodeCapture(Actor("","StartsReady = Yes"),Power("ReloadTime = 15000"),"Fixture",content::CapturePermission::Allowed);
+ BOOST_REQUIRE(ready.definition);BOOST_TEST(ready.definition->startsReady);
+ const auto paused=content::DecodeCapture(Actor("","StartsPaused = Yes"),Power("ReloadTime = 15000"),"Fixture",content::CapturePermission::Allowed);
+ BOOST_REQUIRE(paused.definition);BOOST_TEST(!paused.enabled);
+ for(auto field:{"PersistentPrepTime = 1","SpecialObject = Bomb","PackUnpackVariationFactor = 0.1","UnknownField = Yes"})
+  BOOST_CHECK(!content::DecodeCapture(Actor(field),Power(),"Fixture",content::CapturePermission::Allowed).definition);
+ BOOST_CHECK(!content::DecodeCapture(Actor("","ScriptedSpecialPowerOnly = Yes"),Power(),"Fixture",content::CapturePermission::Allowed).definition);
+ BOOST_CHECK(!content::DecodeCapture(Actor(),Power("RequiredScience = SCIENCE_Test"),"Fixture",content::CapturePermission::Allowed).definition);
+ for(auto field:{"UnpackTime = -1","PreparationTime = 1.5","PackTime = ","DoCaptureFX = Maybe"})
+  BOOST_CHECK_THROW(content::DecodeCapture(Actor(field),Power(),"Fixture",content::CapturePermission::Allowed),std::invalid_argument);
+ BOOST_CHECK_THROW(content::DecodeCapture(Actor("PackTime = 4294967296"),Power(),"Fixture",content::CapturePermission::Allowed),std::out_of_range);
+ BOOST_CHECK_THROW(content::DecodeCapture(Actor(),Power("ReloadTime = -1"),"Fixture",content::CapturePermission::Allowed),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(decoded_capabilities_spawn_then_execute_real_capture_and_recovery_across_workers)
+{
+ const auto run=[](std::size_t workers){
+  namespace n=engine::gameplay::navigation;
+  namespace construction=generalszh::construction;
+  // Explicit authored alternate: starts ready, then preparation-driven recharge.
+  // The extracted paused Ranger is also produced unchanged, not unlocked here.
+  const auto active=content::DecodeCapture(Actor("UnpackTime = 100\nPreparationTime = 100\nPackTime = 200","StartsReady = Yes"),Power("ReloadTime = 500"),"Fixture",content::CapturePermission::Allowed);
+  const auto paused=content::DecodeCapture(Ranger,RangerPower,"AmericaInfantryRanger",content::CapturePermission::Allowed);
+  BOOST_REQUIRE(active.definition);BOOST_REQUIRE(paused.definition);
+  const std::array captures{*active.definition,*paused.definition};
+  std::array units{prod::BuildDefinition{1,1,0ms},prod::BuildDefinition{2,1,0ms},prod::BuildDefinition{3,1,0ms}};
+  units[0].builder=true;units[1].capture=cap::CaptureCapability{0,active.enabled};units[2].capture=cap::CaptureCapability{1,paused.enabled};
+  std::array buildings{construction::BuildingDefinition{10,100,0ms,10000,9,5}};
+  // Target permission is an explicit fixture decision, never actor decoding.
+  buildings[0].capturable=true;
+  const std::array<std::uint8_t,2> terrain{1,1};n::NavigationGrid grid(2,1,terrain);
+  ecs::World world;generalszh::GameSession::RegisterComponents(world);world.FinalizeComponents();engine::jobs::JobSystem jobs({workers});
+  generalszh::GameSession game(world,jobs,units,grid,256,{},{},buildings,{},{},{},captures);
+  const engine::time::FixedStep step{10};game.Finalize(step);
+  const auto red=game.CreateAccount(1000),blue=game.CreateAccount(1000);
+  const auto barracks=game.CreateProducer(red),pausedBarracks=game.CreateProducer(red),yard=game.CreateProducer(blue);
+  const std::array builds{generalszh::BuildInput{yard,1},generalszh::BuildInput{barracks,2},generalszh::BuildInput{pausedBarracks,3}};
+  generalszh::GameInputs inputs;inputs.builds=builds;game.Execute({0,step},inputs);
+  ecs::Entity actor,builder,dormant;ecs::Query<ecs::Read<prod::ProducedUnit>> produced(world);
+  produced.ForEachChunk([&](auto chunk){const auto values=chunk.template Get<prod::ProducedUnit>();
+   for(std::size_t i=0;i<chunk.Count();++i) {
+    if(values[i].definition==1) builder=chunk.Entities()[i];else if(values[i].definition==2) actor=chunk.Entities()[i];else if(values[i].definition==3) dormant=chunk.Entities()[i];
+   }});
+  BOOST_REQUIRE(world.Has<cap::CaptureCapability>(actor));BOOST_REQUIRE(world.Has<cap::CaptureCapability>(dormant));
+  BOOST_REQUIRE(world.Has<cap::CaptureRecharge>(actor));BOOST_REQUIRE(world.Has<cap::CaptureRecharge>(dormant));
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(actor)->initialized);
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(actor)->readyAt==0u);
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(dormant)->initialized);
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(dormant)->readyAt==150u);
+  BOOST_TEST(world.Get<cap::CaptureCapability>(actor)->enabled);BOOST_TEST(!world.Get<cap::CaptureCapability>(dormant)->enabled);
+  BOOST_TEST(world.Get<cap::CaptureCapability>(dormant)->definition==1u);
+  const std::array placement{construction::ConstructionInput{builder,10,0}};inputs={};inputs.construction=placement;game.Execute({1,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.ConstructionResults().size(),1u);const auto target=game.ConstructionResults()[0].site;
+  BOOST_REQUIRE(world.Has<cap::CaptureState>(target));
+  const std::array denied{cap::CaptureInput{cap::CaptureAction::Start,red,dormant,target}};
+  inputs={};inputs.capture=denied;game.Execute({2,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.CaptureResults().size(),1u);BOOST_CHECK(game.CaptureResults()[0].outcome!=cap::CaptureOutcome::Started);
+  BOOST_CHECK(world.Get<construction::Structure>(target)->account==blue);
+  const std::array start{cap::CaptureInput{cap::CaptureAction::Start,red,actor,target}};
+  inputs={};inputs.capture=start;game.Execute({3,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.CaptureResults().size(),1u);BOOST_CHECK(game.CaptureResults()[0].outcome==cap::CaptureOutcome::Started);
+  BOOST_TEST(world.Get<cap::CaptureState>(target)->completionTick==5u);
+  game.Execute({4,step});BOOST_CHECK(world.Get<construction::Structure>(target)->account==blue);
+  game.Execute({5,step});BOOST_REQUIRE_EQUAL(game.CaptureResults().size(),1u);
+  const auto result=game.CaptureResults()[0];BOOST_CHECK(result.outcome==cap::CaptureOutcome::Captured);
+  BOOST_CHECK(world.Get<construction::Structure>(target)->account==red);BOOST_CHECK(world.Get<prod::Producer>(target)->account==red);
+  BOOST_CHECK(world.Get<cap::CaptureActorState>(actor)->phase==cap::CaptureActorPhase::Recovering);
+  BOOST_TEST(world.Get<cap::CaptureActorState>(actor)->recoveryUntil==7u);
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(actor)->readyAt==9u);
+  game.Execute({6,step});BOOST_CHECK(cap::IsCaptureBusy(*world.Get<cap::CaptureActorState>(actor)));
+  game.Execute({7,step});BOOST_CHECK(!cap::IsCaptureBusy(*world.Get<cap::CaptureActorState>(actor)));
+  inputs={};inputs.capture=start;game.Execute({8,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.CaptureResults().size(),1u);
+  BOOST_CHECK(game.CaptureResults()[0].outcome==cap::CaptureOutcome::Ineligible);
+  const std::array delayedBuild{generalszh::BuildInput{pausedBarracks,3}};
+  inputs={};inputs.builds=delayedBuild;game.Execute({9,step},inputs);
+  ecs::Entity lateDormant;
+  produced.ForEachChunk([&](auto chunk){const auto values=chunk.template Get<prod::ProducedUnit>();
+   for(std::size_t i=0;i<chunk.Count();++i) if(values[i].definition==3 && chunk.Entities()[i]!=dormant) lateDormant=chunk.Entities()[i];
+  });
+  BOOST_REQUIRE(lateDormant.IsValid());
+  BOOST_REQUIRE(world.Has<cap::CaptureCapability>(lateDormant));
+  BOOST_REQUIRE(world.Has<cap::CaptureRecharge>(lateDormant));
+  BOOST_TEST(!world.Get<cap::CaptureCapability>(lateDormant)->enabled);
+  BOOST_TEST(world.Get<cap::CaptureCapability>(lateDormant)->definition==1u);
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(lateDormant)->initialized);
+  // The zero-duration order was born at tick 9; reload is 150 ticks, not
+  // measured from startup tick zero.
+  BOOST_TEST(world.Get<cap::CaptureRecharge>(lateDormant)->readyAt==159u);
+  return std::vector<std::uint64_t>{actor.index,actor.generation,dormant.index,dormant.generation,
+   lateDormant.index,lateDormant.generation,world.Get<cap::CaptureRecharge>(lateDormant)->readyAt,target.index,target.generation,
+   result.actor.index,result.target.index,result.account.index,result.tick,static_cast<std::uint64_t>(result.outcome),
+   world.Get<construction::Structure>(target)->account.index,world.Get<cap::CaptureActorState>(actor)->recoveryUntil,
+   world.Get<cap::CaptureRecharge>(actor)->readyAt};
+ };
+ const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}

@@ -1,0 +1,22 @@
+#define BOOST_TEST_MODULE GeneralsZHDefeat
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.match.systems.defeat_system;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh;
+BOOST_AUTO_TEST_CASE(defeat_frame_checks_generation_and_only_kills_defeated_army)
+{
+    using namespace engine::gameplay::combat;
+    match::DefeatFrame frame(32); frame.Set({10,2},true);
+    BOOST_TEST(!frame.IsDefeated({10,1})); BOOST_TEST(frame.IsDefeated({10,2}));
+    ecs::World world; world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>();
+    world.RegisterComponent<production::ProducedUnit>(); world.RegisterComponent<production::Producer>();
+    world.RegisterComponent<construction::Structure>(); world.FinalizeComponents();
+    const auto dead = world.Create<Health,LifeState,production::ProducedUnit>(), live = world.Create<Health,LifeState,production::ProducedUnit>();
+    world.Get<Health>(dead)->current = world.Get<Health>(live)->current = 100;
+    world.Get<production::ProducedUnit>(dead)->account = {10,2}; world.Get<production::ProducedUnit>(live)->account = {10,1};
+    match::DefeatSystem system(frame); ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step); scheduler.Execute({0,step});
+    BOOST_TEST(!world.Get<LifeState>(dead)->alive); BOOST_TEST(world.Get<Health>(dead)->current == 0u);
+    BOOST_TEST(world.Get<LifeState>(live)->alive); BOOST_TEST(world.Get<Health>(live)->current == 100u);
+    frame.Clear(); BOOST_TEST(!frame.IsDefeated({10,2}));
+}

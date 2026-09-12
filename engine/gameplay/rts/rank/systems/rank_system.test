@@ -1,0 +1,176 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <tuple>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.rank.algorithms.rank_initialization;
+import engine.gameplay.rts.rank.systems.rank_system;
+
+using namespace engine::gameplay::rts::rank;
+using namespace engine::gameplay::rts::unlocks;
+
+namespace
+{
+struct CatalogFixture final
+{
+	UnlockCatalog unlocks;
+	RankCatalog *ranks{};
+	std::unique_ptr<RankCatalog> ownedRanks;
+	UnlockId rankOne{}, rankTwo{}, rankThree{}, purchasable{};
+
+	CatalogFixture()
+	{
+		unlocks.Register(UnlockDefinition{"SCIENCE_Rank1", 1, 0, false});
+		unlocks.Register(UnlockDefinition{"SCIENCE_Rank2", 1, 0, false});
+		unlocks.Register(UnlockDefinition{"SCIENCE_Rank3", 1, 0, false});
+		unlocks.Register(UnlockDefinition{"PURCHASABLE", 1, 2, true});
+		unlocks.Finalize();
+		rankOne = unlocks.Find(MakeUnlockKey("SCIENCE_Rank1"));
+		rankTwo = unlocks.Find(MakeUnlockKey("SCIENCE_Rank2"));
+		rankThree = unlocks.Find(MakeUnlockKey("SCIENCE_Rank3"));
+		purchasable = unlocks.Find(MakeUnlockKey("PURCHASABLE"));
+		const std::array definitions{
+			RankDefinition{0, 1, {rankOne}},
+			RankDefinition{800, 1, {rankTwo}},
+			RankDefinition{1500, 1, {rankThree}}};
+		ownedRanks = std::make_unique<RankCatalog>(definitions, RankLevelLimit{3}, unlocks);
+		ranks = ownedRanks.get();
+	}
+};
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<RankState>();
+	world.RegisterComponent<RankInbox>();
+	world.RegisterComponent<UnlockState>();
+	world.FinalizeComponents();
+}
+
+ecs::Entity CreateAccount(ecs::World &world, const CatalogFixture &fixture)
+{
+	const auto account = world.Create<RankState, RankInbox, UnlockState>();
+	InitializeRankAccount(*world.Get<RankState>(account), *world.Get<UnlockState>(account),
+		*fixture.ranks);
+	return account;
+}
+}
+
+BOOST_AUTO_TEST_CASE(rank_system_applies_crossed_rewards_and_caps_at_limit)
+{
+	CatalogFixture fixture;
+	ecs::World world;
+	RegisterComponents(world);
+	const auto account = CreateAccount(world, fixture);
+	RankBatch batch{8};
+	RankSystem system{*fixture.ranks, batch};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{2}};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	const std::array inputs{
+		AcceptedRankPoints{account, 800},
+		AcceptedRankPoints{account, 700},
+		AcceptedRankPoints{account, 1}};
+	batch.SetInputs(inputs);
+	scheduler.Execute({1, step});
+
+	const auto results = batch.Results();
+	BOOST_REQUIRE_EQUAL(results.size(), inputs.size());
+	BOOST_CHECK(results[0].outcome == RankOutcome::Applied);
+	BOOST_TEST(results[0].newLevel == 2u);
+	BOOST_CHECK(results[1].outcome == RankOutcome::Applied);
+	BOOST_TEST(results[1].newLevel == 3u);
+	BOOST_CHECK(results[2].outcome == RankOutcome::Clamped);
+	BOOST_TEST(results[2].applied == 0u);
+	const auto &state = *world.Get<RankState>(account);
+	const auto &unlocks = *world.Get<UnlockState>(account);
+	BOOST_TEST(state.level == 3u);
+	BOOST_TEST(state.skillPoints == 1500u);
+	BOOST_TEST(unlocks.credits == 3u);
+	BOOST_CHECK(unlocks.IsOwned(fixture.rankOne));
+	BOOST_CHECK(unlocks.IsOwned(fixture.rankTwo));
+	BOOST_CHECK(unlocks.IsOwned(fixture.rankThree));
+
+	batch.SetInputs({});
+	scheduler.Execute({2, step});
+	BOOST_CHECK(batch.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(rank_system_reports_stale_and_missing_capability_accounts)
+{
+	CatalogFixture fixture;
+	ecs::World world;
+	RegisterComponents(world);
+	const auto stale = CreateAccount(world, fixture);
+	const auto missingUnlockState = world.Create<RankState, RankInbox>();
+	world.Destroy(stale);
+	RankBatch batch{2};
+	RankSystem system{*fixture.ranks, batch};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	const std::array inputs{AcceptedRankPoints{stale, 1}, AcceptedRankPoints{missingUnlockState, 1}};
+	batch.SetInputs(inputs);
+	scheduler.Execute({1, step});
+	BOOST_REQUIRE_EQUAL(batch.Results().size(), inputs.size());
+	BOOST_CHECK(batch.Results()[0].outcome == RankOutcome::InvalidTarget);
+	BOOST_CHECK(batch.Results()[1].outcome == RankOutcome::InvalidTarget);
+}
+
+std::vector<std::array<std::uint64_t, 10>> RunParallel(const std::size_t workers)
+{
+	CatalogFixture fixture;
+	ecs::World world{ecs::WorldConfig{256}};
+	RegisterComponents(world);
+	std::vector<ecs::Entity> accounts;
+	std::vector<AcceptedRankPoints> inputs;
+	for (std::uint32_t index = 0; index != 512; ++index)
+	{
+		const auto account = CreateAccount(world, fixture);
+		accounts.push_back(account);
+		inputs.push_back({account, 800});
+		inputs.push_back({account, 700});
+	}
+	RankBatch batch{inputs.size()};
+	RankSystem system{*fixture.ranks, batch};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, registry, engine::jobs::JobSystemConfig{workers}};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	batch.SetInputs(inputs);
+	scheduler.Execute({7, step});
+
+	std::vector<std::array<std::uint64_t, 10>> snapshot;
+	for (const auto &result : batch.Results())
+		snapshot.push_back({result.requestIndex, result.account.index, result.account.generation,
+			result.requested, result.applied, result.skillPointsAfter, result.oldLevel,
+			result.newLevel, result.creditsAfter, static_cast<std::uint64_t>(result.outcome)});
+	for (const auto account : accounts)
+	{
+		const auto &state = *world.Get<RankState>(account);
+		const auto &unlocks = *world.Get<UnlockState>(account);
+		snapshot.push_back({account.index, account.generation, state.skillPoints, state.level,
+			unlocks.credits, unlocks.IsOwned(fixture.rankOne), unlocks.IsOwned(fixture.rankTwo),
+			unlocks.IsOwned(fixture.rankThree), 0, 0});
+	}
+	return snapshot;
+}
+
+BOOST_AUTO_TEST_CASE(rank_system_is_identical_at_one_two_and_four_workers)
+{
+	const auto expected = RunParallel(1);
+	BOOST_CHECK(RunParallel(2) == expected);
+	BOOST_CHECK(RunParallel(4) == expected);
+}

@@ -1,0 +1,15 @@
+#define BOOST_TEST_MODULE EngineGameplayProgression
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.progression.components.progression_state;
+using namespace engine::gameplay::progression;
+BOOST_AUTO_TEST_CASE(progression_state_and_schema_defaults)
+{
+ BOOST_TEST(ProgressionState{}.experience==0u);
+ BOOST_TEST(ProgressionState{}.level==0u);
+ BOOST_TEST(!ProgressionEligibility{}.trainable);
+ ecs::ComponentRegistry registry;
+ registry.Register<ProgressionState>(); registry.Register<ProgressionDefinitionRef>();
+ registry.Register<ProgressionEligibility>(); registry.Register<ProgressionInbox>(); registry.Finalize();
+ BOOST_CHECK(registry.Get(registry.TryGet<ProgressionState>()).persistence==ecs::PersistencePolicy::Serializable);
+ BOOST_CHECK(registry.Get(registry.TryGet<ProgressionInbox>()).persistence==ecs::PersistencePolicy::Transient);
+}

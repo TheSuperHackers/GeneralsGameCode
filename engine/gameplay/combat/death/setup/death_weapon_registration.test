@@ -1,0 +1,60 @@
+#define BOOST_TEST_MODULE EngineDeathWeaponRegistration
+#include <boost/test/included/unit_test.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+import engine.ecs.query.query;
+import engine.ecs.core.world;
+import engine.gameplay.combat.death.components.death_weapon_state;
+import engine.gameplay.combat.death.setup.death_weapon_registration;
+
+BOOST_AUTO_TEST_CASE(death_weapon_registration_freezes_stable_components_and_supports_query)
+{
+    using namespace engine::gameplay::combat::death;
+    ecs::World world;
+    RegisterDeathWeaponComponents(world);
+    BOOST_CHECK(!world.Components().IsFrozen());
+
+    world.FinalizeComponents();
+    const auto bindingId=world.Components().TryGet<DeathWeaponBinding>();
+    const auto stateId=world.Components().TryGet<DeathWeaponState>();
+    BOOST_REQUIRE(bindingId!=ecs::InvalidComponentId);
+    BOOST_REQUIRE(stateId!=ecs::InvalidComponentId);
+    const auto schema=world.Components().SchemaHash();
+    BOOST_CHECK(schema!=ecs::UnfinalizedSchemaHash);
+
+    const auto &bindingInfo=world.Components().Get(bindingId);
+    const auto &stateInfo=world.Components().Get(stateId);
+    BOOST_TEST(bindingInfo.stableName==std::string_view{"engine.gameplay.combat.death_weapon_binding"});
+    BOOST_TEST(stateInfo.stableName==std::string_view{"engine.gameplay.combat.death_weapon_state"});
+    BOOST_TEST(bindingInfo.version==1u);
+    BOOST_TEST(stateInfo.version==1u);
+    BOOST_CHECK(bindingInfo.persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(stateInfo.persistence==ecs::PersistencePolicy::Serializable);
+
+    world.FinalizeComponents();
+    BOOST_TEST(world.Components().TryGet<DeathWeaponBinding>()==bindingId);
+    BOOST_TEST(world.Components().TryGet<DeathWeaponState>()==stateId);
+    BOOST_TEST(world.Components().SchemaHash()==schema);
+
+    const auto entity=world.Create<DeathWeaponBinding,DeathWeaponState>();
+    world.Get<DeathWeaponBinding>(entity)->definition=17;
+    world.Get<DeathWeaponState>(entity)->deathTick=4;
+    world.Get<DeathWeaponState>(entity)->armed=true;
+
+    ecs::Query<ecs::Read<DeathWeaponBinding>,ecs::Read<DeathWeaponState>> query(world);
+    std::size_t count=0;
+    query.ForEachChunk([&](auto chunk)
+    {
+        const auto bindings=chunk.template Get<DeathWeaponBinding>();
+        const auto states=chunk.template Get<DeathWeaponState>();
+        for(std::size_t row=0;row!=chunk.Count();++row)
+        {
+            ++count;
+            BOOST_TEST(bindings[row].definition==17u);
+            BOOST_TEST(states[row].deathTick==4u);
+            BOOST_CHECK(states[row].armed);
+        }
+    });
+    BOOST_TEST(count==1u);
+}

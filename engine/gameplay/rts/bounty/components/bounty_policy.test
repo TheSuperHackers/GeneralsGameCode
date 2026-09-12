@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE EngineRtsBountyPolicy
+#include <boost/test/included/unit_test.hpp>
+
+#include <type_traits>
+
+import engine.gameplay.rts.bounty.components.bounty_policy;
+
+BOOST_AUTO_TEST_CASE(bounty_rate_and_policy_are_value_state)
+{
+	using namespace engine::gameplay::rts::bounty;
+	static_assert(std::is_trivially_copyable_v<BountyRate>);
+	static_assert(std::is_trivially_copyable_v<BountyPolicy>);
+	BOOST_CHECK(IsValidBountyRate(BountyRate{1, 20}));
+	BOOST_CHECK(IsValidBountyRate(BountyRate{}));
+	BOOST_CHECK(!IsValidBountyRate(BountyRate{2, 1}));
+}

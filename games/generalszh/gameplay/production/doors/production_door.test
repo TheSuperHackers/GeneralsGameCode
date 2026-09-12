@@ -1,0 +1,15 @@
+#define BOOST_TEST_MODULE ProductionDoorCompatibilityFacade
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+import games.generalszh.gameplay.production.doors.production_door;
+BOOST_AUTO_TEST_CASE(facade_reexports_legacy_api)
+{
+    using namespace generalszh::production;
+    using namespace std::chrono_literals;
+    DoorOpening opening; DoorWaiting waiting; DoorClosing closing; DoorHold hold;
+    DoorView view{opening,waiting,closing,hold};
+    const auto timing=AuthorDoorTiming(1s,1s,1s,engine::time::FixedStep{30});
+    BOOST_TEST(timing.opening==30u);
+    BOOST_TEST(RequestDoorForExit(view,1).set==DoorOpeningFlag);
+    BOOST_TEST(AdvanceDoor(view,32u,timing).set==DoorWaitingFlag);
+}

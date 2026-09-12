@@ -1,0 +1,333 @@
+#define BOOST_TEST_MODULE GeneralsZHPendingConditionAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "pending_condition_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.presentation.model.pending_conditions;
+import games.generalszh.simulation.gameplay_state;
+
+using generalszh::GameplayState;
+using generalszh::legacy::PendingConditionLease;
+using generalszh::legacy::PendingConditionSnapshot;
+using generalszh::legacy::PendingConditionStore;
+using generalszh::presentation::ConditionCount;
+using generalszh::presentation::ModelCondition;
+using generalszh::presentation::PendingConditionClear;
+using generalszh::presentation::PendingConditionDirty;
+using generalszh::presentation::PendingConditionSet;
+
+namespace pending_condition_adapter_test
+{
+ecs::Entity OnlyEntity(GameplayState &state)
+{
+	ecs::Entity entity{};
+	std::size_t count = 0;
+	ecs::Query<ecs::Read<PendingConditionClear>> query(state.World());
+	query.ForEachChunk([&](const auto chunk) {
+		for (const auto id : chunk.Entities())
+		{
+			entity = id;
+			++count;
+		}
+	});
+	BOOST_REQUIRE_EQUAL(count, 1u);
+	return entity;
+}
+
+bool Same(const PendingConditionSnapshot &left, const PendingConditionSnapshot &right)
+{
+	return left.clear == right.clear && left.set == right.set && left.dirty == right.dirty;
+}
+
+struct ScheduledBypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<PendingConditionClear>>;
+	PendingConditionLease &lease;
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+	}
+};
+}
+
+namespace ecs
+{
+template<>
+struct SystemTraits<pending_condition_adapter_test::ScheduledBypassAttempt>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.pending_condition.adapter.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(snapshot_and_adapter_types_are_cold_nonowning_value_contracts)
+{
+	static_assert(std::is_standard_layout_v<PendingConditionSnapshot>);
+	static_assert(std::is_trivially_copyable_v<PendingConditionSnapshot>);
+	static_assert(std::is_nothrow_default_constructible_v<PendingConditionSnapshot>);
+	static_assert(std::is_nothrow_copy_constructible_v<PendingConditionSnapshot>);
+	static_assert(std::is_nothrow_copy_assignable_v<PendingConditionSnapshot>);
+	static_assert(std::is_nothrow_destructible_v<PendingConditionSnapshot>);
+	static_assert(!std::is_copy_constructible_v<PendingConditionStore>);
+	static_assert(!std::is_move_constructible_v<PendingConditionStore>);
+	static_assert(!std::is_copy_constructible_v<PendingConditionLease>);
+	static_assert(!std::is_move_constructible_v<PendingConditionLease>);
+
+	BOOST_TEST(sizeof(PendingConditionSnapshot) >= sizeof(std::uint64_t) * 4u);
+	BOOST_TEST(ConditionCount == 118u);
+}
+
+BOOST_AUTO_TEST_CASE(shared_gameplay_schema_is_finalized_and_component_ids_are_stable)
+{
+	GameplayState first;
+	GameplayState second;
+
+	BOOST_TEST(first.World().ComponentsFinalized());
+	BOOST_TEST(first.World().Components().SchemaHash() == second.World().Components().SchemaHash());
+	const auto clearId = first.World().Components().TryGet<PendingConditionClear>();
+	const auto setId = first.World().Components().TryGet<PendingConditionSet>();
+	const auto dirtyId = first.World().Components().TryGet<PendingConditionDirty>();
+	BOOST_TEST(clearId != ecs::InvalidComponentId);
+	BOOST_TEST(setId != ecs::InvalidComponentId);
+	BOOST_TEST(dirtyId != ecs::InvalidComponentId);
+	BOOST_TEST(clearId != setId);
+	BOOST_TEST(clearId != dirtyId);
+	BOOST_TEST(setId != dirtyId);
+	BOOST_TEST(second.World().Components().TryGet<PendingConditionClear>() == clearId);
+	BOOST_TEST(second.World().Components().TryGet<PendingConditionSet>() == setId);
+	BOOST_TEST(second.World().Components().TryGet<PendingConditionDirty>() == dirtyId);
+}
+
+BOOST_AUTO_TEST_CASE(default_stores_are_isolated_and_release_their_entities)
+{
+	PendingConditionStore first;
+	PendingConditionStore second;
+	BOOST_TEST(first.Count() == 0u);
+	BOOST_TEST(second.Count() == 0u);
+
+	{
+		PendingConditionLease firstLease(first);
+		PendingConditionLease secondLease(second);
+		firstLease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+		secondLease.QueueSet(static_cast<std::uint16_t>(ModelCondition::PACKING));
+		BOOST_TEST(first.Count() == 1u);
+		BOOST_TEST(second.Count() == 1u);
+		const auto firstSnapshot = firstLease.Read();
+		const auto secondSnapshot = secondLease.Read();
+		BOOST_CHECK(firstSnapshot.set != secondSnapshot.set);
+	}
+
+	BOOST_TEST(first.Count() == 0u);
+	BOOST_TEST(second.Count() == 0u);
+	BOOST_CHECK_NO_THROW(first.Reset());
+	BOOST_CHECK_NO_THROW(second.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(shared_world_reset_is_local_and_live_lease_blocks_gameplay_reset)
+{
+	GameplayState state;
+	PendingConditionStore first(state);
+	PendingConditionStore second(state);
+	{
+		PendingConditionLease lease(first);
+		lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_CHECK_NO_THROW(second.Reset());
+		BOOST_CHECK_THROW(first.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_TEST(lease.Read().set[0] == (std::uint64_t{1} << 63));
+	}
+
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_NO_THROW(first.Reset());
+	BOOST_CHECK_NO_THROW(second.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(released_handles_do_not_resurrect_after_generation_reuse)
+{
+	GameplayState state;
+	PendingConditionStore store(state);
+	ecs::Entity old{};
+	{
+		PendingConditionLease lease(store);
+		old = pending_condition_adapter_test::OnlyEntity(state);
+		lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+	}
+
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(!state.World().IsAlive(old));
+	{
+		PendingConditionLease next(store);
+		const auto current = pending_condition_adapter_test::OnlyEntity(state);
+		BOOST_TEST(current.index == old.index);
+		BOOST_TEST(current.generation != old.generation);
+		BOOST_TEST(!state.World().IsAlive(old));
+		BOOST_TEST(state.World().IsAlive(current));
+		next.QueueSet(static_cast<std::uint16_t>(ModelCondition::PACKING));
+		BOOST_TEST(next.Read().set[1] == std::uint64_t{1});
+	}
+}
+
+BOOST_AUTO_TEST_CASE(lease_operations_edit_the_authoritative_three_ecs_components)
+{
+	GameplayState state;
+	PendingConditionStore store(state);
+	PendingConditionLease lease(store);
+	const auto entity = pending_condition_adapter_test::OnlyEntity(state);
+
+	state.World().Get<PendingConditionClear>(entity)->mask.Set(ModelCondition::OVER_WATER);
+	state.World().Get<PendingConditionSet>(entity)->mask.Set(ModelCondition::PACKING);
+	state.World().Get<PendingConditionDirty>(entity)->value = false;
+
+	const auto direct = lease.Read();
+	BOOST_TEST(direct.clear[0] == (std::uint64_t{1} << 63));
+	BOOST_TEST(direct.set[1] == std::uint64_t{1});
+	BOOST_TEST(!direct.dirty);
+
+	lease.MarkDirty();
+	BOOST_TEST(state.World().Get<PendingConditionDirty>(entity)->value);
+	lease.Clear();
+	const auto cleared = lease.Read();
+	const std::array<std::uint64_t, 2> empty{};
+	BOOST_CHECK(cleared.clear == empty);
+	BOOST_CHECK(cleared.set == empty);
+	BOOST_TEST(!cleared.dirty);
+}
+
+BOOST_AUTO_TEST_CASE(queue_operations_preserve_exact_multiword_clear_set_and_dirty_semantics)
+{
+	GameplayState state;
+	PendingConditionStore store(state);
+	PendingConditionLease lease(store);
+	const auto entity = pending_condition_adapter_test::OnlyEntity(state);
+
+	state.World().Get<PendingConditionClear>(entity)->mask.Set(ModelCondition::OVER_WATER);
+	lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+	lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::PACKING));
+	lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::WEAPONSET_VETERAN));
+	lease.QueueClear(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+	lease.QueueClear(static_cast<std::uint16_t>(ModelCondition::WEAPONSET_VETERAN));
+
+	const auto snapshot = lease.Read();
+	const std::array<std::uint64_t, 2> expectedClear{
+		std::uint64_t{1} << 63,
+		std::uint64_t{1} << 53};
+	const std::array<std::uint64_t, 2> expectedSet{
+		std::uint64_t{0},
+		std::uint64_t{1}};
+	BOOST_CHECK(snapshot.clear == expectedClear);
+	BOOST_CHECK(snapshot.set == expectedSet);
+	BOOST_TEST(snapshot.dirty);
+}
+
+BOOST_AUTO_TEST_CASE(restore_preserves_dirty_independently_and_rejects_unused_bits_without_mutation)
+{
+	GameplayState state;
+	PendingConditionStore store(state);
+	PendingConditionLease lease(store);
+	lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER));
+	lease.QueueClear(static_cast<std::uint16_t>(ModelCondition::PACKING));
+	const auto before = lease.Read();
+
+	PendingConditionSnapshot invalidClearOnly;
+	invalidClearOnly.clear.back() = std::uint64_t{1} << 54;
+	invalidClearOnly.dirty = false;
+	BOOST_CHECK_THROW(lease.Restore(invalidClearOnly), std::invalid_argument);
+	BOOST_CHECK(pending_condition_adapter_test::Same(lease.Read(), before));
+
+	PendingConditionSnapshot invalidSetOnly;
+	invalidSetOnly.set.back() = std::uint64_t{1} << 55;
+	invalidSetOnly.dirty = false;
+	BOOST_CHECK_THROW(lease.Restore(invalidSetOnly), std::invalid_argument);
+	BOOST_CHECK(pending_condition_adapter_test::Same(lease.Read(), before));
+
+	PendingConditionSnapshot restored;
+	restored.clear[0] = std::uint64_t{1} << 63;
+	restored.set[1] = std::uint64_t{1} | (std::uint64_t{1} << 53);
+	restored.dirty = false;
+	lease.Restore(restored);
+	BOOST_CHECK(pending_condition_adapter_test::Same(lease.Read(), restored));
+
+	restored.clear = {};
+	restored.set = {};
+	restored.dirty = true;
+	lease.Restore(restored);
+	BOOST_CHECK(pending_condition_adapter_test::Same(lease.Read(), restored));
+}
+
+BOOST_AUTO_TEST_CASE(missing_any_pending_component_is_preflighted_before_mutation)
+{
+	GameplayState state;
+	PendingConditionStore store(state);
+	PendingConditionLease lease(store);
+	const auto entity = pending_condition_adapter_test::OnlyEntity(state);
+	const PendingConditionSnapshot baseline{
+		{std::uint64_t{1} << 63}, {std::uint64_t{1}}, false};
+	lease.Restore(baseline);
+
+	BOOST_TEST(state.World().Remove<PendingConditionClear>(entity));
+	BOOST_CHECK_THROW(lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::OVER_WATER)), std::logic_error);
+	BOOST_TEST(state.World().Add<PendingConditionClear>(entity));
+	{
+		const auto after = lease.Read();
+		BOOST_CHECK(after.set == baseline.set);
+		BOOST_TEST(!after.dirty);
+	}
+
+	lease.Restore(baseline);
+	BOOST_TEST(state.World().Remove<PendingConditionSet>(entity));
+	BOOST_CHECK_THROW(lease.QueueClear(static_cast<std::uint16_t>(ModelCondition::OVER_WATER)), std::logic_error);
+	BOOST_TEST(state.World().Add<PendingConditionSet>(entity));
+	{
+		const auto after = lease.Read();
+		BOOST_CHECK(after.clear == baseline.clear);
+		BOOST_TEST(!after.dirty);
+	}
+
+	lease.Restore(baseline);
+	BOOST_TEST(state.World().Remove<PendingConditionDirty>(entity));
+	BOOST_CHECK_THROW(lease.MarkDirty(), std::logic_error);
+	BOOST_TEST(state.World().Add<PendingConditionDirty>(entity));
+	{
+		const auto after = lease.Read();
+		BOOST_CHECK(after.clear == baseline.clear);
+		BOOST_CHECK(after.set == baseline.set);
+		BOOST_TEST(!after.dirty);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_execution_cannot_bypass_typed_pending_component_access)
+{
+	GameplayState state;
+	PendingConditionStore store(state);
+	PendingConditionLease lease(store);
+	lease.QueueSet(static_cast<std::uint16_t>(ModelCondition::PACKING));
+	const auto before = lease.Read();
+
+	pending_condition_adapter_test::ScheduledBypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(engine::time::FixedStep{60});
+
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, engine::time::FixedStep{60}}),
+		std::logic_error);
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_CHECK(pending_condition_adapter_test::Same(lease.Read(), before));
+}

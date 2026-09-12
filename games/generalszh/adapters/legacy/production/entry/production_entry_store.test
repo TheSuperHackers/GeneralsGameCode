@@ -1,0 +1,599 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionEntryAdapter
+#include <boost/test/included/unit_test.hpp>
+#include "production_entry_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <memory>
+#include <bit>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.production.quantity.production_quantity;
+import engine.gameplay.rts.production.queue.production_queue;
+import games.generalszh.gameplay.production.progress.production_progress;
+import games.generalszh.gameplay.production.entry.production_entry_metadata;
+import games.generalszh.gameplay.production.entry.exit_reservation;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::legacy::ProductionEntryStore;
+using generalszh::legacy::ProductionEntryLease;
+using engine::gameplay::rts::production::ProductionQuantity;
+using generalszh::production::ProductionElapsed;
+using generalszh::production::ProductionProgress;
+using generalszh::production::ProductionEntryKind;
+using generalszh::production::ProductionCorrelation;
+using generalszh::production::ExitReservation;
+using generalszh::production::ProductionExitReservation;
+using generalszh::production::EntryKind;
+
+// Pointer identity only; the adapter does not inspect a legacy entry's layout.
+class ProductionEntry {};
+
+namespace production_quantity_adapter_test
+{
+struct BypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<ProductionQuantity>>;
+	ProductionEntryLease &lease;
+	void Execute(Query::Chunk, ecs::SystemContext &) const { lease.CompleteOne(); }
+};
+struct ProgressBypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<ProductionElapsed>>;
+	ProductionEntryLease &lease;
+	void Execute(Query::Chunk, ecs::SystemContext &) const { lease.RefreshProgress(7); }
+};
+struct MetadataBypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<ProductionEntryKind>>;
+	ProductionEntryLease &lease;
+	int operation{0};
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (operation)
+		{
+		case 0: (void)lease.Type(); break;
+		case 1: lease.SetType(1); break;
+		case 2: (void)lease.Correlation(); break;
+		case 3: lease.SetCorrelation(8); break;
+		}
+	}
+};
+
+struct ExitReservationBypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<ProductionExitReservation>>;
+	ProductionEntryLease &lease;
+	int operation{0};
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (operation)
+		{
+		case 0: (void)lease.ExitDoor(); break;
+		case 1: lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door1)); break;
+		case 2: lease.RestoreExitDoor(static_cast<std::int32_t>(ExitReservation::Door2)); break;
+		case 3: lease.CompleteOne(); break;
+		case 4: lease.RestoreExitDoor(-3); break;
+		}
+	}
+};
+}
+namespace ecs
+{
+template<> struct SystemTraits<production_quantity_adapter_test::MetadataBypassAttempt>
+{
+	static constexpr std::string_view StableName = "tests.production.metadata.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+template<> struct SystemTraits<production_quantity_adapter_test::ProgressBypassAttempt>
+{
+	static constexpr std::string_view StableName = "tests.production.progress.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+template<> struct SystemTraits<production_quantity_adapter_test::BypassAttempt>
+{
+	static constexpr std::string_view StableName = "tests.production.quantity.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+template<> struct SystemTraits<production_quantity_adapter_test::ExitReservationBypassAttempt>
+{
+	static constexpr std::string_view StableName = "tests.production.exit_reservation.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace
+{
+ecs::Entity OnlyEntity(GameplayState &state)
+{
+	ecs::Entity entity{};
+	std::size_t count = 0;
+	ecs::Query<ecs::Read<ProductionQuantity>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		for (const auto id : chunk.Entities()) { entity = id; ++count; }
+	});
+	BOOST_REQUIRE_EQUAL(count, 1u);
+	return entity;
+}
+}
+BOOST_AUTO_TEST_CASE(lease_and_typed_column_share_one_authoritative_value)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	{
+		ProductionEntryLease lease(store);
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 1u);
+		lease.Set(9, 2);
+		auto *column = state.World().Get<ProductionQuantity>(OnlyEntity(state));
+		BOOST_REQUIRE(column);
+		BOOST_TEST(column->total == 9);
+		BOOST_TEST(column->completed == 2);
+		column->completed = 4;
+		BOOST_TEST(lease.Completed() == 4);
+		BOOST_TEST(lease.Remaining() == 5);
+		lease.CompleteOne();
+		BOOST_TEST(column->completed == 5);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(new_entries_default_exit_reservation_to_none_available)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	auto *reservation = state.World().Get<ProductionExitReservation>(entity);
+	BOOST_REQUIRE(reservation);
+	BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+	BOOST_TEST(static_cast<std::int32_t>(reservation->value) ==
+		static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+}
+
+BOOST_AUTO_TEST_CASE(exit_reservation_lease_and_typed_column_are_bidirectionally_authoritative)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	auto *reservation = state.World().Get<ProductionExitReservation>(entity);
+	BOOST_REQUIRE(reservation);
+
+	for (const auto value : {-2, -1, 0, 1, 2, 3})
+	{
+		lease.SetExitDoor(value);
+		BOOST_TEST(lease.ExitDoor() == value);
+		BOOST_TEST(static_cast<std::int32_t>(reservation->value) == value);
+
+		const auto externallyWrittenValue = value == 3 ? -2 : value + 1;
+		reservation->value = static_cast<ExitReservation>(externallyWrittenValue);
+		BOOST_TEST(lease.ExitDoor() == externallyWrittenValue);
+		lease.RestoreExitDoor(value);
+		BOOST_TEST(static_cast<std::int32_t>(reservation->value) == value);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(completing_one_production_clears_each_exit_reservation_after_incrementing)
+{
+	ProductionEntryStore store;
+	ProductionEntryLease lease(store);
+
+	for (const auto value : {-2, -1, 0, 1, 2, 3})
+	{
+		lease.Set(9, 2);
+		lease.SetExitDoor(value);
+		lease.CompleteOne();
+		BOOST_TEST(lease.Completed() == 3);
+		BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+	}
+}
+
+BOOST_AUTO_TEST_CASE(released_entries_reuse_indices_without_resurrecting_old_handles)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ecs::Entity old;
+	{ ProductionEntryLease lease(store); lease.Set(4, 3); lease.RestoreProgress(7, 80.0f); lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door4)); old = OnlyEntity(state); }
+	BOOST_TEST(!state.World().IsAlive(old));
+	ProductionEntryLease next(store);
+	const auto current = OnlyEntity(state);
+	BOOST_TEST(current.index == old.index);
+	BOOST_TEST(current.generation != old.generation);
+	BOOST_TEST(next.Total() == 0);
+	BOOST_TEST(next.Completed() == 0);
+	BOOST_TEST(next.LegacyElapsedFrames() == 0);
+	BOOST_TEST(next.Percent() == 0.0f);
+	BOOST_TEST(next.ExitDoor() == static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+	BOOST_TEST(static_cast<std::int32_t>(state.World().Get<ProductionExitReservation>(current)->value) ==
+		static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+}
+BOOST_AUTO_TEST_CASE(reset_rejects_live_queue_entries_without_losing_state)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	const auto schema = state.World().Components().SchemaHash();
+	{
+		ProductionEntryLease lease(store);
+		lease.Set(-3, 2);
+		BOOST_CHECK_THROW(store.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, {}), std::logic_error);
+		BOOST_TEST(lease.Remaining() == -5);
+	}
+	store.Reset();
+	generalszh::PersistentWorldReset::Execute(state, {});
+	BOOST_TEST(state.World().Components().SchemaHash() == schema);
+	ProductionEntryLease next(store);
+	BOOST_TEST(next.Total() == 0);
+}
+BOOST_AUTO_TEST_CASE(missing_component_fails_clearly_and_can_be_restored_for_teardown)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	BOOST_TEST(state.World().Remove<ProductionQuantity>(entity));
+	BOOST_CHECK_THROW(lease.Total(), std::logic_error);
+	BOOST_CHECK_THROW(lease.Set(4), std::logic_error);
+	BOOST_CHECK_THROW(lease.CompleteOne(), std::logic_error);
+	BOOST_TEST(state.World().Add<ProductionQuantity>(entity));
+	lease.Set(4, 2);
+	BOOST_TEST(state.World().Remove<ProductionExitReservation>(entity));
+	BOOST_CHECK_THROW(lease.ExitDoor(), std::logic_error);
+	BOOST_CHECK_THROW(lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door1)), std::logic_error);
+	BOOST_CHECK_THROW(lease.RestoreExitDoor(static_cast<std::int32_t>(ExitReservation::Door1)), std::logic_error);
+	BOOST_CHECK_THROW(lease.CompleteOne(), std::logic_error);
+	BOOST_TEST(lease.Completed() == 2);
+	BOOST_TEST(state.World().Add<ProductionExitReservation>(entity));
+}
+
+BOOST_AUTO_TEST_CASE(invalid_exit_reservation_restore_is_nondestructive)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door3));
+	BOOST_CHECK_THROW(lease.RestoreExitDoor(-3), std::invalid_argument);
+	BOOST_CHECK_THROW(lease.RestoreExitDoor((std::numeric_limits<std::int32_t>::min)()), std::invalid_argument);
+	BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::Door3));
+	BOOST_TEST(static_cast<std::int32_t>(state.World().Get<ProductionExitReservation>(entity)->value) ==
+		static_cast<std::int32_t>(ExitReservation::Door3));
+}
+BOOST_AUTO_TEST_CASE(parking_slot_tokens_are_not_limited_to_animation_door_count)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	for (const std::int32_t token : {std::int32_t{4}, std::int32_t{17},
+		(std::numeric_limits<std::int32_t>::max)()})
+	{
+		lease.SetExitDoor(token);
+		BOOST_TEST(lease.ExitDoor() == token);
+		BOOST_TEST(static_cast<std::int32_t>(state.World().Get<ProductionExitReservation>(entity)->value) == token);
+		lease.SetExitDoor(-1);
+		lease.RestoreExitDoor(token);
+		BOOST_TEST(lease.ExitDoor() == token);
+		lease.CompleteOne();
+		BOOST_TEST(lease.ExitDoor() == -1);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(large_queue_churn_preserves_independent_values_and_cleans_up)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	std::vector<std::unique_ptr<ProductionEntryLease>> leases;
+	for (int i = 0; i != 8192; ++i)
+	{
+		auto lease = std::make_unique<ProductionEntryLease>(store);
+		lease->Set(i + 10, i);
+		lease->SetExitDoor(static_cast<std::int32_t>(i % 6) - 2);
+		leases.push_back(std::move(lease));
+	}
+	for (std::size_t i = 0; i < leases.size(); i += 2) leases[i].reset();
+	for (std::size_t i = 0; i < leases.size(); ++i)
+	{
+		if (!leases[i])
+		{
+			leases[i] = std::make_unique<ProductionEntryLease>(store);
+			leases[i]->Set(7, 1);
+			BOOST_TEST(leases[i]->ExitDoor() == static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+		}
+		else
+		{
+			BOOST_TEST(leases[i]->ExitDoor() == static_cast<std::int32_t>(i % 6) - 2);
+			leases[i]->CompleteOne();
+			BOOST_TEST(leases[i]->Remaining() == 9);
+			BOOST_TEST(leases[i]->ExitDoor() == static_cast<std::int32_t>(ExitReservation::NoneAvailable));
+		}
+	}
+	BOOST_TEST(store.Count() == 8192u);
+	BOOST_TEST(state.Count() == 8192u);
+	leases.clear();
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_NO_THROW(store.Reset());
+}
+BOOST_AUTO_TEST_CASE(default_owned_store_and_separate_injected_worlds_are_independent)
+{
+	ProductionEntryStore first, second;
+	{
+		ProductionEntryLease a(first), b(second);
+		a.Set(5, 2);
+		b.Set(10, 4);
+		BOOST_TEST(a.Remaining() == 3);
+		BOOST_TEST(b.Remaining() == 6);
+		BOOST_CHECK_THROW(first.Reset(), std::logic_error);
+	}
+	BOOST_CHECK_NO_THROW(first.Reset());
+	BOOST_CHECK_NO_THROW(second.Reset());
+}
+BOOST_AUTO_TEST_CASE(legacy_access_cannot_bypass_scheduled_component_access)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	lease.Set(7, 2);
+	production_quantity_adapter_test::BypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_TEST(lease.Completed() == 2);
+}
+BOOST_AUTO_TEST_CASE(progress_refresh_cannot_bypass_scheduled_component_access)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	lease.RestoreProgress(2, 25.0f);
+	production_quantity_adapter_test::ProgressBypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_TEST(lease.LegacyElapsedFrames() == 2);
+	BOOST_TEST(lease.Percent() == 25.0f);
+}
+
+BOOST_AUTO_TEST_CASE(exit_reservation_access_cannot_bypass_scheduled_component_access)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	lease.Set(7, 2);
+	lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door4));
+	production_quantity_adapter_test::ExitReservationBypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	const engine::time::FixedStep step{30};
+
+	for (int operation = 0; operation != 4; ++operation)
+	{
+		system.operation = operation;
+		ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+		scheduler.Finalize(step);
+		BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+		BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::Door4));
+		BOOST_TEST(lease.Completed() == 2);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(invalid_exit_reservation_restore_reports_input_failure_during_scheduled_access)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	lease.Set(7, 2);
+	lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door4));
+	production_quantity_adapter_test::ExitReservationBypassAttempt system{lease, 4};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::invalid_argument);
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_TEST(lease.Total() == 7);
+	BOOST_TEST(lease.Completed() == 2);
+	BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::Door4));
+}
+
+BOOST_AUTO_TEST_CASE(progress_columns_and_lease_share_the_existing_entry_entity)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	lease.Set(8, 2);
+	const auto entity = OnlyEntity(state);
+	auto *elapsed = state.World().Get<ProductionElapsed>(entity);
+	auto *progress = state.World().Get<ProductionProgress>(entity);
+	BOOST_REQUIRE(elapsed);
+	BOOST_REQUIRE(progress);
+	BOOST_TEST(state.Count() == 1u);
+	elapsed->ticks = 5;
+	progress->percent = 12.5f;
+	BOOST_TEST(lease.LegacyElapsedFrames() == 5);
+	BOOST_TEST(lease.Percent() == 12.5f);
+	lease.AdvanceStep();
+	BOOST_TEST(elapsed->ticks == 6);
+	BOOST_TEST(progress->percent == 12.5f);
+	lease.RefreshProgress(8);
+	BOOST_TEST(progress->percent == 75.0f);
+	BOOST_TEST(lease.Total() == 8);
+	BOOST_TEST(lease.Completed() == 2);
+}
+BOOST_AUTO_TEST_CASE(legacy_restore_preserves_signed_elapsed_and_cached_percentage_independently)
+{
+	ProductionEntryStore store;
+	ProductionEntryLease lease(store);
+	lease.RestoreProgress(-4, 137.5f);
+	BOOST_TEST(lease.LegacyElapsedFrames() == -4);
+	BOOST_TEST(std::bit_cast<std::uint32_t>(lease.Percent()) == std::bit_cast<std::uint32_t>(137.5f));
+	lease.AdvanceStep();
+	BOOST_TEST(lease.Percent() == 137.5f);
+	lease.RefreshProgress(6);
+	BOOST_TEST(lease.Percent() == -50.0f);
+}
+BOOST_AUTO_TEST_CASE(elapsed_outgrows_legacy_field_without_narrowing_during_simulation)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	auto *elapsed = state.World().Get<ProductionElapsed>(OnlyEntity(state));
+	elapsed->ticks = (std::numeric_limits<std::int32_t>::max)();
+	lease.AdvanceStep();
+	const auto expected = static_cast<std::int64_t>((std::numeric_limits<std::int32_t>::max)()) + 1;
+	BOOST_TEST(elapsed->ticks == expected);
+	lease.RefreshProgress(100);
+	BOOST_TEST(lease.Percent() > 100.0f);
+	BOOST_CHECK_THROW(lease.LegacyElapsedFrames(), std::overflow_error);
+	BOOST_TEST(elapsed->ticks == expected);
+	elapsed->ticks = static_cast<std::int64_t>((std::numeric_limits<std::int32_t>::min)()) - 1;
+	BOOST_CHECK_THROW(lease.LegacyElapsedFrames(), std::overflow_error);
+}
+BOOST_AUTO_TEST_CASE(missing_progress_rejects_restore_before_mutating_elapsed)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	lease.RestoreProgress(15, 50.0f);
+	const auto entity = OnlyEntity(state);
+	BOOST_TEST(state.World().Remove<ProductionProgress>(entity));
+	BOOST_CHECK_THROW(lease.RestoreProgress(99, 100.0f), std::logic_error);
+	BOOST_CHECK_THROW(lease.RefreshProgress(5), std::logic_error);
+	BOOST_CHECK_THROW(lease.Percent(), std::logic_error);
+	BOOST_TEST(lease.LegacyElapsedFrames() == 15);
+	BOOST_TEST(state.World().Add<ProductionProgress>(entity));
+}
+BOOST_AUTO_TEST_CASE(quantity_archetype_transitions_preserve_progress_and_reset_preflight_is_nondestructive)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	{
+		ProductionEntryLease lease(store);
+		lease.RestoreProgress(42, 125.0f);
+		lease.SetExitDoor(static_cast<std::int32_t>(ExitReservation::Door3));
+		const auto entity = OnlyEntity(state);
+		BOOST_TEST(state.World().Remove<ProductionQuantity>(entity));
+		BOOST_TEST(lease.LegacyElapsedFrames() == 42);
+		BOOST_TEST(lease.Percent() == 125.0f);
+		BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::Door3));
+		BOOST_TEST(state.World().Add<ProductionQuantity>(entity));
+		BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, {}), std::logic_error);
+		BOOST_TEST(lease.LegacyElapsedFrames() == 42);
+		BOOST_TEST(lease.Percent() == 125.0f);
+		BOOST_TEST(lease.ExitDoor() == static_cast<std::int32_t>(ExitReservation::Door3));
+	}
+	BOOST_CHECK_NO_THROW(state.Reset());
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(legacy_identity_binding_is_non_null_and_cannot_replace_a_live_owner)
+{
+	ProductionEntryStore store;
+	ProductionEntry first, other;
+	ProductionEntryLease lease(store);
+	BOOST_CHECK_THROW(lease.Bind(nullptr), std::invalid_argument);
+	BOOST_CHECK_NO_THROW(lease.Bind(&first));
+	BOOST_CHECK_NO_THROW(lease.Bind(&first));
+	BOOST_CHECK_THROW(lease.Bind(&other), std::logic_error);
+	BOOST_TEST(store.Count() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(new_entries_have_unqueued_membership_without_a_second_entity)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	auto *member = state.World().Get<engine::gameplay::rts::production::ProductionQueueMember>(entity);
+	BOOST_REQUIRE(member);
+	BOOST_TEST(!member->queue.IsValid());
+	BOOST_TEST(member->position == 0u);
+	BOOST_TEST(state.Count() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(metadata_lease_delegates_to_separate_authoritative_columns)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	BOOST_TEST(lease.Type() == 0);
+	BOOST_TEST(lease.Correlation() == 1);
+	lease.SetType(1);
+	lease.SetCorrelation((std::numeric_limits<std::int32_t>::min)());
+	BOOST_CHECK(state.World().Get<ProductionEntryKind>(entity)->value == EntryKind::Unit);
+	BOOST_TEST(state.World().Get<ProductionCorrelation>(entity)->value == (std::numeric_limits<std::int32_t>::min)());
+	state.World().Get<ProductionEntryKind>(entity)->value = EntryKind::Upgrade;
+	state.World().Get<ProductionCorrelation>(entity)->value = (std::numeric_limits<std::int32_t>::max)();
+	BOOST_TEST(lease.Type() == 2);
+	BOOST_TEST(lease.Correlation() == (std::numeric_limits<std::int32_t>::max)());
+	BOOST_TEST(state.Count() == 1u);
+	BOOST_TEST(lease.Total() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(missing_metadata_columns_fail_instead_of_using_scalar_fallback)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	const auto entity = OnlyEntity(state);
+	BOOST_TEST(state.World().Remove<ProductionEntryKind>(entity));
+	BOOST_CHECK_THROW(lease.Type(), std::logic_error);
+	BOOST_CHECK_THROW(lease.SetType(1), std::logic_error);
+	BOOST_TEST(lease.Correlation() == 1);
+	BOOST_TEST(state.World().Remove<ProductionCorrelation>(entity));
+	BOOST_CHECK_THROW(lease.Correlation(), std::logic_error);
+	BOOST_CHECK_THROW(lease.SetCorrelation(4), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(metadata_access_cannot_bypass_scheduled_component_declarations)
+{
+	GameplayState state;
+	ProductionEntryStore store(state);
+	ProductionEntryLease lease(store);
+	production_quantity_adapter_test::MetadataBypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	for (int operation = 0; operation < 4; ++operation)
+	{
+		system.operation = operation;
+		ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+		BOOST_TEST(lease.Type() == 0);
+		BOOST_TEST(lease.Correlation() == 1);
+	}
+}

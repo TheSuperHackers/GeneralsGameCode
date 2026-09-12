@@ -1,0 +1,30 @@
+add_library(engine_gameplay_rts_visibility STATIC)
+target_sources(engine_gameplay_rts_visibility PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	algorithms/visibility_page_capacity.cppm algorithms/visibility_query.cppm algorithms/visibility_region_index.cppm
+	algorithms/visibility_read_view.cppm
+	components/visibility_cell_page.cppm components/visibility_history_page.cppm
+	components/visibility_lease_page.cppm components/visibility_observer.cppm
+	definitions/visibility_definition.cppm definitions/visibility_participant.cppm
+	systems/visibility_system.cppm)
+target_compile_features(engine_gameplay_rts_visibility PUBLIC cxx_std_23)
+set_property(TARGET engine_gameplay_rts_visibility PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(engine_gameplay_rts_visibility PUBLIC engine_ecs engine_time
+	engine_gameplay_navigation engine_gameplay_combat)
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set(visibility_tests
+		algorithms/visibility_page_capacity.test algorithms/visibility_query.test
+		algorithms/visibility_region_index.test
+		algorithms/visibility_read_view.test
+		components/visibility_cell_page.test components/visibility_history_page.test
+		components/visibility_lease_page.test components/visibility_observer.test
+		definitions/visibility_definition.test definitions/visibility_participant.test
+		systems/visibility_system.test)
+	set_source_files_properties(${visibility_tests} PROPERTIES LANGUAGE CXX)
+	add_executable(engine_gameplay_rts_visibility_tests ${visibility_tests})
+	set_property(TARGET engine_gameplay_rts_visibility_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(engine_gameplay_rts_visibility_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(engine_gameplay_rts_visibility_tests PRIVATE engine_gameplay_rts_visibility
+		Boost::included_unit_test_framework)
+	add_test(NAME engine_gameplay_rts_visibility_tests COMMAND engine_gameplay_rts_visibility_tests)
+endif()

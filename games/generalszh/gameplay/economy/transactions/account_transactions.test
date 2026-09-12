@@ -1,0 +1,310 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
+
+import games.generalszh.gameplay.economy.transactions.account_transactions;
+import engine.ecs.scheduler.scheduler;
+
+using engine::gameplay::rts::economy::ResourceBalance;
+using generalszh::economy::ApplyDeposit;
+using generalszh::economy::ApplyWithdrawal;
+using generalszh::economy::BalanceValue;
+using generalszh::economy::IncomeHistory;
+using generalszh::economy::QuoteWithdrawal;
+using generalszh::economy::RecordIncome;
+using generalszh::economy::ResetAccount;
+
+namespace
+{
+constexpr auto U32Max = (std::numeric_limits<std::uint32_t>::max)();
+
+void CheckHistoryEqual(const IncomeHistory &actual, const IncomeHistory &expected)
+{
+	BOOST_TEST(actual.buckets == expected.buckets);
+	BOOST_TEST(actual.current == expected.current);
+	BOOST_TEST(actual.total == expected.total);
+}
+}
+
+namespace account_transactions_test
+{
+struct ChunkTransactionSystem
+{
+	using Query = ecs::Query<ecs::Write<ResourceBalance>, ecs::Write<IncomeHistory>>;
+	std::atomic<std::size_t> chunkExecutions{0};
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context)
+	{
+		chunkExecutions.fetch_add(1, std::memory_order_relaxed);
+		const auto simulationSecond = context.Tick() / context.Time().Step().TicksPerSecond();
+		auto balances = chunk.Get<ResourceBalance>();
+		auto histories = chunk.Get<IncomeHistory>();
+		const auto entities = chunk.Entities();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			const auto amount = static_cast<std::uint32_t>(
+				(static_cast<std::uint64_t>(entities[row].index) + simulationSecond * 13u) % 97u + 1u);
+			const bool trackIncome = ((static_cast<std::uint64_t>(entities[row].index) + simulationSecond) % 3u) != 0;
+			ApplyDeposit(balances[row], histories[row], amount, trackIncome);
+		}
+	}
+};
+}
+
+namespace ecs
+{
+template<> struct SystemTraits<account_transactions_test::ChunkTransactionSystem>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.account_transactions.chunks";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(balance_value_is_checked_before_narrowing)
+{
+	ResourceBalance balance{123};
+	BOOST_TEST(BalanceValue(balance) == 123u);
+
+	balance.quantity = static_cast<std::uint64_t>(U32Max) + 1;
+	BOOST_CHECK_THROW(BalanceValue(balance), std::overflow_error);
+	BOOST_TEST(balance.quantity == static_cast<std::uint64_t>(U32Max) + 1);
+}
+
+BOOST_AUTO_TEST_CASE(withdrawal_quote_is_capped_and_read_only)
+{
+	ResourceBalance balance{17};
+	BOOST_TEST(QuoteWithdrawal(balance, 7) == 7u);
+	BOOST_TEST(QuoteWithdrawal(balance, 100) == 17u);
+	BOOST_TEST(balance.quantity == 17u);
+}
+
+BOOST_AUTO_TEST_CASE(withdrawal_application_requires_an_affordable_quote)
+{
+	ResourceBalance balance{17};
+	ApplyWithdrawal(balance, 7);
+	BOOST_TEST(balance.quantity == 10u);
+
+	const auto before = balance.quantity;
+	BOOST_CHECK_THROW(ApplyWithdrawal(balance, 11), std::invalid_argument);
+	BOOST_TEST(balance.quantity == before);
+	ApplyWithdrawal(balance, 0);
+	BOOST_TEST(balance.quantity == before);
+}
+
+BOOST_AUTO_TEST_CASE(deposit_tracks_income_and_preserves_the_ring_rules)
+{
+	ResourceBalance balance{100};
+	IncomeHistory history;
+	ApplyDeposit(balance, history, 11, true);
+	BOOST_TEST(balance.quantity == 111u);
+	BOOST_TEST(history.buckets[0] == 11u);
+	BOOST_TEST(history.total == 11u);
+
+	history.current = 1;
+	ApplyDeposit(balance, history, 23, true);
+	BOOST_TEST(balance.quantity == 134u);
+	BOOST_TEST(history.buckets[1] == 23u);
+	BOOST_TEST(history.total == 34u);
+
+	// The selected-bucket ageing behavior is owned by IncomeHistory and is not
+	// folded into the transaction rule.
+	BOOST_CHECK_NO_THROW(ResetAccount(balance, history, 5));
+	BOOST_TEST(balance.quantity == 5u);
+	BOOST_TEST(history.total == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(deposit_uses_zero_hour_uint32_wrap)
+{
+	ResourceBalance balance{static_cast<std::uint64_t>(U32Max) - 1};
+	IncomeHistory history;
+	ApplyDeposit(balance, history, 3, false);
+	BOOST_TEST(balance.quantity == 1u);
+	CheckHistoryEqual(history, IncomeHistory{});
+}
+
+BOOST_AUTO_TEST_CASE(nontracking_deposit_does_not_validate_or_touch_unused_history)
+{
+	ResourceBalance balance{10};
+	IncomeHistory history;
+	history.current = static_cast<std::uint32_t>(history.buckets.size());
+	history.total = 99;
+	const auto before = history;
+
+	BOOST_CHECK_NO_THROW(ApplyDeposit(balance, history, 5, false));
+	BOOST_TEST(balance.quantity == 15u);
+	CheckHistoryEqual(history, before);
+}
+
+BOOST_AUTO_TEST_CASE(zero_deposit_has_no_effect_even_for_malformed_inputs)
+{
+	ResourceBalance balance{static_cast<std::uint64_t>(U32Max) + 1};
+	IncomeHistory history;
+	history.current = static_cast<std::uint32_t>(history.buckets.size());
+	history.total = 99;
+	const auto before = history;
+
+	BOOST_CHECK_NO_THROW(ApplyDeposit(balance, history, 0, true));
+	BOOST_TEST(balance.quantity == static_cast<std::uint64_t>(U32Max) + 1);
+	CheckHistoryEqual(history, before);
+}
+
+BOOST_AUTO_TEST_CASE(tracked_deposit_rejects_invalid_bucket_without_partial_mutation)
+{
+	ResourceBalance balance{10};
+	IncomeHistory history;
+	history.buckets[0] = 4;
+	history.current = static_cast<std::uint32_t>(history.buckets.size());
+	history.total = 4;
+	const auto beforeBalance = balance.quantity;
+	const auto beforeHistory = history;
+
+	BOOST_CHECK_THROW(ApplyDeposit(balance, history, 5, true), std::out_of_range);
+	BOOST_TEST(balance.quantity == beforeBalance);
+	CheckHistoryEqual(history, beforeHistory);
+}
+
+BOOST_AUTO_TEST_CASE(tracked_deposit_does_not_require_full_ring_scan)
+{
+	ResourceBalance balance{10};
+	IncomeHistory history;
+	history.total = 100; // Deliberately inconsistent; restore validation owns this check.
+
+	BOOST_CHECK_NO_THROW(ApplyDeposit(balance, history, 5, true));
+	BOOST_TEST(balance.quantity == 15u);
+	BOOST_TEST(history.buckets[0] == 5u);
+	BOOST_TEST(history.total == 105u);
+}
+
+BOOST_AUTO_TEST_CASE(reset_account_replaces_balance_and_all_income_state)
+{
+	ResourceBalance balance{77};
+	IncomeHistory history;
+	RecordIncome(history, 12);
+	history.current = 4;
+	RecordIncome(history, 8);
+
+	ResetAccount(balance, history, 21);
+	BOOST_TEST(balance.quantity == 21u);
+	CheckHistoryEqual(history, IncomeHistory{});
+}
+
+BOOST_AUTO_TEST_CASE(quote_and_apply_form_a_strict_read_then_commit_pair)
+{
+	ResourceBalance balance{25};
+	const auto approved = QuoteWithdrawal(balance, 40);
+	BOOST_TEST(approved == 25u);
+	ApplyWithdrawal(balance, approved);
+	BOOST_TEST(balance.quantity == 0u);
+
+	// In this exhausted-balance case, reusing the full quote is unaffordable and
+	// the strict application contract rejects it.  There is no quote token.
+	BOOST_CHECK_THROW(ApplyWithdrawal(balance, approved), std::invalid_argument);
+}
+
+struct ExpectedChunkTransactionState
+{
+	std::uint32_t balance;
+	std::uint32_t income;
+};
+
+ExpectedChunkTransactionState ExpectedChunkTransaction(std::size_t index)
+{
+	std::uint32_t balance = static_cast<std::uint32_t>(100u + index % 19u);
+	std::uint32_t income = 0;
+	for (std::uint32_t second = 0; second < 4; ++second)
+	{
+		const auto amount = static_cast<std::uint32_t>(
+			(static_cast<std::uint64_t>(index) + static_cast<std::uint64_t>(second) * 13u) % 97u + 1u);
+		balance = static_cast<std::uint32_t>(
+			static_cast<std::uint64_t>(balance) + static_cast<std::uint64_t>(amount));
+		if ((static_cast<std::uint64_t>(index) + second) % 3u != 0)
+			income = static_cast<std::uint32_t>(
+				static_cast<std::uint64_t>(income) + static_cast<std::uint64_t>(amount));
+	}
+	return {balance, income};
+}
+
+struct ChunkTransactionSnapshot
+{
+	std::vector<std::uint64_t> values;
+	std::size_t chunkExecutions{0};
+};
+
+ChunkTransactionSnapshot RunChunkTransactionWorkload(std::size_t workerCount)
+{
+	ecs::World world{ecs::WorldConfig{1024}};
+	world.RegisterComponent<ResourceBalance>();
+	world.RegisterComponent<IncomeHistory>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(1024);
+	for (std::size_t index = 0; index < 1024; ++index)
+	{
+		const auto entity = world.Create<ResourceBalance, IncomeHistory>();
+		world.Get<ResourceBalance>(entity)->quantity = 100u + static_cast<std::uint32_t>(index % 19u);
+		entities.push_back(entity);
+	}
+
+	account_transactions_test::ChunkTransactionSystem system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workerCount});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	for (const std::uint64_t tick : {0u, 30u, 60u, 90u})
+		scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+	ChunkTransactionSnapshot result;
+	result.chunkExecutions = system.chunkExecutions.load(std::memory_order_relaxed);
+	result.values.reserve(entities.size() * 65u);
+	for (const auto entity : entities)
+	{
+		const auto &balance = *world.Get<ResourceBalance>(entity);
+		const auto &history = *world.Get<IncomeHistory>(entity);
+		result.values.push_back(entity.index);
+		result.values.push_back(entity.generation);
+		result.values.push_back(balance.quantity);
+		result.values.push_back(history.current);
+		result.values.push_back(history.total);
+		for (const auto value : history.buckets)
+			result.values.push_back(value);
+	}
+	return result;
+}
+
+BOOST_AUTO_TEST_CASE(typed_chunk_transactions_are_identical_across_worker_counts)
+{
+	const auto one = RunChunkTransactionWorkload(1);
+	const auto two = RunChunkTransactionWorkload(2);
+	const auto four = RunChunkTransactionWorkload(4);
+
+	BOOST_TEST(one.chunkExecutions > 4u);
+	BOOST_TEST(one.chunkExecutions == two.chunkExecutions);
+	BOOST_TEST(one.chunkExecutions == four.chunkExecutions);
+	BOOST_CHECK(one.values == two.values);
+	BOOST_CHECK(one.values == four.values);
+	BOOST_REQUIRE(one.values.size() == 1024u * 65u);
+
+	for (std::size_t index = 0; index < 1024; ++index)
+	{
+		const auto expected = ExpectedChunkTransaction(index);
+		const auto offset = index * 65u;
+		BOOST_TEST(one.values[offset] == index);
+		BOOST_TEST(one.values[offset + 2] == expected.balance);
+		BOOST_TEST(one.values[offset + 3] == 0u);
+		BOOST_TEST(one.values[offset + 4] == expected.income);
+		BOOST_TEST(one.values[offset + 5] == expected.income);
+		for (std::size_t bucket = 1; bucket < 60; ++bucket)
+			BOOST_TEST(one.values[offset + 5 + bucket] == 0u);
+	}
+}

@@ -1,0 +1,22 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import engine.gameplay.containment.inputs.containment_batch;
+using namespace engine::gameplay::containment;
+BOOST_AUTO_TEST_CASE(containment_batch_has_ordered_one_shot_publication_and_capacity_failures)
+{
+    ContainmentBatch batch(1);
+    const std::array inputs{ContainmentInput{ContainmentAction::Enter,{1,1},{2,1}},ContainmentInput{ContainmentAction::Exit,{1,1},{2,1}}};
+    BOOST_CHECK_THROW(batch.SetInputs(inputs),std::length_error);
+    batch.SetInputs({inputs.data(),1});BOOST_CHECK_THROW(batch.SetInputs({}),std::logic_error);
+    batch.Prepare(7);batch.Result(0).outcome=ContainmentOutcome::Entered;batch.Publish();
+    BOOST_REQUIRE_EQUAL(batch.Results().size(),1u);BOOST_TEST(batch.Results()[0].tick==7u);
+    batch.Prepare(8);batch.Publish();BOOST_TEST(batch.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(containment_outcomes_append_boarding_receipts_without_renumbering_existing_values)
+{
+    using namespace engine::gameplay::containment;
+    BOOST_TEST(static_cast<unsigned>(ContainmentOutcome::BoardingQueued)==14u);
+    BOOST_TEST(static_cast<unsigned>(ContainmentOutcome::Interrupted)==15u);
+    BOOST_TEST(static_cast<unsigned>(ContainmentOutcome::InvalidAction)==13u);
+}

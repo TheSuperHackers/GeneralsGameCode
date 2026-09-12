@@ -1,0 +1,103 @@
+#define BOOST_TEST_MODULE GeneralsZHDemolitionTrapSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.gameplay.demolition.setup.demolition_registration;
+import games.generalszh.gameplay.demolition.systems.demolition_trap_system;
+
+BOOST_AUTO_TEST_CASE(explicit_command_kills_a_manual_trap_once_and_uses_existing_projectile_payload)
+{
+    using namespace generalszh::demolition;
+    using namespace generalszh::construction;
+    using namespace generalszh::production;
+    using namespace engine::gameplay::combat;
+    using namespace engine::gameplay::navigation;
+    using namespace engine::gameplay::containment;
+    using DeathWeaponBinding=engine::gameplay::combat::death::DeathWeaponBinding;
+    using SaleState=generalszh::selling::SaleState;
+    const std::array<std::uint8_t,4> terrain{1,1,1,1};
+    const NavigationGrid grid(4,1,terrain);
+    ecs::World world;
+    RegisterDemolitionComponents(world);
+    world.RegisterComponent<Health>();
+    world.RegisterComponent<LifeState>();
+    world.RegisterComponent<GridPosition>();
+    world.RegisterComponent<Structure>();
+    world.RegisterComponent<SaleState>();
+    world.RegisterComponent<ProducedUnit>();
+    world.RegisterComponent<Producer>();
+    world.RegisterComponent<PassengerMembership>();
+    world.RegisterComponent<ProjectileImpact>();
+    world.RegisterComponent<ImpactDue>();
+    world.FinalizeComponents();
+
+    const auto owner=world.Create<>();
+    const auto enemy=world.Create<>();
+    DemolitionTrapDefinition definition;
+    definition.key=41;
+    definition.mode=DemolitionDetonationMode::Manual;
+    definition.radiusCells=1;
+    definition.ignoreTargetTypes.structures=true;
+    definition.deathWeapon.key=41;
+    definition.deathWeapon.destructionDelay=std::chrono::milliseconds{100};
+    WeaponConfig weapon;
+    weapon.damage=25;
+    definition.detonationWeapon=weapon;
+    definition.deathWeapon.final=weapon;
+    const std::array authored{definition};
+    const engine::time::FixedStep step{10};
+    const DemolitionTrapCatalog catalog(authored,step);
+
+    const auto trap=world.Create<Structure,GridPosition,Health,LifeState,DeathWeaponBinding,
+        DemolitionTrapState,SaleState>();
+    world.Get<Structure>(trap)->account=owner;
+    world.Get<Structure>(trap)->definition=41;
+    world.Get<Structure>(trap)->complete=true;
+    world.Get<GridPosition>(trap)->cell=1;
+    world.Get<Health>(trap)->current=100;
+    world.Get<DeathWeaponBinding>(trap)->definition=41;
+    world.Get<DemolitionTrapState>(trap)->mode=DemolitionDetonationMode::Manual;
+
+    const auto target=world.Create<Health,LifeState,GridPosition,ProducedUnit>();
+    world.Get<Health>(target)->current=100;
+    world.Get<GridPosition>(target)->cell=2;
+    world.Get<ProducedUnit>(target)->account=enemy;
+
+    DemolitionTargetIndex targetIndex(world,grid,32);
+    DemolitionTrapInputBatch inputs(8);
+    const std::array command{DemolitionTrapInput{trap,DemolitionTrapCommand::Detonate}};
+    inputs.SetInputs(command);
+    DemolitionTrapSystem system(catalog,targetIndex,inputs);
+    ecs::SystemRegistry registry;
+    registry.Register(system,ecs::SystemPhase::Simulation);
+    registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<Health>(trap)->current==0u);
+    BOOST_CHECK(!world.Get<LifeState>(trap)->alive);
+    BOOST_CHECK(world.Get<DemolitionTrapState>(trap)->detonated);
+
+    std::size_t emitted{};
+    ecs::Query<ecs::Read<ProjectileImpact>,ecs::Read<ImpactDue>> projectiles(world);
+    projectiles.ForEachChunk([&](auto chunk) {
+        const auto impacts=chunk.template Get<ProjectileImpact>();
+        for(std::size_t row=0;row!=chunk.Count();++row)
+        {
+            ++emitted;
+            BOOST_CHECK(impacts[row].source==trap);
+            BOOST_TEST(impacts[row].sourceDefinition==41u);
+            BOOST_TEST(impacts[row].damage==25u);
+        }
+    });
+    BOOST_TEST(emitted==1u);
+
+    scheduler.Execute({1,step});
+    std::size_t stillOne{};
+    projectiles.ForEachChunk([&](auto chunk) { stillOne+=chunk.Count(); });
+    BOOST_TEST(stillOne==1u);
+    BOOST_CHECK(inputs.Requested(trap)==false);
+}

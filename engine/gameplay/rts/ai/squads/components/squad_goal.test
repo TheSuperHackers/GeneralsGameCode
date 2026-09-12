@@ -1,0 +1,14 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.rts.ai.squads.components.squad_goal;
+
+BOOST_AUTO_TEST_CASE(squad_goal_is_serializable_versioned_authoritative_state)
+{
+	using engine::gameplay::rts::ai::squads::SquadGoal;
+	using engine::gameplay::rts::ai::squads::SquadGoalKind;
+
+	const SquadGoal goal{};
+	BOOST_CHECK(goal.kind == SquadGoalKind::None);
+	BOOST_TEST(ecs::ComponentTraits<SquadGoal>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<SquadGoal>::Persistence == ecs::PersistencePolicy::Serializable);
+}

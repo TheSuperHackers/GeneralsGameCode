@@ -1,0 +1,269 @@
+/*
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2025 Electronic Arts Inc.
+**
+**	This program is free software: you can redistribute it and/or modify
+**	it under the terms of the GNU General Public License as published by
+**	the Free Software Foundation, either version 3 of the License, or
+**	(at your option) any later version.
+**
+**	This program is distributed in the hope that it will be useful,
+**	but WITHOUT ANY WARRANTY; without even the implied warranty of
+**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**	GNU General Public License for more details.
+**
+**	You should have received a copy of the GNU General Public License
+**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#define BOOST_TEST_MODULE GeneralsZHModelCondition
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.presentation.model.model_condition;
+
+using namespace generalszh::presentation;
+
+namespace
+{
+struct ExpectedCondition
+{
+	ModelCondition condition;
+	std::string_view name;
+};
+
+constexpr std::array<ExpectedCondition, ConditionCount> ExpectedCatalog{{
+	{ModelCondition::ACTIVELY_BEING_CONSTRUCTED, "ACTIVELY_BEING_CONSTRUCTED"},
+	{ModelCondition::ACTIVELY_CONSTRUCTING, "ACTIVELY_CONSTRUCTING"},
+	{ModelCondition::AFLAME, "AFLAME"},
+	{ModelCondition::ARMED, "ARMED"},
+	{ModelCondition::ARMORSET_CRATEUPGRADE_ONE, "ARMORSET_CRATEUPGRADE_ONE"},
+	{ModelCondition::ARMORSET_CRATEUPGRADE_TWO, "ARMORSET_CRATEUPGRADE_TWO"},
+	{ModelCondition::ATTACKING, "ATTACKING"},
+	{ModelCondition::AWAITING_CONSTRUCTION, "AWAITING_CONSTRUCTION"},
+	{ModelCondition::BACKCRUSHED, "BACKCRUSHED"},
+	{ModelCondition::BETWEEN_FIRING_SHOTS_A, "BETWEEN_FIRING_SHOTS_A"},
+	{ModelCondition::BETWEEN_FIRING_SHOTS_B, "BETWEEN_FIRING_SHOTS_B"},
+	{ModelCondition::BETWEEN_FIRING_SHOTS_C, "BETWEEN_FIRING_SHOTS_C"},
+	{ModelCondition::BURNED, "BURNED"},
+	{ModelCondition::CAPTURED, "CAPTURED"},
+	{ModelCondition::CARRYING, "CARRYING"},
+	{ModelCondition::CENTER_TO_LEFT, "CENTER_TO_LEFT"},
+	{ModelCondition::CENTER_TO_RIGHT, "CENTER_TO_RIGHT"},
+	{ModelCondition::CLIMBING, "CLIMBING"},
+	{ModelCondition::CONSTRUCTION_COMPLETE, "CONSTRUCTION_COMPLETE"},
+	{ModelCondition::CONTINUOUS_FIRE_FAST, "CONTINUOUS_FIRE_FAST"},
+	{ModelCondition::CONTINUOUS_FIRE_MEAN, "CONTINUOUS_FIRE_MEAN"},
+	{ModelCondition::CONTINUOUS_FIRE_SLOW, "CONTINUOUS_FIRE_SLOW"},
+	{ModelCondition::DAMAGED, "DAMAGED"},
+	{ModelCondition::DEPLOYED, "DEPLOYED"},
+	{ModelCondition::DISGUISED, "DISGUISED"},
+	{ModelCondition::DOCKING, "DOCKING"},
+	{ModelCondition::DOCKING_ACTIVE, "DOCKING_ACTIVE"},
+	{ModelCondition::DOCKING_BEGINNING, "DOCKING_BEGINNING"},
+	{ModelCondition::DOCKING_ENDING, "DOCKING_ENDING"},
+	{ModelCondition::DOOR_1_CLOSING, "DOOR_1_CLOSING"},
+	{ModelCondition::DOOR_1_OPENING, "DOOR_1_OPENING"},
+	{ModelCondition::DOOR_1_WAITING_OPEN, "DOOR_1_WAITING_OPEN"},
+	{ModelCondition::DOOR_1_WAITING_TO_CLOSE, "DOOR_1_WAITING_TO_CLOSE"},
+	{ModelCondition::DOOR_2_CLOSING, "DOOR_2_CLOSING"},
+	{ModelCondition::DOOR_2_OPENING, "DOOR_2_OPENING"},
+	{ModelCondition::DOOR_2_WAITING_OPEN, "DOOR_2_WAITING_OPEN"},
+	{ModelCondition::DOOR_2_WAITING_TO_CLOSE, "DOOR_2_WAITING_TO_CLOSE"},
+	{ModelCondition::DOOR_3_CLOSING, "DOOR_3_CLOSING"},
+	{ModelCondition::DOOR_3_OPENING, "DOOR_3_OPENING"},
+	{ModelCondition::DOOR_3_WAITING_OPEN, "DOOR_3_WAITING_OPEN"},
+	{ModelCondition::DOOR_3_WAITING_TO_CLOSE, "DOOR_3_WAITING_TO_CLOSE"},
+	{ModelCondition::DOOR_4_CLOSING, "DOOR_4_CLOSING"},
+	{ModelCondition::DOOR_4_OPENING, "DOOR_4_OPENING"},
+	{ModelCondition::DOOR_4_WAITING_OPEN, "DOOR_4_WAITING_OPEN"},
+	{ModelCondition::DOOR_4_WAITING_TO_CLOSE, "DOOR_4_WAITING_TO_CLOSE"},
+	{ModelCondition::DYING, "DYING"},
+	{ModelCondition::ENEMYNEAR, "ENEMYNEAR"},
+	{ModelCondition::EXPLODED_BOUNCING, "EXPLODED_BOUNCING"},
+	{ModelCondition::EXPLODED_FLAILING, "EXPLODED_FLAILING"},
+	{ModelCondition::FIRING_A, "FIRING_A"},
+	{ModelCondition::FIRING_B, "FIRING_B"},
+	{ModelCondition::FIRING_C, "FIRING_C"},
+	{ModelCondition::FLOODED, "FLOODED"},
+	{ModelCondition::FREEFALL, "FREEFALL"},
+	{ModelCondition::FRONTCRUSHED, "FRONTCRUSHED"},
+	{ModelCondition::GARRISONED, "GARRISONED"},
+	{ModelCondition::JAMMED, "JAMMED"},
+	{ModelCondition::JETAFTERBURNER, "JETAFTERBURNER"},
+	{ModelCondition::JETEXHAUST, "JETEXHAUST"},
+	{ModelCondition::LEFT_TO_CENTER, "LEFT_TO_CENTER"},
+	{ModelCondition::LOADED, "LOADED"},
+	{ModelCondition::MOVING, "MOVING"},
+	{ModelCondition::NIGHT, "NIGHT"},
+	{ModelCondition::OVER_WATER, "OVER_WATER"},
+	{ModelCondition::PACKING, "PACKING"},
+	{ModelCondition::PANICKING, "PANICKING"},
+	{ModelCondition::PARACHUTING, "PARACHUTING"},
+	{ModelCondition::PARTIALLY_CONSTRUCTED, "PARTIALLY_CONSTRUCTED"},
+	{ModelCondition::POST_COLLAPSE, "POST_COLLAPSE"},
+	{ModelCondition::POWER_PLANT_UPGRADED, "POWER_PLANT_UPGRADED"},
+	{ModelCondition::POWER_PLANT_UPGRADING, "POWER_PLANT_UPGRADING"},
+	{ModelCondition::PREATTACK_A, "PREATTACK_A"},
+	{ModelCondition::PREATTACK_B, "PREATTACK_B"},
+	{ModelCondition::PREATTACK_C, "PREATTACK_C"},
+	{ModelCondition::PREORDER, "PREORDER"},
+	{ModelCondition::PRONE, "PRONE"},
+	{ModelCondition::RADAR_EXTENDING, "RADAR_EXTENDING"},
+	{ModelCondition::RADAR_UPGRADED, "RADAR_UPGRADED"},
+	{ModelCondition::RAISING_FLAG, "RAISING_FLAG"},
+	{ModelCondition::RAPPELLING, "RAPPELLING"},
+	{ModelCondition::REALLY_DAMAGED, "REALLY_DAMAGED"},
+	{ModelCondition::RELOADING_A, "RELOADING_A"},
+	{ModelCondition::RELOADING_B, "RELOADING_B"},
+	{ModelCondition::RELOADING_C, "RELOADING_C"},
+	{ModelCondition::RIDER1, "RIDER1"},
+	{ModelCondition::RIDER2, "RIDER2"},
+	{ModelCondition::RIDER3, "RIDER3"},
+	{ModelCondition::RIDER4, "RIDER4"},
+	{ModelCondition::RIDER5, "RIDER5"},
+	{ModelCondition::RIDER6, "RIDER6"},
+	{ModelCondition::RIDER7, "RIDER7"},
+	{ModelCondition::RIDER8, "RIDER8"},
+	{ModelCondition::RIGHT_TO_CENTER, "RIGHT_TO_CENTER"},
+	{ModelCondition::RUBBLE, "RUBBLE"},
+	{ModelCondition::SECOND_LIFE, "SECOND_LIFE"},
+	{ModelCondition::SMOLDERING, "SMOLDERING"},
+	{ModelCondition::SNOW, "SNOW"},
+	{ModelCondition::SOLD, "SOLD"},
+	{ModelCondition::SPECIAL_CHEERING, "SPECIAL_CHEERING"},
+	{ModelCondition::SPECIAL_DAMAGED, "SPECIAL_DAMAGED"},
+	{ModelCondition::SPLATTED, "SPLATTED"},
+	{ModelCondition::STUNNED, "STUNNED"},
+	{ModelCondition::STUNNED_FLAILING, "STUNNED_FLAILING"},
+	{ModelCondition::SURRENDER, "SURRENDER"},
+	{ModelCondition::TOPPLED, "TOPPLED"},
+	{ModelCondition::TURRET_ROTATE, "TURRET_ROTATE"},
+	{ModelCondition::UNPACKING, "UNPACKING"},
+	{ModelCondition::USER_1, "USER_1"},
+	{ModelCondition::USER_2, "USER_2"},
+	{ModelCondition::USING_WEAPON_A, "USING_WEAPON_A"},
+	{ModelCondition::USING_WEAPON_B, "USING_WEAPON_B"},
+	{ModelCondition::USING_WEAPON_C, "USING_WEAPON_C"},
+	{ModelCondition::WEAPONSET_CRATEUPGRADE_ONE, "WEAPONSET_CRATEUPGRADE_ONE"},
+	{ModelCondition::WEAPONSET_CRATEUPGRADE_TWO, "WEAPONSET_CRATEUPGRADE_TWO"},
+	{ModelCondition::WEAPONSET_ELITE, "WEAPONSET_ELITE"},
+	{ModelCondition::WEAPONSET_HERO, "WEAPONSET_HERO"},
+	{ModelCondition::WEAPONSET_PLAYER_UPGRADE, "WEAPONSET_PLAYER_UPGRADE"},
+	{ModelCondition::WEAPONSET_VETERAN, "WEAPONSET_VETERAN"}}};
+
+static_assert(ExpectedCatalog.size() == ConditionCount);
+static_assert(std::is_standard_layout_v<ConditionMask>);
+static_assert(std::is_trivially_copyable_v<ConditionMask>);
+static_assert(std::is_nothrow_default_constructible_v<ConditionMask>);
+static_assert(std::is_nothrow_copy_constructible_v<ConditionMask>);
+static_assert(std::is_nothrow_copy_assignable_v<ConditionMask>);
+static_assert(std::is_nothrow_destructible_v<ConditionMask>);
+static_assert(!std::is_polymorphic_v<ConditionMask>);
+}
+
+BOOST_AUTO_TEST_CASE(model_condition_catalog_has_stable_exhaustive_ids_and_names)
+{
+	BOOST_TEST(SchemaVersion == 1u);
+	BOOST_TEST(ConditionCount == std::size_t{118});
+	BOOST_TEST(ConditionWordCount == std::size_t{2});
+	BOOST_TEST(static_cast<std::uint16_t>(ModelCondition::Count) == std::uint16_t{118});
+
+	for (std::size_t index = 0u; index < ConditionCount; ++index)
+	{
+		const auto &entry = ExpectedCatalog[index];
+		BOOST_TEST(static_cast<std::size_t>(entry.condition) == index);
+		BOOST_TEST(Name(entry.condition) == entry.name);
+		BOOST_TEST(ConditionNames[index] == entry.name);
+		for (std::size_t other = index + 1u; other < ConditionCount; ++other)
+			BOOST_CHECK(entry.name != ExpectedCatalog[other].name);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(surrender_is_always_part_of_the_modern_catalog)
+{
+	BOOST_TEST(static_cast<std::size_t>(ModelCondition::SURRENDER) == std::size_t{103});
+	BOOST_TEST(Name(ModelCondition::SURRENDER) == "SURRENDER");
+}
+
+BOOST_AUTO_TEST_CASE(condition_mask_sets_cross_word_and_high_flags_to_exact_words)
+{
+	ConditionMask mask;
+	BOOST_CHECK(mask.Empty());
+
+	mask.Set(ModelCondition::OVER_WATER);
+	mask.Set(ModelCondition::PACKING);
+	mask.Set(ModelCondition::WEAPONSET_VETERAN);
+
+	const std::array<std::uint64_t, ConditionWordCount> expected{
+		std::uint64_t{1} << 63,
+		(std::uint64_t{1} << 53) | std::uint64_t{1}};
+	BOOST_CHECK(mask.words == expected);
+	BOOST_CHECK(mask.Contains(ModelCondition::OVER_WATER));
+	BOOST_CHECK(mask.Contains(ModelCondition::PACKING));
+	BOOST_CHECK(mask.Contains(ModelCondition::WEAPONSET_VETERAN));
+	BOOST_CHECK(!mask.Contains(ModelCondition::NIGHT));
+	BOOST_CHECK(!mask.Contains(ModelCondition::PANICKING));
+}
+
+BOOST_AUTO_TEST_CASE(condition_mask_apply_clears_then_sets_overlapping_flags)
+{
+	ConditionMask mask;
+	mask.Set(ModelCondition::OVER_WATER);
+	mask.Set(ModelCondition::PACKING);
+	mask.Set(ModelCondition::SURRENDER);
+
+	ConditionMask clearMask;
+	clearMask.Set(ModelCondition::OVER_WATER);
+	clearMask.Set(ModelCondition::PACKING);
+	clearMask.Set(ModelCondition::SURRENDER);
+
+	ConditionMask setMask;
+	setMask.Set(ModelCondition::PACKING);
+	setMask.Set(ModelCondition::WEAPONSET_VETERAN);
+	mask.Apply(clearMask, setMask);
+
+	const std::array<std::uint64_t, ConditionWordCount> expected{
+		std::uint64_t{0},
+		(std::uint64_t{1} << 53) | std::uint64_t{1}};
+	BOOST_CHECK(mask.words == expected);
+	BOOST_CHECK(mask.Empty() == false);
+	BOOST_CHECK(!mask.Contains(ModelCondition::OVER_WATER));
+	BOOST_CHECK(mask.Contains(ModelCondition::PACKING));
+	BOOST_CHECK(!mask.Contains(ModelCondition::SURRENDER));
+	BOOST_CHECK(mask.Contains(ModelCondition::WEAPONSET_VETERAN));
+}
+
+BOOST_AUTO_TEST_CASE(condition_mask_reset_returns_all_words_to_zero)
+{
+	ConditionMask mask;
+	mask.Set(ModelCondition::TOPPLED);
+	mask.Set(ModelCondition::WEAPONSET_PLAYER_UPGRADE);
+	mask.Reset();
+
+	BOOST_CHECK(mask.Empty());
+	const std::array<std::uint64_t, ConditionWordCount> expected{};
+	BOOST_CHECK(mask.words == expected);
+}
+
+BOOST_AUTO_TEST_CASE(condition_masks_are_independent_value_objects)
+{
+	ConditionMask first;
+	ConditionMask second;
+	first.Set(ModelCondition::TOPPLED);
+	second.Set(ModelCondition::SURRENDER);
+
+	BOOST_CHECK(first.Contains(ModelCondition::TOPPLED));
+	BOOST_CHECK(!first.Contains(ModelCondition::SURRENDER));
+	BOOST_CHECK(!second.Contains(ModelCondition::TOPPLED));
+	BOOST_CHECK(second.Contains(ModelCondition::SURRENDER));
+
+	const auto copy = first;
+	first.Clear(ModelCondition::TOPPLED);
+	BOOST_CHECK(first.Empty());
+	BOOST_CHECK(copy.Contains(ModelCondition::TOPPLED));
+}

@@ -1,0 +1,14 @@
+#define BOOST_TEST_MODULE GeneralsZHSaleState
+#include <boost/test/included/unit_test.hpp>
+#include <type_traits>
+import games.generalszh.gameplay.selling.components.sale_state;
+using namespace generalszh::selling;
+BOOST_AUTO_TEST_CASE(sale_state_is_idle_and_enrollment_is_explicit)
+{
+    static_assert(std::is_trivially_copyable_v<SaleState>);
+    const SaleState state;
+    BOOST_CHECK(state.phase==SalePhase::Idle); BOOST_TEST(state.deadline==0u);
+    BOOST_TEST(!SaleEligibility{}.allowed);
+    BOOST_CHECK(ecs::ComponentTraits<SaleState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<SaleEligibility>::Persistence==ecs::PersistencePolicy::Serializable);
+}

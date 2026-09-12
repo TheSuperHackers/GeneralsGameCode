@@ -1,0 +1,200 @@
+add_subdirectory(rally)
+add_library(generalszh_production_rules STATIC)
+target_sources(generalszh_production_rules PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	power/production_power_rate.cppm progress/production_progress.cppm doors/production_door.cppm
+	progress/components/production_progress.cppm progress/definitions/production_requirement.cppm
+	progress/algorithms/production_progress.cppm
+	    doors/components/legacy_door_state.cppm doors/definitions/door_timing.cppm
+	    doors/algorithms/legacy_door_transitions.cppm
+	entry/components/production_entry_metadata.cppm entry/components/exit_reservation.cppm
+	entry/production_entry_metadata.cppm entry/exit_reservation.cppm definitions/production_definition.cppm
+	presentation/construction_marker.cppm definitions/presentation_definition.cppm
+	presentation/components/construction_marker.cppm
+	presentation/definitions/construction_marker_timing.cppm
+	presentation/algorithms/construction_marker.cppm
+	completion/unit_completion.cppm completion/upgrade_completion.cppm
+	dispatch/production_dispatch.cppm)
+target_compile_features(generalszh_production_rules PUBLIC cxx_std_23)
+set_property(TARGET generalszh_production_rules PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_production_rules PUBLIC engine_ecs engine_time)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(power/production_power_rate.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_rules_tests power/production_power_rate.test)
+	set_property(TARGET generalszh_production_rules_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_rules_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_rules_tests PRIVATE
+		generalszh_production_rules engine_ecs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_rules_tests COMMAND generalszh_production_rules_tests)
+	set_source_files_properties(progress/production_progress.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_progress_tests progress/production_progress.test)
+	set_property(TARGET generalszh_production_progress_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_progress_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_progress_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_progress_tests COMMAND generalszh_production_progress_tests)
+	set_source_files_properties(doors/production_door.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_door_tests doors/production_door.test)
+	set_property(TARGET generalszh_production_door_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_door_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_door_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_door_tests COMMAND generalszh_production_door_tests)
+    foreach(door_test IN ITEMS components/legacy_door_state definitions/door_timing algorithms/legacy_door_transitions)
+        get_filename_component(door_stem "${door_test}" NAME)
+        set_source_files_properties("doors/${door_test}.test" PROPERTIES LANGUAGE CXX)
+        add_executable("generalszh_${door_stem}_tests" "doors/${door_test}.test")
+        target_link_libraries("generalszh_${door_stem}_tests" PRIVATE generalszh_production_rules engine_jobs Boost::included_unit_test_framework)
+        add_test(NAME "generalszh_${door_stem}_tests" COMMAND "generalszh_${door_stem}_tests")
+    endforeach()
+	set_source_files_properties(entry/components/production_entry_metadata.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_entry_metadata_tests entry/components/production_entry_metadata.test)
+	set_property(TARGET generalszh_production_entry_metadata_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_entry_metadata_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_entry_metadata_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_entry_metadata_tests COMMAND generalszh_production_entry_metadata_tests)
+	set_source_files_properties(definitions/production_definition.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_definition_tests definitions/production_definition.test)
+	set_property(TARGET generalszh_production_definition_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_definition_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_definition_tests PRIVATE generalszh_production_rules engine_jobs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_definition_tests COMMAND generalszh_production_definition_tests)
+	set_source_files_properties(presentation/construction_marker.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_construction_marker_tests presentation/construction_marker.test)
+	set_property(TARGET generalszh_construction_marker_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_construction_marker_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_construction_marker_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_construction_marker_tests COMMAND generalszh_construction_marker_tests)
+	set_source_files_properties(progress/components/production_progress.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_progress_components_production_progress_tests progress/components/production_progress.test)
+	set_property(TARGET generalszh_progress_components_production_progress_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_progress_components_production_progress_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_progress_components_production_progress_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_progress_components_production_progress_tests COMMAND generalszh_progress_components_production_progress_tests)
+	set_source_files_properties(progress/definitions/production_requirement.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_progress_definitions_production_requirement_tests progress/definitions/production_requirement.test)
+	set_property(TARGET generalszh_progress_definitions_production_requirement_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_progress_definitions_production_requirement_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_progress_definitions_production_requirement_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_progress_definitions_production_requirement_tests COMMAND generalszh_progress_definitions_production_requirement_tests)
+	set_source_files_properties(progress/algorithms/production_progress.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_progress_algorithms_production_progress_tests progress/algorithms/production_progress.test)
+	set_property(TARGET generalszh_progress_algorithms_production_progress_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_progress_algorithms_production_progress_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_progress_algorithms_production_progress_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_progress_algorithms_production_progress_tests COMMAND generalszh_progress_algorithms_production_progress_tests)
+	set_source_files_properties(presentation/components/construction_marker.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_presentation_components_construction_marker_tests presentation/components/construction_marker.test)
+	set_property(TARGET generalszh_presentation_components_construction_marker_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_presentation_components_construction_marker_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_presentation_components_construction_marker_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_presentation_components_construction_marker_tests COMMAND generalszh_presentation_components_construction_marker_tests)
+	set_source_files_properties(presentation/definitions/construction_marker_timing.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_presentation_definitions_construction_marker_timing_tests presentation/definitions/construction_marker_timing.test)
+	set_property(TARGET generalszh_presentation_definitions_construction_marker_timing_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_presentation_definitions_construction_marker_timing_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_presentation_definitions_construction_marker_timing_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_presentation_definitions_construction_marker_timing_tests COMMAND generalszh_presentation_definitions_construction_marker_timing_tests)
+	set_source_files_properties(presentation/algorithms/construction_marker.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_presentation_algorithms_construction_marker_tests presentation/algorithms/construction_marker.test)
+	set_property(TARGET generalszh_presentation_algorithms_construction_marker_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_presentation_algorithms_construction_marker_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_presentation_algorithms_construction_marker_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_presentation_algorithms_construction_marker_tests COMMAND generalszh_presentation_algorithms_construction_marker_tests)
+	set_source_files_properties(definitions/presentation_definition.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_presentation_definition_tests definitions/presentation_definition.test)
+	set_property(TARGET generalszh_production_presentation_definition_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_presentation_definition_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_presentation_definition_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_presentation_definition_tests COMMAND generalszh_production_presentation_definition_tests)
+	set_source_files_properties(entry/components/exit_reservation.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_exit_reservation_tests entry/components/exit_reservation.test)
+	set_property(TARGET generalszh_production_exit_reservation_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_exit_reservation_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_exit_reservation_tests PRIVATE generalszh_production_rules Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_exit_reservation_tests COMMAND generalszh_production_exit_reservation_tests)
+	set_source_files_properties(completion/unit_completion.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_unit_completion_tests completion/unit_completion.test)
+	set_property(TARGET generalszh_production_unit_completion_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_unit_completion_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_unit_completion_tests PRIVATE
+		generalszh_production_rules engine_jobs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_unit_completion_tests COMMAND generalszh_production_unit_completion_tests)
+	set_source_files_properties(completion/upgrade_completion.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_upgrade_completion_tests completion/upgrade_completion.test)
+	set_property(TARGET generalszh_production_upgrade_completion_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_upgrade_completion_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_upgrade_completion_tests PRIVATE
+		generalszh_production_rules engine_jobs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_upgrade_completion_tests COMMAND generalszh_production_upgrade_completion_tests)
+	set_source_files_properties(dispatch/production_dispatch.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_production_dispatch_tests dispatch/production_dispatch.test)
+	set_property(TARGET generalszh_production_dispatch_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_production_dispatch_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_production_dispatch_tests PRIVATE
+		generalszh_production_rules engine_jobs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_production_dispatch_tests COMMAND generalszh_production_dispatch_tests)
+endif()
+
+# Independent modern execution; retained legacy completion wrappers above are
+# not linked as the gameplay implementation of this target.
+add_library(generalszh_build_execution STATIC)
+target_sources(generalszh_build_execution PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES
+    BASE_DIRS . ../containment/components ../progression
+    FILES
+    runtime/production_runtime.cppm systems/build_completion_system.cppm
+    components/production_state.cppm definitions/build_definition.cppm
+    ../progression/definitions/veterancy_definition.cppm
+    ../progression/components/veterancy_award_binding.cppm
+    ../containment/components/initial_payload.cppm)
+target_compile_features(generalszh_build_execution PUBLIC cxx_std_23)
+target_link_libraries(generalszh_build_execution PUBLIC generalszh_production_rules engine_gameplay_rts_production
+    engine_gameplay_rts_unlocks generalszh_upgrade_state engine_gameplay_rts_visibility
+    generalszh_cash_bounty_components)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_containment)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_concealment
+    generalszh_concealment_definitions generalszh_concealment_components)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_rts_repair)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_combat)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_regeneration engine_gameplay_progression)
+target_link_libraries(generalszh_build_execution PUBLIC generalszh_capture_definitions)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_navigation)
+target_link_libraries(generalszh_build_execution PUBLIC generalszh_acquisition_policy)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_rts_orders)
+target_link_libraries(generalszh_build_execution PUBLIC engine_gameplay_rts_harvesting generalszh_construction_definitions)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+    set_source_files_properties(runtime/production_runtime.test systems/build_completion_system.test components/production_state.test definitions/build_definition.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_build_execution_tests runtime/production_runtime.test systems/build_completion_system.test components/production_state.test definitions/build_definition.test)
+    target_compile_definitions(generalszh_build_execution_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(generalszh_build_execution_tests PRIVATE generalszh_build_execution Boost::included_unit_test_framework)
+    add_test(NAME generalszh_build_execution_tests COMMAND generalszh_build_execution_tests)
+endif()
+
+# Cohesive independent production: admission commits new orders before the
+# chunk behaviour advances/fulfils them. No owning feature simulation target.
+add_library(generalszh_production_execution STATIC)
+target_sources(generalszh_production_execution PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    components/build_admission.cppm inputs/build_inputs.cppm admission/build_catalog.cppm
+    algorithms/prerequisite_presence.cppm algorithms/production_prerequisite_evaluation.cppm
+    boundary/production_operations.cppm power/build_power_rate.cppm
+    admission/production_admission_system.cppm systems/production_admission_system.cppm systems/production_system.cppm
+    registration/production_registration.cppm systems/production_exit_system.cppm
+    doors/components/production_exit.cppm doors/definitions/production_exit_definition.cppm)
+target_compile_features(generalszh_production_execution PUBLIC cxx_std_23)
+target_link_libraries(generalszh_production_execution PUBLIC generalszh_build_execution engine_gameplay_rts_economy)
+target_link_libraries(generalszh_production_execution PUBLIC generalszh_concealment_components)
+target_link_libraries(generalszh_production_execution PUBLIC generalszh_power_policy)
+target_link_libraries(generalszh_production_execution PUBLIC generalszh_rally_components)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+    foreach(production_test IN ITEMS components/build_admission inputs/build_inputs admission/build_catalog algorithms/prerequisite_presence algorithms/production_prerequisite_evaluation power/build_power_rate
+        boundary/production_operations systems/production_admission_system
+        systems/production_system systems/production_exit_system registration/production_registration
+        doors/components/production_exit doors/definitions/production_exit_definition)
+        get_filename_component(production_test_stem "${production_test}" NAME)
+        set_source_files_properties("${production_test}.test" PROPERTIES LANGUAGE CXX)
+        add_executable("generalszh_${production_test_stem}_tests" "${production_test}.test")
+        target_link_libraries("generalszh_${production_test_stem}_tests" PRIVATE
+            generalszh_production_execution Boost::included_unit_test_framework)
+        add_test(NAME "generalszh_${production_test_stem}_tests"
+            COMMAND "generalszh_${production_test_stem}_tests")
+    endforeach()
+    target_link_libraries(generalszh_production_registration_tests PRIVATE generalszh_economy_execution)
+endif()

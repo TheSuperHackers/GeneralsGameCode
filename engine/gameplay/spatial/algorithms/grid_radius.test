@@ -1,0 +1,16 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+import engine.gameplay.spatial.algorithms.grid_radius;
+using engine::gameplay::spatial::GridPoint;
+using engine::gameplay::spatial::IsWithinGridRadius;
+
+BOOST_AUTO_TEST_CASE(inclusive_radius_and_overflow_safe_bounds)
+{
+    BOOST_TEST(IsWithinGridRadius({4, 4}, {4, 4}, 0));
+    BOOST_TEST(IsWithinGridRadius({4, 4}, {6, 4}, 2));
+    BOOST_TEST(!IsWithinGridRadius({4, 4}, {7, 4}, 2));
+    const auto maximum = (std::numeric_limits<std::uint32_t>::max)();
+    BOOST_TEST(IsWithinGridRadius({0, 0}, {maximum, 0}, maximum));
+    BOOST_TEST(!IsWithinGridRadius({0, 0}, {maximum, 1}, maximum));
+}

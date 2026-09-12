@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE GeneralsZHDefeatFrame
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+import games.generalszh.gameplay.match.observations.defeat_frame;
+
+BOOST_AUTO_TEST_CASE(defeat_frame_checks_capacity_and_generation_and_clears)
+{
+    generalszh::match::DefeatFrame frame(32);
+    BOOST_TEST(frame.Capacity() == 32u);
+    frame.Set({10, 2}, true);
+    BOOST_CHECK(!frame.IsDefeated({10, 1}));
+    BOOST_CHECK(frame.IsDefeated({10, 2}));
+    BOOST_CHECK_THROW(frame.Set({32, 1}, true), std::length_error);
+    frame.Clear();
+    BOOST_CHECK(!frame.IsDefeated({10, 2}));
+}

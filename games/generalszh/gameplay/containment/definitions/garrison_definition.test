@@ -1,0 +1,12 @@
+#define BOOST_TEST_MODULE GeneralsZHGarrisonDefinition
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.containment.definitions.garrison_definition;
+
+BOOST_AUTO_TEST_CASE(garrison_definition_is_immutable_capacity_policy)
+{
+    using generalszh::containment::GarrisonDefinition;
+    using generalszh::containment::IsValid;
+    BOOST_TEST(generalszh::containment::GarrisonDefinitionVersion == 1u);
+    BOOST_CHECK(!IsValid(GarrisonDefinition{}));
+    BOOST_CHECK(IsValid(GarrisonDefinition{5}));
+}

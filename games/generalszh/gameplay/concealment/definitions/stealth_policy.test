@@ -1,0 +1,18 @@
+#define BOOST_TEST_MODULE GeneralsZHConcealmentRules
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+import games.generalszh.gameplay.concealment.definitions.stealth_policy;
+
+BOOST_AUTO_TEST_CASE(stealth_policy_compiles_only_the_bounded_initial_conditions)
+{
+    using namespace generalszh::concealment;
+    const std::array authored{StealthPolicy{true, static_cast<std::uint8_t>(
+        static_cast<std::uint8_t>(StealthForbiddenCondition::Moving) |
+        static_cast<std::uint8_t>(StealthForbiddenCondition::Firing))}};
+    StealthPolicies policies(authored);
+    const auto value = policies.Get(policies.Id(0));
+    BOOST_TEST(value.innateStealth);
+    BOOST_TEST(value.Forbids(StealthForbiddenCondition::Moving));
+    BOOST_TEST(value.Forbids(StealthForbiddenCondition::Firing));
+}

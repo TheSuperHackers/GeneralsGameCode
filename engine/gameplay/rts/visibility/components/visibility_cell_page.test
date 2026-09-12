@@ -1,0 +1,50 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <string_view>
+#include <vector>
+
+import engine.ecs.storage.chunk_layout;
+import engine.ecs.core.entity;
+import engine.gameplay.rts.visibility.components.visibility_cell_page;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_cell_page)
+
+BOOST_AUTO_TEST_CASE(page_columns_report_compiler_sizes_and_alignment)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<VisibilityCellIndex>();
+	registry.Register<VisibilityExploredMaskPage>();
+	registry.Register<VisibilityVisibleMaskPage>();
+	registry.Finalize();
+	const auto cellId = registry.TryGet<VisibilityCellIndex>();
+	const auto exploredId = registry.TryGet<VisibilityExploredMaskPage>();
+	const auto visibleId = registry.TryGet<VisibilityVisibleMaskPage>();
+	BOOST_TEST(registry.Get(cellId).size == sizeof(VisibilityCellIndex));
+	BOOST_TEST(registry.Get(cellId).alignment == alignof(VisibilityCellIndex));
+	BOOST_TEST(registry.Get(exploredId).size == sizeof(VisibilityExploredMaskPage));
+	BOOST_TEST(registry.Get(visibleId).size == sizeof(VisibilityVisibleMaskPage));
+
+	const std::vector<const ecs::ComponentInfo *> columns{
+		&registry.Get(cellId), &registry.Get(exploredId), &registry.Get(visibleId)};
+	const auto layout = ecs::ChunkLayout::Build(columns);
+	BOOST_TEST(layout.Capacity() >= 1u);
+	BOOST_TEST(layout.Alignment() >= alignof(VisibilityExploredMaskPage));
+	for (const auto &column : layout.Columns())
+		BOOST_TEST(column.offset % column.alignment == 0u);
+	BOOST_TEST(layout.TotalBytes() >= sizeof(ecs::Entity) * layout.Capacity());
+	BOOST_TEST(CellPagePayloadBytes() == sizeof(VisibilityCellIndex) +
+		sizeof(VisibilityExploredMaskPage) + sizeof(VisibilityVisibleMaskPage));
+	BOOST_TEST_MESSAGE("VisibilityCellIndex sizeof=" << sizeof(VisibilityCellIndex) <<
+		" alignof=" << alignof(VisibilityCellIndex) <<
+		" explored sizeof=" << sizeof(VisibilityExploredMaskPage) <<
+		" visible sizeof=" << sizeof(VisibilityVisibleMaskPage) <<
+		" chunk capacity=" << layout.Capacity() <<
+		" chunk bytes=" << layout.TotalBytes());
+}
+
+BOOST_AUTO_TEST_SUITE_END()

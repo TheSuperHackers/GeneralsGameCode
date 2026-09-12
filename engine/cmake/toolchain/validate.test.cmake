@@ -1,0 +1,41 @@
+# Build-policy tests use CMake itself; C++ behavior remains in colocated Boost tests.
+if(DEFINED probe)
+    set(CMAKE_GENERATOR Ninja)
+    set(CMAKE_CXX_COMPILER_ID Clang)
+    set(CMAKE_CXX_COMPILER_VERSION 22.1.8)
+    if(probe STREQUAL "compiler")
+        set(CMAKE_CXX_COMPILER_ID MSVC)
+    elseif(probe STREQUAL "compiler-version")
+        set(CMAKE_CXX_COMPILER_VERSION 18.1.3)
+    elseif(probe STREQUAL "cmake")
+        set(CMAKE_VERSION 3.28.3)
+    elseif(probe STREQUAL "generator")
+        set(CMAKE_GENERATOR "Unix Makefiles")
+    elseif(probe STREQUAL "ninja")
+        set(CMAKE_MAKE_PROGRAM "${CMAKE_COMMAND}")
+    elseif(probe STREQUAL "scanner")
+        set(CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS "${CMAKE_COMMAND}")
+    elseif(probe STREQUAL "missing-scanner")
+        set(CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS "")
+    elseif(NOT probe STREQUAL "accepted")
+        message(FATAL_ERROR "Unknown validation probe")
+    endif()
+    include("${CMAKE_CURRENT_LIST_DIR}/validate.cmake")
+    return()
+endif()
+
+foreach(case accepted compiler compiler-version cmake generator ninja scanner missing-scanner)
+    execute_process(COMMAND "${CMAKE_COMMAND}"
+        "-Dprobe=${case}"
+        "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}"
+        "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS}"
+        -P "${CMAKE_CURRENT_LIST_FILE}"
+        RESULT_VARIABLE result OUTPUT_VARIABLE output ERROR_VARIABLE error)
+    if(case STREQUAL "accepted")
+        if(NOT result EQUAL 0)
+            message(FATAL_ERROR "Pinned tools rejected: ${output}${error}")
+        endif()
+    elseif(result EQUAL 0 OR NOT error MATCHES "Engine requires|scanner is required|clang-scan-deps must match")
+        message(FATAL_ERROR "Expected clear rejection for ${case}: ${output}${error}")
+    endif()
+endforeach()

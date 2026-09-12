@@ -1,0 +1,26 @@
+#include <boost/test/unit_test.hpp>
+#include <string_view>
+import games.generalszh.gameplay.economy.systems.income_prepare_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(income_policy_keeps_liveness_dispatch_and_payment_separate)
+{
+	using namespace generalszh::economy;
+	using namespace engine::gameplay::rts::economy;
+	ecs::World world;
+	world.RegisterComponent<IncomeDefinition>(); world.RegisterComponent<IncomeObservation>();
+	world.RegisterComponent<IncomeEligibility>(); world.RegisterComponent<IncomeDispatch>(); world.FinalizeComponents();
+	const auto entity = world.Create<IncomeDefinition, IncomeObservation, IncomeEligibility, IncomeDispatch>();
+	*world.Get<IncomeDefinition>(entity) = {10, 50, true};
+	*world.Get<IncomeObservation>(entity) = {0, 0, true, false, true, false, false};
+	IncomePrepareSystem system;
+	ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({0, step});
+	BOOST_TEST(world.Get<IncomeEligibility>(entity)->enabled);
+	BOOST_TEST(!world.Get<IncomeDispatch>(entity)->enabled);
+	world.Get<IncomeObservation>(entity)->dispatchEnabled = true;
+	world.Get<IncomeObservation>(entity)->neutral = true;
+	scheduler.Execute({1, step});
+	BOOST_TEST(!world.Get<IncomeEligibility>(entity)->enabled);
+	BOOST_TEST(world.Get<IncomeDispatch>(entity)->enabled);
+}

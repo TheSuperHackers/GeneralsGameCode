@@ -1,0 +1,260 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+
+import engine.ecs.core.world;
+
+namespace world_test
+{
+
+struct Position
+{
+	int x{0};
+	int y{0};
+};
+
+struct Velocity
+{
+	int x{0};
+	int y{0};
+};
+
+struct Marker
+{
+	std::uint64_t value{0};
+};
+
+struct TransitionCounted
+{
+	static inline int defaultConstructed{0};
+	static inline int moveConstructed{0};
+
+	int value{0};
+
+	TransitionCounted()
+	{
+		++defaultConstructed;
+	}
+
+	TransitionCounted(const TransitionCounted &) = delete;
+	TransitionCounted(TransitionCounted &&other) noexcept :
+		value(other.value)
+	{
+		++moveConstructed;
+	}
+	~TransitionCounted() noexcept = default;
+};
+
+struct TransitionAdded
+{
+	static inline int defaultConstructed{0};
+	static inline int moveConstructed{0};
+
+	int value{0};
+
+	TransitionAdded()
+	{
+		++defaultConstructed;
+	}
+
+	TransitionAdded(const TransitionAdded &) = delete;
+	TransitionAdded(TransitionAdded &&other) noexcept :
+		value(other.value)
+	{
+		++moveConstructed;
+	}
+	~TransitionAdded() noexcept = default;
+};
+
+} // namespace world_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<world_test::Position>
+{
+	static constexpr std::string_view StableName = "tests.world.position";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<world_test::Velocity>
+{
+	static constexpr std::string_view StableName = "tests.world.velocity";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<world_test::Marker>
+{
+	static constexpr std::string_view StableName = "tests.world.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct ComponentTraits<world_test::TransitionCounted>
+{
+	static constexpr std::string_view StableName = "tests.world.transition_counted";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct ComponentTraits<world_test::TransitionAdded>
+{
+	static constexpr std::string_view StableName = "tests.world.transition_added";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+namespace ecs
+{
+
+struct WorldTestAccess
+{
+	static void BeginExecution(World &world) { world.BeginScheduledExecution(); }
+	static void EndExecution(World &world) { world.EndScheduledExecution(); }
+	static void SetGeneration(World &world, const Entity entity, const EntityGeneration generation)
+	{
+		BOOST_REQUIRE(entity.index < world.m_records.size());
+		BOOST_REQUIRE(world.m_records[entity.index].alive);
+		world.m_records[entity.index].generation = generation;
+	}
+};
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_SUITE(ecs_world)
+
+BOOST_AUTO_TEST_CASE(execution_state_is_observable_without_mutating_world_structure)
+{
+	ecs::World world;
+	BOOST_TEST(!world.IsScheduledExecutionActive());
+	ecs::WorldTestAccess::BeginExecution(world);
+	BOOST_TEST(world.IsScheduledExecutionActive());
+	BOOST_TEST(world.EntityCount() == 0u);
+	ecs::WorldTestAccess::EndExecution(world);
+	BOOST_TEST(!world.IsScheduledExecutionActive());
+}
+
+BOOST_AUTO_TEST_CASE(component_entity_creation_requires_explicit_finalization)
+{
+	ecs::World world;
+	world.RegisterComponent<world_test::Position>();
+
+	BOOST_CHECK_THROW(world.Create<world_test::Position>(), std::logic_error);
+	BOOST_TEST(!world.ComponentsFinalized());
+	BOOST_TEST(world.ArchetypeCount() == 0);
+
+	world.FinalizeComponents();
+	const ecs::Entity entity = world.Create<world_test::Position>();
+	BOOST_TEST(world.IsAlive(entity));
+}
+
+BOOST_AUTO_TEST_CASE(stale_handles_and_reuse)
+{
+	ecs::World world;
+	world.RegisterComponent<world_test::Position>();
+	world.FinalizeComponents();
+	const ecs::Entity first = world.Create<world_test::Position>();
+
+	BOOST_TEST(world.IsAlive(first));
+	BOOST_TEST(world.Destroy(first));
+	BOOST_TEST(!world.IsAlive(first));
+	BOOST_TEST(!world.Destroy(first));
+
+	const ecs::Entity replacement = world.Create<world_test::Position>();
+	BOOST_TEST(replacement.index == first.index);
+	BOOST_TEST(replacement.generation != first.generation);
+	BOOST_TEST(world.IsAlive(replacement));
+	BOOST_TEST(!world.IsAlive(first));
+}
+
+BOOST_AUTO_TEST_CASE(archetype_transitions_preserve_components)
+{
+	ecs::World world;
+	world.RegisterComponent<world_test::Position>();
+	world.RegisterComponent<world_test::Velocity>();
+	world.RegisterComponent<world_test::Marker>();
+	world.FinalizeComponents();
+	const ecs::Entity first = world.Create<world_test::Position, world_test::Velocity>();
+	const ecs::Entity second = world.Create<world_test::Position, world_test::Velocity>();
+	world.Get<world_test::Position>(first)->x = 10;
+	world.Get<world_test::Position>(first)->y = 11;
+	world.Get<world_test::Velocity>(first)->x = 12;
+	world.Get<world_test::Position>(second)->x = 20;
+	world.Get<world_test::Position>(second)->y = 21;
+
+	BOOST_TEST(world.Add<world_test::Marker>(first));
+	BOOST_TEST(world.Has<world_test::Marker>(first));
+	BOOST_TEST(world.Get<world_test::Position>(first)->x == 10);
+	BOOST_TEST(world.Get<world_test::Position>(first)->y == 11);
+	BOOST_TEST(world.Get<world_test::Velocity>(first)->x == 12);
+	BOOST_TEST(world.Get<world_test::Position>(second)->x == 20);
+	BOOST_TEST(world.Get<world_test::Position>(second)->y == 21);
+	BOOST_TEST(!world.Add<world_test::Marker>(first));
+
+	BOOST_TEST(world.Remove<world_test::Velocity>(first));
+	BOOST_TEST(!world.Has<world_test::Velocity>(first));
+	BOOST_TEST(world.Get<world_test::Position>(first)->x == 10);
+	BOOST_TEST(world.Get<world_test::Marker>(first) != nullptr);
+	BOOST_TEST(!world.Remove<world_test::Velocity>(first));
+	const ecs::Entity invalid{999, 1};
+	BOOST_TEST(!world.Add<world_test::Marker>(invalid));
+}
+
+BOOST_AUTO_TEST_CASE(transitions_construct_each_destination_component_once)
+{
+	world_test::TransitionCounted::defaultConstructed = 0;
+	world_test::TransitionCounted::moveConstructed = 0;
+	world_test::TransitionAdded::defaultConstructed = 0;
+	world_test::TransitionAdded::moveConstructed = 0;
+
+	ecs::World world;
+	world.RegisterComponent<world_test::TransitionCounted>();
+	world.RegisterComponent<world_test::TransitionAdded>();
+	world.FinalizeComponents();
+	const ecs::Entity entity = world.Create<world_test::TransitionCounted>();
+	world.Get<world_test::TransitionCounted>(entity)->value = 42;
+
+	world_test::TransitionCounted::defaultConstructed = 0;
+	world_test::TransitionCounted::moveConstructed = 0;
+	world_test::TransitionAdded::defaultConstructed = 0;
+	world_test::TransitionAdded::moveConstructed = 0;
+
+	BOOST_TEST(world.Add<world_test::TransitionAdded>(entity));
+	BOOST_TEST(world_test::TransitionCounted::defaultConstructed == 0);
+	BOOST_TEST(world_test::TransitionCounted::moveConstructed == 1);
+	BOOST_TEST(world_test::TransitionAdded::defaultConstructed == 1);
+	BOOST_TEST(world_test::TransitionAdded::moveConstructed == 0);
+	BOOST_TEST(world.Get<world_test::TransitionCounted>(entity)->value == 42);
+}
+
+BOOST_AUTO_TEST_CASE(generation_exhaustion_retires_entity_index)
+{
+	ecs::World world;
+	world.RegisterComponent<world_test::Position>();
+	world.FinalizeComponents();
+	const ecs::Entity issued = world.Create<world_test::Position>();
+	const ecs::Entity exhausted{issued.index, (std::numeric_limits<ecs::EntityGeneration>::max)()};
+	ecs::WorldTestAccess::SetGeneration(world, issued, exhausted.generation);
+
+	BOOST_TEST(world.IsAlive(exhausted));
+	BOOST_TEST(world.Destroy(exhausted));
+	BOOST_TEST(!world.IsAlive(exhausted));
+
+	const ecs::Entity replacement = world.Create<world_test::Position>();
+	BOOST_TEST(replacement.index != exhausted.index);
+	BOOST_TEST(!world.IsAlive(exhausted));
+}
+
+BOOST_AUTO_TEST_SUITE_END()

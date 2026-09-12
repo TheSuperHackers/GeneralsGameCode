@@ -1,0 +1,46 @@
+#define BOOST_TEST_MODULE GeneralsZHSellDefinition
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <limits>
+import games.generalszh.gameplay.selling.definitions.sell_definition;
+using namespace generalszh::selling;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(sale_refund_uses_override_or_truncated_cost_percentage_and_explicit_duration)
+{
+    const std::array buildings{generalszh::construction::BuildingDefinition{1,101,0ms},generalszh::construction::BuildingDefinition{2,900,0ms}};
+    const generalszh::construction::BuildingCatalog buildingCatalog(buildings,engine::time::FixedStep{30});
+    std::array source{SellDefinition{2,2s,17},SellDefinition{1,75ms}};
+    const SellCatalog catalog(buildingCatalog,source);
+    BOOST_REQUIRE(catalog.Find(1)); BOOST_TEST(catalog.Find(1)->refund==50u);
+    BOOST_TEST(catalog.Find(1)->delayTicks==3u); BOOST_TEST(catalog.Find(2)->refund==17u);
+    BOOST_CHECK(!catalog.Find(3)); source[1].percentageNumerator=0;
+    BOOST_TEST(catalog.Find(1)->refund==50u);
+    const SellCatalog zero(buildingCatalog,source); BOOST_TEST(zero.Find(1)->refund==0u);
+    // Source provenance: BuildAssistant starts at 99.9, holds 45 reference
+    // frames and performs 135 decrements. Frame-start ordering determines the
+    // absolute deadline; the caller chooses this explicit characterization input.
+    const std::array characterized{SellDefinition{1,5966666666ns}};
+    const SellCatalog timing(buildingCatalog,characterized);
+    BOOST_TEST(timing.Find(1)->delayTicks==179u);
+}
+BOOST_AUTO_TEST_CASE(sale_catalog_rejects_invalid_startup_values_and_tick_overflow)
+{
+    const std::array buildings{generalszh::construction::BuildingDefinition{1,UINT32_MAX,0ms}};
+    const generalszh::construction::BuildingCatalog buildingCatalog(buildings,engine::time::FixedStep{30});
+    std::array source{SellDefinition{9,1s}};
+    BOOST_CHECK_THROW((SellCatalog{buildingCatalog,source}),std::invalid_argument);
+    source[0].building=1; source[0].percentageDenominator=0;
+    BOOST_CHECK_THROW((SellCatalog{buildingCatalog,source}),std::invalid_argument);
+    source[0].percentageDenominator=1; source[0].percentageNumerator=2;
+    BOOST_CHECK_THROW((SellCatalog{buildingCatalog,source}),std::out_of_range);
+    source[0].percentageNumerator=1; source[0].duration=-1ns;
+    BOOST_CHECK_THROW((SellCatalog{buildingCatalog,source}),std::invalid_argument);
+    source[0].duration=1s; source[0].refundValue=65536;
+    BOOST_CHECK_THROW((SellCatalog{buildingCatalog,source}),std::invalid_argument);
+    const std::array duplicate{SellDefinition{1,1s},SellDefinition{1,2s}};
+    BOOST_CHECK_THROW((SellCatalog{buildingCatalog,duplicate}),std::invalid_argument);
+    const auto last=(std::numeric_limits<std::uint64_t>::max)();
+    BOOST_TEST(SaleDeadline(last-2,2)==last);
+    BOOST_CHECK_THROW(SaleDeadline(last-2,3),std::overflow_error);
+}

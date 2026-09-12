@@ -1,0 +1,28 @@
+#include <boost/test/unit_test.hpp>
+#include <cstddef>
+#include <string_view>
+#include <type_traits>
+import games.generalszh.gameplay.economy.components.capture_reward_state;
+
+BOOST_AUTO_TEST_CASE(capture_reward_state_preserves_layout_defaults_and_schema)
+{
+	using Component = generalszh::economy::CaptureRewardState;
+	static_assert(std::is_standard_layout_v<Component>);
+	static_assert(std::is_trivially_copyable_v<Component>);
+	static_assert(offsetof(Component, available) == 0u);
+	static_assert(offsetof(Component, initialized) == 1u);
+	static_assert(ecs::ComponentTraits<Component>::StableName
+		== std::string_view{"games.generalszh.economy.capture_reward"});
+	static_assert(ecs::ComponentTraits<Component>::Version == 1u);
+	static_assert(ecs::ComponentTraits<Component>::Persistence
+		== ecs::PersistencePolicy::Serializable);
+
+	const Component defaults{};
+	BOOST_CHECK(!defaults.available);
+	BOOST_CHECK(!defaults.initialized);
+	BOOST_TEST(ecs::ComponentTraits<Component>::StableName
+		== "games.generalszh.economy.capture_reward");
+	BOOST_TEST(ecs::ComponentTraits<Component>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<Component>::Persistence
+		== ecs::PersistencePolicy::Serializable);
+}

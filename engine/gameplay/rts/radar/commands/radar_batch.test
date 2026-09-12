@@ -1,0 +1,43 @@
+#define BOOST_TEST_MODULE RadarBatch
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+import engine.gameplay.rts.radar.commands.radar_batch;
+using namespace engine::gameplay::rts::radar;
+
+BOOST_AUTO_TEST_CASE(stable_partition_retains_input_sequence_and_reuses_capacity)
+{
+	RadarBatch batch(4);
+	batch.Record(1, RadarAction::Add);
+	batch.Record(0, RadarAction::Suppress);
+	batch.Record(1, RadarAction::Remove);
+	const auto ranges = batch.Prepare(2);
+	BOOST_TEST(ranges[0].first == 0u);
+	BOOST_TEST(ranges[1].first == 1u);
+	BOOST_TEST(ranges[1].count == 2u);
+	BOOST_CHECK(batch.Actions(ranges[1])[1] == RadarAction::Remove);
+	batch.Transitions(ranges[1])[0] = RadarTransition::Online;
+	batch.Transitions(ranges[1])[1] = RadarTransition::Offline;
+	BOOST_CHECK(batch.Result(0) == RadarTransition::Online);
+	BOOST_CHECK(batch.Result(1) == RadarTransition::None);
+	BOOST_CHECK(batch.Result(2) == RadarTransition::Offline);
+	const auto *storage = batch.Actions(ranges[0]).data();
+	BOOST_CHECK_THROW(batch.Record(0, RadarAction::Add), std::logic_error);
+	BOOST_CHECK_THROW(batch.Prepare(2), std::logic_error);
+	batch.Clear();
+	batch.Record(0, RadarAction::Add);
+	BOOST_CHECK(batch.Actions(batch.Prepare(2)[0]).data() == storage);
+}
+BOOST_AUTO_TEST_CASE(capacity_and_invalid_owners_fail_without_silent_drops)
+{
+	RadarBatch batch(1);
+	batch.Record(4, RadarAction::Add);
+	BOOST_CHECK_THROW(batch.Record(0, RadarAction::Remove), std::length_error);
+	BOOST_TEST(batch.Size() == 1u);
+	BOOST_CHECK_THROW(batch.Prepare(4), std::out_of_range);
+	BOOST_TEST(!batch.IsPrepared());
+	batch.Cancel(4);
+	batch.Prepare(0);
+	BOOST_CHECK(batch.Result(0) == RadarTransition::None);
+	batch.Clear();
+	BOOST_CHECK_THROW(batch.Result(0), std::logic_error);
+}

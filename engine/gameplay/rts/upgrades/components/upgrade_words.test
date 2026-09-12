@@ -1,0 +1,74 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsUpgradeWords
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import engine.gameplay.rts.upgrades.components.upgrade_words;
+
+using engine::gameplay::rts::upgrades::CompletedUpgradeWord;
+using engine::gameplay::rts::upgrades::InProgressUpgradeWord;
+using engine::gameplay::rts::upgrades::UpgradeWordOrdinal;
+using engine::gameplay::rts::upgrades::UpgradeWordOwner;
+
+BOOST_AUTO_TEST_CASE(upgrade_word_components_are_plain_typed_data_with_stable_metadata)
+{
+	static_assert(std::is_standard_layout_v<UpgradeWordOwner>);
+	static_assert(std::is_trivially_copyable_v<UpgradeWordOwner>);
+	static_assert(std::is_same_v<decltype(UpgradeWordOwner::value), ecs::Entity>);
+	static_assert(std::is_standard_layout_v<UpgradeWordOrdinal>);
+	static_assert(std::is_trivially_copyable_v<UpgradeWordOrdinal>);
+	static_assert(std::is_same_v<decltype(UpgradeWordOrdinal::value), std::uint32_t>);
+	static_assert(std::is_standard_layout_v<CompletedUpgradeWord>);
+	static_assert(std::is_trivially_copyable_v<CompletedUpgradeWord>);
+	static_assert(std::is_same_v<decltype(CompletedUpgradeWord::value), std::uint64_t>);
+	static_assert(std::is_standard_layout_v<InProgressUpgradeWord>);
+	static_assert(std::is_trivially_copyable_v<InProgressUpgradeWord>);
+	static_assert(std::is_same_v<decltype(InProgressUpgradeWord::value), std::uint64_t>);
+
+	BOOST_TEST(sizeof(UpgradeWordOwner) == sizeof(ecs::Entity));
+	BOOST_TEST(alignof(UpgradeWordOwner) == alignof(ecs::Entity));
+	BOOST_TEST(offsetof(UpgradeWordOwner, value) == 0u);
+	BOOST_TEST(sizeof(UpgradeWordOrdinal) == sizeof(std::uint32_t));
+	BOOST_TEST(alignof(UpgradeWordOrdinal) == alignof(std::uint32_t));
+	BOOST_TEST(offsetof(UpgradeWordOrdinal, value) == 0u);
+	BOOST_TEST(sizeof(CompletedUpgradeWord) == sizeof(std::uint64_t));
+	BOOST_TEST(alignof(CompletedUpgradeWord) == alignof(std::uint64_t));
+	BOOST_TEST(offsetof(CompletedUpgradeWord, value) == 0u);
+	BOOST_TEST(sizeof(InProgressUpgradeWord) == sizeof(std::uint64_t));
+	BOOST_TEST(alignof(InProgressUpgradeWord) == alignof(std::uint64_t));
+	BOOST_TEST(offsetof(InProgressUpgradeWord, value) == 0u);
+
+	UpgradeWordOwner owner;
+	UpgradeWordOrdinal ordinal;
+	CompletedUpgradeWord completed;
+	InProgressUpgradeWord inProgress;
+	BOOST_TEST(owner.value.index == ecs::Entity::InvalidIndex);
+	BOOST_TEST(owner.value.generation == ecs::Entity::InvalidGeneration);
+	BOOST_TEST(ordinal.value == 0u);
+	BOOST_TEST(completed.value == 0ull);
+	BOOST_TEST(inProgress.value == 0ull);
+
+	BOOST_TEST(ecs::ComponentTraits<UpgradeWordOwner>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.word_owner"});
+	BOOST_TEST(ecs::ComponentTraits<UpgradeWordOrdinal>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.word_ordinal"});
+	BOOST_TEST(ecs::ComponentTraits<CompletedUpgradeWord>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.completed_word"});
+	BOOST_TEST(ecs::ComponentTraits<InProgressUpgradeWord>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.in_progress_word"});
+	BOOST_TEST(ecs::ComponentTraits<UpgradeWordOwner>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<UpgradeWordOrdinal>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<CompletedUpgradeWord>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<InProgressUpgradeWord>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<UpgradeWordOwner>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<UpgradeWordOrdinal>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<CompletedUpgradeWord>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<InProgressUpgradeWord>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}

@@ -1,0 +1,56 @@
+#define BOOST_TEST_MODULE EngineRtsEconomy
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+#include <exception>
+#include <limits>
+import engine.gameplay.rts.economy.components.periodic_income;
+using namespace engine::gameplay::rts::economy;
+
+BOOST_AUTO_TEST_CASE(typed_rate_quantizes_and_due_schedule_skips_catch_up)
+{
+	const auto rate = MakeIncomeRate(std::chrono::milliseconds{100}, 17, engine::time::FixedStep{30});
+	BOOST_TEST(rate.intervalTicks == 3u);
+	IncomeSchedule schedule{3};
+	BOOST_TEST(!EvaluateIncome(schedule, rate, {true}, 2).due);
+	BOOST_TEST(schedule.nextTick == 3u);
+	const auto pulse = EvaluateIncome(schedule, rate, {true}, 30);
+	BOOST_TEST(pulse.due);
+	BOOST_TEST(pulse.quantity == 17u);
+	BOOST_TEST(schedule.nextTick == 33u);
+}
+BOOST_AUTO_TEST_CASE(ineligible_schedule_still_advances_and_zero_interval_is_per_execution)
+{
+	IncomeSchedule schedule;
+	const auto noPayment = EvaluateIncome(schedule, {5, 17}, {false}, 10);
+	BOOST_TEST(noPayment.due);
+	BOOST_TEST(noPayment.quantity == 0u);
+	BOOST_TEST(schedule.nextTick == 15u);
+	BOOST_TEST(!EvaluateIncome(schedule, {5, 17}, {true}, 14).due);
+	BOOST_TEST(EvaluateIncome(schedule, {0, 17}, {true}, 15).quantity == 17u);
+	BOOST_TEST(EvaluateIncome(schedule, {0, 17}, {true}, 15).quantity == 17u);
+}
+BOOST_AUTO_TEST_CASE(income_overflow_is_explicit_and_preserves_schedule)
+{
+	IncomeSchedule schedule{7};
+	BOOST_CHECK_THROW(EvaluateIncome(schedule, {1, 10}, {true}, (std::numeric_limits<std::uint64_t>::max)()), std::overflow_error);
+	BOOST_TEST(schedule.nextTick == 7u);
+	BOOST_CHECK_THROW(MakeIncomeRate(std::chrono::nanoseconds{-1}, 1, engine::time::FixedStep{60}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(income_overflow_exception_survives_capture_and_rethrow)
+{
+	IncomeSchedule schedule{7};
+	std::exception_ptr failure;
+	try { RearmIncome(schedule, (std::numeric_limits<std::uint64_t>::max)(), 1); }
+	catch (...) { failure = std::current_exception(); }
+	BOOST_REQUIRE(failure != nullptr);
+	for (int attempt = 0; attempt != 2; ++attempt)
+	{
+		try { std::rethrow_exception(failure); }
+		catch (const std::overflow_error &error)
+		{
+			BOOST_TEST(std::string_view(error.what()) == "Income schedule exceeds simulation tick range");
+		}
+	}
+	BOOST_TEST(schedule.nextTick == 7u);
+}

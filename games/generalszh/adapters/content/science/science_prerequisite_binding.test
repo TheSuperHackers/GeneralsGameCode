@@ -1,0 +1,65 @@
+#define BOOST_TEST_MODULE GeneralsZHSciencePrerequisiteBinding
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+#include <span>
+#include <string_view>
+
+import games.generalszh.adapters.content.science.science_prerequisite_binding;
+
+using namespace generalszh::content;
+using namespace engine::gameplay::rts::unlocks;
+
+namespace
+{
+void MakeScienceCatalog(UnlockCatalog &catalog)
+{
+	catalog.Register(UnlockDefinition{"SCIENCE_ROOT"});
+	catalog.Register(UnlockDefinition{"SCIENCE_CHILD", 1, 2, true,
+		std::array{MakeUnlockKey("SCIENCE_ROOT")}});
+	catalog.Finalize();
+}
+}
+
+BOOST_AUTO_TEST_CASE(science_names_bind_to_dense_ids_and_preserve_object_binding)
+{
+	const auto object = ReadNamedBlock(R"(Object Unit
+Prerequisites
+ Object = Barracks
+ Science = SCIENCE_CHILD
+End
+End
+)", "Object", "Unit");
+	const auto decoded = DecodePrerequisites(object);
+	BOOST_REQUIRE_EQUAL(decoded.scienceNames.size(), 1u);
+	const std::array identities{ContentDefinitionIdentity{"Barracks", 11}};
+	UnlockCatalog catalog;
+	MakeScienceCatalog(catalog);
+	const auto bound = BindProductionPrerequisites(decoded, identities, catalog);
+	BOOST_REQUIRE_EQUAL(bound.object.Groups().size(), 1u);
+	BOOST_REQUIRE_EQUAL(bound.scienceIds.size(), 1u);
+	BOOST_TEST(bound.scienceIds.front().value == catalog.Find(MakeUnlockKey("SCIENCE_CHILD")).value);
+	BOOST_REQUIRE(bound.scienceSchemaHash);
+	BOOST_TEST(*bound.scienceSchemaHash == catalog.SchemaHash());
+}
+
+BOOST_AUTO_TEST_CASE(object_only_binder_rejects_unconsumed_science_and_schema_dependencies_are_explicit)
+{
+	const auto object = ReadNamedBlock(R"(Object Unit
+Prerequisites
+ Science = SCIENCE_MISSING
+End
+End
+)", "Object", "Unit");
+	const auto decoded = DecodePrerequisites(object);
+	BOOST_CHECK_THROW(BindPrerequisites(decoded, std::span<const ContentDefinitionIdentity>{}), std::invalid_argument);
+
+	UnlockCatalog unfinalized;
+	BOOST_CHECK_THROW(BindProductionPrerequisites(decoded,
+		std::span<const ContentDefinitionIdentity>{}, unfinalized), std::logic_error);
+
+	UnlockCatalog catalog;
+	MakeScienceCatalog(catalog);
+	BOOST_CHECK_THROW(BindProductionPrerequisites(decoded,
+		std::span<const ContentDefinitionIdentity>{}, catalog), std::invalid_argument);
+}

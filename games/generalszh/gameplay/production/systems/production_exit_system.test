@@ -1,0 +1,101 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionExitSystem
+#include <boost/test/included/unit_test.hpp>
+#include "../testing/production_test_host.hpp"
+namespace
+{
+std::size_t UnitCount(ecs::World &world)
+{
+    ecs::Query<ecs::Read<ProducedUnit>> query(world);std::size_t count=0;
+    query.ForEachChunk([&](auto chunk){count+=chunk.Count();});return count;
+}
+void AddDoor(ecs::World &world,ecs::Entity producer,ProductionExitTiming timing)
+{
+    world.Add<ProductionExitState>(producer);world.Add<ProductionExitTiming>(producer);
+    *world.Get<ProductionExitTiming>(producer)=timing;
+}
+}
+BOOST_AUTO_TEST_CASE(real_exit_system_handles_zero_tick_strict_timing_holds_close_and_reopen)
+{
+    ecs::World world;RegisterProductionComponents(world);world.FinalizeComponents();
+    const std::array defs{BuildDefinition{1,0,0ms},BuildDefinition{2,0,0ms,EntryKind::Upgrade}};
+    engine::jobs::JobSystem jobs({2});ProductionTestHost host(world,jobs,defs,16);
+    const engine::time::FixedStep step{10};host.Finalize(step);
+    const auto account=world.Create<Balance>();const auto producer=host.CreateProducer(account);
+    AddDoor(world,producer,{1,1,1});host.Enqueue(producer,1);
+    host.Execute({0,step});BOOST_TEST(UnitCount(world)==0u);
+    BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Opening);
+    host.Execute({1,step});BOOST_TEST(UnitCount(world)==0u);
+    host.Execute({2,step});BOOST_TEST(UnitCount(world)==1u);BOOST_TEST(world.Get<Queue>(producer)->count==0u);
+    world.Get<ProductionExitState>(producer)->held=true;
+    host.Execute({3,step});host.Execute({4,step});
+    BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Open);
+    world.Get<ProductionExitState>(producer)->held=false;host.Execute({5,step});
+    BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Closing);
+    host.Enqueue(producer,1);host.Execute({6,step});BOOST_TEST(UnitCount(world)==2u);
+    BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Open);
+    host.Execute({7,step});host.Execute({8,step});host.Execute({9,step});host.Execute({10,step});
+    BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Closed);
+    host.Enqueue(producer,2);host.Execute({11,step});
+    BOOST_TEST(world.Get<Queue>(producer)->count==0u);
+    BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Closed);
+}
+BOOST_AUTO_TEST_CASE(cancelled_or_dead_producer_cannot_release_waiting_output)
+{
+    ecs::World world;RegisterProductionComponents(world);world.FinalizeComponents();
+    const std::array defs{BuildDefinition{1,0,0ms}};engine::jobs::JobSystem jobs({4});
+    ProductionTestHost host(world,jobs,defs,16);const engine::time::FixedStep step{10};host.Finalize(step);
+    const auto account=world.Create<Balance>(),producer=host.CreateProducer(account);
+    AddDoor(world,producer,{0,0,0});const auto order=host.Enqueue(producer,1).order;
+    host.Execute({0,step});BOOST_TEST(host.Cancel(producer,order));host.Execute({1,step});BOOST_TEST(UnitCount(world)==0u);
+    host.Enqueue(producer,1);world.Get<Life>(producer)->alive=false;
+    host.Execute({2,step});BOOST_TEST(UnitCount(world)==0u);
+}
+BOOST_AUTO_TEST_CASE(malformed_door_signature_fails_before_chunk_output)
+{
+    ecs::World world;RegisterProductionComponents(world);world.FinalizeComponents();
+    const std::array defs{BuildDefinition{1,0,0ms}};engine::jobs::JobSystem jobs({2});
+    ProductionTestHost host(world,jobs,defs,8);const engine::time::FixedStep step{10};host.Finalize(step);
+    const auto account=world.Create<Balance>(),producer=host.CreateProducer(account);
+    world.Add<ProductionExitState>(producer);host.Enqueue(producer,1);
+    BOOST_CHECK_THROW(host.Execute({0,step}),std::logic_error);BOOST_TEST(UnitCount(world)==0u);
+}
+BOOST_AUTO_TEST_CASE(duplicate_ready_heads_fail_before_parallel_quantity_writes)
+{
+    ecs::World world;RegisterProductionComponents(world);world.FinalizeComponents();
+    const std::array defs{BuildDefinition{1,0,0ms}};engine::jobs::JobSystem jobs({4});
+    ProductionTestHost host(world,jobs,defs,8);const engine::time::FixedStep step{10};host.Finalize(step);
+    const auto account=world.Create<Balance>(),producer=host.CreateProducer(account);
+    host.Enqueue(producer,1);const auto second=host.Enqueue(producer,1).order;
+    world.Get<Member>(second)->position=0;
+    BOOST_CHECK_THROW(host.Execute({0,step}),std::logic_error);BOOST_TEST(UnitCount(world)==0u);
+    BOOST_CHECK_THROW(host.Execute({1,step}),std::logic_error);
+}
+BOOST_AUTO_TEST_CASE(exit_horizon_failure_propagates_from_workers_and_cannot_retry)
+{
+    ecs::World world;RegisterProductionComponents(world);world.FinalizeComponents();
+    const std::array defs{BuildDefinition{1,0,0ms}};engine::jobs::JobSystem jobs({4});
+    ProductionTestHost host(world,jobs,defs,8);const engine::time::FixedStep step{10};host.Finalize(step);
+    const auto account=world.Create<Balance>(),producer=host.CreateProducer(account);
+    AddDoor(world,producer,{1,0,0});host.Enqueue(producer,1);
+    BOOST_CHECK_THROW(host.Execute({(std::numeric_limits<std::uint64_t>::max)()-1,step}),std::overflow_error);
+    BOOST_TEST(UnitCount(world)==0u);BOOST_CHECK_THROW(host.Execute({0,step}),std::logic_error);
+}
+BOOST_AUTO_TEST_CASE(idle_producer_capacity_is_bounded_and_inactive_living_doors_finish)
+{
+    ecs::World world;RegisterProductionComponents(world);world.FinalizeComponents();
+    const std::array defs{BuildDefinition{1,0,0ms}};engine::jobs::JobSystem jobs({2});
+    ProductionTestHost host(world,jobs,defs,2);const engine::time::FixedStep step{10};host.Finalize(step);
+    const auto account=world.Create<Balance>(),producer=host.CreateProducer(account);
+    AddDoor(world,producer,{0,0,0});world.Get<ProductionExitState>(producer)->held=true;
+    host.Execute({0,step});world.Get<Producer>(producer)->active=false;
+    host.Execute({1,step});BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Open);
+    world.Get<ProductionExitState>(producer)->held=false;
+    host.Execute({2,step});BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Closing);
+    world.Get<ProductionExitState>(producer)->held=true;
+    host.Execute({3,step});BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Closing);
+    world.Get<ProductionExitState>(producer)->held=false;
+    host.Execute({4,step});BOOST_CHECK(world.Get<ProductionExitState>(producer)->phase==ExitDoorPhase::Closed);
+    // Deliberate malformed setup bypasses the normal CreateProducer capacity boundary.
+    world.Create<Producer,Life>();world.Create<Producer,Life>();
+    BOOST_CHECK_THROW(host.Execute({5,step}),std::length_error);
+}

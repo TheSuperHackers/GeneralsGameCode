@@ -1,0 +1,15 @@
+#define BOOST_TEST_MODULE BuilderTask
+#include <boost/test/included/unit_test.hpp>
+#include "../testing/construction_host.h"
+BOOST_AUTO_TEST_CASE(receipt_resolves_to_committed_site_and_assignment)
+{
+    Host host(1); const auto builder=host.Builder();
+    const std::array inputs{c::ConstructionInput{builder,1,8}};
+    host.requests.SetInputs(inputs); host.Tick(0);
+    const auto receipt=host.receipts.Receipts()[0];
+    BOOST_CHECK(receipt.status==c::ConstructionAcceptance::Accepted);
+    BOOST_TEST(host.world.IsAlive(receipt.site));
+    BOOST_CHECK(host.world.Get<Assignment>(builder)->site==receipt.site);
+    BOOST_TEST(host.world.Get<c::ConstructionAdmission>(receipt.site)==nullptr);
+    BOOST_TEST(host.requests.Inputs().empty());
+}

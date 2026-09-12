@@ -1,0 +1,27 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionAdmission
+#include <boost/test/included/unit_test.hpp>
+#include <cstddef>
+#include <type_traits>
+import games.generalszh.gameplay.construction.components.construction_admission;
+
+BOOST_AUTO_TEST_CASE(construction_admission_preserves_layout_and_transient_schema)
+{
+    using Component=generalszh::construction::ConstructionAdmission;
+    static_assert(std::is_standard_layout_v<Component>);
+    static_assert(std::is_trivially_copyable_v<Component>);
+    static_assert(std::is_same_v<decltype(Component::receipt),std::size_t>);
+    static_assert(offsetof(Component,receipt)==0u);
+    static_assert(ecs::ComponentTraits<Component>::StableName
+        == "games.generalszh.construction.admission");
+    static_assert(ecs::ComponentTraits<Component>::Version==1u);
+    static_assert(ecs::ComponentTraits<Component>::Persistence
+        == ecs::PersistencePolicy::Transient);
+
+    const Component defaults{};
+    BOOST_TEST(defaults.receipt==0u);
+    BOOST_TEST(ecs::ComponentTraits<Component>::StableName
+        == "games.generalszh.construction.admission");
+    BOOST_TEST(ecs::ComponentTraits<Component>::Version==1u);
+    BOOST_CHECK(ecs::ComponentTraits<Component>::Persistence
+        == ecs::PersistencePolicy::Transient);
+}

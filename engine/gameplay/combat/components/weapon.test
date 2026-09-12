@@ -1,0 +1,25 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.components.weapon;
+import engine.ecs.core.world;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(weapon_components_retain_identity_and_launch_metadata_policy)
+{
+    ecs::World world;world.RegisterComponent<WeaponDefinition>();world.RegisterComponent<WeaponState>();world.RegisterComponent<DamageEmitter>();world.FinalizeComponents();
+    const auto entity=world.Create<WeaponDefinition,WeaponState>();world.Get<WeaponState>(entity)->ammo=7;
+    world.Add<DamageEmitter>(entity);world.Get<WeaponState>(entity)->lastAttackTarget={12,4};
+    BOOST_TEST(world.Get<WeaponState>(entity)->ammo==7u);
+    BOOST_TEST(world.Get<WeaponState>(entity)->lastAttackTarget.index==12u);
+    BOOST_TEST(world.Get<WeaponState>(entity)->lastAttackTarget.generation==4u);
+    BOOST_TEST(ecs::ComponentTraits<WeaponDefinition>::Version==5u);
+    BOOST_TEST(ecs::ComponentTraits<WeaponState>::Version==4u);
+    BOOST_CHECK(ecs::ComponentTraits<WeaponState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<DamageEmitter>::Persistence==ecs::PersistencePolicy::Transient);
+}
+BOOST_AUTO_TEST_CASE(weapon_target_has_one_compatible_identity)
+{
+    const auto entity=ecs::Entity{7,3};
+    const auto byEntity=WeaponTarget::ForEntity(entity);
+    const auto byPosition=WeaponTarget::ForPosition({4,9});
+    BOOST_CHECK(byEntity.IsEntity()); BOOST_CHECK(!byEntity.IsPosition()); BOOST_CHECK(byEntity.entity==entity);
+    BOOST_CHECK(byPosition.IsPosition()); BOOST_CHECK(!byPosition.IsEntity()); BOOST_CHECK(!byPosition.entity.IsValid());
+}

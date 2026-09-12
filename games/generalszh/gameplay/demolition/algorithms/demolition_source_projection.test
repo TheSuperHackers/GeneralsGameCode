@@ -1,0 +1,51 @@
+#define BOOST_TEST_MODULE GeneralsZHDemolitionSourceProjection
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+import games.generalszh.gameplay.demolition.algorithms.demolition_source_projection;
+
+BOOST_AUTO_TEST_CASE(source_projection_captures_only_completed_unsold_structure_provenance)
+{
+    using namespace generalszh::demolition;
+    using namespace generalszh::construction;
+    using namespace generalszh::selling;
+    using namespace engine::gameplay::navigation;
+    const std::array<std::uint8_t,4> terrain{1,1,1,1};
+    const NavigationGrid grid(4,1,terrain);
+    ecs::World world;
+    world.RegisterComponent<Structure>();
+    world.RegisterComponent<GridPosition>();
+    world.RegisterComponent<SaleState>();
+    world.FinalizeComponents();
+    const auto owner=world.Create<>();
+    const auto source=world.Create<Structure,GridPosition,SaleState>();
+    auto *structure=world.Get<Structure>(source);
+    structure->account=owner;
+    structure->definition=77;
+    structure->complete=false;
+    world.Get<GridPosition>(source)->cell=2;
+
+    DemolitionSourceProjection projection(world,grid,16);
+    projection.Refresh();
+    auto capture=projection.Capture(source);
+    BOOST_CHECK(capture.disposition==engine::gameplay::combat::death::DeathSourceDisposition::Exempt);
+
+    structure->complete=true;
+    projection.Refresh();
+    capture=projection.Capture(source);
+    BOOST_CHECK(capture.disposition==engine::gameplay::combat::death::DeathSourceDisposition::Eligible);
+    BOOST_CHECK(capture.account==owner);
+    BOOST_TEST(capture.definition==77u);
+    BOOST_TEST(capture.position.x==2u);
+    BOOST_TEST(capture.position.y==0u);
+
+    world.Get<SaleState>(source)->phase=SalePhase::Selling;
+    projection.Refresh();
+    capture=projection.Capture(source);
+    BOOST_CHECK(capture.disposition==engine::gameplay::combat::death::DeathSourceDisposition::Exempt);
+
+    world.Destroy(source);
+    projection.Refresh();
+    capture=projection.Capture(source);
+    BOOST_CHECK(capture.disposition==engine::gameplay::combat::death::DeathSourceDisposition::Invalid);
+}

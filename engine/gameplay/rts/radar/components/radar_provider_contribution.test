@@ -1,0 +1,21 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRadarProviderContribution
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <type_traits>
+
+import engine.gameplay.rts.radar.components.radar_provider_contribution;
+
+using engine::gameplay::rts::radar::RadarProviderContribution;
+
+BOOST_AUTO_TEST_CASE(provider_contribution_is_transient_plain_data)
+{
+	static_assert(std::is_standard_layout_v<RadarProviderContribution>);
+	static_assert(std::is_trivially_copyable_v<RadarProviderContribution>);
+	BOOST_TEST(sizeof(RadarProviderContribution) == 2u * sizeof(std::int32_t));
+	BOOST_TEST(ecs::ComponentTraits<RadarProviderContribution>::StableName ==
+		"engine.gameplay.rts.radar.provider_contribution");
+	BOOST_TEST(ecs::ComponentTraits<RadarProviderContribution>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<RadarProviderContribution>::Persistence ==
+		ecs::PersistencePolicy::Transient);
+}

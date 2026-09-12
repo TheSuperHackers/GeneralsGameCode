@@ -1,0 +1,9 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.orders.inputs.order_input;
+BOOST_AUTO_TEST_CASE(order_request_is_value_data_without_a_world_or_executor)
+{
+    using namespace engine::gameplay::rts::orders;
+    const OrderInput input{{3,9},{OrderKind::AttackMove,25,{}}};
+    BOOST_CHECK(input.actor==ecs::Entity(3,9));BOOST_TEST(input.order.destination==25u);
+    BOOST_CHECK(input.order.kind==OrderKind::AttackMove);
+}

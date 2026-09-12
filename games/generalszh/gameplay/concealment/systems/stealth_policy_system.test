@@ -1,0 +1,104 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+import engine.ecs.core.world;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.combat.components.weapon;
+import engine.gameplay.concealment.components.concealment_binding;
+import engine.gameplay.concealment.components.concealment_eligibility;
+import engine.gameplay.concealment.components.concealment_state;
+import engine.gameplay.concealment.components.detection_state;
+import engine.gameplay.navigation.components.movement_activity;
+import engine.gameplay.concealment.definitions.concealment_definition;
+import engine.gameplay.concealment.definitions.detection_definition;
+import engine.gameplay.concealment.systems.concealment_system;
+import engine.gameplay.containment.components.passenger_membership;
+import engine.gameplay.navigation.components.movement;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.concealment.components.stealth_binding;
+import games.generalszh.gameplay.concealment.definitions.stealth_policy;
+import games.generalszh.gameplay.concealment.systems.stealth_policy_system;
+
+BOOST_AUTO_TEST_CASE(policy_uses_actual_movement_count_and_prior_launch_without_cooldown_guessing)
+{
+    using namespace engine::gameplay;
+    using namespace engine::gameplay::concealment;
+    using namespace generalszh::concealment;
+    using namespace std::chrono_literals;
+    const std::array stealthAuth{StealthPolicy{true, static_cast<std::uint8_t>(
+        static_cast<std::uint8_t>(StealthForbiddenCondition::Moving) |
+        static_cast<std::uint8_t>(StealthForbiddenCondition::Firing))}};
+    const std::array concealAuth{ConcealmentDefinition{0ms, true}};
+    const std::array<DetectionDefinition, 0> detectionAuth{};
+    StealthPolicies policies(stealthAuth);
+    ConcealmentDefinitions concealmentDefinitions(engine::time::FixedStep{20}, concealAuth);
+    DetectionDefinitions detectionDefinitions(engine::time::FixedStep{20}, detectionAuth);
+
+    const std::array<std::uint8_t, 2> terrain{1, 1};
+    navigation::NavigationGrid grid(2, 1, terrain);
+    ecs::World world;
+    world.RegisterComponent<combat::LifeState>();
+    world.RegisterComponent<combat::WeaponState>();
+    world.RegisterComponent<navigation::GridPosition>();
+    world.RegisterComponent<navigation::MoveResult>();
+    world.RegisterComponent<ConcealmentBinding>();
+    world.RegisterComponent<ConcealmentState>();
+    world.RegisterComponent<ConcealmentEligibility>();
+    world.RegisterComponent<ConcealmentGroup>();
+    world.RegisterComponent<DetectionBinding>();
+    world.RegisterComponent<DetectionState>();
+    world.RegisterComponent<navigation::MovementActivity>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();
+    world.RegisterComponent<generalszh::concealment::StealthPolicyBinding>();
+    world.RegisterComponent<generalszh::production::ProducedUnit>();
+    world.FinalizeComponents();
+
+    const auto group = world.Create();
+    const auto actor = world.Create<combat::LifeState, combat::WeaponState, navigation::GridPosition,
+        navigation::MoveResult, ConcealmentBinding, ConcealmentState, ConcealmentEligibility,
+        ConcealmentGroup, navigation::MovementActivity, StealthPolicyBinding, generalszh::production::ProducedUnit>();
+    world.Get<navigation::GridPosition>(actor)->cell = 1;
+    world.Get<ConcealmentBinding>(actor)->definition = concealmentDefinitions.Id(0);
+    world.Get<ConcealmentGroup>(actor)->value = group;
+    world.Get<StealthPolicyBinding>(actor)->policy = policies.Id(0);
+    world.Get<generalszh::production::ProducedUnit>(actor)->account = group;
+    world.Get<navigation::MoveResult>(actor)->status = navigation::MoveStatus::Arrived;
+    world.Get<navigation::MovementActivity>(actor)->cellsMovedThisTick = 1;
+    const auto capturedOwner = world.Create();
+    const auto detectorOnly = world.Create<combat::LifeState, DetectionBinding, ConcealmentGroup,
+        generalszh::production::ProducedUnit>();
+    world.Get<ConcealmentGroup>(detectorOnly)->value = group;
+    world.Get<generalszh::production::ProducedUnit>(detectorOnly)->account = group;
+
+    DetectionIndex detection(world, grid, 8);
+    ConcealmentSystem concealment(world, concealmentDefinitions, detectionDefinitions, detection, 4);
+    StealthPolicySystem policy(policies, world);
+    ecs::SystemRegistry registry; registry.Register(policy); registry.Register(concealment); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+
+    scheduler.Execute({0, step});
+    BOOST_CHECK(world.Get<ConcealmentGroup>(actor)->value==group);
+    BOOST_CHECK(world.Get<ConcealmentGroup>(detectorOnly)->value==group);
+    BOOST_TEST(!world.Get<ConcealmentEligibility>(actor)->allowed);
+    BOOST_TEST(!world.Get<ConcealmentState>(actor)->concealed);
+
+    world.Get<navigation::MovementActivity>(actor)->cellsMovedThisTick = 0;
+    world.Get<combat::WeaponState>(actor)->lastFireTickValid = true;
+    world.Get<combat::WeaponState>(actor)->lastFireTick = 0;
+    scheduler.Execute({1, step});
+    BOOST_TEST(!world.Get<ConcealmentEligibility>(actor)->allowed);
+
+    world.Get<combat::WeaponState>(actor)->lastFireTickValid = false;
+    scheduler.Execute({2, step});
+    BOOST_TEST(world.Get<ConcealmentEligibility>(actor)->allowed);
+    BOOST_TEST(world.Get<ConcealmentState>(actor)->concealed);
+
+    world.Get<generalszh::production::ProducedUnit>(actor)->account = capturedOwner;
+    world.Get<generalszh::production::ProducedUnit>(detectorOnly)->account = capturedOwner;
+    scheduler.Execute({3, step});
+    BOOST_CHECK(world.Get<ConcealmentGroup>(actor)->value==capturedOwner);
+    BOOST_CHECK(world.Get<ConcealmentGroup>(detectorOnly)->value==capturedOwner);
+}

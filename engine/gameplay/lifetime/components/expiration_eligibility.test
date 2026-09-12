@@ -1,0 +1,40 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+import engine.gameplay.lifetime.components.expiration_eligibility;
+import engine.ecs.core.world;
+
+using engine::gameplay::lifetime::ExpirationEligibility;
+
+BOOST_AUTO_TEST_SUITE(ExpirationEligibilityComponent)
+
+BOOST_AUTO_TEST_CASE(default_enabled_input_has_explicit_transient_identity)
+{
+	static_assert(std::is_trivially_copyable_v<ExpirationEligibility>);
+	static_assert(std::is_standard_layout_v<ExpirationEligibility>);
+	static_assert(ecs::ComponentTraits<ExpirationEligibility>::Persistence == ecs::PersistencePolicy::Transient);
+	BOOST_TEST(ExpirationEligibility{}.enabled);
+	ecs::World first, second;
+	first.RegisterComponent<ExpirationEligibility>();
+	second.RegisterComponent<ExpirationEligibility>();
+	first.FinalizeComponents();
+	second.FinalizeComponents();
+	BOOST_TEST(first.Components().SchemaHash() == second.Components().SchemaHash());
+	BOOST_TEST(first.Components().TryGet<ExpirationEligibility>() == second.Components().TryGet<ExpirationEligibility>());
+}
+
+BOOST_AUTO_TEST_CASE(component_value_is_reset_on_removal_and_readdition)
+{
+	ecs::World world;
+	world.RegisterComponent<ExpirationEligibility>();
+	world.FinalizeComponents();
+	const auto entity = world.Create();
+	world.Add<ExpirationEligibility>(entity);
+	world.Get<ExpirationEligibility>(entity)->enabled = false;
+	BOOST_TEST(!world.Get<ExpirationEligibility>(entity)->enabled);
+	world.Remove<ExpirationEligibility>(entity);
+	BOOST_CHECK(world.Get<ExpirationEligibility>(entity) == nullptr);
+	world.Add<ExpirationEligibility>(entity);
+	BOOST_TEST(world.Get<ExpirationEligibility>(entity)->enabled);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

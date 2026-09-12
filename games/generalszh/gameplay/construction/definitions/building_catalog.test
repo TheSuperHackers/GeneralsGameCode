@@ -1,0 +1,32 @@
+#define BOOST_TEST_MODULE BuildingCatalog
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+import games.generalszh.gameplay.construction.definitions.building_catalog;
+BOOST_AUTO_TEST_CASE(building_repair_binding_is_validated_before_construction_can_begin)
+{
+    using namespace std::chrono_literals;
+    using namespace generalszh::construction;
+    const engine::time::FixedStep step{20};
+    const std::array definitions{engine::gameplay::rts::repair::RepairDefinition{1,10,100ms,1s,0ms}};
+    const engine::gameplay::rts::repair::RepairDefinitions repairs(step,definitions);
+    std::array buildings{BuildingDefinition{1}}; buildings[0].repairDefinition=0;
+    BOOST_CHECK_THROW((BuildingCatalog{buildings,step}),std::invalid_argument);
+    const BuildingCatalog catalog(buildings,step,&repairs); BOOST_REQUIRE(catalog.Find(1)->definition.repairDefinition);
+    BOOST_TEST(*catalog.Find(1)->definition.repairDefinition==0u);
+    buildings[0].repairDefinition=1;
+    BOOST_CHECK_THROW((BuildingCatalog{buildings,step,&repairs}),std::out_of_range);
+}
+BOOST_AUTO_TEST_CASE(catalog_sorts_copies_validates_and_compiles_fixed_work)
+{
+    using namespace generalszh::construction;
+    std::array definitions{BuildingDefinition{9,10,std::chrono::milliseconds(150),100},BuildingDefinition{2}};
+    const BuildingCatalog catalog(definitions,engine::time::FixedStep(10));
+    definitions[0].health=1;
+    BOOST_TEST(catalog.Find(9)->definition.health==100u); BOOST_TEST(catalog.Find(9)->work.required==2u);
+    BOOST_TEST(catalog.Find(2)!=nullptr); BOOST_TEST(catalog.Find(3)==nullptr);
+    definitions[1].key=9;
+    BOOST_CHECK_THROW(BuildingCatalog(definitions,engine::time::FixedStep(10)),std::invalid_argument);
+    definitions[1].key=2; definitions[0].health=0;
+    BOOST_CHECK_THROW(BuildingCatalog(definitions,engine::time::FixedStep(10)),std::invalid_argument);
+}

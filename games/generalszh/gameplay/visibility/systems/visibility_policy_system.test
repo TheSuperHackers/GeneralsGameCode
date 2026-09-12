@@ -1,0 +1,60 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+
+import engine.ecs.core.world;
+import engine.ecs.scheduler.scheduler;
+import engine.jobs.job_system;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.rts.visibility.components.visibility_observer;
+import engine.gameplay.rts.visibility.definitions.visibility_definition;
+import engine.gameplay.rts.visibility.definitions.visibility_participant;
+import games.generalszh.gameplay.construction.components.structure;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.visibility.systems.visibility_policy_system;
+
+BOOST_AUTO_TEST_SUITE(generalszh_visibility_policy_system)
+
+BOOST_AUTO_TEST_CASE(garrison_uses_generation_safe_carrier_cell)
+{
+	using namespace std::chrono_literals;
+	using namespace engine::gameplay::rts::visibility;
+	using namespace engine::gameplay::navigation;
+	using namespace engine::gameplay::combat;
+	using namespace engine::gameplay::containment;
+	const VisibilityTopology topology{4, 1};
+	const auto definition = CompileVisibilityDefinition(0, 1, 0, 5000ms, engine::time::FixedStep{30});
+	const std::array definitions{definition};
+	const VisibilityDefinitions catalog{definitions, engine::time::FixedStep{30}};
+	VisibilityParticipantTable participants;
+	const auto account = ecs::Entity{1, 2};
+	participants.Enroll(account);
+	ecs::World world;
+	world.RegisterComponent<LifeState>(); world.RegisterComponent<GridPosition>();
+	world.RegisterComponent<VisibilityObserver>(); world.RegisterComponent<VisibilityEligibility>();
+	world.RegisterComponent<generalszh::production::ProducedUnit>();
+	world.RegisterComponent<generalszh::production::Producer>();
+	world.RegisterComponent<generalszh::construction::Structure>();
+	world.RegisterComponent<PassengerMembership>(); world.FinalizeComponents();
+	const auto carrier = world.Create<LifeState, GridPosition>();
+	world.Get<GridPosition>(carrier)->cell = 3;
+	const auto passenger = world.Create<LifeState, GridPosition, VisibilityObserver, VisibilityEligibility,
+		generalszh::production::ProducedUnit, PassengerMembership>();
+	world.Get<GridPosition>(passenger)->cell = 0;
+	world.Get<generalszh::production::ProducedUnit>(passenger)->account = account;
+	world.Get<VisibilityObserver>(passenger)->definition = 0;
+	world.Get<PassengerMembership>(passenger)->carrier = carrier;
+	world.Get<PassengerMembership>(passenger)->phase = ContainmentPhase::Inside;
+	world.Get<PassengerMembership>(passenger)->owner = PassengerContainmentOwner::Garrison;
+	generalszh::visibility::VisibilityPolicySystem system(world, catalog, participants, 32);
+	ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({1});
+	ecs::Scheduler scheduler(world, registry, jobs); scheduler.Finalize(engine::time::FixedStep{30});
+	scheduler.Execute({0, engine::time::FixedStep{30}});
+	BOOST_TEST(world.Get<VisibilityEligibility>(passenger)->active);
+	BOOST_TEST(world.Get<VisibilityEligibility>(passenger)->resolvedCell == 3u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

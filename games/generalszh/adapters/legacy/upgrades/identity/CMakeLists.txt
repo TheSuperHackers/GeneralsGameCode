@@ -1,0 +1,17 @@
+add_library(generalszh_upgrade_catalog_adapter STATIC)
+target_sources(generalszh_upgrade_catalog_adapter PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	upgrade_catalog.cppm)
+target_compile_features(generalszh_upgrade_catalog_adapter PUBLIC cxx_std_23)
+set_property(TARGET generalszh_upgrade_catalog_adapter PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_include_directories(generalszh_upgrade_catalog_adapter PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../..")
+target_link_libraries(generalszh_upgrade_catalog_adapter PUBLIC generalszh_upgrade_catalog)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(upgrade_catalog.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_upgrade_catalog_adapter_tests upgrade_catalog.test)
+	set_property(TARGET generalszh_upgrade_catalog_adapter_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_upgrade_catalog_adapter_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_upgrade_catalog_adapter_tests PRIVATE
+		generalszh_upgrade_catalog_adapter engine_jobs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_upgrade_catalog_adapter_tests COMMAND generalszh_upgrade_catalog_adapter_tests)
+endif()

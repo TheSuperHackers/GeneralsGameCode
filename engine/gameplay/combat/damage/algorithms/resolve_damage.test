@@ -1,0 +1,19 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <stdexcept>
+import engine.gameplay.combat.damage.algorithms.resolve_damage;
+BOOST_AUTO_TEST_CASE(fixed_point_armor_floor_bypass_immunity_and_saturation) {
+    using namespace engine::gameplay::combat::damage;
+    BOOST_TEST(ResolveDamage(19,{100000},ArmorApplication::Scale).quantity==1u);
+    BOOST_TEST(ResolveDamage(100,{1500000},ArmorApplication::Scale).quantity==150u);
+    BOOST_TEST(ResolveDamage(UINT64_MAX,{0},ArmorApplication::Scale).quantity==0u);
+    const auto identity=ResolveDamage(UINT64_MAX,{1000000},ArmorApplication::Scale);
+    BOOST_TEST(identity.quantity==UINT64_MAX);BOOST_TEST(!identity.saturated);
+    const auto overflow=ResolveDamage(UINT64_MAX,{UINT32_MAX},ArmorApplication::Scale);
+    BOOST_TEST(overflow.quantity==UINT64_MAX);BOOST_TEST(overflow.saturated);
+    BOOST_TEST(ResolveDamage(100,{0},ArmorApplication::Bypass).quantity==100u);
+    BOOST_CHECK_THROW(ResolveDamage(0,{0},ArmorApplication::Unsupported),std::invalid_argument);
+    // Alternate non-game-specific coefficients through the same algorithm.
+    for(std::uint64_t raw=0;raw<1000;++raw)
+        BOOST_TEST(ResolveDamage(raw,{1234567},ArmorApplication::Scale).quantity==raw*1234567/1000000);
+}

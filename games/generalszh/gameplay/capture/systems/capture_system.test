@@ -1,0 +1,233 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <stdexcept>
+#include <vector>
+import games.generalszh.gameplay.capture.systems.capture_system;
+import engine.ecs.scheduler.scheduler;
+namespace
+{
+using namespace generalszh::capture;
+using namespace engine::gameplay::combat;
+using namespace engine::gameplay::navigation;
+using generalszh::construction::Structure;
+using generalszh::production::ProducedUnit;
+using generalszh::production::Producer;
+using engine::gameplay::rts::economy::ResourceBalance;
+using engine::gameplay::rts::power::PowerSource;
+using engine::gameplay::rts::production::ProductionQueue;
+using generalszh::match::VictoryAsset;
+using generalszh::harvesting::SupplyDropoffOwner;
+void Register(ecs::World &world) {
+    world.RegisterComponent<CaptureCapability>();world.RegisterComponent<CaptureActorState>();world.RegisterComponent<CaptureRecharge>();
+    world.RegisterComponent<CaptureState>();world.RegisterComponent<Capturable>();
+    world.RegisterComponent<Structure>();world.RegisterComponent<ProducedUnit>();world.RegisterComponent<Producer>();
+    world.RegisterComponent<Health>();world.RegisterComponent<LifeState>();world.RegisterComponent<PendingDamage>();world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<GridPosition>();world.RegisterComponent<MoveGoal>();world.RegisterComponent<ResourceBalance>();
+    world.RegisterComponent<PowerSource>();world.RegisterComponent<VictoryAsset>();world.RegisterComponent<SupplyDropoffOwner>();
+    world.RegisterComponent<ProductionQueue>();world.RegisterComponent<generalszh::selling::SaleState>();
+    world.RegisterComponent<generalszh::economy::IncomeAccount>();world.RegisterComponent<generalszh::construction::Builder>();
+    world.RegisterComponent<engine::gameplay::rts::harvesting::HarvestPolicy>();
+    world.RegisterComponent<engine::gameplay::rts::orders::UnitOrder>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();world.RegisterComponent<engine::gameplay::containment::TransportBinding>();
+    world.FinalizeComponents();
+}
+ecs::Entity Actor(ecs::World &world,ecs::Entity owner) {
+    const auto entity=world.Create<CaptureCapability,CaptureActorState,CaptureRecharge,ProducedUnit,GridPosition,Health,LifeState,PendingDamage,DamageResult>();
+    *world.Get<CaptureRecharge>(entity)=InitialCaptureRecharge(CompiledCaptureDefinition{},0);
+    *world.Get<CaptureCapability>(entity)={0,true};world.Get<ProducedUnit>(entity)->account=owner;world.Get<Health>(entity)->current=100;
+    return entity;
+}
+ecs::Entity Target(ecs::World &world,ecs::Entity owner) {
+    const auto entity=world.Create<Structure,CaptureState,Capturable,GridPosition,Health,LifeState,PendingDamage,DamageResult,
+        Producer,ProductionQueue,PowerSource,VictoryAsset,SupplyDropoffOwner>();
+    auto &structure=*world.Get<Structure>(entity);structure.account=owner;structure.complete=true;
+    world.Get<Capturable>(entity)->enabled=true;world.Get<Health>(entity)->current=1000;
+    world.Get<Producer>(entity)->account=owner;world.Get<PowerSource>(entity)->account=owner;
+    world.Get<VictoryAsset>(entity)->account=owner;world.Get<SupplyDropoffOwner>(entity)->account=owner;
+    return entity;
+}
+}
+BOOST_AUTO_TEST_CASE(real_health_capture_transfer_and_deadline_interruption_match_workers)
+{
+    using namespace std::chrono_literals;
+    const auto run=[](unsigned workers) {
+        const engine::time::FixedStep step{30};const std::array authored{CaptureDefinition{3s,20s,2s}};
+        const CaptureDefinitions definitions(step,authored);
+        ecs::World world(ecs::WorldConfig{256});Register(world);
+        const auto oldOwner=world.Create<ResourceBalance>(),newOwner=world.Create<ResourceBalance>();
+        std::vector<ecs::Entity> actors,targets;std::vector<CaptureInput> inputs;
+        for(unsigned i=0;i<80;++i) {
+            actors.push_back(Actor(world,newOwner));targets.push_back(Target(world,oldOwner));
+            inputs.push_back({CaptureAction::Start,newOwner,actors.back(),targets.back()});
+        }
+        CaptureBatch batch(100,4196);CaptureSystem capture(world,definitions,batch,2048);HealthSystem health;
+        ecs::SystemRegistry registry;registry.Register(health);registry.Register(capture);registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers});scheduler.Finalize(step);
+        batch.SetInputs(inputs);scheduler.Execute({0,step});
+        BOOST_TEST(batch.Results().size()==80u);
+        scheduler.Execute({689,step});BOOST_CHECK(world.Get<Structure>(targets[0])->account==oldOwner);
+        const std::array interrupted{actors[0]};capture.SetInterruptions(interrupted);
+        // A lethal hit in the joined health pass cancels another actor's work.
+        world.Get<PendingDamage>(actors[1])->quantity=100;
+        const std::array restart{CaptureInput{CaptureAction::Start,newOwner,actors[0],targets[0]}};
+        batch.SetInputs(restart);scheduler.Execute({690,step});
+        BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Interrupted);
+        BOOST_CHECK(batch.Results()[1].outcome==CaptureOutcome::Busy);
+        std::vector<std::uint64_t> result;
+        for(unsigned i=0;i<targets.size();++i) {
+            const auto target=targets[i];const auto expected=i<2?oldOwner:newOwner;
+            BOOST_CHECK(world.Get<Structure>(target)->account==expected);
+            BOOST_CHECK(world.Get<Producer>(target)->account==expected);
+            BOOST_CHECK(world.Get<PowerSource>(target)->account==expected);
+            BOOST_CHECK(world.Get<VictoryAsset>(target)->account==expected);
+            BOOST_CHECK(world.Get<SupplyDropoffOwner>(target)->account==expected);
+            BOOST_TEST(world.Get<Health>(target)->current==1000u);
+            result.insert(result.end(),{target.index,target.generation,expected.index,expected.generation,
+                world.Get<CaptureActorState>(actors[i])->recoveryUntil});
+        }
+        BOOST_TEST(IsCaptureBusy(*world.Get<CaptureActorState>(actors[2])));
+        scheduler.Execute({750,step});BOOST_TEST(!IsCaptureBusy(*world.Get<CaptureActorState>(actors[2])));
+        return result;
+    };
+    const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(queued_production_and_inconsistent_routing_are_not_transferred)
+{
+    using namespace std::chrono_literals;const engine::time::FixedStep step{30};
+    const std::array authored{CaptureDefinition{0s,1s,0s}};const CaptureDefinitions definitions(step,authored);
+    ecs::World world;Register(world);const auto a=world.Create<ResourceBalance>(),b=world.Create<ResourceBalance>();
+    const auto actor=Actor(world,b),target=Target(world,a);
+    CaptureBatch batch(1,2049);CaptureSystem capture(world,definitions,batch,1024);HealthSystem health;
+    ecs::SystemRegistry registry;registry.Register(health);registry.Register(capture);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry);scheduler.Finalize(step);
+    const std::array input{CaptureInput{CaptureAction::Start,b,actor,target}};
+    world.Get<ProductionQueue>(target)->count=1;batch.SetInputs(input);scheduler.Execute({0,step});
+    BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::UnsupportedSignature);
+    world.Get<ProductionQueue>(target)->count=0;world.Get<PowerSource>(target)->account=b;
+    batch.SetInputs(input);scheduler.Execute({1,step});BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::InvalidBindings);
+    world.Get<PowerSource>(target)->account=a;batch.SetInputs(input);scheduler.Execute({2,step});
+    BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Started);
+    world.Get<ProductionQueue>(target)->count=1;scheduler.Execute({32,step});
+    BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Interrupted);
+    BOOST_CHECK(world.Get<Structure>(target)->account==a);
+}
+
+BOOST_AUTO_TEST_CASE(orphan_order_and_recovery_interruptions_release_actor)
+{
+    using namespace std::chrono_literals;const engine::time::FixedStep step{30};
+    const std::array authored{CaptureDefinition{0s,1s,2s}};const CaptureDefinitions definitions(step,authored);
+    ecs::World world;Register(world);const auto oldOwner=world.Create<ResourceBalance>(),owner=world.Create<ResourceBalance>();
+    const auto actor=Actor(world,owner);auto target=Target(world,oldOwner);
+    CaptureBatch batch(1,CaptureBatch::RequiredResultCapacity(1,1024));CaptureSystem capture(world,definitions,batch,1024);HealthSystem health;
+    ecs::SystemRegistry registry;registry.Register(health);registry.Register(capture);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry);scheduler.Finalize(step);
+    const auto start=[&](std::uint64_t tick) {
+        const std::array input{CaptureInput{CaptureAction::Start,owner,actor,target}};
+        batch.SetInputs(input);scheduler.Execute({tick,step});
+        BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Started);
+    };
+    start(0);world.Destroy(target);scheduler.Execute({1,step});
+    BOOST_TEST(!IsCaptureBusy(*world.Get<CaptureActorState>(actor)));
+    BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Interrupted);
+    target=Target(world,oldOwner);start(2);
+    world.Remove<CaptureState>(target);scheduler.Execute({3,step});
+    BOOST_TEST(!IsCaptureBusy(*world.Get<CaptureActorState>(actor)));
+    world.Add<CaptureState>(target);start(4);
+    world.Add<MoveGoal>(actor);world.Get<MoveGoal>(actor)->cell=1;
+    scheduler.Execute({34,step});
+    BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Interrupted);
+    BOOST_CHECK(world.Get<Structure>(target)->account==oldOwner);
+    world.Get<MoveGoal>(actor)->cell=InvalidCell;start(35);scheduler.Execute({65,step});
+    BOOST_CHECK(world.Get<CaptureActorState>(actor)->phase==CaptureActorPhase::Recovering);
+    const std::array manual{actor};capture.SetInterruptions(manual);scheduler.Execute({66,step});
+    BOOST_TEST(!IsCaptureBusy(*world.Get<CaptureActorState>(actor)));
+    BOOST_CHECK(batch.Results()[0].outcome==CaptureOutcome::Interrupted);
+}
+BOOST_AUTO_TEST_CASE(preparation_recharge_survives_cancel_success_and_recovery_across_workers)
+{
+    using namespace std::chrono_literals;
+    const auto run=[](unsigned workers) {
+        const engine::time::FixedStep step{10};
+        const std::array authored{CaptureDefinition{200ms,300ms,200ms,500ms,true}};
+        const CaptureDefinitions definitions(step,authored);
+        ecs::World world;Register(world);
+        const auto oldOwner=world.Create<ResourceBalance>(),owner=world.Create<ResourceBalance>();
+        const auto actor=Actor(world,owner),target=Target(world,oldOwner),next=Target(world,oldOwner);
+        *world.Get<CaptureRecharge>(actor)=InitialCaptureRecharge(definitions.Get(0),0);
+        CaptureBatch batch(1,CaptureBatch::RequiredResultCapacity(1,1024));
+        CaptureSystem capture(world,definitions,batch,1024);HealthSystem health;
+        ecs::SystemRegistry registry;registry.Register(health);registry.Register(capture);registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers});scheduler.Finalize(step);
+        std::vector<std::uint64_t> observed;
+        const auto tick=[&](std::uint64_t now,CaptureAction action,ecs::Entity destination,CaptureOutcome expected) {
+            const std::array input{CaptureInput{action,owner,actor,destination}};
+            batch.SetInputs(input);scheduler.Execute({now,step});
+            BOOST_REQUIRE(!batch.Results().empty());BOOST_CHECK(batch.Results()[0].outcome==expected);
+            for(const auto &result:batch.Results()) observed.insert(observed.end(),{result.actor.index,result.actor.generation,
+                result.target.index,result.target.generation,result.tick,static_cast<std::uint64_t>(result.outcome)});
+            observed.push_back(world.Get<CaptureRecharge>(actor)->readyAt);
+        };
+        tick(0,CaptureAction::Start,target,CaptureOutcome::Started);
+        tick(1,CaptureAction::Cancel,target,CaptureOutcome::Cancelled);
+        BOOST_TEST(world.Get<CaptureRecharge>(actor)->readyAt==0u); // Unpacking consumed nothing.
+        tick(2,CaptureAction::Start,target,CaptureOutcome::Started);
+        scheduler.Execute({3,step});scheduler.Execute({4,step});
+        BOOST_TEST(world.Get<CaptureRecharge>(actor)->readyAt==9u);
+        scheduler.Execute({5,step});BOOST_TEST(world.Get<CaptureRecharge>(actor)->readyAt==10u);
+        tick(6,CaptureAction::Cancel,target,CaptureOutcome::Cancelled);
+        tick(7,CaptureAction::Start,target,CaptureOutcome::Ineligible);
+        tick(10,CaptureAction::Start,target,CaptureOutcome::Started);
+        for(std::uint64_t now=11;now<=15;++now) scheduler.Execute({now,step});
+        BOOST_CHECK(world.Get<Structure>(target)->account==owner);
+        BOOST_TEST(world.Get<CaptureRecharge>(actor)->readyAt==19u); // Last continuation was 14, not success at 15.
+        BOOST_TEST(world.Get<CaptureActorState>(actor)->recoveryUntil==17u);
+        // Interrupting packing releases action occupancy, not the power deadline.
+        const std::array manual{actor};capture.SetInterruptions(manual);scheduler.Execute({16,step});
+        BOOST_TEST(!IsCaptureBusy(*world.Get<CaptureActorState>(actor)));
+        tick(17,CaptureAction::Start,next,CaptureOutcome::Ineligible);
+        tick(19,CaptureAction::Start,next,CaptureOutcome::Started);
+        observed.insert(observed.end(),{world.Get<Structure>(target)->account.index,
+            world.Get<CaptureRecharge>(actor)->readyAt,world.Get<CaptureState>(next)->completionTick});
+        return observed;
+    };
+    const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(initial_recharge_missing_initialization_and_zero_preparation_use_real_system)
+{
+    using namespace std::chrono_literals;const engine::time::FixedStep step{10};
+    const std::array authored{CaptureDefinition{0ms,0ms,500ms,200ms}};
+    const CaptureDefinitions definitions(step,authored);ecs::World world;Register(world);
+    const auto oldOwner=world.Create<ResourceBalance>(),owner=world.Create<ResourceBalance>();
+    const auto actor=Actor(world,owner),target=Target(world,oldOwner),next=Target(world,oldOwner);
+    *world.Get<CaptureRecharge>(actor)={};
+    CaptureBatch batch(1,CaptureBatch::RequiredResultCapacity(1,1024));CaptureSystem capture(world,definitions,batch,1024);HealthSystem health;
+    ecs::SystemRegistry registry;registry.Register(health);registry.Register(capture);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry);scheduler.Finalize(step);
+    const auto start=[&](std::uint64_t now,ecs::Entity destination,CaptureOutcome expected) {
+        const std::array input{CaptureInput{CaptureAction::Start,owner,actor,destination}};
+        batch.SetInputs(input);scheduler.Execute({now,step});BOOST_CHECK(batch.Results()[0].outcome==expected);
+    };
+    start(0,target,CaptureOutcome::Ineligible);
+    *world.Get<CaptureRecharge>(actor)=InitialCaptureRecharge(definitions.Get(0),1);
+    start(1,target,CaptureOutcome::Ineligible);start(3,target,CaptureOutcome::Started);
+    BOOST_CHECK(world.Get<Structure>(target)->account==owner);
+    BOOST_TEST(world.Get<CaptureRecharge>(actor)->readyAt==5u);
+    start(5,next,CaptureOutcome::Busy); // Recharge complete, recovery still running.
+    start(8,next,CaptureOutcome::Started);
+}
+BOOST_AUTO_TEST_CASE(recharge_horizon_failure_propagates_from_real_capture_job)
+{
+    using namespace std::chrono_literals;const engine::time::FixedStep step{10};
+    const std::array authored{CaptureDefinition{0ms,0ms,0ms,200ms,true}};
+    const CaptureDefinitions definitions(step,authored);ecs::World world;Register(world);
+    const auto oldOwner=world.Create<ResourceBalance>(),owner=world.Create<ResourceBalance>();
+    const auto actor=Actor(world,owner),target=Target(world,oldOwner);
+    CaptureBatch batch(1,CaptureBatch::RequiredResultCapacity(1,1024));CaptureSystem capture(world,definitions,batch,1024);HealthSystem health;
+    ecs::SystemRegistry registry;registry.Register(health);registry.Register(capture);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});scheduler.Finalize(step);
+    const std::array input{CaptureInput{CaptureAction::Start,owner,actor,target}};batch.SetInputs(input);
+    BOOST_CHECK_THROW(scheduler.Execute({UINT64_MAX-1,step}),std::overflow_error);
+    BOOST_CHECK(world.Get<Structure>(target)->account==oldOwner);
+}

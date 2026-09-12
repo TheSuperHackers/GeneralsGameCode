@@ -1,0 +1,49 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+import engine.ecs.storage.chunk_layout;
+import engine.gameplay.rts.visibility.components.visibility_history_page;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_history_page)
+
+BOOST_AUTO_TEST_CASE(bitmap_uses_word_scan_and_clears_the_payload)
+{
+	VisibilityHistoryPage page;
+	BOOST_TEST(page.FindFree() == 0u);
+	page.SetOccupied(0);
+	page.SetOccupied(255);
+	BOOST_TEST(page.Occupied(0));
+	BOOST_TEST(page.Occupied(255));
+	BOOST_TEST(page.FindFree() == 1u);
+	page.sources[0] = ecs::Entity{7, 2};
+	page.graceTicks[0] = 19;
+	page.Clear(0);
+	BOOST_CHECK(!page.Occupied(0));
+	BOOST_CHECK(!page.sources[0].IsValid());
+	BOOST_TEST(page.graceTicks[0] == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(component_and_chunk_layout_use_actual_compiler_values)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<VisibilityHistoryPage>();
+	registry.Finalize();
+	const auto id = registry.TryGet<VisibilityHistoryPage>();
+	BOOST_TEST(registry.Get(id).size == sizeof(VisibilityHistoryPage));
+	BOOST_TEST(registry.Get(id).alignment == alignof(VisibilityHistoryPage));
+	const std::vector<const ecs::ComponentInfo *> columns{&registry.Get(id)};
+	const auto layout = ecs::ChunkLayout::Build(columns);
+	BOOST_TEST(layout.Capacity() >= 1u);
+	BOOST_TEST(layout.Alignment() >= alignof(VisibilityHistoryPage));
+	BOOST_TEST_MESSAGE("VisibilityHistoryPage sizeof=" << sizeof(VisibilityHistoryPage) <<
+		" alignof=" << alignof(VisibilityHistoryPage) <<
+		" chunk capacity=" << layout.Capacity() <<
+		" chunk bytes=" << layout.TotalBytes());
+}
+
+BOOST_AUTO_TEST_SUITE_END()

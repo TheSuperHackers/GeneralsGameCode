@@ -1,0 +1,15 @@
+#include <boost/test/unit_test.hpp>
+import games.generalszh.gameplay.production.definitions.build_definition;
+BOOST_AUTO_TEST_CASE(build_authoring_defaults_do_not_enable_unauthored_capabilities)
+{
+    const generalszh::production::BuildDefinition value;
+    BOOST_CHECK(!value.capture);BOOST_CHECK(!value.armor);BOOST_CHECK(!value.transportDefinition);
+    BOOST_CHECK(!value.regeneration);BOOST_CHECK(!value.progression);BOOST_CHECK(!value.lifetime);
+    BOOST_CHECK(!value.veterancy);
+    BOOST_CHECK(!value.initialPayload);
+    BOOST_CHECK(!value.garrisonable);
+    BOOST_CHECK(!value.cashBountyCost);
+    BOOST_CHECK(value.sciencePrerequisiteIds.empty());
+    BOOST_CHECK(!value.scienceSchemaHash);
+    BOOST_TEST(value.quantity==1);BOOST_TEST(value.health==100u);
+}

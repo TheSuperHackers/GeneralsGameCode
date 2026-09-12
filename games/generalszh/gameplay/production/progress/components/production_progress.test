@@ -1,0 +1,114 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionProgressComponents
+#include <boost/test/included/unit_test.hpp>
+
+#include <bit>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.gameplay.production.progress.components.production_progress;
+import games.generalszh.gameplay.production.progress.definitions.production_requirement;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::production::ProductionElapsed;
+using generalszh::production::ProductionProgress;
+using generalszh::production::ProductionRequirement;
+
+namespace production_progress_components_test
+{
+struct Marker
+{
+	int value{0};
+};
+} // namespace production_progress_components_test
+
+namespace ecs
+{
+template<>
+struct ComponentTraits<production_progress_components_test::Marker>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.progress.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+} // namespace ecs
+
+namespace
+{
+std::uint32_t FloatBits(const float value) noexcept
+{
+	return std::bit_cast<std::uint32_t>(value);
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(default_values_and_serializable_component_metadata_are_stable)
+{
+	static_assert(std::is_standard_layout_v<ProductionElapsed>);
+	static_assert(std::is_standard_layout_v<ProductionProgress>);
+	static_assert(std::is_standard_layout_v<ProductionRequirement>);
+	static_assert(std::is_trivially_copyable_v<ProductionElapsed>);
+	static_assert(std::is_trivially_copyable_v<ProductionProgress>);
+	static_assert(std::is_trivially_copyable_v<ProductionRequirement>);
+
+	const ProductionElapsed elapsed;
+	const ProductionProgress progress;
+	BOOST_TEST(elapsed.ticks == 0);
+	BOOST_TEST(FloatBits(progress.percent) == FloatBits(0.0f));
+
+	BOOST_TEST(ecs::ComponentTraits<ProductionElapsed>::StableName ==
+		"games.generalszh.production.elapsed");
+	BOOST_TEST(ecs::ComponentTraits<ProductionProgress>::StableName ==
+		"games.generalszh.production.progress");
+	BOOST_TEST(ecs::ComponentTraits<ProductionElapsed>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<ProductionProgress>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ProductionElapsed>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ProductionProgress>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}
+
+BOOST_AUTO_TEST_CASE(components_keep_separate_contiguous_columns_across_archetype_transitions)
+{
+	ecs::World world{ecs::WorldConfig{64}};
+	world.RegisterComponent<ProductionElapsed>();
+	world.RegisterComponent<ProductionProgress>();
+	world.RegisterComponent<production_progress_components_test::Marker>();
+	world.FinalizeComponents();
+
+	const ecs::Entity entity = world.Create<ProductionElapsed, ProductionProgress>();
+	world.Get<ProductionElapsed>(entity)->ticks = 73;
+	world.Get<ProductionProgress>(entity)->percent = 12.5f;
+
+	for (std::size_t index = 0; index < 12; ++index)
+		world.Create<ProductionElapsed, ProductionProgress>();
+
+	std::size_t rowsSeen = 0;
+	std::size_t chunksSeen = 0;
+	ecs::Query<ecs::Read<ProductionElapsed>,
+		ecs::Read<ProductionProgress>> query(world);
+	query.ForEachChunk([&](const auto chunk) {
+		++chunksSeen;
+		const auto elapsed = chunk.template Get<ProductionElapsed>();
+		const auto progress = chunk.template Get<ProductionProgress>();
+		BOOST_TEST(elapsed.size() == progress.size());
+		BOOST_TEST(reinterpret_cast<const void *>(elapsed.data()) !=
+			reinterpret_cast<const void *>(progress.data()));
+		for (std::size_t row = 1; row < elapsed.size(); ++row)
+		{
+			BOOST_CHECK(&elapsed[row] == &elapsed[row - 1] + 1);
+			BOOST_CHECK(&progress[row] == &progress[row - 1] + 1);
+		}
+		rowsSeen += elapsed.size();
+	});
+	BOOST_TEST(rowsSeen == 13u);
+	BOOST_TEST(chunksSeen > 1u);
+
+	BOOST_TEST(world.Add<production_progress_components_test::Marker>(entity));
+	BOOST_TEST(world.Get<ProductionElapsed>(entity)->ticks == 73);
+	BOOST_TEST(FloatBits(world.Get<ProductionProgress>(entity)->percent) == FloatBits(12.5f));
+	BOOST_TEST(world.Remove<production_progress_components_test::Marker>(entity));
+	BOOST_TEST(world.Get<ProductionElapsed>(entity)->ticks == 73);
+	BOOST_TEST(FloatBits(world.Get<ProductionProgress>(entity)->percent) == FloatBits(12.5f));
+}

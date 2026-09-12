@@ -1,0 +1,31 @@
+#define BOOST_TEST_MODULE EngineDeathWeaponState
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+import engine.ecs.core.world;
+import engine.gameplay.combat.death.components.death_weapon_state;
+
+BOOST_AUTO_TEST_CASE(death_binding_and_capture_state_are_registered_as_persistent_runtime_state)
+{
+    using namespace engine::gameplay::combat::death;
+    ecs::World world;
+    world.RegisterComponent<DeathWeaponBinding>();
+    world.RegisterComponent<DeathWeaponState>();
+    world.FinalizeComponents();
+
+    const auto source=world.Create<DeathWeaponBinding,DeathWeaponState>();
+    *world.Get<DeathWeaponBinding>(source)={17};
+    auto *state=world.Get<DeathWeaponState>(source);
+    state->source={source,ecs::Entity{3,1},29,{4,2}};
+    state->deathTick=8;
+    state->destructionDeadline=28;
+    state->armed=true;
+
+    BOOST_TEST(ecs::ComponentTraits<DeathWeaponBinding>::Version==1u);
+    BOOST_CHECK(ecs::ComponentTraits<DeathWeaponState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_TEST(world.Get<DeathWeaponBinding>(source)->definition==17u);
+    BOOST_CHECK(state->source.entity==source);
+    BOOST_TEST(state->source.definition==29u);
+    BOOST_TEST(state->source.position.x==4u);
+    BOOST_TEST(state->source.position.y==2u);
+    BOOST_TEST(state->destructionDeadline==28u);
+}

@@ -1,0 +1,8 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.navigation.components.movement_activity;
+
+BOOST_AUTO_TEST_CASE(movement_activity_preserves_a_one_cell_arrival_as_movement)
+{
+    const engine::gameplay::navigation::MovementActivity activity{1};
+    BOOST_TEST(activity.cellsMovedThisTick==1u);
+}

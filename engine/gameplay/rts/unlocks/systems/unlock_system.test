@@ -1,0 +1,165 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <string>
+#include <tuple>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.unlocks.systems.unlock_system;
+
+using namespace engine::gameplay::rts::unlocks;
+
+namespace
+{
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<UnlockState>();
+	world.RegisterComponent<UnlockInbox>();
+	world.FinalizeComponents();
+}
+
+ecs::Entity CreateAccount(ecs::World &world)
+{
+	return world.Create<UnlockState, UnlockInbox>();
+}
+
+void RegisterDefinitions(UnlockCatalog &catalog)
+{
+	const std::array root{MakeUnlockKey("grant_only")};
+	catalog.Register(UnlockDefinition{"root", 1, 1, true});
+	catalog.Register(UnlockDefinition{"child", 1, 2, true, std::array{MakeUnlockKey("root")}});
+	catalog.Register(UnlockDefinition{"locked", 1, 1, true, root});
+	catalog.Register(UnlockDefinition{"zero", 1, 0, true});
+	catalog.Register(UnlockDefinition{"expensive", 1, 100, true});
+	catalog.Register(UnlockDefinition{"hidden", 1, 1, true});
+	catalog.Register(UnlockDefinition{"disabled", 1, 1, true});
+	catalog.Register(UnlockDefinition{"grant_only", 1, 100, true});
+	catalog.Register(UnlockDefinition{"not_grantable", 1, 1, false});
+	catalog.Register(UnlockDefinition{"available", 1, 1, true});
+	catalog.Finalize();
+}
+
+std::vector<std::uint64_t> RunParallel(std::size_t workers)
+{
+	ecs::World world(ecs::WorldConfig{4096});
+	RegisterComponents(world);
+	UnlockCatalog catalog;
+	catalog.Register(UnlockDefinition{"root", 1, 1, true});
+	catalog.Finalize();
+	const auto root = catalog.Find(MakeUnlockKey("root"));
+	std::vector<ecs::Entity> accounts;
+	accounts.reserve(128);
+	for (std::size_t index = 0; index != 128; ++index)
+	{
+		const auto account = CreateAccount(world);
+		world.Get<UnlockState>(account)->credits = 1;
+		accounts.push_back(account);
+	}
+	std::vector<UnlockRequest> inputs;
+	inputs.reserve(accounts.size() * 2);
+	for (const auto account : accounts)
+		inputs.push_back({account, MakeUnlockKey("root"), UnlockOperation::Purchase});
+	for (const auto account : accounts)
+		inputs.push_back({account, MakeUnlockKey("root"), UnlockOperation::Purchase});
+	UnlockBatch batch(inputs.size());
+	UnlockSystem system(catalog, batch);
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	scheduler.Finalize(engine::time::FixedStep{30});
+	batch.SetInputs(inputs);
+	scheduler.Execute({7, engine::time::FixedStep{30}});
+
+	std::vector<std::uint64_t> snapshot;
+	snapshot.reserve(inputs.size() + accounts.size() * 2);
+	for (const auto &receipt : batch.Results())
+		snapshot.push_back(static_cast<std::uint64_t>(receipt.result));
+	for (const auto account : accounts)
+	{
+		const auto &state = *world.Get<UnlockState>(account);
+		snapshot.push_back(state.credits);
+		snapshot.push_back(state.IsOwned(root) ? 1u : 0u);
+	}
+	return snapshot;
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(unlock_system_matches_legacy_purchase_grant_and_availability_boundaries)
+{
+	ecs::World world;
+	RegisterComponents(world);
+	UnlockCatalog catalog;
+	RegisterDefinitions(catalog);
+	const auto account = CreateAccount(world);
+	const auto stale = CreateAccount(world);
+	const auto missingInbox = world.Create<UnlockState>();
+	world.Destroy(stale);
+	auto &state = *world.Get<UnlockState>(account);
+	state.credits = 5;
+	state.SetHidden(catalog.Find(MakeUnlockKey("hidden")));
+	state.SetDisabled(catalog.Find(MakeUnlockKey("disabled")));
+	state.SetHidden(catalog.Find(MakeUnlockKey("grant_only")));
+	state.SetDisabled(catalog.Find(MakeUnlockKey("grant_only")));
+
+	UnlockBatch batch(16);
+	UnlockSystem system(catalog, batch);
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	scheduler.Finalize(engine::time::FixedStep{30});
+	const std::array inputs{
+		UnlockRequest{account, MakeUnlockKey("root"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("root"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("child"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("child"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("locked"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("zero"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("expensive"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("hidden"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("disabled"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("grant_only"), UnlockOperation::Grant},
+		UnlockRequest{account, MakeUnlockKey("not_grantable"), UnlockOperation::Grant},
+		UnlockRequest{account, UnlockKey{123}, UnlockOperation::Purchase},
+		UnlockRequest{stale, MakeUnlockKey("root"), UnlockOperation::Purchase},
+		UnlockRequest{missingInbox, MakeUnlockKey("root"), UnlockOperation::Purchase},
+		UnlockRequest{account, MakeUnlockKey("available"), UnlockOperation::Availability},
+		UnlockRequest{account, MakeUnlockKey("root"), static_cast<UnlockOperation>(99)}};
+	batch.SetInputs(inputs);
+	scheduler.Execute({1, engine::time::FixedStep{30}});
+	const auto results = batch.Results();
+	BOOST_REQUIRE_EQUAL(results.size(), inputs.size());
+	BOOST_CHECK(results[0].result == UnlockResultCode::Purchased);
+	BOOST_CHECK(results[1].result == UnlockResultCode::AlreadyOwned);
+	BOOST_CHECK(results[2].result == UnlockResultCode::Purchased);
+	BOOST_CHECK(results[3].result == UnlockResultCode::AlreadyOwned);
+	BOOST_CHECK(results[4].result == UnlockResultCode::MissingPrerequisite);
+	BOOST_CHECK(results[5].result == UnlockResultCode::ZeroCost);
+	BOOST_CHECK(results[6].result == UnlockResultCode::InsufficientCredits);
+	BOOST_CHECK(results[7].result == UnlockResultCode::Hidden);
+	BOOST_CHECK(results[8].result == UnlockResultCode::Disabled);
+	BOOST_CHECK(results[9].result == UnlockResultCode::Granted);
+	BOOST_CHECK(results[10].result == UnlockResultCode::NotGrantable);
+	BOOST_CHECK(results[11].result == UnlockResultCode::UnknownUnlock);
+	BOOST_CHECK(results[12].result == UnlockResultCode::InvalidTarget);
+	BOOST_CHECK(results[13].result == UnlockResultCode::InvalidTarget);
+	BOOST_CHECK(results[14].result == UnlockResultCode::Available);
+	BOOST_CHECK(results[15].result == UnlockResultCode::InvalidOperation);
+	BOOST_TEST(state.credits == 2u);
+	BOOST_TEST(state.IsOwned(catalog.Find(MakeUnlockKey("grant_only"))));
+	BOOST_TEST(results[0].creditsBefore == 5u);
+	BOOST_TEST(results[0].creditsAfter == 4u);
+	BOOST_TEST(results[2].creditsBefore == 4u);
+	BOOST_TEST(results[2].creditsAfter == 2u);
+	BOOST_TEST(results[9].creditsBefore == 2u);
+	BOOST_TEST(results[9].creditsAfter == 2u);
+}
+
+BOOST_AUTO_TEST_CASE(unlock_system_has_identical_results_for_one_two_and_four_workers)
+{
+	const auto expected = RunParallel(1);
+	BOOST_CHECK(expected == RunParallel(2));
+	BOOST_CHECK(expected == RunParallel(4));
+}

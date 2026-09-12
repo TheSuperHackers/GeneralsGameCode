@@ -1,0 +1,23 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <limits>
+#include <stdexcept>
+import engine.gameplay.combat.regeneration.components.regeneration;
+using namespace engine::gameplay::combat::regeneration;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(regeneration_activation_requires_explicit_phase_and_has_persistent_ownership)
+{
+    const engine::time::FixedStep step{10};
+    const std::array definitions{RegenerationDefinition{1,1s}};
+    const RegenerationDefinitions catalog(step,definitions);
+    auto state=StartRegeneration(catalog,catalog.Id(0),{10,step},300ms,true);
+    BOOST_TEST(state.nextPulse==13u); BOOST_TEST(state.armed); BOOST_TEST(state.active);
+    StopRegeneration(state); BOOST_TEST(state.stopped); BOOST_TEST(!state.armed);
+    const auto inactive=StartRegeneration(catalog,catalog.Id(0),{10,step},0ns,false);
+    BOOST_TEST(!inactive.active); BOOST_TEST(!inactive.armed);
+    BOOST_CHECK_THROW(StartRegeneration(catalog,catalog.Id(0),{10,engine::time::FixedStep{20}},0ns,true),std::invalid_argument);
+    BOOST_CHECK_THROW(StartRegeneration(catalog,catalog.Id(0),{(std::numeric_limits<std::uint64_t>::max)(),step},1s,true),std::overflow_error);
+    BOOST_CHECK(ecs::ComponentTraits<RegenerationState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<RegenerationBinding>::Persistence==ecs::PersistencePolicy::Serializable);
+}

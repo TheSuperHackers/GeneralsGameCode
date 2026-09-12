@@ -1,0 +1,271 @@
+#define BOOST_TEST_MODULE GeneralsZHCrateExecution
+#include <boost/test/included/unit_test.hpp>
+
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory_resource>
+#include <span>
+#include <stdexcept>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.ecs.query.query;
+import engine.events.storage.event_batch;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.combat.systems.health_system;
+import engine.gameplay.navigation.grid.navigation_grid;
+import engine.gameplay.progression.components.progression_state;
+import engine.gameplay.progression.definitions.progression_definition;
+import engine.gameplay.progression.inputs.progression_batch;
+import engine.gameplay.progression.systems.progression_system;
+import engine.gameplay.spatial.contacts.events.contact_pair;
+import games.generalszh.gameplay.crates.components.crate_state;
+import games.generalszh.gameplay.crates.definitions.account_pickup_policy;
+import games.generalszh.gameplay.crates.definitions.collector_definition;
+import games.generalszh.gameplay.crates.definitions.crate_definition;
+import games.generalszh.gameplay.crates.inputs.crate_pickup_batch;
+import games.generalszh.gameplay.crates.systems.crate_claim_system;
+import games.generalszh.gameplay.production.components.production_state;
+
+namespace claim_system_test
+{
+using engine::gameplay::combat::DamageResult;
+using engine::gameplay::combat::Health;
+using engine::gameplay::combat::LifeState;
+using engine::gameplay::combat::PendingDamage;
+using engine::gameplay::navigation::GridPosition;
+using engine::gameplay::navigation::NavigationGrid;
+using engine::gameplay::progression::ProgressionBatch;
+using engine::gameplay::progression::ProgressionCatalog;
+using engine::gameplay::progression::ProgressionDefinition;
+using engine::gameplay::progression::ProgressionDefinitionRef;
+using engine::gameplay::progression::ProgressionEligibility;
+using engine::gameplay::progression::ProgressionInbox;
+using engine::gameplay::progression::ProgressionState;
+using engine::gameplay::progression::ProgressionSystem;
+using generalszh::construction::Structure;
+using generalszh::crates::AccountPickupPolicies;
+using generalszh::crates::CollectorDefinition;
+using generalszh::crates::CollectorDefinitionCatalog;
+using generalszh::crates::CrateClaim;
+using generalszh::crates::CrateClaimSystem;
+using generalszh::crates::CrateDefinition;
+using generalszh::crates::CrateDefinitionCatalog;
+using generalszh::crates::CratePickupBatch;
+using generalszh::crates::CratePickupInput;
+using generalszh::crates::CrateState;
+using generalszh::crates::RewardKind;
+using generalszh::production::ProducedUnit;
+using ContactPair = engine::gameplay::spatial::contacts::ContactPair;
+using ContactPublishedBatch = engine::events::PublishedBatch<ContactPair>;
+using ContactRecordedBatch = engine::events::RecordedBatch<ContactPair>;
+
+constexpr std::size_t CollectorCount = 48;
+
+struct RunResult final
+{
+	std::vector<std::array<std::uint32_t, 5>> claims;
+	std::size_t secondTickClaims{};
+};
+
+RunResult Run(const std::size_t workers, const bool registerPolicy = true,
+	const bool freezePolicy = true, const std::size_t expectedClaims = CollectorCount,
+	const bool publishedOnly = false)
+{
+	std::array<std::uint8_t, 64> walkable{};
+	walkable.fill(1);
+	const NavigationGrid grid{8, 8, walkable};
+
+	std::array<CrateDefinition, 1> crateDefinitions{{
+		CrateDefinition{RewardKind::Money, 0, 0, {}, false, false, false, false, 10, {}, 0, false, false}}};
+	const CrateDefinitionCatalog crateCatalog{crateDefinitions};
+	std::array<CollectorDefinition, 1> collectorDefinitions{{CollectorDefinition{1, 0, true}}};
+	const CollectorDefinitionCatalog collectorCatalog{collectorDefinitions,
+		std::span<const CollectorDefinition>{}};
+	std::vector<ProgressionDefinition> progressionDefinitions;
+	progressionDefinitions.push_back(ProgressionDefinition{{0, 10}, 100});
+	const ProgressionCatalog progressionCatalog{progressionDefinitions};
+
+	const std::size_t entityCapacity = CollectorCount * 2 + 8;
+	ProgressionBatch progressionBatch{1};
+	CratePickupBatch pickupBatch{CollectorCount + 1, 1};
+
+	ecs::World world{ecs::WorldConfig{512}};
+	world.RegisterComponent<LifeState>();
+	world.RegisterComponent<Health>();
+	world.RegisterComponent<PendingDamage>();
+	world.RegisterComponent<DamageResult>();
+	world.RegisterComponent<ProducedUnit>();
+	world.RegisterComponent<Structure>();
+	world.RegisterComponent<GridPosition>();
+	world.RegisterComponent<ProgressionState>();
+	world.RegisterComponent<ProgressionDefinitionRef>();
+	world.RegisterComponent<ProgressionEligibility>();
+	world.RegisterComponent<ProgressionInbox>();
+	world.RegisterComponent<CrateState>();
+	world.RegisterComponent<engine::gameplay::rts::unlocks::UnlockState>();
+	world.FinalizeComponents();
+
+	const ecs::Entity account = world.Create<engine::gameplay::rts::unlocks::UnlockState>();
+	AccountPickupPolicies policies{entityCapacity};
+	if (registerPolicy)
+		policies.Register(account, true, false);
+	if (freezePolicy)
+		policies.Freeze();
+
+	std::vector<ecs::Entity> collectors;
+	std::vector<ecs::Entity> crates;
+	collectors.reserve(CollectorCount);
+	crates.reserve(CollectorCount);
+	for (std::size_t index = 0; index != CollectorCount; ++index)
+	{
+		const ecs::Entity collector = world.Create<LifeState, ProducedUnit, GridPosition>();
+		*world.Get<ProducedUnit>(collector) = ProducedUnit{collector, account, 1};
+		*world.Get<GridPosition>(collector) = GridPosition{
+			static_cast<engine::gameplay::navigation::Cell>(index % grid.Count())};
+		collectors.push_back(collector);
+
+		const ecs::Entity crate = world.Create<CrateState>();
+		*world.Get<CrateState>(crate) = CrateState{0, {}, collector,
+			generalszh::crates::CratePlacement::Grounded, 0};
+		crates.push_back(crate);
+	}
+
+	// Build the host contact order by interleaving rows from distinct ECS
+	// chunks.  The claim system indexes its job-local validity slots by this
+	// source ordinal, so adjacent ordinals must be written by different chunk
+	// jobs in this scenario rather than by one contiguous chunk.
+	using CollectorRows = ecs::Query<ecs::Read<LifeState>, ecs::Read<ProducedUnit>,
+		ecs::Read<GridPosition>>;
+	CollectorRows collectorRows{world};
+	std::vector<std::vector<ecs::Entity>> collectorChunks;
+	collectorRows.ForEachChunk([&](const CollectorRows::Chunk chunk) {
+		collectorChunks.emplace_back(chunk.Entities().begin(), chunk.Entities().end());
+	});
+	BOOST_REQUIRE(collectorChunks.size() > 1u);
+
+	std::size_t maximumChunkRows = 0;
+	for (const auto &chunk : collectorChunks)
+		maximumChunkRows = (std::max)(maximumChunkRows, chunk.size());
+	std::vector<std::size_t> inputOrder;
+	inputOrder.reserve(CollectorCount);
+	for (std::size_t row = 0; row != maximumChunkRows; ++row)
+	{
+		for (const auto &chunk : collectorChunks)
+		{
+			if (row >= chunk.size())
+				continue;
+			const auto it = std::find(collectors.begin(), collectors.end(), chunk[row]);
+			BOOST_REQUIRE(it != collectors.end());
+			inputOrder.push_back(static_cast<std::size_t>(it - collectors.begin()));
+		}
+	}
+	BOOST_REQUIRE_EQUAL(inputOrder.size(), CollectorCount);
+	BOOST_TEST(inputOrder[0] != inputOrder[1]);
+
+	std::vector<CratePickupInput> inputs;
+	inputs.reserve(CollectorCount + 1);
+	for (const std::size_t index : inputOrder)
+		inputs.push_back(CratePickupInput{crates[index], collectors[index],
+			static_cast<std::uint32_t>(index)});
+	// The duplicate contact must be visited once by the generic arbitration
+	// join even though both contacts independently pass game eligibility.
+	inputs.push_back(CratePickupInput{crates.front(), collectors.front(), 1000});
+	std::pmr::unsynchronized_pool_resource contactMemory;
+	ContactPublishedBatch publishedContacts{entityCapacity, 1, contactMemory};
+	ContactRecordedBatch recordedContacts{entityCapacity, contactMemory};
+	const auto publishContacts = [&](const std::uint64_t tick, const bool withPair) {
+		recordedContacts.Begin({{tick, 0}, 0, 0, 0});
+		if (withPair)
+			recordedContacts.Emplace(engine::gameplay::spatial::contacts::CanonicalPair(
+				crates.front(), collectors.front()));
+		recordedContacts.Seal();
+		std::array<ContactRecordedBatch *, 1> sources{&recordedContacts};
+		publishedContacts.Publish({tick, 0}, sources);
+	};
+	if (publishedOnly)
+	{
+		inputs.clear();
+	}
+	publishContacts(1, publishedOnly);
+
+	engine::gameplay::combat::HealthSystem healthSystem;
+	CrateClaimSystem claimSystem{world, grid, crateCatalog, collectorCatalog, policies,
+		progressionCatalog, progressionBatch, pickupBatch, publishedContacts, entityCapacity};
+	ProgressionSystem progressionSystem{progressionCatalog, progressionBatch};
+	claimSystem.Configure();
+
+	ecs::SystemRegistry systems;
+	systems.Register(healthSystem);
+	systems.Register(claimSystem);
+	systems.Register(progressionSystem);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, systems, engine::jobs::JobSystemConfig{workers}};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	claimSystem.SetInputs(inputs);
+	progressionBatch.SetInputs({});
+	scheduler.Execute(engine::time::SimulationTime{1, step});
+
+	RunResult result;
+	for (const CrateClaim &claim : pickupBatch.Claims())
+		result.claims.push_back({claim.crate.index, claim.crate.generation,
+			claim.collector.index, claim.collector.generation, claim.sequence});
+	BOOST_CHECK_EQUAL(result.claims.size(), expectedClaims);
+	if (result.claims.empty())
+		return result;
+	BOOST_TEST(result.claims.front()[4] == 0u);
+
+	claimSystem.SetInputs({});
+	progressionBatch.SetInputs({});
+	publishContacts(2, false);
+	scheduler.Execute(engine::time::SimulationTime{2, step});
+	result.secondTickClaims = pickupBatch.Claims().size();
+	return result;
+}
+} // namespace claim_system_test
+
+BOOST_AUTO_TEST_CASE(crate_claim_runs_as_one_shared_scheduler_system_and_deduplicates_contacts)
+{
+	const auto one = claim_system_test::Run(1);
+	const auto two = claim_system_test::Run(2);
+	const auto four = claim_system_test::Run(4);
+
+	BOOST_CHECK(one.claims == two.claims);
+	BOOST_CHECK(one.claims == four.claims);
+	BOOST_TEST(one.secondTickClaims == 0u);
+	BOOST_TEST(two.secondTickClaims == 0u);
+	BOOST_TEST(four.secondTickClaims == 0u);
+	BOOST_REQUIRE_EQUAL(one.claims.size(), claim_system_test::CollectorCount);
+	for (std::size_t index = 0; index != one.claims.size(); ++index)
+	{
+		BOOST_TEST(one.claims[index][0] == one.claims[0][0] + static_cast<std::uint32_t>(index * 2));
+		BOOST_TEST(one.claims[index][2] == one.claims[0][2] + static_cast<std::uint32_t>(index * 2));
+		BOOST_TEST(one.claims[index][4] == static_cast<std::uint32_t>(index));
+	}
+}
+
+BOOST_AUTO_TEST_CASE(crate_claim_requires_frozen_policies_and_rejects_missing_accounts)
+{
+	BOOST_CHECK_THROW(claim_system_test::Run(1, true, false), std::logic_error);
+	const auto missing = claim_system_test::Run(1, false, true, 0);
+	BOOST_CHECK(missing.claims.empty());
+}
+
+BOOST_AUTO_TEST_CASE(crate_claim_consumes_published_contact_pairs)
+{
+	const auto one = claim_system_test::Run(1, true, true, 1, true);
+	const auto two = claim_system_test::Run(2, true, true, 1, true);
+	const auto four = claim_system_test::Run(4, true, true, 1, true);
+
+	BOOST_CHECK(one.claims == two.claims);
+	BOOST_CHECK(one.claims == four.claims);
+	BOOST_REQUIRE_EQUAL(one.claims.size(), 1u);
+	BOOST_TEST(one.claims.front()[4] == 0u);
+	BOOST_TEST(one.secondTickClaims == 0u);
+	BOOST_TEST(two.secondTickClaims == 0u);
+	BOOST_TEST(four.secondTickClaims == 0u);
+}

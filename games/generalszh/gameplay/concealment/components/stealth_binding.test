@@ -1,0 +1,12 @@
+#include <boost/test/unit_test.hpp>
+import engine.ecs.core.world;
+import games.generalszh.gameplay.concealment.components.stealth_binding;
+
+BOOST_AUTO_TEST_CASE(stealth_policy_binding_is_a_serializable_runtime_component)
+{
+    ecs::World world; world.RegisterComponent<generalszh::concealment::StealthPolicyBinding>(); world.FinalizeComponents();
+    const auto entity = world.Create<generalszh::concealment::StealthPolicyBinding>();
+    BOOST_CHECK(world.Get<generalszh::concealment::StealthPolicyBinding>(entity)->policy ==
+        generalszh::concealment::StealthPolicyId{});
+    BOOST_CHECK(ecs::ComponentTraits<generalszh::concealment::StealthPolicyBinding>::Persistence == ecs::PersistencePolicy::Serializable);
+}

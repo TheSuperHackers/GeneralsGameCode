@@ -1,0 +1,42 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.combat.systems.targeting_system;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.visibility.components.visibility_cell_page;
+BOOST_AUTO_TEST_CASE(targeting_rejects_friends_and_out_of_range_enemies)
+{
+    using namespace engine::gameplay::combat; using engine::gameplay::navigation::GridPosition;
+    const std::array<std::uint8_t,4> cells{1,1,1,1}; engine::gameplay::navigation::NavigationGrid grid(4,1,cells);
+    ecs::World world; world.RegisterComponent<GridPosition>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponDefinition>(); world.RegisterComponent<WeaponContact>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>();
+    world.RegisterComponent<generalszh::production::ProducedUnit>();world.RegisterComponent<DamageEmitter>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityCellIndex>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityVisibleMaskPage>(); world.FinalizeComponents();
+    const auto actor = world.Create<GridPosition,WeaponTarget,WeaponDefinition,WeaponContact>(), target = world.Create();
+    world.Get<WeaponTarget>(actor)->entity = target; world.Get<WeaponDefinition>(actor)->rangeCells = 2;
+    generalszh::combat::TargetFrame frame(8,4,1); frame.Set(actor,0,{6,1}); frame.Set(target,3,{7,1});
+    generalszh::combat::TargetingSystem system(frame,grid); ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<WeaponContact>(actor)->valid); BOOST_TEST(!world.Get<WeaponContact>(actor)->inRange);
+    world.Get<WeaponDefinition>(actor)->rangeCells = 3; scheduler.Execute({1,step}); BOOST_TEST(world.Get<WeaponContact>(actor)->inRange);
+    frame.Clear(); frame.Set(actor,0,{6,1}); frame.Set(target,3,{6,1}); scheduler.Execute({2,step}); BOOST_TEST(!world.Get<WeaponContact>(actor)->valid);
+}
+BOOST_AUTO_TEST_CASE(targeting_accepts_blocked_ground_aim_without_target_frame_and_rejects_dual_identity)
+{
+    using namespace engine::gameplay::combat; using engine::gameplay::navigation::GridPosition;
+    const std::array<std::uint8_t,8> cells{1,1,1,1,1,1,1,0}; engine::gameplay::navigation::NavigationGrid grid(4,2,cells);
+    ecs::World world; world.RegisterComponent<GridPosition>(); world.RegisterComponent<WeaponTarget>();
+    world.RegisterComponent<WeaponDefinition>(); world.RegisterComponent<WeaponContact>(); world.RegisterComponent<DamageEmitter>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>(); world.RegisterComponent<generalszh::production::ProducedUnit>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityCellIndex>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityVisibleMaskPage>(); world.FinalizeComponents();
+    const auto actor=world.Create<GridPosition,WeaponTarget,WeaponDefinition,WeaponContact>();
+    world.Get<GridPosition>(actor)->cell=0; world.Get<WeaponDefinition>(actor)->rangeCells=4;
+    *world.Get<WeaponTarget>(actor)=WeaponTarget::ForPosition({3,1});
+    generalszh::combat::TargetFrame frame(8,4,1); generalszh::combat::TargetingSystem system(frame,grid);
+    ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<WeaponContact>(actor)->valid); BOOST_TEST(world.Get<WeaponContact>(actor)->inRange);
+    world.Get<WeaponTarget>(actor)->entity={99,1}; scheduler.Execute({1,step});
+    BOOST_TEST(!world.Get<WeaponContact>(actor)->valid);
+}

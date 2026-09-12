@@ -1,0 +1,70 @@
+#define BOOST_TEST_MODULE EngineCombat
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.combat.systems.health_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(damage_clips_to_health_and_death_is_not_storage_deletion)
+{
+    ecs::World world; world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>(); world.RegisterComponent<PendingDamage>(); world.RegisterComponent<DamageResult>(); world.FinalizeComponents();
+    const auto entity = world.Create<Health, LifeState, PendingDamage, DamageResult>();
+    world.Get<Health>(entity)->current = 20; world.Get<PendingDamage>(entity)->quantity = 40;
+    HealthSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0, step}); BOOST_TEST(world.Get<DamageResult>(entity)->applied == 20u);
+    BOOST_TEST(world.Get<DamageResult>(entity)->killed); BOOST_TEST(!world.Get<LifeState>(entity)->alive); BOOST_TEST(world.IsAlive(entity));
+    scheduler.Execute({1, step}); BOOST_TEST(!world.Get<DamageResult>(entity)->killed); BOOST_TEST(world.Get<PendingDamage>(entity)->quantity == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(health_publishes_only_the_matching_generation_safe_lethal_source)
+{
+    ecs::World world; world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<DamageResult>(); world.FinalizeComponents();
+    const auto entity=world.Create<Health,LifeState,PendingDamage,DamageResult>();
+    world.Get<Health>(entity)->current=100;
+    world.Get<PendingDamage>(entity)->quantity=140;
+    world.Get<PendingDamage>(entity)->lethalSource={entity,ecs::Entity{8,2},ecs::Entity{9,1},3,100,90,100,true};
+    HealthSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({3,step});
+    const auto *result=world.Get<DamageResult>(entity);
+    BOOST_REQUIRE(result);
+    const ecs::Entity expectedSource{8,2};
+    BOOST_TEST(result->killed); BOOST_TEST(result->applied==100u);
+    BOOST_CHECK(result->lethalSource.source==expectedSource);
+    BOOST_CHECK(!world.Get<PendingDamage>(entity)->lethalSource.valid);
+    scheduler.Execute({4,step});
+    BOOST_CHECK(!world.Get<DamageResult>(entity)->killed);
+    BOOST_CHECK(!world.Get<DamageResult>(entity)->lethalSource.valid);
+}
+
+BOOST_AUTO_TEST_CASE(nonlethal_damage_does_not_promote_a_later_unattributed_kill)
+{
+    ecs::World world; world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<DamageResult>(); world.FinalizeComponents();
+    const auto entity=world.Create<Health,LifeState,PendingDamage,DamageResult>();
+    world.Get<Health>(entity)->current=100; world.Get<PendingDamage>(entity)->quantity=40;
+    HealthSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step}); BOOST_CHECK(!world.Get<DamageResult>(entity)->killed);
+    world.Get<PendingDamage>(entity)->quantity=60;
+    scheduler.Execute({2,step});
+    const auto *result=world.Get<DamageResult>(entity);
+    BOOST_REQUIRE(result); BOOST_TEST(result->killed); BOOST_CHECK(!result->lethalSource.valid);
+}
+
+BOOST_AUTO_TEST_CASE(reused_target_generation_rejects_an_old_lethal_source_proof)
+{
+    ecs::World world; world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<DamageResult>(); world.FinalizeComponents();
+    const auto oldTarget=world.Create<Health,LifeState,PendingDamage,DamageResult>();
+    world.Destroy(oldTarget);
+    const auto replacement=world.Create<Health,LifeState,PendingDamage,DamageResult>();
+    BOOST_REQUIRE_EQUAL(oldTarget.index,replacement.index); BOOST_REQUIRE(oldTarget.generation!=replacement.generation);
+    world.Get<Health>(replacement)->current=100; world.Get<PendingDamage>(replacement)->quantity=100;
+    world.Get<PendingDamage>(replacement)->lethalSource={oldTarget,ecs::Entity{8,2},ecs::Entity{9,1},1,100,0,100,true};
+    HealthSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step});
+    const auto *result=world.Get<DamageResult>(replacement);
+    BOOST_REQUIRE(result); BOOST_TEST(result->killed); BOOST_CHECK(!result->lethalSource.valid);
+}

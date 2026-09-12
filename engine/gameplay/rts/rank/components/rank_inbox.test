@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.rts.rank.components.rank_inbox;
+
+using namespace engine::gameplay::rts::rank;
+
+BOOST_AUTO_TEST_CASE(rank_inbox_is_transient_batch_routing_state)
+{
+	const RankInbox inbox{7, 2};
+	BOOST_TEST(inbox.begin == 7u);
+	BOOST_TEST(inbox.count == 2u);
+	BOOST_CHECK(ecs::ComponentTraits<RankInbox>::Persistence == ecs::PersistencePolicy::Transient);
+}

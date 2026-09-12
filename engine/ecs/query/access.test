@@ -1,0 +1,32 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.ecs.query.access;
+
+namespace
+{
+
+struct AccessTestComponent
+{
+};
+
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(ecs_access)
+
+BOOST_AUTO_TEST_CASE(access_tags_expose_explicit_metadata)
+{
+	static_assert(ecs::Read<AccessTestComponent>::Mode == ecs::AccessMode::Read);
+	static_assert(ecs::Write<AccessTestComponent>::Mode == ecs::AccessMode::Write);
+	static_assert(ecs::Optional<AccessTestComponent>::IsOptional);
+	static_assert(ecs::OptionalWrite<AccessTestComponent>::IsOptional);
+	static_assert(ecs::OptionalWrite<AccessTestComponent>::Mode == ecs::AccessMode::Write);
+	static_assert(ecs::Exclude<AccessTestComponent>::IsExcluded);
+
+	const ecs::AccessDescriptor descriptor{3, ecs::AccessMode::Write, false, false};
+	BOOST_TEST(descriptor.component == 3);
+	BOOST_TEST(static_cast<int>(descriptor.mode) == static_cast<int>(ecs::AccessMode::Write));
+	BOOST_TEST(!descriptor.optional);
+	BOOST_TEST(!descriptor.excluded);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

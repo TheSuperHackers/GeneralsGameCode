@@ -1,0 +1,19 @@
+#include <boost/test/unit_test.hpp>
+#include <stdexcept>
+import games.generalszh.gameplay.power.data.power_frame;
+BOOST_AUTO_TEST_CASE(power_frame_generation_publication_and_clear)
+{
+    generalszh::power::PowerFrame frame{8};
+    const ecs::Entity account{3, 1}, replacement{3, 2};
+    BOOST_TEST(frame.Find(account) == nullptr);
+    frame.Publish(account, {true, 7500, 10000});
+    BOOST_REQUIRE(frame.Find(account) != nullptr);
+    BOOST_TEST(frame.Find(account)->speedNumerator == 7500u);
+    BOOST_TEST(frame.Find(replacement) == nullptr);
+    frame.Publish(replacement, {});
+    BOOST_TEST(frame.Find(account) == nullptr);
+    BOOST_TEST(frame.Find(replacement)->speedNumerator == 10000u);
+    frame.Clear();
+    BOOST_TEST(frame.Find(replacement) == nullptr);
+    BOOST_CHECK_THROW(frame.Publish(ecs::Entity{8, 1}, {}), std::length_error);
+}

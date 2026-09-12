@@ -1,0 +1,58 @@
+#define BOOST_TEST_MODULE GeneralsZHNativeUpgradeWords
+#include <boost/test/included/unit_test.hpp>
+#include "upgrade_mask_store.h"
+#include <bitset>
+#include <cstdint>
+import games.generalszh.adapters.legacy.upgrades.masks.native_upgrade_words;
+
+using namespace generalszh::legacy;
+
+namespace
+{
+struct ObservedSizeMask : std::bitset<512>
+{
+	mutable unsigned sizeCalls{};
+	std::size_t size() const { ++sizeCalls; return 512; }
+};
+}
+
+BOOST_AUTO_TEST_CASE(size_sanity_predicate_is_not_evaluated_in_release)
+{
+	ObservedSizeMask native;
+	native.set(511);
+	const auto words = ToLegacyWords(native);
+	const auto restored = FromLegacyWords<ObservedSizeMask>(words);
+#ifdef NDEBUG
+	BOOST_TEST(native.sizeCalls == 0u);
+	BOOST_TEST(restored.sizeCalls == 0u);
+#else
+	BOOST_TEST(native.sizeCalls == 1u);
+	BOOST_TEST(restored.sizeCalls == 1u);
+#endif
+	BOOST_TEST(restored.test(511));
+}
+
+BOOST_AUTO_TEST_CASE(native_bits_have_explicit_word_and_bit_positions)
+{
+	std::bitset<512> native;
+	for (unsigned bit : {0u, 63u, 64u, 127u, 128u, 255u, 256u, 511u}) native.set(bit);
+	const LegacyUpgradeWords expected{
+		UINT64_C(0x8000000000000001), UINT64_C(0x8000000000000001),
+		1, UINT64_C(0x8000000000000000), 1, 0, 0, UINT64_C(0x8000000000000000)};
+	BOOST_TEST(ToLegacyWords(native) == expected, boost::test_tools::per_element());
+	BOOST_CHECK(FromLegacyWords<std::bitset<512>>(expected) == native);
+}
+BOOST_AUTO_TEST_CASE(empty_full_and_mixed_words_round_trip_without_representation_casts)
+{
+	for (std::uint64_t pattern = 0; pattern < 64; ++pattern)
+	{
+		LegacyUpgradeWords words;
+		for (std::size_t word = 0; word < words.size(); ++word)
+			words[word] = pattern == 0 ? 0 : pattern == 1 ? UINT64_MAX :
+				(UINT64_C(0x9E3779B97F4A7C15) * (pattern + word));
+		const auto native = FromLegacyWords<std::bitset<512>>(words);
+		for (std::size_t bit = 0; bit < 512; ++bit)
+			BOOST_TEST(native.test(bit) == ((words[bit / 64] & (UINT64_C(1) << (bit % 64))) != 0));
+		BOOST_TEST(ToLegacyWords(native) == words, boost::test_tools::per_element());
+	}
+}

@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.components.projectile;
+import engine.ecs.core.world;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(projectile_payload_preserves_generation_safe_launch_facts)
+{
+    ecs::World world;world.RegisterComponent<ProjectileImpact>();world.RegisterComponent<ImpactDue>();world.FinalizeComponents();
+    const auto entity=world.Create<ProjectileImpact>();
+    *world.Get<ProjectileImpact>(entity)={{1,4},{2,8},99,3,9,{7},{2},{5,6},12};world.Add<ImpactDue>(entity);
+    const auto &value=*world.Get<ProjectileImpact>(entity);
+    BOOST_CHECK(value.source==ecs::Entity(1,4));BOOST_CHECK(value.target==ecs::Entity(2,8));BOOST_TEST(value.damageType.value==7u);
+    BOOST_TEST(value.sourceDefinition==12u);BOOST_TEST(ecs::ComponentTraits<ProjectileImpact>::Version==4u);
+}

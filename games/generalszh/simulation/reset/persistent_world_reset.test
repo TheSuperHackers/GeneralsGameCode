@@ -1,0 +1,1080 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <optional>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+#include <utility>
+#include <vector>
+
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/lifecycle/world_binding.h"
+import engine.ecs.core.entity;
+import engine.ecs.core.world;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.economy.components.periodic_income;
+import engine.gameplay.rts.economy.components.resource_balance;
+import games.generalszh.gameplay.economy.income_history;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+namespace world_binding_reset_test
+{
+struct Owner
+{
+	generalszh::GameplayState &state;
+	std::optional<generalszh::GameplayWorldBinding> binding;
+	bool releaseBinding{true}, failed{false};
+	std::size_t releases{0};
+	explicit Owner(generalszh::GameplayState &value) : state(value), binding(std::in_place, value) {}
+	generalszh::PersistentResetParticipant Descriptor()
+	{
+		return {"tests.world_binding", &state, this,
+			+[](void *) -> std::span<const ecs::Entity> { return {}; },
+			+[](void *raw) {
+				auto &owner = *static_cast<Owner *>(raw);
+				++owner.releases;
+				if (owner.releaseBinding) owner.binding.reset();
+			},
+			+[](void *raw) { auto &owner = *static_cast<Owner *>(raw); owner.binding.emplace(owner.state); },
+			+[](void *) noexcept {},
+			+[](void *raw) noexcept { static_cast<Owner *>(raw)->failed = true; }, 1};
+	}
+};
+
+BOOST_AUTO_TEST_CASE(binding_claims_are_checked_before_any_destructive_release)
+{
+	generalszh::GameplayState state;
+	Owner owner(state);
+	auto participant = owner.Descriptor();
+	for (const auto invalidClaim : {0u, 2u})
+	{
+		participant.worldBindings = invalidClaim;
+		BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::logic_error);
+		BOOST_TEST(owner.releases == 0u);
+		BOOST_TEST(!owner.failed);
+	}
+	participant.worldBindings = 1;
+	BOOST_CHECK_NO_THROW(generalszh::PersistentWorldReset::Execute(state, std::span{&participant, 1}));
+	BOOST_TEST(owner.releases == 1u);
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error); // Restored binding is live.
+}
+
+BOOST_AUTO_TEST_CASE(replacement_checks_actual_release_even_after_valid_preflight_claims)
+{
+	generalszh::GameplayState state;
+	Owner owner(state);
+	owner.releaseBinding = false;
+	const auto *original = &state.World();
+	const auto participant = owner.Descriptor();
+	BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::logic_error);
+	BOOST_TEST(owner.failed);
+	BOOST_CHECK(&state.World() == original); // Never destroy beneath cached users.
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error); // Failed destructive phase is terminal.
+	BOOST_CHECK_THROW(generalszh::GameplayWorldBinding{state}, std::logic_error);
+}
+}
+
+namespace persistent_world_reset_test
+{
+
+using engine::gameplay::rts::economy::IncomeSchedule;
+using engine::gameplay::rts::economy::ResourceBalance;
+using generalszh::economy::IncomeHistory;
+using generalszh::GameplayState;
+using generalszh::PersistentResetParticipant;
+using generalszh::PersistentWorldReset;
+
+constexpr std::string_view BalanceName = "tests.persistent.accounts";
+constexpr std::string_view ScheduleName = "tests.persistent.schedules";
+
+struct ScheduledResetSystem
+{
+	using Query = ecs::Query<ecs::Read<ResourceBalance>>;
+
+	PersistentResetParticipant participant{};
+	std::size_t executions{0};
+
+	void Execute(Query::Chunk, ecs::SystemContext &)
+	{
+		++executions;
+		PersistentWorldReset::Execute(*participant.state, std::span{&participant, 1});
+	}
+};
+
+enum class CallbackKind : std::uint8_t
+{
+	Capture,
+	Release,
+	Restore,
+	Discard,
+	Fail
+};
+
+struct CallbackEntry
+{
+	std::string_view participant;
+	CallbackKind kind;
+};
+
+struct CallbackLog
+{
+	// Reset is a cold, bounded composition operation in these tests. Keeping
+	// the log inline also makes the noexcept cleanup callbacks allocation-free.
+	static constexpr std::size_t Capacity = 64;
+	std::array<CallbackEntry, Capacity> entries{};
+	std::size_t size{0};
+
+	void Add(std::string_view participant, CallbackKind kind) noexcept
+	{
+		assert(size < Capacity);
+		entries[size++] = {participant, kind};
+	}
+};
+
+struct BalanceSnapshot
+{
+	ResourceBalance balance{};
+	IncomeHistory history{};
+};
+
+// This fake owns actual ResourceBalance and IncomeHistory ECS entities. Its
+// callbacks deliberately use typed World access and typed snapshot fields;
+// they are not erased serialization callbacks.
+struct BalanceParticipant
+{
+	GameplayState &state;
+	CallbackLog &log;
+	std::string_view name{BalanceName};
+	std::vector<ecs::Entity> entities;
+	std::vector<BalanceSnapshot> capturedValues;
+	bool throwOnCapture{false};
+	bool throwOnRelease{false};
+	bool throwOnRestore{false};
+	bool attemptGameplayReset{false};
+	bool attemptReentrantCoordinatorReset{false};
+	bool gameplayResetRejected{false};
+	bool reentrantCoordinatorResetRejected{false};
+	bool poisoned{false};
+	bool captured{false};
+	std::size_t captureCount{0};
+	std::size_t releaseCount{0};
+	std::size_t restoreCount{0};
+	std::size_t discardCount{0};
+	std::size_t failCount{0};
+
+	BalanceParticipant(GameplayState &injected, CallbackLog &callbacks,
+		std::string_view stableName = BalanceName) :
+		state(injected), log(callbacks), name(stableName)
+	{
+	}
+	~BalanceParticipant() noexcept { CleanupEntities(); }
+
+	void Create(std::uint64_t quantity, std::uint32_t bucket, std::uint32_t income)
+	{
+		if (bucket >= 60) throw std::out_of_range("test income bucket");
+		entities.reserve(entities.size() + 1);
+		const auto entity = state.World().Create<ResourceBalance, IncomeHistory>();
+		entities.push_back(entity);
+		state.World().Get<ResourceBalance>(entity)->quantity = quantity;
+		auto *history = state.World().Get<IncomeHistory>(entity);
+		history->current = bucket;
+		history->buckets[bucket] = income;
+		history->total = income;
+	}
+
+	PersistentResetParticipant Descriptor() noexcept
+	{
+		return {name, &state, this, &Capture, &Release, &Restore, &Discard, &Fail};
+	}
+
+private:
+	void CaptureTyped()
+	{
+		++captureCount;
+		log.Add(name, CallbackKind::Capture);
+
+		if (attemptGameplayReset)
+		{
+			try { state.Reset(); }
+			catch (const std::logic_error &) { gameplayResetRejected = true; }
+		}
+		if (attemptReentrantCoordinatorReset)
+		{
+			try
+			{
+				PersistentWorldReset::Execute(state, std::span<const PersistentResetParticipant>{});
+			}
+			catch (const std::logic_error &)
+			{
+				reentrantCoordinatorResetRejected = true;
+			}
+		}
+
+		capturedValues.clear();
+		for (const auto entity : entities)
+		{
+			BalanceSnapshot snapshot{};
+			// The coordinator, not the fake owner, validates claims. Retaining a
+			// stale claim here lets the stale-claim contract be tested directly.
+			if (state.World().IsAlive(entity))
+			{
+				const auto *balance = state.World().Get<ResourceBalance>(entity);
+				const auto *history = state.World().Get<IncomeHistory>(entity);
+				if (!balance || !history)
+					throw std::logic_error("test balance participant claims the wrong component set");
+				snapshot.balance = *balance;
+				snapshot.history = *history;
+			}
+			capturedValues.push_back(snapshot);
+		}
+		if (throwOnCapture) throw std::runtime_error("test capture failure");
+		captured = true;
+	}
+
+	void ReleaseTyped()
+	{
+		++releaseCount;
+		log.Add(name, CallbackKind::Release);
+		if (!captured) throw std::logic_error("test balance release without capture");
+		if (throwOnRelease) throw std::runtime_error("test release failure");
+		for (auto &entity : entities)
+		{
+			if (!state.World().Destroy(entity))
+				throw std::logic_error("test balance entity disappeared during release");
+			entity = ecs::Entity::Null();
+		}
+		entities.clear();
+	}
+
+	void RestoreTyped()
+	{
+		++restoreCount;
+		log.Add(name, CallbackKind::Restore);
+		if (!captured) throw std::logic_error("test balance restore without capture");
+		if (throwOnRestore) throw std::runtime_error("test restore failure");
+
+		std::vector<ecs::Entity> replacement;
+		replacement.reserve(capturedValues.size());
+		try
+		{
+			for (const auto &snapshot : capturedValues)
+			{
+				const auto entity = state.World().Create<ResourceBalance, IncomeHistory>();
+				replacement.push_back(entity);
+				state.World().Get<ResourceBalance>(entity)->quantity = snapshot.balance.quantity;
+				*state.World().Get<IncomeHistory>(entity) = snapshot.history;
+			}
+		}
+		catch (...)
+		{
+			for (auto &entity : replacement)
+				if (state.World().IsAlive(entity))
+				{
+					state.World().Destroy(entity);
+					entity = ecs::Entity::Null();
+				}
+			throw;
+		}
+		entities = std::move(replacement);
+	}
+
+	void DiscardTyped() noexcept
+	{
+		++discardCount;
+		log.Add(name, CallbackKind::Discard);
+		capturedValues.clear();
+		captured = false;
+	}
+
+	void FailTyped() noexcept
+	{
+		++failCount;
+		log.Add(name, CallbackKind::Fail);
+		poisoned = true;
+		for (auto &entity : entities)
+			if (state.World().IsAlive(entity))
+			{
+				state.World().Destroy(entity);
+				entity = ecs::Entity::Null();
+			}
+		entities.clear();
+		capturedValues.clear();
+		captured = false;
+	}
+
+	void CleanupEntities() noexcept
+	{
+		try
+		{
+			for (auto &entity : entities)
+				if (state.World().IsAlive(entity))
+				{
+					state.World().Destroy(entity);
+					entity = ecs::Entity::Null();
+				}
+			entities.clear();
+		}
+		catch (...)
+		{
+			std::terminate();
+		}
+	}
+
+	static std::span<const ecs::Entity> Capture(void *context)
+	{
+		auto &participant = *static_cast<BalanceParticipant *>(context);
+		if (participant.poisoned) throw std::logic_error("test balance participant is poisoned");
+		participant.CaptureTyped();
+		return participant.entities;
+	}
+	static void Release(void *context)
+	{
+		static_cast<BalanceParticipant *>(context)->ReleaseTyped();
+	}
+	static void Restore(void *context)
+	{
+		static_cast<BalanceParticipant *>(context)->RestoreTyped();
+	}
+	static void Discard(void *context) noexcept
+	{
+		static_cast<BalanceParticipant *>(context)->DiscardTyped();
+	}
+	static void Fail(void *context) noexcept
+	{
+		static_cast<BalanceParticipant *>(context)->FailTyped();
+	}
+};
+
+struct ScheduleSnapshot
+{
+	std::uint64_t nextTick{0};
+};
+
+// A separate typed fake owns IncomeSchedule. Keeping the two implementations
+// separate makes callback access/lifecycle mistakes visible in these tests.
+struct ScheduleParticipant
+{
+	GameplayState &state;
+	CallbackLog &log;
+	std::string_view name{ScheduleName};
+	std::vector<ecs::Entity> entities;
+	std::vector<ScheduleSnapshot> capturedValues;
+	bool throwOnCapture{false};
+	bool throwOnRelease{false};
+	bool throwOnRestore{false};
+	bool poisoned{false};
+	bool captured{false};
+	std::size_t captureCount{0};
+	std::size_t releaseCount{0};
+	std::size_t restoreCount{0};
+	std::size_t discardCount{0};
+	std::size_t failCount{0};
+
+	ScheduleParticipant(GameplayState &injected, CallbackLog &callbacks,
+		std::string_view stableName = ScheduleName) :
+		state(injected), log(callbacks), name(stableName)
+	{
+	}
+	~ScheduleParticipant() noexcept { CleanupEntities(); }
+
+	void Create(std::uint64_t nextTick)
+	{
+		entities.reserve(entities.size() + 1);
+		const auto entity = state.World().Create<IncomeSchedule>();
+		entities.push_back(entity);
+		state.World().Get<IncomeSchedule>(entity)->nextTick = nextTick;
+	}
+
+	PersistentResetParticipant Descriptor() noexcept
+	{
+		return {name, &state, this, &Capture, &Release, &Restore, &Discard, &Fail};
+	}
+
+private:
+	void CaptureTyped()
+	{
+		++captureCount;
+		log.Add(name, CallbackKind::Capture);
+		capturedValues.clear();
+		for (const auto entity : entities)
+		{
+			ScheduleSnapshot snapshot{};
+			if (state.World().IsAlive(entity))
+			{
+				const auto *schedule = state.World().Get<IncomeSchedule>(entity);
+				if (!schedule) throw std::logic_error("test schedule participant claims the wrong component set");
+				snapshot.nextTick = schedule->nextTick;
+			}
+			capturedValues.push_back(snapshot);
+		}
+		if (throwOnCapture) throw std::runtime_error("test capture failure");
+		captured = true;
+	}
+
+	void ReleaseTyped()
+	{
+		++releaseCount;
+		log.Add(name, CallbackKind::Release);
+		if (!captured) throw std::logic_error("test schedule release without capture");
+		if (throwOnRelease) throw std::runtime_error("test release failure");
+		for (auto &entity : entities)
+		{
+			if (!state.World().Destroy(entity))
+				throw std::logic_error("test schedule entity disappeared during release");
+			entity = ecs::Entity::Null();
+		}
+		entities.clear();
+	}
+
+	void RestoreTyped()
+	{
+		++restoreCount;
+		log.Add(name, CallbackKind::Restore);
+		if (!captured) throw std::logic_error("test schedule restore without capture");
+		if (throwOnRestore) throw std::runtime_error("test restore failure");
+
+		std::vector<ecs::Entity> replacement;
+		replacement.reserve(capturedValues.size());
+		try
+		{
+			for (const auto snapshot : capturedValues)
+			{
+				const auto entity = state.World().Create<IncomeSchedule>();
+				replacement.push_back(entity);
+				state.World().Get<IncomeSchedule>(entity)->nextTick = snapshot.nextTick;
+			}
+		}
+		catch (...)
+		{
+			for (auto &entity : replacement)
+				if (state.World().IsAlive(entity))
+				{
+					state.World().Destroy(entity);
+					entity = ecs::Entity::Null();
+				}
+			throw;
+		}
+		entities = std::move(replacement);
+	}
+
+	void DiscardTyped() noexcept
+	{
+		++discardCount;
+		log.Add(name, CallbackKind::Discard);
+		capturedValues.clear();
+		captured = false;
+	}
+
+	void FailTyped() noexcept
+	{
+		++failCount;
+		log.Add(name, CallbackKind::Fail);
+		poisoned = true;
+		for (auto &entity : entities)
+			if (state.World().IsAlive(entity))
+			{
+				state.World().Destroy(entity);
+				entity = ecs::Entity::Null();
+			}
+		entities.clear();
+		capturedValues.clear();
+		captured = false;
+	}
+
+	void CleanupEntities() noexcept
+	{
+		try
+		{
+			for (auto &entity : entities)
+				if (state.World().IsAlive(entity))
+				{
+					state.World().Destroy(entity);
+					entity = ecs::Entity::Null();
+				}
+			entities.clear();
+		}
+		catch (...)
+		{
+			std::terminate();
+		}
+	}
+
+	static std::span<const ecs::Entity> Capture(void *context)
+	{
+		auto &participant = *static_cast<ScheduleParticipant *>(context);
+		if (participant.poisoned) throw std::logic_error("test schedule participant is poisoned");
+		participant.CaptureTyped();
+		return participant.entities;
+	}
+	static void Release(void *context)
+	{
+		static_cast<ScheduleParticipant *>(context)->ReleaseTyped();
+	}
+	static void Restore(void *context)
+	{
+		static_cast<ScheduleParticipant *>(context)->RestoreTyped();
+	}
+	static void Discard(void *context) noexcept
+	{
+		static_cast<ScheduleParticipant *>(context)->DiscardTyped();
+	}
+	static void Fail(void *context) noexcept
+	{
+		static_cast<ScheduleParticipant *>(context)->FailTyped();
+	}
+};
+
+template<typename Participant>
+void DestroyOwned(Participant &participant)
+{
+	for (auto &entity : participant.entities)
+		if (participant.state.World().IsAlive(entity))
+		{
+			BOOST_TEST(participant.state.World().Destroy(entity));
+			entity = ecs::Entity::Null();
+		}
+	participant.entities.clear();
+}
+
+void DestroyEntity(GameplayState &state, ecs::Entity entity)
+{
+	if (state.World().IsAlive(entity)) BOOST_TEST(state.World().Destroy(entity));
+}
+
+void CheckHistory(const IncomeHistory &actual, const IncomeHistory &expected)
+{
+	BOOST_TEST(actual.current == expected.current);
+	BOOST_TEST(actual.total == expected.total);
+	for (std::size_t index = 0; index < actual.buckets.size(); ++index)
+		BOOST_TEST(actual.buckets[index] == expected.buckets[index]);
+}
+
+void CheckLog(const CallbackLog &actual, std::span<const CallbackEntry> expected)
+{
+	BOOST_TEST(actual.size == expected.size());
+	if (actual.size != expected.size()) return;
+	for (std::size_t index = 0; index < expected.size(); ++index)
+	{
+		BOOST_TEST(actual.entries[index].participant == expected[index].participant);
+		BOOST_TEST(static_cast<unsigned>(actual.entries[index].kind) ==
+			static_cast<unsigned>(expected[index].kind));
+	}
+}
+
+struct CanonicalRunResult
+{
+	ecs::Entity balanceEntity{};
+	ecs::Entity scheduleEntity{};
+	ResourceBalance balance{};
+	IncomeHistory history{};
+	IncomeSchedule schedule{};
+	CallbackLog log{};
+};
+
+CanonicalRunResult RunCanonicalReset(bool reverseParticipantInputOrder)
+{
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	ScheduleParticipant schedules(state, log);
+	balances.Create(1234, 7, 91);
+	schedules.Create(800);
+
+	const auto balanceParticipant = balances.Descriptor();
+	const auto scheduleParticipant = schedules.Descriptor();
+	std::array<PersistentResetParticipant, 2> participants = reverseParticipantInputOrder
+		? std::array{scheduleParticipant, balanceParticipant}
+		: std::array{balanceParticipant, scheduleParticipant};
+	PersistentWorldReset::Execute(state, participants);
+
+	CanonicalRunResult result;
+	result.balanceEntity = balances.entities.front();
+	result.scheduleEntity = schedules.entities.front();
+	result.balance = *state.World().Get<ResourceBalance>(result.balanceEntity);
+	result.history = *state.World().Get<IncomeHistory>(result.balanceEntity);
+	result.schedule = *state.World().Get<IncomeSchedule>(result.scheduleEntity);
+	result.log = log;
+
+	DestroyOwned(balances);
+	DestroyOwned(schedules);
+	return result;
+}
+
+} // namespace persistent_world_reset_test
+
+namespace ecs
+{
+template<>
+struct SystemTraits<persistent_world_reset_test::ScheduledResetSystem>
+{
+	static constexpr std::string_view StableName = "tests.persistent.scheduled_reset";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+BOOST_AUTO_TEST_SUITE(generalszh_persistent_world_reset)
+
+BOOST_AUTO_TEST_CASE(canonical_name_order_controls_capture_release_restore_and_ids)
+{
+	using namespace persistent_world_reset_test;
+	const auto forward = RunCanonicalReset(false);
+	const auto reverse = RunCanonicalReset(true);
+	BOOST_TEST(forward.balance.quantity == 1234u);
+	BOOST_TEST(forward.history.current == 7u);
+	BOOST_TEST(forward.history.total == 91u);
+	BOOST_TEST(forward.history.buckets[7] == 91u);
+	BOOST_TEST(forward.schedule.nextTick == 800u);
+
+	BOOST_CHECK(forward.balanceEntity == reverse.balanceEntity);
+	BOOST_CHECK(forward.scheduleEntity == reverse.scheduleEntity);
+	BOOST_TEST(forward.balance.quantity == reverse.balance.quantity);
+	CheckHistory(forward.history, reverse.history);
+	BOOST_TEST(forward.schedule.nextTick == reverse.schedule.nextTick);
+
+	const std::array expected{
+		CallbackEntry{BalanceName, CallbackKind::Capture},
+		CallbackEntry{ScheduleName, CallbackKind::Capture},
+		CallbackEntry{BalanceName, CallbackKind::Release},
+		CallbackEntry{ScheduleName, CallbackKind::Release},
+		CallbackEntry{BalanceName, CallbackKind::Restore},
+		CallbackEntry{ScheduleName, CallbackKind::Restore},
+		CallbackEntry{BalanceName, CallbackKind::Discard},
+		CallbackEntry{ScheduleName, CallbackKind::Discard}};
+	CheckLog(forward.log, expected);
+	CheckLog(reverse.log, expected);
+}
+
+BOOST_AUTO_TEST_CASE(capture_all_completes_before_any_release)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	ScheduleParticipant schedules(state, log);
+	balances.Create(17, 2, 5);
+	schedules.Create(99);
+	const auto first = balances.Descriptor();
+	const auto second = schedules.Descriptor();
+	const std::array participants{first, second};
+
+	PersistentWorldReset::Execute(state, participants);
+	BOOST_TEST(log.size == 8u);
+	if (log.size == 8)
+	{
+		BOOST_CHECK(log.entries[0].kind == CallbackKind::Capture);
+		BOOST_CHECK(log.entries[1].kind == CallbackKind::Capture);
+		BOOST_CHECK(log.entries[2].kind == CallbackKind::Release);
+		BOOST_CHECK(log.entries[3].kind == CallbackKind::Release);
+		BOOST_CHECK(log.entries[4].kind == CallbackKind::Restore);
+		BOOST_CHECK(log.entries[5].kind == CallbackKind::Restore);
+	}
+	DestroyOwned(balances);
+	DestroyOwned(schedules);
+}
+
+BOOST_AUTO_TEST_CASE(unknown_leftover_entity_is_rejected_without_world_mutation)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	ScheduleParticipant schedules(state, log);
+	balances.Create(31, 4, 12);
+	schedules.Create(77);
+	const auto balanceEntity = balances.entities.front();
+	const auto scheduleEntity = schedules.entities.front();
+	const auto leftover = state.World().Create<IncomeSchedule>();
+	state.World().Get<IncomeSchedule>(leftover)->nextTick = 123;
+	const auto beforeBalance = *state.World().Get<ResourceBalance>(balanceEntity);
+	const auto beforeHistory = *state.World().Get<IncomeHistory>(balanceEntity);
+	const auto beforeSchedule = *state.World().Get<IncomeSchedule>(scheduleEntity);
+
+	const std::array participants{balances.Descriptor(), schedules.Descriptor()};
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::logic_error);
+	BOOST_TEST(state.Count() == 3u);
+	BOOST_TEST(state.World().Get<ResourceBalance>(balanceEntity)->quantity == beforeBalance.quantity);
+	CheckHistory(*state.World().Get<IncomeHistory>(balanceEntity), beforeHistory);
+	BOOST_TEST(state.World().Get<IncomeSchedule>(scheduleEntity)->nextTick == beforeSchedule.nextTick);
+	BOOST_TEST(state.World().Get<IncomeSchedule>(leftover)->nextTick == 123u);
+	BOOST_TEST(balances.releaseCount == 0u);
+	BOOST_TEST(schedules.releaseCount == 0u);
+	BOOST_TEST(balances.discardCount == 1u);
+	BOOST_TEST(schedules.discardCount == 1u);
+
+	DestroyOwned(balances);
+	DestroyOwned(schedules);
+	DestroyEntity(state, leftover);
+}
+
+BOOST_AUTO_TEST_CASE(duplicate_names_contexts_and_claims_are_rejected)
+{
+	using namespace persistent_world_reset_test;
+
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant balances(state, log);
+		ScheduleParticipant schedules(state, log);
+		balances.Create(3, 1, 2);
+		schedules.Create(4);
+		auto first = balances.Descriptor();
+		auto second = schedules.Descriptor();
+		second.stableName = first.stableName;
+		const std::array participants{first, second};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::logic_error);
+		BOOST_TEST(state.Count() == 2u);
+		BOOST_TEST(log.size == 0u);
+		DestroyOwned(balances);
+		DestroyOwned(schedules);
+	}
+
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant balances(state, log);
+		balances.Create(5, 1, 2);
+		auto first = balances.Descriptor();
+		auto second = balances.Descriptor();
+		second.stableName = "tests.persistent.accounts.copy";
+		const std::array participants{first, second};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::logic_error);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_TEST(log.size == 0u);
+		DestroyOwned(balances);
+	}
+
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant first(state, log, "tests.persistent.first");
+		BalanceParticipant second(state, log, "tests.persistent.second");
+		first.Create(8, 1, 3);
+		second.entities.push_back(first.entities.front());
+		const std::array participants{first.Descriptor(), second.Descriptor()};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::logic_error);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_TEST(first.discardCount == 1u);
+		BOOST_TEST(second.discardCount == 1u);
+		DestroyOwned(first);
+		second.entities.clear();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(stale_and_wrong_world_claims_fail_before_mutation)
+{
+	using namespace persistent_world_reset_test;
+
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant balances(state, log);
+		balances.Create(11, 1, 6);
+		const auto stale = balances.entities.front();
+		BOOST_TEST(state.World().Destroy(stale));
+		const std::array participants{balances.Descriptor()};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::logic_error);
+		BOOST_TEST(state.Count() == 0u);
+		BOOST_TEST(balances.discardCount == 1u);
+		BOOST_TEST(balances.releaseCount == 0u);
+		balances.entities.clear();
+	}
+
+	{
+		GameplayState target;
+		GameplayState other;
+		CallbackLog log;
+		BalanceParticipant balances(other, log);
+		balances.Create(13, 2, 7);
+		const auto descriptor = balances.Descriptor();
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(target, std::span{&descriptor, 1}), std::invalid_argument);
+		BOOST_TEST(target.Count() == 0u);
+		BOOST_TEST(other.Count() == 1u);
+		BOOST_TEST(log.size == 0u);
+		DestroyOwned(balances);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(capture_failure_discards_buffers_and_can_be_retried)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	ScheduleParticipant schedules(state, log);
+	balances.Create(41, 5, 14);
+	schedules.Create(88);
+	const auto balanceEntity = balances.entities.front();
+	const auto scheduleEntity = schedules.entities.front();
+	const auto beforeBalance = *state.World().Get<ResourceBalance>(balanceEntity);
+	const auto beforeHistory = *state.World().Get<IncomeHistory>(balanceEntity);
+	const auto beforeSchedule = *state.World().Get<IncomeSchedule>(scheduleEntity);
+	balances.throwOnCapture = true;
+	const std::array participants{balances.Descriptor(), schedules.Descriptor()};
+
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+	BOOST_TEST(state.Count() == 2u);
+	BOOST_TEST(state.World().Get<ResourceBalance>(balanceEntity)->quantity == beforeBalance.quantity);
+	CheckHistory(*state.World().Get<IncomeHistory>(balanceEntity), beforeHistory);
+	BOOST_TEST(state.World().Get<IncomeSchedule>(scheduleEntity)->nextTick == beforeSchedule.nextTick);
+	BOOST_TEST(balances.capturedValues.empty());
+	BOOST_TEST(schedules.capturedValues.empty());
+	BOOST_TEST(balances.releaseCount == 0u);
+	BOOST_TEST(schedules.releaseCount == 0u);
+	BOOST_TEST(balances.discardCount == 1u);
+	BOOST_TEST(schedules.discardCount == 1u);
+
+	balances.throwOnCapture = false;
+	PersistentWorldReset::Execute(state, participants);
+	BOOST_TEST(state.Count() == 2u);
+	BOOST_TEST(balances.captureCount == 2u);
+	BOOST_TEST(schedules.captureCount == 1u);
+	BOOST_TEST(balances.discardCount == 2u);
+	BOOST_TEST(schedules.discardCount == 2u);
+	CheckHistory(*state.World().Get<IncomeHistory>(balances.entities.front()), beforeHistory);
+	BOOST_TEST(state.World().Get<ResourceBalance>(balances.entities.front())->quantity == beforeBalance.quantity);
+	BOOST_TEST(state.World().Get<IncomeSchedule>(schedules.entities.front())->nextTick == beforeSchedule.nextTick);
+
+	DestroyOwned(balances);
+	DestroyOwned(schedules);
+}
+
+BOOST_AUTO_TEST_CASE(release_failure_poison_cleans_all_entities_and_cannot_retry)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	ScheduleParticipant schedules(state, log);
+	balances.Create(19, 2, 8);
+	schedules.Create(101);
+	schedules.throwOnRelease = true;
+	const std::array participants{balances.Descriptor(), schedules.Descriptor()};
+
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(balances.poisoned);
+	BOOST_TEST(schedules.poisoned);
+	BOOST_TEST(balances.failCount == 1u);
+	BOOST_TEST(schedules.failCount == 1u);
+	BOOST_TEST(balances.discardCount == 1u);
+	BOOST_TEST(schedules.discardCount == 1u);
+	const std::array expected{
+		CallbackEntry{BalanceName, CallbackKind::Capture},
+		CallbackEntry{ScheduleName, CallbackKind::Capture},
+		CallbackEntry{BalanceName, CallbackKind::Release},
+		CallbackEntry{ScheduleName, CallbackKind::Release},
+		CallbackEntry{BalanceName, CallbackKind::Fail},
+		CallbackEntry{ScheduleName, CallbackKind::Fail},
+		CallbackEntry{BalanceName, CallbackKind::Discard},
+		CallbackEntry{ScheduleName, CallbackKind::Discard}};
+	CheckLog(log, expected);
+	BOOST_TEST(balances.entities.empty());
+	BOOST_TEST(schedules.entities.empty());
+	BOOST_TEST(balances.capturedValues.empty());
+	BOOST_TEST(schedules.capturedValues.empty());
+	// Destructive failure poisons the state itself. Even an empty participant
+	// set cannot accidentally clear or replace it on a later attempt.
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(
+		state, std::span<const PersistentResetParticipant>{}), std::logic_error);
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(restore_failure_poison_cleans_recreated_entities_and_cannot_retry)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	ScheduleParticipant schedules(state, log);
+	balances.Create(23, 3, 9);
+	schedules.Create(202);
+	schedules.throwOnRestore = true;
+	const std::array participants{balances.Descriptor(), schedules.Descriptor()};
+
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(balances.poisoned);
+	BOOST_TEST(schedules.poisoned);
+	BOOST_TEST(balances.failCount == 1u);
+	BOOST_TEST(schedules.failCount == 1u);
+	BOOST_TEST(balances.discardCount == 1u);
+	BOOST_TEST(schedules.discardCount == 1u);
+	const std::array expected{
+		CallbackEntry{BalanceName, CallbackKind::Capture},
+		CallbackEntry{ScheduleName, CallbackKind::Capture},
+		CallbackEntry{BalanceName, CallbackKind::Release},
+		CallbackEntry{ScheduleName, CallbackKind::Release},
+		CallbackEntry{BalanceName, CallbackKind::Restore},
+		CallbackEntry{ScheduleName, CallbackKind::Restore},
+		CallbackEntry{BalanceName, CallbackKind::Fail},
+		CallbackEntry{ScheduleName, CallbackKind::Fail},
+		CallbackEntry{BalanceName, CallbackKind::Discard},
+		CallbackEntry{ScheduleName, CallbackKind::Discard}};
+	CheckLog(log, expected);
+	BOOST_TEST(balances.entities.empty());
+	BOOST_TEST(schedules.entities.empty());
+	BOOST_TEST(balances.capturedValues.empty());
+	BOOST_TEST(schedules.capturedValues.empty());
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(
+		state, std::span<const PersistentResetParticipant>{}), std::logic_error);
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(reentrant_reset_attempts_are_rejected_while_capture_is_in_progress)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	balances.Create(29, 4, 10);
+	balances.attemptGameplayReset = true;
+	balances.attemptReentrantCoordinatorReset = true;
+	const std::array participants{balances.Descriptor()};
+
+	BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, participants));
+	BOOST_TEST(balances.gameplayResetRejected);
+	BOOST_TEST(balances.reentrantCoordinatorResetRejected);
+	BOOST_TEST(state.Count() == 1u);
+	DestroyOwned(balances);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_reset_is_rejected_before_any_participant_callback)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	balances.Create(43, 5, 16);
+	const auto entity = balances.entities.front();
+	const auto before = *state.World().Get<ResourceBalance>(entity);
+	ScheduledResetSystem system;
+	system.participant = balances.Descriptor();
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{60};
+	scheduler.Finalize(step);
+
+	// The scheduler owns the real scheduled-execution boundary. The reset
+	// request reaches GameplayState::BeginReset while that boundary is active,
+	// so it must fail before capture and make the scheduler tick fatal.
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+	BOOST_TEST(scheduler.IsFailed());
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_TEST(system.executions == 1u);
+	BOOST_TEST(state.Count() == 1u);
+	BOOST_TEST(state.World().Get<ResourceBalance>(entity)->quantity == before.quantity);
+	BOOST_TEST(log.size == 0u);
+	BOOST_TEST(balances.captureCount == 0u);
+	BOOST_TEST(balances.discardCount == 0u);
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{2, step}), std::logic_error);
+	DestroyOwned(balances);
+}
+
+BOOST_AUTO_TEST_CASE(stable_names_require_canonical_lowercase_ascii)
+{
+	using namespace persistent_world_reset_test;
+	const std::array invalidNames{
+		std::string_view{"Tests.persistent.accounts"},
+		std::string_view{"tests.Persistent.accounts"},
+		std::string_view{"tests.persistent accounts"},
+		std::string_view{"tests.persistent:accounts"},
+		std::string_view{"tests.persistent.\xC3\xA9"}};
+
+	for (const auto invalidName : invalidNames)
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant balances(state, log, invalidName);
+		balances.Create(47, 6, 17);
+		const auto entity = balances.entities.front();
+		const auto before = *state.World().Get<ResourceBalance>(entity);
+		const auto descriptor = balances.Descriptor();
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&descriptor, 1}), std::invalid_argument);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_TEST(state.World().Get<ResourceBalance>(entity)->quantity == before.quantity);
+		BOOST_TEST(log.size == 0u);
+		DestroyOwned(balances);
+	}
+
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant balances(state, log, "a-z_0/9");
+		balances.Create(53, 7, 19);
+		const auto descriptor = balances.Descriptor();
+		BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, std::span{&descriptor, 1}));
+		BOOST_TEST(state.Count() == 1u);
+		DestroyOwned(balances);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(empty_world_accepts_empty_participant_set)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(
+		state, std::span<const PersistentResetParticipant>{}));
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(state.World().ComponentsFinalized());
+}
+
+BOOST_AUTO_TEST_CASE(empty_participant_set_rejects_a_live_world_without_mutation)
+{
+	using namespace persistent_world_reset_test;
+	GameplayState state;
+	CallbackLog log;
+	BalanceParticipant balances(state, log);
+	balances.Create(59, 8, 23);
+	const auto entity = balances.entities.front();
+	const auto before = *state.World().Get<ResourceBalance>(entity);
+
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(
+		state, std::span<const PersistentResetParticipant>{}), std::logic_error);
+	BOOST_TEST(state.Count() == 1u);
+	BOOST_TEST(state.World().Get<ResourceBalance>(entity)->quantity == before.quantity);
+	BOOST_TEST(log.size == 0u);
+	DestroyOwned(balances);
+}
+
+BOOST_AUTO_TEST_CASE(each_missing_callback_is_rejected_without_callbacks_or_mutation)
+{
+	using namespace persistent_world_reset_test;
+	for (int missing = 0; missing < 6; ++missing)
+	{
+		GameplayState state;
+		CallbackLog log;
+		BalanceParticipant balances(state, log);
+		balances.Create(37, 6, 11);
+		auto descriptor = balances.Descriptor();
+		switch (missing)
+		{
+		case 0: descriptor.capture = nullptr; break;
+		case 1: descriptor.release = nullptr; break;
+		case 2: descriptor.restore = nullptr; break;
+		case 3: descriptor.discard = nullptr; break;
+		case 4: descriptor.fail = nullptr; break;
+		case 5: descriptor.context = nullptr; break;
+		default: break;
+		}
+		const auto entity = balances.entities.front();
+		const auto before = *state.World().Get<ResourceBalance>(entity);
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&descriptor, 1}), std::invalid_argument);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_TEST(state.World().Get<ResourceBalance>(entity)->quantity == before.quantity);
+		BOOST_TEST(log.size == 0u);
+		DestroyOwned(balances);
+	}
+}
+
+BOOST_AUTO_TEST_SUITE_END()

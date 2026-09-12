@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+
+import games.generalszh.gameplay.bounty.definitions.cash_bounty_definition;
+
+BOOST_AUTO_TEST_CASE(cash_bounty_definition_is_keyed_by_decoded_science)
+{
+	using namespace generalszh::bounty;
+	const auto definition = CashBountyDefinition{
+		engine::gameplay::rts::unlocks::MakeUnlockKey("SCIENCE_CashBounty1"), {1, 20}};
+	BOOST_CHECK(definition.science != engine::gameplay::rts::unlocks::InvalidUnlockKey);
+	BOOST_TEST(definition.rate.numerator == 1u);
+	BOOST_TEST(definition.rate.denominator == 20u);
+}

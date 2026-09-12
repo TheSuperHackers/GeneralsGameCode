@@ -1,0 +1,42 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+
+import engine.gameplay.rts.rank.inputs.rank_batch;
+
+using namespace engine::gameplay::rts::rank;
+
+BOOST_AUTO_TEST_CASE(rank_batch_routes_accounts_deterministically_and_supports_append)
+{
+	RankBatch batch{4};
+	const std::array inputs{
+		AcceptedRankPoints{ecs::Entity{2, 1}, 20},
+		AcceptedRankPoints{ecs::Entity{1, 1}, 10}};
+	batch.SetInputs(inputs);
+	const std::array appended{AcceptedRankPoints{ecs::Entity{2, 1}, 30}};
+	batch.Append(appended);
+	batch.Prepare(17);
+
+	std::size_t begin = 0;
+	std::size_t count = 0;
+	BOOST_CHECK(batch.FindRange(ecs::Entity{1, 1}, begin, count));
+	BOOST_TEST(count == 1u);
+	BOOST_CHECK(batch.FindRange(ecs::Entity{2, 1}, begin, count));
+	BOOST_TEST(count == 2u);
+	BOOST_CHECK(!batch.FindRange(ecs::Entity{2, 2}, begin, count));
+	batch.Publish();
+	BOOST_REQUIRE_EQUAL(batch.Results().size(), 3u);
+	BOOST_TEST(batch.Results()[0].requestIndex == 0u);
+	BOOST_TEST(batch.Results()[0].tick == 17u);
+	BOOST_CHECK(batch.Results()[2].account == inputs[1].account ||
+		batch.Results()[2].account == appended[0].account);
+}
+
+BOOST_AUTO_TEST_CASE(rank_batch_rejects_capacity_overflow_before_copy)
+{
+	RankBatch batch{1};
+	const std::array inputs{
+		AcceptedRankPoints{ecs::Entity{1, 1}, 1}, AcceptedRankPoints{ecs::Entity{2, 1}, 2}};
+	BOOST_CHECK_THROW(batch.SetInputs(inputs), std::length_error);
+}

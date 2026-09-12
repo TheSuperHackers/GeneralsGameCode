@@ -1,0 +1,20 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+import engine.gameplay.rts.repair.algorithms.repair_progress;
+BOOST_AUTO_TEST_CASE(repair_fractional_progress_preserves_rate_and_defined_arithmetic)
+{
+    using namespace engine::gameplay::rts::repair;
+    using namespace std::chrono_literals;
+    const std::array authored{RepairDefinition{3,1000,100ms,3s,{}}};
+    for(auto rate:{1u,20u,30u,60u}) {
+        const RepairDefinitions definitions(engine::time::FixedStep{rate},authored);
+        const auto &definition=definitions.Get(0); std::uint32_t remainder=0; std::uint64_t sum=0;
+        for(unsigned pulse=0;pulse<10*rate/definition.interval;++pulse) sum+=RepairPulse(100,definition,remainder);
+        BOOST_TEST(sum==3u); BOOST_TEST(remainder==0u);
+    }
+    std::uint32_t remainder=0;
+    BOOST_TEST(RepairPulse(UINT64_MAX,CompiledRepairDefinition{1,1},remainder)==UINT64_MAX);
+    BOOST_TEST(RepairPulse(UINT64_MAX,CompiledRepairDefinition{1,2},remainder)==UINT64_MAX/2);
+    BOOST_TEST(remainder==1u);
+}

@@ -1,0 +1,25 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionProgressFacade
+#include <boost/test/included/unit_test.hpp>
+
+#include <chrono>
+
+import games.generalszh.gameplay.production.progress.production_progress;
+using generalszh::production::AdvanceOneStep;
+using generalszh::production::AuthorRequirement;
+using generalszh::production::ProductionElapsed;
+using generalszh::production::ProductionProgress;
+using generalszh::production::ProductionRequirement;
+using generalszh::production::RefreshProgress;
+
+BOOST_AUTO_TEST_CASE(facade_reexports_progress_components_definitions_and_algorithms)
+{
+	using namespace std::chrono_literals;
+	ProductionElapsed elapsed;
+	ProductionProgress progress;
+
+	AdvanceOneStep(elapsed);
+	RefreshProgress(elapsed, progress, ProductionRequirement{2});
+	BOOST_TEST(elapsed.ticks == 1);
+	BOOST_TEST(progress.percent == 50.0f);
+	BOOST_TEST(AuthorRequirement(1s, engine::time::FixedStep{30}).ticks == 30);
+}

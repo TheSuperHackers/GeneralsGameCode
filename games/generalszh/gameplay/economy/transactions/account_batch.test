@@ -1,0 +1,80 @@
+#define BOOST_TEST_MODULE GeneralsZHAccountExecution
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <string_view>
+import games.generalszh.gameplay.economy.transactions.account_batch;
+using namespace generalszh::economy;
+BOOST_AUTO_TEST_CASE(staged_inputs_are_borrowed_and_consumed_once)
+{
+    AccountBatch batch(1);
+    std::array input{AccountRequest{{1, 1}, {AccountOperation::Deposit, 3}}};
+    batch.StageInputs(input);
+    BOOST_CHECK_THROW(batch.Published(), std::logic_error);
+    input[0].command.amount = 7; // The boundary stores a span, not a prepared copy.
+    batch.PrepareStaged();
+    BOOST_TEST(batch.Commands(batch.RangeFor(input[0].account))[0].amount == 7u);
+    batch.Publish(); batch.Release(); batch.PrepareStaged(); batch.Publish();
+    BOOST_TEST(batch.Published().empty());
+    AccountBatch full(0);
+    BOOST_CHECK_THROW(full.StageInputs(input), std::length_error);
+    input[0].command.operation = static_cast<AccountOperation>(255);
+    BOOST_CHECK_THROW(batch.StageInputs(input), std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(account_batch_preserves_local_sequence_and_publishes_original_order)
+{
+    AccountBatch batch(4); const ecs::Entity a{1, 1}, b{2, 1}, stale{1, 2};
+    const std::array input{
+        AccountRequest{b, {AccountOperation::Deposit, 9}}, AccountRequest{a, {AccountOperation::Withdraw, 3}},
+        AccountRequest{b, {AccountOperation::Withdraw, 4}}, AccountRequest{stale, {AccountOperation::Deposit, 8}}};
+    batch.Prepare(input);
+    BOOST_CHECK_THROW(batch.Published(), std::logic_error);
+    const auto range = batch.RangeFor(b); BOOST_REQUIRE(range.count == 2u);
+    BOOST_TEST(batch.Commands(range)[0].amount == 9u); BOOST_TEST(batch.Commands(range)[1].amount == 4u);
+    BOOST_TEST(batch.RangeFor(a).count == 1u); BOOST_TEST(batch.RangeFor({1, 3}).count == 0u);
+    batch.Results(range)[0].amount = 90; batch.Results(range)[1].amount = 40;
+    batch.Publish(); const auto results = batch.Published();
+    BOOST_TEST(results[0].amount == 90u); BOOST_TEST(results[2].amount == 40u);
+    BOOST_CHECK(results[1].account == a); BOOST_CHECK(results[3].account == stale);
+    BOOST_CHECK_THROW(batch.Prepare(input), std::logic_error);
+    batch.Release(); batch.Prepare({}); batch.Publish(); BOOST_TEST(batch.Published().empty());
+}
+BOOST_AUTO_TEST_CASE(invalid_borrowed_input_at_preparation_permanently_fails_batch)
+{
+    AccountBatch batch(1);
+    std::array input{AccountRequest{{1, 1}, {AccountOperation::Deposit, 3}}};
+    batch.StageInputs(input);
+    input[0].command.operation = static_cast<AccountOperation>(255);
+    BOOST_CHECK_THROW(batch.PrepareStaged(), std::invalid_argument);
+    BOOST_CHECK_THROW(batch.PrepareStaged(), std::logic_error);
+    BOOST_CHECK_THROW(batch.Publish(), std::logic_error);
+    BOOST_CHECK_THROW(batch.Release(), std::logic_error);
+    BOOST_CHECK_THROW(batch.Published(), std::logic_error);
+    BOOST_CHECK_THROW(batch.StageInputs({}), std::logic_error);
+}
+BOOST_AUTO_TEST_CASE(rejected_staging_preserves_prior_input_and_prepared_results)
+{
+    AccountBatch batch(1);
+    const std::array valid{AccountRequest{{1, 1}, {AccountOperation::Deposit, 3}}};
+    const std::array oversized{valid[0], valid[0]};
+    auto invalid = valid; invalid[0].command.operation = static_cast<AccountOperation>(255);
+    batch.StageInputs(valid);
+    BOOST_CHECK_THROW(batch.StageInputs(oversized), std::length_error);
+    BOOST_CHECK_THROW(batch.StageInputs(invalid), std::invalid_argument);
+    batch.PrepareStaged();
+    BOOST_TEST(batch.Commands(batch.RangeFor(valid[0].account))[0].amount == 3u);
+    BOOST_CHECK_THROW(batch.StageInputs({}), std::logic_error);
+    batch.Publish();
+    BOOST_TEST(batch.Published().size() == 1u);
+    batch.Release(); batch.PrepareStaged(); batch.Publish();
+    BOOST_TEST(batch.Published().empty());
+}
+BOOST_AUTO_TEST_CASE(account_batch_capacity_and_invalid_operation_fail_without_replay)
+{
+    AccountBatch full(0);
+    const std::array request{AccountRequest{{0, 1}, {AccountOperation::Deposit, 1}}};
+    BOOST_CHECK_THROW(full.Prepare(request), std::length_error);
+    BOOST_CHECK_THROW(full.Prepare({}), std::logic_error); BOOST_CHECK_THROW(full.Publish(), std::logic_error);
+    AccountBatch bad(1); auto invalid = request; invalid[0].command.operation = static_cast<AccountOperation>(255);
+    BOOST_CHECK_THROW(bad.Prepare(invalid), std::invalid_argument);
+    BOOST_CHECK_THROW(bad.Release(), std::logic_error);
+}

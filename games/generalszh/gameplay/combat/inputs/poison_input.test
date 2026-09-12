@@ -1,0 +1,28 @@
+#define BOOST_TEST_MODULE GeneralsZHPoisonInput
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <type_traits>
+
+import games.generalszh.gameplay.combat.inputs.poison_input;
+
+BOOST_AUTO_TEST_CASE(poison_input_is_an_aggregate_with_default_values)
+{
+	static_assert(std::is_aggregate_v<generalszh::PoisonInput>);
+	const generalszh::PoisonInput input{};
+	const ecs::Entity nullEntity{};
+	BOOST_CHECK(input.target == nullEntity);
+	BOOST_CHECK(input.source == nullEntity);
+	BOOST_CHECK(input.actualDamage == std::uint64_t{});
+}
+
+BOOST_AUTO_TEST_CASE(poison_input_preserves_full_payload_identity)
+{
+	const ecs::Entity target{19, 29};
+	const ecs::Entity source{37, 43};
+	const std::uint64_t actualDamage{0x123456789abcdef0ULL};
+	const generalszh::PoisonInput input{target, source, actualDamage};
+	BOOST_CHECK(input.target == target);
+	BOOST_CHECK(input.source == source);
+	BOOST_CHECK(input.actualDamage == actualDamage);
+}

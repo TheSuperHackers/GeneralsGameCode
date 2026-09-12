@@ -1,0 +1,24 @@
+add_library(generalszh_force_production_ai STATIC)
+target_sources(generalszh_force_production_ai PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	systems/force_production_system.cppm)
+target_compile_features(generalszh_force_production_ai PUBLIC cxx_std_23)
+set_property(TARGET generalszh_force_production_ai PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_force_production_ai PUBLIC
+	engine_gameplay_rts_ai
+	generalszh_production_execution
+	generalszh_account_execution
+	generalszh_selling
+	generalszh_match_rules
+	generalszh_capture)
+
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(systems/force_production_system.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_force_production_ai_tests systems/force_production_system.test)
+	set_property(TARGET generalszh_force_production_ai_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_force_production_ai_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_force_production_ai_tests PRIVATE
+		generalszh_force_production_ai Boost::included_unit_test_framework)
+	add_test(NAME generalszh_force_production_ai_tests
+		COMMAND generalszh_force_production_ai_tests)
+endif()

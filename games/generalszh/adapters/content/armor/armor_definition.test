@@ -1,0 +1,58 @@
+#define BOOST_TEST_MODULE ArmorContent
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import games.generalszh.adapters.content.armor.armor_definition;
+import engine.gameplay.combat.damage.algorithms.resolve_damage;
+namespace {
+using namespace generalszh::content;
+using namespace engine::gameplay::combat::damage;
+const std::array mapping{
+    DamageTypeMapping{"ARMOR_PIERCING",{0},{ArmorApplication::Scale}},
+    DamageTypeMapping{"FLAME",{1},{ArmorApplication::Scale}},
+    DamageTypeMapping{"SMALL_ARMS",{2},{ArmorApplication::Scale}},
+    DamageTypeMapping{"UNRESISTABLE",{3},{ArmorApplication::Bypass}},
+    DamageTypeMapping{"SUBDUAL_VEHICLE",{4},{ArmorApplication::Unsupported}}};
+}
+BOOST_AUTO_TEST_CASE(real_human_fields_default_and_ordered_overrides) {
+    // Relevant literal fields from extracted HumanArmor; unspecified SMALL_ARMS
+    // exercises ArmorTemplate::clear's 100%, not an invented DEFAULT field.
+    const auto block=ReadNamedBlock("Armor HumanArmor\n Armor = ARMOR_PIERCING 10%\n Armor = FLAME 150%\n Armor = SUBDUAL_VEHICLE 0%\nEnd","Armor","HumanArmor");
+    const auto decoded=DecodeArmor(block,mapping);
+    BOOST_TEST(decoded.coefficients[0].millionths==100000u);
+    BOOST_TEST(decoded.coefficients[1].millionths==1500000u);
+    BOOST_TEST(decoded.coefficients[2].millionths==1000000u);
+    const auto ordered=DecodeArmor(ReadNamedBlock("Armor X\n Armor = FLAME 150%\n Armor = DEFAULT 50%\n Armor = SMALL_ARMS 25%\nEnd","Armor","X"),mapping);
+    BOOST_TEST(ordered.coefficients[1].millionths==500000u);BOOST_TEST(ordered.coefficients[2].millionths==250000u);
+    const auto policies=DecodeDamagePolicies(mapping);
+    BOOST_TEST(ResolveDamage(100,ordered.coefficients[3],policies[3].armor).quantity==100u);
+    BOOST_CHECK_THROW(ResolveDamage(100,decoded.coefficients[4],policies[4].armor),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(armor_rejects_precision_unknown_names_and_semantic_relabelling) {
+    BOOST_CHECK_THROW(DecodeArmor(ReadNamedBlock("Armor X\n Armor = FLAME 0.00001%\nEnd","Armor","X"),mapping),std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeArmor(ReadNamedBlock("Armor X\n Armor = MADE_UP 100%\nEnd","Armor","X"),mapping),std::invalid_argument);
+    const std::array invalid{DamageTypeMapping{"HEALING",{0},{ArmorApplication::Scale}}};
+    BOOST_CHECK_THROW(DecodeDamagePolicies(invalid),std::invalid_argument);
+    const std::array sparse{DamageTypeMapping{"FLAME",{1},{ArmorApplication::Scale}}};
+    BOOST_CHECK_THROW(DecodeDamagePolicies(sparse),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(zero_hour_explicit_mapping_is_complete_and_policy_consistent) {
+    const auto policies=DecodeDamagePolicies(ZeroHourDamageTypes);
+    BOOST_TEST(policies.size()==38u);
+    for(std::size_t i=0;i<ZeroHourDamageTypes.size();++i) {
+        const auto &entry=ZeroHourDamageTypes[i];
+        BOOST_TEST(entry.id.value==i);
+        BOOST_CHECK(policies[entry.id.value].armor==ArmorSemantics(entry.name));
+        BOOST_TEST(!EqualToken(entry.name,"FLESHY_SNIPER"));
+        if(entry.policy.armor==ArmorApplication::Unsupported)
+            BOOST_CHECK_THROW(ResolveDamage(1,{1000000},entry.policy.armor),std::invalid_argument);
+    }
+    BOOST_TEST(ZeroHourDamageTypes[0].name=="EXPLOSION");
+    BOOST_TEST(ZeroHourDamageTypes[3].name=="SMALL_ARMS");
+    BOOST_TEST(ZeroHourDamageTypes[23].name=="TOPPLING");
+    BOOST_TEST(ZeroHourDamageTypes[31].name=="SUBDUAL_MISSILE");
+    BOOST_TEST(ZeroHourDamageTypes[37].name=="STATUS");
+    BOOST_CHECK(policies[11].armor==ArmorApplication::Bypass);
+    BOOST_CHECK(policies[23].armor==ArmorApplication::Unsupported);
+    BOOST_CHECK(policies[34].armor==ArmorApplication::Unsupported);
+}

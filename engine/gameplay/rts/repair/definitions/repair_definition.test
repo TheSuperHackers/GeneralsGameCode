@@ -1,0 +1,45 @@
+#define BOOST_TEST_MODULE EngineRepair
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <span>
+import engine.gameplay.rts.repair.definitions.repair_definition;
+using namespace engine::gameplay::rts::repair;
+BOOST_AUTO_TEST_CASE(repair_compiles_actual_pulse_duration_at_each_rate)
+{
+    using namespace std::chrono_literals;
+    const std::array definitions{RepairDefinition{3,1000,100ms,3s,engine::time::Duration{33333333}}};
+    for(auto rate:{1u,20u,30u,60u}) {
+        RepairDefinitions catalog(engine::time::FixedStep{rate},definitions);
+        const auto &value=catalog.Get(0);
+        BOOST_CHECK(&catalog.GetUnchecked(0)==&value);
+        BOOST_TEST(value.interval==(rate==1?1u:rate/10));
+        BOOST_TEST(value.numerator==3u); BOOST_TEST(value.denominator==(rate==1?1000u:10000u));
+        BOOST_TEST(value.damageDelay==3u*rate);
+    }
+    RepairDefinitions empty(engine::time::FixedStep{30},std::span<const RepairDefinition>{});
+    BOOST_CHECK_THROW(empty.Get(0),std::out_of_range);
+    BOOST_CHECK_THROW(RepairDeadline(UINT64_MAX,1),std::overflow_error);
+    const std::array invalid{RepairDefinition{1,0,100ms,{},{}}};
+    BOOST_CHECK_THROW((RepairDefinitions{engine::time::FixedStep{30},invalid}),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(simulation_step_cadence_preserves_authored_per_second_rate)
+{
+    using namespace std::chrono_literals;
+    const RepairDefinition source{3,1000,1s,0ms,0ms,RepairIntervalPolicy::SimulationStep};
+    const RepairDefinitions simulation(engine::time::FixedStep{30},std::span{&source,1});
+    const auto &simulationPulse=simulation.Get(0);
+    BOOST_TEST(simulationPulse.interval==1u);
+    BOOST_TEST(simulationPulse.numerator==1u);
+    BOOST_TEST(simulationPulse.denominator==10000u);
+
+    const RepairDefinition authored{3,1000,1s,0ms,0ms,RepairIntervalPolicy::AuthoredDuration};
+    const RepairDefinitions duration(engine::time::FixedStep{30},std::span{&authored,1});
+    const auto &durationPulse=duration.Get(0);
+    BOOST_TEST(durationPulse.interval==30u);
+    BOOST_TEST(durationPulse.numerator==3u);
+    BOOST_TEST(durationPulse.denominator==1000u);
+
+    const RepairDefinition unknown{3,1000,1s,0ms,0ms,static_cast<RepairIntervalPolicy>(255)};
+    BOOST_CHECK_THROW((RepairDefinitions{engine::time::FixedStep{30},std::span{&unknown,1}}),std::invalid_argument);
+}

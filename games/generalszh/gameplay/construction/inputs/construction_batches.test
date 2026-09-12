@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE ConstructionBatches
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.construction.inputs.construction_batches;
+BOOST_AUTO_TEST_CASE(bounded_requests_preserve_staged_input_on_rejection_and_receipts_keep_order)
+{
+    using namespace generalszh::construction;
+    ConstructionRequests requests(1); const std::array one{ConstructionInput{{1,1},3,4}};
+    const std::array two{one[0],one[0]}; requests.SetInputs(one);
+    BOOST_CHECK_THROW(requests.SetInputs(two),std::length_error);
+    BOOST_TEST(requests.Inputs().size()==1u); requests.Clear(); BOOST_TEST(requests.Inputs().empty());
+    ConstructionReceipts receipts(1); const auto index=receipts.Append(ConstructionAcceptance::Accepted);
+    receipts.Resolve(index,{9,2}); BOOST_CHECK(receipts.Receipts()[0].site==ecs::Entity(9,2));
+    BOOST_CHECK_THROW(receipts.Append(ConstructionAcceptance::InvalidBuilder),std::length_error);
+    receipts.Clear(); BOOST_TEST(receipts.Receipts().empty());
+}

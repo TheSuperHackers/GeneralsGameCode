@@ -1,0 +1,85 @@
+#define BOOST_TEST_MODULE EngineDeathWeaponSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.death.systems.death_weapon_system;
+
+namespace death_weapon_system_test
+{
+struct Projection
+{
+    using Access=ecs::Query<ecs::Read<engine::gameplay::combat::Health>>;
+    void Refresh() noexcept {}
+    engine::gameplay::combat::death::DeathSourceCapture Capture(ecs::Entity entity) const noexcept
+    {
+        return {engine::gameplay::combat::death::DeathSourceDisposition::Eligible,
+            ecs::Entity{8,1},77,{3,0}};
+    }
+};
+}
+
+BOOST_AUTO_TEST_CASE(final_weapon_is_emitted_once_before_deferred_source_deletion)
+{
+    using namespace engine::gameplay::combat;
+    using namespace engine::gameplay::combat::death;
+    DeathWeaponDefinition definition;
+    definition.key=17;
+    definition.destructionDelay=std::chrono::milliseconds{100};
+    WeaponConfig weapon;
+    weapon.damage=40;
+    definition.final=weapon;
+    const std::array definitions{definition};
+    const engine::time::FixedStep step{10};
+    const DeathWeaponCatalog catalog(definitions,step);
+
+    ecs::World world;
+    world.RegisterComponent<Health>();
+    world.RegisterComponent<LifeState>();
+    world.RegisterComponent<DeathWeaponBinding>();
+    world.RegisterComponent<DeathWeaponState>();
+    world.RegisterComponent<ProjectileImpact>();
+    world.RegisterComponent<ImpactDue>();
+    world.FinalizeComponents();
+    const auto source=world.Create<Health,LifeState,DeathWeaponBinding,DeathWeaponState>();
+    world.Get<Health>(source)->current=0;
+    world.Get<LifeState>(source)->alive=false;
+    world.Get<DeathWeaponBinding>(source)->definition=17;
+
+    death_weapon_system_test::Projection projection;
+    DeathWeaponSystemT<death_weapon_system_test::Projection> system(catalog,projection);
+    ecs::SystemRegistry registry;
+    registry.Register(system,ecs::SystemPhase::PostSimulation);
+    registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_REQUIRE(world.IsAlive(source));
+    BOOST_REQUIRE(world.Get<DeathWeaponState>(source)->armed);
+    scheduler.Execute({1,step});
+    BOOST_CHECK(!world.IsAlive(source));
+
+    std::size_t emitted{};
+    ecs::Query<ecs::Read<ProjectileImpact>,ecs::Read<ImpactDue>> projectiles(world);
+    projectiles.ForEachChunk([&](auto chunk) {
+        const auto impacts=chunk.template Get<ProjectileImpact>();
+        for(std::size_t row=0;row!=chunk.Count();++row)
+        {
+            ++emitted;
+            const ecs::Entity expectedAccount{8,1};
+            BOOST_CHECK(impacts[row].source==source);
+            BOOST_CHECK(impacts[row].sourceAccount==expectedAccount);
+            BOOST_TEST(impacts[row].sourceDefinition==77u);
+            BOOST_TEST(impacts[row].damage==40u);
+            BOOST_TEST(impacts[row].launchTick==1u);
+        }
+    });
+    BOOST_TEST(emitted==1u);
+    scheduler.Execute({2,step});
+    std::size_t stillOne{};
+    projectiles.ForEachChunk([&](auto chunk) { stillOne+=chunk.Count(); });
+    BOOST_TEST(stillOne==1u);
+}

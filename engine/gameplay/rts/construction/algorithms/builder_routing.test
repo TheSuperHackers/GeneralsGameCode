@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE BuilderRouting
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.rts.construction.algorithms.builder_routing;
+using namespace engine::gameplay;
+BOOST_AUTO_TEST_CASE(route_resets_credit_on_new_goal_and_dead_builder_releases_task)
+{
+    rts::construction::BuilderAssignment assignment{{3,1},7};
+    navigation::MoveGoal goal; navigation::MoveCredit credit{5};
+    rts::construction::UpdateBuilderRoute(assignment,{true},goal,credit);
+    BOOST_TEST(goal.cell==7u); BOOST_TEST(credit.remainder==0u);
+    credit.remainder=5; rts::construction::UpdateBuilderRoute(assignment,{true},goal,credit);
+    BOOST_TEST(credit.remainder==5u);
+    rts::construction::UpdateBuilderRoute(assignment,{false},goal,credit);
+    BOOST_TEST(!assignment.site.IsValid()); BOOST_TEST(goal.cell==navigation::InvalidCell);
+    BOOST_TEST(credit.remainder==0u);
+}

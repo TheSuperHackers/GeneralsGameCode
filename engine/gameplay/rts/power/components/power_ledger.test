@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsPower
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+#include <string_view>
+
+import engine.gameplay.rts.power.components.power_ledger;
+
+BOOST_AUTO_TEST_CASE(component_metadata_is_stable_and_serializable)
+{
+	using Ledger = engine::gameplay::rts::power::PowerLedger;
+	BOOST_TEST(ecs::ComponentTraits<Ledger>::StableName
+		== "engine.gameplay.rts.power.power_ledger");
+	BOOST_TEST(ecs::ComponentTraits<Ledger>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<Ledger>::Persistence)
+		== static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}

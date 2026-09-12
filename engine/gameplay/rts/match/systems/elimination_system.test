@@ -1,0 +1,17 @@
+#define BOOST_TEST_MODULE EngineElimination
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.rts.match.systems.elimination_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::rts::match;
+BOOST_AUTO_TEST_CASE(elimination_latches_and_uses_game_supplied_counts)
+{
+    ecs::World world; world.RegisterComponent<Contender>(); world.RegisterComponent<SurvivalCount>(); world.FinalizeComponents();
+    const auto empty = world.Create<Contender,SurvivalCount>(), survivor = world.Create<Contender,SurvivalCount>();
+    world.Get<SurvivalCount>(survivor)->value = 3;
+    EliminationSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<Contender>(empty)->defeated); BOOST_TEST(!world.Get<Contender>(survivor)->defeated);
+    world.Get<SurvivalCount>(empty)->value = 1; scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<Contender>(empty)->defeated);
+}

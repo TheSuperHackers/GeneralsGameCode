@@ -1,0 +1,208 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionPowerRate
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <bit>
+#include <cmath>
+#include <cstdint>
+#include <array>
+#include <string_view>
+#include <vector>
+
+import games.generalszh.gameplay.production.power.production_power_rate;
+import engine.ecs.scheduler.scheduler;
+
+namespace production_rate_test
+{
+struct Supply { float ratio{0}; };
+struct Speed { float value{0}; };
+struct RateStep
+{
+	using Query = ecs::Query<ecs::Read<Supply>, ecs::Write<Speed>>;
+	const generalszh::production::PowerRateConfig config{0.5f, 0.8f, 1.0f};
+	void Execute(Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		const auto supply = chunk.Get<Supply>();
+		auto speed = chunk.Get<Speed>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			speed[row].value = generalszh::production::CalculatePowerRate(supply[row].ratio, config);
+	}
+};
+}
+namespace ecs
+{
+template<> struct ComponentTraits<production_rate_test::Supply>
+{
+	static constexpr std::string_view StableName = "tests.production.power.supply";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+template<> struct ComponentTraits<production_rate_test::Speed>
+{
+	static constexpr std::string_view StableName = "tests.production.power.speed";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+template<> struct SystemTraits<production_rate_test::RateStep>
+{
+	static constexpr std::string_view StableName = "tests.production.power.rate_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace
+{
+using generalszh::production::CalculatePowerRate;
+using generalszh::production::PowerRateConfig;
+
+std::uint32_t FloatBits(float value) noexcept
+{
+	return std::bit_cast<std::uint32_t>(value);
+}
+
+// Independent scalar characterization oracle. Keep its arithmetic explicit so
+// comparisons cover the operation order rather than only a broad tolerance.
+float ScalarOracle(float supplyRatio, const PowerRateConfig &config) noexcept
+{
+	if (supplyRatio > 1.0f)
+		supplyRatio = 1.0f;
+
+	float shortage = 1.0f - supplyRatio;
+	shortage *= config.penaltyModifier;
+	float rate = 1.0f - shortage;
+	rate = (std::max)(rate, config.minimumSpeed);
+	if (supplyRatio < 1.0f)
+		rate = (std::min)(rate, config.maximumSpeed);
+	if (rate <= 0.0f)
+		rate = 0.01f;
+	return rate;
+}
+
+void CheckMatchesScalarOracle(float supplyRatio, const PowerRateConfig &config)
+{
+	const float actual = CalculatePowerRate(supplyRatio, config);
+	const float expected = ScalarOracle(supplyRatio, config);
+	BOOST_TEST(FloatBits(actual) == FloatBits(expected));
+}
+}
+
+BOOST_AUTO_TEST_CASE(shipped_configuration_preserves_full_excess_partial_and_zero_rates)
+{
+	const PowerRateConfig shippedConfig{0.5f, 0.8f, 1.0f};
+
+	CheckMatchesScalarOracle(1.0f, shippedConfig);
+	CheckMatchesScalarOracle(1.25f, shippedConfig);
+	CheckMatchesScalarOracle(0.75f, shippedConfig);
+	CheckMatchesScalarOracle(0.0f, shippedConfig);
+
+	BOOST_TEST(FloatBits(CalculatePowerRate(1.0f, shippedConfig)) == UINT32_C(0x3F800000));
+	BOOST_TEST(FloatBits(CalculatePowerRate(1.25f, shippedConfig)) == UINT32_C(0x3F800000));
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.75f, shippedConfig)) == UINT32_C(0x3F400000));
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.0f, shippedConfig)) == UINT32_C(0x3F000000));
+}
+
+BOOST_AUTO_TEST_CASE(zero_configuration_keeps_the_legacy_fallback)
+{
+	const PowerRateConfig zeroConfig{};
+
+	CheckMatchesScalarOracle(0.0f, zeroConfig);
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.0f, zeroConfig)) == UINT32_C(0x3C23D70A));
+}
+
+BOOST_AUTO_TEST_CASE(supply_boundary_keeps_just_below_one_on_the_partial_path)
+{
+	const PowerRateConfig shippedConfig{0.5f, 0.8f, 1.0f};
+	const float justBelowOne = std::nextafter(1.0f, 0.0f);
+
+	CheckMatchesScalarOracle(justBelowOne, shippedConfig);
+	CheckMatchesScalarOracle(1.0f, shippedConfig);
+	CheckMatchesScalarOracle(std::nextafter(1.0f, 2.0f), shippedConfig);
+
+	BOOST_TEST(FloatBits(CalculatePowerRate(justBelowOne, shippedConfig)) == UINT32_C(0x3F4CCCCD));
+	BOOST_TEST(FloatBits(CalculatePowerRate(1.0f, shippedConfig)) == UINT32_C(0x3F800000));
+}
+
+BOOST_AUTO_TEST_CASE(inverted_and_negative_finite_speed_limits_follow_legacy_clamps)
+{
+	const PowerRateConfig invertedConfig{0.8f, 0.2f, 1.0f};
+	const PowerRateConfig negativeConfig{-0.5f, -0.8f, 1.0f};
+
+	CheckMatchesScalarOracle(0.5f, invertedConfig);
+	CheckMatchesScalarOracle(0.5f, negativeConfig);
+
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.5f, invertedConfig)) == FloatBits(0.2f));
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.5f, negativeConfig)) == UINT32_C(0x3C23D70A));
+}
+
+BOOST_AUTO_TEST_CASE(representative_operation_order_has_exact_binary32_results)
+{
+	const PowerRateConfig uncappedConfig{0.0f, 1.0f, 0.7f};
+
+	CheckMatchesScalarOracle(0.9f, uncappedConfig);
+	CheckMatchesScalarOracle(0.75f, PowerRateConfig{0.0f, 1.0f, 0.5f});
+
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.9f, uncappedConfig)) == UINT32_C(0x3F6E147B));
+	BOOST_TEST(FloatBits(CalculatePowerRate(0.75f, PowerRateConfig{0.0f, 1.0f, 0.5f})) == UINT32_C(0x3F600000));
+}
+
+BOOST_AUTO_TEST_CASE(input_and_configuration_are_not_mutated)
+{
+	float supplyRatio = 0.25f;
+	PowerRateConfig config{0.5f, 0.8f, 1.0f};
+	const auto supplyBefore = FloatBits(supplyRatio);
+	const auto minimumBefore = FloatBits(config.minimumSpeed);
+	const auto maximumBefore = FloatBits(config.maximumSpeed);
+	const auto modifierBefore = FloatBits(config.penaltyModifier);
+
+	static_assert(noexcept(CalculatePowerRate(supplyRatio, config)));
+	static_assert(noexcept(ScalarOracle(supplyRatio, config)));
+	const float actual = CalculatePowerRate(supplyRatio, config);
+
+	BOOST_TEST(FloatBits(actual) == FloatBits(0.5f));
+	BOOST_TEST(FloatBits(supplyRatio) == supplyBefore);
+	BOOST_TEST(FloatBits(config.minimumSpeed) == minimumBefore);
+	BOOST_TEST(FloatBits(config.maximumSpeed) == maximumBefore);
+	BOOST_TEST(FloatBits(config.penaltyModifier) == modifierBefore);
+}
+
+BOOST_AUTO_TEST_CASE(typed_chunk_rates_have_identical_entity_and_binary32_state_across_workers)
+{
+	using namespace production_rate_test;
+	auto run = [](std::size_t workers)
+	{
+		ecs::World world{ecs::WorldConfig{256}};
+		world.RegisterComponent<Supply>();
+		world.RegisterComponent<Speed>();
+		world.FinalizeComponents();
+		std::vector<ecs::Entity> entities;
+		for (std::uint32_t index = 0; index != 4096; ++index)
+		{
+			const auto entity = world.Create<Supply, Speed>();
+			world.Get<Supply>(entity)->ratio = static_cast<float>(index % 41) / 20.0f;
+			entities.push_back(entity);
+		}
+		RateStep system;
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{60};
+		scheduler.Finalize(step);
+		scheduler.Execute(engine::time::SimulationTime{1, step});
+		ecs::Query<ecs::Read<Supply>, ecs::Read<Speed>> query(world);
+		BOOST_TEST(query.PrepareChunks() > 1u);
+		std::vector<std::array<std::uint32_t, 4>> result;
+		for (const auto entity : entities)
+		{
+			const auto supply = world.Get<Supply>(entity)->ratio;
+			const auto speed = world.Get<Speed>(entity)->value;
+			BOOST_TEST(FloatBits(speed) == FloatBits(ScalarOracle(supply, system.config)));
+			result.push_back({entity.index, entity.generation, FloatBits(supply), FloatBits(speed)});
+		}
+		return result;
+	};
+	const auto one = run(1);
+	BOOST_CHECK(run(2) == one);
+	BOOST_CHECK(run(4) == one);
+}

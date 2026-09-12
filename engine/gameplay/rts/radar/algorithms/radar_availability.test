@@ -1,0 +1,258 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRadarAvailability
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import engine.gameplay.rts.radar.algorithms.radar_availability;
+import engine.ecs.scheduler.scheduler;
+
+using engine::gameplay::rts::radar::AddProvider;
+using engine::gameplay::rts::radar::HasRadar;
+using engine::gameplay::rts::radar::RadarAvailability;
+using engine::gameplay::rts::radar::RemoveProvider;
+using engine::gameplay::rts::radar::SetSuppressed;
+
+namespace radar_availability_test
+{
+struct AvailabilityStep
+{
+	using Query = ecs::Query<ecs::Write<RadarAvailability>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		auto states = chunk.Get<RadarAvailability>();
+		const auto entities = chunk.Entities();
+		for (std::size_t row = 0; row < states.size(); ++row)
+		{
+			const std::uint64_t phase = static_cast<std::uint64_t>(entities[row].index)
+				+ context.Tick();
+			const bool resistant = (phase % 2) == 0;
+			AddProvider(states[row], resistant);
+			if ((phase % 3) == 0)
+				RemoveProvider(states[row], resistant);
+			if ((phase % 4) == 0)
+				SetSuppressed(states[row], !states[row].suppressed);
+		}
+	}
+};
+
+RadarAvailability ExpectedState(const std::size_t index) noexcept
+{
+	RadarAvailability state{
+		static_cast<std::int32_t>(index % 4),
+		static_cast<std::int32_t>(index % 2),
+		(index % 5) == 0};
+	for (std::uint64_t tick = 1; tick <= 6; ++tick)
+	{
+		const std::uint64_t phase = static_cast<std::uint64_t>(index) + tick;
+		const bool resistant = (phase % 2) == 0;
+		++state.producers;
+		if (resistant)
+			++state.resistantProducers;
+		if ((phase % 3) == 0)
+		{
+			--state.producers;
+			if (resistant)
+				--state.resistantProducers;
+		}
+		if ((phase % 4) == 0)
+			state.suppressed = !state.suppressed;
+	}
+	return state;
+}
+}
+
+namespace ecs
+{
+template<> struct SystemTraits<radar_availability_test::AvailabilityStep>
+{
+	static constexpr std::string_view StableName = "tests.rts.radar.availability_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(availability_gate_matches_legacy_edge_table)
+{
+	struct GateCase
+	{
+		RadarAvailability availability;
+		bool expected;
+	};
+
+	const std::array<GateCase, 8> cases{{
+		{{0, 0, false}, false},
+		{{1, 0, false}, true},
+		{{0, 0, true}, false},
+		{{1, 0, true}, false},
+		{{1, 1, true}, true},
+		{{0, 1, true}, false},
+		{{1, -1, true}, true}, // Preserve nonzero, not an invented positive-only gate.
+		{{-1, 1, false}, false},
+	}};
+
+	for (const GateCase &test : cases)
+		BOOST_TEST(HasRadar(test.availability) == test.expected);
+}
+
+BOOST_AUTO_TEST_CASE(provider_counts_follow_legacy_refcount_transitions)
+{
+	RadarAvailability availability;
+	AddProvider(availability, false);
+	BOOST_TEST(availability.producers == 1);
+	BOOST_TEST(availability.resistantProducers == 0);
+
+	AddProvider(availability, true);
+	BOOST_TEST(availability.producers == 2);
+	BOOST_TEST(availability.resistantProducers == 1);
+
+	RemoveProvider(availability, false);
+	BOOST_TEST(availability.producers == 1);
+	BOOST_TEST(availability.resistantProducers == 1);
+	RemoveProvider(availability, true);
+	BOOST_TEST(availability.producers == 0);
+	BOOST_TEST(availability.resistantProducers == 0);
+	BOOST_TEST(!HasRadar(availability));
+}
+
+BOOST_AUTO_TEST_CASE(resistant_removal_updates_the_gate_proof_count)
+{
+	RadarAvailability availability;
+	AddProvider(availability, true);
+	AddProvider(availability, false);
+	SetSuppressed(availability, true);
+	BOOST_TEST(HasRadar(availability));
+
+	RemoveProvider(availability, true);
+	BOOST_TEST(availability.producers == 1);
+	BOOST_TEST(availability.resistantProducers == 0);
+	BOOST_TEST(!HasRadar(availability));
+}
+
+BOOST_AUTO_TEST_CASE(repeated_suppression_is_idempotent_and_preserves_counts)
+{
+	RadarAvailability availability{2, 1, false};
+	SetSuppressed(availability, true);
+	SetSuppressed(availability, true);
+	BOOST_TEST(availability.suppressed);
+	BOOST_TEST(availability.producers == 2);
+	BOOST_TEST(availability.resistantProducers == 1);
+	BOOST_TEST(HasRadar(availability));
+
+	SetSuppressed(availability, false);
+	SetSuppressed(availability, false);
+	BOOST_TEST(!availability.suppressed);
+	BOOST_TEST(availability.producers == 2);
+	BOOST_TEST(availability.resistantProducers == 1);
+	BOOST_TEST(HasRadar(availability));
+}
+
+BOOST_AUTO_TEST_CASE(count_limits_are_checked_in_debug_and_wrap_defined_in_release)
+{
+	constexpr std::int32_t maximum = (std::numeric_limits<std::int32_t>::max)();
+	constexpr std::int32_t minimum = (std::numeric_limits<std::int32_t>::min)();
+
+	RadarAvailability producerLimit{maximum - 1, 0, false};
+	AddProvider(producerLimit, false);
+	BOOST_TEST(producerLimit.producers == maximum);
+
+	RadarAvailability resistantLimit{maximum - 1, maximum - 1, false};
+	AddProvider(resistantLimit, true);
+	BOOST_TEST(resistantLimit.producers == maximum);
+	BOOST_TEST(resistantLimit.resistantProducers == maximum);
+
+#if defined(NDEBUG)
+	// Invalid internal arithmetic is deliberately exercised only in Release.
+	AddProvider(producerLimit, false);
+	BOOST_TEST(producerLimit.producers == minimum);
+	AddProvider(resistantLimit, true);
+	BOOST_TEST(resistantLimit.producers == minimum);
+	BOOST_TEST(resistantLimit.resistantProducers == minimum);
+
+	RadarAvailability invalidProducer{minimum, 0, false};
+	RemoveProvider(invalidProducer, false);
+	BOOST_TEST(invalidProducer.producers == maximum);
+
+	RadarAvailability invalidResistant{1, minimum, false};
+	RemoveProvider(invalidResistant, true);
+	BOOST_TEST(invalidResistant.producers == 0);
+	BOOST_TEST(invalidResistant.resistantProducers == maximum);
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(actual_chunk_writes_match_across_worker_counts)
+{
+	using Snapshot = std::vector<std::array<std::int64_t, 5>>;
+	constexpr std::size_t entityCount = 4096;
+
+	auto run = [entityCount](const std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{256}};
+		world.RegisterComponent<RadarAvailability>();
+		world.FinalizeComponents();
+
+		std::vector<ecs::Entity> entities;
+		entities.reserve(entityCount);
+		for (std::size_t index = 0; index < entityCount; ++index)
+		{
+			const ecs::Entity entity = world.Create<RadarAvailability>();
+			*world.Get<RadarAvailability>(entity) = RadarAvailability{
+				static_cast<std::int32_t>(index % 4),
+				static_cast<std::int32_t>(index % 2),
+				(index % 5) == 0};
+			entities.push_back(entity);
+		}
+
+		radar_availability_test::AvailabilityStep system;
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		for (std::uint64_t tick = 1; tick <= 6; ++tick)
+			scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+		Snapshot result;
+		result.reserve(entities.size());
+		std::size_t chunks = 0;
+		ecs::Query<ecs::Read<RadarAvailability>> query(world);
+		query.ForEachChunk([&](auto chunk) {
+			const auto states = chunk.template Get<RadarAvailability>();
+			const auto chunkEntities = chunk.Entities();
+			for (std::size_t row = 0; row < states.size(); ++row)
+			{
+				const ecs::Entity entity = chunkEntities[row];
+				const auto expected = radar_availability_test::ExpectedState(entity.index);
+				BOOST_TEST(states[row].producers == expected.producers);
+				BOOST_TEST(states[row].resistantProducers == expected.resistantProducers);
+				BOOST_TEST(states[row].suppressed == expected.suppressed);
+				BOOST_TEST(&states[row]
+					== static_cast<const RadarAvailability *>(world.Get<RadarAvailability>(entity)));
+				result.push_back({
+					static_cast<std::int64_t>(entity.index),
+					static_cast<std::int64_t>(entity.generation),
+					static_cast<std::int64_t>(states[row].producers),
+					static_cast<std::int64_t>(states[row].resistantProducers),
+					states[row].suppressed ? 1 : 0});
+			}
+			++chunks;
+		});
+
+		BOOST_TEST(result.size() == entityCount);
+		BOOST_TEST(chunks > 1u);
+		return result;
+	};
+
+	const Snapshot one = run(1);
+	const Snapshot two = run(2);
+	const Snapshot four = run(4);
+	BOOST_CHECK(one == two);
+	BOOST_CHECK(one == four);
+}

@@ -1,0 +1,130 @@
+#define BOOST_TEST_MODULE GeneralsZHTransactionSoundAdapter
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+#include "transaction_sound_channel.h"
+import games.generalszh.presentation.economy.transaction_sound;
+using namespace generalszh::legacy;
+using namespace generalszh::presentation;
+
+namespace
+{
+struct Sink
+{
+	std::array<TransactionSound, 8> values{};
+	std::size_t count{0}, calls{0};
+	bool fail{false};
+	static void Consume(void *raw, std::span<const TransactionSound> requests)
+	{
+		auto &sink = *static_cast<Sink *>(raw); ++sink.calls;
+		for (const auto request : requests)
+		{
+			sink.values.at(sink.count++) = request;
+			if (sink.fail) throw std::runtime_error("consumer failure after a submitted prefix");
+		}
+	}
+};
+struct CountingMemory final : std::pmr::memory_resource
+{
+	std::size_t allocations{0}, releases{0};
+	void *do_allocate(std::size_t bytes, std::size_t alignment) override
+	{
+		++allocations; return std::pmr::new_delete_resource()->allocate(bytes, alignment);
+	}
+	void do_deallocate(void *ptr, std::size_t bytes, std::size_t alignment) override
+	{
+		++releases; std::pmr::new_delete_resource()->deallocate(ptr, bytes, alignment);
+	}
+	bool do_is_equal(const std::pmr::memory_resource &other) const noexcept override { return this == &other; }
+};
+}
+BOOST_AUTO_TEST_CASE(transaction_channel_requires_explicit_finalize_record_and_commit)
+{
+	Sink sink; CountingMemory memory;
+	TransactionSoundChannel channel({&sink, &Sink::Consume}, 2, memory);
+	BOOST_CHECK_THROW(channel.Begin(0), std::logic_error);
+	BOOST_TEST(!channel.IsFinalized());
+	channel.Finalize(); channel.Finalize();
+	BOOST_CHECK_THROW(channel.Deposit(1), std::logic_error);
+	channel.Begin(7); channel.Deposit(2); channel.Withdraw(3);
+	BOOST_TEST(sink.count == 0u);
+	BOOST_CHECK_THROW(channel.Begin(8), std::logic_error);
+	channel.Commit();
+	BOOST_TEST(sink.count == 2u); BOOST_TEST(sink.calls == 1u);
+	BOOST_TEST(sink.values[0].playerIndex == 2);
+	BOOST_CHECK(sink.values[0].kind == TransactionSoundKind::Deposit);
+	BOOST_TEST(sink.values[1].playerIndex == 3);
+	BOOST_CHECK(sink.values[1].kind == TransactionSoundKind::Withdraw);
+	BOOST_CHECK_THROW(channel.Commit(), std::logic_error);
+	channel.Begin(8); channel.Commit();
+	BOOST_TEST(sink.count == 2u);
+}
+BOOST_AUTO_TEST_CASE(transaction_channel_destructor_does_not_publish)
+{
+	Sink sink; CountingMemory memory;
+	{
+		TransactionSoundChannel channel({&sink, &Sink::Consume}, 2, memory);
+		channel.Finalize(); channel.Begin(0); channel.Deposit(1);
+	}
+	BOOST_TEST(sink.calls == 0u);
+	BOOST_TEST(memory.allocations == memory.releases);
+}
+BOOST_AUTO_TEST_CASE(transaction_channel_overflow_cannot_commit_a_prefix)
+{
+	Sink sink; CountingMemory memory;
+	TransactionSoundChannel channel({&sink, &Sink::Consume}, 1, memory);
+	channel.Finalize(); channel.Begin(0); channel.Deposit(1);
+	BOOST_CHECK_THROW(channel.Withdraw(1), std::length_error);
+	BOOST_TEST(channel.IsFailed());
+	BOOST_CHECK_THROW(channel.Commit(), std::logic_error);
+	BOOST_CHECK_THROW(channel.Begin(1), std::logic_error);
+	BOOST_TEST(sink.calls == 0u);
+}
+BOOST_AUTO_TEST_CASE(transaction_channel_consumer_failure_cleans_and_cannot_replay)
+{
+	Sink sink; sink.fail = true; CountingMemory memory;
+	{
+		TransactionSoundChannel channel({&sink, &Sink::Consume}, 2, memory);
+		channel.Finalize(); channel.Begin(0); channel.Deposit(1); channel.Withdraw(2);
+		BOOST_CHECK_THROW(channel.Commit(), std::runtime_error);
+		BOOST_TEST(channel.IsFailed()); BOOST_TEST(sink.count == 1u);
+		BOOST_CHECK_THROW(channel.Commit(), std::logic_error);
+		BOOST_CHECK_THROW(channel.Begin(0), std::logic_error);
+		BOOST_CHECK_THROW(channel.Deposit(2), std::logic_error);
+		BOOST_TEST(sink.calls == 1u); BOOST_TEST(sink.count == 1u);
+	}
+	BOOST_TEST(memory.allocations == memory.releases);
+}
+BOOST_AUTO_TEST_CASE(transaction_channel_reuse_has_no_storage_allocations_after_setup)
+{
+	Sink sink; CountingMemory memory;
+	TransactionSoundChannel channel({&sink, &Sink::Consume}, 2, memory);
+	channel.Finalize();
+	const auto allocations = memory.allocations;
+	for (std::uint64_t tick = 0; tick < 100; ++tick)
+	{
+		sink.count = 0;
+		channel.Begin(tick); channel.Deposit(1); channel.Withdraw(2); channel.Commit();
+		BOOST_TEST(sink.count == 2u);
+	}
+	BOOST_TEST(memory.allocations == allocations);
+	BOOST_TEST(memory.releases == 0u);
+}
+BOOST_AUTO_TEST_CASE(transaction_channel_rejects_recursive_publication_before_mutating_buffers)
+{
+	CountingMemory memory;
+	struct Recursive
+	{
+		TransactionSoundChannel *channel{};
+		bool rejected{false};
+		static void Consume(void *raw, std::span<const TransactionSound> values)
+		{
+			auto &self = *static_cast<Recursive *>(raw);
+			try { self.channel->Begin(1); } catch (const std::logic_error &) { self.rejected = true; }
+			BOOST_REQUIRE(values.size() == 1u); BOOST_TEST(values[0].playerIndex == 5);
+		}
+	} sink;
+	TransactionSoundChannel channel({&sink, &Recursive::Consume}, 1, memory);
+	sink.channel = &channel; channel.Finalize(); channel.Begin(0); channel.Deposit(5); channel.Commit();
+	BOOST_TEST(sink.rejected); BOOST_TEST(!channel.IsFailed());
+}

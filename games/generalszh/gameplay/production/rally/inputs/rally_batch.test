@@ -1,0 +1,30 @@
+#define BOOST_TEST_MODULE GeneralsZHRallyBatch
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <span>
+#include <stdexcept>
+import games.generalszh.gameplay.production.rally.inputs.rally_batch;
+using namespace generalszh::production::rally;
+BOOST_AUTO_TEST_CASE(rally_batch_copies_ordered_inputs_and_publishes_once)
+{
+ RallyBatch batch(2);std::array inputs{RallyInput{{1,1},{2,1},7},RallyInput{{1,1},{2,1},9}};
+ batch.SetInputs(inputs);inputs[0].destination=12;
+ BOOST_TEST(batch.Receipts().empty());BOOST_CHECK_THROW(batch.SetInputs({}),std::logic_error);
+ const auto pending=batch.Prepare();BOOST_REQUIRE_EQUAL(pending.size(),2u);BOOST_TEST(pending[0].destination==7u);
+ BOOST_CHECK_THROW(batch.Prepare(),std::logic_error);BOOST_CHECK_THROW(batch.SetInputs({}),std::logic_error);
+ batch.Record(1,RallyAcceptance::Accepted);batch.Record(0,RallyAcceptance::Unreachable);
+ BOOST_TEST(batch.Receipts().empty());batch.Publish();BOOST_REQUIRE_EQUAL(batch.Receipts().size(),2u);
+ BOOST_CHECK(batch.Receipts()[0].status==RallyAcceptance::Unreachable);
+ BOOST_CHECK(batch.Receipts()[1].status==RallyAcceptance::Accepted);
+ BOOST_CHECK(batch.Receipts()[0].producer==pending[0].producer);
+ BOOST_TEST(batch.Prepare().empty());batch.Publish();BOOST_TEST(batch.Receipts().empty());
+ batch.SetInputs({});BOOST_TEST(batch.Prepare().empty());batch.Publish();
+}
+BOOST_AUTO_TEST_CASE(rally_batch_capacity_failure_does_not_stage_partial_inputs)
+{
+ RallyBatch batch(1);const std::array requests{RallyInput{},RallyInput{}};
+ BOOST_CHECK_THROW(batch.SetInputs(requests),std::length_error);
+ batch.SetInputs(std::span<const RallyInput>{requests.data(),1});
+ BOOST_REQUIRE_EQUAL(batch.Prepare().size(),1u);batch.Publish();BOOST_REQUIRE_EQUAL(batch.Receipts().size(),1u);
+ BOOST_CHECK(batch.Receipts()[0].status==RallyAcceptance::InvalidProducer);
+}

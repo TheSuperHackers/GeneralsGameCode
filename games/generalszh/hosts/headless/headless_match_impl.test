@@ -1,0 +1,23 @@
+#define BOOST_TEST_MODULE GeneralsZHHeadless
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.hosts.headless.headless_match;
+BOOST_AUTO_TEST_CASE(produce_move_attack_destroy_base_and_win_through_actual_game_composition)
+{
+    const auto expected = generalszh::headless::RunMatch(1);
+    BOOST_CHECK(expected.outcome.status == generalszh::MatchStatus::Won);
+    BOOST_TEST(expected.targetHealth == 0u); BOOST_TEST(expected.survivingUnits == 1u);
+    BOOST_TEST(expected.outcome.tick == 11u);
+    for (const auto workers : {2u,4u})
+    {
+        const auto actual = generalszh::headless::RunMatch(workers);
+        BOOST_CHECK(actual.outcome.status == expected.outcome.status); BOOST_CHECK(actual.outcome.winner == expected.outcome.winner);
+        BOOST_TEST(actual.outcome.tick == expected.outcome.tick); BOOST_CHECK(actual.attacker == expected.attacker);
+        BOOST_CHECK(actual.state == expected.state); BOOST_TEST(actual.survivingUnits == expected.survivingUnits);
+    }
+}
+BOOST_AUTO_TEST_CASE(host_tick_limit_is_not_a_fabricated_victory)
+{
+    BOOST_CHECK(generalszh::headless::RunMatch(1,2).outcome.status == generalszh::MatchStatus::Running);
+}
+
+

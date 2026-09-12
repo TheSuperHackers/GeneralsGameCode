@@ -1,0 +1,60 @@
+#define BOOST_TEST_MODULE GeneralsZHVisibilityRules
+#include <boost/test/included/unit_test.hpp>
+
+#include <optional>
+
+import games.generalszh.gameplay.visibility.definitions.visibility_policy;
+
+namespace c = engine::gameplay::containment;
+namespace n = engine::gameplay::navigation;
+namespace v = generalszh::visibility;
+
+BOOST_AUTO_TEST_SUITE(generalszh_visibility_policy)
+
+BOOST_AUTO_TEST_CASE(garrisoned_observer_uses_the_carrier_cell)
+{
+	v::VisibilityPolicyInput input;
+	input.alive = true;
+	input.actorCell = 2;
+	input.membership = c::PassengerMembership{};
+	input.membership->phase = c::ContainmentPhase::Inside;
+	input.membership->owner = c::PassengerContainmentOwner::Garrison;
+	input.carrierCell = 9;
+	input.carrierCellValid = true;
+	const auto result = v::ResolveVisibilityEligibility(input);
+	BOOST_CHECK(result.active);
+	BOOST_CHECK(result.resolvedCellValid);
+	BOOST_TEST(result.resolvedCell == 9u);
+}
+
+BOOST_AUTO_TEST_CASE(non_garrison_transport_and_unresolved_carrier_do_not_reveal)
+{
+	v::VisibilityPolicyInput transport;
+	transport.alive = true;
+	transport.actorCell = 2;
+	transport.membership = c::PassengerMembership{};
+	transport.membership->phase = c::ContainmentPhase::Inside;
+	transport.membership->owner = c::PassengerContainmentOwner::Transport;
+	transport.carrierCell = 9;
+	transport.carrierCellValid = true;
+	BOOST_CHECK(!v::ResolveVisibilityEligibility(transport).active);
+
+	transport.membership->owner = c::PassengerContainmentOwner::Garrison;
+	transport.carrierCellValid = false;
+	BOOST_CHECK(!v::ResolveVisibilityEligibility(transport).active);
+}
+
+BOOST_AUTO_TEST_CASE(construction_can_supply_the_legacy_reduced_radius)
+{
+	v::VisibilityPolicyInput input;
+	input.alive = true;
+	input.actorCell = 4;
+	input.underConstruction = true;
+	input.constructionRadiusCells = 1u;
+	const auto result = v::ResolveVisibilityEligibility(input);
+	BOOST_CHECK(result.active);
+	BOOST_CHECK(result.radiusOverride);
+	BOOST_TEST(result.radiusCells == 1u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

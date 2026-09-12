@@ -1,0 +1,25 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.navigation.components.movement;
+import engine.ecs.query.query;
+using namespace engine::gameplay::navigation;
+BOOST_AUTO_TEST_CASE(movement_columns_keep_position_and_credit_during_transition)
+{
+    ecs::World world;world.RegisterComponent<GridPosition>();world.RegisterComponent<MoveCredit>();world.RegisterComponent<MoveField>();
+    world.RegisterComponent<MoveRangeGoal>();world.FinalizeComponents();
+    const auto entity=world.Create<GridPosition,MoveCredit>();world.Get<GridPosition>(entity)->cell=12;world.Get<MoveCredit>(entity)->remainder=9;
+    world.Add<MoveField>(entity);BOOST_TEST(world.Get<GridPosition>(entity)->cell==12u);BOOST_TEST(world.Get<MoveCredit>(entity)->remainder==9u);
+    BOOST_CHECK(ecs::ComponentTraits<MoveCredit>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<MoveField>::Persistence==ecs::PersistencePolicy::Transient);
+    BOOST_CHECK(ecs::ComponentTraits<MoveRangeGoal>::Version==1u);
+    BOOST_CHECK(ecs::ComponentTraits<MoveRangeGoal>::Persistence==ecs::PersistencePolicy::Transient);
+}
+
+BOOST_AUTO_TEST_CASE(range_goal_changes_reset_credit_only_on_identity_transition)
+{
+    MoveRangeGoal range{}; MoveCredit credit{7};
+    SetMoveRangeGoal(range,credit,9,2); BOOST_TEST(credit.remainder==0u);
+    credit.remainder=5; SetMoveRangeGoal(range,credit,9,2); BOOST_TEST(credit.remainder==5u);
+    SetMoveRangeGoal(range,credit,9,3); BOOST_TEST(credit.remainder==0u);
+    credit.remainder=4; ClearMoveRangeGoal(range,credit); BOOST_TEST(credit.remainder==0u);
+    credit.remainder=6; ClearMoveRangeGoal(range,credit); BOOST_TEST(credit.remainder==6u);
+}

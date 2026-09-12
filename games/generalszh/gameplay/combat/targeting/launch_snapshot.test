@@ -1,0 +1,14 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.combat.targeting.launch_snapshot;
+
+BOOST_AUTO_TEST_CASE(launch_snapshot_is_a_generation_safe_post_movement_projection)
+{
+    using namespace generalszh::combat;
+    TargetFrame frame(8,2,1);
+    const ecs::Entity target{3,4}, account{50,1}; frame.Set(target,1,account); frame.Publish();
+    LaunchSnapshotView view(frame); engine::gameplay::spatial::SpatialPoint point{};
+    BOOST_CHECK(view.TryGet(target,point)); BOOST_TEST(point.x==1u); BOOST_TEST(point.y==0u);
+    BOOST_CHECK(point.group==account); BOOST_CHECK(!view.TryGet(ecs::Entity{3,3},point));
+    BOOST_CHECK(!view.TryGet(ecs::Entity{4,1},point));
+}

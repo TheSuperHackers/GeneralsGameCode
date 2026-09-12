@@ -1,0 +1,45 @@
+#define BOOST_TEST_MODULE GeneralsZHVisibilityContent
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+#include <string>
+#include <string_view>
+#include <stdexcept>
+
+import games.generalszh.adapters.content.visibility.visibility_definition;
+
+namespace content_visibility = generalszh::content::visibility;
+using generalszh::content::IniBlock;
+using namespace std::chrono_literals;
+
+BOOST_AUTO_TEST_SUITE(generalszh_visibility_content)
+
+IniBlock MakeObject(std::string_view vision, std::string_view shroud)
+{
+	IniBlock block{"Object", "Demo"};
+	block.fields.push_back({"VisionRange", std::string{vision}});
+	if (!shroud.empty()) block.fields.push_back({"ShroudClearingRange", std::string{shroud}});
+	return block;
+}
+
+BOOST_AUTO_TEST_CASE(shroud_minus_one_falls_back_to_vision_and_5000ms_is_typed)
+{
+	const auto block = MakeObject("25", "-1");
+	const auto decoded = content_visibility::DecodeVisibilityDefinition(
+		block, 0, content_visibility::VisibilityContentScale{10}, 1, "5000", engine::time::FixedStep{30});
+	BOOST_TEST(decoded.definition.shroudClearingRadiusCells == 3u);
+	BOOST_TEST(decoded.definition.constructionRadiusCells == 1u);
+	BOOST_TEST(decoded.definition.unlookPersistDuration == 5000ms);
+	BOOST_TEST(decoded.definition.unlookPersistTicks == 150u);
+}
+
+BOOST_AUTO_TEST_CASE(reveal_to_all_is_explicitly_outside_this_adapter)
+{
+	auto block = MakeObject("10", "10");
+	block.fields.push_back({"ShroudRevealToAllRange", "50"});
+	BOOST_CHECK_THROW(content_visibility::DecodeVisibilityDefinition(
+		block, 0, {}, 0, "5000", engine::time::FixedStep{30}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

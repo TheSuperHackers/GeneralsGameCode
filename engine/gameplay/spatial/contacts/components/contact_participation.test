@@ -1,0 +1,19 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.spatial.contacts.components.contact_participation;
+
+namespace c = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(participation_component_is_data_with_explicit_defaults)
+{
+	const c::ContactParticipation participation{};
+	BOOST_TEST(participation.enabled);
+	BOOST_TEST(participation.categoryMask == 1u);
+	BOOST_TEST(participation.collisionMask != 0u);
+}
+
+BOOST_AUTO_TEST_CASE(participation_schema_is_serializable)
+{
+	BOOST_TEST(ecs::ComponentTraits<c::ContactParticipation>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<c::ContactParticipation>::Persistence == ecs::PersistencePolicy::Serializable);
+}

@@ -1,0 +1,63 @@
+#define BOOST_TEST_MODULE GeneralsZHPoisonSystems
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <vector>
+import games.generalszh.gameplay.combat.systems.poison_input_system;
+import engine.gameplay.combat.inputs.health_input_system;
+import engine.ecs.scheduler.scheduler;
+
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(shared_poison_health_graph_cleanses_after_healing_without_resurrection)
+{
+    const auto run=[](std::size_t workers) {
+        ecs::World world; RegisterHealthComponents(world); generalszh::RegisterPoisonComponents(world);
+        world.FinalizeComponents(); HealthInputSystem health{world}; HealthSystem damageSystem; HealingSystem healingSystem;
+        generalszh::PoisonInputSystem poison{world}; PeriodicDamageSystem periodic; generalszh::combat::PoisonCleanseSystem cleanse;
+        const engine::time::FixedStep step{30}; 
+        ecs::SystemRegistry registry; RegisterHealthSystems(registry, health, damageSystem, healingSystem); generalszh::RegisterPoisonSystems(registry, poison, periodic, cleanse);
+        registry.OrderBefore<HealthInputSystem,generalszh::PoisonInputSystem>();
+        registry.OrderBefore<PeriodicDamageSystem,HealthSystem>();
+        registry.OrderBefore<HealingSystem,generalszh::combat::PoisonCleanseSystem>();
+        registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers}); scheduler.Finalize(step);
+        std::array<ecs::Entity,3> entities;
+        for(auto &entity:entities) {
+            entity=world.Create<Health,LifeState,PendingDamage,DamageResult,HealthCapacity,PendingHealing,HealingResult,PeriodicDamagePolicy,PeriodicDamage>();
+            world.Get<Health>(entity)->current=10; world.Get<HealthCapacity>(entity)->maximum=10;
+            *world.Get<PeriodicDamagePolicy>(entity)={1,4};
+        }
+        const auto healed=entities[0],killed=entities[1],unhealed=entities[2];
+        const std::array inputs{generalszh::PoisonInput{healed,{},3},generalszh::PoisonInput{killed,{},3},generalszh::PoisonInput{unhealed,{},3}};
+        poison.SetInputs(inputs);
+        BOOST_TEST(!world.Get<PeriodicDamage>(healed)->active);
+        scheduler.Execute({0,step});
+        BOOST_TEST(world.Get<PeriodicDamage>(healed)->active);
+        BOOST_TEST(world.Get<Health>(healed)->current==10u); // Application is not a second initial hit.
+        const std::array damage{DamageInput{killed,7}};
+        const std::array healing{HealingInput{healed,2},HealingInput{killed,100}};
+        health.SetInputs(damage,healing); scheduler.Execute({1,step});
+        BOOST_TEST(world.Get<Health>(healed)->current==9u);
+        BOOST_TEST(world.Get<DamageResult>(healed)->applied==3u);
+        BOOST_TEST(world.Get<HealingResult>(healed)->applied==2u);
+        BOOST_TEST(!world.Get<PeriodicDamage>(healed)->active);
+        BOOST_TEST(!world.Get<LifeState>(killed)->alive);
+        BOOST_TEST(world.Get<DamageResult>(killed)->applied==10u);
+        BOOST_TEST(world.Get<HealingResult>(killed)->applied==0u);
+        BOOST_TEST(!world.Get<PeriodicDamage>(killed)->active);
+        BOOST_TEST(world.IsAlive(killed)); // Logical death does not require storage deletion.
+        BOOST_TEST(world.Get<PeriodicDamage>(unhealed)->active);
+        scheduler.Execute({2,step}); // No setters: borrowed inputs must have been consumed once.
+        BOOST_TEST(world.Get<Health>(healed)->current==9u);
+        BOOST_TEST(world.Get<Health>(killed)->current==0u);
+        BOOST_TEST(world.Get<Health>(unhealed)->current==4u);
+        std::vector<std::uint64_t> result;
+        for(const auto entity:entities) {
+            const auto &effect=*world.Get<PeriodicDamage>(entity);
+            result.insert(result.end(),{entity.index,entity.generation,world.Get<Health>(entity)->current,
+                world.Get<LifeState>(entity)->alive,world.Get<DamageResult>(entity)->applied,
+                world.Get<HealingResult>(entity)->applied,effect.active,effect.nextTick,effect.stopTick,effect.quantity});
+        }
+        return result;
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}

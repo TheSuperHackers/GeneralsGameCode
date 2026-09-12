@@ -1,0 +1,827 @@
+#define BOOST_TEST_MODULE GeneralsZHContentHost
+#include <boost/test/included/unit_test.hpp>
+#include <filesystem>
+#include <array>
+#include <cstdint>
+#include <string>
+#include <stdexcept>
+#include <span>
+#include <vector>
+import games.generalszh.hosts.headless.content_match;
+import games.generalszh.adapters.content.bounty.cash_bounty_definition;
+import games.generalszh.adapters.content.science.science_definition;
+BOOST_AUTO_TEST_CASE(decoded_unlimited_weapon_fires_through_production_and_shared_game_plan)
+{
+    const auto unit=generalszh::content::DecodeUnit(
+        "Object Tank\nKindOf = VEHICLE TRANSPORT\nBehavior = TransportContain Transport\nSlots = 5\nAllowInsideKindOf = INFANTRY\nDamagePercentToUnits = 10%\nEnd\nBuildCost = 100\nBuildTime = 0.1\nBody = ActiveBody Tag\nMaxHealth = 100\nEnd\nWeaponSet\nWeapon = PRIMARY Cannon\nEnd\nLocomotor = SET_NORMAL Drive\nEnd",
+        "Weapon Cannon\nPrimaryDamage = 10\nAttackRange = 100\nDelayBetweenShots = 100\nEnd",
+        "Locomotor Drive\nSpeed = 200\nEnd","Tank");
+    BOOST_REQUIRE(unit.transport);
+    const auto expected=generalszh::headless::RunDecodedMatch(unit,1);
+    BOOST_TEST(expected.transportPresent); BOOST_TEST(!expected.passengerPresent);
+    BOOST_CHECK(expected.outcome.status==generalszh::MatchStatus::Won); BOOST_TEST(expected.targetHealth==0u);
+    for(const auto workers:{2u,4u}) {
+        const auto actual=generalszh::headless::RunDecodedMatch(unit,workers);
+        BOOST_CHECK(actual.state==expected.state); BOOST_TEST(actual.outcome.tick==expected.outcome.tick);
+        BOOST_CHECK(actual.attacker==expected.attacker); BOOST_TEST(actual.targetHealth==0u);
+    }
+}
+BOOST_AUTO_TEST_CASE(decoded_unit_drives_real_build_pursuit_weapon_and_match_plans)
+{
+    const auto unit=generalszh::content::DecodeUnit(R"(
+Object FixtureInfantry
+ KindOf = INFANTRY CAN_ATTACK
+ TransportSlotCount = 1
+ Behavior = SpecialAbility Capture
+  SpecialPowerTemplate = FixtureCapture
+  UpdateModuleStartsAttack = Yes
+  StartsPaused = Yes
+ End
+ Behavior = SpecialAbilityUpdate CaptureUpdate
+  SpecialPowerTemplate = FixtureCapture
+  PreparationTime = 1000
+ End
+ BuildCost = 100
+ BuildTime = 0.1
+ Body = ActiveBody Tag
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY FixtureRifle
+ End
+ Locomotor = SET_NORMAL FixtureLocomotor
+End
+)",R"(
+Weapon FixtureRifle
+ PrimaryDamage = 50
+ AttackRange = 100
+ ClipSize = 3
+ DelayBetweenShots = 100
+ ClipReloadTime = 700
+End
+)","Locomotor FixtureLocomotor\nSpeed = 200\nEnd","FixtureInfantry",{},
+        "SpecialPower FixtureCapture\nEnum = SPECIAL_INFANTRY_CAPTURE_BUILDING\nReloadTime = 15000\nEnd\n",
+        generalszh::content::CapturePermission::Allowed);
+    const auto expected=generalszh::headless::RunDecodedMatch(unit,1);
+    BOOST_CHECK(expected.outcome.status==generalszh::MatchStatus::Won); BOOST_TEST(expected.targetHealth==0u);
+    BOOST_CHECK(!expected.progressionPresent); BOOST_CHECK(!expected.regenerationPresent);
+    BOOST_TEST(expected.passengerPresent); BOOST_TEST(!expected.transportPresent);
+    BOOST_TEST(expected.capturePresent); BOOST_TEST(!expected.captureEnabled);
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=generalszh::headless::RunDecodedMatch(unit,workers);
+        BOOST_CHECK(actual.state==expected.state); BOOST_CHECK(actual.outcome.winner==expected.outcome.winner);
+        BOOST_TEST(actual.outcome.tick==expected.outcome.tick);
+    }
+}
+BOOST_AUTO_TEST_CASE(decoded_capabilities_are_created_by_production_and_run_next_tick)
+{
+    // Authored self-heal fixture with the extracted Ranger XP thresholds. This
+    // does not claim Ranger inherits active self-healing or that kills grant XP.
+    const auto unit=generalszh::content::DecodeUnit(R"(
+Object CapabilityFixture
+ BuildCost = 100
+ BuildTime = 0.1
+ ExperienceValue = 20 20 40 60
+ ExperienceRequired = 0 40 60 120
+ IsTrainable = Yes
+ Body = ActiveBody Tag
+  MaxHealth = 100
+  InitialHealth = 40
+ End
+ WeaponSet
+  Weapon = PRIMARY FixtureRifle
+ End
+ Behavior = AutoHealBehavior Heal
+  HealingAmount = 10
+  HealingDelay = 100
+  StartsActive = Yes
+  Radius = 0
+ End
+ Locomotor = SET_NORMAL FixtureLocomotor
+End
+)",R"(
+Weapon FixtureRifle
+ PrimaryDamage = 5
+ AttackRange = 100
+ ClipSize = 3
+ DelayBetweenShots = 100
+ ClipReloadTime = 700
+End
+)","Locomotor FixtureLocomotor\nSpeed = 200\nEnd","CapabilityFixture");
+    BOOST_REQUIRE(unit.progression); BOOST_REQUIRE(unit.regeneration);
+    const auto run=[&](std::size_t workers) {
+        return generalszh::headless::RunDecodedMatch(unit,workers,4096,{120,{}});
+    };
+    const auto expected=run(1);
+    BOOST_CHECK(expected.outcome.status==generalszh::MatchStatus::Won);
+    BOOST_REQUIRE(expected.progressionPresent); BOOST_REQUIRE(expected.regenerationPresent);
+    BOOST_TEST(expected.spawnHealth==40000u); // No health work before spawn commit.
+    BOOST_REQUIRE_GE(expected.state.size(),4u); BOOST_TEST(expected.state[3]==100000u);
+    BOOST_TEST(expected.experience==120u); BOOST_TEST(expected.level==3u);
+    BOOST_REQUIRE_EQUAL(expected.experienceResults.size(),1u);
+    const auto &award=expected.experienceResults[0];
+    BOOST_CHECK(award.entity==expected.attacker); BOOST_TEST(award.tick==expected.spawnTick+1);
+    BOOST_TEST(award.requested==120u); BOOST_TEST(award.applied==120u);
+    BOOST_TEST(award.oldLevel==0u); BOOST_TEST(award.newLevel==3u);
+    BOOST_CHECK(award.outcome==engine::gameplay::progression::ExperienceOutcome::Applied);
+    const auto results=[](const auto &report) {
+        std::vector<std::array<std::uint64_t,9>> values;
+        for(const auto &r:report.experienceResults) values.push_back({r.entity.index,r.entity.generation,r.tick,
+            r.requested,r.applied,r.experience,r.oldLevel,r.newLevel,static_cast<std::uint64_t>(r.outcome)});
+        return values;
+    };
+    for(const auto workers:{2u,4u}) {
+        const auto actual=run(workers);
+        BOOST_CHECK(actual.state==expected.state); BOOST_CHECK(results(actual)==results(expected));
+        BOOST_CHECK(actual.outcome.winner==expected.outcome.winner); BOOST_TEST(actual.outcome.tick==expected.outcome.tick);
+        BOOST_TEST(actual.targetHealth==expected.targetHealth);
+    }
+    auto inactive=unit; inactive.regeneration->startsActive=false;
+    const auto inactiveReport=generalszh::headless::RunDecodedMatch(inactive,1);
+    BOOST_REQUIRE(inactiveReport.regenerationPresent);
+    BOOST_REQUIRE_GE(inactiveReport.state.size(),4u); BOOST_TEST(inactiveReport.state[3]==40000u);
+    BOOST_TEST(inactiveReport.experience==0u); BOOST_TEST(inactiveReport.experienceResults.empty());
+}
+
+BOOST_AUTO_TEST_CASE(real_projectile_kill_awards_a_nontrainable_victim_value_at_one_two_four_workers)
+{
+    const auto attacker=generalszh::content::DecodeUnit(R"(
+Object XPAttacker
+ KindOf = INFANTRY CAN_ATTACK
+ BuildCost = 1
+ BuildTime = 0
+ ExperienceValue = 0 0 0 0
+ ExperienceRequired = 0 10 20 30
+ IsTrainable = Yes
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY XPWeapon
+ End
+ Locomotor = SET_NORMAL Walk
+End
+)",R"(
+Weapon XPWeapon
+ PrimaryDamage = 100
+ AttackRange = 100
+ DelayBetweenShots = 100
+End
+)","Locomotor Walk\nSpeed = 200\nEnd","XPAttacker");
+    const auto victim=generalszh::content::DecodeUnit(R"(
+Object XPVictim
+ KindOf = INFANTRY
+ BuildCost = 1
+ BuildTime = 0
+ ExperienceValue = 37 37 37 37
+ ExperienceRequired = 0 100 200 300
+ IsTrainable = No
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ Locomotor = SET_NORMAL Walk
+End
+)","","Locomotor Walk\nSpeed = 200\nEnd","XPVictim");
+    BOOST_REQUIRE(attacker.progression); BOOST_REQUIRE(victim.progression);
+    generalszh::headless::ContentExercise exercise; exercise.passiveTarget=&victim;
+    const auto run=[&](const std::size_t workers) {
+        return generalszh::headless::RunDecodedMatch(attacker,workers,64,exercise);
+    };
+    const auto expected=run(1);
+    BOOST_CHECK(expected.outcome.status==generalszh::MatchStatus::Running);
+    BOOST_TEST(expected.targetHealth==0u); BOOST_REQUIRE_EQUAL(expected.experienceResults.size(),1u);
+    BOOST_REQUIRE_EQUAL(expected.acceptedHits.size(),1u);
+    BOOST_CHECK(expected.acceptedHits[0].packet.attribution.source==expected.attacker);
+    BOOST_CHECK(expected.acceptedHits[0].packet.attribution.sourceAccount==expected.attackerAccount);
+    const auto &award=expected.experienceResults[0];
+    BOOST_CHECK(award.entity==expected.attacker); BOOST_TEST(award.requested==37u);
+    BOOST_TEST(award.applied==37u); BOOST_TEST(expected.experience==37u);
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=run(workers);
+        BOOST_CHECK(actual.state==expected.state);
+        BOOST_CHECK(actual.experienceResults.size()==expected.experienceResults.size());
+        BOOST_CHECK(actual.experienceResults[0].entity==expected.experienceResults[0].entity);
+        BOOST_TEST(actual.experienceResults[0].tick==expected.experienceResults[0].tick);
+        BOOST_TEST(actual.experienceResults[0].requested==37u);
+        BOOST_TEST(actual.experienceResults[0].applied==37u);
+        BOOST_TEST(actual.targetHealth==0u); BOOST_TEST(actual.outcome.tick==expected.outcome.tick);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(decoded_dozer_repair_authoring_binds_once_and_is_born_through_production)
+{
+    using namespace std::chrono_literals;
+    const auto unit=generalszh::content::DecodeUnit(R"(
+Object RepairDozer
+ BuildCost = 1
+ BuildTime = 0
+ Body = ActiveBody Tag
+  MaxHealth = 100
+ End
+ Behavior = DozerAIUpdate Repair
+  RepairHealthPercentPerSecond = 2%
+ End
+ WeaponSet
+  Weapon = PRIMARY RepairGun
+ End
+ Locomotor = SET_NORMAL RepairLocomotor
+End
+)",R"(
+Weapon RepairGun
+ PrimaryDamage = 1
+ AttackRange = 100
+ DelayBetweenShots = 100
+End
+)","Locomotor RepairLocomotor\nSpeed = 200\nEnd","RepairDozer");
+    BOOST_REQUIRE(unit.definition.manualRepair);
+    BOOST_TEST(unit.definition.manualRepair->interval==1s);
+    BOOST_CHECK(unit.definition.manualRepair->intervalPolicy==
+        engine::gameplay::rts::repair::RepairIntervalPolicy::SimulationStep);
+    const auto expected=generalszh::headless::RunDecodedMatch(unit,1,32);
+    BOOST_REQUIRE(expected.manualRepairPresent);
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=generalszh::headless::RunDecodedMatch(unit,workers,32);
+        BOOST_CHECK(actual.manualRepairPresent);
+        BOOST_CHECK(actual.state==expected.state);
+        BOOST_TEST(actual.spawnTick==expected.spawnTick);
+    }
+}
+BOOST_AUTO_TEST_CASE(extracted_ranger_is_deterministic, *boost::unit_test::disabled())
+{
+    const auto &arguments=boost::unit_test::framework::master_test_suite(); BOOST_REQUIRE(arguments.argc==2);
+    const std::filesystem::path root(arguments.argv[1]);
+    const auto expected=generalszh::headless::RunContentMatch(root,1);
+    BOOST_TEST(expected.unitName=="AmericaInfantryRanger"); BOOST_CHECK(expected.match.outcome.status==generalszh::MatchStatus::Won);
+    BOOST_CHECK(expected.match.progressionPresent);
+    BOOST_CHECK(expected.match.passengerPresent); BOOST_CHECK(!expected.match.transportPresent);
+    BOOST_CHECK(expected.match.capturePresent); BOOST_CHECK(!expected.match.captureEnabled); // StartsPaused does not grant the upgrade.
+    BOOST_CHECK(expected.match.armorPresent);BOOST_REQUIRE(!expected.match.acceptedHits.empty());
+    BOOST_TEST(expected.match.acceptedHits[0].packet.type.value==3u); // Ranger SMALL_ARMS, not generic default type 0.
+    BOOST_CHECK(!expected.match.regenerationPresent); // Only explicit Object fields are resolved.
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=generalszh::headless::RunContentMatch(root,workers);
+        BOOST_CHECK(actual.match.state==expected.match.state); BOOST_CHECK(actual.match.outcome.winner==expected.match.outcome.winner);
+        BOOST_TEST(actual.match.outcome.tick==expected.match.outcome.tick); BOOST_TEST(actual.match.targetHealth==expected.match.targetHealth);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(production_created_content_armor_resolves_real_hits_and_preserves_provenance_across_workers)
+{
+    using namespace generalszh::content;
+    const std::string armor="Armor HumanArmor\nArmor = ARMOR_PIERCING 10%\nArmor = FLAME 150%\nEnd\nArmor NoArmor\nArmor = DEFAULT 100%\nEnd\n";
+    const std::string locomotor="Locomotor Walk\nSpeed = 200\nEnd";
+    auto attacker=DecodeUnit("Object ArmorAttacker\nBuildCost = 10\nBuildTime = 0.1\nBody = ActiveBody B\nMaxHealth = 100\nEnd\nWeaponSet\nWeapon = PRIMARY Gun\nEnd\nArmorSet\nArmor = NoArmor\nEnd\nLocomotor = SET_NORMAL Walk\nEnd",
+        "Weapon Gun\nPrimaryDamage = 10\nDamageType = ARMOR_PIERCING\nAttackRange = 100\nDelayBetweenShots = 100\nEnd",
+        locomotor,"ArmorAttacker",{},"",CapturePermission::Unresolved,armor);
+    const auto target=DecodeUnit("Object ArmorTarget\nBuildCost = 10\nBuildTime = 0.1\nBody = ActiveBody B\nMaxHealth = 100\nEnd\nArmorSet\nConditions = None\nArmor = HumanArmor\nEnd\nLocomotor = SET_NORMAL Walk\nEnd",
+        "",locomotor,"ArmorTarget",{},"",CapturePermission::Unresolved,armor);
+    // Explicit host-authored channel, not inferred from DamageType or INI order.
+    attacker.definition.weapon.damageChannel={17};
+    generalszh::headless::ContentExercise exercise;exercise.passiveTarget=&target;exercise.hitCapacity=512;
+    const auto run=[&](unsigned workers){return generalszh::headless::RunDecodedMatch(attacker,workers,1024,exercise);};
+    const auto expected=run(1);BOOST_TEST(expected.armorPresent);BOOST_TEST(expected.targetArmorPresent);
+    BOOST_TEST(expected.targetHealth==0u);BOOST_REQUIRE(!expected.acceptedHits.empty());
+    for(const auto &hit:expected.acceptedHits) {
+        BOOST_CHECK(hit.target==expected.target);BOOST_CHECK(hit.packet.attribution.source==expected.attacker);
+        BOOST_CHECK(hit.packet.attribution.sourceAccount==expected.attackerAccount);
+        BOOST_TEST(hit.packet.attribution.sourceDefinition==attacker.definition.key);
+        BOOST_TEST(hit.packet.type.value==2u);BOOST_TEST(hit.packet.channel.value==17u);
+        BOOST_TEST(hit.packet.quantity==10000u);BOOST_TEST(hit.resolvedQuantity==1000u);BOOST_TEST(!hit.saturated);
+    }
+    const auto snapshot=[](const auto &report) {
+        std::vector<std::uint64_t> result;
+        for(const auto &hit:report.acceptedHits) result.insert(result.end(),{
+            hit.target.index,hit.target.generation,hit.projectile.index,hit.projectile.generation,hit.launchTick,hit.impactTick,
+            hit.packet.type.value,hit.packet.channel.value,hit.packet.quantity,hit.packet.attribution.source.index,
+            hit.packet.attribution.source.generation,hit.packet.attribution.sourceAccount.index,
+            hit.packet.attribution.sourceAccount.generation,hit.packet.attribution.sourceDefinition,hit.resolvedQuantity,hit.saturated});
+        return result;
+    };
+    for(const auto workers:{2u,4u}) {
+        const auto actual=run(workers);BOOST_CHECK(actual.state==expected.state);
+        BOOST_CHECK(actual.attacker==expected.attacker);BOOST_CHECK(actual.target==expected.target);
+        BOOST_CHECK(snapshot(actual)==snapshot(expected));
+    }
+    auto wrong=target;wrong.damagePolicies[2].armor=engine::gameplay::combat::damage::ArmorApplication::Bypass;
+    exercise.passiveTarget=&wrong;
+    BOOST_CHECK_THROW(run(1),std::invalid_argument);
+    exercise.passiveTarget=&target;exercise.hitCapacity=1;
+    BOOST_CHECK_THROW(run(1),std::length_error);
+}
+
+BOOST_AUTO_TEST_CASE(decoded_payload_reference_fails_before_host_publication_when_catalog_entry_is_missing)
+{
+    const auto carrier=generalszh::content::DecodeUnit(R"(
+Object PayloadCarrier
+ KindOf = VEHICLE TRANSPORT
+ Behavior = TransportContain CarrierTransport
+  Slots = 1
+  InitialPayload = MissingPayloadInfantry 1
+ End
+ BuildCost = 10
+ BuildTime = 0.1
+ Body = ActiveBody Tag
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY PayloadGun
+ End
+ Locomotor = SET_NORMAL PayloadDrive
+End
+)",R"(
+Weapon PayloadGun
+ PrimaryDamage = 5
+ AttackRange = 100
+ DelayBetweenShots = 100
+End
+)","Locomotor PayloadDrive\nSpeed = 200\nEnd","PayloadCarrier");
+    BOOST_REQUIRE(carrier.initialPayload);
+    BOOST_CHECK_THROW(generalszh::headless::RunDecodedMatch(carrier,1),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(decoded_payload_supporting_catalog_is_bound_before_definition_publication)
+{
+    const auto carrier=generalszh::content::DecodeUnit(R"(
+Object PayloadCarrier
+ KindOf = VEHICLE TRANSPORT
+ Behavior = TransportContain CarrierTransport
+  Slots = 1
+  InitialPayload = PayloadInfantry 1
+ End
+ BuildCost = 10
+ BuildTime = 0.1
+ Body = ActiveBody Tag
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY PayloadGun
+ End
+ Locomotor = SET_NORMAL PayloadDrive
+End
+)",R"(
+Weapon PayloadGun
+ PrimaryDamage = 5
+ AttackRange = 100
+ DelayBetweenShots = 100
+End
+)","Locomotor PayloadDrive\nSpeed = 200\nEnd","PayloadCarrier");
+    const auto passenger=generalszh::content::DecodeUnit(R"(
+Object PayloadInfantry
+ KindOf = INFANTRY
+ TransportSlotCount = 1
+ BuildCost = 1
+ BuildTime = 0.1
+ Body = ActiveBody Tag
+  MaxHealth = 25
+ End
+ Locomotor = SET_NORMAL PayloadInfantryDrive
+End
+)","","Locomotor PayloadInfantryDrive\nSpeed = 200\nEnd","PayloadInfantry");
+    BOOST_REQUIRE(carrier.initialPayload);
+    BOOST_REQUIRE(passenger.definition.passenger);
+    generalszh::headless::ContentExercise exercise;
+    exercise.supportingCatalog=std::span<const generalszh::content::DecodedUnit>{&passenger,1};
+    const auto report=generalszh::headless::RunDecodedMatch(carrier,1,64,exercise);
+    BOOST_TEST(report.transportPresent);
+    BOOST_CHECK(report.attacker.IsValid());
+    BOOST_CHECK(report.outcome.status==generalszh::MatchStatus::Won);
+}
+
+BOOST_AUTO_TEST_CASE(decoded_payload_catalog_runs_through_game_session_with_owner_membership_and_stable_ids)
+{
+    const auto carrier=generalszh::content::DecodeUnit(R"(
+Object PayloadCarrier
+ KindOf = VEHICLE TRANSPORT
+ Behavior = TransportContain CarrierTransport
+  Slots = 4
+  InitialPayload = PayloadInfantry 2
+ End
+ BuildCost = 10
+ BuildTime = 0
+ Body = ActiveBody Tag
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY PayloadGun
+ End
+ Locomotor = SET_NORMAL PayloadDrive
+End
+)",R"(
+Weapon PayloadGun
+ PrimaryDamage = 5
+ AttackRange = 100
+ DelayBetweenShots = 100
+End
+)","Locomotor PayloadDrive\nSpeed = 200\nEnd","PayloadCarrier");
+    const auto passenger=generalszh::content::DecodeUnit(R"(
+Object PayloadInfantry
+ KindOf = INFANTRY
+ TransportSlotCount = 1
+ BuildCost = 1
+ BuildTime = 0
+ Body = ActiveBody Tag
+  MaxHealth = 25
+ End
+ Locomotor = SET_NORMAL PayloadInfantryDrive
+End
+)","","Locomotor PayloadInfantryDrive\nSpeed = 200\nEnd","PayloadInfantry");
+    BOOST_REQUIRE(carrier.initialPayload); BOOST_REQUIRE(passenger.definition.passenger);
+    std::array supporting{passenger}; generalszh::headless::ContentExercise exercise;
+    exercise.supportingCatalog=std::span<const generalszh::content::DecodedUnit>{supporting};
+    const auto run=[&](std::size_t workers) { return generalszh::headless::RunDecodedMatch(carrier,workers,64,exercise); };
+    const auto expected=run(1);
+    BOOST_REQUIRE(expected.initialPayloadPresent); BOOST_REQUIRE(expected.initialPayloadConsumed);
+    BOOST_TEST(expected.initialPayloadConfiguredCount==2u); BOOST_TEST(expected.initialPayloadSpawnCount==2u);
+    BOOST_TEST(expected.initialPayloadSpawned); BOOST_TEST(expected.initialPayloadSpawnTick==1u);
+    BOOST_CHECK(expected.initialPayloadCarrier==expected.attacker);
+    BOOST_REQUIRE_EQUAL(expected.initialPayloadState.size(),16u);
+    for(std::size_t i=0;i<2;++i)
+    {
+        const auto offset=i*8;
+        BOOST_TEST(expected.initialPayloadState[offset+2]==expected.attackerAccount.index);
+        BOOST_TEST(expected.initialPayloadState[offset+3]==expected.attackerAccount.generation);
+        BOOST_TEST(expected.initialPayloadState[offset+4]==expected.initialPayloadCarrier.index);
+        BOOST_TEST(expected.initialPayloadState[offset+5]==expected.initialPayloadCarrier.generation);
+        BOOST_TEST(expected.initialPayloadState[offset+6]==passenger.definition.key);
+        BOOST_TEST(expected.initialPayloadState[offset+7]==static_cast<std::uint64_t>(engine::gameplay::containment::ContainmentPhase::Inside));
+    }
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=run(workers);
+        BOOST_CHECK(actual.initialPayloadState==expected.initialPayloadState);
+        BOOST_CHECK(actual.initialPayloadCarrier==expected.initialPayloadCarrier);
+        BOOST_TEST(actual.initialPayloadSpawnTick==expected.initialPayloadSpawnTick);
+        BOOST_CHECK(actual.state==expected.state);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(decoded_detector_and_stealth_units_reach_production_and_global_reveal_targeting_at_one_two_four_workers)
+{
+    const auto detector=generalszh::content::DecodeUnit(R"(
+Object DetectorUnit
+ BuildCost = 1
+ BuildTime = 0
+ VisionRange = 400
+ Body = ActiveBody Body
+ MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY Probe
+ End
+ Behavior = StealthDetectorUpdate Detector
+  DetectionRate = 100
+  DetectionRange = 0
+  CanDetectWhileContained = No
+ End
+ Locomotor = SET_NORMAL Walk
+End
+)",R"(
+Weapon Probe
+ PrimaryDamage = 1
+ AttackRange = 10
+End
+)","Locomotor Walk\nSpeed = 20\nEnd","DetectorUnit");
+    const auto concealed=generalszh::content::DecodeUnit(R"(
+Object ConcealedUnit
+ BuildCost = 1
+ BuildTime = 0
+ Body = ActiveBody Body
+ MaxHealth = 100
+ End
+ Behavior = StealthUpdate Cloak
+  StealthDelay = 0
+  InnateStealth = Yes
+ End
+ Locomotor = SET_NORMAL Walk
+End
+)","","Locomotor Walk\nSpeed = 20\nEnd","ConcealedUnit");
+    BOOST_CHECK(!detector.definition.concealment);
+    BOOST_REQUIRE(detector.definition.detection);
+    BOOST_REQUIRE(concealed.definition.concealment);
+    BOOST_REQUIRE(concealed.definition.stealthPolicy);
+    generalszh::headless::ContentExercise exercise; exercise.passiveTarget=&concealed;
+    const auto run=[&](const std::size_t workers) {
+        return generalszh::headless::RunDecodedMatch(detector,workers,5,exercise);
+    };
+    const auto expected=run(1);
+    BOOST_CHECK(!expected.concealmentPresent); // Detector-only enrollment does not cloak by default.
+    BOOST_CHECK(expected.detectorPresent);
+    BOOST_CHECK(expected.targetConcealmentPresent);
+    BOOST_CHECK(!expected.targetDetectorPresent);
+    BOOST_CHECK(expected.targetDetectedAtEnd);
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=run(workers);
+        BOOST_CHECK(actual.state==expected.state);
+        BOOST_CHECK(actual.attacker==expected.attacker); BOOST_CHECK(actual.target==expected.target);
+        BOOST_CHECK(actual.targetDetectedAtEnd);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(decoded_science_purchase_reaches_produced_unit_at_one_two_four_workers)
+{
+    using namespace engine::gameplay::rts::unlocks;
+    const auto decodedScience=generalszh::content::DecodeScienceDefinitions(R"(
+Science SCIENCE_GATE
+ SciencePurchasePointCost = 3
+ IsGrantable = Yes
+ PrerequisiteSciences = None
+End
+)");
+    const auto scienceDefinitions=generalszh::content::BindScienceDefinitions(decodedScience);
+    UnlockCatalog scienceCatalog;
+    for (const auto &definition:scienceDefinitions) scienceCatalog.Register(definition);
+    scienceCatalog.Finalize();
+    const auto scienceKey=MakeUnlockKey("SCIENCE_GATE");
+    const auto scienceId=scienceCatalog.Find(scienceKey);
+    const auto scienceSchemaHash=scienceCatalog.SchemaHash();
+    const auto unit=generalszh::content::DecodeUnit(R"(
+Object ScienceInfantry
+ KindOf = INFANTRY CAN_ATTACK
+ BuildCost = 10
+ BuildTime = 0
+ Prerequisites
+  Science = SCIENCE_GATE
+ End
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY ScienceRifle
+ End
+ Locomotor = SET_NORMAL ScienceWalk
+End
+)",R"(
+    Weapon ScienceRifle
+ PrimaryDamage = 100
+ AttackRange = 100
+ DelayBetweenShots = 100
+End
+)","Locomotor ScienceWalk\nSpeed = 200\nEnd","ScienceInfantry");
+    BOOST_CHECK_THROW(generalszh::headless::RunDecodedMatch(unit,1,8),std::invalid_argument);
+    generalszh::headless::ContentExercise blockedExercise;
+    blockedExercise.unlockCatalog=&scienceCatalog;
+    const auto blocked=generalszh::headless::RunDecodedMatch(unit,1,8,blockedExercise);
+    BOOST_REQUIRE_EQUAL(blocked.buildReceipts.size(),1u);
+    BOOST_CHECK(blocked.buildReceipts[0].status==generalszh::BuildAcceptance::PrerequisitesUnmet);
+    BOOST_CHECK(blocked.unlockReceipts.empty());
+    BOOST_CHECK(!blocked.attacker.IsValid());
+    const std::array purchase{scienceKey};
+    generalszh::headless::ContentExercise exercise;
+    exercise.unlockCatalog=&scienceCatalog;
+    exercise.purchaseUnlocks=std::span<const UnlockKey>{purchase};
+    exercise.unlockCredits=3;
+    const auto run=[&](const std::size_t workers) {
+        return generalszh::headless::RunDecodedMatch(unit,workers,32,exercise);
+    };
+    const auto expected=run(1);
+    BOOST_REQUIRE_EQUAL(expected.unlockReceipts.size(),1u);
+    BOOST_CHECK(expected.unlockReceipts[0].result==UnlockResultCode::Purchased);
+    BOOST_TEST(expected.unlockReceipts[0].key.value==purchase[0].value);
+    BOOST_TEST(expected.unlockReceipts[0].creditsBefore==3u);
+    BOOST_TEST(expected.unlockReceipts[0].creditsAfter==0u);
+    BOOST_REQUIRE_EQUAL(expected.buildReceipts.size(),1u);
+    BOOST_CHECK(expected.buildReceipts[0].status==generalszh::BuildAcceptance::Accepted);
+    BOOST_CHECK(expected.attacker.IsValid());
+    for (const auto workers:{2u,4u})
+    {
+        const auto actual=run(workers);
+        BOOST_CHECK(actual.state==expected.state);
+        BOOST_CHECK(actual.attacker==expected.attacker);
+        BOOST_REQUIRE_EQUAL(actual.unlockReceipts.size(),1u);
+        BOOST_CHECK(actual.unlockReceipts[0].result==UnlockResultCode::Purchased);
+        BOOST_REQUIRE_EQUAL(actual.buildReceipts.size(),1u);
+        BOOST_CHECK(actual.buildReceipts[0].status==generalszh::BuildAcceptance::Accepted);
+        BOOST_TEST(actual.spawnTick==expected.spawnTick);
+    }
+    BOOST_TEST(scienceCatalog.SchemaHash()==scienceSchemaHash);
+    BOOST_TEST(scienceCatalog.Find(scienceKey).value==scienceId.value);
+}
+
+BOOST_AUTO_TEST_CASE(decoded_cash_bounty_kill_settles_once_and_funds_followup_production_at_one_two_four_workers)
+{
+    using namespace engine::gameplay::rts::unlocks;
+    const auto decodedBounty=generalszh::content::DecodeCashBountyDefinitions(R"(
+Object CommandCenter
+ Behavior = CashBountyPower ModuleTag_Bounty
+  SpecialPowerTemplate = SpecialAbilityCashBounty3
+  Bounty = 20%
+ End
+End
+)",R"(
+SpecialPower SpecialAbilityCashBounty3
+ Enum = SPECIAL_CASH_BOUNTY
+ RequiredScience = SCIENCE_CashBounty3
+ PublicTimer = No
+End
+)","CommandCenter");
+    const auto bountyDefinitions=generalszh::content::BindCashBountyDefinitions(decodedBounty);
+    UnlockCatalog scienceCatalog;
+    scienceCatalog.Register(UnlockDefinition{"SCIENCE_CashBounty3",1,1,true});
+    scienceCatalog.Finalize();
+    const auto scienceKey=MakeUnlockKey("SCIENCE_CashBounty3");
+    const auto attacker=generalszh::content::DecodeUnit(R"(
+Object BountyAttacker
+ KindOf = INFANTRY CAN_ATTACK
+ BuildCost = 20
+ BuildTime = 0
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY BountyGun
+ End
+ Locomotor = SET_NORMAL BountyWalk
+End
+)",R"(
+Weapon BountyGun
+ PrimaryDamage = 100
+ AttackRange = 100
+ DelayBetweenShots = 0
+End
+ )",R"(Locomotor BountyWalk
+ Speed = 200
+ End)","BountyAttacker");
+    const auto victim=generalszh::content::DecodeUnit(R"(
+Object BountyVictim
+ KindOf = INFANTRY
+ BuildCost = 100
+ BuildTime = 0
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ Locomotor = SET_NORMAL BountyVictimWalk
+End
+ )","",R"(Locomotor BountyVictimWalk
+ Speed = 200
+ End)","BountyVictim");
+    const std::array purchase{scienceKey};
+    generalszh::headless::ContentExercise exercise;
+    exercise.passiveTarget=&victim;
+    exercise.unlockCatalog=&scienceCatalog;
+    exercise.purchaseUnlocks=std::span<const UnlockKey>{purchase};
+    exercise.unlockCredits=1;
+    exercise.cashBountyDefinitions=std::span<const generalszh::bounty::CashBountyDefinition>{bountyDefinitions};
+    exercise.cashBountyFollowupDefinition=attacker.definition.key;
+    const auto run=[&](const std::size_t workers) {
+        return generalszh::headless::RunDecodedMatch(attacker,workers,64,exercise);
+    };
+    const auto expected=run(1);
+    BOOST_CHECK(expected.bountyRateNumerator==1u);
+    BOOST_CHECK(expected.bountyRateDenominator==5u);
+    BOOST_REQUIRE_EQUAL(expected.bountyAwards.size(),1u);
+    BOOST_CHECK(expected.bountyAwards[0].source==expected.attacker);
+    BOOST_CHECK(expected.bountyAwards[0].victim==expected.target);
+    BOOST_CHECK(expected.bountyAwards[0].account==expected.attackerAccount);
+    BOOST_CHECK(expected.bountyAwards[0].amount==20u);
+    BOOST_CHECK(expected.attackerIncome==20u);
+    BOOST_CHECK(expected.attackerBalance==0u);
+    BOOST_CHECK(expected.bountyFollowupAccepted);
+    BOOST_CHECK(expected.bountyFollowupSpawned);
+    BOOST_REQUIRE(expected.bountyFollowupEntity.IsValid());
+    BOOST_CHECK(expected.bountyFollowupEntity!=expected.attacker);
+    BOOST_CHECK(expected.bountyFollowupDefinition==attacker.definition.key);
+    BOOST_CHECK(expected.bountyFollowupAccount==expected.attackerAccount);
+    for(const auto workers:{2u,4u})
+    {
+        const auto actual=run(workers);
+        BOOST_CHECK(actual.state==expected.state);
+        BOOST_CHECK(actual.attacker==expected.attacker);
+        BOOST_CHECK(actual.target==expected.target);
+        BOOST_REQUIRE_EQUAL(actual.bountyAwards.size(),1u);
+        BOOST_CHECK(actual.bountyAwards[0].source==expected.bountyAwards[0].source);
+        BOOST_CHECK(actual.bountyAwards[0].victim==expected.bountyAwards[0].victim);
+        BOOST_CHECK(actual.bountyAwards[0].account==expected.bountyAwards[0].account);
+        BOOST_CHECK(actual.bountyAwards[0].amount==20u);
+        BOOST_CHECK(actual.attackerIncome==20u);
+        BOOST_CHECK(actual.attackerBalance==0u);
+        BOOST_CHECK(actual.bountyFollowupAccepted);
+        BOOST_CHECK(actual.bountyFollowupSpawned);
+        BOOST_REQUIRE(actual.bountyFollowupEntity.IsValid());
+        BOOST_CHECK(actual.bountyFollowupEntity!=actual.attacker);
+        BOOST_CHECK(actual.bountyFollowupEntity==expected.bountyFollowupEntity);
+        BOOST_CHECK(actual.bountyFollowupDefinition==attacker.definition.key);
+        BOOST_CHECK(actual.bountyFollowupDefinition==expected.bountyFollowupDefinition);
+        BOOST_CHECK(actual.bountyFollowupAccount==expected.attackerAccount);
+        BOOST_CHECK(actual.bountyFollowupAccount==expected.bountyFollowupAccount);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(decoded_cash_bounty_completed_building_pays_but_scaffold_does_not_at_one_two_four_workers)
+{
+    using namespace engine::gameplay::rts::unlocks;
+    const auto decodedBounty=generalszh::content::DecodeCashBountyDefinitions(R"(
+Object CommandCenter
+ Behavior = CashBountyPower ModuleTag_Bounty
+  SpecialPowerTemplate = SpecialAbilityCashBounty3
+  Bounty = 20%
+ End
+End
+)",R"(
+SpecialPower SpecialAbilityCashBounty3
+ Enum = SPECIAL_CASH_BOUNTY
+ RequiredScience = SCIENCE_CashBounty3
+ PublicTimer = No
+End
+)","CommandCenter");
+    const auto bountyDefinitions=generalszh::content::BindCashBountyDefinitions(decodedBounty);
+    UnlockCatalog scienceCatalog;
+    scienceCatalog.Register(UnlockDefinition{"SCIENCE_CashBounty3",1,1,true});
+    scienceCatalog.Finalize();
+    const auto scienceKey=MakeUnlockKey("SCIENCE_CashBounty3");
+    const auto attacker=generalszh::content::DecodeUnit(R"(
+Object BuildingBountyAttacker
+ KindOf = INFANTRY CAN_ATTACK
+ BuildCost = 20
+ BuildTime = 0
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ WeaponSet
+  Weapon = PRIMARY BuildingBountyGun
+ End
+ Locomotor = SET_NORMAL BuildingBountyWalk
+End
+)",R"(
+Weapon BuildingBountyGun
+ PrimaryDamage = 100
+ AttackRange = 100
+ DelayBetweenShots = 0
+End
+ )",R"(Locomotor BuildingBountyWalk
+ Speed = 200
+ End)","BuildingBountyAttacker");
+    const auto rules=generalszh::content::DecodeGameRules(R"(
+GameData
+ ValuePerSupplyBox = 75
+ MinLowEnergyProductionSpeed = 0.5
+ MaxLowEnergyProductionSpeed = 0.8
+ LowEnergyPenaltyModifier = 1.0
+End
+)");
+    const auto building=generalszh::content::DecodeBuilding(R"(
+Object BountyCommandCenter
+ KindOf = STRUCTURE
+ BuildCost = 100
+ BuildTime = 10
+ Body = StructureBody Body
+  MaxHealth = 100
+ End
+End
+)","BountyCommandCenter",rules);
+    const std::array purchase{scienceKey};
+    const auto run=[&](const bool scaffold,const std::size_t workers) {
+        generalszh::headless::ContentExercise exercise;
+        exercise.passiveBuilding=&building;
+        exercise.passiveBuildingUnderConstruction=scaffold;
+        exercise.unlockCatalog=&scienceCatalog;
+        exercise.purchaseUnlocks=std::span<const UnlockKey>{purchase};
+        exercise.unlockCredits=1;
+        exercise.cashBountyDefinitions=std::span<const generalszh::bounty::CashBountyDefinition>{bountyDefinitions};
+        return generalszh::headless::RunDecodedMatch(attacker,workers,64,exercise);
+    };
+    const auto completed=run(false,1);
+    BOOST_CHECK(completed.targetStructureComplete);
+    BOOST_REQUIRE_EQUAL(completed.bountyAwards.size(),1u);
+    BOOST_CHECK(completed.bountyAwards[0].victim==completed.target);
+    BOOST_CHECK(completed.bountyAwards[0].account==completed.attackerAccount);
+    BOOST_CHECK(completed.bountyAwards[0].amount==20u);
+    BOOST_CHECK(completed.attackerIncome==20u);
+    BOOST_CHECK(completed.attackerBalance==20u);
+    const auto scaffold=run(true,1);
+    BOOST_CHECK(!scaffold.targetStructureComplete);
+    BOOST_CHECK(scaffold.target.IsValid());
+    BOOST_CHECK(scaffold.targetHealth==0u);
+    BOOST_CHECK(scaffold.bountyAwards.empty());
+    BOOST_CHECK(scaffold.attackerIncome==0u);
+    BOOST_CHECK(scaffold.attackerBalance==0u);
+    for(const auto workers:{2u,4u})
+    {
+        const auto completedActual=run(false,workers);
+        BOOST_CHECK(completedActual.state==completed.state);
+        BOOST_CHECK(completedActual.attacker==completed.attacker);
+        BOOST_CHECK(completedActual.target==completed.target);
+        BOOST_CHECK(completedActual.targetStructureComplete);
+        BOOST_REQUIRE_EQUAL(completedActual.bountyAwards.size(),1u);
+        BOOST_CHECK(completedActual.bountyAwards[0].victim==completed.bountyAwards[0].victim);
+        BOOST_CHECK(completedActual.bountyAwards[0].account==completed.bountyAwards[0].account);
+        BOOST_CHECK(completedActual.bountyAwards[0].amount==20u);
+        BOOST_CHECK(completedActual.attackerIncome==20u);
+        BOOST_CHECK(completedActual.attackerBalance==20u);
+
+        const auto scaffoldActual=run(true,workers);
+        BOOST_CHECK(scaffoldActual.state==scaffold.state);
+        BOOST_CHECK(scaffoldActual.attacker==scaffold.attacker);
+        BOOST_CHECK(scaffoldActual.target==scaffold.target);
+        BOOST_CHECK(!scaffoldActual.targetStructureComplete);
+        BOOST_CHECK(scaffoldActual.targetHealth==0u);
+        BOOST_CHECK(scaffoldActual.bountyAwards.empty());
+        BOOST_CHECK(scaffoldActual.attackerIncome==0u);
+        BOOST_CHECK(scaffoldActual.attackerBalance==0u);
+    }
+}
+

@@ -1,0 +1,65 @@
+#define BOOST_TEST_MODULE GeneralsZHDemolitionTargetIndex
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <vector>
+import games.generalszh.gameplay.demolition.algorithms.demolition_target_index;
+
+BOOST_AUTO_TEST_CASE(target_index_keeps_incomplete_scaffolds_and_excludes_dead_or_contained_rows)
+{
+    using namespace generalszh::demolition;
+    using namespace engine::gameplay::combat;
+    using namespace engine::gameplay::navigation;
+    using namespace engine::gameplay::containment;
+    using generalszh::construction::Structure;
+    using generalszh::production::ProducedUnit;
+    const std::array<std::uint8_t,6> terrain{1,1,1,1,1,1};
+    const NavigationGrid grid(6,1,terrain);
+    ecs::World world;
+    world.RegisterComponent<Health>();
+    world.RegisterComponent<LifeState>();
+    world.RegisterComponent<GridPosition>();
+    world.RegisterComponent<ProducedUnit>();
+    world.RegisterComponent<generalszh::production::Producer>();
+    world.RegisterComponent<Structure>();
+    world.RegisterComponent<PassengerMembership>();
+    world.RegisterComponent<DemolitionTargetClassification>();
+    world.FinalizeComponents();
+    const auto owner=world.Create<>();
+    const auto scaffold=world.Create<Health,LifeState,GridPosition,Structure>();
+    world.Get<Health>(scaffold)->current=10;
+    world.Get<GridPosition>(scaffold)->cell=2;
+    world.Get<Structure>(scaffold)->account=owner;
+    world.Get<Structure>(scaffold)->complete=false;
+    const auto airborne=world.Create<Health,LifeState,GridPosition,ProducedUnit,DemolitionTargetClassification>();
+    world.Get<Health>(airborne)->current=10;
+    world.Get<GridPosition>(airborne)->cell=3;
+    world.Get<ProducedUnit>(airborne)->account=ecs::Entity{8,1};
+    world.Get<DemolitionTargetClassification>(airborne)->airborne=true;
+    const auto contained=world.Create<Health,LifeState,GridPosition,ProducedUnit,PassengerMembership>();
+    world.Get<Health>(contained)->current=10;
+    world.Get<GridPosition>(contained)->cell=2;
+    world.Get<ProducedUnit>(contained)->account=ecs::Entity{9,1};
+    world.Get<PassengerMembership>(contained)->phase=ContainmentPhase::Inside;
+    const auto dead=world.Create<Health,LifeState,GridPosition,ProducedUnit>();
+    world.Get<Health>(dead)->current=0;
+    world.Get<LifeState>(dead)->alive=false;
+    world.Get<GridPosition>(dead)->cell=2;
+    world.Get<ProducedUnit>(dead)->account=ecs::Entity{10,1};
+
+    DemolitionTargetIndex index(world,grid,32);
+    index.Rebuild();
+    std::vector<DemolitionTargetObservation> observations;
+    index.VisitWithinRadius({2,0},1,[&](const auto &observation) { observations.push_back(observation); });
+    BOOST_REQUIRE_EQUAL(observations.size(),2u);
+    bool sawScaffold=false,sawAirborne=false;
+    for(const auto &observation:observations)
+    {
+        sawScaffold|=observation.entity==scaffold && observation.structure;
+        sawAirborne|=observation.entity==airborne && observation.airborne;
+        BOOST_CHECK(observation.entity!=contained);
+        BOOST_CHECK(observation.entity!=dead);
+    }
+    BOOST_CHECK(sawScaffold);
+    BOOST_CHECK(sawAirborne);
+}

@@ -1,0 +1,158 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeBuildDefinition
+#include <boost/test/included/unit_test.hpp>
+
+#include <bit>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+
+import games.generalszh.gameplay.upgrades.definitions.build_definition;
+
+namespace build_definition_test
+{
+using generalszh::upgrades::BuildDefinition;
+using generalszh::upgrades::Seconds;
+
+constexpr std::string_view FingerprintDomain =
+	"games.generalszh.upgrades.build_definition.recipe";
+constexpr std::uint64_t FnvOffsetBasis = UINT64_C(14695981039346656037);
+constexpr std::uint64_t FnvPrime = UINT64_C(1099511628211);
+
+constexpr void HashByte(std::uint64_t &hash, const std::uint8_t byte) noexcept
+{
+	hash ^= byte;
+	hash *= FnvPrime;
+}
+
+constexpr void HashLittleEndian(std::uint64_t &hash, const std::uint64_t value,
+	const std::size_t byteCount) noexcept
+{
+	for (std::size_t byte = 0; byte < byteCount; ++byte)
+		HashByte(hash, static_cast<std::uint8_t>(value >> (byte * 8)));
+}
+
+constexpr void HashBytes(std::uint64_t &hash, const std::string_view bytes) noexcept
+{
+	for (const char byte : bytes)
+		HashByte(hash, static_cast<std::uint8_t>(static_cast<unsigned char>(byte)));
+}
+
+constexpr std::uint32_t CanonicalFloatBits(const float value) noexcept
+{
+	const auto bits = std::bit_cast<std::uint32_t>(value);
+	return value == 0.0f ? std::uint32_t{0} : bits;
+}
+
+constexpr std::uint64_t IndependentFingerprint(
+	const Seconds duration, const std::int32_t cost) noexcept
+{
+	std::uint64_t hash = FnvOffsetBasis;
+	HashLittleEndian(hash, static_cast<std::uint64_t>(FingerprintDomain.size()),
+		sizeof(std::uint64_t));
+	HashBytes(hash, FingerprintDomain);
+	HashLittleEndian(hash, 1u, sizeof(std::uint32_t));
+	HashLittleEndian(hash, CanonicalFloatBits(duration.count()), sizeof(std::uint32_t));
+	HashLittleEndian(hash, static_cast<std::uint32_t>(cost), sizeof(std::uint32_t));
+	return hash;
+}
+} // namespace build_definition_test
+
+using namespace build_definition_test;
+
+BOOST_AUTO_TEST_CASE(zero_is_explicit_and_negative_zero_has_canonical_fingerprint_bits)
+{
+	constexpr auto negativeZero = std::bit_cast<float>(std::uint32_t{0x80000000});
+	const BuildDefinition zero{Seconds{0.0f}, 0};
+	const BuildDefinition signedZero{Seconds{negativeZero}, 0};
+
+	BOOST_TEST(zero.Duration().count() == 0.0f);
+	BOOST_TEST(zero.Cost() == 0);
+	BOOST_TEST(std::bit_cast<std::uint32_t>(zero.Duration().count()) == 0u);
+	BOOST_TEST(std::bit_cast<std::uint32_t>(signedZero.Duration().count()) == 0u);
+	BOOST_TEST(zero.Fingerprint() ==
+		IndependentFingerprint(Seconds{0.0f}, 0));
+	BOOST_TEST(zero.Fingerprint() == UINT64_C(0xD12B01F08F0C0328));
+	BOOST_TEST(signedZero.Fingerprint() == zero.Fingerprint());
+	BOOST_TEST(signedZero.Duration().count() == 0.0f);
+}
+
+BOOST_AUTO_TEST_CASE(fingerprint_matches_the_versioned_canonical_field_encoding)
+{
+	const BuildDefinition definition{Seconds{1.5f}, 37};
+
+	BOOST_TEST(definition.Fingerprint() == IndependentFingerprint(Seconds{1.5f}, 37));
+	BOOST_TEST(definition.Fingerprint() == UINT64_C(0x6A0FB6559985F380));
+}
+
+BOOST_AUTO_TEST_CASE(each_modern_build_field_changes_the_fingerprint)
+{
+	const auto baseline = BuildDefinition{Seconds{1.0f}, 7}.Fingerprint();
+
+	BOOST_TEST((BuildDefinition{Seconds{2.0f}, 7}.Fingerprint()) != baseline);
+	BOOST_TEST((BuildDefinition{Seconds{1.0f}, 8}.Fingerprint()) != baseline);
+}
+
+BOOST_AUTO_TEST_CASE(authoring_rejects_non_finite_negative_time_and_negative_cost)
+{
+	BOOST_CHECK_THROW((BuildDefinition{Seconds{-1.0f}, 0}), std::invalid_argument);
+	BOOST_CHECK_THROW((BuildDefinition{
+		Seconds{(std::numeric_limits<float>::infinity)()}, 0}), std::invalid_argument);
+	BOOST_CHECK_THROW((BuildDefinition{
+		Seconds{(std::numeric_limits<float>::quiet_NaN)()}, 0}), std::invalid_argument);
+	BOOST_CHECK_THROW((BuildDefinition{Seconds{1.0f}, -1}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(modern_authoring_has_no_legacy_frame_ceiling)
+{
+	const BuildDefinition definition{
+		Seconds{(std::numeric_limits<float>::max)()},
+		(std::numeric_limits<std::int32_t>::max)()};
+
+	BOOST_TEST(definition.Duration().count() == (std::numeric_limits<float>::max)());
+	BOOST_TEST(definition.Cost() == (std::numeric_limits<std::int32_t>::max)());
+}
+
+BOOST_AUTO_TEST_CASE(subnormal_duration_bits_are_preserved_and_negative_subnormals_rejected)
+{
+	for (const auto bits : {0x00000001u, 0x007fffffu, 0x00800000u})
+	{
+		const BuildDefinition definition{Seconds{std::bit_cast<float>(bits)}, 0};
+		BOOST_TEST(std::bit_cast<std::uint32_t>(definition.Duration().count()) == bits);
+		BOOST_TEST(definition.Fingerprint() != BuildDefinition(Seconds{0.0f}, 0).Fingerprint());
+		BOOST_CHECK_THROW((BuildDefinition{Seconds{std::bit_cast<float>(bits | 0x80000000u)}, 0}),
+			std::invalid_argument);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(api_is_a_compact_immutable_typed_value)
+{
+	static_assert(BuildDefinition::Version == 1u);
+	static_assert(std::is_same_v<Seconds, std::chrono::duration<float>>);
+	static_assert(std::is_same_v<decltype(std::declval<const BuildDefinition &>().Duration()),
+		Seconds>);
+	static_assert(std::is_same_v<decltype(std::declval<const BuildDefinition &>().Cost()),
+		std::int32_t>);
+	static_assert(std::is_same_v<decltype(std::declval<const BuildDefinition &>().Fingerprint()),
+		std::uint64_t>);
+	static_assert(noexcept(std::declval<const BuildDefinition &>().Duration()));
+	static_assert(noexcept(std::declval<const BuildDefinition &>().Cost()));
+	static_assert(noexcept(std::declval<const BuildDefinition &>().Fingerprint()));
+	static_assert(std::is_copy_constructible_v<BuildDefinition>);
+	static_assert(!std::is_assignable_v<BuildDefinition &, BuildDefinition>);
+	static_assert(!std::is_assignable_v<BuildDefinition &, BuildDefinition &&>);
+	static_assert(sizeof(BuildDefinition) == sizeof(Seconds) + sizeof(std::int32_t) +
+		sizeof(std::uint64_t));
+
+	const BuildDefinition source{Seconds{4.0f}, 12};
+	const BuildDefinition copy{source};
+	const BuildDefinition fromRvalue{std::move(source)};
+	BOOST_TEST(copy.Duration().count() == 4.0f);
+	BOOST_TEST(copy.Cost() == 12);
+	BOOST_TEST(copy.Fingerprint() == source.Fingerprint());
+	BOOST_TEST(fromRvalue.Fingerprint() == source.Fingerprint());
+}

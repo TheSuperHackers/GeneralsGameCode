@@ -1,0 +1,22 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionMarkerFacade
+#include <boost/test/included/unit_test.hpp>
+
+#include <chrono>
+
+import games.generalszh.gameplay.production.presentation.construction_marker;
+using generalszh::production::AuthorConstructionMarkerTiming;
+using generalszh::production::BeginConstructionMarker;
+using generalszh::production::ConstructionMarker;
+using generalszh::production::ConstructionMarkerTiming;
+
+BOOST_AUTO_TEST_CASE(facade_reexports_marker_components_definitions_and_algorithms)
+{
+	using namespace std::chrono_literals;
+	ConstructionMarker marker{};
+	const auto timing = AuthorConstructionMarkerTiming(1s, engine::time::FixedStep{30});
+
+	BOOST_TEST(BeginConstructionMarker(marker, 42u));
+	BOOST_TEST(marker.tick == 42u);
+	BOOST_TEST(!BeginConstructionMarker(marker, 99u));
+	BOOST_TEST(!AdvanceConstructionMarker(marker, 42u, timing));
+}

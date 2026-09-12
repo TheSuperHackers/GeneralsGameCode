@@ -1,0 +1,23 @@
+#include <boost/test/unit_test.hpp>
+
+#include <stdexcept>
+
+import engine.ecs;
+
+BOOST_AUTO_TEST_SUITE(ecs_module)
+
+BOOST_AUTO_TEST_CASE(umbrella_module_exports_foundation)
+{
+	ecs::World world;
+	BOOST_CHECK_THROW(world.Create<>(), std::logic_error);
+	BOOST_TEST(!world.ComponentsFinalized());
+	BOOST_TEST(world.ArchetypeCount() == 0);
+
+	world.FinalizeComponents();
+	const ecs::Entity entity = world.Create<>();
+
+	BOOST_TEST(world.IsAlive(entity));
+	BOOST_TEST(world.EntityCount() == 1);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

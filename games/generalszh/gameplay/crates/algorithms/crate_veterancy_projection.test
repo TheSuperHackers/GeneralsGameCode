@@ -1,0 +1,25 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+
+import games.generalszh.gameplay.crates.algorithms.crate_veterancy_projection;
+
+namespace crates = generalszh::crates;
+namespace progression = engine::gameplay::progression;
+
+BOOST_AUTO_TEST_CASE(veterancy_projection_applies_prefix_then_sequential_crate_levels)
+{
+	const progression::ProgressionDefinition definition{{0, 10, 25, 50}, 100};
+	const ecs::Entity target{3, 1};
+	crates::ProjectedProgression projection = crates::MakeProjection(0, 0, true, &definition);
+	const std::array prefix{progression::AcceptedExperience{target, 10}};
+	crates::ApplyPrefix(projection, definition, prefix);
+	BOOST_TEST(projection.experience == 10u);
+	BOOST_TEST(projection.level == 1u);
+	BOOST_TEST(crates::ApplyLevelGain(projection, definition, 1) == 15u);
+	BOOST_TEST(projection.experience == 25u);
+	BOOST_TEST(projection.level == 2u);
+	BOOST_TEST(crates::ApplyLevelGain(projection, definition, 1) == 25u);
+	BOOST_TEST(projection.experience == 50u);
+	BOOST_TEST(projection.level == 3u);
+	BOOST_TEST(crates::ApplyLevelGain(projection, definition, 1) == 0u);
+}

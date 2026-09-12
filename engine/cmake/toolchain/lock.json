@@ -1,0 +1,95 @@
+{
+  "versions": {
+    "llvm": "22.1.8",
+    "cmake": "4.4.3",
+    "ninja": "1.13.2",
+    "cxx": 23
+  },
+  "hosts": {
+    "windows-x64": {
+      "llvm": {
+        "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/clang%2Bllvm-22.1.8-x86_64-pc-windows-msvc.tar.xz",
+        "sha256": "d96c2cc1736f4eb7fa43cb9bbdf56d93551a9ae0a9aadb9c99c3c3b2b712a234",
+        "prefix": "clang+llvm-22.1.8-x86_64-pc-windows-msvc"
+      },
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v4.4.3/cmake-4.4.3-windows-x86_64.zip",
+        "sha256": "4d52ebab7193a698651639ed80d8d04fd903358843572cf44c7fd234cb7c26ab",
+        "prefix": "cmake-4.4.3-windows-x86_64"
+      },
+      "ninja": {
+        "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-win.zip",
+        "sha256": "07fc8261b42b20e71d1720b39068c2e14ffcee6396b76fb7a795fb460b78dc65",
+        "prefix": "."
+      }
+    },
+    "windows-arm64": {
+      "llvm": {
+        "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/clang%2Bllvm-22.1.8-aarch64-pc-windows-msvc.tar.xz",
+        "sha256": "de718c58ebbc5f61d58c17b90457fcf42983bc2c4a4aba3e010d108713bfd7f1",
+        "prefix": "clang+llvm-22.1.8-aarch64-pc-windows-msvc"
+      },
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v4.4.3/cmake-4.4.3-windows-arm64.zip",
+        "sha256": "7b410ddd00e24c7250eec7452da2348a4a70437aa87e9cda0a20d6a85662fcff",
+        "prefix": "cmake-4.4.3-windows-arm64"
+      },
+      "ninja": {
+        "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-winarm64.zip",
+        "sha256": "e52f0bdef9dfb1003229dbd6508a508c4073fd017247002adc66e5e806cb0391",
+        "prefix": "."
+      }
+    },
+    "linux-x64": {
+      "llvm": {
+        "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/LLVM-22.1.8-Linux-X64.tar.xz",
+        "sha256": "df0e1ecf16caf3489a272a5eea4eec9b0d82878f6477fa309504f918a0006384",
+        "prefix": "LLVM-22.1.8-Linux-X64"
+      },
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v4.4.3/cmake-4.4.3-linux-x86_64.tar.gz",
+        "sha256": "d6c83076c575bc00b823522ac974bda66d0af05d6ddc30e739c12385cf32c6cc",
+        "prefix": "cmake-4.4.3-linux-x86_64"
+      },
+      "ninja": {
+        "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-linux.zip",
+        "sha256": "5749cbc4e668273514150a80e387a957f933c6ed3f5f11e03fb30955e2bbead6",
+        "prefix": "."
+      }
+    },
+    "linux-arm64": {
+      "llvm": {
+        "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/LLVM-22.1.8-Linux-ARM64.tar.xz",
+        "sha256": "805efad2bb91cb4967fa569e0881d10c0f69c04461cf671cccbae19f547acc34",
+        "prefix": "LLVM-22.1.8-Linux-ARM64"
+      },
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v4.4.3/cmake-4.4.3-linux-aarch64.tar.gz",
+        "sha256": "2efc974dbd63b4444c0e8494b92f2e80c2d7e635b4b80eac2916985ddd8f72a6",
+        "prefix": "cmake-4.4.3-linux-aarch64"
+      },
+      "ninja": {
+        "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-linux-aarch64.zip",
+        "sha256": "fd2cacc8050a7f12a16a2e48f9e06fca5c14fc4c2bee2babb67b58be17a607fc",
+        "prefix": "."
+      }
+    },
+    "macos-arm64": {
+      "llvm": {
+        "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/LLVM-22.1.8-macOS-ARM64.tar.xz",
+        "sha256": "f260f4f7c0d430828a81ae8a3826a1d63fc0963ec2459489308cc23b1f7eab4f",
+        "prefix": "LLVM-22.1.8-macOS-ARM64"
+      },
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v4.4.3/cmake-4.4.3-macos-universal.tar.gz",
+        "sha256": "0c5d65251c14cc884bfa16bdbed3c263ce5bffe2e21c0d0d00962cb0610464fa",
+        "prefix": "cmake-4.4.3-macos-universal/CMake.app/Contents"
+      },
+      "ninja": {
+        "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-mac.zip",
+        "sha256": "c99048673aa765960a99cf10c6ddb9f1fad506099ff0a0e137ad8960a88f321b",
+        "prefix": "."
+      }
+    }
+  }
+}

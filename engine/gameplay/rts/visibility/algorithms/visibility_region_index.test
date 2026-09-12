@@ -1,0 +1,34 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <cstdint>
+#include <vector>
+
+import engine.gameplay.rts.visibility.algorithms.visibility_region_index;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_region_index)
+
+BOOST_AUTO_TEST_CASE(overlapping_regions_reduce_to_all_owners_deterministically)
+{
+	const VisibilityTopology topology{8, 8};
+	VisibilityRegionIndex index{topology, 4};
+	const ParticipantHandle first{0, 1};
+	const ParticipantHandle second{1, 1};
+	index.Add(first, VisibilityRegion{topology.CellAt(2, 2), 2, true});
+	index.Add(second, VisibilityRegion{topology.CellAt(3, 2), 2, true});
+	index.Publish();
+
+	std::vector<ParticipantHandle> owners;
+	index.VisitCovering(topology.CellAt(2, 2), [&](const ParticipantHandle owner) {
+		owners.push_back(owner);
+	});
+	BOOST_REQUIRE_EQUAL(owners.size(), 2u);
+	BOOST_CHECK(owners[0] == first);
+	BOOST_CHECK(owners[1] == second);
+	index.Clear();
+	BOOST_TEST(index.Size() == 0u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

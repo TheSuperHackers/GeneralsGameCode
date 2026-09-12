@@ -1,0 +1,44 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+import engine.ecs.storage.chunk_layout;
+import engine.gameplay.rts.visibility.components.visibility_lease_page;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_lease_page)
+
+BOOST_AUTO_TEST_CASE(bitmap_finds_slots_in_deterministic_word_order)
+{
+	VisibilityLeasePage page;
+	page.SetOccupied(0);
+	page.SetOccupied(64);
+	BOOST_TEST(page.FindFree() == 1u);
+	page.SetOccupied(1);
+	BOOST_TEST(page.FindFree() == 2u);
+	page.Clear(64);
+	BOOST_TEST(page.FindFree() == 2u);
+}
+
+BOOST_AUTO_TEST_CASE(component_and_chunk_layout_use_actual_compiler_values)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<VisibilityLeasePage>();
+	registry.Finalize();
+	const auto id = registry.TryGet<VisibilityLeasePage>();
+	BOOST_TEST(registry.Get(id).size == sizeof(VisibilityLeasePage));
+	BOOST_TEST(registry.Get(id).alignment == alignof(VisibilityLeasePage));
+	const std::vector<const ecs::ComponentInfo *> columns{&registry.Get(id)};
+	const auto layout = ecs::ChunkLayout::Build(columns);
+	BOOST_TEST(layout.Capacity() >= 1u);
+	BOOST_TEST(layout.Alignment() >= alignof(VisibilityLeasePage));
+	BOOST_TEST_MESSAGE("VisibilityLeasePage sizeof=" << sizeof(VisibilityLeasePage) <<
+		" alignof=" << alignof(VisibilityLeasePage) <<
+		" chunk capacity=" << layout.Capacity() <<
+		" chunk bytes=" << layout.TotalBytes());
+}
+
+BOOST_AUTO_TEST_SUITE_END()

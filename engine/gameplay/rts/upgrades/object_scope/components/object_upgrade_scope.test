@@ -1,0 +1,33 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsObjectUpgradeScope
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import engine.gameplay.rts.upgrades.object_scope.components.object_upgrade_scope;
+
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeTarget;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeWordMarker;
+
+BOOST_AUTO_TEST_CASE(object_scope_components_are_persistent_plain_data)
+{
+	static_assert(std::is_standard_layout_v<ObjectUpgradeTarget>);
+	static_assert(std::is_trivially_copyable_v<ObjectUpgradeTarget>);
+	static_assert(std::is_standard_layout_v<ObjectUpgradeWordMarker>);
+	static_assert(std::is_trivially_copyable_v<ObjectUpgradeWordMarker>);
+
+	ObjectUpgradeTarget target{};
+	BOOST_TEST(target.wordCount == 0u);
+	BOOST_TEST(target.schemaHash == 0ull);
+	BOOST_TEST(ecs::ComponentTraits<ObjectUpgradeTarget>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.object_scope.target"});
+	BOOST_TEST(ecs::ComponentTraits<ObjectUpgradeWordMarker>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.object_scope.word_marker"});
+	BOOST_TEST(ecs::ComponentTraits<ObjectUpgradeTarget>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<ObjectUpgradeWordMarker>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ObjectUpgradeTarget>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ObjectUpgradeWordMarker>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}

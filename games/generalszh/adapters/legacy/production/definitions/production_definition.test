@@ -1,0 +1,193 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionDefinitionAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "production_definition.h"
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.adapters.legacy.production.definitions.production_definition;
+
+using generalszh::legacy::ProductionDefinition;
+
+static_assert(!std::is_copy_constructible_v<ProductionDefinition>);
+static_assert(!std::is_move_constructible_v<ProductionDefinition>);
+static_assert(!std::is_copy_assignable_v<ProductionDefinition>);
+static_assert(!std::is_move_assignable_v<ProductionDefinition>);
+
+BOOST_AUTO_TEST_CASE(default_definition_is_unfinalized_and_requires_explicit_freeze)
+{
+	ProductionDefinition definition;
+	BOOST_TEST(!definition.IsFinalized());
+	BOOST_CHECK_THROW(definition.QueueLimit(), std::logic_error);
+	BOOST_CHECK_THROW(definition.Quantities(), std::logic_error);
+	BOOST_CHECK_THROW(definition.Name(0), std::logic_error);
+	BOOST_CHECK_THROW(definition.Fingerprint(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(default_queue_limit_is_nine)
+{
+	ProductionDefinition definition;
+	definition.Finalize();
+	BOOST_TEST(definition.IsFinalized());
+	BOOST_TEST(definition.QueueLimit() == 9u);
+	BOOST_TEST(definition.Quantities().empty());
+}
+
+BOOST_AUTO_TEST_CASE(queue_limit_accepts_zero_and_uint32_maximum)
+{
+	ProductionDefinition zero;
+	zero.SetQueueLimit(0u);
+	zero.Finalize();
+	BOOST_TEST(zero.QueueLimit() == 0u);
+
+	ProductionDefinition maximum;
+	maximum.SetQueueLimit((std::numeric_limits<std::uint32_t>::max)());
+	maximum.Finalize();
+	BOOST_TEST(maximum.QueueLimit() == (std::numeric_limits<std::uint32_t>::max)());
+}
+
+BOOST_AUTO_TEST_CASE(valid_input_preserves_name_bytes_order_and_duplicates)
+{
+	ProductionDefinition definition;
+	definition.AddQuantity("Zulu_42", 3);
+	definition.AddQuantity("alpha", 1);
+	definition.AddQuantity("Zulu_42", 7);
+	definition.Finalize();
+
+	const auto quantities = definition.Quantities();
+	BOOST_REQUIRE(quantities.size() == 3u);
+	BOOST_TEST(definition.Name(0) == std::string_view{"Zulu_42"});
+	BOOST_TEST(definition.Name(1) == std::string_view{"alpha"});
+	BOOST_TEST(definition.Name(2) == std::string_view{"Zulu_42"});
+	BOOST_TEST(quantities[0] == 3);
+	BOOST_TEST(quantities[1] == 1);
+	BOOST_TEST(quantities[2] == 7);
+}
+
+BOOST_AUTO_TEST_CASE(add_quantity_owns_input_text_until_finalize)
+{
+	ProductionDefinition definition;
+	std::string first = "first_template";
+	std::string second = "second_template";
+	definition.AddQuantity(first, 4);
+	definition.AddQuantity(second, 8);
+
+	first = "changed";
+	second.clear();
+	definition.Finalize();
+
+	BOOST_TEST(definition.Name(0) == std::string_view{"first_template"});
+	BOOST_TEST(definition.Name(1) == std::string_view{"second_template"});
+}
+
+BOOST_AUTO_TEST_CASE(invalid_input_is_rejected_without_partial_append)
+{
+	ProductionDefinition definition;
+	definition.SetQueueLimit(4);
+	definition.AddQuantity("valid", 5);
+	BOOST_CHECK_THROW(definition.AddQuantity("", 2), std::invalid_argument);
+	BOOST_CHECK_THROW(definition.AddQuantity(std::string_view{"a\0b", 3}, 2),
+		std::invalid_argument);
+	BOOST_CHECK_THROW(definition.AddQuantity("negative", -1), std::invalid_argument);
+
+	definition.Finalize();
+	BOOST_TEST(definition.QueueLimit() == 4u);
+	const auto quantities = definition.Quantities();
+	BOOST_REQUIRE(quantities.size() == 1u);
+	BOOST_TEST(definition.Name(0) == std::string_view{"valid"});
+	BOOST_TEST(quantities[0] == 5);
+}
+
+BOOST_AUTO_TEST_CASE(finalization_freezes_setters_and_is_idempotent)
+{
+	ProductionDefinition definition;
+	definition.SetQueueLimit(12);
+	definition.AddQuantity("unit", 6);
+	definition.Finalize();
+	const auto fingerprint = definition.Fingerprint();
+	const auto quantitiesData = definition.Quantities().data();
+
+	BOOST_CHECK_NO_THROW(definition.Finalize());
+	BOOST_TEST(definition.Fingerprint() == fingerprint);
+	BOOST_TEST(definition.Quantities().data() == quantitiesData);
+	BOOST_CHECK_THROW(definition.SetQueueLimit(1), std::logic_error);
+	BOOST_CHECK_THROW(definition.AddQuantity("other", 1), std::logic_error);
+	BOOST_CHECK_THROW(definition.AddQuantity("", -1), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(fingerprints_are_stable_for_equal_canonical_definitions)
+{
+	ProductionDefinition first;
+	ProductionDefinition second;
+	first.SetQueueLimit(3);
+	second.SetQueueLimit(3);
+	first.AddQuantity("one", 1);
+	second.AddQuantity("one", 1);
+	first.AddQuantity("two", 2);
+	second.AddQuantity("two", 2);
+	first.Finalize();
+	second.Finalize();
+
+	BOOST_TEST(first.Fingerprint() == second.Fingerprint());
+	const auto firstFingerprint = first.Fingerprint();
+	first.Finalize();
+	BOOST_TEST(first.Fingerprint() == firstFingerprint);
+}
+
+BOOST_AUTO_TEST_CASE(queue_limit_contributes_to_the_fingerprint)
+{
+	ProductionDefinition zero;
+	ProductionDefinition maximum;
+	zero.SetQueueLimit(0u);
+	maximum.SetQueueLimit((std::numeric_limits<std::uint32_t>::max)());
+	zero.Finalize();
+	maximum.Finalize();
+
+	BOOST_TEST(zero.Fingerprint() != maximum.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(quantity_span_is_contiguous_and_read_only)
+{
+	ProductionDefinition definition;
+	definition.AddQuantity("one", 10);
+	definition.AddQuantity("two", 20);
+	definition.AddQuantity("three", 30);
+	definition.Finalize();
+
+	const std::span<const std::int32_t> quantities = definition.Quantities();
+	BOOST_REQUIRE(quantities.size() == 3u);
+	BOOST_CHECK(&quantities[1] == &quantities[0] + 1);
+	BOOST_CHECK(&quantities[2] == &quantities[1] + 1);
+	BOOST_TEST(quantities[0] == 10);
+	BOOST_TEST(quantities[1] == 20);
+	BOOST_TEST(quantities[2] == 30);
+}
+
+BOOST_AUTO_TEST_CASE(independent_definitions_do_not_share_pending_or_runtime_state)
+{
+	ProductionDefinition first;
+	ProductionDefinition second;
+	first.SetQueueLimit(1);
+	second.SetQueueLimit(2);
+	first.AddQuantity("first", 11);
+	second.AddQuantity("second", 22);
+
+	first.Finalize();
+	BOOST_TEST(first.IsFinalized());
+	BOOST_TEST(!second.IsFinalized());
+	BOOST_CHECK_THROW(second.QueueLimit(), std::logic_error);
+
+	second.Finalize();
+	BOOST_TEST(first.QueueLimit() == 1u);
+	BOOST_TEST(second.QueueLimit() == 2u);
+	BOOST_TEST(first.Name(0) == std::string_view{"first"});
+	BOOST_TEST(second.Name(0) == std::string_view{"second"});
+	BOOST_TEST(first.Quantities()[0] == 11);
+	BOOST_TEST(second.Quantities()[0] == 22);
+	BOOST_TEST(first.Fingerprint() != second.Fingerprint());
+}

@@ -1,0 +1,247 @@
+#define BOOST_TEST_MODULE GeneralsZHBuildCatalog
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <limits>
+#include <span>
+import games.generalszh.gameplay.production.admission.build_catalog;
+using namespace generalszh::production;
+using namespace engine::gameplay::rts::unlocks;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(catalog_requires_explicit_matching_capture_definitions_and_preserves_authorization)
+{
+    namespace c=generalszh::capture;
+    ecs::World world;world.FinalizeComponents();const engine::time::FixedStep step{20};
+    const std::array authored{c::CaptureDefinition{3s,20s,2s}};const c::CaptureDefinitions captures(step,authored);
+    std::array units{BuildDefinition{1}};units[0].capture=c::CaptureCapability{0,false};
+    BOOST_CHECK_THROW((BuildCatalog{world,units,step}),std::invalid_argument);
+    const BuildCatalog valid(world,units,step,nullptr,nullptr,nullptr,&captures);
+    BOOST_REQUIRE(valid.Definitions()[0].capture);BOOST_TEST(!valid.Definitions()[0].capture->enabled);
+    units[0].capture->definition=1;
+    BOOST_CHECK_THROW((BuildCatalog{world,units,step,nullptr,nullptr,nullptr,&captures}),std::out_of_range);
+    units[0].capture->definition=0;units[0].builder=true;
+    BOOST_CHECK_THROW((BuildCatalog{world,units,step,nullptr,nullptr,nullptr,&captures}),std::invalid_argument);
+    units[0].builder=false;units[0].kind=EntryKind::Upgrade;
+    BOOST_CHECK_THROW((BuildCatalog{world,units,step,nullptr,nullptr,nullptr,&captures}),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(catalog_validates_transport_binding_and_passenger_capability_at_startup)
+{
+    namespace c=engine::gameplay::containment;
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{20};
+    const std::array authored{c::TransportDefinition{5,100ms,1,10}}; const c::TransportDefinitions transports(step,authored);
+    std::array source{BuildDefinition{1},BuildDefinition{2}}; source[0].transportDefinition=0; source[1].passenger=c::PassengerSlots{1};
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step}),std::invalid_argument);
+    const BuildCatalog valid(world,source,step,nullptr,nullptr,&transports);
+    BOOST_TEST(valid.Definitions()[1].passenger->slots==1u);
+    source[1].builder=true; BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+    source[1].builder=false; source[1].passenger->slots=0;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+    source[1].passenger->slots=1; source[0].transportDefinition=1;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::out_of_range);
+}
+BOOST_AUTO_TEST_CASE(catalog_resolves_initial_payload_keys_and_rejects_invalid_capacity_or_passengers)
+{
+    namespace c=engine::gameplay::containment;
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{20};
+    const std::array authored{c::TransportDefinition{5,100ms,1,10}}; const c::TransportDefinitions transports(step,authored);
+    BuildDefinition carrier{10}; carrier.transportDefinition=0; carrier.initialPayload=InitialPayloadDefinition{20,5};
+    BuildDefinition passenger{20}; passenger.passenger=c::PassengerSlots{1};
+    std::array source{carrier,passenger};
+    const BuildCatalog valid(world,source,step,nullptr,nullptr,&transports);
+    const auto carrierIndex=valid.DefinitionIndex(carrier.key);
+    BOOST_REQUIRE(valid.InitialPayload(carrierIndex));
+    BOOST_TEST(valid.InitialPayload(carrierIndex)->passengerDefinition==20u);
+    BOOST_TEST(valid.InitialPayload(carrierIndex)->count==5u);
+
+    source[0].initialPayload->count=0;
+    const BuildCatalog zero(world,source,step,nullptr,nullptr,&transports);
+    const auto zeroCarrierIndex=zero.DefinitionIndex(carrier.key);
+    BOOST_REQUIRE(zero.InitialPayload(zeroCarrierIndex)); BOOST_TEST(zero.InitialPayload(zeroCarrierIndex)->count==0u);
+
+    source[0].initialPayload->count=6;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+    source[0].initialPayload->count=1; source[0].initialPayload->passengerDefinition=99;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+    source[0].initialPayload->passengerDefinition=20; source[1].passenger.reset();
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+    source[1].passenger=c::PassengerSlots{1}; source[1].builder=true;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+    source[1].builder=false; source[1].initialPayload=InitialPayloadDefinition{20,1};
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&transports}),std::invalid_argument);
+
+    source[1].initialPayload.reset();
+    const auto maxSlots=(std::numeric_limits<std::uint32_t>::max)();
+    const std::array maxCapacityAuthored{c::TransportDefinition{maxSlots,100ms,1,10}};
+    const c::TransportDefinitions maxCapacityTransports(step,maxCapacityAuthored);
+    source[0].initialPayload->count=static_cast<std::uint32_t>((std::numeric_limits<std::int32_t>::max)());
+    const BuildCatalog representable(world,source,step,nullptr,nullptr,&maxCapacityTransports);
+    const auto representableCarrierIndex=representable.DefinitionIndex(carrier.key);
+    BOOST_REQUIRE(representable.InitialPayload(representableCarrierIndex));
+    BOOST_TEST(representable.InitialPayload(representableCarrierIndex)->count==static_cast<std::uint32_t>((std::numeric_limits<std::int32_t>::max)()));
+    source[0].initialPayload->count=maxSlots;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,&maxCapacityTransports}),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(catalog_validates_capture_activation_against_an_actual_upgrade_entry)
+{
+    namespace c=generalszh::capture;
+    ecs::World world;world.FinalizeComponents();const engine::time::FixedStep step{20};
+    const std::array authored{c::CaptureDefinition{3s,20s,2s,15s,false,c::CaptureUpgradeBinding{7001}}};
+    const c::CaptureDefinitions captures(step,authored);
+    std::array source{BuildDefinition{1},BuildDefinition{7001}};
+    source[0].capture=c::CaptureCapability{0,false};source[1].kind=EntryKind::Upgrade;
+    const BuildCatalog valid(world,source,step,nullptr,nullptr,nullptr,&captures);
+    BOOST_CHECK(valid.Definitions()[1].kind==EntryKind::Upgrade);
+    BOOST_REQUIRE(valid.CaptureTiming(0));BOOST_REQUIRE(valid.CaptureTiming(0)->activationUpgrade);
+    BOOST_CHECK(valid.CaptureTiming(0)->activationUpgrade->definition==7001u);
+    source[1].kind=EntryKind::Unit;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,nullptr,&captures}),std::invalid_argument);
+    source[1].kind=EntryKind::Upgrade;source[1].key=7002;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,nullptr,&captures}),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(catalog_compiles_optional_lifetimes_without_starting_deadlines)
+{
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{20};
+    std::array source{BuildDefinition{9,0,1s},BuildDefinition{2,0,1s}}; source[0].lifetime=75ms;
+    BuildCatalog catalog(world,source,step); BOOST_CHECK(!catalog.Lifetime(0)); BOOST_REQUIRE(catalog.Lifetime(1));
+    BOOST_TEST(*catalog.Lifetime(1)==2u); source[0].lifetime=-1ns;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step}),std::invalid_argument);
+    source[0].lifetime=1s; source[0].kind=EntryKind::Upgrade;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step}),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(catalog_requires_frozen_components_and_compiles_immutable_sorted_definitions)
+{
+    ecs::World world; const engine::time::FixedStep step{20};
+    std::array source{BuildDefinition{9, 50, 75ms}, BuildDefinition{2, 1, 50ms}};
+    BOOST_CHECK_THROW((BuildCatalog{world, source, step}), std::logic_error);
+    world.FinalizeComponents(); BuildCatalog catalog(world, source, step);
+    source[1].cost = 999;
+    BOOST_TEST(catalog.Definitions()[0].key == 2u);
+    BOOST_TEST(catalog.Definitions()[0].cost == 1u);
+    BOOST_TEST(catalog.Requirement(1).required == 2u);
+    BOOST_TEST(catalog.Definitions()[0].maximumHealth == catalog.Definitions()[0].health);
+    BOOST_CHECK(catalog.Step() == step);
+    source[1].key = 9;
+    BOOST_CHECK_THROW((BuildCatalog{world, source, step}), std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(catalog_compiles_spawn_configuration_with_validated_external_catalogs)
+{
+    namespace regen=engine::gameplay::combat::regeneration;
+    namespace xp=engine::gameplay::progression;
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{20};
+    const std::array regenerationDefinitions{regen::RegenerationDefinition{4,1s}};
+    const regen::RegenerationDefinitions regeneration(step,regenerationDefinitions);
+    const std::array progressionDefinitions{xp::ProgressionDefinition{{0,10,20},100}};
+    const xp::ProgressionCatalog progression(progressionDefinitions);
+    std::array source{BuildDefinition{9,0,100ms},BuildDefinition{2,0,100ms}};
+    source[0].regeneration=RegenerationSpawnConfig{0,75ms,true};
+    source[0].progression=ProgressionSpawnConfig{0,false};
+    BuildCatalog catalog(world,source,step,&regeneration,&progression);
+    BOOST_CHECK(!catalog.Regeneration(0)); BOOST_CHECK(!catalog.Progression(0));
+    BOOST_REQUIRE(catalog.Regeneration(1)); BOOST_REQUIRE(catalog.Progression(1));
+    BOOST_CHECK(catalog.Regeneration(1)->definition==regeneration.Id(0));
+    BOOST_TEST(catalog.Regeneration(1)->phaseTicks==2u); BOOST_TEST(catalog.Regeneration(1)->active);
+    BOOST_TEST(catalog.Progression(1)->definition.index==0u); BOOST_TEST(!catalog.Progression(1)->trainable);
+    source[0].regeneration->phase=1s; source[0].progression->trainable=true;
+    BOOST_TEST(catalog.Regeneration(1)->phaseTicks==2u); BOOST_TEST(!catalog.Progression(1)->trainable);
+}
+BOOST_AUTO_TEST_CASE(catalog_rejects_missing_invalid_or_mismatched_spawn_catalogs_at_startup)
+{
+    namespace regen=engine::gameplay::combat::regeneration;
+    namespace xp=engine::gameplay::progression;
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{20};
+    const std::array regenerationDefinitions{regen::RegenerationDefinition{4,1s}};
+    const regen::RegenerationDefinitions regeneration(step,regenerationDefinitions);
+    const regen::RegenerationDefinitions mismatch(engine::time::FixedStep{30},regenerationDefinitions);
+    const std::array progressionDefinitions{xp::ProgressionDefinition{{0,10},100}};
+    const xp::ProgressionCatalog progression(progressionDefinitions);
+    std::array source{BuildDefinition{1,0,100ms}};
+    source[0].regeneration=RegenerationSpawnConfig{0,0ms,false};
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step}),std::invalid_argument);
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,&mismatch}),std::invalid_argument);
+    source[0].regeneration->definition=1;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,&regeneration}),std::out_of_range);
+    source[0].regeneration->definition=0; source[0].regeneration->phase=-1ns;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,&regeneration}),std::invalid_argument);
+    source[0].regeneration.reset(); source[0].progression=ProgressionSpawnConfig{0,true};
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step}),std::invalid_argument);
+    source[0].progression->definition=1;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,&progression}),std::out_of_range);
+    source[0].progression->definition=0; source[0].kind=EntryKind::Upgrade;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,&progression}),std::invalid_argument);
+    source[0].progression.reset(); source[0].regeneration=RegenerationSpawnConfig{0,0ms,true};
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,&regeneration}),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_binds_validated_manual_repair_authoring_to_the_session_catalog_once)
+{
+    namespace repair=engine::gameplay::rts::repair;
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{30};
+    const std::array authored{repair::RepairDefinition{1,50,1s,0ms,0ms}};
+    const repair::RepairDefinitions repairs(step,authored);
+    BuildDefinition sourceDefinition{11}; sourceDefinition.builder=true; sourceDefinition.manualRepair=authored[0];
+    std::array source{sourceDefinition};
+    const BuildCatalog catalog(world,source,step,nullptr,nullptr,nullptr,nullptr,nullptr,&repairs,authored);
+    BOOST_REQUIRE(catalog.ManualRepair(0)); BOOST_TEST(*catalog.ManualRepair(0)==0u);
+
+    source[0].manualRepair->rateNumerator=2;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,nullptr,nullptr,nullptr,&repairs,authored}),std::invalid_argument);
+    source[0].manualRepair=authored[0]; source[0].builder=false;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,nullptr,nullptr,nullptr,&repairs,authored}),std::invalid_argument);
+    source[0].builder=true;
+    BOOST_CHECK_THROW((BuildCatalog{world,source,step,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,authored}),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_manual_repair_matching_keeps_interval_policy_distinct)
+{
+    namespace repair=engine::gameplay::rts::repair;
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{30};
+    const std::array authored{
+        repair::RepairDefinition{1,50,1s,0ms,0ms,repair::RepairIntervalPolicy::AuthoredDuration},
+        repair::RepairDefinition{1,50,1s,0ms,0ms,repair::RepairIntervalPolicy::SimulationStep}};
+    const repair::RepairDefinitions repairs(step,authored);
+    BuildDefinition sourceDefinition{12}; sourceDefinition.builder=true; sourceDefinition.manualRepair=authored[1];
+    const std::array source{sourceDefinition};
+    const BuildCatalog catalog(world,source,step,nullptr,nullptr,nullptr,nullptr,nullptr,&repairs,authored);
+    BOOST_REQUIRE(catalog.ManualRepair(0)); BOOST_TEST(*catalog.ManualRepair(0)==1u);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_binds_dense_science_requirements_and_rejects_schema_dependency_errors)
+{
+    ecs::World world; world.FinalizeComponents(); const engine::time::FixedStep step{20};
+    UnlockCatalog science;
+    science.Register(UnlockDefinition{"SCIENCE_A"});
+    science.Register(UnlockDefinition{"SCIENCE_B"});
+    science.Finalize();
+
+    BuildDefinition gated{11, 5, 100ms};
+    const auto scienceId = science.Find(MakeUnlockKey("SCIENCE_A"));
+    gated.sciencePrerequisiteIds = {scienceId, scienceId};
+    gated.scienceSchemaHash = science.SchemaHash();
+    std::array source{gated};
+    const BuildCatalog catalog(world, source, step, nullptr, nullptr, nullptr, nullptr, nullptr,
+        nullptr, std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+        nullptr, nullptr, nullptr, nullptr, &science);
+    const auto index = catalog.DefinitionIndex(11);
+    const auto requirements = catalog.SciencePrerequisites(index);
+    BOOST_REQUIRE_EQUAL(requirements.size(), 1u);
+    BOOST_TEST(requirements.front().value == scienceId.value);
+    BOOST_REQUIRE(catalog.ScienceSchemaHash());
+    BOOST_TEST(*catalog.ScienceSchemaHash() == science.SchemaHash());
+    BOOST_TEST(catalog.HasPrerequisites());
+
+    source[0].scienceSchemaHash = science.SchemaHash() + 1;
+    BOOST_CHECK_THROW((BuildCatalog{world, source, step, nullptr, nullptr, nullptr, nullptr, nullptr,
+        nullptr, std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+        nullptr, nullptr, nullptr, nullptr, &science}), std::invalid_argument);
+    source[0].scienceSchemaHash.reset();
+    BOOST_CHECK_THROW((BuildCatalog{world, source, step, nullptr, nullptr, nullptr, nullptr, nullptr,
+        nullptr, std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+        nullptr, nullptr, nullptr, nullptr, &science}), std::invalid_argument);
+    source[0].scienceSchemaHash = science.SchemaHash();
+    BOOST_CHECK_THROW((BuildCatalog{world, source, step}), std::logic_error);
+    source[0].sciencePrerequisiteIds = {UnlockId{99}};
+    BOOST_CHECK_THROW((BuildCatalog{world, source, step, nullptr, nullptr, nullptr, nullptr, nullptr,
+        nullptr, std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+        nullptr, nullptr, nullptr, nullptr, &science}), std::out_of_range);
+}

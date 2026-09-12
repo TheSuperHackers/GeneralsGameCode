@@ -1,0 +1,285 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <optional>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <utility>
+import engine.gameplay.combat.systems.projectile_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+namespace
+{
+struct TestSpatialProjection
+{
+    static constexpr bool Spatial=true;
+    using Access=ecs::Query<ecs::Read<LifeState>,ecs::Read<Health>,ecs::Read<DamageResult>,ecs::Write<PendingDamage>>;
+    struct TargetRecord { bool hasArmor{}; damage::ArmorDefinitionRef armor{}; };
+
+    TestSpatialProjection(ecs::World &world,std::span<const engine::gameplay::spatial::SpatialPoint> points) :
+        targets(world),points(points),index(8,1,8,32)
+    {
+        generations.fill(ecs::Entity::InvalidGeneration);
+    }
+    void Refresh()
+    {
+        generations.fill(ecs::Entity::InvalidGeneration); index.Clear(); targets.PrepareChunks();
+        for(const auto &point:points)
+        {
+            index.Add(point); generations[point.entity.index]=point.entity.generation; records[point.entity.index]={};
+        }
+        index.Publish();
+    }
+    [[nodiscard]] std::optional<TargetRecord> Target(ecs::Entity entity) const noexcept
+    {
+        if(!entity.IsValid()||entity.index>=generations.size()||generations[entity.index]!=entity.generation) return std::nullopt;
+        return records[entity.index];
+    }
+    [[nodiscard]] const engine::gameplay::spatial::PointGrid &Index() const noexcept { return index; }
+    template<typename Function> void ForEachTargetChunk(Function &&function)
+    {
+        targets.ForEachPreparedChunk(std::forward<Function>(function));
+    }
+    [[nodiscard]] std::size_t EntityCapacity() const noexcept { return generations.size(); }
+
+private:
+    Access targets;
+    std::span<const engine::gameplay::spatial::SpatialPoint> points;
+    engine::gameplay::spatial::PointGrid index;
+    std::array<ecs::EntityGeneration,32> generations{};
+    std::array<TargetRecord,32> records{};
+};
+}
+BOOST_AUTO_TEST_CASE(projectile_arrival_does_not_depend_on_source_lifetime)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>(); world.RegisterComponent<PendingDamage>();
+    world.RegisterComponent<damage::ArmorBinding>();
+    world.FinalizeComponents();
+    const auto source = world.Create(); const auto projectile = world.Create<ProjectileImpact,ImpactDue>();
+    *world.Get<ProjectileImpact>(projectile) = {source,{},10,0,2}; world.Destroy(source);
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{});damage::AcceptedHitBatch hits(16);
+    ProjectileSystem system(world,armor,hits,16); ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({1,step}); BOOST_TEST(!world.Get<ImpactDue>(projectile)->value);
+    scheduler.Execute({2,step}); BOOST_TEST(!world.IsAlive(projectile));
+}
+BOOST_AUTO_TEST_CASE(zero_radius_positional_projectile_is_consumed_without_a_victim)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto source=world.Create(); const auto projectile=world.Create<ProjectileImpact,ImpactDue>();
+    auto &impact=*world.Get<ProjectileImpact>(projectile); impact={source,{},25,0,2};
+    impact.positionalTarget=true; impact.detonationPositionValid=true; impact.detonationX=3; impact.detonationY=0;
+    world.Destroy(source);
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystem system(world,armor,hits,4); ecs::SystemRegistry registry; registry.Register(system);
+    registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step); scheduler.Execute({2,step});
+    BOOST_CHECK(!world.IsAlive(projectile)); BOOST_TEST(hits.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(positional_splash_uses_saved_aim_and_source_attribution_after_source_reuse)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.FinalizeComponents();
+    const ecs::Entity sourceAccount{40,1},enemyAccount{41,1}; const auto source=world.Create();
+    const auto target=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    *world.Get<LifeState>(target)={true}; *world.Get<Health>(target)={100};
+    const std::array points{engine::gameplay::spatial::SpatialPoint{target,enemyAccount,3,0,1}};
+    TestSpatialProjection projection(world,points);
+    const auto projectile=world.Create<ProjectileImpact,ImpactDue>(); auto &impact=*world.Get<ProjectileImpact>(projectile);
+    impact={source,{},20,0,1}; impact.sourceAccount=sourceAccount; impact.primaryRadiusCells=1;
+    impact.radiusDamageAffects.bits=static_cast<std::uint8_t>(RadiusDamageAffect::Enemies);
+    impact.positionalTarget=true; impact.detonationPositionValid=true; impact.detonationX=2; impact.detonationY=0;
+    world.Destroy(source); const auto sourceReuse=world.Create();
+    BOOST_REQUIRE_EQUAL(sourceReuse.index,source.index); BOOST_REQUIRE(sourceReuse.generation!=source.generation);
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystemT<TestSpatialProjection> system(world,armor,projection,hits,4,8); ecs::SystemRegistry registry;
+    registry.Register(system); registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step); scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<PendingDamage>(target)->quantity==20u); BOOST_CHECK(!world.IsAlive(projectile));
+    const auto results=hits.Results(); BOOST_REQUIRE_EQUAL(results.size(),1u);
+    BOOST_CHECK(results[0].target==target); BOOST_CHECK(results[0].packet.attribution.source==source);
+}
+BOOST_AUTO_TEST_CASE(zero_radius_direct_projectile_delivery_keeps_source_attribution_after_source_death)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto source=world.Create();
+    const auto target=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    *world.Get<LifeState>(target)={true}; *world.Get<Health>(target)={100};
+    const auto projectile=world.Create<ProjectileImpact,ImpactDue>();
+    *world.Get<ProjectileImpact>(projectile)={source,target,25,0,2}; world.Destroy(source);
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystem system(world,armor,hits,4); ecs::SystemRegistry registry; registry.Register(system);
+    registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step); scheduler.Execute({2,step});
+    BOOST_TEST(world.Get<Health>(target)->current==100u);
+    BOOST_TEST(world.Get<PendingDamage>(target)->quantity==25u);
+    const auto results=hits.Results(); BOOST_REQUIRE_EQUAL(results.size(),1u);
+    BOOST_CHECK(results[0].projectile==projectile); BOOST_CHECK(results[0].target==target);
+    BOOST_CHECK(results[0].packet.attribution.source==source); BOOST_TEST(results[0].resolvedQuantity==25u);
+    BOOST_CHECK(!world.IsAlive(projectile));
+}
+BOOST_AUTO_TEST_CASE(accepted_hit_capacity_fails_before_pending_writes_publication_or_destruction)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto source=world.Create();
+    const auto firstTarget=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    const auto secondTarget=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    *world.Get<LifeState>(firstTarget)={true}; *world.Get<LifeState>(secondTarget)={true};
+    *world.Get<Health>(firstTarget)={100}; *world.Get<Health>(secondTarget)={100};
+    const auto firstProjectile=world.Create<ProjectileImpact,ImpactDue>();
+    const auto secondProjectile=world.Create<ProjectileImpact,ImpactDue>();
+    *world.Get<ProjectileImpact>(firstProjectile)={source,firstTarget,10,0,1};
+    *world.Get<ProjectileImpact>(secondProjectile)={source,secondTarget,10,0,1};
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(1);
+    ProjectileSystem system(world,armor,hits,4); ecs::SystemRegistry registry; registry.Register(system);
+    registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    BOOST_CHECK_THROW(scheduler.Execute({1,step}),std::length_error);
+    BOOST_TEST(world.Get<PendingDamage>(firstTarget)->quantity==0u);
+    BOOST_TEST(world.Get<PendingDamage>(secondTarget)->quantity==0u);
+    BOOST_TEST(hits.Results().empty()); BOOST_CHECK(world.IsAlive(firstProjectile)); BOOST_CHECK(world.IsAlive(secondProjectile));
+}
+BOOST_AUTO_TEST_CASE(spatial_mask_excludes_self_but_direct_victim_bypasses_the_mask)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.FinalizeComponents();
+    const ecs::Entity sourceAccount{40,1},enemyAccount{41,1};
+    const auto source=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    const auto directAlly=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    const auto enemy=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    for(const auto entity:{source,directAlly,enemy})
+    {
+        *world.Get<LifeState>(entity)={true}; *world.Get<Health>(entity)={100};
+    }
+    const std::array points{
+        engine::gameplay::spatial::SpatialPoint{source,sourceAccount,4,0,1},
+        engine::gameplay::spatial::SpatialPoint{directAlly,sourceAccount,5,0,1},
+        engine::gameplay::spatial::SpatialPoint{enemy,enemyAccount,7,0,1}};
+    TestSpatialProjection projection(world,points);
+    const auto projectile=world.Create<ProjectileImpact,ImpactDue>(); auto &impact=*world.Get<ProjectileImpact>(projectile);
+    impact={source,directAlly,20,0,1}; impact.secondaryDamage=5; impact.primaryRadiusCells=1; impact.secondaryRadiusCells=2;
+    impact.sourceAccount=sourceAccount; impact.radiusDamageAffects.bits=static_cast<std::uint8_t>(RadiusDamageAffect::Enemies);
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystemT<TestSpatialProjection> system(world,armor,projection,hits,4,8); ecs::SystemRegistry registry; registry.Register(system);
+    registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step); scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<PendingDamage>(source)->quantity==0u);
+    BOOST_TEST(world.Get<PendingDamage>(directAlly)->quantity==20u);
+    BOOST_TEST(world.Get<PendingDamage>(enemy)->quantity==5u);
+    const auto results=hits.Results(); BOOST_REQUIRE_EQUAL(results.size(),2u);
+    BOOST_CHECK(results[0].target==directAlly); BOOST_CHECK(results[1].target==enemy);
+    BOOST_CHECK(results[0].projectile==projectile); BOOST_CHECK(results[1].projectile==projectile);
+}
+
+BOOST_AUTO_TEST_CASE(projectile_crossing_uses_preexisting_pending_damage_and_survives_health_application)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto source=world.Create(); const auto account=world.Create();
+    const auto target=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    *world.Get<LifeState>(target)={true}; *world.Get<Health>(target)={100}; *world.Get<PendingDamage>(target)={90};
+    const auto projectile=world.Create<ProjectileImpact,ImpactDue>();
+    auto &impact=*world.Get<ProjectileImpact>(projectile); impact={source,target,10,0,1}; impact.sourceAccount=account;
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystem projectileSystem(world,armor,hits,4); HealthSystem healthSystem;
+    ecs::SystemRegistry registry; registry.Register(projectileSystem); registry.Register(healthSystem);
+    registry.OrderBefore<ProjectileSystem,HealthSystem>(); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step});
+    const auto *result=world.Get<DamageResult>(target);
+    BOOST_REQUIRE(result); BOOST_TEST(result->killed); BOOST_TEST(result->applied==100u);
+    BOOST_CHECK(result->lethalSource.source==source); BOOST_CHECK(result->lethalSource.target==target);
+    BOOST_TEST(result->lethalSource.pendingBefore==90u); BOOST_TEST(result->lethalSource.pendingAfter==100u);
+}
+
+BOOST_AUTO_TEST_CASE(nonlethal_projectile_followed_by_unattributed_direct_damage_has_no_projectile_source)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto source=world.Create(); const auto account=world.Create();
+    const auto target=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    *world.Get<Health>(target)={100};
+    const auto projectile=world.Create<ProjectileImpact,ImpactDue>();
+    auto &impact=*world.Get<ProjectileImpact>(projectile); impact={source,target,40,0,1}; impact.sourceAccount=account;
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystem projectileSystem(world,armor,hits,4); HealthSystem healthSystem;
+    ecs::SystemRegistry registry; registry.Register(projectileSystem); registry.Register(healthSystem);
+    registry.OrderBefore<ProjectileSystem,HealthSystem>(); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step}); BOOST_CHECK(!world.Get<DamageResult>(target)->killed);
+    world.Get<PendingDamage>(target)->quantity=60;
+    scheduler.Execute({2,step});
+    const auto *result=world.Get<DamageResult>(target);
+    BOOST_REQUIRE(result); BOOST_TEST(result->killed); BOOST_CHECK(!result->lethalSource.valid);
+}
+
+BOOST_AUTO_TEST_CASE(two_projectiles_choose_the_canonical_crossing_source)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto sourceFirst=world.Create(); const auto sourceSecond=world.Create(); const auto sourceOverkill=world.Create();
+    const auto accountFirst=world.Create(); const auto accountSecond=world.Create(); const auto accountOverkill=world.Create();
+    const auto target=world.Create<LifeState,Health,DamageResult,PendingDamage>(); *world.Get<Health>(target)={100};
+    const auto first=world.Create<ProjectileImpact,ImpactDue>(); const auto second=world.Create<ProjectileImpact,ImpactDue>();
+    const auto overkill=world.Create<ProjectileImpact,ImpactDue>();
+    auto &firstImpact=*world.Get<ProjectileImpact>(first); firstImpact={sourceFirst,target,60,0,1}; firstImpact.sourceAccount=accountFirst;
+    auto &secondImpact=*world.Get<ProjectileImpact>(second); secondImpact={sourceSecond,target,60,0,1}; secondImpact.sourceAccount=accountSecond;
+    auto &overkillImpact=*world.Get<ProjectileImpact>(overkill); overkillImpact={sourceOverkill,target,100,0,1}; overkillImpact.sourceAccount=accountOverkill;
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystem projectileSystem(world,armor,hits,4); HealthSystem healthSystem;
+    ecs::SystemRegistry registry; registry.Register(projectileSystem); registry.Register(healthSystem);
+    registry.OrderBefore<ProjectileSystem,HealthSystem>(); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step});
+    const auto *result=world.Get<DamageResult>(target);
+    BOOST_REQUIRE(result); BOOST_TEST(result->killed); BOOST_TEST(result->lethalSource.valid);
+    BOOST_CHECK(result->lethalSource.source==sourceSecond);
+    BOOST_CHECK(result->lethalSource.sourceAccount==accountSecond);
+    BOOST_TEST(result->lethalSource.pendingBefore==60u); BOOST_TEST(result->lethalSource.pendingAfter==120u);
+}
+
+BOOST_AUTO_TEST_CASE(projectile_crossing_uses_saturating_cumulative_pending_damage)
+{
+    ecs::World world; world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<damage::ArmorBinding>(); world.FinalizeComponents();
+    const auto source=world.Create(); const auto account=world.Create();
+    const auto target=world.Create<LifeState,Health,DamageResult,PendingDamage>();
+    const auto maximum=(std::numeric_limits<std::uint64_t>::max)();
+    *world.Get<Health>(target)={maximum-1}; *world.Get<PendingDamage>(target)={maximum-5};
+    const auto projectile=world.Create<ProjectileImpact,ImpactDue>();
+    auto &impact=*world.Get<ProjectileImpact>(projectile); impact={source,target,10,0,1}; impact.sourceAccount=account;
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const damage::ArmorCatalog armor(policies,{}); damage::AcceptedHitBatch hits(4);
+    ProjectileSystem projectileSystem(world,armor,hits,4); HealthSystem healthSystem;
+    ecs::SystemRegistry registry; registry.Register(projectileSystem); registry.Register(healthSystem);
+    registry.OrderBefore<ProjectileSystem,HealthSystem>(); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step});
+    const auto *result=world.Get<DamageResult>(target);
+    BOOST_REQUIRE(result); BOOST_TEST(result->killed); BOOST_TEST(result->applied==maximum-1);
+    BOOST_CHECK(result->lethalSource.source==source); BOOST_TEST(result->lethalSource.pendingAfter==maximum);
+}

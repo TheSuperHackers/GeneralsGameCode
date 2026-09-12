@@ -1,0 +1,33 @@
+#define BOOST_TEST_MODULE GeneralsZHRadarProviderDefinition
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+
+import games.generalszh.gameplay.radar.definitions.radar_provider_definition;
+
+using namespace generalszh::radar;
+
+BOOST_AUTO_TEST_CASE(dense_definitions_validate_canonical_object_words)
+{
+	const std::array definitions{
+		RadarProviderDefinition{0, {7, 0, 1ull << 7, 19},
+			RadarGrantAuthority::CreationGrant, false, true},
+		RadarProviderDefinition{1, {65, 1, 1ull << 1, 19},
+			RadarGrantAuthority::CompletionGrant, true, true}};
+	const RadarProviderDefinitions catalog{definitions};
+	BOOST_TEST(catalog.Size() == 2u);
+	BOOST_TEST(catalog.Get(0).upgrade.definitionId == 7u);
+	BOOST_TEST(catalog.Get(1).resistant);
+}
+
+BOOST_AUTO_TEST_CASE(noncanonical_or_unproduced_authority_is_rejected)
+{
+	const std::array noncanonical{RadarProviderDefinition{
+		0, {7, 1, 1ull << 7, 19}, RadarGrantAuthority::CompletionGrant, false, true}};
+	BOOST_CHECK_THROW((RadarProviderDefinitions{noncanonical}), std::invalid_argument);
+	const std::array objectUpgrade{RadarProviderDefinition{
+		0, {7, 0, 1ull << 7, 19}, RadarGrantAuthority::ObjectUpgradeCompletion, false, true}};
+	BOOST_CHECK_THROW((RadarProviderDefinitions{objectUpgrade}), std::invalid_argument);
+}

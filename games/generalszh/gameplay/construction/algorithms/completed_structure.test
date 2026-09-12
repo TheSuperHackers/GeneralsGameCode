@@ -1,0 +1,68 @@
+#define BOOST_TEST_MODULE GeneralsZHCompletedStructure
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <vector>
+import games.generalszh.gameplay.construction.algorithms.completed_structure;
+import games.generalszh.gameplay.construction.setup.construction_registration;
+
+BOOST_AUTO_TEST_CASE(completed_structure_setup_keeps_all_authored_capabilities_across_archetype_moves)
+{
+    using namespace std::chrono_literals;
+    namespace c=generalszh::construction;
+    namespace capture=generalszh::capture;
+    namespace combat=engine::gameplay::combat;
+    namespace damage=engine::gameplay::combat::damage;
+    namespace power=engine::gameplay::rts::power;
+    namespace repair=engine::gameplay::rts::repair;
+    const engine::time::FixedStep step{20};
+    const std::array repairsAuthored{repair::RepairDefinition{1,10,100ms,1s,0ms}};
+    const repair::RepairDefinitions repairs(step,repairsAuthored);
+    const std::array policies{damage::DamageTypePolicy{damage::ArmorApplication::Scale}};
+    const std::array armorAuthored{damage::ArmorDefinition{std::vector<damage::ArmorMultiplier>{{777777}}}};
+    const damage::ArmorCatalog armorCatalog(policies,armorAuthored);
+    c::BuildingDefinition authored{91,12,1s,500,4,7,true,88,0,true,damage::ArmorBinding{{0}}};
+    authored.cashBountyCost=generalszh::bounty::CashBountyCostBinding{
+        500,generalszh::bounty::CashBountyCostBasis::DecodedBuildCost,true};
+    const std::array buildings{authored};
+    ecs::World world; c::RegisterConstructionComponents(world);
+    world.RegisterComponent<generalszh::bounty::CashBountyCostBinding>(); world.FinalizeComponents();
+    const auto account=world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+    const auto catalog=c::BuildingCatalog(buildings,step,&repairs,&armorCatalog);
+    const std::array<std::uint8_t,4> terrain{1,1,1,1};
+    const engine::gameplay::navigation::NavigationGrid grid(4,1,terrain);
+    const auto structure=c::CreateCompletedStructure(world,grid,catalog,&repairs,account,91,1,{0,step});
+    BOOST_REQUIRE(world.IsAlive(structure));
+    BOOST_CHECK(world.Get<c::Structure>(structure)->account==account);
+    BOOST_TEST(world.Get<c::Structure>(structure)->definition==91u);
+    BOOST_TEST(world.Get<c::Structure>(structure)->complete);
+    BOOST_TEST(world.Get<combat::Health>(structure)->current==500u);
+    BOOST_REQUIRE(world.Has<damage::ArmorBinding>(structure));
+    BOOST_TEST(world.Get<damage::ArmorBinding>(structure)->definition.value==0u);
+    const auto *bounty=world.Get<generalszh::bounty::CashBountyCostBinding>(structure);
+    BOOST_REQUIRE(bounty);
+    BOOST_TEST(bounty->authoredBuildCost==500u);
+    BOOST_CHECK(bounty->basis==generalszh::bounty::CashBountyCostBasis::DecodedBuildCost);
+    BOOST_CHECK(bounty->eligible);
+    BOOST_REQUIRE(world.Has<capture::Capturable>(structure));
+    BOOST_REQUIRE(world.Has<capture::CaptureState>(structure));
+    BOOST_REQUIRE(world.Has<repair::RepairBinding>(structure));
+    BOOST_REQUIRE(world.Has<repair::RepairState>(structure));
+    BOOST_TEST(world.Get<repair::RepairState>(structure)->nextPulse==0u);
+    BOOST_REQUIRE(world.Has<repair::ManualRepairBenefactorLease>(structure));
+    BOOST_CHECK(!world.Get<repair::ManualRepairBenefactorLease>(structure)->benefactor.IsValid());
+    BOOST_REQUIRE(world.Has<generalszh::selling::SaleState>(structure));
+    BOOST_TEST(world.Get<generalszh::selling::SaleEligibility>(structure)->allowed==false);
+    BOOST_REQUIRE(world.Has<generalszh::production::Producer>(structure));
+    BOOST_TEST(world.Get<generalszh::production::Producer>(structure)->queueLimit==4u);
+    BOOST_REQUIRE(world.Has<engine::gameplay::rts::production::ProductionQueue>(structure));
+    BOOST_REQUIRE(world.Has<generalszh::production::rally::RallyPoint>(structure));
+    BOOST_REQUIRE(world.Has<generalszh::match::VictoryAsset>(structure));
+    BOOST_REQUIRE(world.Has<engine::gameplay::rts::harvesting::SupplyDropoff>(structure));
+    BOOST_REQUIRE(world.Has<generalszh::harvesting::SupplyDropoffOwner>(structure));
+    BOOST_TEST(world.Get<generalszh::harvesting::SupplyDropoffOwner>(structure)->valuePerBox==88u);
+    BOOST_REQUIRE(world.Has<power::PowerSource>(structure));
+    BOOST_TEST(world.Get<power::PowerSource>(structure)->authoredPower==7);
+    BOOST_REQUIRE(world.Has<power::PowerContribution>(structure));
+}

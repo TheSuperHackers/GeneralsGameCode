@@ -1,0 +1,604 @@
+#define BOOST_TEST_MODULE GeneralsZHRadarAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <span>
+#include <stdexcept>
+#include <vector>
+
+#include "radar_store.h"
+#include "games/generalszh/adapters/legacy/economy/account_store.h"
+#include "games/generalszh/adapters/legacy/power/power_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+import engine.ecs.query.query;
+import engine.gameplay.rts.radar.availability.radar_availability;
+import engine.gameplay.rts.radar.commands.radar_batch;
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::PersistentResetParticipant;
+using generalszh::PersistentWorldReset;
+using generalszh::legacy::AccountLease;
+using generalszh::legacy::AccountStore;
+using generalszh::legacy::PowerLease;
+using generalszh::legacy::PowerStore;
+using generalszh::legacy::PowerTotals;
+using generalszh::legacy::RadarLease;
+using generalszh::legacy::RadarStore;
+using generalszh::legacy::RadarValue;
+using engine::gameplay::rts::radar::RadarAvailability;
+
+struct IllegalRadarWriter
+{
+	using Query = ecs::Query<ecs::Read<RadarAvailability>>;
+	RadarLease &lease;
+	void Execute(Query::Chunk, ecs::SystemContext &) const { lease.AddProvider(false); }
+};
+namespace ecs
+{
+template<> struct SystemTraits<IllegalRadarWriter>
+{
+	static constexpr std::string_view StableName = "tests.radar.illegal_writer";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace
+{
+struct RadarRow
+{
+	ecs::Entity entity{};
+	RadarValue value{};
+};
+
+bool EntityBefore(const ecs::Entity left, const ecs::Entity right) noexcept
+{
+	return left.index != right.index ? left.index < right.index : left.generation < right.generation;
+}
+
+std::vector<RadarRow> ReadRadarRows(ecs::World &world)
+{
+	std::vector<RadarRow> result;
+	ecs::Query<ecs::Read<RadarAvailability>> query(world);
+	query.ForEachChunk([&](auto chunk) {
+		const auto values = chunk.template Get<RadarAvailability>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.push_back(RadarRow{chunk.Entities()[row],
+				RadarValue{values[row].producers, values[row].resistantProducers, values[row].suppressed}});
+	});
+	std::sort(result.begin(), result.end(), [](const RadarRow &left, const RadarRow &right) {
+		return EntityBefore(left.entity, right.entity);
+	});
+	return result;
+}
+
+void CheckRadarValue(const RadarValue actual, const RadarValue expected)
+{
+	BOOST_TEST(actual.producers == expected.producers);
+	BOOST_TEST(actual.resistantProducers == expected.resistantProducers);
+	BOOST_TEST(actual.suppressed == expected.suppressed);
+}
+
+void CheckRadarRowsEqual(const std::vector<RadarRow> &left, const std::vector<RadarRow> &right)
+{
+	BOOST_REQUIRE(left.size() == right.size());
+	for (std::size_t index = 0; index < left.size(); ++index)
+	{
+		BOOST_TEST(left[index].entity.index == right[index].entity.index);
+		BOOST_TEST(left[index].entity.generation == right[index].entity.generation);
+		CheckRadarValue(left[index].value, right[index].value);
+	}
+}
+
+void ThrowingRadarRestore(void *)
+{
+	throw std::runtime_error("Injected radar restore failure");
+}
+}
+
+BOOST_AUTO_TEST_CASE(lease_state_is_the_authoritative_ecs_radar_availability)
+{
+	GameplayState state;
+	RadarStore store(state);
+	RadarLease lease(store, RadarValue{1, 0, false});
+
+	BOOST_TEST(store.Count() == 1u);
+	BOOST_TEST(state.Count() == 1u);
+	CheckRadarValue(lease.State(), {1, 0, false});
+	BOOST_TEST(lease.HasRadar());
+
+	// Query access and the point adapter address the same contiguous ECS row.
+	ecs::Query<ecs::Write<RadarAvailability>> writeQuery(state.World());
+	writeQuery.ForEachChunk([](auto chunk) {
+		for (auto &availability : chunk.template Get<RadarAvailability>())
+			availability = {2, 1, true};
+	});
+	CheckRadarValue(lease.State(), {2, 1, true});
+	BOOST_TEST(lease.HasRadar()); // A resistant provider survives suppression.
+
+	lease.RemoveProvider(true);
+	store.Execute(0);
+	BOOST_TEST(!lease.HasRadar());
+	lease.RemoveProvider(false);
+	store.Execute(1);
+	CheckRadarValue(lease.State(), {0, 0, true});
+	lease.SetSuppressed(false);
+	lease.AddProvider(true);
+	store.Execute(2);
+	CheckRadarValue(lease.State(), {1, 1, false});
+	BOOST_TEST(lease.HasRadar());
+
+	const auto rows = ReadRadarRows(state.World());
+	BOOST_REQUIRE(rows.size() == 1u);
+	CheckRadarValue(rows.front().value, lease.State());
+}
+
+BOOST_AUTO_TEST_CASE(radar_provider_operations_preserve_the_plain_transfer_value_contract)
+{
+	RadarValue plain{3, 1, true};
+	GameplayState state;
+	RadarStore store(state);
+	RadarLease lease(store, plain);
+
+	CheckRadarValue(lease.State(), plain);
+	lease.Restore({7, 2, false});
+	CheckRadarValue(lease.State(), {7, 2, false});
+	lease.Reset();
+	CheckRadarValue(lease.State(), {});
+	BOOST_TEST(!lease.HasRadar());
+}
+
+struct CoordinatedResetResult
+{
+	RadarValue radar{};
+	std::int32_t powerProduction{0};
+	std::int32_t powerConsumption{0};
+	std::uint32_t accountBalance{0};
+	std::size_t entityCount{0};
+	std::vector<RadarRow> radarRows;
+	std::uint64_t schemaHash{0};
+};
+
+CoordinatedResetResult RunCoordinatedReset(bool reverseDescriptorOrder)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	PowerStore powers(state);
+	RadarStore radar(state);
+	AccountLease account(accounts, 1234);
+	account.RecordIncome(7);
+	PowerLease power(powers, PowerTotals{321, -11});
+	power.AddProduction(9);
+	power.AddConsumption(-4);
+	RadarLease availability(radar, RadarValue{4, 1, true});
+	availability.RemoveProvider(false);
+	radar.Execute(0);
+
+	std::array participants{
+		accounts.ResetParticipant(), powers.ResetParticipant(), radar.ResetParticipant()};
+	if (reverseDescriptorOrder)
+		std::reverse(participants.begin(), participants.end());
+	PersistentWorldReset::Execute(state, participants);
+
+	CoordinatedResetResult result{
+		availability.State(),
+		power.State().production,
+		power.State().consumption,
+		account.Value(),
+		state.Count(), ReadRadarRows(state.World()), state.World().Components().SchemaHash()};
+	BOOST_TEST(availability.HasRadar());
+	return result;
+}
+
+BOOST_AUTO_TEST_CASE(coordinated_reset_preserves_radar_account_and_power_state)
+{
+	const auto forward = RunCoordinatedReset(false);
+	const auto reverse = RunCoordinatedReset(true);
+
+	BOOST_TEST(forward.entityCount == 3u);
+	BOOST_TEST(reverse.entityCount == 3u);
+	CheckRadarValue(forward.radar, {3, 1, true});
+	CheckRadarValue(reverse.radar, forward.radar);
+	BOOST_TEST(forward.powerProduction == 330);
+	BOOST_TEST(forward.powerConsumption == -15);
+	BOOST_TEST(forward.powerProduction == reverse.powerProduction);
+	BOOST_TEST(forward.powerConsumption == reverse.powerConsumption);
+	BOOST_TEST(forward.accountBalance == 1234u);
+	BOOST_TEST(forward.accountBalance == reverse.accountBalance);
+	BOOST_TEST(forward.schemaHash == reverse.schemaHash);
+	CheckRadarRowsEqual(forward.radarRows, reverse.radarRows);
+}
+
+BOOST_AUTO_TEST_CASE(lease_churn_preserves_deterministic_radar_rows_and_chunk_reuse)
+{
+	constexpr std::size_t leaseCount = 8192;
+	struct RunResult
+	{
+		std::vector<RadarRow> rowsBeforeReset;
+		std::vector<std::size_t> chunkSizesBeforeReset;
+		std::vector<RadarRow> rows;
+		std::vector<std::size_t> chunkSizes;
+	};
+
+	auto run = [leaseCount](bool churn) {
+		GameplayState state;
+		RadarStore store(state);
+		std::vector<std::unique_ptr<RadarLease>> leases;
+		leases.reserve(leaseCount);
+		for (std::size_t index = 0; index < leaseCount; ++index)
+		{
+			const auto value = RadarValue{
+				static_cast<std::int32_t>(index % 17 + 1),
+				static_cast<std::int32_t>(index % 3),
+				index % 5 == 0};
+			leases.push_back(std::make_unique<RadarLease>(store, value));
+		}
+
+		if (churn)
+			for (std::size_t index = 0; index < leases.size(); index += 2)
+			{
+				leases[index].reset();
+				leases[index] = std::make_unique<RadarLease>(store, RadarValue{
+					static_cast<std::int32_t>(index % 17 + 1),
+					static_cast<std::int32_t>(index % 3),
+					index % 5 == 0});
+			}
+
+		RunResult result;
+		result.rowsBeforeReset = ReadRadarRows(state.World());
+		for (const auto *archetype : state.World().GetArchetypes())
+			for (const auto &chunk : archetype->Chunks())
+				result.chunkSizesBeforeReset.push_back(chunk->Size());
+		BOOST_TEST(result.rowsBeforeReset.size() == leaseCount);
+		for (std::size_t index = 0; index < result.rowsBeforeReset.size(); ++index)
+		{
+			const auto &row = result.rowsBeforeReset[index];
+			BOOST_TEST(row.entity.index == index);
+			const auto expectedGeneration = churn && index % 2 == 0 ? 2u : 1u;
+			BOOST_TEST(row.entity.generation == expectedGeneration);
+			CheckRadarValue(row.value, RadarValue{
+				static_cast<std::int32_t>(index % 17 + 1),
+				static_cast<std::int32_t>(index % 3), index % 5 == 0});
+		}
+
+		const auto participant = store.ResetParticipant();
+		PersistentWorldReset::Execute(state, std::span{&participant, 1});
+		result.rows = ReadRadarRows(state.World());
+		for (const auto *archetype : state.World().GetArchetypes())
+			for (const auto &chunk : archetype->Chunks())
+				result.chunkSizes.push_back(chunk->Size());
+		BOOST_TEST(store.Count() == leaseCount);
+		BOOST_TEST(state.Count() == leaseCount);
+		leases.clear();
+		BOOST_TEST(store.Count() == 0u);
+		BOOST_TEST(state.Count() == 0u);
+		return result;
+	};
+
+	const auto baseline = run(false);
+	const auto churned = run(true);
+	BOOST_CHECK(baseline.chunkSizesBeforeReset == churned.chunkSizesBeforeReset);
+	BOOST_CHECK(baseline.chunkSizes == churned.chunkSizes);
+	CheckRadarRowsEqual(baseline.rows, churned.rows);
+}
+
+BOOST_AUTO_TEST_CASE(free_slot_reuse_rebinds_a_new_generation_safe_radar_entity)
+{
+	GameplayState state;
+	RadarStore store(state);
+	auto first = std::make_unique<RadarLease>(store, RadarValue{1, 0, false});
+	auto second = std::make_unique<RadarLease>(store, RadarValue{2, 1, false});
+	const auto before = ReadRadarRows(state.World());
+	BOOST_REQUIRE(before.size() == 2u);
+	const auto releasedEntity = before[0].entity;
+
+	first.reset();
+	auto replacement = std::make_unique<RadarLease>(store, RadarValue{9, 3, true});
+	const auto after = ReadRadarRows(state.World());
+	BOOST_REQUIRE(after.size() == 2u);
+	BOOST_TEST(store.Count() == 2u);
+	BOOST_TEST(replacement->State().producers == 9);
+	BOOST_TEST(replacement->State().resistantProducers == 3);
+	BOOST_TEST(replacement->State().suppressed);
+	const auto found = std::find_if(after.begin(), after.end(), [&](const RadarRow &row) {
+		return row.value.producers == 9 && row.value.resistantProducers == 3;
+	});
+	BOOST_REQUIRE(found != after.end());
+	BOOST_TEST(found->entity.index == releasedEntity.index);
+	BOOST_TEST(found->entity.generation == releasedEntity.generation + 1u);
+	BOOST_TEST(!state.World().IsAlive(releasedEntity));
+}
+
+BOOST_AUTO_TEST_CASE(poisoned_reset_invalidates_radar_and_allows_safe_lease_teardown)
+{
+	GameplayState state;
+	RadarStore store(state);
+	{
+		RadarLease lease(store, RadarValue{2, 1, false});
+		auto participant = store.ResetParticipant();
+		participant.restore = &ThrowingRadarRestore;
+
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::runtime_error);
+		BOOST_CHECK_THROW(lease.State(), std::logic_error);
+		BOOST_CHECK_THROW(lease.HasRadar(), std::logic_error);
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 0u);
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(
+			state, std::span<const PersistentResetParticipant>{}), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(later_participant_failure_cleans_up_already_restored_radar_entities)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	PowerStore powers(state);
+	RadarStore radar(state);
+	{
+		AccountLease account(accounts, 12);
+		PowerLease power(powers, {5, 3});
+		RadarLease availability(radar, {2, 1, true});
+		bool failed = false;
+		const PersistentResetParticipant lateFailure{
+			"tests.radar.late_failure", &state, &failed,
+			+[](void *) -> std::span<const ecs::Entity> { return {}; },
+			+[](void *) {}, &ThrowingRadarRestore,
+			+[](void *) noexcept {},
+			+[](void *context) noexcept { *static_cast<bool *>(context) = true; }};
+		const std::array participants{
+			lateFailure, radar.ResetParticipant(), powers.ResetParticipant(), accounts.ResetParticipant()};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+		BOOST_TEST(failed);
+		BOOST_TEST(state.Count() == 3u); // Canonical ordering restored all real owners first.
+		BOOST_CHECK_THROW(availability.State(), std::logic_error);
+		BOOST_CHECK_THROW(availability.AddProvider(false), std::logic_error);
+		BOOST_CHECK_THROW(account.Value(), std::logic_error);
+		BOOST_CHECK_THROW(power.State(), std::logic_error);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(accounts.Count() == 0u);
+	BOOST_TEST(powers.Count() == 0u);
+	BOOST_TEST(radar.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(incomplete_reset_participant_set_leaves_radar_live_and_unchanged)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	RadarStore radar(state);
+	AccountLease account(accounts, 19);
+	RadarLease availability(radar, {3, 1, true});
+	const auto incomplete = accounts.ResetParticipant();
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&incomplete, 1}), std::logic_error);
+	CheckRadarValue(availability.State(), {3, 1, true});
+	BOOST_TEST(account.Value() == 19u);
+	BOOST_TEST(state.Count() == 2u);
+	const std::array complete{radar.ResetParticipant(), accounts.ResetParticipant()};
+	BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, complete));
+	CheckRadarValue(availability.State(), {3, 1, true});
+}
+
+BOOST_AUTO_TEST_CASE(real_composition_defers_state_and_retains_global_edge_order_across_workers)
+{
+	auto run = [](std::size_t workers) {
+		GameplayState state;
+		RadarStore store(state, {workers});
+		std::vector<std::unique_ptr<RadarLease>> owners;
+		for (std::size_t index = 0; index < 2048; ++index)
+			owners.push_back(std::make_unique<RadarLease>(store));
+		for (std::size_t index = 0; index < owners.size(); ++index)
+			owners[index]->AddProvider(false, true, static_cast<std::int32_t>(index));
+		// Reverse input order is deliberate; job/chunk traversal is not output order.
+		for (std::size_t index = owners.size(); index-- != 0;)
+		{
+			owners[index]->SetSuppressed(true, true, static_cast<std::int32_t>(index));
+			owners[index]->AddProvider(true, true, static_cast<std::int32_t>(index));
+			BOOST_TEST(!owners[index]->HasRadar());
+		}
+		const auto output = store.Execute(3);
+		BOOST_REQUIRE(output.size() == owners.size() * 3);
+		std::vector<std::array<std::uint64_t, 5>> result;
+		for (std::size_t index = 0; index < output.size(); ++index)
+		{
+			const auto expectedOwner = index < owners.size() ? index :
+				owners.size() - 1 - (index - owners.size()) / 2;
+			const bool online = index < owners.size() || (index - owners.size()) % 2 == 1;
+			BOOST_TEST(output[index].playerIndex == expectedOwner);
+			BOOST_TEST(output[index].online == online);
+			result.push_back({static_cast<std::uint64_t>(output[index].playerIndex), output[index].online, 0, 0, 0});
+		}
+		for (const auto &row : ReadRadarRows(state.World()))
+		{
+			CheckRadarValue(row.value, {2, 1, true});
+			result.push_back({row.entity.index, row.entity.generation,
+				static_cast<std::uint64_t>(row.value.producers), static_cast<std::uint64_t>(row.value.resistantProducers), row.value.suppressed});
+		}
+		BOOST_TEST(store.Execute(4).empty());
+		return result;
+	};
+	const auto one = run(1);
+	BOOST_CHECK(run(2) == one);
+	BOOST_CHECK(run(4) == one);
+}
+
+BOOST_AUTO_TEST_CASE(capture_sequence_and_presentation_suppression_do_not_change_authoritative_results)
+{
+	GameplayState state;
+	RadarStore store(state);
+	RadarLease oldOwner(store, {1, 1, false}), newOwner(store);
+	oldOwner.RemoveProvider(true, true, 2);
+	newOwner.AddProvider(true, true, 7);
+	newOwner.SetSuppressed(true, true, 7);
+	newOwner.RemoveProvider(true, false, 7); // Quiet presentation still removes state.
+	const auto output = store.Execute(1);
+	BOOST_REQUIRE(output.size() == 2u);
+	BOOST_TEST(output[0].playerIndex == 2);
+	BOOST_TEST(!output[0].online);
+	BOOST_TEST(output[1].playerIndex == 7);
+	BOOST_TEST(output[1].online);
+	CheckRadarValue(oldOwner.State(), {});
+	CheckRadarValue(newOwner.State(), {0, 0, true});
+}
+
+BOOST_AUTO_TEST_CASE(destroyed_or_reset_bindings_cannot_deliver_inputs_to_reused_slots)
+{
+	GameplayState state;
+	RadarStore store(state);
+	auto old = std::make_unique<RadarLease>(store);
+	old->AddProvider(true, true, 1);
+	old.reset();
+	RadarLease replacement(store);
+	replacement.AddProvider(false, true, 2);
+	const auto first = store.Execute(1);
+	BOOST_REQUIRE(first.size() == 1u);
+	BOOST_TEST(first[0].playerIndex == 2);
+	CheckRadarValue(replacement.State(), {1, 0, false});
+	replacement.AddProvider(true, true, 2);
+	replacement.Reset();
+	BOOST_TEST(store.Execute(2).empty());
+	CheckRadarValue(replacement.State(), {});
+	replacement.AddProvider(true, true, 2);
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, std::span{&participant, 1});
+	BOOST_TEST(store.Execute(0).empty());
+	replacement.AddProvider(false, true, 2);
+	BOOST_TEST(store.Execute(1).size() == 1u); // New-world query really executes.
+	CheckRadarValue(replacement.State(), {1, 0, false});
+}
+
+BOOST_AUTO_TEST_CASE(input_overflow_poisoning_never_replays_an_accepted_prefix)
+{
+	GameplayState state;
+	RadarStore store(state, {1, 1});
+	RadarLease lease(store);
+	lease.AddProvider(false);
+	BOOST_CHECK_THROW(lease.AddProvider(false), std::length_error);
+	BOOST_CHECK_THROW(store.Execute(0), std::logic_error);
+	BOOST_CHECK_THROW(lease.HasRadar(), std::logic_error);
+	const auto rows = ReadRadarRows(state.World());
+	CheckRadarValue(rows[0].value, {});
+}
+
+BOOST_AUTO_TEST_CASE(failed_preparation_consumes_inputs_and_rejects_retry)
+{
+	GameplayState state;
+	RadarStore store(state);
+	RadarLease lease(store);
+	lease.AddProvider(false, true, 3);
+	const auto entity = ReadRadarRows(state.World())[0].entity;
+	state.World().Remove<engine::gameplay::rts::radar::RadarBatchRange>(entity);
+	BOOST_CHECK_THROW(store.Execute(0), std::logic_error);
+	BOOST_CHECK_THROW(store.Execute(0), std::logic_error);
+	BOOST_CHECK_THROW(lease.AddProvider(false), std::logic_error);
+	CheckRadarValue(ReadRadarRows(state.World())[0].value, {});
+}
+
+BOOST_AUTO_TEST_CASE(legacy_input_recording_is_rejected_inside_scheduled_jobs)
+{
+	GameplayState state;
+	RadarStore store(state);
+	RadarLease lease(store);
+	IllegalRadarWriter illegal{lease};
+	ecs::SystemRegistry registry;
+	registry.Register(illegal);
+	registry.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+	BOOST_TEST(scheduler.IsFailed());
+	CheckRadarValue(lease.State(), {});
+}
+
+BOOST_AUTO_TEST_CASE(explicit_teardown_commit_precedes_persistent_aggregate_capture)
+{
+	GameplayState state;
+	RadarStore store(state);
+	RadarLease player(store);
+	player.AddProvider(true, true, 1);
+	store.Execute(9);
+	player.RemoveProvider(true, true, 1); // Native object teardown records this.
+	BOOST_TEST(player.HasRadar());
+	static_cast<void>(store.Execute(9)); // GameLogic reset discards presentation only.
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, std::span{&participant, 1});
+	CheckRadarValue(player.State(), {});
+	BOOST_TEST(store.Execute(0).empty());
+}
+
+BOOST_AUTO_TEST_CASE(empty_radar_composition_prevents_direct_world_replacement)
+{
+	GameplayState state;
+	{
+		RadarStore store(state);
+		BOOST_TEST(state.Count() == 0u);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_TEST(store.Execute(0).empty()); // Rejected reset leaves the cache valid.
+		{
+			RadarLease player(store);
+			player.AddProvider(false);
+			store.Execute(1);
+			BOOST_TEST(player.HasRadar());
+		}
+		BOOST_TEST(state.Count() == 0u);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_TEST(store.Execute(2).empty()); // Previously matched archetypes remain valid.
+	}
+	BOOST_CHECK_NO_THROW(state.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(coordinated_empty_radar_reset_releases_and_rebinds_cached_execution)
+{
+	GameplayState state;
+	RadarStore store(state);
+	const auto participant = store.ResetParticipant();
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state,
+		std::span<const PersistentResetParticipant>{}), std::logic_error);
+	BOOST_TEST(store.Execute(0).empty()); // Omission failed before destruction.
+	BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}));
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error); // New binding is active too.
+	RadarLease player(store);
+	player.AddProvider(true);
+	store.Execute(0);
+	CheckRadarValue(player.State(), {1, 1, false});
+}
+
+BOOST_AUTO_TEST_CASE(failed_radar_finalization_unwinds_the_world_binding_and_worker_owner)
+{
+	GameplayState state;
+	auto construct = [&] { RadarStore store(state, {.ticksPerSecond = 0}); };
+	BOOST_CHECK_THROW(construct(), std::invalid_argument);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_NO_THROW(state.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(injected_game_workers_survive_radar_execution_and_world_replacement)
+{
+	generalszh::GameplayWorkers workers(2);
+	GameplayState state;
+	RadarStore store(state, workers);
+	{
+		RadarLease player(store);
+		player.AddProvider(false);
+		store.Execute(0);
+		BOOST_TEST(player.HasRadar());
+	}
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, {&participant, 1});
+	RadarLease player(store);
+	player.AddProvider(true);
+	store.Execute(1);
+	BOOST_TEST(player.HasRadar());
+	BOOST_TEST(workers.Count() == 2u);
+}

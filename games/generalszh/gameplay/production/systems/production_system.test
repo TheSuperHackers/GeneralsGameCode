@@ -1,0 +1,289 @@
+#define BOOST_TEST_MODULE GeneralsZHproductionsystem
+#include <boost/test/included/unit_test.hpp>
+#include "../testing/production_test_host.hpp"
+import engine.gameplay.combat.regeneration.systems.regeneration_system;
+import engine.gameplay.progression.systems.progression_system;
+
+BOOST_AUTO_TEST_CASE(admitted_zero_duration_order_resolves_receipt_and_retires_after_outputs)
+{
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const std::array catalog{BuildDefinition{7, 0, 0ms}};
+    engine::jobs::JobSystem jobs({2}); ProductionTestHost host(world, jobs, catalog, 4);
+    const engine::time::FixedStep step{20}; host.Finalize(step);
+    const auto account = world.Create<Balance>(); const auto producer = host.CreateProducer(account);
+    const std::array requests{BuildInput{producer, 7}};
+    host.StageInputs(requests); host.Execute({0, step});
+    BOOST_REQUIRE(host.Receipts().size() == 1u);
+    const auto receipt = host.Receipts()[0];
+    BOOST_CHECK(receipt.status == BuildAcceptance::Accepted); BOOST_TEST(receipt.order.IsValid());
+    BOOST_TEST(!world.IsAlive(receipt.order)); BOOST_TEST(world.Get<Queue>(producer)->count == 0u);
+    ecs::Query<ecs::Read<ProducedUnit>> units(world); std::size_t count = 0;
+    units.ForEachChunk([&](auto chunk) { count += chunk.Count();
+        for (auto entity : chunk.Entities()) BOOST_TEST(entity.index != receipt.order.index);
+    });
+    BOOST_TEST(count == 1u);
+}
+BOOST_AUTO_TEST_CASE(production_spawns_capabilities_at_completion_then_real_systems_process_next_ticks)
+{
+    namespace regen=engine::gameplay::combat::regeneration;
+    namespace xp=engine::gameplay::progression;
+    auto run=[](std::size_t workers) {
+        const engine::time::FixedStep step{20};
+        const std::array regenerationDefinitions{regen::RegenerationDefinition{5,1s},regen::RegenerationDefinition{7,1s}};
+        const regen::RegenerationDefinitions regenerationCatalog(step,regenerationDefinitions);
+        const std::array progressionDefinitions{xp::ProgressionDefinition{{0,5},100},xp::ProgressionDefinition{{0,10,20},100}};
+        const xp::ProgressionCatalog progressionCatalog(progressionDefinitions);
+        std::array source{BuildDefinition{1,0,150ms},BuildDefinition{2,0,150ms},BuildDefinition{3,0,150ms}};
+        for(std::size_t i=0;i<source.size();++i)
+        {
+            source[i].health=50; source[i].maximumHealth=100; source[i].quantity=2;
+            source[i].regeneration=RegenerationSpawnConfig{static_cast<std::uint32_t>(i==1),i==1?100ms:0ms,i!=2};
+            source[i].progression=ProgressionSpawnConfig{1,i!=2};
+        }
+        ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+        const BuildCatalog catalog(world,source,step,&regenerationCatalog,&progressionCatalog);
+        constexpr std::size_t producerCount=300;
+        BuildBatch batch(producerCount); power::PowerFrame frame;
+        ProductionAdmissionSystem admission(world,catalog,batch); ProductionSystem production(world,batch,frame);
+        ProductionExitSystem exits(world,batch);
+        engine::gameplay::combat::HealthSystem health; engine::gameplay::combat::HealingSystem healing;
+        regen::RegenerationSystem regeneration(regenerationCatalog);
+        xp::ProgressionBatch experience(producerCount*2); xp::ProgressionSystem progression(progressionCatalog,experience);
+        ecs::SystemRegistry registry;
+        registry.Register(health,ecs::SystemPhase::Simulation); registry.Register(regeneration,ecs::SystemPhase::Simulation);
+        registry.Register(healing,ecs::SystemPhase::Simulation); registry.Register(progression,ecs::SystemPhase::Simulation);
+        RegisterProductionSystems(registry,admission,production,exits);
+        // Match the root's health-before-production visibility. New components
+        // exist at completion commit but cannot run earlier in that same tick.
+        registry.OrderBefore<engine::gameplay::combat::HealingSystem,xp::ProgressionSystem>();
+        registry.OrderBefore<xp::ProgressionSystem,ProductionAdmissionSystem>();
+        registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers}); scheduler.Finalize(step);
+        const auto account=world.Create<Balance>();
+        std::vector<BuildInput> requests;
+        for(std::size_t i=0;i<producerCount;++i)
+            requests.push_back({CreateProducer(world,ProductionBoundaryState::Ready,producerCount,account),static_cast<std::uint32_t>(i%3+1)});
+        batch.StageInputs(world,ProductionBoundaryState::Ready,requests);
+        ecs::Query<ecs::Read<ProducedUnit>,ecs::Read<regen::RegenerationBinding>,ecs::Read<regen::RegenerationState>,
+            ecs::Read<xp::ProgressionDefinitionRef>,ecs::Read<xp::ProgressionState>,ecs::Read<xp::ProgressionEligibility>,
+            ecs::Read<xp::ProgressionInbox>,ecs::Read<engine::gameplay::combat::Health>> units(world);
+        std::vector<xp::AcceptedExperience> awards;
+        std::vector<std::uint64_t> snapshot;
+        for(std::uint64_t tick=40;tick<=45;++tick)
+        {
+            if(tick==43) experience.SetInputs(awards);
+            scheduler.Execute({tick,step});
+            if(tick==40)
+            {
+                BOOST_REQUIRE(batch.Receipts().size()==producerCount);
+                for(std::size_t i=0;i<producerCount;++i)
+                {
+                    const auto receipt=batch.Receipts()[i]; BOOST_REQUIRE(receipt.status==BuildAcceptance::Accepted);
+                    const auto *order=world.Get<BuildOrder>(receipt.order); BOOST_REQUIRE(order);
+                    BOOST_REQUIRE(order->regeneration); BOOST_REQUIRE(order->progression);
+                    BOOST_TEST(order->regeneration->phaseTicks==(i%3==1?2u:0u));
+                    BOOST_TEST(order->progression->definition.index==1u);
+                    snapshot.insert(snapshot.end(),{receipt.order.index,receipt.order.generation,order->regeneration->phaseTicks});
+                }
+            }
+            std::size_t count=0;
+            units.ForEachChunk([&](auto chunk) {
+                count+=chunk.Count();
+                const auto produced=chunk.template Get<ProducedUnit>();
+                const auto bindings=chunk.template Get<regen::RegenerationBinding>();
+                const auto schedules=chunk.template Get<regen::RegenerationState>();
+                const auto refs=chunk.template Get<xp::ProgressionDefinitionRef>();
+                const auto states=chunk.template Get<xp::ProgressionState>();
+                const auto eligibility=chunk.template Get<xp::ProgressionEligibility>();
+                const auto inboxes=chunk.template Get<xp::ProgressionInbox>();
+                const auto health=chunk.template Get<engine::gameplay::combat::Health>();
+                for(std::size_t row=0;row<chunk.Count();++row)
+                {
+                    const auto id=chunk.Entities()[row]; const auto mode=produced[row].definition-1;
+                    BOOST_CHECK(bindings[row].definition==regenerationCatalog.Id(mode==1?1:0));
+                    BOOST_TEST(refs[row].index==1u); BOOST_TEST(eligibility[row].trainable==(mode!=2));
+                    BOOST_TEST(inboxes[row].count==0u);
+                    if(tick==42)
+                    {
+                        BOOST_TEST(schedules[row].nextPulse==(mode==1?44u:42u));
+                        BOOST_TEST(schedules[row].soonestDamageWake==0u);
+                        BOOST_TEST(health[row].current==50u); BOOST_TEST(states[row].experience==0u);
+                        awards.push_back({id,12});
+                    }
+                    else
+                    {
+                        BOOST_TEST(health[row].current==(mode==0?55u:(mode==1&&tick>=44?57u:50u)));
+                        BOOST_TEST(states[row].experience==(mode==2?0u:12u));
+                        BOOST_TEST(states[row].level==(mode==2?0u:1u));
+                    }
+                    BOOST_TEST(schedules[row].active==(mode!=2));
+                    snapshot.insert(snapshot.end(),{tick,id.index,id.generation,produced[row].definition,
+                        schedules[row].nextPulse,schedules[row].soonestDamageWake,health[row].current,
+                        states[row].experience,states[row].level,refs[row].index,eligibility[row].trainable});
+                }
+            });
+            BOOST_TEST(count==(tick<42?0u:producerCount*2));
+            if(tick==43)
+            {
+                BOOST_REQUIRE(experience.Results().size()==producerCount*2);
+                for(const auto &result:experience.Results())
+                    snapshot.insert(snapshot.end(),{result.entity.index,result.entity.generation,result.tick,
+                        result.requested,result.applied,result.experience,result.oldLevel,result.newLevel,
+                        static_cast<std::uint64_t>(result.outcome)});
+            }
+        }
+        return snapshot;
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(production_compiles_optional_harvest_and_builder_into_order_and_spawn)
+{
+    using namespace engine::gameplay::rts::harvesting;
+    BuildDefinition definition{8,0,100ms}; definition.harvest=HarvestConfig{4,1000ms,400ms}; definition.builder=true;
+    const std::array catalog{definition};
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({2}); ProductionTestHost production(world,jobs,catalog);
+    const engine::time::FixedStep step{30}; production.Finalize(step);
+    const auto account=world.Create<Balance>(); const auto producer=production.CreateProducer(account);
+    const auto receipt=production.Enqueue(producer,8); BOOST_CHECK(receipt.status==BuildAcceptance::Accepted);
+    const auto *order=world.Get<BuildOrder>(receipt.order); BOOST_REQUIRE(order); BOOST_REQUIRE(order->harvest);
+    BOOST_TEST(order->harvest->capacity==4u); BOOST_TEST(order->harvest->pickupTicks==30u); BOOST_TEST(order->harvest->unloadTicks==12u); BOOST_TEST(order->builder);
+    for(std::uint64_t tick=0;tick<3;++tick) production.Execute({tick,step});
+    ecs::Query<ecs::Read<ProducedUnit>,ecs::Read<HarvestPolicy>,ecs::Read<HarvestState>,ecs::Read<HarvestCargo>,ecs::Read<HarvestIntent>,ecs::Read<HarvestDelivery>,ecs::Read<construction::Builder>> units(world);
+    std::size_t count=0; units.ForEachChunk([&](auto chunk){count+=chunk.Count();
+        for(auto builder:chunk.template Get<construction::Builder>()) BOOST_CHECK(builder.account==account);
+        for(auto policy:chunk.template Get<HarvestPolicy>()) BOOST_TEST(policy.pickupTicks==30u);
+    }); BOOST_TEST(count==1u);
+}
+
+BOOST_AUTO_TEST_CASE(parallel_factories_produce_identical_units_upgrades_and_ids)
+{
+    auto run = [](std::size_t workers) {
+        ecs::World world; ProductionTestHost::RegisterComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workers}); ProductionTestHost production(world, jobs, definitions); const engine::time::FixedStep step{20}; production.Finalize(step);
+        for (int i = 0; i != 512; ++i)
+        {
+            const auto account = world.Create<Balance>(); world.Get<Balance>(account)->quantity = 150;
+            const auto producer = production.CreateProducer(account);
+            BOOST_CHECK(production.Enqueue(producer, 1).status == BuildAcceptance::Accepted);
+            BOOST_CHECK(production.Enqueue(producer, 2).status == BuildAcceptance::Accepted);
+        }
+        for (std::uint64_t tick = 0; tick != 3; ++tick) production.Execute({tick, step});
+        std::vector<std::uint64_t> result;
+        ecs::Query<ecs::Read<ProducedUnit>> units(world);
+        units.ForEachChunk([&](auto chunk) { for (std::size_t i = 0; i != chunk.Count(); ++i) {
+            const auto &unit = chunk.template Get<ProducedUnit>()[i];
+            result.insert(result.end(), {chunk.Entities()[i].index, chunk.Entities()[i].generation, unit.producer.index, unit.account.index, unit.definition}); } });
+        BOOST_TEST(result.size() == 1024u * 5u);
+        ecs::Query<ecs::Read<ResearchedUpgrade>> upgrades(world);
+        upgrades.ForEachChunk([&](auto chunk) { for (std::size_t i = 0; i != chunk.Count(); ++i) {
+            const auto &upgrade = chunk.template Get<ResearchedUpgrade>()[i];
+            result.insert(result.end(), {chunk.Entities()[i].index, chunk.Entities()[i].generation, upgrade.account.index, upgrade.definition}); } });
+        BOOST_TEST(result.size() == 1024u * 5u + 512u * 4u);
+        return result;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(batch_deaths_pack_completions_and_reused_ids_preserve_fifo_counts)
+{
+    auto run = [](std::size_t workers) {
+        constexpr std::size_t count = 64, depth = 4;
+        ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workers}); const engine::time::FixedStep step{20};
+        ProductionTestHost production(world, jobs, definitions, count * (depth + 1));
+        production.Finalize(step);
+        std::array<ecs::Entity, count> accounts, producers;
+        std::array<std::array<ecs::Entity, depth + 1>, count> orders{};
+        std::vector<BuildInput> inputs;
+        std::vector<std::uint64_t> snapshot;
+        for (std::size_t i = 0; i != count; ++i)
+        {
+            accounts[i] = world.Create<Balance>(); world.Get<Balance>(accounts[i])->quantity = 1000;
+            producers[i] = production.CreateProducer(accounts[i], depth + 1);
+        }
+        // Interleaving producers makes entity order different from grouped FIFO order.
+        for (std::size_t position = 0; position != depth; ++position)
+            for (const auto producer : producers) inputs.push_back({producer, 1});
+        production.StageInputs(inputs); production.Execute({0, step});
+        BOOST_REQUIRE(production.Receipts().size() == count * depth);
+        for (std::size_t position = 0; position != depth; ++position)
+            for (std::size_t i = 0; i != count; ++i)
+            {
+                const auto receipt = production.Receipts()[position * count + i];
+                BOOST_REQUIRE(receipt.status == BuildAcceptance::Accepted);
+                orders[i][position] = receipt.order;
+                snapshot.insert(snapshot.end(), {receipt.order.index, receipt.order.generation});
+            }
+        for (std::size_t i = 0; i < count; i += 3)
+            world.Get<engine::gameplay::combat::LifeState>(producers[i])->alive = false;
+        production.Execute({1, step}); // Death batches and surviving head packs leave together.
+        for (std::size_t i = 0; i != count; ++i)
+        {
+            BOOST_TEST(world.Get<Queue>(producers[i])->count == (i % 3 ? 3u : 0u));
+            BOOST_TEST(world.Get<Balance>(accounts[i])->quantity == (i % 3 ? 600u : 1000u));
+            for (std::size_t position = 0; position != depth; ++position)
+            {
+                const bool remains = i % 3 && position != 0;
+                BOOST_TEST(world.IsAlive(orders[i][position]) == remains);
+                if (remains)
+                {
+                    BOOST_TEST(world.Get<Member>(orders[i][position])->position == position - 1);
+                    BOOST_TEST(world.Get<Work>(orders[i][position])->elapsed == 0u);
+                }
+            }
+        }
+        inputs.clear();
+        for (std::size_t i = 0; i != count; ++i) if (i % 3) inputs.push_back({producers[i], 1});
+        production.StageInputs(inputs); production.Execute({2, step});
+        std::size_t receiptIndex = 0;
+        for (std::size_t i = 0; i != count; ++i)
+            if (i % 3)
+            {
+                const auto receipt = production.Receipts()[receiptIndex++];
+                BOOST_REQUIRE(receipt.status == BuildAcceptance::Accepted);
+                orders[i][depth] = receipt.order;
+                snapshot.insert(snapshot.end(), {receipt.order.index, receipt.order.generation});
+                BOOST_TEST(world.Get<Member>(receipt.order)->position == 3u);
+                BOOST_TEST(world.Get<Work>(receipt.order)->elapsed == 0u);
+                BOOST_TEST(world.Get<Queue>(producers[i])->count == 4u);
+            }
+        for (std::uint64_t tick = 3; tick != 10; ++tick)
+        {
+            production.Execute({tick, step});
+            const auto completed = (tick + 1) / 2;
+            for (std::size_t i = 0; i != count; ++i)
+            {
+                const auto expected = i % 3 ? depth + 1 - completed : 0;
+                const auto actual = world.Get<Queue>(producers[i])->count;
+                BOOST_TEST(actual == expected);
+                snapshot.push_back(actual);
+                if (!(i % 3)) continue;
+                BOOST_TEST(world.Get<Balance>(accounts[i])->quantity == 500u);
+                for (std::size_t position = 0; position != depth + 1; ++position)
+                {
+                    BOOST_TEST(world.IsAlive(orders[i][position]) == (position >= completed));
+                    if (position < completed) continue;
+                    const auto member = *world.Get<Member>(orders[i][position]);
+                    BOOST_CHECK(member.queue == producers[i]);
+                    BOOST_TEST(member.position == position - completed);
+                    snapshot.insert(snapshot.end(), {member.position, world.Get<Work>(orders[i][position])->elapsed});
+                }
+            }
+        }
+        std::size_t unitCount = 0;
+        ecs::Query<ecs::Read<ProducedUnit>> units(world);
+        units.ForEachChunk([&](auto chunk) {
+            unitCount += chunk.Count();
+            for (std::size_t row = 0; row != chunk.Count(); ++row)
+            {
+                const auto &unit = chunk.template Get<ProducedUnit>()[row];
+                snapshot.insert(snapshot.end(), {chunk.Entities()[row].index, chunk.Entities()[row].generation,
+                    unit.producer.index, unit.account.index, unit.definition});
+            }
+        });
+        BOOST_TEST(unitCount == (count - (count + 2) / 3) * (depth + 1) * 2);
+        return snapshot;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}

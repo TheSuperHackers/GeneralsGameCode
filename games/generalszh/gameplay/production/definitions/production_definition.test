@@ -1,0 +1,292 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionDefinition
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+import games.generalszh.gameplay.production.definitions.production_definition;
+import engine.jobs.job_system;
+
+namespace production_definition_test
+{
+using generalszh::production::ProductionDefinition;
+using generalszh::production::QuantityRuleInput;
+
+constexpr std::string_view RecipeFingerprintDomain =
+	"games.generalszh.production.production_definition.recipe";
+constexpr std::uint64_t FnvOffsetBasis = UINT64_C(14695981039346656037);
+constexpr std::uint64_t FnvPrime = UINT64_C(1099511628211);
+
+void HashByte(std::uint64_t &hash, const std::uint8_t byte) noexcept
+{
+	hash ^= byte;
+	hash *= FnvPrime;
+}
+
+void HashLittleEndian(std::uint64_t &hash, const std::uint64_t value,
+	const std::size_t byteCount) noexcept
+{
+	for (std::size_t byte = 0; byte < byteCount; ++byte)
+		HashByte(hash, static_cast<std::uint8_t>(value >> (byte * 8)));
+}
+
+void HashBytes(std::uint64_t &hash, const std::string_view bytes) noexcept
+{
+	for (const char byte : bytes)
+		HashByte(hash, static_cast<std::uint8_t>(static_cast<unsigned char>(byte)));
+}
+
+std::uint64_t IndependentFingerprint(
+	const std::uint32_t queueLimit,
+	const std::span<const QuantityRuleInput> rules) noexcept
+{
+	std::uint64_t hash = FnvOffsetBasis;
+	HashLittleEndian(hash,
+		static_cast<std::uint64_t>(RecipeFingerprintDomain.size()),
+		sizeof(std::uint64_t));
+	HashBytes(hash, RecipeFingerprintDomain);
+	HashLittleEndian(hash, 1, sizeof(std::uint32_t));
+	HashLittleEndian(hash, queueLimit, sizeof(std::uint32_t));
+	HashLittleEndian(hash, static_cast<std::uint64_t>(rules.size()),
+		sizeof(std::uint64_t));
+	for (const auto &rule : rules)
+	{
+		HashLittleEndian(hash, static_cast<std::uint64_t>(rule.templateName.size()),
+			sizeof(std::uint64_t));
+		HashBytes(hash, rule.templateName);
+		HashLittleEndian(hash, static_cast<std::uint32_t>(rule.quantity),
+			sizeof(std::uint32_t));
+	}
+	return hash;
+}
+
+ProductionDefinition MakeOwnedDefinition()
+{
+	std::string name = "owned-name";
+	std::vector<QuantityRuleInput> rules{{name, 4}};
+	ProductionDefinition definition{9, rules};
+	name[0] = 'X';
+	rules[0].templateName = "replaced-input";
+	rules[0].quantity = 99;
+	return definition;
+}
+} // namespace production_definition_test
+
+using production_definition_test::ProductionDefinition;
+using production_definition_test::QuantityRuleInput;
+
+BOOST_AUTO_TEST_CASE(empty_definition_has_explicit_zero_defaults)
+{
+	using namespace production_definition_test;
+	const ProductionDefinition definition{0, std::span<const QuantityRuleInput>{}};
+
+	BOOST_TEST(definition.QueueLimit() == 0u);
+	BOOST_TEST(definition.Quantities().empty());
+	BOOST_TEST(definition.Fingerprint() ==
+		IndependentFingerprint(0, std::span<const QuantityRuleInput>{}));
+}
+
+BOOST_AUTO_TEST_CASE(input_strings_and_rules_are_owned_at_construction)
+{
+	const auto definition = production_definition_test::MakeOwnedDefinition();
+
+	BOOST_TEST(definition.QueueLimit() == 9u);
+	BOOST_TEST(definition.Name(0) == "owned-name");
+	BOOST_REQUIRE(definition.Quantities().size() == 1u);
+	BOOST_TEST(definition.Quantities()[0] == 4);
+}
+
+BOOST_AUTO_TEST_CASE(names_and_quantities_preserve_order_duplicates_case_and_zero)
+{
+	const std::array rules{
+		QuantityRuleInput{"Tank", 4},
+		QuantityRuleInput{"Tank", 4},
+		QuantityRuleInput{"tank", 0},
+		QuantityRuleInput{"Tank", 12}};
+	const ProductionDefinition definition{17, rules};
+	const auto quantities = definition.Quantities();
+
+	BOOST_REQUIRE(quantities.size() == rules.size());
+	BOOST_TEST(definition.Name(0) == "Tank");
+	BOOST_TEST(definition.Name(1) == "Tank");
+	BOOST_TEST(definition.Name(2) == "tank");
+	BOOST_TEST(definition.Name(3) == "Tank");
+	BOOST_TEST(quantities[0] == 4);
+	BOOST_TEST(quantities[1] == 4);
+	BOOST_TEST(quantities[2] == 0);
+	BOOST_TEST(quantities[3] == 12);
+	for (std::size_t index = 1; index < quantities.size(); ++index)
+		BOOST_CHECK(&quantities[index] == &quantities[index - 1] + 1);
+}
+
+BOOST_AUTO_TEST_CASE(invalid_external_rule_domains_are_rejected)
+{
+	const std::array emptyName{QuantityRuleInput{"", 1}};
+	const std::array embeddedNul{
+		QuantityRuleInput{std::string_view{"Tank\0Extra", 10}, 1}};
+	const std::array negativeQuantity{QuantityRuleInput{"Tank", -1}};
+
+	BOOST_CHECK_THROW((ProductionDefinition{1, emptyName}), std::invalid_argument);
+	BOOST_CHECK_THROW((ProductionDefinition{1, embeddedNul}), std::invalid_argument);
+	BOOST_CHECK_THROW((ProductionDefinition{1, negativeQuantity}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(fingerprint_matches_independent_fixed_golden_recipe)
+{
+	const std::array rules{
+		QuantityRuleInput{"Alpha", 0},
+		QuantityRuleInput{"BETA", 37},
+		QuantityRuleInput{"Alpha", 2}};
+	const ProductionDefinition definition{11, rules};
+
+	BOOST_TEST(definition.Fingerprint() ==
+		production_definition_test::IndependentFingerprint(11, rules));
+	BOOST_TEST(definition.Fingerprint() == UINT64_C(0xF4DF9478D766F2AB));
+}
+
+BOOST_AUTO_TEST_CASE(fingerprint_changes_for_each_recipe_field)
+{
+	const std::array baselineRules{
+		QuantityRuleInput{"Alpha", 0},
+		QuantityRuleInput{"BETA", 37},
+		QuantityRuleInput{"Alpha", 2}};
+	const auto baseline = ProductionDefinition{11, baselineRules}.Fingerprint();
+
+	const std::array reorderedRules{
+		QuantityRuleInput{"BETA", 37},
+		QuantityRuleInput{"Alpha", 0},
+		QuantityRuleInput{"Alpha", 2}};
+	const std::array changedNameRules{
+		QuantityRuleInput{"Gamma", 0},
+		QuantityRuleInput{"BETA", 37},
+		QuantityRuleInput{"Alpha", 2}};
+	const std::array changedCaseRules{
+		QuantityRuleInput{"alpha", 0},
+		QuantityRuleInput{"BETA", 37},
+		QuantityRuleInput{"Alpha", 2}};
+	const std::array changedQuantityRules{
+		QuantityRuleInput{"Alpha", 0},
+		QuantityRuleInput{"BETA", 38},
+		QuantityRuleInput{"Alpha", 2}};
+
+	BOOST_TEST((ProductionDefinition{11, reorderedRules}.Fingerprint() != baseline));
+	BOOST_TEST((ProductionDefinition{11, changedNameRules}.Fingerprint() != baseline));
+	BOOST_TEST((ProductionDefinition{11, changedCaseRules}.Fingerprint() != baseline));
+	BOOST_TEST((ProductionDefinition{11, changedQuantityRules}.Fingerprint() != baseline));
+	BOOST_TEST((ProductionDefinition{12, baselineRules}.Fingerprint() != baseline));
+}
+
+BOOST_AUTO_TEST_CASE(api_exposes_read_only_views_and_no_assignment)
+{
+	static_assert(std::is_same_v<decltype(std::declval<ProductionDefinition &>().Quantities()),
+		std::span<const std::int32_t>>);
+	static_assert(std::is_same_v<decltype(std::declval<const ProductionDefinition &>().Name(0)),
+		std::string_view>);
+	static_assert(std::is_same_v<decltype(std::declval<ProductionDefinition &>().QueueLimit()),
+		std::uint32_t>);
+	static_assert(std::is_same_v<decltype(std::declval<ProductionDefinition &>().Fingerprint()),
+		std::uint64_t>);
+	static_assert(noexcept(std::declval<const ProductionDefinition &>().QueueLimit()));
+	static_assert(noexcept(std::declval<const ProductionDefinition &>().Quantities()));
+	static_assert(noexcept(std::declval<const ProductionDefinition &>().Name(0)));
+	static_assert(noexcept(std::declval<const ProductionDefinition &>().Fingerprint()));
+	static_assert(!std::is_assignable_v<ProductionDefinition &, ProductionDefinition>);
+	static_assert(!std::is_assignable_v<ProductionDefinition &, ProductionDefinition &&>);
+
+	const std::array rules{QuantityRuleInput{"Tank", 1}};
+	const ProductionDefinition definition{3, rules};
+	const auto quantities = definition.Quantities();
+	static_assert(std::is_const_v<std::remove_reference_t<decltype(quantities[0])>>);
+	BOOST_TEST(definition.Name(0) == "Tank");
+	BOOST_TEST(quantities[0] == 1);
+}
+
+BOOST_AUTO_TEST_CASE(copying_or_passing_an_rvalue_does_not_invalidate_published_source_views)
+{
+	const std::array rules{QuantityRuleInput{"Source", 7}};
+	ProductionDefinition source{3, rules};
+	const auto name = source.Name(0);
+	const auto quantities = source.Quantities();
+	const auto fingerprint = source.Fingerprint();
+	const ProductionDefinition copy{source};
+	const ProductionDefinition fromRvalue{std::move(source)};
+	BOOST_TEST(source.Fingerprint() == fingerprint);
+	BOOST_TEST(copy.Fingerprint() == fingerprint);
+	BOOST_TEST(fromRvalue.Fingerprint() == fingerprint);
+	BOOST_TEST(name == "Source");
+	BOOST_TEST(quantities[0] == 7);
+	BOOST_CHECK(copy.Quantities().data() != quantities.data());
+	BOOST_CHECK(fromRvalue.Quantities().data() != quantities.data());
+}
+
+BOOST_AUTO_TEST_CASE(shared_immutable_definition_produces_identical_range_results_across_workers)
+{
+	constexpr std::size_t count = 2048, rangeSize = 128, rangeCount = count / rangeSize;
+	std::vector<std::string> names;
+	names.reserve(count);
+	std::vector<QuantityRuleInput> rules;
+	rules.reserve(count);
+	for (std::size_t i = 0; i < count; ++i)
+	{
+		names.push_back("Unit" + std::to_string(i));
+		rules.push_back({names.back(), static_cast<std::int32_t>(i % 17)});
+	}
+	const ProductionDefinition definition{19, rules};
+	struct Range
+	{
+		const ProductionDefinition *definition;
+		std::span<std::int32_t> quantities;
+		std::span<std::size_t> nameLengths;
+		std::span<std::array<char, 16>> nameBytes;
+		std::uint64_t *fingerprint;
+		std::size_t begin;
+		static void Run(void *context)
+		{
+			auto &range = *static_cast<Range *>(context);
+			const auto values = range.definition->Quantities().subspan(range.begin, range.quantities.size());
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				range.quantities[i] = values[i];
+				const auto name = range.definition->Name(range.begin + i);
+				range.nameLengths[i] = name.size();
+				for (std::size_t byte = 0; byte < name.size(); ++byte)
+					range.nameBytes[i][byte] = name[byte];
+			}
+			*range.fingerprint = range.definition->Fingerprint();
+		}
+	};
+	for (const auto workers : {1u, 2u, 4u})
+	{
+		std::vector<std::int32_t> values(count, -1);
+		std::vector<std::size_t> lengths(count, 0);
+		std::vector<std::array<char, 16>> bytes(count);
+		for (const auto &name : names) BOOST_REQUIRE_LE(name.size(), bytes.front().size());
+		std::array<std::uint64_t, rangeCount> hashes{};
+		std::array<Range, rangeCount> ranges{};
+		std::array<engine::jobs::Job, rangeCount> jobs{};
+		for (std::size_t i = 0; i < rangeCount; ++i)
+		{
+			ranges[i] = {&definition, std::span(values).subspan(i * rangeSize, rangeSize),
+				std::span(lengths).subspan(i * rangeSize, rangeSize),
+				std::span(bytes).subspan(i * rangeSize, rangeSize), &hashes[i], i * rangeSize};
+			jobs[i] = {&Range::Run, &ranges[i]};
+		}
+		engine::jobs::JobSystem pool{engine::jobs::JobSystemConfig{workers}};
+		pool.Execute(jobs);
+		for (std::size_t i = 0; i < count; ++i)
+		{
+			BOOST_TEST(values[i] == static_cast<std::int32_t>(i % 17));
+			BOOST_TEST(lengths[i] == names[i].size());
+			BOOST_TEST((std::string_view{bytes[i].data(), names[i].size()} == names[i]));
+		}
+		for (const auto hash : hashes) BOOST_TEST(hash == definition.Fingerprint());
+	}
+}

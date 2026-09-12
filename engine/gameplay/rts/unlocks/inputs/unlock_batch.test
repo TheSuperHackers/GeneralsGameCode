@@ -1,0 +1,46 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+
+import engine.gameplay.rts.unlocks.inputs.unlock_batch;
+
+using namespace engine::gameplay::rts::unlocks;
+
+BOOST_AUTO_TEST_CASE(unlock_batch_forms_deterministic_account_ranges_and_publishes_receipts)
+{
+	UnlockBatch batch(4);
+	const std::array inputs{
+		UnlockRequest{ecs::Entity{2, 1}, MakeUnlockKey("two"), UnlockOperation::Purchase},
+		UnlockRequest{ecs::Entity{1, 1}, MakeUnlockKey("one"), UnlockOperation::Grant},
+		UnlockRequest{ecs::Entity{2, 1}, MakeUnlockKey("two-again"), UnlockOperation::Availability},
+		UnlockRequest{ecs::Entity{9, 3}, MakeUnlockKey("stale"), UnlockOperation::Purchase}};
+	batch.SetInputs(inputs);
+	batch.Prepare(17);
+
+	std::size_t begin = 0;
+	std::size_t count = 0;
+	BOOST_CHECK(batch.FindRange(ecs::Entity{1, 1}, begin, count));
+	BOOST_TEST(count == 1u);
+	BOOST_CHECK(batch.FindRange(ecs::Entity{2, 1}, begin, count));
+	BOOST_TEST(count == 2u);
+	BOOST_CHECK(!batch.FindRange(ecs::Entity{9, 2}, begin, count));
+	BOOST_TEST(batch.Results().empty());
+	batch.Publish();
+
+	const auto results = batch.Results();
+	BOOST_REQUIRE_EQUAL(results.size(), inputs.size());
+	BOOST_TEST(results[0].requestIndex == 0u);
+	BOOST_TEST(results[0].tick == 17u);
+	BOOST_CHECK(results[0].result == UnlockResultCode::InvalidTarget);
+	BOOST_CHECK(results[3].account == inputs[3].account);
+}
+
+BOOST_AUTO_TEST_CASE(unlock_batch_rejects_over_capacity_before_copying)
+{
+	UnlockBatch batch(1);
+	const std::array inputs{
+		UnlockRequest{ecs::Entity{1, 1}, MakeUnlockKey("one"), UnlockOperation::Purchase},
+		UnlockRequest{ecs::Entity{2, 1}, MakeUnlockKey("two"), UnlockOperation::Purchase}};
+	BOOST_CHECK_THROW(batch.SetInputs(inputs), std::length_error);
+}

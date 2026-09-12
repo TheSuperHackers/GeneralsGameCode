@@ -1,0 +1,16 @@
+#include <boost/test/unit_test.hpp>
+#include <stdexcept>
+import engine.gameplay.combat.damage.inputs.accepted_hit_batch;
+BOOST_AUTO_TEST_CASE(accepted_hits_publish_once_without_exposing_staging) {
+    using namespace engine::gameplay::combat::damage;AcceptedHitBatch batch(1);
+    BOOST_CHECK_THROW(batch.Append({}),std::logic_error);
+    batch.BeginTick();ResolvedHit hit;hit.packet.channel={9};hit.packet.attribution.source={7,3};
+    hit.packet.quantity=100;hit.resolvedQuantity=10;batch.Append(hit);
+    BOOST_TEST(batch.Results().empty());BOOST_CHECK_THROW(batch.Append({}),std::length_error);
+    batch.Publish();BOOST_TEST(batch.Results().size()==1u);
+    BOOST_TEST(batch.Results()[0].packet.channel.value==9u);
+    BOOST_TEST(batch.Results()[0].packet.attribution.source.generation==3u);
+    BOOST_TEST(batch.Results()[0].resolvedQuantity==10u);
+    BOOST_CHECK_THROW(batch.Publish(),std::logic_error);
+    batch.BeginTick();BOOST_TEST(batch.Results().empty());batch.Publish();BOOST_TEST(batch.Results().empty());
+}

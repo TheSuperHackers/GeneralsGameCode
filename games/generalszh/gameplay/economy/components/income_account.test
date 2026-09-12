@@ -1,0 +1,11 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+#include <string_view>
+import games.generalszh.gameplay.economy.income.income_account;
+BOOST_AUTO_TEST_CASE(income_account_is_a_plain_generation_safe_relationship)
+{
+    using generalszh::economy::IncomeAccount;
+    static_assert(std::is_trivially_copyable_v<IncomeAccount>);
+    BOOST_TEST(!IncomeAccount{}.entity.IsValid());
+    BOOST_CHECK((IncomeAccount{{3, 7}}.entity != IncomeAccount{{3, 8}}.entity));
+}

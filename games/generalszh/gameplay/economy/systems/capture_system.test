@@ -1,0 +1,28 @@
+#include <boost/test/unit_test.hpp>
+#include <string_view>
+import games.generalszh.gameplay.economy.systems.capture_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(capture_system_consumes_before_effects_preserves_recipient_and_rearms_every_attempt)
+{
+	using namespace generalszh::economy;
+	using namespace engine::gameplay::rts::economy;
+	ecs::World world;
+	world.RegisterComponent<IncomeSchedule>(); world.RegisterComponent<IncomeRate>(); world.RegisterComponent<CaptureRewardState>();
+	world.RegisterComponent<IncomeDefinition>(); world.RegisterComponent<IncomeObservation>(); world.RegisterComponent<CaptureRange>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<IncomeSchedule, IncomeRate, CaptureRewardState, IncomeDefinition, IncomeObservation, CaptureRange>();
+	*world.Get<IncomeRate>(entity) = {5, 10};
+	*world.Get<CaptureRewardState>(entity) = {true, true};
+	*world.Get<IncomeDefinition>(entity) = {10, 50, false};
+	world.Get<IncomeObservation>(entity)->active = true;
+	world.Get<IncomeObservation>(entity)->dispatchEnabled = false;
+	CaptureBatch batch(3); batch.Record(0, {1, -1}); batch.Record(0, {2, 4}); batch.Record(0, {3, 5});
+	*world.Get<CaptureRange>(entity) = batch.Prepare(1)[0];
+	CaptureSystem system(batch);
+	ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({3, step});
+	BOOST_TEST(!batch.Result(0).pay); BOOST_TEST(batch.Result(1).money == 50u); BOOST_TEST(!batch.Result(2).pay);
+	BOOST_TEST(!world.Get<CaptureRewardState>(entity)->available);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 8u);
+}

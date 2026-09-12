@@ -1,0 +1,31 @@
+#define BOOST_TEST_MODULE DoorTiming
+#include <boost/test/included/unit_test.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <chrono>
+import games.generalszh.gameplay.production.doors.definitions.door_timing;
+using namespace generalszh::production;
+BOOST_AUTO_TEST_CASE(timing_layout)
+{
+ static_assert(std::is_standard_layout_v<DoorTiming>);
+ static_assert(std::is_trivially_copyable_v<DoorTiming>);
+}
+BOOST_AUTO_TEST_CASE(typed_duration_authoring_uses_the_selected_30_or_60_hz_step)
+{
+	using namespace std::chrono_literals;
+	const auto at30 = AuthorDoorTiming(2s, 1s, 500ms, engine::time::FixedStep{30});
+	const auto at60 = AuthorDoorTiming(2s, 1s, 500ms, engine::time::FixedStep{60});
+
+	BOOST_TEST(at30.opening == 60u);
+	BOOST_TEST(at30.waiting == 30u);
+	BOOST_TEST(at30.closing == 15u);
+	BOOST_TEST(at60.opening == 120u);
+	BOOST_TEST(at60.waiting == 60u);
+	BOOST_TEST(at60.closing == 30u);
+	BOOST_TEST(at30.opening * 2 == at60.opening);
+	BOOST_TEST(at30.waiting * 2 == at60.waiting);
+	BOOST_TEST(at30.closing * 2 == at60.closing);
+	BOOST_TEST(AuthorDoorTiming(1ns, 0ns, 0ns, engine::time::FixedStep{30}).opening == 1u);
+}

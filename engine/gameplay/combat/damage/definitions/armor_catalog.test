@@ -1,0 +1,16 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import engine.gameplay.combat.damage.definitions.armor_catalog;
+BOOST_AUTO_TEST_CASE(armor_catalog_validates_rows_and_checked_references) {
+    using namespace engine::gameplay::combat::damage;
+    const std::array policies{DamageTypePolicy{ArmorApplication::Scale},DamageTypePolicy{ArmorApplication::Bypass}};
+    const std::array definitions{ArmorDefinition{{ArmorMultiplier{500000},ArmorMultiplier{0}}}};
+    const ArmorCatalog catalog(policies,definitions);
+    BOOST_TEST(catalog.Get({0}).coefficients[0].millionths==500000u);
+    BOOST_CHECK(catalog.PolicyUnchecked({1}).armor==ArmorApplication::Bypass);
+    BOOST_CHECK_THROW(catalog.Get({1}),std::out_of_range);BOOST_CHECK_THROW(catalog.Policy({2}),std::out_of_range);
+    const std::array bad{ArmorDefinition{}};
+    BOOST_CHECK_THROW((ArmorCatalog(policies,bad)),std::invalid_argument);
+    const ArmorCatalog empty({},{});BOOST_TEST(empty.TypeCount()==0u);
+}

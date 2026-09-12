@@ -1,0 +1,58 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRank
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+
+import engine.gameplay.rts.rank.definitions.rank_definition;
+
+using namespace engine::gameplay::rts::rank;
+using namespace engine::gameplay::rts::unlocks;
+
+namespace
+{
+void PopulateUnlockCatalog(UnlockCatalog &catalog)
+{
+	for (const auto name : {"SCIENCE_Rank1", "SCIENCE_Rank2", "SCIENCE_Rank3"})
+		catalog.Register(UnlockDefinition{name, 1, 0, false});
+	catalog.Finalize();
+}
+}
+
+BOOST_AUTO_TEST_CASE(rank_catalog_validates_limit_ids_and_captures_unlock_schema)
+{
+	UnlockCatalog unlocks;
+	PopulateUnlockCatalog(unlocks);
+	const auto first = unlocks.Find(MakeUnlockKey("SCIENCE_Rank1"));
+	const auto second = unlocks.Find(MakeUnlockKey("SCIENCE_Rank2"));
+	const std::array definitions{
+		RankDefinition{0, 1, {first}},
+		RankDefinition{800, 1, {second}}};
+	const RankCatalog catalog{definitions, RankLevelLimit{2}, unlocks};
+
+	BOOST_TEST(catalog.Count() == 2u);
+	BOOST_TEST(catalog.LevelLimit().value == 2u);
+	BOOST_TEST(catalog.Get(2).skillPointsNeeded == 800u);
+	BOOST_TEST(catalog.UnlockSchemaHash() == unlocks.SchemaHash());
+	BOOST_TEST(catalog.SchemaHash() != 0u);
+
+	BOOST_CHECK_THROW((RankCatalog{definitions, RankLevelLimit{0}, unlocks}), std::invalid_argument);
+	BOOST_CHECK_THROW((RankCatalog{definitions, RankLevelLimit{3}, unlocks}), std::invalid_argument);
+	const std::array invalidId{RankDefinition{0, 1, {UnlockId{999}}}};
+	BOOST_CHECK_THROW((RankCatalog{invalidId, RankLevelLimit{1}, unlocks}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(rank_catalog_rejects_nonmonotonic_thresholds_and_duplicate_grants)
+{
+	UnlockCatalog unlocks;
+	PopulateUnlockCatalog(unlocks);
+	const auto first = unlocks.Find(MakeUnlockKey("SCIENCE_Rank1"));
+	const auto second = unlocks.Find(MakeUnlockKey("SCIENCE_Rank2"));
+	const std::array nonmonotonic{
+		RankDefinition{0, 1, {first}}, RankDefinition{800, 1, {second}}, RankDefinition{700, 1, {}}};
+	BOOST_CHECK_THROW((RankCatalog{nonmonotonic, RankLevelLimit{3}, unlocks}), std::invalid_argument);
+	const std::array equal{RankDefinition{0, 1, {first}}, RankDefinition{0, 1, {second}}};
+	BOOST_CHECK_THROW((RankCatalog{equal, RankLevelLimit{2}, unlocks}), std::invalid_argument);
+	const std::array duplicate{RankDefinition{0, 1, {first, first}}};
+	BOOST_CHECK_THROW((RankCatalog{duplicate, RankLevelLimit{1}, unlocks}), std::invalid_argument);
+}

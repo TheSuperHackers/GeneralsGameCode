@@ -1,0 +1,19 @@
+#define BOOST_TEST_MODULE GeneralsZHRallyPoint
+#include <boost/test/included/unit_test.hpp>
+#include <type_traits>
+import games.generalszh.gameplay.production.rally.components.rally_point;
+using namespace generalszh::production::rally;
+BOOST_AUTO_TEST_CASE(rally_state_defaults_clear_and_has_explicit_persistence)
+{
+ static_assert(std::is_trivially_copyable_v<RallyPoint>);
+ BOOST_TEST(RallyPoint{}.destination==engine::gameplay::navigation::InvalidCell);
+ BOOST_CHECK(ecs::ComponentTraits<RallyPoint>::Persistence==ecs::PersistencePolicy::Serializable);
+ BOOST_TEST(ecs::ComponentTraits<RallyPoint>::Version==1u);
+}
+BOOST_AUTO_TEST_CASE(initial_order_is_ordinary_move_or_none_not_attack_move)
+{
+ namespace orders=engine::gameplay::rts::orders;
+ const auto empty=InitialRallyOrder({});BOOST_CHECK(empty.kind==orders::OrderKind::None);
+ const auto move=InitialRallyOrder({7});BOOST_CHECK(move.kind==orders::OrderKind::Move);
+ BOOST_TEST(move.destination==7u);BOOST_TEST(!move.target.IsValid());
+}

@@ -1,0 +1,27 @@
+add_library(generalszh_gameplay_ai_squads STATIC)
+target_sources(generalszh_gameplay_ai_squads PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	systems/tactical_behavior_system.cppm)
+target_compile_features(generalszh_gameplay_ai_squads PUBLIC cxx_std_23)
+set_property(TARGET generalszh_gameplay_ai_squads PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_gameplay_ai_squads PUBLIC
+	engine_gameplay_rts_ai_squads
+	engine_gameplay_combat
+	engine_gameplay_containment
+	engine_gameplay_navigation
+	engine_gameplay_concealment
+	engine_gameplay_rts_visibility
+	generalszh_acquisition_policy
+	generalszh_combat_rules
+	generalszh_build_execution)
+
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(systems/tactical_behavior_system.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_gameplay_ai_squads_tests systems/tactical_behavior_system.test)
+	set_property(TARGET generalszh_gameplay_ai_squads_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_gameplay_ai_squads_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_gameplay_ai_squads_tests PRIVATE
+		generalszh_gameplay_ai_squads Boost::included_unit_test_framework)
+	add_test(NAME generalszh_gameplay_ai_squads_tests
+		COMMAND generalszh_gameplay_ai_squads_tests)
+endif()

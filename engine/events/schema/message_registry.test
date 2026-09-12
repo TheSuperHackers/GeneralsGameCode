@@ -1,0 +1,164 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+import engine.events.schema.message_registry;
+using namespace engine::events;
+
+namespace message_tests
+{
+struct A {};
+struct B { std::uint32_t value; };
+struct C {};
+struct Impostor { char differentLayout[17]; };
+struct VersionTwo {};
+struct Transient {};
+struct Presentation {};
+struct EmptyName {};
+struct BadName {};
+struct ZeroVersion {};
+struct InvalidKind {};
+struct InvalidPolicy {};
+template<std::size_t I> struct Many {};
+template<std::size_t I> constexpr auto ManyName()
+{
+	std::array<char, 17> value{'t','e','s','t','s','.','e','v','e','n','t','s','.',
+		static_cast<char>('0' + I / 100), static_cast<char>('0' + I / 10 % 10), static_cast<char>('0' + I % 10), '\0'};
+	return value;
+}
+}
+namespace engine::events
+{
+template<> struct MessageTraits<message_tests::A>
+{
+	static constexpr std::string_view StableName = "tests.events.a";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr MessageKind Kind = MessageKind::Fact;
+	static constexpr RecordPolicy Recording = RecordPolicy::Recordable;
+};
+template<> struct MessageTraits<message_tests::B> : MessageTraits<message_tests::A> { static constexpr std::string_view StableName = "tests.events.b"; };
+template<> struct MessageTraits<message_tests::C> : MessageTraits<message_tests::A> { static constexpr std::string_view StableName = "tests.events.c"; };
+template<> struct MessageTraits<message_tests::Impostor> : MessageTraits<message_tests::A> {};
+template<> struct MessageTraits<message_tests::VersionTwo> : MessageTraits<message_tests::A> { static constexpr std::uint32_t Version = 2; };
+template<> struct MessageTraits<message_tests::Transient> : MessageTraits<message_tests::A> { static constexpr RecordPolicy Recording = RecordPolicy::Transient; };
+template<> struct MessageTraits<message_tests::Presentation> : MessageTraits<message_tests::A> { static constexpr MessageKind Kind = MessageKind::Presentation; };
+template<> struct MessageTraits<message_tests::EmptyName> : MessageTraits<message_tests::A> { static constexpr std::string_view StableName = ""; };
+template<> struct MessageTraits<message_tests::BadName> : MessageTraits<message_tests::A> { static constexpr std::string_view StableName = "Tests events"; };
+template<> struct MessageTraits<message_tests::ZeroVersion> : MessageTraits<message_tests::A> { static constexpr std::uint32_t Version = 0; };
+template<> struct MessageTraits<message_tests::InvalidKind> : MessageTraits<message_tests::A> { static constexpr auto Kind = static_cast<MessageKind>(255); };
+template<> struct MessageTraits<message_tests::InvalidPolicy> : MessageTraits<message_tests::A> { static constexpr auto Recording = static_cast<RecordPolicy>(255); };
+template<std::size_t I> struct MessageTraits<message_tests::Many<I>> : MessageTraits<message_tests::A>
+{
+	static constexpr auto Name = message_tests::ManyName<I>();
+	static constexpr std::string_view StableName{Name.data(), Name.size() - 1};
+};
+}
+using namespace message_tests;
+
+BOOST_AUTO_TEST_CASE(message_ids_and_schema_are_independent_of_registration_order)
+{
+	MessageRegistry first, second;
+	first.Register<A>(); first.Register<B>(); first.Register<C>();
+	second.Register<C>(); second.Register<A>(); second.Register<B>();
+	first.Finalize(); second.Finalize();
+	BOOST_TEST(first.Id<A>() == second.Id<A>());
+	BOOST_TEST(first.Id<B>() == second.Id<B>());
+	BOOST_TEST(first.Id<C>() == second.Id<C>());
+	BOOST_TEST(first.SchemaHash() == second.SchemaHash());
+	for (MessageId i = 0; i < 3; ++i)
+	{
+		BOOST_TEST(first.Get(i).id == i);
+		BOOST_TEST(first.Get(i).stableKey == second.Get(i).stableKey);
+		if (i) BOOST_TEST(first.Get(i - 1).stableKey < first.Get(i).stableKey);
+	}
+}
+BOOST_AUTO_TEST_CASE(message_finalization_is_explicit_idempotent_and_blocks_all_registration)
+{
+	static_assert(!std::is_copy_assignable_v<MessageRegistry> && !std::is_move_assignable_v<MessageRegistry>);
+	MessageRegistry registry;
+	registry.Register<A>(); registry.Register<A>();
+	BOOST_TEST(registry.Count() == 1u);
+	BOOST_CHECK_THROW((void)registry.Id<A>(), std::logic_error);
+	BOOST_CHECK_THROW((void)registry.Get(0), std::logic_error);
+	BOOST_CHECK_THROW((void)registry.Find(HashMessageKey("tests.events.a")), std::logic_error);
+	BOOST_CHECK_THROW((void)registry.SchemaHash(), std::logic_error);
+	BOOST_TEST(!registry.IsFinalized());
+	registry.Finalize();
+	const auto id = registry.Id<A>(); const auto hash = registry.SchemaHash();
+	BOOST_CHECK_THROW(registry.Register<A>(), std::logic_error);
+	BOOST_CHECK_THROW(registry.Register<B>(), std::logic_error);
+	registry.Finalize();
+	BOOST_TEST(registry.Id<A>() == id); BOOST_TEST(registry.SchemaHash() == hash);
+	BOOST_TEST(registry.Find(HashMessageKey("missing")) == InvalidMessageId);
+	BOOST_CHECK_THROW((void)registry.Get(InvalidMessageId), std::out_of_range);
+}
+BOOST_AUTO_TEST_CASE(message_key_collision_rejects_an_unregistered_exact_type_without_corrupting_registry)
+{
+	MessageRegistry registry;
+	registry.Register<A>();
+	BOOST_CHECK_THROW(registry.Register<Impostor>(), std::logic_error);
+	BOOST_TEST(registry.Count() == 1u);
+	registry.Register<B>(); registry.Finalize();
+	BOOST_CHECK_THROW((void)registry.Id<Impostor>(), std::out_of_range);
+	BOOST_TEST(registry.Find(HashMessageKey("tests.events.a")) == registry.Id<A>());
+	BOOST_TEST(registry.Get(registry.Id<A>()).stableName == "tests.events.a");
+}
+BOOST_AUTO_TEST_CASE(message_versions_roles_and_persistence_participate_in_schema_identity)
+{
+	MessageRegistry base, version, transient, presentation;
+	base.Register<A>(); version.Register<VersionTwo>(); transient.Register<Transient>(); presentation.Register<Presentation>();
+	base.Finalize(); version.Finalize(); transient.Finalize(); presentation.Finalize();
+	BOOST_TEST(base.Get(0).stableKey == version.Get(0).stableKey);
+	BOOST_TEST(base.SchemaHash() != version.SchemaHash());
+	BOOST_TEST(base.SchemaHash() != transient.SchemaHash());
+	BOOST_TEST(base.SchemaHash() != presentation.SchemaHash());
+}
+BOOST_AUTO_TEST_CASE(message_layout_and_cpp_type_are_not_serialization_identity)
+{
+	MessageRegistry small, larger;
+	small.Register<A>(); larger.Register<Impostor>(); small.Finalize(); larger.Finalize();
+	BOOST_TEST(small.SchemaHash() == larger.SchemaHash());
+	BOOST_TEST(small.Get(0).stableKey == larger.Get(0).stableKey);
+	// A codec/version change, not sizeof(T) or padding, defines schema changes.
+}
+BOOST_AUTO_TEST_CASE(message_invalid_declarations_leave_collection_usable)
+{
+	MessageRegistry registry;
+	BOOST_CHECK_THROW(registry.Register<EmptyName>(), std::invalid_argument);
+	BOOST_CHECK_THROW(registry.Register<BadName>(), std::invalid_argument);
+	BOOST_CHECK_THROW(registry.Register<ZeroVersion>(), std::invalid_argument);
+	BOOST_CHECK_THROW(registry.Register<InvalidKind>(), std::invalid_argument);
+	BOOST_CHECK_THROW(registry.Register<InvalidPolicy>(), std::invalid_argument);
+	BOOST_TEST(registry.Count() == 0u); BOOST_TEST(!registry.IsFinalized());
+	registry.Register<A>(); registry.Finalize();
+	BOOST_TEST(registry.Id<A>() == 0u);
+}
+BOOST_AUTO_TEST_CASE(message_registry_has_no_64_type_limit)
+{
+	MessageRegistry forward, reverse;
+	[&]<std::size_t... I>(std::index_sequence<I...>) {
+		(forward.Register<Many<I>>(), ...);
+		(reverse.Register<Many<127 - I>>(), ...);
+	}(std::make_index_sequence<128>{});
+	forward.Finalize(); reverse.Finalize();
+	BOOST_TEST(forward.Count() == 128u);
+	BOOST_TEST(forward.SchemaHash() == reverse.SchemaHash());
+	for (MessageId i = 0; i < 128; ++i)
+	{
+		BOOST_TEST(forward.Get(i).stableKey == reverse.Get(i).stableKey);
+		BOOST_TEST(forward.Find(forward.Get(i).stableKey) == i);
+	}
+}
+BOOST_AUTO_TEST_CASE(message_stable_hash_has_fixed_vectors_and_empty_schema_finalizes)
+{
+	BOOST_TEST(HashMessageKey("") == 14695981039346656037ull);
+	BOOST_TEST(HashMessageKey("a") == 0xaf63dc4c8601ec8cull);
+	MessageRegistry empty; empty.Finalize();
+	BOOST_TEST(empty.IsFinalized()); BOOST_TEST(empty.Count() == 0u);
+	BOOST_TEST(empty.Find(HashMessageKey("tests.events.a")) == InvalidMessageId);
+	MessageRegistry single; single.Register<A>(); single.Finalize();
+	BOOST_TEST(single.Get(0).stableKey == 1582947799249762648ull);
+	BOOST_TEST(single.SchemaHash() == 3348801862493929144ull);
+}

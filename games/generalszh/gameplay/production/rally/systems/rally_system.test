@@ -1,0 +1,156 @@
+#define BOOST_TEST_MODULE GeneralsZHRallySystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <vector>
+import games.generalszh.gameplay.production.rally.systems.rally_system;
+import games.generalszh.composition.game_session;
+import games.generalszh.gameplay.production.components.production_state;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.rts.economy.components.resource_balance;
+import engine.ecs.scheduler.scheduler;
+namespace r=generalszh::production::rally;
+namespace p=generalszh::production;
+namespace c=engine::gameplay::combat;
+namespace n=engine::gameplay::navigation;
+namespace o=engine::gameplay::rts::orders;
+using namespace std::chrono_literals;
+namespace
+{
+// Test composition of real nodes, not a feature executor or substitute system.
+struct RallyFixture
+{
+ std::array<std::uint8_t,7> terrain{1,1,1,0,1,1,1};
+ n::NavigationGrid grid{7,1,terrain};ecs::World world;engine::jobs::JobSystem jobs;
+ n::FlowFields fields;r::RallyBatch batch;r::RallySystem rally;c::HealthSystem health;
+ ecs::SystemRegistry registry;ecs::Scheduler scheduler;engine::time::FixedStep step{10};ecs::Entity account;
+ RallyFixture(std::size_t workers=2,std::size_t capacity=64,std::uint32_t destinations=8)
+  :jobs({workers}),fields(grid,{destinations,7}),batch(capacity),rally(grid,jobs,fields,batch,capacity),scheduler(world,registry,jobs)
+ {
+  world.RegisterComponent<p::Producer>();world.RegisterComponent<c::Health>();world.RegisterComponent<c::LifeState>();
+  world.RegisterComponent<c::PendingDamage>();world.RegisterComponent<c::DamageResult>();
+  world.RegisterComponent<n::GridPosition>();world.RegisterComponent<r::RallyPoint>();world.FinalizeComponents();
+  registry.Register(health,ecs::SystemPhase::Simulation);registry.Register(rally);
+  registry.OrderBefore<c::HealthSystem,r::RallySystem>();registry.Finalize(world.Components());scheduler.Finalize(step);
+  account=world.Create();
+ }
+ ecs::Entity Producer()
+ {
+  const auto entity=world.Create<p::Producer,c::Health,c::LifeState,c::PendingDamage,c::DamageResult,n::GridPosition,r::RallyPoint>();
+  world.Get<p::Producer>(entity)->account=account;world.Get<c::Health>(entity)->current=100;return entity;
+ }
+ void Tick(std::uint64_t tick,std::span<const r::RallyInput> input={}) {batch.SetInputs(input);scheduler.Execute({tick,step});}
+};
+}
+BOOST_AUTO_TEST_CASE(ordered_rally_requests_preserve_last_accepted_choice_and_clear_explicitly)
+{
+ RallyFixture f;const auto producer=f.Producer();
+ const std::array inputs{r::RallyInput{producer,f.account,1},r::RallyInput{producer,f.account,2},
+  r::RallyInput{producer,f.account,3},r::RallyInput{producer,f.account,6}};
+ f.Tick(0,inputs);BOOST_REQUIRE_EQUAL(f.batch.Receipts().size(),4u);
+ BOOST_CHECK(f.batch.Receipts()[0].status==r::RallyAcceptance::Accepted);
+ BOOST_CHECK(f.batch.Receipts()[1].status==r::RallyAcceptance::Accepted);
+ BOOST_CHECK(f.batch.Receipts()[2].status==r::RallyAcceptance::InvalidDestination);
+ BOOST_CHECK(f.batch.Receipts()[3].status==r::RallyAcceptance::Unreachable);
+ BOOST_TEST(f.world.Get<r::RallyPoint>(producer)->destination==2u);
+ const std::array clear{r::RallyInput{producer,f.account}};f.Tick(1,clear);
+ BOOST_CHECK(f.batch.Receipts()[0].status==r::RallyAcceptance::Cleared);
+ BOOST_TEST(f.world.Get<r::RallyPoint>(producer)->destination==n::InvalidCell);
+ f.Tick(2);BOOST_TEST(f.batch.Receipts().empty());
+}
+BOOST_AUTO_TEST_CASE(stale_dead_inactive_foreign_and_unenrolled_producers_reject)
+{
+ RallyFixture f;const auto stale=f.Producer(),dead=f.Producer(),inactive=f.Producer(),foreign=f.Producer(),missing=f.Producer();
+ f.world.Destroy(stale);const auto replacement=f.Producer();BOOST_CHECK(stale!=replacement);
+ f.world.Get<c::PendingDamage>(dead)->quantity=100;f.world.Get<p::Producer>(inactive)->active=false;
+ f.world.Remove<r::RallyPoint>(missing);
+ const std::array requests{r::RallyInput{stale,f.account,2},r::RallyInput{dead,f.account,2},
+  r::RallyInput{inactive,f.account,2},r::RallyInput{foreign,{},2},r::RallyInput{missing,f.account,2}};
+ f.Tick(0,requests);const auto results=f.batch.Receipts();BOOST_REQUIRE_EQUAL(results.size(),5u);
+ BOOST_CHECK(results[0].status==r::RallyAcceptance::InvalidProducer);BOOST_CHECK(results[1].status==r::RallyAcceptance::NotAlive);
+ BOOST_CHECK(results[2].status==r::RallyAcceptance::Inactive);BOOST_CHECK(results[3].status==r::RallyAcceptance::WrongOwner);
+ BOOST_CHECK(results[4].status==r::RallyAcceptance::InvalidProducer);
+ BOOST_TEST(f.world.Get<r::RallyPoint>(replacement)->destination==n::InvalidCell);
+ BOOST_TEST(f.world.Get<r::RallyPoint>(dead)->destination==n::InvalidCell);
+}
+BOOST_AUTO_TEST_CASE(rally_capacity_failure_is_explicit_and_does_not_apply_a_prefix)
+{
+ RallyFixture producers(2,1);producers.Producer();producers.Producer();
+ BOOST_CHECK_THROW(producers.Tick(0),std::length_error);BOOST_TEST(producers.scheduler.IsFailed());
+ RallyFixture destinations(2,4,1);const auto actor=destinations.Producer();
+ const std::array requests{r::RallyInput{actor,destinations.account,1},r::RallyInput{actor,destinations.account,2}};
+ BOOST_CHECK_THROW(destinations.Tick(0,requests),std::length_error);BOOST_TEST(destinations.scheduler.IsFailed());
+ BOOST_TEST(destinations.world.Get<r::RallyPoint>(actor)->destination==n::InvalidCell);
+}
+BOOST_AUTO_TEST_CASE(stale_account_cannot_authorize_a_producer_with_the_same_stale_owner)
+{
+ RallyFixture f;const auto actor=f.Producer();f.world.Get<r::RallyPoint>(actor)->destination=1;
+ const auto stale=f.account;f.world.Destroy(stale);const auto replacement=f.world.Create();
+ BOOST_CHECK(stale!=replacement);
+ const std::array requests{r::RallyInput{actor,stale,2},r::RallyInput{actor,replacement,2}};
+ f.Tick(0,requests);BOOST_REQUIRE_EQUAL(f.batch.Receipts().size(),2u);
+ for(const auto &receipt:f.batch.Receipts()) BOOST_CHECK(receipt.status==r::RallyAcceptance::WrongOwner);
+ BOOST_TEST(f.world.Get<r::RallyPoint>(actor)->destination==1u);
+}
+BOOST_AUTO_TEST_CASE(rally_chunk_states_and_ordered_receipts_match_across_workers)
+{
+ const auto run=[](std::size_t workers){
+  RallyFixture f(workers,2048);std::vector<r::RallyInput> inputs;std::vector<ecs::Entity> producers;
+  for(unsigned i=0;i<600;++i) {const auto actor=f.Producer();producers.push_back(actor);inputs.push_back({actor,f.account,1});}
+  for(auto actor:producers) {inputs.push_back({actor,f.account,2});inputs.push_back({actor,f.account,6});}
+  f.Tick(0,inputs);std::vector<std::uint64_t> state;
+  BOOST_REQUIRE_EQUAL(f.batch.Receipts().size(),1800u);
+  for(std::size_t i=0;i<f.batch.Receipts().size();++i)
+  {
+   const auto &receipt=f.batch.Receipts()[i];
+   const auto expected=i<600||(i-600)%2==0?r::RallyAcceptance::Accepted:r::RallyAcceptance::Unreachable;
+   BOOST_CHECK(receipt.status==expected);
+   state.insert(state.end(),{receipt.producer.index,receipt.producer.generation,static_cast<std::uint64_t>(receipt.status)});
+  }
+  for(auto actor:producers) {BOOST_TEST(f.world.Get<r::RallyPoint>(actor)->destination==2u);state.push_back(f.world.Get<r::RallyPoint>(actor)->destination);}
+  return state;
+ };
+ const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(completion_samples_latest_rally_then_existing_order_and_movement_execute_it)
+{
+ const auto run=[](std::size_t workers){
+  const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1};n::NavigationGrid grid(8,1,terrain);
+  ecs::World world;generalszh::GameSession::RegisterComponents(world);world.FinalizeComponents();
+  engine::jobs::JobSystem jobs({workers});
+  const std::array definitions{p::BuildDefinition{1,10,300ms,p::EntryKind::Unit,2,100,10}};
+  generalszh::GameSession game(world,jobs,definitions,grid,64);const engine::time::FixedStep step{10};game.Finalize(step);
+  const auto account=game.CreateAccount(100),producer=game.CreateProducer(account);
+  const std::array build{generalszh::BuildInput{producer,1}};const std::array oldRally{r::RallyInput{producer,account,2}};
+  generalszh::GameInputs inputs;inputs.builds=build;inputs.rally=oldRally;game.Execute({0,step},inputs);
+  ecs::Query<ecs::Read<p::ProducedUnit>> produced(world);std::vector<ecs::Entity> units;
+  auto collect=[&]{units.clear();produced.ForEachChunk([&](auto chunk){for(auto entity:chunk.Entities()) units.push_back(entity);});};
+  collect();BOOST_TEST(units.empty());game.Execute({1,step});collect();BOOST_TEST(units.empty());
+  // A clear followed by a new choice on the exact completion tick must beat
+  // the destination that existed at queue admission. Pack outputs agree.
+  const std::array latest{r::RallyInput{producer,account},r::RallyInput{producer,account,6}};
+  inputs={};inputs.rally=latest;game.Execute({2,step},inputs);collect();BOOST_REQUIRE_EQUAL(units.size(),2u);
+  std::vector<std::uint64_t> state;
+  for(auto unit:units) {
+   BOOST_CHECK(world.Get<o::UnitOrder>(unit)->kind==o::OrderKind::Move);
+   BOOST_TEST(world.Get<o::UnitOrder>(unit)->destination==6u);
+   state.insert(state.end(),{unit.index,unit.generation,world.Get<o::UnitOrder>(unit)->destination});
+  }
+  for(std::uint64_t tick=3;tick<=9;++tick) game.Execute({tick,step});
+  for(auto unit:units) {BOOST_TEST(world.Get<n::GridPosition>(unit)->cell==6u);state.push_back(world.Get<n::GridPosition>(unit)->cell);}
+  // Clear before another completion: output remains idle, previous units keep
+  // their own ordinary orders/state. No post-spawn rally sweep changes them.
+  const std::array clear{r::RallyInput{producer,account}};inputs={};inputs.builds=build;inputs.rally=clear;
+  game.Execute({10,step},inputs);game.Execute({11,step});game.Execute({12,step});collect();BOOST_REQUIRE_EQUAL(units.size(),4u);
+  unsigned idleAtSpawn=0;for(auto unit:units) if(world.Get<n::GridPosition>(unit)->cell==0) {
+   ++idleAtSpawn;BOOST_CHECK(world.Get<o::UnitOrder>(unit)->kind==o::OrderKind::None);
+   state.insert(state.end(),{unit.index,unit.generation,world.Get<n::GridPosition>(unit)->cell});
+  }
+  BOOST_TEST(idleAtSpawn==2u);return state;
+ };
+ const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}

@@ -1,0 +1,280 @@
+#include <boost/test/unit_test.hpp>
+
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.upgrades.object_scope.systems.object_upgrade_system;
+
+using engine::gameplay::rts::upgrades::CompletedUpgradeWord;
+using engine::gameplay::rts::upgrades::UpgradeWordOrdinal;
+using engine::gameplay::rts::upgrades::UpgradeWordOwner;
+using namespace engine::gameplay::rts::upgrades::object_scope;
+
+namespace
+{
+constexpr std::uint64_t Schema = UINT64_C(0xA55A5AA5C33C3CC3);
+
+ObjectUpgradeBinding Binding(const std::uint32_t definition)
+{
+	return {definition, definition / 64u,
+		std::uint64_t{1} << (definition % 64u), Schema};
+}
+
+struct RowSnapshot
+{
+	ecs::Entity entity{};
+	ecs::Entity owner{};
+	std::uint32_t ordinal{};
+	std::uint64_t completed{};
+
+	friend bool operator==(const RowSnapshot &, const RowSnapshot &) = default;
+};
+
+struct Scenario
+{
+	std::vector<RowSnapshot> rows;
+	std::vector<ObjectUpgradeReceipt> receipts;
+	std::size_t chunkCount{};
+};
+
+std::vector<RowSnapshot> CaptureRows(ecs::World &world, std::size_t &chunkCount)
+{
+	std::vector<RowSnapshot> result;
+	ecs::Query<ecs::Read<ObjectUpgradeWordMarker>,
+		ecs::Read<UpgradeWordOwner>, ecs::Read<UpgradeWordOrdinal>,
+		ecs::Read<CompletedUpgradeWord>> query(world);
+	query.ForEachChunk([&](auto chunk) {
+		++chunkCount;
+		const auto markers = chunk.template Get<ObjectUpgradeWordMarker>();
+		const auto owners = chunk.template Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		const auto completed = chunk.template Get<CompletedUpgradeWord>();
+		(void)markers;
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.push_back({chunk.Entities()[row], owners[row].value,
+				ordinals[row].value, completed[row].value});
+	});
+	std::sort(result.begin(), result.end(), [](const RowSnapshot &left,
+		const RowSnapshot &right) {
+		if (left.entity.index != right.entity.index)
+			return left.entity.index < right.entity.index;
+		return left.entity.generation < right.entity.generation;
+	});
+	return result;
+}
+
+Scenario RunScenario(const std::size_t workers)
+{
+	constexpr std::size_t targetCount = 48;
+	constexpr std::size_t wordCount = 2;
+	constexpr std::size_t wordRowCount = targetCount * wordCount + 1;
+	constexpr std::size_t entityIndexCapacity = 256;
+
+	ecs::World world(ecs::WorldConfig{256});
+	world.RegisterComponent<ObjectUpgradeTarget>();
+	world.RegisterComponent<ObjectUpgradeWordMarker>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.RegisterComponent<engine::gameplay::rts::upgrades::InProgressUpgradeWord>();
+	world.FinalizeComponents();
+
+	const ecs::Entity staleTarget = world.Create<ObjectUpgradeTarget>();
+	if (!world.Destroy(staleTarget))
+		throw std::logic_error("Object upgrade test could not create a stale target");
+	const ecs::Entity liveTarget = world.Create<ObjectUpgradeTarget>();
+	if (liveTarget.index != staleTarget.index || liveTarget.generation == staleTarget.generation)
+		throw std::logic_error("Object upgrade test did not exercise a reused full entity handle");
+
+	std::vector<ecs::Entity> targets;
+	targets.reserve(targetCount);
+	targets.push_back(liveTarget);
+	for (std::size_t index = 1; index < targetCount; ++index)
+		targets.push_back(world.Create<ObjectUpgradeTarget>());
+	for (const ecs::Entity target : targets)
+		*world.Get<ObjectUpgradeTarget>(target) = {
+			static_cast<std::uint32_t>(wordCount), Schema};
+
+	std::vector<ecs::Entity> liveWords;
+	liveWords.reserve(targetCount * wordCount);
+	for (const ecs::Entity target : targets)
+	{
+		for (std::uint32_t ordinal = 0; ordinal < wordCount; ++ordinal)
+		{
+			const ecs::Entity word = world.Create<ObjectUpgradeWordMarker,
+				UpgradeWordOwner, UpgradeWordOrdinal, CompletedUpgradeWord>();
+			world.Get<UpgradeWordOwner>(word)->value = target;
+			world.Get<UpgradeWordOrdinal>(word)->value = ordinal;
+			world.Get<CompletedUpgradeWord>(word)->value =
+				target == liveTarget && ordinal == 1 ? (std::uint64_t{1} << 1) : 0;
+			liveWords.push_back(word);
+		}
+	}
+	const ecs::Entity orphan = world.Create<ObjectUpgradeWordMarker,
+		UpgradeWordOwner, UpgradeWordOrdinal, CompletedUpgradeWord>();
+	world.Get<UpgradeWordOwner>(orphan)->value = staleTarget;
+	world.Get<UpgradeWordOrdinal>(orphan)->value = 0;
+	world.Get<CompletedUpgradeWord>(orphan)->value = UINT64_C(0x8000000000000000);
+
+	ObjectUpgradeBatch batch{entityIndexCapacity, 8};
+	batch.Append({liveTarget, Binding(7), ObjectUpgradeOperation::Grant, 11});
+	batch.Append({liveTarget, Binding(7), ObjectUpgradeOperation::Grant, 12});
+	batch.Append({staleTarget, Binding(7), ObjectUpgradeOperation::Grant, 10});
+	batch.Append({liveTarget, Binding(65), ObjectUpgradeOperation::Remove, 13});
+
+	ObjectUpgradeSystem system{world, batch, wordRowCount};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute({0, step});
+
+	if (world.IsAlive(orphan))
+		throw std::logic_error("Object upgrade orphan destruction was not committed");
+	if (!world.IsAlive(liveTarget) || world.Get<CompletedUpgradeWord>(liveWords[0]) == nullptr ||
+		world.Get<CompletedUpgradeWord>(liveWords[1]) == nullptr)
+		throw std::logic_error("Object upgrade test lost a live full entity handle");
+	if (world.Get<CompletedUpgradeWord>(liveWords[0])->value != (std::uint64_t{1} << 7) ||
+		world.Get<CompletedUpgradeWord>(liveWords[1])->value != 0)
+		throw std::logic_error("Object upgrade grant/remove result was not applied");
+
+	Scenario result;
+	const auto appendReceipts = [&](const std::size_t expected) {
+		const auto receipts = batch.Receipts();
+		if (receipts.size() != expected)
+			throw std::logic_error("Object upgrade receipt count was not deterministic");
+		result.receipts.insert(result.receipts.end(), receipts.begin(), receipts.end());
+	};
+	appendReceipts(4);
+
+	batch.Reset();
+	batch.Append({liveTarget, Binding(7), ObjectUpgradeOperation::Remove, 20});
+	batch.Append({liveTarget, Binding(65), ObjectUpgradeOperation::Grant, 21});
+	scheduler.Execute({1, step});
+	appendReceipts(2);
+
+	batch.Reset();
+	batch.Append({liveTarget, Binding(65), ObjectUpgradeOperation::Grant, 22});
+	scheduler.Execute({2, step});
+	appendReceipts(1);
+
+	if (world.Get<CompletedUpgradeWord>(liveWords[0])->value != 0 ||
+		world.Get<CompletedUpgradeWord>(liveWords[1])->value != (std::uint64_t{1} << 1))
+		throw std::logic_error("Object upgrade batch reuse produced the wrong final mask");
+	for (const ecs::Entity word : liveWords)
+		if (world.Has<engine::gameplay::rts::upgrades::InProgressUpgradeWord>(word))
+			throw std::logic_error("Object upgrade system created a competing progress word");
+
+	result.rows = CaptureRows(world, result.chunkCount);
+	return result;
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(real_object_upgrade_system_is_deterministic_and_generation_safe)
+{
+	const Scenario expected = RunScenario(1);
+	BOOST_REQUIRE(expected.chunkCount > 1u);
+	BOOST_REQUIRE_EQUAL(expected.receipts.size(), 7u);
+	BOOST_TEST(expected.receipts[0].target.index == 0u);
+	BOOST_TEST(expected.receipts[0].target.generation != expected.receipts[1].target.generation);
+	BOOST_CHECK(expected.receipts[0].transition == ObjectUpgradeTransition::RejectedStaleTarget);
+	BOOST_CHECK(expected.receipts[0].word == ecs::Entity{});
+	BOOST_CHECK(expected.receipts[1].transition == ObjectUpgradeTransition::Granted);
+	BOOST_CHECK(expected.receipts[2].transition == ObjectUpgradeTransition::AlreadyGranted);
+	BOOST_CHECK(expected.receipts[3].transition == ObjectUpgradeTransition::Removed);
+	BOOST_CHECK(expected.receipts[4].transition == ObjectUpgradeTransition::Removed);
+	BOOST_CHECK(expected.receipts[5].transition == ObjectUpgradeTransition::Granted);
+	BOOST_CHECK(expected.receipts[6].transition == ObjectUpgradeTransition::AlreadyGranted);
+	BOOST_CHECK(RunScenario(2).rows == expected.rows);
+	BOOST_CHECK(RunScenario(2).receipts == expected.receipts);
+	BOOST_CHECK(RunScenario(4).rows == expected.rows);
+	BOOST_CHECK(RunScenario(4).receipts == expected.receipts);
+}
+
+BOOST_AUTO_TEST_CASE(zero_word_scope_rejects_stray_rows_as_malformed_live_state)
+{
+	ecs::World world;
+	world.RegisterComponent<ObjectUpgradeTarget>();
+	world.RegisterComponent<ObjectUpgradeWordMarker>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.FinalizeComponents();
+	const ecs::Entity target = world.Create<ObjectUpgradeTarget>();
+	world.Get<ObjectUpgradeTarget>(target)->schemaHash = Schema;
+	const ecs::Entity stray = world.Create<ObjectUpgradeWordMarker,
+		UpgradeWordOwner, UpgradeWordOrdinal, CompletedUpgradeWord>();
+	world.Get<UpgradeWordOwner>(stray)->value = target;
+	world.Get<UpgradeWordOrdinal>(stray)->value = 1;
+
+	ObjectUpgradeBatch batch{64, 1};
+	ObjectUpgradeSystem system{world, batch, 2};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_CHECK_THROW(scheduler.Execute({0, step}), std::logic_error);
+	BOOST_TEST(world.IsAlive(stray));
+}
+
+BOOST_AUTO_TEST_CASE(zero_word_scope_without_rows_is_a_valid_empty_scope)
+{
+	ecs::World world;
+	world.RegisterComponent<ObjectUpgradeTarget>();
+	world.RegisterComponent<ObjectUpgradeWordMarker>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.FinalizeComponents();
+	const ecs::Entity target = world.Create<ObjectUpgradeTarget>();
+	world.Get<ObjectUpgradeTarget>(target)->schemaHash = Schema;
+
+	ObjectUpgradeBatch batch{64, 1};
+	ObjectUpgradeSystem system{world, batch, 1};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute({0, step});
+	BOOST_TEST(batch.IsPublished());
+	BOOST_TEST(batch.Receipts().empty());
+}
+
+BOOST_AUTO_TEST_CASE(live_scope_rejects_stale_schema_before_writing_words)
+{
+	ecs::World world;
+	world.RegisterComponent<ObjectUpgradeTarget>();
+	world.RegisterComponent<ObjectUpgradeWordMarker>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.FinalizeComponents();
+	const ecs::Entity target = world.Create<ObjectUpgradeTarget>();
+	world.Get<ObjectUpgradeTarget>(target)->wordCount = 1;
+	world.Get<ObjectUpgradeTarget>(target)->schemaHash = Schema;
+	const ecs::Entity word = world.Create<ObjectUpgradeWordMarker,
+		UpgradeWordOwner, UpgradeWordOrdinal, CompletedUpgradeWord>();
+	world.Get<UpgradeWordOwner>(word)->value = target;
+
+	ObjectUpgradeBatch batch{64, 1};
+	batch.Append({target, {0, 0, 1, Schema + 1}, ObjectUpgradeOperation::Grant, 1});
+	ObjectUpgradeSystem system{world, batch, 1};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_CHECK_THROW(scheduler.Execute({0, step}), std::invalid_argument);
+	BOOST_TEST(world.Get<CompletedUpgradeWord>(word)->value == 0ull);
+}

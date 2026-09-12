@@ -1,0 +1,186 @@
+#define BOOST_TEST_MODULE GeneralsZHRadarZeroHourPolicy
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory_resource>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.events.storage.event_batch;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.rts.power.components.power_ledger;
+import engine.gameplay.rts.power.components.power_source;
+import engine.gameplay.rts.radar.components.radar_availability;
+import engine.gameplay.rts.radar.components.radar_provider_contribution;
+import engine.gameplay.rts.radar.events.radar_availability_transition;
+import engine.gameplay.rts.radar.systems.radar_availability_system;
+import engine.gameplay.rts.upgrades.components.upgrade_words;
+import engine.gameplay.rts.upgrades.object_scope.components.object_upgrade_scope;
+import games.generalszh.gameplay.construction.components.structure;
+import games.generalszh.gameplay.power.components.power_state;
+import games.generalszh.gameplay.power.data.power_frame;
+import games.generalszh.gameplay.power.systems.power_system;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.radar.components.radar_provider_binding;
+import games.generalszh.gameplay.radar.definitions.radar_provider_definition;
+import games.generalszh.gameplay.radar.policies.zero_hour_radar_policy;
+
+namespace
+{
+using engine::gameplay::combat::LifeState;
+using engine::gameplay::rts::power::PowerContribution;
+using engine::gameplay::rts::power::PowerLedger;
+using engine::gameplay::rts::power::PowerSource;
+using engine::gameplay::rts::radar::RadarAvailability;
+using engine::gameplay::rts::radar::RadarAvailabilityLimits;
+using engine::gameplay::rts::radar::RadarAvailabilitySystemT;
+using engine::gameplay::rts::radar::RadarAvailabilityTransition;
+using engine::gameplay::rts::radar::RadarProviderContribution;
+using engine::gameplay::rts::upgrades::CompletedUpgradeWord;
+using engine::gameplay::rts::upgrades::UpgradeWordOrdinal;
+using engine::gameplay::rts::upgrades::UpgradeWordOwner;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeTarget;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeWordMarker;
+using generalszh::construction::Structure;
+using generalszh::power::PowerFrame;
+using generalszh::power::PowerPolicy;
+using generalszh::power::PowerState;
+using generalszh::power::PowerSystem;
+using generalszh::production::ProducedUnit;
+using generalszh::radar::RadarGrantAuthority;
+using generalszh::radar::RadarProviderBinding;
+using generalszh::radar::RadarProviderDefinitions;
+using generalszh::radar::RadarProviderDefinition;
+using generalszh::radar::RadarProviderGrant;
+using generalszh::radar::RadarUpgradeBinding;
+using generalszh::radar::ZeroHourRadarPolicy;
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<RadarAvailability>();
+	world.RegisterComponent<RadarProviderContribution>();
+	world.RegisterComponent<RadarProviderBinding>();
+	world.RegisterComponent<RadarProviderGrant>();
+	world.RegisterComponent<LifeState>();
+	world.RegisterComponent<Structure>();
+	world.RegisterComponent<ProducedUnit>();
+	world.RegisterComponent<ObjectUpgradeTarget>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<ObjectUpgradeWordMarker>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.RegisterComponent<PowerLedger>();
+	world.RegisterComponent<PowerState>();
+	world.RegisterComponent<PowerPolicy>();
+	world.RegisterComponent<PowerSource>();
+	world.RegisterComponent<PowerContribution>();
+	world.FinalizeComponents();
+}
+
+struct Harness final
+{
+	std::array<std::byte, 8192> storage{};
+	std::pmr::monotonic_buffer_resource memory{storage.data(), storage.size()};
+	engine::events::RecordedBatch<RadarAvailabilityTransition> recorded{16, memory};
+	engine::events::PublishedBatch<RadarAvailabilityTransition> published{16, 1, memory};
+};
+
+std::vector<std::uint64_t> Run(const std::uint32_t workers)
+{
+	ecs::World world{ecs::WorldConfig{512}};
+	RegisterComponents(world);
+	const auto accountA = world.Create<RadarAvailability, PowerLedger, PowerState, PowerPolicy>();
+	const auto provider = world.Create<RadarProviderBinding, RadarProviderGrant,
+		RadarProviderContribution, LifeState, Structure, ObjectUpgradeTarget>();
+	world.Get<Structure>(provider)->account = accountA;
+	world.Get<Structure>(provider)->complete = true;
+	world.Get<RadarProviderBinding>(provider)->definitionId = 0;
+	world.Get<ObjectUpgradeTarget>(provider)->wordCount = 1;
+	world.Get<ObjectUpgradeTarget>(provider)->schemaHash = 55;
+	const auto word = world.Create<UpgradeWordOwner, UpgradeWordOrdinal,
+		ObjectUpgradeWordMarker, CompletedUpgradeWord>();
+	*world.Get<UpgradeWordOwner>(word) = {provider};
+	*world.Get<UpgradeWordOrdinal>(word) = {0};
+	*world.Get<CompletedUpgradeWord>(word) = {1};
+	const std::array definitions{RadarProviderDefinition{
+		0, RadarUpgradeBinding{0, 0, 1, 55}, RadarGrantAuthority::CreationGrant, false, true}};
+	const RadarProviderDefinitions catalog{definitions};
+	ZeroHourRadarPolicy policy{catalog};
+	Harness harness;
+	RadarAvailabilitySystemT<ZeroHourRadarPolicy> radar(world, policy,
+		RadarAvailabilityLimits{4, 4, 4, 8}, harness.recorded, harness.published);
+	PowerFrame frame{512};
+	PowerSystem power(world, frame);
+	ecs::SystemRegistry registry;
+	registry.Register(power);
+	registry.Register(radar);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	std::vector<std::uint64_t> result;
+	const auto capture = [&](const std::uint64_t tick, const ecs::Entity accountB = {}) {
+		result.push_back(tick);
+		for (const auto account : {accountA, accountB})
+		{
+			if (!account.IsValid()) continue;
+			const auto state = *world.Get<RadarAvailability>(account);
+			result.insert(result.end(), {account.index, account.generation,
+				static_cast<std::uint64_t>(state.producers),
+				static_cast<std::uint64_t>(state.resistantProducers), state.suppressed});
+		}
+		BOOST_REQUIRE(harness.published.IsPublished());
+		result.push_back(harness.published.Values().size());
+		for (const auto transition : harness.published.Values())
+			result.insert(result.end(), {transition.account.index, transition.account.generation,
+				transition.before, transition.after});
+		harness.published.Release();
+	};
+
+	scheduler.Execute({0, step});
+	capture(0);
+	BOOST_TEST(world.Get<RadarAvailability>(accountA)->producers == 1);
+	BOOST_TEST(world.Get<RadarAvailability>(accountA)->resistantProducers == 0);
+	BOOST_TEST(world.Get<RadarProviderGrant>(provider)->granted);
+	world.Get<CompletedUpgradeWord>(word)->value = 0;
+	scheduler.Execute({1, step});
+	capture(1);
+	BOOST_TEST(world.Get<RadarAvailability>(accountA)->producers == 1);
+	BOOST_TEST(world.Get<RadarProviderGrant>(provider)->granted);
+
+	world.Get<Structure>(provider)->complete = false;
+	scheduler.Execute({2, step});
+	capture(2);
+	BOOST_TEST(world.Get<RadarAvailability>(accountA)->producers == 0);
+	world.Get<Structure>(provider)->complete = true;
+	const auto accountB = world.Create<RadarAvailability, PowerLedger, PowerState, PowerPolicy>();
+	world.Get<Structure>(provider)->account = accountB;
+	scheduler.Execute({3, step});
+	capture(3, accountB);
+	BOOST_TEST(world.Get<RadarAvailability>(accountB)->producers == 1);
+
+	const auto brownoutSource = world.Create<PowerSource, PowerContribution, LifeState>();
+	*world.Get<PowerSource>(brownoutSource) = {accountB, -1, true};
+	scheduler.Execute({4, step});
+	capture(4, accountB);
+	BOOST_TEST(world.Get<PowerState>(accountB)->brownout);
+	BOOST_TEST(world.Get<RadarAvailability>(accountB)->suppressed);
+	world.Destroy(brownoutSource);
+	scheduler.Execute({5, step});
+	capture(5, accountB);
+	return result;
+}
+}
+
+// This is a one-provider policy/system fixture. It validates the typed
+// Zero Hour projection and its worker determinism, not the full game root.
+BOOST_AUTO_TEST_CASE(zero_hour_policy_projection_is_worker_deterministic)
+{
+	const auto one = Run(1);
+	const auto two = Run(2);
+	const auto four = Run(4);
+	BOOST_TEST(one == two, boost::test_tools::per_element());
+	BOOST_TEST(one == four, boost::test_tools::per_element());
+}

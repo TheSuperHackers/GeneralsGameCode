@@ -1,0 +1,18 @@
+#define BOOST_TEST_MODULE BaseRepairContent
+#include <boost/test/included/unit_test.hpp>
+#include <string_view>
+import games.generalszh.adapters.content.repair.base_repair_definition;
+BOOST_AUTO_TEST_CASE(base_repair_shipped_rules_and_explicit_enrollment)
+{
+    using namespace generalszh::content;
+    // GameData.ini 392-393; explicit no-field module appears in faction buildings.
+    constexpr std::string_view data="GameData\nBaseRegenHealthPercentPerSecond = 0.3%\nBaseRegenDelay = 3000\nEnd\n";
+    const auto object=ReadNamedBlock("Object Building\nBehavior = BaseRegenerateUpdate Tag\nEnd\nEnd\n","Object","Building");
+    const auto result=DecodeBaseRepair(data,object);
+    BOOST_TEST(result.enabled); BOOST_TEST(result.definition.rateNumerator==3u);
+    BOOST_TEST(result.definition.rateDenominator==1000u); BOOST_TEST(result.definition.damageDelay.count()==3000000000ll);
+    BOOST_TEST(result.definition.interval.count()==100000000ll);
+    BOOST_TEST(!DecodeBaseRepair(data,ReadNamedBlock("Object Empty\nEnd\n","Object","Empty")).enabled);
+    const auto unsupported=ReadNamedBlock("Object Building\nBehavior = BaseRegenerateUpdate Tag\nTriggeredBy = Upgrade_Test\nEnd\nEnd\n","Object","Building");
+    BOOST_CHECK_THROW(DecodeBaseRepair(data,unsupported),std::invalid_argument);
+}

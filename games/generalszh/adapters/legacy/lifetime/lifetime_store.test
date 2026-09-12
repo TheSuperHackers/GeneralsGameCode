@@ -1,0 +1,303 @@
+#define BOOST_TEST_MODULE GeneralsZHLifetimeStore
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+#include <memory>
+#include <vector>
+#include "lifetime_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+#include <array>
+import games.generalszh.simulation.reset.persistent_world_reset;
+import engine.gameplay.lifetime.components.expiration;
+import games.generalszh.gameplay.lifetime.components.lifetime_dispatch;
+import engine.ecs.query.query;
+
+using namespace generalszh::legacy;
+
+BOOST_AUTO_TEST_CASE(injected_stores_count_only_their_own_leases)
+{
+	generalszh::GameplayState state;
+	{
+	LifetimeStore first(state), second(state);
+	{
+		LifetimeLease timer(first);
+		timer.SetDeadline(31);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_TEST(first.Count() == 1u);
+		BOOST_TEST(second.Count() == 0u);
+		second.Reset(); // Does not reset another owner's live state.
+		BOOST_TEST(timer.Deadline() == 31u);
+	}
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error); // Cached execution still borrows this World.
+	LifetimeLease next(second);
+	BOOST_TEST(next.Deadline() == 0u);
+	}
+	state.Reset();
+}
+
+BOOST_AUTO_TEST_CASE(leases_have_independent_deadlines_and_release_timer_entities)
+{
+	LifetimeStore store;
+	BOOST_TEST(store.Count() == 0u);
+	{
+		LifetimeLease first(store);
+		first.SetDeadline(17);
+		{
+			LifetimeLease second(store);
+			second.SetDeadline(29);
+			BOOST_TEST(store.Count() == 2u);
+			BOOST_TEST(first.Deadline() == 17u);
+			BOOST_TEST(second.Deadline() == 29u);
+		}
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(first.Deadline() == 17u);
+	}
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(reset_requires_all_modules_released)
+{
+	LifetimeStore store;
+	{
+		LifetimeLease timer(store);
+		timer.SetDeadline(81);
+		BOOST_CHECK_THROW(store.Reset(), std::logic_error);
+		BOOST_TEST(timer.Deadline() == 81u);
+	}
+	BOOST_CHECK_NO_THROW(store.Reset());
+	LifetimeLease nextGame(store);
+	BOOST_TEST(nextGame.Deadline() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(construction_unwind_releases_timer_entity)
+{
+	LifetimeStore store;
+	try
+	{
+		LifetimeLease timer(store);
+		timer.SetDeadline(44);
+		throw std::runtime_error("later module initialization failed");
+	}
+	catch (const std::runtime_error &) {}
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(large_timer_set_survives_chunk_growth_and_release)
+{
+	LifetimeStore store;
+	std::vector<std::unique_ptr<LifetimeLease>> timers;
+	for (std::uint32_t index = 0; index != 4096; ++index)
+	{
+		auto timer = std::make_unique<LifetimeLease>(store);
+		timer->SetDeadline(index + 10);
+		timers.push_back(std::move(timer));
+	}
+	for (std::size_t index = 0; index < timers.size(); index += 2)
+		timers[index].reset();
+	for (std::size_t index = 1; index < timers.size(); index += 2)
+		BOOST_TEST(timers[index]->Deadline() == index + 10);
+	BOOST_TEST(store.Count() == 2048u);
+	timers.clear();
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(ordered_effects_are_one_shot_and_reentrant_reset_invalidates_old_results)
+{
+	LifetimeStore store;
+	LifetimeLease cleanup(store, 1, true), first(store, 9), reset(store, 3);
+	for (auto *timer : {&cleanup, &first, &reset}) timer->SetDeadline(1);
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto effects = store.Execute(1);
+	BOOST_REQUIRE_EQUAL(effects.size(), 3u);
+	BOOST_TEST(effects[0].object == 3u);
+	BOOST_TEST(effects[1].object == 9u);
+	BOOST_TEST(effects[2].destroy);
+	reset.SetDeadline(5);
+	BOOST_TEST(!store.Consume(effects[0]));
+	BOOST_TEST(store.Consume(effects[1]));
+	BOOST_TEST(!store.Consume(effects[1]));
+	BOOST_TEST(store.Consume(effects[2]));
+	store.FinishEffects();
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	BOOST_TEST(store.Execute(2).empty());
+	store.FinishEffects();
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto later = store.Execute(5);
+	BOOST_REQUIRE_EQUAL(later.size(), 1u);
+	BOOST_TEST(later[0].object == 3u);
+	BOOST_TEST(store.Consume(later[0]));
+	store.FinishEffects();
+}
+
+BOOST_AUTO_TEST_CASE(stale_effect_cannot_target_reused_entity_and_new_timers_wait_for_next_boundary)
+{
+	LifetimeStore store;
+	auto timer = std::make_unique<LifetimeLease>(store, 11);
+	timer->SetDeadline(1);
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto effects = store.Execute(1);
+	BOOST_REQUIRE_EQUAL(effects.size(), 1u);
+	const auto old = effects[0];
+	timer.reset();
+	auto replacement = std::make_unique<LifetimeLease>(store, 22);
+	replacement->SetDeadline(1);
+	BOOST_TEST(!store.Consume(old));
+	store.FinishEffects();
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto next = store.Execute(2);
+	BOOST_REQUIRE_EQUAL(next.size(), 1u);
+	BOOST_TEST(next[0].object == 22u);
+	BOOST_TEST(next[0].generation != old.generation);
+	BOOST_TEST(store.Consume(next[0]));
+	store.FinishEffects();
+}
+
+BOOST_AUTO_TEST_CASE(failed_effect_application_cannot_replay_and_unconsumed_results_are_fatal)
+{
+	LifetimeStore store;
+	LifetimeLease first(store, 1), second(store, 2);
+	first.SetDeadline(1); second.SetDeadline(1);
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto effects = store.Execute(1);
+	BOOST_REQUIRE_EQUAL(effects.size(), 2u);
+	BOOST_TEST(store.Consume(effects[0]));
+	BOOST_CHECK_THROW(store.FinishEffects(), std::logic_error);
+	BOOST_CHECK_THROW(store.Consume(effects[0]), std::logic_error);
+	BOOST_CHECK_THROW(store.Execute(1), std::logic_error);
+	BOOST_CHECK_THROW(store.PrepareInputs(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(world_reset_rebinds_empty_execution_and_missing_participant_fails_preflight)
+{
+	generalszh::GameplayWorkers workers(2);
+	generalszh::GameplayState state;
+	LifetimeStore store(state, workers);
+	BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, {}), std::logic_error);
+	const auto participant = store.ResetParticipant();
+	generalszh::PersistentWorldReset::Execute(state, {&participant, 1});
+	LifetimeLease timer(store, 1);
+	timer.SetDeadline(2);
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto effects = store.Execute(2);
+	BOOST_REQUIRE_EQUAL(effects.size(), 1u);
+	BOOST_TEST(store.Consume(effects[0]));
+	store.FinishEffects();
+}
+
+BOOST_AUTO_TEST_CASE(real_timer_composition_matches_entity_ids_values_and_effect_order_at_1_2_4_workers)
+{
+	auto run = [](std::size_t count) {
+		generalszh::GameplayWorkers workers(count);
+		generalszh::GameplayState state;
+		LifetimeStore store(state, workers);
+		std::vector<std::unique_ptr<LifetimeLease>> timers;
+		for (std::uint32_t index = 0; index != 4096; ++index)
+		{
+			auto timer = std::make_unique<LifetimeLease>(store, 4096 - index, index % 3 == 0);
+			timer->SetDeadline(index % 7);
+			timers.push_back(std::move(timer));
+		}
+		std::vector<std::array<std::uint64_t, 7>> result;
+		for (std::uint64_t tick = 0; tick != 9; ++tick)
+		{
+			for (auto &input : store.PrepareInputs()) input.enabled = tick >= 7 || input.object % 2 == 0;
+			for (const auto &effect : store.Execute(tick))
+			{
+				BOOST_TEST(store.Consume(effect));
+				result.push_back({tick, effect.object, effect.index, effect.generation, effect.revision,
+					effect.destroy, timers[4096 - effect.object]->Deadline()});
+			}
+			store.FinishEffects();
+		}
+		BOOST_TEST(result.size() == 4096u);
+		ecs::Query<ecs::Read<engine::gameplay::lifetime::Expiration>,
+			ecs::Read<generalszh::lifetime::LifetimeTarget>, ecs::Read<generalszh::lifetime::LifetimeDispatch>> query(state.World());
+		std::size_t chunks = 0;
+		query.ForEachChunk([&](auto chunk) {
+			++chunks;
+			const auto expirations = chunk.template Get<engine::gameplay::lifetime::Expiration>();
+			const auto targets = chunk.template Get<generalszh::lifetime::LifetimeTarget>();
+			const auto dispatch = chunk.template Get<generalszh::lifetime::LifetimeDispatch>();
+			for (std::size_t row = 0; row != chunk.Count(); ++row)
+			{
+				BOOST_CHECK(expirations[row].state == engine::gameplay::lifetime::ExpirationState::Inactive);
+				BOOST_TEST(!dispatch[row].ready);
+				result.push_back({9, targets[row].object, chunk.Entities()[row].index, chunk.Entities()[row].generation,
+					dispatch[row].revision, static_cast<std::uint64_t>(expirations[row].state), expirations[row].deadline});
+			}
+		});
+		BOOST_TEST(chunks > 1u);
+		return result;
+	};
+	const auto expected = run(1);
+	BOOST_CHECK(run(2) == expected);
+	BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(effect_tokens_cannot_survive_world_replacement_and_identity_remapping_cancels_old_results)
+{
+	LifetimeStore store;
+	LifetimeEffect old;
+	{
+		LifetimeLease timer(store, 7);
+		timer.SetDeadline(1);
+		for (auto &input : store.PrepareInputs()) input.enabled = true;
+		old = store.Execute(1)[0];
+		BOOST_TEST(store.Consume(old));
+		store.FinishEffects();
+	}
+	store.Reset();
+	LifetimeLease timer(store, 7);
+	timer.SetDeadline(1);
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto current = store.Execute(1)[0];
+	BOOST_TEST(current.index == old.index);
+	BOOST_TEST(current.generation == old.generation);
+	BOOST_TEST(current.revision == old.revision);
+	BOOST_TEST(current.boundary != old.boundary);
+	BOOST_TEST(!store.Consume(old));
+	timer.SetObject(8);
+	BOOST_TEST(!store.Consume(current));
+	store.FinishEffects();
+	for (auto &input : store.PrepareInputs()) input.enabled = true;
+	const auto remapped = store.Execute(2)[0];
+	BOOST_TEST(remapped.object == 8u);
+	BOOST_TEST(store.Consume(remapped));
+	store.FinishEffects();
+}
+
+BOOST_AUTO_TEST_CASE(capacity_and_bad_inputs_fail_without_silent_recovery)
+{
+	generalszh::GameplayWorkers workers(1);
+	generalszh::GameplayState state;
+	LifetimeStore store(state, workers, {.capacity = 1});
+	LifetimeLease timer(store, 1);
+	BOOST_CHECK_THROW(LifetimeLease(store, 2), std::length_error);
+	BOOST_TEST(store.Count() == 1u);
+	timer.SetDeadline(1);
+	auto inputs = store.PrepareInputs();
+	BOOST_REQUIRE_EQUAL(inputs.size(), 1u);
+	inputs[0].object = 99;
+	BOOST_CHECK_THROW(store.Execute(1), std::logic_error);
+	BOOST_CHECK_THROW(store.PrepareInputs(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(execution_rejects_foreign_timer_ownership_in_the_same_world)
+{
+	generalszh::GameplayState state;
+	LifetimeStore first(state), second(state);
+	LifetimeLease firstTimer(first, 1), secondTimer(second, 2);
+	firstTimer.SetDeadline(1); secondTimer.SetDeadline(1);
+	BOOST_CHECK_THROW(first.PrepareInputs(), std::logic_error);
+	BOOST_CHECK_THROW(first.PrepareInputs(), std::logic_error);
+	BOOST_TEST(secondTimer.Deadline() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(failed_lifetime_startup_releases_cached_world_binding)
+{
+	generalszh::GameplayWorkers workers(1);
+	generalszh::GameplayState state;
+	auto construct = [&] { LifetimeStore store(state, workers, {.ticksPerSecond = 0}); };
+	BOOST_CHECK_THROW(construct(), std::invalid_argument);
+	BOOST_CHECK_NO_THROW(state.Reset());
+}

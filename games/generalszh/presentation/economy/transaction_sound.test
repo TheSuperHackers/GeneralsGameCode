@@ -1,0 +1,36 @@
+#define BOOST_TEST_MODULE GeneralsZHEconomyPresentation
+#include <boost/test/included/unit_test.hpp>
+#include <memory_resource>
+#include <type_traits>
+import games.generalszh.presentation.economy.transaction_sound;
+import engine.events.storage.event_batch;
+using namespace engine::events;
+using namespace generalszh::presentation;
+
+BOOST_AUTO_TEST_CASE(transaction_sound_is_an_explicit_transient_presentation_schema)
+{
+	MessageRegistry registry;
+	registry.Register<TransactionSound>(); registry.Finalize();
+	const auto &info = registry.Get(registry.Id<TransactionSound>());
+	BOOST_TEST(info.stableName == "games.generalszh.presentation.transaction_sound");
+	BOOST_TEST(info.version == 1u);
+	BOOST_CHECK(info.kind == MessageKind::Presentation);
+	BOOST_CHECK(info.recording == RecordPolicy::Transient);
+	static_assert(std::is_trivially_copyable_v<TransactionSound>);
+}
+BOOST_AUTO_TEST_CASE(transaction_sound_requests_keep_player_and_kind_in_typed_ordered_batches)
+{
+	auto &memory = *std::pmr::new_delete_resource();
+	RecordedBatch<TransactionSound> pending(2, memory);
+	PublishedBatch<TransactionSound> published(2, 1, memory);
+	pending.Begin({{1, 0}, 0, 0, 0});
+	pending.Emplace(TransactionSound{-1, TransactionSoundKind::Deposit});
+	pending.Emplace(TransactionSound{4, TransactionSoundKind::Withdraw});
+	pending.Seal();
+	RecordedBatch<TransactionSound> *sources[]{&pending};
+	published.Publish({1, 0}, sources);
+	BOOST_TEST(published.Values()[0].playerIndex == -1);
+	BOOST_CHECK(published.Values()[0].kind == TransactionSoundKind::Deposit);
+	BOOST_TEST(published.Values()[1].playerIndex == 4);
+	BOOST_CHECK(published.Values()[1].kind == TransactionSoundKind::Withdraw);
+}

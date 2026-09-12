@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+import engine.ecs.core.world;
+import engine.gameplay.concealment.components.detection_state;
+
+BOOST_AUTO_TEST_CASE(detection_state_starts_enabled_at_the_first_scan_boundary)
+{
+    ecs::World world; world.RegisterComponent<engine::gameplay::concealment::DetectionState>(); world.FinalizeComponents();
+    const auto entity = world.Create<engine::gameplay::concealment::DetectionState>();
+    const auto &state = *world.Get<engine::gameplay::concealment::DetectionState>(entity);
+    BOOST_TEST(state.enabled);
+    BOOST_TEST(state.nextScanTick == 0u);
+    BOOST_CHECK(ecs::ComponentTraits<engine::gameplay::concealment::DetectionState>::Persistence == ecs::PersistencePolicy::Serializable);
+}

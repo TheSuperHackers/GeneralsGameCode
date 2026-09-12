@@ -1,0 +1,540 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
+#include <string_view>
+
+import engine.ecs.system.system;
+
+namespace ecs_system_test
+{
+
+struct Position
+{
+	int value{0};
+};
+
+struct Velocity
+{
+	int value{0};
+};
+
+struct AlphaSystem
+{
+	using Query = ecs::Query<ecs::Read<Position>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &)
+	{
+		visited += chunk.Count();
+	}
+
+	std::size_t visited{0};
+};
+
+struct BetaSystem
+{
+	using Query = ecs::Query<ecs::Read<Velocity>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &)
+	{
+		visited += chunk.Count();
+	}
+
+	std::size_t visited{0};
+};
+
+struct ReadPositionSystem
+{
+	using Query = ecs::Query<ecs::Read<Position>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct ReadPositionAgainSystem
+{
+	using Query = ecs::Query<ecs::Read<Position>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct WritePositionSystem
+{
+	using Query = ecs::Query<ecs::Write<Position>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct ReadVelocitySystem
+{
+	using Query = ecs::Query<ecs::Read<Velocity>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct WriteVelocitySystem
+{
+	using Query = ecs::Query<ecs::Write<Velocity>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct LateSystem
+{
+	using Query = ecs::Query<ecs::Read<Position>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct CohesiveAccessSystem
+{
+	using Query = ecs::Query<ecs::Read<Position>, ecs::OptionalWrite<Velocity>>;
+	using AuxiliaryAccess = ecs::Query<ecs::Write<Position>, ecs::Read<Velocity>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+#define ECS_HIGH_COMPONENTS(X) \
+	X(Extra00, "tests.system.zz.extra.00") \
+	X(Extra01, "tests.system.zz.extra.01") \
+	X(Extra02, "tests.system.zz.extra.02") \
+	X(Extra03, "tests.system.zz.extra.03") \
+	X(Extra04, "tests.system.zz.extra.04") \
+	X(Extra05, "tests.system.zz.extra.05") \
+	X(Extra06, "tests.system.zz.extra.06") \
+	X(Extra07, "tests.system.zz.extra.07") \
+	X(Extra08, "tests.system.zz.extra.08") \
+	X(Extra09, "tests.system.zz.extra.09") \
+	X(Extra10, "tests.system.zz.extra.10") \
+	X(Extra11, "tests.system.zz.extra.11") \
+	X(Extra12, "tests.system.zz.extra.12") \
+	X(Extra13, "tests.system.zz.extra.13") \
+	X(Extra14, "tests.system.zz.extra.14") \
+	X(Extra15, "tests.system.zz.extra.15") \
+	X(Extra16, "tests.system.zz.extra.16") \
+	X(Extra17, "tests.system.zz.extra.17") \
+	X(Extra18, "tests.system.zz.extra.18") \
+	X(Extra19, "tests.system.zz.extra.19") \
+	X(Extra20, "tests.system.zz.extra.20") \
+	X(Extra21, "tests.system.zz.extra.21") \
+	X(Extra22, "tests.system.zz.extra.22") \
+	X(Extra23, "tests.system.zz.extra.23") \
+	X(Extra24, "tests.system.zz.extra.24") \
+	X(Extra25, "tests.system.zz.extra.25") \
+	X(Extra26, "tests.system.zz.extra.26") \
+	X(Extra27, "tests.system.zz.extra.27") \
+	X(Extra28, "tests.system.zz.extra.28") \
+	X(Extra29, "tests.system.zz.extra.29") \
+	X(Extra30, "tests.system.zz.extra.30") \
+	X(Extra31, "tests.system.zz.extra.31") \
+	X(Extra32, "tests.system.zz.extra.32") \
+	X(Extra33, "tests.system.zz.extra.33") \
+	X(Extra34, "tests.system.zz.extra.34") \
+	X(Extra35, "tests.system.zz.extra.35") \
+	X(Extra36, "tests.system.zz.extra.36") \
+	X(Extra37, "tests.system.zz.extra.37") \
+	X(Extra38, "tests.system.zz.extra.38") \
+	X(Extra39, "tests.system.zz.extra.39") \
+	X(Extra40, "tests.system.zz.extra.40") \
+	X(Extra41, "tests.system.zz.extra.41") \
+	X(Extra42, "tests.system.zz.extra.42") \
+	X(Extra43, "tests.system.zz.extra.43") \
+	X(Extra44, "tests.system.zz.extra.44") \
+	X(Extra45, "tests.system.zz.extra.45") \
+	X(Extra46, "tests.system.zz.extra.46") \
+	X(Extra47, "tests.system.zz.extra.47") \
+	X(Extra48, "tests.system.zz.extra.48") \
+	X(Extra49, "tests.system.zz.extra.49") \
+	X(Extra50, "tests.system.zz.extra.50") \
+	X(Extra51, "tests.system.zz.extra.51") \
+	X(Extra52, "tests.system.zz.extra.52") \
+	X(Extra53, "tests.system.zz.extra.53") \
+	X(Extra54, "tests.system.zz.extra.54") \
+	X(Extra55, "tests.system.zz.extra.55") \
+	X(Extra56, "tests.system.zz.extra.56") \
+	X(Extra57, "tests.system.zz.extra.57") \
+	X(Extra58, "tests.system.zz.extra.58") \
+	X(Extra59, "tests.system.zz.extra.59") \
+	X(Extra60, "tests.system.zz.extra.60") \
+	X(Extra61, "tests.system.zz.extra.61") \
+	X(Extra62, "tests.system.zz.extra.62") \
+	X(Extra63, "tests.system.zz.extra.63") \
+	X(Extra64, "tests.system.zz.extra.64")
+
+#define ECS_DECLARE_HIGH_COMPONENT(Type, Name) struct Type {};
+ECS_HIGH_COMPONENTS(ECS_DECLARE_HIGH_COMPONENT)
+#undef ECS_DECLARE_HIGH_COMPONENT
+
+struct HighComponentSystem
+{
+	using Query = ecs::Query<ecs::Read<Extra28>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+struct HighWriteComponentSystem
+{
+	using Query = ecs::Query<ecs::Write<Extra28>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) {}
+};
+
+#undef ECS_HIGH_COMPONENTS
+
+} // namespace ecs_system_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<ecs_system_test::Position>
+{
+	static constexpr std::string_view StableName = "tests.system.position";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<ecs_system_test::Velocity>
+{
+	static constexpr std::string_view StableName = "tests.system.velocity";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+#define ECS_SYSTEM_TRAITS(Type, Name) \
+	template<> \
+	struct SystemTraits<ecs_system_test::Type> \
+	{ \
+		static constexpr std::string_view StableName = Name; \
+		static constexpr SystemPhase Phase = SystemPhase::Simulation; \
+		using Before = SystemTypeList<>; \
+		using After = SystemTypeList<>; \
+	}
+
+ECS_SYSTEM_TRAITS(AlphaSystem, "tests.system.alpha");
+ECS_SYSTEM_TRAITS(BetaSystem, "tests.system.beta");
+ECS_SYSTEM_TRAITS(ReadPositionSystem, "tests.system.read_position");
+ECS_SYSTEM_TRAITS(ReadPositionAgainSystem, "tests.system.read_position_again");
+ECS_SYSTEM_TRAITS(WritePositionSystem, "tests.system.write_position");
+ECS_SYSTEM_TRAITS(ReadVelocitySystem, "tests.system.read_velocity");
+ECS_SYSTEM_TRAITS(WriteVelocitySystem, "tests.system.write_velocity");
+ECS_SYSTEM_TRAITS(LateSystem, "tests.system.late");
+ECS_SYSTEM_TRAITS(CohesiveAccessSystem, "tests.system.cohesive_access");
+
+#undef ECS_SYSTEM_TRAITS
+
+#define ECS_DEFINE_HIGH_COMPONENT_TRAITS(Type, Name) \
+	template<> \
+	struct ComponentTraits<ecs_system_test::Type> \
+	{ \
+		static constexpr std::string_view StableName = Name; \
+		static constexpr std::uint32_t Version = 1; \
+		static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient; \
+	};
+
+#define ECS_HIGH_COMPONENTS(X) \
+	X(Extra00, "tests.system.zz.extra.00") \
+	X(Extra01, "tests.system.zz.extra.01") \
+	X(Extra02, "tests.system.zz.extra.02") \
+	X(Extra03, "tests.system.zz.extra.03") \
+	X(Extra04, "tests.system.zz.extra.04") \
+	X(Extra05, "tests.system.zz.extra.05") \
+	X(Extra06, "tests.system.zz.extra.06") \
+	X(Extra07, "tests.system.zz.extra.07") \
+	X(Extra08, "tests.system.zz.extra.08") \
+	X(Extra09, "tests.system.zz.extra.09") \
+	X(Extra10, "tests.system.zz.extra.10") \
+	X(Extra11, "tests.system.zz.extra.11") \
+	X(Extra12, "tests.system.zz.extra.12") \
+	X(Extra13, "tests.system.zz.extra.13") \
+	X(Extra14, "tests.system.zz.extra.14") \
+	X(Extra15, "tests.system.zz.extra.15") \
+	X(Extra16, "tests.system.zz.extra.16") \
+	X(Extra17, "tests.system.zz.extra.17") \
+	X(Extra18, "tests.system.zz.extra.18") \
+	X(Extra19, "tests.system.zz.extra.19") \
+	X(Extra20, "tests.system.zz.extra.20") \
+	X(Extra21, "tests.system.zz.extra.21") \
+	X(Extra22, "tests.system.zz.extra.22") \
+	X(Extra23, "tests.system.zz.extra.23") \
+	X(Extra24, "tests.system.zz.extra.24") \
+	X(Extra25, "tests.system.zz.extra.25") \
+	X(Extra26, "tests.system.zz.extra.26") \
+	X(Extra27, "tests.system.zz.extra.27") \
+	X(Extra28, "tests.system.zz.extra.28") \
+	X(Extra29, "tests.system.zz.extra.29") \
+	X(Extra30, "tests.system.zz.extra.30") \
+	X(Extra31, "tests.system.zz.extra.31") \
+	X(Extra32, "tests.system.zz.extra.32") \
+	X(Extra33, "tests.system.zz.extra.33") \
+	X(Extra34, "tests.system.zz.extra.34") \
+	X(Extra35, "tests.system.zz.extra.35") \
+	X(Extra36, "tests.system.zz.extra.36") \
+	X(Extra37, "tests.system.zz.extra.37") \
+	X(Extra38, "tests.system.zz.extra.38") \
+	X(Extra39, "tests.system.zz.extra.39") \
+	X(Extra40, "tests.system.zz.extra.40") \
+	X(Extra41, "tests.system.zz.extra.41") \
+	X(Extra42, "tests.system.zz.extra.42") \
+	X(Extra43, "tests.system.zz.extra.43") \
+	X(Extra44, "tests.system.zz.extra.44") \
+	X(Extra45, "tests.system.zz.extra.45") \
+	X(Extra46, "tests.system.zz.extra.46") \
+	X(Extra47, "tests.system.zz.extra.47") \
+	X(Extra48, "tests.system.zz.extra.48") \
+	X(Extra49, "tests.system.zz.extra.49") \
+	X(Extra50, "tests.system.zz.extra.50") \
+	X(Extra51, "tests.system.zz.extra.51") \
+	X(Extra52, "tests.system.zz.extra.52") \
+	X(Extra53, "tests.system.zz.extra.53") \
+	X(Extra54, "tests.system.zz.extra.54") \
+	X(Extra55, "tests.system.zz.extra.55") \
+	X(Extra56, "tests.system.zz.extra.56") \
+	X(Extra57, "tests.system.zz.extra.57") \
+	X(Extra58, "tests.system.zz.extra.58") \
+	X(Extra59, "tests.system.zz.extra.59") \
+	X(Extra60, "tests.system.zz.extra.60") \
+	X(Extra61, "tests.system.zz.extra.61") \
+	X(Extra62, "tests.system.zz.extra.62") \
+	X(Extra63, "tests.system.zz.extra.63") \
+	X(Extra64, "tests.system.zz.extra.64")
+
+ECS_HIGH_COMPONENTS(ECS_DEFINE_HIGH_COMPONENT_TRAITS)
+
+template<>
+struct SystemTraits<ecs_system_test::HighComponentSystem>
+{
+	static constexpr std::string_view StableName = "tests.system.high_component";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+
+template<>
+struct SystemTraits<ecs_system_test::HighWriteComponentSystem>
+{
+	static constexpr std::string_view StableName = "tests.system.high_write_component";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+
+#undef ECS_HIGH_COMPONENTS
+#undef ECS_DEFINE_HIGH_COMPONENT_TRAITS
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_SUITE(ecs_system)
+
+BOOST_AUTO_TEST_CASE(context_carries_explicit_immutable_time_input)
+{
+	ecs::World world;
+	ecs::CommandBuffer commands;
+	const engine::time::SimulationTime input{91, engine::time::FixedStep{30}};
+	ecs::SystemContext context(world, commands, input, 4, ecs::SystemPhase::Simulation, 7, 7);
+	BOOST_TEST(context.Tick() == 91u);
+	BOOST_TEST(context.Time().Step().TicksPerSecond() == 30u);
+	BOOST_TEST(context.Time().Delta().count() == 1.0 / 30.0);
+	BOOST_TEST(context.JobOrder() == 7u);
+	BOOST_CHECK(&context.Commands() == &commands);
+}
+
+BOOST_AUTO_TEST_CASE(system_ids_are_independent_of_registration_order)
+{
+	ecs::World world;
+	world.RegisterComponent<ecs_system_test::Position>();
+	world.RegisterComponent<ecs_system_test::Velocity>();
+	world.FinalizeComponents();
+
+	ecs_system_test::AlphaSystem firstAlpha;
+	ecs_system_test::BetaSystem firstBeta;
+	ecs::SystemRegistry first;
+	first.Register(firstBeta);
+	first.Register(firstAlpha);
+	first.Finalize(world.Components());
+
+	ecs_system_test::AlphaSystem secondAlpha;
+	ecs_system_test::BetaSystem secondBeta;
+	ecs::SystemRegistry second;
+	second.Register(secondAlpha);
+	second.Register(secondBeta);
+	second.Finalize(world.Components());
+
+	BOOST_TEST(first.TryGet<ecs_system_test::AlphaSystem>() == second.TryGet<ecs_system_test::AlphaSystem>());
+	BOOST_TEST(first.TryGet<ecs_system_test::BetaSystem>() == second.TryGet<ecs_system_test::BetaSystem>());
+	BOOST_TEST(first.Get(first.TryGet<ecs_system_test::AlphaSystem>()).stableKey ==
+		second.Get(second.TryGet<ecs_system_test::AlphaSystem>()).stableKey);
+	BOOST_TEST(first.IsFrozen());
+	BOOST_TEST(second.IsFrozen());
+}
+
+BOOST_AUTO_TEST_CASE(system_finalization_is_explicit_and_freezes_registration)
+{
+	ecs::World world;
+	world.RegisterComponent<ecs_system_test::Position>();
+	world.FinalizeComponents();
+
+	ecs_system_test::AlphaSystem alpha;
+	ecs::SystemRegistry registry;
+	registry.Register(alpha);
+	BOOST_TEST(!registry.IsFrozen());
+
+	registry.Finalize(world.Components());
+	BOOST_TEST(registry.IsFrozen());
+	const ecs::SystemId assigned = registry.TryGet<ecs_system_test::AlphaSystem>();
+	ecs_system_test::LateSystem late;
+	BOOST_CHECK_THROW(registry.Register(late), std::logic_error);
+	BOOST_TEST(registry.TryGet<ecs_system_test::AlphaSystem>() == assigned);
+}
+
+BOOST_AUTO_TEST_CASE(system_finalization_requires_finalized_components)
+{
+	ecs::World world;
+	ecs_system_test::AlphaSystem alpha;
+	ecs::SystemRegistry registry;
+	registry.Register(alpha);
+
+	BOOST_CHECK_THROW(registry.Finalize(world.Components()), std::logic_error);
+	BOOST_TEST(!registry.IsFrozen());
+	world.RegisterComponent<ecs_system_test::Position>();
+	world.FinalizeComponents();
+	registry.Finalize(world.Components());
+	BOOST_TEST(registry.IsFrozen());
+}
+
+BOOST_AUTO_TEST_CASE(access_masks_express_read_write_conflicts)
+{
+	ecs::World world;
+	world.RegisterComponent<ecs_system_test::Position>();
+	world.RegisterComponent<ecs_system_test::Velocity>();
+	world.FinalizeComponents();
+
+	ecs_system_test::ReadPositionSystem readPosition;
+	ecs_system_test::ReadPositionAgainSystem readPositionAgain;
+	ecs_system_test::WritePositionSystem writePosition;
+	ecs_system_test::ReadVelocitySystem readVelocity;
+	ecs_system_test::WriteVelocitySystem writeVelocity;
+	ecs::SystemRegistry registry;
+	registry.Register(readPosition);
+	registry.Register(readPositionAgain);
+	registry.Register(writePosition);
+	registry.Register(readVelocity);
+	registry.Register(writeVelocity);
+	registry.Finalize(world.Components());
+
+	const ecs::SystemAccess &read = registry.Get(registry.TryGet<ecs_system_test::ReadPositionSystem>()).Access();
+	const ecs::SystemAccess &readAgain = registry.Get(registry.TryGet<ecs_system_test::ReadPositionAgainSystem>()).Access();
+	const ecs::SystemAccess &write = registry.Get(registry.TryGet<ecs_system_test::WritePositionSystem>()).Access();
+	const ecs::SystemAccess &otherRead = registry.Get(registry.TryGet<ecs_system_test::ReadVelocitySystem>()).Access();
+	const ecs::SystemAccess &otherWrite = registry.Get(registry.TryGet<ecs_system_test::WriteVelocitySystem>()).Access();
+
+	BOOST_TEST(!read.ConflictsWith(readAgain));
+	BOOST_TEST(read.ConflictsWith(write));
+	BOOST_TEST(write.ConflictsWith(read));
+	BOOST_TEST(write.ConflictsWith(write));
+	BOOST_TEST(!read.ConflictsWith(otherRead));
+	BOOST_TEST(!write.ConflictsWith(otherWrite));
+	BOOST_TEST(read.ReadComponents().size() == 1);
+	BOOST_TEST(write.WriteComponents().size() == 1);
+}
+
+BOOST_AUTO_TEST_CASE(auxiliary_and_optional_writes_participate_in_canonical_conflicts)
+{
+	ecs::World world;
+	world.RegisterComponent<ecs_system_test::Position>();
+	world.RegisterComponent<ecs_system_test::Velocity>();
+	world.FinalizeComponents();
+	ecs_system_test::CohesiveAccessSystem cohesive;
+	ecs_system_test::ReadPositionSystem positionReader;
+	ecs_system_test::ReadVelocitySystem velocityReader;
+	ecs::SystemRegistry registry;
+	registry.Register(cohesive);
+	registry.Register(positionReader);
+	registry.Register(velocityReader);
+	registry.Finalize(world.Components());
+	const auto &access = registry.Get(registry.TryGet<ecs_system_test::CohesiveAccessSystem>()).Access();
+	BOOST_TEST(access.ReadComponents().empty());
+	BOOST_TEST(access.WriteComponents().size() == 2u);
+	BOOST_TEST(access.ReadMask().front() == 0u);
+	BOOST_TEST(access.ConflictsWith(registry.Get(registry.TryGet<ecs_system_test::ReadPositionSystem>()).Access()));
+	BOOST_TEST(access.ConflictsWith(registry.Get(registry.TryGet<ecs_system_test::ReadVelocitySystem>()).Access()));
+	// Auxiliary access protects hook work without narrowing the chunk population.
+	world.Create<ecs_system_test::Position>();
+	ecs_system_test::CohesiveAccessSystem::Query query(world);
+	std::size_t rows = 0;
+	query.ForEachChunk([&](auto chunk) {
+		rows += chunk.Count();
+		BOOST_TEST(chunk.template Get<ecs_system_test::Velocity>().empty());
+	});
+	BOOST_TEST(rows == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(access_masks_scale_beyond_64_components)
+{
+	ecs::World world;
+	world.RegisterComponent<ecs_system_test::Position>();
+	world.RegisterComponent<ecs_system_test::Velocity>();
+	#define ECS_REGISTER_HIGH_COMPONENT(Type, Name) world.RegisterComponent<ecs_system_test::Type>();
+	#define ECS_HIGH_COMPONENTS(X) \
+		X(Extra00, "tests.system.zz.extra.00") X(Extra01, "tests.system.zz.extra.01") \
+		X(Extra02, "tests.system.zz.extra.02") X(Extra03, "tests.system.zz.extra.03") \
+		X(Extra04, "tests.system.zz.extra.04") X(Extra05, "tests.system.zz.extra.05") \
+		X(Extra06, "tests.system.zz.extra.06") X(Extra07, "tests.system.zz.extra.07") \
+		X(Extra08, "tests.system.zz.extra.08") X(Extra09, "tests.system.zz.extra.09") \
+		X(Extra10, "tests.system.zz.extra.10") X(Extra11, "tests.system.zz.extra.11") \
+		X(Extra12, "tests.system.zz.extra.12") X(Extra13, "tests.system.zz.extra.13") \
+		X(Extra14, "tests.system.zz.extra.14") X(Extra15, "tests.system.zz.extra.15") \
+		X(Extra16, "tests.system.zz.extra.16") X(Extra17, "tests.system.zz.extra.17") \
+		X(Extra18, "tests.system.zz.extra.18") X(Extra19, "tests.system.zz.extra.19") \
+		X(Extra20, "tests.system.zz.extra.20") X(Extra21, "tests.system.zz.extra.21") \
+		X(Extra22, "tests.system.zz.extra.22") X(Extra23, "tests.system.zz.extra.23") \
+		X(Extra24, "tests.system.zz.extra.24") X(Extra25, "tests.system.zz.extra.25") \
+		X(Extra26, "tests.system.zz.extra.26") X(Extra27, "tests.system.zz.extra.27") \
+		X(Extra28, "tests.system.zz.extra.28") X(Extra29, "tests.system.zz.extra.29") \
+		X(Extra30, "tests.system.zz.extra.30") X(Extra31, "tests.system.zz.extra.31") \
+		X(Extra32, "tests.system.zz.extra.32") X(Extra33, "tests.system.zz.extra.33") \
+		X(Extra34, "tests.system.zz.extra.34") X(Extra35, "tests.system.zz.extra.35") \
+		X(Extra36, "tests.system.zz.extra.36") X(Extra37, "tests.system.zz.extra.37") \
+		X(Extra38, "tests.system.zz.extra.38") X(Extra39, "tests.system.zz.extra.39") \
+		X(Extra40, "tests.system.zz.extra.40") X(Extra41, "tests.system.zz.extra.41") \
+		X(Extra42, "tests.system.zz.extra.42") X(Extra43, "tests.system.zz.extra.43") \
+		X(Extra44, "tests.system.zz.extra.44") X(Extra45, "tests.system.zz.extra.45") \
+		X(Extra46, "tests.system.zz.extra.46") X(Extra47, "tests.system.zz.extra.47") \
+		X(Extra48, "tests.system.zz.extra.48") X(Extra49, "tests.system.zz.extra.49") \
+		X(Extra50, "tests.system.zz.extra.50") X(Extra51, "tests.system.zz.extra.51") \
+		X(Extra52, "tests.system.zz.extra.52") X(Extra53, "tests.system.zz.extra.53") \
+		X(Extra54, "tests.system.zz.extra.54") X(Extra55, "tests.system.zz.extra.55") \
+		X(Extra56, "tests.system.zz.extra.56") X(Extra57, "tests.system.zz.extra.57") \
+		X(Extra58, "tests.system.zz.extra.58") X(Extra59, "tests.system.zz.extra.59") \
+		X(Extra60, "tests.system.zz.extra.60") X(Extra61, "tests.system.zz.extra.61") \
+		X(Extra62, "tests.system.zz.extra.62") X(Extra63, "tests.system.zz.extra.63") \
+		X(Extra64, "tests.system.zz.extra.64")
+	ECS_HIGH_COMPONENTS(ECS_REGISTER_HIGH_COMPONENT)
+	#undef ECS_HIGH_COMPONENTS
+	#undef ECS_REGISTER_HIGH_COMPONENT
+	BOOST_TEST(world.Components().Count() == 67);
+	world.FinalizeComponents();
+
+	ecs_system_test::HighComponentSystem system;
+	ecs_system_test::HighWriteComponentSystem writer;
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Register(writer);
+	registry.Finalize(world.Components());
+	const ecs::SystemAccess &access = registry.Get(registry.TryGet<ecs_system_test::HighComponentSystem>()).Access();
+	const ecs::SystemAccess &writeAccess = registry.Get(registry.TryGet<ecs_system_test::HighWriteComponentSystem>()).Access();
+	const ecs::ComponentId component = world.Components().TryGet<ecs_system_test::Extra28>();
+	BOOST_REQUIRE(component >= 64);
+	BOOST_TEST(access.ReadMask().size() >= 2);
+	BOOST_TEST((access.ReadMask()[component / 64] & (std::uint64_t{1} << (component % 64))) != 0);
+	BOOST_TEST(access.ConflictsWith(writeAccess));
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_CASE(system_composition_phase_binding_is_explicit_and_immutable)
+{
+    ecs::World world;
+    world.RegisterComponent<ecs_system_test::Position>(); world.FinalizeComponents();
+    ecs_system_test::AlphaSystem system, other;
+    ecs::SystemRegistry registry;
+    registry.Register(system, ecs::SystemPhase::PostSimulation);
+    BOOST_CHECK_NO_THROW(registry.Register(system, ecs::SystemPhase::PostSimulation));
+    BOOST_CHECK_THROW(registry.Register(other, ecs::SystemPhase::PostSimulation), std::logic_error);
+    BOOST_CHECK_THROW(registry.Register(system, ecs::SystemPhase::Simulation), std::logic_error);
+    registry.Finalize(world.Components());
+    BOOST_CHECK(registry.Get(registry.TryGet<ecs_system_test::AlphaSystem>()).phase == ecs::SystemPhase::PostSimulation);
+    BOOST_CHECK_THROW(registry.Register(system, ecs::SystemPhase::PostSimulation), std::logic_error);
+}

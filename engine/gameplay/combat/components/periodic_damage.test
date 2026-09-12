@@ -1,0 +1,12 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.components.periodic_damage;
+import engine.ecs.core.world;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(periodic_damage_state_survives_policy_column_transition)
+{
+    ecs::World world;world.RegisterComponent<PeriodicDamage>();world.RegisterComponent<PeriodicDamagePolicy>();world.FinalizeComponents();
+    const auto entity=world.Create<PeriodicDamage>();*world.Get<PeriodicDamage>(entity)={{2,9},8,10,20,true};
+    world.Add<PeriodicDamagePolicy>(entity);BOOST_TEST(world.Get<PeriodicDamage>(entity)->nextTick==10u);
+    BOOST_CHECK(world.Get<PeriodicDamage>(entity)->source==ecs::Entity(2,9));
+    BOOST_CHECK(ecs::ComponentTraits<PeriodicDamage>::Persistence==ecs::PersistencePolicy::Serializable);
+}

@@ -1,0 +1,41 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.components.health;
+import engine.ecs.query.query;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(health_component_columns_preserve_values_during_transition)
+{
+    ecs::World world;world.RegisterComponent<Health>();world.RegisterComponent<LifeState>();world.RegisterComponent<DamageResult>();world.FinalizeComponents();
+    const auto a=world.Create<Health,LifeState>(),b=world.Create<Health,LifeState>();
+    world.Get<Health>(a)->current=42;world.Add<DamageResult>(a);
+    BOOST_TEST(world.Get<Health>(a)->current==42u);BOOST_TEST(world.Get<LifeState>(a)->alive);
+    world.Remove<DamageResult>(a);ecs::Query<ecs::Read<Health>,ecs::Read<LifeState>> query(world);
+    query.ForEachChunk([&](auto chunk){const auto data=chunk.template Get<Health>();BOOST_REQUIRE(data.size()==2u);BOOST_TEST(&data[1]==&data[0]+1);});
+    BOOST_CHECK(ecs::ComponentTraits<Health>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<DamageResult>::Persistence==ecs::PersistencePolicy::Transient);
+    BOOST_TEST(world.IsAlive(b));
+}
+
+BOOST_AUTO_TEST_CASE(lethal_source_proof_requires_the_exact_target_tick_and_health_transition)
+{
+    const ecs::Entity target{7,3};
+    const ecs::Entity reusedTarget{7,4};
+    const LethalSourceEvidence proof{target,ecs::Entity{9,2},ecs::Entity{11,1},42,100,90,100,true};
+    BOOST_CHECK(MatchesLethalTransition(proof,target,42,100,0,100));
+    BOOST_CHECK(MatchesLethalTransition(proof,target,42,100,0,140));
+    BOOST_CHECK(!MatchesLethalTransition(proof,reusedTarget,42,100,0,100));
+    BOOST_CHECK(!MatchesLethalTransition(proof,target,41,100,0,100));
+    BOOST_CHECK(!MatchesLethalTransition(proof,target,42,99,0,100));
+    BOOST_CHECK(!MatchesLethalTransition(proof,target,42,100,1,100));
+    BOOST_CHECK(!MatchesLethalTransition(proof,target,42,100,0,99));
+}
+
+BOOST_AUTO_TEST_CASE(provenance_suffix_preserves_scalar_aggregate_initializers)
+{
+    const PendingDamage pending{17};
+    const DamageResult result{17,true};
+    BOOST_TEST(pending.quantity==17u);
+    BOOST_TEST(!pending.lethalSource.valid);
+    BOOST_TEST(result.applied==17u);
+    BOOST_TEST(result.killed);
+    BOOST_TEST(!result.lethalSource.valid);
+}

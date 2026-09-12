@@ -1,0 +1,12 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.production.components.build_work;
+import engine.ecs.core.world;
+using namespace engine::gameplay::rts::production;
+BOOST_AUTO_TEST_CASE(build_credit_is_persistent_and_readiness_is_derived)
+{
+    ecs::World world;world.RegisterComponent<BuildWork>();world.RegisterComponent<BuildReady>();world.FinalizeComponents();
+    const auto entity=world.Create<BuildWork>();*world.Get<BuildWork>(entity)={10,4,1,3,2};world.Add<BuildReady>(entity);
+    BOOST_TEST(world.Get<BuildWork>(entity)->elapsed==4u);BOOST_TEST(world.Get<BuildWork>(entity)->remainder==2u);
+    BOOST_TEST(ecs::ComponentTraits<BuildWork>::Version==2u);
+    BOOST_CHECK(ecs::ComponentTraits<BuildReady>::Persistence==ecs::PersistencePolicy::Transient);
+}

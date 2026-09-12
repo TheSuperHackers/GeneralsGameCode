@@ -1,0 +1,55 @@
+#define BOOST_TEST_MODULE EngineSimulationTime
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <type_traits>
+import engine.time.simulation_time;
+
+using namespace engine::time;
+using namespace std::chrono_literals;
+
+BOOST_AUTO_TEST_CASE(step_requires_explicit_positive_rate)
+{
+	static_assert(!std::is_default_constructible_v<FixedStep>);
+	static_assert(!std::is_default_constructible_v<SimulationTime>);
+	BOOST_CHECK_THROW(FixedStep{0}, std::invalid_argument);
+	BOOST_TEST(FixedStep{60}.TicksPerSecond() == 60u);
+	BOOST_TEST(FixedStep{60}.Delta().count() == 1.0 / 60.0);
+}
+
+BOOST_AUTO_TEST_CASE(duration_conversion_rounds_up_without_rounding_the_step)
+{
+	constexpr FixedStep step{30};
+	static_assert(step.TicksFor(1s) == 30);
+	BOOST_TEST(step.TicksFor(0ns) == 0u);
+	BOOST_TEST(step.TicksFor(1ns) == 1u);
+	BOOST_TEST(step.TicksFor(33333333ns) == 1u);
+	BOOST_TEST(step.TicksFor(33333334ns) == 2u);
+	BOOST_TEST(step.TicksFor(100ms) == 3u);
+	BOOST_TEST(step.TicksFor(1h) == 108000u);
+	BOOST_TEST(step.TicksFor(24h) == 2592000u);
+	BOOST_TEST(FixedStep{60}.TicksFor(100ms) == 6u);
+	BOOST_TEST(FixedStep{120}.TicksFor(100ms) == 12u);
+	BOOST_CHECK_THROW(step.TicksFor(-1ns), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(conversion_handles_large_values_and_reports_overflow)
+{
+	const Duration longest{(std::numeric_limits<std::int64_t>::max)()};
+	BOOST_TEST(FixedStep{1}.TicksFor(longest) == 9223372037ull);
+	BOOST_TEST(FixedStep{30}.TicksFor(longest) == 276701161106ull);
+	const FixedStep fastest{(std::numeric_limits<std::uint32_t>::max)()};
+	BOOST_TEST(fastest.TicksFor(999999999ns) == 4294967291ull);
+	BOOST_CHECK_THROW(fastest.TicksFor(longest), std::overflow_error);
+}
+
+BOOST_AUTO_TEST_CASE(time_is_a_value_with_explicit_delta_and_wide_tick_identity)
+{
+	const SimulationTime time{std::uint64_t{1} << 40, FixedStep{120}};
+	const auto copy = time;
+	BOOST_TEST(copy.Tick() == time.Tick());
+	BOOST_TEST(copy.Step().TicksPerSecond() == 120u);
+	BOOST_TEST(copy.Delta().count() == 1.0 / 120.0);
+}

@@ -1,0 +1,390 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionQueueAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "production_queue_store.h"
+#include "games/generalszh/adapters/legacy/production/entry/production_entry_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.production.queue.production_queue;
+
+class ProductionEntry
+{
+};
+
+using generalszh::GameplayState;
+using generalszh::legacy::ProductionEntryLease;
+using generalszh::legacy::ProductionEntryStore;
+using generalszh::legacy::ProductionQueueLease;
+using generalszh::legacy::ProductionQueueStore;
+using engine::gameplay::rts::production::ProductionQueue;
+using engine::gameplay::rts::production::ProductionQueueMember;
+
+namespace production_queue_adapter_test
+{
+struct TestEntry
+{
+	ProductionEntry object;
+	ProductionEntryLease lease;
+
+	explicit TestEntry(ProductionEntryStore &store, const bool bind = true) :
+		lease(store)
+	{
+		if (bind)
+			lease.Bind(&object);
+	}
+};
+
+std::vector<std::pair<ecs::Entity, ProductionQueue>> ReadQueues(GameplayState &state)
+{
+	std::vector<std::pair<ecs::Entity, ProductionQueue>> result;
+	ecs::Query<ecs::Read<ProductionQueue>> query(state.World());
+	query.ForEachChunk([&](const auto chunk) {
+		const auto values = chunk.template Get<ProductionQueue>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.emplace_back(chunk.Entities()[row], values[row]);
+	});
+	return result;
+}
+
+std::vector<std::pair<ecs::Entity, ProductionQueueMember>> ReadMembers(GameplayState &state)
+{
+	std::vector<std::pair<ecs::Entity, ProductionQueueMember>> result;
+	ecs::Query<ecs::Read<ProductionQueueMember>> query(state.World());
+	query.ForEachChunk([&](const auto chunk) {
+		const auto values = chunk.template Get<ProductionQueueMember>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.emplace_back(chunk.Entities()[row], values[row]);
+	});
+	return result;
+}
+
+enum class ScheduledRead
+{
+	count,
+	first,
+	next,
+	contains
+};
+
+struct ScheduledQueueRead
+{
+	using Query = ecs::Query<ecs::Read<ProductionQueueMember>>;
+	ProductionQueueLease *queue;
+	ProductionEntryLease *entry;
+	ScheduledRead read;
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (read)
+		{
+		case ScheduledRead::count:
+			(void)queue->Count();
+			break;
+		case ScheduledRead::first:
+			(void)queue->First();
+			break;
+		case ScheduledRead::next:
+			(void)queue->Next(*entry);
+			break;
+		case ScheduledRead::contains:
+			(void)queue->Contains(*entry);
+			break;
+		}
+	}
+};
+}
+
+namespace ecs
+{
+template<>
+struct SystemTraits<production_queue_adapter_test::ScheduledQueueRead>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.production.queue.scheduled_read";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+using production_queue_adapter_test::TestEntry;
+
+static_assert(!std::is_copy_constructible_v<ProductionQueueStore>);
+static_assert(!std::is_move_constructible_v<ProductionQueueStore>);
+static_assert(!std::is_copy_constructible_v<ProductionQueueLease>);
+static_assert(!std::is_move_constructible_v<ProductionQueueLease>);
+
+BOOST_AUTO_TEST_CASE(empty_queue_is_fifo_with_no_head)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(state, entries);
+	ProductionQueueLease queue(stores);
+
+	BOOST_TEST(stores.Count() == 1u);
+	BOOST_TEST(queue.Count() == 0u);
+	BOOST_TEST(queue.First() == nullptr);
+	const ProductionQueueLease &readOnlyQueue = queue;
+	BOOST_TEST(readOnlyQueue.First() == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(erase_keeps_remaining_fifo_order_stable)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+	ProductionQueueLease queue(stores);
+	TestEntry first(entries);
+	TestEntry second(entries);
+	TestEntry third(entries);
+
+	queue.Append(first.lease);
+	queue.Append(second.lease);
+	queue.Append(third.lease);
+	BOOST_TEST(queue.Count() == 3u);
+	BOOST_TEST(queue.First() == &first.object);
+	BOOST_TEST(queue.Next(first.lease) == &second.object);
+	const ProductionQueueLease &readOnlyQueue = queue;
+	BOOST_TEST(readOnlyQueue.First() == &first.object);
+	BOOST_TEST(readOnlyQueue.Next(first.lease) == &second.object);
+
+	queue.Remove(second.lease);
+	BOOST_TEST(queue.Count() == 2u);
+	BOOST_TEST(queue.First() == &first.object);
+	BOOST_TEST(queue.Next(first.lease) == &third.object);
+
+	queue.Remove(first.lease);
+	queue.Remove(third.lease);
+}
+
+BOOST_AUTO_TEST_CASE(next_is_captured_before_current_entry_is_deleted)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+	ProductionQueueLease queue(stores);
+	TestEntry second(entries);
+	ProductionEntry *next = nullptr;
+
+	{
+		TestEntry first(entries);
+		queue.Append(first.lease);
+		queue.Append(second.lease);
+		next = queue.Next(first.lease);
+		BOOST_TEST(next == &second.object);
+		queue.Remove(first.lease);
+	}
+
+	BOOST_TEST(next == &second.object);
+	BOOST_TEST(queue.First() == &second.object);
+	queue.Remove(second.lease);
+}
+
+BOOST_AUTO_TEST_CASE(binding_duplicate_and_cross_queue_inputs_are_rejected)
+{
+	GameplayState state;
+	GameplayState otherState;
+	ProductionEntryStore entries(state);
+	ProductionEntryStore sameWorldEntries(state);
+	ProductionEntryStore otherWorldEntries(otherState);
+	ProductionQueueStore stores(state, entries);
+	ProductionQueueLease firstQueue(stores);
+	ProductionQueueLease secondQueue(stores);
+	TestEntry valid(entries);
+	TestEntry wrongStore(sameWorldEntries);
+	TestEntry wrongWorld(otherWorldEntries);
+	TestEntry unbound(entries, false);
+
+	firstQueue.Append(valid.lease);
+	BOOST_CHECK_THROW(firstQueue.Append(valid.lease), std::logic_error);
+	BOOST_CHECK_THROW(firstQueue.Append(wrongStore.lease), std::invalid_argument);
+	BOOST_CHECK_THROW(firstQueue.Append(wrongWorld.lease), std::invalid_argument);
+	BOOST_CHECK_THROW(firstQueue.Append(unbound.lease), std::invalid_argument);
+	BOOST_CHECK_THROW(secondQueue.Append(valid.lease), std::exception);
+	BOOST_TEST(firstQueue.Count() == 1u);
+	BOOST_TEST(secondQueue.Count() == 0u);
+
+	firstQueue.Remove(valid.lease);
+}
+
+BOOST_AUTO_TEST_CASE(explicit_state_must_match_the_entry_store)
+{
+	GameplayState state;
+	GameplayState otherState;
+	ProductionEntryStore entries(state);
+
+	BOOST_CHECK_THROW(ProductionQueueStore(otherState, entries), std::invalid_argument);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(otherState.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(one_queue_and_each_entry_have_one_authoritative_world_owner)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+	ProductionQueueLease queue(stores);
+	TestEntry first(entries);
+	TestEntry second(entries);
+	queue.Append(first.lease);
+	queue.Append(second.lease);
+
+	const auto queues = production_queue_adapter_test::ReadQueues(state);
+	const auto members = production_queue_adapter_test::ReadMembers(state);
+	BOOST_REQUIRE_EQUAL(queues.size(), 1u);
+	BOOST_REQUIRE_EQUAL(members.size(), 2u);
+	BOOST_TEST(state.Count() == 3u);
+	BOOST_TEST(stores.Count() == 1u);
+	BOOST_TEST(queue.Count() == 2u);
+	BOOST_TEST(queues[0].second.count == 2u);
+	BOOST_TEST(queues[0].second.capacity >= queues[0].second.count);
+
+	for (const auto &member : members)
+	{
+		BOOST_CHECK(member.second.queue == queues[0].first);
+		BOOST_TEST(member.second.position < 2u);
+	}
+	BOOST_TEST(members[0].second.position != members[1].second.position);
+
+	queue.Remove(first.lease);
+	queue.Remove(second.lease);
+}
+
+BOOST_AUTO_TEST_CASE(reused_entry_generation_gets_a_fresh_legacy_mapping)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+	ProductionQueueLease queue(stores);
+	ecs::Entity old{};
+
+	{
+		TestEntry oldEntry(entries);
+		old = production_queue_adapter_test::ReadMembers(state).front().first;
+		queue.Append(oldEntry.lease);
+		BOOST_TEST(queue.First() == &oldEntry.object);
+		queue.Remove(oldEntry.lease);
+	}
+
+	TestEntry newEntry(entries);
+	const auto current = production_queue_adapter_test::ReadMembers(state).front().first;
+	BOOST_TEST(current.index == old.index);
+	BOOST_TEST(current.generation != old.generation);
+	BOOST_TEST(!state.World().IsAlive(old));
+	queue.Append(newEntry.lease);
+	BOOST_TEST(queue.First() == &newEntry.object);
+	BOOST_TEST(queue.Contains(newEntry.lease));
+	queue.Remove(newEntry.lease);
+}
+
+BOOST_AUTO_TEST_CASE(world_reset_rejects_live_queues_and_succeeds_after_their_release)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+
+	{
+		ProductionQueueLease queue(stores);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_TEST(stores.Count() == 1u);
+	}
+
+	BOOST_TEST(stores.Count() == 0u);
+	BOOST_CHECK_NO_THROW(state.Reset());
+	{
+		ProductionQueueLease replacement(stores, 4);
+		TestEntry entry(entries);
+		replacement.Append(entry.lease);
+		BOOST_TEST(replacement.First() == &entry.object);
+		BOOST_TEST(replacement.Count() == 1u);
+		BOOST_TEST(state.Count() == 2u);
+		replacement.Remove(entry.lease);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_NO_THROW(state.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(queue_lifetime_churn_reclaims_all_live_queues)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+	std::vector<std::unique_ptr<ProductionQueueLease>> queues;
+	queues.reserve(2048);
+
+	for (std::size_t index = 0; index < 2048; ++index)
+		queues.push_back(std::make_unique<ProductionQueueLease>(stores,
+			static_cast<std::uint32_t>(index % 7)));
+	BOOST_TEST(stores.Count() == queues.size());
+	BOOST_TEST(state.Count() == queues.size());
+
+	queues.clear();
+	BOOST_TEST(stores.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(scoped_legacy_inputs_are_only_identity_mappings)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(entries);
+	ProductionQueueLease queue(stores);
+	ProductionEntry *observed = nullptr;
+
+	{
+		ProductionEntry scopedEntry;
+		ProductionEntryLease lease(entries);
+		lease.Bind(&scopedEntry);
+		queue.Append(lease);
+		observed = queue.First();
+		BOOST_TEST(observed == &scopedEntry);
+		queue.Remove(lease);
+	}
+
+	BOOST_TEST(observed != nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(read_apis_reject_scheduled_execution)
+{
+	GameplayState state;
+	ProductionEntryStore entries(state);
+	ProductionQueueStore stores(state, entries);
+	ProductionQueueLease queue(stores);
+	TestEntry entry(entries);
+	queue.Append(entry.lease);
+
+	production_queue_adapter_test::ScheduledQueueRead system{
+		&queue, &entry.lease, production_queue_adapter_test::ScheduledRead::count};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+
+	const production_queue_adapter_test::ScheduledRead reads[] = {
+		production_queue_adapter_test::ScheduledRead::count,
+		production_queue_adapter_test::ScheduledRead::first,
+		production_queue_adapter_test::ScheduledRead::next,
+		production_queue_adapter_test::ScheduledRead::contains};
+	std::uint64_t tick = 1;
+	for (const auto read : reads)
+	{
+		system.read = read;
+		// A failed scheduler is one-shot: use a fresh run owner so every API is
+		// actually reached, rather than just retesting the failed-run guard.
+		ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+		scheduler.Finalize(engine::time::FixedStep{30});
+		BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{
+			tick++, engine::time::FixedStep{30}}), std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	}
+
+	queue.Remove(entry.lease);
+}

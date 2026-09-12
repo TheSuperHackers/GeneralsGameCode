@@ -1,0 +1,4 @@
+add_library(generalszh_prerequisite_content STATIC)
+target_sources(generalszh_prerequisite_content PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES prerequisite_definition.cppm)
+target_compile_features(generalszh_prerequisite_content PUBLIC cxx_std_23)
+target_link_libraries(generalszh_prerequisite_content PUBLIC generalszh_content_ini engine_gameplay_rts_production)

@@ -1,0 +1,13 @@
+#define BOOST_TEST_MODULE GeneralsZHLifetimeDispatch
+#include <boost/test/included/unit_test.hpp>
+#include <type_traits>
+import games.generalszh.gameplay.lifetime.components.lifetime_dispatch;
+using namespace generalszh::lifetime;
+BOOST_AUTO_TEST_CASE(new_dispatch_is_not_ready)
+{
+	static_assert(std::is_trivially_copyable_v<LifetimeTarget>);
+	static_assert(std::is_trivially_copyable_v<LifetimeDispatch>);
+	BOOST_TEST(!LifetimeDispatch{}.ready);
+	BOOST_TEST(LifetimeDispatch{}.revision == 0u);
+	BOOST_CHECK(LifetimeTarget{}.action == LifetimeAction::Kill);
+}

@@ -1,0 +1,207 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeCatalogAdapter
+#include <boost/test/included/unit_test.hpp>
+#include "upgrade_catalog.h"
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+import engine.jobs.job_system;
+
+using generalszh::legacy::UpgradeCatalogBridge;
+using generalszh::legacy::UpgradeIdentityInput;
+
+BOOST_AUTO_TEST_CASE(all_identity_operations_require_explicit_publication)
+{
+	UpgradeCatalogBridge bridge;
+	BOOST_TEST(!bridge.IsPublished());
+	BOOST_CHECK_THROW(bridge.Count(), std::logic_error);
+	BOOST_CHECK_THROW(bridge.SchemaHash(), std::logic_error);
+	BOOST_CHECK_THROW(bridge.DenseId(0), std::logic_error);
+	std::array<std::uint64_t, 8> words{};
+	BOOST_CHECK_THROW(bridge.ImportMask(words, {}), std::logic_error);
+	BOOST_TEST(!bridge.IsPublished());
+	bridge.Publish({});
+	BOOST_TEST(bridge.Count() == 0u);
+	BOOST_CHECK_THROW(bridge.RequireMutable(), std::logic_error);
+	BOOST_CHECK_THROW(bridge.Publish({}), std::logic_error);
+	bridge.Reset();
+	bridge.Reset();
+	BOOST_TEST(!bridge.IsPublished());
+	BOOST_CHECK_NO_THROW(bridge.RequireMutable());
+}
+
+BOOST_AUTO_TEST_CASE(dense_identity_is_independent_of_list_order_and_legacy_bit_assignment)
+{
+	const std::array firstInputs{UpgradeIdentityInput{"Upgrade_A", 511},
+		UpgradeIdentityInput{"Upgrade_B", 64}, UpgradeIdentityInput{"Upgrade_C", 0}};
+	const std::array secondInputs{UpgradeIdentityInput{"Upgrade_C", 511},
+		UpgradeIdentityInput{"Upgrade_A", 0}, UpgradeIdentityInput{"Upgrade_B", 63}};
+	UpgradeCatalogBridge first, second;
+	first.Publish(firstInputs);
+	second.Publish(secondInputs);
+	BOOST_TEST(first.SchemaHash() == second.SchemaHash());
+	for (std::uint32_t id = 0; id < 3; ++id)
+	{
+		BOOST_TEST(first.Key(id) == second.Key(id));
+		BOOST_TEST(first.Name(id) == second.Name(id));
+		BOOST_TEST(first.DenseId(first.LegacyBit(id)) == id);
+		BOOST_TEST(second.DenseId(second.LegacyBit(id)) == id);
+	}
+	std::array<std::uint64_t, 8> firstLegacy{}, secondLegacy{};
+	firstLegacy[7] = UINT64_C(1) << 63; // A
+	firstLegacy[1] = 1; // B
+	secondLegacy[0] = 1 | (UINT64_C(1) << 63); // A, B
+	std::array<std::uint64_t, 1> firstModern{}, secondModern{};
+	first.ImportMask(firstLegacy, firstModern);
+	second.ImportMask(secondLegacy, secondModern);
+	BOOST_TEST(firstModern == secondModern, boost::test_tools::per_element());
+	std::array<std::uint64_t, 8> restored{};
+	second.ExportMask(firstModern, restored);
+	BOOST_TEST(restored == secondLegacy, boost::test_tools::per_element());
+	BOOST_TEST(first.DenseId(123) == UpgradeCatalogBridge::InvalidId);
+}
+
+BOOST_AUTO_TEST_CASE(publication_failure_does_not_freeze_or_leave_partial_mappings)
+{
+	UpgradeCatalogBridge bridge;
+	const std::array sameBits{UpgradeIdentityInput{"Upgrade_A", 1}, UpgradeIdentityInput{"Upgrade_B", 1}};
+	BOOST_CHECK_THROW(bridge.Publish(sameBits), std::invalid_argument);
+	const std::array sameNames{UpgradeIdentityInput{"Upgrade_A", 1}, UpgradeIdentityInput{"Upgrade_A", 2}};
+	BOOST_CHECK_THROW(bridge.Publish(sameNames), std::logic_error);
+	const std::array badBit{UpgradeIdentityInput{"Upgrade_A", 512}};
+	BOOST_CHECK_THROW(bridge.Publish(badBit), std::invalid_argument);
+	BOOST_TEST(!bridge.IsPublished());
+	BOOST_CHECK_THROW(bridge.DenseId(1), std::logic_error);
+	const std::array valid{UpgradeIdentityInput{"Upgrade_B", 63}};
+	bridge.Publish(valid);
+	BOOST_TEST(bridge.Count() == 1u);
+	BOOST_TEST(bridge.DenseId(63) == 0u);
+	BOOST_TEST(bridge.DenseId(1) == UpgradeCatalogBridge::InvalidId);
+	BOOST_CHECK_THROW(bridge.DenseId(512), std::out_of_range);
+	BOOST_CHECK_THROW(bridge.LegacyBit(1), std::out_of_range);
+}
+
+BOOST_AUTO_TEST_CASE(mask_conversion_rejects_unknown_bits_and_preserves_outputs)
+{
+	UpgradeCatalogBridge bridge;
+	const std::array input{UpgradeIdentityInput{"Upgrade_A", 511}};
+	bridge.Publish(input);
+	std::array<std::uint64_t, 8> legacy{};
+	legacy[7] = UINT64_C(1) << 63;
+	legacy[0] = 1; // unregistered
+	std::array<std::uint64_t, 1> modern{99};
+	BOOST_CHECK_THROW(bridge.ImportMask(legacy, modern), std::invalid_argument);
+	BOOST_TEST(modern[0] == 99u);
+	legacy.fill(77);
+	modern[0] = 2; // invalid padding bit after the one registered dense ID
+	BOOST_CHECK_THROW(bridge.ExportMask(modern, legacy), std::invalid_argument);
+	for (const auto word : legacy) BOOST_TEST(word == 77u);
+	BOOST_CHECK_THROW(bridge.ExportMask({}, legacy), std::invalid_argument);
+	BOOST_CHECK_THROW(bridge.ImportMask({}, modern), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(full_capacity_word_crossings_and_overlapping_spans_round_trip)
+{
+	std::vector<std::string> names;
+	std::vector<UpgradeIdentityInput> inputs;
+	names.reserve(512);
+	inputs.reserve(512);
+	for (std::uint32_t i = 0; i < 512; ++i) names.push_back("Upgrade_" + std::to_string(i));
+	for (std::uint32_t i = 0; i < 512; ++i) inputs.push_back({names[i], 511 - i});
+	UpgradeCatalogBridge bridge;
+	bridge.Publish(inputs);
+	BOOST_TEST(bridge.MaskWordCount() == 8u);
+	std::array<std::uint64_t, 8> original{};
+	for (const unsigned bit : {0u, 63u, 64u, 127u, 128u, 255u, 256u, 511u})
+		original[bit / 64] |= UINT64_C(1) << (bit % 64);
+	auto inPlace = original;
+	bridge.ImportMask(inPlace, inPlace);
+	for (const unsigned bit : {0u, 63u, 64u, 127u, 128u, 255u, 256u, 511u})
+	{
+		const auto id = bridge.DenseId(bit);
+		BOOST_TEST((inPlace[id / 64] & (UINT64_C(1) << (id % 64))) != 0);
+	}
+	bridge.ExportMask(inPlace, inPlace);
+	BOOST_TEST(inPlace == original, boost::test_tools::per_element());
+	inPlace.fill(UINT64_MAX);
+	bridge.ImportMask(inPlace, inPlace);
+	bridge.ExportMask(inPlace, inPlace);
+	for (const auto word : inPlace) BOOST_TEST(word == UINT64_MAX);
+}
+
+BOOST_AUTO_TEST_CASE(reset_requires_republication_and_names_are_owned)
+{
+	UpgradeCatalogBridge bridge;
+	std::string name = "Upgrade_A";
+	std::array inputs{UpgradeIdentityInput{name, 0}};
+	bridge.Publish(inputs);
+	const auto hash = bridge.SchemaHash();
+	name.assign("Upgrade_B");
+	BOOST_TEST(bridge.Name(0) == "Upgrade_A");
+	bridge.Reset();
+	BOOST_CHECK_THROW(bridge.Name(0), std::logic_error);
+	inputs[0].name = name;
+	bridge.Publish(inputs);
+	BOOST_TEST(bridge.Name(0) == "Upgrade_B");
+	BOOST_TEST(bridge.SchemaHash() != hash);
+}
+
+BOOST_AUTO_TEST_CASE(published_mappings_produce_identical_isolated_batches_for_one_two_and_four_workers)
+{
+	std::vector<std::string> names;
+	std::vector<UpgradeIdentityInput> definitions;
+	names.reserve(128);
+	for (unsigned i = 0; i < 128; ++i) names.push_back("Upgrade_" + std::to_string(i));
+	for (unsigned i = 0; i < 128; ++i) definitions.push_back({names[i], 511 - i});
+	UpgradeCatalogBridge bridge;
+	bridge.Publish(definitions);
+	using LegacyRow = std::array<std::uint64_t, 8>;
+	using ModernRow = std::array<std::uint64_t, 2>;
+	std::vector<LegacyRow> input(4096);
+	std::vector<ModernRow> expected(4096);
+	for (std::size_t row = 0; row < input.size(); ++row)
+	{
+		for (const auto position : {row % 128, (row * 17 + 3) % 128})
+		{
+			const auto bit = 511 - static_cast<unsigned>(position);
+			input[row][bit / 64] |= UINT64_C(1) << (bit % 64);
+			const auto id = bridge.DenseId(bit);
+			expected[row][id / 64] |= UINT64_C(1) << (id % 64);
+		}
+	}
+	struct Batch
+	{
+		const UpgradeCatalogBridge *catalog;
+		std::span<const LegacyRow> input;
+		std::span<ModernRow> output;
+		static void Execute(void *raw)
+		{
+			auto &batch = *static_cast<Batch *>(raw);
+			for (std::size_t row = 0; row < batch.input.size(); ++row)
+				batch.catalog->ImportMask(batch.input[row], batch.output[row]);
+		}
+	};
+	for (const auto workerCount : {1u, 2u, 4u})
+	{
+		std::vector<ModernRow> output(4096);
+		std::vector<Batch> batches;
+		batches.reserve(64);
+		for (std::size_t begin = 0; begin < input.size(); begin += 64)
+			batches.push_back({&bridge, std::span<const LegacyRow>{input}.subspan(begin, 64),
+				std::span<ModernRow>{output}.subspan(begin, 64)});
+		std::vector<engine::jobs::Job> jobs;
+		for (auto &batch : batches) jobs.push_back({Batch::Execute, &batch});
+		engine::jobs::JobSystem workers{engine::jobs::JobSystemConfig{workerCount}};
+		workers.Execute(jobs);
+		BOOST_CHECK(output == expected);
+		for (std::size_t row = 0; row < output.size(); ++row)
+		{
+			LegacyRow roundTrip{};
+			bridge.ExportMask(output[row], roundTrip);
+			BOOST_TEST(roundTrip == input[row], boost::test_tools::per_element());
+		}
+	}
+}

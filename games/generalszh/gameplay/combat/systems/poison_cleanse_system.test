@@ -1,0 +1,20 @@
+#include <boost/test/unit_test.hpp>
+import games.generalszh.gameplay.combat.systems.poison_cleanse_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(poison_cleanses_on_actual_healing_or_death)
+{
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<HealingResult>();
+    world.RegisterComponent<PeriodicDamage>(); world.FinalizeComponents();
+    const auto healed=world.Create<LifeState,HealingResult,PeriodicDamage>();
+    const auto untouched=world.Create<LifeState,HealingResult,PeriodicDamage>();
+    const auto dead=world.Create<LifeState,HealingResult,PeriodicDamage>();
+    world.Get<PeriodicDamage>(healed)->active=true; world.Get<PeriodicDamage>(untouched)->active=true;
+    world.Get<PeriodicDamage>(dead)->active=true; world.Get<LifeState>(dead)->alive=false;
+    world.Get<HealingResult>(healed)->applied=1;
+    generalszh::combat::PoisonCleanseSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_TEST(!world.Get<PeriodicDamage>(healed)->active); BOOST_TEST(world.Get<PeriodicDamage>(untouched)->active);
+    BOOST_TEST(!world.Get<PeriodicDamage>(dead)->active);
+}

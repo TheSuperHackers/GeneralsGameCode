@@ -1,0 +1,39 @@
+#define BOOST_TEST_MODULE GeneralsZHObjectUpgradeLifecycleComponent
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.gameplay.upgrades.object_scope.components.object_upgrade_lifecycle;
+
+using generalszh::upgrades::object_scope::ObjectUpgradeCreationEvent;
+using generalszh::upgrades::object_scope::ObjectUpgradeLifecycle;
+using generalszh::upgrades::object_scope::ObjectUpgradeLifecycleStage;
+
+BOOST_AUTO_TEST_CASE(lifecycle_retains_definition_policy_and_serializable_stage)
+{
+	static_assert(std::is_standard_layout_v<ObjectUpgradeLifecycle>);
+	static_assert(std::is_trivially_copyable_v<ObjectUpgradeLifecycle>);
+
+	ObjectUpgradeLifecycle lifecycle;
+	BOOST_CHECK(lifecycle.event == ObjectUpgradeCreationEvent::OnBuildCompleteAfterGuard);
+	BOOST_CHECK(lifecycle.stage == ObjectUpgradeLifecycleStage::Enrolling);
+	BOOST_CHECK(!lifecycle.definition.policy.exemptUnderConstruction);
+	BOOST_TEST(ecs::ComponentTraits<ObjectUpgradeLifecycle>::StableName ==
+		std::string_view{"games.generalszh.upgrades.object_scope.lifecycle"});
+	BOOST_TEST(ecs::ComponentTraits<ObjectUpgradeLifecycle>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<ObjectUpgradeLifecycle>::Persistence ==
+		ecs::PersistencePolicy::Serializable);
+}
+
+BOOST_AUTO_TEST_CASE(immediate_event_is_data_not_an_implicit_policy_override)
+{
+	ObjectUpgradeLifecycle lifecycle{
+		{{7, 0, std::uint64_t{1} << 7, 33}, {false}},
+		ObjectUpgradeCreationEvent::OnCreateWhenComplete,
+		ObjectUpgradeLifecycleStage::Enrolling};
+
+	BOOST_CHECK(!lifecycle.definition.policy.exemptUnderConstruction);
+	BOOST_CHECK(lifecycle.event == ObjectUpgradeCreationEvent::OnCreateWhenComplete);
+}

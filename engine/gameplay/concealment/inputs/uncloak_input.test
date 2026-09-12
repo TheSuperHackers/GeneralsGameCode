@@ -1,0 +1,11 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import engine.gameplay.concealment.inputs.uncloak_input;
+
+BOOST_AUTO_TEST_CASE(uncloak_input_is_a_bounded_entity_command_payload)
+{
+    const std::array inputs{engine::gameplay::concealment::UncloakInput{{7, 2}}};
+    BOOST_TEST(inputs.size() == 1u);
+    BOOST_TEST(inputs[0].actor.index == 7u);
+    BOOST_TEST(inputs[0].actor.generation == 2u);
+}

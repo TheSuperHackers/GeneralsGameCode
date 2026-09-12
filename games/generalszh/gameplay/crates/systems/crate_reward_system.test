@@ -1,0 +1,434 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory_resource>
+#include <span>
+#include <stdexcept>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.events.storage.event_batch;
+import engine.gameplay.combat.components.healing;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.combat.systems.healing_system;
+import engine.gameplay.combat.systems.health_system;
+import engine.gameplay.navigation.grid.navigation_grid;
+import engine.gameplay.progression.components.progression_state;
+import engine.gameplay.progression.definitions.progression_definition;
+import engine.gameplay.progression.inputs.progression_batch;
+import engine.gameplay.progression.systems.progression_system;
+import engine.gameplay.spatial.contacts.events.contact_pair;
+import games.generalszh.gameplay.crates.components.crate_state;
+import games.generalszh.gameplay.crates.definitions.account_pickup_policy;
+import games.generalszh.gameplay.crates.definitions.collector_definition;
+import games.generalszh.gameplay.crates.definitions.crate_definition;
+import games.generalszh.gameplay.crates.inputs.crate_pickup_batch;
+import games.generalszh.gameplay.crates.inputs.crate_reward_batch;
+import games.generalszh.gameplay.crates.systems.crate_claim_system;
+import games.generalszh.gameplay.crates.systems.crate_reward_system;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.upgrades.components.upgrade_status;
+
+namespace reward_system_test
+{
+using engine::gameplay::combat::DamageResult;
+using engine::gameplay::combat::Health;
+using engine::gameplay::combat::HealthCapacity;
+using engine::gameplay::combat::HealingResult;
+using engine::gameplay::combat::LifeState;
+using engine::gameplay::combat::PendingDamage;
+using engine::gameplay::combat::PendingHealing;
+using engine::gameplay::navigation::GridPosition;
+using engine::gameplay::navigation::NavigationGrid;
+using engine::gameplay::progression::AcceptedExperience;
+using engine::gameplay::progression::ProgressionBatch;
+using engine::gameplay::progression::ProgressionCatalog;
+using engine::gameplay::progression::ProgressionDefinition;
+using engine::gameplay::progression::ProgressionDefinitionRef;
+using engine::gameplay::progression::ProgressionEligibility;
+using engine::gameplay::progression::ExperienceOutcome;
+using engine::gameplay::progression::ProgressionInbox;
+using engine::gameplay::progression::ProgressionState;
+using engine::gameplay::progression::ProgressionSystem;
+using generalszh::crates::AccountPickupPolicies;
+using generalszh::crates::CollectorDefinition;
+using generalszh::crates::CollectorDefinitionCatalog;
+using generalszh::crates::CrateClaimSystem;
+using generalszh::crates::CrateDefinition;
+using generalszh::crates::CrateDefinitionCatalog;
+using generalszh::crates::CratePickupBatch;
+using generalszh::crates::CratePickupInput;
+using generalszh::crates::CratePlacement;
+using generalszh::crates::CrateRewardBatch;
+using generalszh::crates::CrateRewardLimits;
+using generalszh::crates::CrateRewardSystem;
+using generalszh::crates::CrateState;
+using generalszh::crates::MoneyUpgradeBoost;
+using generalszh::crates::RewardKind;
+using generalszh::production::ProducedUnit;
+using generalszh::production::ResearchedUpgrade;
+using generalszh::upgrades::Status;
+using generalszh::upgrades::UpgradeInstanceStatus;
+using ContactPair = engine::gameplay::spatial::contacts::ContactPair;
+using ContactPublishedBatch = engine::events::PublishedBatch<ContactPair>;
+using ContactRecordedBatch = engine::events::RecordedBatch<ContactPair>;
+
+constexpr std::size_t EntityCapacity = 256;
+constexpr std::size_t HealTargetCount = 24;
+
+struct RunResult final
+{
+	std::vector<ecs::Entity> requestAccounts;
+	std::vector<std::uint32_t> requestAmounts;
+	std::vector<ecs::Entity> consumedEntities;
+	std::vector<ecs::Entity> progressionEntities;
+	std::vector<std::uint64_t> progressionRequested;
+	std::vector<std::uint64_t> progressionApplied;
+	std::vector<std::uint8_t> progressionOutcomes;
+	std::vector<std::uint64_t> targetHealth;
+	std::uint64_t healCollectorHealth{};
+	std::uint64_t healingApplied{};
+	std::uint64_t pendingHealing{};
+	std::uint64_t veterancyExperience{};
+	std::uint32_t veterancyLevel{};
+	std::size_t secondTickRequests{};
+	bool cratesDestroyed{};
+};
+
+void AddUpgradeGrant(ecs::World &world, const ecs::Entity account,
+	const std::uint32_t definition, const Status status)
+{
+	const auto grant = world.Create<ResearchedUpgrade, UpgradeInstanceStatus>();
+	*world.Get<ResearchedUpgrade>(grant) = ResearchedUpgrade{account, definition};
+	*world.Get<UpgradeInstanceStatus>(grant) = UpgradeInstanceStatus{status};
+}
+
+RunResult RunScenario(const std::size_t workers, const CrateRewardLimits limits,
+	const bool includeVeterancy)
+{
+	std::array<std::uint8_t, 64> walkable{};
+	walkable.fill(1);
+	const NavigationGrid grid{8, 8, walkable};
+
+	std::array<CrateDefinition, 3> definitions{};
+	definitions[0].reward = RewardKind::Money;
+	definitions[0].moneyProvided = 20;
+	definitions[0].buildingPickup = true;
+	definitions[0].moneyUpgradeBoosts = {
+		MoneyUpgradeBoost{7001, 7}, MoneyUpgradeBoost{7002, 99}};
+	definitions[1].reward = RewardKind::Heal;
+	definitions[2].reward = RewardKind::Veterancy;
+	definitions[2].addsOwnerVeterancy = true;
+	const CrateDefinitionCatalog crateCatalog{definitions};
+
+	const std::array unitCollectors{CollectorDefinition{1, 0, true}};
+	const std::array structureCollectors{CollectorDefinition{2, 0, true}};
+	const CollectorDefinitionCatalog collectorCatalog{unitCollectors, structureCollectors};
+
+	const std::array progressionDefinitions{
+		ProgressionDefinition{{0, 10, 20}, 100}};
+	const ProgressionCatalog progressionCatalog{progressionDefinitions};
+
+	ProgressionBatch progressionBatch{8};
+	CratePickupBatch pickupBatch{8, 8};
+	CrateRewardBatch rewardBatch{8};
+
+	// A small chunk target forces the joined queries to visit multiple chunks;
+	// the worker-count comparison therefore exercises the real chunk path.
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<LifeState>();
+	world.RegisterComponent<Health>();
+	world.RegisterComponent<PendingDamage>();
+	world.RegisterComponent<DamageResult>();
+	world.RegisterComponent<HealthCapacity>();
+	world.RegisterComponent<PendingHealing>();
+	world.RegisterComponent<HealingResult>();
+	world.RegisterComponent<ProducedUnit>();
+	world.RegisterComponent<generalszh::construction::Structure>();
+	world.RegisterComponent<GridPosition>();
+	world.RegisterComponent<ProgressionState>();
+	world.RegisterComponent<ProgressionDefinitionRef>();
+	world.RegisterComponent<ProgressionEligibility>();
+	world.RegisterComponent<ProgressionInbox>();
+	world.RegisterComponent<CrateState>();
+	world.RegisterComponent<engine::gameplay::rts::unlocks::UnlockState>();
+	world.RegisterComponent<ResearchedUpgrade>();
+	world.RegisterComponent<UpgradeInstanceStatus>();
+	world.FinalizeComponents();
+
+	// Reuse the old account index for C so stale grants with the same index do
+	// not match the current full entity identity.
+	const auto staleAccountC = world.Create<engine::gameplay::rts::unlocks::UnlockState>();
+	const auto accountA = world.Create<engine::gameplay::rts::unlocks::UnlockState>();
+	const auto accountB = world.Create<engine::gameplay::rts::unlocks::UnlockState>();
+	BOOST_REQUIRE(world.Destroy(staleAccountC));
+	const auto accountC = world.Create<engine::gameplay::rts::unlocks::UnlockState>();
+	BOOST_REQUIRE(accountC.index == staleAccountC.index);
+	BOOST_REQUIRE(accountC.generation != staleAccountC.generation);
+
+	AccountPickupPolicies policies{EntityCapacity};
+	policies.Register(accountA, true, false);
+	policies.Register(accountB, true, false);
+	policies.Register(accountC, true, false);
+	policies.Freeze();
+
+	// A has the first authored boost complete and the second still in
+	// production. B has only the second boost complete. The old generation of
+	// C has a complete grant, but current C must receive only the base amount.
+	AddUpgradeGrant(world, accountA, 7001, Status::Complete);
+	AddUpgradeGrant(world, accountA, 7002, Status::InProduction);
+	AddUpgradeGrant(world, accountB, 7002, Status::Complete);
+	AddUpgradeGrant(world, staleAccountC, 7001, Status::Complete);
+
+	const auto makeUnit = [&](const ecs::Entity account, const std::uint32_t definition = 1) {
+		const auto entity = world.Create<LifeState, ProducedUnit, GridPosition>();
+		*world.Get<ProducedUnit>(entity) = ProducedUnit{entity, account, definition};
+		*world.Get<GridPosition>(entity) = GridPosition{static_cast<engine::gameplay::navigation::Cell>(entity.index % 64)};
+		return entity;
+	};
+
+	const auto moneyCollectorA = makeUnit(accountA);
+	const auto moneyCollectorC = makeUnit(accountC);
+	const auto moneyCollectorB = world.Create<LifeState, generalszh::construction::Structure,
+		GridPosition>();
+	*world.Get<generalszh::construction::Structure>(moneyCollectorB) =
+		generalszh::construction::Structure{};
+	world.Get<generalszh::construction::Structure>(moneyCollectorB)->account = accountB;
+	world.Get<generalszh::construction::Structure>(moneyCollectorB)->definition = 2;
+	*world.Get<GridPosition>(moneyCollectorB) = GridPosition{3};
+
+	const auto healCollector = world.Create<LifeState, ProducedUnit, GridPosition,
+		Health, HealthCapacity, PendingDamage, DamageResult, PendingHealing, HealingResult>();
+	*world.Get<ProducedUnit>(healCollector) = ProducedUnit{healCollector, accountA, 1};
+	*world.Get<GridPosition>(healCollector) = GridPosition{4};
+	*world.Get<Health>(healCollector) = Health{40};
+	*world.Get<HealthCapacity>(healCollector) = HealthCapacity{100};
+
+	std::vector<ecs::Entity> healTargets;
+	healTargets.reserve(HealTargetCount);
+	for (std::size_t index = 0; index != HealTargetCount; ++index)
+	{
+		const auto target = world.Create<LifeState, ProducedUnit, GridPosition,
+			Health, HealthCapacity, PendingDamage, DamageResult, PendingHealing, HealingResult>();
+		*world.Get<ProducedUnit>(target) = ProducedUnit{target, accountA, 1};
+		*world.Get<GridPosition>(target) = GridPosition{
+			static_cast<engine::gameplay::navigation::Cell>((index + 5) % 64)};
+		*world.Get<Health>(target) = Health{static_cast<std::uint64_t>(index + 1)};
+		*world.Get<HealthCapacity>(target) = HealthCapacity{100};
+		healTargets.push_back(target);
+	}
+
+	ecs::Entity veterancyCollector{};
+	ecs::Entity veterancyCrate{};
+	if (includeVeterancy)
+	{
+		veterancyCollector = world.Create<LifeState, ProducedUnit, GridPosition,
+			ProgressionState, ProgressionDefinitionRef, ProgressionEligibility, ProgressionInbox>();
+		*world.Get<ProducedUnit>(veterancyCollector) =
+			ProducedUnit{veterancyCollector, accountB, 1};
+		*world.Get<GridPosition>(veterancyCollector) = GridPosition{2};
+		*world.Get<ProgressionState>(veterancyCollector) = ProgressionState{0, 0};
+		*world.Get<ProgressionDefinitionRef>(veterancyCollector) = ProgressionDefinitionRef{0};
+		*world.Get<ProgressionEligibility>(veterancyCollector) = ProgressionEligibility{true};
+	}
+
+	const auto moneyCrateA = world.Create<CrateState>();
+	*world.Get<CrateState>(moneyCrateA) = CrateState{0, {}, moneyCollectorA,
+		CratePlacement::Grounded, 0};
+	const auto moneyCrateB = world.Create<CrateState>();
+	*world.Get<CrateState>(moneyCrateB) = CrateState{0, {}, moneyCollectorB,
+		CratePlacement::Grounded, 0};
+	const auto moneyCrateC = world.Create<CrateState>();
+	*world.Get<CrateState>(moneyCrateC) = CrateState{0, {}, moneyCollectorC,
+		CratePlacement::Grounded, 0};
+	const auto healCrate = world.Create<CrateState>();
+	*world.Get<CrateState>(healCrate) = CrateState{1, {}, healCollector,
+		CratePlacement::Grounded, 0};
+	if (includeVeterancy)
+	{
+		veterancyCrate = world.Create<CrateState>();
+		*world.Get<CrateState>(veterancyCrate) = CrateState{2, {}, veterancyCollector,
+			CratePlacement::Grounded, 1};
+	}
+
+	std::vector<CratePickupInput> inputs{
+		{healCrate, healCollector, 30},
+		{moneyCrateC, moneyCollectorC, 20},
+		{moneyCrateB, moneyCollectorB, 10},
+		{moneyCrateA, moneyCollectorA, 0}};
+	if (includeVeterancy)
+		inputs.push_back({veterancyCrate, veterancyCollector, 40});
+	std::pmr::unsynchronized_pool_resource contactMemory;
+	ContactPublishedBatch publishedContacts{EntityCapacity, 1, contactMemory};
+	ContactRecordedBatch recordedContacts{EntityCapacity, contactMemory};
+	const auto publishEmptyContacts = [&](const std::uint64_t tick) {
+		recordedContacts.Begin({{tick, 0}, 0, 0, 0});
+		recordedContacts.Seal();
+		std::array<ContactRecordedBatch *, 1> sources{&recordedContacts};
+		publishedContacts.Publish({tick, 0}, sources);
+	};
+
+	engine::gameplay::combat::HealthSystem healthSystem;
+	engine::gameplay::combat::HealingSystem healingSystem;
+	CrateClaimSystem claimSystem{world, grid, crateCatalog, collectorCatalog, policies,
+		progressionCatalog, progressionBatch, pickupBatch, publishedContacts, EntityCapacity};
+	CrateRewardSystem rewardSystem{world, grid, crateCatalog, progressionCatalog,
+		progressionBatch, pickupBatch, rewardBatch, EntityCapacity, limits};
+	ProgressionSystem progressionSystem{progressionCatalog, progressionBatch};
+	claimSystem.Configure();
+	rewardSystem.Configure();
+
+	ecs::SystemRegistry systems;
+	systems.Register(healthSystem);
+	systems.Register(claimSystem);
+	systems.Register(rewardSystem);
+	systems.Register(healingSystem);
+	systems.Register(progressionSystem);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler{world, systems, engine::jobs::JobSystemConfig{workers}};
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	claimSystem.SetInputs(inputs);
+	if (includeVeterancy)
+	{
+		const std::array hostPrefix{AcceptedExperience{veterancyCollector, 5}};
+		progressionBatch.SetInputs(hostPrefix);
+	}
+	else
+		progressionBatch.SetInputs({});
+	publishEmptyContacts(1);
+	scheduler.Execute(engine::time::SimulationTime{1, step});
+
+	RunResult result;
+	for (const auto &request : rewardBatch.Requests())
+	{
+		result.requestAccounts.push_back(request.account);
+		result.requestAmounts.push_back(request.command.amount);
+	}
+	if (result.requestAccounts.size() == 3)
+	{
+		BOOST_CHECK(result.requestAccounts[0] == accountA);
+		BOOST_CHECK(result.requestAccounts[1] == accountB);
+		BOOST_CHECK(result.requestAccounts[2] == accountC);
+	}
+	for (const auto entity : rewardBatch.ConsumedCrates())
+		result.consumedEntities.push_back(entity);
+	for (const auto &experience : progressionBatch.Results())
+	{
+		result.progressionEntities.push_back(experience.entity);
+		result.progressionRequested.push_back(experience.requested);
+		result.progressionApplied.push_back(experience.applied);
+		result.progressionOutcomes.push_back(static_cast<std::uint8_t>(experience.outcome));
+	}
+	for (const auto target : healTargets)
+		result.targetHealth.push_back(world.Get<Health>(target)->current);
+	result.healCollectorHealth = world.Get<Health>(healCollector)->current;
+	result.healingApplied = world.Get<HealingResult>(healCollector)->applied;
+	result.pendingHealing = world.Get<PendingHealing>(healCollector)->quantity;
+	if (includeVeterancy)
+	{
+		result.veterancyExperience = world.Get<ProgressionState>(veterancyCollector)->experience;
+		result.veterancyLevel = world.Get<ProgressionState>(veterancyCollector)->level;
+		bool consumedVeterancyCrate = false;
+		for (const auto entity : result.consumedEntities)
+			consumedVeterancyCrate = consumedVeterancyCrate || entity == veterancyCrate;
+		BOOST_CHECK(consumedVeterancyCrate);
+	}
+	result.cratesDestroyed = !world.IsAlive(moneyCrateA) && !world.IsAlive(moneyCrateB) &&
+		!world.IsAlive(moneyCrateC) && !world.IsAlive(healCrate) &&
+		(!includeVeterancy || !world.IsAlive(veterancyCrate));
+
+	// The same systems and batches execute again after explicit release. This
+	// proves transient outputs are reclaimed without replaying consumed crates.
+	rewardBatch.Release();
+	claimSystem.SetInputs({});
+	progressionBatch.SetInputs({});
+	publishEmptyContacts(2);
+	scheduler.Execute(engine::time::SimulationTime{2, step});
+	result.secondTickRequests = rewardBatch.Requests().size();
+	rewardBatch.Release();
+	return result;
+}
+} // namespace reward_system_test
+
+BOOST_AUTO_TEST_CASE(crate_reward_uses_complete_generation_safe_grants_and_is_deterministic)
+{
+	const auto one = reward_system_test::RunScenario(1, {1, 1}, true);
+	const auto two = reward_system_test::RunScenario(2, {1, 1}, true);
+	const auto four = reward_system_test::RunScenario(4, {1, 1}, true);
+
+	BOOST_REQUIRE_EQUAL(one.requestAccounts.size(), 3u);
+	BOOST_REQUIRE_EQUAL(one.requestAmounts.size(), 3u);
+	BOOST_TEST(one.requestAmounts[0] == 27u);  // first matching complete grant
+	BOOST_TEST(one.requestAmounts[1] == 119u); // other account's second grant
+	BOOST_TEST(one.requestAmounts[2] == 20u);  // stale generation does not match
+	BOOST_REQUIRE_EQUAL(one.targetHealth.size(), reward_system_test::HealTargetCount);
+	for (const auto health : one.targetHealth)
+		BOOST_TEST(health == 100u);
+	BOOST_TEST(one.healCollectorHealth == 100u);
+	BOOST_TEST(one.healingApplied == 60u);
+	BOOST_TEST(one.pendingHealing == 0u);
+	BOOST_TEST(one.veterancyExperience == 10u);
+	BOOST_TEST(one.veterancyLevel == 1u);
+	BOOST_REQUIRE_EQUAL(one.progressionEntities.size(), 2u);
+	BOOST_CHECK(one.progressionEntities[0] == one.progressionEntities[1]);
+	BOOST_TEST(one.progressionRequested[0] == 5u);
+	BOOST_TEST(one.progressionRequested[1] == 5u);
+	BOOST_TEST(one.progressionApplied[0] == 5u);
+	BOOST_TEST(one.progressionApplied[1] == 5u);
+	BOOST_REQUIRE_EQUAL(one.progressionOutcomes.size(), 2u);
+	for (const auto outcome : one.progressionOutcomes)
+		BOOST_CHECK(outcome == static_cast<std::uint8_t>(
+			engine::gameplay::progression::ExperienceOutcome::Applied));
+	BOOST_TEST(one.consumedEntities.size() == 5u);
+	for (std::size_t index = 1; index != one.consumedEntities.size(); ++index)
+		BOOST_CHECK(one.consumedEntities[index - 1].index < one.consumedEntities[index].index);
+	BOOST_TEST(one.cratesDestroyed);
+	BOOST_TEST(one.secondTickRequests == 0u);
+
+	BOOST_CHECK(one.requestAccounts == two.requestAccounts);
+	BOOST_CHECK(one.requestAccounts == four.requestAccounts);
+	BOOST_CHECK(one.requestAmounts == two.requestAmounts);
+	BOOST_CHECK(one.requestAmounts == four.requestAmounts);
+	BOOST_CHECK(one.consumedEntities == two.consumedEntities);
+	BOOST_CHECK(one.consumedEntities == four.consumedEntities);
+	BOOST_CHECK(one.progressionEntities == two.progressionEntities);
+	BOOST_CHECK(one.progressionEntities == four.progressionEntities);
+	BOOST_CHECK(one.progressionRequested == two.progressionRequested);
+	BOOST_CHECK(one.progressionRequested == four.progressionRequested);
+	BOOST_CHECK(one.progressionApplied == two.progressionApplied);
+	BOOST_CHECK(one.progressionApplied == four.progressionApplied);
+	BOOST_CHECK(one.progressionOutcomes == two.progressionOutcomes);
+	BOOST_CHECK(one.progressionOutcomes == four.progressionOutcomes);
+	BOOST_CHECK(one.targetHealth == two.targetHealth);
+	BOOST_CHECK(one.targetHealth == four.targetHealth);
+	BOOST_TEST(two.healCollectorHealth == one.healCollectorHealth);
+	BOOST_TEST(four.healCollectorHealth == one.healCollectorHealth);
+	BOOST_TEST(two.healingApplied == one.healingApplied);
+	BOOST_TEST(four.healingApplied == one.healingApplied);
+	BOOST_TEST(two.pendingHealing == one.pendingHealing);
+	BOOST_TEST(four.pendingHealing == one.pendingHealing);
+	BOOST_TEST(two.veterancyExperience == one.veterancyExperience);
+	BOOST_TEST(four.veterancyExperience == one.veterancyExperience);
+	BOOST_TEST(two.veterancyLevel == one.veterancyLevel);
+	BOOST_TEST(four.veterancyLevel == one.veterancyLevel);
+}
+
+BOOST_AUTO_TEST_CASE(crate_reward_accepts_zero_logical_limits_when_no_veterancy_references_exist)
+{
+	const auto result = reward_system_test::RunScenario(1, {0, 0}, false);
+	BOOST_REQUIRE_EQUAL(result.requestAmounts.size(), 3u);
+	BOOST_TEST(result.requestAmounts[0] == 27u);
+	BOOST_TEST(result.requestAmounts[1] == 119u);
+	BOOST_TEST(result.requestAmounts[2] == 20u);
+	BOOST_TEST(result.secondTickRequests == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(crate_reward_rejects_reference_and_output_award_overflow_at_logical_caps)
+{
+	BOOST_CHECK_THROW(reward_system_test::RunScenario(1, {0, 1}, true), std::length_error);
+	BOOST_CHECK_THROW(reward_system_test::RunScenario(1, {1, 0}, true), std::length_error);
+}

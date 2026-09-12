@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.containment.components.containment_task;
+
+BOOST_AUTO_TEST_CASE(containment_task_is_pending_intent_and_serializable_policy)
+{
+    using namespace engine::gameplay::containment;
+    ContainmentTask task;
+    BOOST_CHECK(!task.carrier.IsValid());
+    task.carrier={7,3};
+    BOOST_CHECK((task.carrier==ecs::Entity{7,3}));
+    BOOST_CHECK(ecs::ComponentTraits<ContainmentTask>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_TEST(ecs::ComponentTraits<ContainmentTask>::Version==1u);
+}

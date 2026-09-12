@@ -1,0 +1,58 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <stdexcept>
+
+import engine.gameplay.rts.visibility.algorithms.visibility_read_view;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_read_view)
+
+BOOST_AUTO_TEST_CASE(reads_owner_bit_from_the_prepared_page_without_world_lookup)
+{
+	const VisibilityTopology topology{4, 1};
+	const VisibilityCellIndex index{0, 4, 0};
+	const VisibilityVisibleMaskPage visible{[] {
+		VisibilityVisibleMaskPage result{};
+		result.values[2] = ObserverBit(3);
+		return result;
+	}()};
+	const std::array<const VisibilityCellIndex *, 1> indexes{&index};
+	const std::array<const VisibilityVisibleMaskPage *, 1> pages{&visible};
+	VisibilityReadView view{topology};
+	view.Bind(indexes, pages);
+	BOOST_TEST(view.Visible(ParticipantHandle{3, 9}, 2));
+	BOOST_TEST(!view.Visible(ParticipantHandle{2, 9}, 2));
+	BOOST_TEST(!view.Visible(ParticipantHandle{3, 9}, 3));
+}
+
+BOOST_AUTO_TEST_CASE(startup_unrestricted_is_an_explicit_policy)
+{
+	const VisibilityTopology topology{1, 1};
+	VisibilityReadView view{topology};
+	view.SetStartupUnrestricted();
+	BOOST_TEST(view.StartupUnrestricted());
+	BOOST_TEST(view.Visible(ParticipantHandle{}, 0));
+}
+
+BOOST_AUTO_TEST_CASE(rejects_zero_and_short_interior_pages)
+{
+	const VisibilityTopology topology{257, 1};
+	const VisibilityCellIndex shortIndex{0, 255, 0};
+	const VisibilityCellIndex finalIndex{255, 2, 0};
+	const VisibilityVisibleMaskPage firstPage{};
+	const VisibilityVisibleMaskPage secondPage{};
+	const std::array<const VisibilityCellIndex *, 2> shortIndexes{&shortIndex, &finalIndex};
+	const std::array<const VisibilityVisibleMaskPage *, 2> shortPages{&firstPage, &secondPage};
+	VisibilityReadView shortView{topology};
+	BOOST_CHECK_THROW(shortView.Bind(shortIndexes, shortPages), std::invalid_argument);
+
+	const VisibilityCellIndex zeroIndex{0, 0, 0};
+	const std::array<const VisibilityCellIndex *, 1> zeroIndexes{&zeroIndex};
+	const std::array<const VisibilityVisibleMaskPage *, 1> zeroPages{&firstPage};
+	VisibilityReadView zeroView{VisibilityTopology{1, 1}};
+	BOOST_CHECK_THROW(zeroView.Bind(zeroIndexes, zeroPages), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -1,0 +1,206 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionMarkerAlgorithms
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.production.presentation.algorithms.construction_marker;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::production::AdvanceConstructionMarker;
+using generalszh::production::AuthorConstructionMarkerTiming;
+using generalszh::production::BeginConstructionMarker;
+using generalszh::production::ConstructionMarker;
+using generalszh::production::ConstructionMarkerTiming;
+
+namespace construction_marker_test
+{
+struct ConstructionMarkerSystem
+{
+	using Query = ecs::Query<ecs::Write<ConstructionMarker>>;
+
+	ConstructionMarkerTiming timing;
+
+	void Execute(const Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		const auto markers = chunk.Get<ConstructionMarker>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			AdvanceConstructionMarker(markers[row], context.Tick(), timing);
+	}
+};
+
+using Snapshot = std::vector<std::array<std::uint64_t, 3>>;
+Snapshot RunScheduledMarkers(std::size_t workers);
+} // namespace construction_marker_test
+
+namespace ecs
+{
+template<>
+struct SystemTraits<construction_marker_test::ConstructionMarkerSystem>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.presentation.construction_marker.system";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace construction_marker_test
+{
+Snapshot RunScheduledMarkers(const std::size_t workers)
+{
+	constexpr std::size_t entityCount = 4096;
+	constexpr std::uint64_t now = 1'000'000;
+	constexpr ConstructionMarkerTiming timing{5};
+
+	ecs::World world{ecs::WorldConfig{64}};
+	world.RegisterComponent<ConstructionMarker>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<ConstructionMarker>();
+		auto *marker = world.Get<ConstructionMarker>(entity);
+		BOOST_REQUIRE(marker != nullptr);
+		if (index % 9 != 0)
+			marker->tick = now - (static_cast<std::uint64_t>(index % 8) + 1);
+		entities.push_back(entity);
+	}
+
+	ConstructionMarkerSystem system{timing};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+	scheduler.Finalize(engine::time::FixedStep{60});
+	scheduler.Execute(engine::time::SimulationTime{now, engine::time::FixedStep{60}});
+
+	ecs::Query<ecs::Read<ConstructionMarker>> query(world);
+	BOOST_REQUIRE(query.PrepareChunks() > 1u);
+
+	Snapshot result;
+	result.reserve(entityCount);
+	for (const ecs::Entity entity : entities)
+	{
+		const auto *marker = world.Get<ConstructionMarker>(entity);
+		BOOST_REQUIRE(marker != nullptr);
+		result.push_back({
+			static_cast<std::uint64_t>(entity.index),
+			static_cast<std::uint64_t>(entity.generation),
+			marker->tick});
+	}
+	return result;
+}
+} // namespace construction_marker_test
+
+using namespace construction_marker_test;
+
+BOOST_AUTO_TEST_CASE(begin_starts_an_inactive_marker)
+{
+	ConstructionMarker marker{};
+	static_assert(noexcept(BeginConstructionMarker(marker, std::uint64_t{0})));
+
+	BOOST_TEST(BeginConstructionMarker(marker, 42u));
+	BOOST_TEST(marker.tick == 42u);
+}
+
+BOOST_AUTO_TEST_CASE(begin_does_not_refresh_an_active_marker)
+{
+	ConstructionMarker marker{42};
+
+	BOOST_TEST(!BeginConstructionMarker(marker, 99u));
+	BOOST_TEST(marker.tick == 42u);
+}
+
+BOOST_AUTO_TEST_CASE(zero_tick_start_is_reported_and_can_be_rearmed)
+{
+	ConstructionMarker marker{};
+
+	BOOST_TEST(BeginConstructionMarker(marker, 0u));
+	BOOST_TEST(marker.tick == 0u);
+	BOOST_TEST(BeginConstructionMarker(marker, 7u));
+	BOOST_TEST(marker.tick == 7u);
+}
+
+BOOST_AUTO_TEST_CASE(advance_ignores_the_zero_sentinel)
+{
+	ConstructionMarker marker{};
+
+	static_assert(noexcept(AdvanceConstructionMarker(marker, std::uint64_t{0},
+		ConstructionMarkerTiming{0})));
+	BOOST_TEST(!AdvanceConstructionMarker(marker, 100u, ConstructionMarkerTiming{0}));
+	BOOST_TEST(marker.tick == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(expiry_is_strict_and_clears_only_after_the_duration)
+{
+	ConstructionMarker marker{10};
+	const ConstructionMarkerTiming timing{5};
+
+	BOOST_TEST(!AdvanceConstructionMarker(marker, 15u, timing));
+	BOOST_TEST(marker.tick == 10u);
+	BOOST_TEST(AdvanceConstructionMarker(marker, 16u, timing));
+	BOOST_TEST(marker.tick == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(expired_markers_can_be_started_again)
+{
+	ConstructionMarker marker{10};
+
+	BOOST_TEST(AdvanceConstructionMarker(marker, 11u, ConstructionMarkerTiming{0}));
+	BOOST_TEST(marker.tick == 0u);
+	BOOST_TEST(BeginConstructionMarker(marker, 20u));
+	BOOST_TEST(marker.tick == 20u);
+}
+
+BOOST_AUTO_TEST_CASE(explicit_32_bit_wrap_differs_from_explicit_64_bit_time)
+{
+	const ConstructionMarkerTiming timing{100};
+
+	ConstructionMarker marker32{0xfffffff0u};
+	BOOST_TEST(!AdvanceConstructionMarker<std::uint32_t>(marker32, 0x10u, timing));
+	BOOST_TEST(marker32.tick == 0xfffffff0u);
+
+	ConstructionMarker marker64{0xfffffff0u};
+	BOOST_TEST(AdvanceConstructionMarker<std::uint64_t>(marker64, 0x10u, timing));
+	BOOST_TEST(marker64.tick == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(modern_64_bit_ticks_are_not_narrowed)
+{
+	const std::uint64_t markerTick = (std::uint64_t{1} << 40) + 10;
+	ConstructionMarker marker{markerTick};
+
+	BOOST_TEST(AdvanceConstructionMarker<std::uint64_t>(marker, markerTick + 32,
+		ConstructionMarkerTiming{31}));
+	BOOST_TEST(marker.tick == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_marker_states_match_for_one_two_and_four_workers)
+{
+	const auto oneWorker = RunScheduledMarkers(1);
+	const auto twoWorkers = RunScheduledMarkers(2);
+	const auto fourWorkers = RunScheduledMarkers(4);
+
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+	BOOST_TEST(oneWorker.size() == 4096u);
+	for (std::size_t index = 0; index < oneWorker.size(); ++index)
+	{
+		const auto &state = oneWorker[index];
+		BOOST_TEST(state[0] == index);
+		BOOST_TEST(state[1] == 1u);
+		const bool active = index % 9 != 0;
+		const std::uint64_t age = static_cast<std::uint64_t>(index % 8) + 1;
+		const std::uint64_t expectedTick = active && age <= 5 ? 1'000'000 - age : 0;
+		BOOST_TEST(state[2] == expectedTick);
+	}
+}

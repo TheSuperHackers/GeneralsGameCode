@@ -1,0 +1,87 @@
+#define BOOST_TEST_MODULE BaseRepairSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <vector>
+import games.generalszh.gameplay.repair.systems.base_repair_system;
+import engine.ecs.scheduler.scheduler;
+namespace
+{
+using namespace engine::gameplay::combat;
+using namespace engine::gameplay::rts::repair;
+void Register(ecs::World &world)
+{
+    world.RegisterComponent<Health>();world.RegisterComponent<HealthCapacity>();world.RegisterComponent<LifeState>();
+    world.RegisterComponent<PendingDamage>();world.RegisterComponent<DamageResult>();world.RegisterComponent<PendingHealing>();
+    world.RegisterComponent<HealingResult>();world.RegisterComponent<RepairState>();world.RegisterComponent<RepairBinding>();
+    world.RegisterComponent<generalszh::construction::Structure>();world.RegisterComponent<generalszh::selling::SaleState>();
+    world.FinalizeComponents();
+}
+ecs::Entity Create(ecs::World &world,const RepairDefinitions &definitions,unsigned kind)
+{
+    const auto entity=world.Create<Health,HealthCapacity,LifeState,PendingDamage,DamageResult,PendingHealing,HealingResult,
+        RepairState,RepairBinding,generalszh::construction::Structure>();
+    if(kind!=0) world.Add<generalszh::selling::SaleState>(entity);
+    *world.Get<Health>(entity)={kind==1?10000u:9000u};*world.Get<HealthCapacity>(entity)={10000};
+    world.Get<generalszh::construction::Structure>(entity)->complete=kind!=3;
+    *world.Get<RepairState>(entity)=StartRepair(definitions,0,{0,definitions.Step()});
+    if(kind==2) *world.Get<PendingDamage>(entity)={10000};
+    if(kind==4) world.Get<generalszh::selling::SaleState>(entity)->phase=generalszh::selling::SalePhase::Selling;
+    return entity;
+}
+}
+BOOST_AUTO_TEST_CASE(real_damage_repair_healing_pipeline_matches_workers_and_lifecycle)
+{
+    using namespace std::chrono_literals;
+    const auto run=[](unsigned workers) {
+        const auto step=engine::time::FixedStep{30};
+        const std::array authored{RepairDefinition{3,1000,100ms,3s,engine::time::Duration{33333333}}};
+        const RepairDefinitions definitions(step,authored);
+        ecs::World world(ecs::WorldConfig{256});Register(world);
+        std::vector<ecs::Entity> entities;
+        for(unsigned i=0;i<100;++i) entities.push_back(Create(world,definitions,i%5));
+        HealthSystem damage; generalszh::repair::BaseRepairSystem repair(definitions); HealingSystem healing;
+        ecs::SystemRegistry registry;registry.Register(healing);registry.Register(repair);registry.Register(damage);
+        registry.Finalize(world.Components());ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers});scheduler.Finalize(step);
+        std::vector<std::uint64_t> snapshot;
+        for(std::uint64_t tick=0;tick<=150;++tick) {
+            if(tick==0||tick==30) for(unsigned i=0;i<entities.size();i+=5) *world.Get<PendingDamage>(entities[i])={100};
+            scheduler.Execute({tick,step});
+            if(tick==119) BOOST_TEST(world.Get<Health>(entities[0])->current==8800u);
+            if(tick==120) BOOST_TEST(world.Get<Health>(entities[0])->current==8803u);
+            for(const auto entity:entities) snapshot.push_back(world.Get<HealingResult>(entity)->applied);
+        }
+        BOOST_TEST(world.Get<Health>(entities[0])->current==8833u);
+        BOOST_TEST(world.Get<Health>(entities[1])->current==10000u);BOOST_TEST(!world.Get<RepairState>(entities[1])->armed);
+        BOOST_TEST(!world.Get<LifeState>(entities[2])->alive);BOOST_TEST(world.Get<Health>(entities[2])->current==0u);
+        BOOST_TEST(world.Get<Health>(entities[3])->current==9000u);
+        BOOST_TEST(world.Get<Health>(entities[4])->current==9000u);BOOST_TEST(world.Get<RepairState>(entities[4])->stopped);
+        // Completion is observed on the next repair tick; no catch-up burst for
+        // construction time. Existing pending healing is combined by HealingSystem.
+        world.Get<generalszh::construction::Structure>(entities[3])->complete=true;
+        world.Get<PendingHealing>(entities[3])->quantity=2;
+        scheduler.Execute({151,step});
+        BOOST_TEST(world.Get<Health>(entities[3])->current==9005u);
+        for(const auto entity:entities) {
+            const auto state=*world.Get<RepairState>(entity);
+            snapshot.insert(snapshot.end(),{entity.index,entity.generation,world.Get<Health>(entity)->current,
+                world.Get<LifeState>(entity)->alive,state.nextPulse,state.remainder,state.armed,state.stopped});
+        }
+        return snapshot;
+    };
+    const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(base_repair_zero_rate_stays_dormant_after_damage)
+{
+    using namespace std::chrono_literals;
+    const auto step=engine::time::FixedStep{30};
+    const std::array authored{RepairDefinition{0,1000,100ms,3s,{}}};
+    const RepairDefinitions definitions(step,authored);ecs::World world;Register(world);
+    const auto entity=Create(world,definitions,0);
+    *world.Get<PendingDamage>(entity)={1};
+    HealthSystem damage;generalszh::repair::BaseRepairSystem repair(definitions);HealingSystem healing;
+    ecs::SystemRegistry registry;registry.Register(damage);registry.Register(repair);registry.Register(healing);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry);scheduler.Finalize(step);scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<Health>(entity)->current==8999u);BOOST_TEST(!world.Get<RepairState>(entity)->armed);
+}

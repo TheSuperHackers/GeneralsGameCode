@@ -1,0 +1,216 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeStatus
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.gameplay.upgrades.state.upgrade_status;
+
+using generalszh::upgrades::IsValidStatus;
+using generalszh::upgrades::Status;
+using generalszh::upgrades::UpgradeInstanceStatus;
+
+namespace upgrade_status_test
+{
+struct Marker
+{
+	std::int32_t value{0};
+};
+
+struct StatusStep
+{
+	using Query = ecs::Query<ecs::Write<UpgradeInstanceStatus>>;
+
+	void Execute(const Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		const auto statuses = chunk.Get<UpgradeInstanceStatus>();
+		const auto entities = chunk.Entities();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			const auto raw = static_cast<std::int32_t>(
+				(static_cast<std::uint64_t>(entities[row].index) + context.Tick()) % 3u);
+			statuses[row].value = static_cast<Status>(raw);
+		}
+	}
+};
+
+} // namespace upgrade_status_test
+
+namespace ecs
+{
+template<>
+struct SystemTraits<upgrade_status_test::StatusStep>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.upgrades.instance_status.step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace upgrade_status_test
+{
+
+struct Row
+{
+	ecs::Entity entity{};
+	std::int32_t value{0};
+};
+
+std::vector<Row> RunScheduled(const std::size_t workerCount)
+{
+	constexpr std::size_t entityCount = 4096;
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<UpgradeInstanceStatus>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+		entities.push_back(world.Create<UpgradeInstanceStatus>());
+
+	StatusStep system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workerCount});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	for (std::uint64_t tick = 1; tick <= 4; ++tick)
+		scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+	std::vector<Row> result;
+	result.reserve(entities.size());
+	for (const ecs::Entity entity : entities)
+	{
+		const auto *status = world.Get<UpgradeInstanceStatus>(entity);
+		BOOST_REQUIRE(status != nullptr);
+		result.push_back({entity, static_cast<std::int32_t>(status->value)});
+	}
+	return result;
+}
+} // namespace upgrade_status_test
+
+namespace ecs
+{
+template<>
+struct ComponentTraits<upgrade_status_test::Marker>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.upgrades.instance_status.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_CASE(status_domain_metadata_and_plain_layout_are_stable)
+{
+	static_assert(std::is_same_v<std::underlying_type_t<Status>, std::int32_t>);
+	static_assert(std::is_standard_layout_v<UpgradeInstanceStatus>);
+	static_assert(std::is_trivially_copyable_v<UpgradeInstanceStatus>);
+
+	BOOST_TEST(sizeof(UpgradeInstanceStatus) == sizeof(std::int32_t));
+	BOOST_TEST(alignof(UpgradeInstanceStatus) == alignof(std::int32_t));
+	BOOST_TEST(offsetof(UpgradeInstanceStatus, value) == 0u);
+	BOOST_TEST(static_cast<std::int32_t>(UpgradeInstanceStatus{}.value) == 0);
+
+	BOOST_CHECK(IsValidStatus(static_cast<std::int32_t>(Status::Invalid)));
+	BOOST_CHECK(IsValidStatus(static_cast<std::int32_t>(Status::InProduction)));
+	BOOST_CHECK(IsValidStatus(static_cast<std::int32_t>(Status::Complete)));
+	BOOST_CHECK(!IsValidStatus(-1));
+	BOOST_CHECK(!IsValidStatus(3));
+
+	BOOST_TEST(ecs::ComponentTraits<UpgradeInstanceStatus>::StableName ==
+		"games.generalszh.upgrades.instance_status");
+	BOOST_TEST(ecs::ComponentTraits<UpgradeInstanceStatus>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<UpgradeInstanceStatus>::Persistence ==
+		ecs::PersistencePolicy::Serializable);
+}
+
+BOOST_AUTO_TEST_CASE(read_write_queries_use_contiguous_separate_component_columns)
+{
+	constexpr std::size_t entityCount = 65;
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<UpgradeInstanceStatus>();
+	world.RegisterComponent<upgrade_status_test::Marker>();
+	world.FinalizeComponents();
+
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const auto entity = world.Create<UpgradeInstanceStatus, upgrade_status_test::Marker>();
+		world.Get<UpgradeInstanceStatus>(entity)->value =
+			static_cast<Status>(index % 3u);
+		world.Get<upgrade_status_test::Marker>(entity)->value =
+			static_cast<std::int32_t>(index + 10u);
+	}
+
+	ecs::Query<ecs::Write<UpgradeInstanceStatus>,
+		ecs::Write<upgrade_status_test::Marker>> writeQuery(world);
+	writeQuery.ForEachChunk([](const auto chunk) {
+		const auto statuses = chunk.template Get<UpgradeInstanceStatus>();
+		const auto markers = chunk.template Get<upgrade_status_test::Marker>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			statuses[row].value = Status::Complete;
+			markers[row].value += 1;
+		}
+	});
+
+	ecs::Query<ecs::Read<UpgradeInstanceStatus>,
+		ecs::Read<upgrade_status_test::Marker>> readQuery(world);
+	std::size_t rowsSeen = 0;
+	std::size_t chunksSeen = 0;
+	readQuery.ForEachChunk([&](const auto chunk) {
+		const auto statuses = chunk.template Get<UpgradeInstanceStatus>();
+		const auto markers = chunk.template Get<upgrade_status_test::Marker>();
+		BOOST_TEST(statuses.size() == markers.size());
+		BOOST_CHECK(reinterpret_cast<const void *>(statuses.data()) !=
+			reinterpret_cast<const void *>(markers.data()));
+		const auto statusBegin = reinterpret_cast<std::uintptr_t>(statuses.data());
+		const auto markerBegin = reinterpret_cast<std::uintptr_t>(markers.data());
+		BOOST_CHECK(statusBegin + statuses.size_bytes() <= markerBegin ||
+			markerBegin + markers.size_bytes() <= statusBegin);
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			if (row > 0)
+			{
+				BOOST_CHECK(&statuses[row] == statuses.data() + row);
+				BOOST_CHECK(&markers[row] == markers.data() + row);
+			}
+			BOOST_CHECK(statuses[row].value == Status::Complete);
+			BOOST_TEST(markers[row].value == static_cast<std::int32_t>(chunk.Entities()[row].index + 11u));
+		}
+		rowsSeen += chunk.Count();
+		++chunksSeen;
+	});
+
+	BOOST_TEST(rowsSeen == entityCount);
+	BOOST_TEST(chunksSeen > 1u);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_actual_entity_ids_and_statuses_match_for_one_two_and_four_workers)
+{
+	const auto oneWorker = upgrade_status_test::RunScheduled(1);
+	const auto twoWorkers = upgrade_status_test::RunScheduled(2);
+	const auto fourWorkers = upgrade_status_test::RunScheduled(4);
+
+	BOOST_REQUIRE(oneWorker.size() == 4096u);
+	BOOST_REQUIRE(twoWorkers.size() == oneWorker.size());
+	BOOST_REQUIRE(fourWorkers.size() == oneWorker.size());
+	for (std::size_t index = 0; index < oneWorker.size(); ++index)
+	{
+		BOOST_CHECK(twoWorkers[index].entity == oneWorker[index].entity);
+		BOOST_CHECK(fourWorkers[index].entity == oneWorker[index].entity);
+		const auto expected = static_cast<std::int32_t>((index + 4u) % 3u);
+		BOOST_TEST(oneWorker[index].value == expected);
+		BOOST_TEST(twoWorkers[index].value == expected);
+		BOOST_TEST(fourWorkers[index].value == expected);
+	}
+}

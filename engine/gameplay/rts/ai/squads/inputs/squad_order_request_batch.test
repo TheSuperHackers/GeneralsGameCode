@@ -1,0 +1,57 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+
+import engine.gameplay.rts.ai.squads.inputs.squad_order_request_batch;
+
+namespace
+{
+using namespace engine::gameplay::rts::ai::squads;
+using engine::gameplay::rts::orders::OrderKind;
+
+SquadOrderRequest Request(ecs::Entity squad, std::uint64_t revision, ecs::Entity actor)
+{
+	return {squad, revision, {actor, {OrderKind::Stop, engine::gameplay::navigation::InvalidCell, {}, {}}}};
+}
+}
+
+BOOST_AUTO_TEST_CASE(batch_requires_canonical_unique_requests_and_publishes_without_dropping)
+{
+	SquadOrderRequestBatch batch(3);
+	batch.Begin(12);
+	batch.Append(Request({2, 1}, 1, {3, 1}));
+	batch.Append(Request({1, 1}, 2, {8, 1}));
+	BOOST_CHECK_THROW(batch.Publish(), std::logic_error);
+	BOOST_CHECK_THROW(batch.Begin(13), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(batch_orders_requests_at_the_producer_boundary)
+{
+	SquadOrderRequestBatch batch(3);
+	batch.Begin(12);
+	batch.Append(Request({1, 1}, 1, {4, 1}));
+	batch.Append(Request({1, 1}, 1, {7, 1}));
+	batch.Append(Request({2, 1}, 1, {3, 1}));
+	batch.Publish();
+	BOOST_TEST(batch.Tick() == 12u);
+	BOOST_REQUIRE_EQUAL(batch.Requests().size(), 3u);
+	BOOST_CHECK(batch.Requests()[0].input.actor == (ecs::Entity{4, 1}));
+	BOOST_CHECK(batch.Requests()[2].input.actor == (ecs::Entity{3, 1}));
+	batch.Release();
+	BOOST_CHECK(!batch.IsPublished());
+}
+
+BOOST_AUTO_TEST_CASE(batch_capacity_and_lifecycle_are_explicit)
+{
+	SquadOrderRequestBatch batch(1);
+	batch.Begin(4);
+	batch.Append(Request({1, 1}, 0, {2, 1}));
+	BOOST_CHECK_THROW(batch.Append(Request({2, 1}, 0, {3, 1})), std::length_error);
+	batch.Publish();
+	BOOST_CHECK_THROW(batch.Begin(5), std::logic_error);
+	batch.Release();
+	batch.Begin(5);
+	batch.Publish();
+	BOOST_TEST(batch.Requests().empty());
+	batch.Release();
+}

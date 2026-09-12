@@ -1,0 +1,546 @@
+#define BOOST_TEST_MODULE GeneralsZHObjectUpgradeStore
+#include <boost/test/included/unit_test.hpp>
+#include "object_upgrade_store.h"
+#include "games/generalszh/adapters/legacy/upgrades/identity/upgrade_catalog.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <array>
+#include <cstdint>
+#include <memory>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.upgrades.state.upgrade_words;
+
+using generalszh::GameplayState;
+using generalszh::legacy::LegacyUpgradeWords;
+using generalszh::legacy::ObjectUpgradeLease;
+using generalszh::legacy::ObjectUpgradeStore;
+using generalszh::legacy::UpgradeCatalogBridge;
+using generalszh::legacy::UpgradeIdentityInput;
+using namespace engine::gameplay::rts::upgrades;
+
+static_assert(!std::is_copy_constructible_v<ObjectUpgradeStore>);
+static_assert(!std::is_copy_assignable_v<ObjectUpgradeStore>);
+static_assert(!std::is_move_constructible_v<ObjectUpgradeStore>);
+static_assert(!std::is_move_assignable_v<ObjectUpgradeStore>);
+static_assert(!std::is_copy_constructible_v<ObjectUpgradeLease>);
+static_assert(!std::is_copy_assignable_v<ObjectUpgradeLease>);
+static_assert(!std::is_move_constructible_v<ObjectUpgradeLease>);
+static_assert(!std::is_move_assignable_v<ObjectUpgradeLease>);
+
+namespace object_upgrade_test
+{
+LegacyUpgradeWords Bit(const unsigned bit)
+{
+	LegacyUpgradeWords result{};
+	result[bit / 64] = UINT64_C(1) << (bit % 64);
+	return result;
+}
+
+LegacyUpgradeWords AllBits()
+{
+	LegacyUpgradeWords result;
+	result.fill(UINT64_MAX);
+	return result;
+}
+
+void PublishCatalog(UpgradeCatalogBridge &catalog,
+	const std::size_t count,
+	const bool reverseLegacyBits = false)
+{
+	std::vector<std::string> names;
+	names.reserve(count);
+	std::vector<UpgradeIdentityInput> definitions;
+	definitions.reserve(count);
+	for (std::size_t index = 0; index < count; ++index)
+	{
+		names.push_back("ObjectUpgrade_" + std::to_string(index));
+		const auto legacyBit = reverseLegacyBits
+			? UpgradeCatalogBridge::LegacyBitCount - 1 - static_cast<std::uint32_t>(index)
+			: static_cast<std::uint32_t>(index);
+		definitions.push_back({std::string_view{names.back()}, legacyBit});
+	}
+	catalog.Publish(definitions);
+}
+
+struct ScheduledLegacyAccess
+{
+	ObjectUpgradeStore *store{};
+	ObjectUpgradeLease *lease{};
+	GameplayState *state{};
+	const UpgradeCatalogBridge *catalog{};
+	unsigned operation{};
+	using Query = ecs::Query<ecs::Read<CompletedUpgradeWord>>;
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (operation)
+		{
+		case 0:
+			(void)lease->Read();
+			break;
+		case 1:
+			lease->Add(Bit(0));
+			break;
+		case 2:
+			lease->Remove(Bit(0));
+			break;
+		case 3:
+			(void)lease->HasAll(Bit(0));
+			break;
+		case 4:
+			lease->Restore({});
+			break;
+		case 5:
+		{
+			ObjectUpgradeLease extra(*store, *catalog);
+			break;
+		}
+		case 6:
+		{
+			ObjectUpgradeStore extra(*state);
+			break;
+		}
+		default:
+			throw std::logic_error("Unknown scheduled object upgrade test operation");
+		}
+	}
+};
+
+struct DeterministicObjectWords
+{
+	using Query = ecs::Query<
+		ecs::Write<CompletedUpgradeWord>,
+		ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		auto values = chunk.Get<CompletedUpgradeWord>();
+		const auto owners = chunk.Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.Get<UpgradeWordOrdinal>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			const auto ownerIndex = static_cast<std::uint64_t>(owners[row].value.index);
+			const auto ownerGeneration = static_cast<std::uint64_t>(owners[row].value.generation);
+			values[row].value =
+				UINT64_C(0xA5A5A5A5A5A5A5A5) ^
+				(ownerIndex * UINT64_C(0x9E3779B97F4A7C15)) ^
+				(ownerGeneration << 32) ^
+				static_cast<std::uint64_t>(ordinals[row].value);
+		}
+	}
+};
+
+std::uint64_t ExpectedCompleted(const ecs::Entity owner, const std::uint32_t ordinal)
+{
+	const auto ownerIndex = static_cast<std::uint64_t>(owner.index);
+	const auto ownerGeneration = static_cast<std::uint64_t>(owner.generation);
+	return UINT64_C(0xA5A5A5A5A5A5A5A5) ^
+		(ownerIndex * UINT64_C(0x9E3779B97F4A7C15)) ^
+		(ownerGeneration << 32) ^ static_cast<std::uint64_t>(ordinal);
+}
+
+struct RowSnapshot
+{
+	ecs::Entity entity{};
+	ecs::Entity owner{};
+	std::uint32_t ordinal{};
+	std::uint64_t completed{};
+
+	friend bool operator==(const RowSnapshot &, const RowSnapshot &) = default;
+};
+
+struct DeterministicSnapshot
+{
+	std::vector<RowSnapshot> rows;
+	std::size_t chunkCount{};
+};
+
+DeterministicSnapshot RunDeterministicWords(const std::size_t workers);
+}
+
+namespace ecs
+{
+template<> struct SystemTraits<object_upgrade_test::ScheduledLegacyAccess>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.object_upgrades.scheduled_access";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+
+template<> struct SystemTraits<object_upgrade_test::DeterministicObjectWords>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.object_upgrades.deterministic_words";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+namespace object_upgrade_test
+{
+DeterministicSnapshot RunDeterministicWords(const std::size_t workers)
+{
+	constexpr std::size_t ObjectCount = 1024;
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, UpgradeCatalogBridge::LegacyBitCount);
+	ObjectUpgradeStore store(state);
+	std::vector<std::unique_ptr<ObjectUpgradeLease>> objects;
+	objects.reserve(ObjectCount);
+	for (std::size_t index = 0; index < ObjectCount; ++index)
+		objects.push_back(std::make_unique<ObjectUpgradeLease>(store, catalog));
+
+	DeterministicObjectWords system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute(engine::time::SimulationTime{1, step});
+
+	DeterministicSnapshot result;
+	result.rows.resize(state.Count());
+	ecs::Query<
+		ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>,
+		ecs::Read<CompletedUpgradeWord>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		++result.chunkCount;
+		const auto entities = chunk.Entities();
+		const auto owners = chunk.template Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		const auto completed = chunk.template Get<CompletedUpgradeWord>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			if (entities[row].index >= result.rows.size())
+				throw std::logic_error("Object word test saw an unexpected entity index");
+			result.rows[entities[row].index] = {
+				entities[row], owners[row].value, ordinals[row].value, completed[row].value};
+		}
+	});
+	return result;
+}
+}
+
+using object_upgrade_test::AllBits;
+using object_upgrade_test::Bit;
+using object_upgrade_test::PublishCatalog;
+
+BOOST_AUTO_TEST_CASE(unpublished_catalog_fails_before_slot_or_world_allocation)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	ObjectUpgradeStore store(state);
+	BOOST_CHECK_THROW(
+		(ObjectUpgradeLease(store, catalog)),
+		std::logic_error);
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(empty_published_catalog_has_one_zero_owner_row)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	catalog.Publish(std::span<const UpgradeIdentityInput>{});
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+
+	BOOST_TEST(store.Count() == 1u);
+	BOOST_TEST(state.Count() == 1u);
+	BOOST_TEST(lease.Read() == LegacyUpgradeWords{}, boost::test_tools::per_element());
+	BOOST_TEST(lease.HasAll({}));
+	BOOST_CHECK_THROW(lease.Add(Bit(0)), std::invalid_argument);
+
+	ecs::Entity row{};
+	ecs::Query<ecs::Read<UpgradeWordOwner>, ecs::Read<UpgradeWordOrdinal>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		const auto entities = chunk.Entities();
+		const auto owners = chunk.template Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		BOOST_REQUIRE(chunk.Count() == 1u);
+		row = entities[0];
+		BOOST_TEST(owners[0].value.index == row.index);
+		BOOST_TEST(owners[0].value.generation == row.generation);
+		BOOST_TEST(ordinals[0].value == 0u);
+	});
+	BOOST_REQUIRE(row.IsValid());
+	BOOST_TEST(!state.World().Has<InProgressUpgradeWord>(row));
+}
+
+BOOST_AUTO_TEST_CASE(ninety_six_entry_objects_use_two_rows_and_complete_only_columns)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, 96);
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+
+	BOOST_TEST(store.Count() == 1u);
+	BOOST_TEST(state.Count() == 2u);
+	lease.Add(Bit(95));
+	BOOST_TEST(lease.HasAll(Bit(95)));
+	BOOST_TEST(!lease.HasAll(Bit(94)));
+	BOOST_TEST(lease.Read() == Bit(95), boost::test_tools::per_element());
+
+	std::array<ecs::Entity, 2> owners{};
+	std::array<std::uint32_t, 2> ordinals{};
+	std::array<ecs::Entity, 2> rows{};
+	ecs::Query<
+		ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		const auto entities = chunk.Entities();
+		const auto ownerValues = chunk.template Get<UpgradeWordOwner>();
+		const auto ordinalValues = chunk.template Get<UpgradeWordOrdinal>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			const auto ordinal = ordinalValues[row].value;
+			BOOST_REQUIRE(ordinal < rows.size());
+			rows[ordinal] = entities[row];
+			owners[ordinal] = ownerValues[row].value;
+			ordinals[ordinal] = ordinal;
+			BOOST_TEST(!state.World().Has<InProgressUpgradeWord>(entities[row]));
+		}
+	});
+	BOOST_TEST(owners[0].index == rows[0].index);
+	BOOST_TEST(owners[0].generation == rows[0].generation);
+	BOOST_TEST(owners[1].index == rows[0].index);
+	BOOST_TEST(owners[1].generation == rows[0].generation);
+	BOOST_TEST(ordinals[0] == 0u);
+	BOOST_TEST(ordinals[1] == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(full_catalog_maps_all_eight_canonical_words)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, UpgradeCatalogBridge::LegacyBitCount, true);
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+	const auto all = AllBits();
+	lease.Add(all);
+
+	BOOST_TEST(state.Count() == 8u);
+	BOOST_TEST(lease.Read() == all, boost::test_tools::per_element());
+
+	std::array<std::uint64_t, 8> values{};
+	std::array<std::size_t, 8> visits{};
+	ecs::Query<ecs::Read<UpgradeWordOrdinal>, ecs::Read<CompletedUpgradeWord>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		const auto completed = chunk.template Get<CompletedUpgradeWord>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			BOOST_REQUIRE(ordinals[row].value < values.size());
+			values[ordinals[row].value] = completed[row].value;
+			++visits[ordinals[row].value];
+		}
+	});
+	for (std::size_t ordinal = 0; ordinal < values.size(); ++ordinal)
+	{
+		BOOST_TEST(visits[ordinal] == 1u);
+		BOOST_TEST(values[ordinal] == UINT64_MAX);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(ecs_completed_columns_are_the_only_object_upgrade_authority)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, 96, true);
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+	const auto initialBits = Bit(catalog.LegacyBit(0));
+	lease.Add(initialBits);
+
+	ecs::Query<
+		ecs::Write<CompletedUpgradeWord>,
+		ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		auto completed = chunk.template Get<CompletedUpgradeWord>();
+		const auto owners = chunk.template Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			BOOST_TEST(owners[row].value.IsValid());
+			completed[row].value = ordinals[row].value == 0u ? UINT64_C(1) << 5 : 0;
+		}
+	});
+
+	BOOST_TEST(
+		lease.Read() == Bit(catalog.LegacyBit(5)),
+		boost::test_tools::per_element());
+	BOOST_TEST(lease.HasAll(Bit(catalog.LegacyBit(5))));
+	BOOST_TEST(!lease.HasAll(initialBits));
+}
+
+BOOST_AUTO_TEST_CASE(released_catalog_invalidates_mapped_reads_and_mutations)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, 96);
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+	lease.Add(Bit(0));
+	catalog.Reset();
+
+	BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+	BOOST_CHECK_THROW(lease.Add(Bit(1)), std::logic_error);
+	BOOST_CHECK_THROW(lease.Remove(Bit(0)), std::logic_error);
+	BOOST_CHECK_THROW(lease.HasAll(Bit(0)), std::logic_error);
+	BOOST_CHECK_THROW(lease.Restore({}), std::logic_error);
+
+	// A current publication with the captured schema and row count is valid,
+	// even when the catalog was released between accesses. Native mapping is
+	// consequently defined by the currently published bridge.
+	PublishCatalog(catalog, 96, true);
+	BOOST_TEST(lease.Read() == Bit(511), boost::test_tools::per_element());
+
+	catalog.Reset();
+	PublishCatalog(catalog, 95);
+	BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(unknown_restore_leaves_existing_columns_unchanged)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, 2);
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+	lease.Add(Bit(0));
+	const auto before = lease.Read();
+	BOOST_CHECK_THROW(lease.Restore(Bit(2)), std::invalid_argument);
+	BOOST_TEST(lease.Read() == before, boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(compaction_slot_reuse_and_missing_component_cleanup_are_safe)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, 96);
+	ObjectUpgradeStore store(state);
+	{
+		auto first = std::make_unique<ObjectUpgradeLease>(store, catalog);
+		ecs::Entity firstOwner{};
+		ecs::Query<ecs::Read<UpgradeWordOwner>, ecs::Read<UpgradeWordOrdinal>> firstQuery(state.World());
+		firstQuery.ForEachChunk([&](auto chunk) {
+			const auto owners = chunk.template Get<UpgradeWordOwner>();
+			const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+			for (std::size_t row = 0; row < chunk.Count(); ++row)
+				if (ordinals[row].value == 0u)
+					firstOwner = owners[row].value;
+		});
+		BOOST_REQUIRE(firstOwner.IsValid());
+
+		ObjectUpgradeLease second(store, catalog);
+		first->Add(Bit(0));
+		second.Add(Bit(1));
+		first.reset();
+		BOOST_TEST(!state.World().IsAlive(firstOwner));
+		BOOST_TEST(second.HasAll(Bit(1)));
+
+		ObjectUpgradeLease replacement(store, catalog);
+		BOOST_TEST(store.Count() == 2u);
+		BOOST_TEST(state.Count() == 4u);
+		replacement.Add(Bit(2));
+		BOOST_TEST(second.HasAll(Bit(1)));
+		BOOST_TEST(replacement.HasAll(Bit(2)));
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+
+	{
+		ObjectUpgradeLease missingComponent(store, catalog);
+		ecs::Entity row{};
+		ecs::Query<ecs::Read<CompletedUpgradeWord>> query(state.World());
+		query.ForEachChunk([&](auto chunk) { row = chunk.Entities().front(); });
+		BOOST_REQUIRE(row.IsValid());
+		BOOST_TEST(state.World().Remove<CompletedUpgradeWord>(row));
+		BOOST_CHECK_THROW(missingComponent.Read(), std::logic_error);
+		BOOST_CHECK_THROW(missingComponent.Add(Bit(0)), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+
+	{
+		ObjectUpgradeLease staleOwner(store, catalog);
+		ecs::Entity row{};
+		ecs::Query<ecs::Read<UpgradeWordOwner>> query(state.World());
+		query.ForEachChunk([&](auto chunk) { row = chunk.Entities().front(); });
+		BOOST_REQUIRE(row.IsValid());
+		state.World().Get<UpgradeWordOwner>(row)->value = {};
+		BOOST_CHECK_THROW(staleOwner.Read(), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(all_legacy_access_is_rejected_during_scheduled_execution)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	PublishCatalog(catalog, 96);
+	ObjectUpgradeStore store(state);
+	ObjectUpgradeLease lease(store, catalog);
+
+	for (unsigned operation = 0; operation < 7; ++operation)
+	{
+		object_upgrade_test::ScheduledLegacyAccess system{
+			&store, &lease, &state, &catalog, operation};
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(state.World().Components());
+		ecs::Scheduler scheduler(
+			state.World(), systems, engine::jobs::JobSystemConfig{1});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		BOOST_CHECK_THROW(
+			scheduler.Execute(engine::time::SimulationTime{operation + 1, step}),
+			std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 2u);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(many_objects_have_worker_count_independent_ids_values_and_chunks)
+{
+	const auto oneWorker = object_upgrade_test::RunDeterministicWords(1);
+	const auto twoWorkers = object_upgrade_test::RunDeterministicWords(2);
+	const auto fourWorkers = object_upgrade_test::RunDeterministicWords(4);
+	BOOST_TEST(oneWorker.rows.size() == 8192u);
+	BOOST_TEST(oneWorker.chunkCount > 1u);
+	BOOST_TEST(oneWorker.chunkCount == twoWorkers.chunkCount);
+	BOOST_TEST(oneWorker.chunkCount == fourWorkers.chunkCount);
+	BOOST_CHECK(oneWorker.rows == twoWorkers.rows);
+	BOOST_CHECK(oneWorker.rows == fourWorkers.rows);
+	for (std::size_t index = 0; index < oneWorker.rows.size(); ++index)
+	{
+		const auto &row = oneWorker.rows[index];
+		const ecs::Entity expectedOwner{
+			static_cast<ecs::EntityIndex>(index - index % 8u),
+			1u};
+		BOOST_TEST(row.entity.index == index);
+		BOOST_TEST(row.entity.generation == 1u);
+		BOOST_TEST(row.owner.index == expectedOwner.index);
+		BOOST_TEST(row.owner.generation == expectedOwner.generation);
+		BOOST_TEST(row.ordinal == index % 8u);
+		BOOST_TEST(row.completed == object_upgrade_test::ExpectedCompleted(
+			row.owner, row.ordinal));
+	}
+}

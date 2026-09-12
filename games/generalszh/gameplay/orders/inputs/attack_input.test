@@ -1,0 +1,24 @@
+#define BOOST_TEST_MODULE GeneralsZHAttackInput
+#include <boost/test/included/unit_test.hpp>
+
+#include <type_traits>
+
+import games.generalszh.gameplay.orders.inputs.attack_input;
+
+BOOST_AUTO_TEST_CASE(attack_input_is_an_aggregate_with_default_entities)
+{
+	static_assert(std::is_aggregate_v<generalszh::AttackInput>);
+	const generalszh::AttackInput input{};
+	const ecs::Entity nullEntity{};
+	BOOST_CHECK(input.actor == nullEntity);
+	BOOST_CHECK(input.target == nullEntity);
+}
+
+BOOST_AUTO_TEST_CASE(attack_input_preserves_full_entity_identity)
+{
+	const ecs::Entity actor{17, 23};
+	const ecs::Entity target{41, 47};
+	const generalszh::AttackInput input{actor, target};
+	BOOST_CHECK(input.actor == actor);
+	BOOST_CHECK(input.target == target);
+}

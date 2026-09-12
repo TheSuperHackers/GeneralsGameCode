@@ -1,0 +1,253 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <algorithm>
+#include <limits>
+#include <span>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+import engine.gameplay.rts.economy.systems.income_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::rts::economy;
+
+namespace
+{
+void RegisterIncome(ecs::World &world, bool includeDispatch = true)
+{
+	world.RegisterComponent<IncomeSchedule>();
+	world.RegisterComponent<IncomeRate>();
+	world.RegisterComponent<IncomeEligibility>();
+	world.RegisterComponent<IncomePulse>();
+	if (includeDispatch) world.RegisterComponent<IncomeDispatch>();
+	world.FinalizeComponents();
+}
+struct IncomeFixture
+{
+	ecs::World world;
+	IncomeSystem income;
+	ecs::SystemRegistry systems;
+	engine::time::FixedStep step{30};
+	ecs::Scheduler scheduler{world, systems, engine::jobs::JobSystemConfig{2}};
+	IncomeFixture()
+	{
+		RegisterIncome(world);
+		systems.Register(income);
+		systems.Finalize(world.Components());
+		scheduler.Finalize(step);
+	}
+	ecs::Entity Source(bool gated = true)
+	{
+		const auto entity = world.Create<IncomeSchedule, IncomeRate, IncomeEligibility, IncomePulse>();
+		*world.Get<IncomeSchedule>(entity) = {1};
+		*world.Get<IncomeRate>(entity) = {3, 17};
+		*world.Get<IncomeEligibility>(entity) = {true};
+		if (gated) world.Add<IncomeDispatch>(entity);
+		return entity;
+	}
+	void Run(std::uint64_t tick) { scheduler.Execute({tick, step}); }
+};
+}
+
+BOOST_FIXTURE_TEST_CASE(dispatch_block_retains_deadline_clears_old_pulse_and_resumes_without_catchup, IncomeFixture)
+{
+	const auto entity = Source();
+	Run(1);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->quantity == 17u);
+	world.Get<IncomeDispatch>(entity)->enabled = false;
+	Run(10);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 4u);
+	BOOST_TEST(!world.Get<IncomePulse>(entity)->due);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->quantity == 0u);
+	world.Get<IncomeDispatch>(entity)->enabled = true;
+	Run(10);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 13u);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->due);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->quantity == 17u);
+}
+
+BOOST_FIXTURE_TEST_CASE(blocked_dispatch_does_not_evaluate_overflowing_rearm, IncomeFixture)
+{
+	const auto entity = Source();
+	world.Get<IncomeDispatch>(entity)->enabled = false;
+	Run((std::numeric_limits<std::uint64_t>::max)());
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 1u);
+	BOOST_TEST(!world.Get<IncomePulse>(entity)->due);
+}
+
+BOOST_FIXTURE_TEST_CASE(worker_income_overflow_is_joined_preserves_deadline_and_fails_scheduler, IncomeFixture)
+{
+	const auto entity = Source();
+	BOOST_CHECK_THROW(Run((std::numeric_limits<std::uint64_t>::max)()), std::overflow_error);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 1u);
+	BOOST_TEST(!world.IsScheduledExecutionActive());
+	BOOST_TEST(scheduler.IsFailed());
+	BOOST_CHECK_THROW(Run(2), std::logic_error);
+}
+
+BOOST_FIXTURE_TEST_CASE(payment_eligibility_does_not_block_dispatch_or_due_notification, IncomeFixture)
+{
+	const auto entity = Source();
+	world.Get<IncomeEligibility>(entity)->enabled = false;
+	Run(10);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 13u);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->due);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->quantity == 0u);
+	world.Get<IncomeDispatch>(entity)->enabled = false;
+	world.Get<IncomeEligibility>(entity)->enabled = true;
+	Run(20);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 13u);
+	BOOST_TEST(!world.Get<IncomePulse>(entity)->due);
+}
+
+BOOST_FIXTURE_TEST_CASE(pre_boundary_rearm_and_cached_dispatch_column_transitions_are_observed, IncomeFixture)
+{
+	const auto entity = Source(false);
+	Run(1);
+	world.Add<IncomeDispatch>(entity);
+	world.Get<IncomeDispatch>(entity)->enabled = false;
+	Run(10);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 4u);
+	RearmIncome(*world.Get<IncomeSchedule>(entity), 10, 2);
+	world.Get<IncomeDispatch>(entity)->enabled = true;
+	Run(11);
+	BOOST_TEST(!world.Get<IncomePulse>(entity)->due);
+	Run(12);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->due);
+	world.Get<IncomeDispatch>(entity)->enabled = false;
+	world.Remove<IncomeDispatch>(entity);
+	Run(15);
+	BOOST_TEST(world.Get<IncomePulse>(entity)->due);
+	BOOST_TEST(world.Get<IncomeSchedule>(entity)->nextTick == 18u);
+}
+
+BOOST_AUTO_TEST_CASE(income_dispatch_is_readonly_and_explicitly_registered_even_for_ungated_queries)
+{
+	static_assert(std::is_same_v<decltype(std::declval<IncomeSystem::Query::Chunk>().Get<IncomeDispatch>()),
+		std::span<const IncomeDispatch>>);
+	ecs::World missing;
+	RegisterIncome(missing, false);
+	IncomeSystem income;
+	ecs::SystemRegistry systems;
+	systems.Register(income);
+	BOOST_CHECK_THROW(systems.Finalize(missing.Components()), std::logic_error);
+	BOOST_TEST(!systems.IsFrozen());
+	ecs::World world;
+	RegisterIncome(world);
+	systems.Finalize(world.Components());
+	const auto &access = systems.Get(systems.TryGet<IncomeSystem>()).Access();
+	const auto id = world.Components().TryGet<IncomeDispatch>();
+	BOOST_TEST(std::count(access.ReadComponents().begin(), access.ReadComponents().end(), id) == 1);
+	BOOST_TEST(std::count(access.WriteComponents().begin(), access.WriteComponents().end(), id) == 0);
+}
+
+BOOST_AUTO_TEST_CASE(mixed_income_dispatch_chunks_preserve_full_state_at_1_2_4_workers)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{256}};
+		RegisterIncome(world);
+		std::vector<ecs::Entity> gated;
+		for (std::uint64_t index = 0; index != 4096; ++index)
+		{
+			const auto entity = world.Create<IncomeSchedule, IncomeRate, IncomeEligibility, IncomePulse>();
+			*world.Get<IncomeSchedule>(entity) = {index % 5};
+			*world.Get<IncomeRate>(entity) = {index % 4, index + 1};
+			*world.Get<IncomeEligibility>(entity) = {index % 2 == 0};
+			if (index % 3 != 0)
+			{
+				world.Add<IncomeDispatch>(entity);
+				world.Get<IncomeDispatch>(entity)->enabled = false;
+				gated.push_back(entity);
+			}
+		}
+		IncomeSystem income;
+		ecs::SystemRegistry systems;
+		systems.Register(income);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		IncomeSystem::Query query(world);
+		std::vector<std::array<std::uint64_t, 9>> result;
+		for (std::uint64_t tick = 0; tick != 9; ++tick)
+		{
+			if (tick == 6)
+				for (const auto entity : gated) world.Get<IncomeDispatch>(entity)->enabled = true;
+			scheduler.Execute({tick, step});
+			std::size_t chunks = 0;
+			query.ForEachChunk([&](auto chunk) {
+				++chunks;
+				const auto schedules = chunk.template Get<IncomeSchedule>();
+				const auto rates = chunk.template Get<IncomeRate>();
+				const auto eligibility = chunk.template Get<IncomeEligibility>();
+				const auto pulses = chunk.template Get<IncomePulse>();
+				const auto dispatch = chunk.template Get<IncomeDispatch>();
+				for (std::size_t row = 0; row != chunk.Count(); ++row)
+				{
+					if (!dispatch.empty() && !dispatch[row].enabled)
+					{
+						BOOST_TEST(!pulses[row].due);
+						BOOST_TEST(schedules[row].nextTick == (rates[row].quantity - 1) % 5);
+					}
+					result.push_back({tick, chunk.Entities()[row].index, chunk.Entities()[row].generation,
+						schedules[row].nextTick, rates[row].intervalTicks, rates[row].quantity,
+						eligibility[row].enabled, pulses[row].quantity, pulses[row].due});
+				}
+			});
+			BOOST_TEST(chunks > 1u);
+		}
+		return result;
+	};
+	const auto expected = run(1);
+	BOOST_CHECK(run(2) == expected);
+	BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(income_chunks_match_across_worker_counts_and_clear_old_outputs)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{256}};
+		world.RegisterComponent<IncomeSchedule>();
+		world.RegisterComponent<IncomeRate>();
+		world.RegisterComponent<IncomeEligibility>();
+		world.RegisterComponent<IncomePulse>();
+		world.RegisterComponent<IncomeDispatch>();
+		world.FinalizeComponents();
+		std::vector<ecs::Entity> entities;
+		for (std::uint64_t index = 0; index < 4096; ++index)
+		{
+			const auto entity = world.Create<IncomeSchedule, IncomeRate, IncomeEligibility, IncomePulse>();
+			*world.Get<IncomeSchedule>(entity) = {1};
+			*world.Get<IncomeRate>(entity) = {3, index + 10};
+			*world.Get<IncomeEligibility>(entity) = {index % 2 == 0};
+			entities.push_back(entity);
+		}
+		IncomeSystem income;
+		ecs::SystemRegistry systems;
+		systems.Register(income);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		scheduler.Execute(engine::time::SimulationTime{1, step});
+		std::vector<std::array<std::uint64_t, 5>> result;
+		for (std::size_t index = 0; index < entities.size(); ++index)
+		{
+			const auto entity = entities[index];
+			const auto pulse = *world.Get<IncomePulse>(entity);
+			BOOST_TEST(pulse.due);
+			BOOST_TEST(pulse.quantity == (index % 2 == 0 ? index + 10 : 0));
+			result.push_back({entity.index, entity.generation, world.Get<IncomeSchedule>(entity)->nextTick, pulse.quantity, pulse.due});
+		}
+		scheduler.Execute(engine::time::SimulationTime{2, step});
+		for (const auto entity : entities)
+		{
+			BOOST_TEST(!world.Get<IncomePulse>(entity)->due);
+			BOOST_TEST(world.Get<IncomePulse>(entity)->quantity == 0u);
+		}
+		return result;
+	};
+	const auto one = run(1);
+	BOOST_CHECK(run(2) == one);
+	BOOST_CHECK(run(4) == one);
+}

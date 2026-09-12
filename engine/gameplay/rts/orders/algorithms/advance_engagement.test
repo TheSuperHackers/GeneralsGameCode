@@ -1,0 +1,47 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+import engine.gameplay.rts.orders.algorithms.advance_engagement;
+BOOST_AUTO_TEST_CASE(engagement_arithmetic_stops_dead_actor_and_clears_travel_credit)
+{
+    using namespace engine::gameplay;using namespace rts::orders;
+    UnitOrder order{OrderKind::AttackMove,5,{}};navigation::MoveGoal goal{5};navigation::MoveCredit credit{3};EngagementResult result;
+    AdvanceEngagement(order,{},combat::LifeState{false},navigation::GridPosition{0},goal,credit,result);
+    BOOST_CHECK(order.kind==OrderKind::None);BOOST_TEST(goal.cell==navigation::InvalidCell);BOOST_TEST(credit.remainder==0u);BOOST_TEST(result.controlsWeapon);
+}
+BOOST_AUTO_TEST_CASE(guard_position_retains_intent_and_returns_to_center)
+{
+    using namespace engine::gameplay;using namespace rts::orders;
+    const ecs::Entity target{9,1}; UnitOrder order{OrderKind::GuardPosition,5,{}, {1,3}};
+    navigation::MoveGoal goal{5}; navigation::MoveCredit credit{3}; EngagementResult result;
+    AdvanceEngagement(order,{target,7,true},combat::LifeState{true},navigation::GridPosition{0},goal,credit,result);
+    BOOST_CHECK(order.kind==OrderKind::GuardPosition); BOOST_CHECK(order.target==target);
+    BOOST_CHECK(result.target==target); BOOST_TEST(goal.cell==navigation::InvalidCell); BOOST_TEST(credit.remainder==0u);
+    AdvanceEngagement(order,{target,8,false},combat::LifeState{true},navigation::GridPosition{0},goal,credit,result);
+    BOOST_CHECK(order.target==target); BOOST_TEST(goal.cell==8u);
+    AdvanceEngagement(order,{},combat::LifeState{true},navigation::GridPosition{8},goal,credit,result);
+    BOOST_CHECK(order.kind==OrderKind::GuardPosition); BOOST_CHECK(!order.target.IsValid()); BOOST_TEST(goal.cell==5u);
+    AdvanceEngagement(order,{},combat::LifeState{true},navigation::GridPosition{5},goal,credit,result);
+    BOOST_TEST(goal.cell==navigation::InvalidCell);
+}
+BOOST_AUTO_TEST_CASE(guard_radius_uses_two_dimensional_compare_before_sum)
+{
+    using namespace engine::gameplay::rts::orders;
+    BOOST_TEST(IsWithinGridRadius(0u,4u,4u,1u));
+    BOOST_TEST(!IsWithinGridRadius(0u,5u,4u,1u));
+    BOOST_TEST(IsWithinGridRadius(0u,5u,4u,2u));
+    const auto maximum=std::numeric_limits<std::uint32_t>::max();
+    BOOST_TEST(IsWithinGridRadius(0u,maximum-1u,maximum,maximum));
+    BOOST_TEST(IsWithinGridRadius(0u,maximum,maximum,maximum));
+    BOOST_TEST(!IsWithinGridRadius(0u,1u,maximum,0u));
+}
+BOOST_AUTO_TEST_CASE(attack_position_preserves_authored_cell_without_entity_or_walk_goal)
+{
+    using namespace engine::gameplay;using namespace rts::orders;
+    UnitOrder order{OrderKind::AttackPosition,9,{}}; navigation::MoveGoal goal{3}; navigation::MoveCredit credit{5};
+    EngagementResult result;
+    AdvanceEngagement(order,{{},9,false,true},combat::LifeState{true},navigation::GridPosition{0},goal,credit,result);
+    BOOST_CHECK(order.kind==OrderKind::AttackPosition); BOOST_TEST(goal.cell==navigation::InvalidCell);
+    BOOST_TEST(credit.remainder==0u); BOOST_TEST(result.controlsWeapon); BOOST_TEST(result.positionValid);
+    BOOST_TEST(result.position==9u); BOOST_CHECK(!result.target.IsValid());
+}

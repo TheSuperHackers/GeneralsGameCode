@@ -1,0 +1,825 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionUnitCompletion
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <initializer_list>
+#include <limits>
+#include <stdexcept>
+#include <vector>
+#include <span>
+
+import games.generalszh.gameplay.production.completion.unit_completion;
+import engine.jobs.job_system;
+
+using generalszh::production::CompleteUnits;
+using generalszh::production::ExitReservation;
+
+namespace unit_completion_test
+{
+enum class Operation : std::uint8_t
+{
+	None,
+	HasExit,
+	ReportMissingExit,
+	DiscardEntry,
+	Remaining,
+	Reservation,
+	ReserveExit,
+	SetReservation,
+	AnimationCount,
+	RequestDoor,
+	RequestMarker,
+	DoorReady,
+	CreateUnit,
+	SetProducer,
+	ExitUnit,
+	VoiceCreated,
+	OwnerCreated,
+	BuildComplete,
+	Total,
+	FirstUnitVoice,
+	RecordProduction,
+	CompleteOne
+};
+
+struct Event
+{
+	Operation operation{Operation::None};
+	std::int32_t first{0};
+	std::int32_t second{0};
+
+	friend bool operator==(const Event &, const Event &) = default;
+};
+
+Event MakeEvent(const Operation operation,
+	const std::int32_t first = 0,
+	const std::int32_t second = 0) noexcept
+{
+	return Event{operation, first, second};
+}
+
+std::int32_t Raw(const ExitReservation reservation) noexcept
+{
+	return static_cast<std::int32_t>(reservation);
+}
+
+struct Token
+{
+	std::int32_t id{0};
+};
+
+struct RecordingBoundary
+{
+	bool hasExit{true};
+	std::int32_t liveRemaining{0};
+	std::int32_t total{0};
+	std::int32_t animations{0};
+	bool ready{true};
+	ExitReservation reservation{ExitReservation::NoneAvailable};
+
+	std::vector<ExitReservation> reserveResults;
+	std::vector<std::int32_t> animationResults;
+	std::vector<bool> readyResults;
+	std::size_t reserveIndex{0};
+	std::size_t animationIndex{0};
+	std::size_t readyIndex{0};
+	std::int32_t nextToken{1};
+	bool mutateRemainingAtBuild{false};
+	std::int32_t buildRemaining{0};
+	Operation throwAt{Operation::None};
+	std::vector<Event> events;
+	bool discarded{false};
+	bool setReservationAtBuild{false};
+	ExitReservation buildReservation{ExitReservation::Door4};
+
+	void Log(const Operation operation,
+		const std::int32_t first = 0,
+		const std::int32_t second = 0)
+	{
+		events.push_back(MakeEvent(operation, first, second));
+		if (throwAt == operation)
+			throw std::runtime_error("recording boundary failure");
+	}
+
+	bool HasExit()
+	{
+		Log(Operation::HasExit, hasExit ? 1 : 0);
+		return hasExit;
+	}
+
+	void ReportMissingExit()
+	{
+		Log(Operation::ReportMissingExit);
+	}
+
+	void DiscardEntry()
+	{
+		Log(Operation::DiscardEntry);
+		discarded = true;
+	}
+
+	std::int32_t Remaining()
+	{
+		Log(Operation::Remaining, liveRemaining);
+		return liveRemaining;
+	}
+
+	ExitReservation Reservation()
+	{
+		Log(Operation::Reservation, Raw(reservation));
+		return reservation;
+	}
+
+	ExitReservation ReserveExit()
+	{
+		const ExitReservation result = reserveIndex < reserveResults.size()
+			? reserveResults[reserveIndex]
+			: reservation;
+		++reserveIndex;
+		Log(Operation::ReserveExit, Raw(result));
+		return result;
+	}
+
+	void SetReservation(const ExitReservation value)
+	{
+		Log(Operation::SetReservation, Raw(value));
+		reservation = value;
+	}
+
+	std::int32_t AnimationCount()
+	{
+		const std::int32_t result = animationIndex < animationResults.size()
+			? animationResults[animationIndex]
+			: animations;
+		++animationIndex;
+		Log(Operation::AnimationCount, result);
+		return result;
+	}
+
+	void RequestDoor(const ExitReservation value)
+	{
+		Log(Operation::RequestDoor, Raw(value));
+	}
+
+	void RequestMarker()
+	{
+		Log(Operation::RequestMarker);
+	}
+
+	bool DoorReady(const ExitReservation value)
+	{
+		const bool result = readyIndex < readyResults.size()
+			? readyResults[readyIndex]
+			: ready;
+		++readyIndex;
+		Log(Operation::DoorReady, Raw(value), result ? 1 : 0);
+		return result;
+	}
+
+	Token CreateUnit()
+	{
+		const Token token{nextToken++};
+		Log(Operation::CreateUnit, token.id);
+		return token;
+	}
+
+	void SetProducer(Token &token)
+	{
+		Log(Operation::SetProducer, token.id);
+	}
+
+	void ExitUnit(Token &token, const ExitReservation value)
+	{
+		Log(Operation::ExitUnit, token.id, Raw(value));
+	}
+
+	void VoiceCreated(Token &token)
+	{
+		Log(Operation::VoiceCreated, token.id);
+	}
+
+	void OwnerCreated(Token &token)
+	{
+		Log(Operation::OwnerCreated, token.id);
+	}
+
+	void BuildComplete(Token &token)
+	{
+		Log(Operation::BuildComplete, token.id);
+		if (mutateRemainingAtBuild)
+			liveRemaining = buildRemaining;
+		if (setReservationAtBuild)
+			reservation = buildReservation;
+	}
+
+	std::int32_t Total()
+	{
+		Log(Operation::Total, total);
+		return total;
+	}
+
+	void FirstUnitVoice(Token &token)
+	{
+		Log(Operation::FirstUnitVoice, token.id);
+	}
+
+	void RecordProduction(Token &token)
+	{
+		Log(Operation::RecordProduction, token.id);
+	}
+
+	void CompleteOne()
+	{
+		Log(Operation::CompleteOne);
+		--liveRemaining;
+		reservation = ExitReservation::NoneAvailable;
+	}
+};
+
+void CheckEvents(const std::vector<Event> &actual,
+	const std::vector<Event> &expected)
+{
+	BOOST_REQUIRE_EQUAL(actual.size(), expected.size());
+	if (actual.size() != expected.size())
+		return;
+
+	for (std::size_t index = 0; index < actual.size(); ++index)
+	{
+		BOOST_TEST(static_cast<unsigned>(actual[index].operation) ==
+			static_cast<unsigned>(expected[index].operation));
+		BOOST_TEST(actual[index].first == expected[index].first);
+		BOOST_TEST(actual[index].second == expected[index].second);
+	}
+}
+
+void CheckEvents(const std::vector<Event> &actual,
+	const std::initializer_list<Event> expected)
+{
+	CheckEvents(actual, std::vector<Event>(expected.begin(), expected.end()));
+}
+
+std::vector<Event> ExpectedSingleAvailableUnit(const ExitReservation reservation)
+{
+	return {
+		MakeEvent(Operation::HasExit, 1),
+		MakeEvent(Operation::Remaining, 1),
+		MakeEvent(Operation::Reservation, Raw(ExitReservation::NoneAvailable)),
+		MakeEvent(Operation::ReserveExit, Raw(reservation)),
+		MakeEvent(Operation::SetReservation, Raw(reservation)),
+		MakeEvent(Operation::AnimationCount, 0),
+		MakeEvent(Operation::RequestMarker),
+		MakeEvent(Operation::AnimationCount, 0),
+		MakeEvent(Operation::CreateUnit, 1),
+		MakeEvent(Operation::SetProducer, 1),
+		MakeEvent(Operation::ExitUnit, 1, Raw(reservation)),
+		MakeEvent(Operation::SetReservation, Raw(ExitReservation::NoneAvailable)),
+		MakeEvent(Operation::VoiceCreated, 1),
+		MakeEvent(Operation::OwnerCreated, 1),
+		MakeEvent(Operation::BuildComplete, 1),
+		MakeEvent(Operation::Total, 1),
+		MakeEvent(Operation::Remaining, 1),
+		MakeEvent(Operation::FirstUnitVoice, 1),
+		MakeEvent(Operation::RecordProduction, 1),
+		MakeEvent(Operation::CompleteOne),
+		MakeEvent(Operation::Remaining, 0),
+		MakeEvent(Operation::DiscardEntry)
+	};
+}
+
+struct WorkloadToken
+{
+	std::int32_t index{0};
+};
+
+struct WorkloadBoundary
+{
+	std::int32_t index{0};
+	std::int32_t remaining{1};
+	std::int32_t total{1};
+	ExitReservation reservation{ExitReservation::NoneAvailable};
+	ExitReservation exitedReservation{ExitReservation::NoneAvailable};
+	std::int32_t exitedToken{-1};
+	std::int32_t doorRequests{0};
+	std::int32_t markerRequests{0};
+	std::int32_t readyChecks{0};
+	std::int32_t created{0};
+	std::int32_t producers{0};
+	std::int32_t exits{0};
+	std::int32_t voices{0};
+	std::int32_t owners{0};
+	std::int32_t builds{0};
+	std::int32_t firstVoices{0};
+	std::int32_t records{0};
+	std::int32_t completions{0};
+	bool discarded{false};
+	bool missingExit{false};
+
+	bool HasExit() noexcept { return true; }
+	void ReportMissingExit() noexcept { missingExit = true; }
+	void DiscardEntry() noexcept { discarded = true; }
+	std::int32_t Remaining() noexcept { return remaining; }
+	ExitReservation Reservation() noexcept { return reservation; }
+
+	ExitReservation ReserveExit() noexcept
+	{
+		if (index % 3 == 0)
+			return ExitReservation::NoneNeeded;
+		if (index % 3 == 1)
+			return static_cast<ExitReservation>(17);
+		return static_cast<ExitReservation>((std::numeric_limits<std::int32_t>::max)());
+	}
+
+	void SetReservation(const ExitReservation value) noexcept
+	{
+		reservation = value;
+	}
+
+	std::int32_t AnimationCount() noexcept
+	{
+		return index % 2 == 0 ? 0 : 1;
+	}
+
+	void RequestDoor(const ExitReservation) noexcept
+	{
+		++doorRequests;
+	}
+
+	void RequestMarker() noexcept
+	{
+		++markerRequests;
+	}
+
+	bool DoorReady(const ExitReservation) noexcept
+	{
+		++readyChecks;
+		return true;
+	}
+
+	WorkloadToken CreateUnit() noexcept
+	{
+		++created;
+		return WorkloadToken{index};
+	}
+
+	void SetProducer(WorkloadToken &) noexcept
+	{
+		++producers;
+	}
+
+	void ExitUnit(WorkloadToken &token, const ExitReservation value) noexcept
+	{
+		++exits;
+		exitedToken = token.index;
+		exitedReservation = value;
+	}
+
+	void VoiceCreated(WorkloadToken &) noexcept { ++voices; }
+	void OwnerCreated(WorkloadToken &) noexcept { ++owners; }
+	void BuildComplete(WorkloadToken &) noexcept { ++builds; }
+
+	std::int32_t Total() noexcept { return total; }
+
+	void FirstUnitVoice(WorkloadToken &) noexcept
+	{
+		++firstVoices;
+	}
+
+	void RecordProduction(WorkloadToken &) noexcept
+	{
+		++records;
+	}
+
+	void CompleteOne() noexcept
+	{
+		--remaining;
+		++completions;
+		reservation = ExitReservation::NoneAvailable;
+	}
+};
+
+struct WorkloadSnapshot
+{
+	std::int32_t index{0};
+	std::int32_t remaining{0};
+	std::int32_t total{0};
+	std::int32_t reservation{0};
+	std::int32_t exitedReservation{0};
+	std::int32_t exitedToken{0};
+	std::int32_t doorRequests{0};
+	std::int32_t markerRequests{0};
+	std::int32_t readyChecks{0};
+	std::int32_t created{0};
+	std::int32_t producers{0};
+	std::int32_t exits{0};
+	std::int32_t voices{0};
+	std::int32_t owners{0};
+	std::int32_t builds{0};
+	std::int32_t firstVoices{0};
+	std::int32_t records{0};
+	std::int32_t completions{0};
+	bool discarded{false};
+	bool missingExit{false};
+
+	friend bool operator==(const WorkloadSnapshot &, const WorkloadSnapshot &) = default;
+};
+
+WorkloadSnapshot Snapshot(const WorkloadBoundary &boundary)
+{
+	return WorkloadSnapshot{
+		boundary.index,
+		boundary.remaining,
+		boundary.total,
+		Raw(boundary.reservation),
+		Raw(boundary.exitedReservation),
+		boundary.exitedToken,
+		boundary.doorRequests,
+		boundary.markerRequests,
+		boundary.readyChecks,
+		boundary.created,
+		boundary.producers,
+		boundary.exits,
+		boundary.voices,
+		boundary.owners,
+		boundary.builds,
+		boundary.firstVoices,
+		boundary.records,
+		boundary.completions,
+		boundary.discarded,
+		boundary.missingExit};
+}
+
+struct WorkloadJob
+{
+	WorkloadBoundary *boundaries{nullptr};
+	std::size_t first{0};
+	std::size_t last{0};
+
+	static void Execute(void *raw) noexcept
+	{
+		auto &job = *static_cast<WorkloadJob *>(raw);
+		for (std::size_t index = job.first; index < job.last; ++index)
+			CompleteUnits(job.boundaries[index]);
+	}
+};
+
+std::vector<WorkloadSnapshot> RunWorkload(const std::size_t workerCount)
+{
+	constexpr std::size_t recordCount = 1024;
+	constexpr std::size_t recordsPerJob = 17;
+	constexpr std::size_t jobCount = (recordCount + recordsPerJob - 1) / recordsPerJob;
+
+	std::vector<WorkloadBoundary> boundaries(recordCount);
+	for (std::size_t index = 0; index < recordCount; ++index)
+		boundaries[index].index = static_cast<std::int32_t>(index);
+
+	std::vector<WorkloadJob> contexts(jobCount);
+	std::vector<engine::jobs::Job> jobs(jobCount);
+	for (std::size_t index = 0; index < jobCount; ++index)
+	{
+		contexts[index] = WorkloadJob{
+			boundaries.data(),
+			index * recordsPerJob,
+			(index + 1) * recordsPerJob < recordCount
+				? (index + 1) * recordsPerJob
+				: recordCount};
+		jobs[index] = engine::jobs::Job{&WorkloadJob::Execute, &contexts[index]};
+	}
+
+	engine::jobs::JobSystem jobSystem{engine::jobs::JobSystemConfig{workerCount}};
+	jobSystem.Execute(std::span<engine::jobs::Job>{jobs});
+
+	std::vector<WorkloadSnapshot> result;
+	result.reserve(recordCount);
+	for (const WorkloadBoundary &boundary : boundaries)
+		result.push_back(Snapshot(boundary));
+	return result;
+}
+} // namespace unit_completion_test
+
+BOOST_AUTO_TEST_CASE(missing_exit_reports_then_discards_without_reading_quantity)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.hasExit = false;
+	boundary.liveRemaining = 7;
+
+	CompleteUnits(boundary);
+
+	unit_completion_test::CheckEvents(boundary.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ReportMissingExit),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DiscardEntry)});
+}
+
+BOOST_AUTO_TEST_CASE(zero_and_negative_counts_use_signed_snapshot_and_only_zero_discards)
+{
+	unit_completion_test::RecordingBoundary zero;
+	zero.liveRemaining = 0;
+	CompleteUnits(zero);
+	unit_completion_test::CheckEvents(zero.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DiscardEntry)});
+
+	unit_completion_test::RecordingBoundary negative;
+	negative.liveRemaining = -2;
+	CompleteUnits(negative);
+	unit_completion_test::CheckEvents(negative.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, -2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, -2)});
+	BOOST_TEST(!negative.discarded);
+}
+
+BOOST_AUTO_TEST_CASE(unavailable_reservation_is_retried_for_each_snapshot_attempt)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.liveRemaining = 3;
+	boundary.reserveResults = {
+		ExitReservation::NoneAvailable,
+		ExitReservation::NoneAvailable,
+		ExitReservation::NoneAvailable};
+
+	CompleteUnits(boundary);
+
+	std::vector<unit_completion_test::Event> expected{
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 3)};
+	for (int attempt = 0; attempt < 3; ++attempt)
+	{
+		expected.push_back(unit_completion_test::MakeEvent(
+			unit_completion_test::Operation::Reservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)));
+		expected.push_back(unit_completion_test::MakeEvent(
+			unit_completion_test::Operation::ReserveExit,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)));
+		expected.push_back(unit_completion_test::MakeEvent(
+			unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)));
+	}
+	expected.push_back(unit_completion_test::MakeEvent(
+		unit_completion_test::Operation::Remaining, 3));
+	unit_completion_test::CheckEvents(boundary.events, expected);
+	BOOST_TEST(!boundary.discarded);
+}
+
+BOOST_AUTO_TEST_CASE(widened_reservations_are_passed_unchanged_and_zero_animations_bypass_readiness)
+{
+	for (const ExitReservation reservation : {
+		ExitReservation::NoneNeeded,
+		static_cast<ExitReservation>(17),
+		static_cast<ExitReservation>((std::numeric_limits<std::int32_t>::max)())})
+	{
+		unit_completion_test::RecordingBoundary boundary;
+		boundary.liveRemaining = 1;
+		boundary.total = 1;
+		boundary.reserveResults = {reservation};
+
+		CompleteUnits(boundary);
+
+		unit_completion_test::CheckEvents(
+			boundary.events,
+			unit_completion_test::ExpectedSingleAvailableUnit(reservation));
+		BOOST_TEST(!boundary.events.empty());
+	}
+}
+
+BOOST_AUTO_TEST_CASE(door_wait_retries_each_attempt_and_marker_precedes_readiness)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.liveRemaining = 2;
+	boundary.reservation = ExitReservation::Door1;
+	boundary.animations = 1;
+	boundary.readyResults = {false, false};
+
+	CompleteUnits(boundary);
+
+	unit_completion_test::CheckEvents(boundary.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestDoor,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DoorReady,
+			unit_completion_test::Raw(ExitReservation::Door1), 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestDoor,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DoorReady,
+			unit_completion_test::Raw(ExitReservation::Door1), 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 2)});
+	BOOST_TEST(!boundary.discarded);
+}
+
+BOOST_AUTO_TEST_CASE(negative_animation_count_still_checks_readiness_without_requesting_door)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.liveRemaining = 1;
+	boundary.total = 1;
+	boundary.reservation = static_cast<ExitReservation>(17);
+	boundary.animationResults = {-3, -3};
+
+	CompleteUnits(boundary);
+
+	unit_completion_test::CheckEvents(boundary.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, -3),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, -3),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DoorReady, 17, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CreateUnit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetProducer, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ExitUnit, 1, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::VoiceCreated, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::OwnerCreated, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::BuildComplete, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Total, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::FirstUnitVoice, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RecordProduction, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CompleteOne),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DiscardEntry)});
+}
+
+BOOST_AUTO_TEST_CASE(snapshot_bound_survives_live_quantity_changes_and_checks_first_voice_before_completion)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.liveRemaining = 2;
+	boundary.total = 2;
+	boundary.reserveResults = {ExitReservation::Door1, static_cast<ExitReservation>(17)};
+
+	CompleteUnits(boundary);
+
+	std::vector<unit_completion_test::Event> expected{
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ReserveExit,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CreateUnit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetProducer, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ExitUnit, 1,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::VoiceCreated, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::OwnerCreated, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::BuildComplete, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Total, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::FirstUnitVoice, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RecordProduction, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CompleteOne),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ReserveExit, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CreateUnit, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetProducer, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ExitUnit, 2, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::VoiceCreated, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::OwnerCreated, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::BuildComplete, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Total, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RecordProduction, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CompleteOne),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::DiscardEntry)};
+	unit_completion_test::CheckEvents(boundary.events, expected);
+	BOOST_TEST(boundary.liveRemaining == 0);
+	BOOST_TEST(boundary.discarded);
+}
+
+BOOST_AUTO_TEST_CASE(clear_precedes_callbacks_and_first_voice_reads_post_callback_live_quantity)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.liveRemaining = 1;
+	boundary.total = 5;
+	boundary.reservation = static_cast<ExitReservation>(17);
+	boundary.mutateRemainingAtBuild = true;
+	boundary.buildRemaining = 5;
+	boundary.setReservationAtBuild = true;
+	boundary.buildReservation = ExitReservation::Door4;
+
+	CompleteUnits(boundary);
+
+	unit_completion_test::CheckEvents(boundary.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CreateUnit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetProducer, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ExitUnit, 1, 17),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::VoiceCreated, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::OwnerCreated, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::BuildComplete, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Total, 5),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 5),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::FirstUnitVoice, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RecordProduction, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CompleteOne),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 4)});
+	BOOST_TEST(boundary.liveRemaining == 4);
+	BOOST_CHECK(boundary.reservation == ExitReservation::NoneAvailable);
+	BOOST_TEST(!boundary.discarded);
+}
+
+BOOST_AUTO_TEST_CASE(exceptions_propagate_the_completed_prefix_without_retry_or_rollback)
+{
+	unit_completion_test::RecordingBoundary boundary;
+	boundary.liveRemaining = 2;
+	boundary.total = 2;
+	boundary.reservation = ExitReservation::Door1;
+	boundary.throwAt = unit_completion_test::Operation::VoiceCreated;
+
+	BOOST_CHECK_THROW(CompleteUnits(boundary), std::runtime_error);
+	unit_completion_test::CheckEvents(boundary.events, {
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::HasExit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Remaining, 2),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::Reservation,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::RequestMarker),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::AnimationCount, 0),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::CreateUnit, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetProducer, 1),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::ExitUnit, 1,
+			unit_completion_test::Raw(ExitReservation::Door1)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::SetReservation,
+			unit_completion_test::Raw(ExitReservation::NoneAvailable)),
+		unit_completion_test::MakeEvent(unit_completion_test::Operation::VoiceCreated, 1)});
+	BOOST_CHECK(boundary.reservation == ExitReservation::NoneAvailable);
+	BOOST_TEST(boundary.liveRemaining == 2);
+	BOOST_TEST(!boundary.discarded);
+}
+
+BOOST_AUTO_TEST_CASE(independent_complete_workload_is_identical_with_one_two_and_four_workers)
+{
+	const auto oneWorker = unit_completion_test::RunWorkload(1);
+	const auto twoWorkers = unit_completion_test::RunWorkload(2);
+	const auto fourWorkers = unit_completion_test::RunWorkload(4);
+
+	constexpr std::size_t recordCount = 1024;
+	BOOST_REQUIRE_EQUAL(oneWorker.size(), recordCount);
+	BOOST_CHECK(oneWorker == twoWorkers);
+	BOOST_CHECK(oneWorker == fourWorkers);
+
+	for (const auto &state : oneWorker)
+	{
+		BOOST_TEST(state.remaining == 0);
+		BOOST_TEST(state.total == 1);
+		BOOST_TEST(state.reservation == unit_completion_test::Raw(ExitReservation::NoneAvailable));
+		const auto expectedReservation = state.index % 3 == 0
+			? ExitReservation::NoneNeeded
+			: state.index % 3 == 1
+				? static_cast<ExitReservation>(17)
+				: static_cast<ExitReservation>((std::numeric_limits<std::int32_t>::max)());
+		BOOST_TEST(state.exitedReservation == unit_completion_test::Raw(expectedReservation));
+		BOOST_TEST(state.exitedToken == state.index);
+		BOOST_TEST(state.markerRequests == 1);
+		BOOST_TEST(state.created == 1);
+		BOOST_TEST(state.producers == 1);
+		BOOST_TEST(state.exits == 1);
+		BOOST_TEST(state.voices == 1);
+		BOOST_TEST(state.owners == 1);
+		BOOST_TEST(state.builds == 1);
+		BOOST_TEST(state.firstVoices == 1);
+		BOOST_TEST(state.records == 1);
+		BOOST_TEST(state.completions == 1);
+		BOOST_TEST(state.discarded);
+		BOOST_TEST(!state.missingExit);
+		BOOST_TEST(state.doorRequests == (state.index % 2 == 0 ? 0 : 1));
+		BOOST_TEST(state.readyChecks == (state.index % 2 == 0 ? 0 : 1));
+	}
+}

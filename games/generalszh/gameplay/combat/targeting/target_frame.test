@@ -1,0 +1,65 @@
+#define BOOST_TEST_MODULE GeneralsZHCombatRules
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <stdexcept>
+import games.generalszh.gameplay.combat.targeting.target_frame;
+import engine.gameplay.rts.visibility.components.visibility_cell_page;
+import engine.gameplay.rts.visibility.definitions.visibility_definition;
+import engine.gameplay.rts.visibility.definitions.visibility_participant;
+BOOST_AUTO_TEST_CASE(target_frame_validates_generations_and_is_rebuilt_without_stale_entries)
+{
+    generalszh::combat::TargetFrame frame(4,4,1); const ecs::Entity entity{1,1}, owner{0,1};
+    frame.Set(entity,3,owner); BOOST_TEST(frame.Contains(entity)); BOOST_TEST(!frame.Contains({1,2}));
+    BOOST_TEST(frame.Position(entity) == 3u); BOOST_CHECK(frame.Owner(entity) == owner);
+    frame.Clear(); BOOST_TEST(!frame.Contains(entity));
+}
+BOOST_AUTO_TEST_CASE(published_frame_uses_live_generation_and_ownership_for_nearest_search)
+{
+    generalszh::combat::TargetFrame frame(8,8,1); const ecs::Entity actor{0,1}, enemy{1,1};
+    frame.Set(actor,0,{6,1}); frame.Set(enemy,1,{7,1}); frame.Publish(); BOOST_CHECK(frame.Nearest(actor,2,1) == enemy);
+    frame.Clear(); frame.Set(actor,0,{6,1}); frame.Publish(); BOOST_TEST(!frame.Nearest(actor,2,1).IsValid());
+}
+BOOST_AUTO_TEST_CASE(nearest_can_search_from_a_guard_center)
+{
+    generalszh::combat::TargetFrame frame(8,8,1); const ecs::Entity actor{0,1}, enemy{1,1};
+    frame.Set(actor,0,{6,1}); frame.Set(enemy,6,{7,1}); frame.Publish();
+    BOOST_TEST(!frame.Nearest(actor,1,1).IsValid());
+    BOOST_CHECK(frame.Nearest(6u,{6,1},1,1)==enemy);
+}
+BOOST_AUTO_TEST_CASE(nearest_filters_hidden_near_candidate_before_reducing_to_farther_visible_enemy)
+{
+    using namespace engine::gameplay::rts::visibility;
+    const VisibilityTopology topology{8,1};
+    VisibilityCellIndex index{0,8,0}; VisibilityVisibleMaskPage page{};
+    const ecs::Entity red{20,1}, blue{21,1};
+    VisibilityParticipantTable participants;
+    const auto redParticipant=participants.Enroll(red);
+    const auto blueParticipant=participants.Enroll(blue);
+    BOOST_REQUIRE(redParticipant.IsValid()); BOOST_REQUIRE(blueParticipant.IsValid());
+    page.values[4]=ObserverBit(redParticipant.slot);
+    const std::array<const VisibilityCellIndex *, 1> indexes{&index};
+    const std::array<const VisibilityVisibleMaskPage *, 1> pages{&page};
+    VisibilityReadView view{topology}; view.Bind(indexes,pages);
+    generalszh::combat::TargetFrame frame(32,8,1,view,participants);
+    const ecs::Entity source{1,1}, nearHidden{2,1}, farVisible{3,1};
+    frame.Set(source,0,red); frame.Set(nearHidden,2,blue); frame.Set(farVisible,4,blue); frame.Publish();
+    BOOST_TEST(!frame.CanTarget(source,nearHidden));
+    BOOST_TEST(frame.CanTarget(source,farVisible));
+    const auto nearest=frame.Nearest(source,8,1);
+    BOOST_CHECK(nearest.index==farVisible.index);
+    BOOST_CHECK(nearest.generation==farVisible.generation);
+}
+
+BOOST_AUTO_TEST_CASE(visibility_policy_is_bound_once_before_target_snapshot_use)
+{
+    using namespace engine::gameplay::rts::visibility;
+    const VisibilityTopology topology{1,1};
+    VisibilityReadView view{topology};
+    VisibilityParticipantTable participants;
+    generalszh::combat::TargetFrame frame(8,1,1,view,participants);
+    BOOST_CHECK_THROW(frame.ConfigureVisibilityPolicy(), std::logic_error);
+    view.SetStartupUnrestricted();
+    frame.ConfigureVisibilityPolicy();
+    BOOST_CHECK_THROW(frame.ConfigureVisibilityPolicy(), std::logic_error);
+}

@@ -1,0 +1,621 @@
+#define BOOST_TEST_MODULE GeneralsZHPowerAdapter
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <span>
+#include <stdexcept>
+#include <utility>
+#include <vector>
+
+#include "power_store.h"
+#include "games/generalszh/adapters/legacy/economy/account_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+import engine.ecs.query.query;
+import engine.gameplay.rts.economy.components.resource_balance;
+import engine.gameplay.rts.power.ledger.power_ledger;
+import games.generalszh.gameplay.power.suppression.power_suppression;
+import games.generalszh.gameplay.power.recovery.power_recovery;
+import games.generalszh.gameplay.economy.income_history;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::PersistentResetParticipant;
+using generalszh::PersistentWorldReset;
+using generalszh::economy::IncomeHistory;
+using generalszh::legacy::AccountLease;
+using generalszh::legacy::AccountStore;
+using generalszh::legacy::AccountValue;
+using generalszh::legacy::PowerLease;
+using generalszh::legacy::PowerStore;
+using generalszh::legacy::PowerTotals;
+using engine::gameplay::rts::economy::ResourceBalance;
+using engine::gameplay::rts::power::PowerLedger;
+using generalszh::power::PowerSuppression;
+
+namespace
+{
+struct PowerRow
+{
+	ecs::Entity entity{};
+	PowerTotals value{};
+	std::uint64_t suppressionDeadline{0};
+};
+
+struct AccountRow
+{
+	ecs::Entity entity{};
+	ResourceBalance balance{};
+	IncomeHistory history{};
+};
+
+bool EntityBefore(const ecs::Entity left, const ecs::Entity right) noexcept
+{
+	return left.index != right.index ? left.index < right.index : left.generation < right.generation;
+}
+
+std::vector<PowerRow> ReadPowerRows(ecs::World &world)
+{
+	std::vector<PowerRow> result;
+	ecs::Query<ecs::Read<PowerLedger>, ecs::Read<PowerSuppression>> query(world);
+	query.ForEachChunk([&](auto chunk) {
+		const auto values = chunk.template Get<PowerLedger>();
+		const auto suppression = chunk.template Get<PowerSuppression>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.push_back(PowerRow{chunk.Entities()[row],
+				PowerTotals{values[row].production, values[row].consumption}, suppression[row].untilTick});
+	});
+	std::sort(result.begin(), result.end(), [](const PowerRow &left, const PowerRow &right) {
+		return EntityBefore(left.entity, right.entity);
+	});
+	return result;
+}
+
+std::vector<AccountRow> ReadAccountRows(ecs::World &world)
+{
+	std::vector<AccountRow> result;
+	ecs::Query<ecs::Read<ResourceBalance>, ecs::Read<IncomeHistory>> query(world);
+	query.ForEachChunk([&](auto chunk) {
+		const auto balances = chunk.template Get<ResourceBalance>();
+		const auto histories = chunk.template Get<IncomeHistory>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.push_back(AccountRow{chunk.Entities()[row], balances[row], histories[row]});
+	});
+	std::sort(result.begin(), result.end(), [](const AccountRow &left, const AccountRow &right) {
+		return EntityBefore(left.entity, right.entity);
+	});
+	return result;
+}
+
+void CheckPowerRowsEqual(const std::vector<PowerRow> &left, const std::vector<PowerRow> &right)
+{
+	BOOST_REQUIRE(left.size() == right.size());
+	for (std::size_t index = 0; index < left.size() && index < right.size(); ++index)
+	{
+		BOOST_TEST(left[index].entity.index == right[index].entity.index);
+		BOOST_TEST(left[index].entity.generation == right[index].entity.generation);
+		BOOST_TEST(left[index].value.production == right[index].value.production);
+		BOOST_TEST(left[index].value.consumption == right[index].value.consumption);
+		BOOST_TEST(left[index].suppressionDeadline == right[index].suppressionDeadline);
+	}
+}
+
+void CheckAccountRowsEqual(const std::vector<AccountRow> &left, const std::vector<AccountRow> &right)
+{
+	BOOST_REQUIRE(left.size() == right.size());
+	for (std::size_t index = 0; index < left.size() && index < right.size(); ++index)
+	{
+		BOOST_TEST(left[index].entity.index == right[index].entity.index);
+		BOOST_TEST(left[index].entity.generation == right[index].entity.generation);
+		BOOST_TEST(left[index].balance.quantity == right[index].balance.quantity);
+		BOOST_TEST(left[index].history.current == right[index].history.current);
+		BOOST_TEST(left[index].history.total == right[index].history.total);
+		BOOST_CHECK(left[index].history.buckets == right[index].history.buckets);
+	}
+}
+
+void CheckPowerTotals(const PowerTotals actual, const PowerTotals expected)
+{
+	BOOST_TEST(actual.production == expected.production);
+	BOOST_TEST(actual.consumption == expected.consumption);
+}
+
+struct ResetResult
+{
+	AccountValue account{};
+	PowerTotals power{};
+	std::vector<AccountRow> accountRows;
+	std::vector<PowerRow> powerRows;
+	std::size_t entityCount{0};
+};
+
+void ThrowingPowerRestore(void *)
+{
+	throw std::runtime_error("Injected power restore failure");
+}
+
+void CheckAccountValueEqual(const AccountValue &left, const AccountValue &right)
+{
+	BOOST_TEST(left.balance == right.balance);
+	BOOST_TEST(left.current == right.current);
+	BOOST_TEST(left.total == right.total);
+	BOOST_CHECK(left.buckets == right.buckets);
+}
+
+ResetResult RunCoordinatedReset(const bool reverseDescriptorOrder)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	PowerStore powers(state);
+	ResetResult result;
+	{
+		AccountLease account(accounts, 1234);
+		account.RecordIncome(7);
+		account.AdvanceBucket(3);
+		PowerLease power(powers, PowerTotals{321, -11});
+		power.AddProduction(9);
+		power.AddConsumption(-4);
+		power.SetSabotagedUntilFrame(990);
+
+		std::array participants{accounts.ResetParticipant(), powers.ResetParticipant()};
+		if (reverseDescriptorOrder)
+			std::swap(participants[0], participants[1]);
+		PersistentWorldReset::Execute(state, participants);
+
+		result.account = account.State();
+		result.power = power.State();
+		BOOST_TEST(power.SabotagedUntilFrame() == 990u);
+		result.accountRows = ReadAccountRows(state.World());
+		result.powerRows = ReadPowerRows(state.World());
+		result.entityCount = state.Count();
+	}
+	// The lease and store lifetimes end before GameplayState, so this test also
+	// exercises the required owner teardown order after the world replacement.
+	return result;
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(lease_state_is_the_authoritative_ecs_power_ledger)
+{
+	GameplayState state;
+	PowerStore store(state);
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	{
+		PowerLease lease(store, PowerTotals{12, 5});
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 1u);
+
+		auto rows = ReadPowerRows(state.World());
+		BOOST_REQUIRE(rows.size() == 1u);
+		if (rows.size() == 1u)
+		{
+			CheckPowerTotals(rows[0].value, PowerTotals{12, 5});
+			BOOST_TEST(state.World().Get<PowerLedger>(rows[0].entity) != nullptr);
+		}
+
+		// Query write access mutates the same contiguous ECS row that the lease
+		// reads; no synchronized legacy total is used.
+		ecs::Query<ecs::Write<PowerLedger>> writeQuery(state.World());
+		writeQuery.ForEachChunk([](auto chunk) {
+			auto values = chunk.template Get<PowerLedger>();
+			for (auto &value : values)
+			{
+				value.production = 20;
+				value.consumption = -2;
+			}
+		});
+		CheckPowerTotals(lease.State(), PowerTotals{20, -2});
+
+		lease.AddProduction(3);
+		lease.AddConsumption(4);
+		rows = ReadPowerRows(state.World());
+		BOOST_REQUIRE(rows.size() == 1u);
+		if (rows.size() == 1u)
+			CheckPowerTotals(rows[0].value, PowerTotals{23, 2});
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(power_channels_allow_negative_intermediates_and_honor_int32_boundaries)
+{
+	GameplayState state;
+	PowerStore store(state);
+	PowerLease lease(store, PowerTotals{-10, 4});
+	lease.AddProduction(-7);
+	lease.AddConsumption(-9);
+	CheckPowerTotals(lease.State(), PowerTotals{-17, -5});
+
+	const auto maximum = (std::numeric_limits<std::int32_t>::max)();
+	const auto minimum = (std::numeric_limits<std::int32_t>::min)();
+	lease.Restore(PowerTotals{maximum, minimum});
+	lease.AddProduction(-1);
+	lease.AddConsumption(1);
+	CheckPowerTotals(lease.State(), PowerTotals{maximum - 1, minimum + 1});
+	lease.AddProduction(1);
+	lease.AddConsumption(-1);
+	CheckPowerTotals(lease.State(), PowerTotals{maximum, minimum});
+}
+
+#ifdef NDEBUG
+BOOST_AUTO_TEST_CASE(power_channels_use_defined_unsigned_wrap_in_release)
+{
+	GameplayState state;
+	PowerStore store(state);
+	PowerLease lease(store, PowerTotals{
+		(std::numeric_limits<std::int32_t>::max)(),
+		(std::numeric_limits<std::int32_t>::min)()});
+
+	// This case is intentionally compiled only when internal invariant asserts
+	// are disabled. It must never execute an out-of-range update in a debug
+	// Boost process.
+	lease.AddProduction(1);
+	lease.AddConsumption(-1);
+	CheckPowerTotals(lease.State(), PowerTotals{
+		(std::numeric_limits<std::int32_t>::min)(),
+		(std::numeric_limits<std::int32_t>::max)()});
+}
+#endif
+
+BOOST_AUTO_TEST_CASE(lease_churn_preserves_deterministic_entity_and_chunk_reuse)
+{
+	constexpr std::uint32_t leaseCount = 8192;
+	struct RunResult
+	{
+		std::vector<PowerRow> rowsBeforeReset;
+		std::size_t chunkCountBeforeReset{0};
+		std::vector<std::size_t> chunkSizesBeforeReset;
+		std::vector<PowerRow> rows;
+		std::size_t chunkCount{0};
+		std::vector<std::size_t> chunkSizes;
+	};
+
+	auto run = [leaseCount](const bool churn) {
+		GameplayState state;
+		PowerStore store(state);
+		std::vector<std::unique_ptr<PowerLease>> leases;
+		leases.reserve(leaseCount);
+		for (std::uint32_t index = 0; index < leaseCount; ++index)
+		{
+			leases.push_back(std::make_unique<PowerLease>(store,
+				PowerTotals{static_cast<std::int32_t>(index), -static_cast<std::int32_t>(index)}));
+			leases.back()->SetSabotagedUntilFrame(index + 100);
+		}
+
+		if (churn)
+			for (std::size_t index = 0; index < leases.size(); index += 2)
+			{
+				leases[index].reset();
+				leases[index] = std::make_unique<PowerLease>(store,
+					PowerTotals{static_cast<std::int32_t>(index), -static_cast<std::int32_t>(index)});
+				leases[index]->SetSabotagedUntilFrame(static_cast<std::uint32_t>(index) + 100);
+			}
+
+		RunResult result;
+		result.rowsBeforeReset = ReadPowerRows(state.World());
+		const auto beforeResetArchetypes = state.World().GetArchetypes();
+		BOOST_TEST(beforeResetArchetypes.size() == 1u);
+		if (beforeResetArchetypes.size() == 1u)
+		{
+			result.chunkCountBeforeReset = beforeResetArchetypes.front()->Chunks().size();
+			for (const auto &chunk : beforeResetArchetypes.front()->Chunks())
+				result.chunkSizesBeforeReset.push_back(chunk->Size());
+			BOOST_TEST(result.chunkCountBeforeReset > 1u);
+		}
+		BOOST_TEST(result.rowsBeforeReset.size() == leaseCount);
+		for (std::size_t index = 0; index < result.rowsBeforeReset.size(); ++index)
+		{
+			const auto &row = result.rowsBeforeReset[index];
+			BOOST_TEST(row.entity.index == index);
+			const auto expectedGeneration = churn && index % 2 == 0 ? 2u : 1u;
+			BOOST_TEST(row.entity.generation == expectedGeneration);
+			BOOST_TEST(row.value.production == static_cast<std::int32_t>(index));
+			BOOST_TEST(row.value.consumption == -static_cast<std::int32_t>(index));
+			BOOST_TEST(row.suppressionDeadline == index + 100);
+		}
+
+		// Compare at the same explicit world-rebinding boundary. This removes
+		// the intentionally different pre-boundary generation histories while
+		// retaining the chunk-availability churn exercised above.
+		const auto participant = store.ResetParticipant();
+		PersistentWorldReset::Execute(state, std::span{&participant, 1});
+
+		result.rows = ReadPowerRows(state.World());
+		const auto archetypes = state.World().GetArchetypes();
+		BOOST_TEST(archetypes.size() == 1u);
+		if (archetypes.size() == 1u)
+		{
+			result.chunkCount = archetypes.front()->Chunks().size();
+			for (const auto &chunk : archetypes.front()->Chunks())
+				result.chunkSizes.push_back(chunk->Size());
+			BOOST_TEST(result.chunkCount > 1u);
+		}
+		BOOST_TEST(store.Count() == leaseCount);
+		BOOST_TEST(state.Count() == leaseCount);
+		leases.clear();
+		BOOST_TEST(store.Count() == 0u);
+		BOOST_TEST(state.Count() == 0u);
+		return result;
+	};
+
+	const auto baseline = run(false);
+	const auto churned = run(true);
+	BOOST_TEST(baseline.chunkCountBeforeReset == churned.chunkCountBeforeReset);
+	BOOST_CHECK(baseline.chunkSizesBeforeReset == churned.chunkSizesBeforeReset);
+	BOOST_TEST(baseline.chunkCount == churned.chunkCount);
+	BOOST_CHECK(baseline.chunkSizes == churned.chunkSizes);
+	CheckPowerRowsEqual(baseline.rows, churned.rows);
+}
+
+BOOST_AUTO_TEST_CASE(injected_power_stores_are_isolated_by_their_gameplay_world)
+{
+	GameplayState firstState;
+	GameplayState secondState;
+	{
+		PowerStore first(firstState);
+		PowerLease firstLease(first, PowerTotals{7, 2});
+		BOOST_TEST(firstState.Count() == 1u);
+		{
+			PowerStore second(secondState);
+			PowerLease secondLease(second, PowerTotals{19, -3});
+			firstLease.AddProduction(11);
+			secondLease.AddConsumption(5);
+			CheckPowerTotals(firstLease.State(), PowerTotals{18, 2});
+			CheckPowerTotals(secondLease.State(), PowerTotals{19, 2});
+			BOOST_TEST(firstState.Count() == 1u);
+			BOOST_TEST(secondState.Count() == 1u);
+		}
+		BOOST_TEST(secondState.Count() == 0u);
+	}
+	BOOST_TEST(firstState.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(coordinated_reset_preserves_full_account_and_power_state_in_descriptor_order)
+{
+	const auto forward = RunCoordinatedReset(false);
+	const auto reverse = RunCoordinatedReset(true);
+
+	BOOST_TEST(forward.entityCount == 2u);
+	BOOST_TEST(reverse.entityCount == 2u);
+	CheckAccountValueEqual(forward.account, reverse.account);
+	CheckPowerTotals(forward.power, reverse.power);
+	BOOST_TEST(forward.account.balance == 1234u);
+	BOOST_TEST(forward.account.current == 3u);
+	BOOST_TEST(forward.account.total == 7u);
+	BOOST_TEST(forward.account.buckets[0] == 7u);
+	CheckPowerTotals(forward.power, PowerTotals{330, -15});
+	CheckAccountRowsEqual(forward.accountRows, reverse.accountRows);
+	CheckPowerRowsEqual(forward.powerRows, reverse.powerRows);
+
+	BOOST_REQUIRE(forward.accountRows.size() == 1u);
+	BOOST_REQUIRE(forward.powerRows.size() == 1u);
+	if (forward.accountRows.size() == 1u)
+	{
+		BOOST_TEST(forward.accountRows[0].balance.quantity == 1234u);
+		BOOST_TEST(forward.accountRows[0].history.current == 3u);
+		BOOST_TEST(forward.accountRows[0].history.total == 7u);
+		BOOST_TEST(forward.accountRows[0].history.buckets[0] == 7u);
+	}
+	if (forward.powerRows.size() == 1u)
+		CheckPowerTotals(forward.powerRows[0].value, PowerTotals{330, -15});
+}
+
+BOOST_AUTO_TEST_CASE(failed_reset_preflight_preserves_all_power_and_account_state)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	PowerStore powers(state);
+	{
+		AccountLease account(accounts, 41);
+		account.RecordIncome(6);
+		PowerLease power(powers, PowerTotals{-8, 13});
+		const auto beforeAccount = account.State();
+		const auto beforePower = power.State();
+		const auto beforeAccounts = ReadAccountRows(state.World());
+		const auto beforePowers = ReadPowerRows(state.World());
+
+		auto accountParticipant = accounts.ResetParticipant();
+		auto powerParticipant = powers.ResetParticipant();
+		// Duplicate canonical participant identity fails during preflight, before
+		// any capture, release, world replacement, or lease invalidation.
+		powerParticipant.stableName = accountParticipant.stableName;
+		const std::array invalidParticipants{accountParticipant, powerParticipant};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, invalidParticipants), std::logic_error);
+
+		CheckAccountValueEqual(account.State(), beforeAccount);
+		CheckPowerTotals(power.State(), beforePower);
+		BOOST_TEST(accounts.Count() == 1u);
+		BOOST_TEST(powers.Count() == 1u);
+		BOOST_TEST(state.Count() == 2u);
+		CheckAccountRowsEqual(ReadAccountRows(state.World()), beforeAccounts);
+		CheckPowerRowsEqual(ReadPowerRows(state.World()), beforePowers);
+
+		// Preflight rejection does not poison either owner; a valid explicit
+		// participant set can still be committed while the leases are live.
+		const std::array validParticipants{accounts.ResetParticipant(), powers.ResetParticipant()};
+		BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, validParticipants));
+		CheckAccountValueEqual(account.State(), beforeAccount);
+		CheckPowerTotals(power.State(), beforePower);
+	}
+	BOOST_TEST(accounts.Count() == 0u);
+	BOOST_TEST(powers.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(destructive_restore_failure_poison_all_stores_and_tears_down_cleanly)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	PowerStore powers(state);
+	{
+		AccountLease account(accounts, 73);
+		account.RecordIncome(9);
+		PowerLease power(powers, PowerTotals{14, -6});
+
+		auto accountParticipant = accounts.ResetParticipant();
+		auto powerParticipant = powers.ResetParticipant();
+		powerParticipant.restore = &ThrowingPowerRestore;
+		const std::array participants{accountParticipant, powerParticipant};
+
+		// Both owners have released their old entities and the world has been
+		// replaced before the wrapped Power restore throws. The account restore
+		// is therefore a valid partial prefix, not a transaction to replay.
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+		BOOST_CHECK_THROW(account.State(), std::logic_error);
+		BOOST_CHECK_THROW(power.State(), std::logic_error);
+		BOOST_CHECK_THROW(power.SabotagedUntilFrame(), std::logic_error);
+		BOOST_TEST(accounts.Count() == 1u);
+		BOOST_TEST(powers.Count() == 1u);
+		BOOST_TEST(state.Count() == 1u);
+	}
+
+	// Failed leases must release any surviving partial state and tolerate the
+	// already-invalidated Power binding. Both stores reach zero before the
+	// injected GameplayState is destroyed.
+	BOOST_TEST(accounts.Count() == 0u);
+	BOOST_TEST(powers.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(suppression_is_a_separate_authoritative_column_and_reset_clears_both_states)
+{
+	GameplayState state;
+	PowerStore store(state);
+	PowerLease lease(store, {31, 12});
+	lease.SetSabotagedUntilFrame(50);
+	const auto rows = ReadPowerRows(state.World());
+	BOOST_REQUIRE(rows.size() == 1u);
+	BOOST_TEST(rows[0].suppressionDeadline == 50u);
+	BOOST_TEST(lease.IsSuppressedAt(49));
+	BOOST_TEST(!lease.IsSuppressedAt(50));
+	BOOST_CHECK_THROW(lease.RecoverSuppressionAt(50), std::logic_error);
+	lease.SetPlayer(7);
+	std::int32_t player;
+	store.ExecuteRecovery(50); BOOST_TEST(!store.NextRecovery(player)); store.FinishRecovery();
+	store.ExecuteRecovery(51); BOOST_REQUIRE(store.NextRecovery(player)); BOOST_TEST(player == 7); store.FinishRecovery();
+	store.ExecuteRecovery(52); BOOST_TEST(!store.NextRecovery(player)); store.FinishRecovery();
+	BOOST_TEST(lease.SabotagedUntilFrame() == 0u);
+	state.World().Get<PowerSuppression>(rows[0].entity)->untilTick = 77;
+	BOOST_TEST(lease.SabotagedUntilFrame() == 77u);
+	lease.Restore({14, 3}); // Totals-only transfer must not overwrite suppression.
+	BOOST_TEST(lease.SabotagedUntilFrame() == 77u);
+	lease.Reset();
+	CheckPowerTotals(lease.State(), {});
+	BOOST_TEST(lease.SabotagedUntilFrame() == 0u);
+	BOOST_TEST(state.World().Get<PowerSuppression>(rows[0].entity)->untilTick == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(persistent_capture_preserves_wide_modern_deadlines_without_legacy_narrowing)
+{
+	GameplayState state;
+	PowerStore store(state);
+	PowerLease lease(store, {5, 2});
+	const auto rows = ReadPowerRows(state.World());
+	BOOST_REQUIRE(rows.size() == 1u);
+	const auto wide = static_cast<std::uint64_t>((std::numeric_limits<std::uint32_t>::max)()) + 100;
+	state.World().Get<PowerSuppression>(rows[0].entity)->untilTick = wide;
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, std::span{&participant, 1});
+	const auto restored = ReadPowerRows(state.World());
+	BOOST_REQUIRE(restored.size() == 1u);
+	BOOST_TEST(restored[0].suppressionDeadline == wide);
+	CheckPowerTotals(lease.State(), {5, 2});
+	// A raw legacy frame getter is intentionally not used for a modern >32-bit
+	// deadline: only the persistent storage contract crosses this boundary.
+}
+
+BOOST_AUTO_TEST_CASE(power_recovery_cancels_rearmed_deleted_and_remapped_outputs)
+{
+    GameplayState state; PowerStore store(state);
+    PowerLease first(store), second(store); auto removed = std::make_unique<PowerLease>(store);
+    first.SetPlayer(1); second.SetPlayer(2); removed->SetPlayer(3);
+    first.SetSabotagedUntilFrame(10); second.SetSabotagedUntilFrame(10); removed->SetSabotagedUntilFrame(10);
+    store.ExecuteRecovery(11);
+    BOOST_TEST(second.SabotagedUntilFrame() == 0u); // All chunk work joined before effects.
+    std::int32_t player;
+    BOOST_REQUIRE(store.NextRecovery(player)); BOOST_TEST(player == 1);
+    second.SetSabotagedUntilFrame(20); removed.reset();
+    PowerLease replacement(store); replacement.SetPlayer(3); replacement.SetSabotagedUntilFrame(30);
+    BOOST_TEST(!store.NextRecovery(player)); store.FinishRecovery();
+    BOOST_TEST(second.SabotagedUntilFrame() == 20u);
+    store.ExecuteRecovery(31); replacement.SetPlayer(4);
+    BOOST_REQUIRE(store.NextRecovery(player)); BOOST_TEST(player == 2);
+    BOOST_TEST(!store.NextRecovery(player)); store.FinishRecovery();
+}
+
+BOOST_AUTO_TEST_CASE(unconsumed_power_recovery_is_not_replayed_and_empty_cached_owner_participates_in_reset)
+{
+    GameplayState state; PowerStore store(state);
+    BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+    auto participant = store.ResetParticipant(); PersistentWorldReset::Execute(state, std::span{&participant, 1});
+    PowerLease source(store); source.SetPlayer(1); source.SetSabotagedUntilFrame(1);
+    store.ExecuteRecovery(2);
+    BOOST_CHECK_THROW(store.ExecuteRecovery(3), std::logic_error);
+    BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::logic_error);
+    BOOST_CHECK_THROW(store.FinishRecovery(), std::logic_error);
+    std::int32_t player;
+    BOOST_CHECK_THROW(store.NextRecovery(player), std::logic_error);
+    BOOST_CHECK_THROW(store.ExecuteRecovery(4), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(missing_power_recovery_column_fails_before_consuming_deadlines)
+{
+    GameplayState state; PowerStore store(state); PowerLease source(store);
+    source.SetSabotagedUntilFrame(10);
+    const auto entity = ReadPowerRows(state.World()).front().entity;
+    state.World().Remove<generalszh::power::PowerRecovery>(entity);
+    BOOST_CHECK_THROW(store.ExecuteRecovery(11), std::logic_error);
+    BOOST_TEST(state.World().Get<PowerSuppression>(entity)->untilTick == 10u);
+}
+
+BOOST_AUTO_TEST_CASE(real_power_recovery_state_ids_and_order_match_with_one_two_and_four_workers)
+{
+    auto run = [](std::size_t workerCount) {
+        GameplayState state; generalszh::GameplayWorkers workers(workerCount); PowerStore store(state, workers);
+        std::vector<std::unique_ptr<PowerLease>> sources;
+        for (std::uint32_t i = 0; i != 4096; ++i)
+        {
+            auto source = std::make_unique<PowerLease>(store, PowerTotals{static_cast<std::int32_t>(i), 1});
+            source->SetPlayer(4096 - i); source->SetSabotagedUntilFrame(i % 4);
+            sources.push_back(std::move(source));
+        }
+        std::vector<std::array<std::uint64_t, 6>> result;
+        for (std::uint64_t tick = 0; tick != 8; ++tick)
+        {
+            if (tick == 5) for (auto &source : sources) source->SetSabotagedUntilFrame(6);
+            store.ExecuteRecovery(tick); std::int32_t player; std::int32_t previous = -1;
+            while (store.NextRecovery(player))
+            {
+                BOOST_TEST(player > previous); previous = player;
+                result.push_back({tick, static_cast<std::uint64_t>(player), 0, 0, 0, 1});
+            }
+            store.FinishRecovery();
+            for (const auto &row : ReadPowerRows(state.World()))
+                result.push_back({tick, row.entity.index, row.entity.generation, row.suppressionDeadline,
+                    static_cast<std::uint64_t>(row.value.production), 0});
+        }
+        BOOST_TEST(state.World().GetArchetypes().front()->Chunks().size() > 1u);
+        return result;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(power_startup_failure_releases_binding_and_recovery_rebinds_after_reset)
+{
+    GameplayState state; generalszh::GameplayWorkers workers(1);
+    auto bad = [&] { PowerStore store(state, workers, 0); };
+    BOOST_CHECK_THROW(bad(), std::invalid_argument);
+    BOOST_CHECK_NO_THROW(state.Reset());
+    PowerStore store(state, workers); PowerLease source(store); source.SetPlayer(9); source.SetSabotagedUntilFrame(10);
+    auto participant = store.ResetParticipant();
+    PersistentWorldReset::Execute(state, std::span{&participant, 1});
+    store.ExecuteRecovery(11); std::int32_t player;
+    BOOST_REQUIRE(store.NextRecovery(player)); BOOST_TEST(player == 9); store.FinishRecovery();
+    BOOST_TEST(source.SabotagedUntilFrame() == 0u);
+}

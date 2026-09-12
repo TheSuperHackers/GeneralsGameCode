@@ -1,0 +1,76 @@
+#define BOOST_TEST_MODULE GeneralsZHDisabledProcessingDefinitionAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "disabled_processing_definition.h"
+#include <array>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <type_traits>
+#include <utility>
+
+import games.generalszh.adapters.legacy.production.definitions.disabled_processing_definition;
+import games.generalszh.gameplay.status.definitions.disabled_processing_definition;
+
+using generalszh::legacy::DisabledProcessingDefinition;
+using ModernDisabledProcessingDefinition =
+	generalszh::status::DisabledProcessingDefinition;
+using ModernDisabledReason = generalszh::status::DisabledReason;
+
+static_assert(!std::is_default_constructible_v<DisabledProcessingDefinition>);
+static_assert(!std::is_copy_constructible_v<DisabledProcessingDefinition>);
+static_assert(!std::is_move_constructible_v<DisabledProcessingDefinition>);
+static_assert(!std::is_copy_assignable_v<DisabledProcessingDefinition>);
+static_assert(!std::is_move_assignable_v<DisabledProcessingDefinition>);
+static_assert(!std::is_convertible_v<std::uint16_t, DisabledProcessingDefinition>);
+static_assert(std::is_nothrow_destructible_v<DisabledProcessingDefinition>);
+static_assert(std::is_same_v<decltype(std::declval<const DisabledProcessingDefinition &>()
+	.AllowedMask()), std::uint16_t>);
+static_assert(std::is_same_v<decltype(std::declval<const DisabledProcessingDefinition &>()
+	.Fingerprint()), std::uint64_t>);
+static_assert(noexcept(std::declval<const DisabledProcessingDefinition &>().AllowedMask()));
+static_assert(noexcept(std::declval<const DisabledProcessingDefinition &>().Fingerprint()));
+
+BOOST_AUTO_TEST_CASE(all_valid_masks_preserve_the_exact_legacy_mask)
+{
+	for (std::uint16_t mask = 0; mask <= 0x1fffu; ++mask)
+	{
+		const DisabledProcessingDefinition definition{mask};
+		BOOST_TEST(definition.AllowedMask() == mask);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(all_reason_bits_match_the_explicit_modern_typed_definition)
+{
+	for (std::uint16_t bit = 0; bit < 13; ++bit)
+	{
+		const auto mask = static_cast<std::uint16_t>(std::uint16_t{1u} << bit);
+		const DisabledProcessingDefinition legacy{mask};
+		const ModernDisabledProcessingDefinition modernFromMask{mask};
+		const std::array reasons{static_cast<ModernDisabledReason>(bit)};
+		const std::span<const ModernDisabledReason> typedReasons{reasons};
+		const ModernDisabledProcessingDefinition modernFromReason{typedReasons};
+
+		BOOST_TEST(legacy.AllowedMask() == modernFromMask.AllowedMask());
+		BOOST_TEST(legacy.Fingerprint() == modernFromMask.Fingerprint());
+		BOOST_TEST(legacy.AllowedMask() == modernFromReason.AllowedMask());
+		BOOST_TEST(legacy.Fingerprint() == modernFromReason.Fingerprint());
+	}
+}
+
+BOOST_AUTO_TEST_CASE(fingerprint_is_independent_of_adapter_object_address)
+{
+	const DisabledProcessingDefinition first{0x0123u};
+	const DisabledProcessingDefinition second{0x0123u};
+	const ModernDisabledProcessingDefinition modern{0x0123u};
+
+	BOOST_CHECK(&first != &second);
+	BOOST_TEST(first.Fingerprint() == second.Fingerprint());
+	BOOST_TEST(first.Fingerprint() == modern.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(high_mask_bits_are_rejected_at_construction)
+{
+	BOOST_CHECK_THROW(DisabledProcessingDefinition{0x2000u}, std::invalid_argument);
+	BOOST_CHECK_THROW(DisabledProcessingDefinition{0xffffu}, std::invalid_argument);
+}

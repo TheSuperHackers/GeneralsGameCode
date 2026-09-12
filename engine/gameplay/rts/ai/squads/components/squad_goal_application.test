@@ -1,0 +1,14 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.rts.ai.squads.components.squad_goal_application;
+
+BOOST_AUTO_TEST_CASE(goal_application_keeps_squad_generation_and_revision_together)
+{
+	using engine::gameplay::rts::ai::squads::SquadGoalApplication;
+	SquadGoalApplication application{{11, 4}, 9};
+	BOOST_TEST(application.squad.index == 11u);
+	BOOST_TEST(application.squad.generation == 4u);
+	BOOST_TEST(application.appliedRevision == 9u);
+	BOOST_TEST(ecs::ComponentTraits<SquadGoalApplication>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<SquadGoalApplication>::Persistence == ecs::PersistencePolicy::Serializable);
+}

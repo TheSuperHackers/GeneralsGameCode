@@ -1,0 +1,30 @@
+#define BOOST_TEST_MODULE EngineGameplayRegeneration
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <limits>
+#include <stdexcept>
+import engine.gameplay.combat.regeneration.definitions.regeneration_definition;
+using namespace engine::gameplay::combat::regeneration;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(regeneration_definitions_validate_quantize_and_bound_identity)
+{
+    std::array definitions{RegenerationDefinition{7,150ms,250ms}};
+    const RegenerationDefinitions catalog(engine::time::FixedStep{10},definitions);
+    const auto &value=catalog.Get(catalog.Id(0));
+    BOOST_TEST(value.interval==2u); BOOST_TEST(value.damageDelay==3u);
+    definitions[0].quantity=99;
+    BOOST_TEST(value.quantity==7u);
+    BOOST_CHECK_THROW(catalog.Id(1),std::out_of_range);
+    BOOST_CHECK_THROW(catalog.Get(RegenerationDefinitionId{}),std::out_of_range);
+    definitions[0].interval=0ns;
+    BOOST_CHECK_THROW((RegenerationDefinitions(engine::time::FixedStep{10},definitions)),std::invalid_argument);
+    definitions[0].interval=1s; definitions[0].damageDelay=-1ns;
+    BOOST_CHECK_THROW((RegenerationDefinitions(engine::time::FixedStep{10},definitions)),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(regeneration_deadline_never_wraps)
+{
+    const auto last=(std::numeric_limits<std::uint64_t>::max)();
+    BOOST_TEST(RegenerationDeadline(last-2,2)==last);
+    BOOST_CHECK_THROW(RegenerationDeadline(last-2,3),std::overflow_error);
+}

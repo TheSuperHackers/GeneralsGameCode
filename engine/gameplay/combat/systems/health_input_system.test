@@ -1,0 +1,43 @@
+#include <boost/test/unit_test.hpp>
+#include <vector>
+#include <array>
+import engine.gameplay.combat.systems.health_input_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(health_input_reduction_and_deaths_match_across_workers)
+{
+    auto run = [](std::size_t workers) {
+        ecs::World world; RegisterHealthComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workers}); HealthInputSystem input{world}; HealthSystem health; HealingSystem healing;
+        const engine::time::FixedStep step{30};
+        ecs::SystemRegistry registry; RegisterHealthSystems(registry, input, health, healing); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,jobs); scheduler.Finalize(step);
+        std::vector<ecs::Entity> entities; std::vector<DamageInput> inputs;
+        for (std::uint32_t i = 0; i != 2048; ++i) {
+            auto entity = world.Create<Health, LifeState, PendingDamage, DamageResult>(); entities.push_back(entity);
+            world.Get<Health>(entity)->current = 10; inputs.push_back({entity, i % 15}); inputs.push_back({entity, 3}); }
+        const auto stale = world.Create<Health, LifeState, PendingDamage, DamageResult>(); world.Destroy(stale); inputs.push_back({stale, 100});
+        input.SetInputs(inputs); scheduler.Execute({0, step});
+        std::vector<std::uint64_t> state;
+        for (auto entity : entities) state.insert(state.end(), {entity.index, entity.generation, world.Get<Health>(entity)->current,
+            world.Get<LifeState>(entity)->alive, world.Get<DamageResult>(entity)->applied, world.Get<DamageResult>(entity)->killed});
+        return state;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+BOOST_AUTO_TEST_CASE(health_inputs_are_staged_and_consumed_once_with_damage_before_healing)
+{
+    ecs::World world; RegisterHealthComponents(world); world.FinalizeComponents();
+    HealthInputSystem input{world}; HealthSystem health; HealingSystem healingSystem; const engine::time::FixedStep step{30};
+    ecs::SystemRegistry registry; RegisterHealthSystems(registry, input, health, healingSystem); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    const auto entity=world.Create<Health,LifeState,PendingDamage,DamageResult,HealthCapacity,PendingHealing,HealingResult>();
+    world.Get<Health>(entity)->current=10; world.Get<HealthCapacity>(entity)->maximum=10;
+    const std::array damage{DamageInput{entity,4}}; const std::array healing{HealingInput{entity,2}};
+    input.SetInputs(damage,healing);
+    BOOST_TEST(world.Get<PendingDamage>(entity)->quantity==0u); BOOST_TEST(world.Get<PendingHealing>(entity)->quantity==0u);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<Health>(entity)->current==8u);
+    BOOST_TEST(world.Get<DamageResult>(entity)->applied==4u); BOOST_TEST(world.Get<HealingResult>(entity)->applied==2u);
+    scheduler.Execute({1,step}); BOOST_TEST(world.Get<Health>(entity)->current==8u);
+    BOOST_TEST(world.Get<DamageResult>(entity)->applied==0u); BOOST_TEST(world.Get<HealingResult>(entity)->applied==0u);
+}

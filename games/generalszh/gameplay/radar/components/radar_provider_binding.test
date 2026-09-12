@@ -1,0 +1,29 @@
+#define BOOST_TEST_MODULE GeneralsZHRadarProviderBinding
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.gameplay.radar.components.radar_provider_binding;
+
+using generalszh::radar::RadarProviderBinding;
+using generalszh::radar::RadarProviderGrant;
+
+BOOST_AUTO_TEST_CASE(binding_and_grant_have_distinct_serializable_authority)
+{
+	static_assert(std::is_standard_layout_v<RadarProviderBinding>);
+	static_assert(std::is_trivially_copyable_v<RadarProviderBinding>);
+	static_assert(std::is_standard_layout_v<RadarProviderGrant>);
+	static_assert(std::is_trivially_copyable_v<RadarProviderGrant>);
+	BOOST_TEST(ecs::ComponentTraits<RadarProviderBinding>::StableName ==
+		"games.generalszh.radar.provider_binding");
+	BOOST_TEST(ecs::ComponentTraits<RadarProviderGrant>::StableName ==
+		"games.generalszh.radar.provider_grant");
+	BOOST_CHECK(ecs::ComponentTraits<RadarProviderBinding>::Persistence ==
+		ecs::PersistencePolicy::Serializable);
+	BOOST_CHECK(ecs::ComponentTraits<RadarProviderGrant>::Persistence ==
+		ecs::PersistencePolicy::Serializable);
+	BOOST_TEST(RadarProviderBinding{7}.definitionId == 7u);
+	BOOST_TEST(!RadarProviderGrant{false}.granted);
+}

@@ -1,0 +1,18 @@
+add_library(engine_gameplay_progression STATIC)
+target_sources(engine_gameplay_progression PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+ components/progression_state.cppm definitions/progression_definition.cppm
+ inputs/progression_batch.cppm systems/progression_system.cppm)
+target_compile_features(engine_gameplay_progression PUBLIC cxx_std_23)
+set_property(TARGET engine_gameplay_progression PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(engine_gameplay_progression PUBLIC engine_ecs)
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+ find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+ set(progression_tests components/progression_state.test definitions/progression_definition.test
+  inputs/progression_batch.test systems/progression_system.test)
+ set_source_files_properties(${progression_tests} PROPERTIES LANGUAGE CXX)
+ add_executable(engine_gameplay_progression_tests ${progression_tests})
+ set_property(TARGET engine_gameplay_progression_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+ target_compile_definitions(engine_gameplay_progression_tests PRIVATE BOOST_TEST_INCLUDED)
+ target_link_libraries(engine_gameplay_progression_tests PRIVATE engine_gameplay_progression Boost::included_unit_test_framework)
+ add_test(NAME engine_gameplay_progression_tests COMMAND engine_gameplay_progression_tests)
+endif()

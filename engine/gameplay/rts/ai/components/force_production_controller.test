@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE RTSForceProductionController
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+import engine.gameplay.rts.ai.components.force_production_controller;
+
+using engine::gameplay::rts::ai::ForceProductionController;
+
+BOOST_AUTO_TEST_CASE(controller_state_is_serializable_runtime_cursor)
+{
+	ForceProductionController controller{17, 42, true};
+	BOOST_TEST(controller.policyKey == 17u);
+	BOOST_TEST(controller.nextDecisionTick == 42u);
+	BOOST_TEST(controller.enabled);
+	BOOST_TEST(ecs::ComponentTraits<ForceProductionController>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<ForceProductionController>::Persistence == ecs::PersistencePolicy::Serializable);
+}

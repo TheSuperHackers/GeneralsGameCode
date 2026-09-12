@@ -1,0 +1,225 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+import games.generalszh.gameplay.progression.systems.kill_experience_system;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+using namespace engine::gameplay::combat;
+using namespace engine::gameplay::progression;
+using namespace generalszh::construction;
+using namespace generalszh::production;
+using namespace generalszh::progression;
+
+void RegisterComponents(ecs::World &world)
+{
+    world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>();
+    world.RegisterComponent<PendingDamage>(); world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<ProgressionState>(); world.RegisterComponent<ProgressionDefinitionRef>();
+    world.RegisterComponent<ProgressionEligibility>(); world.RegisterComponent<ProgressionInbox>();
+    world.RegisterComponent<engine::gameplay::rts::rank::RankSkillAwardModifier>();
+    world.RegisterComponent<VeterancyAwardBinding>();
+    world.RegisterComponent<ProducedUnit>(); world.RegisterComponent<Structure>();
+    world.RegisterComponent<generalszh::match::MatchState>();
+    world.RegisterComponent<generalszh::match::MatchMember>();
+    world.FinalizeComponents();
+}
+
+ecs::Entity BeginMatch(ecs::World &world, ecs::Entity first, ecs::Entity second)
+{
+    const auto match = world.Create<generalszh::match::MatchState>();
+    world.Add<generalszh::match::MatchMember>(first);
+    world.Add<generalszh::match::MatchMember>(second);
+    *world.Get<generalszh::match::MatchMember>(first) = {match, 0};
+    *world.Get<generalszh::match::MatchMember>(second) = {match, 1};
+    return match;
+}
+}
+
+BOOST_AUTO_TEST_CASE(kill_award_uses_a_regular_nontrainable_victim_value)
+{
+    ecs::World world; RegisterComponents(world);
+    const auto killerAccount=world.Create(); const auto victimAccount=world.Create();
+    const auto match=BeginMatch(world,killerAccount,victimAccount);
+    const auto killer=world.Create<LifeState,ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,
+        ProgressionInbox,ProducedUnit>();
+    const auto victim=world.Create<LifeState,DamageResult,VeterancyAwardBinding,ProducedUnit>();
+    *world.Get<ProducedUnit>(killer)={killerAccount,killerAccount,0};
+    *world.Get<ProducedUnit>(victim)={victimAccount,victimAccount,1};
+    *world.Get<ProgressionEligibility>(killer)={true}; *world.Get<ProgressionDefinitionRef>(killer)={2};
+    *world.Get<ProgressionState>(killer)={0,0};
+    *world.Get<VeterancyAwardBinding>(victim)={1,true}; *world.Get<LifeState>(victim)={false};
+    *world.Get<DamageResult>(victim)={100,true,{victim,killer,killerAccount,4,100,90,100,true}};
+    const std::array definitions{
+        VeterancyDefinition{{0,100,200,300},{0,0,0,0},true},
+        VeterancyDefinition{{0,0,0,0},{25,30,40,50},false}};
+    const VeterancyCatalog veterancyCatalog(definitions); ProgressionBatch batch(4); batch.SetInputs({});
+    // The source's generic progression reference is deliberately index 2;
+    // the victim's award binding is independently index 1 in VeterancyCatalog.
+    const std::array progressionDefinitions{
+        engine::gameplay::progression::ProgressionDefinition{{0},0},
+        engine::gameplay::progression::ProgressionDefinition{{0},0},
+        engine::gameplay::progression::ProgressionDefinition{{0,100,200,300},2147483647u}};
+    const engine::gameplay::progression::ProgressionCatalog progressionCatalog(progressionDefinitions);
+    engine::gameplay::progression::ProgressionSystem progression(progressionCatalog,batch);
+    KillExperienceSystem system(world,match,progressionCatalog,veterancyCatalog,batch,32,4); system.Configure();
+    HealthSystem healthSystem; ecs::SystemRegistry registry; registry.Register(healthSystem);
+    registry.Register(system); registry.Register(progression); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({4,step});
+    const auto results=batch.Results(); BOOST_REQUIRE_EQUAL(results.size(),1u);
+    BOOST_CHECK(results[0].entity.index==killer.index);
+    BOOST_CHECK(results[0].entity.generation==killer.generation);
+    BOOST_TEST(results[0].applied==25u);
+}
+
+BOOST_AUTO_TEST_CASE(kill_rank_award_is_independent_of_source_trainability_and_unit_xp)
+{
+    ecs::World world; RegisterComponents(world);
+    const auto killerAccount=world.Create<engine::gameplay::rts::rank::RankSkillAwardModifier>();
+    *world.Get<engine::gameplay::rts::rank::RankSkillAwardModifier>(killerAccount)={3,2};
+    const auto victimAccount=world.Create();
+    const auto match=BeginMatch(world,killerAccount,victimAccount);
+    // This source deliberately has no progression components: it cannot earn
+    // unit XP, but its owning enrolled account remains rank-eligible.
+    const auto killer=world.Create<LifeState,ProducedUnit>();
+    const auto victim=world.Create<LifeState,DamageResult,VeterancyAwardBinding,ProducedUnit>();
+    *world.Get<ProducedUnit>(killer)={killerAccount,killerAccount,0};
+    *world.Get<ProducedUnit>(victim)={victimAccount,victimAccount,1};
+    *world.Get<LifeState>(killer)={true}; *world.Get<LifeState>(victim)={false};
+    *world.Get<VeterancyAwardBinding>(victim)={0,true};
+    *world.Get<DamageResult>(victim)={100,true,{victim,killer,killerAccount,9,100,90,100,true}};
+
+    const std::array definitions{
+        VeterancyDefinition{{0,0,0,0},{0,0,0,0},false,{5,5,5,5}}};
+    const VeterancyCatalog veterancyCatalog(definitions);
+    const std::array progressionDefinitions{engine::gameplay::progression::ProgressionDefinition{{0},0}};
+    const engine::gameplay::progression::ProgressionCatalog progressionCatalog(progressionDefinitions);
+    ProgressionBatch experienceBatch(4); experienceBatch.SetInputs({});
+    engine::gameplay::rts::rank::RankBatch rankBatch(4); rankBatch.SetInputs({});
+    engine::gameplay::progression::ProgressionSystem progression(progressionCatalog,experienceBatch);
+    KillExperienceSystem system(world,match,progressionCatalog,veterancyCatalog,experienceBatch,32,4,&rankBatch);
+    system.Configure();
+    HealthSystem healthSystem; ecs::SystemRegistry registry; registry.Register(healthSystem);
+    registry.Register(system); registry.Register(progression); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({9,step});
+
+    BOOST_CHECK(experienceBatch.Results().empty());
+    rankBatch.Prepare(9);
+    BOOST_REQUIRE_EQUAL(rankBatch.Order().size(),1u);
+    const auto &accepted=rankBatch.Input(rankBatch.Order()[0]);
+    BOOST_CHECK(accepted.account==killerAccount);
+    BOOST_TEST(accepted.amount==8u); // ceil(5 * 3 / 2), before RankSystem.
+}
+
+BOOST_AUTO_TEST_CASE(kill_award_rejects_a_victim_owned_by_a_neutral_account)
+{
+    ecs::World world; RegisterComponents(world);
+    const auto killerAccount=world.Create(); const auto neutralAccount=world.Create();
+    const auto match=world.Create<generalszh::match::MatchState>();
+    world.Add<generalszh::match::MatchMember>(killerAccount);
+    *world.Get<generalszh::match::MatchMember>(killerAccount)={match,0};
+    const auto killer=world.Create<LifeState,ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,
+        ProgressionInbox,ProducedUnit>();
+    const auto victim=world.Create<LifeState,DamageResult,VeterancyAwardBinding,ProducedUnit>();
+    *world.Get<ProducedUnit>(killer)={killerAccount,killerAccount,0};
+    *world.Get<ProducedUnit>(victim)={neutralAccount,neutralAccount,1};
+    *world.Get<ProgressionEligibility>(killer)={true}; *world.Get<ProgressionDefinitionRef>(killer)={0};
+    *world.Get<ProgressionState>(killer)={0,0}; *world.Get<VeterancyAwardBinding>(victim)={0,true};
+    *world.Get<LifeState>(victim)={false};
+    *world.Get<DamageResult>(victim)={100,true,{victim,killer,killerAccount,1,100,0,100,true}};
+    const std::array definitions{VeterancyDefinition{{0,100,200,300},{25,25,25,25},false}};
+    const VeterancyCatalog veterancyCatalog(definitions); ProgressionBatch batch(2); batch.SetInputs({});
+    const std::array progressionDefinitions{definitions[0].Progression()};
+    const engine::gameplay::progression::ProgressionCatalog progressionCatalog(progressionDefinitions);
+    engine::gameplay::progression::ProgressionSystem progression(progressionCatalog,batch);
+    KillExperienceSystem system(world,match,progressionCatalog,veterancyCatalog,batch,32,2); system.Configure();
+    HealthSystem healthSystem; ecs::SystemRegistry registry; registry.Register(healthSystem);
+    registry.Register(system); registry.Register(progression); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({1,step});
+    BOOST_TEST(batch.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(kill_award_rejects_a_kind_of_ignored_victim_binding)
+{
+    ecs::World world; RegisterComponents(world);
+    const auto killerAccount=world.Create(); const auto victimAccount=world.Create();
+    const auto match=BeginMatch(world,killerAccount,victimAccount);
+    const auto killer=world.Create<LifeState,ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,
+        ProgressionInbox,ProducedUnit>();
+    const auto victim=world.Create<LifeState,DamageResult,VeterancyAwardBinding,ProducedUnit>();
+    *world.Get<ProducedUnit>(killer)={killerAccount,killerAccount,0};
+    *world.Get<ProducedUnit>(victim)={victimAccount,victimAccount,1};
+    *world.Get<ProgressionEligibility>(killer)={true}; *world.Get<ProgressionDefinitionRef>(killer)={0};
+    *world.Get<ProgressionState>(killer)={0,0}; *world.Get<VeterancyAwardBinding>(victim)={0,false};
+    *world.Get<LifeState>(victim)={false};
+    *world.Get<DamageResult>(victim)={100,true,{victim,killer,killerAccount,1,100,0,100,true}};
+    const std::array definitions{VeterancyDefinition{{0,100,200,300},{25,25,25,25},false}};
+    const VeterancyCatalog veterancyCatalog(definitions); ProgressionBatch batch(2); batch.SetInputs({});
+    const std::array progressionDefinitions{definitions[0].Progression()};
+    const engine::gameplay::progression::ProgressionCatalog progressionCatalog(progressionDefinitions);
+    engine::gameplay::progression::ProgressionSystem progression(progressionCatalog,batch);
+    KillExperienceSystem system(world,match,progressionCatalog,veterancyCatalog,batch,32,2); system.Configure();
+    HealthSystem healthSystem; ecs::SystemRegistry registry; registry.Register(healthSystem);
+    registry.Register(system); registry.Register(progression); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({1,step});
+    BOOST_TEST(batch.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(kill_award_rejects_reused_source_and_target_generation_proofs)
+{
+    ecs::World world; RegisterComponents(world);
+    const auto killerAccount=world.Create(); const auto victimAccount=world.Create();
+    const auto match=BeginMatch(world,killerAccount,victimAccount);
+    const auto oldKiller=world.Create<LifeState,ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,
+        ProgressionInbox,ProducedUnit>();
+    const auto victim=world.Create<LifeState,DamageResult,VeterancyAwardBinding,ProducedUnit>();
+    *world.Get<ProducedUnit>(oldKiller)={killerAccount,killerAccount,0}; *world.Get<ProducedUnit>(victim)={victimAccount,victimAccount,1};
+    *world.Get<ProgressionEligibility>(oldKiller)={true}; *world.Get<ProgressionDefinitionRef>(oldKiller)={0};
+    *world.Get<VeterancyAwardBinding>(victim)={0,true};
+    const auto proofKiller=oldKiller; world.Destroy(oldKiller); const auto replacement=world.Create();
+    BOOST_REQUIRE_EQUAL(replacement.index,proofKiller.index); BOOST_REQUIRE(replacement.generation!=proofKiller.generation);
+    *world.Get<LifeState>(victim)={false};
+    *world.Get<DamageResult>(victim)={100,true,{victim,proofKiller,killerAccount,1,100,0,100,true}};
+    const std::array definitions{VeterancyDefinition{{0,100,200,300},{25,25,25,25},true}};
+    const VeterancyCatalog veterancyCatalog(definitions); ProgressionBatch batch(2); batch.SetInputs({});
+    const std::array progressionDefinitions{definitions[0].Progression()};
+    const engine::gameplay::progression::ProgressionCatalog progressionCatalog(progressionDefinitions);
+    engine::gameplay::progression::ProgressionSystem progression(progressionCatalog,batch);
+    KillExperienceSystem system(world,match,progressionCatalog,veterancyCatalog,batch,32,2); system.Configure();
+    HealthSystem healthSystem; ecs::SystemRegistry registry; registry.Register(healthSystem);
+    registry.Register(system); registry.Register(progression); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step}); BOOST_TEST(batch.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(kill_award_append_is_once_only_for_a_published_damage_result)
+{
+    ecs::World world; RegisterComponents(world);
+    const auto killerAccount=world.Create(); const auto victimAccount=world.Create();
+    const auto match=BeginMatch(world,killerAccount,victimAccount);
+    const auto killer=world.Create<LifeState,ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,
+        ProgressionInbox,ProducedUnit>();
+    const auto victim=world.Create<LifeState,DamageResult,VeterancyAwardBinding,ProducedUnit>();
+    *world.Get<ProducedUnit>(killer)={killerAccount,killerAccount,0}; *world.Get<ProducedUnit>(victim)={victimAccount,victimAccount,1};
+    *world.Get<ProgressionEligibility>(killer)={true}; *world.Get<ProgressionDefinitionRef>(killer)={0};
+    *world.Get<VeterancyAwardBinding>(victim)={0,true};
+    *world.Get<LifeState>(victim)={false}; *world.Get<DamageResult>(victim)={100,true,{victim,killer,killerAccount,2,100,0,100,true}};
+    const std::array definitions{VeterancyDefinition{{0,100,200,300},{10,10,10,10},true}};
+    const VeterancyCatalog veterancyCatalog(definitions); ProgressionBatch batch(2); batch.SetInputs({});
+    const std::array progressionDefinitions{definitions[0].Progression()};
+    const engine::gameplay::progression::ProgressionCatalog progressionCatalog(progressionDefinitions);
+    engine::gameplay::progression::ProgressionSystem progression(progressionCatalog,batch);
+    KillExperienceSystem system(world,match,progressionCatalog,veterancyCatalog,batch,32,2); system.Configure();
+    HealthSystem healthSystem; ecs::SystemRegistry registry; registry.Register(healthSystem);
+    registry.Register(system); registry.Register(progression); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({2,step});
+    BOOST_REQUIRE_EQUAL(batch.Results().size(),1u); BOOST_TEST(batch.Results()[0].applied==10u);
+    *world.Get<DamageResult>(victim)={}; batch.SetInputs({}); scheduler.Execute({3,step}); BOOST_TEST(batch.Results().empty());
+}

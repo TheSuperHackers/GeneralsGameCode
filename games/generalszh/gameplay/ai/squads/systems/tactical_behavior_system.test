@@ -1,0 +1,331 @@
+#define BOOST_TEST_MODULE GeneralsZHTacticalBehaviorSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <vector>
+
+import games.generalszh.gameplay.ai.squads.systems.tactical_behavior_system;
+import engine.ecs.scheduler.scheduler;
+import engine.jobs.job_system;
+
+namespace
+{
+namespace ai = engine::gameplay::rts::ai::squads;
+namespace tactical = generalszh::ai::squads;
+namespace combat = engine::gameplay::combat;
+namespace navigation = engine::gameplay::navigation;
+namespace production = generalszh::production;
+
+constexpr std::uint64_t liveHealth = 100;
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<ai::SquadMembership>();
+	world.RegisterComponent<ai::SquadGoalApplication>();
+	world.RegisterComponent<ai::SquadGoal>();
+	world.RegisterComponent<combat::Health>();
+	world.RegisterComponent<combat::LifeState>();
+	world.RegisterComponent<combat::WeaponDefinition>();
+	world.RegisterComponent<engine::gameplay::rts::construction::BuilderAssignment>();
+	world.RegisterComponent<engine::gameplay::rts::harvesting::HarvestState>();
+	world.RegisterComponent<engine::gameplay::containment::ContainmentTask>();
+	world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();
+	world.RegisterComponent<generalszh::capture::CaptureActorState>();
+	world.RegisterComponent<engine::gameplay::rts::repair::ManualRepairAssignment>();
+	world.RegisterComponent<navigation::GridPosition>();
+	world.RegisterComponent<production::ProducedUnit>();
+	world.RegisterComponent<production::Producer>();
+	world.RegisterComponent<generalszh::construction::Structure>();
+	world.RegisterComponent<engine::gameplay::concealment::ConcealmentState>();
+	world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityCellIndex>();
+	world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityVisibleMaskPage>();
+	world.RegisterComponent<engine::gameplay::rts::orders::UnitOrder>();
+}
+
+struct ScenarioResult
+{
+	std::vector<std::uint64_t> requests;
+	std::size_t primaryChunkCount{};
+};
+
+ScenarioResult RunScenario(const std::size_t workers)
+{
+	const std::array<std::uint8_t, 16> cells{1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1};
+	const navigation::NavigationGrid grid(16, 1, cells);
+	ecs::World world{ecs::WorldConfig{512}};
+	RegisterComponents(world);
+	world.FinalizeComponents();
+
+	const auto owner = world.Create();
+	const auto enemy = world.Create();
+	const auto squad = world.Create<ai::SquadGoal>();
+	const auto target = world.Create<combat::Health, combat::LifeState, navigation::GridPosition,
+		production::ProducedUnit>();
+	world.Get<combat::Health>(target)->current = liveHealth;
+	world.Get<production::ProducedUnit>(target)->account = enemy;
+	world.Get<navigation::GridPosition>(target)->cell = 7;
+
+	std::array<ecs::Entity, 4> actors{};
+	for (std::size_t index = 0; index != actors.size(); ++index)
+	{
+		actors[index] = world.Create<ai::SquadMembership, ai::SquadGoalApplication,
+			combat::Health, combat::LifeState, combat::WeaponDefinition, navigation::GridPosition,
+			production::ProducedUnit, engine::gameplay::rts::orders::UnitOrder>();
+		world.Get<ai::SquadMembership>(actors[index])->squad = squad;
+		world.Get<combat::Health>(actors[index])->current = liveHealth;
+		world.Get<production::ProducedUnit>(actors[index])->account = owner;
+		world.Get<navigation::GridPosition>(actors[index])->cell = static_cast<navigation::Cell>(index);
+		world.Get<combat::WeaponDefinition>(actors[index])->rangeCells = 4;
+	}
+
+	*world.Get<ai::SquadGoal>(squad) = {
+		ai::SquadGoalKind::AttackTarget, owner, target, navigation::InvalidCell, 0, 0};
+	generalszh::combat::TargetIndex targetIndex(world, grid, 64);
+	ai::SquadOrderRequestBatch requests(16);
+	tactical::TacticalBehaviorSystem tacticalSystem(world, grid, targetIndex, requests, {4, 8, 8, 16});
+	ecs::SystemRegistry registry;
+	registry.Register(tacticalSystem);
+	registry.Finalize(world.Components());
+	tactical::TacticalBehaviorSystem::Query primaryQuery(world);
+	primaryQuery.PrepareChunks();
+	const auto primaryChunkCount = primaryQuery.PreparedChunkCount();
+	engine::jobs::JobSystem jobs({workers});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	scheduler.Finalize(engine::time::FixedStep{20});
+	scheduler.Execute({0, engine::time::FixedStep{20}});
+
+	ScenarioResult result;
+	for (const auto &request : requests.Requests())
+	{
+		result.requests.insert(result.requests.end(), {
+			request.squad.index, request.squad.generation, request.revision,
+			request.input.actor.index, request.input.actor.generation,
+			static_cast<std::uint64_t>(request.input.order.kind), request.input.order.target.index,
+			request.input.order.target.generation});
+	}
+	requests.Release();
+	result.primaryChunkCount = primaryChunkCount;
+	return result;
+}
+}
+
+BOOST_AUTO_TEST_CASE(tactical_requests_are_identical_across_worker_counts)
+{
+	const auto one = RunScenario(1);
+	const auto two = RunScenario(2);
+	const auto four = RunScenario(4);
+	BOOST_REQUIRE_GT(one.primaryChunkCount, 1u);
+	BOOST_REQUIRE_GT(two.primaryChunkCount, 1u);
+	BOOST_REQUIRE_GT(four.primaryChunkCount, 1u);
+	BOOST_CHECK_EQUAL(one.primaryChunkCount, two.primaryChunkCount);
+	BOOST_CHECK_EQUAL(one.primaryChunkCount, four.primaryChunkCount);
+	BOOST_REQUIRE_EQUAL(one.requests.size(), 4u * 8u);
+	BOOST_CHECK(one.requests == two.requests);
+	BOOST_CHECK(one.requests == four.requests);
+	for (std::size_t index = 1; index != 4; ++index)
+		BOOST_TEST(one.requests[index * 8 + 3] > one.requests[(index - 1) * 8 + 3]);
+}
+
+BOOST_AUTO_TEST_CASE(latch_matches_full_squad_generation_and_revision)
+{
+	const std::array<std::uint8_t, 8> cells{1, 1, 1, 1, 1, 1, 1, 1};
+	const navigation::NavigationGrid grid(8, 1, cells);
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create();
+	const auto enemy = world.Create();
+	const auto squad = world.Create<ai::SquadGoal>();
+	const auto target = world.Create<combat::Health, combat::LifeState, navigation::GridPosition, production::ProducedUnit>();
+	world.Get<combat::Health>(target)->current = liveHealth;
+	world.Get<production::ProducedUnit>(target)->account = enemy;
+	world.Get<navigation::GridPosition>(target)->cell = 4;
+	const auto actor = world.Create<ai::SquadMembership, ai::SquadGoalApplication, combat::Health,
+		combat::LifeState, combat::WeaponDefinition, navigation::GridPosition, production::ProducedUnit,
+		engine::gameplay::rts::orders::UnitOrder>();
+	world.Get<ai::SquadMembership>(actor)->squad = squad;
+	world.Get<combat::Health>(actor)->current = liveHealth;
+	world.Get<production::ProducedUnit>(actor)->account = owner;
+	world.Get<navigation::GridPosition>(actor)->cell = 0;
+	world.Get<combat::WeaponDefinition>(actor)->rangeCells = 4;
+	*world.Get<ai::SquadGoal>(squad) = {
+		ai::SquadGoalKind::AttackTarget, owner, target, navigation::InvalidCell, 0, 0};
+
+	generalszh::combat::TargetIndex targetIndex(world, grid, 32);
+	ai::SquadOrderRequestBatch requests(8);
+	tactical::TacticalBehaviorSystem tacticalSystem(world, grid, targetIndex, requests, {4, 4, 4, 8});
+	ecs::SystemRegistry registry;
+	registry.Register(tacticalSystem);
+	registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({2});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	const engine::time::FixedStep step{20};
+	scheduler.Finalize(step);
+
+	scheduler.Execute({0, step});
+	BOOST_REQUIRE_EQUAL(requests.Requests().size(), 1u);
+	requests.Release();
+	const auto oldSquad = squad;
+	world.Get<engine::gameplay::rts::orders::UnitOrder>(actor)->kind =
+		engine::gameplay::rts::orders::OrderKind::Move;
+	world.Get<engine::gameplay::rts::orders::UnitOrder>(actor)->destination = 1;
+	scheduler.Execute({1, step});
+	BOOST_TEST(requests.Requests().empty());
+	requests.Release();
+	BOOST_CHECK(world.Get<engine::gameplay::rts::orders::UnitOrder>(actor)->kind ==
+		engine::gameplay::rts::orders::OrderKind::Move);
+
+	world.Get<ai::SquadGoal>(squad)->revision = 1;
+	scheduler.Execute({2, step});
+	BOOST_REQUIRE_EQUAL(requests.Requests().size(), 1u);
+	BOOST_TEST(requests.Requests()[0].revision == 1u);
+	requests.Release();
+	scheduler.Execute({3, step});
+	BOOST_TEST(requests.Requests().empty());
+	requests.Release();
+
+	BOOST_REQUIRE(world.Destroy(squad));
+	const auto replacementSquad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(replacementSquad)->kind = ai::SquadGoalKind::AttackTarget;
+	world.Get<ai::SquadGoal>(replacementSquad)->owner = owner;
+	world.Get<ai::SquadGoal>(replacementSquad)->target = target;
+	world.Get<ai::SquadMembership>(actor)->squad = replacementSquad;
+	scheduler.Execute({4, step});
+	BOOST_REQUIRE_EQUAL(requests.Requests().size(), 1u);
+	BOOST_CHECK(requests.Requests()[0].squad == replacementSquad);
+	BOOST_CHECK(requests.Requests()[0].squad != oldSquad);
+	requests.Release();
+}
+
+BOOST_AUTO_TEST_CASE(actual_system_latches_ineligible_members_and_ignores_stale_squads)
+{
+	const std::array<std::uint8_t, 8> cells{1, 1, 1, 1, 1, 1, 1, 1};
+	const navigation::NavigationGrid grid(8, 1, cells);
+	ecs::World world{ecs::WorldConfig{256}};
+	RegisterComponents(world);
+	world.FinalizeComponents();
+
+	const auto owner = world.Create();
+	const auto enemy = world.Create();
+	const auto squad = world.Create<ai::SquadGoal>();
+	const auto target = world.Create<combat::Health, combat::LifeState,
+		navigation::GridPosition, production::ProducedUnit>();
+	world.Get<combat::Health>(target)->current = liveHealth;
+	world.Get<production::ProducedUnit>(target)->account = enemy;
+	world.Get<navigation::GridPosition>(target)->cell = 5;
+	world.Get<combat::LifeState>(target)->alive = false;
+	*world.Get<ai::SquadGoal>(squad) = {
+		ai::SquadGoalKind::AttackTarget, owner, target, navigation::InvalidCell, 0, 0};
+
+	auto createActor = [&](const ecs::Entity membershipSquad, const ecs::Entity account,
+		const navigation::Cell cell)
+	{
+		const auto actor = world.Create<ai::SquadMembership, ai::SquadGoalApplication,
+			combat::Health, combat::LifeState, combat::WeaponDefinition,
+			engine::gameplay::containment::PassengerMembership, navigation::GridPosition,
+			production::ProducedUnit, engine::gameplay::rts::orders::UnitOrder>();
+		world.Get<ai::SquadMembership>(actor)->squad = membershipSquad;
+		world.Get<combat::Health>(actor)->current = liveHealth;
+		world.Get<production::ProducedUnit>(actor)->account = account;
+		world.Get<navigation::GridPosition>(actor)->cell = cell;
+		world.Get<combat::WeaponDefinition>(actor)->rangeCells = 4;
+		return actor;
+	};
+
+	const auto dead = createActor(squad, owner, 0);
+	world.Get<combat::LifeState>(dead)->alive = false;
+	const auto contained = createActor(squad, owner, 1);
+	world.Get<engine::gameplay::containment::PassengerMembership>(contained)->phase =
+		engine::gameplay::containment::ContainmentPhase::Inside;
+	world.Get<engine::gameplay::containment::PassengerMembership>(contained)->owner =
+		engine::gameplay::containment::PassengerContainmentOwner::Transport;
+	const auto wrongOwner = createActor(squad, enemy, 2);
+	const auto noVisibleTarget = createActor(squad, owner, 3);
+	const auto stale = createActor(ecs::Entity{900, 1}, owner, 4);
+
+	generalszh::combat::TargetIndex targetIndex(world, grid, 64);
+	ai::SquadOrderRequestBatch requests(8);
+	tactical::TacticalBehaviorSystem tacticalSystem(world, grid, targetIndex, requests, {4, 8, 8, 8});
+	ecs::SystemRegistry registry;
+	registry.Register(tacticalSystem);
+	registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({2});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	const engine::time::FixedStep step{20};
+	scheduler.Finalize(step);
+
+	scheduler.Execute({0, step});
+	BOOST_TEST(requests.Requests().empty());
+	for (const auto actor : {dead, contained, wrongOwner, noVisibleTarget})
+	{
+		const auto &application = *world.Get<ai::SquadGoalApplication>(actor);
+		BOOST_CHECK(application.squad == squad);
+		BOOST_TEST(application.appliedRevision == 0u);
+	}
+	BOOST_CHECK(world.Get<ai::SquadGoalApplication>(stale)->squad != squad);
+	requests.Release();
+
+	world.Get<combat::LifeState>(target)->alive = true;
+	world.Get<combat::LifeState>(dead)->alive = true;
+	world.Get<engine::gameplay::containment::PassengerMembership>(contained)->phase =
+		engine::gameplay::containment::ContainmentPhase::Outside;
+	world.Get<engine::gameplay::containment::PassengerMembership>(contained)->owner =
+		engine::gameplay::containment::PassengerContainmentOwner::None;
+	world.Get<production::ProducedUnit>(wrongOwner)->account = owner;
+	world.Get<ai::SquadMembership>(stale)->squad = squad;
+
+	scheduler.Execute({1, step});
+	BOOST_REQUIRE_EQUAL(requests.Requests().size(), 1u);
+	BOOST_CHECK(requests.Requests()[0].input.actor == stale);
+	requests.Release();
+}
+
+BOOST_AUTO_TEST_CASE(task_owned_member_latches_revision_without_publishing_until_released)
+{
+	const std::array<std::uint8_t, 4> cells{1, 1, 1, 1};
+	const navigation::NavigationGrid grid(4, 1, cells);
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create();
+	const auto squad = world.Create<ai::SquadGoal>();
+	const auto actor = world.Create<ai::SquadMembership, ai::SquadGoalApplication,
+		combat::Health, combat::LifeState, navigation::GridPosition, production::ProducedUnit,
+		engine::gameplay::rts::harvesting::HarvestState,
+		engine::gameplay::rts::orders::UnitOrder>();
+	world.Get<ai::SquadGoal>(squad)->owner = owner;
+	world.Get<ai::SquadGoal>(squad)->kind = ai::SquadGoalKind::Stop;
+	world.Get<ai::SquadMembership>(actor)->squad = squad;
+	world.Get<combat::Health>(actor)->current = liveHealth;
+	world.Get<combat::LifeState>(actor)->alive = true;
+	world.Get<navigation::GridPosition>(actor)->cell = 0;
+	world.Get<production::ProducedUnit>(actor)->account = owner;
+	world.Get<engine::gameplay::rts::harvesting::HarvestState>(actor)->phase =
+		engine::gameplay::rts::harvesting::HarvestPhase::ToSource;
+
+	generalszh::combat::TargetIndex targetIndex(world, grid, 16);
+	ai::SquadOrderRequestBatch requests(4);
+	tactical::TacticalBehaviorSystem system(world, grid, targetIndex, requests, {2, 2, 4, 4});
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{20};
+	scheduler.Finalize(step);
+
+	scheduler.Execute({0, step});
+	BOOST_CHECK(requests.Requests().empty());
+	BOOST_CHECK(world.Get<ai::SquadGoalApplication>(actor)->squad == squad);
+	BOOST_CHECK(world.Get<ai::SquadGoalApplication>(actor)->appliedRevision == 0u);
+	requests.Release();
+
+	world.Get<engine::gameplay::rts::harvesting::HarvestState>(actor)->phase =
+		engine::gameplay::rts::harvesting::HarvestPhase::Idle;
+	world.Get<ai::SquadGoal>(squad)->revision = 1;
+	scheduler.Execute({1, step});
+	BOOST_REQUIRE_EQUAL(requests.Requests().size(), 1u);
+	BOOST_CHECK(requests.Requests()[0].input.actor == actor);
+	BOOST_CHECK(requests.Requests()[0].revision == 1u);
+	requests.Release();
+}

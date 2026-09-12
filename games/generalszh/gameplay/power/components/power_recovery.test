@@ -1,0 +1,15 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+#include <string_view>
+
+import games.generalszh.gameplay.power.components.power_recovery;
+
+BOOST_AUTO_TEST_CASE(power_recovery_is_plain_transient_routing_and_output)
+{
+    using namespace generalszh::power;
+    static_assert(std::is_trivially_copyable_v<PowerRecoveryOwner>);
+    static_assert(std::is_trivially_copyable_v<PowerRecovery>);
+    static_assert(ecs::ComponentTraits<PowerRecovery>::Persistence == ecs::PersistencePolicy::Transient);
+    BOOST_TEST(PowerRecoveryOwner{}.player == -1);
+    BOOST_TEST(!PowerRecovery{}.recovered);
+}

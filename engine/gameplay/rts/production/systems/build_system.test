@@ -1,0 +1,53 @@
+#define BOOST_TEST_MODULE EngineBuild
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+import engine.gameplay.rts.production.systems.build_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::rts::production;
+BOOST_AUTO_TEST_CASE(shared_advance_preserves_fractional_credit_across_pause)
+{
+    BuildWork work{1, 0, 1, 2}; BuildEnabled enabled{true}; BuildReady ready{};
+    AdvanceBuild(work, enabled, ready);
+    BOOST_TEST(work.elapsed == 0u); BOOST_TEST(work.remainder == 1u); BOOST_TEST(!ready.value);
+    enabled.value = false; AdvanceBuild(work, enabled, ready);
+    BOOST_TEST(work.remainder == 1u); BOOST_TEST(!ready.value);
+    enabled.value = true; AdvanceBuild(work, enabled, ready);
+    BOOST_TEST(work.elapsed == 1u); BOOST_TEST(ready.value);
+}
+BOOST_AUTO_TEST_CASE(typed_duration_paused_work_and_integer_completion)
+{
+    ecs::World world; world.RegisterComponent<BuildWork>(); world.RegisterComponent<BuildEnabled>(); world.RegisterComponent<BuildReady>(); world.FinalizeComponents();
+    const auto item = world.Create<BuildWork, BuildEnabled, BuildReady>();
+    const engine::time::FixedStep step{20};
+    *world.Get<BuildWork>(item) = AuthorBuild(std::chrono::milliseconds{100}, step);
+    BuildSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    scheduler.Execute({0, step}); BOOST_TEST(world.Get<BuildWork>(item)->elapsed == 0u);
+    world.Get<BuildEnabled>(item)->value = true;
+    scheduler.Execute({1, step}); BOOST_TEST(!world.Get<BuildReady>(item)->value);
+    scheduler.Execute({2, step}); BOOST_TEST(world.Get<BuildReady>(item)->value);
+    scheduler.Execute({3, step}); BOOST_TEST(world.Get<BuildWork>(item)->elapsed == 2u);
+}
+BOOST_AUTO_TEST_CASE(fractional_speed_pause_resume_and_saturating_completion)
+{
+    ecs::World world; world.RegisterComponent<BuildWork>(); world.RegisterComponent<BuildEnabled>(); world.RegisterComponent<BuildReady>(); world.FinalizeComponents();
+    const auto item = world.Create<BuildWork, BuildEnabled, BuildReady>();
+    *world.Get<BuildWork>(item) = {3, 0, 1, 2};
+    world.Get<BuildEnabled>(item)->value = true;
+    BuildSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0, step});
+    BOOST_TEST(world.Get<BuildWork>(item)->elapsed == 0u);
+    BOOST_TEST(world.Get<BuildWork>(item)->remainder == 1u);
+    world.Get<BuildEnabled>(item)->value = false;
+    scheduler.Execute({1, step});
+    BOOST_TEST(world.Get<BuildWork>(item)->remainder == 1u);
+    world.Get<BuildEnabled>(item)->value = true;
+    scheduler.Execute({2, step});
+    BOOST_TEST(world.Get<BuildWork>(item)->elapsed == 1u);
+    world.Get<BuildWork>(item)->speedNumerator = 4294967295u;
+    scheduler.Execute({3, step});
+    BOOST_TEST(world.Get<BuildWork>(item)->elapsed == 3u);
+    BOOST_TEST(world.Get<BuildReady>(item)->value);
+}

@@ -1,0 +1,135 @@
+#define BOOST_TEST_MODULE Construction
+#include <boost/test/included/unit_test.hpp>
+#include "../testing/construction_host.h"
+namespace {
+using Site=engine::gameplay::rts::construction::ConstructionSite;
+using Frame=engine::gameplay::rts::construction::BuilderFrame;
+ecs::Entity MakeSite(ecs::World &world,ecs::Entity builder,n::Cell cell,std::uint64_t duration)
+{
+    const auto site=world.Create<Site,n::GridPosition,c::Structure,c::ConstructionHealth,p::BuildWork,
+        p::BuildEnabled,p::BuildReady,h::Health,h::HealthCapacity,h::LifeState>();
+    world.Get<Site>(site)->builder=builder;
+    world.Get<n::GridPosition>(site)->cell=cell;
+    *world.Get<c::Structure>(site)={{7,1},42,0,10,false};
+    *world.Get<p::BuildWork>(site)={duration,0};
+    world.Get<h::Health>(site)->current=1;
+    world.Get<h::HealthCapacity>(site)->maximum=100;
+    *world.Get<Assignment>(builder)={site,cell};
+    return site;
+}
+}
+BOOST_AUTO_TEST_CASE(completion_preserves_site_and_inert_building_has_no_producer)
+{
+    ecs::World world; c::RegisterConstructionComponents(world); world.FinalizeComponents();
+    const auto builder=world.Create<Assignment,n::GridPosition,n::MoveGoal,n::MoveCredit,h::LifeState>();
+    const auto site=MakeSite(world,builder,0,2);
+    world.Get<c::Structure>(site)->supplyDropoff=true;
+    world.Get<c::Structure>(site)->supplyBoxValue=83;
+    Frame frame(4); c::ConstructionSystem construction(world,frame); construction.Configure();
+    ecs::SystemRegistry registry; registry.Register(construction); registry.Finalize(world.Components());
+    const engine::time::FixedStep step(10);
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<h::Health>(site)->current==51u);
+    BOOST_TEST(!world.Has<engine::gameplay::rts::harvesting::SupplyDropoff>(site));
+    BOOST_TEST(!world.Has<generalszh::selling::SaleState>(site));
+    world.Get<h::Health>(site)->current-=10;
+    scheduler.Execute({1,step}); BOOST_TEST(world.IsAlive(site)); BOOST_TEST(world.Get<c::Structure>(site)->complete);
+    BOOST_TEST(world.Get<h::Health>(site)->current==91u);
+    BOOST_TEST(world.Get<generalszh::production::Producer>(site)==nullptr);
+    BOOST_TEST(world.Get<generalszh::match::VictoryAsset>(site)!=nullptr);
+    BOOST_TEST(world.Get<p::BuildWork>(site)==nullptr);
+    BOOST_TEST(world.Get<engine::gameplay::rts::power::PowerSource>(site)->authoredPower==10);
+    BOOST_TEST(world.Has<engine::gameplay::rts::harvesting::SupplyDropoff>(site));
+    BOOST_REQUIRE(world.Has<generalszh::selling::SaleState>(site));
+    BOOST_CHECK(world.Get<generalszh::selling::SaleState>(site)->phase==generalszh::selling::SalePhase::Idle);
+    BOOST_TEST(!world.Get<generalszh::selling::SaleEligibility>(site)->allowed);
+    BOOST_REQUIRE(world.Get<generalszh::harvesting::SupplyDropoffOwner>(site));
+    BOOST_TEST(world.Get<generalszh::harvesting::SupplyDropoffOwner>(site)->valuePerBox==83u);
+    BOOST_CHECK(world.Get<generalszh::harvesting::SupplyDropoffOwner>(site)->account==(ecs::Entity{7,1}));
+    BOOST_TEST(!world.Get<Assignment>(builder)->site.IsValid());
+}
+BOOST_AUTO_TEST_CASE(destroyed_scaffold_releases_assignment_and_movement_goal)
+{
+    Host host(2); const auto builder=host.Builder();
+    const std::array inputs{c::ConstructionInput{builder,1,8}};
+    host.requests.SetInputs(inputs); host.Tick(0); const auto site=host.receipts.Receipts()[0].site;
+    host.world.Get<h::PendingDamage>(site)->quantity=1000; host.Tick(1);
+    BOOST_TEST(!host.world.Get<Assignment>(builder)->site.IsValid());
+    BOOST_TEST(host.world.Get<n::MoveGoal>(builder)->cell==n::InvalidCell);
+    BOOST_TEST(host.world.Get<p::BuildWork>(site)->elapsed==0u);
+    BOOST_TEST(host.world.Get<Balance>(host.account)->quantity==9990u);
+}
+BOOST_AUTO_TEST_CASE(alternate_game_work_requires_matching_living_builder_at_site)
+{
+    ecs::World world; c::RegisterConstructionComponents(world); world.FinalizeComponents();
+    const auto builder=world.Create<Assignment,n::GridPosition,n::MoveGoal,n::MoveCredit,h::LifeState>();
+    const auto site=MakeSite(world,builder,5,3);
+    Frame frame(4); c::ConstructionSystem construction(world,frame); construction.Configure();
+    ecs::SystemRegistry registry; registry.Register(construction); registry.Finalize(world.Components());
+    const engine::time::FixedStep step(10);
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<p::BuildWork>(site)->elapsed==0u);
+    world.Get<n::GridPosition>(builder)->cell=5;
+    scheduler.Execute({1,step}); BOOST_TEST(world.Get<p::BuildWork>(site)->elapsed==1u);
+    world.Get<h::LifeState>(builder)->alive=false;
+    scheduler.Execute({2,step}); BOOST_TEST(world.Get<p::BuildWork>(site)->elapsed==1u);
+    BOOST_TEST(!world.Get<p::BuildEnabled>(site)->value);
+}
+BOOST_AUTO_TEST_CASE(snapshot_replaces_previous_frame_after_entity_deletion)
+{
+    ecs::World world; c::RegisterConstructionComponents(world); world.FinalizeComponents();
+    const auto builder=world.Create<Assignment,n::GridPosition,h::LifeState>();
+    Frame frame(2); c::ConstructionSystem construction(world,frame); construction.Configure();
+    ecs::SystemRegistry registry; registry.Register(construction); registry.Finalize(world.Components());
+    const engine::time::FixedStep step(10);
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(frame.Find(builder)!=nullptr);
+    world.Destroy(builder); scheduler.Execute({1,step}); BOOST_TEST(frame.Find(builder)==nullptr);
+}
+namespace {
+std::vector<std::uint64_t> Run(std::uint32_t workers)
+{
+    Host host(workers); std::vector<c::ConstructionInput> requests;
+    for(std::uint32_t i=0;i<320;++i) requests.push_back({host.Builder(i),i%2+1,i});
+    host.requests.SetInputs(requests); host.Tick(0);
+    std::vector<ecs::Entity> sites;
+    for(const auto &receipt:host.receipts.Receipts())
+    { BOOST_CHECK(receipt.status==c::ConstructionAcceptance::Accepted); sites.push_back(receipt.site); }
+    host.Tick(1);
+    std::vector<std::uint64_t> state{host.world.Get<Balance>(host.account)->quantity};
+    for(std::size_t i=0;i<sites.size();++i)
+    {
+        const auto entity=sites[i]; const auto *structure=host.world.Get<c::Structure>(entity);
+        BOOST_TEST(structure->complete);
+        state.insert(state.end(),{entity.index,entity.generation,structure->account.index,structure->account.generation,
+            structure->definition,structure->queueLimit,structure->complete,host.world.Get<h::Health>(entity)->current,
+            host.world.Get<n::GridPosition>(entity)->cell,
+            host.world.Get<generalszh::production::Producer>(entity)!=nullptr,
+            host.world.Get<generalszh::match::VictoryAsset>(entity)!=nullptr,
+            host.world.Get<Assignment>(requests[i].builder)->site.IsValid()});
+    }
+    return state;
+}
+}
+BOOST_AUTO_TEST_CASE(shared_graph_routes_builder_then_completes_actual_producer)
+{
+    Host host(2); const auto builder=host.Builder();
+    const std::array requests{c::ConstructionInput{builder,1,3}};
+    host.requests.SetInputs(requests); host.Tick(0);
+    const auto site=host.receipts.Receipts()[0].site;
+    BOOST_TEST(host.world.Get<Balance>(host.account)->quantity==9990u);
+    BOOST_TEST(host.world.Get<n::GridPosition>(builder)->cell==1u);
+    BOOST_TEST(host.world.Get<p::BuildWork>(site)->elapsed==0u);
+    BOOST_TEST(host.world.Get<h::Health>(site)->current==1u);
+    host.Tick(1); BOOST_TEST(host.world.Get<p::BuildWork>(site)->elapsed==0u);
+    host.Tick(2); BOOST_TEST(host.world.Get<p::BuildWork>(site)->elapsed==1u);
+    host.Tick(3); BOOST_TEST(host.world.Get<c::Structure>(site)->complete);
+    BOOST_TEST(host.world.Get<generalszh::production::Producer>(site)->queueLimit==9u);
+    BOOST_TEST(host.world.Get<generalszh::production::ProducedUnit>(site)==nullptr);
+    BOOST_TEST(!host.world.Get<Assignment>(builder)->site.IsValid());
+}
+BOOST_AUTO_TEST_CASE(actual_ids_accounts_components_and_completion_match_across_workers)
+{
+    const auto one=Run(1),two=Run(2),four=Run(4);
+    BOOST_TEST(one==two,boost::test_tools::per_element()); BOOST_TEST(one==four,boost::test_tools::per_element());
+}

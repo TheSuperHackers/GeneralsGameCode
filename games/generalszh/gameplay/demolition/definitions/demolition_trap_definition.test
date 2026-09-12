@@ -1,0 +1,52 @@
+#define BOOST_TEST_MODULE GeneralsZHDemolitionDefinitions
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+import games.generalszh.gameplay.demolition.definitions.demolition_trap_definition;
+
+namespace
+{
+generalszh::demolition::DemolitionTrapDefinition Definition(std::uint32_t key)
+{
+    using namespace generalszh::demolition;
+    using namespace engine::gameplay::combat;
+    DemolitionTrapDefinition definition;
+    definition.key=key;
+    definition.scanInterval=std::chrono::milliseconds{150};
+    definition.deathWeapon.key=key;
+    WeaponConfig weapon;
+    weapon.damage=10;
+    definition.deathWeapon.final=weapon;
+    return definition;
+}
+}
+
+BOOST_AUTO_TEST_CASE(empty_catalog_is_valid_and_copies_unsorted_authored_entries)
+{
+    using namespace generalszh::demolition;
+    const engine::time::FixedStep step{10};
+    const DemolitionTrapCatalog empty({},step);
+    BOOST_CHECK(empty.Find(1)==nullptr);
+    BOOST_TEST(empty.DeathWeapons().empty());
+
+    const std::array definitions{Definition(9),Definition(2)};
+    const DemolitionTrapCatalog catalog(definitions,step);
+    BOOST_REQUIRE(catalog.Find(2)!=nullptr);
+    BOOST_TEST(catalog.Find(2)->scanIntervalTicks==2u);
+    BOOST_TEST(catalog.Find(9)->key==9u);
+    BOOST_TEST(catalog.DeathWeapons().front().key==2u);
+}
+
+BOOST_AUTO_TEST_CASE(duplicate_trap_keys_are_checked_after_sorting_and_versions_are_validated)
+{
+    using namespace generalszh::demolition;
+    const engine::time::FixedStep step{20};
+    const std::array duplicate{Definition(9),Definition(2),Definition(9)};
+    BOOST_CHECK_THROW((DemolitionTrapCatalog{duplicate,step}),std::invalid_argument);
+    auto unsupported=Definition(3);
+    unsupported.version=DemolitionTrapDefinition::CurrentVersion+1;
+    BOOST_CHECK_THROW((DemolitionTrapCatalog{std::span<const DemolitionTrapDefinition>{&unsupported,1},step}),std::invalid_argument);
+}

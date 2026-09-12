@@ -1,0 +1,17 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+
+import games.generalszh.gameplay.power.definitions.power_config;
+
+BOOST_AUTO_TEST_CASE(power_config_defaults_and_authored_values_are_preserved)
+{
+    const generalszh::power::PowerConfig shipped{};
+    BOOST_TEST(shipped.minimumSpeed == 5000u);
+    BOOST_TEST(shipped.maximumSpeed == 8000u);
+    BOOST_TEST(shipped.penaltyModifier == 10000u);
+
+    const generalszh::power::PowerConfig authored{2000, 9000, 5000};
+    BOOST_TEST(authored.minimumSpeed == 2000u);
+    BOOST_TEST(authored.maximumSpeed == 9000u);
+    BOOST_TEST(authored.penaltyModifier == 5000u);
+}

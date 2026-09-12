@@ -1,0 +1,128 @@
+#define BOOST_TEST_MODULE LegacyDoorState
+#include <boost/test/included/unit_test.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+import games.generalszh.gameplay.production.doors.components.legacy_door_state;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh::production;
+namespace production_door_test {
+struct Marker
+{
+	std::uint32_t value{0};
+};
+
+}
+namespace ecs {
+template<>
+struct ComponentTraits<production_door_test::Marker>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.production.door.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+}
+using namespace production_door_test;
+BOOST_AUTO_TEST_CASE(default_values_and_stable_serializable_component_metadata)
+{
+	static_assert(std::is_standard_layout_v<DoorOpening>);
+	static_assert(std::is_standard_layout_v<DoorWaiting>);
+	static_assert(std::is_standard_layout_v<DoorClosing>);
+	static_assert(std::is_standard_layout_v<DoorHold>);
+	static_assert(std::is_trivially_copyable_v<DoorOpening>);
+	static_assert(std::is_trivially_copyable_v<DoorWaiting>);
+	static_assert(std::is_trivially_copyable_v<DoorClosing>);
+	static_assert(std::is_trivially_copyable_v<DoorHold>);
+
+	BOOST_TEST(DoorOpening{}.tick == 0u);
+	BOOST_TEST(DoorWaiting{}.tick == 0u);
+	BOOST_TEST(DoorClosing{}.tick == 0u);
+	BOOST_TEST(!DoorHold{}.value);
+
+	BOOST_TEST(ecs::ComponentTraits<DoorOpening>::StableName ==
+		"games.generalszh.production.door.opening");
+	BOOST_TEST(ecs::ComponentTraits<DoorWaiting>::StableName ==
+		"games.generalszh.production.door.waiting");
+	BOOST_TEST(ecs::ComponentTraits<DoorClosing>::StableName ==
+		"games.generalszh.production.door.closing");
+	BOOST_TEST(ecs::ComponentTraits<DoorHold>::StableName ==
+		"games.generalszh.production.door.hold");
+	BOOST_TEST(ecs::ComponentTraits<DoorOpening>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<DoorWaiting>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<DoorClosing>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<DoorHold>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<DoorOpening>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<DoorWaiting>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<DoorClosing>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<DoorHold>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}
+
+
+BOOST_AUTO_TEST_CASE(four_scalar_columns_stay_contiguous_across_archetype_transitions)
+{
+	ecs::World world{ecs::WorldConfig{64}};
+	world.RegisterComponent<DoorOpening>();
+	world.RegisterComponent<DoorWaiting>();
+	world.RegisterComponent<DoorClosing>();
+	world.RegisterComponent<DoorHold>();
+	world.RegisterComponent<Marker>();
+	world.FinalizeComponents();
+
+	const ecs::Entity entity = world.Create<DoorOpening, DoorWaiting, DoorClosing, DoorHold>();
+	world.Get<DoorOpening>(entity)->tick = 73;
+	world.Get<DoorWaiting>(entity)->tick = 74;
+	world.Get<DoorClosing>(entity)->tick = 75;
+	world.Get<DoorHold>(entity)->value = true;
+	for (std::size_t index = 0; index < 12; ++index)
+		world.Create<DoorOpening, DoorWaiting, DoorClosing, DoorHold>();
+
+	std::size_t rowsSeen = 0;
+	std::size_t chunksSeen = 0;
+	ecs::Query<ecs::Read<DoorOpening>,
+		ecs::Read<DoorWaiting>,
+		ecs::Read<DoorClosing>,
+		ecs::Read<DoorHold>> query(world);
+	query.ForEachChunk([&](const auto chunk) {
+		++chunksSeen;
+		const auto opening = chunk.template Get<DoorOpening>();
+		const auto waiting = chunk.template Get<DoorWaiting>();
+		const auto closing = chunk.template Get<DoorClosing>();
+		const auto hold = chunk.template Get<DoorHold>();
+		BOOST_TEST(opening.size() == waiting.size());
+		BOOST_TEST(opening.size() == closing.size());
+		BOOST_TEST(opening.size() == hold.size());
+		BOOST_TEST(reinterpret_cast<const void *>(opening.data()) !=
+			reinterpret_cast<const void *>(waiting.data()));
+		BOOST_TEST(reinterpret_cast<const void *>(opening.data()) !=
+			reinterpret_cast<const void *>(closing.data()));
+		BOOST_TEST(reinterpret_cast<const void *>(opening.data()) !=
+			reinterpret_cast<const void *>(hold.data()));
+		for (std::size_t row = 1; row < opening.size(); ++row)
+		{
+			BOOST_CHECK(&opening[row] == &opening[row - 1] + 1);
+			BOOST_CHECK(&waiting[row] == &waiting[row - 1] + 1);
+			BOOST_CHECK(&closing[row] == &closing[row - 1] + 1);
+			BOOST_CHECK(&hold[row] == &hold[row - 1] + 1);
+		}
+		rowsSeen += opening.size();
+	});
+	BOOST_TEST(rowsSeen == 13u);
+	BOOST_TEST(chunksSeen > 1u);
+
+	BOOST_TEST(world.Add<Marker>(entity));
+	BOOST_TEST(world.Get<DoorOpening>(entity)->tick == 73u);
+	BOOST_TEST(world.Get<DoorWaiting>(entity)->tick == 74u);
+	BOOST_TEST(world.Get<DoorClosing>(entity)->tick == 75u);
+	BOOST_TEST(world.Get<DoorHold>(entity)->value);
+	BOOST_TEST(world.Remove<Marker>(entity));
+	BOOST_TEST(world.Get<DoorOpening>(entity)->tick == 73u);
+	BOOST_TEST(world.Get<DoorWaiting>(entity)->tick == 74u);
+	BOOST_TEST(world.Get<DoorClosing>(entity)->tick == 75u);
+	BOOST_TEST(world.Get<DoorHold>(entity)->value);
+}

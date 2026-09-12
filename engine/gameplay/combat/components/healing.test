@@ -1,0 +1,12 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.components.healing;
+import engine.ecs.core.world;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(healing_capacity_persists_but_tick_accumulators_are_transient)
+{
+    ecs::World world;world.RegisterComponent<HealthCapacity>();world.RegisterComponent<PendingHealing>();world.RegisterComponent<HealingResult>();world.FinalizeComponents();
+    const auto entity=world.Create<HealthCapacity,PendingHealing,HealingResult>();world.Get<HealthCapacity>(entity)->maximum=123;
+    world.Remove<PendingHealing>(entity);BOOST_TEST(world.Get<HealthCapacity>(entity)->maximum==123u);
+    BOOST_CHECK(ecs::ComponentTraits<HealthCapacity>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<PendingHealing>::Persistence==ecs::PersistencePolicy::Transient);
+}

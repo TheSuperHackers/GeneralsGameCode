@@ -1,0 +1,96 @@
+#define BOOST_TEST_MODULE RTSForceProductionPlan
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <vector>
+import engine.gameplay.rts.ai.definitions.force_production_plan;
+
+using namespace engine::gameplay::rts::ai;
+using namespace std::chrono_literals;
+
+BOOST_AUTO_TEST_CASE(flat_catalog_accepts_configured_entry_capacity_above_legacy_content_limits)
+{
+	const engine::time::FixedStep step{10};
+	std::array<ForceProductionEntry, 8> entries{};
+	for (std::size_t index = 0; index != entries.size(); ++index)
+		entries[index] = {static_cast<std::uint32_t>(800 - index), 1, 2};
+	const std::array candidates{
+		ForceProductionCandidateInput{42, 5, 100ms, std::span<const ForceProductionEntry>(entries)}};
+	const std::array policies{
+		ForceProductionPolicyInput{7, 3, 200ms, std::span<const ForceProductionCandidateInput>(candidates)}};
+	const ForceProductionPlanCatalog catalog(policies, step, {1, 1, 8});
+
+	BOOST_REQUIRE_EQUAL(catalog.Policies().size(), 1u);
+	const auto *policy = catalog.FindPolicy(7);
+	BOOST_REQUIRE(policy != nullptr);
+	BOOST_TEST(policy->version == 3u);
+	BOOST_TEST(policy->fallbackCooldownTicks == 2u);
+	const auto candidatesView = catalog.Candidates(*policy);
+	BOOST_REQUIRE_EQUAL(candidatesView.size(), 1u);
+	BOOST_TEST(candidatesView[0].entryCount == 8u);
+	const auto entriesView = catalog.Entries(candidatesView[0]);
+	BOOST_REQUIRE_EQUAL(entriesView.size(), 8u);
+	BOOST_TEST(entriesView.front().definitionKey == 793u);
+	BOOST_TEST(entriesView.back().definitionKey == 800u);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_canonicalizes_priority_and_key_ties_and_rejects_bad_ranges)
+{
+	const engine::time::FixedStep step{20};
+	const std::array entriesA{ForceProductionEntry{10, 1, 1}};
+	const std::array entriesB{ForceProductionEntry{20, 1, 1}};
+	const std::array candidates{
+		ForceProductionCandidateInput{20, 4, 50ms, entriesB},
+		ForceProductionCandidateInput{10, 4, 50ms, entriesA}};
+	const std::array policies{
+		ForceProductionPolicyInput{1, 1, 50ms, candidates}};
+	const ForceProductionPlanCatalog catalog(policies, step, {1, 2, 2});
+	const auto *policy = catalog.FindPolicy(1);
+	BOOST_REQUIRE(policy != nullptr);
+	BOOST_REQUIRE_EQUAL(catalog.Candidates(*policy).size(), 2u);
+	BOOST_TEST(catalog.Candidates(*policy)[0].stableKey == 10u);
+	BOOST_TEST(catalog.Candidates(*policy)[1].stableKey == 20u);
+
+	const std::array duplicateEntries{ForceProductionEntry{10, 1, 1}, ForceProductionEntry{10, 1, 2}};
+	const std::array duplicateCandidate{ForceProductionCandidateInput{1, 1, 50ms, duplicateEntries}};
+	const std::array duplicatePolicy{ForceProductionPolicyInput{2, 1, 50ms, duplicateCandidate}};
+	BOOST_CHECK_THROW((ForceProductionPlanCatalog{duplicatePolicy, step, {1, 1, 2}}), std::invalid_argument);
+
+	const std::array separatedPriorityCandidates{
+		ForceProductionCandidateInput{30, 9, 50ms, entriesA},
+		ForceProductionCandidateInput{31, 8, 50ms, entriesB},
+		ForceProductionCandidateInput{30, 7, 50ms, entriesA}};
+	const std::array separatedPriorityPolicy{
+		ForceProductionPolicyInput{5, 1, 50ms, separatedPriorityCandidates}};
+	BOOST_CHECK_THROW((ForceProductionPlanCatalog{separatedPriorityPolicy, step, {1, 3, 3}}), std::invalid_argument);
+
+	const std::array invalidEntries{ForceProductionEntry{10, 2, 1}};
+	const std::array invalidCandidate{ForceProductionCandidateInput{1, 1, 50ms, invalidEntries}};
+	const std::array invalidPolicy{ForceProductionPolicyInput{3, 1, 50ms, invalidCandidate}};
+	BOOST_CHECK_THROW((ForceProductionPlanCatalog{invalidPolicy, step, {1, 1, 1}}), std::invalid_argument);
+
+	const std::array zeroVersionPolicy{ForceProductionPolicyInput{4, 0, 50ms, invalidCandidate}};
+	BOOST_CHECK_THROW((ForceProductionPlanCatalog{zeroVersionPolicy, step, {1, 1, 1}}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(positive_cooldowns_convert_once_and_overflow_is_terminal)
+{
+	const engine::time::FixedStep step{20};
+	const std::array entries{ForceProductionEntry{1, 1, 1}};
+	const std::array candidates{ForceProductionCandidateInput{1, 1, 50ms, entries}};
+	const std::array policies{ForceProductionPolicyInput{1, 1, 50ms, candidates}};
+	const ForceProductionPlanCatalog valid(policies, step, {1, 1, 1});
+	BOOST_TEST(valid.Candidates(*valid.FindPolicy(1))[0].retryCooldownTicks == 1u);
+
+	const std::array zeroPolicy{ForceProductionPolicyInput{2, 1, 0ms, candidates}};
+	BOOST_CHECK_THROW((ForceProductionPlanCatalog{zeroPolicy, step, {1, 1, 1}}), std::invalid_argument);
+
+	const engine::time::FixedStep hugeStep{(std::numeric_limits<std::uint32_t>::max)()};
+	const std::array hugePolicy{ForceProductionPolicyInput{3, 1,
+		(std::chrono::nanoseconds::max)(), candidates}};
+	BOOST_CHECK_THROW((ForceProductionPlanCatalog{hugePolicy, hugeStep, {1, 1, 1}}), std::overflow_error);
+}

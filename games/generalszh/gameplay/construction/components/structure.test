@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionStructure
+#include <boost/test/included/unit_test.hpp>
+#include <type_traits>
+import games.generalszh.gameplay.construction.components.structure;
+
+BOOST_AUTO_TEST_CASE(structure_and_builder_are_component_owned_with_stable_schemas)
+{
+    static_assert(std::is_trivially_copyable_v<generalszh::construction::Structure>);
+    static_assert(std::is_trivially_copyable_v<generalszh::construction::Builder>);
+    BOOST_CHECK(ecs::ComponentTraits<generalszh::construction::Structure>::StableName
+        == "games.generalszh.construction.structure");
+    BOOST_CHECK(ecs::ComponentTraits<generalszh::construction::Structure>::Version == 5u);
+    BOOST_CHECK(ecs::ComponentTraits<generalszh::construction::Builder>::StableName
+        == "games.generalszh.construction.builder");
+    BOOST_CHECK(ecs::ComponentTraits<generalszh::construction::Builder>::Version == 1u);
+}

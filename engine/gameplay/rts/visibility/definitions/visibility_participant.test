@@ -1,0 +1,38 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+
+import engine.ecs.core.entity;
+import engine.gameplay.rts.visibility.definitions.visibility_participant;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_participants)
+
+BOOST_AUTO_TEST_CASE(enrollment_is_stable_and_generation_safe)
+{
+	VisibilityParticipantTable table;
+	const ecs::Entity first{7, 3};
+	const ecs::Entity reusedIndex{7, 4};
+	const auto handle = table.Enroll(first);
+	BOOST_TEST(handle.slot == 0u);
+	BOOST_TEST(handle.generation == 3u);
+	const auto resolved = table.Resolve(first);
+	BOOST_CHECK(resolved.slot == handle.slot);
+	BOOST_CHECK(resolved.generation == handle.generation);
+	BOOST_CHECK(!table.Resolve(reusedIndex).IsValid());
+	const auto second = table.Enroll(ecs::Entity{8, 1});
+	BOOST_TEST(second.slot == 1u);
+	BOOST_TEST(table.Count() == 2u);
+}
+
+BOOST_AUTO_TEST_CASE(retired_slots_are_not_reused_and_overflow_is_fatal)
+{
+	VisibilityParticipantTable table;
+	for (std::uint32_t index = 0; index != MaxObserverSlots; ++index)
+		table.Enroll(ecs::Entity{index, 1});
+	BOOST_TEST(!table.CanEnroll());
+	BOOST_CHECK_THROW(table.Enroll(ecs::Entity{MaxObserverSlots + 1u, 1}), std::length_error);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -1,0 +1,11 @@
+#define BOOST_TEST_MODULE GeneralsZHHeadlessEntry
+#include <boost/test/included/unit_test.hpp>
+#define main HeadlessEntry
+#include "main.cpp"
+#undef main
+BOOST_AUTO_TEST_CASE(process_entry_accepts_valid_worker_count_and_rejects_invalid_input)
+{
+    char name[] = "generalszh_headless", valid[] = "2", invalid[] = "2junk";
+    char *args[]{name,valid}; BOOST_TEST(HeadlessEntry(2,args) == 0);
+    args[1] = invalid; BOOST_TEST(HeadlessEntry(2,args) == 2);
+}

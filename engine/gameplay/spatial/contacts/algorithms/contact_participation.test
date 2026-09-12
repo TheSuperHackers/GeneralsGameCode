@@ -1,0 +1,16 @@
+#include <boost/test/unit_test.hpp>
+#include <stdexcept>
+
+import engine.gameplay.spatial.contacts.algorithms.contact_participation;
+
+namespace c = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(participation_requires_symmetric_authored_masks)
+{
+	const c::ContactParticipation unit{true, 1u, 2u};
+	const c::ContactParticipation target{true, 2u, 1u};
+	BOOST_TEST(c::CanCollide(unit, target));
+	BOOST_TEST(!c::CanCollide(unit, c::ContactParticipation{true, 4u, 1u}));
+	BOOST_TEST(!c::CanCollide(c::ContactParticipation{false, 1u, 2u}, target));
+	BOOST_CHECK_THROW(c::ValidateParticipation(c::ContactParticipation{true, 0u, 1u}), std::invalid_argument);
+}

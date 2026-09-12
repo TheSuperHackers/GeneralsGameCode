@@ -1,0 +1,290 @@
+#define BOOST_TEST_MODULE GeneralsZHObjectUpgradeLifecycleSystem
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
+#include <tuple>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.rts.radar.components.radar_provider_contribution;
+import engine.gameplay.rts.upgrades.components.upgrade_words;
+import engine.gameplay.rts.upgrades.object_scope.components.object_upgrade_scope;
+import games.generalszh.gameplay.construction.components.structure;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.radar.components.radar_provider_binding;
+import games.generalszh.gameplay.radar.definitions.radar_provider_definition;
+import games.generalszh.gameplay.upgrades.identity.upgrade_catalog;
+import games.generalszh.gameplay.upgrades.object_scope.components.object_upgrade_lifecycle;
+import games.generalszh.gameplay.upgrades.object_scope.systems.object_upgrade_lifecycle_system;
+
+namespace
+{
+using engine::gameplay::combat::LifeState;
+using engine::gameplay::rts::radar::RadarProviderContribution;
+using engine::gameplay::rts::upgrades::CompletedUpgradeWord;
+using engine::gameplay::rts::upgrades::UpgradeWordOrdinal;
+using engine::gameplay::rts::upgrades::UpgradeWordOwner;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeTarget;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeWordMarker;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeBatch;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeBinding;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeOperation;
+using generalszh::construction::Structure;
+using generalszh::production::ProducedUnit;
+using generalszh::radar::RadarGrantAuthority;
+using generalszh::radar::RadarProviderBinding;
+using generalszh::radar::RadarProviderDefinition;
+using generalszh::radar::RadarProviderDefinitions;
+using generalszh::radar::RadarProviderGrant;
+using generalszh::radar::RadarUpgradeBinding;
+using generalszh::upgrades::object_scope::ObjectUpgradeCreationDefinition;
+using generalszh::upgrades::object_scope::ObjectUpgradeCreationEvent;
+using generalszh::upgrades::object_scope::ObjectUpgradeLifecycle;
+using generalszh::upgrades::object_scope::ObjectUpgradeLifecycleStage;
+using generalszh::upgrades::object_scope::ObjectUpgradeLifecycleSystem;
+
+struct LifecycleSnapshot final
+{
+	ecs::Entity entity{};
+	ObjectUpgradeLifecycleStage stage{};
+	bool hasTarget{};
+	std::uint32_t wordCount{};
+	std::uint64_t schemaHash{};
+	bool hasProvider{};
+	std::uint32_t providerId{};
+	bool grant{};
+
+	friend bool operator==(const LifecycleSnapshot &, const LifecycleSnapshot &) = default;
+};
+
+struct WordSnapshot final
+{
+	ecs::Entity entity{};
+	ecs::Entity owner{};
+	std::uint32_t ordinal{};
+	std::uint64_t completed{};
+
+	friend bool operator==(const WordSnapshot &, const WordSnapshot &) = default;
+};
+
+struct RequestSnapshot final
+{
+	ecs::Entity target{};
+	ObjectUpgradeBinding binding{};
+	ObjectUpgradeOperation operation{};
+	std::uint64_t producerSequence{};
+
+	friend bool operator==(const RequestSnapshot &, const RequestSnapshot &) = default;
+};
+
+struct ScenarioResult final
+{
+	std::vector<LifecycleSnapshot> lifecycles;
+	std::vector<WordSnapshot> words;
+	std::vector<RequestSnapshot> requests;
+
+	friend bool operator==(const ScenarioResult &, const ScenarioResult &) = default;
+};
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<ObjectUpgradeLifecycle>();
+	world.RegisterComponent<LifeState>();
+	world.RegisterComponent<Structure>();
+	world.RegisterComponent<ProducedUnit>();
+	world.RegisterComponent<ObjectUpgradeTarget>();
+	world.RegisterComponent<RadarProviderBinding>();
+	world.RegisterComponent<RadarProviderGrant>();
+	world.RegisterComponent<RadarProviderContribution>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<ObjectUpgradeWordMarker>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.FinalizeComponents();
+}
+
+void SortSnapshots(ScenarioResult &result)
+{
+	std::sort(result.lifecycles.begin(), result.lifecycles.end(),
+		[](const auto &left, const auto &right) {
+			return std::tie(left.entity.index, left.entity.generation) <
+				std::tie(right.entity.index, right.entity.generation);
+		});
+	std::sort(result.words.begin(), result.words.end(),
+		[](const auto &left, const auto &right) {
+			if (left.owner != right.owner)
+				return std::tie(left.owner.index, left.owner.generation) <
+					std::tie(right.owner.index, right.owner.generation);
+			if (left.ordinal != right.ordinal)
+				return left.ordinal < right.ordinal;
+			return std::tie(left.entity.index, left.entity.generation) <
+				std::tie(right.entity.index, right.entity.generation);
+		});
+}
+
+ScenarioResult RunScenario(const std::size_t workers)
+{
+	generalszh::upgrades::UpgradeCatalog catalog;
+	catalog.Register("Radar");
+	catalog.Register("Other");
+	catalog.Finalize();
+	const ObjectUpgradeBinding binding{0, 0, 1, catalog.SchemaHash()};
+	const std::array radarDefinitions{RadarProviderDefinition{
+		0, RadarUpgradeBinding{0, 0, 1, catalog.SchemaHash()},
+		RadarGrantAuthority::CreationGrant, false, true}};
+	const RadarProviderDefinitions radarCatalog{radarDefinitions};
+
+	ecs::World world{ecs::WorldConfig{256}};
+	RegisterComponents(world);
+	const ObjectUpgradeCreationDefinition definition{binding, {true}};
+
+	const auto structure = world.Create<ObjectUpgradeLifecycle, LifeState, Structure>();
+	world.Get<ObjectUpgradeLifecycle>(structure)->definition = definition;
+	world.Get<ObjectUpgradeLifecycle>(structure)->event =
+		ObjectUpgradeCreationEvent::OnBuildCompleteAfterGuard;
+	world.Get<Structure>(structure)->complete = false;
+
+	const auto unit = world.Create<ObjectUpgradeLifecycle, LifeState, ProducedUnit>();
+	world.Get<ObjectUpgradeLifecycle>(unit)->definition = definition;
+	world.Get<ObjectUpgradeLifecycle>(unit)->event =
+		ObjectUpgradeCreationEvent::OnCreateWhenComplete;
+	world.Get<ProducedUnit>(unit)->definition = 17;
+
+	const auto dead = world.Create<ObjectUpgradeLifecycle, LifeState, ProducedUnit>();
+	world.Get<ObjectUpgradeLifecycle>(dead)->definition = definition;
+	world.Get<LifeState>(dead)->alive = false;
+
+	ObjectUpgradeBatch batch{256, 8};
+	ObjectUpgradeLifecycleSystem system{catalog, batch, 16, &radarCatalog};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	ScenarioResult result;
+	const auto captureRequests = [&]() {
+		for (const auto &request : batch.Requests())
+			result.requests.push_back({request.target, request.binding,
+				request.operation, request.producerSequence});
+	};
+
+	scheduler.Execute({0, step});
+	captureRequests();
+	BOOST_REQUIRE_EQUAL(batch.Requests().size(), 1u);
+	BOOST_CHECK(world.Get<ObjectUpgradeLifecycle>(structure)->stage ==
+		ObjectUpgradeLifecycleStage::AwaitingReadiness);
+	BOOST_CHECK(world.Get<ObjectUpgradeLifecycle>(unit)->stage ==
+		ObjectUpgradeLifecycleStage::RequestPublished);
+	BOOST_CHECK(world.Get<ObjectUpgradeLifecycle>(dead)->stage ==
+		ObjectUpgradeLifecycleStage::SuppressedDead);
+
+	batch.Reset();
+	world.Get<Structure>(structure)->complete = true;
+	scheduler.Execute({1, step});
+	captureRequests();
+	BOOST_REQUIRE_EQUAL(batch.Requests().size(), 1u);
+	BOOST_CHECK(world.Get<ObjectUpgradeLifecycle>(structure)->stage ==
+		ObjectUpgradeLifecycleStage::RequestPublished);
+
+	ecs::Query<ecs::Read<ObjectUpgradeLifecycle>, ecs::Optional<ObjectUpgradeTarget>,
+		ecs::Optional<RadarProviderBinding>, ecs::Optional<RadarProviderGrant>> lifecycleQuery(world);
+	lifecycleQuery.ForEachChunk([&](auto chunk) {
+		const auto lifecycles = chunk.template Get<ObjectUpgradeLifecycle>();
+		const auto targets = chunk.template Get<ObjectUpgradeTarget>();
+		const auto bindings = chunk.template Get<RadarProviderBinding>();
+		const auto grants = chunk.template Get<RadarProviderGrant>();
+		for (std::size_t row = 0; row != chunk.Count(); ++row)
+		{
+			const auto entity = chunk.Entities()[row];
+			const auto target = targets.empty() ? ObjectUpgradeTarget{} : targets[row];
+			const auto provider = bindings.empty() ? RadarProviderBinding{} : bindings[row];
+			const auto grant = grants.empty() ? RadarProviderGrant{} : grants[row];
+			result.lifecycles.push_back({entity, lifecycles[row].stage, !targets.empty(),
+				target.wordCount, target.schemaHash, !bindings.empty(), provider.definitionId,
+				grant.granted});
+		}
+	});
+
+	ecs::Query<ecs::Read<ObjectUpgradeWordMarker>, ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>, ecs::Read<CompletedUpgradeWord>> wordQuery(world);
+	wordQuery.ForEachChunk([&](auto chunk) {
+		const auto owners = chunk.template Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		const auto completed = chunk.template Get<CompletedUpgradeWord>();
+		for (std::size_t row = 0; row != chunk.Count(); ++row)
+			result.words.push_back({chunk.Entities()[row], owners[row].value,
+				ordinals[row].value, completed[row].value});
+	});
+	SortSnapshots(result);
+	return result;
+}
+
+BOOST_AUTO_TEST_CASE(lifecycle_decisions_and_enrollment_are_worker_deterministic)
+{
+	const auto one = RunScenario(1);
+	const auto two = RunScenario(2);
+	const auto four = RunScenario(4);
+
+	BOOST_REQUIRE_EQUAL(one.requests.size(), 2u);
+	BOOST_REQUIRE_EQUAL(one.words.size(), 2u);
+	BOOST_CHECK(one == two);
+	BOOST_CHECK(one == four);
+	for (const auto &lifecycle : one.lifecycles)
+	{
+		BOOST_CHECK(lifecycle.hasTarget);
+		BOOST_TEST(lifecycle.wordCount == 1u);
+		BOOST_TEST(lifecycle.schemaHash != 0ull);
+		BOOST_CHECK(lifecycle.hasProvider);
+		BOOST_TEST(lifecycle.providerId == 0u);
+		BOOST_CHECK(!lifecycle.grant);
+	}
+	for (const auto &word : one.words)
+	{
+		BOOST_TEST(word.ordinal == 0u);
+		BOOST_TEST(word.completed == 0ull);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(capacity_failure_is_terminal_and_discards_the_current_wave)
+{
+	generalszh::upgrades::UpgradeCatalog catalog;
+	catalog.Register("Radar");
+	catalog.Finalize();
+	const ObjectUpgradeBinding binding{0, 0, 1, catalog.SchemaHash()};
+	const std::array radarDefinitions{RadarProviderDefinition{
+		0, RadarUpgradeBinding{0, 0, 1, catalog.SchemaHash()},
+		RadarGrantAuthority::CreationGrant, false, true}};
+	const RadarProviderDefinitions radarCatalog{radarDefinitions};
+	ecs::World world{ecs::WorldConfig{128}};
+	RegisterComponents(world);
+	const auto hostTarget = world.Create<ObjectUpgradeTarget>();
+	world.Get<ObjectUpgradeTarget>(hostTarget)->wordCount = 1;
+	world.Get<ObjectUpgradeTarget>(hostTarget)->schemaHash = catalog.SchemaHash();
+	const auto unit = world.Create<ObjectUpgradeLifecycle, LifeState, ProducedUnit>();
+	world.Get<ObjectUpgradeLifecycle>(unit)->definition = {binding, {true}};
+	world.Get<ObjectUpgradeLifecycle>(unit)->event = ObjectUpgradeCreationEvent::OnCreateWhenComplete;
+
+	ObjectUpgradeBatch batch{128, 1};
+	batch.Append({hostTarget, binding, ObjectUpgradeOperation::Remove, 99});
+	ObjectUpgradeLifecycleSystem system{catalog, batch, 8, &radarCatalog};
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	BOOST_CHECK_THROW(scheduler.Execute({0, step}), std::length_error);
+	BOOST_CHECK(scheduler.IsFailed());
+	BOOST_CHECK(!world.Get<ObjectUpgradeTarget>(unit));
+	BOOST_CHECK(world.Get<ObjectUpgradeLifecycle>(unit)->stage ==
+		ObjectUpgradeLifecycleStage::Enrolling);
+	BOOST_REQUIRE_EQUAL(batch.Requests().size(), 1u);
+	BOOST_CHECK(batch.Requests()[0].target == hostTarget);
+}

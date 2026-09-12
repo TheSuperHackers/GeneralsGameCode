@@ -1,0 +1,158 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <vector>
+import engine.gameplay.combat.regeneration.systems.regeneration_system;
+import engine.gameplay.combat.inputs.health_input_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+using namespace engine::gameplay::combat::regeneration;
+using namespace std::chrono_literals;
+namespace
+{
+struct RegenerationFixture
+{
+    engine::time::FixedStep step{10};
+    RegenerationDefinitions definitions;
+    ecs::World world;
+    HealthInputSystem input{world};
+    HealthSystem damage;
+    RegenerationSystem regeneration;
+    HealingSystem healing;
+    ecs::SystemRegistry registry;
+    ecs::Scheduler scheduler;
+    RegenerationFixture(const RegenerationDefinition &definition, unsigned workers, unsigned catalogRate=10)
+        : definitions(engine::time::FixedStep{catalogRate},std::span<const RegenerationDefinition>{&definition,1}),
+          regeneration(definitions),scheduler(world,registry,engine::jobs::JobSystemConfig{workers})
+    {
+        RegisterHealthComponents(world);
+        world.RegisterComponent<RegenerationBinding>(); world.RegisterComponent<RegenerationState>();
+        world.FinalizeComponents();
+        RegisterHealthSystems(registry,input,damage,healing);
+        registry.Register(regeneration,ecs::SystemPhase::Simulation);
+        registry.Finalize(world.Components()); scheduler.Finalize(step);
+    }
+    ecs::Entity Create(std::uint64_t health=10,bool active=true)
+    {
+        const auto entity=world.Create<Health,HealthCapacity,LifeState,PendingDamage,DamageResult,
+            PendingHealing,HealingResult,RegenerationBinding,RegenerationState>();
+        world.Get<Health>(entity)->current=health;
+        world.Get<HealthCapacity>(entity)->maximum=20;
+        world.Get<RegenerationBinding>(entity)->definition=definitions.Id(0);
+        *world.Get<RegenerationState>(entity)=StartRegeneration(definitions,definitions.Id(0),{0,step},0ns,active);
+        return entity;
+    }
+    void Tick(std::uint64_t tick,std::span<const DamageInput> damageInputs={},std::span<const HealingInput> heals={})
+    {
+        input.SetInputs(damageInputs,heals); scheduler.Execute({tick,step});
+    }
+};
+struct Observation
+{
+    ecs::Entity entity;
+    std::uint64_t health,damage,healing,next,cooldown,pending;
+    bool alive,armed,active,stopped;
+    bool operator==(const Observation &) const = default;
+};
+std::vector<Observation> ConnectedRun(unsigned workers)
+{
+    RegenerationFixture fixture({4,200ms,300ms},workers);
+    std::vector<ecs::Entity> entities;
+    // Enough actual rows for many independent chunks, with distinct eligibility.
+    for(unsigned i=0;i<1200;++i) entities.push_back(fixture.Create(i%4==2?20:10,i%4!=3));
+    std::vector<Observation> observations;
+    for(std::uint64_t tick=0;tick<10;++tick)
+    {
+        std::vector<DamageInput> damage;
+        std::vector<HealingInput> heals;
+        for(unsigned i=0;i<entities.size();++i)
+        {
+            if((tick==0||tick==2)&&i%4==0) damage.push_back({entities[i],2});
+            if(tick==0&&i%4==1) {damage.push_back({entities[i],100}); heals.push_back({entities[i],100});}
+            if(tick==5&&i%4==0) heals.push_back({entities[i],1});
+        }
+        fixture.Tick(tick,damage,heals);
+        for(unsigned i=0;i<entities.size();++i)
+        {
+            const auto entity=entities[i]; const auto &state=*fixture.world.Get<RegenerationState>(entity);
+            const auto hp=fixture.world.Get<Health>(entity)->current;
+            const auto healed=fixture.world.Get<HealingResult>(entity)->applied;
+            if(i%4==0)
+            {
+                if(tick==0) BOOST_TEST(hp==8u);
+                if(tick>=2&&tick<5) {BOOST_TEST(hp==6u); BOOST_TEST(healed==0u);}
+                if(tick==5) {BOOST_TEST(hp==11u); BOOST_TEST(healed==5u);}
+                if(tick==7) BOOST_TEST(hp==15u);
+                if(tick==9) BOOST_TEST(hp==19u);
+            }
+            if(i%4==1) {BOOST_TEST(hp==0u); BOOST_TEST(healed==0u); BOOST_TEST(!fixture.world.Get<LifeState>(entity)->alive);}
+            if(i%4==2) {BOOST_TEST(hp==20u); BOOST_TEST(!state.armed);}
+            if(i%4==3) BOOST_TEST(hp==10u);
+            observations.push_back({entity,hp,fixture.world.Get<DamageResult>(entity)->applied,healed,
+                state.nextPulse,state.soonestDamageWake,fixture.world.Get<PendingHealing>(entity)->quantity,
+                fixture.world.Get<LifeState>(entity)->alive,state.armed,state.active,state.stopped});
+        }
+    }
+    return observations;
+}
+}
+BOOST_AUTO_TEST_CASE(regeneration_connected_damage_delay_no_resurrection_and_worker_equality)
+{
+    const auto serial=ConnectedRun(1);
+    BOOST_CHECK(serial==ConnectedRun(2)); BOOST_CHECK(serial==ConnectedRun(4));
+}
+BOOST_AUTO_TEST_CASE(regeneration_explicit_strict_wake_policy_and_full_health_sleep)
+{
+    RegenerationFixture fixture({4,200ms,0ns,100ms,true},2);
+    const auto entity=fixture.Create(18);
+    fixture.Tick(0); BOOST_TEST(fixture.world.Get<Health>(entity)->current==20u);
+    const std::array damage{DamageInput{entity,1}};
+    fixture.Tick(1,damage); // Before cooldown: retain scheduled tick 2 pulse.
+    BOOST_TEST(fixture.world.Get<Health>(entity)->current==19u);
+    fixture.Tick(2,damage); // At cooldown: strict wake predicate is false, due pulse still runs.
+    BOOST_TEST(fixture.world.Get<HealingResult>(entity)->applied==2u);
+    fixture.Tick(3); fixture.Tick(4); // Full health suspends at next scheduled check.
+    BOOST_TEST(!fixture.world.Get<RegenerationState>(entity)->armed);
+    fixture.Tick(5,damage); // Past cooldown: explicit one-tick latency.
+    BOOST_TEST(fixture.world.Get<Health>(entity)->current==19u);
+    BOOST_TEST(fixture.world.Get<RegenerationState>(entity)->nextPulse==6u);
+    fixture.Tick(6); BOOST_TEST(fixture.world.Get<Health>(entity)->current==20u);
+    StopRegeneration(*fixture.world.Get<RegenerationState>(entity));
+    fixture.Tick(7,damage); fixture.Tick(8);
+    BOOST_TEST(fixture.world.Get<Health>(entity)->current==19u);
+}
+BOOST_AUTO_TEST_CASE(regeneration_fatal_horizon_and_catalog_step_contract)
+{
+    RegenerationFixture fixture({4,200ms,300ms},1);
+    const auto entity=fixture.Create();
+    const auto last=(std::numeric_limits<std::uint64_t>::max)();
+    const std::array damage{DamageInput{entity,1}};
+    BOOST_CHECK_THROW(fixture.Tick(last-1,damage),std::overflow_error);
+    BOOST_TEST(fixture.scheduler.IsFailed());
+    BOOST_TEST(fixture.world.Get<RegenerationState>(entity)->nextPulse==0u);
+    BOOST_TEST(fixture.world.Get<PendingHealing>(entity)->quantity==0u);
+    BOOST_CHECK_THROW(fixture.Tick(last),std::logic_error);
+    RegenerationFixture pulse({4,200ms},1);
+    const auto target=pulse.Create();
+    BOOST_CHECK_THROW(pulse.Tick(last),std::overflow_error);
+    BOOST_TEST(pulse.scheduler.IsFailed());
+    BOOST_TEST(pulse.world.Get<PendingHealing>(target)->quantity==0u);
+    RegenerationFixture mismatch({4,200ms},1,20);
+    BOOST_CHECK_THROW(mismatch.Tick(0),std::invalid_argument);
+    BOOST_TEST(mismatch.scheduler.IsFailed());
+}
+BOOST_AUTO_TEST_CASE(regeneration_combines_pending_healing_without_integer_overflow)
+{
+    const auto last=(std::numeric_limits<std::uint64_t>::max)();
+    RegenerationFixture fixture({last,200ms},1);
+    const auto entity=fixture.Create();
+    const std::array healing{HealingInput{entity,last-1}};
+    fixture.Tick(0,{},healing);
+    BOOST_TEST(fixture.world.Get<Health>(entity)->current==20u);
+    BOOST_TEST(fixture.world.Get<HealingResult>(entity)->applied==10u);
+    BOOST_TEST(fixture.world.Get<PendingHealing>(entity)->quantity==0u);
+}

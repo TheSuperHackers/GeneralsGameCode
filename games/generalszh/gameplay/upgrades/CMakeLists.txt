@@ -1,0 +1,43 @@
+add_library(generalszh_upgrade_state STATIC)
+target_sources(generalszh_upgrade_state PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	components/upgrade_status.cppm
+	state/upgrade_status.cppm)
+target_compile_features(generalszh_upgrade_state PUBLIC cxx_std_23)
+set_property(TARGET generalszh_upgrade_state PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_upgrade_state PUBLIC engine_ecs)
+
+add_library(generalszh_upgrade_definitions STATIC)
+target_sources(generalszh_upgrade_definitions PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	definitions/build_definition.cppm)
+target_compile_features(generalszh_upgrade_definitions PUBLIC cxx_std_23)
+set_property(TARGET generalszh_upgrade_definitions PROPERTY CXX_SCAN_FOR_MODULES ON)
+
+add_library(generalszh_upgrade_catalog STATIC)
+target_sources(generalszh_upgrade_catalog PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	identity/upgrade_catalog.cppm)
+target_compile_features(generalszh_upgrade_catalog PUBLIC cxx_std_23)
+set_property(TARGET generalszh_upgrade_catalog PROPERTY CXX_SCAN_FOR_MODULES ON)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(components/upgrade_status.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_upgrade_status_tests components/upgrade_status.test)
+	set_property(TARGET generalszh_upgrade_status_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_upgrade_status_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_upgrade_status_tests PRIVATE
+		generalszh_upgrade_state Boost::included_unit_test_framework)
+	add_test(NAME generalszh_upgrade_status_tests COMMAND generalszh_upgrade_status_tests)
+	set_source_files_properties(definitions/build_definition.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_upgrade_build_definition_tests definitions/build_definition.test)
+	set_property(TARGET generalszh_upgrade_build_definition_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_upgrade_build_definition_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_upgrade_build_definition_tests PRIVATE
+		generalszh_upgrade_definitions Boost::included_unit_test_framework)
+	add_test(NAME generalszh_upgrade_build_definition_tests COMMAND generalszh_upgrade_build_definition_tests)
+	set_source_files_properties(identity/upgrade_catalog.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_upgrade_catalog_tests identity/upgrade_catalog.test)
+	set_property(TARGET generalszh_upgrade_catalog_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_upgrade_catalog_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_upgrade_catalog_tests PRIVATE
+		generalszh_upgrade_catalog Boost::included_unit_test_framework)
+	add_test(NAME generalszh_upgrade_catalog_tests COMMAND generalszh_upgrade_catalog_tests)
+endif()

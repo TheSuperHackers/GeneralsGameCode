@@ -1,0 +1,32 @@
+include_guard(GLOBAL)
+file(READ "${CMAKE_CURRENT_LIST_DIR}/lock.json" engine_toolchain_lock)
+foreach(tool llvm cmake ninja)
+    string(JSON engine_${tool}_version GET "${engine_toolchain_lock}" versions ${tool})
+endforeach()
+
+if(NOT CMAKE_VERSION VERSION_EQUAL engine_cmake_version)
+    message(FATAL_ERROR "Engine requires pinned CMake ${engine_cmake_version}; found ${CMAKE_VERSION}")
+endif()
+if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
+    message(FATAL_ERROR "Engine requires the Ninja generator; use engine/CMakePresets.json")
+endif()
+if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+   NOT CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL engine_llvm_version)
+    message(FATAL_ERROR "Engine requires upstream Clang ${engine_llvm_version}; found ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+endif()
+execute_process(COMMAND "${CMAKE_MAKE_PROGRAM}" --version
+    OUTPUT_VARIABLE engine_ninja_actual OUTPUT_STRIP_TRAILING_WHITESPACE
+    COMMAND_ERROR_IS_FATAL ANY)
+if(NOT engine_ninja_actual STREQUAL engine_ninja_version)
+    message(FATAL_ERROR "Engine requires Ninja ${engine_ninja_version}; found ${engine_ninja_actual}")
+endif()
+if(NOT EXISTS "${CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS}")
+    message(FATAL_ERROR "The pinned clang-scan-deps module scanner is required")
+endif()
+execute_process(COMMAND "${CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS}" --version
+    OUTPUT_VARIABLE engine_scanner_actual COMMAND_ERROR_IS_FATAL ANY)
+string(REGEX MATCH "version ([0-9]+\\.[0-9]+\\.[0-9]+)" engine_scanner_match "${engine_scanner_actual}")
+if(NOT CMAKE_MATCH_1 STREQUAL engine_llvm_version)
+    message(FATAL_ERROR "clang-scan-deps must match Clang ${engine_llvm_version}: ${engine_scanner_actual}")
+endif()
+message(STATUS "Pinned engine toolchain: Clang ${engine_llvm_version}, CMake ${engine_cmake_version}, Ninja ${engine_ninja_version}, C++23")

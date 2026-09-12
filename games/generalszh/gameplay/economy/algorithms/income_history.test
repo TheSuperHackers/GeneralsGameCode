@@ -1,0 +1,103 @@
+#include <boost/test/unit_test.hpp>
+#include <limits>
+#include <vector>
+import games.generalszh.gameplay.economy.income_history;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh::economy;
+
+struct TestHistorySystem
+{
+	using Query = ecs::Query<ecs::Write<IncomeHistory>>;
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		const auto next = static_cast<std::uint32_t>((context.Tick() / context.Time().Step().TicksPerSecond()) % 60);
+		auto histories = chunk.Get<IncomeHistory>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			AdvanceIncomeBucket(histories[row], next);
+			RecordIncome(histories[row], chunk.Entities()[row].index + 1);
+		}
+	}
+};
+namespace ecs
+{
+template<> struct SystemTraits<TestHistorySystem>
+{
+	static constexpr std::string_view StableName = "tests.economy.history";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(income_ring_tracks_gross_deposits_and_ages_only_selected_bucket)
+{
+	IncomeHistory history;
+	RecordIncome(history, 11);
+	AdvanceIncomeBucket(history, 1);
+	RecordIncome(history, 23);
+	BOOST_TEST(history.total == 34u);
+	AdvanceIncomeBucket(history, 0);
+	BOOST_TEST(history.total == 23u);
+	AdvanceIncomeBucket(history, 1);
+	BOOST_TEST(history.total == 0u);
+	BOOST_CHECK_NO_THROW(ValidateIncomeHistory(history));
+}
+BOOST_AUTO_TEST_CASE(income_ring_wrap_and_same_index_behavior_are_explicit)
+{
+	IncomeHistory history;
+	RecordIncome(history, (std::numeric_limits<std::uint32_t>::max)());
+	RecordIncome(history, 2);
+	AdvanceIncomeBucket(history, 0);
+	BOOST_TEST(history.total == 1u);
+	BOOST_CHECK_NO_THROW(ValidateIncomeHistory(history));
+	AdvanceIncomeBucket(history, 1);
+	AdvanceIncomeBucket(history, 0);
+	BOOST_TEST(history.total == 0u);
+}
+BOOST_AUTO_TEST_CASE(income_ring_rejects_invalid_records_before_access)
+{
+	IncomeHistory history;
+	BOOST_CHECK_THROW(AdvanceIncomeBucket(history, 60), std::out_of_range);
+	BOOST_TEST(history.current == 0u);
+	history.total = 1;
+	BOOST_CHECK_THROW(ValidateIncomeHistory(history), std::invalid_argument);
+	history.current = 60;
+	BOOST_CHECK_THROW(RecordIncome(history, 1), std::out_of_range);
+}
+
+BOOST_AUTO_TEST_CASE(income_history_columns_produce_identical_state_across_worker_counts)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{1024}};
+		world.RegisterComponent<IncomeHistory>();
+		world.FinalizeComponents();
+		std::vector<ecs::Entity> entities;
+		for (int index = 0; index < 1024; ++index) entities.push_back(world.Create<IncomeHistory>());
+		TestHistorySystem system;
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		for (auto tick : {0u, 30u, 1800u}) scheduler.Execute(engine::time::SimulationTime{tick, step});
+		std::vector<std::uint64_t> result;
+		result.reserve(entities.size() * 64);
+		for (auto entity : entities)
+		{
+			const auto &history = *world.Get<IncomeHistory>(entity);
+			BOOST_TEST(history.total == 2 * (entity.index + 1));
+			BOOST_CHECK_NO_THROW(ValidateIncomeHistory(history));
+			result.push_back(entity.index);
+			result.push_back(entity.generation);
+			result.push_back(history.current);
+			result.push_back(history.total);
+			for (auto value : history.buckets) result.push_back(value);
+		}
+		return result;
+	};
+	const auto one = run(1);
+	BOOST_CHECK(run(2) == one);
+	BOOST_CHECK(run(4) == one);
+}

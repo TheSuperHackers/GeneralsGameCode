@@ -1,0 +1,14 @@
+#define BOOST_TEST_MODULE RtsSquadMembership
+#include <boost/test/included/unit_test.hpp>
+
+import engine.gameplay.rts.ai.squads.components.squad_membership;
+
+BOOST_AUTO_TEST_CASE(squad_membership_is_generation_safe_serializable_state)
+{
+	using engine::gameplay::rts::ai::squads::SquadMembership;
+	const SquadMembership membership{{7, 3}};
+	BOOST_TEST(membership.squad.index == 7u);
+	BOOST_TEST(membership.squad.generation == 3u);
+	BOOST_TEST(ecs::ComponentTraits<SquadMembership>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<SquadMembership>::Persistence == ecs::PersistencePolicy::Serializable);
+}

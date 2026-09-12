@@ -1,0 +1,41 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeContent
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <string_view>
+#include <vector>
+import games.generalszh.adapters.content.upgrades.upgrade_definition;
+
+namespace content=generalszh::content;
+
+BOOST_AUTO_TEST_CASE(upgrade_adapter_preserves_explicit_identity_and_legacy_player_default)
+{
+    constexpr std::uint32_t key=7001;
+    const auto decoded=content::DecodeUpgrade(R"(
+Upgrade Upgrade_InfantryCaptureBuilding
+ DisplayName = UPGRADE:RangerCaptureBuilding
+ BuildTime = 30.0
+ BuildCost = 1000
+ ButtonImage = SSCaptureBuilding
+End
+)","Upgrade_InfantryCaptureBuilding",key);
+    BOOST_TEST(decoded.name=="Upgrade_InfantryCaptureBuilding");
+    BOOST_TEST(decoded.definition.key==key);
+    BOOST_CHECK(decoded.definition.kind==generalszh::production::EntryKind::Upgrade);
+    BOOST_TEST(decoded.definition.cost==1000u);
+    BOOST_TEST(decoded.definition.duration.count()==30000000000ll);
+    BOOST_CHECK(decoded.scope==content::UpgradeScope::Player);
+    BOOST_CHECK(content::Identity(decoded).name==decoded.name);
+    BOOST_TEST(content::Identity(decoded).definition==key);
+}
+
+BOOST_AUTO_TEST_CASE(upgrade_adapter_reads_object_scope_and_rejects_identity_collisions)
+{
+    const auto object=content::DecodeUpgrade("Upgrade ObjectUpgrade\nBuildTime = 1\nBuildCost = 2\nType = OBJECT\nEnd\n",
+        "ObjectUpgrade",17);
+    BOOST_CHECK(object.scope==content::UpgradeScope::Object);
+    const std::array sameName{content::UpgradeIdentity{"Capture",1},content::UpgradeIdentity{"capture",2}};
+    BOOST_CHECK_THROW(content::ValidateUpgradeIdentities(sameName),std::invalid_argument);
+    const std::array sameKey{content::UpgradeIdentity{"Capture",1},content::UpgradeIdentity{"Other",1}};
+    BOOST_CHECK_THROW(content::ValidateUpgradeIdentities(sameKey),std::invalid_argument);
+}

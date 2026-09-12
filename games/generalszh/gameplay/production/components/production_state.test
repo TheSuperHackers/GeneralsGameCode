@@ -1,0 +1,29 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.production.definitions.build_definition;
+import engine.ecs.core.world;
+BOOST_AUTO_TEST_CASE(build_runtime_has_value_components_and_explicit_schema)
+{
+    static_assert(std::is_trivially_copyable_v<generalszh::production::BuildOrder>);
+    ecs::World world; world.RegisterComponent<generalszh::production::BuildOrder>(); world.RegisterComponent<generalszh::production::ProducedUnit>(); world.FinalizeComponents();
+    const auto item = world.Create<generalszh::production::BuildOrder>();
+    BOOST_TEST(world.Get<generalszh::production::BuildOrder>(item)->paid == 0u);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->harvest);
+    BOOST_TEST(!world.Get<generalszh::production::BuildOrder>(item)->builder);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->regeneration);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->progression);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->veterancy);
+    const generalszh::production::BuildDefinition defaults;
+    BOOST_CHECK(!defaults.regeneration); BOOST_CHECK(!defaults.progression);
+    BOOST_CHECK(!defaults.lifetime);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->lifetimeTicks);
+    BOOST_CHECK(!defaults.transportDefinition); BOOST_CHECK(!defaults.passenger);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->transport);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->passenger);
+    BOOST_CHECK(!defaults.initialPayload); BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->initialPayload);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->garrisonable);
+    BOOST_CHECK(!defaults.cashBountyCost);
+    BOOST_CHECK(!world.Get<generalszh::production::BuildOrder>(item)->cashBountyCost);
+    BOOST_TEST(ecs::ComponentTraits<generalszh::production::BuildOrder>::Version == 21u);
+}

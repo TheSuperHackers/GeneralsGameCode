@@ -1,0 +1,17 @@
+#include <boost/test/unit_test.hpp>
+import engine.ecs.core.world;
+import engine.gameplay.concealment.components.concealment_binding;
+
+BOOST_AUTO_TEST_CASE(concealment_bindings_and_groups_are_individually_registered_components)
+{
+    ecs::World world;
+    world.RegisterComponent<engine::gameplay::concealment::ConcealmentBinding>();
+    world.RegisterComponent<engine::gameplay::concealment::DetectionBinding>();
+    world.RegisterComponent<engine::gameplay::concealment::ConcealmentGroup>();
+    world.FinalizeComponents();
+    const auto entity = world.Create<engine::gameplay::concealment::ConcealmentBinding,
+        engine::gameplay::concealment::DetectionBinding, engine::gameplay::concealment::ConcealmentGroup>();
+    world.Get<engine::gameplay::concealment::ConcealmentGroup>(entity)->value = {3, 1};
+    BOOST_CHECK(world.Get<engine::gameplay::concealment::ConcealmentGroup>(entity)->value.IsValid());
+    BOOST_TEST(ecs::ComponentTraits<engine::gameplay::concealment::ConcealmentBinding>::Version == 1u);
+}

@@ -1,0 +1,62 @@
+#define BOOST_TEST_MODULE GeneralsZHPrerequisitePresence
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+import games.generalszh.gameplay.production.algorithms.prerequisite_presence;
+import games.generalszh.gameplay.production.registration.production_registration;
+
+namespace
+{
+using Balance=engine::gameplay::rts::economy::ResourceBalance;
+using Life=engine::gameplay::combat::LifeState;
+using Unit=generalszh::production::ProducedUnit;
+using Structure=generalszh::construction::Structure;
+}
+
+BOOST_AUTO_TEST_CASE(presence_counts_only_live_completed_authoritative_objects_by_full_owner_entity)
+{
+    ecs::World world; generalszh::production::RegisterProductionComponents(world); world.FinalizeComponents();
+    const auto account=world.Create<Balance>();
+    const auto opponent=world.Create<Balance>();
+    const auto stale=world.Create<Balance>(); world.Destroy(stale);
+    const auto unit=world.Create<Unit,Life>();
+    *world.Get<Unit>(unit)={ecs::Entity{},account,11};
+    const auto structure=world.Create<Structure,Life>();
+    *world.Get<Structure>(structure)={account,22,0,0,true};
+    const auto incomplete=world.Create<Structure,Life>();
+    *world.Get<Structure>(incomplete)={account,33,0,0,false};
+    const auto dead=world.Create<Unit,Life>();
+    *world.Get<Unit>(dead)={ecs::Entity{},account,44}; world.Get<Life>(dead)->alive=false;
+    const auto enemy=world.Create<Unit,Life>();
+    *world.Get<Unit>(enemy)={ecs::Entity{},opponent,55};
+    const auto staleObject=world.Create<Unit,Life>();
+    *world.Get<Unit>(staleObject)={ecs::Entity{},stale,66};
+
+    generalszh::production::PrerequisitePresence presence(world,8); presence.Rebuild();
+    const auto keys=presence.Keys(account);
+    BOOST_REQUIRE_EQUAL(keys.size(),2u);
+    BOOST_TEST(keys[0]==11u); BOOST_TEST(keys[1]==22u);
+    BOOST_TEST(presence.Keys(opponent).size()==1u);
+    BOOST_TEST(presence.Keys(stale).empty());
+
+    // Ownership is read from Structure.account on each admission snapshot;
+    // capture/loss does not leave a second ownership model behind.
+    world.Get<Structure>(structure)->account=opponent;
+    world.Get<Life>(unit)->alive=false;
+    presence.Rebuild();
+    BOOST_TEST(presence.Keys(account).empty());
+    BOOST_REQUIRE_EQUAL(presence.Keys(opponent).size(),2u);
+    BOOST_TEST(presence.Keys(opponent)[0]==22u); BOOST_TEST(presence.Keys(opponent)[1]==55u);
+}
+
+BOOST_AUTO_TEST_CASE(presence_observation_capacity_is_an_explicit_configuration_boundary)
+{
+    ecs::World world; generalszh::production::RegisterProductionComponents(world); world.FinalizeComponents();
+    const auto account=world.Create<Balance>();
+    const auto first=world.Create<Unit,Life>(); const auto second=world.Create<Unit,Life>();
+    world.Get<Unit>(first)->account=account; world.Get<Unit>(first)->definition=1;
+    world.Get<Unit>(second)->account=account; world.Get<Unit>(second)->definition=2;
+    generalszh::production::PrerequisitePresence presence(world,1);
+    BOOST_CHECK_THROW(presence.Rebuild(),std::length_error);
+}

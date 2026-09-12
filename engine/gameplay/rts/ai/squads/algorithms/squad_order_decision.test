@@ -1,0 +1,50 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.rts.ai.squads.algorithms.squad_order_decision;
+
+namespace
+{
+using namespace engine::gameplay::rts::ai::squads;
+using engine::gameplay::rts::orders::OrderKind;
+
+SquadGoal AttackTargetGoal()
+{
+	return {SquadGoalKind::AttackTarget, {1, 1}, {8, 2}, engine::gameplay::navigation::InvalidCell, 0, 0};
+}
+}
+
+BOOST_AUTO_TEST_CASE(generic_decision_fixture_maps_visible_target_to_attack_order)
+{
+	const auto decision = DecideSquadOrder(AttackTargetGoal(),
+		{{3, 1}, {1, 1}, true, false, true, true, {8, 2}, true});
+	BOOST_CHECK(decision.emit);
+	BOOST_CHECK(decision.rejection == SquadDecisionRejection::None);
+	BOOST_CHECK(decision.order.kind == OrderKind::AttackTarget);
+	BOOST_CHECK(decision.order.target == (ecs::Entity{8, 2}));
+}
+
+BOOST_AUTO_TEST_CASE(decision_latches_ineligible_members_without_emitting)
+{
+	const auto goal = AttackTargetGoal();
+	const auto dead = DecideSquadOrder(goal, {{3, 1}, {1, 1}, false, false, true, true, {8, 2}, true});
+	const auto contained = DecideSquadOrder(goal, {{3, 1}, {1, 1}, true, true, true, true, {8, 2}, true});
+	const auto wrongOwner = DecideSquadOrder(goal, {{3, 1}, {2, 1}, true, false, true, true, {8, 2}, true});
+	const auto hidden = DecideSquadOrder(goal, {{3, 1}, {1, 1}, true, false, true, true, {8, 2}, false});
+	BOOST_CHECK(!dead.emit); BOOST_CHECK(dead.rejection == SquadDecisionRejection::Dead);
+	BOOST_CHECK(!contained.emit); BOOST_CHECK(contained.rejection == SquadDecisionRejection::Contained);
+	BOOST_CHECK(!wrongOwner.emit); BOOST_CHECK(wrongOwner.rejection == SquadDecisionRejection::WrongOwner);
+	BOOST_CHECK(!hidden.emit); BOOST_CHECK(hidden.rejection == SquadDecisionRejection::NoTarget);
+}
+
+BOOST_AUTO_TEST_CASE(stop_and_hunt_have_explicit_one_shot_orders)
+{
+	const auto stop = DecideSquadOrder(
+		SquadGoal{SquadGoalKind::Stop, {1, 1}, {}, engine::gameplay::navigation::InvalidCell, 0, 2},
+		{{3, 1}, {1, 1}, true, false, true, false, {}, false});
+	BOOST_CHECK(stop.emit); BOOST_CHECK(stop.order.kind == OrderKind::Stop);
+
+	const auto hunt = DecideSquadOrder(
+		SquadGoal{SquadGoalKind::Hunt, {1, 1}, {}, engine::gameplay::navigation::InvalidCell, 4, 3},
+		{{3, 1}, {1, 1}, true, false, true, true, {8, 2}, true});
+	BOOST_CHECK(hunt.emit); BOOST_CHECK(hunt.order.kind == OrderKind::AttackTarget);
+}

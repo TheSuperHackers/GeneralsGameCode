@@ -1,0 +1,23 @@
+#include <boost/test/unit_test.hpp>
+#include <cstddef>
+#include <string_view>
+#include <type_traits>
+import games.generalszh.gameplay.economy.components.capture_range;
+
+BOOST_AUTO_TEST_CASE(capture_range_preserves_layout_defaults_and_schema)
+{
+	using Component = generalszh::economy::CaptureRange;
+	static_assert(std::is_standard_layout_v<Component>);
+	static_assert(std::is_trivially_copyable_v<Component>);
+	static_assert(offsetof(Component, first) == 0u);
+	static_assert(offsetof(Component, count) == sizeof(std::size_t));
+	static_assert(ecs::ComponentTraits<Component>::StableName
+		== std::string_view{"games.generalszh.income.capture_range"});
+	static_assert(ecs::ComponentTraits<Component>::Version == 1u);
+	static_assert(ecs::ComponentTraits<Component>::Persistence
+		== ecs::PersistencePolicy::Transient);
+
+	const Component defaults{};
+	BOOST_TEST(defaults.first == 0u);
+	BOOST_TEST(defaults.count == 0u);
+}

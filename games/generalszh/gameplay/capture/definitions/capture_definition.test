@@ -1,0 +1,31 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <stdexcept>
+import games.generalszh.gameplay.capture.definitions.capture_definition;
+BOOST_AUTO_TEST_CASE(ranger_authored_capture_timing_and_empty_composition)
+{
+    using namespace std::chrono_literals;using namespace generalszh::capture;
+    const std::array authored{CaptureDefinition{3s,20s,2s}};
+    const CaptureDefinitions definitions(engine::time::FixedStep{30},authored);
+    BOOST_TEST(definitions.Get(0).captureTicks==690u);BOOST_TEST(definitions.GetUnchecked(0).recoveryTicks==60u);
+    const CaptureDefinitions empty(engine::time::FixedStep{30},{});
+    BOOST_CHECK_THROW(empty.Get(0),std::out_of_range);
+    BOOST_CHECK_THROW(CaptureDeadline(UINT64_MAX,1),std::overflow_error);
+    const std::array bad{CaptureDefinition{-1ms,20s,2s}};
+    BOOST_CHECK_THROW((CaptureDefinitions(engine::time::FixedStep{30},bad)),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(recharge_is_creation_relative_and_separate_from_recovery)
+{
+    using namespace std::chrono_literals;using namespace generalszh::capture;
+    const std::array authored{CaptureDefinition{3s,20s,2s,15s},CaptureDefinition{0ms,0ms,0ms,15s,true}};
+    const CaptureDefinitions definitions(engine::time::FixedStep{10},authored);
+    const auto &value=definitions.Get(0);
+    BOOST_TEST(value.unpackTicks==30u);BOOST_TEST(value.rechargeTicks==150u);BOOST_TEST(value.recoveryTicks==20u);
+    const auto initial=InitialCaptureRecharge(value,7);
+    BOOST_TEST(initial.initialized);BOOST_TEST(initial.readyAt==157u);
+    BOOST_TEST(InitialCaptureRecharge(definitions.Get(1),7).readyAt==7u);
+    BOOST_CHECK_THROW(InitialCaptureRecharge(value,UINT64_MAX),std::overflow_error);
+    const std::array bad{CaptureDefinition{0ms,0ms,0ms,-1ms}};
+    BOOST_CHECK_THROW((CaptureDefinitions(engine::time::FixedStep{10},bad)),std::invalid_argument);
+}

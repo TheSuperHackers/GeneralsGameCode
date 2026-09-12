@@ -1,0 +1,14 @@
+#define BOOST_TEST_MODULE ConstructionComponents
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.rts.construction.observations.builder_frame;
+import engine.ecs.scheduler.scheduler;
+namespace c=engine::gameplay::rts::construction;
+namespace p=engine::gameplay::rts::production;
+namespace n=engine::gameplay::navigation;
+namespace h=engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(default_assignment_has_no_site_or_move_goal)
+{
+    const c::BuilderAssignment assignment;
+    BOOST_TEST(!assignment.site.IsValid()); BOOST_TEST(assignment.cell==n::InvalidCell);
+    BOOST_TEST(!c::ConstructionSite{}.builder.IsValid());
+}

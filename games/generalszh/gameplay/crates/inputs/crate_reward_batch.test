@@ -1,0 +1,69 @@
+#include <array>
+#include <boost/test/unit_test.hpp>
+#include <span>
+#include <stdexcept>
+
+import games.generalszh.gameplay.crates.inputs.crate_reward_batch;
+
+namespace crates = generalszh::crates;
+
+BOOST_AUTO_TEST_CASE(crate_reward_batch_rejects_zero_capacity)
+{
+	BOOST_CHECK_THROW(crates::CrateRewardBatch{0}, std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(crate_reward_batch_publishes_empty_payload_and_reuses_storage)
+{
+	crates::CrateRewardBatch batch{2};
+	BOOST_CHECK_THROW(batch.Requests(), std::logic_error);
+	BOOST_CHECK_THROW(batch.ConsumedCrates(), std::logic_error);
+
+	batch.Publish({}, {});
+	BOOST_REQUIRE(batch.IsPublished());
+	BOOST_TEST(batch.Requests().empty());
+	BOOST_TEST(batch.ConsumedCrates().empty());
+	batch.Release();
+	BOOST_CHECK(!batch.IsPublished());
+
+	const std::array requests{generalszh::economy::AccountRequest{
+		ecs::Entity{3, 1},
+		{generalszh::economy::AccountOperation::Deposit, 20, false, true}}};
+	const std::array consumed{ecs::Entity{4, 1}};
+	batch.Publish(requests, consumed);
+	BOOST_REQUIRE(batch.IsPublished());
+	BOOST_TEST(batch.Requests().size() == 1u);
+	BOOST_CHECK(batch.Requests()[0].account == requests[0].account);
+	BOOST_TEST(batch.Requests()[0].command.amount == 20u);
+	BOOST_TEST(batch.ConsumedCrates().size() == 1u);
+	BOOST_CHECK(batch.ConsumedCrates()[0] == consumed[0]);
+}
+
+BOOST_AUTO_TEST_CASE(crate_reward_batch_checks_both_payload_capacities_before_copying)
+{
+	crates::CrateRewardBatch batch{1};
+	const std::array requests{generalszh::economy::AccountRequest{
+		ecs::Entity{3, 1},
+		{generalszh::economy::AccountOperation::Deposit, 20, false, false}},
+		generalszh::economy::AccountRequest{
+			ecs::Entity{5, 1},
+			{generalszh::economy::AccountOperation::Deposit, 30, false, false}}};
+	const std::array oneCrate{ecs::Entity{4, 1}};
+	BOOST_CHECK_THROW(batch.Publish(requests, oneCrate), std::length_error);
+	BOOST_CHECK(!batch.IsPublished());
+	BOOST_CHECK_THROW(batch.Publish({}, std::array{ecs::Entity{4, 1}, ecs::Entity{6, 1}}),
+		std::length_error);
+	BOOST_CHECK(!batch.IsPublished());
+}
+
+BOOST_AUTO_TEST_CASE(crate_reward_batch_requires_release_before_republication)
+{
+	crates::CrateRewardBatch batch{1};
+	const std::array request{generalszh::economy::AccountRequest{
+		ecs::Entity{3, 1},
+		{generalszh::economy::AccountOperation::Deposit, 20, false, false}}};
+	batch.Publish(request, {});
+	BOOST_CHECK_THROW(batch.Publish({}, {}), std::logic_error);
+	batch.Release();
+	BOOST_CHECK(!batch.IsPublished());
+	BOOST_CHECK_THROW(batch.Release(), std::logic_error);
+}

@@ -1,0 +1,27 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.spatial.contacts.algorithms.contact_intersection;
+
+namespace c = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(circle_circle_is_inclusive_and_fixed_point)
+{
+	const auto circle = c::Circle(c::MicroCells{500000});
+	BOOST_TEST(c::Intersects(circle, c::CellCoordinate(0), c::CellCoordinate(0),
+		circle, c::CellCoordinate(1), c::CellCoordinate(0)));
+	BOOST_TEST(!c::Intersects(circle, c::CellCoordinate(0), c::CellCoordinate(0),
+		circle, c::CellCoordinate(2), c::CellCoordinate(0)));
+}
+
+BOOST_AUTO_TEST_CASE(box_circle_and_box_box_use_exact_inclusive_boundaries)
+{
+	const auto box = c::AxisAlignedBox(c::MicroCells{500000}, c::MicroCells{500000});
+	const auto circle = c::Circle(c::MicroCells{500000});
+	BOOST_TEST(c::Intersects(box, c::CellCoordinate(0), c::CellCoordinate(0),
+		circle, c::CellCoordinate(1), c::CellCoordinate(0)));
+	BOOST_TEST(!c::Intersects(box, c::CellCoordinate(0), c::CellCoordinate(0),
+		circle, c::CellCoordinate(2), c::CellCoordinate(0)));
+	const auto tall = c::AxisAlignedBox(c::MicroCells{500000}, c::MicroCells{250000});
+	BOOST_TEST(c::Intersects(box, c::CellCoordinate(0), c::CellCoordinate(0),
+		tall, c::CellCoordinate(1), c::CellCoordinate(0)));
+}

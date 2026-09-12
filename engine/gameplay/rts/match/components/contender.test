@@ -1,0 +1,12 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.match.components.contender;
+import engine.ecs.core.world;
+using namespace engine::gameplay::rts::match;
+BOOST_AUTO_TEST_CASE(defeat_persists_while_survival_count_is_rebuildable)
+{
+    ecs::World world;world.RegisterComponent<Contender>();world.RegisterComponent<SurvivalCount>();world.FinalizeComponents();
+    const auto entity=world.Create<Contender>();world.Get<Contender>(entity)->defeated=true;world.Add<SurvivalCount>(entity);
+    BOOST_TEST(world.Get<Contender>(entity)->defeated);
+    BOOST_CHECK(ecs::ComponentTraits<Contender>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<SurvivalCount>::Persistence==ecs::PersistencePolicy::Transient);
+}

@@ -1,0 +1,24 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+
+import engine.gameplay.rts.visibility.components.visibility_observer;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_observer)
+
+BOOST_AUTO_TEST_CASE(participant_handles_are_generation_safe_and_bits_are_bounded)
+{
+	const ParticipantHandle first{3, 11};
+	const ParticipantHandle second{3, 12};
+	const ParticipantHandle invalid{MaxObserverSlots, 11};
+	BOOST_CHECK(first.IsValid());
+	BOOST_CHECK(first != second);
+	BOOST_CHECK(Less(first, second));
+	BOOST_CHECK(!invalid.IsValid());
+	BOOST_TEST(ObserverBit(first.slot) == (ObserverMask{1} << 3));
+	BOOST_TEST(ObserverBit(static_cast<ObserverSlot>(MaxObserverSlots)) == 0u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

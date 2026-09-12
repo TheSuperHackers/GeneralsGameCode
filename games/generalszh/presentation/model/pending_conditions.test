@@ -1,0 +1,326 @@
+#define BOOST_TEST_MODULE GeneralsZHPendingConditions
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.presentation.model.pending_conditions;
+import engine.ecs.scheduler.scheduler;
+
+using namespace generalszh::presentation;
+
+namespace pending_conditions_test
+{
+struct ExpectedPendingState
+{
+	std::uint64_t clearWord0{0};
+	std::uint64_t clearWord1{0};
+	std::uint64_t setWord0{0};
+	std::uint64_t setWord1{0};
+};
+
+ExpectedPendingState ExpectedState(const std::size_t index) noexcept
+{
+	constexpr std::uint64_t overWaterBit = std::uint64_t{1} << 63;
+	constexpr std::uint64_t veteranBit = std::uint64_t{1} << 53;
+
+	ExpectedPendingState expected{
+		(index % 2u == 0u) ? overWaterBit : 0u,
+		(index % 3u == 0u) ? veteranBit : 0u,
+		(index % 4u == 0u) ? overWaterBit : 0u,
+		(index % 5u == 0u) ? veteranBit : 0u};
+
+	switch (index % 4u)
+	{
+	case 0u:
+		expected.setWord0 |= overWaterBit;
+		expected.clearWord1 |= veteranBit;
+		expected.setWord1 &= ~veteranBit;
+		break;
+	case 1u:
+		expected.clearWord0 |= overWaterBit;
+		expected.setWord0 &= ~overWaterBit;
+		expected.setWord1 |= veteranBit;
+		break;
+	case 2u:
+		expected.clearWord1 |= veteranBit;
+		expected.setWord1 &= ~veteranBit;
+		break;
+	default:
+		expected.setWord1 |= veteranBit;
+		break;
+	}
+
+	return expected;
+}
+
+struct PendingConditionSystem
+{
+	using Query = ecs::Query<ecs::Write<PendingConditionClear>,
+		ecs::Write<PendingConditionSet>, ecs::Write<PendingConditionDirty>>;
+
+	void Execute(const Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		const auto clear = chunk.Get<PendingConditionClear>();
+		const auto set = chunk.Get<PendingConditionSet>();
+		const auto dirty = chunk.Get<PendingConditionDirty>();
+		const auto entities = chunk.Entities();
+
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			PendingConditionView view{clear[row], set[row], dirty[row]};
+			switch (entities[row].index % 4u)
+			{
+			case 0u:
+				QueueSet(view, ModelCondition::OVER_WATER);
+				QueueClear(view, ModelCondition::WEAPONSET_VETERAN);
+				break;
+			case 1u:
+				QueueClear(view, ModelCondition::OVER_WATER);
+				QueueSet(view, ModelCondition::WEAPONSET_VETERAN);
+				break;
+			case 2u:
+				MarkDirty(view);
+				QueueClear(view, ModelCondition::WEAPONSET_VETERAN);
+				break;
+			default:
+				QueueSet(view, ModelCondition::WEAPONSET_VETERAN);
+				MarkDirty(view);
+				break;
+			}
+		}
+	}
+};
+
+struct SnapshotEntry
+{
+	ecs::Entity entity;
+	std::array<std::uint64_t, ConditionWordCount> clear{};
+	std::array<std::uint64_t, ConditionWordCount> set{};
+	bool dirty{false};
+
+	friend bool operator==(const SnapshotEntry &, const SnapshotEntry &) = default;
+};
+
+using Snapshot = std::vector<SnapshotEntry>;
+
+Snapshot RunScheduledMutation(std::size_t workers);
+} // namespace pending_conditions_test
+
+namespace ecs
+{
+template<>
+struct SystemTraits<pending_conditions_test::PendingConditionSystem>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.presentation.model.pending_conditions.system";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace pending_conditions_test
+{
+Snapshot RunScheduledMutation(const std::size_t workers)
+{
+	constexpr std::size_t entityCount = 4096;
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<PendingConditionClear>();
+	world.RegisterComponent<PendingConditionSet>();
+	world.RegisterComponent<PendingConditionDirty>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<PendingConditionClear,
+			PendingConditionSet, PendingConditionDirty>();
+		auto *clear = world.Get<PendingConditionClear>(entity);
+		auto *set = world.Get<PendingConditionSet>(entity);
+		auto *dirty = world.Get<PendingConditionDirty>(entity);
+		BOOST_REQUIRE(clear != nullptr);
+		BOOST_REQUIRE(set != nullptr);
+		BOOST_REQUIRE(dirty != nullptr);
+
+		if (index % 2u == 0u)
+			clear->mask.Set(ModelCondition::OVER_WATER);
+		if (index % 3u == 0u)
+			clear->mask.Set(ModelCondition::WEAPONSET_VETERAN);
+		if (index % 4u == 0u)
+			set->mask.Set(ModelCondition::OVER_WATER);
+		if (index % 5u == 0u)
+			set->mask.Set(ModelCondition::WEAPONSET_VETERAN);
+		dirty->value = index % 7u == 0u;
+		entities.push_back(entity);
+	}
+
+	PendingConditionSystem system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+	scheduler.Finalize(engine::time::FixedStep{60});
+	scheduler.Execute(engine::time::SimulationTime{1u, engine::time::FixedStep{60}});
+
+	ecs::Query<ecs::Read<PendingConditionClear>, ecs::Read<PendingConditionSet>,
+		ecs::Read<PendingConditionDirty>> query(world);
+	BOOST_REQUIRE(query.PrepareChunks() > 1u);
+	bool sawMultiRowChunk = false;
+	query.ForEachPreparedChunk([&sawMultiRowChunk](const auto chunk) {
+		const auto clear = chunk.template Get<PendingConditionClear>();
+		const auto set = chunk.template Get<PendingConditionSet>();
+		const auto dirty = chunk.template Get<PendingConditionDirty>();
+		if (chunk.Count() > 1u)
+			sawMultiRowChunk = true;
+		for (std::size_t row = 1; row < chunk.Count(); ++row)
+		{
+			BOOST_CHECK(&clear[row] == clear.data() + row);
+			BOOST_CHECK(&set[row] == set.data() + row);
+			BOOST_CHECK(&dirty[row] == dirty.data() + row);
+		}
+	});
+	BOOST_TEST(sawMultiRowChunk);
+
+	Snapshot result;
+	result.reserve(entityCount);
+	for (const ecs::Entity entity : entities)
+	{
+		const auto *clear = world.Get<PendingConditionClear>(entity);
+		const auto *set = world.Get<PendingConditionSet>(entity);
+		const auto *dirty = world.Get<PendingConditionDirty>(entity);
+		BOOST_REQUIRE(clear != nullptr);
+		BOOST_REQUIRE(set != nullptr);
+		BOOST_REQUIRE(dirty != nullptr);
+		result.push_back(SnapshotEntry{
+			entity, clear->mask.words, set->mask.words, dirty->value});
+	}
+	return result;
+}
+} // namespace pending_conditions_test
+
+BOOST_AUTO_TEST_CASE(pending_condition_components_are_transient_version_one_schemas)
+{
+	BOOST_TEST(ecs::ComponentTraits<PendingConditionClear>::StableName ==
+		"games.generalszh.presentation.model.pending_clear");
+	BOOST_TEST(ecs::ComponentTraits<PendingConditionSet>::StableName ==
+		"games.generalszh.presentation.model.pending_set");
+	BOOST_TEST(ecs::ComponentTraits<PendingConditionDirty>::StableName ==
+		"games.generalszh.presentation.model.pending_dirty");
+	BOOST_TEST(ecs::ComponentTraits<PendingConditionClear>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<PendingConditionSet>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<PendingConditionDirty>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<PendingConditionClear>::Persistence ==
+		ecs::PersistencePolicy::Transient);
+	BOOST_CHECK(ecs::ComponentTraits<PendingConditionSet>::Persistence ==
+		ecs::PersistencePolicy::Transient);
+	BOOST_CHECK(ecs::ComponentTraits<PendingConditionDirty>::Persistence ==
+		ecs::PersistencePolicy::Transient);
+	static_assert(std::is_trivially_copyable_v<PendingConditionClear>);
+	static_assert(std::is_trivially_copyable_v<PendingConditionSet>);
+	static_assert(std::is_trivially_copyable_v<PendingConditionDirty>);
+}
+
+BOOST_AUTO_TEST_CASE(queue_set_preserves_clear_and_marks_dirty)
+{
+	PendingConditionClear clear;
+	PendingConditionSet set;
+	PendingConditionDirty dirty;
+	clear.mask.Set(ModelCondition::OVER_WATER);
+	set.mask.Set(ModelCondition::PACKING);
+	const auto clearBefore = clear.mask.words;
+
+	QueueSet(PendingConditionView{clear, set, dirty}, ModelCondition::OVER_WATER);
+	QueueSet(PendingConditionView{clear, set, dirty}, ModelCondition::WEAPONSET_VETERAN);
+
+	BOOST_CHECK(clear.mask.words == clearBefore);
+	BOOST_CHECK(set.mask.Contains(ModelCondition::PACKING));
+	BOOST_CHECK(set.mask.Contains(ModelCondition::OVER_WATER));
+	BOOST_CHECK(set.mask.Contains(ModelCondition::WEAPONSET_VETERAN));
+	BOOST_TEST(dirty.value);
+}
+
+BOOST_AUTO_TEST_CASE(queue_clear_sets_clear_unsets_set_and_marks_dirty)
+{
+	PendingConditionClear clear;
+	PendingConditionSet set;
+	PendingConditionDirty dirty;
+	clear.mask.Set(ModelCondition::PACKING);
+	set.mask.Set(ModelCondition::OVER_WATER);
+	set.mask.Set(ModelCondition::WEAPONSET_VETERAN);
+
+	QueueClear(PendingConditionView{clear, set, dirty}, ModelCondition::OVER_WATER);
+
+	BOOST_CHECK(clear.mask.Contains(ModelCondition::PACKING));
+	BOOST_CHECK(clear.mask.Contains(ModelCondition::OVER_WATER));
+	BOOST_CHECK(!set.mask.Contains(ModelCondition::OVER_WATER));
+	BOOST_CHECK(set.mask.Contains(ModelCondition::WEAPONSET_VETERAN));
+	BOOST_TEST(dirty.value);
+}
+
+BOOST_AUTO_TEST_CASE(clear_then_set_and_set_then_clear_have_explicit_ordering)
+{
+	PendingConditionClear clear;
+	PendingConditionSet set;
+	PendingConditionDirty dirty;
+	PendingConditionView view{clear, set, dirty};
+
+	QueueClear(view, ModelCondition::OVER_WATER);
+	QueueSet(view, ModelCondition::OVER_WATER);
+	BOOST_CHECK(clear.mask.Contains(ModelCondition::OVER_WATER));
+	BOOST_CHECK(set.mask.Contains(ModelCondition::OVER_WATER));
+
+	ResetPending(view);
+	QueueSet(view, ModelCondition::WEAPONSET_VETERAN);
+	QueueClear(view, ModelCondition::WEAPONSET_VETERAN);
+	BOOST_CHECK(clear.mask.Contains(ModelCondition::WEAPONSET_VETERAN));
+	BOOST_CHECK(!set.mask.Contains(ModelCondition::WEAPONSET_VETERAN));
+	BOOST_TEST(dirty.value);
+}
+
+BOOST_AUTO_TEST_CASE(mark_dirty_is_independent_of_existing_masks_and_reset_restores_empty_state)
+{
+	PendingConditionClear clear;
+	PendingConditionSet set;
+	PendingConditionDirty dirty;
+	PendingConditionView view{clear, set, dirty};
+	clear.mask.Set(ModelCondition::OVER_WATER);
+	set.mask.Set(ModelCondition::WEAPONSET_VETERAN);
+
+	MarkDirty(view);
+	BOOST_CHECK(!clear.mask.Empty());
+	BOOST_CHECK(!set.mask.Empty());
+	BOOST_TEST(dirty.value);
+
+	ResetPending(view);
+	BOOST_CHECK(clear.mask.Empty());
+	BOOST_CHECK(set.mask.Empty());
+	BOOST_TEST(!dirty.value);
+}
+
+BOOST_AUTO_TEST_CASE(soa_pending_mutation_is_deterministic_for_one_two_and_four_workers)
+{
+	const auto oneWorker = pending_conditions_test::RunScheduledMutation(1);
+	const auto twoWorkers = pending_conditions_test::RunScheduledMutation(2);
+	const auto fourWorkers = pending_conditions_test::RunScheduledMutation(4);
+
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+	BOOST_TEST(oneWorker.size() == 4096u);
+	for (std::size_t index = 0; index < oneWorker.size(); ++index)
+	{
+		BOOST_TEST(oneWorker[index].entity.index == index);
+		BOOST_TEST(oneWorker[index].entity.generation == 1u);
+		const auto expected = pending_conditions_test::ExpectedState(index);
+		BOOST_TEST(oneWorker[index].clear[0] == expected.clearWord0);
+		BOOST_TEST(oneWorker[index].clear[1] == expected.clearWord1);
+		BOOST_TEST(oneWorker[index].set[0] == expected.setWord0);
+		BOOST_TEST(oneWorker[index].set[1] == expected.setWord1);
+		BOOST_TEST(oneWorker[index].dirty == true);
+	}
+}

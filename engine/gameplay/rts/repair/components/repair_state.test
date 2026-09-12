@@ -1,0 +1,16 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+import engine.gameplay.rts.repair.components.repair_state;
+BOOST_AUTO_TEST_CASE(repair_enrollment_uses_explicit_time_and_serializable_state)
+{
+    using namespace engine::gameplay::rts::repair;
+    using namespace std::chrono_literals;
+    const auto step=engine::time::FixedStep{30};
+    const std::array authored{RepairDefinition{3,1000,100ms,3s,engine::time::Duration{33333333}}};
+    const RepairDefinitions definitions(step,authored);
+    const auto state=StartRepair(definitions,0,{9,step});
+    BOOST_TEST(state.nextPulse==10u); BOOST_TEST(state.armed); BOOST_TEST(!state.stopped);
+    BOOST_CHECK(ecs::ComponentTraits<RepairState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK_THROW(StartRepair(definitions,0,{0,engine::time::FixedStep{20}}),std::invalid_argument);
+}

@@ -1,0 +1,537 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+#include <string_view>
+
+import engine.ecs.commands.command_buffer;
+
+namespace command_buffer_test
+{
+
+struct Position
+{
+	int value{0};
+};
+
+struct Health
+{
+	int value{0};
+};
+
+struct SameStableNameAsPosition
+{
+	int value{0};
+};
+
+struct Marker
+{
+	int value{0};
+};
+
+struct alignas(64) AlignedComponent
+{
+	int value{0};
+};
+
+struct Tracked
+{
+	static inline int live{0};
+
+	int value{0};
+
+	Tracked()
+	{
+		++live;
+	}
+
+	explicit Tracked(int initialValue) :
+		value(initialValue)
+	{
+		++live;
+	}
+
+	Tracked(const Tracked &other) :
+		value(other.value)
+	{
+		++live;
+	}
+
+	Tracked(Tracked &&other) noexcept :
+		value(other.value)
+	{
+		other.value = -1;
+		++live;
+	}
+
+	~Tracked() noexcept
+	{
+		--live;
+	}
+};
+
+struct NonDefault
+{
+	int value;
+
+	NonDefault() = delete;
+	explicit NonDefault(const int initialValue) : value(initialValue) {}
+	NonDefault(const NonDefault &) = default;
+	NonDefault(NonDefault &&) noexcept = default;
+	~NonDefault() noexcept = default;
+};
+
+struct ThrowingDefault
+{
+	static inline bool throwOnDefault{false};
+
+	int value{0};
+
+	ThrowingDefault()
+	{
+		if (throwOnDefault)
+			throw std::runtime_error("test default construction failure");
+	}
+
+	explicit ThrowingDefault(const int initialValue) : value(initialValue) {}
+	ThrowingDefault(const ThrowingDefault &) = default;
+	ThrowingDefault(ThrowingDefault &&) noexcept = default;
+	~ThrowingDefault() noexcept = default;
+};
+
+} // namespace command_buffer_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<command_buffer_test::Position>
+{
+	static constexpr std::string_view StableName = "tests.commands.position";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::Health>
+{
+	static constexpr std::string_view StableName = "tests.commands.health";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::SameStableNameAsPosition>
+{
+	static constexpr std::string_view StableName = "tests.commands.position";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::Marker>
+{
+	static constexpr std::string_view StableName = "tests.commands.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::AlignedComponent>
+{
+	static constexpr std::string_view StableName = "tests.commands.aligned";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::Tracked>
+{
+	static constexpr std::string_view StableName = "tests.commands.tracked";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::NonDefault>
+{
+	static constexpr std::string_view StableName = "tests.commands.non_default";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<>
+struct ComponentTraits<command_buffer_test::ThrowingDefault>
+{
+	static constexpr std::string_view StableName = "tests.commands.throwing_default";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+namespace
+{
+
+void RegisterCommandComponents(ecs::World &world)
+{
+	world.RegisterComponent<command_buffer_test::Position>();
+	world.RegisterComponent<command_buffer_test::Health>();
+	world.RegisterComponent<command_buffer_test::Marker>();
+	world.RegisterComponent<command_buffer_test::AlignedComponent>();
+	world.RegisterComponent<command_buffer_test::Tracked>();
+	world.RegisterComponent<command_buffer_test::NonDefault>();
+	world.RegisterComponent<command_buffer_test::ThrowingDefault>();
+	world.FinalizeComponents();
+}
+
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(ecs_command_buffer)
+
+BOOST_AUTO_TEST_CASE(deferred_create_is_invisible_until_commit)
+{
+	ecs::World world;
+	ecs::CommandBuffer commands;
+	const ecs::DeferredEntity temporary = commands.Create();
+
+	BOOST_TEST(temporary.IsValid());
+	BOOST_TEST(world.EntityCount() == 0);
+	BOOST_CHECK_THROW(static_cast<void>(commands.Resolve(temporary)), std::logic_error);
+	BOOST_CHECK_THROW(world.Commit(commands), std::logic_error);
+	BOOST_TEST(!world.ComponentsFinalized());
+
+	world.FinalizeComponents();
+	world.Commit(commands);
+	const ecs::Entity entity = commands.Resolve(temporary);
+	BOOST_TEST(entity.IsValid());
+	BOOST_TEST(world.IsAlive(entity));
+	BOOST_TEST(world.EntityCount() == 1);
+	BOOST_TEST(commands.Empty());
+	BOOST_CHECK(commands.State() == ecs::CommandBufferState::Consumed);
+}
+
+BOOST_AUTO_TEST_CASE(command_buffer_destruction_does_not_commit)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	{
+		ecs::CommandBuffer commands;
+		commands.Create();
+		BOOST_TEST(world.EntityCount() == 0);
+	}
+	BOOST_TEST(world.EntityCount() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(deferred_create_can_receive_components_before_commit)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	ecs::CommandBuffer commands;
+	const ecs::DeferredEntity temporary = commands.Create();
+	commands.Add<command_buffer_test::Position>(temporary, command_buffer_test::Position{42});
+	commands.Add<command_buffer_test::Health>(temporary, command_buffer_test::Health{7});
+
+	world.Commit(commands);
+	const ecs::Entity entity = commands.Resolve(temporary);
+	BOOST_TEST(world.Get<command_buffer_test::Position>(entity)->value == 42);
+	BOOST_TEST(world.Get<command_buffer_test::Health>(entity)->value == 7);
+}
+
+BOOST_AUTO_TEST_CASE(structural_commands_require_the_exact_registered_cpp_type)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+
+	// Same stable key as Position, but this is intentionally not registered.
+	ecs::CommandBuffer addCommands;
+	addCommands.Add<command_buffer_test::SameStableNameAsPosition>(
+		entity, command_buffer_test::SameStableNameAsPosition{7});
+	BOOST_CHECK_THROW(world.Commit(addCommands), std::logic_error);
+	BOOST_CHECK(addCommands.State() == ecs::CommandBufferState::Failed);
+	BOOST_TEST(world.Get<command_buffer_test::Position>(entity) != nullptr);
+
+	ecs::CommandBuffer removeCommands;
+	removeCommands.Remove<command_buffer_test::SameStableNameAsPosition>(entity);
+	BOOST_CHECK_THROW(world.Commit(removeCommands), std::logic_error);
+	BOOST_CHECK(removeCommands.State() == ecs::CommandBufferState::Failed);
+	BOOST_TEST(world.Get<command_buffer_test::Position>(entity) != nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(destruction_is_deferred_until_commit)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+	ecs::CommandBuffer commands;
+	commands.Destroy(entity);
+
+	BOOST_TEST(world.IsAlive(entity));
+	world.Commit(commands);
+	BOOST_TEST(!world.IsAlive(entity));
+}
+
+BOOST_AUTO_TEST_CASE(add_and_remove_reuse_archetype_transitions)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+	world.Get<command_buffer_test::Position>(entity)->value = 11;
+
+	ecs::CommandBuffer addCommands;
+	addCommands.Add<command_buffer_test::Health>(entity, command_buffer_test::Health{9});
+	BOOST_TEST(world.Get<command_buffer_test::Health>(entity) == nullptr);
+	world.Commit(addCommands);
+	BOOST_TEST(world.Get<command_buffer_test::Position>(entity)->value == 11);
+	BOOST_TEST(world.Get<command_buffer_test::Health>(entity)->value == 9);
+
+	ecs::CommandBuffer removeCommands;
+	removeCommands.Remove<command_buffer_test::Position>(entity);
+	world.Commit(removeCommands);
+	BOOST_TEST(world.Get<command_buffer_test::Position>(entity) == nullptr);
+	BOOST_TEST(world.Get<command_buffer_test::Health>(entity)->value == 9);
+}
+
+BOOST_AUTO_TEST_CASE(commands_execute_in_recorded_order)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+
+	ecs::CommandBuffer commands;
+	commands.Add<command_buffer_test::Health>(entity, command_buffer_test::Health{1});
+	commands.Remove<command_buffer_test::Health>(entity);
+	commands.Add<command_buffer_test::Health>(entity, command_buffer_test::Health{3});
+	world.Commit(commands);
+
+	BOOST_TEST(world.Get<command_buffer_test::Health>(entity)->value == 3);
+}
+
+BOOST_AUTO_TEST_CASE(create_add_remove_and_destroy_follow_sequence_semantics)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	ecs::CommandBuffer commands;
+	const ecs::DeferredEntity temporary = commands.Create();
+	commands.Add<command_buffer_test::Marker>(temporary, command_buffer_test::Marker{1});
+	commands.Remove<command_buffer_test::Marker>(temporary);
+	commands.Add<command_buffer_test::Marker>(temporary, command_buffer_test::Marker{2});
+	commands.Destroy(temporary);
+	commands.Add<command_buffer_test::Health>(temporary, command_buffer_test::Health{99});
+
+	world.Commit(commands);
+	const ecs::Entity entity = commands.Resolve(temporary);
+	BOOST_TEST(!world.IsAlive(entity));
+	BOOST_TEST(world.EntityCount() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(stale_entity_commands_are_deterministic_no_ops)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity stale = world.Create<command_buffer_test::Position>();
+	BOOST_TEST(world.Destroy(stale));
+	const ecs::Entity replacement = world.Create<command_buffer_test::Position>();
+	BOOST_TEST(replacement.index == stale.index);
+	BOOST_TEST(replacement.generation != stale.generation);
+
+	ecs::CommandBuffer commands;
+	commands.Add<command_buffer_test::Health>(stale, command_buffer_test::Health{5});
+	commands.Remove<command_buffer_test::Position>(stale);
+	commands.Destroy(stale);
+	world.Commit(commands);
+
+	BOOST_TEST(world.IsAlive(replacement));
+	BOOST_TEST(world.Get<command_buffer_test::Position>(replacement) != nullptr);
+	BOOST_TEST(world.Get<command_buffer_test::Health>(replacement) == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(worker_buffer_order_is_canonical_and_duplicate_order_is_rejected)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+
+	ecs::CommandBuffer later{ecs::CommandBufferOrder{0, 2, 0, 0}};
+	later.Add<command_buffer_test::Health>(entity, command_buffer_test::Health{2});
+	ecs::CommandBuffer earlier{ecs::CommandBufferOrder{0, 1, 0, 0}};
+	earlier.Add<command_buffer_test::Health>(entity, command_buffer_test::Health{1});
+	std::array<ecs::CommandBuffer *, 2> buffers{&later, &earlier};
+	world.Commit(buffers);
+	BOOST_TEST(world.Get<command_buffer_test::Health>(entity)->value == 1);
+
+	ecs::CommandBuffer duplicateA{ecs::CommandBufferOrder{1, 0, 0, 0}};
+	ecs::CommandBuffer duplicateB{ecs::CommandBufferOrder{1, 0, 0, 0}};
+	duplicateA.Destroy(entity);
+	duplicateB.Destroy(entity);
+	std::array<ecs::CommandBuffer *, 2> duplicateBuffers{&duplicateA, &duplicateB};
+	BOOST_CHECK_THROW(world.Commit(duplicateBuffers), std::logic_error);
+	BOOST_TEST(world.IsAlive(entity));
+}
+
+BOOST_AUTO_TEST_CASE(deferred_handles_are_buffer_and_epoch_scoped)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	ecs::CommandBuffer first;
+	const ecs::DeferredEntity temporary = first.Create();
+	ecs::CommandBuffer second;
+	second.Create();
+
+	BOOST_CHECK_THROW(second.Destroy(temporary), std::logic_error);
+	BOOST_CHECK_THROW(static_cast<void>(first.Resolve(temporary)), std::logic_error);
+
+	world.Commit(first);
+	BOOST_TEST(first.Resolve(temporary).IsValid());
+	BOOST_CHECK_THROW(first.Destroy(temporary), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(non_trivial_payloads_are_constructed_moved_and_destroyed)
+{
+	command_buffer_test::Tracked::live = 0;
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+	command_buffer_test::Tracked value{42};
+	BOOST_TEST(command_buffer_test::Tracked::live == 1);
+
+	{
+		ecs::CommandBuffer commands;
+		commands.Add<command_buffer_test::Tracked>(entity, value);
+		BOOST_TEST(command_buffer_test::Tracked::live == 2);
+		world.Commit(commands);
+		BOOST_TEST(command_buffer_test::Tracked::live == 2);
+		BOOST_TEST(world.Get<command_buffer_test::Tracked>(entity)->value == 42);
+	}
+
+	BOOST_TEST(world.Destroy(entity));
+	BOOST_TEST(command_buffer_test::Tracked::live == 1);
+}
+
+BOOST_AUTO_TEST_CASE(failed_playback_consumes_the_buffer_and_cleans_payloads)
+{
+	command_buffer_test::Tracked::live = 0;
+	command_buffer_test::ThrowingDefault::throwOnDefault = false;
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+
+	{
+		command_buffer_test::Tracked value{42};
+		ecs::CommandBuffer commands;
+		commands.Add<command_buffer_test::Tracked>(entity, value);
+		commands.Add<command_buffer_test::ThrowingDefault>(entity);
+		command_buffer_test::ThrowingDefault::throwOnDefault = true;
+
+		BOOST_CHECK_THROW(world.Commit(commands), std::runtime_error);
+		command_buffer_test::ThrowingDefault::throwOnDefault = false;
+		BOOST_CHECK(commands.State() == ecs::CommandBufferState::Failed);
+		BOOST_TEST(commands.Empty());
+		BOOST_TEST(world.Get<command_buffer_test::Tracked>(entity)->value == 42);
+		const std::size_t entityCountAfterFailure = world.EntityCount();
+		BOOST_CHECK_THROW(world.Commit(commands), std::logic_error);
+		BOOST_TEST(world.EntityCount() == entityCountAfterFailure);
+		BOOST_TEST(command_buffer_test::Tracked::live == 2);
+		BOOST_TEST(world.Destroy(entity));
+	}
+
+	BOOST_TEST(command_buffer_test::Tracked::live == 0);
+}
+
+BOOST_AUTO_TEST_CASE(failed_playback_invalidates_deferred_handles)
+{
+	command_buffer_test::ThrowingDefault::throwOnDefault = false;
+	ecs::World world;
+	RegisterCommandComponents(world);
+	ecs::CommandBuffer commands;
+	const ecs::DeferredEntity temporary = commands.Create();
+	commands.Add<command_buffer_test::ThrowingDefault>(temporary);
+	command_buffer_test::ThrowingDefault::throwOnDefault = true;
+
+	BOOST_CHECK_THROW(world.Commit(commands), std::runtime_error);
+	command_buffer_test::ThrowingDefault::throwOnDefault = false;
+	BOOST_CHECK(commands.State() == ecs::CommandBufferState::Failed);
+	BOOST_CHECK_THROW(static_cast<void>(commands.Resolve(temporary)), std::logic_error);
+	BOOST_CHECK_THROW(world.Commit(commands), std::logic_error);
+	BOOST_TEST(world.EntityCount() == 1);
+
+	const auto archetypes = world.GetArchetypes();
+	BOOST_REQUIRE(!archetypes.empty());
+	BOOST_REQUIRE(!archetypes.front()->Chunks().empty());
+	const ecs::Entity partiallyCreated = archetypes.front()->Chunks().front()->Entities()[0];
+	BOOST_TEST(world.Destroy(partiallyCreated));
+}
+
+BOOST_AUTO_TEST_CASE(non_default_constructible_components_support_explicit_value_addition)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	BOOST_CHECK_THROW(world.Create<command_buffer_test::NonDefault>(), std::logic_error);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+
+	ecs::CommandBuffer commands;
+	commands.Add<command_buffer_test::NonDefault>(entity, command_buffer_test::NonDefault{27});
+	world.Commit(commands);
+
+	BOOST_TEST(world.Get<command_buffer_test::NonDefault>(entity)->value == 27);
+}
+
+BOOST_AUTO_TEST_CASE(aligned_payloads_reach_aligned_component_columns)
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	const ecs::Entity entity = world.Create<command_buffer_test::Position>();
+	ecs::CommandBuffer commands;
+	commands.Add<command_buffer_test::AlignedComponent>(entity, command_buffer_test::AlignedComponent{64});
+	world.Commit(commands);
+
+	const command_buffer_test::AlignedComponent *aligned = world.Get<command_buffer_test::AlignedComponent>(entity);
+	BOOST_TEST(reinterpret_cast<std::uintptr_t>(aligned) % alignof(command_buffer_test::AlignedComponent) == 0);
+	BOOST_TEST(aligned->value == 64);
+}
+
+struct ReplayState
+{
+	std::size_t entityCount{0};
+	std::size_t archetypeCount{0};
+	int position{0};
+	int health{0};
+	bool alive{false};
+};
+
+ReplayState RunCommandSequence()
+{
+	ecs::World world;
+	RegisterCommandComponents(world);
+	ecs::CommandBuffer commands;
+	const ecs::DeferredEntity temporary = commands.Create();
+	commands.Add<command_buffer_test::Position>(temporary, command_buffer_test::Position{10});
+	commands.Add<command_buffer_test::Health>(temporary, command_buffer_test::Health{20});
+	commands.Remove<command_buffer_test::Position>(temporary);
+	commands.Add<command_buffer_test::Position>(temporary, command_buffer_test::Position{30});
+	world.Commit(commands);
+
+	const ecs::Entity entity = commands.Resolve(temporary);
+	return ReplayState{
+		world.EntityCount(),
+		world.ArchetypeCount(),
+		world.Get<command_buffer_test::Position>(entity)->value,
+		world.Get<command_buffer_test::Health>(entity)->value,
+		world.IsAlive(entity)};
+}
+
+BOOST_AUTO_TEST_CASE(replaying_a_command_sequence_produces_identical_state)
+{
+	const ReplayState first = RunCommandSequence();
+	const ReplayState second = RunCommandSequence();
+
+	BOOST_TEST(first.entityCount == second.entityCount);
+	BOOST_TEST(first.archetypeCount == second.archetypeCount);
+	BOOST_TEST(first.position == second.position);
+	BOOST_TEST(first.health == second.health);
+	BOOST_TEST(first.alive == second.alive);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

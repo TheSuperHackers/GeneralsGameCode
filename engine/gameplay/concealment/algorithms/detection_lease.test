@@ -1,0 +1,15 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+import engine.gameplay.concealment.algorithms.detection_lease;
+
+BOOST_AUTO_TEST_CASE(detection_lease_matches_global_update_rate_plus_one_expiry)
+{
+    using namespace engine::gameplay::concealment;
+    BOOST_TEST(DetectionLeaseDeadline(10, 3) == 14u);
+    BOOST_TEST(IsDetected(13, 14));
+    BOOST_TEST(!IsDetected(14, 14));
+    BOOST_TEST(ExtendDetectionLease(20, 10, 3) == 20u);
+    BOOST_CHECK_THROW(DetectionLeaseDeadline((std::numeric_limits<std::uint64_t>::max)(), 0), std::overflow_error);
+}

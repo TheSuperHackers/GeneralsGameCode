@@ -1,0 +1,99 @@
+#define BOOST_TEST_MODULE EngineJobsTests
+#include <boost/test/included/unit_test.hpp>
+
+#include <atomic>
+#include <barrier>
+#include <cstddef>
+#include <mutex>
+#include <stdexcept>
+#include <thread>
+#include <unordered_set>
+#include <vector>
+
+import engine.jobs.job_system;
+
+namespace
+{
+
+struct BatchContext
+{
+	std::atomic<std::size_t> completed{0};
+	std::barrier<> started{2};
+	std::mutex mutex;
+	std::unordered_set<std::thread::id> workers;
+};
+
+void RunBatchJob(void *rawContext)
+{
+	BatchContext &context = *static_cast<BatchContext *>(rawContext);
+	{
+		std::lock_guard lock(context.mutex);
+		context.workers.insert(std::this_thread::get_id());
+	}
+	context.started.arrive_and_wait();
+	context.completed.fetch_add(1, std::memory_order_relaxed);
+}
+
+struct CountContext
+{
+	std::atomic<std::size_t> completed{0};
+};
+
+void RunCountJob(void *rawContext)
+{
+	static_cast<CountContext *>(rawContext)->completed.fetch_add(1, std::memory_order_relaxed);
+}
+
+void ThrowJob(void *)
+{
+	throw std::runtime_error("test job failure");
+}
+
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(engine_jobs)
+
+BOOST_AUTO_TEST_CASE(batch_uses_persistent_workers_and_explicit_barrier)
+{
+	engine::jobs::JobSystem jobs(engine::jobs::JobSystemConfig{2});
+	BatchContext context;
+	engine::jobs::Job batch[] = {
+		{&RunBatchJob, &context},
+		{&RunBatchJob, &context}};
+
+	jobs.Execute(batch);
+
+	BOOST_TEST(jobs.WorkerCount() == 2);
+	BOOST_TEST(context.completed.load() == 2);
+	BOOST_TEST(context.workers.size() == 2);
+}
+
+BOOST_AUTO_TEST_CASE(batches_can_be_reused_without_creating_threads_per_batch)
+{
+	engine::jobs::JobSystem jobs(engine::jobs::JobSystemConfig{2});
+	CountContext context;
+	engine::jobs::Job batch[] = {{&RunCountJob, &context}};
+
+	jobs.Execute(batch);
+	jobs.Execute(batch);
+
+	BOOST_TEST(context.completed.load() == 2);
+	jobs.Shutdown();
+	BOOST_CHECK_NO_THROW(jobs.Shutdown());
+}
+
+BOOST_AUTO_TEST_CASE(job_failure_is_reported_and_workers_remain_usable_until_shutdown)
+{
+	engine::jobs::JobSystem jobs(engine::jobs::JobSystemConfig{2});
+	engine::jobs::Job failing[] = {{&ThrowJob, nullptr}};
+	BOOST_CHECK_THROW(jobs.Execute(failing), std::runtime_error);
+
+	CountContext context;
+	engine::jobs::Job succeeding[] = {{&RunCountJob, &context}};
+	BOOST_CHECK_NO_THROW(jobs.Execute(succeeding));
+	BOOST_TEST(context.completed.load() == 1);
+	jobs.Shutdown();
+	BOOST_CHECK_THROW(jobs.Execute(succeeding), std::logic_error);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

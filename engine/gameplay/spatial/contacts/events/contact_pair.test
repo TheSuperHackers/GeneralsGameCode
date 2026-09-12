@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.spatial.contacts.events.contact_pair;
+
+namespace c = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(pair_identity_is_canonical_over_full_entity_handles)
+{
+	const ecs::Entity low{2, 7}, high{8, 1};
+	BOOST_CHECK((c::CanonicalPair(high, low) == c::ContactPair{low, high}));
+	BOOST_TEST(c::IsCanonical(c::CanonicalPair(high, low)));
+	BOOST_TEST(engine::events::MessageTraits<c::ContactPair>::Version == 1u);
+}

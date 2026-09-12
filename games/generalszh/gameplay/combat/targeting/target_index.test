@@ -1,0 +1,48 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.combat.targeting.target_index;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.concealment.components.concealment_state;
+
+BOOST_AUTO_TEST_CASE(target_snapshot_is_rebuilt_from_live_ecs_ownership)
+{
+    using namespace engine::gameplay;
+    const std::array<std::uint8_t, 2> cells{1,1};
+    navigation::NavigationGrid grid(2,1,cells);
+    ecs::World world;
+    world.RegisterComponent<combat::Health>(); world.RegisterComponent<combat::LifeState>();
+    world.RegisterComponent<navigation::GridPosition>(); world.RegisterComponent<generalszh::production::ProducedUnit>();
+    world.RegisterComponent<generalszh::production::Producer>(); world.RegisterComponent<generalszh::construction::Structure>();
+    world.RegisterComponent<containment::PassengerMembership>();
+    world.RegisterComponent<engine::gameplay::concealment::ConcealmentState>();
+    world.FinalizeComponents();
+    const auto account=world.Create();
+    const auto enemyAccount=world.Create();
+    const auto actor=world.Create<combat::Health,combat::LifeState,navigation::GridPosition,generalszh::production::ProducedUnit>();
+    const auto target=world.Create<combat::Health,combat::LifeState,navigation::GridPosition,generalszh::production::ProducedUnit>();
+    world.Get<generalszh::production::ProducedUnit>(actor)->account=account;
+    world.Get<generalszh::production::ProducedUnit>(target)->account=enemyAccount;
+    world.Get<navigation::GridPosition>(target)->cell=1;
+    generalszh::combat::TargetIndex index(world,grid,16);
+    const auto &frame=index.Frame();
+    index.Rebuild(0);
+    BOOST_TEST(frame.Contains(actor)); BOOST_CHECK(frame.Owner(actor)==account);
+    BOOST_CHECK(frame.CanTarget(actor,target));
+    world.Get<generalszh::production::ProducedUnit>(target)->account=account;
+    index.Rebuild(1); BOOST_CHECK(!frame.CanTarget(actor,target));
+    world.Get<generalszh::production::ProducedUnit>(target)->account=enemyAccount;
+    index.Rebuild(2); BOOST_CHECK(frame.CanTarget(actor,target));
+    world.Add<containment::PassengerMembership>(actor);
+    world.Get<containment::PassengerMembership>(actor)->phase=containment::ContainmentPhase::Inside;
+    world.Get<containment::PassengerMembership>(actor)->owner=containment::PassengerContainmentOwner::Transport;
+    index.Rebuild(3); BOOST_TEST(!frame.Contains(actor));
+    world.Get<containment::PassengerMembership>(actor)->owner=containment::PassengerContainmentOwner::Garrison;
+    world.Get<containment::PassengerMembership>(actor)->combat=containment::PassengerCombatPolicy::Allowed;
+    index.Rebuild(3); BOOST_TEST(frame.Contains(actor)); BOOST_CHECK(frame.CanTarget(actor,target));
+    BOOST_CHECK(!frame.CanTarget(target,actor));
+    *world.Get<containment::PassengerMembership>(actor)={}; index.Rebuild(4); BOOST_TEST(frame.Contains(actor));
+    world.Get<combat::LifeState>(actor)->alive=false;
+    index.Rebuild(5); BOOST_TEST(!frame.Contains(actor));
+    world.Get<combat::LifeState>(actor)->alive=true; world.Destroy(account);
+    index.Rebuild(6); BOOST_TEST(!frame.Contains(actor));
+}

@@ -1,0 +1,29 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+
+import engine.gameplay.rts.ai.squads.algorithms.squad_anchor;
+
+BOOST_AUTO_TEST_CASE(anchor_selection_is_deterministic_and_ignores_invalid_candidates)
+{
+	using namespace engine::gameplay::rts::ai::squads;
+	const std::array candidates{
+		SquadAnchorCandidate{{9, 2}, 4},
+		SquadAnchorCandidate{{2, 7}, 3},
+		SquadAnchorCandidate{{}, 1},
+		SquadAnchorCandidate{{4, 1}, engine::gameplay::navigation::InvalidCell}};
+	const auto anchor = SelectSquadAnchor(candidates);
+	BOOST_REQUIRE(anchor.has_value());
+	BOOST_TEST(anchor->actor.index == 2u);
+	BOOST_TEST(anchor->actor.generation == 7u);
+	BOOST_TEST(anchor->position == 3u);
+}
+
+BOOST_AUTO_TEST_CASE(anchor_tie_breaks_same_index_by_generation)
+{
+	using namespace engine::gameplay::rts::ai::squads;
+	const std::array candidates{
+		SquadAnchorCandidate{{4, 8}, 2}, SquadAnchorCandidate{{4, 3}, 6}};
+	const auto anchor = SelectSquadAnchor(candidates);
+	BOOST_REQUIRE(anchor.has_value());
+	BOOST_CHECK(anchor->actor == (ecs::Entity{4, 3}));
+}

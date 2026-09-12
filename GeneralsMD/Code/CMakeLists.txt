@@ -1,4 +1,6 @@
 # z stands for Zero Hour, i stands for Interface
+cmake_minimum_required(VERSION 4.4.3)
+
 add_library(zi_gameengine_include INTERFACE)
 add_library(zi_libraries_source_wwvegas INTERFACE)
 add_library(zi_main INTERFACE)
@@ -25,6 +27,12 @@ target_link_libraries(zi_always INTERFACE
 target_link_libraries(zi_always_no_pch INTERFACE
     corei_always_no_pch # Must stay below so headers from game are included first
 )
+
+# The supported GeneralsMD toolchain uses CMake 4 and supports C++ modules.
+set(ENGINE_JOBS_BUILD_TESTS ${RTS_BUILD_ZEROHOUR_EXTRAS})
+add_subdirectory("${CMAKE_SOURCE_DIR}/engine/jobs" "${CMAKE_CURRENT_BINARY_DIR}/engine_jobs")
+set(ENGINE_ECS_BUILD_TESTS ${RTS_BUILD_ZEROHOUR_EXTRAS})
+add_subdirectory("${CMAKE_SOURCE_DIR}/engine/ecs" "${CMAKE_CURRENT_BINARY_DIR}/engine_ecs")
 
 # Contains internal libraries
 add_subdirectory(Libraries)

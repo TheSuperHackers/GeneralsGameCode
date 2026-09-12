@@ -1,0 +1,11 @@
+#define BOOST_TEST_MODULE RTSHarvesting
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+import engine.gameplay.rts.harvesting.components.harvest_state;
+using namespace engine::gameplay::rts::harvesting;
+BOOST_AUTO_TEST_CASE(harvest_typed_duration_rounds_up_and_rejects_invalid_configuration) {
+    auto policy=MakeHarvestPolicy({4,std::chrono::milliseconds{1000},std::chrono::milliseconds{400}},engine::time::FixedStep{30});
+    BOOST_TEST(policy.capacity==4u); BOOST_TEST(policy.pickupTicks==30u); BOOST_TEST(policy.unloadTicks==12u);
+    BOOST_CHECK_THROW(MakeHarvestPolicy({0,{},{}},engine::time::FixedStep{30}),std::invalid_argument);
+    BOOST_CHECK_THROW(MakeHarvestPolicy({1,std::chrono::milliseconds{-1},{}},engine::time::FixedStep{30}),std::invalid_argument);
+}

@@ -1,0 +1,58 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsVisibility
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+
+import engine.gameplay.rts.visibility.algorithms.visibility_page_capacity;
+
+using namespace engine::gameplay::rts::visibility;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_page_capacity)
+
+BOOST_AUTO_TEST_CASE(lease_capacity_includes_the_exclusive_expiry_tick)
+{
+	const VisibilityPageCapacity capacity{
+		4096, 100, 100, 262'144, 151, 4};
+	const auto budget = CalculateVisibilityPageBudget(capacity, 150);
+	BOOST_TEST(budget.leaseRecordCapacity == 151u * 4u * (150u + 1u));
+	BOOST_TEST(budget.cellPageCount == 1024u);
+	BOOST_TEST(budget.historyPageCount == 1u);
+	BOOST_TEST(budget.leasePageCount == CeilingDivide(budget.leaseRecordCapacity, VisibilityPageLanes));
+	BOOST_TEST(budget.requiredEntityIndexCapacity == capacity.maximumGameplayEntities +
+		capacity.reservedEntityCapacity + budget.visibilityPageEntityCount);
+}
+
+BOOST_AUTO_TEST_CASE(total_entity_index_budget_is_checked_before_page_creation)
+{
+	const VisibilityPageCapacity capacity{10, 4, 4, 256, 4, 1};
+	BOOST_CHECK_THROW(CalculateVisibilityPageBudget(capacity, 0), std::length_error);
+	const VisibilityPageCapacity invalidBase{7, 8, 0, 1, 1, 1};
+	BOOST_CHECK_THROW(CalculateVisibilityPageBudget(invalidBase, 0), std::length_error);
+}
+
+BOOST_AUTO_TEST_CASE(session_fit_accounts_for_pages_and_gameplay_in_one_budget)
+{
+	const auto session = FitVisibilitySessionBudget(4096, 257, 32, 3, 150, 2);
+	BOOST_TEST(session.capacity.maximumObserverEntities > 0u);
+	BOOST_TEST(session.capacity.maximumGameplayEntities > 0u);
+	BOOST_TEST(session.pages.requiredEntityIndexCapacity == std::size_t{4096});
+	BOOST_TEST(session.capacity.maximumGameplayEntities + session.capacity.reservedEntityCapacity +
+		session.pages.visibilityPageEntityCount == std::size_t{4096});
+}
+
+BOOST_AUTO_TEST_CASE(arithmetic_overflow_is_not_wrapped)
+{
+	const VisibilityPageCapacity capacity{
+		(std::numeric_limits<std::size_t>::max)(),
+		0,
+		0,
+		1,
+		(std::numeric_limits<std::size_t>::max)(),
+		(std::numeric_limits<std::size_t>::max)()};
+	BOOST_CHECK_THROW(CalculateVisibilityPageBudget(capacity, 1), std::overflow_error);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

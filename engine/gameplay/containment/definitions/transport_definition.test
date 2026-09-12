@@ -1,0 +1,17 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+import engine.gameplay.containment.definitions.transport_definition;
+using namespace engine::gameplay::containment;
+BOOST_AUTO_TEST_CASE(transport_definitions_validate_and_quantize_once)
+{
+    using namespace std::chrono_literals;
+    const std::array authored{TransportDefinition{5,250ms,1,10}};
+    const TransportDefinitions definitions(engine::time::FixedStep{30},authored);
+    const auto &entry=definitions.Get(0);BOOST_TEST(entry.slots==5u);BOOST_TEST(entry.exitTicks==8u);
+    BOOST_TEST(PassengerDeathDamage(1000,entry)==100u);
+    BOOST_TEST(PassengerDeathDamage(UINT64_MAX,entry)==UINT64_MAX/10);
+    BOOST_CHECK_THROW(ContainmentDeadline(UINT64_MAX,1),std::overflow_error);
+    const std::array invalid{TransportDefinition{5,0ms,2,1}};
+    BOOST_CHECK_THROW((TransportDefinitions{engine::time::FixedStep{30},invalid}),std::invalid_argument);
+}

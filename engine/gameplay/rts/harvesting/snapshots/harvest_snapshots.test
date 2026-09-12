@@ -1,0 +1,12 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.harvesting.snapshots.harvest_snapshots;
+using namespace engine::gameplay::rts::harvesting;
+BOOST_AUTO_TEST_CASE(harvest_sparse_snapshots_reject_stale_generations_and_bound_capacity) {
+    HarvestSnapshots snapshots(1);
+    AppendHarvestDock(snapshots.sources,{{4000000000u,2},0,true},snapshots.capacity);
+    BOOST_CHECK(FindHarvestDock(snapshots.sources,{4000000000u,1})==nullptr);
+    BOOST_REQUIRE(FindHarvestDock(snapshots.sources,{4000000000u,2})!=nullptr);
+    BOOST_CHECK_THROW(AppendHarvestDock(snapshots.sources,{{1,1},0,true},snapshots.capacity),std::length_error);
+    HarvestState state{{1,1},{2,1},HarvestPhase::Pickup,20};
+    CancelHarvest(state); BOOST_CHECK(state.phase==HarvestPhase::Idle); BOOST_TEST(state.remaining==0u);
+}

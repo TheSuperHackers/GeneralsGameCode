@@ -1,0 +1,296 @@
+#include <boost/test/unit_test.hpp>
+#include <chrono>
+#include <limits>
+#include <stdexcept>
+#include <array>
+#include <vector>
+import engine.gameplay.combat.systems.weapon_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+namespace
+{
+std::size_t ProjectileCount(ecs::World &world)
+{
+    ecs::Query<ecs::Read<ProjectileImpact>> projectiles(world); std::size_t count=0;
+    projectiles.ForEachChunk([&](auto chunk) { count+=chunk.Count(); });
+    return count;
+}
+}
+BOOST_AUTO_TEST_CASE(unlimited_ammunition_has_no_counter_depletion_or_reload_and_is_worker_deterministic)
+{
+    using namespace std::chrono_literals;
+    const engine::time::FixedStep step{20};
+    WeaponConfig config{10,4,0,100ms,200ms,50ms,true,AmmunitionPolicy::Unlimited};
+    const auto definition=AuthorWeapon(config,step);
+    BOOST_CHECK(definition.ammunition==AmmunitionPolicy::Unlimited); BOOST_TEST(definition.clipSize==0u);
+    config.ammunition=AmmunitionPolicy::Limited; BOOST_CHECK_THROW(AuthorWeapon(config,step),std::invalid_argument);
+    config.ammunition=static_cast<AmmunitionPolicy>(255); BOOST_CHECK_THROW(AuthorWeapon(config,step),std::invalid_argument);
+    const auto run=[&](std::size_t workers) {
+        ecs::World world;
+        world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>(); world.RegisterComponent<WeaponState>();
+        world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>(); world.RegisterComponent<ProjectileImpact>();
+        world.RegisterComponent<ImpactDue>(); world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+        std::vector<ecs::Entity> actors;
+        for(unsigned i=0;i<600;++i) {
+            const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>(); actors.push_back(actor);
+            *world.Get<WeaponDefinition>(actor)=definition;
+            *world.Get<WeaponTarget>(actor)=WeaponTarget::ForEntity(ecs::Entity{600,1});
+            *world.Get<WeaponContact>(actor)={true,true};
+        }
+        WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers}); scheduler.Finalize(step);
+        for(std::uint64_t tick=0;tick<7;++tick) scheduler.Execute({tick,step}); // Four shots despite an empty counter.
+        for(auto actor:actors) {
+            BOOST_TEST(world.Get<WeaponState>(actor)->ammo==0u); BOOST_TEST(!world.Get<WeaponState>(actor)->reloading);
+            BOOST_TEST(world.Get<WeaponState>(actor)->readyTick==8u); world.Get<LifeState>(actor)->alive=false;
+        }
+        scheduler.Execute({8,step});
+        std::vector<std::array<std::uint64_t,6>> result; std::size_t chunks=0;
+        ecs::Query<ecs::Read<ProjectileImpact>> impacts(world);
+        impacts.ForEachChunk([&](auto chunk) {
+            ++chunks; const auto data=chunk.template Get<ProjectileImpact>();
+            for(std::size_t i=0;i<chunk.Count();++i) result.push_back({chunk.Entities()[i].index,chunk.Entities()[i].generation,
+                data[i].source.index,data[i].damage,data[i].launchTick,data[i].arrivalTick});
+        });
+        BOOST_TEST(chunks>1u); BOOST_TEST(result.size()==2400u); return result;
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(primary_radius_larger_than_secondary_radius_uses_source_max_search_contract)
+{
+    using namespace std::chrono_literals;
+    WeaponConfig config{10,4,2,100ms,200ms,50ms,true,AmmunitionPolicy::Limited};
+    config.secondaryDamage=5; config.primaryRadiusCells=4; config.secondaryRadiusCells=2;
+    const auto definition=AuthorWeapon(config,engine::time::FixedStep{20});
+    BOOST_TEST(definition.damage==10u); BOOST_TEST(definition.secondaryDamage==5u);
+    BOOST_TEST(definition.primaryRadiusCells==4u); BOOST_TEST(definition.secondaryRadiusCells==2u);
+}
+BOOST_AUTO_TEST_CASE(weapon_clip_interval_and_reload_use_explicit_ticks)
+{
+    using namespace std::chrono_literals;
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>(); world.RegisterComponent<WeaponState>();
+    world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>(); world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+    const auto actor = world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+    const engine::time::FixedStep step{20};
+    *world.Get<WeaponDefinition>(actor) = AuthorWeapon({10,4,2,100ms,200ms,50ms,true},step);
+    *world.Get<WeaponState>(actor) = {0,2,false}; *world.Get<WeaponTarget>(actor)=WeaponTarget::ForEntity(ecs::Entity{9,1});
+    *world.Get<WeaponContact>(actor) = {true,true};
+    WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo == 1u);
+    BOOST_TEST(world.Get<WeaponState>(actor)->lastFireTickValid);
+    BOOST_TEST(world.Get<WeaponState>(actor)->lastFireTick == 0u);
+    scheduler.Execute({1,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo == 1u);
+    BOOST_TEST(world.Get<WeaponState>(actor)->lastFireTick == 0u);
+    scheduler.Execute({2,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo == 0u); BOOST_TEST(world.Get<WeaponState>(actor)->readyTick == 6u);
+    BOOST_TEST(world.Get<WeaponState>(actor)->lastFireTick == 2u);
+    scheduler.Execute({6,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo == 1u);
+    world.Get<LifeState>(actor)->alive = false; scheduler.Execute({8,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo == 1u);
+    ecs::Query<ecs::Read<ProjectileImpact>> projectiles(world); std::size_t count = 0;
+    projectiles.ForEachChunk([&](auto chunk) { count += chunk.Count(); }); BOOST_TEST(count == 3u);
+    using namespace engine::gameplay::containment;
+    world.Get<LifeState>(actor)->alive=true; world.Add<PassengerMembership>(actor);
+    world.Get<PassengerMembership>(actor)->phase=ContainmentPhase::Inside;
+    world.Get<PassengerMembership>(actor)->owner=PassengerContainmentOwner::Transport;
+    scheduler.Execute({10,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==1u);
+    world.Get<PassengerMembership>(actor)->phase=ContainmentPhase::AwaitingEvacuation;
+    scheduler.Execute({11,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==1u);
+    *world.Get<PassengerMembership>(actor)={}; scheduler.Execute({12,step});
+    BOOST_TEST(world.Get<WeaponState>(actor)->ammo==0u);
+}
+BOOST_AUTO_TEST_CASE(weapon_horizon_accepts_last_representable_deadline_then_fails_closed)
+{
+    const auto maximum=(std::numeric_limits<std::uint64_t>::max)();
+    for(unsigned limitingDuration=0;limitingDuration!=3;++limitingDuration) {
+        ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+        world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+        world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+        world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+        const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+        auto &definition=*world.Get<WeaponDefinition>(actor);
+        definition={10,1,1,1,4,2,true};
+        if(limitingDuration==0) definition.flightTicks=4;
+        if(limitingDuration==1) definition.shotTicks=4;
+        if(limitingDuration==2) definition.reloadTicks=4;
+        *world.Get<WeaponState>(actor)={0,2,false}; *world.Get<WeaponTarget>(actor)=WeaponTarget::ForEntity(ecs::Entity{9,1});
+        *world.Get<WeaponContact>(actor)={true,true};
+        WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+        const engine::time::FixedStep step{30};
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+        scheduler.Execute({maximum-4,step}); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==1u);
+        ecs::Query<ecs::Read<ProjectileImpact>> projectiles(world); std::size_t count=0;
+        projectiles.ForEachChunk([&](auto chunk) {
+            count+=chunk.Count();
+            for(const auto &impact:chunk.template Get<ProjectileImpact>())
+                BOOST_TEST(impact.arrivalTick==maximum-4+definition.flightTicks);
+        });
+        BOOST_TEST(count==1u);
+        *world.Get<WeaponState>(actor)={0,0,true};
+        BOOST_CHECK_THROW(scheduler.Execute({maximum-3,step}),std::invalid_argument);
+        BOOST_TEST(world.Get<WeaponState>(actor)->ammo==0u);
+        BOOST_TEST(world.Get<WeaponState>(actor)->reloading);
+        BOOST_TEST(world.Get<WeaponState>(actor)->readyTick==0u);
+        count=0; projectiles.ForEachChunk([&](auto chunk) { count+=chunk.Count(); }); BOOST_TEST(count==1u);
+        BOOST_CHECK_THROW(scheduler.Execute({maximum-2,step}),std::logic_error);
+    }
+}
+BOOST_AUTO_TEST_CASE(prefire_policies_use_explicit_ticks_and_bounded_episode_state)
+{
+    using namespace std::chrono_literals;
+    {
+        ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+        world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+        world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+        world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+        const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+        WeaponConfig config{}; config.damage=1; config.ammunition=AmmunitionPolicy::Limited; config.clipSize=4;
+        config.shotInterval=0ms; config.reloadTime=1s; config.preAttackDelay=200ms; config.preAttackType=PrefirePolicy::PerShot;
+        *world.Get<WeaponDefinition>(actor)=AuthorWeapon(config,engine::time::FixedStep{10});
+        *world.Get<WeaponState>(actor)={0,4,false}; *world.Get<WeaponTarget>(actor)={{9,1}}; *world.Get<WeaponContact>(actor)={true,true};
+        WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{10}; scheduler.Finalize(step);
+        scheduler.Execute({0,step}); BOOST_TEST(ProjectileCount(world)==0u); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackActive);
+        BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==2u);
+        scheduler.Execute({1,step}); BOOST_TEST(ProjectileCount(world)==0u);
+        scheduler.Execute({2,step}); BOOST_TEST(ProjectileCount(world)==1u); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==3u);
+        BOOST_CHECK(!world.Get<WeaponState>(actor)->lastAttackTarget.IsValid());
+        scheduler.Execute({3,step}); BOOST_TEST(ProjectileCount(world)==1u); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==5u);
+        scheduler.Execute({5,step}); BOOST_TEST(ProjectileCount(world)==2u);
+    }
+    {
+        ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+        world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+        world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+        world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+        const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+        WeaponConfig config{}; config.damage=1; config.clipSize=3; config.shotInterval=0ms; config.reloadTime=200ms;
+        config.preAttackDelay=200ms; config.preAttackType=PrefirePolicy::PerClip;
+        *world.Get<WeaponDefinition>(actor)=AuthorWeapon(config,engine::time::FixedStep{10});
+        *world.Get<WeaponState>(actor)={0,3,false}; *world.Get<WeaponTarget>(actor)={{9,1}}; *world.Get<WeaponContact>(actor)={true,true};
+        WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{10}; scheduler.Finalize(step);
+        scheduler.Execute({0,step}); BOOST_TEST(ProjectileCount(world)==0u);
+        scheduler.Execute({1,step});
+        scheduler.Execute({2,step}); BOOST_TEST(ProjectileCount(world)==1u); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==2u);
+        scheduler.Execute({3,step}); BOOST_TEST(ProjectileCount(world)==2u); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==1u);
+        scheduler.Execute({4,step}); BOOST_TEST(ProjectileCount(world)==3u); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==0u);
+        BOOST_TEST(world.Get<WeaponState>(actor)->reloading); BOOST_TEST(world.Get<WeaponState>(actor)->readyTick==6u);
+        scheduler.Execute({5,step}); BOOST_TEST(ProjectileCount(world)==3u);
+        scheduler.Execute({6,step}); BOOST_TEST(ProjectileCount(world)==3u); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==3u);
+        BOOST_TEST(world.Get<WeaponState>(actor)->preAttackActive); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==8u);
+        scheduler.Execute({8,step}); BOOST_TEST(ProjectileCount(world)==4u); BOOST_TEST(world.Get<WeaponState>(actor)->ammo==2u);
+    }
+    {
+        ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+        world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+        world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+        world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+        const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+        WeaponConfig config{}; config.damage=1; config.ammunition=AmmunitionPolicy::Unlimited; config.clipSize=0;
+        config.shotInterval=0ms; config.preAttackDelay=200ms; config.preAttackType=PrefirePolicy::PerAttack;
+        *world.Get<WeaponDefinition>(actor)=AuthorWeapon(config,engine::time::FixedStep{10});
+        *world.Get<WeaponState>(actor)={0,0,false}; *world.Get<WeaponTarget>(actor)={{9,1}}; *world.Get<WeaponContact>(actor)={true,true};
+        WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{10}; scheduler.Finalize(step);
+        const auto targetA=ecs::Entity{9,1}, targetB=ecs::Entity{9,2}, targetC=ecs::Entity{9,3};
+        scheduler.Execute({0,step}); BOOST_TEST(ProjectileCount(world)==0u); BOOST_CHECK(!world.Get<WeaponState>(actor)->lastAttackTarget.IsValid());
+        scheduler.Execute({1,step}); BOOST_TEST(ProjectileCount(world)==0u);
+        // Range loss pauses the windup but does not reset its same-target deadline.
+        *world.Get<WeaponContact>(actor)={true,false}; scheduler.Execute({2,step});
+        BOOST_TEST(ProjectileCount(world)==0u); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackActive);
+        BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==2u);
+        *world.Get<WeaponContact>(actor)={true,true}; scheduler.Execute({3,step});
+        BOOST_TEST(ProjectileCount(world)==1u); BOOST_CHECK(world.Get<WeaponState>(actor)->lastAttackTarget==targetA);
+        scheduler.Execute({4,step}); BOOST_TEST(ProjectileCount(world)==2u); // Same target skips only after the actual tick-3 shot.
+        *world.Get<WeaponTarget>(actor)={targetB}; scheduler.Execute({5,step});
+        BOOST_TEST(ProjectileCount(world)==2u); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==7u);
+        BOOST_CHECK(!world.Get<WeaponState>(actor)->lastAttackTarget.IsValid());
+        scheduler.Execute({6,step}); scheduler.Execute({7,step}); BOOST_TEST(ProjectileCount(world)==3u);
+        BOOST_CHECK(world.Get<WeaponState>(actor)->lastAttackTarget==targetB);
+        // Same index with a new generation is a different target and cannot inherit windup.
+        *world.Get<WeaponTarget>(actor)={targetC}; scheduler.Execute({8,step});
+        BOOST_TEST(ProjectileCount(world)==3u); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==10u);
+        // Invalid contact is the bounded episode reset; this is not the range-loss path above.
+        *world.Get<WeaponContact>(actor)={false,false}; scheduler.Execute({9,step});
+        BOOST_TEST(ProjectileCount(world)==3u); BOOST_CHECK(!world.Get<WeaponState>(actor)->preAttackActive);
+        BOOST_CHECK(!world.Get<WeaponState>(actor)->lastAttackTarget.IsValid());
+        *world.Get<WeaponContact>(actor)={true,true}; scheduler.Execute({10,step});
+        BOOST_TEST(ProjectileCount(world)==3u); BOOST_TEST(world.Get<WeaponState>(actor)->preAttackReadyTick==12u);
+        scheduler.Execute({11,step}); scheduler.Execute({12,step}); BOOST_TEST(ProjectileCount(world)==4u);
+        BOOST_CHECK(world.Get<WeaponState>(actor)->lastAttackTarget==targetC);
+        // Death and containment cancel pending windup without changing the
+        // existing no-fire/ammunition behavior.
+        *world.Get<WeaponTarget>(actor)={targetA}; scheduler.Execute({13,step});
+        BOOST_TEST(world.Get<WeaponState>(actor)->preAttackActive);
+        world.Get<LifeState>(actor)->alive=false; scheduler.Execute({14,step});
+        BOOST_TEST(ProjectileCount(world)==4u); BOOST_CHECK(!world.Get<WeaponState>(actor)->preAttackActive);
+        world.Get<LifeState>(actor)->alive=true; *world.Get<WeaponTarget>(actor)={targetB}; scheduler.Execute({15,step});
+        BOOST_TEST(world.Get<WeaponState>(actor)->preAttackActive);
+        world.Add<engine::gameplay::containment::PassengerMembership>(actor);
+        world.Get<engine::gameplay::containment::PassengerMembership>(actor)->phase=engine::gameplay::containment::ContainmentPhase::Inside;
+        world.Get<engine::gameplay::containment::PassengerMembership>(actor)->owner=engine::gameplay::containment::PassengerContainmentOwner::Transport;
+        scheduler.Execute({16,step}); BOOST_TEST(ProjectileCount(world)==4u);
+        BOOST_CHECK(!world.Get<WeaponState>(actor)->preAttackActive);
+    }
+}
+BOOST_AUTO_TEST_CASE(allowed_containment_policy_is_generic_and_does_not_key_off_container_owner)
+{
+    using namespace std::chrono_literals;
+    using namespace engine::gameplay::containment;
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+    world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+    world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+    const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+    *world.Get<WeaponDefinition>(actor)=AuthorWeapon({1,1,1,0ms,0ms,0ms,true},engine::time::FixedStep{10});
+    *world.Get<WeaponState>(actor)={0,1,false}; *world.Get<WeaponTarget>(actor)=WeaponTarget::ForEntity(ecs::Entity{9,1});
+    *world.Get<WeaponContact>(actor)={true,true}; world.Add<PassengerMembership>(actor);
+    *world.Get<PassengerMembership>(actor)={ecs::Entity{8,1},0,ContainmentPhase::Inside,
+        PassengerContainmentOwner::Transport,PassengerCombatPolicy::Allowed};
+    WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); scheduler.Finalize(engine::time::FixedStep{10});
+    scheduler.Execute({0,engine::time::FixedStep{10}});
+    BOOST_TEST(ProjectileCount(world)==1u);
+}
+BOOST_AUTO_TEST_CASE(prefire_horizon_is_checked_before_windup_mutation)
+{
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+    world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+    world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>(); world.FinalizeComponents();
+    const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+    auto &definition=*world.Get<WeaponDefinition>(actor); definition={1,1,1,1,4,2,true}; definition.preAttackTicks=4;
+    auto &state=*world.Get<WeaponState>(actor); state={0,2,false,123,{8,1},{7,4},true};
+    *world.Get<WeaponTarget>(actor)={{8,1}}; *world.Get<WeaponContact>(actor)={true,true};
+    WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    const auto maximum=(std::numeric_limits<std::uint64_t>::max)();
+    BOOST_CHECK_THROW(scheduler.Execute({maximum-3,step}),std::invalid_argument);
+    BOOST_TEST(state.readyTick==0u); BOOST_TEST(state.ammo==2u); BOOST_CHECK(!state.reloading);
+    BOOST_TEST(state.preAttackReadyTick==123u); BOOST_CHECK(state.preAttackActive);
+    BOOST_TEST(ProjectileCount(world)==0u);
+}
+
+BOOST_AUTO_TEST_CASE(malformed_dual_weapon_target_cannot_fire_from_stale_contact)
+{
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<WeaponDefinition>();
+    world.RegisterComponent<WeaponState>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<WeaponContact>();
+    world.RegisterComponent<ProjectileImpact>(); world.RegisterComponent<ImpactDue>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<DamageEmitter>();
+    world.FinalizeComponents();
+    const auto actor=world.Create<LifeState,WeaponDefinition,WeaponState,WeaponTarget,WeaponContact>();
+    auto &definition=*world.Get<WeaponDefinition>(actor); definition.damage=1; definition.flightTicks=1;
+    definition.ammunition=AmmunitionPolicy::Unlimited; definition.clipSize=0;
+    *world.Get<WeaponState>(actor)={0,0,false};
+    *world.Get<WeaponTarget>(actor)={{9,1},{1,0},true};
+    *world.Get<WeaponContact>(actor)={true,true};
+    WeaponSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_TEST(ProjectileCount(world)==0u); BOOST_TEST(world.Get<WeaponState>(actor)->readyTick==0u);
+    *world.Get<WeaponTarget>(actor)=WeaponTarget::ForPosition({1,0});
+    scheduler.Execute({1,step});
+    BOOST_TEST(ProjectileCount(world)==1u);
+}

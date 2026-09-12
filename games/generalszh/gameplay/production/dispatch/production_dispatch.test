@@ -1,0 +1,601 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionDispatch
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <bit>
+#include <cstddef>
+#include <cstdint>
+#include <initializer_list>
+#include <limits>
+#include <stdexcept>
+
+import games.generalszh.gameplay.production.dispatch.production_dispatch;
+import engine.jobs.job_system;
+
+using generalszh::production::DispatchProduction;
+
+namespace production_dispatch_test
+{
+enum class Operation : std::uint8_t
+{
+	None,
+	HasDoorAnimations,
+	UpdateDoors,
+	UpdateMarker,
+	FlushFlags,
+	HasEntry,
+	IsSold,
+	Owner,
+	HasOwner,
+	IsUnit,
+	Allowed,
+	IsDozer,
+	CancelUnit,
+	Advance,
+	UnitRequirement,
+	UpgradeRequirement,
+	Refresh,
+	IsComplete,
+	CompleteUnit,
+	IsUpgrade,
+	CompleteUpgrade,
+	DiscardEntry
+};
+
+enum class Kind : std::uint8_t
+{
+	Unit = 11,
+	Upgrade = 22
+};
+
+enum class Player : std::uint8_t
+{
+	Alpha = 7,
+	Beta = 9
+};
+
+struct Event
+{
+	Operation operation{Operation::None};
+	std::uint32_t first{0};
+	std::uint32_t second{0};
+
+	friend bool operator==(const Event &, const Event &) = default;
+};
+
+struct Trace
+{
+	std::array<Event, 32> events{};
+	std::size_t count{0};
+};
+
+std::uint32_t Raw(const Kind kind) noexcept
+{
+	return static_cast<std::uint32_t>(kind);
+}
+
+std::uint32_t Raw(const Player player) noexcept
+{
+	return static_cast<std::uint32_t>(player);
+}
+
+std::uint32_t FloatBits(const float value) noexcept
+{
+	return std::bit_cast<std::uint32_t>(value);
+}
+
+struct RecordingBoundary
+{
+	bool hasDoorAnimations{true};
+	bool hasEntry{true};
+	bool sold{false};
+	Player liveOwner{Player::Alpha};
+	bool ownerPresent{true};
+	Kind kind{Kind::Unit};
+	bool allowed{true};
+	bool dozer{false};
+	std::int32_t unitRequirement{41};
+	std::int32_t upgradeRequirement{73};
+	float progress{100.0f};
+
+	bool mutateKindAtAdvance{false};
+	Kind kindAfterAdvance{Kind::Unit};
+	bool mutateOwnerAtAdvance{false};
+	Player ownerAfterAdvance{Player::Alpha};
+	bool mutateKindAtRefresh{false};
+	Kind kindAfterRefresh{Kind::Unit};
+	bool mutateOwnerAtRefresh{false};
+	Player ownerAfterRefresh{Player::Alpha};
+
+	Operation throwAt{Operation::None};
+	Trace trace{};
+	std::uint32_t completedUnits{0};
+	std::uint32_t completedUpgrades{0};
+	std::uint32_t discardedEntries{0};
+	std::uint32_t cancelledUnits{0};
+
+	void Log(const Operation operation,
+		const std::uint32_t first = 0,
+		const std::uint32_t second = 0)
+	{
+		if (trace.count >= trace.events.size())
+			throw std::length_error("production dispatch trace capacity exceeded");
+		trace.events[trace.count++] = Event{operation, first, second};
+		if (throwAt == operation)
+			throw std::runtime_error("production dispatch boundary failure");
+	}
+
+	bool HasDoorAnimations()
+	{
+		Log(Operation::HasDoorAnimations, hasDoorAnimations ? 1u : 0u);
+		return hasDoorAnimations;
+	}
+
+	void UpdateDoors()
+	{
+		Log(Operation::UpdateDoors);
+	}
+
+	void UpdateMarker()
+	{
+		Log(Operation::UpdateMarker);
+	}
+
+	void FlushFlags()
+	{
+		Log(Operation::FlushFlags);
+	}
+
+	bool HasEntry()
+	{
+		Log(Operation::HasEntry, hasEntry ? 1u : 0u);
+		return hasEntry;
+	}
+
+	bool IsSold()
+	{
+		Log(Operation::IsSold, sold ? 1u : 0u);
+		return sold;
+	}
+
+	Player Owner()
+	{
+		Log(Operation::Owner, Raw(liveOwner));
+		return liveOwner;
+	}
+
+	bool HasOwner(const Player owner)
+	{
+		Log(Operation::HasOwner, Raw(owner));
+		return ownerPresent;
+	}
+
+	bool IsUnit()
+	{
+		Log(Operation::IsUnit, Raw(kind));
+		return kind == Kind::Unit;
+	}
+
+	bool Allowed(const Player owner)
+	{
+		Log(Operation::Allowed, Raw(owner));
+		return allowed;
+	}
+
+	bool IsDozer()
+	{
+		Log(Operation::IsDozer, Raw(kind));
+		return dozer;
+	}
+
+	void CancelUnit()
+	{
+		Log(Operation::CancelUnit);
+		++cancelledUnits;
+	}
+
+	void Advance()
+	{
+		Log(Operation::Advance);
+		if (mutateKindAtAdvance)
+			kind = kindAfterAdvance;
+		if (mutateOwnerAtAdvance)
+			liveOwner = ownerAfterAdvance;
+	}
+
+	std::int32_t UnitRequirement(const Player owner)
+	{
+		Log(Operation::UnitRequirement, Raw(owner),
+			static_cast<std::uint32_t>(unitRequirement));
+		return unitRequirement;
+	}
+
+	std::int32_t UpgradeRequirement(const Player owner)
+	{
+		Log(Operation::UpgradeRequirement, Raw(owner),
+			static_cast<std::uint32_t>(upgradeRequirement));
+		return upgradeRequirement;
+	}
+
+	void Refresh(const std::int32_t required)
+	{
+		Log(Operation::Refresh, static_cast<std::uint32_t>(required));
+		if (mutateKindAtRefresh)
+			kind = kindAfterRefresh;
+		if (mutateOwnerAtRefresh)
+			liveOwner = ownerAfterRefresh;
+	}
+
+	bool IsComplete()
+	{
+		Log(Operation::IsComplete, FloatBits(progress));
+		return progress >= 100.0f;
+	}
+
+	void CompleteUnit()
+	{
+		Log(Operation::CompleteUnit);
+		++completedUnits;
+	}
+
+	bool IsUpgrade()
+	{
+		Log(Operation::IsUpgrade, Raw(kind));
+		return kind == Kind::Upgrade;
+	}
+
+	void CompleteUpgrade(const Player owner)
+	{
+		Log(Operation::CompleteUpgrade, Raw(owner));
+		++completedUpgrades;
+	}
+
+	void DiscardEntry()
+	{
+		Log(Operation::DiscardEntry);
+		++discardedEntries;
+	}
+};
+
+Event E(const Operation operation,
+	const std::uint32_t first = 0,
+	const std::uint32_t second = 0) noexcept
+{
+	return Event{operation, first, second};
+}
+
+void CheckTrace(const Trace &trace, const std::initializer_list<Event> expected)
+{
+	BOOST_REQUIRE_EQUAL(trace.count, expected.size());
+	if (trace.count != expected.size())
+		return;
+
+	std::size_t index = 0;
+	for (const Event expectedEvent : expected)
+	{
+		BOOST_TEST(static_cast<unsigned>(trace.events[index].operation) ==
+			static_cast<unsigned>(expectedEvent.operation));
+		BOOST_TEST(trace.events[index].first == expectedEvent.first);
+		BOOST_TEST(trace.events[index].second == expectedEvent.second);
+		++index;
+	}
+}
+
+void CheckCommonProgressPrefix(const RecordingBoundary &boundary)
+{
+	BOOST_REQUIRE_GE(boundary.trace.count, 14u);
+
+	const std::array<Operation, 14> expected{
+		Operation::HasDoorAnimations, Operation::UpdateDoors,
+		Operation::UpdateMarker, Operation::FlushFlags, Operation::HasEntry,
+		Operation::IsSold, Operation::Owner, Operation::HasOwner,
+		Operation::IsUnit, Operation::Allowed, Operation::Advance,
+		Operation::IsUnit, Operation::UnitRequirement, Operation::Refresh};
+	for (std::size_t index = 0; index < expected.size(); ++index)
+		BOOST_TEST(static_cast<unsigned>(boundary.trace.events[index].operation) ==
+			static_cast<unsigned>(expected[index]));
+}
+} // namespace production_dispatch_test
+
+using namespace production_dispatch_test;
+
+BOOST_AUTO_TEST_CASE(housekeeping_and_unit_completion_preserve_the_fixed_order)
+{
+	RecordingBoundary boundary;
+
+	DispatchProduction(boundary);
+
+	CheckTrace(boundary.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::Allowed, Raw(Player::Alpha)), E(Operation::Advance),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::UnitRequirement, Raw(Player::Alpha), 41),
+		E(Operation::Refresh, 41),
+		E(Operation::IsComplete, FloatBits(100.0f)),
+		E(Operation::IsUnit, Raw(Kind::Unit)), E(Operation::CompleteUnit)});
+	BOOST_TEST(boundary.completedUnits == 1u);
+	BOOST_TEST(boundary.completedUpgrades == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(early_gates_keep_housekeeping_order_and_stop_the_suffix)
+{
+	RecordingBoundary empty;
+	empty.hasDoorAnimations = false;
+	empty.hasEntry = false;
+	DispatchProduction(empty);
+	CheckTrace(empty.trace, {
+		E(Operation::HasDoorAnimations, 0), E(Operation::UpdateMarker),
+		E(Operation::FlushFlags), E(Operation::HasEntry, 0)});
+
+	RecordingBoundary sold;
+	sold.sold = true;
+	DispatchProduction(sold);
+	CheckTrace(sold.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 1)});
+
+	RecordingBoundary noOwner;
+	noOwner.ownerPresent = false;
+	DispatchProduction(noOwner);
+	CheckTrace(noOwner.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::DiscardEntry)});
+	BOOST_TEST(noOwner.discardedEntries == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(disallowed_units_cancel_only_non_dozers)
+{
+	RecordingBoundary cancelled;
+	cancelled.allowed = false;
+	cancelled.dozer = false;
+	DispatchProduction(cancelled);
+	CheckTrace(cancelled.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::Allowed, Raw(Player::Alpha)),
+		E(Operation::IsDozer, Raw(Kind::Unit)), E(Operation::CancelUnit)});
+	BOOST_TEST(cancelled.cancelledUnits == 1u);
+
+	RecordingBoundary dozer;
+	dozer.allowed = false;
+	dozer.dozer = true;
+	dozer.progress = 0.0f;
+	DispatchProduction(dozer);
+	CheckTrace(dozer.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::Allowed, Raw(Player::Alpha)),
+		E(Operation::IsDozer, Raw(Kind::Unit)), E(Operation::Advance),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::UnitRequirement, Raw(Player::Alpha), 41),
+		E(Operation::Refresh, 41), E(Operation::IsComplete, FloatBits(0.0f))});
+	BOOST_TEST(dozer.cancelledUnits == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(upgrades_use_the_upgrade_requirement_and_completion_branch)
+{
+	RecordingBoundary boundary;
+	boundary.kind = Kind::Upgrade;
+	boundary.unitRequirement = 41;
+	boundary.upgradeRequirement = 73;
+
+	DispatchProduction(boundary);
+
+	CheckTrace(boundary.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Upgrade)), E(Operation::Advance),
+		E(Operation::IsUnit, Raw(Kind::Upgrade)),
+		E(Operation::UpgradeRequirement, Raw(Player::Alpha), 73),
+		E(Operation::Refresh, 73),
+		E(Operation::IsComplete, FloatBits(100.0f)),
+		E(Operation::IsUnit, Raw(Kind::Upgrade)),
+		E(Operation::IsUpgrade, Raw(Kind::Upgrade)),
+		E(Operation::CompleteUpgrade, Raw(Player::Alpha))});
+	BOOST_TEST(boundary.completedUnits == 0u);
+	BOOST_TEST(boundary.completedUpgrades == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(type_is_reread_after_callbacks_and_owner_argument_stays_captured)
+{
+	RecordingBoundary afterAdvance;
+	afterAdvance.mutateKindAtAdvance = true;
+	afterAdvance.kindAfterAdvance = Kind::Upgrade;
+	afterAdvance.mutateOwnerAtAdvance = true;
+	afterAdvance.ownerAfterAdvance = Player::Beta;
+	afterAdvance.mutateOwnerAtRefresh = true;
+	afterAdvance.ownerAfterRefresh = Player::Beta;
+
+	DispatchProduction(afterAdvance);
+
+	CheckTrace(afterAdvance.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::Allowed, Raw(Player::Alpha)), E(Operation::Advance),
+		E(Operation::IsUnit, Raw(Kind::Upgrade)),
+		E(Operation::UpgradeRequirement, Raw(Player::Alpha), 73),
+		E(Operation::Refresh, 73), E(Operation::IsComplete, FloatBits(100.0f)),
+		E(Operation::IsUnit, Raw(Kind::Upgrade)),
+		E(Operation::IsUpgrade, Raw(Kind::Upgrade)),
+		E(Operation::CompleteUpgrade, Raw(Player::Alpha))});
+	BOOST_TEST(afterAdvance.completedUpgrades == 1u);
+
+	RecordingBoundary afterRefresh;
+	afterRefresh.mutateKindAtRefresh = true;
+	afterRefresh.kindAfterRefresh = Kind::Upgrade;
+	afterRefresh.mutateOwnerAtRefresh = true;
+	afterRefresh.ownerAfterRefresh = Player::Beta;
+
+	DispatchProduction(afterRefresh);
+
+	CheckTrace(afterRefresh.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::Allowed, Raw(Player::Alpha)), E(Operation::Advance),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::UnitRequirement, Raw(Player::Alpha), 41),
+		E(Operation::Refresh, 41), E(Operation::IsComplete, FloatBits(100.0f)),
+		E(Operation::IsUnit, Raw(Kind::Upgrade)),
+		E(Operation::IsUpgrade, Raw(Kind::Upgrade)),
+		E(Operation::CompleteUpgrade, Raw(Player::Alpha))});
+	BOOST_TEST(afterRefresh.completedUpgrades == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(completion_and_nonfinite_progress_are_boundary_predicates)
+{
+	const std::array<float, 4> progressValues{
+		-1.0f, std::numeric_limits<float>::infinity(),
+		-std::numeric_limits<float>::infinity(),
+		std::numeric_limits<float>::quiet_NaN()};
+	const std::array<bool, 4> expectedCompletion{{false, true, false, false}};
+
+	for (std::size_t index = 0; index < progressValues.size(); ++index)
+	{
+		RecordingBoundary boundary;
+		boundary.progress = progressValues[index];
+
+		DispatchProduction(boundary);
+
+		CheckCommonProgressPrefix(boundary);
+		BOOST_REQUIRE_EQUAL(boundary.trace.count, 15u +
+			(expectedCompletion[index] ? 2u : 0u));
+		BOOST_TEST(static_cast<unsigned>(boundary.trace.events[14].operation) ==
+			static_cast<unsigned>(Operation::IsComplete));
+		BOOST_TEST(boundary.trace.events[14].first == FloatBits(progressValues[index]));
+		BOOST_TEST(boundary.completedUnits == (expectedCompletion[index] ? 1u : 0u));
+		if (expectedCompletion[index])
+		{
+			BOOST_TEST(static_cast<unsigned>(boundary.trace.events[15].operation) ==
+				static_cast<unsigned>(Operation::IsUnit));
+			BOOST_TEST(static_cast<unsigned>(boundary.trace.events[16].operation) ==
+				static_cast<unsigned>(Operation::CompleteUnit));
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(boundary_exceptions_propagate_with_the_applied_prefix)
+{
+	RecordingBoundary housekeeping;
+	housekeeping.throwAt = Operation::UpdateMarker;
+	BOOST_CHECK_THROW(DispatchProduction(housekeeping), std::runtime_error);
+	CheckTrace(housekeeping.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker)});
+
+	RecordingBoundary progress;
+	progress.throwAt = Operation::Refresh;
+	BOOST_CHECK_THROW(DispatchProduction(progress), std::runtime_error);
+	CheckTrace(progress.trace, {
+		E(Operation::HasDoorAnimations, 1), E(Operation::UpdateDoors),
+		E(Operation::UpdateMarker), E(Operation::FlushFlags),
+		E(Operation::HasEntry, 1), E(Operation::IsSold, 0),
+		E(Operation::Owner, Raw(Player::Alpha)),
+		E(Operation::HasOwner, Raw(Player::Alpha)),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::Allowed, Raw(Player::Alpha)), E(Operation::Advance),
+		E(Operation::IsUnit, Raw(Kind::Unit)),
+		E(Operation::UnitRequirement, Raw(Player::Alpha), 41),
+		E(Operation::Refresh, 41)});
+	BOOST_TEST(progress.completedUnits == 0u);
+	BOOST_TEST(progress.discardedEntries == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(requirement_values_are_forwarded_without_clamps)
+{
+	for (const std::int32_t required : {0, -7, 1, 987654})
+	{
+		RecordingBoundary boundary;
+		boundary.unitRequirement = required;
+		DispatchProduction(boundary);
+		BOOST_TEST(boundary.trace.events[12].second == static_cast<std::uint32_t>(required));
+		BOOST_TEST(boundary.trace.events[13].first == static_cast<std::uint32_t>(required));
+	}
+}
+
+BOOST_AUTO_TEST_CASE(isolated_dispatch_records_have_identical_results_across_workers)
+{
+	constexpr std::size_t recordCount = 128;
+	const auto run = [](const std::size_t workers)
+	{
+		std::array<RecordingBoundary, recordCount> records{};
+		std::array<engine::jobs::Job, recordCount / 8> jobs{};
+		for (std::size_t i = 0; i < records.size(); ++i)
+		{
+			auto &record = records[i];
+			record.kind = (i % 2 == 0) ? Kind::Unit : Kind::Upgrade;
+			record.hasEntry = i % 3 != 0;
+			record.sold = i % 5 == 0;
+			record.allowed = i % 7 != 0;
+			record.dozer = i % 11 == 0;
+			record.progress = (i % 4 == 0) ? 99.0f : 100.0f;
+		}
+		for (std::size_t i = 0; i < jobs.size(); ++i)
+		{
+			jobs[i] = engine::jobs::Job{[](void *context)
+			{
+				auto *batch = static_cast<RecordingBoundary *>(context);
+				for (std::size_t row = 0; row < 8; ++row)
+					DispatchProduction(batch[row]);
+			}, &records[i * 8]};
+		}
+		engine::jobs::JobSystem pool{engine::jobs::JobSystemConfig{workers}};
+		pool.Execute(jobs);
+		return records;
+	};
+	const auto expected = run(1);
+	for (const std::size_t workers : {2u, 4u})
+	{
+		const auto actual = run(workers);
+		for (std::size_t i = 0; i < recordCount; ++i)
+		{
+			const bool eligible = i % 3 != 0 && i % 5 != 0;
+			const bool unit = i % 2 == 0;
+			const bool cancelled = eligible && unit && i % 7 == 0 && i % 11 != 0;
+			const bool complete = eligible && !cancelled && i % 4 != 0;
+			BOOST_TEST(actual[i].completedUnits == static_cast<unsigned>(complete && unit));
+			BOOST_TEST(actual[i].completedUpgrades == static_cast<unsigned>(complete && !unit));
+			BOOST_TEST(actual[i].cancelledUnits == static_cast<unsigned>(cancelled));
+			BOOST_TEST(actual[i].discardedEntries == 0u);
+			BOOST_TEST(actual[i].completedUnits == expected[i].completedUnits);
+			BOOST_TEST(actual[i].completedUpgrades == expected[i].completedUpgrades);
+			BOOST_TEST(actual[i].cancelledUnits == expected[i].cancelledUnits);
+			BOOST_REQUIRE_EQUAL(actual[i].trace.count, expected[i].trace.count);
+			for (std::size_t e = 0; e < actual[i].trace.count; ++e)
+			{
+				BOOST_TEST(static_cast<unsigned>(actual[i].trace.events[e].operation) ==
+					static_cast<unsigned>(expected[i].trace.events[e].operation));
+				BOOST_TEST(actual[i].trace.events[e].first == expected[i].trace.events[e].first);
+				BOOST_TEST(actual[i].trace.events[e].second == expected[i].trace.events[e].second);
+			}
+		}
+	}
+}

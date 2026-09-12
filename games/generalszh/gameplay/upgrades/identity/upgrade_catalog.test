@@ -1,0 +1,293 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeCatalog
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.upgrades.identity.upgrade_catalog;
+
+using generalszh::upgrades::Entry;
+using generalszh::upgrades::InvalidUpgradeId;
+using generalszh::upgrades::IsValidUpgradeName;
+using generalszh::upgrades::MakeUpgradeKey;
+using generalszh::upgrades::UpgradeCatalog;
+using generalszh::upgrades::UpgradeDescriptor;
+using generalszh::upgrades::UpgradeId;
+using generalszh::upgrades::UpgradeKey;
+
+namespace upgrade_catalog_test
+{
+constexpr std::uint64_t KeyGolden(std::string_view name)
+{
+	std::uint64_t hash = UINT64_C(14695981039346656037);
+	for (const char character : std::string_view{"games.generalszh.upgrade:"})
+	{
+		hash ^= static_cast<std::uint64_t>(
+			static_cast<unsigned char>(character));
+		hash *= UINT64_C(1099511628211);
+	}
+	for (const char character : name)
+	{
+		hash ^= static_cast<std::uint64_t>(
+			static_cast<unsigned char>(character));
+		hash *= UINT64_C(1099511628211);
+	}
+	return hash;
+}
+
+constexpr void HashByte(std::uint64_t &hash, const std::uint8_t byte)
+{
+	hash ^= static_cast<std::uint64_t>(byte);
+	hash *= UINT64_C(1099511628211);
+}
+
+constexpr void HashBigEndian(std::uint64_t &hash, const std::uint64_t value,
+	const std::size_t byteCount)
+{
+	for (std::size_t index = byteCount; index > 0; --index)
+		HashByte(hash, static_cast<std::uint8_t>(value >> ((index - 1) * 8)));
+}
+
+constexpr void HashBytes(std::uint64_t &hash, std::string_view bytes)
+{
+	for (const char character : bytes)
+		HashByte(hash, static_cast<std::uint8_t>(
+			static_cast<unsigned char>(character)));
+}
+
+constexpr std::uint64_t SchemaGolden()
+{
+	std::uint64_t hash = UINT64_C(14695981039346656037);
+	HashBytes(hash, "games.generalszh.upgrade.catalog.schema");
+	HashBigEndian(hash, 1, sizeof(std::uint32_t));
+	HashBigEndian(hash, 2, sizeof(std::uint64_t));
+	HashBigEndian(hash, UINT64_C(0x418617165D450EF3), sizeof(std::uint64_t));
+	HashBigEndian(hash, 1, sizeof(std::uint32_t));
+	HashBigEndian(hash, std::string_view{"upgrade.alpha"}.size(), sizeof(std::uint64_t));
+	HashBytes(hash, "upgrade.alpha");
+	HashBigEndian(hash, UINT64_C(0x4FAFE7837724D4A7), sizeof(std::uint64_t));
+	HashBigEndian(hash, 2, sizeof(std::uint32_t));
+	HashBigEndian(hash, std::string_view{"upgrade.zeta"}.size(), sizeof(std::uint64_t));
+	HashBytes(hash, "upgrade.zeta");
+	return hash;
+}
+
+std::vector<std::string> Names(const UpgradeCatalog &catalog)
+{
+	std::vector<std::string> names;
+	for (const Entry &entry : catalog.Entries())
+		names.emplace_back(catalog.Name(entry.id));
+	return names;
+}
+} // namespace upgrade_catalog_test
+
+using namespace upgrade_catalog_test;
+
+BOOST_AUTO_TEST_CASE(key_function_is_constexpr_prefixed_fnv1a_and_case_sensitive)
+{
+	static_assert(UpgradeId{}.value == UpgradeId::InvalidValue);
+	static_assert(InvalidUpgradeId.value == UpgradeId::InvalidValue);
+	static_assert(IsValidUpgradeName("upgrade.alpha-2"));
+	static_assert(!IsValidUpgradeName("upgrade/alpha"));
+	static_assert(MakeUpgradeKey("upgrade.alpha").value ==
+		KeyGolden("upgrade.alpha"));
+
+	BOOST_TEST(MakeUpgradeKey("").value == KeyGolden(""));
+	BOOST_TEST(MakeUpgradeKey("").value ==
+		UINT64_C(0xC39321D6D5AF16BB));
+	BOOST_TEST(MakeUpgradeKey("upgrade.alpha").value ==
+		UINT64_C(0x418617165D450EF3));
+	BOOST_TEST(MakeUpgradeKey("upgrade.alpha").value !=
+		MakeUpgradeKey("Upgrade.alpha").value);
+	BOOST_TEST(MakeUpgradeKey("upgrade.alpha").value !=
+		MakeUpgradeKey("upgrade.alpha-").value);
+}
+
+BOOST_AUTO_TEST_CASE(canonical_name_validation_rejects_without_normalization)
+{
+	const std::string embeddedNul{"upgrade\0alpha", 13};
+	const std::string controlCharacter{"upgrade\x01alpha", 13};
+	const std::array<std::string_view, 8> invalidNames{
+		"", "upgrade alpha", "upgrade/alpha", "upgrade:alpha",
+		"upgrade+alpha", embeddedNul, controlCharacter, "upgrade\xC3\xA9"};
+	for (const std::string_view name : invalidNames)
+	{
+		BOOST_CHECK(!IsValidUpgradeName(name));
+		UpgradeCatalog catalog;
+		BOOST_CHECK_THROW((void)catalog.Register(name), std::invalid_argument);
+		BOOST_TEST(catalog.Count() == 0u);
+		BOOST_CHECK(!catalog.IsFinalized());
+	}
+
+	UpgradeCatalog catalog;
+	(void)catalog.Register("Upgrade.Mixed_Case-2", 7);
+	BOOST_TEST(MakeUpgradeKey("Upgrade.Mixed_Case-2").value !=
+		InvalidUpgradeId.value);
+	BOOST_CHECK(IsValidUpgradeName("Upgrade.Mixed_Case-2"));
+}
+
+BOOST_AUTO_TEST_CASE(descriptor_retains_and_checks_the_canonical_key)
+{
+	const UpgradeDescriptor descriptor{"upgrade.alpha", 3};
+	BOOST_TEST(descriptor.key.value == MakeUpgradeKey(descriptor.name).value);
+	BOOST_TEST(descriptor.name == "upgrade.alpha");
+	BOOST_TEST(descriptor.version == 3u);
+
+	BOOST_CHECK_THROW((UpgradeDescriptor{UpgradeKey{0}, "upgrade.alpha"}),
+		std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(finalization_sorts_dense_ids_and_exposes_frozen_flat_storage)
+{
+	UpgradeCatalog catalog;
+	(void)catalog.Register("upgrade.zeta", 2);
+	(void)catalog.Register("upgrade.alpha", 1);
+	(void)catalog.Register("upgrade.middle", 4);
+	const auto firstKey = MakeUpgradeKey("upgrade.zeta");
+	const auto secondKey = MakeUpgradeKey("upgrade.alpha");
+	const auto thirdKey = MakeUpgradeKey("upgrade.middle");
+
+	BOOST_CHECK_THROW((void)catalog.Find(firstKey), std::logic_error);
+	BOOST_CHECK_THROW((void)catalog.Get(UpgradeId{0}), std::logic_error);
+	BOOST_CHECK_THROW((void)catalog.Name(UpgradeId{0}), std::logic_error);
+	BOOST_CHECK_THROW((void)catalog.Entries(), std::logic_error);
+	BOOST_CHECK_THROW((void)catalog.SchemaHash(), std::logic_error);
+	BOOST_TEST(!catalog.IsFinalized());
+
+	catalog.Finalize();
+	BOOST_TEST(catalog.IsFinalized());
+	BOOST_TEST(catalog.Count() == 3u);
+	const std::span<const Entry> entries = catalog.Entries();
+	BOOST_TEST(entries.size() == 3u);
+	for (std::size_t index = 0; index < entries.size(); ++index)
+	{
+		BOOST_TEST(entries[index].id.value == static_cast<std::uint32_t>(index));
+		if (index > 0u)
+			BOOST_CHECK(entries[index - 1].key.value < entries[index].key.value);
+		BOOST_TEST(catalog.Find(entries[index].key).value == entries[index].id.value);
+		BOOST_TEST(catalog.Name(entries[index].id).size() == entries[index].nameSize);
+		BOOST_TEST(catalog.Name(entries[index].id) ==
+			std::string_view{catalog.Name(entries[index].id)});
+	}
+
+	BOOST_TEST(catalog.Find(MakeUpgradeKey("missing")).value ==
+		InvalidUpgradeId.value);
+	BOOST_CHECK_THROW((void)catalog.Get(InvalidUpgradeId), std::out_of_range);
+	BOOST_CHECK_THROW((void)catalog.Get(UpgradeId{3}), std::out_of_range);
+	BOOST_TEST(catalog.Find(firstKey).value != InvalidUpgradeId.value);
+	BOOST_TEST(catalog.Find(secondKey).value != InvalidUpgradeId.value);
+	BOOST_TEST(catalog.Find(thirdKey).value != InvalidUpgradeId.value);
+	BOOST_TEST(catalog.Name(catalog.Find(secondKey)) == "upgrade.alpha");
+}
+
+BOOST_AUTO_TEST_CASE(duplicate_names_are_rejected_for_all_versions)
+{
+	UpgradeCatalog catalog;
+	(void)catalog.Register("upgrade.same", 1);
+	BOOST_CHECK_THROW((void)catalog.Register("upgrade.same", 1), std::logic_error);
+	BOOST_CHECK_THROW((void)catalog.Register("upgrade.same", 2), std::logic_error);
+	BOOST_TEST(catalog.Count() == 1u);
+	catalog.Finalize();
+	BOOST_TEST(catalog.Count() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(schema_and_ids_are_registration_order_independent)
+{
+	UpgradeCatalog forward;
+	UpgradeCatalog reverse;
+	(void)forward.Register("upgrade.zeta", 2);
+	(void)forward.Register("upgrade.alpha", 1);
+	(void)forward.Register("upgrade.middle", 4);
+	(void)reverse.Register("upgrade.middle", 4);
+	(void)reverse.Register("upgrade.zeta", 2);
+	(void)reverse.Register("upgrade.alpha", 1);
+	forward.Finalize();
+	reverse.Finalize();
+
+	BOOST_TEST(forward.SchemaHash() == reverse.SchemaHash());
+	BOOST_TEST(Names(forward) == Names(reverse));
+	for (const Entry &entry : forward.Entries())
+	{
+		const UpgradeId reverseId = reverse.Find(entry.key);
+		BOOST_TEST(reverseId.value == entry.id.value);
+		BOOST_TEST(reverse.Get(reverseId).version == entry.version);
+	}
+
+	UpgradeCatalog changedVersion;
+	(void)changedVersion.Register("upgrade.zeta", 2);
+	(void)changedVersion.Register("upgrade.alpha", 1);
+	(void)changedVersion.Register("upgrade.middle", 5);
+	changedVersion.Finalize();
+	BOOST_TEST(changedVersion.SchemaHash() != forward.SchemaHash());
+}
+
+BOOST_AUTO_TEST_CASE(schema_hash_uses_the_versioned_identity_encoding)
+{
+	UpgradeCatalog catalog;
+	(void)catalog.Register("upgrade.zeta", 2);
+	(void)catalog.Register("upgrade.alpha", 1);
+	catalog.Finalize();
+
+	BOOST_TEST(SchemaGolden() == UINT64_C(0xC8D8EF00B65B67E1));
+	BOOST_TEST(catalog.SchemaHash() == SchemaGolden());
+}
+
+BOOST_AUTO_TEST_CASE(empty_catalog_finalizes_and_finalization_is_idempotent)
+{
+	UpgradeCatalog catalog;
+	catalog.Finalize();
+	const auto hash = catalog.SchemaHash();
+	BOOST_TEST(catalog.IsFinalized());
+	BOOST_TEST(catalog.Count() == 0u);
+	BOOST_TEST(catalog.Entries().empty());
+	BOOST_TEST(catalog.Find(UpgradeKey{123}).value == InvalidUpgradeId.value);
+	BOOST_CHECK_THROW((void)catalog.Get(UpgradeId{0}), std::out_of_range);
+	BOOST_CHECK_THROW((void)catalog.Register("upgrade.late"), std::logic_error);
+
+	catalog.Finalize();
+	BOOST_TEST(catalog.SchemaHash() == hash);
+}
+
+BOOST_AUTO_TEST_CASE(finalized_catalog_is_immutable_and_registry_has_no_copy_or_move)
+{
+	static_assert(!std::is_copy_constructible_v<UpgradeCatalog>);
+	static_assert(!std::is_copy_assignable_v<UpgradeCatalog>);
+	static_assert(!std::is_move_constructible_v<UpgradeCatalog>);
+	static_assert(!std::is_move_assignable_v<UpgradeCatalog>);
+	static_assert(std::is_trivially_copyable_v<UpgradeKey>);
+	static_assert(std::is_trivially_copyable_v<UpgradeId>);
+
+	UpgradeCatalog catalog;
+	(void)catalog.Register("upgrade.locked");
+	catalog.Finalize();
+	const auto key = catalog.SchemaHash();
+	BOOST_CHECK_THROW((void)catalog.Register("upgrade.other"), std::logic_error);
+	BOOST_TEST(catalog.SchemaHash() == key);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_supports_more_than_legacy_sixty_four_and_five_hundred_twelve_limits)
+{
+	constexpr std::size_t entryCount = 513;
+	UpgradeCatalog catalog;
+	for (std::size_t index = 0; index < entryCount; ++index)
+	{
+		const std::string name = "upgrade.entry." + std::to_string(index);
+		(void)catalog.Register(name, static_cast<std::uint32_t>((index % 3u) + 1u));
+	}
+	catalog.Finalize();
+
+	BOOST_TEST(catalog.Count() == entryCount);
+	BOOST_TEST(catalog.Entries().size() == entryCount);
+	BOOST_TEST(catalog.Find(MakeUpgradeKey("upgrade.entry.0")).value !=
+		InvalidUpgradeId.value);
+	BOOST_TEST(catalog.Find(MakeUpgradeKey("upgrade.entry.512")).value !=
+		InvalidUpgradeId.value);
+	}

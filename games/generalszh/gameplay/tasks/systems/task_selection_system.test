@@ -1,0 +1,56 @@
+#define BOOST_TEST_MODULE GeneralsZHTaskSelection
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.tasks.systems.task_selection_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay;
+BOOST_AUTO_TEST_CASE(construction_selection_clears_old_intent_but_manual_requests_interrupt)
+{
+    ecs::World world;
+    world.RegisterComponent<rts::construction::BuilderAssignment>(); world.RegisterComponent<rts::orders::UnitOrder>();
+    world.RegisterComponent<combat::LifeState>(); world.RegisterComponent<navigation::MoveGoal>();
+    world.RegisterComponent<navigation::MoveRangeGoal>();
+    world.RegisterComponent<rts::harvesting::HarvestState>();
+    world.RegisterComponent<navigation::MoveCredit>(); world.RegisterComponent<combat::WeaponTarget>();
+    world.RegisterComponent<generalszh::combat::TargetIntent>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>();
+    world.RegisterComponent<engine::gameplay::containment::ContainmentTask>();
+    world.RegisterComponent<rts::repair::ManualRepairAssignment>(); world.FinalizeComponents();
+    const auto create=[&] {
+        const auto actor=world.Create<rts::construction::BuilderAssignment,rts::orders::UnitOrder,combat::LifeState,
+            navigation::MoveGoal,navigation::MoveCredit,combat::WeaponTarget,generalszh::combat::TargetIntent,
+            containment::ContainmentTask>();
+        *world.Get<rts::construction::BuilderAssignment>(actor)={{900,1},7};
+        *world.Get<rts::orders::UnitOrder>(actor)={rts::orders::OrderKind::AttackTarget,{}, {901,1}};
+        world.Get<combat::WeaponTarget>(actor)->entity={901,1};
+        world.Get<navigation::MoveGoal>(actor)->cell=7;
+        return actor;
+    };
+    const auto working=create(),manual=create(),cancelled=create(),dead=create(),boarding=create();
+    world.Get<combat::LifeState>(dead)->alive=false;
+    *world.Get<containment::ContainmentTask>(boarding)={ecs::Entity{900,1}};
+    generalszh::tasks::TaskSelectionSystem selection(4);
+    ecs::SystemRegistry registry; registry.Register(selection); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    const std::array moves{navigation::MoveInput{manual,3}};
+    const std::array cancels{cancelled}; selection.SetInputs(moves,{},{},cancels);
+    scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<rts::construction::BuilderAssignment>(working)->site.IsValid());
+    BOOST_CHECK(world.Get<rts::orders::UnitOrder>(working)->kind==rts::orders::OrderKind::None);
+    BOOST_TEST(world.Get<navigation::MoveGoal>(working)->cell==7u);
+    BOOST_TEST(!world.Get<combat::WeaponTarget>(working)->entity.IsValid());
+    BOOST_CHECK(world.Get<rts::orders::UnitOrder>(boarding)->kind==rts::orders::OrderKind::None);
+    BOOST_TEST(!world.Get<combat::WeaponTarget>(boarding)->entity.IsValid());
+    BOOST_TEST(world.Get<navigation::MoveGoal>(boarding)->cell==7u);
+    BOOST_TEST(!world.Get<rts::construction::BuilderAssignment>(manual)->site.IsValid());
+    for(auto actor:{cancelled,dead}) {
+        BOOST_TEST(!world.Get<rts::construction::BuilderAssignment>(actor)->site.IsValid());
+        BOOST_CHECK(world.Get<rts::orders::UnitOrder>(actor)->kind==rts::orders::OrderKind::None);
+        BOOST_TEST(world.Get<navigation::MoveGoal>(actor)->cell==navigation::InvalidCell);
+    }
+    // No input replay on the following tick: a newly assigned actor keeps work.
+    *world.Get<rts::construction::BuilderAssignment>(manual)={{900,1},7};
+    scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<rts::construction::BuilderAssignment>(manual)->site.IsValid());
+}

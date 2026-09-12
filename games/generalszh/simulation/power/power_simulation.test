@@ -1,0 +1,16 @@
+#define BOOST_TEST_MODULE GeneralsZHPowerSimulation
+#include <boost/test/included/unit_test.hpp>
+#include <string_view>
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+import games.generalszh.simulation.power.power_simulation;
+BOOST_AUTO_TEST_CASE(power_composition_requires_explicit_startup_and_borrows_workers)
+{
+    generalszh::GameplayState state; generalszh::GameplayWorkers workers(2);
+    generalszh::PowerSimulation simulation(state.World(), workers);
+    const engine::time::FixedStep step{30};
+    BOOST_CHECK_THROW(simulation.Execute({0, step}), std::logic_error);
+    simulation.Finalize(step);
+    BOOST_CHECK_NO_THROW(simulation.Execute({0, step}));
+    BOOST_TEST(workers.Count() == 2u);
+}

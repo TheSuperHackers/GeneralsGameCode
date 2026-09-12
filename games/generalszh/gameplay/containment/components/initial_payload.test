@@ -1,0 +1,31 @@
+#define BOOST_TEST_MODULE GeneralsZHInitialPayloadComponent
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+#include <string_view>
+
+import games.generalszh.gameplay.containment.components.initial_payload;
+
+using generalszh::containment::InitialPayloadBinding;
+using generalszh::containment::InitialPayloadPhase;
+
+BOOST_AUTO_TEST_CASE(initial_payload_binding_has_stable_serializable_identity)
+{
+    const InitialPayloadBinding pending{0xA17E42u, 8u};
+    BOOST_TEST(pending.passengerDefinition == 0xA17E42u);
+    BOOST_TEST(pending.count == 8u);
+    BOOST_CHECK(pending.phase == InitialPayloadPhase::Pending);
+    BOOST_TEST(ecs::ComponentTraits<InitialPayloadBinding>::StableName ==
+        std::string_view{"games.generalszh.containment.initial_payload"});
+    BOOST_TEST(ecs::ComponentTraits<InitialPayloadBinding>::Version == 1u);
+    BOOST_CHECK(ecs::ComponentTraits<InitialPayloadBinding>::Persistence ==
+        ecs::PersistencePolicy::Serializable);
+}
+
+BOOST_AUTO_TEST_CASE(initial_payload_binding_keeps_terminal_outcomes_explicit)
+{
+    InitialPayloadBinding binding{17u, 0u};
+    binding.phase = InitialPayloadPhase::Consumed;
+    BOOST_CHECK(binding.phase == InitialPayloadPhase::Consumed);
+    binding.phase = InitialPayloadPhase::Aborted;
+    BOOST_CHECK(binding.phase == InitialPayloadPhase::Aborted);
+}

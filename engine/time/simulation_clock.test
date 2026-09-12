@@ -1,0 +1,33 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+import engine.time.simulation_clock;
+
+using namespace engine::time;
+
+BOOST_AUTO_TEST_CASE(clocks_are_explicit_independent_and_only_advance_on_request)
+{
+	SimulationClock first{FixedStep{30}};
+	SimulationClock second{FixedStep{60}, 500};
+	const auto input = first.Current();
+	for (int render = 0; render < 100; ++render)
+		BOOST_TEST(first.Current().Tick() == 0u); // Reading/presentation cannot advance it.
+	for (int step = 0; step < 30; ++step)
+		first.Advance();
+	BOOST_TEST(first.Current().Tick() == 30u);
+	BOOST_TEST(input.Tick() == 0u); // Published values do not change behind jobs.
+	BOOST_TEST(first.Current().Step().TicksPerSecond() == 30u);
+	BOOST_TEST(second.Current().Tick() == 500u);
+	BOOST_TEST(second.Current().Step().TicksPerSecond() == 60u);
+}
+
+BOOST_AUTO_TEST_CASE(clock_exhaustion_does_not_wrap_or_advance_on_failure)
+{
+	const auto maximum = (std::numeric_limits<std::uint64_t>::max)();
+	SimulationClock clock{FixedStep{30}, maximum - 1};
+	clock.Advance();
+	BOOST_TEST(clock.Current().Tick() == maximum);
+	BOOST_CHECK_THROW(clock.Advance(), std::overflow_error);
+	BOOST_TEST(clock.Current().Tick() == maximum);
+}

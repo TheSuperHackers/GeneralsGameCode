@@ -1,0 +1,116 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
+
+import engine.ecs.storage.archetype;
+
+namespace archetype_test
+{
+
+struct ArchetypeTestComponent
+{
+	int value{0};
+};
+
+} // namespace archetype_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<archetype_test::ArchetypeTestComponent>
+{
+	static constexpr std::string_view StableName = "tests.archetype.component";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_SUITE(ecs_archetype)
+
+BOOST_AUTO_TEST_CASE(archetype_resolution_requires_explicit_finalization)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<archetype_test::ArchetypeTestComponent>();
+	ecs::ArchetypeRegistry archetypes;
+
+	BOOST_CHECK_THROW(archetypes.GetOrCreate(ecs::Signature{}, registry, 256), std::logic_error);
+	BOOST_TEST(!registry.IsFrozen());
+
+	registry.Finalize();
+	const ecs::ComponentId component = registry.TryGet<archetype_test::ArchetypeTestComponent>();
+	const ecs::Archetype &archetype = archetypes.GetOrCreate(ecs::Signature{component}, registry, 256);
+	BOOST_TEST(archetype.Has(component));
+}
+
+BOOST_AUTO_TEST_CASE(entities_use_dense_chunks_and_signature_lookup)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<archetype_test::ArchetypeTestComponent>();
+	registry.Finalize();
+	const ecs::ComponentId component = registry.TryGet<archetype_test::ArchetypeTestComponent>();
+	const ecs::Signature signature{component};
+	const std::vector<const ecs::ComponentInfo *> components{&registry.Get(component)};
+	ecs::Archetype archetype(signature, components, 256);
+
+	const ecs::Entity first{1, 1};
+	const ecs::Entity second{2, 1};
+	const ecs::Archetype::Slot firstSlot = archetype.AddEntity(first);
+	const ecs::Archetype::Slot secondSlot = archetype.AddEntity(second);
+
+	BOOST_TEST(archetype.Has(component));
+	BOOST_TEST(archetype.ColumnIndex(component) == 0);
+	BOOST_TEST(archetype.EntityCount() == 2);
+	BOOST_TEST(firstSlot.chunk != nullptr);
+	BOOST_CHECK(secondSlot.chunk == firstSlot.chunk);
+
+	const ecs::Entity moved = archetype.RemoveEntity(firstSlot.chunk, firstSlot.row);
+	BOOST_CHECK(moved == second);
+	BOOST_TEST(archetype.EntityCount() == 1);
+	BOOST_CHECK(firstSlot.chunk->Entities()[0] == second);
+}
+
+BOOST_AUTO_TEST_CASE(available_chunks_are_reused_deterministically_after_churn)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<archetype_test::ArchetypeTestComponent>();
+	registry.Finalize();
+	const ecs::ComponentId component = registry.TryGet<archetype_test::ArchetypeTestComponent>();
+	const ecs::Signature signature{component};
+	const std::vector<const ecs::ComponentInfo *> components{&registry.Get(component)};
+	ecs::Archetype archetype(signature, components, 128);
+
+	std::uint32_t nextEntity = 0;
+	const ecs::Archetype::Slot firstSlot = archetype.AddEntity(ecs::Entity{nextEntity++, 1});
+	const std::size_t capacity = firstSlot.chunk->Capacity();
+	BOOST_REQUIRE(capacity > 1);
+	for (std::size_t index = 1; index < capacity * 64; ++index)
+		archetype.AddEntity(ecs::Entity{nextEntity++, 1});
+
+	BOOST_REQUIRE(archetype.Chunks().size() >= 64);
+	ecs::Chunk *firstChunk = archetype.Chunks()[0].get();
+	ecs::Chunk *secondChunk = archetype.Chunks()[1].get();
+	BOOST_REQUIRE(firstChunk->IsFull());
+	BOOST_REQUIRE(secondChunk->IsFull());
+	archetype.RemoveEntity(firstChunk, 0);
+	archetype.RemoveEntity(secondChunk, 0);
+
+	const ecs::Archetype::Slot reused = archetype.AddEntity(ecs::Entity{nextEntity++, 1});
+	BOOST_CHECK(reused.chunk == secondChunk);
+
+	// The same full chunk remains the deterministic LIFO choice after each
+	// remove/add pair, while m_chunks and their scheduler-visible order stay fixed.
+	for (std::size_t iteration = 0; iteration < 1024; ++iteration)
+	{
+		BOOST_REQUIRE(secondChunk->IsFull());
+		archetype.RemoveEntity(secondChunk, 0);
+		const ecs::Archetype::Slot churned = archetype.AddEntity(ecs::Entity{nextEntity++, 1});
+		BOOST_CHECK(churned.chunk == secondChunk);
+	}
+}
+
+BOOST_AUTO_TEST_SUITE_END()

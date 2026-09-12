@@ -1,0 +1,7 @@
+#define BOOST_TEST_MODULE GeneralsZHBuildExecution
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.production.runtime.production_runtime;
+BOOST_AUTO_TEST_CASE(production_compatibility_import_exposes_canonical_state)
+{
+    BOOST_TEST(ecs::ComponentTraits<generalszh::production::BuildOrder>::Version==21u);
+}

@@ -1,0 +1,13 @@
+add_library(engine_gameplay_rts_orders STATIC)
+target_sources(engine_gameplay_rts_orders PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES systems/engagement_system.cppm
+    components/unit_order.cppm inputs/order_input.cppm algorithms/advance_engagement.cppm)
+target_compile_features(engine_gameplay_rts_orders PUBLIC cxx_std_23)
+target_link_libraries(engine_gameplay_rts_orders PUBLIC engine_gameplay_combat engine_gameplay_navigation engine_gameplay_spatial)
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+    find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+    set_source_files_properties(systems/engagement_system.test components/unit_order.test inputs/order_input.test algorithms/advance_engagement.test PROPERTIES LANGUAGE CXX)
+    add_executable(engine_gameplay_orders_tests systems/engagement_system.test components/unit_order.test inputs/order_input.test algorithms/advance_engagement.test)
+    target_compile_definitions(engine_gameplay_orders_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(engine_gameplay_orders_tests PRIVATE engine_gameplay_rts_orders Boost::included_unit_test_framework)
+    add_test(NAME engine_gameplay_orders_tests COMMAND engine_gameplay_orders_tests)
+endif()

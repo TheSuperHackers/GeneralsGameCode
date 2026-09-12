@@ -1,0 +1,32 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionMarkerComponents
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.production.presentation.components.construction_marker;
+import games.generalszh.gameplay.production.presentation.definitions.construction_marker_timing;
+
+using generalszh::production::ConstructionMarker;
+using generalszh::production::ConstructionMarkerTiming;
+
+BOOST_AUTO_TEST_CASE(default_values_and_stable_transient_component_metadata)
+{
+	static_assert(std::is_standard_layout_v<ConstructionMarker>);
+	static_assert(std::is_standard_layout_v<ConstructionMarkerTiming>);
+	static_assert(std::is_trivially_copyable_v<ConstructionMarker>);
+	static_assert(std::is_trivially_copyable_v<ConstructionMarkerTiming>);
+
+	BOOST_TEST(ConstructionMarker{}.tick == 0u);
+	BOOST_TEST(ConstructionMarkerTiming{0}.duration == 0u);
+	BOOST_TEST(ecs::ComponentTraits<ConstructionMarker>::StableName ==
+		"games.generalszh.production.presentation.construction_marker");
+	BOOST_TEST(ecs::ComponentTraits<ConstructionMarker>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ConstructionMarker>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Transient));
+}

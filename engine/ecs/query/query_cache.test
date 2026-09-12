@@ -1,0 +1,60 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <string_view>
+
+import engine.ecs.query.query;
+
+namespace query_cache_test
+{
+
+struct CachePosition
+{
+	int value{0};
+};
+
+} // namespace query_cache_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<query_cache_test::CachePosition>
+{
+	static constexpr std::string_view StableName = "tests.query_cache.position";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_SUITE(ecs_query_cache)
+
+BOOST_AUTO_TEST_CASE(cache_updates_when_an_archetype_is_created)
+{
+	ecs::World world;
+	world.RegisterComponent<query_cache_test::CachePosition>();
+	world.FinalizeComponents();
+	ecs::Query<ecs::Read<query_cache_test::CachePosition>> query(world);
+	bool firstRun = false;
+	query.ForEachChunk([&](auto chunk) {
+		firstRun = true;
+		BOOST_TEST(chunk.Count() == 1);
+	});
+
+	BOOST_TEST(!firstRun);
+	const std::uint64_t initialRevision = query.CachedRevision();
+	world.Create<query_cache_test::CachePosition>();
+
+	bool secondRun = false;
+	query.ForEachChunk([&](auto chunk) {
+		secondRun = true;
+		BOOST_TEST(chunk.Count() == 1);
+	});
+
+	BOOST_TEST(secondRun);
+	BOOST_TEST(query.CachedArchetypeCount() == 1);
+	BOOST_TEST(query.CachedRevision() > initialRevision);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -1,0 +1,42 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+
+import engine.gameplay.rts.ai.squads.algorithms.squad_goal;
+
+BOOST_AUTO_TEST_CASE(goal_validation_distinguishes_none_and_command_payloads)
+{
+	using namespace engine::gameplay::rts::ai::squads;
+	using engine::gameplay::navigation::Cell;
+	using engine::gameplay::navigation::NavigationGrid;
+
+	const std::array<std::uint8_t, 4> walkable{1, 1, 1, 1};
+	const NavigationGrid grid(4, 1, walkable);
+
+	ValidateSquadGoal({}, grid);
+	ValidateSquadGoal(SquadGoal{SquadGoalKind::Stop, {3, 1}, {},
+		engine::gameplay::navigation::InvalidCell, 0, 0}, grid);
+	ValidateSquadGoal(SquadGoal{SquadGoalKind::AttackTarget, {3, 1}, {8, 2},
+		engine::gameplay::navigation::InvalidCell, 0, 0}, grid);
+	ValidateSquadGoal(SquadGoal{SquadGoalKind::AttackMove, {3, 1}, {}, Cell{2}, 0, 0}, grid);
+	ValidateSquadGoal(SquadGoal{SquadGoalKind::Hunt, {3, 1}, {},
+		engine::gameplay::navigation::InvalidCell, 3, 0}, grid);
+
+	BOOST_CHECK_THROW(ValidateSquadGoal(SquadGoal{SquadGoalKind::None, {}, {8, 2},
+		engine::gameplay::navigation::InvalidCell, 0, 0}, grid), std::invalid_argument);
+	BOOST_CHECK_THROW(ValidateSquadGoal(SquadGoal{SquadGoalKind::AttackMove, {3, 1}, {},
+		Cell{99}, 0, 0}, grid), std::invalid_argument);
+	BOOST_CHECK_THROW(ValidateSquadGoal(SquadGoal{SquadGoalKind::Hunt, {3, 1}, {},
+		engine::gameplay::navigation::InvalidCell, 0, 0}, grid), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(goal_revisions_are_explicit_and_overflow_is_rejected)
+{
+	using engine::gameplay::rts::ai::squads::NextSquadGoalRevision;
+
+	BOOST_TEST(NextSquadGoalRevision(0) == 1u);
+	BOOST_CHECK_THROW(NextSquadGoalRevision((std::numeric_limits<std::uint64_t>::max)()),
+		std::overflow_error);
+}

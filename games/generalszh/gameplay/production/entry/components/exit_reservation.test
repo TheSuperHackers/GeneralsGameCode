@@ -1,0 +1,354 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionExitReservation
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.production.entry.components.exit_reservation;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::production::ClearExitReservation;
+using generalszh::production::ExitReservation;
+using generalszh::production::IsValidExitReservation;
+using generalszh::production::ProductionExitReservation;
+
+namespace exit_reservation_test
+{
+struct ColumnMarker
+{
+	std::uint32_t value{0};
+};
+
+struct ExitReservationSystem
+{
+	using Query = ecs::Query<ecs::Write<ProductionExitReservation>>;
+
+	void Execute(const Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		const auto reservations = chunk.Get<ProductionExitReservation>();
+		const auto entities = chunk.Entities();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			if (entities[row].index % 2u == 0u)
+				ClearExitReservation(reservations[row]);
+		}
+	}
+};
+
+struct EntityState
+{
+	ecs::Entity entity{};
+	ExitReservation reservation{ExitReservation::NoneAvailable};
+};
+
+struct Snapshot
+{
+	std::vector<EntityState> entries;
+	std::size_t chunkCount{0};
+};
+
+} // namespace exit_reservation_test
+
+namespace ecs
+{
+template<>
+struct ComponentTraits<exit_reservation_test::ColumnMarker>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.exit_reservation.column_marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct SystemTraits<exit_reservation_test::ExitReservationSystem>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.exit_reservation.system";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace exit_reservation_test
+{
+struct RegistrySnapshot
+{
+	ecs::ComponentId reservationId{ecs::InvalidComponentId};
+	ecs::ComponentId markerId{ecs::InvalidComponentId};
+	ecs::ComponentSchemaHash schema{ecs::UnfinalizedSchemaHash};
+};
+
+RegistrySnapshot RegisterInOrder(const bool reverse)
+{
+	ecs::ComponentRegistry registry;
+	if (reverse)
+	{
+		registry.Register<ColumnMarker>();
+		registry.Register<ProductionExitReservation>();
+	}
+	else
+	{
+		registry.Register<ProductionExitReservation>();
+		registry.Register<ColumnMarker>();
+	}
+	registry.Finalize();
+
+	return RegistrySnapshot{
+		registry.TryGet<ProductionExitReservation>(),
+		registry.TryGet<ColumnMarker>(),
+		registry.SchemaHash()};
+}
+
+ExitReservation InitialReservation(const std::size_t index) noexcept
+{
+	constexpr std::array<std::int32_t, 8> tokens{
+		-2, -1, 0, 1, 2, 3, 17, (std::numeric_limits<std::int32_t>::max)()};
+	return static_cast<ExitReservation>(tokens[index % tokens.size()]);
+}
+
+ExitReservation ExpectedReservationAfterProcessing(const std::size_t index) noexcept
+{
+	if (index % 2u == 0u)
+		return ExitReservation::NoneAvailable;
+	return InitialReservation(index);
+}
+
+Snapshot RunScheduledProcessing(const std::size_t workerCount)
+{
+	constexpr std::size_t entityCount = 4096;
+
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<ProductionExitReservation>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<ProductionExitReservation>();
+		auto *reservation = world.Get<ProductionExitReservation>(entity);
+		BOOST_REQUIRE(reservation != nullptr);
+		reservation->value = InitialReservation(index);
+		entities.push_back(entity);
+	}
+
+	ExitReservationSystem system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workerCount});
+	const engine::time::FixedStep step{60};
+	scheduler.Finalize(step);
+	scheduler.Execute(engine::time::SimulationTime{1u, step});
+
+	Snapshot result;
+	result.chunkCount = 0;
+	{
+		ecs::Query<ecs::Read<ProductionExitReservation>> query(world);
+		result.chunkCount = query.PrepareChunks();
+	}
+	BOOST_REQUIRE(result.chunkCount > 1u);
+
+	result.entries.reserve(entityCount);
+	for (const ecs::Entity entity : entities)
+	{
+		const auto *reservation = world.Get<ProductionExitReservation>(entity);
+		BOOST_REQUIRE(reservation != nullptr);
+		result.entries.push_back(EntityState{entity, reservation->value});
+	}
+	return result;
+}
+} // namespace exit_reservation_test
+
+BOOST_AUTO_TEST_CASE(enum_ids_are_stable_and_validation_is_bounded)
+{
+	BOOST_TEST(static_cast<std::int32_t>(ExitReservation::NoneNeeded) == -2);
+	BOOST_TEST(static_cast<std::int32_t>(ExitReservation::NoneAvailable) == -1);
+	BOOST_TEST(static_cast<std::int32_t>(ExitReservation::Door1) == 0);
+	BOOST_TEST(static_cast<std::int32_t>(ExitReservation::Door2) == 1);
+	BOOST_TEST(static_cast<std::int32_t>(ExitReservation::Door3) == 2);
+	BOOST_TEST(static_cast<std::int32_t>(ExitReservation::Door4) == 3);
+
+	BOOST_CHECK(!IsValidExitReservation(-3));
+	for (std::int32_t raw = -2; raw <= 3; ++raw)
+		BOOST_CHECK(IsValidExitReservation(raw));
+	BOOST_CHECK(IsValidExitReservation(4));
+	BOOST_CHECK(IsValidExitReservation((std::numeric_limits<std::int32_t>::max)()));
+}
+
+BOOST_AUTO_TEST_CASE(default_value_and_clear_cover_all_named_states)
+{
+	static_assert(std::is_same_v<std::underlying_type_t<ExitReservation>, std::int32_t>);
+	static_assert(std::is_standard_layout_v<ProductionExitReservation>);
+	static_assert(std::is_trivially_copyable_v<ProductionExitReservation>);
+	static_assert(sizeof(ProductionExitReservation) == sizeof(ExitReservation));
+	static_assert(alignof(ProductionExitReservation) == alignof(ExitReservation));
+	static_assert(offsetof(ProductionExitReservation, value) == 0);
+
+	const ProductionExitReservation defaultReservation;
+	const ExitReservation defaultValue = defaultReservation.value;
+	BOOST_CHECK(defaultValue == ExitReservation::NoneAvailable);
+
+	for (std::int32_t raw = -2; raw <= 3; ++raw)
+	{
+		ProductionExitReservation reservation{static_cast<ExitReservation>(raw)};
+		ClearExitReservation(reservation);
+		const ExitReservation clearedValue = reservation.value;
+		BOOST_CHECK(clearedValue == ExitReservation::NoneAvailable);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(non_animation_parking_tokens_are_preserved_until_explicit_clear)
+{
+	for (const std::int32_t token : {std::int32_t{4}, std::int32_t{17},
+		(std::numeric_limits<std::int32_t>::max)()})
+	{
+		const auto value = static_cast<ExitReservation>(token);
+		ProductionExitReservation reservation{value};
+		BOOST_TEST(static_cast<std::int32_t>(reservation.value) == token);
+		ClearExitReservation(reservation);
+		BOOST_CHECK(reservation.value == ExitReservation::NoneAvailable);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(serializable_metadata_and_dense_ids_are_registration_order_independent)
+{
+	BOOST_TEST(ecs::ComponentTraits<ProductionExitReservation>::StableName ==
+		"games.generalszh.production.exit_reservation");
+	BOOST_TEST(ecs::ComponentTraits<ProductionExitReservation>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<ProductionExitReservation>::Persistence ==
+		ecs::PersistencePolicy::Serializable);
+
+	const auto forward = exit_reservation_test::RegisterInOrder(false);
+	const auto reverse = exit_reservation_test::RegisterInOrder(true);
+	BOOST_TEST(forward.reservationId == reverse.reservationId);
+	BOOST_TEST(forward.markerId == reverse.markerId);
+	BOOST_TEST(forward.schema == reverse.schema);
+
+	ecs::ComponentRegistry registry;
+	registry.Register<ProductionExitReservation>();
+	registry.Finalize();
+	const ecs::ComponentId reservationId = registry.TryGet<ProductionExitReservation>();
+	const ecs::ComponentInfo &info = registry.Get(reservationId);
+	BOOST_TEST(info.id == reservationId);
+	BOOST_TEST(info.stableKey == ecs::HashComponentKey(
+		"games.generalszh.production.exit_reservation"));
+	BOOST_TEST(info.stableName == "games.generalszh.production.exit_reservation");
+	BOOST_TEST(info.version == 1u);
+	BOOST_CHECK(info.persistence == ecs::PersistencePolicy::Serializable);
+}
+
+BOOST_AUTO_TEST_CASE(query_columns_are_aligned_and_contiguous)
+{
+	constexpr std::size_t entityCount = 65;
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<ProductionExitReservation>();
+	world.RegisterComponent<exit_reservation_test::ColumnMarker>();
+	world.FinalizeComponents();
+
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<ProductionExitReservation,
+			exit_reservation_test::ColumnMarker>();
+		auto *reservation = world.Get<ProductionExitReservation>(entity);
+		auto *marker = world.Get<exit_reservation_test::ColumnMarker>(entity);
+		BOOST_REQUIRE(reservation != nullptr);
+		BOOST_REQUIRE(marker != nullptr);
+		reservation->value = exit_reservation_test::InitialReservation(index);
+		marker->value = 10'000u + static_cast<std::uint32_t>(index * 3u + 1u);
+	}
+
+	ecs::Query<ecs::Read<ProductionExitReservation>,
+		ecs::Read<exit_reservation_test::ColumnMarker>> query(world);
+	const std::size_t chunkCount = query.PrepareChunks();
+	BOOST_REQUIRE(chunkCount > 1u);
+
+	std::size_t rowsSeen = 0;
+	bool sawMultiRowChunk = false;
+	std::array<bool, entityCount> visitedEntityIds{};
+	query.ForEachPreparedChunk([&rowsSeen, &sawMultiRowChunk, &visitedEntityIds](const auto chunk) {
+		const auto reservations = chunk.template Get<ProductionExitReservation>();
+		const auto markers = chunk.template Get<exit_reservation_test::ColumnMarker>();
+		BOOST_TEST(reservations.size() == markers.size());
+		BOOST_CHECK(reinterpret_cast<std::uintptr_t>(reservations.data()) %
+			alignof(ProductionExitReservation) == 0u);
+		BOOST_CHECK(reinterpret_cast<std::uintptr_t>(markers.data()) %
+			alignof(exit_reservation_test::ColumnMarker) == 0u);
+		BOOST_CHECK(reinterpret_cast<const void *>(reservations.data()) !=
+			reinterpret_cast<const void *>(markers.data()));
+		if (chunk.Count() > 1u)
+			sawMultiRowChunk = true;
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			if (row > 0u)
+			{
+				BOOST_CHECK(&reservations[row] == reservations.data() + row);
+				BOOST_CHECK(&markers[row] == markers.data() + row);
+			}
+
+			const ecs::Entity entity = chunk.Entities()[row];
+			const std::size_t entityIndex = static_cast<std::size_t>(entity.index);
+			const bool entityIndexIsExpected = entityIndex < entityCount;
+			BOOST_CHECK(entityIndexIsExpected);
+			if (!entityIndexIsExpected)
+				continue;
+
+			const ExitReservation expectedReservation =
+				exit_reservation_test::InitialReservation(entityIndex);
+			const ExitReservation actualReservation = reservations[row].value;
+			const std::uint32_t expectedMarker =
+				10'000u + static_cast<std::uint32_t>(entityIndex * 3u + 1u);
+			const std::uint32_t actualMarker = markers[row].value;
+			BOOST_CHECK(actualReservation == expectedReservation);
+			BOOST_TEST(actualMarker == expectedMarker);
+			BOOST_CHECK(!visitedEntityIds[entityIndex]);
+			visitedEntityIds[entityIndex] = true;
+		}
+		rowsSeen += chunk.Count();
+	});
+	BOOST_REQUIRE(sawMultiRowChunk);
+	BOOST_TEST(rowsSeen == entityCount);
+	for (const bool visited : visitedEntityIds)
+		BOOST_CHECK(visited);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_state_and_entity_ids_match_for_one_two_and_four_workers)
+{
+	const auto oneWorker = exit_reservation_test::RunScheduledProcessing(1);
+	const auto twoWorkers = exit_reservation_test::RunScheduledProcessing(2);
+	const auto fourWorkers = exit_reservation_test::RunScheduledProcessing(4);
+
+	BOOST_TEST(oneWorker.chunkCount > 1u);
+	BOOST_TEST(twoWorkers.chunkCount == oneWorker.chunkCount);
+	BOOST_TEST(fourWorkers.chunkCount == oneWorker.chunkCount);
+	BOOST_TEST(oneWorker.entries.size() == 4096u);
+	BOOST_TEST(twoWorkers.entries.size() == oneWorker.entries.size());
+	BOOST_TEST(fourWorkers.entries.size() == oneWorker.entries.size());
+
+	for (std::size_t index = 0; index < oneWorker.entries.size(); ++index)
+	{
+		const auto &expected = oneWorker.entries[index];
+		const auto &two = twoWorkers.entries[index];
+		const auto &four = fourWorkers.entries[index];
+		const ecs::Entity expectedEntity = expected.entity;
+		const ecs::Entity twoEntity = two.entity;
+		const ecs::Entity fourEntity = four.entity;
+		BOOST_CHECK(twoEntity == expectedEntity);
+		BOOST_CHECK(fourEntity == expectedEntity);
+
+		const ExitReservation expectedReservation =
+			exit_reservation_test::ExpectedReservationAfterProcessing(index);
+		const ExitReservation twoReservation = two.reservation;
+		const ExitReservation fourReservation = four.reservation;
+		BOOST_CHECK(expected.reservation == expectedReservation);
+		BOOST_CHECK(twoReservation == expectedReservation);
+		BOOST_CHECK(fourReservation == expectedReservation);
+	}
+}

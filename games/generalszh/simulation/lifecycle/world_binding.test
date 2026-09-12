@@ -1,0 +1,40 @@
+#include <boost/test/unit_test.hpp>
+#include <memory>
+#include <stdexcept>
+#include "world_binding.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+import engine.ecs.core.world;
+
+BOOST_AUTO_TEST_CASE(empty_world_replacement_requires_all_cached_world_bindings_to_release)
+{
+	generalszh::GameplayState state;
+	const auto *original = &state.World();
+	const auto schema = state.World().Components().SchemaHash();
+	{
+		generalszh::GameplayWorldBinding first(state);
+		{
+			generalszh::GameplayWorldBinding second(state);
+			BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		}
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_CHECK(&state.World() == original);
+		BOOST_TEST(state.World().Components().SchemaHash() == schema);
+	}
+	BOOST_CHECK_NO_THROW(state.Reset());
+	BOOST_TEST(state.World().Components().SchemaHash() == schema);
+}
+
+BOOST_AUTO_TEST_CASE(failed_composition_construction_releases_its_world_binding)
+{
+	struct FailingComposition
+	{
+		generalszh::GameplayWorldBinding binding;
+		explicit FailingComposition(generalszh::GameplayState &state) : binding(state)
+		{
+			throw std::runtime_error("Injected setup failure after binding acquisition");
+		}
+	};
+	generalszh::GameplayState state;
+	BOOST_CHECK_THROW(std::make_unique<FailingComposition>(state), std::runtime_error);
+	BOOST_CHECK_NO_THROW(state.Reset());
+}

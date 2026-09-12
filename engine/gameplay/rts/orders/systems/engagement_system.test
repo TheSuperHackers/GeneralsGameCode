@@ -1,0 +1,21 @@
+#define BOOST_TEST_MODULE EngineEngagement
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.rts.orders.systems.engagement_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay;
+BOOST_AUTO_TEST_CASE(attack_move_interrupts_travel_then_resumes_and_death_clears_orders)
+{
+    using namespace rts::orders; using namespace navigation;
+    ecs::World world; world.RegisterComponent<UnitOrder>(); world.RegisterComponent<EngagementObservation>(); world.RegisterComponent<EngagementResult>();
+    world.RegisterComponent<combat::LifeState>(); world.RegisterComponent<GridPosition>(); world.RegisterComponent<MoveGoal>(); world.RegisterComponent<MoveCredit>(); world.RegisterComponent<MoveRangeGoal>(); world.FinalizeComponents();
+    const auto actor=world.Create<UnitOrder,EngagementObservation,EngagementResult,combat::LifeState,GridPosition,MoveGoal,MoveCredit>();
+    *world.Get<UnitOrder>(actor)={OrderKind::AttackMove,20,{}};
+    EngagementSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<MoveGoal>(actor)->cell==20u);
+    *world.Get<EngagementObservation>(actor)={{10,1},3,true}; scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell); BOOST_CHECK(world.Get<EngagementResult>(actor)->target==ecs::Entity(10,1));
+    *world.Get<EngagementObservation>(actor)={}; scheduler.Execute({2,step}); BOOST_TEST(world.Get<MoveGoal>(actor)->cell==20u);
+    world.Get<combat::LifeState>(actor)->alive=false; scheduler.Execute({3,step}); BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::None);
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell);
+}

@@ -1,0 +1,21 @@
+#define BOOST_TEST_MODULE GeneralsZHDemolitionComponents
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.demolition.components.demolition_trap;
+import games.generalszh.gameplay.demolition.setup.demolition_registration;
+
+BOOST_AUTO_TEST_CASE(trap_runtime_state_is_serializable_and_registration_is_explicit)
+{
+    using namespace generalszh::demolition;
+    ecs::World world;
+    RegisterDemolitionComponents(world);
+    world.FinalizeComponents();
+    const auto trap=world.Create<DemolitionTrapState,DemolitionTargetClassification>();
+    *world.Get<DemolitionTrapState>(trap)={12,DemolitionDetonationMode::Manual,true,true};
+    *world.Get<DemolitionTargetClassification>(trap)={true,false,false};
+    BOOST_CHECK(ecs::ComponentTraits<DemolitionTrapState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<DemolitionTargetClassification>::Persistence==ecs::PersistencePolicy::Transient);
+    BOOST_TEST(world.Get<DemolitionTrapState>(trap)->nextScanTick==12u);
+    BOOST_CHECK(world.Get<DemolitionTrapState>(trap)->mode==DemolitionDetonationMode::Manual);
+    BOOST_CHECK(world.Get<DemolitionTrapState>(trap)->detonated);
+    BOOST_CHECK(world.Get<DemolitionTargetClassification>(trap)->airborne);
+}

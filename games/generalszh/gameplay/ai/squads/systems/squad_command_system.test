@@ -1,0 +1,248 @@
+#define BOOST_TEST_MODULE GeneralsZHSquadCommandSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+
+import games.generalszh.gameplay.ai.squads.systems.squad_command_system;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+namespace ai = engine::gameplay::rts::ai::squads;
+namespace command = generalszh::ai::squads;
+namespace combat = engine::gameplay::combat;
+namespace containment = engine::gameplay::containment;
+namespace construction = engine::gameplay::rts::construction;
+namespace harvesting = engine::gameplay::rts::harvesting;
+namespace navigation = engine::gameplay::navigation;
+namespace repair = engine::gameplay::rts::repair;
+namespace production = generalszh::production;
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<ai::SquadGoal>();
+	world.RegisterComponent<ai::SquadMembership>();
+	world.RegisterComponent<ai::SquadGoalApplication>();
+	world.RegisterComponent<engine::gameplay::rts::economy::ResourceBalance>();
+	world.RegisterComponent<combat::LifeState>();
+	world.RegisterComponent<combat::Health>();
+	world.RegisterComponent<navigation::GridPosition>();
+	world.RegisterComponent<production::ProducedUnit>();
+	world.RegisterComponent<production::Producer>();
+	world.RegisterComponent<generalszh::construction::Structure>();
+	world.RegisterComponent<construction::BuilderAssignment>();
+	world.RegisterComponent<harvesting::HarvestState>();
+	world.RegisterComponent<containment::ContainmentTask>();
+	world.RegisterComponent<containment::PassengerMembership>();
+	world.RegisterComponent<generalszh::capture::CaptureActorState>();
+	world.RegisterComponent<repair::ManualRepairAssignment>();
+}
+
+void MakeLiveActor(ecs::World &world, const ecs::Entity actor, const ecs::Entity owner)
+{
+	world.Get<combat::LifeState>(actor)->alive = true;
+	world.Get<combat::Health>(actor)->current = 100;
+	world.Get<navigation::GridPosition>(actor)->cell = 0;
+	world.Get<production::ProducedUnit>(actor)->account = owner;
+}
+
+void Run(ecs::World &world, command::SquadCommandSystem &system,
+	const std::uint64_t tick = 0)
+{
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{20};
+	scheduler.Finalize(step);
+	scheduler.Execute({tick, step});
+}
+
+ai::SquadCommand Assign(const ecs::Entity owner, const ecs::Entity squad, const ecs::Entity actor)
+{
+	return {ai::SquadCommandKind::Assign, owner, squad, actor, {}, 0, {}};
+}
+}
+
+BOOST_AUTO_TEST_CASE(duplicate_goals_and_actors_are_rejected_before_structural_mutation)
+{
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto squad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(squad)->owner = owner;
+	const auto actor = world.Create<combat::LifeState, combat::Health, navigation::GridPosition,
+		production::ProducedUnit>();
+	MakeLiveActor(world, actor, owner);
+
+	ai::SquadCommandBatch batch(4);
+	batch.Begin(0);
+	batch.Append(Assign(owner, squad, actor));
+	batch.Append(Assign(owner, squad, actor));
+	batch.Append({ai::SquadCommandKind::SetGoal, owner, squad, {}, {}, 0,
+		{ai::SquadGoalKind::Stop, {}, navigation::InvalidCell, 0}});
+	batch.Append({ai::SquadCommandKind::SetGoal, owner, squad, {}, {}, 0,
+		{ai::SquadGoalKind::Stop, {}, navigation::InvalidCell, 0}});
+	batch.Publish();
+	const std::array<std::uint8_t, 1> cells{1};
+	navigation::NavigationGrid grid(1, 1, cells);
+	command::SquadCommandSystem system(world, grid, batch);
+	Run(world, system);
+
+	const auto receipts = batch.Receipts();
+	BOOST_REQUIRE_EQUAL(receipts.size(), 4u);
+	BOOST_TEST(receipts[0].sequence == 0u);
+	BOOST_TEST(receipts[1].sequence == 1u);
+	BOOST_TEST(receipts[2].sequence == 2u);
+	BOOST_TEST(receipts[3].sequence == 3u);
+	BOOST_CHECK(receipts[0].status == ai::SquadCommandStatus::DuplicateActor);
+	BOOST_CHECK(receipts[1].status == ai::SquadCommandStatus::DuplicateActor);
+	BOOST_CHECK(receipts[2].status == ai::SquadCommandStatus::DuplicateSquad);
+	BOOST_CHECK(receipts[3].status == ai::SquadCommandStatus::DuplicateSquad);
+	BOOST_CHECK(world.Get<ai::SquadMembership>(actor) == nullptr);
+	BOOST_CHECK(world.Get<ai::SquadGoalApplication>(actor) == nullptr);
+	BOOST_TEST(world.Get<ai::SquadGoal>(squad)->revision == 0u);
+	batch.Release();
+}
+
+BOOST_AUTO_TEST_CASE(goal_and_assignment_share_one_reduction_and_commit_once)
+{
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto squad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(squad)->owner = owner;
+	const auto actor = world.Create<combat::LifeState, combat::Health, navigation::GridPosition,
+		production::ProducedUnit>();
+	MakeLiveActor(world, actor, owner);
+
+	ai::SquadCommandBatch batch(2);
+	batch.Begin(3);
+	batch.Append({ai::SquadCommandKind::SetGoal, owner, squad, {}, {}, 0,
+		{ai::SquadGoalKind::Stop, {}, navigation::InvalidCell, 0}});
+	batch.Append(Assign(owner, squad, actor));
+	batch.Publish();
+	const std::array<std::uint8_t, 1> cells{1};
+	navigation::NavigationGrid grid(1, 1, cells);
+	command::SquadCommandSystem system(world, grid, batch);
+	Run(world, system, 3);
+
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 2u);
+	BOOST_CHECK(batch.Receipts()[0].status == ai::SquadCommandStatus::Accepted);
+	BOOST_CHECK(batch.Receipts()[1].status == ai::SquadCommandStatus::Accepted);
+	BOOST_TEST(world.Get<ai::SquadGoal>(squad)->revision == 1u);
+	BOOST_REQUIRE(world.Get<ai::SquadMembership>(actor) != nullptr);
+	BOOST_CHECK(world.Get<ai::SquadMembership>(actor)->squad == squad);
+	BOOST_REQUIRE(world.Get<ai::SquadGoalApplication>(actor) != nullptr);
+	BOOST_CHECK(!world.Get<ai::SquadGoalApplication>(actor)->squad.IsValid());
+	batch.Release();
+}
+
+BOOST_AUTO_TEST_CASE(owner_live_generation_and_task_state_are_validated)
+{
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto other = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto squad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(squad)->owner = owner;
+	const auto actor = world.Create<combat::LifeState, combat::Health, navigation::GridPosition,
+		production::ProducedUnit, harvesting::HarvestState, containment::PassengerMembership>();
+	MakeLiveActor(world, actor, owner);
+	world.Get<harvesting::HarvestState>(actor)->phase = harvesting::HarvestPhase::Pickup;
+
+	ai::SquadCommandBatch batch(4);
+	batch.Begin(0);
+	batch.Append(Assign(owner, squad, actor));
+	batch.Append(Assign(other, squad, actor));
+	batch.Append(Assign(owner, squad, ecs::Entity{actor.index, actor.generation + 1}));
+	batch.Append({ai::SquadCommandKind::SetGoal, owner, squad, {}, {}, 4,
+		{ai::SquadGoalKind::Stop, {}, navigation::InvalidCell, 0}});
+	batch.Publish();
+	const std::array<std::uint8_t, 1> cells{1};
+	navigation::NavigationGrid grid(1, 1, cells);
+	command::SquadCommandSystem system(world, grid, batch);
+	Run(world, system);
+
+	const auto receipts = batch.Receipts();
+	BOOST_REQUIRE_EQUAL(receipts.size(), 4u);
+	BOOST_CHECK(receipts[0].status == ai::SquadCommandStatus::TaskBusy);
+	BOOST_CHECK(receipts[1].status == ai::SquadCommandStatus::NotOwned);
+	BOOST_CHECK(receipts[2].status == ai::SquadCommandStatus::InvalidActor);
+	BOOST_CHECK(receipts[3].status == ai::SquadCommandStatus::StaleGoalRevision);
+	BOOST_CHECK(world.Get<ai::SquadMembership>(actor) == nullptr);
+	batch.Release();
+}
+
+BOOST_AUTO_TEST_CASE(stale_membership_and_invalid_target_are_rejected)
+{
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto squad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(squad)->owner = owner;
+	const auto actor = world.Create<ai::SquadMembership, ai::SquadGoalApplication,
+		combat::LifeState, combat::Health, navigation::GridPosition, production::ProducedUnit>();
+	MakeLiveActor(world, actor, owner);
+	world.Get<ai::SquadMembership>(actor)->squad = squad;
+	const auto otherSquad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(otherSquad)->owner = owner;
+	const auto invalidTarget = ecs::Entity{99, 1};
+
+	ai::SquadCommandBatch batch(2);
+	batch.Begin(0);
+	batch.Append({ai::SquadCommandKind::Remove, owner, squad, actor, otherSquad, 0, {}});
+	batch.Append({ai::SquadCommandKind::SetGoal, owner, squad, {}, {}, 0,
+		{ai::SquadGoalKind::AttackTarget, invalidTarget, navigation::InvalidCell, 0}});
+	batch.Publish();
+	const std::array<std::uint8_t, 1> cells{1};
+	navigation::NavigationGrid grid(1, 1, cells);
+	command::SquadCommandSystem system(world, grid, batch);
+	Run(world, system);
+
+	BOOST_CHECK(batch.Receipts()[0].status == ai::SquadCommandStatus::StaleMembership);
+	BOOST_CHECK(batch.Receipts()[1].status == ai::SquadCommandStatus::InvalidTarget);
+	BOOST_REQUIRE(world.Get<ai::SquadMembership>(actor) != nullptr);
+	batch.Release();
+}
+
+BOOST_AUTO_TEST_CASE(alive_zero_health_actor_and_target_are_rejected)
+{
+	ecs::World world;
+	RegisterComponents(world);
+	world.FinalizeComponents();
+	const auto owner = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto enemy = world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+	const auto squad = world.Create<ai::SquadGoal>();
+	world.Get<ai::SquadGoal>(squad)->owner = owner;
+	const auto actor = world.Create<combat::LifeState, combat::Health, navigation::GridPosition,
+		production::ProducedUnit>();
+	MakeLiveActor(world, actor, owner);
+	world.Get<combat::Health>(actor)->current = 0;
+	const auto target = world.Create<combat::LifeState, combat::Health, navigation::GridPosition,
+		production::ProducedUnit>();
+	MakeLiveActor(world, target, enemy);
+	world.Get<combat::Health>(target)->current = 0;
+
+	ai::SquadCommandBatch batch(2);
+	batch.Begin(0);
+	batch.Append(Assign(owner, squad, actor));
+	batch.Append({ai::SquadCommandKind::SetGoal, owner, squad, {}, {}, 0,
+		{ai::SquadGoalKind::AttackTarget, target, navigation::InvalidCell, 0}});
+	batch.Publish();
+	const std::array<std::uint8_t, 1> cells{1};
+	navigation::NavigationGrid grid(1, 1, cells);
+	command::SquadCommandSystem system(world, grid, batch);
+	Run(world, system);
+
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 2u);
+	BOOST_CHECK(batch.Receipts()[0].status == ai::SquadCommandStatus::InvalidActor);
+	BOOST_CHECK(batch.Receipts()[1].status == ai::SquadCommandStatus::InvalidTarget);
+	BOOST_CHECK(world.Get<ai::SquadMembership>(actor) == nullptr);
+	BOOST_TEST(world.Get<ai::SquadGoal>(squad)->revision == 0u);
+	batch.Release();
+}

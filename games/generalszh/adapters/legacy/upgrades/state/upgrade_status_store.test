@@ -1,0 +1,308 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeStatusAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+#include "upgrade_status_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.gameplay.upgrades.state.upgrade_status;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::PersistentResetParticipant;
+using generalszh::PersistentWorldReset;
+using generalszh::legacy::UpgradeStatusLease;
+using generalszh::legacy::UpgradeStatusStore;
+using generalszh::upgrades::Status;
+using generalszh::upgrades::UpgradeInstanceStatus;
+
+namespace upgrade_status_adapter_test
+{
+struct Row
+{
+	ecs::Entity entity{};
+	std::int32_t value{0};
+};
+
+std::vector<Row> ReadRows(GameplayState &state)
+{
+	std::vector<Row> result;
+	ecs::Query<ecs::Read<UpgradeInstanceStatus>> query(state.World());
+	query.ForEachChunk([&](const auto chunk) {
+		const auto statuses = chunk.template Get<UpgradeInstanceStatus>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+			result.push_back({chunk.Entities()[row], static_cast<std::int32_t>(statuses[row].value)});
+	});
+	return result;
+}
+
+enum class ScheduledAction
+{
+	Read,
+	Create,
+	Write,
+	Restore
+};
+
+struct ScheduledAccess
+{
+	UpgradeStatusStore *store;
+	UpgradeStatusLease *lease;
+	ScheduledAction action;
+
+	using Query = ecs::Query<ecs::Read<UpgradeInstanceStatus>>;
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		if (action == ScheduledAction::Write) { lease->Set(1); return; }
+		if (action == ScheduledAction::Restore) { lease->Restore(1); return; }
+		if (action == ScheduledAction::Read)
+		{
+			(void)lease->Get();
+			return;
+		}
+		UpgradeStatusLease extra(*store);
+	}
+};
+
+struct ResetResult
+{
+	std::vector<Row> rows;
+};
+
+ResetResult RunReset(const bool reverseInputOrder)
+{
+	GameplayState state;
+	UpgradeStatusStore first(state);
+	UpgradeStatusStore second(state);
+	UpgradeStatusLease firstLease(first);
+	UpgradeStatusLease secondLease(second);
+	firstLease.Set(static_cast<std::int32_t>(Status::InProduction));
+	secondLease.Set(static_cast<std::int32_t>(Status::Complete));
+
+	auto firstParticipant = first.ResetParticipant();
+	auto secondParticipant = second.ResetParticipant();
+	secondParticipant.stableName = "tests.generalszh.upgrades.second";
+	std::array participants{firstParticipant, secondParticipant};
+	if (reverseInputOrder)
+		std::swap(participants[0], participants[1]);
+	PersistentWorldReset::Execute(state, participants);
+
+	BOOST_TEST(firstLease.Get() == static_cast<std::int32_t>(Status::InProduction));
+	BOOST_TEST(secondLease.Get() == static_cast<std::int32_t>(Status::Complete));
+	return {ReadRows(state)};
+}
+
+void ThrowingRestore(void *)
+{
+	throw std::runtime_error("Injected upgrade status restore failure");
+}
+} // namespace upgrade_status_adapter_test
+
+namespace ecs
+{
+template<>
+struct SystemTraits<upgrade_status_adapter_test::ScheduledAccess>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.upgrades.scheduled_access";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+static_assert(!std::is_copy_constructible_v<UpgradeStatusStore>);
+static_assert(!std::is_move_constructible_v<UpgradeStatusStore>);
+static_assert(!std::is_copy_constructible_v<UpgradeStatusLease>);
+static_assert(!std::is_move_constructible_v<UpgradeStatusLease>);
+using upgrade_status_adapter_test::ReadRows;
+
+BOOST_AUTO_TEST_CASE(lease_lifecycle_and_ecs_query_share_one_authoritative_status)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	UpgradeStatusLease lease(store);
+
+	BOOST_TEST(store.Count() == 1u);
+	BOOST_TEST(state.Count() == 1u);
+	BOOST_TEST(lease.Get() == static_cast<std::int32_t>(Status::Invalid));
+
+	lease.Set(static_cast<std::int32_t>(Status::InProduction));
+	BOOST_TEST(ReadRows(state).front().value ==
+		static_cast<std::int32_t>(Status::InProduction));
+
+	ecs::Query<ecs::Write<UpgradeInstanceStatus>> query(state.World());
+	query.ForEachChunk([](const auto chunk) {
+		chunk.template Get<UpgradeInstanceStatus>().front().value = Status::Complete;
+	});
+	BOOST_TEST(lease.Get() == static_cast<std::int32_t>(Status::Complete));
+}
+
+BOOST_AUTO_TEST_CASE(missing_and_stale_component_bindings_are_rejected)
+{
+	{
+		GameplayState state;
+		UpgradeStatusStore store(state);
+		UpgradeStatusLease lease(store);
+		const auto entity = ReadRows(state).front().entity;
+		BOOST_TEST(state.World().Remove<UpgradeInstanceStatus>(entity));
+		BOOST_CHECK_THROW(lease.Get(), std::logic_error);
+	}
+
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	UpgradeStatusLease lease(store);
+	const auto stale = ReadRows(state).front().entity;
+	BOOST_TEST(state.World().Destroy(stale));
+	BOOST_CHECK_THROW(lease.Get(), std::logic_error);
+	// This test deliberately violated lease ownership above. Invoke the existing
+	// fatal-reset callback solely for teardown; never resurrect a stale identity.
+	const auto participant = store.ResetParticipant();
+	participant.fail(participant.context);
+	BOOST_CHECK_THROW(lease.Get(), std::logic_error);
+	BOOST_TEST(!state.World().IsAlive(stale));
+}
+
+BOOST_AUTO_TEST_CASE(invalid_external_restore_rejects_before_mutation)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	UpgradeStatusLease lease(store);
+	lease.Set(static_cast<std::int32_t>(Status::Complete));
+	const auto beforeCount = state.Count();
+
+	BOOST_CHECK_THROW(lease.Restore(-1), std::invalid_argument);
+	BOOST_CHECK_THROW(lease.Restore(3), std::invalid_argument);
+	BOOST_TEST(lease.Get() == static_cast<std::int32_t>(Status::Complete));
+	BOOST_TEST(state.Count() == beforeCount);
+}
+
+BOOST_AUTO_TEST_CASE(reset_preserves_values_and_canonical_participant_order)
+{
+	const auto forward = upgrade_status_adapter_test::RunReset(false).rows;
+	const auto reverse = upgrade_status_adapter_test::RunReset(true).rows;
+
+	BOOST_REQUIRE(forward.size() == 2u);
+	BOOST_REQUIRE(reverse.size() == forward.size());
+	for (std::size_t index = 0; index < forward.size(); ++index)
+	{
+		BOOST_CHECK(forward[index].entity == reverse[index].entity);
+		BOOST_TEST(forward[index].value == reverse[index].value);
+	}
+	BOOST_TEST(forward[0].value == static_cast<std::int32_t>(Status::InProduction));
+	BOOST_TEST(forward[1].value == static_cast<std::int32_t>(Status::Complete));
+}
+
+BOOST_AUTO_TEST_CASE(released_slot_reuses_index_with_a_new_generation)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	ecs::Entity released{};
+	{
+		UpgradeStatusLease first(store);
+		first.Set(static_cast<std::int32_t>(Status::InProduction));
+		released = upgrade_status_adapter_test::ReadRows(state).front().entity;
+	}
+	UpgradeStatusLease replacementLease(store);
+	replacementLease.Set(static_cast<std::int32_t>(Status::Complete));
+	const auto replacement = upgrade_status_adapter_test::ReadRows(state).front().entity;
+	BOOST_TEST(replacement.index == released.index);
+	BOOST_TEST(replacement.generation == released.generation + 1u);
+}
+
+BOOST_AUTO_TEST_CASE(restore_failure_poisoning_allows_safe_lease_teardown)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	{
+		UpgradeStatusLease lease(store);
+		lease.Set(static_cast<std::int32_t>(Status::Complete));
+		auto participant = store.ResetParticipant();
+		participant.restore = &upgrade_status_adapter_test::ThrowingRestore;
+
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(
+			state, std::span{&participant, 1}), std::runtime_error);
+		BOOST_CHECK_THROW(lease.Get(), std::logic_error);
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 0u);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_legacy_access_is_rejected_without_bookkeeping_changes)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	UpgradeStatusLease lease(store);
+
+	for (const auto action : {upgrade_status_adapter_test::ScheduledAction::Read,
+		upgrade_status_adapter_test::ScheduledAction::Create,
+		upgrade_status_adapter_test::ScheduledAction::Write,
+		upgrade_status_adapter_test::ScheduledAction::Restore})
+	{
+		upgrade_status_adapter_test::ScheduledAccess system{&store, &lease, action};
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(state.World().Components());
+		ecs::Scheduler scheduler(state.World(), systems,
+			engine::jobs::JobSystemConfig{1});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}),
+			std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 1u);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(preflight_failure_releases_capture_without_losing_live_status)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	UpgradeStatusLease lease(store);
+	lease.Set(2);
+	const auto unrelated = state.World().Create();
+	const auto participant = store.ResetParticipant();
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::logic_error);
+	BOOST_TEST(lease.Get() == 2);
+	BOOST_TEST(state.World().Destroy(unrelated));
+	BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}));
+	BOOST_TEST(lease.Get() == 2);
+}
+
+BOOST_AUTO_TEST_CASE(later_reset_failure_cleans_up_already_restored_status_entities)
+{
+	GameplayState state;
+	UpgradeStatusStore store(state);
+	bool failed = false;
+	{
+		UpgradeStatusLease lease(store);
+		lease.Set(1);
+		const PersistentResetParticipant late{
+			"zz.tests.upgrades.failure", &state, &failed,
+			+[](void *) -> std::span<const ecs::Entity> { return {}; },
+			+[](void *) {}, &upgrade_status_adapter_test::ThrowingRestore,
+			+[](void *) noexcept {}, +[](void *context) noexcept { *static_cast<bool *>(context) = true; }};
+		const std::array participants{late, store.ResetParticipant()};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+		BOOST_TEST(failed);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_CHECK_THROW(lease.Get(), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}

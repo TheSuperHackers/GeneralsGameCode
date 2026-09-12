@@ -1,0 +1,59 @@
+add_library(generalszh_garrison_definitions STATIC)
+target_sources(generalszh_garrison_definitions PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    definitions/garrison_definition.cppm)
+target_compile_features(generalszh_garrison_definitions PUBLIC cxx_std_23)
+set_property(TARGET generalszh_garrison_definitions PROPERTY CXX_SCAN_FOR_MODULES ON)
+
+add_library(generalszh_transport_containment STATIC)
+target_sources(generalszh_transport_containment PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES systems/transport_containment_system.cppm)
+target_compile_features(generalszh_transport_containment PUBLIC cxx_std_23)
+set_property(TARGET generalszh_transport_containment PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_transport_containment PUBLIC engine_gameplay_containment generalszh_build_execution generalszh_construction_definitions generalszh_capture_definitions)
+
+add_library(generalszh_initial_payload_execution STATIC)
+target_sources(generalszh_initial_payload_execution PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    systems/initial_payload_production_system.cppm)
+target_compile_features(generalszh_initial_payload_execution PUBLIC cxx_std_23)
+set_property(TARGET generalszh_initial_payload_execution PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_initial_payload_execution PUBLIC
+    generalszh_production_execution generalszh_transport_containment)
+
+add_library(generalszh_garrison_containment STATIC)
+target_sources(generalszh_garrison_containment PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    systems/garrison_containment_system.cppm)
+target_compile_features(generalszh_garrison_containment PUBLIC cxx_std_23)
+set_property(TARGET generalszh_garrison_containment PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_garrison_containment PUBLIC
+    generalszh_garrison_definitions generalszh_production_execution generalszh_construction_definitions
+    engine_gameplay_containment engine_gameplay_combat engine_gameplay_navigation)
+
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+    find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+    set_source_files_properties(systems/transport_containment_system.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_transport_containment_tests systems/transport_containment_system.test)
+    target_compile_definitions(generalszh_transport_containment_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(generalszh_transport_containment_tests PRIVATE generalszh_transport_containment generalszh_movement_rules Boost::included_unit_test_framework)
+    add_test(NAME generalszh_transport_containment_tests COMMAND generalszh_transport_containment_tests)
+    set_source_files_properties(components/initial_payload.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_initial_payload_component_tests components/initial_payload.test)
+    target_compile_definitions(generalszh_initial_payload_component_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(generalszh_initial_payload_component_tests PRIVATE generalszh_transport_containment Boost::included_unit_test_framework)
+    add_test(NAME generalszh_initial_payload_component_tests COMMAND generalszh_initial_payload_component_tests)
+    set_source_files_properties(systems/initial_payload_production_system.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_initial_payload_production_system_tests systems/initial_payload_production_system.test)
+    target_compile_definitions(generalszh_initial_payload_production_system_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(generalszh_initial_payload_production_system_tests PRIVATE
+        generalszh_initial_payload_execution generalszh_movement_rules Boost::included_unit_test_framework)
+    add_test(NAME generalszh_initial_payload_production_system_tests COMMAND generalszh_initial_payload_production_system_tests)
+    set_source_files_properties(definitions/garrison_definition.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_garrison_definition_tests definitions/garrison_definition.test)
+    target_compile_definitions(generalszh_garrison_definition_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(generalszh_garrison_definition_tests PRIVATE generalszh_garrison_definitions Boost::included_unit_test_framework)
+    add_test(NAME generalszh_garrison_definition_tests COMMAND generalszh_garrison_definition_tests)
+    set_source_files_properties(systems/garrison_containment_system.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_garrison_containment_system_tests systems/garrison_containment_system.test)
+    target_compile_definitions(generalszh_garrison_containment_system_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(generalszh_garrison_containment_system_tests PRIVATE
+        generalszh_garrison_containment generalszh_movement_rules Boost::included_unit_test_framework)
+    add_test(NAME generalszh_garrison_containment_system_tests COMMAND generalszh_garrison_containment_system_tests)
+endif()

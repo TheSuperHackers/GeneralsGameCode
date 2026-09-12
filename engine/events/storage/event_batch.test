@@ -1,0 +1,304 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <atomic>
+#include <cstdint>
+#include <deque>
+#include <memory_resource>
+#include <span>
+#include <stdexcept>
+#include <thread>
+#include <type_traits>
+#include <vector>
+import engine.events.storage.event_batch;
+import engine.jobs.job_system;
+using namespace engine::events;
+
+namespace
+{
+class CountedMemory final : public std::pmr::memory_resource
+{
+public:
+	std::atomic<std::size_t> allocations{0}, releases{0}, liveBytes{0};
+private:
+	void *do_allocate(std::size_t bytes, std::size_t alignment) override
+	{
+		auto *value = std::pmr::new_delete_resource()->allocate(bytes, alignment);
+		++allocations; liveBytes += bytes;
+		return value;
+	}
+	void do_deallocate(void *value, std::size_t bytes, std::size_t alignment) override
+	{
+		++releases; liveBytes -= bytes;
+		std::pmr::new_delete_resource()->deallocate(value, bytes, alignment);
+	}
+	bool do_is_equal(const std::pmr::memory_resource &other) const noexcept override { return this == &other; }
+};
+struct alignas(256) Tracked
+{
+	inline static int live = 0, constructed = 0, destroyed = 0;
+	int value;
+	explicit Tracked(int input) : value(input)
+	{
+		if (input < 0) throw std::runtime_error("rejected test payload");
+		++live; ++constructed;
+	}
+	Tracked(const Tracked &) = delete;
+	Tracked(Tracked &&other) noexcept : value(other.value) { ++live; ++constructed; }
+	~Tracked() noexcept { --live; ++destroyed; }
+};
+constexpr BatchBoundary Boundary{17, 1};
+constexpr BatchOrder Order{Boundary, 3, 0, 0};
+}
+
+BOOST_AUTO_TEST_CASE(event_publication_is_explicit_consumes_once_and_exposes_const_contiguous_values)
+{
+	CountedMemory memory;
+	RecordedBatch<int> pending(4, memory);
+	PublishedBatch<int> visible(4, 1, memory);
+	RecordedBatch<int> *sources[]{&pending};
+	BOOST_CHECK_THROW((void)visible.Values(), std::logic_error);
+	BOOST_CHECK_THROW(pending.Emplace(0), std::logic_error);
+	pending.Begin(Order);
+	pending.Emplace(10); pending.Emplace(20);
+	BOOST_TEST(!visible.IsPublished());
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::logic_error);
+	pending.Seal();
+	BOOST_CHECK_THROW(pending.Emplace(30), std::logic_error);
+	visible.Publish(Boundary, sources);
+	static_assert(std::is_same_v<decltype(visible.Values()), std::span<const int>>);
+	BOOST_TEST(visible.Values().size() == 2u);
+	BOOST_TEST(visible.Values()[0] == 10);
+	BOOST_TEST(visible.Values()[1] == 20);
+	BOOST_CHECK(&visible.Values()[1] == &visible.Values()[0] + 1);
+	BOOST_CHECK(pending.State() == RecordingState::Consumed);
+	BOOST_TEST(pending.Size() == 0u);
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::logic_error);
+	visible.Release();
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::logic_error);
+	BOOST_CHECK_THROW((void)visible.Values(), std::logic_error);
+	pending.Begin(Order); pending.Seal();
+	visible.Publish(Boundary, sources);
+	BOOST_TEST(visible.Values().empty());
+}
+
+BOOST_AUTO_TEST_CASE(event_merge_orders_batches_and_preserves_local_sequence_and_segment_metadata)
+{
+	CountedMemory memory;
+	RecordedBatch<int> a(2, memory), b(2, memory), c(0, memory);
+	a.Begin({Boundary, 3, 1, 4}); a.Emplace(30); a.Emplace(31); a.Seal();
+	b.Begin({Boundary, 2, 8, 0}); b.Emplace(20); b.Emplace(21); b.Seal();
+	c.Begin({Boundary, 3, 1, 3}); c.Seal();
+	RecordedBatch<int> *sources[]{&a, &b, &c};
+	PublishedBatch<int> visible(4, 3, memory);
+	visible.Publish(Boundary, sources);
+	const std::array expected{20, 21, 30, 31};
+	BOOST_CHECK_EQUAL_COLLECTIONS(visible.Values().begin(), visible.Values().end(), expected.begin(), expected.end());
+	const auto segments = visible.Segments();
+	BOOST_REQUIRE(segments.size() == 3u);
+	BOOST_CHECK(segments[0].order == b.Order());
+	BOOST_TEST(segments[0].first == 0u); BOOST_TEST(segments[0].count == 2u);
+	BOOST_CHECK(segments[1].order == c.Order());
+	BOOST_TEST(segments[1].first == 2u); BOOST_TEST(segments[1].count == 0u);
+	BOOST_CHECK(segments[2].order == a.Order());
+	BOOST_TEST(segments[2].first == 2u); BOOST_TEST(segments[2].count == 2u);
+	BOOST_CHECK(visible.Boundary() == Boundary);
+}
+
+BOOST_AUTO_TEST_CASE(event_duplicate_orders_even_empty_and_duplicate_source_pointers_are_rejected)
+{
+	CountedMemory memory;
+	RecordedBatch<int> a(1, memory), b(0, memory);
+	a.Begin(Order); a.Emplace(7); a.Seal();
+	b.Begin(Order); b.Seal();
+	PublishedBatch<int> visible(2, 2, memory);
+	RecordedBatch<int> *duplicateOrder[]{&a, &b};
+	BOOST_CHECK_THROW(visible.Publish(Boundary, duplicateOrder), std::logic_error);
+	RecordedBatch<int> *duplicatePointer[]{&a, &a};
+	BOOST_CHECK_THROW(visible.Publish(Boundary, duplicatePointer), std::logic_error);
+	BOOST_TEST(!visible.IsPublished());
+	BOOST_CHECK(a.State() == RecordingState::Sealed);
+	BOOST_TEST(a.Size() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(event_publication_validates_all_inputs_before_moving_payloads)
+{
+	CountedMemory memory;
+	RecordedBatch<int> a(2, memory), b(2, memory);
+	a.Begin(Order); a.Emplace(1); a.Emplace(2); a.Seal();
+	b.Begin({{Boundary.tick + 1, Boundary.phase}, 4, 0, 0}); b.Emplace(3); b.Seal();
+	PublishedBatch<int> visible(3, 2, memory);
+	RecordedBatch<int> *sources[]{&a, &b};
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::logic_error);
+	b.Discard(); b.Begin({{Boundary.tick, Boundary.phase + 1}, 4, 0, 0}); b.Seal();
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::logic_error);
+	b.Discard(); b.Begin({Boundary, 4, 0, 0}); b.Emplace(3); b.Emplace(4); b.Seal();
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::length_error);
+	BOOST_CHECK(a.State() == RecordingState::Sealed);
+	BOOST_CHECK(b.State() == RecordingState::Sealed);
+	BOOST_TEST(a.Size() == 2u); BOOST_TEST(b.Size() == 2u);
+	BOOST_TEST(!visible.IsPublished());
+	RecordedBatch<int> *nullSource[]{&a, nullptr};
+	BOOST_CHECK_THROW(visible.Publish(Boundary, nullSource), std::logic_error);
+	RecordedBatch<int> *tooMany[]{&a, &b, nullptr};
+	BOOST_CHECK_THROW(visible.Publish(Boundary, tooMany), std::length_error);
+	RecordedBatch<int> *validSubset[]{&a};
+	visible.Publish(Boundary, validSubset);
+	BOOST_TEST(visible.Values()[0] == 1); // Failure did not move the first payload.
+}
+
+BOOST_AUTO_TEST_CASE(event_overflow_fails_and_cleans_the_entire_producer_without_publishing_a_prefix)
+{
+	CountedMemory memory;
+	RecordedBatch<Tracked> pending(1, memory);
+	PublishedBatch<Tracked> visible(2, 1, memory);
+	pending.Begin(Order); pending.Emplace(7);
+	BOOST_TEST(Tracked::live == 1);
+	BOOST_CHECK_THROW(pending.Emplace(8), std::length_error);
+	BOOST_CHECK(pending.State() == RecordingState::Failed);
+	BOOST_TEST(pending.Size() == 0u);
+	BOOST_TEST(Tracked::live == 0);
+	BOOST_CHECK_THROW(pending.Seal(), std::logic_error);
+	BOOST_CHECK_THROW(pending.Begin(Order), std::logic_error);
+	RecordedBatch<Tracked> *sources[]{&pending};
+	BOOST_CHECK_THROW(visible.Publish(Boundary, sources), std::logic_error);
+	pending.Discard(); // Explicit teardown/reset; not a retry of partial simulation.
+	pending.Begin(Order); pending.Emplace(9); pending.Seal();
+	visible.Publish(Boundary, sources);
+	BOOST_TEST(visible.Values()[0].value == 9);
+	visible.Release();
+	BOOST_TEST(Tracked::live == 0);
+}
+
+BOOST_AUTO_TEST_CASE(event_throwing_construction_fails_the_producer_and_all_lifetimes_are_balanced)
+{
+	CountedMemory memory;
+	const int beforeConstructed = Tracked::constructed, beforeDestroyed = Tracked::destroyed;
+	{
+		RecordedBatch<Tracked> pending(4, memory);
+		pending.Begin(Order); pending.Emplace(1);
+		BOOST_CHECK_THROW(pending.Emplace(-1), std::runtime_error);
+		BOOST_CHECK(pending.State() == RecordingState::Failed);
+		BOOST_TEST(Tracked::live == 0);
+		pending.Discard(); pending.Begin(Order); pending.Emplace(2); pending.Seal();
+		BOOST_CHECK_THROW(pending.Begin(Order), std::logic_error);
+		// Destruction only reclaims the sealed payload; it never publishes it.
+	}
+	BOOST_TEST(Tracked::live == 0);
+	BOOST_TEST(Tracked::constructed - beforeConstructed == Tracked::destroyed - beforeDestroyed);
+	BOOST_TEST(memory.liveBytes.load() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(event_payloads_keep_extended_alignment_and_do_not_require_default_or_copy_construction)
+{
+	CountedMemory memory;
+	RecordedBatch<Tracked> pending(3, memory);
+	PublishedBatch<Tracked> visible(3, 1, memory);
+	RecordedBatch<Tracked> *sources[]{&pending};
+	pending.Begin(Order); pending.Emplace(5); pending.Emplace(6); pending.Seal();
+	visible.Publish(Boundary, sources);
+	BOOST_TEST(Tracked::live == 2);
+	for (const auto &value : visible.Values())
+		BOOST_TEST(reinterpret_cast<std::uintptr_t>(&value) % alignof(Tracked) == 0u);
+	BOOST_TEST(visible.Values()[0].value == 5); BOOST_TEST(visible.Values()[1].value == 6);
+	visible.Release();
+	BOOST_TEST(Tracked::live == 0);
+}
+
+BOOST_AUTO_TEST_CASE(event_successful_record_publish_release_cycles_allocate_only_during_setup)
+{
+	CountedMemory memory;
+	{
+		RecordedBatch<int> a(128, memory), b(128, memory);
+		PublishedBatch<int> visible(256, 2, memory);
+		RecordedBatch<int> *sources[]{&b, &a};
+		const auto allocated = memory.allocations.load();
+		// Five storage blocks; a debug STL may also allocate iterator proxies at
+		// construction. Only startup counts differ, not successful-cycle growth.
+		BOOST_TEST(allocated >= 5u);
+		const int *firstOutput = nullptr;
+		for (std::uint64_t tick = 0; tick != 100; ++tick)
+		{
+			a.Begin({{tick, 1}, 0, 0, 0}); b.Begin({{tick, 1}, 1, 0, 0});
+			for (int i = 0; i != 128; ++i) { a.Emplace(i); b.Emplace(i + 128); }
+			a.Seal(); b.Seal(); visible.Publish({tick, 1}, sources);
+			if (!firstOutput) firstOutput = visible.Values().data();
+			BOOST_CHECK(visible.Values().data() == firstOutput);
+			BOOST_TEST(visible.Values().front() == 0); BOOST_TEST(visible.Values().back() == 255);
+			visible.Release();
+		}
+		BOOST_TEST(memory.allocations.load() == allocated);
+		BOOST_TEST(memory.releases.load() == 0u);
+	}
+	BOOST_TEST(memory.allocations.load() == memory.releases.load());
+	BOOST_TEST(memory.liveBytes.load() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(event_zero_capacity_and_empty_publications_have_explicit_behavior)
+{
+	CountedMemory memory;
+	RecordedBatch<int> pending(0, memory);
+	pending.Begin(Order);
+	BOOST_CHECK_THROW(pending.Emplace(1), std::length_error);
+	pending.Discard(); pending.Begin(Order); pending.Seal();
+	PublishedBatch<int> visible(0, 0, memory);
+	const auto allocated = memory.allocations.load();
+	visible.Publish(Boundary, {});
+	BOOST_TEST(visible.Values().empty()); BOOST_TEST(visible.Segments().empty());
+	BOOST_TEST(visible.Capacity() == 0u); BOOST_TEST(pending.Capacity() == 0u);
+	BOOST_TEST(memory.allocations.load() == allocated);
+}
+
+namespace
+{
+struct RecordJob
+{
+	RecordedBatch<std::uint64_t> *batch;
+	std::uint64_t logicalJob;
+	static void Execute(void *raw)
+	{
+		auto &job = *static_cast<RecordJob *>(raw);
+		// Perturb execution opportunity, never the logical identity or contents.
+		if (job.logicalJob % 3 == 0) std::this_thread::yield();
+		for (std::uint64_t local = 0; local < 128; ++local)
+			job.batch->Emplace(job.logicalJob * 128 + local);
+		job.batch->Seal();
+	}
+};
+std::vector<std::uint64_t> RecordWithWorkers(std::size_t workers)
+{
+	CountedMemory memory;
+	std::deque<RecordedBatch<std::uint64_t>> batches;
+	std::array<RecordJob, 64> contexts{};
+	std::array<engine::jobs::Job, 64> jobs{};
+	std::array<RecordedBatch<std::uint64_t> *, 64> sources{};
+	for (std::uint32_t i = 0; i < jobs.size(); ++i)
+	{
+		auto &batch = batches.emplace_back(128, memory);
+		batch.Begin({Boundary, i / 16, i % 16, i % 16});
+		contexts[i] = {&batch, i}; jobs[i] = {&RecordJob::Execute, &contexts[i]};
+		sources[jobs.size() - 1 - i] = &batch; // Merge order deliberately disagrees.
+	}
+	PublishedBatch<std::uint64_t> visible(8192, 64, memory);
+	const auto allocated = memory.allocations.load();
+	engine::jobs::JobSystem pool({workers});
+	pool.Execute(jobs); // Explicit join before any inspection/publication.
+	BOOST_TEST(!visible.IsPublished());
+	visible.Publish(Boundary, sources);
+	BOOST_TEST(memory.allocations.load() == allocated);
+	BOOST_TEST(visible.Segments().size() == 64u);
+	for (std::uint32_t i = 0; i < 64; ++i)
+	{
+		const auto &segment = visible.Segments()[i];
+		BOOST_CHECK((segment.order == BatchOrder{Boundary, i / 16, i % 16, i % 16}));
+		BOOST_TEST(segment.first == i * 128u); BOOST_TEST(segment.count == 128u);
+	}
+	std::vector<std::uint64_t> result(visible.Values().begin(), visible.Values().end());
+	for (std::size_t i = 0; i != result.size(); ++i) BOOST_TEST(result[i] == i);
+	return result;
+}
+}
+BOOST_AUTO_TEST_CASE(event_job_local_recording_produces_identical_ordered_payloads_with_1_2_4_workers)
+{
+	const auto one = RecordWithWorkers(1), two = RecordWithWorkers(2), four = RecordWithWorkers(4);
+	BOOST_CHECK(one == two); BOOST_CHECK(one == four);
+}

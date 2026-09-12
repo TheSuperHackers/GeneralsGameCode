@@ -1,0 +1,27 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRadarAvailabilityTransition
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <type_traits>
+
+import engine.gameplay.rts.radar.events.radar_availability_transition;
+import engine.events.schema.message_registry;
+
+using engine::gameplay::rts::radar::RadarAvailabilityTransition;
+
+BOOST_AUTO_TEST_CASE(availability_transition_is_a_transient_fact)
+{
+	static_assert(std::is_standard_layout_v<RadarAvailabilityTransition>);
+	static_assert(std::is_trivially_copyable_v<RadarAvailabilityTransition>);
+	BOOST_TEST(engine::events::MessageTraits<RadarAvailabilityTransition>::StableName ==
+		"engine.gameplay.rts.radar.availability_transition");
+	BOOST_TEST(engine::events::MessageTraits<RadarAvailabilityTransition>::Version == 1u);
+	BOOST_CHECK(engine::events::MessageTraits<RadarAvailabilityTransition>::Kind ==
+		engine::events::MessageKind::Fact);
+	BOOST_CHECK(engine::events::MessageTraits<RadarAvailabilityTransition>::Recording ==
+		engine::events::RecordPolicy::Transient);
+
+	const RadarAvailabilityTransition transition{{4, 2}, false, true};
+	const RadarAvailabilityTransition expected{{4, 2}, false, true};
+	BOOST_CHECK(transition == expected);
+}

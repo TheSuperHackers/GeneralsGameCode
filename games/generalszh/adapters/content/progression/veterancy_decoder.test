@@ -1,0 +1,92 @@
+#define BOOST_TEST_MODULE GeneralsZHProgressionContent
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
+import games.generalszh.adapters.content.progression.veterancy_decoder;
+import engine.gameplay.progression.systems.progression_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::progression;
+namespace {
+// Exact progression fields from GeneralsMD/run/Data/INI/Object/AmericaInfantry.ini
+// AmericaInfantryRanger, lines 884-886, inspected 2026-09-06. This is an extracted
+// field fixture, not a claim that complete Object inheritance is implemented.
+constexpr std::string_view Ranger=R"(Object AmericaInfantryRanger
+  ExperienceValue = 20 20 40 60    ;Experience point value at each level
+  ExperienceRequired = 0 40 60 120  ;Experience points needed to gain each level
+  IsTrainable = Yes             ;Can gain experience
+End
+)";
+}
+BOOST_AUTO_TEST_CASE(veterancy_decoder_source_fields_defaults_and_validation)
+{
+ const auto ranger=generalszh::content::DecodeVeterancy(Ranger,"AmericaInfantryRanger");
+ BOOST_TEST(ranger.required[1]==40u); BOOST_TEST(ranger.required[2]==60u);
+ BOOST_TEST(ranger.required[3]==120u); BOOST_TEST(ranger.trainable);
+ BOOST_TEST(ranger.awardValues[3]==60u);
+ BOOST_TEST(ranger.skillPointValues[3]==60u); // legacy -999 fallback at the adapter boundary.
+ const auto defaults=generalszh::content::DecodeVeterancy("Object Empty\nEnd\n","Empty");
+ BOOST_TEST(!defaults.trainable); BOOST_TEST(defaults.required[3]==0u);
+ BOOST_CHECK_THROW(generalszh::content::DecodeVeterancy("Object Bad\nExperienceRequired = 0 1 2\nEnd\n","Bad"),std::invalid_argument);
+ BOOST_CHECK_THROW(generalszh::content::DecodeVeterancy("Object Bad\nExperienceValue = 0 -1 2 3\nEnd\n","Bad"),std::invalid_argument);
+ BOOST_CHECK_THROW(generalszh::content::DecodeVeterancy("Object Bad\nIsTrainable = Maybe\nEnd\n","Bad"),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(veterancy_decoder_resolves_explicit_skill_point_values)
+{
+ const auto value=generalszh::content::DecodeVeterancy(R"(Object RankVictim
+ ExperienceValue = 0 0 0 0
+ SkillPointValue = 5 6 7 8
+ IsTrainable = No
+End
+)","RankVictim");
+ BOOST_TEST(value.awardValues[0]==0u);
+ BOOST_TEST(value.skillPointValues[0]==5u);
+ BOOST_TEST(value.skillPointValues[3]==8u);
+ BOOST_CHECK(!value.trainable);
+}
+
+BOOST_AUTO_TEST_CASE(veterancy_decoder_rejects_skill_point_values_below_legacy_sentinel)
+{
+ BOOST_CHECK_THROW(generalszh::content::DecodeVeterancy(
+  "Object Bad\nSkillPointValue = -1000 0 0 0\nEnd\n", "Bad"), std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(ranger_content_runs_real_progression_across_workers)
+{
+ auto run=[](std::size_t workers) {
+  const auto ranger=generalszh::content::DecodeVeterancy(Ranger,"AmericaInfantryRanger");
+  const std::array definitions{ranger.Progression()};
+  const ProgressionCatalog catalog(definitions);
+  ecs::World world(ecs::WorldConfig{256});
+  world.RegisterComponent<ProgressionState>(); world.RegisterComponent<ProgressionDefinitionRef>();
+  world.RegisterComponent<ProgressionEligibility>(); world.RegisterComponent<ProgressionInbox>(); world.FinalizeComponents();
+  std::vector<ecs::Entity> entities; std::vector<AcceptedExperience> inputs;
+  for(unsigned i=0;i<256;++i) {
+   const auto entity=world.Create<ProgressionState,ProgressionDefinitionRef,ProgressionEligibility,ProgressionInbox>();
+   world.Get<ProgressionEligibility>(entity)->trainable=ranger.trainable; entities.push_back(entity);
+  }
+  // Explicit accepted awards, not simulated kills or invented attribution.
+  for(auto amount:{39u,1u,20u,60u}) for(auto entity:entities) inputs.push_back({entity,amount});
+  ProgressionBatch batch(inputs.size()); ProgressionSystem progression(catalog,batch);
+  ecs::SystemRegistry registry; registry.Register(progression); registry.Finalize(world.Components());
+  ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers}); scheduler.Finalize(engine::time::FixedStep{30});
+  batch.SetInputs(inputs); scheduler.Execute({11,engine::time::FixedStep{30}});
+  const auto results=batch.Results(); BOOST_REQUIRE_EQUAL(results.size(),inputs.size());
+  BOOST_TEST(results[0].newLevel==0u); BOOST_CHECK(!results[0].LevelChanged());
+  BOOST_TEST(results[256].newLevel==1u); BOOST_TEST(results[512].newLevel==2u); BOOST_TEST(results[768].newLevel==3u);
+  std::vector<std::array<std::uint64_t,9>> snapshot;
+  for(const auto &r:results) snapshot.push_back({r.entity.index,r.entity.generation,r.tick,r.requested,r.applied,
+   r.experience,r.oldLevel,r.newLevel,static_cast<std::uint64_t>(r.outcome)});
+  for(auto entity:entities) {
+   const auto &state=*world.Get<ProgressionState>(entity);
+   BOOST_TEST(state.experience==120u); BOOST_TEST(state.level==3u);
+   snapshot.push_back({entity.index,entity.generation,state.experience,state.level});
+  }
+  scheduler.Execute({12,engine::time::FixedStep{30}}); BOOST_TEST(batch.Results().empty());
+  for(auto entity:entities) BOOST_TEST(world.Get<ProgressionState>(entity)->experience==120u);
+  return snapshot;
+ };
+ const auto expected=run(1); BOOST_CHECK(expected==run(2)); BOOST_CHECK(expected==run(4));
+}

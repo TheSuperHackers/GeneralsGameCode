@@ -1,0 +1,63 @@
+#define BOOST_TEST_MODULE RadarSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <vector>
+import engine.gameplay.rts.radar.systems.radar_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::rts::radar;
+
+BOOST_AUTO_TEST_CASE(real_system_matches_state_ids_and_all_intermediate_edges_across_workers)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{256}};
+		world.RegisterComponent<RadarAvailability>();
+		world.RegisterComponent<RadarBatchRange>();
+		world.FinalizeComponents();
+		constexpr std::size_t owners = 2048;
+		RadarBatch batch(owners * 7);
+		std::vector<ecs::Entity> entities;
+		for (std::size_t index = 0; index < owners; ++index)
+			entities.push_back(world.Create<RadarAvailability, RadarBatchRange>());
+		const std::array actions{RadarAction::Add, RadarAction::Suppress, RadarAction::AddResistant,
+			RadarAction::RemoveResistant, RadarAction::Unsuppress, RadarAction::Remove, RadarAction::Add};
+		for (auto action : actions)
+			for (std::size_t index = 0; index < owners; ++index) batch.Record(index, action);
+		const auto ranges = batch.Prepare(owners);
+		for (std::size_t index = 0; index < owners; ++index)
+		{
+			*world.Get<RadarBatchRange>(entities[index]) = ranges[index];
+			BOOST_TEST(!HasRadar(*world.Get<RadarAvailability>(entities[index])));
+		}
+		RadarSystem system(batch);
+		ecs::SystemRegistry registry;
+		registry.Register(system);
+		registry.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		scheduler.Execute(engine::time::SimulationTime{9, step});
+		std::vector<std::array<std::uint64_t, 5>> results;
+		for (auto entity : entities)
+		{
+			const auto &value = *world.Get<RadarAvailability>(entity);
+			BOOST_TEST(value.producers == 1);
+			BOOST_TEST(value.resistantProducers == 0);
+			BOOST_TEST(!value.suppressed);
+			BOOST_TEST(world.Get<RadarBatchRange>(entity)->count == 0u);
+			results.push_back({entity.index, entity.generation, static_cast<std::uint64_t>(value.producers),
+				static_cast<std::uint64_t>(value.resistantProducers), value.suppressed});
+		}
+		for (std::size_t index = 0; index < batch.Size(); ++index)
+		{
+			const auto expected = (index / owners) % 2 == 0 ? RadarTransition::Online : RadarTransition::Offline;
+			BOOST_CHECK(batch.Result(index) == expected);
+			results.push_back({index, static_cast<std::uint64_t>(batch.Result(index)), 0, 0, 0});
+		}
+		scheduler.Execute(engine::time::SimulationTime{10, step});
+		for (auto entity : entities) BOOST_TEST(world.Get<RadarAvailability>(entity)->producers == 1);
+		return results;
+	};
+	const auto one = run(1);
+	BOOST_CHECK(run(2) == one);
+	BOOST_CHECK(run(4) == one);
+}

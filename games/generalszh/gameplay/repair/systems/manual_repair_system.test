@@ -1,0 +1,358 @@
+#include <boost/test/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <memory_resource>
+#include <span>
+#include <vector>
+
+import games.generalszh.gameplay.repair.systems.manual_repair_system;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.harvesting.components.harvest_state;
+
+namespace
+{
+using namespace engine::gameplay;
+using namespace engine::gameplay::rts::repair;
+using generalszh::repair::ManualRepairInput;
+
+void Register(ecs::World &world)
+{
+    world.RegisterComponent<ManualRepairRateBinding>();
+    world.RegisterComponent<ManualRepairProgress>();
+    world.RegisterComponent<ManualRepairAssignment>();
+    world.RegisterComponent<ManualRepairBenefactorLease>();
+    world.RegisterComponent<generalszh::construction::Builder>();
+    world.RegisterComponent<combat::Health>();
+    world.RegisterComponent<combat::HealthCapacity>();
+    world.RegisterComponent<combat::LifeState>();
+    world.RegisterComponent<combat::PendingHealing>();
+    world.RegisterComponent<combat::HealingResult>();
+    world.RegisterComponent<combat::PendingDamage>();
+    world.RegisterComponent<combat::DamageResult>();
+    world.RegisterComponent<navigation::GridPosition>();
+    world.RegisterComponent<navigation::MoveGoal>();
+    world.RegisterComponent<navigation::MoveRangeGoal>();
+    world.RegisterComponent<navigation::MoveCredit>();
+    world.RegisterComponent<generalszh::construction::Structure>();
+    world.RegisterComponent<generalszh::selling::SaleState>();
+    world.RegisterComponent<engine::gameplay::rts::economy::ResourceBalance>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>();
+    world.RegisterComponent<rts::harvesting::HarvestState>();
+    world.FinalizeComponents();
+}
+
+ecs::Entity Account(ecs::World &world)
+{
+    return world.Create<engine::gameplay::rts::economy::ResourceBalance>();
+}
+
+ecs::Entity Actor(ecs::World &world,ecs::Entity account,navigation::Cell cell)
+{
+    const auto entity=world.Create<ManualRepairRateBinding,ManualRepairProgress,ManualRepairAssignment,
+        generalszh::construction::Builder,combat::LifeState,navigation::GridPosition,navigation::MoveGoal,
+        navigation::MoveCredit,rts::harvesting::HarvestState>();
+    world.Get<ManualRepairRateBinding>(entity)->definition=0;
+    world.Get<generalszh::construction::Builder>(entity)->account=account;
+    world.Get<navigation::GridPosition>(entity)->cell=cell;
+    return entity;
+}
+
+ecs::Entity Target(ecs::World &world,ecs::Entity account,std::uint64_t health=0,navigation::Cell cell=1)
+{
+    const auto entity=world.Create<ManualRepairBenefactorLease,generalszh::construction::Structure,
+        combat::Health,combat::HealthCapacity,combat::LifeState,navigation::GridPosition,
+        combat::PendingHealing,combat::HealingResult,generalszh::selling::SaleState>();
+    auto *structure=world.Get<generalszh::construction::Structure>(entity);
+    structure->account=account; structure->complete=true;
+    world.Get<combat::Health>(entity)->current=health;
+    world.Get<combat::HealthCapacity>(entity)->maximum=10000;
+    world.Get<navigation::GridPosition>(entity)->cell=cell;
+    return entity;
+}
+
+struct Harness
+{
+    engine::time::FixedStep step{10};
+    std::vector<RepairDefinition> authored;
+    RepairDefinitions definitions{step,authored};
+    std::array<std::uint8_t,2> terrain{1,1};
+    navigation::NavigationGrid grid{2,1,terrain};
+    std::pmr::monotonic_buffer_resource memory;
+    engine::events::PublishedBatch<ecs::Entity> accepted{16,1,memory};
+    ecs::World world{ecs::WorldConfig{128}};
+    engine::gameplay::combat::HealthSystem health;
+    generalszh::repair::ManualRepairSystem manual;
+    engine::gameplay::combat::HealingSystem healing;
+    ecs::SystemRegistry registry;
+    std::unique_ptr<ecs::Scheduler> scheduler;
+
+    explicit Harness(std::uint32_t numerator=100,std::uint32_t denominator=1000) :
+        authored{RepairDefinition{numerator,denominator,std::chrono::milliseconds{100},{},{}}},
+        definitions(step,authored),manual(world,grid,definitions,accepted,16,std::chrono::milliseconds{200})
+    {
+        Register(world);
+        // The system owns no private scheduler.  It is configured and then
+        // registered in the same shared plan as Health and Healing.
+        manual.Configure(step);
+        registry.Register(health); registry.Register(manual); registry.Register(healing);
+        registry.Finalize(world.Components());
+        scheduler=std::make_unique<ecs::Scheduler>(world,registry,engine::jobs::JobSystemConfig{2});
+        scheduler->Finalize(step);
+    }
+};
+}
+
+BOOST_AUTO_TEST_CASE(arrived_repairer_wins_without_a_distant_lower_id_reservation)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto distant=Actor(harness.world,account,0);
+    const auto arrived=Actor(harness.world,account,1);
+    const auto target=Target(harness.world,account);
+    const std::array requests{ManualRepairInput{distant,target},ManualRepairInput{arrived,target}};
+    harness.manual.SetInputs(requests);
+    harness.scheduler->Execute({0,harness.step});
+
+    const auto lease=*harness.world.Get<ManualRepairBenefactorLease>(target);
+    BOOST_CHECK(lease.benefactor==arrived);
+    BOOST_TEST(harness.world.Get<combat::Health>(target)->current>0u);
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(distant)->target==target);
+    BOOST_TEST(harness.accepted.Values().size()==2u);
+
+    harness.accepted.Release();
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({1,harness.step});
+    BOOST_TEST(!harness.world.Get<ManualRepairAssignment>(distant)->target.IsValid());
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(arrived)->target==target);
+}
+
+BOOST_AUTO_TEST_CASE(lease_renews_only_after_repair_and_expires_at_exclusive_deadline)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto actor=Actor(harness.world,account,1);
+    const auto target=Target(harness.world,account);
+    const std::array request{ManualRepairInput{actor,target}};
+
+    harness.manual.SetInputs(request);
+    harness.scheduler->Execute({0,harness.step});
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(target)->expiryTick==2u);
+    harness.accepted.Release();
+
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({1,harness.step});
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(target)->expiryTick==3u);
+
+    // Prevent the next pulse while retaining the live assignment.  At tick 3
+    // the prior [0,3) lease is expired and no repair may renew it.
+    harness.world.Get<ManualRepairProgress>(actor)->state.nextPulse=100;
+    harness.accepted.Release();
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({3,harness.step});
+    BOOST_TEST(!harness.world.Get<ManualRepairBenefactorLease>(target)->benefactor.IsValid());
+}
+
+BOOST_AUTO_TEST_CASE(active_lease_advances_fractional_zero_pulse_without_renewing)
+{
+    Harness harness(1,1000000);
+    const auto account=Account(harness.world);
+    const auto actor=Actor(harness.world,account,1);
+    const auto target=Target(harness.world,account);
+    *harness.world.Get<ManualRepairAssignment>(actor)={target,1};
+    harness.world.Get<ManualRepairProgress>(actor)->state={0,0,true,false};
+    *harness.world.Get<ManualRepairBenefactorLease>(target)={actor,2};
+
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({0,harness.step});
+
+    const auto progress=*harness.world.Get<ManualRepairProgress>(actor);
+    BOOST_TEST(progress.state.nextPulse==1u);
+    BOOST_TEST(progress.state.remainder>0u);
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(target)->expiryTick==2u);
+    BOOST_TEST(harness.accepted.Values().empty());
+}
+
+BOOST_AUTO_TEST_CASE(stale_benefactor_generation_is_not_a_valid_lease)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto actor=Actor(harness.world,account,0);
+    const auto target=Target(harness.world,account,10000);
+    auto *lease=harness.world.Get<ManualRepairBenefactorLease>(target);
+    *lease={{actor.index,actor.generation+1},100};
+    *harness.world.Get<ManualRepairAssignment>(actor)={target,1};
+    harness.scheduler->Execute({0,harness.step});
+    BOOST_TEST(!harness.world.Get<ManualRepairBenefactorLease>(target)->benefactor.IsValid());
+    BOOST_TEST(!harness.world.Get<ManualRepairAssignment>(actor)->target.IsValid());
+}
+
+BOOST_AUTO_TEST_CASE(ineligible_request_is_not_published_or_healed)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto actor=Actor(harness.world,account,1);
+    const auto target=Target(harness.world,account);
+    harness.world.Get<generalszh::selling::SaleState>(target)->phase=generalszh::selling::SalePhase::Selling;
+    const std::array request{ManualRepairInput{actor,target}};
+    harness.manual.SetInputs(request);
+    harness.scheduler->Execute({0,harness.step});
+    BOOST_TEST(harness.accepted.Values().empty());
+    BOOST_TEST(!harness.world.Get<ManualRepairAssignment>(actor)->target.IsValid());
+    BOOST_TEST(harness.world.Get<combat::Health>(target)->current==0u);
+}
+
+BOOST_AUTO_TEST_CASE(rejected_contended_request_preserves_unrelated_task_and_is_not_published)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto holder=Actor(harness.world,account,1);
+    const auto rejected=Actor(harness.world,account,0);
+    const auto target=Target(harness.world,account);
+    *harness.world.Get<ManualRepairAssignment>(holder)={target,1};
+    harness.world.Get<ManualRepairProgress>(holder)->state={0,0,true,false};
+    *harness.world.Get<ManualRepairBenefactorLease>(target)={holder,2};
+    harness.world.Get<navigation::MoveGoal>(rejected)->cell=0;
+    harness.world.Get<navigation::MoveCredit>(rejected)->remainder=9;
+    harness.world.Get<rts::harvesting::HarvestState>(rejected)->phase=rts::harvesting::HarvestPhase::ToSource;
+
+    const std::array request{ManualRepairInput{rejected,target}};
+    harness.manual.SetInputs(request);
+    harness.scheduler->Execute({0,harness.step});
+
+    BOOST_TEST(harness.world.Get<navigation::MoveGoal>(rejected)->cell==0u);
+    BOOST_TEST(harness.world.Get<navigation::MoveCredit>(rejected)->remainder==9u);
+    BOOST_CHECK(harness.world.Get<rts::harvesting::HarvestState>(rejected)->phase==rts::harvesting::HarvestPhase::ToSource);
+    BOOST_TEST(!harness.world.Get<ManualRepairAssignment>(rejected)->target.IsValid());
+    BOOST_CHECK(std::find(harness.accepted.Values().begin(),harness.accepted.Values().end(),rejected)==harness.accepted.Values().end());
+}
+
+BOOST_AUTO_TEST_CASE(rejected_retarget_defers_without_clearing_existing_lease)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto existing=Actor(harness.world,account,1);
+    const auto holder=Actor(harness.world,account,0);
+    const auto targetA=Target(harness.world,account,0,1);
+    const auto targetB=Target(harness.world,account,0,0);
+    *harness.world.Get<ManualRepairAssignment>(existing)={targetA,1};
+    harness.world.Get<ManualRepairProgress>(existing)->state={0,0,true,false};
+    *harness.world.Get<ManualRepairBenefactorLease>(targetA)={existing,2};
+    *harness.world.Get<ManualRepairAssignment>(holder)={targetB,0};
+    harness.world.Get<ManualRepairProgress>(holder)->state={0,0,true,false};
+    *harness.world.Get<ManualRepairBenefactorLease>(targetB)={holder,2};
+
+    // Existing repair A attempts to retarget B, where another repairer owns a
+    // live lease. The request is rejected against the immutable lease before
+    // grouping. A keeps its ECS assignment and lease, but explicitly defers
+    // healing for this tick; B must not be stolen by the rejected request.
+    const std::array request{ManualRepairInput{existing,targetB}};
+    harness.manual.SetInputs(request);
+    harness.scheduler->Execute({0,harness.step});
+
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(existing)->target==targetA);
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(holder)->target==targetB);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetA)->benefactor==existing);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetB)->benefactor==holder);
+    BOOST_TEST(harness.world.Get<combat::Health>(targetA)->current==0u);
+    BOOST_TEST(harness.world.Get<combat::Health>(targetB)->current>0u);
+    BOOST_CHECK(std::find(harness.accepted.Values().begin(),harness.accepted.Values().end(),existing)==harness.accepted.Values().end());
+
+    harness.accepted.Release();
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({1,harness.step});
+    BOOST_TEST(harness.world.Get<combat::Health>(targetA)->current>0u);
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(targetA)->expiryTick==3u);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetA)->benefactor==existing);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetB)->benefactor==holder);
+}
+
+BOOST_AUTO_TEST_CASE(chained_retargets_defer_before_one_stable_grouping_pass)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto first=Actor(harness.world,account,1);
+    const auto second=Actor(harness.world,account,0);
+    const auto third=Actor(harness.world,account,1);
+    const auto targetA=Target(harness.world,account,0,1);
+    const auto targetB=Target(harness.world,account,0,0);
+    const auto targetC=Target(harness.world,account,0,1);
+    *harness.world.Get<ManualRepairAssignment>(first)={targetA,1};
+    *harness.world.Get<ManualRepairAssignment>(second)={targetB,0};
+    *harness.world.Get<ManualRepairAssignment>(third)={targetC,1};
+    harness.world.Get<ManualRepairProgress>(first)->state={0,0,true,false};
+    harness.world.Get<ManualRepairProgress>(second)->state={0,0,true,false};
+    harness.world.Get<ManualRepairProgress>(third)->state={0,0,true,false};
+    *harness.world.Get<ManualRepairBenefactorLease>(targetA)={first,2};
+    *harness.world.Get<ManualRepairBenefactorLease>(targetB)={second,2};
+    *harness.world.Get<ManualRepairBenefactorLease>(targetC)={third,2};
+
+    // Both requests target another live lease holder: A -> B and B -> C.
+    // Neither speculative retarget may release its old lease or heal its old
+    // target in this tick. The stable group contains only C's old assignment.
+    const std::array requests{ManualRepairInput{first,targetB},ManualRepairInput{second,targetC}};
+    harness.manual.SetInputs(requests);
+    harness.scheduler->Execute({0,harness.step});
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(first)->target==targetA);
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(second)->target==targetB);
+    BOOST_CHECK(harness.world.Get<ManualRepairAssignment>(third)->target==targetC);
+    BOOST_TEST(harness.world.Get<combat::Health>(targetA)->current==0u);
+    BOOST_TEST(harness.world.Get<combat::Health>(targetB)->current==0u);
+    BOOST_TEST(harness.world.Get<combat::Health>(targetC)->current>0u);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetA)->benefactor==first);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetB)->benefactor==second);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetC)->benefactor==third);
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(targetA)->expiryTick==2u);
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(targetB)->expiryTick==2u);
+    BOOST_TEST(harness.world.Get<ManualRepairBenefactorLease>(targetC)->expiryTick==2u);
+    BOOST_CHECK(std::find(harness.accepted.Values().begin(),harness.accepted.Values().end(),first)==harness.accepted.Values().end());
+    BOOST_CHECK(std::find(harness.accepted.Values().begin(),harness.accepted.Values().end(),second)==harness.accepted.Values().end());
+
+    harness.accepted.Release();
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({1,harness.step});
+    BOOST_TEST(harness.world.Get<combat::Health>(targetA)->current>0u);
+    BOOST_TEST(harness.world.Get<combat::Health>(targetB)->current>0u);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetA)->benefactor==first);
+    BOOST_CHECK(harness.world.Get<ManualRepairBenefactorLease>(targetB)->benefactor==second);
+}
+
+BOOST_AUTO_TEST_CASE(no_repair_request_leaves_ordinary_movement_and_harvest_untouched)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto actor=Actor(harness.world,account,0);
+    harness.world.Get<navigation::MoveGoal>(actor)->cell=0;
+    harness.world.Get<navigation::MoveCredit>(actor)->remainder=9;
+    harness.world.Get<rts::harvesting::HarvestState>(actor)->phase=rts::harvesting::HarvestPhase::ToSource;
+    harness.manual.SetInputs(std::span<const ManualRepairInput>{});
+    harness.scheduler->Execute({0,harness.step});
+    BOOST_TEST(harness.world.Get<navigation::MoveGoal>(actor)->cell==0u);
+    BOOST_TEST(harness.world.Get<navigation::MoveCredit>(actor)->remainder==9u);
+    BOOST_CHECK(harness.world.Get<rts::harvesting::HarvestState>(actor)->phase==rts::harvesting::HarvestPhase::ToSource);
+}
+
+BOOST_AUTO_TEST_CASE(combined_ordinary_input_sources_fit_the_explicit_bounded_override_capacity)
+{
+    Harness harness;
+    const auto account=Account(harness.world);
+    const auto actor=Actor(harness.world,account,0);
+    std::array<ecs::Entity,17> combined{};
+    combined.fill(actor);
+    BOOST_CHECK_NO_THROW(harness.manual.SetInputs(std::span<const ManualRepairInput>{},combined));
+    harness.scheduler->Execute({0,harness.step});
+    BOOST_TEST(!harness.world.Get<ManualRepairAssignment>(actor)->target.IsValid());
+}
+
+BOOST_AUTO_TEST_CASE(auxiliary_metadata_declares_target_and_account_access)
+{
+    Harness harness;
+    const auto id=harness.registry.TryGet<generalszh::repair::ManualRepairSystem>();
+    BOOST_REQUIRE(id!=ecs::InvalidSystemId);
+    const auto &access=harness.registry.Get(id).Access();
+    const auto balance=harness.world.Components().TryGet<engine::gameplay::rts::economy::ResourceBalance>();
+    const auto lease=harness.world.Components().TryGet<ManualRepairBenefactorLease>();
+    BOOST_TEST(std::binary_search(access.ReadComponents().begin(),access.ReadComponents().end(),balance));
+    BOOST_TEST(std::binary_search(access.WriteComponents().begin(),access.WriteComponents().end(),lease));
+}

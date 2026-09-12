@@ -1,0 +1,87 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import engine.gameplay.progression.inputs.progression_batch;
+using namespace engine::gameplay::progression;
+BOOST_AUTO_TEST_CASE(progression_batch_rejects_overflow_and_pending_replacement)
+{
+ ProgressionBatch batch(1);
+ std::array inputs{AcceptedExperience{{1,1},10},AcceptedExperience{{2,1},20}};
+ BOOST_CHECK_THROW(batch.SetInputs(inputs),std::length_error);
+ batch.SetInputs({inputs.data(),1});
+ BOOST_CHECK_THROW(batch.SetInputs({}),std::logic_error);
+ BOOST_TEST(batch.Results().empty());
+}
+BOOST_AUTO_TEST_CASE(progression_batch_groups_without_losing_authoritative_sequence)
+{
+ ProgressionBatch batch(3);
+ const std::array inputs{AcceptedExperience{{2,1},4},AcceptedExperience{{1,1},7},AcceptedExperience{{2,1},9}};
+ BOOST_CHECK_THROW(batch.Publish(),std::logic_error);
+ batch.SetInputs(inputs); batch.Prepare(8);
+ const auto order=batch.Order();
+ BOOST_REQUIRE(order.size()==3u);
+ BOOST_TEST(order[0]==1u); BOOST_TEST(order[1]==0u); BOOST_TEST(order[2]==2u);
+ BOOST_TEST(batch.Input(order[2]).amount==9u);
+ BOOST_CHECK_THROW(batch.Prepare(9),std::logic_error);
+ batch.Result(0).applied=4;
+ batch.Publish();
+ BOOST_TEST(batch.Results()[0].tick==8u); BOOST_TEST(batch.Results()[0].applied==4u);
+ BOOST_TEST(batch.Results()[1].requested==7u);
+ batch.Prepare(9); batch.Publish(); BOOST_TEST(batch.Results().empty());
+}
+
+BOOST_AUTO_TEST_CASE(progression_batch_appends_automatic_awards_after_external_inputs)
+{
+ ProgressionBatch batch(3);
+ const AcceptedExperience external{{8,1},3};
+ const ecs::Entity groupedTarget{2,1};
+ const std::array automatic{AcceptedExperience{{2,1},4},AcceptedExperience{{2,1},5}};
+ batch.SetInputs({&external,1}); batch.Append(automatic); batch.Prepare(12);
+ BOOST_TEST(batch.Capacity()==3u); BOOST_TEST(batch.Order().size()==3u);
+ const auto order=batch.Order();
+ BOOST_CHECK(batch.Input(order[0]).entity==groupedTarget);
+ BOOST_TEST(batch.Input(order[0]).amount==4u);
+ BOOST_CHECK(batch.Input(order[1]).entity==groupedTarget);
+ BOOST_TEST(batch.Input(order[1]).amount==5u);
+ BOOST_CHECK(batch.Input(order[2]).entity==external.entity);
+ BOOST_TEST(batch.Input(order[2]).amount==external.amount);
+}
+
+BOOST_AUTO_TEST_CASE(progression_batch_append_capacity_failure_is_atomic)
+{
+ ProgressionBatch batch(2);
+ const AcceptedExperience external{{8,1},3};
+ const std::array automatic{AcceptedExperience{{2,1},4},AcceptedExperience{{3,1},5}};
+ batch.SetInputs({&external,1});
+ BOOST_CHECK_THROW(batch.Append(automatic),std::length_error);
+ batch.Prepare(12);
+ BOOST_REQUIRE_EQUAL(batch.Order().size(),1u);
+ BOOST_CHECK(batch.Input(batch.Order()[0]).entity==external.entity);
+ BOOST_TEST(batch.Input(batch.Order()[0]).amount==external.amount);
+}
+
+BOOST_AUTO_TEST_CASE(progression_batch_append_requires_the_staged_preparation_window)
+{
+ ProgressionBatch batch(2); const AcceptedExperience award{{1,1},1};
+ BOOST_CHECK_THROW(batch.Append({&award,1}),std::logic_error);
+ batch.SetInputs({}); batch.Prepare(1);
+ BOOST_CHECK_THROW(batch.Append({&award,1}),std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(progression_batch_exposes_only_the_pending_prefix_window)
+{
+ ProgressionBatch batch(3);
+ const std::array host{AcceptedExperience{{3,1},7}};
+ const std::array automatic{AcceptedExperience{{2,1},4}};
+ BOOST_CHECK_THROW(batch.PendingInputs(),std::logic_error);
+ batch.SetInputs(host);
+ BOOST_REQUIRE_EQUAL(batch.PendingInputs().size(),1u);
+ BOOST_CHECK(batch.PendingInputs()[0].entity==host[0].entity);
+ batch.Append(automatic);
+ BOOST_REQUIRE_EQUAL(batch.PendingInputs().size(),2u);
+ BOOST_TEST(batch.PendingInputs()[1].amount==4u);
+ batch.Prepare(11);
+ BOOST_CHECK_THROW(batch.PendingInputs(),std::logic_error);
+ batch.Publish();
+ BOOST_CHECK_THROW(batch.PendingInputs(),std::logic_error);
+}

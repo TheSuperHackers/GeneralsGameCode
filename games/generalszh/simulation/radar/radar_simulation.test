@@ -1,0 +1,23 @@
+#define BOOST_TEST_MODULE GeneralsZHRadarSimulation
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+import games.generalszh.simulation.radar.radar_simulation;
+using namespace engine::gameplay::rts::radar;
+BOOST_AUTO_TEST_CASE(production_composition_requires_explicit_startup_and_consumes_real_query_rows)
+{
+	ecs::World world;
+	world.RegisterComponent<RadarAvailability>();
+	world.RegisterComponent<RadarBatchRange>();
+	world.FinalizeComponents();
+	RadarBatch batch(8);
+	generalszh::RadarSimulation simulation(world, batch, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30};
+	BOOST_CHECK_THROW(simulation.Execute(engine::time::SimulationTime{0, step}), std::logic_error);
+	simulation.Finalize(step);
+	const auto entity = world.Create<RadarAvailability, RadarBatchRange>();
+	batch.Record(0, RadarAction::Add);
+	*world.Get<RadarBatchRange>(entity) = batch.Prepare(1)[0];
+	simulation.Execute(engine::time::SimulationTime{0, step});
+	BOOST_TEST(world.Get<RadarAvailability>(entity)->producers == 1);
+	BOOST_CHECK(batch.Result(0) == RadarTransition::Online);
+}

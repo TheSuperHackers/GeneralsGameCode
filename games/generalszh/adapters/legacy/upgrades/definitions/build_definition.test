@@ -1,0 +1,300 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeBuildDefinitionAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "build_definition.h"
+#include <array>
+#include <bit>
+#include <cfenv>
+#include <cmath>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <type_traits>
+
+import games.generalszh.adapters.legacy.upgrades.definitions.build_definition;
+import games.generalszh.gameplay.upgrades.definitions.build_definition;
+
+using generalszh::legacy::UpgradeBuildDefinition;
+using ModernBuildDefinition = generalszh::upgrades::BuildDefinition;
+using Seconds = generalszh::upgrades::Seconds;
+
+static_assert(std::is_default_constructible_v<UpgradeBuildDefinition>);
+static_assert(std::is_copy_constructible_v<UpgradeBuildDefinition>);
+static_assert(std::is_copy_assignable_v<UpgradeBuildDefinition>);
+static_assert(!std::is_move_constructible_v<UpgradeBuildDefinition>);
+static_assert(!std::is_move_assignable_v<UpgradeBuildDefinition>);
+static_assert(std::is_nothrow_destructible_v<UpgradeBuildDefinition>);
+static_assert(std::is_same_v<decltype(std::declval<const UpgradeBuildDefinition &>()
+	.DurationSeconds()), float>);
+static_assert(std::is_same_v<decltype(std::declval<const UpgradeBuildDefinition &>()
+	.Cost()), std::int32_t>);
+static_assert(std::is_same_v<decltype(std::declval<const UpgradeBuildDefinition &>()
+	.LegacyFrames()), std::int32_t>);
+static_assert(std::is_same_v<decltype(std::declval<const UpgradeBuildDefinition &>()
+	.Fingerprint()), std::uint64_t>);
+static_assert(noexcept(std::declval<UpgradeBuildDefinition &>().CancelOverride()));
+static_assert(noexcept(std::declval<const UpgradeBuildDefinition &>().DurationSeconds()));
+static_assert(noexcept(std::declval<const UpgradeBuildDefinition &>().Cost()));
+static_assert(noexcept(std::declval<const UpgradeBuildDefinition &>().LegacyFrames()));
+static_assert(noexcept(std::declval<const UpgradeBuildDefinition &>().Fingerprint()));
+
+namespace upgrade_build_definition_adapter_test
+{
+void Publish(UpgradeBuildDefinition &definition, const float seconds,
+	const std::int32_t cost)
+{
+	definition.BeginOverride();
+	definition.SetDurationSeconds(seconds);
+	definition.SetCost(cost);
+	definition.Publish();
+}
+
+struct UpgradeTemplateLike
+{
+	UpgradeBuildDefinition build;
+};
+} // namespace upgrade_build_definition_adapter_test
+
+using namespace upgrade_build_definition_adapter_test;
+
+BOOST_AUTO_TEST_CASE(default_runtime_is_explicit_zero_and_matches_modern_definition)
+{
+	const UpgradeBuildDefinition legacy;
+	const ModernBuildDefinition modern{Seconds{0.0f}, 0};
+
+	BOOST_TEST(legacy.DurationSeconds() == 0.0f);
+	BOOST_TEST(legacy.Cost() == 0);
+	BOOST_TEST(legacy.LegacyFrames() == 0);
+	BOOST_TEST(legacy.Fingerprint() == modern.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(publish_uses_float_thirty_times_then_truncates_and_matches_modern)
+{
+	UpgradeBuildDefinition legacy;
+	Publish(legacy, 1.25f, 17);
+	const ModernBuildDefinition modern{Seconds{1.25f}, 17};
+
+	BOOST_TEST(legacy.DurationSeconds() == 1.25f);
+	BOOST_TEST(legacy.Cost() == 17);
+	BOOST_TEST(legacy.LegacyFrames() == 37);
+	BOOST_TEST(legacy.LegacyFrames() ==
+		static_cast<std::int32_t>(1.25f * 30.0f));
+	BOOST_TEST(legacy.Fingerprint() == modern.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(begin_copies_complete_runtime_and_reads_ignore_staged_values)
+{
+	UpgradeBuildDefinition legacy;
+	Publish(legacy, 2.0f, 11);
+	const auto baselineDuration = legacy.DurationSeconds();
+	const auto baselineCost = legacy.Cost();
+	const auto baselineFrames = legacy.LegacyFrames();
+	const auto baselineFingerprint = legacy.Fingerprint();
+
+	legacy.BeginOverride();
+	legacy.SetDurationSeconds(3.5f);
+	legacy.SetCost(22);
+
+	BOOST_TEST(legacy.DurationSeconds() == baselineDuration);
+	BOOST_TEST(legacy.Cost() == baselineCost);
+	BOOST_TEST(legacy.LegacyFrames() == baselineFrames);
+	BOOST_TEST(legacy.Fingerprint() == baselineFingerprint);
+
+	legacy.Publish();
+	BOOST_TEST(legacy.DurationSeconds() == 3.5f);
+	BOOST_TEST(legacy.Cost() == 22);
+	BOOST_TEST(legacy.LegacyFrames() ==
+		static_cast<std::int32_t>(3.5f * 30.0f));
+}
+
+BOOST_AUTO_TEST_CASE(overrides_are_single_use_staged_lifecycle_and_cancel_is_idempotent)
+{
+	UpgradeBuildDefinition legacy;
+
+	BOOST_CHECK_THROW(legacy.SetDurationSeconds(1.0f), std::logic_error);
+	BOOST_CHECK_THROW(legacy.SetCost(1), std::logic_error);
+	BOOST_CHECK_THROW(legacy.Publish(), std::logic_error);
+
+	legacy.BeginOverride();
+	BOOST_CHECK_THROW(legacy.BeginOverride(), std::logic_error);
+	legacy.CancelOverride();
+	legacy.CancelOverride();
+	BOOST_CHECK_THROW(legacy.Publish(), std::logic_error);
+	BOOST_CHECK_THROW(legacy.SetDurationSeconds(1.0f), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(publish_failure_rolls_back_runtime_and_keeps_pending_fixable)
+{
+	UpgradeBuildDefinition legacy;
+	Publish(legacy, 2.0f, 11);
+	const auto baselineFingerprint = legacy.Fingerprint();
+
+	legacy.BeginOverride();
+	legacy.SetDurationSeconds((std::numeric_limits<float>::max)());
+
+	BOOST_CHECK_THROW(legacy.Publish(), std::invalid_argument);
+	BOOST_TEST(legacy.DurationSeconds() == 2.0f);
+	BOOST_TEST(legacy.Cost() == 11);
+	BOOST_TEST(legacy.LegacyFrames() == 60);
+	BOOST_TEST(legacy.Fingerprint() == baselineFingerprint);
+
+	// The failed publish did not discard the pending edit; fix it and publish.
+	legacy.SetDurationSeconds(2.5f);
+	legacy.Publish();
+	BOOST_TEST(legacy.DurationSeconds() == 2.5f);
+	BOOST_TEST(legacy.Cost() == 11);
+	BOOST_TEST(legacy.LegacyFrames() == 75);
+}
+
+BOOST_AUTO_TEST_CASE(modern_validation_failure_also_preserves_pending_and_runtime)
+{
+	UpgradeBuildDefinition legacy;
+	Publish(legacy, 1.0f, 4);
+	const auto baselineFingerprint = legacy.Fingerprint();
+
+	legacy.BeginOverride();
+	legacy.SetCost(-1);
+	BOOST_CHECK_THROW(legacy.Publish(), std::invalid_argument);
+
+	BOOST_TEST(legacy.DurationSeconds() == 1.0f);
+	BOOST_TEST(legacy.Cost() == 4);
+	BOOST_TEST(legacy.LegacyFrames() == 30);
+	BOOST_TEST(legacy.Fingerprint() == baselineFingerprint);
+
+	legacy.SetCost(9);
+	legacy.Publish();
+	BOOST_TEST(legacy.DurationSeconds() == 1.0f);
+	BOOST_TEST(legacy.Cost() == 9);
+	BOOST_TEST(legacy.LegacyFrames() == 30);
+}
+
+BOOST_AUTO_TEST_CASE(legacy_frame_boundary_is_checked_before_float_to_integer_cast)
+{
+	UpgradeBuildDefinition valid;
+	Publish(valid, 71582784.0f, 1);
+	BOOST_TEST(valid.LegacyFrames() == 2147483520);
+
+	UpgradeBuildDefinition tooLarge;
+	tooLarge.BeginOverride();
+	tooLarge.SetDurationSeconds(71582792.0f);
+	BOOST_CHECK_THROW(tooLarge.Publish(), std::invalid_argument);
+	BOOST_TEST(tooLarge.DurationSeconds() == 0.0f);
+	BOOST_TEST(tooLarge.Cost() == 0);
+	BOOST_TEST(tooLarge.LegacyFrames() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(default_copying_of_an_upgrade_template_deep_copies_published_runtime)
+{
+	UpgradeTemplateLike source;
+	Publish(source.build, 4.0f, 12);
+	UpgradeTemplateLike copy{source};
+
+	BOOST_TEST(copy.build.DurationSeconds() == 4.0f);
+	BOOST_TEST(copy.build.Cost() == 12);
+	BOOST_TEST(copy.build.LegacyFrames() == 120);
+	BOOST_TEST(copy.build.Fingerprint() == source.build.Fingerprint());
+
+	Publish(source.build, 5.0f, 13);
+	BOOST_TEST(copy.build.DurationSeconds() == 4.0f);
+	BOOST_TEST(copy.build.Cost() == 12);
+
+	UpgradeTemplateLike assigned;
+	assigned = source;
+	BOOST_TEST(assigned.build.DurationSeconds() == 5.0f);
+	BOOST_TEST(assigned.build.Cost() == 13);
+	BOOST_TEST(assigned.build.LegacyFrames() == 150);
+}
+
+BOOST_AUTO_TEST_CASE(copy_of_active_override_is_rejected_and_assignment_is_strong)
+{
+	UpgradeBuildDefinition source;
+	Publish(source, 3.0f, 8);
+	UpgradeBuildDefinition target;
+	Publish(target, 9.0f, 10);
+	const auto targetFingerprint = target.Fingerprint();
+
+	source.BeginOverride();
+	source.SetDurationSeconds(4.0f);
+	BOOST_CHECK_THROW((UpgradeBuildDefinition{source}), std::logic_error);
+	BOOST_CHECK_THROW(target = source, std::logic_error);
+	BOOST_TEST(target.DurationSeconds() == 9.0f);
+	BOOST_TEST(target.Cost() == 10);
+	BOOST_TEST(target.LegacyFrames() == 270);
+	BOOST_TEST(target.Fingerprint() == targetFingerprint);
+
+	// Self-assignment is a no-op even while a source override is staged.
+	source = source;
+	source.CancelOverride();
+}
+
+namespace upgrade_build_definition_adapter_test
+{
+struct RoundingRestore
+{
+	int original{std::fegetround()};
+	~RoundingRestore() { std::fesetround(original); }
+};
+}
+
+BOOST_AUTO_TEST_CASE(frame_projection_is_independent_of_ambient_rounding_and_rounds_ties_to_even)
+{
+	const RoundingRestore restore;
+	BOOST_REQUIRE(restore.original != -1);
+	struct Example { std::uint32_t secondsBits; std::int32_t frames; };
+	constexpr std::array examples{
+		Example{0x00000001u, 0}, Example{0x007fffffu, 0}, // subnormal inputs
+		Example{0x80000000u, 0}, Example{0x3fffffffu, 59},
+		Example{0x40000000u, 60}, Example{0x4a800004u, 125829184},
+		Example{0x4a80000cu, 125829296}}; // half-way: odd rounds up, even stays
+	std::array<std::uint64_t, examples.size()> fingerprints{};
+	bool first = true;
+	UpgradeBuildDefinition definition;
+	for (const auto mode : {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO})
+	{
+		BOOST_REQUIRE_EQUAL(std::fesetround(mode), 0);
+		for (std::size_t index = 0; index < examples.size(); ++index)
+		{
+			const auto &example = examples[index];
+			Publish(definition, std::bit_cast<float>(example.secondsBits), 19);
+			BOOST_TEST(definition.LegacyFrames() == example.frames);
+			if (first) fingerprints[index] = definition.Fingerprint();
+			BOOST_TEST(definition.Fingerprint() == fingerprints[index]);
+		}
+		first = false;
+	}
+}
+
+BOOST_AUTO_TEST_CASE(frame_projection_matches_native_binary32_across_exponents_and_significands)
+{
+	const RoundingRestore restore;
+	BOOST_REQUIRE(restore.original != -1);
+	BOOST_REQUIRE_EQUAL(std::fesetround(FE_TONEAREST), 0);
+	UpgradeBuildDefinition definition;
+	std::uint32_t sequence = 17;
+	for (std::uint32_t exponent = 0; exponent < 255; ++exponent)
+	{
+		for (unsigned sample = 0; sample < 64; ++sample)
+		{
+			sequence = sequence * 1664525u + 1013904223u;
+			const auto bits = (exponent << 23) | (sequence & 0x7fffffu);
+			const float seconds = std::bit_cast<float>(bits);
+			// Volatile keeps this reference an actual binary32 runtime operation,
+			// independent of the integer implementation under test.
+			volatile float source = seconds;
+			volatile float product = source * 30.0f;
+			const float expected = product;
+			definition.BeginOverride();
+			definition.SetDurationSeconds(seconds);
+			if (std::isfinite(expected) && static_cast<double>(expected) < 2147483648.0)
+			{
+				definition.Publish();
+				BOOST_TEST(definition.LegacyFrames() == static_cast<std::int32_t>(expected));
+			}
+			else
+			{
+				BOOST_CHECK_THROW(definition.Publish(), std::invalid_argument);
+				definition.CancelOverride();
+			}
+		}
+	}
+}

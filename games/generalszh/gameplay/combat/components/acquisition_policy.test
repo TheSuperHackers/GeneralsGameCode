@@ -1,0 +1,10 @@
+#define BOOST_TEST_MODULE GeneralsZHAcquisitionPolicy
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.combat.components.acquisition_policy;
+BOOST_AUTO_TEST_CASE(acquisition_is_explicitly_authored_and_intent_is_independent)
+{
+    ecs::World world; world.RegisterComponent<generalszh::combat::AcquisitionPolicy>(); world.RegisterComponent<generalszh::combat::TargetIntent>();
+    world.FinalizeComponents(); const auto actor = world.Create<generalszh::combat::AcquisitionPolicy,generalszh::combat::TargetIntent>();
+    BOOST_TEST(!world.Get<generalszh::combat::AcquisitionPolicy>(actor)->enabled);
+    BOOST_TEST(!world.Get<generalszh::combat::TargetIntent>(actor)->explicitOrder);
+}

@@ -1,0 +1,107 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <vector>
+import engine.gameplay.rts.harvesting.systems.harvest_system;
+import engine.gameplay.navigation.systems.movement_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::rts::harvesting;
+BOOST_AUTO_TEST_CASE(harvest_hook_observes_docks_without_matching_collectors) {
+    const std::array<std::uint8_t,1> terrain{1}; NavigationGrid grid(1,1,terrain);
+    ecs::World world; RegisterHarvestComponents(world); RegisterMovementComponents(world);
+    world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>(); world.FinalizeComponents();
+    const auto dock=world.Create<SupplySource,GridPosition,Health,LifeState>();
+    world.Get<SupplySource>(dock)->boxes=7; world.Get<Health>(dock)->current=1;
+    HarvestSnapshots snapshots(1); HarvestSystem harvest(world,grid,snapshots); const engine::time::FixedStep step{30}; harvest.Configure(step);
+    ecs::SystemRegistry registry; registry.Register(harvest); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step); scheduler.Execute({0,step});
+    BOOST_REQUIRE_EQUAL(snapshots.sources.size(),1u); BOOST_CHECK(snapshots.sources[0].entity==dock);
+    BOOST_TEST(snapshots.sources[0].available); BOOST_TEST(world.Get<SupplySource>(dock)->boxes==7u);
+}
+BOOST_AUTO_TEST_CASE(manual_cancellation_wins_over_same_tick_harvest_request) {
+    const std::array<std::uint8_t,1> terrain{1}; NavigationGrid grid(1,1,terrain);
+    ecs::World world; RegisterHarvestComponents(world); RegisterMovementComponents(world);
+    world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>(); world.FinalizeComponents();
+    const auto source=world.Create<SupplySource,GridPosition,Health,LifeState>();
+    world.Get<SupplySource>(source)->boxes=1; world.Get<Health>(source)->current=1;
+    const auto actor=world.Create<HarvestState,HarvestCargo,HarvestPolicy,HarvestIntent,HarvestDelivery,GridPosition,MoveGoal,MoveCredit,Health,LifeState>();
+    world.Get<Health>(actor)->current=1;
+    HarvestSnapshots snapshots(2); HarvestSystem harvest(world,grid,snapshots); const engine::time::FixedStep step{30}; harvest.Configure(step);
+    ecs::SystemRegistry registry; registry.Register(harvest);
+    registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    const std::array inputs{HarvestInput{actor,source,{},false}}; const std::array cancellations{actor};
+    harvest.SetInputs(inputs,cancellations); scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<SupplySource>(source)->boxes==1u); BOOST_TEST(world.Get<HarvestCargo>(actor)->boxes==0u);
+    BOOST_CHECK(world.Get<HarvestState>(actor)->phase==HarvestPhase::Idle);
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell);
+    harvest.SetInputs(inputs); scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<SupplySource>(source)->boxes==0u); BOOST_TEST(world.Get<HarvestCargo>(actor)->boxes==1u);
+}
+BOOST_AUTO_TEST_CASE(harvest_decision_retains_cargo_at_unavailable_dropoff_and_unloads_after_timer) {
+    const std::array<std::uint8_t,1> terrain{1}; NavigationGrid grid(1,1,terrain);
+    ecs::World world; RegisterHarvestComponents(world);
+    world.RegisterComponent<GridPosition>(); world.RegisterComponent<MoveGoal>(); world.RegisterComponent<MoveRangeGoal>(); world.RegisterComponent<MoveCredit>();
+    world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>(); world.FinalizeComponents();
+    const auto actor=world.Create<HarvestState,HarvestCargo,HarvestPolicy,HarvestIntent,HarvestDelivery,GridPosition,MoveGoal,MoveCredit,Health,LifeState>();
+    const auto dock=world.Create<SupplyDropoff,GridPosition,Health,LifeState>();
+    world.Get<Health>(dock)->current=1; world.Get<SupplyDropoff>(dock)->available=false;
+    world.Get<Health>(actor)->current=10; world.Get<HarvestCargo>(actor)->boxes=3;
+    *world.Get<HarvestState>(actor)={{},dock,HarvestPhase::ToDropoff,0};
+    HarvestSnapshots snapshots(1);
+    const engine::time::FixedStep step{30}; HarvestSystem decision(world,grid,snapshots); decision.Configure(step); ecs::SystemRegistry registry; registry.Register(decision); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+    BOOST_CHECK(world.Get<HarvestState>(actor)->phase==HarvestPhase::NeedsInput);
+    BOOST_TEST(world.Get<HarvestCargo>(actor)->boxes==3u); BOOST_TEST(world.Get<HarvestDelivery>(actor)->boxes==0u);
+    world.Get<SupplyDropoff>(dock)->available=true;
+    world.Get<HarvestState>(actor)->phase=HarvestPhase::ToDropoff;
+    world.Get<HarvestPolicy>(actor)->unloadTicks=2;
+    scheduler.Execute({1,step}); BOOST_TEST(world.Get<HarvestCargo>(actor)->boxes==3u);
+    scheduler.Execute({2,step}); BOOST_TEST(world.Get<HarvestCargo>(actor)->boxes==0u);
+    BOOST_TEST(world.Get<HarvestDelivery>(actor)->boxes==3u); BOOST_CHECK(world.Get<HarvestDelivery>(actor)->dropoff==dock);
+    scheduler.Execute({3,step}); BOOST_TEST(world.Get<HarvestDelivery>(actor)->boxes==0u);
+}
+namespace {
+std::vector<std::uint64_t> RunHarvest(unsigned workers,unsigned actorCount=260) {
+    const std::array<std::uint8_t,3> terrain{1,1,1}; NavigationGrid grid(3,1,terrain);
+    ecs::World world; RegisterHarvestComponents(world); RegisterMovementComponents(world);
+    world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>(); world.FinalizeComponents();
+    const auto source=world.Create<SupplySource,GridPosition,Health,LifeState>();
+    world.Get<SupplySource>(source)->boxes=5; world.Get<Health>(source)->current=1;
+    const auto dropoff=world.Create<SupplyDropoff,GridPosition,Health,LifeState>();
+    world.Get<GridPosition>(dropoff)->cell=2; world.Get<Health>(dropoff)->current=1;
+    std::vector<ecs::Entity> actors; std::vector<HarvestInput> inputs;
+    for(unsigned i=0;i<actorCount;++i) {
+        const auto a=world.Create<HarvestState,HarvestCargo,HarvestPolicy,HarvestIntent,HarvestDelivery,GridPosition,MoveGoal,MoveCredit,MoveSpeed,MoveField,MoveEnabled,MoveResult,Health,LifeState>();
+        world.Get<Health>(a)->current=i==0?0:1; world.Get<HarvestPolicy>(a)->capacity=2;
+        actors.push_back(a); inputs.push_back({a,source,dropoff,false});
+    }
+    engine::jobs::JobSystem jobs({workers}); HarvestSnapshots snapshots(300); HarvestSystem harvest(world,grid,snapshots);
+    FlowFields fields(grid,{3,9}); MovementSystem movement(world,jobs,grid,fields,300);
+    const engine::time::FixedStep step{1}; harvest.Configure(step);
+    ecs::SystemRegistry registry; registry.Register(harvest);
+    registry.Register(movement);
+    registry.OrderBefore<HarvestSystem,MovementSystem>(); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,jobs); scheduler.Finalize(step); harvest.SetInputs(inputs);
+    std::vector<std::uint64_t> result;
+    std::uint64_t total=0;
+    for(std::uint64_t tick=0;tick<40;++tick) {
+        scheduler.Execute({tick,step});
+        for(auto a:actors) { const auto d=*world.Get<HarvestDelivery>(a); if(d.boxes) {
+            result.insert(result.end(),{tick,a.index,a.generation,d.dropoff.index,d.dropoff.generation,d.boxes}); total+=d.boxes;
+        }}
+    }
+    BOOST_TEST(total==5u); BOOST_TEST(world.Get<SupplySource>(source)->boxes==0u);
+    BOOST_TEST(world.Get<HarvestCargo>(actors[0])->boxes==0u);
+    for(auto a:actors) result.insert(result.end(),{a.index,a.generation,world.Get<HarvestCargo>(a)->boxes,static_cast<std::uint64_t>(world.Get<HarvestState>(a)->phase),world.Get<GridPosition>(a)->cell});
+    return result;
+}
+}
+BOOST_AUTO_TEST_CASE(harvest_contended_finite_stock_movement_delivery_and_dead_actor_are_worker_independent) {
+    auto one=RunHarvest(1),two=RunHarvest(2),four=RunHarvest(4);
+    BOOST_CHECK(one==two); BOOST_CHECK(one==four);
+}
+BOOST_AUTO_TEST_CASE(harvest_repeats_route_until_source_is_empty) {
+    auto one=RunHarvest(1,2),four=RunHarvest(4,2);
+    BOOST_CHECK(one==four);
+}

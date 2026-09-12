@@ -1,0 +1,194 @@
+#define BOOST_TEST_MODULE GeneralsZhPowerExecution
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+#include <array>
+#include <stdexcept>
+#include <limits>
+#include <vector>
+import games.generalszh.gameplay.power.systems.power_system;
+import engine.ecs.scheduler.scheduler;
+namespace
+{
+using namespace generalszh::power;
+using engine::gameplay::combat::LifeState;
+void Register(ecs::World &world)
+{
+    world.RegisterComponent<PowerSource>(); world.RegisterComponent<PowerContribution>();
+    world.RegisterComponent<PowerLedger>(); world.RegisterComponent<PowerState>();
+    world.RegisterComponent<PowerPolicy>(); world.RegisterComponent<LifeState>();
+    world.FinalizeComponents();
+}
+std::vector<std::uint64_t> Run(std::uint32_t workers)
+{
+    ecs::World world; Register(world);
+    const auto account = world.Create<PowerLedger, PowerState, PowerPolicy>();
+    const auto exempt = world.Create<PowerLedger, PowerState>();
+    const auto zero = world.Create<PowerLedger, PowerState, PowerPolicy>();
+    std::vector<ecs::Entity> sources;
+    for (unsigned i = 0; i != 512; ++i)
+    {
+        const auto source = world.Create<PowerSource, PowerContribution, LifeState>();
+        *world.Get<PowerSource>(source) = {account, i % 2 == 0 ? 3 : -4};
+        sources.push_back(source);
+    }
+    PowerFrame frame{2048}; PowerSystem power(world, frame);
+    ecs::SystemRegistry registry;
+    registry.Register(power);
+    registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    std::vector<std::uint64_t> result;
+    auto record = [&] {
+        for (auto entity : {account, exempt, zero})
+        {
+            const auto &ledger = *world.Get<PowerLedger>(entity);
+            const auto &state = *world.Get<PowerState>(entity);
+            result.insert(result.end(), {entity.index, entity.generation,
+                static_cast<std::uint64_t>(ledger.production), static_cast<std::uint64_t>(ledger.consumption),
+                state.brownout, state.speedNumerator, state.speedDenominator});
+            const auto *published = frame.Find(entity);
+            BOOST_REQUIRE(published != nullptr);
+            BOOST_TEST(published->brownout == state.brownout);
+            BOOST_TEST(published->speedNumerator == state.speedNumerator);
+            BOOST_TEST(published->speedDenominator == state.speedDenominator);
+        }
+        for (auto entity : sources)
+        {
+            const auto &source = *world.Get<PowerSource>(entity);
+            const auto &contribution = *world.Get<PowerContribution>(entity);
+            result.insert(result.end(), {entity.index, entity.generation,
+                source.account.index, source.account.generation, source.eligible,
+                world.Get<LifeState>(entity)->alive, contribution.production, contribution.consumption});
+        }
+    };
+    for (std::uint64_t tick = 0; tick != 4; ++tick) scheduler.Execute({tick, step});
+    BOOST_TEST(world.Get<PowerLedger>(account)->production == 768);
+    BOOST_TEST(world.Get<PowerLedger>(account)->consumption == 1024);
+    BOOST_TEST(world.Get<PowerState>(account)->speedNumerator == 7500u);
+    BOOST_TEST(!world.Get<PowerState>(zero)->brownout);
+    record();
+    for (unsigned i = 0; i != sources.size(); i += 2) world.Get<LifeState>(sources[i])->alive = false;
+    scheduler.Execute({4, step});
+    BOOST_TEST(world.Get<PowerLedger>(account)->production == 0);
+    BOOST_TEST(world.Get<PowerState>(account)->speedNumerator == 5000u);
+    record();
+    for (unsigned i = 0; i != sources.size(); i += 2)
+    {
+        world.Get<LifeState>(sources[i])->alive = true;
+        world.Get<PowerSource>(sources[i])->authoredPower = 4;
+    }
+    scheduler.Execute({5, step});
+    BOOST_TEST(!world.Get<PowerState>(account)->brownout);
+    BOOST_TEST(world.Get<PowerState>(account)->speedNumerator == 10000u);
+    record();
+    // Capture changes source ownership, and removing consumption updates totals.
+    world.Get<PowerSource>(sources[0])->account = exempt;
+    world.Get<PowerSource>(sources[1])->eligible = false;
+    scheduler.Execute({6, step});
+    BOOST_TEST(world.Get<PowerLedger>(exempt)->production == 4);
+    BOOST_TEST(world.Get<PowerLedger>(account)->consumption == 1020);
+    record();
+    world.Destroy(exempt);
+    const auto replacement = world.Create<PowerLedger, PowerState>();
+    scheduler.Execute({7, step});
+    BOOST_TEST(frame.Find(exempt) == nullptr);
+    BOOST_REQUIRE(frame.Find(replacement) != nullptr);
+    BOOST_TEST(world.Get<PowerLedger>(replacement)->production == 0);
+    result.insert(result.end(), {replacement.index, replacement.generation,
+        frame.Find(replacement)->speedNumerator, frame.Find(replacement)->speedDenominator});
+    for (auto source : sources) world.Destroy(source);
+    scheduler.Execute({8, step});
+    BOOST_TEST(world.Get<PowerLedger>(account)->production == 0);
+    BOOST_TEST(world.Get<PowerLedger>(account)->consumption == 0);
+    BOOST_TEST(frame.Find(account)->speedNumerator == 5000u);
+    return result;
+}
+}
+BOOST_AUTO_TEST_CASE(real_power_sources_accounts_and_frames_match_across_workers)
+{
+    const auto one = Run(1), two = Run(2), four = Run(4);
+    BOOST_TEST(one == two, boost::test_tools::per_element());
+    BOOST_TEST(one == four, boost::test_tools::per_element());
+}
+BOOST_AUTO_TEST_CASE(power_config_boundary_rejects_invalid_bounds)
+{
+    ecs::World world; Register(world); PowerFrame frame;
+    BOOST_CHECK_THROW((PowerSystem(world, frame, {8000, 5000, 10000})), std::invalid_argument);
+    BOOST_CHECK_THROW((PowerSystem(world, frame, {5000, 10001, 10000})), std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(shipped_clamps_full_supply_and_alternate_config)
+{
+    for (const auto config : {PowerConfig{}, PowerConfig{2000, 9000, 5000}})
+    {
+        ecs::World world; Register(world);
+        const auto account = world.Create<PowerLedger, PowerState, PowerPolicy>();
+        const auto supply = world.Create<PowerSource, PowerContribution>();
+        const auto draw = world.Create<PowerSource, PowerContribution>();
+        *world.Get<PowerSource>(draw) = {account, -100};
+        PowerFrame frame{16}; PowerSystem power(world, frame, config);
+        ecs::SystemRegistry registry; registry.Register(power); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+        const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+        const std::array<std::int32_t, 6> values{0, 50, 75, 99, 100, 101};
+        const std::array<std::uint32_t, 6> shipped{5000, 5000, 7500, 8000, 10000, 10000};
+        const std::array<std::uint32_t, 6> alternate{5000, 7500, 8750, 9000, 10000, 10000};
+        for (std::size_t i = 0; i != values.size(); ++i)
+        {
+            *world.Get<PowerSource>(supply) = {account, values[i]};
+            scheduler.Execute({i, step});
+            BOOST_TEST(world.Get<PowerState>(account)->speedNumerator ==
+                (config.penaltyModifier == 10000 ? shipped[i] : alternate[i]));
+        }
+    }
+}
+BOOST_AUTO_TEST_CASE(empty_source_query_still_rebuilds_accounts_and_clears_removed_accounts)
+{
+    ecs::World world; Register(world);
+    auto account = world.Create<PowerLedger, PowerState, PowerPolicy>();
+    *world.Get<PowerLedger>(account) = {9, 10};
+    PowerFrame frame{16}; PowerSystem power(world, frame);
+    ecs::SystemRegistry registry; registry.Register(power); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0, step});
+    BOOST_TEST(world.Get<PowerLedger>(account)->production == 0);
+    BOOST_TEST(world.Get<PowerLedger>(account)->consumption == 0);
+    BOOST_REQUIRE(frame.Find(account) != nullptr);
+    BOOST_TEST(frame.Find(account)->speedNumerator == 5000u);
+    world.Destroy(account);
+    scheduler.Execute({1, step});
+    BOOST_TEST(frame.Find(account) == nullptr);
+}
+BOOST_AUTO_TEST_CASE(absent_and_false_policy_preserve_full_speed)
+{
+    ecs::World world; Register(world);
+    auto absent = world.Create<PowerLedger, PowerState>();
+    auto disabled = world.Create<PowerLedger, PowerState, PowerPolicy>();
+    world.Get<PowerPolicy>(disabled)->affected = false;
+    PowerFrame frame{16}; PowerSystem power(world, frame);
+    ecs::SystemRegistry registry; registry.Register(power); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0, step});
+    BOOST_TEST(frame.Find(absent)->speedNumerator == 10000u);
+    BOOST_TEST(frame.Find(disabled)->speedNumerator == 10000u);
+}
+BOOST_AUTO_TEST_CASE(power_capacity_and_ledger_overflow_fail_without_publishing)
+{
+    for (bool overflow : {false, true})
+    {
+        ecs::World world; Register(world);
+        auto account = world.Create<PowerLedger, PowerState>();
+        auto source = world.Create<PowerSource, PowerContribution>();
+        *world.Get<PowerSource>(source) = {account, (std::numeric_limits<std::int32_t>::min)()};
+        PowerFrame frame{overflow ? 16u : 0u}; PowerSystem power(world, frame);
+        ecs::SystemRegistry registry; registry.Register(power); registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+        const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+        if (overflow) BOOST_CHECK_THROW(scheduler.Execute({0, step}), std::overflow_error);
+        else BOOST_CHECK_THROW(scheduler.Execute({0, step}), std::length_error);
+        BOOST_TEST(scheduler.IsFailed());
+        BOOST_TEST(frame.Find(account) == nullptr);
+        BOOST_TEST(world.Get<PowerLedger>(account)->consumption == 0);
+    }
+}

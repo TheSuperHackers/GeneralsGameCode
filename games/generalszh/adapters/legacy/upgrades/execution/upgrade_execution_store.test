@@ -1,0 +1,212 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeExecutionStore
+#include <boost/test/included/unit_test.hpp>
+#include "upgrade_execution_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <array>
+#include <memory>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.upgrades.state.upgrade_execution;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::legacy::UpgradeExecutionStore;
+using generalszh::legacy::UpgradeExecutionLease;
+using engine::gameplay::rts::upgrades::UpgradeExecutionState;
+static_assert(!std::is_copy_constructible_v<UpgradeExecutionLease>);
+static_assert(!std::is_move_constructible_v<UpgradeExecutionLease>);
+static_assert(!std::is_copy_constructible_v<UpgradeExecutionStore>);
+static_assert(!std::is_move_constructible_v<UpgradeExecutionStore>);
+
+namespace execution_tests
+{
+ecs::Entity OnlyEntity(GameplayState &state)
+{
+	ecs::Entity entity{};
+	ecs::Query<ecs::Read<UpgradeExecutionState>> query(state.World());
+	query.ForEachChunk([&](auto chunk) { entity = chunk.Entities().front(); });
+	return entity;
+}
+struct IllegalAccess
+{
+	UpgradeExecutionLease &lease;
+	UpgradeExecutionStore &store;
+	GameplayState &state;
+	unsigned operation;
+	using Query = ecs::Query<ecs::Read<UpgradeExecutionState>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (operation)
+		{
+		case 0: (void)lease.Get(); break;
+		case 1: lease.Set(true); break;
+		case 2: { UpgradeExecutionLease other(store); break; }
+		case 3: { UpgradeExecutionStore other(state); break; }
+		}
+	}
+};
+}
+namespace ecs
+{
+template<> struct SystemTraits<execution_tests::IllegalAccess>
+{
+	static constexpr std::string_view StableName = "tests.upgrade_execution.illegal_access";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(independent_leases_have_one_ecs_row_and_no_cached_flag)
+{
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	{
+		UpgradeExecutionLease first(store);
+		const auto firstEntity = execution_tests::OnlyEntity(state);
+		BOOST_REQUIRE(firstEntity.IsValid());
+		UpgradeExecutionLease second(store);
+		BOOST_TEST(store.Count() == 2u);
+		BOOST_TEST(state.Count() == 2u);
+		BOOST_TEST(!first.Get());
+		BOOST_TEST(!second.Get());
+		first.Set(true);
+		BOOST_TEST(first.Get());
+		BOOST_TEST(!second.Get());
+		BOOST_TEST(state.World().Get<UpgradeExecutionState>(firstEntity)->executed);
+		state.World().Get<UpgradeExecutionState>(firstEntity)->executed = false;
+		BOOST_TEST(!first.Get());
+		second.Set(true);
+		BOOST_TEST(second.Get());
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(reuse_invalidates_old_generation_and_survives_compaction)
+{
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	auto first = std::make_unique<UpgradeExecutionLease>(store);
+	const auto stale = execution_tests::OnlyEntity(state);
+	UpgradeExecutionLease survivor(store);
+	survivor.Set(true);
+	first.reset();
+	BOOST_TEST(!state.World().IsAlive(stale));
+	UpgradeExecutionLease replacement(store);
+	BOOST_TEST(!replacement.Get());
+	BOOST_TEST(survivor.Get());
+	BOOST_TEST(state.World().Get<UpgradeExecutionState>(stale) == nullptr);
+	bool reused{};
+	ecs::Query<ecs::Read<UpgradeExecutionState>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		for (const auto entity : chunk.Entities())
+			if (entity.index == stale.index)
+			{
+				BOOST_TEST(entity.generation != stale.generation);
+				reused = true;
+			}
+	});
+	BOOST_TEST(reused);
+}
+
+BOOST_AUTO_TEST_CASE(missing_component_fails_access_but_live_entity_is_released)
+{
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	{
+		UpgradeExecutionLease lease(store);
+		const auto entity = execution_tests::OnlyEntity(state);
+		BOOST_TEST(state.World().Remove<UpgradeExecutionState>(entity));
+		BOOST_CHECK_THROW(lease.Get(), std::logic_error);
+		BOOST_CHECK_THROW(lease.Set(true), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(live_module_rows_prevent_world_replacement_until_teardown)
+{
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	{
+		UpgradeExecutionLease lease(store);
+		lease.Set(true);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, {}), std::logic_error);
+		BOOST_TEST(lease.Get());
+	}
+	BOOST_CHECK_NO_THROW(state.Reset());
+	UpgradeExecutionLease newModule(store);
+	BOOST_TEST(!newModule.Get());
+}
+
+BOOST_AUTO_TEST_CASE(failed_containing_constructor_releases_the_execution_lease)
+{
+	struct ThrowingModule
+	{
+		UpgradeExecutionLease lease;
+		explicit ThrowingModule(UpgradeExecutionStore &store) : lease(store)
+		{
+			lease.Set(true);
+			throw std::runtime_error("injected module construction failure");
+		}
+	};
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	BOOST_CHECK_THROW((ThrowingModule{store}), std::runtime_error);
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	UpgradeExecutionLease next(store);
+	BOOST_TEST(!next.Get());
+}
+
+BOOST_AUTO_TEST_CASE(legacy_execution_access_is_rejected_before_any_scheduled_mutation)
+{
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	UpgradeExecutionLease lease(store);
+	const engine::time::FixedStep step{30};
+	for (unsigned operation = 0; operation != 4; ++operation)
+	{
+		execution_tests::IllegalAccess system{lease, store, state, operation};
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(state.World().Components());
+		ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+		scheduler.Finalize(step);
+		BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{operation, step}), std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+		BOOST_TEST(!lease.Get());
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 1u);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(many_live_module_bindings_survive_repeated_chunk_compaction)
+{
+	GameplayState state;
+	UpgradeExecutionStore store(state);
+	std::vector<std::unique_ptr<UpgradeExecutionLease>> leases;
+	for (std::size_t index = 0; index != 4096; ++index)
+	{
+		leases.push_back(std::make_unique<UpgradeExecutionLease>(store));
+		leases.back()->Set(index % 3 == 0);
+	}
+	for (std::size_t index = 0; index < leases.size(); index += 2) leases[index].reset();
+	BOOST_TEST(store.Count() == 2048u);
+	for (std::size_t index = 1; index < leases.size(); index += 2)
+		BOOST_TEST(leases[index]->Get() == (index % 3 == 0));
+	for (std::size_t index = 0; index < leases.size(); index += 2)
+	{
+		leases[index] = std::make_unique<UpgradeExecutionLease>(store);
+		BOOST_TEST(!leases[index]->Get());
+	}
+	BOOST_TEST(store.Count() == 4096u);
+	leases.clear();
+	BOOST_TEST(state.Count() == 0u);
+}

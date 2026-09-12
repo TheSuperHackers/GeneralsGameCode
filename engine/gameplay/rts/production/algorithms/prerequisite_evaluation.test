@@ -1,0 +1,20 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import engine.gameplay.rts.production.algorithms.prerequisite_evaluation;
+using namespace engine::gameplay::rts::production;
+
+BOOST_AUTO_TEST_CASE(evaluator_implements_or_within_groups_and_and_between_groups)
+{
+    const std::array groups{PrerequisiteGroup{{3, 7}}, PrerequisiteGroup{{11}}};
+    const PrerequisiteDefinition definition(groups);
+    BOOST_TEST(SatisfiesPrerequisites(definition, std::array<std::uint32_t, 2>{3, 11}));
+    BOOST_TEST(SatisfiesPrerequisites(definition, std::array<std::uint32_t, 2>{7, 11}));
+    BOOST_TEST(!SatisfiesPrerequisites(definition, std::array<std::uint32_t, 1>{3}));
+    BOOST_TEST(!SatisfiesPrerequisites(definition, std::array<std::uint32_t, 2>{5, 11}));
+}
+
+BOOST_AUTO_TEST_CASE(evaluator_keeps_no_prerequisite_baseline)
+{
+    const PrerequisiteDefinition definition;
+    BOOST_TEST(SatisfiesPrerequisites(definition, {}));
+}

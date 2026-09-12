@@ -1,0 +1,28 @@
+add_library(engine_gameplay_rts_power STATIC)
+target_sources(engine_gameplay_rts_power PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	components/power_ledger.cppm algorithms/power_ledger.cppm
+	ledger/power_ledger.cppm)
+target_compile_features(engine_gameplay_rts_power PUBLIC cxx_std_23)
+set_property(TARGET engine_gameplay_rts_power PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(engine_gameplay_rts_power PUBLIC engine_ecs)
+
+add_library(engine_gameplay_rts_power_execution STATIC)
+target_sources(engine_gameplay_rts_power_execution PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    components/power_source.cppm algorithms/power_projection.cppm systems/power_projection_system.cppm)
+target_compile_features(engine_gameplay_rts_power_execution PUBLIC cxx_std_23)
+target_link_libraries(engine_gameplay_rts_power_execution PUBLIC engine_gameplay_rts_power engine_gameplay_combat)
+
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set(power_tests components/power_ledger.test algorithms/power_ledger.test
+		components/power_source.test algorithms/power_projection.test systems/power_projection_system.test)
+	set_source_files_properties(${power_tests} PROPERTIES LANGUAGE CXX)
+	add_executable(engine_gameplay_rts_power_tests ${power_tests})
+	set_property(TARGET engine_gameplay_rts_power_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(engine_gameplay_rts_power_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(engine_gameplay_rts_power_tests PRIVATE
+		engine_gameplay_rts_power
+		engine_gameplay_rts_power_execution
+		Boost::included_unit_test_framework)
+	add_test(NAME engine_gameplay_rts_power_tests COMMAND engine_gameplay_rts_power_tests)
+endif()

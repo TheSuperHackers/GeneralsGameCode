@@ -1,0 +1,19 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.combat.systems.periodic_damage_system;
+import engine.ecs.scheduler.scheduler;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(periodic_damage_includes_stop_tick_then_expires)
+{
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<PendingDamage>();
+    world.RegisterComponent<PeriodicDamagePolicy>(); world.RegisterComponent<PeriodicDamage>(); world.FinalizeComponents();
+    const auto entity=world.Create<LifeState,PendingDamage,PeriodicDamagePolicy,PeriodicDamage>();
+    *world.Get<PeriodicDamagePolicy>(entity)={2,4}; *world.Get<PeriodicDamage>(entity)={{},3,2,4,true};
+    PeriodicDamageSystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({1,step}); BOOST_TEST(world.Get<PendingDamage>(entity)->quantity==0u);
+    scheduler.Execute({2,step}); BOOST_TEST(world.Get<PendingDamage>(entity)->quantity==3u);
+    scheduler.Execute({3,step}); BOOST_TEST(world.Get<PendingDamage>(entity)->quantity==3u);
+    scheduler.Execute({4,step}); BOOST_TEST(world.Get<PendingDamage>(entity)->quantity==6u);
+    BOOST_TEST(!world.Get<PeriodicDamage>(entity)->active);
+    scheduler.Execute({5,step}); BOOST_TEST(world.Get<PendingDamage>(entity)->quantity==6u);
+}

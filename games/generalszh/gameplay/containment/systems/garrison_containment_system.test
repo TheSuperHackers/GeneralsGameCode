@@ -1,0 +1,173 @@
+#define BOOST_TEST_MODULE GeneralsZHGarrisonContainmentSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <tuple>
+#include <vector>
+import games.generalszh.gameplay.containment.systems.garrison_containment_system;
+import games.generalszh.gameplay.production.registration.production_registration;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+using namespace std::chrono_literals;
+namespace c=engine::gameplay::containment;
+namespace combat=engine::gameplay::combat;
+namespace navigation=engine::gameplay::navigation;
+namespace production=generalszh::production;
+namespace construction=generalszh::construction;
+
+struct RunResult
+{
+    std::vector<std::uint64_t> state;
+    std::vector<std::uint64_t> receipts;
+};
+
+RunResult Run(unsigned workers)
+{
+    const engine::time::FixedStep step{10};
+    production::BuildDefinition passengerDefinition{};
+    passengerDefinition.key=7;passengerDefinition.duration=0ms;passengerDefinition.health=100;
+    passengerDefinition.maximumHealth=100;passengerDefinition.garrisonable=true;
+    const std::array unitDefinitions{passengerDefinition};
+    ecs::World world(ecs::WorldConfig{512});
+    production::RegisterProductionComponents(world);
+    world.FinalizeComponents();
+    const production::BuildCatalog unitCatalog(world,unitDefinitions,step);
+    construction::BuildingDefinition buildingDefinition{};
+    buildingDefinition.key=55;buildingDefinition.health=100;
+    buildingDefinition.garrison=generalszh::containment::GarrisonDefinition{2};
+    const std::array buildingDefinitions{buildingDefinition};
+    const construction::BuildingCatalog buildingCatalog(buildingDefinitions,step);
+
+    const auto account=world.Create();
+    const auto otherAccount=world.Create();
+    const auto carrier=world.Create<construction::Structure,navigation::GridPosition,combat::Health,
+        combat::HealthCapacity,combat::LifeState,combat::PendingDamage,combat::DamageResult>();
+    *world.Get<construction::Structure>(carrier)={};
+    world.Get<construction::Structure>(carrier)->account=account;
+    world.Get<construction::Structure>(carrier)->definition=55;
+    world.Get<construction::Structure>(carrier)->complete=true;
+    *world.Get<navigation::GridPosition>(carrier)={0};
+    *world.Get<combat::Health>(carrier)={100};*world.Get<combat::HealthCapacity>(carrier)={100};
+
+    const auto otherCarrier=world.Create<construction::Structure,navigation::GridPosition,combat::Health,
+        combat::HealthCapacity,combat::LifeState,combat::PendingDamage,combat::DamageResult>();
+    *world.Get<construction::Structure>(otherCarrier)={};
+    world.Get<construction::Structure>(otherCarrier)->account=otherAccount;
+    world.Get<construction::Structure>(otherCarrier)->definition=55;
+    world.Get<construction::Structure>(otherCarrier)->complete=true;
+    *world.Get<navigation::GridPosition>(otherCarrier)={1};
+    *world.Get<combat::Health>(otherCarrier)={100};*world.Get<combat::HealthCapacity>(otherCarrier)={100};
+
+    const auto makePassenger=[&](ecs::Entity owner,navigation::Cell cell) {
+        const auto entity=world.Create<production::ProducedUnit,c::PassengerMembership,navigation::GridPosition,
+            combat::Health,combat::HealthCapacity,combat::LifeState,combat::PendingDamage,combat::DamageResult,
+            navigation::MoveGoal,navigation::MoveCredit,navigation::MoveRangeGoal>();
+        *world.Get<production::ProducedUnit>(entity)={carrier,owner,7};
+        *world.Get<navigation::GridPosition>(entity)={cell};*world.Get<combat::Health>(entity)={100};
+        *world.Get<combat::HealthCapacity>(entity)={100};*world.Get<navigation::MoveGoal>(entity)={4};
+        *world.Get<navigation::MoveCredit>(entity)={3};*world.Get<navigation::MoveRangeGoal>(entity)={4,1};
+        return entity;
+    };
+    const auto first=makePassenger(account,0);
+    const auto second=makePassenger(account,0);
+    const auto full=makePassenger(account,0);
+    const auto wrongOwner=makePassenger(account,1);
+    const auto transportOwned=makePassenger(account,0);
+    const auto replacement=makePassenger(account,0);
+    *world.Get<c::PassengerMembership>(transportOwned)={carrier,0,c::ContainmentPhase::Inside,
+        c::PassengerContainmentOwner::Transport,c::PassengerCombatPolicy::Blocked};
+    *world.Get<navigation::MoveGoal>(transportOwned)={9};*world.Get<navigation::MoveCredit>(transportOwned)={8};
+    *world.Get<navigation::MoveRangeGoal>(transportOwned)={9,2};
+
+    c::ContainmentBatch batch(16);
+    combat::HealthSystem health;
+    generalszh::containment::GarrisonContainmentSystem garrison(world,unitCatalog,buildingCatalog,batch,1024);
+    ecs::SystemRegistry registry;registry.Register(health);registry.Register(garrison);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers});scheduler.Finalize(step);
+
+    const std::array entries{
+        c::ContainmentInput{c::ContainmentAction::Enter,first,carrier},
+        c::ContainmentInput{c::ContainmentAction::Enter,second,carrier},
+        c::ContainmentInput{c::ContainmentAction::Enter,full,carrier},
+        c::ContainmentInput{c::ContainmentAction::Enter,transportOwned,carrier}};
+    batch.SetInputs(entries);scheduler.Execute({0,step});
+    BOOST_CHECK(batch.Results()[0].outcome==c::ContainmentOutcome::Entered);
+    BOOST_CHECK(batch.Results()[1].outcome==c::ContainmentOutcome::Entered);
+    BOOST_CHECK(batch.Results()[2].outcome==c::ContainmentOutcome::Full);
+    BOOST_CHECK(batch.Results()[3].outcome==c::ContainmentOutcome::AlreadyContained);
+    BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(first)));
+    BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(second)));
+    BOOST_CHECK(!c::IsContained(*world.Get<c::PassengerMembership>(full)));
+    BOOST_CHECK(c::IsTransportOwned(*world.Get<c::PassengerMembership>(transportOwned)));
+    BOOST_TEST(world.Get<navigation::GridPosition>(first)->cell==0u);
+    BOOST_TEST(world.Get<navigation::MoveGoal>(first)->cell==navigation::InvalidCell);
+    BOOST_TEST(world.Get<navigation::MoveGoal>(transportOwned)->cell==9u);
+    BOOST_TEST(world.Get<navigation::MoveCredit>(transportOwned)->remainder==8u);
+
+    batch.SetInputs({});scheduler.Execute({1,step});
+    batch.SetInputs({});scheduler.Execute({2,step});
+    BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(first)));
+    BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(second)));
+    BOOST_CHECK(c::IsTransportOwned(*world.Get<c::PassengerMembership>(transportOwned)));
+    BOOST_TEST(world.Get<navigation::GridPosition>(first)->cell==0u);
+    BOOST_TEST(world.Get<navigation::MoveGoal>(transportOwned)->cell==9u);
+
+    const std::array wrong{c::ContainmentInput{c::ContainmentAction::Enter,wrongOwner,otherCarrier}};
+    batch.SetInputs(wrong);scheduler.Execute({3,step});
+    BOOST_CHECK(batch.Results()[0].outcome==c::ContainmentOutcome::WrongOwner);
+    const std::array exit{c::ContainmentInput{c::ContainmentAction::Exit,second,carrier}};
+    batch.SetInputs(exit);scheduler.Execute({4,step});
+    BOOST_CHECK(batch.Results()[0].outcome==c::ContainmentOutcome::Exited);
+    BOOST_CHECK(!c::IsContained(*world.Get<c::PassengerMembership>(second)));
+    BOOST_TEST(world.Get<navigation::GridPosition>(second)->cell==0u);
+
+    // Reintroduce stale actuators at the boundary. The release path must clear
+    // them in Execute after the prepared health snapshot invalidates the row;
+    // BeforeChunks only prepares decisions and cannot perform this cleanup.
+    BOOST_REQUIRE(world.Add<c::ContainmentTask>(first));
+    world.Get<c::ContainmentTask>(first)->carrier=carrier;
+    *world.Get<navigation::MoveGoal>(first)={7}; *world.Get<navigation::MoveCredit>(first)={6};
+    *world.Get<navigation::MoveRangeGoal>(first)={7,1};
+    world.Get<combat::PendingDamage>(first)->quantity=100;
+    // The dead retained row releases in this wave. Same-wave capacity is
+    // computed from the prepared retainable snapshot, so it cannot starve a
+    // deterministic span-order entry behind a member that will be released.
+    const std::array replacementEntry{c::ContainmentInput{c::ContainmentAction::Enter,replacement,carrier}};
+    batch.SetInputs(replacementEntry);scheduler.Execute({5,step});
+    BOOST_CHECK(batch.Results()[0].outcome==c::ContainmentOutcome::Entered);
+    BOOST_CHECK(!c::IsContained(*world.Get<c::PassengerMembership>(first)));
+    BOOST_CHECK(c::IsGarrisonOwned(*world.Get<c::PassengerMembership>(replacement)));
+    BOOST_CHECK(c::IsTransportOwned(*world.Get<c::PassengerMembership>(transportOwned)));
+    BOOST_CHECK(!world.Get<c::ContainmentTask>(first)->carrier.IsValid());
+    BOOST_TEST(world.Get<navigation::MoveGoal>(first)->cell==navigation::InvalidCell);
+    BOOST_TEST(world.Get<navigation::MoveRangeGoal>(first)->center==navigation::InvalidCell);
+    BOOST_TEST(world.Get<navigation::MoveCredit>(first)->remainder==0u);
+    BOOST_TEST(world.Get<navigation::MoveGoal>(transportOwned)->cell==9u);
+
+    RunResult result;
+    const auto members=std::array{first,second,full,wrongOwner,transportOwned,replacement};
+    for(const auto entity:members)
+    {
+        const auto member=*world.Get<c::PassengerMembership>(entity);
+        result.state.insert(result.state.end(),{entity.index,entity.generation,
+            static_cast<std::uint64_t>(member.phase),static_cast<std::uint64_t>(member.owner),
+            static_cast<std::uint64_t>(member.combat),member.carrier.index,member.carrier.generation,
+            world.Get<navigation::GridPosition>(entity)->cell,world.Get<navigation::MoveGoal>(entity)->cell,
+            world.Get<navigation::MoveCredit>(entity)->remainder});
+    }
+    for(const auto &receipt:batch.Results()) result.receipts.push_back(static_cast<std::uint64_t>(receipt.outcome));
+    return result;
+}
+}
+
+BOOST_AUTO_TEST_CASE(garrison_membership_is_canonical_persistent_and_worker_deterministic)
+{
+    const auto expected=Run(1);
+    BOOST_CHECK(Run(2).state==expected.state);
+    BOOST_CHECK(Run(2).receipts==expected.receipts);
+    BOOST_CHECK(Run(4).state==expected.state);
+    BOOST_CHECK(Run(4).receipts==expected.receipts);
+}

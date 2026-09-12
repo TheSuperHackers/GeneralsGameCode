@@ -1,0 +1,198 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <string_view>
+import games.generalszh.gameplay.economy.systems.account_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(real_account_system_owns_ordered_balance_history_and_effect_decisions)
+{
+    using namespace generalszh::economy;
+    ecs::World world; world.RegisterComponent<ResourceBalance>(); world.RegisterComponent<IncomeHistory>();
+    world.RegisterComponent<AccountRange>(); world.FinalizeComponents();
+    const auto account = world.Create<ResourceBalance, IncomeHistory, AccountRange>();
+    world.Get<ResourceBalance>(account)->quantity = UINT32_MAX - 1;
+    const std::array requests{
+        AccountRequest{account, {AccountOperation::Deposit, 3}},
+        AccountRequest{account, {AccountOperation::Withdraw, 100}},
+        AccountRequest{account, {AccountOperation::Deposit, 7, false, false}},
+        AccountRequest{account, {AccountOperation::Deposit, 0}}};
+    AccountBatch batch(requests.size()); batch.StageInputs(requests);
+    AccountSystem system(batch); ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step); scheduler.Execute({30, step});
+    const auto results = batch.Published();
+    BOOST_TEST(results[0].balance == 1u); BOOST_TEST(results[0].recordedIncome);
+    BOOST_TEST(results[1].amount == 1u); BOOST_TEST(results[1].balance == 0u);
+    BOOST_TEST(!results[2].playSound); BOOST_TEST(!results[2].recordedIncome);
+    BOOST_TEST(!results[3].playSound); BOOST_TEST(!results[3].recordedIncome);
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity == 7u);
+    BOOST_TEST(world.Get<IncomeHistory>(account)->current == 1u);
+    BOOST_TEST(world.Get<IncomeHistory>(account)->buckets[1] == 3u);
+    BOOST_TEST(world.Get<IncomeHistory>(account)->total == 3u);
+    BOOST_TEST(registry.Count() == 1u);
+    world.Destroy(account);
+}
+
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <optional>
+#include <span>
+#include <stdexcept>
+#include <cstdint>
+#include <string_view>
+#include <vector>
+import games.generalszh.gameplay.economy.systems.account_system;
+import games.generalszh.gameplay.economy.transactions.account_transactions;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh::economy;
+namespace
+{
+ecs::Entity Create(ecs::World &world, std::uint32_t starting)
+{
+    const auto entity = world.Create<ResourceBalance, IncomeHistory, AccountRange>();
+    world.Get<ResourceBalance>(entity)->quantity = starting; return entity;
+}
+}
+
+namespace
+{
+class AccountTestHost
+{
+public:
+    static void RegisterComponents(ecs::World &world) { RegisterAccountComponents(world); }
+    AccountTestHost(ecs::World &world, engine::jobs::JobSystem &jobs, std::size_t capacity) :
+        world(world), batch(capacity), systems(batch), scheduler(world, registry, jobs) {}
+    void Finalize(engine::time::FixedStep step)
+    {
+        registry.Register(systems);
+        registry.Finalize(world.Components()); scheduler.Finalize(step); configured = true;
+    }
+    std::span<const AccountResult> Execute(engine::time::SimulationTime time, std::span<const AccountRequest> input)
+    {
+        if (!configured || failed) throw std::logic_error("Test host is not runnable");
+        try
+        {
+            if (lastTick && time.Tick() <= *lastTick) throw std::invalid_argument("Ticks must increase");
+            systems.SetInputs(input); scheduler.Execute(time); lastTick = time.Tick();
+            return systems.Results();
+        }
+        catch (...) { failed = true; throw; }
+    }
+private:
+    ecs::World &world;
+    AccountBatch batch;
+    AccountSystem systems;
+    ecs::SystemRegistry registry;
+    ecs::Scheduler scheduler;
+    bool configured{}, failed{};
+    std::optional<std::uint64_t> lastTick;
+};
+}
+
+BOOST_AUTO_TEST_CASE(independent_accounts_use_explicit_startup_and_generation_safe_routing)
+{
+    ecs::World world; engine::jobs::JobSystem jobs({2}); AccountTestHost simulation(world, jobs, 4);
+    const engine::time::FixedStep step{60};
+    BOOST_CHECK_THROW(simulation.Execute({0, step}, {}), std::logic_error);
+    AccountTestHost::RegisterComponents(world); world.FinalizeComponents(); simulation.Finalize(step);
+    const auto removed = Create(world, 3); world.Destroy(removed); const auto replacement = Create(world, 7);
+    const auto notAccount = world.Create<ResourceBalance>();
+    const std::array requests{AccountRequest{removed, {AccountOperation::Deposit, 10}},
+        AccountRequest{replacement, {AccountOperation::Withdraw, 9}},
+        AccountRequest{notAccount, {AccountOperation::Deposit, 5}}};
+    const auto results = simulation.Execute({0, step}, requests);
+    BOOST_CHECK(results[0].status == AccountResultStatus::InvalidTarget);
+    BOOST_CHECK(results[2].status == AccountResultStatus::InvalidTarget);
+    BOOST_TEST(results[1].amount == 7u); BOOST_TEST(world.Get<ResourceBalance>(replacement)->quantity == 0u);
+    BOOST_TEST(world.Get<ResourceBalance>(notAccount)->quantity == 0u);
+    BOOST_CHECK_THROW(simulation.Execute({0, step}, requests), std::invalid_argument);
+    BOOST_CHECK_THROW(simulation.Execute({1, step}, requests), std::logic_error);
+    world.Destroy(replacement); world.Destroy(notAccount);
+}
+BOOST_AUTO_TEST_CASE(invalid_account_input_cannot_partially_apply_or_publish_a_prefix)
+{
+    ecs::World world; AccountTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); AccountTestHost simulation(world, jobs, 1);
+    const engine::time::FixedStep step{30}; simulation.Finalize(step);
+    const auto first = Create(world, 4); const auto bad = Create(world, 8);
+    world.Get<IncomeHistory>(bad)->current = 60;
+    const std::array requests{AccountRequest{first, {AccountOperation::Deposit, 6}}};
+    BOOST_CHECK_THROW(simulation.Execute({1, step}, requests), std::invalid_argument);
+    BOOST_TEST(world.Get<ResourceBalance>(first)->quantity == 4u);
+    BOOST_CHECK_THROW(simulation.Execute({2, step}, requests), std::logic_error);
+    world.Destroy(first); world.Destroy(bad);
+}
+BOOST_AUTO_TEST_CASE(account_capacity_failure_leaves_state_unchanged_and_composition_failed)
+{
+    ecs::World world; AccountTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); AccountTestHost simulation(world, jobs, 0);
+    const engine::time::FixedStep step{30}; simulation.Finalize(step); const auto account = Create(world, 10);
+    const std::array requests{AccountRequest{account, {AccountOperation::Withdraw, 4}}};
+    BOOST_CHECK_THROW(simulation.Execute({0, step}, requests), std::length_error);
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity == 10u);
+    BOOST_CHECK_THROW(simulation.Execute({1, step}, {}), std::logic_error);
+    world.Destroy(account);
+}
+BOOST_AUTO_TEST_CASE(real_accounts_match_reference_rules_and_other_worker_counts)
+{
+    auto run = [](std::size_t workerCount) {
+        constexpr std::size_t accounts = 2048;
+        ecs::World world; AccountTestHost::RegisterComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workerCount}); AccountTestHost simulation(world, jobs, accounts * 3);
+        const engine::time::FixedStep step{20}; simulation.Finalize(step);
+        std::vector<ecs::Entity> entities;
+        std::vector<ResourceBalance> expected(accounts);
+        std::vector<IncomeHistory> histories(accounts);
+        for (std::size_t i = 0; i != accounts; ++i)
+        { expected[i].quantity = 100 + i; entities.push_back(Create(world, 100 + static_cast<std::uint32_t>(i))); }
+        std::vector<std::uint64_t> snapshot;
+        for (std::uint64_t tick : {0ull, 19ull, 20ull, 40ull, 1200ull, 1220ull})
+        {
+            const auto bucket = static_cast<std::uint32_t>((tick / 20) % 60);
+            for (auto &history : histories) AdvanceIncomeBucket(history, bucket);
+            std::vector<AccountRequest> requests;
+            std::vector<AccountResult> expectedResults;
+            for (std::size_t pass = 0; pass != 3; ++pass)
+                for (std::size_t sequence = 0; sequence != accounts; ++sequence)
+                {
+                    const auto i = accounts - sequence - 1;
+                    const AccountCommand command{pass == 1 ? AccountOperation::Withdraw : AccountOperation::Deposit,
+                        static_cast<std::uint32_t>(pass == 1 ? 200 + i : 3 + tick % 17), i % 2 == 0, i % 3 == 0};
+                    requests.push_back({entities[i], command});
+                    auto amount = command.amount;
+                    if (command.operation == AccountOperation::Deposit) ApplyDeposit(expected[i], histories[i], amount, command.trackIncome);
+                    else { amount = QuoteWithdrawal(expected[i], amount); ApplyWithdrawal(expected[i], amount); }
+                    expectedResults.push_back({entities[i], command.operation, AccountResultStatus::Applied, amount,
+                        BalanceValue(expected[i]), command.playSound && amount != 0,
+                        command.operation == AccountOperation::Deposit && command.trackIncome && amount != 0});
+                }
+            const auto results = simulation.Execute({tick, step}, requests);
+            BOOST_REQUIRE(results.size() == expectedResults.size());
+            for (std::size_t i = 0; i != results.size(); ++i)
+            {
+                BOOST_CHECK(results[i] == expectedResults[i]);
+                snapshot.insert(snapshot.end(), {results[i].account.index, results[i].account.generation,
+                    results[i].amount, results[i].balance, results[i].playSound, results[i].recordedIncome});
+            }
+            ecs::Query<ecs::Read<ResourceBalance>, ecs::Read<IncomeHistory>> query(world);
+            std::size_t chunks = 0;
+            query.ForEachChunk([&](auto chunk) {
+                ++chunks;
+                for (std::size_t row = 0; row != chunk.Count(); ++row)
+                {
+                    const auto i = chunk.Entities()[row].index;
+                    const auto &balance = chunk.template Get<ResourceBalance>()[row];
+                    const auto &history = chunk.template Get<IncomeHistory>()[row];
+                    BOOST_TEST(balance.quantity == expected[i].quantity);
+                    BOOST_CHECK(history.buckets == histories[i].buckets);
+                    BOOST_TEST(history.total == histories[i].total); BOOST_TEST(history.current == histories[i].current);
+                    snapshot.insert(snapshot.end(), {i, chunk.Entities()[row].generation, balance.quantity, history.total, history.current});
+                    snapshot.insert(snapshot.end(), history.buckets.begin(), history.buckets.end());
+                }
+            });
+            BOOST_TEST(chunks > 1u);
+        }
+        for (auto entity : entities) world.Destroy(entity);
+        return snapshot;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}

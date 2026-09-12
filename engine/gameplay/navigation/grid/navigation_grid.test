@@ -1,0 +1,11 @@
+#define BOOST_TEST_MODULE EngineNavigation
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+import engine.gameplay.navigation.grid.navigation_grid;
+using namespace engine::gameplay::navigation;
+BOOST_AUTO_TEST_CASE(grid_validates_shape_and_walkability_at_input_boundary)
+{
+    const std::array<std::uint8_t, 4> cells{1, 0, 1, 1}; NavigationGrid grid(2, 2, cells);
+    BOOST_TEST(grid.Walkable(0)); BOOST_TEST(!grid.Walkable(1)); BOOST_TEST(!grid.Walkable(InvalidCell));
+    BOOST_CHECK_THROW(NavigationGrid(3, 2, cells), std::invalid_argument);
+}

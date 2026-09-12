@@ -1,0 +1,15 @@
+#include <boost/test/unit_test.hpp>
+import engine.ecs.core.world;
+import engine.gameplay.concealment.components.concealment_state;
+
+BOOST_AUTO_TEST_CASE(concealment_state_is_serializable_authoritative_runtime_state)
+{
+    ecs::World world; world.RegisterComponent<engine::gameplay::concealment::ConcealmentState>(); world.FinalizeComponents();
+    const auto entity = world.Create<engine::gameplay::concealment::ConcealmentState>();
+    auto &state = *world.Get<engine::gameplay::concealment::ConcealmentState>(entity);
+    state.enabled = true; state.concealed = true; state.concealAllowedTick = 7; state.detectedUntilTick = 11;
+    BOOST_TEST(state.concealed);
+    BOOST_TEST(state.detectedUntilTick == 11u);
+    BOOST_TEST(ecs::ComponentTraits<engine::gameplay::concealment::ConcealmentState>::Version == 1u);
+    BOOST_CHECK(ecs::ComponentTraits<engine::gameplay::concealment::ConcealmentState>::Persistence == ecs::PersistencePolicy::Serializable);
+}

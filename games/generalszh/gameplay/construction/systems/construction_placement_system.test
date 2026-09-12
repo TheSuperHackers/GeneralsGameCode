@@ -1,0 +1,73 @@
+#define BOOST_TEST_MODULE ConstructionPlacement
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <vector>
+#include "../testing/construction_host.h"
+import games.generalszh.gameplay.bounty.components.cash_bounty_cost_binding;
+BOOST_AUTO_TEST_CASE(manual_interrupt_wins_over_new_request_and_does_not_refund_scaffold)
+{
+    Host host(1); const auto builder=host.Builder(); const std::array requests{c::ConstructionInput{builder,1,0}};
+    host.requests.SetInputs(requests); host.Tick(0); const auto site=host.receipts.Receipts()[0].site;
+    const std::array cancels{builder}; host.requests.SetInputs(requests,cancels); host.Tick(1);
+    BOOST_CHECK(host.receipts.Receipts()[0].status==c::ConstructionAcceptance::Interrupted);
+    BOOST_TEST(host.world.Get<p::BuildWork>(site)->elapsed==1u);
+    BOOST_TEST(host.world.Get<Balance>(host.account)->quantity==9990u);
+    BOOST_TEST(host.world.IsAlive(site)); host.Tick(2); BOOST_TEST(!host.world.Get<c::Structure>(site)->complete);
+}
+BOOST_AUTO_TEST_CASE(death_interrupts_and_admission_checks_ownership_funds_and_footprint)
+{
+    Host host(2); const auto first=host.Builder(); const auto second=host.Builder();
+    const std::array requests{c::ConstructionInput{first,1,0},c::ConstructionInput{second,2,0}};
+    host.requests.SetInputs(requests); host.Tick(0); const auto site=host.receipts.Receipts()[0].site;
+    BOOST_CHECK(host.receipts.Receipts()[1].status==c::ConstructionAcceptance::Occupied);
+    host.world.Get<h::PendingDamage>(first)->quantity=10; host.Tick(1);
+    BOOST_TEST(host.world.Get<p::BuildWork>(site)->elapsed==1u); BOOST_TEST(!host.world.Get<c::Structure>(site)->complete);
+    host.world.Get<Balance>(host.account)->quantity=0;
+    const std::array unfunded{c::ConstructionInput{second,2,1}};
+    host.requests.SetInputs(unfunded); host.Tick(2);
+    BOOST_CHECK(host.receipts.Receipts()[0].status==c::ConstructionAcceptance::InsufficientFunds);
+    BOOST_TEST(host.world.Get<Balance>(host.account)->quantity==0u);
+}
+
+BOOST_AUTO_TEST_CASE(placement_enrolls_cost_binding_while_scaffold_remains_under_construction)
+{
+    const engine::time::FixedStep step{1};
+    std::vector<std::uint8_t> cells{1,1};
+    n::NavigationGrid grid(2,1,cells);
+    c::BuildingDefinition authored{1,10,std::chrono::seconds(2),100,0,0};
+    authored.cashBountyCost=generalszh::bounty::CashBountyCostBinding{
+        10,generalszh::bounty::CashBountyCostBasis::DecodedBuildCost,true};
+    const std::array definitions{authored};
+    c::BuildingCatalog catalog(definitions,step);
+    c::ConstructionRequests requests{4}; c::ConstructionReceipts receipts{4};
+    ecs::World world; c::RegisterConstructionComponents(world);
+    world.RegisterComponent<generalszh::bounty::CashBountyCostBinding>(); world.FinalizeComponents();
+    c::ConstructionPlacementSystem placement(world,grid,catalog,requests,receipts,4);
+    c::BuilderTaskSystem builders{world,receipts}; placement.Configure(); builders.Configure();
+    ecs::SystemRegistry registry; registry.Register(placement); registry.Register(builders);
+    registry.OrderBefore<c::ConstructionPlacementSystem,c::BuilderTaskSystem>();
+    registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); scheduler.Finalize(step);
+
+    const auto account=world.Create<Balance>(); world.Get<Balance>(account)->quantity=10;
+    const auto builder=world.Create<c::Builder,Assignment,h::LifeState,h::Health,h::PendingDamage,
+        h::DamageResult,n::GridPosition,n::MoveGoal,n::MoveCredit>();
+    world.Get<c::Builder>(builder)->account=account;
+    world.Get<h::Health>(builder)->current=10;
+    world.Get<n::GridPosition>(builder)->cell=0;
+    const std::array input{c::ConstructionInput{builder,1,0}};
+    requests.SetInputs(input); scheduler.Execute({0,step});
+
+    BOOST_REQUIRE(receipts.Receipts().size()==1u);
+    BOOST_CHECK(receipts.Receipts()[0].status==c::ConstructionAcceptance::Accepted);
+    const auto site=receipts.Receipts()[0].site; BOOST_REQUIRE(world.IsAlive(site));
+    BOOST_REQUIRE(world.Get<c::Structure>(site));
+    BOOST_CHECK(!world.Get<c::Structure>(site)->complete);
+    const auto *binding=world.Get<generalszh::bounty::CashBountyCostBinding>(site);
+    BOOST_REQUIRE(binding);
+    BOOST_TEST(binding->authoredBuildCost==10u);
+    BOOST_CHECK(binding->basis==generalszh::bounty::CashBountyCostBasis::DecodedBuildCost);
+    BOOST_CHECK(binding->eligible);
+}

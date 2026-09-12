@@ -1,0 +1,89 @@
+#include <boost/test/unit_test.hpp>
+#include <chrono>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+import games.generalszh.adapters.content.buildings.demolition_trap_definition;
+
+namespace
+{
+constexpr std::string_view Trap=R"(
+Object GLADemoTrap
+ KindOf = PRELOAD STRUCTURE DEMOTRAP
+ Body = StructureBody BodyTag
+  MaxHealth = 100
+  InitialHealth = 100
+ End
+ Behavior = DemoTrapUpdate TrapUpdate
+ DefaultProximityMode = Yes
+  TriggerDetonationRange = 40
+  IgnoreTargetTypes = PROJECTILE UNATTACKABLE
+  AutoDetonationWithFriendsInvolved = Yes
+  DetonateWhenKilled = Yes
+ End
+ Behavior = SlowDeathBehavior SlowDeath
+  ExemptStatus = UNDER_CONSTRUCTION
+  DestructionDelay = 1000
+  FX = INITIAL DemoTrapDetonationFX
+  Weapon = FINAL DemoTrapDetonationWeapon
+ End
+End
+)";
+
+constexpr std::string_view Weapons=R"(
+Weapon DemoTrapDetonationWeapon
+ PrimaryDamage = 100
+ DamageType = EXPLOSION
+ AttackRange = 40
+ PrimaryDamageRadius = 20
+End
+)";
+}
+
+BOOST_AUTO_TEST_CASE(real_typed_final_weapon_and_trap_controls_are_decoded)
+{
+    const auto decoded=generalszh::content::TryDecodeDemolitionTrap(Trap,"GLADemoTrap",Weapons);
+    BOOST_REQUIRE(decoded);
+    const auto &definition=decoded->definition;
+    BOOST_CHECK(definition.mode==generalszh::demolition::DemolitionDetonationMode::Proximity);
+    BOOST_TEST(definition.radiusCells==4u);
+    BOOST_TEST(definition.scanInterval==std::chrono::milliseconds{0});
+    BOOST_TEST(definition.friendlyDetonation);
+    BOOST_TEST(definition.detonateWhenKilled);
+    BOOST_TEST(!definition.ignoreTargetTypes.structures);
+    BOOST_TEST(!definition.ignoreTargetTypes.airborne);
+    BOOST_TEST(definition.ignoreTargetTypes.projectiles);
+    BOOST_TEST(definition.ignoreTargetTypes.unattackable);
+    BOOST_TEST(definition.deathWeapon.key==definition.key);
+    BOOST_TEST(definition.deathWeapon.destructionDelay==std::chrono::milliseconds{1000});
+    BOOST_REQUIRE(definition.deathWeapon.final);
+    BOOST_TEST(definition.deathWeapon.final->damage==100000u);
+    BOOST_TEST(!decoded->omissions.empty());
+}
+
+BOOST_AUTO_TEST_CASE(authored_unattackable_kindof_produces_typed_target_classification)
+{
+    const std::string unsupported=std::string{Trap}+R"(
+Object UnsupportedTarget
+ KindOf = INFANTRY UNATTACKABLE
+End
+)";
+    const auto classification=generalszh::content::DecodeDemolitionTargetClassification(
+        unsupported,"UnsupportedTarget");
+    BOOST_CHECK(classification.unattackable);
+}
+
+BOOST_AUTO_TEST_CASE(scan_rate_preserves_authored_milliseconds_and_variance_is_rejected)
+{
+    const std::string withScan=std::string{Trap}.insert(
+        std::string{Trap}.find("IgnoreTargetTypes")," ScanRate = 100\n");
+    const auto decoded=generalszh::content::TryDecodeDemolitionTrap(withScan,"GLADemoTrap",Weapons);
+    BOOST_REQUIRE(decoded);
+    BOOST_TEST(decoded->definition.scanInterval==std::chrono::milliseconds{100});
+
+    const auto position=withScan.find("DestructionDelay = 1000");
+    const auto withVariance=withScan.substr(0,position)+
+        "DestructionDelayVariance = 100\n"+withScan.substr(position);
+    BOOST_CHECK_THROW(generalszh::content::TryDecodeDemolitionTrap(withVariance,"GLADemoTrap",Weapons),
+        std::invalid_argument);
+}

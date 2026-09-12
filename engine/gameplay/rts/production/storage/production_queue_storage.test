@@ -1,0 +1,710 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsProductionQueue
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.production.storage.production_queue_storage;
+
+using engine::gameplay::rts::production::ProductionQueue;
+using engine::gameplay::rts::production::ProductionQueueMember;
+using engine::gameplay::rts::production::ProductionQueueStorage;
+
+namespace production_queue_test
+{
+
+struct Marker
+{
+	std::uint32_t value{0};
+};
+
+} // namespace production_queue_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<production_queue_test::Marker>
+{
+	static constexpr std::string_view StableName = "tests.rts.production_queue.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+namespace production_queue_test
+{
+
+struct Fixture
+{
+	ecs::World world;
+	ProductionQueueStorage storage;
+
+	Fixture()
+	{
+		world.RegisterComponent<ProductionQueue>();
+		world.RegisterComponent<ProductionQueueMember>();
+		world.RegisterComponent<Marker>();
+		world.FinalizeComponents();
+	}
+
+	ecs::Entity Entry()
+	{
+		return world.Create<ProductionQueueMember>();
+	}
+};
+
+void EmptyAndDestroy(Fixture &fixture, const ecs::Entity queue)
+{
+	while (true)
+	{
+		const auto entries = fixture.storage.Entries(fixture.world, queue);
+		if (entries.empty())
+			break;
+		BOOST_REQUIRE(fixture.storage.Remove(fixture.world, queue, entries.front()));
+	}
+	BOOST_REQUIRE(fixture.storage.Destroy(fixture.world, queue));
+}
+
+} // namespace production_queue_test
+
+BOOST_AUTO_TEST_CASE(fifo_stable_erase_and_next_preserve_logical_order)
+{
+	production_queue_test::Fixture fixture;
+	const ecs::Entity queue = fixture.storage.Create(fixture.world);
+	const ecs::Entity first = fixture.Entry();
+	const ecs::Entity second = fixture.Entry();
+	const ecs::Entity third = fixture.Entry();
+
+	fixture.storage.Append(fixture.world, queue, first);
+	fixture.storage.Append(fixture.world, queue, second);
+	fixture.storage.Append(fixture.world, queue, third);
+	BOOST_TEST(fixture.storage.LiveQueueCount() == 1u);
+	BOOST_TEST(fixture.storage.Contains(fixture.world, queue, first));
+	BOOST_CHECK(fixture.storage.First(fixture.world, queue) == first);
+	BOOST_CHECK(fixture.storage.Next(fixture.world, queue, first) == second);
+	BOOST_CHECK(fixture.storage.Next(fixture.world, queue, second) == third);
+	BOOST_TEST(!fixture.storage.Next(fixture.world, queue, third).IsValid());
+
+	const auto beforeErase = fixture.storage.Entries(fixture.world, queue);
+	BOOST_REQUIRE_EQUAL(beforeErase.size(), 3u);
+	BOOST_CHECK(beforeErase[0] == first);
+	BOOST_CHECK(beforeErase[1] == second);
+	BOOST_CHECK(beforeErase[2] == third);
+
+	BOOST_TEST(fixture.storage.Remove(fixture.world, queue, second));
+	BOOST_TEST(fixture.storage.Entries(fixture.world, queue).size() == 2u);
+	BOOST_CHECK(fixture.storage.First(fixture.world, queue) == first);
+	BOOST_CHECK(fixture.storage.Next(fixture.world, queue, first) == third);
+	BOOST_TEST(fixture.storage.Contains(fixture.world, queue, first));
+	BOOST_TEST(fixture.storage.Contains(fixture.world, queue, third));
+	BOOST_TEST(!fixture.storage.Contains(fixture.world, queue, second));
+	BOOST_TEST(fixture.world.Get<ProductionQueueMember>(first)->position == 0u);
+	BOOST_TEST(fixture.world.Get<ProductionQueueMember>(third)->position == 1u);
+	BOOST_TEST(!fixture.world.Get<ProductionQueueMember>(second)->queue.IsValid());
+
+	BOOST_TEST(!fixture.storage.Remove(fixture.world, queue, second));
+	BOOST_TEST(fixture.storage.Remove(fixture.world, queue, first));
+	BOOST_TEST(fixture.storage.Remove(fixture.world, queue, third));
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, queue));
+	BOOST_TEST(fixture.world.Destroy(first));
+	BOOST_TEST(fixture.world.Destroy(second));
+	BOOST_TEST(fixture.world.Destroy(third));
+}
+
+BOOST_AUTO_TEST_CASE(multiple_queues_counts_generations_and_wrong_members_are_safe)
+{
+	production_queue_test::Fixture fixture;
+	const ecs::Entity firstQueue = fixture.storage.Create(fixture.world, 3);
+	const ecs::Entity secondQueue = fixture.storage.Create(fixture.world, 3);
+	const ecs::Entity firstEntry = fixture.Entry();
+	const ecs::Entity secondEntry = fixture.Entry();
+
+	fixture.storage.Append(fixture.world, firstQueue, firstEntry);
+	fixture.storage.Append(fixture.world, secondQueue, secondEntry);
+	BOOST_CHECK_THROW(fixture.storage.Append(fixture.world, firstQueue, firstEntry), std::logic_error);
+	BOOST_CHECK_THROW(fixture.storage.Append(fixture.world, secondQueue, firstEntry), std::logic_error);
+	BOOST_CHECK_THROW(fixture.storage.Append(fixture.world, firstQueue, firstQueue), std::logic_error);
+	BOOST_TEST(fixture.storage.Entries(fixture.world, firstQueue).size() == 1u);
+	BOOST_TEST(fixture.storage.Entries(fixture.world, secondQueue).size() == 1u);
+	BOOST_TEST(!fixture.storage.Remove(fixture.world, secondQueue, firstEntry));
+	BOOST_TEST(fixture.storage.Contains(fixture.world, firstQueue, firstEntry));
+
+	BOOST_CHECK_THROW(fixture.storage.Destroy(fixture.world, firstQueue), std::logic_error);
+	BOOST_TEST(fixture.world.IsAlive(firstQueue));
+	BOOST_TEST(fixture.storage.LiveQueueCount() == 2u);
+
+	BOOST_TEST(fixture.storage.Remove(fixture.world, firstQueue, firstEntry));
+	const ecs::Entity oldQueue = firstQueue;
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, oldQueue));
+	BOOST_TEST(!fixture.storage.Destroy(fixture.world, oldQueue));
+	const ecs::Entity replacementQueue = fixture.storage.Create(fixture.world);
+	BOOST_TEST(replacementQueue.index == oldQueue.index);
+	BOOST_TEST(replacementQueue.generation != oldQueue.generation);
+	BOOST_TEST(fixture.storage.LiveQueueCount() == 2u);
+
+	BOOST_TEST(fixture.storage.Remove(fixture.world, secondQueue, secondEntry));
+	EmptyAndDestroy(fixture, secondQueue);
+	EmptyAndDestroy(fixture, replacementQueue);
+	BOOST_TEST(fixture.storage.LiveQueueCount() == 0u);
+	BOOST_TEST(fixture.world.Destroy(firstEntry));
+	BOOST_TEST(fixture.world.Destroy(secondEntry));
+}
+
+BOOST_AUTO_TEST_CASE(queue_entities_must_also_detach_before_destruction)
+{
+	production_queue_test::Fixture fixture;
+	const auto parent = fixture.storage.Create(fixture.world);
+	const auto child = fixture.storage.Create(fixture.world);
+	BOOST_TEST(fixture.world.Add<ProductionQueueMember>(child));
+	fixture.storage.Append(fixture.world, parent, child);
+	BOOST_CHECK_THROW(fixture.storage.Destroy(fixture.world, child), std::logic_error);
+	BOOST_TEST(fixture.world.IsAlive(child));
+	BOOST_TEST(fixture.storage.Contains(fixture.world, parent, child));
+	BOOST_TEST(fixture.storage.Remove(fixture.world, parent, child));
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, child));
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, parent));
+}
+
+BOOST_AUTO_TEST_CASE(foreign_storage_and_unowned_live_queue_entities_are_rejected)
+{
+	production_queue_test::Fixture fixture;
+	ProductionQueueStorage otherStorage;
+	const ecs::Entity owned = fixture.storage.Create(fixture.world, 4);
+	const ecs::Entity foreign = otherStorage.Create(fixture.world, 4);
+	const ecs::Entity arbitrary = fixture.world.Create<ProductionQueue>();
+
+	BOOST_CHECK_THROW(fixture.storage.Contains(fixture.world, foreign, {}), std::logic_error);
+	BOOST_CHECK_THROW(fixture.storage.Destroy(fixture.world, foreign), std::logic_error);
+	BOOST_CHECK_THROW(fixture.storage.Entries(fixture.world, arbitrary), std::logic_error);
+	BOOST_CHECK_THROW(fixture.storage.Destroy(fixture.world, arbitrary), std::logic_error);
+
+	BOOST_TEST(otherStorage.Destroy(fixture.world, foreign));
+	BOOST_TEST(fixture.world.Destroy(arbitrary));
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, owned));
+}
+
+BOOST_AUTO_TEST_CASE(missing_member_is_rejected_before_arena_mutation_and_restored)
+{
+	production_queue_test::Fixture fixture;
+	const ecs::Entity queue = fixture.storage.Create(fixture.world);
+	const ecs::Entity missingMember = fixture.world.Create<production_queue_test::Marker>();
+	const std::size_t before = fixture.storage.AllocatedSlots();
+
+	BOOST_CHECK_THROW(fixture.storage.Append(fixture.world, queue, missingMember), std::logic_error);
+	BOOST_TEST(fixture.storage.AllocatedSlots() == before);
+	BOOST_TEST(fixture.storage.Entries(fixture.world, queue).empty());
+	BOOST_TEST(fixture.world.IsAlive(missingMember));
+	BOOST_TEST(fixture.world.Destroy(missingMember));
+	EmptyAndDestroy(fixture, queue);
+}
+
+BOOST_AUTO_TEST_CASE(archetype_transitions_do_not_lose_queue_or_member_state)
+{
+	production_queue_test::Fixture fixture;
+	const ecs::Entity queue = fixture.storage.Create(fixture.world, 2);
+	const ecs::Entity first = fixture.Entry();
+	const ecs::Entity second = fixture.Entry();
+
+	BOOST_TEST(fixture.world.Add<production_queue_test::Marker>(queue));
+	BOOST_TEST(fixture.world.Add<production_queue_test::Marker>(first));
+	fixture.storage.Append(fixture.world, queue, first);
+	BOOST_TEST(fixture.world.Remove<production_queue_test::Marker>(first));
+	BOOST_TEST(fixture.world.Add<production_queue_test::Marker>(second));
+	fixture.storage.Append(fixture.world, queue, second);
+
+	BOOST_CHECK(fixture.storage.First(fixture.world, queue) == first);
+	BOOST_CHECK(fixture.storage.Next(fixture.world, queue, first) == second);
+	BOOST_TEST(fixture.storage.Remove(fixture.world, queue, first));
+	BOOST_CHECK(fixture.storage.First(fixture.world, queue) == second);
+
+	BOOST_TEST(fixture.storage.Remove(fixture.world, queue, second));
+	BOOST_TEST(fixture.world.Remove<production_queue_test::Marker>(queue));
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, queue));
+	BOOST_TEST(fixture.world.Destroy(first));
+	BOOST_TEST(fixture.world.Destroy(second));
+}
+
+BOOST_AUTO_TEST_CASE(zero_reserve_grows_past_sixty_four_and_reuses_pool_capacity)
+{
+	production_queue_test::Fixture fixture;
+	const ecs::Entity queue = fixture.storage.Create(fixture.world, 0);
+	std::vector<ecs::Entity> entries;
+	entries.reserve(65);
+	for (std::size_t index = 0; index < 65; ++index)
+	{
+		entries.push_back(fixture.Entry());
+		fixture.storage.Append(fixture.world, queue, entries.back());
+	}
+
+	const ProductionQueue *component = fixture.world.Get<ProductionQueue>(queue);
+	BOOST_REQUIRE(component != nullptr);
+	BOOST_TEST(component->count == 65u);
+	BOOST_TEST(component->capacity == 128u);
+	BOOST_TEST(fixture.storage.AllocatedSlots() == 255u);
+	for (const ecs::Entity entry : entries)
+		BOOST_TEST(fixture.storage.Remove(fixture.world, queue, entry));
+	for (const ecs::Entity entry : entries)
+		BOOST_TEST(fixture.world.Destroy(entry));
+	BOOST_TEST(fixture.storage.Destroy(fixture.world, queue));
+
+	const std::size_t allocated = fixture.storage.AllocatedSlots();
+	for (std::size_t round = 0; round < 256; ++round)
+	{
+		const ecs::Entity churnQueue = fixture.storage.Create(fixture.world, 64);
+		const ecs::Entity entry = fixture.Entry();
+		fixture.storage.Append(fixture.world, churnQueue, entry);
+		BOOST_TEST(fixture.storage.Remove(fixture.world, churnQueue, entry));
+		BOOST_TEST(fixture.world.Destroy(entry));
+		BOOST_TEST(fixture.storage.Destroy(fixture.world, churnQueue));
+	}
+	BOOST_TEST(fixture.storage.AllocatedSlots() == allocated);
+}
+
+BOOST_AUTO_TEST_CASE(same_bin_churn_reuses_all_blocks_without_growing_the_arena)
+{
+	production_queue_test::Fixture fixture;
+	std::vector<ecs::Entity> queues;
+	queues.reserve(64);
+	for (std::size_t index = 0; index < 64; ++index)
+		queues.push_back(fixture.storage.Create(fixture.world, 8));
+	const std::size_t allocated = fixture.storage.AllocatedSlots();
+	BOOST_TEST(allocated == 64u * 8u);
+	for (const ecs::Entity queue : queues)
+		BOOST_TEST(fixture.storage.Destroy(fixture.world, queue));
+	BOOST_TEST(fixture.storage.LiveQueueCount() == 0u);
+
+	for (std::size_t index = 0; index < queues.size(); ++index)
+		queues[index] = fixture.storage.Create(fixture.world, 8);
+	BOOST_TEST(fixture.storage.AllocatedSlots() == allocated);
+	for (const ecs::Entity queue : queues)
+		BOOST_TEST(fixture.storage.Destroy(fixture.world, queue));
+}
+
+BOOST_AUTO_TEST_CASE(failed_create_releases_ownership_and_reuses_reserved_block)
+{
+	ProductionQueueStorage storage;
+	ecs::World unregistered;
+	BOOST_CHECK_THROW(storage.Create(unregistered, 8), std::logic_error);
+	BOOST_TEST(storage.LiveQueueCount() == 0u);
+	BOOST_TEST(storage.AllocatedSlots() == 8u);
+
+	ecs::World missingQueue;
+	missingQueue.RegisterComponent<ProductionQueueMember>();
+	missingQueue.FinalizeComponents();
+	BOOST_CHECK_THROW(storage.Create(missingQueue, 8), std::logic_error);
+	BOOST_TEST(storage.LiveQueueCount() == 0u);
+	BOOST_TEST(storage.AllocatedSlots() == 8u);
+
+	ecs::World world;
+	world.RegisterComponent<ProductionQueue>();
+	world.FinalizeComponents();
+	const ecs::Entity queue = storage.Create(world, 8);
+	BOOST_TEST(storage.AllocatedSlots() == 8u);
+	BOOST_TEST(storage.Destroy(world, queue));
+}
+
+BOOST_AUTO_TEST_CASE(initial_capacity_is_a_reserve_and_cached_query_span_is_read_only)
+{
+	production_queue_test::Fixture fixture;
+	const ecs::Entity queue = fixture.storage.Create(fixture.world, 3);
+	const ecs::Entity first = fixture.Entry();
+	const ecs::Entity second = fixture.Entry();
+	const ecs::Entity third = fixture.Entry();
+	const ecs::Entity fourth = fixture.Entry();
+	const ecs::Entity fifth = fixture.Entry();
+	fixture.storage.Append(fixture.world, queue, first);
+	fixture.storage.Append(fixture.world, queue, second);
+	fixture.storage.Append(fixture.world, queue, third);
+	fixture.storage.Append(fixture.world, queue, fourth);
+	fixture.storage.Append(fixture.world, queue, fifth);
+
+	const ProductionQueue *cachedQueue = fixture.world.Get<ProductionQueue>(queue);
+	BOOST_REQUIRE(cachedQueue != nullptr);
+	BOOST_TEST(cachedQueue->capacity == 8u);
+	const auto cachedEntries = fixture.storage.Entries(*cachedQueue);
+	BOOST_REQUIRE_EQUAL(cachedEntries.size(), 5u);
+	BOOST_CHECK(cachedEntries[0] == first);
+	BOOST_CHECK(cachedEntries[4] == fifth);
+
+	production_queue_test::EmptyAndDestroy(fixture, queue);
+	BOOST_TEST(fixture.world.Destroy(first));
+	BOOST_TEST(fixture.world.Destroy(second));
+	BOOST_TEST(fixture.world.Destroy(third));
+	BOOST_TEST(fixture.world.Destroy(fourth));
+	BOOST_TEST(fixture.world.Destroy(fifth));
+}
+
+BOOST_AUTO_TEST_CASE(world_binding_is_only_a_live_queue_guard_and_can_be_reused)
+{
+	ProductionQueueStorage storage;
+
+	{
+		ecs::World firstWorld;
+		firstWorld.RegisterComponent<ProductionQueue>();
+		firstWorld.RegisterComponent<ProductionQueueMember>();
+		firstWorld.FinalizeComponents();
+		const ecs::Entity queue = storage.Create(firstWorld);
+		BOOST_TEST(storage.Destroy(firstWorld, queue));
+	}
+
+	ecs::World replacementWorld;
+	replacementWorld.RegisterComponent<ProductionQueue>();
+	replacementWorld.RegisterComponent<ProductionQueueMember>();
+	replacementWorld.FinalizeComponents();
+	const ecs::Entity replacement = storage.Create(replacementWorld);
+	BOOST_TEST(storage.LiveQueueCount() == 1u);
+	BOOST_TEST(storage.Destroy(replacementWorld, replacement));
+}
+
+namespace production_queue_test
+{
+
+struct ScheduledMutation
+{
+	enum class Mode
+	{
+		Create,
+		Append,
+		Remove,
+		Destroy
+	};
+
+	using Query = ecs::Query<ecs::Read<ProductionQueue>>;
+
+	ProductionQueueStorage *storage;
+	ecs::World *world;
+	ecs::Entity queue;
+	ecs::Entity item;
+	Mode mode{Mode::Append};
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (mode)
+		{
+		case Mode::Create:
+			(void)storage->Create(*world);
+			break;
+		case Mode::Append:
+			storage->Append(*world, queue, item);
+			break;
+		case Mode::Remove:
+			(void)storage->Remove(*world, queue, item);
+			break;
+		case Mode::Destroy:
+			(void)storage->Destroy(*world, queue);
+			break;
+		}
+	}
+};
+
+struct CachedEntriesStep
+{
+	using Query = ecs::Query<ecs::Read<ProductionQueue>, ecs::Write<Marker>>;
+
+	const ProductionQueueStorage *storage{nullptr};
+	mutable std::atomic<std::size_t> chunkCount{0};
+
+	static std::uint32_t Mix(const std::uint32_t state,
+		const std::uint32_t value) noexcept
+	{
+		return (state ^ value) * std::uint32_t{16777619};
+	}
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		chunkCount.fetch_add(1, std::memory_order_relaxed);
+		const auto queues = chunk.Get<ProductionQueue>();
+		auto markers = chunk.Get<Marker>();
+		const auto queueEntities = chunk.Entities();
+		for (std::size_t row = 0; row < queues.size(); ++row)
+		{
+			std::uint32_t output = 2166136261u;
+			output = Mix(output, queueEntities[row].index);
+			output = Mix(output, queueEntities[row].generation);
+			const auto entries = storage->Entries(queues[row]);
+			output = Mix(output, static_cast<std::uint32_t>(entries.size()));
+			for (const ecs::Entity entry : entries)
+			{
+				output = Mix(output, entry.index);
+				output = Mix(output, entry.generation);
+			}
+			markers[row].value = output;
+		}
+	}
+};
+
+} // namespace production_queue_test
+
+namespace ecs
+{
+
+template<>
+struct SystemTraits<production_queue_test::ScheduledMutation>
+{
+	static constexpr std::string_view StableName = "tests.rts.production_queue.scheduled_mutation";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+
+template<>
+struct SystemTraits<production_queue_test::CachedEntriesStep>
+{
+	static constexpr std::string_view StableName =
+		"tests.rts.production_queue.cached_entries_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_CASE(all_structural_mutations_reject_scheduled_execution)
+{
+	using Mode = production_queue_test::ScheduledMutation::Mode;
+	const std::array<Mode, 4> modes{{
+		Mode::Create, Mode::Append, Mode::Remove, Mode::Destroy}};
+	for (const Mode mode : modes)
+	{
+		production_queue_test::Fixture fixture;
+		const ecs::Entity queue = fixture.storage.Create(fixture.world);
+		const ecs::Entity item = fixture.Entry();
+		if (mode == Mode::Remove)
+			fixture.storage.Append(fixture.world, queue, item);
+		const std::size_t entityCount = fixture.world.EntityCount();
+
+		production_queue_test::ScheduledMutation system{
+			&fixture.storage, &fixture.world, queue, item, mode};
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(fixture.world.Components());
+		{
+			ecs::Scheduler scheduler(fixture.world, systems, engine::jobs::JobSystemConfig{1});
+			const engine::time::FixedStep fixedStep{30};
+			scheduler.Finalize(fixedStep);
+			BOOST_CHECK_THROW(
+				scheduler.Execute(engine::time::SimulationTime{1, fixedStep}),
+				std::logic_error);
+		}
+
+		BOOST_TEST(!fixture.world.IsScheduledExecutionActive());
+		BOOST_TEST(fixture.world.EntityCount() == entityCount);
+		BOOST_TEST(fixture.storage.LiveQueueCount() == 1u);
+		BOOST_TEST(fixture.world.IsAlive(queue));
+		const auto entries = fixture.storage.Entries(fixture.world, queue);
+		BOOST_TEST(entries.size() == (mode == Mode::Remove ? 1u : 0u));
+		const ProductionQueueMember *member =
+			fixture.world.Get<ProductionQueueMember>(item);
+		BOOST_REQUIRE(member != nullptr);
+		if (mode == Mode::Remove)
+			BOOST_CHECK(member->queue == queue);
+		else
+			BOOST_TEST(!member->queue.IsValid());
+
+		if (!entries.empty())
+			BOOST_TEST(fixture.storage.Remove(fixture.world, queue, entries.front()));
+		BOOST_TEST(fixture.world.Destroy(item));
+		BOOST_TEST(fixture.storage.Destroy(fixture.world, queue));
+	}
+}
+
+namespace production_queue_test
+{
+
+struct CachedQueueSnapshot
+{
+	ecs::Entity queue{};
+	ProductionQueue component{};
+	std::vector<ecs::Entity> entries;
+	std::vector<std::uint32_t> positions;
+	std::uint32_t output{0};
+};
+
+struct CachedEntriesRun
+{
+	std::vector<CachedQueueSnapshot> queues;
+	std::size_t chunkCount{0};
+};
+
+CachedEntriesRun CaptureCachedEntries(ecs::World &world,
+	const ProductionQueueStorage &storage,
+	const std::vector<ecs::Entity> &queues)
+{
+	CachedEntriesRun result;
+	result.queues.reserve(queues.size());
+	for (const ecs::Entity queue : queues)
+	{
+		const ProductionQueue *component = world.Get<ProductionQueue>(queue);
+		const Marker *marker = world.Get<Marker>(queue);
+		if (component == nullptr || marker == nullptr)
+			throw std::logic_error("Cached production queue snapshot lost its queue marker");
+
+		CachedQueueSnapshot snapshot;
+		snapshot.queue = queue;
+		snapshot.component = *component;
+		const auto entries = storage.Entries(*component);
+		snapshot.entries.assign(entries.begin(), entries.end());
+		snapshot.positions.reserve(entries.size());
+		for (const ecs::Entity entry : entries)
+		{
+			const ProductionQueueMember *member = world.Get<ProductionQueueMember>(entry);
+			if (member == nullptr || member->queue != queue)
+				throw std::logic_error("Cached production queue snapshot lost its member ownership");
+			snapshot.positions.push_back(member->position);
+		}
+		snapshot.output = marker->value;
+		result.queues.push_back(std::move(snapshot));
+	}
+	return result;
+}
+
+CachedEntriesRun RunCachedEntries(const std::size_t workers)
+{
+	constexpr std::size_t queueCount = 2048;
+	ecs::World world{ecs::WorldConfig{128}};
+	ProductionQueueStorage storage;
+	world.RegisterComponent<ProductionQueue>();
+	world.RegisterComponent<ProductionQueueMember>();
+	world.RegisterComponent<Marker>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> queues;
+	queues.reserve(queueCount);
+	std::vector<ecs::Entity> allEntries;
+	allEntries.reserve(queueCount * 8);
+	for (std::size_t index = 0; index < queueCount; ++index)
+	{
+		const ecs::Entity queue = storage.Create(world,
+			static_cast<std::uint32_t>(index % 4));
+		queues.push_back(queue);
+
+		const std::size_t initialCount = 3 + index % 4;
+		std::array<ecs::Entity, 6> initial{};
+		for (std::size_t itemIndex = 0; itemIndex < initialCount; ++itemIndex)
+		{
+			initial[itemIndex] = world.Create<ProductionQueueMember>();
+			allEntries.push_back(initial[itemIndex]);
+			storage.Append(world, queue, initial[itemIndex]);
+		}
+
+		if ((index % 2) == 0)
+			if (!storage.Remove(world, queue, initial[1]))
+				throw std::logic_error("Initial stable erase unexpectedly failed");
+		if ((index % 3) == 0)
+			if (!storage.Remove(world, queue, initial[0]))
+				throw std::logic_error("Second initial stable erase unexpectedly failed");
+
+		const std::size_t extraCount = 2 + index % 3;
+		for (std::size_t itemIndex = 0; itemIndex < extraCount; ++itemIndex)
+		{
+			const ecs::Entity entry = world.Create<ProductionQueueMember>();
+			allEntries.push_back(entry);
+			storage.Append(world, queue, entry);
+		}
+
+		if (!world.Add<Marker>(queue))
+			throw std::logic_error("Queue marker archetype transition unexpectedly failed");
+		world.Get<Marker>(queue)->value = static_cast<std::uint32_t>(index);
+	}
+
+	CachedEntriesStep step{&storage};
+	{
+		ecs::SystemRegistry systems;
+		systems.Register(step);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep fixedStep{60};
+		scheduler.Finalize(fixedStep);
+		scheduler.Execute(engine::time::SimulationTime{1, fixedStep});
+	}
+
+	CachedEntriesRun result = CaptureCachedEntries(world, storage, queues);
+	result.chunkCount = step.chunkCount.load(std::memory_order_relaxed);
+
+	for (const ecs::Entity queue : queues)
+	{
+		while (true)
+		{
+			const auto entries = storage.Entries(world, queue);
+			if (entries.empty())
+				break;
+			if (!storage.Remove(world, queue, entries.front()))
+				throw std::logic_error("Cached production queue cleanup erase failed");
+		}
+		if (!storage.Destroy(world, queue))
+			throw std::logic_error("Cached production queue cleanup destroy failed");
+	}
+	for (const ecs::Entity entry : allEntries)
+		if (!world.Destroy(entry))
+			throw std::logic_error("Cached production queue entry cleanup failed");
+	return result;
+}
+
+bool SameCachedEntriesRun(const CachedEntriesRun &left,
+	const CachedEntriesRun &right)
+{
+	if (left.chunkCount != right.chunkCount || left.queues.size() != right.queues.size())
+		return false;
+	for (std::size_t index = 0; index < left.queues.size(); ++index)
+	{
+		const CachedQueueSnapshot &leftQueue = left.queues[index];
+		const CachedQueueSnapshot &rightQueue = right.queues[index];
+		if (leftQueue.queue != rightQueue.queue ||
+			leftQueue.component.offset != rightQueue.component.offset ||
+			leftQueue.component.count != rightQueue.component.count ||
+			leftQueue.component.capacity != rightQueue.component.capacity ||
+			leftQueue.entries != rightQueue.entries ||
+			leftQueue.positions != rightQueue.positions ||
+			leftQueue.output != rightQueue.output)
+			return false;
+	}
+	return true;
+}
+
+} // namespace production_queue_test
+
+BOOST_AUTO_TEST_CASE(cached_entries_chunk_system_is_deterministic_for_one_two_and_four_workers)
+{
+	const production_queue_test::CachedEntriesRun one =
+		production_queue_test::RunCachedEntries(1);
+	const production_queue_test::CachedEntriesRun two =
+		production_queue_test::RunCachedEntries(2);
+	const production_queue_test::CachedEntriesRun four =
+		production_queue_test::RunCachedEntries(4);
+
+	BOOST_TEST(one.chunkCount > 1u);
+	BOOST_TEST(two.chunkCount == one.chunkCount);
+	BOOST_TEST(four.chunkCount == one.chunkCount);
+	BOOST_CHECK(production_queue_test::SameCachedEntriesRun(one, two));
+	BOOST_CHECK(production_queue_test::SameCachedEntriesRun(one, four));
+	BOOST_REQUIRE_EQUAL(one.queues.size(), 2048u);
+	for (const auto &queue : one.queues)
+	{
+		BOOST_TEST(queue.component.count == queue.entries.size());
+		BOOST_TEST(queue.component.count <= queue.component.capacity);
+		std::uint32_t expected = 2166136261u;
+		for (const auto value : {queue.queue.index, queue.queue.generation,
+			static_cast<std::uint32_t>(queue.entries.size())})
+			expected = (expected ^ value) * std::uint32_t{16777619};
+		for (const auto entry : queue.entries)
+		{
+			expected = (expected ^ entry.index) * std::uint32_t{16777619};
+			expected = (expected ^ entry.generation) * std::uint32_t{16777619};
+		}
+		BOOST_TEST(queue.output == expected);
+		for (std::size_t position = 0; position < queue.positions.size(); ++position)
+			BOOST_TEST(queue.positions[position] == position);
+	}
+}

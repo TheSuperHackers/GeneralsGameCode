@@ -1,0 +1,23 @@
+#define BOOST_TEST_MODULE GeneralsZHHarvestDelivery
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.harvesting.revenue.harvest_revenue;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh::harvesting;
+BOOST_AUTO_TEST_CASE(harvest_delivery_credits_center_owner_and_retains_ordered_requests) {
+    ecs::World world;
+    world.RegisterComponent<SupplyDropoffOwner>(); world.RegisterComponent<SupplyDropoff>();
+    world.RegisterComponent<HarvestDelivery>(); world.RegisterComponent<generalszh::production::ProducedUnit>();
+    world.RegisterComponent<Health>(); world.RegisterComponent<LifeState>(); world.FinalizeComponents();
+    const auto center=world.Create<SupplyDropoffOwner,SupplyDropoff,Health,LifeState>();
+    const ecs::Entity account{99,1};
+    *world.Get<SupplyDropoffOwner>(center)={account,100}; world.Get<Health>(center)->current=1;
+    const auto collector=world.Create<HarvestDelivery,generalszh::production::ProducedUnit,Health,LifeState>();
+    *world.Get<HarvestDelivery>(collector)={center,4}; world.Get<Health>(collector)->current=1;
+    world.Get<generalszh::production::ProducedUnit>(collector)->account={98,1};
+    HarvestRevenue collection(world,2); collection.Configure(); collection.Collect();
+    BOOST_REQUIRE_EQUAL(collection.Outputs().size(),1u);
+    BOOST_CHECK(collection.Outputs()[0].account==account); BOOST_TEST(collection.Outputs()[0].command.amount==400u);
+    BOOST_TEST(collection.Outputs()[0].command.trackIncome);
+    world.Get<LifeState>(collector)->alive=false; collection.Collect();
+    BOOST_TEST(collection.Outputs().empty());
+}

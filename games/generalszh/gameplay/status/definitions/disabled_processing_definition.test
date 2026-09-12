@@ -1,0 +1,289 @@
+#define BOOST_TEST_MODULE GeneralsZHDisabledProcessingDefinition
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+import games.generalszh.gameplay.status.definitions.disabled_processing_definition;
+import engine.jobs.job_system;
+
+namespace disabled_processing_definition_test
+{
+
+using generalszh::status::AllDisabledReasons;
+using generalszh::status::DisabledProcessingDefinition;
+using generalszh::status::DisabledProcessingDefinitionVersion;
+using generalszh::status::DisabledReason;
+using generalszh::status::DisabledReasonCount;
+using generalszh::status::DisabledReasonSchemaVersion;
+
+constexpr std::array<DisabledReason, DisabledReasonCount> AllReasons{{
+	DisabledReason::Default,
+	DisabledReason::Hacked,
+	DisabledReason::Emp,
+	DisabledReason::Held,
+	DisabledReason::Paralyzed,
+	DisabledReason::Unmanned,
+	DisabledReason::Underpowered,
+	DisabledReason::Freefall,
+	DisabledReason::Awestruck,
+	DisabledReason::Brainwashed,
+	DisabledReason::Subdued,
+	DisabledReason::ScriptDisabled,
+	DisabledReason::ScriptUnderpowered}};
+
+constexpr std::string_view FingerprintDomain =
+	"games.generalszh.status.disabled_processing.definition.recipe";
+constexpr std::uint64_t FnvOffsetBasis = UINT64_C(14695981039346656037);
+constexpr std::uint64_t FnvPrime = UINT64_C(1099511628211);
+
+constexpr void HashByte(std::uint64_t &hash, const std::uint8_t byte) noexcept
+{
+	hash ^= byte;
+	hash *= FnvPrime;
+}
+
+constexpr void HashLittleEndian(std::uint64_t &hash, const std::uint64_t value,
+	const std::size_t byteCount) noexcept
+{
+	for (std::size_t byte = 0; byte < byteCount; ++byte)
+		HashByte(hash, static_cast<std::uint8_t>(value >> (byte * 8)));
+}
+
+constexpr void HashBytes(std::uint64_t &hash, const std::string_view bytes) noexcept
+{
+	for (const char byte : bytes)
+		HashByte(hash, static_cast<std::uint8_t>(static_cast<unsigned char>(byte)));
+}
+
+constexpr std::uint64_t IndependentFingerprint(const std::uint16_t allowedMask) noexcept
+{
+	std::uint64_t hash = FnvOffsetBasis;
+	HashLittleEndian(hash, static_cast<std::uint64_t>(FingerprintDomain.size()),
+		sizeof(std::uint64_t));
+	HashBytes(hash, FingerprintDomain);
+	HashLittleEndian(hash, 1u, sizeof(std::uint32_t));
+	HashLittleEndian(hash, 1u, sizeof(std::uint32_t));
+	HashLittleEndian(hash, allowedMask, sizeof(std::uint16_t));
+	return hash;
+}
+
+constexpr std::uint16_t Bit(const DisabledReason reason) noexcept
+{
+	return static_cast<std::uint16_t>(
+		std::uint16_t{1} << static_cast<std::uint8_t>(reason));
+}
+
+static_assert(IndependentFingerprint(std::uint16_t{0}) ==
+	UINT64_C(0x851B913E31D28C69));
+static_assert(IndependentFingerprint(AllDisabledReasons) ==
+	UINT64_C(0x86C44A3E333B53BF));
+
+struct Result
+{
+	std::uint16_t allowedMask;
+	std::uint64_t fingerprint;
+
+	friend bool operator==(const Result &, const Result &) = default;
+};
+
+struct Range
+{
+	const DisabledProcessingDefinition *definition;
+	std::span<Result> results;
+
+	static void Run(void *rawContext)
+	{
+		auto &range = *static_cast<Range *>(rawContext);
+		const Result result{
+			range.definition->AllowedMask(), range.definition->Fingerprint()};
+		for (auto &output : range.results)
+			output = result;
+	}
+};
+
+std::vector<Result> RunConcurrent(const DisabledProcessingDefinition &definition,
+	const std::size_t workers)
+{
+	constexpr std::size_t resultCount = 2048;
+	constexpr std::size_t rangeSize = 64;
+	constexpr std::size_t rangeCount = resultCount / rangeSize;
+
+	std::vector<Result> results(resultCount);
+	std::array<Range, rangeCount> ranges{};
+	std::array<engine::jobs::Job, rangeCount> jobs{};
+	for (std::size_t index = 0; index < rangeCount; ++index)
+	{
+		ranges[index] = {&definition,
+			std::span(results).subspan(index * rangeSize, rangeSize)};
+		jobs[index] = {&Range::Run, &ranges[index]};
+	}
+
+	engine::jobs::JobSystem pool{engine::jobs::JobSystemConfig{workers}};
+	pool.Execute(jobs);
+	return results;
+}
+
+} // namespace disabled_processing_definition_test
+
+using namespace disabled_processing_definition_test;
+
+BOOST_AUTO_TEST_CASE(disabled_reason_ids_are_exact_and_exhaustive)
+{
+	static_assert(std::is_same_v<std::underlying_type_t<DisabledReason>, std::uint8_t>);
+	static_assert(DisabledReasonCount == std::size_t{13});
+	static_assert(DisabledReasonSchemaVersion == std::uint32_t{1});
+	static_assert(DisabledProcessingDefinitionVersion == std::uint32_t{1});
+	static_assert(AllDisabledReasons == std::uint16_t{0x1fff});
+
+	for (std::size_t index = 0; index < AllReasons.size(); ++index)
+		BOOST_TEST(static_cast<std::uint8_t>(AllReasons[index]) == index);
+	BOOST_TEST(AllDisabledReasons == std::uint16_t{0x1fff});
+}
+
+BOOST_AUTO_TEST_CASE(empty_and_all_masks_are_explicit)
+{
+	const DisabledProcessingDefinition emptyMask{std::uint16_t{0}};
+	const DisabledProcessingDefinition emptyReasons{
+		std::span<const DisabledReason>{}};
+	const DisabledProcessingDefinition allMask{AllDisabledReasons};
+	const DisabledProcessingDefinition allReasons{
+		std::span<const DisabledReason>{AllReasons}};
+
+	BOOST_TEST(emptyMask.AllowedMask() == std::uint16_t{0});
+	BOOST_TEST(emptyReasons.AllowedMask() == std::uint16_t{0});
+	BOOST_TEST(allMask.AllowedMask() == AllDisabledReasons);
+	BOOST_TEST(allReasons.AllowedMask() == AllDisabledReasons);
+	BOOST_TEST(emptyMask.Fingerprint() == emptyReasons.Fingerprint());
+	BOOST_TEST(allMask.Fingerprint() == allReasons.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(typed_authoring_preserves_set_membership_and_deduplicates)
+{
+	const std::array reasons{
+		DisabledReason::Held,
+		DisabledReason::Default,
+		DisabledReason::Held,
+		DisabledReason::Emp,
+		DisabledReason::ScriptDisabled,
+		DisabledReason::Default};
+	const DisabledProcessingDefinition definition{
+		std::span<const DisabledReason>{reasons}};
+	const std::array reversedReasons{
+		DisabledReason::ScriptDisabled,
+		DisabledReason::Emp,
+		DisabledReason::Held,
+		DisabledReason::Default,
+		DisabledReason::Held,
+		DisabledReason::Default};
+	const DisabledProcessingDefinition reversedDefinition{
+		std::span<const DisabledReason>{reversedReasons}};
+
+	const auto expected = Bit(DisabledReason::Default) |
+		Bit(DisabledReason::Emp) | Bit(DisabledReason::Held) |
+		Bit(DisabledReason::ScriptDisabled);
+	BOOST_TEST(definition.AllowedMask() == expected);
+	BOOST_TEST(reversedDefinition.AllowedMask() == expected);
+	BOOST_TEST(reversedDefinition.Fingerprint() == definition.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(each_reason_maps_to_its_single_bit)
+{
+	const DisabledProcessingDefinition empty{std::uint16_t{0}};
+	for (const auto reason : AllReasons)
+	{
+		const std::array oneReason{reason};
+		const DisabledProcessingDefinition definition{
+			std::span<const DisabledReason>{oneReason}};
+		BOOST_TEST(definition.AllowedMask() == Bit(reason));
+		BOOST_TEST(definition.Fingerprint() != empty.Fingerprint());
+	}
+}
+
+BOOST_AUTO_TEST_CASE(authoring_rejects_unknown_mask_bits_and_reason_ids)
+{
+	BOOST_CHECK_THROW(
+		(DisabledProcessingDefinition{std::uint16_t{0x2000}}),
+		std::invalid_argument);
+	BOOST_CHECK_THROW(
+		(DisabledProcessingDefinition{std::uint16_t{0xffff}}),
+		std::invalid_argument);
+
+	const std::array invalidThirteen{
+		static_cast<DisabledReason>(std::uint8_t{13})};
+	const std::array invalidMax{
+		static_cast<DisabledReason>((std::numeric_limits<std::uint8_t>::max)())};
+	BOOST_CHECK_THROW(
+		(DisabledProcessingDefinition{
+			std::span<const DisabledReason>{invalidThirteen}}),
+		std::invalid_argument);
+	BOOST_CHECK_THROW(
+		(DisabledProcessingDefinition{
+			std::span<const DisabledReason>{invalidMax}}),
+		std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(fingerprint_matches_independent_golden_recipe)
+{
+	const DisabledProcessingDefinition definition{AllDisabledReasons};
+
+	BOOST_TEST(definition.Fingerprint() == IndependentFingerprint(AllDisabledReasons));
+	BOOST_TEST(definition.Fingerprint() == UINT64_C(0x86C44A3E333B53BF));
+	BOOST_TEST(DisabledProcessingDefinition{Bit(DisabledReason::Held)}.Fingerprint() ==
+		UINT64_C(0x8536C13E31E9A5B1));
+	BOOST_TEST(DisabledProcessingDefinition{std::uint16_t{0}}.Fingerprint() ==
+		UINT64_C(0x851B913E31D28C69));
+}
+
+BOOST_AUTO_TEST_CASE(definition_is_an_immutable_nonassignable_value)
+{
+	static_assert(!std::is_default_constructible_v<DisabledProcessingDefinition>);
+	static_assert(std::is_copy_constructible_v<DisabledProcessingDefinition>);
+	static_assert(std::is_move_constructible_v<DisabledProcessingDefinition>);
+	static_assert(!std::is_assignable_v<DisabledProcessingDefinition &,
+		DisabledProcessingDefinition>);
+	static_assert(!std::is_assignable_v<DisabledProcessingDefinition &,
+		DisabledProcessingDefinition &&>);
+	static_assert(noexcept(std::declval<const DisabledProcessingDefinition &>()
+		.AllowedMask()));
+	static_assert(noexcept(std::declval<const DisabledProcessingDefinition &>()
+		.Fingerprint()));
+	static_assert(sizeof(DisabledProcessingDefinition) <= sizeof(std::uint64_t) * 2);
+
+	const DisabledProcessingDefinition source{AllDisabledReasons};
+	const auto expectedMask = source.AllowedMask();
+	const auto expectedFingerprint = source.Fingerprint();
+	const DisabledProcessingDefinition copy{source};
+	const DisabledProcessingDefinition fromRvalue{std::move(source)};
+
+	for (const auto *definition : {&source, &copy, &fromRvalue})
+	{
+		BOOST_TEST(definition->AllowedMask() == expectedMask);
+		BOOST_TEST(definition->Fingerprint() == expectedFingerprint);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(shared_immutable_definition_reads_match_across_workers)
+{
+	const DisabledProcessingDefinition definition{AllDisabledReasons};
+	const Result expected{AllDisabledReasons,
+		IndependentFingerprint(AllDisabledReasons)};
+
+	const auto oneWorker = RunConcurrent(definition, 1);
+	const auto twoWorkers = RunConcurrent(definition, 2);
+	const auto fourWorkers = RunConcurrent(definition, 4);
+
+	BOOST_REQUIRE(oneWorker.size() == 2048u);
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+	for (const auto &result : oneWorker)
+		BOOST_CHECK(result == expected);
+}

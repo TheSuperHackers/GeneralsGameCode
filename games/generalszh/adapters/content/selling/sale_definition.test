@@ -1,0 +1,174 @@
+#define BOOST_TEST_MODULE GeneralsZHSaleContent
+#include <boost/test/included/unit_test.hpp>
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <stdexcept>
+#include <span>
+#include <string>
+#include <string_view>
+#include <vector>
+import games.generalszh.adapters.content.selling.sale_definition;
+import games.generalszh.composition.game_session;
+import games.generalszh.gameplay.economy.income_history;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.construction.components.structure;
+import engine.gameplay.rts.harvesting.components.harvest_state;
+import games.generalszh.gameplay.harvesting.revenue.harvest_revenue;
+import games.generalszh.gameplay.selling.components.sale_state;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.rts.economy.components.resource_balance;
+using namespace generalszh;
+using namespace std::chrono_literals;
+namespace
+{
+constexpr std::string_view RulesText=R"(GameData
+ ValuePerSupplyBox = 75
+ MinLowEnergyProductionSpeed = 0.5
+ MaxLowEnergyProductionSpeed = 0.8
+ LowEnergyPenaltyModifier = 1.0
+ SellPercentage = 50%
+End
+)";
+// Selected fields from extracted FactionBuilding.ini AmericaPowerPlant,
+// inspected 2026-09-06. Art and unrelated modules are omitted, not ported.
+constexpr std::string_view Plant=R"(Object AmericaPowerPlant
+ BuildCost = 800
+ BuildTime = 10.0
+ EnergyProduction = 5
+ KindOf = PRELOAD STRUCTURE SELECTABLE IMMOBILE SCORE CAPTURABLE FS_POWER MP_COUNT_FOR_VICTORY
+ Body = StructureBody BodyTag
+  MaxHealth = 800
+  InitialHealth = 800
+ End
+ Behavior = ProductionUpdate ProductionTag
+ End
+ Behavior = PowerPlantUpdate PowerTag
+  RodsExtendTime = 600
+ End
+End
+)";
+std::string Object(std::string_view fields)
+{
+ return "Object Fixture\nBuildCost = 101\nBody = StructureBody BodyTag\nMaxHealth = 100\nEnd\n"+std::string(fields)+"End\n";
+}
+content::DecodedBuilding Building(std::string_view text,std::string_view name="Fixture")
+{return content::DecodeBuilding(text,name,content::DecodeGameRules(RulesText));}
+bool Omitted(const content::DecodedSale &sale,std::string_view text)
+{return std::any_of(sale.omissions.begin(),sale.omissions.end(),[&](const auto &entry){return entry.find(text)!=std::string::npos;});}
+}
+BOOST_AUTO_TEST_CASE(refund_defaults_override_percentage_and_explicit_duration)
+{
+ const auto text=Object("KindOf = STRUCTURE IMMOBILE\n"); const auto building=Building(text);
+ const auto decode=[&](std::string_view rules){return content::DecodeSale(text,building,rules,230ms,content::SalePermission::Allowed);};
+ const auto sale=decode(RulesText); BOOST_REQUIRE(sale.definition);
+ BOOST_TEST(sale.definition->building==building.definition.key);
+ BOOST_TEST(sale.definition->duration.count()==230000000ll);
+ BOOST_TEST(sale.definition->refundValue==0u);
+ BOOST_TEST(sale.definition->percentageNumerator==1u); BOOST_TEST(sale.definition->percentageDenominator==2u);
+ BOOST_TEST(Omitted(sale,"frame-start")); BOOST_TEST(Omitted(sale,"float rounding"));
+ const construction::BuildingCatalog buildings(std::span{&building.definition,1},engine::time::FixedStep{10});
+ const selling::SellCatalog catalog(buildings,std::span{&*sale.definition,1});
+ BOOST_TEST(catalog.Find(building.definition.key)->refund==50u);
+ const auto defaults=decode("GameData\nEnd\n"); BOOST_REQUIRE(defaults.definition);
+ BOOST_TEST(defaults.definition->percentageNumerator==1u); BOOST_TEST(defaults.definition->percentageDenominator==1u);
+ const auto fractional=decode("GameData\nSellPercentage = 12.5%\nEnd\n"); BOOST_REQUIRE(fractional.definition);
+ BOOST_TEST(fractional.definition->percentageNumerator==1u); BOOST_TEST(fractional.definition->percentageDenominator==8u);
+ const auto bare=decode("GameData\nSellPercentage = 50\nEnd\n"); BOOST_REQUIRE(bare.definition);
+ BOOST_TEST(bare.definition->percentageDenominator==2u);
+ const auto zero=decode("GameData\nSellPercentage = 0%\nEnd\n"); BOOST_REQUIRE(zero.definition);
+ BOOST_TEST(zero.definition->percentageNumerator==0u);
+ const auto overridden=Object("KindOf = STRUCTURE IMMOBILE\nRefundValue = 17\n");
+ const auto overrideSale=content::DecodeSale(overridden,Building(overridden),RulesText,0ms,content::SalePermission::Allowed);
+ BOOST_REQUIRE(overrideSale.definition); BOOST_TEST(overrideSale.definition->refundValue==17u);
+}
+BOOST_AUTO_TEST_CASE(unsupported_and_missing_capabilities_never_enroll)
+{
+ const std::array fields{"", "KindOf = STRUCTURE\n", "KindOf = STRUCTURE IMMOBILE CAN_ATTACK\n",
+  "KindOf = STRUCTURE IMMOBILE\nLocomotor = SET_NORMAL Walk\n",
+  "KindOf = STRUCTURE IMMOBILE\nWeaponSet\nWeapon = PRIMARY Gun\nEnd\n",
+  "KindOf = STRUCTURE IMMOBILE\nBehavior = SupplyCenterDockUpdate Dock\nEnd\n",
+  "KindOf = STRUCTURE IMMOBILE\nBehavior = GarrisonContain Container\nEnd\n",
+  "KindOf = STRUCTURE IMMOBILE\nBehavior = ParkingPlaceBehavior Parking\nEnd\n",
+  "KindOf = STRUCTURE IMMOBILE\nBehavior = MinefieldBehavior Mines\nEnd\n",
+  "KindOf = STRUCTURE IMMOBILE\nBehavior = UnknownUpdate Unknown\nEnd\n"};
+ for(auto field:fields)
+ {
+  const auto text=Object(field); const auto sale=content::DecodeSale(text,Building(text),RulesText,1s,content::SalePermission::Allowed);
+  BOOST_CHECK(!sale.definition); BOOST_TEST(!sale.omissions.empty());
+ }
+ const auto text=Object("KindOf = STRUCTURE IMMOBILE\n"); const auto building=Building(text);
+ for(auto permission:{content::SalePermission::Unresolved,content::SalePermission::Unsellable})
+  BOOST_CHECK(!content::DecodeSale(text,building,RulesText,1s,permission).definition);
+ auto supplied=building; supplied.definition.supplyDropoff=true;
+ BOOST_CHECK(!content::DecodeSale(text,supplied,RulesText,1s,content::SalePermission::Allowed).definition);
+ const auto plant=content::DecodeSale(Plant,Building(Plant,"AmericaPowerPlant"),RulesText,2s,content::SalePermission::Allowed);
+ BOOST_REQUIRE(plant.definition); BOOST_TEST(Omitted(plant,"PowerPlantUpdate"));
+}
+BOOST_AUTO_TEST_CASE(identity_and_numeric_boundary_validation)
+{
+ const auto text=Object("KindOf = STRUCTURE IMMOBILE\n"); auto building=Building(text);
+ ++building.definition.key;
+ BOOST_CHECK_THROW(content::DecodeSale(text,building,RulesText,1s,content::SalePermission::Allowed),std::invalid_argument);
+ building=Building(text); building.name="Other"; building.definition.key=content::DefinitionKey("Other");
+ BOOST_CHECK_THROW(content::DecodeSale(text,building,RulesText,1s,content::SalePermission::Allowed),std::invalid_argument);
+ building=Building(text);
+ BOOST_CHECK_THROW(content::DecodeSale(text,building,RulesText,-1ns,content::SalePermission::Allowed),std::invalid_argument);
+ for(auto value:{"","-1%","NaN","50%%","0.0000001%"})
+ {
+  const auto rules="GameData\nSellPercentage = "+std::string(value)+"\nEnd\n";
+  BOOST_CHECK_THROW(content::DecodeSale(text,building,rules,1s,content::SalePermission::Allowed),std::invalid_argument);
+ }
+ const auto bad=Object("KindOf = STRUCTURE IMMOBILE\nRefundValue = 65536\n");
+ BOOST_CHECK_THROW(content::DecodeSale(bad,Building(bad),RulesText,1s,content::SalePermission::Allowed),std::out_of_range);
+}
+BOOST_AUTO_TEST_CASE(decoded_plant_constructs_and_sells_through_real_session_across_workers)
+{
+ const auto run=[](unsigned workers) {
+  namespace combat=engine::gameplay::combat;
+  namespace navigation=engine::gameplay::navigation;
+  using Balance=engine::gameplay::rts::economy::ResourceBalance;
+  const auto building=Building(Plant,"AmericaPowerPlant");
+  const auto decoded=content::DecodeSale(Plant,building,RulesText,2s,content::SalePermission::Allowed);
+  BOOST_REQUIRE(decoded.definition);
+  const std::array buildings{building.definition}; const std::array sales{*decoded.definition};
+  const auto dozer=content::DecodeUnit("Object Builder\nBuildCost = 1\nBuildTime = 0\nBody = ActiveBody BodyTag\nMaxHealth = 100\nEnd\nBehavior = DozerAIUpdate AI\nEnd\nLocomotor = SET_NORMAL Walk\nEnd\n",
+   "","Locomotor Walk\nSpeed = 10\nEnd\n","Builder");
+  const std::array units{dozer.definition}; const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1};
+  navigation::NavigationGrid grid(8,1,terrain); ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents();
+  engine::jobs::JobSystem jobs({workers}); GameSession game(world,jobs,units,grid,64,{},{},buildings,sales);
+  const engine::time::FixedStep step{1}; game.Finalize(step);
+  const auto account=game.CreateAccount(10000),base=game.CreateProducer(account);
+  const std::array build{BuildInput{base,dozer.definition.key}}; GameInputs inputs; inputs.builds=build; game.Execute({0,step},inputs);
+  ecs::Entity builder; ecs::Query<ecs::Read<production::ProducedUnit>> produced(world);
+  produced.ForEachChunk([&](auto chunk){BOOST_REQUIRE_EQUAL(chunk.Count(),1u);builder=chunk.Entities()[0];});
+  BOOST_REQUIRE(builder.IsValid());
+  const std::array placement{construction::ConstructionInput{builder,building.definition.key,2}};
+  inputs={};inputs.construction=placement;game.Execute({1,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.ConstructionResults().size(),1u); const auto site=game.ConstructionResults()[0].site;
+  BOOST_REQUIRE(world.IsAlive(site)); std::uint64_t tick=2;
+  for(unsigned wait=0;wait<32&&!world.Get<construction::Structure>(site)->complete;++wait) game.Execute({tick++,step});
+  BOOST_REQUIRE(world.Get<construction::Structure>(site)->complete);
+  BOOST_REQUIRE(world.Has<selling::SaleState>(site)); BOOST_TEST(world.Get<selling::SaleEligibility>(site)->allowed);
+  BOOST_TEST(world.Get<Balance>(account)->quantity==9199u);
+  const auto accepted=tick; const std::array request{selling::SellRequest{site,account}};
+  inputs={};inputs.sales=request;game.Execute({tick++,step},inputs);
+  BOOST_REQUIRE_EQUAL(game.SaleReceipts().size(),1u); BOOST_CHECK(game.SaleReceipts()[0].status==selling::SellAcceptance::Accepted);
+  BOOST_TEST(world.Get<selling::SaleState>(site)->deadline==accepted+2);
+  BOOST_TEST(world.Get<combat::LifeState>(site)->alive); BOOST_TEST(!world.Get<production::Producer>(site)->active);
+  const std::array damage{combat::DamageInput{site,1000}};inputs={};inputs.damage=damage;game.Execute({tick++,step},inputs);
+  BOOST_TEST(world.Get<combat::Health>(site)->current==799000u); BOOST_TEST(game.SaleResults().empty());
+  game.Execute({tick++,step}); BOOST_TEST(!world.IsAlive(site)); BOOST_REQUIRE_EQUAL(game.SaleResults().size(),1u);
+  const auto result=game.SaleResults()[0]; BOOST_CHECK(result.outcome==selling::SellOutcome::Sold); BOOST_TEST(result.refunded==400u);
+  BOOST_TEST(world.Get<Balance>(account)->quantity==9599u);
+  BOOST_TEST(world.Get<economy::IncomeHistory>(account)->total==0u);
+  std::vector<std::uint64_t> state{builder.index,builder.generation,site.index,site.generation,accepted,
+   result.structure.index,result.structure.generation,result.account.index,result.account.generation,result.tick,result.refunded,
+   world.Get<Balance>(account)->quantity,world.EntityCount()};
+  game.Execute({tick,step}); BOOST_TEST(game.SaleResults().empty()); BOOST_TEST(world.Get<Balance>(account)->quantity==9599u);
+  return state;
+ };
+ const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}

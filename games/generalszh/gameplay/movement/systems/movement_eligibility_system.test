@@ -1,0 +1,23 @@
+#define BOOST_TEST_MODULE GeneralsZHMovement
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.movement.systems.movement_eligibility_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(dead_actors_are_ineligible_for_movement)
+{
+    using engine::gameplay::combat::LifeState; using engine::gameplay::navigation::MoveEnabled;
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<MoveEnabled>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>(); world.FinalizeComponents();
+    const auto actor = world.Create<LifeState,MoveEnabled>(); world.Get<LifeState>(actor)->alive = false;
+    generalszh::movement::MovementEligibilitySystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_TEST(!world.Get<MoveEnabled>(actor)->value);
+    using namespace engine::gameplay::containment;
+    world.Get<LifeState>(actor)->alive=true; world.Add<PassengerMembership>(actor);
+    world.Get<PassengerMembership>(actor)->phase=ContainmentPhase::Inside;
+    world.Get<PassengerMembership>(actor)->owner=PassengerContainmentOwner::Transport;
+    scheduler.Execute({1,step}); BOOST_TEST(!world.Get<MoveEnabled>(actor)->value);
+    world.Get<PassengerMembership>(actor)->phase=ContainmentPhase::AwaitingEvacuation;
+    scheduler.Execute({2,step}); BOOST_TEST(!world.Get<MoveEnabled>(actor)->value);
+    *world.Get<PassengerMembership>(actor)={}; scheduler.Execute({3,step}); BOOST_TEST(world.Get<MoveEnabled>(actor)->value);
+}

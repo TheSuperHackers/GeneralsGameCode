@@ -1,0 +1,14 @@
+#define BOOST_TEST_MODULE CaptureGameplay
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.capture.components.capture_state;
+BOOST_AUTO_TEST_CASE(capture_actor_busy_and_persistence)
+{
+    using namespace generalszh::capture;
+    CaptureActorState state;BOOST_TEST(!IsCaptureBusy(state));
+    state.phase=CaptureActorPhase::Capturing;BOOST_TEST(IsCaptureBusy(state));
+    state.phase=CaptureActorPhase::Recovering;BOOST_TEST(IsCaptureBusy(state));
+    BOOST_CHECK(ecs::ComponentTraits<CaptureState>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_CHECK(ecs::ComponentTraits<CaptureRecharge>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_TEST(ecs::ComponentTraits<CaptureState>::Version==2u);
+    CaptureRecharge recharge;BOOST_TEST(!recharge.initialized);
+}

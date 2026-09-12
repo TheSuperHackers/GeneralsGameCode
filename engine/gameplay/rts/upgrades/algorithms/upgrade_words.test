@@ -1,0 +1,234 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <vector>
+
+import engine.gameplay.rts.upgrades.algorithms.upgrade_words;
+import engine.ecs.scheduler.scheduler;
+
+using engine::gameplay::rts::upgrades::CompleteWord;
+using engine::gameplay::rts::upgrades::CompletedUpgradeWord;
+using engine::gameplay::rts::upgrades::InProgressUpgradeWord;
+using engine::gameplay::rts::upgrades::RemoveWord;
+using engine::gameplay::rts::upgrades::StartWord;
+using engine::gameplay::rts::upgrades::UpgradeWordOrdinal;
+using engine::gameplay::rts::upgrades::UpgradeWordOwner;
+
+namespace upgrade_words_test
+{
+constexpr std::size_t EntityCount = 1024;
+constexpr std::uint64_t CompletedSeed = 0x13579BDF2468ACE0ull;
+constexpr std::uint64_t InProgressSeed = 0xFEDCBA9876543210ull;
+
+struct UpgradeWordStep
+{
+	using Query = ecs::Query<
+		ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>,
+		ecs::Write<CompletedUpgradeWord>,
+		ecs::Write<InProgressUpgradeWord>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		const auto owners = chunk.Get<UpgradeWordOwner>();
+		const auto ordinals = chunk.Get<UpgradeWordOrdinal>();
+		auto completed = chunk.Get<CompletedUpgradeWord>();
+		auto inProgress = chunk.Get<InProgressUpgradeWord>();
+
+		for (std::size_t row = 0; row < ordinals.size(); ++row)
+		{
+			const std::uint64_t phase =
+				static_cast<std::uint64_t>(owners[row].value.index) + context.Tick();
+			const std::uint64_t bit = std::uint64_t{1} << (ordinals[row].value % 64u);
+
+			StartWord(inProgress[row], bit);
+			if ((phase % 3u) == 0u)
+				CompleteWord(inProgress[row], completed[row], bit);
+			else if ((phase % 3u) == 1u)
+				RemoveWord(inProgress[row], completed[row], bit);
+		}
+	}
+};
+
+struct Snapshot
+{
+	std::vector<std::array<std::uint64_t, 7>> state;
+	std::size_t chunkCount{0};
+};
+} // namespace upgrade_words_test
+
+namespace ecs
+{
+template<> struct SystemTraits<upgrade_words_test::UpgradeWordStep>
+{
+	static constexpr std::string_view StableName =
+		"tests.rts.upgrades.upgrade_word_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+BOOST_AUTO_TEST_CASE(word_kernels_are_bit_exact_and_allow_overlap_between_states)
+{
+	constexpr std::uint64_t initialProgress = 0xF0000000000000A5ull;
+	constexpr std::uint64_t initialCompleted = 0x000000000000005Aull;
+	constexpr std::uint64_t startBits = 0x00000000000000F0ull;
+	constexpr std::uint64_t completeBits = 0x00000000000000C0ull;
+	constexpr std::uint64_t removeBits = 0x0000000000000030ull;
+
+	InProgressUpgradeWord inProgress{initialProgress};
+	CompletedUpgradeWord completed{initialCompleted};
+
+	StartWord(inProgress, startBits);
+	BOOST_TEST(inProgress.value == (initialProgress | startBits));
+	BOOST_TEST((inProgress.value & 0x10ull) != 0ull);
+	BOOST_TEST((completed.value & 0x10ull) != 0ull);
+
+	CompleteWord(inProgress, completed, completeBits);
+	BOOST_TEST(inProgress.value == ((initialProgress | startBits) & ~completeBits));
+	BOOST_TEST(completed.value == (initialCompleted | completeBits));
+	BOOST_TEST((inProgress.value & initialProgress & 0xF000000000000000ull) ==
+		(initialProgress & 0xF000000000000000ull));
+	BOOST_TEST((completed.value & initialCompleted) == initialCompleted);
+
+	RemoveWord(inProgress, completed, removeBits);
+	BOOST_TEST(inProgress.value == ((initialProgress | startBits) & ~completeBits & ~removeBits));
+	BOOST_TEST(completed.value == ((initialCompleted | completeBits) & ~removeBits));
+}
+
+BOOST_AUTO_TEST_CASE(real_ecs_word_chunks_cover_ordinals_above_eight_and_512)
+{
+	using namespace upgrade_words_test;
+
+	auto run = [](const std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{128}};
+		world.RegisterComponent<UpgradeWordOwner>();
+		world.RegisterComponent<UpgradeWordOrdinal>();
+		world.RegisterComponent<CompletedUpgradeWord>();
+		world.RegisterComponent<InProgressUpgradeWord>();
+		world.FinalizeComponents();
+
+		for (std::size_t index = 0; index < EntityCount; ++index)
+		{
+			const ecs::Entity entity = world.Create<
+				UpgradeWordOwner,
+				UpgradeWordOrdinal,
+				CompletedUpgradeWord,
+				InProgressUpgradeWord>();
+			*world.Get<UpgradeWordOwner>(entity) = UpgradeWordOwner{entity};
+			*world.Get<UpgradeWordOrdinal>(entity) =
+				UpgradeWordOrdinal{static_cast<std::uint32_t>(index)};
+			*world.Get<CompletedUpgradeWord>(entity) = CompletedUpgradeWord{
+				CompletedSeed ^ (static_cast<std::uint64_t>(index) * 0x9E3779B97F4A7C15ull)};
+			*world.Get<InProgressUpgradeWord>(entity) = InProgressUpgradeWord{
+				InProgressSeed ^ (static_cast<std::uint64_t>(index) * 0xD1B54A32D192ED03ull)};
+		}
+
+		UpgradeWordStep system;
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		for (std::uint64_t tick = 1; tick <= 6; ++tick)
+			scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+		Snapshot result;
+		result.state.resize(EntityCount);
+		std::vector<std::size_t> seen(EntityCount, 0);
+		ecs::Query<
+			ecs::Read<UpgradeWordOwner>,
+			ecs::Read<UpgradeWordOrdinal>,
+			ecs::Read<CompletedUpgradeWord>,
+			ecs::Read<InProgressUpgradeWord>> query(world);
+		query.ForEachChunk([&](auto chunk) {
+			++result.chunkCount;
+			const auto owners = chunk.template Get<UpgradeWordOwner>();
+			const auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+			const auto completed = chunk.template Get<CompletedUpgradeWord>();
+			const auto inProgress = chunk.template Get<InProgressUpgradeWord>();
+			const auto entities = chunk.Entities();
+			BOOST_TEST(owners.size() == ordinals.size());
+			BOOST_TEST(owners.size() == completed.size());
+			BOOST_TEST(owners.size() == inProgress.size());
+
+			for (std::size_t row = 0; row < owners.size(); ++row)
+			{
+				if (row != 0)
+				{
+					BOOST_CHECK(&owners[row] == &owners[row - 1] + 1);
+					BOOST_CHECK(&ordinals[row] == &ordinals[row - 1] + 1);
+					BOOST_CHECK(&completed[row] == &completed[row - 1] + 1);
+					BOOST_CHECK(&inProgress[row] == &inProgress[row - 1] + 1);
+				}
+
+				const ecs::Entity entity = entities[row];
+				BOOST_REQUIRE(entity.index < EntityCount);
+				BOOST_CHECK(&owners[row] == static_cast<const UpgradeWordOwner *>(world.Get<UpgradeWordOwner>(entity)));
+				BOOST_CHECK(&ordinals[row] == static_cast<const UpgradeWordOrdinal *>(world.Get<UpgradeWordOrdinal>(entity)));
+				BOOST_CHECK(&completed[row] == static_cast<const CompletedUpgradeWord *>(world.Get<CompletedUpgradeWord>(entity)));
+				BOOST_CHECK(&inProgress[row] == static_cast<const InProgressUpgradeWord *>(world.Get<InProgressUpgradeWord>(entity)));
+				result.state[entity.index] = {
+					static_cast<std::uint64_t>(entity.index),
+					static_cast<std::uint64_t>(entity.generation),
+					static_cast<std::uint64_t>(owners[row].value.index),
+					static_cast<std::uint64_t>(owners[row].value.generation),
+					static_cast<std::uint64_t>(ordinals[row].value),
+					completed[row].value,
+					inProgress[row].value};
+				++seen[entity.index];
+			}
+		});
+
+		BOOST_TEST(EntityCount > 8u);
+		BOOST_TEST(EntityCount > 512u);
+		BOOST_TEST(result.chunkCount > 8u);
+		for (std::size_t index = 0; index < EntityCount; ++index)
+		{
+			BOOST_TEST(seen[index] == 1u);
+			std::uint64_t expectedCompleted =
+				CompletedSeed ^ (static_cast<std::uint64_t>(index) * 0x9E3779B97F4A7C15ull);
+			std::uint64_t expectedInProgress =
+				InProgressSeed ^ (static_cast<std::uint64_t>(index) * 0xD1B54A32D192ED03ull);
+			const std::uint64_t bit = std::uint64_t{1} << (index % 64u);
+			for (std::uint64_t tick = 1; tick <= 6; ++tick)
+			{
+				expectedInProgress |= bit;
+				const std::uint64_t phase = static_cast<std::uint64_t>(index) + tick;
+				if ((phase % 3u) == 0u)
+				{
+					expectedInProgress &= ~bit;
+					expectedCompleted |= bit;
+				}
+				else if ((phase % 3u) == 1u)
+				{
+					expectedInProgress &= ~bit;
+					expectedCompleted &= ~bit;
+				}
+			}
+
+			const auto &state = result.state[index];
+			BOOST_TEST(state[0] == static_cast<std::uint64_t>(index));
+			BOOST_TEST(state[1] == 1u);
+			BOOST_TEST(state[2] == static_cast<std::uint64_t>(index));
+			BOOST_TEST(state[3] == 1u);
+			BOOST_TEST(state[4] == static_cast<std::uint64_t>(index));
+			BOOST_TEST(state[5] == expectedCompleted);
+			BOOST_TEST(state[6] == expectedInProgress);
+		}
+		return result;
+	};
+
+	const Snapshot oneWorker = run(1);
+	const Snapshot twoWorkers = run(2);
+	const Snapshot fourWorkers = run(4);
+	BOOST_CHECK(oneWorker.state == twoWorkers.state);
+	BOOST_CHECK(oneWorker.state == fourWorkers.state);
+	BOOST_TEST(oneWorker.chunkCount == twoWorkers.chunkCount);
+	BOOST_TEST(oneWorker.chunkCount == fourWorkers.chunkCount);
+}

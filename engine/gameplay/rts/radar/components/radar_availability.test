@@ -1,0 +1,33 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRadarAvailabilityComponents
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import engine.gameplay.rts.radar.components.radar_availability;
+
+using engine::gameplay::rts::radar::RadarAvailability;
+
+BOOST_AUTO_TEST_CASE(component_layout_is_plain_and_contiguous)
+{
+	static_assert(std::is_standard_layout_v<RadarAvailability>);
+	static_assert(std::is_trivially_copyable_v<RadarAvailability>);
+
+	BOOST_TEST(sizeof(RadarAvailability) == 12u);
+	BOOST_TEST(alignof(RadarAvailability) == alignof(std::int32_t));
+	BOOST_TEST(offsetof(RadarAvailability, producers) == 0u);
+	BOOST_TEST(offsetof(RadarAvailability, resistantProducers) == sizeof(std::int32_t));
+	BOOST_TEST(offsetof(RadarAvailability, suppressed) == (2 * sizeof(std::int32_t)));
+}
+
+BOOST_AUTO_TEST_CASE(component_metadata_is_stable_and_serializable)
+{
+	using Component = RadarAvailability;
+	BOOST_TEST(ecs::ComponentTraits<Component>::StableName
+		== "engine.gameplay.rts.radar.availability");
+	BOOST_TEST(ecs::ComponentTraits<Component>::Version == 1u);
+	BOOST_CHECK(static_cast<std::uint8_t>(ecs::ComponentTraits<Component>::Persistence)
+		== static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}

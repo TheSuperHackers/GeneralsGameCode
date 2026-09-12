@@ -1,0 +1,72 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <vector>
+import games.generalszh.gameplay.capture.systems.capture_upgrade_activation_system;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+using namespace std::chrono_literals;
+using namespace generalszh::capture;
+using namespace generalszh::production;
+using engine::gameplay::combat::LifeState;
+using engine::gameplay::rts::economy::ResourceBalance;
+
+void Register(ecs::World &world)
+{
+    world.RegisterComponent<CaptureCapability>();world.RegisterComponent<CaptureRecharge>();
+    world.RegisterComponent<ProducedUnit>();world.RegisterComponent<LifeState>();
+    world.RegisterComponent<ResearchedUpgrade>();world.RegisterComponent<generalszh::upgrades::UpgradeInstanceStatus>();
+    world.RegisterComponent<ResourceBalance>();world.FinalizeComponents();
+}
+}
+
+BOOST_AUTO_TEST_CASE(player_research_activates_live_matching_capture_once_and_respects_generation)
+{
+    const engine::time::FixedStep step{1};
+    const std::array authored{
+        CaptureDefinition{0ms,0ms,0ms,10s,false,CaptureUpgradeBinding{7001}},
+        CaptureDefinition{0ms,0ms,0ms,10s,true,CaptureUpgradeBinding{7001}}};
+    const CaptureDefinitions definitions(step,authored);
+    ecs::World world;Register(world);
+    const auto account=world.Create<ResourceBalance>(),wrong=world.Create<ResourceBalance>();
+    const auto stale=world.Create<ResourceBalance>();world.Destroy(stale);const auto replacement=world.Create<ResourceBalance>();
+    const auto makeActor=[&](const std::uint32_t definition,const ecs::Entity owner) {
+        const auto entity=world.Create<CaptureCapability,CaptureRecharge,ProducedUnit,LifeState>();
+        *world.Get<CaptureCapability>(entity)={definition,false};
+        *world.Get<CaptureRecharge>(entity)={0,true};
+        *world.Get<ProducedUnit>(entity)={ {},owner,0 };
+        return entity;
+    };
+    const auto falseActor=makeActor(0,account),readyActor=makeActor(1,account);
+    const auto deadActor=makeActor(0,account),wrongActor=makeActor(0,wrong),staleActor=makeActor(0,stale);
+    world.Get<LifeState>(deadActor)->alive=false;
+    const auto grant=world.Create<ResearchedUpgrade,generalszh::upgrades::UpgradeInstanceStatus>();
+    *world.Get<ResearchedUpgrade>(grant)={account,7001};
+    *world.Get<generalszh::upgrades::UpgradeInstanceStatus>(grant)={generalszh::upgrades::Status::Complete};
+    const auto incomplete=world.Create<ResearchedUpgrade,generalszh::upgrades::UpgradeInstanceStatus>();
+    *world.Get<ResearchedUpgrade>(incomplete)={wrong,7001};
+    *world.Get<generalszh::upgrades::UpgradeInstanceStatus>(incomplete)={generalszh::upgrades::Status::InProduction};
+    const auto staleGrant=world.Create<ResearchedUpgrade,generalszh::upgrades::UpgradeInstanceStatus>();
+    *world.Get<ResearchedUpgrade>(staleGrant)={stale,7001};
+    *world.Get<generalszh::upgrades::UpgradeInstanceStatus>(staleGrant)={generalszh::upgrades::Status::Complete};
+
+    CaptureUpgradeActivationSystem activation(world,definitions,64);
+    ecs::SystemRegistry registry;registry.Register(activation,ecs::SystemPhase::Simulation);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry);scheduler.Finalize(step);
+    scheduler.Execute({5,step});
+    BOOST_TEST(world.Get<CaptureCapability>(falseActor)->enabled);
+    BOOST_TEST(world.Get<CaptureRecharge>(falseActor)->readyAt==15u);
+    BOOST_TEST(world.Get<CaptureCapability>(readyActor)->enabled);
+    BOOST_TEST(world.Get<CaptureRecharge>(readyActor)->readyAt==5u);
+    BOOST_TEST(!world.Get<CaptureCapability>(deadActor)->enabled);
+    BOOST_TEST(!world.Get<CaptureCapability>(wrongActor)->enabled);
+    BOOST_TEST(!world.Get<CaptureCapability>(staleActor)->enabled);
+    BOOST_CHECK(world.Get<ProducedUnit>(staleActor)->account==stale);
+    BOOST_TEST(stale.index==replacement.index);
+    scheduler.Execute({6,step});
+    BOOST_TEST(world.Get<CaptureRecharge>(falseActor)->readyAt==15u);
+    BOOST_TEST(world.Get<CaptureRecharge>(readyActor)->readyAt==5u);
+}

@@ -1,0 +1,16 @@
+add_library(generalszh_visibility_content STATIC)
+target_sources(generalszh_visibility_content PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	visibility_definition.cppm)
+target_compile_features(generalszh_visibility_content PUBLIC cxx_std_23)
+set_property(TARGET generalszh_visibility_content PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_visibility_content PUBLIC generalszh_content_ini engine_gameplay_rts_visibility)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(visibility_definition.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_visibility_content_tests visibility_definition.test)
+	set_property(TARGET generalszh_visibility_content_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_visibility_content_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_visibility_content_tests PRIVATE generalszh_visibility_content
+		Boost::included_unit_test_framework)
+	add_test(NAME generalszh_visibility_content_tests COMMAND generalszh_visibility_content_tests)
+endif()

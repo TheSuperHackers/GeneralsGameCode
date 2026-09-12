@@ -1,0 +1,253 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsUpgradeExecution
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import engine.gameplay.rts.upgrades.components.upgrade_execution;
+import engine.ecs.scheduler.scheduler;
+import engine.time.simulation_time;
+
+using engine::gameplay::rts::upgrades::UpgradeExecutionState;
+
+namespace upgrade_execution_test
+{
+constexpr std::size_t EntityCount = 4096;
+constexpr std::uint64_t TickCount = 7;
+
+struct OtherColumn
+{
+	std::uint64_t value{0};
+};
+
+std::vector<std::vector<std::uint8_t>> MakeExpectedFlags()
+{
+	std::vector<std::vector<std::uint8_t>> flags(
+		static_cast<std::size_t>(TickCount + 1), std::vector<std::uint8_t>(EntityCount, 0));
+	for (std::uint64_t tick = 1; tick <= TickCount; ++tick)
+	{
+		for (std::size_t index = 0; index < EntityCount; ++index)
+		{
+			const std::size_t lane =
+				(index * 37u + static_cast<std::size_t>(tick) * 11u) % 19u;
+			flags[static_cast<std::size_t>(tick)][index] =
+				static_cast<std::uint8_t>(lane < 7u || index % 64u == tick % 64u);
+		}
+	}
+	return flags;
+}
+
+struct UpgradeExecutionStep
+{
+	using Query = ecs::Query<ecs::Write<UpgradeExecutionState>, ecs::Read<OtherColumn>>;
+
+	const std::vector<std::vector<std::uint8_t>> *expectedFlags{nullptr};
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		auto states = chunk.Get<UpgradeExecutionState>();
+		const auto other = chunk.Get<OtherColumn>();
+		const auto entities = chunk.Entities();
+		const auto &flags = (*expectedFlags)[static_cast<std::size_t>(context.Time().Tick())];
+
+		for (std::size_t row = 0; row < states.size(); ++row)
+		{
+			states[row].executed = flags[entities[row].index] != 0;
+			(void)other[row];
+		}
+	}
+};
+
+} // namespace upgrade_execution_test
+
+namespace ecs
+{
+template<> struct ComponentTraits<upgrade_execution_test::OtherColumn>
+{
+	static constexpr std::string_view StableName = "tests.rts.upgrades.other_column";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<> struct SystemTraits<upgrade_execution_test::UpgradeExecutionStep>
+{
+	static constexpr std::string_view StableName = "tests.rts.upgrades.upgrade_execution_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace upgrade_execution_test
+{
+
+struct Snapshot
+{
+	std::vector<std::array<std::uint64_t, 4>> state;
+	std::size_t chunkCount{0};
+};
+
+Snapshot RunScheduledExecution(const std::size_t workerCount)
+{
+	const auto expectedFlags = MakeExpectedFlags();
+	ecs::World world{ecs::WorldConfig{128}};
+	world.RegisterComponent<UpgradeExecutionState>();
+	world.RegisterComponent<OtherColumn>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(EntityCount);
+	std::vector<std::uint64_t> otherValues;
+	otherValues.reserve(EntityCount);
+	for (std::size_t index = 0; index < EntityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<UpgradeExecutionState, OtherColumn>();
+		*world.Get<UpgradeExecutionState>(entity) = UpgradeExecutionState{index % 2u == 0u};
+		const std::uint64_t otherValue =
+			0xC001D00D5EED0000ull ^ (static_cast<std::uint64_t>(index) * 0x9E3779B97F4A7C15ull);
+		*world.Get<OtherColumn>(entity) = OtherColumn{otherValue};
+		entities.push_back(entity);
+		otherValues.push_back(otherValue);
+	}
+
+	UpgradeExecutionStep system{&expectedFlags};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workerCount});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+
+	std::size_t finalChunkCount = 0;
+	for (std::uint64_t tick = 1; tick <= TickCount; ++tick)
+	{
+		const engine::time::SimulationTime time{tick, step};
+		BOOST_TEST(time.Tick() == tick);
+		BOOST_TEST(time.Step().TicksPerSecond() == 30u);
+		scheduler.Execute(time);
+
+		std::size_t chunkCount = 0;
+		std::vector<std::size_t> seen(EntityCount, 0);
+		ecs::Query<ecs::Read<UpgradeExecutionState>, ecs::Read<OtherColumn>> query(world);
+		query.ForEachChunk([&](auto chunk) {
+			++chunkCount;
+			const auto states = chunk.template Get<UpgradeExecutionState>();
+			const auto other = chunk.template Get<OtherColumn>();
+			const auto chunkEntities = chunk.Entities();
+			BOOST_TEST(states.size() == other.size());
+			BOOST_TEST(states.size() == chunkEntities.size());
+
+			const auto stateBegin = reinterpret_cast<std::uintptr_t>(states.data());
+			const auto stateEnd = stateBegin + states.size() * sizeof(UpgradeExecutionState);
+			const auto otherBegin = reinterpret_cast<std::uintptr_t>(other.data());
+			const auto otherEnd = otherBegin + other.size() * sizeof(OtherColumn);
+			BOOST_CHECK(stateEnd <= otherBegin || otherEnd <= stateBegin);
+
+			for (std::size_t row = 0; row < states.size(); ++row)
+			{
+				if (row != 0)
+				{
+					BOOST_CHECK(&states[row] == &states[row - 1] + 1);
+					BOOST_CHECK(&other[row] == &other[row - 1] + 1);
+				}
+
+				const ecs::Entity entity = chunkEntities[row];
+				BOOST_REQUIRE(entity.index < EntityCount);
+				BOOST_TEST(states[row].executed ==
+					(expectedFlags[static_cast<std::size_t>(tick)][entity.index] != 0));
+				BOOST_TEST(other[row].value == otherValues[entity.index]);
+				BOOST_CHECK(&states[row] == world.Get<UpgradeExecutionState>(entity));
+				BOOST_CHECK(&other[row] == world.Get<OtherColumn>(entity));
+				++seen[entity.index];
+			}
+		});
+
+		BOOST_TEST(chunkCount > 1u);
+		for (std::size_t index = 0; index < EntityCount; ++index)
+		{
+			BOOST_TEST(seen[index] == 1u);
+			BOOST_TEST(world.Get<UpgradeExecutionState>(entities[index])->executed ==
+				(expectedFlags[static_cast<std::size_t>(tick)][index] != 0));
+			BOOST_TEST(world.Get<OtherColumn>(entities[index])->value == otherValues[index]);
+		}
+		finalChunkCount = chunkCount;
+	}
+
+	Snapshot result;
+	result.chunkCount = finalChunkCount;
+	result.state.reserve(EntityCount);
+	for (const ecs::Entity entity : entities)
+	{
+		result.state.push_back({
+			static_cast<std::uint64_t>(entity.index),
+			static_cast<std::uint64_t>(entity.generation),
+			static_cast<std::uint64_t>(world.Get<UpgradeExecutionState>(entity)->executed),
+			world.Get<OtherColumn>(entity)->value});
+	}
+	return result;
+}
+} // namespace upgrade_execution_test
+
+BOOST_AUTO_TEST_CASE(upgrade_execution_state_is_plain_defaulted_data_with_stable_metadata)
+{
+	static_assert(std::is_standard_layout_v<UpgradeExecutionState>);
+	static_assert(std::is_trivially_copyable_v<UpgradeExecutionState>);
+	static_assert(std::is_default_constructible_v<UpgradeExecutionState>);
+	static_assert(std::is_aggregate_v<UpgradeExecutionState>);
+	static_assert(std::is_same_v<decltype(UpgradeExecutionState::executed), bool>);
+
+	BOOST_TEST(sizeof(UpgradeExecutionState) == sizeof(bool));
+	BOOST_TEST(alignof(UpgradeExecutionState) == alignof(bool));
+	BOOST_TEST(offsetof(UpgradeExecutionState, executed) == 0u);
+
+	const UpgradeExecutionState state;
+	BOOST_TEST(!state.executed);
+	const UpgradeExecutionState executed{true};
+	BOOST_TEST(executed.executed);
+
+	BOOST_TEST(ecs::ComponentTraits<UpgradeExecutionState>::StableName ==
+		std::string_view{"engine.gameplay.rts.upgrades.execution_state"});
+	BOOST_TEST(ecs::ComponentTraits<UpgradeExecutionState>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<UpgradeExecutionState>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}
+
+BOOST_AUTO_TEST_CASE(reset_only_changes_the_marker_and_does_not_undo_caller_owned_effects)
+{
+	UpgradeExecutionState state{true};
+	std::uint64_t callerOwnedAppliedEffect = 37;
+
+	state.executed = false;
+
+	BOOST_TEST(!state.executed);
+	BOOST_TEST(callerOwnedAppliedEffect == 37u);
+	callerOwnedAppliedEffect += 5;
+	BOOST_TEST(callerOwnedAppliedEffect == 42u);
+}
+
+BOOST_AUTO_TEST_CASE(real_ecs_columns_and_scheduler_are_deterministic_across_workers)
+{
+	const auto oneWorker = upgrade_execution_test::RunScheduledExecution(1);
+	const auto twoWorkers = upgrade_execution_test::RunScheduledExecution(2);
+	const auto fourWorkers = upgrade_execution_test::RunScheduledExecution(4);
+
+	BOOST_TEST(oneWorker.chunkCount > 1u);
+	BOOST_TEST(oneWorker.chunkCount == twoWorkers.chunkCount);
+	BOOST_TEST(oneWorker.chunkCount == fourWorkers.chunkCount);
+	BOOST_CHECK(oneWorker.state == twoWorkers.state);
+	BOOST_CHECK(oneWorker.state == fourWorkers.state);
+
+	BOOST_REQUIRE(oneWorker.state.size() == upgrade_execution_test::EntityCount);
+	for (std::size_t index = 0; index < oneWorker.state.size(); ++index)
+	{
+		BOOST_TEST(oneWorker.state[index][0] == static_cast<std::uint64_t>(index));
+		BOOST_TEST(oneWorker.state[index][1] == 1u);
+		BOOST_TEST(oneWorker.state[index][3] ==
+			(0xC001D00D5EED0000ull ^
+				(static_cast<std::uint64_t>(index) * 0x9E3779B97F4A7C15ull)));
+	}
+}

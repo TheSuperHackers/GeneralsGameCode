@@ -1,0 +1,151 @@
+#define BOOST_TEST_MODULE TransportContainmentSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <vector>
+import games.generalszh.gameplay.containment.systems.transport_containment_system;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+using namespace engine::gameplay::containment;
+using namespace engine::gameplay::combat;
+using engine::gameplay::navigation::GridPosition;
+using generalszh::production::ProducedUnit;
+void Register(ecs::World &world)
+{
+    world.RegisterComponent<PassengerMembership>();world.RegisterComponent<PassengerSlots>();
+    world.RegisterComponent<ContainmentTask>();
+    world.RegisterComponent<TransportBinding>();world.RegisterComponent<TransportState>();
+    world.RegisterComponent<GridPosition>();world.RegisterComponent<engine::gameplay::navigation::MoveGoal>();
+    world.RegisterComponent<engine::gameplay::navigation::MoveRangeGoal>();
+    world.RegisterComponent<engine::gameplay::navigation::MoveCredit>();world.RegisterComponent<ProducedUnit>();
+    world.RegisterComponent<Health>();world.RegisterComponent<HealthCapacity>();
+    world.RegisterComponent<LifeState>();world.RegisterComponent<PendingDamage>();world.RegisterComponent<DamageResult>();
+    world.RegisterComponent<generalszh::construction::Builder>();
+    world.RegisterComponent<engine::gameplay::rts::harvesting::HarvestPolicy>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>();
+    world.FinalizeComponents();
+}
+ecs::Entity Actor(ecs::World &world,ecs::Entity owner,bool carrier)
+{
+    const auto entity=world.Create<GridPosition,ProducedUnit,Health,HealthCapacity,LifeState,PendingDamage,DamageResult,
+        ContainmentTask,engine::gameplay::navigation::MoveGoal,engine::gameplay::navigation::MoveCredit>();
+    world.Get<ProducedUnit>(entity)->account=owner;
+    *world.Get<Health>(entity)={1000};*world.Get<HealthCapacity>(entity)={1000};
+    if(carrier) {world.Add<TransportBinding>(entity);world.Add<TransportState>(entity);}
+    else {world.Add<PassengerMembership>(entity);world.Add<PassengerSlots>(entity);}
+    return entity;
+}
+
+BOOST_AUTO_TEST_CASE(invalid_direct_receipt_still_interrupts_prior_boarding_task)
+{
+    const engine::time::FixedStep step{30};
+    const std::array authored{TransportDefinition{2,{},1,10}};
+    const TransportDefinitions definitions(step,authored);
+    ecs::World world; Register(world); const auto owner=world.Create<ProducedUnit>();
+    const auto carrier=Actor(world,owner,true), passenger=Actor(world,owner,false);
+    world.Get<GridPosition>(carrier)->cell=3; world.Get<GridPosition>(passenger)->cell=0;
+    ContainmentBatch batch(4); HealthSystem health;
+    generalszh::containment::TransportContainmentSystem containment(world,definitions,batch);
+    ecs::SystemRegistry registry; registry.Register(containment); registry.Register(health); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry); scheduler.Finalize(step);
+    const std::array enter{ContainmentInput{ContainmentAction::Enter,passenger,carrier}};
+    batch.SetInputs(enter); scheduler.Execute({0,step});
+    BOOST_CHECK(batch.Results()[0].outcome==ContainmentOutcome::BoardingQueued);
+    BOOST_CHECK(world.Get<ContainmentTask>(passenger)->carrier==carrier);
+    BOOST_TEST(world.Get<engine::gameplay::navigation::MoveGoal>(passenger)->cell==3u);
+
+    const std::array ordinaryOverride{passenger}; containment.SetInterruptions(ordinaryOverride);
+    const std::array invalid{ContainmentInput{static_cast<ContainmentAction>(99),passenger,carrier}};
+    batch.SetInputs(invalid); scheduler.Execute({1,step});
+    BOOST_CHECK(batch.Results()[0].outcome==ContainmentOutcome::InvalidAction);
+    BOOST_CHECK(!world.Get<ContainmentTask>(passenger)->carrier.IsValid());
+    BOOST_TEST(world.Get<engine::gameplay::navigation::MoveGoal>(passenger)->cell==engine::gameplay::navigation::InvalidCell);
+}
+}
+
+BOOST_AUTO_TEST_CASE(ordered_capacity_death_health_barrier_matches_workers)
+{
+    const auto run=[](unsigned workers) {
+        const engine::time::FixedStep step{30};
+        const std::array authored{TransportDefinition{5,{},1,10}};
+        const TransportDefinitions definitions(step,authored);
+        ecs::World world(ecs::WorldConfig{256});Register(world);
+        const auto owner=world.Create<ProducedUnit>();
+        ContainmentBatch batch(600);
+        std::vector<ecs::Entity> carriers,passengers;
+        std::vector<ContainmentInput> inputs;
+        for(unsigned i=0;i<80;++i) {
+            const auto carrier=Actor(world,owner,true);carriers.push_back(carrier);
+            for(unsigned j=0;j<6;++j) {
+                const auto passenger=Actor(world,owner,false);passengers.push_back(passenger);
+                inputs.push_back({ContainmentAction::Enter,passenger,carrier});
+            }
+        }
+        HealthSystem health;
+        generalszh::containment::TransportContainmentSystem containment(world,definitions,batch,2048);
+        ecs::SystemRegistry registry;registry.Register(containment);registry.Register(health);registry.Finalize(world.Components());
+        ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{workers});scheduler.Finalize(step);
+        batch.SetInputs(inputs);scheduler.Execute({0,step});
+        for(unsigned i=0;i<passengers.size();++i) {
+            BOOST_CHECK(batch.Results()[i].outcome==(i%6==5?ContainmentOutcome::Full:ContainmentOutcome::Entered));
+            BOOST_TEST(IsContained(*world.Get<PassengerMembership>(passengers[i]))==(i%6!=5));
+            BOOST_CHECK(world.Get<ProducedUnit>(passengers[i])->account==owner);
+            BOOST_TEST(world.Get<Health>(passengers[i])->current==1000u);
+        }
+        for(const auto carrier:carriers) world.Get<PendingDamage>(carrier)->quantity=1000;
+        scheduler.Execute({1,step});
+        BOOST_CHECK(world.Get<PassengerMembership>(passengers[0])->phase==ContainmentPhase::AwaitingEvacuation);
+        BOOST_TEST(world.Get<Health>(passengers[0])->current==1000u);
+        BOOST_TEST(world.Get<PendingDamage>(passengers[0])->quantity==100u);
+        const std::array exit{ContainmentInput{ContainmentAction::Exit,passengers[0],carriers[0]}};
+        batch.SetInputs(exit);scheduler.Execute({2,step});
+        BOOST_CHECK(batch.Results()[0].outcome==ContainmentOutcome::AwaitingEvacuation);
+        BOOST_TEST(!IsContained(*world.Get<PassengerMembership>(passengers[0])));
+        scheduler.Execute({3,step}); // No repeated carrier-death damage.
+        std::vector<std::uint64_t> result;
+        for(unsigned i=0;i<passengers.size();++i) {
+            const auto entity=passengers[i];
+            BOOST_TEST(world.Get<Health>(entity)->current==(i%6==5?1000u:900u));
+            const auto member=*world.Get<PassengerMembership>(entity);
+            result.insert(result.end(),{entity.index,entity.generation,world.Get<Health>(entity)->current,
+                world.Get<PendingDamage>(entity)->quantity,static_cast<std::uint64_t>(member.phase),
+                member.carrier.index,member.carrier.generation,member.evacuationTick});
+        }
+        return result;
+    };
+    const auto expected=run(1);BOOST_CHECK(run(2)==expected);BOOST_CHECK(run(4)==expected);
+}
+
+BOOST_AUTO_TEST_CASE(exit_cooldown_unsupported_builder_and_stale_owner)
+{
+    using namespace std::chrono_literals;
+    const engine::time::FixedStep step{30};
+    const std::array authored{TransportDefinition{5,100ms,1,10}};
+    const TransportDefinitions definitions(step,authored);
+    ecs::World world;Register(world);const auto owner=world.Create<ProducedUnit>();
+    const auto carrier=Actor(world,owner,true),a=Actor(world,owner,false),b=Actor(world,owner,false);
+    const auto builder=Actor(world,owner,false);world.Add<generalszh::construction::Builder>(builder);
+    ContainmentBatch batch(8);HealthSystem health;
+    generalszh::containment::TransportContainmentSystem containment(world,definitions,batch);
+    ecs::SystemRegistry registry;registry.Register(health);registry.Register(containment);registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry);scheduler.Finalize(step);
+    const std::array enter{ContainmentInput{ContainmentAction::Enter,a,carrier},
+        ContainmentInput{ContainmentAction::Enter,b,carrier},ContainmentInput{ContainmentAction::Enter,builder,carrier}};
+    batch.SetInputs(enter);scheduler.Execute({0,step});
+    BOOST_CHECK(batch.Results()[2].outcome==ContainmentOutcome::UnsupportedActor);
+    const std::array exits{ContainmentInput{ContainmentAction::Exit,a,carrier},ContainmentInput{ContainmentAction::Exit,b,carrier}};
+    batch.SetInputs(exits);scheduler.Execute({1,step});
+    BOOST_CHECK(batch.Results()[0].outcome==ContainmentOutcome::Exited);
+    BOOST_CHECK(batch.Results()[1].outcome==ContainmentOutcome::ExitBusy);
+    world.Destroy(owner);
+    const std::array stale{ContainmentInput{ContainmentAction::Enter,a,carrier}};
+    batch.SetInputs(stale);scheduler.Execute({2,step});
+    BOOST_CHECK(batch.Results()[0].outcome==ContainmentOutcome::WrongOwner);
+    // Removal must invalidate the previously touched snapshot slot.
+    world.Destroy(carrier);scheduler.Execute({3,step});
+    BOOST_TEST(!IsContained(*world.Get<PassengerMembership>(b)));
+    scheduler.Execute({4,step}); // Empty carrier population after touched-slot cleanup.
+}

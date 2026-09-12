@@ -1,0 +1,29 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <vector>
+#include <stdexcept>
+import engine.gameplay.rts.production.definitions.prerequisite_definition;
+using namespace engine::gameplay::rts::production;
+
+BOOST_AUTO_TEST_CASE(compiled_definition_canonicalizes_alternatives_and_preserves_empty_baseline)
+{
+    const PrerequisiteDefinition empty;
+    BOOST_TEST(empty.Empty());
+    const std::array groups{PrerequisiteGroup{{7, 3, 7}}, PrerequisiteGroup{{9}}};
+    const PrerequisiteDefinition definition(groups);
+    BOOST_TEST(!definition.Empty());
+    BOOST_REQUIRE_EQUAL(definition.Groups().size(), 2u);
+    BOOST_TEST(definition.Groups()[0].first == 0u);
+    BOOST_TEST(definition.Groups()[0].count == 2u);
+    BOOST_TEST(definition.Alternatives()[0] == 3u);
+    BOOST_TEST(definition.Alternatives()[1] == 7u);
+}
+
+BOOST_AUTO_TEST_CASE(compiled_definition_rejects_empty_groups_and_uint32_range_overflow)
+{
+    BOOST_CHECK_THROW(PrerequisiteDefinition{std::array{PrerequisiteGroup{{}}}}, std::invalid_argument);
+    const std::array groups{PrerequisiteGroup{{1}}, PrerequisiteGroup{{2}}};
+    const PrerequisiteDefinition definition(groups);
+    BOOST_TEST(definition.Groups().size() == 2u);
+}

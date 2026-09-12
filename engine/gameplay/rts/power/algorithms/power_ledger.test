@@ -1,0 +1,139 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <limits>
+#include <string_view>
+#include <vector>
+
+import engine.gameplay.rts.power.algorithms.power_ledger;
+import engine.ecs.scheduler.scheduler;
+
+using engine::gameplay::rts::power::ApplyConsumption;
+using engine::gameplay::rts::power::ApplyProduction;
+using engine::gameplay::rts::power::CheckedAdd;
+using engine::gameplay::rts::power::CheckedNegate;
+using engine::gameplay::rts::power::PowerLedger;
+
+namespace power_ledger_test
+{
+// Only the generic ledger arithmetic is parallel here, never legacy callbacks.
+struct LedgerStep
+{
+	using Query = ecs::Query<ecs::Write<PowerLedger>>;
+	void Execute(Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		for (auto &ledger : chunk.Get<PowerLedger>())
+		{
+			ApplyProduction(ledger, 7);
+			ApplyConsumption(ledger, 3);
+		}
+	}
+};
+}
+namespace ecs
+{
+template<> struct SystemTraits<power_ledger_test::LedgerStep>
+{
+	static constexpr std::string_view StableName = "tests.power.ledger_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(contiguous_ledger_steps_match_complete_state_across_worker_counts)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world{ecs::WorldConfig{256}};
+		world.RegisterComponent<PowerLedger>();
+		world.FinalizeComponents();
+		std::vector<ecs::Entity> entities;
+		for (std::int32_t index = 0; index < 4096; ++index)
+		{
+			const auto entity = world.Create<PowerLedger>();
+			*world.Get<PowerLedger>(entity) = {index, -index};
+			entities.push_back(entity);
+		}
+		power_ledger_test::LedgerStep system;
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		for (std::uint64_t tick = 1; tick <= 4; ++tick)
+			scheduler.Execute(engine::time::SimulationTime{tick, step});
+		std::vector<std::array<std::int64_t, 4>> result;
+		for (std::size_t index = 0; index < entities.size(); ++index)
+		{
+			const auto entity = entities[index];
+			const auto ledger = *world.Get<PowerLedger>(entity);
+			BOOST_TEST(ledger.production == static_cast<std::int32_t>(index) + 28);
+			BOOST_TEST(ledger.consumption == -static_cast<std::int32_t>(index) + 12);
+			result.push_back({entity.index, entity.generation, ledger.production, ledger.consumption});
+		}
+		std::size_t chunks = 0;
+		ecs::Query<ecs::Read<PowerLedger>> query(world);
+		query.ForEachChunk([&](auto chunk) {
+			const auto rows = chunk.template Get<PowerLedger>();
+			for (std::size_t row = 0; row < rows.size(); ++row)
+				BOOST_CHECK(&rows[row] == world.Get<PowerLedger>(chunk.Entities()[row]));
+			++chunks;
+		});
+		BOOST_TEST(chunks > 1u);
+		BOOST_TEST(sizeof(PowerLedger) == 8u);
+		return result;
+	};
+	const auto one = run(1);
+	BOOST_CHECK(run(2) == one);
+	BOOST_CHECK(run(4) == one);
+}
+
+BOOST_AUTO_TEST_CASE(ledger_updates_are_checked_and_channel_specific)
+{
+	PowerLedger ledger;
+	ApplyProduction(ledger, 17);
+	ApplyConsumption(ledger, 4);
+
+	BOOST_TEST(ledger.production == 17);
+	BOOST_TEST(ledger.consumption == 4);
+}
+
+BOOST_AUTO_TEST_CASE(negative_intermediate_totals_are_representable)
+{
+	PowerLedger ledger{10, 4};
+	ApplyProduction(ledger, -17);
+	ApplyConsumption(ledger, -9);
+
+	BOOST_TEST(ledger.production == -7);
+	BOOST_TEST(ledger.consumption == -5);
+}
+
+BOOST_AUTO_TEST_CASE(debug_range_predicates_cover_overflow_without_executing_invalid_debug_math)
+{
+	using engine::gameplay::rts::power::CanAdd;
+	constexpr auto maximum = (std::numeric_limits<std::int32_t>::max)();
+	constexpr auto minimum = (std::numeric_limits<std::int32_t>::min)();
+	BOOST_TEST(!CanAdd(maximum, 1));
+	BOOST_TEST(!CanAdd(minimum, -1));
+	BOOST_TEST(CanAdd(maximum, 0));
+	BOOST_TEST(CanAdd(minimum, 0));
+	BOOST_TEST(CanAdd(maximum, minimum));
+#if defined(NDEBUG)
+	// Release must contain no numeric guard and no signed-overflow UB.
+	BOOST_TEST(CheckedAdd(maximum, 1) == minimum);
+	BOOST_TEST(CheckedAdd(minimum, -1) == maximum);
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(extreme_negation_is_defined_and_checked)
+{
+	BOOST_TEST(CheckedNegate(17) == -17);
+	BOOST_TEST(CheckedNegate(-17) == 17);
+	BOOST_TEST(CheckedNegate((std::numeric_limits<std::int32_t>::max)())
+		== -(std::numeric_limits<std::int32_t>::max)());
+	BOOST_TEST(!engine::gameplay::rts::power::CanNegate((std::numeric_limits<std::int32_t>::min)()));
+#if defined(NDEBUG)
+	BOOST_TEST(CheckedNegate((std::numeric_limits<std::int32_t>::min)()) == (std::numeric_limits<std::int32_t>::min)());
+#endif
+}

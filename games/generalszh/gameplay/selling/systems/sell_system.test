@@ -1,0 +1,198 @@
+#define BOOST_TEST_MODULE GeneralsZHSellSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <limits>
+#include <optional>
+#include <span>
+#include <vector>
+import games.generalszh.gameplay.selling.systems.sell_system;
+import games.generalszh.gameplay.production.registration.production_registration;
+import engine.gameplay.combat.inputs.health_input_system;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh;
+using namespace generalszh::selling;
+using namespace std::chrono_literals;
+namespace
+{
+using Balance=engine::gameplay::rts::economy::ResourceBalance;
+using Health=engine::gameplay::combat::Health;
+using Life=engine::gameplay::combat::LifeState;
+using Damage=engine::gameplay::combat::DamageInput;
+struct SellingFixture
+{
+    engine::time::FixedStep step{10};
+    std::array<construction::BuildingDefinition,1> buildings{{{1,101,0ms,100}}};
+    construction::BuildingCatalog buildingCatalog{buildings,step};
+    SellCatalog catalog;
+    SellBatch batch;
+    SellSystem sell;
+    ecs::World world;
+    engine::gameplay::combat::HealthInputSystem healthInput{world};
+    engine::gameplay::combat::HealthSystem health;
+    engine::gameplay::combat::HealingSystem healing;
+    BuildBatch builds;
+    power::PowerFrame powerFrame;
+    std::optional<production::BuildCatalog> buildCatalog;
+    std::optional<production::ProductionAdmissionSystem> admission;
+    std::optional<production::ProductionSystem> production;
+    std::optional<production::ProductionExitSystem> exits;
+    ecs::SystemRegistry registry;
+    ecs::Scheduler scheduler;
+    std::size_t capacity;
+    ecs::Entity account;
+    SellingFixture(SellDefinition definition={1,200ms},std::size_t workers=2,std::size_t capacity=64)
+        : catalog(buildingCatalog,std::span<const SellDefinition>{&definition,1}),batch(capacity,capacity),sell(catalog,batch,capacity),
+          builds(capacity),scheduler(world,registry,engine::jobs::JobSystemConfig{workers}),capacity(capacity)
+    {
+        production::RegisterProductionComponents(world); RegisterSellComponents(world);
+        world.RegisterComponent<economy::IncomeHistory>(); world.FinalizeComponents();
+        const std::array units{production::BuildDefinition{1,20,10s}};
+        buildCatalog.emplace(world,units,step); admission.emplace(world,*buildCatalog,builds);
+        production.emplace(world,builds,powerFrame);
+        exits.emplace(world,builds);
+        engine::gameplay::combat::RegisterHealthSystems(registry,healthInput,health,healing);
+        registry.Register(sell); production::RegisterProductionSystems(registry,*admission,*production,*exits);
+        registry.OrderBefore<engine::gameplay::combat::HealingSystem,SellSystem>();
+        registry.OrderBefore<SellSystem,production::ProductionAdmissionSystem>();
+        registry.Finalize(world.Components()); scheduler.Finalize(step);
+        account=world.Create<Balance,economy::IncomeHistory>(); world.Get<Balance>(account)->quantity=1000;
+    }
+    ecs::Entity Structure(bool factory=false)
+    {
+        ecs::Entity entity;
+        if (factory) entity=production::CreateProducer(world,ProductionBoundaryState::Ready,capacity,account,9,100);
+        else
+        {
+            entity=world.Create<Health,Life,engine::gameplay::combat::PendingDamage,engine::gameplay::combat::DamageResult,
+                engine::gameplay::combat::HealthCapacity,engine::gameplay::combat::PendingHealing,engine::gameplay::combat::HealingResult>();
+            world.Get<Health>(entity)->current=100; world.Get<engine::gameplay::combat::HealthCapacity>(entity)->maximum=100;
+        }
+        world.Add<construction::Structure>(entity); *world.Get<construction::Structure>(entity)={account,1,factory?9u:0u,0,true};
+        world.Add<SaleState>(entity); world.Add<SaleEligibility>(entity); world.Get<SaleEligibility>(entity)->allowed=true;
+        return entity;
+    }
+    void Tick(std::uint64_t tick,std::span<const SellRequest> sales={},std::span<const Damage> damage={})
+    {
+        batch.SetInputs(sales); healthInput.SetInputs(damage); scheduler.Execute({tick,step});
+    }
+};
+}
+BOOST_AUTO_TEST_CASE(selling_refunds_production_now_and_structure_later_without_income_or_invulnerability)
+{
+    SellingFixture fixture;
+    const auto structure=fixture.Structure(true);
+    const auto receipt=production::EnqueueBuild(fixture.world,ProductionBoundaryState::Ready,*fixture.buildCatalog,
+        fixture.capacity,structure,1);
+    BOOST_REQUIRE(receipt.status==BuildAcceptance::Accepted);
+    BOOST_TEST(fixture.world.Get<Balance>(fixture.account)->quantity==980u);
+    const std::array sales{SellRequest{structure,fixture.account},SellRequest{structure,fixture.account}};
+    fixture.Tick(10,sales);
+    BOOST_CHECK(fixture.batch.Receipts()[0].status==SellAcceptance::Accepted);
+    BOOST_CHECK(fixture.batch.Receipts()[1].status==SellAcceptance::AlreadySelling);
+    BOOST_TEST(fixture.world.IsAlive(structure)); BOOST_TEST(fixture.world.Get<Life>(structure)->alive);
+    BOOST_TEST(!fixture.world.Get<production::Producer>(structure)->active);
+    BOOST_TEST(!fixture.world.IsAlive(receipt.order)); BOOST_TEST(fixture.world.Get<Balance>(fixture.account)->quantity==1000u);
+    BOOST_TEST(fixture.world.Get<SaleState>(structure)->deadline==12u);
+    BOOST_TEST(fixture.batch.Results().empty());
+    const std::array damage{Damage{structure,40}}; fixture.Tick(11,{},damage);
+    BOOST_TEST(fixture.world.Get<Health>(structure)->current==60u); BOOST_TEST(fixture.world.Get<Life>(structure)->alive);
+    fixture.Tick(12); BOOST_TEST(!fixture.world.IsAlive(structure));
+    BOOST_REQUIRE(fixture.batch.Results().size()==1u); BOOST_TEST(fixture.batch.Results()[0].refunded==50u);
+    BOOST_TEST(fixture.world.Get<Balance>(fixture.account)->quantity==1050u);
+    BOOST_TEST(fixture.world.Get<economy::IncomeHistory>(fixture.account)->total==0u);
+    fixture.Tick(13); BOOST_TEST(fixture.batch.Results().empty()); BOOST_TEST(fixture.world.Get<Balance>(fixture.account)->quantity==1050u);
+}
+BOOST_AUTO_TEST_CASE(sale_rejects_incomplete_armed_mobile_supply_foreign_dead_and_stale_signatures)
+{
+    SellingFixture f;
+    const auto incomplete=f.Structure(),armed=f.Structure(),mobile=f.Structure(),supply=f.Structure();
+    const auto foreign=f.Structure(),dead=f.Structure(),disabled=f.Structure(),stale=f.Structure(),missing=f.Structure();
+    f.world.Get<construction::Structure>(incomplete)->complete=false;
+    f.world.Add<engine::gameplay::combat::WeaponDefinition>(armed);
+    f.world.Add<engine::gameplay::navigation::MoveSpeed>(mobile);
+    f.world.Add<engine::gameplay::rts::harvesting::SupplyDropoff>(supply);
+    f.world.Get<Life>(dead)->alive=false; f.world.Get<SaleEligibility>(disabled)->allowed=false;
+    f.world.Destroy(stale); f.world.Remove<SaleState>(missing);
+    const auto replacement=f.Structure(); BOOST_CHECK(replacement!=stale);
+    const std::array requests{SellRequest{incomplete,f.account},SellRequest{armed,f.account},SellRequest{mobile,f.account},
+        SellRequest{supply,f.account},SellRequest{foreign,{}},SellRequest{dead,f.account},SellRequest{disabled,f.account},
+        SellRequest{stale,f.account},SellRequest{missing,f.account}};
+    f.Tick(0,requests); const auto receipts=f.batch.Receipts(); BOOST_REQUIRE(receipts.size()==requests.size());
+    for(std::size_t i=0;i<4;++i) BOOST_CHECK(receipts[i].status==SellAcceptance::UnsupportedSignature);
+    BOOST_CHECK(receipts[4].status==SellAcceptance::WrongOwner); BOOST_CHECK(receipts[5].status==SellAcceptance::Dead);
+    BOOST_CHECK(receipts[6].status==SellAcceptance::Ineligible); BOOST_CHECK(receipts[7].status==SellAcceptance::InvalidTarget);
+    BOOST_CHECK(receipts[8].status==SellAcceptance::InvalidTarget); BOOST_TEST(f.batch.Results().empty());
+    BOOST_TEST(f.world.Get<Balance>(f.account)->quantity==1000u);
+}
+BOOST_AUTO_TEST_CASE(logical_death_and_external_deletion_cancel_sale_without_refund)
+{
+    SellingFixture f; const auto dead=f.Structure(),removed=f.Structure();
+    const std::array requests{SellRequest{dead,f.account},SellRequest{removed,f.account}};
+    f.Tick(0,requests); f.world.Destroy(removed);
+    const std::array damage{Damage{dead,100}}; f.Tick(1,{},damage);
+    BOOST_REQUIRE(f.batch.Results().size()==1u); BOOST_CHECK(f.batch.Results()[0].outcome==SellOutcome::CancelledDeath);
+    BOOST_TEST(f.world.IsAlive(dead)); BOOST_CHECK(f.world.Get<SaleState>(dead)->phase==SalePhase::CancelledDeath);
+    f.Tick(2); BOOST_TEST(f.batch.Results().empty()); BOOST_TEST(f.world.Get<Balance>(f.account)->quantity==1000u);
+}
+BOOST_AUTO_TEST_CASE(sale_handles_lost_account_modular_refund_and_fatal_deadline)
+{
+    SellingFixture missing; const auto item=missing.Structure();
+    const std::array request{SellRequest{item,missing.account}};
+    missing.Tick(0,request); missing.world.Destroy(missing.account); missing.Tick(1); missing.Tick(2);
+    BOOST_REQUIRE(missing.batch.Results().size()==1u);
+    BOOST_CHECK(missing.batch.Results()[0].outcome==SellOutcome::MissingAccount); BOOST_TEST(!missing.world.IsAlive(item));
+    SellingFixture wrap({1,0ms}); const auto immediate=wrap.Structure();
+    wrap.world.Get<Balance>(wrap.account)->quantity=UINT32_MAX-10;
+    const std::array now{SellRequest{immediate,wrap.account}}; wrap.Tick(0,now);
+    BOOST_TEST(wrap.world.Get<Balance>(wrap.account)->quantity==39u);
+    SellingFixture horizon; const auto last=horizon.Structure(); const std::array late{SellRequest{last,horizon.account}};
+    BOOST_CHECK_THROW(horizon.Tick((std::numeric_limits<std::uint64_t>::max)()-1,late),std::overflow_error);
+    BOOST_TEST(horizon.scheduler.IsFailed()); BOOST_TEST(horizon.world.IsAlive(last));
+    BOOST_CHECK(horizon.world.Get<SaleState>(last)->phase==SalePhase::Idle);
+}
+BOOST_AUTO_TEST_CASE(sale_refunds_and_ordered_removals_are_identical_across_workers)
+{
+    auto run=[](std::size_t workers) {
+        constexpr std::size_t count=600; SellingFixture f({1,200ms},workers,count);
+        std::vector<SellRequest> requests; std::vector<Damage> damage; std::vector<std::uint64_t> snapshot;
+        for(std::size_t i=0;i<count;++i)
+        {
+            const auto entity=f.Structure(); requests.push_back({entity,f.account});
+            if(i%3==0) damage.push_back({entity,100});
+        }
+        f.Tick(0,requests);
+        for(const auto &receipt:f.batch.Receipts())
+        {
+            BOOST_CHECK(receipt.status==SellAcceptance::Accepted);
+            snapshot.insert(snapshot.end(),{receipt.structure.index,receipt.structure.generation});
+        }
+        for(std::uint64_t tick=1;tick<=3;++tick)
+        {
+            f.Tick(tick,{},tick==1?std::span<const Damage>{damage}:std::span<const Damage>{});
+            const auto results=f.batch.Results();
+            BOOST_TEST(results.size()==(tick==1?200u:tick==2?400u:0u));
+            for(std::size_t i=1;i<results.size();++i)
+                BOOST_TEST(results[i-1].structure.index>results[i].structure.index);
+            for(const auto &result:f.batch.Results())
+                snapshot.insert(snapshot.end(),{result.structure.index,result.structure.generation,result.account.index,
+                    result.tick,result.refunded,static_cast<std::uint64_t>(result.outcome)});
+            snapshot.push_back(f.world.Get<Balance>(f.account)->quantity);
+        }
+        BOOST_TEST(f.world.Get<Balance>(f.account)->quantity==21000u);
+        for(std::size_t i=0;i<count;++i) BOOST_TEST(f.world.IsAlive(requests[i].structure)==(i%3==0));
+        return snapshot;
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(immediate_factory_sale_still_refunds_orphaned_production_orders)
+{
+    SellingFixture f({1,0ms}); const auto factory=f.Structure(true);
+    const auto receipt=production::EnqueueBuild(f.world,ProductionBoundaryState::Ready,*f.buildCatalog,
+        f.capacity,factory,1);
+    BOOST_REQUIRE(receipt.status==BuildAcceptance::Accepted);
+    const std::array requests{SellRequest{factory,f.account}}; f.Tick(0,requests);
+    BOOST_TEST(!f.world.IsAlive(factory)); BOOST_TEST(!f.world.IsAlive(receipt.order));
+    BOOST_TEST(f.world.Get<Balance>(f.account)->quantity==1050u);
+    BOOST_TEST(f.world.Get<economy::IncomeHistory>(f.account)->total==0u);
+}

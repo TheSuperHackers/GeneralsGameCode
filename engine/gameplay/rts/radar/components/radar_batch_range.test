@@ -1,0 +1,27 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRadarBatchRange
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import engine.gameplay.rts.radar.components.radar_batch_range;
+
+using engine::gameplay::rts::radar::RadarBatchRange;
+
+BOOST_AUTO_TEST_CASE(batch_range_metadata_is_stable_and_transient)
+{
+	using Component = RadarBatchRange;
+	static_assert(std::is_standard_layout_v<Component>);
+	static_assert(std::is_trivially_copyable_v<Component>);
+	BOOST_TEST(sizeof(Component) == (2 * sizeof(std::size_t)));
+	BOOST_TEST(alignof(Component) == alignof(std::size_t));
+	BOOST_TEST(offsetof(Component, first) == 0u);
+	BOOST_TEST(offsetof(Component, count) == sizeof(std::size_t));
+	BOOST_TEST(ecs::ComponentTraits<Component>::StableName
+		== "engine.gameplay.rts.radar.batch_range");
+	BOOST_TEST(ecs::ComponentTraits<Component>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<Component>::Persistence)
+		== static_cast<std::uint8_t>(ecs::PersistencePolicy::Transient));
+}

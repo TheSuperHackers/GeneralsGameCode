@@ -1,0 +1,136 @@
+#define BOOST_TEST_MODULE GeneralsZHRadarContentDefinition
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+
+import games.generalszh.adapters.content.ini.named_block;
+import games.generalszh.adapters.content.radar.radar_definition;
+import games.generalszh.adapters.content.upgrades.upgrade_definition;
+import games.generalszh.gameplay.radar.definitions.radar_provider_definition;
+import games.generalszh.gameplay.upgrades.identity.upgrade_catalog;
+
+namespace
+{
+using generalszh::content::IniBlock;
+using generalszh::content::ReadNamedBlock;
+using generalszh::content::UpgradeIdentity;
+using generalszh::content::UpgradeScope;
+using generalszh::content::radar::DecodeRadarProviderDefinition;
+using generalszh::upgrades::UpgradeCatalog;
+
+IniBlock AmericaObject()
+{
+	return ReadNamedBlock(R"ini(
+Object AmericaCommandCenter
+  Behavior = GrantUpgradeCreate ModuleTag_AmericaRadar
+    UpgradeToGrant = Upgrade_AmericaRadar
+    ExemptStatus = UNDER_CONSTRUCTION
+  End
+  Behavior = RadarUpgrade ModuleTag_AmericaRadarUpgrade
+    TriggeredBy = Upgrade_AmericaRadar
+    DisableProof = No
+  End
+End
+)ini", "Object", "AmericaCommandCenter");
+}
+
+IniBlock GlaObject()
+{
+	return ReadNamedBlock(R"ini(
+Object GLARadarVan
+  Behavior = GrantUpgradeCreate ModuleTag_GLARadar
+    UpgradeToGrant = Upgrade_GLARadar
+  End
+  Behavior = RadarUpgrade ModuleTag_GLARadarUpgrade
+    TriggeredBy = Upgrade_GLARadar
+    DisableProof = Yes
+  End
+End
+)ini", "Object", "GLARadarVan");
+}
+
+IniBlock ChinaObject()
+{
+	return ReadNamedBlock(R"ini(
+Object ChinaCommandCenter
+  Behavior = RadarUpgrade ModuleTag_ChinaRadar
+    TriggeredBy = Upgrade_ChinaRadar
+    DisableProof = No
+  End
+End
+)ini", "Object", "ChinaCommandCenter");
+}
+}
+
+BOOST_AUTO_TEST_CASE(decodes_creation_and_disable_proof_from_real_object_blocks)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_AmericaRadar");
+	catalog.Finalize();
+	const std::array identities{UpgradeIdentity{
+		"Upgrade_AmericaRadar", 11, UpgradeScope::Object}};
+	const auto decoded = DecodeRadarProviderDefinition(
+		AmericaObject(), 0, catalog, identities);
+	BOOST_TEST(decoded.definition.id == 0u);
+	BOOST_CHECK(decoded.definition.authority ==
+		generalszh::radar::RadarGrantAuthority::CreationGrant);
+	BOOST_TEST(decoded.grantsAtCreation);
+	BOOST_TEST(decoded.grantsAtBuildCompletion);
+	BOOST_TEST(!decoded.definition.resistant);
+	BOOST_TEST(decoded.definition.upgrade.schemaHash == catalog.SchemaHash());
+}
+
+BOOST_AUTO_TEST_CASE(completion_grant_and_disable_proof_are_distinct_fields)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_GLARadar");
+	catalog.Finalize();
+	const std::array identities{UpgradeIdentity{
+		"Upgrade_GLARadar", 12, UpgradeScope::Object}};
+	const auto decoded = DecodeRadarProviderDefinition(
+		GlaObject(), 0, catalog, identities);
+	BOOST_CHECK(decoded.definition.authority ==
+		generalszh::radar::RadarGrantAuthority::CompletionGrant);
+	BOOST_TEST(!decoded.grantsAtCreation);
+	BOOST_TEST(decoded.definition.resistant);
+}
+
+BOOST_AUTO_TEST_CASE(china_without_a_concrete_object_grant_is_not_auto_enabled)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_ChinaRadar");
+	catalog.Finalize();
+	const std::array identities{UpgradeIdentity{
+		"Upgrade_ChinaRadar", 13, UpgradeScope::Object}};
+	BOOST_CHECK_THROW(DecodeRadarProviderDefinition(
+		ChinaObject(), 0, catalog, identities), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(player_scope_and_unsupported_exemption_are_rejected)
+{
+	UpgradeCatalog catalog;
+	catalog.Register("Upgrade_AmericaRadar");
+	catalog.Finalize();
+	const std::array playerIdentity{UpgradeIdentity{
+		"Upgrade_AmericaRadar", 11, UpgradeScope::Player}};
+	BOOST_CHECK_THROW(DecodeRadarProviderDefinition(
+		AmericaObject(), 0, catalog, playerIdentity), std::invalid_argument);
+
+	const auto bad = ReadNamedBlock(R"ini(
+Object BadRadar
+  Behavior = GrantUpgradeCreate ModuleTag_Bad
+    UpgradeToGrant = Upgrade_AmericaRadar
+    ExemptStatus = EMP
+  End
+  Behavior = RadarUpgrade ModuleTag_BadRadar
+    TriggeredBy = Upgrade_AmericaRadar
+  End
+End
+)ini", "Object", "BadRadar");
+	const std::array objectIdentity{UpgradeIdentity{
+		"Upgrade_AmericaRadar", 11, UpgradeScope::Object}};
+	BOOST_CHECK_THROW(DecodeRadarProviderDefinition(
+		bad, 0, catalog, objectIdentity), std::invalid_argument);
+}

@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.orders.components.unit_order;
+import engine.ecs.core.world;
+using namespace engine::gameplay::rts::orders;
+BOOST_AUTO_TEST_CASE(order_authority_survives_observation_column_transition)
+{
+    ecs::World world;world.RegisterComponent<UnitOrder>();world.RegisterComponent<EngagementObservation>();world.FinalizeComponents();
+    const auto actor=world.Create<UnitOrder>();*world.Get<UnitOrder>(actor)={OrderKind::AttackTarget,3,{9,5}};
+    world.Add<EngagementObservation>(actor);BOOST_CHECK(world.Get<UnitOrder>(actor)->target==ecs::Entity(9,5));
+    BOOST_CHECK(ecs::ComponentTraits<UnitOrder>::Persistence==ecs::PersistencePolicy::Serializable);
+    BOOST_TEST(ecs::ComponentTraits<UnitOrder>::Version==3u);
+    BOOST_CHECK(ecs::ComponentTraits<EngagementObservation>::Persistence==ecs::PersistencePolicy::Transient);
+}

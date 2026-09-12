@@ -1,0 +1,53 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <stdexcept>
+
+import games.generalszh.gameplay.crates.definitions.account_pickup_policy;
+
+namespace crates = generalszh::crates;
+
+BOOST_AUTO_TEST_CASE(account_policy_rejects_invalid_and_duplicate_accounts)
+{
+	const std::array invalid{crates::AccountPickupPolicy{{}, true, false}};
+	BOOST_CHECK_THROW(crates::AccountPickupPolicies(8, invalid), std::invalid_argument);
+	const std::array duplicate{crates::AccountPickupPolicy{{2, 1}, true, false},
+		crates::AccountPickupPolicy{{2, 1}, false, false}};
+	BOOST_CHECK_THROW(crates::AccountPickupPolicies(8, duplicate), std::invalid_argument);
+	const std::array outOfBounds{crates::AccountPickupPolicy{{8, 1}, true, false}};
+	BOOST_CHECK_THROW(crates::AccountPickupPolicies(8, outOfBounds), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(account_policy_registers_exact_generations_then_freezes)
+{
+	const ecs::Entity account{2, 7};
+	const ecs::Entity reusedIndex{2, 8};
+	crates::AccountPickupPolicies policies{8};
+	BOOST_CHECK(!policies.IsFrozen());
+	BOOST_CHECK_THROW(policies.Find(account), std::logic_error);
+
+	policies.Register(account, true, false);
+	policies.Register({3, 1}, false, true);
+	BOOST_CHECK(!policies.IsFrozen());
+	policies.Freeze();
+	BOOST_CHECK(policies.IsFrozen());
+	BOOST_CHECK(policies.Find(account) != nullptr);
+	BOOST_CHECK(policies.IsHuman(account));
+	BOOST_CHECK(!policies.IsNeutral(account));
+	BOOST_CHECK(policies.IsNeutral({3, 1}));
+	BOOST_CHECK(policies.Find(reusedIndex) == nullptr);
+	BOOST_CHECK(!policies.IsHuman(reusedIndex));
+	BOOST_CHECK(!policies.IsNeutral(reusedIndex));
+	BOOST_CHECK_THROW(policies.Register({4, 1}, true, false), std::logic_error);
+	BOOST_CHECK_THROW(policies.Freeze(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(account_policy_fixed_entries_are_already_frozen)
+{
+	const std::array entries{crates::AccountPickupPolicy{{2, 1}, true, false}};
+	const crates::AccountPickupPolicies policies(8, entries);
+	BOOST_CHECK(policies.IsFrozen());
+	BOOST_CHECK(policies.Find({2, 1}) != nullptr);
+	BOOST_CHECK(policies.Find({2, 2}) == nullptr);
+	BOOST_CHECK(policies.Find({}) == nullptr);
+}

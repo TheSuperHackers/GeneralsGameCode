@@ -1,0 +1,191 @@
+#define BOOST_TEST_MODULE GeneralsZHGameplayState
+#include <boost/test/included/unit_test.hpp>
+#include "gameplay_state.h"
+import engine.ecs.core.world;
+import engine.gameplay.lifetime.components.expiration;
+import engine.gameplay.lifetime.components.expiration_eligibility;
+import engine.gameplay.rts.economy.components.income_dispatch;
+import engine.gameplay.rts.economy.components.periodic_income;
+import engine.gameplay.rts.production.queue.production_queue;
+import games.generalszh.gameplay.production.entry.production_entry_metadata;
+import games.generalszh.gameplay.production.entry.exit_reservation;
+import games.generalszh.gameplay.production.presentation.construction_marker;
+import games.generalszh.presentation.model.pending_conditions;
+import games.generalszh.gameplay.upgrades.state.upgrade_status;
+import engine.gameplay.rts.upgrades.state.upgrade_words;
+import engine.gameplay.rts.upgrades.state.upgrade_execution;
+import engine.gameplay.rts.radar.commands.radar_batch;
+
+BOOST_AUTO_TEST_CASE(expiration_eligibility_identity_is_finalized_and_stable_across_reset)
+{
+	using engine::gameplay::lifetime::ExpirationEligibility;
+	generalszh::GameplayState first, second;
+	const auto id = first.World().Components().TryGet<ExpirationEligibility>();
+	BOOST_TEST(id != ecs::InvalidComponentId);
+	BOOST_TEST(id == second.World().Components().TryGet<ExpirationEligibility>());
+	const auto schema = first.World().Components().SchemaHash();
+	first.Reset();
+	BOOST_TEST(first.World().Components().TryGet<ExpirationEligibility>() == id);
+	BOOST_TEST(first.World().Components().SchemaHash() == schema);
+}
+
+BOOST_AUTO_TEST_CASE(radar_batch_ranges_have_finalized_identity_and_reset_with_the_world_schema)
+{
+	using engine::gameplay::rts::radar::RadarBatchRange;
+	generalszh::GameplayState first, second;
+	const auto id = first.World().Components().TryGet<RadarBatchRange>();
+	BOOST_TEST(id != ecs::InvalidComponentId);
+	BOOST_TEST(second.World().Components().TryGet<RadarBatchRange>() == id);
+	static_assert(ecs::ComponentTraits<RadarBatchRange>::Persistence == ecs::PersistencePolicy::Transient);
+	const auto schema = first.World().Components().SchemaHash();
+	first.Reset();
+	BOOST_TEST(first.World().Components().TryGet<RadarBatchRange>() == id);
+	BOOST_TEST(first.World().Components().SchemaHash() == schema);
+}
+
+BOOST_AUTO_TEST_CASE(upgrade_execution_state_has_its_own_stable_finalized_identity)
+{
+	using namespace engine::gameplay::rts::upgrades;
+	generalszh::GameplayState first, second;
+	const auto id = first.World().Components().TryGet<UpgradeExecutionState>();
+	BOOST_TEST(id != ecs::InvalidComponentId);
+	BOOST_TEST(id != first.World().Components().TryGet<CompletedUpgradeWord>());
+	BOOST_TEST(id != first.World().Components().TryGet<generalszh::upgrades::UpgradeInstanceStatus>());
+	BOOST_TEST(second.World().Components().TryGet<UpgradeExecutionState>() == id);
+	const auto schema = first.World().Components().SchemaHash();
+	const auto entity = first.World().Create<UpgradeExecutionState>();
+	BOOST_TEST(!first.World().Get<UpgradeExecutionState>(entity)->executed);
+	BOOST_TEST(first.World().Destroy(entity));
+	first.Reset();
+	BOOST_TEST(first.World().Components().TryGet<UpgradeExecutionState>() == id);
+	BOOST_TEST(first.World().Components().SchemaHash() == schema);
+}
+
+BOOST_AUTO_TEST_CASE(upgrade_word_columns_keep_ids_and_schema_across_world_replacement)
+{
+	using namespace engine::gameplay::rts::upgrades;
+	generalszh::GameplayState state;
+	const auto owner = state.World().Components().TryGet<UpgradeWordOwner>();
+	const auto ordinal = state.World().Components().TryGet<UpgradeWordOrdinal>();
+	const auto completed = state.World().Components().TryGet<CompletedUpgradeWord>();
+	const auto progress = state.World().Components().TryGet<InProgressUpgradeWord>();
+	BOOST_TEST(owner != ecs::InvalidComponentId);
+	BOOST_TEST(ordinal != ecs::InvalidComponentId);
+	BOOST_TEST(completed != ecs::InvalidComponentId);
+	BOOST_TEST(progress != ecs::InvalidComponentId);
+	BOOST_TEST(completed != progress);
+	const auto schema = state.World().Components().SchemaHash();
+	state.Reset();
+	BOOST_TEST(state.World().Components().TryGet<UpgradeWordOwner>() == owner);
+	BOOST_TEST(state.World().Components().TryGet<UpgradeWordOrdinal>() == ordinal);
+	BOOST_TEST(state.World().Components().TryGet<CompletedUpgradeWord>() == completed);
+	BOOST_TEST(state.World().Components().TryGet<InProgressUpgradeWord>() == progress);
+	BOOST_TEST(state.World().Components().SchemaHash() == schema);
+}
+
+BOOST_AUTO_TEST_CASE(gameplay_state_explicitly_finalizes_shared_component_schema)
+{
+	generalszh::GameplayState first, second;
+	BOOST_TEST(first.World().ComponentsFinalized());
+	BOOST_TEST(first.World().Components().SchemaHash() == second.World().Components().SchemaHash());
+	using engine::gameplay::rts::production::ProductionQueue;
+	using engine::gameplay::rts::production::ProductionQueueMember;
+	const auto queueId = first.World().Components().TryGet<ProductionQueue>();
+	const auto memberId = first.World().Components().TryGet<ProductionQueueMember>();
+	using generalszh::production::ProductionEntryKind;
+	using generalszh::production::ProductionCorrelation;
+	const auto kindId = first.World().Components().TryGet<ProductionEntryKind>();
+	const auto correlationId = first.World().Components().TryGet<ProductionCorrelation>();
+	BOOST_TEST(kindId != ecs::InvalidComponentId);
+	BOOST_TEST(correlationId != ecs::InvalidComponentId);
+	BOOST_TEST(kindId != correlationId);
+	using generalszh::production::ConstructionMarker;
+	const auto markerId = first.World().Components().TryGet<ConstructionMarker>();
+	BOOST_TEST(markerId != ecs::InvalidComponentId);
+	BOOST_TEST(second.World().Components().TryGet<ConstructionMarker>() == markerId);
+	BOOST_TEST(queueId != ecs::InvalidComponentId);
+	BOOST_TEST(memberId != ecs::InvalidComponentId);
+	BOOST_TEST(queueId != memberId);
+	BOOST_TEST(second.World().Components().TryGet<ProductionQueue>() == queueId);
+	BOOST_TEST(second.World().Components().TryGet<ProductionQueueMember>() == memberId);
+	const auto entity = first.World().Create<engine::gameplay::rts::economy::IncomeSchedule>();
+	BOOST_TEST(first.Count() == 1u);
+	BOOST_TEST(second.Count() == 0u);
+	BOOST_CHECK_THROW(first.Reset(), std::logic_error);
+	BOOST_TEST(first.World().Destroy(entity));
+	const auto hash = first.World().Components().SchemaHash();
+	first.Reset();
+	BOOST_TEST(first.World().Components().SchemaHash() == hash);
+	BOOST_TEST(first.World().Components().TryGet<ProductionQueue>() == queueId);
+	BOOST_TEST(first.World().Components().TryGet<ProductionQueueMember>() == memberId);
+	BOOST_TEST(first.World().Components().TryGet<ProductionEntryKind>() == kindId);
+	BOOST_TEST(first.World().Components().TryGet<ProductionCorrelation>() == correlationId);
+	BOOST_TEST(first.World().Components().TryGet<ConstructionMarker>() == markerId);
+}
+
+BOOST_AUTO_TEST_CASE(upgrade_instance_status_has_stable_finalized_identity_after_reset)
+{
+	using generalszh::upgrades::UpgradeInstanceStatus;
+	generalszh::GameplayState first, second;
+	const auto id = first.World().Components().TryGet<UpgradeInstanceStatus>();
+	BOOST_TEST(id != ecs::InvalidComponentId);
+	const auto schema = first.World().Components().SchemaHash();
+	BOOST_TEST(second.World().Components().TryGet<UpgradeInstanceStatus>() == id);
+	const auto entity = first.World().Create<UpgradeInstanceStatus>();
+	BOOST_TEST(first.World().Get<UpgradeInstanceStatus>(entity) != nullptr);
+	BOOST_TEST(first.World().Destroy(entity));
+	first.Reset();
+	BOOST_TEST(first.World().Components().TryGet<UpgradeInstanceStatus>() == id);
+	BOOST_TEST(first.World().Components().SchemaHash() == schema);
+}
+
+BOOST_AUTO_TEST_CASE(pending_condition_columns_are_registered_and_survive_schema_reset)
+{
+	using namespace generalszh::presentation;
+	generalszh::GameplayState state;
+	const auto clear = state.World().Components().TryGet<PendingConditionClear>();
+	const auto set = state.World().Components().TryGet<PendingConditionSet>();
+	const auto dirty = state.World().Components().TryGet<PendingConditionDirty>();
+	BOOST_TEST(clear != ecs::InvalidComponentId);
+	BOOST_TEST(set != ecs::InvalidComponentId);
+	BOOST_TEST(dirty != ecs::InvalidComponentId);
+	BOOST_TEST(clear != set);
+	BOOST_TEST(clear != dirty);
+	BOOST_TEST(set != dirty);
+	const auto hash = state.World().Components().SchemaHash();
+	state.Reset();
+	BOOST_TEST(state.World().Components().TryGet<PendingConditionClear>() == clear);
+	BOOST_TEST(state.World().Components().TryGet<PendingConditionSet>() == set);
+	BOOST_TEST(state.World().Components().TryGet<PendingConditionDirty>() == dirty);
+	BOOST_TEST(state.World().Components().SchemaHash() == hash);
+}
+
+BOOST_AUTO_TEST_CASE(exit_reservation_has_a_distinct_stable_registered_column_after_reset)
+{
+	using namespace generalszh::production;
+	generalszh::GameplayState first, second;
+	const auto id = first.World().Components().TryGet<ProductionExitReservation>();
+	BOOST_TEST(id != ecs::InvalidComponentId);
+	BOOST_TEST(id != first.World().Components().TryGet<ProductionEntryKind>());
+	BOOST_TEST(id != first.World().Components().TryGet<ProductionCorrelation>());
+	BOOST_TEST(second.World().Components().TryGet<ProductionExitReservation>() == id);
+	const auto hash = first.World().Components().SchemaHash();
+	first.Reset();
+	BOOST_TEST(first.World().Components().TryGet<ProductionExitReservation>() == id);
+	BOOST_TEST(first.World().Components().SchemaHash() == hash);
+}
+
+BOOST_AUTO_TEST_CASE(income_dispatch_is_explicitly_registered_and_stable_across_world_replacement)
+{
+	using engine::gameplay::rts::economy::IncomeDispatch;
+	generalszh::GameplayState state;
+	const auto id = state.World().Components().TryGet<IncomeDispatch>();
+	BOOST_TEST(id != ecs::InvalidComponentId);
+	const auto schema = state.World().Components().SchemaHash();
+	const auto entity = state.World().Create<IncomeDispatch>();
+	BOOST_TEST(state.World().Get<IncomeDispatch>(entity)->enabled);
+	state.World().Destroy(entity);
+	state.Reset();
+	BOOST_TEST(state.World().Components().TryGet<IncomeDispatch>() == id);
+	BOOST_TEST(state.World().Components().SchemaHash() == schema);
+}

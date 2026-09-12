@@ -1,0 +1,17 @@
+#define BOOST_TEST_MODULE GeneralsZHCashBountyCostBinding
+#include <boost/test/included/unit_test.hpp>
+
+#include <type_traits>
+
+import games.generalszh.gameplay.bounty.components.cash_bounty_cost_binding;
+
+BOOST_AUTO_TEST_CASE(cost_binding_marks_authored_cost_without_receipt_semantics)
+{
+	using generalszh::bounty::CashBountyCostBasis;
+	using generalszh::bounty::CashBountyCostBinding;
+	static_assert(std::is_trivially_copyable_v<CashBountyCostBinding>);
+	const CashBountyCostBinding binding{800, CashBountyCostBasis::DecodedBuildCost, true};
+	BOOST_TEST(binding.authoredBuildCost == 800u);
+	BOOST_CHECK(binding.basis == CashBountyCostBasis::DecodedBuildCost);
+	BOOST_TEST(binding.eligible);
+}

@@ -1,0 +1,56 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+
+import engine.gameplay.rts.upgrades.object_scope.inputs.object_upgrade_batch;
+
+using namespace engine::gameplay::rts::upgrades::object_scope;
+
+namespace
+{
+ObjectUpgradeBinding Binding(const std::uint32_t definition)
+{
+	return {definition, definition / 64u,
+		std::uint64_t{1} << (definition % 64u), 17};
+}
+}
+
+BOOST_AUTO_TEST_CASE(batch_validates_canonical_definition_layout_and_capacity)
+{
+	ObjectUpgradeBatch batch{8, 2};
+	const ecs::Entity target{3, 9};
+	batch.Append({target, Binding(65), ObjectUpgradeOperation::Grant, 12});
+	BOOST_TEST(batch.Requests().size() == 1u);
+
+	BOOST_CHECK_THROW(batch.Append({target, {65, 0, 1, 17}, ObjectUpgradeOperation::Grant, 13}),
+		std::invalid_argument);
+	BOOST_CHECK_THROW(batch.Append({target, {65, 1, 4, 17}, ObjectUpgradeOperation::Grant, 14}),
+		std::invalid_argument);
+	batch.Append({target, Binding(1), ObjectUpgradeOperation::Grant, 15});
+	BOOST_TEST(batch.Requests().size() == 2u);
+	BOOST_CHECK_THROW(batch.Append({target, Binding(2), ObjectUpgradeOperation::Grant, 16}),
+		std::length_error);
+}
+
+BOOST_AUTO_TEST_CASE(batch_requires_publication_boundary_and_reuses_storage)
+{
+	ObjectUpgradeBatch batch{4, 2};
+	const ecs::Entity target{1, 2};
+	BOOST_CHECK_THROW((void)batch.Receipts(), std::logic_error);
+	batch.Append({target, Binding(0), ObjectUpgradeOperation::Grant, 4});
+	const ObjectUpgradeReceipt receipt{target, {7, 3}, Binding(0),
+		ObjectUpgradeOperation::Grant, 4, ObjectUpgradeTransition::Granted};
+	batch.Publish(std::span<const ObjectUpgradeReceipt>{&receipt, 1});
+	BOOST_TEST(batch.IsPublished());
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 1u);
+	BOOST_CHECK(batch.Receipts()[0] == receipt);
+	BOOST_CHECK_THROW(batch.Append({target, Binding(1), ObjectUpgradeOperation::Grant, 5}),
+		std::logic_error);
+	batch.Reset();
+	BOOST_TEST(batch.Requests().empty());
+	BOOST_TEST(!batch.IsPublished());
+	batch.Append({target, Binding(1), ObjectUpgradeOperation::Remove, 6});
+	BOOST_TEST(batch.Requests().size() == 1u);
+}

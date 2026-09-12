@@ -1,0 +1,36 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+
+import engine.gameplay.rts.visibility.definitions.visibility_definition;
+
+using namespace engine::gameplay::rts::visibility;
+using namespace std::chrono_literals;
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_definition)
+
+BOOST_AUTO_TEST_CASE(duration_is_compiled_to_fixed_ticks_once)
+{
+	const auto step = engine::time::FixedStep{30};
+	const auto definition = CompileVisibilityDefinition(0, 7, 1, 5000ms, step);
+	BOOST_TEST(definition.unlookPersistTicks == 150u);
+	BOOST_TEST(definition.shroudClearingRadiusCells == 7u);
+	BOOST_TEST(definition.constructionRadiusCells == 1u);
+	const std::array definitions{definition};
+	const VisibilityDefinitions catalog{definitions, step};
+	BOOST_TEST(catalog.MaximumGraceTicks() == 150u);
+}
+
+BOOST_AUTO_TEST_CASE(topology_is_row_major_and_bounded)
+{
+	const VisibilityTopology topology{5, 3};
+	BOOST_TEST(topology.Count() == 15u);
+	BOOST_TEST(topology.CellAt(2, 1) == 7u);
+	BOOST_TEST(topology.X(7) == 2u);
+	BOOST_TEST(topology.Y(7) == 1u);
+	BOOST_CHECK(topology.Contains(14));
+	BOOST_CHECK(!topology.Contains(15));
+}
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -1,0 +1,21 @@
+#include <boost/test/unit_test.hpp>
+#include "gameplay_workers.h"
+#include <array>
+import games.generalszh.simulation.execution.gameplay_workers;
+
+BOOST_AUTO_TEST_CASE(shared_game_workers_remain_usable_between_explicit_batches)
+{
+	for (std::size_t count : {1u, 2u, 4u})
+	{
+		generalszh::GameplayWorkers owner(count);
+		BOOST_TEST(owner.Count() == count);
+		std::array<unsigned, 128> values{};
+		std::array<engine::jobs::Job, 128> jobs{};
+		for (std::size_t index = 0; index != values.size(); ++index)
+			jobs[index] = {+[](void *value) { ++*static_cast<unsigned *>(value); }, &values[index]};
+		auto &pool = generalszh::GameplayWorkerAccess::Jobs(owner);
+		pool.Execute(jobs);
+		pool.Execute(jobs);
+		for (auto value : values) BOOST_TEST(value == 2u);
+	}
+}

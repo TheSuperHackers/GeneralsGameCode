@@ -1,0 +1,25 @@
+#define BOOST_TEST_MODULE GeneralsZHMatchState
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.match.components.match_state;
+BOOST_AUTO_TEST_CASE(match_start_validates_before_creating_identity_and_stores_roster_in_ecs)
+{
+    using namespace generalszh;
+    using namespace engine::gameplay::rts::match;
+    using Balance = engine::gameplay::rts::economy::ResourceBalance;
+    ecs::World world;
+    world.RegisterComponent<match::MatchState>(); world.RegisterComponent<match::MatchMember>();
+    world.RegisterComponent<Contender>(); world.RegisterComponent<SurvivalCount>(); world.RegisterComponent<Balance>();
+    world.FinalizeComponents();
+    const auto a = world.Create<Balance>(), b = world.Create<Balance>();
+    BOOST_CHECK(match::ReadMatchOutcome(world, {}).status == MatchStatus::Setup);
+    const std::array bad{a,a};
+    BOOST_CHECK_THROW(match::BeginMatch(world, bad), std::invalid_argument);
+    const std::array roster{b,a}; const auto state = match::BeginMatch(world, roster);
+    BOOST_TEST(state.index == b.index + 1);
+    BOOST_TEST(world.Get<match::MatchState>(state)->rosterSize == 2u);
+    BOOST_CHECK(world.Get<match::MatchMember>(a)->match == state);
+    BOOST_TEST(world.Get<match::MatchMember>(a)->ordinal == 0u);
+    BOOST_TEST(world.Get<match::MatchMember>(b)->ordinal == 1u);
+    BOOST_CHECK_THROW(match::BeginMatch(world, roster), std::invalid_argument);
+}

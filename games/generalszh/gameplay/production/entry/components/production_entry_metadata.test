@@ -1,0 +1,334 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionEntryMetadata
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.production.entry.components.production_entry_metadata;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::production::EntryKind;
+using generalszh::production::ProductionCorrelation;
+using generalszh::production::ProductionEntryKind;
+
+namespace production_entry_metadata_test
+{
+struct Marker
+{
+	std::uint32_t value{0};
+};
+
+struct EntryProcessingSystem
+{
+	using Query = ecs::Query<ecs::Write<ProductionEntryKind>,
+		ecs::Write<ProductionCorrelation>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		const auto kinds = chunk.Get<ProductionEntryKind>();
+		const auto correlations = chunk.Get<ProductionCorrelation>();
+		const auto tick = static_cast<std::int32_t>(context.Tick());
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			switch (kinds[row].value)
+			{
+			case EntryKind::Invalid:
+				kinds[row].value = EntryKind::Unit;
+				break;
+			case EntryKind::Unit:
+				kinds[row].value = EntryKind::Upgrade;
+				break;
+			case EntryKind::Upgrade:
+				kinds[row].value = EntryKind::Invalid;
+				break;
+			}
+			correlations[row].value += tick;
+		}
+	}
+};
+
+struct EntityState
+{
+	ecs::Entity entity;
+	EntryKind kind{EntryKind::Invalid};
+	std::int32_t correlation{1};
+};
+
+struct Snapshot
+{
+	std::vector<EntityState> entries;
+	std::size_t chunkCount{0};
+};
+
+} // namespace production_entry_metadata_test
+
+namespace ecs
+{
+template<>
+struct ComponentTraits<production_entry_metadata_test::Marker>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.entry.marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct SystemTraits<production_entry_metadata_test::EntryProcessingSystem>
+{
+	static constexpr std::string_view StableName =
+		"tests.generalszh.production.entry.processing";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace production_entry_metadata_test
+{
+
+struct RegistrySnapshot
+{
+	ecs::ComponentId kindId{ecs::InvalidComponentId};
+	ecs::ComponentId correlationId{ecs::InvalidComponentId};
+	ecs::ComponentSchemaHash schema{ecs::UnfinalizedSchemaHash};
+};
+
+RegistrySnapshot RegisterInOrder(const bool reverse)
+{
+	ecs::ComponentRegistry registry;
+	if (reverse)
+	{
+		registry.Register<ProductionCorrelation>();
+		registry.Register<ProductionEntryKind>();
+	}
+	else
+	{
+		registry.Register<ProductionEntryKind>();
+		registry.Register<ProductionCorrelation>();
+	}
+	registry.Finalize();
+
+	return RegistrySnapshot{
+		registry.TryGet<ProductionEntryKind>(),
+		registry.TryGet<ProductionCorrelation>(),
+		registry.SchemaHash()};
+}
+
+EntryKind InitialKind(const std::size_t index) noexcept
+{
+	switch (index % 3)
+	{
+	case 0:
+		return EntryKind::Invalid;
+	case 1:
+		return EntryKind::Unit;
+	default:
+		return EntryKind::Upgrade;
+	}
+}
+
+EntryKind ExpectedKindAfterProcessing(const std::size_t index) noexcept
+{
+	switch (index % 3)
+	{
+	case 0:
+		return EntryKind::Unit;
+	case 1:
+		return EntryKind::Upgrade;
+	default:
+		return EntryKind::Invalid;
+	}
+}
+
+Snapshot RunScheduledProcessing(const std::size_t workerCount)
+{
+	constexpr std::size_t entityCount = 4096;
+	constexpr std::int32_t tick = 7;
+
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<ProductionEntryKind>();
+	world.RegisterComponent<ProductionCorrelation>();
+	world.FinalizeComponents();
+
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<ProductionEntryKind, ProductionCorrelation>();
+		auto *kind = world.Get<ProductionEntryKind>(entity);
+		auto *correlation = world.Get<ProductionCorrelation>(entity);
+		BOOST_REQUIRE(kind != nullptr);
+		BOOST_REQUIRE(correlation != nullptr);
+		kind->value = InitialKind(index);
+		// This request correlation is deliberately independent of entity identity.
+		correlation->value = 1000 + static_cast<std::int32_t>((index * 17) % 113);
+	}
+
+	EntryProcessingSystem system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workerCount});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+	Snapshot result;
+	ecs::Query<ecs::Read<ProductionEntryKind>,
+		ecs::Read<ProductionCorrelation>> query(world);
+	result.chunkCount = query.PrepareChunks();
+	BOOST_REQUIRE(result.chunkCount > 1u);
+	query.ForEachPreparedChunk([&](const auto chunk) {
+		const auto kinds = chunk.template Get<ProductionEntryKind>();
+		const auto correlations = chunk.template Get<ProductionCorrelation>();
+		const auto entities = chunk.Entities();
+		BOOST_TEST(kinds.size() == correlations.size());
+		BOOST_TEST(kinds.size() == entities.size());
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			result.entries.push_back(EntityState{
+				entities[row],
+				kinds[row].value,
+				correlations[row].value});
+		}
+	});
+	BOOST_REQUIRE(result.entries.size() == entityCount);
+	return result;
+}
+
+} // namespace production_entry_metadata_test
+
+BOOST_AUTO_TEST_CASE(default_values_and_layout_are_explicit)
+{
+	static_assert(std::is_same_v<std::underlying_type_t<EntryKind>, std::int32_t>);
+	static_assert(std::is_standard_layout_v<ProductionEntryKind>);
+	static_assert(std::is_standard_layout_v<ProductionCorrelation>);
+	static_assert(std::is_trivially_copyable_v<ProductionEntryKind>);
+	static_assert(std::is_trivially_copyable_v<ProductionCorrelation>);
+	static_assert(sizeof(EntryKind) == sizeof(std::int32_t));
+	static_assert(sizeof(ProductionEntryKind) == sizeof(std::int32_t));
+	static_assert(sizeof(ProductionCorrelation) == sizeof(std::int32_t));
+	static_assert(alignof(ProductionEntryKind) == alignof(std::int32_t));
+	static_assert(alignof(ProductionCorrelation) == alignof(std::int32_t));
+	static_assert(offsetof(ProductionEntryKind, value) == 0);
+	static_assert(offsetof(ProductionCorrelation, value) == 0);
+
+	const ProductionEntryKind kind;
+	const ProductionCorrelation correlation;
+	BOOST_CHECK(kind.value == EntryKind::Invalid);
+	BOOST_TEST(correlation.value == 1);
+}
+
+BOOST_AUTO_TEST_CASE(trait_identity_and_schema_are_registration_order_independent)
+{
+	BOOST_TEST(ecs::ComponentTraits<ProductionEntryKind>::StableName ==
+		"games.generalszh.production.entry_kind");
+	BOOST_TEST(ecs::ComponentTraits<ProductionCorrelation>::StableName ==
+		"games.generalszh.production.entry_correlation");
+	BOOST_TEST(ecs::ComponentTraits<ProductionEntryKind>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<ProductionCorrelation>::Version == 1u);
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ProductionEntryKind>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_TEST(static_cast<std::uint8_t>(ecs::ComponentTraits<ProductionCorrelation>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+
+	const auto forward = production_entry_metadata_test::RegisterInOrder(false);
+	const auto reverse = production_entry_metadata_test::RegisterInOrder(true);
+	BOOST_TEST(forward.kindId == reverse.kindId);
+	BOOST_TEST(forward.correlationId == reverse.correlationId);
+	BOOST_TEST(forward.schema == reverse.schema);
+
+	ecs::ComponentRegistry registry;
+	registry.Register<ProductionEntryKind>();
+	registry.Register<ProductionCorrelation>();
+	registry.Finalize();
+	const ecs::ComponentInfo &kind = registry.Get(registry.TryGet<ProductionEntryKind>());
+	const ecs::ComponentInfo &correlation =
+		registry.Get(registry.TryGet<ProductionCorrelation>());
+	BOOST_TEST(kind.stableKey == ecs::HashComponentKey(kind.stableName));
+	BOOST_TEST(correlation.stableKey == ecs::HashComponentKey(correlation.stableName));
+}
+
+BOOST_AUTO_TEST_CASE(separate_columns_preserve_state_through_archetype_transitions)
+{
+	ecs::World world{ecs::WorldConfig{64}};
+	world.RegisterComponent<ProductionEntryKind>();
+	world.RegisterComponent<ProductionCorrelation>();
+	world.RegisterComponent<production_entry_metadata_test::Marker>();
+	world.FinalizeComponents();
+
+	const ecs::Entity entity = world.Create<ProductionEntryKind, ProductionCorrelation>();
+	world.Get<ProductionEntryKind>(entity)->value = EntryKind::Upgrade;
+	world.Get<ProductionCorrelation>(entity)->value = 7001;
+	for (std::size_t index = 0; index < 24; ++index)
+		world.Create<ProductionEntryKind, ProductionCorrelation>();
+
+	std::size_t rowsSeen = 0;
+	std::size_t chunksSeen = 0;
+	ecs::Query<ecs::Read<ProductionEntryKind>,
+		ecs::Read<ProductionCorrelation>> query(world);
+	query.ForEachChunk([&](const auto chunk) {
+		++chunksSeen;
+		const auto kinds = chunk.template Get<ProductionEntryKind>();
+		const auto correlations = chunk.template Get<ProductionCorrelation>();
+		BOOST_TEST(kinds.size() == correlations.size());
+		BOOST_CHECK(reinterpret_cast<const void *>(kinds.data()) !=
+			reinterpret_cast<const void *>(correlations.data()));
+		for (std::size_t row = 1; row < chunk.Count(); ++row)
+		{
+			BOOST_CHECK(&kinds[row] == &kinds[row - 1] + 1);
+			BOOST_CHECK(&correlations[row] == &correlations[row - 1] + 1);
+		}
+		rowsSeen += chunk.Count();
+	});
+	BOOST_TEST(rowsSeen == 25u);
+	BOOST_TEST(chunksSeen > 1u);
+
+	BOOST_TEST(world.Add<production_entry_metadata_test::Marker>(entity));
+	const auto *kindAfterAdd = world.Get<ProductionEntryKind>(entity);
+	const auto *correlationAfterAdd = world.Get<ProductionCorrelation>(entity);
+	BOOST_REQUIRE(kindAfterAdd != nullptr);
+	BOOST_REQUIRE(correlationAfterAdd != nullptr);
+	BOOST_CHECK(kindAfterAdd->value == EntryKind::Upgrade);
+	BOOST_TEST(correlationAfterAdd->value == 7001);
+
+	BOOST_TEST(world.Remove<production_entry_metadata_test::Marker>(entity));
+	const auto *kindAfterRemove = world.Get<ProductionEntryKind>(entity);
+	const auto *correlationAfterRemove = world.Get<ProductionCorrelation>(entity);
+	BOOST_REQUIRE(kindAfterRemove != nullptr);
+	BOOST_REQUIRE(correlationAfterRemove != nullptr);
+	BOOST_CHECK(kindAfterRemove->value == EntryKind::Upgrade);
+	BOOST_TEST(correlationAfterRemove->value == 7001);
+}
+
+BOOST_AUTO_TEST_CASE(typed_chunk_processing_is_identical_for_one_two_and_four_workers)
+{
+	const auto oneWorker = production_entry_metadata_test::RunScheduledProcessing(1);
+	const auto twoWorkers = production_entry_metadata_test::RunScheduledProcessing(2);
+	const auto fourWorkers = production_entry_metadata_test::RunScheduledProcessing(4);
+
+	BOOST_TEST(oneWorker.chunkCount > 1u);
+	BOOST_TEST(twoWorkers.chunkCount == oneWorker.chunkCount);
+	BOOST_TEST(fourWorkers.chunkCount == oneWorker.chunkCount);
+	BOOST_TEST(twoWorkers.entries.size() == oneWorker.entries.size());
+	BOOST_TEST(fourWorkers.entries.size() == oneWorker.entries.size());
+
+	for (std::size_t index = 0; index < oneWorker.entries.size(); ++index)
+	{
+		const auto &expected = oneWorker.entries[index];
+		const auto &two = twoWorkers.entries[index];
+		const auto &four = fourWorkers.entries[index];
+		BOOST_CHECK(two.entity == expected.entity);
+		BOOST_CHECK(four.entity == expected.entity);
+		BOOST_CHECK(two.kind == expected.kind);
+		BOOST_CHECK(four.kind == expected.kind);
+		BOOST_CHECK(expected.kind ==
+			production_entry_metadata_test::ExpectedKindAfterProcessing(index));
+		BOOST_TEST(two.correlation == expected.correlation);
+		BOOST_TEST(four.correlation == expected.correlation);
+		BOOST_TEST(expected.correlation ==
+			1000 + static_cast<std::int32_t>((index * 17) % 113) + 7);
+	}
+}

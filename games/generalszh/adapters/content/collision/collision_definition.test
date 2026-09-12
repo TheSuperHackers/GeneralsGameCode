@@ -1,0 +1,48 @@
+#define BOOST_TEST_MODULE GeneralsZeroHourCollisionContent
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+
+import games.generalszh.adapters.content.collision.collision_definition;
+
+namespace contacts = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(content_translates_sphere_and_cylinder_to_fixed_circle)
+{
+	const auto sphere = generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Tank\n Geometry = SPHERE\n GeometryMajorRadius = 4\n GeometryMinorRadius = 4\n GeometryHeight = 10\n GeometryIsSmall = Yes\n End\n",
+		"Tank", 3, {10});
+	BOOST_CHECK(sphere.geometry == contacts::Circle(contacts::MicroCells{400000}));
+	BOOST_TEST((sphere.omissions & 7u) == 7u);
+
+	const auto cylinder = generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Unit\n Geometry = CYLINDER\n GeometryMajorRadius = 10\n GeometryHeight = 12\n End\n",
+		"Unit", 4, {10});
+	BOOST_CHECK(cylinder.geometry == contacts::Circle(contacts::MicroCells{1000000}));
+}
+
+BOOST_AUTO_TEST_CASE(content_scale_converts_world_units_and_rounds_up_remainders)
+{
+	const auto exact = generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Exact\n Geometry = SPHERE\n GeometryMajorRadius = 20\n End\n",
+		"Exact", 8, {10});
+	BOOST_CHECK(exact.geometry == contacts::Circle(contacts::MicroCells{2000000}));
+
+	const auto fractional = generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Fractional\n Geometry = SPHERE\n GeometryMajorRadius = 20.000001\n End\n",
+		"Fractional", 9, {10});
+	BOOST_CHECK(fractional.geometry == contacts::Circle(contacts::MicroCells{2000001}));
+	BOOST_CHECK_THROW(generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Invalid\n GeometryMajorRadius = 20\n End\n", "Invalid", 10, {0}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(content_translates_box_and_rejects_unsupported_geometry)
+{
+	const auto box = generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Crate\n Geometry = BOX\n GeometryMajorRadius = 4\n GeometryMinorRadius = 12\n End\n",
+		"Crate", 5, {10});
+	BOOST_CHECK(box.geometry == contacts::AxisAlignedBox(contacts::MicroCells{400000}, contacts::MicroCells{1200000}));
+	BOOST_CHECK_THROW(generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Bad\n Geometry = CAPSULE\n End\n", "Bad", 6, {10}), std::invalid_argument);
+	BOOST_CHECK_THROW(generalszh::content::DecodeZeroHourCollisionDefinition(
+		"Object Bad\n GeometryAngle = 45\n End\n", "Bad", 7, {10}), std::invalid_argument);
+}

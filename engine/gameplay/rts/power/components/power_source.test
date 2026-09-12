@@ -1,0 +1,10 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.power.components.power_source;
+BOOST_AUTO_TEST_CASE(power_source_defaults_and_identity)
+{
+    engine::gameplay::rts::power::PowerSource source{{7, 2}, -10};
+    BOOST_TEST(source.eligible);
+    BOOST_TEST(source.account.generation == 2u);
+    BOOST_TEST(source.authoredPower == -10);
+    BOOST_TEST(ecs::ComponentTraits<engine::gameplay::rts::power::PowerSource>::Version == 1u);
+}

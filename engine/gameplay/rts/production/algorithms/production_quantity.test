@@ -1,0 +1,195 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsProductionQuantity
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import engine.gameplay.rts.production.algorithms.production_quantity;
+import engine.ecs.scheduler.scheduler;
+
+using engine::gameplay::rts::production::CompleteOne;
+using engine::gameplay::rts::production::ProductionQuantity;
+using engine::gameplay::rts::production::Remaining;
+using engine::gameplay::rts::production::SetQuantity;
+
+namespace production_quantity_test
+{
+struct CompletionStep
+{
+	using Query = ecs::Query<ecs::Write<ProductionQuantity>>;
+
+	void Execute(Query::Chunk chunk, ecs::SystemContext &) const
+	{
+		const auto quantities = chunk.Get<ProductionQuantity>();
+		for (ProductionQuantity &quantity : quantities)
+			CompleteOne(quantity);
+	}
+};
+
+using Snapshot = std::vector<std::array<std::int64_t, 4>>;
+
+Snapshot RunCompletion(std::size_t workers);
+} // namespace production_quantity_test
+
+namespace ecs
+{
+template<> struct SystemTraits<production_quantity_test::CompletionStep>
+{
+	static constexpr std::string_view StableName = "tests.rts.production_quantity.completion_step";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace production_quantity_test
+{
+Snapshot RunCompletion(const std::size_t workers)
+{
+	constexpr std::size_t entityCount = 4096;
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<ProductionQuantity>();
+	world.FinalizeComponents();
+
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<ProductionQuantity>();
+		SetQuantity(*world.Get<ProductionQuantity>(entity),
+			static_cast<std::int32_t>(index),
+			-static_cast<std::int32_t>(index % 3));
+	}
+
+	CompletionStep system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	for (std::uint64_t tick = 1; tick <= 6; ++tick)
+		scheduler.Execute(engine::time::SimulationTime{tick, step});
+
+	Snapshot state(entityCount);
+	std::vector<std::size_t> seen(entityCount, 0);
+	std::size_t chunks = 0;
+	ecs::Query<ecs::Read<ProductionQuantity>> query(world);
+	query.ForEachChunk([&](auto chunk) {
+		++chunks;
+		const auto quantities = chunk.template Get<ProductionQuantity>();
+		const auto entities = chunk.Entities();
+		for (std::size_t row = 0; row < quantities.size(); ++row)
+		{
+			if (row != 0)
+				BOOST_CHECK(&quantities[row] == &quantities[row - 1] + 1);
+
+			const ecs::Entity entity = entities[row];
+			BOOST_REQUIRE(entity.index < entityCount);
+			state[entity.index] = {
+				static_cast<std::int64_t>(entity.index),
+				static_cast<std::int64_t>(entity.generation),
+				static_cast<std::int64_t>(quantities[row].total),
+				static_cast<std::int64_t>(quantities[row].completed)};
+			++seen[entity.index];
+		}
+	});
+
+	BOOST_TEST(chunks > 1u);
+	BOOST_TEST(state.size() == entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		BOOST_TEST(seen[index] == 1u);
+		BOOST_TEST(state[index][0] == static_cast<std::int64_t>(index));
+		BOOST_TEST(state[index][1] == 1);
+		BOOST_TEST(state[index][2] == static_cast<std::int64_t>(index));
+		BOOST_TEST(state[index][3] ==
+			-static_cast<std::int64_t>(index % 3) + 6);
+	}
+	return state;
+}
+} // namespace production_quantity_test
+
+BOOST_AUTO_TEST_CASE(default_quantity_can_be_reset_with_simple_assignment)
+{
+	ProductionQuantity quantity;
+	BOOST_TEST(quantity.total == 0);
+	BOOST_TEST(quantity.completed == 0);
+
+	SetQuantity(quantity, 24, 8);
+	BOOST_TEST(quantity.total == 24);
+	BOOST_TEST(quantity.completed == 8);
+
+	SetQuantity(quantity, 0);
+	BOOST_TEST(quantity.total == 0);
+	BOOST_TEST(quantity.completed == 0);
+}
+
+BOOST_AUTO_TEST_CASE(remaining_preserves_arbitrary_signed_values)
+{
+	ProductionQuantity quantity;
+
+	SetQuantity(quantity, -10, 7);
+	BOOST_TEST(Remaining(quantity) == -17);
+
+	SetQuantity(quantity, 10, -7);
+	BOOST_TEST(Remaining(quantity) == 17);
+
+	SetQuantity(quantity, -10, -7);
+	BOOST_TEST(Remaining(quantity) == -3);
+}
+
+BOOST_AUTO_TEST_CASE(completing_one_advances_only_the_completed_count)
+{
+	ProductionQuantity quantity;
+	SetQuantity(quantity, -4, -2);
+
+	CompleteOne(quantity);
+	BOOST_TEST(quantity.total == -4);
+	BOOST_TEST(quantity.completed == -1);
+	BOOST_TEST(Remaining(quantity) == -3);
+
+	SetQuantity(quantity, 4, 3);
+	CompleteOne(quantity);
+	BOOST_TEST(quantity.total == 4);
+	BOOST_TEST(quantity.completed == 4);
+	BOOST_TEST(Remaining(quantity) == 0);
+}
+
+BOOST_AUTO_TEST_CASE(overflow_checks_are_debug_only_and_release_math_is_defined)
+{
+	constexpr std::int32_t maximum = (std::numeric_limits<std::int32_t>::max)();
+	constexpr std::int32_t minimum = (std::numeric_limits<std::int32_t>::min)();
+
+#if defined(NDEBUG)
+	ProductionQuantity highDifference{maximum, minimum};
+	BOOST_TEST(Remaining(highDifference) == -1);
+
+	ProductionQuantity lowDifference{minimum, maximum};
+	BOOST_TEST(Remaining(lowDifference) == 1);
+
+	ProductionQuantity completedMaximum{maximum, maximum};
+	CompleteOne(completedMaximum);
+	BOOST_TEST(completedMaximum.completed == minimum);
+#else
+	ProductionQuantity validDifference{maximum, maximum};
+	BOOST_TEST(Remaining(validDifference) == 0);
+
+	ProductionQuantity validCompletion{maximum, maximum - 1};
+	CompleteOne(validCompletion);
+	BOOST_TEST(validCompletion.completed == maximum);
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(chunk_completion_is_deterministic_across_worker_counts)
+{
+	const auto oneWorker = production_quantity_test::RunCompletion(1);
+	const auto twoWorkers = production_quantity_test::RunCompletion(2);
+	const auto fourWorkers = production_quantity_test::RunCompletion(4);
+
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+}

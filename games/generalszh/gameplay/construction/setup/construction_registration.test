@@ -1,0 +1,27 @@
+#define BOOST_TEST_MODULE ConstructionRegistration
+#include <boost/test/included/unit_test.hpp>
+#include "../testing/construction_host.h"
+BOOST_AUTO_TEST_CASE(registration_executes_empty_world_without_a_build_system_node)
+{
+    Host host(1); host.Tick(0);
+    BOOST_TEST(host.receipts.Receipts().empty());
+    BOOST_TEST(host.world.Get<Balance>(host.account)->quantity==10000u);
+}
+BOOST_AUTO_TEST_CASE(registration_is_self_sufficient_for_construction_system_startup)
+{
+    ecs::World world;
+    c::RegisterConstructionComponents(world);
+    world.FinalizeComponents();
+
+    engine::gameplay::rts::construction::BuilderFrame frame(4);
+    c::ConstructionSystem construction(world,frame);
+    construction.Configure();
+
+    ecs::SystemRegistry registry;
+    registry.Register(construction);
+    registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{1};
+    scheduler.Finalize(step);
+    scheduler.Execute({0,step});
+}

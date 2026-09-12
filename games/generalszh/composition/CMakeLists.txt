@@ -1,0 +1,24 @@
+add_library(generalszh_game_session STATIC)
+target_sources(generalszh_game_session PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES game_session.cppm)
+target_sources(generalszh_game_session PRIVATE game_session_impl.cppm)
+set_source_files_properties(game_session_impl.cppm PROPERTIES LANGUAGE CXX)
+set_property(TARGET generalszh_game_session PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_compile_features(generalszh_game_session PUBLIC cxx_std_23)
+target_link_libraries(generalszh_game_session PUBLIC generalszh_production_execution generalszh_economy_execution
+    generalszh_crate_execution
+    generalszh_cash_bounty_execution
+    generalszh_force_production_ai
+    engine_gameplay_combat engine_gameplay_navigation generalszh_movement_rules generalszh_combat_rules
+    generalszh_concealment_rules engine_gameplay_concealment
+    generalszh_visibility_rules engine_gameplay_rts_visibility
+    generalszh_match_rules generalszh_order_rules generalszh_power_execution
+    engine_gameplay_regeneration engine_gameplay_progression engine_gameplay_rts_rank generalszh_progression generalszh_construction generalszh_task_rules generalszh_selling generalszh_base_repair
+    generalszh_transport_containment generalszh_initial_payload_execution generalszh_garrison_containment
+    generalszh_production_rally generalszh_capture generalszh_demolition engine_gameplay_combat_death)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+    find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+    set_source_files_properties(game_session_impl.test PROPERTIES LANGUAGE CXX)
+    add_executable(generalszh_game_session_tests game_session_impl.test)
+    target_link_libraries(generalszh_game_session_tests PRIVATE generalszh_game_session generalszh_building_content Boost::included_unit_test_framework)
+    add_test(NAME generalszh_game_session_tests COMMAND generalszh_game_session_tests)
+endif()

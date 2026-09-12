@@ -1,0 +1,61 @@
+#define BOOST_TEST_MODULE GeneralsZHproductionregistration
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.economy.systems.economy_system;
+#include "../testing/production_test_host.hpp"
+BOOST_AUTO_TEST_CASE(initial_payload_component_is_registered_with_production_enrollment)
+{
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const auto carrier=world.Create<generalszh::containment::InitialPayloadBinding>();
+    BOOST_REQUIRE(world.Get<generalszh::containment::InitialPayloadBinding>(carrier));
+    BOOST_CHECK(world.Get<generalszh::containment::InitialPayloadBinding>(carrier)->phase ==
+        generalszh::containment::InitialPayloadPhase::Pending);
+}
+
+BOOST_AUTO_TEST_CASE(account_income_funds_fifo_unit_packs_and_research_without_legacy_dispatch)
+{
+    ecs::World world; RegisterEconomyComponents(world); economy::RegisterAccountComponents(world); RegisterProductionComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({2}); const engine::time::FixedStep step{20};
+    economy::AccountBatch batch(1); economy::AccountSystem accounts(batch);
+    EconomySystem economy(world, batch, {0, 1}); ProductionTestHost production(world, jobs, definitions);
+    ecs::SystemRegistry registry; ecs::Scheduler scheduler(world, registry, jobs);
+    economy.Configure(step); production.Configure(step);
+    registry.Register(economy); registry.Register(accounts);
+    registry.OrderBefore<EconomySystem, economy::AccountSystem>(); production.RegisterSystems(registry);
+    registry.OrderBefore<economy::AccountSystem, ProductionAdmissionSystem>();
+    registry.Finalize(world.Components()); scheduler.Finalize(step);
+    const auto account = world.Create<Balance, economy::IncomeHistory, economy::AccountRange>();
+    const auto producer = production.CreateProducer(account, 3);
+    BOOST_CHECK(production.Enqueue(producer, 1).status == BuildAcceptance::InsufficientFunds);
+    const std::array credits{economy::AccountRequest{account, {economy::AccountOperation::Deposit, 200}}};
+    const std::array builds{BuildInput{producer, 1}, BuildInput{producer, 2}, BuildInput{producer, 2}};
+    economy.SetInputs(credits); production.StageInputs(builds);
+    scheduler.Execute({0, step});
+    BOOST_REQUIRE(production.Receipts().size() == 3u);
+    const auto units = production.Receipts()[0], upgrade = production.Receipts()[1];
+    BOOST_CHECK(production.Receipts()[2].status == BuildAcceptance::DuplicateUpgrade);
+    BOOST_TEST(units.order.IsValid()); BOOST_TEST(upgrade.order.IsValid());
+    BOOST_CHECK(units.status == BuildAcceptance::Accepted); BOOST_CHECK(upgrade.status == BuildAcceptance::Accepted);
+    BOOST_CHECK(production.Enqueue(producer, 2).status == BuildAcceptance::DuplicateUpgrade);
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 50u);
+    BOOST_TEST(world.Get<Work>(units.order)->elapsed == 1u); BOOST_TEST(world.Get<Work>(upgrade.order)->elapsed == 0u);
+    scheduler.Execute({1, step}); BOOST_TEST(!world.IsAlive(units.order));
+    ecs::Query<ecs::Read<ProducedUnit>> query(world); std::size_t count = 0;
+    query.ForEachChunk([&](auto chunk) { count += chunk.Count(); for (const auto &unit : chunk.template Get<ProducedUnit>()) BOOST_CHECK(unit.account == account);
+        for(auto entity:chunk.Entities()) {
+            BOOST_CHECK(!world.Get<engine::gameplay::rts::harvesting::HarvestPolicy>(entity));
+            BOOST_CHECK(!world.Get<construction::Builder>(entity));
+            BOOST_CHECK(!world.Get<engine::gameplay::combat::regeneration::RegenerationBinding>(entity));
+            BOOST_CHECK(!world.Get<engine::gameplay::combat::regeneration::RegenerationState>(entity));
+            BOOST_CHECK(!world.Get<engine::gameplay::progression::ProgressionState>(entity));
+            BOOST_CHECK(!world.Get<engine::gameplay::progression::ProgressionDefinitionRef>(entity));
+            BOOST_CHECK(!world.Get<engine::gameplay::progression::ProgressionEligibility>(entity));
+            BOOST_CHECK(!world.Get<engine::gameplay::progression::ProgressionInbox>(entity));
+        }
+    });
+    BOOST_TEST(count == 2u);
+    scheduler.Execute({2, step}); BOOST_TEST(!world.IsAlive(upgrade.order));
+    BOOST_CHECK(production.Enqueue(producer, 2).status == BuildAcceptance::DuplicateUpgrade);
+    ecs::Query<ecs::Read<ResearchedUpgrade>, ecs::Read<upgrades::UpgradeInstanceStatus>> grants(world); count = 0;
+    grants.ForEachChunk([&](auto chunk) { count += chunk.Count(); BOOST_CHECK(chunk.template Get<upgrades::UpgradeInstanceStatus>()[0].value == upgrades::Status::Complete); });
+    BOOST_TEST(count == 1u); BOOST_TEST(world.Get<economy::IncomeHistory>(account)->total == 200u);
+}

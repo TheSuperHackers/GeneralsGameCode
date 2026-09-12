@@ -1,0 +1,56 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionRequirement
+#include <boost/test/included/unit_test.hpp>
+
+#include <bit>
+#include <chrono>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+
+import games.generalszh.gameplay.production.progress.algorithms.production_progress;
+import games.generalszh.gameplay.production.progress.components.production_progress;
+import games.generalszh.gameplay.production.progress.definitions.production_requirement;
+
+using generalszh::production::AdvanceOneStep;
+using generalszh::production::AuthorRequirement;
+using generalszh::production::ProductionElapsed;
+using generalszh::production::ProductionProgress;
+using generalszh::production::RefreshProgress;
+
+namespace
+{
+std::uint32_t FloatBits(const float value) noexcept
+{
+	return std::bit_cast<std::uint32_t>(value);
+}
+} // namespace
+
+BOOST_AUTO_TEST_CASE(author_requirement_uses_the_explicit_fixed_step_and_signed_boundary)
+{
+	using namespace std::chrono_literals;
+	const auto duration = 2s;
+	const auto at30 = AuthorRequirement(duration, engine::time::FixedStep{30});
+	const auto at60 = AuthorRequirement(duration, engine::time::FixedStep{60});
+	BOOST_TEST(at30.ticks == 60);
+	BOOST_TEST(at60.ticks == 120);
+	BOOST_TEST(at30.ticks * 2 == at60.ticks);
+	ProductionElapsed elapsed30, elapsed60;
+	for (int tick = 0; tick != 30; ++tick) AdvanceOneStep(elapsed30);
+	for (int tick = 0; tick != 60; ++tick) AdvanceOneStep(elapsed60);
+	ProductionProgress progress30, progress60;
+	RefreshProgress(elapsed30, progress30, at30);
+	RefreshProgress(elapsed60, progress60, at60);
+	BOOST_TEST(FloatBits(progress30.percent) == FloatBits(50.0f));
+	BOOST_TEST(FloatBits(progress30.percent) == FloatBits(progress60.percent));
+	BOOST_TEST(AuthorRequirement(1ns, engine::time::FixedStep{30}).ticks == 1);
+	BOOST_TEST(AuthorRequirement(0ns, engine::time::FixedStep{30}).ticks == 0);
+	BOOST_TEST(at30.ticks == engine::time::FixedStep{30}.TicksFor(duration));
+	BOOST_CHECK_THROW(AuthorRequirement(-1ns, engine::time::FixedStep{30}), std::invalid_argument);
+
+	const engine::time::Duration longest{
+		(std::numeric_limits<std::int64_t>::max)()};
+	const engine::time::FixedStep wideStep{1'100'000'000};
+	const auto unsignedTicks = wideStep.TicksFor(longest);
+	BOOST_TEST(unsignedTicks > static_cast<std::uint64_t>((std::numeric_limits<std::int64_t>::max)()));
+	BOOST_CHECK_THROW(AuthorRequirement(longest, wideStep), std::overflow_error);
+}

@@ -1,0 +1,27 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import games.generalszh.gameplay.repair.inputs.manual_repair_batches;
+
+BOOST_AUTO_TEST_CASE(batch_copies_and_canonicalizes_requests)
+{
+	using namespace generalszh::repair;
+	ManualRepairRequestBatch batch(3);
+	const std::array input{ManualRepairInput{{8,1},{12,1}},ManualRepairInput{{2,1},{12,1}}};
+	batch.Set(input);
+	const auto values=batch.Values();
+	BOOST_REQUIRE_EQUAL(values.size(),2u);
+	BOOST_TEST(values[0].actor.index==2u);
+	BOOST_TEST(values[1].actor.index==8u);
+	batch.Clear();
+	BOOST_TEST(batch.Values().empty());
+}
+
+BOOST_AUTO_TEST_CASE(batch_rejects_over_capacity_without_partial_state)
+{
+	using namespace generalszh::repair;
+	ManualRepairRequestBatch batch(1);
+	const std::array input{ManualRepairInput{{1,1},{2,1}},ManualRepairInput{{3,1},{2,1}}};
+	BOOST_CHECK_THROW(batch.Set(input),std::length_error);
+	BOOST_TEST(batch.Values().empty());
+}

@@ -1,0 +1,23 @@
+#define BOOST_TEST_MODULE GeneralsZeroHourCollisionDefinitions
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+
+import games.generalszh.gameplay.collision.definitions.zero_hour_collision_definition;
+
+namespace contacts = engine::gameplay::spatial::contacts;
+using generalszh::collision::ZeroHourCollisionDefinition;
+
+BOOST_AUTO_TEST_CASE(definition_keeps_the_explicit_bounded_2d_omissions)
+{
+	ZeroHourCollisionDefinition definition{7, contacts::Circle(contacts::MicroCells{250000}), {}, 7};
+	BOOST_CHECK_NO_THROW(generalszh::collision::ValidateZeroHourCollisionDefinition(definition));
+	BOOST_TEST(definition.omissions == 7u);
+}
+
+BOOST_AUTO_TEST_CASE(definition_rejects_invalid_identity_or_geometry)
+{
+	ZeroHourCollisionDefinition invalid{};
+	BOOST_CHECK_THROW(generalszh::collision::ValidateZeroHourCollisionDefinition(invalid), std::invalid_argument);
+	invalid.id = 1;
+	BOOST_CHECK_THROW(generalszh::collision::ValidateZeroHourCollisionDefinition(invalid), std::invalid_argument);
+}

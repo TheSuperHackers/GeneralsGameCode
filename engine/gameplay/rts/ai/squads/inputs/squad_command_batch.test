@@ -1,0 +1,77 @@
+#define BOOST_TEST_MODULE RtsSquadCommandBatch
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <span>
+#include <stdexcept>
+
+import engine.gameplay.rts.ai.squads.inputs.squad_command_batch;
+
+namespace
+{
+using namespace engine::gameplay::rts::ai::squads;
+
+SquadCommand Goal(const ecs::Entity issuer, const ecs::Entity squad)
+{
+	return {SquadCommandKind::SetGoal, issuer, squad, {}, {}, 0,
+		{SquadGoalKind::Stop, {}, engine::gameplay::navigation::InvalidCell, 0}};
+}
+}
+
+BOOST_AUTO_TEST_CASE(batch_requires_explicit_lifecycle_and_reclaims_capacity)
+{
+	SquadCommandBatch batch(2);
+	const ecs::Entity issuer{1, 1};
+	const ecs::Entity squad{2, 1};
+	batch.Begin(4);
+	batch.Append(Goal(issuer, squad));
+	batch.Publish();
+	BOOST_CHECK(batch.IsPublished());
+	BOOST_TEST(batch.Tick() == 4u);
+	BOOST_REQUIRE_EQUAL(batch.Commands().size(), 1u);
+	BOOST_CHECK_THROW(batch.Begin(5), std::logic_error);
+	batch.RecordReceipt({0, SquadCommandKind::SetGoal, SquadCommandStatus::Accepted,
+		issuer, squad, {}, 1, {}});
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 1u);
+	batch.Release();
+	BOOST_CHECK(!batch.IsPublished());
+	BOOST_CHECK_THROW(batch.Release(), std::logic_error);
+
+	batch.Begin(5);
+	const std::array orderedInput{Goal(issuer, squad), Goal(issuer, ecs::Entity{3, 1})};
+	batch.Append(std::span<const SquadCommand>(orderedInput));
+	batch.Publish();
+	BOOST_REQUIRE_EQUAL(batch.Commands().size(), 2u);
+	BOOST_CHECK(batch.Commands()[0].squad == squad);
+	BOOST_CHECK((batch.Commands()[1].squad == ecs::Entity{3, 1}));
+	batch.RecordReceipt({0, SquadCommandKind::SetGoal, SquadCommandStatus::Accepted,
+		issuer, squad, {}, 1, {}});
+	batch.RecordReceipt({1, SquadCommandKind::SetGoal, SquadCommandStatus::Accepted,
+		issuer, {3, 1}, {}, 1, {}});
+	BOOST_TEST(batch.Receipts()[0].sequence == 0u);
+	BOOST_TEST(batch.Receipts()[1].sequence == 1u);
+	batch.Release();
+}
+
+BOOST_AUTO_TEST_CASE(batch_rejects_invalid_identity_and_overflow)
+{
+	SquadCommandBatch batch(1);
+	batch.Begin(0);
+	BOOST_CHECK_THROW(batch.Append(Goal({}, {2, 1})), std::invalid_argument);
+	batch.Append(Goal({1, 1}, {2, 1}));
+	BOOST_CHECK_THROW(batch.Append(Goal({1, 1}, {3, 1})), std::length_error);
+	batch.Publish();
+	batch.RecordReceipt({0, SquadCommandKind::SetGoal, SquadCommandStatus::Accepted,
+		{1, 1}, {2, 1}, {}, 1, {}});
+	batch.Release();
+}
+
+BOOST_AUTO_TEST_CASE(batch_rejects_malformed_kind_payload)
+{
+	SquadCommandBatch batch(2);
+	batch.Begin(0);
+	SquadCommand command = Goal({1, 1}, {2, 1});
+	command.actor = {9, 1};
+	BOOST_CHECK_THROW(batch.Append(command), std::invalid_argument);
+	command = {SquadCommandKind::Assign, {1, 1}, {2, 1}, {}, {}, 0, {}};
+	BOOST_CHECK_THROW(batch.Append(command), std::invalid_argument);
+}

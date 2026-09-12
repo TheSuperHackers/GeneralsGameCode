@@ -1,0 +1,183 @@
+#define BOOST_TEST_MODULE GeneralsZHCrateContent
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+
+import games.generalszh.adapters.content.crates.crate_definition;
+
+namespace content = generalszh::content;
+namespace crates = generalszh::crates;
+namespace unlocks = engine::gameplay::rts::unlocks;
+
+constexpr std::string_view MoneyObject = R"(
+Object 1000DollarCrate
+  KindOf = PARACHUTABLE CRATE
+  Behavior = MoneyCrateCollide ModuleTag_ForbiddenChanges
+    ForbiddenKindOf = PROJECTILE
+    PickupScience = SCIENCE_GLA
+    MoneyProvided = 1000
+    ExecuteAnimation = MoneyPickUp
+    ExecuteAnimationTime = 4.0
+    ExecuteAnimationZRise = 15.0
+    ExecuteAnimationFades = Yes
+  End
+  Behavior = SquishCollide ModuleTag_03
+  End
+End
+)",
+    PilotObject = R"(
+Object AmericaInfantryPilot
+  KindOf = PRELOAD SELECTABLE INFANTRY NO_GARRISON
+  Behavior = VeterancyCrateCollide ModuleTag_03
+    RequiredKindOf = VEHICLE
+    ForbiddenKindOf = DOZER
+    EffectRange = 0
+    AddsOwnerVeterancy = Yes
+    IsPilot = Yes
+  End
+End
+)",
+    HealObject = R"(
+Object HealFixture
+  KindOf = CRATE
+  Behavior = HealCrateCollide ModuleTag_02
+  End
+End
+)",
+    BoostObject = R"(
+Object SupplyDropzoneCrate
+  KindOf = PARACHUTABLE CRATE
+  Behavior = MoneyCrateCollide ModuleTag_ForbiddenChanges
+    ForbiddenKindOf = PROJECTILE
+    MoneyProvided = 250
+    UpgradedBoost = UpgradeType:Upgrade_AmericaSupplyLines Boost:25
+    BuildingPickup = Yes
+  End
+End
+)",
+    SalvageObject = R"(
+Object SalvageCrate
+  KindOf = PARACHUTABLE CRATE
+  Behavior = SalvageCrateCollide ModuleTag_02
+    ForbiddenKindOf = PROJECTILE
+    WeaponChance = 100%
+    LevelChance = 25%
+    MoneyChance = 75%
+    MinMoney = 25
+    MaxMoney = 75
+  End
+End
+)",
+    InvalidFieldObject = R"(
+Object BadCrate
+  Behavior = MoneyCrateCollide Money
+    SupportsAirborneCollector = No
+  End
+End
+)";
+
+void FinalizeEmpty(unlocks::UnlockCatalog &science)
+{
+	science.Finalize();
+}
+
+BOOST_AUTO_TEST_CASE(crate_adapter_reads_actual_object_behavior_and_defaults)
+{
+    const auto decoded = content::DecodeCrate(MoneyObject, "1000DollarCrate");
+    BOOST_TEST(decoded.objectName == "1000DollarCrate");
+	BOOST_CHECK(decoded.definition.reward == crates::RewardKind::Money);
+    BOOST_TEST(decoded.definition.moneyProvided == 1000u);
+    BOOST_TEST(decoded.requiredKindOfNames.empty());
+    BOOST_REQUIRE_EQUAL(decoded.forbiddenKindOfNames.size(), 1u);
+    BOOST_TEST(decoded.forbiddenKindOfNames.front() == "PROJECTILE");
+    BOOST_TEST(decoded.parachutable);
+    BOOST_REQUIRE_EQUAL(decoded.presentationOmissions.size(), 4u);
+    BOOST_REQUIRE_EQUAL(decoded.omittedBehaviors.size(), 1u);
+
+    const std::array kinds{crates::KindOfBinding{"CRATE", 1u},
+        crates::KindOfBinding{"PARACHUTABLE", 2u},
+        crates::KindOfBinding{"PROJECTILE", 4u}};
+    unlocks::UnlockCatalog science;
+    science.Register(unlocks::UnlockDefinition{"SCIENCE_GLA"});
+    science.Finalize();
+	const auto bound = content::BindCrateDefinition(decoded, crates::KindOfCatalog{kinds},
+		science, std::span<const content::UpgradeIdentity>{});
+    BOOST_TEST(bound.forbiddenKindOf == 4u);
+	BOOST_CHECK(bound.pickupScience != unlocks::InvalidUnlockId);
+    BOOST_TEST(bound.moneyUpgradeBoosts.empty());
+}
+
+BOOST_AUTO_TEST_CASE(crate_adapter_maps_heal_and_veterancy_module_defaults)
+{
+    const auto heal = content::DecodeCrate(HealObject, "HealFixture");
+	BOOST_CHECK(heal.definition.reward == crates::RewardKind::Heal);
+    BOOST_TEST(heal.definition.moneyProvided == 0u);
+    BOOST_TEST(heal.definition.effectRange == 0u);
+
+    const auto pilot = content::DecodeCrate(PilotObject, "AmericaInfantryPilot");
+	BOOST_CHECK(pilot.definition.reward == crates::RewardKind::Veterancy);
+    BOOST_REQUIRE_EQUAL(pilot.requiredKindOfNames.size(), 1u);
+    BOOST_TEST(pilot.requiredKindOfNames.front() == "VEHICLE");
+    BOOST_REQUIRE_EQUAL(pilot.forbiddenKindOfNames.size(), 1u);
+    BOOST_TEST(pilot.forbiddenKindOfNames.front() == "DOZER");
+    BOOST_TEST(pilot.definition.isPilot);
+    BOOST_TEST(pilot.definition.addsOwnerVeterancy);
+    BOOST_TEST(pilot.definition.effectRange == 0u);
+
+    const std::array kinds{crates::KindOfBinding{"DOZER", 1u},
+        crates::KindOfBinding{"VEHICLE", 2u},
+        crates::KindOfBinding{"PRELOAD", 4u},
+        crates::KindOfBinding{"SELECTABLE", 8u},
+        crates::KindOfBinding{"INFANTRY", 16u},
+        crates::KindOfBinding{"NO_GARRISON", 32u}};
+    unlocks::UnlockCatalog science;
+	FinalizeEmpty(science);
+	const auto bound = content::BindCrateDefinition(pilot, crates::KindOfCatalog{kinds},
+		science, std::span<const content::UpgradeIdentity>{});
+    BOOST_TEST(bound.requiredKindOf == 2u);
+    BOOST_TEST(bound.forbiddenKindOf == 1u);
+    BOOST_CHECK_THROW(crates::CrateDefinitionCatalog(
+        std::span<const crates::CrateDefinition>{&bound, 1}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(crate_adapter_binds_symbolic_science_and_upgrade_names)
+{
+    const auto decoded = content::DecodeCrate(BoostObject, "SupplyDropzoneCrate");
+    BOOST_REQUIRE_EQUAL(decoded.moneyUpgradeBoosts.size(), 1u);
+    BOOST_TEST(decoded.moneyUpgradeBoosts.front().upgradeName == "Upgrade_AmericaSupplyLines");
+    BOOST_TEST(decoded.moneyUpgradeBoosts.front().amount == 25u);
+
+	const std::array identities{content::UpgradeIdentity{
+		"Upgrade_AmericaSupplyLines", 7001u, content::UpgradeScope::Player}};
+	const std::array kinds{crates::KindOfBinding{"CRATE", 1u},
+		crates::KindOfBinding{"PARACHUTABLE", 2u},
+		crates::KindOfBinding{"PROJECTILE", 4u}};
+	 unlocks::UnlockCatalog science;
+	science.Finalize();
+	const auto bound = content::BindCrateDefinition(decoded, crates::KindOfCatalog{kinds},
+		science, identities);
+	BOOST_REQUIRE_EQUAL(bound.moneyUpgradeBoosts.size(), 1u);
+	BOOST_TEST(bound.moneyUpgradeBoosts.front().definition == 7001u);
+	BOOST_TEST(bound.moneyUpgradeBoosts.front().amount == 25u);
+
+	const std::array objectIdentity{content::UpgradeIdentity{
+		"Upgrade_AmericaSupplyLines", 7001u, content::UpgradeScope::Object}};
+	BOOST_CHECK_THROW(content::BindCrateDefinition(decoded, crates::KindOfCatalog{kinds},
+		science, objectIdentity), std::invalid_argument);
+	BOOST_CHECK_THROW(content::BindCrateDefinition(decoded, crates::KindOfCatalog{kinds},
+		science, std::span<const content::UpgradeIdentity>{}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(crate_adapter_rejects_unknown_simulation_fields_and_marks_family_gaps)
+{
+    BOOST_CHECK_THROW(content::DecodeCrate(InvalidFieldObject, "BadCrate"), std::invalid_argument);
+    const auto salvage = content::DecodeCrate(SalvageObject, "SalvageCrate");
+	BOOST_CHECK(salvage.definition.reward == crates::RewardKind::Salvage);
+    BOOST_TEST(salvage.pickupScienceName.empty());
+    BOOST_REQUIRE_EQUAL(salvage.unsupportedSimulationFields.size(), 5u);
+    BOOST_CHECK_THROW(crates::CrateDefinitionCatalog(
+        std::span<const crates::CrateDefinition>{&salvage.definition, 1}), std::invalid_argument);
+}

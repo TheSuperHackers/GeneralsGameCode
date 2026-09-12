@@ -1,0 +1,11 @@
+#include <boost/test/unit_test.hpp>
+import engine.ecs.core.world;
+import engine.gameplay.concealment.components.concealment_eligibility;
+
+BOOST_AUTO_TEST_CASE(concealment_eligibility_is_transient_policy_input)
+{
+    ecs::World world; world.RegisterComponent<engine::gameplay::concealment::ConcealmentEligibility>(); world.FinalizeComponents();
+    const auto entity = world.Create<engine::gameplay::concealment::ConcealmentEligibility>();
+    BOOST_TEST(world.Get<engine::gameplay::concealment::ConcealmentEligibility>(entity)->allowed);
+    BOOST_CHECK(ecs::ComponentTraits<engine::gameplay::concealment::ConcealmentEligibility>::Persistence == ecs::PersistencePolicy::Transient);
+}

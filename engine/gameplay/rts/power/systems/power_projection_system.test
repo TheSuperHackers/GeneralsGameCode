@@ -1,0 +1,29 @@
+#include <boost/test/unit_test.hpp>
+#include <limits>
+#include <cstdint>
+import engine.gameplay.rts.power.systems.power_projection_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(power_projection_signed_limits_and_dead_source)
+{
+    using namespace engine::gameplay::rts::power;
+    using engine::gameplay::combat::LifeState;
+    ecs::World world;
+    world.RegisterComponent<PowerSource>(); world.RegisterComponent<PowerContribution>();
+    world.RegisterComponent<LifeState>(); world.FinalizeComponents();
+    const auto source = world.Create<PowerSource, PowerContribution, LifeState>();
+    world.Get<PowerSource>(source)->authoredPower = (std::numeric_limits<std::int32_t>::min)();
+    PowerProjectionSystem project; ecs::SystemRegistry registry;
+    registry.Register(project); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({0, step});
+    BOOST_TEST(world.Get<PowerContribution>(source)->consumption == 2147483648u);
+    world.Get<LifeState>(source)->alive = false;
+    scheduler.Execute({1, step});
+    BOOST_TEST(world.Get<PowerContribution>(source)->consumption == 0u);
+    world.Get<LifeState>(source)->alive = true;
+    world.Get<PowerSource>(source)->eligible = false;
+    scheduler.Execute({2, step});
+    BOOST_TEST(world.Get<PowerContribution>(source)->production == 0u);
+    BOOST_TEST(world.Get<PowerContribution>(source)->consumption == 0u);
+}

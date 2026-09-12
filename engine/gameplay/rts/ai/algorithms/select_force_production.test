@@ -1,0 +1,98 @@
+#define BOOST_TEST_MODULE RTSSelectForceProduction
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <span>
+import engine.gameplay.rts.ai.algorithms.select_force_production;
+
+using namespace engine::gameplay::rts::ai;
+using namespace std::chrono_literals;
+
+namespace
+{
+ForceProductionPlanCatalog MakeCatalog()
+{
+	const std::array entries{
+		ForceProductionEntry{10, 2, 3},
+		ForceProductionEntry{20, 1, 2}};
+	const std::array candidates{ForceProductionCandidateInput{5, 9, 50ms, entries}};
+	const std::array policies{ForceProductionPolicyInput{1, 1, 100ms, candidates}};
+	return ForceProductionPlanCatalog(policies, engine::time::FixedStep{20}, {1, 1, 2});
+}
+}
+
+BOOST_AUTO_TEST_CASE(required_deficit_precedes_optional_fill_and_uses_stable_producer_key)
+{
+	const auto catalog = MakeCatalog();
+	const ecs::Entity account{7, 3};
+	const std::array producers{
+		ForceProductionProducerSnapshot{account, ecs::Entity{12, 2}, 0, 3, true, true, true},
+		ForceProductionProducerSnapshot{account, ecs::Entity{4, 9}, 0, 3, true, true, true}};
+	const std::array quantities{
+		ForceProductionQuantitySnapshot{account, ecs::Entity{9, 1}, 1, 1, 0},
+		ForceProductionQuantitySnapshot{account, ecs::Entity{9, 1}, 20, 1, 0}};
+	const std::array definitions{
+		ForceProductionDefinitionSnapshot{account, 10, 10, 1, true},
+		ForceProductionDefinitionSnapshot{account, 20, 10, 1, true}};
+	const ForceProductionAccountSnapshot snapshot{account, 100, producers, quantities, definitions};
+
+	const auto choice = SelectForceProduction(catalog, 1, snapshot);
+	BOOST_REQUIRE(choice.has_value());
+	BOOST_TEST(choice->definitionKey == 10u);
+	BOOST_CHECK(choice->producer.index == 4u && choice->producer.generation == 9u);
+	BOOST_TEST(choice->retryCooldownTicks == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(funds_tech_and_full_queue_are_preflight_rejections_without_requests)
+{
+	const std::array entries{ForceProductionEntry{10, 1, 1}};
+	const std::array candidates{ForceProductionCandidateInput{1, 1, 50ms, entries}};
+	const std::array policies{ForceProductionPolicyInput{1, 1, 100ms, candidates}};
+	const ForceProductionPlanCatalog catalog(policies, engine::time::FixedStep{20}, {1, 1, 1});
+	const ecs::Entity account{1, 4};
+	const std::array producers{ForceProductionProducerSnapshot{account, ecs::Entity{2, 8}, 3, 3, true, true, true}};
+	const std::array quantities{ForceProductionQuantitySnapshot{account, ecs::Entity{2, 8}, 10, 0, 0}};
+
+	const std::array noFunds{ForceProductionDefinitionSnapshot{account, 10, 101, 1, true}};
+	BOOST_CHECK(!SelectForceProduction(catalog, 1, ForceProductionAccountSnapshot{account, 100, producers, quantities, noFunds}));
+
+	const std::array noTech{ForceProductionDefinitionSnapshot{account, 10, 1, 1, false}};
+	BOOST_CHECK(!SelectForceProduction(catalog, 1, ForceProductionAccountSnapshot{account, 1000, producers, quantities, noTech}));
+
+	const std::array noQueue{ForceProductionProducerSnapshot{account, ecs::Entity{2, 8}, 3, 3, true, true, true}};
+	const std::array validDefinition{ForceProductionDefinitionSnapshot{account, 10, 1, 1, true}};
+	BOOST_CHECK(!SelectForceProduction(catalog, 1, ForceProductionAccountSnapshot{account, 1000, noQueue, quantities, validDefinition}));
+}
+
+BOOST_AUTO_TEST_CASE(generation_safe_owner_keys_do_not_alias)
+{
+	const auto catalog = MakeCatalog();
+	const ecs::Entity account{7, 3};
+	const std::array producers{ForceProductionProducerSnapshot{ecs::Entity{7, 2}, ecs::Entity{4, 9}, 0, 3, true, true, true}};
+	const std::array quantities{ForceProductionQuantitySnapshot{account, ecs::Entity{4, 9}, 10, 0, 0}};
+	const std::array definitions{ForceProductionDefinitionSnapshot{ecs::Entity{7, 2}, 10, 1, 1, true}};
+	BOOST_CHECK(!SelectForceProduction(catalog, 1, ForceProductionAccountSnapshot{account, 100, producers, quantities, definitions}));
+}
+
+BOOST_AUTO_TEST_CASE(recipe_quantity_must_fit_remaining_authored_maximum)
+{
+	const engine::time::FixedStep step{20};
+	const std::array entries{ForceProductionEntry{10, 1, 2}};
+	const std::array candidates{ForceProductionCandidateInput{1, 1, 50ms, entries}};
+	const std::array policies{ForceProductionPolicyInput{1, 1, 100ms, candidates}};
+	const ForceProductionPlanCatalog catalog(policies, step, {1, 1, 1});
+	const ecs::Entity account{8, 1};
+	const std::array producers{
+		ForceProductionProducerSnapshot{account, ecs::Entity{3, 1}, 0, 2, true, true, true}};
+
+	const std::array oversize{ForceProductionDefinitionSnapshot{account, 10, 1, 3, true}};
+	BOOST_CHECK(!SelectForceProduction(catalog, 1,
+		ForceProductionAccountSnapshot{account, 100, producers, {}, oversize}));
+
+	const std::array fitting{ForceProductionDefinitionSnapshot{account, 10, 1, 2, true}};
+	const auto choice = SelectForceProduction(catalog, 1,
+		ForceProductionAccountSnapshot{account, 100, producers, {}, fitting});
+	BOOST_REQUIRE(choice.has_value());
+	BOOST_TEST(choice->definitionKey == 10u);
+}

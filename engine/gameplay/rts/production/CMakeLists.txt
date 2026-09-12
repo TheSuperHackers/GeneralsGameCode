@@ -1,0 +1,37 @@
+add_library(engine_gameplay_rts_production STATIC)
+target_sources(engine_gameplay_rts_production PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	components/production_quantity.cppm components/production_queue.cppm
+	algorithms/production_quantity.cppm storage/production_queue_storage.cppm
+	quantity/production_quantity.cppm queue/production_queue.cppm systems/build_system.cppm
+	components/build_work.cppm algorithms/advance_build.cppm algorithms/prerequisite_evaluation.cppm
+	definitions/build_definition.cppm definitions/prerequisite_definition.cppm)
+target_compile_features(engine_gameplay_rts_production PUBLIC cxx_std_23)
+set_property(TARGET engine_gameplay_rts_production PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(engine_gameplay_rts_production PUBLIC engine_ecs)
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(algorithms/production_quantity.test components/production_quantity.test PROPERTIES LANGUAGE CXX)
+	add_executable(engine_gameplay_rts_production_tests
+		algorithms/production_quantity.test components/production_quantity.test)
+	set_property(TARGET engine_gameplay_rts_production_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(engine_gameplay_rts_production_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(engine_gameplay_rts_production_tests PRIVATE engine_gameplay_rts_production Boost::included_unit_test_framework)
+	add_test(NAME engine_gameplay_rts_production_tests COMMAND engine_gameplay_rts_production_tests)
+	set_source_files_properties(storage/production_queue_storage.test components/production_queue.test PROPERTIES LANGUAGE CXX)
+	add_executable(engine_gameplay_rts_production_queue_tests
+		storage/production_queue_storage.test components/production_queue.test)
+	set_property(TARGET engine_gameplay_rts_production_queue_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(engine_gameplay_rts_production_queue_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(engine_gameplay_rts_production_queue_tests PRIVATE engine_gameplay_rts_production Boost::included_unit_test_framework)
+	add_test(NAME engine_gameplay_rts_production_queue_tests COMMAND engine_gameplay_rts_production_queue_tests)
+endif()
+
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+    set_source_files_properties(systems/build_system.test components/build_work.test algorithms/advance_build.test
+        algorithms/prerequisite_evaluation.test definitions/build_definition.test definitions/prerequisite_definition.test PROPERTIES LANGUAGE CXX)
+    add_executable(engine_gameplay_build_tests systems/build_system.test components/build_work.test algorithms/advance_build.test
+        algorithms/prerequisite_evaluation.test definitions/build_definition.test definitions/prerequisite_definition.test)
+    target_compile_definitions(engine_gameplay_build_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(engine_gameplay_build_tests PRIVATE engine_gameplay_rts_production Boost::included_unit_test_framework)
+    add_test(NAME engine_gameplay_build_tests COMMAND engine_gameplay_build_tests)
+endif()

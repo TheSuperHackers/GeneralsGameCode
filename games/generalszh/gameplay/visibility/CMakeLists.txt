@@ -1,0 +1,18 @@
+add_library(generalszh_visibility_rules STATIC)
+target_sources(generalszh_visibility_rules PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+	definitions/visibility_policy.cppm systems/visibility_policy_system.cppm)
+target_compile_features(generalszh_visibility_rules PUBLIC cxx_std_23)
+set_property(TARGET generalszh_visibility_rules PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_visibility_rules PUBLIC engine_gameplay_rts_visibility
+	engine_gameplay_containment engine_gameplay_navigation generalszh_build_execution
+	generalszh_construction_definitions)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+	find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+	set_source_files_properties(definitions/visibility_policy.test systems/visibility_policy_system.test PROPERTIES LANGUAGE CXX)
+	add_executable(generalszh_visibility_rules_tests definitions/visibility_policy.test systems/visibility_policy_system.test)
+	set_property(TARGET generalszh_visibility_rules_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+	target_compile_definitions(generalszh_visibility_rules_tests PRIVATE BOOST_TEST_INCLUDED)
+	target_link_libraries(generalszh_visibility_rules_tests PRIVATE generalszh_visibility_rules
+		engine_jobs Boost::included_unit_test_framework)
+	add_test(NAME generalszh_visibility_rules_tests COMMAND generalszh_visibility_rules_tests)
+endif()

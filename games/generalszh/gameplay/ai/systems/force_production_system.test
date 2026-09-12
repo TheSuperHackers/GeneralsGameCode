@@ -1,0 +1,289 @@
+#define BOOST_TEST_MODULE GeneralsZHForceProductionSystem
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <vector>
+import games.generalszh.gameplay.ai.systems.force_production_system;
+import games.generalszh.gameplay.production.definitions.build_definition;
+import games.generalszh.gameplay.production.registration.production_registration;
+import games.generalszh.gameplay.power.data.power_frame;
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+import engine.jobs.job_system;
+import engine.ecs.scheduler.scheduler;
+
+using namespace std::chrono_literals;
+
+namespace
+{
+namespace ai = engine::gameplay::rts::ai;
+namespace p = generalszh::production;
+using Controller = ai::ForceProductionController;
+
+struct RunResult
+{
+	std::vector<std::uint64_t> state;
+};
+
+RunResult RunPartialQuantityScenario(const std::size_t workers)
+{
+	std::array definitions{p::BuildDefinition{1, 0, 0ms}};
+	definitions[0].quantity = 3;
+	const engine::time::FixedStep step{20};
+
+	ecs::World world;
+	p::RegisterProductionComponents(world);
+	world.RegisterComponent<Controller>();
+	world.FinalizeComponents();
+	p::BuildCatalog catalog(world, definitions, step);
+
+	const std::array entries{ai::ForceProductionEntry{1, 2, 4}};
+	const std::array candidates{ai::ForceProductionCandidateInput{1, 1, 50ms, entries}};
+	const std::array policies{ai::ForceProductionPolicyInput{1, 1, 50ms, candidates}};
+	const ai::ForceProductionPlanCatalog plans(policies, step, {1, 1, 1});
+	generalszh::BuildBatch batch(16);
+	p::ProductionAdmissionSystem admission(world, catalog, batch);
+	generalszh::power::PowerFrame powerFrame;
+	p::ProductionSystem production(world, batch, powerFrame);
+	generalszh::ai::ForceProductionSystem force(world, plans, catalog, batch, 4, 32);
+
+const auto account = world.Create<p::Balance, Controller>();
+	world.Get<p::Balance>(account)->quantity = 0;
+	world.Get<Controller>(account)->policyKey = 1;
+	world.Get<Controller>(account)->nextDecisionTick = 1;
+	const auto producer = p::CreateProducer(world, generalszh::ProductionBoundaryState::Ready,
+		batch.Capacity(), account, 3, 1000, 0);
+	force.ValidateConfiguredControllers();
+
+	ecs::SystemRegistry registry;
+	registry.Register(force);
+	registry.Register(admission);
+	registry.Register(production);
+	registry.OrderBefore<p::ProductionAdmissionSystem, p::ProductionSystem>();
+	registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({workers});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	scheduler.Finalize(step);
+
+	const std::array external{generalszh::BuildInput{producer, 1}, generalszh::BuildInput{producer, 1}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, external);
+	scheduler.Execute({0, step});
+	BOOST_CHECK(batch.inputs.empty());
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 2u);
+	BOOST_CHECK(batch.Receipts()[0].status == generalszh::BuildAcceptance::Accepted);
+	BOOST_CHECK(batch.Receipts()[1].status == generalszh::BuildAcceptance::Accepted);
+
+	const auto first = batch.Receipts()[0].order;
+	const auto second = batch.Receipts()[1].order;
+	BOOST_REQUIRE(first.IsValid());
+	BOOST_REQUIRE(second.IsValid());
+	auto *firstQuantity = world.Get<p::Quantity>(first);
+	auto *secondQuantity = world.Get<p::Quantity>(second);
+	BOOST_REQUIRE(firstQuantity != nullptr);
+	BOOST_REQUIRE(secondQuantity != nullptr);
+	firstQuantity->completed = 2;
+	secondQuantity->completed = 3;
+
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, std::span<const generalszh::BuildInput>{});
+	scheduler.Execute({1, step});
+	BOOST_CHECK(batch.inputs.empty());
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 1u);
+	BOOST_CHECK(batch.Receipts()[0].status == generalszh::BuildAcceptance::Accepted);
+	BOOST_TEST(world.Get<p::Queue>(producer)->count == 3u);
+	const auto third = batch.Receipts()[0].order;
+	BOOST_REQUIRE(third.IsValid());
+	const auto *thirdQuantity = world.Get<p::Quantity>(third);
+	BOOST_REQUIRE(thirdQuantity != nullptr);
+	BOOST_TEST(thirdQuantity->total == 3);
+	BOOST_TEST(world.Get<Controller>(account)->nextDecisionTick == 2u);
+
+	RunResult result;
+	result.state = {account.index, account.generation, producer.index, producer.generation,
+		world.Get<p::Balance>(account)->quantity, world.Get<p::Queue>(producer)->count,
+		world.Get<Controller>(account)->nextDecisionTick};
+	for (const auto order : {first, second, third})
+	{
+		const auto quantity = *world.Get<p::Quantity>(order);
+		result.state.insert(result.state.end(), {order.index, order.generation,
+			static_cast<std::uint64_t>(quantity.total), static_cast<std::uint64_t>(quantity.completed)});
+	}
+	return result;
+}
+
+RunResult RunExternalContentionScenario(const std::size_t workers)
+{
+	std::array definitions{p::BuildDefinition{1, 100, 0ms}};
+	const engine::time::FixedStep step{20};
+	ecs::World world;
+	p::RegisterProductionComponents(world);
+	world.RegisterComponent<Controller>();
+	world.FinalizeComponents();
+	p::BuildCatalog catalog(world, definitions, step);
+
+	const std::array entries{ai::ForceProductionEntry{1, 1, 1}};
+	const std::array candidates{ai::ForceProductionCandidateInput{1, 1, 50ms, entries}};
+	const std::array policies{ai::ForceProductionPolicyInput{1, 1, 50ms, candidates}};
+	const ai::ForceProductionPlanCatalog plans(policies, step, {1, 1, 1});
+	generalszh::BuildBatch batch(8);
+	p::ProductionAdmissionSystem admission(world, catalog, batch);
+	generalszh::power::PowerFrame powerFrame;
+	p::ProductionSystem production(world, batch, powerFrame);
+	generalszh::ai::ForceProductionSystem force(world, plans, catalog, batch, 4, 16);
+
+const auto account = world.Create<p::Balance, Controller>();
+	world.Get<p::Balance>(account)->quantity = 100;
+	world.Get<Controller>(account)->policyKey = 1;
+	const auto producer = p::CreateProducer(world, generalszh::ProductionBoundaryState::Ready,
+		batch.Capacity(), account, 2, 1000, 0);
+	force.ValidateConfiguredControllers();
+
+	ecs::SystemRegistry registry;
+	registry.Register(force);
+	registry.Register(admission);
+	registry.Register(production);
+	registry.OrderBefore<p::ProductionAdmissionSystem, p::ProductionSystem>();
+	registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({workers});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	scheduler.Finalize(step);
+
+	const std::array external{generalszh::BuildInput{producer, 1}};
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, external);
+	scheduler.Execute({0, step});
+	BOOST_CHECK(batch.inputs.empty());
+	BOOST_REQUIRE_EQUAL(batch.ExternalInputCount(), 1u);
+	BOOST_REQUIRE_EQUAL(batch.GeneratedInputCount(), 1u);
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 2u);
+	BOOST_CHECK(batch.Receipts()[0].status == generalszh::BuildAcceptance::Accepted);
+	BOOST_CHECK(batch.Receipts()[1].status == generalszh::BuildAcceptance::InsufficientFunds);
+	const auto externalOrder = batch.Receipts()[0].order;
+	BOOST_REQUIRE(externalOrder.IsValid());
+	BOOST_TEST(world.Get<p::Queue>(producer)->count == 1u);
+	BOOST_TEST(world.Get<Controller>(account)->nextDecisionTick == 1u);
+
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready, std::span<const generalszh::BuildInput>{});
+	scheduler.Execute({1, step});
+	BOOST_CHECK(batch.inputs.empty());
+	BOOST_TEST(batch.GeneratedInputCount() == 0u);
+	BOOST_TEST(batch.Receipts().empty());
+	BOOST_TEST(world.Get<Controller>(account)->nextDecisionTick == 2u);
+
+	RunResult result;
+	result.state = {account.index, account.generation, producer.index, producer.generation,
+		world.Get<p::Balance>(account)->quantity, world.Get<p::Queue>(producer)->count,
+		world.Get<Controller>(account)->nextDecisionTick};
+	result.state.insert(result.state.end(), {externalOrder.index, externalOrder.generation});
+	return result;
+}
+
+std::uint32_t RunScienceSelectionScenario(const bool owned)
+{
+	const engine::time::FixedStep step{20};
+	std::array definitions{p::BuildDefinition{1, 0, 0ms}, p::BuildDefinition{2, 0, 0ms}};
+	engine::gameplay::rts::unlocks::UnlockCatalog science;
+	science.Register(engine::gameplay::rts::unlocks::UnlockDefinition{"SCIENCE_AI"});
+	science.Finalize();
+	const auto scienceId = science.Find(engine::gameplay::rts::unlocks::MakeUnlockKey("SCIENCE_AI"));
+	definitions[1].sciencePrerequisiteIds = {scienceId};
+	definitions[1].scienceSchemaHash = science.SchemaHash();
+
+	ecs::World world;
+	p::RegisterProductionComponents(world);
+	world.RegisterComponent<Controller>();
+	world.FinalizeComponents();
+	p::BuildCatalog catalog(world, definitions, step, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+		nullptr, nullptr, nullptr, nullptr, &science);
+	const std::array lockedEntries{ai::ForceProductionEntry{2, 1, 1}};
+	const std::array fallbackEntries{ai::ForceProductionEntry{1, 1, 1}};
+	const std::array candidates{
+		ai::ForceProductionCandidateInput{1, 10, 50ms, lockedEntries},
+		ai::ForceProductionCandidateInput{2, 0, 50ms, fallbackEntries}};
+	const std::array policies{ai::ForceProductionPolicyInput{1, 1, 50ms, candidates}};
+	const ai::ForceProductionPlanCatalog plans(policies, step, {1, 2, 2});
+	generalszh::BuildBatch batch(8);
+	p::ProductionAdmissionSystem admission(world, catalog, batch);
+	generalszh::power::PowerFrame powerFrame;
+	p::ProductionSystem production(world, batch, powerFrame);
+	generalszh::ai::ForceProductionSystem force(world, plans, catalog, batch, 1, 8);
+
+	const auto account = world.Create<p::Balance, Controller, engine::gameplay::rts::unlocks::UnlockState>();
+	world.Get<p::Balance>(account)->quantity = 100;
+	world.Get<Controller>(account)->policyKey = 1;
+	if (owned)
+		BOOST_REQUIRE(world.Get<engine::gameplay::rts::unlocks::UnlockState>(account)->SetOwned(scienceId));
+	const auto producer = p::CreateProducer(world, generalszh::ProductionBoundaryState::Ready,
+		batch.Capacity(), account);
+	force.ValidateConfiguredControllers();
+
+	ecs::SystemRegistry registry;
+	registry.Register(force);
+	registry.Register(admission);
+	registry.Register(production);
+	registry.OrderBefore<p::ProductionAdmissionSystem, p::ProductionSystem>();
+	registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({1});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	scheduler.Finalize(step);
+	batch.StageInputs(world, generalszh::ProductionBoundaryState::Ready,
+		std::span<const generalszh::BuildInput>{});
+	scheduler.Execute({0, step});
+	BOOST_REQUIRE_EQUAL(batch.Receipts().size(), 1u);
+	BOOST_CHECK(batch.Receipts()[0].status == generalszh::BuildAcceptance::Accepted);
+	const auto order = batch.Receipts()[0].order;
+	BOOST_REQUIRE(order.IsValid());
+	const auto *value = world.Get<p::BuildOrder>(order);
+	BOOST_REQUIRE(value != nullptr);
+	BOOST_TEST(world.Get<p::Balance>(account)->quantity == 100u);
+	BOOST_TEST(world.Get<p::Queue>(producer)->count == 1u);
+	return value->definition;
+}
+}
+
+BOOST_AUTO_TEST_CASE(unknown_policy_is_rejected_at_configuration_boundary)
+{
+	std::array definitions{p::BuildDefinition{1, 0, 0ms}};
+	const engine::time::FixedStep step{20};
+	ecs::World world;
+	p::RegisterProductionComponents(world);
+	world.RegisterComponent<Controller>();
+	world.FinalizeComponents();
+	p::BuildCatalog catalog(world, definitions, step);
+
+	const std::array entries{ai::ForceProductionEntry{1, 1, 1}};
+	const std::array candidates{ai::ForceProductionCandidateInput{1, 1, 50ms, entries}};
+	const std::array policies{ai::ForceProductionPolicyInput{1, 1, 50ms, candidates}};
+	const ai::ForceProductionPlanCatalog plans(policies, step, {1, 1, 1});
+	generalszh::BuildBatch batch(4);
+	generalszh::ai::ForceProductionSystem force(world, plans, catalog, batch, 1, 4);
+
+    const auto account = world.Create<p::Balance, Controller>();
+	world.Get<Controller>(account)->policyKey = 99;
+	BOOST_CHECK_THROW(force.ValidateConfiguredControllers(), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(partial_multi_unit_orders_use_remaining_quantity_and_are_worker_independent)
+{
+	const auto one = RunPartialQuantityScenario(1);
+	const auto two = RunPartialQuantityScenario(2);
+	const auto four = RunPartialQuantityScenario(4);
+	BOOST_CHECK(one.state == two.state);
+	BOOST_CHECK(one.state == four.state);
+}
+
+BOOST_AUTO_TEST_CASE(external_prefix_wins_contention_but_later_ai_receipt_rejection_still_cools_down)
+{
+	const auto one = RunExternalContentionScenario(1);
+	const auto two = RunExternalContentionScenario(2);
+	const auto four = RunExternalContentionScenario(4);
+	BOOST_CHECK(one.state == two.state);
+	BOOST_CHECK(one.state == four.state);
+}
+
+BOOST_AUTO_TEST_CASE(force_production_reads_account_unlock_state_and_skips_locked_high_priority_recipes)
+{
+	BOOST_TEST(RunScienceSelectionScenario(false) == 1u);
+	BOOST_TEST(RunScienceSelectionScenario(true) == 2u);
+}

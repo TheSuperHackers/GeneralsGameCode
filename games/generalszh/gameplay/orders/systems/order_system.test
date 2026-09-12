@@ -1,0 +1,313 @@
+#define BOOST_TEST_MODULE GeneralsZHOrderInput
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <stdexcept>
+#include <vector>
+import games.generalszh.composition.game_session;
+import games.generalszh.gameplay.orders.systems.order_system;
+import games.generalszh.gameplay.combat.targeting.target_index;
+import games.generalszh.gameplay.production.components.production_state;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.containment.components.passenger_membership;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.containment.definitions.transport_definition;
+using namespace generalszh;
+using namespace engine::gameplay::navigation;
+using namespace engine::gameplay::combat;
+using namespace engine::gameplay::rts::orders;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(attack_move_engages_an_enemy_then_resumes_original_destination_across_workers)
+{
+    const auto run=[](std::size_t workers) {
+        const std::array<std::uint8_t,13> terrain{1,1,1,1,1,1,1,1,1,1,1,1,1}; NavigationGrid grid(13,1,terrain);
+        ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents(); engine::jobs::JobSystem jobs({workers});
+        const std::array definitions{production::BuildDefinition{1,10,0ms,production::EntryKind::Unit,1,100,20,{100,2,2,100ms,100ms,50ms,true}},
+            production::BuildDefinition{2,10,0ms,production::EntryKind::Unit,1,100,20}};
+        GameSession game(world,jobs,definitions,grid); const engine::time::FixedStep step{20}; game.Finalize(step);
+        const auto a=game.CreateAccount(10), b=game.CreateAccount(10), pa=game.CreateProducer(a), pb=game.CreateProducer(b,9,1000,6);
+        const std::array builds{BuildInput{pa,1},BuildInput{pb,2}}; game.Execute({0,step},{{},{},builds});
+        ecs::Entity actor{},victim{}; ecs::Query<ecs::Read<production::ProducedUnit>> units(world);
+        units.ForEachChunk([&](auto chunk) { const auto data=chunk.template Get<production::ProducedUnit>();
+            for(std::size_t row=0;row!=chunk.Count();++row) (data[row].account==a?actor:victim)=chunk.Entities()[row]; });
+        const std::array orders{OrderInput{actor,{OrderKind::AttackMove,12,{}}}};
+        game.Execute({1,step},{{},{},{},{},{},orders});
+        for(std::uint64_t tick=2;tick<=5;++tick) game.Execute({tick,step});
+        BOOST_TEST(world.Get<GridPosition>(actor)->cell==4u); BOOST_TEST(world.Get<LifeState>(victim)->alive);
+        BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity==victim);
+        game.Execute({6,step}); BOOST_TEST(!world.Get<LifeState>(victim)->alive); BOOST_TEST(world.Get<GridPosition>(actor)->cell==5u);
+        for(std::uint64_t tick=7;tick<=14;++tick) game.Execute({tick,step});
+        BOOST_TEST(world.Get<GridPosition>(actor)->cell==12u); BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::None);
+        return std::array<std::uint64_t,5>{actor.index,actor.generation,world.Get<GridPosition>(actor)->cell,world.Get<WeaponState>(actor)->ammo,world.Get<Health>(victim)->current};
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}
+BOOST_AUTO_TEST_CASE(attack_order_pursues_moving_target_and_stops_after_its_death)
+{
+    const std::array<std::uint8_t,13> terrain{1,1,1,1,1,1,1,1,1,1,1,1,1}; NavigationGrid grid(13,1,terrain);
+    ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents(); engine::jobs::JobSystem jobs({4});
+    const std::array definitions{production::BuildDefinition{1,10,0ms,production::EntryKind::Unit,1,100,40,{100,2,2,100ms,100ms,50ms,true}},
+        production::BuildDefinition{2,10,0ms,production::EntryKind::Unit,1,100,20}};
+    GameSession game(world,jobs,definitions,grid); const engine::time::FixedStep step{20}; game.Finalize(step);
+    const auto a=game.CreateAccount(10),b=game.CreateAccount(10),pa=game.CreateProducer(a),pb=game.CreateProducer(b,9,1000,6);
+    const std::array builds{BuildInput{pa,1},BuildInput{pb,2}}; game.Execute({0,step},{{},{},builds});
+    ecs::Entity actor{},victim{}; ecs::Query<ecs::Read<production::ProducedUnit>> units(world);
+    units.ForEachChunk([&](auto chunk) {const auto data=chunk.template Get<production::ProducedUnit>();
+        for(std::size_t row=0;row!=chunk.Count();++row) (data[row].account==a?actor:victim)=chunk.Entities()[row];});
+    const std::array moves{MoveInput{victim,12}}; const std::array attacks{AttackInput{actor,victim}};
+    game.Execute({1,step},{{},{},{},moves,attacks});
+    for(std::uint64_t tick=2;tick<=6;++tick) game.Execute({tick,step});
+    BOOST_TEST(!world.Get<LifeState>(victim)->alive); BOOST_TEST(world.Get<GridPosition>(actor)->cell>0u);
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell); BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::None);
+    const std::array resume{MoveInput{actor,12}}; game.Execute({7,step},{{},{},{},resume});
+    const auto stoppedAt=world.Get<GridPosition>(actor)->cell;
+    const std::array stop{OrderInput{actor,{OrderKind::Stop}}}; game.Execute({8,step},{{},{},{},{},{},stop});
+    BOOST_TEST(world.Get<GridPosition>(actor)->cell==stoppedAt);
+    const std::array stale{OrderInput{{actor.index,actor.generation+1},{OrderKind::Move,0,{}}}};
+    game.Execute({9,step},{{},{},{},{},{},stale}); BOOST_TEST(world.Get<GridPosition>(actor)->cell==stoppedAt);
+}
+
+BOOST_AUTO_TEST_CASE(order_system_groups_pursuit_and_weapon_intent_and_rejects_stale_targets)
+{
+    using namespace engine::gameplay::rts::orders;
+    using namespace engine::gameplay::navigation;
+    using namespace engine::gameplay::combat;
+    const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1}; NavigationGrid grid(8,1,terrain);
+    ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents();
+    const auto friendly=world.Create(), enemy=world.Create();
+    const auto actor=world.Create<UnitOrder,EngagementObservation,EngagementResult,LifeState,GridPosition,MoveGoal,MoveCredit,
+        Health,production::ProducedUnit,WeaponDefinition,WeaponTarget,combat::AcquisitionPolicy,combat::TargetIntent>();
+    world.Get<production::ProducedUnit>(actor)->account=friendly;
+    const auto victim=world.Create<Health,LifeState,GridPosition,production::ProducedUnit>();
+    world.Get<production::ProducedUnit>(victim)->account=enemy;
+    world.Get<GridPosition>(victim)->cell=7;
+    combat::TargetIndex frame(world,grid,8);
+    world.Get<WeaponDefinition>(actor)->rangeCells=2;
+    OrderSystem system(world,grid,frame,8); ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    const std::array attack{AttackInput{actor,victim}}; system.SetInputs({},attack);
+    scheduler.Execute({0,step});
+    const auto observation=*world.Get<EngagementObservation>(actor);
+    BOOST_CHECK(observation.target==victim); BOOST_TEST(observation.position==7u); BOOST_TEST(!observation.inRange);
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==7u);
+    BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity==victim); BOOST_TEST(world.Get<combat::TargetIntent>(actor)->explicitOrder);
+    world.Get<UnitOrder>(actor)->target.generation=2; scheduler.Execute({1,step});
+    BOOST_TEST(!world.Get<EngagementObservation>(actor)->target.IsValid());
+    BOOST_TEST(!world.Get<WeaponTarget>(actor)->entity.IsValid()); BOOST_TEST(!world.Get<combat::TargetIntent>(actor)->explicitOrder);
+    BOOST_TEST(registry.Count()==1u);
+}
+BOOST_AUTO_TEST_CASE(order_system_moves_unarmed_archetypes_without_requiring_weapon_columns)
+{
+    using namespace engine::gameplay::rts::orders; using namespace engine::gameplay::navigation;
+    const std::array<std::uint8_t,2> terrain{1,1}; NavigationGrid grid(2,1,terrain);
+    ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents();
+    const auto actor=world.Create<UnitOrder,EngagementObservation,EngagementResult,engine::gameplay::combat::LifeState,
+        GridPosition,MoveGoal,MoveCredit>();
+    combat::TargetIndex frame(world,grid,8); OrderSystem system(world,grid,frame,8);
+    ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    const std::array moves{MoveInput{actor,1}}; system.SetInputs(moves);
+    scheduler.Execute({0,step}); BOOST_TEST(world.Get<MoveGoal>(actor)->cell==1u);
+}
+
+BOOST_AUTO_TEST_CASE(tactical_requests_are_consumed_before_all_same_tick_manual_input_groups)
+{
+    using namespace engine::gameplay::rts::ai::squads;
+    using namespace engine::gameplay::rts::orders;
+    using namespace engine::gameplay::navigation;
+    const std::array<std::uint8_t,3> terrain{1,1,1};
+    NavigationGrid grid(3,1,terrain); ecs::World world; GameSession::RegisterComponents(world);
+    world.FinalizeComponents();
+    const auto first=world.Create<UnitOrder,EngagementObservation,EngagementResult,LifeState,
+        GridPosition,MoveGoal,MoveCredit,Health,WeaponDefinition,production::ProducedUnit>();
+    const auto second=world.Create<UnitOrder,EngagementObservation,EngagementResult,LifeState,
+        GridPosition,MoveGoal,MoveCredit,Health,WeaponDefinition,production::ProducedUnit>();
+    const auto third=world.Create<UnitOrder,EngagementObservation,EngagementResult,LifeState,
+        GridPosition,MoveGoal,MoveCredit,Health,WeaponDefinition,production::ProducedUnit>();
+    const auto owner=world.Create();
+    const auto enemy=world.Create();
+    const auto target=world.Create<LifeState,Health,GridPosition,production::ProducedUnit>();
+    for (const auto actor : {first,second,third})
+    {
+        world.Get<LifeState>(actor)->alive=true;
+        world.Get<Health>(actor)->current=100;
+        world.Get<GridPosition>(actor)->cell=0;
+        world.Get<production::ProducedUnit>(actor)->account=owner;
+        world.Get<WeaponDefinition>(actor)->rangeCells=2;
+    }
+    world.Get<LifeState>(target)->alive=true;
+    world.Get<Health>(target)->current=100;
+    world.Get<GridPosition>(target)->cell=2;
+    world.Get<production::ProducedUnit>(target)->account=enemy;
+    const auto squad=world.Create();
+    combat::TargetIndex index(world,grid,16); SquadOrderRequestBatch requests(8);
+    OrderSystem system(world,grid,index,8,&requests);
+    ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+
+    requests.Begin(0);
+    requests.Append({squad,0,{first,{OrderKind::Move,2,{}}}});
+    requests.Append({squad,0,{second,{OrderKind::Move,2,{}}}});
+    requests.Append({squad,0,{third,{OrderKind::Move,2,{}}}});
+    requests.Publish();
+    const std::array manualMoves{MoveInput{first,1}};
+    const std::array manualAttacks{AttackInput{second,target}};
+    const std::array manualOrders{OrderInput{third,{OrderKind::AttackPosition,2,{},{}}}};
+    system.SetInputs(manualMoves,manualAttacks,manualOrders);
+    scheduler.Execute({0,step});
+    BOOST_CHECK(!requests.IsPublished());
+    BOOST_CHECK_THROW(requests.Requests(),std::logic_error);
+    BOOST_CHECK(world.Get<UnitOrder>(first)->kind==OrderKind::Move);
+    BOOST_TEST(world.Get<UnitOrder>(first)->destination==1u);
+    BOOST_CHECK(world.Get<UnitOrder>(second)->kind==OrderKind::AttackTarget);
+    BOOST_CHECK(world.Get<UnitOrder>(second)->target==target);
+    BOOST_CHECK(world.Get<UnitOrder>(third)->kind==OrderKind::AttackPosition);
+    BOOST_TEST(world.Get<UnitOrder>(third)->destination==2u);
+
+    requests.Begin(1);
+    requests.Append({squad,0,{third,{OrderKind::Move,2,{}}}});
+    requests.Publish();
+    system.SetInputs();
+    scheduler.Execute({1,step});
+    BOOST_CHECK(!requests.IsPublished());
+    BOOST_CHECK(world.Get<UnitOrder>(third)->kind==OrderKind::Move);
+    BOOST_TEST(world.Get<UnitOrder>(third)->destination==2u);
+}
+BOOST_AUTO_TEST_CASE(garrison_guard_and_position_publish_fire_intent_without_movement)
+{
+    using namespace engine::gameplay::containment;
+    using namespace engine::gameplay::navigation;
+    using namespace engine::gameplay::combat;
+    const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1};
+    NavigationGrid grid(8,1,terrain); ecs::World world; GameSession::RegisterComponents(world);
+    world.FinalizeComponents();
+    const auto owner=world.Create(); const auto enemy=world.Create();
+    const auto actor=world.Create<UnitOrder,EngagementObservation,EngagementResult,LifeState,Health,
+        GridPosition,MoveGoal,MoveCredit,MoveRangeGoal,production::ProducedUnit,WeaponDefinition,WeaponTarget,
+        combat::AcquisitionPolicy,combat::TargetIntent,PassengerMembership>();
+    const auto target=world.Create<LifeState,Health,GridPosition,production::ProducedUnit>();
+    world.Get<production::ProducedUnit>(actor)->account=owner;
+    world.Get<production::ProducedUnit>(target)->account=enemy;
+    world.Get<GridPosition>(actor)->cell=0; world.Get<GridPosition>(target)->cell=3;
+    world.Get<PassengerMembership>(actor)->phase=ContainmentPhase::Inside;
+    world.Get<PassengerMembership>(actor)->owner=PassengerContainmentOwner::Garrison;
+    world.Get<PassengerMembership>(actor)->combat=PassengerCombatPolicy::Allowed;
+    world.Get<LifeState>(actor)->alive=true; world.Get<Health>(actor)->current=100;
+    world.Get<LifeState>(target)->alive=true; world.Get<Health>(target)->current=100;
+    world.Get<WeaponDefinition>(actor)->rangeCells=2;
+    *world.Get<MoveGoal>(actor)={6}; *world.Get<MoveCredit>(actor)={7}; *world.Get<MoveRangeGoal>(actor)={6,1};
+    combat::TargetIndex index(world,grid,16); OrderSystem system(world,grid,index,16);
+    ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    const engine::time::FixedStep step{10}; ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{1});
+    scheduler.Finalize(step);
+
+    const std::array guard{OrderInput{actor,{OrderKind::GuardPosition,2,{}, {2,5}}}};
+    system.SetInputs({}, {}, guard); scheduler.Execute({0,step});
+    BOOST_CHECK(world.Get<UnitOrder>(actor)->target==target);
+    BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity==target);
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell);
+    BOOST_TEST(!world.Get<MoveRangeGoal>(actor)->Active());
+    BOOST_TEST(world.Get<MoveCredit>(actor)->remainder==0u);
+
+    const std::array position{OrderInput{actor,{OrderKind::AttackPosition,7,{},{}}}};
+    system.SetInputs({}, {}, position); scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<WeaponTarget>(actor)->position.x==7u);
+    BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell);
+    BOOST_TEST(!world.Get<MoveRangeGoal>(actor)->Active());
+    BOOST_TEST(world.Get<MoveCredit>(actor)->remainder==0u);
+}
+BOOST_AUTO_TEST_CASE(guard_position_engages_leashes_returns_and_accepts_interrupts_across_workers)
+{
+    const auto run=[](std::size_t workers) {
+        const std::array<std::uint8_t,13> terrain{1,1,1,1,1,1,1,1,1,1,1,1,1};
+        NavigationGrid grid(13,1,terrain); ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workers});
+        std::array definitions{
+            production::BuildDefinition{1,10,0ms,production::EntryKind::Unit,1,100,20,{100,1,2,100ms,100ms,50ms,true}},
+            production::BuildDefinition{2,10,0ms,production::EntryKind::Unit,1,100,20},
+            production::BuildDefinition{3,10,0ms,production::EntryKind::Unit,1,100,20}};
+        definitions[1].passenger=engine::gameplay::containment::PassengerSlots{1}; definitions[2].transportDefinition=0;
+        const std::array transports{engine::gameplay::containment::TransportDefinition{1,0ms,1,1}};
+        GameSession game(world,jobs,definitions,grid,128,{},{},{},{},{},transports); const engine::time::FixedStep step{20}; game.Finalize(step);
+        const auto account=game.CreateAccount(40), enemyAccount=game.CreateAccount(10);
+        const auto producer=game.CreateProducer(account,9,1000,0), friendlyProducer=game.CreateProducer(account,9,1000,3),
+            carrierProducer=game.CreateProducer(account,9,1000,3), enemyProducer=game.CreateProducer(enemyAccount,9,1000,5);
+        const std::array builds{BuildInput{producer,1},BuildInput{friendlyProducer,2},BuildInput{carrierProducer,3},BuildInput{enemyProducer,2}};
+        game.Execute({0,step},{{},{},builds});
+        ecs::Entity actor{},friendly{},carrier{},victim{}; ecs::Query<ecs::Read<production::ProducedUnit>> units(world);
+        units.ForEachChunk([&](auto chunk) {
+            const auto data=chunk.template Get<production::ProducedUnit>();
+            for(std::size_t row=0;row!=chunk.Count();++row)
+            {
+                if(data[row].producer==producer) actor=chunk.Entities()[row];
+                else if(data[row].producer==friendlyProducer) friendly=chunk.Entities()[row];
+                else if(data[row].producer==carrierProducer) carrier=chunk.Entities()[row];
+                else if(data[row].producer==enemyProducer) victim=chunk.Entities()[row];
+            }
+        });
+        BOOST_REQUIRE(actor.IsValid()); BOOST_REQUIRE(friendly.IsValid()); BOOST_REQUIRE(carrier.IsValid()); BOOST_REQUIRE(victim.IsValid());
+        world.Get<GridPosition>(actor)->cell=0; world.Get<GridPosition>(friendly)->cell=3; world.Get<GridPosition>(carrier)->cell=3;
+        world.Get<GridPosition>(victim)->cell=5;
+
+        const std::array attack{AttackInput{actor,victim}}; GameInputs attackInputs{}; attackInputs.attacks=attack;
+        game.Execute({1,step},attackInputs);
+        const std::array resetGuard{OrderInput{actor,{OrderKind::GuardPosition,0,{}, {0,1}}}};
+        GameInputs resetInputs{}; resetInputs.orders=resetGuard; game.Execute({2,step},resetInputs);
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::GuardPosition);
+        BOOST_CHECK(!world.Get<UnitOrder>(actor)->target.IsValid());
+        BOOST_TEST(world.Get<MoveGoal>(actor)->cell==0u);
+
+        const std::array guard{OrderInput{actor,{OrderKind::GuardPosition,4,{}, {1,3}}}};
+        GameInputs guardInputs{}; guardInputs.orders=guard; game.Execute({3,step},guardInputs);
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->target==victim);
+        BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity==victim);
+        BOOST_TEST(!world.Get<combat::TargetIntent>(actor)->explicitOrder);
+        BOOST_TEST(world.Get<MoveGoal>(actor)->cell==5u);
+
+        world.Get<GridPosition>(victim)->cell=7; game.Execute({4,step});
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->target==victim);
+        BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity==victim);
+        BOOST_TEST(world.Get<MoveGoal>(actor)->cell==7u);
+        world.Get<GridPosition>(victim)->cell=8; game.Execute({5,step});
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::GuardPosition);
+        BOOST_CHECK(!world.Get<UnitOrder>(actor)->target.IsValid());
+        BOOST_CHECK(!world.Get<WeaponTarget>(actor)->entity.IsValid());
+        BOOST_TEST(world.Get<MoveGoal>(actor)->cell==4u);
+        game.Execute({6,step}); game.Execute({7,step});
+        BOOST_TEST(world.Get<GridPosition>(actor)->cell==4u);
+        BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell);
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::GuardPosition);
+
+        const std::array manualMove{MoveInput{actor,10}}; GameInputs manualInputs{}; manualInputs.moves=manualMove;
+        game.Execute({8,step},manualInputs);
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::Move);
+        BOOST_CHECK(!world.Get<UnitOrder>(actor)->target.IsValid()); BOOST_TEST(world.Get<MoveGoal>(actor)->cell==10u);
+
+        const std::array deathGuard{OrderInput{actor,{OrderKind::GuardPosition,4,{}, {1,3}}}};
+        const std::array damage{DamageInput{actor,1000}}; GameInputs deathInputs{};
+        deathInputs.damage=damage; deathInputs.orders=deathGuard; game.Execute({9,step},deathInputs);
+        BOOST_CHECK(world.Get<UnitOrder>(actor)->kind==OrderKind::None);
+        BOOST_CHECK(!world.Get<UnitOrder>(actor)->target.IsValid()); BOOST_TEST(world.Get<MoveGoal>(actor)->cell==InvalidCell);
+        BOOST_TEST(!world.Get<LifeState>(actor)->alive);
+
+        BOOST_REQUIRE(world.Has<engine::gameplay::containment::TransportBinding>(carrier));
+        BOOST_REQUIRE(world.Has<engine::gameplay::containment::PassengerMembership>(friendly));
+        const std::array friendlyGuard{OrderInput{friendly,{OrderKind::GuardPosition,3,{}, {0,1}}}};
+        GameInputs friendlyInputs{}; friendlyInputs.orders=friendlyGuard; game.Execute({10,step},friendlyInputs);
+        BOOST_CHECK(world.Get<UnitOrder>(friendly)->kind==OrderKind::GuardPosition);
+        const std::array enter{engine::gameplay::containment::ContainmentInput{
+            engine::gameplay::containment::ContainmentAction::Enter,friendly,carrier}};
+        GameInputs containmentInputs{}; containmentInputs.containment=enter; game.Execute({11,step},containmentInputs);
+        BOOST_REQUIRE_EQUAL(game.ContainmentResults().size(),1u);
+        BOOST_CHECK(game.ContainmentResults()[0].outcome==engine::gameplay::containment::ContainmentOutcome::Entered);
+        BOOST_CHECK(world.Get<UnitOrder>(friendly)->kind==OrderKind::None);
+        BOOST_TEST(world.Get<MoveGoal>(friendly)->cell==InvalidCell);
+        return std::array<std::uint64_t,10>{actor.index,actor.generation,victim.index,victim.generation,
+            world.Get<GridPosition>(actor)->cell,world.Get<Health>(actor)->current,
+            world.Get<UnitOrder>(actor)->kind==OrderKind::None,
+            world.Get<UnitOrder>(friendly)->kind==OrderKind::None,
+            world.Get<GridPosition>(friendly)->cell,world.Get<MoveGoal>(friendly)->cell};
+    };
+    const auto expected=run(1); BOOST_CHECK(run(2)==expected); BOOST_CHECK(run(4)==expected);
+}

@@ -1,0 +1,35 @@
+#include <boost/test/unit_test.hpp>
+#include <string_view>
+#include <array>
+#include <limits>
+import games.generalszh.gameplay.power.systems.power_recovery_system;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(real_power_recovery_system_preserves_equality_zero_and_one_shot_rules)
+{
+    using namespace generalszh::power;
+    using engine::gameplay::rts::power::PowerLedger;
+    ecs::World world;
+    world.RegisterComponent<PowerSuppression>(); world.RegisterComponent<PowerRecovery>();
+    world.RegisterComponent<PowerRecoveryOwner>(); world.RegisterComponent<PowerLedger>(); world.FinalizeComponents();
+    std::array<ecs::Entity, 4> entities;
+    const std::array<std::uint64_t, 4> deadlines{0, 10, 11, UINT64_MAX};
+    for (std::size_t i = 0; i != entities.size(); ++i)
+    {
+        entities[i] = world.Create<PowerSuppression, PowerRecovery, PowerRecoveryOwner, PowerLedger>();
+        world.Get<PowerSuppression>(entities[i])->untilTick = deadlines[i];
+    }
+    PowerRecoverySystem system; ecs::SystemRegistry registry; registry.Register(system); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+    const engine::time::FixedStep step{30}; scheduler.Finalize(step);
+    scheduler.Execute({11, step});
+    for (std::size_t i = 0; i != entities.size(); ++i)
+    {
+        BOOST_TEST(world.Get<PowerRecovery>(entities[i])->recovered == (i == 1));
+        BOOST_TEST(world.Get<PowerSuppression>(entities[i])->untilTick == (i == 1 ? 0 : deadlines[i]));
+    }
+    scheduler.Execute({12, step});
+    BOOST_TEST(!world.Get<PowerRecovery>(entities[1])->recovered);
+    BOOST_TEST(world.Get<PowerRecovery>(entities[2])->recovered);
+    scheduler.Execute({UINT64_MAX, step});
+    BOOST_TEST(!world.Get<PowerRecovery>(entities[3])->recovered);
+}

@@ -1,0 +1,93 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+
+using namespace engine::gameplay::rts::unlocks;
+
+BOOST_AUTO_TEST_CASE(unlock_catalog_finalizes_dense_canonical_prerequisites)
+{
+	const std::array rootPrerequisite{MakeUnlockKey("root")};
+	UnlockCatalog catalog;
+	catalog.Register(UnlockDefinition{"child", 1, 2, true, rootPrerequisite});
+	catalog.Register(UnlockDefinition{"root", 1, 1, true});
+	catalog.Finalize();
+
+	BOOST_TEST(catalog.IsFinalized());
+	BOOST_TEST(catalog.Count() == 2u);
+	BOOST_TEST(catalog.SchemaHash() != 0u);
+	const auto root = catalog.Find(MakeUnlockKey("root"));
+	const auto child = catalog.Find(MakeUnlockKey("child"));
+	BOOST_CHECK(root != InvalidUnlockId);
+	BOOST_CHECK(child != InvalidUnlockId);
+	BOOST_TEST(catalog.Name(root) == "root");
+	BOOST_TEST(catalog.Name(child) == "child");
+	BOOST_REQUIRE_EQUAL(catalog.Prerequisites(child).size(), 1u);
+	BOOST_TEST(catalog.Prerequisites(child).front().value == root.value);
+	BOOST_TEST(catalog.Prerequisites(root).empty());
+	BOOST_TEST(catalog.Get(child).cost == 2u);
+}
+
+BOOST_AUTO_TEST_CASE(unlock_catalog_rejects_unknown_and_cyclic_prerequisites_at_startup)
+{
+	{
+		const std::array missing{MakeUnlockKey("missing")};
+		UnlockCatalog catalog;
+		catalog.Register(UnlockDefinition{"root", 1, 1, true, missing});
+		BOOST_CHECK_THROW(catalog.Finalize(), std::invalid_argument);
+	}
+	{
+		const std::array toB{MakeUnlockKey("b")};
+		const std::array toA{MakeUnlockKey("a")};
+		UnlockCatalog catalog;
+		catalog.Register(UnlockDefinition{"a", 1, 1, true, toB});
+		catalog.Register(UnlockDefinition{"b", 1, 1, true, toA});
+		BOOST_CHECK_THROW(catalog.Finalize(), std::invalid_argument);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(unlock_catalog_assigns_more_than_64_dense_definitions)
+{
+	UnlockCatalog catalog;
+	for (std::uint32_t index = 0; index != 65; ++index)
+		catalog.Register(UnlockDefinition{"unlock_" + std::to_string(index), 1, 1, true});
+	catalog.Finalize();
+	BOOST_TEST(catalog.Count() == 65u);
+	BOOST_CHECK(catalog.Find(MakeUnlockKey("unlock_64")) != InvalidUnlockId);
+}
+
+BOOST_AUTO_TEST_CASE(unlock_catalog_order_version_and_lifecycle_are_stable)
+{
+	const std::array childPrerequisite{MakeUnlockKey("root")};
+	auto registerDefinitions = [&](UnlockCatalog &catalog, const bool reverse, const std::uint32_t rootVersion) {
+		if (reverse)
+		{
+			catalog.Register(UnlockDefinition{"child", 1, 2, true, childPrerequisite});
+			catalog.Register(UnlockDefinition{"root", rootVersion, 1, true});
+		}
+		else
+		{
+			catalog.Register(UnlockDefinition{"root", rootVersion, 1, true});
+			catalog.Register(UnlockDefinition{"child", 1, 2, true, childPrerequisite});
+		}
+	};
+
+	UnlockCatalog canonical;
+	UnlockCatalog reversed;
+	registerDefinitions(canonical, false, 1);
+	registerDefinitions(reversed, true, 1);
+	canonical.Finalize();
+	reversed.Finalize();
+	BOOST_TEST(canonical.SchemaHash() == reversed.SchemaHash());
+	for (const auto name : {std::string_view{"root"}, std::string_view{"child"}})
+		BOOST_TEST(canonical.Find(MakeUnlockKey(name)).value == reversed.Find(MakeUnlockKey(name)).value);
+
+	UnlockCatalog versionChanged;
+	registerDefinitions(versionChanged, false, 2);
+	versionChanged.Finalize();
+	BOOST_TEST(canonical.SchemaHash() != versionChanged.SchemaHash());
+	BOOST_CHECK_THROW(canonical.Register(UnlockDefinition{"late", 1, 1, true}), std::logic_error);
+}

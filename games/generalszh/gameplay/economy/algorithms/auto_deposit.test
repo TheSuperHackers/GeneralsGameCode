@@ -1,0 +1,54 @@
+#define BOOST_TEST_MODULE GeneralsZHEconomyRules
+#include <boost/test/included/unit_test.hpp>
+#include <limits>
+import games.generalszh.gameplay.economy.auto_deposit;
+using namespace generalszh::economy;
+
+BOOST_AUTO_TEST_CASE(capture_reward_is_initialized_once_and_not_implicitly_consumed)
+{
+	CaptureRewardState state;
+	BOOST_TEST(!PlanCapture(state.available, true, 50).pay);
+	OnFirstIncomeDue(state);
+	BOOST_TEST(PlanCapture(state.available, true, 50).pay);
+	BOOST_TEST(state.available);
+	BOOST_TEST(!PlanCapture(state.available, false, 50).pay);
+	BOOST_TEST(!PlanCapture(state.available, true, 0).pay);
+	state.available = false;
+	OnFirstIncomeDue(state);
+	BOOST_TEST(!state.available);
+}
+BOOST_AUTO_TEST_CASE(income_eligibility_and_game_specific_payout_are_separate)
+{
+	BOOST_TEST(CanAccrue(false, true, 1));
+	BOOST_TEST(!CanAccrue(true, true, 1));
+	BOOST_TEST(!CanAccrue(false, false, 1));
+	BOOST_TEST(!CanAccrue(false, true, 0));
+	const auto payout = PlanIncome(100, 25, true, true);
+	BOOST_TEST(payout.money == 125u);
+	BOOST_TEST(payout.score == 100);
+	BOOST_TEST(payout.displayAmount == 125);
+	BOOST_TEST(payout.pay);
+	BOOST_TEST(payout.show);
+	BOOST_TEST(!PlanIncome(100, 25, false, true).pay);
+	BOOST_TEST(PlanIncome(100, 25, false, true).show);
+	BOOST_TEST(!PlanIncome(100, 25, true, false).show);
+}
+BOOST_AUTO_TEST_CASE(signed_overflow_is_rejected_and_defined_unsigned_boundary_is_explicit)
+{
+	BOOST_CHECK_THROW(PlanIncome((std::numeric_limits<std::int32_t>::max)(), 1, true, true), std::overflow_error);
+	const auto negative = PlanIncome(100, -101, true, true);
+	BOOST_TEST(negative.money == (std::numeric_limits<std::uint32_t>::max)());
+	BOOST_TEST(!negative.show);
+}
+BOOST_AUTO_TEST_CASE(validated_chunk_payout_matches_the_checked_boundary_without_runtime_sanity_guards)
+{
+	static_assert(noexcept(PlanValidatedIncome(0, 0, false, false)));
+	for (const auto boost : {-101, 0, 25})
+	{
+		ValidateIncomeAmount(100, boost);
+		const auto checked = PlanIncome(100, boost, true, true);
+		const auto hot = PlanValidatedIncome(100, boost, true, true);
+		BOOST_TEST(hot.money == checked.money); BOOST_TEST(hot.score == checked.score);
+		BOOST_TEST(hot.displayAmount == checked.displayAmount); BOOST_TEST(hot.show == checked.show);
+	}
+}

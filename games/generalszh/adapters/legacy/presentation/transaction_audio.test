@@ -1,0 +1,55 @@
+#include <boost/test/unit_test.hpp>
+#include <vector>
+import games.generalszh.adapters.legacy.presentation.transaction_audio;
+using namespace generalszh::presentation;
+
+namespace
+{
+struct Sound
+{
+	float volume{1}; int player{0}; int resource{0}; bool logical{false};
+	float getVolume() const { return volume; }
+	void setVolume(float value) { volume = value; }
+	void setPlayerIndex(int value) { player = value; }
+};
+struct Audio
+{
+	struct Settings { float m_preferredMoneyTransactionVolume{1}; } settings;
+	struct Definitions { Sound m_moneyDepositSound{1, 0, 11, true}, m_moneyWithdrawSound{1, 0, 22, false}; } definitions;
+	std::vector<Sound> submitted;
+	auto *getAudioSettings() { return &settings; }
+	auto *getMiscAudio() { return &definitions; }
+	void addAudioEvent(const Sound *sound) { submitted.push_back(*sound); }
+};
+}
+BOOST_AUTO_TEST_CASE(transaction_audio_copies_and_scales_definitions_without_changing_logical_metadata)
+{
+	Audio audio; audio.settings.m_preferredMoneyTransactionVolume = 0.5f;
+	audio.definitions.m_moneyDepositSound.volume = 0.5f;
+	const TransactionSound requests[]{{2, TransactionSoundKind::Deposit}, {3, TransactionSoundKind::Withdraw}};
+	generalszh::legacy::ConsumeTransactionSounds(audio, requests);
+	BOOST_REQUIRE(audio.submitted.size() == 2u);
+	BOOST_TEST(audio.submitted[0].volume == 0.25f); BOOST_TEST(audio.submitted[1].volume == 0.5f);
+	BOOST_TEST(audio.submitted[0].player == 2); BOOST_TEST(audio.submitted[1].player == 3);
+	BOOST_TEST(audio.submitted[0].resource == 11); BOOST_TEST(audio.submitted[1].resource == 22);
+	BOOST_TEST(audio.submitted[0].logical); BOOST_TEST(!audio.submitted[1].logical);
+	BOOST_TEST(audio.definitions.m_moneyDepositSound.volume == 0.5f);
+	BOOST_TEST(audio.definitions.m_moneyDepositSound.player == 0);
+}
+BOOST_AUTO_TEST_CASE(transaction_audio_nonpositive_volume_is_presentation_only_suppression)
+{
+	Audio audio;
+	const TransactionSound request[]{{2, TransactionSoundKind::Deposit}};
+	audio.settings.m_preferredMoneyTransactionVolume = 0;
+	generalszh::legacy::ConsumeTransactionSounds(audio, request);
+	audio.settings.m_preferredMoneyTransactionVolume = -1;
+	generalszh::legacy::ConsumeTransactionSounds(audio, request);
+	BOOST_TEST(audio.submitted.empty());
+}
+BOOST_AUTO_TEST_CASE(transaction_audio_rejects_invalid_kind_without_guessing_a_sound)
+{
+	Audio audio;
+	const TransactionSound request[]{{2, static_cast<TransactionSoundKind>(255)}};
+	BOOST_CHECK_THROW(generalszh::legacy::ConsumeTransactionSounds(audio, request), std::invalid_argument);
+	BOOST_TEST(audio.submitted.empty());
+}

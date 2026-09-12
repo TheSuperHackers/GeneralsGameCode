@@ -1,0 +1,89 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+import games.generalszh.gameplay.combat.targeting.impact_target_projection;
+
+namespace
+{
+using namespace engine::gameplay::combat;
+using namespace engine::gameplay::navigation;
+using engine::gameplay::containment::ContainmentPhase;
+using engine::gameplay::containment::PassengerMembership;
+using engine::gameplay::spatial::SpatialPoint;
+using generalszh::combat::ImpactTargetProjection;
+using generalszh::construction::Structure;
+using generalszh::production::ProducedUnit;
+using generalszh::production::Producer;
+
+void RegisterTargetComponents(ecs::World &world)
+{
+    world.RegisterComponent<LifeState>(); world.RegisterComponent<Health>();
+    world.RegisterComponent<DamageResult>(); world.RegisterComponent<PendingDamage>();
+    world.RegisterComponent<GridPosition>(); world.RegisterComponent<PassengerMembership>();
+    world.RegisterComponent<ProducedUnit>(); world.RegisterComponent<Producer>();
+    world.RegisterComponent<Structure>(); world.RegisterComponent<damage::ArmorBinding>();
+    world.FinalizeComponents();
+}
+
+ecs::Entity MakeUnit(ecs::World &world, ecs::Entity account, Cell cell, bool alive=true)
+{
+    const auto entity=world.Create<LifeState,Health,DamageResult,PendingDamage,GridPosition,ProducedUnit>();
+    *world.Get<LifeState>(entity)={alive}; *world.Get<Health>(entity)={100};
+    world.Get<GridPosition>(entity)->cell=cell; world.Get<ProducedUnit>(entity)->account=account;
+    return entity;
+}
+}
+
+BOOST_AUTO_TEST_CASE(impact_projection_keeps_blocked_valid_cells_and_excludes_dead_or_contained_targets)
+{
+    const std::array<std::uint8_t,4> terrain{1,0,1,1}; NavigationGrid grid(4,1,terrain);
+    ecs::World world; RegisterTargetComponents(world);
+    const ecs::Entity ally{100,1}, enemy{101,1};
+    const auto blocked=MakeUnit(world,ally,1); const auto liveEnemy=MakeUnit(world,enemy,2);
+    const auto dead=MakeUnit(world,enemy,3,false);
+    const auto contained=MakeUnit(world,ally,0); world.Add<PassengerMembership>(contained);
+    world.Get<PassengerMembership>(contained)->phase=ContainmentPhase::Inside;
+    world.Get<PassengerMembership>(contained)->owner=engine::gameplay::containment::PassengerContainmentOwner::Transport;
+    ImpactTargetProjection projection(world,grid,16,16); projection.Refresh();
+    BOOST_REQUIRE(projection.Target(blocked)); BOOST_REQUIRE(projection.Target(liveEnemy));
+    BOOST_CHECK(!projection.Target(dead)); BOOST_CHECK(!projection.Target(contained));
+    SpatialPoint point{}; BOOST_CHECK(projection.Index().TryGet(blocked,point)); BOOST_TEST(point.x==1u);
+    std::array<SpatialPoint,4> results{};
+    const auto count=projection.Index().EnumerateWithinRadius(0,0,2,results);
+    BOOST_TEST(count==2u); BOOST_CHECK(results[0].entity==blocked); BOOST_CHECK(results[1].entity==liveEnemy);
+}
+
+BOOST_AUTO_TEST_CASE(impact_projection_is_generation_safe_across_delete_and_entity_reuse)
+{
+    const std::array<std::uint8_t,2> terrain{1,1}; NavigationGrid grid(2,1,terrain);
+    ecs::World world; RegisterTargetComponents(world);
+    const ecs::Entity account{70,1}; const auto old=MakeUnit(world,account,0);
+    ImpactTargetProjection projection(world,grid,8,8); projection.Refresh();
+    BOOST_REQUIRE(projection.Target(old));
+    world.Destroy(old);
+    const auto replacement=MakeUnit(world,account,1);
+    BOOST_REQUIRE_EQUAL(replacement.index,old.index);
+    BOOST_REQUIRE(replacement.generation!=old.generation);
+    projection.Refresh();
+    BOOST_CHECK(!projection.Target(old)); BOOST_REQUIRE(projection.Target(replacement));
+    SpatialPoint point{}; BOOST_CHECK(!projection.Index().TryGet(old,point));
+    BOOST_CHECK(projection.Index().TryGet(replacement,point)); BOOST_TEST(point.x==1u);
+}
+
+BOOST_AUTO_TEST_CASE(impact_projection_enforces_entity_index_and_point_capacities_separately)
+{
+    const std::array<std::uint8_t,4> terrain{1,1,1,1}; NavigationGrid grid(4,1,terrain);
+    {
+        ecs::World world; RegisterTargetComponents(world); (void)world.Create();
+        (void)MakeUnit(world,ecs::Entity{9,1},1);
+        ImpactTargetProjection projection(world,grid,1,4);
+        BOOST_CHECK_THROW(projection.Refresh(),std::length_error);
+    }
+    {
+        ecs::World world; RegisterTargetComponents(world);
+        (void)MakeUnit(world,ecs::Entity{9,1},0); (void)MakeUnit(world,ecs::Entity{9,1},1);
+        ImpactTargetProjection projection(world,grid,4,1);
+        BOOST_CHECK_THROW(projection.Refresh(),std::length_error);
+    }
+}

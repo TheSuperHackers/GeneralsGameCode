@@ -1,0 +1,16 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import games.generalszh.gameplay.capture.inputs.capture_batch;
+BOOST_AUTO_TEST_CASE(capture_batch_explicit_capacity_and_single_consumption)
+{
+    using namespace generalszh::capture;CaptureBatch batch(1,2);
+    BOOST_TEST(CaptureBatch::RequiredResultCapacity(10,10)==30u);
+    BOOST_CHECK_THROW(CaptureBatch::RequiredResultCapacity(SIZE_MAX,1),std::length_error);
+    const std::array tooMany{CaptureInput{},CaptureInput{}};
+    BOOST_CHECK_THROW(batch.SetInputs(tooMany),std::length_error);
+    const std::array input{CaptureInput{}};batch.SetInputs(input);
+    BOOST_CHECK_THROW(batch.SetInputs(input),std::logic_error);
+    BOOST_TEST(batch.BeginTick().size()==1u);batch.Append({});BOOST_TEST(batch.Results().empty());batch.Publish();
+    BOOST_TEST(batch.Results().size()==1u);BOOST_TEST(batch.BeginTick().empty());batch.Publish();
+}

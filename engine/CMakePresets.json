@@ -1,0 +1,45 @@
+{
+  "version": 10,
+  "cmakeMinimumRequired": { "major": 4, "minor": 4, "patch": 3 },
+  "configurePresets": [
+    {
+      "name": "llvm-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/../build/engine/${hostSystemName}/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "$env{ENGINE_LLVM_ROOT}/bin/clang++",
+        "CMAKE_MAKE_PROGRAM": "$env{ENGINE_NINJA}",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_PREFIX_PATH": "$env{ENGINE_DEPENDENCY_PREFIX}",
+        "BUILD_TESTING": "ON"
+      }
+    },
+    { "name": "llvm-release", "inherits": "llvm-base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
+    { "name": "llvm-debug", "inherits": "llvm-base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" } },
+    {
+      "name": "llvm-windows-release",
+      "inherits": "llvm-release",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "cacheVariables": { "CMAKE_CXX_COMPILER": "$env{ENGINE_LLVM_ROOT}/bin/clang-cl.exe" }
+    },
+    {
+      "name": "llvm-windows-debug",
+      "inherits": "llvm-debug",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "cacheVariables": { "CMAKE_CXX_COMPILER": "$env{ENGINE_LLVM_ROOT}/bin/clang-cl.exe" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "llvm-release", "configurePreset": "llvm-release" },
+    { "name": "llvm-debug", "configurePreset": "llvm-debug" },
+    { "name": "llvm-windows-release", "configurePreset": "llvm-windows-release" },
+    { "name": "llvm-windows-debug", "configurePreset": "llvm-windows-debug" }
+  ],
+  "testPresets": [
+    { "name": "llvm-release", "configurePreset": "llvm-release", "output": { "outputOnFailure": true }, "execution": { "noTestsAction": "error", "timeout": 120 } },
+    { "name": "llvm-debug", "configurePreset": "llvm-debug", "output": { "outputOnFailure": true }, "execution": { "noTestsAction": "error", "timeout": 120 } },
+    { "name": "llvm-windows-release", "configurePreset": "llvm-windows-release", "output": { "outputOnFailure": true }, "execution": { "noTestsAction": "error", "timeout": 120 } },
+    { "name": "llvm-windows-debug", "configurePreset": "llvm-windows-debug", "output": { "outputOnFailure": true }, "execution": { "noTestsAction": "error", "timeout": 120 } }
+  ]
+}

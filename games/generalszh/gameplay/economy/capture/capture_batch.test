@@ -1,0 +1,20 @@
+#include <boost/test/unit_test.hpp>
+import games.generalszh.gameplay.economy.capture.capture_batch;
+BOOST_AUTO_TEST_CASE(capture_partition_preserves_local_and_original_result_order_with_bounded_storage)
+{
+	generalszh::economy::CaptureBatch batch(3);
+	batch.Record(1, {7, 2}); batch.Record(0, {8, 3}); batch.Record(1, {9, 4});
+	BOOST_CHECK_THROW(batch.Record(0, {}), std::length_error);
+	const auto ranges = batch.Prepare(2);
+	BOOST_TEST(batch.Requests(ranges[1])[0].player == 2);
+	BOOST_TEST(batch.Requests(ranges[1])[1].player == 4);
+	batch.Results(ranges[1])[0].money = 20;
+	batch.Results(ranges[0])[0].money = 30;
+	batch.Results(ranges[1])[1].money = 40;
+	BOOST_TEST(batch.Result(0).money == 20u);
+	BOOST_TEST(batch.Result(1).money == 30u);
+	BOOST_TEST(batch.Result(2).money == 40u);
+	BOOST_CHECK_THROW(batch.Prepare(2), std::logic_error);
+	batch.Clear(); batch.Record(0, {}); batch.Prepare(1);
+	BOOST_TEST(batch.Result(0).money == 0u);
+}

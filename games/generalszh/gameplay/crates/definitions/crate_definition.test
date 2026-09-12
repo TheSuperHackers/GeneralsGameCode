@@ -1,0 +1,42 @@
+#define BOOST_TEST_MODULE GeneralsZHCrateDefinitions
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+
+import games.generalszh.gameplay.crates.definitions.crate_definition;
+
+namespace crates = generalszh::crates;
+BOOST_AUTO_TEST_CASE(crate_definition_catalog_rejects_unimplemented_families)
+{
+	const std::array unsupported{crates::CrateDefinition{crates::RewardKind::Salvage}};
+	BOOST_CHECK_THROW((crates::CrateDefinitionCatalog{unsupported}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(crate_definition_catalog_rejects_unknown_reward_enum_values)
+{
+	const std::array unknown{crates::CrateDefinition{
+		static_cast<crates::RewardKind>(255)}};
+	BOOST_CHECK_THROW((crates::CrateDefinitionCatalog{unknown}), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(crate_definition_catalog_accepts_exact_account_money_limit)
+{
+	crates::CrateDefinition definition{};
+	definition.moneyProvided = (std::numeric_limits<std::uint32_t>::max)() - 7u;
+	definition.moneyUpgradeBoosts.push_back({1u, 7u});
+	const std::array definitions{definition};
+
+	BOOST_CHECK_NO_THROW((crates::CrateDefinitionCatalog{definitions}));
+}
+
+BOOST_AUTO_TEST_CASE(crate_definition_catalog_rejects_each_overbound_money_plus_boost)
+{
+	crates::CrateDefinition definition{};
+	definition.moneyProvided = (std::numeric_limits<std::uint32_t>::max)() - 7u;
+	definition.moneyUpgradeBoosts = {{1u, 7u}, {2u, 8u}};
+	const std::array definitions{definition};
+
+	BOOST_CHECK_THROW((crates::CrateDefinitionCatalog{definitions}), std::invalid_argument);
+}

@@ -1,0 +1,22 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+import engine.gameplay.rts.economy.components.income_dispatch;
+import engine.ecs.core.world;
+using engine::gameplay::rts::economy::IncomeDispatch;
+
+BOOST_AUTO_TEST_CASE(income_dispatch_defaults_to_enabled_and_has_transient_stable_identity)
+{
+	static_assert(std::is_trivially_copyable_v<IncomeDispatch>);
+	static_assert(std::is_standard_layout_v<IncomeDispatch>);
+	static_assert(ecs::ComponentTraits<IncomeDispatch>::Persistence == ecs::PersistencePolicy::Transient);
+	BOOST_TEST(IncomeDispatch{}.enabled);
+	ecs::World world;
+	world.RegisterComponent<IncomeDispatch>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<IncomeDispatch>();
+	world.Get<IncomeDispatch>(entity)->enabled = false;
+	BOOST_TEST(!world.Get<IncomeDispatch>(entity)->enabled);
+	world.Remove<IncomeDispatch>(entity);
+	world.Add<IncomeDispatch>(entity);
+	BOOST_TEST(world.Get<IncomeDispatch>(entity)->enabled);
+}

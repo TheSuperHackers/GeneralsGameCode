@@ -1,0 +1,49 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+#include <vector>
+
+import engine.gameplay.rts.unlocks.components.unlock_state;
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+import engine.gameplay.rts.unlocks.definitions.unlock_definition;
+import games.generalszh.gameplay.bounty.definitions.cash_bounty_catalog;
+
+namespace
+{
+void MakeUnlocks(engine::gameplay::rts::unlocks::UnlockCatalog &catalog)
+{
+	catalog.Register({"SCIENCE_CashBounty1"});
+	catalog.Register({"SCIENCE_CashBounty2"});
+	catalog.Register({"SCIENCE_CashBounty3"});
+	catalog.Finalize();
+}
+}
+
+BOOST_AUTO_TEST_CASE(catalog_binds_dense_ids_and_selects_max_owned_rate)
+{
+	engine::gameplay::rts::unlocks::UnlockCatalog unlocks;
+	MakeUnlocks(unlocks);
+	using generalszh::bounty::CashBountyCatalog;
+	using generalszh::bounty::CashBountyDefinition;
+	using engine::gameplay::rts::bounty::BountyRate;
+	using engine::gameplay::rts::unlocks::MakeUnlockKey;
+	const std::array definitions{
+		CashBountyDefinition{MakeUnlockKey("SCIENCE_CashBounty1"), BountyRate{1, 20}},
+		CashBountyDefinition{MakeUnlockKey("SCIENCE_CashBounty2"), BountyRate{1, 10}},
+		CashBountyDefinition{MakeUnlockKey("SCIENCE_CashBounty3"), BountyRate{1, 5}}};
+	const CashBountyCatalog catalog(definitions, unlocks);
+	engine::gameplay::rts::unlocks::UnlockState state;
+	state.SetOwned(unlocks.Find(MakeUnlockKey("SCIENCE_CashBounty2")));
+	const auto maximum = catalog.MaximumOwned(state);
+	BOOST_TEST(maximum.numerator == 1u);
+	BOOST_TEST(maximum.denominator == 10u);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_rejects_unknown_science)
+{
+	engine::gameplay::rts::unlocks::UnlockCatalog unlocks;
+	MakeUnlocks(unlocks);
+	const std::array definitions{generalszh::bounty::CashBountyDefinition{
+		engine::gameplay::rts::unlocks::MakeUnlockKey("SCIENCE_Missing"), {1, 20}}};
+	BOOST_CHECK_THROW(generalszh::bounty::CashBountyCatalog(definitions, unlocks), std::invalid_argument);
+}

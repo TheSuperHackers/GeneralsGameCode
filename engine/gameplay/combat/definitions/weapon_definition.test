@@ -1,0 +1,15 @@
+#include <boost/test/unit_test.hpp>
+#include <chrono>
+import engine.gameplay.combat.definitions.weapon_definition;
+using namespace engine::gameplay::combat;
+BOOST_AUTO_TEST_CASE(weapon_authoring_keeps_typed_damage_and_compiles_duration)
+{
+    WeaponConfig source;source.damage=11;source.damageType={5};source.damageChannel={3};source.flightTime=std::chrono::milliseconds{101};
+    source.preAttackDelay=std::chrono::milliseconds{101}; source.preAttackType=PrefirePolicy::PerAttack;
+    const auto value=AuthorWeapon(source,engine::time::FixedStep{20});
+    BOOST_TEST(value.flightTicks==3u);BOOST_TEST(value.preAttackTicks==3u);BOOST_CHECK(value.preAttackType==PrefirePolicy::PerAttack);
+    BOOST_TEST(value.damageType.value==5u);BOOST_TEST(value.damageChannel.value==3u);
+    source.clipSize=0;BOOST_CHECK_THROW(AuthorWeapon(source,engine::time::FixedStep{20}),std::invalid_argument);
+    source.ammunition=AmmunitionPolicy::Unlimited;BOOST_TEST(AuthorWeapon(source,engine::time::FixedStep{20}).clipSize==0u);
+    source.preAttackType=static_cast<PrefirePolicy>(255);BOOST_CHECK_THROW(AuthorWeapon(source,engine::time::FixedStep{20}),std::invalid_argument);
+}

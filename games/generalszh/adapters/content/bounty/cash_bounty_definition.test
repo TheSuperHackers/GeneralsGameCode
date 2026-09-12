@@ -1,0 +1,100 @@
+#define BOOST_TEST_MODULE GeneralsZHCashBountyContent
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <string>
+#include <stdexcept>
+#include <string_view>
+
+import games.generalszh.adapters.content.bounty.cash_bounty_definition;
+import games.generalszh.gameplay.construction.definitions.building_definition;
+import games.generalszh.gameplay.production.definitions.build_definition;
+
+namespace
+{
+constexpr std::string_view ObjectText = R"(
+Object FactionBuilding
+  Behavior = CashBountyPower ModuleTag_15
+    SpecialPowerTemplate = SpecialAbilityCashBounty1
+    Bounty = 5%
+  End
+  Behavior = CashBountyPower ModuleTag_16
+    SpecialPowerTemplate = SpecialAbilityCashBounty2
+    Bounty = 10%
+  End
+  Behavior = CashBountyPower ModuleTag_17
+    SpecialPowerTemplate = SpecialAbilityCashBounty3
+    Bounty = 20%
+  End
+End
+)",
+SpecialPowerText = R"(
+SpecialPower SpecialAbilityCashBounty1
+  Enum = SPECIAL_CASH_BOUNTY
+  RequiredScience = SCIENCE_CashBounty1
+  PublicTimer = No
+End
+SpecialPower SpecialAbilityCashBounty2
+  Enum = SPECIAL_CASH_BOUNTY
+  RequiredScience = SCIENCE_CashBounty2
+  PublicTimer = No
+End
+SpecialPower SpecialAbilityCashBounty3
+  Enum = SPECIAL_CASH_BOUNTY
+  RequiredScience = SCIENCE_CashBounty3
+  PublicTimer = No
+End
+)";
+}
+
+BOOST_AUTO_TEST_CASE(actual_zero_hour_rates_decode_to_five_ten_twenty_percent)
+{
+    const auto decoded = generalszh::content::DecodeCashBountyDefinitions(
+        ObjectText, SpecialPowerText, "FactionBuilding");
+    BOOST_REQUIRE(decoded.definitions.size() == 3u);
+    BOOST_TEST(decoded.definitions[0].scienceName == "SCIENCE_CashBounty1");
+    const auto five = engine::gameplay::rts::bounty::BountyRate{1, 20};
+    const auto ten = engine::gameplay::rts::bounty::BountyRate{1, 10};
+    const auto twenty = engine::gameplay::rts::bounty::BountyRate{1, 5};
+    BOOST_TEST(decoded.definitions[0].rate.numerator == five.numerator);
+    BOOST_TEST(decoded.definitions[0].rate.denominator == five.denominator);
+    BOOST_TEST(decoded.definitions[1].rate.numerator == ten.numerator);
+    BOOST_TEST(decoded.definitions[1].rate.denominator == ten.denominator);
+    BOOST_TEST(decoded.definitions[2].rate.numerator == twenty.numerator);
+    BOOST_TEST(decoded.definitions[2].rate.denominator == twenty.denominator);
+    const auto bound = generalszh::content::BindCashBountyDefinitions(decoded);
+    BOOST_TEST(bound.size() == 3u);
+}
+
+BOOST_AUTO_TEST_CASE(cost_binding_explicitly_excludes_ignored_gui_objects)
+{
+    generalszh::production::BuildDefinition definition{};
+    definition.cost = 800;
+    const auto ordinary = generalszh::content::BindCashBountyCostBinding(definition, false);
+    const auto ignored = generalszh::content::BindCashBountyCostBinding(definition, true);
+    BOOST_CHECK(ordinary.eligible);
+    BOOST_CHECK(!ignored.eligible);
+    BOOST_TEST(ordinary.authoredBuildCost == ignored.authoredBuildCost);
+}
+
+BOOST_AUTO_TEST_CASE(building_cost_binding_uses_decoded_cost_until_completion)
+{
+    generalszh::construction::BuildingDefinition definition{};
+    definition.cost = 100;
+    const auto binding = generalszh::content::BindCashBountyCostBinding(definition, false);
+    BOOST_TEST(binding.authoredBuildCost == 100u);
+    BOOST_CHECK(binding.basis == generalszh::bounty::CashBountyCostBasis::DecodedBuildCost);
+    BOOST_CHECK(binding.eligible);
+}
+
+BOOST_AUTO_TEST_CASE(content_boundary_rejects_non_cash_special_power_and_invalid_percent)
+{
+    const auto badEnum = std::string{SpecialPowerText}.replace(
+        std::string{SpecialPowerText}.find("SPECIAL_CASH_BOUNTY"), 19, "SPECIAL_ARTILLERY");
+    BOOST_CHECK_THROW(generalszh::content::DecodeCashBountyDefinitions(
+        ObjectText, badEnum, "FactionBuilding"), std::invalid_argument);
+    const auto badObject = std::string{ObjectText}.replace(
+        std::string{ObjectText}.find("5%"), 2, "105%");
+    BOOST_CHECK_THROW(generalszh::content::DecodeCashBountyDefinitions(
+        badObject, SpecialPowerText, "FactionBuilding"), std::out_of_range);
+}

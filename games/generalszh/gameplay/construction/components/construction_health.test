@@ -1,0 +1,9 @@
+#define BOOST_TEST_MODULE GeneralsZHConstructionHealth
+#include <boost/test/included/unit_test.hpp>
+import games.generalszh.gameplay.construction.components.construction_health;
+BOOST_AUTO_TEST_CASE(construction_health_is_a_serializable_remainder_component)
+{
+    BOOST_TEST(ecs::ComponentTraits<generalszh::construction::ConstructionHealth>::Version==1u);
+    BOOST_TEST(ecs::ComponentTraits<generalszh::construction::ConstructionHealth>::StableName
+        =="games.generalszh.construction.health_remainder");
+}

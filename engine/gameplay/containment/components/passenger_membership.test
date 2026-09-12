@@ -1,0 +1,18 @@
+#define BOOST_TEST_MODULE EngineContainment
+#include <boost/test/included/unit_test.hpp>
+import engine.gameplay.containment.components.passenger_membership;
+using namespace engine::gameplay::containment;
+BOOST_AUTO_TEST_CASE(membership_gate_includes_pending_evacuation)
+{
+    PassengerMembership membership;BOOST_TEST(!IsContained(membership));
+    membership.phase=ContainmentPhase::Inside; membership.owner=PassengerContainmentOwner::Transport;
+    BOOST_TEST(IsContained(membership)); BOOST_TEST(IsTransportOwned(membership));
+    BOOST_TEST(!IsGarrisonOwned(membership)); BOOST_TEST(!CanPassengerFire(membership));
+    membership.owner=PassengerContainmentOwner::Garrison; membership.combat=PassengerCombatPolicy::Allowed;
+    BOOST_TEST(IsGarrisonOwned(membership)); BOOST_TEST(CanPassengerFire(membership));
+    membership.phase=ContainmentPhase::AwaitingEvacuation;BOOST_TEST(IsContained(membership));
+    membership.phase=ContainmentPhase::Outside; membership.owner=PassengerContainmentOwner::None;
+    membership.combat=PassengerCombatPolicy::Blocked; BOOST_TEST(!IsContained(membership));
+    BOOST_TEST(ecs::ComponentTraits<PassengerMembership>::Version==2u);
+    BOOST_CHECK(ecs::ComponentTraits<PassengerMembership>::Persistence==ecs::PersistencePolicy::Serializable);
+}

@@ -1,0 +1,312 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionPresentationDefinition
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+import games.generalszh.gameplay.production.definitions.presentation_definition;
+import engine.jobs.job_system;
+
+namespace production_presentation_definition_test
+{
+using generalszh::production::ConstructionMarkerTiming;
+using generalszh::production::DoorTiming;
+using generalszh::production::ProductionPresentationDefinition;
+
+constexpr std::string_view FingerprintDomain =
+	"games.generalszh.production.presentation_definition.recipe";
+constexpr std::uint64_t FnvOffsetBasis = UINT64_C(14695981039346656037);
+constexpr std::uint64_t FnvPrime = UINT64_C(1099511628211);
+
+void HashByte(std::uint64_t &hash, const std::uint8_t byte) noexcept
+{
+	hash ^= byte;
+	hash *= FnvPrime;
+}
+
+void HashLittleEndian(std::uint64_t &hash, const std::uint64_t value,
+	const std::size_t byteCount) noexcept
+{
+	for (std::size_t byte = 0; byte < byteCount; ++byte)
+		HashByte(hash, static_cast<std::uint8_t>(value >> (byte * 8)));
+}
+
+void HashBytes(std::uint64_t &hash, const std::string_view bytes) noexcept
+{
+	for (const char byte : bytes)
+		HashByte(hash, static_cast<std::uint8_t>(static_cast<unsigned char>(byte)));
+}
+
+std::uint64_t IndependentFingerprint(const std::int32_t animations,
+	const std::uint32_t rate, const DoorTiming doors,
+	const ConstructionMarkerTiming marker) noexcept
+{
+	std::uint64_t hash = FnvOffsetBasis;
+	HashLittleEndian(hash, static_cast<std::uint64_t>(FingerprintDomain.size()),
+		sizeof(std::uint64_t));
+	HashBytes(hash, FingerprintDomain);
+	HashLittleEndian(hash, 1, sizeof(std::uint32_t));
+	HashLittleEndian(hash, static_cast<std::uint32_t>(animations),
+		sizeof(std::uint32_t));
+	HashLittleEndian(hash, rate, sizeof(std::uint32_t));
+	HashLittleEndian(hash, doors.opening, sizeof(std::uint64_t));
+	HashLittleEndian(hash, doors.waiting, sizeof(std::uint64_t));
+	HashLittleEndian(hash, doors.closing, sizeof(std::uint64_t));
+	HashLittleEndian(hash, marker.duration, sizeof(std::uint64_t));
+	return hash;
+}
+
+ProductionPresentationDefinition MakeDefinition(const std::int32_t animations = 0,
+	const std::uint32_t rate = 60)
+{
+	using namespace std::chrono_literals;
+	return ProductionPresentationDefinition{
+		animations, 2s, 1s, 500ms, 3s, engine::time::FixedStep{rate}};
+}
+
+struct Result
+{
+	std::int32_t animations;
+	std::uint32_t rate;
+	DoorTiming doors;
+	ConstructionMarkerTiming marker;
+	std::uint64_t fingerprint;
+
+	friend bool operator==(const Result &left, const Result &right) noexcept
+	{
+		return left.animations == right.animations && left.rate == right.rate &&
+			left.doors.opening == right.doors.opening &&
+			left.doors.waiting == right.doors.waiting &&
+			left.doors.closing == right.doors.closing &&
+			left.marker.duration == right.marker.duration &&
+			left.fingerprint == right.fingerprint;
+	}
+};
+
+struct Range
+{
+	const ProductionPresentationDefinition *definition;
+	std::span<Result> results;
+
+	static void Run(void *rawContext)
+	{
+		auto &range = *static_cast<Range *>(rawContext);
+		const auto &definition = *range.definition;
+		const Result result{
+			definition.NumDoorAnimations(), definition.Step().TicksPerSecond(),
+			definition.Doors(), definition.Marker(), definition.Fingerprint()};
+		for (auto &output : range.results)
+			output = result;
+	}
+};
+
+std::vector<Result> RunConcurrent(const ProductionPresentationDefinition &definition,
+	const std::size_t workers)
+{
+	constexpr std::size_t resultCount = 2048;
+	constexpr std::size_t rangeSize = 64;
+	constexpr std::size_t rangeCount = resultCount / rangeSize;
+
+	std::vector<Result> results(resultCount);
+	std::array<Range, rangeCount> ranges{};
+	std::array<engine::jobs::Job, rangeCount> jobs{};
+	for (std::size_t index = 0; index < rangeCount; ++index)
+	{
+		ranges[index] = {&definition,
+			std::span(results).subspan(index * rangeSize, rangeSize)};
+		jobs[index] = {&Range::Run, &ranges[index]};
+	}
+
+	engine::jobs::JobSystem pool{engine::jobs::JobSystemConfig{workers}};
+	pool.Execute(jobs);
+	return results;
+}
+} // namespace production_presentation_definition_test
+
+using namespace production_presentation_definition_test;
+using namespace std::chrono_literals;
+
+BOOST_AUTO_TEST_CASE(explicit_zero_defaults_have_zero_compiled_timings)
+{
+	const ProductionPresentationDefinition definition{
+		0, 0ns, 0ns, 0ns, 0ns, engine::time::FixedStep{60}};
+
+	BOOST_TEST(definition.NumDoorAnimations() == 0);
+	BOOST_TEST(definition.Doors().opening == 0u);
+	BOOST_TEST(definition.Doors().waiting == 0u);
+	BOOST_TEST(definition.Doors().closing == 0u);
+	BOOST_TEST(definition.Marker().duration == 0u);
+	BOOST_TEST(definition.Step().TicksPerSecond() == 60u);
+}
+
+BOOST_AUTO_TEST_CASE(typed_durations_round_up_at_thirty_and_sixty_hz)
+{
+	const auto at30 = ProductionPresentationDefinition{
+		3, 1ns, 33333333ns, 33333334ns, 100ms, engine::time::FixedStep{30}};
+	const auto at60 = ProductionPresentationDefinition{
+		3, 1ns, 33333333ns, 33333334ns, 100ms, engine::time::FixedStep{60}};
+
+	BOOST_TEST(at30.Doors().opening == 1u);
+	BOOST_TEST(at30.Doors().waiting == 1u);
+	BOOST_TEST(at30.Doors().closing == 2u);
+	BOOST_TEST(at30.Marker().duration == 3u);
+	BOOST_TEST(at60.Doors().opening == 1u);
+	BOOST_TEST(at60.Doors().waiting == 2u);
+	BOOST_TEST(at60.Doors().closing == 3u);
+	BOOST_TEST(at60.Marker().duration == 6u);
+}
+
+BOOST_AUTO_TEST_CASE(equal_effective_durations_have_equal_fingerprints)
+{
+	const ProductionPresentationDefinition first{
+		2, 33333330ns, 1s, 500ms, 3s, engine::time::FixedStep{30}};
+	const ProductionPresentationDefinition second{
+		2, 33333333ns, 1s, 500ms, 3s, engine::time::FixedStep{30}};
+
+	BOOST_TEST(first.Doors().opening == 1u);
+	BOOST_TEST(second.Doors().opening == 1u);
+	BOOST_TEST(first.Fingerprint() == second.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(signed_animation_count_is_preserved_exactly)
+{
+	const auto negative = MakeDefinition(-7);
+	const auto zero = MakeDefinition(0);
+	const auto positive = MakeDefinition(7);
+
+	BOOST_TEST(negative.NumDoorAnimations() == -7);
+	BOOST_TEST(zero.NumDoorAnimations() == 0);
+	BOOST_TEST(positive.NumDoorAnimations() == 7);
+	BOOST_TEST(negative.Fingerprint() != zero.Fingerprint());
+	BOOST_TEST(zero.Fingerprint() != positive.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(each_effective_setting_contributes_to_the_fingerprint)
+{
+	const auto baseline = MakeDefinition(2, 30);
+	const auto baselineFingerprint = baseline.Fingerprint();
+
+	const ProductionPresentationDefinition changedAnimations{
+		-3, 2s, 1s, 500ms, 3s, engine::time::FixedStep{30}};
+	const ProductionPresentationDefinition changedOpening{
+		2, 3s, 1s, 500ms, 3s, engine::time::FixedStep{30}};
+	const ProductionPresentationDefinition changedWaiting{
+		2, 2s, 2s, 500ms, 3s, engine::time::FixedStep{30}};
+	const ProductionPresentationDefinition changedClosing{
+		2, 2s, 1s, 1s, 3s, engine::time::FixedStep{30}};
+	const ProductionPresentationDefinition changedComplete{
+		2, 2s, 1s, 500ms, 4s, engine::time::FixedStep{30}};
+	BOOST_TEST(changedAnimations.Fingerprint() != baselineFingerprint);
+	BOOST_TEST(changedOpening.Fingerprint() != baselineFingerprint);
+	BOOST_TEST(changedWaiting.Fingerprint() != baselineFingerprint);
+	BOOST_TEST(changedClosing.Fingerprint() != baselineFingerprint);
+	BOOST_TEST(changedComplete.Fingerprint() != baselineFingerprint);
+	const ProductionPresentationDefinition zeroAt30{
+		2, 0ns, 0ns, 0ns, 0ns, engine::time::FixedStep{30}};
+	const ProductionPresentationDefinition zeroAt60{
+		2, 0ns, 0ns, 0ns, 0ns, engine::time::FixedStep{60}};
+	BOOST_TEST(zeroAt30.Fingerprint() != zeroAt60.Fingerprint());
+}
+
+BOOST_AUTO_TEST_CASE(negative_and_overflowing_durations_are_rejected_by_typed_authoring)
+{
+	BOOST_CHECK_THROW((ProductionPresentationDefinition{
+		0, -1ns, 0ns, 0ns, 0ns, engine::time::FixedStep{60}}), std::invalid_argument);
+	BOOST_CHECK_THROW((ProductionPresentationDefinition{
+		0, 0ns, -1ns, 0ns, 0ns, engine::time::FixedStep{60}}), std::invalid_argument);
+	BOOST_CHECK_THROW((ProductionPresentationDefinition{
+		0, 0ns, 0ns, -1ns, 0ns, engine::time::FixedStep{60}}), std::invalid_argument);
+	BOOST_CHECK_THROW((ProductionPresentationDefinition{
+		0, 0ns, 0ns, 0ns, -1ns, engine::time::FixedStep{60}}), std::invalid_argument);
+
+	const auto longest = (std::numeric_limits<std::int64_t>::max)();
+	BOOST_CHECK_THROW((ProductionPresentationDefinition{
+		0, std::chrono::nanoseconds{longest}, 0ns, 0ns, 0ns,
+		engine::time::FixedStep{(std::numeric_limits<std::uint32_t>::max)()}}),
+		std::overflow_error);
+}
+
+BOOST_AUTO_TEST_CASE(fingerprint_matches_independent_fixed_golden_recipe)
+{
+	const ProductionPresentationDefinition definition{
+		-7, 2s, 1s, 500ms, 3s, engine::time::FixedStep{30}};
+	const DoorTiming expectedDoors{60u, 30u, 15u};
+	const ConstructionMarkerTiming expectedMarker{90u};
+
+	BOOST_TEST(definition.Fingerprint() == IndependentFingerprint(-7, 30,
+		expectedDoors, expectedMarker));
+	BOOST_TEST(definition.Fingerprint() == UINT64_C(0x2ABFF102C6894BA0));
+}
+
+BOOST_AUTO_TEST_CASE(public_api_is_const_copy_constructible_and_not_assignable)
+{
+	static_assert(std::is_same_v<decltype(std::declval<const ProductionPresentationDefinition &>().
+		NumDoorAnimations()), std::int32_t>);
+	static_assert(std::is_same_v<decltype(std::declval<const ProductionPresentationDefinition &>().
+		Doors()), const DoorTiming &>);
+	static_assert(std::is_same_v<decltype(std::declval<const ProductionPresentationDefinition &>().
+		Marker()), const ConstructionMarkerTiming &>);
+	static_assert(std::is_same_v<decltype(std::declval<const ProductionPresentationDefinition &>().
+		Step()), engine::time::FixedStep>);
+	static_assert(std::is_same_v<decltype(std::declval<const ProductionPresentationDefinition &>().
+		Fingerprint()), std::uint64_t>);
+	static_assert(noexcept(std::declval<const ProductionPresentationDefinition &>().
+		NumDoorAnimations()));
+	static_assert(noexcept(std::declval<const ProductionPresentationDefinition &>().Doors()));
+	static_assert(noexcept(std::declval<const ProductionPresentationDefinition &>().Marker()));
+	static_assert(noexcept(std::declval<const ProductionPresentationDefinition &>().Step()));
+	static_assert(noexcept(std::declval<const ProductionPresentationDefinition &>().Fingerprint()));
+	static_assert(std::is_copy_constructible_v<ProductionPresentationDefinition>);
+	static_assert(!std::is_assignable_v<ProductionPresentationDefinition &,
+		ProductionPresentationDefinition>);
+	static_assert(!std::is_assignable_v<ProductionPresentationDefinition &,
+		ProductionPresentationDefinition &&>);
+
+	const auto source = MakeDefinition(-4, 30);
+	const auto sourceAnimations = source.NumDoorAnimations();
+	const auto sourceDoors = source.Doors();
+	const auto sourceMarker = source.Marker();
+	const auto sourceStep = source.Step();
+	const auto sourceFingerprint = source.Fingerprint();
+	const ProductionPresentationDefinition copy{source};
+	const ProductionPresentationDefinition fromRvalue{std::move(source)};
+
+	for (const auto *definition : {&source, &copy, &fromRvalue})
+	{
+		BOOST_TEST(definition->NumDoorAnimations() == sourceAnimations);
+		BOOST_TEST(definition->Doors().opening == sourceDoors.opening);
+		BOOST_TEST(definition->Doors().waiting == sourceDoors.waiting);
+		BOOST_TEST(definition->Doors().closing == sourceDoors.closing);
+		BOOST_TEST(definition->Marker().duration == sourceMarker.duration);
+		BOOST_CHECK(definition->Step() == sourceStep);
+		BOOST_TEST(definition->Fingerprint() == sourceFingerprint);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(shared_definition_has_complete_identical_results_for_one_two_and_four_workers)
+{
+	const auto definition = MakeDefinition(-9, 30);
+	const Result expected{
+		-9, 30u, DoorTiming{60u, 30u, 15u}, ConstructionMarkerTiming{90u},
+		IndependentFingerprint(-9, 30, DoorTiming{60u, 30u, 15u},
+			ConstructionMarkerTiming{90u})};
+
+	const auto oneWorker = RunConcurrent(definition, 1);
+	const auto twoWorkers = RunConcurrent(definition, 2);
+	const auto fourWorkers = RunConcurrent(definition, 4);
+
+	BOOST_REQUIRE(oneWorker.size() == 2048u);
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+	for (const auto &result : oneWorker)
+		BOOST_CHECK(result == expected);
+}

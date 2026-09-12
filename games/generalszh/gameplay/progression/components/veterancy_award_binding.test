@@ -1,0 +1,11 @@
+#include <boost/test/unit_test.hpp>
+import games.generalszh.gameplay.progression.components.veterancy_award_binding;
+
+BOOST_AUTO_TEST_CASE(veterancy_award_binding_is_explicit_and_serializable)
+{
+    const generalszh::progression::VeterancyAwardBinding regular{7,true};
+    BOOST_TEST(regular.definition==7u);
+    BOOST_TEST(regular.awardable);
+    BOOST_CHECK(ecs::ComponentTraits<generalszh::progression::VeterancyAwardBinding>::Persistence
+        == ecs::PersistencePolicy::Serializable);
+}

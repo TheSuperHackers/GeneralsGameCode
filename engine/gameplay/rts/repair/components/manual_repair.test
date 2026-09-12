@@ -1,0 +1,27 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+import engine.gameplay.rts.repair.components.manual_repair;
+
+BOOST_AUTO_TEST_CASE(manual_progress_is_distinct_from_automatic_repair_state)
+{
+	using namespace engine::gameplay::rts::repair;
+	static_assert(!std::is_same_v<ManualRepairProgress,RepairState>);
+	static_assert(ecs::ComponentTraits<ManualRepairProgress>::Persistence==ecs::PersistencePolicy::Serializable);
+	static_assert(ecs::ComponentTraits<ManualRepairBenefactorLease>::Persistence==ecs::PersistencePolicy::Serializable);
+
+	ManualRepairProgress progress;
+	progress.state.remainder=7;
+	RepairState automatic;
+	automatic.remainder=3;
+	BOOST_TEST(progress.state.remainder==7u);
+	BOOST_TEST(automatic.remainder==3u);
+}
+
+BOOST_AUTO_TEST_CASE(benefactor_deadline_is_exclusive)
+{
+	using namespace engine::gameplay::rts::repair;
+	const ManualRepairBenefactorLease lease{{4,2},12};
+	BOOST_TEST(IsActive(lease,11));
+	BOOST_TEST(!IsActive(lease,12));
+	BOOST_TEST(!IsActive(ManualRepairBenefactorLease{{},12},11));
+}

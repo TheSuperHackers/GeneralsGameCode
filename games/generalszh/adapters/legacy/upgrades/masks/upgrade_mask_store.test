@@ -1,0 +1,422 @@
+#define BOOST_TEST_MODULE GeneralsZHUpgradeMaskStore
+#include <boost/test/included/unit_test.hpp>
+#include "upgrade_mask_store.h"
+#include "games/generalszh/adapters/legacy/upgrades/identity/upgrade_catalog.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <array>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
+#include <memory>
+#include <string>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.upgrades.state.upgrade_words;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using namespace generalszh::legacy;
+using namespace engine::gameplay::rts::upgrades;
+using generalszh::GameplayState;
+using generalszh::PersistentWorldReset;
+
+namespace mask_test
+{
+LegacyUpgradeWords Bit(unsigned bit)
+{
+	LegacyUpgradeWords result{};
+	result[bit / 64] = UINT64_C(1) << (bit % 64);
+	return result;
+}
+void Publish(UpgradeCatalogBridge &catalog)
+{
+	const std::array definitions{UpgradeIdentityInput{"Upgrade_A", 511}, UpgradeIdentityInput{"Upgrade_B", 64}};
+	catalog.Publish(definitions);
+}
+struct ScheduledAccess
+{
+	UpgradeMaskStore *store;
+	UpgradeMaskLease *lease;
+	const UpgradeCatalogBridge *catalog;
+	unsigned operation;
+	using Query = ecs::Query<ecs::Read<CompletedUpgradeWord>>;
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		switch (operation)
+		{
+		case 0: (void)lease->Read(); break;
+		case 1: lease->Complete(Bit(511)); break;
+		case 2: lease->Clear(); break;
+		case 3: lease->Restore({}); break;
+		default: { UpgradeMaskLease extra(*store, *catalog); break; }
+		}
+	}
+};
+}
+namespace ecs
+{
+template<> struct SystemTraits<mask_test::ScheduledAccess>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.upgrade_masks.scheduled";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+using mask_test::Bit;
+using mask_test::Publish;
+
+BOOST_AUTO_TEST_CASE(empty_owner_lifecycle_does_not_publish_catalog)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	UpgradeMaskStore store(state);
+	{
+		UpgradeMaskLease lease(store, catalog);
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(state.Count() == 9u);
+		BOOST_TEST(lease.Read().completed == LegacyUpgradeWords{}, boost::test_tools::per_element());
+		BOOST_TEST(lease.HasCompleted({}));
+		lease.Clear();
+		BOOST_CHECK_THROW(lease.Start(Bit(0)), std::logic_error);
+		BOOST_TEST(!catalog.IsPublished());
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(start_complete_restart_remove_preserve_independent_masks)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	lease.Start(Bit(511));
+	lease.Start(Bit(64));
+	lease.Complete(Bit(511));
+	BOOST_TEST(lease.HasCompleted(Bit(511)));
+	BOOST_TEST(!lease.HasInProgress(Bit(511)));
+	BOOST_TEST(lease.HasInProgress(Bit(64)));
+	lease.Start(Bit(511)); // Deliberately does not clear completed.
+	BOOST_TEST(lease.HasInProgress(Bit(511)));
+	BOOST_TEST(lease.HasCompleted(Bit(511)));
+	lease.Remove(Bit(511));
+	BOOST_TEST(!lease.HasCompleted(Bit(511)));
+	BOOST_TEST(!lease.HasInProgress(Bit(511)));
+	BOOST_TEST(lease.HasInProgress(Bit(64)));
+	lease.Clear();
+	BOOST_TEST(lease.Read().inProgress == LegacyUpgradeWords{}, boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(canonical_ecs_columns_are_the_only_authority)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	lease.Complete(Bit(511));
+	const auto a = catalog.DenseId(511), b = catalog.DenseId(64);
+	ecs::Query<ecs::Write<CompletedUpgradeWord>, ecs::Read<UpgradeWordOrdinal>, ecs::Read<UpgradeWordOwner>> query(state.World());
+	std::size_t count{};
+	query.ForEachChunk([&](auto chunk) {
+		auto values = chunk.template Get<CompletedUpgradeWord>();
+		auto ordinals = chunk.template Get<UpgradeWordOrdinal>();
+		auto owners = chunk.template Get<UpgradeWordOwner>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			BOOST_TEST(state.World().IsAlive(owners[row].value));
+			if (ordinals[row].value == a / 64)
+			{
+				BOOST_TEST(values[row].value == (UINT64_C(1) << (a % 64)));
+				values[row].value = UINT64_C(1) << (b % 64);
+			}
+			++count;
+		}
+	});
+	BOOST_TEST(count == 8u);
+	BOOST_TEST(!lease.HasCompleted(Bit(511)));
+	BOOST_TEST(lease.HasCompleted(Bit(64)));
+	BOOST_TEST(lease.Read().completed == Bit(64), boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(malformed_restore_does_not_publish_any_prefix)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	lease.Complete(Bit(511));
+	UpgradeMaskSnapshot snapshot{Bit(64), Bit(3)};
+	BOOST_CHECK_THROW(lease.Restore(snapshot), std::invalid_argument);
+	BOOST_TEST(lease.Read().completed == Bit(511), boost::test_tools::per_element());
+	BOOST_TEST(lease.Read().inProgress == LegacyUpgradeWords{}, boost::test_tools::per_element());
+	snapshot.inProgress = Bit(511);
+	lease.Restore(snapshot);
+	BOOST_TEST(lease.Read().completed == Bit(64), boost::test_tools::per_element());
+	BOOST_TEST(lease.Read().inProgress == Bit(511), boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(transfer_only_merges_progress_and_self_transfer_is_safe)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease first(store, catalog), second(store, catalog);
+	first.Complete(Bit(511));
+	second.Start(Bit(511));
+	second.Complete(Bit(64));
+	first.MergeProgress(second);
+	first.MergeProgress(first);
+	BOOST_TEST(first.HasCompleted(Bit(511)));
+	BOOST_TEST(!first.HasCompleted(Bit(64)));
+	BOOST_TEST(first.HasInProgress(Bit(511)));
+	BOOST_TEST(second.HasCompleted(Bit(64)));
+}
+
+BOOST_AUTO_TEST_CASE(released_or_changed_catalog_cannot_reinterpret_live_bits)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	lease.Complete(Bit(511));
+	catalog.Reset();
+	BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+	const std::array replacement{UpgradeIdentityInput{"Upgrade_Other", 511}};
+	catalog.Publish(replacement);
+	BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+	BOOST_CHECK_THROW(lease.Complete(Bit(511)), std::logic_error);
+	lease.Clear(); // Explicit reset ends the previous mask's schema lifetime.
+	lease.Complete(Bit(511));
+	BOOST_TEST(lease.HasCompleted(Bit(511)));
+}
+
+BOOST_AUTO_TEST_CASE(equivalent_catalogs_with_different_native_bits_transfer_canonical_identity)
+{
+	GameplayState state;
+	UpgradeCatalogBridge firstCatalog, secondCatalog;
+	Publish(firstCatalog);
+	const std::array reversed{UpgradeIdentityInput{"Upgrade_B", 0}, UpgradeIdentityInput{"Upgrade_A", 1}};
+	secondCatalog.Publish(reversed);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease first(store, firstCatalog), second(store, secondCatalog);
+	second.Start(Bit(1));
+	first.MergeProgress(second);
+	BOOST_TEST(first.Read().inProgress == Bit(511), boost::test_tools::per_element());
+	BOOST_TEST(second.Read().inProgress == Bit(1), boost::test_tools::per_element());
+	secondCatalog.Reset();
+	const std::array different{UpgradeIdentityInput{"Upgrade_Other", 1}};
+	secondCatalog.Publish(different);
+	second.Clear();
+	second.Start(Bit(1));
+	BOOST_CHECK_THROW(first.MergeProgress(second), std::invalid_argument);
+	BOOST_TEST(first.Read().inProgress == Bit(511), boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(persistent_reset_rebinds_word_owners_and_preserves_values)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease first(store, catalog), second(store, catalog);
+	first.Complete(Bit(511));
+	second.Start(Bit(64));
+	const auto schema = state.World().Components().SchemaHash();
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, std::span{&participant, 1});
+	BOOST_TEST(state.World().Components().SchemaHash() == schema);
+	BOOST_TEST(state.Count() == 18u);
+	BOOST_TEST(first.HasCompleted(Bit(511)));
+	BOOST_TEST(!first.HasInProgress(Bit(64)));
+	BOOST_TEST(second.HasInProgress(Bit(64)));
+}
+
+BOOST_AUTO_TEST_CASE(reset_preflight_failure_retains_masks_and_allows_retry)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	lease.Start(Bit(511));
+	const auto unowned = state.World().Create();
+	const auto participant = store.ResetParticipant();
+	BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::logic_error);
+	BOOST_TEST(lease.HasInProgress(Bit(511)));
+	state.World().Destroy(unowned);
+	BOOST_CHECK_NO_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}));
+}
+
+BOOST_AUTO_TEST_CASE(failed_restore_poisoning_allows_complete_teardown)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	{
+		UpgradeMaskLease lease(store, catalog);
+		lease.Complete(Bit(511));
+		auto participant = store.ResetParticipant();
+		participant.restore = +[](void *) { throw std::runtime_error("Injected mask restore failure"); };
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, std::span{&participant, 1}), std::runtime_error);
+		BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+		BOOST_CHECK_THROW(lease.Clear(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_legacy_access_fails_before_mutation_or_slot_allocation)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	for (unsigned operation = 0; operation < 5; ++operation)
+	{
+		mask_test::ScheduledAccess system{&store, &lease, &catalog, operation};
+		ecs::SystemRegistry systems;
+		systems.Register(system);
+		systems.Finalize(state.World().Components());
+		ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+		const engine::time::FixedStep step{30};
+		scheduler.Finalize(step);
+		BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+		BOOST_TEST(!state.World().IsScheduledExecutionActive());
+		BOOST_TEST(state.Count() == 9u);
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(lease.Read().completed == LegacyUpgradeWords{}, boost::test_tools::per_element());
+	}
+}
+
+BOOST_AUTO_TEST_CASE(missing_word_component_rejects_access_without_leaking_its_owner)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	{
+		UpgradeMaskLease lease(store, catalog);
+		ecs::Entity first;
+		ecs::Query<ecs::Read<CompletedUpgradeWord>> query(state.World());
+		query.ForEachChunk([&](auto chunk) { first = chunk.Entities().front(); });
+		BOOST_REQUIRE(first.IsValid());
+		BOOST_TEST(state.World().Remove<CompletedUpgradeWord>(first));
+		BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+		BOOST_CHECK_THROW(lease.Complete(Bit(511)), std::logic_error);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(later_reset_failure_releases_already_restored_word_rows)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	bool failed = false;
+	{
+		UpgradeMaskLease lease(store, catalog);
+		lease.Complete(Bit(511));
+		const generalszh::PersistentResetParticipant late{
+			"zz.tests.upgrade_masks.failure", &state, &failed,
+			+[](void *) -> std::span<const ecs::Entity> { return {}; },
+			+[](void *) {}, +[](void *) { throw std::runtime_error("Later reset failure"); },
+			+[](void *) noexcept {}, +[](void *p) noexcept { *static_cast<bool *>(p) = true; }};
+		const std::array participants{late, store.ResetParticipant()};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+		BOOST_TEST(failed);
+		BOOST_TEST(state.Count() == 9u);
+		BOOST_CHECK_THROW(lease.Read(), std::logic_error);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(store.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(slot_reuse_and_chunk_compaction_preserve_other_owners)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	Publish(catalog);
+	UpgradeMaskStore store(state);
+	{
+		auto first = std::make_unique<UpgradeMaskLease>(store, catalog);
+		UpgradeMaskLease second(store, catalog);
+		first->Complete(Bit(511));
+		second.Start(Bit(64));
+		ecs::Entity originalOwner;
+		ecs::Query<ecs::Read<UpgradeWordOwner>, ecs::Read<CompletedUpgradeWord>> query(state.World());
+		query.ForEachChunk([&](auto chunk) {
+			const auto owners = chunk.template Get<UpgradeWordOwner>();
+			const auto completed = chunk.template Get<CompletedUpgradeWord>();
+			for (std::size_t row = 0; row < chunk.Count(); ++row)
+				if (completed[row].value != 0) originalOwner = owners[row].value;
+		});
+		BOOST_REQUIRE(originalOwner.IsValid());
+		first.reset(); // Swap-removes word rows; the surviving bindings must follow entities.
+		BOOST_TEST(!state.World().IsAlive(originalOwner));
+		BOOST_TEST(second.HasInProgress(Bit(64)));
+		UpgradeMaskLease replacement(store, catalog);
+		BOOST_TEST(!state.World().IsAlive(originalOwner));
+		BOOST_TEST(replacement.Read().completed == LegacyUpgradeWords{}, boost::test_tools::per_element());
+		BOOST_TEST(replacement.Read().inProgress == LegacyUpgradeWords{}, boost::test_tools::per_element());
+		BOOST_TEST(second.HasInProgress(Bit(64)));
+		BOOST_TEST(store.Count() == 2u);
+	}
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(all_canonical_words_survive_native_remapping_mutation_and_reset)
+{
+	GameplayState state;
+	UpgradeCatalogBridge catalog;
+	std::vector<std::string> names;
+	names.reserve(512);
+	for (unsigned index = 0; index < 512; ++index) names.push_back("Upgrade_" + std::to_string(index));
+	std::vector<UpgradeIdentityInput> definitions;
+	for (unsigned index = 0; index < 512; ++index) definitions.push_back({names[index], 511u - index});
+	catalog.Publish(definitions);
+	UpgradeMaskStore store(state);
+	UpgradeMaskLease lease(store, catalog);
+	LegacyUpgradeWords all;
+	all.fill(UINT64_MAX);
+	lease.Complete(all);
+	lease.Start(all);
+	lease.Remove(Bit(catalog.LegacyBit(511))); // Last bit of canonical word seven.
+	auto expected = all;
+	const auto removed = catalog.LegacyBit(511);
+	expected[removed / 64] &= ~(UINT64_C(1) << (removed % 64));
+	BOOST_TEST(lease.Read().completed == expected, boost::test_tools::per_element());
+	BOOST_TEST(lease.Read().inProgress == expected, boost::test_tools::per_element());
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, std::span{&participant, 1});
+	ecs::Query<ecs::Read<CompletedUpgradeWord>, ecs::Read<InProgressUpgradeWord>, ecs::Read<UpgradeWordOrdinal>> query(state.World());
+	std::array<unsigned, 8> visits{};
+	query.ForEachChunk([&](auto chunk) {
+		const auto completed = chunk.template Get<CompletedUpgradeWord>();
+		const auto progress = chunk.template Get<InProgressUpgradeWord>();
+		const auto ordinal = chunk.template Get<UpgradeWordOrdinal>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			BOOST_REQUIRE(ordinal[row].value < visits.size());
+			++visits[ordinal[row].value];
+			const auto expectedWord = ordinal[row].value == 7 ? UINT64_MAX >> 1 : UINT64_MAX;
+			BOOST_TEST(completed[row].value == expectedWord);
+			BOOST_TEST(progress[row].value == expectedWord);
+		}
+	});
+	for (auto count : visits) BOOST_TEST(count == 1u);
+	BOOST_TEST(lease.Read().completed == expected, boost::test_tools::per_element());
+	BOOST_TEST(lease.Read().inProgress == expected, boost::test_tools::per_element());
+}

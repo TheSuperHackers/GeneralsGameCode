@@ -1,0 +1,19 @@
+add_library(generalszh_progression STATIC)
+target_sources(generalszh_progression PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    systems/kill_experience_system.cppm)
+target_compile_features(generalszh_progression PUBLIC cxx_std_23)
+set_property(TARGET generalszh_progression PROPERTY CXX_SCAN_FOR_MODULES ON)
+target_link_libraries(generalszh_progression PUBLIC engine_gameplay_progression engine_gameplay_combat
+    engine_gameplay_rts_rank
+    generalszh_build_execution generalszh_construction_definitions generalszh_match_rules)
+if(RTS_BUILD_ZEROHOUR_EXTRAS)
+ find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+ set(progression_tests definitions/veterancy_definition.test components/veterancy_award_binding.test
+  systems/kill_experience_system.test)
+ set_source_files_properties(${progression_tests} PROPERTIES LANGUAGE CXX)
+ add_executable(generalszh_progression_tests ${progression_tests})
+ set_property(TARGET generalszh_progression_tests PROPERTY CXX_SCAN_FOR_MODULES ON)
+ target_compile_definitions(generalszh_progression_tests PRIVATE BOOST_TEST_INCLUDED)
+ target_link_libraries(generalszh_progression_tests PRIVATE generalszh_progression Boost::included_unit_test_framework)
+ add_test(NAME generalszh_progression_tests COMMAND generalszh_progression_tests)
+endif()

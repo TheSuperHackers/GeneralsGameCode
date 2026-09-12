@@ -1,0 +1,654 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionUpgradeCompletion
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <initializer_list>
+#include <stdexcept>
+
+import games.generalszh.gameplay.production.completion.upgrade_completion;
+import engine.jobs.job_system;
+
+using generalszh::production::CompleteUpgrade;
+using generalszh::production::UpgradeCameoSlots;
+
+static_assert(UpgradeCameoSlots == 5);
+
+namespace upgrade_completion_test
+{
+enum class Operation : std::uint8_t
+{
+	None,
+	RecordCost,
+	NotifyScripts,
+	IsLocallyViewed,
+	HasDisplayName,
+	ShowMessage,
+	RadarCue,
+	ResearchSound,
+	IsValidSound,
+	EmitSound,
+	GenericCompletionVoice,
+	SetUnitSpecificSound,
+	IsPlayerUpgrade,
+	GrantPlayerUpgrade,
+	GrantObjectUpgrade,
+	RecordAcademy,
+	SelectedObject,
+	HasSelectedObject,
+	SelectedDefinition,
+	CameoMatches,
+	MarkSelectionDirty,
+	DiscardEntry
+};
+
+struct Call
+{
+	Operation operation{Operation::None};
+	std::uint32_t value{0};
+	friend bool operator==(const Call &, const Call &) = default;
+};
+
+Call C(const Operation operation, const std::uint32_t value = 0) noexcept
+{
+	return {operation, value};
+}
+
+struct Trace
+{
+	std::array<Call, 64> calls{};
+	std::size_t callCount{0};
+
+	void Log(const Call call)
+	{
+		if (callCount >= calls.size())
+			throw std::length_error("test upgrade trace capacity exceeded");
+		calls[callCount++] = call;
+	}
+};
+
+struct Recorder
+{
+	std::array<Call, 64> calls{};
+	std::size_t callCount{0};
+	Operation throwAt{Operation::None};
+	Trace *sharedTrace{nullptr};
+
+	void Log(const Operation operation, const std::uint32_t value = 0)
+	{
+		const Call call = C(operation, value);
+		if (callCount >= calls.size())
+			throw std::length_error("test upgrade recorder capacity exceeded");
+		calls[callCount++] = call;
+		if (sharedTrace != nullptr)
+			sharedTrace->Log(call);
+		if (throwAt == operation)
+			throw std::runtime_error("upgrade completion failure");
+	}
+};
+
+struct Authority : Recorder
+{
+	bool playerUpgrade{true};
+	std::uint32_t costRecords{0};
+	std::uint32_t scriptNotifications{0};
+	std::uint32_t playerGrants{0};
+	std::uint32_t objectGrants{0};
+	std::uint32_t academyRecords{0};
+	std::uint32_t discardedEntries{0};
+
+	void RecordCost()
+	{
+		Log(Operation::RecordCost);
+		++costRecords;
+	}
+
+	void NotifyScripts()
+	{
+		Log(Operation::NotifyScripts);
+		++scriptNotifications;
+	}
+
+	bool IsPlayerUpgrade()
+	{
+		Log(Operation::IsPlayerUpgrade, playerUpgrade ? 1u : 0u);
+		return playerUpgrade;
+	}
+
+	void GrantPlayerUpgrade()
+	{
+		Log(Operation::GrantPlayerUpgrade);
+		++playerGrants;
+	}
+
+	void GrantObjectUpgrade()
+	{
+		Log(Operation::GrantObjectUpgrade);
+		++objectGrants;
+	}
+
+	void RecordAcademy()
+	{
+		Log(Operation::RecordAcademy);
+		++academyRecords;
+	}
+
+	void DiscardEntry()
+	{
+		Log(Operation::DiscardEntry);
+		++discardedEntries;
+	}
+};
+
+struct Sound
+{
+	std::uint32_t id{0};
+};
+
+struct SelectedToken
+{
+	std::uint32_t id{0};
+};
+
+struct Definition
+{
+	std::uint32_t id{0};
+};
+
+struct Presentation : Recorder
+{
+	bool locallyViewed{true};
+	bool hasDisplayName{true};
+	bool researchSoundValid{true};
+	bool mutateValidatedSound{false};
+	std::uint32_t validatedSoundId{0};
+	Sound researchSound{11};
+	Sound unitSpecificSound{22};
+	SelectedToken selectedObject{0};
+	bool selectedObjectPresent{false};
+	Definition selectedDefinition{31};
+	std::array<bool, UpgradeCameoSlots> cameoMatches{};
+	std::array<std::uint32_t, UpgradeCameoSlots> checkedSlots{};
+	std::size_t cameoCallCount{0};
+	std::array<std::uint32_t, 4> playedSounds{};
+	std::size_t playedSoundCount{0};
+	bool selectionDirty{false};
+
+	bool IsLocallyViewed()
+	{
+		Log(Operation::IsLocallyViewed, locallyViewed ? 1u : 0u);
+		return locallyViewed;
+	}
+
+	bool HasDisplayName()
+	{
+		Log(Operation::HasDisplayName, hasDisplayName ? 1u : 0u);
+		return hasDisplayName;
+	}
+
+	void ShowMessage()
+	{
+		Log(Operation::ShowMessage);
+	}
+
+	void RadarCue()
+	{
+		Log(Operation::RadarCue);
+	}
+
+	Sound ResearchSound()
+	{
+		Log(Operation::ResearchSound, researchSound.id);
+		return researchSound;
+	}
+
+	bool IsValidSound(Sound &sound)
+	{
+		Log(Operation::IsValidSound, sound.id);
+		if (mutateValidatedSound)
+			sound.id = validatedSoundId;
+		return researchSoundValid;
+	}
+
+	void EmitSound(const Sound sound)
+	{
+		Log(Operation::EmitSound, sound.id);
+		if (playedSoundCount >= playedSounds.size())
+			throw std::length_error("test sound output capacity exceeded");
+		playedSounds[playedSoundCount++] = sound.id;
+	}
+
+	void GenericCompletionVoice()
+	{
+		Log(Operation::GenericCompletionVoice);
+	}
+
+	void SetUnitSpecificSound(Sound &sound)
+	{
+		Log(Operation::SetUnitSpecificSound, unitSpecificSound.id);
+		sound = unitSpecificSound;
+	}
+
+	SelectedToken SelectedObject()
+	{
+		Log(Operation::SelectedObject, selectedObject.id);
+		return selectedObject;
+	}
+
+	bool HasSelectedObject(const SelectedToken object)
+	{
+		if (object.id != selectedObject.id)
+			throw std::logic_error("wrong selected token forwarded by test policy");
+		Log(Operation::HasSelectedObject, object.id);
+		return selectedObjectPresent;
+	}
+
+	Definition SelectedDefinition(const SelectedToken object)
+	{
+		if (object.id != selectedObject.id)
+			throw std::logic_error("wrong selected token used for test definition");
+		Log(Operation::SelectedDefinition, object.id);
+		return selectedDefinition;
+	}
+
+	bool CameoMatches(const Definition definition, const std::uint32_t slot)
+	{
+		if (definition.id != selectedDefinition.id)
+			throw std::logic_error("wrong definition forwarded by test policy");
+		if (slot >= cameoMatches.size())
+			throw std::out_of_range("test cameo slot out of range");
+		Log(Operation::CameoMatches, slot);
+		if (cameoCallCount >= checkedSlots.size())
+			throw std::length_error("test cameo trace capacity exceeded");
+		checkedSlots[cameoCallCount++] = slot;
+		return cameoMatches[slot];
+	}
+
+	void MarkSelectionDirty()
+	{
+		Log(Operation::MarkSelectionDirty);
+		selectionDirty = true;
+	}
+};
+
+void CheckCallSequence(const std::array<Call, 64> &calls,
+	const std::size_t callCount, const std::initializer_list<Call> expected)
+{
+	BOOST_REQUIRE_EQUAL(callCount, expected.size());
+	if (callCount != expected.size())
+		return;
+
+	std::size_t index = 0;
+	for (const Call expectedCall : expected)
+	{
+		BOOST_TEST(static_cast<unsigned>(calls[index].operation) ==
+			static_cast<unsigned>(expectedCall.operation));
+		BOOST_TEST(calls[index].value == expectedCall.value);
+		++index;
+	}
+}
+
+void CheckCalls(const Recorder &recorder,
+	const std::initializer_list<Call> expected)
+{
+	CheckCallSequence(recorder.calls, recorder.callCount, expected);
+}
+
+void CheckCalls(const Trace &trace, const std::initializer_list<Call> expected)
+{
+	CheckCallSequence(trace.calls, trace.callCount, expected);
+}
+
+struct AuthoritySnapshot
+{
+	std::uint32_t costRecords;
+	std::uint32_t scriptNotifications;
+	std::uint32_t playerGrants;
+	std::uint32_t objectGrants;
+	std::uint32_t academyRecords;
+	std::uint32_t discardedEntries;
+
+	friend bool operator==(const AuthoritySnapshot &, const AuthoritySnapshot &) = default;
+};
+
+AuthoritySnapshot Snapshot(const Authority &authority) noexcept
+{
+	return {
+		authority.costRecords,
+		authority.scriptNotifications,
+		authority.playerGrants,
+		authority.objectGrants,
+		authority.academyRecords,
+		authority.discardedEntries};
+}
+} // namespace upgrade_completion_test
+
+BOOST_AUTO_TEST_CASE(visible_custom_sound_reuses_mutable_sound_and_preserves_order)
+{
+	using namespace upgrade_completion_test;
+
+	Trace fixedTrace;
+	Authority authority;
+	Presentation presentation;
+	authority.sharedTrace = &fixedTrace;
+	presentation.sharedTrace = &fixedTrace;
+	presentation.selectedObject = {7};
+	presentation.selectedObjectPresent = true;
+	presentation.cameoMatches[0] = true;
+	presentation.mutateValidatedSound = true;
+	presentation.validatedSoundId = 12;
+
+	CompleteUpgrade(authority, presentation);
+
+	CheckCalls(fixedTrace, {
+		C(Operation::RecordCost), C(Operation::NotifyScripts),
+		C(Operation::IsLocallyViewed, 1), C(Operation::HasDisplayName, 1),
+		C(Operation::ShowMessage), C(Operation::RadarCue),
+		C(Operation::ResearchSound, 11), C(Operation::IsValidSound, 11),
+		C(Operation::EmitSound, 12), C(Operation::SetUnitSpecificSound, 22),
+		C(Operation::EmitSound, 22), C(Operation::IsPlayerUpgrade, 1),
+		C(Operation::GrantPlayerUpgrade), C(Operation::RecordAcademy),
+		C(Operation::SelectedObject, 7), C(Operation::HasSelectedObject, 7),
+		C(Operation::SelectedDefinition, 7), C(Operation::CameoMatches, 0),
+		C(Operation::MarkSelectionDirty), C(Operation::DiscardEntry)});
+	BOOST_TEST(presentation.playedSoundCount == 2u);
+	BOOST_TEST(presentation.playedSounds[0] == 12u);
+	BOOST_TEST(presentation.playedSounds[1] == 22u);
+}
+
+BOOST_AUTO_TEST_CASE(hidden_completion_short_circuits_before_display_name)
+{
+	using namespace upgrade_completion_test;
+
+	Authority authority;
+	Presentation presentation;
+	presentation.locallyViewed = false;
+
+	CompleteUpgrade(authority, presentation);
+
+	CheckCalls(presentation, {
+		C(Operation::IsLocallyViewed, 0), C(Operation::SelectedObject, 0),
+		C(Operation::HasSelectedObject, 0)});
+	BOOST_TEST(authority.discardedEntries == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(empty_display_name_skips_message_radar_and_audio)
+{
+	using namespace upgrade_completion_test;
+
+	Authority authority;
+	Presentation presentation;
+	presentation.hasDisplayName = false;
+
+	CompleteUpgrade(authority, presentation);
+
+	CheckCalls(presentation, {
+		C(Operation::IsLocallyViewed, 1), C(Operation::HasDisplayName, 0),
+		C(Operation::SelectedObject, 0), C(Operation::HasSelectedObject, 0)});
+	BOOST_TEST(presentation.playedSoundCount == 0u);
+	BOOST_TEST(authority.discardedEntries == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(fallback_voice_still_plays_unit_specific_sound)
+{
+	using namespace upgrade_completion_test;
+
+	Authority authority;
+	Presentation presentation;
+	presentation.researchSoundValid = false;
+
+	CompleteUpgrade(authority, presentation);
+
+	CheckCalls(presentation, {
+		C(Operation::IsLocallyViewed, 1), C(Operation::HasDisplayName, 1),
+		C(Operation::ShowMessage), C(Operation::RadarCue),
+		C(Operation::ResearchSound, 11), C(Operation::IsValidSound, 11),
+		C(Operation::GenericCompletionVoice),
+		C(Operation::SetUnitSpecificSound, 22), C(Operation::EmitSound, 22),
+		C(Operation::SelectedObject, 0), C(Operation::HasSelectedObject, 0)});
+	BOOST_TEST(presentation.playedSoundCount == 1u);
+	BOOST_TEST(presentation.playedSounds[0] == 22u);
+}
+
+BOOST_AUTO_TEST_CASE(player_and_non_player_upgrades_use_their_legacy_grant_branch)
+{
+	using namespace upgrade_completion_test;
+
+	Authority player;
+	Presentation playerPresentation;
+	playerPresentation.locallyViewed = false;
+	CompleteUpgrade(player, playerPresentation);
+	BOOST_TEST(player.playerGrants == 1u);
+	BOOST_TEST(player.objectGrants == 0u);
+
+	Authority object;
+	object.playerUpgrade = false;
+	Presentation objectPresentation;
+	objectPresentation.locallyViewed = false;
+	CompleteUpgrade(object, objectPresentation);
+	BOOST_TEST(object.playerGrants == 0u);
+	BOOST_TEST(object.objectGrants == 1u);
+	BOOST_TEST(object.academyRecords == 1u);
+	BOOST_TEST(object.discardedEntries == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(null_selection_skips_definition_lookup_and_cameo_scan)
+{
+	using namespace upgrade_completion_test;
+
+	Authority authority;
+	Presentation presentation;
+
+	CompleteUpgrade(authority, presentation);
+
+	CheckCalls(presentation, {
+		C(Operation::IsLocallyViewed, 1), C(Operation::HasDisplayName, 1),
+		C(Operation::ShowMessage), C(Operation::RadarCue),
+		C(Operation::ResearchSound, 11), C(Operation::IsValidSound, 11),
+		C(Operation::EmitSound, 11),
+		C(Operation::SetUnitSpecificSound, 22), C(Operation::EmitSound, 22),
+		C(Operation::SelectedObject, 0), C(Operation::HasSelectedObject, 0)});
+	BOOST_TEST(presentation.cameoCallCount == 0u);
+	BOOST_TEST(!presentation.selectionDirty);
+}
+
+BOOST_AUTO_TEST_CASE(cameo_scan_is_bounded_to_five_slots_and_stops_on_first_match)
+{
+	using namespace upgrade_completion_test;
+
+	const std::array<std::array<bool, UpgradeCameoSlots>, 3> matchCases{{
+		{true, true, true, true, true},
+		{false, false, false, false, true},
+		{false, false, false, false, false}}};
+	const std::array<std::size_t, 3> expectedCalls{1, 5, 5};
+
+	for (std::size_t index = 0; index < matchCases.size(); ++index)
+	{
+		Authority authority;
+		Presentation presentation;
+		presentation.locallyViewed = false;
+		presentation.selectedObject = {9};
+		presentation.selectedObjectPresent = true;
+		presentation.cameoMatches = matchCases[index];
+
+		CompleteUpgrade(authority, presentation);
+
+		BOOST_TEST(presentation.cameoCallCount == expectedCalls[index]);
+		BOOST_TEST(presentation.selectionDirty == (index != 2));
+		for (std::size_t slot = 0; slot < expectedCalls[index]; ++slot)
+			BOOST_TEST(presentation.checkedSlots[slot] == slot);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(exception_propagates_with_applied_prefix_and_no_rollback)
+{
+	using namespace upgrade_completion_test;
+
+	Authority authority;
+	Presentation presentation;
+	presentation.throwAt = Operation::ShowMessage;
+
+	BOOST_CHECK_THROW(CompleteUpgrade(authority, presentation), std::runtime_error);
+	BOOST_TEST(authority.costRecords == 1u);
+	BOOST_TEST(authority.scriptNotifications == 1u);
+	BOOST_TEST(authority.playerGrants == 0u);
+	BOOST_TEST(authority.academyRecords == 0u);
+	BOOST_TEST(authority.discardedEntries == 0u);
+	CheckCalls(presentation, {
+		C(Operation::IsLocallyViewed, 1), C(Operation::HasDisplayName, 1),
+		C(Operation::ShowMessage)});
+}
+
+BOOST_AUTO_TEST_CASE(authoritative_state_is_independent_of_presentation_choices)
+{
+	using namespace upgrade_completion_test;
+
+	struct Choice
+	{
+		bool locallyViewed;
+		bool hasDisplayName;
+		bool researchSoundValid;
+	};
+
+	const std::array<Choice, 5> choices{{
+		{false, false, false}, {true, false, true}, {true, true, false},
+		{true, true, true}, {false, true, true}}};
+	AuthoritySnapshot expected{};
+	bool first = true;
+
+	for (const Choice choice : choices)
+	{
+		Authority authority;
+		authority.playerUpgrade = false;
+		Presentation presentation;
+		presentation.locallyViewed = choice.locallyViewed;
+		presentation.hasDisplayName = choice.hasDisplayName;
+		presentation.researchSoundValid = choice.researchSoundValid;
+
+		CompleteUpgrade(authority, presentation);
+		const AuthoritySnapshot actual = Snapshot(authority);
+		if (first)
+		{
+			expected = actual;
+			first = false;
+		}
+		else
+		{
+			BOOST_TEST(actual.costRecords == expected.costRecords);
+			BOOST_TEST(actual.scriptNotifications == expected.scriptNotifications);
+			BOOST_TEST(actual.playerGrants == expected.playerGrants);
+			BOOST_TEST(actual.objectGrants == expected.objectGrants);
+			BOOST_TEST(actual.academyRecords == expected.academyRecords);
+			BOOST_TEST(actual.discardedEntries == expected.discardedEntries);
+		}
+	}
+}
+
+namespace upgrade_completion_test
+{
+struct WorkloadItem
+{
+	Authority authority;
+	Presentation presentation;
+};
+
+struct WorkloadJob
+{
+	WorkloadItem *items;
+	std::size_t first;
+	std::size_t last;
+
+	static void Execute(void *raw)
+	{
+		auto &job = *static_cast<WorkloadJob *>(raw);
+		for (std::size_t index = job.first; index < job.last; ++index)
+			CompleteUpgrade(job.items[index].authority, job.items[index].presentation);
+	}
+};
+
+constexpr std::size_t WorkloadRecords = 64;
+constexpr std::size_t WorkloadRecordsPerJob = 8;
+constexpr std::size_t WorkloadJobs =
+	(WorkloadRecords + WorkloadRecordsPerJob - 1) / WorkloadRecordsPerJob;
+
+struct WorkloadSnapshot
+{
+	AuthoritySnapshot authority;
+	std::array<std::uint32_t, 4> sounds;
+	std::size_t soundCount;
+	bool selectionDirty;
+	std::array<Call, 64> authorityCalls;
+	std::array<Call, 64> presentationCalls;
+	std::size_t authorityCallCount;
+	std::size_t presentationCallCount;
+	friend bool operator==(const WorkloadSnapshot &, const WorkloadSnapshot &) = default;
+};
+
+std::array<WorkloadSnapshot, WorkloadRecords> RunWorkload(
+	const std::size_t workerCount)
+{
+	std::array<WorkloadItem, WorkloadRecords> items{};
+	for (std::size_t index = 0; index < items.size(); ++index)
+	{
+		auto &item = items[index];
+		item.authority.playerUpgrade = index % 2 == 0;
+		item.presentation.locallyViewed = index % 3 != 0;
+		item.presentation.hasDisplayName = index % 4 != 0;
+		item.presentation.researchSoundValid = index % 5 != 0;
+	}
+
+	std::array<WorkloadJob, WorkloadJobs> contexts{};
+	std::array<engine::jobs::Job, WorkloadJobs> jobs{};
+	for (std::size_t index = 0; index < contexts.size(); ++index)
+	{
+		contexts[index] = {
+			items.data(), index * WorkloadRecordsPerJob,
+			(index + 1) * WorkloadRecordsPerJob < WorkloadRecords
+				? (index + 1) * WorkloadRecordsPerJob
+				: WorkloadRecords};
+		jobs[index] = {&WorkloadJob::Execute, &contexts[index]};
+	}
+
+	engine::jobs::JobSystem jobSystem{engine::jobs::JobSystemConfig{workerCount}};
+	jobSystem.Execute(jobs);
+
+	std::array<WorkloadSnapshot, WorkloadRecords> result{};
+	for (std::size_t index = 0; index < items.size(); ++index)
+	{
+		const auto &item = items[index];
+		result[index] = {Snapshot(item.authority), item.presentation.playedSounds,
+			item.presentation.playedSoundCount, item.presentation.selectionDirty,
+			item.authority.calls, item.presentation.calls, item.authority.callCount,
+			item.presentation.callCount};
+	}
+	return result;
+}
+} // namespace upgrade_completion_test
+
+BOOST_AUTO_TEST_CASE(independent_workload_is_identical_with_one_two_and_four_workers)
+{
+	using namespace upgrade_completion_test;
+
+	const auto oneWorker = RunWorkload(1);
+	for (std::size_t index = 0; index < oneWorker.size(); ++index)
+	{
+		const auto &state = oneWorker[index];
+		BOOST_TEST(state.authority.costRecords == 1u);
+		BOOST_TEST(state.authority.scriptNotifications == 1u);
+		BOOST_TEST(state.authority.playerGrants == (index % 2 == 0 ? 1u : 0u));
+		BOOST_TEST(state.authority.objectGrants == (index % 2 == 0 ? 0u : 1u));
+		BOOST_TEST(state.authority.academyRecords == 1u);
+		BOOST_TEST(state.authority.discardedEntries == 1u);
+		const bool feedback = index % 3 != 0 && index % 4 != 0;
+		BOOST_TEST(state.soundCount == (feedback ? (index % 5 != 0 ? 2u : 1u) : 0u));
+	}
+	for (const std::size_t workers : {2u, 4u})
+	{
+		const auto actual = RunWorkload(workers);
+		for (std::size_t index = 0; index < actual.size(); ++index)
+		{
+			BOOST_CHECK(actual[index] == oneWorker[index]);
+		}
+	}
+}

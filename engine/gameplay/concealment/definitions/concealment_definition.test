@@ -1,0 +1,15 @@
+#define BOOST_TEST_MODULE EngineGameplayConcealment
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+import engine.gameplay.concealment.definitions.concealment_definition;
+
+BOOST_AUTO_TEST_CASE(concealment_definitions_compile_durations_to_fixed_ticks)
+{
+    using namespace std::chrono_literals;
+    const std::array authored{engine::gameplay::concealment::ConcealmentDefinition{100ms, true}};
+    engine::gameplay::concealment::ConcealmentDefinitions definitions(engine::time::FixedStep{20}, authored);
+    const auto value = definitions.Get(definitions.Id(0));
+    BOOST_TEST(value.stealthDelayTicks == 2u);
+    BOOST_TEST(value.enabledByDefault);
+}

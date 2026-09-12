@@ -1,0 +1,28 @@
+#define BOOST_TEST_MODULE BuildingDefinition
+#include <boost/test/included/unit_test.hpp>
+#include <chrono>
+import games.generalszh.gameplay.construction.definitions.building_definition;
+BOOST_AUTO_TEST_CASE(building_definition_is_distinct_from_unit_production_and_authors_time)
+{
+    const generalszh::construction::BuildingDefinition definition{42,800,std::chrono::seconds(3),1200,9,-5};
+    const auto work=engine::gameplay::rts::production::AuthorBuild(definition.duration,engine::time::FixedStep(20));
+    BOOST_TEST(work.required==60u); BOOST_TEST(definition.energy==-5);
+    const generalszh::construction::Structure site{{1,1},definition.key,definition.queueLimit,definition.energy,false};
+    BOOST_TEST(!site.complete); BOOST_TEST(site.definition==42u);
+    BOOST_TEST(generalszh::construction::BuildingDefinition{}.queueLimit==0u);
+    BOOST_CHECK(!definition.repairDefinition); BOOST_CHECK(!site.repairDefinition);
+    BOOST_CHECK(!definition.cashBountyCost);
+    BOOST_TEST(ecs::ComponentTraits<generalszh::construction::Structure>::Version==5u);
+}
+
+BOOST_AUTO_TEST_CASE(building_definition_can_carry_optional_decoded_bounty_cost)
+{
+    generalszh::construction::BuildingDefinition definition{};
+    definition.cost=100;
+    definition.cashBountyCost=generalszh::bounty::CashBountyCostBinding{
+        100,generalszh::bounty::CashBountyCostBasis::DecodedBuildCost,true};
+    BOOST_REQUIRE(definition.cashBountyCost);
+    BOOST_TEST(definition.cashBountyCost->authoredBuildCost==100u);
+    BOOST_CHECK(definition.cashBountyCost->basis==generalszh::bounty::CashBountyCostBasis::DecodedBuildCost);
+    BOOST_CHECK(definition.cashBountyCost->eligible);
+}

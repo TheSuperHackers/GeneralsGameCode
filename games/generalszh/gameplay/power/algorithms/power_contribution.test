@@ -1,0 +1,106 @@
+#define BOOST_TEST_MODULE GeneralsZHPowerContributionRules
+#include <boost/test/included/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+#include <optional>
+#include <stdexcept>
+
+import games.generalszh.gameplay.power.algorithms.power_contribution;
+
+using generalszh::power::CheckedPowerDelta;
+using generalszh::power::NegatePowerDelta;
+using generalszh::power::PlanContribution;
+using generalszh::power::PowerChannel;
+
+namespace
+{
+constexpr auto I32Min = (std::numeric_limits<std::int32_t>::min)();
+constexpr auto I32Max = (std::numeric_limits<std::int32_t>::max)();
+
+void CheckContribution(const std::optional<generalszh::power::PowerContribution> &actual,
+	PowerChannel channel, std::int32_t delta)
+{
+	BOOST_REQUIRE(actual.has_value());
+	BOOST_CHECK(actual->channel == channel);
+	BOOST_TEST(actual->delta == delta);
+}
+}
+
+BOOST_AUTO_TEST_CASE(zero_configuration_is_a_noop)
+{
+	BOOST_CHECK(!PlanContribution(0, true).has_value());
+	BOOST_CHECK(!PlanContribution(0, false).has_value());
+}
+
+BOOST_AUTO_TEST_CASE(positive_configuration_maps_to_production_and_removal_inverts_it)
+{
+	CheckContribution(PlanContribution(17, true), PowerChannel::Production, 17);
+	CheckContribution(PlanContribution(17, false), PowerChannel::Production, -17);
+	CheckContribution(PlanContribution(I32Max, true), PowerChannel::Production, I32Max);
+	CheckContribution(PlanContribution(I32Max, false), PowerChannel::Production, -I32Max);
+}
+
+BOOST_AUTO_TEST_CASE(negative_configuration_maps_to_consumption_and_removal_inverts_it)
+{
+	CheckContribution(PlanContribution(-17, true), PowerChannel::Consumption, 17);
+	CheckContribution(PlanContribution(-17, false), PowerChannel::Consumption, -17);
+	CheckContribution(PlanContribution(I32Min, false), PowerChannel::Consumption, I32Min);
+}
+
+BOOST_AUTO_TEST_CASE(minimum_configuration_is_outside_the_debug_negation_precondition)
+{
+	BOOST_TEST(!engine::gameplay::rts::power::CanNegate(I32Min));
+#if defined(NDEBUG)
+	CheckContribution(PlanContribution(I32Min, true), PowerChannel::Consumption, I32Min);
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(negation_is_checked_without_signed_integer_undefined_behavior)
+{
+	BOOST_TEST(NegatePowerDelta(17) == -17);
+	BOOST_TEST(NegatePowerDelta(-17) == 17);
+	BOOST_TEST(NegatePowerDelta(I32Max) == -I32Max);
+	BOOST_TEST(engine::gameplay::rts::power::CanNegate(-I32Max));
+#if defined(NDEBUG)
+	BOOST_TEST(NegatePowerDelta(I32Min) == I32Min);
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(checked_delta_accepts_negative_representable_intermediate_totals)
+{
+	BOOST_TEST(CheckedPowerDelta(10, -17) == -7);
+	BOOST_TEST(CheckedPowerDelta(-10, 3) == -7);
+	BOOST_TEST(CheckedPowerDelta(I32Min, 0) == I32Min);
+	BOOST_TEST(CheckedPowerDelta(I32Max, 0) == I32Max);
+}
+
+BOOST_AUTO_TEST_CASE(delta_debug_precondition_has_no_release_overflow_branch)
+{
+	BOOST_TEST(!engine::gameplay::rts::power::CanAdd(I32Max, 1));
+	BOOST_TEST(!engine::gameplay::rts::power::CanAdd(I32Min, -1));
+#if defined(NDEBUG)
+	BOOST_TEST(CheckedPowerDelta(I32Max, 1) == I32Min);
+	BOOST_TEST(CheckedPowerDelta(I32Min, -1) == I32Max);
+#endif
+}
+
+BOOST_AUTO_TEST_CASE(source_derived_signed_contributions_can_be_applied_without_partial_update)
+{
+	std::int32_t production = 10;
+	std::int32_t consumption = 4;
+
+	const auto productionContribution = *PlanContribution(6, true);
+	const auto consumptionContribution = *PlanContribution(-9, true);
+	production = CheckedPowerDelta(production,
+		productionContribution.channel == PowerChannel::Production ? productionContribution.delta : 0);
+	consumption = CheckedPowerDelta(consumption,
+		consumptionContribution.channel == PowerChannel::Consumption ? consumptionContribution.delta : 0);
+	BOOST_TEST(production == 16);
+	BOOST_TEST(consumption == 13);
+
+	const auto beforeProduction = production;
+	const auto beforeConsumption = consumption;
+	BOOST_TEST(!engine::gameplay::rts::power::CanAdd(production, I32Max));
+	BOOST_TEST(production == beforeProduction);
+	BOOST_TEST(consumption == beforeConsumption);
+}

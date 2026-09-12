@@ -1,0 +1,413 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsRadarAvailabilitySystem
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory_resource>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import engine.ecs.scheduler.scheduler;
+import engine.events.storage.event_batch;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.rts.radar.components.radar_availability;
+import engine.gameplay.rts.radar.components.radar_provider_contribution;
+import engine.gameplay.rts.radar.events.radar_availability_transition;
+import engine.gameplay.rts.radar.systems.radar_availability_system;
+import engine.gameplay.rts.upgrades.components.upgrade_words;
+
+namespace radar_test
+{
+struct ProviderBinding final
+{
+	ecs::Entity account{};
+	bool resistant{};
+};
+
+struct ProviderGrant final
+{
+	bool granted{};
+};
+
+struct ProviderTarget final
+{
+	std::uint32_t wordCount{1};
+	std::uint64_t schemaHash{1};
+};
+
+struct WordMarker final
+{
+};
+}
+
+namespace ecs
+{
+template<> struct ComponentTraits<radar_test::ProviderBinding>
+{
+	static constexpr std::string_view StableName = "test.radar.provider_binding";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<> struct ComponentTraits<radar_test::ProviderGrant>
+{
+	static constexpr std::string_view StableName = "test.radar.provider_grant";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<> struct ComponentTraits<radar_test::ProviderTarget>
+{
+	static constexpr std::string_view StableName = "test.radar.provider_target";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Serializable;
+};
+
+template<> struct ComponentTraits<radar_test::WordMarker>
+{
+	static constexpr std::string_view StableName = "test.radar.word_marker";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+}
+
+namespace
+{
+using engine::gameplay::combat::LifeState;
+using engine::gameplay::rts::radar::RadarAvailability;
+using engine::gameplay::rts::radar::RadarAvailabilityLimits;
+using engine::gameplay::rts::radar::RadarAvailabilitySystemT;
+using engine::gameplay::rts::radar::RadarProviderContribution;
+using engine::gameplay::rts::radar::RadarAvailabilityTransition;
+using engine::gameplay::rts::upgrades::CompletedUpgradeWord;
+using engine::gameplay::rts::upgrades::UpgradeWordOrdinal;
+using engine::gameplay::rts::upgrades::UpgradeWordOwner;
+
+class TestPolicy final
+{
+public:
+	static constexpr std::string_view StableName = "test.radar.availability";
+	using Before = ecs::SystemTypeList<>;
+	using After = ecs::SystemTypeList<>;
+	using Grant = radar_test::ProviderGrant;
+	using ProviderQuery = ecs::Query<
+		ecs::Read<radar_test::ProviderBinding>,
+		ecs::Write<radar_test::ProviderGrant>,
+		ecs::Write<RadarProviderContribution>,
+		ecs::Read<LifeState>,
+		ecs::Read<radar_test::ProviderTarget>>;
+	using AccountQuery = ecs::Query<ecs::Write<RadarAvailability>>;
+	using WordQuery = ecs::Query<
+			ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>,
+			ecs::Read<radar_test::WordMarker>,
+		ecs::Read<CompletedUpgradeWord>>;
+	using AuxiliaryAccess = ecs::Query<
+		ecs::Write<RadarAvailability>,
+		ecs::Read<UpgradeWordOwner>,
+		ecs::Read<UpgradeWordOrdinal>,
+		ecs::Read<radar_test::WordMarker>,
+		ecs::Read<CompletedUpgradeWord>>;
+
+	engine::gameplay::rts::radar::RadarWordRecord ExtractWord(
+		WordQuery::Chunk chunk, const std::size_t row) const
+	{
+		return {chunk.template Get<UpgradeWordOwner>()[row].value,
+			chunk.template Get<UpgradeWordOrdinal>()[row].value,
+			chunk.template Get<CompletedUpgradeWord>()[row].value};
+	}
+
+	engine::gameplay::rts::radar::RadarProviderProjection Project(
+		ProviderQuery::Chunk chunk, const std::size_t row,
+		const engine::gameplay::rts::radar::RadarWordIndex &words) const
+	{
+		const auto bindings = chunk.template Get<radar_test::ProviderBinding>();
+		const auto lives = chunk.template Get<LifeState>();
+		const auto targets = chunk.template Get<radar_test::ProviderTarget>();
+		const auto entity = chunk.Entities()[row];
+		const auto &target = targets[row];
+		const auto *word = words.Find(entity, 0);
+		if (target.wordCount == 0 || target.schemaHash == 0 || word == nullptr)
+			throw std::logic_error("Test radar provider has no valid word binding");
+		return {bindings[row].account, (word->completed & 1u) != 0,
+			lives[row].alive, bindings[row].resistant};
+	}
+
+	ecs::Entity AccountFor(ProviderQuery::Chunk chunk, const std::size_t row) const
+	{
+		return chunk.template Get<radar_test::ProviderBinding>()[row].account;
+	}
+
+	bool AccountSuppressed(AccountQuery::Chunk, const std::size_t) const noexcept
+	{
+		return false;
+	}
+};
+
+using System = RadarAvailabilitySystemT<TestPolicy>;
+
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<RadarAvailability>();
+	world.RegisterComponent<RadarProviderContribution>();
+	world.RegisterComponent<LifeState>();
+	world.RegisterComponent<radar_test::ProviderBinding>();
+	world.RegisterComponent<radar_test::ProviderGrant>();
+	world.RegisterComponent<radar_test::ProviderTarget>();
+	world.RegisterComponent<UpgradeWordOwner>();
+	world.RegisterComponent<UpgradeWordOrdinal>();
+	world.RegisterComponent<radar_test::WordMarker>();
+	world.RegisterComponent<CompletedUpgradeWord>();
+	world.FinalizeComponents();
+}
+
+struct Harness final
+{
+	std::array<std::byte, 8192> storage{};
+	std::pmr::monotonic_buffer_resource memory{storage.data(), storage.size()};
+	engine::events::RecordedBatch<RadarAvailabilityTransition> recorded{32, memory};
+	engine::events::PublishedBatch<RadarAvailabilityTransition> published{32, 1, memory};
+};
+
+ecs::Entity AddWord(ecs::World &world, const ecs::Entity owner, const std::uint64_t completed)
+{
+	const auto word = world.Create<UpgradeWordOwner, UpgradeWordOrdinal,
+		radar_test::WordMarker, CompletedUpgradeWord>();
+	*world.Get<UpgradeWordOwner>(word) = {owner};
+	*world.Get<UpgradeWordOrdinal>(word) = {0};
+	*world.Get<CompletedUpgradeWord>(word) = {completed};
+	return word;
+}
+
+std::vector<std::uint64_t> RunDeterministic(const std::uint32_t workers)
+{
+	// The provider archetype is deliberately split into several real ECS chunks;
+	// the worker comparison must exercise the scheduler's chunk jobs rather than
+	// only one primary chunk.
+	ecs::World world{ecs::WorldConfig{128}};
+	RegisterComponents(world);
+	const auto accountA = world.Create<RadarAvailability>();
+	const auto accountB = world.Create<RadarAvailability>();
+	const auto stale = ecs::Entity{400, 1};
+	std::vector<ecs::Entity> providers;
+	std::vector<ecs::Entity> words;
+	providers.reserve(12);
+	words.reserve(12);
+	const auto addProvider = [&](const ecs::Entity account, const bool resistant) {
+		const auto provider = world.Create<radar_test::ProviderBinding, radar_test::ProviderGrant,
+			RadarProviderContribution, LifeState, radar_test::ProviderTarget>();
+		*world.Get<radar_test::ProviderBinding>(provider) = {account, resistant};
+		providers.push_back(provider);
+		words.push_back(AddWord(world, provider, 1));
+		return provider;
+	};
+	const auto providerA = addProvider(accountA, false);
+	const auto providerAResistant = addProvider(accountA, true);
+	const auto providerB = addProvider(accountB, false);
+	const auto staleProvider = addProvider(stale, false);
+	for (std::size_t index = 0; index != 8; ++index)
+		(void)addProvider(index < 4 ? accountA : accountB, index < 2);
+
+	System::Query providerQuery(world);
+	const auto preparedProviderChunks = providerQuery.PrepareChunks();
+	BOOST_REQUIRE_GT(preparedProviderChunks, 1u);
+	BOOST_REQUIRE_EQUAL(providerQuery.PreparedChunkCount(), preparedProviderChunks);
+
+	TestPolicy policy;
+	Harness harness;
+	System system(world, policy,
+		{2, providers.size() + 1, words.size() + 1, 8}, harness.recorded, harness.published);
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	std::vector<std::uint64_t> result{preparedProviderChunks};
+	const auto capture = [&](const std::uint64_t tick) {
+		result.push_back(tick);
+		for (const auto account : {accountA, accountB})
+		{
+			const auto state = *world.Get<RadarAvailability>(account);
+			result.insert(result.end(), {account.index, account.generation,
+				static_cast<std::uint64_t>(state.producers),
+				static_cast<std::uint64_t>(state.resistantProducers), state.suppressed});
+		}
+		for (const auto provider : providers)
+		{
+			const bool alive = world.IsAlive(provider);
+			std::uint32_t accountIndex{};
+			std::uint32_t accountGeneration{};
+			std::uint64_t granted{};
+			std::uint64_t producers{};
+			std::uint64_t resistantProducers{};
+			std::uint64_t lifeAlive{};
+			if (alive)
+			{
+				const auto binding = *world.Get<radar_test::ProviderBinding>(provider);
+				const auto grant = *world.Get<radar_test::ProviderGrant>(provider);
+				const auto contribution = *world.Get<RadarProviderContribution>(provider);
+				const auto life = *world.Get<LifeState>(provider);
+				accountIndex = binding.account.index;
+				accountGeneration = binding.account.generation;
+				granted = grant.granted;
+				producers = static_cast<std::uint64_t>(contribution.producers);
+				resistantProducers = static_cast<std::uint64_t>(contribution.resistantProducers);
+				lifeAlive = life.alive;
+			}
+			result.insert(result.end(), {provider.index, provider.generation,
+				static_cast<std::uint64_t>(alive), accountIndex, accountGeneration,
+				granted, producers, resistantProducers, lifeAlive});
+		}
+		BOOST_REQUIRE(harness.published.IsPublished());
+		result.push_back(harness.published.Values().size());
+		for (const auto transition : harness.published.Values())
+			result.insert(result.end(), {transition.account.index, transition.account.generation,
+				transition.before, transition.after});
+		harness.published.Release();
+	};
+
+	scheduler.Execute({0, step});
+	capture(0);
+	BOOST_TEST(world.Get<RadarAvailability>(accountA)->producers == 6);
+	BOOST_TEST(world.Get<RadarAvailability>(accountA)->resistantProducers == 3);
+	BOOST_TEST(world.Get<RadarAvailability>(accountB)->producers == 5);
+	BOOST_TEST(world.Get<radar_test::ProviderGrant>(providerA)->granted);
+	BOOST_TEST(world.Get<radar_test::ProviderGrant>(providerAResistant)->granted);
+	// The raw word is removed, but the persistent grant latch is retained.
+	for (const auto word : words)
+		world.Get<CompletedUpgradeWord>(word)->value = 0;
+	scheduler.Execute({1, step});
+	capture(1);
+
+	world.Get<radar_test::ProviderBinding>(providerB)->account = accountA;
+	scheduler.Execute({2, step});
+	capture(2);
+
+	world.Get<LifeState>(providerA)->alive = false;
+	scheduler.Execute({3, step});
+	capture(3);
+
+	world.Destroy(providerAResistant);
+	world.Destroy(providerB);
+	scheduler.Execute({4, step});
+	capture(4);
+	return result;
+}
+
+void ExecuteEmptyWorld(const std::size_t accountCount, const std::size_t providerCount,
+	const std::size_t wordCount, const std::size_t workers)
+{
+	ecs::World world{ecs::WorldConfig{128}};
+	RegisterComponents(world);
+	std::vector<ecs::Entity> accounts;
+	for (std::size_t index = 0; index != accountCount; ++index)
+		accounts.push_back(world.Create<RadarAvailability>());
+	const ecs::Entity stale{100, 1};
+	for (std::size_t index = 0; index != providerCount; ++index)
+	{
+		const auto provider = world.Create<radar_test::ProviderBinding, radar_test::ProviderGrant,
+			RadarProviderContribution, LifeState, radar_test::ProviderTarget>();
+		*world.Get<radar_test::ProviderBinding>(provider) = {stale, false};
+		if (index < wordCount) (void)AddWord(world, provider, 1);
+	}
+	TestPolicy policy;
+	Harness harness;
+	System system(world, policy, {accountCount + 1, providerCount + 1, wordCount + 1, 8},
+		harness.recorded, harness.published);
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute({0, step});
+	BOOST_REQUIRE(harness.published.IsPublished());
+	BOOST_TEST(harness.published.Values().empty());
+	for (const auto account : accounts)
+	{
+		BOOST_TEST(world.Get<RadarAvailability>(account)->producers == 0);
+		BOOST_TEST(world.Get<RadarAvailability>(account)->resistantProducers == 0);
+	}
+}
+}
+
+BOOST_AUTO_TEST_CASE(typed_projection_and_ordered_edges_are_worker_independent)
+{
+	const auto one = RunDeterministic(1);
+	const auto two = RunDeterministic(2);
+	const auto four = RunDeterministic(4);
+	BOOST_TEST(one == two, boost::test_tools::per_element());
+	BOOST_TEST(one == four, boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(empty_words_providers_and_accounts_are_safe)
+{
+	ExecuteEmptyWorld(0, 0, 0, 1);
+	ExecuteEmptyWorld(1, 0, 0, 2);
+	ExecuteEmptyWorld(0, 1, 1, 4);
+}
+
+BOOST_AUTO_TEST_CASE(last_provider_destruction_publishes_one_offline_edge)
+{
+	ecs::World world{ecs::WorldConfig{128}};
+	RegisterComponents(world);
+	const auto account = world.Create<RadarAvailability>();
+	const auto provider = world.Create<radar_test::ProviderBinding, radar_test::ProviderGrant,
+		RadarProviderContribution, LifeState, radar_test::ProviderTarget>();
+	*world.Get<radar_test::ProviderBinding>(provider) = {account, false};
+	AddWord(world, provider, 1);
+	TestPolicy policy;
+	Harness harness;
+	System system(world, policy, {1, 1, 1, 1}, harness.recorded, harness.published);
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{2});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	scheduler.Execute({0, step});
+	BOOST_REQUIRE(harness.published.IsPublished());
+	BOOST_REQUIRE_EQUAL(harness.published.Values().size(), 1u);
+	const RadarAvailabilityTransition online{account, false, true};
+	BOOST_CHECK(harness.published.Values()[0] == online);
+	harness.published.Release();
+
+	world.Destroy(provider);
+	scheduler.Execute({1, step});
+	BOOST_REQUIRE(harness.published.IsPublished());
+	BOOST_REQUIRE_EQUAL(harness.published.Values().size(), 1u);
+	const RadarAvailabilityTransition offline{account, true, false};
+	BOOST_CHECK(harness.published.Values()[0] == offline);
+	BOOST_TEST(world.Get<RadarAvailability>(account)->producers == 0);
+	harness.published.Release();
+}
+
+BOOST_AUTO_TEST_CASE(logical_provider_capacity_failure_is_terminal)
+{
+	ecs::World world{ecs::WorldConfig{128}};
+	RegisterComponents(world);
+	const auto account = world.Create<RadarAvailability>();
+	for (int index = 0; index != 2; ++index)
+	{
+		const auto provider = world.Create<radar_test::ProviderBinding, radar_test::ProviderGrant,
+			RadarProviderContribution, LifeState, radar_test::ProviderTarget>();
+		*world.Get<radar_test::ProviderBinding>(provider) = {account, false};
+		AddWord(world, provider, 0);
+	}
+	TestPolicy policy;
+	Harness harness;
+	System system(world, policy, {1, 1, 2, 1}, harness.recorded, harness.published);
+	ecs::SystemRegistry registry;
+	registry.Register(system);
+	registry.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, registry, engine::jobs::JobSystemConfig{1});
+	const engine::time::FixedStep step{30};
+	scheduler.Finalize(step);
+	BOOST_CHECK_THROW(scheduler.Execute({0, step}), std::length_error);
+	BOOST_TEST(scheduler.IsFailed());
+	BOOST_TEST(!harness.published.IsPublished());
+}

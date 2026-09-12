@@ -1,0 +1,119 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.combat.systems.acquisition_system;
+import engine.gameplay.concealment.components.concealment_state;
+import engine.gameplay.rts.visibility.components.visibility_cell_page;
+import engine.ecs.scheduler.scheduler;
+BOOST_AUTO_TEST_CASE(acquisition_respects_explicit_intent_building_policy_stale_targets_and_death)
+{
+    using namespace engine::gameplay::combat; using namespace generalszh::combat; using engine::gameplay::navigation::GridPosition;
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<AcquisitionPolicy>(); world.RegisterComponent<WeaponDefinition>();
+    world.RegisterComponent<TargetIntent>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<GridPosition>(); world.RegisterComponent<WeaponContact>();
+    world.RegisterComponent<Health>(); world.RegisterComponent<generalszh::production::ProducedUnit>();
+    world.RegisterComponent<generalszh::production::Producer>(); world.RegisterComponent<generalszh::construction::Structure>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();
+    world.RegisterComponent<engine::gameplay::concealment::ConcealmentState>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>();
+    world.RegisterComponent<DamageEmitter>(); world.RegisterComponent<engine::gameplay::rts::orders::UnitOrder>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityCellIndex>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityVisibleMaskPage>();
+    world.FinalizeComponents();
+    const auto friendly=world.Create(), enemy=world.Create();
+    const auto actor = world.Create<Health,LifeState,AcquisitionPolicy,WeaponDefinition,TargetIntent,WeaponTarget,GridPosition,WeaponContact,generalszh::production::ProducedUnit>();
+    world.Get<generalszh::production::ProducedUnit>(actor)->account=friendly;
+    const auto building = world.Create<Health,LifeState,GridPosition,generalszh::production::Producer>();
+    world.Get<generalszh::production::Producer>(building)->account=enemy;
+    world.Get<GridPosition>(building)->cell=1;
+    const auto unit=world.Create<Health,LifeState,GridPosition,generalszh::production::ProducedUnit>();
+    const auto far=world.Create<Health,LifeState,GridPosition,generalszh::production::ProducedUnit>();
+    world.Get<generalszh::production::ProducedUnit>(unit)->account=enemy;
+    world.Get<generalszh::production::ProducedUnit>(far)->account=enemy;
+    world.Get<GridPosition>(unit)->cell=2; world.Get<GridPosition>(far)->cell=7;
+    const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1}; engine::gameplay::navigation::NavigationGrid grid(8,1,terrain);
+    TargetIndex frame(world,grid,16);
+    *world.Get<AcquisitionPolicy>(actor) = {true,false}; world.Get<WeaponDefinition>(actor)->rangeCells = 3;
+    AcquisitionSystem acquisition(frame); TargetingSystem targeting(frame.Frame(),grid); ecs::SystemRegistry registry;
+    registry.Register(targeting); registry.Register(acquisition); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity == unit);
+    world.Get<AcquisitionPolicy>(actor)->attackBuildings = true;
+    scheduler.Execute({1,step}); BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity == building);
+    world.Get<TargetIntent>(actor)->explicitOrder = true; world.Get<WeaponTarget>(actor)->entity = far;
+    scheduler.Execute({2,step}); BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity == far); BOOST_TEST(!world.Get<WeaponContact>(actor)->inRange);
+    world.Get<WeaponTarget>(actor)->entity = {far.index,far.generation+1};
+    scheduler.Execute({3,step}); BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity == building); BOOST_TEST(!world.Get<TargetIntent>(actor)->explicitOrder);
+    world.Get<LifeState>(actor)->alive = false; scheduler.Execute({4,step}); BOOST_TEST(!world.Get<WeaponTarget>(actor)->entity.IsValid());
+}
+BOOST_AUTO_TEST_CASE(acquisition_projects_canonical_guard_target_without_reacquiring)
+{
+    using namespace engine::gameplay::combat; using namespace engine::gameplay::rts::orders;
+    using namespace generalszh::combat; using engine::gameplay::navigation::GridPosition;
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<AcquisitionPolicy>(); world.RegisterComponent<WeaponDefinition>();
+    world.RegisterComponent<TargetIntent>(); world.RegisterComponent<WeaponTarget>(); world.RegisterComponent<GridPosition>(); world.RegisterComponent<WeaponContact>();
+    world.RegisterComponent<Health>(); world.RegisterComponent<generalszh::production::ProducedUnit>();
+    world.RegisterComponent<generalszh::production::Producer>(); world.RegisterComponent<generalszh::construction::Structure>();
+    world.RegisterComponent<engine::gameplay::containment::PassengerMembership>(); world.RegisterComponent<generalszh::capture::CaptureActorState>();
+    world.RegisterComponent<engine::gameplay::concealment::ConcealmentState>();
+    world.RegisterComponent<DamageEmitter>(); world.RegisterComponent<UnitOrder>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityCellIndex>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityVisibleMaskPage>(); world.FinalizeComponents();
+    const auto friendly=world.Create(), enemyAccount=world.Create();
+    const auto actor=world.Create<Health,LifeState,AcquisitionPolicy,WeaponDefinition,TargetIntent,WeaponTarget,GridPosition,WeaponContact,
+        generalszh::production::ProducedUnit,UnitOrder>();
+    world.Get<generalszh::production::ProducedUnit>(actor)->account=friendly; world.Get<GridPosition>(actor)->cell=0;
+    const auto enemy=world.Create<Health,LifeState,GridPosition,generalszh::production::ProducedUnit>();
+    const auto replacement=world.Create<Health,LifeState,GridPosition,generalszh::production::ProducedUnit>();
+    world.Get<generalszh::production::ProducedUnit>(enemy)->account=enemyAccount;
+    world.Get<generalszh::production::ProducedUnit>(replacement)->account=enemyAccount;
+    world.Get<GridPosition>(enemy)->cell=3; world.Get<GridPosition>(replacement)->cell=2;
+    const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1}; engine::gameplay::navigation::NavigationGrid grid(8,1,terrain);
+    TargetIndex frame(world,grid,16); *world.Get<AcquisitionPolicy>(actor)={true,false}; world.Get<WeaponDefinition>(actor)->rangeCells=1;
+    *world.Get<UnitOrder>(actor)={OrderKind::GuardPosition,2,enemy,{1,3}};
+    AcquisitionSystem acquisition(frame); TargetingSystem targeting(frame.Frame(),grid); ecs::SystemRegistry registry;
+    registry.Register(targeting); registry.Register(acquisition); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20}; scheduler.Finalize(step);
+    scheduler.Execute({0,step}); BOOST_CHECK(world.Get<WeaponTarget>(actor)->entity==enemy);
+    world.Get<GridPosition>(enemy)->cell=6; scheduler.Execute({1,step});
+    BOOST_CHECK(world.Get<UnitOrder>(actor)->target==enemy);
+    BOOST_CHECK(!world.Get<WeaponTarget>(actor)->entity.IsValid());
+    BOOST_TEST(!world.Get<TargetIntent>(actor)->explicitOrder);
+}
+
+BOOST_AUTO_TEST_CASE(acquisition_preserves_explicit_ground_position_over_nearest_entity)
+{
+    using namespace engine::gameplay::combat; using namespace engine::gameplay::rts::orders;
+    using namespace generalszh::combat; using engine::gameplay::navigation::GridPosition;
+    ecs::World world; world.RegisterComponent<LifeState>(); world.RegisterComponent<AcquisitionPolicy>();
+    world.RegisterComponent<WeaponDefinition>(); world.RegisterComponent<TargetIntent>(); world.RegisterComponent<WeaponTarget>();
+    world.RegisterComponent<GridPosition>(); world.RegisterComponent<WeaponContact>(); world.RegisterComponent<Health>();
+    world.RegisterComponent<generalszh::production::ProducedUnit>(); world.RegisterComponent<generalszh::production::Producer>();
+    world.RegisterComponent<generalszh::construction::Structure>(); world.RegisterComponent<engine::gameplay::containment::PassengerMembership>();
+    world.RegisterComponent<generalszh::capture::CaptureActorState>(); world.RegisterComponent<DamageEmitter>();
+    world.RegisterComponent<engine::gameplay::concealment::ConcealmentState>();
+    world.RegisterComponent<UnitOrder>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityCellIndex>();
+    world.RegisterComponent<engine::gameplay::rts::visibility::VisibilityVisibleMaskPage>(); world.FinalizeComponents();
+    const auto friendly=world.Create(), enemyAccount=world.Create();
+    const auto actor=world.Create<Health,LifeState,AcquisitionPolicy,WeaponDefinition,TargetIntent,WeaponTarget,
+        GridPosition,WeaponContact,generalszh::production::ProducedUnit,UnitOrder>();
+    world.Get<generalszh::production::ProducedUnit>(actor)->account=friendly;
+    world.Get<Health>(actor)->current=100;
+    world.Get<GridPosition>(actor)->cell=0; world.Get<WeaponDefinition>(actor)->rangeCells=8;
+    const auto nearest=world.Create<Health,LifeState,GridPosition,generalszh::production::ProducedUnit>();
+    world.Get<Health>(nearest)->current=100;
+    world.Get<generalszh::production::ProducedUnit>(nearest)->account=enemyAccount;
+    world.Get<GridPosition>(nearest)->cell=1;
+    const std::array<std::uint8_t,8> terrain{1,1,1,1,1,1,1,1};
+    engine::gameplay::navigation::NavigationGrid grid(8,1,terrain); TargetIndex frame(world,grid,16);
+    *world.Get<AcquisitionPolicy>(actor)={true,false};
+    *world.Get<WeaponTarget>(actor)=WeaponTarget::ForPosition({4,0});
+    *world.Get<UnitOrder>(actor)={OrderKind::AttackPosition,4,{}};
+    AcquisitionSystem acquisition(frame); TargetingSystem targeting(frame.Frame(),grid); ecs::SystemRegistry registry;
+    registry.Register(targeting); registry.Register(acquisition); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry,engine::jobs::JobSystemConfig{2}); const engine::time::FixedStep step{20};
+    scheduler.Finalize(step); scheduler.Execute({0,step});
+    const auto target=*world.Get<WeaponTarget>(actor);
+    BOOST_CHECK(target.IsPosition()); BOOST_CHECK(!target.entity.IsValid()); BOOST_TEST(target.position.x==4u);
+    BOOST_TEST(target.position.y==0u); BOOST_TEST(world.Get<TargetIntent>(actor)->explicitOrder);
+    BOOST_CHECK(world.Get<WeaponContact>(actor)->valid); BOOST_CHECK(world.Get<WeaponContact>(actor)->inRange);
+}

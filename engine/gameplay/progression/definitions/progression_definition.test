@@ -1,0 +1,18 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import engine.gameplay.progression.definitions.progression_definition;
+using namespace engine::gameplay::progression;
+BOOST_AUTO_TEST_CASE(progression_catalog_validates_and_freezes_authored_limits)
+{
+ std::array definitions{ProgressionDefinition{{0,2,2,9,20},100000000000ull}};
+ ProgressionCatalog catalog(definitions);
+ definitions[0].thresholds[1]=99;
+ BOOST_TEST(catalog.Get(0).thresholds[1]==2u);
+ BOOST_TEST(catalog.Get(0).maximumExperience==100000000000ull);
+ BOOST_CHECK_THROW(ProgressionCatalog{definitions},std::invalid_argument);
+ definitions[0]={{0,10},9};
+ BOOST_CHECK_THROW(ProgressionCatalog{definitions},std::invalid_argument);
+ definitions[0]={{1},10};
+ BOOST_CHECK_THROW(ProgressionCatalog{definitions},std::invalid_argument);
+}

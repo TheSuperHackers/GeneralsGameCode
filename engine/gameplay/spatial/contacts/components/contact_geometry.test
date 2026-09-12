@@ -1,0 +1,15 @@
+#define BOOST_TEST_MODULE EngineContactGeometry
+#include <boost/test/included/unit_test.hpp>
+
+import engine.gameplay.spatial.contacts.components.contact_geometry;
+
+namespace c = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(geometry_component_is_data_and_schema_is_serializable)
+{
+	const c::ContactGeometry circle{c::ContactShape::Circle, 1u, 0u};
+	BOOST_TEST(circle.extentX == 1u);
+	BOOST_TEST(circle.extentY == 0u);
+	BOOST_TEST(ecs::ComponentTraits<c::ContactGeometry>::Version == 1u);
+	BOOST_CHECK(ecs::ComponentTraits<c::ContactGeometry>::Persistence == ecs::PersistencePolicy::Serializable);
+}

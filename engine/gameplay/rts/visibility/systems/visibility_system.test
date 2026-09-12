@@ -1,0 +1,297 @@
+#include <boost/test/unit_test.hpp>
+
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <vector>
+
+import engine.ecs.core.world;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.components.movement;
+import engine.gameplay.rts.visibility.algorithms.visibility_query;
+import engine.gameplay.rts.visibility.components.visibility_cell_page;
+import engine.gameplay.rts.visibility.components.visibility_history_page;
+import engine.gameplay.rts.visibility.components.visibility_lease_page;
+import engine.gameplay.rts.visibility.components.visibility_observer;
+import engine.gameplay.rts.visibility.definitions.visibility_definition;
+import engine.gameplay.rts.visibility.systems.visibility_system;
+
+namespace v = engine::gameplay::rts::visibility;
+namespace combat = engine::gameplay::combat;
+namespace navigation = engine::gameplay::navigation;
+using namespace std::chrono_literals;
+
+namespace
+{
+void RegisterComponents(ecs::World &world)
+{
+	world.RegisterComponent<combat::LifeState>();
+	world.RegisterComponent<navigation::GridPosition>();
+	world.RegisterComponent<v::VisibilityObserver>();
+	world.RegisterComponent<v::VisibilityEligibility>();
+	world.RegisterComponent<v::VisibilityCellIndex>();
+	world.RegisterComponent<v::VisibilityExploredMaskPage>();
+	world.RegisterComponent<v::VisibilityVisibleMaskPage>();
+	world.RegisterComponent<v::VisibilityHistoryPage>();
+	world.RegisterComponent<v::VisibilityLeasePage>();
+	world.FinalizeComponents();
+}
+
+class VisibilityHarness final
+{
+public:
+	VisibilityHarness(const std::uint32_t width, const std::uint32_t height,
+		const std::size_t maximumObservers, const std::size_t workers) :
+		topology(width, height),
+		capacity{4096, 0, 0, topology.Count(), maximumObservers, 1},
+		world(ecs::WorldConfig{4096}),
+		definitions(authored, step)
+	{
+		RegisterComponents(world);
+		const auto budget = v::CalculateVisibilityPageBudget(capacity, definitions.MaximumGraceTicks());
+		CreatePages(budget);
+		visibility = std::make_unique<v::VisibilitySystem>(world, definitions, topology, capacity);
+		registry.Register(*visibility);
+		registry.Finalize(world.Components());
+		scheduler = std::make_unique<ecs::Scheduler>(world, registry,
+			engine::jobs::JobSystemConfig{workers});
+		scheduler->Finalize(step);
+	}
+
+	ecs::Entity CreateObserver(const v::ParticipantHandle owner, const navigation::Cell cell)
+	{
+		const auto entity = world.Create<combat::LifeState, navigation::GridPosition,
+			v::VisibilityObserver, v::VisibilityEligibility>();
+		world.Get<combat::LifeState>(entity)->alive = true;
+		world.Get<navigation::GridPosition>(entity)->cell = cell;
+		world.Get<v::VisibilityObserver>(entity)->participant = owner;
+		world.Get<v::VisibilityObserver>(entity)->definition = 0;
+		world.Get<v::VisibilityEligibility>(entity)->active = true;
+		return entity;
+	}
+
+	void SetCell(const ecs::Entity entity, const navigation::Cell cell)
+	{
+		world.Get<navigation::GridPosition>(entity)->cell = cell;
+	}
+
+	void SetAlive(const ecs::Entity entity, const bool alive)
+	{
+		world.Get<combat::LifeState>(entity)->alive = alive;
+	}
+
+	void Execute(const std::uint64_t tick)
+	{
+		scheduler->Execute({tick, step});
+	}
+
+	struct CellState final
+	{
+		v::ObserverMask explored{};
+		v::ObserverMask visible{};
+		friend bool operator==(const CellState &, const CellState &) noexcept = default;
+	};
+
+	std::vector<CellState> Snapshot()
+	{
+		std::vector<CellState> result(topology.Count());
+		ecs::Query<ecs::Read<v::VisibilityCellIndex>, ecs::Read<v::VisibilityExploredMaskPage>,
+			ecs::Read<v::VisibilityVisibleMaskPage>> query(world);
+		query.ForEachChunk([&](auto chunk) {
+			const auto indexes = chunk.template Get<v::VisibilityCellIndex>();
+			const auto explored = chunk.template Get<v::VisibilityExploredMaskPage>();
+			const auto visible = chunk.template Get<v::VisibilityVisibleMaskPage>();
+			for (std::size_t row = 0; row != chunk.Count(); ++row)
+				for (std::size_t lane = 0; lane != indexes[row].count; ++lane)
+				{
+					const auto cell = static_cast<std::size_t>(indexes[row].firstCell) + lane;
+					result[cell] = {explored[row].values[lane], visible[row].values[lane]};
+				}
+		});
+		return result;
+	}
+
+	std::size_t HistoryCount()
+	{
+		std::size_t result = 0;
+		ecs::Query<ecs::Read<v::VisibilityHistoryPage>> query(world);
+		query.ForEachChunk([&](auto chunk) {
+			const auto pages = chunk.template Get<v::VisibilityHistoryPage>();
+			for (std::size_t row = 0; row != chunk.Count(); ++row)
+				for (std::size_t slot = 0; slot != v::VisibilityPageLanes; ++slot)
+					result += pages[row].Occupied(slot) ? 1u : 0u;
+		});
+		return result;
+	}
+
+	const v::VisibilityTopology topology;
+	const v::VisibilityPageCapacity capacity;
+	ecs::World world;
+	const engine::time::FixedStep step{30};
+	const std::array<v::VisibilityDefinition, 1> authored{
+		v::CompileVisibilityDefinition(0, 1, 1, 5000ms, step)};
+	v::VisibilityDefinitions definitions;
+	std::unique_ptr<v::VisibilitySystem> visibility;
+	ecs::SystemRegistry registry;
+	std::unique_ptr<ecs::Scheduler> scheduler;
+
+private:
+	void CreatePages(const v::VisibilityPageBudget &budget)
+	{
+		std::size_t firstCell = 0;
+		for (std::size_t pageIndex = 0; pageIndex != budget.cellPageCount; ++pageIndex)
+		{
+			const auto page = world.Create<v::VisibilityCellIndex, v::VisibilityExploredMaskPage,
+				v::VisibilityVisibleMaskPage>();
+			const auto remaining = static_cast<std::size_t>(topology.Count()) - firstCell;
+			const auto count = (std::min)(remaining, v::VisibilityPageLanes);
+			*world.Get<v::VisibilityCellIndex>(page) = {
+				static_cast<std::uint32_t>(firstCell), static_cast<std::uint16_t>(count), 0};
+			firstCell += count;
+		}
+		for (std::size_t pageIndex = 0; pageIndex != budget.historyPageCount; ++pageIndex)
+		{
+			const auto page = world.Create<v::VisibilityHistoryPage>();
+			world.Get<v::VisibilityHistoryPage>(page)->pageIndex = static_cast<std::uint32_t>(pageIndex);
+		}
+		for (std::size_t pageIndex = 0; pageIndex != budget.leasePageCount; ++pageIndex)
+		{
+			const auto page = world.Create<v::VisibilityLeasePage>();
+			world.Get<v::VisibilityLeasePage>(page)->pageIndex = static_cast<std::uint32_t>(pageIndex);
+		}
+	}
+};
+
+std::vector<VisibilityHarness::CellState> RunParallel(const std::size_t workers)
+{
+	VisibilityHarness harness{512, 2, 8, workers};
+	for (std::size_t index = 0; index != 8; ++index)
+		harness.CreateObserver(v::ParticipantHandle{static_cast<v::ObserverSlot>(index % 4), 1},
+			static_cast<navigation::Cell>((index * 127) % harness.topology.Count()));
+	harness.Execute(0);
+	return harness.Snapshot();
+}
+} // namespace
+
+BOOST_AUTO_TEST_SUITE(rts_visibility_system)
+
+BOOST_AUTO_TEST_CASE(empty_live_observer_snapshot_is_a_valid_zero_state)
+{
+	VisibilityHarness harness{8, 1, 1, 1};
+	harness.Execute(0);
+	const auto cells = harness.Snapshot();
+	BOOST_REQUIRE(cells.size() == 8u);
+	for (const auto &cell : cells)
+	{
+		BOOST_TEST(cell.explored == 0u);
+		BOOST_TEST(cell.visible == 0u);
+	}
+	BOOST_TEST(harness.HistoryCount() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(removal_at_tick_one_expires_after_exact_exclusive_grace_deadline)
+{
+	VisibilityHarness harness{16, 1, 1, 1};
+	const auto observer = harness.CreateObserver(v::ParticipantHandle{0, 1}, 5);
+	harness.Execute(0);
+	BOOST_REQUIRE(harness.world.Destroy(observer));
+	harness.Execute(1);
+
+	harness.Execute(151);
+	auto cells = harness.Snapshot();
+	BOOST_CHECK((cells[5].visible & v::ObserverBit(0)) != 0);
+
+	harness.Execute(152);
+	cells = harness.Snapshot();
+	BOOST_CHECK((cells[5].visible & v::ObserverBit(0)) == 0);
+	BOOST_CHECK((cells[5].explored & v::ObserverBit(0)) != 0);
+	BOOST_CHECK(v::StatusFor(cells[5].explored, cells[5].visible, 0) == v::VisibilityStatus::Fogged);
+}
+
+BOOST_AUTO_TEST_CASE(movement_overlap_death_ownership_and_deletion_preserve_authoritative_grace)
+{
+	VisibilityHarness harness{16, 1, 8, 1};
+	const auto overlapA = harness.CreateObserver(v::ParticipantHandle{0, 1}, 2);
+	const auto overlapB = harness.CreateObserver(v::ParticipantHandle{0, 1}, 2);
+	const auto mover = harness.CreateObserver(v::ParticipantHandle{1, 1}, 5);
+	const auto dead = harness.CreateObserver(v::ParticipantHandle{2, 1}, 8);
+	const auto ownerChange = harness.CreateObserver(v::ParticipantHandle{3, 1}, 12);
+	const auto deleted = harness.CreateObserver(v::ParticipantHandle{4, 1}, 15);
+
+	harness.Execute(0);
+	auto cells = harness.Snapshot();
+	const auto ownerZero = v::ObserverBit(0);
+	const auto ownerOne = v::ObserverBit(1);
+	const auto ownerTwo = v::ObserverBit(2);
+	const auto ownerThree = v::ObserverBit(3);
+	const auto ownerFour = v::ObserverBit(4);
+	BOOST_CHECK((cells[2].visible & ownerZero) != 0);
+	BOOST_CHECK((cells[5].visible & ownerOne) != 0);
+
+	harness.SetCell(mover, 10);
+	harness.SetAlive(dead, false);
+	harness.world.Get<v::VisibilityObserver>(ownerChange)->participant = {4, 1};
+	BOOST_REQUIRE(harness.world.Destroy(overlapB));
+	BOOST_REQUIRE(harness.world.Destroy(deleted));
+	harness.Execute(1);
+	cells = harness.Snapshot();
+	BOOST_CHECK((cells[2].visible & ownerZero) != 0);
+	BOOST_CHECK((cells[5].visible & ownerOne) != 0);
+	BOOST_CHECK((cells[10].visible & ownerOne) != 0);
+	BOOST_CHECK((cells[8].visible & ownerTwo) != 0);
+	BOOST_CHECK((cells[12].visible & ownerThree) != 0);
+	BOOST_CHECK((cells[12].visible & ownerFour) != 0);
+	BOOST_CHECK((cells[15].visible & ownerFour) != 0);
+	BOOST_CHECK(harness.HistoryCount() == 4u);
+	(void)overlapA;
+
+	harness.Execute(151);
+	cells = harness.Snapshot();
+	BOOST_CHECK((cells[5].visible & ownerOne) != 0);
+	harness.Execute(152);
+	cells = harness.Snapshot();
+	BOOST_CHECK((cells[5].visible & ownerOne) == 0);
+	BOOST_CHECK((cells[5].explored & ownerOne) != 0);
+	BOOST_CHECK((cells[8].visible & ownerTwo) == 0);
+	BOOST_CHECK((cells[8].explored & ownerTwo) != 0);
+	BOOST_CHECK((cells[15].visible & ownerFour) == 0);
+	BOOST_CHECK((cells[15].explored & ownerFour) != 0);
+	BOOST_CHECK(v::StatusFor(cells[8].explored, cells[8].visible, 2) == v::VisibilityStatus::Fogged);
+	BOOST_CHECK(!v::CanTargetEntity(cells[8].visible, 2));
+	BOOST_CHECK(v::CanTargetPosition(true));
+}
+
+BOOST_AUTO_TEST_CASE(full_history_pool_retires_missing_generations_before_reusing_a_lower_index)
+{
+	VisibilityHarness harness{256, 1, 256, 1};
+	std::vector<ecs::Entity> observers;
+	observers.reserve(256);
+	for (std::size_t index = 0; index != 256; ++index)
+		observers.push_back(harness.CreateObserver(v::ParticipantHandle{0, 1},
+			static_cast<navigation::Cell>(index)));
+	harness.Execute(0);
+	BOOST_TEST(harness.HistoryCount() == 256u);
+
+	const auto high = observers.back();
+	const auto low = observers.front();
+	BOOST_REQUIRE(harness.world.Destroy(high));
+	BOOST_REQUIRE(harness.world.Destroy(low));
+	const auto replacement = harness.CreateObserver(v::ParticipantHandle{0, 1}, 200);
+	harness.Execute(1);
+	BOOST_TEST(harness.HistoryCount() == 255u);
+	BOOST_CHECK(harness.world.IsAlive(replacement));
+	BOOST_CHECK((harness.Snapshot()[200].visible & v::ObserverBit(0)) != 0);
+}
+
+BOOST_AUTO_TEST_CASE(one_two_and_four_workers_produce_identical_page_state)
+{
+	const auto expected = RunParallel(1);
+	BOOST_CHECK(RunParallel(2) == expected);
+	BOOST_CHECK(RunParallel(4) == expected);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

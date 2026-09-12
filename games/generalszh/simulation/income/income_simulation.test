@@ -1,0 +1,18 @@
+#define BOOST_TEST_MODULE GeneralsZHIncomeSimulation
+#include <boost/test/included/unit_test.hpp>
+#include <string_view>
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+import games.generalszh.simulation.income.income_simulation;
+BOOST_AUTO_TEST_CASE(income_composition_has_explicit_startup_and_uses_the_injected_worker_owner)
+{
+	generalszh::GameplayState state;
+	generalszh::GameplayWorkers workers(2);
+	generalszh::economy::CaptureBatch batch(1);
+	generalszh::IncomeSimulation simulation(state.World(), batch, workers);
+	const engine::time::FixedStep step{30};
+	BOOST_CHECK_THROW(simulation.Execute({0, step}), std::logic_error);
+	simulation.Finalize(step); batch.Prepare(0);
+	BOOST_CHECK_NO_THROW(simulation.Execute({0, step}));
+	BOOST_TEST(workers.Count() == 2u);
+}

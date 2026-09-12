@@ -1,0 +1,275 @@
+#define BOOST_TEST_MODULE GeneralsZHProductionMarkerAdapter
+#include <boost/test/included/unit_test.hpp>
+
+#include "production_marker_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
+
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import games.generalszh.gameplay.production.presentation.construction_marker;
+import games.generalszh.simulation.gameplay_state;
+import games.generalszh.simulation.reset.persistent_world_reset;
+
+using generalszh::GameplayState;
+using generalszh::legacy::ProductionMarkerLease;
+using generalszh::legacy::ProductionMarkerStore;
+using generalszh::production::ConstructionMarker;
+
+namespace production_marker_adapter_test
+{
+ecs::Entity OnlyEntity(GameplayState &state)
+{
+	ecs::Entity entity{};
+	std::size_t count = 0;
+	ecs::Query<ecs::Read<ConstructionMarker>> query(state.World());
+	query.ForEachChunk([&](const auto chunk) {
+		for (const auto id : chunk.Entities())
+		{
+			entity = id;
+			++count;
+		}
+	});
+	BOOST_REQUIRE_EQUAL(count, 1u);
+	return entity;
+}
+
+struct ScheduledBypassAttempt
+{
+	using Query = ecs::Query<ecs::Read<ConstructionMarker>>;
+	ProductionMarkerLease &lease;
+
+	void Execute(Query::Chunk, ecs::SystemContext &) const
+	{
+		lease.Advance(0, 1);
+	}
+};
+}
+
+namespace ecs
+{
+template<>
+struct SystemTraits<production_marker_adapter_test::ScheduledBypassAttempt>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.production.marker.bypass";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(default_stores_are_isolated_and_leases_have_normal_lifecycle)
+{
+	ProductionMarkerStore first;
+	ProductionMarkerStore second;
+	BOOST_TEST(first.Count() == 0u);
+	BOOST_TEST(second.Count() == 0u);
+
+	{
+		ProductionMarkerLease firstLease(first);
+		ProductionMarkerLease secondLease(second);
+		firstLease.RestoreLegacy(11);
+		secondLease.RestoreLegacy(17);
+		BOOST_TEST(first.Count() == 1u);
+		BOOST_TEST(second.Count() == 1u);
+		BOOST_TEST(firstLease.ReadLegacy() == 11u);
+		BOOST_TEST(secondLease.ReadLegacy() == 17u);
+	}
+
+	BOOST_TEST(first.Count() == 0u);
+	BOOST_TEST(second.Count() == 0u);
+	BOOST_CHECK_NO_THROW(first.Reset());
+	BOOST_CHECK_NO_THROW(second.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(shared_world_lifetime_keeps_store_reset_local_and_blocks_gameplay_reset)
+{
+	GameplayState state;
+	ProductionMarkerStore first(state);
+	ProductionMarkerStore second(state);
+	{
+		ProductionMarkerLease lease(first);
+		lease.RestoreLegacy(31);
+		BOOST_TEST(state.Count() == 1u);
+		BOOST_TEST(first.Count() == 1u);
+		BOOST_TEST(second.Count() == 0u);
+
+		BOOST_CHECK_NO_THROW(second.Reset());
+		BOOST_CHECK_THROW(first.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_TEST(lease.ReadLegacy() == 31u);
+	}
+
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_CHECK_NO_THROW(first.Reset());
+	BOOST_CHECK_NO_THROW(second.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(released_marker_handles_do_not_resurrect_after_generation_reuse)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ecs::Entity old{};
+	{
+		ProductionMarkerLease lease(store);
+		old = production_marker_adapter_test::OnlyEntity(state);
+		lease.RestoreLegacy(43);
+		BOOST_CHECK_THROW(store.Reset(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	}
+
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(!state.World().IsAlive(old));
+	{
+		ProductionMarkerLease next(store);
+		const auto current = production_marker_adapter_test::OnlyEntity(state);
+		BOOST_TEST(current.index == old.index);
+		BOOST_TEST(current.generation != old.generation);
+		BOOST_TEST(!state.World().IsAlive(old));
+		BOOST_TEST(state.World().IsAlive(current));
+		next.RestoreLegacy(47);
+		BOOST_TEST(next.ReadLegacy() == 47u);
+	}
+
+	BOOST_CHECK_NO_THROW(state.Reset());
+}
+
+BOOST_AUTO_TEST_CASE(one_lease_owns_one_marker_and_restore_updates_the_authoritative_tick)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+	BOOST_TEST(store.Count() == 1u);
+	BOOST_TEST(state.Count() == 1u);
+
+	const ecs::Entity entity = production_marker_adapter_test::OnlyEntity(state);
+	auto *marker = state.World().Get<ConstructionMarker>(entity);
+	BOOST_REQUIRE(marker != nullptr);
+	BOOST_TEST(marker->tick == 0u);
+
+	lease.RestoreLegacy(53);
+	BOOST_TEST(marker->tick == 53u);
+	BOOST_TEST(lease.ReadLegacy() == 53u);
+	BOOST_TEST(!lease.Begin(54));
+	BOOST_TEST(lease.ReadLegacy() == 53u);
+}
+
+BOOST_AUTO_TEST_CASE(begin_is_idempotent_for_an_active_marker_and_zero_remains_the_sentinel)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+
+	BOOST_TEST(lease.ReadLegacy() == 0u);
+	BOOST_TEST(!lease.Advance(100, 0));
+	BOOST_TEST(lease.Begin(7));
+	BOOST_TEST(lease.ReadLegacy() == 7u);
+	BOOST_TEST(!lease.Begin(8));
+	BOOST_TEST(lease.ReadLegacy() == 7u);
+
+	lease.RestoreLegacy(0);
+	BOOST_TEST(lease.ReadLegacy() == 0u);
+	BOOST_TEST(lease.Begin(0));
+	BOOST_TEST(lease.ReadLegacy() == 0u);
+	BOOST_TEST(!lease.Advance(1, 0));
+}
+
+BOOST_AUTO_TEST_CASE(advance_expires_only_after_the_strict_duration_boundary)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+	lease.RestoreLegacy(10);
+
+	BOOST_TEST(!lease.Advance(15, 5));
+	BOOST_TEST(lease.ReadLegacy() == 10u);
+	BOOST_TEST(lease.Advance(16, 5));
+	BOOST_TEST(lease.ReadLegacy() == 0u);
+	BOOST_TEST(!lease.Advance(100, 0));
+}
+
+BOOST_AUTO_TEST_CASE(advance_preserves_legacy_uint32_wrap_age)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+	const auto maximum = (std::numeric_limits<std::uint32_t>::max)();
+
+	lease.RestoreLegacy(maximum - 2u);
+	BOOST_TEST(!lease.Advance(1u, 4u));
+	BOOST_TEST(lease.ReadLegacy() == maximum - 2u);
+
+	lease.RestoreLegacy(maximum - 2u);
+	BOOST_TEST(lease.Advance(1u, 3u));
+	BOOST_TEST(lease.ReadLegacy() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(read_legacy_rejects_a_wide_modern_tick_at_the_cold_boundary)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+	const ecs::Entity entity = production_marker_adapter_test::OnlyEntity(state);
+	const auto tooWide = static_cast<std::uint64_t>((std::numeric_limits<std::uint32_t>::max)()) + 1u;
+
+	state.World().Get<ConstructionMarker>(entity)->tick = tooWide;
+	BOOST_CHECK_THROW(lease.ReadLegacy(), std::overflow_error);
+}
+
+BOOST_AUTO_TEST_CASE(missing_component_preflight_is_nondestructive)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+	lease.RestoreLegacy(61);
+	const ecs::Entity entity = production_marker_adapter_test::OnlyEntity(state);
+
+	BOOST_TEST(state.World().Remove<ConstructionMarker>(entity));
+	BOOST_CHECK_THROW(lease.RestoreLegacy(73), std::logic_error);
+	BOOST_CHECK_THROW(lease.Begin(74), std::logic_error);
+	BOOST_CHECK_THROW(lease.Advance(75, 1), std::logic_error);
+	BOOST_TEST(state.World().Add<ConstructionMarker>(entity));
+	BOOST_TEST(lease.ReadLegacy() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_execution_cannot_bypass_typed_marker_access)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	ProductionMarkerLease lease(store);
+	lease.RestoreLegacy(4);
+
+	production_marker_adapter_test::ScheduledBypassAttempt system{lease};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(state.World().Components());
+	ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(engine::time::FixedStep{30});
+
+	BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, engine::time::FixedStep{30}}),
+		std::logic_error);
+	BOOST_TEST(!state.World().IsScheduledExecutionActive());
+	BOOST_TEST(lease.ReadLegacy() == 4u);
+}
+
+BOOST_AUTO_TEST_CASE(persistent_reset_rejects_an_unclaimed_marker_before_releasing_state)
+{
+	GameplayState state;
+	ProductionMarkerStore store(state);
+	{
+		ProductionMarkerLease lease(store);
+		lease.RestoreLegacy(10);
+		const auto entity = production_marker_adapter_test::OnlyEntity(state);
+		BOOST_CHECK_THROW(generalszh::PersistentWorldReset::Execute(state, {}), std::logic_error);
+		BOOST_TEST(state.World().IsAlive(entity));
+		BOOST_TEST(store.Count() == 1u);
+		BOOST_TEST(lease.ReadLegacy() == 10u);
+	}
+
+	BOOST_CHECK_NO_THROW(generalszh::PersistentWorldReset::Execute(state, {}));
+	BOOST_TEST(state.Count() == 0u);
+}

@@ -1,0 +1,273 @@
+#define BOOST_TEST_MODULE GeneralsZHIndependentEconomy
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <optional>
+#include <span>
+#include <stdexcept>
+#include <chrono>
+#include <cstdint>
+#include <iostream>
+#include <string_view>
+#include <vector>
+import games.generalszh.gameplay.economy.systems.economy_system;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh;
+using namespace generalszh::economy;
+using namespace engine::gameplay::rts::economy;
+namespace
+{
+ecs::Entity Account(ecs::World &world, std::uint32_t balance)
+{
+    const auto entity = world.Create<ResourceBalance, IncomeHistory, AccountRange>();
+    world.Get<ResourceBalance>(entity)->quantity = balance; return entity;
+}
+ecs::Entity Source(ecs::World &world, ecs::Entity account, std::uint64_t interval = 2)
+{
+    const auto entity = world.Create<IncomeAccount, IncomeDefinition, IncomeObservation, IncomePayout,
+        CaptureRewardState, IncomeRate, IncomeSchedule, IncomeEligibility, IncomeDispatch, IncomePulse>();
+    *world.Get<IncomeAccount>(entity) = {account};
+    *world.Get<IncomeDefinition>(entity) = {10, 50, true};
+    *world.Get<IncomeObservation>(entity) = {-1, 2, true, false, true, true, true};
+    *world.Get<IncomeRate>(entity) = {interval, 10};
+    world.Get<IncomeSchedule>(entity)->nextTick = interval;
+    return entity;
+}
+}
+// Test-only owner/driver. All gameplay runs through one registered plan.
+class EconomyTestHost
+{
+public:
+    static void RegisterComponents(ecs::World &world) { generalszh::RegisterEconomyComponents(world); }
+    EconomyTestHost(ecs::World &world, engine::jobs::JobSystem &jobs, generalszh::EconomyLimits limits) :
+        world(world), batch(generalszh::EconomySystem::Capacity(limits)),
+        accounts(batch), systems(world, batch, limits), scheduler(world, registry, jobs) {}
+    void Finalize(engine::time::FixedStep step)
+    {
+        systems.Configure(step);
+        registry.Register(accounts); registry.Register(systems);
+        registry.Finalize(world.Components()); scheduler.Finalize(step); configured = true;
+    }
+    generalszh::EconomyStepResult Execute(engine::time::SimulationTime time,
+        std::span<const generalszh::economy::AccountRequest> input = {})
+    {
+        if (!configured || failed) throw std::logic_error("Test host is not runnable");
+        try { systems.SetInputs(input); scheduler.Execute(time); return systems.Results(); }
+        catch (...) { failed = true; throw; }
+    }
+private:
+    ecs::World &world;
+    generalszh::economy::AccountBatch batch;
+    generalszh::economy::AccountSystem accounts;
+    generalszh::EconomySystem systems;
+    ecs::SystemRegistry registry;
+    ecs::Scheduler scheduler;
+    bool configured{}, failed{};
+};
+
+BOOST_AUTO_TEST_CASE(connected_income_updates_modern_accounts_without_legacy_objects_or_dispatch)
+{
+    ecs::World world; EconomyTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({2}); EconomyTestHost simulation(world, jobs, {2, 1});
+    const engine::time::FixedStep step{30};
+    BOOST_CHECK_THROW(simulation.Execute({0, step}), std::logic_error); simulation.Finalize(step);
+    const auto account = Account(world, 5), source = Source(world, account);
+    BOOST_TEST(simulation.Execute({0, step}).income.empty());
+    const std::array input{AccountRequest{account, {AccountOperation::Withdraw, 7}}};
+    const auto paid = simulation.Execute({2, step}, input);
+    BOOST_REQUIRE(paid.accounts.size() == 2u); BOOST_REQUIRE(paid.income.size() == 1u);
+    BOOST_TEST(paid.accounts[0].amount == 5u); BOOST_TEST(paid.accounts[1].amount == 12u);
+    BOOST_TEST(paid.income[0].transaction == 1u); BOOST_TEST(paid.income[0].payout.score == 10);
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity == 12u);
+    BOOST_TEST(world.Get<IncomeHistory>(account)->total == 12u);
+    BOOST_TEST(world.Get<IncomeSchedule>(source)->nextTick == 4u);
+    BOOST_TEST(world.Get<CaptureRewardState>(source)->available);
+    world.Get<IncomeObservation>(source)->active = false;
+    BOOST_TEST(simulation.Execute({4, step}).income.empty());
+    BOOST_TEST(world.Get<IncomeSchedule>(source)->nextTick == 4u);
+    world.Get<IncomeObservation>(source)->active = true;
+    BOOST_TEST(simulation.Execute({6, step}).income.size() == 1u);
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity == 24u);
+    BOOST_TEST(world.Get<IncomeSchedule>(source)->nextTick == 8u); // No catch-up burst.
+    world.Destroy(source); world.Destroy(account);
+}
+
+BOOST_AUTO_TEST_CASE(supply_revenue_is_merged_inside_economy_before_account_settlement)
+{
+    namespace h=engine::gameplay::rts::harvesting;
+    namespace c=engine::gameplay::combat;
+    ecs::World world; RegisterEconomyComponents(world); world.FinalizeComponents();
+    const auto account=Account(world,0);
+    const auto center=world.Create<harvesting::SupplyDropoffOwner,h::SupplyDropoff,c::Health,c::LifeState>();
+    *world.Get<harvesting::SupplyDropoffOwner>(center)={account,50}; world.Get<c::Health>(center)->current=100;
+    const auto collector=world.Create<h::HarvestDelivery,production::ProducedUnit,c::Health,c::LifeState>();
+    *world.Get<h::HarvestDelivery>(collector)={center,4};
+    world.Get<production::ProducedUnit>(collector)->account=account; world.Get<c::Health>(collector)->current=100;
+    harvesting::HarvestRevenue revenue(world,1); revenue.Configure();
+    generalszh::bounty::CashBountyBatch bounty(1);
+    bounty.BeginTick();
+    const std::array bountyAwards{generalszh::bounty::CashBountyAward{collector,center,account,5}};
+    bounty.Publish(bountyAwards);
+    AccountBatch batch(EconomySystem::Capacity({0,1,1,1})); AccountSystem accounts(batch);
+    EconomySystem economy(world,batch,{0,1,1,1},&revenue,&bounty); const engine::time::FixedStep step{20}; economy.Configure(step);
+    ecs::SystemRegistry registry; registry.Register(economy); registry.Register(accounts); registry.Finalize(world.Components());
+    ecs::Scheduler scheduler(world,registry); scheduler.Finalize(step);
+    const std::array external{AccountRequest{account,{AccountOperation::Deposit,3}}};
+    economy.SetInputs(external); scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity==208u);
+    const auto results=economy.Results().accounts; BOOST_REQUIRE(results.size()==3u);
+    BOOST_TEST(results[0].amount==3u); BOOST_TEST(results[1].amount==200u);
+    BOOST_TEST(results[2].amount==5u);
+    BOOST_CHECK(!results[2].playSound);
+    BOOST_TEST(world.Get<IncomeHistory>(account)->total==208u);
+    // A publisher supplies a fresh tick-local delivery column before economy.
+    *world.Get<h::HarvestDelivery>(collector)={};
+    bounty.BeginTick(); bounty.Publish(std::span<const generalszh::bounty::CashBountyAward>{});
+    economy.SetInputs({}); scheduler.Execute({1,step});
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity==208u);
+    BOOST_CHECK(bounty.Requests().empty());
+}
+
+BOOST_AUTO_TEST_CASE(crate_rewards_are_merged_and_released_only_after_account_staging)
+{
+    ecs::World world; RegisterEconomyComponents(world); world.FinalizeComponents();
+    const auto account=Account(world,7);
+    generalszh::crates::CrateRewardBatch crates(1);
+    const std::array request{AccountRequest{account,{AccountOperation::Deposit,11,true,true}}};
+    const std::array consumed{account};
+    crates.Publish(request,consumed);
+    AccountBatch batch(EconomySystem::Capacity({0,0,0,0,1})); AccountSystem accounts(batch);
+    EconomySystem economy(world,batch,{0,0,0,0,1},nullptr,nullptr,&crates);
+    const engine::time::FixedStep step{20}; economy.Configure(step);
+    ecs::SystemRegistry registry; registry.Register(economy); registry.Register(accounts);
+    registry.Finalize(world.Components()); ecs::Scheduler scheduler(world,registry); scheduler.Finalize(step);
+    economy.SetInputs({}); scheduler.Execute({0,step});
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity==18u);
+    BOOST_CHECK(!crates.IsPublished());
+    BOOST_REQUIRE_EQUAL(economy.Results().accounts.size(),1u);
+    BOOST_TEST(economy.Results().accounts[0].amount==11u);
+}
+BOOST_AUTO_TEST_CASE(income_receipts_reject_stale_recipient_and_nonmoney_output_does_not_deposit)
+{
+    ecs::World world; EconomyTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); EconomyTestHost simulation(world, jobs, {2, 0});
+    const engine::time::FixedStep step{30}; simulation.Finalize(step);
+    const auto old = Account(world, 9); const auto source = Source(world, old);
+    world.Destroy(old); const auto replacement = Account(world, 7);
+    const auto rejected = simulation.Execute({2, step});
+    BOOST_REQUIRE(rejected.accounts.size() == 1u);
+    BOOST_CHECK(rejected.accounts[0].status == AccountResultStatus::InvalidTarget);
+    BOOST_TEST(world.Get<ResourceBalance>(replacement)->quantity == 7u);
+    world.Destroy(source);
+    const auto nonmoney = Source(world, replacement, 4);
+    world.Get<IncomeDefinition>(nonmoney)->actualMoney = false; // Immutable setup, before its first execution.
+    const auto display = simulation.Execute({4, step});
+    BOOST_TEST(display.accounts.empty()); BOOST_REQUIRE(display.income.size() == 1u);
+    BOOST_TEST(display.income[0].payout.show); BOOST_TEST(!display.income[0].payout.pay);
+    world.Destroy(nonmoney); world.Destroy(replacement);
+}
+BOOST_AUTO_TEST_CASE(incomplete_income_source_fails_before_any_deadline_advances)
+{
+    ecs::World world; EconomyTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); EconomyTestHost simulation(world, jobs, {2, 0});
+    const engine::time::FixedStep step{30}; simulation.Finalize(step);
+    const auto account = Account(world, 0), source = Source(world, account);
+    world.Remove<IncomeAccount>(source);
+    BOOST_CHECK_THROW(simulation.Execute({2, step}), std::invalid_argument);
+    BOOST_TEST(world.Get<IncomeSchedule>(source)->nextTick == 2u);
+    BOOST_CHECK_THROW(simulation.Execute({3, step}), std::logic_error);
+    world.Destroy(source); world.Destroy(account);
+}
+BOOST_AUTO_TEST_CASE(connected_income_and_account_state_is_identical_at_one_two_four_workers)
+{
+    auto run = [](std::size_t workerCount) {
+        ecs::World world; EconomyTestHost::RegisterComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workerCount}); EconomyTestHost simulation(world, jobs, {2048, 3});
+        const engine::time::FixedStep step{30}; simulation.Finalize(step);
+        const std::array accounts{Account(world, 1), Account(world, 2), Account(world, 3)};
+        std::vector<ecs::Entity> sources;
+        for (std::size_t i = 0; i != 2048; ++i) sources.push_back(Source(world, accounts[i % 3], i % 4));
+        std::vector<std::uint64_t> state;
+        for (std::uint64_t tick = 0; tick != 8; ++tick)
+        {
+            const std::array inputs{AccountRequest{accounts[2], {AccountOperation::Withdraw, 100}}};
+            const auto result = simulation.Execute({tick, step}, inputs);
+            for (const auto &receipt : result.accounts)
+                state.insert(state.end(), {tick, receipt.account.index, receipt.account.generation, receipt.amount,
+                    receipt.balance, receipt.playSound, receipt.recordedIncome, static_cast<std::uint64_t>(receipt.status)});
+            for (const auto &calculation : result.income)
+                state.insert(state.end(), {calculation.source.index, calculation.source.generation, calculation.account.index,
+                    calculation.transaction, calculation.payout.money, static_cast<std::uint64_t>(calculation.payout.score)});
+            for (auto account : accounts)
+            {
+                const auto &history = *world.Get<IncomeHistory>(account);
+                state.insert(state.end(), {world.Get<ResourceBalance>(account)->quantity, history.current, history.total});
+                state.insert(state.end(), history.buckets.begin(), history.buckets.end());
+            }
+            ecs::Query<ecs::Read<IncomeSchedule>, ecs::Read<CaptureRewardState>> query(world);
+            std::size_t chunks = 0;
+            query.ForEachChunk([&](auto chunk) {
+                ++chunks;
+                for (std::size_t row = 0; row != chunk.Count(); ++row)
+                    state.insert(state.end(), {chunk.Entities()[row].index, chunk.Entities()[row].generation,
+                        chunk.template Get<IncomeSchedule>()[row].nextTick,
+                        chunk.template Get<CaptureRewardState>()[row].available,
+                        chunk.template Get<CaptureRewardState>()[row].initialized});
+            });
+            BOOST_TEST(chunks > 1u);
+        }
+        for (auto source : sources) world.Destroy(source);
+        for (auto account : accounts) world.Destroy(account);
+        return state;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(income_job_failure_prevents_account_commit_and_leaves_borrowed_workers_usable)
+{
+    ecs::World world; EconomyTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({2}); EconomyTestHost simulation(world, jobs, {1, 1});
+    const engine::time::FixedStep step{30}; simulation.Finalize(step);
+    const auto account = Account(world, 5), source = Source(world, account, UINT64_MAX);
+    world.Get<IncomeSchedule>(source)->nextTick = 1;
+    const std::array requests{AccountRequest{account, {AccountOperation::Withdraw, 4}}};
+    BOOST_CHECK_THROW(simulation.Execute({1, step}, requests), std::overflow_error);
+    BOOST_TEST(world.Get<ResourceBalance>(account)->quantity == 5u);
+    BOOST_TEST(!world.IsScheduledExecutionActive());
+    BOOST_CHECK_THROW(simulation.Execute({2, step}, requests), std::logic_error);
+    bool completed = false;
+    std::array tasks{engine::jobs::Job{+[](void *context) { *static_cast<bool *>(context) = true; }, &completed}};
+    jobs.Execute(tasks); BOOST_TEST(completed);
+    world.Destroy(source); world.Destroy(account);
+}
+
+// Opt-in measurement of the real composition, not a timing-sensitive CI gate.
+BOOST_AUTO_TEST_CASE(measure_connected_economy, * boost::unit_test::disabled())
+{
+    std::uint64_t expectedTotal = 0;
+    for (const std::size_t workers : {1u, 2u, 4u})
+    {
+        ecs::World world; EconomyTestHost::RegisterComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workers}); EconomyTestHost simulation(world, jobs, {8192, 0});
+        const engine::time::FixedStep step{30}; simulation.Finalize(step);
+        std::vector<ecs::Entity> accounts, sources;
+        for (std::size_t i = 0; i != 512; ++i) accounts.push_back(Account(world, 0));
+        for (std::size_t i = 0; i != 8192; ++i) sources.push_back(Source(world, accounts[i % accounts.size()], 1));
+        std::size_t chunks = 0;
+        for (const auto &archetype : world.GetArchetypes())
+            for (const auto &chunk : archetype->Chunks()) if (chunk->Size()) ++chunks;
+        simulation.Execute({0, step}); simulation.Execute({1, step});
+        const auto begin = std::chrono::steady_clock::now();
+        for (std::uint64_t tick = 2; tick != 62; ++tick) simulation.Execute({tick, step});
+        const auto elapsed = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin).count();
+        std::uint64_t total = 0;
+        for (const auto account : accounts) total += world.Get<ResourceBalance>(account)->quantity;
+        if (workers == 1) expectedTotal = total;
+        BOOST_TEST(total == expectedTotal);
+        BOOST_TEST(total == 8192ull * 12 * 61);
+        std::cout << "economy_benchmark accounts=512 sources=8192 workers=" << workers
+            << " chunks=" << chunks << " measured_ticks=60 elapsed_ms=" << elapsed
+            << " ms_per_tick=" << elapsed / 60 << '\n';
+        for (const auto source : sources) world.Destroy(source);
+        for (const auto account : accounts) world.Destroy(account);
+    }
+}

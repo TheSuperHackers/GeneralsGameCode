@@ -1,0 +1,15 @@
+add_library(engine_gameplay_navigation STATIC)
+target_sources(engine_gameplay_navigation PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+    grid/navigation_grid.cppm fields/flow_fields.cppm systems/movement_system.cppm
+    components/movement.cppm components/movement_activity.cppm inputs/move_input.cppm)
+target_compile_features(engine_gameplay_navigation PUBLIC cxx_std_23)
+target_link_libraries(engine_gameplay_navigation PUBLIC engine_ecs engine_jobs engine_gameplay_spatial)
+if(ENGINE_GAMEPLAY_BUILD_TESTS)
+    find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+    set(navigation_tests grid/navigation_grid.test fields/flow_fields.test systems/movement_system.test components/movement.test components/movement_activity.test inputs/move_input.test)
+    set_source_files_properties(${navigation_tests} PROPERTIES LANGUAGE CXX)
+    add_executable(engine_gameplay_navigation_tests ${navigation_tests})
+    target_compile_definitions(engine_gameplay_navigation_tests PRIVATE BOOST_TEST_INCLUDED)
+    target_link_libraries(engine_gameplay_navigation_tests PRIVATE engine_gameplay_navigation Boost::included_unit_test_framework)
+    add_test(NAME engine_gameplay_navigation_tests COMMAND engine_gameplay_navigation_tests)
+endif()

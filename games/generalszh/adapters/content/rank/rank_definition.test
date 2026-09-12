@@ -1,0 +1,111 @@
+#define BOOST_TEST_MODULE GeneralsZHRankContent
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+
+import games.generalszh.adapters.content.rank.rank_definition;
+
+using namespace generalszh::content;
+using namespace engine::gameplay::rts::rank;
+using namespace engine::gameplay::rts::unlocks;
+
+namespace
+{
+constexpr std::string_view RankText = R"(
+Rank 1
+  RankName = INI:RankLevel1
+  SkillPointsNeeded = 0
+  SciencesGranted = SCIENCE_Rank1
+  SciencePurchasePointsGranted = 1
+End
+Rank 2
+  RankName = INI:RankLevel2
+  SkillPointsNeeded = 800
+  SciencesGranted = SCIENCE_Rank2
+  SciencePurchasePointsGranted = 1
+End
+Rank 3
+  RankName = INI:RankLevel3
+  SkillPointsNeeded = 1500
+  SciencesGranted = SCIENCE_Rank3
+  SciencePurchasePointsGranted = 1
+End
+Rank 4
+  RankName = INI:RankLevel4
+  SkillPointsNeeded = 2500
+  SciencesGranted = SCIENCE_Rank4
+  SciencePurchasePointsGranted = 1
+End
+Rank 5
+  RankName = INI:RankLevel5
+  SkillPointsNeeded = 5000
+  SciencesGranted = SCIENCE_Rank5
+  SciencePurchasePointsGranted = 3
+End
+)";
+
+void PopulateScienceCatalog(UnlockCatalog &catalog)
+{
+	for (std::uint32_t level = 1; level <= 5; ++level)
+		catalog.Register(UnlockDefinition{"SCIENCE_Rank" + std::to_string(level), 1, 0, false});
+	catalog.Finalize();
+}
+}
+
+BOOST_AUTO_TEST_CASE(rank_adapter_matches_inspected_zero_hour_values_and_binds_dense_unlock_ids)
+{
+	BOOST_TEST(InspectedZeroHourRankDefinitionCount == 5u);
+	const auto decoded = DecodeRankDefinitions(RankText);
+	BOOST_REQUIRE_EQUAL(decoded.definitions.size(), 5u);
+	const std::array thresholds{0u, 800u, 1500u, 2500u, 5000u};
+	const std::array credits{1u, 1u, 1u, 1u, 3u};
+	for (std::size_t index = 0; index < decoded.definitions.size(); ++index)
+	{
+		BOOST_TEST(decoded.definitions[index].level == index + 1u);
+		BOOST_TEST(decoded.definitions[index].skillPointsNeeded == thresholds[index]);
+		BOOST_TEST(decoded.definitions[index].sciencePurchasePointsGranted == credits[index]);
+		BOOST_REQUIRE_EQUAL(decoded.definitions[index].sciencesGranted.size(), 1u);
+	}
+
+	UnlockCatalog science;
+	PopulateScienceCatalog(science);
+	const auto bound = BindRankDefinitions(decoded, science);
+	BOOST_REQUIRE_EQUAL(bound.size(), 5u);
+	BOOST_TEST(bound[0].unlockCreditsGranted == 1u);
+	BOOST_TEST(bound[4].unlockCreditsGranted == 3u);
+	BOOST_TEST(bound[0].unlocksGranted.front().value ==
+		science.Find(MakeUnlockKey("SCIENCE_Rank1")).value);
+	const RankCatalog catalog{bound, RankLevelLimit{5}, science};
+	BOOST_TEST(catalog.Get(5).skillPointsNeeded == 5000u);
+	BOOST_TEST(catalog.UnlockSchemaHash() == science.SchemaHash());
+}
+
+BOOST_AUTO_TEST_CASE(rank_adapter_rejects_nonmonotonic_or_unknown_content)
+{
+	constexpr std::string_view nonmonotonic = R"(
+Rank 1
+ SkillPointsNeeded = 0
+ SciencesGranted = SCIENCE_Rank1
+ SciencePurchasePointsGranted = 1
+End
+Rank 3
+ SkillPointsNeeded = 10
+ SciencesGranted = SCIENCE_Rank3
+ SciencePurchasePointsGranted = 1
+End
+)";
+	BOOST_CHECK_THROW(DecodeRankDefinitions(nonmonotonic), std::invalid_argument);
+	constexpr std::string_view unknown = R"(
+Rank 1
+ SkillPointsNeeded = 0
+ SciencesGranted = SCIENCE_Missing
+ SciencePurchasePointsGranted = 1
+End
+)";
+	UnlockCatalog science;
+	PopulateScienceCatalog(science);
+	BOOST_CHECK_THROW(BindRankDefinitions(DecodeRankDefinitions(unknown), science), std::invalid_argument);
+}

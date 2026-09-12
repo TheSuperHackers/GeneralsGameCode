@@ -1,0 +1,22 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <limits>
+
+import engine.gameplay.rts.rank.algorithms.rank_skill_award;
+
+using namespace engine::gameplay::rts::rank;
+
+BOOST_AUTO_TEST_CASE(rank_skill_award_uses_integer_ceiling)
+{
+	BOOST_TEST(ApplyRankSkillAward(7, {1, 1}) == 7u);
+	BOOST_TEST(ApplyRankSkillAward(5, {1, 2}) == 3u);
+	BOOST_TEST(ApplyRankSkillAward(5, {3, 2}) == 8u);
+	BOOST_TEST(ApplyRankSkillAward(5, {0, 3}) == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(rank_skill_award_saturates_checked_products)
+{
+	const auto maximum = (std::numeric_limits<std::uint64_t>::max)();
+	BOOST_TEST(ApplyRankSkillAward(maximum, {2, 1}) == maximum);
+	BOOST_TEST(ApplyRankSkillAward(maximum, {std::numeric_limits<std::uint32_t>::max(), 1}) == maximum);
+}

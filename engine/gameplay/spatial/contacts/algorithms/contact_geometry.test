@@ -1,0 +1,17 @@
+#include <boost/test/unit_test.hpp>
+
+#include <stdexcept>
+import engine.gameplay.spatial.contacts.algorithms.contact_geometry;
+
+namespace c = engine::gameplay::spatial::contacts;
+
+BOOST_AUTO_TEST_CASE(geometry_bounds_and_fixed_cell_conversion_are_explicit)
+{
+	BOOST_TEST(c::CeilCells(c::MicroCells{1000000}) == 1u);
+	BOOST_TEST(c::CeilCells(c::MicroCells{1000001}) == 2u);
+	BOOST_TEST(c::IsValidGeometry(c::Circle(c::MicroCells{1})));
+	BOOST_TEST(c::IsValidGeometry(c::AxisAlignedBox(c::MicroCells{1}, c::MicroCells{1})));
+	BOOST_CHECK_THROW(c::ValidateGeometry(c::Circle(c::MicroCells{0})), std::invalid_argument);
+	BOOST_CHECK_THROW(c::ValidateGeometry(c::AxisAlignedBox(c::MicroCells{1}, c::MicroCells{0})), std::invalid_argument);
+	BOOST_TEST(c::BroadphaseRadiusCells(c::AxisAlignedBox(500000, 500000)) == 2u);
+}

@@ -1,0 +1,44 @@
+#define BOOST_TEST_MODULE GeneralsZHVeterancy
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
+import games.generalszh.gameplay.progression.definitions.veterancy_definition;
+using namespace generalszh::progression;
+BOOST_AUTO_TEST_CASE(veterancy_defaults_and_ranger_policy)
+{
+ const VeterancyDefinition defaults;
+ BOOST_TEST(!defaults.trainable);
+ BOOST_TEST(defaults.Progression().thresholds.size()==4u);
+ BOOST_TEST(defaults.Progression().maximumExperience==2147483647u);
+ const VeterancyDefinition ranger{{0,40,60,120},{20,20,40,60},true};
+ BOOST_TEST(ranger.Progression().thresholds[3]==120u);
+ BOOST_TEST(ranger.AwardValue(VeterancyLevel::Elite)==40u);
+ BOOST_TEST(ranger.SkillPointValue(VeterancyLevel::Elite)==0u);
+ BOOST_TEST(static_cast<unsigned>(VeterancyLevel::Heroic)==3u);
+}
+
+BOOST_AUTO_TEST_CASE(veterancy_keeps_player_skill_awards_separate_from_unit_xp)
+{
+ const VeterancyDefinition definition{{0,40,60,120},{0,0,0,0},false,{5,6,7,8}};
+ BOOST_TEST(definition.AwardValue(VeterancyLevel::Regular)==0u);
+ BOOST_TEST(definition.SkillPointValue(VeterancyLevel::Regular)==5u);
+ BOOST_CHECK(!definition.trainable);
+}
+BOOST_AUTO_TEST_CASE(veterancy_rejects_invalid_authored_values)
+{
+ VeterancyDefinition definition{{0,40,20,120},{},true};
+ BOOST_CHECK_THROW(definition.Progression(),std::invalid_argument);
+ definition.required={0,40,60,120}; definition.awardValues[0]=2147483648u;
+ BOOST_CHECK_THROW(definition.Progression(),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(veterancy_catalog_freezes_award_values_alongside_progression_data)
+{
+ const std::array definitions{
+     VeterancyDefinition{{0,40,60,120},{20,30,40,60},true},
+     VeterancyDefinition{{0,10,20,30},{7,8,9,10},false}};
+ const VeterancyCatalog catalog(definitions);
+ BOOST_TEST(catalog.Size()==2u);
+ BOOST_TEST(catalog.Get(0).AwardValue(VeterancyLevel::Veteran)==30u);
+ BOOST_TEST(catalog.Get(1).AwardValue(VeterancyLevel::Regular)==7u);
+ BOOST_CHECK_THROW(catalog.Get(2),std::out_of_range);
+}

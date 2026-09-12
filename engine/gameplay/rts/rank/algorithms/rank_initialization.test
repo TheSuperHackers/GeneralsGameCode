@@ -1,0 +1,61 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+
+import engine.gameplay.rts.rank.algorithms.rank_initialization;
+
+using namespace engine::gameplay::rts::rank;
+using namespace engine::gameplay::rts::unlocks;
+
+namespace
+{
+struct Fixture final
+{
+	UnlockCatalog unlocks;
+	RankCatalog *ranks{};
+	std::unique_ptr<RankCatalog> ownedRanks;
+	Fixture()
+	{
+		unlocks.Register(UnlockDefinition{"SCIENCE_Rank1", 1, 0, false});
+		unlocks.Register(UnlockDefinition{"intrinsic", 1, 0, true});
+		unlocks.Finalize();
+		const auto rankScience = unlocks.Find(MakeUnlockKey("SCIENCE_Rank1"));
+		const std::array definitions{RankDefinition{0, 1, {rankScience}}};
+		ownedRanks = std::make_unique<RankCatalog>(definitions, RankLevelLimit{1}, unlocks);
+		ranks = ownedRanks.get();
+	}
+};
+}
+
+BOOST_AUTO_TEST_CASE(rank_initialization_adds_intrinsic_and_rank_credits_without_clearing_science)
+{
+	Fixture fixture;
+	RankState rank{0, 0};
+	UnlockState unlocks;
+	const auto intrinsic = fixture.unlocks.Find(MakeUnlockKey("intrinsic"));
+	const auto rankScience = fixture.unlocks.Find(MakeUnlockKey("SCIENCE_Rank1"));
+	const auto preowned = unlocks.SetOwned(intrinsic);
+	BOOST_CHECK(preowned);
+	InitializeRankAccount(rank, unlocks, *fixture.ranks, 4);
+	BOOST_TEST(rank.level == 1u);
+	BOOST_TEST(rank.skillPoints == 0u);
+	BOOST_TEST(unlocks.credits == 5u);
+	BOOST_CHECK(unlocks.IsOwned(intrinsic));
+	BOOST_CHECK(unlocks.IsOwned(rankScience));
+	BOOST_CHECK_THROW(InitializeRankAccount(rank, unlocks, *fixture.ranks), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(rank_initialization_rejects_credit_overflow_before_mutation)
+{
+	Fixture fixture;
+	RankState rank{0, 0};
+	UnlockState unlocks;
+	const auto before = unlocks;
+	BOOST_CHECK_THROW(InitializeRankAccount(rank, unlocks, *fixture.ranks,
+		(std::numeric_limits<std::uint64_t>::max)()), std::overflow_error);
+	BOOST_TEST(rank.level == 0u);
+	BOOST_TEST(unlocks.credits == before.credits);
+}

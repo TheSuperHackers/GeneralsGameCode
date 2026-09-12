@@ -1,0 +1,31 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+
+import games.generalszh.gameplay.crates.definitions.collector_definition;
+
+namespace crates = generalszh::crates;
+
+BOOST_AUTO_TEST_CASE(collector_definitions_are_immutable_typed_kind_bindings)
+{
+	const std::array units{crates::CollectorDefinition{4, 0x10, true}, crates::CollectorDefinition{9, 0x20}};
+	const std::array structures{crates::CollectorDefinition{4, crates::KindOfStructure, true}};
+	const crates::CollectorDefinitionCatalog catalog(units, structures);
+	BOOST_REQUIRE(catalog.Find(false, 9));
+	BOOST_TEST(catalog.Find(false, 9)->kindOf == 0x20u);
+	BOOST_TEST(catalog.Find(true, 4)->kindOf == crates::KindOfStructure);
+	BOOST_TEST(catalog.Find(false, 4)->supportsGroundVeterancy);
+	BOOST_CHECK(catalog.Find(false, 5) == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(kind_of_catalog_rejects_non_adjacent_case_insensitive_duplicates)
+{
+	const std::array bindings{crates::KindOfBinding{"A", 1u},
+		crates::KindOfBinding{"B", 2u}, crates::KindOfBinding{"a", 4u}};
+	BOOST_CHECK_THROW(crates::KindOfCatalog{bindings}, std::invalid_argument);
+
+	const std::array unique{crates::KindOfBinding{"A", 1u}, crates::KindOfBinding{"B", 2u}};
+	const crates::KindOfCatalog catalog{unique};
+	BOOST_REQUIRE(catalog.Find("a"));
+	BOOST_TEST(catalog.Find("a")->mask == 1u);
+}

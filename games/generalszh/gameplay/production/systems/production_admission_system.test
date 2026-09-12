@@ -1,0 +1,101 @@
+#define BOOST_TEST_MODULE GeneralsZHproductionadmissionsystem
+#include <boost/test/included/unit_test.hpp>
+#include "../testing/production_test_host.hpp"
+
+BOOST_AUTO_TEST_CASE(nonconsecutive_tick_fails_caller_and_cannot_restart)
+{
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); ProductionTestHost host(world, jobs, definitions);
+    const engine::time::FixedStep step{20}; host.Finalize(step);
+    host.Execute({0, step});
+    BOOST_CHECK_THROW(host.Execute({2, step}), std::invalid_argument);
+    BOOST_CHECK_THROW(host.StageInputs({}), std::logic_error);
+    BOOST_CHECK_THROW(host.Execute({1, step}), std::logic_error);
+    BOOST_CHECK_THROW(host.Configure(step), std::logic_error);
+}
+BOOST_AUTO_TEST_CASE(graph_inputs_refund_dead_producers_before_admission_without_skipping_fifo)
+{
+    auto run = [](std::size_t workers) {
+        ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+        engine::jobs::JobSystem jobs({workers}); const engine::time::FixedStep step{20};
+        ProductionTestHost production(world, jobs, definitions, 32); production.Finalize(step);
+        const auto account = world.Create<Balance>(); world.Get<Balance>(account)->quantity = 300;
+        const auto dead = production.CreateProducer(account), survivor = production.CreateProducer(account);
+        const std::array first{BuildInput{dead, 1}, BuildInput{dead, 1}, BuildInput{survivor, 1}};
+        production.StageInputs(first); production.Execute({0, step});
+        BOOST_REQUIRE(production.Receipts().size() == 3u);
+        std::vector<std::uint64_t> snapshot;
+        std::array<ecs::Entity, 3> ids;
+        for (std::size_t i = 0; i != ids.size(); ++i)
+        {
+            const auto receipt = production.Receipts()[i];
+            BOOST_CHECK(receipt.status == BuildAcceptance::Accepted);
+            ids[i] = receipt.order;
+            snapshot.insert(snapshot.end(), {receipt.order.index, receipt.order.generation});
+        }
+        BOOST_TEST(world.Get<Work>(ids[0])->elapsed == 1u);
+        BOOST_TEST(world.Get<Work>(ids[1])->elapsed == 0u);
+        world.Get<engine::gameplay::combat::LifeState>(dead)->alive = false;
+        const std::array second{BuildInput{dead, 2}, BuildInput{survivor, 1}, BuildInput{survivor, 2}};
+        production.StageInputs(second); production.Execute({1, step});
+        BOOST_CHECK(production.Receipts()[0].status == BuildAcceptance::InvalidProducer);
+        BOOST_CHECK(production.Receipts()[1].status == BuildAcceptance::Accepted);
+        BOOST_CHECK(production.Receipts()[2].status == BuildAcceptance::Accepted);
+        const auto next = production.Receipts()[1].order, research = production.Receipts()[2].order;
+        BOOST_TEST(!world.IsAlive(ids[0])); BOOST_TEST(!world.IsAlive(ids[1]));
+        BOOST_TEST(!world.IsAlive(ids[2]));
+        BOOST_TEST(world.Get<Balance>(account)->quantity == 50u);
+        BOOST_TEST(world.Get<Work>(next)->elapsed == 0u);
+        BOOST_TEST(world.Get<Work>(research)->elapsed == 0u);
+        snapshot.insert(snapshot.end(), {next.index, next.generation, research.index, research.generation, 50u});
+        production.Execute({2, step});
+        BOOST_TEST(production.Receipts().empty());
+        BOOST_TEST(world.Get<Work>(next)->elapsed == 1u);
+        production.Execute({3, step});
+        BOOST_TEST(!world.IsAlive(next)); BOOST_TEST(world.Get<Work>(research)->elapsed == 0u);
+        production.Execute({4, step}); BOOST_TEST(!world.IsAlive(research));
+        ecs::Query<ecs::Read<ProducedUnit>> units(world);
+        units.ForEachChunk([&](auto chunk) {
+            const auto values = chunk.template Get<ProducedUnit>();
+            for (std::size_t row = 0; row != chunk.Count(); ++row)
+            {
+                BOOST_CHECK(values[row].producer == survivor);
+                snapshot.insert(snapshot.end(), {chunk.Entities()[row].index, chunk.Entities()[row].generation,
+                    values[row].producer.index, values[row].account.index, values[row].definition});
+            }
+        });
+        ecs::Query<ecs::Read<ResearchedUpgrade>> grants(world);
+        grants.ForEachChunk([&](auto chunk) {
+            for (std::size_t row = 0; row != chunk.Count(); ++row)
+                snapshot.insert(snapshot.end(), {chunk.Entities()[row].index, chunk.Entities()[row].generation,
+                    chunk.template Get<ResearchedUpgrade>()[row].definition});
+        });
+        return snapshot;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(rejected_staged_replacement_preserves_inputs_balances_and_queue_counts)
+{
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); ProductionTestHost production(world, jobs, definitions, 2);
+    const engine::time::FixedStep step{20}; production.Finalize(step);
+    const auto account = world.Create<Balance>(); world.Get<Balance>(account)->quantity = 200;
+    const auto producer = production.CreateProducer(account, 2);
+    const std::array valid{BuildInput{producer, 1}};
+    const std::array oversized{BuildInput{producer, 1}, BuildInput{producer, 1}, BuildInput{producer, 1}};
+    production.StageInputs(valid);
+    BOOST_CHECK_THROW(production.StageInputs(oversized), std::length_error);
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 200u);
+    BOOST_TEST(world.Get<Queue>(producer)->count == 0u);
+    BOOST_TEST(production.Receipts().empty());
+    production.Execute({0, step});
+    BOOST_REQUIRE(production.Receipts().size() == 1u);
+    BOOST_CHECK(production.Receipts()[0].status == BuildAcceptance::Accepted);
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 100u);
+    BOOST_TEST(world.Get<Queue>(producer)->count == 1u);
+    production.Execute({1, step});
+    BOOST_TEST(production.Receipts().empty());
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 100u);
+    BOOST_TEST(world.Get<Queue>(producer)->count == 0u);
+}

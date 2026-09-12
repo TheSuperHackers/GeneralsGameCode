@@ -1,0 +1,80 @@
+#include <boost/test/unit_test.hpp>
+
+#include <array>
+
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.bounty.components.bounty_policy;
+import engine.gameplay.rts.unlocks.components.unlock_inbox;
+import engine.gameplay.rts.unlocks.components.unlock_state;
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+import engine.gameplay.rts.unlocks.inputs.unlock_batch;
+import engine.gameplay.rts.unlocks.systems.unlock_system;
+import games.generalszh.gameplay.bounty.definitions.cash_bounty_catalog;
+import games.generalszh.gameplay.bounty.systems.cash_bounty_policy_system;
+
+namespace
+{
+void MakeUnlocks(engine::gameplay::rts::unlocks::UnlockCatalog &catalog)
+{
+	catalog.Register({"SCIENCE_CashBounty1"});
+	catalog.Register({"SCIENCE_CashBounty2"});
+	catalog.Register({"SCIENCE_CashBounty3"});
+	catalog.Finalize();
+}
+}
+
+BOOST_AUTO_TEST_CASE(policy_activation_is_maximum_and_persistent)
+{
+	engine::gameplay::rts::unlocks::UnlockCatalog unlocks;
+	MakeUnlocks(unlocks);
+	using namespace generalszh::bounty;
+	using engine::gameplay::rts::bounty::BountyPolicy;
+	using engine::gameplay::rts::bounty::BountyRate;
+	using engine::gameplay::rts::unlocks::MakeUnlockKey;
+	const std::array definitions{
+		CashBountyDefinition{MakeUnlockKey("SCIENCE_CashBounty1"), BountyRate{1, 20}},
+		CashBountyDefinition{MakeUnlockKey("SCIENCE_CashBounty2"), BountyRate{1, 10}},
+		CashBountyDefinition{MakeUnlockKey("SCIENCE_CashBounty3"), BountyRate{1, 5}}};
+	const CashBountyCatalog bountyCatalog(definitions, unlocks);
+	CashBountyPolicySystem system(bountyCatalog);
+	ecs::World world;
+	world.RegisterComponent<BountyPolicy>();
+	world.RegisterComponent<engine::gameplay::rts::unlocks::UnlockState>();
+	world.RegisterComponent<engine::gameplay::rts::unlocks::UnlockInbox>();
+	world.FinalizeComponents();
+	const auto account = world.Create<BountyPolicy, engine::gameplay::rts::unlocks::UnlockState,
+		engine::gameplay::rts::unlocks::UnlockInbox>();
+	const auto id1 = unlocks.Find(MakeUnlockKey("SCIENCE_CashBounty1"));
+	const auto id3 = unlocks.Find(MakeUnlockKey("SCIENCE_CashBounty3"));
+	world.Get<engine::gameplay::rts::unlocks::UnlockState>(account)->SetOwned(id1);
+	ecs::SystemRegistry registry;
+	engine::gameplay::rts::unlocks::UnlockBatch unlockBatch{4};
+	engine::gameplay::rts::unlocks::UnlockSystem unlockSystem(unlocks, unlockBatch);
+	registry.Register(unlockSystem);
+	registry.Register(system);
+	registry.OrderBefore<CashBountyPolicySystem,
+		engine::gameplay::rts::unlocks::UnlockSystem>();
+	registry.Finalize(world.Components());
+	engine::jobs::JobSystem jobs({1});
+	ecs::Scheduler scheduler(world, registry, jobs);
+	scheduler.Finalize(engine::time::FixedStep{30});
+	scheduler.Execute({0, engine::time::FixedStep{30}});
+	const auto first = BountyRate{1, 20};
+	BOOST_TEST(world.Get<BountyPolicy>(account)->maximum.numerator == first.numerator);
+	BOOST_TEST(world.Get<BountyPolicy>(account)->maximum.denominator == first.denominator);
+	const std::array<engine::gameplay::rts::unlocks::UnlockRequest, 1> grant{{
+		engine::gameplay::rts::unlocks::UnlockRequest{
+		account, engine::gameplay::rts::unlocks::MakeUnlockKey("SCIENCE_CashBounty3"),
+		engine::gameplay::rts::unlocks::UnlockOperation::Grant}}};
+	unlockBatch.SetInputs(grant);
+	scheduler.Execute({1, engine::time::FixedStep{30}});
+	// Policy is deliberately a pre-Unlock snapshot: the grant becomes visible
+	// to policy activation on the following tick, not retroactively in this one.
+	BOOST_CHECK(world.Get<engine::gameplay::rts::unlocks::UnlockState>(account)->IsOwned(id3));
+	BOOST_TEST(world.Get<BountyPolicy>(account)->maximum.numerator == first.numerator);
+	BOOST_TEST(world.Get<BountyPolicy>(account)->maximum.denominator == first.denominator);
+	scheduler.Execute({2, engine::time::FixedStep{30}});
+	const auto third = BountyRate{1, 5};
+	BOOST_TEST(world.Get<BountyPolicy>(account)->maximum.numerator == third.numerator);
+	BOOST_TEST(world.Get<BountyPolicy>(account)->maximum.denominator == third.denominator);
+}

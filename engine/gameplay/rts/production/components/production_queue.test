@@ -1,0 +1,34 @@
+#include <boost/test/unit_test.hpp>
+
+#include <cstdint>
+#include <limits>
+#include <type_traits>
+
+import engine.gameplay.rts.production.components.production_queue;
+
+using engine::gameplay::rts::production::ProductionQueue;
+using engine::gameplay::rts::production::ProductionQueueMember;
+
+BOOST_AUTO_TEST_CASE(component_traits_and_empty_layout_are_stable)
+{
+	using Queue = ProductionQueue;
+	using Member = ProductionQueueMember;
+	static_assert(std::is_standard_layout_v<Queue>);
+	static_assert(std::is_trivially_copyable_v<Queue>);
+	static_assert(std::is_standard_layout_v<Member>);
+	static_assert(std::is_trivially_copyable_v<Member>);
+
+	BOOST_TEST(Queue{}.offset == (std::numeric_limits<std::uint32_t>::max)());
+	BOOST_TEST(Queue{}.count == 0u);
+	BOOST_TEST(Queue{}.capacity == 0u);
+	BOOST_TEST(ecs::ComponentTraits<Queue>::StableName ==
+		"engine.gameplay.rts.production.queue");
+	BOOST_TEST(ecs::ComponentTraits<Member>::StableName ==
+		"engine.gameplay.rts.production.queue_member");
+	BOOST_TEST(ecs::ComponentTraits<Queue>::Version == 1u);
+	BOOST_TEST(ecs::ComponentTraits<Member>::Version == 1u);
+	BOOST_CHECK(static_cast<std::uint8_t>(ecs::ComponentTraits<Queue>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+	BOOST_CHECK(static_cast<std::uint8_t>(ecs::ComponentTraits<Member>::Persistence) ==
+		static_cast<std::uint8_t>(ecs::PersistencePolicy::Serializable));
+}

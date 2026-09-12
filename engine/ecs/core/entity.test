@@ -1,0 +1,26 @@
+#define BOOST_TEST_MODULE EngineEcsEntityTests
+#include <boost/test/included/unit_test.hpp>
+
+import engine.ecs.core.entity;
+
+BOOST_AUTO_TEST_SUITE(ecs_entity)
+
+BOOST_AUTO_TEST_CASE(null_entity_is_invalid)
+{
+	BOOST_TEST(!ecs::Entity::Null().IsValid());
+	const ecs::Entity nonNull{0, 1};
+	BOOST_CHECK(ecs::Entity::Null() != nonNull);
+}
+
+BOOST_AUTO_TEST_CASE(index_and_generation_define_identity)
+{
+	const ecs::Entity first{7, 3};
+	const ecs::Entity same{7, 3};
+	const ecs::Entity differentGeneration{7, 4};
+
+	BOOST_TEST(first.IsValid());
+	BOOST_CHECK(first == same);
+	BOOST_CHECK(first != differentGeneration);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

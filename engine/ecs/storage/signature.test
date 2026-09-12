@@ -1,0 +1,86 @@
+#include <boost/test/unit_test.hpp>
+
+#include <algorithm>
+#include <cstdint>
+#include <string_view>
+#include <vector>
+
+import engine.ecs.storage.signature;
+
+namespace signature_test
+{
+
+struct SignatureTestComponentA
+{
+};
+
+struct SignatureTestComponentB
+{
+};
+
+} // namespace signature_test
+
+namespace ecs
+{
+
+template<>
+struct ComponentTraits<signature_test::SignatureTestComponentA>
+{
+	static constexpr std::string_view StableName = "tests.signature.a";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct ComponentTraits<signature_test::SignatureTestComponentB>
+{
+	static constexpr std::string_view StableName = "tests.signature.b";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+} // namespace ecs
+
+BOOST_AUTO_TEST_SUITE(ecs_signature)
+
+BOOST_AUTO_TEST_CASE(canonicalization_sorts_and_deduplicates)
+{
+	ecs::ComponentRegistry registry;
+	registry.Register<signature_test::SignatureTestComponentA>();
+	registry.Register<signature_test::SignatureTestComponentB>();
+	registry.Finalize();
+	const ecs::ComponentId a = registry.TryGet<signature_test::SignatureTestComponentA>();
+	const ecs::ComponentId b = registry.TryGet<signature_test::SignatureTestComponentB>();
+	ecs::Signature signature{b, a, b};
+
+	ecs::CanonicalizeSignature(signature);
+
+	const ecs::Signature expected{(std::min)(a, b), (std::max)(a, b)};
+	BOOST_CHECK(signature == expected);
+	BOOST_TEST(ecs::SignatureLess{}(ecs::Signature({expected[0]}), ecs::Signature({expected[1]})));
+}
+
+BOOST_AUTO_TEST_CASE(archetype_signatures_are_stable_across_registration_orders)
+{
+	ecs::ComponentRegistry firstRegistry;
+	firstRegistry.Register<signature_test::SignatureTestComponentB>();
+	firstRegistry.Register<signature_test::SignatureTestComponentA>();
+	firstRegistry.Finalize();
+	ecs::Signature first{
+		firstRegistry.TryGet<signature_test::SignatureTestComponentB>(),
+		firstRegistry.TryGet<signature_test::SignatureTestComponentA>()};
+	ecs::CanonicalizeSignature(first);
+
+	ecs::ComponentRegistry secondRegistry;
+	secondRegistry.Register<signature_test::SignatureTestComponentA>();
+	secondRegistry.Register<signature_test::SignatureTestComponentB>();
+	secondRegistry.Finalize();
+	ecs::Signature second{
+		secondRegistry.TryGet<signature_test::SignatureTestComponentA>(),
+		secondRegistry.TryGet<signature_test::SignatureTestComponentB>()};
+	ecs::CanonicalizeSignature(second);
+
+	BOOST_CHECK(first == second);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

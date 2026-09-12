@@ -1,0 +1,73 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <stdexcept>
+import engine.gameplay.navigation.fields.flow_fields;
+using namespace engine::gameplay::navigation;
+BOOST_AUTO_TEST_CASE(flow_fields_reuse_destinations_and_route_around_obstacles)
+{
+    const std::array<std::uint8_t, 9> terrain{1,1,1,1,0,1,1,1,1}; const NavigationGrid grid(3,3,terrain);
+    engine::jobs::JobSystem workers({2}); FlowFields fields(grid, {2, 9}); const std::array goals{Cell{2}, Cell{8}};
+    fields.Prepare(goals, workers); BOOST_TEST(fields.RebuiltFields() == 2u);
+    Cell position = 0; const auto field = fields.Find(8);
+    for (int step = 0; step != 4; ++step) { position = fields.Next(field, position); BOOST_TEST(grid.Walkable(position)); }
+    BOOST_TEST(position == 8u); fields.Prepare(goals, workers); BOOST_TEST(fields.RebuiltFields() == 0u);
+    const std::array replacement{Cell{0}, Cell{8}}; fields.Prepare(replacement, workers); BOOST_TEST(fields.RebuiltFields() == 1u);
+    BOOST_TEST(fields.Next(fields.Find(8), 4) == InvalidCell);
+}
+
+BOOST_AUTO_TEST_CASE(range_goal_accepts_blocked_center_and_seeds_all_walkable_cells)
+{
+    const std::array<std::uint8_t, 15> terrain{1,1,1,1,1,1,1,0,1,1,1,1,1,1,1};
+    const NavigationGrid grid(5,3,terrain); engine::jobs::JobSystem workers({2});
+    FlowFields fields(grid, {2,15});
+    const auto key=FlowGoalKey::ForRange(7,1); const std::array goals{key};
+    fields.Prepare(goals,workers);
+    const auto field=fields.Find(key);
+    BOOST_TEST(field!=InvalidCell);
+    BOOST_TEST(fields.Next(field,6)==6u); BOOST_TEST(fields.Next(field,8)==8u);
+    BOOST_TEST(fields.Next(field,7)==InvalidCell);
+    Cell position=0;
+    for(std::size_t step=0;step!=4&&fields.Next(field,position)!=position;++step)
+        position=fields.Next(field,position);
+    BOOST_TEST(position==2u);
+}
+
+BOOST_AUTO_TEST_CASE(range_goal_with_no_walkable_seed_is_unreachable_not_fatal)
+{
+    const std::array<std::uint8_t, 3> terrain{1,0,1}; const NavigationGrid grid(3,1,terrain);
+    engine::jobs::JobSystem workers({1}); FlowFields fields(grid,{1,3});
+    const auto key=FlowGoalKey::ForRange(1,0); const std::array goals{key};
+    fields.Prepare(goals,workers);
+    BOOST_TEST(fields.Find(key)!=InvalidCell); BOOST_TEST(fields.Next(fields.Find(key),0)==InvalidCell);
+}
+
+BOOST_AUTO_TEST_CASE(tagged_range_keys_share_bounded_capacity_without_aliasing_cell_or_radius)
+{
+    std::array<std::uint8_t, 25> walkable; walkable.fill(1);
+    const NavigationGrid grid(5,5,walkable); engine::jobs::JobSystem workers({2});
+    FlowFields fields(grid,{3,25});
+    const auto cell=FlowGoalKey::ForCell(12);
+    const auto rangeZero=FlowGoalKey::ForRange(12,0);
+    const auto rangeOne=FlowGoalKey::ForRange(12,1);
+    const std::array mixed{cell,rangeZero,rangeOne};
+    fields.Prepare(mixed,workers);
+    BOOST_TEST(fields.RebuiltFields()==3u);
+    BOOST_TEST(fields.Find(cell)!=InvalidCell);
+    BOOST_TEST(fields.Find(rangeZero)!=InvalidCell);
+    BOOST_TEST(fields.Find(rangeOne)!=InvalidCell);
+    BOOST_TEST(fields.Find(cell)!=fields.Find(rangeZero));
+    BOOST_TEST(fields.Find(rangeZero)!=fields.Find(rangeOne));
+
+    fields.Prepare(mixed,workers); BOOST_TEST(fields.RebuiltFields()==0u);
+    const auto rangeTwo=FlowGoalKey::ForRange(12,2);
+    const std::array replacement{rangeZero,rangeOne,rangeTwo};
+    fields.Prepare(replacement,workers);
+    BOOST_TEST(fields.RebuiltFields()==1u);
+    BOOST_TEST(fields.Find(cell)==InvalidCell);
+    BOOST_TEST(fields.Find(rangeZero)!=InvalidCell);
+    BOOST_TEST(fields.Find(rangeOne)!=InvalidCell);
+    BOOST_TEST(fields.Find(rangeTwo)!=InvalidCell);
+
+    const std::array overCapacity{cell,rangeZero,rangeOne,rangeTwo};
+    BOOST_CHECK_THROW(fields.Prepare(overCapacity,workers),std::length_error);
+}

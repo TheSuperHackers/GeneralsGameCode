@@ -1,0 +1,25 @@
+#include <boost/test/unit_test.hpp>
+#include <cstddef>
+#include <string_view>
+#include <type_traits>
+import games.generalszh.gameplay.economy.components.income_history;
+
+BOOST_AUTO_TEST_CASE(income_history_preserves_layout_defaults_and_schema)
+{
+	using Component = generalszh::economy::IncomeHistory;
+	static_assert(std::is_standard_layout_v<Component>);
+	static_assert(std::is_trivially_copyable_v<Component>);
+	static_assert(offsetof(Component, buckets) == 0u);
+	static_assert(offsetof(Component, current) > offsetof(Component, buckets));
+	static_assert(offsetof(Component, total) > offsetof(Component, current));
+	static_assert(ecs::ComponentTraits<Component>::StableName
+		== std::string_view{"games.generalszh.economy.income_history"});
+	static_assert(ecs::ComponentTraits<Component>::Version == 1u);
+	static_assert(ecs::ComponentTraits<Component>::Persistence
+		== ecs::PersistencePolicy::Serializable);
+
+	const Component defaults{};
+	BOOST_TEST(defaults.current == 0u);
+	BOOST_TEST(defaults.total == 0u);
+	for (const auto bucket : defaults.buckets) BOOST_TEST(bucket == 0u);
+}

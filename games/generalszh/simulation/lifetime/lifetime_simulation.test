@@ -1,0 +1,25 @@
+#define BOOST_TEST_MODULE GeneralsZHLifetimeSimulation
+#include <boost/test/included/unit_test.hpp>
+#include <string_view>
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+import games.generalszh.simulation.lifetime.lifetime_simulation;
+
+BOOST_AUTO_TEST_CASE(production_lifetime_plan_requires_finalization_and_runs_real_systems)
+{
+	using namespace engine::gameplay::lifetime;
+	using generalszh::lifetime::LifetimeDispatch;
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.RegisterComponent<LifetimeDispatch>();
+	world.FinalizeComponents();
+	generalszh::GameplayWorkers workers(2);
+	generalszh::LifetimeSimulation simulation(world, workers);
+	const engine::time::FixedStep step{30};
+	BOOST_CHECK_THROW(simulation.Execute({0, step}), std::logic_error);
+	simulation.Finalize(step);
+	const auto entity = world.Create<Expiration, LifetimeDispatch>();
+	ArmAfter(*world.Get<Expiration>(entity), 0, 1);
+	simulation.Execute({1, step});
+	BOOST_TEST(world.Get<LifetimeDispatch>(entity)->ready);
+}

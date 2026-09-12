@@ -1,0 +1,10 @@
+#include <boost/test/unit_test.hpp>
+import engine.gameplay.rts.production.algorithms.advance_build;
+using namespace engine::gameplay::rts::production;
+BOOST_AUTO_TEST_CASE(shared_build_advance_preserves_fractional_credit_across_pause)
+{
+    BuildWork work{1,0,1,2};BuildEnabled enabled{true};BuildReady ready;
+    AdvanceBuild(work,enabled,ready);BOOST_TEST(work.elapsed==0u);BOOST_TEST(work.remainder==1u);
+    enabled.value=false;AdvanceBuild(work,enabled,ready);BOOST_TEST(work.remainder==1u);BOOST_TEST(!ready.value);
+    enabled.value=true;AdvanceBuild(work,enabled,ready);BOOST_TEST(work.elapsed==1u);BOOST_TEST(ready.value);
+}

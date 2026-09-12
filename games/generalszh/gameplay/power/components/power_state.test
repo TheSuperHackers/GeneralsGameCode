@@ -1,0 +1,31 @@
+#include <boost/test/unit_test.hpp>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+
+import games.generalszh.gameplay.power.components.power_state;
+
+BOOST_AUTO_TEST_CASE(power_state_components_keep_defaults_and_schema)
+{
+    using namespace generalszh::power;
+    static_assert(std::is_standard_layout_v<PowerPolicy>);
+    static_assert(std::is_trivially_copyable_v<PowerPolicy>);
+    static_assert(std::is_standard_layout_v<PowerState>);
+    static_assert(std::is_trivially_copyable_v<PowerState>);
+
+    BOOST_TEST(PowerPolicy{}.affected);
+    const PowerState state{};
+    BOOST_TEST(!state.brownout);
+    BOOST_TEST(state.speedNumerator == 10000u);
+    BOOST_TEST(state.speedDenominator == 10000u);
+    BOOST_TEST(ecs::ComponentTraits<PowerPolicy>::StableName
+        == "games.generalszh.power.policy");
+    BOOST_TEST(ecs::ComponentTraits<PowerPolicy>::Version == 1u);
+    BOOST_CHECK(ecs::ComponentTraits<PowerPolicy>::Persistence
+        == ecs::PersistencePolicy::Serializable);
+    BOOST_TEST(ecs::ComponentTraits<PowerState>::StableName
+        == "games.generalszh.power.state");
+    BOOST_TEST(ecs::ComponentTraits<PowerState>::Version == 1u);
+    BOOST_CHECK(ecs::ComponentTraits<PowerState>::Persistence
+        == ecs::PersistencePolicy::Transient);
+}

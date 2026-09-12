@@ -1,0 +1,560 @@
+#define BOOST_TEST_MODULE LegacyDoorTransitions
+#include <boost/test/included/unit_test.hpp>
+
+#include <array>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+
+import games.generalszh.gameplay.production.doors.algorithms.legacy_door_transitions;
+import engine.ecs.scheduler.scheduler;
+
+using generalszh::production::AdvanceDoor;
+using generalszh::production::DoorChanges;
+using generalszh::production::DoorClosing;
+using generalszh::production::DoorClosingFlag;
+using generalszh::production::DoorHold;
+using generalszh::production::DoorOpening;
+using generalszh::production::DoorOpeningFlag;
+using generalszh::production::DoorTiming;
+using generalszh::production::DoorView;
+using generalszh::production::DoorWaiting;
+using generalszh::production::DoorWaitingFlag;
+using generalszh::production::HoldDoor;
+using generalszh::production::RequestDoorForExit;
+
+namespace production_door_test
+{
+struct WorkerOutput
+{
+	std::uint8_t clear{0};
+	std::uint8_t set{0};
+};
+
+
+// Historical test-only helper harness, not production execution evidence.
+struct DoorSystem
+{
+	using Query = ecs::Query<ecs::Write<DoorOpening>,
+		ecs::Write<DoorWaiting>,
+		ecs::Write<DoorClosing>,
+		ecs::Write<DoorHold>,
+		ecs::Write<WorkerOutput>>;
+
+	DoorTiming timing;
+
+	void Execute(const Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		const auto opening = chunk.Get<DoorOpening>();
+		const auto waiting = chunk.Get<DoorWaiting>();
+		const auto closing = chunk.Get<DoorClosing>();
+		const auto hold = chunk.Get<DoorHold>();
+		const auto output = chunk.Get<WorkerOutput>();
+		for (std::size_t row = 0; row < chunk.Count(); ++row)
+		{
+			DoorView view{opening[row], waiting[row], closing[row], hold[row]};
+			const DoorChanges changes = AdvanceDoor(view, context.Tick(), timing);
+			output[row] = WorkerOutput{changes.clear, changes.set};
+		}
+	}
+};
+} // namespace production_door_test
+
+namespace ecs
+{
+template<>
+struct ComponentTraits<production_door_test::WorkerOutput>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.production.door.worker_output";
+	static constexpr std::uint32_t Version = 1;
+	static constexpr PersistencePolicy Persistence = PersistencePolicy::Transient;
+};
+
+template<>
+struct SystemTraits<production_door_test::DoorSystem>
+{
+	static constexpr std::string_view StableName = "tests.generalszh.production.door.system";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+} // namespace ecs
+
+namespace production_door_test
+{
+
+struct OracleState
+{
+	std::uint64_t opening{0};
+	std::uint64_t waiting{0};
+	std::uint64_t closing{0};
+	bool hold{false};
+};
+
+DoorChanges OracleAdvance(OracleState &state,
+	const std::uint64_t now,
+	const DoorTiming &timing) noexcept
+{
+	if (state.opening != 0)
+	{
+		if (now - state.opening > timing.opening)
+		{
+			state.opening = 0;
+			state.waiting = now;
+			return DoorChanges{DoorOpeningFlag, DoorWaitingFlag};
+		}
+	}
+	else if (state.waiting != 0)
+	{
+		if (now - state.waiting > timing.waiting && !state.hold)
+		{
+			state.waiting = 0;
+			state.closing = now;
+			return DoorChanges{DoorWaitingFlag, DoorClosingFlag};
+		}
+	}
+	else if (state.closing != 0 && !state.hold)
+	{
+		if (now - state.closing > timing.closing)
+		{
+			state.closing = 0;
+			return DoorChanges{DoorClosingFlag, 0};
+		}
+	}
+
+	return {};
+}
+
+DoorChanges OracleRequest(OracleState &state, const std::uint64_t now) noexcept
+{
+	if (state.opening == 0 && state.waiting == 0 && state.closing == 0)
+	{
+		state.opening = now;
+		return DoorChanges{0, DoorOpeningFlag};
+	}
+	if (state.waiting != 0)
+	{
+		state.waiting = now;
+		return {};
+	}
+	if (state.closing != 0)
+	{
+		state.waiting = now;
+		return DoorChanges{
+			static_cast<std::uint8_t>(DoorOpeningFlag | DoorClosingFlag),
+			DoorWaitingFlag};
+	}
+	return {};
+}
+
+DoorChanges OracleHold(OracleState &state, const bool hold, const std::uint64_t now) noexcept
+{
+	state.hold = hold;
+	if (hold && state.opening == 0 && state.waiting == 0 && state.closing == 0)
+	{
+		state.opening = now;
+		return DoorChanges{0, DoorOpeningFlag};
+	}
+	return {};
+}
+
+void CheckChanges(const DoorChanges actual,
+	const std::uint8_t clear,
+	const std::uint8_t set)
+{
+	BOOST_TEST(actual.clear == clear);
+	BOOST_TEST(actual.set == set);
+}
+
+void CheckState(const DoorView view, const OracleState &expected)
+{
+	BOOST_TEST(view.opening.tick == expected.opening);
+	BOOST_TEST(view.waiting.tick == expected.waiting);
+	BOOST_TEST(view.closing.tick == expected.closing);
+	BOOST_TEST(view.hold.value == expected.hold);
+}
+
+using Snapshot = std::vector<std::array<std::uint64_t, 8>>;
+
+Snapshot RunScheduledDoors(const std::size_t workers)
+{
+	constexpr std::size_t entityCount = 4096;
+	constexpr std::uint64_t now = 1'000'000;
+	const DoorTiming timing{5, 5, 5};
+
+	ecs::World world{ecs::WorldConfig{256}};
+	world.RegisterComponent<DoorOpening>();
+	world.RegisterComponent<DoorWaiting>();
+	world.RegisterComponent<DoorClosing>();
+	world.RegisterComponent<DoorHold>();
+	world.RegisterComponent<WorkerOutput>();
+	world.FinalizeComponents();
+
+	std::vector<ecs::Entity> entities;
+	entities.reserve(entityCount);
+	std::vector<OracleState> expected;
+	expected.reserve(entityCount);
+	for (std::size_t index = 0; index < entityCount; ++index)
+	{
+		const ecs::Entity entity = world.Create<DoorOpening, DoorWaiting, DoorClosing, DoorHold, WorkerOutput>();
+		auto *opening = world.Get<DoorOpening>(entity);
+		auto *waiting = world.Get<DoorWaiting>(entity);
+		auto *closing = world.Get<DoorClosing>(entity);
+		auto *hold = world.Get<DoorHold>(entity);
+		auto *output = world.Get<WorkerOutput>(entity);
+		BOOST_REQUIRE(opening != nullptr);
+		BOOST_REQUIRE(waiting != nullptr);
+		BOOST_REQUIRE(closing != nullptr);
+		BOOST_REQUIRE(hold != nullptr);
+		BOOST_REQUIRE(output != nullptr);
+
+		const std::uint64_t marker = now - (static_cast<std::uint64_t>(index % 12) + 1);
+		switch (index % 6)
+		{
+		case 0:
+			opening->tick = marker;
+			break;
+		case 1:
+			waiting->tick = marker;
+			break;
+		case 2:
+			closing->tick = marker;
+			break;
+		case 3:
+			opening->tick = marker;
+			waiting->tick = marker;
+			closing->tick = marker;
+			break;
+		case 4:
+			waiting->tick = marker;
+			hold->value = true;
+			break;
+		default:
+			break;
+		}
+		expected.push_back(OracleState{opening->tick, waiting->tick, closing->tick, hold->value});
+		entities.push_back(entity);
+	}
+
+	DoorSystem system{timing};
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+	const engine::time::FixedStep step{60};
+	scheduler.Finalize(step);
+	scheduler.Execute(engine::time::SimulationTime{now, step});
+
+	ecs::Query<ecs::Read<DoorOpening>,
+		ecs::Read<DoorWaiting>,
+		ecs::Read<DoorClosing>,
+		ecs::Read<DoorHold>,
+		ecs::Read<WorkerOutput>> query(world);
+	BOOST_REQUIRE(query.PrepareChunks() > 1u);
+
+	Snapshot result;
+	result.reserve(entityCount);
+	for (std::size_t index = 0; index < entities.size(); ++index)
+	{
+		const ecs::Entity entity = entities[index];
+		const auto *opening = world.Get<DoorOpening>(entity);
+		const auto *waiting = world.Get<DoorWaiting>(entity);
+		const auto *closing = world.Get<DoorClosing>(entity);
+		const auto *hold = world.Get<DoorHold>(entity);
+		const auto *output = world.Get<WorkerOutput>(entity);
+		BOOST_REQUIRE(opening != nullptr);
+		BOOST_REQUIRE(waiting != nullptr);
+		BOOST_REQUIRE(closing != nullptr);
+		BOOST_REQUIRE(hold != nullptr);
+		BOOST_REQUIRE(output != nullptr);
+
+		const DoorChanges expectedChanges = OracleAdvance(expected[index], now, timing);
+		BOOST_TEST(opening->tick == expected[index].opening);
+		BOOST_TEST(waiting->tick == expected[index].waiting);
+		BOOST_TEST(closing->tick == expected[index].closing);
+		BOOST_TEST(hold->value == expected[index].hold);
+		BOOST_TEST(output->clear == expectedChanges.clear);
+		BOOST_TEST(output->set == expectedChanges.set);
+		result.push_back({
+			static_cast<std::uint64_t>(entity.index),
+			static_cast<std::uint64_t>(entity.generation),
+			opening->tick,
+			waiting->tick,
+			closing->tick,
+			hold->value ? 1u : 0u,
+			output->clear,
+			output->set});
+	}
+	return result;
+}
+} // namespace production_door_test
+
+using namespace production_door_test;
+
+BOOST_AUTO_TEST_CASE(changes_defaults_and_layout)
+{
+ static_assert(std::is_standard_layout_v<DoorChanges>);
+ static_assert(std::is_trivially_copyable_v<DoorChanges>);
+ BOOST_TEST(DoorChanges{}.clear == 0u);
+ BOOST_TEST(DoorChanges{}.set == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(advance_uses_strict_boundaries_and_one_transition_per_call)
+{
+	const DoorTiming timing{5, 5, 5};
+
+	DoorOpening opening{10};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+	static_assert(noexcept(AdvanceDoor(view, std::uint64_t{0}, timing)));
+	CheckChanges(AdvanceDoor(view, 15u, timing), 0, 0);
+	BOOST_TEST(opening.tick == 10u);
+	CheckChanges(AdvanceDoor(view, 16u, timing), DoorOpeningFlag, DoorWaitingFlag);
+	BOOST_TEST(opening.tick == 0u);
+	BOOST_TEST(waiting.tick == 16u);
+	BOOST_TEST(closing.tick == 0u);
+
+	waiting.tick = 10;
+	CheckChanges(AdvanceDoor(view, 15u, timing), 0, 0);
+	CheckChanges(AdvanceDoor(view, 16u, timing), DoorWaitingFlag, DoorClosingFlag);
+	BOOST_TEST(waiting.tick == 0u);
+	BOOST_TEST(closing.tick == 16u);
+
+	closing.tick = 10;
+	CheckChanges(AdvanceDoor(view, 15u, timing), 0, 0);
+	CheckChanges(AdvanceDoor(view, 16u, timing), DoorClosingFlag, 0);
+	BOOST_TEST(closing.tick == 0u);
+
+	opening.tick = 10;
+	waiting.tick = 1;
+	closing.tick = 2;
+	// Older waiting/closing markers are expired, but opening has priority.
+	CheckChanges(AdvanceDoor(view, 15u, timing), 0, 0);
+	BOOST_TEST(opening.tick == 10u);
+	BOOST_TEST(waiting.tick == 1u);
+	BOOST_TEST(closing.tick == 2u);
+	CheckChanges(AdvanceDoor(view, 16u, timing), DoorOpeningFlag, DoorWaitingFlag);
+	BOOST_TEST(waiting.tick == 16u);
+	BOOST_TEST(closing.tick == 2u);
+}
+
+
+BOOST_AUTO_TEST_CASE(zero_is_a_sentinel_and_does_not_form_an_active_phase)
+{
+	const DoorTiming timing{0, 0, 0};
+	DoorOpening opening{};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+
+	CheckChanges(AdvanceDoor(view, 100u, timing), 0, 0);
+	CheckChanges(RequestDoorForExit(view, 0), 0, DoorOpeningFlag);
+	BOOST_TEST(opening.tick == 0u);
+	CheckChanges(AdvanceDoor(view, 100u, timing), 0, 0);
+
+	waiting.tick = 10;
+	CheckChanges(AdvanceDoor(view, 11u, timing), DoorWaitingFlag, DoorClosingFlag);
+	BOOST_TEST(waiting.tick == 0u);
+	BOOST_TEST(closing.tick == 11u);
+}
+
+
+BOOST_AUTO_TEST_CASE(hold_blocks_waiting_and_closing_but_not_opening_transition)
+{
+	const DoorTiming timing{5, 5, 5};
+	DoorOpening opening{};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+
+	CheckChanges(HoldDoor(view, true, 42), 0, DoorOpeningFlag);
+	BOOST_TEST(hold.value);
+	BOOST_TEST(opening.tick == 42u);
+	CheckChanges(AdvanceDoor(view, 48u, timing), DoorOpeningFlag, DoorWaitingFlag);
+	BOOST_TEST(waiting.tick == 48u);
+
+	CheckChanges(AdvanceDoor(view, 54u, timing), 0, 0);
+	BOOST_TEST(waiting.tick == 48u);
+	CheckChanges(HoldDoor(view, false, 54), 0, 0);
+	CheckChanges(AdvanceDoor(view, 54u, timing), DoorWaitingFlag, DoorClosingFlag);
+
+	CheckChanges(HoldDoor(view, true, 60), 0, 0);
+	CheckChanges(AdvanceDoor(view, 66u, timing), 0, 0);
+	BOOST_TEST(closing.tick == 54u);
+	CheckChanges(HoldDoor(view, false, 66), 0, 0);
+	CheckChanges(AdvanceDoor(view, 66u, timing), DoorClosingFlag, 0);
+	BOOST_TEST(closing.tick == 0u);
+}
+
+
+BOOST_AUTO_TEST_CASE(exit_requests_match_completion_updates_and_flag_masks)
+{
+	DoorOpening opening{};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+
+	opening.tick = 9;
+	CheckChanges(RequestDoorForExit(view, 100), 0, 0);
+	BOOST_TEST(opening.tick == 9u);
+
+	opening.tick = 0;
+	waiting.tick = 20;
+	closing.tick = 30;
+	CheckChanges(RequestDoorForExit(view, 101), 0, 0);
+	BOOST_TEST(waiting.tick == 101u);
+	BOOST_TEST(closing.tick == 30u);
+
+	waiting.tick = 0;
+	opening.tick = 0;
+	closing.tick = 30;
+	CheckChanges(RequestDoorForExit(view, 102),
+		static_cast<std::uint8_t>(DoorOpeningFlag | DoorClosingFlag), DoorWaitingFlag);
+	BOOST_TEST(opening.tick == 0u);
+	BOOST_TEST(waiting.tick == 102u);
+	BOOST_TEST(closing.tick == 30u);
+}
+
+
+BOOST_AUTO_TEST_CASE(closing_reopen_retains_the_closing_marker_until_waiting_finishes)
+{
+	const DoorTiming timing{5, 5, 5};
+	DoorOpening opening{};
+	DoorWaiting waiting{};
+	DoorClosing closing{40};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+
+	CheckChanges(RequestDoorForExit(view, 100),
+		static_cast<std::uint8_t>(DoorOpeningFlag | DoorClosingFlag), DoorWaitingFlag);
+	BOOST_TEST(waiting.tick == 100u);
+	BOOST_TEST(closing.tick == 40u);
+
+	CheckChanges(AdvanceDoor(view, 106u, timing), DoorWaitingFlag, DoorClosingFlag);
+	BOOST_TEST(waiting.tick == 0u);
+	BOOST_TEST(closing.tick == 106u);
+}
+
+
+BOOST_AUTO_TEST_CASE(explicit_32_bit_wrap_differs_from_explicit_64_bit_time)
+{
+	const DoorTiming timing{100, 100, 100};
+	DoorOpening opening32{0xfffffff0u};
+	DoorWaiting waiting32{};
+	DoorClosing closing32{};
+	DoorHold hold32{};
+	DoorView view32{opening32, waiting32, closing32, hold32};
+	CheckChanges(AdvanceDoor<std::uint32_t>(view32, 0x10u, timing), 0, 0);
+	BOOST_TEST(opening32.tick == 0xfffffff0u);
+
+	DoorOpening opening64{0xfffffff0u};
+	DoorWaiting waiting64{};
+	DoorClosing closing64{};
+	DoorHold hold64{};
+	DoorView view64{opening64, waiting64, closing64, hold64};
+	CheckChanges(AdvanceDoor<std::uint64_t>(view64, 0x10u, timing),
+		DoorOpeningFlag, DoorWaitingFlag);
+	BOOST_TEST(opening64.tick == 0u);
+	BOOST_TEST(waiting64.tick == 0x10u);
+}
+
+
+BOOST_AUTO_TEST_CASE(default_clock_stays_64_bit_for_a_32_bit_literal)
+{
+	const DoorTiming timing{100, 100, 100};
+	DoorOpening opening{0xfffffff0u};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+
+	CheckChanges(AdvanceDoor(view, 0x10u, timing), DoorOpeningFlag, DoorWaitingFlag);
+	BOOST_TEST(opening.tick == 0u);
+	BOOST_TEST(waiting.tick == 0x10u);
+}
+
+
+BOOST_AUTO_TEST_CASE(modern_64_bit_ticks_are_not_narrowed)
+{
+	const std::uint64_t marker = (std::uint64_t{1} << 40) + 10;
+	const std::uint64_t now = marker + 32;
+	DoorOpening opening{marker};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+
+	CheckChanges(AdvanceDoor<std::uint64_t>(view, now, DoorTiming{31, 0, 0}),
+		DoorOpeningFlag, DoorWaitingFlag);
+	BOOST_TEST(waiting.tick == now);
+
+	opening.tick = marker;
+	waiting.tick = 0;
+	CheckChanges(RequestDoorForExit(view, (std::uint64_t{1} << 40) + 100), 0, 0);
+	BOOST_TEST(opening.tick == marker);
+}
+
+
+BOOST_AUTO_TEST_CASE(independent_scalar_oracle_matches_a_long_mixed_sequence)
+{
+	const DoorTiming timing{3, 4, 5};
+	DoorOpening opening{};
+	DoorWaiting waiting{};
+	DoorClosing closing{};
+	DoorHold hold{};
+	DoorView view{opening, waiting, closing, hold};
+	OracleState expected{};
+
+	for (std::uint64_t index = 0; index < 2048; ++index)
+	{
+		const std::uint64_t now = 1'000 + ((index * 37) % 1'000);
+		DoorChanges actual;
+		DoorChanges oracle;
+		switch (index % 17)
+		{
+		case 0:
+			actual = HoldDoor(view, (index % 34) == 0, now);
+			oracle = OracleHold(expected, (index % 34) == 0, now);
+			break;
+		case 1:
+		case 2:
+			actual = RequestDoorForExit(view, now);
+			oracle = OracleRequest(expected, now);
+			break;
+		default:
+			actual = AdvanceDoor(view, now, timing);
+			oracle = OracleAdvance(expected, now, timing);
+			break;
+		}
+		BOOST_TEST(actual.clear == oracle.clear);
+		BOOST_TEST(actual.set == oracle.set);
+		CheckState(view, expected);
+	}
+}
+
+
+// Historical helper determinism only; this test-local DoorSystem is not a production system.
+BOOST_AUTO_TEST_CASE(scheduled_door_states_are_identical_for_one_two_and_four_workers)
+{
+	const auto oneWorker = RunScheduledDoors(1);
+	const auto twoWorkers = RunScheduledDoors(2);
+	const auto fourWorkers = RunScheduledDoors(4);
+
+	BOOST_CHECK(twoWorkers == oneWorker);
+	BOOST_CHECK(fourWorkers == oneWorker);
+	BOOST_TEST(oneWorker.size() == 4096u);
+	for (std::size_t index = 0; index < oneWorker.size(); ++index)
+	{
+		const auto &state = oneWorker[index];
+		BOOST_TEST(state[0] == index);
+		BOOST_TEST(state[1] == 1u);
+	}
+}

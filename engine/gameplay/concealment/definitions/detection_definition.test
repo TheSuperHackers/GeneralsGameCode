@@ -1,0 +1,18 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <stdexcept>
+import engine.gameplay.concealment.definitions.detection_definition;
+
+BOOST_AUTO_TEST_CASE(detection_definitions_compile_rate_and_reject_zero_rate)
+{
+    using namespace std::chrono_literals;
+    const std::array authored{engine::gameplay::concealment::DetectionDefinition{50ms, 4, true}};
+    engine::gameplay::concealment::DetectionDefinitions definitions(engine::time::FixedStep{20}, authored);
+    const auto value = definitions.Get(definitions.Id(0));
+    BOOST_TEST(value.detectionRateTicks == 1u);
+    BOOST_TEST(value.detectionRangeCells == 4u);
+    BOOST_TEST(value.canDetectWhileContained);
+    const std::array invalid{engine::gameplay::concealment::DetectionDefinition{0ms, 1, false}};
+    BOOST_CHECK_THROW(engine::gameplay::concealment::DetectionDefinitions(engine::time::FixedStep{20}, invalid), std::invalid_argument);
+}

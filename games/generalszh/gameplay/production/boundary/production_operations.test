@@ -1,0 +1,154 @@
+#define BOOST_TEST_MODULE GeneralsZHproductionoperations
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <span>
+#include "../testing/production_test_host.hpp"
+import engine.gameplay.rts.unlocks.components.unlock_state;
+import engine.gameplay.rts.unlocks.definitions.unlock_catalog;
+using namespace std::chrono_literals;
+BOOST_AUTO_TEST_CASE(cancellation_refunds_and_stopped_producer_cannot_finish_work)
+{
+    ecs::World world; ProductionTestHost::RegisterComponents(world); world.FinalizeComponents();
+    engine::jobs::JobSystem jobs({1}); ProductionTestHost production(world, jobs, definitions); const engine::time::FixedStep step{20}; production.Finalize(step);
+    const auto account = world.Create<Balance>(); world.Get<Balance>(account)->quantity = 300;
+    const auto producer = production.CreateProducer(account, 2);
+    const auto first = production.Enqueue(producer, 1), second = production.Enqueue(producer, 1);
+    BOOST_CHECK(production.Enqueue(producer, 1).status == BuildAcceptance::QueueFull);
+    production.Execute({0, step}); BOOST_TEST(production.Cancel(producer, first.order));
+    BOOST_TEST(!production.Cancel(producer, first.order));
+    production.StopProducer(producer); BOOST_TEST(!world.IsAlive(second.order));
+    production.Execute({1, step}); BOOST_TEST(world.Get<Balance>(account)->quantity == 300u);
+    BOOST_CHECK(production.Enqueue(producer, 1).status == BuildAcceptance::InvalidProducer);
+}
+
+BOOST_AUTO_TEST_CASE(world_retains_producers_and_orders_after_catalog_teardown)
+{
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const auto account = world.Create<Balance>(); world.Get<Balance>(account)->quantity = 200;
+    ecs::Entity producer, order;
+    {
+        BuildCatalog catalog(world, definitions, engine::time::FixedStep{20});
+        const auto state = ProductionBoundaryState::Ready;
+        producer = CreateProducer(world, state, 65536, account);
+        const auto receipt = EnqueueBuild(world, state, catalog, 65536, producer, 1);
+        BOOST_CHECK(receipt.status == BuildAcceptance::Accepted); order = receipt.order;
+    }
+    BOOST_TEST(world.IsAlive(producer)); BOOST_TEST(world.IsAlive(order));
+    BOOST_TEST(world.Get<Queue>(producer)->count == 1u);
+    BOOST_CHECK(world.Get<Member>(order)->queue == producer);
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 100u);
+}
+BOOST_AUTO_TEST_CASE(direct_enqueue_copies_validated_capabilities_into_authoritative_order)
+{
+    namespace regen=engine::gameplay::combat::regeneration;
+    namespace xp=engine::gameplay::progression;
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const engine::time::FixedStep step{20};
+    const std::array regenerationDefinitions{regen::RegenerationDefinition{4,1s}};
+    const regen::RegenerationDefinitions regeneration(step,regenerationDefinitions);
+    const std::array progressionDefinitions{xp::ProgressionDefinition{{0,10},100}};
+    const xp::ProgressionCatalog progression(progressionDefinitions);
+    std::array source{BuildDefinition{1,5,100ms}};
+    source[0].regeneration=RegenerationSpawnConfig{0,75ms,false};
+    source[0].progression=ProgressionSpawnConfig{0,true};
+    source[0].cashBountyCost=generalszh::bounty::CashBountyCostBinding{5,
+        generalszh::bounty::CashBountyCostBasis::DecodedBuildCost,true};
+    const auto account=world.Create<Balance>(); world.Get<Balance>(account)->quantity=10;
+    const auto producer=CreateProducer(world,ProductionBoundaryState::Ready,8,account);
+    ecs::Entity order;
+    {
+        const BuildCatalog catalog(world,source,step,&regeneration,&progression);
+        const auto receipt=EnqueueBuild(world,ProductionBoundaryState::Ready,catalog,8,producer,1);
+        BOOST_REQUIRE(receipt.status==BuildAcceptance::Accepted); order=receipt.order;
+    }
+    const auto *value=world.Get<BuildOrder>(order); BOOST_REQUIRE(value);
+    BOOST_REQUIRE(value->regeneration); BOOST_REQUIRE(value->progression);
+    BOOST_CHECK(value->regeneration->definition==regeneration.Id(0));
+    BOOST_TEST(value->regeneration->phaseTicks==2u); BOOST_TEST(!value->regeneration->active);
+    BOOST_TEST(value->progression->definition.index==0u); BOOST_TEST(value->progression->trainable);
+    BOOST_REQUIRE(value->cashBountyCost);
+    BOOST_TEST(value->cashBountyCost->authoredBuildCost==5u);
+    BOOST_CHECK(value->cashBountyCost->basis==generalszh::bounty::CashBountyCostBasis::DecodedBuildCost);
+    BOOST_CHECK(value->cashBountyCost->eligible);
+    BOOST_TEST(world.Get<Balance>(account)->quantity==5u);
+}
+BOOST_AUTO_TEST_CASE(direct_enqueue_copies_validated_initial_payload_definition)
+{
+    namespace c=engine::gameplay::containment;
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const engine::time::FixedStep step{20};
+    const std::array authored{c::TransportDefinition{5,100ms,1,10}}; const c::TransportDefinitions transports(step,authored);
+    BuildDefinition carrier{1,5,100ms}; carrier.transportDefinition=0; carrier.initialPayload=InitialPayloadDefinition{2,0};
+    BuildDefinition passenger{2,1,100ms}; passenger.passenger=c::PassengerSlots{1};
+    const std::array source{carrier,passenger};
+    const auto account=world.Create<Balance>(); world.Get<Balance>(account)->quantity=10;
+    const auto producer=CreateProducer(world,ProductionBoundaryState::Ready,8,account);
+    const BuildCatalog catalog(world,source,step,nullptr,nullptr,&transports);
+    const auto receipt=EnqueueBuild(world,ProductionBoundaryState::Ready,catalog,8,producer,1);
+    BOOST_REQUIRE(receipt.status==BuildAcceptance::Accepted);
+    const auto *order=world.Get<BuildOrder>(receipt.order); BOOST_REQUIRE(order);
+    BOOST_REQUIRE(order->initialPayload);
+    BOOST_TEST(order->initialPayload->passengerDefinition==2u);
+    BOOST_TEST(order->initialPayload->count==0u);
+}
+
+BOOST_AUTO_TEST_CASE(payload_order_reuses_typed_recipe_without_world_access_or_payment)
+{
+    namespace c=engine::gameplay::containment;
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const engine::time::FixedStep step{20};
+    const std::array authored{c::TransportDefinition{5,100ms,1,10}}; const c::TransportDefinitions transports(step,authored);
+    BuildDefinition carrier{1,5,100ms}; carrier.transportDefinition=0; carrier.initialPayload=InitialPayloadDefinition{2,2};
+    BuildDefinition passenger{2,1,100ms}; passenger.passenger=c::PassengerSlots{1}; passenger.cellsPerSecond=17;
+    const std::array source{carrier,passenger};
+    const auto account=world.Create<Balance>(); const auto producer=CreateProducer(world,ProductionBoundaryState::Ready,8,account);
+    const BuildCatalog catalog(world,source,step,nullptr,nullptr,&transports);
+    const auto passengerIndex=catalog.DefinitionIndex(2);
+    const auto carrierEntity=ecs::Entity{800,4};
+    const auto order=MakePayloadOrder(catalog,carrierEntity,account,6,2,passengerIndex);
+    BOOST_CHECK(order.producer==carrierEntity); BOOST_CHECK(order.account==account);
+    BOOST_TEST(order.definition==2u); BOOST_TEST(order.paid==0u); BOOST_TEST(order.spawn==6u);
+    BOOST_CHECK(order.passenger); BOOST_TEST(order.passenger->slots==1u);
+    BOOST_CHECK(!order.initialPayload);
+    BOOST_CHECK_THROW(MakePayloadOrder(catalog,carrierEntity,account,6,2,source.size()),std::out_of_range);
+    BOOST_CHECK_THROW(MakePayloadOrder(catalog,carrierEntity,account,6,1,passengerIndex),std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(direct_enqueue_requires_owned_science_before_debiting_account)
+{
+    ecs::World world; RegisterProductionComponents(world); world.FinalizeComponents();
+    const engine::time::FixedStep step{20};
+    engine::gameplay::rts::unlocks::UnlockCatalog science;
+    science.Register(engine::gameplay::rts::unlocks::UnlockDefinition{"SCIENCE_PRODUCTION"});
+    science.Finalize();
+    BuildDefinition gated{3, 5, 100ms};
+    const auto scienceId = science.Find(
+        engine::gameplay::rts::unlocks::MakeUnlockKey("SCIENCE_PRODUCTION"));
+    gated.sciencePrerequisiteIds = {scienceId};
+    gated.scienceSchemaHash = science.SchemaHash();
+    const std::array source{gated};
+    const BuildCatalog catalog(world, source, step, nullptr, nullptr, nullptr, nullptr, nullptr,
+        nullptr, std::span<const engine::gameplay::rts::repair::RepairDefinition>{},
+        nullptr, nullptr, nullptr, nullptr, &science);
+
+    const auto unenrolled = world.Create<Balance>();
+    world.Get<Balance>(unenrolled)->quantity = 10;
+    const auto unenrolledProducer = CreateProducer(world, ProductionBoundaryState::Ready, 8, unenrolled);
+    BOOST_CHECK_THROW(EnqueueBuild(world, ProductionBoundaryState::Ready, catalog, 8,
+        unenrolledProducer, 3), std::logic_error);
+
+    const auto account = world.Create<Balance, engine::gameplay::rts::unlocks::UnlockState>();
+    world.Get<Balance>(account)->quantity = 10;
+    const auto producer = CreateProducer(world, ProductionBoundaryState::Ready, 8, account);
+    auto receipt = EnqueueBuild(world, ProductionBoundaryState::Ready, catalog, 8, producer, 3);
+    BOOST_CHECK(receipt.status == BuildAcceptance::PrerequisitesUnmet);
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 10u);
+    BOOST_TEST(world.Get<Queue>(producer)->count == 0u);
+
+    BOOST_REQUIRE(world.Get<engine::gameplay::rts::unlocks::UnlockState>(account)->SetOwned(scienceId));
+    receipt = EnqueueBuild(world, ProductionBoundaryState::Ready, catalog, 8, producer, 3);
+    BOOST_CHECK(receipt.status == BuildAcceptance::Accepted);
+    BOOST_TEST(world.Get<Balance>(account)->quantity == 5u);
+    BOOST_TEST(world.Get<Queue>(producer)->count == 1u);
+}

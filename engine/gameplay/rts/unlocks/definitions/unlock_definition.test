@@ -1,0 +1,36 @@
+#define BOOST_TEST_MODULE EngineGameplayRtsUnlocks
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <string_view>
+
+import engine.gameplay.rts.unlocks.definitions.unlock_definition;
+
+using namespace engine::gameplay::rts::unlocks;
+
+BOOST_AUTO_TEST_CASE(unlock_keys_are_canonical_and_address_free)
+{
+	const auto first = MakeUnlockKey("alpha");
+	const auto second = MakeUnlockKey("alpha");
+	BOOST_TEST(first.value == second.value);
+	BOOST_TEST(first.value != MakeUnlockKey("beta").value);
+	BOOST_TEST(IsValidUnlockName("SCIENCE_Rank1"));
+	BOOST_TEST(!IsValidUnlockName("contains space"));
+	BOOST_TEST(!IsValidUnlockName(""));
+
+	const std::array prerequisites{MakeUnlockKey("root")};
+	const UnlockDefinition definition{"child", 2, 7, false, prerequisites};
+	BOOST_TEST(definition.key.value == MakeUnlockKey("child").value);
+	BOOST_TEST(definition.version == 2u);
+	BOOST_TEST(definition.cost == 7u);
+	BOOST_TEST(!definition.grantable);
+	BOOST_REQUIRE_EQUAL(definition.prerequisiteKeys.size(), 1u);
+	BOOST_TEST(definition.prerequisiteKeys.front().value == prerequisites.front().value);
+}
+
+BOOST_AUTO_TEST_CASE(unlock_capacity_is_multiple_words_and_covers_inspected_catalog)
+{
+	BOOST_TEST(MaxUnlockDefinitions >= 95u);
+	BOOST_TEST(UnlockWordCount >= 2u);
+	BOOST_TEST(MaxUnlockDefinitions > 64u);
+}

@@ -1,0 +1,223 @@
+#define BOOST_TEST_MODULE GeneralsZHIncomeStore
+#include <boost/test/included/unit_test.hpp>
+#include <memory>
+#include <array>
+#include <vector>
+#include "income_store.h"
+#include "account_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+#include "games/generalszh/simulation/execution/gameplay_workers.h"
+#include "games/generalszh/adapters/legacy/lifetime/lifetime_store.h"
+import engine.gameplay.rts.economy.systems.income_system;
+import games.generalszh.gameplay.economy.auto_deposit;
+import games.generalszh.simulation.reset.persistent_world_reset;
+import games.generalszh.gameplay.economy.income.income_components;
+using namespace generalszh;
+using namespace generalszh::legacy;
+namespace
+{
+void StepIncome(IncomeStore &store, std::uint64_t tick)
+{
+	for (auto &input : store.PrepareInputs()) { input.active = true; input.player = 0; input.neutral = false; input.constructionComplete = true; }
+	store.Execute(tick);
+	IncomeEffect effect; while (store.NextEffect(effect)) {}
+	store.FinishEffects();
+}
+}
+
+BOOST_AUTO_TEST_CASE(bound_income_now_matches_the_real_batch_system_and_rejects_legacy_dispatch)
+{
+	GameplayState state;
+	IncomeStore store(state);
+	IncomeLease income(store, 0, 5);
+	engine::gameplay::rts::economy::IncomeSystem::Query query(state.World());
+	BOOST_TEST(query.PrepareChunks() == 1u);
+	BOOST_TEST(income.State().deadline == 5u);
+	BOOST_CHECK_THROW(income.BeginUpdate(5, 5), std::logic_error);
+	StepIncome(store, 5);
+	BOOST_TEST(income.State().initialized);
+}
+
+BOOST_AUTO_TEST_CASE(missing_lease_components_fail_clearly_without_partial_restore)
+{
+	GameplayState state;
+	IncomeStore store(state);
+	IncomeLease income(store, 0, 5);
+	using Schedule = engine::gameplay::rts::economy::IncomeSchedule;
+	ecs::Query<ecs::Read<Schedule>> query(state.World());
+	ecs::Entity entity;
+	query.ForEachChunk([&](auto chunk) { entity = chunk.Entities()[0]; });
+	BOOST_TEST(state.World().Remove<generalszh::economy::CaptureRewardState>(entity));
+	BOOST_CHECK_THROW(income.State(), std::logic_error);
+	BOOST_CHECK_THROW(income.Restore({99, true, true}), std::logic_error);
+	BOOST_TEST(state.World().Get<Schedule>(entity)->nextTick == 5u);
+	BOOST_CHECK_THROW(store.PrepareInputs(), std::logic_error);
+	BOOST_TEST(state.World().Get<Schedule>(entity)->nextTick == 5u);
+	// The entity itself remains lease-owned and is released normally.
+}
+
+BOOST_AUTO_TEST_CASE(shared_world_supports_injected_timer_and_income_owners)
+{
+	GameplayState state;
+	LifetimeStore timers(state);
+	IncomeStore incomes(state);
+	{
+		LifetimeLease timer(timers);
+		timer.SetDeadline(17);
+		IncomeLease income(incomes, 10, 5);
+		BOOST_TEST(state.Count() == 2u);
+		BOOST_TEST(timers.Count() == 1u);
+		BOOST_TEST(incomes.Count() == 1u);
+		StepIncome(incomes, 14); BOOST_TEST(!income.State().initialized);
+		StepIncome(incomes, 15);
+		BOOST_TEST(income.State().deadline == 20u);
+		BOOST_TEST(income.State().bonusAvailable);
+		income.ConsumeCaptureBonus();
+		StepIncome(incomes, 20);
+		BOOST_TEST(!income.State().bonusAvailable);
+		BOOST_TEST(timer.Deadline() == 17u);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	const std::array participants{timers.ResetParticipant(), incomes.ResetParticipant()};
+	PersistentWorldReset::Execute(state, participants);
+	IncomeLease nextGame(incomes, 0, 1);
+	BOOST_TEST(!nextGame.State().initialized);
+}
+BOOST_AUTO_TEST_CASE(income_leases_survive_chunk_growth_removal_and_restore)
+{
+	GameplayState state;
+	IncomeStore store(state);
+	std::vector<std::unique_ptr<IncomeLease>> leases;
+	for (std::uint32_t index = 0; index < 4096; ++index)
+		leases.push_back(std::make_unique<IncomeLease>(store, index, 7));
+	for (std::size_t index = 0; index < leases.size(); index += 2) leases[index].reset();
+	for (std::size_t index = 1; index < leases.size(); index += 2)
+		BOOST_TEST(leases[index]->State().deadline == index + 7);
+	leases[1]->Restore({91, true, true});
+	BOOST_TEST(leases[1]->State().deadline == 91u);
+	BOOST_TEST(leases[1]->State().bonusAvailable);
+	leases.clear();
+	BOOST_TEST(store.Count() == 0u);
+	BOOST_TEST(state.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(income_reset_rebinds_execution_and_omitted_empty_owner_is_rejected)
+{
+	GameplayWorkers workers(2); GameplayState state; IncomeStore store(state, workers);
+	BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+	const auto participant = store.ResetParticipant();
+	PersistentWorldReset::Execute(state, {&participant, 1});
+	IncomeLease source(store, 0, 1, 7, 0, 10, 20);
+	StepIncome(store, 1); BOOST_TEST(source.State().initialized);
+}
+
+BOOST_AUTO_TEST_CASE(capture_requests_keep_recorded_recipient_and_cancel_on_source_generation_reuse)
+{
+	GameplayState state; IncomeStore store(state);
+	auto old = std::make_unique<IncomeLease>(store, 0, 5, 1, 0, 0, 50);
+	StepIncome(store, 5); old->Capture(6, 4); old.reset();
+	IncomeLease replacement(store, 6, 5, 1, 0, 0, 50);
+	StepIncome(store, 6); BOOST_TEST(!replacement.State().initialized);
+	StepIncome(store, 11); replacement.Capture(12, 4); replacement.Capture(12, 9);
+	for (auto &input : store.PrepareInputs()) { input.active = true; input.player = 9; }
+	store.Execute(12);
+	IncomeEffect effect; BOOST_REQUIRE(store.NextEffect(effect));
+	BOOST_TEST(effect.player == 4); BOOST_TEST(effect.money == 50u); BOOST_TEST(effect.capture);
+	BOOST_TEST(!replacement.State().bonusAvailable); BOOST_TEST(!store.NextEffect(effect));
+	store.FinishEffects();
+}
+
+BOOST_AUTO_TEST_CASE(committed_income_effects_are_one_shot_and_failure_is_terminal)
+{
+	GameplayState state; IncomeStore store(state);
+	IncomeLease first(store, 0, 1, 2, 0, 17), second(store, 0, 1, 1, 0, 19);
+	for (auto &input : store.PrepareInputs()) { input.active = true; input.neutral = false; input.player = 0; input.constructionComplete = true; }
+	store.Execute(1); IncomeEffect effect;
+	BOOST_REQUIRE(store.NextEffect(effect)); BOOST_TEST(effect.object == 1u);
+	BOOST_CHECK_THROW(store.FinishEffects(), std::logic_error);
+	BOOST_CHECK_THROW(store.NextEffect(effect), std::logic_error);
+	BOOST_CHECK_THROW(store.PrepareInputs(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(income_capacity_bad_inputs_and_failed_initialization_have_explicit_failure)
+{
+	GameplayWorkers workers(1); GameplayState state;
+	auto bad = [&] { IncomeStore store(state, workers, {.ticksPerSecond = 0}); };
+	BOOST_CHECK_THROW(bad(), std::invalid_argument); BOOST_CHECK_NO_THROW(state.Reset());
+	IncomeStore store(state, workers, {.capacity = 1});
+	IncomeLease source(store, 0, 1, 7);
+	BOOST_CHECK_THROW(IncomeLease(store, 0, 1), std::length_error);
+	source.Capture(0, 1); BOOST_CHECK_THROW(source.Capture(0, 2), std::length_error);
+	BOOST_CHECK_THROW(store.PrepareInputs(), std::logic_error);
+}
+BOOST_AUTO_TEST_CASE(invalid_external_income_amount_fails_before_schedule_or_capture_mutation)
+{
+	GameplayState state; IncomeStore store(state);
+	IncomeLease source(store, 0, 5, 7, 0, INT32_MAX);
+	for (auto &input : store.PrepareInputs()) { input.active = true; input.player = 0; input.boost = 1; }
+	BOOST_CHECK_THROW(store.Execute(5), std::overflow_error);
+	using namespace engine::gameplay::rts::economy;
+	ecs::Query<ecs::Read<IncomeSchedule>, ecs::Read<generalszh::economy::CaptureRewardState>> query(state.World());
+	query.ForEachChunk([&](auto chunk) {
+		BOOST_TEST(chunk.template Get<IncomeSchedule>()[0].nextTick == 5u);
+		BOOST_TEST(!chunk.template Get<generalszh::economy::CaptureRewardState>()[0].initialized);
+	});
+	BOOST_CHECK_THROW(store.PrepareInputs(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(real_income_composition_state_and_ordered_effects_match_at_1_2_4_workers)
+{
+	auto run = [](std::size_t count) {
+		GameplayWorkers workers(count); GameplayState state;
+		AccountStore accounts(state); AccountLease a(accounts, 0), b(accounts, 0), c(accounts, 0);
+		const std::array<AccountLease *, 3> recipients{&a, &b, &c};
+		IncomeStore store(state, workers);
+		std::vector<std::unique_ptr<IncomeLease>> sources;
+		for (std::uint32_t i = 0; i != 4096; ++i)
+			sources.push_back(std::make_unique<IncomeLease>(store, 0, i % 4, 4096 - i, 0, 10, 50, i % 5 != 0));
+		std::vector<std::array<std::uint64_t, 10>> result;
+		using namespace engine::gameplay::rts::economy;
+		using namespace generalszh::economy;
+		ecs::Query<ecs::Read<IncomeSource>, ecs::Read<IncomeSchedule>, ecs::Read<CaptureRewardState>> query(state.World());
+		for (std::uint64_t tick = 0; tick != 10; ++tick)
+		{
+			if (tick == 7)
+				for (std::size_t i = 0; i != sources.size(); ++i) sources[i]->Capture(7, static_cast<std::int32_t>(i % 3));
+			for (auto &input : store.PrepareInputs())
+			{
+				input.active = true; input.dispatchEnabled = tick >= 5 || input.object % 2 == 0;
+				input.player = input.object % 3; input.boost = 2; input.neutral = input.object % 7 == 0;
+				input.constructionComplete = true; input.visible = input.object % 2 == 0;
+			}
+			store.Execute(tick); IncomeEffect effect;
+			while (store.NextEffect(effect))
+			{
+				if (effect.pay) recipients.at(effect.player)->ApplyDeposit(effect.money, true);
+				result.push_back({tick, effect.object, effect.money, static_cast<std::uint64_t>(effect.player),
+					static_cast<std::uint64_t>(effect.score), static_cast<std::uint64_t>(effect.display), effect.pay, effect.show, effect.capture, 1});
+			}
+			store.FinishEffects();
+			for (std::size_t recipient = 0; recipient != recipients.size(); ++recipient)
+			{
+				const auto account = recipients[recipient]->State();
+				result.push_back({tick, recipient, account.balance, account.total, account.current, 0, 0, 0, 0, 2});
+				for (std::size_t bucket = 0; bucket != account.buckets.size(); ++bucket)
+					result.push_back({tick, recipient, bucket, account.buckets[bucket], 0, 0, 0, 0, 0, 3});
+			}
+			std::size_t chunks = 0;
+			query.ForEachChunk([&](auto chunk) {
+				++chunks;
+				const auto identities = chunk.template Get<IncomeSource>();
+				const auto schedules = chunk.template Get<IncomeSchedule>();
+				const auto rewards = chunk.template Get<CaptureRewardState>();
+				for (std::size_t row = 0; row != chunk.Count(); ++row)
+					result.push_back({tick, identities[row].object, chunk.Entities()[row].index, chunk.Entities()[row].generation,
+						schedules[row].nextTick, rewards[row].available, rewards[row].initialized, 0, 0, 0});
+			});
+			BOOST_TEST(chunks > 1u);
+		}
+		return result;
+	};
+	const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}

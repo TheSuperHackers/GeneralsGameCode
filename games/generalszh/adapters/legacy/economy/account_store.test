@@ -1,0 +1,356 @@
+#define BOOST_TEST_MODULE GeneralsZHAccounts
+#include <boost/test/included/unit_test.hpp>
+#include <memory>
+#include <array>
+#include <span>
+#include <vector>
+#include "account_store.h"
+#include "income_store.h"
+#include "games/generalszh/simulation/gameplay_state.h"
+import engine.ecs.query.query;
+import engine.ecs.scheduler.scheduler;
+import engine.gameplay.rts.economy.components.resource_balance;
+import games.generalszh.simulation.reset.persistent_world_reset;
+using namespace generalszh;
+using namespace generalszh::legacy;
+using engine::gameplay::rts::economy::ResourceBalance;
+
+namespace
+{
+// A second persistent capability, deliberately not hidden in AccountStore.
+struct PersistentBalanceProbe
+{
+	GameplayState &state;
+	ecs::Entity entity;
+	std::array<ecs::Entity, 1> claimed{};
+	std::uint64_t saved{0};
+	bool failRestore{false};
+	bool failed{false};
+	explicit PersistentBalanceProbe(GameplayState &owner) : state(owner), entity(owner.World().Create<ResourceBalance>())
+	{
+		state.World().Get<ResourceBalance>(entity)->quantity = 77;
+	}
+	~PersistentBalanceProbe() { if (state.World().IsAlive(entity)) state.World().Destroy(entity); }
+	PersistentResetParticipant Participant()
+	{
+		return {"tests.accounts.other_persistent_state", &state, this,
+			+[](void *context) -> std::span<const ecs::Entity> {
+				auto &self = *static_cast<PersistentBalanceProbe *>(context);
+				if (self.failed) throw std::logic_error("Failed probe");
+				self.saved = self.state.World().Get<ResourceBalance>(self.entity)->quantity;
+				self.claimed[0] = self.entity;
+				return self.claimed;
+			},
+			+[](void *context) {
+				auto &self = *static_cast<PersistentBalanceProbe *>(context);
+				self.state.World().Destroy(self.entity); self.entity = {};
+			},
+			+[](void *context) {
+				auto &self = *static_cast<PersistentBalanceProbe *>(context);
+				if (self.failRestore) throw std::runtime_error("Injected restore failure");
+				self.entity = self.state.World().Create<ResourceBalance>();
+				self.state.World().Get<ResourceBalance>(self.entity)->quantity = self.saved;
+			},
+			+[](void *context) noexcept {
+				auto &self = *static_cast<PersistentBalanceProbe *>(context); self.claimed = {}; self.saved = 0;
+			},
+			+[](void *context) noexcept { static_cast<PersistentBalanceProbe *>(context)->failed = true; }};
+	}
+};
+}
+
+BOOST_AUTO_TEST_CASE(accounts_and_independent_persistent_state_share_reset_without_aliasing)
+{
+	auto run = [](bool reversed) {
+		GameplayState state;
+		AccountStore accounts(state);
+		AccountLease lease(accounts, 31);
+		lease.RecordIncome(13);
+		PersistentBalanceProbe other(state);
+		std::array participants{accounts.ResetParticipant(), other.Participant()};
+		if (reversed) std::swap(participants[0], participants[1]);
+		PersistentWorldReset::Execute(state, participants);
+		BOOST_TEST(lease.Value() == 31u);
+		BOOST_TEST(lease.IncomePerMinute() == 13u);
+		BOOST_TEST(state.Count() == 2u);
+		BOOST_TEST(state.World().Get<ResourceBalance>(other.entity)->quantity == 77u);
+		BOOST_TEST(other.saved == 0u);
+		std::vector<std::uint64_t> result;
+		ecs::Query<ecs::Read<ResourceBalance>> query(state.World());
+		query.ForEachChunk([&](auto chunk) {
+			for (std::size_t row = 0; row < chunk.Count(); ++row)
+			{
+				result.push_back(chunk.Entities()[row].index);
+				result.push_back(chunk.Entities()[row].generation);
+				result.push_back(chunk.template Get<ResourceBalance>()[row].quantity);
+			}
+		});
+		return result;
+	};
+	BOOST_CHECK(run(false) == run(true));
+}
+
+BOOST_AUTO_TEST_CASE(participant_restore_failure_invalidates_accounts_and_still_allows_safe_teardown)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	{
+		AccountLease lease(accounts, 31);
+		PersistentBalanceProbe other(state);
+		other.failRestore = true;
+		const std::array participants{other.Participant(), accounts.ResetParticipant()};
+		BOOST_CHECK_THROW(PersistentWorldReset::Execute(state, participants), std::runtime_error);
+		BOOST_CHECK_THROW(lease.Value(), std::logic_error);
+		BOOST_CHECK_THROW(accounts.ResetWorld(), std::logic_error);
+		BOOST_CHECK_THROW(state.Reset(), std::logic_error);
+		BOOST_TEST(other.failed);
+		BOOST_TEST(other.saved == 0u);
+		// Accounts were restored before the second participant threw. Failure
+		// invalidates access but does not pretend the world transaction rolled back.
+		BOOST_TEST(state.Count() == 1u);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(accounts.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(repeated_world_reset_captures_fresh_state_after_player_reinitialization)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountLease lease(accounts, 31);
+	lease.RecordIncome(13);
+	const std::array participants{accounts.ResetParticipant()};
+	PersistentWorldReset::Execute(state, participants);
+	BOOST_TEST(lease.Value() == 31u);
+	// GameEngine purges through GameLogic first, then the reverse subsystem
+	// reset reinitializes players before visiting GameLogic again.
+	lease.Reset(0);
+	PersistentWorldReset::Execute(state, participants);
+	BOOST_TEST(lease.Value() == 0u);
+	BOOST_TEST(lease.IncomePerMinute() == 0u);
+	BOOST_TEST(accounts.Count() == 1u);
+}
+
+struct InvalidResetSystem
+{
+	using Query = ecs::Query<ecs::Read<ResourceBalance>>;
+	AccountStore &accounts;
+	void Execute(Query::Chunk, ecs::SystemContext &) const { accounts.ResetWorld(); }
+};
+namespace ecs
+{
+template<> struct SystemTraits<InvalidResetSystem>
+{
+	static constexpr std::string_view StableName = "tests.accounts.invalid_reset";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<>;
+};
+}
+
+BOOST_AUTO_TEST_CASE(scheduled_reset_is_rejected_before_account_capture_and_bindings_still_unwind)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	{
+		AccountLease lease(accounts, 31);
+		{
+			InvalidResetSystem system{accounts};
+			ecs::SystemRegistry systems;
+			systems.Register(system);
+			systems.Finalize(state.World().Components());
+			ecs::Scheduler scheduler(state.World(), systems, engine::jobs::JobSystemConfig{1});
+			const engine::time::FixedStep step{30};
+			scheduler.Finalize(step);
+			BOOST_CHECK_THROW(scheduler.Execute(engine::time::SimulationTime{1, step}), std::logic_error);
+		} // Destroy the scheduler and its cached queries before replacing the world.
+		// Preflight failure never captured/mutated accounts. The failed scheduler
+		// tick cannot continue, but storage is intact for teardown/setup tooling.
+		BOOST_TEST(lease.Value() == 31u);
+		BOOST_CHECK_NO_THROW(accounts.ResetWorld());
+		BOOST_TEST(lease.Value() == 31u);
+	}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(accounts.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(accounts_share_world_and_survive_explicit_session_rebinding)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountLease first(accounts, 17), second(accounts, 29);
+	IncomeStore income(state);
+	{
+		IncomeLease pending(income, 0, 1);
+		BOOST_CHECK_THROW(accounts.ResetWorld(), std::logic_error);
+		BOOST_TEST(first.Value() == 17u);
+	}
+	const std::array participants{accounts.ResetParticipant(), income.ResetParticipant()};
+	PersistentWorldReset::Execute(state, participants);
+	BOOST_TEST(first.Value() == 17u);
+	BOOST_TEST(second.Value() == 29u);
+	second.Set(41);
+	PersistentWorldReset::Execute(state, participants);
+	BOOST_TEST(second.Value() == 41u);
+	BOOST_TEST(accounts.Count() == 2u);
+}
+BOOST_AUTO_TEST_CASE(account_columns_and_session_entity_ids_are_deterministic_after_churn)
+{
+	auto run = [](bool churn) {
+		GameplayState state;
+		AccountStore accounts(state);
+		std::vector<std::unique_ptr<AccountLease>> leases;
+		for (std::uint32_t index = 0; index < 4096; ++index)
+			leases.push_back(std::make_unique<AccountLease>(accounts, index));
+		if (churn)
+			for (std::size_t index = 0; index < leases.size(); index += 2)
+			{
+				leases[index].reset();
+				leases[index] = std::make_unique<AccountLease>(accounts, static_cast<std::uint32_t>(index));
+			}
+		accounts.ResetWorld();
+		std::vector<std::uint64_t> result;
+		ecs::Query<ecs::Read<ResourceBalance>> query(state.World());
+		query.ForEachChunk([&](auto chunk) {
+			const auto values = chunk.template Get<ResourceBalance>();
+			for (std::size_t row = 0; row < chunk.Count(); ++row)
+			{
+				result.push_back(chunk.Entities()[row].index);
+				result.push_back(chunk.Entities()[row].generation);
+				result.push_back(values[row].quantity);
+			}
+		});
+		for (std::size_t index = 0; index < leases.size(); ++index) BOOST_TEST(leases[index]->Value() == index);
+		return result;
+	};
+	BOOST_CHECK(run(false) == run(true));
+}
+BOOST_AUTO_TEST_CASE(account_binding_unwind_releases_entity)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	try { AccountLease lease(accounts, 7); throw std::runtime_error("initialization"); }
+	catch (const std::runtime_error &) {}
+	BOOST_TEST(state.Count() == 0u);
+	BOOST_TEST(accounts.Count() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(account_history_is_preserved_across_world_rebinding)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountLease lease(accounts, 100);
+	lease.RecordIncome(11);
+	lease.AdvanceBucket(1);
+	lease.RecordIncome(23);
+	accounts.ResetWorld();
+	BOOST_TEST(lease.Value() == 100u);
+	BOOST_TEST(lease.IncomePerMinute() == 34u);
+	BOOST_TEST(lease.State().buckets[0] == 11u);
+	lease.AdvanceBucket(0);
+	BOOST_TEST(lease.IncomePerMinute() == 23u);
+	lease.ClearIncome();
+	BOOST_TEST(lease.IncomePerMinute() == 0u);
+	BOOST_TEST(lease.Value() == 100u);
+}
+
+BOOST_AUTO_TEST_CASE(invalid_account_restore_does_not_partially_update_balance_or_history)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountLease lease(accounts, 17);
+	lease.RecordIncome(7);
+	auto value = lease.State();
+	value.balance = 99;
+	value.current = 60;
+	BOOST_CHECK_THROW(lease.Restore(value), std::out_of_range);
+	BOOST_TEST(lease.Value() == 17u);
+	BOOST_TEST(lease.IncomePerMinute() == 7u);
+	value.current = 0;
+	value.total = 9;
+	BOOST_CHECK_THROW(AccountLease(accounts, value), std::invalid_argument);
+	BOOST_TEST(accounts.Count() == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(plain_account_values_use_the_same_history_rules_without_world_ownership)
+{
+	AccountValue value{100};
+	value.RecordIncome(11);
+	value.AdvanceBucket(1);
+	value.RecordIncome(23);
+	value.AdvanceBucket(0);
+	BOOST_TEST(value.total == 23u);
+	BOOST_CHECK_NO_THROW(value.Validate());
+	value.ClearIncome();
+	BOOST_TEST(value.balance == 100u);
+	BOOST_TEST(value.total == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(bound_and_plain_accounts_apply_identical_transaction_rules)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountValue plain{19};
+	AccountLease bound(accounts, plain);
+	for (std::uint32_t step = 0; step < 240; ++step)
+	{
+		const auto bucket = step % 60;
+		plain.AdvanceBucket(bucket);
+		bound.AdvanceBucket(bucket);
+		const auto amount = step % 5 == 0 ? UINT32_MAX : step * 17;
+		plain.ApplyDeposit(amount, step % 3 != 0);
+		bound.ApplyDeposit(amount, step % 3 != 0);
+		const auto requested = step % 7 == 0 ? UINT32_MAX : step * 11;
+		const auto approved = plain.QuoteWithdrawal(requested);
+		BOOST_TEST(bound.QuoteWithdrawal(requested) == approved);
+		plain.ApplyWithdrawal(approved);
+		bound.ApplyWithdrawal(approved);
+		if (step % 31 == 0) accounts.ResetWorld();
+		const auto actual = bound.State();
+		BOOST_TEST(actual.balance == plain.balance);
+		BOOST_TEST(actual.current == plain.current);
+		BOOST_TEST(actual.total == plain.total);
+		BOOST_CHECK(actual.buckets == plain.buckets);
+	}
+	plain.Reset(71);
+	bound.Reset(71);
+	BOOST_TEST(bound.Value() == plain.balance);
+	BOOST_TEST(bound.IncomePerMinute() == 0u);
+	BOOST_CHECK(bound.State().buckets == plain.buckets);
+}
+
+BOOST_AUTO_TEST_CASE(transaction_application_rejects_unaffordable_quote_without_mutation)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountLease bound(accounts, 19);
+	AccountValue plain{19};
+	const auto approved = bound.QuoteWithdrawal(100);
+	bound.ApplyWithdrawal(10);
+	plain.ApplyWithdrawal(10);
+	BOOST_CHECK_THROW(bound.ApplyWithdrawal(approved), std::invalid_argument);
+	BOOST_CHECK_THROW(plain.ApplyWithdrawal(approved), std::invalid_argument);
+	BOOST_TEST(bound.Value() == 9u);
+	BOOST_TEST(plain.balance == 9u);
+	BOOST_TEST(bound.IncomePerMinute() == 0u);
+}
+
+BOOST_AUTO_TEST_CASE(bound_deposit_checks_balance_range_before_updating_income)
+{
+	GameplayState state;
+	AccountStore accounts(state);
+	AccountLease bound(accounts, 19);
+	bound.RecordIncome(7);
+	ecs::Query<ecs::Write<ResourceBalance>> query(state.World());
+	query.ForEachChunk([](auto chunk) {
+		for (auto &balance : chunk.template Get<ResourceBalance>())
+			balance.quantity = std::uint64_t{UINT32_MAX} + 1;
+	});
+	BOOST_CHECK_THROW(bound.ApplyDeposit(5, true), std::overflow_error);
+	BOOST_TEST(bound.IncomePerMinute() == 7u);
+	BOOST_CHECK_THROW(bound.QuoteWithdrawal(5), std::overflow_error);
+	BOOST_CHECK_THROW(bound.ApplyWithdrawal(5), std::overflow_error);
+	bound.Reset(23); // Explicit setup reset replaces even malformed prior state.
+	BOOST_TEST(bound.Value() == 23u);
+	BOOST_TEST(bound.IncomePerMinute() == 0u);
+}

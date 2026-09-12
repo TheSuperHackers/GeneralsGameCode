@@ -1,0 +1,21 @@
+#include <boost/test/unit_test.hpp>
+#include <limits>
+import engine.gameplay.rts.economy.components.resource_balance;
+using namespace engine::gameplay::rts::economy;
+
+BOOST_AUTO_TEST_CASE(resource_balance_credit_and_capped_debit_are_explicit)
+{
+	ResourceBalance balance;
+	Credit(balance, 17);
+	BOOST_TEST(DebitUpTo(balance, 7) == 7u);
+	BOOST_TEST(balance.quantity == 10u);
+	BOOST_TEST(DebitUpTo(balance, 100) == 10u);
+	BOOST_TEST(DebitUpTo(balance, 1) == 0u);
+}
+BOOST_AUTO_TEST_CASE(resource_credit_overflow_preserves_the_balance)
+{
+	ResourceBalance balance{(std::numeric_limits<std::uint64_t>::max)()};
+	BOOST_CHECK_THROW(Credit(balance, 1), std::overflow_error);
+	BOOST_TEST(balance.quantity == (std::numeric_limits<std::uint64_t>::max)());
+	BOOST_CHECK_NO_THROW(Credit(balance, 0));
+}

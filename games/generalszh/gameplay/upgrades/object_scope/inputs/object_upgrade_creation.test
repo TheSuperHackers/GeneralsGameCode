@@ -1,0 +1,49 @@
+#define BOOST_TEST_MODULE GeneralsZHObjectUpgradeCreation
+#include <boost/test/included/unit_test.hpp>
+
+#include <cstdint>
+#include <stdexcept>
+
+import games.generalszh.gameplay.upgrades.object_scope.inputs.object_upgrade_creation;
+
+using namespace generalszh::upgrades::object_scope;
+using engine::gameplay::rts::upgrades::object_scope::ObjectUpgradeBinding;
+
+namespace
+{
+ObjectUpgradeCreationDefinition SyntheticObjectUpgradeDefinition()
+{
+	return {{7, 0, std::uint64_t{1} << 7, 33}, {true}};
+}
+}
+
+BOOST_AUTO_TEST_CASE(creation_input_adds_full_entity_only_at_spawn_boundary)
+{
+	const auto definition = SyntheticObjectUpgradeDefinition();
+	const ecs::Entity target{41, 9};
+	const auto created = MakeObjectUpgradeCreationInput(
+		target, definition, ObjectUpgradeCreationEvent::OnCreateWhenComplete);
+	BOOST_CHECK(created.target == target);
+	BOOST_CHECK(created.binding == definition.binding);
+	BOOST_CHECK(created.event == ObjectUpgradeCreationEvent::OnCreateWhenComplete);
+
+	const auto completed = MakeObjectUpgradeCreationInput(
+		target, definition, ObjectUpgradeCreationEvent::OnBuildCompleteAfterGuard);
+	BOOST_CHECK(completed.target == target);
+	BOOST_CHECK(completed.event == ObjectUpgradeCreationEvent::OnBuildCompleteAfterGuard);
+}
+
+BOOST_AUTO_TEST_CASE(creation_policy_rejects_unrepresented_immediate_exemption)
+{
+	ObjectUpgradeCreationDefinition noExemption{{7, 0, std::uint64_t{1} << 7, 33}, {false}};
+	BOOST_CHECK_THROW(MakeObjectUpgradeCreationInput(
+		ecs::Entity{41, 9}, noExemption,
+		ObjectUpgradeCreationEvent::OnCreateWhenComplete), std::invalid_argument);
+	BOOST_CHECK_THROW(MakeObjectUpgradeCreationInput(
+		ecs::Entity{}, SyntheticObjectUpgradeDefinition(),
+		ObjectUpgradeCreationEvent::OnBuildCompleteAfterGuard), std::invalid_argument);
+	BOOST_CHECK_THROW(MakeObjectUpgradeCreationInput(
+		ecs::Entity{41, 9},
+		ObjectUpgradeCreationDefinition{{7, 1, std::uint64_t{1} << 7, 33}, {true}},
+		ObjectUpgradeCreationEvent::OnBuildCompleteAfterGuard), std::invalid_argument);
+}

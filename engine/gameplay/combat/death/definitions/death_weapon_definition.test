@@ -1,0 +1,59 @@
+#define BOOST_TEST_MODULE EngineDeathWeaponDefinitions
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+import engine.gameplay.combat.death.definitions.death_weapon_definition;
+
+namespace
+{
+engine::gameplay::combat::death::DeathWeaponDefinition Definition(std::uint32_t key)
+{
+    using namespace engine::gameplay::combat;
+    engine::gameplay::combat::death::DeathWeaponDefinition definition;
+    definition.key=key;
+    definition.destructionDelay=std::chrono::milliseconds{150};
+    WeaponConfig weapon;
+    weapon.damage=25;
+    definition.final=weapon;
+    return definition;
+}
+}
+
+BOOST_AUTO_TEST_CASE(empty_catalog_is_valid_and_unsorted_entries_are_canonicalized)
+{
+    using namespace engine::gameplay::combat::death;
+    const engine::time::FixedStep step{10};
+    const DeathWeaponCatalog empty({},step);
+    BOOST_CHECK(empty.Find(1)==nullptr);
+
+    const std::array definitions{Definition(9),Definition(2)};
+    const DeathWeaponCatalog catalog(definitions,step);
+    BOOST_REQUIRE(catalog.Find(2)!=nullptr);
+    BOOST_REQUIRE(catalog.Find(9)!=nullptr);
+    BOOST_TEST(catalog.Find(2)->destructionDelayTicks==2u);
+    BOOST_TEST(catalog.Find(2)->final->flightTicks==1u);
+}
+
+BOOST_AUTO_TEST_CASE(duplicate_detection_happens_after_sorting_and_version_is_explicit)
+{
+    using namespace engine::gameplay::combat::death;
+    const engine::time::FixedStep step{20};
+    const std::array duplicate{Definition(9),Definition(2),Definition(9)};
+    BOOST_CHECK_THROW((DeathWeaponCatalog{duplicate,step}),std::invalid_argument);
+
+    auto unsupported=Definition(3);
+    unsupported.version=DeathWeaponDefinition::CurrentVersion+1;
+    BOOST_CHECK_THROW((DeathWeaponCatalog{std::span<const DeathWeaponDefinition>{&unsupported,1},step}),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(catalog_rejects_a_definition_without_any_emission_phase)
+{
+    using namespace engine::gameplay::combat::death;
+    DeathWeaponDefinition definition;
+    definition.key=4;
+    const std::array definitions{definition};
+    BOOST_CHECK_THROW((DeathWeaponCatalog{definitions,engine::time::FixedStep{30}}),std::invalid_argument);
+}

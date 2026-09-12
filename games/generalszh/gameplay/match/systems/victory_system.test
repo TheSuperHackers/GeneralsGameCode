@@ -1,0 +1,195 @@
+#define BOOST_TEST_MODULE GeneralsZHMatch
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <vector>
+#include <memory>
+#include <span>
+import games.generalszh.composition.game_session;
+import games.generalszh.gameplay.production.components.production_state;
+import games.generalszh.gameplay.construction.components.structure;
+import engine.gameplay.combat.components.health;
+import engine.gameplay.navigation.grid.navigation_grid;
+import engine.gameplay.rts.economy.components.resource_balance;
+import games.generalszh.gameplay.match.systems.victory_system;
+import engine.ecs.scheduler.scheduler;
+using namespace generalszh;
+namespace
+{
+// Test host owns the shared scheduler and the two independent behaviours.
+struct MatchHarness
+{
+    ecs::World world;
+    ecs::Entity matchEntity{};
+    match::DefeatFrame frame{2048};
+    std::unique_ptr<match::VictorySystem> victory;
+    match::DefeatSystem defeat{frame};
+    ecs::SystemRegistry registry;
+    ecs::Scheduler scheduler;
+    engine::time::FixedStep step{20};
+    explicit MatchHarness(std::size_t workers) : scheduler(world, registry, engine::jobs::JobSystemConfig{workers})
+    {
+        world.RegisterComponent<engine::gameplay::rts::match::Contender>();
+        world.RegisterComponent<engine::gameplay::rts::match::SurvivalCount>();
+        world.RegisterComponent<match::MatchState>(); world.RegisterComponent<match::MatchMember>();
+        world.RegisterComponent<match::VictoryAsset>(); world.RegisterComponent<construction::Structure>();
+        world.RegisterComponent<engine::gameplay::rts::economy::ResourceBalance>();
+        world.RegisterComponent<engine::gameplay::combat::Health>(); world.RegisterComponent<engine::gameplay::combat::LifeState>();
+        world.RegisterComponent<production::ProducedUnit>(); world.RegisterComponent<production::Producer>();
+        world.FinalizeComponents();
+        victory = std::make_unique<match::VictorySystem>(world, matchEntity, frame, 2048);
+        registry.Register(*victory); registry.Register(defeat);
+        registry.OrderBefore<match::VictorySystem, match::DefeatSystem>();
+        registry.Finalize(world.Components()); scheduler.Finalize(step);
+    }
+    void Tick(std::uint64_t tick) { scheduler.Execute({tick, step}); }
+    void Begin(std::span<const ecs::Entity> accounts) { matchEntity = match::BeginMatch(world, accounts, 2048); }
+    MatchOutcome Outcome() { return match::ReadMatchOutcome(world, matchEntity); }
+    ecs::Entity Account() { return world.Create<engine::gameplay::rts::economy::ResourceBalance>(); }
+    ecs::Entity Asset(ecs::Entity owner)
+    {
+        const auto entity = world.Create<match::VictoryAsset, engine::gameplay::combat::Health,
+            engine::gameplay::combat::LifeState, production::Producer>();
+        world.Get<match::VictoryAsset>(entity)->account = owner;
+        world.Get<production::Producer>(entity)->account = owner;
+        world.Get<engine::gameplay::combat::Health>(entity)->current = 100;
+        return entity;
+    }
+};
+}
+// Architecture-correction coverage: actual cohesive behaviours in one external graph.
+// This harness alone does not verify cross-feature ordering in GameSession.
+BOOST_AUTO_TEST_CASE(shared_match_graph_reduces_counts_publishes_outcome_and_joins_defeat)
+{
+    const auto run = [](std::size_t workers) {
+        MatchHarness host(workers);
+        const auto a = host.Account(), b = host.Account(), neutral = host.Account();
+        host.Asset(a); const auto lost = host.Asset(b);
+        const auto army = host.world.Create<production::ProducedUnit, engine::gameplay::combat::Health,
+            engine::gameplay::combat::LifeState>();
+        host.world.Get<production::ProducedUnit>(army)->account = b;
+        host.world.Get<engine::gameplay::combat::Health>(army)->current = 50;
+        host.Tick(0);
+        BOOST_CHECK(host.Outcome().status == MatchStatus::Setup);
+        BOOST_TEST(!host.world.Get<engine::gameplay::rts::match::Contender>(neutral));
+        BOOST_TEST(!host.world.Get<engine::gameplay::rts::match::Contender>(a));
+        const std::array roster{b, a}; host.Begin(roster);
+        host.Tick(1); BOOST_CHECK(host.Outcome().status == MatchStatus::Running);
+        host.world.Get<engine::gameplay::combat::LifeState>(lost)->alive = false;
+        host.Tick(2);
+        BOOST_CHECK(host.Outcome().status == MatchStatus::Won);
+        BOOST_CHECK(host.Outcome().winner == a);
+        BOOST_TEST(!host.world.Get<engine::gameplay::combat::LifeState>(army)->alive);
+        BOOST_TEST(host.world.Get<engine::gameplay::combat::Health>(army)->current == 0u);
+        const std::array<std::uint64_t, 8> result{a.index, a.generation, army.index, army.generation,
+            host.Outcome().tick,
+            host.world.Get<engine::gameplay::rts::match::SurvivalCount>(a)->value,
+            host.world.Get<engine::gameplay::rts::match::SurvivalCount>(b)->value,
+            host.world.Get<engine::gameplay::rts::match::Contender>(b)->defeated};
+        BOOST_CHECK_THROW(host.Tick(3), std::logic_error);
+        return result;
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+BOOST_AUTO_TEST_CASE(victory_multichunk_roster_and_army_state_is_worker_independent)
+{
+    const auto run = [](std::size_t workers) {
+        MatchHarness host(workers);
+        const auto a = host.Account(), b = host.Account(), c = host.Account();
+        std::vector<ecs::Entity> assets;
+        for (unsigned i = 0; i != 600; ++i) assets.push_back(host.Asset(i % 3 == 0 ? a : i % 3 == 1 ? b : c));
+        const std::array roster{c,a,b}; host.Begin(roster);
+        host.Tick(0);
+        BOOST_TEST(host.world.Get<engine::gameplay::rts::match::SurvivalCount>(a)->value == 200u);
+        for (unsigned i = 1; i < assets.size(); i += 3)
+            host.world.Get<engine::gameplay::combat::LifeState>(assets[i])->alive = false;
+        host.Tick(1);
+        BOOST_CHECK(host.Outcome().status == MatchStatus::Running);
+        // Defeat latches even if an asset is later externally restored.
+        host.world.Get<engine::gameplay::combat::LifeState>(assets[1])->alive = true;
+        host.Tick(2);
+        BOOST_TEST(!host.world.Get<engine::gameplay::combat::LifeState>(assets[1])->alive);
+        std::vector<std::uint64_t> result;
+        for (auto account : {a,b,c}) {
+            result.insert(result.end(), {account.index, account.generation,
+                host.world.Get<engine::gameplay::rts::match::SurvivalCount>(account)->value,
+                host.world.Get<engine::gameplay::rts::match::Contender>(account)->defeated});
+        }
+        for (auto asset : assets) result.insert(result.end(), {asset.index, asset.generation,
+            host.world.Get<engine::gameplay::combat::Health>(asset)->current,
+            host.world.Get<engine::gameplay::combat::LifeState>(asset)->alive});
+        return result;
+    };
+    const auto one = run(1), two = run(2), four = run(4);
+    BOOST_TEST(one == two, boost::test_tools::per_element());
+    BOOST_TEST(one == four, boost::test_tools::per_element());
+}
+BOOST_AUTO_TEST_CASE(empty_asset_query_draws_and_missing_roster_state_fails)
+{
+    {
+        MatchHarness host(2); const auto a = host.Account(), b = host.Account();
+        const std::array roster{a,b}; host.Begin(roster); host.Tick(0);
+        BOOST_CHECK(host.Outcome().status == MatchStatus::Draw);
+        BOOST_CHECK(!host.Outcome().winner.IsValid());
+    }
+    {
+        MatchHarness host(2); const auto a = host.Account(), b = host.Account();
+        const std::array roster{a,b}; host.Begin(roster);
+        host.world.Destroy(b);
+        const auto replacement = host.Account();
+        BOOST_CHECK(replacement != b);
+        BOOST_CHECK_THROW(host.Tick(0), std::logic_error);
+    }
+}
+// Retained connected behavior scenarios. Historical passes preceded the shared
+// graph correction; rerun against the corrected root before claiming validation.
+BOOST_AUTO_TEST_CASE(match_defeat_cancels_work_kills_remaining_army_and_has_deterministic_winner)
+{
+    using namespace std::chrono_literals;
+    const auto run = [](std::size_t workers) {
+        const std::array<std::uint8_t,2> terrain{1,1}; engine::gameplay::navigation::NavigationGrid grid(2,1,terrain);
+        ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents(); engine::jobs::JobSystem jobs({workers});
+        const std::array definitions{production::BuildDefinition{1,100,0ms,production::EntryKind::Unit,2},
+            production::BuildDefinition{2,50,100ms,production::EntryKind::Unit,1}};
+        GameSession game(world,jobs,definitions,grid); const engine::time::FixedStep step{20}; game.Finalize(step);
+        const auto a = game.CreateAccount(200), b = game.CreateAccount(200), c = game.CreateAccount(200);
+        const auto fa = game.CreateProducer(a), fb = game.CreateProducer(b), fc = game.CreateProducer(c);
+        const std::array roster{c,b,a}; game.BeginMatch(roster);
+        const std::array build{BuildInput{fa,1},BuildInput{fb,1},BuildInput{fb,2}};
+        const auto receipts = game.Execute({0,step},{{},{},build}); const auto pending = receipts[2].order;
+        BOOST_TEST(world.IsAlive(pending));
+        const std::array hits{engine::gameplay::combat::DamageInput{fb,1000}};
+        game.Execute({1,step},{hits,{},{}});
+        BOOST_TEST(!world.IsAlive(pending));
+        BOOST_TEST(world.Get<engine::gameplay::rts::economy::ResourceBalance>(b)->quantity == 100u);
+        BOOST_CHECK(game.Outcome().status == MatchStatus::Running);
+        ecs::Query<ecs::Read<production::ProducedUnit>,ecs::Read<engine::gameplay::combat::LifeState>> units(world);
+        std::size_t killed = 0;
+        units.ForEachChunk([&](auto chunk) {
+            const auto data = chunk.template Get<production::ProducedUnit>(); const auto life = chunk.template Get<engine::gameplay::combat::LifeState>();
+            for (std::size_t row = 0; row != chunk.Count(); ++row) if (data[row].account == b) { BOOST_TEST(!life[row].alive); ++killed; }
+        });
+        BOOST_TEST(killed == 2u);
+        const std::array lastHit{engine::gameplay::combat::DamageInput{fc,1000}}; game.Execute({2,step},{lastHit});
+        BOOST_CHECK(game.Outcome().status == MatchStatus::Won); BOOST_CHECK(game.Outcome().winner == a);
+        BOOST_CHECK_THROW(game.Execute({3,step}),std::logic_error);
+        return std::array<std::uint64_t,3>{game.Outcome().winner.index,game.Outcome().winner.generation,game.Outcome().tick};
+    };
+    const auto expected = run(1); BOOST_CHECK(run(2) == expected); BOOST_CHECK(run(4) == expected);
+}
+BOOST_AUTO_TEST_CASE(explicit_start_does_not_infer_players_and_simultaneous_building_loss_is_a_draw)
+{
+    const std::array<std::uint8_t,1> terrain{1}; engine::gameplay::navigation::NavigationGrid grid(1,1,terrain);
+    ecs::World world; GameSession::RegisterComponents(world); world.FinalizeComponents(); engine::jobs::JobSystem jobs({2});
+    GameSession game(world,jobs,{},grid); const engine::time::FixedStep step{20}; game.Finalize(step);
+    const auto a = game.CreateAccount(0), b = game.CreateAccount(0); game.CreateAccount(0); // Neutral account is not a player.
+    const auto fa = game.CreateProducer(a), fb = game.CreateProducer(b);
+    game.Execute({0,step}); BOOST_CHECK(game.Outcome().status == MatchStatus::Setup);
+    const auto countBeforeInvalidStart = world.EntityCount();
+    const std::array invalid{a,a}; BOOST_CHECK_THROW(game.BeginMatch(invalid),std::invalid_argument);
+    BOOST_TEST(world.EntityCount() == countBeforeInvalidStart);
+    BOOST_CHECK(game.Outcome().status == MatchStatus::Setup);
+    const std::array roster{a,b}; game.BeginMatch(roster); BOOST_CHECK_THROW(game.BeginMatch(roster),std::logic_error);
+    const std::array hits{engine::gameplay::combat::DamageInput{fa,1000},engine::gameplay::combat::DamageInput{fb,1000}};
+    game.Execute({1,step},{hits}); BOOST_CHECK(game.Outcome().status == MatchStatus::Draw); BOOST_TEST(!game.Outcome().winner.IsValid());
+}

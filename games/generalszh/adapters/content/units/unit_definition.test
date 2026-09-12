@@ -1,0 +1,439 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <utility>
+#include <vector>
+#include <string>
+#include <string_view>
+import games.generalszh.adapters.content.units.unit_definition;
+using namespace generalszh::content;
+BOOST_AUTO_TEST_CASE(fixed_lifetime_preserves_reference_minimum_and_reports_unbound_random_ranges)
+{
+    const auto decode=[](std::string fields) { return DecodeUnit(
+        "Object Timed\nBuildCost = 1\nBuildTime = 1\nBody = ActiveBody Tag\nMaxHealth = 10\nEnd\nBehavior = LifetimeUpdate Life\n"+fields+
+        "End\nLocomotor = SET_NORMAL Walk\nEnd","","Locomotor Walk\nSpeed = 10\nEnd","Timed"); };
+    const auto fixed=decode("MinLifetime = 1000\nMaxLifetime = 1000\n");
+    BOOST_REQUIRE(fixed.definition.lifetime); BOOST_TEST(fixed.definition.lifetime->count()==1000000000ll);
+    const auto minimum=decode(""); BOOST_REQUIRE(minimum.definition.lifetime); BOOST_TEST(minimum.definition.lifetime->count()==33333333ll);
+    const auto random=decode("MinLifetime = 1000\nMaxLifetime = 2000\n");
+    BOOST_CHECK(!random.definition.lifetime); BOOST_REQUIRE_EQUAL(random.omittedBehaviors.size(),2u);
+    BOOST_CHECK_THROW(decode("MinLifetime = 2000\nMaxLifetime = 1000\n"),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(stealth_and_detector_bindings_decode_only_configured_behaviors)
+{
+    const std::string prefix=R"(Object Concealed
+ BuildCost = 1
+ BuildTime = 1
+ VisionRange = 200
+ Body = ActiveBody Body
+ MaxHealth = 100
+ End
+ Locomotor = SET_NORMAL Walk
+ )";
+    const std::string locomotor="Locomotor Walk\nSpeed = 20\nEnd\n";
+    const auto decodeStealth=[&](std::string_view innateStealthField) {
+        return DecodeUnit(prefix+
+            "Behavior = StealthUpdate Cloak\nStealthDelay = 250\n"+std::string{innateStealthField}+
+            "StealthForbiddenConditions = MOVING FIRING_PRIMARY\nEnd\nEnd\n",
+            "",locomotor,"Concealed");
+    };
+    const auto stealth=decodeStealth("");
+    BOOST_REQUIRE(stealth.definition.concealment); BOOST_REQUIRE(stealth.definition.stealthPolicy);
+    BOOST_TEST(stealth.definition.concealment->stealthDelay==std::chrono::milliseconds{250});
+    BOOST_TEST(stealth.definition.stealthPolicy->innateStealth);
+    BOOST_CHECK((stealth.definition.stealthPolicy->forbiddenConditions &
+        static_cast<std::uint8_t>(generalszh::concealment::StealthForbiddenCondition::Moving)) != 0);
+    BOOST_CHECK((stealth.definition.stealthPolicy->forbiddenConditions &
+        static_cast<std::uint8_t>(generalszh::concealment::StealthForbiddenCondition::Firing)) != 0);
+    const auto explicitYes=decodeStealth("InnateStealth = Yes\n");
+    const auto explicitNo=decodeStealth("InnateStealth = No\n");
+    BOOST_REQUIRE(explicitYes.definition.stealthPolicy); BOOST_REQUIRE(explicitNo.definition.stealthPolicy);
+    BOOST_TEST(explicitYes.definition.stealthPolicy->innateStealth);
+    BOOST_TEST(!explicitNo.definition.stealthPolicy->innateStealth);
+
+    for (const auto rangeField : {std::string{}, std::string{"DetectionRange = 0\n"},
+        std::string{"DetectionRange = 200\n"}})
+    {
+        const auto detector=DecodeUnit(prefix+"Behavior = StealthDetectorUpdate Detector\nDetectionRate = 100\n"+
+            rangeField+"CanDetectWhileContained = Yes\nInitiallyDisabled = Yes\nEnd\nEnd\n",
+            "",locomotor,"Concealed");
+        BOOST_REQUIRE(detector.definition.detection);
+        BOOST_TEST(detector.definition.detection->detectionRangeCells==20u);
+        BOOST_TEST(detector.definition.detection->canDetectWhileContained);
+        BOOST_TEST(detector.definition.detection->initiallyDisabled);
+    }
+    BOOST_CHECK_THROW(DecodeUnit(prefix+
+        "Behavior = StealthUpdate Cloak\nStealthDelay = 250\nMoveThresholdSpeed = 1\nEnd\nEnd\n",
+        "",locomotor,"Concealed"),std::invalid_argument);
+    BOOST_CHECK_THROW(DecodeUnit(prefix+
+        "Behavior = StealthDetectorUpdate Detector\nDetectionRate = 100\nCanDetectWhileGarrisoned = Yes\nEnd\nEnd\n",
+        "",locomotor,"Concealed"),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(weapon_splash_fields_preserve_friendly_default_and_reject_unrepresentable_legacy_flags)
+{
+    const std::string object="Object SplashUnit\nBuildCost = 1\nBuildTime = 1\nBody = ActiveBody Body\nMaxHealth = 100\nEnd\nWeaponSet\nWeapon = PRIMARY Cannon\nEnd\nLocomotor = SET_NORMAL Walk\nEnd\n";
+    const auto decode=[&](const std::string &fields) {
+        return DecodeUnit(object,"Weapon Cannon\nPrimaryDamage = 10\nAttackRange = 100\n"+fields+"End\n",
+            "Locomotor Walk\nSpeed = 20\nEnd\n","SplashUnit");
+    };
+    using Affect=engine::gameplay::combat::RadiusDamageAffect;
+    const auto defaults=decode("");
+    BOOST_CHECK(defaults.definition.weapon.radiusDamageAffects.Contains(Affect::Allies));
+    BOOST_CHECK(defaults.definition.weapon.radiusDamageAffects.Contains(Affect::Enemies));
+    BOOST_CHECK(defaults.definition.weapon.radiusDamageAffects.Contains(Affect::Neutrals));
+    BOOST_CHECK(!defaults.definition.weapon.radiusDamageAffects.Contains(Affect::Self));
+
+    const auto splash=decode("SecondaryDamage = 8.5\nPrimaryDamageRadius = 25.01\nSecondaryDamageRadius = 15\n"
+        "RadiusDamageAffects = ALLIES|ENEMIES|NEUTRALS\nDamageDealtAtSelfPosition = No\n");
+    BOOST_TEST(splash.definition.weapon.secondaryDamage==8500u);
+    BOOST_TEST(splash.definition.weapon.primaryRadiusCells==3u);
+    BOOST_TEST(splash.definition.weapon.secondaryRadiusCells==2u); // Primary may be larger than secondary.
+    BOOST_CHECK(splash.definition.weapon.radiusDamageAffects.Contains(Affect::Allies));
+    BOOST_CHECK(!splash.definition.weapon.radiusDamageAffects.Contains(Affect::Self));
+    const auto selfOnly=decode("RadiusDamageAffects = SELF ENEMIES\n");
+    BOOST_CHECK(selfOnly.definition.weapon.radiusDamageAffects.Contains(Affect::Self));
+    BOOST_CHECK(!selfOnly.definition.weapon.radiusDamageAffects.Contains(Affect::Allies));
+    BOOST_TEST(RadiusCells("0.01",ContentScale{})==1u);
+    BOOST_TEST(RadiusCells("10.0",ContentScale{})==1u);
+    BOOST_TEST(RadiusCells("10.01",ContentScale{})==2u);
+    BOOST_CHECK_THROW(decode("PrimaryDamageRadius = 42949672951\n"),std::out_of_range);
+    for(const auto flag:{"SUICIDE","NOT_SIMILAR","NOT_AIRBORNE"})
+        BOOST_CHECK_THROW(decode(std::string{"RadiusDamageAffects = "+std::string{flag}+"\n"}),std::invalid_argument);
+    BOOST_CHECK_THROW(decode("DamageDealtAtSelfPosition = Yes\n"),std::invalid_argument);
+    BOOST_CHECK_THROW(decode("DamageDealtAtSelfPosition = Maybe\n"),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(zero_or_omitted_reference_clip_becomes_explicit_unlimited_ammunition)
+{
+    const std::string object="Object Tank\nBuildCost = 800\nBuildTime = 10\nBody = ActiveBody Tag\nMaxHealth = 300\nEnd\nWeaponSet\nWeapon = PRIMARY Cannon\nEnd\nLocomotor = SET_NORMAL Drive\nEnd";
+    for(const auto clip:{"","ClipSize = 0\n"}) {
+        const auto unit=DecodeUnit(object,std::string{"Weapon Cannon\nPrimaryDamage = 60\nAttackRange = 150\n"}+clip+"End",
+            "Locomotor Drive\nSpeed = 30\nEnd","Tank");
+        BOOST_CHECK(unit.definition.weapon.ammunition==engine::gameplay::combat::AmmunitionPolicy::Unlimited);
+        BOOST_TEST(unit.definition.weapon.clipSize==0u);
+        BOOST_TEST(unit.definition.weapon.shotInterval.count()==0); BOOST_TEST(unit.definition.weapon.reloadTime.count()==0);
+    }
+}
+BOOST_AUTO_TEST_CASE(prefire_fields_decode_to_typed_duration_and_policy)
+{
+    const std::string object="Object PrefireUnit\nBuildCost = 1\nBuildTime = 1\nBody = ActiveBody Tag\nMaxHealth = 10\nEnd\nWeaponSet\nWeapon = PRIMARY Cannon\nEnd\nLocomotor = SET_NORMAL Walk\nEnd";
+    const auto decode=[&](const std::string &fields) {
+        return DecodeUnit(object,"Weapon Cannon\nPrimaryDamage = 1\nAttackRange = 100\n"+fields+"End\n",
+            "Locomotor Walk\nSpeed = 20\nEnd","PrefireUnit");
+    };
+    using engine::gameplay::combat::PrefirePolicy;
+    const std::array policies{
+        std::pair{"PER_SHOT",PrefirePolicy::PerShot},
+        std::pair{"PER_ATTACK",PrefirePolicy::PerAttack},
+        std::pair{"PER_CLIP",PrefirePolicy::PerClip}};
+    for(const auto &[name,policy]:policies)
+    {
+        const auto unit=decode("PreAttackDelay = 101\nPreAttackType = "+std::string{name}+"\n");
+        BOOST_TEST(unit.definition.weapon.preAttackDelay.count()==101000000ll);
+        BOOST_CHECK(unit.definition.weapon.preAttackType==policy);
+    }
+    const auto defaulted=decode("PreAttackDelay = 101\n");
+    BOOST_CHECK(defaulted.definition.weapon.preAttackType==PrefirePolicy::PerShot);
+    BOOST_CHECK_THROW(decode("PreAttackType = PER_TARGET\n"),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(supply_truck_reference_fields_and_builder_markers_decode)
+{
+    const std::string prefix="Object ChinaVehicleSupplyTruck\nBuildCost = 600\nBuildTime = 10\nBody = ActiveBody Tag\nMaxHealth = 300\nEnd\nLocomotor = SET_NORMAL SupplyTruckLocomotor\n";
+    const std::string behavior="Behavior = SupplyTruckAIUpdate Tag\nMaxBoxes = 4\nSupplyCenterActionDelay = 400\nSupplyWarehouseActionDelay = 1000\nEnd\n";
+    const auto decode=[&](const std::string &value){return DecodeUnit(prefix+value+"End","","Locomotor SupplyTruckLocomotor\nSpeed = 40\nEnd","ChinaVehicleSupplyTruck");};
+    const auto truck=decode(behavior); BOOST_REQUIRE(truck.definition.harvest);
+    BOOST_CHECK(!truck.progression); BOOST_CHECK(!truck.regeneration);
+    BOOST_TEST(truck.definition.harvest->capacity==4u); BOOST_TEST(truck.definition.harvest->pickup.count()==1000000000ll);
+    BOOST_TEST(truck.definition.harvest->unload.count()==400000000ll); BOOST_TEST(!truck.definition.builder);
+    BOOST_CHECK_THROW(decode(behavior+behavior),std::invalid_argument);
+    auto invalid=behavior; invalid.replace(invalid.find("MaxBoxes = 4"),12,"MaxBoxes = 0");
+    BOOST_CHECK_THROW(decode(invalid),std::invalid_argument);
+    for(const auto type:{"DozerAIUpdate","WorkerAIUpdate"}) {
+        const auto builder=decode(std::string{"Behavior = "}+type+" Tag\nEnd\n");
+        BOOST_TEST(builder.definition.builder); BOOST_CHECK(!builder.definition.harvest); BOOST_CHECK(!builder.definition.manualRepair);
+        BOOST_REQUIRE_EQUAL(builder.omittedBehaviors.size(),2u); BOOST_TEST(builder.omittedBehaviors[0]==type);
+    }
+    const auto repairing=decode("Behavior = DozerAIUpdate Tag\nRepairHealthPercentPerSecond = 2%\nEnd\n");
+    BOOST_REQUIRE(repairing.definition.manualRepair);
+    BOOST_TEST(repairing.definition.manualRepair->rateNumerator==1u);
+    BOOST_TEST(repairing.definition.manualRepair->rateDenominator==50u);
+    BOOST_TEST(repairing.definition.manualRepair->interval==std::chrono::seconds{1});
+    BOOST_CHECK(repairing.definition.manualRepair->intervalPolicy==engine::gameplay::rts::repair::RepairIntervalPolicy::SimulationStep);
+    BOOST_CHECK_THROW(decode("Behavior = DozerAIUpdate Tag\nRepairHealthPercentPerSecond = 0%\nEnd\n"),std::invalid_argument);
+    BOOST_CHECK_THROW(decode("Behavior = DozerAIUpdate Tag\nRepairHealthPercentPerSecond = 2\nEnd\n"),std::invalid_argument);
+    BOOST_CHECK_THROW(decode("Behavior = DozerAIUpdate Tag\nRepairHealthPercentPerSecond = 101%\nEnd\n"),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(reference_ranger_fields_translate_without_legacy_objects_or_floating_point)
+{
+    const auto unit=DecodeUnit(R"(
+Object AmericaInfantryRanger
+ BuildCost = 225
+ BuildTime = 5.0
+ ExperienceValue = 20 20 40 60
+ ExperienceRequired = 0 40 60 120
+ SkillPointValue = 7 8 9 10
+ IsTrainable = Yes
+ Body = ActiveBody ModuleTag_03
+  MaxHealth = 180.0
+  InitialHealth = 180.0
+ End
+ WeaponSet
+  Conditions = None
+  Weapon = PRIMARY RangerAdvancedCombatRifle
+ End
+ WeaponSet
+  Conditions = PLAYER_UPGRADE
+  Weapon = PRIMARY UnsupportedUpgradeRifle
+ End
+ Behavior = AIUpdateInterface ModuleTag_06
+  AutoAcquireEnemiesWhenIdle = Yes
+ End
+ Behavior = SlowDeathBehavior Tag
+  SinkDelay = 3000
+ End
+ Locomotor = SET_NORMAL BasicHumanLocomotor
+End
+)",R"(
+Weapon RangerAdvancedCombatRifle
+ PrimaryDamage = 5.0
+ AttackRange = 100.0
+ ClipSize = 3
+ DelayBetweenShots = 100
+ ClipReloadTime = 700
+End
+)","Locomotor BasicHumanLocomotor\nSpeed = 20\nEnd","AmericaInfantryRanger");
+    BOOST_TEST(unit.definition.cost==225u); BOOST_TEST(unit.definition.duration.count()==5000000000ll);
+    BOOST_TEST(unit.definition.health==180000u); BOOST_TEST(unit.definition.cellsPerSecond==2u);
+    BOOST_TEST(unit.definition.weapon.damage==5000u); BOOST_TEST(unit.definition.weapon.rangeCells==10u);
+    BOOST_TEST(unit.definition.weapon.clipSize==3u); BOOST_TEST(unit.definition.weapon.shotInterval.count()==100000000ll);
+    BOOST_TEST(unit.definition.weapon.reloadTime.count()==700000000ll); BOOST_TEST(unit.definition.acquisition.enabled);
+    BOOST_REQUIRE(unit.omittedBehaviors.size()==2u); BOOST_TEST(unit.omittedBehaviors[0]=="SlowDeathBehavior");
+    const std::vector duplicates{unit,unit}; BOOST_CHECK_THROW(ValidateUnitKeys(duplicates),std::invalid_argument);
+    BOOST_REQUIRE(unit.progression); BOOST_TEST(unit.progression->required[1]==40u);
+    BOOST_TEST(unit.progression->required[3]==120u); BOOST_TEST(unit.progression->trainable);
+    BOOST_TEST(unit.progression->skillPointValues[3]==10u);
+    BOOST_CHECK(!unit.regeneration); // No inherited heroic healing is fabricated.
+}
+BOOST_AUTO_TEST_CASE(ignored_in_gui_is_derived_from_kind_of_without_defining_owner_membership)
+{
+    const auto decode=[](std::string_view kinds) {
+        return DecodeUnit("Object Target\nKindOf = "+std::string{kinds}+R"(
+BuildCost = 1
+BuildTime = 1
+ExperienceValue = 25 25 25 25
+ExperienceRequired = 0 10 20 30
+IsTrainable = No
+Body = ActiveBody Body
+MaxHealth = 10
+End
+Locomotor = SET_NORMAL Walk
+End
+)" ,"","Locomotor Walk\nSpeed = 10\nEnd","Target");
+    };
+    const auto ordinary=decode("INFANTRY");
+    const auto ignored=decode("INFANTRY IGNORED_IN_GUI");
+    BOOST_CHECK(!ordinary.ignoredInGui);
+    BOOST_CHECK(ignored.ignoredInGui);
+    BOOST_REQUIRE(ordinary.progression);
+    BOOST_CHECK(!ordinary.progression->trainable);
+}
+BOOST_AUTO_TEST_CASE(object_prerequisites_are_retained_for_explicit_composition_binding)
+{
+    const auto unit=DecodeUnit(R"(Object PrereqUnit
+BuildCost = 1
+BuildTime = 1
+Body = ActiveBody Body
+MaxHealth = 10
+End
+Prerequisites
+ Object = Barracks AlternateBarracks
+ Object = StrategyCenter
+End
+Locomotor = SET_NORMAL Walk
+End
+)","",R"(Locomotor Walk
+Speed = 20
+End
+)","PrereqUnit");
+    BOOST_REQUIRE_EQUAL(unit.prerequisites.objectGroups.size(),2u);
+    BOOST_TEST(unit.prerequisites.objectGroups[0].alternatives[1]=="AlternateBarracks");
+    BOOST_CHECK(!unit.definition.prerequisites);
+}
+BOOST_AUTO_TEST_CASE(unit_self_heal_decodes_typed_data_and_reports_unsupported_policy)
+{
+    const std::string prefix="Object Healer\nBuildCost = 100\nBuildTime = 1\nBody = ActiveBody Tag\nMaxHealth = 100\nEnd\nLocomotor = SET_NORMAL Walk\n";
+    const auto decode=[&](const std::string &fields) {
+        return DecodeUnit(prefix+fields+"End\n","","Locomotor Walk\nSpeed = 20\nEnd\n","Healer");
+    };
+    const std::string start="Behavior = AutoHealBehavior Heal\nHealingAmount = 4\nHealingDelay = 1000\nStartsActive = Yes\n";
+    const auto supported=decode(start+"Radius = 0.0f\nStartHealingDelay = 2000\nEnd\n");
+    BOOST_REQUIRE(supported.regeneration); BOOST_TEST(supported.regeneration->startsActive);
+    BOOST_TEST(supported.regeneration->definition.quantity==4000u);
+    BOOST_TEST(supported.regeneration->definition.interval.count()==1000000000ll);
+    BOOST_TEST(supported.regeneration->definition.damageDelay.count()==2000000000ll);
+    BOOST_REQUIRE_EQUAL(supported.omittedBehaviors.size(),1u);
+    BOOST_TEST(supported.omittedBehaviors[0].find("No ArmorSet")!=std::string::npos);
+    for(const auto field:{"Radius = 100.0f","AffectsWholePlayer = Yes","TriggeredBy = Upgrade_Veterancy_HEROIC",
+        "ConflictsWith = Upgrade_Disabled","UnknownHealingPolicy = Yes"}) {
+        const auto unsupported=decode(start+field+"\nEnd\n");
+        BOOST_CHECK(!unsupported.regeneration); BOOST_TEST(unsupported.omittedBehaviors.size()>1u);
+    }
+    const auto presentation=decode(start+"UnitHealPulseParticleSystemName = HealFX\nEnd\n");
+    BOOST_REQUIRE(presentation.regeneration); BOOST_TEST(presentation.omittedBehaviors.size()>1u);
+    BOOST_CHECK_THROW(decode(start+"End\n"+start+"End\n"),std::invalid_argument);
+    BOOST_CHECK_THROW(decode(start+"AffectsWholePlayer = Maybe\nEnd\n"),std::invalid_argument);
+    BOOST_CHECK_THROW(decode("ExperienceRequired = 0 40 20 120\n"),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(decode_unit_preserves_unresolved_initial_payload_until_catalog_binding)
+{
+    const auto decoded=DecodeUnit(R"(Object Carrier
+ KindOf = VEHICLE TRANSPORT
+ BuildCost = 1
+ BuildTime = 1
+ Body = ActiveBody Body
+  MaxHealth = 100
+ End
+ Behavior = TransportContain Tag
+  Slots = 5
+  InitialPayload = Passenger 0
+ End
+ Locomotor = SET_NORMAL Walk
+End
+)","","Locomotor Walk\nSpeed = 10\nEnd","Carrier");
+    BOOST_REQUIRE(decoded.initialPayload);
+    BOOST_TEST(decoded.initialPayload->passengerName=="Passenger");
+    BOOST_TEST(decoded.initialPayload->count==0u);
+    BOOST_CHECK(!decoded.definition.initialPayload);
+}
+
+BOOST_AUTO_TEST_CASE(bind_decoded_unit_catalog_resolves_exact_names_and_stable_keys)
+{
+    DecodedUnit carrier; carrier.name="Carrier"; carrier.definition.key=DefinitionKey(carrier.name);
+    carrier.transport=engine::gameplay::containment::TransportDefinition{5};
+    carrier.initialPayload=InitialPayloadReference{"Passenger",2};
+    DecodedUnit passenger; passenger.name="Passenger"; passenger.definition.key=DefinitionKey(passenger.name);
+    passenger.definition.passenger=engine::gameplay::containment::PassengerSlots{2};
+    std::array units{carrier,passenger};
+    BindDecodedUnitCatalog(units);
+    BOOST_REQUIRE(units[0].definition.initialPayload);
+    BOOST_TEST(units[0].definition.initialPayload->passengerDefinition==passenger.definition.key);
+    BOOST_TEST(units[0].definition.initialPayload->count==2u);
+
+    auto missing=units; missing[0].definition.initialPayload.reset();
+    missing[0].initialPayload->passengerName="passenger";
+    BOOST_CHECK_THROW(BindDecodedUnitCatalog(missing),std::invalid_argument);
+    auto overCapacity=units; overCapacity[0].definition.initialPayload.reset();
+    overCapacity[0].initialPayload->count=3;
+    BOOST_CHECK_THROW(BindDecodedUnitCatalog(overCapacity),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(capture_binding_requires_explicit_special_power_resolution_and_does_not_grant_upgrade)
+{
+    const std::string object=R"(Object CaptureInfantry
+KindOf = INFANTRY
+BuildCost = 100
+BuildTime = 1
+Body = ActiveBody Body
+MaxHealth = 100
+End
+Behavior = SpecialAbility Ability
+SpecialPowerTemplate = CapturePower
+UpdateModuleStartsAttack = Yes
+StartsPaused = Yes
+End
+Behavior = SpecialAbilityUpdate Update
+SpecialPowerTemplate = CapturePower
+UnpackTime = 3000
+PreparationTime = 20000
+PackTime = 2000
+End
+Behavior = UnpauseSpecialPowerUpgrade Upgrade
+SpecialPowerTemplate = CapturePower
+TriggeredBy = CaptureUpgrade
+End
+Locomotor = SET_NORMAL Walk
+End
+)";
+    const std::string powers="SpecialPower CapturePower\nEnum = SPECIAL_INFANTRY_CAPTURE_BUILDING\nReloadTime = 15000\nEnd\n";
+    const std::string locomotor="Locomotor Walk\nSpeed = 20\nEnd\n";
+    BOOST_CHECK(!DecodeUnit(object,"",locomotor,"CaptureInfantry").capture);
+    BOOST_CHECK(!DecodeUnit(object,"",locomotor,"CaptureInfantry",{},powers).capture);
+    const auto decoded=DecodeUnit(object,"",locomotor,"CaptureInfantry",{},powers,CapturePermission::Allowed);
+    BOOST_REQUIRE(decoded.capture);BOOST_TEST(!decoded.captureEnabled);BOOST_CHECK(!decoded.definition.capture);
+    BOOST_TEST(decoded.capture->unpack.count()==3000000000ll);
+    BOOST_TEST(decoded.capture->preparation.count()==20000000000ll);
+    BOOST_TEST(decoded.capture->recovery.count()==2000000000ll);
+    BOOST_TEST(!decoded.omittedBehaviors.empty());
+}
+
+BOOST_AUTO_TEST_CASE(typed_weapon_and_default_armor_resolve_through_explicit_zero_hour_mapping)
+{
+    const std::string base="Object Armored\nBuildCost = 10\nBuildTime = 1\nBody = ActiveBody B\nMaxHealth = 100\nEnd\nWeaponSet\nWeapon = PRIMARY Rifle\nEnd\nLocomotor = SET_NORMAL Walk\n";
+    const std::string armor="Armor HumanArmor\nArmor = ARMOR_PIERCING 10%\nArmor = FLAME 150%\nEnd\nArmor NoArmor\nArmor = DEFAULT 100%\nEnd\n";
+    const auto decode=[&](const std::string &sets,const std::string &type,std::string_view armorText) {
+        return DecodeUnit(base+sets+"End\n","Weapon Rifle\nPrimaryDamage = 10\nAttackRange = 100\n"+type+"End\n",
+            "Locomotor Walk\nSpeed = 20\nEnd","Armored",{},"",CapturePermission::Unresolved,armorText);
+    };
+    const std::string normal="ArmorSet\nConditions = None\nArmor = HumanArmor\nEnd\n";
+    const auto unit=decode(normal,"DamageType = SMALL_ARMS\n",armor);
+    BOOST_TEST(unit.definition.weapon.damageType.value==3u);BOOST_REQUIRE(unit.armor);
+    BOOST_TEST(unit.armorName=="HumanArmor");BOOST_TEST(unit.damagePolicies.size()==38u);
+    BOOST_TEST(unit.armor->coefficients[2].millionths==100000u);
+    BOOST_TEST(unit.armor->coefficients[6].millionths==1500000u);
+    BOOST_CHECK(!unit.definition.armor); // Host owns dense armor catalog binding.
+    BOOST_TEST(decode("","","").definition.weapon.damageType.value==0u);
+    const auto noArmor=decode("ArmorSet\nArmor = NoArmor\nEnd\n","",armor);
+    BOOST_REQUIRE(noArmor.armor);BOOST_TEST(noArmor.armor->coefficients[3].millionths==1000000u);
+    BOOST_CHECK_THROW(decode(normal,"",""),std::invalid_argument);
+    BOOST_CHECK_THROW(decode(normal,"","Armor Other\nEnd"),std::invalid_argument);
+    BOOST_CHECK_THROW(decode(normal+normal,"",armor),std::invalid_argument);
+    BOOST_CHECK_THROW(decode("ArmorSet\nConditions = None\nEnd\n","",armor),std::invalid_argument);
+    const std::string conditional="ArmorSet\nConditions = PLAYER_UPGRADE\nArmor = MissingUpgradeArmor\nEnd\n";
+    BOOST_CHECK_THROW(decode(conditional,"",armor),std::invalid_argument);
+    const auto conditionalUnit=decode(normal+conditional,"",armor);
+    BOOST_TEST(conditionalUnit.armorName=="HumanArmor");BOOST_REQUIRE_EQUAL(conditionalUnit.omittedBehaviors.size(),1u);
+    for(const auto type:{"HEALING","SUBDUAL_VEHICLE","STATUS","MADE_UP"})
+        BOOST_CHECK_THROW(decode(normal,std::string{"DamageType = "}+type+"\n",armor),std::invalid_argument);
+}
+BOOST_AUTO_TEST_CASE(garrison_enrollment_is_explicit_and_reports_excluded_authored_kinds)
+{
+    const std::string base=R"(Object Infantry
+KindOf = INFANTRY
+BuildCost = 1
+BuildTime = 1
+TransportSlotCount = 1
+Body = ActiveBody Body
+MaxHealth = 100
+End
+Locomotor = SET_NORMAL Walk
+End
+)";
+    const auto regular=DecodeUnit(base,"","Locomotor Walk\nSpeed = 20\nEnd\n","Infantry");
+    BOOST_CHECK(regular.definition.garrisonable);
+    const auto noGarrison=DecodeUnit(std::string{base}.replace(std::string{base}.find("KindOf = INFANTRY"),
+        std::string{"KindOf = INFANTRY"}.size(),"KindOf = INFANTRY NO_GARRISON"),"",
+        "Locomotor Walk\nSpeed = 20\nEnd\n","Infantry");
+    BOOST_CHECK(!noGarrison.definition.garrisonable);
+    BOOST_CHECK(std::any_of(noGarrison.omittedBehaviors.begin(),noGarrison.omittedBehaviors.end(),
+        [](const auto &value){return value.find("NO_GARRISON")!=std::string::npos;}));
+    const std::string carrier=R"(Object InfantryCarrier
+KindOf = INFANTRY VEHICLE
+BuildCost = 1
+BuildTime = 1
+Body = ActiveBody Body
+MaxHealth = 100
+End
+Behavior = TransportContain Contain
+Slots = 1
+AllowInsideKindOf = INFANTRY
+End
+Locomotor = SET_NORMAL Walk
+End
+)";
+    const auto transport=DecodeUnit(carrier,"","Locomotor Walk\nSpeed = 20\nEnd\n","InfantryCarrier");
+    BOOST_CHECK(!transport.definition.garrisonable);
+    BOOST_CHECK(std::any_of(transport.omittedBehaviors.begin(),transport.omittedBehaviors.end(),
+        [](const auto &value){return value.find("garrison carrier")!=std::string::npos;}));
+}

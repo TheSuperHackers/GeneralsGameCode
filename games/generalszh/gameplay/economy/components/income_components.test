@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+#include <type_traits>
+import games.generalszh.gameplay.economy.income.income_components;
+BOOST_AUTO_TEST_CASE(income_columns_are_plain_values_with_no_pending_default_payout)
+{
+	using namespace generalszh::economy;
+	static_assert(std::is_trivially_copyable_v<IncomeDefinition>);
+	static_assert(std::is_trivially_copyable_v<IncomeObservation>);
+	BOOST_TEST(IncomeDefinition{}.actualMoney);
+	BOOST_TEST(!IncomeObservation{}.active);
+	BOOST_TEST(!IncomePayout{}.value.pay);
+	BOOST_TEST(!IncomePayout{}.value.show);
+}

@@ -1,0 +1,13 @@
+#include <boost/test/unit_test.hpp>
+
+import engine.gameplay.rts.unlocks.components.unlock_inbox;
+
+using namespace engine::gameplay::rts::unlocks;
+
+BOOST_AUTO_TEST_CASE(unlock_inbox_is_transient_routing_state)
+{
+	UnlockInbox inbox{4, 3};
+	BOOST_TEST(inbox.begin == 4u);
+	BOOST_TEST(inbox.count == 3u);
+	BOOST_CHECK(ecs::ComponentTraits<UnlockInbox>::Persistence == ecs::PersistencePolicy::Transient);
+}

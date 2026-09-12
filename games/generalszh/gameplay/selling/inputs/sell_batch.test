@@ -1,0 +1,22 @@
+#define BOOST_TEST_MODULE GeneralsZHSellBatch
+#include <boost/test/included/unit_test.hpp>
+#include <array>
+import games.generalszh.gameplay.selling.inputs.sell_batch;
+using namespace generalszh::selling;
+BOOST_AUTO_TEST_CASE(sale_batch_copies_ordered_inputs_and_has_bounded_one_shot_publication)
+{
+    SellBatch batch(1,1); std::array input{SellRequest{{7,1},{2,1}}};
+    batch.SetInputs(input); input[0].structure={8,1};
+    BOOST_CHECK_THROW(batch.SetInputs({}),std::logic_error);
+    const auto staged=batch.BeginTick(); BOOST_REQUIRE(staged.size()==1u); BOOST_TEST(staged[0].structure.index==7u);
+    BOOST_CHECK_THROW(batch.BeginTick(),std::logic_error);
+    batch.Accept(0,{staged[0].structure,SellAcceptance::Accepted});
+    batch.AddResult({staged[0].structure,staged[0].account,3,50,SellOutcome::Sold});
+    BOOST_CHECK_THROW(batch.AddResult({}),std::length_error);
+    batch.Publish(); BOOST_REQUIRE(batch.Receipts().size()==1u); BOOST_TEST(batch.Results()[0].refunded==50u);
+    BOOST_TEST(batch.BeginTick().empty()); batch.Publish();
+    BOOST_TEST(batch.Receipts().empty()); BOOST_TEST(batch.Results().empty());
+    const std::array oversized{input[0],input[0]};
+    BOOST_CHECK_THROW(batch.SetInputs(oversized),std::length_error);
+    BOOST_TEST(batch.BeginTick().empty()); batch.Publish();
+}

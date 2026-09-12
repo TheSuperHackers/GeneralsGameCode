@@ -1,0 +1,316 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <cstdint>
+#include <span>
+#include <stdexcept>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+import engine.gameplay.lifetime.systems.expiration_system;
+import engine.ecs.scheduler.scheduler;
+
+namespace
+{
+constexpr engine::time::SimulationTime TestTime(std::uint64_t tick)
+{
+	return {tick, engine::time::FixedStep{60}};
+}
+}
+
+using namespace engine::gameplay::lifetime;
+
+namespace expiration_test
+{
+// Test-only consumer demonstrates explicit ordering and deferred structural work.
+struct Consume
+{
+	using Query = ecs::Query<ecs::Write<Expiration>>;
+	void Execute(Query::Chunk chunk, ecs::SystemContext &context) const
+	{
+		auto values = chunk.Get<Expiration>();
+		for (std::size_t index = 0; index < values.size(); ++index)
+		{
+			if (values[index].state == ExpirationState::Elapsed)
+			{
+				context.Commands().Destroy(chunk.Entities()[index]);
+				const auto created = context.Commands().Create();
+				context.Commands().Add<Expiration>(created,
+					Expiration{values[index].deadline, ExpirationState::Inactive});
+			}
+		}
+	}
+};
+}
+
+namespace ecs
+{
+template<> struct SystemTraits<expiration_test::Consume>
+{
+	static constexpr std::string_view StableName = "tests.expiration.consume";
+	static constexpr SystemPhase Phase = SystemPhase::Simulation;
+	using Before = SystemTypeList<>;
+	using After = SystemTypeList<ExpirationSystem>;
+};
+}
+
+BOOST_AUTO_TEST_SUITE(ExpirationChunkSystem)
+
+BOOST_AUTO_TEST_CASE(expiration_is_inclusive_one_shot_and_does_not_destroy_entities)
+{
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<Expiration>();
+	ExpirationSystem system;
+	ecs::SystemRegistry systems;
+	systems.Register(system);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{2});
+	scheduler.Finalize(engine::time::FixedStep{60});
+	scheduler.Execute(TestTime(100));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Inactive);
+	ArmAfter(*world.Get<Expiration>(entity), 100, 2);
+	scheduler.Execute(TestTime(101));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Armed);
+	scheduler.Execute(TestTime(102));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+	scheduler.Execute(TestTime(103));
+	BOOST_TEST(world.IsAlive(entity));
+	BOOST_TEST(world.Get<Expiration>(entity)->deadline == 102u);
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+	ArmAfter(*world.Get<Expiration>(entity), 103, 0);
+	scheduler.Execute(TestTime(103));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+}
+
+BOOST_AUTO_TEST_CASE(chunk_execution_and_structural_results_match_across_worker_counts)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world(ecs::WorldConfig{256});
+		world.RegisterComponent<Expiration>();
+		world.RegisterComponent<ExpirationEligibility>();
+		world.FinalizeComponents();
+		for (std::uint64_t index = 0; index != 4096; ++index)
+		{
+			const auto entity = world.Create<Expiration>();
+			ArmAfter(*world.Get<Expiration>(entity), 0, index % 7);
+		}
+		ExpirationSystem expire;
+		expiration_test::Consume consume;
+		ecs::SystemRegistry systems;
+		systems.Register(consume);
+		systems.Register(expire);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		scheduler.Finalize(engine::time::FixedStep{60});
+		for (std::uint64_t tick = 0; tick != 7; ++tick)
+			scheduler.Execute(TestTime(tick));
+		std::vector<std::array<std::uint64_t, 4>> state;
+		ecs::Query<ecs::Read<Expiration>> query(world);
+		std::size_t chunks = 0;
+		query.ForEachChunk([&](auto chunk) {
+			++chunks;
+			auto values = chunk.template Get<Expiration>();
+			for (std::size_t index = 0; index < values.size(); ++index)
+			{
+				const auto entity = chunk.Entities()[index];
+				BOOST_CHECK(values[index].state == ExpirationState::Inactive);
+				state.push_back({entity.index, entity.generation, values[index].deadline,
+					static_cast<std::uint64_t>(values[index].state)});
+			}
+		});
+		BOOST_TEST(chunks > 1u);
+		BOOST_TEST(state.size() == 4096u);
+		return state;
+	};
+	const auto expected = run(1);
+	BOOST_CHECK(run(2) == expected);
+	BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(ExpirationEligibilitySystem)
+
+BOOST_AUTO_TEST_CASE(disabled_expiration_keeps_deadline_and_runs_when_reenabled)
+{
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<Expiration, ExpirationEligibility>();
+	ArmAfter(*world.Get<Expiration>(entity), 0, 5);
+	world.Get<ExpirationEligibility>(entity)->enabled = false;
+	ExpirationSystem expire;
+	ecs::SystemRegistry systems;
+	systems.Register(expire);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{2});
+	scheduler.Finalize(TestTime(0).Step());
+	for (const auto tick : {4u, 5u, 20u})
+	{
+		scheduler.Execute(TestTime(tick));
+		BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Armed);
+		BOOST_TEST(world.Get<Expiration>(entity)->deadline == 5u);
+	}
+	world.Get<ExpirationEligibility>(entity)->enabled = true;
+	scheduler.Execute(TestTime(21));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+	BOOST_TEST(world.Get<Expiration>(entity)->deadline == 5u);
+	// Eligibility is an input, not an arm/reset command.
+	world.Get<ExpirationEligibility>(entity)->enabled = false;
+	scheduler.Execute(TestTime(22));
+	world.Get<ExpirationEligibility>(entity)->enabled = true;
+	scheduler.Execute(TestTime(23));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+	BOOST_TEST(world.IsAlive(entity));
+}
+
+BOOST_AUTO_TEST_CASE(rearm_and_cancel_before_execution_replace_overdue_work)
+{
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.FinalizeComponents();
+	const auto rearmed = world.Create<Expiration, ExpirationEligibility>();
+	const auto canceled = world.Create<Expiration, ExpirationEligibility>();
+	for (const auto entity : {rearmed, canceled})
+	{
+		ArmAfter(*world.Get<Expiration>(entity), 0, 1);
+		world.Get<ExpirationEligibility>(entity)->enabled = false;
+	}
+	ExpirationSystem expire;
+	ecs::SystemRegistry systems;
+	systems.Register(expire);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{1});
+	scheduler.Finalize(TestTime(0).Step());
+	scheduler.Execute(TestTime(10));
+	ArmAfter(*world.Get<Expiration>(rearmed), 10, 2);
+	world.Get<Expiration>(canceled)->state = ExpirationState::Inactive;
+	world.Get<ExpirationEligibility>(rearmed)->enabled = true;
+	world.Get<ExpirationEligibility>(canceled)->enabled = true;
+	scheduler.Execute(TestTime(10));
+	BOOST_CHECK(world.Get<Expiration>(rearmed)->state == ExpirationState::Armed);
+	scheduler.Execute(TestTime(12));
+	BOOST_CHECK(world.Get<Expiration>(rearmed)->state == ExpirationState::Elapsed);
+	BOOST_TEST(world.Get<Expiration>(rearmed)->deadline == 12u);
+	BOOST_CHECK(world.Get<Expiration>(canceled)->state == ExpirationState::Inactive);
+}
+
+BOOST_AUTO_TEST_CASE(cached_optional_column_tracks_addition_and_removal)
+{
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.FinalizeComponents();
+	const auto entity = world.Create<Expiration>();
+	ExpirationSystem expire;
+	ecs::SystemRegistry systems;
+	systems.Register(expire);
+	systems.Finalize(world.Components());
+	ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{2});
+	scheduler.Finalize(TestTime(0).Step());
+	ArmAfter(*world.Get<Expiration>(entity), 0, 0);
+	scheduler.Execute(TestTime(0));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+	world.Add<ExpirationEligibility>(entity);
+	world.Get<ExpirationEligibility>(entity)->enabled = false;
+	ArmAfter(*world.Get<Expiration>(entity), 1, 0);
+	scheduler.Execute(TestTime(1));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Armed);
+	world.Remove<ExpirationEligibility>(entity);
+	scheduler.Execute(TestTime(2));
+	BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Elapsed);
+	BOOST_TEST(world.Get<Expiration>(entity)->deadline == 1u);
+}
+
+BOOST_AUTO_TEST_CASE(optional_input_is_statically_readonly_and_requires_explicit_registration)
+{
+	static_assert(std::is_same_v<decltype(std::declval<ExpirationSystem::Query::Chunk>().Get<ExpirationEligibility>()),
+		std::span<const ExpirationEligibility>>);
+	ecs::World missing;
+	missing.RegisterComponent<Expiration>();
+	missing.FinalizeComponents();
+	ExpirationSystem expire;
+	ecs::SystemRegistry systems;
+	systems.Register(expire);
+	BOOST_CHECK_THROW(systems.Finalize(missing.Components()), std::logic_error);
+	BOOST_TEST(!systems.IsFrozen());
+	ecs::World world;
+	world.RegisterComponent<Expiration>();
+	world.RegisterComponent<ExpirationEligibility>();
+	world.FinalizeComponents();
+	systems.Finalize(world.Components());
+	const auto &access = systems.Get(systems.TryGet<ExpirationSystem>()).Access();
+	BOOST_REQUIRE_EQUAL(access.ReadComponents().size(), 1u);
+	BOOST_REQUIRE_EQUAL(access.WriteComponents().size(), 1u);
+	BOOST_TEST(access.ReadComponents()[0] == world.Components().TryGet<ExpirationEligibility>());
+	BOOST_TEST(access.WriteComponents()[0] == world.Components().TryGet<Expiration>());
+}
+
+BOOST_AUTO_TEST_CASE(mixed_gated_and_ungated_chunks_match_state_and_structural_results_at_all_worker_counts)
+{
+	auto run = [](std::size_t workers) {
+		ecs::World world(ecs::WorldConfig{256});
+		world.RegisterComponent<Expiration>();
+		world.RegisterComponent<ExpirationEligibility>();
+		world.FinalizeComponents();
+		std::vector<ecs::Entity> blocked;
+		for (std::uint64_t index = 0; index != 4096; ++index)
+		{
+			const auto entity = world.Create<Expiration>();
+			ArmAfter(*world.Get<Expiration>(entity), 0, index % 7);
+			if (index % 3 != 0)
+			{
+				world.Add<ExpirationEligibility>(entity);
+				world.Get<ExpirationEligibility>(entity)->enabled = index % 3 == 1;
+				if (index % 3 == 2) blocked.push_back(entity);
+			}
+		}
+		ExpirationSystem expire;
+		expiration_test::Consume consume;
+		ecs::SystemRegistry systems;
+		systems.Register(consume);
+		systems.Register(expire);
+		systems.Finalize(world.Components());
+		ecs::Scheduler scheduler(world, systems, engine::jobs::JobSystemConfig{workers});
+		scheduler.Finalize(TestTime(0).Step());
+		std::vector<std::array<std::uint64_t, 5>> snapshots;
+		auto capture = [&](std::uint64_t tick) {
+			ecs::Query<ecs::Read<Expiration>> query(world);
+			std::size_t chunks = 0;
+			query.ForEachChunk([&](auto chunk) {
+				++chunks;
+				const auto values = chunk.template Get<Expiration>();
+				for (std::size_t row = 0; row != values.size(); ++row)
+					snapshots.push_back({tick, chunk.Entities()[row].index, chunk.Entities()[row].generation,
+						values[row].deadline, static_cast<std::uint64_t>(values[row].state)});
+			});
+			BOOST_TEST(chunks > 1u);
+		};
+		for (std::uint64_t tick = 0; tick != 7; ++tick)
+		{
+			scheduler.Execute(TestTime(tick));
+			capture(tick);
+		}
+		for (const auto entity : blocked)
+		{
+			BOOST_REQUIRE(world.IsAlive(entity));
+			BOOST_CHECK(world.Get<Expiration>(entity)->state == ExpirationState::Armed);
+			world.Get<ExpirationEligibility>(entity)->enabled = true;
+		}
+		scheduler.Execute(TestTime(7));
+		capture(7);
+		for (const auto entity : blocked) BOOST_TEST(!world.IsAlive(entity));
+		BOOST_TEST(world.EntityCount() == 4096u);
+		return snapshots;
+	};
+	const auto expected = run(1);
+	BOOST_CHECK(run(2) == expected);
+	BOOST_CHECK(run(4) == expected);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

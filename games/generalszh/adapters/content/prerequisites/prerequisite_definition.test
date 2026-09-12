@@ -1,0 +1,62 @@
+#include <boost/test/unit_test.hpp>
+#include <array>
+#include <span>
+#include <string>
+#include <vector>
+import games.generalszh.adapters.content.prerequisites.prerequisite_definition;
+import engine.gameplay.rts.production.algorithms.prerequisite_evaluation;
+using namespace generalszh::content;
+
+BOOST_AUTO_TEST_CASE(decoded_object_lines_are_or_groups_and_separate_lines_are_and_groups)
+{
+    const auto object=ReadNamedBlock(R"(Object Unit
+Prerequisites
+ Object = Barracks AlternateBarracks
+ Object = StrategyCenter
+End
+End
+)","Object","Unit");
+    const auto decoded=DecodePrerequisites(object);
+    BOOST_REQUIRE_EQUAL(decoded.objectGroups.size(),2u);
+    BOOST_REQUIRE_EQUAL(decoded.objectGroups[0].alternatives.size(),2u);
+    BOOST_TEST(decoded.objectGroups[0].alternatives[0]=="Barracks");
+    const std::array identities{
+        ContentDefinitionIdentity{"Barracks",11}, ContentDefinitionIdentity{"AlternateBarracks",13},
+        ContentDefinitionIdentity{"StrategyCenter",17}};
+    const auto bound=BindPrerequisites(decoded,identities);
+    BOOST_TEST(engine::gameplay::rts::production::SatisfiesPrerequisites(bound,std::array<std::uint32_t,2>{11,17}));
+    BOOST_TEST(engine::gameplay::rts::production::SatisfiesPrerequisites(bound,std::array<std::uint32_t,2>{13,17}));
+    BOOST_TEST(!engine::gameplay::rts::production::SatisfiesPrerequisites(bound,std::array<std::uint32_t,1>{11}));
+}
+
+BOOST_AUTO_TEST_CASE(science_unknown_names_and_identity_collisions_are_explicit_failures)
+{
+    const auto science=ReadNamedBlock("Object Unit\nPrerequisites\n Science = SCIENCE_Pathfinder\nEnd\nEnd\n","Object","Unit");
+    const auto decodedScience=DecodePrerequisites(science);
+    BOOST_REQUIRE_EQUAL(decodedScience.scienceNames.size(),1u);
+    const std::span<const ContentDefinitionIdentity> noIdentities{};
+    BOOST_CHECK_THROW(BindObjectPrerequisites(decodedScience,noIdentities),std::invalid_argument);
+    BOOST_CHECK_THROW(BindPrerequisites(decodedScience,noIdentities),std::invalid_argument);
+    const auto object=ReadNamedBlock("Object Unit\nPrerequisites\n Object = Missing\nEnd\nEnd\n","Object","Unit");
+    BOOST_CHECK_THROW(BindPrerequisites(DecodePrerequisites(object),std::array{ContentDefinitionIdentity{"Known",1}}),std::invalid_argument);
+    const std::array collision{ContentDefinitionIdentity{"Same",1},ContentDefinitionIdentity{"Same",2}};
+    BOOST_CHECK_THROW(BindPrerequisites(DecodedPrerequisites{},collision),std::invalid_argument);
+    const std::array keyCollision{ContentDefinitionIdentity{"First",1},ContentDefinitionIdentity{"Second",1}};
+    BOOST_CHECK_THROW(BindPrerequisites(DecodedPrerequisites{},keyCollision),std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(zero_hour_32_limit_applies_per_object_record_not_total_definition)
+{
+    std::string oneLine="Object Unit\nPrerequisites\n Object =";
+    for(unsigned index=0;index<33;++index) oneLine+=" Object"+std::to_string(index);
+    oneLine+="\nEnd\nEnd\n";
+    BOOST_CHECK_THROW(DecodePrerequisites(ReadNamedBlock(oneLine,"Object","Unit")),std::length_error);
+
+    std::string twoLines="Object Unit\nPrerequisites\n Object =";
+    for(unsigned index=0;index<32;++index) twoLines+=" First"+std::to_string(index);
+    twoLines+="\n Object = Second\nEnd\nEnd\n";
+    const auto decoded=DecodePrerequisites(ReadNamedBlock(twoLines,"Object","Unit"));
+    BOOST_REQUIRE_EQUAL(decoded.objectGroups.size(),2u);
+    BOOST_TEST(decoded.objectGroups[0].alternatives.size()==32u);
+    BOOST_TEST(decoded.objectGroups[1].alternatives.size()==1u);
+}
