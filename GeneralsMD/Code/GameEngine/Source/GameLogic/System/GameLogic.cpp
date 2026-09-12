@@ -3736,6 +3736,32 @@ void GameLogic::update()
 
 	PROFILER_PLOT("LogicFrame", static_cast<int64_t>(now));
 
+#if defined(RTS_DEBUG)
+	// TheSuperHackers @feature bobtista 14/08/2026 Write a save at the requested logic frame and quit.
+	// This runs ahead of the rest of the frame because the engine's own save runs from
+	// TheGameClient->UPDATE(), which precedes TheGameLogic->UPDATE(). The test is >= rather than ==
+	// because the save is deferred while input is disabled, matching when the Save button is usable.
+	if (TheGlobalData->m_saveAtFrame > 0 && (Int)m_frame >= TheGlobalData->m_saveAtFrame && getGameMode() != GAME_SHELL)
+	{
+		if (TheInGameUI != nullptr && TheInGameUI->getInputEnabled() == FALSE)
+		{
+			// Log once, on the frame that was actually requested
+			if ((Int)m_frame == TheGlobalData->m_saveAtFrame)
+			{
+				DEBUG_LOG(("Command line save deferred at frame %d: input is disabled", m_frame));
+			}
+		}
+		else
+		{
+			const AsciiString &saveName = TheGlobalData->m_saveToFile;
+			MAYBE_UNUSED const SaveResult saveResult = TheGameState->saveGame(saveName, UnicodeString(L"Command line save"), SAVE_FILE_TYPE_NORMAL);
+			DEBUG_LOG(("Command line save to '%s' at frame %d returned %d", saveName.str(), m_frame, (Int)saveResult.saveCode));
+			TheWritableGlobalData->m_saveAtFrame = 0;
+			TheGameEngine->setQuitting(TRUE);
+		}
+	}
+#endif
+
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
