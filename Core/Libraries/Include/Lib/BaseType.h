@@ -739,7 +739,7 @@ struct ICoord3D
 {
 	Int x, y, z;
 
-	ICoord2D getXY() const
+	ICoord2D asICoord2D() const
 	{
 		const ICoord2D xy = { x, y };
 		return xy;
