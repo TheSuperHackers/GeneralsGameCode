@@ -515,21 +515,21 @@ struct Region2D
 	Coord2D lo, hi;						// bounds of 2D rectangular region
 
 	// Keep only the overlapping portion of both regions.
-	void clipTo( const Region2D &other )
+	void intersectWith( const Region2D &other )
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void expandWith( const Region2D &other )
+	void uniteWith( const Region2D &other )
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void expandWith( const Coord2D &point )
+	void uniteWith( const Coord2D &point )
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -556,21 +556,21 @@ struct IRegion2D
 	ICoord2D lo, hi;					// bounds of 2D rectangular region
 
 	// Keep only the overlapping portion of both regions.
-	void clipTo( const IRegion2D &other )
+	void intersectWith( const IRegion2D &other )
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void expandWith( const IRegion2D &other )
+	void uniteWith( const IRegion2D &other )
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void expandWith( const ICoord2D &point )
+	void uniteWith( const ICoord2D &point )
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -843,21 +843,21 @@ struct Region3D
 	Coord3D lo, hi;						// axis-aligned bounding box
 
 	// Keep only the overlapping portion of both regions.
-	void clipTo( const Region3D &other )
+	void intersectWith( const Region3D &other )
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void expandWith( const Region3D &other )
+	void uniteWith( const Region3D &other )
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void expandWith( const Coord3D &point )
+	void uniteWith( const Coord3D &point )
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -909,7 +909,7 @@ struct Region3D
 		hi = points[0];
 		for (Int i = 1; i < count; ++i)
 		{
-			expandWith(points[i]);
+			uniteWith(points[i]);
 		}
 	}
 
@@ -932,21 +932,21 @@ struct IRegion3D
 	ICoord3D lo, hi;					// axis-aligned bounding box
 
 	// Keep only the overlapping portion of both regions.
-	void clipTo( const IRegion3D &other )
+	void intersectWith( const IRegion3D &other )
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void expandWith( const IRegion3D &other )
+	void uniteWith( const IRegion3D &other )
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void expandWith( const ICoord3D &point )
+	void uniteWith( const ICoord3D &point )
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);

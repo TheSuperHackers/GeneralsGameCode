@@ -277,7 +277,7 @@ void PolygonTrigger::updateBounds()	const
 	m_bounds.hi.x = m_bounds.hi.y = -BIG_INT;
 	Int i;
 	for (i=0; i<m_numPoints; i++) {
-		m_bounds.expandWith(m_points[i].getXY());
+		m_bounds.uniteWith(m_points[i].getXY());
 	}
 	m_boundsNeedsUpdate = 0;
 	Real halfWidth = (m_bounds.hi.x - m_bounds.lo.x) / 2.0f;

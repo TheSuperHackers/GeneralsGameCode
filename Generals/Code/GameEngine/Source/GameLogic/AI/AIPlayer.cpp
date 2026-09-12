@@ -3496,14 +3496,14 @@ void AIPlayer::getPlayerStructureBounds(Region2D *bounds, Int playerNdx )
 						objBounds.lo.y = objBounds.hi.y = pos.y;
 						firstObject = false;
 					}	else {
-						objBounds.expandWith(pos.asCoord2D());
+						objBounds.uniteWith(pos.asCoord2D());
 					}
 					if (firstStructure) {
 						bounds->lo.x = bounds->hi.x = pos.x;
 						bounds->lo.y = bounds->hi.y = pos.y;
 						firstStructure = false;
 					}	else {
-						bounds->expandWith(pos.asCoord2D());
+						bounds->uniteWith(pos.asCoord2D());
 					}
 				}
 			}

@@ -223,9 +223,9 @@ m_bridgeInfo(theInfo)
 	//Coord3D fromLeft, fromRight, toLeft, toRight; /// The 4 corners of the rectangle that the bridge covers.
 	m_bounds.lo = m_bridgeInfo.fromLeft.asCoord2D();
 	m_bounds.hi = m_bounds.lo;
-	m_bounds.expandWith(m_bridgeInfo.fromRight.asCoord2D());
-	m_bounds.expandWith(m_bridgeInfo.toLeft.asCoord2D());
-	m_bounds.expandWith(m_bridgeInfo.toRight.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.fromRight.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toLeft.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toRight.asCoord2D());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 
@@ -349,9 +349,9 @@ Bridge::Bridge(Object *bridgeObj)
 	//Coord3D fromLeft, fromRight, toLeft, toRight; /// The 4 corners of the rectangle that the bridge covers.
 	m_bounds.lo = m_bridgeInfo.fromLeft.asCoord2D();
 	m_bounds.hi = m_bounds.lo;
-	m_bounds.expandWith(m_bridgeInfo.fromRight.asCoord2D());
-	m_bounds.expandWith(m_bridgeInfo.toLeft.asCoord2D());
-	m_bounds.expandWith(m_bridgeInfo.toRight.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.fromRight.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toLeft.asCoord2D());
+	m_bounds.uniteWith(m_bridgeInfo.toRight.asCoord2D());
 
 	m_bridgeInfo.curDamageState = BODY_PRISTINE;
 

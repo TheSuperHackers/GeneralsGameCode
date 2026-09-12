@@ -3052,7 +3052,7 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 			blockBounds.lo.y = globalBounds.lo.y + yBlock*ZONE_BLOCK_SIZE;
 			blockBounds.hi.x = blockBounds.lo.x + ZONE_BLOCK_SIZE - 1; // blockBounds are inclusive.
 			blockBounds.hi.y = blockBounds.lo.y + ZONE_BLOCK_SIZE - 1; // blockBounds are inclusive.
-			blockBounds.clipTo(bounds);
+			blockBounds.intersectWith(bounds);
 			if (blockBounds.lo.x>blockBounds.hi.x || blockBounds.lo.y>blockBounds.hi.y) {
 				continue;
 			}
@@ -3591,7 +3591,7 @@ void PathfindLayer::allocateCellsForWallLayer(const IRegion2D *extent, ObjectID 
 			bridgeBounds = objBounds;
 			first = false;
 		} else {
-			bridgeBounds.expandWith(objBounds);
+			bridgeBounds.uniteWith(objBounds);
 		}
 	}
 
@@ -4577,7 +4577,7 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 
 	Int i, j;
 
-	cellBounds.clipTo(m_extent);
+	cellBounds.intersectWith(m_extent);
 
 	if (!insert) {
 		for( j=cellBounds.lo.y; j<=cellBounds.hi.y; j++ )
