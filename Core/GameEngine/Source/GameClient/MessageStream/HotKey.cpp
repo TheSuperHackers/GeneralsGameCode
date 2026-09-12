@@ -158,6 +158,24 @@ void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
 }
 
 //-----------------------------------------------------------------------------
+// TheSuperHackers @feature Reverse lookup for the hotkey overlay on command bar cameos.
+//-----------------------------------------------------------------------------
+AsciiString HotKeyManager::getHotKeyForWindow( const GameWindow *win ) const
+{
+	if( win == nullptr )
+		return AsciiString::TheEmptyString;
+
+	// the map only ever holds the currently displayed commands, so this stays tiny
+	for( HotKeyMap::const_iterator it = m_hotKeyMap.begin(); it != m_hotKeyMap.end(); ++it )
+	{
+		if( it->second.m_win == win )
+			return it->second.m_key;
+	}
+
+	return AsciiString::TheEmptyString;
+}
+
+//-----------------------------------------------------------------------------
 Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 {
 	AsciiString key = keyIn;
