@@ -708,6 +708,11 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				diffuse_used = diffuse_used || mtl_diffuse.X || mtl_diffuse.Y || mtl_diffuse.Z;
 				ambient_used = ambient_used || mtl_ambient.X || mtl_ambient.Y || mtl_ambient.Z;
 				emissive_used = emissive_used || mtl_emissive.X || mtl_emissive.Y || mtl_emissive.Z;
+
+				if (diffuse_used && ambient_used && emissive_used)
+				{
+					break;
+				}
 			}
 		}
 
