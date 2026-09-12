@@ -111,7 +111,7 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 				}
 
 				// Use the last known good path
-				pathFixed = p;
+				pathFixedPart = p;
 			}
 
 			// Copy of the current path to mirror the current depth
