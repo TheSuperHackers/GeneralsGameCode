@@ -1169,6 +1169,8 @@ FontCharsClass::FontCharsClass () :
 	CharHeight( 0 ),
 	GlyphBitmapWidth( 0 ),
 	GlyphBitmapHeight( 0 ),
+	GlyphCellBytes( 0 ),
+	GlyphBlockBytes( 0 ),
 	UnicodeCharArray( nullptr ),
 	FirstUnicodeChar( 0xFFFF ),
 	LastUnicodeChar( 0 ),
@@ -1477,8 +1479,17 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 	//
 	if (needs_new_buffer)
 	{
-		// TheSuperHackers @fix arcticdolphin 07/09/2026 Length may exceed CHAR_BUFFER_LEN to fit this glyph.
-		const int length = max( (int)CHAR_BUFFER_LEN, char_len );
+		//
+		//	TheSuperHackers @fix Ceil the block size to the char size to make it fit.
+		//	TheSuperHackers @tweak Ramp the first blocks up to the full size, because a font whose
+		//	working set is a handful of glyphs would otherwise pay for a whole block of them.
+		//	Halving rather than one small first block is what keeps such a font from being pushed
+		//	into a full sized second block.
+		//
+		const int shift = 2 - min( 2, BufferList.Count() );
+		const int length = max( GlyphBlockBytes >> shift, GlyphCellBytes );
+		WWASSERT( char_len <= length );
+
 		BufferList.Add( FontCharsBuffer( length, W3DNEWARRAY uint8[length] ) );
 		CurrPixelOffset = 0;
 	}
@@ -1569,6 +1580,16 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 
 	GlyphBitmapWidth = clamp (min_glypth_width, GlyphBitmapWidth, max_glyph_extent);
 	GlyphBitmapHeight = CharHeight = clamp (1, CharHeight, max_glyph_extent);
+
+	//
+	//	TheSuperHackers @tweak Size the glyph cache blocks from the widest glyph this font can produce,
+	//	so that a block always holds a whole number of glyphs and the space abandoned when one does not
+	//	fit is at most one glyph. A block always fits at least one glyph, however large the font is.
+	//
+	GlyphCellBytes = GlyphBitmapWidth * GlyphBitmapHeight;
+	GlyphBlockBytes = GlyphCellBytes * GLYPH_BLOCK_TARGET_CELLS;
+	GlyphBlockBytes = clamp ((int)GLYPH_BLOCK_MIN_BYTES, GlyphBlockBytes, (int)GLYPH_BLOCK_MAX_BYTES);
+	GlyphBlockBytes = max (GlyphBlockBytes, GlyphCellBytes);
 
 	//
 	// Set-up the fields of the BITMAPINFOHEADER
