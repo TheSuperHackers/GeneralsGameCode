@@ -1247,13 +1247,36 @@ FontCharsClass::FontCharsClass () :
 ////////////////////////////////////////////////////////////////////////////////////
 FontCharsClass::~FontCharsClass ()
 {
+	Free_Glyph_Cache();
+	Free_GDI_Font();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Free_Glyph_Cache
+//	Discards the cached glyphs but keeps the font itself, so that the pointers other
+//	objects hold to this font stay valid and glyphs are rebuilt on demand.
+//
+////////////////////////////////////////////////////////////////////////////////////
+void
+FontCharsClass::Free_Glyph_Cache ()
+{
 	while ( BufferList.Count() ) {
 		delete [] BufferList[0].Buffer;
 		BufferList.Delete(0);
 	}
 
-	Free_GDI_Font();
 	Free_Character_Arrays();
+
+	//
+	//	The character arrays are gone, so the unicode range has to start over as well.
+	//	The GDI font and the derived metrics are deliberately kept, so Store_GDI_Char
+	//	can rebuild any glyph that is asked for again without recreating this object.
+	//
+	CurrPixelOffset = 0;
+	FirstUnicodeChar = 0xFFFF;
+	LastUnicodeChar = 0;
 }
 
 

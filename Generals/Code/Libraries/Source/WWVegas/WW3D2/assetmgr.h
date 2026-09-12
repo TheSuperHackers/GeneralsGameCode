@@ -288,6 +288,11 @@ public:
 	virtual FontCharsClass *		Get_FontChars( const char * name, int point_size, bool is_bold = false );
 
 	/*
+	** Discard the cached glyphs of every font without destroying the fonts.
+	*/
+	virtual void Free_All_FontChars_Glyph_Caches();
+
+	/*
 	** Access to HTrees, Used by Animatable3DObj's
 	*/
 	virtual AssetIterator *			Create_HTree_Iterator();
