@@ -28,6 +28,12 @@
 
 #pragma once
 
+// Legacy headers use CPP_11 and related compatibility macros. Keep the
+// compatibility contract explicit for C++23 builds instead of relying on a
+// compiler-specific forced-include option (which is invalid before module
+// global fragments).
+#include "Utility/CppMacros.h"
+
 //-----------------------------------------------------------------------------
 // srj sez: this must come first, first, first.
 #define _STLP_USE_NEWALLOC					1

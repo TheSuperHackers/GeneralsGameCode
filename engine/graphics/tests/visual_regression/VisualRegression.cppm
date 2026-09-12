@@ -447,6 +447,11 @@ public:
 		const bool rendered = Render_Offscreen(device, render, context, actual);
 		RGBAImage expected;
 		const std::filesystem::path expected_path = m_config.reference_directory / (std::string(scene_name) + ".png");
+		const char *update_references = std::getenv("GRAPHICS_TEST_UPDATE_REFERENCES");
+		if (rendered && update_references != nullptr && std::string_view(update_references) == "1") {
+			const bool saved = Save_RGBA8_PNG(expected_path, actual);
+			return {saved, saved, 0, 0};
+		}
 		const bool expected_loaded = Load_RGBA8_PNG(expected_path, expected);
 		VisualComparisonResult result = rendered && expected_loaded
 			? Compare_RGBA8(actual, expected, m_config.channel_tolerance)

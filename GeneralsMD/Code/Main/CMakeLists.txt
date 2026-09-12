@@ -45,18 +45,35 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 # Copy runtime game data next to the built executable.
 # The game sets working directory to the executable directory on startup,
 # so required data must exist directly under that directory (for example Data/...).
+set(RTS_FFMPEG_DEBUG_RUNTIME_DIRECTORY "${FFMPEG_DEBUG_RUNTIME_DIRECTORY}")
+set(RTS_FFMPEG_RUNTIME_DIRECTORY "${FFMPEG_RUNTIME_DIRECTORY}")
+if(NOT EXISTS "${RTS_FFMPEG_DEBUG_RUNTIME_DIRECTORY}" OR NOT EXISTS "${RTS_FFMPEG_RUNTIME_DIRECTORY}")
+    foreach(runtime_prefix IN LISTS CMAKE_PREFIX_PATH)
+        if(NOT EXISTS "${RTS_FFMPEG_DEBUG_RUNTIME_DIRECTORY}" AND EXISTS "${runtime_prefix}/debug/bin")
+            set(RTS_FFMPEG_DEBUG_RUNTIME_DIRECTORY "${runtime_prefix}/debug/bin")
+        endif()
+        if(NOT EXISTS "${RTS_FFMPEG_RUNTIME_DIRECTORY}" AND EXISTS "${runtime_prefix}/bin")
+            set(RTS_FFMPEG_RUNTIME_DIRECTORY "${runtime_prefix}/bin")
+        endif()
+    endforeach()
+endif()
+
 add_custom_command(TARGET z_generals POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:z_generals>/Run"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/GeneralsMD/Run"
         "$<TARGET_FILE_DIR:z_generals>"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "$<IF:$<CONFIG:Debug>,${FFMPEG_DEBUG_RUNTIME_DIRECTORY},${FFMPEG_RUNTIME_DIRECTORY}>"
-        "$<TARGET_FILE_DIR:z_generals>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:SDL3::SDL3>"
         "$<TARGET_FILE_DIR:z_generals>"
 )
+
+if(EXISTS "${RTS_FFMPEG_DEBUG_RUNTIME_DIRECTORY}" OR EXISTS "${RTS_FFMPEG_RUNTIME_DIRECTORY}")
+    add_custom_command(TARGET z_generals POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "$<IF:$<CONFIG:Debug>,${RTS_FFMPEG_DEBUG_RUNTIME_DIRECTORY},${RTS_FFMPEG_RUNTIME_DIRECTORY}>"
+            "$<TARGET_FILE_DIR:z_generals>")
+endif()
 
 if(GRAPHICS_SHADER_ASSET_DIRECTORY)
     add_custom_command(TARGET z_generals POST_BUILD
@@ -85,12 +102,17 @@ target_sources(z_generals PRIVATE
 # macros. Clang must parse SDL headers before those macros are active.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set_target_properties(z_generals PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
-    target_compile_options(z_generals PRIVATE
-        "-include${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h")
 endif()
 
 if(WIN32)
-    target_link_options(z_generals PRIVATE
-        "LINKER:/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        # lld-link embeds the default manifest correctly, but rejects the
+        # MSVC-only /MANIFESTINPUT spelling used by the original build.
+        target_link_options(z_generals PRIVATE "LINKER:/MANIFEST:EMBED")
+    else()
+        target_link_options(z_generals PRIVATE
+            "LINKER:/MANIFEST:EMBED"
+            "LINKER:/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
+    endif()
     target_sources(z_generals PRIVATE RTS.RC)
 endif()

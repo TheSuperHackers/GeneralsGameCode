@@ -171,8 +171,8 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/GameText.h
 #    Include/GameClient/GameWindow.h
 #    Include/GameClient/GameWindowGlobal.h
-    Include/GameClient/GameWindowID.h
-    Include/GameClient/GameWindowManager.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/include/GameClient/GameWindowID.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/include/GameClient/GameWindowManager.h
 #    Include/GameClient/GameWindowTransitions.h
 #    Include/GameClient/GlobalLanguage.h
 #    Include/GameClient/GraphDraw.h
@@ -683,10 +683,10 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/GameFont.cpp
 #    Source/GameClient/GUI/GameWindow.cpp
 #    Source/GameClient/GUI/GameWindowGlobal.cpp
-    Source/GameClient/GUI/GameWindowManager.cpp
-    Source/GameClient/GUI/GameWindowManagerScript.cpp
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/source/GameClient/GUI/GameWindowManager.cppm
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/source/GameClient/GUI/GameWindowManagerScript.cppm
 #    Source/GameClient/GUI/GameWindowTransitions.cpp
-    Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/source/GameClient/GUI/GameWindowTransitionsStyles.cppm
 #    Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
 #    Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
 #    Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp
@@ -1078,6 +1078,8 @@ target_sources(g_gameengine PRIVATE ${GAMEENGINE_SRC})
 
 target_include_directories(g_gameengine PUBLIC
     Include
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/include
 )
 
 target_include_directories(g_gameengine PRIVATE
@@ -1097,4 +1099,15 @@ target_link_libraries(g_gameengine PUBLIC
 target_precompile_headers(g_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
 #    Include/Precompiled/PreRTS.h
+)
+
+# The legacy Generals target still uses the original class ABI, but its WND
+# implementation is owned by engine/gui/wnd and is kept in modern .cppm
+# translation units.  Compile these compatibility units as ordinary C++ so
+# they do not become named modules or change the historical ABI.
+set_source_files_properties(
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/source/GameClient/GUI/GameWindowManager.cppm
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/source/GameClient/GUI/GameWindowManagerScript.cppm
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/legacy/generals/source/GameClient/GUI/GameWindowTransitionsStyles.cppm
+    PROPERTIES COMPILE_OPTIONS "-x;c++"
 )

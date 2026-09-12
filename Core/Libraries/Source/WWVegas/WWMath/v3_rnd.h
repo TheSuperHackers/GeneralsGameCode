@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <Utility/CppMacros.h>
 #include "WWLib/always.h"
 #include "vector3.h"
 #include "WWLib/RANDOM.h"

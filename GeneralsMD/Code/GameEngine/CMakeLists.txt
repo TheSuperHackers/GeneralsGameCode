@@ -177,8 +177,8 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/GameText.h
 #    Include/GameClient/GameWindow.h
 #    Include/GameClient/GameWindowGlobal.h
-    Include/GameClient/GameWindowID.h
-    Include/GameClient/GameWindowManager.h
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GameWindowID.h
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GameWindowManager.h
 #    Include/GameClient/GameWindowTransitions.h
 #    Include/GameClient/GlobalLanguage.h
 #    Include/GameClient/GraphDraw.h
@@ -717,10 +717,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GUI/GameFont.cpp
 #    Source/GameClient/GUI/GameWindow.cpp
 #    Source/GameClient/GUI/GameWindowGlobal.cpp
-    Source/GameClient/GUI/GameWindowManager.cpp
-    Source/GameClient/GUI/GameWindowManagerScript.cpp
 #    Source/GameClient/GUI/GameWindowTransitions.cpp
-    Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
 #    Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
 #    Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
 #    Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp
@@ -1152,6 +1149,50 @@ target_sources(z_gameengine PRIVATE
     Source/Common/RuntimeModule.cpp
     ../../../Core/GameEngineDevice/Source/SDL3Device/Common/SDL3GameEngine.cpp
     ../../../Generals/Code/Main/Platform/SDLPlatformWindow.cpp
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameFont.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindow.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowGlobal.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowManager.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowManagerScript.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowTransitions.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowTransitionsStyles.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/WindowLayout.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/WinInstanceData.cppm
+)
+
+
+target_sources(z_gameengine PRIVATE
+    FILE_SET CXX_MODULES
+    BASE_DIRS "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source"
+    FILES
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetCheckBox.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetComboBox.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetHorizontalSlider.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetListBox.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetProgressBar.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetPushButton.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetRadioButton.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetStaticText.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetTabControl.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetTextEntry.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/Gadget/GadgetVerticalSlider.cppm"
+)
+
+set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameFont.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindow.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowTransitions.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowTransitionsStyles.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/WindowLayout.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/WinInstanceData.cppm
+    PROPERTIES COMPILE_OPTIONS "-x;c++"
+)
+
+set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowGlobal.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowManager.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/source/GameClient/GUI/GameWindowManagerScript.cppm
+    PROPERTIES COMPILE_OPTIONS "-x;c++"
 )
 
 target_include_directories(z_gameengine PUBLIC
@@ -1159,6 +1200,7 @@ target_include_directories(z_gameengine PUBLIC
     ../../../Generals/Code/Main
     ../../../Core/GameEngineDevice/Include
     ../GameEngineDevice/Include
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include
 )
 
 target_include_directories(z_gameengine PRIVATE
@@ -1195,8 +1237,6 @@ target_precompile_headers(z_gameengine PRIVATE
 # already include PreRTS explicitly, so compile them without a PCH on Clang.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set_target_properties(z_gameengine PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
-    target_compile_options(z_gameengine PRIVATE
-        "-include${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h")
 endif()
 
 engine_navigation_attach_generalsmd(z_gameengine)

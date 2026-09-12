@@ -222,6 +222,41 @@ add_dependencies(z_gameenginedevice generals_ui_wnd)
 
 target_sources(z_gameenginedevice PRIVATE
     ${GAMEENGINEDEVICE_SRC}
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/W3DGameFont.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/W3DGameWindow.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cppm
+)
+
+
+target_sources(z_gameenginedevice PRIVATE
+    FILE_SET CXX_MODULES
+    BASE_DIRS "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source"
+    FILES
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMainMenu.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMOTD.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DCheckBox.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DComboBox.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DHorizontalSlider.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DListBox.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DPushButton.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DRadioButton.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DStaticText.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DTabControl.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cppm"
+        "${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cppm"
+)
+
+set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cppm
+    PROPERTIES COMPILE_OPTIONS "-x;c++"
+)
+
+set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/W3DGameFont.cppm
+    ${CMAKE_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/source/W3DDevice/GameClient/GUI/W3DGameWindow.cppm
+    PROPERTIES COMPILE_OPTIONS "-x;c++"
 )
 
 target_include_directories(z_gameenginedevice PUBLIC
@@ -241,8 +276,6 @@ target_precompile_headers(z_gameenginedevice PRIVATE
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set_target_properties(z_gameenginedevice PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
-    target_compile_options(z_gameenginedevice PRIVATE
-        "-include${CMAKE_SOURCE_DIR}/Dependencies/Utility/Utility/CppMacros.h")
 endif()
 
 target_link_libraries(z_gameenginedevice PRIVATE

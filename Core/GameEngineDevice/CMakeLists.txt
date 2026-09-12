@@ -55,12 +55,12 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DDisplayStringManager.h
 #    Include/W3DDevice/GameClient/W3DDynamicLight.h
 #    Include/W3DDevice/GameClient/W3DFileSystem.h
-    Include/W3DDevice/GameClient/W3DGadget.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include/W3DDevice/GameClient/W3DGadget.h
 #    Include/W3DDevice/GameClient/W3DGameClient.h
-    Include/W3DDevice/GameClient/W3DGameFont.h
-    Include/W3DDevice/GameClient/W3DGameWindow.h
-    Include/W3DDevice/GameClient/W3DGameWindowManager.h
-    Include/W3DDevice/GameClient/W3DGUICallbacks.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include/W3DDevice/GameClient/W3DGameFont.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include/W3DDevice/GameClient/W3DGameWindow.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include/W3DDevice/GameClient/W3DGameWindowManager.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include/W3DDevice/GameClient/W3DGUICallbacks.h
 #    Include/W3DDevice/GameClient/W3DInGameUI.h
     Include/W3DDevice/GameClient/W3DMouse.h
     Include/W3DDevice/GameClient/W3DParticleSys.h
@@ -134,23 +134,6 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTracerDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTruckDraw.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DCheckBox.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DComboBox.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DHorizontalSlider.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DListBox.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DPushButton.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DRadioButton.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DStaticText.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DTabControl.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp
-    Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp
-    Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cpp
-    Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMainMenu.cpp
-    Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DMOTD.cpp
-    Source/W3DDevice/GameClient/GUI/W3DGameFont.cpp
-    Source/W3DDevice/GameClient/GUI/W3DGameWindow.cpp
-    Source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cpp
 #    Source/W3DDevice/GameClient/Shadow/W3DBufferManager.cpp
 #    Source/W3DDevice/GameClient/Shadow/W3DProjectedShadow.cpp
 #    Source/W3DDevice/GameClient/Shadow/W3DShadow.cpp
@@ -216,11 +199,13 @@ target_sources(corei_gameenginedevice_private INTERFACE ${GAMEENGINEDEVICE_SRC})
 
 target_include_directories(corei_gameenginedevice_public INTERFACE
     Include
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include
 )
 
 target_include_directories(corei_gameenginedevice_private INTERFACE
     Include/XAudio2AudioDevice
     Source/XAudio2AudioDevice
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/renderer/include
 )
 
 target_link_libraries(corei_gameenginedevice_private INTERFACE

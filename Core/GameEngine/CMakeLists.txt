@@ -166,26 +166,26 @@ set(GAMEENGINE_SRC
     Include/GameClient/ExtendedMessageBox.h
 #    Include/GameClient/FontDesc.h
     Include/GameClient/FXList.h
-    Include/GameClient/Gadget.h
-    Include/GameClient/GadgetCheckBox.h
-    Include/GameClient/GadgetComboBox.h
-    Include/GameClient/GadgetListBox.h
-    Include/GameClient/GadgetProgressBar.h
-    Include/GameClient/GadgetPushButton.h
-    Include/GameClient/GadgetRadioButton.h
-    Include/GameClient/GadgetSlider.h
-    Include/GameClient/GadgetStaticText.h
-    Include/GameClient/GadgetTabControl.h
-    Include/GameClient/GadgetTextEntry.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/Gadget.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetCheckBox.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetComboBox.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetListBox.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetProgressBar.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetPushButton.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetRadioButton.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetSlider.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetStaticText.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetTabControl.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GadgetTextEntry.h
 #    Include/GameClient/GameClient.h
-    Include/GameClient/GameFont.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GameFont.h
 #    Include/GameClient/GameInfoWindow.h
     Include/GameClient/GameText.h
-    Include/GameClient/GameWindow.h
-    Include/GameClient/GameWindowGlobal.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GameWindow.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GameWindowGlobal.h
 #    Include/GameClient/GameWindowID.h
 #    Include/GameClient/GameWindowManager.h
-    Include/GameClient/GameWindowTransitions.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/GameWindowTransitions.h
     Include/GameClient/GlobalLanguage.h
     Include/GameClient/GraphDraw.h
 #    Include/GameClient/GUICallbacks.h
@@ -231,10 +231,10 @@ set(GAMEENGINE_SRC
     Include/GameClient/VideoPlayer.h
     Include/GameClient/View.h
     Include/GameClient/Water.h
-    Include/GameClient/WindowLayout.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/WindowLayout.h
     Include/GameClient/WindowVideoManager.h
     Include/GameClient/WindowXlat.h
-    Include/GameClient/WinInstanceData.h
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include/GameClient/WinInstanceData.h
 #    Include/GameLogic/AI.h
 #    Include/GameLogic/AIDock.h
 #    Include/GameLogic/AIGuard.h
@@ -722,23 +722,8 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/ControlBar/ControlBarUnderConstruction.cpp
 #    Source/GameClient/GUI/DisconnectMenu/DisconnectMenu.cpp
     Source/GameClient/GUI/EstablishConnectionsMenu/EstablishConnectionsMenu.cpp
-    Source/GameClient/GUI/Gadget/GadgetCheckBox.cpp
-    Source/GameClient/GUI/Gadget/GadgetComboBox.cpp
-    Source/GameClient/GUI/Gadget/GadgetHorizontalSlider.cpp
-    Source/GameClient/GUI/Gadget/GadgetListBox.cpp
-    Source/GameClient/GUI/Gadget/GadgetProgressBar.cpp
-    Source/GameClient/GUI/Gadget/GadgetPushButton.cpp
-    Source/GameClient/GUI/Gadget/GadgetRadioButton.cpp
-    Source/GameClient/GUI/Gadget/GadgetStaticText.cpp
-    Source/GameClient/GUI/Gadget/GadgetTabControl.cpp
-    Source/GameClient/GUI/Gadget/GadgetTextEntry.cpp
-    Source/GameClient/GUI/Gadget/GadgetVerticalSlider.cpp
-    Source/GameClient/GUI/GameFont.cpp
-    Source/GameClient/GUI/GameWindow.cpp
-    Source/GameClient/GUI/GameWindowGlobal.cpp
 #    Source/GameClient/GUI/GameWindowManager.cpp
 #    Source/GameClient/GUI/GameWindowManagerScript.cpp
-    Source/GameClient/GUI/GameWindowTransitions.cpp
 #    Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
     Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
@@ -798,9 +783,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/ProcessAnimateWindow.cpp
     Source/GameClient/GUI/Shell/Shell.cpp
     Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
-    Source/GameClient/GUI/WindowLayout.cpp
     Source/GameClient/GUI/WindowVideoManager.cpp
-    Source/GameClient/GUI/WinInstanceData.cpp
 #    Source/GameClient/InGameUI.cpp
     Source/GameClient/Input/Keyboard.cpp
     Source/GameClient/Input/Mouse.cpp
@@ -1171,6 +1154,7 @@ target_sources(corei_gameengine_private INTERFACE ${GAMEENGINE_SRC})
 
 target_include_directories(corei_gameengine_private INTERFACE
     Include/Precompiled
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include
 )
 
 target_link_libraries(corei_gameengine_private INTERFACE
@@ -1188,6 +1172,7 @@ target_precompile_headers(corei_gameengine_private INTERFACE
 
 target_include_directories(corei_gameengine_public INTERFACE
     Include
+    ${PROJECT_SOURCE_DIR}/engine/gui/wnd/runtime/include
 )
 
 target_link_libraries(corei_gameengine_public INTERFACE
