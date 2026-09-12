@@ -549,6 +549,7 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/NetCommandWrapperList.h
     Include/GameNetwork/NetPacket.h
     Include/GameNetwork/NetPacketStructs.h
+    Include/GameNetwork/NetworkAutoStart.h
     Include/GameNetwork/NetworkDefs.h
     Include/GameNetwork/NetworkInterface.h
     Include/GameNetwork/networkutil.h
@@ -1145,6 +1146,7 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/NetPacket.cpp
     Source/GameNetwork/NetPacketStructs.cpp
     Source/GameNetwork/Network.cpp
+    Source/GameNetwork/NetworkAutoStart.cpp
     Source/GameNetwork/NetworkUtil.cpp
     Source/GameNetwork/Transport.cpp
     Source/GameNetwork/udp.cpp
