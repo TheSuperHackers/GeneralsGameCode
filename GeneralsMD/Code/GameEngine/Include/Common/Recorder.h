@@ -99,6 +99,7 @@ public:
 	// Methods dealing with playback.
 	void updatePlayback();														///< The update function for playing back a file.
 	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
+	void loadQueuedReplay();													///< Play the replay file requested on startup.
 	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
 	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
 	AsciiString getCurrentReplayFilename();			///< valid during playback only
