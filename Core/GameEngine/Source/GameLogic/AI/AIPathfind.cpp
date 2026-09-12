@@ -173,28 +173,6 @@ PathNode *PathNode::prependToList( PathNode *list )
 	return this;
 }
 
-//-----------------------------------------------------------------------------------
-/// given a list, append this node, return new list.  slow implementation.
-/// @todo optimize this
-PathNode *PathNode::appendToList( PathNode *list )
-{
-	if (list == nullptr)
-	{
-		m_next = nullptr;
-		m_prev = nullptr;
-		return this;
-	}
-
-	PathNode *tail;
-	for( tail = list; tail->m_next; tail = tail->m_next )
-		;
-
-	tail->m_next = this;
-	m_prev = tail;
-	m_next = nullptr;
-
-	return list;
-}
 
 //-----------------------------------------------------------------------------------
 /// given a node, append new node to this.
@@ -437,7 +415,14 @@ void Path::appendNode( const Coord3D *pos, PathfindLayerEnum layer )
 	node->setPosition( pos );
 	node->setLayer(layer);
 
-	m_path = node->appendToList( m_path );
+	if (m_pathTail)
+	{
+		m_pathTail->append(node);
+	}
+	else
+	{
+		m_path = node->prependToList(nullptr);
+	}
 
 	if (m_isOptimized && m_pathTail)
 	{
@@ -6184,6 +6169,7 @@ struct ExamineCellsStruct
 	const LocomotorSet	*theLoco;
 	Bool								centerInCell;
 	Bool								isHuman;
+	Bool								isCrusher;
 	Int									radius;
 	const Object				*obj;
 	PathfindCell				*goalCell;
@@ -6192,10 +6178,9 @@ struct ExamineCellsStruct
 /*static*/ Int Pathfinder::examineCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData)
 {
 	ExamineCellsStruct* d = (ExamineCellsStruct*)userData;
-	Bool isCrusher = d->obj ? d->obj->getCrusherLevel() > 0 : false;
 	if (d->thePathfinder->m_isTunneling) return 1; // abort.
 	if (from && to) {
-			if (!d->thePathfinder->validMovementPosition( isCrusher, d->theLoco->getValidSurfaces(), to, from )) {
+			if (!d->thePathfinder->validMovementPosition( d->isCrusher, d->theLoco->getValidSurfaces(), to, from )) {
 				return 1;
 			}
 			if ( (to->getLayer() == LAYER_GROUND) && !d->thePathfinder->m_zoneManager.isPassable(to_x, to_y) ) {
@@ -6297,6 +6282,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			info.radius = radius;
 			info.obj = obj;
 			info.isHuman = isHuman;
+			info.isCrusher = isCrusher;
 			info.goalCell = goalCell;
 			ICoord2D start, end;
 			start.x = parentCell->getXIndex();
@@ -6321,6 +6307,11 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		Bool neighborFlags[8] = { 0 };
 
 		UnsignedInt newCostSoFar = 0;
+
+		Coord3D fromPos;
+		fromPos.x = parentCell->getXIndex() * PATHFIND_CELL_SIZE_F ;
+		fromPos.y = parentCell->getYIndex() * PATHFIND_CELL_SIZE_F ;
+		fromPos.z = TheTerrainLogic->getGroundHeight(fromPos.x , fromPos.y);
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -6360,11 +6351,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			// do the gravity check here
 			if ( locomotorSet.isDownhillOnly() )
 			{
-				Coord3D fromPos;
-				fromPos.x = parentCell->getXIndex() * PATHFIND_CELL_SIZE_F ;
-				fromPos.y = parentCell->getYIndex() * PATHFIND_CELL_SIZE_F ;
-				fromPos.z = TheTerrainLogic->getGroundHeight(fromPos.x , fromPos.y);
-
 				Coord3D toPos;
 				toPos.x = newCellCoord.x * PATHFIND_CELL_SIZE_F ;
 				toPos.y = newCellCoord.y * PATHFIND_CELL_SIZE_F ;
@@ -6430,11 +6416,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			}
 
 			if (newCell->getType() == PathfindCell::CELL_CLIFF && !newCell->getPinched() ) {
-				Coord3D fromPos;
-				fromPos.x = parentCell->getXIndex() * PATHFIND_CELL_SIZE_F ;
-				fromPos.y = parentCell->getYIndex() * PATHFIND_CELL_SIZE_F ;
-				fromPos.z = TheTerrainLogic->getGroundHeight(fromPos.x , fromPos.y);
-
 				Coord3D toPos;
 				toPos.x = newCellCoord.x * PATHFIND_CELL_SIZE_F ;
 				toPos.y = newCellCoord.y * PATHFIND_CELL_SIZE_F ;
