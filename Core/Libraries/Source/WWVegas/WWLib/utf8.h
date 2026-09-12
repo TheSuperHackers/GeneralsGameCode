@@ -55,3 +55,9 @@ size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLe
 // that many wide characters plus one for the terminator. Pass destLen 0 to measure without writing.
 // Returns UTF8_INVALID if src is not well-formed UTF-8, setting dest[0] to L'\0' if destLen > 0.
 size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen);
+
+// Returns the largest length not greater than maxLen at which the srcLen bytes of the UTF-8 string
+// src can be cut without splitting a multibyte sequence, by backing off the continuation bytes at
+// the cut point. Returns srcLen when the string already fits in maxLen. Returns 0 when no whole
+// sequence fits, which is also what malformed UTF-8 yields once it has no lead byte to back off to.
+size_t Utf8_Truncate_Len(const char* src, size_t srcLen, size_t maxLen);

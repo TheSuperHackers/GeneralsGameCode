@@ -44,6 +44,7 @@
 #include "GameNetwork/LANAPI.h"						// for testing packet size
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
 #include "WWLib/strtok_r.h"
+#include "WWLib/utf8.h"
 
 
 
@@ -891,11 +892,80 @@ Bool GameInfo::isSandbox()
 
 static const char slotListID		= 'S';
 
-AsciiString GameInfoToAsciiString( const GameInfo *game )
+// TheSuperHackers @bugfix bobtista 23/08/2026 Truncate player names without splitting a
+// multibyte UTF-8 character. A non-positive budget empties the name instead of looping forever.
+static void truncatePlayerName(AsciiString& name, Int maxByteCount)
 {
-	if (!game)
-		return AsciiString::TheEmptyString;
+	if (maxByteCount <= 0)
+	{
+		name.clear();
+		return;
+	}
 
+	const size_t truncatedLength = Utf8_Truncate_Len(name.str(), name.getLength(), maxByteCount);
+	name.truncateTo(static_cast<Int>(truncatedLength));
+}
+
+static Int getMinimumPlayerNameLength(const AsciiString& name)
+{
+	for (Int maxByteCount = 1; maxByteCount <= name.getLength(); ++maxByteCount)
+	{
+		const size_t truncatedLength = Utf8_Truncate_Len(name.str(), name.getLength(), maxByteCount);
+		if (truncatedLength > 0)
+		{
+			return static_cast<Int>(truncatedLength);
+		}
+	}
+
+	return 0;
+}
+
+static Bool truncatePlayerNames(const GameInfo *game, AsciiString playerNames[MAX_SLOTS], Int maxTotalLength)
+{
+	Int minimumLengths[MAX_SLOTS] = { 0 };
+	Int minimumTotalLength = 0;
+	Int playerCount = 0;
+	Int i;
+
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot *slot = game->getConstSlot(i);
+		if (slot && slot->isHuman())
+		{
+			minimumLengths[i] = getMinimumPlayerNameLength(playerNames[i]);
+			if (minimumLengths[i] == 0)
+			{
+				return false;
+			}
+			minimumTotalLength += minimumLengths[i];
+			++playerCount;
+		}
+	}
+
+	if (playerCount == 0 || maxTotalLength < minimumTotalLength)
+	{
+		return false;
+	}
+
+	Int remainingLength = maxTotalLength;
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot *slot = game->getConstSlot(i);
+		if (slot && slot->isHuman())
+		{
+			const Int extraLength = (remainingLength - minimumTotalLength) / playerCount;
+			truncatePlayerName(playerNames[i], minimumLengths[i] + extraLength);
+			remainingLength -= playerNames[i].getLength();
+			minimumTotalLength -= minimumLengths[i];
+			--playerCount;
+		}
+	}
+
+	return true;
+}
+
+static AsciiString buildGameInfoAsciiString(const GameInfo *game, const AsciiString playerNames[MAX_SLOTS])
+{
 	AsciiString mapName = game->getMap();
 	mapName = TheGameState->realMapPathToPortableMapPath(mapName);
 	AsciiString newMapName;
@@ -948,15 +1018,8 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 				slot->getColor(), slot->getPlayerTemplate(),
 				slot->getStartPos(), slot->getTeamNumber(),
 				slot->getNATBehavior() );
-			//make sure name doesn't cause overflow of m_lanMaxOptionsLength
-			int lenCur = tmp.getLength() + optionsString.getLength() + 2;  //+2 for H and trailing ;
-			int lenRem = m_lanMaxOptionsLength - lenCur;  //length remaining before overflowing
-			int lenMax = lenRem / (MAX_SLOTS-i);  //share lenRem with all remaining slots
-			AsciiString name = WideCharStringToMultiByte(slot->getName().str()).c_str();
-			while( name.getLength() > lenMax )
-				name.removeLastChar();  //what a horrible way to truncate.  I hate AsciiString.
 
-			str.format( "H%s%s", name.str(), tmp.str() );
+			str.format( "H%s%s", playerNames[i].str(), tmp.str() );
 		}
 		else if (slot && slot->isAI())
 		{
@@ -988,9 +1051,51 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 	}
 	optionsString.concat(';');
 
-	DEBUG_ASSERTCRASH(!TheLAN || (optionsString.getLength() < m_lanMaxOptionsLength),
-		("WARNING: options string is longer than expected!  Length is %d, but max is %d!",
-		optionsString.getLength(), m_lanMaxOptionsLength));
+	return optionsString;
+}
+
+AsciiString GameInfoToAsciiString( const GameInfo *game )
+{
+	if (!game)
+	{
+		return AsciiString::TheEmptyString;
+	}
+
+	AsciiString playerNames[MAX_SLOTS];
+	Int playerNamesLength = 0;
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot *slot = game->getConstSlot(i);
+		if (slot && slot->isHuman())
+		{
+			playerNames[i] = WideCharStringToMultiByte(slot->getName().str()).c_str();
+			playerNamesLength += playerNames[i].getLength();
+		}
+	}
+
+	AsciiString optionsString = buildGameInfoAsciiString(game, playerNames);
+	// TheSuperHackers @bugfix bobtista 23/08/2026 Build with full names first so the second pass
+	// can reserve the exact fixed-field length and divide the remaining wire budget between names.
+	if (TheLAN && optionsString.getLength() > m_lanMaxOptionsLength)
+	{
+		const Int fixedLength = optionsString.getLength() - playerNamesLength;
+		const Int maxPlayerNamesLength = m_lanMaxOptionsLength - fixedLength;
+		if (!truncatePlayerNames(game, playerNames, maxPlayerNamesLength))
+		{
+			DEBUG_CRASH(("WARNING: options string is longer than expected!  Length is %d, but max is %d!",
+				optionsString.getLength(), m_lanMaxOptionsLength));
+			return AsciiString::TheEmptyString;
+		}
+
+		optionsString = buildGameInfoAsciiString(game, playerNames);
+	}
+
+	if (TheLAN && optionsString.getLength() > m_lanMaxOptionsLength)
+	{
+		DEBUG_CRASH(("WARNING: options string is longer than expected after truncation!  Length is %d, but max is %d!",
+			optionsString.getLength(), m_lanMaxOptionsLength));
+		return AsciiString::TheEmptyString;
+	}
 
 	return optionsString;
 }
@@ -1644,5 +1749,4 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 void SkirmishGameInfo::loadPostProcess()
 {
 }
-
 
