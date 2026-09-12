@@ -1167,6 +1167,8 @@ FontCharsClass::FontCharsClass () :
 	CurrPixelOffset( 0 ),
 	PointSize( 0 ),
 	CharHeight( 0 ),
+	GlyphBitmapWidth( 0 ),
+	GlyphBitmapHeight( 0 ),
 	UnicodeCharArray( nullptr ),
 	FirstUnicodeChar( 0xFFFF ),
 	LastUnicodeChar( 0 ),
@@ -1310,8 +1312,8 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 const FontCharsClassCharDataStruct *
 FontCharsClass::Store_GDI_Char (WCHAR ch)
 {
-	int width	= PointSize * 2;
-	int height	= PointSize * 2;
+	const int width = GlyphBitmapWidth;
+	const int height = GlyphBitmapHeight;
 
 	//
 	//	Draw the character into the memory DC
@@ -1329,12 +1331,21 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	SIZE char_size = { 0 };
 	::GetTextExtentPoint32W( MemDC, &ch, 1, &char_size );
 	char_size.cx += PixelOverlap + xOrigin;
+
+	//
+	//	TheSuperHackers @fix ExtTextOutW clipped the glyph to the scratch bitmap, so the copy
+	//	below must not read beyond it either, whatever extent GDI reports. A malformed font can
+	//	report nothing at all, which leaves a character of zero width that everything skips.
+	//
+	char_size.cx = min (max ((int)char_size.cx, 0), width);
+	char_size.cy = min (max ((int)char_size.cy, 0), height);
+
 	//
 	//	Get a pointer to the surface that this character should use
 	//
 	Update_Current_Buffer( char_size.cx );
-	uint16* curr_buffer_p = BufferList[BufferList.Count () - 1].Buffer;
-	curr_buffer_p += CurrPixelOffset;
+	uint16* glyph_buffer_p = BufferList[BufferList.Count () - 1].Buffer + CurrPixelOffset;
+	uint16* curr_buffer_p = glyph_buffer_p;
 
 	//
 	//	Copy the BMP contents to the buffer
@@ -1402,12 +1413,20 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	}
 
 	//
+	//	TheSuperHackers @fix Blit_Char always reads CharHeight rows, so any row GDI did not
+	//	report must not be left at whatever the freshly allocated block happened to contain.
+	//
+	if (char_size.cy < CharHeight) {
+		::memset (curr_buffer_p, 0, (CharHeight - char_size.cy) * char_size.cx * sizeof (uint16));
+	}
+
+	//
 	//	Save information about this character in our list
 	//
 	FontCharsClassCharDataStruct *char_data	= W3DNEW FontCharsClassCharDataStruct;
 	char_data->Value				= ch;
 	char_data->Width				= char_size.cx;
-	char_data->Buffer				= BufferList[BufferList.Count () - 1].Buffer + CurrPixelOffset;
+	char_data->Buffer				= glyph_buffer_p;
 
 	//
 	//	Insert this character into our array
@@ -1419,9 +1438,10 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	}
 
 	//
-	//	Advance the character position
+	//	Advance the character position. This matches both what Update_Current_Buffer reserved and
+	//	what Blit_Char reads back; char_size.cx already includes PixelOverlap.
 	//
-	CurrPixelOffset += ((char_size.cx+PixelOverlap) * CharHeight);
+	CurrPixelOffset += (char_size.cx * CharHeight);
 
 	//
 	//	Return the index of the entry we just added
@@ -1511,17 +1531,59 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 								VARIABLE_PITCH, font_name);
 
 	//
+	//	Create a device context we can select the font and bitmap into
+	//
+	MemDC = ::CreateCompatibleDC (screen_dc);
+
+	//
+	//	TheSuperHackers @fix Select the font and read its metrics before creating the scratch
+	//	bitmap below, because that bitmap is sized from them. The point size alone cannot give a
+	//	safe size: a font is free to report a tmHeight or a tmMaxCharWidth larger than any guess
+	//	made from it, and Store_GDI_Char copies as many rows and columns as GDI reports.
+	//
+	OldGDIFont = (HFONT)::SelectObject (MemDC, GDIFont);
+
+	//
+	//	Lookup the pixel height of the font
+	//
+	TEXTMETRIC text_metric = { 0 };
+	::GetTextMetrics (MemDC, &text_metric);
+	CharHeight = text_metric.tmHeight;
+	CharAscent = text_metric.tmAscent;
+	CharOverhang = text_metric.tmOverhang;
+	if (doingGenerals) {
+		CharOverhang = 0;
+	}
+
+	//
+	//	The scratch bitmap must hold the widest glyph, the overlap column that Store_GDI_Char
+	//	appends to it and the one pixel it shifts 'W' by.
+	//
+	GlyphBitmapWidth = (int)text_metric.tmMaxCharWidth + max ((int)text_metric.tmOverhang, 0) + PixelOverlap + 1;
+
+	// Sanity check. A font reporting absurd metrics renders clipped
+	// rather than allocating an absurd bitmap and absurd glyph buffers.
+	const int max_glyph_extent = PointSize * 4 + 8;
+	// The width is never smaller than the PointSize*2 of the retail font bitmap, because tmMaxCharWidth
+	// only covers the font's own glyphs. GDI substitutes glyphs from other fonts for characters the
+	// font lacks, and those can be wider than anything a narrow font such as Batang reports.
+	const int min_glypth_width = PointSize * 2;
+
+	GlyphBitmapWidth = clamp (min_glypth_width, GlyphBitmapWidth, max_glyph_extent);
+	GlyphBitmapHeight = CharHeight = clamp (1, CharHeight, max_glyph_extent);
+
+	//
 	// Set-up the fields of the BITMAPINFOHEADER
 	//	Note: Top-down DIBs use negative height in Win32.
 	//
 	BITMAPINFOHEADER bitmap_info = { 0 };
 	bitmap_info.biSize				= sizeof (BITMAPINFOHEADER);
-	bitmap_info.biWidth				= PointSize * 2;
-	bitmap_info.biHeight				= -(PointSize * 2);
+	bitmap_info.biWidth				= GlyphBitmapWidth;
+	bitmap_info.biHeight			= -GlyphBitmapHeight;
 	bitmap_info.biPlanes				= 1;
 	bitmap_info.biBitCount			= 24;
 	bitmap_info.biCompression		= BI_RGB;
-	bitmap_info.biSizeImage			= ((PointSize * PointSize * 4) * 3);
+	bitmap_info.biSizeImage			= (((GlyphBitmapWidth * 3) + 3) & ~3) * GlyphBitmapHeight;
 	bitmap_info.biXPelsPerMeter	= 0;
 	bitmap_info.biYPelsPerMeter	= 0;
 	bitmap_info.biClrUsed			= 0;
@@ -1538,34 +1600,16 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 													0L);
 
 	//
-	//	Create a device context we can select the font and bitmap into
-	//
-	MemDC = ::CreateCompatibleDC (screen_dc);
-
-	//
 	// Release our temporary screen DC
 	//
 	::ReleaseDC ((HWND)WW3D::Get_Window(), screen_dc);
 
 	//
-	//	Now select the BMP and font into the DC
+	//	Now select the BMP into the DC
 	//
 	OldGDIBitmap	= (HBITMAP)::SelectObject (MemDC, GDIBitmap);
-	OldGDIFont		= (HFONT)::SelectObject (MemDC, GDIFont);
 	::SetBkColor (MemDC, RGB (0, 0, 0));
 	::SetTextColor (MemDC, RGB (255, 255, 255));
-
-	//
-	//	Lookup the pixel height of the font
-	//
-	TEXTMETRIC text_metric = { 0 };
-	::GetTextMetrics (MemDC, &text_metric);
-	CharHeight = text_metric.tmHeight;
-	CharAscent = text_metric.tmAscent;
-	CharOverhang = text_metric.tmOverhang;
-	if (doingGenerals) {
-		CharOverhang = 0;
-	}
 
 	return GDIFont != nullptr && GDIBitmap != nullptr;
 }
