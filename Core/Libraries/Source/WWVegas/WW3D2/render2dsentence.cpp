@@ -617,21 +617,55 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 	}
 
 	//
-	// Calculate the width of the text
+	// Calculate the width of the text and of its widest glyph
 	//
 	int text_width = 0;
+	int max_char_width = 0;
 	for (int index = 0; text[index] != 0; index ++) {
 		text_width += Font->Get_Char_Spacing (text[index]);
+		const int char_width = Font->Get_Char_Width (text[index]);
+		max_char_width = max (max_char_width, char_width);
 	}
 
 	int char_height = Font->Get_Char_Height ();
 
 	//
+	//	TheSuperHackers @fix The texture must hold at least one row of glyphs and the widest glyph
+	//	of this text, otherwise the blit runs off the surface. The widest glyph the font can produce
+	//	is no use here, because fonts such as Arial report one several times wider than their text.
+	//	Fonts that fit search 64 to 256 px, which bounds the texture that every display string
+	//	allocates for itself. Larger fonts use the smallest texture that fits.
+	//
+	constexpr const int TextureSizeMinPow2 = 6; // 64 px, smallest texture
+	constexpr const int TextureSizeSearchMaxPow2 = 8; // 256 px, largest texture searched for fonts that fit
+	constexpr const int TextureSizeMaxPow2 = 11; // 2048 px, largest texture for any font
+
+	const int min_extent = max (char_height + 1, max_char_width + TEXTURE_OFFSET + 1);
+	int min_pow2 = TextureSizeMinPow2;
+	while (min_pow2 < TextureSizeMaxPow2 && (1 << min_pow2) < min_extent) {
+		min_pow2 ++;
+	}
+
+	int max_pow2 = max (TextureSizeSearchMaxPow2, min_pow2);
+	if (max_pow2 > TextureSizeSearchMaxPow2) {
+		//
+		//	The font does not fit the search range, so use the smallest texture that fits, limited to
+		//	the largest texture the device supports.
+		//
+		const D3DCAPS8 &dx8caps = DX8Wrapper::Get_Current_Caps ()->Get_DX8_Caps ();
+		const int max_device_size = (int)min (dx8caps.MaxTextureWidth, dx8caps.MaxTextureHeight);
+		while (max_pow2 > TextureSizeMinPow2 && (1 << max_pow2) > max_device_size) {
+			max_pow2 --;
+		}
+		min_pow2 = min (min_pow2, max_pow2);
+	}
+
+	//
 	//	Find the best texture size for the remaining text
 	//
-	CurrTextureSize = 256;
+	CurrTextureSize = 1 << min_pow2;
 	int best_tex_mem_usage = 999999999;
-	for (int pow2 = 6; pow2 <= 8; pow2 ++) {
+	for (int pow2 = min_pow2; pow2 <= max_pow2; pow2 ++) {
 
 		int size					= 1 << pow2;
 		int row_count			= (text_width / size) + 1;
@@ -758,7 +792,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//
 			// read a word
 			//
-			int charWidth = 0;
+			int word_spacing = 0;
 			while ((*word != 0) && (*word > L' ') && (*word != L'\n')) {
 				if( ParseHotKey && (*word == L'&') && (*word+1 != 0) && (*word+1 > L' ') && (*word+1 != L'\n'))
 				{
@@ -777,8 +811,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 					calcHotKeyX = true;
 				}
 
-				charWidth = Font->Get_Char_Spacing (*word++);
-				word_width += charWidth;
+				word_spacing = Font->Get_Char_Spacing (*word++);
+				word_width += word_spacing;
 				wordCount++;
 
 				if (WrapWidth > 0 && word_width >= WrapWidth && useHardWordWrap)
@@ -796,7 +830,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				if(charCount == 0)
 				{
 					charCount +=wordCount - 1;
-					line_width += word_width - charWidth;
+					line_width += word_width - word_spacing;
 					if(*word == 0)
 						end = true;
 					break;
@@ -844,6 +878,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 		}
 
 		for(int i = 0; i <= charCount; i++) {
+			// TheSuperHackers @fix The text still to be placed, starting at ch, so a new surface is sized for ch as well.
+			const WCHAR *remaining_text = text;
 			WCHAR ch = *text++;
 			dontBlit = false;
 			//
@@ -851,12 +887,14 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//
 			if(ParseHotKey && (ch == L'&') && (*text != 0) && (*text > L' ') && (*text != L'\n'))
 			{
+				remaining_text = text;
 				ch = *text++;
 				dontBlit = true;
 			}
-			float char_spacing = Font->Get_Char_Spacing (ch);
+			int char_spacing = Font->Get_Char_Spacing (ch);
+			const int char_width = Font->Get_Char_Width (ch);
 
-			bool exceeded_texture_width	= ((TextureOffset.I + char_spacing) >= CurrTextureSize);
+			bool exceeded_texture_width	= ((TextureOffset.I + char_width) >= CurrTextureSize);
 			bool encountered_break_char	= (ch == L' ' || ch == L'\n' || ch == 0);
 
 			//
@@ -892,7 +930,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 					//	Did the text extent completely off the texture?
 					//
 					if ((TextureOffset.J + char_height) >= CurrTextureSize) {
-						Allocate_New_Surface (text);
+						Allocate_New_Surface (remaining_text);
 					}
 				}
 			}
@@ -912,12 +950,14 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				//
 				//	Check to ensure the text will fit on this texture
 				//
-				WWASSERT (((TextureOffset.I + char_spacing) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize));
+				const bool fits_texture = ((TextureOffset.I + char_width) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize);
+				WWASSERT (fits_texture);
 
 				//
 				//	Blit the character to the surface
+				//	TheSuperHackers @fix Skip a glyph that still does not fit.
 				//
-				if(!dontBlit)
+				if(!dontBlit && fits_texture)
 					Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);
 
 				if (dontBlit) {
@@ -961,6 +1001,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	bool calcHotKeyX = false;
 	bool dontBlit = false;
 	Vector2i textureOffset = TextureOffset;
+	int currTextureSize = CurrTextureSize;
 
 
 	//
@@ -988,6 +1029,8 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	//	Loop over all the characters in the string
 	//
 	while (text != nullptr) {
+		// TheSuperHackers @fix The text still to be placed, starting at ch, so a new surface is sized for ch as well.
+		const WCHAR *remaining_text = text;
 		WCHAR ch = *text++;
 		dontBlit = false;
 		//
@@ -1001,12 +1044,14 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 			else
 				hotKeyPosX = Cursor.X + TextureOffset.I -TextureStartX;//TextureOffset.I;
 
+			remaining_text = text;
 			ch = *text++;
 			dontBlit = true;
 		}
-		float char_spacing = Font->Get_Char_Spacing (ch);
+		int char_spacing = Font->Get_Char_Spacing (ch);
+		const int char_width = Font->Get_Char_Width (ch);
 
-		bool exceeded_texture_width	= ((TextureOffset.I + char_spacing) >= CurrTextureSize);
+		bool exceeded_texture_width	= ((TextureOffset.I + char_width) >= CurrTextureSize);
 		bool encountered_break_char	= (ch == L' ' || ch == L'\n' || ch == 0);
 		bool wordBiggerThenLine = ((useHardWordWrap) && ( WrapWidth != 0 ) &&((Cursor.X + TextureOffset.I -TextureStartX + char_spacing) >= WrapWidth));
 		//
@@ -1081,7 +1126,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 				//	Did the text extent completely off the texture?
 				//
 				if ((TextureOffset.J + char_height) >= CurrTextureSize) {
-					Allocate_New_Surface (text, justCalcExtents);
+					Allocate_New_Surface (remaining_text, justCalcExtents);
 				}
 			}
 		}
@@ -1102,12 +1147,14 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 			//
 			//	Check to ensure the text will fit on this texture
 			//
-			WWASSERT (((TextureOffset.I + char_spacing) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize));
+			const bool fits_texture = ((TextureOffset.I + char_width) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize);
+			WWASSERT (fits_texture);
 
 			//
 			//	Blit the character to the surface
+			//	TheSuperHackers @fix Skip a glyph that still does not fit.
 			//
-			if (!justCalcExtents && !dontBlit )
+			if (!justCalcExtents && !dontBlit && fits_texture)
 			{
 				Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);
 			}
@@ -1122,6 +1169,15 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	Cursor = cursor;
 	TextureOffset = textureOffset;
 	TextureStartX = textureStartX;
+
+	//
+	//	TheSuperHackers @fix Measuring allocates no surface, so it must not leave behind the texture
+	//	size of a surface it did not create. The next pass would otherwise check its glyphs against a
+	//	size that differs from the surface it actually locks.
+	//
+	if (justCalcExtents) {
+		CurrTextureSize = currTextureSize;
+	}
 
 	if(hkX)
 		*hkX = hotKeyPosX;
