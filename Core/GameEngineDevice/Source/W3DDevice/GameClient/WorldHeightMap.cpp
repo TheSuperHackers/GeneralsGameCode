@@ -537,6 +537,21 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 	setupAlphaTiles();
 }
 
+Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
+{
+	const UnsignedByte* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
+	const UnsignedByte referenceHeight = firstRow[0];
+	for (Int j = 0; j < bounds.height(); j++)
+	{
+		const UnsignedByte* row = firstRow + j * m_width;
+		for (Int i = 0; i < bounds.width(); i++)
+			if (row[i] != referenceHeight)
+				return false;
+	}
+
+	return true;
+}
+
 /** Optimized version of method to get triangle flip state of a terrain cell.  Use this
 *	instead of getAlphaUVData() whenever possible.
 */

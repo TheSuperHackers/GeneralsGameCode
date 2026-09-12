@@ -30,6 +30,7 @@
 #pragma once
 
 #include "Common/AsciiString.h"
+#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -436,6 +437,7 @@ public:
 	{
 		PARTICLE_ALIGNMENT_BILLBOARD = 0,
 		PARTICLE_ALIGNMENT_XYPLANAR,
+		PARTICLE_ALIGNMENT_CONFORMING,
 		PARTICLE_ALIGNMENT_TYPE_COUNT
 	};
 	ParticleAlignmentType m_particleAlignment;		///< align particles toward the camera or with the XY plane.
@@ -504,7 +506,7 @@ static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, 
 
 static const char *const GroundAlignmentTypeNames[] =
 {
-	"No", "Yes", nullptr
+	"No", "Yes", "Conforming", nullptr
 };
 static_assert(ARRAY_SIZE(GroundAlignmentTypeNames) == ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT + 1, "Incorrect array size");
 
@@ -628,6 +630,11 @@ public:
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	Bool shouldBillboard() const { return m_particleAlignment == PARTICLE_ALIGNMENT_BILLBOARD; }
+#if ENABLE_TERRAIN_CONFORMING_PARTICLES
+	Bool isTerrainConforming() const { return m_particleAlignment == PARTICLE_ALIGNMENT_CONFORMING; }
+#else
+	Bool isTerrainConforming() const { return FALSE; }
+#endif
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
 

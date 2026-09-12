@@ -199,6 +199,7 @@ protected:
 		KEY_MOUSE_STATES, ///< keyboard modifier and mouse button states.
 		MousePosition,    ///< debug display mouse position
 		Particles,        ///< debug display particles
+		TerrainParticles, ///< debug display for terrain-conforming particles
 		Objects,          ///< debug display total number of objects
 		NetIncoming,			///< debug display network incoming stats
 		NetOutgoing,			///< debug display network outgoing stats
