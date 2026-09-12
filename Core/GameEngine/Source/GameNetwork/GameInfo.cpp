@@ -1645,4 +1645,24 @@ void SkirmishGameInfo::loadPostProcess()
 {
 }
 
+void SkirmishGameInfo::handleOriginalSetups()
+{
+	// TheSuperHackers @fix Caball009 19/03/2026 Random color, position and faction are based on the logical seed. For improved determinism,
+	// restarted games now set the original values so that the games start with the exact same logical seed values as the first time.
 
+	for (size_t i = 0; i < ARRAY_SIZE(m_skirmishSlot); ++i)
+	{
+		GameSlot& slot = m_skirmishSlot[i];
+
+		if (slot.hasSavedOriginalSetup())
+		{
+			slot.setColor(slot.getOriginalColor());
+			slot.setStartPos(slot.getOriginalStartPos());
+			slot.setPlayerTemplate(slot.getOriginalPlayerTemplate());
+		}
+		else
+		{
+			slot.saveOriginalSetup();
+		}
+	}
+}

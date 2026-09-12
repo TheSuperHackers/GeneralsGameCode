@@ -301,6 +301,8 @@ public:
 		for (Int i = 0; i< MAX_SLOTS; ++i)
 			setSlotPointer(i, &m_skirmishSlot[i]);
 	}
+
+	void handleOriginalSetups();
 };
 
 extern SkirmishGameInfo *TheSkirmishGameInfo;
