@@ -153,7 +153,7 @@ public:
 	virtual ProductionID requestUniqueUnitID() = 0;
 
 	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade ) = 0;
-	virtual void cancelUpgrade( const UpgradeTemplate *upgrade ) = 0;
+	virtual Bool cancelUpgrade( const UpgradeTemplate *upgrade ) = 0;
 	virtual Bool isUpgradeInQueue( const UpgradeTemplate *upgrade ) const = 0;
 	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const = 0;
 
@@ -209,7 +209,7 @@ public:
 	virtual ProductionID requestUniqueUnitID() override { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
 
 	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade ) override;				///< queue upgrade "research"
-	virtual void cancelUpgrade( const UpgradeTemplate *upgrade ) override;				///< cancel upgrade "research"
+	virtual Bool cancelUpgrade( const UpgradeTemplate *upgrade ) override;				///< cancel upgrade "research"
 	virtual Bool isUpgradeInQueue( const UpgradeTemplate *upgrade ) const override;		///< is the upgrade in our production queue already
 	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const override;  ///< count number of units with matching unit type in the production queue
 
@@ -239,9 +239,11 @@ public:
 
 protected:
 
-
 	void addToProductionQueue( ProductionEntry *production );				///< add to *END* of production queue list
 	void removeFromProductionQueue( ProductionEntry *production );	///< remove production from the queue list
+
+	Bool cancelUpgrade( ProductionEntry *production );
+	Bool cancelUnitCreate( ProductionEntry *production );
 
 	void updateDoors();														///< update the door behavior
 
