@@ -431,7 +431,8 @@ public:
 	m_emissionVolume;														///< the dimensions of the emission volume
 
 	Bool m_isEmissionVolumeHollow;							///< if true, only create particles at boundary of volume
-	enum ParticleAlignmentType
+
+	enum ParticleAlignmentType CPP_11(: Int)
 	{
 		PARTICLE_ALIGNMENT_BILLBOARD = 0,
 		PARTICLE_ALIGNMENT_XYPLANAR,
