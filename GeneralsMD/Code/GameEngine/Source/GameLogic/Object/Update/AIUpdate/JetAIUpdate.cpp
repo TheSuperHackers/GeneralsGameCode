@@ -2551,24 +2551,6 @@ void JetAIUpdate::privateGetRepaired( Object *repairDepot, CommandSourceType cmd
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool JetAIUpdate::isParkedAt(const Object* obj) const
-{
-	if (!getFlag(ALLOW_AIR_LOCO) &&
-			!getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD) &&
-			obj != nullptr)
-	{
-		Object* airfield;
-		ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID(), &airfield);
-		if (pp != nullptr && airfield != nullptr && airfield == obj)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-//-------------------------------------------------------------------------------------------------
 void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 {
 	// call this from aiDoCommand as well as update, because this can
@@ -2632,19 +2614,29 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 					return;
 				}
 
-				FALLTHROUGH;
+				goto defaultCase; // cannot fall through to get to the default case!
 #endif
 
 			case AICMD_ENTER:
 			case AICMD_GET_REPAIRED:
+				// if we're already located at the airfield in question, just ignore.
+				// TheSuperHackers @bugfix Caball009 12/08/2026 This applies to units produced at the helipad now as well.
+#if RETAIL_COMPATIBLE_CRC
+				if (parms->m_obj && !getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
+#else
+				if (parms->m_obj)
+#endif
+				{
+					Object* airfield = nullptr;
+					ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID(), &airfield);
+					if (pp != nullptr && airfield == parms->m_obj)
+						return;
+				}
 
-				// if we're already parked at the airfield in question, just ignore.
-				if (isParkedAt(parms->m_obj))
-					return;
-
-				FALLTHROUGH; // else fall thru to the default case!
+				FALLTHROUGH; // else fall through to the default case!
 
 			default:
+			defaultCase:
 			{
 				// nuke any existing pending cmd
 				m_mostRecentCommand.store(*parms);
