@@ -2677,6 +2677,46 @@ void ParticleSystem::loadPostProcess()
 
 }
 
+static Bool forceTerrainConforming(const AsciiString &templateName)
+{
+	static const char *const templateNames[] = {
+		"AnthraxFieldLarge",
+		"AnthraxFieldMedium",
+		"AnthraxFieldSmall",
+		"AnthraxGammaPuddleContinuous",
+		"AnthraxGammaPuddleLarge",
+		"AnthraxPuddle",
+		"AnthraxPuddleContinuous",
+		"AnthraxPuddleLarge",
+		"CleanupPuddle",
+		"GC_Chem_AnthraxFieldGammaLarge",
+		"GC_Chem_AnthraxFieldGammaMedium",
+		"GC_Chem_AnthraxGammaFieldLarge",
+		"GC_Chem_AnthraxGammaFieldMedium",
+		"GC_Chem_AnthraxGammaFieldSmall",
+		"GC_Chem_ToxinPuddle",
+		"NukeRadiationInitial",
+		"PoisonFieldLarge",
+		"PoisonFieldMedium",
+		"PoisonFieldSmall",
+		"RadiationFieldLarge",
+		"RadiationFieldMedium",
+		"RadiationFieldSmall",
+		"ToxinPuddle",
+		"ToxinPuddleContinuous",
+		"ToxinPuddleLarge",
+		"ToxinTankPuddle",
+	};
+
+	for (Int i = 0; i < ARRAY_SIZE(templateNames); ++i)
+	{
+		if (templateName == templateNames[i])
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // ParticleSystemTemplate /////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2911,6 +2951,9 @@ void ParticleSystemTemplate::validate()
 		m_particleType = ParticleSystemInfo::SMUDGE;
 	}
 #endif
+
+	if (m_particleAlignment == PARTICLE_ALIGNMENT_XYPLANAR && forceTerrainConforming(m_name))
+		m_particleAlignment = PARTICLE_ALIGNMENT_CONFORMING;
 
 #if !ENABLE_TERRAIN_CONFORMING_PARTICLES
 	if (m_particleAlignment == PARTICLE_ALIGNMENT_CONFORMING)
