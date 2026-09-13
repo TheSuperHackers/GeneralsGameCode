@@ -53,7 +53,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "ParticlePool", 4096, 256 },
 	{ "ParticleSystemTemplatePool", 768, 32 },
 	{ "ParticleSystemPool", 1024, 32 },
-	{ "TerrainRoadType", 64, 64, },
+	{ "TerrainRoadType", 64, 64 },
 	{ "WindowLayoutPool", 32, 32 },
 	{ "AnimatedParticleSysBoneClientUpdate", 16, 16 },
 	{ "SwayClientUpdate", 4096, 32 },
@@ -155,8 +155,8 @@ static PoolSizeRec PoolSizes[] =
 	{ "ParkingPlaceBehavior", 32, 32 },
 	{ "FlightDeckBehavior", 8, 8 },
 #ifdef ALLOW_SURRENDER
-	{ "POWTruckAIUpdate", 32, 32, },
-	{ "POWTruckBehavior", 32, 32, },
+	{ "POWTruckAIUpdate", 32, 32 },
+	{ "POWTruckBehavior", 32, 32 },
 	{ "PrisonBehavior", 32, 32 },
 	{ "PrisonVisual", 32, 32 },
 	{ "PropagandaCenterBehavior", 16, 16 },
@@ -320,7 +320,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "OCLSpecialPower", 32, 32 },
 	{ "FireWeaponPower", 32, 32 },
 #ifdef ALLOW_DEMORALIZE
-	{ "DemoralizeSpecialPower", 16, 16, },
+	{ "DemoralizeSpecialPower", 16, 16 },
 #endif
 	{ "CashHackSpecialPower", 32, 32 },
 	{ "CommandSetUpgrade", 32, 32 },
