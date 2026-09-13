@@ -441,15 +441,14 @@ void BoneFXUpdate::doParticleSystemAtBone(const ParticleSystemTemplate *particle
 	if( lastDamageInfo && getDamageTypeFlag( d->m_damageParticleTypes, lastDamageInfo->in.m_damageType ) == FALSE )
 		return;
 
-	Object *building = getObject();
-
 	ParticleSystem *psys = TheParticleSystemManager->createParticleSystem(particleSystemTemplate);
 	if (psys != nullptr)
 	{
+		Object *object = getObject();
 		m_particleSystemIDs.push_back(psys->getSystemID());
 		psys->setPosition(bonePosition);
-		psys->attachToObject(building);
-		Drawable *drawable = building->getDrawable();
+		psys->attachToObject(object);
+		Drawable *drawable = object->getDrawable();
 		if (drawable && drawable->isDrawableEffectivelyHidden())
 		{
 			psys->stop();

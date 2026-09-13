@@ -51,6 +51,7 @@ static void drawFramerateBar();
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/GameLOD.h"
+#include "Common/GameUtility.h"
 #include "Common/DrawModule.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -1936,6 +1937,8 @@ AGAIN:
 		// limit the framerate, because while fast time is on, the game logic is running as fast as it can.
 	}
 
+	Bool updateParticles = TheGameLogic->hasUpdated();
+
 	do {
 
 		// update all views of the world - recomputes data which will affect drawing
@@ -1944,15 +1947,23 @@ AGAIN:
 			//trying to refresh the visible terrain geometry.
 //			if(TheGlobalData->m_loadScreenRender != TRUE)
 				updateViews();
-     		TheParticleSystemManager->update();//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
-                                           //FOR THE PURPOSE OF LETTING THE PARTICLE SYSTEM LOOK UP THE RENDER OBJECT"S
-                                           //TRANSFORM MATRIX, WHILE IT IS STILL VALID (HAVING DONE ITS CLIENT TRANSFORMS
-                                           //BUT NOT YET RESETTING TOT HE LOGICAL TRANSFORM)
-                                           //THE RESULT IS THAT PARTICLESYSTEMS LINKED TO BONES IN DRAWABLES.OBJECTS
-                                           //MOVE WITH THE CLIENT TRANSFORMS, NOW.
-                                           //REVOLUTIONARY!
-                                           //-LORENZEN
 
+			//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
+			//FOR THE PURPOSE OF LETTING THE PARTICLE SYSTEM LOOK UP THE RENDER OBJECT"S
+			//TRANSFORM MATRIX, WHILE IT IS STILL VALID (HAVING DONE ITS CLIENT TRANSFORMS
+			//BUT NOT YET RESETTING TOT HE LOGICAL TRANSFORM)
+			//THE RESULT IS THAT PARTICLESYSTEMS LINKED TO BONES IN DRAWABLES.OBJECTS
+			//MOVE WITH THE CLIENT TRANSFORMS, NOW.
+			//REVOLUTIONARY!
+			//-LORENZEN
+			if (updateParticles)
+			{
+				const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+				TheParticleSystemManager->setLocalPlayerIndex(localPlayerIndex);
+				TheParticleSystemManager->UPDATE();
+				updateParticles = false;
+			}
+			TheParticleSystemManager->DRAW();
 
 			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
 				TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture

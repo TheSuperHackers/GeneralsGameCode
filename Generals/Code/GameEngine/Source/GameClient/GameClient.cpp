@@ -660,11 +660,11 @@ void GameClient::update()
 #endif
 
 	// update all particle systems
-	if( !freezeTime )
+	if( !freezeTime && TheGameLogic->hasUpdated() )
 	{
 		// update particle systems
 		TheParticleSystemManager->setLocalPlayerIndex(localPlayerIndex);
-		TheParticleSystemManager->update();
+		TheParticleSystemManager->UPDATE();
 
 	}
 
