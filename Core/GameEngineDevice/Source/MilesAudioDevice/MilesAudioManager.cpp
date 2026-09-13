@@ -1662,7 +1662,7 @@ void MilesAudioManager::selectProvider( UnsignedInt providerNdx )
 	{
 		providerNdx = getProviderIndex( "Miles Fast 2D Positional Audio" );
 	}
-	success = AIL_open_3D_provider( m_provider3D[providerNdx].id ) == 0;
+	success = providerNdx < m_providerCount && AIL_open_3D_provider( m_provider3D[providerNdx].id ) == 0;
 
 	//if (providerNdx < m_providerCount)
 	//{
@@ -1676,7 +1676,7 @@ void MilesAudioManager::selectProvider( UnsignedInt providerNdx )
 		m_selectedProvider = PROVIDER_ERROR;
 		// try to select a failsafe
 		providerNdx = getProviderIndex( "Miles Fast 2D Positional Audio" );
-		success = AIL_open_3D_provider( m_provider3D[providerNdx].id ) == 0;
+		success = providerNdx < m_providerCount && AIL_open_3D_provider( m_provider3D[providerNdx].id ) == 0;
 	}
 
 	if ( success )
