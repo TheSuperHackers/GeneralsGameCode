@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="ShareBufferClass&lt;*&gt;">
+        <DisplayString>{{ size={Count} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">Count</Item>
+            <Item Name="[refs]" ExcludeView="simple">NumRefs</Item>
+            <!-- Msg only exists in RTS_DEBUG builds. -->
+            <Item Name="[msg]" Optional="true" ExcludeView="simple">Msg,s</Item>
+            <ArrayItems>
+                <Size>Count</Size>
+                <ValuePointer>Array</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

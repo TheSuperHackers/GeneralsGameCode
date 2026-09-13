@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- Push prepends, and the chain is only reversed inside Flush, so the entries below
+         are listed newest first, which is the reverse of the order a consumer will see. -->
+    <Type Name="MPSCIntrusiveQueue&lt;*&gt;">
+        <DisplayString Condition="m_head == 0">{{ empty }}</DisplayString>
+        <DisplayString>{{ MPSCIntrusiveQueue }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="m_head"/>
+                <Loop>
+                    <Break Condition="node == 0"/>
+                    <Item>node</Item>
+                    <Exec>node = node-&gt;next</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

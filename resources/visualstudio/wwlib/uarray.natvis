@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- The unique items live in a DynamicVectorClass of HashItem, so the element
+         value has to be reached through the Item member of each slot. -->
+    <Type Name="UniqueArrayClass&lt;*&gt;">
+        <DisplayString>{{ size={UniqueItems.ActiveCount} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">UniqueItems.ActiveCount</Item>
+            <Item Name="[capacity]" ExcludeView="simple">UniqueItems.VectorMax</Item>
+            <Item Name="[hash table size]" ExcludeView="simple">HashTableSize</Item>
+            <IndexListItems>
+                <Size>UniqueItems.ActiveCount</Size>
+                <ValueNode>UniqueItems.Vector[$i].Item</ValueNode>
+            </IndexListItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

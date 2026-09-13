@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- m_Buffer points just past a { int allocated_length; int length; } header, so the
+         two counters sit at [-2] and [-1]. An empty string instead points at the shared
+         static m_EmptyString, which has no header in front of it, hence the condition. -->
+    <Type Name="StringClass">
+        <DisplayString>{m_Buffer,s}</DisplayString>
+        <StringView>m_Buffer,s</StringView>
+        <Expand>
+            <Item Name="[length]" Optional="true" Condition="m_Buffer != m_EmptyString" ExcludeView="simple">((int *)m_Buffer)[-1]</Item>
+            <Item Name="[capacity]" Optional="true" Condition="m_Buffer != m_EmptyString" ExcludeView="simple">((int *)m_Buffer)[-2]</Item>
+            <Item Name="[str]">m_Buffer,s</Item>
+            <Item Name="[ptr]" ExcludeView="simple">m_Buffer</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>
