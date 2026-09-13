@@ -39,6 +39,7 @@
 #include "Common/ThingFactory.h"
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
+#include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/HelixContain.h"
 #include "GameLogic/Object.h"
@@ -401,6 +402,11 @@ void HelixContain::onContaining( Object *obj, Bool wasSelected )
 	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
   obj->setDisabled( DISABLED_HELD );
 
+#if !RETAIL_COMPATIBLE_CRC
+  // TheSuperHackers @bugfix arcticdolphin 13/09/2026 Route portable attachment XP to the Helix.
+  if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && obj->getExperienceTracker() )
+    obj->getExperienceTracker()->setExperienceSink( getObject()->getID() );
+#endif
 
   if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
   {
