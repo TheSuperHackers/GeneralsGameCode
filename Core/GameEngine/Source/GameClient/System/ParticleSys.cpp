@@ -1766,7 +1766,7 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 				 TheGameLODManager->isParticleSkipped()) )
 			return nullptr;
 
-		if ( getParticleCount() > 0 && priority == AREA_EFFECT && !shouldBillboard() && TheParticleSystemManager->getFieldParticleCount() > (UnsignedInt)TheGlobalData->m_maxFieldParticleCount )
+		if ( getParticleCount() > 0 && priority == AREA_EFFECT && isFieldParticle() && TheParticleSystemManager->getFieldParticleCount() > (UnsignedInt)TheGlobalData->m_maxFieldParticleCount )
 			return nullptr;
 
 		// ALWAYS_RENDER particles are exempt from all count limits, and are always created, regardless of LOD issues.
