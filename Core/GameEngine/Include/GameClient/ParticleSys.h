@@ -629,6 +629,7 @@ public:
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
 	ParticleAlignmentType getParticleAlignment() const { return m_particleAlignment; }
+	Bool isFieldParticle() const { return m_particleAlignment == PARTICLE_ALIGNMENT_XYPLANAR || m_particleAlignment == PARTICLE_ALIGNMENT_CONFORMING; }
 	Bool shouldBillboard() const { return m_particleAlignment == PARTICLE_ALIGNMENT_BILLBOARD; }
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
