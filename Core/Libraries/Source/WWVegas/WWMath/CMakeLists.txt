@@ -93,3 +93,8 @@ target_link_libraries(core_wwmath PRIVATE
 
 # @todo Test its impact and see what to do with the legacy functions.
 #add_compile_definitions(core_wwmath PUBLIC ALLOW_TEMPORARIES) # Enables legacy math with "temporaries"
+
+# Apply D3DXWrapper forced include for NO_D3DX builds
+if(TARGET core_d3dxcompat)
+    target_link_libraries(core_wwmath PRIVATE core_d3dxcompat)
+endif()
