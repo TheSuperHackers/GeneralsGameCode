@@ -627,6 +627,7 @@ public:
 	Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
+	ParticleAlignmentType getParticleAlignment() const { return m_particleAlignment; }
 	Bool shouldBillboard() const { return m_particleAlignment == PARTICLE_ALIGNMENT_BILLBOARD; }
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
