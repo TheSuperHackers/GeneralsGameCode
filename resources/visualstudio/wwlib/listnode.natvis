@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- GenericList embeds two sentinel nodes by value. FirstNode.NextNode is the first
+         real entry, and LastNode is recognised by having no NextNode of its own. -->
+    <Type Name="GenericList">
+        <DisplayString Condition="FirstNode.NextNode-&gt;NextNode == 0">{{ size=0 }}</DisplayString>
+        <DisplayString>{{ GenericList }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="FirstNode.NextNode"/>
+                <Loop>
+                    <Break Condition="node == 0 || node-&gt;NextNode == 0"/>
+                    <Item>node</Item>
+                    <Exec>node = node-&gt;NextNode</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <!-- List's template argument is already a pointer type, so the item cast is ($T1)
+         rather than ($T1 *). This only works because GenericNode must be the first base
+         of the linked object, which is what the class comment in LISTNODE.h requires. -->
+    <Type Name="List&lt;*&gt;">
+        <DisplayString Condition="FirstNode.NextNode-&gt;NextNode == 0">{{ size=0 }}</DisplayString>
+        <DisplayString>{{ List }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="FirstNode.NextNode"/>
+                <Loop>
+                    <Break Condition="node == 0 || node-&gt;NextNode == 0"/>
+                    <Item>($T1)node</Item>
+                    <Exec>node = node-&gt;NextNode</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <Type Name="GenericNode">
+        <DisplayString Condition="NextNode == 0 || PrevNode == 0">{{ unlinked }}</DisplayString>
+        <DisplayString>{{ GenericNode }}</DisplayString>
+        <Expand>
+            <Item Name="[next]">NextNode</Item>
+            <Item Name="[prev]">PrevNode</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Node&lt;*&gt;">
+        <DisplayString Condition="NextNode == 0 || PrevNode == 0">{{ unlinked }}</DisplayString>
+        <DisplayString>{{ Node }}</DisplayString>
+        <Expand>
+            <Item Name="[next]">($T1)NextNode</Item>
+            <Item Name="[prev]">($T1)PrevNode</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="DataNode&lt;*&gt;">
+        <DisplayString>{Value}</DisplayString>
+        <Expand>
+            <Item Name="[value]">Value</Item>
+            <Item Name="[next]" ExcludeView="simple">(DataNode&lt;$T1&gt; *)NextNode</Item>
+            <Item Name="[prev]" ExcludeView="simple">(DataNode&lt;$T1&gt; *)PrevNode</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>

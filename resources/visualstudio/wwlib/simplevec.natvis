@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="SimpleVecClass&lt;*&gt;">
+        <DisplayString>{{ size={VectorMax} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">VectorMax</Item>
+            <ArrayItems>
+                <Size>VectorMax</Size>
+                <ValuePointer>Vector</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <!-- Must be spelled out even though SimpleVecClass already matches by inheritance,
+         because the live element count here is ActiveCount and not VectorMax. -->
+    <Type Name="SimpleDynVecClass&lt;*&gt;">
+        <DisplayString>{{ size={ActiveCount} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">ActiveCount</Item>
+            <Item Name="[capacity]" ExcludeView="simple">VectorMax</Item>
+            <ArrayItems>
+                <Size>ActiveCount</Size>
+                <ValuePointer>Vector</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>
