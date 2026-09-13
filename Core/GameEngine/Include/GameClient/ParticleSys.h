@@ -821,6 +821,13 @@ public:
 	UnsignedInt getParticleCount() const { return m_particleCount; }
 
 	UnsignedInt getFieldParticleCount()     const { return m_fieldParticleCount; }
+	enum TerrainParticleRenderMode
+	{
+		TERRAIN_PARTICLE_CONFORMING,
+		TERRAIN_PARTICLE_GROUND_ALIGNED
+	};
+	TerrainParticleRenderMode getTerrainParticleRenderMode() const { return m_terrainParticleRenderMode; }
+	TerrainParticleRenderMode cycleTerrainParticleRenderMode();
 
 	UnsignedInt getParticleSystemCount() const { return m_particleSystemCount; }
 
@@ -851,6 +858,7 @@ protected:
 	ParticleSystemList m_allParticleSystemList;
 
 	UnsignedInt m_particleCount;
+	TerrainParticleRenderMode m_terrainParticleRenderMode; ///< Local runtime rendering preference; not serialized
 	UnsignedInt m_fieldParticleCount; ///< this does not need to be xfered, since it is evaluated every frame
 	UnsignedInt m_particleSystemCount;
 	Int m_onScreenParticleCount;                ///< number of particles displayed on screen per frame

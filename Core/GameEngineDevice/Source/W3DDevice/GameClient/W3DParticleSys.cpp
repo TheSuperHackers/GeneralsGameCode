@@ -454,7 +454,8 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 				break;
 		}
 
-		if (m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING)
+		if (m_batchParticleAlignment == ParticleSystemInfo::PARTICLE_ALIGNMENT_CONFORMING &&
+		    getTerrainParticleRenderMode() == TERRAIN_PARTICLE_CONFORMING)
 		{
 			m_terrainParticles->setTexture(m_batchTexture.Peek());
 			m_terrainParticles->setShader( shader );
