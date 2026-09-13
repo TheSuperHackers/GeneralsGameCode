@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- Same buffer layout as StringClass: a { int allocated_length; int length; } header
+         sits in front of m_Buffer, except for the shared static empty string. -->
+    <Type Name="WideStringClass">
+        <DisplayString>{m_Buffer,su}</DisplayString>
+        <StringView>m_Buffer,su</StringView>
+        <Expand>
+            <Item Name="[length]" Optional="true" Condition="m_Buffer != m_EmptyString" ExcludeView="simple">((int *)m_Buffer)[-1]</Item>
+            <Item Name="[capacity]" Optional="true" Condition="m_Buffer != m_EmptyString" ExcludeView="simple">((int *)m_Buffer)[-2]</Item>
+            <Item Name="[str]">m_Buffer,su</Item>
+            <Item Name="[ptr]" ExcludeView="simple">m_Buffer</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>

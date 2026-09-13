@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- Head is an embedded sentinel and the list is circular, so the walk ends when it
+         comes back round to &Head rather than on a null link. -->
+    <Type Name="GenericMultiListClass">
+        <DisplayString Condition="Head.Next == &amp;Head">{{ size=0 }}</DisplayString>
+        <DisplayString>{{ GenericMultiList }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="Head.Next"/>
+                <Loop>
+                    <Break Condition="node == &amp;Head"/>
+                    <Item>node-&gt;Object</Item>
+                    <Exec>node = node-&gt;Next</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <!-- Must be spelled out even though GenericMultiListClass already matches by
+         inheritance, so that the entries come out as the list's own object type. -->
+    <Type Name="MultiListClass&lt;*&gt;">
+        <DisplayString Condition="Head.Next == &amp;Head">{{ size=0 }}</DisplayString>
+        <DisplayString>{{ MultiList }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="Head.Next"/>
+                <Loop>
+                    <Break Condition="node == &amp;Head"/>
+                    <Item>($T1 *)node-&gt;Object</Item>
+                    <Exec>node = node-&gt;Next</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <Type Name="RefMultiListClass&lt;*&gt;">
+        <DisplayString Condition="Head.Next == &amp;Head">{{ size=0 }}</DisplayString>
+        <DisplayString>{{ RefMultiList }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="Head.Next"/>
+                <Loop>
+                    <Break Condition="node == &amp;Head"/>
+                    <Item>($T1 *)node-&gt;Object</Item>
+                    <Exec>node = node-&gt;Next</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <!-- ListNode chains across every list the object is in, via NextList. -->
+    <Type Name="MultiListObjectClass">
+        <DisplayString Condition="ListNode == 0">{{ not in any list }}</DisplayString>
+        <DisplayString>{{ in list(s) }}</DisplayString>
+        <Expand>
+            <Synthetic Name="[lists]">
+                <DisplayString>lists this object belongs to</DisplayString>
+                <Expand>
+                    <CustomListItems>
+                        <Variable Name="node" InitialValue="ListNode"/>
+                        <Loop>
+                            <Break Condition="node == 0"/>
+                            <Item>node-&gt;List</Item>
+                            <Exec>node = node-&gt;NextList</Exec>
+                        </Loop>
+                    </CustomListItems>
+                </Expand>
+            </Synthetic>
+        </Expand>
+    </Type>
+
+    <Type Name="MultiListNodeClass">
+        <DisplayString>{{ object={Object} }}</DisplayString>
+        <Expand>
+            <Item Name="[object]">Object</Item>
+            <Item Name="[list]">List</Item>
+            <Item Name="[next]" ExcludeView="simple">Next</Item>
+            <Item Name="[prev]" ExcludeView="simple">Prev</Item>
+            <Item Name="[next list]" ExcludeView="simple">NextList</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="GenericMultiListIterator">
+        <DisplayString Condition="CurNode == &amp;List-&gt;Head">{{ done }}</DisplayString>
+        <DisplayString>{CurNode-&gt;Object}</DisplayString>
+        <Expand>
+            <Item Name="[current]" Condition="CurNode != &amp;List-&gt;Head">CurNode-&gt;Object</Item>
+            <Item Name="[list]">List</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="MultiListIterator&lt;*&gt;">
+        <AlternativeType Name="RefMultiListIterator&lt;*&gt;"/>
+        <AlternativeType Name="PriorityMultiListIterator&lt;*&gt;"/>
+        <DisplayString Condition="CurNode == &amp;List-&gt;Head">{{ done }}</DisplayString>
+        <DisplayString>{*($T1 *)CurNode-&gt;Object}</DisplayString>
+        <Expand>
+            <Item Name="[current]" Condition="CurNode != &amp;List-&gt;Head">($T1 *)CurNode-&gt;Object</Item>
+            <Item Name="[list]">List</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>
