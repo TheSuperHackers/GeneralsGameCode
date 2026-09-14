@@ -1479,7 +1479,15 @@ void ControlBar::update()
 			exitPosition = obj->getObjectExitInterface()->getRallyPoint();
 
 		showRallyPoint(exitPosition);
-		return;
+
+		if(getObservedPlayer() != nullptr )
+		{
+			if( m_currContext != CB_CONTEXT_OBSERVER_LIST )
+				switchToContext( CB_CONTEXT_OBSERVER_LIST, nullptr );
+
+			return;
+		}
+
 	}
 
 
@@ -1760,20 +1768,26 @@ void ControlBar::evaluateContextUI()
 
 	// sanity, nothing selected
 	if( TheInGameUI->getSelectCount() == 0 )
+	{
+		switchToDefaultContext(nullptr);
 		return;
+	}
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
 	if( selectedDrawables->empty() == TRUE )
+	{
+		switchToDefaultContext(nullptr);
 		return;
+	}
 
 	//Make sure the selected objects are in fact, controllable! If not, then
 	//we don't show any GUI commands for them!!!
 	//This is used when we select enemy objects or objects on another team.
 	//@todo we may want to show their portrait
-	if( !TheInGameUI->areSelectedObjectsControllable() )
+	if( !isObserverControlBarOn() && !TheInGameUI->areSelectedObjectsControllable())
 	{
 		//Also make sure the unit isn't a garrisonable neutral civ team building!
 		Drawable *draw = selectedDrawables->front();
@@ -1798,31 +1812,18 @@ void ControlBar::evaluateContextUI()
 		}
 		else
 		{
-			switchToContext( CB_CONTEXT_NONE, draw );
+			switchToDefaultContext(draw);
 		}
 
 		//Check for a contain interface and a enemy relationship and reject that!
 		ContainModuleInterface *contain = obj->getContain();
 		if( contain && contain->getContainMax() > 0 )
 		{
-
-			const Player *otherPlayer = contain->getApparentControllingPlayer(ThePlayerList->getLocalPlayer());
-			if (!otherPlayer)
-				otherPlayer = obj->getControllingPlayer();
-			Player *player = ThePlayerList->getLocalPlayer();
-
-			if( !player || !otherPlayer )
-			{
-				//Sanity.
-				return;
-			}
-			Relationship relation = player->getRelationship( otherPlayer->getDefaultTeam() );
-
 			//Note: All following checks already account for the fact that this object
 			//isn't ours.
 
 			//The only case we can actually see a non-controlled controlbar is a neutral garrisonable structure.
-			if( !contain->isGarrisonable() || relation != NEUTRAL )
+			if( !contain->isGarrisonable() || !isApparentControllingPlayerNeutral(obj))
 			{
 				//Can't peek inside enemy/allied containers period!
 				return;
@@ -1852,7 +1853,7 @@ void ControlBar::evaluateContextUI()
 		// but is represented in the UI as a single unit,
 		// so we must isolate and evaluate only the Nexus
 		drawToEvaluateFor = TheGameClient->findDrawableByID( TheInGameUI->getSoloNexusSelectedDrawableID() ) ;
-		multiSelect = ( drawToEvaluateFor == nullptr );
+		multiSelect = ( drawToEvaluateFor == nullptr ) && !isObserverControlBarOn();
 
 	}
 	else // get the first and only drawble in the selection list
@@ -1912,12 +1913,8 @@ void ControlBar::evaluateContextUI()
 				//a commandset defined. If we do, then trust that the commandset will
 				//handle it!
 
-				Player *localPlayer = ThePlayerList->getLocalPlayer();
-				Relationship relationship;
-
 				// we cannot select objects that are controlled by our enemies
-				relationship = localPlayer->getRelationship( obj->getTeam() );
-				if( obj->isLocallyControlled() == TRUE || relationship == NEUTRAL )
+				if( obj->isLocallyControlled() == TRUE || isObserverControlBarOn() || isControllingPlayerNeutral(obj))
 					switchToContext( CB_CONTEXT_STRUCTURE_INVENTORY, drawToEvaluateFor );
 
 			}
@@ -1927,8 +1924,8 @@ void ControlBar::evaluateContextUI()
 			}
 			else if( obj->getCommandSetString().isEmpty() == FALSE )
 			{
-
-				switchToContext( CB_CONTEXT_COMMAND, drawToEvaluateFor );
+				if (obj->isLocallyControlled() == TRUE || isObserverControlBarOn() || isControllingPlayerNeutral(obj))
+					switchToContext( CB_CONTEXT_COMMAND, drawToEvaluateFor );
 
 			}
 			else if (obj->getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate().compare(obj->getTemplate()->getName()) == 0)
@@ -1936,7 +1933,7 @@ void ControlBar::evaluateContextUI()
 				switchToContext( CB_CONTEXT_BEACON, drawToEvaluateFor );
 			}
 			else
-				switchToContext( CB_CONTEXT_NONE, drawToEvaluateFor );
+				switchToDefaultContext(drawToEvaluateFor);
 		}
 
 	}
@@ -2151,6 +2148,14 @@ CBCommandStatus ControlBar::processContextSensitiveButtonTransition( GameWindow 
 	* art and/or buttons that we need to for the new context using data from the object
 	* passed in */
 //-------------------------------------------------------------------------------------------------
+void ControlBar::switchToDefaultContext(Drawable* draw)
+{
+	if (isObserverControlBarOn() && getObservedPlayer() == nullptr)
+		switchToContext(CB_CONTEXT_OBSERVER_LIST, nullptr);
+	else
+		switchToContext(CB_CONTEXT_NONE, draw);
+}
+
 void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 {
 
@@ -3580,6 +3585,26 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 		return true;
 
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
+{
+	ContainModuleInterface* contain = obj->getContain();
+	if (!contain)
+		return FALSE;
+
+	Player* localPlayer = ThePlayerList->getLocalPlayer();
+	if (const Player* otherPlayer = contain->getApparentControllingPlayer(localPlayer))
+		return localPlayer->getRelationship(otherPlayer->getDefaultTeam()) == NEUTRAL;
+
+	return isControllingPlayerNeutral(obj);
+}
+
+Bool ControlBar::isControllingPlayerNeutral(const Object* obj) const
+{
+	const Player* player = ThePlayerList->getLocalPlayer();
+	return player->getRelationship(obj->getTeam()) == NEUTRAL;
 }
 
 //-------------------------------------------------------------------------------------------------

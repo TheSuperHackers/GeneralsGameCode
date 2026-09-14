@@ -702,6 +702,8 @@ public:
 
 	Bool hasAnyShortcutSelection() const;
 	Bool canShowSpecialPowerShortcut() const;
+	Bool isApparentControllingPlayerNeutral(const Object* obj) const;
+	Bool isControllingPlayerNeutral(const Object* obj) const;
 	void showSpecialPowerShortcut();
 	void hideSpecialPowerShortcut();
 	void animateSpecialPowerShortcut( Bool isOn );
@@ -742,7 +744,8 @@ public:
 	void initObserverControls();
 	void populateObserverInfoWindow ();
 	void populateObserverList();
-	Bool isObserverControlBarOn() { return m_isObserverCommandBar;}
+	Bool isObserverControlBarOn() const { return m_isObserverCommandBar;}
+	Bool isControlEnabled() const { return !isObserverControlBarOn();}
 
 	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
 	Player *getObserverLookAtPlayer () const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
@@ -814,7 +817,7 @@ protected:
 
 	/// switch the interface context to the new mode and populate as needed
 	void switchToContext( ControlBarContext context, Drawable *draw );
-
+	void switchToDefaultContext(Drawable* draw);
 	/// set the command data into the button
 	void setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
 											 const CommandButton *commandButton );
@@ -847,6 +850,7 @@ protected:
 	void populateUnderConstruction( Object *objectUnderConstruction );
 	void populateOCLTimer( Object *creatorObject );
 	void doTransportInventoryUI( Object *transport, const CommandSet *commandSet );
+	void populateTransportInventoryReadOnly(Object* transport);
 	static void populateInvDataCallback( Object *obj, void *userData );
 
 	// the following methods are for updating the currently showing context
