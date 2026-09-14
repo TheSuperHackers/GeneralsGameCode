@@ -74,8 +74,8 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 	if ( t == GameMessage::MSG_RAW_KEY_UP)
 	{
 		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
-		const Int keyState = msg->getArgument(1)->integer;
-		const Int pressedKeyState = msg->getArgument(2)->integer;
+		const KeyState keyState = (KeyState)msg->getArgument(1)->integer;
+		const KeyState pressedKeyState = (KeyState)msg->getArgument(2)->integer;
 		if( (keyState | pressedKeyState) & KEY_STATE_MODIFIERS )
 			return disp;
 

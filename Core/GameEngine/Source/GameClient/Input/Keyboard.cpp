@@ -44,6 +44,23 @@ Keyboard *TheKeyboard = nullptr;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
+static Bool isCtrlShiftAltKey(KeyDefType key)
+{
+	switch (key)
+	{
+		case KEY_LCTRL:
+		case KEY_RCTRL:
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+		case KEY_LALT:
+		case KEY_RALT:
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Given the state of the device, create messages from the input and
 	* place them on the message stream */
 //-------------------------------------------------------------------------------------------------
@@ -62,6 +79,12 @@ void Keyboard::createStreamMessages()
 		// add message to stream
 		if( BitIsSet( key->state, KEY_STATE_DOWN ) )
 		{
+			const Bool isModifier = isCtrlShiftAltKey((KeyDefType)key->key) || key->key == m_shift2Key;
+			if( !isModifier && !BitIsSet( key->state, KEY_STATE_AUTOREPEAT ) )
+			{
+				// Track presses in message order, including multiple presses of one key in a frame.
+				m_lastPressedKeyState[key->key] = key->state;
+			}
 
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_KEY_DOWN );
 			DEBUG_ASSERTCRASH( msg, ("Unable to append key down message to stream") );
@@ -87,7 +110,10 @@ void Keyboard::createStreamMessages()
 			msg->appendIntegerArgument( key->key );
 			msg->appendIntegerArgument( key->state );
 			if( BitIsSet( key->state, KEY_STATE_UP ) )
-				msg->appendIntegerArgument( key->pressedState );
+			{
+				msg->appendIntegerArgument( m_lastPressedKeyState[key->key] );
+				m_lastPressedKeyState[key->key] = KEY_STATE_NONE;
+			}
 		}
 
 		// next key please
@@ -96,23 +122,6 @@ void Keyboard::createStreamMessages()
 
 	}
 
-}
-
-//-------------------------------------------------------------------------------------------------
-static Bool isCtrlShiftAltKey(KeyDefType key)
-{
-	switch (key)
-	{
-		case KEY_LCTRL:
-		case KEY_RCTRL:
-		case KEY_LSHIFT:
-		case KEY_RSHIFT:
-		case KEY_LALT:
-		case KEY_RALT:
-			return TRUE;
-	}
-
-	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -193,20 +202,6 @@ void Keyboard::updateKeys()
 		// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026 Preserve the current
 		// modifier state for each buffered event.
 		BitSet( m_keys[ index ].state, m_modifiers );
-		m_keys[ index ].pressedState = KEY_STATE_NONE;
-		if( !isModifier )
-		{
-			if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
-			{
-				m_lastPressedKeyState[key] = m_modifiers;
-			}
-			else
-			{
-				// Keep the press state separate so a modified release cannot fire a plain hotkey.
-				m_keys[ index ].pressedState = m_lastPressedKeyState[key];
-				m_lastPressedKeyState[key] = KEY_STATE_NONE;
-			}
-		}
 
 		index++;
 
@@ -253,7 +248,6 @@ Bool Keyboard::checkKeyRepeat()
 				m_keys[ index ].key = (UnsignedByte)key;
 				// This is an assignment, not a bit set.
 				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers;
-				m_keys[ index ].pressedState = KEY_STATE_NONE;
 				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
 
 				// Set End Flag
@@ -847,7 +841,7 @@ UnsignedByte Keyboard::getKeyStatusData( KeyDefType key )
 //-------------------------------------------------------------------------------------------------
 /** Get the key state data as a Bool for the specified key */
 //-------------------------------------------------------------------------------------------------
-Bool Keyboard::getKeyStateBit( KeyDefType key, Int bit )
+Bool Keyboard::getKeyStateBit( KeyDefType key, KeyState bit )
 {
 	return (m_keyStatus[ key ].state & bit) ? 1 : 0;
 }
@@ -863,7 +857,7 @@ void Keyboard::setKeyStatusData( KeyDefType key, KeyboardIO::StatusType data )
 //-------------------------------------------------------------------------------------------------
 /** set the key state data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::setKeyStateData( KeyDefType key, UnsignedByte data )
+void Keyboard::setKeyStateData( KeyDefType key, KeyState data )
 {
 	m_keyStatus[ key ].state = data;
 }
