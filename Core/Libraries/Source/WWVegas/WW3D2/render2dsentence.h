@@ -191,12 +191,13 @@ public:
 //	const Vector2 & Get_Cursor()						{ return Cursor; }
 
 	Vector2	Get_Text_Extents( const WCHAR * text );
-	Vector2	Get_Formatted_Text_Extents( const WCHAR * text );
+	Vector2	Get_Formatted_Text_Extents( const WCHAR * text, bool *used_complex_text = nullptr );
 
 	//
 	//	Sentence control
 	//
-	void	Build_Sentence (const WCHAR *text, int *hkX, int *hkY);
+	void	Build_Sentence (const WCHAR *text, int *hkX, int *hkY, bool *used_complex_text = nullptr,
+		Vector2 *legacy_extents = nullptr);
 	void	Draw_Sentence (uint32 color = 0xFFFFFFFF);
 
 	//
@@ -206,6 +207,14 @@ public:
 	int	Get_Texture_Size_Hint() const				{ return TextureSizeHint; }
 
 	void	Set_Mono_Spaced( bool onoff )						{ MonoSpaced = onoff; }
+	bool	Set_Complex_Text_Enabled( bool enabled )		{
+		if (ComplexTextEnabled == enabled) {
+			return false;
+		}
+
+		ComplexTextEnabled = enabled;
+		return true;
+	}
 
 private:
 
@@ -242,11 +251,15 @@ private:
 	//
 	void	Reset_Sentence_Data ();
 	void	Build_Textures ();
-	void	Record_Sentence_Chunk ();
+	void	Record_Sentence_Chunk (int char_height = 0);
 	void	Allocate_New_Surface (const WCHAR *text, bool justCalcExtents = false);
+	void	Allocate_New_Surface (int text_width, int char_height, bool justCalcExtents = false);
 	void	Release_Pending_Surfaces ();
-	void	Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY);
+	Vector2	Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY);
 	Vector2	Build_Sentence_Not_Centered (const WCHAR *text, int *hkX, int *hkY,bool justCalcExtents = false );
+	bool	Get_Complex_Text_Extents( const WCHAR *text, Vector2 *extents );
+	bool	Is_Single_Line_Complex_Text (const WCHAR *text) const;
+	bool	Build_Complex_Sentence (const WCHAR *text);
 	//
 	//	Private member data
 	//
@@ -263,6 +276,7 @@ private:
 	int													TextureSizeHint;
 	SurfaceClass *							CurSurface;
 	bool												MonoSpaced;
+	bool												ComplexTextEnabled;
 	float												WrapWidth;
 	bool												Centered;			// Determines whether or not to center each line
 	RectClass										ClipRect;

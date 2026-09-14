@@ -72,6 +72,7 @@ Render2DSentenceClass::Render2DSentenceClass () :
 	CurSurface (nullptr),
 	CurrTextureSize (0),
 	MonoSpaced (false),
+	ComplexTextEnabled (true),
 	IsClippedEnabled (false),
 	ClipRect (0, 0, 0, 0),
 	BaseLocation (0, 0),
@@ -158,7 +159,6 @@ Render2DSentenceClass::Reset ()
 
 	Cursor.Set (0, 0);
 	MonoSpaced = false;
-	ParseHotKey = false;
 
 	Release_Pending_Surfaces ();
 	Reset_Sentence_Data ();
@@ -260,6 +260,11 @@ Render2DSentenceClass::Set_Location (const Vector2 &loc)
 Vector2
 Render2DSentenceClass::Get_Text_Extents (const WCHAR *text)
 {
+	Vector2 complex_extent;
+	if (Get_Complex_Text_Extents(text, &complex_extent)) {
+		return complex_extent;
+	}
+
 	Vector2 extent (0, Font->Get_Char_Height());
 
 	while (*text) {
@@ -280,8 +285,20 @@ Render2DSentenceClass::Get_Text_Extents (const WCHAR *text)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 Vector2
-Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text)
+Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text, bool *used_complex_text)
 {
+	if (used_complex_text != nullptr) {
+		*used_complex_text = false;
+	}
+
+	Vector2 complex_extent;
+	if (Get_Complex_Text_Extents(text, &complex_extent)) {
+		if (used_complex_text != nullptr) {
+			*used_complex_text = true;
+		}
+		return complex_extent;
+	}
+
 	return Build_Sentence_Not_Centered(text, nullptr, nullptr, true);
 }
 
@@ -574,14 +591,16 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Record_Sentence_Chunk ()
+Render2DSentenceClass::Record_Sentence_Chunk (int char_height)
 {
 	//
 	//	Do we have anything to store?
 	//
 	int width = TextureOffset.I - TextureStartX;
 	if (width > 0) {
-		float char_height = Font->Get_Char_Height ();
+		if (char_height <= 0) {
+			char_height = Font->Get_Char_Height ();
+		}
 
 		//
 		//	Build a structure that contains enough information
@@ -609,23 +628,123 @@ Render2DSentenceClass::Record_Sentence_Chunk ()
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
+//	Is_Single_Line_Complex_Text
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Is_Single_Line_Complex_Text (const WCHAR *text) const
+{
+	// TheSuperHackers @feature Omar Aglan 28/08/2026 Shape eligible complex single-line text
+	// as one paragraph to preserve contextual forms and bidirectional order.
+	if (!ComplexTextEnabled || Font == nullptr || text == nullptr || text[0] == 0 ||
+		wcspbrk(text, L"\r\n\v\f\x001C\x001D\x001E\x0085\x2028\x2029") != nullptr ||
+		ParseHotKey || MonoSpaced)
+	{
+		return false;
+	}
+
+	return Font->Is_Complex_Text(text);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Get_Complex_Text_Extents
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Get_Complex_Text_Extents (const WCHAR *text, Vector2 *extents)
+{
+	if (extents == nullptr || !Is_Single_Line_Complex_Text(text)) {
+		return false;
+	}
+
+	int width = 0;
+	int height = 0;
+	if (!Font->Build_Complex_Text(text, &width, &height, WrapWidth, max(TextureSizeHint, 256)))
+	{
+		return false;
+	}
+
+	extents->Set((float)width, (float)height);
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Build_Complex_Sentence
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+Render2DSentenceClass::Build_Complex_Sentence (const WCHAR *text)
+{
+	// TheSuperHackers @bugfix Omar Aglan 28/08/2026 Build one bounded raster
+	// before splitting it across sentence textures.
+	uint16 *raster = nullptr;
+	int text_width = 0;
+	int text_height = 0;
+	if (!Font->Build_Complex_Text(text, &text_width, &text_height,
+		WrapWidth, max(TextureSizeHint, 256), &raster))
+	{
+		return false;
+	}
+
+	Reset_Sentence_Data ();
+	Cursor.Set (0, 0);
+
+	// TheSuperHackers @performance Omar Aglan 13/09/2026 Reuse the shaped dimensions
+	// when allocating sentence textures to avoid measuring legacy glyphs.
+	if (CurSurface == nullptr) {
+		Allocate_New_Surface (text_width, text_height);
+	}
+	TextureOffset.Set (TEXTURE_OFFSET, 0);
+	TextureStartX = TEXTURE_OFFSET;
+
+	int source_x = 0;
+
+	while (source_x < text_width) {
+		if ((TextureOffset.J + text_height) >= CurrTextureSize) {
+			Allocate_New_Surface (text_width - source_x, text_height);
+		}
+
+		TextureOffset.I = TEXTURE_OFFSET;
+		TextureStartX = TEXTURE_OFFSET;
+		const int available_width = CurrTextureSize - TEXTURE_OFFSET - 1;
+		const int chunk_width = min(text_width - source_x, available_width);
+
+		if (LockedPtr == nullptr) {
+			LockedPtr = (uint16 *)CurSurface->Lock (&LockedStride);
+			WWASSERT (LockedPtr != nullptr);
+		}
+
+		const int dest_inc = LockedStride >> 1;
+		for (int row = 0; row < text_height; ++row) {
+			const uint16 *source = raster + row * text_width + source_x;
+			uint16 *destination = LockedPtr + (TextureOffset.J + row) * dest_inc + TextureOffset.I;
+			::memcpy(destination, source, chunk_width * sizeof(uint16));
+		}
+
+		TextureOffset.I += chunk_width;
+		Record_Sentence_Chunk (text_height);
+		Cursor.X += chunk_width;
+		source_x += chunk_width;
+		TextureOffset.J += text_height;
+	}
+
+	delete [] raster;
+	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
 //	Allocate_New_Surface
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
 Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExtents)
 {
-	if (!justCalcExtents)
-	{
-		//
-		//	Unlock the last surface (if necessary)
-		//
-		if (LockedPtr != nullptr) {
-			CurSurface->Unlock ();
-			LockedPtr = nullptr;
-		}
-	}
-
 	//
 	// Calculate the width of the text
 	//
@@ -634,7 +753,17 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 		text_width += Font->Get_Char_Spacing (text[index]);
 	}
 
-	int char_height = Font->Get_Char_Height ();
+	Allocate_New_Surface (text_width, Font->Get_Char_Height (), justCalcExtents);
+}
+
+
+void
+Render2DSentenceClass::Allocate_New_Surface (int text_width, int char_height, bool justCalcExtents)
+{
+	if (!justCalcExtents && LockedPtr != nullptr) {
+		CurSurface->Unlock ();
+		LockedPtr = nullptr;
+	}
 
 	//
 	//	Find the best texture size for the remaining text
@@ -714,7 +843,7 @@ float FindStartingXPos( const WCHAR *text )
 //	Build_Sentence_Centered
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY)
+Vector2	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY)
 {
 	float char_height = Font->Get_Char_Height ();
 	int		wordWidth = 0;
@@ -954,6 +1083,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			*hkX = hotKeyPosX;
 		if(hkX)
 			*hkY = hotKeyPosY;
+
+	return extent;
 }
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1148,8 +1279,16 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
+Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY, bool *used_complex_text,
+	Vector2 *legacy_extents)
 {
+	if (used_complex_text != nullptr) {
+		*used_complex_text = false;
+	}
+	if (legacy_extents != nullptr) {
+		legacy_extents->Set(0, 0);
+	}
+
 	if (text == nullptr) {
 		return ;
 	}
@@ -1157,10 +1296,22 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 	if (Font == nullptr)
 		return;
 
+	if (Is_Single_Line_Complex_Text(text) && Build_Complex_Sentence(text)) {
+		if (used_complex_text != nullptr) {
+			*used_complex_text = true;
+		}
+		return;
+	}
+
+	Vector2 extents;
 	if(Centered && (WrapWidth > 0 || wcschr(text,L'\n')))
-		Build_Sentence_Centered(text, hkX, hkY);
+		extents = Build_Sentence_Centered(text, hkX, hkY);
 	else
-		Build_Sentence_Not_Centered(text, hkX, hkY);
+		extents = Build_Sentence_Not_Centered(text, hkX, hkY);
+
+	if (legacy_extents != nullptr) {
+		*legacy_extents = extents;
+	}
 
 }
 
