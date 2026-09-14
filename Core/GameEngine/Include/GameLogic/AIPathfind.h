@@ -131,10 +131,6 @@ private:
 
 };
 
-// this doesn't actually seem to be a particularly useful win,
-// performance-wise, so I didn't enable it. (srj)
-#define NO_CPOP_STARTS_FROM_PREV_SEG
-
 struct ClosestPointOnPathInfo
 {
 	Real								distAlongPath;
