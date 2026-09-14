@@ -7538,14 +7538,13 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 			return;
 		}
 
-		newCell->allocateInfo(scanCell);
-
+#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 		// TheSuperHackers @bugfix Caball009 14/09/2026 Check newCell->m_info before accessing it to prevent a possible crash.
-		if (newCell->hasInfo())
+		// The Zero Hour / non-retail compatible pathfinding code performs this check earlier in the function.
+		if (newCell->allocateInfo(scanCell) && !newCell->getOpen() && !newCell->getClosed())
+#endif
 		{
-			if (!newCell->getClosed() && !newCell->getOpen()) {
-				newCell->putOnClosedList(m_closedList);
-			}
+			newCell->putOnClosedList(m_closedList);
 		}
 
 		if (adjNewCell->allocateInfo(adjacentCell))
