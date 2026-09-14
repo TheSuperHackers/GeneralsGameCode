@@ -217,7 +217,7 @@ static void playerTooltip(GameWindow *window,
 	setLANPlayerTooltip(player);
 }
 
-void StartLANGame()
+Bool StartLANGame()
 {
 	LANGameInfo *myGame = TheLAN->GetMyGame();
 
@@ -226,7 +226,7 @@ void StartLANGame()
 	Int playerCount = 0;
 	if (!myGame)
 	{
-		return;
+		return false;
 	}
 	myGame->getLANSlot(0)->setAccept(); // cause we are, of course!
 
@@ -255,7 +255,7 @@ void StartLANGame()
 			text.format(TheGameText->fetch("LAN:TooManyPlayers"), (md)?md->m_numPlayers:0);
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	// Check for observer + AI players
@@ -266,7 +266,7 @@ void StartLANGame()
 			UnicodeString text = TheGameText->fetch("GUI:NeedHumanPlayers");
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	// Check for too few players
@@ -278,7 +278,7 @@ void StartLANGame()
 			text.format(TheGameText->fetch("LAN:NeedMorePlayers"),numUsers);
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	// Check for too few teams
@@ -307,7 +307,7 @@ void StartLANGame()
 			text.format(TheGameText->fetch("LAN:NeedMoreTeams"));
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	if (numRandom + teams.size() < 2)
@@ -369,6 +369,7 @@ void StartLANGame()
 		else
 			TheLAN->RequestGameStart();
 		LANEnableStartButton(false);
+		return true;
 	}
 	else
 	{
@@ -380,6 +381,7 @@ void StartLANGame()
 		}
 	}
 
+	return false;
 }
 
 void LANEnableStartButton(Bool enabled)
