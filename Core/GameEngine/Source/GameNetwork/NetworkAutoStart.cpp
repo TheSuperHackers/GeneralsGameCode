@@ -57,7 +57,7 @@ Bool s_startRequested = false;
 Bool s_gameStarted = false;
 Bool s_failed = false;
 
-Bool ParseIPv4Address(AsciiString address, UnsignedInt &result)
+Bool ParseIPv4Address(const AsciiString &address, UnsignedInt &result)
 {
 	const char *cursor = address.str();
 	result = 0;
@@ -114,7 +114,7 @@ Bool CanAcceptMap(LANGameInfo *game, LANGameSlot *slot)
 }
 } // namespace
 
-Bool NetworkAutoStart::setMode(AsciiString mode)
+Bool NetworkAutoStart::setMode(const AsciiString &mode)
 {
 	s_hasArguments = true;
 	if (mode.compareNoCase("direct") == 0)
@@ -209,11 +209,6 @@ Bool NetworkAutoStart::setTimeoutSeconds(Int seconds)
 
 	s_timeoutMilliseconds = (UnsignedInt)seconds * MillisecondsPerSecond;
 	return true;
-}
-
-Bool NetworkAutoStart::hasArguments()
-{
-	return s_hasArguments;
 }
 
 Bool NetworkAutoStart::isEnabled()
@@ -315,6 +310,7 @@ void NetworkAutoStart::fail(const char *message)
 	s_actionPending = false;
 	DEBUG_LOG(("NetworkAutoStart failed: %s", message));
 	printf("NetworkAutoStart failed: %s\n", message);
+	fflush(stdout);
 }
 
 void NetworkAutoStart::updateDirectConnect()
@@ -438,8 +434,11 @@ void NetworkAutoStart::updateGameOptions()
 	{
 		DEBUG_LOG(("NetworkAutoStart starting Direct Connect game with %d players", humanPlayers));
 		s_lastActionTime = now;
-		s_startRequested = true;
-		StartLANGame();
+		s_startRequested = StartLANGame();
+		if (!s_startRequested)
+		{
+			fail("LAN start validation rejected the match; see LAN system messages");
+		}
 	}
 }
 
@@ -505,8 +504,9 @@ void NetworkAutoStart::onGameStart()
 	}
 
 	s_gameStarted = true;
-	DEBUG_LOG(("NetworkAutoStart entered the network game"));
-	printf("NetworkAutoStart entered the network game\n");
+	DEBUG_LOG(("NetworkAutoStart requested network game startup"));
+	printf("NetworkAutoStart requested network game startup\n");
+	fflush(stdout);
 }
 
 #endif

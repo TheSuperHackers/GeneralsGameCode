@@ -24,8 +24,7 @@
 #include "Common/UnicodeString.h"
 #include "GameNetwork/LANAPI.h"
 
-// TheSuperHackers @feature bobtista 10/08/2026 Automate network match startup
-// for multi-instance testing.
+// Automate network match startup for multi-instance testing.
 class NetworkAutoStart
 {
 public:
@@ -44,7 +43,7 @@ public:
 		ROLE_JOIN,
 	};
 
-	static Bool setMode(AsciiString mode);
+	static Bool setMode(const AsciiString &mode);
 	static Bool setHost(Int expectedPlayers);
 	static Bool setJoin(AsciiString hostAddress);
 	static Bool setLocalAddress(AsciiString localAddress);
@@ -52,7 +51,6 @@ public:
 	static Bool setMapName(AsciiString mapName);
 	static Bool setTimeoutSeconds(Int seconds);
 
-	static Bool hasArguments();
 	static Bool isEnabled();
 	static Bool shouldOpenDirectConnect();
 	static void markDirectConnectOpened();
