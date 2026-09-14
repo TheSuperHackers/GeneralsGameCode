@@ -111,7 +111,8 @@ SoundSceneObjClass::SoundSceneObjClass ()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
-	:	m_Scene (src.m_Scene),
+	:	PersistClass(static_cast<const PersistClass &>(src)),
+		m_Scene (src.m_Scene),
 		m_PhysWrapper (nullptr),
 		m_pCallback (src.m_pCallback),
 		m_AttachedObject (nullptr),
@@ -123,10 +124,7 @@ SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
 {
 	m_ID = m_NextAvailableID ++;
 
-	// TheSuperHackers @bugfix Cryo 01/09/2026 Copy the attachment without invoking virtual positioning
-	// before the derived sound object has been constructed.
 	REF_PTR_SET (m_AttachedObject, src.m_AttachedObject);
-	PersistClass::operator= ((const PersistClass &)src);
 	Register_Sound_Object (this);
 }
 
