@@ -95,6 +95,10 @@ public:
 	int	Get_Char_Height()			{ return CharHeight; }
 	int	Get_Char_Width( WCHAR ch );
 	int	Get_Char_Spacing( WCHAR ch );
+	bool	Is_Complex_Text( const WCHAR *text );
+	// A null raster requests measurement only; both paths apply the same size limits.
+	bool	Build_Complex_Text( const WCHAR *text, int *width, int *height,
+		float maximum_width, int maximum_height, uint16 **raster = nullptr );
 
 	int Get_Extra_Overlap() {return PixelOverlap;}
 
@@ -121,7 +125,6 @@ private:
 	DynamicVectorClass<FontCharsBuffer>	BufferList;
 	int									CurrPixelOffset;
 	int									CharHeight;
-	int									CharAscent;
 	int									CharOverhang;
 	int									PixelOverlap;
 	int									PointSize;
