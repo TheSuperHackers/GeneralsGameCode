@@ -12,6 +12,7 @@ target_link_libraries(core_wwcommon INTERFACE
     deps_miles
     deps_usp10
     stlport
+    unicodebidi
 )
 
 target_include_directories(core_wwcommon INTERFACE
