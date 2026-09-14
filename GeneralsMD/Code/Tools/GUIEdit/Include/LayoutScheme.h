@@ -60,32 +60,30 @@
 
 // LayoutScheme ---------------------------------------------------------------
 /** The layout scheme provides a place for default look of newly
-	* created controls and windows */
+ * created controls and windows */
 //-----------------------------------------------------------------------------
 class LayoutScheme
 {
-
 public:
-
 	LayoutScheme();
 	~LayoutScheme();
 
 	void init();
 
-	void openDialog();  ///< open the scheme info and editing dialog
+	void openDialog();    ///< open the scheme info and editing dialog
 
-	char *getSchemeFilename();  ///< get the scheme filename
-	void setSchemeFilename( char *filename );  ///< set the scheme filename
+	char* getSchemeFilename();    ///< get the scheme filename
+	void setSchemeFilename(char* filename);    ///< set the scheme filename
 
-	Bool saveScheme( char *filename );  ///< save the current scheme to file
-	Bool loadScheme( char *filename );  ///< load the scheme file
+	Bool saveScheme(char* filename);    ///< save the current scheme to file
+	Bool loadScheme(char* filename);    ///< load the scheme file
 
-	ImageAndColorInfo *getImageAndColor( StateIdentifier id );
-	void storeImageAndColor( StateIdentifier id, const Image *image,
-													 Color color, Color borderColor );
+	ImageAndColorInfo* getImageAndColor(StateIdentifier id);
+	void storeImageAndColor(StateIdentifier id, const Image* image,
+	                        Color color, Color borderColor);
 
-	void setFont( GameFont *font );
-	GameFont *getFont();
+	void setFont(GameFont* font);
+	GameFont* getFont();
 
 	Color getEnabledTextColor();
 	Color getEnabledTextBorderColor();
@@ -93,54 +91,52 @@ public:
 	Color getDisabledTextBorderColor();
 	Color getHiliteTextColor();
 	Color getHiliteTextBorderColor();
-	void setEnabledTextColor( Color c );
-	void setEnabledTextBorderColor( Color c );
-	void setDisabledTextColor( Color c );
-	void setDisabledTextBorderColor( Color c );
-	void setHiliteTextColor( Color c );
-	void setHiliteTextBorderColor( Color c );
+	void setEnabledTextColor(Color c);
+	void setEnabledTextBorderColor(Color c);
+	void setDisabledTextColor(Color c);
+	void setDisabledTextBorderColor(Color c);
+	void setHiliteTextColor(Color c);
+	void setHiliteTextBorderColor(Color c);
 
 	/** apply the image and color info stored in the state identifier tables
 	used for "property editing" to all appropriate windows currently
 	loaded in the editor */
-	void applyPropertyTablesToWindow( GameWindow *root );
+	void applyPropertyTablesToWindow(GameWindow* root);
 
 protected:
+	ImageAndColorInfo* findEntry(StateIdentifier id);
 
-	ImageAndColorInfo *findEntry( StateIdentifier id );
+	char m_schemeFilename[_MAX_PATH];    ///< filename
 
-	char m_schemeFilename[ _MAX_PATH ];  ///< filename
+	ImageAndColorInfo m_imageAndColorTable[NUM_STATE_IDENTIFIERS];    // the color and image info
+	TextDrawData m_enabledText;    ///< default text colors
+	TextDrawData m_disabledText;    ///< default text colors
+	TextDrawData m_hiliteText;    ///< default text colors
 
-	ImageAndColorInfo m_imageAndColorTable[ NUM_STATE_IDENTIFIERS ];  // the color and image info
-	TextDrawData m_enabledText;  ///< default text colors
-	TextDrawData m_disabledText;  ///< default text colors
-	TextDrawData m_hiliteText;  ///< default text colors
-
-	GameFont *m_font;  ///< default font
-
+	GameFont* m_font;    ///< default font
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline char *LayoutScheme::getSchemeFilename() { return m_schemeFilename; }
-inline void LayoutScheme::setSchemeFilename( char *filename ) { strlcpy(m_schemeFilename, filename, ARRAY_SIZE(m_schemeFilename)); }
+inline char* LayoutScheme::getSchemeFilename() { return m_schemeFilename; }
+inline void LayoutScheme::setSchemeFilename(char* filename) { strlcpy(m_schemeFilename, filename, ARRAY_SIZE(m_schemeFilename)); }
 inline Color LayoutScheme::getEnabledTextColor() { return m_enabledText.color; }
 inline Color LayoutScheme::getEnabledTextBorderColor() { return m_enabledText.borderColor; }
 inline Color LayoutScheme::getDisabledTextColor() { return m_disabledText.color; }
 inline Color LayoutScheme::getDisabledTextBorderColor() { return m_disabledText.borderColor; }
 inline Color LayoutScheme::getHiliteTextColor() { return m_hiliteText.color; }
 inline Color LayoutScheme::getHiliteTextBorderColor() { return m_hiliteText.borderColor; }
-inline void LayoutScheme::setEnabledTextColor( Color c ) { m_enabledText.color = c; }
-inline void LayoutScheme::setEnabledTextBorderColor( Color c ) { m_enabledText.borderColor = c; }
-inline void LayoutScheme::setDisabledTextColor( Color c ) { m_disabledText.color = c; }
-inline void LayoutScheme::setDisabledTextBorderColor( Color c ) { m_disabledText.borderColor = c; }
-inline void LayoutScheme::setHiliteTextColor( Color c ) { m_hiliteText.color = c; }
-inline void LayoutScheme::setHiliteTextBorderColor( Color c ) { m_hiliteText.borderColor = c; }
-inline void LayoutScheme::setFont( GameFont *font ) { m_font = font; }
-inline GameFont *LayoutScheme::getFont() { return m_font; }
+inline void LayoutScheme::setEnabledTextColor(Color c) { m_enabledText.color = c; }
+inline void LayoutScheme::setEnabledTextBorderColor(Color c) { m_enabledText.borderColor = c; }
+inline void LayoutScheme::setDisabledTextColor(Color c) { m_disabledText.color = c; }
+inline void LayoutScheme::setDisabledTextBorderColor(Color c) { m_disabledText.borderColor = c; }
+inline void LayoutScheme::setHiliteTextColor(Color c) { m_hiliteText.color = c; }
+inline void LayoutScheme::setHiliteTextBorderColor(Color c) { m_hiliteText.borderColor = c; }
+inline void LayoutScheme::setFont(GameFont* font) { m_font = font; }
+inline GameFont* LayoutScheme::getFont() { return m_font; }
 
 ///////////////////////////////////////////////////////////////////////////////
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-extern LayoutScheme *TheDefaultScheme;
+extern LayoutScheme* TheDefaultScheme;

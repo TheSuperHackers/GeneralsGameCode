@@ -52,18 +52,16 @@ class W3DGhostObjectManager;
 //-----------------------------------------------------------------------------
 class W3DGameLogic : public GameLogic
 {
-
 public:
-
 protected:
-
 	/// factory for TheTerrainLogic, called from init()
-	virtual TerrainLogic *createTerrainLogic() override { return NEW W3DTerrainLogic; };
-	virtual GhostObjectManager *createGhostObjectManager(bool dummy) override
+	virtual TerrainLogic* createTerrainLogic() override { return NEW W3DTerrainLogic; };
+	virtual GhostObjectManager* createGhostObjectManager(bool dummy) override
 	{
 		if (dummy)
+		{
 			return NEW GhostObjectManagerDummy;
+		}
 		return NEW W3DGhostObjectManager;
 	}
-
 };

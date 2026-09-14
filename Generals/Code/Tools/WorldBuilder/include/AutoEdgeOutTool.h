@@ -26,7 +26,7 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             AutoEdgeOutTool
-	 Does the BlendEdgesOut tool operation.
+   Does the BlendEdgesOut tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
 class AutoEdgeOutTool : public Tool
@@ -37,6 +37,6 @@ public:
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void activate() override; ///< Become the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void activate() override;    ///< Become the current tool.
 };

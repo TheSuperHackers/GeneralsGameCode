@@ -30,16 +30,15 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/BitFlags.h"
 #include "Common/BitFlagsIO.h"
 #include "Common/ModelState.h"
 #include "GameLogic/ArmorSet.h"
 
-template<>
-const char* const ModelConditionFlags::s_bitNameList[] =
-{
+template <>
+const char* const ModelConditionFlags::s_bitNameList[] = {
 	"TOPPLED",
 	"FRONTCRUSHED",
 	"BACKCRUSHED",
@@ -100,7 +99,7 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 	"CONSTRUCTION_COMPLETE",
 	"RADAR_EXTENDING",
 	"RADAR_UPGRADED",
-	"PANICKING",	// yes, it's spelled with a "k". look it up.
+	"PANICKING",    // yes, it's spelled with a "k". look it up.
 	"AFLAME",
 	"SMOLDERING",
 	"BURNED",
@@ -151,7 +150,7 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 	"CENTER_TO_RIGHT",
 	"RIGHT_TO_CENTER",
 
-	"RIDER1",	//Kris: Added these for different combat-bike riders, but feel free to use these for anything.
+	"RIDER1",    // Kris: Added these for different combat-bike riders, but feel free to use these for anything.
 	"RIDER2",
 	"RIDER3",
 	"RIDER4",
@@ -160,7 +159,7 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 	"RIDER7",
 	"RIDER8",
 
-  "STUNNED_FLAILING", // Daniel Teh's idea, added by Lorenzen, 5/28/03
+	"STUNNED_FLAILING",    // Daniel Teh's idea, added by Lorenzen, 5/28/03
 	"STUNNED",
 	"SECOND_LIFE",
 	"JAMMED",
@@ -176,9 +175,8 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 };
 static_assert(ARRAY_SIZE(ModelConditionFlags::s_bitNameList) == ModelConditionFlags::NumBits + 1, "Incorrect array size");
 
-template<>
-const char* const ArmorSetFlags::s_bitNameList[] =
-{
+template <>
+const char* const ArmorSetFlags::s_bitNameList[] = {
 	"VETERAN",
 	"ELITE",
 	"HERO",

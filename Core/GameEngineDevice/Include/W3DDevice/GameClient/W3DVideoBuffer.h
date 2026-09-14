@@ -62,35 +62,31 @@ class SurfaceClass;
 // W3DVideoBuffer
 //===============================
 /**
-  * Video buffer interface class to a W3D TextureClass
-	*/
+ * Video buffer interface class to a W3D TextureClass
+ */
 //===============================
-
 
 class W3DVideoBuffer : public VideoBuffer
 {
-	protected:
+protected:
+	TextureClass* m_texture;
+	SurfaceClass* m_surface;
 
-		TextureClass	*m_texture;
-		SurfaceClass	*m_surface;
+public:
+	W3DVideoBuffer(Type format);
+	virtual ~W3DVideoBuffer() override;
 
-	public:
+	virtual Bool allocate(UnsignedInt width, UnsignedInt height) override;    ///< Allocates buffer
+	virtual void free() override;    ///< Free buffer
+	virtual void* lock() override;    ///< Returns memory pointer to start of buffer
+	virtual void unlock() override;    ///< Release buffer
+	virtual Bool valid() override;    ///< Is the buffer valid to use
 
-		W3DVideoBuffer( Type format );
-		virtual ~W3DVideoBuffer() override;
+	TextureClass* texture();    ///< Returns texture object
 
-		virtual	Bool		allocate( UnsignedInt width, UnsignedInt height) override; ///< Allocates buffer
-		virtual void		free() override;					///< Free buffer
-		virtual	void*		lock() override;					///< Returns memory pointer to start of buffer
-		virtual void		unlock() override;				///< Release buffer
-		virtual Bool		valid() override;				///< Is the buffer valid to use
-
-		TextureClass		*texture();			///< Returns texture object
-
-		static WW3DFormat TypeToW3DFormat( VideoBuffer::Type format );
-		static VideoBuffer::Type W3DFormatToType( WW3DFormat w3dFormat );
+	static WW3DFormat TypeToW3DFormat(VideoBuffer::Type format);
+	static VideoBuffer::Type W3DFormatToType(WW3DFormat w3dFormat);
 };
-
 
 //----------------------------------------------------------------------------
 //           Inlining

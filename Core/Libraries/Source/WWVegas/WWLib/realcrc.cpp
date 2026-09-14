@@ -41,8 +41,7 @@
 #include <ctype.h>
 
 //    CRC for poly 0x04C11DB7
-unsigned long  CRC32_Table[ 256 ] =
-{
+unsigned long CRC32_Table[256] = {
 	0x00000000L, 0x77073096L, 0xEE0E612CL, 0x990951BAL,
 	0x076DC419L, 0x706AF48FL, 0xE963A535L, 0x9E6495A3L,
 	0x0EDB8832L, 0x79DCB8A4L, 0xE0D5E91EL, 0x97D2D988L,
@@ -109,8 +108,7 @@ unsigned long  CRC32_Table[ 256 ] =
 	0xB40BBE37L, 0xC30C8EA1L, 0x5A05DF1BL, 0x2D02EF8DL
 };
 
-#define CRC32(c,crc) (CRC32_Table[((unsigned long)(crc) ^ (c)) & 0xFFL] ^ (((crc) >> 8) & 0x00FFFFFFL))
-
+#define CRC32(c, crc) (CRC32_Table[((unsigned long)(crc) ^ (c)) & 0xFFL] ^ (((crc) >> 8) & 0x00FFFFFFL))
 
 /***********************************************************************************************
  * CRC_Memory -- calculates a CRC for a block of memory                                        *
@@ -123,15 +121,15 @@ unsigned long  CRC32_Table[ 256 ] =
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsigned long crc )
+unsigned long CRC_Memory(const unsigned char* data, unsigned long length, unsigned long crc)
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
-	while ( length-- ) {
-		crc = CRC32( *data++, crc );					// calc crc for each byte
+	crc ^= 0xFFFFFFFF;    // invert previous CRC
+	while (length--)
+	{
+		crc = CRC32(*data++, crc);    // calc crc for each byte
 	}
-	return (crc ^ 0xFFFFFFFF); 						// invert new CRC and return it
+	return (crc ^ 0xFFFFFFFF);    // invert new CRC and return it
 }
-
 
 /***********************************************************************************************
  * CRC_String -- Calculates a CRC for a null-terminated string                                 *
@@ -144,15 +142,15 @@ unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsig
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-unsigned long	CRC_String( const char *string, unsigned long crc )
+unsigned long CRC_String(const char* string, unsigned long crc)
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
-	while ( *string )	{
-		crc = CRC32( *string++, crc );				// calc crc for each byte
+	crc ^= 0xFFFFFFFF;    // invert previous CRC
+	while (*string)
+	{
+		crc = CRC32(*string++, crc);    // calc crc for each byte
 	}
-	return (crc ^ 0xFFFFFFFF); 						// invert new CRC and return it
+	return (crc ^ 0xFFFFFFFF);    // invert new CRC and return it
 }
-
 
 /***********************************************************************************************
  * CRC_Stringi -- Calculates a CRC for a string, case-insensitive                              *
@@ -165,12 +163,13 @@ unsigned long	CRC_String( const char *string, unsigned long crc )
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-unsigned long	CRC_Stringi( const char *string, unsigned long crc )
+unsigned long CRC_Stringi(const char* string, unsigned long crc)
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
-	while ( *string )	{
+	crc ^= 0xFFFFFFFF;    // invert previous CRC
+	while (*string)
+	{
 		char c = (char)toupper(*string++);
-		crc = CRC32( c, crc );				// calc crc for each byte
+		crc = CRC32(c, crc);    // calc crc for each byte
 	}
-	return (crc ^ 0xFFFFFFFF); 						// invert new CRC and return it
+	return (crc ^ 0xFFFFFFFF);    // invert new CRC and return it
 }

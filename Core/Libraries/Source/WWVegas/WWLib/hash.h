@@ -41,51 +41,50 @@
 
 class HashTableIteratorClass;
 
-
 /*
 ** HashableClass
 */
-class	HashableClass {
-
+class HashableClass
+{
 public:
-	HashableClass() : NextHash( nullptr ) {}
-	virtual	~HashableClass() {}
+	HashableClass()
+	  : NextHash(nullptr)
+	{}
+	virtual ~HashableClass() {}
 
-	virtual	const char * Get_Key()				= 0;
+	virtual const char* Get_Key() = 0;
 
 private:
-	HashableClass * NextHash;
-	friend	class		HashTableClass;
-	friend	class		HashTableIteratorClass;
+	HashableClass* NextHash;
+	friend class HashTableClass;
+	friend class HashTableIteratorClass;
 };
-
 
 /*
 ** HashTableClass
 */
-class HashTableClass {
-
+class HashTableClass
+{
 public:
-	HashTableClass( int size );
+	HashTableClass(int size);
 	~HashTableClass();
 
-	void					Reset();
-	void					Add( HashableClass * entry );
-	bool					Remove( HashableClass * entry );
+	void Reset();
+	void Add(HashableClass* entry);
+	bool Remove(HashableClass* entry);
 
-	HashableClass *	Find( const char * key );
+	HashableClass* Find(const char* key);
 
 private:
 	// HashTableSize MUST be a power of two
-	int					HashTableSize;
-	HashableClass * *	HashTable;
+	int HashTableSize;
+	HashableClass** HashTable;
 
 	// Convert key to a table index
-	int					Hash( const char * key );
+	int Hash(const char* key);
 
-	friend	class		HashTableIteratorClass;
+	friend class HashTableIteratorClass;
 };
-
 
 /*
 **
@@ -93,19 +92,21 @@ private:
 class HashTableIteratorClass
 {
 public:
-	HashTableIteratorClass( HashTableClass & table ) : Table( table ) {}
+	HashTableIteratorClass(HashTableClass& table)
+	  : Table(table)
+	{}
 	virtual ~HashTableIteratorClass() {}
 
-	void					First();
-	void					Next();
-	bool					Is_Done()		{ return CurrentEntry == nullptr; }
-	HashableClass *	Get_Current()	{ return CurrentEntry; }
+	void First();
+	void Next();
+	bool Is_Done() { return CurrentEntry == nullptr; }
+	HashableClass* Get_Current() { return CurrentEntry; }
 
 private:
-	const HashTableClass	&	Table;
-	int							Index;
-	HashableClass *			CurrentEntry;
-	HashableClass *			NextEntry;
+	const HashTableClass& Table;
+	int Index;
+	HashableClass* CurrentEntry;
+	HashableClass* NextEntry;
 
-	void					Advance_Next();
+	void Advance_Next();
 };

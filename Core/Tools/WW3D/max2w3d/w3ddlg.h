@@ -41,23 +41,19 @@
 #include <max.h>
 #include "w3dutil.h"
 
-
 class W3dOptionsDialogClass
 {
 public:
-
-	W3dOptionsDialogClass(Interface * maxinterface,ExpInterface * exportinterface);
+	W3dOptionsDialogClass(Interface* maxinterface, ExpInterface* exportinterface);
 	~W3dOptionsDialogClass();
 
-	bool Get_Export_Options(W3dExportOptionsStruct * options);
-	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+	bool Get_Export_Options(W3dExportOptionsStruct* options);
+	bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
 public:
-
-	HWND								Hwnd;
+	HWND Hwnd;
 
 private:
-
 	void Dialog_Init();
 	BOOL Dialog_Ok();
 	void Enable_WHT_Export();
@@ -83,20 +79,19 @@ private:
 	void WHA_Compression_Flavor_Changed();
 
 private:
+	W3dExportOptionsStruct* Options;
+	bool GotHierarchyFilename;
+	Interface* MaxInterface;
+	ExpInterface* ExportInterface;
 
-	W3dExportOptionsStruct *	Options;
-	bool								GotHierarchyFilename;
-	Interface *						MaxInterface;
-	ExpInterface *		 			ExportInterface;
+	ISpinnerControl* RangeLowSpin;
+	ISpinnerControl* RangeHighSpin;
 
-	ISpinnerControl *				RangeLowSpin;
-	ISpinnerControl *				RangeHighSpin;
+	HWND HwndReduce;
+	HWND HwndFlavor;
+	HWND HwndTError;
+	HWND HwndRError;
 
-	HWND								HwndReduce;
-	HWND								HwndFlavor;
-	HWND								HwndTError;
-	HWND								HwndRError;
-
-	int								UnitsType;
-	float								UnitsScale;
+	int UnitsType;
+	float UnitsScale;
 };

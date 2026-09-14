@@ -22,18 +22,16 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/CriticalSection.h"
 
 // Definitions.
-CriticalSection *TheAsciiStringCriticalSection = nullptr;
-CriticalSection *TheUnicodeStringCriticalSection = nullptr;
-CriticalSection *TheDmaCriticalSection = nullptr;
-CriticalSection *TheMemoryPoolCriticalSection = nullptr;
-CriticalSection *TheDebugLogCriticalSection = nullptr;
+CriticalSection* TheAsciiStringCriticalSection = nullptr;
+CriticalSection* TheUnicodeStringCriticalSection = nullptr;
+CriticalSection* TheDmaCriticalSection = nullptr;
+CriticalSection* TheMemoryPoolCriticalSection = nullptr;
+CriticalSection* TheDebugLogCriticalSection = nullptr;
 
 #ifdef PERF_TIMERS
 PerfGather TheCritSecPerfGather("CritSec");
 #endif
-

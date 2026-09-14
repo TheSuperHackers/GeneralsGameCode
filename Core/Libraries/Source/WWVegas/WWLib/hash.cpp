@@ -42,61 +42,65 @@
 /*
 ** HashTableClass
 */
-HashTableClass::HashTableClass( int size ) :
-	HashTableSize( size )
+HashTableClass::HashTableClass(int size)
+  : HashTableSize(size)
 {
 	// Assert HashTableSize is a power of 2
-	WWASSERT( (HashTableSize & (HashTableSize-1)) == 0 );
+	WWASSERT((HashTableSize & (HashTableSize - 1)) == 0);
 
 	// Allocate and clear the table
-	HashTable = W3DNEWARRAY HashableClass * [ HashTableSize ];
+	HashTable = W3DNEWARRAY HashableClass* [HashTableSize];
 	Reset();
 }
 
 HashTableClass::~HashTableClass()
 {
 	// If we need to, free the hash table
-	delete [] HashTable;
+	delete[] HashTable;
 	HashTable = nullptr;
 }
 
-void	HashTableClass::Reset()
+void HashTableClass::Reset()
 {
-	for ( int i = 0; i < HashTableSize; i++ ) {
+	for (int i = 0; i < HashTableSize; i++)
+	{
 		HashTable[i] = nullptr;
 	}
 }
 
-void	HashTableClass::Add( HashableClass * entry )
+void HashTableClass::Add(HashableClass* entry)
 {
-	WWASSERT( entry != nullptr);
+	WWASSERT(entry != nullptr);
 
-	int index = Hash( entry->Get_Key() );
-	WWASSERT( entry->NextHash == nullptr );
-	entry->NextHash = HashTable[ index ];
-	HashTable[ index ] = entry;
+	int index = Hash(entry->Get_Key());
+	WWASSERT(entry->NextHash == nullptr);
+	entry->NextHash = HashTable[index];
+	HashTable[index] = entry;
 }
 
-bool	HashTableClass::Remove( HashableClass * entry )
+bool HashTableClass::Remove(HashableClass* entry)
 {
 	WWASSERT(entry != nullptr);
 
 	// Find in the hash table.
-	const char *key = entry->Get_Key();
-	int index = Hash( key );
+	const char* key = entry->Get_Key();
+	int index = Hash(key);
 
-	if ( HashTable[ index ] != nullptr ) {
-
+	if (HashTable[index] != nullptr)
+	{
 		// Special check for first entry
-		if ( HashTable[ index ] == entry ) {
-			HashTable[ index ] = entry->NextHash;
+		if (HashTable[index] == entry)
+		{
+			HashTable[index] = entry->NextHash;
 			return true;
 		}
 
 		// Search the list for the entry, and remove it
-		HashableClass * node = HashTable[ index ];
-		while ( node->NextHash != nullptr ) {
-			if ( node->NextHash == entry ) {
+		HashableClass* node = HashTable[index];
+		while (node->NextHash != nullptr)
+		{
+			if (node->NextHash == entry)
+			{
 				node->NextHash = entry->NextHash;
 				return true;
 			}
@@ -107,53 +111,55 @@ bool	HashTableClass::Remove( HashableClass * entry )
 	return false;
 }
 
-HashableClass * HashTableClass::Find( const char * key )
+HashableClass* HashTableClass::Find(const char* key)
 {
 	// Find in the hash table.
-	int index = Hash( key );
-	for ( HashableClass * node = HashTable[ index ]; node != nullptr; node = node->NextHash ) {
-		if ( ::stricmp( node->Get_Key(), key ) == 0 ) {
+	int index = Hash(key);
+	for (HashableClass* node = HashTable[index]; node != nullptr; node = node->NextHash)
+	{
+		if (::stricmp(node->Get_Key(), key) == 0)
+		{
 			return node;
 		}
 	}
 	return nullptr;
 }
 
-int	HashTableClass::Hash( const char * key )
+int HashTableClass::Hash(const char* key)
 {
-	return CRC_Stringi( key ) & (HashTableSize-1);
+	return CRC_Stringi(key) & (HashTableSize - 1);
 }
-
 
 /*
 **
 */
-void	HashTableIteratorClass::First()
+void HashTableIteratorClass::First()
 {
 	Index = 0;
-	NextEntry = Table.HashTable[ Index ];
+	NextEntry = Table.HashTable[Index];
 	Advance_Next();
-	Next();		// Accept the next we found, and go to the next next
+	Next();    // Accept the next we found, and go to the next next
 }
 
-void	HashTableIteratorClass::Next()
+void HashTableIteratorClass::Next()
 {
 	CurrentEntry = NextEntry;
-	if ( NextEntry != nullptr ) {
+	if (NextEntry != nullptr)
+	{
 		NextEntry = NextEntry->NextHash;
 		Advance_Next();
 	}
 }
 
-void	HashTableIteratorClass::Advance_Next()
+void HashTableIteratorClass::Advance_Next()
 {
-	while ( NextEntry == nullptr ) {
+	while (NextEntry == nullptr)
+	{
 		Index++;
-		if ( Index >= Table.HashTableSize ) {
-			return;	// Done!
+		if (Index >= Table.HashTableSize)
+		{
+			return;    // Done!
 		}
-		NextEntry = Table.HashTable[ Index ];
+		NextEntry = Table.HashTable[Index];
 	}
 }
-
-

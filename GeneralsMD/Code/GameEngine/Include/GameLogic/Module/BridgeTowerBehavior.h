@@ -40,55 +40,48 @@
 // ------------------------------------------------------------------------------------------------
 class BridgeTowerBehaviorInterface
 {
-
 public:
-
-	virtual void setBridge( Object *bridge ) = 0;
+	virtual void setBridge(Object* bridge) = 0;
 	virtual ObjectID getBridgeID() = 0;
-	virtual void setTowerType( BridgeTowerType type ) = 0;
-
+	virtual void setTowerType(BridgeTowerType type) = 0;
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class BridgeTowerBehavior : public BehaviorModule,
-														public BridgeTowerBehaviorInterface,
-														public DieModuleInterface,
-														public DamageModuleInterface
+                            public BridgeTowerBehaviorInterface,
+                            public DieModuleInterface,
+                            public DamageModuleInterface
 {
-
-	MAKE_STANDARD_MODULE_MACRO( BridgeTowerBehavior );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BridgeTowerBehavior, "BridgeTowerBehavior" )
+	MAKE_STANDARD_MODULE_MACRO(BridgeTowerBehavior);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BridgeTowerBehavior, "BridgeTowerBehavior")
 
 public:
-
-	BridgeTowerBehavior( Thing *thing, const ModuleData* moduleData );
+	BridgeTowerBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return (MODULEINTERFACE_DAMAGE) | (MODULEINTERFACE_DIE); }
 	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() override { return this; }
 
-	virtual void setBridge( Object *bridge ) override;
+	virtual void setBridge(Object* bridge) override;
 	virtual ObjectID getBridgeID() override;
-	virtual void setTowerType( BridgeTowerType type ) override;
+	virtual void setTowerType(BridgeTowerType type) override;
 
-	static BridgeTowerBehaviorInterface *getBridgeTowerBehaviorInterfaceFromObject( Object *obj );
+	static BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterfaceFromObject(Object* obj);
 
 	// Damage methods
 	virtual DamageModuleInterface* getDamage() override { return this; }
-	virtual void onDamage( DamageInfo *damageInfo ) override;
-	virtual void onHealing( DamageInfo *damageInfo ) override;
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
-																				BodyDamageType oldState,
-																				BodyDamageType newState ) override;
+	virtual void onDamage(DamageInfo* damageInfo) override;
+	virtual void onHealing(DamageInfo* damageInfo) override;
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo,
+	                                     BodyDamageType oldState,
+	                                     BodyDamageType newState) override;
 
 	// Die methods
 	virtual DieModuleInterface* getDie() override { return this; }
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 protected:
-
-	ObjectID m_bridgeID;					///< the bridge we're a part of
-	BridgeTowerType m_type;				///< type of tower (positioning) we are
-
+	ObjectID m_bridgeID;    ///< the bridge we're a part of
+	BridgeTowerType m_type;    ///< type of tower (positioning) we are
 };

@@ -39,7 +39,6 @@
 #include "WWSaveLoad/saveloadids.h"
 #include "WWSaveLoad/definitionclassids.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	These are the chunk IDs that serve as 'globally-unique' persist identifiers for
@@ -49,7 +48,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 enum
 {
-	CHUNKID_SOUND_DEF			= CHUNKID_WWAUDIO_BEGIN,
+	CHUNKID_SOUND_DEF = CHUNKID_WWAUDIO_BEGIN,
 	CHUNKID_AUDIBLE_SOUND,
 	CHUNKID_FILTERED_SOUND,
 	CHUNKID_SOUND3D,
@@ -60,7 +59,6 @@ enum
 	CHUNKID_LOGICALLISTENER
 };
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	These are the globally-unique class identifiers that the definition system
@@ -69,5 +67,5 @@ enum
 //////////////////////////////////////////////////////////////////////////////////
 enum
 {
-	CLASSID_SOUND_DEF			= CLASSID_SOUND,
+	CLASSID_SOUND_DEF = CLASSID_SOUND,
 };

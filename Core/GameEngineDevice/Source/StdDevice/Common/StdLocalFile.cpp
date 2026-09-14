@@ -28,8 +28,11 @@
 
 #include "StdDevice/Common/StdLocalFile.h"
 
-StdLocalFile::StdLocalFile() : LocalFile() {
+StdLocalFile::StdLocalFile()
+  : LocalFile()
+{
 }
 
-StdLocalFile::~StdLocalFile() {
+StdLocalFile::~StdLocalFile()
+{
 }

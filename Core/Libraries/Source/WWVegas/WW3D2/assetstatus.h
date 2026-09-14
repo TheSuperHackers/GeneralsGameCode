@@ -24,7 +24,8 @@
 class AssetStatusClass
 {
 public:
-	enum {
+	enum
+	{
 		REPORT_LOAD_ON_DEMAND_ROBJ,
 		REPORT_LOAD_ON_DEMAND_HANIM,
 		REPORT_LOAD_ON_DEMAND_HTREE,
@@ -37,8 +38,8 @@ public:
 	AssetStatusClass();
 	~AssetStatusClass();
 
-	void Enable_Reporting(bool enable)					  { Reporting=enable; }
-	void Enable_Load_On_Demand_Reporting(bool enable) { LoadOnDemandReporting=enable; }
+	void Enable_Reporting(bool enable) { Reporting = enable; }
+	void Enable_Load_On_Demand_Reporting(bool enable) { LoadOnDemandReporting = enable; }
 
 	void Report_Load_On_Demand_RObj(const char* name);
 	void Report_Load_On_Demand_HAnim(const char* name);
@@ -57,5 +58,4 @@ private:
 	HashTemplateClass<StringClass, int> ReportHashTables[REPORT_COUNT];
 
 	void Add_To_Report(int index, const char* name);
-
 };

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
@@ -39,8 +39,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData )
-																		  : DamageModule( thing, moduleData )
+BoneFXDamage::BoneFXDamage(Thing* thing, const ModuleData* moduleData)
+  : DamageModule(thing, moduleData)
 {
 }
 
@@ -48,7 +48,6 @@ BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData )
 //-------------------------------------------------------------------------------------------------
 BoneFXDamage::~BoneFXDamage()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -66,44 +65,41 @@ void BoneFXDamage::onObjectCreated()
 //-------------------------------------------------------------------------------------------------
 /** Switching damage states */
 //-------------------------------------------------------------------------------------------------
-void BoneFXDamage::onBodyDamageStateChange( const DamageInfo *damageInfo,
-																						BodyDamageType oldState,
-																						BodyDamageType newState )
+void BoneFXDamage::onBodyDamageStateChange(const DamageInfo* damageInfo,
+                                           BodyDamageType oldState,
+                                           BodyDamageType newState)
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
 	BoneFXUpdate* bfxu = (BoneFXUpdate*)getObject()->findUpdateModule(key_BoneFXUpdate);
 	if (bfxu)
+	{
 		bfxu->changeBodyDamageState(oldState, newState);
-
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BoneFXDamage::crc( Xfer *xfer )
+void BoneFXDamage::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DamageModule::crc( xfer );
-
+	DamageModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BoneFXDamage::xfer( Xfer *xfer )
+void BoneFXDamage::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DamageModule::xfer( xfer );
-
+	DamageModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -111,8 +107,6 @@ void BoneFXDamage::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void BoneFXDamage::loadPostProcess()
 {
-
 	// extend base class
 	DamageModule::loadPostProcess();
-
 }

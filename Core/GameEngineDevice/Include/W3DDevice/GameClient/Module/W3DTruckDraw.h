@@ -50,25 +50,24 @@ public:
 	AsciiString m_frontRightTireBoneName;
 	AsciiString m_rearLeftTireBoneName;
 	AsciiString m_rearRightTireBoneName;
-	//4 extra tires to support up to 8 tires.
+	// 4 extra tires to support up to 8 tires.
 	AsciiString m_midFrontLeftTireBoneName;
 	AsciiString m_midFrontRightTireBoneName;
 	AsciiString m_midRearLeftTireBoneName;
 	AsciiString m_midRearRightTireBoneName;
-	//And some more
+	// And some more
 	AsciiString m_midMidLeftTireBoneName;
 	AsciiString m_midMidRightTireBoneName;
 
 	// Cab bone for a segmented truck.
 	AsciiString m_cabBoneName;
 	AsciiString m_trailerBoneName;
-	Real				m_cabRotationFactor;
-	Real				m_trailerRotationFactor;
-	Real				m_rotationDampingFactor;
+	Real m_cabRotationFactor;
+	Real m_trailerRotationFactor;
+	Real m_rotationDampingFactor;
 
-
-	Real				m_rotationSpeedMultiplier;
-	Real				m_powerslideRotationAddition;
+	Real m_rotationSpeedMultiplier;
+	Real m_powerslideRotationAddition;
 
 	W3DTruckDrawModuleData();
 	virtual ~W3DTruckDrawModuleData() override;
@@ -78,63 +77,66 @@ public:
 //-------------------------------------------------------------------------------------------------
 class W3DTruckDraw : public W3DModelDraw
 {
-
- 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DTruckDraw, "W3DTruckDraw" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DTruckDraw, W3DTruckDrawModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DTruckDraw, "W3DTruckDraw")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(W3DTruckDraw, W3DTruckDrawModuleData)
 
 public:
-
-	W3DTruckDraw( Thing *thing, const ModuleData* moduleData );
+	W3DTruckDraw(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void setHidden(Bool h) override;
 	virtual void doDrawModule(const Matrix3D* transformMtx) override;
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) override;
-	virtual void reactToGeometryChange() override { }
+	virtual void reactToGeometryChange() override {}
 
 protected:
 	virtual void onRenderObjRecreated() override;
 
 protected:
-	Bool						m_effectsInitialized;
-	Bool						m_wasAirborne;
-	Bool						m_isPowersliding;
+	Bool m_effectsInitialized;
+	Bool m_wasAirborne;
+	Bool m_isPowersliding;
 
 	/// debris emitters for when tank is moving
-	enum { DustEffect, DirtEffect, PowerslideEffect };
+	enum
+	{
+		DustEffect,
+		DirtEffect,
+		PowerslideEffect
+	};
 	ParticleSystemID m_truckEffectIDs[3];
 
-	Real						m_frontWheelRotation;
-	Real						m_rearWheelRotation;
-	Real						m_midFrontWheelRotation;
-	Real						m_midRearWheelRotation;
+	Real m_frontWheelRotation;
+	Real m_rearWheelRotation;
+	Real m_midFrontWheelRotation;
+	Real m_midRearWheelRotation;
 
-	Int							m_frontLeftTireBone;
-	Int							m_frontRightTireBone;
-	Int							m_rearLeftTireBone;
-	Int							m_rearRightTireBone;
-	//4 extra tires to support up to 8 tires
-	Int							m_midFrontLeftTireBone;
-	Int							m_midFrontRightTireBone;
-	Int							m_midRearLeftTireBone;
-	Int							m_midRearRightTireBone;
-	//And some more
-	Int							m_midMidLeftTireBone;
-	Int							m_midMidRightTireBone;
+	Int m_frontLeftTireBone;
+	Int m_frontRightTireBone;
+	Int m_rearLeftTireBone;
+	Int m_rearRightTireBone;
+	// 4 extra tires to support up to 8 tires
+	Int m_midFrontLeftTireBone;
+	Int m_midFrontRightTireBone;
+	Int m_midRearLeftTireBone;
+	Int m_midRearRightTireBone;
+	// And some more
+	Int m_midMidLeftTireBone;
+	Int m_midMidRightTireBone;
 
-	Int							m_cabBone;
-	Real						m_curCabRotation;
-	Int							m_trailerBone;
-	Real						m_curTrailerRotation;
+	Int m_cabBone;
+	Real m_curCabRotation;
+	Int m_trailerBone;
+	Real m_curTrailerRotation;
 
-	Int							m_prevNumBones;
-	AudioEventRTS		m_powerslideSound;
-	AudioEventRTS		m_landingSound;
+	Int m_prevNumBones;
+	AudioEventRTS m_powerslideSound;
+	AudioEventRTS m_landingSound;
 
-	RenderObjClass *m_prevRenderObj;
+	RenderObjClass* m_prevRenderObj;
 
-	void createWheelEmitters(); ///< Create particle effects for wheels.
-	void tossWheelEmitters(); ///< Destroy particle effects for wheels.
-	void enableWheelEmitters( Bool enable ); ///< Start or stop creating effects from the wheels.
+	void createWheelEmitters();    ///< Create particle effects for wheels.
+	void tossWheelEmitters();    ///< Destroy particle effects for wheels.
+	void enableWheelEmitters(Bool enable);    ///< Start or stop creating effects from the wheels.
 	void updateBones();
 };

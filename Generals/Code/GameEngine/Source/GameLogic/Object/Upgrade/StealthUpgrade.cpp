@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Module/StealthUpgrade.h"
@@ -36,7 +36,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StealthUpgrade::StealthUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+StealthUpgrade::StealthUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
 }
 
@@ -50,37 +51,33 @@ StealthUpgrade::~StealthUpgrade()
 void StealthUpgrade::upgradeImplementation()
 {
 	// The logic that does the stealthupdate will notice this and start stealthing
-	Object *me = getObject();
-	me->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_STEALTH ) );
+	Object* me = getObject();
+	me->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_CAN_STEALTH));
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void StealthUpgrade::crc( Xfer *xfer )
+void StealthUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void StealthUpgrade::xfer( Xfer *xfer )
+void StealthUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -88,8 +85,6 @@ void StealthUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void StealthUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

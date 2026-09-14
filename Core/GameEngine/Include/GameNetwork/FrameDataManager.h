@@ -32,16 +32,16 @@ class FrameDataManager : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FrameDataManager, "FrameDataManager")
 public:
 	FrameDataManager(Bool isLocal);
-	//virtual ~FrameDataManager();
+	// virtual ~FrameDataManager();
 
 	void init();
 	void reset();
 	void update();
 
-	void addNetCommandMsg(NetCommandMsg *msg);
+	void addNetCommandMsg(NetCommandMsg* msg);
 	void setIsLocal(Bool isLocal);
 	FrameDataReturnType allCommandsReady(UnsignedInt frame, Bool debugSpewage);
-	NetCommandList * getFrameCommandList(UnsignedInt frame);
+	NetCommandList* getFrameCommandList(UnsignedInt frame);
 	UnsignedInt getCommandCount(UnsignedInt frame);
 	void setFrameCommandCount(UnsignedInt frame, UnsignedInt commandCount);
 	UnsignedInt getFrameCommandCount(UnsignedInt frame);
@@ -53,7 +53,7 @@ public:
 	Bool getIsQuitting();
 
 protected:
-	FrameData *m_frameData;
+	FrameData* m_frameData;
 	Bool m_isLocal;
 
 	Bool m_isQuitting;

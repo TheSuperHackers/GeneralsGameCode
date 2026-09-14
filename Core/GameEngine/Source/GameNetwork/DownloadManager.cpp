@@ -26,12 +26,12 @@
 // Generals download manager code
 // Author: Matthew D. Campbell, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameText.h"
 #include "GameNetwork/DownloadManager.h"
 
-DownloadManager *TheDownloadManager;
+DownloadManager* TheDownloadManager;
 
 DownloadManager::DownloadManager()
 {
@@ -52,13 +52,12 @@ DownloadManager::DownloadManager()
 	}
 	else
 	{
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2))
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
 		{
 			WSACleanup();
 			m_winsockInit = false;
 		}
 	}
-
 }
 
 DownloadManager::~DownloadManager()
@@ -84,12 +83,12 @@ HRESULT DownloadManager::update()
 	return m_download->PumpMessages();
 }
 
-HRESULT DownloadManager::downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
+HRESULT DownloadManager::downloadFile(AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume)
 {
-	return m_download->DownloadFile( server.str(), username.str(), password.str(), file.str(), localfile.str(), regkey.str(), tryResume );
+	return m_download->DownloadFile(server.str(), username.str(), password.str(), file.str(), localfile.str(), regkey.str(), tryResume);
 }
 
-void DownloadManager::queueFileForDownload( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
+void DownloadManager::queueFileForDownload(AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume)
 {
 	QueuedDownload q;
 	q.file = file;
@@ -112,7 +111,7 @@ HRESULT DownloadManager::downloadNextQueuedFile()
 		q = *it;
 		m_queuedDownloads.pop_front();
 		m_wasError = m_sawEnd = false;
-		return downloadFile( q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume );
+		return downloadFile(q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume);
 	}
 	else
 	{
@@ -128,33 +127,33 @@ AsciiString DownloadManager::getLastLocalFile()
 	return buf;
 }
 
-HRESULT DownloadManager::OnError( Int error )
+HRESULT DownloadManager::OnError(Int error)
 {
 	m_wasError = true;
 	AsciiString s = "FTP:UnknownError";
 	switch (error)
 	{
-		case DOWNLOADEVENT_NOSUCHSERVER:
-			s = "FTP:NoSuchServer";
-			break;
-		case DOWNLOADEVENT_COULDNOTCONNECT:
-			s = "FTP:CouldNotConnect";
-			break;
-		case DOWNLOADEVENT_LOGINFAILED:
-			s = "FTP:LoginFailed";
-			break;
-		case DOWNLOADEVENT_NOSUCHFILE:
-			s = "FTP:NoSuchFile";
-			break;
-		case DOWNLOADEVENT_LOCALFILEOPENFAILED:
-			s = "FTP:LocalFileOpenFailed";
-			break;
-		case DOWNLOADEVENT_TCPERROR:
-			s = "FTP:TCPError";
-			break;
-		case DOWNLOADEVENT_DISCONNECTERROR:
-			s = "FTP:DisconnectError";
-			break;
+	case DOWNLOADEVENT_NOSUCHSERVER:
+		s = "FTP:NoSuchServer";
+		break;
+	case DOWNLOADEVENT_COULDNOTCONNECT:
+		s = "FTP:CouldNotConnect";
+		break;
+	case DOWNLOADEVENT_LOGINFAILED:
+		s = "FTP:LoginFailed";
+		break;
+	case DOWNLOADEVENT_NOSUCHFILE:
+		s = "FTP:NoSuchFile";
+		break;
+	case DOWNLOADEVENT_LOCALFILEOPENFAILED:
+		s = "FTP:LocalFileOpenFailed";
+		break;
+	case DOWNLOADEVENT_TCPERROR:
+		s = "FTP:TCPError";
+		break;
+	case DOWNLOADEVENT_DISCONNECTERROR:
+		s = "FTP:DisconnectError";
+		break;
 	}
 	m_errorString = TheGameText->fetch(s);
 	DEBUG_LOG(("DownloadManager::OnError(): %s(%d)", s.str(), error));
@@ -171,45 +170,45 @@ HRESULT DownloadManager::OnEnd()
 HRESULT DownloadManager::OnQueryResume()
 {
 	DEBUG_LOG(("DownloadManager::OnQueryResume()"));
-	//return DOWNLOADEVENT_DONOTRESUME;
+	// return DOWNLOADEVENT_DONOTRESUME;
 	return DOWNLOADEVENT_RESUME;
 }
 
-HRESULT DownloadManager::OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft )
+HRESULT DownloadManager::OnProgressUpdate(Int bytesread, Int totalsize, Int timetaken, Int timeleft)
 {
 	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d", bytesread, totalsize, timetaken, timeleft));
 	return S_OK;
 }
 
-HRESULT DownloadManager::OnStatusUpdate( Int status )
+HRESULT DownloadManager::OnStatusUpdate(Int status)
 {
 	AsciiString s = "FTP:StatusNone";
 	switch (status)
 	{
-		case DOWNLOADSTATUS_CONNECTING:
-			s = "FTP:StatusConnecting";
-			break;
-		case DOWNLOADSTATUS_LOGGINGIN:
-			s = "FTP:StatusLoggingIn";
-			break;
-		case DOWNLOADSTATUS_FINDINGFILE:
-			s = "FTP:StatusFindingFile";
-			break;
-		case DOWNLOADSTATUS_QUERYINGRESUME:
-			s = "FTP:StatusQueryingResume";
-			break;
-		case DOWNLOADSTATUS_DOWNLOADING:
-			s = "FTP:StatusDownloading";
-			break;
-		case DOWNLOADSTATUS_DISCONNECTING:
-			s = "FTP:StatusDisconnecting";
-			break;
-		case DOWNLOADSTATUS_FINISHING:
-			s = "FTP:StatusFinishing";
-			break;
-		case DOWNLOADSTATUS_DONE:
-			s = "FTP:StatusDone";
-			break;
+	case DOWNLOADSTATUS_CONNECTING:
+		s = "FTP:StatusConnecting";
+		break;
+	case DOWNLOADSTATUS_LOGGINGIN:
+		s = "FTP:StatusLoggingIn";
+		break;
+	case DOWNLOADSTATUS_FINDINGFILE:
+		s = "FTP:StatusFindingFile";
+		break;
+	case DOWNLOADSTATUS_QUERYINGRESUME:
+		s = "FTP:StatusQueryingResume";
+		break;
+	case DOWNLOADSTATUS_DOWNLOADING:
+		s = "FTP:StatusDownloading";
+		break;
+	case DOWNLOADSTATUS_DISCONNECTING:
+		s = "FTP:StatusDisconnecting";
+		break;
+	case DOWNLOADSTATUS_FINISHING:
+		s = "FTP:StatusFinishing";
+		break;
+	case DOWNLOADSTATUS_DONE:
+		s = "FTP:StatusDone";
+		break;
 	}
 	m_statusString = TheGameText->fetch(s);
 	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)", s.str(), status));

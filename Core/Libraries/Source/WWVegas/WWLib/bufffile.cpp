@@ -33,34 +33,33 @@
  *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "always.h"
+#include "bufffile.h"
+#include "WWDebug/wwdebug.h"
 
-#include	"always.h"
-#include	"bufffile.h"
-#include	"WWDebug/wwdebug.h"
-
-int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
+int BufferedFileClass::_DesiredBufferSize = 1024 * 16;
 
 /***********************************************************************************************
  * BufferedFileClass::BufferedFileClass -- Default constructor for a file object.              *
  *=============================================================================================*/
-BufferedFileClass::BufferedFileClass() :
-	RawFileClass(),
-	Buffer( nullptr ),
-	BufferSize( 0 ),
-	BufferAvailable( 0 ),
-	BufferOffset( 0 )
+BufferedFileClass::BufferedFileClass()
+  : RawFileClass()
+  , Buffer(nullptr)
+  , BufferSize(0)
+  , BufferAvailable(0)
+  , BufferOffset(0)
 {
 }
 
 /***********************************************************************************************
  * BufferedFileClass::BufferedFileClass -- Simple constructor for a file object.                         *
  *=============================================================================================*/
-BufferedFileClass::BufferedFileClass(char const * filename) :
-	RawFileClass( filename ),
-	Buffer( nullptr ),
-	BufferSize( 0 ),
-	BufferAvailable( 0 ),
-	BufferOffset( 0 )
+BufferedFileClass::BufferedFileClass(char const* filename)
+  : RawFileClass(filename)
+  , Buffer(nullptr)
+  , BufferSize(0)
+  , BufferAvailable(0)
+  , BufferOffset(0)
 {
 }
 
@@ -81,7 +80,6 @@ void BufferedFileClass::Close()
 
 	Reset_Buffer();
 }
-
 
 /***********************************************************************************************
  * BufferedFileClass::Read -- Reads the specified number of bytes into a memory buffer.             *
@@ -105,22 +103,24 @@ void BufferedFileClass::Close()
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BufferedFileClass::Read(void * buffer, int size)
+int BufferedFileClass::Read(void* buffer, int size)
 {
 	int read = 0;
 
 	// If there is anything in the buffer, copy it in.
-	if ( BufferAvailable > 0 ) {
-		int amount = min( size, BufferAvailable );
-		::memcpy( buffer, &Buffer[BufferOffset], amount );
+	if (BufferAvailable > 0)
+	{
+		int amount = min(size, BufferAvailable);
+		::memcpy(buffer, &Buffer[BufferOffset], amount);
 		BufferAvailable -= amount;
 		BufferOffset += amount;
 		size -= amount;
-		buffer = (char *)buffer + amount;
+		buffer = (char*)buffer + amount;
 		read += amount;
 	}
 
-	if ( size == 0 ) {
+	if (size == 0)
+	{
 		return read;
 	}
 
@@ -133,31 +133,36 @@ int BufferedFileClass::Read(void * buffer, int size)
 
 	// If we need more than the buffer will hold, just read it
 	int amount = BufferSize;
-	if ( amount == 0 ) {
+	if (amount == 0)
+	{
 		amount = desired_buffer_size;
 	}
-	if ( size > amount ) {
-		return BASECLASS::Read( buffer, size ) + read;
+	if (size > amount)
+	{
+		return BASECLASS::Read(buffer, size) + read;
 	}
 
 	// If we dont have a buffer, get one
-	if ( BufferSize == 0 ) {
+	if (BufferSize == 0)
+	{
 		BufferSize = desired_buffer_size;
-		Buffer = W3DNEWARRAY unsigned char [BufferSize];
+		Buffer = W3DNEWARRAY unsigned char[BufferSize];
 		BufferAvailable = 0;
 		BufferOffset = 0;
 	}
 
 	// Fill the buffer
-	if ( BufferAvailable == 0 ) {
-		BufferAvailable = BASECLASS::Read( Buffer, BufferSize );
+	if (BufferAvailable == 0)
+	{
+		BufferAvailable = BASECLASS::Read(Buffer, BufferSize);
 		BufferOffset = 0;
 	}
 
 	// If there is anything in the buffer, copy it in.
-	if ( BufferAvailable > 0 ) {
-		int amount = min( size, BufferAvailable );
-		::memcpy( buffer, &Buffer[BufferOffset], amount );
+	if (BufferAvailable > 0)
+	{
+		int amount = min(size, BufferAvailable);
+		::memcpy(buffer, &Buffer[BufferOffset], amount);
 		BufferAvailable -= amount;
 		BufferOffset += amount;
 		read += amount;
@@ -165,7 +170,6 @@ int BufferedFileClass::Read(void * buffer, int size)
 
 	return read;
 }
-
 
 /***********************************************************************************************
  * BufferedFileClass::Write -- Writes the specified data to the buffer specified.                   *
@@ -185,15 +189,15 @@ int BufferedFileClass::Read(void * buffer, int size)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BufferedFileClass::Write(void const * buffer, int size)
+int BufferedFileClass::Write(void const* buffer, int size)
 {
-	if ( BufferSize != 0 ) {
-		WWASSERT( 0 );
+	if (BufferSize != 0)
+	{
+		WWASSERT(0);
 	}
 
-	return BASECLASS::Write( buffer, size );
+	return BASECLASS::Write(buffer, size);
 }
-
 
 /***********************************************************************************************
  * BufferedFileClass::Seek -- Reposition the file pointer as indicated.                             *
@@ -218,30 +222,32 @@ int BufferedFileClass::Write(void const * buffer, int size)
  *=============================================================================================*/
 int BufferedFileClass::Seek(int pos, int dir)
 {
-	if ( (dir != SEEK_CUR) || (pos < 0) ) {
+	if ((dir != SEEK_CUR) || (pos < 0))
+	{
 		Reset_Buffer();
 	}
 
 	// If not buffered, pass through
-	if ( BufferAvailable == 0 ) {
-		return BASECLASS::Seek( pos, dir );
+	if (BufferAvailable == 0)
+	{
+		return BASECLASS::Seek(pos, dir);
 	}
 
 	// use up what we can of the buffer
-	int amount = min( pos, BufferAvailable );
+	int amount = min(pos, BufferAvailable);
 	pos -= amount;
 	BufferAvailable -= amount;
 	BufferOffset += amount;
 
-	return BASECLASS::Seek( pos, dir ) - BufferAvailable;
+	return BASECLASS::Seek(pos, dir) - BufferAvailable;
 }
 
 /*
 **
 */
-void	BufferedFileClass::Reset_Buffer()
+void BufferedFileClass::Reset_Buffer()
 {
-	delete [] Buffer;
+	delete[] Buffer;
 	Buffer = nullptr;
 	BufferSize = 0;
 	BufferAvailable = 0;

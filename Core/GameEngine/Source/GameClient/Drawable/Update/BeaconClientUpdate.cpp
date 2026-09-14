@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h" // This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
@@ -40,9 +40,9 @@
 #include "GameLogic/GameLogic.h"
 
 //-------------------------------------------------------------------------------------------------
-BeaconClientUpdateModuleData::BeaconClientUpdateModuleData() :
-	m_framesBetweenRadarPulses(30),
-	m_radarPulseDuration(15)
+BeaconClientUpdateModuleData::BeaconClientUpdateModuleData()
+  : m_framesBetweenRadarPulses(30)
+  , m_radarPulseDuration(15)
 {
 }
 
@@ -54,23 +54,22 @@ BeaconClientUpdateModuleData::~BeaconClientUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 void BeaconClientUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ClientUpdateModuleData::buildFieldParse(p);
+	ClientUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "RadarPulseFrequency",	INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_framesBetweenRadarPulses) },
-		{ "RadarPulseDuration",		INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_radarPulseDuration) },
+	static const FieldParse dataFieldParse[] = {
+		{ "RadarPulseFrequency", INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_framesBetweenRadarPulses) },
+		{ "RadarPulseDuration", INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_radarPulseDuration) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BeaconClientUpdate::BeaconClientUpdate( Thing *thing, const ModuleData* moduleData ) :
-	ClientUpdateModule( thing, moduleData ),
-	m_particleSystemID(INVALID_PARTICLE_SYSTEM_ID),
-	m_lastRadarPulse(TheGameLogic->getFrame())
+BeaconClientUpdate::BeaconClientUpdate(Thing* thing, const ModuleData* moduleData)
+  : ClientUpdateModule(thing, moduleData)
+  , m_particleSystemID(INVALID_PARTICLE_SYSTEM_ID)
+  , m_lastRadarPulse(TheGameLogic->getFrame())
 {
 }
 
@@ -78,39 +77,40 @@ BeaconClientUpdate::BeaconClientUpdate( Thing *thing, const ModuleData* moduleDa
 //-------------------------------------------------------------------------------------------------
 BeaconClientUpdate::~BeaconClientUpdate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static ParticleSystem* createParticleSystem( Drawable *draw )
+static ParticleSystem* createParticleSystem(Drawable* draw)
 {
-	ParticleSystem *system = nullptr;
+	ParticleSystem* system = nullptr;
 	if (draw)
 	{
-		Object *obj = draw->getObject();
+		Object* obj = draw->getObject();
 		if (obj)
 		{
 			AsciiString templateName;
 			templateName.format("BeaconSmoke%6.6X", (0xffffff & obj->getIndicatorColor()));
-			const ParticleSystemTemplate *particleTemplate = TheParticleSystemManager->findTemplate( templateName );
+			const ParticleSystemTemplate* particleTemplate = TheParticleSystemManager->findTemplate(templateName);
 			DEBUG_ASSERTCRASH(TheParticleSystemManager->isDummy() || particleTemplate, ("Could not find particle system %s", templateName.str()));
 			if (particleTemplate)
 			{
-				system = TheParticleSystemManager->createParticleSystem( particleTemplate );
-				if (system)
-					system->attachToDrawable( draw );
-			}
-			else// This is a failsafe... if someone has monkeyed with the particle system names, or the MP house colors
-			{// THis this will whip up a new particle system to match the house color provided
-				templateName.format("BeaconSmokeFFFFFF");
-				const ParticleSystemTemplate *failsafeTemplate = TheParticleSystemManager->findTemplate( templateName );
-				DEBUG_ASSERTCRASH(TheParticleSystemManager->isDummy() || failsafeTemplate, ("Doh, this is bad \n I Could not even find the white particle system to make a failsafe system out of."));
-				system = TheParticleSystemManager->createParticleSystem( failsafeTemplate );
+				system = TheParticleSystemManager->createParticleSystem(particleTemplate);
 				if (system)
 				{
-					system->attachToDrawable( draw );
-					system->tintAllColors( obj->getIndicatorColor() );
+					system->attachToDrawable(draw);
+				}
+			}
+			else    // This is a failsafe... if someone has monkeyed with the particle system names, or the MP house colors
+			{    // THis this will whip up a new particle system to match the house color provided
+				templateName.format("BeaconSmokeFFFFFF");
+				const ParticleSystemTemplate* failsafeTemplate = TheParticleSystemManager->findTemplate(templateName);
+				DEBUG_ASSERTCRASH(TheParticleSystemManager->isDummy() || failsafeTemplate, ("Doh, this is bad \n I Could not even find the white particle system to make a failsafe system out of."));
+				system = TheParticleSystemManager->createParticleSystem(failsafeTemplate);
+				if (system)
+				{
+					system->attachToDrawable(draw);
+					system->tintAllColors(obj->getIndicatorColor());
 				}
 			}
 		}
@@ -122,33 +122,35 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 void BeaconClientUpdate::hideBeacon()
 {
-	Drawable *draw = getDrawable();
+	Drawable* draw = getDrawable();
 	if (draw)
 	{
-		draw->setDrawableHidden( true );
-		draw->setShadowsEnabled( false );
+		draw->setDrawableHidden(true);
+		draw->setShadowsEnabled(false);
 	}
 
-	ParticleSystem *system;
+	ParticleSystem* system;
 	if (draw && m_particleSystemID == INVALID_PARTICLE_SYSTEM_ID)
 	{
-		system = createParticleSystem( draw );
+		system = createParticleSystem(draw);
 		if (system)
+		{
 			m_particleSystemID = system->getSystemID();
+		}
 	}
 
 	// clean up particle system
 	if (m_particleSystemID != INVALID_PARTICLE_SYSTEM_ID)
 	{
-		ParticleSystem *system = TheParticleSystemManager->findParticleSystem( m_particleSystemID );
+		ParticleSystem* system = TheParticleSystemManager->findParticleSystem(m_particleSystemID);
 
-		if( system )
+		if (system)
+		{
 			system->stop();
-
+		}
 	}
 
-//	DEBUG_LOG(("in hideBeacon(): draw=%d, m_particleSystemID=%d", draw, m_particleSystemID));
-
+	//	DEBUG_LOG(("in hideBeacon(): draw=%d, m_particleSystemID=%d", draw, m_particleSystemID));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -156,23 +158,27 @@ void BeaconClientUpdate::hideBeacon()
 //-------------------------------------------------------------------------------------------------
 void BeaconClientUpdate::clientUpdate()
 {
-	Drawable *draw = getDrawable();
+	Drawable* draw = getDrawable();
 	if (!draw)
+	{
 		return;
+	}
 
 	if (m_particleSystemID == INVALID_PARTICLE_SYSTEM_ID)
 	{
-		ParticleSystem *system = createParticleSystem( draw );
-		if( system )
+		ParticleSystem* system = createParticleSystem(draw);
+		if (system)
+		{
 			m_particleSystemID = system->getSystemID();
+		}
 	}
 
 	if (!draw->isDrawableEffectivelyHidden())
 	{
-		BeaconClientUpdateModuleData *moduleData = (BeaconClientUpdateModuleData *)getModuleData();
+		BeaconClientUpdateModuleData* moduleData = (BeaconClientUpdateModuleData*)getModuleData();
 		if (TheGameLogic->getFrame() > m_lastRadarPulse + moduleData->m_framesBetweenRadarPulses)
 		{
-			TheRadar->createEvent( draw->getPosition(), RADAR_EVENT_BEACON_PULSE, moduleData->m_radarPulseDuration * SECONDS_PER_LOGICFRAME_REAL );
+			TheRadar->createEvent(draw->getPosition(), RADAR_EVENT_BEACON_PULSE, moduleData->m_radarPulseDuration * SECONDS_PER_LOGICFRAME_REAL);
 			m_lastRadarPulse = TheGameLogic->getFrame();
 		}
 	}
@@ -181,36 +187,32 @@ void BeaconClientUpdate::clientUpdate()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BeaconClientUpdate::crc( Xfer *xfer )
+void BeaconClientUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	ClientUpdateModule::crc( xfer );
-
+	ClientUpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BeaconClientUpdate::xfer( Xfer *xfer )
+void BeaconClientUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	ClientUpdateModule::xfer( xfer );
+	ClientUpdateModule::xfer(xfer);
 
 	// particle system ID
-	xfer->xferUser( &m_particleSystemID, sizeof( ParticleSystemID ) );
+	xfer->xferUser(&m_particleSystemID, sizeof(ParticleSystemID));
 
 	// last radar pulse
-	xfer->xferUnsignedInt( &m_lastRadarPulse );
-
+	xfer->xferUnsignedInt(&m_lastRadarPulse);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -218,8 +220,6 @@ void BeaconClientUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void BeaconClientUpdate::loadPostProcess()
 {
-
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
-
 }

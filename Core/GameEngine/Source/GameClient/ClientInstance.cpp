@@ -130,4 +130,4 @@ const char* ClientInstance::getFirstInstanceName()
 	return GENERALS_GUID;
 }
 
-} // namespace rts
+}    // namespace rts

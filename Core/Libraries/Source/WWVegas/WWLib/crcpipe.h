@@ -45,17 +45,17 @@
 */
 class CRCPipe : public Pipe
 {
-	public:
-		CRCPipe() {}
-		virtual int Put(void const * source, int slen);
+public:
+	CRCPipe() {}
+	virtual int Put(void const* source, int slen);
 
-		// Fetch the CRC value.
-		long Result() const;
+	// Fetch the CRC value.
+	long Result() const;
 
-	protected:
-		CRCEngine CRC;
+protected:
+	CRCEngine CRC;
 
-	private:
-		CRCPipe(CRCPipe & rvalue);
-		CRCPipe & operator = (CRCPipe const & pipe);
+private:
+	CRCPipe(CRCPipe& rvalue);
+	CRCPipe& operator=(CRCPipe const& pipe);
 };

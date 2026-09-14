@@ -39,19 +39,19 @@
 template <size_t NUMBITS, typename TAG>
 void BitFlags<NUMBITS, TAG>::buildDescription( AsciiString* str ) const
 {
-	if ( str == nullptr )
-		return;//sanity
+  if ( str == nullptr )
+    return;//sanity
 
-	for( Int i = 0; i < size(); ++i )
-	{
-		const char* bitName = getBitNameIfSet(i);
+  for( Int i = 0; i < size(); ++i )
+  {
+    const char* bitName = getBitNameIfSet(i);
 
-		if (bitName != nullptr)
-		{
-			str->concat( bitName );
-			str->concat( ",\n");
-		}
-	}
+    if (bitName != nullptr)
+    {
+      str->concat( bitName );
+      str->concat( ",\n");
+    }
+  }
 }
 */
 
@@ -59,20 +59,24 @@ void BitFlags<NUMBITS, TAG>::buildDescription( AsciiString* str ) const
 template <size_t NUMBITS, typename TAG>
 void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 {
-//	m_bits.reset();
+	//	m_bits.reset();
 	if (str)
+	{
 		str->clear();
+	}
 
 	Bool foundNormal = false;
 	Bool foundAddOrSub = false;
 
 	// loop through all tokens
-	for (const char *token = ini->getNextTokenOrNull(); token; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextTokenOrNull(); token; token = ini->getNextTokenOrNull())
 	{
 		if (str)
 		{
 			if (str->isNotEmpty())
+			{
 				str->concat(" ");
+			}
 			str->concat(token);
 		}
 
@@ -94,7 +98,7 @@ void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
 				throw INI_INVALID_NAME_LIST;
 			}
-			Int bitIndex = INI::scanIndexList(token+1, s_bitNameList);	// this throws if the token is not found
+			Int bitIndex = INI::scanIndexList(token + 1, s_bitNameList);    // this throws if the token is not found
 			set(bitIndex, 1);
 			foundAddOrSub = true;
 		}
@@ -105,7 +109,7 @@ void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
 				throw INI_INVALID_NAME_LIST;
 			}
-			Int bitIndex = INI::scanIndexList(token+1, s_bitNameList);	// this throws if the token is not found
+			Int bitIndex = INI::scanIndexList(token + 1, s_bitNameList);    // this throws if the token is not found
 			set(bitIndex, 0);
 			foundAddOrSub = true;
 		}
@@ -118,9 +122,11 @@ void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 			}
 
 			if (!foundNormal)
+			{
 				clear();
+			}
 
-			Int bitIndex = INI::scanIndexList(token, s_bitNameList);	// this throws if the token is not found
+			Int bitIndex = INI::scanIndexList(token, s_bitNameList);    // this throws if the token is not found
 			set(bitIndex, 1);
 			foundNormal = true;
 		}
@@ -130,7 +136,7 @@ void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 template <size_t NUMBITS, typename TAG>
-/*static*/ void BitFlags<NUMBITS, TAG>::parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
+/*static*/ void BitFlags<NUMBITS, TAG>::parseFromINI(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	((BitFlags*)store)->parse(ini, nullptr);
 }
@@ -138,19 +144,19 @@ template <size_t NUMBITS, typename TAG>
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 template <size_t NUMBITS, typename TAG>
-/*static*/ void BitFlags<NUMBITS, TAG>::parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
+/*static*/ void BitFlags<NUMBITS, TAG>::parseSingleBitFromINI(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
-	const char *token = ini->getNextToken();
-	Int bitIndex = INI::scanIndexList(token, s_bitNameList);	// this throws if the token is not found
+	const char* token = ini->getNextToken();
+	Int bitIndex = INI::scanIndexList(token, s_bitNameList);    // this throws if the token is not found
 
-	Int *storeAsInt = (Int*)store;
+	Int* storeAsInt = (Int*)store;
 	*storeAsInt = bitIndex;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 //-------------------------------------------------------------------------------------------------
 template <size_t NUMBITS, typename TAG>
 void BitFlags<NUMBITS, TAG>::xfer(Xfer* xfer)
@@ -158,75 +164,67 @@ void BitFlags<NUMBITS, TAG>::xfer(Xfer* xfer)
 	// this deserves a version number
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
 		// save how many entries are to follow
 		Int c = count();
-		xfer->xferInt( &c );
+		xfer->xferInt(&c);
 
 		// save each of the string data
-		for( Int i = 0; i < size(); ++i )
+		for (Int i = 0; i < size(); ++i)
 		{
 			const char* bitName = getBitNameIfSet(i);
 
 			// ignore if this kindof is not set in our mask data
 			if (bitName == nullptr)
+			{
 				continue;
+			}
 
 			// this bit is set, write the string value
 			AsciiString bitNameA = bitName;
-			xfer->xferAsciiString( &bitNameA );
-
+			xfer->xferAsciiString(&bitNameA);
 		}
-
 	}
-	else if( xfer->getXferMode() == XFER_LOAD )
+	else if (xfer->getXferMode() == XFER_LOAD)
 	{
-  	// clear the kind of mask data
+		// clear the kind of mask data
 		clear();
 
 		// read how many entries follow
 		Int c;
-		xfer->xferInt( &c );
+		xfer->xferInt(&c);
 
 		// read each of the string entries
 		AsciiString string;
-		for( Int i = 0; i < c; ++i )
+		for (Int i = 0; i < c; ++i)
 		{
-
 			// read ascii string
-			xfer->xferAsciiString( &string );
+			xfer->xferAsciiString(&string);
 
 			// set in our mask type data
-			Bool valid = setBitByName( string.str() );
+			Bool valid = setBitByName(string.str());
 			if (!valid)
 			{
-				DEBUG_CRASH(("invalid bit name %s",string.str()));
+				DEBUG_CRASH(("invalid bit name %s", string.str()));
 				throw XFER_READ_ERROR;
 			}
-
 		}
-
 	}
-	else if( xfer->getXferMode() == XFER_CRC )
+	else if (xfer->getXferMode() == XFER_CRC)
 	{
-
 		// just call the xfer implementation on the data values
 #if RETAIL_COMPATIBLE_CRC
-		xfer->xferUser( this, sizeof( this ) );
+		xfer->xferUser(this, sizeof(this));
 #else
-		xfer->xferUser( this, sizeof( *this ) );
+		xfer->xferUser(this, sizeof(*this));
 #endif
-
 	}
 	else
 	{
-
-		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'", xfer->getXferMode() ));
+		DEBUG_CRASH(("BitFlagsXfer - Unknown xfer mode '%d'", xfer->getXferMode()));
 		throw XFER_MODE_UNKNOWN;
-
 	}
-
 }

@@ -39,17 +39,17 @@
 /**************************************************************************************************
 Some info about partioning problems:
 
-	This problem is contained in a very interesting class of problems known as NP complete. The
-	basic problem is that there is no way to tell whether you have an optimal solution or not.
-	Worst case, you try out every possible solution and still don't find the optimal solution:
-	this takes 2^n time to find, where N is the number of elements you are attempting to place.
-	For this reason, a value near PREFER_FAST_SOLUTION should almost always be chosen. We will use
-	a flat multiply to determine how many solutions to attempt before giving up and returning our
-	best attempt. If you want more info, this site contains info on the problem:
-	http://odysseus.nat.uni-magdeburg.de/~mertens/npp/index.shtml
+  This problem is contained in a very interesting class of problems known as NP complete. The
+  basic problem is that there is no way to tell whether you have an optimal solution or not.
+  Worst case, you try out every possible solution and still don't find the optimal solution:
+  this takes 2^n time to find, where N is the number of elements you are attempting to place.
+  For this reason, a value near PREFER_FAST_SOLUTION should almost always be chosen. We will use
+  a flat multiply to determine how many solutions to attempt before giving up and returning our
+  best attempt. If you want more info, this site contains info on the problem:
+  http://odysseus.nat.uni-magdeburg.de/~mertens/npp/index.shtml
 **************************************************************************************************/
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PartitionSolver.h"
 
@@ -77,11 +77,13 @@ void PartitionSolver::solve()
 	size_t i, j;
 
 	// first, determine whether there is an actual solution, or we're going to have to fudge it.
-	for (i = 0; i < m_data.size(); ++i) {
+	for (i = 0; i < m_data.size(); ++i)
+	{
 		minSizeForAllData += m_data[i].second;
 	}
 
-	for (i = 0; i < m_spacesForData.size(); ++i) {
+	for (i = 0; i < m_spacesForData.size(); ++i)
+	{
 		slotsAllotted += m_spacesForData[i].second;
 	}
 
@@ -112,7 +114,9 @@ void PartitionSolver::solve()
 				}
 			}
 		}
-	} else {
+	}
+	else
+	{
 		DEBUG_CRASH(("PREFER_CORRECT_SOLUTION @todo impl"));
 	}
 }

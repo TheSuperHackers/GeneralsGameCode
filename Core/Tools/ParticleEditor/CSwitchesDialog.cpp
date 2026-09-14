@@ -22,94 +22,114 @@
 
 #include "ParticleEditorDialog.h"
 
-CSwitchesDialog::CSwitchesDialog(UINT nIDTemplate, CWnd* pParentWnd) : CDialog(nIDTemplate, pParentWnd)
+CSwitchesDialog::CSwitchesDialog(UINT nIDTemplate, CWnd* pParentWnd)
+  : CDialog(nIDTemplate, pParentWnd)
 {
-
 }
 
 void CSwitchesDialog::InitPanel()
 {
-
 }
 
 // if true, updates the UI from the Particle System.
 // if false, updates the Particle System from the UI
-void CSwitchesDialog::performUpdate( IN Bool toUI )
+void CSwitchesDialog::performUpdate(IN Bool toUI)
 {
-	DebugWindowDialog *parent = GetDWDParent();
-	if (!parent) {
+	DebugWindowDialog* parent = GetDWDParent();
+	if (!parent)
+	{
 		return;
 	}
 
-	{ // update hollowness
-		CButton *pWnd;
+	{    // update hollowness
+		CButton* pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_Hollow);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Bool hollow;
-			if (toUI) {
+			if (toUI)
+			{
 				parent->getSwitchFromSystem(ST_HOLLOW, hollow);
 				pWnd->SetCheck(hollow);
-			} else {
+			}
+			else
+			{
 				hollow = pWnd->GetCheck();
 				parent->updateSwitchToSystem(ST_HOLLOW, hollow);
 			}
 		}
 	}
 
-	{ // update one shot
-		CButton *pWnd;
+	{    // update one shot
+		CButton* pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_OneShot);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Bool oneShot;
-			if (toUI) {
+			if (toUI)
+			{
 				parent->getSwitchFromSystem(ST_ONESHOT, oneShot);
 				pWnd->SetCheck(oneShot);
-			} else {
+			}
+			else
+			{
 				oneShot = pWnd->GetCheck();
 				parent->updateSwitchToSystem(ST_ONESHOT, oneShot);
 			}
 		}
 	}
 
-	{ // update Ground Aligned
-		CButton *pWnd;
+	{    // update Ground Aligned
+		CButton* pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_GroundAligned);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Bool groundAlign;
-			if (toUI) {
+			if (toUI)
+			{
 				parent->getSwitchFromSystem(ST_ALIGNXY, groundAlign);
 				pWnd->SetCheck(groundAlign);
-			} else {
+			}
+			else
+			{
 				groundAlign = pWnd->GetCheck();
 				parent->updateSwitchToSystem(ST_ALIGNXY, groundAlign);
 			}
 		}
 	}
 
-	{ // update Emit above ground only
-		CButton *pWnd;
+	{    // update Emit above ground only
+		CButton* pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_EmitAboveGroundOnly);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Bool aboveGroundOnly;
-			if (toUI) {
+			if (toUI)
+			{
 				parent->getSwitchFromSystem(ST_EMITABOVEGROUNDONLY, aboveGroundOnly);
 				pWnd->SetCheck(aboveGroundOnly);
-			} else {
+			}
+			else
+			{
 				aboveGroundOnly = pWnd->GetCheck();
 				parent->updateSwitchToSystem(ST_EMITABOVEGROUNDONLY, aboveGroundOnly);
 			}
 		}
 	}
 
-	{ // update Particle Up towards emitter
-		CButton *pWnd;
+	{    // update Particle Up towards emitter
+		CButton* pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_ParticleUpTowardsEmitter);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Bool upTowardsEmitter;
-			if (toUI) {
+			if (toUI)
+			{
 				parent->getSwitchFromSystem(ST_PARTICLEUPTOWARDSEMITTER, upTowardsEmitter);
 				pWnd->SetCheck(upTowardsEmitter);
-			} else {
+			}
+			else
+			{
 				upTowardsEmitter = pWnd->GetCheck();
 				parent->updateSwitchToSystem(ST_PARTICLEUPTOWARDSEMITTER, upTowardsEmitter);
 			}
@@ -119,8 +139,9 @@ void CSwitchesDialog::performUpdate( IN Bool toUI )
 
 void CSwitchesDialog::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = GetDWDParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = GetDWDParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -128,9 +149,9 @@ void CSwitchesDialog::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(CSwitchesDialog, CDialog)
-	ON_BN_CLICKED(IDC_PSEd_OneShot, OnParticleSystemEdit)
-	ON_BN_CLICKED(IDC_PSEd_Hollow, OnParticleSystemEdit)
-	ON_BN_CLICKED(IDC_PSEd_GroundAligned, OnParticleSystemEdit)
-	ON_BN_CLICKED(IDC_PSEd_EmitAboveGroundOnly, OnParticleSystemEdit)
-	ON_BN_CLICKED(IDC_PSEd_ParticleUpTowardsEmitter, OnParticleSystemEdit)
+ON_BN_CLICKED(IDC_PSEd_OneShot, OnParticleSystemEdit)
+ON_BN_CLICKED(IDC_PSEd_Hollow, OnParticleSystemEdit)
+ON_BN_CLICKED(IDC_PSEd_GroundAligned, OnParticleSystemEdit)
+ON_BN_CLICKED(IDC_PSEd_EmitAboveGroundOnly, OnParticleSystemEdit)
+ON_BN_CLICKED(IDC_PSEd_ParticleUpTowardsEmitter, OnParticleSystemEdit)
 END_MESSAGE_MAP()

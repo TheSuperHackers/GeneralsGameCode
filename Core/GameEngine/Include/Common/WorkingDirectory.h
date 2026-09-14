@@ -31,7 +31,7 @@ public:
 	static Bool setStartupWorkingDirectory();
 	static Bool setExecutableWorkingDirectory();
 	// Relative paths are resolved from the current working directory.
-	static Bool setCustomWorkingDirectory(const char *path);
+	static Bool setCustomWorkingDirectory(const char* path);
 	// Returns true after a setter successfully changes the working directory.
 	static Bool hasSetWorkingDirectory();
 
@@ -39,10 +39,10 @@ private:
 	friend struct WorkingDirectoryInitializer;
 
 	static Bool saveStartupWorkingDirectory();
-	static Bool setWorkingDirectory(const char *path);
+	static Bool setWorkingDirectory(const char* path);
 
 	static Bool s_hasSetWorkingDirectory;
 	static Char s_startupWorkingDirectory[];
 };
 
-} // namespace rts
+}    // namespace rts

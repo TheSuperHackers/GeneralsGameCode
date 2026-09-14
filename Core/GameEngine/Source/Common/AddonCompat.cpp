@@ -33,4 +33,4 @@ Bool HasFullviewportDat()
 	return value != '0';
 }
 
-} // namespace addon
+}    // namespace addon

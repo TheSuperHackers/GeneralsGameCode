@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
@@ -42,7 +42,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeDie::UpgradeDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+UpgradeDie::UpgradeDie(Thing* thing, const ModuleData* moduleData)
+  : DieModule(thing, moduleData)
 {
 }
 
@@ -55,32 +56,34 @@ UpgradeDie::~UpgradeDie()
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void UpgradeDie::onDie( const DamageInfo *damageInfo )
+void UpgradeDie::onDie(const DamageInfo* damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
-		return;
-	//Look for the object that created me.
-	Object *producer = TheGameLogic->findObjectByID( getObject()->getProducerID() );
-	if( producer )
 	{
-		//Okay, we found our parent... now look for the upgrade.
-		const UpgradeTemplate *upgrade = TheUpgradeCenter->findUpgrade( getUpgradeDieModuleData()->m_upgradeName );
+		return;
+	}
+	// Look for the object that created me.
+	Object* producer = TheGameLogic->findObjectByID(getObject()->getProducerID());
+	if (producer)
+	{
+		// Okay, we found our parent... now look for the upgrade.
+		const UpgradeTemplate* upgrade = TheUpgradeCenter->findUpgrade(getUpgradeDieModuleData()->m_upgradeName);
 
-		if( upgrade )
+		if (upgrade)
 		{
-			//We found the upgrade, now see if the parent object has it set...
-			if( producer->hasUpgrade( upgrade ) )
+			// We found the upgrade, now see if the parent object has it set...
+			if (producer->hasUpgrade(upgrade))
 			{
-				//Cool, now remove it.
-				producer->removeUpgrade( upgrade );
+				// Cool, now remove it.
+				producer->removeUpgrade(upgrade);
 			}
 			else
 			{
-				DEBUG_CRASH( ("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
-					getObject()->getTemplate()->getName().str(),
-					getUpgradeDieModuleData()->m_upgradeName.str(),
-					producer->getTemplate()->getName().str(),
-					", which the producer doesn't have. This is used in cases where the producer builds an upgrade that can die... like ranger building scout drones.") );
+				DEBUG_CRASH(("Object %s just died, but is trying to free upgrade %s in it's producer %s%s",
+				             getObject()->getTemplate()->getName().str(),
+				             getUpgradeDieModuleData()->m_upgradeName.str(),
+				             producer->getTemplate()->getName().str(),
+				             ", which the producer doesn't have. This is used in cases where the producer builds an upgrade that can die... like ranger building scout drones."));
 			}
 		}
 	}
@@ -89,30 +92,26 @@ void UpgradeDie::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void UpgradeDie::crc( Xfer *xfer )
+void UpgradeDie::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
-
+	DieModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void UpgradeDie::xfer( Xfer *xfer )
+void UpgradeDie::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
-
+	DieModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -120,8 +119,6 @@ void UpgradeDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void UpgradeDie::loadPostProcess()
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
-
 }

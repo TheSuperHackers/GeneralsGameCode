@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -40,52 +40,51 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnitCrateCollide::UnitCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+UnitCrateCollide::UnitCrateCollide(Thing* thing, const ModuleData* moduleData)
+  : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UnitCrateCollide::~UnitCrateCollide()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool UnitCrateCollide::executeCrateBehavior( Object *other )
+Bool UnitCrateCollide::executeCrateBehavior(Object* other)
 {
 	UnsignedInt unitCount = getUnitCrateCollideModuleData()->m_unitCount;
-	ThingTemplate const *unitType = TheThingFactory->findTemplate( getUnitCrateCollideModuleData()->m_unitType );
+	ThingTemplate const* unitType = TheThingFactory->findTemplate(getUnitCrateCollideModuleData()->m_unitType);
 
-	if( unitType == nullptr )
+	if (unitType == nullptr)
 	{
 		return FALSE;
 	}
 
-	for( UnsignedInt unitIndex = 0; unitIndex < unitCount; unitIndex++ )
+	for (UnsignedInt unitIndex = 0; unitIndex < unitCount; unitIndex++)
 	{
-		Team *creationTeam = other->getControllingPlayer()->getDefaultTeam();
-		Object *newObj = TheThingFactory->newObject( unitType, creationTeam );
-		if( newObj )
+		Team* creationTeam = other->getControllingPlayer()->getDefaultTeam();
+		Object* newObj = TheThingFactory->newObject(unitType, creationTeam);
+		if (newObj)
 		{
 			Coord3D creationPoint = *other->getPosition();
 			/// @todo As a user of the future findLegalPositionAround, I wouldn't mind not having to specify range.  I just want a non colliding point.
 			FindPositionOptions fpOptions;
 			fpOptions.minRadius = 0.0f;
 			fpOptions.maxRadius = 20.0f;
-			ThePartitionManager->findPositionAround( &creationPoint,
-																							 &fpOptions,
-																							 &creationPoint );
+			ThePartitionManager->findPositionAround(&creationPoint,
+			                                        &fpOptions,
+			                                        &creationPoint);
 
-			newObj->setOrientation( other->getOrientation() );
-			newObj->setPosition( &creationPoint );
+			newObj->setOrientation(other->getOrientation());
+			newObj->setPosition(&creationPoint);
 		}
 	}
 
-	//Play a crate pickup sound.
+	// Play a crate pickup sound.
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateFreeUnit;
-	soundToPlay.setObjectID( other->getID() );
+	soundToPlay.setObjectID(other->getID());
 	TheAudio->addAudioEvent(&soundToPlay);
 
 	return TRUE;
@@ -94,30 +93,26 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void UnitCrateCollide::crc( Xfer *xfer )
+void UnitCrateCollide::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
-
+	CrateCollide::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void UnitCrateCollide::xfer( Xfer *xfer )
+void UnitCrateCollide::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
-
+	CrateCollide::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -125,8 +120,6 @@ void UnitCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void UnitCrateCollide::loadPostProcess()
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
-
 }

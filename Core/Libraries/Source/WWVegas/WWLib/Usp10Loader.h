@@ -21,14 +21,12 @@
 #include "mutex.h"
 #include "win.h"
 
-
 // This static class loads usp10.dll on first use and unloads it during engine shutdown.
 
 class Usp10Loader
 {
 public:
-
-	typedef void *ScriptStringAnalysis;
+	typedef void* ScriptStringAnalysis;
 	struct ScriptControl;
 	struct ScriptTabDefinition;
 
@@ -74,38 +72,37 @@ public:
 		SSA_RTL = 0x00000100,
 	};
 
-	static HRESULT ScriptIsComplex(const WCHAR *text, int text_length, DWORD flags);
-	static HRESULT ScriptItemize(const WCHAR *text, int text_length, int item_capacity,
-		const ScriptControl *control, const ScriptState *state, ScriptItem *items, int *item_count);
-	static HRESULT ScriptBreak(const WCHAR *text, int text_length, const ScriptAnalysis *analysis,
-		ScriptLogAttr *attributes);
-	static HRESULT ScriptLayout(int run_count, const BYTE *levels, int *visual_to_logical,
-		int *logical_to_visual);
-	static HRESULT ScriptStringAnalyse(HDC dc, const void *text, int text_length, int glyph_count,
-		int charset, DWORD flags, int required_width, ScriptControl *control, ScriptState *state,
-		const int *spacing, ScriptTabDefinition *tabs, const BYTE *character_classes,
-		ScriptStringAnalysis *analysis);
-	static HRESULT ScriptStringFree(ScriptStringAnalysis *analysis);
-	static const SIZE *ScriptString_pSize(ScriptStringAnalysis analysis);
+	static HRESULT ScriptIsComplex(const WCHAR* text, int text_length, DWORD flags);
+	static HRESULT ScriptItemize(const WCHAR* text, int text_length, int item_capacity,
+	                             const ScriptControl* control, const ScriptState* state, ScriptItem* items, int* item_count);
+	static HRESULT ScriptBreak(const WCHAR* text, int text_length, const ScriptAnalysis* analysis,
+	                           ScriptLogAttr* attributes);
+	static HRESULT ScriptLayout(int run_count, const BYTE* levels, int* visual_to_logical,
+	                            int* logical_to_visual);
+	static HRESULT ScriptStringAnalyse(HDC dc, const void* text, int text_length, int glyph_count,
+	                                   int charset, DWORD flags, int required_width, ScriptControl* control, ScriptState* state,
+	                                   const int* spacing, ScriptTabDefinition* tabs, const BYTE* character_classes,
+	                                   ScriptStringAnalysis* analysis);
+	static HRESULT ScriptStringFree(ScriptStringAnalysis* analysis);
+	static const SIZE* ScriptString_pSize(ScriptStringAnalysis analysis);
 	static HRESULT ScriptStringOut(ScriptStringAnalysis analysis, int x, int y, UINT options,
-		const RECT *rect, int minimum_selection, int maximum_selection, BOOL disabled);
+	                               const RECT* rect, int minimum_selection, int maximum_selection, BOOL disabled);
 	static void unload();
 
 private:
-
 	static bool load();
 	static void freeResources();
 
-	typedef HRESULT (WINAPI *ScriptIsComplex_t)(const WCHAR *, int, DWORD);
-	typedef HRESULT (WINAPI *ScriptItemize_t)(const WCHAR *, int, int, const ScriptControl *,
-		const ScriptState *, ScriptItem *, int *);
-	typedef HRESULT (WINAPI *ScriptBreak_t)(const WCHAR *, int, const ScriptAnalysis *, ScriptLogAttr *);
-	typedef HRESULT (WINAPI *ScriptLayout_t)(int, const BYTE *, int *, int *);
-	typedef HRESULT (WINAPI *ScriptStringAnalyse_t)(HDC, const void *, int, int, int, DWORD, int,
-		ScriptControl *, ScriptState *, const int *, ScriptTabDefinition *, const BYTE *, ScriptStringAnalysis *);
-	typedef HRESULT (WINAPI *ScriptStringFree_t)(ScriptStringAnalysis *);
-	typedef const SIZE *(WINAPI *ScriptString_pSize_t)(ScriptStringAnalysis);
-	typedef HRESULT (WINAPI *ScriptStringOut_t)(ScriptStringAnalysis, int, int, UINT, const RECT *, int, int, BOOL);
+	typedef HRESULT(WINAPI* ScriptIsComplex_t)(const WCHAR*, int, DWORD);
+	typedef HRESULT(WINAPI* ScriptItemize_t)(const WCHAR*, int, int, const ScriptControl*,
+	                                         const ScriptState*, ScriptItem*, int*);
+	typedef HRESULT(WINAPI* ScriptBreak_t)(const WCHAR*, int, const ScriptAnalysis*, ScriptLogAttr*);
+	typedef HRESULT(WINAPI* ScriptLayout_t)(int, const BYTE*, int*, int*);
+	typedef HRESULT(WINAPI* ScriptStringAnalyse_t)(HDC, const void*, int, int, int, DWORD, int,
+	                                               ScriptControl*, ScriptState*, const int*, ScriptTabDefinition*, const BYTE*, ScriptStringAnalysis*);
+	typedef HRESULT(WINAPI* ScriptStringFree_t)(ScriptStringAnalysis*);
+	typedef const SIZE*(WINAPI* ScriptString_pSize_t)(ScriptStringAnalysis);
+	typedef HRESULT(WINAPI* ScriptStringOut_t)(ScriptStringAnalysis, int, int, UINT, const RECT*, int, int, BOOL);
 
 	static CriticalSectionClass CriticalSection;
 	static HMODULE Module;

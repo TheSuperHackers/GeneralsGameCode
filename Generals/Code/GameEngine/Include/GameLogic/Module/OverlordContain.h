@@ -36,7 +36,6 @@
 class OverlordContainModuleData : public TransportContainModuleData
 {
 public:
-
 	OverlordContainModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -45,48 +44,46 @@ public:
 //-------------------------------------------------------------------------------------------------
 class OverlordContain : public TransportContain
 {
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OverlordContain, "OverlordContain")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(OverlordContain, OverlordContainModuleData)
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OverlordContain, "OverlordContain" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OverlordContain, OverlordContainModuleData )
-
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
-																				BodyDamageType oldState,
-																				BodyDamageType newState) override;  ///< state change callback
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo,
+	                                     BodyDamageType oldState,
+	                                     BodyDamageType newState) override;    ///< state change callback
 public:
-
-	OverlordContain( Thing *thing, const ModuleData* moduleData );
+	OverlordContain(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual OpenContain *asOpenContain() override { return this; }  ///< treat as open container
-	virtual Bool isGarrisonable() const override;	///< can this unit be Garrisoned? (ick)
-	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual OpenContain* asOpenContain() override { return this; }    ///< treat as open container
+	virtual Bool isGarrisonable() const override;    ///< can this unit be Garrisoned? (ick)
+	virtual Bool isHealContain() const override { return false; }    ///< true when container only contains units while healing (not a transport!)
 	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
 
-	virtual void onDie( const DamageInfo *damageInfo ) override;  ///< the die callback
-	virtual void onDelete() override;	///< Last possible moment cleanup
-	virtual void onCapture( Player *oldOwner, Player *newOwner ) override; // Our main guy goes with us, but our redirected contain needs to do his thing too
+	virtual void onDie(const DamageInfo* damageInfo) override;    ///< the die callback
+	virtual void onDelete() override;    ///< Last possible moment cleanup
+	virtual void onCapture(Player* oldOwner, Player* newOwner) override;    // Our main guy goes with us, but our redirected contain needs to do his thing too
 
 	// Contain stuff we need to override to redirect on a condition
-	virtual void onContaining( Object *obj ) override;		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual void onContaining(Object* obj) override;    ///< object now contains 'obj'
+	virtual void onRemoving(Object* obj) override;    ///< object no longer contains 'obj'
 
 	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const override;
-	virtual void addToContain( Object *obj ) override;				///< add 'obj' to contain list
-	virtual void addToContainList( Object *obj ) override;		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
-	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
-	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) override;				///< remove all objects on contain list
-	virtual Bool isEnclosingContainerFor( const Object *obj ) const override;	///< Does this type of Contain Visibly enclose its contents?
-	virtual Bool isDisplayedOnControlBar() const override;///< Does this container display its contents on the ControlBar?
-	virtual Bool isKickOutOnCapture() override;// The bunker may want to, but we certainly don't
+	virtual void addToContain(Object* obj) override;    ///< add 'obj' to contain list
+	virtual void addToContainList(Object* obj) override;    ///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
+	virtual void removeFromContain(Object* obj, Bool exposeStealthUnits = FALSE) override;    ///< remove 'obj' from contain list
+	virtual void removeAllContained(Bool exposeStealthUnits = FALSE) override;    ///< remove all objects on contain list
+	virtual Bool isEnclosingContainerFor(const Object* obj) const override;    ///< Does this type of Contain Visibly enclose its contents?
+	virtual Bool isDisplayedOnControlBar() const override;    ///< Does this container display its contents on the ControlBar?
+	virtual Bool isKickOutOnCapture() override;    // The bunker may want to, but we certainly don't
 
 	// contain list access
-	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse ) override;
+	virtual void iterateContained(ContainIterateFunc func, void* userData, Bool reverse) override;
 	virtual UnsignedInt getContainCount() const override;
 	virtual Int getContainMax() const override;
 	virtual const ContainedItemsList* getContainedItemsList() const override;
 
 	// Friend for our Draw module only.
-	virtual const Object *friend_getRider() const override; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
+	virtual const Object* friend_getRider() const override;    ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
@@ -98,10 +95,9 @@ private:
 	/**< An empty overlord is a container, but a full one redirects calls to its passengers.  If this returns null,
 	we are either empty or carrying a non container.
 	*/
-	ContainModuleInterface *getRedirectedContain() const; ///< And this gets what are redirecting to.
-	void activateRedirectedContain();///< I need to shut this off since I can talk directly to my bunker, but he can never directly see me
+	ContainModuleInterface* getRedirectedContain() const;    ///< And this gets what are redirecting to.
+	void activateRedirectedContain();    ///< I need to shut this off since I can talk directly to my bunker, but he can never directly see me
 	void deactivateRedirectedContain();
 
 	Bool m_redirectionActivated;
-
 };

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Module/DynamicGeometryInfoUpdate.h"
@@ -38,7 +38,6 @@
 //-------------------------------------------------------------------------------------------------
 DynamicGeometryInfoUpdateModuleData::DynamicGeometryInfoUpdateModuleData()
 {
-
 	m_initialDelay = 0;
 
 	m_initialHeight = 0;
@@ -51,7 +50,6 @@ DynamicGeometryInfoUpdateModuleData::DynamicGeometryInfoUpdateModuleData()
 
 	m_transitionTime = 1;
 	m_reverseAtTransitionTime = FALSE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -59,21 +57,20 @@ DynamicGeometryInfoUpdateModuleData::DynamicGeometryInfoUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 
-		{ "InitialDelay",					INI::parseDurationUnsignedInt,		nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialDelay) },
+		{ "InitialDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialDelay) },
 
-		{ "InitialHeight",				INI::parseReal,										nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialHeight) },
-		{ "InitialMajorRadius",		INI::parseReal,										nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMajorRadius) },
-		{ "InitialMinorRadius",		INI::parseReal,										nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMinorRadius) },
+		{ "InitialHeight", INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialHeight) },
+		{ "InitialMajorRadius", INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMajorRadius) },
+		{ "InitialMinorRadius", INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_initialMinorRadius) },
 
-		{ "FinalHeight",					INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalHeight) },
-		{ "FinalMajorRadius",			INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMajorRadius) },
-		{ "FinalMinorRadius",			INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMinorRadius) },
+		{ "FinalHeight", INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalHeight) },
+		{ "FinalMajorRadius", INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMajorRadius) },
+		{ "FinalMinorRadius", INI::parseReal, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_finalMinorRadius) },
 
-		{ "TransitionTime",				INI::parseDurationUnsignedInt,		nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_transitionTime) },
-		{ "ReverseAtTransitionTime", INI::parseBool,	 nullptr, offsetof( DynamicGeometryInfoUpdateModuleData, m_reverseAtTransitionTime ) },
+		{ "TransitionTime", INI::parseDurationUnsignedInt, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_transitionTime) },
+		{ "ReverseAtTransitionTime", INI::parseBool, nullptr, offsetof(DynamicGeometryInfoUpdateModuleData, m_reverseAtTransitionTime) },
 
 		{ nullptr, nullptr, nullptr, 0 }
 
@@ -82,11 +79,12 @@ DynamicGeometryInfoUpdateModuleData::DynamicGeometryInfoUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-DynamicGeometryInfoUpdate::DynamicGeometryInfoUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+DynamicGeometryInfoUpdate::DynamicGeometryInfoUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
-	DynamicGeometryInfoUpdateModuleData *modData = (DynamicGeometryInfoUpdateModuleData *)moduleData;
+	DynamicGeometryInfoUpdateModuleData* modData = (DynamicGeometryInfoUpdateModuleData*)moduleData;
 	m_startingDelayCountdown = modData->m_initialDelay;
-	m_startingDelayCountdown = max( m_startingDelayCountdown, 1u );
+	m_startingDelayCountdown = max(m_startingDelayCountdown, 1u);
 	m_timeActive = 0;
 
 	m_started = FALSE;
@@ -102,7 +100,6 @@ DynamicGeometryInfoUpdate::DynamicGeometryInfoUpdate( Thing *thing, const Module
 	m_finalHeight = modData->m_finalHeight;
 	m_finalMajorRadius = modData->m_finalMajorRadius;
 	m_finalMinorRadius = modData->m_finalMinorRadius;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -116,24 +113,26 @@ DynamicGeometryInfoUpdate::~DynamicGeometryInfoUpdate()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime DynamicGeometryInfoUpdate::update()
 {
-/// @todo srj use SLEEPY_UPDATE here
-	if( m_finished )
-		return UPDATE_SLEEP_NONE;
-
-	if( !m_started )
+	/// @todo srj use SLEEPY_UPDATE here
+	if (m_finished)
 	{
+		return UPDATE_SLEEP_NONE;
+	}
 
+	if (!m_started)
+	{
 		m_startingDelayCountdown--;
-		if( m_startingDelayCountdown > 0 )
+		if (m_startingDelayCountdown > 0)
+		{
 			return UPDATE_SLEEP_NONE;
+		}
 
 		m_started = TRUE;
-
 	}
 
 	// Either we've been running, or we just started right now.  Doesn't matter.
-	const DynamicGeometryInfoUpdateModuleData *data = getDynamicGeometryInfoUpdateModuleData();
-	Object *me = getObject();
+	const DynamicGeometryInfoUpdateModuleData* data = getDynamicGeometryInfoUpdateModuleData();
+	Object* me = getObject();
 	Real newHeight, newMajor, newMinor;
 
 	Real ratio = (float)m_timeActive / (float)data->m_transitionTime;
@@ -144,20 +143,18 @@ UpdateSleepTime DynamicGeometryInfoUpdate::update()
 
 	// make a new geometry info with the new values
 	const GeometryInfo oldGeom = me->getGeometryInfo();
-	GeometryInfo newGeom( oldGeom.getGeomType(), oldGeom.getIsSmall(), newHeight, newMajor, newMinor );
-	me->setGeometryInfo( newGeom );
+	GeometryInfo newGeom(oldGeom.getGeomType(), oldGeom.getIsSmall(), newHeight, newMajor, newMinor);
+	me->setGeometryInfo(newGeom);
 
 	// we've not been active another frame .. increment out counter
 	m_timeActive++;
 
 	// greater, so an update that is exactly right will be done
-	if( m_timeActive > data->m_transitionTime )
+	if (m_timeActive > data->m_transitionTime)
 	{
-
 		// if we're supposed to reverse at transition time do so now if we haven't already
-		if( m_reverseAtTransitionTime == TRUE )
+		if (m_reverseAtTransitionTime == TRUE)
 		{
-
 			// switch directions, reset time active, and turn off the switch at transition time
 			m_switchedDirections = TRUE;
 			m_timeActive = 0;
@@ -170,16 +167,12 @@ UpdateSleepTime DynamicGeometryInfoUpdate::update()
 			m_finalHeight = data->m_initialHeight;
 			m_finalMajorRadius = data->m_initialMajorRadius;
 			m_finalMinorRadius = data->m_initialMinorRadius;
-
 		}
 		else
 		{
-
 			// no switch needed ... we're all done
 			m_finished = TRUE;
-
 		}
-
 	}
 
 	return UPDATE_SLEEP_NONE;
@@ -188,69 +181,65 @@ UpdateSleepTime DynamicGeometryInfoUpdate::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DynamicGeometryInfoUpdate::crc( Xfer *xfer )
+void DynamicGeometryInfoUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DynamicGeometryInfoUpdate::xfer( Xfer *xfer )
+void DynamicGeometryInfoUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// starting delay countdown
-	xfer->xferUnsignedInt( &m_startingDelayCountdown );
+	xfer->xferUnsignedInt(&m_startingDelayCountdown);
 
 	// time active
-	xfer->xferUnsignedInt( &m_timeActive );
+	xfer->xferUnsignedInt(&m_timeActive);
 
 	// started
-	xfer->xferBool( &m_started );
+	xfer->xferBool(&m_started);
 
 	// finished
-	xfer->xferBool( &m_finished );
+	xfer->xferBool(&m_finished);
 
 	// reverse at transition time
-	xfer->xferBool( &m_reverseAtTransitionTime );
+	xfer->xferBool(&m_reverseAtTransitionTime);
 
 	// direction
-	xfer->xferUser( &m_direction, sizeof( DynamicGeometryDirection ) );
+	xfer->xferUser(&m_direction, sizeof(DynamicGeometryDirection));
 
 	// switched directions
-	xfer->xferBool( &m_switchedDirections );
+	xfer->xferBool(&m_switchedDirections);
 
 	// initial height
-	xfer->xferReal( &m_initialHeight );
+	xfer->xferReal(&m_initialHeight);
 
 	// initial major radius
-	xfer->xferReal( &m_initialMajorRadius );
+	xfer->xferReal(&m_initialMajorRadius);
 
 	// initial minor radius
-	xfer->xferReal( &m_initialMinorRadius );
+	xfer->xferReal(&m_initialMinorRadius);
 
 	// final height
-	xfer->xferReal( &m_finalHeight );
+	xfer->xferReal(&m_finalHeight);
 
 	// final major radius
-	xfer->xferReal( &m_finalMajorRadius );
+	xfer->xferReal(&m_finalMajorRadius);
 
 	// final minor radius
-	xfer->xferReal( &m_finalMinorRadius );
-
+	xfer->xferReal(&m_finalMinorRadius);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -258,8 +247,6 @@ void DynamicGeometryInfoUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DynamicGeometryInfoUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

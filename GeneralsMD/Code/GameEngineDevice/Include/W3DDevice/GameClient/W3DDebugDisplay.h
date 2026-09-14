@@ -49,7 +49,6 @@
 
 #include "GameClient/DebugDisplay.h"
 
-
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
@@ -61,35 +60,29 @@ class DisplayString;
 //           Type Defines
 //----------------------------------------------------------------------------
 
-
 //===============================
 // W3DDebugDisplay
 //===============================
 
 class W3DDebugDisplay : public DebugDisplay
 {
+public:
+	W3DDebugDisplay();
+	virtual ~W3DDebugDisplay() override;
 
-	public:
+	void init();    ///< Initialized the display
+	void setFont(GameFont* font);    ///< Set the font to render with
+	void setFontWidth(Int width) { m_fontWidth = width; };    ///< Set the font width
+	void setFontHeight(Int height) { m_fontHeight = height; };    ///< Set the font height
 
-		W3DDebugDisplay();
-		virtual ~W3DDebugDisplay() override;
+protected:
+	GameFont* m_font;    ///< Font to render text with
+	Int m_fontWidth;
+	Int m_fontHeight;
+	DisplayString* m_displayString;
 
-		void init();																						///< Initialized the display
-		void setFont( GameFont *font );																///< Set the font to render with
-		void setFontWidth( Int width ) { m_fontWidth = width; };			///< Set the font width
-		void setFontHeight( Int height ) { m_fontHeight = height; };		///< Set the font height
-
-	protected:
-
-		GameFont *m_font;			///< Font to render text with
-		Int m_fontWidth;
-		Int m_fontHeight;
-		DisplayString *m_displayString;
-
-		virtual void drawText( Int x, Int y, Char *text ) override;			///< Render null terminated string at current cursor position
-
+	virtual void drawText(Int x, Int y, Char* text) override;    ///< Render null terminated string at current cursor position
 };
-
 
 //----------------------------------------------------------------------------
 //           Inlining

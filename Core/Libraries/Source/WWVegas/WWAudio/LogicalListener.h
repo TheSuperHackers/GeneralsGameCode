@@ -47,98 +47,103 @@
 /////////////////////////////////////////////////////////////////////////////////
 class LogicalListenerClass : public SoundSceneObjClass
 {
-	public:
+public:
+	//////////////////////////////////////////////////////////////////////
+	//	Public constructors/destructors
+	//////////////////////////////////////////////////////////////////////
+	LogicalListenerClass();
+	virtual ~LogicalListenerClass() override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public constructors/destructors
-		//////////////////////////////////////////////////////////////////////
-		LogicalListenerClass ();
-		virtual ~LogicalListenerClass () override;
+	//////////////////////////////////////////////////////////////////////
+	//	Public methods
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public methods
-		//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//	LogicalSoundClass specific
+	//////////////////////////////////////////////////////////////////////
+	virtual void Set_Type_Mask(uint32 mask = 0) { m_TypeMask = mask; }
+	virtual uint32 Get_Type_Mask() const { return m_TypeMask; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	LogicalSoundClass specific
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Type_Mask (uint32 mask = 0)	{ m_TypeMask = mask; }
-		virtual uint32			Get_Type_Mask () const			{ return m_TypeMask; }
+	//////////////////////////////////////////////////////////////////////
+	//	Position/direction methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Set_Position(const Vector3& position) override { m_Position = position; }
+	virtual Vector3 Get_Position() const override { return m_Position; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	Position/direction methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Position (const Vector3 &position) override { m_Position = position; }
-		virtual Vector3			Get_Position () const override { return m_Position; }
+	virtual void Set_Transform(const Matrix3D& transform) override { m_Position = transform.Get_Translation(); }
+	virtual Matrix3D Get_Transform() const override
+	{
+		Matrix3D tm(1);
+		tm.Set_Translation(m_Position);
+		return tm;
+	}
 
-		virtual void			Set_Transform (const Matrix3D &transform) override { m_Position = transform.Get_Translation (); }
-		virtual Matrix3D		Get_Transform () const override { Matrix3D tm(1); tm.Set_Translation (m_Position); return tm; }
+	//////////////////////////////////////////////////////////////////////
+	//	Culling methods (not used for listeners)
+	//////////////////////////////////////////////////////////////////////
+	virtual void Cull_Sound(bool culled = true) override {};
+	virtual bool Is_Sound_Culled() const override { return false; };
 
-		//////////////////////////////////////////////////////////////////////
-		//	Culling methods (not used for listeners)
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Cull_Sound (bool culled = true) override { };
-		virtual bool			Is_Sound_Culled () const override { return false; };
+	//////////////////////////////////////////////////////////////////////
+	//	Scene integration
+	//////////////////////////////////////////////////////////////////////
+	virtual void Add_To_Scene(bool /*start_playing*/ = true) override;
+	virtual void Remove_From_Scene() override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Scene integration
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Add_To_Scene (bool /*start_playing*/ = true) override;
-		virtual void			Remove_From_Scene () override;
+	//////////////////////////////////////////////////////////////////////
+	//	Attenuation settings
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		//	Attenuation settings
-		//////////////////////////////////////////////////////////////////////
+	//
+	//	This is the distance where the listener can no longer hear sounds.
+	//
+	virtual void Set_Scale(float scale = 1.0F) { m_Scale = scale; }
+	virtual float Get_Scale() const { return m_Scale; }
+	virtual float Get_Effective_Scale() const { return m_Scale * m_GlobalScale; }
 
-		//
-		//	This is the distance where the listener can no longer hear sounds.
-		//
-		virtual void			Set_Scale (float scale = 1.0F)	{ m_Scale = scale; }
-		virtual float			Get_Scale () const				{ return m_Scale; }
-		virtual float			Get_Effective_Scale () const	{ return m_Scale * m_GlobalScale; }
+	static float Get_Global_Scale() { return m_GlobalScale; }
+	static void Set_Global_Scale(float scale) { m_GlobalScale = scale; }
 
-		static float			Get_Global_Scale ()				{ return m_GlobalScale; }
-		static void				Set_Global_Scale (float scale)	{ m_GlobalScale = scale; }
+	virtual void Set_DropOff_Radius(float radius = 1) override {}
+	virtual float Get_DropOff_Radius() const override { return 1.0F; }
 
-		virtual void			Set_DropOff_Radius (float radius = 1) override {}
-		virtual float			Get_DropOff_Radius () const override { return 1.0F; }
+	//////////////////////////////////////////////////////////////////////
+	//	From PersistClass
+	//////////////////////////////////////////////////////////////////////
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	From PersistClass
-		//////////////////////////////////////////////////////////////////////
-		virtual bool									Save (ChunkSaveClass &csave) override;
-		virtual bool									Load (ChunkLoadClass &cload) override;
-		virtual const PersistFactoryClass &	Get_Factory () const override;
+	//////////////////////////////////////////////////////////////////////
+	//	Timestamp
+	//////////////////////////////////////////////////////////////////////
+	uint32 Get_Timestamp() const { return m_Timestamp; }
+	void Set_Timestamp(int timestamp) { m_Timestamp = timestamp; }
 
+	static uint32 Get_New_Timestamp() { return m_NewestTimestamp++; }
+	static uint32 Get_Newest_Timestamp() { return m_NewestTimestamp - 1; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	Timestamp
-		//////////////////////////////////////////////////////////////////////
-		uint32					Get_Timestamp () const		{ return m_Timestamp; }
-		void					Set_Timestamp (int timestamp)	{ m_Timestamp = timestamp; }
+	static uint32 Get_Oldest_Timestamp() { return m_OldestTimestamp; }
+	static void Set_Oldest_Timestamp(uint32 timestamp)
+	{
+		WWASSERT(m_OldestTimestamp < timestamp);
+		m_OldestTimestamp = timestamp;
+	}
 
-		static uint32			Get_New_Timestamp ()		{ return m_NewestTimestamp ++; }
-		static uint32			Get_Newest_Timestamp ()		{ return m_NewestTimestamp - 1; }
+protected:
+	//////////////////////////////////////////////////////////////////////
+	//	Update methods
+	//////////////////////////////////////////////////////////////////////
 
-		static uint32			Get_Oldest_Timestamp ()				{ return m_OldestTimestamp; }
-		static void				Set_Oldest_Timestamp (uint32 timestamp)	{ WWASSERT (m_OldestTimestamp < timestamp); m_OldestTimestamp = timestamp; }
-
-	protected:
-
-		//////////////////////////////////////////////////////////////////////
-		//	Update methods
-		//////////////////////////////////////////////////////////////////////
-
-	private:
-
-		//////////////////////////////////////////////////////////////////////
-		//	Private member data
-		//////////////////////////////////////////////////////////////////////
-		static float			m_GlobalScale;
-		float						m_Scale;
-		uint32					m_TypeMask;
-		Vector3					m_Position;
-		uint32					m_Timestamp;
-		static uint32			m_OldestTimestamp;
-		static uint32			m_NewestTimestamp;
+private:
+	//////////////////////////////////////////////////////////////////////
+	//	Private member data
+	//////////////////////////////////////////////////////////////////////
+	static float m_GlobalScale;
+	float m_Scale;
+	uint32 m_TypeMask;
+	Vector3 m_Position;
+	uint32 m_Timestamp;
+	static uint32 m_OldestTimestamp;
+	static uint32 m_NewestTimestamp;
 };

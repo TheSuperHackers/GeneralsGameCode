@@ -24,7 +24,6 @@
 #include "resource.h"
 #include "ColorUtils.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Forward declarations
 /////////////////////////////////////////////////////////////////////////////
@@ -37,33 +36,34 @@ class ColorPickerClass;
 //
 class ColorPickerDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ColorPickerDialogClass (int red, int green, int blue, CWnd* pParent = nullptr, UINT res_id = ColorPickerDialogClass::IDD);
+	ColorPickerDialogClass(int red, int green, int blue, CWnd* pParent = nullptr, UINT res_id = ColorPickerDialogClass::IDD);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ColorPickerDialogClass)
-	enum { IDD = IDD_COLOR_PICKER };
-	CSpinButtonCtrl	m_BlueSpin;
-	CSpinButtonCtrl	m_GreenSpin;
-	CSpinButtonCtrl	m_RedSpin;
+	enum
+	{
+		IDD = IDD_COLOR_PICKER
+	};
+	CSpinButtonCtrl m_BlueSpin;
+	CSpinButtonCtrl m_GreenSpin;
+	CSpinButtonCtrl m_RedSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ColorPickerDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX)  override;    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	virtual void PostNcDestroy() override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ColorPickerDialogClass)
 	virtual BOOL OnInitDialog() override;
@@ -71,59 +71,59 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////////
+	//	Public methods
+	/////////////////////////////////////////////////////////////
+	int Get_Red() const { return (int)m_CurrentRed; }
+	int Get_Green() const { return (int)m_CurrentGreen; }
+	int Get_Blue() const { return (int)m_CurrentBlue; }
+	void Set_Color(int r, int g, int b)
+	{ Update_Color((float)r, (float)g, (float)b); }
+	void Set_Original_Color(int r, int g, int b);
+	void Create_Form(CWnd* parent);
+	void Set_Update_Callback(WWCTRL_COLORCALLBACK callme, void* arg)
+	{
+		m_UpdateCallback = callme;
+		m_CallArg = arg;
+	}
 
-		/////////////////////////////////////////////////////////////
-		//	Public methods
-		/////////////////////////////////////////////////////////////
-		int					Get_Red () const { return (int)m_CurrentRed; }
-		int					Get_Green () const { return (int)m_CurrentGreen; }
-		int					Get_Blue () const { return (int)m_CurrentBlue; }
-		void					Set_Color (int r, int g, int b)
-									{ Update_Color((float)r, (float)g, (float)b); }
-		void					Set_Original_Color (int r, int g, int b);
-		void					Create_Form (CWnd *parent);
-		void					Set_Update_Callback (WWCTRL_COLORCALLBACK callme, void *arg)
-									{ m_UpdateCallback = callme; m_CallArg = arg; }
+protected:
+	/////////////////////////////////////////////////////////////
+	//	Protected methods
+	/////////////////////////////////////////////////////////////
+	void Update_Red_Bar();
+	void Update_Green_Bar();
+	void Update_Blue_Bar();
+	void Update_Current_Color_Bar();
+	void Update_Whiteness_Bar();
+	void Update_Color(float red, float green, float blue, DWORD flags = 0xFFFFFFFF);
 
-	protected:
+private:
+	/////////////////////////////////////////////////////////////
+	//	Private member data
+	/////////////////////////////////////////////////////////////
+	float m_OrigRed;
+	float m_OrigGreen;
+	float m_OrigBlue;
 
-		/////////////////////////////////////////////////////////////
-		//	Protected methods
-		/////////////////////////////////////////////////////////////
-		void					Update_Red_Bar ();
-		void					Update_Green_Bar ();
-		void					Update_Blue_Bar ();
-		void					Update_Current_Color_Bar ();
-		void					Update_Whiteness_Bar ();
-		void					Update_Color (float red, float green, float blue, DWORD flags = 0xFFFFFFFF);
+	float m_CurrentRed;
+	float m_CurrentGreen;
+	float m_CurrentBlue;
 
-	private:
+	ColorBarClass* m_CurrentColorBar;
+	ColorBarClass* m_OrigColorBar;
+	ColorBarClass* m_RedColorBar;
+	ColorBarClass* m_GreenColorBar;
+	ColorBarClass* m_BlueColorBar;
+	ColorBarClass* m_WhitenessColorBar;
+	ColorPickerClass* m_HuePicker;
 
-		/////////////////////////////////////////////////////////////
-		//	Private member data
-		/////////////////////////////////////////////////////////////
-		float	m_OrigRed;
-		float	m_OrigGreen;
-		float	m_OrigBlue;
+	bool m_bDeleteOnClose;
 
-		float	m_CurrentRed;
-		float	m_CurrentGreen;
-		float	m_CurrentBlue;
-
-		ColorBarClass *	m_CurrentColorBar;
-		ColorBarClass *	m_OrigColorBar;
-		ColorBarClass *	m_RedColorBar;
-		ColorBarClass *	m_GreenColorBar;
-		ColorBarClass *	m_BlueColorBar;
-		ColorBarClass *	m_WhitenessColorBar;
-		ColorPickerClass *m_HuePicker;
-
-		bool	m_bDeleteOnClose;
-
-		// Callback function when color is updated.
-		WWCTRL_COLORCALLBACK m_UpdateCallback;
-		void *					m_CallArg;
+	// Callback function when color is updated.
+	WWCTRL_COLORCALLBACK m_UpdateCallback;
+	void* m_CallArg;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -39,7 +39,7 @@ public:
 	Real m_pitchRateMax;
 	Real m_rollRateMax;
 	Real m_lowAltitudeDamping;
-	Real m_paraOpenDist;		///< deploy the parachute when we have traveled this far
+	Real m_paraOpenDist;    ///< deploy the parachute when we have traveled this far
 	Real m_freeFallDamagePercent;
 	Real m_killWhenLandingInWaterSlop;
 	AudioEventRTS m_parachuteOpenSound;
@@ -51,40 +51,36 @@ public:
 //-------------------------------------------------------------------------------------------------
 class ParachuteContain : public OpenContain
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParachuteContain, "ParachuteContain" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ParachuteContain, ParachuteContainModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParachuteContain, "ParachuteContain")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ParachuteContain, ParachuteContainModuleData)
 
 public:
-
-	ParachuteContain( Thing *thing, const ModuleData* moduleData );
+	ParachuteContain(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onDrawableBoundToObject() override;
 
-	virtual Bool isValidContainerFor( const Object* obj, bool checkCapacity) const override;
-	virtual Bool isEnclosingContainerFor( const Object *obj ) const override { return FALSE; }	///< Does this type of Contain Visibly enclose its contents?
+	virtual Bool isValidContainerFor(const Object* obj, bool checkCapacity) const override;
+	virtual Bool isEnclosingContainerFor(const Object* obj) const override { return FALSE; }    ///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isSpecialZeroSlotContainer() const override { return true; }
 
-	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
+	virtual void onContaining(Object* obj, Bool wasSelected) override;    ///< object now contains 'obj'
+	virtual void onRemoving(Object* obj) override;    ///< object no longer contains 'obj'
 
-	virtual UpdateSleepTime update() override;							///< called once per frame
+	virtual UpdateSleepTime update() override;    ///< called once per frame
 
 	virtual void containReactToTransformChange() override;
 
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
-	virtual void onDie( const DamageInfo * damageInfo ) override;
+	virtual void onCollide(Object* other, const Coord3D* loc, const Coord3D* normal) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
-	virtual void setOverrideDestination( const Coord3D *dest ) override; ///< Instead of falling peacefully towards a clear spot, I will now aim here
+	virtual void setOverrideDestination(const Coord3D* dest) override;    ///< Instead of falling peacefully towards a clear spot, I will now aim here
 
 protected:
-
 	virtual Bool isFullyEnclosingContainer() const { return false; }
 	virtual void positionContainedObjectsRelativeToContainer() override;
 
 private:
-
 	void positionRider(Object* obj);
 	void updateBonePositions();
 	void updateOffsetsFromBones();

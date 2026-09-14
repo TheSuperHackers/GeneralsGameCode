@@ -61,16 +61,15 @@ ObjectPreview::~ObjectPreview()
 {
 }
 
-void ObjectPreview::SetThingTemplate(const ThingTemplate *tTempl)
+void ObjectPreview::SetThingTemplate(const ThingTemplate* tTempl)
 {
 	m_tTempl = tTempl;
 }
 
-
 BEGIN_MESSAGE_MAP(ObjectPreview, CWnd)
-	//{{AFX_MSG_MAP(ObjectPreview)
-	ON_WM_PAINT()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ObjectPreview)
+ON_WM_PAINT()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 #define SWATCH_OFFSET 20
@@ -78,82 +77,82 @@ END_MESSAGE_MAP()
 #define PREVIEW_WIDTH 128
 #define PREVIEW_HEIGHT 128
 
-static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
+static UnsignedByte* saveSurface(IDirect3DSurface8* surface)
 {
 	D3DSURFACE_DESC desc;
-	IDirect3DSurface8 *tempSurface;
+	IDirect3DSurface8* tempSurface;
 
 	surface->GetDesc(&desc);
 
-	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE8 m_pDev = DX8Wrapper::_Get_D3D_Device8();
 
-	HRESULT hr=m_pDev->CreateImageSurface(  desc.Width,desc.Height,desc.Format, &tempSurface);
+	HRESULT hr = m_pDev->CreateImageSurface(desc.Width, desc.Height, desc.Format, &tempSurface);
 
-	hr=m_pDev->CopyRects(surface,nullptr,0,tempSurface,nullptr);
+	hr = m_pDev->CopyRects(surface, nullptr, 0, tempSurface, nullptr);
 
 	D3DLOCKED_RECT lrect;
 
-	DX8_ErrorCode(tempSurface->LockRect(&lrect,nullptr,D3DLOCK_READONLY));
+	DX8_ErrorCode(tempSurface->LockRect(&lrect, nullptr, D3DLOCK_READONLY));
 
-	unsigned int x,y,index,index2,width,height;
+	unsigned int x, y, index, index2, width, height;
 
-	width=desc.Width;
-	height=desc.Height;
+	width = desc.Width;
+	height = desc.Height;
 
 #ifdef CAPTURE_TO_TARGA
-	char image[3*PREVIEW_WIDTH*PREVIEW_HEIGHT];
-	//bytes are mixed in targa files, not rgb order.
-	for (y=0; y<height; y++)
+	char image[3 * PREVIEW_WIDTH * PREVIEW_HEIGHT];
+	// bytes are mixed in targa files, not rgb order.
+	for (y = 0; y < height; y++)
 	{
-		for (x=0; x<width; x++)
+		for (x = 0; x < width; x++)
 		{
 			// index for image
-			index=3*(x+y*width);
+			index = 3 * (x + y * width);
 			// index for fb
-			index2=y*lrect.Pitch+4*x;
+			index2 = y * lrect.Pitch + 4 * x;
 
-			image[index]=*((char *) lrect.pBits + index2+2);
-			image[index+1]=*((char *) lrect.pBits + index2+1);
-			image[index+2]=*((char *) lrect.pBits + index2+0);
+			image[index] = *((char*)lrect.pBits + index2 + 2);
+			image[index + 1] = *((char*)lrect.pBits + index2 + 1);
+			image[index + 2] = *((char*)lrect.pBits + index2 + 0);
 		}
 	}
 
 	Targa targ;
-	memset(&targ.Header,0,sizeof(targ.Header));
-	targ.Header.Width=width;
-	targ.Header.Height=height;
-	targ.Header.PixelDepth=24;
-	targ.Header.ImageType=TGA_TRUECOLOR;
+	memset(&targ.Header, 0, sizeof(targ.Header));
+	targ.Header.Width = width;
+	targ.Header.Height = height;
+	targ.Header.PixelDepth = 24;
+	targ.Header.ImageType = TGA_TRUECOLOR;
 	targ.SetImage(image);
 	targ.YFlip();
 
-	targ.Save("ObjectPreview.tga",TGAF_IMAGE,false);
+	targ.Save("ObjectPreview.tga", TGAF_IMAGE, false);
 
 	return nullptr;
 
 #else
 
-	static UnsignedByte bgraImage[3*PREVIEW_WIDTH*PREVIEW_HEIGHT];
-	//bmp is same byte order
-	for (y=0; y<height; y++)
+	static UnsignedByte bgraImage[3 * PREVIEW_WIDTH * PREVIEW_HEIGHT];
+	// bmp is same byte order
+	for (y = 0; y < height; y++)
 	{
-		for (x=0; x<width; x++)
+		for (x = 0; x < width; x++)
 		{
 			// index for image
-			index=3*(x+y*width);
+			index = 3 * (x + y * width);
 			// index for fb
-			index2=y*lrect.Pitch+4*x;
+			index2 = y * lrect.Pitch + 4 * x;
 
-			bgraImage[index]=*((UnsignedByte *) lrect.pBits + index2+0);
-			bgraImage[index+1]=*((UnsignedByte *) lrect.pBits + index2+1);
-			bgraImage[index+2]=*((UnsignedByte *) lrect.pBits + index2+2);
-			//bgraImage[index+3]=0;
+			bgraImage[index] = *((UnsignedByte*)lrect.pBits + index2 + 0);
+			bgraImage[index + 1] = *((UnsignedByte*)lrect.pBits + index2 + 1);
+			bgraImage[index + 2] = *((UnsignedByte*)lrect.pBits + index2 + 2);
+			// bgraImage[index+3]=0;
 		}
 	}
 
-	//Flip the image
-	UnsignedByte *ptr,*ptr1;
-	UnsignedByte  v,v1;
+	// Flip the image
+	UnsignedByte *ptr, *ptr1;
+	UnsignedByte v, v1;
 
 	for (y = 0; y < (height >> 1); y++)
 	{
@@ -164,14 +163,14 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 
 		/* Exchange all the pixels on this scan line. */
 		for (x = 0; x < (width * 3); x++)
-			{
+		{
 			v = *ptr;
 			v1 = *ptr1;
 			*ptr = v1;
 			*ptr1 = v;
 			ptr++;
 			ptr1++;
-			}
+		}
 	}
 
 	tempSurface->Release();
@@ -181,36 +180,36 @@ static UnsignedByte * saveSurface(IDirect3DSurface8 *surface)
 }
 
 // return an array of BGRA pixels
-static UnsignedByte * generatePreview( const ThingTemplate *tt )
+static UnsignedByte* generatePreview(const ThingTemplate* tt)
 {
 	// find the default model to preview
-	RenderObjClass *model = nullptr;
+	RenderObjClass* model = nullptr;
 	Real scale = 1.0f;
 	AsciiString modelName = "No Model Name";
 	if (tt)
 	{
 		ModelConditionFlags state;
 		state.clear();
-		WbView3d *p3View = CWorldBuilderDoc::GetActiveDoc()->GetActive3DView();
+		WbView3d* p3View = CWorldBuilderDoc::GetActiveDoc()->GetActive3DView();
 		modelName = p3View->getBestModelName(tt, state);
 		scale = tt->getAssetScale();
 	}
 	// set render object, or create if we need to
-	if( modelName.isEmpty() == FALSE &&
-			strncmp( modelName.str(), "No ", 3 ) )
+	if (modelName.isEmpty() == FALSE &&
+	    strncmp(modelName.str(), "No ", 3))
 	{
-	 	WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
+		WW3DAssetManager* pMgr = W3DAssetManager::Get_Instance();
 		model = pMgr->Create_Render_Obj(modelName.str());
 		if (model)
 		{
 			const AABoxClass bbox = model->Get_Bounding_Box();
-//			Real height = bbox.Extent.Z;
+			//			Real height = bbox.Extent.Z;
 			const SphereClass sphere = model->Get_Bounding_Sphere();
-			Real dist = sphere.Radius*0.5;
+			Real dist = sphere.Radius * 0.5;
 			model->Set_Position(Vector3(-sphere.Center.X, -sphere.Center.Y, -sphere.Center.Z));
 
 			// Create reflection texture
-			TextureClass *objectTexture = DX8Wrapper::Create_Render_Target (PREVIEW_WIDTH, PREVIEW_HEIGHT);
+			TextureClass* objectTexture = DX8Wrapper::Create_Render_Target(PREVIEW_WIDTH, PREVIEW_HEIGHT);
 			if (!objectTexture)
 			{
 				model->Release_Ref();
@@ -222,21 +221,23 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 
 			// create the camera
 			Bool orthoCamera = false;
-			CameraClass *camera = NEW_REF( CameraClass, () );
+			CameraClass* camera = NEW_REF(CameraClass, ());
 			Matrix3D camTran;
-			camTran.Look_At(Vector3(dist*2,dist*2,dist),Vector3(0.0f, 0.0f, 0.0f),0);
-			camera->Set_Transform( camTran);
+			camTran.Look_At(Vector3(dist * 2, dist * 2, dist), Vector3(0.0f, 0.0f, 0.0f), 0);
+			camera->Set_Transform(camTran);
 
-			Vector2 minVec = Vector2( -1, -1 );
-			Vector2 maxVec = Vector2( +1, +1 );
-			camera->Set_View_Plane( minVec, maxVec );
-			camera->Set_Clip_Planes( 0.995f, 600.0f );
+			Vector2 minVec = Vector2(-1, -1);
+			Vector2 maxVec = Vector2(+1, +1);
+			camera->Set_View_Plane(minVec, maxVec);
+			camera->Set_Clip_Planes(0.995f, 600.0f);
 			if (orthoCamera)
-				camera->Set_Projection_Type( CameraClass::ORTHO );
+			{
+				camera->Set_Projection_Type(CameraClass::ORTHO);
+			}
 
 			// Clear the backbuffer
-			WW3D::Begin_Render(true,true,Vector3(0.5f,0.5f,0.5f));
-			//WW3D::Begin_Render(true,true,Vector3(1.0f,1.0f,1.0f));
+			WW3D::Begin_Render(true, true, Vector3(0.5f, 0.5f, 0.5f));
+			// WW3D::Begin_Render(true,true,Vector3(1.0f,1.0f,1.0f));
 
 			RenderInfoClass rinfo(*camera);
 			LightEnvironmentClass lightEnv;
@@ -248,10 +249,10 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			WW3D::End_Render(false);
 
 			// Change the rendertarget back to the main backbuffer
-			DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
+			DX8Wrapper::Set_Render_Target((IDirect3DSurface8*)nullptr);
 
-			SurfaceClass *surface = objectTexture->Get_Surface_Level();
-			UnsignedByte *data = saveSurface(surface->Peek_D3D_Surface());
+			SurfaceClass* surface = objectTexture->Get_Surface_Level();
+			UnsignedByte* data = saveSurface(surface->Peek_D3D_Surface());
 
 			REF_PTR_RELEASE(surface);
 
@@ -269,7 +270,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 
 void ObjectPreview::OnPaint()
 {
-	CPaintDC dc(this); // device context for painting
+	CPaintDC dc(this);    // device context for painting
 
 	CRect clientRect;
 	GetClientRect(&clientRect);
@@ -278,43 +279,44 @@ void ObjectPreview::OnPaint()
 	previewRect = clientRect;
 
 	CBrush brush;
-	brush.CreateSolidBrush(RGB(0,0,0));
+	brush.CreateSolidBrush(RGB(0, 0, 0));
 
-	UnsignedByte *pData;
+	UnsignedByte* pData;
 	pData = generatePreview(m_tTempl);
-	if (pData) {
+	if (pData)
+	{
 		DrawMyTexture(&dc, previewRect.top, previewRect.left, previewRect.Width(), previewRect.Height(), pData);
-	} else {
-		dc.FillSolidRect(&previewRect, RGB(128,128,128));
+	}
+	else
+	{
+		dc.FillSolidRect(&previewRect, RGB(128, 128, 128));
 	}
 	dc.FrameRect(&previewRect, &brush);
 }
 
-void ObjectPreview::DrawMyTexture(CDC *pDc, int top, int left, Int width, Int height, UnsignedByte *rgbData)
+void ObjectPreview::DrawMyTexture(CDC* pDc, int top, int left, Int width, Int height, UnsignedByte* rgbData)
 {
 	// Just blast about some dib bits.
 
 	LPBITMAPINFO pBI;
-//	long bytes = sizeof(BITMAPINFO);
- 	pBI = new BITMAPINFO;
+	//	long bytes = sizeof(BITMAPINFO);
+	pBI = new BITMAPINFO;
 	pBI->bmiHeader.biSize = sizeof(pBI->bmiHeader);
 	pBI->bmiHeader.biWidth = PREVIEW_WIDTH;
 	pBI->bmiHeader.biHeight = PREVIEW_HEIGHT; /* match display top left == 0,0 */
 	pBI->bmiHeader.biPlanes = 1;
 	pBI->bmiHeader.biBitCount = 24;
 	pBI->bmiHeader.biCompression = BI_RGB;
-	pBI->bmiHeader.biSizeImage = (PREVIEW_WIDTH*PREVIEW_HEIGHT)*(pBI->bmiHeader.biBitCount/8);
+	pBI->bmiHeader.biSizeImage = (PREVIEW_WIDTH * PREVIEW_HEIGHT) * (pBI->bmiHeader.biBitCount / 8);
 	pBI->bmiHeader.biXPelsPerMeter = 1000;
 	pBI->bmiHeader.biYPelsPerMeter = 1000;
 	pBI->bmiHeader.biClrUsed = 0;
 	pBI->bmiHeader.biClrImportant = 0;
 
 	//::Sleep(10);
-	//int val=::StretchDIBits(pDc->m_hDC, left, top, width, height, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, rgbData, pBI,
+	// int val=::StretchDIBits(pDc->m_hDC, left, top, width, height, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, rgbData, pBI,
 	//	DIB_RGB_COLORS, SRCCOPY);
-	/*int val=*/::StretchDIBits(pDc->m_hDC, left, top, width, height, PREVIEW_WIDTH/4, PREVIEW_HEIGHT/4, PREVIEW_WIDTH/2, PREVIEW_HEIGHT/2, rgbData, pBI,
-		DIB_RGB_COLORS, SRCCOPY);
-	delete(pBI);
+	/*int val=*/::StretchDIBits(pDc->m_hDC, left, top, width, height, PREVIEW_WIDTH / 4, PREVIEW_HEIGHT / 4, PREVIEW_WIDTH / 2, PREVIEW_HEIGHT / 2, rgbData, pBI,
+	                            DIB_RGB_COLORS, SRCCOPY);
+	delete (pBI);
 }
-
-

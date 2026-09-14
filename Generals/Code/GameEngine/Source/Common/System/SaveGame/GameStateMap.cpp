@@ -41,8 +41,7 @@
 #include "GameNetwork/GameInfo.h"
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-GameStateMap *TheGameStateMap = nullptr;
-
+GameStateMap* TheGameStateMap = nullptr;
 
 // METHODS ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,219 +49,193 @@ GameStateMap *TheGameStateMap = nullptr;
 // ------------------------------------------------------------------------------------------------
 GameStateMap::GameStateMap()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 GameStateMap::~GameStateMap()
 {
-
 	//
 	// clear the save directory of any temporary "scratch pad" maps that were extracted
 	// from any previously loaded save game files
 	//
 	clearScratchPadMaps();
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Embed the pristine map into the xfer stream */
 // ------------------------------------------------------------------------------------------------
-static void embedPristineMap( AsciiString map, Xfer *xfer )
+static void embedPristineMap(AsciiString map, Xfer* xfer)
 {
-
 	// open the map file
-	File *file = TheFileSystem->openFile( map.str(), File::READ | File::BINARY );
-	if( file == nullptr )
+	File* file = TheFileSystem->openFile(map.str(), File::READ | File::BINARY);
+	if (file == nullptr)
 	{
-
-		DEBUG_CRASH(( "embedPristineMap - Error opening source file '%s'", map.str() ));
+		DEBUG_CRASH(("embedPristineMap - Error opening source file '%s'", map.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// how big is the map file
-	Int fileSize = file->seek( 0, File::END );
+	Int fileSize = file->seek(0, File::END);
 
 	// rewind to beginning of file
-	file->seek( 0, File::START );
+	file->seek(0, File::START);
 
 	// allocate buffer big enough to hold the entire map file
-	char *buffer = new char[ fileSize ];
-	if( buffer == nullptr )
+	char* buffer = new char[fileSize];
+	if (buffer == nullptr)
 	{
-
-		DEBUG_CRASH(( "embedPristineMap - Unable to allocate buffer for file '%s'", map.str() ));
+		DEBUG_CRASH(("embedPristineMap - Unable to allocate buffer for file '%s'", map.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// copy the file to the buffer
-	if( file->read( buffer, fileSize ) != fileSize )
+	if (file->read(buffer, fileSize) != fileSize)
 	{
-
 		delete[] buffer;
 
-		DEBUG_CRASH(( "embedPristineMap - Error reading from file '%s'", map.str() ));
+		DEBUG_CRASH(("embedPristineMap - Error reading from file '%s'", map.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// close the BIG file
 	file->close();
 
 	// write the contents to the save file
-	DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupported xfer mode") );
+	DEBUG_ASSERTCRASH(xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupported xfer mode"));
 	xfer->beginBlock();
-	xfer->xferUser( buffer, fileSize );
+	xfer->xferUser(buffer, fileSize);
 	xfer->endBlock();
 
 	// delete the buffer
-	delete [] buffer;
-
+	delete[] buffer;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Embed an "in use" map into the xfer stream.  An "in use" map is one that has already
-	* been pulled out of a save game file and parked in a temporary file in the save directory */
+ * been pulled out of a save game file and parked in a temporary file in the save directory */
 // ------------------------------------------------------------------------------------------------
-static void embedInUseMap( AsciiString map, Xfer *xfer )
+static void embedInUseMap(AsciiString map, Xfer* xfer)
 {
-	FILE *fp = fopen( map.str(), "rb" );
+	FILE* fp = fopen(map.str(), "rb");
 
 	// sanity
-	if( fp == nullptr )
+	if (fp == nullptr)
 	{
-
-		DEBUG_CRASH(( "embedInUseMap - Unable to open file '%s'", map.str() ));
+		DEBUG_CRASH(("embedInUseMap - Unable to open file '%s'", map.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// how big is the file
-	fseek( fp, 0, SEEK_END );
-	Int fileSize = ftell( fp );
+	fseek(fp, 0, SEEK_END);
+	Int fileSize = ftell(fp);
 
 	// rewind file back to start
-	fseek( fp, 0, SEEK_SET );
+	fseek(fp, 0, SEEK_SET);
 
 	// allocate a buffer big enough for the entire file
-	char *buffer = new char[ fileSize ];
-	if( buffer == nullptr )
+	char* buffer = new char[fileSize];
+	if (buffer == nullptr)
 	{
-
-		DEBUG_CRASH(( "embedInUseMap - Unable to allocate buffer for file '%s'", map.str() ));
+		DEBUG_CRASH(("embedInUseMap - Unable to allocate buffer for file '%s'", map.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// read the entire file
-	if( fread( buffer, 1, fileSize, fp ) != fileSize )
+	if (fread(buffer, 1, fileSize, fp) != fileSize)
 	{
-
 		delete[] buffer;
 
-		DEBUG_CRASH(( "embedInUseMap - Error reading from file '%s'", map.str() ));
+		DEBUG_CRASH(("embedInUseMap - Error reading from file '%s'", map.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// embed file into xfer stream
 	xfer->beginBlock();
-	xfer->xferUser( buffer, fileSize );
+	xfer->xferUser(buffer, fileSize);
 	xfer->endBlock();
 
 	// close the file
-	fclose( fp );
+	fclose(fp);
 
 	// delete buffer
-	delete [] buffer;
-
+	delete[] buffer;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Extract the map from the xfer stream and save as a file with filename 'mapToSave' */
 // ------------------------------------------------------------------------------------------------
-static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
+static void extractAndSaveMap(AsciiString mapToSave, Xfer* xfer)
 {
 	UnsignedInt dataSize;
 
 	// open handle to output file
-	FILE *fp = fopen( mapToSave.str(), "w+b" );
-	if( fp == nullptr )
+	FILE* fp = fopen(mapToSave.str(), "w+b");
+	if (fp == nullptr)
 	{
-
-		DEBUG_CRASH(( "extractAndSaveMap - Unable to open file '%s'", mapToSave.str() ));
+		DEBUG_CRASH(("extractAndSaveMap - Unable to open file '%s'", mapToSave.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// read data size from file
 	dataSize = xfer->beginBlock();
 
 	// allocate buffer big enough for the entire map file
-	char *buffer = new char[ dataSize ];
-	if( buffer == nullptr )
+	char* buffer = new char[dataSize];
+	if (buffer == nullptr)
 	{
-
-		DEBUG_CRASH(( "extractAndSaveMap - Unable to allocate buffer for file '%s'", mapToSave.str() ));
+		DEBUG_CRASH(("extractAndSaveMap - Unable to allocate buffer for file '%s'", mapToSave.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// read map file
-	xfer->xferUser( buffer, dataSize );
+	xfer->xferUser(buffer, dataSize);
 
 	// write contents of buffer to new file
-	if( fwrite( buffer, 1, dataSize, fp ) != dataSize )
+	if (fwrite(buffer, 1, dataSize, fp) != dataSize)
 	{
-
 		delete[] buffer;
 
-		DEBUG_CRASH(( "extractAndSaveMap - Error writing to file '%s'", mapToSave.str() ));
+		DEBUG_CRASH(("extractAndSaveMap - Error writing to file '%s'", mapToSave.str()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// close the new file
-	fclose( fp );
+	fclose(fp);
 
 	// end of data block
 	xfer->endBlock();
 
 	// delete the buffer
-	delete [] buffer;
-
+	delete[] buffer;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 2: Now storing the game mode from logic. Storing that here cause TheGameLogic->startNewGame
-	*     needs to set up the player list based on it.
-	*/
+ * Version Info:
+ * 1: Initial version
+ * 2: Now storing the game mode from logic. Storing that here cause TheGameLogic->startNewGame
+ *     needs to set up the player list based on it.
+ */
 // ------------------------------------------------------------------------------------------------
-void GameStateMap::xfer( Xfer *xfer )
+void GameStateMap::xfer(Xfer* xfer)
 {
 	// version
 	const XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// get save game info
-	SaveGameInfo *saveGameInfo = TheGameState->getSaveGameInfo();
+	SaveGameInfo* saveGameInfo = TheGameState->getSaveGameInfo();
 
 	//
 	// map filename, for purposes of saving we will always be saving a with a map filename
 	// that refers to map in the save directory so we must always save a filename into
 	// the file that is in the save directory
 	//
-	Bool firstSave = FALSE;  // TRUE if we haven't yet saved a pristine load of a new map
-	if( xfer->getXferMode() == XFER_SAVE )
+	Bool firstSave = FALSE;    // TRUE if we haven't yet saved a pristine load of a new map
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		AsciiString mapLeafName = TheGameState->getMapLeafName(TheGlobalData->m_mapName);
 
 		// construct filename to map in the save directory
@@ -272,7 +245,7 @@ void GameStateMap::xfer( Xfer *xfer )
 		// it as just "Save\filename", not a full path.
 		{
 			AsciiString tmp = TheGameState->realMapPathToPortableMapPath(saveGameInfo->saveGameMapName);
-			xfer->xferAsciiString( &tmp );
+			xfer->xferAsciiString(&tmp);
 		}
 
 		//
@@ -282,7 +255,6 @@ void GameStateMap::xfer( Xfer *xfer )
 		//
 		if (!TheGameState->isInSaveDirectory(TheGlobalData->m_mapName))
 		{
-
 			// copy the pristine name
 			saveGameInfo->pristineMapName = TheGlobalData->m_mapName;
 
@@ -297,7 +269,6 @@ void GameStateMap::xfer( Xfer *xfer )
 			// or from the temporary map extracted to the save directory from a load
 			//
 			firstSave = TRUE;
-
 		}
 
 		// save the pristine name
@@ -305,30 +276,28 @@ void GameStateMap::xfer( Xfer *xfer )
 		// it as just "Save\filename", not a full path.
 		{
 			AsciiString tmp = TheGameState->realMapPathToPortableMapPath(saveGameInfo->pristineMapName);
-			xfer->xferAsciiString( &tmp );
+			xfer->xferAsciiString(&tmp);
 		}
 
 		if (currentVersion >= 2)
 		{
 			// save the game mode.
 			Int gameMode = (Int)TheGameLogic->getGameMode();
-			xfer->xferInt( &gameMode);
+			xfer->xferInt(&gameMode);
 		}
-
 	}
 	else
 	{
-
 		// read the save game map name
 		AsciiString tmp;
-		xfer->xferAsciiString( &tmp );
+		xfer->xferAsciiString(&tmp);
 
 		saveGameInfo->saveGameMapName = TheGameState->portableMapPathToRealMapPath(tmp);
 
 		if (!TheGameState->isInSaveDirectory(saveGameInfo->saveGameMapName))
 		{
 			DEBUG_CRASH(("GameState::xfer - The map filename read from the file '%s' is not in the SAVE directory, but should be",
-												 saveGameInfo->saveGameMapName.str()) );
+			             saveGameInfo->saveGameMapName.str()));
 			throw SC_INVALID_DATA;
 		}
 
@@ -336,7 +305,7 @@ void GameStateMap::xfer( Xfer *xfer )
 		TheWritableGlobalData->m_mapName = saveGameInfo->saveGameMapName;
 
 		// read the pristine map filename
-		xfer->xferAsciiString( &saveGameInfo->pristineMapName );
+		xfer->xferAsciiString(&saveGameInfo->pristineMapName);
 		saveGameInfo->pristineMapName = TheGameState->portableMapPathToRealMapPath(saveGameInfo->pristineMapName);
 
 		if (currentVersion >= 2)
@@ -346,45 +315,36 @@ void GameStateMap::xfer( Xfer *xfer )
 			xfer->xferInt(&gameMode);
 			TheGameLogic->setGameMode((GameMode)gameMode);
 		}
-
 	}
 
 	// map data
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		//
 		// if this is a first save from a pristine map load, we need to copy the pristine
 		// map into the save game file
 		//
-		if( firstSave == TRUE )
+		if (firstSave == TRUE)
 		{
-
-			embedPristineMap( saveGameInfo->pristineMapName, xfer );
-
+			embedPristineMap(saveGameInfo->pristineMapName, xfer);
 		}
 		else
 		{
-
 			//
 			// this is *NOT* a first save from a pristine map, just read the map file
 			// that was extracted from the save game file during the last load and embedd
 			// that into the save game file
 			//
-			embedInUseMap( saveGameInfo->saveGameMapName, xfer );
-
+			embedInUseMap(saveGameInfo->saveGameMapName, xfer);
 		}
-
 	}
 	else
 	{
-
 		//
 		// take the embedded map file out of the save file, and save as its own .map file
 		// in the save directory temporarily
 		//
-		extractAndSaveMap( saveGameInfo->saveGameMapName, xfer );
-
+		extractAndSaveMap(saveGameInfo->saveGameMapName, xfer);
 	}
 
 	//
@@ -397,8 +357,8 @@ void GameStateMap::xfer( Xfer *xfer )
 	// that we will load from the save file
 	//
 	ObjectID highObjectID = TheGameLogic->getObjectIDCounter();
-	xfer->xferObjectID( &highObjectID );
-	TheGameLogic->setObjectIDCounter( highObjectID );
+	xfer->xferObjectID(&highObjectID);
+	TheGameLogic->setObjectIDCounter(highObjectID);
 
 	//
 	// it is also equally important to xfer the drawable id counter early in the load process
@@ -408,18 +368,22 @@ void GameStateMap::xfer( Xfer *xfer )
 	// which then had its ID transferred in from the save file
 	//
 	DrawableID highDrawableID = TheGameClient->getDrawableIDCounter();
-	xfer->xferDrawableID( &highDrawableID );
-	TheGameClient->setDrawableIDCounter( highDrawableID );
+	xfer->xferDrawableID(&highDrawableID);
+	TheGameClient->setDrawableIDCounter(highDrawableID);
 
-	if (TheGameLogic->getGameMode()==GAME_SKIRMISH) {
-		if (TheSkirmishGameInfo==nullptr) {
+	if (TheGameLogic->getGameMode() == GAME_SKIRMISH)
+	{
+		if (TheSkirmishGameInfo == nullptr)
+		{
 			TheSkirmishGameInfo = NEW SkirmishGameInfo;
 			TheSkirmishGameInfo->init();
 			TheSkirmishGameInfo->clearSlotList();
 			TheSkirmishGameInfo->reset();
 		}
 		xfer->xferSnapshot(TheSkirmishGameInfo);
-	} else {
+	}
+	else
+	{
 		delete TheSkirmishGameInfo;
 		TheSkirmishGameInfo = nullptr;
 	}
@@ -429,63 +393,61 @@ void GameStateMap::xfer( Xfer *xfer )
 	// things in the map file that don't don't change (terrain, triggers, teams, script
 	// definitions) etc
 	//
-	if( xfer->getXferMode() == XFER_LOAD ) {
-		TheGameLogic->startNewGame( TRUE );
+	if (xfer->getXferMode() == XFER_LOAD)
+	{
+		TheGameLogic->startNewGame(TRUE);
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Delete any scratch pad maps in the save directory.  Scratch pad maps are maps that
-	* were embedded in previously loaded save game files and temporarily written out as
-	* their own file so that those map files could be loaded as a part of the load game
-	* process */
+ * were embedded in previously loaded save game files and temporarily written out as
+ * their own file so that those map files could be loaded as a part of the load game
+ * process */
 // ------------------------------------------------------------------------------------------------
 void GameStateMap::clearScratchPadMaps()
 {
-
 	// remember the current directory
-	char currentDirectory[ _MAX_PATH ];
-	GetCurrentDirectory( _MAX_PATH, currentDirectory );
+	char currentDirectory[_MAX_PATH];
+	GetCurrentDirectory(_MAX_PATH, currentDirectory);
 
 	// switch into the save directory
-	SetCurrentDirectory( TheGameState->getSaveDirectory().str() );
+	SetCurrentDirectory(TheGameState->getSaveDirectory().str());
 
 	// iterate all items in the directory
 	AsciiString fileToDelete;
-	WIN32_FIND_DATA item;  // search item
-	HANDLE hFile = INVALID_HANDLE_VALUE;  // handle for search resources
+	WIN32_FIND_DATA item;    // search item
+	HANDLE hFile = INVALID_HANDLE_VALUE;    // handle for search resources
 	Bool done = FALSE;
 	Bool first = TRUE;
-	while( done == FALSE )
+	while (done == FALSE)
 	{
-
 		// first, clear flag for deleting file
 		fileToDelete.clear();
 
 		// if our first time through we need to start the search
-		if( first )
+		if (first)
 		{
-
 			// start search
-			hFile = FindFirstFile( "*", &item );
-			if( hFile == INVALID_HANDLE_VALUE )
+			hFile = FindFirstFile("*", &item);
+			if (hFile == INVALID_HANDLE_VALUE)
+			{
 				return;
+			}
 
 			// we are no longer on our first item
 			first = FALSE;
-
 		}
 
 		// see if this is a file, and therefore a possible .map file
-		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+		if (!(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-
 			// see if there is a ".map" at end of this filename
-			Char *c = strrchr( item.cFileName, '.' );
-			if( c && stricmp( c, ".map" ) == 0 )
-				fileToDelete.set( item.cFileName );  // we want to delete this one
-
+			Char* c = strrchr(item.cFileName, '.');
+			if (c && stricmp(c, ".map") == 0)
+			{
+				fileToDelete.set(item.cFileName);    // we want to delete this one
+			}
 		}
 
 		//
@@ -493,19 +455,21 @@ void GameStateMap::clearScratchPadMaps()
 		// to structure things this way so that the find next occurs before the file
 		// delete, but it seems more correct to do so
 		//
-		if( FindNextFile( hFile, &item ) == 0 )
+		if (FindNextFile(hFile, &item) == 0)
+		{
 			done = TRUE;
+		}
 
 		// delete file if set
-		if( fileToDelete.isEmpty() == FALSE )
-			DeleteFile( fileToDelete.str() );
-
+		if (fileToDelete.isEmpty() == FALSE)
+		{
+			DeleteFile(fileToDelete.str());
+		}
 	}
 
 	// close search resources
-	FindClose( hFile );
+	FindClose(hFile);
 
 	// restore our directory to the current directory
-	SetCurrentDirectory( currentDirectory );
-
+	SetCurrentDirectory(currentDirectory);
 }

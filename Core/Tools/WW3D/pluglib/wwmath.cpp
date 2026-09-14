@@ -34,14 +34,13 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "wwmath.h"
 #include <stdlib.h>
 
 /*
 **
 */
-float		WWMath::Random_Float()
+float WWMath::Random_Float()
 {
 	return ((float)(rand() & 0xFFF)) / (float)(0xFFF);
 }
