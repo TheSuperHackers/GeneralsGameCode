@@ -22,4 +22,4 @@ namespace addon
 {
 extern Bool HasFullviewportDat();
 
-} // namespace addon
+}    // namespace addon

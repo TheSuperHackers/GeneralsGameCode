@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Energy.h"
 #include "Common/Player.h"
@@ -52,7 +52,6 @@
 
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
-
 
 //-----------------------------------------------------------------------------
 Energy::Energy()
@@ -66,9 +65,9 @@ Energy::Energy()
 //-----------------------------------------------------------------------------
 Int Energy::getProduction() const
 {
-	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
+	if (TheGameLogic->getFrame() < m_powerSabotagedTillFrame)
 	{
-		//Power sabotaged, therefore no power.
+		// Power sabotaged, therefore no power.
 		return 0;
 	}
 	return m_energyProduction;
@@ -79,14 +78,16 @@ Real Energy::getEnergySupplyRatio() const
 {
 	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
 
-	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
+	if (TheGameLogic->getFrame() < m_powerSabotagedTillFrame)
 	{
-		//Power sabotaged, therefore no power, no ratio.
+		// Power sabotaged, therefore no power, no ratio.
 		return 0.0f;
 	}
 
 	if (m_energyConsumption == 0)
+	{
 		return (Real)m_energyProduction;
+	}
 
 	return (Real)m_energyProduction / (Real)m_energyConsumption;
 }
@@ -94,9 +95,9 @@ Real Energy::getEnergySupplyRatio() const
 //-------------------------------------------------------------------------------------------------
 Bool Energy::hasSufficientPower() const
 {
-	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
+	if (TheGameLogic->getFrame() < m_powerSabotagedTillFrame)
 	{
-		//Power sabotaged, therefore no power.
+		// Power sabotaged, therefore no power.
 		return FALSE;
 	}
 	return m_energyProduction >= m_energyConsumption;
@@ -105,21 +106,31 @@ Bool Energy::hasSufficientPower() const
 //-------------------------------------------------------------------------------------------------
 void Energy::adjustPower(Int powerDelta, Bool adding)
 {
-	if (powerDelta == 0) {
+	if (powerDelta == 0)
+	{
 		return;
 	}
 
-	if (powerDelta > 0) {
-		if (adding) {
+	if (powerDelta > 0)
+	{
+		if (adding)
+		{
 			addProduction(powerDelta);
-		} else {
+		}
+		else
+		{
 			addProduction(-powerDelta);
 		}
-	} else {
+	}
+	else
+	{
 		// Seems a little odd, however, consumption is reversed. Negative power is positive consumption.
-		if (adding) {
+		if (adding)
+		{
 			addConsumption(-powerDelta);
-		} else {
+		}
+		else
+		{
 			addConsumption(powerDelta);
 		}
 	}
@@ -128,100 +139,110 @@ void Energy::adjustPower(Int powerDelta, Bool adding)
 //-------------------------------------------------------------------------------------------------
 /** new 'obj' will now add/subtract from this energy construct */
 //-------------------------------------------------------------------------------------------------
-void Energy::objectEnteringInfluence( Object *obj )
+void Energy::objectEnteringInfluence(Object* obj)
 {
-
 	// sanity
-	if( obj == nullptr )
+	if (obj == nullptr)
+	{
 		return;
+	}
 
 	// get the amount of energy this object produces or consumes
 	Int energy = obj->getTemplate()->getEnergyProduction();
 
 	// adjust energy
-	if( energy < 0 )
-		addConsumption( -energy );
-	else if( energy > 0 )
-		addProduction( energy );
+	if (energy < 0)
+	{
+		addConsumption(-energy);
+	}
+	else if (energy > 0)
+	{
+		addProduction(energy);
+	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
-										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
-										 m_energyProduction, m_energyConsumption) );
-
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0,
+	                  ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
+	                   m_energyProduction, m_energyConsumption));
 }
 
 //-------------------------------------------------------------------------------------------------
 /** 'obj' will now no longer add/subtrack from this energy construct */
 //-------------------------------------------------------------------------------------------------
-void Energy::objectLeavingInfluence( Object *obj )
+void Energy::objectLeavingInfluence(Object* obj)
 {
-
 	// sanity
-	if( obj == nullptr )
+	if (obj == nullptr)
+	{
 		return;
+	}
 
 	// get the amount of energy this object produces or consumes
 	Int energy = obj->getTemplate()->getEnergyProduction();
 
 	// adjust energy
-	if( energy < 0 )
-		addConsumption( energy );
-	else if( energy > 0 )
-		addProduction( -energy );
+	if (energy < 0)
+	{
+		addConsumption(energy);
+	}
+	else if (energy > 0)
+	{
+		addProduction(-energy);
+	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
-										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
-										 m_energyProduction, m_energyConsumption) );
-
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0,
+	                  ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
+	                   m_energyProduction, m_energyConsumption));
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Adds an energy bonus to the player's pool of energy when the "Control Rods" upgrade
-		is made to the American Cold Fusion Plant */
+    is made to the American Cold Fusion Plant */
 //-------------------------------------------------------------------------------------------------
-void Energy::addPowerBonus( Object *obj )
+void Energy::addPowerBonus(Object* obj)
 {
-
 	// sanity
-	if( obj == nullptr )
+	if (obj == nullptr)
+	{
 		return;
+	}
 
 	DEBUG_ASSERTCRASH(!obj->isDisabled(), ("power bonus should not be added to disabled power plant"));
 
 	addProduction(obj->getTemplate()->getEnergyBonus());
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
-										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
-										 m_energyProduction, m_energyConsumption) );
-
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0,
+	                  ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
+	                   m_energyProduction, m_energyConsumption));
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Removed an energy bonus */
 // ------------------------------------------------------------------------------------------------
-void Energy::removePowerBonus( Object *obj )
+void Energy::removePowerBonus(Object* obj)
 {
-
 	// sanity
-	if( obj == nullptr )
+	if (obj == nullptr)
+	{
 		return;
+	}
 
 	// TheSuperHackers @bugfix Caball009 14/11/2025 Don't remove power bonus for disabled power plants.
 #if !RETAIL_COMPATIBLE_CRC
-	if ( obj->isDisabled() )
+	if (obj->isDisabled())
+	{
 		return;
+	}
 #endif
 
-	addProduction( -obj->getTemplate()->getEnergyBonus() );
+	addProduction(-obj->getTemplate()->getEnergyBonus());
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
-										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
-										 m_energyProduction, m_energyConsumption) );
-
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0,
+	                  ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
+	                   m_energyProduction, m_energyConsumption));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -232,12 +253,14 @@ void Energy::addProduction(Int amt)
 {
 	m_energyProduction += amt;
 
-	if( m_owner == nullptr )
+	if (m_owner == nullptr)
+	{
 		return;
+	}
 
 	// A repeated Brownout signal does nothing bad, and we need to handle more than just edge cases.
 	// Like low power, now even more low power, refresh disable.
-	m_owner->onPowerBrownOutChange( !hasSufficientPower() );
+	m_owner->onPowerBrownOutChange(!hasSufficientPower());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -245,57 +268,62 @@ void Energy::addConsumption(Int amt)
 {
 	m_energyConsumption += amt;
 
-	if( m_owner == nullptr )
+	if (m_owner == nullptr)
+	{
 		return;
+	}
 
-	m_owner->onPowerBrownOutChange( !hasSufficientPower() );
+	m_owner->onPowerBrownOutChange(!hasSufficientPower());
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void Energy::crc( Xfer *xfer )
+void Energy::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void Energy::xfer( Xfer *xfer )
+void Energy::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// It is actually incorrect to save these, as they are reconstructed when the buildings are loaded
 	// I need to version though so old games will load wrong rather than crashing
 
 	// production
-	if( version < 2 )
-		xfer->xferInt( &m_energyProduction );
+	if (version < 2)
+	{
+		xfer->xferInt(&m_energyProduction);
+	}
 
 	// consumption
-	if( version < 2 )
-		xfer->xferInt( &m_energyConsumption );
+	if (version < 2)
+	{
+		xfer->xferInt(&m_energyConsumption);
+	}
 
 	// owning player index
 	Int owningPlayerIndex;
-	if( xfer->getXferMode() == XFER_SAVE )
-		owningPlayerIndex = m_owner->getPlayerIndex();
-	xfer->xferInt( &owningPlayerIndex );
-	m_owner = ThePlayerList->getNthPlayer( owningPlayerIndex );
-
-	//Sabotage
-	if( version >= 3 )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-		xfer->xferUnsignedInt( &m_powerSabotagedTillFrame );
+		owningPlayerIndex = m_owner->getPlayerIndex();
 	}
+	xfer->xferInt(&owningPlayerIndex);
+	m_owner = ThePlayerList->getNthPlayer(owningPlayerIndex);
 
+	// Sabotage
+	if (version >= 3)
+	{
+		xfer->xferUnsignedInt(&m_powerSabotagedTillFrame);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -303,5 +331,4 @@ void Energy::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Energy::loadPostProcess()
 {
-
 }

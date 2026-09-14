@@ -28,24 +28,24 @@
 
 class BezFwdIterator
 {
-	protected:
-		Int mStep;
-		Int mStepsDesired;
+protected:
+	Int mStep;
+	Int mStepsDesired;
 
-		BezierSegment mBezSeg;
-		Coord3D mCurrPoint;
+	BezierSegment mBezSeg;
+	Coord3D mCurrPoint;
 
-		Coord3D mDq;	// First Derivative
-		Coord3D mDDq;	// Second Derivative
-		Coord3D mDDDq;	// Third Derivative
+	Coord3D mDq;    // First Derivative
+	Coord3D mDDq;    // Second Derivative
+	Coord3D mDDDq;    // Third Derivative
 
-	public:
-		BezFwdIterator();
-		BezFwdIterator(Int stepsDesired, const BezierSegment *bezSeg);
+public:
+	BezFwdIterator();
+	BezFwdIterator(Int stepsDesired, const BezierSegment* bezSeg);
 
-		void start();
-		Bool done();
-		const Coord3D& getCurrent() const;
+	void start();
+	Bool done();
+	const Coord3D& getCurrent() const;
 
-		void next();
+	void next();
 };

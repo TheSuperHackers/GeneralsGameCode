@@ -40,11 +40,9 @@
 #include "WWLib/Vector.h"
 #include "WWLib/bittype.h"
 
-
 // Singleton instances
 extern class StaticAudioSaveLoadClass _StaticAudioSaveLoadSubsystem;
 extern class DynamicAudioSaveLoadClass _DynamicAudioSaveLoadSubsystem;
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -54,31 +52,28 @@ extern class DynamicAudioSaveLoadClass _DynamicAudioSaveLoadSubsystem;
 class StaticAudioSaveLoadClass : public SaveLoadSubSystemClass
 {
 public:
-
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	StaticAudioSaveLoadClass ()				{ }
-	virtual ~StaticAudioSaveLoadClass () override { }
+	StaticAudioSaveLoadClass() {}
+	virtual ~StaticAudioSaveLoadClass() override {}
 
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual uint32				Chunk_ID () const override;
+	virtual uint32 Chunk_ID() const override;
 
 protected:
-
 	//////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////
-	virtual bool				Contains_Data() const override;
-	virtual bool				Save (ChunkSaveClass &csave) override;
-	virtual bool				Load (ChunkLoadClass &cload) override;
-	virtual const char*		Name() const override { return "StaticAudioSaveLoadClass"; }
+	virtual bool Contains_Data() const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
+	virtual const char* Name() const override { return "StaticAudioSaveLoadClass"; }
 };
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -88,30 +83,28 @@ protected:
 class DynamicAudioSaveLoadClass : public SaveLoadSubSystemClass
 {
 public:
-
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	DynamicAudioSaveLoadClass ()				{ }
-	virtual ~DynamicAudioSaveLoadClass () override { }
+	DynamicAudioSaveLoadClass() {}
+	virtual ~DynamicAudioSaveLoadClass() override {}
 
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual uint32				Chunk_ID () const override;
+	virtual uint32 Chunk_ID() const override;
 
 protected:
-
 	//////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////
-	virtual bool				Contains_Data() const override;
-	virtual bool				Save (ChunkSaveClass &csave) override;
-	virtual bool				Load (ChunkLoadClass &cload) override;
-	virtual const char*		Name() const override { return "DynamicAudioSaveLoadClass"; }
+	virtual bool Contains_Data() const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
+	virtual const char* Name() const override { return "DynamicAudioSaveLoadClass"; }
 
-	//bool							Save_Micro_Chunks (ChunkSaveClass &csave);
-	//bool							Load_Micro_Chunks (ChunkLoadClass &cload);
+	// bool							Save_Micro_Chunks (ChunkSaveClass &csave);
+	// bool							Load_Micro_Chunks (ChunkLoadClass &cload);
 };

@@ -27,26 +27,26 @@
 class DX8Backend : public IRenderBackend
 {
 public:
-    static DX8Backend *Create(void * window, bool lite);
+	static DX8Backend* Create(void* window, bool lite);
 
-    virtual ~DX8Backend() override;
+	virtual ~DX8Backend() override;
 
-    virtual void Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit) override;
+	virtual void Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit) override;
 
-    virtual void Begin_Scene() override;
-    virtual void End_Scene(bool flip_frame) override;
-    virtual void Flip_To_Primary() override;
-    virtual void Clear(bool clear_color, bool clear_z_stencil,
-                       const Vector3 & color,
-                       float dest_alpha, float z, unsigned int stencil) override;
-    virtual void Set_Viewport(const RenderBackendViewport & viewport) override;
-    virtual void Invalidate_Cached_Render_States() override;
+	virtual void Begin_Scene() override;
+	virtual void End_Scene(bool flip_frame) override;
+	virtual void Flip_To_Primary() override;
+	virtual void Clear(bool clear_color, bool clear_z_stencil,
+	                   const Vector3& color,
+	                   float dest_alpha, float z, unsigned int stencil) override;
+	virtual void Set_Viewport(const RenderBackendViewport& viewport) override;
+	virtual void Invalidate_Cached_Render_States() override;
 
-    virtual void Set_Ambient(const Vector3 & color) override;
-    virtual void Set_Light_Environment(LightEnvironmentClass * light_env) override;
+	virtual void Set_Ambient(const Vector3& color) override;
+	virtual void Set_Light_Environment(LightEnvironmentClass* light_env) override;
 
 private:
-    explicit DX8Backend(bool lite);
+	explicit DX8Backend(bool lite);
 
-    bool Lite;
+	bool Lite;
 };

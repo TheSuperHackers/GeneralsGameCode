@@ -29,7 +29,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/ThingFactory.h"
@@ -48,7 +48,7 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-DamageFXStore *TheDamageFXStore = nullptr;					///< the DamageFX store definition
+DamageFXStore* TheDamageFXStore = nullptr;    ///< the DamageFX store definition
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ DamageFXStore *TheDamageFXStore = nullptr;					///< the DamageFX store definitio
 DamageFX::DamageFX()
 {
 	// not necessary.
-	//clear();
+	// clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -101,18 +101,18 @@ void DamageFX::doDamageFX(DamageType t, Real damageAmount, const Object* source,
 ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const Object* source) const
 {
 	/*
-		if damage is zero, never do damage fx. this is by design, since "zero" damage can happen
-		with some special weapons, like the battleship, which is a "faux" weapon that never does damage.
-		if you really need to change this for some reason, consider carefully... (srj)
+	  if damage is zero, never do damage fx. this is by design, since "zero" damage can happen
+	  with some special weapons, like the battleship, which is a "faux" weapon that never does damage.
+	  if you really need to change this for some reason, consider carefully... (srj)
 	*/
 	if (damageAmount == 0.0f)
+	{
 		return nullptr;
+	}
 
 	const DFX& dfx = m_dfx[t][source ? source->getVeterancyLevel() : LEVEL_REGULAR];
 	ConstFXListPtr fx =
-		damageAmount >= dfx.m_amountForMajorFX ?
-		dfx.m_majorDamageFXList :
-		dfx.m_minorDamageFXList;
+	  damageAmount >= dfx.m_amountForMajorFX ? dfx.m_majorDamageFXList : dfx.m_minorDamageFXList;
 
 	return fx;
 }
@@ -120,30 +120,28 @@ ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const 
 //-------------------------------------------------------------------------------------------------
 const FieldParse* DamageFX::getFieldParse() const
 {
-	static const FieldParse myFieldParse[] =
-	{
-		{ "AmountForMajorFX",						parseAmount,			nullptr, 0 },
-		{ "MajorFX",										parseMajorFXList,	nullptr, 0 },
-		{ "MinorFX",										parseMinorFXList,	nullptr, 0 },
-		{ "ThrottleTime",								parseTime,				nullptr, 0 },
-		{ "VeterancyAmountForMajorFX",	parseAmount,			TheVeterancyNames, 0 },
-		{ "VeterancyMajorFX",						parseMajorFXList,	TheVeterancyNames, 0 },
-		{ "VeterancyMinorFX",						parseMinorFXList,	TheVeterancyNames, 0 },
-		{ "VeterancyThrottleTime",			parseTime,				TheVeterancyNames, 0 },
-		{ nullptr, nullptr, nullptr,0 }
+	static const FieldParse myFieldParse[] = {
+		{ "AmountForMajorFX", parseAmount, nullptr, 0 },
+		{ "MajorFX", parseMajorFXList, nullptr, 0 },
+		{ "MinorFX", parseMinorFXList, nullptr, 0 },
+		{ "ThrottleTime", parseTime, nullptr, 0 },
+		{ "VeterancyAmountForMajorFX", parseAmount, TheVeterancyNames, 0 },
+		{ "VeterancyMajorFX", parseMajorFXList, TheVeterancyNames, 0 },
+		{ "VeterancyMinorFX", parseMinorFXList, TheVeterancyNames, 0 },
+		{ "VeterancyThrottleTime", parseTime, TheVeterancyNames, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	return myFieldParse;
 }
 
 //-------------------------------------------------------------------------------------------Static
 static void parseCommonStuff(
-	INI* ini,
-	ConstCharPtrArray names,
-	VeterancyLevel& vetFirst,
-	VeterancyLevel& vetLast,
-	DamageType& damageFirst,
-	DamageType& damageLast
-)
+  INI* ini,
+  ConstCharPtrArray names,
+  VeterancyLevel& vetFirst,
+  VeterancyLevel& vetLast,
+  DamageType& damageFirst,
+  DamageType& damageLast)
 {
 	if (names)
 	{
@@ -170,7 +168,7 @@ static void parseCommonStuff(
 }
 
 //-------------------------------------------------------------------------------------------Static
-/*static*/ void DamageFX::parseAmount( INI* ini, void* instance, void* /*store*/, const void* userData )
+/*static*/ void DamageFX::parseAmount(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	DamageFX* self = (DamageFX*)instance;
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
@@ -191,7 +189,7 @@ static void parseCommonStuff(
 }
 
 //-------------------------------------------------------------------------------------------Static
-/*static*/ void DamageFX::parseMajorFXList( INI* ini, void* instance, void* /*store*/, const void* userData )
+/*static*/ void DamageFX::parseMajorFXList(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	DamageFX* self = (DamageFX*)instance;
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
@@ -213,7 +211,7 @@ static void parseCommonStuff(
 }
 
 //-------------------------------------------------------------------------------------------Static
-/*static*/ void DamageFX::parseMinorFXList( INI* ini, void* instance, void* /*store*/, const void* userData )
+/*static*/ void DamageFX::parseMinorFXList(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	DamageFX* self = (DamageFX*)instance;
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
@@ -235,7 +233,7 @@ static void parseCommonStuff(
 }
 
 //-------------------------------------------------------------------------------------------Static
-/*static*/ void DamageFX::parseTime( INI* ini, void* instance, void* /*store*/, const void* userData )
+/*static*/ void DamageFX::parseTime(INI* ini, void* instance, void* /*store*/, const void* userData)
 {
 	DamageFX* self = (DamageFX*)instance;
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
@@ -272,7 +270,7 @@ DamageFXStore::~DamageFXStore()
 }
 
 //-------------------------------------------------------------------------------------------------
-const DamageFX *DamageFXStore::findDamageFX(NameKeyType namekey) const
+const DamageFX* DamageFXStore::findDamageFX(NameKeyType namekey) const
 {
 	DamageFXMap::const_iterator it = m_dfxmap.find(namekey);
 	if (it == m_dfxmap.end())
@@ -286,13 +284,13 @@ const DamageFX *DamageFXStore::findDamageFX(NameKeyType namekey) const
 }
 
 //-------------------------------------------------------------------------------------------------
-const DamageFX *DamageFXStore::findDamageFX(const AsciiString& name) const
+const DamageFX* DamageFXStore::findDamageFX(const AsciiString& name) const
 {
 	return findDamageFX(TheNameKeyGenerator->nameToKey(name));
 }
 
 //-------------------------------------------------------------------------------------------------
-const DamageFX *DamageFXStore::findDamageFX(const char* name) const
+const DamageFX* DamageFXStore::findDamageFX(const char* name) const
 {
 	return findDamageFX(TheNameKeyGenerator->nameToKey(name));
 }
@@ -315,8 +313,7 @@ void DamageFXStore::update()
 //-------------------------------------------------------------------------------------------------
 /*static */ void DamageFXStore::parseDamageFXDefinition(INI* ini)
 {
-
-	const char *c = ini->getNextToken();
+	const char* c = ini->getNextToken();
 	NameKeyType key = TheNameKeyGenerator->nameToKey(c);
 	DamageFX& dfx = TheDamageFXStore->m_dfxmap[key];
 	dfx.clear();

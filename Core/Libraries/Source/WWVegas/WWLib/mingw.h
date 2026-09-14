@@ -38,7 +38,7 @@
 **	Define it to match visualc.h and watcom.h
 */
 #ifndef M_1_SQRTPI
-#define M_1_SQRTPI  0.564189583547756286948
+#define M_1_SQRTPI 0.564189583547756286948
 #endif
 
 /*
@@ -47,7 +47,7 @@
 **	Create an alias for compatibility
 */
 #ifndef M_SQRT_2
-#define M_SQRT_2    M_SQRT1_2
+#define M_SQRT_2 M_SQRT1_2
 #endif
 
 /*

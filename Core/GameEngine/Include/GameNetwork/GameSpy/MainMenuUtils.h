@@ -34,10 +34,10 @@ void StopAsyncDNSCheck();
 void StartPatchCheck();
 void CancelPatchCheckCallback();
 void StartDownloadingPatches();
-void HandleCanceledDownload( Bool resetDropDown = TRUE );
+void HandleCanceledDownload(Bool resetDropDown = TRUE);
 
 #if RTS_GENERALS
-enum OverallStatsPeriod CPP_11(: Int)
+enum OverallStatsPeriod CPP_11( : Int)
 {
 	STATS_TODAY = 0,
 	STATS_YESTERDAY,
@@ -56,10 +56,10 @@ struct OverallStats
 
 void CheckOverallStats();
 #if RTS_GENERALS
-void HandleOverallStats( const OverallStats& USA, const OverallStats& China, const OverallStats& GLA );
+void HandleOverallStats(const OverallStats& USA, const OverallStats& China, const OverallStats& GLA);
 #else
-void HandleOverallStats( const char* szHTTPStats, unsigned len );
+void HandleOverallStats(const char* szHTTPStats, unsigned len);
 #endif
 
 void CheckNumPlayersOnline();
-void HandleNumPlayersOnline( Int numPlayersOnline );
+void HandleNumPlayersOnline(Int numPlayersOnline);

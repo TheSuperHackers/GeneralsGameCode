@@ -38,28 +38,34 @@ class AsciiString;
 
 //-------------------------------------------------------------------------------------------------
 /*
-	BitFlags is a wrapper class that exists primarily because of a flaw in std::bitset<>.
-	Although quite useful, it has horribly non-useful constructor, which (1) don't let
-	us initialize stuff in useful ways, and (2) provide a default constructor that implicitly
-	converts ints into bitsets in a "wrong" way (ie, it treats the int as a mask, not an index).
-	So we wrap to correct this, but leave the bitset "exposed" so that we can use all the non-ctor
-	functions on it directly (since it doesn't overload operator= to do the "wrong" thing, strangely enough)
+  BitFlags is a wrapper class that exists primarily because of a flaw in std::bitset<>.
+  Although quite useful, it has horribly non-useful constructor, which (1) don't let
+  us initialize stuff in useful ways, and (2) provide a default constructor that implicitly
+  converts ints into bitsets in a "wrong" way (ie, it treats the int as a mask, not an index).
+  So we wrap to correct this, but leave the bitset "exposed" so that we can use all the non-ctor
+  functions on it directly (since it doesn't overload operator= to do the "wrong" thing, strangely enough)
 */
 template <size_t NUMBITS, typename TAG>
 class BitFlags
 {
 private:
-	std::bitset<NUMBITS>				m_bits;
+	std::bitset<NUMBITS> m_bits;
 
 public:
 	CPP_11(static constexpr size_t NumBits = NUMBITS);
 	static const char* const s_bitNameList[];
 
 	/*
-		just a little syntactic sugar so that there is no "foo = 0" compatible constructor
+	  just a little syntactic sugar so that there is no "foo = 0" compatible constructor
 	*/
-	enum BogusInitType { kInit };
-	enum InitSetAllType { kInitSetAll };
+	enum BogusInitType
+	{
+		kInit
+	};
+	enum InitSetAllType
+	{
+		kInitSetAll
+	};
 
 	BitFlags()
 	{
@@ -72,7 +78,7 @@ public:
 	}
 
 	BitFlags(UnsignedInt value)
-		: m_bits(static_cast<unsigned long>(value))
+	  : m_bits(static_cast<unsigned long>(value))
 	{
 	}
 
@@ -144,20 +150,20 @@ public:
 		return m_bits.test(i);
 	}
 
-	//Tests for any bits that are set in both.
-	Bool testForAny( const BitFlags& that ) const
+	// Tests for any bits that are set in both.
+	Bool testForAny(const BitFlags& that) const
 	{
 		return (m_bits & that.m_bits).any();
 	}
 
-	//All argument bits must be set in our bits too in order to return TRUE
-	Bool testForAll( const BitFlags& that ) const
+	// All argument bits must be set in our bits too in order to return TRUE
+	Bool testForAll(const BitFlags& that) const
 	{
 		return (m_bits & that.m_bits) == that.m_bits;
 	}
 
-	//None of the argument bits must be set in our bits in order to return TRUE
-	Bool testForNone( const BitFlags& that ) const
+	// None of the argument bits must be set in our bits in order to return TRUE
+	Bool testForNone(const BitFlags& that) const
 	{
 		return (m_bits & that.m_bits).none();
 	}
@@ -230,71 +236,75 @@ public:
 		UnsignedInt val = 0;
 		const UnsignedInt count = min(m_bits.size(), sizeof(val) * 8);
 		for (UnsignedInt i = 0; i < count; ++i)
+		{
 			val |= m_bits.test(i) * (1u << i);
+		}
 		return val;
 	}
 
-  static const char* const* getBitNames()
-  {
-    return s_bitNameList;
-  }
+	static const char* const* getBitNames()
+	{
+		return s_bitNameList;
+	}
 
-  static const char* getNameFromSingleBit(Int i)
-  {
-    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
-  }
+	static const char* getNameFromSingleBit(Int i)
+	{
+		return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
+	}
 
-  static Int getSingleBitFromName(const char* token)
-  {
-    Int i = 0;
-	  for(const char* const* name = s_bitNameList; *name; ++name, ++i )
-	  {
-		  if( stricmp( *name, token ) == 0 )
-		  {
-        return i;
-		  }
-	  }
+	static Int getSingleBitFromName(const char* token)
+	{
+		Int i = 0;
+		for (const char* const* name = s_bitNameList; *name; ++name, ++i)
+		{
+			if (stricmp(*name, token) == 0)
+			{
+				return i;
+			}
+		}
 		return -1;
-  }
+	}
 
-  const char* getBitNameIfSet(Int i) const
-  {
-    return test(i) ? s_bitNameList[i] : nullptr;
-  }
+	const char* getBitNameIfSet(Int i) const
+	{
+		return test(i) ? s_bitNameList[i] : nullptr;
+	}
 
-  Bool setBitByName(const char* token)
-  {
-    Int i = getSingleBitFromName(token);
+	Bool setBitByName(const char* token)
+	{
+		Int i = getSingleBitFromName(token);
 		if (i >= 0)
 		{
-      set(i);
+			set(i);
 			return true;
 		}
 		else
 		{
-	    return false;
+			return false;
 		}
-  }
+	}
 
 	void parse(INI* ini, AsciiString* str);
 	void parseSingleBit(INI* ini, AsciiString* str);
 	void xfer(Xfer* xfer);
-	static void parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/); ///< Returns a BitFlag
-	static void parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/); ///< Returns an int, the Index of the one bit
+	static void parseFromINI(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);    ///< Returns a BitFlag
+	static void parseSingleBitFromINI(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);    ///< Returns an int, the Index of the one bit
 
-	void buildDescription( AsciiString* str ) const
+	void buildDescription(AsciiString* str) const
 	{
-		if ( str == nullptr )
-			return;//sanity
+		if (str == nullptr)
+		{
+			return;    // sanity
+		}
 
-		for( Int i = 0; i < size(); ++i )
+		for (Int i = 0; i < size(); ++i)
 		{
 			const char* bitName = getBitNameIfSet(i);
 
 			if (bitName != nullptr)
 			{
-				str->concat( bitName );
-				str->concat( ",\n");
+				str->concat(bitName);
+				str->concat(",\n");
 			}
 		}
 	}
@@ -303,7 +313,7 @@ public:
 	AsciiString toHexString() const
 	{
 		constexpr const int numChunks = (NUMBITS + 63) / 64;
-		char chunkBuf[32]; // Enough for 16 hex digits + null terminator
+		char chunkBuf[32];    // Enough for 16 hex digits + null terminator
 		AsciiString result;
 		bool printedAny = false;
 
@@ -313,15 +323,21 @@ public:
 			for (int bit = 0; bit < 64 && (chunk * 64 + bit) < NUMBITS; ++bit)
 			{
 				if (m_bits.test(chunk * 64 + bit))
+				{
 					val |= (UnsignedInt64)(1) << bit;
+				}
 			}
 
 			if (val != 0 || chunk == 0 || printedAny)
 			{
 				if (printedAny)
+				{
 					snprintf(chunkBuf, sizeof(chunkBuf), "%016I64X", val);
+				}
 				else
+				{
 					snprintf(chunkBuf, sizeof(chunkBuf), "%I64X", val);
+				}
 
 				result.concat(chunkBuf);
 				printedAny = true;
@@ -329,7 +345,9 @@ public:
 		}
 
 		if (!printedAny)
+		{
 			result = "0";
+		}
 
 		return result;
 	}

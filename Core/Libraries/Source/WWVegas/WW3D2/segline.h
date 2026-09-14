@@ -41,7 +41,6 @@
 #include "WWLib/simplevec.h"
 #include "seglinerenderer.h"
 
-
 class TextureClass;
 
 /*
@@ -49,127 +48,124 @@ class TextureClass;
 */
 class SegmentedLineClass : public RenderObjClass
 {
-	public:
+public:
+	SegmentedLineClass();
+	SegmentedLineClass(const SegmentedLineClass& src);
+	SegmentedLineClass& operator=(const SegmentedLineClass& that);
+	virtual ~SegmentedLineClass() override;
 
-		SegmentedLineClass();
-		SegmentedLineClass(const SegmentedLineClass & src);
-		SegmentedLineClass & operator = (const SegmentedLineClass &that);
-		virtual ~SegmentedLineClass() override;
+	void Reset_Line();
 
-		void					Reset_Line();
+	/*
+	** SegmentedLineClass interface:
+	*/
 
-		/*
-		** SegmentedLineClass interface:
-		*/
+	// These are segment points, and include the start and end point of the
+	// entire line. Therefore there must be at least two.
+	void Set_Points(unsigned int num_points, Vector3* locs);
+	int Get_Num_Points();
 
-		// These are segment points, and include the start and end point of the
-		// entire line. Therefore there must be at least two.
-		void					Set_Points(unsigned int num_points, Vector3 *locs);
-		int					Get_Num_Points();
+	// Set object-space location for a given point.
+	// NOTE: If given position beyond end of point list, do nothing.
+	void Set_Point_Location(unsigned int point_idx, const Vector3& location);
 
-		// Set object-space location for a given point.
-		// NOTE: If given position beyond end of point list, do nothing.
-		void					Set_Point_Location(unsigned int point_idx, const Vector3 &location);
+	// Get object-space location for a given point.
+	void Get_Point_Location(unsigned int point_idx, Vector3& loc);
 
-		// Get object-space location for a given point.
-		void					Get_Point_Location(unsigned int point_idx, Vector3 &loc);
+	// Modify the line by adding and removing points
+	void Add_Point(const Vector3& location);
+	void Delete_Point(unsigned int point_idx);
 
-		// Modify the line by adding and removing points
-		void					Add_Point(const Vector3 & location);
-		void					Delete_Point(unsigned int point_idx);
+	// Get/set global properties (which affect all line segments)
+	TextureClass* Get_Texture();
+	ShaderClass Get_Shader();
 
-		// Get/set global properties (which affect all line segments)
-		TextureClass *		Get_Texture();
-		ShaderClass			Get_Shader();
+	float Get_Width();
+	void Get_Color(Vector3& color);
+	float Get_Opacity();
+	float Get_Noise_Amplitude();
+	float Get_Merge_Abort_Factor();
+	unsigned int Get_Subdivision_Levels();
+	SegLineRendererClass::TextureMapMode Get_Texture_Mapping_Mode();
+	float Get_Texture_Tile_Factor();
+	Vector2 Get_UV_Offset_Rate();
+	int Is_Merge_Intersections();
+	int Is_Freeze_Random();
+	int Is_Sorting_Disabled();
+	int Are_End_Caps_Enabled();
 
-		float					Get_Width();
-		void					Get_Color(Vector3 &color);
-		float					Get_Opacity();
-		float					Get_Noise_Amplitude();
-		float					Get_Merge_Abort_Factor();
-		unsigned int		Get_Subdivision_Levels();
-		SegLineRendererClass::TextureMapMode		Get_Texture_Mapping_Mode();
-		float					Get_Texture_Tile_Factor();
-		Vector2				Get_UV_Offset_Rate();
-		int					Is_Merge_Intersections();
-		int					Is_Freeze_Random();
-		int					Is_Sorting_Disabled();
-		int					Are_End_Caps_Enabled();
+	void Set_Texture(TextureClass* texture);
+	void Set_Shader(ShaderClass shader);
+	void Set_Width(float width);
+	void Set_Color(const Vector3& color);
+	void Set_Opacity(float opacity);
+	void Set_Noise_Amplitude(float amplitude);
+	void Set_Merge_Abort_Factor(float factor);
+	void Set_Subdivision_Levels(unsigned int levels);
+	void Set_Texture_Mapping_Mode(SegLineRendererClass::TextureMapMode mode);
+	// WARNING! Do NOT set the tile factor to be too high (should be less than 8) or negative
+	// performance impact will result!
+	void Set_Texture_Tile_Factor(float factor);
+	void Set_UV_Offset_Rate(const Vector2& rate);
+	void Set_Merge_Intersections(int onoff);
+	void Set_Freeze_Random(int onoff);
+	void Set_Disable_Sorting(int onoff);
+	void Set_End_Caps(int onoff);
 
-		void					Set_Texture(TextureClass *texture);
-		void					Set_Shader(ShaderClass shader);
-		void					Set_Width(float width);
-		void					Set_Color(const Vector3 &color);
-		void					Set_Opacity(float opacity);
-		void					Set_Noise_Amplitude(float amplitude);
-		void					Set_Merge_Abort_Factor(float factor);
-		void					Set_Subdivision_Levels(unsigned int levels);
-		void					Set_Texture_Mapping_Mode(SegLineRendererClass::TextureMapMode mode);
-		// WARNING! Do NOT set the tile factor to be too high (should be less than 8) or negative
-		//performance impact will result!
-		void					Set_Texture_Tile_Factor(float factor);
-		void					Set_UV_Offset_Rate(const Vector2 &rate);
-		void					Set_Merge_Intersections(int onoff);
-		void					Set_Freeze_Random(int onoff);
-		void					Set_Disable_Sorting(int onoff);
-		void					Set_End_Caps(int onoff);
+	/////////////////////////////////////////////////////////////////////////////
+	// Render Object Interface - Cloning and Identification
+	/////////////////////////////////////////////////////////////////////////////
+	virtual RenderObjClass* Clone() const override;
+	virtual int Class_ID() const override { return CLASSID_SEGLINE; }
+	virtual int Get_Num_Polys() const override;
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Cloning and Identification
-		/////////////////////////////////////////////////////////////////////////////
-		virtual RenderObjClass *	Clone() const override;
-		virtual int						Class_ID()	const override { return CLASSID_SEGLINE; }
-		virtual int						Get_Num_Polys() const override;
+	/////////////////////////////////////////////////////////////////////////////
+	// Render Object Interface - Rendering
+	/////////////////////////////////////////////////////////////////////////////
+	virtual void Render(RenderInfoClass& rinfo) override;
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Rendering
-		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Render(RenderInfoClass & rinfo) override;
+	/////////////////////////////////////////////////////////////////////////////
+	// Render Object Interface - Bounding Volumes
+	/////////////////////////////////////////////////////////////////////////////
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& box) const override;
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Bounding Volumes
-		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-		virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	/////////////////////////////////////////////////////////////////////////////
+	// Render Object Interface - Predictive LOD
+	/////////////////////////////////////////////////////////////////////////////
+	virtual void Prepare_LOD(CameraClass& camera) override;
+	virtual void Increment_LOD() override;
+	virtual void Decrement_LOD() override;
+	virtual float Get_Cost() const override;
+	virtual float Get_Value() const override;
+	virtual float Get_Post_Increment_Value() const override;
+	virtual void Set_LOD_Level(int lod) override;
+	virtual int Get_LOD_Level() const override;
+	virtual int Get_LOD_Count() const override;
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Predictive LOD
-		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Prepare_LOD(CameraClass &camera) override;
-		virtual void					Increment_LOD() override;
-		virtual void					Decrement_LOD() override;
-		virtual float					Get_Cost() const override;
-		virtual float					Get_Value() const override;
-		virtual float					Get_Post_Increment_Value() const override;
-		virtual void					Set_LOD_Level(int lod) override;
-		virtual int						Get_LOD_Level() const override;
-		virtual int						Get_LOD_Count() const override;
+	/////////////////////////////////////////////////////////////////////////////
+	// Render Object Interface - Attributes, Options, Properties, etc
+	/////////////////////////////////////////////////////////////////////////////
+	//		virtual void					Set_Texture_Reduction_Factor(float trf);
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Attributes, Options, Properties, etc
-		/////////////////////////////////////////////////////////////////////////////
-//		virtual void					Set_Texture_Reduction_Factor(float trf);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Render Object Interface - Collision Detection
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	virtual bool Cast_Ray(RayCollisionTestClass& raytest) override;
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Render Object Interface - Collision Detection
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
+protected:
+	void Render_Seg_Line(RenderInfoClass& rinfo);
 
-	protected:
+private:
+	// Subdivision properties
+	unsigned int MaxSubdivisionLevels;
 
-		void 								Render_Seg_Line(RenderInfoClass & rinfo);
+	// Normalized screen area - used for LOD purposes
+	float NormalizedScreenArea;
 
-	private:
+	// Per-point location array
+	SimpleDynVecClass<Vector3> PointLocations;
 
-		// Subdivision properties
-		unsigned int					MaxSubdivisionLevels;
-
-		// Normalized screen area - used for LOD purposes
-		float								NormalizedScreenArea;
-
-		// Per-point location array
-		SimpleDynVecClass<Vector3>	PointLocations;
-
-		// LineRenderer, contains most of the line settings.
-		SegLineRendererClass		LineRenderer;
+	// LineRenderer, contains most of the line settings.
+	SegLineRendererClass LineRenderer;
 };

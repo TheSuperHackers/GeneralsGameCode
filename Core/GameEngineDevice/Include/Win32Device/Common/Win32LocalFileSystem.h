@@ -40,11 +40,11 @@ public:
 	virtual void reset() override;
 	virtual void update() override;
 
-	virtual File * openFile(const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE) override;	///< open the given file.
-	virtual Bool doesFileExist(const Char *filename) const override;								///< does the given file exist?
+	virtual File* openFile(const Char* filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE) override;    ///< open the given file.
+	virtual Bool doesFileExist(const Char* filename) const override;    ///< does the given file exist?
 
-	virtual void getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const override; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.
-	virtual Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const override;
+	virtual void getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList& filenameList, Bool searchSubdirectories) const override;    ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.
+	virtual Bool getFileInfo(const AsciiString& filename, FileInfo* fileInfo) const override;
 
 	virtual Bool createDirectory(AsciiString directory) override;
 	virtual AsciiString normalizePath(const AsciiString& filePath) const override;

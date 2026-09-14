@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -60,94 +60,88 @@ BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void BaikonurLaunchPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "DetonationObject", INI::parseAsciiString, nullptr, offsetof( BaikonurLaunchPowerModuleData, m_detonationObject ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "DetonationObject", INI::parseAsciiString, nullptr, offsetof(BaikonurLaunchPowerModuleData, m_detonationObject) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
-
 // ------------------------------------------------------------------------------------------------
-BaikonurLaunchPower::BaikonurLaunchPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+BaikonurLaunchPower::BaikonurLaunchPower(Thing* thing, const ModuleData* moduleData)
+  : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 BaikonurLaunchPower::~BaikonurLaunchPower()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::doSpecialPower( UnsignedInt commandOptions )
+void BaikonurLaunchPower::doSpecialPower(UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
-		return;
-
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPower( commandOptions );
-
-	getObject()->setModelConditionState( MODELCONDITION_DOOR_1_OPENING );
-}
-
-// ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
-{
-	if (getObject()->isDisabled())
-		return;
-
-	const BaikonurLaunchPowerModuleData *data = getBaikonurLaunchPowerModuleData();
-
-	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
-
-	//Create the detonation
-	const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_detonationObject );
-	if( thing )
 	{
-		Object *detonation = TheThingFactory->newObject( thing, getObject()->getTeam() );
-		if( detonation )
+		return;
+	}
+
+	// call the base class action cause we are *EXTENDING* functionality
+	SpecialPowerModule::doSpecialPower(commandOptions);
+
+	getObject()->setModelConditionState(MODELCONDITION_DOOR_1_OPENING);
+}
+
+// ------------------------------------------------------------------------------------------------
+void BaikonurLaunchPower::doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions)
+{
+	if (getObject()->isDisabled())
+	{
+		return;
+	}
+
+	const BaikonurLaunchPowerModuleData* data = getBaikonurLaunchPowerModuleData();
+
+	// call the base class action cause we are *EXTENDING* functionality
+	SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
+
+	// Create the detonation
+	const ThingTemplate* thing = TheThingFactory->findTemplate(data->m_detonationObject);
+	if (thing)
+	{
+		Object* detonation = TheThingFactory->newObject(thing, getObject()->getTeam());
+		if (detonation)
 		{
-			detonation->setPosition( loc );
+			detonation->setPosition(loc);
 		}
 	}
 }
 
-
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::crc( Xfer *xfer )
+void BaikonurLaunchPower::crc(Xfer* xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
-
+	SpecialPowerModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::xfer( Xfer *xfer )
+void BaikonurLaunchPower::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
+	SpecialPowerModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -155,8 +149,6 @@ void BaikonurLaunchPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void BaikonurLaunchPower::loadPostProcess()
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
-
 }

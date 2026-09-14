@@ -47,7 +47,7 @@ static void changePlayerCommon(Player* player)
 	TheInGameUI->deselectAllDrawables();
 }
 
-} // namespace detail
+}    // namespace detail
 
 bool localPlayerHasRadar()
 {
@@ -57,10 +57,14 @@ bool localPlayerHasRadar()
 	const PlayerIndex index = player->getPlayerIndex();
 
 	if (TheRadar->isRadarForced(index))
+	{
 		return true;
+	}
 
 	if (!TheRadar->isRadarHidden(index) && player->hasRadar())
+	{
 		return true;
+	}
 
 	return false;
 }
@@ -82,11 +86,17 @@ Player* getObservedOrLocalPlayer_Safe()
 	Player* player = nullptr;
 
 	if (TheControlBar != nullptr)
+	{
 		player = TheControlBar->getObservedPlayer();
+	}
 
 	if (player == nullptr)
+	{
 		if (ThePlayerList != nullptr)
+		{
 			player = ThePlayerList->getLocalPlayer();
+		}
+	}
 
 	return player;
 }
@@ -94,7 +104,9 @@ Player* getObservedOrLocalPlayer_Safe()
 PlayerIndex getObservedOrLocalPlayerIndex_Safe()
 {
 	if (Player* player = getObservedOrLocalPlayer_Safe())
+	{
 		return player->getPlayerIndex();
+	}
 
 	return 0;
 }
@@ -123,11 +135,13 @@ void changeObservedPlayer(Player* player)
 	{
 		TheControlBar->setObservedPlayer(player);
 
-		Player *becomePlayer = player;
+		Player* becomePlayer = player;
 		if (becomePlayer == nullptr)
+		{
 			becomePlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
+		}
 		detail::changePlayerCommon(becomePlayer);
 	}
 }
 
-} // namespace rts
+}    // namespace rts

@@ -58,14 +58,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
+HINSTANCE ApplicationHInstance = nullptr;    ///< our application instance
 
 /// just to satisfy the game libraries we link to
 HWND ApplicationHWnd = nullptr;
 
-const Char *g_strFile = "data\\Generals.str";
-const Char *g_csfFile = "data\\%s\\Generals.csf";
-
+const Char* g_strFile = "data\\Generals.str";
+const Char* g_csfFile = "data\\%s\\Generals.csf";
 
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
 
@@ -80,10 +79,9 @@ const Char *g_csfFile = "data\\%s\\Generals.csf";
 // WinMain ====================================================================
 /** Application entry point */
 //=============================================================================
-Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                      LPSTR lpCmdLine, Int nCmdShow )
+Int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine, Int nCmdShow)
 {
-
 	// initialize the memory manager early
 	initMemoryManager();
 
@@ -92,22 +90,22 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// allocate a new image packer system
 	TheImagePacker = new ImagePacker;
-	if( TheImagePacker == nullptr )
+	if (TheImagePacker == nullptr)
+	{
 		return 0;
+	}
 
 	// initialize the system
-	if( TheImagePacker->init() == FALSE )
+	if (TheImagePacker->init() == FALSE)
 	{
-
 		delete TheImagePacker;
 		TheImagePacker = nullptr;
 		return 0;
-
 	}
 
 	// load the dialog box
-	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
-						 nullptr, (DLGPROC)ImagePackerProc );
+	DialogBox(hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
+	          nullptr, (DLGPROC)ImagePackerProc);
 
 	// delete the image packer
 	delete TheImagePacker;
@@ -117,5 +115,4 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// all done
 	return 0;
-
 }

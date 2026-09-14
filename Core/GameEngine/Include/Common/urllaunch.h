@@ -18,6 +18,6 @@
 
 #pragma once
 
-HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL );
+HRESULT MakeEscapedURL(LPWSTR pszInURL, LPWSTR* ppszOutURL);
 
-HRESULT LaunchURL( LPCWSTR pszURL );
+HRESULT LaunchURL(LPCWSTR pszURL);

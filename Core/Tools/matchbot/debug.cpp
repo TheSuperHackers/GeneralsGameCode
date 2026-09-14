@@ -33,23 +33,23 @@ extern "C" {
 #ifdef _WIN32
 
 #include <stdarg.h>
-void DebugCrash( const char *fmt, ... ) {}
+void DebugCrash(const char* fmt, ...) {}
 char* TheCurrentIgnoreCrashPtr;
 
 #else
 
 #endif
 
-void DebugLog(const char *fmt, ...)
+void DebugLog(const char* fmt, ...)
 {
 	static char buffer[1024];
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buffer, 1024, fmt, va );
+	va_start(va, fmt);
+	vsnprintf(buffer, 1024, fmt, va);
 	buffer[1023] = 0;
-	va_end( va );
+	va_end(va);
 
-	//printf( buffer );
+	// printf( buffer );
 	DBGMSG(buffer);
 }
 
@@ -57,5 +57,4 @@ void DebugLog(const char *fmt, ...)
 }
 #endif
 
-#endif // DEBUG
-
+#endif    // DEBUG

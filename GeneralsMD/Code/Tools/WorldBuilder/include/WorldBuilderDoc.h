@@ -42,135 +42,145 @@ class CWorldBuilderDoc : public CDocument
 {
 	friend class COptionsPanel;
 
-	enum {MAX_WAYPOINTS=16000}; ///@todo - make it dynamic.  jba.
-protected: // create from serialization only
+	enum
+	{
+		MAX_WAYPOINTS = 16000
+	};    ///@todo - make it dynamic.  jba.
+protected:    // create from serialization only
 	CWorldBuilderDoc();
 	DECLARE_DYNCREATE(CWorldBuilderDoc)
 
 protected:
-	WorldHeightMapEdit	*m_heightMap;
-	Undoable						*m_undoList;  ///< Head of undo/redo list.
-	int									m_maxUndos;
-	int									m_curRedo;		///< 0 means no redos available.
-	Bool								m_linkCenters;				///< Flag whether the centers of the 2d and 3d views track together.
- 	Bool								m_needAutosave;			///< True if changes have been made since last autosave.
-	Int									m_curWaypointID;
+	WorldHeightMapEdit* m_heightMap;
+	Undoable* m_undoList;    ///< Head of undo/redo list.
+	int m_maxUndos;
+	int m_curRedo;    ///< 0 means no redos available.
+	Bool m_linkCenters;    ///< Flag whether the centers of the 2d and 3d views track together.
+	Bool m_needAutosave;    ///< True if changes have been made since last autosave.
+	Int m_curWaypointID;
 
 protected:
 	std::vector<ICoord2D> m_boundaries;
 
-protected:	// waypoint stuff.
-	MapObject		*m_waypointTable[MAX_WAYPOINTS];
-	Bool				m_waypointTableNeedsUpdate;
-	struct {
+protected:    // waypoint stuff.
+	MapObject* m_waypointTable[MAX_WAYPOINTS];
+	Bool m_waypointTableNeedsUpdate;
+	struct
+	{
 		Int waypoint1;
 		Int waypoint2;
 		Bool processedFlag;
 	} m_waypointLinks[MAX_WAYPOINTS];
-	Int									m_numWaypointLinks;
+	Int m_numWaypointLinks;
+
 protected:
 	void updateWaypointTable();
 	void compressWaypointIds();
-	void updateLWL(MapObject *pWay, MapObject *pSrcWay);
+	void updateLWL(MapObject* pWay, MapObject* pSrcWay);
+
 public:
 	void addWaypointLink(Int waypointID1, Int waypointID2);
 	void removeWaypointLink(Int waypointID1, Int waypointID2);
-	MapObject *getWaypointByID(Int waypointID);
-	Int getNumWaypointLinks() {return m_numWaypointLinks;};
-	void getWaypointLink(Int ndx, Int *waypoint1, Int *waypointID2);
+	MapObject* getWaypointByID(Int waypointID);
+	Int getNumWaypointLinks() { return m_numWaypointLinks; };
+	void getWaypointLink(Int ndx, Int* waypoint1, Int* waypointID2);
 	Bool waypointLinkExists(Int waypointID1, Int waypointID2);
-	Bool isWaypointLinked(MapObject *pWay);
-	void updateLinkedWaypointLabels(MapObject *pWay);
+	Bool isWaypointLinked(MapObject* pWay);
+	void updateLinkedWaypointLabels(MapObject* pWay);
 
 	// Boundary stuff
-	Int getNumBoundaries() const ;
+	Int getNumBoundaries() const;
 	void getBoundary(Int ndx, ICoord2D* border) const;
 	void addBoundary(ICoord2D* boundaryToAdd);
-	void changeBoundary(Int ndx, ICoord2D *border);
+	void changeBoundary(Int ndx, ICoord2D* border);
 	void removeLastBoundary();
 
 	// outNdx must not be null, but outHandle can be.
 	// outHandle: 0 means BL, 1 means TL, 2 means TR, 3 means BR
-	void findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle);
+	void findBoundaryNear(Coord3D* pt, float okDistance, Int* outNdx, Int* outHandle);
 
-	static Bool ParseWaypointDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
-	Bool ParseWaypointData(DataChunkInput &file, DataChunkInfo *info, void *userData);
+	static Bool ParseWaypointDataChunk(DataChunkInput& file, DataChunkInfo* info, void* userData);
+	Bool ParseWaypointData(DataChunkInput& file, DataChunkInfo* info, void* userData);
 
-public: // overridden
+public:    // overridden
 	virtual BOOL DoSave(LPCTSTR lpszPathName, BOOL bReplace = TRUE) override;
 	virtual BOOL DoFileSave() override;
 
-// Attributes
+	// Attributes
 public:
-
-	WorldHeightMapEdit *GetHeightMap() {return m_heightMap;}
-	void SetHeightMap(WorldHeightMapEdit *pMap, Bool doUpdate);
+	WorldHeightMapEdit* GetHeightMap() { return m_heightMap; }
+	void SetHeightMap(WorldHeightMapEdit* pMap, Bool doUpdate);
 
 	void Create2DView();
 	void Create3DView();
 
-	CWorldBuilderView *Get2DView();
-	WbView3d *Get3DView();
+	CWorldBuilderView* Get2DView();
+	WbView3d* Get3DView();
 
-	static CWorldBuilderDoc *GetActiveDoc();
-	static CWorldBuilderView *GetActive2DView();
-	static WbView3d *GetActive3DView();
+	static CWorldBuilderDoc* GetActiveDoc();
+	static CWorldBuilderView* GetActive2DView();
+	static WbView3d* GetActive3DView();
 
-	void invalObject(MapObject *pMapObj);
+	void invalObject(MapObject* pMapObj);
 	void invalCell(int xIndex, int yIndex);
 
 	void updateAllViews();
-	void updateHeightMap(WorldHeightMap *htMap, Bool partial, const IRegion2D &partialRange);
+	void updateHeightMap(WorldHeightMap* htMap, Bool partial, const IRegion2D& partialRange);
 
 	/// Gets an xy index into the height map from a pixel location.
-	Bool getCellIndexFromCoord(Coord3D pt, CPoint *ndxP);
+	Bool getCellIndexFromCoord(Coord3D pt, CPoint* ndxP);
 
 	void getCoordFromCellIndex(CPoint ndx, Coord3D* pt);
 
 	/// Gets a real xy location from a pixel point.
-	Bool getCellPositionFromCoord(Coord3D pt,  Coord3D *locP);
+	Bool getCellPositionFromCoord(Coord3D pt, Coord3D* locP);
 
 	/// Gets all of the indices within widthOutside of the rectangle and places them into
 	/// allIndices
 	Bool getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
-													 const Coord3D* tl, const Coord3D* tr,
-													 Int widthOutside, VecHeightMapIndexes* allIndices);
+	                         const Coord3D* tl, const Coord3D* tr,
+	                         Int widthOutside, VecHeightMapIndexes* allIndices);
 
 	/// Gets the arrow point location.
-	void getObjArrowPoint(MapObject *pObj, Coord3D *location);
+	void getObjArrowPoint(MapObject* pObj, Coord3D* location);
 
 	void syncViewCenters(Real x, Real y);
 
-	Bool needAutoSave() {return m_needAutosave;};
+	Bool needAutoSave() { return m_needAutosave; };
 
-	Int getNextWaypointID() { return ++m_curWaypointID;};
+	Int getNextWaypointID() { return ++m_curWaypointID; };
 
-	void setNextWaypointID(Int newMax) { if (newMax>m_curWaypointID) m_curWaypointID = newMax;};
+	void setNextWaypointID(Int newMax)
+	{
+		if (newMax > m_curWaypointID)
+		{
+			m_curWaypointID = newMax;
+		}
+	};
 
 	void autoSave();
 	void validate();
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWorldBuilderDoc)
-	public:
+public:
 	virtual BOOL OnNewDocument() override;
 	virtual void Serialize(CArchive& ar) override;
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CWorldBuilderDoc() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const override;
 	virtual void Dump(CDumpContext& dc) const override;
 #endif
-	void AddAndDoUndoable(Undoable *pUndo);
-// Generated message map functions
+	void AddAndDoUndoable(Undoable* pUndo);
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CWorldBuilderDoc)
 	afx_msg void OnEditRedo();

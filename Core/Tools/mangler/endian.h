@@ -27,31 +27,33 @@
 */
 extern bool BigEndian;
 
-template<class T> inline T Endian(T val)
+template <class T>
+inline T Endian(T val)
 {
-	if (!BigEndian) {
-		return(val);
+	if (!BigEndian)
+	{
+		return (val);
 	}
 
-/*
-	char temp[sizeof(T)];
-	*((T*)(&temp[0])) = val;
-*/
+	/*
+	  char temp[sizeof(T)];
+	  *((T*)(&temp[0])) = val;
+	*/
 
 	T retval = 0;
 
-/*
-	for (int i=0 ; i<sizeof(T) ; i++) {
-		retval <<= 8;
-		retval |= temp[i];
-	}
-*/
+	/*
+	  for (int i=0 ; i<sizeof(T) ; i++) {
+	    retval <<= 8;
+	    retval |= temp[i];
+	  }
+	*/
 
 	int len = sizeof(T);
-	unsigned char *c = (unsigned char *)(&val);
-	for (int i=0; i<len; i++)
+	unsigned char* c = (unsigned char*)(&val);
+	for (int i = 0; i < len; i++)
 	{
-		retval |= ( (*c++) << (8*i) );
+		retval |= ((*c++) << (8 * i));
 	}
 
 	return (retval);

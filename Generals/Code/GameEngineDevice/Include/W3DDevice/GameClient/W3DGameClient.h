@@ -53,7 +53,7 @@
 
 class ThingTemplate;
 
-extern Win32Mouse *TheWin32Mouse;
+extern Win32Mouse* TheWin32Mouse;
 
 ///////////////////////////////////////////////////////////////////////////////
 // PROTOTYPES /////////////////////////////////////////////////////////////////
@@ -64,62 +64,58 @@ extern Win32Mouse *TheWin32Mouse;
 //-----------------------------------------------------------------------------
 class W3DGameClient : public GameClient
 {
-
 public:
-
 	W3DGameClient();
 	virtual ~W3DGameClient() override;
 
 	/// given a type, create a drawable
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT ) override;
+	virtual Drawable* friend_createDrawable(const ThingTemplate* thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT) override;
 
-	virtual void init() override;		///< initialize resources
-	virtual void update() override;  ///< per frame update
-	virtual void reset() override;   ///< reset system
+	virtual void init() override;    ///< initialize resources
+	virtual void update() override;    ///< per frame update
+	virtual void reset() override;    ///< reset system
 
-	virtual void addScorch(const Coord3D *pos, Real radius, Scorches type) override;
-	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl ) override;  ///< create effect needing start and end location
-	//virtual Bool getBonePos(Drawable *draw, AsciiString boneName, Coord3D* pos, Matrix3D* transform) const;
+	virtual void addScorch(const Coord3D* pos, Real radius, Scorches type) override;
+	virtual void createRayEffectByTemplate(const Coord3D* start, const Coord3D* end, const ThingTemplate* tmpl) override;    ///< create effect needing start and end location
+	// virtual Bool getBonePos(Drawable *draw, AsciiString boneName, Coord3D* pos, Matrix3D* transform) const;
 
-	virtual void setTimeOfDay( TimeOfDay tod ) override;							///< Tell all the drawables what time of day it is now
+	virtual void setTimeOfDay(TimeOfDay tod) override;    ///< Tell all the drawables what time of day it is now
 
 	//---------------------------------------------------------------------------
-	virtual void setTeamColor( Int red, Int green, Int blue ) override;  ///< @todo superhack for demo, remove!!!
-	virtual void setTextureLOD( Int level ) override;
+	virtual void setTeamColor(Int red, Int green, Int blue) override;    ///< @todo superhack for demo, remove!!!
+	virtual void setTextureLOD(Int level) override;
 
 protected:
-
-	virtual Keyboard *createKeyboard() override;								///< factory for the keyboard
-	virtual Mouse *createMouse() override;											///< factory for the mouse
+	virtual Keyboard* createKeyboard() override;    ///< factory for the keyboard
+	virtual Mouse* createMouse() override;    ///< factory for the mouse
 
 	/// factory for creating TheDisplay
-	virtual Display *createGameDisplay() override { return NEW W3DDisplay; }
+	virtual Display* createGameDisplay() override { return NEW W3DDisplay; }
 
 	/// factory for creating TheInGameUI
-	virtual InGameUI *createInGameUI() override { return NEW W3DInGameUI; }
+	virtual InGameUI* createInGameUI() override { return NEW W3DInGameUI; }
 
 	/// factory for creating the window manager
-	virtual GameWindowManager *createWindowManager() override { return NEW W3DGameWindowManager; }
+	virtual GameWindowManager* createWindowManager() override { return NEW W3DGameWindowManager; }
 
 	/// factory for creating the font library
-	virtual FontLibrary *createFontLibrary() override { return NEW W3DFontLibrary; }
+	virtual FontLibrary* createFontLibrary() override { return NEW W3DFontLibrary; }
 
-  /// Manager for display strings
-	virtual DisplayStringManager *createDisplayStringManager() override { return NEW W3DDisplayStringManager; }
+	/// Manager for display strings
+	virtual DisplayStringManager* createDisplayStringManager() override { return NEW W3DDisplayStringManager; }
 
-	virtual VideoPlayerInterface *createVideoPlayer() override { return NEW BinkVideoPlayer; }
+	virtual VideoPlayerInterface* createVideoPlayer() override { return NEW BinkVideoPlayer; }
 	/// factory for creating the TerrainVisual
-	virtual TerrainVisual *createTerrainVisual() override { return NEW W3DTerrainVisual; }
+	virtual TerrainVisual* createTerrainVisual() override { return NEW W3DTerrainVisual; }
 
 	virtual void setFrameRate(Real msecsPerFrame) override { TheW3DFrameLengthInMsec = msecsPerFrame; }
-
 };
 
-inline Keyboard *W3DGameClient::createKeyboard() { return NEW DirectInputKeyboard; }
-inline Mouse *W3DGameClient::createMouse()
+inline Keyboard* W3DGameClient::createKeyboard() { return NEW DirectInputKeyboard; }
+inline Mouse* W3DGameClient::createMouse()
 {
-	//return new DirectInputMouse;
-	Win32Mouse * mouse = NEW W3DMouse;
-	TheWin32Mouse = mouse;   ///< global cheat for the WndProc()
+	// return new DirectInputMouse;
+	Win32Mouse* mouse = NEW W3DMouse;
+	TheWin32Mouse = mouse;    ///< global cheat for the WndProc()
 	return mouse;
 }

@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -67,44 +67,47 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage *msg)
+GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage* msg)
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	if (t == GameMessage::MSG_RAW_KEY_UP)
 	{
-
-		//char key = msg->getArgument(0)->integer;
+		// char key = msg->getArgument(0)->integer;
 		Int keyState = msg->getArgument(1)->integer;
 
 		// for our purposes here, we don't care to distinguish between right and left keys,
 		// so just fudge a little to simplify things.
 		Int newModState = 0;
 
-		if( keyState & KEY_STATE_CONTROL )
+		if (keyState & KEY_STATE_CONTROL)
 		{
 			newModState |= CTRL;
 		}
 
-		if( keyState & KEY_STATE_SHIFT )
+		if (keyState & KEY_STATE_SHIFT)
 		{
 			newModState |= SHIFT;
 		}
 
-		if( keyState & KEY_STATE_ALT )
+		if (keyState & KEY_STATE_ALT)
 		{
 			newModState |= ALT;
 		}
-		if(newModState != 0)
+		if (newModState != 0)
+		{
 			return disp;
+		}
 		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
 		UnicodeString uKey;
 		uKey.concat(key);
 		AsciiString aKey;
 		aKey.translate(uKey);
-		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
+		if (TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
+		{
 			disp = DESTROY_MESSAGE;
+		}
 	}
 	return disp;
 }
@@ -119,7 +122,6 @@ HotKey::HotKey()
 //-----------------------------------------------------------------------------
 HotKeyManager::HotKeyManager()
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -141,12 +143,12 @@ void HotKeyManager::reset()
 }
 
 //-----------------------------------------------------------------------------
-void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
+void HotKeyManager::addHotKey(GameWindow* win, const AsciiString& keyIn)
 {
 	AsciiString key = keyIn;
 	key.toLower();
 	HotKeyMap::iterator it = m_hotKeyMap.find(key);
-	if( it != m_hotKeyMap.end() )
+	if (it != m_hotKeyMap.end())
 	{
 		DEBUG_CRASH(("Hotkey %s is already mapped to window %s, current window is %s", key.str(), it->second.m_win->winGetInstanceData()->m_decoratedNameString.str(), win->winGetInstanceData()->m_decoratedNameString.str()));
 		return;
@@ -158,61 +160,67 @@ void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
 }
 
 //-----------------------------------------------------------------------------
-Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
+Bool HotKeyManager::executeHotKey(const AsciiString& keyIn)
 {
 	AsciiString key = keyIn;
 	key.toLower();
 	HotKeyMap::iterator it = m_hotKeyMap.find(key);
-	if( it == m_hotKeyMap.end() )
-		return FALSE;
-	GameWindow *win = it->second.m_win;
-	if( !win )
-		return FALSE;
-	if( !BitIsSet( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if (it == m_hotKeyMap.end())
 	{
-		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) )
- 		{
- 			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
-
- 			// here we make the same click sound that the GUI uses when you click a button
- 			AudioEventRTS buttonClick("GUIClick");
-
- 			if( TheAudio )
- 			{
- 				TheAudio->addAudioEvent( &buttonClick );
- 			}
-			return TRUE;
- 		}
-
-		AudioEventRTS disabledClick( "GUIClickDisabled" );
-		if( TheAudio )
+		return FALSE;
+	}
+	GameWindow* win = it->second.m_win;
+	if (!win)
+	{
+		return FALSE;
+	}
+	if (!BitIsSet(win->winGetStatus(), WIN_STATUS_HIDDEN))
+	{
+		if (BitIsSet(win->winGetStatus(), WIN_STATUS_ENABLED))
 		{
-			TheAudio->addAudioEvent( &disabledClick );
+			TheWindowManager->winSendSystemMsg(win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId());
+
+			// here we make the same click sound that the GUI uses when you click a button
+			AudioEventRTS buttonClick("GUIClick");
+
+			if (TheAudio)
+			{
+				TheAudio->addAudioEvent(&buttonClick);
+			}
+			return TRUE;
+		}
+
+		AudioEventRTS disabledClick("GUIClickDisabled");
+		if (TheAudio)
+		{
+			TheAudio->addAudioEvent(&disabledClick);
 		}
 	}
 	return FALSE;
 }
 
 //-----------------------------------------------------------------------------
-AsciiString HotKeyManager::searchHotKey( const AsciiString& label)
+AsciiString HotKeyManager::searchHotKey(const AsciiString& label)
 {
 	return searchHotKey(TheGameText->fetch(label));
 }
 
 //-----------------------------------------------------------------------------
-AsciiString HotKeyManager::searchHotKey( const UnicodeString& uStr )
+AsciiString HotKeyManager::searchHotKey(const UnicodeString& uStr)
 {
-	if(uStr.isEmpty())
+	if (uStr.isEmpty())
+	{
 		return AsciiString::TheEmptyString;
+	}
 
-	const WideChar *marker = (const WideChar *)uStr.str();
+	const WideChar* marker = (const WideChar*)uStr.str();
 	while (marker && *marker)
 	{
 		if (*marker == L'&')
 		{
 			// found a '&' - now look for the next char
 			UnicodeString tmp = UnicodeString::TheEmptyString;
-			tmp.concat(*(marker+1));
+			tmp.concat(*(marker + 1));
 			AsciiString retStr;
 			retStr.translate(tmp);
 			return retStr;
@@ -223,9 +231,8 @@ AsciiString HotKeyManager::searchHotKey( const UnicodeString& uStr )
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager *TheHotKeyManager = nullptr;
+HotKeyManager* TheHotKeyManager = nullptr;
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-

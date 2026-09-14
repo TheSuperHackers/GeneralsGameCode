@@ -28,30 +28,30 @@ class MapObject;
 
 class LightOptions : public COptionsPanel
 {
-
-// Construction
+	// Construction
 public:
-	LightOptions(CWnd* pParent = nullptr);   // standard constructor
+	LightOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(LightOptions)
-	enum { IDD = IDD_LIGHT_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_LIGHT_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(LightOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(LightOptions)
 	virtual BOOL OnInitDialog() override;
@@ -60,16 +60,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	static LightOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	Bool		m_updating; ///<true if the ui is updating itself.
+	static LightOptions* m_staticThis;    ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+	Bool m_updating;    ///< true if the ui is updating itself.
 
 protected:
 	void updateTheUI();
 
 public:
 	static void update();
-	static MapObject *getSingleSelectedLight();
-
+	static MapObject* getSingleSelectedLight();
 };
 
 //{{AFX_INSERT_LOCATION}}

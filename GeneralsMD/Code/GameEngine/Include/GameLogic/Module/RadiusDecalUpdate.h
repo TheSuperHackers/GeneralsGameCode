@@ -35,24 +35,23 @@
 class RadiusDecalUpdateModuleData : public UpdateModuleData
 {
 public:
-	//RadiusDecalTemplate	m_deliveryDecalTemplate;
-	//Real								m_deliveryDecalRadius;
+	// RadiusDecalTemplate	m_deliveryDecalTemplate;
+	// Real								m_deliveryDecalRadius;
 
 	RadiusDecalUpdateModuleData()
 	{
-		//m_deliveryDecalRadius = 0.0f;
+		// m_deliveryDecalRadius = 0.0f;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
 			//{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalTemplate ) },
 			//{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalRadius ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -60,24 +59,21 @@ public:
 //-------------------------------------------------------------------------------------------------
 class RadiusDecalUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RadiusDecalUpdate, "RadiusDecalUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RadiusDecalUpdate, RadiusDecalUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RadiusDecalUpdate, "RadiusDecalUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(RadiusDecalUpdate, RadiusDecalUpdateModuleData)
 
 public:
-
-	RadiusDecalUpdate( Thing *thing, const ModuleData* moduleData );
+	RadiusDecalUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	//void createRadiusDecal( const Coord3D& pos );
-	void createRadiusDecal( const RadiusDecalTemplate& tmpl, Real radius, const Coord3D& pos );
+	// void createRadiusDecal( const Coord3D& pos );
+	void createRadiusDecal(const RadiusDecalTemplate& tmpl, Real radius, const Coord3D& pos);
 	void killWhenNoLongerAttacking(Bool v) { m_killWhenNoLongerAttacking = v; }
 	void killRadiusDecal();
 
 	virtual UpdateSleepTime update() override;
 
 private:
-
 	RadiusDecal m_deliveryDecal;
 	Bool m_killWhenNoLongerAttacking;
 };

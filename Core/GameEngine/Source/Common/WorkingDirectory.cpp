@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/WorkingDirectory.h"
 
@@ -45,7 +45,7 @@ Bool WorkingDirectory::saveStartupWorkingDirectory()
 	return len > 0 && len < ARRAY_SIZE(s_startupWorkingDirectory);
 }
 
-Bool WorkingDirectory::setWorkingDirectory(const char *path)
+Bool WorkingDirectory::setWorkingDirectory(const char* path)
 {
 	if (path == nullptr || path[0] == '\0')
 	{
@@ -90,7 +90,7 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 		return FALSE;
 	}
 
-	Char *pEnd = strrchr(buffer, '\\');
+	Char* pEnd = strrchr(buffer, '\\');
 	if (pEnd == nullptr)
 	{
 		DEBUG_LOG(("Executable path has no directory: '%s'", buffer));
@@ -103,7 +103,7 @@ Bool WorkingDirectory::setExecutableWorkingDirectory()
 	return setWorkingDirectory(buffer);
 }
 
-Bool WorkingDirectory::setCustomWorkingDirectory(const char *path)
+Bool WorkingDirectory::setCustomWorkingDirectory(const char* path)
 {
 	saveStartupWorkingDirectory();
 	return setWorkingDirectory(path);
@@ -114,4 +114,4 @@ Bool WorkingDirectory::hasSetWorkingDirectory()
 	return s_hasSetWorkingDirectory;
 }
 
-} // namespace rts
+}    // namespace rts

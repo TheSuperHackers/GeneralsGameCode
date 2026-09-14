@@ -33,23 +33,23 @@
 class GameWindow;
 class WindowLayout;
 
-Bool GameSpySendChat(UnicodeString message, Bool isEmote, GameWindow *playerListbox = nullptr);
-void GameSpyAddText( UnicodeString message, GameSpyColors color = GSCOLOR_DEFAULT );
+Bool GameSpySendChat(UnicodeString message, Bool isEmote, GameWindow* playerListbox = nullptr);
+void GameSpyAddText(UnicodeString message, GameSpyColors color = GSCOLOR_DEFAULT);
 
-extern GameWindow *progressTextWindow;				///< Text box on the progress screen
-extern GameWindow *quickmatchTextWindow;			///< Text box on the quickmatch screen
-extern GameWindow *quickmatchTextWindow;			///< Text box on the quickmatch screen
-extern GameWindow *listboxLobbyChat;					///< Chat box on the custom lobby screen
-extern GameWindow *listboxLobbyPlayers;				///< Player box on the custom lobby screen
-extern GameWindow *listboxLobbyGames;					///< Game box on the custom lobby screen
-extern GameWindow *listboxLobbyChatChannels;	///< Chat channel box on the custom lobby screen
-extern GameWindow *listboxGameSetupChat;			///< Chat box on the custom game setup screen
-extern WindowLayout *WOLMapSelectLayout;			///< Map selection overlay
+extern GameWindow* progressTextWindow;    ///< Text box on the progress screen
+extern GameWindow* quickmatchTextWindow;    ///< Text box on the quickmatch screen
+extern GameWindow* quickmatchTextWindow;    ///< Text box on the quickmatch screen
+extern GameWindow* listboxLobbyChat;    ///< Chat box on the custom lobby screen
+extern GameWindow* listboxLobbyPlayers;    ///< Player box on the custom lobby screen
+extern GameWindow* listboxLobbyGames;    ///< Game box on the custom lobby screen
+extern GameWindow* listboxLobbyChatChannels;    ///< Chat channel box on the custom lobby screen
+extern GameWindow* listboxGameSetupChat;    ///< Chat box on the custom game setup screen
+extern WindowLayout* WOLMapSelectLayout;    ///< Map selection overlay
 
 void RoomMessageCallback(PEER peer, RoomType roomType,
-												 const char * nick, const char * message,
-												 MessageType messageType, void * param);		///< Called when a message arrives in a room.
+                         const char* nick, const char* message,
+                         MessageType messageType, void* param);    ///< Called when a message arrives in a room.
 
-void PlayerMessageCallback(PEER peer, const char * nick,
-													 const char * message, MessageType messageType,
-													 void * param);														///< Called when a private message is received from another player.
+void PlayerMessageCallback(PEER peer, const char* nick,
+                           const char* message, MessageType messageType,
+                           void* param);    ///< Called when a private message is received from another player.

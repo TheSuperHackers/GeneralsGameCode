@@ -61,15 +61,15 @@ public:
 	virtual void endThreads() = 0;
 	virtual Bool areThreadsRunning() = 0;
 
-	virtual void addRequest( const GameResultsRequest& req ) = 0;
-	virtual Bool getRequest( GameResultsRequest& resp ) = 0;
+	virtual void addRequest(const GameResultsRequest& req) = 0;
+	virtual Bool getRequest(GameResultsRequest& resp) = 0;
 
-	virtual void addResponse( const GameResultsResponse& resp ) = 0;
-	virtual Bool getResponse( GameResultsResponse& resp ) = 0;
+	virtual void addResponse(const GameResultsResponse& resp) = 0;
+	virtual Bool getResponse(GameResultsResponse& resp) = 0;
 
 	static GameResultsInterface* createNewGameResultsInterface();
 
 	virtual Bool areGameResultsBeingSent() = 0;
 };
 
-extern GameResultsInterface *TheGameResultsQueue;
+extern GameResultsInterface* TheGameResultsQueue;

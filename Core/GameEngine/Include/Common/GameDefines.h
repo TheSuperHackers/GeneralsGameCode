@@ -21,7 +21,7 @@
 #include "WWLib/WWDefines.h"
 
 #ifndef PRESERVE_BUILDING_RESUMPTION_DELAY
-#define PRESERVE_BUILDING_RESUMPTION_DELAY (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_BUILDING_RESUMPTION_DELAY (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_CHINOOK_PASSENGER_DUMPING
@@ -33,11 +33,11 @@
 #endif
 
 #ifndef PRESERVE_MULTI_CRATE_PICKUP
-#define PRESERVE_MULTI_CRATE_PICKUP (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_MULTI_CRATE_PICKUP (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_NO_XP_FROM_FLAME_KILLS
-#define PRESERVE_NO_XP_FROM_FLAME_KILLS (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_NO_XP_FROM_FLAME_KILLS (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_NO_XP_FROM_OCL_KILLS
@@ -45,11 +45,11 @@
 #endif
 
 #ifndef PRESERVE_NO_XP_FROM_POISON_KILLS
-#define PRESERVE_NO_XP_FROM_POISON_KILLS (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_NO_XP_FROM_POISON_KILLS (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION
-#define PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_PERPETUAL_HORDE_BONUS
@@ -57,7 +57,7 @@
 #endif
 
 #ifndef PRESERVE_PREMATURE_BATTLE_BUS_DEATH
-#define PRESERVE_PREMATURE_BATTLE_BUS_DEATH (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_PREMATURE_BATTLE_BUS_DEATH (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_RADAR_WARNING_SUPPRESSION
@@ -65,7 +65,7 @@
 #endif
 
 #ifndef PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR
-#define PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_TUNNEL_HEAL_STACKING
@@ -73,38 +73,38 @@
 #endif
 
 #ifndef PRESERVE_UNRELIABLE_FIRESTORMS
-#define PRESERVE_UNRELIABLE_FIRESTORMS (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_UNRELIABLE_FIRESTORMS (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_SNIPING_EMPTY_STINGER_SITES
-#define PRESERVE_SNIPING_EMPTY_STINGER_SITES (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_SNIPING_EMPTY_STINGER_SITES (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_RETAIL_SCRIPTED_CAMERA
-#define PRESERVE_RETAIL_SCRIPTED_CAMERA (1) // Retain scripted camera behavior present in retail Generals 1.08 and Zero Hour 1.04
+#define PRESERVE_RETAIL_SCRIPTED_CAMERA (1)    // Retain scripted camera behavior present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
 #ifndef PRESERVE_RETAIL_PARTICLES
-#define PRESERVE_RETAIL_PARTICLES (1) // Preserve original look of particles present in retail Generals 1.08 and Zero Hour 1.04
+#define PRESERVE_RETAIL_PARTICLES (1)    // Preserve original look of particles present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
 #ifndef PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_SEARCH
-#define PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_SEARCH (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_SEARCH (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE
-#define PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
+#define PRESERVE_RETAIL_NUKE_MISSILE_OUTER_RADIUS_DAMAGE (0)    // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 // Note: Retail compatibility must not be broken before this project officially does.
 // Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
 
 #ifndef RETAIL_COMPATIBLE_CRC
-#define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#define RETAIL_COMPATIBLE_CRC (1)    // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
 #ifndef RETAIL_COMPATIBLE_XFER_SAVE
-#define RETAIL_COMPATIBLE_XFER_SAVE (1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
+#define RETAIL_COMPATIBLE_XFER_SAVE (1)    // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
 // This is here to easily toggle between the retail compatible with fixed pathfinding fallback and pure fixed pathfinding mode
@@ -118,7 +118,7 @@
 #endif
 
 #ifndef RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM
-#define RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM (1) // Use the original circle fill algorithm, which is more efficient but less accurate
+#define RETAIL_COMPATIBLE_CIRCLE_FILL_ALGORITHM (1)    // Use the original circle fill algorithm, which is more efficient but less accurate
 #endif
 
 // Disable non retail fixes in the networking, such as putting more data per UDP packet
@@ -131,22 +131,22 @@
 // but put them behind this macro.
 
 #ifndef RETAIL_COMPATIBLE_AIGROUP
-#define RETAIL_COMPATIBLE_AIGROUP (1) // AIGroup logic is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#define RETAIL_COMPATIBLE_AIGROUP (1)    // AIGroup logic is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
 #ifndef ENABLE_GAMETEXT_SUBSTITUTES
-#define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
+#define ENABLE_GAMETEXT_SUBSTITUTES (1)    // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
 #endif
 
 #ifndef ALLOW_MONEY_PER_MINUTE_FOR_PLAYER
-#define ALLOW_MONEY_PER_MINUTE_FOR_PLAYER (0) // When enabled, a money-per-minute stat is calculated and displayed in-game
+#define ALLOW_MONEY_PER_MINUTE_FOR_PLAYER (0)    // When enabled, a money-per-minute stat is calculated and displayed in-game
 #endif
 
 // Previously the configurable shroud sat behind #if defined(RTS_DEBUG)
 // Enable the configurable shroud to properly draw the terrain in World Builder without RTS_DEBUG compiled in.
 // Disable the configurable shroud to make shroud hacking a bit less accessible in Release game builds.
 #ifndef ENABLE_CONFIGURABLE_SHROUD
-#define ENABLE_CONFIGURABLE_SHROUD (1) // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
+#define ENABLE_CONFIGURABLE_SHROUD (1)    // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
 #endif
 
 // Enable buffered IO in File System. Was disabled in retail game.
@@ -188,7 +188,7 @@
 #endif
 #endif
 
-#define MIN_DISPLAY_BIT_DEPTH       16
-#define DEFAULT_DISPLAY_BIT_DEPTH   32
-#define DEFAULT_DISPLAY_WIDTH      800 // The standard resolution this game was designed for
-#define DEFAULT_DISPLAY_HEIGHT     600 // The standard resolution this game was designed for
+#define MIN_DISPLAY_BIT_DEPTH 16
+#define DEFAULT_DISPLAY_BIT_DEPTH 32
+#define DEFAULT_DISPLAY_WIDTH 800    // The standard resolution this game was designed for
+#define DEFAULT_DISPLAY_HEIGHT 600    // The standard resolution this game was designed for

@@ -41,8 +41,8 @@ class Thing;
 class VeterancyGainCreateModuleData : public CreateModuleData
 {
 public:
-	VeterancyLevel m_startingLevel;			///< Level to set Object at
-	ScienceType m_scienceRequired;			///< The science you must have to trigger this
+	VeterancyLevel m_startingLevel;    ///< Level to set Object at
+	ScienceType m_scienceRequired;    ///< The science you must have to trigger this
 
 	VeterancyGainCreateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -52,18 +52,15 @@ public:
 // ------------------------------------------------------------------------------------------------
 class VeterancyGainCreate : public CreateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( VeterancyGainCreate, "VeterancyGainCreate" );
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( VeterancyGainCreate, VeterancyGainCreateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(VeterancyGainCreate, "VeterancyGainCreate");
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(VeterancyGainCreate, VeterancyGainCreateModuleData);
 
 public:
-
-	VeterancyGainCreate( Thing *thing, const ModuleData* moduleData );
+	VeterancyGainCreate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the create method
 	virtual void onCreate() override;
 
 protected:
-
 };

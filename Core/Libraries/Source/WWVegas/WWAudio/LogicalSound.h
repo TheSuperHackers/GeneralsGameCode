@@ -46,99 +46,101 @@
 //
 class LogicalSoundClass : public SoundSceneObjClass
 {
-	public:
+public:
+	//////////////////////////////////////////////////////////////////////
+	//	Public friends
+	//////////////////////////////////////////////////////////////////////
+	friend class SoundSceneClass;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public friends
-		//////////////////////////////////////////////////////////////////////
-		friend class SoundSceneClass;
+	//////////////////////////////////////////////////////////////////////
+	//	Public constructors/destructors
+	//////////////////////////////////////////////////////////////////////
+	LogicalSoundClass();
+	virtual ~LogicalSoundClass() override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public constructors/destructors
-		//////////////////////////////////////////////////////////////////////
-		LogicalSoundClass ();
-		virtual ~LogicalSoundClass () override;
+	//////////////////////////////////////////////////////////////////////
+	//	Public methods
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public methods
-		//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//	LogicalSoundClass specific
+	//////////////////////////////////////////////////////////////////////
+	virtual bool Is_Single_Shot() const { return m_IsSingleShot; }
+	virtual void Set_Single_Shot(bool single_shot) { m_IsSingleShot = single_shot; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	LogicalSoundClass specific
-		//////////////////////////////////////////////////////////////////////
-		virtual bool			Is_Single_Shot () const			{ return m_IsSingleShot; }
-		virtual void			Set_Single_Shot (bool single_shot)	{ m_IsSingleShot = single_shot; }
+	virtual void Set_Type_Mask(uint32 mask = 0) { m_TypeMask = mask; }
+	virtual uint32 Get_Type_Mask() const { return m_TypeMask; }
 
-		virtual void			Set_Type_Mask (uint32 mask = 0)	{ m_TypeMask = mask; }
-		virtual uint32			Get_Type_Mask () const			{ return m_TypeMask; }
+	virtual float Get_Notify_Delay() const { return (float)m_NotifyDelayInMS / 1000.0F; }
+	virtual void Set_Notify_Delay(float secs) { m_NotifyDelayInMS = uint32(secs * 1000.0F); }
+	virtual bool Allow_Notify(uint32 timestamp);
 
-		virtual float			Get_Notify_Delay () const		{ return (float)m_NotifyDelayInMS / 1000.0F; }
-		virtual void			Set_Notify_Delay (float secs)		{ m_NotifyDelayInMS = uint32(secs * 1000.0F); }
-		virtual bool			Allow_Notify (uint32 timestamp);
+	virtual uint32 Get_Listener_Timestamp() const { return m_OldestListenerTimestamp; }
+	virtual void Set_Listener_Timestamp(int timestamp) { m_OldestListenerTimestamp = timestamp; }
 
-		virtual uint32			Get_Listener_Timestamp () const		{ return m_OldestListenerTimestamp; }
-		virtual void			Set_Listener_Timestamp (int timestamp)	{ m_OldestListenerTimestamp = timestamp; }
+	//////////////////////////////////////////////////////////////////////
+	//	Update methods
+	//////////////////////////////////////////////////////////////////////
+	virtual bool On_Frame_Update(unsigned int milliseconds) override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Update methods
-		//////////////////////////////////////////////////////////////////////
-		virtual bool			On_Frame_Update (unsigned int milliseconds) override;
+	//////////////////////////////////////////////////////////////////////
+	//	Position/direction methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Set_Position(const Vector3& position) override { m_Position = position; }
+	virtual Vector3 Get_Position() const override { return m_Position; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	Position/direction methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Position (const Vector3 &position) override { m_Position = position; }
-		virtual Vector3		Get_Position () const override { return m_Position; }
+	virtual void Set_Transform(const Matrix3D& transform) override { m_Position = transform.Get_Translation(); }
+	virtual Matrix3D Get_Transform() const override
+	{
+		Matrix3D tm(1);
+		tm.Set_Translation(m_Position);
+		return tm;
+	}
 
-		virtual void			Set_Transform (const Matrix3D &transform) override { m_Position = transform.Get_Translation (); }
-		virtual Matrix3D		Get_Transform () const override { Matrix3D tm(1); tm.Set_Translation (m_Position); return tm; }
+	//////////////////////////////////////////////////////////////////////
+	//	Culling methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Cull_Sound(bool culled = true) override {};
+	virtual bool Is_Sound_Culled() const override { return false; };
 
-		//////////////////////////////////////////////////////////////////////
-		//	Culling methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Cull_Sound (bool culled = true) override { };
-		virtual bool			Is_Sound_Culled () const override { return false; };
+	//////////////////////////////////////////////////////////////////////
+	//	Scene integration
+	//////////////////////////////////////////////////////////////////////
+	virtual void Add_To_Scene(bool start_playing = true) override;
+	virtual void Remove_From_Scene() override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Scene integration
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Add_To_Scene (bool start_playing = true) override;
-		virtual void			Remove_From_Scene () override;
+	//////////////////////////////////////////////////////////////////////
+	//	Attenuation settings
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		//	Attenuation settings
-		//////////////////////////////////////////////////////////////////////
+	//
+	//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
+	//
+	virtual void Set_DropOff_Radius(float radius = 1) override { m_DropOffRadius = radius; }
+	virtual float Get_DropOff_Radius() const override { return m_DropOffRadius; }
 
-		//
-		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
-		//
-		virtual void			Set_DropOff_Radius (float radius = 1) override { m_DropOffRadius = radius; }
-		virtual float			Get_DropOff_Radius () const override { return m_DropOffRadius; }
+	//////////////////////////////////////////////////////////////////////
+	//	From PersistClass
+	//////////////////////////////////////////////////////////////////////
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
 
-		//////////////////////////////////////////////////////////////////////
-		//	From PersistClass
-		//////////////////////////////////////////////////////////////////////
-		virtual bool									Save (ChunkSaveClass &csave) override;
-		virtual bool									Load (ChunkLoadClass &cload) override;
-		virtual const PersistFactoryClass &	Get_Factory () const override;
+protected:
+	//////////////////////////////////////////////////////////////////////
+	//	Protected methods
+	//////////////////////////////////////////////////////////////////////
 
-	protected:
-
-		//////////////////////////////////////////////////////////////////////
-		//	Protected methods
-		//////////////////////////////////////////////////////////////////////
-
-	private:
-
-		//////////////////////////////////////////////////////////////////////
-		//	Private member data
-		//////////////////////////////////////////////////////////////////////
-		float					m_DropOffRadius;
-		bool					m_IsSingleShot;
-		uint32					m_TypeMask;
-		Vector3					m_Position;
-		uint32					m_OldestListenerTimestamp;
-		int						m_MaxListeners;
-		uint32					m_NotifyDelayInMS;
-		uint32					m_LastNotification;
+private:
+	//////////////////////////////////////////////////////////////////////
+	//	Private member data
+	//////////////////////////////////////////////////////////////////////
+	float m_DropOffRadius;
+	bool m_IsSingleShot;
+	uint32 m_TypeMask;
+	Vector3 m_Position;
+	uint32 m_OldestListenerTimestamp;
+	int m_MaxListeners;
+	uint32 m_NotifyDelayInMS;
+	uint32 m_LastNotification;
 };

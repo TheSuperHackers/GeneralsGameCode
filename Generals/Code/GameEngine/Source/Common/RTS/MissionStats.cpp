@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/MissionStats.h"
 #include "Common/Player.h"
@@ -66,42 +66,39 @@ void MissionStats::init()
 	}
 	m_unitsLost = 0;
 	m_buildingsLost = 0;
-	//m_whoLastHurtMe = PLAYER_NONE;
+	// m_whoLastHurtMe = PLAYER_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void MissionStats::crc( Xfer *xfer )
+void MissionStats::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MissionStats::xfer( Xfer *xfer )
+void MissionStats::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// units killed
-	xfer->xferUser( m_unitsKilled, sizeof( Int ) * MAX_PLAYER_COUNT );
+	xfer->xferUser(m_unitsKilled, sizeof(Int) * MAX_PLAYER_COUNT);
 
 	// units lost
-	xfer->xferInt( &m_unitsLost );
+	xfer->xferInt(&m_unitsLost);
 
 	// buildings killed
-	xfer->xferUser( m_buildingsKilled, sizeof( Int ) * MAX_PLAYER_COUNT );
+	xfer->xferUser(m_buildingsKilled, sizeof(Int) * MAX_PLAYER_COUNT);
 
 	// buildings lost
-	xfer->xferInt( &m_buildingsLost );
-
+	xfer->xferInt(&m_buildingsLost);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -109,5 +106,4 @@ void MissionStats::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void MissionStats::loadPostProcess()
 {
-
 }

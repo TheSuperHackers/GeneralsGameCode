@@ -43,7 +43,7 @@
 #include "HierarchyView.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-GUIEditWindowManager *TheGUIEditWindowManager = nullptr;  ///< editor use only
+GUIEditWindowManager* TheGUIEditWindowManager = nullptr;    ///< editor use only
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -51,84 +51,98 @@ GUIEditWindowManager *TheGUIEditWindowManager = nullptr;  ///< editor use only
 
 //-------------------------------------------------------------------------------------------------
 /** Is the given window in the clipboard at the top level.  NOTE that
-	* children are NOT included in this search */
+ * children are NOT included in this search */
 //-------------------------------------------------------------------------------------------------
-Bool GUIEditWindowManager::isWindowInClipboard( GameWindow *window,
-																								GameWindow **list )
+Bool GUIEditWindowManager::isWindowInClipboard(GameWindow* window,
+                                               GameWindow** list)
 {
-	GameWindow *other;
+	GameWindow* other;
 
 	// sanity
-	if( list == nullptr || window == nullptr )
-		return FALSE;
-
-	// just run through the window list in the clipboard to check
-	for( other = *list; other; other = other->winGetNext() )
+	if (list == nullptr || window == nullptr)
 	{
-
-		if( window == other )
-			return TRUE;  // found
-
+		return FALSE;
 	}
 
-	return FALSE;  // not found
+	// just run through the window list in the clipboard to check
+	for (other = *list; other; other = other->winGetNext())
+	{
+		if (window == other)
+		{
+			return TRUE;    // found
+		}
+	}
 
+	return FALSE;    // not found
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Add the window to clipboard list */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::linkToClipboard( GameWindow *window,
-																						GameWindow **list )
+void GUIEditWindowManager::linkToClipboard(GameWindow* window,
+                                           GameWindow** list)
 {
-
 	// sanity
-	if( window == nullptr || list == nullptr )
+	if (window == nullptr || list == nullptr)
+	{
 		return;
+	}
 
 	// debug sanity checking, can't add if already in it
-	if( isWindowInClipboard( window, list ) )
+	if (isWindowInClipboard(window, list))
+	{
 		return;
+	}
 
-	window->winSetPrev( nullptr );
-	window->winSetNext( *list );
-	if( *list )
-		(*list)->winSetPrev( window );
+	window->winSetPrev(nullptr);
+	window->winSetNext(*list);
+	if (*list)
+	{
+		(*list)->winSetPrev(window);
+	}
 	*list = window;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink window from the clipboard list */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::unlinkFromClipboard( GameWindow *window,
-																								GameWindow **list )
+void GUIEditWindowManager::unlinkFromClipboard(GameWindow* window,
+                                               GameWindow** list)
 {
 	GameWindow *next, *prev;
 
 	// sanity
-	if( window == nullptr || list == nullptr )
+	if (window == nullptr || list == nullptr)
+	{
 		return;
+	}
 
 	// debug sanity checking, can't remove if not in
-	if( isWindowInClipboard( window, list ) == FALSE )
+	if (isWindowInClipboard(window, list) == FALSE)
+	{
 		return;
+	}
 
 	prev = window->winGetPrev();
 	next = window->winGetNext();
 
-	if( next )
-		next->winSetPrev( prev );
-	if( prev )
-		prev->winSetNext( next );
+	if (next)
+	{
+		next->winSetPrev(prev);
+	}
+	if (prev)
+	{
+		prev->winSetNext(next);
+	}
 	else
+	{
 		*list = next;
-
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Remove selection entries for child windows that also have ANY of
-	* their parents in the selection list. */
+ * their parents in the selection list. */
 //-------------------------------------------------------------------------------------------------
 void GUIEditWindowManager::removeSupervisedChildSelections()
 {
@@ -136,7 +150,7 @@ void GUIEditWindowManager::removeSupervisedChildSelections()
 	GameWindow *window, *parent;
 
 	// iterate selections
-	for( select = TheEditor->getSelectList(); select; select = next )
+	for (select = TheEditor->getSelectList(); select; select = next)
 	{
 		Bool parentSelected;
 
@@ -149,65 +163,65 @@ void GUIEditWindowManager::removeSupervisedChildSelections()
 
 		// check to see if any parent is selected
 		parentSelected = FALSE;
-		while( parent )
+		while (parent)
 		{
-
-			if( TheEditor->isWindowSelected( parent ) )
+			if (TheEditor->isWindowSelected(parent))
+			{
 				parentSelected = TRUE;
+			}
 			parent = parent->winGetParent();
-
 		}
 
 		//
 		// if there is a parent selected then we can remove this
 		// selection
 		//
-		if( parentSelected == TRUE )
-			TheEditor->unSelectWindow( window );
-
+		if (parentSelected == TRUE)
+		{
+			TheEditor->unSelectWindow(window);
+		}
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Traverse the selected window list, any child windows we encounter
-	* are removed from their parent and placed in the window list at
-	* the top level.  Window position adjustments are made to compensate
-	* for the transition from "parent space" to "screen space" */
+ * are removed from their parent and placed in the window list at
+ * the top level.  Window position adjustments are made to compensate
+ * for the transition from "parent space" to "screen space" */
 //-------------------------------------------------------------------------------------------------
 /*
 void GUIEditWindowManager::orphanSelectedChildren()
 {
-	WindowSelectionEntry *select;
-	GameWindow *window, *parent;
+  WindowSelectionEntry *select;
+  GameWindow *window, *parent;
 
-	for( select = TheEditor->getSelectList(); select; select = select->next )
-	{
+  for( select = TheEditor->getSelectList(); select; select = select->next )
+  {
 
-		// get window information
-		window = select->window;
-		parent = window->winGetParent();
+    // get window information
+    window = select->window;
+    parent = window->winGetParent();
 
-		// we have a parent we're a candidate
-		if( parent )
-		{
-			ICoord2D pos;
+    // we have a parent we're a candidate
+    if( parent )
+    {
+      ICoord2D pos;
 
-			// get the screen position of the window BEFORE we remove the parent
-			window->winGetScreenPosition( &pos.x, &pos.y );
+      // get the screen position of the window BEFORE we remove the parent
+      window->winGetScreenPosition( &pos.x, &pos.y );
 
-			// remove the child from the parent and add to top level of window system
-			window->winSetParent( nullptr );
+      // remove the child from the parent and add to top level of window system
+      window->winSetParent( nullptr );
 
-			//
-			// adjust the position, which previously was relative to the parent
-			// but now is relative to the screen
-			//
-			window->winSetPosition( pos.x, pos.y );
+      //
+      // adjust the position, which previously was relative to the parent
+      // but now is relative to the screen
+      //
+      window->winSetPosition( pos.x, pos.y );
 
-		}
+    }
 
-	}
+  }
 
 }
 */
@@ -220,26 +234,22 @@ void GUIEditWindowManager::orphanSelectedChildren()
 //-------------------------------------------------------------------------------------------------
 GUIEditWindowManager::GUIEditWindowManager()
 {
-
 	m_clipboard = nullptr;
 	m_clipboardDup = nullptr;
 
 	m_copySpacing = 8;
 	m_numCopiesPasted = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GUIEditWindowManager::~GUIEditWindowManager()
 {
-
 	// the duplicate list is only used in the actual act of pasting
-	assert( m_clipboardDup == nullptr );
+	assert(m_clipboardDup == nullptr);
 
 	// free all data on the clipboard
 	resetClipboard();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -247,72 +257,64 @@ GUIEditWindowManager::~GUIEditWindowManager()
 //-------------------------------------------------------------------------------------------------
 void GUIEditWindowManager::init()
 {
-
 	// extending functionality
 	W3DGameWindowManager::init();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Destroy a game window */
 //-------------------------------------------------------------------------------------------------
-Int GUIEditWindowManager::winDestroy( GameWindow *window )
+Int GUIEditWindowManager::winDestroy(GameWindow* window)
 {
-
 	//
 	// delete the edit data from window if present, the editor is the
 	// ONLY place where this edit data is allocated anyway, it is
 	// NOT present in the game
 	//
-	GameWindowEditData *editData = window->winGetEditData();
-	if( editData )
+	GameWindowEditData* editData = window->winGetEditData();
+	if (editData)
 	{
-
 		// delete it
 		delete editData;
 
 		// set the edit data to null in the window
-		window->winSetEditData( nullptr );
-
+		window->winSetEditData(nullptr);
 	}
 
 	// call our base class functionality
-	return W3DGameWindowManager::winDestroy( window );
-
+	return W3DGameWindowManager::winDestroy(window);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new window by setting up its parameters and callbacks. */
 //-------------------------------------------------------------------------------------------------
-GameWindow *GUIEditWindowManager::winCreate( GameWindow *parent,
-																						 UnsignedInt status,
-	 																				   Int x, Int y,
-																						 Int width, Int height,
-																						 GameWinSystemFunc system,
-																						 WinInstanceData *instData )
+GameWindow* GUIEditWindowManager::winCreate(GameWindow* parent,
+                                            UnsignedInt status,
+                                            Int x, Int y,
+                                            Int width, Int height,
+                                            GameWinSystemFunc system,
+                                            WinInstanceData* instData)
 {
-	GameWindow *window;
+	GameWindow* window;
 
 	// call base class create
-	window = W3DGameWindowManager::winCreate( parent, status, x, y,
-																						width, height, system,
-																						instData );
+	window = W3DGameWindowManager::winCreate(parent, status, x, y,
+	                                         width, height, system,
+	                                         instData);
 
 	// allocate edit data for the window
-	if( window )
+	if (window)
 	{
-		GameWindowEditData *editData = new GameWindowEditData;
+		GameWindowEditData* editData = new GameWindowEditData;
 
 		// set edit data to nothing
-		memset( editData, 0, sizeof( GameWindowEditData ) );
+		memset(editData, 0, sizeof(GameWindowEditData));
 
 		// attach edit data to window
-		window->winSetEditData( editData );
-
+		window->winSetEditData(editData);
 	}
 
 	return window;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -323,9 +325,8 @@ void GUIEditWindowManager::resetClipboard()
 	GameWindow *window, *next;
 
 	// iterate through all windows
-	for( window = m_clipboard; window; window = next )
+	for (window = m_clipboard; window; window = next)
 	{
-
 		// get next window
 		next = window->winGetNext();
 
@@ -334,8 +335,8 @@ void GUIEditWindowManager::resetClipboard()
 		// assumes that the window is actually part of the system, so take it
 		// away from the clipboard and add it back to the regular system
 		//
-		unlinkFromClipboard( window, &m_clipboard );
-		linkWindow( window );
+		unlinkFromClipboard(window, &m_clipboard);
+		linkWindow(window);
 
 		//
 		// delete the window, note that these aren't part of the active editor,
@@ -343,8 +344,7 @@ void GUIEditWindowManager::resetClipboard()
 		// the edit window or the editor that this is going away ... they can't
 		// possible be selected or anything
 		//
-		winDestroy( window );
-
+		winDestroy(window);
 	}
 
 	// immediately process the destroyed windows just to be clean here
@@ -353,7 +353,6 @@ void GUIEditWindowManager::resetClipboard()
 	// nothing in the buffer now
 	m_clipboard = nullptr;
 	m_numCopiesPasted = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -361,23 +360,22 @@ void GUIEditWindowManager::resetClipboard()
 //-------------------------------------------------------------------------------------------------
 Bool GUIEditWindowManager::isClipboardEmpty()
 {
-
-	if( m_clipboard )
+	if (m_clipboard)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Remove the selected windows from the current layout and put them into
-	* the clipboard.  If the parent of a window is not being cut with the
-	* child the child will have no parent and will be adjusted to absolute
-	* screen coordinates with no parent */
+ * the clipboard.  If the parent of a window is not being cut with the
+ * child the child will have no parent and will be adjusted to absolute
+ * screen coordinates with no parent */
 //-------------------------------------------------------------------------------------------------
 void GUIEditWindowManager::cutSelectedToClipboard()
 {
-
 	//
 	// reset the clipboard just to be safe, this is done in the copy but
 	// it's nice cause we depend on it here for deleting
@@ -391,35 +389,36 @@ void GUIEditWindowManager::cutSelectedToClipboard()
 	// now delete the selected windows from the scene if we actually
 	// copied them to the clipboard
 	//
-	if( m_clipboard )
+	if (m_clipboard)
+	{
 		TheEditor->deleteSelected();
-
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Given the current window in a list pointed to by 'root', if that
-	* window is selected, duplicate it and place it on the clipboard.  If
-	* it's not selected check it's children to see if any of them are
-	* selected and should be duplicated.  Then just move on down the list
-	* and check the other sibling windows as well */
+ * window is selected, duplicate it and place it on the clipboard.  If
+ * it's not selected check it's children to see if any of them are
+ * selected and should be duplicated.  Then just move on down the list
+ * and check the other sibling windows as well */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::duplicateSelected( GameWindow *root )
+void GUIEditWindowManager::duplicateSelected(GameWindow* root)
 {
-
 	// end of recursion
-	if( root == nullptr )
+	if (root == nullptr)
+	{
 		return;
+	}
 
 	// if widow is selected duplicate and continue on
-	if( TheEditor->isWindowSelected( root ) )
+	if (TheEditor->isWindowSelected(root))
 	{
-		GameWindow *duplicate;
+		GameWindow* duplicate;
 
 		// perform the duplication of window and all children
-		duplicate = duplicateWindow( root, nullptr );
-		if( duplicate )
+		duplicate = duplicateWindow(root, nullptr);
+		if (duplicate)
 		{
-
 			//
 			// if our source window had a parent, that means that the child
 			// was selected, but the parent wasn't.  Therefore the new
@@ -427,40 +426,34 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 			// adjusted to be relative to the screen instead of the now
 			// missing parent
 			//
-			GameWindow *parent = root->winGetParent();
-			if( parent )
+			GameWindow* parent = root->winGetParent();
+			if (parent)
 			{
 				ICoord2D parentPos;
 				ICoord2D pos;
 
-				parent->winGetScreenPosition( &parentPos.x, &parentPos.y );
-				duplicate->winGetScreenPosition( &pos.x, &pos.y );
+				parent->winGetScreenPosition(&parentPos.x, &parentPos.y);
+				duplicate->winGetScreenPosition(&pos.x, &pos.y);
 				pos.x += parentPos.x;
 				pos.y += parentPos.y;
-				duplicate->winSetPosition( pos.x, pos.y );
-
+				duplicate->winSetPosition(pos.x, pos.y);
 			}
 
 			// add window to the clipboard
-			linkToClipboard( duplicate, &m_clipboard );
-
+			linkToClipboard(duplicate, &m_clipboard);
 		}
-
 	}
 	else
 	{
-
 		//
 		// the window itself is not selected, but some of it's children
 		// may be so check them
 		//
-		duplicateSelected( root->winGetChild() );
-
+		duplicateSelected(root->winGetChild());
 	}
 
 	// move on to the next window
-	duplicateSelected( root->winGetNext() );
-
+	duplicateSelected(root->winGetNext());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -468,7 +461,6 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 //-------------------------------------------------------------------------------------------------
 void GUIEditWindowManager::copySelectedToClipboard()
 {
-
 	// reset the contents of the clipboard
 	resetClipboard();
 
@@ -484,18 +476,17 @@ void GUIEditWindowManager::copySelectedToClipboard()
 	// that the clipboard will contain the list of windows in reverse
 	// order from the original order in the layout
 	//
-	duplicateSelected( m_windowList );
-
+	duplicateSelected(m_windowList);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Take the string representation of the name of the window passed in,
-	* and add a number to it at the end.  If there is already a number
-	* on it at the end, that number will be incremented */
+ * and add a number to it at the end.  If there is already a number
+ * on it at the end, that number will be incremented */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::incrementName( GameWindow *window )
+void GUIEditWindowManager::incrementName(GameWindow* window)
 {
-	WinInstanceData *instData = window->winGetInstanceData();
+	WinInstanceData* instData = window->winGetInstanceData();
 
 	// bleah, this is ugly and hokey, but if I rewrite
 	// this I will botch it (cuz I'm currently not sure
@@ -503,20 +494,18 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	char name[MAX_WINDOW_NAME_LEN];
 	strlcpy(name, instData->m_decoratedNameString.str(), ARRAY_SIZE(name));
 
-	Int len = strlen( name );
-	char numberBuffer[ MAX_WINDOW_NAME_LEN ];
+	Int len = strlen(name);
+	char numberBuffer[MAX_WINDOW_NAME_LEN];
 	Int i, j;
 	char c;
 	Bool hasNumberSuffix = FALSE;
 	Int numberStartIndex = 0;
 
 	// trivial case, just append a number to the end and get outta here
-	if( len == 0 )
+	if (len == 0)
 	{
-
 		strlcat(name, "1", ARRAY_SIZE(name));
 		goto cleanup;
-
 	}
 
 	//
@@ -526,90 +515,82 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	// the string is turned real number, incremented, and replaces the
 	// existing number string
 	//
-	for( i = 0; i < MAX_WINDOW_NAME_LEN; i++ )
-		numberBuffer[ i ] = ' ';
-	numberBuffer[ MAX_WINDOW_NAME_LEN - 1 ] = '\0';
-	for( i = len - 1, j = MAX_WINDOW_NAME_LEN - 2; i >= 0; i-- )
+	for (i = 0; i < MAX_WINDOW_NAME_LEN; i++)
 	{
-
-		c = name[ i ];
-		if( isdigit( c ) )
+		numberBuffer[i] = ' ';
+	}
+	numberBuffer[MAX_WINDOW_NAME_LEN - 1] = '\0';
+	for (i = len - 1, j = MAX_WINDOW_NAME_LEN - 2; i >= 0; i--)
+	{
+		c = name[i];
+		if (isdigit(c))
 		{
-
 			hasNumberSuffix = TRUE;
-			numberBuffer[ j-- ] = c;
-
+			numberBuffer[j--] = c;
 		}
 		else
 		{
-
 			numberStartIndex = i + 1;
-			break;  // exit for i
-
+			break;    // exit for i
 		}
-
 	}
 
 	//
 	// if we have a number suffix change it to a number, increment it, and
 	// paste it over the old number
 	//
-	if( hasNumberSuffix == TRUE )
+	if (hasNumberSuffix == TRUE)
 	{
-		Int number = atoi( numberBuffer );
+		Int number = atoi(numberBuffer);
 		Int charsAdded;
 
 		// increment the number
 		number++;
 
 		// turn number back into string
-		itoa( number, numberBuffer, 10 );
+		itoa(number, numberBuffer, 10);
 
 		// put number string OVER the original number string in the name
-		len = strlen( numberBuffer );
+		len = strlen(numberBuffer);
 		charsAdded = 0;
-		for( i = 0; i < len; i++ )
+		for (i = 0; i < len; i++)
 		{
-			if( i + numberStartIndex <= MAX_WINDOW_NAME_LEN - 2 )
+			if (i + numberStartIndex <= MAX_WINDOW_NAME_LEN - 2)
 			{
-
-				name[ i + numberStartIndex ] = numberBuffer[ i ];
+				name[i + numberStartIndex] = numberBuffer[i];
 				charsAdded++;
-
 			}
 		}
-		name[ numberStartIndex + charsAdded ] = 0;  // terminate at end of new string
-
+		name[numberStartIndex + charsAdded] = 0;    // terminate at end of new string
 	}
 	else
 	{
-
 		// no number at end, easy ... just append a number '1'
 		strlcat(name, "1", ARRAY_SIZE(name));
-
 	}
 
 cleanup:
 
 	instData->m_decoratedNameString = name;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Validate the names for all the windows and child windows in the copy
-	* buffer that they are unique and don't collide with any windows in
-	* the real system.  This is in preparation for a paste of the copy
-	* buffer into the real working layout */
+ * buffer that they are unique and don't collide with any windows in
+ * the real system.  This is in preparation for a paste of the copy
+ * buffer into the real working layout */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
+void GUIEditWindowManager::validateClipboardNames(GameWindow* root)
 {
 	Bool nameOK = FALSE;
-	WinInstanceData *instData;
+	WinInstanceData* instData;
 	Int sanityLoop = 0;
 
 	// end of recursion
-	if( root == nullptr )
+	if (root == nullptr)
+	{
 		return;
+	}
 
 	// get our inst data
 	instData = root->winGetInstanceData();
@@ -619,42 +600,44 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 	// in the clipboard, if it's a dupe we will pick a new name and
 	// try it over and over until it's OK
 	//
-	while( nameOK == FALSE )
+	while (nameOK == FALSE)
 	{
-
 		// if we're not a dupe with anything anywhere we're ok
-		if( !TheEditor->isNameDuplicate( m_windowList, root, instData->m_decoratedNameString ) &&
-				!TheEditor->isNameDuplicate( m_clipboardDup, root, instData->m_decoratedNameString ) )
+		if (!TheEditor->isNameDuplicate(m_windowList, root, instData->m_decoratedNameString) &&
+		    !TheEditor->isNameDuplicate(m_clipboardDup, root, instData->m_decoratedNameString))
+		{
 			nameOK = TRUE;
+		}
 		else
-			incrementName( root );  // have to change our name, so sorry :(
+		{
+			incrementName(root);    // have to change our name, so sorry :(
+		}
 
 		//
 		// and just because I don't want the possibility of a infinite loop
 		// EVER to occur here this is just a sanity check that will probably
 		// never get run
 		//
-		if( ++sanityLoop > 99999999 )
+		if (++sanityLoop > 99999999)
 		{
-			char buffer[ 1024 ];
+			char buffer[1024];
 
-			sprintf( buffer, "Unable to make unique name for '%s', please manually edit the name before saving.",
-							 instData->m_decoratedNameString.str() );
-			MessageBox( TheEditor->getWindowHandle(), buffer, "Error Mapping Names", MB_OK );
+			sprintf(buffer, "Unable to make unique name for '%s', please manually edit the name before saving.",
+			        instData->m_decoratedNameString.str());
+			MessageBox(TheEditor->getWindowHandle(), buffer, "Error Mapping Names", MB_OK);
 			nameOK = TRUE;
-
 		}
-
 	}
 
 	// validate our children names
-	GameWindow *child;
-	for( child = root->winGetChild(); child; child = child->winGetNext() )
-		validateClipboardNames( child );
+	GameWindow* child;
+	for (child = root->winGetChild(); child; child = child->winGetNext())
+	{
+		validateClipboardNames(child);
+	}
 
 	// validate the next window in the list
-	validateClipboardNames( root->winGetNext() );
-
+	validateClipboardNames(root->winGetNext());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -663,22 +646,20 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 void GUIEditWindowManager::pasteClipboard()
 {
 	GameWindow *window, *next;
-	GameWindow *firstWindow = nullptr;
+	GameWindow* firstWindow = nullptr;
 
 	// check for empty clipboard
-	if( m_clipboard == nullptr )
+	if (m_clipboard == nullptr)
 	{
-
-		MessageBox( TheEditor->getWindowHandle(),
-								"Cannot perform paste, the clipboard is empty.",
-								"Clipboard Empty",
-								MB_OK );
+		MessageBox(TheEditor->getWindowHandle(),
+		           "Cannot perform paste, the clipboard is empty.",
+		           "Clipboard Empty",
+		           MB_OK);
 		return;
-
 	}
 
 	// create a duplicate of everything in the clipboard
-	assert( m_clipboardDup == nullptr );
+	assert(m_clipboardDup == nullptr);
 	createClipboardDuplicate();
 
 	//
@@ -686,23 +667,22 @@ void GUIEditWindowManager::pasteClipboard()
 	// scan through the clipboard dupe and adjust any names that will cause
 	// collisions in the current layout
 	//
-	validateClipboardNames( m_clipboardDup );
+	validateClipboardNames(m_clipboardDup);
 
 	// keep a pointer to the first window we will add
 	firstWindow = m_clipboardDup;
 
 	// move everything from the duplicate list into the real world
-	for( window = m_clipboardDup; window; window = next )
+	for (window = m_clipboardDup; window; window = next)
 	{
-
 		// get next window
 		next = window->winGetNext();
 
 		// remove from clipboard
-		unlinkFromClipboard( window, &m_clipboardDup );
+		unlinkFromClipboard(window, &m_clipboardDup);
 
 		// place in real layout
-		linkWindow( window );
+		linkWindow(window);
 
 		//
 		// since we just pasted in a new window, offset it a little bit
@@ -712,24 +692,23 @@ void GUIEditWindowManager::pasteClipboard()
 		//
 		ICoord2D pos, safePos;
 
-		window->winGetPosition( &pos.x, &pos.y );
+		window->winGetPosition(&pos.x, &pos.y);
 		pos.x += m_copySpacing * (m_numCopiesPasted + 1);
 		pos.y += m_copySpacing * (m_numCopiesPasted + 1);
 
 		// kee the location legal
-		TheEditor->computeSafeLocation( window, pos.x, pos.y,
-																		&safePos.x, &safePos.y );
+		TheEditor->computeSafeLocation(window, pos.x, pos.y,
+		                               &safePos.x, &safePos.y);
 
 		// set the new location
-		TheEditor->moveWindowTo( window, safePos.x, safePos.y );
+		TheEditor->moveWindowTo(window, safePos.x, safePos.y);
 
 		// notify the hierarchy of the new window added
-		TheHierarchyView->addWindow( window, HIERARCHY_ADD_AT_TOP );
-
+		TheHierarchyView->addWindow(window, HIERARCHY_ADD_AT_TOP);
 	}
 
 	// the clipboard duplicate list is only for the act of pasting
-	assert( m_clipboardDup == nullptr );
+	assert(m_clipboardDup == nullptr);
 
 	// we've now completed another successful copy pasted in
 	m_numCopiesPasted++;
@@ -744,60 +723,61 @@ void GUIEditWindowManager::pasteClipboard()
 	//
 	TheEditor->clearSelections();
 	window = firstWindow;
-	while( window )
+	while (window)
 	{
-
-		TheEditor->selectWindow( window );
+		TheEditor->selectWindow(window);
 		window = window->winGetPrev();
 
 		// notify the editor that each of the windows was created
-		TheEditor->notifyNewWindow( window );
-
+		TheEditor->notifyNewWindow(window);
 	}
 
 	// if we did in fact paste a window then our file contents have changed
-	if( firstWindow )
-		TheEditor->setUnsaved( TRUE );
-
+	if (firstWindow)
+	{
+		TheEditor->setUnsaved(TRUE);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Convinience function to copy the Draw state info for a given instance */
 //-------------------------------------------------------------------------------------------------
-void InstDrawCopy (  WinInstanceData *instData, WinInstanceData *sourceInstData)
+void InstDrawCopy(WinInstanceData* instData, WinInstanceData* sourceInstData)
 {
 	// do the copy of the colors for each state
-	memcpy( &instData->m_enabledDrawData,
-					&sourceInstData->m_enabledDrawData,
-					sizeof( WinDrawData ) * MAX_DRAW_DATA );
-	memcpy( &instData->m_disabledDrawData,
-					&sourceInstData->m_disabledDrawData,
-					sizeof( WinDrawData ) * MAX_DRAW_DATA );
-	memcpy( &instData->m_hiliteDrawData,
-					&sourceInstData->m_hiliteDrawData,
-					sizeof( WinDrawData ) * MAX_DRAW_DATA );
+	memcpy(&instData->m_enabledDrawData,
+	       &sourceInstData->m_enabledDrawData,
+	       sizeof(WinDrawData) * MAX_DRAW_DATA);
+	memcpy(&instData->m_disabledDrawData,
+	       &sourceInstData->m_disabledDrawData,
+	       sizeof(WinDrawData) * MAX_DRAW_DATA);
+	memcpy(&instData->m_hiliteDrawData,
+	       &sourceInstData->m_hiliteDrawData,
+	       sizeof(WinDrawData) * MAX_DRAW_DATA);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Duplciate a window and all its children */
 //-------------------------------------------------------------------------------------------------
-GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
-																									 GameWindow *parent )
+GameWindow* GUIEditWindowManager::duplicateWindow(GameWindow* source,
+                                                  GameWindow* parent)
 {
-	GameWindow *duplicate = nullptr;
+	GameWindow* duplicate = nullptr;
 	UnsignedInt style, status;
-	WinInstanceData *instData;
+	WinInstanceData* instData;
 	WinInstanceData instDataCopy;
 	ICoord2D pos, size;
 
 	// sanity
-	if( source == nullptr )
+	if (source == nullptr)
+	{
 		return nullptr;
+	}
 
 	// get the window instance data and make a copy of it for creating new stuff
 	instData = source->winGetInstanceData();
 	instDataCopy = *instData;
-//	memcpy( &instDataCopy, instData, sizeof( instDataCopy ) );
+	//	memcpy( &instDataCopy, instData, sizeof( instDataCopy ) );
 
 	//
 	// do NOT copy the display string instances, these MUST be allocated when
@@ -809,127 +789,116 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// get a few properties we're going to need
 	style = source->winGetStyle();
 	status = source->winGetStatus();
-	source->winGetPosition( &pos.x, &pos.y );
-	source->winGetSize( &size.x, &size.y );
+	source->winGetPosition(&pos.x, &pos.y);
+	source->winGetSize(&size.x, &size.y);
 
 	// create a new window or gadget of the appropriate type
-	if( BitIsSet( style, GWS_PUSH_BUTTON ) )
+	if (BitIsSet(style, GWS_PUSH_BUTTON))
 	{
-
 		duplicate =
-			TheWindowManager->gogoGadgetPushButton( parent,
-																							status,
-																							pos.x,
-																							pos.y,
-																							size.x,
-																							size.y,
-																							&instDataCopy,
-																							source->winGetFont(),
-																							FALSE );
-
+		  TheWindowManager->gogoGadgetPushButton(parent,
+		                                         status,
+		                                         pos.x,
+		                                         pos.y,
+		                                         size.x,
+		                                         size.y,
+		                                         &instDataCopy,
+		                                         source->winGetFont(),
+		                                         FALSE);
 	}
-	else if( BitIsSet( style, GWS_RADIO_BUTTON ) )
+	else if (BitIsSet(style, GWS_RADIO_BUTTON))
 	{
-		RadioButtonData *radioData = (RadioButtonData *)source->winGetUserData();
+		RadioButtonData* radioData = (RadioButtonData*)source->winGetUserData();
 		RadioButtonData radioDataCopy;
 
 		radioDataCopy = *radioData;
-//		memcpy( &radioDataCopy, radioData, sizeof( RadioButtonData ) );
+		//		memcpy( &radioDataCopy, radioData, sizeof( RadioButtonData ) );
 
 		duplicate =
-			TheWindowManager->gogoGadgetRadioButton( parent,
-																							 status,
-																							 pos.x,
-																							 pos.y,
-																							 size.x,
-																							 size.y,
-																							 &instDataCopy,
-																							 &radioDataCopy,
-																							 source->winGetFont(),
-																							 FALSE );
-
+		  TheWindowManager->gogoGadgetRadioButton(parent,
+		                                          status,
+		                                          pos.x,
+		                                          pos.y,
+		                                          size.x,
+		                                          size.y,
+		                                          &instDataCopy,
+		                                          &radioDataCopy,
+		                                          source->winGetFont(),
+		                                          FALSE);
 	}
-	else if( BitIsSet( style, GWS_CHECK_BOX ) )
+	else if (BitIsSet(style, GWS_CHECK_BOX))
 	{
-
 		duplicate =
-			TheWindowManager->gogoGadgetCheckbox( parent,
-																						status,
-																						pos.x,
-																						pos.y,
-																						size.x,
-																						size.y,
-																						&instDataCopy,
-																						source->winGetFont(),
-																						FALSE );
-
+		  TheWindowManager->gogoGadgetCheckbox(parent,
+		                                       status,
+		                                       pos.x,
+		                                       pos.y,
+		                                       size.x,
+		                                       size.y,
+		                                       &instDataCopy,
+		                                       source->winGetFont(),
+		                                       FALSE);
 	}
-	else if( BitIsSet( style, GWS_HORZ_SLIDER | GWS_VERT_SLIDER ) )
+	else if (BitIsSet(style, GWS_HORZ_SLIDER | GWS_VERT_SLIDER))
 	{
-		SliderData *sliderData = (SliderData *)source->winGetUserData();
+		SliderData* sliderData = (SliderData*)source->winGetUserData();
 		SliderData sliderDataCopy;
 
 		sliderDataCopy = *sliderData;
-//		memcpy( &sliderDataCopy, sliderData, sizeof( SliderData ) );
+		//		memcpy( &sliderDataCopy, sliderData, sizeof( SliderData ) );
 
-		duplicate = TheWindowManager->gogoGadgetSlider( parent,
-																										status,
-																										pos.x,
-																										pos.y,
-																										size.x,
-																										size.y,
-																										&instDataCopy,
-																										&sliderDataCopy,
-																										source->winGetFont(),
-																										FALSE );
+		duplicate = TheWindowManager->gogoGadgetSlider(parent,
+		                                               status,
+		                                               pos.x,
+		                                               pos.y,
+		                                               size.x,
+		                                               size.y,
+		                                               &instDataCopy,
+		                                               &sliderDataCopy,
+		                                               source->winGetFont(),
+		                                               FALSE);
 
 		//
 		// copy the color and image schemes of the sub controls that make
 		// up a slider
 		//
-		if( duplicate )
+		if (duplicate)
 		{
-			WinInstanceData *instData;
-			WinInstanceData *sourceInstData;
+			WinInstanceData* instData;
+			WinInstanceData* sourceInstData;
 
 			// do the slider thumb
-			GameWindow *thumb = GadgetSliderGetThumb( duplicate );
-			GameWindow *sourceThumb = GadgetSliderGetThumb( source );
-			if( thumb && sourceThumb )
+			GameWindow* thumb = GadgetSliderGetThumb(duplicate);
+			GameWindow* sourceThumb = GadgetSliderGetThumb(source);
+			if (thumb && sourceThumb)
 			{
-
 				instData = thumb->winGetInstanceData();
 				sourceInstData = sourceThumb->winGetInstanceData();
 
 				// do the copy of the colors for each state
-				memcpy( &instData->m_enabledDrawData,
-								&sourceInstData->m_enabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_disabledDrawData,
-								&sourceInstData->m_disabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_hiliteDrawData,
-								&sourceInstData->m_hiliteDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+				memcpy(&instData->m_enabledDrawData,
+				       &sourceInstData->m_enabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_disabledDrawData,
+				       &sourceInstData->m_disabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_hiliteDrawData,
+				       &sourceInstData->m_hiliteDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
 			}
-
 		}
-
 	}
-	else if( BitIsSet( style, GWS_COMBO_BOX ) )
+	else if (BitIsSet(style, GWS_COMBO_BOX))
 	{
-		ComboBoxData *comboData = (ComboBoxData *)source->winGetUserData();
+		ComboBoxData* comboData = (ComboBoxData*)source->winGetUserData();
 		ComboBoxData comboDataCopy;
 
-		memset( &comboDataCopy, 0, sizeof( ComboBoxData ) );
+		memset(&comboDataCopy, 0, sizeof(ComboBoxData));
 
 		comboDataCopy.entryData = new EntryData;
-		memset ( comboDataCopy.entryData, 0, sizeof(EntryData));
+		memset(comboDataCopy.entryData, 0, sizeof(EntryData));
 		comboDataCopy.listboxData = new ListboxData;
-		memset ( comboDataCopy.listboxData, 0, sizeof(ListboxData));
-
-
+		memset(comboDataCopy.listboxData, 0, sizeof(ListboxData));
 
 		comboDataCopy.entryCount = comboData->entryCount;
 		comboDataCopy.isEditable = comboData->isEditable;
@@ -954,163 +923,149 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		comboDataCopy.entryData->maxTextLen = comboData->entryData->maxTextLen;
 		comboDataCopy.entryData->numericalOnly = comboData->entryData->numericalOnly;
 
-
-
 		duplicate =
-			TheWindowManager->gogoGadgetComboBox( parent,
-																					 status,
-																					 pos.x,
-																					 pos.y,
-																					 size.x,
-																					 size.y,
-																					 &instDataCopy,
-																					 &comboDataCopy,
-																					 source->winGetFont(),
-																					 FALSE );
+		  TheWindowManager->gogoGadgetComboBox(parent,
+		                                       status,
+		                                       pos.x,
+		                                       pos.y,
+		                                       size.x,
+		                                       size.y,
+		                                       &instDataCopy,
+		                                       &comboDataCopy,
+		                                       source->winGetFont(),
+		                                       FALSE);
 
 		//
 		// copy the color and image schemes of the sub controls that make
 		// up a listbox
 		//
-		if( duplicate )
+		if (duplicate)
 		{
-			ComboBoxData *comboData = (ComboBoxData *)duplicate->winGetUserData();
-			ComboBoxData *sourceComboData = (ComboBoxData *)source->winGetUserData();
-			WinInstanceData *instData;
-			WinInstanceData *sourceInstData;
-
+			ComboBoxData* comboData = (ComboBoxData*)duplicate->winGetUserData();
+			ComboBoxData* sourceComboData = (ComboBoxData*)source->winGetUserData();
+			WinInstanceData* instData;
+			WinInstanceData* sourceInstData;
 
 			// drop down button
-			GameWindow *dropDownButton = comboData->dropDownButton;
-			GameWindow *sourceDropDownButton = sourceComboData->dropDownButton;
-			if(dropDownButton && sourceDropDownButton)
+			GameWindow* dropDownButton = comboData->dropDownButton;
+			GameWindow* sourceDropDownButton = sourceComboData->dropDownButton;
+			if (dropDownButton && sourceDropDownButton)
 			{
 				instData = dropDownButton->winGetInstanceData();
 				sourceInstData = sourceDropDownButton->winGetInstanceData();
 
-				InstDrawCopy(instData,sourceInstData);
+				InstDrawCopy(instData, sourceInstData);
 			}
 
 			// edit box
-			GameWindow *editBox = comboData->editBox;
-			GameWindow *sourceEditBox = sourceComboData->editBox;
-			if(editBox && sourceEditBox)
+			GameWindow* editBox = comboData->editBox;
+			GameWindow* sourceEditBox = sourceComboData->editBox;
+			if (editBox && sourceEditBox)
 			{
 				instData = editBox->winGetInstanceData();
 				sourceInstData = sourceEditBox->winGetInstanceData();
 
-				InstDrawCopy(instData,sourceInstData);
+				InstDrawCopy(instData, sourceInstData);
 			}
 
 			// ListBox
-			GameWindow *listBox = comboData->listBox;
-			GameWindow *sourceListBox = sourceComboData->listBox;
-			if(listBox && sourceListBox)
+			GameWindow* listBox = comboData->listBox;
+			GameWindow* sourceListBox = sourceComboData->listBox;
+			if (listBox && sourceListBox)
 			{
 				instData = listBox->winGetInstanceData();
 				sourceInstData = sourceListBox->winGetInstanceData();
 
-				InstDrawCopy(instData,sourceInstData);
+				InstDrawCopy(instData, sourceInstData);
 
 				// up button
-				GameWindow *upButton = comboData->listboxData->upButton;
-				GameWindow *sourceUpButton = sourceComboData->listboxData->upButton;
-				if( upButton && sourceUpButton )
+				GameWindow* upButton = comboData->listboxData->upButton;
+				GameWindow* sourceUpButton = sourceComboData->listboxData->upButton;
+				if (upButton && sourceUpButton)
 				{
-
 					instData = upButton->winGetInstanceData();
 					sourceInstData = sourceUpButton->winGetInstanceData();
 
 					// do the copy of the colors for each state
-					memcpy( &instData->m_enabledDrawData,
-									&sourceInstData->m_enabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_disabledDrawData,
-									&sourceInstData->m_disabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_hiliteDrawData,
-									&sourceInstData->m_hiliteDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+					memcpy(&instData->m_enabledDrawData,
+					       &sourceInstData->m_enabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_disabledDrawData,
+					       &sourceInstData->m_disabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_hiliteDrawData,
+					       &sourceInstData->m_hiliteDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
 				}
 
 				// down button
-				GameWindow *downButton = comboData->listboxData->downButton;
-				GameWindow *sourceDownButton = sourceComboData->listboxData->downButton;
-				if( downButton && sourceDownButton )
+				GameWindow* downButton = comboData->listboxData->downButton;
+				GameWindow* sourceDownButton = sourceComboData->listboxData->downButton;
+				if (downButton && sourceDownButton)
 				{
-
 					instData = downButton->winGetInstanceData();
 					sourceInstData = sourceDownButton->winGetInstanceData();
 
 					// do the copy of the colors for each state
-					memcpy( &instData->m_enabledDrawData,
-									&sourceInstData->m_enabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_disabledDrawData,
-									&sourceInstData->m_disabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_hiliteDrawData,
-									&sourceInstData->m_hiliteDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+					memcpy(&instData->m_enabledDrawData,
+					       &sourceInstData->m_enabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_disabledDrawData,
+					       &sourceInstData->m_disabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_hiliteDrawData,
+					       &sourceInstData->m_hiliteDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
 				}
 
 				// slider
-				GameWindow *slider = comboData->listboxData->slider;
-				GameWindow *sourceSlider = sourceComboData->listboxData->slider;
-				if( slider && sourceSlider )
+				GameWindow* slider = comboData->listboxData->slider;
+				GameWindow* sourceSlider = sourceComboData->listboxData->slider;
+				if (slider && sourceSlider)
 				{
-
 					instData = slider->winGetInstanceData();
 					sourceInstData = sourceSlider->winGetInstanceData();
 
 					// do the copy of the colors for each state
-					memcpy( &instData->m_enabledDrawData,
-									&sourceInstData->m_enabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_disabledDrawData,
-									&sourceInstData->m_disabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_hiliteDrawData,
-									&sourceInstData->m_hiliteDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
+					memcpy(&instData->m_enabledDrawData,
+					       &sourceInstData->m_enabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_disabledDrawData,
+					       &sourceInstData->m_disabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_hiliteDrawData,
+					       &sourceInstData->m_hiliteDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
 
 					// do the slider thumb
-					GameWindow *thumb = GadgetSliderGetThumb( slider );
-					GameWindow *sourceThumb = GadgetSliderGetThumb( sourceSlider );
-					if( thumb && sourceThumb )
+					GameWindow* thumb = GadgetSliderGetThumb(slider);
+					GameWindow* sourceThumb = GadgetSliderGetThumb(sourceSlider);
+					if (thumb && sourceThumb)
 					{
-
 						instData = thumb->winGetInstanceData();
 						sourceInstData = sourceThumb->winGetInstanceData();
 
-					// do the copy of the colors for each state
-					memcpy( &instData->m_enabledDrawData,
-									&sourceInstData->m_enabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_disabledDrawData,
-									&sourceInstData->m_disabledDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-					memcpy( &instData->m_hiliteDrawData,
-									&sourceInstData->m_hiliteDrawData,
-									sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+						// do the copy of the colors for each state
+						memcpy(&instData->m_enabledDrawData,
+						       &sourceInstData->m_enabledDrawData,
+						       sizeof(WinDrawData) * MAX_DRAW_DATA);
+						memcpy(&instData->m_disabledDrawData,
+						       &sourceInstData->m_disabledDrawData,
+						       sizeof(WinDrawData) * MAX_DRAW_DATA);
+						memcpy(&instData->m_hiliteDrawData,
+						       &sourceInstData->m_hiliteDrawData,
+						       sizeof(WinDrawData) * MAX_DRAW_DATA);
 					}
-
 				}
-
 			}
-
 		}
-
 	}
-	else if( BitIsSet( style, GWS_SCROLL_LISTBOX ) )
+	else if (BitIsSet(style, GWS_SCROLL_LISTBOX))
 	{
-		ListboxData *listData = (ListboxData *)source->winGetUserData();
+		ListboxData* listData = (ListboxData*)source->winGetUserData();
 		ListboxData listDataCopy;
 
-		memset( &listDataCopy, 0, sizeof( listDataCopy ) );
+		memset(&listDataCopy, 0, sizeof(listDataCopy));
 		listDataCopy.autoPurge = listData->autoPurge;
 		listDataCopy.autoScroll = listData->autoScroll;
 		listDataCopy.scrollIfAtEnd = listData->scrollIfAtEnd;
@@ -1119,148 +1074,142 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		listDataCopy.multiSelect = listData->multiSelect;
 		listDataCopy.scrollBar = listData->scrollBar;
 		listDataCopy.columns = listData->columns;
-		if(listData->columnWidth)
+		if (listData->columnWidth)
 		{
 			listDataCopy.columnWidth = new Int[listData->columns];
-			for(Int i = 0; i < listData->columns; i ++)
+			for (Int i = 0; i < listData->columns; i++)
 			{
 				listDataCopy.columnWidth[i] = listData->columnWidth[i];
 			}
 		}
 		else
+		{
 			listDataCopy.columnWidth = nullptr;
+		}
 
-		if(listData->columnWidthPercentage)
+		if (listData->columnWidthPercentage)
 		{
 			listDataCopy.columnWidthPercentage = new Int[listData->columns];
-			for(Int i = 0; i < listData->columns; i ++)
+			for (Int i = 0; i < listData->columns; i++)
 			{
 				listDataCopy.columnWidthPercentage[i] = listData->columnWidthPercentage[i];
 			}
 		}
 		else
+		{
 			listDataCopy.columnWidthPercentage = nullptr;
+		}
 
 		duplicate =
-			TheWindowManager->gogoGadgetListBox( parent,
-																					 status,
-																					 pos.x,
-																					 pos.y,
-																					 size.x,
-																					 size.y,
-																					 &instDataCopy,
-																					 &listDataCopy,
-																					 source->winGetFont(),
-																					 FALSE );
+		  TheWindowManager->gogoGadgetListBox(parent,
+		                                      status,
+		                                      pos.x,
+		                                      pos.y,
+		                                      size.x,
+		                                      size.y,
+		                                      &instDataCopy,
+		                                      &listDataCopy,
+		                                      source->winGetFont(),
+		                                      FALSE);
 
 		//
 		// copy the color and image schemes of the sub controls that make
 		// up a listbox
 		//
-		if( duplicate )
+		if (duplicate)
 		{
-			ListboxData *listData = (ListboxData *)duplicate->winGetUserData();
-			ListboxData *sourceListData = (ListboxData *)source->winGetUserData();
-			WinInstanceData *instData;
-			WinInstanceData *sourceInstData;
+			ListboxData* listData = (ListboxData*)duplicate->winGetUserData();
+			ListboxData* sourceListData = (ListboxData*)source->winGetUserData();
+			WinInstanceData* instData;
+			WinInstanceData* sourceInstData;
 
 			// up button
-			GameWindow *upButton = listData->upButton;
-			GameWindow *sourceUpButton = sourceListData->upButton;
-			if( upButton && sourceUpButton )
+			GameWindow* upButton = listData->upButton;
+			GameWindow* sourceUpButton = sourceListData->upButton;
+			if (upButton && sourceUpButton)
 			{
-
 				instData = upButton->winGetInstanceData();
 				sourceInstData = sourceUpButton->winGetInstanceData();
 
 				// do the copy of the colors for each state
-				memcpy( &instData->m_enabledDrawData,
-								&sourceInstData->m_enabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_disabledDrawData,
-								&sourceInstData->m_disabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_hiliteDrawData,
-								&sourceInstData->m_hiliteDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+				memcpy(&instData->m_enabledDrawData,
+				       &sourceInstData->m_enabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_disabledDrawData,
+				       &sourceInstData->m_disabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_hiliteDrawData,
+				       &sourceInstData->m_hiliteDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
 			}
 
 			// down button
-			GameWindow *downButton = listData->downButton;
-			GameWindow *sourceDownButton = sourceListData->downButton;
-			if( downButton && sourceDownButton )
+			GameWindow* downButton = listData->downButton;
+			GameWindow* sourceDownButton = sourceListData->downButton;
+			if (downButton && sourceDownButton)
 			{
-
 				instData = downButton->winGetInstanceData();
 				sourceInstData = sourceDownButton->winGetInstanceData();
 
 				// do the copy of the colors for each state
-				memcpy( &instData->m_enabledDrawData,
-								&sourceInstData->m_enabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_disabledDrawData,
-								&sourceInstData->m_disabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_hiliteDrawData,
-								&sourceInstData->m_hiliteDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+				memcpy(&instData->m_enabledDrawData,
+				       &sourceInstData->m_enabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_disabledDrawData,
+				       &sourceInstData->m_disabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_hiliteDrawData,
+				       &sourceInstData->m_hiliteDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
 			}
 
 			// slider
-			GameWindow *slider = listData->slider;
-			GameWindow *sourceSlider = sourceListData->slider;
-			if( slider && sourceSlider )
+			GameWindow* slider = listData->slider;
+			GameWindow* sourceSlider = sourceListData->slider;
+			if (slider && sourceSlider)
 			{
-
 				instData = slider->winGetInstanceData();
 				sourceInstData = sourceSlider->winGetInstanceData();
 
 				// do the copy of the colors for each state
-				memcpy( &instData->m_enabledDrawData,
-								&sourceInstData->m_enabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_disabledDrawData,
-								&sourceInstData->m_disabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_hiliteDrawData,
-								&sourceInstData->m_hiliteDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
+				memcpy(&instData->m_enabledDrawData,
+				       &sourceInstData->m_enabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_disabledDrawData,
+				       &sourceInstData->m_disabledDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
+				memcpy(&instData->m_hiliteDrawData,
+				       &sourceInstData->m_hiliteDrawData,
+				       sizeof(WinDrawData) * MAX_DRAW_DATA);
 
 				// do the slider thumb
-				GameWindow *thumb = GadgetSliderGetThumb( slider );
-				GameWindow *sourceThumb = GadgetSliderGetThumb( sourceSlider );
-				if( thumb && sourceThumb )
+				GameWindow* thumb = GadgetSliderGetThumb(slider);
+				GameWindow* sourceThumb = GadgetSliderGetThumb(sourceSlider);
+				if (thumb && sourceThumb)
 				{
-
 					instData = thumb->winGetInstanceData();
 					sourceInstData = sourceThumb->winGetInstanceData();
 
-				// do the copy of the colors for each state
-				memcpy( &instData->m_enabledDrawData,
-								&sourceInstData->m_enabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_disabledDrawData,
-								&sourceInstData->m_disabledDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-				memcpy( &instData->m_hiliteDrawData,
-								&sourceInstData->m_hiliteDrawData,
-								sizeof( WinDrawData ) * MAX_DRAW_DATA );
-
+					// do the copy of the colors for each state
+					memcpy(&instData->m_enabledDrawData,
+					       &sourceInstData->m_enabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_disabledDrawData,
+					       &sourceInstData->m_disabledDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
+					memcpy(&instData->m_hiliteDrawData,
+					       &sourceInstData->m_hiliteDrawData,
+					       sizeof(WinDrawData) * MAX_DRAW_DATA);
 				}
-
 			}
-
 		}
-
 	}
-	else if( BitIsSet( style, GWS_ENTRY_FIELD ) )
+	else if (BitIsSet(style, GWS_ENTRY_FIELD))
 	{
-		EntryData *entryData = (EntryData *)source->winGetUserData();
+		EntryData* entryData = (EntryData*)source->winGetUserData();
 		EntryData entryDataCopy;
 
-		memset( &entryDataCopy, 0, sizeof( entryDataCopy ) );
+		memset(&entryDataCopy, 0, sizeof(entryDataCopy));
 		entryDataCopy.alphaNumericalOnly = entryData->alphaNumericalOnly;
 		entryDataCopy.aSCIIOnly = entryData->aSCIIOnly;
 		entryDataCopy.maxTextLen = entryData->maxTextLen;
@@ -1268,89 +1217,79 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		entryDataCopy.secretText = entryData->secretText;
 
 		duplicate =
-			TheWindowManager->gogoGadgetTextEntry( parent,
-																						 status,
-																						 pos.x,
-																						 pos.y,
-																						 size.x,
-																						 size.y,
-																						 &instDataCopy,
-																						 &entryDataCopy,
-																						 source->winGetFont(),
-																						 FALSE );
-
+		  TheWindowManager->gogoGadgetTextEntry(parent,
+		                                        status,
+		                                        pos.x,
+		                                        pos.y,
+		                                        size.x,
+		                                        size.y,
+		                                        &instDataCopy,
+		                                        &entryDataCopy,
+		                                        source->winGetFont(),
+		                                        FALSE);
 	}
-	else if( BitIsSet( style, GWS_STATIC_TEXT ) )
+	else if (BitIsSet(style, GWS_STATIC_TEXT))
 	{
-		TextData *textData = (TextData *)source->winGetUserData();
+		TextData* textData = (TextData*)source->winGetUserData();
 		TextData textDataCopy;
 
 		textDataCopy.centered = textData->centered;
 
 		duplicate =
-			TheWindowManager->gogoGadgetStaticText( parent,
-																							status,
-																							pos.x,
-																							pos.y,
-																							size.x,
-																							size.y,
-																							&instDataCopy,
-																							&textDataCopy,
-																							source->winGetFont(),
-																							FALSE );
-
+		  TheWindowManager->gogoGadgetStaticText(parent,
+		                                         status,
+		                                         pos.x,
+		                                         pos.y,
+		                                         size.x,
+		                                         size.y,
+		                                         &instDataCopy,
+		                                         &textDataCopy,
+		                                         source->winGetFont(),
+		                                         FALSE);
 	}
-	else if( BitIsSet( style, GWS_PROGRESS_BAR ) )
+	else if (BitIsSet(style, GWS_PROGRESS_BAR))
 	{
-
 		duplicate =
-			TheWindowManager->gogoGadgetProgressBar( parent,
-																							 status,
-																							 pos.x,
-																							 pos.y,
-																							 size.x,
-																							 size.y,
-																							 &instDataCopy,
-																							 source->winGetFont(),
-																							 FALSE );
-
+		  TheWindowManager->gogoGadgetProgressBar(parent,
+		                                          status,
+		                                          pos.x,
+		                                          pos.y,
+		                                          size.x,
+		                                          size.y,
+		                                          &instDataCopy,
+		                                          source->winGetFont(),
+		                                          FALSE);
 	}
-	else if( BitIsSet( style, GWS_USER_WINDOW ) )
+	else if (BitIsSet(style, GWS_USER_WINDOW))
 	{
-
 		// create plain ol generic window
-		duplicate = TheWindowManager->winCreate( parent,
-																						 status,
-																						 pos.x,
-																						 pos.y,
-																						 size.x,
-																						 size.y,
-																						 nullptr,
-																						 &instDataCopy );
-
+		duplicate = TheWindowManager->winCreate(parent,
+		                                        status,
+		                                        pos.x,
+		                                        pos.y,
+		                                        size.x,
+		                                        size.y,
+		                                        nullptr,
+		                                        &instDataCopy);
 	}
 	else
 	{
-
-		MessageBox( TheEditor->getWindowHandle(),
-								"Cannot duplicate window, undefined style.",
-								"Internal Error", MB_OK );
-		assert( 0 );
-		memset( &instDataCopy, 0, sizeof( instDataCopy ) );  // see comment below
+		MessageBox(TheEditor->getWindowHandle(),
+		           "Cannot duplicate window, undefined style.",
+		           "Internal Error", MB_OK);
+		assert(0);
+		memset(&instDataCopy, 0, sizeof(instDataCopy));    // see comment below
 		return nullptr;
-
 	}
 
 	// sanity
-	if( duplicate == nullptr )
+	if (duplicate == nullptr)
 	{
-
-		MessageBox( TheEditor->getWindowHandle(), "Unable to duplicate window",
-								"Internal Error", MB_OK );
-		assert( 0 );
-		memset( &instDataCopy, 0, sizeof( instDataCopy ) );  // see comment below
+		MessageBox(TheEditor->getWindowHandle(), "Unable to duplicate window",
+		           "Internal Error", MB_OK);
+		assert(0);
+		memset(&instDataCopy, 0, sizeof(instDataCopy));    // see comment below
 		return nullptr;
-
 	}
 
 	//
@@ -1361,20 +1300,23 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// but that is totally isolated in the parent so that's OK and
 	// necessary.
 	//
-	if( parent == nullptr )
-		unlinkWindow( duplicate );
+	if (parent == nullptr)
+	{
+		unlinkWindow(duplicate);
+	}
 
 	// copy edit data, only for the editor
-	if( duplicate )
+	if (duplicate)
 	{
-		GameWindowEditData *editData = duplicate->winGetEditData();
-		GameWindowEditData *sourceEditData = source->winGetEditData();
+		GameWindowEditData* editData = duplicate->winGetEditData();
+		GameWindowEditData* sourceEditData = source->winGetEditData();
 
 		// set edit data to zero or copy from source
-		if( sourceEditData && editData )
+		if (sourceEditData && editData)
+		{
 			*editData = *sourceEditData;
-//			memcpy( editData, sourceEditData, sizeof( GameWindowEditData ) );
-
+		}
+		//			memcpy( editData, sourceEditData, sizeof( GameWindowEditData ) );
 	}
 
 	//
@@ -1383,13 +1325,14 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// is already taken care of in the creation above ... a gadget should
 	// be considered a single atomic unit
 	//
-	if( TheEditor->windowIsGadget( duplicate ) == FALSE )
+	if (TheEditor->windowIsGadget(duplicate) == FALSE)
 	{
-		GameWindow *child;
+		GameWindow* child;
 
-		for( child = source->winGetChild(); child; child = child->winGetNext() )
-			duplicateWindow( child, duplicate );
-
+		for (child = source->winGetChild(); child; child = child->winGetNext())
+		{
+			duplicateWindow(child, duplicate);
+		}
 	}
 
 	//
@@ -1397,68 +1340,70 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// scope and we DONT want any data to be freed that points back to the
 	// original window e got it from.  So therefore we'll just blow it away
 	//
-	memset( &instDataCopy, 0, sizeof( instDataCopy ) );
+	memset(&instDataCopy, 0, sizeof(instDataCopy));
 
 	// return the duped window
 	return duplicate;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Create a duplicate everything on the clipboard list and put it
-	* on the m_clipboardDup list for pasting */
+ * on the m_clipboardDup list for pasting */
 //-------------------------------------------------------------------------------------------------
 void GUIEditWindowManager::createClipboardDuplicate()
 {
-	GameWindow *duplicate;
-	GameWindow *window;
-	GameWindow *lastWindow;
+	GameWindow* duplicate;
+	GameWindow* window;
+	GameWindow* lastWindow;
 
 	// find last window in clipboard
 	lastWindow = m_clipboard;
-	while( lastWindow && lastWindow->winGetNext() != nullptr )
+	while (lastWindow && lastWindow->winGetNext() != nullptr)
+	{
 		lastWindow = lastWindow->winGetNext();
+	}
 
 	//
 	// go through each window in the clipboard, note we're starting from
 	// the bottom and going to the front to preserve the same order
 	// as the clipboard
 	//
-	for( window = lastWindow; window; window = window->winGetPrev() )
+	for (window = lastWindow; window; window = window->winGetPrev())
 	{
-
 		// duplicate the window and all its children
-		duplicate = duplicateWindow( window, nullptr );
+		duplicate = duplicateWindow(window, nullptr);
 
 		// add duplicate to list
-		if( duplicate )
-			linkToClipboard( duplicate, &m_clipboardDup );
-
+		if (duplicate)
+		{
+			linkToClipboard(duplicate, &m_clipboardDup);
+		}
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Make the 'target' a child of the 'parent' */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::makeChildOf( GameWindow *target,
-																				GameWindow *parent )
+void GUIEditWindowManager::makeChildOf(GameWindow* target,
+                                       GameWindow* parent)
 {
-
 	// sanity
-	if( target == nullptr )
+	if (target == nullptr)
+	{
 		return;
+	}
 
 	// get target parent
-	GameWindow *prevParent = target->winGetParent();
+	GameWindow* prevParent = target->winGetParent();
 
 	// check for no parent
-	if( parent == nullptr )
+	if (parent == nullptr)
 	{
-
 		// if target already has no parent nothing to do
-		if( prevParent == nullptr )
+		if (prevParent == nullptr)
+		{
 			return;
+		}
 
 		//
 		// we are removing a parent from the target and placing target
@@ -1466,120 +1411,120 @@ void GUIEditWindowManager::makeChildOf( GameWindow *target,
 		// screen position as the new coords so it's in the same place
 		//
 		ICoord2D screenPos;
-		target->winGetScreenPosition( &screenPos.x, &screenPos.y );
-		unlinkChildWindow( target );
-		linkWindow( target );
-		target->winSetPosition( screenPos.x, screenPos.y );
+		target->winGetScreenPosition(&screenPos.x, &screenPos.y);
+		unlinkChildWindow(target);
+		linkWindow(target);
+		target->winSetPosition(screenPos.x, screenPos.y);
 		return;
-
 	}
 
 	// check to see if this is already out parent, nothing to do
-	if( prevParent == parent )
+	if (prevParent == parent)
+	{
 		return;
+	}
 
 	// you cannot make a window a child of a gadget control
-	if( TheEditor->windowIsGadget( parent ) )
+	if (TheEditor->windowIsGadget(parent))
 	{
-
-		MessageBox( TheEditor->getWindowHandle(),
-								"You cannot give a gadget control a child.",
-								"Child Not Allowed",
-								MB_OK );
+		MessageBox(TheEditor->getWindowHandle(),
+		           "You cannot give a gadget control a child.",
+		           "Child Not Allowed",
+		           MB_OK);
 		return;
-
 	}
 
 	// get the target screen position before the move to child
 	ICoord2D screenPosBeforeMove;
-	target->winGetScreenPosition( &screenPosBeforeMove.x,
-																&screenPosBeforeMove.y );
+	target->winGetScreenPosition(&screenPosBeforeMove.x,
+	                             &screenPosBeforeMove.y);
 
 	// remove the target from the window or any child list
-	if( prevParent )
-		unlinkChildWindow( target );
+	if (prevParent)
+	{
+		unlinkChildWindow(target);
+	}
 	else
-		unlinkWindow( target );
+	{
+		unlinkWindow(target);
+	}
 
 	// add as child of 'parent'
-	addWindowToParent( target, parent );
+	addWindowToParent(target, parent);
 
 	// adjust the position so it's relative to the new parent
 	ICoord2D parentPos;
-	parent->winGetScreenPosition( &parentPos.x, &parentPos.y );
-	target->winSetPosition( screenPosBeforeMove.x - parentPos.x,
-													screenPosBeforeMove.y - parentPos.y );
+	parent->winGetScreenPosition(&parentPos.x, &parentPos.y);
+	target->winSetPosition(screenPosBeforeMove.x - parentPos.x,
+	                       screenPosBeforeMove.y - parentPos.y);
 
 	// notify the hierarchy of the change
-	TheHierarchyView->moveWindowChildOf( target, parent );
+	TheHierarchyView->moveWindowChildOf(target, parent);
 
 	//
 	// run through the move code to keep the child in a legal position
 	// inside the parent client area
 	//
 	ICoord2D origin, safeLoc;
-	target->winGetScreenPosition( &origin.x, &origin.y );
+	target->winGetScreenPosition(&origin.x, &origin.y);
 
 	// kee the location legal
-	TheEditor->computeSafeLocation( target, origin.x, origin.y,
-																	&safeLoc.x, &safeLoc.y );
+	TheEditor->computeSafeLocation(target, origin.x, origin.y,
+	                               &safeLoc.x, &safeLoc.y);
 
 	// move the target
-	TheEditor->moveWindowTo( target, safeLoc.x, safeLoc.y );
-
+	TheEditor->moveWindowTo(target, safeLoc.x, safeLoc.y);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Move the 'windowToMove' to be just in front of the 'aheadOf' window
-	* in either the master window list or in the child list */
+ * in either the master window list or in the child list */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::moveAheadOf( GameWindow *windowToMove,
-																				GameWindow *aheadOf )
+void GUIEditWindowManager::moveAheadOf(GameWindow* windowToMove,
+                                       GameWindow* aheadOf)
 {
-
 	// sanity
-	if( windowToMove == nullptr || aheadOf == nullptr || windowToMove == aheadOf )
+	if (windowToMove == nullptr || aheadOf == nullptr || windowToMove == aheadOf)
+	{
 		return;
+	}
 
 	//
 	// get our screen position before the move ... we want to appear in the
 	// same place after we're moved
 	//
 	ICoord2D beforeMoveScreenPos;
-	windowToMove->winGetScreenPosition( &beforeMoveScreenPos.x,
-																			&beforeMoveScreenPos.y );
+	windowToMove->winGetScreenPosition(&beforeMoveScreenPos.x,
+	                                   &beforeMoveScreenPos.y);
 
 	// get the parent of that which we are moving
-	GameWindow *prevParent = windowToMove->winGetParent();
+	GameWindow* prevParent = windowToMove->winGetParent();
 
 	// take the window to move off the chain
-	if( prevParent )
+	if (prevParent)
 	{
 		ICoord2D pos;
 
 		// get he screen position of the window BEFORE we unlink it
-		windowToMove->winGetScreenPosition( &pos.x, &pos.y );
+		windowToMove->winGetScreenPosition(&pos.x, &pos.y);
 
 		// take off the child list, this will remove our parent pointer as well
-		unlinkChildWindow( windowToMove );
+		unlinkChildWindow(windowToMove);
 
 		//
 		// now that we're unlinked, set the position to be accurate with
 		// the screen position and no parent
 		//
-		windowToMove->winSetPosition( pos.x, pos.y );
-
+		windowToMove->winSetPosition(pos.x, pos.y);
 	}
 	else
 	{
-
 		// just take off the main list
-		unlinkWindow( windowToMove );
-
+		unlinkWindow(windowToMove);
 	}
 
 	// insert the window at the specified location
-	insertWindowAheadOf( windowToMove, aheadOf );
+	insertWindowAheadOf(windowToMove, aheadOf);
 
 	//
 	// adjust our position to be in the same place in our new location
@@ -1588,29 +1533,29 @@ void GUIEditWindowManager::moveAheadOf( GameWindow *windowToMove,
 	// if we lost a parent our position must be set to the absolute
 	// screen position
 	//
-	GameWindow *newParent = windowToMove->winGetParent();
-	ICoord2D parentPos = { 0 };  // init to top left of screen
-	if( newParent )
-		newParent->winGetScreenPosition( &parentPos.x, &parentPos.y );
-	windowToMove->winSetPosition( beforeMoveScreenPos.x - parentPos.x,
-																beforeMoveScreenPos.y - parentPos.y );
+	GameWindow* newParent = windowToMove->winGetParent();
+	ICoord2D parentPos = { 0 };    // init to top left of screen
+	if (newParent)
+	{
+		newParent->winGetScreenPosition(&parentPos.x, &parentPos.y);
+	}
+	windowToMove->winSetPosition(beforeMoveScreenPos.x - parentPos.x,
+	                             beforeMoveScreenPos.y - parentPos.y);
 
 	// move the window hierarchy representation of this window
-	TheHierarchyView->moveWindowAheadOf( windowToMove, aheadOf );
+	TheHierarchyView->moveWindowAheadOf(windowToMove, aheadOf);
 
 	//
 	// run through the move code to keep the child in a legal position
 	// inside the parent client area
 	//
 	ICoord2D origin, safeLoc;
-	windowToMove->winGetScreenPosition( &origin.x, &origin.y );
+	windowToMove->winGetScreenPosition(&origin.x, &origin.y);
 
 	// kee the location legal
-	TheEditor->computeSafeLocation( windowToMove, origin.x, origin.y,
-																	&safeLoc.x, &safeLoc.y );
+	TheEditor->computeSafeLocation(windowToMove, origin.x, origin.y,
+	                               &safeLoc.x, &safeLoc.y);
 
 	// move the target
-	TheEditor->moveWindowTo( windowToMove, safeLoc.x, safeLoc.y );
-
+	TheEditor->moveWindowTo(windowToMove, safeLoc.x, safeLoc.y);
 }
-

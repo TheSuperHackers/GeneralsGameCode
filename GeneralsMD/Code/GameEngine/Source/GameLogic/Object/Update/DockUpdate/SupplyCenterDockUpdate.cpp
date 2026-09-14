@@ -27,7 +27,7 @@
 // Desc:   The action of this dock update is taking boxes and turning them into money for my ownerplayer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -37,7 +37,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameText.h"
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -50,17 +49,14 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void SupplyCenterDockUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
+	DockUpdateModuleData::buildFieldParse(p);
 
-	DockUpdateModuleData::buildFieldParse( p );
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "GrantTemporaryStealth",		INI::parseDurationUnsignedInt,  nullptr, offsetof( SupplyCenterDockUpdateModuleData, m_grantTemporaryStealthFrames ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "GrantTemporaryStealth", INI::parseDurationUnsignedInt, nullptr, offsetof(SupplyCenterDockUpdateModuleData, m_grantTemporaryStealthFrames) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
-
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +65,8 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SupplyCenterDockUpdate::SupplyCenterDockUpdate( Thing *thing, const ModuleData* moduleData ) : DockUpdate( thing, moduleData )
+SupplyCenterDockUpdate::SupplyCenterDockUpdate(Thing* thing, const ModuleData* moduleData)
+  : DockUpdate(thing, moduleData)
 {
 }
 
@@ -80,7 +77,7 @@ SupplyCenterDockUpdate::~SupplyCenterDockUpdate()
 }
 
 // TheSuperHackers @bugfix arcticdolphin 12/03/2026 Scale supply bonus proportionally to delivered boxes.
-static UnsignedInt getUpgradedSupplyBoostValue( SupplyTruckAIInterface* supplyTruckAI )
+static UnsignedInt getUpgradedSupplyBoostValue(SupplyTruckAIInterface* supplyTruckAI)
 {
 #if RETAIL_COMPATIBLE_CRC
 	return supplyTruckAI->getUpgradedSupplyBoost();
@@ -98,49 +95,54 @@ static UnsignedInt getUpgradedSupplyBoostValue( SupplyTruckAIInterface* supplyTr
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
+Bool SupplyCenterDockUpdate::action(Object* docker, Object* drone)
 {
-	const SupplyCenterDockUpdateModuleData *data = getSupplyCenterDockUpdateModuleData();
+	const SupplyCenterDockUpdateModuleData* data = getSupplyCenterDockUpdateModuleData();
 	SupplyTruckAIInterface* supplyTruckAI = nullptr;
-	if( docker->getAIUpdateInterface() == nullptr )
+	if (docker->getAIUpdateInterface() == nullptr)
+	{
 		return FALSE;
+	}
 
 	supplyTruckAI = docker->getAIUpdateInterface()->getSupplyTruckAIInterface();
 
-	DEBUG_ASSERTCRASH( supplyTruckAI != nullptr, ("Something Docking with a Supply Center must have a Supply-truck like AIUpdate") );
-	if( supplyTruckAI == nullptr )
+	DEBUG_ASSERTCRASH(supplyTruckAI != nullptr, ("Something Docking with a Supply Center must have a Supply-truck like AIUpdate"));
+	if (supplyTruckAI == nullptr)
+	{
 		return FALSE;
+	}
 
 	UnsignedInt value = 0;
 
-	value += getUpgradedSupplyBoostValue( supplyTruckAI );
+	value += getUpgradedSupplyBoostValue(supplyTruckAI);
 
-	Player *ownerPlayer = getObject()->getControllingPlayer();
-	while( supplyTruckAI->loseOneBox() )
-		value += ownerPlayer->getSupplyBoxValue();
-
-	if( value > 0)
+	Player* ownerPlayer = getObject()->getControllingPlayer();
+	while (supplyTruckAI->loseOneBox())
 	{
-		Money *ownerPlayerMoney = ownerPlayer->getMoney();
+		value += ownerPlayer->getSupplyBoxValue();
+	}
+
+	if (value > 0)
+	{
+		Money* ownerPlayerMoney = ownerPlayer->getMoney();
 		ownerPlayerMoney->deposit(value);
 		ownerPlayer->getScoreKeeper()->addMoneyEarned(value);
 
-
-		if( data->m_grantTemporaryStealthFrames > 0 )
+		if (data->m_grantTemporaryStealthFrames > 0)
 		{
-			StealthUpdate *stealth = docker->getStealth();
-			//Only grant temporary stealth to the default stealth update. It's
-			//possible that another type of stealth was granted... like the
-			//GPS scrambler. We want that to take precedence.
-			if( getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
+			StealthUpdate* stealth = docker->getStealth();
+			// Only grant temporary stealth to the default stealth update. It's
+			// possible that another type of stealth was granted... like the
+			// GPS scrambler. We want that to take precedence.
+			if (getObject()->testStatus(OBJECT_STATUS_STEALTHED))
 			{
-				if( !stealth )
+				if (!stealth)
 				{
-					DEBUG_CRASH( ("SupplyCenterDockUpdate::action() -- It shouldn't be possible for a unit to be OBJECT_STATUS_STEALTHED without a StealthUpdate module!") );
+					DEBUG_CRASH(("SupplyCenterDockUpdate::action() -- It shouldn't be possible for a unit to be OBJECT_STATUS_STEALTHED without a StealthUpdate module!"));
 				}
-				else if( stealth->isTemporaryGrant() || !docker->testStatus( OBJECT_STATUS_CAN_STEALTH ) )
+				else if (stealth->isTemporaryGrant() || !docker->testStatus(OBJECT_STATUS_CAN_STEALTH))
 				{
-					stealth->receiveGrant( TRUE, data->m_grantTemporaryStealthFrames );
+					stealth->receiveGrant(TRUE, data->m_grantTemporaryStealthFrames);
 				}
 			}
 		}
@@ -151,18 +153,17 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 		// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 		// Setup info for adding a floating text
 		Coord3D pos;
-		const Coord3D *dockerPos;
+		const Coord3D* dockerPos;
 		UnicodeString moneys;
-		moneys.format( TheGameText->fetch( "GUI:AddCash" ), value );
+		moneys.format(TheGameText->fetch("GUI:AddCash"), value);
 		dockerPos = docker->getPosition();
 		pos.x = dockerPos->x;
 		pos.y = dockerPos->y;
-		pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);//dockerPos->z + docker->getGeometryInfo().getHeight();
-		Color color = ownerPlayer->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
+		pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);    // dockerPos->z + docker->getGeometryInfo().getHeight();
+		Color color = ownerPlayer->getPlayerColor() | GameMakeColor(0, 0, 0, 230);
 
 		TheInGameUI->addFloatingText(moneys, &pos, color);
 	}
-
 
 	return FALSE;
 }
@@ -171,13 +172,13 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime SupplyCenterDockUpdate::update()
 {
-	//extend
+	// extend
 	UpdateSleepTime result = DockUpdate::update();
 
 #ifdef _DEBUG_ECONOMY
 	static const NameKeyType key_SupplyCenterCreate = NAMEKEY("SupplyCenterCreate");
 	SupplyCenterCreate* create = (SupplyCenterCreate*)getObject()->findCreateModule(key_SupplyCenterCreate);
-	DEBUG_ASSERTCRASH( create && ! create->shouldDoOnBuildComplete(), ("A Supply center did not call onBuildComplete.") );
+	DEBUG_ASSERTCRASH(create && !create->shouldDoOnBuildComplete(), ("A Supply center did not call onBuildComplete."));
 #endif
 
 	return result;
@@ -186,30 +187,26 @@ UpdateSleepTime SupplyCenterDockUpdate::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterDockUpdate::crc( Xfer *xfer )
+void SupplyCenterDockUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DockUpdate::crc( xfer );
-
+	DockUpdate::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterDockUpdate::xfer( Xfer *xfer )
+void SupplyCenterDockUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DockUpdate::xfer( xfer );
-
+	DockUpdate::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -217,8 +214,6 @@ void SupplyCenterDockUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SupplyCenterDockUpdate::loadPostProcess()
 {
-
 	// extend base class
 	DockUpdate::loadPostProcess();
-
 }

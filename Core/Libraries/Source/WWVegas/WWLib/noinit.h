@@ -46,8 +46,9 @@
 **	into a class object, simply perform an in-place new operation.
 */
 #ifndef NoInitClass
-class NoInitClass {
-	public:
-		void operator () () const {};
+class NoInitClass
+{
+public:
+	void operator()() const {};
 };
 #endif

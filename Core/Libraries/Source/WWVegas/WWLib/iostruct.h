@@ -44,26 +44,26 @@
 */
 struct IOVector2Struct
 {
-	float32		X;
-	float32		Y;
+	float32 X;
+	float32 Y;
 };
 
 struct IOVector3Struct
 {
-	float32		X;							// X,Y,Z coordinates
-	float32		Y;
-	float32		Z;
+	float32 X;    // X,Y,Z coordinates
+	float32 Y;
+	float32 Z;
 };
 
 struct IOVector4Struct
 {
-	float32		X;
-	float32		Y;
-	float32		Z;
-	float32		W;
+	float32 X;
+	float32 Y;
+	float32 Z;
+	float32 W;
 };
 
 struct IOQuaternionStruct
 {
-	float32		Q[4];
+	float32 Q[4];
 };

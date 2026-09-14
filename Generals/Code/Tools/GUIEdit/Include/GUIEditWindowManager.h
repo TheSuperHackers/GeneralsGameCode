@@ -42,20 +42,18 @@
 //-------------------------------------------------------------------------------------------------
 class GUIEditWindowManager : public W3DGameWindowManager
 {
-
 public:
-
 	GUIEditWindowManager();
 	virtual ~GUIEditWindowManager() override;
 
-	virtual void init() override;  ///< initialize system
+	virtual void init() override;    ///< initialize system
 
-	virtual Int winDestroy( GameWindow *window ) override;  ///< destroy this window
+	virtual Int winDestroy(GameWindow* window) override;    ///< destroy this window
 	/// create a new window by setting up parameters and callbacks
-	virtual GameWindow *winCreate( GameWindow *parent, UnsignedInt status,
-																 Int x, Int y, Int width, Int height,
-																 GameWinSystemFunc system,
-																 WinInstanceData *instData = nullptr ) override;
+	virtual GameWindow* winCreate(GameWindow* parent, UnsignedInt status,
+	                              Int x, Int y, Int width, Int height,
+	                              GameWinSystemFunc system,
+	                              WinInstanceData* instData = nullptr) override;
 
 	// **************************************************************************
 	// GUIEdit specific methods *************************************************
@@ -63,51 +61,49 @@ public:
 
 	/** unlink the window to move and place it ahead of the target window
 	in the master chain or the child chain */
-	void moveAheadOf( GameWindow *windowToMove, GameWindow *aheadOf );
+	void moveAheadOf(GameWindow* windowToMove, GameWindow* aheadOf);
 	/// make target a child of the parent
-	void makeChildOf( GameWindow *target, GameWindow *parent );
+	void makeChildOf(GameWindow* target, GameWindow* parent);
 
-	void validateClipboardNames( GameWindow *root );  ///< ensure unique names
-	void incrementName( GameWindow *window );  ///< make a new unique name
-	void resetClipboard();  ///< reset the clipboard to empty
-	Bool isClipboardEmpty();  ///< is the clipboard empty
-	void duplicateSelected( GameWindow *root );  ///< dupe the selected windows into the clipboard
-	void copySelectedToClipboard();  ///< copy selected windows to clipboard
-	void cutSelectedToClipboard();  ///< cut selected windows to clipboard
-	void pasteClipboard();  ///< paste the contents of the clipboard
+	void validateClipboardNames(GameWindow* root);    ///< ensure unique names
+	void incrementName(GameWindow* window);    ///< make a new unique name
+	void resetClipboard();    ///< reset the clipboard to empty
+	Bool isClipboardEmpty();    ///< is the clipboard empty
+	void duplicateSelected(GameWindow* root);    ///< dupe the selected windows into the clipboard
+	void copySelectedToClipboard();    ///< copy selected windows to clipboard
+	void cutSelectedToClipboard();    ///< cut selected windows to clipboard
+	void pasteClipboard();    ///< paste the contents of the clipboard
 
-	GameWindow *getClipboardList();  ///< get the clipboard list
-	GameWindow *getClipboardDupeList();  ///< get clipboard dupe list
+	GameWindow* getClipboardList();    ///< get the clipboard list
+	GameWindow* getClipboardDupeList();    ///< get clipboard dupe list
 
 protected:
-
 	/** validate window is part of the clipboard at the top level */
-	Bool isWindowInClipboard( GameWindow *window, GameWindow **list );
-	void linkToClipboard( GameWindow *window, GameWindow **list );  ///< add window to clipboard
-	void unlinkFromClipboard( GameWindow *window, GameWindow **list );  ///< remove window from clipboard
+	Bool isWindowInClipboard(GameWindow* window, GameWindow** list);
+	void linkToClipboard(GameWindow* window, GameWindow** list);    ///< add window to clipboard
+	void unlinkFromClipboard(GameWindow* window, GameWindow** list);    ///< remove window from clipboard
 
 	/** remove selected children from the select list that have a parent
 	also in the select list */
 	void removeSupervisedChildSelections();
 	/** selected windows that are children will cut loose their parents
 	and become adults (their parent will be null, otherwise the screen) */
-//	void orphanSelectedChildren();
+	//	void orphanSelectedChildren();
 
-  /// dupe a window and its children
-	GameWindow *duplicateWindow( GameWindow *source, GameWindow *parent );
-	void createClipboardDuplicate();  ///< duplicate the clipboard on the dup list
+	/// dupe a window and its children
+	GameWindow* duplicateWindow(GameWindow* source, GameWindow* parent);
+	void createClipboardDuplicate();    ///< duplicate the clipboard on the dup list
 
-	GameWindow *m_clipboard;  ///< list of windows in the clipboard
-	GameWindow *m_clipboardDup;  ///< list duplicate of the clipboard used for pasting
+	GameWindow* m_clipboard;    ///< list of windows in the clipboard
+	GameWindow* m_clipboardDup;    ///< list duplicate of the clipboard used for pasting
 
-	Int m_copySpacing;  ///< keeps multiple pastes from being on top of each other
-	Int m_numCopiesPasted;  ///< keeps multiple pastes from being on top of each other
-
+	Int m_copySpacing;    ///< keeps multiple pastes from being on top of each other
+	Int m_numCopiesPasted;    ///< keeps multiple pastes from being on top of each other
 };
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////
-inline GameWindow *GUIEditWindowManager::getClipboardList() { return m_clipboard; }
-inline GameWindow *GUIEditWindowManager::getClipboardDupeList() { return m_clipboardDup; }
+inline GameWindow* GUIEditWindowManager::getClipboardList() { return m_clipboard; }
+inline GameWindow* GUIEditWindowManager::getClipboardDupeList() { return m_clipboardDup; }
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
-extern GUIEditWindowManager *TheGUIEditWindowManager;  ///< editor use only
+extern GUIEditWindowManager* TheGUIEditWindowManager;    ///< editor use only
