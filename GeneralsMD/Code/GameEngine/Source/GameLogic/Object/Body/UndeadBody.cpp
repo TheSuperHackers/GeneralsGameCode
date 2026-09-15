@@ -75,8 +75,7 @@ UndeadBody::~UndeadBody()
 // ------------------------------------------------------------------------------------------------
 void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 {
-	// If we are on our first life, see if this damage will kill us.  If it will, bind it to one hitpoint
-	// remaining, then go ahead and take it.
+	// If we are on our first life, see if this damage will kill us.
 	Bool shouldStartSecondLife = FALSE;
 
 	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
@@ -90,50 +89,50 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 			&& IsHealthDamagingDamage(damageInfo->in.m_damageType)
 			)
 	{
-		damageInfo->in.m_amount = min( damageInfo->in.m_amount, getHealth() - 1 );
 		shouldStartSecondLife = TRUE;
 	}
 
-	ActiveBody::attemptDamage(damageInfo);
-
 	// After we take it (which allows for damaging special effects), we will do our modifications to the body module
 	if( shouldStartSecondLife )
-		startSecondLife(damageInfo);
+	{
+		if( !startSecondLife(damageInfo) )
+		{
+#if !RETAIL_COMPATIBLE_CRC
+			damageInfo->in.m_kill = true;
+			damageInfo->in.m_enterSecondLife = false;
+			ActiveBody::attemptDamage(damageInfo);
+#endif
+		}
+	}
+	else
+	{
+		ActiveBody::attemptDamage(damageInfo);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void UndeadBody::startSecondLife(DamageInfo *damageInfo)
+Bool UndeadBody::startSecondLife(DamageInfo *damageInfo)
 {
-	const UndeadBodyModuleData *data = getUndeadBodyModuleData();
+#if RETAIL_COMPATIBLE_CRC
+	applySecondLife(damageInfo);
+#endif
 
-	// Flag module as no longer intercepting damage
-	m_isSecondLife = TRUE;
+	damageInfo->in.m_enterSecondLife = TRUE;
 
-	// Modify ActiveBody's max health and initial health
-	setMaxHealth(data->m_secondLifeMaxHealth, FULLY_HEAL);
+	const Int total = SlowDeathBehavior::computeTotalSlowDeathProbability(getObject(), damageInfo);
 
-	// Set Armor set flag to use second life armor
-	setArmorSetFlag(ARMORSET_SECOND_LIFE);
-
-	// Fire the Slow Death module.  The fact that this is not the result of an onDie will cause the special behavior
-	Int total = 0;
-	BehaviorModule** update = getObject()->getBehaviorModules();
-	for( ; *update; ++update )
-	{
-		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != nullptr  && sdu->isDieApplicable(damageInfo) )
-		{
-			total += sdu->getProbabilityModifier( damageInfo );
-		}
-	}
-	DEBUG_ASSERTCRASH(total > 0, ("Hmm, this is wrong"));
-
+#if !RETAIL_COMPATIBLE_CRC
+	if (total == 0)
+		return false;
+#endif
 
 	// this returns a value from 1...total, inclusive
 	Int roll = GameLogicRandomValue(1, total);
 
-	for( update = getObject()->getBehaviorModules(); *update; ++update)
+	// Fire one of the Slow Death modules with Second Life at random.
+	// The fact that this is not the result of an onDie will cause the special behavior.
+	for (BehaviorModule** update = getObject()->getBehaviorModules(); *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
 		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
@@ -141,14 +140,37 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 			roll -= sdu->getProbabilityModifier( damageInfo );
 			if (roll <= 0)
 			{
+#if !RETAIL_COMPATIBLE_CRC
+				applySecondLife(damageInfo);
+#endif
 				sdu->beginSlowDeath(damageInfo);
-				return;
+				return true;
 			}
 		}
 	}
 
+	return false;
 }
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void UndeadBody::applySecondLife(DamageInfo *damageInfo)
+{
+	// In second life, bind it to one hit point remaining, then go ahead and take it
+	damageInfo->in.m_amount = min(damageInfo->in.m_amount, getHealth() - 1);
+
+	// Damage first to apply hit effects
+	ActiveBody::attemptDamage(damageInfo);
+
+	// Flag module as no longer intercepting damage
+	m_isSecondLife = TRUE;
+
+	// Modify ActiveBody's max health and initial health
+	setMaxHealth(getUndeadBodyModuleData()->m_secondLifeMaxHealth, FULLY_HEAL);
+
+	// Set Armor set flag to use second life armor
+	setArmorSetFlag(ARMORSET_SECOND_LIFE);
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
