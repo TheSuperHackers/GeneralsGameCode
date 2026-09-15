@@ -30,6 +30,7 @@
 
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
+#include "Common/FileSystem.h"
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
 
@@ -157,9 +158,8 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
 		AsciiString tempdirname;
 		tempdirname = currentDirectory;
-		if ((!tempdirname.isEmpty()) && (!tempdirname.endsWith("\\"))) {
-			tempdirname.concat('\\');
-		}
+		// TheSuperHackers @fix bobtista 14/08/2026 Avoid adding a separator when either separator is already present.
+		FileSystem::appendPathSeparator(tempdirname);
 		tempdirname.concat(tempDirInfo->m_directoryName);
 		getFileListInDirectory(tempDirInfo, tempdirname, searchName, filenameList, searchSubdirectories);
 		diriter++;
@@ -170,9 +170,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 		if (SearchStringMatches(fileiter->second.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			if ((!tempfilename.isEmpty()) && (!tempfilename.endsWith("\\"))) {
-				tempfilename.concat('\\');
-			}
+			FileSystem::appendPathSeparator(tempfilename);
 			tempfilename.concat(fileiter->second.m_filename);
 			if (filenameList.find(tempfilename) == filenameList.end()) {
 				// only insert into the list if its not already in there.
