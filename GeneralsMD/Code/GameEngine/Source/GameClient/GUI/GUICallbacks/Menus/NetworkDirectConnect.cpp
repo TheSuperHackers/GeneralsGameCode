@@ -60,6 +60,7 @@
 
 extern Bool LANbuttonPushed;
 extern Bool LANisShuttingDown;
+extern Bool LANSocketErrorDetected;
 
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
