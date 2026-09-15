@@ -774,6 +774,8 @@ protected:
  */
 // TheSuperHackers @tweak The particle render update is now decoupled from the logic step.
 // The lifetime management and the velocity and rate changes remain coupled to the logic step.
+// The render updates integrate exactly one logic time step per logic frame, regardless of how many render updates
+// fall into it, so the particles follow the same course as in the original update.
 //
 class ParticleSystemManager : public SubsystemInterface,
 															public Snapshot
@@ -862,6 +864,9 @@ protected:
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
 
+	void completeLogicFrameDrawUpdate(); ///< render update for the rest of the current logic frame
+	void drawSystems( Real timeScale ); ///< render update for all particle systems
+
 	Particle *m_allParticlesHead[ NUM_PARTICLE_PRIORITIES ];
 	Particle *m_allParticlesTail[ NUM_PARTICLE_PRIORITIES ];
 
@@ -874,6 +879,7 @@ protected:
 	UnsignedInt m_particleSystemCount;
 	Int m_onScreenParticleCount;                ///< number of particles displayed on screen per frame
 	Int m_localPlayerIndex;	///<used to tell particle systems which particles can be skipped due to player shroud status
+	Real m_drawnLogicFramePhase; ///< How far the render updates have integrated the current logic frame, ranging 0 to 1.
 
 private:
 	TemplateMap m_templateMap;		///< a hash map of all particle system templates

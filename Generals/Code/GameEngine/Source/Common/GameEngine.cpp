@@ -752,7 +752,6 @@ void GameEngine::update()
 		if (canUpdateGameLogic(FramePacer::IgnoreFrozenTime))
 		{
 			TheGameLogic->UPDATE();
-			TheFramePacer->onNewLogicFrame();
 
 			if (!TheFramePacer->isTimeFrozen())
 			{

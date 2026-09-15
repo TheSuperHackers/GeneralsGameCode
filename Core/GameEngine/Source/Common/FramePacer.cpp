@@ -57,12 +57,22 @@ void FramePacer::update()
 	const UnsignedInt maxFps = getActualFramesPerSecondLimit();
 	m_updateTime = m_frameRateLimit.wait(maxFps);
 
-	// Advance the logic frame phase by the render step that the next update will draw.
-	// It is capped at a whole logic frame, because the render steps in between can add up to more than one when
-	// the render frame rate is not a multiple of the logic frame rate. Consumers are expected to interpolate
-	// towards the next logic frame and not extrapolate past it.
-	const Real timeScale = getActualLogicTimeScaleOverFpsRatio();
-	m_logicFramePhase = min(1.0f, m_logicFramePhase + timeScale);
+	if (TheGameLogic != nullptr)
+	{
+		// Set or advance the logic frame phase by the render step that the next update will draw.
+		// It is capped at a whole logic frame, because the render steps in between can add up to more than one.
+		// Consumers are expected to interpolate towards the next logic frame and not extrapolate past it.
+		const Real timeScale = getActualLogicTimeScaleOverFpsRatio();
+
+		if (TheGameLogic->hasUpdated())
+		{
+			m_logicFramePhase = timeScale;
+		}
+		else
+		{
+			m_logicFramePhase = min(1.0f, m_logicFramePhase + timeScale);
+		}
+	}
 }
 
 void FramePacer::reset()
@@ -70,12 +80,6 @@ void FramePacer::reset()
 	m_frameRateLimit.reset();
 	m_updateTime = 1.0f / (Real)getActualFramesPerSecondLimit();
 	m_logicFramePhase = 1.0f;
-}
-
-void FramePacer::onNewLogicFrame()
-{
-	// Restarts the logic frame phase.
-	m_logicFramePhase = 0.0f;
 }
 
 void FramePacer::setFramesPerSecondLimit( Int fps )

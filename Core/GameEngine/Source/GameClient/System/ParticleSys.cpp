@@ -3122,6 +3122,7 @@ ParticleSystemManager::ParticleSystemManager()
 
 	m_onScreenParticleCount = 0;
 	m_localPlayerIndex = 0;
+	m_drawnLogicFramePhase = 1.0f;
 
 	m_particleCount = 0;
 	m_fieldParticleCount = 0;
@@ -3208,6 +3209,8 @@ void ParticleSystemManager::reset()
 
 	m_uniqueSystemID = INVALID_PARTICLE_SYSTEM_ID;
 
+	m_drawnLogicFramePhase = 1.0f;
+
 	// leave templates as-is
 }
 
@@ -3218,6 +3221,11 @@ void ParticleSystemManager::reset()
 void ParticleSystemManager::update()
 {
 	//USE_PERF_TIMER(ParticleSystemManager)
+
+	// TheSuperHackers @tweak Complete the render update of the previous logic frame before the logic update
+	// changes the rates, so that every logic frame integrates exactly one logic time step.
+	completeLogicFrameDrawUpdate();
+
 	ParticleSystemListIt it = m_allParticleSystemList.begin();
 	while( it != m_allParticleSystemList.end() )
 	{
@@ -3271,13 +3279,38 @@ void ParticleSystemManager::update()
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemManager::draw()
 {
-	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+	// TheSuperHackers @tweak Integrate the part of the logic frame that the render time
+	// has advanced into since the last render update.
+	const Real logicFramePhase = TheFramePacer->getLogicFramePhase();
+	if (logicFramePhase > m_drawnLogicFramePhase)
+	{
+		const Real timeScale = logicFramePhase - m_drawnLogicFramePhase;
+		drawSystems(timeScale);
+		m_drawnLogicFramePhase = logicFramePhase;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystemManager::completeLogicFrameDrawUpdate()
+{
+	const Real timeScale = 1.0f - m_drawnLogicFramePhase;
+	if (timeScale > 0.0f)
+	{
+		drawSystems(timeScale);
+	}
+	m_drawnLogicFramePhase = 0.0f;
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystemManager::drawSystems(Real timeScale)
+{
+	DEBUG_ASSERTCRASH(timeScale > 0.0f, ("ParticleSystemManager::drawSystems: timeScale %f is not greater than zero", timeScale));
 
 	ParticleSystemListIt it = m_allParticleSystemList.begin();
 	while( it != m_allParticleSystemList.end() )
 	{
 		ParticleSystem* sys = *it++;
-		DEBUG_ASSERTCRASH(sys != nullptr, ("ParticleSystemManager::draw: ParticleSystem is null"));
+		DEBUG_ASSERTCRASH(sys != nullptr, ("ParticleSystemManager::drawSystems: ParticleSystem is null"));
 
 		sys->draw(timeScale);
 	}
