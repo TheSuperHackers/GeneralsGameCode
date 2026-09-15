@@ -53,6 +53,12 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/Display.h"
+// TheSuperHackers @feature for the command bar hotkey overlay
+#include "Common/GlobalData.h"
+#include "GameClient/DisplayStringManager.h"
+#include "GameClient/GameFont.h"
+#include "GameClient/GlobalLanguage.h"
+#include "GameClient/HotKey.h"
 #include "W3DDevice/GameClient/W3DGameWindow.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
@@ -78,6 +84,106 @@ void W3DGadgetPushButtonImageDrawOne(GameWindow *window, WinInstanceData *instDa
 // drawButtonText =============================================================
 /** Draw button text to the screen */
 //=============================================================================
+// TheSuperHackers @feature Command bar hotkey overlay (Options.ini: KeyboardOverlay).
+// One display string per letter, so that drawing many cameos in a row does not
+// rebuild sentence geometry over and over. There are only ever a handful of
+// distinct hotkeys on screen, so this stays small. Returned to the manager by
+// W3DGadgetPushButtonFreeHotKeyStrings before the manager is torn down.
+static DisplayString *s_hotKeyStrings[ 256 ] = { nullptr };
+
+//=============================================================================
+/** Return the overlay's display strings to the manager. Must run before
+	* TheDisplayStringManager is destroyed, which asserts on any string still
+	* registered -- the W3DDisplayStringManager destructor calls this. */
+//=============================================================================
+void W3DGadgetPushButtonFreeHotKeyStrings( void )
+{
+	for( Int i = 0; i < 256; ++i )
+	{
+		if( s_hotKeyStrings[ i ] != nullptr && TheDisplayStringManager != nullptr )
+			TheDisplayStringManager->freeDisplayString( s_hotKeyStrings[ i ] );
+
+		s_hotKeyStrings[ i ] = nullptr;
+	}
+}
+
+// drawButtonHotKeyOverlay ====================================================
+/** Draw the keyboard hotkey letter over a command bar cameo, so the player can
+	* learn the shortcuts without hunting through tooltips.
+	*
+	* The letter comes from what actually got registered in the hotkey manager, not
+	* from the button's label -- colliding hotkeys are dropped at registration, and
+	* drawing those would advertise a key that does nothing. */
+//=============================================================================
+static void drawButtonHotKeyOverlay( GameWindow *window )
+{
+	if( !TheGlobalData || !TheGlobalData->m_keyboardOverlayEnabled )
+		return;
+
+	if( TheHotKeyManager == nullptr || TheDisplayStringManager == nullptr )
+		return;
+
+	// only cameo style buttons opt into overlay states, so this leaves menu buttons alone
+	if( !BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
+		return;
+
+	AsciiString hotKey = TheHotKeyManager->getHotKeyForWindow( window );
+	if( hotKey.isEmpty() )
+		return;
+
+	// Only a single byte printable key can be shown faithfully. A localized mnemonic outside
+	// ASCII arrives as a multi byte sequence here, and drawing its first byte would show a
+	// wrong or garbled shortcut - better to draw nothing for those.
+	if( hotKey.getLength() != 1 || !isprint( (unsigned char)hotKey.getCharAt( 0 ) ) )
+		return;
+
+	const UnsignedByte index = (UnsignedByte)hotKey.getCharAt( 0 );
+	DisplayString *hotKeyString = s_hotKeyStrings[ index ];
+
+	if( hotKeyString == nullptr )
+	{
+		hotKeyString = TheDisplayStringManager->newDisplayString();
+		if( hotKeyString == nullptr )
+			return;
+
+		Int pointSize = 10;
+		if( TheGlobalLanguageData )
+			pointSize = TheGlobalLanguageData->adjustFontSize( pointSize );
+		hotKeyString->setFont( TheFontLibrary->getFont( AsciiString( "Arial" ), pointSize, TRUE ) );
+
+		// the manager stores keys lowercased, but shortcuts read better as capitals
+		UnicodeString text;
+		WideChar upper = (WideChar)toupper( (Int)index );
+		text.concat( upper );
+		hotKeyString->setText( text );
+
+		s_hotKeyStrings[ index ] = hotKeyString;
+	}
+
+	ICoord2D origin;
+	window->winGetScreenPosition( &origin.x, &origin.y );
+
+	// tuck it into the top left of the cameo, where no existing decoration lives
+	const Int inset = 2;
+	const Int textX = origin.x + inset;
+	const Int textY = origin.y + inset;
+
+	// Optional plate behind the letter, so it stays readable over busy cameo art.
+	if( TheGlobalData->m_keyboardOverlayBackdrop )
+	{
+		Int width, height;
+		hotKeyString->getSize( &width, &height );
+
+		const Int pad = 1;
+		TheDisplay->drawFillRect( textX - pad, textY - pad,
+			width + pad * 2, height + pad * 2,
+			TheGlobalData->m_keyboardOverlayBackdropColor );
+	}
+
+	hotKeyString->draw( textX, textY,
+		TheGlobalData->m_keyboardOverlayColor, GameMakeColor( 0, 0, 0, 255 ) );
+}
+
 static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, textPos;
@@ -481,6 +587,10 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			}
 		}
 	}
+
+	// TheSuperHackers @feature Draw the hotkey letter last, so it stays readable on top
+	// of the hilite and pushed overlays.
+	drawButtonHotKeyOverlay( window );
 }
 
 

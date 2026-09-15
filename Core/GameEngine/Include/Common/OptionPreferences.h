@@ -34,6 +34,7 @@
 #include "WW3D2/texturefilter.h"
 
 #include "Common/UserPreferences.h"
+#include "GameClient/Color.h"
 
 typedef UnsignedInt CursorCaptureMode;
 typedef UnsignedInt ScreenEdgeScrollMode;
@@ -76,6 +77,10 @@ public:
 	Real getScrollFactor();
 	Bool getDrawScrollAnchor();
 	Bool getMoveScrollAnchor();
+	Bool getKeyboardOverlayEnabled() const;
+	Color getKeyboardOverlayColor() const;
+	Bool getKeyboardOverlayBackdropEnabled() const;
+	Color getKeyboardOverlayBackdropColor() const;
 	Bool getCursorCaptureEnabledInWindowedGame() const;
 	Bool getCursorCaptureEnabledInWindowedMenu() const;
 	Bool getCursorCaptureEnabledInFullscreenGame() const;
@@ -131,4 +136,8 @@ public:
 	Bool getShowMoneyPerMinute() const;
 
 	Real getGameWindowTransitionSpeedMultiplier() const;
+
+private:
+	// TheSuperHackers @feature Read one 0-255 colour channel, clamped, with a fallback.
+	UnsignedByte getColorChannel(const char *keyName, UnsignedByte defaultValue) const;
 };

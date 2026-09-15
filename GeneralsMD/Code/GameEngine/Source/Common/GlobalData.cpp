@@ -1062,6 +1062,10 @@ GlobalData::GlobalData()
 	m_useRightMouseScrollWithAlternateMouse = TRUE;
 #endif
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
+	m_keyboardOverlayEnabled = FALSE;
+	m_keyboardOverlayColor = GameMakeColor( 255, 255, 255, 255 );
+	m_keyboardOverlayBackdrop = TRUE;
+	m_keyboardOverlayBackdropColor = GameMakeColor( 0, 0, 0, 128 );
 	m_doubleClickAttackMove = FALSE;
 
 }
@@ -1206,6 +1210,10 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_useRightMouseScrollWithAlternateMouse = optionPref.getRightMouseScrollWithAlternateMouseEnabled();
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
+	TheWritableGlobalData->m_keyboardOverlayEnabled = optionPref.getKeyboardOverlayEnabled();
+	TheWritableGlobalData->m_keyboardOverlayColor = optionPref.getKeyboardOverlayColor();
+	TheWritableGlobalData->m_keyboardOverlayBackdrop = optionPref.getKeyboardOverlayBackdropEnabled();
+	TheWritableGlobalData->m_keyboardOverlayBackdropColor = optionPref.getKeyboardOverlayBackdropColor();
 	TheWritableGlobalData->m_jpegQuality = optionPref.getJpegQuality();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
 	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
