@@ -1790,7 +1790,6 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			// 3 times per particle when we can do it once
 			float recipDepth = 0.1f / (float)depth;
 
-			float shiftInc = t * (current_size ? *current_size : DefaultPointSize) * recipDepth;
 			const float pointSize = current_size ? *current_size : DefaultPointSize;
 			float shiftInc = t * pointSize * recipDepth;
 
