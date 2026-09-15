@@ -51,6 +51,9 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "GameClient/HotKey.h"
+// TheSuperHackers @feature for hold to aim quick cast
+#include "Common/GlobalData.h"
+#include "Common/OptionPreferences.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/MetaEvent.h"
 #include "GameClient/GameWindow.h"
@@ -72,7 +75,17 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	// TheSuperHackers @feature In QuickCastWithIndicator mode a hotkey arms on key down so the
+	// player can see the targeting decal and still adjust aim, then fires on key up. Every other
+	// mode keeps the original behaviour of acting only on key up.
+#if RTS_ZEROHOUR
+	const Bool holdToAim = TheGlobalData &&
+		TheGlobalData->m_castMode == CastMode_QuickCastWithIndicator;
+#else
+	const Bool holdToAim = FALSE;
+#endif
+
+	if ( t == GameMessage::MSG_RAW_KEY_UP || (holdToAim && t == GameMessage::MSG_RAW_KEY_DOWN) )
 	{
 
 		//char key = msg->getArgument(0)->integer;
@@ -103,8 +116,16 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		uKey.concat(key);
 		AsciiString aKey;
 		aKey.translate(uKey);
-		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
-			disp = DESTROY_MESSAGE;
+		if( TheHotKeyManager )
+		{
+			// key down arms and previews, key up commits at wherever the cursor ended up
+			HotKeyManager::setQuickCastAiming( holdToAim && t == GameMessage::MSG_RAW_KEY_DOWN );
+
+			if( TheHotKeyManager->executeHotKey(aKey) )
+				disp = DESTROY_MESSAGE;
+
+			HotKeyManager::setQuickCastAiming( FALSE );
+		}
 	}
 	return disp;
 }
@@ -157,6 +178,10 @@ void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
 	m_hotKeyMap[key] = newHK;
 }
 
+// TheSuperHackers @feature See HotKey.h -- set only while synthesizing a button press.
+Bool HotKeyManager::s_executingHotKey = FALSE;
+Bool HotKeyManager::s_quickCastAiming = FALSE;
+
 //-----------------------------------------------------------------------------
 Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 {
@@ -170,9 +195,41 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 		return FALSE;
 	if( !BitIsSet( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
 	{
-		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) )
+		// TheSuperHackers @feature A button that is merely not ready yet -- a recharging ability,
+		// or a weapon still working through its burst -- is disabled, which normally swallows the
+		// hotkey outright. In quick cast let it through anyway.
+		//
+		// Without this a repeat press is dropped here, before quick cast ever runs, and the only
+		// way to retarget is to Stop first. A FIRE_WEAPON cameo reports COMMAND_NOT_READY for as
+		// long as its weapon is not READY_TO_FIRE, so any unit still shooting has its own button
+		// disabled underneath the player. Retargeting mid burst is expected behaviour -- see the
+		// DragonTank firewall note in ControlBarCommand.cpp, which describes the same case.
+		//
+		// Deliberately narrow: this only opens up buttons disabled by WIN_STATUS_NOT_READY. Ones
+		// that are restricted or unaffordable stay rejected, and the order still only does
+		// anything if the logic side accepts it, so this cannot fire something that is genuinely
+		// unavailable -- it just stops the keypress being thrown away before it is even looked at.
+#if RTS_ZEROHOUR
+		Bool allowWhileNotReady = FALSE;
+		if( !BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) &&
+				BitIsSet( win->winGetStatus(), WIN_STATUS_NOT_READY ) &&
+				TheGlobalData &&
+				TheGlobalData->m_castMode != CastMode_Normal )
+		{
+			allowWhileNotReady = TRUE;
+		}
+#else
+		const Bool allowWhileNotReady = FALSE;
+#endif
+
+		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) || allowWhileNotReady )
  		{
+			// TheSuperHackers @feature Tell the command bar this press came from the keyboard, so
+			// quick cast can fire at the cursor. A mouse click on the cameo leaves the cursor over
+			// the control bar, where there is nothing sensible to target.
+			HotKeyManager::setExecutingHotKey( TRUE );
  			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
+			HotKeyManager::setExecutingHotKey( FALSE );
 
  			// here we make the same click sound that the GUI uses when you click a button
  			AudioEventRTS buttonClick("GUIClick");
