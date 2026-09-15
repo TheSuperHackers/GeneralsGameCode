@@ -60,6 +60,7 @@
 #include "GameLogic/FPUControl.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "Lib/PathUtil.h"
 
 
 //-------------------------------------------------------------------------------
@@ -530,14 +531,13 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 		AsciiString filepathLower = *filepathIt;
 		filepathLower.toLower();
 
-		const char *szFilenameLower = filepathLower.reverseFind('\\');
+		const char *szFilenameLower = getLastPathSeparator(filepathLower.str());
 		if (!szFilenameLower)
 		{
-			DEBUG_CRASH(("Couldn't find \\ in map name!"));
+			DEBUG_CRASH(("Couldn't find path separator in map name!"));
 			continue;
 		}
 
-		AsciiString endingStr;
 		AsciiString filenameLower = szFilenameLower+1;
 		filenameLower.truncateBy(strlen(mapExtension));
 
@@ -547,7 +547,8 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 			continue;
 		}
 
-		endingStr.format("%s\\%s%s", filenameLower.str(), filenameLower.str(), mapExtension);
+		AsciiString endingStr;
+		endingStr.format("%s%c%s%s", filenameLower.str(), *szFilenameLower, filenameLower.str(), mapExtension);
 
 		if (!filepathLower.endsWithNoCase(endingStr.str()))
 		{
@@ -591,8 +592,8 @@ Bool MapCache::addMap(
 			if (md.m_nameLookupTag.isEmpty())
 			{
 				// unofficial maps or maps without names
-				AsciiString tempdisplayname;
-				tempdisplayname = fname.reverseFind('\\') + 1;
+				// TheSuperHackers @bugfix bobtista 14/09/2026 Handle map filenames with either separator or no separator.
+				AsciiString tempdisplayname = getFileName(fname.str());
 				(*this)[lowerFname].m_displayName.translate(tempdisplayname);
 				if (md.m_numPlayers >= 2)
 				{
@@ -653,8 +654,7 @@ Bool MapCache::addMap(
 	if (!exists || nameLookupTag.isEmpty())
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
-		AsciiString tempdisplayname;
-		tempdisplayname = fname.reverseFind('\\') + 1;
+		AsciiString tempdisplayname = getFileName(fname.str());
 		md.m_displayName.translate(tempdisplayname);
 		if (md.m_numPlayers >= 2)
 		{
