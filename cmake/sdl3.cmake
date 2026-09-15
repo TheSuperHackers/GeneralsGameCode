@@ -1,7 +1,11 @@
 # Standardized vcpkg integration: Try find_package first, fallback to source build if not found.
-# Require SDL3_image >= 3.4.5 for the ANI loader RIFF word-alignment fix.
+# Require SDL3_image >= 3.4.6 for the ANI loader RIFF word-alignment fix and legacy parsing relaxation.
+# NOTE: vcpkg's sdl3-image port is still stuck at 3.4.4 (no upstream port update exists yet), which
+# lacks this fix, so find_package below will always fail its version check and fall through to the
+# FetchContent build of the real 3.4.6 release. Until vcpkg publishes a 3.4.6+ port, animated cursor
+# (.ani) loading depends entirely on this FetchContent path, not the vcpkg-installed sdl3-image.
 find_package(SDL3 CONFIG QUIET)
-find_package(SDL3_image 3.4.5 CONFIG QUIET)
+find_package(SDL3_image 3.4.6 CONFIG QUIET)
 
 if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
     message(STATUS "SDL3 not found via vcpkg/find_package, falling back to source build (FetchContent)...")
@@ -9,18 +13,15 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
 
     FetchContent_Declare(
         SDL3
-        URL https://github.com/libsdl-org/SDL/releases/download/release-3.4.10/SDL3-3.4.10.tar.gz
-        URL_HASH SHA256=12b34280415ec8418c864408b93d008a20a6530687ee613d60bfbd20411f2785
+        URL https://github.com/libsdl-org/SDL/releases/download/release-3.4.16/SDL3-3.4.16.tar.gz
+        URL_HASH SHA256=7322236cd12090c3eb40b9728be4d49c76f66ad17d04369584d4ecad5cf77c68
         OVERRIDE_FIND_PACKAGE
     )
 
     FetchContent_Declare(
         SDL3_image
-        # Pin to commit with the ANI loader RIFF word-alignment fix and legacy parsing relaxation.
-        # NOTE: The legacy asset parsing relaxation fix (commit 67da91c / 0e2eaa9) is not yet in the 
-        # official SDL_image 3.4.4 release. vcpkg builds will inherit this fix once 3.4.5+ is packaged.
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-        GIT_TAG 0e2eaa923ddea285dfa35c4bf0c0092d3799e2ee
+        URL https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.6/SDL3_image-3.4.6.tar.gz
+        URL_HASH SHA256=d2e4637ae700f72e5196b8fbd749850ed2e5e1e09c5a5be8d06ff55aaccf3b01
     )
 
     # Official SDL configuration for a unified build tree
