@@ -39,6 +39,7 @@
 #include "Common/ThingFactory.h"
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
+#include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/HelixContain.h"
 #include "GameLogic/Object.h"
@@ -272,6 +273,12 @@ void HelixContain::addToContain( Object *obj )
     m_portableStructureID = obj->getID();
     obj->friend_setContainedBy( getObject() );//fool portable into thinking my object is his container
 
+#if !RETAIL_COMPATIBLE_CRC
+    // Portable structures bypass onContaining(), so route their kill XP here.
+    if ( obj->getExperienceTracker() )
+      obj->getExperienceTracker()->setExperienceSink( getObject()->getID() );
+#endif
+
     DEBUG_ASSERTCRASH(getObject() == nullptr || !getObject()->isDestroyed(),
       ("HelixContain::addToContain - Adding to a destroyed container"));
   }
@@ -400,7 +407,6 @@ void HelixContain::onContaining( Object *obj, Bool wasSelected )
 	// give the object a garrisoned version of its weapon
 	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
   obj->setDisabled( DISABLED_HELD );
-
 
   if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
   {
