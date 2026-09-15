@@ -38,6 +38,7 @@
 //-----------------------------------------------------------------------------
 #include "Common/GameSpyMiscPreferences.h"
 #include "Common/UserPreferences.h"
+#include "Common/FileSystem.h"
 #include "Common/LadderPreferences.h"
 #include "Common/Player.h"
 #include "Common/PlayerTemplate.h"
@@ -668,7 +669,7 @@ AsciiString CustomMatchPreferences::getPreferredMap()
 		return ret;
 	}
 
-	ret = QuotedPrintableToAsciiString(it->second);
+	ret = FileSystem::normalizePathSeparators(QuotedPrintableToAsciiString(it->second));
 	ret.trim();
 	if (ret.isEmpty() || !isValidMap(ret, TRUE))
 	{	//map is invalid, use default instead
