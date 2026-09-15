@@ -16,7 +16,7 @@
   "overrides": [
     {
       "name": "sdl3",
-      "version": "3.4.10"
+      "version": "3.4.16"
     },
     {
       "name": "sdl3-image",
