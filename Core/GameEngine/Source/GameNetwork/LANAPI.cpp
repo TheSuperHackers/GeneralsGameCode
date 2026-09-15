@@ -97,11 +97,14 @@ LANAPI::~LANAPI()
 
 void LANAPI::init()
 {
+	init(m_localIP);
+}
+
+Bool LANAPI::init(UnsignedInt localIP)
+{
 	m_gameStartTime = 0;
 	m_gameStartSeconds = 0;
-	m_transport->reset();
-	m_transport->init(m_localIP, lobbyPort);
-	m_transport->allowBroadcasts(true);
+	const Bool bound = SetLocalIP(localIP);
 
 	m_pendingAction = ACT_NONE;
 	m_expiration = 0;
@@ -135,6 +138,7 @@ void LANAPI::init()
 		m_hostName = "unknown";
 	}
 #endif
+	return bound;
 }
 
 void LANAPI::reset()
@@ -760,17 +764,14 @@ void LANAPI::RequestHasMap()
 		UnicodeString text;
 		UnicodeString mapDisplayName;
 		const MapMetaData *mapData = TheMapCache->findMap( m_currentGame->getMap() );
-		Bool willTransfer = TRUE;
+		Bool willTransfer = CanTransferMap(m_currentGame->getMap());
 		if (mapData)
 		{
 			mapDisplayName.format(L"%ls", mapData->m_displayName.str());
-			if (mapData->m_isOfficial)
-				willTransfer = FALSE;
 		}
 		else
 		{
 			mapDisplayName.format(L"%hs", TheGameState->getMapLeafName(m_currentGame->getMap()).str());
-			willTransfer = WouldMapTransfer(m_currentGame->getMap());
 		}
 		if (willTransfer)
 			text.format(TheGameText->fetch("GUI:LocalPlayerNoMapWillTransfer"), mapDisplayName.str());

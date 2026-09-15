@@ -283,6 +283,7 @@ public:
 	virtual ~LANAPI() override;
 
 	virtual void init() override;															///< Initialize or re-initialize the instance
+	Bool init(UnsignedInt localIP);
 	virtual void reset() override;															///< reset the logic system
 	virtual void update() override;														///< update the world
 
