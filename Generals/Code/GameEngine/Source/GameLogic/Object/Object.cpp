@@ -2728,6 +2728,12 @@ VeterancyLevel Object::getVeterancyLevel() const
 }
 
 //-------------------------------------------------------------------------------------------------
+Real Object::getMaxHealthUpgradeScale() const
+{
+	return TheGlobalData->m_healthBonus[getVeterancyLevel()];
+}
+
+//-------------------------------------------------------------------------------------------------
 void Object::friend_bindToDrawable( Drawable *draw )
 {
 	m_drawable = draw;
