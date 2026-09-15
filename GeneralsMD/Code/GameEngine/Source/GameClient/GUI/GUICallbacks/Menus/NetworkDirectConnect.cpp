@@ -253,25 +253,6 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	LANbuttonPushed = false;
 	LANisShuttingDown = false;
 
-	Bool automatedStartup = FALSE;
-	UnsignedInt autoLocalIP = 0;
-#if defined(RTS_DEBUG)
-	if (NetworkAutoStart::isEnabled())
-	{
-		automatedStartup = TRUE;
-		autoLocalIP = NetworkAutoStart::getLocalAddress();
-	}
-#endif
-
-	if (!automatedStartup)
-	{
-		if (TheLAN == nullptr)
-		{
-			TheLAN = NEW LANAPI();
-			TheLAN->init();
-		}
-		TheLAN->reset();
-	}
 
 	buttonPushed = false;
 	isShuttingDown = false;
@@ -310,6 +291,14 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 
 	UnicodeString ipstr;
 
+	UnsignedInt autoLocalIP = 0;
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::isEnabled() && TheLAN != nullptr)
+	{
+		autoLocalIP = TheLAN->GetLocalIP();
+	}
+#endif
+
 	delete TheLAN;
 	TheLAN = nullptr;
 
@@ -320,45 +309,46 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 		OptionPreferences prefs;
 		UnsignedInt IP = prefs.getOnlineIPAddress();
 		if (autoLocalIP != 0)
+		{
 			IP = autoLocalIP;
+		}
 
-		IPEnumeration IPs;
+		if (autoLocalIP == 0)
+		{
+			IPEnumeration IPs;
 
-//		if (!IP)
-//		{
-			EnumeratedIP *IPlist = IPs.getAddresses();
-			DEBUG_ASSERTCRASH(IPlist, ("No IP addresses found!"));
-			if (!IPlist)
-			{
-				/// @todo: display error and exit lan lobby if no IPs are found
-			}
-
-			Bool foundIP = autoLocalIP != 0;
-			EnumeratedIP *tempIP = IPlist;
-			while ((tempIP != nullptr) && (foundIP == FALSE)) {
-				if (IP == tempIP->getIP()) {
-					foundIP = TRUE;
+	//		if (!IP)
+	//		{
+				EnumeratedIP *IPlist = IPs.getAddresses();
+				DEBUG_ASSERTCRASH(IPlist, ("No IP addresses found!"));
+				if (!IPlist)
+				{
+					/// @todo: display error and exit lan lobby if no IPs are found
 				}
-				tempIP = tempIP->getNext();
-			}
 
-			if (foundIP == FALSE) {
-				// The IP that we had no longer exists, we need to pick a new one.
-				IP = IPlist->getIP();
-			}
+				Bool foundIP = FALSE;
+				EnumeratedIP *tempIP = IPlist;
+				while ((tempIP != nullptr) && (foundIP == FALSE)) {
+					if (IP == tempIP->getIP()) {
+						foundIP = TRUE;
+					}
+					tempIP = tempIP->getNext();
+				}
 
-//			IP = IPlist->getIP();
-//		}
-		if (automatedStartup)
+				if (foundIP == FALSE) {
+					// The IP that we had no longer exists, we need to pick a new one.
+					IP = IPlist->getIP();
+				}
+
+	//			IP = IPlist->getIP();
+	//		}
+		}
+		if (!TheLAN->init(IP))
 		{
 #if defined(RTS_DEBUG)
-			NetworkAutoStart::onLocalAddressSet(TheLAN->SetLocalIP(IP));
+			NetworkAutoStart::onLocalAddressSet(false);
 #endif
-		}
-		else
-		{
-			TheLAN->init();
-			TheLAN->SetLocalIP(IP);
+			LANSocketErrorDetected = TRUE;
 		}
 	}
 
@@ -421,7 +411,6 @@ void NetworkDirectConnectUpdate( WindowLayout * layout, void *userData)
 #if defined(RTS_DEBUG)
 	if (NetworkAutoStart::isEnabled() && TheLAN != nullptr)
 	{
-		TheLAN->update();
 		NetworkAutoStart::updateDirectConnect();
 	}
 #endif

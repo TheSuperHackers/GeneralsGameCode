@@ -52,6 +52,9 @@ public:
 	static Bool setTimeoutSeconds(Int seconds);
 
 	static Bool isEnabled();
+	static Bool hasFailed();
+	static Bool shouldOpenLobby();
+	static void markLobbyOpened();
 	static Bool shouldOpenDirectConnect();
 	static void markDirectConnectOpened();
 

@@ -22,10 +22,12 @@
 
 #include <limits.h>
 
+#include "Common/GameEngine.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/NetworkAutoStart.h"
+#include "GameNetwork/networkutil.h"
 
 namespace
 {
@@ -33,12 +35,7 @@ enum {
 	DefaultStartupTimeoutMilliseconds = 30000,
 	ActionRetryMilliseconds = 1000,
 	MillisecondsPerSecond = 1000,
-	IPv4OctetCount = 4,
-	IPv4BitsPerOctet = 8,
-	MaxIPv4OctetValue = 255,
 };
-
-const UnsignedInt IPv4BroadcastAddress = UINT_MAX;
 
 NetworkAutoStart::Mode s_mode = NetworkAutoStart::MODE_NONE;
 NetworkAutoStart::Role s_role = NetworkAutoStart::ROLE_NONE;
@@ -51,67 +48,13 @@ UnsignedInt s_timeoutMilliseconds = DefaultStartupTimeoutMilliseconds;
 UnsignedInt s_startTime = 0;
 UnsignedInt s_lastActionTime = 0;
 Bool s_hasArguments = false;
+Bool s_lobbyOpened = false;
 Bool s_directConnectOpened = false;
 Bool s_actionPending = false;
 Bool s_startRequested = false;
 Bool s_gameStarted = false;
 Bool s_failed = false;
 
-Bool ParseIPv4Address(const AsciiString &address, UnsignedInt &result)
-{
-	const char *cursor = address.str();
-	result = 0;
-	for (Int octet = 0; octet < IPv4OctetCount; ++octet)
-	{
-		if (*cursor < '0' || *cursor > '9')
-		{
-			return false;
-		}
-
-		UnsignedInt value = 0;
-		do
-		{
-			value = value * 10 + (*cursor - '0');
-			if (value > MaxIPv4OctetValue)
-			{
-				return false;
-			}
-			++cursor;
-		} while (*cursor >= '0' && *cursor <= '9');
-
-		result = (result << IPv4BitsPerOctet) | value;
-		if (octet + 1 < IPv4OctetCount)
-		{
-			if (*cursor != '.')
-			{
-				return false;
-			}
-			++cursor;
-		}
-		else if (*cursor != '\0')
-		{
-			return false;
-		}
-	}
-
-	return result != 0 && result != IPv4BroadcastAddress;
-}
-
-Bool CanAcceptMap(LANGameInfo *game, LANGameSlot *slot)
-{
-	if (slot->hasMap())
-	{
-		return true;
-	}
-
-	const MapMetaData *mapData = TheMapCache->findMap(game->getMap());
-	if (mapData != nullptr)
-	{
-		return !mapData->m_isOfficial;
-	}
-
-	return WouldMapTransfer(game->getMap());
-}
 } // namespace
 
 Bool NetworkAutoStart::setMode(const AsciiString &mode)
@@ -238,6 +181,22 @@ Bool NetworkAutoStart::validateConfiguration()
 	return true;
 }
 
+Bool NetworkAutoStart::hasFailed()
+{
+	return s_failed;
+}
+
+Bool NetworkAutoStart::shouldOpenLobby()
+{
+	return s_hasArguments && !s_lobbyOpened && validateConfiguration();
+}
+
+void NetworkAutoStart::markLobbyOpened()
+{
+	s_lobbyOpened = true;
+	s_startTime = timeGetTime();
+}
+
 Bool NetworkAutoStart::shouldOpenDirectConnect()
 {
 	if (!s_hasArguments || s_directConnectOpened || !validateConfiguration())
@@ -311,6 +270,7 @@ void NetworkAutoStart::fail(const char *message)
 	DEBUG_LOG(("NetworkAutoStart failed: %s", message));
 	printf("NetworkAutoStart failed: %s\n", message);
 	fflush(stdout);
+	TheGameEngine->setQuitting(true);
 }
 
 void NetworkAutoStart::updateDirectConnect()
@@ -364,7 +324,7 @@ void NetworkAutoStart::updateGameOptions()
 				(s_lastActionTime == 0 || now - s_lastActionTime >= ActionRetryMilliseconds))
 		{
 			TheLAN->RequestHasMap();
-			if (!CanAcceptMap(game, slot))
+			if (!slot->hasMap() && !CanTransferMap(game->getMap()))
 			{
 				fail("required map is unavailable and cannot be transferred");
 				return;

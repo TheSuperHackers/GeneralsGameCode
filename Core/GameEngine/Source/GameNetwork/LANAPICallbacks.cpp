@@ -159,17 +159,14 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 		{
 			UnicodeString mapDisplayName;
 			const MapMetaData *mapData = TheMapCache->findMap( m_currentGame->getMap() );
-			Bool willTransfer = TRUE;
+			Bool willTransfer = CanTransferMap(m_currentGame->getMap());
 			if (mapData)
 			{
 				mapDisplayName.format(L"%ls", mapData->m_displayName.str());
-				if (mapData->m_isOfficial)
-					willTransfer = FALSE;
 			}
 			else
 			{
 				mapDisplayName.format(L"%hs", m_currentGame->getMap().str());
-				willTransfer = WouldMapTransfer(m_currentGame->getMap());
 			}
 			if (!status)
 			{

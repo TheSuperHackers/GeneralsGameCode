@@ -787,10 +787,10 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData );
 void MainMenuUpdate( WindowLayout *layout, void *userData )
 {
 #if defined(RTS_DEBUG)
-	if (NetworkAutoStart::shouldOpenDirectConnect())
+	if (NetworkAutoStart::shouldOpenLobby())
 	{
-		NetworkAutoStart::markDirectConnectOpened();
-		TheShell->push("Menus/NetworkDirectConnect.wnd");
+		NetworkAutoStart::markLobbyOpened();
+		TheShell->push("Menus/LanLobbyMenu.wnd");
 		return;
 	}
 #endif

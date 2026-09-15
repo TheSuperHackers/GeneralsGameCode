@@ -327,16 +327,14 @@ Bool StartLANGame()
 	// see if everyone's accepted and count the number of players in the game
 	UnicodeString mapDisplayName;
 	const MapMetaData *mapData = TheMapCache->findMap( myGame->getMap() );
-	Bool willTransfer = TRUE;
+	Bool willTransfer = CanTransferMap(myGame->getMap());
 	if (mapData)
 	{
 		mapDisplayName.format(L"%ls", mapData->m_displayName.str());
-		willTransfer = !mapData->m_isOfficial;
 	}
 	else
 	{
 		mapDisplayName.format(L"%hs", myGame->getMap().str());
-		willTransfer = WouldMapTransfer(myGame->getMap());
 	}
 	for( i = 0; i < MAX_SLOTS; i++ )
 	{
@@ -867,7 +865,9 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		AsciiString mapName = pref.getPreferredMap();
 #if defined(RTS_DEBUG)
 		if (NetworkAutoStart::isEnabled() && NetworkAutoStart::getMapName().isNotEmpty())
+		{
 			mapName = NetworkAutoStart::getMapName();
+		}
 #endif
 		game->setMap(mapName);
     game->setStartingCash( pref.getStartingCash() );
@@ -1081,7 +1081,6 @@ void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 #if defined(RTS_DEBUG)
 	if (NetworkAutoStart::isEnabled() && TheLAN != nullptr)
 	{
-		TheLAN->update();
 		NetworkAutoStart::updateGameOptions();
 	}
 #endif
