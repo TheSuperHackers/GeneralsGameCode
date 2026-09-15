@@ -1149,7 +1149,9 @@ void Drawable::updateDrawable()
 			Real numer = (m_fadeMode == FADING_IN) ? (m_timeElapsedFade) : (m_timeToFade-m_timeElapsedFade);
 
 			setDrawableOpacity(numer/(Real)m_timeToFade);
-			++m_timeElapsedFade;
+			// TheSuperHackers @bugfix bobtista 15/09/2026 Decouple Drawable fade timing from render updates.
+			const Real fadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_timeElapsedFade += fadeTimeScale;
 
 			if (m_timeElapsedFade > m_timeToFade)
 				m_fadeMode = FADING_NONE;
@@ -1167,7 +1169,9 @@ void Drawable::updateDrawable()
 			{
 				//LERP
 				(*dm)->setTerrainDecalOpacity(m_decalOpacity);
-				m_decalOpacity += m_decalOpacityFadeRate;
+				// TheSuperHackers @bugfix bobtista 15/09/2026 Decouple decal opacity fade timing from render updates.
+				const Real decalFadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+				m_decalOpacity += m_decalOpacityFadeRate * decalFadeTimeScale;
 			}
 			//---------------
 
@@ -5035,7 +5039,12 @@ void Drawable::xfer( Xfer *xfer )
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
 
 	// time elapsed fade
-	xfer->xferUnsignedInt( &m_timeElapsedFade );
+	UnsignedInt timeElapsedFadeFrames = static_cast<UnsignedInt>(m_timeElapsedFade);
+	xfer->xferUnsignedInt( &timeElapsedFadeFrames );
+	if (xfer->getXferMode() == XFER_LOAD)
+	{
+		m_timeElapsedFade = static_cast<Real>(timeElapsedFadeFrames);
+	}
 
 	// time to fade
 	xfer->xferUnsignedInt( &m_timeToFade );
