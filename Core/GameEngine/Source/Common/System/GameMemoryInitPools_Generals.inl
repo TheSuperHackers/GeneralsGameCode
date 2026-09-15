@@ -640,7 +640,6 @@ static PoolSizeRec PoolSizes[] =
 	{ "Render2DClass", 64, 32 },
 	{ "SurfaceClass", 128, 32 },
 	{ "FontCharsClassCharDataStruct", 1024, 32 },
-	{ "FontCharsBuffer", 16, 4 },
 	{ "FVFInfoClass", 128, 32 },
 	{ "TerrainTracksRenderObjClass", 128, 32 },
 	{ "DynamicIBAccessClass", 32, 32 },

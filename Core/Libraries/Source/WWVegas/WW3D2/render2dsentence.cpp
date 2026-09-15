@@ -617,21 +617,55 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 	}
 
 	//
-	// Calculate the width of the text
+	// Calculate the width of the text and of its widest glyph
 	//
 	int text_width = 0;
+	int max_char_width = 0;
 	for (int index = 0; text[index] != 0; index ++) {
 		text_width += Font->Get_Char_Spacing (text[index]);
+		const int char_width = Font->Get_Char_Width (text[index]);
+		max_char_width = max (max_char_width, char_width);
 	}
 
 	int char_height = Font->Get_Char_Height ();
 
 	//
+	//	TheSuperHackers @fix The texture must hold at least one row of glyphs and the widest glyph
+	//	of this text, otherwise the blit runs off the surface. The widest glyph the font can produce
+	//	is no use here, because fonts such as Arial report one several times wider than their text.
+	//	Fonts that fit search 64 to 256 px, which bounds the texture that every display string
+	//	allocates for itself. Larger fonts use the smallest texture that fits.
+	//
+	constexpr const int TextureSizeMinPow2 = 6; // 64 px, smallest texture
+	constexpr const int TextureSizeSearchMaxPow2 = 8; // 256 px, largest texture searched for fonts that fit
+	constexpr const int TextureSizeMaxPow2 = 11; // 2048 px, largest texture for any font
+
+	const int min_extent = max (char_height + 1, max_char_width + TEXTURE_OFFSET + 1);
+	int min_pow2 = TextureSizeMinPow2;
+	while (min_pow2 < TextureSizeMaxPow2 && (1 << min_pow2) < min_extent) {
+		min_pow2 ++;
+	}
+
+	int max_pow2 = max (TextureSizeSearchMaxPow2, min_pow2);
+	if (max_pow2 > TextureSizeSearchMaxPow2) {
+		//
+		//	The font does not fit the search range, so use the smallest texture that fits, limited to
+		//	the largest texture the device supports.
+		//
+		const D3DCAPS8 &dx8caps = DX8Wrapper::Get_Current_Caps ()->Get_DX8_Caps ();
+		const int max_device_size = (int)min (dx8caps.MaxTextureWidth, dx8caps.MaxTextureHeight);
+		while (max_pow2 > TextureSizeMinPow2 && (1 << max_pow2) > max_device_size) {
+			max_pow2 --;
+		}
+		min_pow2 = min (min_pow2, max_pow2);
+	}
+
+	//
 	//	Find the best texture size for the remaining text
 	//
-	CurrTextureSize = 256;
+	CurrTextureSize = 1 << min_pow2;
 	int best_tex_mem_usage = 999999999;
-	for (int pow2 = 6; pow2 <= 8; pow2 ++) {
+	for (int pow2 = min_pow2; pow2 <= max_pow2; pow2 ++) {
 
 		int size					= 1 << pow2;
 		int row_count			= (text_width / size) + 1;
@@ -758,7 +792,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//
 			// read a word
 			//
-			int charWidth = 0;
+			int word_spacing = 0;
 			while ((*word != 0) && (*word > L' ') && (*word != L'\n')) {
 				if( ParseHotKey && (*word == L'&') && (*word+1 != 0) && (*word+1 > L' ') && (*word+1 != L'\n'))
 				{
@@ -777,8 +811,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 					calcHotKeyX = true;
 				}
 
-				charWidth = Font->Get_Char_Spacing (*word++);
-				word_width += charWidth;
+				word_spacing = Font->Get_Char_Spacing (*word++);
+				word_width += word_spacing;
 				wordCount++;
 
 				if (WrapWidth > 0 && word_width >= WrapWidth && useHardWordWrap)
@@ -796,7 +830,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				if(charCount == 0)
 				{
 					charCount +=wordCount - 1;
-					line_width += word_width - charWidth;
+					line_width += word_width - word_spacing;
 					if(*word == 0)
 						end = true;
 					break;
@@ -844,6 +878,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 		}
 
 		for(int i = 0; i <= charCount; i++) {
+			// TheSuperHackers @fix The text still to be placed, starting at ch, so a new surface is sized for ch as well.
+			const WCHAR *remaining_text = text;
 			WCHAR ch = *text++;
 			dontBlit = false;
 			//
@@ -851,12 +887,14 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//
 			if(ParseHotKey && (ch == L'&') && (*text != 0) && (*text > L' ') && (*text != L'\n'))
 			{
+				remaining_text = text;
 				ch = *text++;
 				dontBlit = true;
 			}
-			float char_spacing = Font->Get_Char_Spacing (ch);
+			int char_spacing = Font->Get_Char_Spacing (ch);
+			const int char_width = Font->Get_Char_Width (ch);
 
-			bool exceeded_texture_width	= ((TextureOffset.I + char_spacing) >= CurrTextureSize);
+			bool exceeded_texture_width	= ((TextureOffset.I + char_width) >= CurrTextureSize);
 			bool encountered_break_char	= (ch == L' ' || ch == L'\n' || ch == 0);
 
 			//
@@ -892,7 +930,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 					//	Did the text extent completely off the texture?
 					//
 					if ((TextureOffset.J + char_height) >= CurrTextureSize) {
-						Allocate_New_Surface (text);
+						Allocate_New_Surface (remaining_text);
 					}
 				}
 			}
@@ -912,12 +950,14 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				//
 				//	Check to ensure the text will fit on this texture
 				//
-				WWASSERT (((TextureOffset.I + char_spacing) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize));
+				const bool fits_texture = ((TextureOffset.I + char_width) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize);
+				WWASSERT (fits_texture);
 
 				//
 				//	Blit the character to the surface
+				//	TheSuperHackers @fix Skip a glyph that still does not fit.
 				//
-				if(!dontBlit)
+				if(!dontBlit && fits_texture)
 					Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);
 
 				if (dontBlit) {
@@ -961,6 +1001,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	bool calcHotKeyX = false;
 	bool dontBlit = false;
 	Vector2i textureOffset = TextureOffset;
+	int currTextureSize = CurrTextureSize;
 
 
 	//
@@ -988,6 +1029,8 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	//	Loop over all the characters in the string
 	//
 	while (text != nullptr) {
+		// TheSuperHackers @fix The text still to be placed, starting at ch, so a new surface is sized for ch as well.
+		const WCHAR *remaining_text = text;
 		WCHAR ch = *text++;
 		dontBlit = false;
 		//
@@ -1001,12 +1044,14 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 			else
 				hotKeyPosX = Cursor.X + TextureOffset.I -TextureStartX;//TextureOffset.I;
 
+			remaining_text = text;
 			ch = *text++;
 			dontBlit = true;
 		}
-		float char_spacing = Font->Get_Char_Spacing (ch);
+		int char_spacing = Font->Get_Char_Spacing (ch);
+		const int char_width = Font->Get_Char_Width (ch);
 
-		bool exceeded_texture_width	= ((TextureOffset.I + char_spacing) >= CurrTextureSize);
+		bool exceeded_texture_width	= ((TextureOffset.I + char_width) >= CurrTextureSize);
 		bool encountered_break_char	= (ch == L' ' || ch == L'\n' || ch == 0);
 		bool wordBiggerThenLine = ((useHardWordWrap) && ( WrapWidth != 0 ) &&((Cursor.X + TextureOffset.I -TextureStartX + char_spacing) >= WrapWidth));
 		//
@@ -1081,7 +1126,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 				//	Did the text extent completely off the texture?
 				//
 				if ((TextureOffset.J + char_height) >= CurrTextureSize) {
-					Allocate_New_Surface (text, justCalcExtents);
+					Allocate_New_Surface (remaining_text, justCalcExtents);
 				}
 			}
 		}
@@ -1102,12 +1147,14 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 			//
 			//	Check to ensure the text will fit on this texture
 			//
-			WWASSERT (((TextureOffset.I + char_spacing) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize));
+			const bool fits_texture = ((TextureOffset.I + char_width) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize);
+			WWASSERT (fits_texture);
 
 			//
 			//	Blit the character to the surface
+			//	TheSuperHackers @fix Skip a glyph that still does not fit.
 			//
-			if (!justCalcExtents && !dontBlit )
+			if (!justCalcExtents && !dontBlit && fits_texture)
 			{
 				Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);
 			}
@@ -1122,6 +1169,15 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	Cursor = cursor;
 	TextureOffset = textureOffset;
 	TextureStartX = textureStartX;
+
+	//
+	//	TheSuperHackers @fix Measuring allocates no surface, so it must not leave behind the texture
+	//	size of a surface it did not create. The next pass would otherwise check its glyphs against a
+	//	size that differs from the surface it actually locks.
+	//
+	if (justCalcExtents) {
+		CurrTextureSize = currTextureSize;
+	}
 
 	if(hkX)
 		*hkX = hotKeyPosX;
@@ -1170,6 +1226,10 @@ FontCharsClass::FontCharsClass () :
 	CurrPixelOffset( 0 ),
 	PointSize( 0 ),
 	CharHeight( 0 ),
+	GlyphBitmapWidth( 0 ),
+	GlyphBitmapHeight( 0 ),
+	GlyphCellBytes( 0 ),
+	GlyphBlockBytes( 0 ),
 	UnicodeCharArray( nullptr ),
 	FirstUnicodeChar( 0xFFFF ),
 	LastUnicodeChar( 0 ),
@@ -1187,13 +1247,36 @@ FontCharsClass::FontCharsClass () :
 ////////////////////////////////////////////////////////////////////////////////////
 FontCharsClass::~FontCharsClass ()
 {
+	Free_Glyph_Cache();
+	Free_GDI_Font();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Free_Glyph_Cache
+//	Discards the cached glyphs but keeps the font itself, so that the pointers other
+//	objects hold to this font stay valid and glyphs are rebuilt on demand.
+//
+////////////////////////////////////////////////////////////////////////////////////
+void
+FontCharsClass::Free_Glyph_Cache ()
+{
 	while ( BufferList.Count() ) {
 		delete [] BufferList[0].Buffer;
 		BufferList.Delete(0);
 	}
 
-	Free_GDI_Font();
 	Free_Character_Arrays();
+
+	//
+	//	The character arrays are gone, so the unicode range has to start over as well.
+	//	The GDI font and the derived metrics are deliberately kept, so Store_GDI_Char
+	//	can rebuild any glyph that is asked for again without recreating this object.
+	//
+	CurrPixelOffset = 0;
+	FirstUnicodeChar = 0xFFFF;
+	LastUnicodeChar = 0;
 }
 
 
@@ -1284,15 +1367,17 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 		//	Setup the src and destination pointers
 		//
 		int dest_inc		= (dest_stride >> 1);
-		uint16 *src_ptr	= data->Buffer;
+		const uint8 *src_ptr = data->Buffer;
 		dest_ptr				+= (dest_inc * y) + x;
 
 		//
-		//	Simply copy the data from the src buffer to the destination
+		//	Copy the data from the src buffer to the destination, rebuilding the A4R4G4B4 texel
+		//	from the stored coverage value the same way Store_GDI_Char used to compose it.
 		//
 		for ( int row = 0; row < CharHeight; row ++ ) {
 			for ( int col = 0; col < data->Width; col ++ ) {
-				uint16 curData = *src_ptr;
+				const uint8 coverage = *src_ptr;
+				uint16 curData = (coverage != 0 ? 0x0FFF : 0) | ((uint16)(coverage >> 4) << 12);
 				if (col<PixelOverlap) {
 					curData |= dest_ptr[col];
 				}
@@ -1313,8 +1398,8 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 const FontCharsClassCharDataStruct *
 FontCharsClass::Store_GDI_Char (WCHAR ch)
 {
-	int width	= PointSize * 2;
-	int height	= PointSize * 2;
+	const int width = GlyphBitmapWidth;
+	const int height = GlyphBitmapHeight;
 
 	//
 	//	Draw the character into the memory DC
@@ -1332,12 +1417,21 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	SIZE char_size = { 0 };
 	::GetTextExtentPoint32W( MemDC, &ch, 1, &char_size );
 	char_size.cx += PixelOverlap + xOrigin;
+
+	//
+	//	TheSuperHackers @fix ExtTextOutW clipped the glyph to the scratch bitmap, so the copy
+	//	below must not read beyond it either, whatever extent GDI reports. A malformed font can
+	//	report nothing at all, which leaves a character of zero width that everything skips.
+	//
+	char_size.cx = min (max ((int)char_size.cx, 0), width);
+	char_size.cy = min (max ((int)char_size.cy, 0), height);
+
 	//
 	//	Get a pointer to the surface that this character should use
 	//
 	Update_Current_Buffer( char_size.cx );
-	uint16* curr_buffer_p = BufferList[BufferList.Count () - 1].Buffer;
-	curr_buffer_p += CurrPixelOffset;
+	uint8* glyph_buffer_p = BufferList[BufferList.Count () - 1].Buffer + CurrPixelOffset;
+	uint8* curr_buffer_p = glyph_buffer_p;
 
 	//
 	//	Copy the BMP contents to the buffer
@@ -1390,18 +1484,22 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
  			}
 #endif
 
-			uint16 pixel_color = 0;
-			if (pixel_value != 0) {
-				pixel_color = 0x0FFF;
-			}
-
 			//
-			//	Convert the pixel intensity from 8bit to 4bit and
-			// store it in our buffer
+			//	Store the raw intensity.
+			//	TheSuperHackers @tweak The glyph is cached as one byte of GDI coverage per pixel.
+			//	Blit_Char rebuilds the A4R4G4B4 texel from it, which is exact because the stored
+			//	color only ever depends on whether the coverage is zero.
 			//
-			uint8 alpha_value	= ((pixel_value >> 4) & 0xF);
-			*curr_buffer_p++	= pixel_color | (alpha_value << 12);
+			*curr_buffer_p++ = pixel_value;
 		}
+	}
+
+	//
+	//	TheSuperHackers @fix Blit_Char always reads CharHeight rows, so any row GDI did not
+	//	report must not be left at whatever the freshly allocated block happened to contain.
+	//
+	if (char_size.cy < CharHeight) {
+		::memset (curr_buffer_p, 0, (CharHeight - char_size.cy) * char_size.cx);
 	}
 
 	//
@@ -1410,7 +1508,7 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	FontCharsClassCharDataStruct *char_data	= W3DNEW FontCharsClassCharDataStruct;
 	char_data->Value				= ch;
 	char_data->Width				= char_size.cx;
-	char_data->Buffer				= BufferList[BufferList.Count () - 1].Buffer + CurrPixelOffset;
+	char_data->Buffer				= glyph_buffer_p;
 
 	//
 	//	Insert this character into our array
@@ -1422,9 +1520,10 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	}
 
 	//
-	//	Advance the character position
+	//	Advance the character position. This matches both what Update_Current_Buffer reserved and
+	//	what Blit_Char reads back; char_size.cx already includes PixelOverlap.
 	//
-	CurrPixelOffset += ((char_size.cx+PixelOverlap) * CharHeight);
+	CurrPixelOffset += (char_size.cx * CharHeight);
 
 	//
 	//	Return the index of the entry we just added
@@ -1462,9 +1561,18 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 	//
 	if (needs_new_buffer)
 	{
-		// TheSuperHackers @fix arcticdolphin 07/09/2026 Length may exceed CHAR_BUFFER_LEN to fit this glyph.
-		const int length = max( (int)CHAR_BUFFER_LEN, char_len );
-		BufferList.Add( FontCharsBuffer( length, W3DNEWARRAY uint16[length] ) );
+		//
+		//	TheSuperHackers @fix Ceil the block size to the char size to make it fit.
+		//	TheSuperHackers @tweak Ramp the first blocks up to the full size, because a font whose
+		//	working set is a handful of glyphs would otherwise pay for a whole block of them.
+		//	Halving rather than one small first block is what keeps such a font from being pushed
+		//	into a full sized second block.
+		//
+		const int shift = 2 - min( 2, BufferList.Count() );
+		const int length = max( GlyphBlockBytes >> shift, GlyphCellBytes );
+		WWASSERT( char_len <= length );
+
+		BufferList.Add( FontCharsBuffer( length, W3DNEWARRAY uint8[length] ) );
 		CurrPixelOffset = 0;
 	}
 }
@@ -1514,17 +1622,65 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 								VARIABLE_PITCH, font_name);
 
 	//
+	//	Create a device context we can select the font and bitmap into
+	//
+	MemDC = ::CreateCompatibleDC (screen_dc);
+
+	//
+	//	TheSuperHackers @fix Select the font and read its metrics before creating the scratch
+	//	bitmap below, because that bitmap is sized from them. The point size alone cannot give a
+	//	safe size: a font is free to report a tmHeight or a tmMaxCharWidth larger than any guess
+	//	made from it, and Store_GDI_Char copies as many rows and columns as GDI reports.
+	//
+	OldGDIFont = (HFONT)::SelectObject (MemDC, GDIFont);
+
+	//
+	//	Lookup the pixel height of the font
+	//
+	TEXTMETRIC text_metric = { 0 };
+	::GetTextMetrics (MemDC, &text_metric);
+	CharHeight = text_metric.tmHeight;
+	CharAscent = text_metric.tmAscent;
+	CharOverhang = text_metric.tmOverhang;
+	if (doingGenerals) {
+		CharOverhang = 0;
+	}
+
+	//
+	//	The scratch bitmap must hold the widest glyph, the overlap column that Store_GDI_Char
+	//	appends to it and the one pixel it shifts 'W' by.
+	//
+	GlyphBitmapWidth = (int)text_metric.tmMaxCharWidth + max ((int)text_metric.tmOverhang, 0) + PixelOverlap + 1;
+
+	// Sanity check. A font reporting absurd metrics renders clipped
+	// rather than allocating an absurd bitmap and absurd glyph buffers.
+	const int max_glyph_extent = PointSize * 4 + 8;
+	GlyphBitmapWidth = min (max (GlyphBitmapWidth, 1), max_glyph_extent);
+	CharHeight = min (max (CharHeight, 1), max_glyph_extent);
+	GlyphBitmapHeight = CharHeight;
+
+	//
+	//	TheSuperHackers @tweak Size the glyph cache blocks from the widest glyph this font can produce,
+	//	so that a block always holds a whole number of glyphs and the space abandoned when one does not
+	//	fit is at most one glyph. A block always fits at least one glyph, however large the font is.
+	//
+	GlyphCellBytes = GlyphBitmapWidth * GlyphBitmapHeight;
+	GlyphBlockBytes = GlyphCellBytes * GLYPH_BLOCK_TARGET_CELLS;
+	GlyphBlockBytes = min (max (GlyphBlockBytes, (int)GLYPH_BLOCK_MIN_BYTES), (int)GLYPH_BLOCK_MAX_BYTES);
+	GlyphBlockBytes = max (GlyphBlockBytes, GlyphCellBytes);
+
+	//
 	// Set-up the fields of the BITMAPINFOHEADER
 	//	Note: Top-down DIBs use negative height in Win32.
 	//
 	BITMAPINFOHEADER bitmap_info = { 0 };
 	bitmap_info.biSize				= sizeof (BITMAPINFOHEADER);
-	bitmap_info.biWidth				= PointSize * 2;
-	bitmap_info.biHeight				= -(PointSize * 2);
+	bitmap_info.biWidth				= GlyphBitmapWidth;
+	bitmap_info.biHeight			= -GlyphBitmapHeight;
 	bitmap_info.biPlanes				= 1;
 	bitmap_info.biBitCount			= 24;
 	bitmap_info.biCompression		= BI_RGB;
-	bitmap_info.biSizeImage			= ((PointSize * PointSize * 4) * 3);
+	bitmap_info.biSizeImage			= (((GlyphBitmapWidth * 3) + 3) & ~3) * GlyphBitmapHeight;
 	bitmap_info.biXPelsPerMeter	= 0;
 	bitmap_info.biYPelsPerMeter	= 0;
 	bitmap_info.biClrUsed			= 0;
@@ -1541,34 +1697,16 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 													0L);
 
 	//
-	//	Create a device context we can select the font and bitmap into
-	//
-	MemDC = ::CreateCompatibleDC (screen_dc);
-
-	//
 	// Release our temporary screen DC
 	//
 	::ReleaseDC ((HWND)WW3D::Get_Window(), screen_dc);
 
 	//
-	//	Now select the BMP and font into the DC
+	//	Now select the BMP into the DC
 	//
 	OldGDIBitmap	= (HBITMAP)::SelectObject (MemDC, GDIBitmap);
-	OldGDIFont		= (HFONT)::SelectObject (MemDC, GDIFont);
 	::SetBkColor (MemDC, RGB (0, 0, 0));
 	::SetTextColor (MemDC, RGB (255, 255, 255));
-
-	//
-	//	Lookup the pixel height of the font
-	//
-	TEXTMETRIC text_metric = { 0 };
-	::GetTextMetrics (MemDC, &text_metric);
-	CharHeight = text_metric.tmHeight;
-	CharAscent = text_metric.tmAscent;
-	CharOverhang = text_metric.tmOverhang;
-	if (doingGenerals) {
-		CharOverhang = 0;
-	}
 
 	return GDIFont != nullptr && GDIBitmap != nullptr;
 }
