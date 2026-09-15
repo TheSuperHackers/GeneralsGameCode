@@ -1062,6 +1062,7 @@ GlobalData::GlobalData()
 	m_useRightMouseScrollWithAlternateMouse = TRUE;
 #endif
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
+	m_easyMilitaryDrag = FALSE;
 	m_doubleClickAttackMove = FALSE;
 
 }
@@ -1206,6 +1207,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_useRightMouseScrollWithAlternateMouse = optionPref.getRightMouseScrollWithAlternateMouseEnabled();
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
+	TheWritableGlobalData->m_easyMilitaryDrag = optionPref.getEasyMilitaryDragEnabled();
 	TheWritableGlobalData->m_jpegQuality = optionPref.getJpegQuality();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
 	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();

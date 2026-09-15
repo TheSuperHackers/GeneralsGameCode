@@ -68,11 +68,28 @@ struct PickDrawableStruct
 	Bool isPointSelection;
 	Bool forceAttackMode;
 
+	// TheSuperHackers @feature EasyMilitaryDrag leaves builders out of a drag selection. Cached here
+	// rather than read per drawable, because the constructor runs once per selection while the
+	// callback runs for every drawable in the region.
+	Bool easyMilitaryDrag;
+	// Set instead of easyMilitaryDrag when Ctrl is held: select only the builders the option
+	// normally skips, so they can still be boxed deliberately.
+	Bool easyMilitaryDragInverted;
+	// Set for a second pass when the first found nothing, which suspends the filter entirely so a
+	// box holding only builders still selects them rather than coming back empty.
+	Bool easyMilitaryDragDisabled;
+
 	// Note, this is OR'd with the things we are attempting to select.
 	KindOfMaskType kindofsToMatch;
 
 	PickDrawableStruct();
 };
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature TRUE while a Ctrl held drag should be treated as an inverted
+// EasyMilitaryDrag selection rather than as force attack targeting. Ctrl drives both, so every
+// place that asks "are we force attacking?" during a drag has to agree on the answer.
+extern Bool isEasyMilitaryDragInvertedActive( Bool selectionIsPoint );
 
 //-------------------------------------------------------------------------------------------------
 extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
