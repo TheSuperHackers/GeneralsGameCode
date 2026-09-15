@@ -846,7 +846,7 @@ AdaptiveDeltaMotionChannelClass::AdaptiveDeltaMotionChannelClass() :
 			//ratio = ((ratio + 1.0f) / 128.0f);
 			ratio/=((float) FILTER_TABLE_GEN_SIZE);
 
-			filtertable[i + FILTER_TABLE_GEN_START] = 1.0f - WWMath::Sin( DEG_TO_RAD(90.0f * ratio));
+			filtertable[i + FILTER_TABLE_GEN_START] = 1.0f - WWMath::Sinf_Legacy( DEG_TO_RAD(90.0f * ratio));
 		}
 
 		table_valid = true;

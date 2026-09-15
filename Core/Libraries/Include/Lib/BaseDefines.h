@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,17 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Trig.h
-// fast trig functions
-// Author: Sondra Iverson, March 1998
-// Converted to Generals by Matthew D. Campbell, February 2002
-
 #pragma once
 
-Real Sin(Real);
-Real Cos(Real);
-Real Tan(Real);
-Real ACos(Real);
-Real ASin(Real x);
-Real Sqrt(Real x);
-double Sqrt(double x);
+#ifndef RETAIL_COMPATIBLE_CRC
+#define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#endif
+
+#ifndef USE_DETERMINISTIC_MATH
+#define USE_DETERMINISTIC_MATH (1) // Game uses deterministic math for game simulation compatibility among different system architectures in peer to peer networks
+#endif
+
+#if defined(__has_include)
+#if __has_include("gmath.h")
+#define HAS_GAMEMATH (1)
+#endif
+#endif
+
+#if !HAS_GAMEMATH || RETAIL_COMPATIBLE_CRC
+#undef USE_DETERMINISTIC_MATH // Cannot actually use deterministic math :(
+#endif
