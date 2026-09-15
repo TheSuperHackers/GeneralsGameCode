@@ -1791,6 +1791,8 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			float recipDepth = 0.1f / (float)depth;
 
 			float shiftInc = t * (current_size ? *current_size : DefaultPointSize) * recipDepth;
+			const float pointSize = current_size ? *current_size : DefaultPointSize;
+			float shiftInc = t * pointSize * recipDepth;
 
 			Vector3 volumeLayerShift;
 			Vector3 cameraPosition = rinfo.Camera.Get_Position();
