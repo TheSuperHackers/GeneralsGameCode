@@ -62,7 +62,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
 #    Include/Common/MapObject.h
-    Include/Common/MapReaderWriterInfo.h
+#    Include/Common/MapReaderWriterInfo.h
 #    Include/Common/MessageStream.h
 #    Include/Common/MiniLog.h
 #    Include/Common/MiscAudio.h
@@ -437,16 +437,16 @@ set(GAMEENGINE_SRC
     Include/GameLogic/ObjectScriptStatusBits.h
     Include/GameLogic/ObjectTypes.h
     Include/GameLogic/PartitionManager.h
-    Include/GameLogic/PolygonTrigger.h
+#    Include/GameLogic/PolygonTrigger.h
     Include/GameLogic/Powers.h
 #    Include/GameLogic/RankInfo.h
     Include/GameLogic/ScriptActions.h
     Include/GameLogic/ScriptConditions.h
     Include/GameLogic/ScriptEngine.h
     Include/GameLogic/Scripts.h
-    Include/GameLogic/SidesList.h
+#    Include/GameLogic/SidesList.h
     Include/GameLogic/Squad.h
-    Include/GameLogic/TerrainLogic.h
+#    Include/GameLogic/TerrainLogic.h
     Include/GameLogic/TurretAI.h
     Include/GameLogic/VictoryConditions.h
     Include/GameLogic/Weapon.h
@@ -787,9 +787,9 @@ set(GAMEENGINE_SRC
     Source/GameLogic/AI/AITNGuard.cpp
     Source/GameLogic/AI/Squad.cpp
     Source/GameLogic/AI/TurretAI.cpp
-    Source/GameLogic/Map/PolygonTrigger.cpp
-    Source/GameLogic/Map/SidesList.cpp
-    Source/GameLogic/Map/TerrainLogic.cpp
+#    Source/GameLogic/Map/PolygonTrigger.cpp
+#    Source/GameLogic/Map/SidesList.cpp
+#    Source/GameLogic/Map/TerrainLogic.cpp
     Source/GameLogic/Object/Armor.cpp
     Source/GameLogic/Object/Behavior/AutoHealBehavior.cpp
     Source/GameLogic/Object/Behavior/BehaviorModule.cpp
