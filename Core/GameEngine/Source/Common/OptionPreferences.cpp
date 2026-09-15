@@ -216,6 +216,28 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 	return FALSE;
 }
 
+// TheSuperHackers @feature Countdown numbers on build queue and cooldown cameos, read from
+// Options.ini as BuildTimerDisplayMode = None | Seconds | Auto (a plain index also works).
+BuildTimerDisplayMode OptionPreferences::getBuildTimerDisplayMode() const
+{
+	OptionPreferences::const_iterator it = find("BuildTimerDisplayMode");
+	if (it == end())
+		return BuildTimerDisplayMode_Default;
+
+	if (stricmp(it->second.str(), "Auto") == 0)
+		return BuildTimerDisplayMode_Auto;
+	if (stricmp(it->second.str(), "Seconds") == 0)
+		return BuildTimerDisplayMode_Seconds;
+	if (stricmp(it->second.str(), "None") == 0)
+		return BuildTimerDisplayMode_None;
+
+	Int mode = atoi(it->second.str());
+	if (mode >= 0 && mode < BuildTimerDisplayMode_Count)
+		return (BuildTimerDisplayMode)mode;
+
+	return BuildTimerDisplayMode_Default;
+}
+
 Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");
