@@ -390,7 +390,7 @@ void CountermeasuresBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxXfer( xfer );
 
-	if( currentVersion >= 2 )
+	if( version >= 2 )
 	{
 		xfer->xferSTLObjectIDVector( &m_counterMeasures );
 		xfer->xferUnsignedInt( &m_availableCountermeasures );
