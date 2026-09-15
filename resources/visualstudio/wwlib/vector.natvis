@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="VectorClass&lt;*&gt;">
+        <DisplayString>{{ size={VectorMax} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">VectorMax</Item>
+            <Item Name="[allocated]" ExcludeView="simple">IsAllocated</Item>
+            <ArrayItems>
+                <Size>VectorMax</Size>
+                <ValuePointer>Vector</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <!-- Must be spelled out even though VectorClass already matches by inheritance,
+         because the live element count here is ActiveCount and not VectorMax. -->
+    <Type Name="DynamicVectorClass&lt;*&gt;">
+        <DisplayString>{{ size={ActiveCount} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">ActiveCount</Item>
+            <Item Name="[capacity]" ExcludeView="simple">VectorMax</Item>
+            <Item Name="[growth step]" ExcludeView="simple">GrowthStep</Item>
+            <ArrayItems>
+                <Size>ActiveCount</Size>
+                <ValuePointer>Vector</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <!-- Copy holds the value of element LastIndex and is only written back into BitArray
+         once a different index is fetched, so the packed bit for LastIndex is stale. -->
+    <Type Name="BooleanVectorClass">
+        <DisplayString>{{ size={BitCount} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">BitCount</Item>
+            <Item Name="[cached index]" ExcludeView="simple">LastIndex</Item>
+            <Item Name="[cached value]" ExcludeView="simple">Copy</Item>
+            <IndexListItems>
+                <Size>BitCount</Size>
+                <ValueNode>$i == LastIndex ? Copy : (bool)((BitArray.Vector[$i / 8] &gt;&gt; ($i % 8)) &amp; 1)</ValueNode>
+            </IndexListItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

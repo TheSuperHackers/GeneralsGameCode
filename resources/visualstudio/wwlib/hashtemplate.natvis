@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- Hash holds one handle per bucket into Table, and the chain is threaded through
+         Table[handle].Next. Both use the class's NIL sentinel, which is -1. -->
+    <Type Name="HashTemplateClass&lt;*,*&gt;">
+        <DisplayString>{{ buckets={(int)Size} }}</DisplayString>
+        <Expand>
+            <Item Name="[buckets]" ExcludeView="simple">(int)Size</Item>
+            <CustomListItems>
+                <Variable Name="bucket" InitialValue="0"/>
+                <Variable Name="handle" InitialValue="-1"/>
+                <Loop>
+                    <Break Condition="bucket &gt;= (int)Size"/>
+                    <Exec>handle = Hash[bucket]</Exec>
+                    <Loop>
+                        <Break Condition="handle == -1"/>
+                        <Item Name="{Table[handle].Key}">Table[handle].Value</Item>
+                        <Exec>handle = Table[handle].Next</Exec>
+                    </Loop>
+                    <Exec>bucket = bucket + 1</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <Type Name="HashTemplateIterator&lt;*,*&gt;">
+        <DisplayString Condition="Handle == -1">{{ done }}</DisplayString>
+        <DisplayString>{HashTable.Table[Handle].Value}</DisplayString>
+        <Expand>
+            <Item Name="[key]" Condition="Handle != -1">HashTable.Table[Handle].Key</Item>
+            <Item Name="[value]" Condition="Handle != -1">HashTable.Table[Handle].Value</Item>
+            <Item Name="[bucket]" ExcludeView="simple">HashIndex</Item>
+            <Item Name="[table]" ExcludeView="simple">HashTable</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>
