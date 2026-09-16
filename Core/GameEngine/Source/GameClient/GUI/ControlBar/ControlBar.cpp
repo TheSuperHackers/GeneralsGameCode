@@ -2756,6 +2756,7 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 	DEBUG_ASSERTCRASH(marker, ("showRallyPoint: No rally point marker found"));
 	if (!marker)
 	{
+		m_rallyPointDrawableID = INVALID_DRAWABLE_ID;
 		return;
 	}
 
