@@ -34,7 +34,8 @@ namespace AppMain
 	/** Initialize subsystems after window creation (version info, single-instance mutex check) */
 	Bool initAfterWindow();
 
-	/** Execute the main game loop */
+	void installCrashHandler();
+
 	Int run();
 
 	/** Get initial window dimensions from GlobalData or defaults (800x600) */
