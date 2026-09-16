@@ -2741,7 +2741,6 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 	if (m_rallyPointDrawableID == INVALID_DRAWABLE_ID)
 	{
 		const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
-		// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Skip rally point creation when its template is missing.
 		if (!ttn)
 		{
 			return;
