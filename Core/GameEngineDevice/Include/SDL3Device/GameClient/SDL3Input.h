@@ -154,6 +154,7 @@ private:
 	// Gamepad management
 	void openFirstGamepad();
 	void closeGamepad();
+	void releaseGamepadVirtualInputs();
 
 	SDL_Window* m_window;
 	SDL_Gamepad* m_gamepad;

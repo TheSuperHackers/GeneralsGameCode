@@ -143,6 +143,9 @@ void SDL3GameEngine::update()
 				break;
 			}
 		}
+
+		AudioAffect aa = (AudioAffect)0x10;
+		TheAudio->setVolume(TheAudio->getVolume(aa), aa);
 	}
 }
 
