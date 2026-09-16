@@ -28,11 +28,6 @@
 
 AnimatedCursor* SDL3CursorManager::m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS] = {nullptr};
 
-void SDL3CursorManager::init()
-{
-	shutdown();
-}
-
 void SDL3CursorManager::shutdown()
 {
 	for (int i = 0; i < Mouse::NUM_MOUSE_CURSORS; ++i)
@@ -148,6 +143,8 @@ AnimatedCursor* SDL3CursorManager::loadANI(const char* filepath)
 	if (!cursor->m_cursor)
 	{
 		DEBUG_LOG(("loadANI: Failed to create cursor from %s. hot=(%d, %d), count=%d. Error: %s", filepath, hot_spot_x, hot_spot_y, anim->count, SDL_GetError()));
+		IMG_FreeAnimation(anim);
+		return nullptr;
 	}
 
 	IMG_FreeAnimation(anim);
