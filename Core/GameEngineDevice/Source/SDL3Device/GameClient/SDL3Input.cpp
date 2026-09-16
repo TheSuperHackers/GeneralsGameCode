@@ -275,13 +275,6 @@ UnsignedByte SDL3Mouse::getMouseEvent(MouseIO* result, Bool flush)
 	return MOUSE_OK;
 }
 
-void SDL3Mouse::addSDLEvent(SDL_Event* event)
-{
-	if (TheSDL3InputManager && event)
-	{
-		TheSDL3InputManager->addMouseSDLEvent(*event);
-	}
-}
 
 // Unified event translation (Clean Slate Rewrite)
 void SDL3Mouse::translateEvent(const SDL_Event& event, MouseIO* result)
@@ -383,8 +376,8 @@ void SDL3Mouse::scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& 
 	int pbX, pbY, pbW, pbH;
 	if (TheDisplay->getViewportRect(pbX, pbY, pbW, pbH))
 	{
-		int cx = std::max(0, std::min(pbW, rawX - pbX));
-		int cy = std::max(0, std::min(pbH, rawY - pbY));
+		int cx = std::max(0, std::min(pbW - 1, rawX - pbX));
+		int cy = std::max(0, std::min(pbH - 1, rawY - pbY));
 		scaledX = (int)(cx * (float)intW / pbW);
 		scaledY = (int)(cy * (float)intH / pbH);
 	}
@@ -464,14 +457,6 @@ void SDL3Keyboard::getKey(KeyboardIO* key)
 		key->state &= ~KEY_STATE_LALT;
 	if (keyDef == KEY_RALT)
 		key->state &= ~KEY_STATE_RALT;
-}
-
-void SDL3Keyboard::addSDLEvent(SDL_Event* event)
-{
-	if (TheSDL3InputManager && event)
-	{
-		TheSDL3InputManager->addKeyboardSDLEvent(*event);
-	}
 }
 
 KeyVal SDL3Keyboard::translateScanCodeToKeyVal(SDL_Scancode scan)

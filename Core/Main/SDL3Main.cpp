@@ -62,13 +62,13 @@ int main(int argc, char* argv[])
 	ApplicationHInstance = GetModuleHandle(nullptr);
 #endif
 
-	// Load splash screen surface
-	char filePath[512];
-	AppMain::getSplashFilePath(filePath, sizeof(filePath));
-	gLoadScreenSurface = SDL_LoadBMP(filePath);
-
 	if (!TheGlobalData->m_headless)
 	{
+		// Load splash screen surface
+		char filePath[512];
+		AppMain::getSplashFilePath(filePath, sizeof(filePath));
+		gLoadScreenSurface = SDL_LoadBMP(filePath);
+
 		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD))
 		{
 			DEBUG_LOG(("SDL_Init failed: %s", SDL_GetError()));

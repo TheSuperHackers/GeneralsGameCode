@@ -181,7 +181,7 @@ void getSplashFilePath(Char* outBuffer, UnsignedInt bufferSize)
 		return;
 
 	const char* fileName = "Install_Final.bmp";
-	sprintf(outBuffer, "Data/%s/%s", GetRegistryLanguage().str(), fileName);
+	snprintf(outBuffer, bufferSize, "Data/%s/%s", GetRegistryLanguage().str(), fileName);
 	FILE* fileImage = fopen(outBuffer, "rb");
 	if (fileImage)
 	{
@@ -189,7 +189,7 @@ void getSplashFilePath(Char* outBuffer, UnsignedInt bufferSize)
 	}
 	else
 	{
-		sprintf(outBuffer, "%s", fileName);
+		snprintf(outBuffer, bufferSize, "%s", fileName);
 	}
 }
 

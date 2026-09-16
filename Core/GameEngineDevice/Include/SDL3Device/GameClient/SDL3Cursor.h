@@ -47,7 +47,6 @@ struct AnimatedCursor
 class SDL3CursorManager
 {
 public:
-	static void init();
 	static void shutdown();
 
 	static SDL_Cursor* getCursor(Mouse::MouseCursor cursor, int direction);
