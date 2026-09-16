@@ -2754,6 +2754,10 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 
 	// sanity
 	DEBUG_ASSERTCRASH(marker, ("showRallyPoint: No rally point marker found"));
+	if (!marker)
+	{
+		return;
+	}
 
 	// set the position of the rally point drawable to the position passed in
 	marker->setPosition(loc);
