@@ -130,7 +130,10 @@ Bool LookAtTranslator::canScrollAtScreenEdge() const
 	if (m_controllerInputActive)
 		return false;
 
-	if (!TheMouse->isCursorCaptured())
+	if (TheMouse == nullptr || !TheMouse->isCursorCaptured())
+		return false;
+
+	if (TheDisplay == nullptr)
 		return false;
 
 	if (TheDisplay->getWindowed())
