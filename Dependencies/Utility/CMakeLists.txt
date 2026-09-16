@@ -1,4 +1,5 @@
 set(UTILITY_SRC
+    Utility/array_adapter.h
     Utility/compat.h
     Utility/CppMacros.h
     Utility/endian_compat.h
