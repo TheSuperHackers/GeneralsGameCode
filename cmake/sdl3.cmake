@@ -7,9 +7,10 @@
 find_package(SDL3 CONFIG QUIET)
 find_package(SDL3_image 3.4.6 CONFIG QUIET)
 
-if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
+include(FetchContent)
+
+if(NOT SDL3_FOUND)
     message(STATUS "SDL3 not found via vcpkg/find_package, falling back to source build (FetchContent)...")
-    include(FetchContent)
 
     FetchContent_Declare(
         SDL3
@@ -18,16 +19,23 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
         OVERRIDE_FIND_PACKAGE
     )
 
+    # Official SDL configuration for a unified build tree
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+    set(SDL_STATIC ON CACHE BOOL "" FORCE)
+
+    FetchContent_MakeAvailable(SDL3)
+endif()
+
+if(NOT SDL3_image_FOUND)
+    message(STATUS "SDL3_image >= 3.4.6 not found via vcpkg/find_package, falling back to source build (FetchContent)...")
+
     FetchContent_Declare(
         SDL3_image
         URL https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.6/SDL3_image-3.4.6.tar.gz
         URL_HASH SHA256=d2e4637ae700f72e5196b8fbd749850ed2e5e1e09c5a5be8d06ff55aaccf3b01
     )
 
-    # Official SDL configuration for a unified build tree
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-    set(SDL_SHARED OFF CACHE BOOL "" FORCE)
-    set(SDL_STATIC ON CACHE BOOL "" FORCE)
     set(SDLIMAGE_VENDORED OFF CACHE BOOL "" FORCE)
     set(SDLIMAGE_SHARED OFF CACHE BOOL "" FORCE)
     set(SDLIMAGE_STATIC ON CACHE BOOL "" FORCE)
@@ -35,8 +43,6 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
     set(SDLIMAGE_PNG OFF CACHE BOOL "" FORCE)
     set(SDLIMAGE_APNG OFF CACHE BOOL "" FORCE)
 
-    # Populate SDL3 and SDL3_image
-    FetchContent_MakeAvailable(SDL3)
     FetchContent_MakeAvailable(SDL3_image)
 endif()
 
