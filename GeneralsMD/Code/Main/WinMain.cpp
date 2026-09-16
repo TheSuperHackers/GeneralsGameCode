@@ -50,7 +50,6 @@
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
-#include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/PlayerList.h"
 #include "Common/Registry.h"
@@ -773,25 +772,6 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 }
 
-// UnHandledExceptionFilter ===================================================
-/** Handler for unhandled win32 exceptions. */
-//=============================================================================
-static LONG WINAPI UnHandledExceptionFilter( struct _EXCEPTION_POINTERS* e_info )
-{
-	DumpExceptionInfo( e_info->ExceptionRecord->ExceptionCode, e_info );
-#ifdef RTS_ENABLE_CRASHDUMP
-	if (TheMiniDumper && TheMiniDumper->IsInitialized())
-	{
-		// Create both minimal and full memory dumps
-		TheMiniDumper->TriggerMiniDumpForException(e_info, DumpType_Minimal);
-		TheMiniDumper->TriggerMiniDumpForException(e_info, DumpType_Full);
-	}
-
-	MiniDumper::shutdownMiniDumper();
-#endif
-	return EXCEPTION_EXECUTE_HANDLER;
-}
-
 // WinMain ====================================================================
 /** Application entry point */
 //=============================================================================
@@ -806,7 +786,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	try {
 
-		SetUnhandledExceptionFilter( UnHandledExceptionFilter );
+		AppMain::installCrashHandler();
 
 		// install debug callbacks
 	//	WWDebug_Install_Message_Handler(WWDebug_Message_Callback);

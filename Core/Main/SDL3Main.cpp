@@ -51,6 +51,8 @@ int main(int argc, char* argv[])
 
 	Int exitcode = 1;
 
+	AppMain::installCrashHandler();
+
 	if (!AppMain::initBeforeWindow())
 	{
 		return exitcode;

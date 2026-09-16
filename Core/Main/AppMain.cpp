@@ -54,6 +54,26 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 namespace AppMain
 {
 
+static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
+{
+	DumpExceptionInfo(e_info->ExceptionRecord->ExceptionCode, e_info);
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper && TheMiniDumper->IsInitialized())
+	{
+		TheMiniDumper->TriggerMiniDumpForException(e_info, DumpType_Minimal);
+		TheMiniDumper->TriggerMiniDumpForException(e_info, DumpType_Full);
+	}
+
+	MiniDumper::shutdownMiniDumper();
+#endif
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+void installCrashHandler()
+{
+	SetUnhandledExceptionFilter(UnHandledExceptionFilter);
+}
+
 Bool initBeforeWindow()
 {
 	TheAsciiStringCriticalSection = &critSec1;
@@ -144,7 +164,15 @@ void getInitialWindowBounds(Int& outWidth, Int& outHeight)
 
 Int run()
 {
-	return GameMain();
+	Int exitcode = 1;
+	try
+	{
+		exitcode = GameMain();
+	}
+	catch (...)
+	{
+	}
+	return exitcode;
 }
 
 void getSplashFilePath(Char* outBuffer, UnsignedInt bufferSize)
