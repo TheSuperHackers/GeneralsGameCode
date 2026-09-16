@@ -19,25 +19,29 @@
 #pragma once
 
 #include <vector>
+#include <Utility/array_adapter.h>
 
 #include "Common/MapObject.h"
 #include "Lib/BaseType.h"
+#include "WW3D2/dx8fvf.h"
 #include "WW3D2/shader.h"
 #include "WWLib/sharebuf.h"
 #include "WWMath/vector3.h"
 #include "WWMath/vector4.h"
 
-constexpr const UnsignedShort MAX_VERTICES = 32768;
-constexpr const UnsignedShort MAX_INDICES = 65535;
-constexpr const UnsignedShort INVALID_VERTEX = MAX_VERTICES + 1;
-constexpr const Real Z_OFFSET = MAP_HEIGHT_SCALE / 10;
+namespace TerrainParticles
+{
+	constexpr const UnsignedShort MAX_VERTICES = 32768;
+	constexpr const UnsignedShort MAX_INDICES = 65535;
+	constexpr const UnsignedShort INVALID_VERTEX = MAX_VERTICES + 1;
+	constexpr const Real Z_OFFSET = MAP_HEIGHT_SCALE * 2; // match the original particle height
 
-static_assert(MAX_VERTICES < INVALID_VERTEX, "Vertex indices must leave room for the INVALID_VERTEX sentinel value.");
+	static_assert(MAX_VERTICES < INVALID_VERTEX, "Vertex indices must leave room for the INVALID_VERTEX sentinel value.");
+}
 
 class AABoxClass;
 class TextureClass;
 class WorldHeightMap;
-struct VertexFormatXYZNDUV2;
 
 /**
  * Render particles as terrain conforming overlays. For each particle, form an initial region by calculating the bounds
@@ -45,11 +49,11 @@ struct VertexFormatXYZNDUV2;
  * region until each sub-region is either a single terrain cell or is on perfectly flat terrain. Flat regions become one
  * large quad, while non-flat regions must match the terrain's topology exactly.
  */
-class W3DTerrainParticle
+class W3DTerrainParticles
 {
 public:
-	W3DTerrainParticle();
-	~W3DTerrainParticle();
+	W3DTerrainParticles();
+	~W3DTerrainParticles();
 
 	void setTexture(TextureClass* texture);
 	void setShader(ShaderClass shader);
@@ -74,9 +78,9 @@ private:
 	IRegion2D calcTerrainBounds(WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const;
 	void updateSettings();
 
-	std::vector<VertexFormatXYZNDUV2> m_vertexData;    ///< Vertices of the current batch.
-	std::vector<UnsignedShort> m_indexData;    ///< Indices defining the triangles of the current batch.
-	std::vector<UnsignedByte> m_outcodes;    ///< UV outcodes indexed by batch vertex.
+	std::array<VertexFormatXYZNDUV2, TerrainParticles::MAX_VERTICES> m_vertexData;    ///< Vertices of the current batch.
+	std::array<UnsignedShort, TerrainParticles::MAX_INDICES> m_indexData;    ///< Indices defining the triangles of the current batch.
+	std::array<UnsignedByte, TerrainParticles::MAX_VERTICES> m_outcodes;    ///< UV outcodes indexed by batch vertex.
 	std::vector<UnsignedShort> m_vertexLookup;    ///< Map grid location to index in m_vertexData.
 	UnsignedShort m_numVertices;    ///< Number of vertices used in m_vertexData.
 	UnsignedShort m_numIndices;    ///< Number of indices used in m_indexData.

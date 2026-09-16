@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "W3DDevice/GameClient/W3DTerrainParticle.h"
+#include "W3DDevice/GameClient/W3DTerrainParticles.h"
 
 #include <algorithm>
 
@@ -57,7 +57,7 @@ UnsignedByte getUVOutcode(const Real u, const Real v)
 	return outcode;
 }
 
-struct W3DTerrainParticle::ParticleContext
+struct W3DTerrainParticles::ParticleContext
 {
 	Vector3 loc;
 	IRegion2D bounds;
@@ -67,11 +67,8 @@ struct W3DTerrainParticle::ParticleContext
 	Real sine;
 };
 
-W3DTerrainParticle::W3DTerrainParticle()
-  : m_vertexData(MAX_VERTICES)
-  , m_indexData(MAX_INDICES)
-  , m_outcodes(MAX_VERTICES)
-  , m_vertexLookup(MAX_VERTICES)
+W3DTerrainParticles::W3DTerrainParticles()
+  : m_vertexLookup(TerrainParticles::MAX_VERTICES)
   , m_numVertices(0)
   , m_numIndices(0)
   , m_texture(nullptr)
@@ -89,7 +86,7 @@ W3DTerrainParticle::W3DTerrainParticle()
 	m_defaultDiffuse = DX8Wrapper::Convert_Color_Clamp(Vector4(m_defaultPointColor.X, m_defaultPointColor.Y, m_defaultPointColor.Z, m_defaultPointAlpha));
 }
 
-W3DTerrainParticle::~W3DTerrainParticle()
+W3DTerrainParticles::~W3DTerrainParticles()
 {
 	REF_PTR_RELEASE(m_texture);
 	REF_PTR_RELEASE(m_pointLoc);
@@ -98,7 +95,7 @@ W3DTerrainParticle::~W3DTerrainParticle()
 	REF_PTR_RELEASE(m_pointOrientation);
 }
 
-void W3DTerrainParticle::render()
+void W3DTerrainParticles::render()
 {
 	if (m_pointCount <= 0 || !m_pointLoc || !TheTerrainRenderObject)
 		return;
@@ -149,19 +146,24 @@ void W3DTerrainParticle::render()
 	}
 }
 
-void W3DTerrainParticle::drawRegion(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
+void W3DTerrainParticles::drawRegion(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
 {
-	if (bounds.width() == 2 && bounds.height() == 2 || map.isTerrainFlat(bounds))
+	const Int sizeX = bounds.width() - 1;
+	const Int sizeY = bounds.height() - 1;
+
+	// Draw a quad if we can't subdivide further, or is the terrain is flat.
+	const Bool singleCell = sizeX <= 1 && sizeY <= 1;
+	if (singleCell || map.isTerrainFlat(bounds))
 	{
 		drawQuad(map, particle, bounds);
 		return;
 	}
 
 	// Subdivide the current region into four sub-regions, or two sub-regions if we can't split one of the sides.
-	const Bool splitX = bounds.width() > 2;
-	const Bool splitY = bounds.height() > 2;
-	const Int midX = bounds.lo.x + (bounds.width() - 1) / 2;
-	const Int midY = bounds.lo.y + (bounds.height() - 1) / 2;
+	const Bool splitX = sizeX > 1;
+	const Bool splitY = sizeY > 1;
+	const Int midX = bounds.lo.x + sizeX / 2;
+	const Int midY = bounds.lo.y + sizeY / 2;
 	for (Int y = 0; y < (splitY ? 2 : 1); y++)
 	{
 		for (Int x = 0; x < (splitX ? 2 : 1); x++)
@@ -176,9 +178,9 @@ void W3DTerrainParticle::drawRegion(WorldHeightMap& map, const ParticleContext& 
 	}
 }
 
-void W3DTerrainParticle::drawQuad(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
+void W3DTerrainParticles::drawQuad(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
 {
-	if (m_numVertices + 4 > MAX_VERTICES || m_numIndices + 6 > MAX_INDICES)
+	if (m_numVertices + 4 > TerrainParticles::MAX_VERTICES || m_numIndices + 6 > TerrainParticles::MAX_INDICES)
 	{
 		flushBatch();
 		resetVertexLookup(particle);
@@ -203,13 +205,13 @@ void W3DTerrainParticle::drawQuad(WorldHeightMap& map, const ParticleContext& pa
 	}
 }
 
-UnsignedShort W3DTerrainParticle::addVertex(WorldHeightMap& map, const ParticleContext& particle, Int x, Int y)
+UnsignedShort W3DTerrainParticles::addVertex(WorldHeightMap& map, const ParticleContext& particle, Int x, Int y)
 {
 	const Int gridLocation = (y - particle.bounds.lo.y) * particle.bounds.width() + (x - particle.bounds.lo.x);
 	UnsignedShort& index = m_vertexLookup[gridLocation];
 
 	// Vertex may not exist yet, or got removed in the last flush.
-	if (index != INVALID_VERTEX)
+	if (index != TerrainParticles::INVALID_VERTEX)
 		return index;
 
 	index = m_numVertices++;
@@ -217,7 +219,7 @@ UnsignedShort W3DTerrainParticle::addVertex(WorldHeightMap& map, const ParticleC
 	vertex.diffuse = particle.diffuse;
 	vertex.x = x * MAP_XY_FACTOR;
 	vertex.y = y * MAP_XY_FACTOR;
-	vertex.z = map.getQuickHeight(x + map.getBorderSizeInline(), y + map.getBorderSizeInline()) * MAP_HEIGHT_SCALE + Z_OFFSET;
+	vertex.z = map.getQuickHeight(x + map.getBorderSizeInline(), y + map.getBorderSizeInline()) * MAP_HEIGHT_SCALE + TerrainParticles::Z_OFFSET;
 	const Real deltaX = vertex.x - particle.loc.X;
 	const Real deltaY = vertex.y - particle.loc.Y;
 	const Real localX = particle.cosine * deltaX - particle.sine * deltaY;
@@ -228,7 +230,7 @@ UnsignedShort W3DTerrainParticle::addVertex(WorldHeightMap& map, const ParticleC
 	return index;
 }
 
-inline void W3DTerrainParticle::addTriangle(UnsignedShort a, UnsignedShort b, UnsignedShort c)
+inline void W3DTerrainParticles::addTriangle(UnsignedShort a, UnsignedShort b, UnsignedShort c)
 {
 	// Skip the triangle when all UV's are outside (transparent).
 	if ((m_outcodes[a] & m_outcodes[b] & m_outcodes[c]) != 0)
@@ -239,7 +241,7 @@ inline void W3DTerrainParticle::addTriangle(UnsignedShort a, UnsignedShort b, Un
 	m_indexData[m_numIndices++] = c;
 }
 
-void W3DTerrainParticle::flushBatch()
+void W3DTerrainParticles::flushBatch()
 {
 	if (m_numIndices > 0 && m_numVertices > 0)
 	{
@@ -272,17 +274,17 @@ void W3DTerrainParticle::flushBatch()
 	m_numIndices = 0;
 }
 
-void W3DTerrainParticle::resetVertexLookup(const ParticleContext& particle)
+void W3DTerrainParticles::resetVertexLookup(const ParticleContext& particle)
 {
 	const Int count = particle.bounds.width() * particle.bounds.height();
 	// For extremely large particles we may need to grow the lookup buffer.
 	if (m_vertexLookup.size() < count)
 		m_vertexLookup.resize(count);
 
-	std::fill(m_vertexLookup.begin(), m_vertexLookup.begin() + count, INVALID_VERTEX);
+	std::fill(m_vertexLookup.begin(), m_vertexLookup.begin() + count, TerrainParticles::INVALID_VERTEX);
 }
 
-IRegion2D W3DTerrainParticle::calcTerrainBounds(WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const
+IRegion2D W3DTerrainParticles::calcTerrainBounds(WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const
 {
 	IRegion2D bounds;
 	bounds.lo.x = REAL_TO_INT_FLOOR((loc.X - projectedRadius) / MAP_XY_FACTOR);
@@ -296,7 +298,7 @@ IRegion2D W3DTerrainParticle::calcTerrainBounds(WorldHeightMap& map, const Vecto
 	return bounds;
 }
 
-void W3DTerrainParticle::updateSettings()
+void W3DTerrainParticles::updateSettings()
 {
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
 	const Real value255 = 0.9961f;    // 254 / 255
@@ -304,10 +306,7 @@ void W3DTerrainParticle::updateSettings()
 	                                m_defaultPointColor.Y > value255 &&
 	                                m_defaultPointColor.Z > value255 &&
 	                                m_defaultPointAlpha > value255;
-
-	// The reason we check for lack of texture here is that SR seems to render black triangles
-	// rather than white triangles as would be expected) when there is no texture AND no gradient.
-	if (m_pointDiffuse || !defaultWhiteOpaque || !m_texture)
+	if (m_pointDiffuse || !defaultWhiteOpaque)
 	{
 		m_shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
 	}
@@ -341,17 +340,17 @@ void W3DTerrainParticle::updateSettings()
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_BORDERCOLOR, 0x00000000);
 }
 
-void W3DTerrainParticle::setTexture(TextureClass* texture)
+void W3DTerrainParticles::setTexture(TextureClass* texture)
 {
 	REF_PTR_SET(m_texture, texture);
 }
 
-void W3DTerrainParticle::setShader(ShaderClass shader)
+void W3DTerrainParticles::setShader(ShaderClass shader)
 {
 	m_shader = shader;
 }
 
-void W3DTerrainParticle::setArrays(
+void W3DTerrainParticles::setArrays(
 	ShareBufferClass<Vector3>* locs,
 	ShareBufferClass<Vector4>* diffuse,
 	ShareBufferClass<Real>* sizes,
@@ -374,7 +373,7 @@ void W3DTerrainParticle::setArrays(
 	m_pointCount = activePointCount >= 0 ? activePointCount : locs->Get_Count();
 }
 
-void W3DTerrainParticle::setBoundingBox(const AABoxClass& worldBoundingBox)
+void W3DTerrainParticles::setBoundingBox(const AABoxClass& worldBoundingBox)
 {
 	m_terrainInViewBounds.lo.x = REAL_TO_INT_FLOOR((worldBoundingBox.Center.X - worldBoundingBox.Extent.X) / MAP_XY_FACTOR);
 	m_terrainInViewBounds.hi.x = REAL_TO_INT_CEIL((worldBoundingBox.Center.X + worldBoundingBox.Extent.X) / MAP_XY_FACTOR) + 1;

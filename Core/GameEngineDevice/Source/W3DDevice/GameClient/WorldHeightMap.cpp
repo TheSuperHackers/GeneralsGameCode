@@ -539,6 +539,9 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 
 Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
 {
+	DEBUG_ASSERTCRASH(bounds.lo.x >= -m_borderSize && bounds.lo.y >= -m_borderSize &&
+	                  bounds.hi.x <= m_width - m_borderSize && bounds.hi.y <= m_height - m_borderSize,
+	                  ("WorldHeightMap::isTerrainFlat must use a region within the logical map bounds."));
 	const UnsignedByte* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
 	const UnsignedByte referenceHeight = firstRow[0];
 	for (Int j = 0; j < bounds.height(); j++)

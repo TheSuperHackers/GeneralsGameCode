@@ -278,12 +278,13 @@ public:  // height map info.
 			return(0);
 	};
 
-	///Faster version of above function without all the safety checks - For people that do checks externally.
+	///Faster version of above function without all the safety checks
 	UnsignedByte getQuickHeight(Int xIndex, Int yIndex) const
 	{
 		return m_data[yIndex * m_width + xIndex];
 	}
 
+	///Check that the map is flat within logical bounds
 	Bool isTerrainFlat(const IRegion2D& bounds) const;
 
 	void getUVForBlend(Int edgeClass, Region2D *range);

@@ -435,9 +435,9 @@ public:
 
 	enum ParticleAlignmentType CPP_11(: Int)
 	{
-		PARTICLE_ALIGNMENT_BILLBOARD = 0,
-		PARTICLE_ALIGNMENT_XYPLANAR,
-		PARTICLE_ALIGNMENT_CONFORMING,
+		PARTICLE_ALIGNMENT_BILLBOARD = 0,		///< Align the particle toward the camera.
+		PARTICLE_ALIGNMENT_XYPLANAR,		///< Align the particle on a flat horizontal surface.
+		PARTICLE_ALIGNMENT_CONFORMING,		///< Align the particle as projected on the terrain.
 		PARTICLE_ALIGNMENT_TYPE_COUNT
 	};
 	ParticleAlignmentType m_particleAlignment;		///< align particles toward the camera or with the XY plane.

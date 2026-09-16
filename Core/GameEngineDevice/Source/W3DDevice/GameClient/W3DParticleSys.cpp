@@ -34,7 +34,7 @@
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/W3DSnow.h"
-#include "W3DDevice/GameClient/W3DTerrainParticle.h"
+#include "W3DDevice/GameClient/W3DTerrainParticles.h"
 #include "WW3D2/camera.h"
 
 
@@ -64,7 +64,7 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 	m_pointGroup = NEW PointGroupClass();
 	//m_streakLine = nullptr;
 	m_streakLine = NEW StreakLineClass();
-	m_terrainParticles = NEW W3DTerrainParticle();
+	m_terrainParticles = NEW W3DTerrainParticles();
 
 	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
 	m_RGBABuffer = NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") );
