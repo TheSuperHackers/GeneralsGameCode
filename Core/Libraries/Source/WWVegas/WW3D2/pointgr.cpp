@@ -1082,6 +1082,8 @@ void PointGroupClass::Update_Arrays(
 	Vector3 *vertex_loc = &VertexLoc[0];
 
 
+	// The selector guarantees the required arrays are present in each branch.
+	// Assert these requirements in the branches that use the arrays.
 	/// @todo lorenzen sez: this switch statement may be done more compactly another way... look into it
 
 	switch (loop_sel) {
@@ -1106,12 +1108,7 @@ void PointGroupClass::Update_Arrays(
 
 		case TRIS_SIZE_NOORIENT:
 			{
-				if (!point_size)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_size);
 
 				// Scale vertex offsets and add them to point locations to get vertex locations
 				for (i = 0; i < active_points; i++) {
@@ -1128,12 +1125,7 @@ void PointGroupClass::Update_Arrays(
 
 		case TRIS_NOSIZE_ORIENT:
 			{
-				if (!point_orientation)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_orientation);
 
 				// Scale vertex offsets and add them to point locations to get vertex locations
 				for (i = 0; i < active_points; i++) {
@@ -1150,12 +1142,7 @@ void PointGroupClass::Update_Arrays(
 
 		case TRIS_SIZE_ORIENT:
 			{
-				if (!point_size || !point_orientation)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_size && point_orientation);
 
 				// Scale vertex offsets and add them to point locations to get vertex locations
 				for (i = 0; i < active_points; i++) {
@@ -1192,12 +1179,7 @@ void PointGroupClass::Update_Arrays(
 
 		case QUADS_SIZE_NOORIENT:
 			{
-				if (!point_size)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_size);
 
 				// Scale vertex offsets and add them to point locations to get vertex locations
 				for (i = 0; i < active_points; i++) {
@@ -1216,12 +1198,7 @@ void PointGroupClass::Update_Arrays(
 
 		case QUADS_NOSIZE_ORIENT:
 			{
-				if (!point_orientation)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_orientation);
 
 				// Scale vertex offsets and add them to point locations to get vertex locations
 				for (i = 0; i < active_points; i++) {
@@ -1240,12 +1217,7 @@ void PointGroupClass::Update_Arrays(
 
 		case QUADS_SIZE_ORIENT:
 			{
-				if (!point_size || !point_orientation)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_size && point_orientation);
 
 				Matrix4x4 view;
 				Vector4 result;
@@ -1354,12 +1326,7 @@ void PointGroupClass::Update_Arrays(
 		case SCREEN_SIZE_NOORIENT:
 		case SCREEN_SIZE_ORIENT:
 			{
-				if (!point_size)
-				{
-					vnum = 0;
-					pnum = 0;
-					return;
-				}
+				WWASSERT(point_size);
 
 				// Offsets need to be scaled to the current screen resolution
 
@@ -1839,6 +1806,8 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			// 3 times per particle when we can do it once
 			float recipDepth = 0.1f / (float)depth;
 
+			// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Volume particles can use the default size without a size array.
+			// Match the size used by the NOSIZE branches in Update_Arrays.
 			const float pointSize = current_size ? *current_size : DefaultPointSize;
 			float shiftInc = t * pointSize * recipDepth;
 
