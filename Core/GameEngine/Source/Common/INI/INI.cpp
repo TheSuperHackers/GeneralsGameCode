@@ -910,7 +910,7 @@ void INI::parsePercentToReal( INI* ini, void * /*instance*/, void *store, const 
 //-------------------------------------------------------------------------------------------------
 void INI::parseBitString8( INI* ini, void * /*instance*/, void *store, const void* userData )
 {
-	UnsignedInt tmp;
+	UnsignedInt tmp = *(Byte*)store;
 	INI::parseBitString32(ini, nullptr, &tmp, userData);
 	if (tmp & 0xffffff00)
 	{
