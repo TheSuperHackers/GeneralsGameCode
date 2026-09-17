@@ -629,7 +629,6 @@ public:
 
 	ParticleAlignmentType getParticleAlignment() const { return m_particleAlignment; }
 	Bool isFieldParticle() const { return m_particleAlignment != PARTICLE_ALIGNMENT_BILLBOARD; }
-	Bool shouldBillboard() const { return m_particleAlignment == PARTICLE_ALIGNMENT_BILLBOARD; }
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
 

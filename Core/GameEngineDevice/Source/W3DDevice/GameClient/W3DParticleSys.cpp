@@ -359,7 +359,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			/// @todo Use both QUADS and TRIS for particles
 			m_pointGroup->Set_Point_Mode( PointGroupClass::QUADS );
 			m_pointGroup->Set_Arrays( m_posBuffer, m_RGBABuffer, nullptr, m_sizeBuffer, m_angleBuffer, nullptr, pointCount );
-			m_pointGroup->Set_Billboard(sys->shouldBillboard());
+			m_pointGroup->Set_Billboard(sys->getParticleAlignment() == ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD);
 
 			/// @todo Support animated texture particles
 			/// @todo lorenzen sez: unimplemented code wastes cpu cycles
