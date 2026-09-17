@@ -1082,8 +1082,6 @@ void PointGroupClass::Update_Arrays(
 	Vector3 *vertex_loc = &VertexLoc[0];
 
 
-	// The selector guarantees the required arrays are present in each branch.
-	// Assert these requirements in the branches that use the arrays.
 	/// @todo lorenzen sez: this switch statement may be done more compactly another way... look into it
 
 	switch (loop_sel) {
@@ -1806,8 +1804,6 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			// 3 times per particle when we can do it once
 			float recipDepth = 0.1f / (float)depth;
 
-			// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Volume particles can use the default size without a size array.
-			// Match the size used by the NOSIZE branches in Update_Arrays.
 			const float pointSize = current_size ? *current_size : DefaultPointSize;
 			float shiftInc = t * pointSize * recipDepth;
 
