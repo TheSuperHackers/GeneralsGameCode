@@ -49,6 +49,7 @@ void ProfileResultFileCSV::WriteThread(ProfileFuncLevel::Thread &thread)
   FILE* f=fopen(help,"wt");
   if (!f)
   {
+    DLOG("Could not open profile CSV '" << help << "'.\n");
     return;
   }
 
@@ -117,6 +118,7 @@ void ProfileResultFileCSV::WriteResults()
   FILE* f=fopen("profile-high.csv","wt");
   if (!f)
   {
+    DLOG("Could not open profile CSV 'profile-high.csv'.\n");
     return;
   }
 
