@@ -403,6 +403,13 @@ ControlBarScheme::ControlBarScheme()
 
 void ControlBarScheme::init()
 {
+	// TheSuperHackers @bugfix Reject invalid dimensions before updating the control bar or scaling its windows.
+	if (m_ScreenCreationRes.x <= 0 || m_ScreenCreationRes.y <= 0)
+	{
+		DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
+		return;
+	}
+
 	if(TheControlBar)
 	{
 		TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
@@ -1039,6 +1046,7 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 	ControlBarScheme *tempScheme = findControlBarScheme( schemeName );
 	if(tempScheme)
 	{
+		// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Reject invalid dimensions and retain fractional display scaling.
 		if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
 		{
 			DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
@@ -1127,6 +1135,13 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 
 	if(tempScheme)
 	{
+		// TheSuperHackers @bugfix Reject invalid dimensions before changing the current scheme or its multipliers.
+		if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
+		{
+			DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
+			return;
+		}
+
 		// setup the multiplier value
 		m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
 		m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
@@ -1195,6 +1210,13 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 
 	if(tempScheme)
 	{
+		// TheSuperHackers @bugfix Reject invalid dimensions before changing the current scheme or its multipliers.
+		if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
+		{
+			DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
+			return;
+		}
+
 		// setup the multiplier value
 		m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
 		m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
