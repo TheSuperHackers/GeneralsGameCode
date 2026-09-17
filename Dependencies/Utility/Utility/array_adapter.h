@@ -22,12 +22,17 @@
 // VC6 also rejects aggregate initialization when the element type is const.
 #pragma once
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if !defined(_MSC_VER) || _MSC_VER >= 1300
+
+#include <array>
+
+#else
 
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <stdexcept>
+#include <string>
 
 namespace utility_array_detail
 {
@@ -58,7 +63,6 @@ struct storage<0>
 };
 }
 
-// Match the existing adapters: callers use std::array on both toolchains.
 namespace std
 {
 template <class T, size_t N>
@@ -178,9 +182,5 @@ inline bool operator>=(const array<T, N>& lhs, const array<T, N>& rhs)
 // Use the existing generic std::swap for non-member swaps. VC6 cannot
 // order an array-specific overload against the generic STL swap template.
 }
-
-#else
-
-#include <array>
 
 #endif
