@@ -403,7 +403,6 @@ ControlBarScheme::ControlBarScheme()
 
 void ControlBarScheme::init()
 {
-	// TheSuperHackers @bugfix Reject invalid dimensions before updating the control bar or scaling its windows.
 	if (m_ScreenCreationRes.x <= 0 || m_ScreenCreationRes.y <= 0)
 	{
 		DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
@@ -1046,7 +1045,6 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 	ControlBarScheme *tempScheme = findControlBarScheme( schemeName );
 	if(tempScheme)
 	{
-		// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Reject invalid dimensions and retain fractional display scaling.
 		if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
 		{
 			DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
@@ -1090,19 +1088,20 @@ void ControlBarSchemeManager::drawBackground( ICoord2D offset )
 }
 
 //-----------------------------------------------------------------------------
-void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt, Bool useSmall)
+Bool ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt, Bool useSmall)
 {
 	if(!pt)
-		return;
+		return FALSE;
 	AsciiString side = pt->getSide();
 	if(useSmall)
 		side.concat("Small");
-	if(m_currentScheme && (m_currentScheme->m_side.compare(side) == 0))
+	if(m_currentScheme && (m_currentScheme->m_side.compare(side) == 0)
+		&& m_currentScheme->m_ScreenCreationRes.x > 0 && m_currentScheme->m_ScreenCreationRes.y > 0)
 	{
 		m_currentScheme->init();
 
 		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side", side.str()));
-		return;
+		return TRUE;
 	}
 
 	// if we don't have a side, set it to Observer shell
@@ -1124,7 +1123,8 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 			continue;
 		}
 		// find the scheme that best matches our resolution
-		if(CBScheme->m_side.compareNoCase( side ) == 0)
+		if(CBScheme->m_side.compareNoCase( side ) == 0
+			&& CBScheme->m_ScreenCreationRes.x > 0 && CBScheme->m_ScreenCreationRes.y > 0)
 		{
 
 			if((!tempScheme || tempScheme->m_ScreenCreationRes.x < CBScheme->m_ScreenCreationRes.x) )//&& TheDisplay->getWidth() >= CBScheme->m_ScreenCreationRes.x )
@@ -1133,32 +1133,27 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 		it ++;
 	}
 
-	if(tempScheme)
+	if(!tempScheme)
 	{
-		// TheSuperHackers @bugfix Reject invalid dimensions before changing the current scheme or its multipliers.
-		if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
-		{
-			DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
-			return;
-		}
-
-		// setup the multiplier value
-		m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
-		m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
-		m_currentScheme = tempScheme;
-	}
-	else
-	{
-		// well, we couldn't find
-		m_currentScheme = findControlBarScheme("Default");
+		tempScheme = findControlBarScheme("Default");
 		DEBUG_LOG(("There's no ControlBarScheme with a side of %s", side.str()));
-//		m_currentScheme = nullptr;
 	}
-	if(m_currentScheme)
-		m_currentScheme->init();
+	if(!tempScheme)
+		return FALSE;
+	if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
+	{
+		DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
+		return FALSE;
+	}
+
+	m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
+	m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
+	m_currentScheme = tempScheme;
+	m_currentScheme->init();
+	return TRUE;
 }
 //-----------------------------------------------------------------------------
-void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
+static void initControlBarSchemeForPlayer(ControlBarScheme *scheme)
 {
 	GameWindow *communicatorButton = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY("ControlBar.wnd:PopupCommunicator") );
 	if (communicatorButton && TheControlBar)
@@ -1169,15 +1164,21 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 			TheControlBar->setControlCommand(communicatorButton, TheControlBar->findCommandButton("NonCommand_BriefingHistory") );
 	}
 
+	scheme->init();
+}
+
+Bool ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
+{
 	if(!p)
-		return;
+		return FALSE;
 	AsciiString side = p->getSide();
-	if(m_currentScheme && (m_currentScheme->m_side.compare(side) == 0))
+	if(m_currentScheme && (m_currentScheme->m_side.compare(side) == 0)
+		&& m_currentScheme->m_ScreenCreationRes.x > 0 && m_currentScheme->m_ScreenCreationRes.y > 0)
 	{
-		m_currentScheme->init();
+		initControlBarSchemeForPlayer(m_currentScheme);
 
 		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side", side.str()));
-		return;
+		return TRUE;
 	}
 
 	// if we don't have a side, set it to Observer shell
@@ -1199,7 +1200,8 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 			continue;
 		}
 		// find the scheme that best matches our resolution
-		if(CBScheme->m_side.compareNoCase( side ) == 0)
+		if(CBScheme->m_side.compareNoCase( side ) == 0
+			&& CBScheme->m_ScreenCreationRes.x > 0 && CBScheme->m_ScreenCreationRes.y > 0)
 		{
 
 			if((!tempScheme || tempScheme->m_ScreenCreationRes.x < CBScheme->m_ScreenCreationRes.x) )//&& TheDisplay->getWidth() >= CBScheme->m_ScreenCreationRes.x )
@@ -1208,29 +1210,24 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		it ++;
 	}
 
-	if(tempScheme)
+	if(!tempScheme)
 	{
-		// TheSuperHackers @bugfix Reject invalid dimensions before changing the current scheme or its multipliers.
-		if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
-		{
-			DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
-			return;
-		}
-
-		// setup the multiplier value
-		m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
-		m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
-		m_currentScheme = tempScheme;
-	}
-	else
-	{
-		// well, we couldn't find
-		m_currentScheme = findControlBarScheme("Default");
+		tempScheme = findControlBarScheme("Default");
 		DEBUG_LOG(("There's no ControlBarScheme with a side of %s", side.str()));
-//		m_currentScheme = nullptr;
 	}
-	if(m_currentScheme)
-		m_currentScheme->init();
+	if(!tempScheme)
+		return FALSE;
+	if (tempScheme->m_ScreenCreationRes.x <= 0 || tempScheme->m_ScreenCreationRes.y <= 0)
+	{
+		DEBUG_CRASH(("ControlBarScheme has an invalid screen creation resolution"));
+		return FALSE;
+	}
+
+	m_multiplier.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
+	m_multiplier.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
+	m_currentScheme = tempScheme;
+	initControlBarSchemeForPlayer(m_currentScheme);
+	return TRUE;
 }
 
 

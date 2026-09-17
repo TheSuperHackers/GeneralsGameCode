@@ -254,8 +254,8 @@ public:
 	void drawForeground( ICoord2D offset );	///< draw function to be called within a w3d draw procedure for the foreground
 	void drawBackground( ICoord2D offset );	///< draw function to be called within a w3d draw procedure for the background
 
-	void setControlBarSchemeByPlayer(Player *p);																				///< Based off the playerTemplate, pick the right scheme for the control bar
-	void setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt, Bool useSmall = FALSE);
+	Bool setControlBarSchemeByPlayer(Player *p);																				///< Based off the playerTemplate, pick the right scheme for the control bar
+	Bool setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt, Bool useSmall = FALSE);
 	void setControlBarScheme(AsciiString schemeName);																										///< SchemeName must be a valid INI entry
 
 	// parse Functions for the INI file
