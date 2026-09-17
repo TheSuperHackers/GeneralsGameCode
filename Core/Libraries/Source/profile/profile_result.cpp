@@ -46,7 +46,11 @@ void ProfileResultFileCSV::WriteThread(ProfileFuncLevel::Thread &thread)
   char help[40];
 
   sprintf(help,"prof%08x-all.csv",thread.GetId());
-  FILE *f=fopen(help,"wt");
+  FILE* f=fopen(help,"wt");
+  if (!f)
+  {
+    return;
+  }
 
   // CSV file header
   fprintf(f,"Function\tFile\tCall count\tPTT (all)\tGTT (all)\tPT/C (all)\tGT/C (all)\tCaller (all)");
@@ -110,7 +114,11 @@ void ProfileResultFileCSV::WriteResults()
   for (;ProfileFuncLevel::EnumThreads(k,t);k++)
     WriteThread(t);
 
-  FILE *f=fopen("profile-high.csv","wt");
+  FILE* f=fopen("profile-high.csv","wt");
+  if (!f)
+  {
+    return;
+  }
 
   // CSV file header
   fprintf(f,"Profile\tUnit\ttotal");
