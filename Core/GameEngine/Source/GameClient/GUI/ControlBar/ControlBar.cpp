@@ -1761,12 +1761,11 @@ void ControlBar::evaluateContextUI()
 		showPurchaseScience();
 
 	// erase any current state of the GUI by switching out to the empty context
-	switchToContext( CB_CONTEXT_NONE, nullptr );
+		switchToDefaultContext(nullptr);
 
 	// sanity, nothing selected
 	if( TheInGameUI->getSelectCount() == 0 )
 	{
-		switchToDefaultContext(nullptr);
 		return;
 	}
 
@@ -1776,7 +1775,6 @@ void ControlBar::evaluateContextUI()
 	// sanity
 	if( selectedDrawables->empty() == TRUE )
 	{
-		switchToDefaultContext(nullptr);
 		return;
 	}
 
