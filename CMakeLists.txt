@@ -95,6 +95,7 @@ else()
 endif()
 
 add_subdirectory(Dependencies/Utility)
+add_subdirectory(Dependencies/ICU)
 add_subdirectory(Dependencies/Bink)
 add_subdirectory(Dependencies/Miles)
 

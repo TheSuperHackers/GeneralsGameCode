@@ -48,7 +48,6 @@ set(WWLIB_SRC
     #global.h
     hash.cpp
     hash.h
-    IcuSupport.h
     hashcalc.h
     HASHLIST.h
     #hashtab.h
@@ -135,8 +134,6 @@ set(WWLIB_SRC
     trim.cpp
     trim.h
     uarray.h
-    utf8.cpp
-    utf8.h
     vector.cpp
     Vector.h
     visualc.h

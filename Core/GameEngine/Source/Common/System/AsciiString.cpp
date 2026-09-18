@@ -45,7 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
-#include "WWLib/utf8.h"
+#include "ICU/utf8.h"
 
 
 // -----------------------------------------------------
@@ -312,22 +312,22 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 	// TheSuperHackers @bugfix CryoTheRenegade 04/08/2026 Convert wide text to UTF-8 with ICU4C.
 	const WideChar* src = stringSrc.str();
 	const size_t srcLen = stringSrc.getLength();
-	const size_t len = Wide_To_Utf8_Len(src, srcLen);
-	if (len == 0)
+	const size_t dstLen = Wide_To_Utf8_Len(src, srcLen);
+	if (dstLen == 0)
 	{
 		clear();
 	}
-	else if (len >= static_cast<size_t>(MAX_LEN))
+	else if (dstLen >= static_cast<size_t>(MAX_LEN))
 	{
 		DEBUG_ASSERTCRASH(false,
 			("AsciiString::translate exceeds max string length %d with required UTF-8 length %u",
-				MAX_LEN, static_cast<unsigned int>(len)));
+				MAX_LEN, static_cast<unsigned int>(dstLen)));
 		clear();
 	}
 	else
 	{
-		ensureUniqueBufferOfSize(static_cast<Int>(len) + 1, false, nullptr, nullptr);
-		Wide_To_Utf8(peek(), len + 1, src, srcLen);
+		ensureUniqueBufferOfSize(static_cast<Int>(dstLen) + 1, false, nullptr, nullptr);
+		Wide_To_Utf8(peek(), dstLen + 1, src, srcLen);
 	}
 
 	validate();
