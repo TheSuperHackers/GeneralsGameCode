@@ -703,7 +703,7 @@ void ControlBar::updateContextCommand()
 
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 	if (obj->isLocallyControlled() == FALSE &&
-		(localPlayer->getRelationship(obj->getTeam()) != NEUTRAL && !isObserverControlBarOn()) )
+		(localPlayer->getRelationship(obj->getTeam()) != NEUTRAL && isControlEnabled()) )
 	{
 		Drawable *draw = obj->getDrawable();
 
@@ -848,7 +848,7 @@ void ControlBar::updateContextCommand()
 //			continue;
 //		}
 //		else
-		if (isObserverControlBarOn())
+		if (!isControlEnabled())
 		{
 			win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 		}

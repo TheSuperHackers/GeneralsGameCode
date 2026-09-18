@@ -1449,7 +1449,7 @@ void ControlBar::update()
 	}*/
 
 	updateSpecialPowerShortcut();
-	// if we're an observer, don't do the complete update
+	
 	if( m_isObserverCommandBar)
 	{
 		if((TheGameLogic->getFrame() % (LOGICFRAMES_PER_SECOND/2)) == 0)
@@ -1480,13 +1480,10 @@ void ControlBar::update()
 
 		showRallyPoint(exitPosition);
 
-		if(getObservedPlayer() != nullptr )
-		{
-			if( m_currContext != CB_CONTEXT_OBSERVER_LIST )
-				switchToContext( CB_CONTEXT_OBSERVER_LIST, nullptr );
-
+		// TheSuperHackers @tweak Mr-Sheerlock 06/09/2026 if we're observing a player don't add other UI components to prevent being locked out from unslecting players and selecting other players.
+		if( getObservedPlayer() != nullptr )
 			return;
-		}
+		
 
 	}
 
@@ -1933,7 +1930,9 @@ void ControlBar::evaluateContextUI()
 				switchToContext( CB_CONTEXT_BEACON, drawToEvaluateFor );
 			}
 			else
+			{
 				switchToDefaultContext(drawToEvaluateFor);
+			}
 		}
 
 	}
@@ -2148,14 +2147,6 @@ CBCommandStatus ControlBar::processContextSensitiveButtonTransition( GameWindow 
 	* art and/or buttons that we need to for the new context using data from the object
 	* passed in */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::switchToDefaultContext(Drawable* draw)
-{
-	if (isObserverControlBarOn() && getObservedPlayer() == nullptr)
-		switchToContext(CB_CONTEXT_OBSERVER_LIST, nullptr);
-	else
-		switchToContext(CB_CONTEXT_NONE, draw);
-}
-
 void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 {
 
@@ -2417,6 +2408,14 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 	// save our context
 	m_currContext = context;
 
+}
+
+void ControlBar::switchToDefaultContext(Drawable* draw)
+{
+	if (isObserverControlBarOn() && getObservedPlayer() == nullptr)
+		switchToContext(CB_CONTEXT_OBSERVER_LIST, nullptr);
+	else
+		switchToContext(CB_CONTEXT_NONE, draw);
 }
 
 void ControlBar::setCommandBarBorder( GameWindow *button, CommandButtonMappedBorderType type)

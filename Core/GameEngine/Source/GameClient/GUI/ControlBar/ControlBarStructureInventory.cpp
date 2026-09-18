@@ -175,7 +175,7 @@ void ControlBar::populateStructureInventory( Object *building )
 		m_commandWindows[ STOP_ID ]->winEnable( TRUE );
 	}
 
-	if(isObserverControlBarOn())
+	if(!isControlEnabled())
 	{
 		m_commandWindows[ EVACUATE_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 		m_commandWindows[ STOP_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
@@ -212,7 +212,7 @@ void ControlBar::updateContextStructureInventory()
 	//
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 	if( source->isLocallyControlled() == FALSE &&
-		(localPlayer->getRelationship(source->getTeam()) != NEUTRAL && !isObserverControlBarOn()) )
+		(localPlayer->getRelationship(source->getTeam()) != NEUTRAL && isControlEnabled()) )
 	{
 		Drawable *draw = source->getDrawable();
 
