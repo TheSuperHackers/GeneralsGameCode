@@ -48,6 +48,40 @@ class RTS2DScene;
 class RTS3DInterfaceScene;
 class TextureClass;
 
+constexpr const Real TICKS_PER_SECOND = 62500.0f;
+
+class QuantizedUnsignedShort
+{
+public:
+	QuantizedUnsignedShort() : m_value(2083) {}
+	explicit QuantizedUnsignedShort(UnsignedShort val) : m_value(val) {}
+
+	static QuantizedUnsignedShort fromSeconds(Real seconds)
+	{
+		Int64 ticks = (Int64)(seconds * TICKS_PER_SECOND + 0.5f);
+		if (ticks >= 65535)
+		{
+			return QuantizedUnsignedShort(65535);
+		}
+		if (ticks <= 0)
+		{
+			return QuantizedUnsignedShort(1);
+		}
+		return QuantizedUnsignedShort((UnsignedShort)ticks);
+	}
+
+	UnsignedShort getValue() const { return m_value; }
+	void setValue(UnsignedShort val) { m_value = val; }
+
+	Real toFPS() const { return TICKS_PER_SECOND / (Real)m_value; }
+	Real toSeconds() const { return (Real)m_value / TICKS_PER_SECOND; }
+
+	operator UnsignedShort() const { return m_value; }
+
+private:
+	UnsignedShort m_value;
+};
+
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
@@ -148,6 +182,7 @@ public:
 
 	void drawFPSStats();								///< draw the fps on the screen
 	virtual Real getAverageFPS() override;						///< return the average FPS.
+	virtual Real getLow1PercentFPS() override;					///< return the 1% low FPS.
 	virtual Real getCurrentFPS() override;						///< return the current FPS.
 	virtual Int getLastFrameDrawCalls() override;				///< returns the number of draw calls issued in the previous frame
 
@@ -161,7 +196,10 @@ protected:
 	void drawCurrentDebugDisplay();			///< draws current debug display
 	void calculateTerrainLOD();						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
-	void updateAverageFPS();	///< calculate the average fps over the last 30 frames.
+	void updatePerformanceMetrics(); ///< update the average and 1% low fps metrics.
+	void addFpsSample(Real elapsedSeconds); ///< add a new sample to the history buffer.
+	Real calculateAverageFPS(Real windowSeconds); ///< calculate average FPS over a time window.
+	Real calculateLow1PercentFPS(Real windowSeconds); ///< calculate 1% low FPS over a time window.
 	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale);
 	virtual void onBeginBatch() override;
 	virtual void onEndBatch() override;
@@ -172,8 +210,16 @@ protected:
 	Render2DClass *m_2DRender;								///< interface for common 2D functions
 	IRegion2D m_clipRegion;									///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
-	Real m_averageFPS;		///<average fps over the last 30 frames.
+	Real m_averageFPS;		///< average fps over the last 1.0s.
+	Real m_low1PercentFPS;	///<1% low fps.
 	Real m_currentFPS;		///<current fps value.
+
+	enum { FPS_HISTORY_SIZE = 4096 }; // degrades gracefully beyond this size
+	QuantizedUnsignedShort m_durationHistory[FPS_HISTORY_SIZE];
+	Int  m_historyOffset;
+	Int  m_historyCount;
+	Int64 m_lastUpdateTime64;
+	UnsignedInt m_lastLow1PercentUpdateMs;
 
 	TextureClass *m_batchTexture;
 	DrawImageMode m_batchMode;
