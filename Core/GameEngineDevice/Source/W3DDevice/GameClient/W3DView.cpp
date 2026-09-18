@@ -1286,21 +1286,23 @@ static void renderAIDebug()
 Bool W3DView::updateCameraMovements()
 {
 	Bool didUpdate = false;
+	// TheSuperHackers @bugfix bobtista 14/08/2026 Keep scripted camera movements from speeding up at high render frame rates.
+	const Real milliseconds = TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime);
 
 	if (hasScriptedState(Scripted_Zoom))
 	{
-		zoomCameraOneFrame();
+		zoomCameraOneFrame(milliseconds);
 		didUpdate = true;
 	}
 	if (hasScriptedState(Scripted_Pitch))
 	{
-		pitchCameraOneFrame();
+		pitchCameraOneFrame(milliseconds);
 		didUpdate = true;
 	}
 	if (hasScriptedState(Scripted_Rotate))
 	{
 		m_previousLookAtPosition = getPosition();
-		rotateCameraOneFrame();
+		rotateCameraOneFrame(milliseconds);
 		didUpdate = true;
 	}
 	else if (hasScriptedState(Scripted_MoveOnWaypointPath))
@@ -1308,7 +1310,7 @@ Bool W3DView::updateCameraMovements()
 		m_previousLookAtPosition = getPosition();
 		// TheSuperHackers @tweak The scripted camera movement is now decoupled from the render update.
 		// The scripted camera will still move when the time is frozen, but not when the game is halted.
-		moveAlongWaypointPath(TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime));
+		moveAlongWaypointPath(milliseconds);
 		didUpdate = true;
 	}
 	if (hasScriptedState(Scripted_CameraLock))
@@ -3267,9 +3269,9 @@ static Real makeQuadraticS(Real t)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::rotateCameraOneFrame()
+void W3DView::rotateCameraOneFrame(Real milliseconds)
 {
-	m_rcInfo.curFrame++;
+	m_rcInfo.curFrame += milliseconds / TheW3DFrameLengthInMsec;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_rcInfo.curFrame >= m_rcInfo.numFrames + m_rcInfo.numHoldFrames) {
 			removeScriptedState(Scripted_Rotate);
@@ -3303,7 +3305,7 @@ void W3DView::rotateCameraOneFrame()
 
 				if (m_rcInfo.curFrame <= m_rcInfo.numFrames)
 				{
-					Real factor = m_rcInfo.ease(((Real)m_rcInfo.curFrame)/m_rcInfo.numFrames);
+					Real factor = m_rcInfo.ease(m_rcInfo.curFrame/m_rcInfo.numFrames);
 					Real angleDiff = angle - m_angle;
 					normAngle(angleDiff);
 					angleDiff *= factor;
@@ -3319,12 +3321,17 @@ void W3DView::rotateCameraOneFrame()
 	}
 	else if (m_rcInfo.curFrame <= m_rcInfo.numFrames)
 	{
-		Real factor = m_rcInfo.ease(((Real)m_rcInfo.curFrame)/m_rcInfo.numFrames);
+		Real factor = m_rcInfo.ease(m_rcInfo.curFrame/m_rcInfo.numFrames);
 		Real angle = WWMath::Lerp(m_rcInfo.angle.startAngle, m_rcInfo.angle.endAngle, factor);
 		View::setAngle(angle);
 		m_timeMultiplier = m_rcInfo.startTimeMultiplier + REAL_TO_INT_FLOOR(0.5 + (m_rcInfo.endTimeMultiplier-m_rcInfo.startTimeMultiplier)*factor);
 	}
 
+
+	if (m_rcInfo.curFrame >= m_rcInfo.numFrames)
+	{
+		m_timeMultiplier = m_rcInfo.endTimeMultiplier;
+	}
 
 	if (m_rcInfo.curFrame >= m_rcInfo.numFrames + m_rcInfo.numHoldFrames) {
 		removeScriptedState(Scripted_Rotate);
@@ -3338,9 +3345,9 @@ void W3DView::rotateCameraOneFrame()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::zoomCameraOneFrame()
+void W3DView::zoomCameraOneFrame(Real milliseconds)
 {
-	m_zcInfo.curFrame++;
+	m_zcInfo.curFrame += milliseconds / TheW3DFrameLengthInMsec;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_zcInfo.curFrame >= m_zcInfo.numFrames) {
 			removeScriptedState(Scripted_Zoom);
@@ -3350,7 +3357,7 @@ void W3DView::zoomCameraOneFrame()
 	if (m_zcInfo.curFrame <= m_zcInfo.numFrames)
 	{
 		// not just holding; do the camera adjustment
-		Real factor = m_zcInfo.ease(((Real)m_zcInfo.curFrame)/m_zcInfo.numFrames);
+		Real factor = m_zcInfo.ease(m_zcInfo.curFrame/m_zcInfo.numFrames);
 		m_zoom = WWMath::Lerp(m_zcInfo.startZoom, m_zcInfo.endZoom, factor);
 	}
 
@@ -3364,9 +3371,9 @@ void W3DView::zoomCameraOneFrame()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DView::pitchCameraOneFrame()
+void W3DView::pitchCameraOneFrame(Real milliseconds)
 {
-	m_pcInfo.curFrame++;
+	m_pcInfo.curFrame += milliseconds / TheW3DFrameLengthInMsec;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_pcInfo.curFrame >= m_pcInfo.numFrames) {
 			removeScriptedState(Scripted_Pitch);
@@ -3376,7 +3383,7 @@ void W3DView::pitchCameraOneFrame()
 	if (m_pcInfo.curFrame <= m_pcInfo.numFrames)
 	{
 		// not just holding; do the camera adjustment
-		Real factor = m_pcInfo.ease(((Real)m_pcInfo.curFrame)/m_pcInfo.numFrames);
+		Real factor = m_pcInfo.ease(m_pcInfo.curFrame/m_pcInfo.numFrames);
 		m_FXPitch = WWMath::Lerp(m_pcInfo.startPitch, m_pcInfo.endPitch, factor);
 	}
 

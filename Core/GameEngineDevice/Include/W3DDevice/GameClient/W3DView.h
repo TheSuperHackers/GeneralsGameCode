@@ -76,7 +76,7 @@ typedef struct
 typedef struct
 {
 	Int			numFrames;						///< Number of frames to rotate.
-	Int			curFrame;							///< Current frame.
+	Real		curFrame;							///< Progress in frames, advanced by elapsed logic time.
 	Int			startTimeMultiplier;
 	Int			endTimeMultiplier;
 	Int			numHoldFrames;				///< Number of frames to hold the camera before finishing the movement
@@ -101,7 +101,7 @@ typedef struct
 typedef struct
 {
 	Int			numFrames;						///< Number of frames to pitch.
-	Int			curFrame;							///< Current frame.
+	Real		curFrame;							///< Progress in frames, advanced by elapsed logic time.
 	Real		angle;
 	Real		startPitch;
 	Real		endPitch;
@@ -115,7 +115,7 @@ typedef struct
 typedef struct
 {
 	Int			numFrames;						///< Number of frames to zoom.
-	Int			curFrame;							///< Current frame.
+	Real		curFrame;							///< Progress in frames, advanced by elapsed logic time.
 	Real		startZoom;
 	Real		endZoom;
 	Int			startTimeMultiplier;
@@ -325,9 +325,9 @@ private:
 	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position
 	void setupWaypointPath(Bool orient);					///< Calculates distances & angles for moving along a waypoint path.
-	void rotateCameraOneFrame();							///< Do one frame of a rotate camera movement.
-	void zoomCameraOneFrame();							///< Do one frame of a zoom camera movement.
-	void pitchCameraOneFrame();							///< Do one frame of a pitch camera movement.
+	void rotateCameraOneFrame(Real milliseconds);							///< Do one frame of a rotate camera movement.
+	void zoomCameraOneFrame(Real milliseconds);							///< Do one frame of a zoom camera movement.
+	void pitchCameraOneFrame(Real milliseconds);							///< Do one frame of a pitch camera movement.
 	void getAxisAlignedViewRegion(Region3D &axisAlignedRegion);	///< Find 3D Region enclosing all possible drawables.
 	void calcDeltaScroll(Coord2D &screenDelta);
 	bool getDesiredTerrainDrawSize(ICoord2D &dimensions) const;
