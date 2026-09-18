@@ -1,8 +1,8 @@
 name: Check Replays
 
-permissions:
-  contents: read
-  pull-requests: write
+# WARNING: Do not declare permissions in this reusable workflow.
+# Declare the required permissions in each calling job:
+#   contents: read - required for replay checks.
 
 on:
   workflow_call:

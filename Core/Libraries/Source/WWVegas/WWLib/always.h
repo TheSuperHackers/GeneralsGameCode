@@ -83,9 +83,11 @@
 
 	extern void * __cdecl operator new		(size_t size);
 	extern void __cdecl operator delete		(void *p);
+	extern void __cdecl operator delete		(void *p, size_t);
 
 	extern void * __cdecl operator new[]	(size_t size);
 	extern void __cdecl operator delete[]	(void *p);
+	extern void __cdecl operator delete[]	(void *p, size_t);
 
 	// additional overloads to account for VC/MFC funky versions
 	extern void* __cdecl operator new			(size_t nSize, const char *, int);

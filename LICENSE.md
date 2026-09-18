@@ -1,3 +1,5 @@
+SPDX-License-Identifier: GPL-3.0-or-later
+
 Electronic Arts Inc. has released the source code for Command & Conquer Generals
 and Command & Conquer Generals Zero Hour under the GPL V3 license below, with
 additional terms at the bottom.

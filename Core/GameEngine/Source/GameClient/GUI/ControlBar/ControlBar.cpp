@@ -2741,13 +2741,15 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 	if (m_rallyPointDrawableID == INVALID_DRAWABLE_ID)
 	{
 		const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
+		if (!ttn)
+		{
+			return;
+		}
+
 		marker = TheThingFactory->newDrawable(ttn);
 		DEBUG_ASSERTCRASH(marker, ("showRallyPoint: Unable to create rally point drawable"));
-		if (marker)
-		{
-			marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
-			m_rallyPointDrawableID = marker->getID();
-		}
+		marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
+		m_rallyPointDrawableID = marker->getID();
 	}
 	else
 		marker = TheGameClient->findDrawableByID(m_rallyPointDrawableID);

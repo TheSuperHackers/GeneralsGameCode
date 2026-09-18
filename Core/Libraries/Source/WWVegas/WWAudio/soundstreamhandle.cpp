@@ -294,7 +294,7 @@ void
 SoundStreamHandleClass::Set_Sample_User_Data (S32 i, void *val)
 {
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
-		::AIL_set_sample_user_data (SampleHandle, i, val);
+		::AIL_set_sample_user_data (SampleHandle, i, (S32)val);
 	}
 }
 
@@ -310,7 +310,7 @@ SoundStreamHandleClass::Get_Sample_User_Data (S32 i)
 	void *retval = nullptr;
 
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
-		retval = ::AIL_sample_user_data (SampleHandle, i);
+		retval = (void *)::AIL_sample_user_data (SampleHandle, i);
 	}
 
 	return retval;

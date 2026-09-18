@@ -106,10 +106,6 @@ public:
 	/// given a list, prepend this node, return new list
 	PathNode *prependToList( PathNode *list );
 
-	/// given a list, append this node, return new list.  slow implementation.
-	/// @todo optimize this
-	PathNode *appendToList( PathNode *list );
-
 	/// given a node, append to this node
 	void append( PathNode *list );
 
@@ -130,10 +126,6 @@ private:
 	Coord2D							m_nextOptiDirNorm2D;								///< if nextOpti is nonnull, normalized dir vec towards it.
 
 };
-
-// this doesn't actually seem to be a particularly useful win,
-// performance-wise, so I didn't enable it. (srj)
-#define NO_CPOP_STARTS_FROM_PREV_SEG
 
 struct ClosestPointOnPathInfo
 {

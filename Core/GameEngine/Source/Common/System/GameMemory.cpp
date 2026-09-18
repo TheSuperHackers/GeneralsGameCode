@@ -210,7 +210,12 @@ static void memset32(void* ptr, Int value, Int bytesToFill);
 static void doStackDumpOutput(const char* m);
 static void doStackDump(void **stacktrace, int size);
 #endif
-static void preMainInitMemoryManager();
+static NOINLINE void preMainInitMemoryManagerImpl();
+static inline void preMainInitMemoryManager()
+{
+	if (TheDynamicMemoryAllocator == nullptr)
+		preMainInitMemoryManagerImpl();
+}
 
 // ----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS
@@ -2272,7 +2277,7 @@ void *DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes DECLARE_L
 /**
 	free a chunk-o-bytes allocated by this dma. it's ok to pass null.
 */
-void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
+void DynamicMemoryAllocator::freeBytes(void* pBlockPtr) noexcept
 {
 	if (!pBlockPtr)
 		return;
@@ -3236,12 +3241,51 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 // GLOBAL FUNCTIONS
 //-----------------------------------------------------------------------------
 
+#ifdef DEBUG_CRASHING
 static int theLinkTester = 0;
+void verifyLinkTester()
+{
+	char* linktest;
+
+	theLinkTester = 0;
+
+	linktest = new char;
+	delete linktest;
+
+	linktest = new char[8];
+	delete [] linktest;
+
+	linktest = new char('\0');
+	delete linktest;
+
+#ifdef MEMORYPOOL_OVERRIDE_MALLOC
+	linktest = (char*)malloc(1);
+	free(linktest);
+
+	linktest = (char*)calloc(1,1);
+	free(linktest);
+#endif
+
+#ifdef MEMORYPOOL_OVERRIDE_MALLOC
+	if (theLinkTester != 10)
+#else
+	if (theLinkTester != 6)
+#endif
+	{
+		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this..."));
+	}
+}
+#define VERIFY_LINK_TESTER() verifyLinkTester()
+#define LINK_TESTER_INCREMENT() ++theLinkTester
+#else
+#define VERIFY_LINK_TESTER()
+#define LINK_TESTER_INCREMENT()
+#endif
 
 //-----------------------------------------------------------------------------
 void* STLSpecialAlloc::allocate(size_t __n)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(__n, "STL_");
@@ -3250,8 +3294,7 @@ void* STLSpecialAlloc::allocate(size_t __n)
 //-----------------------------------------------------------------------------
 void STLSpecialAlloc::deallocate(void* __p, size_t)
 {
-	++theLinkTester;
-	preMainInitMemoryManager();
+	LINK_TESTER_INCREMENT();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	TheDynamicMemoryAllocator->freeBytes(__p);
 }
@@ -3262,7 +3305,7 @@ void STLSpecialAlloc::deallocate(void* __p, size_t)
 */
 void *operator new(size_t size)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new");
@@ -3274,7 +3317,7 @@ void *operator new(size_t size)
 */
 void *operator new[](size_t size)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new[]");
@@ -3286,8 +3329,18 @@ void *operator new[](size_t size)
 */
 void operator delete(void *p)
 {
-	++theLinkTester;
-	preMainInitMemoryManager();
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
+	TheDynamicMemoryAllocator->freeBytes(p);
+}
+
+void operator delete(void *p, size_t)
+{
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
@@ -3298,8 +3351,18 @@ void operator delete(void *p)
 */
 void operator delete[](void *p)
 {
-	++theLinkTester;
-	preMainInitMemoryManager();
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
+	TheDynamicMemoryAllocator->freeBytes(p);
+}
+
+void operator delete[](void *p, size_t)
+{
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
@@ -3310,7 +3373,7 @@ void operator delete[](void *p)
 */
 void* operator new(size_t size, const char * fname, int)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
@@ -3326,8 +3389,9 @@ void* operator new(size_t size, const char * fname, int)
 */
 void operator delete(void * p, const char *, int)
 {
-	++theLinkTester;
-	preMainInitMemoryManager();
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
@@ -3338,7 +3402,7 @@ void operator delete(void * p, const char *, int)
 */
 void* operator new[](size_t size, const char * fname, int)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
@@ -3354,8 +3418,9 @@ void* operator new[](size_t size, const char * fname, int)
 */
 void operator delete[](void * p, const char *, int)
 {
-	++theLinkTester;
-	preMainInitMemoryManager();
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
@@ -3364,7 +3429,7 @@ void operator delete[](void * p, const char *, int)
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
 void *calloc(size_t a, size_t b)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	return TheDynamicMemoryAllocator->allocateBytes(a * b, "calloc");
@@ -3375,8 +3440,9 @@ void *calloc(size_t a, size_t b)
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
 void  free(void * p)
 {
-	++theLinkTester;
-	preMainInitMemoryManager();
+	LINK_TESTER_INCREMENT();
+	if (p == nullptr)
+		return;
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	TheDynamicMemoryAllocator->freeBytes(p);
 }
@@ -3386,7 +3452,7 @@ void  free(void * p)
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
 void *malloc(size_t a)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager"));
 	return TheDynamicMemoryAllocator->allocateBytesDoNotZero(a, "malloc");
@@ -3434,35 +3500,7 @@ void initMemoryManager()
 		}
 	}
 
-	char* linktest;
-
-	theLinkTester = 0;
-
-	linktest = new char;
-	delete linktest;
-
-	linktest = new char[8];
-	delete [] linktest;
-
-	linktest = new char('\0');
-	delete linktest;
-
-#ifdef MEMORYPOOL_OVERRIDE_MALLOC
-	linktest = (char*)malloc(1);
-	free(linktest);
-
-	linktest = (char*)calloc(1,1);
-	free(linktest);
-#endif
-
-#ifdef MEMORYPOOL_OVERRIDE_MALLOC
-	if (theLinkTester != 10)
-#else
-	if (theLinkTester != 6)
-#endif
-	{
-		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this..."));
-	}
+	VERIFY_LINK_TESTER();
 
 	theMainInitFlag = true;
 
@@ -3480,11 +3518,13 @@ Bool isMemoryManagerOfficiallyInited()
 	This is only called if memory is allocated prior to the normal call to initMemoryManager
 	(generally via a static C++ ctor).
 */
-static void preMainInitMemoryManager()
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static NOINLINE void preMainInitMemoryManagerImpl()
 {
 	if (TheMemoryPoolFactory == nullptr)
 	{
-
 		Int numSubPools;
 		const PoolInitRec *pParms;
 		userMemoryManagerGetDmaParms(&numSubPools, &pParms);
@@ -3499,6 +3539,9 @@ static void preMainInitMemoryManager()
 		DEBUG_LOG(("*** Initialized the Memory Manager prior to main!"));
 	}
 }
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
 
 //-----------------------------------------------------------------------------
 /**
@@ -3548,7 +3591,7 @@ void shutdownMemoryManager()
 //-----------------------------------------------------------------------------
 void* createW3DMemPool(const char *poolName, int allocationSize)
 {
-	++theLinkTester;
+	LINK_TESTER_INCREMENT();
 	preMainInitMemoryManager();
 	MemoryPool* pool = TheMemoryPoolFactory->createMemoryPool(poolName, allocationSize, 0, 0);
 	DEBUG_ASSERTCRASH(pool && pool->getAllocationSize() == allocationSize, ("bad w3d pool"));

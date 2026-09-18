@@ -93,6 +93,7 @@ SoundSceneObjClass::SoundSceneObjClass ()
 		m_PhysWrapper (nullptr),
 		m_pCallback (nullptr),
 		m_AttachedObject (nullptr),
+		m_AttachedBone (-1),
 		m_UserData (0),
 		m_UserObj (nullptr),
 		m_ID (SOUND_OBJ_DEFAULT_ID),
@@ -110,18 +111,20 @@ SoundSceneObjClass::SoundSceneObjClass ()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
-	:	m_Scene (nullptr),
+	:	PersistClass(static_cast<const PersistClass &>(src)),
+		m_Scene (src.m_Scene),
 		m_PhysWrapper (nullptr),
-		m_pCallback (nullptr),
+		m_pCallback (src.m_pCallback),
 		m_AttachedObject (nullptr),
+		m_AttachedBone (src.m_AttachedBone),
 		m_UserData (0),
 		m_UserObj (nullptr),
 		m_ID (SOUND_OBJ_DEFAULT_ID),
-		m_RegisteredEvents (AudioCallbackClass::EVENT_NONE)
+		m_RegisteredEvents (src.m_RegisteredEvents)
 {
 	m_ID = m_NextAvailableID ++;
 
-	(*this) = src;
+	REF_PTR_SET (m_AttachedObject, src.m_AttachedObject);
 	Register_Sound_Object (this);
 }
 

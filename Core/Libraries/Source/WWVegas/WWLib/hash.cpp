@@ -131,7 +131,7 @@ int	HashTableClass::Hash( const char * key )
 void	HashTableIteratorClass::First()
 {
 	Index = 0;
-	NextEntry = Table.HashTable[ Index ];
+	NextEntry = nullptr;
 	Advance_Next();
 	Next();		// Accept the next we found, and go to the next next
 }
@@ -148,11 +148,11 @@ void	HashTableIteratorClass::Next()
 void	HashTableIteratorClass::Advance_Next()
 {
 	while ( NextEntry == nullptr ) {
-		Index++;
 		if ( Index >= Table.HashTableSize ) {
 			return;	// Done!
 		}
 		NextEntry = Table.HashTable[ Index ];
+		++Index;
 	}
 }
 

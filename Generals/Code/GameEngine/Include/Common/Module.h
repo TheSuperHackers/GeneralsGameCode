@@ -248,6 +248,7 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	virtual void onCapture( Player *oldOwner, Player *newOwner ) { }
+	virtual void onDisabledEdge( Bool nowDisabled ) { }
 
 protected:
 

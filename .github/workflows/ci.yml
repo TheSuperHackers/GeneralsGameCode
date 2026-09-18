@@ -2,8 +2,6 @@ name: GenCI
 
 permissions:
   contents: read
-  pull-requests: write
-  packages: write
 
 on:
   push:
@@ -61,6 +59,9 @@ jobs:
     name: Build Generals${{ matrix.preset && '' }}
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         include:
@@ -92,7 +93,7 @@ jobs:
             tools: true
             extras: true
       fail-fast: false
-    uses: ./.github/workflows/build-toolchain.yml
+    uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "Generals"
       preset: ${{ matrix.preset }}
@@ -106,6 +107,8 @@ jobs:
     name: Build GeneralsMD${{ matrix.preset && '' }}
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:
@@ -122,7 +125,7 @@ jobs:
             tools: true
             extras: true
       fail-fast: false
-    uses: ./.github/workflows/build-toolchain.yml
+    uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "GeneralsMD"
       preset: ${{ matrix.preset }}
@@ -134,6 +137,9 @@ jobs:
     name: Build GeneralsMD${{ matrix.preset && '' }}
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         include:
@@ -157,7 +163,7 @@ jobs:
             tools: true
             extras: true
       fail-fast: false
-    uses: ./.github/workflows/build-toolchain.yml
+    uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "GeneralsMD"
       preset: ${{ matrix.preset }}
@@ -170,13 +176,15 @@ jobs:
     name: Replay Check GeneralsMD${{ matrix.preset && '' }}
     needs: build-generalsmd-vc6
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:
           - preset: "vc6+t+e"
           - preset: "vc6-releaselog+t+e" # optimized build with logging and crashing enabled should be compatible, so we test that here.
       fail-fast: false
-    uses: ./.github/workflows/check-replays.yml
+    uses: ./.github/workflows/reusable-check-replays.yml
     with:
       game: "GeneralsMD"
       userdata: "GeneralsReplays/GeneralsZH/1.04"

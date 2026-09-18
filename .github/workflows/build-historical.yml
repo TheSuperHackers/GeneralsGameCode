@@ -1,7 +1,7 @@
 name: Build Historical
 
 permissions:
-  contents: write
+  contents: read
 
 on:
   workflow_dispatch:
@@ -215,6 +215,8 @@ jobs:
     needs: [prepare, build]
     if: ${{ github.event.inputs.create_release == 'true' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download Generals Artifact
         if: ${{ github.event.inputs.game == 'Generals' || github.event.inputs.game == 'Both' }}

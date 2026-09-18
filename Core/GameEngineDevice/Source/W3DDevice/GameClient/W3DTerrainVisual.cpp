@@ -644,7 +644,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
 #else
-	if (m_waterRenderObject)
+	if (m_waterRenderObject && W3DDisplay::m_3DScene)
 	{
 		W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
 		m_waterRenderObject->enableWaterGrid(false);

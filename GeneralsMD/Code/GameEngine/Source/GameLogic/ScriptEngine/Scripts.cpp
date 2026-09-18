@@ -128,7 +128,7 @@ void SignalUIInteraction(Int interaction)
 
 // Changing the order or meaning of either of these will require you to update the maps
 // in a meaningful way. If there are new entries, add them to the end, rather than the middle.
-const char *Surfaces[] = { "Ground", "Air", "Ground or Air", };
+const char *Surfaces[] = { "Ground", "Air", "Ground or Air" };
 const char *ShakeIntensities[] = { "Subtle", "Normal", "Strong", "Severe", "Cine_Extreme", "Cine_Insane" };
 
 enum { K_SCRIPT_LIST_DATA_VERSION_1 = 1,

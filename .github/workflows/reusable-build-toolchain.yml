@@ -1,9 +1,9 @@
 name: Build Toolchain
 
-permissions:
-  contents: read
-  pull-requests: write
-  packages: write
+# WARNING: Do not declare permissions in this reusable workflow.
+# Declare the required permissions in each calling job:
+#   contents: read - required for all builds.
+#   packages: write - required for vcpkg binary-cache uploads only.
 
 on:
   workflow_call:
@@ -138,7 +138,7 @@ jobs:
             -Source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           "VCPKG_INSTALL_OPTIONS=--x-abi-tools-use-exact-versions" >> $env:GITHUB_ENV
 
-      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.ffmpeg && '+ffmpeg' || '' }} Preset
+      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
           $buildFlags = @(

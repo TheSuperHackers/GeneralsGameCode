@@ -589,3 +589,25 @@ size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLe
     return UTF8_INVALID;
 #endif
 }
+
+// A UTF-8 continuation byte matches 10xxxxxx, so it can never start a sequence.
+static bool Utf8_Is_Continuation_Byte(char c)
+{
+	return (static_cast<unsigned char>(c) & 0xC0) == 0x80;
+}
+
+size_t Utf8_Truncate_Len(const char* src, size_t srcLen, size_t maxLen)
+{
+	if (srcLen <= maxLen)
+	{
+		return srcLen;
+	}
+
+	size_t len = maxLen;
+	while (len > 0 && Utf8_Is_Continuation_Byte(src[len]))
+	{
+		--len;
+	}
+
+	return len;
+}

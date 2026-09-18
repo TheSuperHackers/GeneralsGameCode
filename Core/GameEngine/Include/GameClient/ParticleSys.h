@@ -431,7 +431,14 @@ public:
 	m_emissionVolume;														///< the dimensions of the emission volume
 
 	Bool m_isEmissionVolumeHollow;							///< if true, only create particles at boundary of volume
-	Bool m_isGroundAligned;											///< if true, align with the ground. if false, then do the normal billboarding.
+
+	enum ParticleAlignmentType CPP_11(: Int)
+	{
+		PARTICLE_ALIGNMENT_BILLBOARD = 0,
+		PARTICLE_ALIGNMENT_XYPLANAR,
+		PARTICLE_ALIGNMENT_TYPE_COUNT
+	};
+	ParticleAlignmentType m_particleAlignment;		///< align particles toward the camera or with the XY plane.
 	Bool m_isEmitAboveGroundOnly;								///< if true, only emit particles when the system is above ground.
 	Bool m_isParticleUpTowardsEmitter;					///< if true, align the up direction to be towards the emitter.
 
@@ -494,6 +501,12 @@ static const char *const ParticlePriorityNames[] =
 	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", nullptr
 };
 static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, "Incorrect array size");
+
+static const char *const GroundAlignmentTypeNames[] =
+{
+	"No", "Yes", nullptr
+};
+static_assert(ARRAY_SIZE(GroundAlignmentTypeNames) == ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const WindMotionNames[] =
 {
@@ -614,7 +627,7 @@ public:
 	Bool isUsingVolumeParticles() const { return m_particleType == VOLUME_PARTICLE; }
 	UnsignedInt getVolumeParticleDepth() const { return m_volumeParticleDepth; }
 
-	Bool shouldBillboard() const { return !m_isGroundAligned; }
+	Bool shouldBillboard() const { return m_particleAlignment == PARTICLE_ALIGNMENT_BILLBOARD; }
 
 	ParticleShaderType getShaderType() const { return m_shaderType; }
 
