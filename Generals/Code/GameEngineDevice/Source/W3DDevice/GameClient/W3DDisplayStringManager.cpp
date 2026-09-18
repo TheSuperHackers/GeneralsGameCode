@@ -176,7 +176,8 @@ void W3DDisplayStringManager::update()
 		string = static_cast<W3DDisplayString *>(m_currentCheckpoint);
 	}
 
-	UnsignedInt currFrame = TheGameClient->getFrame();
+	// TheSuperHackers @bugfix Omar Aglan 10/09/2026 Match the nonzero timestamp used for frame-zero resources.
+	UnsignedInt currFrame = max(TheGameClient->getFrame(), 1U);
 	const UnsignedInt w3dCleanupTime = 60;  /** any string not rendered after
 																					this many frames will have its
 																					render resources freed */

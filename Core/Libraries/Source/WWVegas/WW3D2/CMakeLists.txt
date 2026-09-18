@@ -163,6 +163,9 @@ set(WW3D2_SRC
     #render2d.h
     render2dsentence.cpp
     render2dsentence.h
+    complextext.h
+    unicodebidi.h
+    supplementarybidi.inl
     renderobjectrecycler.cpp
     renderobjectrecycler.h
     rendobj.cpp
