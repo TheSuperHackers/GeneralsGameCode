@@ -28,7 +28,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "WWLib/utf8.h"
+#include "ICU/utf8.h"
 
 //-------------------------------------------------------------------------
 
@@ -37,14 +37,14 @@
 std::wstring MultiByteToWideCharSingleLine( const char* orig )
 {
 	const size_t srcLen = strlen(orig);
-	const size_t len = Utf8_To_Wide_Len(orig, srcLen);
-	if (len == 0)
+	const size_t dstLen = Utf8_To_Wide_Len(orig, srcLen);
+	if (dstLen == 0)
 	{
 		return std::wstring();
 	}
 
 	std::wstring ret;
-	if (len == UTF8_INVALID)
+	if (dstLen == UTF8_INVALID)
 	{
 		ret.resize(srcLen);
 		for (size_t i = 0; i < srcLen; ++i)
@@ -54,8 +54,8 @@ std::wstring MultiByteToWideCharSingleLine( const char* orig )
 	}
 	else
 	{
-		ret.resize(len);
-		Utf8_To_Wide(&ret[0], len, orig, srcLen);
+		ret.resize(dstLen);
+		Utf8_To_Wide(&ret[0], dstLen, orig, srcLen);
 	}
 
 	for (size_t i = 0; i < ret.size(); ++i)
@@ -72,15 +72,15 @@ std::wstring MultiByteToWideCharSingleLine( const char* orig )
 std::string WideCharStringToMultiByte( const WideChar* orig )
 {
 	const size_t srcLen = wcslen(orig);
-	const size_t len = Wide_To_Utf8_Len(orig, srcLen);
-	if (len == 0)
+	const size_t dstLen = Wide_To_Utf8_Len(orig, srcLen);
+	if (dstLen == 0)
 	{
 		return std::string();
 	}
 
 	std::string ret;
-	ret.resize(len);
-	Wide_To_Utf8(&ret[0], len, orig, srcLen);
+	ret.resize(dstLen);
+	Wide_To_Utf8(&ret[0], dstLen, orig, srcLen);
 	return ret;
 }
 

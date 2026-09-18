@@ -13,6 +13,7 @@ if (IS_VS6_BUILD)
 endif()
 
 add_subdirectory(Utility)
+add_subdirectory(ICU)
 add_subdirectory(Bink)
 add_subdirectory(Miles)
 
