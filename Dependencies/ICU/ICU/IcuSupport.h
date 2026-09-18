@@ -24,7 +24,8 @@
 // RTS_HAS_ICU_CXX    - ICU C++ API (icu::UnicodeString, icu::Locale, ...).
 // RTS_HAS_ICU_I18N   - Collation, break iteration, converters, and related i18n APIs.
 // RTS_HAS_ICU_WINSDK - Windows SDK merged C API via <icu.h> (no C++ API).
-// RTS_ICU_DYNAMIC    - No import library; utf8.cpp LoadLibrary's OS icu.dll (VC6).
+// RTS_ICU_DYNAMIC    - VC6 uses IcuLoader and runtime UTF conversion exports from icu.dll.
+//                     The full ICU headers/C++ API are not available in this mode.
 
 #if defined(RTS_HAS_ICU_WINSDK)
 

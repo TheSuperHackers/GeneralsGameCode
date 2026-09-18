@@ -22,9 +22,10 @@
 #include <wchar.h>
 
 // UTF-8 <-> wide-character conversion backed by ICU4C.
-// Modern toolchains link the ICU C API (Windows SDK or vcpkg). VC6 LoadLibrary's OS icu.dll
-// and falls back to Win32 CP_UTF8 when it is missing. Include WWLib/IcuSupport.h to use the
-// rest of the linked ICU suite from engine code.
+// Modern toolchains link the ICU C API through the Windows SDK or a full ICU package.
+// VC6 uses IcuLoader to load icu.dll and call its UTF conversion exports at runtime.
+// Windows builds fall back to Win32 CP_UTF8 if the DLL or required exports are missing.
+// Include ICU/IcuSupport.h to use the rest of the linked ICU suite from engine code.
 
 // Returned when UTF-8 input is malformed. Zero is reserved for a successful empty conversion.
 const size_t UTF8_INVALID = (size_t)-1;
