@@ -96,8 +96,11 @@ Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex,
 #endif
 
 	// sanity
-	if( targetPos == nullptr || m_garrisonPointsInUse == MAX_GARRISON_POINTS )
+	if (targetPos == nullptr || m_garrisonPointsInUse == MAX_GARRISON_POINTS ||
+		conditionIndex < 0 || conditionIndex >= MAX_GARRISON_POINT_CONDITIONS)
+	{
 		return GARRISON_INDEX_INVALID;
+	}
 
 	Int closestIndex = GARRISON_INDEX_INVALID;
 	Real closestDistSq = -1.0f;
