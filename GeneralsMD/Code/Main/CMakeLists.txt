@@ -78,3 +78,8 @@ endif()
 if(MINGW AND COMMAND add_debug_strip_target)
     add_debug_strip_target(z_generals)
 endif()
+
+# Verify no D3DX8 DLL dependency when NO_D3DX is enabled
+if(MINGW AND COMMAND add_no_d3dx_verification)
+    add_no_d3dx_verification(z_generals)
+endif()
