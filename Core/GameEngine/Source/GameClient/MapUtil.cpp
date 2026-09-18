@@ -60,6 +60,7 @@
 #include "GameLogic/FPUControl.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "Lib/PathUtil.h"
 
 
 //-------------------------------------------------------------------------------
@@ -591,8 +592,8 @@ Bool MapCache::addMap(
 			if (md.m_nameLookupTag.isEmpty())
 			{
 				// unofficial maps or maps without names
-				AsciiString tempdisplayname;
-				tempdisplayname = fname.reverseFind('\\') + 1;
+				// TheSuperHackers @bugfix bobtista 14/09/2026 Handle map filenames with either separator or no separator.
+				AsciiString tempdisplayname = getFileName(fname.str());
 				(*this)[lowerFname].m_displayName.translate(tempdisplayname);
 				if (md.m_numPlayers >= 2)
 				{
@@ -653,8 +654,7 @@ Bool MapCache::addMap(
 	if (!exists || nameLookupTag.isEmpty())
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
-		AsciiString tempdisplayname;
-		tempdisplayname = fname.reverseFind('\\') + 1;
+		AsciiString tempdisplayname = getFileName(fname.str());
 		md.m_displayName.translate(tempdisplayname);
 		if (md.m_numPlayers >= 2)
 		{
