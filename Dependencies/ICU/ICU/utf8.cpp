@@ -16,23 +16,21 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "always.h"
-#include "utf8.h"
+#include "ICU/utf8.h"
+#include "ICU/IcuSupport.h"
+#include "ICU/IcuLoader.h"
+
+#include <assert.h>
 
 #include <limits.h>
 #include <string.h>
 
-#if defined(RTS_HAS_ICU_WINSDK)
-#include <windows.h>
-#include <icu.h>
-#elif defined(RTS_HAS_ICU)
-#include <unicode/ustring.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
+#if defined(RTS_HAS_ICU) && !defined(RTS_HAS_ICU_WINSDK)
 #include <vector>
-#elif defined(_WIN32)
-#include <windows.h>
 #endif
 
 namespace
@@ -45,58 +43,18 @@ bool FitsInt(size_t length)
 
 #ifdef _WIN32
 
-enum
-{
-    IcuProbeUnknown = 0,
-    IcuProbeMissing = 1,
-    IcuProbeLoaded = 2
-};
-
-// TheSuperHackers @fix CryoTheRenegade 23/08/2026 Probe icu.dll once through the normal DLL search order.
-bool LoadSystemIcu()
-{
-    static volatile LONG cached = IcuProbeUnknown;
-    static volatile LONG initGate = 0;
-
-    if (cached != IcuProbeUnknown)
-    {
-        return cached == IcuProbeLoaded;
-    }
-
-    // InterlockedIncrement is LONG* on every supported SDK. InterlockedCompareExchange is not:
-    // VC6 winbase.h takes PVOID*, while later SDKs take LONG*.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-    const LONG gate = InterlockedIncrement(const_cast<LONG*>(&initGate));
-#else
-    const LONG gate = InterlockedIncrement(&initGate);
-#endif
-    if (gate == 1)
-    {
-        cached = LoadLibraryA("icu.dll") != nullptr ? IcuProbeLoaded : IcuProbeMissing;
-    }
-    else
-    {
-        while (cached == IcuProbeUnknown)
-        {
-            Sleep(0);
-        }
-    }
-
-    return cached == IcuProbeLoaded;
-}
-
 size_t WindowsWideToUtf8Len(const wchar_t* src, size_t srcLen)
 {
     if (!FitsInt(srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
     const int outputLength = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen), nullptr, 0, nullptr, nullptr);
     if (outputLength == 0 && srcLen != 0)
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -107,7 +65,7 @@ size_t WindowsWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t 
 {
     if (!FitsInt(destLen) || !FitsInt(srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -115,7 +73,7 @@ size_t WindowsWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t 
         dest, static_cast<int>(destLen), nullptr, nullptr);
     if (outputLength == 0 && srcLen != 0)
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -196,7 +154,7 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
 {
     if (!FitsInt(destLen) || !FitsInt(srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -206,7 +164,7 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
         reinterpret_cast<const UChar*>(src), static_cast<int32_t>(srcLen), 0xFFFD, nullptr, &error);
     if (!IcuConversionSucceeded(error))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -217,7 +175,7 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
 {
     if (!FitsInt(srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -227,7 +185,7 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
         static_cast<int32_t>(srcLen), 0xFFFD, nullptr, &error);
     if (!IcuPreflightSucceeded(error))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -333,7 +291,7 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
     std::vector<UChar> utf16;
     if (!WideToUtf16(utf16, src, srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -343,7 +301,7 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
         static_cast<int32_t>(utf16.empty() ? 0 : utf16.size() - 1), 0xFFFD, nullptr, &error);
     if (!IcuPreflightSucceeded(error))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -374,14 +332,14 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
 {
     if (!FitsInt(destLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
     std::vector<UChar> utf16;
     if (!WideToUtf16(utf16, src, srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -392,7 +350,7 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
         0xFFFD, nullptr, &error);
     if (U_FAILURE(error))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -443,13 +401,8 @@ size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcL
 
 #elif defined(RTS_ICU_DYNAMIC)
 
-typedef unsigned short IcuChar;
-typedef int IcuChar32;
-typedef int IcuErrorCode;
-typedef IcuChar* (__cdecl* IcuStrFromUtf8)(
-    IcuChar*, int, int*, const char*, int, IcuErrorCode*);
-typedef char* (__cdecl* IcuStrToUtf8WithSub)(
-    char*, int, int*, const IcuChar*, int, IcuChar32, int*, IcuErrorCode*);
+typedef IcuLoader::Char IcuChar;
+typedef IcuLoader::ErrorCode IcuErrorCode;
 
 enum
 {
@@ -457,45 +410,6 @@ enum
     ICU_BUFFER_OVERFLOW_ERROR = 15,
     ICU_REPLACEMENT_CHARACTER = 0xFFFD
 };
-
-class WindowsIcuFunctions
-{
-public:
-    WindowsIcuFunctions() : m_fromUtf8(nullptr), m_toUtf8WithSub(nullptr), m_module(nullptr)
-    {
-        if (!LoadSystemIcu())
-        {
-            return;
-        }
-
-        m_module = GetModuleHandleA("icu.dll");
-        if (m_module != nullptr)
-        {
-            m_fromUtf8 = reinterpret_cast<IcuStrFromUtf8>(GetProcAddress(m_module, "u_strFromUTF8"));
-            m_toUtf8WithSub = reinterpret_cast<IcuStrToUtf8WithSub>(GetProcAddress(m_module, "u_strToUTF8WithSub"));
-        }
-
-        if (m_fromUtf8 == nullptr || m_toUtf8WithSub == nullptr)
-        {
-            m_module = nullptr;
-            m_fromUtf8 = nullptr;
-            m_toUtf8WithSub = nullptr;
-        }
-    }
-
-    bool isAvailable() const
-    {
-        return m_fromUtf8 != nullptr && m_toUtf8WithSub != nullptr;
-    }
-
-    IcuStrFromUtf8 m_fromUtf8;
-    IcuStrToUtf8WithSub m_toUtf8WithSub;
-
-private:
-    HMODULE m_module;
-};
-
-WindowsIcuFunctions g_icu;
 
 bool IcuPreflightSucceeded(IcuErrorCode error)
 {
@@ -511,17 +425,17 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
 {
     if (!FitsInt(destLen) || !FitsInt(srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    g_icu.m_toUtf8WithSub(dest, static_cast<int>(destLen), &outputLength,
+    IcuLoader::get().toUtf8WithSub()(dest, static_cast<int>(destLen), &outputLength,
         reinterpret_cast<const IcuChar*>(src), static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
     if (!IcuConversionSucceeded(error))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -532,17 +446,17 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
 {
     if (!FitsInt(srcLen))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    g_icu.m_toUtf8WithSub(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
+    IcuLoader::get().toUtf8WithSub()(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
         static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
     if (!IcuPreflightSucceeded(error))
     {
-        WWASSERT(false);
+        assert(false);
         return 0;
     }
 
@@ -563,7 +477,7 @@ size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcL
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    g_icu.m_fromUtf8(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
+    IcuLoader::get().fromUtf8()(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
         src, static_cast<int>(srcLen), &error);
     if (!IcuConversionSucceeded(error))
     {
@@ -587,7 +501,7 @@ size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    g_icu.m_fromUtf8(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error);
+    IcuLoader::get().fromUtf8()(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error);
     if (!IcuPreflightSucceeded(error))
     {
         return UTF8_INVALID;
@@ -601,11 +515,11 @@ size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
 bool IcuIsAvailable()
 {
 #if defined(RTS_HAS_ICU_WINSDK)
-    return LoadSystemIcu();
+    return IcuLoader::get().isAvailable();
 #elif defined(RTS_HAS_ICU)
     return true;
 #elif defined(RTS_ICU_DYNAMIC)
-    return g_icu.isAvailable();
+    return IcuLoader::get().isAvailable();
 #else
     return false;
 #endif
@@ -623,7 +537,7 @@ size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
 #ifdef _WIN32
     return WindowsWideToUtf8Len(src, srcLen);
 #else
-    WWASSERT(false);
+    assert(false);
     return 0;
 #endif
 }
@@ -652,7 +566,7 @@ size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLe
 #ifdef _WIN32
     return WindowsWideToUtf8(dest, destLen, src, srcLen);
 #else
-    WWASSERT(false);
+    assert(false);
     return 0;
 #endif
 }
