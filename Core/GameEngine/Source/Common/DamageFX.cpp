@@ -164,7 +164,14 @@ static void parseCommonStuff(
 	}
 	else
 	{
-		damageFirst = (DamageType)DamageTypeFlags::getSingleBitFromName(damageName);
+		Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+		if (damageIndex < 0 || damageIndex >= DAMAGE_NUM_TYPES)
+		{
+			DEBUG_CRASH(("DamageFX: Unknown damage type %s", damageName));
+			throw INI_INVALID_DATA;
+		}
+
+		damageFirst = (DamageType)damageIndex;
 		damageLast = damageFirst;
 	}
 }

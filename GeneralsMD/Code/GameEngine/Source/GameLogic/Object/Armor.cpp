@@ -96,8 +96,13 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 		return;
 	}
 
-	DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(damageName);
-	self->m_damageCoefficient[dt] = pct;
+	Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+	{
+		DEBUG_CRASH(("Armor: Unknown damage type %s", damageName));
+		throw INI_INVALID_DATA;
+	}
+
+	self->m_damageCoefficient[damageIndex] = pct;
 }
 
 //-------------------------------------------------------------------------------------------------
