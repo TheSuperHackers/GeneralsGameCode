@@ -43,6 +43,8 @@ enum CPP_11( : UnsignedByte)
 	V_MAX = 1 << 3,
 };
 
+// UV outcodes describe whether the vertex is outside the usual UV range and has become transparent.
+// If all vertices of a triangle are outside at the same edge (e.g. all are U_MAX) then the triangle can be safely skipped.
 UnsignedByte getUVOutcode(const Real u, const Real v)
 {
 	UnsignedByte outcode = 0;
@@ -180,6 +182,7 @@ void W3DTerrainParticles::drawRegion(WorldHeightMap& map, const ParticleContext&
 
 void W3DTerrainParticles::drawQuad(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
 {
+	// See if this quad will still fit in the buffer, otherwise flush the buffer first.
 	if (m_numVertices + 4 > TerrainParticles::MAX_VERTICES || m_numIndices + 6 > TerrainParticles::MAX_INDICES)
 	{
 		flushBatch();
@@ -191,6 +194,7 @@ void W3DTerrainParticles::drawQuad(WorldHeightMap& map, const ParticleContext& p
 	const UnsignedShort topLeft = addVertex(map, particle, bounds.lo.x, bounds.hi.y - 1);
 	const UnsignedShort topRight = addVertex(map, particle, bounds.hi.x - 1, bounds.hi.y - 1);
 
+	// Determining the flip state is necessary to get matching topology with the underlying terrain.
 	const Bool flipped = map.getQuickFlipState(bounds.lo.x + map.getBorderSizeInline(),
 	                                           bounds.lo.y + map.getBorderSizeInline());
 	if (flipped)
@@ -207,6 +211,7 @@ void W3DTerrainParticles::drawQuad(WorldHeightMap& map, const ParticleContext& p
 
 UnsignedShort W3DTerrainParticles::addVertex(WorldHeightMap& map, const ParticleContext& particle, Int x, Int y)
 {
+	// Keep track of the vertex in a lookup table, since vertices in the GPU buffer cannot be traced back to their location.
 	const Int gridLocation = (y - particle.bounds.lo.y) * particle.bounds.width() + (x - particle.bounds.lo.x);
 	UnsignedShort& index = m_vertexLookup[gridLocation];
 
@@ -214,6 +219,7 @@ UnsignedShort W3DTerrainParticles::addVertex(WorldHeightMap& map, const Particle
 	if (index != TerrainParticles::INVALID_VERTEX)
 		return index;
 
+	// Write the vertex data.
 	index = m_numVertices++;
 	VertexFormatXYZNDUV2& vertex = m_vertexData[index];
 	vertex.diffuse = particle.diffuse;
@@ -236,6 +242,7 @@ inline void W3DTerrainParticles::addTriangle(UnsignedShort a, UnsignedShort b, U
 	if ((m_outcodes[a] & m_outcodes[b] & m_outcodes[c]) != 0)
 		return;
 
+	// Write the index data.
 	m_indexData[m_numIndices++] = a;
 	m_indexData[m_numIndices++] = b;
 	m_indexData[m_numIndices++] = c;
