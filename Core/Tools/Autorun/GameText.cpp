@@ -38,6 +38,7 @@
 //----------------------------------------------------------------------------
 
 #include <stdlib.h>
+#include "Lib/WideChar.h"
 #include <Utility/stdio_adapter.h>
 #include <ctype.h>
 #include <string.h>
@@ -90,7 +91,7 @@
 struct StringInfo
 {
 	std::string			label;
-	std::wstring		text;
+	std::basic_string<WideChar>		text;
 	std::string			speech;
 };
 
@@ -122,7 +123,7 @@ struct CSFHeader
 struct NoString
 {
 	struct NoString *next;
-	std::wstring text;
+	std::basic_string<WideChar> text;
 };
 
 
@@ -142,7 +143,7 @@ class GameTextManager : public GameTextInterface
 		virtual void					update() {};			///< update text manager
 		virtual void					reset();					///< Resets the text system
 
-		virtual const wchar_t * fetch( const Char *label );		///< Returns the associated labeled unicode text
+		virtual const WideChar* fetch( const Char* label );		///< Returns the associated labeled unicode text
 	protected:
 
 		Int							m_textCount;
@@ -159,7 +160,7 @@ class GameTextManager : public GameTextInterface
 		Bool						m_munkee;
 		NoString				*m_noStringList;
 		Int							m_useStringFile;
-		std::wstring		m_failed;
+		std::basic_string<WideChar>		m_failed;
 
 		void						stripSpaces ( WideChar *string );
 		void						removeLeadingAndTrailing ( Char *m_buffer );
@@ -1045,7 +1046,7 @@ quit:
 // *GameTextManager::fetch
 //============================================================================
 
-const wchar_t * GameTextManager::fetch( const Char *label )
+const WideChar* GameTextManager::fetch( const Char* label )
 {
 	DEBUG_ASSERTCRASH ( m_initialized, ("String Manager has not been m_initialized") );
 
@@ -1066,9 +1067,9 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 	if( lookUp == nullptr )
 	{
 		// See if we already have the missing string
-		wchar_t tmp[256];
+		WideChar tmp[256];
 		swprintf(tmp, 256, L"MISSING: '%hs'", label);
-		std::wstring missingString = tmp;
+		std::basic_string<WideChar> missingString = tmp;
 
 		NoString *noString = m_noStringList;
 

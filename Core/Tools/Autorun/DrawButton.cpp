@@ -43,6 +43,7 @@
 
 #define  STRICT
 #include <windows.h>
+#include "Lib/WideChar.h"
 #include <windowsx.h>
 #include "autorun.h"
 #include "DrawButton.h"
@@ -153,7 +154,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	Msg( __LINE__, TEXT(__FILE__), TEXT("	MyRect	= [%d,%d,%d,%d]"), MyRect.X, MyRect.Y, MyRect.Width, MyRect.Height );
 }
 
-DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const wchar_t *string, TTFontClass *fontptr )
+DrawButton::DrawButton ( int id, RECT button_rect, const char* normal, const char* focus, const char* pressed, const WideChar* string, TTFontClass* fontptr )
 {
 	Id = id;
 

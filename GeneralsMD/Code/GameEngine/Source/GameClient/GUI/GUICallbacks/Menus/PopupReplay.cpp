@@ -46,6 +46,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Lib/WideChar.h"
 
 #include "Common/LocalFileSystem.h"
 #include "Common/MessageStream.h"
@@ -282,7 +283,7 @@ void reallySaveReplay()
 	{
 		if(DeleteFile(filename.str()) == 0)
 		{
-			wchar_t buffer[1024];
+			WideChar buffer[1024];
 			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), nullptr);
 			UnicodeString errorStr;
 			errorStr.set(buffer);
@@ -307,7 +308,7 @@ void reallySaveReplay()
 	// copy the replay to the right place
 	if(CopyFile(oldFilename.str(),filename.str(), FALSE) == 0)
 	{
-		wchar_t buffer[1024];
+		WideChar buffer[1024];
 		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), nullptr);
 		UnicodeString errorStr;
 		errorStr.set(buffer);

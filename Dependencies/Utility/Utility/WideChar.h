@@ -1,5 +1,5 @@
 /*
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -17,24 +17,8 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
+#include <stddef.h>
 
-// Fundamental type definitions
-
-typedef float Real;
-
-typedef int64_t Int64;
-typedef uint64_t UnsignedInt64;
-
-typedef int32_t Int;
-typedef uint32_t UnsignedInt;
-
-typedef int16_t Short;
-typedef uint16_t UnsignedShort;
-
-typedef char Byte;
-typedef unsigned char UnsignedByte;
-
-typedef char Char;
-
-typedef bool Bool;
+// Shared project wide-character type, currently using the native representation.
+// Changing it also requires adapting wide literals, character traits, and CRT/platform APIs.
+typedef wchar_t WideChar;

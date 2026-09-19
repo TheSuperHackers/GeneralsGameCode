@@ -28,6 +28,9 @@
 
 #pragma once
 
+#include "Lib/WideChar.h"
+#include <string>
+
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
@@ -69,7 +72,7 @@ public:
 	} peerRequestType;
 
 	std::string nick;	// only used by login, but must be outside the union b/c of copy constructor
-	std::wstring text;  // can't be in a union
+	std::basic_string<WideChar> text;  // can't be in a union
 	std::string password;
 	std::string email;
 	std::string id;
@@ -248,13 +251,13 @@ public:
 
 	std::string nick;   // can't be in a union
 	std::string oldNick;   // can't be in a union
-	std::wstring text;  // can't be in a union
+	std::basic_string<WideChar> text;  // can't be in a union
 	std::string locale; // can't be in a union
 
 	std::string stagingServerGameOptions; // full string from UTMs
 
 	// game opts sent with PEERRESPONSE_STAGINGROOM
-	std::wstring stagingServerName;
+	std::basic_string<WideChar> stagingServerName;
 	std::string stagingServerPingString;
 	std::string stagingServerLadderIP;
 	std::string stagingRoomMapName;

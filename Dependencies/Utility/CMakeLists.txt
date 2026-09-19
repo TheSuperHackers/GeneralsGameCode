@@ -24,6 +24,7 @@ set(UTILITY_SRC
     Utility/time_compat.h
     Utility/utility_adapter.h
     Utility/wchar_compat.h
+    Utility/WideChar.h
 )
 
 ## core_utility

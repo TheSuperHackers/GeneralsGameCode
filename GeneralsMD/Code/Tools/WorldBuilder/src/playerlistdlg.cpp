@@ -20,6 +20,7 @@
 //
 
 #include "StdAfx.h"
+#include "Lib/WideChar.h"
 #include "WorldBuilder.h"
 #include "playerlistdlg.h"
 #include "mapobjectprops.h"
@@ -845,7 +846,7 @@ void PlayerListDlg::OnChangePlayerdisplayname()
 }
 
 static void addSide(SidesList *sides, AsciiString faction,
-										AsciiString playerName, const wchar_t *playerUName)
+										AsciiString playerName, const WideChar* playerUName)
 {
 	if (!sides->findSideInfo(playerName)) {
 

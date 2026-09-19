@@ -35,6 +35,8 @@
 
 #pragma once
 
+#include "Lib/WideChar.h"
+
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -62,7 +64,7 @@ class GameTextInterface
 		virtual ~GameTextInterface() {};
 
 		virtual void					init() = 0;						///< Initlaizes the text system
-		virtual const wchar_t * fetch( const char *label ) = 0;		///< Returns the associated labeled unicode text
+		virtual const WideChar* fetch( const char* label ) = 0;		///< Returns the associated labeled unicode text
 
 };
 

@@ -36,6 +36,8 @@
 
 #pragma once
 
+#include "Lib/WideChar.h"
+
 //! Signed integer value
 typedef int Int;
 
@@ -67,11 +69,7 @@ typedef char Char;
 typedef unsigned char UChar;
 
 //! Wide character (Unicode)
-#if defined(_MSC_VER) && _MSC_VER < 1300
-typedef unsigned short WChar;
-#else
-typedef wchar_t WChar;
-#endif
+typedef WideChar WChar;
 
 //! 32bit floating point value
 typedef float Float32;

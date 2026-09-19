@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "Lib/WideChar.h"
+
 #include "BaseType.h"
 #include <string.h>
 
@@ -76,7 +78,7 @@ inline const char* getLastPathSeparator(const char* path)
 	return path ? maxPtr(strrchr(path, '/'), strrchr(path, '\\')) : nullptr;
 }
 
-inline const wchar_t* getLastPathSeparator(const wchar_t* path)
+inline const WideChar* getLastPathSeparator(const WideChar* path)
 {
 	return path ? maxPtr(wcsrchr(path, L'/'), wcsrchr(path, L'\\')) : nullptr;
 }
@@ -108,16 +110,16 @@ inline const char* getExtension(const char* path)
 	return lastDot;
 }
 
-inline const wchar_t* getExtension(const wchar_t* path)
+inline const WideChar* getExtension(const WideChar* path)
 {
-	const wchar_t* lastDot = wcsrchr(path, L'.');
+	const WideChar* lastDot = wcsrchr(path, L'.');
 
 	if (!lastDot)
 	{
 		return nullptr;
 	}
 
-	const wchar_t* lastSeparator = getLastPathSeparator(path);
+	const WideChar* lastSeparator = getLastPathSeparator(path);
 
 	// Check if the dot is contained in the filename
 	if (lastSeparator && lastDot < lastSeparator)
