@@ -1351,17 +1351,32 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 {
 	if (m_physicsXform != nullptr)
 	{
-		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
-		// All calculations are originally catered to a 30 fps logic step.
+		// TheSuperHackers @tweak bobtista 16/09/2026 Advance physics only on WW Sync frames using the 30 fps constants.
 		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
+			m_physicsXform->m_prevTotalPitch = m_physicsXform->m_totalPitch;
+			m_physicsXform->m_prevTotalRoll = m_physicsXform->m_totalRoll;
+			m_physicsXform->m_prevTotalYaw = m_physicsXform->m_totalYaw;
+			m_physicsXform->m_prevTotalZ = m_physicsXform->m_totalZ;
+
 			calcPhysicsXform(*m_physicsXform);
 		}
 
-		mtx->Translate(0.0f, 0.0f, m_physicsXform->m_totalZ);
-		mtx->Rotate_Y( m_physicsXform->m_totalPitch );
-		mtx->Rotate_X( -m_physicsXform->m_totalRoll );
-		mtx->Rotate_Z( m_physicsXform->m_totalYaw );
+		// TheSuperHackers @tweak bobtista 14/09/2026 Interpolate the rendered transform between
+		// logic frames, so the motion stays smooth when the render rate is above the logic rate.
+		// The fractional sync time accumulates in logic time, so a full logic step is always MSEC_PER_LOGICFRAME_REAL.
+		const Real fractionalMs = (Real)WW3D::Get_Fractional_Sync_Milliseconds();
+		const Real t = clamp(0.0f, fractionalMs / MSEC_PER_LOGICFRAME_REAL, 1.0f);
+
+		const Real interpPitch = m_physicsXform->m_prevTotalPitch + t * (m_physicsXform->m_totalPitch - m_physicsXform->m_prevTotalPitch);
+		const Real interpRoll = m_physicsXform->m_prevTotalRoll + t * (m_physicsXform->m_totalRoll - m_physicsXform->m_prevTotalRoll);
+		const Real interpYaw = m_physicsXform->m_prevTotalYaw + t * (m_physicsXform->m_totalYaw - m_physicsXform->m_prevTotalYaw);
+		const Real interpZ = m_physicsXform->m_prevTotalZ + t * (m_physicsXform->m_totalZ - m_physicsXform->m_prevTotalZ);
+
+		mtx->Translate(0.0f, 0.0f, interpZ);
+		mtx->Rotate_Y( interpPitch );
+		mtx->Rotate_X( -interpRoll );
+		mtx->Rotate_Z( interpYaw );
 	}
 }
 
