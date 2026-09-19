@@ -308,7 +308,7 @@ void GameStateMap::xfer( Xfer *xfer )
 			xfer->xferAsciiString( &tmp );
 		}
 
-		if (currentVersion >= 2)
+		if (version >= 2)
 		{
 			// save the game mode.
 			Int gameMode = (Int)TheGameLogic->getGameMode();
@@ -339,7 +339,7 @@ void GameStateMap::xfer( Xfer *xfer )
 		xfer->xferAsciiString( &saveGameInfo->pristineMapName );
 		saveGameInfo->pristineMapName = TheGameState->portableMapPathToRealMapPath(saveGameInfo->pristineMapName);
 
-		if (currentVersion >= 2)
+		if (version >= 2)
 		{
 			// get the game mode.
 			Int gameMode;
