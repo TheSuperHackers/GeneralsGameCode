@@ -136,7 +136,7 @@ size_t WindowsUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t 
 
 #endif
 
-#if defined(RTS_HAS_ICU)
+#if defined(RTS_HAS_ICU) && !defined(RTS_HAS_ICU_WINSDK)
 
 bool IcuPreflightSucceeded(UErrorCode error)
 {
@@ -399,7 +399,7 @@ size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcL
 
 #endif
 
-#elif defined(RTS_ICU_DYNAMIC)
+#elif defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
 
 typedef IcuLoader::Char IcuChar;
 typedef IcuLoader::ErrorCode IcuErrorCode;
@@ -431,7 +431,7 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::get().toUtf8WithSub()(dest, static_cast<int>(destLen), &outputLength,
+    IcuLoader::toUtf8WithSub()(dest, static_cast<int>(destLen), &outputLength,
         reinterpret_cast<const IcuChar*>(src), static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
     if (!IcuConversionSucceeded(error))
     {
@@ -452,7 +452,7 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::get().toUtf8WithSub()(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
+    IcuLoader::toUtf8WithSub()(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
         static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
     if (!IcuPreflightSucceeded(error))
     {
@@ -477,7 +477,7 @@ size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcL
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::get().fromUtf8()(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
+    IcuLoader::fromUtf8()(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
         src, static_cast<int>(srcLen), &error);
     if (!IcuConversionSucceeded(error))
     {
@@ -501,7 +501,7 @@ size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::get().fromUtf8()(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error);
+    IcuLoader::fromUtf8()(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error);
     if (!IcuPreflightSucceeded(error))
     {
         return UTF8_INVALID;
@@ -512,24 +512,12 @@ size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
 
 #endif
 
-bool IcuIsAvailable()
-{
-#if defined(RTS_HAS_ICU_WINSDK)
-    return IcuLoader::get().isAvailable();
-#elif defined(RTS_HAS_ICU)
-    return true;
-#elif defined(RTS_ICU_DYNAMIC)
-    return IcuLoader::get().isAvailable();
-#else
-    return false;
-#endif
-}
-
 } // namespace
 
 size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
 {
-    if (IcuIsAvailable())
+    IcuScope icu;
+    if (icu.isAvailable())
     {
         return IcuWideToUtf8Len(src, srcLen);
     }
@@ -544,7 +532,8 @@ size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
 
 size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 {
-    if (IcuIsAvailable())
+    IcuScope icu;
+    if (icu.isAvailable())
     {
         return IcuUtf8ToWideLen(src, srcLen);
     }
@@ -558,7 +547,8 @@ size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 
 size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
 {
-    if (IcuIsAvailable())
+    IcuScope icu;
+    if (icu.isAvailable())
     {
         return IcuWideToUtf8(dest, destLen, src, srcLen);
     }
@@ -573,7 +563,8 @@ size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLe
 
 size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
 {
-    if (IcuIsAvailable())
+    IcuScope icu;
+    if (icu.isAvailable())
     {
         return IcuUtf8ToWide(dest, destLen, src, srcLen);
     }
