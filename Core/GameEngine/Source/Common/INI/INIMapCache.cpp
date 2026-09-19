@@ -31,6 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
+#include "Lib/PathUtil.h"
 #include "Common/INI.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"
@@ -148,8 +149,8 @@ void INI::parseMapCacheDefinition( INI* ini )
 	if (md.m_nameLookupTag.isEmpty())
 	{
 		// maps without localized name tags
-		AsciiString tempdisplayname;
-		tempdisplayname = name.reverseFind('\\') + 1;
+		// TheSuperHackers @bugfix bobtista 14/09/2026 Handle map filenames with either separator or no separator.
+		AsciiString tempdisplayname = getFileName(name.str());
 		md.m_displayName.translate(tempdisplayname);
 		if (md.m_numPlayers >= 2)
 		{
