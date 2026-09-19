@@ -51,7 +51,6 @@ static void drawFramerateBar();
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/GameLOD.h"
-#include "Common/GameUtility.h"
 #include "Common/DrawModule.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -1781,6 +1780,51 @@ Int W3DDisplay::getLastFrameDrawCalls()
 	return Debug_Statistics::Get_Draw_Calls();
 }
 
+// W3DDisplay::update =========================================================
+/** Update the client state of the W3D Display */
+//=============================================================================
+void W3DDisplay::update()
+{
+	Display::update();
+
+	if (TheGlobalData->m_headless)
+		return;
+
+	// TheSuperHackers @bugfix The client updates have moved here from W3DDisplay::draw, so that
+	// they also advance when the draw is skipped, for example when the window is minimized.
+
+	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
+
+	if (!freezeTime && TheScriptEngine->isTimeFast())
+	{
+		/// @todo: I'm assuming the first view is our main 3D view.
+		W3DView *primaryW3DView=(W3DView *)getFirstView();
+		primaryW3DView->updateCameraMovements();  // Update camera motion effects.
+		return;
+	}
+
+	//update state of all the terrain tracks (fade, remove, etc.)
+	if (TheGlobalData->m_loadScreenRender != TRUE)
+	{
+		if (TheTerrainTracksRenderObjClassSystem)
+			TheTerrainTracksRenderObjClassSystem->update();
+	}
+
+	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
+
+	// TheSuperHackers @info This binds the WW3D update to the logic update.
+	WW3D::Sync(TheGameLogic->hasUpdated());
+
+	// update all views of the world - recomputes data which will affect drawing
+	if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) == D3D_OK)
+	{
+		// Checking if we have the device before updating views because the heightmap crashes otherwise while
+		// trying to refresh the visible terrain geometry.
+		// TheSuperHackers @todo Remove the renderer dependency from the update.
+		updateViews();
+	}
+}
+
 //=============================================================================
 void W3DDisplay::step()
 {
@@ -1890,21 +1934,13 @@ AGAIN:
 
 	if (!freezeTime && TheScriptEngine->isTimeFast())
 	{
-		primaryW3DView->updateCameraMovements();  // Update camera motion effects.
 		return;
 	}
 
 	Debug_Statistics::Begin_Statistics();	//reset all counters (polygons, vertices, etc) before drawing
 
-	//update state of all the terrain tracks (fade, remove, etc.)
-	/// @todo: Is there a better place to put per-frame updates like this?
-
 	if(TheGlobalData->m_loadScreenRender != TRUE)
 	{
-
-		if (TheTerrainTracksRenderObjClassSystem)
-			TheTerrainTracksRenderObjClassSystem->update();
-
 		//Shroud data is needed to render all other views, so handle this first.
 		if (TheTerrainRenderObject)
 		{
@@ -1919,11 +1955,6 @@ AGAIN:
 		}
 	}
 
-	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
-
-	// TheSuperHackers @info This binds the WW3D update to the logic update.
-	WW3D::Sync(TheGameLogic->hasUpdated());
-
 	static Int now;
 	now=timeGetTime();
 
@@ -1937,32 +1968,17 @@ AGAIN:
 		// limit the framerate, because while fast time is on, the game logic is running as fast as it can.
 	}
 
-	Bool updateParticles = TheGameLogic->hasUpdated();
+	Bool viewsUpdated = TRUE;
 
 	do {
 
-		// update all views of the world - recomputes data which will affect drawing
 		if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) == D3D_OK)
-		{	//Checking if we have the device before updating views because the heightmap crashes otherwise while
-			//trying to refresh the visible terrain geometry.
-//			if(TheGlobalData->m_loadScreenRender != TRUE)
+		{
+			// TheSuperHackers @info The views are updated in W3DDisplay::update, except in the repeated passes
+			// of this loop, which keep moving the camera while the time is frozen for a camera movement.
+			if (!viewsUpdated)
 				updateViews();
 
-			//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
-			//FOR THE PURPOSE OF LETTING THE PARTICLE SYSTEM LOOK UP THE RENDER OBJECT"S
-			//TRANSFORM MATRIX, WHILE IT IS STILL VALID (HAVING DONE ITS CLIENT TRANSFORMS
-			//BUT NOT YET RESETTING TOT HE LOGICAL TRANSFORM)
-			//THE RESULT IS THAT PARTICLESYSTEMS LINKED TO BONES IN DRAWABLES.OBJECTS
-			//MOVE WITH THE CLIENT TRANSFORMS, NOW.
-			//REVOLUTIONARY!
-			//-LORENZEN
-			if (updateParticles)
-			{
-				const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
-				TheParticleSystemManager->setLocalPlayerIndex(localPlayerIndex);
-				TheParticleSystemManager->UPDATE();
-				updateParticles = false;
-			}
 			TheParticleSystemManager->DRAW();
 
 			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
@@ -1973,6 +1989,8 @@ AGAIN:
 			if (TheW3DProjectedShadowManager)
 				TheW3DProjectedShadowManager->updateRenderTargetTextures();
 		}
+
+		viewsUpdated = FALSE;
 
 		Debug_Statistics::End_Statistics();	//record number of polygons rendered in RenderTargetTextures.
 
