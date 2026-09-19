@@ -1480,11 +1480,10 @@ void ControlBar::update()
 
 		showRallyPoint(exitPosition);
 
-		// TheSuperHackers @tweak Mr-Sheerlock 06/09/2026 if we're observing a player don't add other UI components to prevent being locked out from unslecting players and selecting other players.
+		// TheSuperHackers @tweak Mr-Sheerlock 06/09/2026 while observing player don't add other UI components to prevent
+		// being locked out from unselecting players and selecting other players
 		if( getObservedPlayer() != nullptr )
 			return;
-		
-
 	}
 
 
@@ -1761,22 +1760,19 @@ void ControlBar::evaluateContextUI()
 		showPurchaseScience();
 
 	// erase any current state of the GUI by switching out to the empty context
-		switchToDefaultContext(nullptr);
+	switchToDefaultContext(nullptr);
 
 	// sanity, nothing selected
 	if( TheInGameUI->getSelectCount() == 0 )
-	{
 		return;
-	}
+	
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
 	if( selectedDrawables->empty() == TRUE )
-	{
-		return;
-	}
+	   return;
 
 	//Make sure the selected objects are in fact, controllable! If not, then
 	//we don't show any GUI commands for them!!!
@@ -3585,6 +3581,11 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @info isApparentControllingPlayerNeutral tries to take into consideration
+// whether the stealth unit inside wouldn't change the appearance for an observing player compared
+// to getting the controlling player directly
+//-------------------------------------------------------------------------------------------------
+
 Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
 {
 	ContainModuleInterface* contain = obj->getContain();

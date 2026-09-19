@@ -65,8 +65,11 @@ void ControlBar::populateButtonProc( Object *obj, void *userData )
 	PopulateButtonInfo* info = (PopulateButtonInfo*)userData;
 
 	
-	if (info->buttonIndex>= MAX_STRUCTURE_INVENTORY_BUTTONS) 
+	if (info->buttonIndex >= MAX_STRUCTURE_INVENTORY_BUTTONS) {
+		DEBUG_CRASH(("Too many objects inside '%s' for the inventory buttons to hold",
+			info->source->getTemplate()->getName().str()));
 		return;
+	}
 	
 	// put object in inventory data
 	info->self->m_containData[ info->buttonIndex ].control = info->inventoryButtons[ info->buttonIndex ];
@@ -180,6 +183,10 @@ void ControlBar::populateStructureInventory( Object *building )
 		m_commandWindows[ EVACUATE_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 		m_commandWindows[ STOP_ID ]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 	}
+	else {
+		m_commandWindows[ EVACUATE_ID ]->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
+		m_commandWindows[ STOP_ID ]->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
+	}	
 	//
 	// iterate each of the objects inside the container and put them in a button, note
 	// we're iterating in reverse order here

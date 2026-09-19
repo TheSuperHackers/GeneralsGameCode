@@ -701,23 +701,22 @@ void ControlBar::updateContextCommand()
 	if( m_currentSelectedDrawable )
 		obj = m_currentSelectedDrawable->getObject();
 
-	//
-	// the contents of objects are usually showed on the UI, when those contents change
-	// we always to update the UI
-	//
-	ContainModuleInterface *contain = obj ? obj->getContain() : nullptr;
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 
 	if (obj->isLocallyControlled() == FALSE &&
 		(localPlayer->getRelationship(obj->getTeam()) != NEUTRAL && isControlEnabled()) )
 	{
-		Drawable *draw = obj->getDrawable();
-
-		if (draw)
+		if (Drawable* draw = obj->getDrawable())
 			TheInGameUI->deselectDrawable(draw);
 		return;
 	}
-	else if( contain && contain->getContainMax() > 0 &&
+
+	//
+	// the contents of objects are usually showed on the UI, when those contents change
+	// we always to update the UI
+	//
+	ContainModuleInterface *contain = obj ? obj->getContain() : nullptr;
+	if( contain && contain->getContainMax() > 0 &&
 			m_lastRecordedInventoryCount != contain->getContainCount() )
 	{
 

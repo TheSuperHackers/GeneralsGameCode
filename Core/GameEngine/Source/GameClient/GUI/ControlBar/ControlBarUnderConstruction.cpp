@@ -91,6 +91,10 @@ void ControlBar::populateUnderConstruction( Object *objectUnderConstruction )
 		win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 		win->winEnable(FALSE);
 	}
+	else {
+		win->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
+		win->winEnable(TRUE);
+	}
 	// set the text description of what is building
 	updateConstructionTextDisplay( objectUnderConstruction );
 
