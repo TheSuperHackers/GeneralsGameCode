@@ -33,6 +33,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/ActionManager.h"
+#include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/Recorder.h"
@@ -604,6 +605,7 @@ void GameClient::update()
 
 
 		// call the update for all client drawables
+		const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
 		Drawable* draw = firstDrawable();
 		while (draw)
 		{	// update() could free the Drawable, so go ahead and grab 'next'
@@ -651,7 +653,7 @@ void GameClient::update()
 					draw->setFullyObscuredByShroud(ss >= OBJECTSHROUD_FOGGED);
 				}
 			}
-			draw->updateDrawable();
+			draw->updateDrawable(timeScale);
 			draw = next;
 		}
 	}
