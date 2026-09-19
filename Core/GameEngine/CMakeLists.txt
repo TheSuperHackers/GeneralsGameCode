@@ -490,6 +490,7 @@ set(GAMEENGINE_SRC
      Include/GameLogic/Pathfinder/PathfindCell.h
      Include/GameLogic/Pathfinder/PathfindCellInfo.h
      Include/GameLogic/Pathfinder/PathfindCellList.h
+     Include/GameLogic/Pathfinder/PathfindLayer.h
      Include/GameLogic/Pathfinder/PathNode.h
 #    Include/GameLogic/PartitionManager.h
     Include/GameLogic/PolygonTrigger.h
