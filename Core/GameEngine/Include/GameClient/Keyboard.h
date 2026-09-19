@@ -75,7 +75,7 @@ struct KeyboardIO
 
 	UnsignedByte	key;										// KeyDefType, key data
 	UnsignedByte	status;									// StatusType, above
-	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
+	KeyState			state;									// KEY_STATE_* in KeyDefs.h
 	UnsignedInt		keyDownTimeMsec;				// real-time in milliseconds when key went down
 
 };
@@ -112,7 +112,7 @@ public:
 	Bool isShift();
 	Bool isCtrl();
 	Bool isAlt();
-	Int getModifierFlags() { return m_modifiers; }
+	KeyState getModifierFlags() { return m_modifiers; }
 
 	// access methods for key data
 	void resetKeys();												///< reset the state of the keys
@@ -124,7 +124,7 @@ public:
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
 private:
-	void refreshAltKeys() const;									///< refresh the state of the alt keys, necessary after alt tab
+	void emitModifierKeyUps() const;							///< emit key-ups for held CTRL/SHIFT/ALT after focus loss
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
@@ -136,10 +136,11 @@ protected:
 	void updateKeys();  ///< update the state of our key data
 	Bool checkKeyRepeat();  ///< check for repeating keys
 	UnsignedByte getKeyStatusData( KeyDefType key );  ///< get key status
-	Bool getKeyStateBit( KeyDefType key, Int bit );  ///< get key state bit
-	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state
+	Bool getKeyStateBit( KeyDefType key, KeyState bit );  ///< get key state bit
+	void setKeyStateData( KeyDefType key, KeyState data );  ///< get key state
 
-	UnsignedShort m_modifiers;
+	KeyState m_modifiers;
+	KeyState m_lastPressedKeyState[KEY_COUNT];
 	// internal keyboard data members
 	//Bool m_capsState;			// 1 if caps lock is on
 	//Bool m_shiftState;		// 1 if either shift key is pressed
