@@ -42,6 +42,7 @@
 #include "Common/GameState.h"
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
+#include "Common/OptionPreferences.h"
 #include "Common/ModuleFactory.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -302,6 +303,26 @@ const Int MAX_ENABLED_MODULES								= 16;
 {
 	delete[] s_animationTemplates;
 	s_animationTemplates = nullptr;
+}
+
+// TheSuperHackers @feature One shared string for the numerical health text, rebuilt whenever the
+// text changes. Unlike the command bar overlays there is no small fixed set of values to cache
+// per object, and many bars draw per frame, so it is rebuilt as often as it is reused. It stays
+// static purely to avoid allocating every call, and is returned to the manager before the manager
+// itself is torn down -- see Drawable::killStaticDisplayStrings.
+static DisplayString *s_healthString = nullptr;
+
+//-------------------------------------------------------------------------------------------------
+/** Return the shared display strings to the manager. Must run before TheDisplayStringManager is
+	* destroyed, which asserts on any string still registered -- GameClient's destructor calls this
+	* right before deleting the manager, unlike killStaticImages, which runs after. */
+//-------------------------------------------------------------------------------------------------
+/*static*/ void Drawable::killStaticDisplayStrings()
+{
+	if( s_healthString != nullptr && TheDisplayStringManager != nullptr )
+		TheDisplayStringManager->freeDisplayString( s_healthString );
+
+	s_healthString = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2846,16 +2867,46 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 {
 	const Object *obj = getObject();
 
-	if (!(
-				TheGlobalData->m_showObjectHealth &&
-				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
-			))
+	// The pips are left justified against the health bar, so without that region there is nowhere
+	// to put them. It is null when the object is off screen or has no health box. The selected or
+	// moused over test used to make a valid region implicit; SmartPips draws without that test, so
+	// check it outright rather than dereference null further down.
+	if (!healthBarRegion)
 		return;
+
+	// TheSuperHackers @feature SmartPips shows a unit's ammo pips all the time rather than only
+	// while it is selected or moused over, so remaining ammo is readable at a glance. Restricted
+	// to the player's own units -- not allies, not enemies -- since standing ammo counts on units
+	// you do not control would be information the game does not otherwise give away. A unit with
+	// no shots left draws nothing at all, so the pips read as "this one is still loaded".
+	const Bool smartPips = TheGlobalData->m_smartPips;
+
+	if (!smartPips)
+	{
+		if (!(
+					TheGlobalData->m_showObjectHealth &&
+					(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
+					obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
+				))
+			return;
+	}
+	else
+	{
+		if (obj->getControllingPlayer() != rts::getObservedOrLocalPlayer())
+			return;
+	}
 
 	Int numTotal;
 	Int numFull;
 	if (!obj->getAmmoPipShowingInfo(numTotal, numFull))
+		return;
+
+	// TheSuperHackers @feature With SmartPips the pips are on screen the whole time, so an empty
+	// unit would otherwise sit under a permanent row of empty boxes. Draw nothing at all instead,
+	// which also makes an out of ammo unit obvious by the pips vanishing. Without SmartPips the
+	// pips only appear on selection or hover, where showing the empties is the informative thing
+	// to do, so this does not apply.
+	if (smartPips && numFull <= 0)
 		return;
 
 	if (!s_fullAmmo || !s_emptyAmmo)
@@ -2904,12 +2955,34 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 	if (!container)
 		return;
 
-	if (!(
-				TheGlobalData->m_showObjectHealth &&
-				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
-			))
+	// The pips are left justified against the health bar, so without that region there is nowhere
+	// to put them. It is null when the object is off screen or has no health box. The selected or
+	// moused over test used to make a valid region implicit; SmartPips draws without that test, so
+	// check it outright rather than dereference null further down.
+	if (!healthBarRegion)
 		return;
+
+	// TheSuperHackers @feature SmartPips keeps the passenger pips on screen rather than showing
+	// them only on selection or hover, matching what it does for ammo pips. Own units only -- not
+	// allies, not enemies -- so this never reveals cargo the player could not already see. An
+	// empty transport draws nothing either way, thanks to the numFull check below, so the pips
+	// read as "this one is carrying someone".
+	const Bool smartPips = TheGlobalData->m_smartPips;
+
+	if (!smartPips)
+	{
+		if (!(
+					TheGlobalData->m_showObjectHealth &&
+					(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
+					obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
+				))
+			return;
+	}
+	else
+	{
+		if (obj->getControllingPlayer() != rts::getObservedOrLocalPlayer())
+			return;
+	}
 
 	Int numTotal;
 	Int numFull;
@@ -2920,22 +2993,40 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 	if (numFull == 0)
 		return;
 
+	// TheSuperHackers @fix SmartPips draws these every frame for every owned container rather than
+	// only for a selected one, which exposed two assumptions this loop was quietly making.
+	//
+	// The list can hold a null, and an entry can be mid removal while a transport is unloading, so
+	// each one is checked before use rather than dereferenced outright. And numFull comes from
+	// getContainerPipsToShow, which counts getContainCount() plus getExtraSlotsInUse() and may be
+	// redirected to a different module entirely -- OverlordContain forwards it to its sub container
+	// -- while this list is always the outer container's own. The two therefore need not agree, so
+	// numInfantry is clamped to numFull rather than assumed to be within it.
 	Int numInfantry = 0;
 	const ContainedItemsList* contained = container->getContainedItemsList();
 	if (contained)
 	{
 		for (ContainedItemsList::const_iterator it = contained->begin(); it != contained->end(); ++it)
 		{
-			if ((*it)->isKindOf(KINDOF_INFANTRY))
+			const Object* item = *it;
+			if (item && item->isKindOf(KINDOF_INFANTRY))
 				++numInfantry;
 		}
 	}
+
+	if (numInfantry > numFull)
+		numInfantry = numFull;
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 	Real scale = TheGlobalData->m_ammoPipScaleFactor / CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
 #else
 	Real scale = 1.0f;
 #endif
+	// drawAmmo guards its images the same way. Previously a missing pip image would only crash on
+	// selecting a transport; with SmartPips it would crash on sight of one.
+	if (!s_fullContainer || !s_emptyContainer)
+		return;
+
 	Int boxWidth  = REAL_TO_INT(s_emptyContainer->getImageWidth() * scale);
 	Int boxHeight = REAL_TO_INT(s_emptyContainer->getImageHeight() * scale);
 	const Int SPACING = 1;
@@ -3764,6 +3855,90 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 /** Draw health bar information for drawable */
 // ------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Health bar display modes (Options.ini: HealthBarDisplayMode).
+/**
+ * Should this object show a health bar even though it is neither selected nor moused over?
+ *
+ * Purely a client side display question -- it reads state but never changes any, so it cannot
+ * affect game logic, multiplayer sync or replays.
+ */
+static Bool isHealthBarAlwaysVisible( const Object *obj, Real healthRatio )
+{
+	const Int mode = TheGlobalData->m_healthBarDisplayMode;
+
+	if( mode == HealthBarDisplayMode_Classic )
+		return FALSE;
+
+	// never label a corpse or a piece of scenery, in any mode
+	if( obj->isEffectivelyDead() )
+		return FALSE;
+
+	if( obj->isKindOf( KINDOF_PROJECTILE )
+			|| obj->isKindOf( KINDOF_SHRUBBERY )
+			|| obj->isKindOf( KINDOF_OPTIMIZED_TREE )
+			|| obj->isKindOf( KINDOF_DRAWABLE_ONLY )
+			|| obj->isKindOf( KINDOF_INERT )
+			|| obj->isKindOf( KINDOF_UNATTACKABLE )
+			|| obj->isKindOf( KINDOF_MINE )
+			|| obj->isKindOf( KINDOF_NO_SELECT ) )
+		return FALSE;
+
+	if( mode == HealthBarDisplayMode_Damaged )
+		return healthRatio < 1.0f;
+
+	// HealthBarDisplayMode_Always -- real combatants and buildings only, so the map does not
+	// fill up with bars over rocks, crates and civilian props.
+	return obj->isKindOf( KINDOF_STRUCTURE ) || obj->getAI() != nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Print the hit points beside the health bar (Options.ini:
+// NumericalHealth). Called from drawHealthBar once the bar itself is down, so every rule that
+// decides whether a bar is drawn -- selection, mouseover, HealthBarDisplayMode -- already applies.
+//-------------------------------------------------------------------------------------------------
+void Drawable::drawNumericalHealth( const IRegion2D *healthBarRegion, Real health, Real maxHealth,
+																		Color color )
+{
+	if( healthBarRegion == nullptr || TheDisplayStringManager == nullptr )
+		return;
+
+	if( s_healthString == nullptr )
+	{
+		s_healthString = TheDisplayStringManager->newDisplayString();
+		if( s_healthString == nullptr )
+			return;
+
+		// Small on purpose: in Always mode this is drawn over every unit on screen at once, so it
+		// has to annotate the bar rather than compete with it.
+		Int pointSize = 6;
+		if( TheGlobalLanguageData )
+			pointSize = TheGlobalLanguageData->adjustFontSize( pointSize );
+		s_healthString->setFont( TheFontLibrary->getFont( AsciiString( "Arial" ), pointSize, FALSE ) );
+	}
+
+	// Round rather than truncate, so a sliver of health left does not read as 0 next to a unit
+	// that is plainly still alive.
+	const Int shownHealth = REAL_TO_INT( health + 0.5f );
+	const Int shownMax = REAL_TO_INT( maxHealth + 0.5f );
+
+	UnicodeString text;
+	text.format( L"%d/%d", shownHealth, shownMax );
+	s_healthString->setText( text );
+
+	Int width, height;
+	s_healthString->getSize( &width, &height );
+
+	// just past the right end of the bar, vertically centred on it
+	const Int healthBoxHeight = max( 3, healthBarRegion->hi.y - healthBarRegion->lo.y );
+	const Int textX = healthBarRegion->hi.x + 2;
+	const Int textY = healthBarRegion->lo.y + ( healthBoxHeight / 2 ) - ( height / 2 );
+
+	// Black drop shadow rather than a backdrop plate: the number sits over the battlefield rather
+	// than over a cameo, so a filled box would be far more intrusive than the bar it annotates.
+	s_healthString->draw( textX, textY, color, GameMakeColor( 0, 0, 0, 255 ) );
+}
+
+//-------------------------------------------------------------------------------------------------
 void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 {
 	if (!healthBarRegion)
@@ -3771,11 +3946,14 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 	//
 	// only draw health for selected drawables and drawables that have been moused over
-	// by the cursor
+	// by the cursor. TheSuperHackers @feature Options.ini HealthBarDisplayMode can widen this
+	// to also cover damaged objects, or every unit and structure.
 	//
-	if( TheGlobalData->m_showObjectHealth &&
-			(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) )
+	if( TheGlobalData->m_showObjectHealth )
 	{
+		const Bool classicallyVisible = isSelected()
+			|| (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()));
+
 		Object *obj = getObject();
 
 		// if no object, nothing to do
@@ -3804,6 +3982,12 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 		// what is our health ratio
 		Real healthRatio = health / maxHealth;
+
+		// TheSuperHackers @feature Decide whether this object gets a bar it would not classically get.
+		// Objects hidden, stealthed or shrouded never reach here at all -- drawablePostDraw filters
+		// those out before drawIconUI is ever called.
+		if( !classicallyVisible && !isHealthBarAlwaysVisible( obj, healthRatio ) )
+			return;
 
 		//
 		// what color will we use for the health bar based on our ratio, this makes it
@@ -3879,6 +4063,13 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		TheDisplay->drawFillRect( healthBarRegion->lo.x + 1, healthBarRegion->lo.y + 1,
 															(healthBoxWidth - 2) * healthRatio, healthBoxHeight - 2,
 															color );
+
+		// TheSuperHackers @feature NumericalHealth prints the hit points just past the end of the
+		// bar. It reuses the bar's own colour, so the number carries the same red to green reading
+		// at a glance, and it hangs off every path that got this far -- which means it follows
+		// HealthBarDisplayMode for free and appears exactly where a bar appears.
+		if( TheGlobalData->m_numericalHealth )
+			drawNumericalHealth( healthBarRegion, health, maxHealth, color );
 	}
 
 }
