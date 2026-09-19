@@ -396,6 +396,17 @@ bool FileSystem::removeExtension(AsciiString& path)
 }
 
 //============================================================================
+// FileSystem::appendPathSeparator
+//============================================================================
+void FileSystem::appendPathSeparator(AsciiString& path)
+{
+	if (path.isNotEmpty() && !isPathSeparator(path.getCharAt(path.getLength() - 1)))
+	{
+		path.concat(getNativePathSeparator());
+	}
+}
+
+//============================================================================
 // FileSystem::removeExtension - Unicode handling variant
 //============================================================================
 bool FileSystem::removeExtension(UnicodeString& path)
