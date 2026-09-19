@@ -2778,8 +2778,8 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 // ------------------------------------------------------------------------------------------------
 void ControlBar::setControlBarSchemeByPlayer(Player *p)
 {
-	if(!m_controlBarSchemeManager || !m_controlBarSchemeManager->setControlBarSchemeByPlayer(p))
-		return;
+	if(m_controlBarSchemeManager)
+		m_controlBarSchemeManager->setControlBarSchemeByPlayer(p);
 
 	static NameKeyType buttonPlaceBeaconID = NAMEKEY( "ControlBar.wnd:ButtonPlaceBeacon" );
 	static NameKeyType buttonIdleWorkerID = NAMEKEY("ControlBar.wnd:ButtonIdleWorker");
@@ -2823,8 +2823,8 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 
 void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 {
-	if(!m_controlBarSchemeManager || !m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(pt))
-		return;
+	if(m_controlBarSchemeManager)
+		m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(pt);
 
 	static NameKeyType buttonPlaceBeaconID = NAMEKEY( "ControlBar.wnd:ButtonPlaceBeacon" );
 	static NameKeyType buttonIdleWorkerID = NAMEKEY("ControlBar.wnd:ButtonIdleWorker");
@@ -3069,14 +3069,13 @@ void ControlBar::setSquishedControlBarConfig()
 {
 	if(m_currentControlBarStage == CONTROL_BAR_STAGE_SQUISHED)
 		return;
-	if(!m_controlBarSchemeManager || !m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(ThePlayerList->getLocalPlayer()->getPlayerTemplate(), TRUE))
-		return;
 	m_currentControlBarStage = CONTROL_BAR_STAGE_SQUISHED;
 	m_contextParent[ CP_MASTER ]->winSetPosition(m_defaultControlBarPosition.x, m_defaultControlBarPosition.y);
 
 //	m_controlBarResizer->sizeWindowsAlt();
 	repopulateBuildTooltipLayout();
 	setFullViewportHeight();
+	m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(ThePlayerList->getLocalPlayer()->getPlayerTemplate(), TRUE);
 }
 
 void ControlBar::setLowControlBarConfig()
