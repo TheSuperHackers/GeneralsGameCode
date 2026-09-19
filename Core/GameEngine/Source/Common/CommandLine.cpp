@@ -36,6 +36,10 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
 
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+
 
 
 
@@ -690,6 +694,39 @@ Int parseDisplayDebug(char *args[], int)
 	return 1;
 }
 
+Int parseSaveAtFrame(char *args[], int num)
+{
+	if (num <= 1)
+	{
+		printf("Missing frame number for -saveatframe\n");
+		exit(1);
+	}
+
+	char *end;
+	errno = 0;
+	const long frame = strtol(args[1], &end, 10);
+	if (errno == ERANGE || end == args[1] || *end != '\0' || frame <= 0 || frame > INT_MAX)
+	{
+		printf("Invalid frame number for -saveatframe: '%s'\n", args[1]);
+		exit(1);
+	}
+
+	TheWritableGlobalData->m_saveAtFrame = static_cast<Int>(frame);
+	return 2;
+}
+
+Int parseSaveTo(char *args[], int num)
+{
+	if (num <= 1 || args[1][0] == '\0' || args[1][0] == '-')
+	{
+		printf("Missing filename for -saveto\n");
+		exit(1);
+	}
+
+	TheWritableGlobalData->m_saveToFile = args[1];
+	return 2;
+}
+
 Int parseFile(char *args[], int num)
 {
 	if (num > 1)
@@ -1305,6 +1342,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
+	// TheSuperHackers @feature bobtista 14/08/2026 Save at a chosen logic frame and quit for unattended save/load tests.
+	{ "-saveatframe", parseSaveAtFrame },
+	{ "-saveto", parseSaveTo },
 
 //	{ "-preload", parsePreload },
 
