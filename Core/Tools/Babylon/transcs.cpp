@@ -21,6 +21,7 @@
 //
 
 #include "StdAfx.h"
+#include "Lib/WideChar.h"
 #include <windows.h>
 #include <winnls.h>
 #include <stdio.h>
@@ -32,8 +33,8 @@ void CreateTranslationTable ()
 {
 	int i;
 	FILE *out;
-	wchar_t wc;
-	wchar_t mb;
+	WideChar wc;
+	WideChar mb;
 	DWORD last_error;
 
 	if ( ! ( out = fopen ( "utable.c", "wt" )))

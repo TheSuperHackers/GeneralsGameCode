@@ -30,6 +30,8 @@
 // Author: Matthew D. Campbell, June 2002
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Lib/WideChar.h"
+#include <string>
 
 #include "GameNetwork/GameSpy/BuddyThread.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
@@ -517,7 +519,7 @@ void BuddyThreadClass::messageCallback( GPConnection *con, GPRecvBuddyMessageArg
 	// get info about the person asking to be our buddy
 	gpGetInfo( con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getNickForMessage, &messageResponse);
 
-	std::wstring s = MultiByteToWideCharSingleLine( arg->message );
+	std::basic_string<WideChar> s = MultiByteToWideCharSingleLine( arg->message );
 	wcslcpy(messageResponse.arg.message.text, s.c_str(), MAX_BUDDY_CHAT_LEN);
 	messageResponse.arg.message.date = arg->date;
 	DEBUG_LOG(("Got a buddy message from %d [%ls]", arg->profile, s.c_str()));
@@ -636,7 +638,7 @@ void BuddyThreadClass::requestCallback( GPConnection *con, GPRecvBuddyRequestArg
 	// get info about the person asking to be our buddy
 	gpGetInfo( con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getInfoResponseForRequest, &response);
 
-	std::wstring s = MultiByteToWideCharSingleLine( arg->reason );
+	std::basic_string<WideChar> s = MultiByteToWideCharSingleLine( arg->reason );
 	wcslcpy(response.arg.request.text, s.c_str(), GP_REASON_LEN);
 
 	TheGameSpyBuddyMessageQueue->addResponse( response );
