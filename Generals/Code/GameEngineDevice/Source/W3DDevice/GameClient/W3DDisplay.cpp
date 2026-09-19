@@ -514,6 +514,12 @@ Bool W3DDisplay::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt
 	{
 		Render2DClass::Set_Screen_Resolution(RectClass(0, 0, xres, yres));
 		Display::setDisplayMode(xres, yres, bitdepth, windowed);
+
+		// TheSuperHackers @tweak Font point sizes are scaled from the resolution, so every glyph
+		// cached for the old resolution is now dead weight. Discard the current glyphs and start
+		// with a clean slate.
+		WW3DAssetManager::Get_Instance()->Free_All_FontChars_Glyph_Caches();
+
 		return TRUE;
 	}
 
@@ -931,6 +937,10 @@ void W3DDisplay::reset()
 {
 
 	Display::reset();
+
+	// TheSuperHackers @tweak Discard the current glyphs and start with a clean slate.
+	// This can reduce the memory overhead from glyphs that are no longer needed from here on.
+	WW3DAssetManager::Get_Instance()->Free_All_FontChars_Glyph_Caches();
 
 	// Remove all render objects.
 
