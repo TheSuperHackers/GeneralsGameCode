@@ -267,8 +267,9 @@ ParticleEmitterDefClass::Set_Creation_Volume (Vector3Randomizer *randomizer)
 void
 ParticleEmitterDefClass::Set_User_String (const char *pstring)
 {
-	SAFE_FREE (m_pUserString);
-	m_pUserString = ::_strdup (pstring);
+	char* copy = ::_strdup(pstring);
+	SAFE_FREE(m_pUserString);
+	m_pUserString = copy;
 }
 
 
@@ -279,8 +280,9 @@ ParticleEmitterDefClass::Set_User_String (const char *pstring)
 void
 ParticleEmitterDefClass::Set_Name (const char *pname)
 {
-	SAFE_FREE (m_pName);
-	m_pName = ::_strdup (pname);
+	char* copy = ::_strdup(pname);
+	SAFE_FREE(m_pName);
+	m_pName = copy;
 }
 
 

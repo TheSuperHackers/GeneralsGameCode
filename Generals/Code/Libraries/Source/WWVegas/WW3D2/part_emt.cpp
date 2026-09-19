@@ -818,16 +818,11 @@ ParticleEmitterClass::Save (ChunkSaveClass &chunk_save) const
 
 
 void
-ParticleEmitterClass::Set_Name (const char *pname)
+ParticleEmitterClass::Set_Name (const char* pname)
 {
-	// Free the old name if necessary
-	if (NameString != nullptr) {
-		::free (NameString);
-		NameString = nullptr;
-	}
-
-	// Copy the provided name
-	NameString = ::_strdup (pname);
+	char* name = ::_strdup(pname);
+	::free(NameString);
+	NameString = name;
 }
 
 
