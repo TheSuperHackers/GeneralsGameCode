@@ -22,8 +22,8 @@
 #include <wchar.h>
 
 // UTF-8 <-> wide-character conversion backed by ICU4C.
-// Modern toolchains link the ICU C API through the Windows SDK or a full ICU package.
-// VC6 uses IcuLoader to load icu.dll and call its UTF conversion exports at runtime.
+// Full ICU packages use linked C APIs. Windows SDK and VC6 builds use IcuLoader
+// to load icu.dll and retain its UTF conversion exports for each call.
 // Windows builds fall back to Win32 CP_UTF8 if the DLL or required exports are missing.
 // Include ICU/IcuSupport.h to use the rest of the linked ICU suite from engine code.
 

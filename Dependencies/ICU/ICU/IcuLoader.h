@@ -22,9 +22,10 @@
 
 #include <windows.h>
 
-// Owns one reference to icu.dll until normal process shutdown. The Windows SDK
-// uses it to check availability before a delay-loaded call; VC6 calls the two
-// resolved functions directly without ICU headers or an import library.
+// Loads and unloads icu.dll with a shared reference count, like BinkLoader and
+// MilesLoader. Every load needs a paired unload, even when loading fails.
+// Load/unload are synchronized for conversion workers, including on VC6.
+// Hold a reference while checking availability or using the resolved functions.
 class IcuLoader
 {
 public:
@@ -35,30 +36,37 @@ public:
     typedef Char* (__cdecl* StrFromUtf8)(Char*, int, int*, const char*, int, ErrorCode*);
     typedef char* (__cdecl* StrToUtf8WithSub)(char*, int, int*, const Char*, int, Char32, int*, ErrorCode*);
 
-    // VC6 requires access from its generated static-destruction helper.
-    ~IcuLoader();
-
-    static const IcuLoader& get();
-    bool isAvailable() const;
-
-    StrFromUtf8 fromUtf8() const
-    {
-        return m_fromUtf8;
-    }
-
-    StrToUtf8WithSub toUtf8WithSub() const
-    {
-        return m_toUtf8WithSub;
-    }
+    static bool load();
+    static void unload();
+    static bool isLoaded();
+    static StrFromUtf8 fromUtf8();
+    static StrToUtf8WithSub toUtf8WithSub();
 
 private:
     IcuLoader();
     IcuLoader(const IcuLoader&);
     IcuLoader& operator=(const IcuLoader&);
-
-    HMODULE m_module;
-    StrFromUtf8 m_fromUtf8;
-    StrToUtf8WithSub m_toUtf8WithSub;
 };
 
 #endif
+
+// Keeps ICU available throughout a conversion or a longer application lifetime.
+// Linked ICU needs no explicit DLL ownership; unavailable Windows ICU uses the
+// Win32 conversion fallback. Scopes may overlap on different threads.
+class IcuScope
+{
+public:
+    IcuScope();
+    ~IcuScope();
+
+    bool isAvailable() const
+    {
+        return m_available;
+    }
+
+private:
+    IcuScope(const IcuScope&);
+    IcuScope& operator=(const IcuScope&);
+
+    bool m_available;
+};
