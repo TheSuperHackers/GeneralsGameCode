@@ -959,23 +959,20 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	Real dot = vx + vy;
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
-
-	Real speed = (Real)sqrtf( vx*vx + vy*vy );
-	if (dot >= 0.0f)
-		return speed;
-	return -speed;
-
+	constexpr const Bool useLegacy = true;
+#elif USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	const Bool useLegacy = useLegacyForwardSpeed();
 #else
+	constexpr const Bool useLegacy = false;
+#endif
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (useLegacyForwardSpeed())
+	if constexpr (useLegacy)
 	{
 		Real speed = (Real)sqrtf( vx*vx + vy*vy );
 		if (dot >= 0.0f)
 			return speed;
 		return -speed;
 	}
-#endif
 
 	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns the dot product instead of +-sqrtf(vx*vx+vy*vy).
 	// The retail formula understates the forward speed by up to 1/sqrt(2) on diagonal headings, which made
@@ -983,8 +980,6 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	// onto the facing vector, so this now reports real distance per logic frame and can be used for distance
 	// and time calculations. The speeds the Locomotor commands are compensated to match, in LocomotorTemplate.
 	return dot;
-
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1001,29 +996,24 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	Real dot = vx + vy + vz;
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
-
-	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
-	if (dot >= 0.0f)
-		return speed;
-	return -speed;
-
+	constexpr const Bool useLegacy = true;
+#elif USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+	const Bool useLegacy = useLegacyForwardSpeed();
 #else
+	constexpr const Bool useLegacy = false;
+#endif
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (useLegacyForwardSpeed())
+	if constexpr (useLegacy)
 	{
 		Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
 		if (dot >= 0.0f)
 			return speed;
 		return -speed;
 	}
-#endif
 
 	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns the dot product instead of
 	// +-sqrtf(vx*vx+vy*vy+vz*vz). See getForwardSpeed2D for the rationale.
 	return dot;
-
-#endif
 }
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
