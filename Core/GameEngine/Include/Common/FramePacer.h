@@ -67,6 +67,8 @@ public:
 	Real getLogicTimeStepSeconds(LogicTimeQueryFlags flags = 0) const; ///< Get the logic time step in seconds
 	Real getLogicTimeStepMilliseconds(LogicTimeQueryFlags flags = 0) const; ///< Get the logic time step in milliseconds
 
+	Real getLogicFramePhase() const; ///< Get how far the current render step reaches into the current logic frame, in [0,1]. Used to interpolate render updates between logic updates.
+
 protected:
 
 	FrameRateLimit m_frameRateLimit;
@@ -75,6 +77,7 @@ protected:
 	Int m_logicTimeScaleFPS; ///< Maximum frames per second for logic time scale
 
 	Real m_updateTime; ///< Last update delta time in seconds
+	Real m_logicFramePhase; ///< How far the current render step reaches into the current logic frame, ranging 0 to 1.
 
 	Bool m_enableFpsLimit;
 	Bool m_enableLogicTimeScale;

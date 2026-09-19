@@ -701,15 +701,6 @@ void GameClient::update()
 	}
 #endif
 
-	// update all particle systems
-	if( !freezeTime )
-	{
-		// update particle systems
-		TheParticleSystemManager->setLocalPlayerIndex(localPlayerIndex);
-//		TheParticleSystemManager->update();
-
-	}
-
 	// update the terrain visuals
 	{
 		TheTerrainVisual->UPDATE();
@@ -718,6 +709,15 @@ void GameClient::update()
 	// update display
 	{
 		TheDisplay->UPDATE();
+	}
+
+	// update all particle systems
+	// TheSuperHackers @info The particle update follows the display update, because that
+	// moves bone-attached particle systems to the current client bone transforms of their drawables.
+	if( !freezeTime && TheGameLogic->hasUpdated() )
+	{
+		TheParticleSystemManager->setLocalPlayerIndex(localPlayerIndex);
+		TheParticleSystemManager->UPDATE();
 	}
 
 	{
