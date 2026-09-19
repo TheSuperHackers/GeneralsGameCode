@@ -19,6 +19,7 @@
 /* Copyright (C) Electronic Arts Canada Inc. 1998-1999.  All rights reserved. */
 
 #include <string.h>
+#include "Lib/WideChar.h"
 #include <assert.h>
 #include "gimex.h"      /* for file and memory IO only */
 #include "locale.h"
@@ -769,7 +770,7 @@ const char* LOCALE_getstring( int StringID )
         p = nullptr;
     }
 
-	Msg( __LINE__, __FILE__, L"%s", 1252, (wchar_t *)p );
+	Msg( __LINE__, __FILE__, L"%s", 1252, (WideChar*)p );
 
     return p;
 }

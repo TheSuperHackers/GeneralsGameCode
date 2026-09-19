@@ -17,11 +17,12 @@
 */
 
 #include "always.h"
+#include "Lib/WideChar.h"
 #include "utf8.h"
 
-// wchar_t is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other
+// WideChar is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other
 // platforms. WCHAR_MAX lets us distinguish the two at compile time so the surrogate-pair paths
-// are excluded entirely (not just constant-folded) where wchar_t is wide enough to hold a codepoint.
+// are excluded entirely (not just constant-folded) where WideChar is wide enough to hold a codepoint.
 #if defined(WCHAR_MAX) && (WCHAR_MAX <= 0xFFFF)
 #define UTF8_WCHAR_IS_UTF16 1
 #else
@@ -138,11 +139,11 @@ static size_t Utf8_Decode(const char* src, size_t srcLen, unsigned int& cp)
 }
 
 // Read one codepoint at src, with srcLen wide characters remaining. Returns the number of wide
-// characters consumed (1-2) and sets cp. Combines UTF-16 surrogate pairs where wchar_t is 16-bit;
-// treats each element as a whole codepoint where wchar_t is 32-bit. Wide data that has no UTF-8
+// characters consumed (1-2) and sets cp. Combines UTF-16 surrogate pairs where WideChar is 16-bit;
+// treats each element as a whole codepoint where WideChar is 32-bit. Wide data that has no UTF-8
 // representation is reported as U+FFFD, so the encoder never emits a sequence that the decoder
 // would reject.
-static size_t Wide_Read(const wchar_t* src, size_t srcLen, unsigned int& cp)
+static size_t Wide_Read(const WideChar* src, size_t srcLen, unsigned int& cp)
 {
 	size_t consumed = 1;
 #if UTF8_WCHAR_IS_UTF16
@@ -179,22 +180,22 @@ static size_t Wide_Encoded_Length(unsigned int cp)
 }
 
 // Write one codepoint to a wide buffer, which is assumed to have room. Returns wide characters written.
-static size_t Wide_Write(wchar_t* dest, unsigned int cp)
+static size_t Wide_Write(WideChar* dest, unsigned int cp)
 {
 #if UTF8_WCHAR_IS_UTF16
 	if (cp >= 0x10000)
 	{
 		cp -= 0x10000;
-		dest[0] = (wchar_t)(0xD800 + (cp >> 10));
-		dest[1] = (wchar_t)(0xDC00 + (cp & 0x3FF));
+		dest[0] = (WideChar)(0xD800 + (cp >> 10));
+		dest[1] = (WideChar)(0xDC00 + (cp & 0x3FF));
 		return 2;
 	}
 #endif
-	dest[0] = (wchar_t)cp;
+	dest[0] = (WideChar)cp;
 	return 1;
 }
 
-size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
+size_t Wide_To_Utf8_Len(const WideChar* src, size_t srcLen)
 {
 	size_t needed = 0;
 	size_t i = 0;
@@ -225,7 +226,7 @@ size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 	return needed;
 }
 
-size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
+size_t Wide_To_Utf8(char* dest, size_t destLen, const WideChar* src, size_t srcLen)
 {
 	size_t needed = 0;
 	size_t out = 0;
@@ -249,7 +250,7 @@ size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLe
 	return needed;
 }
 
-size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
+size_t Utf8_To_Wide(WideChar* dest, size_t destLen, const char* src, size_t srcLen)
 {
 	size_t needed = 0;
 	size_t out = 0;

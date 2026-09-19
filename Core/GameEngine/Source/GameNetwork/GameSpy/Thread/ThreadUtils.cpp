@@ -27,19 +27,24 @@
 // Author: Matthew D. Campbell, July 2002
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Lib/WideChar.h"
+#include <string>
 
 #include "WWLib/utf8.h"
 
 //-------------------------------------------------------------------------
 
 // TheSuperHackers @refactor bobtista 02/04/2026 Use WWLib UTF-8 functions instead of raw Win32 API calls
-std::wstring MultiByteToWideCharSingleLine( const char *orig )
+std::basic_string<WideChar> MultiByteToWideCharSingleLine( const char* orig )
 {
 	const size_t srcLen = strlen(orig);
 	const size_t dstLen = Utf8_To_Wide_Len(orig, srcLen);
 	if (dstLen == 0)
-		return std::wstring();
-	std::wstring ret;
+	{
+		return std::basic_string<WideChar>();
+	}
+
+	std::basic_string<WideChar> ret;
 	if (dstLen == UTF8_INVALID)
 	{
 		// Not UTF-8. Fall back to a 1:1 byte cast so legacy data keeps its characters, matching
