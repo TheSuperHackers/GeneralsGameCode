@@ -126,6 +126,8 @@ public:
 	ControlBarScheme();
 	~ControlBarScheme();
 
+	Bool isValid() const;
+	void validate() const;
 	void init();
 	void update();
 	void drawForeground( Coord2D multi, ICoord2D offset );	///< draw function to be called within a w3d draw procedure for the foreground
