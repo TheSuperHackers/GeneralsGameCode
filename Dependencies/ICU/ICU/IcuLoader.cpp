@@ -21,54 +21,158 @@
 #if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
 
 #include <Utility/interlocked_adapter.h>
+#include <string.h>
+#include <wchar.h>
 
-const IcuLoader& IcuLoader::get()
+namespace
 {
-    // VC6 does not synchronize function-local static construction. Serialize it
-    // on every toolchain, including publication of the resolved function pointers.
-    // LONG* works with both VC6 and current SDK InterlockedExchange signatures.
-    static LONG gate = 0;
-    while (InterlockedCompareExchange(&gate, 1, 0) != 0)
+
+LONG Gate = 0;
+unsigned int ReferenceCount = 0;
+HMODULE Module = nullptr;
+IcuLoader::StrFromUtf8 FromUtf8 = nullptr;
+IcuLoader::StrToUtf8WithSub ToUtf8WithSub = nullptr;
+
+class LoaderLock
+{
+public:
+    LoaderLock()
     {
-        Sleep(0);
+        // LONG* works with both VC6 and current SDK interlocked signatures.
+        while (InterlockedCompareExchange(&Gate, 1, 0) != 0)
+        {
+            Sleep(0);
+        }
     }
 
-    static IcuLoader loader;
-    InterlockedExchange(&gate, 0);
-    return loader;
+    ~LoaderLock()
+    {
+        InterlockedExchange(&Gate, 0);
+    }
+
+private:
+    LoaderLock(const LoaderLock&);
+    LoaderLock& operator=(const LoaderLock&);
+};
+
+HMODULE loadModule()
+{
+    // Use absolute paths so -setCwd and PATH cannot supply an unexpected DLL.
+    // Wide paths also allow app-local ICU in non-ASCII installation directories.
+    wchar_t path[MAX_PATH];
+    const wchar_t name[] = L"icu.dll";
+    const DWORD length = GetModuleFileNameW(nullptr, path, MAX_PATH);
+    if (length > 0 && length < MAX_PATH)
+    {
+        wchar_t* separator = wcsrchr(path, L'\\');
+        if (separator != nullptr && separator + 1 - path + sizeof(name) / sizeof(name[0]) <= MAX_PATH)
+        {
+            memcpy(separator + 1, name, sizeof(name));
+            HMODULE module = LoadLibraryW(path);
+            if (module != nullptr)
+            {
+                return module;
+            }
+        }
+    }
+
+    const UINT systemLength = GetSystemDirectoryW(path, MAX_PATH);
+    if (systemLength > 0 && systemLength + 1 + sizeof(name) / sizeof(name[0]) <= MAX_PATH)
+    {
+        path[systemLength] = L'\\';
+        memcpy(path + systemLength + 1, name, sizeof(name));
+        return LoadLibraryW(path);
+    }
+
+    return nullptr;
 }
 
-IcuLoader::IcuLoader() : m_module(nullptr), m_fromUtf8(nullptr), m_toUtf8WithSub(nullptr)
+void freeResources()
 {
-    // Match the Windows SDK delay loader's DLL search order, including app-local ICU.
-    m_module = LoadLibraryA("icu.dll");
-    if (m_module == nullptr)
+    if (Module != nullptr)
+    {
+        FreeLibrary(Module);
+        Module = nullptr;
+    }
+
+    FromUtf8 = nullptr;
+    ToUtf8WithSub = nullptr;
+}
+
+} // namespace
+
+bool IcuLoader::load()
+{
+    LoaderLock lock;
+    // Failed attempts also retain a reference so overlapping callers share the
+    // result. Once all callers unload, a later load can retry.
+    if (++ReferenceCount > 1)
+    {
+        return isLoaded();
+    }
+
+    Module = loadModule();
+    if (Module == nullptr)
+    {
+        return false;
+    }
+
+    FromUtf8 = reinterpret_cast<StrFromUtf8>(GetProcAddress(Module, "u_strFromUTF8"));
+    ToUtf8WithSub = reinterpret_cast<StrToUtf8WithSub>(GetProcAddress(Module, "u_strToUTF8WithSub"));
+    if (FromUtf8 == nullptr || ToUtf8WithSub == nullptr)
+    {
+        freeResources();
+        return false;
+    }
+
+    return true;
+}
+
+void IcuLoader::unload()
+{
+    LoaderLock lock;
+    if (ReferenceCount == 0)
     {
         return;
     }
 
-    m_fromUtf8 = reinterpret_cast<StrFromUtf8>(GetProcAddress(m_module, "u_strFromUTF8"));
-    m_toUtf8WithSub = reinterpret_cast<StrToUtf8WithSub>(GetProcAddress(m_module, "u_strToUTF8WithSub"));
-    if (m_fromUtf8 == nullptr || m_toUtf8WithSub == nullptr)
+    if (--ReferenceCount == 0)
     {
-        FreeLibrary(m_module);
-        m_module = nullptr;
-        m_fromUtf8 = nullptr;
-        m_toUtf8WithSub = nullptr;
+        freeResources();
     }
 }
 
-IcuLoader::~IcuLoader()
+bool IcuLoader::isLoaded()
 {
-    if (m_module != nullptr)
-    {
-        FreeLibrary(m_module);
-    }
+    return Module != nullptr;
 }
 
-bool IcuLoader::isAvailable() const
+IcuLoader::StrFromUtf8 IcuLoader::fromUtf8()
 {
-    return m_module != nullptr;
+    return FromUtf8;
+}
+
+IcuLoader::StrToUtf8WithSub IcuLoader::toUtf8WithSub()
+{
+    return ToUtf8WithSub;
 }
 
 #endif
+
+IcuScope::IcuScope()
+{
+#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+    m_available = IcuLoader::load();
+#elif defined(RTS_HAS_ICU)
+    m_available = true;
+#else
+    m_available = false;
+#endif
+}
+
+IcuScope::~IcuScope()
+{
+#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+    IcuLoader::unload();
+#endif
+}

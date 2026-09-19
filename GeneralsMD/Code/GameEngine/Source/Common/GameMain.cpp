@@ -31,6 +31,7 @@
 #include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/ReplaySimulation.h"
+#include "ICU/IcuLoader.h"
 
 
 /**
@@ -38,6 +39,8 @@
  */
 Int GameMain()
 {
+	// Retain ICU through engine teardown; worker conversions hold their own references.
+	IcuScope icu;
 	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheFramePacer = new FramePacer();
