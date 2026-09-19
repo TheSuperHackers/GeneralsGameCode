@@ -3559,6 +3559,16 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
+		case GameMessage::MSG_META_TOGGLE_TERRAIN_PARTICLES:
+		{
+			if (TheParticleSystemManager)
+			{
+				TheParticleSystemManager->cycleTerrainParticleRenderMode();
+			}
+			disp = DESTROY_MESSAGE;
+			break;
+		}
+
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
     case GameMessage::MSG_CHEAT_RUNSCRIPT1:
     case GameMessage::MSG_CHEAT_RUNSCRIPT2:

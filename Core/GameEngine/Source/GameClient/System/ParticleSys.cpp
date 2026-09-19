@@ -2677,6 +2677,46 @@ void ParticleSystem::loadPostProcess()
 
 }
 
+static Bool forceTerrainConforming(const AsciiString &templateName)
+{
+	static const char *const templateNames[] = {
+		"AnthraxFieldLarge",
+		"AnthraxFieldMedium",
+		"AnthraxFieldSmall",
+		"AnthraxGammaPuddleContinuous",
+		"AnthraxGammaPuddleLarge",
+		"AnthraxPuddle",
+		"AnthraxPuddleContinuous",
+		"AnthraxPuddleLarge",
+		"CleanupPuddle",
+		"GC_Chem_AnthraxFieldGammaLarge",
+		"GC_Chem_AnthraxFieldGammaMedium",
+		"GC_Chem_AnthraxGammaFieldLarge",
+		"GC_Chem_AnthraxGammaFieldMedium",
+		"GC_Chem_AnthraxGammaFieldSmall",
+		"GC_Chem_ToxinPuddle",
+		"NukeRadiationInitial",
+		"PoisonFieldLarge",
+		"PoisonFieldMedium",
+		"PoisonFieldSmall",
+		"RadiationFieldLarge",
+		"RadiationFieldMedium",
+		"RadiationFieldSmall",
+		"ToxinPuddle",
+		"ToxinPuddleContinuous",
+		"ToxinPuddleLarge",
+		"ToxinTankPuddle",
+	};
+
+	for (Int i = 0; i < ARRAY_SIZE(templateNames); ++i)
+	{
+		if (templateName == templateNames[i])
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // ParticleSystemTemplate /////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2911,6 +2951,14 @@ void ParticleSystemTemplate::validate()
 		m_particleType = ParticleSystemInfo::SMUDGE;
 	}
 #endif
+
+	if (m_particleAlignment == PARTICLE_ALIGNMENT_XYPLANAR && forceTerrainConforming(m_name))
+		m_particleAlignment = PARTICLE_ALIGNMENT_CONFORMING;
+
+#if !ENABLE_TERRAIN_CONFORMING_PARTICLES
+	if (m_particleAlignment == PARTICLE_ALIGNMENT_CONFORMING)
+		m_particleAlignment = PARTICLE_ALIGNMENT_XYPLANAR;
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2937,6 +2985,8 @@ ParticleSystem *ParticleSystemTemplate::createSlaveSystem( Bool createSlaves ) c
 ParticleSystemManager::ParticleSystemManager()
 {
 
+	for (Int alignment = 0; alignment < ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT; ++alignment)
+		m_alignmentSystemsTail[alignment] = m_allParticleSystemList.end();
 	m_uniqueSystemID = INVALID_PARTICLE_SYSTEM_ID;
 
 	m_onScreenParticleCount = 0;
@@ -2945,6 +2995,7 @@ ParticleSystemManager::ParticleSystemManager()
 	m_lastLogicFrameUpdate = 0;
 	m_particleCount = 0;
 	m_fieldParticleCount = 0;
+	m_terrainParticleRenderMode = TERRAIN_PARTICLE_CONFORMING;
 	m_particleSystemCount = 0;
 
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
@@ -2958,6 +3009,21 @@ ParticleSystemManager::ParticleSystemManager()
 }
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+ParticleSystemManager::TerrainParticleRenderMode ParticleSystemManager::cycleTerrainParticleRenderMode()
+{
+	switch (m_terrainParticleRenderMode)
+	{
+		case TERRAIN_PARTICLE_CONFORMING:
+			m_terrainParticleRenderMode = TERRAIN_PARTICLE_GROUND_ALIGNED;
+			break;
+		default:
+			m_terrainParticleRenderMode = TERRAIN_PARTICLE_CONFORMING;
+			break;
+	}
+	return m_terrainParticleRenderMode;
+}
+
 // ------------------------------------------------------------------------------------------------
 ParticleSystemManager::~ParticleSystemManager()
 {
@@ -3310,7 +3376,26 @@ void ParticleSystemManager::removeParticle( Particle *particleToRemove)
 void ParticleSystemManager::friend_addParticleSystem( ParticleSystem *particleSystemToAdd )
 {
 	DEBUG_ASSERTCRASH(particleSystemToAdd != nullptr, ("ParticleSystemManager::friend_addParticleSystem: ParticleSystem is null"));
-	m_allParticleSystemList.push_back(particleSystemToAdd);
+	// Group particle systems by alignment
+	const ParticleSystemInfo::ParticleAlignmentType alignment = particleSystemToAdd->getParticleAlignment();
+	if (particleSystemToAdd->isUsingParticles() && alignment != ParticleSystemInfo::PARTICLE_ALIGNMENT_BILLBOARD)
+	{
+		ParticleSystemListIt position = m_allParticleSystemList.begin();
+		for (Int group = alignment; group < ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT; ++group)
+		{
+			if (m_alignmentSystemsTail[group] != m_allParticleSystemList.end())
+			{
+				position = m_alignmentSystemsTail[group];
+				++position;
+				break;
+			}
+		}
+		m_alignmentSystemsTail[alignment] = m_allParticleSystemList.insert(position, particleSystemToAdd);
+	}
+	else
+	{
+		m_allParticleSystemList.push_back(particleSystemToAdd);
+	}
 	m_systemMap[particleSystemToAdd->getSystemID()] = particleSystemToAdd;
 	++m_particleSystemCount;
 }
@@ -3323,6 +3408,20 @@ void ParticleSystemManager::friend_removeParticleSystem( ParticleSystem *particl
 	ParticleSystemListIt it = std::find(m_allParticleSystemList.begin(), m_allParticleSystemList.end(), particleSystemToRemove);
 	if (it != m_allParticleSystemList.end()) {
 		m_systemMap.erase((*it)->getSystemID());
+		for (Int alignment = 0; alignment < ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT; ++alignment)
+		{
+			if (it != m_alignmentSystemsTail[alignment])
+				continue;
+			m_alignmentSystemsTail[alignment] = m_allParticleSystemList.end();
+			if (it != m_allParticleSystemList.begin())
+			{
+				ParticleSystemListIt previous = it;
+				--previous;
+				if ((*previous)->isUsingParticles() && (*previous)->getParticleAlignment() == alignment)
+					m_alignmentSystemsTail[alignment] = previous;
+			}
+			break;
+		}
 		m_allParticleSystemList.erase(it);
 		--m_particleSystemCount;
 	} else {

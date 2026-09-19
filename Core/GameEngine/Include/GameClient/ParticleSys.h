@@ -30,6 +30,7 @@
 #pragma once
 
 #include "Common/AsciiString.h"
+#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -434,8 +435,9 @@ public:
 
 	enum ParticleAlignmentType CPP_11(: Int)
 	{
-		PARTICLE_ALIGNMENT_BILLBOARD = 0,
-		PARTICLE_ALIGNMENT_XYPLANAR,
+		PARTICLE_ALIGNMENT_BILLBOARD = 0,		///< Align the particle toward the camera.
+		PARTICLE_ALIGNMENT_XYPLANAR,		///< Align the particle on a flat horizontal surface.
+		PARTICLE_ALIGNMENT_CONFORMING,		///< Align the particle as projected on the terrain.
 		PARTICLE_ALIGNMENT_TYPE_COUNT
 	};
 	ParticleAlignmentType m_particleAlignment;		///< align particles toward the camera or with the XY plane.
@@ -504,7 +506,7 @@ static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, 
 
 static const char *const GroundAlignmentTypeNames[] =
 {
-	"No", "Yes", nullptr
+	"No", "Yes", "Conforming", nullptr
 };
 static_assert(ARRAY_SIZE(GroundAlignmentTypeNames) == ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT + 1, "Incorrect array size");
 
@@ -819,6 +821,13 @@ public:
 	UnsignedInt getParticleCount() const { return m_particleCount; }
 
 	UnsignedInt getFieldParticleCount()     const { return m_fieldParticleCount; }
+	enum TerrainParticleRenderMode
+	{
+		TERRAIN_PARTICLE_CONFORMING,
+		TERRAIN_PARTICLE_GROUND_ALIGNED
+	};
+	TerrainParticleRenderMode getTerrainParticleRenderMode() const { return m_terrainParticleRenderMode; }
+	TerrainParticleRenderMode cycleTerrainParticleRenderMode();
 
 	UnsignedInt getParticleSystemCount() const { return m_particleSystemCount; }
 
@@ -847,8 +856,10 @@ protected:
 	ParticleSystemID m_uniqueSystemID;					///< unique system ID to assign to each system created
 
 	ParticleSystemList m_allParticleSystemList;
+	ParticleSystemListIt m_alignmentSystemsTail[ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT]; ///< last system per grouped alignment, or end if none
 
 	UnsignedInt m_particleCount;
+	TerrainParticleRenderMode m_terrainParticleRenderMode; ///< Local runtime rendering preference; not serialized
 	UnsignedInt m_fieldParticleCount; ///< this does not need to be xfered, since it is evaluated every frame
 	UnsignedInt m_particleSystemCount;
 	Int m_onScreenParticleCount;                ///< number of particles displayed on screen per frame

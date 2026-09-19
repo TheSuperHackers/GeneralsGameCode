@@ -278,6 +278,7 @@ public:
 		MSG_META_TOGGLE_PAUSE_ALT,									///< TheSuperHackers @feature Toggle game pause (alternative mapping)
 		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame
 		MSG_META_STEP_FRAME_ALT,										///< TheSuperHackers @feature Step one frame (alternative mapping)
+		MSG_META_TOGGLE_TERRAIN_PARTICLES, ///< Toggle terrain-conforming particles between conforming and ground-aligned rendering
 		MSG_META_DEMO_INSTANT_QUIT,									///< bail out of game immediately
 
 
