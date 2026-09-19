@@ -270,6 +270,7 @@ public:
 		m_deathType = DEATH_NORMAL;
 		m_amount = 0;
 		m_kill = FALSE;
+		m_enterSecondLife = FALSE;
 
     m_shockWaveVector.zero();
     m_shockWaveAmount   = 0.0f;
@@ -286,6 +287,7 @@ public:
 	DeathType			 m_deathType;						///< if this kills us, death type to be used
 	Real					 m_amount;								///< # value of how much damage to inflict
 	Bool						m_kill;									///< will always cause object to die regardless of damage.
+	Bool m_enterSecondLife;
 
 	// These are used for damage causing shockwave, forcing units affected to be pushed around
 	Coord3D				 m_shockWaveVector;				///< This represents the incoming damage vector
