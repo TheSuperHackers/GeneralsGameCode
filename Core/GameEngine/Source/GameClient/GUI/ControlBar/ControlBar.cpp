@@ -3585,6 +3585,10 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @info 08/09/2026 isApparentControllingPlayerNeutral tries to take into consideration whether the stealth unit inside
+// wouldn't change the appearance for an observing player compared to getting the controlling player directly
+//-------------------------------------------------------------------------------------------------
+
 Bool ControlBar::isApparentControllingPlayerNeutral(const Object* obj) const
 {
 	ContainModuleInterface* contain = obj->getContain();
