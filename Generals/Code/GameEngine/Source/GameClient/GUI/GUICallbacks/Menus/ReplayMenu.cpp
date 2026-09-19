@@ -29,6 +29,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Lib/WideChar.h"
 
 
 #include "Lib/BaseType.h"
@@ -860,7 +861,7 @@ void copyReplay()
 	newFilename.concat(translate);
 	if(CopyFile(filename.str(),newFilename.str(), FALSE) == 0)
 	{
-		wchar_t buffer[1024];
+		WideChar buffer[1024];
 		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), nullptr);
 		UnicodeString errorStr;
 		errorStr.set(buffer);

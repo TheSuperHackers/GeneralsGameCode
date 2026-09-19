@@ -30,10 +30,8 @@
 #pragma once
 
 #include "Lib/BaseTypeCore.h"
+#include "Lib/WideChar.h"
 #include "Lib/trig.h"
-
-//-----------------------------------------------------------------------------
-typedef wchar_t WideChar;  ///< multi-byte character representations
 
 //-----------------------------------------------------------------------------
 template <typename NUM>

@@ -36,7 +36,9 @@
 
 #pragma once
 
+#include "Lib/WideChar.h"
+
 #include <wchar.h>
 
 char * strtrim(char * buffer);
-wchar_t * wcstrim(wchar_t * buffer);
+WideChar* wcstrim(WideChar* buffer);

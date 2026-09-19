@@ -48,6 +48,7 @@
 
 #define  STRICT
 #include <windows.h>
+#include "Lib/WideChar.h"
 #include <windowsx.h>
 #include <assert.h>
 #include <ctype.h>
@@ -666,7 +667,7 @@ int TTFontClass::Set_YSpacing( int y )
 
 Point2D TTFontClass::Print(
 	HDC hdc,
-	wchar_t const * string,
+	const WideChar* string,
 	Rect const & cliprect,
 	COLORREF forecolor,		/* = TEXT_COLOR,		*/
 	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
@@ -686,7 +687,7 @@ Point2D TTFontClass::Print(
 
 Point2D TTFontClass::Print(
 	HDC hdc,
-	wchar_t const * string,
+	const WideChar* string,
 	Rect const & cliprect,
 	COLORREF forecolor,		/* = TEXT_COLOR,		*/
 	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
