@@ -134,8 +134,6 @@ set(WWLIB_SRC
     trim.cpp
     trim.h
     uarray.h
-    utf8.cpp
-    utf8.h
     vector.cpp
     Vector.h
     visualc.h
@@ -189,4 +187,8 @@ target_precompile_headers(core_wwlib PRIVATE
 target_link_libraries(core_wwlib PRIVATE
     core_wwcommon
     corei_always
+)
+
+target_link_libraries(core_wwlib PUBLIC
+    core_icu
 )

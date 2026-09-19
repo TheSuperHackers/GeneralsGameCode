@@ -65,6 +65,7 @@ else()
 endif()
 
 include(cmake/config.cmake)
+include(cmake/icu.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
@@ -75,6 +76,7 @@ if (IS_VS6_BUILD)
     add_subdirectory(Dependencies/MaxSDK)
 endif()
 add_subdirectory(Dependencies/Utility)
+add_subdirectory(Dependencies/ICU)
 
 # To be removed when abandoning VC6
 if (IS_VS6_BUILD)
