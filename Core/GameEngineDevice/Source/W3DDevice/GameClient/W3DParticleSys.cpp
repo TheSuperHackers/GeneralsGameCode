@@ -333,6 +333,15 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			pointCount = startCount;
 		}
 
+		// Handle lone streak type particles by drawing them as regular particles.
+		if (sys->isUsingStreak() && (pointCount == 1))
+		{
+			m_onScreenParticleCount += (pointCount - startCount);
+			initializeBatch(*sys, texture);
+			flushParticleBatch(rinfo, pointCount);
+			startCount = 0;
+		}
+
 		// Handle volumetric type particle systems.
 		const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
 		if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
