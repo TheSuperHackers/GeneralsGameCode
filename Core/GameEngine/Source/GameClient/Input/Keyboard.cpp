@@ -225,7 +225,7 @@ Bool Keyboard::checkKeyRepeat()
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
 
-			const UnsignedInt now = timeGetTime();
+			const UnsignedInt now = TheGameEngine ? TheGameEngine->getTicksMsec() : timeGetTime();
 			const UnsignedInt keyDownTime = m_keyStatus[ key ].keyDownTimeMsec;
 			const UnsignedInt elapsedMsec = now - keyDownTime;
 
