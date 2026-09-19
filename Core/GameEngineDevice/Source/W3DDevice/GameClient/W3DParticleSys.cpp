@@ -287,6 +287,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			continue;	//this system has no particles to render
 		}
 
+		const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
+
 		// Handle drawing streak type particles.
 		if ( sys->isUsingStreak() && (pointCount >= 2) )
 		{
@@ -332,10 +334,16 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 			m_onScreenParticleCount += (pointCount - startCount);
 			pointCount = startCount;
 		}
-
+		// Handle lone streak type particles by drawing them as regular particles.
+		else if (sys->isUsingStreak() && (pointCount == 1))
+		{
+			m_onScreenParticleCount += (pointCount - startCount);
+			initializeBatch(*sys, texture);
+			flushParticleBatch(rinfo, pointCount);
+			startCount = 0;
+		}
 		// Handle volumetric type particle systems.
-		const UnsignedInt volumeParticleDepth = sys->getVolumeParticleDepth();
-		if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
+		else if( sys->isUsingVolumeParticles() && volumeParticleDepth > DEFAULT_VOLUME_PARTICLE_DEPTH )
 		{
 			m_pointGroup->Set_Texture( texture.Peek() );
 			m_pointGroup->Set_Flag( PointGroupClass::TRANSFORM, true );	// transform to screen space
