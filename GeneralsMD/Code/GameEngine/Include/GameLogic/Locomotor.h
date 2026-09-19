@@ -177,6 +177,7 @@ private:
 	Real											m_braking;							///< max braking (deceleration)
 	Real											m_minTurnSpeed;					///< we must be going >= this speed in order to turn
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
+	Real											m_speedScale;						///< factor that turns an authored speed into its compensated speed
 	Real											m_maxSpeedScaled;				///< compensated max speed
 	Real											m_maxSpeedDamagedScaled;///< compensated speed when "damaged"
 	Real											m_minSpeedScaled;				///< compensated min speed; we should never brake past this
