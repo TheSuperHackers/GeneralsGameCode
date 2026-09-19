@@ -153,7 +153,7 @@ void DamageInfoInput::xfer( Xfer *xfer )
 	xfer->xferReal( &m_amount );
 
 	// kill no matter what (old versions default to FALSE).
-	if( currentVersion >= 2 )
+	if( version >= 2 )
 	{
 		xfer->xferBool( &m_kill );
 	}
