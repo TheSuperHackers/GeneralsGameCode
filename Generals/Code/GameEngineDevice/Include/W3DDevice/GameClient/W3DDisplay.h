@@ -80,6 +80,7 @@ public:
 	virtual Bool	isClippingEnabled() override { return m_isClippedEnabled; }
 	virtual void	enableClipping( Bool onoff ) override { m_isClippedEnabled = onoff; }
 
+	virtual void update() override; ///< Update the client state of the display
 	virtual void step() override; ///< Do one fixed time step
 	virtual void draw() override;  ///< redraw the entire display
 
