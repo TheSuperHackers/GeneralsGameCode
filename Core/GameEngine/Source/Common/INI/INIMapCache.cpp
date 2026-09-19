@@ -32,6 +32,7 @@
 
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
+#include "Common/FileSystem.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -194,7 +195,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 
 	if(TheMapCache && !md.m_displayName.isEmpty())
 	{
-		AsciiString lowerName = name;
+		AsciiString lowerName = FileSystem::normalizePathSeparators(name);
 		lowerName.toLower();
 		md.m_fileName = lowerName;
 //		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
