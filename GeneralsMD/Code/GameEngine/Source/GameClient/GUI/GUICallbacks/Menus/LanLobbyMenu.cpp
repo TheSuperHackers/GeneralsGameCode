@@ -60,6 +60,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/NetworkAutoStart.h"
 #include "GameNetwork/LANGameInfo.h"
 
 Bool LANisShuttingDown = false;
@@ -417,6 +418,12 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 
 	// Choose an IP address, then initialize the LAN singleton
 	UnsignedInt IP = TheGlobalData->m_defaultIP;
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::isEnabled() && NetworkAutoStart::getLocalAddress() != 0)
+	{
+		IP = NetworkAutoStart::getLocalAddress();
+	}
+#endif
 	IPEnumeration IPs;
 	const WideChar* IPSource;
 	if (!IP)
@@ -428,6 +435,13 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 			IPlist = IPlist->getNext();
 		}
 		*/
+#if defined(RTS_DEBUG)
+		if (!IPlist && NetworkAutoStart::isEnabled())
+		{
+			NetworkAutoStart::onLocalAddressSet(false);
+			return;
+		}
+#endif
 		DEBUG_ASSERTCRASH(IPlist, ("No IP addresses found!"));
 		if (!IPlist)
 		{
@@ -448,8 +462,14 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 #endif
 
 	// TheLAN->init() sets us to be in a LAN menu screen automatically.
-	TheLAN->init();
-	if (TheLAN->SetLocalIP(IP) == FALSE) {
+	if (TheLAN->init(IP) == FALSE) {
+#if defined(RTS_DEBUG)
+		if (NetworkAutoStart::isEnabled())
+		{
+			NetworkAutoStart::onLocalAddressSet(false);
+			return;
+		}
+#endif
 		LANSocketErrorDetected = TRUE;
 	}
 
@@ -612,6 +632,25 @@ void LanLobbyMenuUpdate( WindowLayout * layout, void *userData)
 
 	if (TheShell->isAnimFinished() && !LANbuttonPushed && TheLAN)
 		TheLAN->update();
+
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::hasFailed())
+	{
+		return;
+	}
+	if (NetworkAutoStart::isEnabled() && LANSocketErrorDetected)
+	{
+		NetworkAutoStart::onLocalAddressSet(false);
+		return;
+	}
+	if (TheShell->isAnimFinished() && !LANbuttonPushed && NetworkAutoStart::shouldOpenDirectConnect())
+	{
+		NetworkAutoStart::markDirectConnectOpened();
+		TheWindowManager->winSendSystemMsg(buttonDirectConnect->winGetParent(), GBM_SELECTED,
+			(WindowMsgData)buttonDirectConnect, buttonDirectConnectID);
+		return;
+	}
+#endif
 
 	if (LANSocketErrorDetected == TRUE) {
 		LANSocketErrorDetected = FALSE;
