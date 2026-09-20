@@ -254,8 +254,8 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	m_constructionPercent = CONSTRUCTION_COMPLETE;  // complete by default
 
-	m_visionRange = tt->friend_getVisionRange();
-	m_shroudClearingRange = tt->friend_getShroudClearingRange();
+	m_visionRange = tt->friend_calcVisionRange();
+	m_shroudClearingRange = tt->friend_calcShroudClearingRange();
 	if( m_shroudClearingRange == -1.0f )
 		m_shroudClearingRange = m_visionRange;// Backwards compatible, and perfectly logical default to assign
 	m_shroudRange = 0.0f;
@@ -4166,6 +4166,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	handlePartitionCellMaintenance();
 	if(m_team)
 		m_team->notifyTeamOfObjectDeath();
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
 	// Play death sound here.
 
 	AudioEventRTS deathSound = *getTemplate()->getSoundDie();
@@ -4187,6 +4188,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	PlayerIndex index = getControllingPlayer() ? getControllingPlayer()->getPlayerIndex() : 0;
 	deathSound.setPlayerIndex( index );
 	TheAudio->addAudioEvent(&deathSound);
+#endif
 
 	if (isLocallyViewed() && !selfInflicted) // wasLocallyViewed? :-)
 	{

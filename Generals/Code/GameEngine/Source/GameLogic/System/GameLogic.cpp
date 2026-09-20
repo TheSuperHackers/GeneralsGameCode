@@ -229,6 +229,12 @@ const char* toString(GameMode mode)
 }
 
 // ------------------------------------------------------------------------------------------------
+UnsignedShort GameLogic::getSuperweaponRestriction() const
+{
+  return TheGameInfo ? TheGameInfo->getSuperweaponRestriction() : 0;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** GameLogic class constructor */
 // ------------------------------------------------------------------------------------------------
 GameLogic::GameLogic()

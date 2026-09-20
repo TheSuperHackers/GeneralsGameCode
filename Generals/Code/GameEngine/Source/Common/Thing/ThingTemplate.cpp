@@ -70,6 +70,8 @@
 #include "GameLogic/Powers.h"
 #include "GameLogic/Weapon.h"
 
+#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
+
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -137,6 +139,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "WeaponSet",						ThingTemplate::parseWeaponTemplateSet,nullptr, 0},
 	{ "VisionRange",					INI::parseReal,												nullptr,		offsetof( ThingTemplate, m_visionRange ) },
 	{ "ShroudClearingRange",	INI::parseReal,												nullptr,		offsetof( ThingTemplate, m_shroudClearingRange ) },
+	{ "ShroudRevealToAllRange",	INI::parseReal,											nullptr,		offsetof( ThingTemplate, m_shroudRevealToAllRange ) }, // Added in Zero Hour
 
 	{ "PlacementViewAngle",		INI::parseAngleReal,									nullptr,		offsetof( ThingTemplate, m_placementViewAngle ) },
 
@@ -147,6 +150,8 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "ExperienceValue",			ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_experienceValues ) },
 	{ "ExperienceRequired",		ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_experienceRequired ) },
 	{ "IsTrainable",					INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_isTrainable ) },
+	{ "EnterGuard",						INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_enterGuard ) }, // Added in Zero Hour
+	{ "HijackGuard",					INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_hijackGuard ) }, // Added in Zero Hour
 
 	{ "Side",									INI::parseAsciiString,								nullptr,	offsetof( ThingTemplate, m_defaultOwningSide ) },
 
@@ -214,8 +219,12 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "SoundMoveStartDamaged",INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundMoveStartDamaged]) },
 	{ "SoundMoveLoop",				INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundMoveLoop]) },
 	{ "SoundMoveLoopDamaged",	INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundMoveLoopDamaged]) },
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
 	{ "SoundDie",							INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundDie]) },
+	{ "SoundDieFire",					INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundDieFire ]) },
+	{ "SoundDieToxin",				INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundDieToxin ]) },
 	{ "SoundCrush",						INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundCrush ]) },
+#endif
 	{ "SoundAmbient",					INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundAmbient ]) },
 	{ "SoundAmbientDamaged",	INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundAmbientDamaged ]) },
 	{ "SoundAmbientReallyDamaged",INI::parseDynamicAudioEventRTS,	nullptr,offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundAmbientReallyDamaged ]) },
@@ -225,8 +234,6 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "SoundCreated",					INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundCreated ]) },
 	{ "SoundOnDamaged",				INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundOnDamaged ]) },
 	{ "SoundOnReallyDamaged",	INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundOnReallyDamaged ]) },
-	{ "SoundDieFire",					INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundDieFire ]) },
-	{ "SoundDieToxin",				INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundDieToxin ]) },
 	{ "SoundEnter",						INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundEnter ]) },
 	{ "SoundExit",						INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundExit ]) },
 	{ "SoundPromotedVeteran",	INI::parseDynamicAudioEventRTS,	nullptr,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundPromotedVeteran ]) },
@@ -253,11 +260,15 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "RemoveModule",					ThingTemplate::parseRemoveModule,		nullptr, 0 },
 	{ "ReplaceModule",				ThingTemplate::parseReplaceModule,	nullptr, 0 },
 	{ "InheritableModule",		ThingTemplate::parseInheritableModule,	nullptr, 0 },
+
+  { "OverrideableByLikeKind",		ThingTemplate::OverrideableByLikeKind,	nullptr, 0 }, // Added in Zero Hour
+
 	{ "Locomotor",						AIUpdateModuleData::parseLocomotorSet, nullptr, 0 },
 	{ "InstanceScaleFuzziness",	INI::parseReal,					nullptr, offsetof(ThingTemplate, m_instanceScaleFuzziness ) },
 	{ "StructureRubbleHeight",	INI::parseUnsignedByte,					nullptr, offsetof(ThingTemplate, m_structureRubbleHeight ) },
 	{ "ThreatValue",						INI::parseUnsignedShort,		nullptr, offsetof(ThingTemplate, m_threatValue ) },
-	{ "MaxSimultaneousOfType",	INI::parseUnsignedShort,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousOfType ) },
+  { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousOfType ) },
+  { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) }, // Added in Zero Hour
 	{ "CrusherLevel",					INI::parseUnsignedByte,			nullptr, offsetof( ThingTemplate, m_crusherLevel ) },
 	{ "CrushableLevel",				INI::parseUnsignedByte,			nullptr, offsetof( ThingTemplate, m_crushableLevel ) },
 
@@ -278,6 +289,10 @@ const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] =
 	{ "GeometryIsSmall",			GeometryInfo::parseGeometryIsSmall,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
 	{ "FenceWidth",						INI::parseReal,													nullptr,		offsetof( ThingTemplate, m_fenceWidth ) },
 	{ "FenceXOffset",					INI::parseReal,													nullptr,		offsetof( ThingTemplate, m_fenceXOffset ) },
+
+  // Needed to avoid some cheats with the scud storm rebuild hole
+  { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousOfType ) }, // Added in Zero Hour
+  { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) }, // Added in Zero Hour
 
 	{ nullptr, nullptr, nullptr, 0 }
 
@@ -308,7 +323,8 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 															 const AsciiString& moduleTag,
 															 const ModuleData* data,
 															 Int interfaceMask,
-															 Bool inheritable)
+															 Bool inheritable,
+                               Bool overrideableByLikeKind)
 {
 
 	//
@@ -374,7 +390,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 #endif
 
-	m_info.push_back(Nugget(name, moduleTag, data, interfaceMask, inheritable));
+	m_info.push_back(Nugget(name, moduleTag, data, interfaceMask, inheritable, overrideableByLikeKind));
 
 }
 
@@ -404,26 +420,94 @@ Bool ModuleInfo::clearModuleDataWithTag(const AsciiString& tagToClear, AsciiStri
 	return cleared;
 }
 
+
+
+
+
 //-------------------------------------------------------------------------------------------------
-Bool ModuleInfo::clearCopiedFromDefaultEntries(Int interfaceMask)
+Bool ModuleInfo::clearCopiedFromDefaultEntries(Int interfaceMask, const AsciiString &newName, const ThingTemplate *fullTemplate )
 {
-	Bool ret = false;
+  static KindOfMaskType ImmuneToGPSScramblerMask;
+  KindOfMaskType &m = ImmuneToGPSScramblerMask;
+  m.set(KINDOF_AIRCRAFT);// NO PLANES or helicopters
+  m.set(KINDOF_SHRUBBERY);// NO trees or bushes
+  m.set(KINDOF_OPTIMIZED_TREE);
+  m.set(KINDOF_STRUCTURE);// NO buildings
+  m.set(KINDOF_DRAWABLE_ONLY);
+  m.set(KINDOF_MOB_NEXUS);
+  m.set(KINDOF_IGNORED_IN_GUI);
+  m.set(KINDOF_CLEARED_BY_BUILD);
+  m.set(KINDOF_DEFENSIVE_WALL);
+  m.set(KINDOF_BALLISTIC_MISSILE);
+  m.set(KINDOF_SUPPLY_SOURCE);
+  m.set(KINDOF_BOAT);
+  m.set(KINDOF_INERT);
+  m.set(KINDOF_BRIDGE);
+  m.set(KINDOF_LANDMARK_BRIDGE);
+  m.set(KINDOF_BRIDGE_TOWER);
+  Bool disallowed =  fullTemplate->isAnyKindOf( ImmuneToGPSScramblerMask );
+
+  static KindOfMaskType CandidateForGPSScramblerMask;
+  CandidateForGPSScramblerMask.set(KINDOF_SCORE);
+  CandidateForGPSScramblerMask.set(KINDOF_VEHICLE);
+  CandidateForGPSScramblerMask.set(KINDOF_INFANTRY);
+  CandidateForGPSScramblerMask.set(KINDOF_PORTABLE_STRUCTURE);
+  Bool candidate =  fullTemplate->isAnyKindOf( CandidateForGPSScramblerMask );
+
+  Bool ret = false;
 
 	std::vector<Nugget>::iterator it = m_info.begin();
 	while( it != m_info.end() )
 	{
-		if( (it->interfaceMask & interfaceMask) != 0 && it->copiedFromDefault && !it->inheritable )
+		if( (it->interfaceMask & interfaceMask) != 0 && it->copiedFromDefault )
 		{
-			it = m_info.erase( it );
-			ret = true;
-		}
-		else
-		{
+      if ( it->inheritable )
+			{
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
+				if( it->m_moduleTag.compare("ModuleTag_DefaultAutoHealBehavior") == 0  && !fullTemplate->isTrainable() )
+				{
+					// Don't inherit this module if it is entirely useless to us.
+          it = m_info.erase( it );
+			    ret = true;
+				}
+				else
+#endif
+				{
+					++it;//skip to the next nugget, 'cause we inherit this one
+				}
+			}
+      else if ( it->overrideableByLikeKind)
+      {
+
+        AsciiString oldName = it->first;
+        if ( oldName == newName  //we will dump this instance, since the INI author requested a specific one of the same class
+             || disallowed  // or, we just do not Add these special overrideables to these kinds of templates, so just dump it
+             || candidate == FALSE )
+        {
+          it = m_info.erase( it );
+			    ret = true;
+        }
+        else
+			    ++it;//no match, preserve the default instance of this Module for now
+      }
+      else // just dump this instance of this Module, since one of the same interface mask has been added by caller
+      {
+        it = m_info.erase( it );
+			  ret = true;
+      }
+    }
+    else
 			++it;
-		}
 	}
 	return ret;
 }
+
+
+
+
+
+
+
 
 //-------------------------------------------------------------------------------------------------
 Bool ModuleInfo::clearAiModuleInfo()
@@ -511,9 +595,13 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	}
 	else
 	{
-		self->m_behaviorModuleInfo.clearCopiedFromDefaultEntries(interfaceMask);
-		self->m_drawModuleInfo.clearCopiedFromDefaultEntries(interfaceMask);
-		self->m_clientUpdateModuleInfo.clearCopiedFromDefaultEntries(interfaceMask);
+
+//    if (self->getName().compare("GLAVehicleQuadCannon"))
+//      DEBUG_CRASH( ("WE ARE CLEARING DEFAULT MODULES FROM A QUAD CANNON.") );
+
+		self->m_behaviorModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
+		self->m_drawModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
+		self->m_clientUpdateModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
 	}
 
 	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE
@@ -541,12 +629,14 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		Bool replaced = mi->clearAiModuleInfo();
 		if (replaced)
 		{
-			DEBUG_LOG(("replaced an AI for %s!",self->getName().str()));
+			//Kris: Commented this out for SPAM reasons. Do we really need this?
+			//DEBUG_LOG(("replaced an AI for %s!",self->getName().str()));
 		}
 	}
 
 	Bool inheritable = (self->m_moduleParsingMode == MODULEPARSE_INHERITABLE);
-	mi->addModuleInfo(self, tokenStr, moduleTagStr, data, interfaceMask, inheritable);
+  Bool overrideableByLikeKind = (self->m_moduleParsingMode == MODULEPARSE_OVERRIDEABLE_BY_LIKE_KIND);
+	mi->addModuleInfo(self, tokenStr, moduleTagStr, data, interfaceMask, inheritable, overrideableByLikeKind);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -761,6 +851,30 @@ void ThingTemplate::parseInheritableModule(INI *ini, void *instance, void *store
 	self->m_moduleParsingMode = oldMode;
 }
 
+
+//-------------------------------------------------------------------------------------------------
+/** mark the module(s) as being "VverrideableByLikeKind". default module will be replaced by any of the exact same class */
+//-------------------------------------------------------------------------------------------------
+void ThingTemplate::OverrideableByLikeKind(INI *ini, void *instance, void *store, const void *userData)
+{
+	ThingTemplate* self = (ThingTemplate*)instance;
+
+	ModuleParseMode oldMode = (ModuleParseMode)self->m_moduleParsingMode;
+	if (oldMode != MODULEPARSE_NORMAL)
+		throw INI_INVALID_DATA;
+
+	self->m_moduleParsingMode = MODULEPARSE_OVERRIDEABLE_BY_LIKE_KIND;
+
+	ini->initFromINI(self, self->getFieldParse());
+
+	self->m_moduleParsingMode = oldMode;
+}
+
+
+
+
+
+
 //-------------------------------------------------------------------------------------------------
 /** Remove the module whose tag matches moduleToRemove. */
 //-------------------------------------------------------------------------------------------------
@@ -863,6 +977,38 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 }
 
 //-------------------------------------------------------------------------------------------------
+// Parse the "maxSimultaneousOfType" keyword
+void ThingTemplate::parseMaxSimultaneous(INI *ini, void *instance, void *store, const void *userData)
+{
+  // Most of the time, this is an UnsignedShort, but sometimes this is the keyword
+  // "DeterminedBySuperweaponRestriction"
+  const char DETERMINED_BY_SUPERWEAPON_KEYWORD[] = "DeterminedBySuperweaponRestriction";
+
+  ThingTemplate *myTemplate = (ThingTemplate *)instance;
+  DEBUG_ASSERTCRASH ( &myTemplate->m_maxSimultaneousOfType == store, ("Bad store passed to parseMaxSimultaneous" ) );
+
+  const char * token = ini->getNextToken();
+  if ( stricmp( token, DETERMINED_BY_SUPERWEAPON_KEYWORD ) == 0 )
+  {
+    myTemplate->m_maxSimultaneousDeterminedBySuperweaponRestriction = true;
+    *(UnsignedShort *)store = 0;
+  }
+  else
+  {
+    // Copied from parseUnsignedShort
+    Int value = INI::scanInt(token);
+    if (value < 0 || value > 65535)
+    {
+      DEBUG_CRASH(("Bad value parseMaxSimultaneous"));
+      throw ERROR_BUG;
+    }
+    *(UnsignedShort *)store = (UnsignedShort)value;
+    myTemplate->m_maxSimultaneousDeterminedBySuperweaponRestriction = false;
+  }
+}
+
+
+//-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ThingTemplate::ThingTemplate() :
 	m_geometryInfo(GEOMETRY_SPHERE, FALSE, 1, 1, 1)
@@ -877,6 +1023,7 @@ ThingTemplate::ThingTemplate() :
 	m_fenceXOffset = 0;
 	m_visionRange = 0.0f;
 	m_shroudClearingRange = -1.0f;
+	m_shroudRevealToAllRange = -1.0f;
 
 	m_buildCost = 0;
 	m_buildTime = 1;
@@ -893,6 +1040,8 @@ ThingTemplate::ThingTemplate() :
 		m_skillPointValues[levelIndex] = USE_EXP_VALUE_FOR_SKILL_VALUE;
 	}
 	m_isTrainable = FALSE;
+	m_enterGuard = FALSE;
+	m_hijackGuard = FALSE;
 
 	m_templateID = 0;
 	m_kindof = KINDOFMASK_NONE;
@@ -917,6 +1066,8 @@ ThingTemplate::ThingTemplate() :
 	m_instanceScaleFuzziness = 0;
 	m_threatValue = 0;
 	m_maxSimultaneousOfType = 0;	// unlimited
+  m_maxSimultaneousLinkKey = NAMEKEY_INVALID; // Not linked
+  m_maxSimultaneousDeterminedBySuperweaponRestriction = false;
 	m_crusherLevel = 0;			//Unspecified, this object is unable to crush anything!
 	m_crushableLevel = 255; //Unspecified, this object is unable to be crushed by anything!
 
@@ -973,8 +1124,12 @@ void ThingTemplate::validateAudio()
 	AUDIO_TEST(SoundMoveStartDamaged)
 	AUDIO_TEST(SoundMoveLoop)
 	AUDIO_TEST(SoundMoveLoopDamaged)
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
 	AUDIO_TEST(SoundDie)
+	AUDIO_TEST(SoundDieFire)
+	AUDIO_TEST(SoundDieToxin)
 	AUDIO_TEST(SoundCrush)
+#endif
 	AUDIO_TEST(SoundAmbient)
 	AUDIO_TEST(SoundAmbientDamaged)
 	AUDIO_TEST(SoundAmbientReallyDamaged)
@@ -985,8 +1140,6 @@ void ThingTemplate::validateAudio()
 
 	AUDIO_TEST(SoundOnDamaged)
 	AUDIO_TEST(SoundOnReallyDamaged)
-	AUDIO_TEST(SoundDieFire)
-	AUDIO_TEST(SoundDieToxin)
 	AUDIO_TEST(SoundEnter)
 	AUDIO_TEST(SoundExit)
 	AUDIO_TEST(SoundPromotedVeteran)
@@ -1329,12 +1482,28 @@ const AudioEventRTS *ThingTemplate::getPerUnitSound(const AsciiString& soundName
 	PerUnitSoundMap::const_iterator it = m_perUnitSounds.find(soundName);
 	if (it == m_perUnitSounds.end())
 	{
-		DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).", soundName.str(), m_nameString.str()));
-		return &s_audioEventNoSound;
+#ifndef DO_UNIT_TIMINGS
+    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).", soundName.str(), m_nameString.str()));
+#endif
+    return &s_audioEventNoSound;
 	}
 
 	return &(it->second);
 }
+
+//-------------------------------------------------------------------------------------------------
+UnsignedInt ThingTemplate::getMaxSimultaneousOfType() const
+{
+  if ( m_maxSimultaneousDeterminedBySuperweaponRestriction && TheGameLogic )
+  {
+    return TheGameLogic->getSuperweaponRestriction();
+  }
+
+  return m_maxSimultaneousOfType;
+}
+
+
+
 
 //-------------------------------------------------------------------------------------------------
 Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
@@ -1415,7 +1584,7 @@ Int ThingTemplate::calcTimeToBuild( const Player* player) const
 	Real factionModifier = 1 + player->getProductionTimeChangePercent( getName() );
 	buildTime *= factionModifier;
 
-#if defined(RTS_DEBUG)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( player->buildsInstantly() )
 	{
 		buildTime = 1;
