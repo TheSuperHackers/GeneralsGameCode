@@ -49,19 +49,18 @@ W3DOverlordTankDrawModuleData::~W3DOverlordTankDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DOverlordTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DTankDrawModuleData::buildFieldParse(p);
+	W3DTankDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DOverlordTankDraw::W3DOverlordTankDraw( Thing *thing, const ModuleData* moduleData )
-: W3DTankDraw( thing, moduleData )
+W3DOverlordTankDraw::W3DOverlordTankDraw(Thing* thing, const ModuleData* moduleData)
+  : W3DTankDraw(thing, moduleData)
 {
 }
 
@@ -78,15 +77,11 @@ void W3DOverlordTankDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	// Our big thing is that we get our specific passenger (the turret thing) and then wake it up and make it draw
 	// It depends on us because our renderObject is only made correct in the act of drawing.
-	Object *me = getDrawable()->getObject();
-	if( me
-		&& me->getContain()
-		&& me->getContain()->friend_getRider()
-		&& me->getContain()->friend_getRider()->getDrawable()
-		)
+	Object* me = getDrawable()->getObject();
+	if (me && me->getContain() && me->getContain()->friend_getRider() && me->getContain()->friend_getRider()->getDrawable())
 	{
-		Drawable *riderDraw = me->getContain()->friend_getRider()->getDrawable();
-		riderDraw->setColorTintEnvelope( *getDrawable()->getColorTintEnvelope() );
+		Drawable* riderDraw = me->getContain()->friend_getRider()->getDrawable();
+		riderDraw->setColorTintEnvelope(*getDrawable()->getColorTintEnvelope());
 
 		riderDraw->notifyDrawableDependencyCleared();
 		riderDraw->draw();
@@ -99,12 +94,8 @@ void W3DOverlordTankDraw::setHidden(Bool h)
 	W3DTankDraw::setHidden(h);
 
 	// We need to hide our rider, since he won't realize he's being contained in a contained container
-	Object *me = getDrawable()->getObject();
-	if( me
-		&& me->getContain()
-		&& me->getContain()->friend_getRider()
-		&& me->getContain()->friend_getRider()->getDrawable()
-		)
+	Object* me = getDrawable()->getObject();
+	if (me && me->getContain() && me->getContain()->friend_getRider() && me->getContain()->friend_getRider()->getDrawable())
 	{
 		me->getContain()->friend_getRider()->getDrawable()->setDrawableHidden(h);
 	}
@@ -114,30 +105,26 @@ void W3DOverlordTankDraw::setHidden(Bool h)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordTankDraw::crc( Xfer *xfer )
+void W3DOverlordTankDraw::crc(Xfer* xfer)
 {
-
 	// extend base class
-	W3DTankDraw::crc( xfer );
-
+	W3DTankDraw::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordTankDraw::xfer( Xfer *xfer )
+void W3DOverlordTankDraw::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	W3DTankDraw::xfer( xfer );
-
+	W3DTankDraw::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -145,8 +132,6 @@ void W3DOverlordTankDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void W3DOverlordTankDraw::loadPostProcess()
 {
-
 	// extend base class
 	W3DTankDraw::loadPostProcess();
-
 }

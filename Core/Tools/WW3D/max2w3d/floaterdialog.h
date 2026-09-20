@@ -51,18 +51,15 @@ class Interface;
 class FloaterDialogClass
 {
 public:
-
 	FloaterDialogClass();
 	~FloaterDialogClass();
 
-	bool	Is_Created();
-	void	Create(Interface * ip, int child_dialog_id, DLGPROC child_dlg_proc);
-	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+	bool Is_Created();
+	void Create(Interface* ip, int child_dialog_id, DLGPROC child_dlg_proc);
+	bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
 private:
-
-	HWND		Hwnd;
-	int		ChildDialogTemplateID;
-	DLGPROC	ChildDialogProc;
-
+	HWND Hwnd;
+	int ChildDialogTemplateID;
+	DLGPROC ChildDialogProc;
 };

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameUtility.h"
 #include "Common/Player.h"
@@ -40,10 +40,9 @@
 #include "GameClient/GameClient.h"
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Object.h"
-#include "GameLogic/GameLogic.h" // For frame number
+#include "GameLogic/GameLogic.h"    // For frame number
 #include "GameLogic/Module/LaserUpdate.h"
 #include "WWMath/vector3.h"
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -57,16 +56,14 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "MuzzleParticleSystem",		INI::parseAsciiString,	nullptr, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
-		{ "TargetParticleSystem",		INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
-		{ "PunchThroughScalar",			INI::parseReal,					nullptr, offsetof( LaserUpdateModuleData, m_punchThroughScalar ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "MuzzleParticleSystem", INI::parseAsciiString, nullptr, offsetof(LaserUpdateModuleData, m_particleSystemName) },
+		{ "TargetParticleSystem", INI::parseAsciiString, nullptr, offsetof(LaserUpdateModuleData, m_targetParticleSystemName) },
+		{ "PunchThroughScalar", INI::parseReal, nullptr, offsetof(LaserUpdateModuleData, m_punchThroughScalar) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -83,7 +80,8 @@ LaserRadiusUpdate::LaserRadiusUpdate()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientUpdateModule( thing, moduleData )
+LaserUpdate::LaserUpdate(Thing* thing, const ModuleData* moduleData)
+  : ClientUpdateModule(thing, moduleData)
 {
 	m_dirty = FALSE;
 	m_endPos.zero();
@@ -99,12 +97,14 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 //-------------------------------------------------------------------------------------------------
 LaserUpdate::~LaserUpdate()
 {
-
-	if( m_particleSystemID )
-		TheParticleSystemManager->destroyParticleSystemByID( m_particleSystemID );
-	if( m_targetParticleSystemID )
-		TheParticleSystemManager->destroyParticleSystemByID( m_targetParticleSystemID );
-
+	if (m_particleSystemID)
+	{
+		TheParticleSystemManager->destroyParticleSystemByID(m_particleSystemID);
+	}
+	if (m_targetParticleSystemID)
+	{
+		TheParticleSystemManager->destroyParticleSystemByID(m_targetParticleSystemID);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -112,33 +112,35 @@ void LaserUpdate::updateStartPos()
 {
 	Coord3D oldStartPos = m_startPos;
 
-	if( m_parentID == INVALID_DRAWABLE_ID )
-		return;// Can't update if not told to update
+	if (m_parentID == INVALID_DRAWABLE_ID)
+	{
+		return;    // Can't update if not told to update
+	}
 
-	const Drawable *parentDrawable = TheGameClient->findDrawableByID(m_parentID);
-	if( parentDrawable == nullptr )
-		return;// Can't update if no one to ask
+	const Drawable* parentDrawable = TheGameClient->findDrawableByID(m_parentID);
+	if (parentDrawable == nullptr)
+	{
+		return;    // Can't update if no one to ask
+	}
 
-	if( m_parentBoneName.isNotEmpty() )
+	if (m_parentBoneName.isNotEmpty())
 	{
 		Matrix3D startPosMatrix;
 
-		if( !parentDrawable->getCurrentWorldspaceClientBonePositions( m_parentBoneName.str(), startPosMatrix ) )
+		if (!parentDrawable->getCurrentWorldspaceClientBonePositions(m_parentBoneName.str(), startPosMatrix))
 		{
 			// failed to find the required bone, so just die
 
-			//Kris: Doing this CRASHES THE GAME LATER!!!! Instead, let's set the position to the drawable, then
-			//      create a nasty assert.
-			//TheGameClient->destroyDrawable( getDrawable() );
+			// Kris: Doing this CRASHES THE GAME LATER!!!! Instead, let's set the position to the drawable, then
+			//       create a nasty assert.
+			// TheGameClient->destroyDrawable( getDrawable() );
 
-			m_startPos.set( *parentDrawable->getPosition() );
-			DEBUG_CRASH( ("LaserUpdate::updateStartPos() -- Drawable %s is expecting to find a bone %s but can't. Defaulting to position of drawable.",
-				parentDrawable->getTemplate()->getName().str(), m_parentBoneName.str() ) );
+			m_startPos.set(*parentDrawable->getPosition());
+			DEBUG_CRASH(("LaserUpdate::updateStartPos() -- Drawable %s is expecting to find a bone %s but can't. Defaulting to position of drawable.",
+			             parentDrawable->getTemplate()->getName().str(), m_parentBoneName.str()));
 
 			return;
 		}
-
-
 
 		m_startPos.x = startPosMatrix.Get_X_Translation();
 		m_startPos.y = startPosMatrix.Get_Y_Translation();
@@ -150,28 +152,32 @@ void LaserUpdate::updateStartPos()
 		m_startPos = *parentDrawable->getPosition();
 	}
 
-	if( !(m_startPos == oldStartPos) ) // No != operator.  Heh.
+	if (!(m_startPos == oldStartPos))    // No != operator.  Heh.
+	{
 		m_dirty = TRUE;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 void LaserUpdate::updateEndPos()
 {
-	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
+	const LaserUpdateModuleData* data = getLaserUpdateModuleData();
 	Coord3D oldEndPos = m_endPos;
 
-	if( m_targetID == INVALID_DRAWABLE_ID )
-		return;// Can't update if not told to update
+	if (m_targetID == INVALID_DRAWABLE_ID)
+	{
+		return;    // Can't update if not told to update
+	}
 
-	const Drawable *targetDrawable = TheGameClient->findDrawableByID(m_targetID);
+	const Drawable* targetDrawable = TheGameClient->findDrawableByID(m_targetID);
 	Bool targetDead = (targetDrawable && targetDrawable->getObject())
-										? targetDrawable->getObject()->isEffectivelyDead()
-										: FALSE;
-	if( targetDrawable == nullptr || targetDead )
+	                    ? targetDrawable->getObject()->isEffectivelyDead()
+	                    : FALSE;
+	if (targetDrawable == nullptr || targetDead)
 	{
 		// If here, we used to track something, but now it is gone.  So make our end point pierce through
 		// the old spot, and then stop trying to find a target Drawable
-		if( data->m_punchThroughScalar > 0 )
+		if (data->m_punchThroughScalar > 0)
 		{
 			Vector3 laserVector;
 			laserVector.Set(m_endPos.x, m_endPos.y, m_endPos.z);
@@ -190,8 +196,10 @@ void LaserUpdate::updateEndPos()
 		m_endPos = *targetDrawable->getPosition();
 	}
 
-	if( !(m_endPos == oldEndPos) ) // No != operator.  Heh.
+	if (!(m_endPos == oldEndPos))    // No != operator.  Heh.
+	{
 		m_dirty = TRUE;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -208,24 +216,24 @@ void LaserUpdate::clientUpdate()
 bool LaserRadiusUpdate::updateRadius()
 {
 	bool updated = false;
-	if( m_decaying )
+	if (m_decaying)
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_currentWidthScalar = 1.0f - (Real)(now - m_decayStartFrame) / (Real)(m_decayFinishFrame - m_decayStartFrame);
 		updated = true;
-		if( m_currentWidthScalar <= 0.0f )
+		if (m_currentWidthScalar <= 0.0f)
 		{
 			m_currentWidthScalar = 0.0f;
-			//m_decaying = false // ?????
+			// m_decaying = false // ?????
 		}
 	}
-	else if( m_widening )
+	else if (m_widening)
 	{
-		//We need to resize our laser width based on the growth ratio completed.
+		// We need to resize our laser width based on the growth ratio completed.
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_currentWidthScalar = (Real)(now - m_widenStartFrame) / (Real)(m_widenFinishFrame - m_widenStartFrame);
 		updated = true;
-		if( m_currentWidthScalar >= 1.0f )
+		if (m_currentWidthScalar >= 1.0f)
 		{
 			m_currentWidthScalar = 1.0f;
 			m_widening = false;
@@ -236,9 +244,9 @@ bool LaserRadiusUpdate::updateRadius()
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdate::setDecayFrames( UnsignedInt decayFrames )
+void LaserRadiusUpdate::setDecayFrames(UnsignedInt decayFrames)
 {
-	if( decayFrames > 0 )
+	if (decayFrames > 0)
 	{
 		m_decaying = true;
 		m_decayStartFrame = TheGameLogic->getFrame();
@@ -248,16 +256,16 @@ void LaserRadiusUpdate::setDecayFrames( UnsignedInt decayFrames )
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdate::initRadius( Int sizeDeltaFrames )
+void LaserRadiusUpdate::initRadius(Int sizeDeltaFrames)
 {
-	if( sizeDeltaFrames > 0 )
+	if (sizeDeltaFrames > 0)
 	{
 		m_widening = true;
 		m_widenStartFrame = TheGameLogic->getFrame();
 		m_widenFinishFrame = m_widenStartFrame + sizeDeltaFrames;
 		m_currentWidthScalar = 0.0f;
 	}
-	else if( sizeDeltaFrames < 0 )
+	else if (sizeDeltaFrames < 0)
 	{
 		m_decaying = true;
 		m_decayStartFrame = TheGameLogic->getFrame();
@@ -267,51 +275,53 @@ void LaserRadiusUpdate::initRadius( Int sizeDeltaFrames )
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdate::xfer( Xfer *xfer )
+void LaserRadiusUpdate::xfer(Xfer* xfer)
 {
 	// widening
-	xfer->xferBool( &m_widening );
+	xfer->xferBool(&m_widening);
 
 	// decaying
-	xfer->xferBool( &m_decaying );
+	xfer->xferBool(&m_decaying);
 
 	// widen start frame
-	xfer->xferUnsignedInt( &m_widenStartFrame );
+	xfer->xferUnsignedInt(&m_widenStartFrame);
 
 	// widen finish frame
-	xfer->xferUnsignedInt( &m_widenFinishFrame );
+	xfer->xferUnsignedInt(&m_widenFinishFrame);
 
 	// current width scalar
-	xfer->xferReal( &m_currentWidthScalar );
+	xfer->xferReal(&m_currentWidthScalar);
 
 	// decay start frame
-	xfer->xferUnsignedInt( &m_decayStartFrame );
+	xfer->xferUnsignedInt(&m_decayStartFrame);
 
 	// decay finish frame
-	xfer->xferUnsignedInt( &m_decayFinishFrame );
+	xfer->xferUnsignedInt(&m_decayFinishFrame);
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserUpdate::initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames )
+void LaserUpdate::initLaser(const Object* parent, const Object* target, const Coord3D* startPos, const Coord3D* endPos, AsciiString parentBoneName, Int sizeDeltaFrames)
 {
-	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
-	ParticleSystem *system;
+	const LaserUpdateModuleData* data = getLaserUpdateModuleData();
+	ParticleSystem* system;
 
-	m_laserRadius.initRadius( sizeDeltaFrames );
+	m_laserRadius.initRadius(sizeDeltaFrames);
 
 	// Write down the bone name override
 	m_parentBoneName = parentBoneName;
 
-	//Record IDs if we have them, then figure out starting points
-	if( parent )
+	// Record IDs if we have them, then figure out starting points
+	if (parent)
 	{
 		// If a source object, use it
-		if( parent->getDrawable() )
+		if (parent->getDrawable())
+		{
 			m_parentID = parent->getDrawable()->getID();
+		}
 
 		updateStartPos();
 	}
-	else if( startPos )
+	else if (startPos)
 	{
 		// or just use what they gave
 		m_startPos = *startPos;
@@ -319,19 +329,21 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	else
 	{
 		// if they gave nothing, then we are screwed
-		TheGameClient->destroyDrawable( getDrawable() );
+		TheGameClient->destroyDrawable(getDrawable());
 		return;
 	}
 
-	if( target && !endPos )
+	if (target && !endPos)
 	{
 		// If a target object, use it (unless we override it!)
-		if( target->getDrawable() )
+		if (target->getDrawable())
+		{
 			m_targetID = target->getDrawable()->getID();
+		}
 
 		m_endPos = *target->getPosition();
 	}
-	else if( endPos )
+	else if (endPos)
 	{
 		// just use what they gave, no override here
 		m_endPos = *endPos;
@@ -339,37 +351,36 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	else
 	{
 		// if they gave nothing, then we are screwed
-		TheGameClient->destroyDrawable( getDrawable() );
+		TheGameClient->destroyDrawable(getDrawable());
 		return;
 	}
 
 	// Create special particle systems
-	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
-	if( !m_particleSystemID )
+	// PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	if (!m_particleSystemID)
 	{
-		const Player *localPlayer = rts::getObservedOrLocalPlayer();
+		const Player* localPlayer = rts::getObservedOrLocalPlayer();
 
-		//Make sure the laser flare is visible to the player. If no parent, assume laser owner will handle it.
-		if (!parent || parent->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
+		// Make sure the laser flare is visible to the player. If no parent, assume laser owner will handle it.
+		if (!parent || parent->getShroudedStatus(localPlayer->getPlayerIndex()) <= OBJECTSHROUD_PARTIAL_CLEAR)
 		{
-
-			//If we don't have a particle system for the lense flare (muzzle flare), create it.
-			if( data->m_particleSystemName.isNotEmpty() )
+			// If we don't have a particle system for the lense flare (muzzle flare), create it.
+			if (data->m_particleSystemName.isNotEmpty())
 			{
-				const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( data->m_particleSystemName );
-				system = TheParticleSystemManager->createParticleSystem( tmp );
-				if( system )
+				const ParticleSystemTemplate* tmp = TheParticleSystemManager->findTemplate(data->m_particleSystemName);
+				system = TheParticleSystemManager->createParticleSystem(tmp);
+				if (system)
 				{
 					m_particleSystemID = system->getSystemID();
 				}
 			}
 
-			//If we don't have a particle system for the target effect, create it.
-			if( data->m_targetParticleSystemName.isNotEmpty() )
+			// If we don't have a particle system for the target effect, create it.
+			if (data->m_targetParticleSystemName.isNotEmpty())
 			{
-				const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( data->m_targetParticleSystemName );
-				system = TheParticleSystemManager->createParticleSystem( tmp );
-				if( system )
+				const ParticleSystemTemplate* tmp = TheParticleSystemManager->findTemplate(data->m_targetParticleSystemName);
+				system = TheParticleSystemManager->createParticleSystem(tmp);
+				if (system)
 				{
 					m_targetParticleSystemID = system->getSystemID();
 				}
@@ -377,46 +388,46 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 		}
 	}
 
-	//Adjust the position of any existing particle system.
-	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
-	if( m_particleSystemID )
+	// Adjust the position of any existing particle system.
+	// PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	if (m_particleSystemID)
 	{
-		system = TheParticleSystemManager->findParticleSystem( m_particleSystemID );
-		if( system )
+		system = TheParticleSystemManager->findParticleSystem(m_particleSystemID);
+		if (system)
 		{
-			system->setPosition( &m_startPos );
+			system->setPosition(&m_startPos);
 		}
 	}
 
-	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
-	if( m_targetParticleSystemID )
+	// PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	if (m_targetParticleSystemID)
 	{
-		system = TheParticleSystemManager->findParticleSystem( m_targetParticleSystemID );
-		if( system )
+		system = TheParticleSystemManager->findParticleSystem(m_targetParticleSystemID);
+		if (system)
 		{
-			system->setPosition( &m_endPos );
+			system->setPosition(&m_endPos);
 		}
 	}
 
-	//Important! Set the laser position to the average of both points or else
-	//it probably won't get rendered!!!
-	// And as a client update, we cannot set the logic position.
+	// Important! Set the laser position to the average of both points or else
+	// it probably won't get rendered!!!
+	//  And as a client update, we cannot set the logic position.
 	Coord3D posToUse;
-	if( parent == nullptr )
+	if (parent == nullptr)
 	{
-		posToUse.set( *startPos );
-		posToUse.add( *endPos );
-		posToUse.scale( 0.5 );
+		posToUse.set(*startPos);
+		posToUse.add(*endPos);
+		posToUse.scale(0.5);
 	}
 	else
 	{
 		posToUse = *parent->getPosition();
 	}
 
-	Drawable *draw = getDrawable();
-	if( draw )
+	Drawable* draw = getDrawable();
+	if (draw)
 	{
-		draw->setPosition( &posToUse );
+		draw->setPosition(&posToUse);
 	}
 
 	m_dirty = true;
@@ -425,17 +436,17 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 //-------------------------------------------------------------------------------------------------
 Real LaserUpdate::getTemplateLaserRadius() const
 {
-	const Drawable *draw = getDrawable();
+	const Drawable* draw = getDrawable();
 	const LaserDrawInterface* ldi = nullptr;
-	for( const DrawModule** d = draw->getDrawModules(); *d; ++d )
+	for (const DrawModule** d = draw->getDrawModules(); *d; ++d)
 	{
 		ldi = (*d)->getLaserDrawInterface();
-		if( ldi )
+		if (ldi)
 		{
 			//***NOTE***
-			//While it appears the logic is accessing client data, it is actually accessing template module
-			//data from the client. This value is INI constant thus can't change. It's grouped with other
-			//laser defining attributes and having it there makes it easier for artists.
+			// While it appears the logic is accessing client data, it is actually accessing template module
+			// data from the client. This value is INI constant thus can't change. It's grouped with other
+			// laser defining attributes and having it there makes it easier for artists.
 			return ldi->getLaserTemplateWidth();
 		}
 	}
@@ -451,52 +462,48 @@ Real LaserUpdate::getCurrentLaserRadius() const
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void LaserUpdate::crc( Xfer *xfer )
+void LaserUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	ClientUpdateModule::crc( xfer );
-
+	ClientUpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void LaserUpdate::xfer( Xfer *xfer )
+void LaserUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	ClientUpdateModule::xfer( xfer );
+	ClientUpdateModule::xfer(xfer);
 
 	// start pos
-	xfer->xferCoord3D( &m_startPos );
+	xfer->xferCoord3D(&m_startPos);
 
 	// end pos
-	xfer->xferCoord3D( &m_endPos );
+	xfer->xferCoord3D(&m_endPos);
 
 	// dirty
-	xfer->xferBool( &m_dirty );
+	xfer->xferBool(&m_dirty);
 
 	// particle system ID
-	xfer->xferUser( &m_particleSystemID, sizeof( ParticleSystemID ) );
+	xfer->xferUser(&m_particleSystemID, sizeof(ParticleSystemID));
 
 	// target particle system id
-	xfer->xferUser( &m_targetParticleSystemID, sizeof( ParticleSystemID ) );
+	xfer->xferUser(&m_targetParticleSystemID, sizeof(ParticleSystemID));
 
-	m_laserRadius.xfer( xfer );
+	m_laserRadius.xfer(xfer);
 
 	xfer->xferDrawableID(&m_parentID);
 	xfer->xferDrawableID(&m_targetID);
 
 	xfer->xferAsciiString(&m_parentBoneName);
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -504,8 +511,6 @@ void LaserUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void LaserUpdate::loadPostProcess()
 {
-
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
-
 }

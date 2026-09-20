@@ -35,16 +35,16 @@
 #include "Lib/BaseType.h"
 #include "Lib/trig.h"
 
-#define TWOPI			6.28318530718f
-#define DEG2RAD 	0.0174532925199f
+#define TWOPI 6.28318530718f
+#define DEG2RAD 0.0174532925199f
 #define TRIG_RES 4096
 
 // the following are for fixed point ints with 12 fractional bits
-#define INT_ONE								4096
-#define INT_TWOPI							25736
-#define INT_THREEPIOVERTWO 		19302
-#define INT_PI								12868
-#define INT_HALFPI 						6434
+#define INT_ONE 4096
+#define INT_TWOPI 25736
+#define INT_THREEPIOVERTWO 19302
+#define INT_PI 12868
+#define INT_HALFPI 6434
 
 Real Sin(Real x)
 {
@@ -79,15 +79,18 @@ void initTrig()
 	int i;
 
 	if (inited)
+	{
 		return;
+	}
 
 	inited = TRUE;
 
 	static int columns = 8;
 	int column = 0;
-	FILE *fp = fopen("trig.txt", "w");
+	FILE* fp = fopen("trig.txt", "w");
 	fprintf(fp, "static Int sinLookup[TRIG_RES] = {\n");
-	for( i=0; i<TRIG_RES; i++ ) {
+	for (i = 0; i < TRIG_RES; i++)
+	{
 		angle = TWOPI * i / (Real)TRIG_RES;
 		sinLookup[i] = (Int)(sin(angle) * INT_ONE);
 
@@ -97,11 +100,11 @@ void initTrig()
 		}
 		else if (column == 0)
 		{
-		fprintf(fp, ",\n\t0x%8.8X", sinLookup[i]);
+			fprintf(fp, ",\n\t0x%8.8X", sinLookup[i]);
 		}
 		else
 		{
-		fprintf(fp, ", 0x%8.8X", sinLookup[i]);
+			fprintf(fp, ", 0x%8.8X", sinLookup[i]);
 		}
 		column = (column + 1) % columns;
 	}
@@ -109,10 +112,11 @@ void initTrig()
 
 	column = 0;
 	fprintf(fp, "static Int arcCosLookup[2 * INT_ONE] = {\n");
-	for( i=0; i<2*INT_ONE; i++ ) {
+	for (i = 0; i < 2 * INT_ONE; i++)
+	{
 		r = (Real)i / (Real)INT_ONE - 1.0f;
 
-		arcCosLookup[i] = (Int)(acos( (double)r ) * INT_TWOPI / TWOPI );
+		arcCosLookup[i] = (Int)(acos((double)r) * INT_TWOPI / TWOPI);
 
 		if (i == 0)
 		{
@@ -120,11 +124,11 @@ void initTrig()
 		}
 		else if (column == 0)
 		{
-		fprintf(fp, ",\n\t0x%8.8X", arcCosLookup[i]);
+			fprintf(fp, ",\n\t0x%8.8X", arcCosLookup[i]);
 		}
 		else
 		{
-		fprintf(fp, ", 0x%8.8X", arcCosLookup[i]);
+			fprintf(fp, ", 0x%8.8X", arcCosLookup[i]);
 		}
 		column = (column + 1) % columns;
 	}
@@ -140,6 +144,4 @@ public:
 };
 TrigInit trigInitializer;
 
-#endif // REGENERATE_TRIG_TABLES
-
-
+#endif    // REGENERATE_TRIG_TABLES

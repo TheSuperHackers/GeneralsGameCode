@@ -30,18 +30,18 @@
 **	This macro serves as a general way to determine the number of elements
 **	within an array.
 */
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-#define size_of(typ,id) sizeof(((typ*)0)->id)
+#define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
+#define size_of(typ, id) sizeof(((typ*)0)->id)
 
 namespace patchget
 {
 
-int main(int argc, char *argv[]);
+int main(int argc, char* argv[]);
 
 void Startup_Chat();
 void Shutdown_Chat();
 void Update_If_Required();
 
-char const * Fetch_String(int id);
+char const* Fetch_String(int id);
 
-} // namespace patchget
+}    // namespace patchget

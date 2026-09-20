@@ -36,38 +36,38 @@
 
 //-------------------------------------------------------------------------------------------------
 /** Kind of flags for determining groups of things that belong together
-	* NOTE: You *MUST* keep this in the same order as the DisabledNames[] below */
+ * NOTE: You *MUST* keep this in the same order as the DisabledNames[] below */
 //-------------------------------------------------------------------------------------------------
-enum DisabledType CPP_11(: Int)
+enum DisabledType CPP_11( : Int)
 {
-	DISABLED_DEFAULT,     //Typical disable -- like systems, things that don't need to run.
-	DISABLED_HACKED,      //This unit has been hacked
-	DISABLED_EMP,         //This unit has been disabled via electro-magnetic-pulse.
-	DISABLED_HELD,	      //Special case -- held means it can fire and isHeld checks to make sure ONLY held is set!
-	DISABLED_PARALYZED,   //Battle plans have changed, and unit is confused/paralyzed
-	DISABLED_UNMANNED,		//Vehicle is unmanned
-	DISABLED_UNDERPOWERED,//Separate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
-	DISABLED_FREEFALL,    //This unit has been disabled via being in free fall
+	DISABLED_DEFAULT,    // Typical disable -- like systems, things that don't need to run.
+	DISABLED_HACKED,    // This unit has been hacked
+	DISABLED_EMP,    // This unit has been disabled via electro-magnetic-pulse.
+	DISABLED_HELD,    // Special case -- held means it can fire and isHeld checks to make sure ONLY held is set!
+	DISABLED_PARALYZED,    // Battle plans have changed, and unit is confused/paralyzed
+	DISABLED_UNMANNED,    // Vehicle is unmanned
+	DISABLED_UNDERPOWERED,    // Separate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
+	DISABLED_FREEFALL,    // This unit has been disabled via being in free fall
 
-  DISABLED_AWESTRUCK,
-  DISABLED_BRAINWASHED,
-	DISABLED_SUBDUED,			///< Temporarily shut down by Subdual damage
-	//These ones are specifically for scripts to enable/reenable!
+	DISABLED_AWESTRUCK,
+	DISABLED_BRAINWASHED,
+	DISABLED_SUBDUED,    ///< Temporarily shut down by Subdual damage
+	// These ones are specifically for scripts to enable/reenable!
 	DISABLED_SCRIPT_DISABLED,
 	DISABLED_SCRIPT_UNDERPOWERED,
 
 	DISABLED_COUNT,
 
-	DISABLED_ANY = 65535		///< Do not use this value for setting disabled types (read-only)
+	DISABLED_ANY = 65535    ///< Do not use this value for setting disabled types (read-only)
 };
 
-typedef BitFlags<DISABLED_COUNT, struct DisabledMaskTypeTag>	DisabledMaskType;
+typedef BitFlags<DISABLED_COUNT, struct DisabledMaskTypeTag> DisabledMaskType;
 
 #define MAKE_DISABLED_MASK(k) DisabledMaskType(DisabledMaskType::kInit, (k))
-#define MAKE_DISABLED_MASK2(k,a) DisabledMaskType(DisabledMaskType::kInit, (k), (a))
-#define MAKE_DISABLED_MASK3(k,a,b) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b))
-#define MAKE_DISABLED_MASK4(k,a,b,c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
-#define MAKE_DISABLED_MASK5(k,a,b,c,d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
+#define MAKE_DISABLED_MASK2(k, a) DisabledMaskType(DisabledMaskType::kInit, (k), (a))
+#define MAKE_DISABLED_MASK3(k, a, b) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b))
+#define MAKE_DISABLED_MASK4(k, a, b, c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
+#define MAKE_DISABLED_MASK5(k, a, b, c, d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
 
 inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t)
 {
@@ -105,8 +105,6 @@ inline void FLIP_DISABLEDMASK(DisabledMaskType& m)
 	m.flip();
 }
 
-
-
 // defined in Common/System/DisabledTypes.cpp
-extern DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
-extern DisabledMaskType DISABLEDMASK_ALL;		// inits to all bits set.
+extern DisabledMaskType DISABLEDMASK_NONE;    // inits to all zeroes
+extern DisabledMaskType DISABLEDMASK_ALL;    // inits to all bits set.

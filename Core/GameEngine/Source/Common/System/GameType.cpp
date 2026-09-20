@@ -24,10 +24,9 @@
 
 // GameType.cpp ///////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
-const char *const TimeOfDayNames[] =
-{
+const char* const TimeOfDayNames[] = {
 	"NONE",
 	"MORNING",
 	"AFTERNOON",
@@ -38,8 +37,7 @@ const char *const TimeOfDayNames[] =
 };
 static_assert(ARRAY_SIZE(TimeOfDayNames) == TIME_OF_DAY_COUNT + 1, "Incorrect array size");
 
-const char *const WeatherNames[] =
-{
+const char* const WeatherNames[] = {
 	"NORMAL",
 	"SNOWY",
 

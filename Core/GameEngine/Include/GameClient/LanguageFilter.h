@@ -62,7 +62,8 @@ typedef std::map<UnicodeString, Bool, UnicodeStringLessThan>::iterator LangMapIt
 static const int LANGUAGE_XOR_KEY = 0x5555;
 static const char BadWordFileName[] = "langdata.dat";
 
-class LanguageFilter : public SubsystemInterface {
+class LanguageFilter : public SubsystemInterface
+{
 public:
 	LanguageFilter();
 	virtual ~LanguageFilter() override;
@@ -70,14 +71,14 @@ public:
 	virtual void init() override;
 	virtual void reset() override;
 	virtual void update() override;
-	void filterLine(UnicodeString &line);
+	void filterLine(UnicodeString& line);
 
 protected:
-	Bool readWord(File *file1, WideChar *buf);
-	void unHaxor(UnicodeString &word);
+	Bool readWord(File* file1, WideChar* buf);
+	void unHaxor(UnicodeString& word);
 	LangMap m_wordList;
 	LangMap m_subWordList;
 };
 
-extern LanguageFilter *TheLanguageFilter;
-LanguageFilter * createLanguageFilter();
+extern LanguageFilter* TheLanguageFilter;
+LanguageFilter* createLanguageFilter();

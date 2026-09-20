@@ -27,27 +27,28 @@
 // Author: Michael S. Booth, October 2000
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 
-GhostObjectManager *TheGhostObjectManager = nullptr;
+GhostObjectManager* TheGhostObjectManager = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GhostObject::GhostObject():
-m_parentAngle(0.0f),
-// TheSuperHackers @bugfix tomsons26 26/04/2025 Change initialization of m_parentGeometryIsSmall from 0.0f.
-// Assigning a float to a bool results in the compiler using a random 1 byte value to assign to the bool.
-// @todo Change initialization to 'false' when applicable.
-m_parentGeometryIsSmall(true),
-m_parentGeometryMajorRadius(0.0f),
-m_parentGeometryminorRadius(0.0f),
-m_parentObject(nullptr),
-m_partitionData(nullptr)
+GhostObject::GhostObject()
+  : m_parentAngle(0.0f)
+  ,
+  // TheSuperHackers @bugfix tomsons26 26/04/2025 Change initialization of m_parentGeometryIsSmall from 0.0f.
+  // Assigning a float to a bool results in the compiler using a random 1 byte value to assign to the bool.
+  // @todo Change initialization to 'false' when applicable.
+  m_parentGeometryIsSmall(true)
+  , m_parentGeometryMajorRadius(0.0f)
+  , m_parentGeometryminorRadius(0.0f)
+  , m_parentObject(nullptr)
+  , m_partitionData(nullptr)
 {
 	m_parentPosition.zero();
 }
@@ -61,57 +62,59 @@ GhostObject::~GhostObject()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void GhostObject::crc( Xfer *xfer )
+void GhostObject::crc(Xfer* xfer)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GhostObject::xfer( Xfer *xfer )
+void GhostObject::xfer(Xfer* xfer)
 {
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// parent object
 	ObjectID parentObjectID = INVALID_ID;
-	if( m_parentObject )
+	if (m_parentObject)
+	{
 		parentObjectID = m_parentObject->getID();
-	xfer->xferObjectID( &parentObjectID );
-	if( xfer->getXferMode() == XFER_LOAD )
+	}
+	xfer->xferObjectID(&parentObjectID);
+	if (xfer->getXferMode() == XFER_LOAD)
 	{
 		// tie up parent object pointer
-		m_parentObject = TheGameLogic->findObjectByID( parentObjectID );
+		m_parentObject = TheGameLogic->findObjectByID(parentObjectID);
 
 		// sanity
-		if( parentObjectID != INVALID_ID && m_parentObject == nullptr )
+		if (parentObjectID != INVALID_ID && m_parentObject == nullptr)
 		{
-			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject" ));
+			DEBUG_CRASH(("GhostObject::xfer - Unable to connect m_parentObject"));
 			throw INI_INVALID_DATA;
 		}
 	}
 
 	// parent geometry type
-	xfer->xferUser( &m_parentGeometryType, sizeof( GeometryType ) );
+	xfer->xferUser(&m_parentGeometryType, sizeof(GeometryType));
 
 	// parent geometry is small
-	xfer->xferBool( &m_parentGeometryIsSmall );
+	xfer->xferBool(&m_parentGeometryIsSmall);
 
 	// parent geometry major radius
-	xfer->xferReal( &m_parentGeometryMajorRadius );
+	xfer->xferReal(&m_parentGeometryMajorRadius);
 
 	// parent geometry minor radius
-	xfer->xferReal( &m_parentGeometryminorRadius );
+	xfer->xferReal(&m_parentGeometryminorRadius);
 
 	// parent angle
-	xfer->xferReal( &m_parentAngle );
+	xfer->xferReal(&m_parentAngle);
 
 	// parent position
-	xfer->xferCoord3D( &m_parentPosition );
+	xfer->xferCoord3D(&m_parentPosition);
 
 	// partition data
 	///@todo write me ---> !!!!!
@@ -150,20 +153,20 @@ void GhostObjectManager::reset()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GhostObject *GhostObjectManager::addGhostObject(Object *object, PartitionData *pd)
+GhostObject* GhostObjectManager::addGhostObject(Object* object, PartitionData* pd)
 {
 	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::removeGhostObject(GhostObject *mod)
+void GhostObjectManager::removeGhostObject(GhostObject* mod)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::updateOrphanedObjects(int *playerIndexList, int playerIndexCount)
+void GhostObjectManager::updateOrphanedObjects(int* playerIndexList, int playerIndexCount)
 {
 }
 
@@ -181,24 +184,24 @@ void GhostObjectManager::restorePartitionData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::crc( Xfer *xfer )
+void GhostObjectManager::crc(Xfer* xfer)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method:
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::xfer( Xfer *xfer )
+void GhostObjectManager::xfer(Xfer* xfer)
 {
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// local player
-	xfer->xferInt( &m_localPlayer );
+	xfer->xferInt(&m_localPlayer);
 }
 
 // ------------------------------------------------------------------------------------------------

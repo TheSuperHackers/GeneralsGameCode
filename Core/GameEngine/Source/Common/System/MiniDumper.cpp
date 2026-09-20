@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
@@ -109,7 +109,7 @@ void MiniDumper::TriggerMiniDump(DumpType dumpType)
 	// Trigger dump directly without SEH support
 	DEBUG_LOG(("MiniDumper::TriggerMiniDump: SEH not supported on this compiler, skipping manual dump trigger."));
 #else
-	#error "MiniDumper::TriggerMiniDump: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+#error "MiniDumper::TriggerMiniDump: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
 #endif
 }
 
@@ -335,10 +335,9 @@ DWORD WINAPI MiniDumper::MiniDumpThreadProc(LPVOID lpParam)
 		return MiniDumperExitCode_FailureParam;
 	}
 
-	MiniDumper* dumper = static_cast<MiniDumper *>(lpParam);
+	MiniDumper* dumper = static_cast<MiniDumper*>(lpParam);
 	return dumper->ThreadProcInternal();
 }
-
 
 void MiniDumper::CreateMiniDump(DumpType dumpType)
 {
@@ -355,9 +354,9 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 
 	// m_dumpDir is stored with trailing backslash in Initialize
 	snprintf(m_dumpFile, ARRAY_SIZE(m_dumpFile), "%s%s%c%c-%04d%02d%02d-%02d%02d%02d-%s-pid%ld.dmp",
-		m_dumpDir, DumpFileNamePrefix, dumpTypeSpecifier, product, sysTime.wYear, sysTime.wMonth,
-		sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
-		GitShortSHA1, currentProcessId);
+	         m_dumpDir, DumpFileNamePrefix, dumpTypeSpecifier, product, sysTime.wYear, sysTime.wMonth,
+	         sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
+	         GitShortSHA1, currentProcessId);
 
 	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (dumpFile == nullptr || dumpFile == INVALID_HANDLE_VALUE)
@@ -381,7 +380,7 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 	{
 	case DumpType_Full:
 		dumpTypeFlags |= MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpWithHandleData |
-			MiniDumpWithThreadInfo | MiniDumpWithFullMemoryInfo | MiniDumpWithPrivateReadWriteMemory;
+		                 MiniDumpWithThreadInfo | MiniDumpWithFullMemoryInfo | MiniDumpWithPrivateReadWriteMemory;
 		FALLTHROUGH;
 	case DumpType_Minimal:
 		dumpTypeFlags |= MiniDumpWithIndirectlyReferencedMemory | MiniDumpScanMemory;
@@ -390,13 +389,13 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 
 	MINIDUMP_TYPE miniDumpType = static_cast<MINIDUMP_TYPE>(dumpTypeFlags);
 	BOOL success = DbgHelpLoader::miniDumpWriteDump(
-		::GetCurrentProcess(),
-		currentProcessId,
-		dumpFile,
-		miniDumpType,
-		exceptionInfoPtr,
-		nullptr,
-		nullptr);
+	  ::GetCurrentProcess(),
+	  currentProcessId,
+	  dumpFile,
+	  miniDumpType,
+	  exceptionInfoPtr,
+	  nullptr,
+	  nullptr);
 
 	if (!success)
 	{
@@ -446,8 +445,8 @@ void MiniDumper::KeepNewestFiles(const std::string& directory, const DumpType du
 		fileInfo.name = directory + findData.cFileName;
 		fileInfo.lastWriteTime = findData.ftLastWriteTime;
 		files.push_back(fileInfo);
-
-	} while (::FindNextFile(hFind, &findData));
+	}
+	while (::FindNextFile(hFind, &findData));
 
 	::FindClose(hFind);
 

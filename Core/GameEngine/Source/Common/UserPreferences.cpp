@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -50,7 +50,6 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/ChallengeGenerals.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
-
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -101,7 +100,6 @@ static AsciiString realAsStr(Real val)
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 // UserPreferences Class
 //-----------------------------------------------------------------------------
@@ -117,17 +115,17 @@ UserPreferences::~UserPreferences()
 #define LINE_LEN 2048
 Bool UserPreferences::load(AsciiString fname)
 {
-//	if (strstr(fname.str(), "\\"))
-//		throw INI_INVALID_DATA;	// must be a leaf name
+	//	if (strstr(fname.str(), "\\"))
+	//		throw INI_INVALID_DATA;	// must be a leaf name
 
 	m_filename = TheGlobalData->getPath_UserData();
 	m_filename.concat(fname);
 
-	FILE *fp = fopen(m_filename.str(), "r");
+	FILE* fp = fopen(m_filename.str(), "r");
 	if (fp)
 	{
 		char buf[LINE_LEN];
-		while( fgets( buf, LINE_LEN, fp ) != nullptr )
+		while (fgets(buf, LINE_LEN, fp) != nullptr)
 		{
 			AsciiString line = buf;
 			line.trim();
@@ -140,7 +138,9 @@ Bool UserPreferences::load(AsciiString fname)
 			val.trim();
 
 			if (key.isEmpty() || val.isEmpty())
+			{
 				continue;
+			}
 
 			(*this)[key] = val;
 		}
@@ -153,9 +153,11 @@ Bool UserPreferences::load(AsciiString fname)
 Bool UserPreferences::write()
 {
 	if (m_filename.isEmpty())
+	{
 		return false;
+	}
 
-	FILE *fp = fopen(m_filename.str(), "w");
+	FILE* fp = fopen(m_filename.str(), "w");
 	if (fp)
 	{
 		PreferenceMap::const_iterator it = begin();
@@ -253,7 +255,7 @@ QuickMatchPreferences::~QuickMatchPreferences()
 
 void QuickMatchPreferences::setMapSelected(const AsciiString& mapName, Bool selected)
 {
-	(*this)[AsciiStringToQuotedPrintable(mapName)] = (selected)?"1":"0";
+	(*this)[AsciiStringToQuotedPrintable(mapName)] = (selected) ? "1" : "0";
 }
 
 Bool QuickMatchPreferences::isMapSelected(const AsciiString& mapName)
@@ -378,7 +380,7 @@ Int QuickMatchPreferences::getNumPlayers()
 	QuickMatchPreferences::const_iterator it = find("NumPlayers");
 	if (it == end())
 	{
-		return 0;	// first in list, 1v1
+		return 0;    // first in list, 1v1
 	}
 	return atoi(it->second.str());
 }
@@ -400,7 +402,7 @@ Int QuickMatchPreferences::getMaxPing()
 	return atoi(it->second.str());
 }
 
-void QuickMatchPreferences::setColor( Int val )
+void QuickMatchPreferences::setColor(Int val)
 {
 	setInt("Color", val);
 }
@@ -410,7 +412,7 @@ Int QuickMatchPreferences::getColor()
 	return getInt("Color", 0);
 }
 
-void QuickMatchPreferences::setSide( Int val )
+void QuickMatchPreferences::setSide(Int val)
 {
 	setInt("Side", val);
 }
@@ -475,7 +477,9 @@ Int CustomMatchPreferences::getPreferredColor()
 
 	ret = atoi(it->second.str());
 	if (ret < -1 || ret >= TheMultiplayerSettings->getNumColors())
+	{
 		ret = -1;
+	}
 
 	return ret;
 }
@@ -498,7 +502,9 @@ Int CustomMatchPreferences::getChatSizeSlider()
 
 	ret = atoi(it->second.str());
 	if (ret < 0 || ret > 100)
+	{
 		ret = 45;
+	}
 
 	return ret;
 }
@@ -521,26 +527,37 @@ Int CustomMatchPreferences::getPreferredFaction()
 
 	ret = atoi(it->second.str());
 	if (ret == PLAYERTEMPLATE_OBSERVER || ret < PLAYERTEMPLATE_MIN || ret >= ThePlayerTemplateStore->getPlayerTemplateCount())
+	{
 		ret = PLAYERTEMPLATE_RANDOM;
+	}
 
 	if (ret >= 0)
 	{
-		const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(ret);
+		const PlayerTemplate* fac = ThePlayerTemplateStore->getNthPlayerTemplate(ret);
 		if (!fac)
+		{
 			ret = PLAYERTEMPLATE_RANDOM;
+		}
 		else if (fac->getStartingBuilding().isEmpty())
+		{
 			ret = PLAYERTEMPLATE_RANDOM;
+		}
 		else if (TheGameInfo && TheGameInfo->oldFactionsOnly() && !fac->isOldFaction())
+		{
 			ret = PLAYERTEMPLATE_RANDOM;
-		else {
+		}
+		else
+		{
 			// Prevent from loading the disabled Generals, in case you had previously selected one as your preferred faction.
 			// This is also enforced at GUI setup (GUIUtil.cpp and GameLogic.cpp).
 			// @todo: unlock these when something rad happens
 			Bool disallowLockedGenerals = TRUE;
-			const GeneralPersona *general = TheChallengeGenerals->getGeneralByTemplateName(fac->getName());
+			const GeneralPersona* general = TheChallengeGenerals->getGeneralByTemplateName(fac->getName());
 			Bool startsLocked = general ? !general->isStartingEnabled() : FALSE;
 			if (disallowLockedGenerals && startsLocked)
+			{
 				ret = PLAYERTEMPLATE_RANDOM;
+			}
 		}
 	}
 
@@ -558,9 +575,12 @@ Bool CustomMatchPreferences::usesSystemMapDir()
 {
 	CustomMatchPreferences::const_iterator it = find("UseSystemMapDir");
 	if (it == end())
+	{
 		return TRUE;
+	}
 
-	if (stricmp(it->second.str(), "1") == 0) {
+	if (stricmp(it->second.str(), "1") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -578,9 +598,12 @@ Bool CustomMatchPreferences::usesLongGameList()
 	return TRUE;
 	CustomMatchPreferences::const_iterator it = find("UseLongGameList");
 	if (it == end())
+	{
 		return FALSE;
+	}
 
-	if (stricmp(it->second.str(), "1") == 0) {
+	if (stricmp(it->second.str(), "1") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -597,9 +620,12 @@ Bool CustomMatchPreferences::allowsObservers()
 {
 	CustomMatchPreferences::const_iterator it = find("AllowObservers");
 	if (it == end())
+	{
 		return TRUE;
+	}
 
-	if (stricmp(it->second.str(), "1") == 0) {
+	if (stricmp(it->second.str(), "1") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -619,13 +645,18 @@ Bool CustomMatchPreferences::getDisallowAsianText()
 	{
 		// since English Win98 machines don't have a Unicode font installed by default,
 		// we're forced to disable asian chat by default for English builds.
-		if (GetRegistryLanguage().compareNoCase("chinese") == 0 || GetRegistryLanguage().compareNoCase("korean") == 0 )
+		if (GetRegistryLanguage().compareNoCase("chinese") == 0 || GetRegistryLanguage().compareNoCase("korean") == 0)
+		{
 			return FALSE;
+		}
 		else
+		{
 			return TRUE;
+		}
 	}
 
-	if (stricmp(it->second.str(), "1") == 0) {
+	if (stricmp(it->second.str(), "1") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -636,22 +667,24 @@ void CustomMatchPreferences::setDisallowAsianText(Bool val)
 	AsciiString s;
 	s.format("%d", val);
 	(*this)["DisallowAsianText"] = s;
-
 }
 
 Bool CustomMatchPreferences::getDisallowNonAsianText()
 {
 	CustomMatchPreferences::const_iterator it = find("DisallowNonAsianText");
 	if (it == end())
+	{
 		return FALSE;
+	}
 
-	if (stricmp(it->second.str(), "1") == 0) {
+	if (stricmp(it->second.str(), "1") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
 }
 
-void CustomMatchPreferences::setDisallowNonAsianText( Bool val )
+void CustomMatchPreferences::setDisallowNonAsianText(Bool val)
 {
 	AsciiString s;
 	s.format("%d", val);
@@ -663,7 +696,7 @@ AsciiString CustomMatchPreferences::getPreferredMap()
 	AsciiString ret;
 	CustomMatchPreferences::const_iterator it = find("Map");
 	if (it == end())
-	{	//map not found, use default instead
+	{    // map not found, use default instead
 		ret = getDefaultOfficialMap();
 		return ret;
 	}
@@ -671,14 +704,16 @@ AsciiString CustomMatchPreferences::getPreferredMap()
 	ret = QuotedPrintableToAsciiString(it->second);
 	ret.trim();
 	if (ret.isEmpty() || !isValidMap(ret, TRUE))
-	{	//map is invalid, use default instead
+	{    // map is invalid, use default instead
 		ret = getDefaultOfficialMap();
 		return ret;
 	}
 
-	//can only use official maps if recording stats
-	if( getUseStats() && !isOfficialMap(ret) )
+	// can only use official maps if recording stats
+	if (getUseStats() && !isOfficialMap(ret))
+	{
 		ret = getDefaultOfficialMap();
+	}
 	return ret;
 }
 
@@ -687,86 +722,83 @@ void CustomMatchPreferences::setPreferredMap(AsciiString val)
 	(*this)["Map"] = AsciiStringToQuotedPrintable(val);
 }
 
-
 static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
 
 Bool CustomMatchPreferences::getSuperweaponRestricted() const
 {
-  const_iterator it = find(superweaponRestrictionKey);
-  if (it == end())
-  {
-    return false;
-  }
+	const_iterator it = find(superweaponRestrictionKey);
+	if (it == end())
+	{
+		return false;
+	}
 
-  return ( it->second.compareNoCase( "yes" ) == 0 );
+	return (it->second.compareNoCase("yes") == 0);
 }
 
-void CustomMatchPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
+void CustomMatchPreferences::setSuperweaponRestricted(Bool superweaponRestricted)
 {
-  (*this)[superweaponRestrictionKey] = superweaponRestricted ? "Yes" : "No";
+	(*this)[superweaponRestrictionKey] = superweaponRestricted ? "Yes" : "No";
 }
 
 static const char startingCashKey[] = "StartingCash";
 Money CustomMatchPreferences::getStartingCash() const
 {
-  const_iterator it = find(startingCashKey);
-  if (it == end())
-  {
-    return TheMultiplayerSettings->getDefaultStartingMoney();
-  }
+	const_iterator it = find(startingCashKey);
+	if (it == end())
+	{
+		return TheMultiplayerSettings->getDefaultStartingMoney();
+	}
 
-  Money money;
-  money.deposit( strtoul( it->second.str(), nullptr, 10 ), FALSE, FALSE );
+	Money money;
+	money.deposit(strtoul(it->second.str(), nullptr, 10), FALSE, FALSE);
 
-  return money;
+	return money;
 }
 
-void CustomMatchPreferences::setStartingCash( const Money & startingCash )
+void CustomMatchPreferences::setStartingCash(const Money& startingCash)
 {
-  AsciiString option;
+	AsciiString option;
 
-  option.format( "%d", startingCash.countMoney() );
+	option.format("%d", startingCash.countMoney());
 
-  (*this)[startingCashKey] = option;
+	(*this)[startingCashKey] = option;
 }
-
 
 static const char limitFactionsKey[] = "LimitArmies";
 
 // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
 Bool CustomMatchPreferences::getFactionsLimited() const
 {
-  const_iterator it = find(limitFactionsKey);
-  if (it == end())
-  {
-    return false; // The default
-  }
+	const_iterator it = find(limitFactionsKey);
+	if (it == end())
+	{
+		return false;    // The default
+	}
 
-  return ( it->second.compareNoCase( "yes" ) == 0 );
+	return (it->second.compareNoCase("yes") == 0);
 }
 
-void CustomMatchPreferences::setFactionsLimited( Bool factionsLimited )
+void CustomMatchPreferences::setFactionsLimited(Bool factionsLimited)
 {
-  (*this)[limitFactionsKey] = factionsLimited ? "Yes" : "No";
+	(*this)[limitFactionsKey] = factionsLimited ? "Yes" : "No";
 }
-
 
 static const char useStatsKey[] = "UseStats";
 
 Bool CustomMatchPreferences::getUseStats() const
 {
-  const_iterator it = find(useStatsKey);
-  if (it == end())
-  {
-    return true; // The default
-  }
+	const_iterator it = find(useStatsKey);
+	if (it == end())
+	{
+		return true;    // The default
+	}
 
-  return ( it->second.compareNoCase( "yes" ) == 0 );
+	return (it->second.compareNoCase("yes") == 0);
 }
 
-void CustomMatchPreferences::setUseStats( Bool useStats )
+void CustomMatchPreferences::setUseStats(Bool useStats)
 {
-  (*this)[useStatsKey] = useStats ? "Yes" : "No";
+	(*this)[useStatsKey] = useStats ? "Yes" : "No";
 }
 
 //-----------------------------------------------------------------------------
@@ -790,7 +822,7 @@ Int GameSpyMiscPreferences::getLocale()
 	return getInt("Locale", 0);
 }
 
-void GameSpyMiscPreferences::setLocale( Int val )
+void GameSpyMiscPreferences::setLocale(Int val)
 {
 	setInt("Locale", val);
 }
@@ -800,7 +832,7 @@ AsciiString GameSpyMiscPreferences::getCachedStats()
 	return getAsciiString("CachedStats", AsciiString::TheEmptyString);
 }
 
-void GameSpyMiscPreferences::setCachedStats( AsciiString val )
+void GameSpyMiscPreferences::setCachedStats(AsciiString val)
 {
 	setAsciiString("CachedStats", val);
 }
@@ -822,7 +854,7 @@ Int GameSpyMiscPreferences::getMaxMessagesPerUpdate()
 IgnorePreferences::IgnorePreferences()
 {
 	AsciiString userPrefFilename;
-//	if(!TheGameSpyInfo)
+	//	if(!TheGameSpyInfo)
 	Int localProfile = TheGameSpyInfo->getLocalProfileID();
 	userPrefFilename.format("GeneralsOnline\\IgnorePref%d.ini", localProfile);
 	load(userPrefFilename);
@@ -875,7 +907,7 @@ LadderPreferences::~LadderPreferences()
 {
 }
 
-Bool LadderPreferences::loadProfile( Int profileID )
+Bool LadderPreferences::loadProfile(Int profileID)
 {
 	clear();
 	m_ladders.clear();
@@ -883,7 +915,9 @@ Bool LadderPreferences::loadProfile( Int profileID )
 	userPrefFilename.format("GeneralsOnline\\Ladders%d.ini", profileID);
 	Bool success = load(userPrefFilename);
 	if (!success)
+	{
 		return success;
+	}
 
 	// parse out our ladders
 	for (LadderPreferences::iterator it = begin(); it != end(); ++it)
@@ -894,21 +928,25 @@ Bool LadderPreferences::loadProfile( Int profileID )
 
 		DEBUG_LOG(("Looking at [%s] = [%s]", ladName.str(), ladData.str()));
 
-		const char *ptr = ladName.reverseFind(':');
+		const char* ptr = ladName.reverseFind(':');
 		DEBUG_ASSERTCRASH(ptr, ("Did not find ':' in ladder name - skipping"));
 		if (!ptr)
+		{
 			continue;
+		}
 
-		p.port = atoi( ptr + 1 );
+		p.port = atoi(ptr + 1);
 		ladName.truncateBy(strlen(ptr));
 		p.address = QuotedPrintableToAsciiString(ladName);
 
 		ptr = ladData.reverseFind(':');
 		DEBUG_ASSERTCRASH(ptr, ("Did not find ':' in ladder data - skipping"));
 		if (!ptr)
+		{
 			continue;
+		}
 
-		p.lastPlayDate = atoi( ptr + 1 );
+		p.lastPlayDate = atoi(ptr + 1);
 		ladData.truncateBy(strlen(ptr));
 		p.name = QuotedPrintableToUnicodeString(ladData);
 
@@ -925,7 +963,7 @@ bool LadderPreferences::write()
 
 	static const Int MAX_LADDERS = 5;
 	Int count;
-	for (lpIt = m_ladders.begin(), count=0; lpIt != m_ladders.end() && count<MAX_LADDERS; ++lpIt, ++count)
+	for (lpIt = m_ladders.begin(), count = 0; lpIt != m_ladders.end() && count < MAX_LADDERS; ++lpIt, ++count)
 	{
 		LadderPref p = lpIt->second;
 		AsciiString ladName;
@@ -943,7 +981,7 @@ const LadderPrefMap& LadderPreferences::getRecentLadders()
 	return m_ladders;
 }
 
-void LadderPreferences::addRecentLadder( LadderPref ladder )
+void LadderPreferences::addRecentLadder(LadderPref ladder)
 {
 	for (LadderPrefMap::iterator it = m_ladders.begin(); it != m_ladders.end(); ++it)
 	{

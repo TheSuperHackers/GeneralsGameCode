@@ -42,8 +42,8 @@
 #include "WW3D2/shader.h"
 #include "proto.h"
 #include "WWMath/obbox.h"
-#include	"WWMath/Vector3i.h"
-#include	"WWMath/quat.h"
+#include "WWMath/Vector3i.h"
+#include "WWMath/quat.h"
 #include "prim_anim.h"
 #include "WW3D2/meshgeometry.h"
 
@@ -51,60 +51,68 @@ class TextureClass;
 
 struct AlphaVectorStruct
 {
-	AlphaVectorStruct ()
-		:	angle (true),
-			intensity (1.0F)		{ }
-	AlphaVectorStruct (const AlphaVectorStruct &src) { *this = src; }
+	AlphaVectorStruct()
+	  : angle(true)
+	  , intensity(1.0F)
+	{}
+	AlphaVectorStruct(const AlphaVectorStruct& src) { *this = src; }
 
-	bool operator== (const AlphaVectorStruct &src)	{ return (angle.X == src.angle.X) && (angle.Y == src.angle.Y) && (angle.Z == src.angle.Z) && (intensity == src.intensity); }
-	bool operator!= (const AlphaVectorStruct &src)	{ return ! operator== (src); }
+	bool operator==(const AlphaVectorStruct& src) { return (angle.X == src.angle.X) && (angle.Y == src.angle.Y) && (angle.Z == src.angle.Z) && (intensity == src.intensity); }
+	bool operator!=(const AlphaVectorStruct& src) { return !operator==(src); }
 
-	const AlphaVectorStruct &	operator= (const AlphaVectorStruct &src)	{ angle = src.angle; intensity = src.intensity; return *this; }
+	const AlphaVectorStruct& operator=(const AlphaVectorStruct& src)
+	{
+		angle = src.angle;
+		intensity = src.intensity;
+		return *this;
+	}
 
-	Quaternion	angle;
-	float			intensity;
+	Quaternion angle;
+	float intensity;
 };
 
 class AlphaVectorChannel : public PrimitiveAnimationChannelClass<AlphaVectorStruct>
 {
 public:
-	virtual AlphaVectorStruct	Evaluate (float time) override
+	virtual AlphaVectorStruct Evaluate(float time) override
 	{
-		int key_count				= m_Data.Count ();
-		AlphaVectorStruct value	= m_Data[key_count - 1].Get_Value ();
+		int key_count = m_Data.Count();
+		AlphaVectorStruct value = m_Data[key_count - 1].Get_Value();
 
 		//
 		//	Don't interpolate past the last keyframe
 		//
-		if (time < m_Data[key_count - 1].Get_Time ()) {
-
+		if (time < m_Data[key_count - 1].Get_Time())
+		{
 			// Check to see if the last key index is valid
-			if (time < m_Data[m_LastIndex].Get_Time ()) {
+			if (time < m_Data[m_LastIndex].Get_Time())
+			{
 				m_LastIndex = 0;
 			}
 
-			KeyClass *key1 = &m_Data[m_LastIndex];
-			KeyClass *key2 = &m_Data[key_count - 1];
+			KeyClass* key1 = &m_Data[m_LastIndex];
+			KeyClass* key2 = &m_Data[key_count - 1];
 
 			//
 			// Search, using last_key as our starting point
 			//
-			for (int keyidx = m_LastIndex; keyidx < (key_count - 1); keyidx ++) {
-
-				if (time < m_Data[keyidx+1].Get_Time ()) {
+			for (int keyidx = m_LastIndex; keyidx < (key_count - 1); keyidx++)
+			{
+				if (time < m_Data[keyidx + 1].Get_Time())
+				{
 					key1 = &m_Data[keyidx];
-					key2 = &m_Data[keyidx+1];
+					key2 = &m_Data[keyidx + 1];
 					m_LastIndex = keyidx;
 					break;
 				}
 			}
 
 			// Calculate the linear percent between the two keys
-			float percent	= (time - key1->Get_Time ()) / (key2->Get_Time () - key1->Get_Time ());
+			float percent = (time - key1->Get_Time()) / (key2->Get_Time() - key1->Get_Time());
 
 			// Slerp the quaternions and lerp the intensities
-			value.intensity = (key1->Get_Value ().intensity + (key2->Get_Value ().intensity - key1->Get_Value ().intensity) * percent);
-			Fast_Slerp (value.angle, key1->Get_Value ().angle, key2->Get_Value ().angle, percent);
+			value.intensity = (key1->Get_Value().intensity + (key2->Get_Value().intensity - key1->Get_Value().intensity) * percent);
+			Fast_Slerp(value.angle, key1->Get_Value().angle, key2->Get_Value().angle, percent);
 		}
 
 		return value;
@@ -113,22 +121,22 @@ public:
 
 struct W3dSphereStruct
 {
-	uint32				Version;							// file format version
-	uint32				Attributes;						// sphere attributes (above #define's)
-	char					Name[2*W3D_NAME_LEN];		// name is in the form <containername>.<spherename>
+	uint32 Version;    // file format version
+	uint32 Attributes;    // sphere attributes (above #define's)
+	char Name[2 * W3D_NAME_LEN];    // name is in the form <containername>.<spherename>
 
-	W3dVectorStruct	Center;							// center of the sphere
-	W3dVectorStruct	Extent;							// extent of the sphere
+	W3dVectorStruct Center;    // center of the sphere
+	W3dVectorStruct Extent;    // extent of the sphere
 
-	float					AnimDuration;					// Animation time (in seconds)
+	float AnimDuration;    // Animation time (in seconds)
 
-	W3dVectorStruct	DefaultColor;
-	float					DefaultAlpha;
-	W3dVectorStruct	DefaultScale;
+	W3dVectorStruct DefaultColor;
+	float DefaultAlpha;
+	W3dVectorStruct DefaultScale;
 	AlphaVectorStruct DefaultVector;
 
-	char					TextureName[2*W3D_NAME_LEN];
-	W3dShaderStruct	Shader;
+	char TextureName[2 * W3D_NAME_LEN];
+	W3dShaderStruct Shader;
 
 	//
 	//	Note this structure is followed by a series of
@@ -137,18 +145,17 @@ struct W3dSphereStruct
 	//
 };
 
-typedef LERPAnimationChannelClass<Vector3>	SphereColorChannelClass;
-typedef LERPAnimationChannelClass<float>		SphereAlphaChannelClass;
-typedef LERPAnimationChannelClass<Vector3>	SphereScaleChannelClass;
-typedef AlphaVectorChannel							SphereVectorChannelClass;
-//typedef AlphaVectorChannel									;
+typedef LERPAnimationChannelClass<Vector3> SphereColorChannelClass;
+typedef LERPAnimationChannelClass<float> SphereAlphaChannelClass;
+typedef LERPAnimationChannelClass<Vector3> SphereScaleChannelClass;
+typedef AlphaVectorChannel SphereVectorChannelClass;
+// typedef AlphaVectorChannel									;
 
 class VertexMaterialClass;
 
-
 class SphereMeshClass
 {
-friend class SphereRenderObjClass;
+	friend class SphereRenderObjClass;
 
 public:
 	// Constructor
@@ -157,52 +164,53 @@ public:
 	// Destructor
 	~SphereMeshClass();
 
-	void	Generate (float radius, int slices, int stacks);
-	int	Get_Num_Polys () { return face_ct; };
-	void	Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse, bool is_additive, bool force = false);
+	void Generate(float radius, int slices, int stacks);
+	int Get_Num_Polys() { return face_ct; };
+	void Set_Alpha_Vector(const AlphaVectorStruct& v, bool inverse, bool is_additive, bool force = false);
 
 private:
+	void Set_DCG(bool is_additive, int index, float value);
 
-	void		Set_DCG (bool is_additive, int index, float value);
+	void Free();
 
-	void		Free();
+	float Radius;
+	int Slices;
+	int Stacks;
+	int face_ct;    // # of faces
 
-	float		Radius;
-	int		Slices;
-	int		Stacks;
-	int		face_ct;	  		// # of faces
+	int Vertex_ct;    // vertex count
+	Vector3* vtx;    // array of vertices
+	Vector3* vtx_normal;    // array of vertex normals
+	Vector2* vtx_uv;    // array of vertex uv coordinates
+	Vector4* dcg;
 
-	int		Vertex_ct;		// vertex count
-	Vector3	*vtx;				// array of vertices
-	Vector3	*vtx_normal;	// array of vertex normals
-	Vector2	*vtx_uv;			// array of vertex uv coordinates
-	Vector4  *dcg;
+	AlphaVectorStruct alpha_vector;    // vector last used to computer vtx_alpha array
+	bool inverse_alpha;    // inverse alpha, or not
+	bool IsAdditive;
 
-	AlphaVectorStruct alpha_vector;	// vector last used to computer vtx_alpha array
-	bool		inverse_alpha;	// inverse alpha, or not
-	bool		IsAdditive;
+	int strip_ct;    // number of strips
+	int strip_size;    // size of each strip
+	int* strips;    // array of vertex indices for each strip	 (# stripbs x sizeof strip)
 
-	int		strip_ct;		// number of strips
-	int		strip_size;		// size of each strip
-	int		*strips;			// array of vertex indices for each strip	 (# stripbs x sizeof strip)
+	int fan_ct;    // number of fans
+	int fan_size;    // size of each fan
+	int* fans;    // array of vertex indices for each fan (# of fans by fan_size)
 
-	int		fan_ct;			// number of fans
-	int		fan_size;		// size of each fan
-	int		*fans;			// array of vertex indices for each fan (# of fans by fan_size)
-
-	TriIndex	*tri_poly;		// array of triangle poly's, vertex indices  (can be discard if switched to strips + fans)
-
+	TriIndex* tri_poly;    // array of triangle poly's, vertex indices  (can be discard if switched to strips + fans)
 };
 
 inline void
-SphereMeshClass::Set_DCG (bool is_additive, int index, float value)
+SphereMeshClass::Set_DCG(bool is_additive, int index, float value)
 {
-	if (is_additive) {
+	if (is_additive)
+	{
 		dcg[index].X = value;
 		dcg[index].Y = value;
 		dcg[index].Z = value;
 		dcg[index].W = 0;
-	} else {
+	}
+	else
+	{
 		dcg[index].X = 1.0F;
 		dcg[index].Y = 1.0F;
 		dcg[index].Z = 1.0F;
@@ -211,8 +219,8 @@ SphereMeshClass::Set_DCG (bool is_additive, int index, float value)
 }
 
 // Note: SPHERE_NUM_LOD does not include the null LOD.
-#define SPHERE_NUM_LOD		(10)
-#define SPHERE_LOWEST_LOD	(7)
+#define SPHERE_NUM_LOD (10)
+#define SPHERE_LOWEST_LOD (7)
 #define SPHERE_HIGHEST_LOD (17)
 
 /*
@@ -221,199 +229,230 @@ SphereMeshClass::Set_DCG (bool is_additive, int index, float value)
 */
 class SphereRenderObjClass : public RenderObjClass
 {
-
 public:
-
 	// These are bit masks, so they should enum 1,2,4,8,10,20,40 etc...
-	enum SphereFlags {
-		USE_ALPHA_VECTOR	= 0x00000001,
-		USE_CAMERA_ALIGN	= 0x00000002,
-		USE_INVERSE_ALPHA	= 0x00000004,
-		USE_ANIMATION_LOOP= 0x00000008,
+	enum SphereFlags
+	{
+		USE_ALPHA_VECTOR = 0x00000001,
+		USE_CAMERA_ALIGN = 0x00000002,
+		USE_INVERSE_ALPHA = 0x00000004,
+		USE_ANIMATION_LOOP = 0x00000008,
 	};
 
 	SphereRenderObjClass();
-	SphereRenderObjClass(const W3dSphereStruct & def);
-	SphereRenderObjClass(const SphereRenderObjClass & src);
-	SphereRenderObjClass & operator = (const SphereRenderObjClass &);
+	SphereRenderObjClass(const W3dSphereStruct& def);
+	SphereRenderObjClass(const SphereRenderObjClass& src);
+	SphereRenderObjClass& operator=(const SphereRenderObjClass&);
 	virtual ~SphereRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const override;
-	virtual int						Class_ID() const override;
-	virtual void					Render(RenderInfoClass & rinfo) override;
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
-	virtual void 					Set_Transform(const Matrix3D &m) override;
-	virtual void 					Set_Position(const Vector3 &v) override;
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
+	virtual RenderObjClass* Clone() const override;
+	virtual int Class_ID() const override;
+	virtual void Render(RenderInfoClass& rinfo) override;
+	virtual void Special_Render(SpecialRenderInfoClass& rinfo) override;
+	virtual void Set_Transform(const Matrix3D& m) override;
+	virtual void Set_Position(const Vector3& v) override;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& aabox) const override;
 
-	virtual void					Prepare_LOD(CameraClass &camera) override;
-	virtual void					Increment_LOD() override;
-	virtual void					Decrement_LOD() override;
-	virtual float					Get_Cost() const override;
-	virtual float					Get_Value() const override;
-	virtual float					Get_Post_Increment_Value() const override;
-	virtual void					Set_LOD_Level(int lod) override;
-	virtual int						Get_LOD_Level() const override;
-	virtual int						Get_LOD_Count() const override;
-	virtual void					Set_LOD_Bias(float bias) override	{ LODBias = MAX(bias, 0.0f); }
-	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const override;
+	virtual void Prepare_LOD(CameraClass& camera) override;
+	virtual void Increment_LOD() override;
+	virtual void Decrement_LOD() override;
+	virtual float Get_Cost() const override;
+	virtual float Get_Value() const override;
+	virtual float Get_Post_Increment_Value() const override;
+	virtual void Set_LOD_Level(int lod) override;
+	virtual int Get_LOD_Level() const override;
+	virtual int Get_LOD_Count() const override;
+	virtual void Set_LOD_Bias(float bias) override { LODBias = MAX(bias, 0.0f); }
+	virtual int Calculate_Cost_Value_Arrays(float screen_area, float* values, float* costs) const override;
 
-	virtual void					Scale(float scale) override;
-	virtual void					Scale(float scalex, float scaley, float scalez) override;
-	virtual void					Set_Hidden(int onoff) override				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibility (); }
-	virtual void					Set_Visible(int onoff) override				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibility (); }
-	virtual void					Set_Animation_Hidden(int onoff) override	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
-	virtual void					Set_Force_Visible(int onoff) override		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
+	virtual void Scale(float scale) override;
+	virtual void Scale(float scalex, float scaley, float scalez) override;
+	virtual void Set_Hidden(int onoff) override
+	{
+		RenderObjClass::Set_Hidden(onoff);
+		Update_On_Visibility();
+	}
+	virtual void Set_Visible(int onoff) override
+	{
+		RenderObjClass::Set_Visible(onoff);
+		Update_On_Visibility();
+	}
+	virtual void Set_Animation_Hidden(int onoff) override
+	{
+		RenderObjClass::Set_Animation_Hidden(onoff);
+		Update_On_Visibility();
+	}
+	virtual void Set_Force_Visible(int onoff) override
+	{
+		RenderObjClass::Set_Force_Visible(onoff);
+		Update_On_Visibility();
+	}
 
+	const AABoxClass& Get_Box();
 
-	const AABoxClass	&			Get_Box();
+	virtual int Get_Num_Polys() const override;
+	virtual const char* Get_Name() const override;
+	virtual void Set_Name(const char* name) override;
 
-	virtual int					 	Get_Num_Polys() const override;
-	virtual const char *		 	Get_Name() const override;
-	virtual void				 	Set_Name(const char * name) override;
-
-	unsigned int					Get_Flags()  { return Flags; }
-	void								Set_Flags(unsigned int flags) { Flags = flags; }
-	void								Set_Flag(unsigned int flag, bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
+	unsigned int Get_Flags() { return Flags; }
+	void Set_Flags(unsigned int flags) { Flags = flags; }
+	void Set_Flag(unsigned int flag, bool onoff)
+	{
+		Flags &= (~flag);
+		if (onoff)
+		{
+			Flags |= flag;
+		}
+	}
 
 	// Animation access
-	bool								Is_Animating ()		{ return IsAnimating; }
-	void								Start_Animating ()	{ IsAnimating = true; anim_time = 0; }
-	void								Stop_Animating ()	{ IsAnimating = false; anim_time = 0; }
+	bool Is_Animating() { return IsAnimating; }
+	void Start_Animating()
+	{
+		IsAnimating = true;
+		anim_time = 0;
+	}
+	void Stop_Animating()
+	{
+		IsAnimating = false;
+		anim_time = 0;
+	}
 
 	// Current state access
-	void							 	Set_Color(const Vector3 & color)			{ CurrentColor = color; }
-	void							 	Set_Alpha(float alpha)						{ CurrentAlpha = alpha; }
-	void							 	Set_Scale(const Vector3 & scale)			{ CurrentScale = scale; }
-	void								Set_Vector(const AlphaVectorStruct &v)	{ CurrentVector = v; }
+	void Set_Color(const Vector3& color) { CurrentColor = color; }
+	void Set_Alpha(float alpha) { CurrentAlpha = alpha; }
+	void Set_Scale(const Vector3& scale) { CurrentScale = scale; }
+	void Set_Vector(const AlphaVectorStruct& v) { CurrentVector = v; }
 
-	const Vector3 &				Get_Color() const	{ return CurrentColor; }
-	float								Get_Alpha() const	{ return CurrentAlpha; }
-	const Vector3 &				Get_Scale() const	{ return CurrentScale; }
-	const AlphaVectorStruct &	Get_Vector() const	{ return CurrentVector; }
+	const Vector3& Get_Color() const { return CurrentColor; }
+	float Get_Alpha() const { return CurrentAlpha; }
+	const Vector3& Get_Scale() const { return CurrentScale; }
+	const AlphaVectorStruct& Get_Vector() const { return CurrentVector; }
 
-	Vector3							Get_Default_Color() const;
-	float								Get_Default_Alpha() const;
-	Vector3							Get_Default_Scale() const;
-	AlphaVectorStruct				Get_Default_Vector() const;
+	Vector3 Get_Default_Color() const;
+	float Get_Default_Alpha() const;
+	Vector3 Get_Default_Scale() const;
+	AlphaVectorStruct Get_Default_Vector() const;
 
 	// Size/position methods
-	void								Set_Extent (const Vector3 &extent);
-	void							  	Set_Local_Center_Extent(const Vector3 & center,const Vector3 & extent);
-	void							  	Set_Local_Min_Max(const Vector3 & min,const Vector3 & max);
+	void Set_Extent(const Vector3& extent);
+	void Set_Local_Center_Extent(const Vector3& center, const Vector3& extent);
+	void Set_Local_Min_Max(const Vector3& min, const Vector3& max);
 
 	// Texture access
-	void							  	Set_Texture(TextureClass *tf);
-	TextureClass	*				Peek_Texture()					{return SphereTexture;}
-	ShaderClass	&					Get_Shader()						{return SphereShader;}
-	void								Set_Shader(ShaderClass &shader)	{SphereShader=shader;}
+	void Set_Texture(TextureClass* tf);
+	TextureClass* Peek_Texture() { return SphereTexture; }
+	ShaderClass& Get_Shader() { return SphereShader; }
+	void Set_Shader(ShaderClass& shader) { SphereShader = shader; }
 
 	// Animation control
-	float								Get_Animation_Duration () const		{ return AnimDuration; }
-	void								Set_Animation_Duration (float time)		{ AnimDuration = time; Restart_Animation (); }
-	void								Restart_Animation ()					{ anim_time = 0; }
+	float Get_Animation_Duration() const { return AnimDuration; }
+	void Set_Animation_Duration(float time)
+	{
+		AnimDuration = time;
+		Restart_Animation();
+	}
+	void Restart_Animation() { anim_time = 0; }
 
 	// Animatable channel access
-	SphereColorChannelClass &			Get_Color_Channel ()				{ return ColorChannel; }
-	const SphereColorChannelClass &	Peek_Color_Channel ()				{ return ColorChannel; }
+	SphereColorChannelClass& Get_Color_Channel() { return ColorChannel; }
+	const SphereColorChannelClass& Peek_Color_Channel() { return ColorChannel; }
 
-	SphereAlphaChannelClass &			Get_Alpha_Channel ()				{ return AlphaChannel; }
-	const SphereAlphaChannelClass &	Peek_Alpha_Channel ()				{ return AlphaChannel; }
+	SphereAlphaChannelClass& Get_Alpha_Channel() { return AlphaChannel; }
+	const SphereAlphaChannelClass& Peek_Alpha_Channel() { return AlphaChannel; }
 
-	SphereScaleChannelClass &			Get_Scale_Channel ()				{ return ScaleChannel; }
-	const SphereScaleChannelClass &	Peek_Scale_Channel ()				{ return ScaleChannel; }
+	SphereScaleChannelClass& Get_Scale_Channel() { return ScaleChannel; }
+	const SphereScaleChannelClass& Peek_Scale_Channel() { return ScaleChannel; }
 
-	SphereVectorChannelClass &			Get_Vector_Channel ()				{ return VectorChannel; }
-	const SphereVectorChannelClass &	Peek_Vector_Channel ()				{ return VectorChannel; }
+	SphereVectorChannelClass& Get_Vector_Channel() { return VectorChannel; }
+	const SphereVectorChannelClass& Peek_Vector_Channel() { return VectorChannel; }
 
-	void								Set_Color_Channel (const SphereColorChannelClass &data)		{ ColorChannel = data; }
-	void								Set_Alpha_Channel (const SphereAlphaChannelClass &data)		{ AlphaChannel = data; }
-	void								Set_Scale_Channel (const SphereScaleChannelClass &data)		{ ScaleChannel = data; }
-	void								Set_Vector_Channel (const SphereVectorChannelClass &data)	{ VectorChannel = data; }
+	void Set_Color_Channel(const SphereColorChannelClass& data) { ColorChannel = data; }
+	void Set_Alpha_Channel(const SphereAlphaChannelClass& data) { AlphaChannel = data; }
+	void Set_Scale_Channel(const SphereScaleChannelClass& data) { ScaleChannel = data; }
+	void Set_Vector_Channel(const SphereVectorChannelClass& data) { VectorChannel = data; }
 
 protected:
-
-	virtual void			 		update_cached_box();
-	virtual void			 		Update_Cached_Bounding_Volumes() const override;
-	void								Update_On_Visibility();
+	virtual void update_cached_box();
+	virtual void Update_Cached_Bounding_Volumes() const override;
+	void Update_On_Visibility();
 
 	// Initialization stuff
-	void								Init_Material ();
-	static void						Generate_Shared_Mesh_Arrays (const AlphaVectorStruct &alphavector);
+	void Init_Material();
+	static void Generate_Shared_Mesh_Arrays(const AlphaVectorStruct& alphavector);
 
 	// Animation Stuff
-	void								animate();		// animation update function
-	float								anim_time;			// what time in seconds are we in the animation
-	float								AnimDuration;
-	bool								IsAnimating;
+	void animate();    // animation update function
+	float anim_time;    // what time in seconds are we in the animation
+	float AnimDuration;
+	bool IsAnimating;
 
 	// LOD Stuff
-	void								calculate_value_array(float screen_area, float *values) const;
-	float								LODBias;
-	int						 		CurrentLOD;
-	float								Value[SPHERE_NUM_LOD + 2];// Value array needs # of LODs + 1 (RING_NUM_LOD doesn't include null LOD)
+	void calculate_value_array(float screen_area, float* values) const;
+	float LODBias;
+	int CurrentLOD;
+	float Value[SPHERE_NUM_LOD + 2];    // Value array needs # of LODs + 1 (RING_NUM_LOD doesn't include null LOD)
 
-	SphereColorChannelClass		ColorChannel;
-	SphereAlphaChannelClass		AlphaChannel;
-	SphereScaleChannelClass		ScaleChannel;
-	SphereVectorChannelClass	VectorChannel;
+	SphereColorChannelClass ColorChannel;
+	SphereAlphaChannelClass AlphaChannel;
+	SphereScaleChannelClass ScaleChannel;
+	SphereVectorChannelClass VectorChannel;
 
-	void						 		update_mesh_data(const Vector3 & center,const Vector3 & extent);
-	void						 		render_sphere();
-	void						 		vis_render_sphere(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent);
+	void update_mesh_data(const Vector3& center, const Vector3& extent);
+	void render_sphere();
+	void vis_render_sphere(SpecialRenderInfoClass& rinfo, const Vector3& center, const Vector3& extent);
 
-	char						 		Name[2*W3D_NAME_LEN];
-	Vector3					 		ObjSpaceCenter;
-	Vector3					 		ObjSpaceExtent;
+	char Name[2 * W3D_NAME_LEN];
+	Vector3 ObjSpaceCenter;
+	Vector3 ObjSpaceExtent;
 
 	// Current State
-	Vector3					 		CurrentColor;
-	float								CurrentAlpha;
-	Vector3							CurrentScale;
-	AlphaVectorStruct				CurrentVector;
+	Vector3 CurrentColor;
+	float CurrentAlpha;
+	Vector3 CurrentScale;
+	AlphaVectorStruct CurrentVector;
 
-	Quaternion						Orientation;
+	Quaternion Orientation;
 
 	// Flags
-	unsigned int					Flags;
+	unsigned int Flags;
 
-	VertexMaterialClass	  	  *SphereMaterial;
-	ShaderClass					  	SphereShader;
-	TextureClass				  *SphereTexture;
+	VertexMaterialClass* SphereMaterial;
+	ShaderClass SphereShader;
+	TextureClass* SphereTexture;
 
-	AABoxClass						CachedBox;
+	AABoxClass CachedBox;
 
 	// Friend classes
 	friend class SpherePrototypeClass;
 };
 
-inline void SphereRenderObjClass::Set_Extent (const Vector3 &extent)
+inline void SphereRenderObjClass::Set_Extent(const Vector3& extent)
 {
 	ObjSpaceExtent = extent;
 	update_cached_box();
 	Update_Cached_Bounding_Volumes();
 }
 
-inline void SphereRenderObjClass::Set_Local_Center_Extent(const Vector3 & center,const Vector3 & extent)
+inline void SphereRenderObjClass::Set_Local_Center_Extent(const Vector3& center, const Vector3& extent)
 {
 	ObjSpaceCenter = center;
 	ObjSpaceExtent = extent;
 	update_cached_box();
 }
 
-inline void SphereRenderObjClass::Set_Local_Min_Max(const Vector3 & min,const Vector3 & max)
+inline void SphereRenderObjClass::Set_Local_Min_Max(const Vector3& min, const Vector3& max)
 {
 	ObjSpaceCenter = (max + min) / 2.0f;
 	ObjSpaceExtent = (max - min) / 2.0f;
 	update_cached_box();
 }
 
-
-inline const AABoxClass & SphereRenderObjClass::Get_Box()
+inline const AABoxClass& SphereRenderObjClass::Get_Box()
 {
 	Validate_Transform();
 	update_cached_box();
@@ -426,8 +465,8 @@ inline const AABoxClass & SphereRenderObjClass::Get_Box()
 class SphereLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type () override { return W3D_CHUNK_SPHERE; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
+	virtual int Chunk_Type() override { return W3D_CHUNK_SPHERE; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) override;
 };
 
 /*
@@ -437,32 +476,32 @@ class SpherePrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(SpherePrototypeClass)
 public:
-	SpherePrototypeClass ();
-	SpherePrototypeClass (SphereRenderObjClass *sphere);
+	SpherePrototypeClass();
+	SpherePrototypeClass(SphereRenderObjClass* sphere);
 
-	virtual const char *			Get_Name() const override;
-	virtual int						Get_Class_ID() const override;
-	virtual RenderObjClass *	Create() override;
-	virtual void							DeleteSelf() override { delete this; }
+	virtual const char* Get_Name() const override;
+	virtual int Get_Class_ID() const override;
+	virtual RenderObjClass* Create() override;
+	virtual void DeleteSelf() override { delete this; }
 
-	bool								Load (ChunkLoadClass &cload);
-	bool								Save (ChunkSaveClass &csave);
+	bool Load(ChunkLoadClass& cload);
+	bool Save(ChunkSaveClass& csave);
 
 protected:
-	virtual ~SpherePrototypeClass () override;
+	virtual ~SpherePrototypeClass() override;
 
 private:
-	W3dSphereStruct				Definition;
+	W3dSphereStruct Definition;
 
-	SphereColorChannelClass		ColorChannel;
-	SphereAlphaChannelClass		AlphaChannel;
-	SphereScaleChannelClass		ScaleChannel;
-	SphereVectorChannelClass	VectorChannel;
+	SphereColorChannelClass ColorChannel;
+	SphereAlphaChannelClass AlphaChannel;
+	SphereScaleChannelClass ScaleChannel;
+	SphereVectorChannelClass VectorChannel;
 };
 
 /*
 ** Instance of the loader which the asset manager installs
 */
-extern SphereLoaderClass			_SphereLoader;
+extern SphereLoaderClass _SphereLoader;
 
 // EOF - sphereobj,h

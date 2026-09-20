@@ -74,4 +74,4 @@ public:
 	static GameSpyConfigInterface* create(AsciiString config);
 };
 
-extern GameSpyConfigInterface *TheGameSpyConfig;
+extern GameSpyConfigInterface* TheGameSpyConfig;

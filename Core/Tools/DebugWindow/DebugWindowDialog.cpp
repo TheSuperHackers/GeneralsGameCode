@@ -19,8 +19,8 @@
 #include "StdAfx.h"
 #include "DebugWindowDialog.h"
 
-DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) :
-	CDialog(nIDTemplate, pParentWnd)
+DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd)
+  : CDialog(nIDTemplate, pParentWnd)
 {
 	mStepping = false;
 	mRunFast = false;
@@ -52,9 +52,12 @@ void DebugWindowDialog::ForceContinue()
 
 void DebugWindowDialog::OnPause()
 {
-	if (mNumberOfStepsAllowed < 0) {
+	if (mNumberOfStepsAllowed < 0)
+	{
 		mNumberOfStepsAllowed = 0;
-	} else {
+	}
+	else
+	{
 		mNumberOfStepsAllowed = -1;
 	}
 	_UpdatePauseButton();
@@ -69,7 +72,7 @@ void DebugWindowDialog::OnStep()
 
 void DebugWindowDialog::OnRunFast()
 {
-	CButton *pButton = (CButton*)GetDlgItem(IDC_RUN_FAST);
+	CButton* pButton = (CButton*)GetDlgItem(IDC_RUN_FAST);
 	mRunFast = pButton->GetCheck() == 1;
 }
 
@@ -90,10 +93,14 @@ void DebugWindowDialog::OnClearWindows()
 
 bool DebugWindowDialog::CanProceed()
 {
-	if (mNumberOfStepsAllowed < 0) {
+	if (mNumberOfStepsAllowed < 0)
+	{
 		return true;
-	} else if (mNumberOfStepsAllowed == 0) {
-		if (mStepping) {
+	}
+	else if (mNumberOfStepsAllowed == 0)
+	{
+		if (mStepping)
+		{
 			mStepping = false;
 			_UpdatePauseButton();
 		}
@@ -117,8 +124,10 @@ void DebugWindowDialog::AppendMessage(const std::string& messageToAppend)
 
 void DebugWindowDialog::AdjustVariable(const std::string& varName, const std::string& varValue)
 {
-	for (VecPairStringIt it = mVariables.begin(); it != mVariables.end(); it++) {
-		if (it->first == varName) {
+	for (VecPairStringIt it = mVariables.begin(); it != mVariables.end(); it++)
+	{
+		if (it->first == varName)
+		{
 			it->second = varValue;
 			_RebuildVarsString();
 			return;
@@ -136,13 +145,14 @@ void DebugWindowDialog::AdjustVariable(const std::string& varName, const std::st
 void DebugWindowDialog::SetFrameNumber(int frameNumber)
 {
 	static int numDigits;
-	numDigits = frameNumber / 10 + 2;	// 1 for 1 additional digit, 1 for \0
+	numDigits = frameNumber / 10 + 2;    // 1 for 1 additional digit, 1 for \0
 
 	mFrameNumber.resize(numDigits);
 	sprintf(&mFrameNumber[0], "%d", frameNumber);
 
-	CWnd *pWnd = GetDlgItem(IDC_FrameNumber);
-	if (pWnd) {
+	CWnd* pWnd = GetDlgItem(IDC_FrameNumber);
+	if (pWnd)
+	{
 		pWnd->SetWindowText(mFrameNumber.c_str());
 	}
 }
@@ -153,14 +163,13 @@ void DebugWindowDialog::_RebuildVarsString()
 	((CEdit*)GetDlgItem(IDC_Variables))->GetSel(cursorPosBeg, cursorPosEnd);
 	mVariablesString = "";
 
-	for (VecPairStringIt it = mVariables.begin(); it != mVariables.end(); it++) {
+	for (VecPairStringIt it = mVariables.begin(); it != mVariables.end(); it++)
+	{
 		mVariablesString += it->first;
 		mVariablesString += " = ";
 		mVariablesString += it->second;
 		mVariablesString += "\r\n";
 	}
-
-
 
 	// Push the new string
 	mVariablesDisplayString = mVariablesString.c_str();
@@ -172,7 +181,8 @@ void DebugWindowDialog::_RebuildMesgString()
 {
 	mMessagesString = "";
 
-	for (VecStringIt it = mMessages.begin(); it != mMessages.end(); it++) {
+	for (VecStringIt it = mMessages.begin(); it != mMessages.end(); it++)
+	{
 		mMessagesString += (*it);
 		mMessagesString += "\r\n";
 	}
@@ -186,16 +196,16 @@ void DebugWindowDialog::_RebuildMesgString()
 void DebugWindowDialog::_UpdatePauseButton()
 {
 	// huh huh huhuh he said pButt
-	CButton* pButt = (CButton*) GetDlgItem(IDC_Pause);
+	CButton* pButt = (CButton*)GetDlgItem(IDC_Pause);
 
-	if (!pButt) {
+	if (!pButt)
+	{
 		return;
 	}
 
 	// The state should of the button should reflect !mNumberOfStepsAllowed
 	pButt->SetCheck((mNumberOfStepsAllowed ? FALSE : TRUE));
 }
-
 
 void DebugWindowDialog::OnClose()
 {
@@ -205,22 +215,22 @@ void DebugWindowDialog::OnClose()
 void DebugWindowDialog::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
-	if (nType == SIZE_MINIMIZED) {
-		if (mMainWndHWND) {
+	if (nType == SIZE_MINIMIZED)
+	{
+		if (mMainWndHWND)
+		{
 			::SetFocus(mMainWndHWND);
 		}
 	}
 }
 
-
-
 BEGIN_MESSAGE_MAP(DebugWindowDialog, CDialog)
-	ON_WM_CREATE( )
-	ON_BN_CLICKED(IDC_Pause, OnPause)
-	ON_BN_CLICKED(IDC_Step, OnStep)
-	ON_BN_CLICKED(IDC_RUN_FAST, OnRunFast)
-	ON_BN_CLICKED(IDC_StepTen, OnStepTen)
-	ON_BN_CLICKED(IDC_ClearWindows, OnClearWindows)
-	ON_WM_CLOSE()
-	ON_WM_SIZE()
+ON_WM_CREATE()
+ON_BN_CLICKED(IDC_Pause, OnPause)
+ON_BN_CLICKED(IDC_Step, OnStep)
+ON_BN_CLICKED(IDC_RUN_FAST, OnRunFast)
+ON_BN_CLICKED(IDC_StepTen, OnStepTen)
+ON_BN_CLICKED(IDC_ClearWindows, OnClearWindows)
+ON_WM_CLOSE()
+ON_WM_SIZE()
 END_MESSAGE_MAP()

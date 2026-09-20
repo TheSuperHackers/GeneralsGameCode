@@ -28,7 +28,7 @@
 
 #pragma once
 
-enum WeaponStatus CPP_11(: Int)
+enum WeaponStatus CPP_11( : Int)
 {
 	READY_TO_FIRE,
 	OUT_OF_AMMO,

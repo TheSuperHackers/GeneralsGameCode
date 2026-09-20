@@ -38,20 +38,18 @@
 #include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 
-
 //-------------------------------------------------------------------------------------------------
-W3DTreeDrawModuleData::W3DTreeDrawModuleData() :
-m_framesToMoveInward(1),
-m_framesToMoveOutward(1),
-m_darkening(0.0f),
-m_maxOutwardMovement(1.0f)
+W3DTreeDrawModuleData::W3DTreeDrawModuleData()
+  : m_framesToMoveInward(1)
+  , m_framesToMoveOutward(1)
+  , m_darkening(0.0f)
+  , m_maxOutwardMovement(1.0f)
 {
-
 	// Topple parameters. [7/7/2003]
 	const Real START_VELOCITY_PERCENT = 0.2f;
 	const Real START_ACCEL_PERCENT = 0.01f;
-	const Real VELOCITY_BOUNCE_PERCENT = 0.3f;			// multiply the velocity by this when you bounce
-  const Real MINIMUM_TOPPLE_SPEED = 0.5f;         // Won't let trees fall slower than this
+	const Real VELOCITY_BOUNCE_PERCENT = 0.3f;    // multiply the velocity by this when you bounce
+	const Real MINIMUM_TOPPLE_SPEED = 0.5f;    // Won't let trees fall slower than this
 	m_toppleFX = nullptr;
 	m_bounceFX = nullptr;
 	m_stumpName.clear();
@@ -61,10 +59,9 @@ m_maxOutwardMovement(1.0f)
 	m_initialVelocityPercent = START_VELOCITY_PERCENT;
 	m_initialAccelPercent = START_ACCEL_PERCENT;
 	m_bounceVelocityPercent = VELOCITY_BOUNCE_PERCENT;
-  m_minimumToppleSpeed = MINIMUM_TOPPLE_SPEED;
-	m_sinkFrames = 10*LOGICFRAMES_PER_SECOND;
+	m_minimumToppleSpeed = MINIMUM_TOPPLE_SPEED;
+	m_sinkFrames = 10 * LOGICFRAMES_PER_SECOND;
 	m_sinkDistance = 20.0f;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -75,9 +72,8 @@ W3DTreeDrawModuleData::~W3DTreeDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] =
-	{
+	ModuleData::buildFieldParse(p);
+	static const FieldParse dataFieldParse[] = {
 		{ "ModelName", INI::parseAsciiString, nullptr, offsetof(W3DTreeDrawModuleData, m_modelName) },
 		{ "TextureName", INI::parseAsciiString, nullptr, offsetof(W3DTreeDrawModuleData, m_textureName) },
 		{ "MoveOutwardTime", INI::parseDurationUnsignedInt, nullptr, offsetof(W3DTreeDrawModuleData, m_framesToMoveOutward) },
@@ -85,22 +81,22 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "MoveOutwardDistanceFactor", INI::parseReal, nullptr, offsetof(W3DTreeDrawModuleData, m_maxOutwardMovement) },
 		{ "DarkeningFactor", INI::parseReal, nullptr, offsetof(W3DTreeDrawModuleData, m_darkening) },
 
-// Topple parameters [7/7/2003]
-		{ "ToppleFX",	INI::parseFXList, nullptr, offsetof( W3DTreeDrawModuleData, m_toppleFX ) },
-		{ "BounceFX",	INI::parseFXList, nullptr, offsetof( W3DTreeDrawModuleData, m_bounceFX ) },
-		{ "StumpName",	INI::parseAsciiString, nullptr, offsetof( W3DTreeDrawModuleData, m_stumpName ) },
-		{ "KillWhenFinishedToppling",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_killWhenToppled ) },
-		{ "DoTopple",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_doTopple ) },
-		{ "InitialVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( W3DTreeDrawModuleData, m_initialVelocityPercent ) },
-		{ "InitialAccelPercent",	INI::parsePercentToReal, nullptr, offsetof( W3DTreeDrawModuleData, m_initialAccelPercent ) },
-		{ "BounceVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( W3DTreeDrawModuleData, m_bounceVelocityPercent ) },
-    { "MinimumToppleSpeed",	INI::parsePositiveNonZeroReal, nullptr, offsetof( W3DTreeDrawModuleData, m_minimumToppleSpeed ) },
-    { "SinkDistance",	INI::parsePositiveNonZeroReal, nullptr, offsetof( W3DTreeDrawModuleData, m_sinkDistance ) },
+		// Topple parameters [7/7/2003]
+		{ "ToppleFX", INI::parseFXList, nullptr, offsetof(W3DTreeDrawModuleData, m_toppleFX) },
+		{ "BounceFX", INI::parseFXList, nullptr, offsetof(W3DTreeDrawModuleData, m_bounceFX) },
+		{ "StumpName", INI::parseAsciiString, nullptr, offsetof(W3DTreeDrawModuleData, m_stumpName) },
+		{ "KillWhenFinishedToppling", INI::parseBool, nullptr, offsetof(W3DTreeDrawModuleData, m_killWhenToppled) },
+		{ "DoTopple", INI::parseBool, nullptr, offsetof(W3DTreeDrawModuleData, m_doTopple) },
+		{ "InitialVelocityPercent", INI::parsePercentToReal, nullptr, offsetof(W3DTreeDrawModuleData, m_initialVelocityPercent) },
+		{ "InitialAccelPercent", INI::parsePercentToReal, nullptr, offsetof(W3DTreeDrawModuleData, m_initialAccelPercent) },
+		{ "BounceVelocityPercent", INI::parsePercentToReal, nullptr, offsetof(W3DTreeDrawModuleData, m_bounceVelocityPercent) },
+		{ "MinimumToppleSpeed", INI::parsePositiveNonZeroReal, nullptr, offsetof(W3DTreeDrawModuleData, m_minimumToppleSpeed) },
+		{ "SinkDistance", INI::parsePositiveNonZeroReal, nullptr, offsetof(W3DTreeDrawModuleData, m_sinkDistance) },
 		{ "SinkTime", INI::parseDurationUnsignedInt, nullptr, offsetof(W3DTreeDrawModuleData, m_sinkFrames) },
-		{ "DoShadow",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_doShadow ) },
+		{ "DoShadow", INI::parseBool, nullptr, offsetof(W3DTreeDrawModuleData, m_doShadow) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +105,8 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData )
+W3DTreeDraw::W3DTreeDraw(Thing* thing, const ModuleData* moduleData)
+  : DrawModule(thing, moduleData)
 {
 }
 
@@ -123,46 +120,42 @@ W3DTreeDraw::~W3DTreeDraw()
 //-------------------------------------------------------------------------------------------------
 void W3DTreeDraw::addToTreeBuffer()
 {
-	const W3DTreeDrawModuleData *moduleData = getW3DTreeDrawModuleData();
-	const Drawable *draw = getDrawable();
+	const W3DTreeDrawModuleData* moduleData = getW3DTreeDrawModuleData();
+	const Drawable* draw = getDrawable();
 
 	DEBUG_ASSERTCRASH(draw->isPositioned(), ("W3DTreeDraw::addToTreeBuffer - This tree was not positioned!"));
 
 	Real scale = draw->getScale();
 	Real scaleRandomness = draw->getTemplate()->getInstanceScaleFuzziness();
-	scaleRandomness = 0.0f; // We use the scale fuzziness inside WB to generate random scales, so they don't change at load time. jba. [4/22/2003]
+	scaleRandomness = 0.0f;    // We use the scale fuzziness inside WB to generate random scales, so they don't change at load time. jba. [4/22/2003]
 	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(), scale, draw->getOrientation(), scaleRandomness, moduleData);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DTreeDraw::crc( Xfer *xfer )
+void W3DTreeDraw::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DrawModule::crc( xfer );
-
+	DrawModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DTreeDraw::xfer( Xfer *xfer )
+void W3DTreeDraw::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DrawModule::xfer( xfer );
+	DrawModule::xfer(xfer);
 
 	// no data to save here, nobody will ever notice
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -170,9 +163,6 @@ void W3DTreeDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void W3DTreeDraw::loadPostProcess()
 {
-
 	// extend base class
 	DrawModule::loadPostProcess();
-
 }
-

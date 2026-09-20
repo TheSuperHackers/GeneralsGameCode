@@ -51,9 +51,9 @@ public:
 	Real m_maxHealth;
 	Real m_initialHealth;
 
-	Real m_subdualDamageCap;								///< Subdual damage will never accumulate past this
-	UnsignedInt m_subdualDamageHealRate;		///< Every this often, we drop subdual damage...
-	Real m_subdualDamageHealAmount;					///< by this much.
+	Real m_subdualDamageCap;    ///< Subdual damage will never accumulate past this
+	UnsignedInt m_subdualDamageHealRate;    ///< Every this often, we drop subdual damage...
+	Real m_subdualDamageHealAmount;    ///< by this much.
 
 	ActiveBodyModuleData();
 
@@ -63,43 +63,41 @@ public:
 //-------------------------------------------------------------------------------------------------
 class ActiveBody : public BodyModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ActiveBody, "ActiveBody" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ActiveBody, ActiveBodyModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActiveBody, "ActiveBody")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ActiveBody, ActiveBodyModuleData)
 
 public:
-
-	ActiveBody( Thing *thing, const ModuleData* moduleData );
+	ActiveBody(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onDelete() override;
 
-	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
-	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const override;
-	virtual void attemptHealing( DamageInfo *damageInfo ) override;		///< try to heal this object
-	virtual Real getHealth() const override;													///< get current health
+	virtual void attemptDamage(DamageInfo* damageInfo) override;    ///< try to damage this object
+	virtual Real estimateDamage(DamageInfoInput& damageInfo) const override;
+	virtual void attemptHealing(DamageInfo* damageInfo) override;    ///< try to heal this object
+	virtual Real getHealth() const override;    ///< get current health
 	virtual BodyDamageType getDamageState() const override;
-	virtual void setDamageState( BodyDamageType newState ) override;	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting ) override;///< This is a major change like a damage state.
+	virtual void setDamageState(BodyDamageType newState) override;    ///< control damage state directly.  Will adjust hitpoints.
+	virtual void setAflame(Bool setting) override;    ///< This is a major change like a damage state.
 	virtual UnsignedInt getSubdualDamageHealRate() const override;
 	virtual Real getSubdualDamageHealAmount() const override;
 	virtual Bool hasAnySubdualDamage() const override;
 	virtual Real getCurrentSubdualDamageAmount() const override { return m_currentSubdualDamage; }
 
-	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const override { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
-	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
+	virtual const DamageInfo* getLastDamageInfo() const override { return &m_lastDamageInfo; }    ///< return info on last damage dealt to this object
+	virtual UnsignedInt getLastDamageTimestamp() const override { return m_lastDamageTimestamp; }    ///< return frame of last damage dealt
+	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }    ///< return frame of last damage dealt
 	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
 	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }
 
-	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE ) override;
+	virtual void onVeterancyLevelChanged(VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE) override;
 
 	virtual void setArmorSetFlag(ArmorSetType ast) override { m_curArmorSetFlags.set(ast, 1); }
 	virtual void clearArmorSetFlag(ArmorSetType ast) override { m_curArmorSetFlags.set(ast, 0); }
 	virtual Bool testArmorSetFlag(ArmorSetType ast) override { return m_curArmorSetFlags.test(ast); }
 
-	virtual void setInitialHealth(Int initialPercent) override; ///< Sets the initial load health %.
-	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ) override; ///< Sets the initial max health
+	virtual void setInitialHealth(Int initialPercent) override;    ///< Sets the initial load health %.
+	virtual void setMaxHealth(Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH) override;    ///< Sets the initial max health
 
 	virtual Bool getFrontCrushed() const override { return m_frontCrushed; }
 	virtual Bool getBackCrushed() const override { return m_backCrushed; }
@@ -107,67 +105,64 @@ public:
 	virtual void setFrontCrushed(Bool v) override { m_frontCrushed = v; }
 	virtual void setBackCrushed(Bool v) override { m_backCrushed = v; }
 
-	virtual Real getMaxHealth() const override;  ///< return max health
-	virtual Real getInitialHealth() const override;  // return initial health
+	virtual Real getMaxHealth() const override;    ///< return max health
+	virtual Real getInitialHealth() const override;    // return initial health
 
 	virtual Real getPreviousHealth() const override { return m_prevHealth; }
 
-	virtual void setIndestructible( Bool indestructible ) override;
+	virtual void setIndestructible(Bool indestructible) override;
 	virtual Bool isIndestructible() const override { return m_indestructible; }
 
-	virtual void internalChangeHealth( Real delta ) override;								///< change health
+	virtual void internalChangeHealth(Real delta) override;    ///< change health
 
 	virtual void evaluateVisualCondition() override;
-	virtual void updateBodyParticleSystems() override;// made public for topple anf building collapse updates -ML
+	virtual void updateBodyParticleSystems() override;    // made public for topple anf building collapse updates -ML
 
 	// Subdual Damage
 	virtual Bool isSubdued() const;
 	virtual Bool canBeSubdued() const;
-	virtual void onSubdualChange( Bool isNowSubdued );///< Override this if you want a totally different effect than DISABLED_SUBDUED
+	virtual void onSubdualChange(Bool isNowSubdued);    ///< Override this if you want a totally different effect than DISABLED_SUBDUED
 
 protected:
-
 	void validateArmorAndDamageFX() const;
-	void doDamageFX( const DamageInfo *damageInfo );
+	void doDamageFX(const DamageInfo* damageInfo);
 
-	void createParticleSystems( const AsciiString &boneBaseName,
-															const ParticleSystemTemplate *systemTemplate,
-															Int maxSystems );
+	void createParticleSystems(const AsciiString& boneBaseName,
+	                           const ParticleSystemTemplate* systemTemplate,
+	                           Int maxSystems);
 	void deleteAllParticleSystems();
 	void setCorrectDamageState();
 
-	Bool shouldRetaliate(Object *obj);
-	Bool shouldRetaliateAgainstAggressor(Object *obj, Object *damager);
+	Bool shouldRetaliate(Object* obj);
+	Bool shouldRetaliateAgainstAggressor(Object* obj, Object* damager);
 
-	virtual void internalAddSubdualDamage( Real delta );								///< change health
+	virtual void internalAddSubdualDamage(Real delta);    ///< change health
 
 private:
+	Real m_currentHealth;    ///< health of the object
+	Real m_prevHealth;    ///< previous health value before current health change op
+	Real m_maxHealth;    ///< max health this object can have
+	Real m_initialHealth;    ///< starting health for this object
+	Real m_currentSubdualDamage;    ///< Starts at zero and goes up.  Inherited modules will do something when "subdued".
 
-	Real									m_currentHealth;				///< health of the object
-	Real									m_prevHealth;						///< previous health value before current health change op
-  Real									m_maxHealth;						///< max health this object can have
-  Real									m_initialHealth;				///< starting health for this object
-	Real									m_currentSubdualDamage;	///< Starts at zero and goes up.  Inherited modules will do something when "subdued".
+	BodyDamageType m_curDamageState;    ///< last known damage state
+	UnsignedInt m_nextDamageFXTime;
+	DamageType m_lastDamageFXDone;
+	DamageInfo m_lastDamageInfo;    ///< store the last DamageInfo object that we received
+	UnsignedInt m_lastDamageTimestamp;    ///< frame of last damage dealt
+	UnsignedInt m_lastHealingTimestamp;    ///< frame of last healing dealt
+	Bool m_frontCrushed;
+	Bool m_backCrushed;
+	Bool m_lastDamageCleared;
+	Bool m_indestructible;    ///< is this object indestructible?
 
-	BodyDamageType				m_curDamageState;				///< last known damage state
-	UnsignedInt						m_nextDamageFXTime;
-	DamageType						m_lastDamageFXDone;
-	DamageInfo						m_lastDamageInfo;				///< store the last DamageInfo object that we received
-	UnsignedInt						m_lastDamageTimestamp; 	///< frame of last damage dealt
-	UnsignedInt						m_lastHealingTimestamp; ///< frame of last healing dealt
-	Bool									m_frontCrushed;
-	Bool									m_backCrushed;
-	Bool									m_lastDamageCleared;
-	Bool									m_indestructible;				///< is this object indestructible?
-
-	BodyParticleSystem *m_particleSystems;				///< particle systems created and attached to this object
+	BodyParticleSystem* m_particleSystems;    ///< particle systems created and attached to this object
 
 	/*
-		Note, you MUST call validateArmorAndDamageFX() before accessing these fields.
+	  Note, you MUST call validateArmorAndDamageFX() before accessing these fields.
 	*/
-	ArmorSetFlags											m_curArmorSetFlags;
-	mutable const ArmorTemplateSet*		m_curArmorSet;
-	mutable Armor											m_curArmor;
-	mutable const DamageFX*						m_curDamageFX;
-
+	ArmorSetFlags m_curArmorSetFlags;
+	mutable const ArmorTemplateSet* m_curArmorSet;
+	mutable Armor m_curArmor;
+	mutable const DamageFX* m_curDamageFX;
 };

@@ -82,14 +82,14 @@ struct RGBColorReal
 //-----------------------------------------------------------------------------
 struct HSVColorReal
 {
-  Real hue;
-  Real saturation;
-  Real value;
+	Real hue;
+	Real saturation;
+	Real value;
 	Real alpha;
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,
-																 Int mouseX = 0, Int mouseY = 0 );
+extern RGBColorInt* SelectColor(Int red, Int green, Int blue, Int alpha,
+                                Int mouseX = 0, Int mouseY = 0);

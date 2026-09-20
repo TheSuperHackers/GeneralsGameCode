@@ -29,17 +29,16 @@
 #include "GameClient/GlobalLanguage.h"
 #include "GameClient/Image.h"
 
-
 Intro::DisplayEntity::~DisplayEntity()
 {
 	TheDisplayStringManager->freeDisplayString(displayString);
 }
 
 Intro::Intro()
-	: m_currentState(IntroState_Start)
-	, m_allowedStateFlags(0)
-	, m_waitUntilMs(0)
-	, m_fadeValue(0.0f)
+  : m_currentState(IntroState_Start)
+  , m_allowedStateFlags(0)
+  , m_waitUntilMs(0)
+  , m_fadeValue(0.0f)
 {
 	if (TheGlobalData->m_playIntro)
 	{
@@ -53,7 +52,9 @@ Intro::Intro()
 	if (TheGlobalData->m_playSizzle)
 	{
 		if (TheGlobalData->m_playIntro)
+		{
 			m_allowedStateFlags |= 1u << IntroState_SizzleMovieWait;
+		}
 
 		m_allowedStateFlags |= 1u << IntroState_SizzleMovie;
 	}
@@ -66,7 +67,9 @@ void Intro::enterNextState()
 	{
 		++currentState;
 		if (m_allowedStateFlags & (1u << currentState))
+		{
 			break;
+		}
 	}
 
 	m_currentState = static_cast<IntroState>(currentState);
@@ -94,7 +97,7 @@ void Intro::draw()
 {
 	switch (m_currentState)
 	{
-		case IntroState_TheSuperHackers: drawDisplayEntities(); break;
+	case IntroState_TheSuperHackers: drawDisplayEntities(); break;
 	}
 }
 
@@ -125,22 +128,26 @@ Bool Intro::skipCurrentIntroStage()
 void Intro::doEALogoMovie()
 {
 	if (TheGameLODManager && TheGameLODManager->didMemPass())
+	{
 		TheDisplay->playMovie("EALogoMovie");
+	}
 	else
+	{
 		TheDisplay->playMovie("EALogoMovie640");
+	}
 }
 
 struct DisplaySetting
 {
 	DisplaySetting()
-		: imageName(nullptr)
-		, font("Arial")
-		, text(nullptr)
-		, centerOffsetY(0)
-		, sizeX(10)
-		, sizeY(10)
-		, bold(false)
-		, centered(false)
+	  : imageName(nullptr)
+	  , font("Arial")
+	  , text(nullptr)
+	  , centerOffsetY(0)
+	  , sizeX(10)
+	  , sizeY(10)
+	  , bold(false)
+	  , centered(false)
 	{}
 
 	const Char* imageName;
@@ -245,9 +252,13 @@ void Intro::doTheSuperHackers()
 void Intro::doSizzleMovie()
 {
 	if (TheGameLODManager && TheGameLODManager->didMemPass())
+	{
 		TheDisplay->playMovie("Sizzle");
+	}
 	else
+	{
 		TheDisplay->playMovie("Sizzle640");
+	}
 }
 
 void Intro::doPostIntro()
@@ -304,7 +315,9 @@ void Intro::drawDisplayEntities()
 			// Fade out
 			m_fadeValue -= TheFramePacer->getUpdateTime() * (1000.f / fadeOutMs);
 			if (m_fadeValue < 0.0f)
+			{
 				m_fadeValue = 0.0f;
+			}
 		}
 	}
 	else if (m_fadeValue < 1.0f)
@@ -312,6 +325,8 @@ void Intro::drawDisplayEntities()
 		// Fade in
 		m_fadeValue += TheFramePacer->getUpdateTime() * (1000.f / fadeInMs);
 		if (m_fadeValue > 1.0f)
+		{
 			m_fadeValue = 1.0f;
+		}
 	}
 }

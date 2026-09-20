@@ -36,9 +36,7 @@
 //-------------------------------------------------------------------------------------------------
 class W3DFunctionLexicon : public FunctionLexicon
 {
-
 public:
-
 	W3DFunctionLexicon();
 	virtual ~W3DFunctionLexicon() override;
 
@@ -47,5 +45,4 @@ public:
 	virtual void update() override;
 
 protected:
-
 };

@@ -22,18 +22,17 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/networkutil.h"
 
 #ifdef DEBUG_LOGGING
 
-void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
+void dumpBufferToLog(const void* vBuf, Int len, const char* fname, Int line)
 {
 	DEBUG_LOG(("======= dumpBufferToLog() %d bytes =======", len));
 	DEBUG_LOG(("Source: %s:%d", fname, line));
-	const char *buf = (const char *)vBuf;
+	const char* buf = (const char*)vBuf;
 	Int numLines = len / 8;
 	if ((len % 8) != 0)
 	{
@@ -41,7 +40,7 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 	}
 	for (Int dumpindex = 0; dumpindex < numLines; ++dumpindex)
 	{
-		Int offset = dumpindex*8;
+		Int offset = dumpindex * 8;
 		DEBUG_LOG_RAW(("\t%5.5d\t", offset));
 		Int dumpindex2;
 		Int numBytesThisLine = min(8, len - offset);
@@ -58,14 +57,14 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 		for (dumpindex2 = 0; dumpindex2 < numBytesThisLine; ++dumpindex2)
 		{
 			char c = buf[offset + dumpindex2];
-			DEBUG_LOG_RAW(("%c", (isprint(c)?c:'.')));
+			DEBUG_LOG_RAW(("%c", (isprint(c) ? c : '.')));
 		}
 		DEBUG_LOG_RAW(("\n"));
 	}
 	DEBUG_LOG(("End of packet dump"));
 }
 
-#endif // DEBUG_LOGGING
+#endif    // DEBUG_LOGGING
 
 /**
  * ResolveIP turns a string ("games2.westwood.com", or "192.168.0.1") into
@@ -73,30 +72,30 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
  */
 UnsignedInt ResolveIP(AsciiString host)
 {
-  struct hostent *hostStruct;
-  struct in_addr *hostNode;
+	struct hostent* hostStruct;
+	struct in_addr* hostNode;
 
-  if (host.isEmpty())
-  {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve null"));
-	  return 0;
-  }
+	if (host.isEmpty())
+	{
+		DEBUG_LOG(("ResolveIP(): Can't resolve null"));
+		return 0;
+	}
 
-  // String such as "127.0.0.1"
-  if (isdigit(host.getCharAt(0)))
-  {
-    return ( ntohl(inet_addr(host.str())) );
-  }
+	// String such as "127.0.0.1"
+	if (isdigit(host.getCharAt(0)))
+	{
+		return (ntohl(inet_addr(host.str())));
+	}
 
-  // String such as "localhost"
-  hostStruct = gethostbyname(host.str());
-  if (hostStruct == nullptr)
-  {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve %s", host.str()));
-	  return 0;
-  }
-  hostNode = (struct in_addr *) hostStruct->h_addr;
-  return ( ntohl(hostNode->s_addr) );
+	// String such as "localhost"
+	hostStruct = gethostbyname(host.str());
+	if (hostStruct == nullptr)
+	{
+		DEBUG_LOG(("ResolveIP(): Can't resolve %s", host.str()));
+		return 0;
+	}
+	hostNode = (struct in_addr*)hostStruct->h_addr;
+	return (ntohl(hostNode->s_addr));
 }
 
 /**
@@ -113,7 +112,8 @@ UnsignedShort GenerateNextCommandID()
  */
 Bool DoesCommandRequireACommandID(NetCommandType type)
 {
-	switch (type) {
+	switch (type)
+	{
 	case NETCOMMANDTYPE_FRAMEINFO:
 	case NETCOMMANDTYPE_GAMECOMMAND:
 	case NETCOMMANDTYPE_PLAYERLEAVE:
@@ -148,7 +148,8 @@ Bool CommandRequiresAck(const NetCommandMsg* msg)
 
 Bool IsCommandSynchronized(NetCommandType type)
 {
-	switch (type) {
+	switch (type)
+	{
 	case NETCOMMANDTYPE_FRAMEINFO:
 	case NETCOMMANDTYPE_GAMECOMMAND:
 	case NETCOMMANDTYPE_PLAYERLEAVE:
@@ -167,7 +168,8 @@ Bool IsCommandSynchronized(NetCommandType type)
  */
 Bool CommandRequiresDirectSend(const NetCommandMsg* msg)
 {
-	switch (msg->getNetCommandType()) {
+	switch (msg->getNetCommandType())
+	{
 	case NETCOMMANDTYPE_LOADCOMPLETE:
 	case NETCOMMANDTYPE_TIMEOUTSTART:
 	case NETCOMMANDTYPE_FILE:
@@ -186,41 +188,43 @@ Bool CommandRequiresDirectSend(const NetCommandMsg* msg)
 
 const char* GetNetCommandTypeAsString(NetCommandType type)
 {
-#define CASE_LABEL(x) case x: return #x;
+#define CASE_LABEL(x) \
+	case x: return #x;
 
-	switch (type) {
-	CASE_LABEL(NETCOMMANDTYPE_UNKNOWN)
-	CASE_LABEL(NETCOMMANDTYPE_ACKBOTH)
-	CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE1)
-	CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE2)
-	CASE_LABEL(NETCOMMANDTYPE_FRAMEINFO)
-	CASE_LABEL(NETCOMMANDTYPE_GAMECOMMAND)
-	CASE_LABEL(NETCOMMANDTYPE_PLAYERLEAVE)
-	CASE_LABEL(NETCOMMANDTYPE_RUNAHEADMETRICS)
-	CASE_LABEL(NETCOMMANDTYPE_RUNAHEAD)
-	CASE_LABEL(NETCOMMANDTYPE_DESTROYPLAYER)
-	CASE_LABEL(NETCOMMANDTYPE_KEEPALIVE)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTCHAT)
-	CASE_LABEL(NETCOMMANDTYPE_CHAT)
-	CASE_LABEL(NETCOMMANDTYPE_MANGLERQUERY)
-	CASE_LABEL(NETCOMMANDTYPE_MANGLERRESPONSE)
-	CASE_LABEL(NETCOMMANDTYPE_PROGRESS)
-	CASE_LABEL(NETCOMMANDTYPE_LOADCOMPLETE)
-	CASE_LABEL(NETCOMMANDTYPE_TIMEOUTSTART)
-	CASE_LABEL(NETCOMMANDTYPE_WRAPPER)
-	CASE_LABEL(NETCOMMANDTYPE_FILE)
-	CASE_LABEL(NETCOMMANDTYPE_FILEANNOUNCE)
-	CASE_LABEL(NETCOMMANDTYPE_FILEPROGRESS)
-	CASE_LABEL(NETCOMMANDTYPE_FRAMERESENDREQUEST)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTSTART)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTKEEPALIVE)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTPLAYER)
-	CASE_LABEL(NETCOMMANDTYPE_PACKETROUTERQUERY)
-	CASE_LABEL(NETCOMMANDTYPE_PACKETROUTERACK)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTVOTE)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTFRAME)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTSCREENOFF)
-	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTEND)
+	switch (type)
+	{
+		CASE_LABEL(NETCOMMANDTYPE_UNKNOWN)
+		CASE_LABEL(NETCOMMANDTYPE_ACKBOTH)
+		CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE1)
+		CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE2)
+		CASE_LABEL(NETCOMMANDTYPE_FRAMEINFO)
+		CASE_LABEL(NETCOMMANDTYPE_GAMECOMMAND)
+		CASE_LABEL(NETCOMMANDTYPE_PLAYERLEAVE)
+		CASE_LABEL(NETCOMMANDTYPE_RUNAHEADMETRICS)
+		CASE_LABEL(NETCOMMANDTYPE_RUNAHEAD)
+		CASE_LABEL(NETCOMMANDTYPE_DESTROYPLAYER)
+		CASE_LABEL(NETCOMMANDTYPE_KEEPALIVE)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTCHAT)
+		CASE_LABEL(NETCOMMANDTYPE_CHAT)
+		CASE_LABEL(NETCOMMANDTYPE_MANGLERQUERY)
+		CASE_LABEL(NETCOMMANDTYPE_MANGLERRESPONSE)
+		CASE_LABEL(NETCOMMANDTYPE_PROGRESS)
+		CASE_LABEL(NETCOMMANDTYPE_LOADCOMPLETE)
+		CASE_LABEL(NETCOMMANDTYPE_TIMEOUTSTART)
+		CASE_LABEL(NETCOMMANDTYPE_WRAPPER)
+		CASE_LABEL(NETCOMMANDTYPE_FILE)
+		CASE_LABEL(NETCOMMANDTYPE_FILEANNOUNCE)
+		CASE_LABEL(NETCOMMANDTYPE_FILEPROGRESS)
+		CASE_LABEL(NETCOMMANDTYPE_FRAMERESENDREQUEST)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTSTART)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTKEEPALIVE)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTPLAYER)
+		CASE_LABEL(NETCOMMANDTYPE_PACKETROUTERQUERY)
+		CASE_LABEL(NETCOMMANDTYPE_PACKETROUTERACK)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTVOTE)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTFRAME)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTSCREENOFF)
+		CASE_LABEL(NETCOMMANDTYPE_DISCONNECTEND)
 	default:
 		DEBUG_CRASH(("Unhandled NetCommandType in GetNetCommandTypeAsString"));
 		return "<NETCOMMANDTYPE_INVALID>";

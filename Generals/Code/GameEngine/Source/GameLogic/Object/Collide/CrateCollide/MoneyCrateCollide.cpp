@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -38,29 +38,28 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MoneyCrateCollide::MoneyCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+MoneyCrateCollide::MoneyCrateCollide(Thing* thing, const ModuleData* moduleData)
+  : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 MoneyCrateCollide::~MoneyCrateCollide()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
+Bool MoneyCrateCollide::executeCrateBehavior(Object* other)
 {
 	UnsignedInt money = getMoneyCrateCollideModuleData()->m_moneyProvided;
 
-	other->getControllingPlayer()->getMoney()->deposit( money );
-	other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( money );
+	other->getControllingPlayer()->getMoney()->deposit(money);
+	other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned(money);
 
-	//Play a crate pickup sound.
+	// Play a crate pickup sound.
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
-	soundToPlay.setObjectID( other->getID() );
+	soundToPlay.setObjectID(other->getID());
 	TheAudio->addAudioEvent(&soundToPlay);
 
 	return TRUE;
@@ -69,30 +68,26 @@ Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void MoneyCrateCollide::crc( Xfer *xfer )
+void MoneyCrateCollide::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
-
+	CrateCollide::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MoneyCrateCollide::xfer( Xfer *xfer )
+void MoneyCrateCollide::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
-
+	CrateCollide::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -100,8 +95,6 @@ void MoneyCrateCollide::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void MoneyCrateCollide::loadPostProcess()
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
-
 }

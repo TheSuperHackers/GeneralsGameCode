@@ -49,216 +49,213 @@ class HLodDefClass;
 class HModelDefClass;
 class ProxyArrayClass;
 
-
-
 /*
 
-	HLodClass
+  HLodClass
 
-	This is an hierarchical, animatable level-of-detail model.
+  This is an hierarchical, animatable level-of-detail model.
 
 */
 class HLodClass : public Animatable3DObjClass
 {
 	W3DMPO_CODE(HLodClass)
 public:
+	HLodClass(const HLodClass& src);
+	HLodClass(const char* name, RenderObjClass** lods, int count);
+	HLodClass(const HLodDefClass& def);
+	HLodClass(const HModelDefClass& def);
 
-	HLodClass(const HLodClass & src);
-	HLodClass(const char * name,RenderObjClass ** lods,int count);
-	HLodClass(const HLodDefClass & def);
-	HLodClass(const HModelDefClass & def);
-
-	HLodClass & operator = (const HLodClass &);
+	HLodClass& operator=(const HLodClass&);
 	virtual ~HLodClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Cloning and Identification
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const override;
-	virtual int						Class_ID() const override { return CLASSID_HLOD; }
-	virtual int						Get_Num_Polys() const override;
+	virtual RenderObjClass* Clone() const override;
+	virtual int Class_ID() const override { return CLASSID_HLOD; }
+	virtual int Get_Num_Polys() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// HLod Interface - Editing and information
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Max_Screen_Size(int lod_index, float size);
-	virtual float					Get_Max_Screen_Size(int lod_index) const;
+	virtual void Set_Max_Screen_Size(int lod_index, float size);
+	virtual float Get_Max_Screen_Size(int lod_index) const;
 
-	virtual int						Get_Lod_Count() const;
-	virtual int						Get_Lod_Model_Count (int lod_index) const;
-	virtual RenderObjClass *	Peek_Lod_Model (int lod_index, int model_index) const;
-	virtual RenderObjClass *	Get_Lod_Model (int lod_index, int model_index) const;
-	virtual int						Get_Lod_Model_Bone (int lod_index, int model_index) const;
-	virtual int						Get_Additional_Model_Count() const;
-	virtual RenderObjClass *	Peek_Additional_Model (int model_index) const;
-	virtual RenderObjClass *	Get_Additional_Model (int model_index) const;
-	virtual int						Get_Additional_Model_Bone (int model_index) const;
-	virtual void					Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex);
+	virtual int Get_Lod_Count() const;
+	virtual int Get_Lod_Model_Count(int lod_index) const;
+	virtual RenderObjClass* Peek_Lod_Model(int lod_index, int model_index) const;
+	virtual RenderObjClass* Get_Lod_Model(int lod_index, int model_index) const;
+	virtual int Get_Lod_Model_Bone(int lod_index, int model_index) const;
+	virtual int Get_Additional_Model_Count() const;
+	virtual RenderObjClass* Peek_Additional_Model(int model_index) const;
+	virtual RenderObjClass* Get_Additional_Model(int model_index) const;
+	virtual int Get_Additional_Model_Bone(int model_index) const;
+	virtual void Add_Lod_Model(int lod, RenderObjClass* robj, int boneindex);
 
-	virtual bool					Is_NULL_Lod_Included () const;
-	virtual void					Include_NULL_Lod (bool include = true);
+	virtual bool Is_NULL_Lod_Included() const;
+	virtual void Include_NULL_Lod(bool include = true);
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Proxy interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Proxy_Count () const;
-	virtual bool					Get_Proxy (int index, ProxyClass &proxy) const;
+	virtual int Get_Proxy_Count() const;
+	virtual bool Get_Proxy(int index, ProxyClass& proxy) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Rendering
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo) override;
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
+	virtual void Render(RenderInfoClass& rinfo) override;
+	virtual void Special_Render(SpecialRenderInfoClass& rinfo) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void 					Set_Transform(const Matrix3D &m) override;
-	virtual void 					Set_Position(const Vector3 &v) override;
+	virtual void Set_Transform(const Matrix3D& m) override;
+	virtual void Set_Position(const Vector3& v) override;
 
-	virtual void					Notify_Added(SceneClass * scene) override;
-	virtual void					Notify_Removed(SceneClass * scene) override;
+	virtual void Notify_Added(SceneClass* scene) override;
+	virtual void Notify_Removed(SceneClass* scene) override;
 
-	virtual int						Get_Num_Sub_Objects() const override;
-	virtual RenderObjClass *	Get_Sub_Object(int index) const override;
-	virtual int						Add_Sub_Object(RenderObjClass * subobj) override;
-	virtual int						Remove_Sub_Object(RenderObjClass * robj) override;
+	virtual int Get_Num_Sub_Objects() const override;
+	virtual RenderObjClass* Get_Sub_Object(int index) const override;
+	virtual int Add_Sub_Object(RenderObjClass* subobj) override;
+	virtual int Remove_Sub_Object(RenderObjClass* robj) override;
 
-	virtual int						Get_Num_Sub_Objects_On_Bone(int boneindex) const override;
-	virtual RenderObjClass *	Get_Sub_Object_On_Bone(int index,int boneindex) const override;
-	virtual int						Get_Sub_Object_Bone_Index(RenderObjClass * subobj) const override;
-	virtual int						Get_Sub_Object_Bone_Index(int LodIndex, int ModelIndex)	const override;
-	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index) override;
+	virtual int Get_Num_Sub_Objects_On_Bone(int boneindex) const override;
+	virtual RenderObjClass* Get_Sub_Object_On_Bone(int index, int boneindex) const override;
+	virtual int Get_Sub_Object_Bone_Index(RenderObjClass* subobj) const override;
+	virtual int Get_Sub_Object_Bone_Index(int LodIndex, int ModelIndex) const override;
+	virtual int Add_Sub_Object_To_Bone(RenderObjClass* subobj, int bone_index) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Hierarchical Animation
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation() override;
-	virtual void					Set_Animation( HAnimClass * motion,
-															float frame, int anim_mode = ANIM_MODE_MANUAL) override;
-	virtual void					Set_Animation( HAnimClass * motion0,
-															float frame0,
-															HAnimClass * motion1,
-															float frame1,
-															float percentage) override;
-	virtual void					Set_Animation( HAnimComboClass * anim_combo) override;
+	virtual void Set_Animation() override;
+	virtual void Set_Animation(HAnimClass* motion,
+	                           float frame, int anim_mode = ANIM_MODE_MANUAL) override;
+	virtual void Set_Animation(HAnimClass* motion0,
+	                           float frame0,
+	                           HAnimClass* motion1,
+	                           float frame1,
+	                           float percentage) override;
+	virtual void Set_Animation(HAnimComboClass* anim_combo) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection, Ray Tracing
 	/////////////////////////////////////////////////////////////////////////////
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest) override;
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
-	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest) override;
-	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest) override;
+	virtual bool Cast_Ray(RayCollisionTestClass& raytest) override;
+	virtual bool Cast_AABox(AABoxCollisionTestClass& boxtest) override;
+	virtual bool Cast_OBBox(OBBoxCollisionTestClass& boxtest) override;
+	virtual bool Intersect_AABox(AABoxIntersectionTestClass& boxtest) override;
+	virtual bool Intersect_OBBox(OBBoxIntersectionTestClass& boxtest) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Predictive LOD
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Prepare_LOD(CameraClass &camera) override;
-   virtual void					Recalculate_Static_LOD_Factors() override;
-	virtual void					Increment_LOD() override;
-	virtual void					Decrement_LOD() override;
-	virtual float					Get_Cost() const override;
-	virtual float					Get_Value() const override;
-	virtual float					Get_Post_Increment_Value() const override;
-	virtual void					Set_LOD_Level(int lod) override;
-	virtual int						Get_LOD_Level() const override;
-	virtual int						Get_LOD_Count() const override;
-	virtual void					Set_LOD_Bias(float bias) override;
-	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const override;
-	virtual RenderObjClass *	Get_Current_LOD() override;
+	virtual void Prepare_LOD(CameraClass& camera) override;
+	virtual void Recalculate_Static_LOD_Factors() override;
+	virtual void Increment_LOD() override;
+	virtual void Decrement_LOD() override;
+	virtual float Get_Cost() const override;
+	virtual float Get_Value() const override;
+	virtual float Get_Post_Increment_Value() const override;
+	virtual void Set_LOD_Level(int lod) override;
+	virtual int Get_LOD_Level() const override;
+	virtual int Get_LOD_Count() const override;
+	virtual void Set_LOD_Bias(float bias) override;
+	virtual int Calculate_Cost_Value_Arrays(float screen_area, float* values, float* costs) const override;
+	virtual RenderObjClass* Get_Current_LOD() override;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual const SphereClass &	Get_Bounding_Sphere() const override;
-	virtual const AABoxClass &		Get_Bounding_Box() const override;
-	virtual void						Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-	virtual void						Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual const SphereClass& Get_Bounding_Sphere() const override;
+	virtual const AABoxClass& Get_Bounding_Box() const override;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& box) const override;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Decals
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual void					Create_Decal(DecalGeneratorClass * generator) override;
-	virtual void					Delete_Decal(uint32 decal_id) override;
+	virtual void Create_Decal(DecalGeneratorClass* generator) override;
+	virtual void Delete_Decal(uint32 decal_id) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-//   virtual void					Set_Texture_Reduction_Factor(float trf);
-	virtual void					Scale(float scale) override;
-	virtual void					Scale(float scalex, float scaley, float scalez) override { }
-	virtual int						Get_Num_Snap_Points() override;
-	virtual void					Get_Snap_Point(int index,Vector3 * set) override;
-	virtual void					Set_Hidden(int onoff) override;
+	//   virtual void					Set_Texture_Reduction_Factor(float trf);
+	virtual void Scale(float scale) override;
+	virtual void Scale(float scalex, float scaley, float scalez) override {}
+	virtual int Get_Num_Snap_Points() override;
+	virtual void Get_Snap_Point(int index, Vector3* set) override;
+	virtual void Set_Hidden(int onoff) override;
 
 	// (gth) TESTING DYNAMICALLY SWAPPING SKELETONS!
-	virtual void					Set_HTree(HTreeClass * htree) override;
+	virtual void Set_HTree(HTreeClass* htree) override;
 
 protected:
-
 	HLodClass();
 
-	void								Free();
-	virtual void					Update_Sub_Object_Transforms() override;
-	virtual void					Update_Obj_Space_Bounding_Volumes() override;
+	void Free();
+	virtual void Update_Sub_Object_Transforms() override;
+	virtual void Update_Obj_Space_Bounding_Volumes() override;
 
 protected:
-
-
 	class ModelNodeClass
 	{
 	public:
-		RenderObjClass *			Model;
-		int							BoneIndex;
-		bool operator == (const ModelNodeClass & that) { return (Model == that.Model) && (BoneIndex == that.BoneIndex); }
-		bool operator != (const ModelNodeClass & that) { return !operator == (that); }
+		RenderObjClass* Model;
+		int BoneIndex;
+		bool operator==(const ModelNodeClass& that) { return (Model == that.Model) && (BoneIndex == that.BoneIndex); }
+		bool operator!=(const ModelNodeClass& that) { return !operator==(that); }
 	};
 
 	class ModelArrayClass : public DynamicVectorClass<ModelNodeClass>
 	{
 	public:
-		ModelArrayClass() : MaxScreenSize(NO_MAX_SCREEN_SIZE), NonPixelCost(0.0f),
-			PixelCostPerArea(0.0f), BenefitFactor(0.0f) {}
-		float							MaxScreenSize;		// Maximum screen size for this LOD
-		float							NonPixelCost;		// Cost heuristics of LODS (w/o per-pixel cost)
-		float							PixelCostPerArea;	// PixelCostPerArea * area(normalized) + NonPixelCost = total Cost
-		float							BenefitFactor;		// BenefitFactor * area(normalized) = Benefit
+		ModelArrayClass()
+		  : MaxScreenSize(NO_MAX_SCREEN_SIZE)
+		  , NonPixelCost(0.0f)
+		  , PixelCostPerArea(0.0f)
+		  , BenefitFactor(0.0f)
+		{}
+		float MaxScreenSize;    // Maximum screen size for this LOD
+		float NonPixelCost;    // Cost heuristics of LODS (w/o per-pixel cost)
+		float PixelCostPerArea;    // PixelCostPerArea * area(normalized) + NonPixelCost = total Cost
+		float BenefitFactor;    // BenefitFactor * area(normalized) = Benefit
 	};
 
 	// Lod Render Objects, basically one of the LOD Models will be rendered. Typically
 	// each model in an HLodModel will be a mesh or a "simple" HLod (one with a single LOD)
-	int								LodCount;
-	int								CurLod;
-	ModelArrayClass *				Lod;
+	int LodCount;
+	int CurLod;
+	ModelArrayClass* Lod;
 
 	//
 	//	An animating hierarchy can use a hidden CLASSID_OBBOX mesh to represent its bounding
 	// box as it animates.  This is the sub object index of that mesh (if it exists).
 	//
-	int								BoundingBoxIndex;
+	int BoundingBoxIndex;
 
-	float *							Cost;					// Cost array (recalculated every frame)
-	float *							Value;				// Value array (recalculated every frame)
+	float* Cost;    // Cost array (recalculated every frame)
+	float* Value;    // Value array (recalculated every frame)
 
 	// Additional Models, these models have been linked to one of the bones in this
 	// model.  They are all always rendered.  They can be HLODs themselves in order
 	// to implement switching on sub models.
 	// NOTE: This uses ModelArrayClass for convenience, but MaxScreenSize,
 	// NonPixelCost, PixelCostPerArea, BenefitFactor are not used here.
-	ModelArrayClass				AdditionalModels;
+	ModelArrayClass AdditionalModels;
 
 	// possible array of snap points.
-	SnapPointsClass *				SnapPoints;
+	SnapPointsClass* SnapPoints;
 
 	// possible array of proxy objects (names and bone indexes for application defined usage)
-	ProxyArrayClass *				ProxyArray;
+	ProxyArrayClass* ProxyArray;
 
 	// Current LOD Bias (affects recalculation of the Value array)
-	float								LODBias;
+	float LODBias;
 };
-
 
 /*
 ** Loaders for HLodClass
@@ -266,10 +263,9 @@ protected:
 class HLodLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type () override { return W3D_CHUNK_HLOD; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
+	virtual int Chunk_Type() override { return W3D_CHUNK_HLOD; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) override;
 };
-
 
 /**
 ** HLodDefClass
@@ -280,27 +276,24 @@ class HLodDefClass
 {
 	W3DMPO_CODE(HLodDefClass)
 public:
-
 	HLodDefClass();
-	HLodDefClass(HLodClass &src_lod);
+	HLodDefClass(HLodClass& src_lod);
 	~HLodDefClass();
 
-	WW3DErrorType				Load_W3D(ChunkLoadClass & cload);
-	WW3DErrorType				Save(ChunkSaveClass & csave);
-	const char *				Get_Name() const { return Name; }
-	void							Initialize(HLodClass &src_lod);
+	WW3DErrorType Load_W3D(ChunkLoadClass& cload);
+	WW3DErrorType Save(ChunkSaveClass& csave);
+	const char* Get_Name() const { return Name; }
+	void Initialize(HLodClass& src_lod);
 
 protected:
-
 	/*
 	** Serializtion methods
 	*/
-	WW3DErrorType				Save_Header (ChunkSaveClass &csave);
-	WW3DErrorType				Save_Lod_Array (ChunkSaveClass &csave);
-	WW3DErrorType				Save_Aggregate_Array(ChunkSaveClass & csave);
+	WW3DErrorType Save_Header(ChunkSaveClass& csave);
+	WW3DErrorType Save_Lod_Array(ChunkSaveClass& csave);
+	WW3DErrorType Save_Aggregate_Array(ChunkSaveClass& csave);
 
 private:
-
 	/*
 	** SubObjectArrayClass
 	** Describes a level-of-detail in an HLod object.  Note that this is
@@ -312,32 +305,31 @@ private:
 	public:
 		SubObjectArrayClass();
 		~SubObjectArrayClass();
-		void		Reset();
-		void		operator = (const SubObjectArrayClass & that);
+		void Reset();
+		void operator=(const SubObjectArrayClass& that);
 
-		bool		Load_W3D(ChunkLoadClass & cload);
-		bool		Save_W3D(ChunkSaveClass & csave);
+		bool Load_W3D(ChunkLoadClass& cload);
+		bool Save_W3D(ChunkSaveClass& csave);
 
-		float		MaxScreenSize;
-		int		ModelCount;
-		char **	ModelName;				// array of model names
-		int *		BoneIndex;				// array of bone indices
+		float MaxScreenSize;
+		int ModelCount;
+		char** ModelName;    // array of model names
+		int* BoneIndex;    // array of bone indices
 	};
 
-	char * 						Name;
-	char *						HierarchyTreeName;
-	int							LodCount;
-	SubObjectArrayClass *	Lod;
-	SubObjectArrayClass		Aggregates;
-	ProxyArrayClass *			ProxyArray;
+	char* Name;
+	char* HierarchyTreeName;
+	int LodCount;
+	SubObjectArrayClass* Lod;
+	SubObjectArrayClass Aggregates;
+	ProxyArrayClass* ProxyArray;
 
-	void							Free();
-	bool							read_header(ChunkLoadClass & cload);
-	bool							read_proxy_array(ChunkLoadClass & cload);
+	void Free();
+	bool read_header(ChunkLoadClass& cload);
+	bool read_proxy_array(ChunkLoadClass& cload);
 
 	friend class HLodClass;
 };
-
 
 /*
 ** Prototype for HLod objects
@@ -346,23 +338,23 @@ class HLodPrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(HLodPrototypeClass)
 public:
-	HLodPrototypeClass( HLodDefClass *def )					{ Definition = def; }
+	HLodPrototypeClass(HLodDefClass* def) { Definition = def; }
 
-	virtual const char *			Get_Name() const override { return Definition->Get_Name(); }
-	virtual int								Get_Class_ID() const override { return RenderObjClass::CLASSID_HLOD; }
-	virtual RenderObjClass *	Create() override;
-	virtual void							DeleteSelf() override { delete this; }
+	virtual const char* Get_Name() const override { return Definition->Get_Name(); }
+	virtual int Get_Class_ID() const override { return RenderObjClass::CLASSID_HLOD; }
+	virtual RenderObjClass* Create() override;
+	virtual void DeleteSelf() override { delete this; }
 
-	HLodDefClass *					Get_Definition() const	{ return Definition; }
+	HLodDefClass* Get_Definition() const { return Definition; }
 
 protected:
 	virtual ~HLodPrototypeClass() override { delete Definition; }
 
 private:
-	HLodDefClass *					Definition;
+	HLodDefClass* Definition;
 };
 
 /*
 ** Instance of the loaders which the asset manager install
 */
-extern HLodLoaderClass			_HLodLoader;
+extern HLodLoaderClass _HLodLoader;

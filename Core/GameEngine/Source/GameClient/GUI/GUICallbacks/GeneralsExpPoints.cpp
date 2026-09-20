@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -62,107 +62,97 @@
 //-----------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GeneralsExpPointsInput(GameWindow* window, UnsignedInt msg,
+                                            WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-
-		// --------------------------------------------------------------------------------------------
-		case GWM_MOUSE_ENTERING:
-			//Get rid of any building placement mode!
-			if( TheInGameUI )
-			{
-				TheInGameUI->placeBuildAvailable( nullptr, nullptr );
-			}
-			break;
-
-		case GWM_CHAR:
+	// --------------------------------------------------------------------------------------------
+	case GWM_MOUSE_ENTERING:
+		// Get rid of any building placement mode!
+		if (TheInGameUI)
 		{
-			UnsignedByte key = mData1;
-//			UnsignedByte state = mData2;
+			TheInGameUI->placeBuildAvailable(nullptr, nullptr);
+		}
+		break;
 
-			switch( key )
-			{
+	case GWM_CHAR:
+	{
+		UnsignedByte key = mData1;
+		//			UnsignedByte state = mData2;
 
-				// ----------------------------------------------------------------------------------------
-				case KEY_ESC:
-				{
-					TheControlBar->hidePurchaseScience();
-					return MSG_HANDLED;
-					//return MSG_IGNORED;
-				}
-
-			}
-
+		switch (key)
+		{
+		// ----------------------------------------------------------------------------------------
+		case KEY_ESC:
+		{
+			TheControlBar->hidePurchaseScience();
 			return MSG_HANDLED;
-
+			// return MSG_IGNORED;
+		}
 		}
 
+		return MSG_HANDLED;
+	}
 	}
 
 	return MSG_HANDLED;
-
 }
-
-
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GeneralsExpPointsSystem(GameWindow* window, UnsignedInt msg,
+                                             WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-		//---------------------------------------------------------------------------------------------
-		case GGM_FOCUS_CHANGE:
+	//---------------------------------------------------------------------------------------------
+	case GGM_FOCUS_CHANGE:
+	{
+		//			Bool focus = (Bool) mData1;
+		// if (focus)
+		// TheWindowManager->winSetGrabWindow( chatTextEntry );
+		break;
+	}
+
+	//---------------------------------------------------------------------------------------------
+	case GWM_INPUT_FOCUS:
+	{
+		// if we're given the opportunity to take the keyboard focus we must say we don't want it
+		if (mData1 == TRUE)
 		{
-			//			Bool focus = (Bool) mData1;
-			//if (focus)
-				//TheWindowManager->winSetGrabWindow( chatTextEntry );
-			break;
+			*(Bool*)mData2 = FALSE;
 		}
 
-		//---------------------------------------------------------------------------------------------
-		case GWM_INPUT_FOCUS:
+		return MSG_HANDLED;
+	}
+
+	//---------------------------------------------------------------------------------------------
+	case GBM_SELECTED:
+	{
+		GameWindow* control = (GameWindow*)mData1;
+		NameKeyType controlID = (NameKeyType)control->winGetWindowId();
+		static NameKeyType buttonExitID = NAMEKEY("GeneralsExpPoints.wnd:ButtonExit");
+		if (controlID == buttonExitID)
 		{
-			// if we're given the opportunity to take the keyboard focus we must say we don't want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = FALSE;
-
-			return MSG_HANDLED;
+			TheControlBar->hidePurchaseScience();
 		}
-
-		//---------------------------------------------------------------------------------------------
-		case GBM_SELECTED:
+		else
 		{
-			GameWindow *control = (GameWindow *)mData1;
-			NameKeyType controlID = (NameKeyType)control->winGetWindowId();
-			static NameKeyType buttonExitID = NAMEKEY( "GeneralsExpPoints.wnd:ButtonExit" );
-			if (controlID == buttonExitID)
-			{
-				TheControlBar->hidePurchaseScience();
-			}
-			else
-				TheControlBar->processContextSensitiveButtonClick( control, (GadgetGameMessage)msg );
-			break;
-
+			TheControlBar->processContextSensitiveButtonClick(control, (GadgetGameMessage)msg);
 		}
+		break;
+	}
 
-		//---------------------------------------------------------------------------------------------
-		default:
-			return MSG_IGNORED;
-
+	//---------------------------------------------------------------------------------------------
+	default:
+		return MSG_IGNORED;
 	}
 
 	return MSG_HANDLED;
-
 }
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-

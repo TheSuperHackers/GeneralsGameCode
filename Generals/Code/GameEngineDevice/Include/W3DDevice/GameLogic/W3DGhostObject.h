@@ -39,7 +39,7 @@ class W3DGhostObjectManager;
 class W3DRenderObjectSnapshot;
 class PartitionData;
 
-class W3DGhostObject: public GhostObject
+class W3DGhostObject : public GhostObject
 {
 	friend W3DGhostObjectManager;
 
@@ -47,26 +47,26 @@ public:
 	W3DGhostObject();
 	virtual ~W3DGhostObject() override;
 	virtual void snapShot(int playerIndex) override;
-	virtual void updateParentObject(Object *object, PartitionData *mod) override;
+	virtual void updateParentObject(Object* object, PartitionData* mod) override;
 	virtual void freeSnapShot(int playerIndex) override;
 
 protected:
-	virtual void crc( Xfer *xfer) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 	void removeParentObject();
-	void restoreParentObject();	///< restore the original non-ghosted object to scene.
+	void restoreParentObject();    ///< restore the original non-ghosted object to scene.
 	Bool addToScene(int playerIndex);
 	Bool removeFromScene(int playerIndex);
-	ObjectShroudStatus getShroudStatus(int playerIndex);	///< used to get the partition manager to update ghost objects without parent objects.
-	void freeAllSnapShots();				///< used to free all snapshots from all players.
+	ObjectShroudStatus getShroudStatus(int playerIndex);    ///< used to get the partition manager to update ghost objects without parent objects.
+	void freeAllSnapShots();    ///< used to free all snapshots from all players.
 
-	W3DRenderObjectSnapshot *m_parentSnapshots[MAX_PLAYER_COUNT];
-	DrawableInfo	m_drawableInfo;
+	W3DRenderObjectSnapshot* m_parentSnapshots[MAX_PLAYER_COUNT];
+	DrawableInfo m_drawableInfo;
 
 	///@todo this list should really be part of the device independent base class (CBD 12-3-2002)
-	W3DGhostObject *m_nextSystem;
-	W3DGhostObject *m_prevSystem;
+	W3DGhostObject* m_nextSystem;
+	W3DGhostObject* m_prevSystem;
 };
 
 class W3DGhostObjectManager : public GhostObjectManager
@@ -75,19 +75,19 @@ public:
 	W3DGhostObjectManager();
 	virtual ~W3DGhostObjectManager() override;
 	virtual void reset() override;
-	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) override;
-	virtual void removeGhostObject(GhostObject *mod) override;
+	virtual GhostObject* addGhostObject(Object* object, PartitionData* pd) override;
+	virtual void removeGhostObject(GhostObject* mod) override;
 	virtual void setLocalPlayerIndex(int playerIndex) override;
-	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) override;
+	virtual void updateOrphanedObjects(int* playerIndexList, int playerIndexCount) override;
 	virtual void releasePartitionData() override;
 	virtual void restorePartitionData() override;
 
 protected:
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 	///@todo this list should really be part of the device independent base class (CBD 12-3-2002)
-	W3DGhostObject	*m_freeModules;
-	W3DGhostObject	*m_usedModules;
+	W3DGhostObject* m_freeModules;
+	W3DGhostObject* m_usedModules;
 };

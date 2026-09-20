@@ -35,7 +35,7 @@
 class AudioManager;
 class GameLogic;
 class GameClient;
-class MessageStream;															///< @todo Create a MessageStreamInterface abstract class
+class MessageStream;    ///< @todo Create a MessageStreamInterface abstract class
 class FileSystem;
 class Keyboard;
 class LocalFileSystem;
@@ -53,64 +53,62 @@ class ParticleSystemManager;
 class GameEngine : public SubsystemInterface
 {
 public:
-
 	GameEngine();
 	virtual ~GameEngine() override;
 
-	virtual void init() override;								///< Init engine by creating client and logic
-	virtual void reset() override;								///< reset system to starting state
-	virtual void update() override;							///< per frame update
+	virtual void init() override;    ///< Init engine by creating client and logic
+	virtual void reset() override;    ///< reset system to starting state
+	virtual void update() override;    ///< per frame update
 
-	virtual void execute();											/**< The "main loop" of the game engine.
-																								 It will not return until the game exits. */
+	virtual void execute(); /**< The "main loop" of the game engine.
+	                           It will not return until the game exits. */
 
-	static Bool isTimeFrozen(); ///< Returns true if a script has frozen time.
-	static Bool isGameHalted(); ///< Returns true if the game is paused or the network is stalling.
+	static Bool isTimeFrozen();    ///< Returns true if a script has frozen time.
+	static Bool isGameHalted();    ///< Returns true if the game is paused or the network is stalling.
 
-	virtual void setQuitting( Bool quitting );				///< set quitting status
-	virtual Bool getQuitting();						///< is app getting ready to quit.
+	virtual void setQuitting(Bool quitting);    ///< set quitting status
+	virtual Bool getQuitting();    ///< is app getting ready to quit.
 
 	virtual Bool isMultiplayerSession();
-	virtual void serviceWindowsOS() {};		///< service the native OS
-	virtual Bool isActive() {return m_isActive;}	///< returns whether app has OS focus.
+	virtual void serviceWindowsOS() {};    ///< service the native OS
+	virtual Bool isActive() { return m_isActive; }    ///< returns whether app has OS focus.
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 
 protected:
-
 	virtual void resetSubsystems();
 
 	Bool canUpdateGameLogic(UnsignedInt logicTimeQueryFlags);
 	Bool canUpdateNetworkGameLogic();
 	Bool canUpdateRegularGameLogic(UnsignedInt logicTimeQueryFlags);
 
-	virtual FileSystem *createFileSystem();								///< Factory for FileSystem classes
-	virtual LocalFileSystem *createLocalFileSystem() = 0;	///< Factory for LocalFileSystem classes
-	virtual ArchiveFileSystem *createArchiveFileSystem() = 0;	///< Factory for ArchiveFileSystem classes
-	virtual GameLogic *createGameLogic() = 0;							///< Factory for GameLogic classes.
-	virtual GameClient *createGameClient() = 0;						///< Factory for GameClient classes.
-	virtual MessageStream *createMessageStream();					///< Factory for the message stream
-	virtual ModuleFactory *createModuleFactory() = 0;			///< Factory for modules
-	virtual ThingFactory *createThingFactory() = 0;				///< Factory for the thing factory
-	virtual FunctionLexicon *createFunctionLexicon() = 0;	///< Factory for Function Lexicon
-	virtual Radar *createRadar(Bool dummy) = 0;						///< Factory for radar
-	virtual WebBrowser *createWebBrowser() = 0;						///< Factory for embedded browser
+	virtual FileSystem* createFileSystem();    ///< Factory for FileSystem classes
+	virtual LocalFileSystem* createLocalFileSystem() = 0;    ///< Factory for LocalFileSystem classes
+	virtual ArchiveFileSystem* createArchiveFileSystem() = 0;    ///< Factory for ArchiveFileSystem classes
+	virtual GameLogic* createGameLogic() = 0;    ///< Factory for GameLogic classes.
+	virtual GameClient* createGameClient() = 0;    ///< Factory for GameClient classes.
+	virtual MessageStream* createMessageStream();    ///< Factory for the message stream
+	virtual ModuleFactory* createModuleFactory() = 0;    ///< Factory for modules
+	virtual ThingFactory* createThingFactory() = 0;    ///< Factory for the thing factory
+	virtual FunctionLexicon* createFunctionLexicon() = 0;    ///< Factory for Function Lexicon
+	virtual Radar* createRadar(Bool dummy) = 0;    ///< Factory for radar
+	virtual WebBrowser* createWebBrowser() = 0;    ///< Factory for embedded browser
 	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) = 0;
-	virtual AudioManager *createAudioManager(Bool dummy) = 0;				///< Factory for Audio Manager
+	virtual AudioManager* createAudioManager(Bool dummy) = 0;    ///< Factory for Audio Manager
 
-	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
+	Real m_logicTimeAccumulator;    ///< Frame time accumulated towards submitting a new logic frame
 
-	Bool m_quitting; ///< true when we need to quit the game
-	Bool m_isActive; ///< app has OS focus.
+	Bool m_quitting;    ///< true when we need to quit the game
+	Bool m_isActive;    ///< app has OS focus.
 };
 
-inline void GameEngine::setQuitting( Bool quitting ) { m_quitting = quitting; }
+inline void GameEngine::setQuitting(Bool quitting) { m_quitting = quitting; }
 inline Bool GameEngine::getQuitting() { return m_quitting; }
 
 // the game engine singleton
-extern GameEngine *TheGameEngine;
+extern GameEngine* TheGameEngine;
 
 /// This function creates a new game engine instance, and is device specific
-extern GameEngine *CreateGameEngine();
+extern GameEngine* CreateGameEngine();
 
 /// The entry point for the game system
 extern Int GameMain();

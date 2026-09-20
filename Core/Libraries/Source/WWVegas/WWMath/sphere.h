@@ -54,7 +54,6 @@
 #include "vector3.h"
 #include "matrix3d.h"
 
-
 /////////////////////////////////////////////////////////////////////
 // SphereClass
 //
@@ -65,27 +64,29 @@
 class SphereClass
 {
 public:
-	SphereClass() : Center(Vector3(0.0f, 0.0f, 0.0f)), Radius(0.0f) { }
-	SphereClass(const Vector3 & center,float radius) { Init(center,radius); }
-	SphereClass(const Matrix3D& mtx,const Vector3 & center,float radius) { Init(mtx,center,radius); }
-	inline SphereClass(const Vector3 & center,const SphereClass & s0);
-	inline SphereClass(const Vector3 *Position, const int VertCount);
+	SphereClass()
+	  : Center(Vector3(0.0f, 0.0f, 0.0f))
+	  , Radius(0.0f)
+	{}
+	SphereClass(const Vector3& center, float radius) { Init(center, radius); }
+	SphereClass(const Matrix3D& mtx, const Vector3& center, float radius) { Init(mtx, center, radius); }
+	inline SphereClass(const Vector3& center, const SphereClass& s0);
+	inline SphereClass(const Vector3* Position, const int VertCount);
 
-	inline void Init(const Vector3 & pos,float radius);
-	inline void Init(const Matrix3D& mtx,const Vector3 & pos,float radius);
-	inline void Re_Center(const Vector3 & center);
-	inline void Add_Sphere(const SphereClass & s);
-	inline void Transform(const Matrix3D & tm);
+	inline void Init(const Vector3& pos, float radius);
+	inline void Init(const Matrix3D& mtx, const Vector3& pos, float radius);
+	inline void Re_Center(const Vector3& center);
+	inline void Add_Sphere(const SphereClass& s);
+	inline void Transform(const Matrix3D& tm);
 	inline float Volume() const;
 	inline bool Is_Valid() const;
 
-	inline SphereClass & operator += (const SphereClass & s);
-	inline SphereClass & operator *= (const Matrix3D & m);
+	inline SphereClass& operator+=(const SphereClass& s);
+	inline SphereClass& operator*=(const Matrix3D& m);
 
-	Vector3	Center;
-	float		Radius;
+	Vector3 Center;
+	float Radius;
 };
-
 
 /***********************************************************************************************
  * SphereClass::SphereClass -- constructor                                                     *
@@ -99,50 +100,68 @@ public:
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass::SphereClass(const Vector3 & center,const SphereClass & s0)
+inline SphereClass::SphereClass(const Vector3& center, const SphereClass& s0)
 {
 	float dist = (s0.Center - center).Length();
 	Center = center;
 	Radius = s0.Radius + dist;
 }
 
-inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
+inline SphereClass::SphereClass(const Vector3* Position, const int VertCount)
 {
 	int i;
-	double dx,dy,dz;
+	double dx, dy, dz;
 
 	// bounding sphere
 	// Using the algorithm described in Graphics Gems I page 301.
 	// This algorithm supposedly generates a bounding sphere within
 	// 5% of the optimal one but is much faster and simpler to implement.
-	Vector3 xmin(Position[0].X,Position[0].Y,Position[0].Z);
-	Vector3 xmax(Position[0].X,Position[0].Y,Position[0].Z);
-	Vector3 ymin(Position[0].X,Position[0].Y,Position[0].Z);
-	Vector3 ymax(Position[0].X,Position[0].Y,Position[0].Z);
-	Vector3 zmin(Position[0].X,Position[0].Y,Position[0].Z);
-	Vector3 zmax(Position[0].X,Position[0].Y,Position[0].Z);
-
+	Vector3 xmin(Position[0].X, Position[0].Y, Position[0].Z);
+	Vector3 xmax(Position[0].X, Position[0].Y, Position[0].Z);
+	Vector3 ymin(Position[0].X, Position[0].Y, Position[0].Z);
+	Vector3 ymax(Position[0].X, Position[0].Y, Position[0].Z);
+	Vector3 zmin(Position[0].X, Position[0].Y, Position[0].Z);
+	Vector3 zmax(Position[0].X, Position[0].Y, Position[0].Z);
 
 	// FIRST PASS:
 	// finding the 6 minima and maxima points
-	for (i=1; i<VertCount; i++) {
-		if (Position[i].X < xmin.X) {
-			xmin.X = Position[i].X; xmin.Y = Position[i].Y; xmin.Z = Position[i].Z;
+	for (i = 1; i < VertCount; i++)
+	{
+		if (Position[i].X < xmin.X)
+		{
+			xmin.X = Position[i].X;
+			xmin.Y = Position[i].Y;
+			xmin.Z = Position[i].Z;
 		}
-		if (Position[i].X > xmax.X) {
-			xmax.X = Position[i].X; xmax.Y = Position[i].Y; xmax.Z = Position[i].Z;
+		if (Position[i].X > xmax.X)
+		{
+			xmax.X = Position[i].X;
+			xmax.Y = Position[i].Y;
+			xmax.Z = Position[i].Z;
 		}
-		if (Position[i].Y < ymin.Y) {
-			ymin.X = Position[i].X; ymin.Y = Position[i].Y; ymin.Z = Position[i].Z;
+		if (Position[i].Y < ymin.Y)
+		{
+			ymin.X = Position[i].X;
+			ymin.Y = Position[i].Y;
+			ymin.Z = Position[i].Z;
 		}
-		if (Position[i].Y > ymax.Y) {
-			ymax.X = Position[i].X; ymax.Y = Position[i].Y; ymax.Z = Position[i].Z;
+		if (Position[i].Y > ymax.Y)
+		{
+			ymax.X = Position[i].X;
+			ymax.Y = Position[i].Y;
+			ymax.Z = Position[i].Z;
 		}
-		if (Position[i].Z < zmin.Z) {
-			zmin.X = Position[i].X; zmin.Y = Position[i].Y; zmin.Z = Position[i].Z;
+		if (Position[i].Z < zmin.Z)
+		{
+			zmin.X = Position[i].X;
+			zmin.Y = Position[i].Y;
+			zmin.Z = Position[i].Z;
 		}
-		if (Position[i].Z > zmax.Z) {
-			zmax.X = Position[i].X; zmax.Y = Position[i].Y; zmax.Z = Position[i].Z;
+		if (Position[i].Z > zmax.Z)
+		{
+			zmax.X = Position[i].X;
+			zmax.Y = Position[i].Y;
+			zmax.Z = Position[i].Z;
 		}
 	}
 
@@ -151,18 +170,17 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 	dx = xmax.X - xmin.X;
 	dy = xmax.Y - xmin.Y;
 	dz = xmax.Z - xmin.Z;
-	double xspan = dx*dx + dy*dy + dz*dz;
+	double xspan = dx * dx + dy * dy + dz * dz;
 
 	dx = ymax.X - ymin.X;
 	dy = ymax.Y - ymin.Y;
 	dz = ymax.Z - ymin.Z;
-	double yspan = dx*dx + dy*dy + dz*dz;
+	double yspan = dx * dx + dy * dy + dz * dz;
 
 	dx = zmax.X - zmin.X;
 	dy = zmax.Y - zmin.Y;
 	dz = zmax.Z - zmin.Z;
-	double zspan = dx*dx + dy*dy + dz*dz;
-
+	double zspan = dx * dx + dy * dy + dz * dz;
 
 	// Set points dia1 and dia2 to the maximally separated pair
 	// This will be the diameter of the initial sphere
@@ -170,17 +188,18 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 	Vector3 dia2 = xmax;
 	double maxspan = xspan;
 
-	if (yspan > maxspan) {
+	if (yspan > maxspan)
+	{
 		maxspan = yspan;
 		dia1 = ymin;
 		dia2 = ymax;
 	}
-	if (zspan > maxspan) {
+	if (zspan > maxspan)
+	{
 		maxspan = zspan;
 		dia1 = zmin;
 		dia2 = zmax;
 	}
-
 
 	// Compute initial center and radius and radius squared
 	Vector3 center;
@@ -192,22 +211,21 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 	dy = dia2.Y - center.Y;
 	dz = dia2.Z - center.Z;
 
-	double radsqr = dx*dx + dy*dy + dz*dz;
+	double radsqr = dx * dx + dy * dy + dz * dz;
 	double radius = sqrt(radsqr);
-
 
 	// SECOND PASS:
 	// Increment current sphere if any points fall outside of it.
-	for (i=0; i<VertCount; i++) {
-
+	for (i = 0; i < VertCount; i++)
+	{
 		dx = Position[i].X - center.X;
 		dy = Position[i].Y - center.Y;
 		dz = Position[i].Z - center.Z;
 
-		double testrad2 = dx*dx + dy*dy + dz*dz;
+		double testrad2 = dx * dx + dy * dy + dz * dz;
 
-		if (testrad2 > radsqr) {
-
+		if (testrad2 > radsqr)
+		{
 			// this point was outside the old sphere, compute a new
 			// center point and radius which contains this point
 			double testrad = sqrt(testrad2);
@@ -227,7 +245,6 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
 	Radius = radius;
 }
 
-
 /***********************************************************************************************
  * SphereClass::Init -- assign a new center and radius to this sphere                          *
  *                                                                                             *
@@ -240,7 +257,7 @@ inline SphereClass::SphereClass(const Vector3 *Position,const int VertCount)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline void SphereClass::Init(const Vector3 & pos,float radius)
+inline void SphereClass::Init(const Vector3& pos, float radius)
 {
 	Center = pos;
 	Radius = radius;
@@ -258,7 +275,7 @@ inline void SphereClass::Init(const Vector3 & pos,float radius)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline void SphereClass::Init(const Matrix3D& mtx, const Vector3 & pos,float radius)
+inline void SphereClass::Init(const Matrix3D& mtx, const Vector3& pos, float radius)
 {
 #ifdef ALLOW_TEMPORARIES
 	Center = mtx * pos;
@@ -267,7 +284,6 @@ inline void SphereClass::Init(const Matrix3D& mtx, const Vector3 & pos,float rad
 #endif
 	Radius = radius;
 }
-
 
 /***********************************************************************************************
  * SphereClass::Re_Center -- move the center, update radius to enclose old sphere              *
@@ -281,13 +297,12 @@ inline void SphereClass::Init(const Matrix3D& mtx, const Vector3 & pos,float rad
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline void SphereClass::Re_Center(const Vector3 & center)
+inline void SphereClass::Re_Center(const Vector3& center)
 {
 	float dist = (Center - center).Length();
 	Center = center;
 	Radius += dist;
 }
-
 
 /***********************************************************************************************
  * SphereClass::Add_Sphere -- expands 'this' sphere to enclose the given sphere                *
@@ -301,37 +316,47 @@ inline void SphereClass::Re_Center(const Vector3 & center)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline void SphereClass::Add_Sphere(const SphereClass & s)
+inline void SphereClass::Add_Sphere(const SphereClass& s)
 {
-	if (!s.Is_Valid()) return;
+	if (!s.Is_Valid())
+	{
+		return;
+	}
 
 	float dist = (s.Center - Center).Length();
-	if (dist == 0.0f) {
+	if (dist == 0.0f)
+	{
 		Radius = (Radius > s.Radius) ? Radius : s.Radius;
 		return;
 	}
 
 	float rnew = (dist + Radius + s.Radius) / 2.0f;
 
-   // If rnew is smaller than either of the two sphere radii (it can't be
-   // smaller than both of them), this means that the smaller sphere is
-   // completely inside the larger, and the result of adding the two is
-   // simply the larger sphere. If rnew isn't less than either of them, it is
-   // the new radius - calculate the new center.
-   if (rnew < Radius) {
-      // The existing sphere is the result - do nothing.
-   } else {
-      if (rnew < s.Radius) {
-         // The new sphere is the result:
-         Init(s.Center, s.Radius);
-      } else {
-         // Neither sphere is completely inside the other, so rnew is the new
-         // radius - calculate the new center
-	      float lerp = (rnew - Radius) / dist;
-	      Vector3 center = (s.Center - Center) * lerp + Center;
-	      Init(center, rnew);
-      }
-   }
+	// If rnew is smaller than either of the two sphere radii (it can't be
+	// smaller than both of them), this means that the smaller sphere is
+	// completely inside the larger, and the result of adding the two is
+	// simply the larger sphere. If rnew isn't less than either of them, it is
+	// the new radius - calculate the new center.
+	if (rnew < Radius)
+	{
+		// The existing sphere is the result - do nothing.
+	}
+	else
+	{
+		if (rnew < s.Radius)
+		{
+			// The new sphere is the result:
+			Init(s.Center, s.Radius);
+		}
+		else
+		{
+			// Neither sphere is completely inside the other, so rnew is the new
+			// radius - calculate the new center
+			float lerp = (rnew - Radius) / dist;
+			Vector3 center = (s.Center - Center) * lerp + Center;
+			Init(center, rnew);
+		}
+	}
 }
 
 /***********************************************************************************************
@@ -346,7 +371,7 @@ inline void SphereClass::Add_Sphere(const SphereClass & s)
  * HISTORY:                                                                                    *
  *   3/12/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline void SphereClass::Transform(const Matrix3D & tm)
+inline void SphereClass::Transform(const Matrix3D& tm)
 {
 	// warning, assumes Orthogonal matrix
 #ifdef ALLOW_TEMPORARIES
@@ -355,7 +380,6 @@ inline void SphereClass::Transform(const Matrix3D & tm)
 	tm.mulVector3(Center, Center);
 #endif
 }
-
 
 /***********************************************************************************************
  * SphereClass::Volume -- returns the volume of this sphere                                    *
@@ -388,12 +412,11 @@ inline float SphereClass::Volume() const
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass & SphereClass::operator += (const SphereClass & s)
+inline SphereClass& SphereClass::operator+=(const SphereClass& s)
 {
 	Add_Sphere(s);
 	return *this;
 }
-
 
 /***********************************************************************************************
  * SphereClass::operator *= -- transform this sphere by the given radius                       *
@@ -407,12 +430,11 @@ inline SphereClass & SphereClass::operator += (const SphereClass & s)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass & SphereClass::operator *= (const Matrix3D & m)
+inline SphereClass& SphereClass::operator*=(const Matrix3D& m)
 {
 	Init(m, Center, Radius);
 	return *this;
 }
-
 
 /***********************************************************************************************
  * Spheres_Intersect -- test whether two spheres intersect                                     *
@@ -426,18 +448,20 @@ inline SphereClass & SphereClass::operator *= (const Matrix3D & m)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1)
+inline bool Spheres_Intersect(const SphereClass& s0, const SphereClass& s1)
 {
 	Vector3 delta = s0.Center - s1.Center;
 	float dist2 = Vector3::Dot_Product(delta, delta);
 
-	if (dist2 < (s0.Radius + s1.Radius) * (s0.Radius + s1.Radius)) {
+	if (dist2 < (s0.Radius + s1.Radius) * (s0.Radius + s1.Radius))
+	{
 		return true;
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
-
 
 /***********************************************************************************************
  * Add_Spheres -- Add two spheres together, creating sphere which encloses both                *
@@ -451,17 +475,19 @@ inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass Add_Spheres(const SphereClass & s0, const SphereClass & s1)
+inline SphereClass Add_Spheres(const SphereClass& s0, const SphereClass& s1)
 {
-	if (s0.Is_Valid()) {
+	if (s0.Is_Valid())
+	{
 		SphereClass result(s0);
 		result.Add_Sphere(s1);
 		return result;
-	} else {
+	}
+	else
+	{
 		return s1;
 	}
 }
-
 
 /***********************************************************************************************
  * operator + -- Add two spheres together, creating a sphere which encloses both               *
@@ -475,11 +501,10 @@ inline SphereClass Add_Spheres(const SphereClass & s0, const SphereClass & s1)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass operator + (const SphereClass & s0,const SphereClass & s1)
+inline SphereClass operator+(const SphereClass& s0, const SphereClass& s1)
 {
-	return Add_Spheres(s0,s1);
+	return Add_Spheres(s0, s1);
 }
-
 
 /***********************************************************************************************
  * Transform Sphere -- transform a sphere                                                      *
@@ -493,12 +518,11 @@ inline SphereClass operator + (const SphereClass & s0,const SphereClass & s1)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass Transform_Sphere(const Matrix3D & m, const SphereClass & s)
+inline SphereClass Transform_Sphere(const Matrix3D& m, const SphereClass& s)
 {
 	// Warning, assumes Orthogonal matrix
-	return SphereClass(m,s.Center,s.Radius);
+	return SphereClass(m, s.Center, s.Radius);
 }
-
 
 /***********************************************************************************************
  * Transform_Sphere -- transform a sphere                                                      *
@@ -512,17 +536,16 @@ inline SphereClass Transform_Sphere(const Matrix3D & m, const SphereClass & s)
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline void Transform_Sphere(const Matrix3D & m, const SphereClass & s,SphereClass & res)
+inline void Transform_Sphere(const Matrix3D& m, const SphereClass& s, SphereClass& res)
 {
 	// warning, assumes Orthogonal matrix
 #ifdef ALLOW_TEMPORARIES
-	res.Center = m*s.Center;
+	res.Center = m * s.Center;
 #else
 	m.mulVector3(s.Center, res.Center);
 #endif
 	res.Radius = s.Radius;
 }
-
 
 /***********************************************************************************************
  * operator * -- Transform a sphere                                                            *
@@ -536,9 +559,9 @@ inline void Transform_Sphere(const Matrix3D & m, const SphereClass & s,SphereCla
  * HISTORY:                                                                                    *
  *   8/12/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline SphereClass operator * (const Matrix3D & m, const SphereClass & s)
+inline SphereClass operator*(const Matrix3D& m, const SphereClass& s)
 {
-	return Transform_Sphere(m,s);
+	return Transform_Sphere(m, s);
 }
 
 inline bool SphereClass::Is_Valid() const

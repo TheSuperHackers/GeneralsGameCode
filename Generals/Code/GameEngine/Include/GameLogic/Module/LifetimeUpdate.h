@@ -47,14 +47,13 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_minFrames ) },
-			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_maxFrames ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "MinLifetime", INI::parseDurationUnsignedInt, nullptr, offsetof(LifetimeUpdateModuleData, m_minFrames) },
+			{ "MaxLifetime", INI::parseDurationUnsignedInt, nullptr, offsetof(LifetimeUpdateModuleData, m_maxFrames) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -62,22 +61,19 @@ public:
 //-------------------------------------------------------------------------------------------------
 class LifetimeUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LifetimeUpdate, "LifetimeUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( LifetimeUpdate, LifetimeUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(LifetimeUpdate, "LifetimeUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(LifetimeUpdate, LifetimeUpdateModuleData)
 
 public:
-
-	LifetimeUpdate( Thing *thing, const ModuleData* moduleData );
+	LifetimeUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	void setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames );
+	void setLifetimeRange(UnsignedInt minFrames, UnsignedInt maxFrames);
 	UnsignedInt getDieFrame() const { return m_dieFrame; }
 
 	virtual UpdateSleepTime update() override;
 
 private:
-
 	UnsignedInt calcSleepDelay(UnsignedInt minFrames, UnsignedInt maxFrames);
 
 	UnsignedInt m_dieFrame;

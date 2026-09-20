@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // FILE: HotKey.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 //
@@ -66,8 +65,8 @@ class GameWindow;
 class HotKeyTranslator : public GameMessageTranslator
 {
 public:
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
-	virtual ~HotKeyTranslator() override { }
+	virtual GameMessageDisposition translateGameMessage(const GameMessage* msg) override;
+	virtual ~HotKeyTranslator() override {}
 };
 
 //-----------------------------------------------------------------------------
@@ -75,7 +74,7 @@ class HotKey
 {
 public:
 	HotKey();
-	GameWindow *m_win;
+	GameWindow* m_win;
 	AsciiString m_key;
 	// we may need a checkmark system.
 };
@@ -87,22 +86,22 @@ public:
 	HotKeyManager();
 	virtual ~HotKeyManager() override;
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init() override;															///< Initialize the Hotkey system
-	virtual void update() override {}														///< A No-op for us
-	virtual void reset() override;															///< Reset
+	virtual void init() override;    ///< Initialize the Hotkey system
+	virtual void update() override {}    ///< A No-op for us
+	virtual void reset() override;    ///< Reset
 	//-----------------------------------------------------------------------------------------------
 
-	void addHotKey( GameWindow *win, const AsciiString& key);
-	Bool executeHotKey( const AsciiString& key); // called front eh HotKeyTranslator
+	void addHotKey(GameWindow* win, const AsciiString& key);
+	Bool executeHotKey(const AsciiString& key);    // called front eh HotKeyTranslator
 
-	AsciiString searchHotKey( const AsciiString& label);
-	AsciiString searchHotKey( const UnicodeString& uStr );
+	AsciiString searchHotKey(const AsciiString& label);
+	AsciiString searchHotKey(const UnicodeString& uStr);
 
 private:
 	typedef std::map<AsciiString, HotKey> HotKeyMap;
 	HotKeyMap m_hotKeyMap;
 };
-extern HotKeyManager *TheHotKeyManager;
+extern HotKeyManager* TheHotKeyManager;
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------

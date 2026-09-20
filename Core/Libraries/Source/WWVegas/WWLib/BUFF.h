@@ -41,47 +41,46 @@
 **	November of '94. Until the compiler supports this, use the following
 **	definition.
 */
-//#include	"bool.h"
-
+// #include	"bool.h"
 
 /*
 **	A general purpose buffer pointer handler object. It holds not only the pointer to the
 **	buffer, but its size as well. By using this class instead of separate pointer and size
 **	values, function interfaces and algorithms become simpler to manage and understand.
 */
-class Buffer {
-	public:
-		Buffer(char * ptr, long size=0);
-		Buffer(void * ptr=0, long size=0);
-		Buffer(void const * ptr, long size=0);
-		Buffer(long size);
-		Buffer(Buffer const & buffer);
-		~Buffer();
+class Buffer
+{
+public:
+	Buffer(char* ptr, long size = 0);
+	Buffer(void* ptr = 0, long size = 0);
+	Buffer(void const* ptr, long size = 0);
+	Buffer(long size);
+	Buffer(Buffer const& buffer);
+	~Buffer();
 
-		Buffer & operator = (Buffer const & buffer);
-		operator void * () const {return(BufferPtr);}
-		operator char * () const {return((char *)BufferPtr);}
+	Buffer& operator=(Buffer const& buffer);
+	operator void*() const { return (BufferPtr); }
+	operator char*() const { return ((char*)BufferPtr); }
 
-		void Reset();
-		void * Get_Buffer() const {return(BufferPtr);}
-		long Get_Size() const {return(Size);}
-		bool Is_Valid() const {return(BufferPtr != 0);}
+	void Reset();
+	void* Get_Buffer() const { return (BufferPtr); }
+	long Get_Size() const { return (Size); }
+	bool Is_Valid() const { return (BufferPtr != 0); }
 
-	protected:
+protected:
+	/*
+	**	Pointer to the buffer memory.
+	*/
+	void* BufferPtr;
 
-		/*
-		**	Pointer to the buffer memory.
-		*/
-		void * BufferPtr;
+	/*
+	**	The size of the buffer memory.
+	*/
+	long Size;
 
-		/*
-		**	The size of the buffer memory.
-		*/
-		long Size;
-
-		/*
-		**	Was the buffer allocated by this class? If so, then this class
-		**	will be responsible for freeing the buffer.
-		*/
-		bool IsAllocated;
+	/*
+	**	Was the buffer allocated by this class? If so, then this class
+	**	will be responsible for freeing the buffer.
+	*/
+	bool IsAllocated;
 };

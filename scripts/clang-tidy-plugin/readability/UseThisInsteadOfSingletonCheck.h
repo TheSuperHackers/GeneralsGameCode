@@ -3,20 +3,23 @@
 
 #include "clang-tidy/ClangTidyCheck.h"
 
-namespace clang::tidy::generalsgamecode::readability {
+namespace clang::tidy::generalsgamecode::readability
+{
 
-class UseThisInsteadOfSingletonCheck : public ClangTidyCheck {
+class UseThisInsteadOfSingletonCheck : public ClangTidyCheck
+{
 public:
-  UseThisInsteadOfSingletonCheck(StringRef Name, ClangTidyContext *Context)
-      : ClangTidyCheck(Name, Context) {}
-  void registerMatchers(ast_matchers::MatchFinder *Finder) override;
-  void check(const ast_matchers::MatchFinder::MatchResult &Result) override;
-  bool isLanguageVersionSupported(const LangOptions &LangOpts) const override {
-    return LangOpts.CPlusPlus;
-  }
+	UseThisInsteadOfSingletonCheck(StringRef Name, ClangTidyContext* Context)
+	  : ClangTidyCheck(Name, Context)
+	{}
+	void registerMatchers(ast_matchers::MatchFinder* Finder) override;
+	void check(const ast_matchers::MatchFinder::MatchResult& Result) override;
+	bool isLanguageVersionSupported(const LangOptions& LangOpts) const override
+	{
+		return LangOpts.CPlusPlus;
+	}
 };
 
-} // namespace clang::tidy::generalsgamecode::readability
+}    // namespace clang::tidy::generalsgamecode::readability
 
 #endif
-

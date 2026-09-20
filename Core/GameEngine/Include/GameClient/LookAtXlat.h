@@ -33,12 +33,12 @@
 // TheSuperHackers @feature The Screen Edge Scrolling can now be enabled or
 // disabled depending on the App being Windowed or Fullscreen.
 typedef UnsignedInt ScreenEdgeScrollMode;
-enum ScreenEdgeScrollMode_ CPP_11(: ScreenEdgeScrollMode)
+enum ScreenEdgeScrollMode_ CPP_11( : ScreenEdgeScrollMode)
 {
-	ScreenEdgeScrollMode_EnabledInWindowedApp = 1<<0, // Scroll when touching the edge while the app is windowed
-	ScreenEdgeScrollMode_EnabledInFullscreenApp = 1<<1, // Scroll when touching the edge while the app is fullscreen
+	ScreenEdgeScrollMode_EnabledInWindowedApp = 1 << 0,    // Scroll when touching the edge while the app is windowed
+	ScreenEdgeScrollMode_EnabledInFullscreenApp = 1 << 1,    // Scroll when touching the edge while the app is fullscreen
 
-	ScreenEdgeScrollMode_Default = ScreenEdgeScrollMode_EnabledInFullscreenApp, // Default based on original game behavior
+	ScreenEdgeScrollMode_Default = ScreenEdgeScrollMode_EnabledInFullscreenApp,    // Default based on original game behavior
 };
 
 //-----------------------------------------------------------------------------
@@ -48,13 +48,13 @@ public:
 	LookAtTranslator();
 	virtual ~LookAtTranslator() override;
 
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
-	virtual const ICoord2D* getRMBScrollAnchor(); // get m_anchor ICoord2D if we're RMB scrolling
+	virtual GameMessageDisposition translateGameMessage(const GameMessage* msg) override;
+	virtual const ICoord2D* getRMBScrollAnchor();    // get m_anchor ICoord2D if we're RMB scrolling
 	Bool hasMouseMovedRecently();
-	void setCurrentPos( const ICoord2D& pos );
+	void setCurrentPos(const ICoord2D& pos);
 	void setScreenEdgeScrollMode(ScreenEdgeScrollMode mode);
 
-	void resetModes(); //Used when disabling input, so when we reenable it we aren't stuck in a mode.
+	void resetModes();    // Used when disabling input, so when we reenable it we aren't stuck in a mode.
 
 private:
 	enum
@@ -72,21 +72,21 @@ private:
 	ICoord2D m_originalAnchor;
 	ICoord2D m_currentPos;
 	Real m_anchorAngle;
-	Bool m_isScrolling;				// set to true if we are in the act of RMB scrolling
-	Bool m_isRotating;					// set to true if we are in the act of MMB rotating
-	Bool m_isPitching;					// set to true if we are in the act of pitch rotation
-	Bool m_isPitchingToDefault; // set to true if we are in the act of default pitch rotation
-	Bool m_isChangingFOV;			// set to true if we are in the act of changing the field of view
-	UnsignedInt m_middleButtonDownTimeMsec;				// real-time in milliseconds when middle button goes down
+	Bool m_isScrolling;    // set to true if we are in the act of RMB scrolling
+	Bool m_isRotating;    // set to true if we are in the act of MMB rotating
+	Bool m_isPitching;    // set to true if we are in the act of pitch rotation
+	Bool m_isPitchingToDefault;    // set to true if we are in the act of default pitch rotation
+	Bool m_isChangingFOV;    // set to true if we are in the act of changing the field of view
+	UnsignedInt m_middleButtonDownTimeMsec;    // real-time in milliseconds when middle button goes down
 	DrawableID m_lastPlaneID;
-	ViewLocation m_viewLocation[ MAX_VIEW_LOCS ];
+	ViewLocation m_viewLocation[MAX_VIEW_LOCS];
 	ScrollType m_scrollType;
 	ScreenEdgeScrollMode m_screenEdgeScrollMode;
-	UnsignedInt m_lastMouseMoveTimeMsec;				// real-time in milliseconds when mouse last moved
+	UnsignedInt m_lastMouseMoveTimeMsec;    // real-time in milliseconds when mouse last moved
 
-	void setScrolling( ScrollType scrollType );
+	void setScrolling(ScrollType scrollType);
 	void stopScrolling();
 	Bool canScrollAtScreenEdge() const;
 };
 
-extern LookAtTranslator *TheLookAtTranslator;
+extern LookAtTranslator* TheLookAtTranslator;

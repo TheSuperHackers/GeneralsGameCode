@@ -42,23 +42,22 @@
 #include "WWLib/always.h"
 #include "WWLib/multilist.h"
 
-
 /*
 ** Here we're just typedefing some multi-lists so we don't have to write the
 ** long template names.
 */
 class DX8TextureCategoryClass;
-typedef MultiListClass<DX8TextureCategoryClass>			TextureCategoryList;
-typedef MultiListIterator<DX8TextureCategoryClass>		TextureCategoryListIterator;
+typedef MultiListClass<DX8TextureCategoryClass> TextureCategoryList;
+typedef MultiListIterator<DX8TextureCategoryClass> TextureCategoryListIterator;
 
 class DX8FVFCategoryContainer;
-typedef MultiListClass<DX8FVFCategoryContainer>			FVFCategoryList;
-typedef MultiListIterator<DX8FVFCategoryContainer>		FVFCategoryListIterator;
+typedef MultiListClass<DX8FVFCategoryContainer> FVFCategoryList;
+typedef MultiListIterator<DX8FVFCategoryContainer> FVFCategoryListIterator;
 
 class DX8PolygonRendererClass;
-typedef MultiListClass<DX8PolygonRendererClass>			DX8PolygonRendererList;
-typedef MultiListIterator<DX8PolygonRendererClass>		DX8PolygonRendererListIterator;
+typedef MultiListClass<DX8PolygonRendererClass> DX8PolygonRendererList;
+typedef MultiListIterator<DX8PolygonRendererClass> DX8PolygonRendererListIterator;
 
 class TextureTrackerClass;
-typedef MultiListClass<TextureTrackerClass>				TextureTrackerList;
-typedef MultiListIterator<TextureTrackerClass>			TextureTrackerListIterator;
+typedef MultiListClass<TextureTrackerClass> TextureTrackerList;
+typedef MultiListIterator<TextureTrackerClass> TextureTrackerListIterator;

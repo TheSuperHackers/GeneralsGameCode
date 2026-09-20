@@ -47,18 +47,15 @@ class SpecialAbilityModuleData : public SpecialPowerModuleData
 //-------------------------------------------------------------------------------------------------
 class SpecialAbility : public SpecialPowerModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpecialAbility, "SpecialAbility" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpecialAbility, SpecialAbilityModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpecialAbility, "SpecialAbility")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpecialAbility, SpecialAbilityModuleData)
 
 public:
+	SpecialAbility(Thing* thing, const ModuleData* moduleData);
 
-	SpecialAbility( Thing *thing, const ModuleData *moduleData );
-
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) override;
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) override;
-	virtual void doSpecialPower( UnsignedInt commandOptions ) override;
+	virtual void doSpecialPowerAtObject(Object* obj, UnsignedInt commandOptions) override;
+	virtual void doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions) override;
+	virtual void doSpecialPower(UnsignedInt commandOptions) override;
 
 protected:
-
 };

@@ -31,10 +31,9 @@
 #include "ViewerAssetMgr.h"
 
 // Main asset manager for the application.
-ViewerAssetMgrClass *_TheAssetMgr = nullptr;
+ViewerAssetMgrClass* _TheAssetMgr = nullptr;
 
-
-int g_iDeviceIndex      = -1;//DEFAULT_DEVICEINDEX;
-int g_iBitsPerPixel     = -1;//DEFAULT_BITSPERPIX;
-int g_iWidth				= 640;
-int g_iHeight				= 480;
+int g_iDeviceIndex = -1;    // DEFAULT_DEVICEINDEX;
+int g_iBitsPerPixel = -1;    // DEFAULT_BITSPERPIX;
+int g_iWidth = 640;
+int g_iHeight = 480;

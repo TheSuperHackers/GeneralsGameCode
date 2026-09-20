@@ -39,7 +39,6 @@
 #include "definition.h"
 #include "definitionclassids.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	TwiddlerClass
@@ -48,7 +47,6 @@
 class TwiddlerClass : public DefinitionClass
 {
 public:
-
 	/////////////////////////////////////////////////////////////////////
 	//	Editable interface requirements
 	/////////////////////////////////////////////////////////////////////
@@ -57,8 +55,8 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
-	TwiddlerClass ();
-	virtual ~TwiddlerClass () override;
+	TwiddlerClass();
+	virtual ~TwiddlerClass() override;
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -67,54 +65,51 @@ public:
 	//
 	// Type identification
 	//
-	virtual uint32								Get_Class_ID () const override { return CLASSID_TWIDDLERS; }
-	virtual PersistClass *						Create () const override;
+	virtual uint32 Get_Class_ID() const override { return CLASSID_TWIDDLERS; }
+	virtual PersistClass* Create() const override;
 
 	//
 	// From PersistClass
 	//
-	virtual bool									Save (ChunkSaveClass &csave) override;
-	virtual bool									Load (ChunkLoadClass &cload) override;
-	virtual const PersistFactoryClass &	Get_Factory () const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
 
 	//
 	//	Twiddler specific
 	//
-	virtual DefinitionClass *		Twiddle () const;
-	virtual uint32						Get_Indirect_Class_ID () const;
-	virtual void						Set_Indirect_Class_ID (uint32 class_id);
+	virtual DefinitionClass* Twiddle() const;
+	virtual uint32 Get_Indirect_Class_ID() const;
+	virtual void Set_Indirect_Class_ID(uint32 class_id);
 
 private:
-
 	/////////////////////////////////////////////////////////////////////
 	//	Private methods
 	/////////////////////////////////////////////////////////////////////
-	bool								Save_Variables (ChunkSaveClass &csave);
-	bool								Load_Variables (ChunkLoadClass &cload);
+	bool Save_Variables(ChunkSaveClass& csave);
+	bool Load_Variables(ChunkLoadClass& cload);
 
 	/////////////////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////////////////
-	uint32							m_IndirectClassID;
-	DynamicVectorClass<int>		m_DefinitionList;
+	uint32 m_IndirectClassID;
+	DynamicVectorClass<int> m_DefinitionList;
 };
-
 
 /////////////////////////////////////////////////////////////////////
 //	Get_Indirect_Class_ID
 /////////////////////////////////////////////////////////////////////
 inline uint32
-TwiddlerClass::Get_Indirect_Class_ID () const
+TwiddlerClass::Get_Indirect_Class_ID() const
 {
 	return m_IndirectClassID;
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //	Set_Indirect_Class_ID
 /////////////////////////////////////////////////////////////////////
 inline void
-TwiddlerClass::Set_Indirect_Class_ID (uint32 class_id)
+TwiddlerClass::Set_Indirect_Class_ID(uint32 class_id)
 {
 	m_IndirectClassID = class_id;
 }

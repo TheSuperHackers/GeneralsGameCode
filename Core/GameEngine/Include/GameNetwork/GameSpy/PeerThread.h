@@ -31,7 +31,7 @@
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
-enum SerialAuthResult CPP_11(: Int)
+enum SerialAuthResult CPP_11( : Int)
 {
 	SERIAL_NONEXISTENT,
 	SERIAL_AUTHFAILED,
@@ -45,8 +45,8 @@ class PeerRequest
 public:
 	enum
 	{
-		PEERREQUEST_LOGIN,				// attempt to login
-		PEERREQUEST_LOGOUT,				// log out if connected
+		PEERREQUEST_LOGIN,    // attempt to login
+		PEERREQUEST_LOGOUT,    // log out if connected
 		PEERREQUEST_MESSAGEPLAYER,
 		PEERREQUEST_MESSAGEROOM,
 		PEERREQUEST_JOINGROUPROOM,
@@ -68,14 +68,14 @@ public:
 		PEERREQUEST_MAX
 	} peerRequestType;
 
-	std::string nick;	// only used by login, but must be outside the union b/c of copy constructor
-	std::wstring text;  // can't be in a union
+	std::string nick;    // only used by login, but must be outside the union b/c of copy constructor
+	std::wstring text;    // can't be in a union
 	std::string password;
 	std::string email;
 	std::string id;
 
 	// gameopts
-	std::string options; // full string for UTMs
+	std::string options;    // full string for UTMs
 	std::string ladderIP;
 	std::string hostPingStr;
 	std::string gameOptsMapName;
@@ -116,7 +116,7 @@ public:
 			UnsignedInt iniCRC;
 			UnsignedInt gameVersion;
 			Bool allowObservers;
-      Bool useStats;
+			Bool useStats;
 			UnsignedShort ladPort;
 			UnsignedInt ladPassCRC;
 			Bool restrictGameList;
@@ -147,7 +147,7 @@ public:
 			UnsignedInt ladderPassCRC;
 			Int maxPing;
 			Int maxDiscons, discons;
-			char pings[17]; // 8 servers (0-ff), 1 null terminator
+			char pings[17];    // 8 servers (0-ff), 1 null terminator
 			Int numPlayers;
 			Int botID;
 			Int roomID;
@@ -167,13 +167,12 @@ public:
 			Int side;
 			Bool preorder;
 		} statsToPush;
-
 	};
 };
 
 //-------------------------------------------------------------------------
 
-enum DisconnectReason CPP_11(: Int)
+enum DisconnectReason CPP_11( : Int)
 {
 	DISCONNECT_NICKTAKEN = 1,
 	DISCONNECT_BADNICK,
@@ -196,7 +195,7 @@ enum DisconnectReason CPP_11(: Int)
 	DISCONNECT_GP_NEWPROFILE_BAD_OLD_NICK,
 };
 
-enum QMStatus CPP_11(: Int)
+enum QMStatus CPP_11( : Int)
 {
 	QM_IDLE,
 	QM_JOININGQMCHANNEL,
@@ -244,14 +243,14 @@ public:
 		PEERRESPONSE_MAX
 	} peerResponseType;
 
-	std::string groupRoomName; // can't be in union
+	std::string groupRoomName;    // can't be in union
 
-	std::string nick;   // can't be in a union
-	std::string oldNick;   // can't be in a union
-	std::wstring text;  // can't be in a union
-	std::string locale; // can't be in a union
+	std::string nick;    // can't be in a union
+	std::string oldNick;    // can't be in a union
+	std::wstring text;    // can't be in a union
+	std::string locale;    // can't be in a union
 
-	std::string stagingServerGameOptions; // full string from UTMs
+	std::string stagingServerGameOptions;    // full string from UTMs
 
 	// game opts sent with PEERRESPONSE_STAGINGROOM
 	std::wstring stagingServerName;
@@ -297,7 +296,7 @@ public:
 			Int id;
 			Bool ok;
 			Bool isHostPresent;
-			Int result; // for failures
+			Int result;    // for failures
 		} joinStagingRoom;
 
 		struct
@@ -318,8 +317,8 @@ public:
 			Int rankPoints;
 			Int side;
 			Int preorder;
-			UnsignedInt internalIP; // for us, on connection
-			UnsignedInt externalIP; // for us, on connection
+			UnsignedInt internalIP;    // for us, on connection
+			UnsignedInt externalIP;    // for us, on connection
 		} player;
 
 		struct
@@ -329,7 +328,7 @@ public:
 			Bool isStaging;
 			Bool requiresPassword;
 			Bool allowObservers;
-      Bool useStats;
+			Bool useStats;
 			UnsignedInt version;
 			UnsignedInt exeCRC;
 			UnsignedInt iniCRC;
@@ -349,11 +348,11 @@ public:
 		{
 			QMStatus status;
 			Int poolSize;
-			Int mapIdx; // when matched
-			Int seed; // when matched
-			UnsignedInt IP[MAX_SLOTS]; // when matched
-			Int side[MAX_SLOTS]; // when matched
-			Int color[MAX_SLOTS]; // when matched
+			Int mapIdx;    // when matched
+			Int seed;    // when matched
+			UnsignedInt IP[MAX_SLOTS];    // when matched
+			Int side[MAX_SLOTS];    // when matched
+			Int color[MAX_SLOTS];    // when matched
 			Int nat[MAX_SLOTS];
 		} qmStatus;
 	};
@@ -372,15 +371,15 @@ public:
 	virtual Bool isConnected() = 0;
 	virtual Bool isConnecting() = 0;
 
-	virtual void addRequest( const PeerRequest& req ) = 0;
-	virtual Bool getRequest( PeerRequest& req ) = 0;
+	virtual void addRequest(const PeerRequest& req) = 0;
+	virtual Bool getRequest(PeerRequest& req) = 0;
 
-	virtual void addResponse( const PeerResponse& resp ) = 0;
-	virtual Bool getResponse( PeerResponse& resp ) = 0;
+	virtual void addResponse(const PeerResponse& resp) = 0;
+	virtual Bool getResponse(PeerResponse& resp) = 0;
 
 	virtual SerialAuthResult getSerialAuthResult() = 0;
 
 	static GameSpyPeerMessageQueueInterface* createNewMessageQueue();
 };
 
-extern GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;
+extern GameSpyPeerMessageQueueInterface* TheGameSpyPeerMessageQueue;

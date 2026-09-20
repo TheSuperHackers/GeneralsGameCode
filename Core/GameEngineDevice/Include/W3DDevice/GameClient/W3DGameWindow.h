@@ -63,7 +63,6 @@ class W3DGameWindow : public GameWindow
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DGameWindow, "W3DGameWindow")
 
 public:
-
 	W3DGameWindow();
 	// already defined by MPO.
 	//~W3DGameWindow();
@@ -71,29 +70,27 @@ public:
 	/// draw borders for this window only, NO child windows or anything else
 	virtual void winDrawBorder() override;
 
-	Int winSetPosition( Int x, Int y );  ///< set window position
-	virtual Int winSetText( UnicodeString newText ) override;  ///< set text string
-	virtual void winSetFont( GameFont *font ) override;  ///< set font for window
+	Int winSetPosition(Int x, Int y);    ///< set window position
+	virtual Int winSetText(UnicodeString newText) override;    ///< set text string
+	virtual void winSetFont(GameFont* font) override;    ///< set font for window
 
-	void getTextSize( Int *width, Int *height );  ///< get size of text
-	void setTextLoc( Int x, Int y );  ///< set text screen coord loc
-	void drawText( Color color );  ///< draw text in the text renderer
+	void getTextSize(Int* width, Int* height);    ///< get size of text
+	void setTextLoc(Int x, Int y);    ///< set text screen coord loc
+	void drawText(Color color);    ///< draw text in the text renderer
 
 protected:
-
 	/// helper function to draw borders
-	void blitBorderRect( Int x, Int y, Int width, Int height );
+	void blitBorderRect(Int x, Int y, Int width, Int height);
 
-	Render2DSentenceClass m_textRenderer;  ///< for drawing text
-	ICoord2D m_textPos;  ///< current text pos set in text renderer
-	Color m_currTextColor;  ///< current color used in text renderer
-	Bool m_needPolyDraw;  ///< TRUE need to redo the text polys
-	Bool m_newTextPos;  ///< TRUE when our window has moved and we need a new text pos
-
+	Render2DSentenceClass m_textRenderer;    ///< for drawing text
+	ICoord2D m_textPos;    ///< current text pos set in text renderer
+	Color m_currTextColor;    ///< current color used in text renderer
+	Bool m_needPolyDraw;    ///< TRUE need to redo the text polys
+	Bool m_newTextPos;    ///< TRUE when our window has moved and we need a new text pos
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern void W3DGameWinDefaultDraw( GameWindow *window,
-																	 WinInstanceData *instData );
+extern void W3DGameWinDefaultDraw(GameWindow* window,
+                                  WinInstanceData* instData);

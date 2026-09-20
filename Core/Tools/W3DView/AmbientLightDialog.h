@@ -26,30 +26,31 @@
 
 class CAmbientLightDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CAmbientLightDialog(CWnd* pParent = nullptr);   // standard constructor
+	CAmbientLightDialog(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAmbientLightDialog)
-	enum { IDD = IDD_LIGHT_AMBIENT_DIALOG };
-	CSliderCtrl	m_blueSlider;
-	CSliderCtrl	m_greenSlider;
-	CSliderCtrl	m_redSlider;
+	enum
+	{
+		IDD = IDD_LIGHT_AMBIENT_DIALOG
+	};
+	CSliderCtrl m_blueSlider;
+	CSliderCtrl m_greenSlider;
+	CSliderCtrl m_redSlider;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAmbientLightDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CAmbientLightDialog)
 	virtual BOOL OnInitDialog() override;
@@ -59,10 +60,10 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    private:
-        int m_initialRed;
-        int m_initialGreen;
-        int m_initialBlue;
+private:
+	int m_initialRed;
+	int m_initialGreen;
+	int m_initialBlue;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -26,7 +26,7 @@
 // Author: Matt Campbell, February 2002
 // Description: Quoted-printable encode/decode
 ////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/QuotedPrintable.h"
 
@@ -35,20 +35,32 @@
 // takes an integer and returns an ASCII representation
 static char intToHexDigit(int num)
 {
-	if (num<0 || num >15) return '\0';
-	if (num<10)
+	if (num < 0 || num > 15)
+	{
+		return '\0';
+	}
+	if (num < 10)
 	{
 		return '0' + num;
 	}
-	return 'A' + (num-10);
+	return 'A' + (num - 10);
 }
 
 // convert an ASCII representation of a hex digit into the digit itself
 static int hexDigitToInt(char c)
 {
-	if (c <= '9' && c >= '0') return (c - '0');
-	if (c <= 'f' && c >= 'a') return (c - 'a' + 10);
-	if (c <= 'F' && c >= 'A') return (c - 'A' + 10);
+	if (c <= '9' && c >= '0')
+	{
+		return (c - '0');
+	}
+	if (c <= 'f' && c >= 'a')
+	{
+		return (c - 'a' + 10);
+	}
+	if (c <= 'F' && c >= 'A')
+	{
+		return (c - 'A' + 10);
+	}
 	return 0;
 }
 
@@ -56,32 +68,32 @@ static int hexDigitToInt(char c)
 AsciiString UnicodeStringToQuotedPrintable(UnicodeString original)
 {
 	static char dest[1024];
-	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
-	int i=0;
-	while ( !(src[0]=='\0' && src[1]=='\0') && i<1021 )
+	const unsigned char* src = reinterpret_cast<const unsigned char*>(original.str());
+	int i = 0;
+	while (!(src[0] == '\0' && src[1] == '\0') && i < 1021)
 	{
 		if (!isalnum(*src))
 		{
 			dest[i++] = MAGIC_CHAR;
-			dest[i++] = intToHexDigit((*src)>>4);
-			dest[i++] = intToHexDigit((*src)&0xf);
+			dest[i++] = intToHexDigit((*src) >> 4);
+			dest[i++] = intToHexDigit((*src) & 0xf);
 		}
 		else
 		{
 			dest[i++] = *src;
 		}
-		src ++;
+		src++;
 		if (!isalnum(*src))
 		{
 			dest[i++] = MAGIC_CHAR;
-			dest[i++] = intToHexDigit((*src)>>4);
-			dest[i++] = intToHexDigit((*src)&0xf);
+			dest[i++] = intToHexDigit((*src) >> 4);
+			dest[i++] = intToHexDigit((*src) & 0xf);
 		}
 		else
 		{
 			dest[i++] = *src;
 		}
-		src ++;
+		src++;
 	}
 	dest[i] = '\0';
 
@@ -92,21 +104,21 @@ AsciiString UnicodeStringToQuotedPrintable(UnicodeString original)
 AsciiString AsciiStringToQuotedPrintable(AsciiString original)
 {
 	static char dest[1024];
-	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
-	int i=0;
-	while ( src[0]!='\0' && i<1021 )
+	const unsigned char* src = reinterpret_cast<const unsigned char*>(original.str());
+	int i = 0;
+	while (src[0] != '\0' && i < 1021)
 	{
 		if (!isalnum(*src))
 		{
 			dest[i++] = MAGIC_CHAR;
-			dest[i++] = intToHexDigit((*src)>>4);
-			dest[i++] = intToHexDigit((*src)&0xf);
+			dest[i++] = intToHexDigit((*src) >> 4);
+			dest[i++] = intToHexDigit((*src) & 0xf);
 		}
 		else
 		{
 			dest[i++] = *src;
 		}
-		src ++;
+		src++;
 	}
 	dest[i] = '\0';
 
@@ -117,12 +129,12 @@ AsciiString AsciiStringToQuotedPrintable(AsciiString original)
 UnicodeString QuotedPrintableToUnicodeString(AsciiString original)
 {
 	static WideChar dest[1024];
-	int i=0;
+	int i = 0;
 
-	unsigned char *c = reinterpret_cast<unsigned char *>(dest);
-	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
+	unsigned char* c = reinterpret_cast<unsigned char*>(dest);
+	const unsigned char* src = reinterpret_cast<const unsigned char*>(original.str());
 
-	while (*src && i<1023)
+	while (*src && i < 1023)
 	{
 		if (*src == MAGIC_CHAR)
 		{
@@ -135,7 +147,7 @@ UnicodeString QuotedPrintableToUnicodeString(AsciiString original)
 			src++;
 			if (src[1] != '\0')
 			{
-				*c = *c<<4;
+				*c = *c << 4;
 				*c = *c | hexDigitToInt(src[1]);
 				src++;
 			}
@@ -149,7 +161,7 @@ UnicodeString QuotedPrintableToUnicodeString(AsciiString original)
 	}
 
 	// Fixup odd-length strings
-	if ((c-(unsigned char *)dest)%2)
+	if ((c - (unsigned char*)dest) % 2)
 	{
 		// OK
 	}
@@ -168,12 +180,12 @@ UnicodeString QuotedPrintableToUnicodeString(AsciiString original)
 AsciiString QuotedPrintableToAsciiString(AsciiString original)
 {
 	static char dest[1024];
-	int i=0;
+	int i = 0;
 
-	unsigned char *c = reinterpret_cast<unsigned char *>(dest);
-	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
+	unsigned char* c = reinterpret_cast<unsigned char*>(dest);
+	const unsigned char* src = reinterpret_cast<const unsigned char*>(original.str());
 
-	while (*src && i<1023)
+	while (*src && i < 1023)
 	{
 		if (*src == MAGIC_CHAR)
 		{
@@ -186,7 +198,7 @@ AsciiString QuotedPrintableToAsciiString(AsciiString original)
 			src++;
 			if (src[1] != '\0')
 			{
-				*c = *c<<4;
+				*c = *c << 4;
 				*c = *c | hexDigitToInt(src[1]);
 				src++;
 			}
@@ -203,4 +215,3 @@ AsciiString QuotedPrintableToAsciiString(AsciiString original)
 
 	return dest;
 }
-

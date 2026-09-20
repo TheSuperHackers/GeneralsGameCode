@@ -35,28 +35,24 @@
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DamageModule::crc( Xfer *xfer )
+void DamageModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
-
+	BehaviorModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void DamageModule::xfer( Xfer *xfer )
+void DamageModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// call base class
-	BehaviorModule::xfer( xfer );
-
+	BehaviorModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -64,8 +60,6 @@ void DamageModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DamageModule::loadPostProcess()
 {
-
 	// call base class
 	BehaviorModule::loadPostProcess();
-
 }

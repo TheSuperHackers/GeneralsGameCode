@@ -43,7 +43,6 @@
 class ChunkLoadClass;
 class ChunkSaveClass;
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	SaveLoadSubSystemClass
@@ -61,23 +60,20 @@ class ChunkSaveClass;
 class SaveLoadSubSystemClass : public PostLoadableClass
 {
 public:
+	SaveLoadSubSystemClass();
+	virtual ~SaveLoadSubSystemClass() override;
 
-	SaveLoadSubSystemClass ();
-	virtual ~SaveLoadSubSystemClass () override;
-
-	virtual uint32				Chunk_ID () const = 0;
+	virtual uint32 Chunk_ID() const = 0;
 
 protected:
+	virtual bool Contains_Data() const { return true; }
+	virtual bool Save(ChunkSaveClass& csave) = 0;
+	virtual bool Load(ChunkLoadClass& cload) = 0;
 
-	virtual bool				Contains_Data() const						{ return true; }
-	virtual bool				Save (ChunkSaveClass &csave) = 0;
-	virtual bool				Load (ChunkLoadClass &cload) = 0;
-
-	virtual const char*		Name() const = 0;
+	virtual const char* Name() const = 0;
 
 private:
-
-	SaveLoadSubSystemClass *	NextSubSystem;			// managed by SaveLoadSystem
+	SaveLoadSubSystemClass* NextSubSystem;    // managed by SaveLoadSystem
 
 	friend class SaveLoadSystemClass;
 };

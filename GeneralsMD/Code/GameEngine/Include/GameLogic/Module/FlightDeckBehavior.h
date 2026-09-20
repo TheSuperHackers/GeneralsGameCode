@@ -34,9 +34,8 @@
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-
-#define MAX_RUNWAYS			2 //***NOTE: If you change this, make sure you update the parsing section!
-													//And also do a search for MAX_RUNWAYS and evaluate any special case comments!
+#define MAX_RUNWAYS 2    //***NOTE: If you change this, make sure you update the parsing section!
+	                       // And also do a search for MAX_RUNWAYS and evaluate any special case comments!
 
 enum
 {
@@ -55,51 +54,49 @@ struct RunwayDefinition
 	std::vector<AsciiString> m_spacesBoneNames;
 	std::vector<AsciiString> m_taxiBoneNames;
 	std::vector<AsciiString> m_creationBoneNames;
-	AsciiString m_takeoffBoneNames[ NUM_RUNWAY_BONES ];
-	AsciiString m_landingBoneNames[ NUM_RUNWAY_BONES ];
-	const ParticleSystemTemplate *m_catapultParticleSystem;
+	AsciiString m_takeoffBoneNames[NUM_RUNWAY_BONES];
+	AsciiString m_landingBoneNames[NUM_RUNWAY_BONES];
+	const ParticleSystemTemplate* m_catapultParticleSystem;
 };
 
 //-------------------------------------------------------------------------------------------------
 class FlightDeckBehaviorModuleData : public AIUpdateModuleData
 {
 public:
-	RunwayDefinition m_runwayInfo[ MAX_RUNWAYS ];
-	AsciiString   m_thingTemplateName;
-	Real					m_healAmount;
-	Real					m_approachHeight;
-	Real					m_landingDeckHeightOffset;
-	Int						m_numRows;
-	Int						m_numCols;
-	UnsignedInt		m_cleanupFrames;
-	UnsignedInt		m_humanFollowFrames;
-	UnsignedInt		m_replacementFrames;
-	UnsignedInt		m_dockAnimationFrames;
-	UnsignedInt		m_launchWaveFrames;
-	UnsignedInt   m_launchRampFrames;
-	UnsignedInt   m_lowerRampFrames;
-	UnsignedInt		m_catapultFireFrames;
+	RunwayDefinition m_runwayInfo[MAX_RUNWAYS];
+	AsciiString m_thingTemplateName;
+	Real m_healAmount;
+	Real m_approachHeight;
+	Real m_landingDeckHeightOffset;
+	Int m_numRows;
+	Int m_numCols;
+	UnsignedInt m_cleanupFrames;
+	UnsignedInt m_humanFollowFrames;
+	UnsignedInt m_replacementFrames;
+	UnsignedInt m_dockAnimationFrames;
+	UnsignedInt m_launchWaveFrames;
+	UnsignedInt m_launchRampFrames;
+	UnsignedInt m_lowerRampFrames;
+	UnsignedInt m_catapultFireFrames;
 
 	FlightDeckBehaviorModuleData();
-	static void buildFieldParse( MultiIniFieldParse& p );
-	static void parseRunwayStrip( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	static void buildFieldParse(MultiIniFieldParse& p);
+	static void parseRunwayStrip(INI* ini, void* instance, void* store, const void* /*userData*/);
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class FlightDeckBehavior : public AIUpdateInterface,
-													 public ParkingPlaceBehaviorInterface,
-													 public DieModuleInterface,
-													 public ExitInterface
+                           public ParkingPlaceBehaviorInterface,
+                           public DieModuleInterface,
+                           public ExitInterface
 
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FlightDeckBehavior, "FlightDeckBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FlightDeckBehavior, FlightDeckBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FlightDeckBehavior, "FlightDeckBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FlightDeckBehavior, FlightDeckBehaviorModuleData)
 
 public:
-
-	FlightDeckBehavior( Thing *thing, const ModuleData* moduleData );
+	FlightDeckBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
@@ -110,65 +107,64 @@ public:
 	virtual DieModuleInterface* getDie() override { return this; }
 
 	// ExitInterface
-	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
-	virtual Bool getExitPosition( Coord3D& rallyPoint ) const override { return FALSE; }
-	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const override { return FALSE; }
-	virtual void setRallyPoint( const Coord3D *pos ) override {}
-	virtual const Coord3D *getRallyPoint() const override { return nullptr;}
+	virtual Bool isExitBusy() const override { return FALSE; }    ///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit(const ThingTemplate* objType, Object* specificObject) override;
+	virtual void exitObjectViaDoor(Object* newObj, ExitDoorType exitDoor) override;
+	virtual void unreserveDoorForExit(ExitDoorType exitDoor) override;
+	virtual void exitObjectByBudding(Object* newObj, Object* budHost) override { return; }
+	virtual Bool getExitPosition(Coord3D& rallyPoint) const override { return FALSE; }
+	virtual Bool getNaturalRallyPoint(Coord3D& rallyPoint, Bool offset = TRUE) const override { return FALSE; }
+	virtual void setRallyPoint(const Coord3D* pos) override {}
+	virtual const Coord3D* getRallyPoint() const override { return nullptr; }
 
 	// UpdateModule
 	virtual UpdateSleepTime update() override;
 
 	// DieModule
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 	// ParkingPlaceBehaviorInterface
 	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const override;
 	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const override;
 	virtual Bool hasReservedSpace(ObjectID id) const override;
-	virtual Int  getSpaceIndex( ObjectID id ) const override;
+	virtual Int getSpaceIndex(ObjectID id) const override;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) override;
 	virtual void releaseSpace(ObjectID id) override;
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding) override;
 	virtual void releaseRunway(ObjectID id) override;
-	virtual void calcPPInfo( ObjectID id, PPInfo *info ) override;
+	virtual void calcPPInfo(ObjectID id, PPInfo* info) override;
 	virtual Int getRunwayIndex(ObjectID id) override;
 	virtual Int getRunwayCount() const override { return m_runways.size(); }
-	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type ) override;
+	virtual ObjectID getRunwayReservation(Int r, RunwayReservationType type) override;
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) override;
 	virtual Real getApproachHeight() const override { return getFlightDeckBehaviorModuleData()->m_approachHeight; }
 	virtual Real getLandingDeckHeightOffset() const override { return getFlightDeckBehaviorModuleData()->m_landingDeckHeightOffset; }
 	virtual void setHealee(Object* healee, Bool add) override;
 	virtual void killAllParkedUnits() override;
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) override;
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr ) override;
+	virtual Bool calcBestParkingAssignment(ObjectID id, Coord3D* pos, Int* oldIndex = nullptr, Int* newIndex = nullptr) override;
 
 	// AIUpdateInterface
 	virtual void aiDoCommand(const AICommandParms* parms) override;
 
-	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const override;
-	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const override;
+	virtual const std::vector<Coord3D>* getTaxiLocations(ObjectID id) const override;
+	virtual const std::vector<Coord3D>* getCreationLocations(ObjectID id) const override;
 
 private:
-
-	Bool isAbleToGiveUpParkingSpace( Object *jet );
-	Bool isAbleToMoveForward( const Object &jet ) const;
-	Bool isInPositionToTakeoff( const Object &jet ) const;
+	Bool isAbleToGiveUpParkingSpace(Object* jet);
+	Bool isAbleToMoveForward(const Object& jet) const;
+	Bool isInPositionToTakeoff(const Object& jet) const;
 	void validateAssignments();
 	void propagateOrdersToPlanes();
-	void propagateOrderToSpecificPlane( Object *jet );
+	void propagateOrderToSpecificPlane(Object* jet);
 	Bool hasTakeoffOrders();
 
 	struct FlightDeckInfo
 	{
-		Coord3D				m_prep;
-		Real					m_orientation;
-		Int						m_runway;
-		ObjectID			m_objectInSpace;
+		Coord3D m_prep;
+		Real m_orientation;
+		Int m_runway;
+		ObjectID m_objectInSpace;
 
 		FlightDeckInfo()
 		{
@@ -181,48 +177,46 @@ private:
 
 	struct RunwayInfo
 	{
-		Coord3D		m_start;
-		Matrix3D  m_startTransform;
-		Coord3D		m_end;
-		Coord3D		m_landingStart;
-		Coord3D		m_landingEnd;
+		Coord3D m_start;
+		Matrix3D m_startTransform;
+		Coord3D m_end;
+		Coord3D m_landingStart;
+		Coord3D m_landingEnd;
 		std::vector<Coord3D> m_taxi;
 		std::vector<Coord3D> m_creation;
-		Real			m_startOrient;
-		ObjectID	m_inUseByForTakeoff;
-		ObjectID	m_inUseByForLanding;
+		Real m_startOrient;
+		ObjectID m_inUseByForTakeoff;
+		ObjectID m_inUseByForLanding;
 	};
 
 	struct HealingInfo
 	{
-		ObjectID		m_gettingHealedID;
-		UnsignedInt	m_healStartFrame;
+		ObjectID m_gettingHealedID;
+		UnsignedInt m_healStartFrame;
 	};
 
-	void buildInfo( Bool createUnits = TRUE);
+	void buildInfo(Bool createUnits = TRUE);
 	void purgeDead();
 	void resetWakeFrame();
 	FlightDeckInfo* findPPI(ObjectID id);
 	FlightDeckInfo* findEmptyPPI();
 
-  const ThingTemplate *m_thingTemplate;
+	const ThingTemplate* m_thingTemplate;
 
-
-	std::vector<FlightDeckInfo>		m_spaces;
-	std::vector<RunwayInfo>				m_runways;
-	std::list<HealingInfo>				m_healing;	// note, this list can vary in size, and be larger than the parking space count
-	UnsignedInt										m_nextHealFrame;
-	UnsignedInt										m_nextCleanupFrame;
-	UnsignedInt										m_startedProductionFrame;
-	UnsignedInt										m_nextAllowedProductionFrame;
-	UnsignedInt										m_nextLaunchWaveFrame[ MAX_RUNWAYS ];
-	UnsignedInt										m_rampUpFrame[ MAX_RUNWAYS ];		 //The frame the ramp has completed raising.
-	UnsignedInt										m_catapultSystemFrame[ MAX_RUNWAYS ]; //The frame the catapult effect created.
-	UnsignedInt										m_lowerRampFrame[ MAX_RUNWAYS ]; //The frame the ramp begins to lower.
-	ObjectID											m_designatedTarget;
-	AICommandType									m_designatedCommand;
-	Coord3D												m_designatedPosition;
-	Bool													m_gotInfo;
-	Bool													m_rampUp[ MAX_RUNWAYS ];
-
+	std::vector<FlightDeckInfo> m_spaces;
+	std::vector<RunwayInfo> m_runways;
+	std::list<HealingInfo> m_healing;    // note, this list can vary in size, and be larger than the parking space count
+	UnsignedInt m_nextHealFrame;
+	UnsignedInt m_nextCleanupFrame;
+	UnsignedInt m_startedProductionFrame;
+	UnsignedInt m_nextAllowedProductionFrame;
+	UnsignedInt m_nextLaunchWaveFrame[MAX_RUNWAYS];
+	UnsignedInt m_rampUpFrame[MAX_RUNWAYS];    // The frame the ramp has completed raising.
+	UnsignedInt m_catapultSystemFrame[MAX_RUNWAYS];    // The frame the catapult effect created.
+	UnsignedInt m_lowerRampFrame[MAX_RUNWAYS];    // The frame the ramp begins to lower.
+	ObjectID m_designatedTarget;
+	AICommandType m_designatedCommand;
+	Coord3D m_designatedPosition;
+	Bool m_gotInfo;
+	Bool m_rampUp[MAX_RUNWAYS];
 };

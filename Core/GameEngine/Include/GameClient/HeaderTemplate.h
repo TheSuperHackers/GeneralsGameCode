@@ -68,12 +68,11 @@ public:
 	HeaderTemplate();
 	~HeaderTemplate();
 
-	GameFont *m_font;
+	GameFont* m_font;
 	AsciiString m_name;
 	AsciiString m_fontName;
 	Int m_point;
 	Bool m_bold;
-
 };
 
 class HeaderTemplateManager
@@ -84,15 +83,15 @@ public:
 
 	void init();
 
-	const FieldParse *getFieldParse() const { return m_headerFieldParseTable; }		///< Return the field parse info
+	const FieldParse* getFieldParse() const { return m_headerFieldParseTable; }    ///< Return the field parse info
 	static const FieldParse m_headerFieldParseTable[];
 
-	HeaderTemplate *findHeaderTemplate( AsciiString name );
-	HeaderTemplate *newHeaderTemplate( AsciiString name );
+	HeaderTemplate* findHeaderTemplate(AsciiString name);
+	HeaderTemplate* newHeaderTemplate(AsciiString name);
 
-	GameFont *getFontFromTemplate( AsciiString name );
-	HeaderTemplate *getFirstHeader();
-	HeaderTemplate *getNextHeader( HeaderTemplate *ht );
+	GameFont* getFontFromTemplate(AsciiString name);
+	HeaderTemplate* getFirstHeader();
+	HeaderTemplate* getNextHeader(HeaderTemplate* ht);
 
 	void onResolutionChanged();
 
@@ -101,9 +100,7 @@ private:
 	typedef std::list< HeaderTemplate* > HeaderTemplateList;
 	typedef HeaderTemplateList::iterator HeaderTemplateListIt;
 	HeaderTemplateList m_headerTemplateList;
-
 };
-
 
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -112,4 +109,4 @@ private:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-extern HeaderTemplateManager *TheHeaderTemplateManager;
+extern HeaderTemplateManager* TheHeaderTemplateManager;

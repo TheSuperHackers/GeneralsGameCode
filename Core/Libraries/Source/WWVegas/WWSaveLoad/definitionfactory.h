@@ -54,29 +54,26 @@ class DefinitionClass;
 class DefinitionFactoryClass
 {
 public:
-
 	//////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
-	DefinitionFactoryClass ();
-	virtual ~DefinitionFactoryClass ();
+	DefinitionFactoryClass();
+	virtual ~DefinitionFactoryClass();
 
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
-	virtual DefinitionClass *	Create () const = 0;
-	virtual const char *			Get_Name () const = 0;
-	virtual uint32					Get_Class_ID () const = 0;
-	virtual bool					Is_Displayed () const = 0;
+	virtual DefinitionClass* Create() const = 0;
+	virtual const char* Get_Name() const = 0;
+	virtual uint32 Get_Class_ID() const = 0;
+	virtual bool Is_Displayed() const = 0;
 
 protected:
-
 	//////////////////////////////////////////////////////////////
 	//	Protected member data
 	//////////////////////////////////////////////////////////////
-	DefinitionFactoryClass *	m_NextFactory;
-	DefinitionFactoryClass *	m_PrevFactory;
-
+	DefinitionFactoryClass* m_NextFactory;
+	DefinitionFactoryClass* m_PrevFactory;
 
 	//////////////////////////////////////////////////////////////
 	//	Friends

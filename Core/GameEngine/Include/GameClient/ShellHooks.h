@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // ShellHooks.h
 // Author: Matthew D. Campbell, October 2002
 
@@ -77,5 +76,5 @@ enum
 	SHELL_SCRIPT_HOOK_TOTAL
 };
 
-extern const char *const TheShellHookNames[];				///< Contains a list of the text representation of the shell hooks Used in WorldBuilder and in the shell.
+extern const char* const TheShellHookNames[];    ///< Contains a list of the text representation of the shell hooks Used in WorldBuilder and in the shell.
 void SignalUIInteraction(Int interaction);
