@@ -9380,10 +9380,7 @@ void ScriptEngine::loadPostProcess()
 		TheAudio->addAudioEvent(&event);
 	}
 
-	if (m_letterBoxActive)
-	{
-		rts::enableLetterBox(TRUE);
-	}
+	rts::enableLetterBox(isLetterBoxActive());
 
 }
 
