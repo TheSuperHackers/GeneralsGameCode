@@ -22,10 +22,10 @@
 
 #include <windows.h>
 
-// Loads and unloads icu.dll with a shared reference count, like BinkLoader and
-// MilesLoader. Every load needs a paired unload, even when loading fails.
-// Load/unload are synchronized for conversion workers, including on VC6.
-// Hold a reference while checking availability or using the resolved functions.
+// Loads icu.dll on the first conversion and caches success or failure until unload.
+// Conversion calls and unload are serialized with a Windows critical section,
+// including on VC6. Function pointers stay private and cannot outlive the DLL.
+// An explicit unload releases the DLL and allows the next conversion to retry.
 class IcuLoader
 {
 public:
@@ -33,14 +33,15 @@ public:
     typedef unsigned short Char;
     typedef int Char32;
     typedef int ErrorCode;
-    typedef Char* (__cdecl* StrFromUtf8)(Char*, int, int*, const char*, int, ErrorCode*);
-    typedef char* (__cdecl* StrToUtf8WithSub)(char*, int, int*, const Char*, int, Char32, int*, ErrorCode*);
 
-    static bool load();
+    static bool isAvailable();
     static void unload();
-    static bool isLoaded();
-    static StrFromUtf8 fromUtf8();
-    static StrToUtf8WithSub toUtf8WithSub();
+
+    // Return false when ICU is unavailable; otherwise call ICU and return true.
+    // The caller checks error for the conversion result, including preflight.
+    static bool fromUtf8(Char* dest, int capacity, int* length, const char* src, int srcLength, ErrorCode* error);
+    static bool toUtf8WithSub(char* dest, int capacity, int* length, const Char* src, int srcLength,
+        Char32 substitution, int* substitutions, ErrorCode* error);
 
 private:
     IcuLoader();
@@ -49,24 +50,3 @@ private:
 };
 
 #endif
-
-// Keeps ICU available throughout a conversion or a longer application lifetime.
-// Linked ICU needs no explicit DLL ownership; unavailable Windows ICU uses the
-// Win32 conversion fallback. Scopes may overlap on different threads.
-class IcuScope
-{
-public:
-    IcuScope();
-    ~IcuScope();
-
-    bool isAvailable() const
-    {
-        return m_available;
-    }
-
-private:
-    IcuScope(const IcuScope&);
-    IcuScope& operator=(const IcuScope&);
-
-    bool m_available;
-};
