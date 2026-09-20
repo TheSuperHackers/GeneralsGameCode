@@ -958,15 +958,7 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	Real vy = m_vel.y * dir->y;
 	Real dot = vx + vy;
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
-	constexpr const Bool useLegacy = true;
-#elif USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	const Bool useLegacy = useLegacyForwardSpeed();
-#else
-	constexpr const Bool useLegacy = false;
-#endif
-
-	if constexpr (useLegacy)
+	if (useLegacyForwardSpeed())
 	{
 		Real speed = (Real)sqrtf( vx*vx + vy*vy );
 		if (dot >= 0.0f)
@@ -995,15 +987,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	Real vz = m_vel.z * dir.Z;
 	Real dot = vx + vy + vz;
 
-#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
-	constexpr const Bool useLegacy = true;
-#elif USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	const Bool useLegacy = useLegacyForwardSpeed();
-#else
-	constexpr const Bool useLegacy = false;
-#endif
-
-	if constexpr (useLegacy)
+	if (useLegacyForwardSpeed())
 	{
 		Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
 		if (dot >= 0.0f)
@@ -1018,7 +1002,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
 //-------------------------------------------------------------------------------------------------
-Bool PhysicsBehavior::useLegacyForwardSpeed()
+Bool PhysicsBehavior::useLegacyForwardSpeedInCinematics()
 {
 	// TheSuperHackers @info The retail speeds are kept for the duration of a cinematic, because
 	// legacy missions time their cinematics against them.

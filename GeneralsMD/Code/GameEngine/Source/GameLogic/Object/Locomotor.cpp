@@ -489,7 +489,7 @@ Real LocomotorTemplate::getActualMaxSpeed() const
 #else
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (PhysicsBehavior::useLegacyForwardSpeed())
+	if (PhysicsBehavior::useLegacyForwardSpeedInCinematics())
 		return m_maxSpeed;
 #endif
 
@@ -505,7 +505,7 @@ Real LocomotorTemplate::getActualMaxSpeedDamaged() const
 #else
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (PhysicsBehavior::useLegacyForwardSpeed())
+	if (PhysicsBehavior::useLegacyForwardSpeedInCinematics())
 		return m_maxSpeedDamaged;
 #endif
 
@@ -521,7 +521,7 @@ Real LocomotorTemplate::getActualMinSpeed() const
 #else
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (PhysicsBehavior::useLegacyForwardSpeed())
+	if (PhysicsBehavior::useLegacyForwardSpeedInCinematics())
 		return m_minSpeed;
 #endif
 
@@ -537,7 +537,7 @@ Real LocomotorTemplate::getActualMinTurnSpeed() const
 #else
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (PhysicsBehavior::useLegacyForwardSpeed())
+	if (PhysicsBehavior::useLegacyForwardSpeedInCinematics())
 		return m_minTurnSpeed;
 #endif
 
@@ -944,7 +944,7 @@ Real Locomotor::getMaxSpeedOverride() const
 #else
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	if (PhysicsBehavior::useLegacyForwardSpeed())
+	if (PhysicsBehavior::useLegacyForwardSpeedInCinematics())
 		return m_maxSpeed;
 #endif
 

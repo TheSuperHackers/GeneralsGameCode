@@ -142,8 +142,19 @@ public:
 	Real getForwardSpeed3D() const;															///< compute speed along object's 3d direction vector
 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
-	static Bool useLegacyForwardSpeed();
+	static Bool useLegacyForwardSpeedInCinematics();
 #endif
+
+	static Bool useLegacyForwardSpeed()
+	{
+#if USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY()
+		return true;
+#elif USE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY_IN_CINEMATICS()
+		return useLegacyForwardSpeedInCinematics();
+#else
+		return false;
+#endif
+	}
 
 	ObjectID getCurrentOverlap() const;					///< return object(s) being overlapped
 	ObjectID getPreviousOverlap() const;					///< return object(s) that were overlapped last frame
@@ -304,6 +315,7 @@ inline ObjectID PhysicsBehavior::getPreviousOverlap() const
 	return m_previousOverlap;
 }
 
+//-------------------------------------------------------------------------------------------------
 inline ObjectID PhysicsBehavior::getLastCollidee() const
 {
 	return m_lastCollidee;
