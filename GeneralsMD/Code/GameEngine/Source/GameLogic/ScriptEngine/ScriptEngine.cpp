@@ -447,7 +447,7 @@ m_fade(FADE_NONE),
 m_freezeByScript(FALSE),
 m_frameObjectCountChanged(0),
 m_closeWindowTimer(0),
-m_letterBoxActive(0),
+m_letterBoxActive(FALSE),
 m_curFadeFrame(0),
 m_curFadeValue(0.0f),
 m_endGameTimer(0),
@@ -5278,7 +5278,7 @@ void ScriptEngine::reset()
 	m_numFlags = 1;
 	m_endGameTimer = -1;
 	m_closeWindowTimer = -1;
-	m_letterBoxActive = 0;
+	m_letterBoxActive = FALSE;
 
 	m_callingTeam = nullptr;
 	m_callingObject = nullptr;
@@ -8446,7 +8446,7 @@ void ScriptEngine::doUnfreezeTime()
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::friend_notifyLetterBoxActive(Bool active)
 {
-	m_letterBoxActive = (Byte)active;
+	m_letterBoxActive = active;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -8454,7 +8454,7 @@ void ScriptEngine::friend_notifyLetterBoxActive(Bool active)
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::isLetterBoxActive() const
 {
-	return m_letterBoxActive > 0;
+	return m_letterBoxActive;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -9338,13 +9338,13 @@ void ScriptEngine::xfer( Xfer *xfer )
 
 	if (version >= 6)
 	{
-		xfer->xferByte(&m_letterBoxActive);
+		xfer->xferBool(&m_letterBoxActive);
 	}
 	else
 	{
 		if (xfer->getXferMode() == XFER_LOAD)
 		{
-			m_letterBoxActive = -1;
+			m_letterBoxActive = FALSE;
 		}
 	}
 
@@ -9380,9 +9380,9 @@ void ScriptEngine::loadPostProcess()
 		TheAudio->addAudioEvent(&event);
 	}
 
-	if (m_letterBoxActive >= 0)
+	if (m_letterBoxActive)
 	{
-		rts::enableLetterBox(isLetterBoxActive());
+		rts::enableLetterBox(TRUE);
 	}
 
 }
