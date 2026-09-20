@@ -29,8 +29,15 @@ class Usp10Loader
 public:
 
 	typedef void *ScriptStringAnalysis;
-	struct ScriptControl;
 	struct ScriptTabDefinition;
+
+	// TheSuperHackers @info Omar Aglan 13/09/2026 ScriptItemize needs a non-null control
+	// structure for bidirectional analysis. Keep the unused control flags zero.
+	struct ScriptControl
+	{
+		DWORD default_language : 16;
+		DWORD reserved : 16;
+	};
 
 	struct ScriptState
 	{
