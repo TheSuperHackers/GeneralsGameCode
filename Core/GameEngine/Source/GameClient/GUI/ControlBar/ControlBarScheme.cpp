@@ -401,14 +401,9 @@ ControlBarScheme::ControlBarScheme()
 }
 
 
-Bool ControlBarScheme::isValid() const
-{
-	return m_ScreenCreationRes.x > 0 && m_ScreenCreationRes.y > 0;
-}
-
 void ControlBarScheme::validate() const
 {
-	if (!isValid())
+	if (m_ScreenCreationRes.x <= 0 || m_ScreenCreationRes.y <= 0)
 	{
 		DEBUG_CRASH(("ControlBarScheme '%s' has an invalid screen creation resolution (%d, %d)",
 			m_name.str(), m_ScreenCreationRes.x, m_ScreenCreationRes.y));

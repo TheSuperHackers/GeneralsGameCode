@@ -126,7 +126,6 @@ public:
 	ControlBarScheme();
 	~ControlBarScheme();
 
-	Bool isValid() const;
 	void validate() const;
 	void init();
 	void update();
