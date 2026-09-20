@@ -487,6 +487,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/ObjectScriptStatusBits.h
 #    Include/GameLogic/ObjectTypes.h
      Include/GameLogic/Pathfinder/Path.h
+     Include/GameLogic/Pathfinder/PathfindCell.h
      Include/GameLogic/Pathfinder/PathfindCellInfo.h
      Include/GameLogic/Pathfinder/PathfindCellList.h
      Include/GameLogic/Pathfinder/PathNode.h
