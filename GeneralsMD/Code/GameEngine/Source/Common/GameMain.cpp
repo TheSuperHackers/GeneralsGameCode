@@ -39,8 +39,6 @@
  */
 Int GameMain()
 {
-	// Retain ICU through engine teardown; worker conversions hold their own references.
-	IcuScope icu;
 	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheFramePacer = new FramePacer();
@@ -63,6 +61,11 @@ Int GameMain()
 	TheFramePacer = nullptr;
 	delete TheGameEngine;
 	TheGameEngine = nullptr;
+
+#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+	// Release cached ICU after the engine has stopped its conversion workers.
+	IcuLoader::unload();
+#endif
 
 	return exitcode;
 }

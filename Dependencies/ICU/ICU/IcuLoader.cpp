@@ -20,34 +20,59 @@
 
 #if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
 
-#include <Utility/interlocked_adapter.h>
 #include <string.h>
 #include <wchar.h>
 
 namespace
 {
 
-LONG Gate = 0;
-unsigned int ReferenceCount = 0;
+typedef IcuLoader::Char* (__cdecl* StrFromUtf8)(IcuLoader::Char*, int, int*, const char*, int, IcuLoader::ErrorCode*);
+typedef char* (__cdecl* StrToUtf8WithSub)(char*, int, int*, const IcuLoader::Char*, int,
+    IcuLoader::Char32, int*, IcuLoader::ErrorCode*);
+
+bool LoadAttempted = false;
 HMODULE Module = nullptr;
-IcuLoader::StrFromUtf8 FromUtf8 = nullptr;
-IcuLoader::StrToUtf8WithSub ToUtf8WithSub = nullptr;
+StrFromUtf8 FromUtf8 = nullptr;
+StrToUtf8WithSub ToUtf8WithSub = nullptr;
+
+void freeResources();
+
+class LoaderCriticalSection
+{
+public:
+    LoaderCriticalSection()
+    {
+        InitializeCriticalSection(&section);
+    }
+
+    ~LoaderCriticalSection()
+    {
+        // Also release ICU for tools that do not explicitly unload at shutdown.
+        // Conversion workers must have stopped before static destruction.
+        freeResources();
+        DeleteCriticalSection(&section);
+    }
+
+    CRITICAL_SECTION section;
+
+private:
+    LoaderCriticalSection(const LoaderCriticalSection&);
+    LoaderCriticalSection& operator=(const LoaderCriticalSection&);
+};
+
+LoaderCriticalSection CriticalSection;
 
 class LoaderLock
 {
 public:
     LoaderLock()
     {
-        // LONG* works with both VC6 and current SDK interlocked signatures.
-        while (InterlockedCompareExchange(&Gate, 1, 0) != 0)
-        {
-            Sleep(0);
-        }
+        EnterCriticalSection(&CriticalSection.section);
     }
 
     ~LoaderLock()
     {
-        InterlockedExchange(&Gate, 0);
+        LeaveCriticalSection(&CriticalSection.section);
     }
 
 private:
@@ -99,18 +124,15 @@ void freeResources()
     ToUtf8WithSub = nullptr;
 }
 
-} // namespace
-
-bool IcuLoader::load()
+// The caller holds the critical section across loading and the ICU call.
+bool load()
 {
-    LoaderLock lock;
-    // Failed attempts also retain a reference so overlapping callers share the
-    // result. Once all callers unload, a later load can retry.
-    if (++ReferenceCount > 1)
+    if (LoadAttempted)
     {
-        return isLoaded();
+        return Module != nullptr;
     }
 
+    LoadAttempted = true;
     Module = loadModule();
     if (Module == nullptr)
     {
@@ -128,51 +150,44 @@ bool IcuLoader::load()
     return true;
 }
 
+} // namespace
+
+bool IcuLoader::isAvailable()
+{
+    LoaderLock lock;
+    return load();
+}
+
 void IcuLoader::unload()
 {
     LoaderLock lock;
-    if (ReferenceCount == 0)
+    freeResources();
+    LoadAttempted = false;
+}
+
+bool IcuLoader::fromUtf8(Char* dest, int capacity, int* length, const char* src, int srcLength, ErrorCode* error)
+{
+    LoaderLock lock;
+    if (!load())
     {
-        return;
+        return false;
     }
 
-    if (--ReferenceCount == 0)
+    FromUtf8(dest, capacity, length, src, srcLength, error);
+    return true;
+}
+
+bool IcuLoader::toUtf8WithSub(char* dest, int capacity, int* length, const Char* src, int srcLength,
+    Char32 substitution, int* substitutions, ErrorCode* error)
+{
+    LoaderLock lock;
+    if (!load())
     {
-        freeResources();
+        return false;
     }
-}
 
-bool IcuLoader::isLoaded()
-{
-    return Module != nullptr;
-}
-
-IcuLoader::StrFromUtf8 IcuLoader::fromUtf8()
-{
-    return FromUtf8;
-}
-
-IcuLoader::StrToUtf8WithSub IcuLoader::toUtf8WithSub()
-{
-    return ToUtf8WithSub;
+    ToUtf8WithSub(dest, capacity, length, src, srcLength, substitution, substitutions, error);
+    return true;
 }
 
 #endif
-
-IcuScope::IcuScope()
-{
-#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
-    m_available = IcuLoader::load();
-#elif defined(RTS_HAS_ICU)
-    m_available = true;
-#else
-    m_available = false;
-#endif
-}
-
-IcuScope::~IcuScope()
-{
-#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
-    IcuLoader::unload();
-#endif
-}

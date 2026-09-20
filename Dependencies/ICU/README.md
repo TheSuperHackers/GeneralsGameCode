@@ -11,9 +11,9 @@ Include `ICU/utf8.h` for conversions and `ICU/IcuSupport.h` for linked ICU APIs.
 
 VC6 does use ICU when these exports are available. It does not compile against modern ICU headers or expose the full ICU C++ API.
 
-`IcuLoader` has paired `load()` and `unload()` calls, following `BinkLoader` and `MilesLoader`. Every load needs an unload, including failed loads. Overlapping callers share the result, and the last unload releases the DLL and clears the function pointers. A later load can retry. Reference changes are synchronized, including on VC6; callers must retain a reference while using the resolved functions.
+`IcuLoader` loads on the first conversion and caches both successful and failed attempts. Later calls reuse the result, including in WorldBuilder and other tools without an enclosing application scope. `unload()` releases the DLL, clears the exports, and permits a later call to retry. Both games explicitly unload after engine teardown; tools also have cleanup at normal module shutdown.
 
-`IcuScope` pairs these calls automatically. Each conversion holds a scope so another thread cannot unload its functions while they are running. Both games retain an additional scope through engine teardown to avoid repeated loading. Tools can retain a scope around batches of conversions too. Full linked ICU does not need explicit ownership.
+Loading, conversion calls, and unloading use a Windows `CRITICAL_SECTION`, the same primitive used by the engine's critical-section classes. It is available on VC6 and does not require a dependency on WWLib. Calls are serialized, and unload waits for any active conversion before freeing the DLL. Export pointers remain private to the loader. Conversion workers must stop before static destruction begins.
 
 Conversions in Windows SDK builds use the resolved function pointers, avoiding an extra delay-loader reference. If a caller uses other SDK ICU APIs directly, the SDK delay loader owns its reference independently.
 

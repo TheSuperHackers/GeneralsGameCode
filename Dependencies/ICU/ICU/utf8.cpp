@@ -431,8 +431,12 @@ size_t IcuWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcL
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::toUtf8WithSub()(dest, static_cast<int>(destLen), &outputLength,
-        reinterpret_cast<const IcuChar*>(src), static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
+    if (!IcuLoader::toUtf8WithSub(dest, static_cast<int>(destLen), &outputLength,
+        reinterpret_cast<const IcuChar*>(src), static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error))
+    {
+        return WindowsWideToUtf8(dest, destLen, src, srcLen);
+    }
+
     if (!IcuConversionSucceeded(error))
     {
         assert(false);
@@ -452,8 +456,12 @@ size_t IcuWideToUtf8Len(const wchar_t* src, size_t srcLen)
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::toUtf8WithSub()(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
-        static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error);
+    if (!IcuLoader::toUtf8WithSub(nullptr, 0, &outputLength, reinterpret_cast<const IcuChar*>(src),
+        static_cast<int>(srcLen), ICU_REPLACEMENT_CHARACTER, nullptr, &error))
+    {
+        return WindowsWideToUtf8Len(src, srcLen);
+    }
+
     if (!IcuPreflightSucceeded(error))
     {
         assert(false);
@@ -477,8 +485,12 @@ size_t IcuUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcL
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::fromUtf8()(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
-        src, static_cast<int>(srcLen), &error);
+    if (!IcuLoader::fromUtf8(reinterpret_cast<IcuChar*>(dest), static_cast<int>(destLen), &outputLength,
+        src, static_cast<int>(srcLen), &error))
+    {
+        return WindowsUtf8ToWide(dest, destLen, src, srcLen);
+    }
+
     if (!IcuConversionSucceeded(error))
     {
         if (destLen > 0)
@@ -501,7 +513,11 @@ size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
 
     IcuErrorCode error = ICU_ZERO_ERROR;
     int outputLength = 0;
-    IcuLoader::fromUtf8()(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error);
+    if (!IcuLoader::fromUtf8(nullptr, 0, &outputLength, src, static_cast<int>(srcLen), &error))
+    {
+        return WindowsUtf8ToWideLen(src, srcLen);
+    }
+
     if (!IcuPreflightSucceeded(error))
     {
         return UTF8_INVALID;
@@ -516,69 +532,22 @@ size_t IcuUtf8ToWideLen(const char* src, size_t srcLen)
 
 size_t Wide_To_Utf8_Len(const wchar_t* src, size_t srcLen)
 {
-    IcuScope icu;
-    if (icu.isAvailable())
-    {
-        return IcuWideToUtf8Len(src, srcLen);
-    }
-
-#ifdef _WIN32
-    return WindowsWideToUtf8Len(src, srcLen);
-#else
-    assert(false);
-    return 0;
-#endif
+    return IcuWideToUtf8Len(src, srcLen);
 }
 
 size_t Utf8_To_Wide_Len(const char* src, size_t srcLen)
 {
-    IcuScope icu;
-    if (icu.isAvailable())
-    {
-        return IcuUtf8ToWideLen(src, srcLen);
-    }
-
-#ifdef _WIN32
-    return WindowsUtf8ToWideLen(src, srcLen);
-#else
-    return UTF8_INVALID;
-#endif
+    return IcuUtf8ToWideLen(src, srcLen);
 }
 
 size_t Wide_To_Utf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
 {
-    IcuScope icu;
-    if (icu.isAvailable())
-    {
-        return IcuWideToUtf8(dest, destLen, src, srcLen);
-    }
-
-#ifdef _WIN32
-    return WindowsWideToUtf8(dest, destLen, src, srcLen);
-#else
-    assert(false);
-    return 0;
-#endif
+    return IcuWideToUtf8(dest, destLen, src, srcLen);
 }
 
 size_t Utf8_To_Wide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
 {
-    IcuScope icu;
-    if (icu.isAvailable())
-    {
-        return IcuUtf8ToWide(dest, destLen, src, srcLen);
-    }
-
-#ifdef _WIN32
-    return WindowsUtf8ToWide(dest, destLen, src, srcLen);
-#else
-    if (destLen > 0)
-    {
-        dest[0] = L'\0';
-    }
-
-    return UTF8_INVALID;
-#endif
+    return IcuUtf8ToWide(dest, destLen, src, srcLen);
 }
 
 // A UTF-8 continuation byte matches 10xxxxxx, so it can never start a sequence.
