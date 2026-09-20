@@ -723,6 +723,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayString.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayString.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/ThingTemplate.h", Game.CORE, "GameEngine/Include/Common/ThingTemplate.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Thing/ThingTemplate.cpp", Game.CORE, "GameEngine/Source/Common/Thing/ThingTemplate.cpp")
+
     return
 
 

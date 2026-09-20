@@ -114,7 +114,7 @@ set(GAMEENGINE_SRC
     Include/Common/Thing.h
     Include/Common/ThingFactory.h
     Include/Common/ThingSort.h
-    Include/Common/ThingTemplate.h
+#    Include/Common/ThingTemplate.h
     Include/Common/TunnelTracker.h
 #    Include/Common/UnicodeString.h
     Include/Common/UnitTimings.h
@@ -631,7 +631,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ModuleFactory.cpp
     Source/Common/Thing/Thing.cpp
     Source/Common/Thing/ThingFactory.cpp
-    Source/Common/Thing/ThingTemplate.cpp
+#    Source/Common/Thing/ThingTemplate.cpp
 #    Source/Common/UserPreferences.cpp
 #    Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
