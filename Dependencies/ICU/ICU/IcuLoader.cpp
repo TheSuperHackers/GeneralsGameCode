@@ -20,6 +20,8 @@
 
 #if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
 
+#include <Utility/interlocked_adapter.h>
+#include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
 
@@ -35,44 +37,51 @@ HMODULE Module = nullptr;
 StrFromUtf8 FromUtf8 = nullptr;
 StrToUtf8WithSub ToUtf8WithSub = nullptr;
 
+CRITICAL_SECTION CriticalSection;
+LONG CriticalSectionState = 0;
+
 void freeResources();
 
-class LoaderCriticalSection
+void cleanup()
 {
-public:
-    LoaderCriticalSection()
+    // Conversion workers must have stopped before process shutdown.
+    freeResources();
+    LoadAttempted = false;
+    DeleteCriticalSection(&CriticalSection);
+    InterlockedExchange(&CriticalSectionState, 0);
+}
+
+void initializeCriticalSection()
+{
+    // Startup logging can convert strings before global constructors have run.
+    // VC6 also lacks synchronized local statics. Publish the native lock once;
+    // this loop only waits during initialization, not during ICU conversions.
+    while (InterlockedCompareExchange(&CriticalSectionState, 2, 2) != 2)
     {
-        InitializeCriticalSection(&section);
+        if (InterlockedCompareExchange(&CriticalSectionState, 1, 0) == 0)
+        {
+            InitializeCriticalSection(&CriticalSection);
+            atexit(cleanup);
+            InterlockedExchange(&CriticalSectionState, 2);
+            return;
+        }
+
+        Sleep(0);
     }
-
-    ~LoaderCriticalSection()
-    {
-        // Also release ICU for tools that do not explicitly unload at shutdown.
-        // Conversion workers must have stopped before static destruction.
-        freeResources();
-        DeleteCriticalSection(&section);
-    }
-
-    CRITICAL_SECTION section;
-
-private:
-    LoaderCriticalSection(const LoaderCriticalSection&);
-    LoaderCriticalSection& operator=(const LoaderCriticalSection&);
-};
-
-LoaderCriticalSection CriticalSection;
+}
 
 class LoaderLock
 {
 public:
     LoaderLock()
     {
-        EnterCriticalSection(&CriticalSection.section);
+        initializeCriticalSection();
+        EnterCriticalSection(&CriticalSection);
     }
 
     ~LoaderLock()
     {
-        LeaveCriticalSection(&CriticalSection.section);
+        LeaveCriticalSection(&CriticalSection);
     }
 
 private:

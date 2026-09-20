@@ -15,6 +15,8 @@ VC6 does use ICU when these exports are available. It does not compile against m
 
 Loading, conversion calls, and unloading use a Windows `CRITICAL_SECTION`, the same primitive used by the engine's critical-section classes. It is available on VC6 and does not require a dependency on WWLib. Calls are serialized, and unload waits for any active conversion before freeing the DLL. Export pointers remain private to the loader. Conversion workers must stop before static destruction begins.
 
+The critical section initializes on first use, including conversions triggered by startup logging before global constructors have run. An interlocked initialization guard also supports concurrent first calls on VC6; conversion calls use the native critical section. Cleanup is registered when the lock is initialized.
+
 Conversions in Windows SDK builds use the resolved function pointers, avoiding an extra delay-loader reference. If a caller uses other SDK ICU APIs directly, the SDK delay loader owns its reference independently.
 
 The loader tries absolute paths in the executable directory and then the Windows system directory. It supports app-local ICU and Unicode installation paths without searching the working directory or `PATH`. A missing DLL or conversion export selects the Win32 fallback; a DLL with missing exports is released immediately.
