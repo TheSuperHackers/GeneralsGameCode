@@ -547,7 +547,6 @@ void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPend
 
 		m_pendingGroup = nullptr;
 	}
-
 	if(m_currentGroup == g)
 	{
 		m_currentGroup->skip();
