@@ -97,6 +97,7 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 	}
 
 	Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+	if (damageIndex < 0 || damageIndex >= DAMAGE_NUM_TYPES)
 	{
 		DEBUG_CRASH(("Armor: Unknown damage type %s", damageName));
 		throw INI_INVALID_DATA;
