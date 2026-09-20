@@ -36,6 +36,7 @@
 
 #include "Pathfinder/Path.h"
 #include "Pathfinder/PathfindCellInfo.h"
+#include "Pathfinder/PathfindCellList.h"
 #include "Pathfinder/PathNode.h"
 
 class Bridge;
@@ -65,31 +66,6 @@ class PathfindCell;
 
 // Fits in 4 bits for now
 enum {MAX_WALL_PIECES = 128};
-
-// TheSuperHackers @info The PathfindCellList class acts as a new management class for the pathfindcell open and closed lists
-class PathfindCellList
-{
-	friend class PathfindCell;
-
-public:
-	PathfindCellList() : m_head(nullptr), m_tail(nullptr) {}
-
-#if RETAIL_COMPATIBLE_PATHFINDING
-	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; m_tail = nullptr; }
-#else
-	void reset() { m_head = nullptr; m_tail = nullptr; }
-#endif
-
-	PathfindCell* getHead() const { return m_head; }
-
-	Bool empty() const { return m_head == nullptr; }
-
-	Bool canReverseSort(PathfindCell& currentCell) const;
-
-private:
-	PathfindCell* m_head;
-	PathfindCell* m_tail;
-};
 
 /**
  * This represents one cell in the pathfinding grid.
