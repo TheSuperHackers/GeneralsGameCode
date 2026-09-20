@@ -25,7 +25,7 @@ target_include_directories(core_profile_legacy INTERFACE
 )
 
 target_precompile_headers(core_profile_legacy PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Precompiled/precompiled.h"]] # Must be first
     "profile.h"
     "internal.h"
     <windows.h>

@@ -17,7 +17,6 @@
 */
 
 // This file contains macros to help upgrade the code for newer cpp standards.
-// Must be C compliant
 
 #pragma once
 

@@ -30,7 +30,7 @@ target_include_directories(core_debug INTERFACE
 )
 
 target_precompile_headers(core_debug PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Precompiled/precompiled.h"]] # Must be first
     "debug.h"
     "internal.h"
     "internal_except.h"

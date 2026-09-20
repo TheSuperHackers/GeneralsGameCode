@@ -1171,6 +1171,5 @@ target_link_libraries(z_gameengine PUBLIC
 )
 
 target_precompile_headers(z_gameengine PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
-#    Include/Precompiled/PreRTS.h
+    [["Precompiled/precompiled.h"]] # Must be first
 )

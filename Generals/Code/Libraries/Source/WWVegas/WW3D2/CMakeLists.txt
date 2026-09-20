@@ -242,7 +242,7 @@ target_compile_definitions(g_ww3d2 PRIVATE
 )
 
 target_precompile_headers(g_ww3d2 PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Precompiled/precompiled.h"]] # Must be first
     [["dx8wrapper.h"]]
     [["WWLib/always.h"]]
     [["WWLib/STLUtils.h"]]

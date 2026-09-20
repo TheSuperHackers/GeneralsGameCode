@@ -1,7 +1,6 @@
 set(UTILITY_SRC
     Utility/array_adapter.h
     Utility/compat.h
-    Utility/CppMacros.h
     Utility/endian_compat.h
     Utility/fstream_adapter.h
     Utility/hash_map_adapter.h
@@ -23,13 +22,4 @@ set(UTILITY_SRC
 
 add_library(core_utility INTERFACE)
 target_include_directories(core_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-target_precompile_headers(core_utility INTERFACE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
-)
 target_sources(core_utility PRIVATE ${UTILITY_SRC})
-
-## core_utility_no_pch
-
-add_library(core_utility_no_pch INTERFACE)
-target_include_directories(core_utility_no_pch INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-target_sources(core_utility_no_pch PRIVATE ${UTILITY_SRC})
