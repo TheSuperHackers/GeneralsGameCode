@@ -48,7 +48,6 @@
 
 #define  STRICT
 #include <windows.h>
-#include "Lib/WideChar.h"
 #include <windowsx.h>
 #include <assert.h>
 #include <ctype.h>

@@ -85,7 +85,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include "Lib/WideChar.h"
 #include	"b64pipe.h"
 #include	"b64straw.h"
 #include	"cstraw.h"

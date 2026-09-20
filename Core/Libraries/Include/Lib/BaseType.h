@@ -30,7 +30,7 @@
 #pragma once
 
 #include "Lib/BaseTypeCore.h"
-#include "Lib/WideChar.h"
+#include <Utility/WideChar.h>
 #include "Lib/trig.h"
 
 //-----------------------------------------------------------------------------

@@ -70,7 +70,6 @@
 
 #define  STRICT
 #include <windows.h>
-#include "Lib/WideChar.h"
 #include <windowsx.h>
 #include <assert.h>
 #include <ctype.h>
@@ -110,7 +109,7 @@
 #include "WSYS_FileSystem.h"
 #include "WSYS_StdFileSystem.h"
 
-#include <string>
+#include <Utility/string_adapter.h>
 #include "GameText.h"
 
 #include "leanAndMeanAutorun.h"
@@ -3734,8 +3733,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //						}
 /*
 						if (success == 0) {
-							std::basic_string<WideChar> wideBuffer = TheGameText->fetch("Autorun:CantRunAVIs");
-							std::basic_string<WideChar> wideBuffer2 = TheGameText->fetch("Autorun:Error");
+							stl::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunAVIs");
+							stl::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
 							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
@@ -3748,7 +3747,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 					case IDD_HELP:
 					{
-						std::basic_string<WideChar> wFileName;
+						stl::wstring wFileName;
 						wFileName = Locale_GetString(HELP_FILENAME);
 
 						std::string fname;
@@ -3779,8 +3778,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 /*
 						if (success == 0) {
-							std::basic_string<WideChar> wideBuffer = TheGameText->fetch("Autorun:CantRunHelp");
-							std::basic_string<WideChar> wideBuffer2 = TheGameText->fetch("Autorun:Error");
+							stl::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunHelp");
+							stl::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
 							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
@@ -4805,8 +4804,8 @@ BOOL Valid_Environment ()
 	result = WinVersion.Meets_Minimum_Version_Requirements();
   if ( !result )
 	{
-		std::basic_string<WideChar> wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
-		std::basic_string<WideChar> wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
+		stl::wstring wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
+		stl::wstring wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
 		length = wideBuffer.length();
 		WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 		length = wideBuffer2.length();
@@ -5069,9 +5068,9 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 #else
 
-	std::basic_string<WideChar> wideBuffer = TheGameText->fetch("Autorun:AutorunTitle");
-	std::basic_string<WideChar> wideBuffer2.format( wideBuffer.str(), productName.str() );
-	std::basic_string<WideChar> wideBuffer3 = TheGameText->fetch("Autorun:CantFind");
+	stl::wstring wideBuffer = TheGameText->fetch("Autorun:AutorunTitle");
+	stl::wstring wideBuffer2.format( wideBuffer.str(), productName.str() );
+	stl::wstring wideBuffer3 = TheGameText->fetch("Autorun:CantFind");
 
 	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, nullptr );
 	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, nullptr );

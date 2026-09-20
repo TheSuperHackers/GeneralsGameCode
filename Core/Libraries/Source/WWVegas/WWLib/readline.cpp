@@ -38,7 +38,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include "Lib/WideChar.h"
 #include	"readline.h"
 #include	"trim.h"
 #include "WWFILE.h"

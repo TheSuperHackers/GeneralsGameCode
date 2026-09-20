@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 //! Signed integer value
 typedef int Int;
 

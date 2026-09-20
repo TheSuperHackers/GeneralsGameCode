@@ -43,7 +43,6 @@
 
 #define  STRICT
 #include <windows.h>
-#include "Lib/WideChar.h"
 #include <windowsx.h>
 #include "autorun.h"
 #include "DrawButton.h"

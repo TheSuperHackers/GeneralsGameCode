@@ -35,7 +35,6 @@
 *****************************************************************************/
 
 #include "locale.h"
-#include "Lib/WideChar.h"
 #include "Locale_API.h"
 #include "Utils.h"
 #include "Wnd_File.h"

@@ -38,8 +38,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include	<stddef.h>
 #include	"POINT.h"
 #include	"RECT.h"

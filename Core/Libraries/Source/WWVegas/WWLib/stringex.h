@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include "bittype.h"
 #include <string.h>
 #include <ctype.h>

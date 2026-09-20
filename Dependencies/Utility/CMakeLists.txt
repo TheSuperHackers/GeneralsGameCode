@@ -11,11 +11,13 @@ set(UTILITY_SRC
     Utility/sstream_adapter.h
     Utility/stdint_adapter.h
     Utility/stdio_adapter.h
+    Utility/string_adapter.h
     Utility/string_compat.h
     Utility/tchar_compat.h
     Utility/thread_compat.h
     Utility/time_compat.h
     Utility/wchar_compat.h
+    Utility/WideChar.h
 )
 
 ## core_utility
@@ -23,3 +25,12 @@ set(UTILITY_SRC
 add_library(core_utility INTERFACE)
 target_include_directories(core_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_sources(core_utility PRIVATE ${UTILITY_SRC})
+
+# Make the character type available throughout the project, including builds without PCH.
+if(MSVC)
+    target_compile_options(core_utility INTERFACE
+        "$<$<COMPILE_LANGUAGE:C,CXX>:/FIUtility/WideChar.h>")
+else()
+    target_compile_options(core_utility INTERFACE
+        "$<$<COMPILE_LANGUAGE:C,CXX>:SHELL:-include Utility/WideChar.h>")
+endif()

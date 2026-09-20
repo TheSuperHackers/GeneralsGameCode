@@ -33,8 +33,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include <tchar.h>
 #include <stdlib.h>
 #include "TTFont.h"
