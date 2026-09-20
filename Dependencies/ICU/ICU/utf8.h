@@ -23,7 +23,7 @@
 
 // UTF-8 <-> wide-character conversion backed by ICU4C.
 // Full ICU packages use linked C APIs. Windows SDK and VC6 builds use IcuLoader
-// to load icu.dll and retain its UTF conversion exports for each call.
+// to load icu.dll lazily and cache its UTF conversion exports until unload.
 // Windows builds fall back to Win32 CP_UTF8 if the DLL or required exports are missing.
 // Include ICU/IcuSupport.h to use the rest of the linked ICU suite from engine code.
 
