@@ -39,7 +39,7 @@ class SpecialPowerTemplate;
 class SpecialPowerCompletionDieModuleData : public DieModuleData
 {
 public:
-	SpecialPowerTemplate *m_specialPowerTemplate;		///< pointer to the special power template
+	SpecialPowerTemplate* m_specialPowerTemplate;    ///< pointer to the special power template
 
 	SpecialPowerCompletionDieModuleData()
 	{
@@ -48,15 +48,13 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DieModuleData::buildFieldParse(p);
+		DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate,	nullptr, offsetof( SpecialPowerCompletionDieModuleData, m_specialPowerTemplate ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, nullptr, offsetof(SpecialPowerCompletionDieModuleData, m_specialPowerTemplate) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
-
+		p.add(dataFieldParse);
 	}
 };
 
@@ -65,25 +63,21 @@ public:
 //-------------------------------------------------------------------------------------------------
 class SpecialPowerCompletionDie : public DieModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpecialPowerCompletionDie, "SpecialPowerCompletionDie" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpecialPowerCompletionDie, SpecialPowerCompletionDieModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpecialPowerCompletionDie, "SpecialPowerCompletionDie")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpecialPowerCompletionDie, SpecialPowerCompletionDieModuleData)
 
 public:
-
-	SpecialPowerCompletionDie( Thing *thing, const ModuleData* moduleData );
+	SpecialPowerCompletionDie(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	void setCreator( ObjectID creatorID );
+	void setCreator(ObjectID creatorID);
 	void notifyScriptEngine();
 
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 protected:
-
 	ObjectID m_creatorID;
 	Bool m_creatorSet;
-
 };
 
 // Creator is stored as ID, so a failed lookup just means that he died first and noone cares that we are going.

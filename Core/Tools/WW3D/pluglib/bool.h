@@ -46,8 +46,8 @@
 */
 #ifdef _MSC_VER
 
-#include        "yvals.h"
-#define bool    unsigned
+#include "yvals.h"
+#define bool unsigned
 
 #elif defined(_UNIX)
 
@@ -55,7 +55,11 @@
 
 #else
 
-enum {false=0,true=1};
+enum
+{
+	false = 0,
+	true = 1
+};
 typedef int bool;
 
 #endif

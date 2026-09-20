@@ -29,28 +29,31 @@ class WorldHeightMapEdit;
 class ModifyObjectUndoable;
 /*************************************************************************/
 /**                             PointerTool
-	 Does the select/move tool operation.
+   Does the select/move tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
 class PointerTool : public PolygonTool
 {
 protected:
-	enum {HYSTERESIS = 3};
+	enum
+	{
+		HYSTERESIS = 3
+	};
 	CPoint m_downPt2d;
 	Coord3D m_downPt3d;
-	MapObject *m_curObject;
+	MapObject* m_curObject;
 
-	Bool m_moving; ///< True if we are drag moving an object.
-	Bool m_rotating; ///< True if we are rotating an object.
-	Bool m_dragSelect; ///< True if we are drag selecting.
+	Bool m_moving;    ///< True if we are drag moving an object.
+	Bool m_rotating;    ///< True if we are rotating an object.
+	Bool m_dragSelect;    ///< True if we are drag selecting.
 
-	Bool m_doPolyTool; ///< True if we are using the polygon tool to modify a polygon triggter.
+	Bool m_doPolyTool;    ///< True if we are using the polygon tool to modify a polygon triggter.
 
-	ModifyObjectUndoable *m_modifyUndoable;	 ///< The modify undoable that is in progress while we track the mouse.
+	ModifyObjectUndoable* m_modifyUndoable;    ///< The modify undoable that is in progress while we track the mouse.
 
-	Bool m_mouseUpRotate;///< True if we are over the "rotate" hotspot.
+	Bool m_mouseUpRotate;    ///< True if we are over the "rotate" hotspot.
 	HCURSOR m_rotateCursor;
-	Bool m_mouseUpMove;///< True if we are over the "move" hotspot.
+	Bool m_mouseUpMove;    ///< True if we are over the "move" hotspot.
 	HCURSOR m_moveCursor;
 
 protected:
@@ -66,11 +69,11 @@ public:
 	virtual void deactivate() override;
 
 	virtual void setCursor() override;
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 
 public:
-	static void clearSelection(); ///< Clears the selected objects selected flags.
+	static void clearSelection();    ///< Clears the selected objects selected flags.
 	static Bool allowPick(MapObject* pMapObj, WbView* pView);
 };

@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, September 2002
 // Desc:	 UpgradeModule that sets a new override string for Command Set look ups
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/Player.h"
@@ -38,21 +38,21 @@
 // ------------------------------------------------------------------------------------------------
 void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "CommandSet",			INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
-		{ "CommandSetAlt",	INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_newCommandSetAlt ) },
-		{ "TriggerAlt",			INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_triggerAlt ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "CommandSet", INI::parseAsciiString, nullptr, offsetof(CommandSetUpgradeModuleData, m_newCommandSet) },
+		{ "CommandSetAlt", INI::parseAsciiString, nullptr, offsetof(CommandSetUpgradeModuleData, m_newCommandSetAlt) },
+		{ "TriggerAlt", INI::parseAsciiString, nullptr, offsetof(CommandSetUpgradeModuleData, m_triggerAlt) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CommandSetUpgrade::CommandSetUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+CommandSetUpgrade::CommandSetUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
 }
 
@@ -66,24 +66,24 @@ CommandSetUpgrade::~CommandSetUpgrade()
 //-------------------------------------------------------------------------------------------------
 void CommandSetUpgrade::upgradeImplementation()
 {
-	Object *obj = getObject();
+	Object* obj = getObject();
 
 	const AsciiString& upgradeAlt = getCommandSetUpgradeModuleData()->m_triggerAlt;
-	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeAlt );
+	const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(upgradeAlt);
 
 	if (upgradeTemplate)
 	{
 		const UpgradeMaskType& upgradeMask = upgradeTemplate->getUpgradeMask();
 
 		// See if upgrade is found in the player completed upgrades
-		Player *player = obj->getControllingPlayer();
+		Player* player = obj->getControllingPlayer();
 		if (player)
 		{
 			const UpgradeMaskType& playerMask = player->getCompletedUpgradeMask();
 			if (playerMask.testForAny(upgradeMask))
 			{
-				obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSetAlt );
-				TheControlBar->markUIDirty();// Refresh the UI in case we are selected
+				obj->setCommandSetStringOverride(getCommandSetUpgradeModuleData()->m_newCommandSetAlt);
+				TheControlBar->markUIDirty();    // Refresh the UI in case we are selected
 				return;
 			}
 		}
@@ -92,43 +92,39 @@ void CommandSetUpgrade::upgradeImplementation()
 		const UpgradeMaskType& objMask = obj->getObjectCompletedUpgradeMask();
 		if (objMask.testForAny(upgradeMask))
 		{
-			obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSetAlt );
-			TheControlBar->markUIDirty();// Refresh the UI in case we are selected
+			obj->setCommandSetStringOverride(getCommandSetUpgradeModuleData()->m_newCommandSetAlt);
+			TheControlBar->markUIDirty();    // Refresh the UI in case we are selected
 			return;
 		}
 	}
 
-	obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSet );
-	TheControlBar->markUIDirty();// Refresh the UI in case we are selected
+	obj->setCommandSetStringOverride(getCommandSetUpgradeModuleData()->m_newCommandSet);
+	TheControlBar->markUIDirty();    // Refresh the UI in case we are selected
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgrade::crc( Xfer *xfer )
+void CommandSetUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgrade::xfer( Xfer *xfer )
+void CommandSetUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -136,8 +132,6 @@ void CommandSetUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void CommandSetUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

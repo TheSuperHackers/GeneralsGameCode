@@ -28,20 +28,20 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/MultiplayerSettings.h"
 
-void INI::parseMultiplayerSettingsDefinition( INI* ini )
+void INI::parseMultiplayerSettingsDefinition(INI* ini)
 {
-	if( TheMultiplayerSettings )
+	if (TheMultiplayerSettings)
 	{
 		//
 		// if the type of loading we're doing creates override data, we need to
 		// be loading into a new override item
 		//
-		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
 			DEBUG_CRASH(("Creating an override of MultiplayerSettings!"));
 		}
@@ -53,26 +53,28 @@ void INI::parseMultiplayerSettingsDefinition( INI* ini )
 	}
 
 	// parse the ini definition
-	ini->initFromINI( TheMultiplayerSettings, TheMultiplayerSettings->getFieldParse() );
+	ini->initFromINI(TheMultiplayerSettings, TheMultiplayerSettings->getFieldParse());
 }
 
-void INI::parseMultiplayerColorDefinition( INI* ini )
+void INI::parseMultiplayerColorDefinition(INI* ini)
 {
-	const char *c;
+	const char* c;
 	AsciiString name;
-	MultiplayerColorDefinition *multiplayerColorDefinition;
+	MultiplayerColorDefinition* multiplayerColorDefinition;
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );
+	name.set(c);
 
 	// find existing item if present, but this type does not allow overrides,
-	//so if it exists just overwrite it.
-	multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName( name );
-	if( multiplayerColorDefinition == nullptr )
-		multiplayerColorDefinition = TheMultiplayerSettings->newMultiplayerColorDefinition( name );
+	// so if it exists just overwrite it.
+	multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName(name);
+	if (multiplayerColorDefinition == nullptr)
+	{
+		multiplayerColorDefinition = TheMultiplayerSettings->newMultiplayerColorDefinition(name);
+	}
 
-	ini->initFromINI( multiplayerColorDefinition, multiplayerColorDefinition->getFieldParse() );
+	ini->initFromINI(multiplayerColorDefinition, multiplayerColorDefinition->getFieldParse());
 
 	multiplayerColorDefinition->setColor(multiplayerColorDefinition->getRGBValue());
 	multiplayerColorDefinition->setNightColor(multiplayerColorDefinition->getRGBNightValue());
@@ -80,30 +82,28 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 
 namespace
 {
-  struct MultiplayerStartingMoneySettings
-  {
-    Money money;
-    Bool  isDefault;
-  };
-
-  const FieldParse startingMoneyFieldParseTable[] =
-  {
-    { "Value",			  Money::parseMoneyAmount,	nullptr,	offsetof( MultiplayerStartingMoneySettings, money ) },
-    { "Default",	   	INI::parseBool,         	nullptr,	offsetof( MultiplayerStartingMoneySettings, isDefault ) },
-    { nullptr,	nullptr,	nullptr,	0 }
-  };
-}
-
-
-void INI::parseMultiplayerStartingMoneyChoiceDefinition( INI* ini )
+struct MultiplayerStartingMoneySettings
 {
-  DEBUG_ASSERTCRASH( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Overrides not supported for MultiplayerStartingMoneyChoice") );
+	Money money;
+	Bool isDefault;
+};
 
-  // Temporary data store
-  MultiplayerStartingMoneySettings settings;
-  settings.isDefault = false;
+const FieldParse startingMoneyFieldParseTable[] = {
+	{ "Value", Money::parseMoneyAmount, nullptr, offsetof(MultiplayerStartingMoneySettings, money) },
+	{ "Default", INI::parseBool, nullptr, offsetof(MultiplayerStartingMoneySettings, isDefault) },
+	{ nullptr, nullptr, nullptr, 0 }
+};
+}    // namespace
 
-  ini->initFromINI( &settings, startingMoneyFieldParseTable );
+void INI::parseMultiplayerStartingMoneyChoiceDefinition(INI* ini)
+{
+	DEBUG_ASSERTCRASH(ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Overrides not supported for MultiplayerStartingMoneyChoice"));
 
-  TheMultiplayerSettings->addStartingMoneyChoice( settings.money, settings.isDefault );
+	// Temporary data store
+	MultiplayerStartingMoneySettings settings;
+	settings.isDefault = false;
+
+	ini->initFromINI(&settings, startingMoneyFieldParseTable);
+
+	TheMultiplayerSettings->addStartingMoneyChoice(settings.money, settings.isDefault);
 }

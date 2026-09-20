@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #include "Common/Xfer.h"
@@ -47,15 +47,14 @@ LockWeaponCreateModuleData::LockWeaponCreateModuleData()
 // ------------------------------------------------------------------------------------------------
 void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  CreateModuleData::buildFieldParse(p);
+	CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "SlotToLock",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( LockWeaponCreateModuleData, m_slotToLock ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "SlotToLock", INI::parseLookupList, TheWeaponSlotTypeNamesLookupList, offsetof(LockWeaponCreateModuleData, m_slotToLock) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +63,8 @@ void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LockWeaponCreate::LockWeaponCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+LockWeaponCreate::LockWeaponCreate(Thing* thing, const ModuleData* moduleData)
+  : CreateModule(thing, moduleData)
 {
 }
 
@@ -72,7 +72,6 @@ LockWeaponCreate::LockWeaponCreate( Thing *thing, const ModuleData* moduleData )
 //-------------------------------------------------------------------------------------------------
 LockWeaponCreate::~LockWeaponCreate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -86,40 +85,36 @@ void LockWeaponCreate::onCreate()
 //-------------------------------------------------------------------------------------------------
 void LockWeaponCreate::onBuildComplete()
 {
-	CreateModule::onBuildComplete(); // extend
+	CreateModule::onBuildComplete();    // extend
 
-	Object *me = getObject();
+	Object* me = getObject();
 	WeaponSlotType slot = getLockWeaponCreateModuleData()->m_slotToLock;
-	me->setWeaponLock( slot, LOCKED_PERMANENTLY );
+	me->setWeaponLock(slot, LOCKED_PERMANENTLY);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreate::crc( Xfer *xfer )
+void LockWeaponCreate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
-
+	CreateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreate::xfer( Xfer *xfer )
+void LockWeaponCreate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
-
+	CreateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -127,8 +122,6 @@ void LockWeaponCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void LockWeaponCreate::loadPostProcess()
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
-
 }

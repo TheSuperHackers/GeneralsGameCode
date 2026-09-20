@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -37,7 +37,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PassengersFireUpgrade::PassengersFireUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+PassengersFireUpgrade::PassengersFireUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
 }
 
@@ -53,45 +54,39 @@ void PassengersFireUpgrade::upgradeImplementation()
 {
 	// Just need to flag the containmodule having the passengersallowedtofire true, .
 
+	Object* obj = getObject();
+	//	obj->setWeaponSetFlag( WEAPONSET_PLAYER_UPGRADE );
 
-  Object *obj = getObject();
-//	obj->setWeaponSetFlag( WEAPONSET_PLAYER_UPGRADE );
-
-  ContainModuleInterface *contain = obj->getContain();
-  if ( contain )
-  {
-    contain->setPassengerAllowedToFire( TRUE );
-  }
-
+	ContainModuleInterface* contain = obj->getContain();
+	if (contain)
+	{
+		contain->setPassengerAllowedToFire(TRUE);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void PassengersFireUpgrade::crc( Xfer *xfer )
+void PassengersFireUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void PassengersFireUpgrade::xfer( Xfer *xfer )
+void PassengersFireUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -99,8 +94,6 @@ void PassengersFireUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void PassengersFireUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

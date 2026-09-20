@@ -39,60 +39,63 @@
 
 //-------------------------------------------------------------------------------------------------
 /** Game file access.  At present this allows us to access test assets, assets from
-	* legacy GDI assets, and the current flat directory access for textures, models etc */
+ * legacy GDI assets, and the current flat directory access for textures, models etc */
 //-------------------------------------------------------------------------------------------------
 class GameFileClass : public FileClass
 {
-
 public:
-
-	GameFileClass(char const *filename);
+	GameFileClass(char const* filename);
 	GameFileClass();
 	virtual ~GameFileClass() override;
 
-	virtual char const * File_Name() const override;
-	virtual char const * Set_Name(char const *filename) override;
+	virtual char const* File_Name() const override;
+	virtual char const* Set_Name(char const* filename) override;
 
 	// (gth) had to re-instate these functions in the base class, for now just give empty implementations...
-	virtual int Create() override { assert(0); return 1; }
-	virtual int Delete() override { assert(0); return 1; }
+	virtual int Create() override
+	{
+		assert(0);
+		return 1;
+	}
+	virtual int Delete() override
+	{
+		assert(0);
+		return 1;
+	}
 
-	virtual bool Is_Available(int forced=false) override;
+	virtual bool Is_Available(int forced = false) override;
 	virtual bool Is_Open() const override;
-	virtual int Open(char const *filename, int rights=READ) override;
-	virtual int Open(int rights=READ) override;
-	virtual int Read(void *buffer, int len) override;
-	virtual int Seek(int pos, int dir=SEEK_CUR) override;
+	virtual int Open(char const* filename, int rights = READ) override;
+	virtual int Open(int rights = READ) override;
+	virtual int Read(void* buffer, int len) override;
+	virtual int Seek(int pos, int dir = SEEK_CUR) override;
 	virtual int Size() override;
-	virtual int Write(void const *buffer, int len) override;
+	virtual int Write(void const* buffer, int len) override;
 	virtual void Close() override;
 
 protected:
-
-	File					*m_theFile; /// < The file
-	Bool					m_fileExists;		///< TRUE if the file exists
-	char					m_filePath[_MAX_PATH];  ///< the file name *and* path (relative)
-	char					m_filename[_MAX_PATH];	///< The file name only
-
+	File* m_theFile;    /// < The file
+	Bool m_fileExists;    ///< TRUE if the file exists
+	char m_filePath[_MAX_PATH];    ///< the file name *and* path (relative)
+	char m_filename[_MAX_PATH];    ///< The file name only
 };
-
 
 /*
 ** W3DFileSystem is a derived FileFactoryClass which
 ** uses GDI assets.
 */
-class	W3DFileSystem : public FileFactoryClass {
+class W3DFileSystem : public FileFactoryClass
+{
 public:
 	W3DFileSystem();
 	virtual ~W3DFileSystem() override;
 
-	virtual FileClass * Get_File( char const *filename ) override;
-	virtual void Return_File( FileClass *file ) override;
+	virtual FileClass* Get_File(char const* filename) override;
+	virtual void Return_File(FileClass* file) override;
 
 private:
-
 	static void reprioritizeTexturesBySize();
 	static void reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo);
 };
 
-extern W3DFileSystem *TheW3DFileSystem;
+extern W3DFileSystem* TheW3DFileSystem;

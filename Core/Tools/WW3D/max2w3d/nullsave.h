@@ -41,7 +41,6 @@
 #include "chunkio.h"
 #include "PROGRESS.h"
 
-
 /*******************************************************************************************
 **
 ** NullSaveClass - Create a Null object.
@@ -50,20 +49,18 @@
 class NullSaveClass
 {
 public:
-
-	enum {
-		EX_UNKNOWN = 0,	// exception error codes
+	enum
+	{
+		EX_UNKNOWN = 0,    // exception error codes
 		EX_CANCEL = 1
 	};
 
-	NullSaveClass(				char *						mesh_name,
-									char *						container_name,
-									Progress_Meter_Class &	meter);
+	NullSaveClass(char* mesh_name,
+	              char* container_name,
+	              Progress_Meter_Class& meter);
 
-	int Write_To_File(ChunkSaveClass & csave);
+	int Write_To_File(ChunkSaveClass& csave);
 
 private:
-
-	W3dNullObjectStruct		NullData;
-
+	W3dNullObjectStruct NullData;
 };

@@ -43,44 +43,37 @@ class Thing;
 class SabotageFakeBuildingCrateCollideModuleData : public CrateCollideModuleData
 {
 public:
-
 	SabotageFakeBuildingCrateCollideModuleData()
 	{
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    CrateCollideModuleData::buildFieldParse(p);
+		CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
+		static const FieldParse dataFieldParse[] = {
 			{ 0, 0, 0, 0 }
 		};
-		p.add( dataFieldParse );
+		p.add(dataFieldParse);
 	}
-
 };
 
 //-------------------------------------------------------------------------------------------------
 class SabotageFakeBuildingCrateCollide : public CrateCollide
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SabotageFakeBuildingCrateCollide, "SabotageFakeBuildingCrateCollide" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SabotageFakeBuildingCrateCollide, SabotageFakeBuildingCrateCollideModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SabotageFakeBuildingCrateCollide, "SabotageFakeBuildingCrateCollide")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SabotageFakeBuildingCrateCollide, SabotageFakeBuildingCrateCollideModuleData);
 
 public:
-
-	SabotageFakeBuildingCrateCollide( Thing *thing, const ModuleData* moduleData );
+	SabotageFakeBuildingCrateCollide(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 protected:
-
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const override;
+	virtual Bool isValidToExecute(const Object* other) const override;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other ) override;
+	virtual Bool executeCrateBehavior(Object* other) override;
 
 	virtual Bool isSabotageBuildingCrateCollide() const override { return TRUE; }
-
 };

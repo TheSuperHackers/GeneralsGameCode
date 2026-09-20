@@ -40,4 +40,4 @@ private:
 	std::vector<UnsignedByte> m_lastCapturePixels;
 };
 
-#endif // PROFILER_ENABLED
+#endif    // PROFILER_ENABLED

@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, July 2003
 // Desc:	 UpgradeModule that sets a modelcondition flag
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Module/ModelConditionUpgrade.h"
 
@@ -44,19 +44,19 @@ ModelConditionUpgradeModuleData::ModelConditionUpgradeModuleData()
 // ------------------------------------------------------------------------------------------------
 void ModelConditionUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "ConditionFlag",	ModelConditionFlags::parseSingleBitFromINI,	nullptr, offsetof( ModelConditionUpgradeModuleData, m_conditionFlag ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "ConditionFlag", ModelConditionFlags::parseSingleBitFromINI, nullptr, offsetof(ModelConditionUpgradeModuleData, m_conditionFlag) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ModelConditionUpgrade::ModelConditionUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+ModelConditionUpgrade::ModelConditionUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
 }
 
@@ -70,41 +70,39 @@ ModelConditionUpgrade::~ModelConditionUpgrade()
 //-------------------------------------------------------------------------------------------------
 void ModelConditionUpgrade::upgradeImplementation()
 {
-	const ModelConditionUpgradeModuleData *data = getModelConditionUpgradeModuleData();
+	const ModelConditionUpgradeModuleData* data = getModelConditionUpgradeModuleData();
 
-	Object *me = getObject();
+	Object* me = getObject();
 
-	if( data->m_conditionFlag != MODELCONDITION_INVALID )
+	if (data->m_conditionFlag != MODELCONDITION_INVALID)
+	{
 		me->setModelConditionState(data->m_conditionFlag);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ModelConditionUpgrade::crc( Xfer *xfer )
+void ModelConditionUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ModelConditionUpgrade::xfer( Xfer *xfer )
+void ModelConditionUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -112,8 +110,6 @@ void ModelConditionUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ModelConditionUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

@@ -29,44 +29,44 @@
 class CReport : public CDialog
 {
 	char filename[300];
-	RPOPTIONS	options;
-	LangID	langids[200];
-	int			langindices[200];
-	int			num_langs;
-	CListBox *list;
-	CEdit		*limit;
-	CButton *dialog_status;
-	CButton *trans_status;
-	CButton *show_details;
-	CButton *ifless;
-	CStatic *items;
+	RPOPTIONS options;
+	LangID langids[200];
+	int langindices[200];
+	int num_langs;
+	CListBox* list;
+	CEdit* limit;
+	CButton* dialog_status;
+	CButton* trans_status;
+	CButton* show_details;
+	CButton* ifless;
+	CStatic* items;
 
-
-// Construction
+	// Construction
 public:
-	CReport(CWnd* pParent = nullptr);   // standard constructor
+	CReport(CWnd* pParent = nullptr);    // standard constructor
 
-	char*					Filename	()			{ return filename; };
-	RPOPTIONS*		Options			()		{ return &options; };
-	LangID*				Langauges		()		{ return langids; };
+	char* Filename() { return filename; };
+	RPOPTIONS* Options() { return &options; };
+	LangID* Langauges() { return langids; };
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CReport)
-	enum { IDD = IDD_CREATE_REPORTS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CREATE_REPORTS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CReport)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CReport)
 	virtual BOOL OnInitDialog();

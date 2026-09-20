@@ -34,50 +34,44 @@
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateModule::CreateModule( Thing *thing, const ModuleData* moduleData )
-						: BehaviorModule( thing, moduleData ),
-						  m_needToRunOnBuildComplete(TRUE)
+CreateModule::CreateModule(Thing* thing, const ModuleData* moduleData)
+  : BehaviorModule(thing, moduleData)
+  , m_needToRunOnBuildComplete(TRUE)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 CreateModule::~CreateModule()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CreateModule::crc( Xfer *xfer )
+void CreateModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
-
+	BehaviorModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CreateModule::xfer( Xfer *xfer )
+void CreateModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	BehaviorModule::xfer( xfer );
+	BehaviorModule::xfer(xfer);
 
 	// need to run on build complete
-	xfer->xferBool( &m_needToRunOnBuildComplete );
-
+	xfer->xferBool(&m_needToRunOnBuildComplete);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -85,10 +79,6 @@ void CreateModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void CreateModule::loadPostProcess()
 {
-
 	// extend base class
 	BehaviorModule::loadPostProcess();
-
 }
-
-

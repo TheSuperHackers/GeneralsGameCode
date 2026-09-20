@@ -46,41 +46,45 @@
 #include "INDEX.h"
 #include "CRC.h"
 
-
 /*
 **	The value entries for the INI file are stored as objects of this type.
 **	The entry identifier and value string are combined into this object.
 */
-struct INIEntry : public Node<INIEntry *> {
-	INIEntry(char * entry = nullptr, char * value = nullptr) : Entry(entry), Value(value) {}
+struct INIEntry : public Node<INIEntry*>
+{
+	INIEntry(char* entry = nullptr, char* value = nullptr)
+	  : Entry(entry)
+	  , Value(value)
+	{}
 	virtual ~INIEntry() override;
-//	~INIEntry() {free(Entry);Entry = nullptr;free(Value);Value = nullptr;}
-//	int Index_ID() const {return(CRCEngine()(Entry, strlen(Entry)));};
-	int Index_ID() const { return CRC::String(Entry);};
+	//	~INIEntry() {free(Entry);Entry = nullptr;free(Value);Value = nullptr;}
+	//	int Index_ID() const {return(CRCEngine()(Entry, strlen(Entry)));};
+	int Index_ID() const { return CRC::String(Entry); };
 
-	char * Entry;
-	char * Value;
+	char* Entry;
+	char* Value;
 };
 
 /*
 **	Each section (bracketed) is represented by an object of this type. All entries
 **	subordinate to this section are attached.
 */
-struct INISection : public Node<INISection *> {
-		INISection(char * section) : Section(section) {}
-		virtual ~INISection() override;
-//		~INISection() {free(Section);Section = 0;EntryList.Delete();}
-		INIEntry * Find_Entry(char const * entry) const;
-//		int Index_ID() const {return(CRCEngine()(Section, strlen(Section)));};
-		int Index_ID() const { return CRC::String(Section); };
+struct INISection : public Node<INISection*>
+{
+	INISection(char* section)
+	  : Section(section)
+	{}
+	virtual ~INISection() override;
+	//		~INISection() {free(Section);Section = 0;EntryList.Delete();}
+	INIEntry* Find_Entry(char const* entry) const;
+	//		int Index_ID() const {return(CRCEngine()(Section, strlen(Section)));};
+	int Index_ID() const { return CRC::String(Section); };
 
-		char * Section;
-		List<INIEntry *> EntryList;
-		IndexClass<int, INIEntry *> EntryIndex;
+	char* Section;
+	List<INIEntry*> EntryList;
+	IndexClass<int, INIEntry*> EntryIndex;
 
-	private:
-		INISection(INISection const & rvalue);
-		INISection& operator = (INISection const & rvalue);
+private:
+	INISection(INISection const& rvalue);
+	INISection& operator=(INISection const& rvalue);
 };
-
-

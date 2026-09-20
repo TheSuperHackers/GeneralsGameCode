@@ -45,31 +45,27 @@ typedef std::vector<const WeaponTemplate*> WeaponTemplateVec;
 class InstantDeathBehaviorModuleData : public DieModuleData
 {
 public:
-	FXListVec					m_fx;
-	OCLVec						m_ocls;
-	WeaponTemplateVec	m_weapons;
+	FXListVec m_fx;
+	OCLVec m_ocls;
+	WeaponTemplateVec m_weapons;
 
 	InstantDeathBehaviorModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class InstantDeathBehavior : public DieModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( InstantDeathBehavior, "InstantDeathBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( InstantDeathBehavior, InstantDeathBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(InstantDeathBehavior, "InstantDeathBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(InstantDeathBehavior, InstantDeathBehaviorModuleData)
 
 public:
-
-	InstantDeathBehavior( Thing *thing, const ModuleData* moduleData );
+	InstantDeathBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
-
+	virtual void onDie(const DamageInfo* damageInfo) override;
 };

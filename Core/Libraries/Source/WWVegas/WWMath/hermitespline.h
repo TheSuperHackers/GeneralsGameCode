@@ -47,47 +47,47 @@ class HermiteSpline3DClass : public Curve3DClass
 {
 public:
 	HermiteSpline3DClass()
-		: TangentsDirty (true) { }
+	  : TangentsDirty(true)
+	{}
 
-	HermiteSpline3DClass(const HermiteSpline3DClass &that)
-		: TangentsDirty (true) { (*this) = that; }
+	HermiteSpline3DClass(const HermiteSpline3DClass& that)
+	  : TangentsDirty(true)
+	{ (*this) = that; }
 
-	const HermiteSpline3DClass &operator= (const HermiteSpline3DClass &that);
+	const HermiteSpline3DClass& operator=(const HermiteSpline3DClass& that);
 
-	virtual void		Evaluate(float time,Vector3 * set_val) override;
-	virtual void		Evaluate_Derivative(float time,Vector3 * set_val);
-	virtual void		Set_Looping(bool onoff) override;
+	virtual void Evaluate(float time, Vector3* set_val) override;
+	virtual void Evaluate_Derivative(float time, Vector3* set_val);
+	virtual void Set_Looping(bool onoff) override;
 
-	virtual void		Set_Key(int i,const Vector3 & point) override;
-	virtual int			Add_Key(const Vector3 & point,float t) override;
-	virtual void		Remove_Key(int i) override;
-	virtual void		Clear_Keys() override;
+	virtual void Set_Key(int i, const Vector3& point) override;
+	virtual int Add_Key(const Vector3& point, float t) override;
+	virtual void Remove_Key(int i) override;
+	virtual void Clear_Keys() override;
 
-	virtual void		Set_Tangents(int i,const Vector3 & in_tan,const Vector3 & out_tan);
-	virtual void		Get_Tangents(int i,Vector3 * set_in,Vector3 * set_out);
+	virtual void Set_Tangents(int i, const Vector3& in_tan, const Vector3& out_tan);
+	virtual void Get_Tangents(int i, Vector3* set_in, Vector3* set_out);
 
-	virtual void		Update_Tangents() { TangentsDirty = false; }
+	virtual void Update_Tangents() { TangentsDirty = false; }
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
 
 protected:
-
 	class TangentsClass
 	{
 	public:
-		Vector3			InTangent;
-		Vector3			OutTangent;
-		bool				operator == (const TangentsClass & that) { return ((InTangent == that.InTangent) && (OutTangent == that.OutTangent)); }
-		bool				operator != (const TangentsClass & that) { return !TangentsClass::operator == (that); }
+		Vector3 InTangent;
+		Vector3 OutTangent;
+		bool operator==(const TangentsClass& that) { return ((InTangent == that.InTangent) && (OutTangent == that.OutTangent)); }
+		bool operator!=(const TangentsClass& that) { return !TangentsClass::operator==(that); }
 	};
 
-	bool											TangentsDirty;
-	DynamicVectorClass<TangentsClass>	Tangents;
+	bool TangentsDirty;
+	DynamicVectorClass<TangentsClass> Tangents;
 };
-
 
 /*
 ** HermiteSpline1DClass
@@ -97,38 +97,38 @@ protected:
 class HermiteSpline1DClass : public Curve1DClass
 {
 public:
-	HermiteSpline1DClass ()
-		: TangentsDirty (true) { }
+	HermiteSpline1DClass()
+	  : TangentsDirty(true)
+	{}
 
-	virtual void		Evaluate(float time,float * set_val) override;
-	virtual void		Set_Looping(bool onoff) override;
+	virtual void Evaluate(float time, float* set_val) override;
+	virtual void Set_Looping(bool onoff) override;
 
-	virtual void		Set_Key(int i,float point,unsigned int extra=0) override;
-	virtual int			Add_Key(float point,float t,unsigned int extra=0) override;
-	virtual void		Remove_Key(int i) override;
-	virtual void		Clear_Keys() override;
+	virtual void Set_Key(int i, float point, unsigned int extra = 0) override;
+	virtual int Add_Key(float point, float t, unsigned int extra = 0) override;
+	virtual void Remove_Key(int i) override;
+	virtual void Clear_Keys() override;
 
-	virtual void		Set_Tangents(int i,float in_tan,float out_tan);
-	virtual void		Get_Tangents(int i,float * set_in,float * set_out);
+	virtual void Set_Tangents(int i, float in_tan, float out_tan);
+	virtual void Get_Tangents(int i, float* set_in, float* set_out);
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
 
 protected:
-
 	class TangentsClass
 	{
 	public:
-		float			InTangent;
-		float			OutTangent;
-		bool				operator == (const TangentsClass & that) { return ((InTangent == that.InTangent) && (OutTangent == that.OutTangent)); }
-		bool				operator != (const TangentsClass & that) { return !TangentsClass::operator == (that); }
+		float InTangent;
+		float OutTangent;
+		bool operator==(const TangentsClass& that) { return ((InTangent == that.InTangent) && (OutTangent == that.OutTangent)); }
+		bool operator!=(const TangentsClass& that) { return !TangentsClass::operator==(that); }
 	};
 
-	virtual void		Update_Tangents() { TangentsDirty = false; }
+	virtual void Update_Tangents() { TangentsDirty = false; }
 
-	bool											TangentsDirty;
-	DynamicVectorClass<TangentsClass>	Tangents;
+	bool TangentsDirty;
+	DynamicVectorClass<TangentsClass> Tangents;
 };

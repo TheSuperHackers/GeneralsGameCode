@@ -47,7 +47,7 @@ public:
 	OptionPreferences();
 	virtual ~OptionPreferences() override;
 
-	enum AntiAliasingMode CPP_11(: Int)
+	enum AntiAliasingMode CPP_11( : Int)
 	{
 		AntiAliasingMode_OFF = 0,
 		AntiAliasingMode_MSAA_2X,
@@ -103,7 +103,7 @@ public:
 	Int getIdealStaticGameDetail();
 	Real getGammaValue();
 	Int getTextureReduction();
-	void getResolution(Int *xres, Int *yres);
+	void getResolution(Int* xres, Int* yres);
 	Bool get3DShadowsEnabled();
 	Bool get2DShadowsEnabled();
 	Bool getCloudShadowsEnabled();

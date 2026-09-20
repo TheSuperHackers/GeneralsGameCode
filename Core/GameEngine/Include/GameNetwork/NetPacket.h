@@ -50,38 +50,38 @@ public:
 	void init();
 	void reset();
 	void setAddress(Int addr, Int port);
-	Bool addCommand(NetCommandRef *msg);
+	Bool addCommand(NetCommandRef* msg);
 	Int getNumCommands();
 
-	NetCommandList *getCommandList();
+	NetCommandList* getCommandList();
 
-	static NetCommandRef *ConstructNetCommandMsgFromRawData(const UnsignedByte *data, UnsignedInt dataLength);
-	static NetCommandList *ConstructBigCommandList(NetCommandRef *ref);
+	static NetCommandRef* ConstructNetCommandMsgFromRawData(const UnsignedByte* data, UnsignedInt dataLength);
+	static NetCommandList* ConstructBigCommandList(NetCommandRef* ref);
 
-	UnsignedByte *getData();
+	UnsignedByte* getData();
 	Int getLength();
 	UnsignedInt getAddr();
 	UnsignedShort getPort();
 
 protected:
-	Bool isAckRepeat(NetCommandRef *msg);
-	Bool isAckBothRepeat(NetCommandRef *msg);
-	Bool isAckStage1Repeat(NetCommandRef *msg);
-	Bool isAckStage2Repeat(NetCommandRef *msg);
-	Bool isFrameRepeat(NetCommandRef *msg);
+	Bool isAckRepeat(NetCommandRef* msg);
+	Bool isAckBothRepeat(NetCommandRef* msg);
+	Bool isAckStage1Repeat(NetCommandRef* msg);
+	Bool isAckStage2Repeat(NetCommandRef* msg);
+	Bool isFrameRepeat(NetCommandRef* msg);
 
-	static void dumpPacketToLog(const UnsignedByte *packet, Int packetLen);
+	static void dumpPacketToLog(const UnsignedByte* packet, Int packetLen);
 
 protected:
-	UnsignedByte		m_packet[MAX_PACKET_SIZE];
-	Int							m_packetLen;
-	UnsignedInt			m_addr;
-	Int							m_numCommands;
-	NetCommandRef*	m_lastCommand;
-	UnsignedInt			m_lastFrame;
-	UnsignedShort		m_port;
-	UnsignedShort		m_lastCommandID;
-	UnsignedByte		m_lastPlayerID;
-	UnsignedByte		m_lastCommandType;
-	UnsignedByte		m_lastRelay;
+	UnsignedByte m_packet[MAX_PACKET_SIZE];
+	Int m_packetLen;
+	UnsignedInt m_addr;
+	Int m_numCommands;
+	NetCommandRef* m_lastCommand;
+	UnsignedInt m_lastFrame;
+	UnsignedShort m_port;
+	UnsignedShort m_lastCommandID;
+	UnsignedByte m_lastPlayerID;
+	UnsignedByte m_lastCommandType;
+	UnsignedByte m_lastRelay;
 };

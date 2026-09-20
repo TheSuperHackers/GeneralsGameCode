@@ -27,7 +27,7 @@
 // Desc:
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Player.h"
@@ -35,25 +35,22 @@
 
 RankInfoStore* TheRankInfoStore = nullptr;
 
-
 //-----------------------------------------------------------------------------
 RankInfo::~RankInfo()
 {
 }
 
-
 //-----------------------------------------------------------------------------
 RankInfoStore::~RankInfoStore()
 {
 	Int level;
-	for (level =0; level < getRankLevelCount(); level++)
+	for (level = 0; level < getRankLevelCount(); level++)
 	{
 		RankInfo* ri = m_rankInfos[level];
 		deleteInstance(ri);
 	}
 	m_rankInfos.clear();
 }
-
 
 //-----------------------------------------------------------------------------
 void RankInfoStore::init()
@@ -66,7 +63,7 @@ void RankInfoStore::init()
 void RankInfoStore::reset()
 {
 	// nope.
-	//m_rankInfos.clear();
+	// m_rankInfos.clear();
 
 	for (RankInfoVec::iterator it = m_rankInfos.begin(); it != m_rankInfos.end(); /*++it*/)
 	{
@@ -99,7 +96,7 @@ const RankInfo* RankInfoStore::getRankInfo(Int level) const
 {
 	if (level >= 1 && level <= getRankLevelCount())
 	{
-		const RankInfo* ri = m_rankInfos[level-1];
+		const RankInfo* ri = m_rankInfos[level - 1];
 		if (ri)
 		{
 			return (const RankInfo*)ri->getFinalOverride();
@@ -109,18 +106,17 @@ const RankInfo* RankInfoStore::getRankInfo(Int level) const
 }
 
 //-----------------------------------------------------------------------------
-void RankInfoStore::friend_parseRankDefinition( INI* ini )
+void RankInfoStore::friend_parseRankDefinition(INI* ini)
 {
 	if (TheRankInfoStore)
 	{
 		Int rank = INI::scanInt(ini->getNextToken());
 
-		static const FieldParse myFieldParse[] =
-		{
-			{ "RankName", INI::parseAndTranslateLabel, nullptr, offsetof( RankInfo, m_rankName ) },
-			{ "SkillPointsNeeded", INI::parseInt, nullptr, offsetof( RankInfo, m_skillPointsNeeded ) },
-			{ "SciencesGranted", INI::parseScienceVector, nullptr, offsetof( RankInfo, m_sciencesGranted ) },
-			{ "SciencePurchasePointsGranted", INI::parseUnsignedInt, nullptr, offsetof( RankInfo, m_sciencePurchasePointsGranted ) },
+		static const FieldParse myFieldParse[] = {
+			{ "RankName", INI::parseAndTranslateLabel, nullptr, offsetof(RankInfo, m_rankName) },
+			{ "SkillPointsNeeded", INI::parseInt, nullptr, offsetof(RankInfo, m_skillPointsNeeded) },
+			{ "SciencesGranted", INI::parseScienceVector, nullptr, offsetof(RankInfo, m_sciencesGranted) },
+			{ "SciencePurchasePointsGranted", INI::parseUnsignedInt, nullptr, offsetof(RankInfo, m_sciencePurchasePointsGranted) },
 			{ nullptr, nullptr, nullptr, 0 }
 		};
 
@@ -133,7 +129,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 				throw INI_INVALID_DATA;
 			}
 
-			RankInfo* info = TheRankInfoStore->m_rankInfos[rank-1];
+			RankInfo* info = TheRankInfoStore->m_rankInfos[rank - 1];
 			if (!info)
 			{
 				DEBUG_CRASH(("Rank not found in map.ini"));
@@ -147,11 +143,10 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 
 			*newInfo = *info;
 			info->setNextOverride(newInfo);
-			newInfo->markAsOverride();	// must do AFTER the copy
+			newInfo->markAsOverride();    // must do AFTER the copy
 
 			ini->initFromINI(newInfo, myFieldParse);
-			//TheRankInfoStore->m_rankInfos.push_back(newInfo);	// NO, BAD, WRONG -- don't add in this case.
-
+			// TheRankInfoStore->m_rankInfos.push_back(newInfo);	// NO, BAD, WRONG -- don't add in this case.
 		}
 		else
 		{
@@ -168,8 +163,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 }
 
 //-----------------------------------------------------------------------------
-void INI::parseRankDefinition( INI* ini )
+void INI::parseRankDefinition(INI* ini)
 {
 	RankInfoStore::friend_parseRankDefinition(ini);
 }
-

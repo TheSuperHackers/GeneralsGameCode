@@ -39,7 +39,7 @@
 class SupplyCenterDockUpdateModuleData : public DockUpdateModuleData
 {
 public:
-  SupplyCenterDockUpdateModuleData();
+	SupplyCenterDockUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	UnsignedInt m_grantTemporaryStealthFrames;
@@ -49,20 +49,16 @@ public:
 // ------------------------------------------------------------------------------------------------
 class SupplyCenterDockUpdate : public DockUpdate
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyCenterDockUpdate, "SupplyCenterDockUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SupplyCenterDockUpdate, SupplyCenterDockUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyCenterDockUpdate, "SupplyCenterDockUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SupplyCenterDockUpdate, SupplyCenterDockUpdateModuleData)
 
 public:
-
-	SupplyCenterDockUpdate( Thing *thing, const ModuleData* moduleData );
+	SupplyCenterDockUpdate(Thing* thing, const ModuleData* moduleData);
 
 	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
-	virtual Bool action( Object* docker, Object *drone = nullptr ) override;	///<For me, this means taking boxes and turning them into money for my ownerplayer
+	virtual Bool action(Object* docker, Object* drone = nullptr) override;    ///< For me, this means taking boxes and turning them into money for my ownerplayer
 
 	virtual UpdateSleepTime update() override;
 
 protected:
-
-
 };

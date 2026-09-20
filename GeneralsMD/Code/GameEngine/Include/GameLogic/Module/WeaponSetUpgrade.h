@@ -40,17 +40,14 @@ class Thing;
 //-------------------------------------------------------------------------------------------------
 class WeaponSetUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WeaponSetUpgrade, "WeaponSetUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( WeaponSetUpgrade );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(WeaponSetUpgrade, "WeaponSetUpgrade")
+	MAKE_STANDARD_MODULE_MACRO(WeaponSetUpgrade);
 
 public:
-
-	WeaponSetUpgrade( Thing *thing, const ModuleData* moduleData );
+	WeaponSetUpgrade(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() override;    ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
 };

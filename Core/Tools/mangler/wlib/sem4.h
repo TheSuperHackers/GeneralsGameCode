@@ -29,8 +29,8 @@
 #include <semaphore.h>
 #else
 #include <windows.h>
-#endif // _WIN32
-#endif // _REENTRANT
+#endif    // _WIN32
+#endif    // _REENTRANT
 
 // Windows headers have a tendency to redefine IN
 #ifdef IN
@@ -40,22 +40,22 @@
 
 class Sem4
 {
- private:
-  #ifdef _REENTRANT
+private:
+#ifdef _REENTRANT
 #ifndef _WIN32
-  sem_t sem;
+	sem_t sem;
 #else
-  HANDLE sem;
+	HANDLE sem;
 #endif
-  #endif
- public:
-               Sem4();
-               Sem4(uint32 value);
-              ~Sem4();
+#endif
+public:
+	Sem4();
+	Sem4(uint32 value);
+	~Sem4();
 
-  sint32       Wait() const;
-  sint32       TryWait() const;
-  sint32       Post() const;
-  sint32       GetValue(int *sval) const;
-  sint32       Destroy();
+	sint32 Wait() const;
+	sint32 TryWait() const;
+	sint32 Post() const;
+	sint32 GetValue(int* sval) const;
+	sint32 Destroy();
 };

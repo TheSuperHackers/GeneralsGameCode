@@ -28,26 +28,24 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/PreorderCreate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PreorderCreate::PreorderCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+PreorderCreate::PreorderCreate(Thing* thing, const ModuleData* moduleData)
+  : CreateModule(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 PreorderCreate::~PreorderCreate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -60,41 +58,37 @@ void PreorderCreate::onBuildComplete()
 {
 	if (getObject()->getControllingPlayer()->didPlayerPreorder())
 	{
-		getObject()->setModelConditionState( MODELCONDITION_PREORDER );
+		getObject()->setModelConditionState(MODELCONDITION_PREORDER);
 	}
 	else
 	{
-		getObject()->clearModelConditionState( MODELCONDITION_PREORDER );
+		getObject()->clearModelConditionState(MODELCONDITION_PREORDER);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void PreorderCreate::crc( Xfer *xfer )
+void PreorderCreate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
-
+	CreateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void PreorderCreate::xfer( Xfer *xfer )
+void PreorderCreate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
-
+	CreateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -102,8 +96,6 @@ void PreorderCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void PreorderCreate::loadPostProcess()
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
-
 }

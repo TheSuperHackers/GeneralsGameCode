@@ -44,46 +44,41 @@ class SceneClass;
 class CameraClass;
 
 class LayerClass;
-typedef Node<LayerClass *> LayerNodeClass;
+typedef Node<LayerClass*> LayerNodeClass;
 
 class LayerClass : public LayerNodeClass
 {
-
 public:
-
 	LayerClass();
-	LayerClass(SceneClass * s,CameraClass * c,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
-	LayerClass(const LayerClass & src);
+	LayerClass(SceneClass* s, CameraClass* c, bool clear = false, bool clearz = false, const Vector3& color = Vector3(0, 0, 0));
+	LayerClass(const LayerClass& src);
 	virtual ~LayerClass() override;
-
 
 	/*
 	** The following functions will handle the references of the Scene and Camera
 	** objects properly.
 	*/
-	void						Set_Scene(SceneClass * scene);
-	SceneClass *			Get_Scene() const;
-	SceneClass *			Peek_Scene() const;
-	void						Set_Camera(CameraClass * cam);
-	CameraClass *			Get_Camera() const;
-	CameraClass *			Peek_Camera() const;
-
+	void Set_Scene(SceneClass* scene);
+	SceneClass* Get_Scene() const;
+	SceneClass* Peek_Scene() const;
+	void Set_Camera(CameraClass* cam);
+	CameraClass* Get_Camera() const;
+	CameraClass* Peek_Camera() const;
 
 	// [SKB: Aug 14 2001 @ 1:53pm] :
 	// Add a method to copy one layer to another - I would like to create an assignment
 	// operator but it could break old code.
-	void						Set(const LayerClass & layer);
+	void Set(const LayerClass& layer);
 
 	/*
 	** LayerClass members are public since this is a "lightweight" class
 	*/
-	bool						Clear;
-	bool						ClearZ;
-	Vector3					ClearColor;
+	bool Clear;
+	bool ClearZ;
+	Vector3 ClearColor;
 
-	SceneClass *			Scene;
-	CameraClass *			Camera;
-
+	SceneClass* Scene;
+	CameraClass* Camera;
 };
 
-typedef List<LayerClass *> LayerListClass;
+typedef List<LayerClass*> LayerListClass;

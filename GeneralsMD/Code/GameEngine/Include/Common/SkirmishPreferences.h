@@ -49,15 +49,15 @@ public:
 	virtual Bool write() override;
 	AsciiString getSlotList();
 	void setSlotList();
-	UnicodeString getUserName();		// convenience function
-	Int getPreferredFaction();			// convenience function
-	Int getPreferredColor();				// convenience function
-	AsciiString getPreferredMap();	// convenience function
-	Bool usesSystemMapDir();		// convenience function
+	UnicodeString getUserName();    // convenience function
+	Int getPreferredFaction();    // convenience function
+	Int getPreferredColor();    // convenience function
+	AsciiString getPreferredMap();    // convenience function
+	Bool usesSystemMapDir();    // convenience function
 
-  Bool getSuperweaponRestricted() const;
-  void setSuperweaponRestricted( Bool superweaponRestricted);
+	Bool getSuperweaponRestricted() const;
+	void setSuperweaponRestricted(Bool superweaponRestricted);
 
-  Money getStartingCash() const;
-  void setStartingCash( const Money &startingCash );
+	Money getStartingCash() const;
+	void setStartingCash(const Money& startingCash);
 };

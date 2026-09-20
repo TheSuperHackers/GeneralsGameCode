@@ -35,7 +35,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum ScaffoldTargetMotion CPP_11(: Int)
+enum ScaffoldTargetMotion CPP_11( : Int)
 {
 	STM_STILL,
 	STM_RISE,
@@ -48,32 +48,27 @@ enum ScaffoldTargetMotion CPP_11(: Int)
 // ------------------------------------------------------------------------------------------------
 class BridgeScaffoldBehaviorInterface
 {
-
 public:
-
-	virtual void setPositions( const Coord3D *createPos,
-														 const Coord3D *riseToPos,
-														 const Coord3D *buildPos ) = 0;
-	virtual void setMotion( ScaffoldTargetMotion targetMotion ) = 0;
+	virtual void setPositions(const Coord3D* createPos,
+	                          const Coord3D* riseToPos,
+	                          const Coord3D* buildPos) = 0;
+	virtual void setMotion(ScaffoldTargetMotion targetMotion) = 0;
 	virtual ScaffoldTargetMotion getCurrentMotion() = 0;
 	virtual void reverseMotion() = 0;
-	virtual void setLateralSpeed( Real lateralSpeed ) = 0;
-	virtual void setVerticalSpeed( Real verticalSpeed ) = 0;
-
+	virtual void setLateralSpeed(Real lateralSpeed) = 0;
+	virtual void setVerticalSpeed(Real verticalSpeed) = 0;
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class BridgeScaffoldBehavior : public UpdateModule,
-															 public BridgeScaffoldBehaviorInterface
+                               public BridgeScaffoldBehaviorInterface
 {
-
-	MAKE_STANDARD_MODULE_MACRO( BridgeScaffoldBehavior );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BridgeScaffoldBehavior, "BridgeScaffoldBehavior" )
+	MAKE_STANDARD_MODULE_MACRO(BridgeScaffoldBehavior);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BridgeScaffoldBehavior, "BridgeScaffoldBehavior")
 
 public:
-
-	BridgeScaffoldBehavior( Thing *thing, const ModuleData* moduleData );
+	BridgeScaffoldBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// behavior module methods
@@ -83,29 +78,27 @@ public:
 	virtual UpdateSleepTime update() override;
 
 	// bridge scaffold interface methods
-	virtual void setPositions( const Coord3D *createPos,
-														 const Coord3D *riseToPos,
-														 const Coord3D *buildPos ) override;
-	virtual void setMotion( ScaffoldTargetMotion targetMotion ) override;
+	virtual void setPositions(const Coord3D* createPos,
+	                          const Coord3D* riseToPos,
+	                          const Coord3D* buildPos) override;
+	virtual void setMotion(ScaffoldTargetMotion targetMotion) override;
 	virtual ScaffoldTargetMotion getCurrentMotion() override { return m_targetMotion; }
 	virtual void reverseMotion() override;
-	virtual void setLateralSpeed( Real lateralSpeed ) override { m_lateralSpeed = lateralSpeed; }
-	virtual void setVerticalSpeed( Real verticalSpeed ) override { m_verticalSpeed = verticalSpeed; }
+	virtual void setLateralSpeed(Real lateralSpeed) override { m_lateralSpeed = lateralSpeed; }
+	virtual void setVerticalSpeed(Real verticalSpeed) override { m_verticalSpeed = verticalSpeed; }
 
 	// public interface acquisition
-	static BridgeScaffoldBehaviorInterface *getBridgeScaffoldBehaviorInterfaceFromObject( Object *obj );
+	static BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterfaceFromObject(Object* obj);
 
 protected:
+	void doVerticalMotion();    ///< do rise/sink vertical motion
+	void doLateralmotion();    ///< do lateral motion
 
-	void doVerticalMotion();				///< do rise/sink vertical motion
-	void doLateralmotion();					///< do lateral motion
-
-	ScaffoldTargetMotion m_targetMotion;	///< which way our motion should be going (build up, still, tear down etc)
-	Coord3D m_createPos;									///< initial position of object creation (in ground)
-	Coord3D m_riseToPos;									///< position we "rise to" out of the ground
-	Coord3D m_buildPos;										///< position we move to and stop at on the bridge surface
-	Real m_lateralSpeed;									///< speed for lateral motions
-	Real m_verticalSpeed;									///< speed for vertical motions
-	Coord3D m_targetPos;									///< current target position for our motion type
-
+	ScaffoldTargetMotion m_targetMotion;    ///< which way our motion should be going (build up, still, tear down etc)
+	Coord3D m_createPos;    ///< initial position of object creation (in ground)
+	Coord3D m_riseToPos;    ///< position we "rise to" out of the ground
+	Coord3D m_buildPos;    ///< position we move to and stop at on the bridge surface
+	Real m_lateralSpeed;    ///< speed for lateral motions
+	Real m_verticalSpeed;    ///< speed for vertical motions
+	Coord3D m_targetPos;    ///< current target position for our motion type
 };

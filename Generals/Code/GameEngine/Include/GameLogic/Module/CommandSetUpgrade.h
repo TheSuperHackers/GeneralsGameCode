@@ -48,17 +48,14 @@ public:
 //-----------------------------------------------------------------------------
 class CommandSetUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CommandSetUpgrade, "CommandSetUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CommandSetUpgrade, CommandSetUpgradeModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CommandSetUpgrade, "CommandSetUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CommandSetUpgrade, CommandSetUpgradeModuleData);
 
 public:
-
-	CommandSetUpgrade( Thing *thing, const ModuleData* moduleData );
+	CommandSetUpgrade(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() override;    ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
 };

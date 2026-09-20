@@ -23,22 +23,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /******************************************************************************
-*
-* NAME
-*     $Archive:  $
-*
-* DESCRIPTION
-*     Web Browser
-*
-* PROGRAMMER
-*     Bryan Cleveland
-*     $Author:  $
-*
-* VERSION INFO
-*     $Revision:  $
-*     $Modtime:  $
-*
-******************************************************************************/
+ *
+ * NAME
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *     Web Browser
+ *
+ * PROGRAMMER
+ *     Bryan Cleveland
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Revision:  $
+ *     $Modtime:  $
+ *
+ ******************************************************************************/
 
 #pragma once
 
@@ -54,71 +54,66 @@ class GameWindow;
 
 class WebBrowserURL : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WebBrowserURL, "WebBrowserURL" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(WebBrowserURL, "WebBrowserURL")
 
 public:
-
 	WebBrowserURL();
 	// virtual destructor prototype defined by memory pool object
 
-	const FieldParse *getFieldParse() const { return m_URLFieldParseTable; }
+	const FieldParse* getFieldParse() const { return m_URLFieldParseTable; }
 
 	AsciiString m_tag;
 	AsciiString m_url;
 
-	WebBrowserURL *m_next;
+	WebBrowserURL* m_next;
 
-	static const FieldParse m_URLFieldParseTable[];		///< the parse table for INI definition
-
+	static const FieldParse m_URLFieldParseTable[];    ///< the parse table for INI definition
 };
 
+class WebBrowser : public FEBDispatch<WebBrowser, IBrowserDispatch, &IID_IBrowserDispatch>,
+                   public SubsystemInterface
+{
+public:
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
+	// Create an instance of the embedded browser for Dune Emperor.
+	virtual Bool createBrowserWindow(const char* tag, GameWindow* win) = 0;
+	virtual void closeBrowserWindow(GameWindow* win) = 0;
 
-class WebBrowser :
-		public FEBDispatch<WebBrowser, IBrowserDispatch, &IID_IBrowserDispatch>,
-		public SubsystemInterface
-	{
-	public:
-		virtual void init() override;
-		virtual void reset() override;
-		virtual void update() override;
+	WebBrowserURL* makeNewURL(AsciiString tag);
+	WebBrowserURL* findURL(AsciiString tag);
 
-		// Create an instance of the embedded browser for Dune Emperor.
-		virtual Bool createBrowserWindow(const char *tag, GameWindow *win) = 0;
-		virtual void closeBrowserWindow(GameWindow *win) = 0;
+protected:
+	// Protected to prevent direct construction via new, use CreateInstance() instead.
+	WebBrowser();
+	virtual ~WebBrowser() override;
 
-		WebBrowserURL *makeNewURL(AsciiString tag);
-		WebBrowserURL *findURL(AsciiString tag);
+	// Protected to prevent copy and assignment
+	WebBrowser(const WebBrowser&);
+	const WebBrowser& operator=(const WebBrowser&);
 
-	protected:
-		// Protected to prevent direct construction via new, use CreateInstance() instead.
-		WebBrowser();
-		virtual ~WebBrowser() override;
+	//		Bool RetrievePageURL(const char* page, char* url, int size);
+	//		Bool RetrieveHTMLPath(char* path, int size);
 
-		// Protected to prevent copy and assignment
-		WebBrowser(const WebBrowser&);
-		const WebBrowser& operator=(const WebBrowser&);
-
-//		Bool RetrievePageURL(const char* page, char* url, int size);
-//		Bool RetrieveHTMLPath(char* path, int size);
-
-	protected:
-		ULONG mRefCount;
-		WebBrowserURL *m_urlList;
+protected:
+	ULONG mRefCount;
+	WebBrowserURL* m_urlList;
 
 	//---------------------------------------------------------------------------
 	// IUnknown methods
 	//---------------------------------------------------------------------------
-	protected:
-		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject) IUNKNOWN_NOEXCEPT override;
-		ULONG STDMETHODCALLTYPE AddRef() IUNKNOWN_NOEXCEPT override;
-		ULONG STDMETHODCALLTYPE Release() IUNKNOWN_NOEXCEPT override;
+protected:
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject) IUNKNOWN_NOEXCEPT override;
+	ULONG STDMETHODCALLTYPE AddRef() IUNKNOWN_NOEXCEPT override;
+	ULONG STDMETHODCALLTYPE Release() IUNKNOWN_NOEXCEPT override;
 
 	//---------------------------------------------------------------------------
 	// IBrowserDispatch methods
 	//---------------------------------------------------------------------------
-	public:
-		STDMETHOD(TestMethod)(Int num1);
-	};
+public:
+	STDMETHOD(TestMethod)(Int num1);
+};
 
-extern CComObject<WebBrowser> *TheWebBrowser;
+extern CComObject<WebBrowser>* TheWebBrowser;

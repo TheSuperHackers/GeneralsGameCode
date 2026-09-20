@@ -56,98 +56,98 @@ class Vector3;
 class SurfaceClass : public RefCountClass
 {
 	W3DMPO_CODE(SurfaceClass)
-	public:
-		typedef void *LockedSurfacePtr;
+public:
+	typedef void* LockedSurfacePtr;
 
-		struct SurfaceDescription {
-			WW3DFormat		Format;	// Surface format
-			unsigned int	Width;	// Surface width in pixels
-			unsigned int	Height;	// Surface height in pixels
-		};
+	struct SurfaceDescription
+	{
+		WW3DFormat Format;    // Surface format
+		unsigned int Width;    // Surface width in pixels
+		unsigned int Height;    // Surface height in pixels
+	};
 
-		// Create surface with desired height, width and format.
-		SurfaceClass(unsigned width, unsigned height, WW3DFormat format);
+	// Create surface with desired height, width and format.
+	SurfaceClass(unsigned width, unsigned height, WW3DFormat format);
 
-		// Create surface from a file.
-		SurfaceClass(const char *filename);
+	// Create surface from a file.
+	SurfaceClass(const char* filename);
 
-		// Create the surface from a D3D pointer
-		SurfaceClass(IDirect3DSurface8 *d3d_surface);
+	// Create the surface from a D3D pointer
+	SurfaceClass(IDirect3DSurface8* d3d_surface);
 
-		virtual ~SurfaceClass() override;
+	virtual ~SurfaceClass() override;
 
-		// Get surface description
-		void Get_Description(SurfaceDescription &surface_desc);
+	// Get surface description
+	void Get_Description(SurfaceDescription& surface_desc);
 
-		// Get the bytes per pixel count
-		unsigned int Get_Bytes_Per_Pixel();
+	// Get the bytes per pixel count
+	unsigned int Get_Bytes_Per_Pixel();
 
-		// Lock / unlock the surface
-		LockedSurfacePtr Lock(int *pitch);
-		LockedSurfacePtr Lock(int *pitch, const Vector2i &min, const Vector2i &max);
-		void Unlock();
+	// Lock / unlock the surface
+	LockedSurfacePtr Lock(int* pitch);
+	LockedSurfacePtr Lock(int* pitch, const Vector2i& min, const Vector2i& max);
+	void Unlock();
 
-		// HY -- The following functions are support functions for font3d
-		// zaps the surface memory to zero
-		void Clear();
+	// HY -- The following functions are support functions for font3d
+	// zaps the surface memory to zero
+	void Clear();
 
-		// copies the contents of one surface to another
-		void Copy(
-			unsigned int dstx, unsigned int dsty,
-			unsigned int srcx, unsigned int srcy,
-			unsigned int width, unsigned int height,
-			const SurfaceClass *other);
+	// copies the contents of one surface to another
+	void Copy(
+	  unsigned int dstx, unsigned int dsty,
+	  unsigned int srcx, unsigned int srcy,
+	  unsigned int width, unsigned int height,
+	  const SurfaceClass* other);
 
-		// support for copying from a byte array
-		void Copy(const unsigned char *other);
+	// support for copying from a byte array
+	void Copy(const unsigned char* other);
 
-		// support for copying from a byte array
-		void Copy(const Vector2i &min, const Vector2i &max, const unsigned char *other);
+	// support for copying from a byte array
+	void Copy(const Vector2i& min, const Vector2i& max, const unsigned char* other);
 
-		// copies the contents of one surface to another, stretches
-		void Stretch_Copy(
-			unsigned int dstx, unsigned int dsty, unsigned int dstwidth, unsigned int dstheight,
-			unsigned int srcx, unsigned int srcy, unsigned int srcwidth, unsigned int srcheight,
-			const SurfaceClass *source);
+	// copies the contents of one surface to another, stretches
+	void Stretch_Copy(
+	  unsigned int dstx, unsigned int dsty, unsigned int dstwidth, unsigned int dstheight,
+	  unsigned int srcx, unsigned int srcy, unsigned int srcwidth, unsigned int srcheight,
+	  const SurfaceClass* source);
 
-		// finds the bounding box of non-zero pixels, used in font3d
-		void FindBB(Vector2i *min,Vector2i*max);
+	// finds the bounding box of non-zero pixels, used in font3d
+	void FindBB(Vector2i* min, Vector2i* max);
 
-		// tests a column to see if the alpha is nonzero, used in font3d
-		bool Is_Transparent_Column(unsigned int column);
+	// tests a column to see if the alpha is nonzero, used in font3d
+	bool Is_Transparent_Column(unsigned int column);
 
-		// makes a copy of the surface into a byte array
-		unsigned char *CreateCopy(int *width,int *height,int*size,bool flip=false);
+	// makes a copy of the surface into a byte array
+	unsigned char* CreateCopy(int* width, int* height, int* size, bool flip = false);
 
-			// For use by TextureClass:
-		IDirect3DSurface8 *Peek_D3D_Surface() { return D3DSurface; }
+	// For use by TextureClass:
+	IDirect3DSurface8* Peek_D3D_Surface() { return D3DSurface; }
 
-		// Attaching and detaching a surface pointer
-		void	Attach (IDirect3DSurface8 *surface);
-		void	Detach ();
+	// Attaching and detaching a surface pointer
+	void Attach(IDirect3DSurface8* surface);
+	void Detach();
 
-		// draws a horizontal line
-		void Draw_H_Line(const unsigned int y, const unsigned int x1, const unsigned int x2,
-			unsigned int color, unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
+	// draws a horizontal line
+	void Draw_H_Line(const unsigned int y, const unsigned int x1, const unsigned int x2,
+	                 unsigned int color, unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
 
-		// draws a pixel
-		void Draw_Pixel(const unsigned int x, const unsigned int y, unsigned int color,
-			unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
+	// draws a pixel
+	void Draw_Pixel(const unsigned int x, const unsigned int y, unsigned int color,
+	                unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
 
-		// get pixel function
-		void Get_Pixel(Vector3 &rgb, int x, int y, LockedSurfacePtr pBits, int pitch);
+	// get pixel function
+	void Get_Pixel(Vector3& rgb, int x, int y, LockedSurfacePtr pBits, int pitch);
 
-		void Hue_Shift(const Vector3 &hsv_shift);
+	void Hue_Shift(const Vector3& hsv_shift);
 
-		bool Is_Monochrome();
+	bool Is_Monochrome();
 
-		WW3DFormat Get_Surface_Format() const { return SurfaceFormat; }
+	WW3DFormat Get_Surface_Format() const { return SurfaceFormat; }
 
-	private:
+private:
+	// Direct3D surface object
+	IDirect3DSurface8* D3DSurface;
 
-		// Direct3D surface object
-		IDirect3DSurface8 *D3DSurface;
-
-		WW3DFormat SurfaceFormat;
+	WW3DFormat SurfaceFormat;
 	friend class TextureClass;
 };

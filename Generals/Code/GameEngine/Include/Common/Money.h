@@ -52,16 +52,15 @@ class AudioEventRTS;
 
 // ----------------------------------------------------------------------------------------------
 /**
-	How much "money" (Tiberium, Gems, Magic Resource Boxes, whatever) the Player has.
-	This is currently a Very Simple Class but is encapsulated
-	in anticipation of future expansion.
+  How much "money" (Tiberium, Gems, Magic Resource Boxes, whatever) the Player has.
+  This is currently a Very Simple Class but is encapsulated
+  in anticipation of future expansion.
 */
 class Money : public Snapshot
 {
-
 public:
-
-	Money() : m_playerIndex(0)
+	Money()
+	  : m_playerIndex(0)
 	{
 		init();
 	}
@@ -86,28 +85,26 @@ public:
 
 	void setPlayerIndex(Int ndx) { m_playerIndex = ndx; }
 
-  static void parseMoneyAmount( INI *ini, void *instance, void *store, const void* userData );
+	static void parseMoneyAmount(INI* ini, void* instance, void* store, const void* userData);
 
-  // Does the amount of this == the amount of that (compare everything except m_playerIndex)
-  Bool amountEqual( const Money & that ) const
-  {
-    return m_money == that.m_money;
-  }
+	// Does the amount of this == the amount of that (compare everything except m_playerIndex)
+	Bool amountEqual(const Money& that) const
+	{
+		return m_money == that.m_money;
+	}
 
 protected:
-
 	void triggerAudioEvent(const AudioEventRTS& audioEvent);
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 private:
-
-	UnsignedInt m_money;	///< amount of money
-	Int m_playerIndex;	///< what is my player index?
-	UnsignedInt m_incomeBuckets[60];	///< circular buffer of 60 seconds for income tracking
+	UnsignedInt m_money;    ///< amount of money
+	Int m_playerIndex;    ///< what is my player index?
+	UnsignedInt m_incomeBuckets[60];    ///< circular buffer of 60 seconds for income tracking
 	UnsignedInt m_currentBucket;
 	UnsignedInt m_cashPerMinute;
 };

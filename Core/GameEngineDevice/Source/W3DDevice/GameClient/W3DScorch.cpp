@@ -81,9 +81,13 @@ void W3DScorch::addScorch(Vector3 location, Real radius, Scorches type)
 	scorch.location = location;
 	scorch.radius = radius;
 	if (type >= 0 && (Int)type < SCORCH_MARKS_IN_TEXTURE)
+	{
 		scorch.scorchType = type;
+	}
 	else
+	{
 		scorch.scorchType = SCORCH_1;
+	}
 
 	if (m_deduplicateScorches && isDuplicate(scorch))
 	{
@@ -171,8 +175,8 @@ void W3DScorch::updateScorches(WorldHeightMap& map)
 }
 
 W3DScorch::WriteScorchResult W3DScorch::writeScorchToBuffer(const TScorch& scorch, WorldHeightMap& map,
-                                                          UnsignedInt diffuse, VertexFormatXYZDUV1* curVb,
-                                                          UnsignedShort* curIb)
+                                                            UnsignedInt diffuse, VertexFormatXYZDUV1* curVb,
+                                                            UnsignedShort* curIb)
 {
 	Real radius = scorch.radius;
 	Vector3 loc = scorch.location;
@@ -182,9 +186,13 @@ W3DScorch::WriteScorchResult W3DScorch::writeScorchToBuffer(const TScorch& scorc
 	Int minX = REAL_TO_INT_FLOOR((loc.X - radius) / MAP_XY_FACTOR);
 	Int minY = REAL_TO_INT_FLOOR((loc.Y - radius) / MAP_XY_FACTOR);
 	if (minX < -map.getBorderSizeInline())
+	{
 		minX = -map.getBorderSizeInline();
+	}
 	if (minY < -map.getBorderSizeInline())
+	{
 		minY = -map.getBorderSizeInline();
+	}
 	Int maxX = REAL_TO_INT_CEIL((loc.X + radius) / MAP_XY_FACTOR);
 	Int maxY = REAL_TO_INT_CEIL((loc.Y + radius) / MAP_XY_FACTOR);
 	maxX++;

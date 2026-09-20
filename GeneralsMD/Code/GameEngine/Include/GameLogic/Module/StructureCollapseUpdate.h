@@ -41,9 +41,8 @@ class ObjectCreationList;
 typedef std::vector<const ObjectCreationList*> OCLVec;
 typedef std::vector<const FXList*> FXVec;
 
-
 //-------------------------------------------------------------------------------------------------
-enum StructureCollapsePhaseType CPP_11(: Int)
+enum StructureCollapsePhaseType CPP_11( : Int)
 {
 	SCPHASE_INITIAL = 0,
 	SCPHASE_DELAY,
@@ -57,18 +56,18 @@ enum StructureCollapsePhaseType CPP_11(: Int)
 class StructureCollapseUpdateModuleData : public UpdateModuleData
 {
 public:
-	DieMuxData				m_dieMuxData;
-	Int								m_minCollapseDelay;
-	Int								m_maxCollapseDelay;
-	Int								m_minBurstDelay;
-	Int								m_maxBurstDelay;
-	Int								m_bigBurstFrequency;
-	Real							m_collapseDamping;
-	Real							m_maxShudder;
-	OCLVec						m_ocls[SC_PHASE_COUNT];
-	FXVec							m_fxs[SC_PHASE_COUNT];
-	UnsignedInt				m_oclCount[SC_PHASE_COUNT];
-	UnsignedInt				m_fxCount[SC_PHASE_COUNT];
+	DieMuxData m_dieMuxData;
+	Int m_minCollapseDelay;
+	Int m_maxCollapseDelay;
+	Int m_minBurstDelay;
+	Int m_maxBurstDelay;
+	Int m_bigBurstFrequency;
+	Real m_collapseDamping;
+	Real m_maxShudder;
+	OCLVec m_ocls[SC_PHASE_COUNT];
+	FXVec m_fxs[SC_PHASE_COUNT];
+	UnsignedInt m_oclCount[SC_PHASE_COUNT];
+	UnsignedInt m_fxCount[SC_PHASE_COUNT];
 
 	StructureCollapseUpdateModuleData()
 	{
@@ -88,22 +87,18 @@ public:
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p);
-
 };
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class StructureCollapseUpdate : public UpdateModule,
-																public DieModuleInterface
+                                public DieModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StructureCollapseUpdate, "StructureCollapseUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StructureCollapseUpdate, StructureCollapseUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StructureCollapseUpdate, "StructureCollapseUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(StructureCollapseUpdate, StructureCollapseUpdateModuleData)
 
 public:
-
-	StructureCollapseUpdate( Thing *thing, const ModuleData* moduleData );
+	StructureCollapseUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
@@ -115,18 +110,17 @@ public:
 	virtual UpdateSleepTime update() override;
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 protected:
-
 	void applyCrushingDamage(Real theta);
-	void beginStructureCollapse( const DamageInfo *damageInfo );
-	void doDamageLine(Object *building, const WeaponTemplate* wt, Real jcos, Real jsin, Real facingWidth, Real collapseAngle);
-	void doCollapseStartFX(Object *building, const DamageInfo *damageInfo);
+	void beginStructureCollapse(const DamageInfo* damageInfo);
+	void doDamageLine(Object* building, const WeaponTemplate* wt, Real jcos, Real jsin, Real facingWidth, Real collapseAngle);
+	void doCollapseStartFX(Object* building, const DamageInfo* damageInfo);
 	void doCollapseDelayBurstFX();
 	void doCollapseDoneStuff();
 
-	void doPhaseStuff(StructureCollapsePhaseType scphase, const Coord3D *target);
+	void doPhaseStuff(StructureCollapsePhaseType scphase, const Coord3D* target);
 
 	enum StructureCollapseStateType
 	{
@@ -136,10 +130,9 @@ protected:
 		COLLAPSESTATE_DONE
 	};
 
-	UnsignedInt									m_collapseFrame;
-	UnsignedInt									m_burstFrame;
-	StructureCollapseStateType	m_collapseState;
-	Real												m_collapseVelocity;
-	Real												m_currentHeight;
-
+	UnsignedInt m_collapseFrame;
+	UnsignedInt m_burstFrame;
+	StructureCollapseStateType m_collapseState;
+	Real m_collapseVelocity;
+	Real m_currentHeight;
 };

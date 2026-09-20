@@ -35,28 +35,24 @@
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CollideModule::crc( Xfer *xfer )
+void CollideModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
-
+	BehaviorModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void CollideModule::xfer( Xfer *xfer )
+void CollideModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// call base class
-	BehaviorModule::xfer( xfer );
-
+	BehaviorModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -64,8 +60,6 @@ void CollideModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void CollideModule::loadPostProcess()
 {
-
 	// call base class
 	BehaviorModule::loadPostProcess();
-
 }

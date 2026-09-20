@@ -29,32 +29,31 @@ struct IDirect3DVertexBuffer8;
 
 class W3DSnowManager : public SnowManager
 {
-  public :
-
+public:
 	W3DSnowManager();
 	virtual ~W3DSnowManager() override;
 
 	virtual void init() override;
 	virtual void reset() override;
-	virtual void update () override;
+	virtual void update() override;
 	virtual void updateIniSettings() override;
 
-	void	render(RenderInfoClass &rinfo);
-	void	renderAsQuads(RenderInfoClass &rinfo, Int cubeOriginX, Int cubeOriginY, Int cubeDimX, Int cubeDimY);
-	void	renderSubBox(RenderInfoClass &rinfo, Int originX, Int originY, Int cubeDimX, Int cubeDimY );
-	void	ReleaseResources();
-	Bool	ReAcquireResources();
+	void render(RenderInfoClass& rinfo);
+	void renderAsQuads(RenderInfoClass& rinfo, Int cubeOriginX, Int cubeOriginY, Int cubeDimX, Int cubeDimY);
+	void renderSubBox(RenderInfoClass& rinfo, Int originX, Int originY, Int cubeDimX, Int cubeDimY);
+	void ReleaseResources();
+	Bool ReAcquireResources();
 
- private:
-	DX8IndexBufferClass	*m_indexBuffer;
-	TextureClass *m_snowTexture;
-	IDirect3DVertexBuffer8*  m_VertexBufferD3D;
-	Int m_dwBase;	///<index to beginning of unused vertex buffer space.
-    Int m_dwFlush;	///<maximum amount of vertices to sumbit before rendering.
-	Int m_dwDiscard;	///<maximum index allowed before needing to discard the buffer.
-	Int m_leafDim;		///<horizontal dimensions of leaf nodes that are always rendered without visibility checks.
-	Real m_snowCeiling;	///<height at the top of the cube with camera at center.
-	Real m_heightTraveled;	///<height that snow flake traveled this frame.
-	Int m_totalRendered;	///<total number of snow particles rendered this frame - only for profiling.
-	Real m_cullOverscan;	///<how much extra padding to put on the sides of AABoxes when view culling.
+private:
+	DX8IndexBufferClass* m_indexBuffer;
+	TextureClass* m_snowTexture;
+	IDirect3DVertexBuffer8* m_VertexBufferD3D;
+	Int m_dwBase;    ///< index to beginning of unused vertex buffer space.
+	Int m_dwFlush;    ///< maximum amount of vertices to sumbit before rendering.
+	Int m_dwDiscard;    ///< maximum index allowed before needing to discard the buffer.
+	Int m_leafDim;    ///< horizontal dimensions of leaf nodes that are always rendered without visibility checks.
+	Real m_snowCeiling;    ///< height at the top of the cube with camera at center.
+	Real m_heightTraveled;    ///< height that snow flake traveled this frame.
+	Int m_totalRendered;    ///< total number of snow particles rendered this frame - only for profiling.
+	Real m_cullOverscan;    ///< how much extra padding to put on the sides of AABoxes when view culling.
 };

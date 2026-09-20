@@ -73,17 +73,17 @@ public:
 	void setDisallowAsianText(Bool val);
 
 	Bool getDisallowNonAsianText();
-	void setDisallowNonAsianText( Bool val );
+	void setDisallowNonAsianText(Bool val);
 
-  Bool getSuperweaponRestricted() const;
-  void setSuperweaponRestricted( Bool superweaponRestricted);
+	Bool getSuperweaponRestricted() const;
+	void setSuperweaponRestricted(Bool superweaponRestricted);
 
-  Money getStartingCash() const;
-  void setStartingCash( const Money &startingCash );
+	Money getStartingCash() const;
+	void setStartingCash(const Money& startingCash);
 
-  Bool getFactionsLimited() const; // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
-  void setFactionsLimited( Bool factionsLimited );
+	Bool getFactionsLimited() const;    // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
+	void setFactionsLimited(Bool factionsLimited);
 
-  Bool getUseStats() const;
-  void setUseStats( Bool useStats );
+	Bool getUseStats() const;
+	void setUseStats(Bool useStats);
 };

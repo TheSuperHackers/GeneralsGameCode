@@ -47,18 +47,18 @@ class RampTool : public Tool
 
 	Bool mIsMouseDown;
 
-	public:
-		RampTool();
-		virtual void activate() override;
-		virtual void deactivate() override; ///< Become not the current tool.
+public:
+	RampTool();
+	virtual void activate() override;
+	virtual void deactivate() override;    ///< Become not the current tool.
 
-		virtual Bool followsTerrain() override;
+	virtual Bool followsTerrain() override;
 
-		virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-		virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-		virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
 
-	protected:
-		void drawFeedback(Coord3D* endPoint);
-		void applyRamp(CWorldBuilderDoc* pDoc);
+protected:
+	void drawFeedback(Coord3D* endPoint);
+	void applyRamp(CWorldBuilderDoc* pDoc);
 };

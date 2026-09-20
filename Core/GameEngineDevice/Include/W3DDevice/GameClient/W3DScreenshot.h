@@ -25,4 +25,3 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality);
 // Called once per frame on the main thread to show messages for screenshots
 // that the screenshot thread has finished writing.
 void W3D_UpdateScreenshotMessages();
-
