@@ -23,6 +23,7 @@
 #include "STLUtils.h"
 #include "stringex.h"
 #include <Utility/stdio_adapter.h>
+#include <Utility/utility_adapter.h>
 #include <rts/profile.h>
 
 #ifndef SAFE_RELEASE
