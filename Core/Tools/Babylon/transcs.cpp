@@ -21,7 +21,6 @@
 //
 
 #include "StdAfx.h"
-#include "Lib/WideChar.h"
 #include <windows.h>
 #include <winnls.h>
 #include <stdio.h>

@@ -17,7 +17,6 @@
 */
 
 #include "always.h"
-#include "Lib/WideChar.h"
 #include "utf8.h"
 
 // WideChar is a 16-bit UTF-16 code unit on Windows and a 32-bit UTF-32 codepoint on most other

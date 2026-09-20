@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include <windows.h>
 
 

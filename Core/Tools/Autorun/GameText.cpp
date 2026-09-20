@@ -38,12 +38,11 @@
 //----------------------------------------------------------------------------
 
 #include <stdlib.h>
-#include "Lib/WideChar.h"
 #include <Utility/stdio_adapter.h>
 #include <ctype.h>
 #include <string.h>
 
-#include <string>
+#include <Utility/string_adapter.h>
 
 #include <Lib/BaseType.h>
 #include "GameText.h"
@@ -91,7 +90,7 @@
 struct StringInfo
 {
 	std::string			label;
-	std::basic_string<WideChar>		text;
+	stl::wstring		text;
 	std::string			speech;
 };
 
@@ -123,7 +122,7 @@ struct CSFHeader
 struct NoString
 {
 	struct NoString *next;
-	std::basic_string<WideChar> text;
+	stl::wstring text;
 };
 
 
@@ -160,7 +159,7 @@ class GameTextManager : public GameTextInterface
 		Bool						m_munkee;
 		NoString				*m_noStringList;
 		Int							m_useStringFile;
-		std::basic_string<WideChar>		m_failed;
+		stl::wstring		m_failed;
 
 		void						stripSpaces ( WideChar *string );
 		void						removeLeadingAndTrailing ( Char *m_buffer );
@@ -1069,7 +1068,7 @@ const WideChar* GameTextManager::fetch( const Char* label )
 		// See if we already have the missing string
 		WideChar tmp[256];
 		swprintf(tmp, 256, L"MISSING: '%hs'", label);
-		std::basic_string<WideChar> missingString = tmp;
+		stl::wstring missingString = tmp;
 
 		NoString *noString = m_noStringList;
 

@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include "STRAW.h"
 #include "WWFILE.h"
 #include <wchar.h>

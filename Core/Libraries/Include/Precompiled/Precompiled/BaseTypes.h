@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
+#include <Utility/WideChar.h>
 
 // Fundamental type definitions
 

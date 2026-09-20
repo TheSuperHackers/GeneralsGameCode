@@ -46,7 +46,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-#include "Lib/WideChar.h"
 
 #include "Common/LocalFileSystem.h"
 #include "Common/MessageStream.h"

@@ -18,3 +18,10 @@
 #pragma once
 
 #include <Utility/WideChar.h>
+#include <string>
+
+namespace stl
+{
+typedef std::basic_string<char> string;
+typedef std::basic_string<WideChar> wstring;
+}

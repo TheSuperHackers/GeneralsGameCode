@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "Precompiled/CppTypes.h"
 #include <stddef.h>
 
 // Shared project wide-character type, currently using the native representation.

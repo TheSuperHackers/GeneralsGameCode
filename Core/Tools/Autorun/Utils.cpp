@@ -69,7 +69,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #include <io.h>
-#include "Lib/WideChar.h"
 #include "ARGS.h"
 #include "assert.h"
 #include "Locale_API.h"

@@ -19,7 +19,6 @@
 /* Copyright (C) Electronic Arts Canada Inc. 1998-1999.  All rights reserved. */
 
 #include <string.h>
-#include "Lib/WideChar.h"
 #include <assert.h>
 #include "gimex.h"      /* for file and memory IO only */
 #include "locale.h"

@@ -35,7 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include "Lib/WideChar.h"
 #include	"trim.h"
 
 #ifdef _UNIX

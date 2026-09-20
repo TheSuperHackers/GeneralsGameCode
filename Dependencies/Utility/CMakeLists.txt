@@ -17,6 +17,7 @@ set(UTILITY_SRC
     Utility/sstream_adapter.h
     Utility/stdio_adapter.h
     Utility/STLUtils.h
+    Utility/string_adapter.h
     Utility/string_compat.h
     Utility/stringex.h
     Utility/tchar_compat.h
@@ -36,3 +37,12 @@ target_sources(core_utility PRIVATE ${UTILITY_SRC})
 target_link_libraries(core_utility INTERFACE
     core_precompiled # Gives force included headers. Link early.
 )
+
+# Make the character type available throughout the project, including builds without PCH.
+if(MSVC)
+    target_compile_options(core_utility INTERFACE
+        "$<$<COMPILE_LANGUAGE:C,CXX>:/FIUtility/WideChar.h>")
+else()
+    target_compile_options(core_utility INTERFACE
+        "$<$<COMPILE_LANGUAGE:C,CXX>:SHELL:-include Utility/WideChar.h>")
+endif()

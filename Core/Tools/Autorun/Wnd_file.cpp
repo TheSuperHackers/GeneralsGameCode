@@ -42,7 +42,6 @@
 // include files...
 //-----------------------------------------------------------------------------
 #include "windows.h"
-#include "Lib/WideChar.h"
 #include <stdio.h>
 #include <sys/stat.h>
 #include "Wnd_File.h"

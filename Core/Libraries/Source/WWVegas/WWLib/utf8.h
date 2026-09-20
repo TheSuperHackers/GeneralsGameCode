@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include <stddef.h>
 #include <wchar.h>
 

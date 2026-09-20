@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include <wchar.h>
 
 char * strtrim(char * buffer);

@@ -20,7 +20,6 @@
 //
 
 #include "StdAfx.h"
-#include "Lib/WideChar.h"
 #include "WorldBuilder.h"
 #include "playerlistdlg.h"
 #include "mapobjectprops.h"

@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-
 #include "BaseType.h"
 #include <string.h>
 

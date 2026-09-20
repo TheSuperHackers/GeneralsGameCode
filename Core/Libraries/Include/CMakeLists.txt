@@ -13,7 +13,6 @@ set(LIBRARIES_INCLUDE_SRC
     Lib/Region3D.h
     Lib/RGBColor.h
     Lib/trig.h
-    Lib/WideChar.h
     rts/debug.h
     rts/profile.h
     Precompiled/Precompiled/BaseAlgorithm.h

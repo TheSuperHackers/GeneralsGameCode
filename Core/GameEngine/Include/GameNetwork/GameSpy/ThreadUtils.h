@@ -28,8 +28,7 @@
 
 #pragma once
 
-#include "Lib/WideChar.h"
-#include <string>
+#include <Utility/string_adapter.h>
 
-std::basic_string<WideChar> MultiByteToWideCharSingleLine( const char* orig );
+stl::wstring MultiByteToWideCharSingleLine( const char* orig );
 std::string WideCharStringToMultiByte( const WideChar *orig );
