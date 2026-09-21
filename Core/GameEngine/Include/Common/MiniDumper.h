@@ -19,7 +19,7 @@
 #pragma once
 
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "WWLib/DbgHelpLoader.h"
+#include "DbgHelpLoader.h"
 
 enum DumpType CPP_11(: Char)
 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef RTS_ENABLE_CRASHDUMP
-
 // Backported defines from minidumpapiset.h for VC6.
 // minidumpapiset.h is Copyright (C) Microsoft Corporation. All rights reserved.
 
@@ -261,5 +259,4 @@ typedef enum _MODULE_WRITE_FLAGS {
 } MODULE_WRITE_FLAGS;
 
 #include <poppack.h>
-#endif
 #endif

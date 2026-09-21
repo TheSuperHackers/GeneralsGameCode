@@ -83,7 +83,7 @@
 #include "formconv.h"
 #include "dx8texman.h"
 #include "WWLib/bound.h"
-#include "WWLib/DbgHelpGuard.h"
+#include "DbgHelpGuard.h"
 
 #include "shdlib.h"
 

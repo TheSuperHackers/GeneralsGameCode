@@ -96,6 +96,11 @@ endif()
 add_subdirectory(Dependencies/Utility)
 add_subdirectory(Dependencies/Bink)
 add_subdirectory(Dependencies/Miles)
+if (WIN32)
+    add_subdirectory(Dependencies/DbgHelp)
+else()
+    add_library(dbghelploader INTERFACE)
+endif()
 
 add_subdirectory(resources)
 

@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "always.h"
-
 
 // This class temporarily loads and unloads dbghelp.dll from the desired location to prevent
 // other code from potentially loading it from an undesired location.

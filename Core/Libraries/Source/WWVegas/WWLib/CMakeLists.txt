@@ -32,11 +32,6 @@ set(WWLIB_SRC
     #crcstraw.h
     cstraw.cpp
     cstraw.h
-    DbgHelpGuard.cpp
-    DbgHelpGuard.h
-    DbgHelpLoader.cpp
-    DbgHelpLoader.h
-    DbgHelpLoader_minidump.h
     Except.cpp
     Except.h
     FastAllocator.cpp

@@ -18,16 +18,14 @@
 
 #pragma once
 
-#include "always.h"
-
-#include "win.h"
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #include <imagehlp.h> // Must be included after Windows.h
 #include <set>
-#ifdef RTS_ENABLE_CRASHDUMP
 #include "DbgHelpLoader_minidump.h"
-#endif
 
-#include "mutex.h"
 #include "Allocator/SystemAllocator.h"
 
 // This static class can load, unload and use dbghelp.dll. Is thread-safe.
@@ -38,7 +36,6 @@ class DbgHelpLoader
 private:
 
 	static DbgHelpLoader* Inst; // Is singleton class
-	static CriticalSectionClass CriticalSection; // Required because dbg help is not thread safe for the most part
 
 	DbgHelpLoader();
 	~DbgHelpLoader();
@@ -112,7 +109,6 @@ public:
 		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
 		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
-#ifdef RTS_ENABLE_CRASHDUMP
 	static BOOL WINAPI miniDumpWriteDump(
 		HANDLE hProcess,
 		DWORD ProcessId,
@@ -121,7 +117,6 @@ public:
 		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
 		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
 		PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
-#endif
 
 private:
 
@@ -181,7 +176,6 @@ private:
 		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
 		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
-#ifdef RTS_ENABLE_CRASHDUMP
 	typedef BOOL(WINAPI* MiniDumpWriteDump_t)(
 		HANDLE hProcess,
 		DWORD ProcessId,
@@ -190,7 +184,6 @@ private:
 		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
 		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
 		PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
-#endif
 
 	SymInitialize_t m_symInitialize;
 	SymCleanup_t m_symCleanup;
@@ -202,9 +195,7 @@ private:
 	SymSetOptions_t m_symSetOptions;
 	SymFunctionTableAccess_t m_symFunctionTableAccess;
 	StackWalk_t m_stackWalk;
-#ifdef RTS_ENABLE_CRASHDUMP
 	MiniDumpWriteDump_t m_miniDumpWriteDump;
-#endif
 
 	typedef std::set<HANDLE, std::less<HANDLE>, stl::system_allocator<HANDLE>/**/> Processes;
 

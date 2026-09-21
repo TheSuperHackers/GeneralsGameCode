@@ -31,7 +31,7 @@
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
 
-#include "WWLib/DbgHelpLoader.h"
+#include "DbgHelpLoader.h"
 
 //*****************************************************************************
 //	Prototypes
