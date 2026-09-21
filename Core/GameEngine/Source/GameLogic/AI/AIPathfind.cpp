@@ -1874,6 +1874,8 @@ Int PathfindCell::releaseOpenList( PathfindCellList &list )
 	Int count = 0;
 	while (list.m_head) {
 		count++;
+		DEBUG_ASSERTCRASH(list.m_head->m_info, ("Has to have info."));
+		DEBUG_ASSERTCRASH(list.m_head->m_info && list.m_head->m_info->m_closed==FALSE && list.m_head->m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
 		PathfindCell *cur = list.m_head;
 		PathfindCellInfo *curInfo = list.m_head->m_info;
 
@@ -1890,8 +1892,6 @@ Int PathfindCell::releaseOpenList( PathfindCellList &list )
 			return count;
 		}
 #endif
-		DEBUG_ASSERTCRASH(list.m_head->m_info, ("Has to have info."));
-		DEBUG_ASSERTCRASH(list.m_head->m_info->m_closed==FALSE && list.m_head->m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
 
 		if (curInfo->m_nextOpen) {
 			list.m_head = curInfo->m_nextOpen->m_cell;
@@ -1913,6 +1913,8 @@ Int PathfindCell::releaseClosedList( PathfindCellList &list )
 	Int count = 0;
 	while (list.m_head) {
 		count++;
+		DEBUG_ASSERTCRASH(list.m_head->m_info, ("Has to have info."));
+		DEBUG_ASSERTCRASH(list.m_head->m_info && list.m_head->m_info->m_closed==TRUE && list.m_head->m_info->m_open==FALSE, ("Serious error - Invalid flags. jba"));
 		PathfindCell *cur = list.m_head;
 		PathfindCellInfo *curInfo = list.m_head->m_info;
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -1928,8 +1930,6 @@ Int PathfindCell::releaseClosedList( PathfindCellList &list )
 			return count;
 		}
 #endif
-		DEBUG_ASSERTCRASH(list.m_head->m_info, ("Has to have info."));
-		DEBUG_ASSERTCRASH(list.m_head->m_info->m_closed==TRUE && list.m_head->m_info->m_open==FALSE, ("Serious error - Invalid flags. jba"));
 
 		if (curInfo->m_nextOpen) {
 			list.m_head = curInfo->m_nextOpen->m_cell;
