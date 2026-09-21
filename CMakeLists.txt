@@ -88,9 +88,9 @@ add_subdirectory(Dependencies/Precompiled)
 # to the forced include list, so this global one would otherwise be read too late.
 include_directories(Dependencies/Precompiled)
 if (MSVC)
-add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIPrecompiled/precompiled.h>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIPrecompiled/precompiled.h>)
 else()
-add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:SHELL:-include Precompiled/precompiled.h>")
+    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:SHELL:-include Precompiled/precompiled.h>")
 endif()
 
 add_subdirectory(Dependencies/Utility)
