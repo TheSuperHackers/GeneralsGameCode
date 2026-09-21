@@ -17,5 +17,5 @@ slices:
   - { file: 07-sdk-gym-mcp.md, status: not_started, percent: 0 }
   - { file: 08-referee-and-tournament.md, status: not_started, percent: 0 }
   - { file: 09-verification.md, status: not_started, percent: 0 }
-evidence: ["#3328"]
+evidence: ["#3328", "#3338"]
 last_updated: 2026-09-21
