@@ -16,7 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// This file contains fundamental types that newer cpp standards provide as built-in types.
+
 #pragma once
 
-#include "CppMacros.h"
-#include "CppTypes.h"
+// VC6 does not have wchar_t as a built-in type.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#ifndef _WCHAR_T_DEFINED
+typedef unsigned short wchar_t;
+#define _WCHAR_T_DEFINED
+#endif
+#endif
