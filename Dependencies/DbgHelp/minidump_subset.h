@@ -1,9 +1,14 @@
-#pragma once
-
-// Backported defines from minidumpapiset.h for VC6.
+// Subset of the minidump API of the Windows SDK minidumpapiset.h, for compilers whose imagehlp.h does
+// not have it, such as VC6. Is included by imagehlp_adapter.h, which should be used instead of this file.
 // minidumpapiset.h is Copyright (C) Microsoft Corporation. All rights reserved.
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma once
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+
 #include <pshpack4.h>
 
 typedef enum _MINIDUMP_CALLBACK_TYPE {
@@ -259,4 +264,3 @@ typedef enum _MODULE_WRITE_FLAGS {
 } MODULE_WRITE_FLAGS;
 
 #include <poppack.h>
-#endif

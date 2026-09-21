@@ -18,16 +18,56 @@
 
 #include "DbgHelpLoader.h"
 
+#include "Allocator/SystemAllocator.h"
 #include "Utility/lazy_static.h"
 #include "Utility/STLUtils.h"
 #include "Utility/stringex.h"
 #include <new>
+#include <set>
 
 
 namespace
 {
 
-// Required because dbg help is not thread safe for the most part.
+typedef BOOL (WINAPI *SymInitialize_t)(HANDLE hProcess, PCSTR UserSearchPath, BOOL fInvadeProcess);
+typedef BOOL (WINAPI *SymCleanup_t)(HANDLE hProcess);
+typedef DWORD (WINAPI *SymLoadModule_t)(HANDLE hProcess, HANDLE hFile, PCSTR ImageName,
+	PCSTR ModuleName, DWORD BaseOfDll, DWORD SizeOfDll);
+typedef DWORD (WINAPI *SymGetModuleBase_t)(HANDLE hProcess, DWORD dwAddr);
+typedef BOOL (WINAPI *SymUnloadModule_t)(HANDLE hProcess, DWORD BaseOfDll);
+typedef BOOL (WINAPI *SymGetSymFromAddr_t)(HANDLE hProcess, DWORD dwAddr, PDWORD pdwDisplacement, PIMAGEHLP_SYMBOL Symbol);
+typedef BOOL (WINAPI *SymGetLineFromAddr_t)(HANDLE hProcess, DWORD dwAddr, PDWORD pdwDisplacement, PIMAGEHLP_LINE Line);
+typedef DWORD (WINAPI *SymSetOptions_t)(DWORD SymOptions);
+typedef PVOID (WINAPI *SymFunctionTableAccess_t)(HANDLE hProcess, DWORD AddrBase);
+typedef BOOL (WINAPI *StackWalk_t)(DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame,
+	PVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+	PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
+	PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+typedef BOOL (WINAPI *MiniDumpWriteDump_t)(HANDLE hProcess, DWORD ProcessId, HANDLE hFile, MINIDUMP_TYPE DumpType,
+	PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam, PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+	PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+
+SymInitialize_t SymInitializePtr = nullptr;
+SymCleanup_t SymCleanupPtr = nullptr;
+SymLoadModule_t SymLoadModulePtr = nullptr;
+SymGetModuleBase_t SymGetModuleBasePtr = nullptr;
+SymUnloadModule_t SymUnloadModulePtr = nullptr;
+SymGetSymFromAddr_t SymGetSymFromAddrPtr = nullptr;
+SymGetLineFromAddr_t SymGetLineFromAddrPtr = nullptr;
+SymSetOptions_t SymSetOptionsPtr = nullptr;
+SymFunctionTableAccess_t SymFunctionTableAccessPtr = nullptr;
+StackWalk_t StackWalkPtr = nullptr;
+MiniDumpWriteDump_t MiniDumpWriteDumpPtr = nullptr;
+
+typedef std::set<HANDLE, std::less<HANDLE>, stl::system_allocator<HANDLE> > Processes;
+
+// Is created on the first load, because the loader can be used before static initialization of this file is done.
+Processes* InitializedProcesses = nullptr;
+HMODULE Module = HMODULE(nullptr);
+int ReferenceCount = 0;
+bool Failed = false;
+bool LoadedFromSystem = false;
+
 // Uses the plain Windows critical section, because it must not allocate with new.
 class CriticalSection
 {
@@ -52,114 +92,132 @@ public:
 	~ScopedLock() { Lock.get().unlock(); }
 };
 
+#define DBGHELP_RESOLVE(name) \
+	name##Ptr = reinterpret_cast<name##_t>(::GetProcAddress(Module, #name))
+
+static void resolveAll()
+{
+	DBGHELP_RESOLVE(SymInitialize);
+	DBGHELP_RESOLVE(SymCleanup);
+	DBGHELP_RESOLVE(SymLoadModule);
+	DBGHELP_RESOLVE(SymGetModuleBase);
+	DBGHELP_RESOLVE(SymUnloadModule);
+	DBGHELP_RESOLVE(SymGetSymFromAddr);
+	DBGHELP_RESOLVE(SymGetLineFromAddr);
+	DBGHELP_RESOLVE(SymSetOptions);
+	DBGHELP_RESOLVE(SymFunctionTableAccess);
+	DBGHELP_RESOLVE(StackWalk);
+	DBGHELP_RESOLVE(MiniDumpWriteDump);
+}
+#undef DBGHELP_RESOLVE
+
+static void freeResources()
+{
+	while (!InitializedProcesses->empty())
+	{
+		DbgHelp::SymCleanup(*InitializedProcesses->begin());
+	}
+
+	if (Module != HMODULE(nullptr))
+	{
+		::FreeLibrary(Module);
+		Module = HMODULE(nullptr);
+	}
+
+	SymInitializePtr = nullptr;
+	SymCleanupPtr = nullptr;
+	SymLoadModulePtr = nullptr;
+	SymGetModuleBasePtr = nullptr;
+	SymUnloadModulePtr = nullptr;
+	SymGetSymFromAddrPtr = nullptr;
+	SymGetLineFromAddrPtr = nullptr;
+	SymSetOptionsPtr = nullptr;
+	SymFunctionTableAccessPtr = nullptr;
+	StackWalkPtr = nullptr;
+	MiniDumpWriteDumpPtr = nullptr;
+
+	LoadedFromSystem = false;
+}
+
 } // namespace
 
-
-DbgHelpLoader* DbgHelpLoader::Inst = nullptr;
-
-DbgHelpLoader::DbgHelpLoader()
-	: m_symInitialize(nullptr)
-	, m_symCleanup(nullptr)
-	, m_symLoadModule(nullptr)
-	, m_symUnloadModule(nullptr)
-	, m_symGetModuleBase(nullptr)
-	, m_symGetSymFromAddr(nullptr)
-	, m_symGetLineFromAddr(nullptr)
-	, m_symSetOptions(nullptr)
-	, m_symFunctionTableAccess(nullptr)
-	, m_stackWalk(nullptr)
-	, m_miniDumpWriteDump(nullptr)
-	, m_dllModule(HMODULE(nullptr))
-	, m_referenceCount(0)
-	, m_failed(false)
-	, m_loadedFromSystem(false)
-{
-}
-
-DbgHelpLoader::~DbgHelpLoader()
-{
-}
 
 bool DbgHelpLoader::isLoaded()
 {
 	ScopedLock lock;
 
-	return Inst != nullptr && Inst->m_dllModule != HMODULE(nullptr);
+	return Module != HMODULE(nullptr);
 }
 
 bool DbgHelpLoader::isLoadedFromSystem()
 {
 	ScopedLock lock;
 
-	return isLoaded() && Inst->m_loadedFromSystem;
+	return isLoaded() && LoadedFromSystem;
 }
 
 bool DbgHelpLoader::isFailed()
 {
 	ScopedLock lock;
 
-	return Inst != nullptr && Inst->m_failed;
+	return Failed;
 }
 
 bool DbgHelpLoader::load()
 {
 	ScopedLock lock;
 
-	if (Inst == nullptr)
+	if (InitializedProcesses == nullptr)
 	{
 		// Cannot use new/delete here when this is loaded during game memory initialization.
-		void* p = GlobalAlloc(GMEM_FIXED, sizeof(DbgHelpLoader));
-		Inst = new (p) DbgHelpLoader();
+		void* p = ::GlobalAlloc(GMEM_FIXED, sizeof(Processes));
+		if (p == nullptr)
+			return false;
+		InitializedProcesses = new (p) Processes();
 	}
 
 	// Always increment the reference count.
-	++Inst->m_referenceCount;
+	++ReferenceCount;
 
 	// Optimization: return early if it failed before.
-	if (Inst->m_failed)
+	if (Failed)
 		return false;
 
 	// Return early if someone else already loaded it.
-	if (Inst->m_referenceCount > 1)
+	if (ReferenceCount > 1)
 		return true;
 
 	// Try load dbghelp.dll from the system directory first.
 	char dllFilename[MAX_PATH];
-	::GetSystemDirectoryA(dllFilename, sizeof(dllFilename));
-	strlcat(dllFilename, "\\dbghelp.dll", sizeof(dllFilename));
+	const UINT dllFilenameLen = ::GetSystemDirectoryA(dllFilename, sizeof(dllFilename));
+	if (dllFilenameLen == 0 || dllFilenameLen >= sizeof(dllFilename) ||
+		strlcat(dllFilename, "\\dbghelp.dll", sizeof(dllFilename)) >= sizeof(dllFilename)) {
+		Failed = true;
+		return false;
+	}
 
-	Inst->m_dllModule = ::LoadLibraryA(dllFilename);
-	if (Inst->m_dllModule == HMODULE(nullptr))
+	Module = ::LoadLibraryA(dllFilename);
+	if (Module == HMODULE(nullptr))
 	{
 		// Not found. Try load dbghelp.dll from the work directory.
-		Inst->m_dllModule = ::LoadLibraryA("dbghelp.dll");
-		if (Inst->m_dllModule == HMODULE(nullptr))
+		Module = ::LoadLibraryA("dbghelp.dll");
+		if (Module == HMODULE(nullptr))
 		{
-			Inst->m_failed = true;
+			Failed = true;
 			return false;
 		}
 	}
 	else
 	{
-		Inst->m_loadedFromSystem = true;
+		LoadedFromSystem = true;
 	}
 
-	Inst->m_symInitialize = reinterpret_cast<SymInitialize_t>(::GetProcAddress(Inst->m_dllModule, "SymInitialize"));
-	Inst->m_symCleanup = reinterpret_cast<SymCleanup_t>(::GetProcAddress(Inst->m_dllModule, "SymCleanup"));
-	Inst->m_symLoadModule = reinterpret_cast<SymLoadModule_t>(::GetProcAddress(Inst->m_dllModule, "SymLoadModule"));
-	Inst->m_symUnloadModule = reinterpret_cast<SymUnloadModule_t>(::GetProcAddress(Inst->m_dllModule, "SymUnloadModule"));
-	Inst->m_symGetModuleBase = reinterpret_cast<SymGetModuleBase_t>(::GetProcAddress(Inst->m_dllModule, "SymGetModuleBase"));
-	Inst->m_symGetSymFromAddr = reinterpret_cast<SymGetSymFromAddr_t>(::GetProcAddress(Inst->m_dllModule, "SymGetSymFromAddr"));
-	Inst->m_symGetLineFromAddr = reinterpret_cast<SymGetLineFromAddr_t>(::GetProcAddress(Inst->m_dllModule, "SymGetLineFromAddr"));
-	Inst->m_symSetOptions = reinterpret_cast<SymSetOptions_t>(::GetProcAddress(Inst->m_dllModule, "SymSetOptions"));
-	Inst->m_symFunctionTableAccess = reinterpret_cast<SymFunctionTableAccess_t>(::GetProcAddress(Inst->m_dllModule, "SymFunctionTableAccess"));
-	Inst->m_stackWalk = reinterpret_cast<StackWalk_t>(::GetProcAddress(Inst->m_dllModule, "StackWalk"));
-	Inst->m_miniDumpWriteDump = reinterpret_cast<MiniDumpWriteDump_t>(::GetProcAddress(Inst->m_dllModule, "MiniDumpWriteDump"));
+	resolveAll();
 
-	if (Inst->m_symInitialize == nullptr || Inst->m_symCleanup == nullptr)
+	if (SymInitializePtr == nullptr || SymCleanupPtr == nullptr)
 	{
 		freeResources();
-		Inst->m_failed = true;
+		Failed = true;
 		return false;
 	}
 
@@ -170,71 +228,49 @@ void DbgHelpLoader::unload()
 {
 	ScopedLock lock;
 
-	if (Inst == nullptr)
+	if (InitializedProcesses == nullptr)
 		return;
 
-	if (--Inst->m_referenceCount != 0)
+	if (--ReferenceCount != 0)
 		return;
 
 	freeResources();
+	Failed = false;
 
-	Inst->~DbgHelpLoader();
-	GlobalFree(Inst);
-	Inst = nullptr;
+	InitializedProcesses->~Processes();
+	::GlobalFree(InitializedProcesses);
+	InitializedProcesses = nullptr;
 }
 
-void DbgHelpLoader::freeResources()
+
+// The dbghelp functions below stand in for the imports of dbghelp.dll. An unresolved function
+// returns a neutral value.
+
+namespace DbgHelp
 {
-	// Is private. Needs no locking.
 
-	while (!Inst->m_initializedProcesses.empty())
-	{
-		symCleanup(*Inst->m_initializedProcesses.begin());
-	}
-
-	if (Inst->m_dllModule != HMODULE(nullptr))
-	{
-		::FreeLibrary(Inst->m_dllModule);
-		Inst->m_dllModule = HMODULE(nullptr);
-	}
-
-	Inst->m_symInitialize = nullptr;
-	Inst->m_symCleanup = nullptr;
-	Inst->m_symLoadModule = nullptr;
-	Inst->m_symUnloadModule = nullptr;
-	Inst->m_symGetModuleBase = nullptr;
-	Inst->m_symGetSymFromAddr = nullptr;
-	Inst->m_symGetLineFromAddr = nullptr;
-	Inst->m_symSetOptions = nullptr;
-	Inst->m_symFunctionTableAccess = nullptr;
-	Inst->m_stackWalk = nullptr;
-	Inst->m_miniDumpWriteDump = nullptr;
-
-	Inst->m_loadedFromSystem = false;
-}
-
-BOOL DbgHelpLoader::symInitialize(
+BOOL WINAPI SymInitialize(
 	HANDLE hProcess,
-	LPSTR UserSearchPath,
+	PCSTR UserSearchPath,
 	BOOL fInvadeProcess)
 {
 	ScopedLock lock;
 
-	if (Inst == nullptr)
+	if (InitializedProcesses == nullptr)
 		return FALSE;
 
-	if (Inst->m_initializedProcesses.find(hProcess) != Inst->m_initializedProcesses.end())
+	if (InitializedProcesses->find(hProcess) != InitializedProcesses->end())
 	{
 		// Was already initialized.
 		return TRUE;
 	}
 
-	if (Inst->m_symInitialize)
+	if (SymInitializePtr != nullptr)
 	{
-		if (Inst->m_symInitialize(hProcess, UserSearchPath, fInvadeProcess) != FALSE)
+		if (SymInitializePtr(hProcess, UserSearchPath, fInvadeProcess) != FALSE)
 		{
 			// Is now initialized.
-			Inst->m_initializedProcesses.insert(hProcess);
+			InitializedProcesses->insert(hProcess);
 			return TRUE;
 		}
 	}
@@ -242,80 +278,80 @@ BOOL DbgHelpLoader::symInitialize(
 	return FALSE;
 }
 
-BOOL DbgHelpLoader::symCleanup(
+BOOL WINAPI SymCleanup(
 	HANDLE hProcess)
 {
 	ScopedLock lock;
 
-	if (Inst == nullptr)
+	if (InitializedProcesses == nullptr)
 		return FALSE;
 
-	if (stl::find_and_erase(Inst->m_initializedProcesses, hProcess))
+	if (stl::find_and_erase(*InitializedProcesses, hProcess))
 	{
-		if (Inst->m_symCleanup)
+		if (SymCleanupPtr != nullptr)
 		{
-			return Inst->m_symCleanup(hProcess);
+			return SymCleanupPtr(hProcess);
 		}
 	}
 
 	return FALSE;
 }
 
-BOOL DbgHelpLoader::symLoadModule(
+DWORD WINAPI SymLoadModule(
 	HANDLE hProcess,
 	HANDLE hFile,
-	LPSTR ImageName,
-	LPSTR ModuleName,
+	PCSTR ImageName,
+	PCSTR ModuleName,
 	DWORD BaseOfDll,
 	DWORD SizeOfDll)
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symLoadModule)
-		return Inst->m_symLoadModule(hProcess, hFile, ImageName, ModuleName, BaseOfDll, SizeOfDll);
+	if (SymLoadModulePtr != nullptr)
+		return SymLoadModulePtr(hProcess, hFile, ImageName, ModuleName, BaseOfDll, SizeOfDll);
 
-	return FALSE;
+	return 0;
 }
 
-DWORD DbgHelpLoader::symGetModuleBase(
+DWORD WINAPI SymGetModuleBase(
 	HANDLE hProcess,
 	DWORD dwAddr)
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symGetModuleBase)
-		return Inst->m_symGetModuleBase(hProcess, dwAddr);
+	if (SymGetModuleBasePtr != nullptr)
+		return SymGetModuleBasePtr(hProcess, dwAddr);
 
 	return 0u;
 }
 
-BOOL DbgHelpLoader::symUnloadModule(
+BOOL WINAPI SymUnloadModule(
 	HANDLE hProcess,
 	DWORD BaseOfDll)
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symUnloadModule)
-		return Inst->m_symUnloadModule(hProcess, BaseOfDll);
+	if (SymUnloadModulePtr != nullptr)
+		return SymUnloadModulePtr(hProcess, BaseOfDll);
 
 	return FALSE;
 }
 
-BOOL DbgHelpLoader::symGetSymFromAddr(
+BOOL WINAPI SymGetSymFromAddr(
 	HANDLE hProcess,
-	DWORD Address,
-	LPDWORD Displacement,
+	DWORD dwAddr,
+	PDWORD pdwDisplacement,
 	PIMAGEHLP_SYMBOL Symbol)
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symGetSymFromAddr)
-		return Inst->m_symGetSymFromAddr(hProcess, Address, Displacement, Symbol);
+	if (SymGetSymFromAddrPtr != nullptr)
+		return SymGetSymFromAddrPtr(hProcess, dwAddr, pdwDisplacement, Symbol);
 
 	return FALSE;
 }
 
-BOOL DbgHelpLoader::symGetLineFromAddr(
+BOOL WINAPI SymGetLineFromAddr(
 	HANDLE hProcess,
 	DWORD dwAddr,
 	PDWORD pdwDisplacement,
@@ -323,41 +359,41 @@ BOOL DbgHelpLoader::symGetLineFromAddr(
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symGetLineFromAddr)
-		return Inst->m_symGetLineFromAddr(hProcess, dwAddr, pdwDisplacement, Line);
+	if (SymGetLineFromAddrPtr != nullptr)
+		return SymGetLineFromAddrPtr(hProcess, dwAddr, pdwDisplacement, Line);
 
 	return FALSE;
 }
 
-DWORD DbgHelpLoader::symSetOptions(
+DWORD WINAPI SymSetOptions(
 	DWORD SymOptions)
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symSetOptions)
-		return Inst->m_symSetOptions(SymOptions);
+	if (SymSetOptionsPtr != nullptr)
+		return SymSetOptionsPtr(SymOptions);
 
 	return 0u;
 }
 
-LPVOID DbgHelpLoader::symFunctionTableAccess(
+PVOID WINAPI SymFunctionTableAccess(
 	HANDLE hProcess,
 	DWORD AddrBase)
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_symFunctionTableAccess)
-		return Inst->m_symFunctionTableAccess(hProcess, AddrBase);
+	if (SymFunctionTableAccessPtr != nullptr)
+		return SymFunctionTableAccessPtr(hProcess, AddrBase);
 
 	return nullptr;
 }
 
-BOOL DbgHelpLoader::stackWalk(
+BOOL WINAPI StackWalk(
 	DWORD MachineType,
 	HANDLE hProcess,
 	HANDLE hThread,
 	LPSTACKFRAME StackFrame,
-	LPVOID ContextRecord,
+	PVOID ContextRecord,
 	PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
 	PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
 	PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
@@ -365,13 +401,14 @@ BOOL DbgHelpLoader::stackWalk(
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_stackWalk)
-		return Inst->m_stackWalk(MachineType, hProcess, hThread, StackFrame, ContextRecord, ReadMemoryRoutine, FunctionTableAccessRoutine, GetModuleBaseRoutine, TranslateAddress);
+	if (StackWalkPtr != nullptr)
+		return StackWalkPtr(MachineType, hProcess, hThread, StackFrame, ContextRecord, ReadMemoryRoutine,
+			FunctionTableAccessRoutine, GetModuleBaseRoutine, TranslateAddress);
 
 	return FALSE;
 }
 
-BOOL DbgHelpLoader::miniDumpWriteDump(
+BOOL WINAPI MiniDumpWriteDump(
 	HANDLE hProcess,
 	DWORD ProcessId,
 	HANDLE hFile,
@@ -382,8 +419,10 @@ BOOL DbgHelpLoader::miniDumpWriteDump(
 {
 	ScopedLock lock;
 
-	if (Inst != nullptr && Inst->m_miniDumpWriteDump)
-		return Inst->m_miniDumpWriteDump(hProcess, ProcessId, hFile, DumpType, ExceptionParam, UserStreamParam, CallbackParam);
+	if (MiniDumpWriteDumpPtr != nullptr)
+		return MiniDumpWriteDumpPtr(hProcess, ProcessId, hFile, DumpType, ExceptionParam, UserStreamParam, CallbackParam);
 
 	return FALSE;
 }
+
+} // namespace DbgHelp

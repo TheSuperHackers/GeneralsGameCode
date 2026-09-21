@@ -137,7 +137,7 @@ BOOL InitSymbolInfo()
 	char directory[_MAX_PATH+1];
 	HANDLE process;
 
-	DbgHelpLoader::symSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
+	DbgHelp::SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
 
 	process = GetCurrentProcess();
 
@@ -151,11 +151,11 @@ BOOL InitSymbolInfo()
 	// append the current directory to build a search path for SymInit
 	::lstrcat(pathname, ";.;");
 
-	if(DbgHelpLoader::symInitialize(process, pathname, FALSE))
+	if(DbgHelp::SymInitialize(process, pathname, FALSE))
 	{
 		// regenerate the name of the app
 		::GetModuleFileName(nullptr, pathname, _MAX_PATH);
-		if(DbgHelpLoader::symLoadModule(process, nullptr, pathname, nullptr, 0, 0))
+		if(DbgHelp::SymLoadModule(process, nullptr, pathname, nullptr, 0, 0))
 		{
 				//Load any other relevant modules (ie dlls) here
 				atexit(DbgHelpLoader::unload);
@@ -208,14 +208,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			unsigned int skip = skipFrames;
 			while (b_ret&&skip)
 			{
-					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelp::StackWalk(      IMAGE_FILE_MACHINE_I386,
 											process,
 											thread,
 											&stack_frame,
 											nullptr, //&gsContext,
 											nullptr,
-											DbgHelpLoader::symFunctionTableAccess,
-											DbgHelpLoader::symGetModuleBase,
+											DbgHelp::SymFunctionTableAccess,
+											DbgHelp::SymGetModuleBase,
 											nullptr);
 					skip--;
 			}
@@ -224,14 +224,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			while(b_ret&&skip)
 			{
 
-					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelp::StackWalk(      IMAGE_FILE_MACHINE_I386,
 											process,
 											thread,
 											&stack_frame,
 											nullptr, //&gsContext,
 											nullptr,
-											DbgHelpLoader::symFunctionTableAccess,
-											DbgHelpLoader::symGetModuleBase,
+											DbgHelp::SymFunctionTableAccess,
+											DbgHelp::SymGetModuleBase,
 											nullptr);
 
 
@@ -278,7 +278,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
     psymbol->SizeOfStruct = sizeof(symbol_buffer);
     psymbol->MaxNameLength = 512;
 
-	if (DbgHelpLoader::symGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
+	if (DbgHelp::SymGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
 	{
 		if (name)
 		{
@@ -292,7 +292,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		memset(&line,0,sizeof(line));
 		line.SizeOfStruct = sizeof(line);
 
-		if (DbgHelpLoader::symGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
+		if (DbgHelp::SymGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
 		{
 			if (filename)
 			{
@@ -383,28 +383,28 @@ stack_frame.AddrFrame.Offset = myebp;
 		// Skip some?
 		while (stillgoing&&skip)
 		{
-			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelp::StackWalk(IMAGE_FILE_MACHINE_I386,
 								process,
 								thread,
 								&stack_frame,
 								nullptr,	//&gsContext,
 								nullptr,
-								DbgHelpLoader::symFunctionTableAccess,
-								DbgHelpLoader::symGetModuleBase,
+								DbgHelp::SymFunctionTableAccess,
+								DbgHelp::SymGetModuleBase,
 								nullptr) != 0;
 			skip--;
 		}
 
 		while(stillgoing&&count)
 		{
-			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelp::StackWalk(IMAGE_FILE_MACHINE_I386,
 								process,
 								thread,
 								&stack_frame,
 								nullptr, //&gsContext,
 								nullptr,
-								DbgHelpLoader::symFunctionTableAccess,
-								DbgHelpLoader::symGetModuleBase,
+								DbgHelp::SymFunctionTableAccess,
+								DbgHelp::SymGetModuleBase,
 								nullptr) != 0;
 			if (stillgoing)
 			{
