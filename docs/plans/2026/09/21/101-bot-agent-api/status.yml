@@ -1,0 +1,21 @@
+plan: 101-bot-agent-api
+title: Bot / Agent API for Zero Hour
+status: not_started        # not_started | in_progress | blocked | complete | superseded
+created_by: sebi
+worked_by: ""
+owner: sebi
+percent: 0
+current_focus: "spec review with maintainers (#3328) — open questions in overview.md"
+slices:
+  - { file: 00-prior-art.md, status: complete, percent: 100 }
+  - { file: 01-engine-seams.md, status: complete, percent: 100 }
+  - { file: 02-observation.md, status: not_started, percent: 0 }
+  - { file: 03-commands-and-hardening.md, status: not_started, percent: 0 }
+  - { file: 04-bridge-protocol.md, status: not_started, percent: 0 }
+  - { file: 05-match-setup-and-lobby.md, status: not_started, percent: 0 }
+  - { file: 06-headless-and-step.md, status: not_started, percent: 0 }
+  - { file: 07-sdk-gym-mcp.md, status: not_started, percent: 0 }
+  - { file: 08-referee-and-tournament.md, status: not_started, percent: 0 }
+  - { file: 09-verification.md, status: not_started, percent: 0 }
+evidence: ["#3328"]
+last_updated: 2026-09-21
