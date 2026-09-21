@@ -15,6 +15,7 @@
 | **Bridge auth + limits** | Direct connections can't bypass the referee | Connect without / with wrong token → refused; second client → refused; `hello` asking more than launch flags → granted only the flags |
 | **Framing** | Engine survives malformed peers | Fuzz: length 0, over limit, truncated, unknown kind, invalid JSON → error + close, no crash, game continues |
 | **UI parity** | UI-impossible orders are rejected | One case per order type: unowned unit, shrouded target, off-map, unaffordable, illegal build site |
+| **Multi-seat replay** (if option B lands) | Orders stamped for a non-local seat replay correctly | Skirmish with one agent on two seats → `-headless -replay` → zero mismatches |
 | **Determinism of step mode** | Reproducible episodes | Same seed + same actions → identical observations |
 
 ## Tests in the external repo

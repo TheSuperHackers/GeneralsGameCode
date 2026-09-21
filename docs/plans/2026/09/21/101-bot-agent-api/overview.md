@@ -115,7 +115,7 @@ Stages map to #3328: Stage 1 = 01+02+04 (read-only) · Stage 2 = 03 · Stage 3 =
   people who each run their own bot **are** in scope ([05](05-match-setup-and-lobby.md)).
 - Pixel / rendered-frame observation and mouse-level input (world-model agents like SIMA / Genie). Noted as a later
   channel in [02](02-observation.md) §Later.
-- Several bots inside one game process.
+- Several bots inside one game process (multi-seat is a later, skirmish-only option; see [05](05-match-setup-and-lobby.md)).
 
 ## Risks
 
@@ -138,7 +138,8 @@ Stages map to #3328: Stage 1 = 01+02+04 (read-only) · Stage 2 = 03 · Stage 3 =
 7. **Separate repo name/ownership** under the org, or a personal repo until it proves itself?
 8. **Build gating:** CMake option (off by default) + command-line flag, or command-line flag only?
 9. **Disclosure:** `[BOT]` suffix in the player name (visible to retail clients and in replays) — OK, or another form?
-10. **Plan location:** keep `docs/plans/…` in-tree, move to the wiki, or keep only in the external repo?
+10. **One agent, several slots:** is a skirmish/headless-only multi-seat mode (one process, orders stamped per seat) acceptable later, or should it always be one process per slot? See [05](05-match-setup-and-lobby.md) §One agent, several player slots.
+11. **Plan location:** keep `docs/plans/…` in-tree, move to the wiki, or keep only in the external repo?
 
 ## Plan layout
 

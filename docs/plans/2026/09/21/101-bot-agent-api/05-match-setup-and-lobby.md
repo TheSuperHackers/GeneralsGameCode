@@ -21,6 +21,24 @@ Scenario 2 needs **no engine support for multiple bots**: every client is an ord
 by its own bridge. That also answers bobtista's "more than one bot on a machine" concern — the answer is one bot per
 game process, scale with processes.
 
+## One agent, several player slots
+
+Examples: one agent plays both allies in a 2v2, or controls both sides for self-play.
+
+| Option | How | Where it works | Cost |
+|---|---|---|---|
+| **A — one brain, many seats (v1)** | The agent opens one bridge connection per game instance; each instance controls its own local player (scenarios 2 and 4). The SDK presents them as one multi-agent env (PettingZoo Parallel) | Everywhere, including network games; no engine change | One game process per slot |
+| B — multi-seat process (later) | One game process; the bridge stamps each order with the target player's index via `GameMessage::friend_setPlayerIndex` (`Core/GameEngine/Include/Common/MessageStream.h:672`); one snapshot per seat, each with its own fog | Skirmish/headless only: over the network the index is replaced by the sender's slot (`Core/GameEngine/Source/GameNetwork/NetCommandMsg.cpp:156`) | Engine work; see below |
+
+Option B would give the biggest self-play throughput (one simulation, two policies), but:
+- the dispatcher accepts any valid player index (`Core/GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp:363-368`) — *untested* that everything downstream is correct for a non-local sender;
+- replays already store a player index per message (`GeneralsMD/Code/GameEngine/Source/Common/Recorder.cpp:758-759`), so a multi-seat game should still replay — must be proven by the round-trip test ([09](09-verification.md));
+- client-side code assumes one local player (UI, radar, ghost objects), so every seat except the local one is observation-only through the snapshot writer;
+- it is a new capability for a bot that no single human has → skirmish/headless only, refused in network games, flagged in `welcome`.
+
+Fairness: one agent on two allied slots shares knowledge between them, like two humans on voice chat. Allowed, but every
+controlled slot carries the `[BOT]` tag and the referee can forbid it per match.
+
 ## Session API (`session` requests, see [04](04-bridge-protocol.md))
 
 | Action | Engine path |

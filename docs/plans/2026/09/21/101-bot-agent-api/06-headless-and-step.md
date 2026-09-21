@@ -37,6 +37,7 @@ millions of frames; BWAPI needed OpenBW for this).
 |---|---|
 | Many processes | One bot per process, one bridge port per process (`-botapi 0`, [04](04-bridge-protocol.md) §Transport); multi-instance exists but is off by default — only `RTS_MULTI_INSTANCE` builds or `-replay` enable it (`Core/GameEngine/Source/GameClient/ClientInstance.cpp:27-31`, `Core/GameEngine/Source/Common/CommandLine.cpp:436`) → `-botapi` enables it the same way; a runner in the external repo spawns N (same idea as `-jobs`, `ReplaySimulation.cpp:130-201`) |
 | Observation cost | Only compute encodings a client subscribed to; planes at reduced resolution |
+| Multi-seat self-play | Later: one process running both sides ([05](05-match-setup-and-lobby.md) §One agent, several player slots, option B), roughly halving the cost of each self-play game |
 | Frame skip | `every_n_frames` in `subscribe` (PySC2 `step_mul`, Pluto: one step / 6 frames) |
 | Measure | Frames/s per core for headless skirmish with a no-op bot, published as a baseline |
 
