@@ -13,6 +13,7 @@
 | **Fog leak** | `player` mode never exposes shrouded objects | Replay in `player <n>` mode; for every frame, every non-own object in the snapshot sits on a cell `CLEAR` for n (or is a `stale` structure previously seen) |
 | **Stealth / disguise leak** | Undetected stealthed enemies and disguised units never leak | Replays with GLA stealth and disguise: in `player` mode no snapshot contains an undetected stealthed enemy, and disguised units show the disguise template |
 | **Bridge auth + limits** | Direct connections can't bypass the referee | Connect without / with wrong token → refused; second client → refused; `hello` asking more than launch flags → granted only the flags |
+| **Seat scoping** | A connection can only see and command its own seat | Orders for units of another seat → rejected; observations only ever contain that seat's private data (money, queues) |
 | **Framing** | Engine survives malformed peers | Fuzz: length 0, over limit, truncated, unknown kind, invalid JSON → error + close, no crash, game continues |
 | **UI parity** | UI-impossible orders are rejected | One case per order type: unowned unit, shrouded target, off-map, unaffordable, illegal build site |
 | **Multi-seat replay** (if option B lands) | Orders stamped for a non-local seat replay correctly | Skirmish with one agent on two seats → `-headless -replay` → zero mismatches |

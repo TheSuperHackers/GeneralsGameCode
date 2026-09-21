@@ -23,6 +23,16 @@ multi-second LLM without changes on the engine side.
 Rejected: shared memory (BWAPI-style — OS-specific, doesn't cross Wine, fixed ABI); named pipes (Windows-only semantics);
 HTTP server in engine (heavier; can be added by the SDK as a proxy, like NewShoes' Go bridge).
 
+## Seat scoping
+
+**One connection = one token = one seat.** The seat is the player that game instance controls; it is fixed by the engine
+in `welcome` (`seat: {player_index, name, team}`) and cannot be chosen or changed by the client.
+
+- Every `observe` is that seat's view (its fog, its money, its production); every `act` is that seat's orders.
+- A client cannot address another seat — there is no `player` field in `act` or `observe` to get wrong or abuse.
+- Multi-seat (option B in [05](05-match-setup-and-lobby.md)) keeps the rule: one token per seat, even when the seats share a process.
+- An agent driving several seats holds several connections; combining their knowledge happens in the agent, visibly, never in the engine.
+
 ## Framing and encoding
 
 - Frame = `uint32 length (LE) | uint8 kind | payload`, where **`length` = number of bytes after the length field**

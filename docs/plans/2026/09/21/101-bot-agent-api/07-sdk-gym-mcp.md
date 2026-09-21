@@ -59,7 +59,14 @@ Few parameterized tools, constant size regardless of how many orders/templates e
 | `query({filters, fields, area?, since_frame?, format: "text"|"json"})` | Batch read; `text` = summaries sized for context windows |
 | `act({orders:[…]})` | Batch orders; per-order result; every error carries a `docs://` URI to the recipe that fixes it |
 | `session({…})` | Create/join games ([05](05-match-setup-and-lobby.md)) |
+| `chat({to, text})` / `beacon({at, text})` | Talk to human teammates ([05](05-match-setup-and-lobby.md) §Team play with humans) |
 | `step({frames})` / `wait({until_event?, max_ms})` | Step mode / realtime wake-up on events |
+
+**Seat-scoped.** One MCP server instance per seat by default: its tools only ever see and command that seat, and its
+name says so (`zh-seat-2-usa`). An agent that plays several seats (a team, or self-play) uses the **multi-seat** server:
+the same tools with a required `seat` argument, where each call is routed to that seat's own connection and token
+([04](04-bridge-protocol.md) §Seat scoping). `list_resources({})` shows which seats this server controls. Scoping lives
+in the connections, not in the prompt, so a model cannot "forget" and act for the wrong player.
 
 Text summaries are built here, not in the engine: counts by type, base status, visible threats, idle units, economy — a
 "chain of summarization" as in TextStarCraft II.
