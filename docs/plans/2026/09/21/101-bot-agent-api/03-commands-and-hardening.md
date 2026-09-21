@@ -31,8 +31,15 @@ The bot never sends raw selection messages. It sends **orders**; the bridge expa
 | `train {factory, template}` | select factory alone, `MSG_QUEUE_UNIT_CREATE(template, productionID)` |
 | `build {dozer, template, at, angle}` | select dozer alone, `MSG_DOZER_CONSTRUCT(template, at, angle)` |
 | `upgrade`, `special_power`, `sell`, `repair`, `enter`, `evacuate`, `rally` | select + matching message |
-| `camera {to}` | camera move (client-only; required in `camera` mode) |
 | `raw {type, args}` | **Escape hatch**, off unless the referee allows it; still UI-parity checked |
+
+**Camera is not an order.** It is client-only view state, not a `GameMessage`: live camera movement goes through
+`LookAtTranslator` (`Core/GameEngine/Source/GameClient/MessageStream/LookAtXlat.cpp`) and ends in `View::lookAt`
+(`Core/GameEngine/Include/GameClient/View.h:143`); the network-range `MSG_SET_REPLAY_CAMERA` is replay-only. So the
+bridge exposes a separate **`camera {to, zoom?}` request** ([04](04-bridge-protocol.md) §Requests) that calls
+`TheTacticalView->lookAt()` directly, on the client, outside `TheCommandList`. It never enters logic, the network or
+the replay, so it cannot desync. In `camera` mode the referee may rate-limit it (a human cannot teleport the camera
+every frame either; open question).
 
 Grouping: one batch of orders for a frame is expanded in order; consecutive orders on the same unit set reuse one selection.
 Selection lives in logic per player (`GeneralsMD/Code/GameEngine/Include/Common/Player.h:828`), so the bot's selection

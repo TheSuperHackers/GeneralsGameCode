@@ -25,7 +25,7 @@ Fixed at launch, reported in the handshake, never changeable mid-game (BWAPI les
 | Mode | Sees | Allowed in |
 |---|---|---|
 | `player` (**default**) | Own objects; others only where the player's shroud is `CLEAR`; fogged structures as last-seen snapshots marked `stale` | Everything |
-| `camera` (xezon's suggestion) | `player` ∩ current tactical view; bot must move the camera via an order | Everything; referee may require it |
+| `camera` (xezon's suggestion) | `player` ∩ current tactical view; bot moves the view with the client-only `camera` request ([04](04-bridge-protocol.md)) | Everything; referee may require it |
 | `full` | All objects, no fog | Replay observation, local analysis, single-player training. **Refused in any network game** |
 
 Replay observation defaults to `full` — as in BWAPI, where all flags turn on for replays — and can be switched to `player <n>`.
@@ -37,7 +37,10 @@ Replay observation defaults to `full` — as in BWAPI, where all flags turn on f
   Recompute the same rule from cell status: visible if any occupied cell is `CLEAR`; enemy mobile units in fog → hidden;
   mines in fog → hidden; `KINDOF_ALWAYS_VISIBLE` → visible.
 - "Ever seen" memory for fogged structures lives **in the bridge** (bot-side memory keyed by opaque ID), not in logic.
-- Stealth / detection: follow the same flags the client uses to draw an object for that player. Exact source is an open question.
+- Stealth: enemy objects with `OBJECT_STATUS_STEALTHED` and without `OBJECT_STATUS_DETECTED`
+  (`Core/GameEngine/Include/Common/ObjectStatusTypes.h:60-61`) are hidden even on `CLEAR` cells. Open: `DETECTED` is a
+  single status bit, not per player — in games with 3+ players, check how the client decides per viewer and mirror that.
+- Disguises (e.g. GLA units disguised as another template): report the template the player would see, not the real one.
 
 ## Snapshot content (v1)
 
