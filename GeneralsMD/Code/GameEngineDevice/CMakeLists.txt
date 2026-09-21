@@ -37,11 +37,11 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DBridgeBuffer.h
     Include/W3DDevice/GameClient/W3DBufferManager.h
     Include/W3DDevice/GameClient/W3DCustomScene.h
-    Include/W3DDevice/GameClient/W3DDebugDisplay.h
-    Include/W3DDevice/GameClient/W3DDebugIcons.h
-    Include/W3DDevice/GameClient/W3DDisplay.h
-    Include/W3DDevice/GameClient/W3DDisplayString.h
-    Include/W3DDevice/GameClient/W3DDisplayStringManager.h
+#    Include/W3DDevice/GameClient/W3DDebugDisplay.h
+#    Include/W3DDevice/GameClient/W3DDebugIcons.h
+#    Include/W3DDevice/GameClient/W3DDisplay.h
+#    Include/W3DDevice/GameClient/W3DDisplayString.h
+#    Include/W3DDevice/GameClient/W3DDisplayStringManager.h
     Include/W3DDevice/GameClient/W3DDynamicLight.h
     Include/W3DDevice/GameClient/W3DFileSystem.h
 #    Include/W3DDevice/GameClient/W3DGadget.h
@@ -145,11 +145,11 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DAssetManagerExposed.cpp
     Source/W3DDevice/GameClient/W3DBibBuffer.cpp
     Source/W3DDevice/GameClient/W3DBridgeBuffer.cpp
-    Source/W3DDevice/GameClient/W3DDebugDisplay.cpp
-    Source/W3DDevice/GameClient/W3DDebugIcons.cpp
-    Source/W3DDevice/GameClient/W3DDisplay.cpp
-    Source/W3DDevice/GameClient/W3DDisplayString.cpp
-    Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp
+#    Source/W3DDevice/GameClient/W3DDebugDisplay.cpp
+#    Source/W3DDevice/GameClient/W3DDebugIcons.cpp
+#    Source/W3DDevice/GameClient/W3DDisplay.cpp
+#    Source/W3DDevice/GameClient/W3DDisplayString.cpp
+#    Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp
     Source/W3DDevice/GameClient/W3DDynamicLight.cpp
     Source/W3DDevice/GameClient/W3DFileSystem.cpp
     Source/W3DDevice/GameClient/W3DGameClient.cpp
