@@ -18,8 +18,10 @@
 
 #pragma once
 
-#include "mutex.h"
-#include "win.h"
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 
 
 // This static class loads usp10.dll on first use and unloads it during engine shutdown.
@@ -107,7 +109,6 @@ private:
 	typedef const SIZE *(WINAPI *ScriptString_pSize_t)(ScriptStringAnalysis);
 	typedef HRESULT (WINAPI *ScriptStringOut_t)(ScriptStringAnalysis, int, int, UINT, const RECT *, int, int, BOOL);
 
-	static CriticalSectionClass CriticalSection;
 	static HMODULE Module;
 	static bool LoadAttempted;
 	static ScriptIsComplex_t ScriptIsComplexPtr;

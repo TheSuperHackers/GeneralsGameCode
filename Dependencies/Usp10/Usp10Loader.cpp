@@ -18,8 +18,37 @@
 
 #include "Usp10Loader.h"
 
+#include "Utility/stringex.h"
 
-CriticalSectionClass Usp10Loader::CriticalSection;
+
+namespace
+{
+
+class CriticalSection
+{
+public:
+	CriticalSection() { ::InitializeCriticalSection(&m_criticalSection); }
+	~CriticalSection() { ::DeleteCriticalSection(&m_criticalSection); }
+
+	void lock() { ::EnterCriticalSection(&m_criticalSection); }
+	void unlock() { ::LeaveCriticalSection(&m_criticalSection); }
+
+private:
+	CRITICAL_SECTION m_criticalSection;
+};
+
+CriticalSection Lock;
+
+class ScopedLock
+{
+public:
+	ScopedLock() { Lock.lock(); }
+	~ScopedLock() { Lock.unlock(); }
+};
+
+} // namespace
+
+
 HMODULE Usp10Loader::Module = HMODULE(nullptr);
 bool Usp10Loader::LoadAttempted = false;
 Usp10Loader::ScriptIsComplex_t Usp10Loader::ScriptIsComplexPtr = nullptr;
@@ -40,12 +69,11 @@ bool Usp10Loader::load()
 	LoadAttempted = true;
 
 	char dll_path[MAX_PATH];
-	const char dll_name[] = "\\usp10.dll";
-	const UINT path_length = ::GetSystemDirectoryA(dll_path, ARRAY_SIZE(dll_path));
-	if (path_length == 0 || path_length + ARRAY_SIZE(dll_name) > ARRAY_SIZE(dll_path)) {
+	const UINT path_length = ::GetSystemDirectoryA(dll_path, sizeof(dll_path));
+	if (path_length == 0 || path_length >= sizeof(dll_path) ||
+		strlcat(dll_path, "\\usp10.dll", sizeof(dll_path)) >= sizeof(dll_path)) {
 		return false;
 	}
-	strcpy(dll_path + path_length, dll_name);
 
 	Module = ::LoadLibraryA(dll_path);
 	if (Module == HMODULE(nullptr)) {
@@ -75,7 +103,7 @@ bool Usp10Loader::load()
 
 void Usp10Loader::unload()
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 
 	freeResources();
 	LoadAttempted = false;
@@ -102,7 +130,7 @@ void Usp10Loader::freeResources()
 
 HRESULT Usp10Loader::ScriptIsComplex(const WCHAR *text, int text_length, DWORD flags)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptIsComplexPtr(text, text_length, flags) : E_FAIL;
 }
 
@@ -110,7 +138,7 @@ HRESULT Usp10Loader::ScriptIsComplex(const WCHAR *text, int text_length, DWORD f
 HRESULT Usp10Loader::ScriptItemize(const WCHAR *text, int text_length, int item_capacity,
 	const ScriptControl *control, const ScriptState *state, ScriptItem *items, int *item_count)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptItemizePtr(text, text_length, item_capacity, control, state, items, item_count) : E_FAIL;
 }
 
@@ -118,7 +146,7 @@ HRESULT Usp10Loader::ScriptItemize(const WCHAR *text, int text_length, int item_
 HRESULT Usp10Loader::ScriptBreak(const WCHAR *text, int text_length, const ScriptAnalysis *analysis,
 	ScriptLogAttr *attributes)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptBreakPtr(text, text_length, analysis, attributes) : E_FAIL;
 }
 
@@ -126,7 +154,7 @@ HRESULT Usp10Loader::ScriptBreak(const WCHAR *text, int text_length, const Scrip
 HRESULT Usp10Loader::ScriptLayout(int run_count, const BYTE *levels, int *visual_to_logical,
 	int *logical_to_visual)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptLayoutPtr(run_count, levels, visual_to_logical, logical_to_visual) : E_FAIL;
 }
 
@@ -135,7 +163,7 @@ HRESULT Usp10Loader::ScriptStringAnalyse(HDC dc, const void *text, int text_leng
 	int charset, DWORD flags, int required_width, ScriptControl *control, ScriptState *state,
 	const int *spacing, ScriptTabDefinition *tabs, const BYTE *character_classes, ScriptStringAnalysis *analysis)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptStringAnalysePtr(dc, text, text_length, glyph_count, charset, flags, required_width,
 		control, state, spacing, tabs, character_classes, analysis) : E_FAIL;
 }
@@ -143,14 +171,14 @@ HRESULT Usp10Loader::ScriptStringAnalyse(HDC dc, const void *text, int text_leng
 
 HRESULT Usp10Loader::ScriptStringFree(ScriptStringAnalysis *analysis)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptStringFreePtr(analysis) : E_FAIL;
 }
 
 
 const SIZE *Usp10Loader::ScriptString_pSize(ScriptStringAnalysis analysis)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptString_pSizePtr(analysis) : nullptr;
 }
 
@@ -158,6 +186,6 @@ const SIZE *Usp10Loader::ScriptString_pSize(ScriptStringAnalysis analysis)
 HRESULT Usp10Loader::ScriptStringOut(ScriptStringAnalysis analysis, int x, int y, UINT options,
 	const RECT *rect, int minimum_selection, int maximum_selection, BOOL disabled)
 {
-	CriticalSectionClass::LockClass lock(CriticalSection);
+	ScopedLock lock;
 	return load() ? ScriptStringOutPtr(analysis, x, y, options, rect, minimum_selection, maximum_selection, disabled) : E_FAIL;
 }
