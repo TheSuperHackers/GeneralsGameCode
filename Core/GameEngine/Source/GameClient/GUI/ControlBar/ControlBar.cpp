@@ -3587,11 +3587,6 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 //-------------------------------------------------------------------------------------------------
 void ControlBar::updateSpecialPowerShortcut()
 {
-	if (!m_animateWindowManagerForGenShortcuts)
-	{
-		return;
-	}
-
 	if(!m_specialPowerShortcutParent || !m_specialPowerShortcutButtons
 	   || !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
@@ -3608,6 +3603,7 @@ void ControlBar::updateSpecialPowerShortcut()
 	}
 	else if( !hasValidShortcutButton
 					 && !m_specialPowerShortcutParent->winIsHidden()
+					 && m_animateWindowManagerForGenShortcuts
 					 && m_animateWindowManagerForGenShortcuts->isFinished() )
 	{
 		animateSpecialPowerShortcut(FALSE);
