@@ -17,6 +17,7 @@ set(UTILITY_SRC
     Utility/stdio_adapter.h
     Utility/STLUtils.h
     Utility/string_compat.h
+    Utility/stringex.h
     Utility/tchar_compat.h
     Utility/thread_compat.h
     Utility/time_compat.h

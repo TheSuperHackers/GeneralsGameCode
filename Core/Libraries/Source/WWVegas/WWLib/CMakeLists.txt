@@ -114,7 +114,6 @@ set(WWLIB_SRC
     stimer.h
     straw.cpp
     STRAW.h
-    stringex.h
     strtok_r.cpp
     strtok_r.h
     #swap.h

@@ -66,7 +66,7 @@
 #endif
 #include <malloc.h>
 #include <memory.h>
-#include "stringex.h"
+#include "Utility/stringex.h"
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 #include "WWFILE.h"
 #include "ffactory.h"

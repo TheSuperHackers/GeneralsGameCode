@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "bittype.h"
 #include <string.h>
 #include <ctype.h>
 
