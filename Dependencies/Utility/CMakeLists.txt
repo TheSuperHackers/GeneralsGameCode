@@ -15,6 +15,7 @@ set(UTILITY_SRC
     Utility/sstream_adapter.h
     Utility/stdint_adapter.h
     Utility/stdio_adapter.h
+    Utility/STLUtils.h
     Utility/string_compat.h
     Utility/tchar_compat.h
     Utility/thread_compat.h

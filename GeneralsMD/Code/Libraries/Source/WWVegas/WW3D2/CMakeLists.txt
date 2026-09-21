@@ -250,7 +250,7 @@ target_precompile_headers(z_ww3d2 PRIVATE
     [["Precompiled/precompiled.h"]] # Must be first
     [["dx8wrapper.h"]]
     [["WWLib/always.h"]]
-    [["WWLib/STLUtils.h"]]
+    [["Utility/STLUtils.h"]]
     [["WWLib/win.h"]]
     [["WWLib/WWCommon.h"]]
     [["WWLib/wwstring.h"]]

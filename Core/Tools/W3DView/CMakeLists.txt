@@ -174,7 +174,7 @@ target_precompile_headers(corei_w3dview INTERFACE
     [["Precompiled/precompiled.h"]] # Must be first
     "StdAfx.h"
     [["WWLib/always.h"]]
-    [["WWLib/STLUtils.h"]]
+    [["Utility/STLUtils.h"]]
     [["WWLib/WWCommon.h"]]
 )
 
