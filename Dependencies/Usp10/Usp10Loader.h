@@ -18,105 +18,29 @@
 
 #pragma once
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-
-
-// This static class loads usp10.dll on first use and unloads it during engine shutdown.
+// This static class loads and unloads usp10.dll from the system directory at runtime.
+//
+// The Uniscribe functions declared in usp10_adapter.h are implemented in this class and forward
+// to the matching export of the loaded module, so they can be called as if usp10.dll was linked
+// statically. When the module is not loaded, every Uniscribe function returns E_FAIL, or a null
+// pointer for ScriptString_pSize.
+//
+// Is not thread safe. Every call to load needs a paired call to unload, no matter if the load
+// was successful, and both are expected to be called while no Uniscribe function is in flight.
 
 class Usp10Loader
 {
 public:
 
-	typedef void *ScriptStringAnalysis;
-	struct ScriptControl;
-	struct ScriptTabDefinition;
+	// Returns whether usp10.dll is loaded
+	static bool isLoaded();
 
-	struct ScriptState
-	{
-		WORD bidi_level : 5;
-		WORD reserved : 11;
-	};
+	// Returns whether usp10.dll was attempted to be loaded but failed
+	static bool isFailed();
 
-	struct ScriptAnalysis
-	{
-		WORD script : 10;
-		WORD right_to_left : 1;
-		WORD layout_right_to_left : 1;
-		WORD link_before : 1;
-		WORD link_after : 1;
-		WORD logical_order : 1;
-		WORD no_glyph_index : 1;
-		ScriptState state;
-	};
-
-	struct ScriptItem
-	{
-		int character_position;
-		ScriptAnalysis analysis;
-	};
-
-	struct ScriptLogAttr
-	{
-		BYTE soft_break : 1;
-		BYTE white_space : 1;
-		BYTE char_stop : 1;
-		BYTE word_stop : 1;
-		BYTE invalid : 1;
-		BYTE reserved : 3;
-	};
-
-	enum
-	{
-		SIC_COMPLEX = 0x00000001,
-		SSA_FALLBACK = 0x00000020,
-		SSA_GLYPHS = 0x00000080,
-		SSA_RTL = 0x00000100,
-	};
-
-	static HRESULT ScriptIsComplex(const WCHAR *text, int text_length, DWORD flags);
-	static HRESULT ScriptItemize(const WCHAR *text, int text_length, int item_capacity,
-		const ScriptControl *control, const ScriptState *state, ScriptItem *items, int *item_count);
-	static HRESULT ScriptBreak(const WCHAR *text, int text_length, const ScriptAnalysis *analysis,
-		ScriptLogAttr *attributes);
-	static HRESULT ScriptLayout(int run_count, const BYTE *levels, int *visual_to_logical,
-		int *logical_to_visual);
-	static HRESULT ScriptStringAnalyse(HDC dc, const void *text, int text_length, int glyph_count,
-		int charset, DWORD flags, int required_width, ScriptControl *control, ScriptState *state,
-		const int *spacing, ScriptTabDefinition *tabs, const BYTE *character_classes,
-		ScriptStringAnalysis *analysis);
-	static HRESULT ScriptStringFree(ScriptStringAnalysis *analysis);
-	static const SIZE *ScriptString_pSize(ScriptStringAnalysis analysis);
-	static HRESULT ScriptStringOut(ScriptStringAnalysis analysis, int x, int y, UINT options,
-		const RECT *rect, int minimum_selection, int maximum_selection, BOOL disabled);
-	static void unload();
-
-private:
+	// Returns the system error code of the failed load attempt
+	static unsigned long getLastError();
 
 	static bool load();
-	static void freeResources();
-
-	typedef HRESULT (WINAPI *ScriptIsComplex_t)(const WCHAR *, int, DWORD);
-	typedef HRESULT (WINAPI *ScriptItemize_t)(const WCHAR *, int, int, const ScriptControl *,
-		const ScriptState *, ScriptItem *, int *);
-	typedef HRESULT (WINAPI *ScriptBreak_t)(const WCHAR *, int, const ScriptAnalysis *, ScriptLogAttr *);
-	typedef HRESULT (WINAPI *ScriptLayout_t)(int, const BYTE *, int *, int *);
-	typedef HRESULT (WINAPI *ScriptStringAnalyse_t)(HDC, const void *, int, int, int, DWORD, int,
-		ScriptControl *, ScriptState *, const int *, ScriptTabDefinition *, const BYTE *, ScriptStringAnalysis *);
-	typedef HRESULT (WINAPI *ScriptStringFree_t)(ScriptStringAnalysis *);
-	typedef const SIZE *(WINAPI *ScriptString_pSize_t)(ScriptStringAnalysis);
-	typedef HRESULT (WINAPI *ScriptStringOut_t)(ScriptStringAnalysis, int, int, UINT, const RECT *, int, int, BOOL);
-
-	static HMODULE Module;
-	static bool LoadAttempted;
-	static ScriptIsComplex_t ScriptIsComplexPtr;
-	static ScriptItemize_t ScriptItemizePtr;
-	static ScriptBreak_t ScriptBreakPtr;
-	static ScriptLayout_t ScriptLayoutPtr;
-	static ScriptStringAnalyse_t ScriptStringAnalysePtr;
-	static ScriptStringFree_t ScriptStringFreePtr;
-	static ScriptString_pSize_t ScriptString_pSizePtr;
-	static ScriptStringOut_t ScriptStringOutPtr;
+	static void unload();
 };

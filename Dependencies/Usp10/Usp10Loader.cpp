@@ -17,6 +17,7 @@
 */
 
 #include "Usp10Loader.h"
+#include "usp10_adapter.h"
 
 #include "Utility/stringex.h"
 
@@ -24,93 +25,56 @@
 namespace
 {
 
-class CriticalSection
+typedef HRESULT (WINAPI *ScriptIsComplex_t)(const WCHAR *pwcInChars, int cInChars, DWORD dwFlags);
+typedef HRESULT (WINAPI *ScriptItemize_t)(const WCHAR *pwcInChars, int cInChars, int cMaxItems,
+	const SCRIPT_CONTROL *psControl, const SCRIPT_STATE *psState, SCRIPT_ITEM *pItems, int *pcItems);
+typedef HRESULT (WINAPI *ScriptBreak_t)(const WCHAR *pwcChars, int cChars, const SCRIPT_ANALYSIS *psa,
+	SCRIPT_LOGATTR *psla);
+typedef HRESULT (WINAPI *ScriptLayout_t)(int cRuns, const BYTE *pbLevel, int *piVisualToLogical,
+	int *piLogicalToVisual);
+typedef HRESULT (WINAPI *ScriptStringAnalyse_t)(HDC hdc, const void *pString, int cString, int cGlyphs,
+	int iCharset, DWORD dwFlags, int iReqWidth, SCRIPT_CONTROL *psControl, SCRIPT_STATE *psState,
+	const int *piDx, SCRIPT_TABDEF *pTabdef, const BYTE *pbInClass, SCRIPT_STRING_ANALYSIS *pssa);
+typedef HRESULT (WINAPI *ScriptStringFree_t)(SCRIPT_STRING_ANALYSIS *pssa);
+typedef const SIZE *(WINAPI *ScriptString_pSize_t)(SCRIPT_STRING_ANALYSIS ssa);
+typedef HRESULT (WINAPI *ScriptStringOut_t)(SCRIPT_STRING_ANALYSIS ssa, int iX, int iY, UINT uOptions,
+	const RECT *prc, int iMinSel, int iMaxSel, BOOL fDisabled);
+
+ScriptIsComplex_t ScriptIsComplexPtr = nullptr;
+ScriptItemize_t ScriptItemizePtr = nullptr;
+ScriptBreak_t ScriptBreakPtr = nullptr;
+ScriptLayout_t ScriptLayoutPtr = nullptr;
+ScriptStringAnalyse_t ScriptStringAnalysePtr = nullptr;
+ScriptStringFree_t ScriptStringFreePtr = nullptr;
+ScriptString_pSize_t ScriptString_pSizePtr = nullptr;
+ScriptStringOut_t ScriptStringOutPtr = nullptr;
+
+HMODULE Module = HMODULE(nullptr);
+int ReferenceCount = 0;
+bool Failed = false;
+unsigned long LastError = 0;
+
+#define USP10_RESOLVE(name) \
+	name##Ptr = reinterpret_cast<name##_t>(::GetProcAddress(Module, #name))
+
+static bool resolveAll()
 {
-public:
-	CriticalSection() { ::InitializeCriticalSection(&m_criticalSection); }
-	~CriticalSection() { ::DeleteCriticalSection(&m_criticalSection); }
+	USP10_RESOLVE(ScriptIsComplex);
+	USP10_RESOLVE(ScriptItemize);
+	USP10_RESOLVE(ScriptBreak);
+	USP10_RESOLVE(ScriptLayout);
+	USP10_RESOLVE(ScriptStringAnalyse);
+	USP10_RESOLVE(ScriptStringFree);
+	USP10_RESOLVE(ScriptString_pSize);
+	USP10_RESOLVE(ScriptStringOut);
 
-	void lock() { ::EnterCriticalSection(&m_criticalSection); }
-	void unlock() { ::LeaveCriticalSection(&m_criticalSection); }
-
-private:
-	CRITICAL_SECTION m_criticalSection;
-};
-
-CriticalSection Lock;
-
-class ScopedLock
-{
-public:
-	ScopedLock() { Lock.lock(); }
-	~ScopedLock() { Lock.unlock(); }
-};
-
-} // namespace
-
-
-HMODULE Usp10Loader::Module = HMODULE(nullptr);
-bool Usp10Loader::LoadAttempted = false;
-Usp10Loader::ScriptIsComplex_t Usp10Loader::ScriptIsComplexPtr = nullptr;
-Usp10Loader::ScriptItemize_t Usp10Loader::ScriptItemizePtr = nullptr;
-Usp10Loader::ScriptBreak_t Usp10Loader::ScriptBreakPtr = nullptr;
-Usp10Loader::ScriptLayout_t Usp10Loader::ScriptLayoutPtr = nullptr;
-Usp10Loader::ScriptStringAnalyse_t Usp10Loader::ScriptStringAnalysePtr = nullptr;
-Usp10Loader::ScriptStringFree_t Usp10Loader::ScriptStringFreePtr = nullptr;
-Usp10Loader::ScriptString_pSize_t Usp10Loader::ScriptString_pSizePtr = nullptr;
-Usp10Loader::ScriptStringOut_t Usp10Loader::ScriptStringOutPtr = nullptr;
-
-
-bool Usp10Loader::load()
-{
-	if (LoadAttempted) {
-		return Module != HMODULE(nullptr);
-	}
-	LoadAttempted = true;
-
-	char dll_path[MAX_PATH];
-	const UINT path_length = ::GetSystemDirectoryA(dll_path, sizeof(dll_path));
-	if (path_length == 0 || path_length >= sizeof(dll_path) ||
-		strlcat(dll_path, "\\usp10.dll", sizeof(dll_path)) >= sizeof(dll_path)) {
-		return false;
-	}
-
-	Module = ::LoadLibraryA(dll_path);
-	if (Module == HMODULE(nullptr)) {
-		return false;
-	}
-
-	ScriptIsComplexPtr = reinterpret_cast<ScriptIsComplex_t>(::GetProcAddress(Module, "ScriptIsComplex"));
-	ScriptItemizePtr = reinterpret_cast<ScriptItemize_t>(::GetProcAddress(Module, "ScriptItemize"));
-	ScriptBreakPtr = reinterpret_cast<ScriptBreak_t>(::GetProcAddress(Module, "ScriptBreak"));
-	ScriptLayoutPtr = reinterpret_cast<ScriptLayout_t>(::GetProcAddress(Module, "ScriptLayout"));
-	ScriptStringAnalysePtr = reinterpret_cast<ScriptStringAnalyse_t>(::GetProcAddress(Module, "ScriptStringAnalyse"));
-	ScriptStringFreePtr = reinterpret_cast<ScriptStringFree_t>(::GetProcAddress(Module, "ScriptStringFree"));
-	ScriptString_pSizePtr = reinterpret_cast<ScriptString_pSize_t>(::GetProcAddress(Module, "ScriptString_pSize"));
-	ScriptStringOutPtr = reinterpret_cast<ScriptStringOut_t>(::GetProcAddress(Module, "ScriptStringOut"));
-
-	if (ScriptIsComplexPtr == nullptr || ScriptItemizePtr == nullptr || ScriptBreakPtr == nullptr ||
-		ScriptLayoutPtr == nullptr || ScriptStringAnalysePtr == nullptr || ScriptStringFreePtr == nullptr ||
-		ScriptString_pSizePtr == nullptr || ScriptStringOutPtr == nullptr)
-	{
-		freeResources();
-		return false;
-	}
-
-	return true;
+	return ScriptIsComplexPtr != nullptr && ScriptItemizePtr != nullptr && ScriptBreakPtr != nullptr
+		&& ScriptLayoutPtr != nullptr && ScriptStringAnalysePtr != nullptr && ScriptStringFreePtr != nullptr
+		&& ScriptString_pSizePtr != nullptr && ScriptStringOutPtr != nullptr;
 }
+#undef USP10_RESOLVE
 
-
-void Usp10Loader::unload()
-{
-	ScopedLock lock;
-
-	freeResources();
-	LoadAttempted = false;
-}
-
-
-void Usp10Loader::freeResources()
+static void freeResources()
 {
 	if (Module != HMODULE(nullptr)) {
 		::FreeLibrary(Module);
@@ -127,65 +91,139 @@ void Usp10Loader::freeResources()
 	ScriptStringOutPtr = nullptr;
 }
 
+} // namespace
 
-HRESULT Usp10Loader::ScriptIsComplex(const WCHAR *text, int text_length, DWORD flags)
+
+bool Usp10Loader::isLoaded()
 {
-	ScopedLock lock;
-	return load() ? ScriptIsComplexPtr(text, text_length, flags) : E_FAIL;
+	return Module != HMODULE(nullptr);
 }
 
 
-HRESULT Usp10Loader::ScriptItemize(const WCHAR *text, int text_length, int item_capacity,
-	const ScriptControl *control, const ScriptState *state, ScriptItem *items, int *item_count)
+bool Usp10Loader::isFailed()
 {
-	ScopedLock lock;
-	return load() ? ScriptItemizePtr(text, text_length, item_capacity, control, state, items, item_count) : E_FAIL;
+	return Failed;
 }
 
 
-HRESULT Usp10Loader::ScriptBreak(const WCHAR *text, int text_length, const ScriptAnalysis *analysis,
-	ScriptLogAttr *attributes)
+unsigned long Usp10Loader::getLastError()
 {
-	ScopedLock lock;
-	return load() ? ScriptBreakPtr(text, text_length, analysis, attributes) : E_FAIL;
+	return LastError;
 }
 
 
-HRESULT Usp10Loader::ScriptLayout(int run_count, const BYTE *levels, int *visual_to_logical,
-	int *logical_to_visual)
+bool Usp10Loader::load()
 {
-	ScopedLock lock;
-	return load() ? ScriptLayoutPtr(run_count, levels, visual_to_logical, logical_to_visual) : E_FAIL;
+	// Always increment the reference count.
+	++ReferenceCount;
+
+	// Optimization: return early if it failed before.
+	if (Failed)
+		return false;
+
+	// Return early if someone else already loaded it.
+	if (ReferenceCount > 1)
+		return true;
+
+	// Load usp10.dll from the system directory only.
+	char dll_path[MAX_PATH];
+	const UINT path_length = ::GetSystemDirectoryA(dll_path, sizeof(dll_path));
+	if (path_length == 0 || path_length >= sizeof(dll_path) ||
+		strlcat(dll_path, "\\usp10.dll", sizeof(dll_path)) >= sizeof(dll_path)) {
+		LastError = ERROR_BUFFER_OVERFLOW;
+		Failed = true;
+		return false;
+	}
+
+	Module = ::LoadLibraryA(dll_path);
+	if (Module == HMODULE(nullptr)) {
+		LastError = ::GetLastError();
+		Failed = true;
+		return false;
+	}
+
+	if (!resolveAll()) {
+		freeResources();
+		LastError = ERROR_PROC_NOT_FOUND;
+		Failed = true;
+		return false;
+	}
+
+	return true;
 }
 
 
-HRESULT Usp10Loader::ScriptStringAnalyse(HDC dc, const void *text, int text_length, int glyph_count,
-	int charset, DWORD flags, int required_width, ScriptControl *control, ScriptState *state,
-	const int *spacing, ScriptTabDefinition *tabs, const BYTE *character_classes, ScriptStringAnalysis *analysis)
+void Usp10Loader::unload()
 {
-	ScopedLock lock;
-	return load() ? ScriptStringAnalysePtr(dc, text, text_length, glyph_count, charset, flags, required_width,
-		control, state, spacing, tabs, character_classes, analysis) : E_FAIL;
+	if (ReferenceCount > 0)
+		--ReferenceCount;
+
+	if (ReferenceCount > 0)
+		return;
+
+	freeResources();
+	Failed = false;
+	LastError = 0;
 }
 
 
-HRESULT Usp10Loader::ScriptStringFree(ScriptStringAnalysis *analysis)
+// The Uniscribe functions below stand in for the imports of usp10.dll.
+
+HRESULT WINAPI ScriptIsComplex(const WCHAR *pwcInChars, int cInChars, DWORD dwFlags)
 {
-	ScopedLock lock;
-	return load() ? ScriptStringFreePtr(analysis) : E_FAIL;
+	return ScriptIsComplexPtr != nullptr ? ScriptIsComplexPtr(pwcInChars, cInChars, dwFlags) : E_FAIL;
 }
 
-
-const SIZE *Usp10Loader::ScriptString_pSize(ScriptStringAnalysis analysis)
+HRESULT WINAPI ScriptItemize(const WCHAR *pwcInChars, int cInChars, int cMaxItems,
+	const SCRIPT_CONTROL *psControl, const SCRIPT_STATE *psState, SCRIPT_ITEM *pItems, int *pcItems)
 {
-	ScopedLock lock;
-	return load() ? ScriptString_pSizePtr(analysis) : nullptr;
+	if (ScriptItemizePtr != nullptr)
+		return ScriptItemizePtr(pwcInChars, cInChars, cMaxItems, psControl, psState, pItems, pcItems);
+
+	if (pcItems != nullptr)
+		*pcItems = 0;
+	return E_FAIL;
 }
 
-
-HRESULT Usp10Loader::ScriptStringOut(ScriptStringAnalysis analysis, int x, int y, UINT options,
-	const RECT *rect, int minimum_selection, int maximum_selection, BOOL disabled)
+HRESULT WINAPI ScriptBreak(const WCHAR *pwcChars, int cChars, const SCRIPT_ANALYSIS *psa, SCRIPT_LOGATTR *psla)
 {
-	ScopedLock lock;
-	return load() ? ScriptStringOutPtr(analysis, x, y, options, rect, minimum_selection, maximum_selection, disabled) : E_FAIL;
+	return ScriptBreakPtr != nullptr ? ScriptBreakPtr(pwcChars, cChars, psa, psla) : E_FAIL;
+}
+
+HRESULT WINAPI ScriptLayout(int cRuns, const BYTE *pbLevel, int *piVisualToLogical, int *piLogicalToVisual)
+{
+	return ScriptLayoutPtr != nullptr
+		? ScriptLayoutPtr(cRuns, pbLevel, piVisualToLogical, piLogicalToVisual)
+		: E_FAIL;
+}
+
+HRESULT WINAPI ScriptStringAnalyse(HDC hdc, const void *pString, int cString, int cGlyphs, int iCharset,
+	DWORD dwFlags, int iReqWidth, SCRIPT_CONTROL *psControl, SCRIPT_STATE *psState, const int *piDx,
+	SCRIPT_TABDEF *pTabdef, const BYTE *pbInClass, SCRIPT_STRING_ANALYSIS *pssa)
+{
+	if (ScriptStringAnalysePtr != nullptr)
+		return ScriptStringAnalysePtr(hdc, pString, cString, cGlyphs, iCharset, dwFlags, iReqWidth, psControl,
+			psState, piDx, pTabdef, pbInClass, pssa);
+
+	if (pssa != nullptr)
+		*pssa = nullptr;
+	return E_FAIL;
+}
+
+HRESULT WINAPI ScriptStringFree(SCRIPT_STRING_ANALYSIS *pssa)
+{
+	return ScriptStringFreePtr != nullptr ? ScriptStringFreePtr(pssa) : E_FAIL;
+}
+
+const SIZE *WINAPI ScriptString_pSize(SCRIPT_STRING_ANALYSIS ssa)
+{
+	return ScriptString_pSizePtr != nullptr ? ScriptString_pSizePtr(ssa) : nullptr;
+}
+
+HRESULT WINAPI ScriptStringOut(SCRIPT_STRING_ANALYSIS ssa, int iX, int iY, UINT uOptions, const RECT *prc,
+	int iMinSel, int iMaxSel, BOOL fDisabled)
+{
+	return ScriptStringOutPtr != nullptr
+		? ScriptStringOutPtr(ssa, iX, iY, uOptions, prc, iMinSel, iMaxSel, fDisabled)
+		: E_FAIL;
 }
