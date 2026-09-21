@@ -41,6 +41,14 @@ millions of frames; BWAPI needed OpenBW for this).
 | Frame skip | `every_n_frames` in `subscribe` (PySC2 `step_mul`, Pluto: one step / 6 frames) |
 | Measure | Frames/s per core for headless skirmish with a no-op bot, published as a baseline |
 
+## Headless in network games
+
+Scenarios 6 and 7 in [05](05-match-setup-and-lobby.md) put several agent instances on one host. Rendering each is
+wasteful, so headless instances should be able to host and join LAN / direct-connect games. Today the LAN lobby is
+driven by UI code that is dummied in headless mode. **Open:** a headless session path that calls `LANAPI` directly
+(`Core/GameEngine/Include/GameNetwork/LANAPI.h:75-85`) without the menus. Until then, agent instances run windowed
+(minimized, low detail).
+
 ## Bot vs bot locally
 
 One process per bot, LAN game over loopback ([05](05-match-setup-and-lobby.md) scenario 4). No change to the

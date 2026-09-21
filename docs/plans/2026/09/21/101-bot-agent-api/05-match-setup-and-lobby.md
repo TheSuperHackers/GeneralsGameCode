@@ -16,10 +16,34 @@ pick faction, colour, team and map, and play against humans, built-in AI, or **o
 | 3 | Human + AI assistant on the same player (co-pilot) | 1 | Shared player; `assist` flag keeps human input on ([§Human + AI](#human--ai)) |
 | 4 | My bot vs my other bot, locally | 1 | Two game instances in a LAN game on loopback, each with its own bridge **and its own port** (`-botapi 0`, [04](04-bridge-protocol.md) §Transport). Multi-instance must be on ([06](06-headless-and-step.md) §Throughput). To verify: LAN discovery between instances on one host |
 | 5 | Bot vs human online | 2+ | Same as 2; community decides where it's allowed ([§Online](#online)) |
+| 6 | **4 humans vs 4 agents** (8-player game) | 5+ | Every seat is an ordinary client. The 4 agent instances can share one host (multi-instance, one port each), joining the humans' LAN / direct-connect game |
+| 7 | **1 human + 3 agents vs 4 agents** (mixed teams) | 2+ | Same as 6; the human's allied agents coordinate with them through chat and beacons ([§Team play with humans](#team-play-with-humans)) |
 
 Scenario 2 needs **no engine support for multiple bots**: every client is an ordinary client whose local player is driven
 by its own bridge. That also answers bobtista's "more than one bot on a machine" concern — the answer is one bot per
 game process, scale with processes.
+
+## Team play with humans
+
+For scenarios 6 and 7 an agent must be a usable teammate, not just an opponent.
+
+| Need | Engine path | Bridge surface |
+|---|---|---|
+| Read team/all chat | Chat already travels over the network (`NetworkInterface::sendChat(text, playerMask)`, `Core/GameEngine/Include/GameNetwork/NetworkInterface.h:71`) | `chat` events (sender, audience, text) |
+| Write chat | Same `sendChat` the in-game chat box uses | `chat {to: team|all, text}` request, rate-limited |
+| Beacons / map pings | `MSG_PLACE_BEACON`, `MSG_REMOVE_BEACON`, `MSG_SET_BEACON_TEXT` (`Core/GameEngine/Include/Common/MessageStream.h:598-600`) — ordinary network messages | `beacon` order + `beacon` events |
+| Allied vision | Whatever the game already shares with allies (to verify in the shroud code) | Nothing new; follows the `player` visibility rule, which reads the same shroud the human ally would see |
+
+The SDK turns chat into intents for LLM agents ("attack left", "need anti-air") and an MCP recipe covers
+`docs://recipes/play-with-human-teammates`.
+
+Out-of-band coordination: agents on the same team can also talk to each other outside the game (one brain controlling
+3 seats, option A below). Humans on voice chat do the same, so it is allowed by default; the referee can forbid it for a
+match, but the engine cannot enforce it — it is a declared rule, like any tournament rule about communication.
+
+Pace: a network game advances at the speed of the slowest client (`Core/GameEngine/Source/GameNetwork/Network.cpp:686-732`),
+so agent instances in a game with humans **must** run in realtime mode (never step mode) and must keep up. On one host with
+4 agent instances, only the local player's view is rendered in each; headless instances are the goal, but that needs headless LAN join ([06](06-headless-and-step.md)).
 
 ## One agent, several player slots
 
@@ -89,4 +113,5 @@ bot-controlled.
 
 - Scenario 1 from a script: create skirmish, play, get result, exit.
 - Scenario 2 on two machines (one Windows, one Linux/Wine): two bots, two owners, one LAN game; both replays re-simulate identically.
+- Scenario 7 on a LAN: one human + 3 agents vs 4 agents, the 7 agent instances split across two hosts; the agents answer a human's team-chat request; the game keeps normal speed.
 - `[BOT]` visible in lobby, in-game, and in the replay player list.

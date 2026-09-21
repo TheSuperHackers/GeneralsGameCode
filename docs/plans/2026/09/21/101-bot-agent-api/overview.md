@@ -89,7 +89,7 @@ Three consumer tiers, one wire protocol:
 | 02 | [02-observation.md](02-observation.md) | **Stage 1.** Read-only snapshot, fog-respecting; replay observation first; records / planes / entities encodings |
 | 03 | [03-commands-and-hardening.md](03-commands-and-hardening.md) | **Stage 2.** Orders → `GameMessage`; UI-parity validation; action masks; optional logic hardening |
 | 04 | [04-bridge-protocol.md](04-bridge-protocol.md) | Loopback TCP, JSON + binary frames, handshake, batch `observe`/`act`, realtime vs step timing, stalls |
-| 05 | [05-match-setup-and-lobby.md](05-match-setup-and-lobby.md) | Skirmish / LAN host & join; **my AI vs your AI on separate machines**; human + AI co-pilot; `[BOT]` name tag |
+| 05 | [05-match-setup-and-lobby.md](05-match-setup-and-lobby.md) | Skirmish / LAN host & join; **my AI vs your AI on separate machines**; 8-player mixed human/agent teams with chat and beacons; one agent on several slots; human + AI co-pilot; `[BOT]` name tag |
 | 06 | [06-headless-and-step.md](06-headless-and-step.md) | Headless live match, uncapped speed, step mode, throughput, bot vs bot locally |
 | 07 | [07-sdk-gym-mcp.md](07-sdk-gym-mcp.md) | **Separate repo.** SDKs, Gymnasium/PettingZoo (ML), Jev harness, MCP server, recipes for models that don't know C&C |
 | 08 | [08-referee-and-tournament.md](08-referee-and-tournament.md) | **Separate repo.** Referee proxy, time budgets, capability veto, match runner |
@@ -105,6 +105,7 @@ Stages map to #3328: Stage 1 = 01+02+04 (read-only) · Stage 2 = 03 · Stage 3 =
   `reusable-check-replays.yml` job.
 - With the bridge disabled (default), CRC, replays and frame time are identical to a build without it.
 - Two people, each with their own bot on their own machine, play one LAN game; both bots are tagged `[BOT]`.
+- An 8-player LAN game with mixed teams (1 human + 3 agents vs 4 agents) runs at normal speed, and agents respond to team chat.
 - An MCP client (LLM) with no prior C&C knowledge and a Gym env (ML) both drive a match through the same protocol.
 - ZH first; Generals replica of any non-`Core` change follows per `CONTRIBUTING.md`.
 
