@@ -28,7 +28,7 @@
 #endif
 
 #include "mutex.h"
-#include "SystemAllocator.h"
+#include "Allocator/SystemAllocator.h"
 
 // This static class can load, unload and use dbghelp.dll. Is thread-safe.
 // Internally it must not use new and delete because it can be created during game memory initialization.

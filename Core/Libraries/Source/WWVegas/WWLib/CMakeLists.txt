@@ -119,7 +119,6 @@ set(WWLIB_SRC
     strtok_r.cpp
     strtok_r.h
     #swap.h
-    SystemAllocator.h
     systimer.cpp
     systimer.h
     TARGA.cpp

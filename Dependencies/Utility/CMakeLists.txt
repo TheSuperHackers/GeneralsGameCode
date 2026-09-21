@@ -1,4 +1,5 @@
 set(UTILITY_SRC
+    Allocator/SystemAllocator.h
     Utility/array_adapter.h
     Utility/atl_compat.h
     Utility/compat.h
