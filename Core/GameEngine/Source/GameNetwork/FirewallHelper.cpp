@@ -608,17 +608,16 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 	nameBuf[0] = 0;
 	AsciiString host;
 	UnsignedShort port;
-	if (!TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
+	if (TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
 	{
-		return FALSE;
-	}
-	if (host.getLength() >= nameBufSize)
-	{
-		return FALSE;
+		if (host.getLength() < nameBufSize)
+		{
+			strcpy(nameBuf, host.str());
+			return TRUE;
+		}
 	}
 
-	strcpy(nameBuf, host.str());
-	return TRUE;
+	return FALSE;
 }
 
 Bool FirewallHelperClass::detectionBeginUpdate() {
