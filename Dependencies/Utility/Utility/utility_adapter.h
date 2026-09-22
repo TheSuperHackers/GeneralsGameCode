@@ -20,7 +20,7 @@
 
 #include <utility>
 
-#if !(defined(_MSC_VER) && _MSC_VER < 1300) || __cplusplus >= 201103L
+#if __cplusplus >= 201103L
 
 #define MOVE_TO(x) x
 
