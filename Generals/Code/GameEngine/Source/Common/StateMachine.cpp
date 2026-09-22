@@ -430,7 +430,7 @@ StateReturnType StateMachine::updateStateMachine()
 		// Calling m_currentState->update() can release this state machine in certain circumstances,
 		// for example if something kills the entity of this state machine as a result of this state update.
 		// See https://github.com/TheSuperHackers/GeneralsGameCode/issues/212
-		RefCountPtr<StateMachine> refThis = Create_Add_Ref(this);
+		RefCountPtr<StateMachine> refThis(this);
 
 		// update() can change m_currentState, so save it for a moment...
 		State* stateBeforeUpdate = m_currentState;
