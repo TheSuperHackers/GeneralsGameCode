@@ -311,10 +311,6 @@ class RefCountPtr
 		// Is generally used for objects returned by "Peek" functions.
 		const RefCountPtr<T> & operator =(T * object)
 		{
-			if (Referent == object) {
-				return *this;
-			}
-
 			Assign_Add_Ref(object);
 			return *this;
 		}
