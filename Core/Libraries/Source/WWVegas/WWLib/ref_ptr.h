@@ -207,6 +207,9 @@
 					};
 */
 
+// TheSuperHackers @tweak Enabled, because it is perfectly intuitive to assume that construction and assignment with T*
+// adds a reference when construction and assignment with RefCountPtr<T> always does the same.
+#define ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
 
 class DummyPtrType;
 
@@ -238,6 +241,8 @@ class RefCountPtr
 		}
 
 #ifdef ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
+		// Creates a RefCountPtr<T> and increments the reference counter of the passed object.
+		// Is generally used for objects returned by "Peek" functions.
 		RefCountPtr(T * referent)
 			: Referent(referent)
 		{
@@ -272,35 +277,6 @@ class RefCountPtr
 			}
 		}
 
-#ifdef ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
-		const RefCountPtr<T> & operator =(T * object)
-		{
-			if (Referent == object) {
-				return *this;
-			}
-
-			Referent = object;
-
-			if (Referent) {
-				Referent->Add_Ref();
-			}
-
-			return *this;
-		}
-#else
-		const RefCountPtr<T> & operator =(DummyPtrType * dummy_ptr)
-		{
-			if (Referent) {
-				Referent->Release_Ref();
-			}
-
-			Referent = nullptr;
-
-			return *this;
-		}
-#endif
-
-
 		// Assigns a pointer T and does not increment the reference counter of the passed object.
 		// Is generally used for objects returned by operator new and "Get" functions.
 		void Assign_No_Add_Ref(T *t)
@@ -316,6 +292,7 @@ class RefCountPtr
 
 		// Assigns a pointer T and increments the reference counter of the passed object.
 		// Is generally used for objects returned by "Peek" functions.
+		// Prefer using constructor and assignment operator.
 		void Assign_Add_Ref(T *t)
 		{
 			if (t != nullptr) {
@@ -328,6 +305,31 @@ class RefCountPtr
 
 			Referent = t;
 		}
+
+#ifdef ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
+		// Assigns a pointer T and increments the reference counter of the passed object.
+		// Is generally used for objects returned by "Peek" functions.
+		const RefCountPtr<T> & operator =(T * object)
+		{
+			if (Referent == object) {
+				return *this;
+			}
+
+			Assign_Add_Ref(object);
+			return *this;
+		}
+#else
+		const RefCountPtr<T> & operator =(DummyPtrType * dummy_ptr)
+		{
+			if (Referent) {
+				Referent->Release_Ref();
+			}
+
+			Referent = nullptr;
+
+			return *this;
+		}
+#endif
 
 		template <class RHS>
 		const RefCountPtr<T> & operator =(const RefCountPtr<RHS> & rhs)
