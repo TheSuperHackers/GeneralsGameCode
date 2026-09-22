@@ -27,6 +27,7 @@
 #define CPP_11(code)
 #define FUNCTION_DELETE
 #define static_assert(expr, msg)
+#define alignof(type) __alignof(type)
 #define constexpr
 #define noexcept
 #define nullptr 0
