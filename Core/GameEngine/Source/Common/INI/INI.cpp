@@ -1888,13 +1888,13 @@ void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const 
 		}
 		if (token[0] == '+')
 		{
-			DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(token+1);
+			DamageType dt = (DamageType)scanIndexList(token+1, DamageTypeFlags::getBitNames());
 			flags = setDamageTypeFlag(flags, dt);
 			continue;
 		}
 		if (token[0] == '-')
 		{
-			DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(token+1);
+			DamageType dt = (DamageType)scanIndexList(token+1, DamageTypeFlags::getBitNames());
 			flags = clearDamageTypeFlag(flags, dt);
 			continue;
 		}

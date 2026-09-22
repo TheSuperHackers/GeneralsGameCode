@@ -164,7 +164,7 @@ static void parseCommonStuff(
 	}
 	else
 	{
-		damageFirst = (DamageType)DamageTypeFlags::getSingleBitFromName(damageName);
+		damageFirst = (DamageType)INI::scanIndexList(damageName, DamageTypeFlags::getBitNames());
 		damageLast = damageFirst;
 	}
 }
