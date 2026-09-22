@@ -65,7 +65,6 @@ else()
 endif()
 
 include(cmake/config.cmake)
-include(cmake/icu.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
@@ -93,6 +92,11 @@ if (MSVC)
 else()
     add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:SHELL:-include Precompiled/precompiled.h>")
 endif()
+
+# Create core_icu after the force-include. Directory compile options are copied
+# onto a target when it is created, and VC6 needs Precompiled/precompiled.h to
+# define nullptr before these sources are compiled.
+include(cmake/icu.cmake)
 
 add_subdirectory(Dependencies/Utility)
 add_subdirectory(Dependencies/ICU)
