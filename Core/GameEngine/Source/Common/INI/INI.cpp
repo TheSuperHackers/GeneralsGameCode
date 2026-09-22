@@ -1888,13 +1888,29 @@ void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const 
 		}
 		if (token[0] == '+')
 		{
-			DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(token+1);
+			const Int damageIndex = DamageTypeFlags::getSingleBitFromName(token+1);
+			// TheSuperHackers @bugfix Reject unknown damage names before setting damage flags.
+			if (damageIndex < 0 || damageIndex >= DAMAGE_NUM_TYPES)
+			{
+				DEBUG_CRASH(("INI::parseDamageTypeFlags: Unknown damage type %s", token+1));
+				continue;
+			}
+
+			const DamageType dt = (DamageType)damageIndex;
 			flags = setDamageTypeFlag(flags, dt);
 			continue;
 		}
 		if (token[0] == '-')
 		{
-			DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(token+1);
+			const Int damageIndex = DamageTypeFlags::getSingleBitFromName(token+1);
+			// TheSuperHackers @bugfix Reject unknown damage names before clearing damage flags.
+			if (damageIndex < 0 || damageIndex >= DAMAGE_NUM_TYPES)
+			{
+				DEBUG_CRASH(("INI::parseDamageTypeFlags: Unknown damage type %s", token+1));
+				continue;
+			}
+
+			const DamageType dt = (DamageType)damageIndex;
 			flags = clearDamageTypeFlag(flags, dt);
 			continue;
 		}

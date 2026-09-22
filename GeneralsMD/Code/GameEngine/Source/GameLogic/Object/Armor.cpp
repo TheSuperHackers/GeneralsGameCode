@@ -96,11 +96,12 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 		return;
 	}
 
-	Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+	const Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+	// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Reject unknown names before they become damage array indices.
 	if (damageIndex < 0 || damageIndex >= DAMAGE_NUM_TYPES)
 	{
 		DEBUG_CRASH(("Armor: Unknown damage type %s", damageName));
-		throw INI_INVALID_DATA;
+		return;
 	}
 
 	self->m_damageCoefficient[damageIndex] = pct;

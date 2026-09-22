@@ -164,11 +164,14 @@ static void parseCommonStuff(
 	}
 	else
 	{
-		Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+		const Int damageIndex = DamageTypeFlags::getSingleBitFromName(damageName);
+		// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Reject unknown names before they become damage array indices.
 		if (damageIndex < 0 || damageIndex >= DAMAGE_NUM_TYPES)
 		{
 			DEBUG_CRASH(("DamageFX: Unknown damage type %s", damageName));
-			throw INI_INVALID_DATA;
+			damageFirst = (DamageType)DAMAGE_NUM_TYPES;
+			damageLast = (DamageType)(DAMAGE_NUM_TYPES - 1);
+			return;
 		}
 
 		damageFirst = (DamageType)damageIndex;
