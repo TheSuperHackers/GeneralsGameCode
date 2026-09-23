@@ -109,11 +109,11 @@ void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D *outResult) const
 	D3DXVECTOR4 zCoords(m_controlPoints[0].z, m_controlPoints[1].z, m_controlPoints[2].z, m_controlPoints[3].z);
 
 	D3DXVECTOR4 tResult;
-	D3DXVec4Transform(&tResult, &tVec, &BezierSegment::s_bezBasisMatrix);
+	BezierMath::D3DXVec4Transform(&tResult, &tVec, &BezierSegment::s_bezBasisMatrix);
 
-	outResult->x = D3DXVec4Dot(&xCoords, &tResult);
-	outResult->y = D3DXVec4Dot(&yCoords, &tResult);
-	outResult->z = D3DXVec4Dot(&zCoords, &tResult);
+	outResult->x = BezierMath::D3DXVec4Dot(&xCoords, &tResult);
+	outResult->y = BezierMath::D3DXVec4Dot(&yCoords, &tResult);
+	outResult->z = BezierMath::D3DXVec4Dot(&zCoords, &tResult);
 }
 
 //-------------------------------------------------------------------------------------------------
