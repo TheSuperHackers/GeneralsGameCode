@@ -597,27 +597,16 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 	return m_sourcePortAllocationDelta;
 }
 
-/* static */ Bool FirewallHelperClass::getManglerName(Int manglerIndex, Char* nameBuf, UnsignedInt nameBufSize)
+/* static */ AsciiString FirewallHelperClass::getManglerName(Int manglerIndex)
 {
-	// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Reject a failed or oversized mangler lookup rather than resolving an empty or truncated name.
-	if (!nameBuf || nameBufSize == 0)
-	{
-		return FALSE;
-	}
-
-	nameBuf[0] = 0;
 	AsciiString host;
 	UnsignedShort port;
-	if (TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
+	if (!TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
 	{
-		if (host.getLength() < nameBufSize)
-		{
-			strcpy(nameBuf, host.str());
-			return TRUE;
-		}
+		return AsciiString::TheEmptyString;
 	}
 
-	return FALSE;
+	return host;
 }
 
 Bool FirewallHelperClass::detectionBeginUpdate() {
