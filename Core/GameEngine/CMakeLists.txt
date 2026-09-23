@@ -255,6 +255,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/FiringTracker.h
 #    Include/GameLogic/FPUControl.h
 #    Include/GameLogic/GameLogic.h
+    Include/GameLogic/GameMode.h
 #    Include/GameLogic/GhostObject.h
 #    Include/GameLogic/Locomotor.h
 #    Include/GameLogic/LocomotorSet.h
