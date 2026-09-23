@@ -177,9 +177,9 @@ static bool obb_intersect_box0_basis
 	// ra = box0 projection onto the axis
 	// rb = box1 projection onto the axis
 	float ra =	context.Box0.Extent[axis_index];
-	float rb =	WWMath::Fabs(context.Box1.Extent[0]*context.AB[axis_index][0]) +
-					WWMath::Fabs(context.Box1.Extent[1]*context.AB[axis_index][1]) +
-					WWMath::Fabs(context.Box1.Extent[2]*context.AB[axis_index][2]);
+	float rb =	WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[axis_index][0]) +
+					WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[axis_index][1]) +
+					WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[axis_index][2]);
 	float rsum = ra+rb;
 
 	// u = projected distance between the box centers
@@ -214,9 +214,9 @@ static bool obb_intersect_box1_basis
 {
 	// ra = box0 projection onto the axis
 	// rb = box1 projection onto the axis
-	float ra =	WWMath::Fabs(context.Box0.Extent[0]*context.AB[0][axis_index]) +
-					WWMath::Fabs(context.Box0.Extent[1]*context.AB[1][axis_index]) +
-					WWMath::Fabs(context.Box0.Extent[2]*context.AB[2][axis_index]);
+	float ra =	WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[0][axis_index]) +
+					WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[1][axis_index]) +
+					WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[2][axis_index]);
 	float rb =	context.Box1.Extent[axis_index];
 	float rsum = ra+rb;
 
@@ -340,8 +340,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[0],context.B[0],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[1]*context.AB[2][0])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[1][0]);
-		rb = WWMath::Fabs(context.Box1.Extent[1]*context.AB[0][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[0][1]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[2][0])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[1][0]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[0][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[0][1]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -350,8 +350,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[0],context.B[1],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[1]*context.AB[2][1])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[1][1]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[0][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[0][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[2][1])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[1][1]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[0][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[0][0]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -360,8 +360,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[0],context.B[2],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[1]*context.AB[2][2])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[1][2]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[0][1])+WWMath::Fabs(context.Box1.Extent[1]*context.AB[0][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[1][2]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[0][1])+WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[0][0]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -370,8 +370,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[1],context.B[0],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[2][0])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[0][0]);
-		rb = WWMath::Fabs(context.Box1.Extent[1]*context.AB[1][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[1][1]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[2][0])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[0][0]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[1][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[1][1]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -380,8 +380,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[1],context.B[1],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[2][1])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[0][1]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[1][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[1][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[2][1])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[0][1]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[1][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[1][0]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -390,8 +390,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[1],context.B[2],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[2][2])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[0][2]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[1][1])+WWMath::Fabs(context.Box1.Extent[1]*context.AB[1][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[0][2]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[1][1])+WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[1][0]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -400,8 +400,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[2],context.B[0],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[1][0])+WWMath::Fabs(context.Box0.Extent[1]*context.AB[0][0]);
-		rb = WWMath::Fabs(context.Box1.Extent[1]*context.AB[2][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[2][1]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[1][0])+WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[0][0]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[2][1]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -410,8 +410,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[2],context.B[1],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[1][1])+WWMath::Fabs(context.Box0.Extent[1]*context.AB[0][1]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[2][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[2][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[1][1])+WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[0][1]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[2][0]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -420,8 +420,8 @@ bool intersect_obb_obb
 	/////////////////////////////////////////////////////////////////////////
 	Vector3::Cross_Product(context.A[2],context.B[2],&axis);
 	if (axis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[1][2])+WWMath::Fabs(context.Box0.Extent[1]*context.AB[0][2]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[2][1])+WWMath::Fabs(context.Box1.Extent[1]*context.AB[2][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[1][2])+WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[0][2]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[2][1])+WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[2][0]);
 		if (obb_intersect_axis(context,axis,ra,rb)) return false;
 	}
 
@@ -593,7 +593,7 @@ static inline bool obb_separation_test
 		if ( u1 > rsum ) {
 			context.MaxFrac = 1.0f;
 			return true;
-		} else if (WWMath::Fabs(u1-u0) > 0.0f) {
+		} else if (WWMath::Fabsf_Legacy(u1-u0) > 0.0f) {
 			tmp = (rsum-u0)/(u1-u0);
 			if ( tmp > context.MaxFrac ) {
 				context.MaxFrac = tmp;
@@ -606,7 +606,7 @@ static inline bool obb_separation_test
 		if ( u1 < -rsum ) {
 			context.MaxFrac = 1.0f;
 			return true;
-		} else if (WWMath::Fabs(u1-u0) > 0.0f) {
+		} else if (WWMath::Fabsf_Legacy(u1-u0) > 0.0f) {
 			tmp = (-rsum-u0)/(u1-u0);
 			if ( tmp > context.MaxFrac ) {
 				context.MaxFrac = tmp;
@@ -640,9 +640,9 @@ static bool obb_check_box0_basis
 	// ra = box0 projection onto the axis
 	// rb = box1 projection onto the axis
 	float ra =	context.Box0.Extent[axis_index];
-	float rb =	WWMath::Fabs(context.Box1.Extent[0]*context.AB[axis_index][0]) +
-					WWMath::Fabs(context.Box1.Extent[1]*context.AB[axis_index][1]) +
-					WWMath::Fabs(context.Box1.Extent[2]*context.AB[axis_index][2]);
+	float rb =	WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[axis_index][0]) +
+					WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[axis_index][1]) +
+					WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[axis_index][2]);
 
 	// u0 = projected distance between the box centers at t0
 	// u1 = projected distance between the box centers at t1
@@ -673,9 +673,9 @@ static bool obb_check_box1_basis
 {
 	// ra = box0 projection onto the axis
 	// rb = box1 projection onto the axis
-	float ra =	WWMath::Fabs(context.Box0.Extent[0]*context.AB[0][axis_index]) +
-					WWMath::Fabs(context.Box0.Extent[1]*context.AB[1][axis_index]) +
-					WWMath::Fabs(context.Box0.Extent[2]*context.AB[2][axis_index]);
+	float ra =	WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[0][axis_index]) +
+					WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[1][axis_index]) +
+					WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[2][axis_index]);
 	float rb =	context.Box1.Extent[axis_index];
 
 	// u0 = projected distance between the box centers at t0
@@ -730,13 +730,13 @@ static inline void obb_compute_projections
 	float *								rb
 )
 {
-	*ra =	context.Box0.Extent.X * WWMath::Fabs(Vector3::Dot_Product(context.A[0],context.TestAxis)) +
-			context.Box0.Extent.Y * WWMath::Fabs(Vector3::Dot_Product(context.A[1],context.TestAxis)) +
-			context.Box0.Extent.Z * WWMath::Fabs(Vector3::Dot_Product(context.A[2],context.TestAxis));
+	*ra =	context.Box0.Extent.X * WWMath::Fabsf_Legacy(Vector3::Dot_Product(context.A[0],context.TestAxis)) +
+			context.Box0.Extent.Y * WWMath::Fabsf_Legacy(Vector3::Dot_Product(context.A[1],context.TestAxis)) +
+			context.Box0.Extent.Z * WWMath::Fabsf_Legacy(Vector3::Dot_Product(context.A[2],context.TestAxis));
 
-	*rb =	context.Box1.Extent.X * WWMath::Fabs(Vector3::Dot_Product(context.B[0],context.TestAxis)) +
-			context.Box1.Extent.Y * WWMath::Fabs(Vector3::Dot_Product(context.B[1],context.TestAxis)) +
-			context.Box1.Extent.Z * WWMath::Fabs(Vector3::Dot_Product(context.B[2],context.TestAxis));
+	*rb =	context.Box1.Extent.X * WWMath::Fabsf_Legacy(Vector3::Dot_Product(context.B[0],context.TestAxis)) +
+			context.Box1.Extent.Y * WWMath::Fabsf_Legacy(Vector3::Dot_Product(context.B[1],context.TestAxis)) +
+			context.Box1.Extent.Z * WWMath::Fabsf_Legacy(Vector3::Dot_Product(context.B[2],context.TestAxis));
 }
 
 
@@ -923,7 +923,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[2] = eval_side(context.AB[0][1],context.Side) * context.Box1.Extent[2];
 
 		den = (1.0f - context.AB[0][0] * context.AB[0][0]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[0] = Vector3::Dot_Product(context.A[0],dcnew);
 			x[0] += context.AB[0][0] * (Vector3::Dot_Product(-context.B[0],dcnew) + context.AB[1][0]*x[1] + context.AB[2][0]*x[2]);
 			x[0] += context.AB[0][1] * y[1] + context.AB[0][2] * y[2];
@@ -940,7 +940,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[2] = -eval_side(context.AB[0][0],context.Side) * context.Box1.Extent[2];
 
 		den = (1.0f - context.AB[0][1] * context.AB[0][1]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[0] = Vector3::Dot_Product(context.A[0],dcnew);
 			x[0] += context.AB[0][1] * (Vector3::Dot_Product(-context.B[1],dcnew) + context.AB[1][1]*x[1] + context.AB[2][1]*x[2]);
 			x[0] += context.AB[0][0] * y[0] + context.AB[0][2] * y[2];
@@ -957,7 +957,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[1] = eval_side(context.AB[0][0],context.Side) * context.Box1.Extent[1];
 
 		den = (1.0f - context.AB[0][2] * context.AB[0][2]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[0] = Vector3::Dot_Product(context.A[0],dcnew);
 			x[0] += context.AB[0][2] * (Vector3::Dot_Product(-context.B[2],dcnew) + context.AB[1][2]*x[1] + context.AB[2][2]*x[2]);
 			x[0] += context.AB[0][0] * y[0] + context.AB[0][1] * y[1];
@@ -974,7 +974,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[2] = eval_side(context.AB[1][1],context.Side) * context.Box1.Extent[2];
 
 		den = (1.0f - context.AB[1][0] * context.AB[1][0]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[1] = Vector3::Dot_Product(context.A[1],dcnew);
 			x[1] += context.AB[1][0] * (Vector3::Dot_Product(-context.B[0],dcnew) + context.AB[0][0]*x[0] + context.AB[2][0]*x[2]);
 			x[1] += context.AB[1][1] * y[1] + context.AB[1][2] * y[2];
@@ -991,7 +991,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[2] = -eval_side(context.AB[1][0],context.Side) * context.Box1.Extent[2];
 
 		den = 1.0f / (1.0f - context.AB[1][1] * context.AB[1][1]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[1] = Vector3::Dot_Product(context.A[1],dcnew);
 			x[1] += context.AB[1][1] * (Vector3::Dot_Product(-context.B[1],dcnew) + context.AB[0][1]*x[0] + context.AB[2][1]*x[2]);
 			x[1] += context.AB[1][0] * y[0] + context.AB[1][2] * y[2];
@@ -1008,7 +1008,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[1] = eval_side(context.AB[1][0],context.Side) * context.Box1.Extent[1];
 
 		den = (1.0f - context.AB[1][2] * context.AB[1][2]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[1] = Vector3::Dot_Product(context.A[1],dcnew);
 			x[1] += context.AB[1][2] * (Vector3::Dot_Product(-context.B[2],dcnew) + context.AB[0][2]*x[0] + context.AB[2][2]*x[2]);
 			x[1] += context.AB[1][0] * y[0] + context.AB[1][1] * y[1];
@@ -1025,7 +1025,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[2] = eval_side(context.AB[2][1],context.Side) * context.Box1.Extent[2];
 
 		den = (1.0f - context.AB[2][0] * context.AB[2][0]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[2] = Vector3::Dot_Product(context.A[2],dcnew);
 			x[2] += context.AB[2][0] * (Vector3::Dot_Product(-context.B[0],dcnew) + context.AB[0][0]*x[0] + context.AB[1][0]*x[1]);
 			x[2] += context.AB[2][1] * y[1] + context.AB[2][2] * y[2];
@@ -1042,7 +1042,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[2] = -eval_side(context.AB[2][0],context.Side) * context.Box1.Extent[2];
 
 		den = (1.0f - context.AB[2][1] * context.AB[2][1]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[2] = Vector3::Dot_Product(context.A[2],dcnew);
 			x[2] += context.AB[2][1] * (Vector3::Dot_Product(-context.B[1],dcnew) + context.AB[0][1]*x[0] + context.AB[1][1]*x[1]);
 			x[2] += context.AB[2][0] * y[0] + context.AB[2][2] * y[2];
@@ -1059,7 +1059,7 @@ static inline void compute_contact_point(ObbCollisionStruct & context,CastResult
 		y[1] = eval_side(context.AB[2][0],context.Side) * context.Box1.Extent[1];
 
 		den = (1.0f - context.AB[2][2] * context.AB[2][2]);
-		if (WWMath::Fabs(den) > 0.0f) {
+		if (WWMath::Fabsf_Legacy(den) > 0.0f) {
 			x[2] = Vector3::Dot_Product(context.A[2],dcnew);
 			x[2] += context.AB[2][2] * (Vector3::Dot_Product(-context.B[2],dcnew) + context.AB[0][2]*x[0] + context.AB[1][2]*x[1]);
 			x[2] += context.AB[2][0] * y[0] + context.AB[2][1] * y[1];
@@ -1177,8 +1177,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[0],context.B[0],&context.TestAxis);
 	context.TestAxisId = AXIS_A0B0;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[1]*context.AB[2][0])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[1][0]);
-		rb = WWMath::Fabs(context.Box1.Extent[1]*context.AB[0][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[0][1]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[2][0])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[1][0]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[0][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[0][1]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1188,8 +1188,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[0],context.B[1],&context.TestAxis);
 	context.TestAxisId = AXIS_A0B1;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[1]*context.AB[2][1])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[1][1]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[0][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[0][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[2][1])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[1][1]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[0][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[0][0]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1199,8 +1199,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[0],context.B[2],&context.TestAxis);
 	context.TestAxisId = AXIS_A0B2;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[1]*context.AB[2][2])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[1][2]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[0][1])+WWMath::Fabs(context.Box1.Extent[1]*context.AB[0][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[1][2]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[0][1])+WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[0][0]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1210,8 +1210,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[1],context.B[0],&context.TestAxis);
 	context.TestAxisId = AXIS_A1B0;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[2][0])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[0][0]);
-		rb = WWMath::Fabs(context.Box1.Extent[1]*context.AB[1][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[1][1]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[2][0])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[0][0]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[1][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[1][1]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1221,8 +1221,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[1],context.B[1],&context.TestAxis);
 	context.TestAxisId = AXIS_A1B1;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[2][1])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[0][1]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[1][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[1][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[2][1])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[0][1]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[1][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[1][0]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1232,8 +1232,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[1],context.B[2],&context.TestAxis);
 	context.TestAxisId = AXIS_A1B2;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[2][2])+WWMath::Fabs(context.Box0.Extent[2]*context.AB[0][2]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[1][1])+WWMath::Fabs(context.Box1.Extent[1]*context.AB[1][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box0.Extent[2]*context.AB[0][2]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[1][1])+WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[1][0]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1243,8 +1243,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[2],context.B[0],&context.TestAxis);
 	context.TestAxisId = AXIS_A2B0;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[1][0])+WWMath::Fabs(context.Box0.Extent[1]*context.AB[0][0]);
-		rb = WWMath::Fabs(context.Box1.Extent[1]*context.AB[2][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[2][1]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[1][0])+WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[0][0]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[2][1]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1254,8 +1254,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[2],context.B[1],&context.TestAxis);
 	context.TestAxisId = AXIS_A2B1;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[1][1])+WWMath::Fabs(context.Box0.Extent[1]*context.AB[0][1]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[2][2])+WWMath::Fabs(context.Box1.Extent[2]*context.AB[2][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[1][1])+WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[0][1]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[2][2])+WWMath::Fabsf_Legacy(context.Box1.Extent[2]*context.AB[2][0]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 
@@ -1265,8 +1265,8 @@ bool collide_obb_obb
 	Vector3::Cross_Product(context.A[2],context.B[2],&context.TestAxis);
 	context.TestAxisId = AXIS_A2B2;
 	if (context.TestAxis.Length2() > AXISLEN_EPSILON2) {
-		ra = WWMath::Fabs(context.Box0.Extent[0]*context.AB[1][2])+WWMath::Fabs(context.Box0.Extent[1]*context.AB[0][2]);
-		rb = WWMath::Fabs(context.Box1.Extent[0]*context.AB[2][1])+WWMath::Fabs(context.Box1.Extent[1]*context.AB[2][0]);
+		ra = WWMath::Fabsf_Legacy(context.Box0.Extent[0]*context.AB[1][2])+WWMath::Fabsf_Legacy(context.Box0.Extent[1]*context.AB[0][2]);
+		rb = WWMath::Fabsf_Legacy(context.Box1.Extent[0]*context.AB[2][1])+WWMath::Fabsf_Legacy(context.Box1.Extent[1]*context.AB[2][0]);
 		if (obb_check_axis(context,ra,rb)) goto exit;
 	}
 

@@ -37,8 +37,8 @@ static void appendSimulationMathCrc(XferCRC &xfer)
         0.9f, 1.0f, 2.1f, 1.2f);
 
     factorsMatrix.Set(
-        WWMath::Sin(0.7f) * log10f(2.3f),
-        WWMath::Cos(1.1f) * powf(1.1f, 2.0f),
+        WWMath::Sinf(0.7f) * log10f(2.3f),
+        WWMath::Cosf(1.1f) * powf(1.1f, 2.0f),
         tanf(0.3f),
         asinf(0.967302263f),
         acosf(0.967302263f),
