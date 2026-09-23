@@ -84,9 +84,6 @@ private:
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct UnicodeStringData
 	{
-#if defined(RTS_DEBUG)
-		const WideChar* m_debugptr;	// just makes it easier to read in the debugger
-#endif
 		unsigned short	m_refCount;						// reference count
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// WideChar m_stringdata[];
