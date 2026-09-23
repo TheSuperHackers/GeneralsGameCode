@@ -42,6 +42,7 @@ target_link_libraries(core_libraries PUBLIC
 target_link_libraries(core_libraries PRIVATE
     core_config
     deps_utility
+    gamemath
 )
 
 # Makes the game base macros and types available in every C++ translation unit

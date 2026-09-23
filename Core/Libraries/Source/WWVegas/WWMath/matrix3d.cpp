@@ -1121,7 +1121,7 @@ void Matrix3D::Transform_Center_Extent_AABox
 		for (int j=0; j<3; j++) {
 
 			(*set_center)[i] += Row[i][j] * center[j];
-			(*set_extent)[i] += WWMath::Fabs(Row[i][j] * extent[j]);
+			(*set_extent)[i] += WWMath::Fabsf_Legacy(Row[i][j] * extent[j]);
 
 		}
 	}
@@ -1150,9 +1150,9 @@ int Matrix3D::Is_Orthogonal() const
 	if (Vector3::Dot_Product(y,z) > WWMATH_EPSILON) return 0;
 	if (Vector3::Dot_Product(z,x) > WWMATH_EPSILON) return 0;
 
-	if (WWMath::Fabs(x.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
-	if (WWMath::Fabs(y.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
-	if (WWMath::Fabs(z.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(x.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(y.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
+	if (WWMath::Fabsf_Legacy(z.Length2() - 1.0f) > WWMATH_EPSILON) return 0;
 
 	return 1;
 }

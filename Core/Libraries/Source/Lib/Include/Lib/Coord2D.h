@@ -38,7 +38,7 @@ struct Coord2D
 		return x == value && y == value;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y ); }
+	Real length() const { return Sqrt( x*x + y*y ); }
 	Real lengthSqr() const { return x*x + y*y; }
 
 	void normalize()
@@ -141,7 +141,7 @@ inline Real Coord2D::toAngle() const
 	vector.x = x;
 	vector.y = y;
 
-	Real dist = (Real)sqrt(vector.x * vector.x + vector.y * vector.y);
+	Real dist = Sqrt(vector.x * vector.x + vector.y * vector.y);
 
 	// normalize
 	if (dist == 0.0f)
