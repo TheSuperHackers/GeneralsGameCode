@@ -32,7 +32,7 @@ struct ICoord3D
 		return xy;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
+	Int length() const { return (Int)Sqrt( (double)(x*x + y*y + z*z) ); }
 	Int lengthSqr() const { return x*x + y*y + z*z; }
 
 	void zero()
