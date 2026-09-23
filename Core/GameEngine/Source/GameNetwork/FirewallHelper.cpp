@@ -599,11 +599,9 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 
 /* static */ AsciiString FirewallHelperClass::getManglerName(Int manglerIndex)
 {
-	// The previous caller stored the name in a 256-byte buffer, including the null terminator.
-	const Int manglerNameBufferSize = 256;
 	AsciiString host;
 	UnsignedShort port;
-	if (!TheGameSpyConfig->getManglerLocation(manglerIndex, host, port) || host.getLength() >= manglerNameBufferSize)
+	if (!TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
 	{
 		return AsciiString::TheEmptyString;
 	}
