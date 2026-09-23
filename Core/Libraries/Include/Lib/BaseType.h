@@ -284,7 +284,7 @@ struct Coord2D
 		return x == value && y == value;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y ); }
+	Real length() const { return Sqrt( x*x + y*y ); }
 	Real lengthSqr() const { return x*x + y*y; }
 
 	void normalize()
@@ -387,7 +387,7 @@ inline Real Coord2D::toAngle() const
 	vector.x = x;
 	vector.y = y;
 
-	Real dist = (Real)sqrt(vector.x * vector.x + vector.y * vector.y);
+	Real dist = Sqrt(vector.x * vector.x + vector.y * vector.y);
 
 	// normalize
 	if (dist == 0.0f)
@@ -454,7 +454,7 @@ struct ICoord2D
 		return x == value && y == value;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
+	Int length() const { return (Int)Sqrt( (double)(x*x + y*y) ); }
 	Int lengthSqr() const { return x*x + y*y; }
 
 	void add( const ICoord2D &a )
@@ -630,7 +630,17 @@ struct Coord3D
 		return xy;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y + z*z ); }
+	Real length() const
+	{
+#if RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @info With VC6, (Real)sqrt() and Sqrt() give different results here because of x87 excess
+		// precision, and TurretAIAimTurretState::update() relies on it. Calling Sqrt() here breaks retail CRC.
+		// TheSuperHackers @todo Keep the original sqrt() only in TurretAIAimTurretState::update() and call Sqrt() here.
+		return (Real)sqrt( x*x + y*y + z*z );
+#else
+		return Sqrt( x*x + y*y + z*z );
+#endif
+	}
 	Real lengthSqr() const { return ( x*x + y*y + z*z ); }
 
 	void normalize()
@@ -786,7 +796,7 @@ struct ICoord3D
 		return xy;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
+	Int length() const { return (Int)Sqrt( (double)(x*x + y*y + z*z) ); }
 	Int lengthSqr() const { return x*x + y*y + z*z; }
 
 	void zero()

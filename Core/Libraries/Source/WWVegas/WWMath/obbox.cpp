@@ -161,13 +161,13 @@ OBBoxClass::OBBoxClass(const Vector3 * /*points*/, int /*n*/)
 		float dx = pt[i].x - box.center.x;
 		float dy = pt[i].y - box.center.y;
 		float dz = pt[i].z - box.center.z;
-		float absdot = float(WWMath::Fabs(U.x*dx+U.y*dy+U.z*dz));
+		float absdot = float(WWMath::Fabsf(U.x*dx+U.y*dy+U.z*dz));
 		if ( absdot > amax )
 			amax = absdot;
-		absdot = float(WWMath::Fabs(V.x*dx+V.y*dy+V.z*dz));
+		absdot = float(WWMath::Fabsf(V.x*dx+V.y*dy+V.z*dz));
 		if ( absdot > bmax )
 			bmax = absdot;
-		absdot = float(WWMath::Fabs(W.x*dx+W.y*dy+W.z*dz));
+		absdot = float(WWMath::Fabsf(W.x*dx+W.y*dy+W.z*dz));
 		if ( absdot > cmax )
 			cmax = absdot;
 	}
@@ -264,13 +264,13 @@ void OBBoxClass::Init_From_Box_Points(Vector3 * points,int num)
 		float dy = points[i].Y - Center.Y;
 		float dz = points[i].Z - Center.Z;
 
-		float xprj = float(WWMath::Fabs(axis0.X * dx + axis0.Y * dy + axis0.Z * dz));
+		float xprj = float(WWMath::Fabsf_Legacy(axis0.X * dx + axis0.Y * dy + axis0.Z * dz));
 		if (xprj > Extent.X) Extent.X = xprj;
 
-		float yprj = float(WWMath::Fabs(axis1.X * dx + axis1.Y * dy + axis1.Z * dz));
+		float yprj = float(WWMath::Fabsf_Legacy(axis1.X * dx + axis1.Y * dy + axis1.Z * dz));
 		if (yprj > Extent.Y) Extent.Y = yprj;
 
-		float zprj = float(WWMath::Fabs(axis2.X * dx + axis2.Y * dy + axis2.Z * dz));
+		float zprj = float(WWMath::Fabsf_Legacy(axis2.X * dx + axis2.Y * dy + axis2.Z * dz));
 		if (zprj > Extent.Z) Extent.Z = zprj;
 	}
 }
@@ -334,7 +334,7 @@ bool Oriented_Boxes_Intersect_On_Axis
 
 	ra = box0.Project_To_Axis(axis);
 	rb = box1.Project_To_Axis(axis);
-	rsum = WWMath::Fabs(ra) + WWMath::Fabs(rb);
+	rsum = WWMath::Fabsf_Legacy(ra) + WWMath::Fabsf_Legacy(rb);
 
 	// project the center distance onto the line:
 	Vector3 C = box1.Center - box0.Center;
@@ -456,7 +456,7 @@ bool Oriented_Boxes_Collide_On_Axis
 
 	ra = box0.Project_To_Axis(axis);
 	rb = box1.Project_To_Axis(axis);
-	rsum = WWMath::Fabs(ra) + WWMath::Fabs(rb);
+	rsum = WWMath::Fabsf_Legacy(ra) + WWMath::Fabsf_Legacy(rb);
 
 	// project the center distance onto the line:
 	Vector3 C = box1.Center - box0.Center;
