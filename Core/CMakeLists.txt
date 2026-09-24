@@ -12,8 +12,20 @@ target_include_directories(corei_libraries_source_wwvegas INTERFACE "Libraries/S
 target_include_directories(corei_main INTERFACE "Main")
 
 target_sources(corei_libraries_include PRIVATE
+    Libraries/Include/Lib/BaseFunctions.h
     Libraries/Include/Lib/BaseType.h
     Libraries/Include/Lib/BaseTypeCore.h
+    Libraries/Include/Lib/Coord2D.h
+    Libraries/Include/Lib/Coord3D.h
+    Libraries/Include/Lib/ICoord2D.h
+    Libraries/Include/Lib/ICoord3D.h
+    Libraries/Include/Lib/IRegion2D.h
+    Libraries/Include/Lib/IRegion3D.h
+    Libraries/Include/Lib/PathUtil.h
+    Libraries/Include/Lib/RealRange.h
+    Libraries/Include/Lib/Region2D.h
+    Libraries/Include/Lib/Region3D.h
+    Libraries/Include/Lib/RGBColor.h
     Libraries/Include/Lib/trig.h
     Libraries/Include/rts/debug.h
     Libraries/Include/rts/profile.h
