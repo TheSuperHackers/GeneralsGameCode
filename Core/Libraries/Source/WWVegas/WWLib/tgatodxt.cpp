@@ -102,8 +102,8 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 		// 2. Dimensions >= 4 (DDS block size is 4x4).
 		// 3. Aspect ratio <= 1:8 (some H/W will not render textures above this ratio).
 		// 4. Dimensions must be power of 2 (see below).
-		validbitdepth = ((targa.Header.PixelDepth == 24) || (targa.Header.PixelDepth == 32)
-							|| ( (targa.Header.PixelDepth == 8) && (targa.Header.ColorMapType != 1) ) );
+		validbitdepth = ((targa.Header.PixelDepth == 24) || (targa.Header.PixelDepth == 32) ||
+							( (targa.Header.PixelDepth == 8) && (targa.Header.ColorMapType != 1) ) );
 		validsize	  = (targa.Header.Width >= 4) && (targa.Header.Height >= 4);
 		validaspect	  = ((float) MAX (targa.Header.Width, targa.Header.Height)) / ((float) MIN (targa.Header.Width, targa.Header.Height)) <= 8.0f;
 

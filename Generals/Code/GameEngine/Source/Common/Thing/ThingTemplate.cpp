@@ -516,18 +516,18 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		self->m_clientUpdateModuleInfo.clearCopiedFromDefaultEntries(interfaceMask);
 	}
 
-	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE
-			&& self->m_moduleBeingReplacedName.isNotEmpty()
-			&& self->m_moduleBeingReplacedName != tokenStr)
+	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE &&
+			self->m_moduleBeingReplacedName.isNotEmpty() &&
+			self->m_moduleBeingReplacedName != tokenStr)
 	{
 		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), self->m_moduleBeingReplacedName.str(), tokenStr.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
 
-	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE
-			&& self->m_moduleBeingReplacedTag.isNotEmpty()
-			&& self->m_moduleBeingReplacedTag == moduleTagStr)
+	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE &&
+			self->m_moduleBeingReplacedTag.isNotEmpty() &&
+			self->m_moduleBeingReplacedTag == moduleTagStr)
 	{
 		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), moduleTagStr.str(), self->m_moduleBeingReplacedName.str(), self->getName().str()));

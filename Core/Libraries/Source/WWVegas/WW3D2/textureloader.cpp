@@ -1582,9 +1582,9 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 	WW3DFormat dest_format=src_format;
 	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
 
-   if (	src_format != WW3D_FORMAT_A8R8G8B8
-   	&&	src_format != WW3D_FORMAT_R8G8B8
-  		&&	src_format != WW3D_FORMAT_X8R8G8B8 )
+   if (	src_format != WW3D_FORMAT_A8R8G8B8 &&
+   	src_format != WW3D_FORMAT_R8G8B8 &&
+  		src_format != WW3D_FORMAT_X8R8G8B8 )
 	{
 		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path().str()));
 	}
@@ -1752,13 +1752,13 @@ bool TextureLoadTaskClass::Load_Uncompressed_Mipmap()
 
 	// No paletted format allowed when generating mipmaps
 	Vector3 hsv_shift=HSVShift;
-	if (	src_format	== WW3D_FORMAT_A1R5G5B5
-		|| src_format	== WW3D_FORMAT_R5G6B5
-		|| src_format	== WW3D_FORMAT_A4R4G4B4
-		||	src_format	== WW3D_FORMAT_P8
-		|| src_format	== WW3D_FORMAT_L8
-		|| src_width	!= width
-		|| src_height	!= height) {
+	if (	src_format	== WW3D_FORMAT_A1R5G5B5 ||
+		src_format	== WW3D_FORMAT_R5G6B5 ||
+		src_format	== WW3D_FORMAT_A4R4G4B4 ||
+		src_format	== WW3D_FORMAT_P8 ||
+		src_format	== WW3D_FORMAT_L8 ||
+		src_width	!= width ||
+		src_height	!= height) {
 
 		converted_surface = new unsigned char[width*height*4];
 		dest_format = Get_Valid_Texture_Format(WW3D_FORMAT_A8R8G8B8, false);
@@ -2133,9 +2133,9 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load()
 	WW3DFormat dest_format=src_format;
 	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
 
-   if (		src_format != WW3D_FORMAT_A8R8G8B8
-   		&&	src_format != WW3D_FORMAT_R8G8B8
-  			&&	src_format != WW3D_FORMAT_X8R8G8B8 )
+   if (		src_format != WW3D_FORMAT_A8R8G8B8 &&
+   		src_format != WW3D_FORMAT_R8G8B8 &&
+  			src_format != WW3D_FORMAT_X8R8G8B8 )
 	{
 		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path().str()));
 	}
@@ -2441,9 +2441,9 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load()
 	WW3DFormat dest_format=src_format;
 	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
 
-   if (		src_format != WW3D_FORMAT_A8R8G8B8
-   		&&	src_format != WW3D_FORMAT_R8G8B8
-  			&&	src_format != WW3D_FORMAT_X8R8G8B8 )
+   if (		src_format != WW3D_FORMAT_A8R8G8B8 &&
+   		src_format != WW3D_FORMAT_R8G8B8 &&
+  			src_format != WW3D_FORMAT_X8R8G8B8 )
 	{
 		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path().str()));
 	}

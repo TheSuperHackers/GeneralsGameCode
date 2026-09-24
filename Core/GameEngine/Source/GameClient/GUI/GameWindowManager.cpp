@@ -99,8 +99,8 @@ void GameWindowManager::processDestroyList()
 		// send the destroy message to the window we're about to kill
 		winSendSystemMsg( doDestroy, GWM_DESTROY, 0, 0 );
 
-		DEBUG_ASSERTCRASH( m_mouseCaptor != doDestroy && m_keyboardFocus != doDestroy
-			&& m_currMouseRgn != doDestroy && m_grabWindow != doDestroy,
+		DEBUG_ASSERTCRASH( m_mouseCaptor != doDestroy && m_keyboardFocus != doDestroy &&
+			m_currMouseRgn != doDestroy && m_grabWindow != doDestroy,
 			("processDestroyList: manager still points at a window being destroyed") );
 
 		DEBUG_ASSERTCRASH(doDestroy->winGetUserData() == nullptr, ("Win user data is expected to be deleted now"));
@@ -1039,8 +1039,8 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 
 
 					// First check to see if m_loneWindow is set if so, close the window
-					if( m_loneWindow && m_loneWindow == oldLoneWindow
-					&&( msg == GWM_LEFT_UP || msg == GWM_MIDDLE_UP || msg == GWM_RIGHT_UP || tempWin))
+					if( m_loneWindow && m_loneWindow == oldLoneWindow &&
+					( msg == GWM_LEFT_UP || msg == GWM_MIDDLE_UP || msg == GWM_RIGHT_UP || tempWin))
 					{
 						if(!m_loneWindow->winIsChild(tempWin))
 							winSetLoneWindow( nullptr );

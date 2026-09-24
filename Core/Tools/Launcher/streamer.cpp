@@ -85,8 +85,8 @@ int Streamer::overflow(int c)
     return(EOF);
   else {
     sputc(c);
-    if ((STREAMER_UNBUFFERED && c=='\n' || pptr() >= epptr())
-        && sync()==EOF) {
+    if ((STREAMER_UNBUFFERED && c=='\n' || pptr() >= epptr()) &&
+        sync()==EOF) {
       return(EOF);
     }
     return(c);

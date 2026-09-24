@@ -583,8 +583,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 				i1 = 8;
 			if (EC->count[EC->clue+i])
 			{	i1 = HUFF_minrep(EC,i,i1);
-				if ((i1 <= EC->bitsarray[EC->clue+i])
-					 || (EC->count[EC->clue+i]*(i1-EC->bitsarray[EC->clue+i])<(i/2)))
+				if ((i1 <= EC->bitsarray[EC->clue+i]) ||
+					 (EC->count[EC->clue+i]*(i1-EC->bitsarray[EC->clue+i])<(i/2)))
 				{	EC->count[EC->clue+i] = 0;
 				}
 			}

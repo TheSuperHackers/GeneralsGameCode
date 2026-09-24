@@ -37,10 +37,10 @@ bool GCALL REF_is(const void *compresseddata)
     bool ok=false;
     int packtype=ggetm(compresseddata,2);
 
-    if (packtype==0x10fb
-     || packtype==0x11fb
-     || packtype==0x90fb
-     || packtype==0x91fb)
+    if (packtype==0x10fb ||
+     packtype==0x11fb ||
+     packtype==0x90fb ||
+     packtype==0x91fb)
         ok = true;
 
     return(ok);

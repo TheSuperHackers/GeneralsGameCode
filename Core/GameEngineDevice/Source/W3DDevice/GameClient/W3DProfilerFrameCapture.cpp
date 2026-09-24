@@ -44,9 +44,9 @@ W3DProfilerFrameCapture::~W3DProfilerFrameCapture()
 
 bool W3DProfilerFrameCapture::ShouldReuseLastCapture(UnsignedInt currentTimeMs) const
 {
-	return PROFILER_FRAME_IMAGE_INTERVAL_MS > 0
-		&& currentTimeMs - m_lastCaptureTimeMs < PROFILER_FRAME_IMAGE_INTERVAL_MS
-		&& !m_lastCapturePixels.empty();
+	return PROFILER_FRAME_IMAGE_INTERVAL_MS > 0 &&
+		currentTimeMs - m_lastCaptureTimeMs < PROFILER_FRAME_IMAGE_INTERVAL_MS &&
+		!m_lastCapturePixels.empty();
 }
 
 void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt displayHeight)

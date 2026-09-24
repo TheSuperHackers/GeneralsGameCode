@@ -672,14 +672,14 @@ struct W3dVertexMaterialStruct
 
 	bool operator == (W3dVertexMaterialStruct vm)
 	{
-		return (	  Attributes   == vm.Attributes
-				  && Ambient	   == vm.Ambient
-				  && Diffuse	   == vm.Diffuse
-				  && Specular	   == vm.Specular
-				  && Emissive	   == vm.Emissive
-				  && Shininess	   == vm.Shininess
-				  && Opacity	   == vm.Opacity
-				  && Translucency == vm.Translucency);
+		return (	  Attributes   == vm.Attributes &&
+				  Ambient	   == vm.Ambient &&
+				  Diffuse	   == vm.Diffuse &&
+				  Specular	   == vm.Specular &&
+				  Emissive	   == vm.Emissive &&
+				  Shininess	   == vm.Shininess &&
+				  Opacity	   == vm.Opacity &&
+				  Translucency == vm.Translucency);
 	}
 
 	bool operator != (W3dVertexMaterialStruct vm)

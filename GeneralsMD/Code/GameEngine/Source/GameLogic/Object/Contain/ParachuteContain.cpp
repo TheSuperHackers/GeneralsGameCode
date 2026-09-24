@@ -431,10 +431,10 @@ UpdateSleepTime ParachuteContain::update()
 	// the collide system doesn't always collide us with the ground if we fall into water.
 	// so force the issue.
 	Real waterZ;
-	if (!getObject()->isEffectivelyDead()
-			&& getObject()->getLayer() == LAYER_GROUND
-			&& TheTerrainLogic->isUnderwater(paraPos->x, paraPos->y, &waterZ)
-			&& (paraPos->z - waterZ) < d->m_killWhenLandingInWaterSlop)
+	if (!getObject()->isEffectivelyDead() &&
+			getObject()->getLayer() == LAYER_GROUND &&
+			TheTerrainLogic->isUnderwater(paraPos->x, paraPos->y, &waterZ) &&
+			(paraPos->z - waterZ) < d->m_killWhenLandingInWaterSlop)
 	{
 		getObject()->kill();
 	}
@@ -534,9 +534,9 @@ void ParachuteContain::onRemoving( Object *rider )
 	// if we land in the water, we die. alas.
 	const Coord3D* riderPos = rider->getPosition();
 	Real waterZ, terrainZ;
-	if (TheTerrainLogic->isUnderwater(riderPos->x, riderPos->y, &waterZ, &terrainZ)
-			&& riderPos->z <= waterZ + d->m_killWhenLandingInWaterSlop
-			&& rider->getLayer() == LAYER_GROUND)
+	if (TheTerrainLogic->isUnderwater(riderPos->x, riderPos->y, &waterZ, &terrainZ) &&
+			riderPos->z <= waterZ + d->m_killWhenLandingInWaterSlop &&
+			rider->getLayer() == LAYER_GROUND)
 	{
 		// don't call kill(); do it manually, so we can specify DEATH_FLOODED
 		DamageInfo damageInfo;
@@ -556,10 +556,10 @@ void ParachuteContain::onRemoving( Object *rider )
 
 	// If we land outside the map from a faulty parachute, we die too.
 	// Otherwise we exist outside the PartitionManger like a cheater.
-	if( rider->isOffMap()
-    || (cellType == PathfindCell::CELL_CLIFF)
-    || (cellType == PathfindCell::CELL_WATER)
-    || (cellType == PathfindCell::CELL_IMPASSABLE) )
+	if( rider->isOffMap() ||
+    (cellType == PathfindCell::CELL_CLIFF) ||
+    (cellType == PathfindCell::CELL_WATER) ||
+    (cellType == PathfindCell::CELL_IMPASSABLE) )
 	{
 		// The Paradrop command was legal, the parachute destination was legal, but the parachute
 		// can still fail to adjust back on the map.  SO this is the place to cap the cheater.

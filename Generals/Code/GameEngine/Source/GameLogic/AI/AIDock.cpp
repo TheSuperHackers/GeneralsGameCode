@@ -783,9 +783,9 @@ StateReturnType AIDockMoveToRallyState::onEnter()
 		return STATE_FAILURE;
 
 	// if they don't have anywhere to send us, then we are good
-	if( ! dock->isRallyPointAfterDockType()															//Chooses not to
-		|| goalObject->getObjectExitInterface() == nullptr										//or can't
-		|| goalObject->getObjectExitInterface()->getRallyPoint() == nullptr	//or can't right now.
+	if( ! dock->isRallyPointAfterDockType() ||															//Chooses not to
+		goalObject->getObjectExitInterface() == nullptr ||										//or can't
+		goalObject->getObjectExitInterface()->getRallyPoint() == nullptr	//or can't right now.
 		)
 	{
 		return STATE_SUCCESS; // Success in an Enter is like success in an update.  We're all fine here

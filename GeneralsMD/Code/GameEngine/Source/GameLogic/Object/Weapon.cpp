@@ -927,9 +927,9 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		// TheSuperHackers @todo: Remove hardcoded KINDOF_MINE check and apply PlayFXWhenStealthed = Yes to the mine weapons instead.
 
-		if (!sourceObj->isLogicallyVisible()									// if user watching cannot see us
-			&& !sourceObj->isKindOf(KINDOF_MINE)								// and not a mine (which always do the FX, even if hidden)...
-			&& !isPlayFXWhenStealthed()													// and not a weapon marked to playwhenstealthed
+		if (!sourceObj->isLogicallyVisible() &&									// if user watching cannot see us
+			!sourceObj->isKindOf(KINDOF_MINE) &&								// and not a mine (which always do the FX, even if hidden)...
+			!isPlayFXWhenStealthed()													// and not a weapon marked to playwhenstealthed
 			)
 		{
 			handled = TRUE;		// then let's just pretend like we did the fx by returning true
@@ -1983,9 +1983,9 @@ void Weapon::rebuildScatterTargets()
 //-------------------------------------------------------------------------------------------------
 void Weapon::reloadWithBonus(const Object *sourceObj, const WeaponBonus& bonus, Bool loadInstantly)
 {
-	if (m_template->getClipSize() > 0
-			&& m_ammoInClip == m_template->getClipSize()
-			&& !sourceObj->isReloadTimeShared())
+	if (m_template->getClipSize() > 0 &&
+			m_ammoInClip == m_template->getClipSize() &&
+			!sourceObj->isReloadTimeShared())
 		return;	// don't restart our reload delay.
 
 	m_ammoInClip = m_template->getClipSize();

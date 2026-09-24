@@ -47,8 +47,8 @@ static Int numDebugStrings = 0;
 //static Int numDumpStrings = 0;
 
 #define IS_FRAME_OK_TO_LOG TheGameLogic->isInGame() && !TheGameLogic->isInShellGame() && !TheDebugIgnoreSyncErrors && \
-	TheCRCFirstFrameToLog >= 0 && TheCRCFirstFrameToLog <= TheGameLogic->getFrame() \
-	&& TheGameLogic->getFrame() <= TheCRCLastFrameToLog
+	TheCRCFirstFrameToLog >= 0 && TheCRCFirstFrameToLog <= TheGameLogic->getFrame() && \
+	TheGameLogic->getFrame() <= TheCRCLastFrameToLog
 
 CRCVerification::CRCVerification()
 {
