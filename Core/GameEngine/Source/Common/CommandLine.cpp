@@ -25,8 +25,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include <limits.h>
-
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
@@ -38,6 +36,8 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NetworkAutoStart.h"
+
+#include <errno.h>
 
 
 
@@ -507,24 +507,15 @@ static Bool parseNonNegativeInt(const char *text, Int &result)
 		return false;
 	}
 
-	UnsignedInt value = 0;
-	do
-	{
-		const UnsignedInt digit = *text - '0';
-		if (value > ((UnsignedInt)INT_MAX - digit) / 10u)
-		{
-			return false;
-		}
-		value = value * 10u + digit;
-		++text;
-	} while (*text >= '0' && *text <= '9');
-
-	if (*text != '\0')
+	char *end;
+	errno = 0;
+	const long value = strtol(text, &end, 10);
+	if (errno == ERANGE || *end != '\0' || value > INT_MAX)
 	{
 		return false;
 	}
 
-	result = (Int)value;
+	result = static_cast<Int>(value);
 	return true;
 }
 
