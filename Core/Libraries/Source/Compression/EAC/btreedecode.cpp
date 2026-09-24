@@ -128,8 +128,8 @@ bool GCALL BTREE_is(const void *compresseddata)
 {
     bool ok=false;
 
-    if (ggetm(compresseddata,2)==0x46fb
-     || ggetm(compresseddata,2)==0x47fb)
+    if (ggetm(compresseddata,2)==0x46fb ||
+     ggetm(compresseddata,2)==0x47fb)
         ok = true;
 
     return(ok);

@@ -1260,9 +1260,9 @@ protected:
 	    // if we land in the water, we die. alas.
 	    const Coord3D* riderPos = obj->getPosition();
 	    Real waterZ, terrainZ;
-	    if (TheTerrainLogic->isUnderwater(riderPos->x, riderPos->y, &waterZ, &terrainZ)
-			    && riderPos->z <= waterZ + 10.0f
-			    && obj->getLayer() == LAYER_GROUND)
+	    if (TheTerrainLogic->isUnderwater(riderPos->x, riderPos->y, &waterZ, &terrainZ) &&
+			    riderPos->z <= waterZ + 10.0f &&
+			    obj->getLayer() == LAYER_GROUND)
 	    {
 		    // don't call kill(); do it manually, so we can specify DEATH_FLOODED
 		    DamageInfo damageInfo;
@@ -1282,10 +1282,10 @@ protected:
 
 	    // If we land outside the map, we die too.
 	    // Otherwise we exist outside the PartitionManger like a cheater.
-	  if( obj->isOffMap()
-      || (cellType == PathfindCell::CELL_CLIFF)
-      || (cellType == PathfindCell::CELL_WATER)
-      || (cellType == PathfindCell::CELL_IMPASSABLE) )
+	  if( obj->isOffMap() ||
+      (cellType == PathfindCell::CELL_CLIFF) ||
+      (cellType == PathfindCell::CELL_WATER) ||
+      (cellType == PathfindCell::CELL_IMPASSABLE) )
 	    {
 		    // We are sorry, for reasons beyond our control, we are experiencing technical difficulties. Please die.
 		    obj->kill();

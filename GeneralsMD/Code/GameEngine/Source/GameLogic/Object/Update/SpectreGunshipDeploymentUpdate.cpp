@@ -265,9 +265,9 @@ UpdateSleepTime SpectreGunshipDeploymentUpdate::update()
 
 	Object *me = getObject();
 	// Abort conditions.
-	if( me->testStatus(OBJECT_STATUS_SOLD)
-    || me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)
-    || me->isEffectivelyDead() )
+	if( me->testStatus(OBJECT_STATUS_SOLD) ||
+    me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) ||
+    me->isEffectivelyDead() )
 	{
 
 		return UPDATE_SLEEP_FOREVER;

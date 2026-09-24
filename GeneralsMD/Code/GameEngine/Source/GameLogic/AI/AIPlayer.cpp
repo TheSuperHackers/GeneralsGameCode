@@ -1161,10 +1161,10 @@ Bool AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord
 	Region2D bounds;
 	getPlayerStructureBounds(&bounds, playerNdx);
 
-	if( bounds.hi.x == 0
-		&& bounds.lo.x == 0
-		&& bounds.hi.y == 0
-		&& bounds.lo.y == 0
+	if( bounds.hi.x == 0 &&
+		bounds.lo.x == 0 &&
+		bounds.hi.y == 0 &&
+		bounds.lo.y == 0
 		)
 	{
 		Region3D bounds3D;

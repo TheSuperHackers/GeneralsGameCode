@@ -766,9 +766,9 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	comboBoxSide = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, comboBoxSideID );
 	comboBoxColor = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, comboBoxColorID );
 
-	if (TheLadderList->getStandardLadders()->empty()
-		&& TheLadderList->getSpecialLadders()->empty()
-		&& TheLadderList->getLocalLadders()->empty())
+	if (TheLadderList->getStandardLadders()->empty() &&
+		TheLadderList->getSpecialLadders()->empty() &&
+		TheLadderList->getLocalLadders()->empty())
 	{
 		// no ladders, so just disable them
 		comboBoxDisabledLadder = comboBoxLadder;

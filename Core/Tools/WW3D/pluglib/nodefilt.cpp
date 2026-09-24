@@ -134,10 +134,10 @@ BOOL VisibleMeshINodeFilter::Accept_Node(INode * node, TimeValue time)
 
 	if
 	(
-		obj
-		&& !node->IsHidden ()
-		&& obj->CanConvertToType(triObjectClassID)
-		&& obj->SuperClassID() == GEOMOBJECT_CLASS_ID
+		obj &&
+		!node->IsHidden () &&
+		obj->CanConvertToType(triObjectClassID) &&
+		obj->SuperClassID() == GEOMOBJECT_CLASS_ID
 //		&& node->GetVisibility (time) > 0.0f
 	)
 	{

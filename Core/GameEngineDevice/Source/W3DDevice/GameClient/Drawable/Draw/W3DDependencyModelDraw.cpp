@@ -126,10 +126,10 @@ void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 	const Object *me = getDrawable()->getObject();
 	const W3DDependencyModelDrawModuleData *md = getW3DDependencyModelDrawModuleData();
 
-	if( md->m_attachToDrawableBoneInContainer.isNotEmpty()
-		&& me
-		&& me->getContainedBy()
-		&& !me->getContainedBy()->getContain()->isEnclosingContainerFor(me)
+	if( md->m_attachToDrawableBoneInContainer.isNotEmpty() &&
+		me &&
+		me->getContainedBy() &&
+		!me->getContainedBy()->getContain()->isEnclosingContainerFor(me)
 		)
 	{
 		// If we are currently "riding on", then our client position is determined by the client position of

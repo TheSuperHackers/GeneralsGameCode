@@ -68,9 +68,9 @@ static bool resolveAll()
 	USP10_RESOLVE(ScriptString_pSize);
 	USP10_RESOLVE(ScriptStringOut);
 
-	return ScriptIsComplexPtr != nullptr && ScriptItemizePtr != nullptr && ScriptBreakPtr != nullptr
-		&& ScriptLayoutPtr != nullptr && ScriptStringAnalysePtr != nullptr && ScriptStringFreePtr != nullptr
-		&& ScriptString_pSizePtr != nullptr && ScriptStringOutPtr != nullptr;
+	return ScriptIsComplexPtr != nullptr && ScriptItemizePtr != nullptr && ScriptBreakPtr != nullptr &&
+		ScriptLayoutPtr != nullptr && ScriptStringAnalysePtr != nullptr && ScriptStringFreePtr != nullptr &&
+		ScriptString_pSizePtr != nullptr && ScriptStringOutPtr != nullptr;
 }
 #undef USP10_RESOLVE
 

@@ -108,9 +108,9 @@ static Bool isObjectShroudedForAction ( const Object *source, const Object *targ
 
 	if( source && target && source->getControllingPlayer() )
 	{
-		if( source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN
-			&& commandSource != CMD_FROM_SCRIPT
-			&& target->getShroudedStatus( source->getControllingPlayer()->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED
+		if( source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN &&
+			commandSource != CMD_FROM_SCRIPT &&
+			target->getShroudedStatus( source->getControllingPlayer()->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED
 			)
 		{
 			return TRUE;
@@ -556,9 +556,9 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 	// Can't enter something being sold
 	if( objectToEnter->testStatus(OBJECT_STATUS_SOLD) )
 		return FALSE;
-	if ( obj->isKindOf( KINDOF_IGNORED_IN_GUI )  //As in, Angry Mob Members, Cargo Planes
-		|| obj->isKindOf( KINDOF_MOB_NEXUS )
-		|| objectToEnter->isKindOf( KINDOF_IGNORED_IN_GUI ) )  // As in Cargo Planes
+	if ( obj->isKindOf( KINDOF_IGNORED_IN_GUI ) ||  //As in, Angry Mob Members, Cargo Planes
+		obj->isKindOf( KINDOF_MOB_NEXUS ) ||
+		objectToEnter->isKindOf( KINDOF_IGNORED_IN_GUI ) )  // As in Cargo Planes
 	{
 
 		return FALSE;

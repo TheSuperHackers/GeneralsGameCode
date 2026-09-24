@@ -1052,9 +1052,9 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 	}
 
 
-	if (obj->isKindOf(KINDOF_DOZER)
-			&& obj->getAIUpdateInterface()
-			&& obj->getAIUpdateInterface()->isIdle())
+	if (obj->isKindOf(KINDOF_DOZER) &&
+			obj->getAIUpdateInterface() &&
+			obj->getAIUpdateInterface()->isIdle())
 	{
 		// Need to remove it from the pick a peasant button
 		if (yes)
@@ -1206,11 +1206,11 @@ static void doFindCommandCenter(Object* obj, void* userData)
 {
 	PlayerObjectFindInfo* info = (PlayerObjectFindInfo*)userData;
 
-	if (info->obj == nullptr
-			&& obj->isKindOf(KINDOF_COMMANDCENTER)
-			&& obj->getTemplate()->getDefaultOwningSide() == info->player->getSide()
-			&& !obj->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)
-			&& !obj->testStatus(OBJECT_STATUS_SOLD))
+	if (info->obj == nullptr &&
+			obj->isKindOf(KINDOF_COMMANDCENTER) &&
+			obj->getTemplate()->getDefaultOwningSide() == info->player->getSide() &&
+			!obj->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) &&
+			!obj->testStatus(OBJECT_STATUS_SOLD))
 	{
 		info->obj = obj;
 	}
@@ -1229,9 +1229,9 @@ static void doFindSpecialPowerSourceObject( Object *obj, void *userData )
 		//We already found the best case scenario, so no need to iterate any more.
 		return;
 	}
-	if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION )
-			&& !obj->testStatus( OBJECT_STATUS_SOLD )
-			&& !obj->isEffectivelyDead() )
+	if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
+			!obj->testStatus( OBJECT_STATUS_SOLD ) &&
+			!obj->isEffectivelyDead() )
 	{
 		if( info->spType == SPECIAL_INVALID && obj->hasAnySpecialPower() )
 		{
@@ -1291,9 +1291,9 @@ static void doCountSpecialPowersReady( Object *obj, void *userData )
 {
 	PlayerObjectFindInfo* info = (PlayerObjectFindInfo*)userData;
 
-	if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION )
-			&& !obj->testStatus( OBJECT_STATUS_SOLD )
-			&& !obj->isEffectivelyDead() )
+	if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
+			!obj->testStatus( OBJECT_STATUS_SOLD ) &&
+			!obj->isEffectivelyDead() )
 	{
 		if( obj->hasSpecialPower( info->spType ) )
 		{
@@ -1344,9 +1344,9 @@ static void doFindMostReadyWeaponForThing( Object *obj, void *userData )
 
 	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
-		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION )
-				&& !obj->testStatus( OBJECT_STATUS_SOLD )
-				&& !obj->isEffectivelyDead() )
+		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
+				!obj->testStatus( OBJECT_STATUS_SOLD ) &&
+				!obj->isEffectivelyDead() )
 		{
 			if( obj->hasAnyWeapon() )
 			{
@@ -1376,9 +1376,9 @@ static void doFindMostReadySpecialPowerForThing( Object *obj, void *userData )
 
 	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
-		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION )
-				&& !obj->testStatus( OBJECT_STATUS_SOLD )
-				&& !obj->isEffectivelyDead() )
+		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
+				!obj->testStatus( OBJECT_STATUS_SOLD ) &&
+				!obj->isEffectivelyDead() )
 		{
 			// search the modules for the one with the matching template
 			for( BehaviorModule** m = obj->getBehaviorModules(); *m; ++m )
@@ -1412,9 +1412,9 @@ static void doFindExistingObjectWithThingTemplate( Object *obj, void *userData )
 
 	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
-		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION )
-				&& !obj->testStatus( OBJECT_STATUS_SOLD )
-				&& !obj->isEffectivelyDead() )
+		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
+				!obj->testStatus( OBJECT_STATUS_SOLD ) &&
+				!obj->isEffectivelyDead() )
 		{
 			//We found one.
 			info->obj = obj;
@@ -2143,9 +2143,9 @@ void Player::transferAssetsFromThat(Player *that)
 	{
 		const UpgradeTemplate* upgradeTemplate = upgrade->getTemplate();
 
-		if (upgrade->getStatus() == UPGRADE_STATUS_IN_PRODUCTION
-			&& upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER
-			&& (hasUpgradeComplete(upgradeTemplate) || hasUpgradeInProduction(upgradeTemplate)))
+		if (upgrade->getStatus() == UPGRADE_STATUS_IN_PRODUCTION &&
+			upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER &&
+			(hasUpgradeComplete(upgradeTemplate) || hasUpgradeInProduction(upgradeTemplate)))
 		{
 			upgradesToCancel.push_back(upgradeTemplate);
 		}
@@ -3181,11 +3181,11 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 Bool Player::okToPlayRadarEdgeSound()
 {
 	return (
-		! TheVictoryConditions->hasSinglePlayerBeenDefeated( this )
-		&& ! m_isPlayerDead
-		&& ! TheInGameUI->isClientQuiet()
-		&& TheGameLogic->isInGameLogicUpdate()
-		&& TheGameLogic->getFrame() > 0 );
+		! TheVictoryConditions->hasSinglePlayerBeenDefeated( this ) &&
+		! m_isPlayerDead &&
+		! TheInGameUI->isClientQuiet() &&
+		TheGameLogic->isInGameLogicUpdate() &&
+		TheGameLogic->getFrame() > 0 );
 
 }
 
@@ -3240,8 +3240,8 @@ void Player::disableRadar()
 	Bool hadRadar = hasRadar();
 	m_radarDisabled = TRUE;
 
-	if( hadRadar
-		&& !hasRadar() && okToPlayRadarEdgeSound() )
+	if( hadRadar &&
+		!hasRadar() && okToPlayRadarEdgeSound() )
 	{
 		// This player just lost radar, so play the "You lost Radar!" sound
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_radarOfflineSound;

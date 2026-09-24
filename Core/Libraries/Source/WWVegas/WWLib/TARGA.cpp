@@ -634,8 +634,8 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		/*-----------------------------------------------------------------------
 		 * WRITE THE COLORMAP (PALETTE) DATA SECTION
 		 *---------------------------------------------------------------------*/
-		if (!error && (flags & TGAF_PAL) && (mPalette != nullptr)
-				&& (Header.CMapLength > 0))
+		if (!error && (flags & TGAF_PAL) && (mPalette != nullptr) &&
+				(Header.CMapLength > 0))
 			{
 			/* Adjust palette to the starting color entry. */
 			depth = (Header.CMapDepth >> 3);

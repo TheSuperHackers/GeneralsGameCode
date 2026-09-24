@@ -2396,8 +2396,8 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 		return msgType;
 	}
 
-	const Bool canPerformActions = TheInGameUI->areSelectedObjectsControllable()
-		|| ( command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT );
+	const Bool canPerformActions = TheInGameUI->areSelectedObjectsControllable() ||
+		( command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT );
 
 	if( !canPerformActions )
 	{
@@ -2412,14 +2412,14 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 	CanAttackResult result = ATTACKRESULT_NOT_POSSIBLE;
 
 	if(command &&
-		(command->isContextCommand()
-			|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
-			|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT))
+		(command->isContextCommand() ||
+			command->getCommandType() == GUI_COMMAND_SPECIAL_POWER ||
+			command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT))
 	{
 		return handleGuiCommand( command, draw, obj, pos, type );
 	}
-	else if( command && (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT
-					 || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT) )
+	else if( command && (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT ||
+					 command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT) )
 	{
 		return handleSpecialPowerConstructCommand( command, draw, pos, type );
 	}
@@ -2742,8 +2742,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 							hack = TRUE;
 							const Object *tempObject = temp->getObject();
 							// must take case of this case here or else the loop will break without getting newDrawable
-							if( tempObject && temp->getNextDrawable() == selectedDrawable && !temp->isSelected()
-								&& tempObject->isMobile() && tempObject->isLocallyControlled() && !tempObject->isContained() && !tempObject->isKindOf( KINDOF_NO_SELECT ) )
+							if( tempObject && temp->getNextDrawable() == selectedDrawable && !temp->isSelected() &&
+								tempObject->isMobile() && tempObject->isLocallyControlled() && !tempObject->isContained() && !tempObject->isKindOf( KINDOF_NO_SELECT ) )
 							{
 								newDrawable = temp;
 								break;
@@ -2969,8 +2969,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 							hack = TRUE;
 							const Object *tempObject = temp->getObject();
 							// must take case of this case here or else the loop will break without getting newDrawable
-							if( tempObject && temp->getNextDrawable() == selectedDrawable && !temp->isSelected()
-								&& tempObject->isMobile() && tempObject->isLocallyControlled() && !tempObject->isContained() )
+							if( tempObject && temp->getNextDrawable() == selectedDrawable && !temp->isSelected() &&
+								tempObject->isMobile() && tempObject->isLocallyControlled() && !tempObject->isContained() )
 							{
 								newDrawable = temp;
 								break;
@@ -2980,8 +2980,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						else
 						{
 							const Object *tempObject = temp->getObject();
-							if( tempObject && !temp->isSelected() && tempObject->isMobile()
-								  && tempObject->isLocallyControlled() && !tempObject->isContained() && tempObject->isKindOf( KINDOF_DOZER ) )
+							if( tempObject && !temp->isSelected() && tempObject->isMobile() &&
+								  tempObject->isLocallyControlled() && !tempObject->isContained() && tempObject->isKindOf( KINDOF_DOZER ) )
 							{
 								newDrawable = temp;
 								break;
@@ -3150,13 +3150,13 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				disqualifyingKindofs.set(KINDOF_DOZER);
 				disqualifyingKindofs.set(KINDOF_HARVESTER);
 				disqualifyingKindofs.set(KINDOF_IGNORES_SELECT_ALL);
-				if( object
-					&& object->isMobile()
-					&& object->isLocallyControlled()
-					&& !object->isContained()
-					&& !object->isAnyKindOf( disqualifyingKindofs )
-					&& !object->isEffectivelyDead()
-					&& object->isMassSelectable()
+				if( object &&
+					object->isMobile() &&
+					object->isLocallyControlled() &&
+					!object->isContained() &&
+					!object->isAnyKindOf( disqualifyingKindofs ) &&
+					!object->isEffectivelyDead() &&
+					object->isMassSelectable()
 					)
 				{
 					// enforce optional unit cap
@@ -3881,8 +3881,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_MOUSEOVER_DRAWABLE_HINT:
 		{
 			const CommandButton *command = TheInGameUI->getGUICommand();
-			if( TheInGameUI->getSelectCount() > 0
-					|| (command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT) ) // If something is selected
+			if( TheInGameUI->getSelectCount() > 0 ||
+					(command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT) ) // If something is selected
 			{
 				/// @todo This as well as the one in GameMessage::MSG_DRAWABLE_PICKED below should possibly have a generalized CanAttack instead of simply checking isEnemyOf
 				Drawable *draw = TheGameClient->findDrawableByID( msg->getArgument( 0 )->drawableID );
@@ -3992,8 +3992,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_MOUSE_RIGHT_CLICK:
 		{
 			// right click is only actioned here if we're in alternate mouse mode
-			if (TheGlobalData->m_useAlternateMouse
-				&& TheMouse->isClick(
+			if (TheGlobalData->m_useAlternateMouse &&
+				TheMouse->isClick(
 					m_rightMouseDownTimeMs, m_rightMouseUpTimeMs,
 					m_rightMouseDownAnchor, m_rightMouseUpAnchor))
 			{
@@ -4012,8 +4012,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				const CommandButton *command = TheInGameUI->getGUICommand();
 				Bool isPoint = (msg->getArgument(0)->pixelRegion.height() == 0 && msg->getArgument(0)->pixelRegion.width() == 0);
-				Bool controllable = TheInGameUI->areSelectedObjectsControllable()
-														|| (command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT);
+				Bool controllable = TheInGameUI->areSelectedObjectsControllable() ||
+														(command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT);
 				if (isPoint && controllable)
 				{
 					UnsignedInt pickType = getPickTypesForContext( TheInGameUI->isInForceAttackMode() );
@@ -4081,20 +4081,20 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			const CommandButton *command = TheInGameUI->getGUICommand();
 			// maintain this as the list of GUI button initiated commands that fire with left click in alt mouse mode
-  			Bool isFiringGUICommand = (command	&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
-  												|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT
- 												|| command->getCommandType() == GUI_COMMAND_FIRE_WEAPON
-												|| command->getCommandType() == GUI_COMMAND_COMBATDROP
-												|| command->getCommandType() == GUICOMMANDMODE_HIJACK_VEHICLE
-												|| command->getCommandType() == GUICOMMANDMODE_CONVERT_TO_CARBOMB));
+  			Bool isFiringGUICommand = (command	&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER ||
+  												command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT ||
+ 												command->getCommandType() == GUI_COMMAND_FIRE_WEAPON ||
+												command->getCommandType() == GUI_COMMAND_COMBATDROP ||
+												command->getCommandType() == GUICOMMANDMODE_HIJACK_VEHICLE ||
+												command->getCommandType() == GUICOMMANDMODE_CONVERT_TO_CARBOMB));
 
 			// in alternate mouse mode, this left click is only actioned here if we're firing a gui command
 			if ((TheGlobalData->m_useAlternateMouse) && (! isFiringGUICommand))
 				break;
 
 			Bool isPoint = (msg->getArgument(0)->pixelRegion.height() == 0 && msg->getArgument(0)->pixelRegion.width() == 0);
-			Bool controllable = TheInGameUI->areSelectedObjectsControllable()
-													|| (command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT);
+			Bool controllable = TheInGameUI->areSelectedObjectsControllable() ||
+													(command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT);
 			if (isPoint && controllable)
 			{
 				UnsignedInt pickType = getPickTypesForContext( TheInGameUI->isInForceAttackMode() );
