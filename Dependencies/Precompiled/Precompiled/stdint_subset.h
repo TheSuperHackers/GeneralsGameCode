@@ -18,7 +18,6 @@
 
 #pragma once
 
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
 /* 7.18.1.4  Integer types capable of holding object pointers */
 #ifdef _WIN64
   typedef __int64 intptr_t;
@@ -167,9 +166,3 @@ typedef unsigned __int64   uintmax_t;
 /* 7.18.4.2  Macros for greatest-width integer constants */
 #define INTMAX_C(val) val##i64
 #define UINTMAX_C(val) val##ui64
-
-#else
-
-#include <cstdint>
-
-#endif

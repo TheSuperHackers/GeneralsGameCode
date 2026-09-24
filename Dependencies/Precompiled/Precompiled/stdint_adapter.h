@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2026 TheSuperHackers
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -18,17 +18,16 @@
 
 #pragma once
 
-#ifdef __cplusplus
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
 
-	#include "CppMacros.h"
-	#include "CppTypes.h"
+	#ifdef __cplusplus
+		#include <cstdint>
+	#else
+		#include <stdint.h>
+	#endif
 
 #else
 
-	#if !(defined(_MSC_VER) && _MSC_VER < 1300)
-		#include <stdbool.h>
-	#endif
+	#include "stdint_subset.h"
 
-#endif // __cplusplus
-
-#include "stdint_adapter.h"
+#endif

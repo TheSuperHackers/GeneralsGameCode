@@ -2,6 +2,8 @@ set(PRECOMPILED_SRC
     Precompiled/CppMacros.h
     Precompiled/CppTypes.h
     Precompiled/precompiled.h
+    Precompiled/stdint_adapter.h
+    Precompiled/stdint_subset.h
 )
 
 ## core_precompiled
