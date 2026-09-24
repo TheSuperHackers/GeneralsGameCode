@@ -406,7 +406,7 @@ public:
 	/**
 		the given object has just become (or just ceased to be) a member of one of our teams (or subteams)
 	*/
-	void becomingTeamMember(Object *obj, Bool yes);
+	void becomingTeamMember(Object *obj, Bool yes, Bool objectXferLoad = false);
 
 	/**
 		this is called when the player becomes the local player (yes==true)
