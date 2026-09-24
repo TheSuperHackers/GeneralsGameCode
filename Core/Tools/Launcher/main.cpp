@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 	char* extension = configName;
 	char* tempptr;
 
-	while ((tempptr = strchr(extension + 1, '.')))
+	while ((tempptr = strchr(extension + 1, '.')) != nullptr)
 	{
 		extension = tempptr;
 	}

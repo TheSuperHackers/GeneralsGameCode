@@ -126,16 +126,16 @@ static void removeLeadingAndTrailing ( char *buffer )
 
 	ptr = first = buffer;
 
-	while ( (ch = *first) && iswspace ( ch ))
+	while ( (ch = *first) != 0 && iswspace ( ch ))
 	{
 			first++;
 	}
 
-	while ( *ptr++ = *first++ );
+	while ( (*ptr++ = *first++) != '\0' );
 
 	ptr -= 2;
 
-	while ( (ptr > buffer) && (ch = *ptr) && iswspace ( ch ) )
+	while ( (ptr > buffer) && (ch = *ptr) != 0 && iswspace ( ch ) )
 	{
 		ptr--;
 	}
@@ -304,7 +304,7 @@ BOOL CBabylonDlg::OnInitDialog()
 	int index = 0;
 	int lang_index = 0;
 	LANGINFO *info;
-	while ( (info = GetLangInfo ( lang_index )) )
+	while ( (info = GetLangInfo ( lang_index )) != nullptr )
 	{
 		combo->InsertString ( index, info->name );
 		combo->SetItemDataPtr ( index, info );
@@ -689,7 +689,7 @@ int CBabylonDlg::SaveLog()
 	int ok = FALSE;
 
 
-	if ( ! (log = fopen ("babylon.log", "a+t" )))
+	if ( (log = fopen ("babylon.log", "a+t" )) == nullptr)
 	{
 		goto error;
 	}
@@ -756,7 +756,7 @@ static int readToEndOfQuote( FILE *file, char *in, char *out, char *wavefile, in
 
 		if ( in )
 		{
-			if ( !(ch = *in++))
+			if ( (ch = *in++) == 0)
 			{
 				in = nullptr; // have exhausted the input buffer
 				ch = getc ( file );
@@ -832,7 +832,7 @@ static int readToEndOfQuote( FILE *file, char *in, char *out, char *wavefile, in
 
 		if ( in )
 		{
-			if ( !(ch = *in++))
+			if ( (ch = *in++) == 0)
 			{
 				in = nullptr; // have exhausted the input buffer
 				ch = getc ( file );
@@ -906,7 +906,7 @@ static int getString ( FILE *file, char *in, char *out )
 
 	{
 
-		while ( (ch = *in++) && ch != '\n' && bytes )
+		while ( (ch = *in++) != 0 && ch != '\n' && bytes )
 		{
 			*ptr++ = ch;
 			bytes--;
@@ -926,7 +926,7 @@ static char *getToken ( char *buffer, char *token, int bytes )
 	int state = START;
 	*token = 0;
 
-	while ( (ch = *buffer) && ch != '\n' && bytes )
+	while ( (ch = *buffer) != 0 && ch != '\n' && bytes )
 	{
 		switch ( state )
 		{
@@ -1013,7 +1013,7 @@ static int getLabelCount( char *filename )
 	int count = 0;
 	FILE *fp;
 
-	if ( ! ( fp = fopen ( filename, "rt" )))
+	if ( ( fp = fopen ( filename, "rt" )) == nullptr)
 	{
 		return 0;
 	}
@@ -1043,7 +1043,7 @@ int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) () 
 
 	init_info ( &global_info );
 
-	if ( !(file = fopen ( filename, "rt" ) ))
+	if ( (file = fopen ( filename, "rt" ) ) == nullptr)
 	{
 		goto exit;
 	}
@@ -1262,7 +1262,7 @@ void CBabylonDlg::OnReload()
 
 	if ( FileExists ( BabylonstrFilename ))
 	{
-		if ( (errors = ValidateStrFile ( BabylonstrFilename )) )
+		if ( (errors = ValidateStrFile ( BabylonstrFilename )) != 0 )
 		{
 			if ( errors == -1 )
 			{
@@ -1282,7 +1282,7 @@ void CBabylonDlg::OnReload()
 			sprintf ( buffer, "Loading \"%s\"...", BabylonstrFilename );
 			Status ( buffer );
 
-			if ( !(str_loaded = LoadStrFile ( BabylonstrDB, BabylonstrFilename, progress_cb )) )
+			if ( (str_loaded = LoadStrFile ( BabylonstrDB, BabylonstrFilename, progress_cb )) == 0 )
 			{
 				Log ( "FAILED", SAME_LINE );
 				BabylonstrDB->Clear ();
@@ -1307,7 +1307,7 @@ void CBabylonDlg::OnReload()
 		sprintf ( buffer, "Validating \"%s\"...", BabylonstrFilename );
 		Status ( buffer, FALSE );
 
-		if ( (num_errors = BabylonstrDB->Errors ( )))
+		if ( (num_errors = BabylonstrDB->Errors ( )) != 0)
 		{
 			sprintf ( buffer, "Generals.str has %d error(s):\n\nClick \"Errors\" for a detailed list.\n\nAll errors must be fixed before \"Update\" will be enabled.", num_errors );
 			AfxMessageBox ( buffer );
@@ -1317,7 +1317,7 @@ void CBabylonDlg::OnReload()
 			win->EnableWindow ( TRUE );
 		}
 
-		if ( (num_warnings = BabylonstrDB->Warnings()))
+		if ( (num_warnings = BabylonstrDB->Warnings()) != 0)
 		{
 			win = GetDlgItem ( IDC_WARNINGS );
 			win->EnableWindow ( TRUE );
@@ -1339,7 +1339,7 @@ void CBabylonDlg::OnReload()
 
 	if ( FileExists ( MainXLSFilename ))
 	{
-		if ( !(db_loaded = LoadMainDB ( MainDB, MainXLSFilename, progress_cb )) )
+		if ( (db_loaded = LoadMainDB ( MainDB, MainXLSFilename, progress_cb )) == 0 )
 		{
 			Log ( "FAILED", SAME_LINE );
 			MainDB->Clear ();
@@ -1600,7 +1600,7 @@ int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, U
 	while ( dtext )
 	{
 
-		if ( (stext = (BabylonText *) dtext->Matched ()) )
+		if ( (stext = (BabylonText *) dtext->Matched ()) != nullptr )
 		{
 			// stext is the newer version;
 			if ( wcscmp ( dtext->Get (), stext->Get ()) != 0)
@@ -1756,7 +1756,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 
 	while ( slabel )
 	{
-		if ( (dlabel = destination->FindLabel ( slabel->Name ())))
+		if ( (dlabel = destination->FindLabel ( slabel->Name ())) != nullptr)
 		{
 			dlabel->Processed ();
 
@@ -2190,7 +2190,7 @@ int CBabylonDlg::ValidateStrFile( const char *filename)
 	//this->SetForegroundWindow ();
 	//this->RedrawWindow ();
 
-	if ( !(file = fopen ( results, "rt" )))
+	if ( (file = fopen ( results, "rt" )) == nullptr)
 	{
 		goto error;
 	}

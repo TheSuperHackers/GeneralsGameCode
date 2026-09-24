@@ -95,7 +95,7 @@ IFF_FILE	*IFF_Open ( const char *name )
 	IFF_FILE *iff = nullptr;
 
 
-	if ( ! (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))))
+	if ( (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))) == nullptr)
 	{
 		goto error;
 	}
@@ -130,7 +130,7 @@ IFF_FILE	*IFF_Load ( const char *name )
 {
 	IFF_FILE *iff = nullptr;
 
-	if ( ! (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))))
+	if ( (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))) == nullptr)
 	{
 		goto error;
 	}
@@ -146,7 +146,7 @@ IFF_FILE	*IFF_Load ( const char *name )
 	iff->file_size = lseek ( iff->fp, 0, SEEK_END );
 	lseek ( iff->fp, 0, SEEK_SET );
 
-	if ( !(iff->mem_file = ( char *) malloc ( iff->file_size) ) )
+	if ( (iff->mem_file = ( char *) malloc ( iff->file_size) ) == nullptr )
 	{
 		goto error;
 	}
@@ -362,7 +362,7 @@ IFF_FILE		*IFF_New ( const char *name )
 	IFF_FILE *iff = nullptr;
 
 
-	if ( ! (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))))
+	if ( (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))) == nullptr)
 	{
 		goto error;
 	}

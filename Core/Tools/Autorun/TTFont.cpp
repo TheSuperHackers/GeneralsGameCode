@@ -1109,7 +1109,7 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 		//-----------------------------------------------------------------------
 		// For each word...
 		//-----------------------------------------------------------------------
-		while ( n = nGetWord( letter, fdbcs )) {
+		while ( (n = nGetWord( letter, fdbcs )) != 0 ) {
 
 			//--------------------------------------------------------------------
 			// For each character in the word...

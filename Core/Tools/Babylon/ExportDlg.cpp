@@ -82,7 +82,7 @@ void CExportDlg::OnOK()
 	edit->GetWindowText ( buffer, sizeof ( filename) -1 );
 	_getcwd ( filename, sizeof (filename ) -1 );
 	strcat ( filename, "\\" );
-	if ( ( ptr = strchr ( buffer, '.' )))
+	if ( ( ptr = strchr ( buffer, '.' )) != nullptr)
 	{
 			*ptr = 0;
 	}
@@ -163,7 +163,7 @@ BOOL CExportDlg::OnInitDialog()
 	index = 0;
 	lang_index = 0;
 	got_lang = FALSE;
-	while ( (info = GetLangInfo ( lang_index )) )
+	while ( (info = GetLangInfo ( lang_index )) != nullptr )
 	{
 		if ( TRUE )//info->langid != LANGID_US )
 		{
