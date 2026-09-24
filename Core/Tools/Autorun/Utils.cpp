@@ -131,11 +131,11 @@ void Fix_Single_Ampersands ( LPSTR pszString, bool upper_case )
 	strcpy((LPSTR)pszString, (LPSTR)pszTemp );
 }
 
-void Fix_Single_Ampersands ( wchar_t *pszString, bool upper_case )
+void Fix_Single_Ampersands ( WideChar* pszString, bool upper_case )
 {
-	wchar_t	pszTemp[ MAX_PATH ];		// variable to hold the string passed
-	wchar_t	pszOld[ MAX_PATH ];			// variable to hold the string passed
-	wchar_t *letter;
+	WideChar	pszTemp[ MAX_PATH ];		// variable to hold the string passed
+	WideChar	pszOld[ MAX_PATH ];			// variable to hold the string passed
+	WideChar* letter;
 	int		i = 0;
 
 	wcscpy( pszOld, pszString );
@@ -358,13 +358,13 @@ char *Make_Current_Path_To ( const char *filename, char *path )
 	return( path );
 }
 
-wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
+WideChar* Make_Current_Path_To ( const WideChar* filename, WideChar* path )
 {
-	wchar_t	szPath	[ _MAX_PATH ];
-	wchar_t	drive	[ _MAX_DRIVE];
-	wchar_t	dir	 	[ _MAX_DIR  ];
+	WideChar	szPath	[ _MAX_PATH ];
+	WideChar	drive	[ _MAX_DRIVE];
+	WideChar	dir	 	[ _MAX_DIR  ];
 
-	wcscpy( szPath, (wchar_t *)Args->Get_argv(0));
+	wcscpy( szPath, (WideChar*)Args->Get_argv(0));
 	_wsplitpath( szPath, drive, dir, nullptr, nullptr );
 	_wmakepath( szPath, drive, dir, nullptr, nullptr );
 	Path_Add_Back_Slash( szPath );
@@ -400,7 +400,7 @@ char *Path_Add_Back_Slash ( char *path )
 	return( path );
 }
 
-wchar_t *Path_Add_Back_Slash ( wchar_t *path )
+WideChar* Path_Add_Back_Slash ( WideChar* path )
 {
 	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ wcslen( path )-1 ] != '\\' ) {
@@ -434,7 +434,7 @@ char *Path_Remove_Back_Slash ( char *path )
 	return( path );
 }
 
-wchar_t *Path_Remove_Back_Slash ( wchar_t *path )
+WideChar* Path_Remove_Back_Slash ( WideChar* path )
 {
 	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ wcslen( path )-1 ] == L'\\' ) {
@@ -602,14 +602,14 @@ void PlugInProductName( char *szString, int nName )
 /*																	   		*/
 /*--------------------------------------------------------------------------*/
 
-void PlugInProductName ( wchar_t *szString, const wchar_t *szName )
+void PlugInProductName ( WideChar* szString, const WideChar* szName )
 {
 	int		nCount, nMsgLength;
-	wchar_t	szTextBuf[ MAX_PATH ];
-	wchar_t	szOut[ MAX_PATH ];
-	wchar_t	szProduct[ MAX_PATH ];
-	wchar_t *temp = nullptr;
-	wchar_t *next = nullptr;
+	WideChar	szTextBuf[ MAX_PATH ];
+	WideChar	szOut[ MAX_PATH ];
+	WideChar	szProduct[ MAX_PATH ];
+	WideChar* temp = nullptr;
+	WideChar* next = nullptr;
 
 	if ( szName == nullptr || szName[0] == '\0' ) {
 		return;

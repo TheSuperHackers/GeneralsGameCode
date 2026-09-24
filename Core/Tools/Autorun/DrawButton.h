@@ -52,7 +52,7 @@ class DrawButton
 		};
 
 		DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const char *string, TTFontClass *fontptr );
-		DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const wchar_t *string, TTFontClass *fontptr );
+		DrawButton ( int id, RECT button_rect, const char* normal, const char* focus, const char* pressed, const WideChar* string, TTFontClass* fontptr );
 
 		char			*Return_Normal_Bitmap	()						{ return NormalBitmap;	};
 		char			*Return_Pressed_Bitmap	()						{ return PressedBitmap; };
@@ -76,7 +76,11 @@ class DrawButton
 		void	 		Return_Area			   	( Rect *area );
 		void	 		Return_Text_Area	   	( Rect *area );
 		TTFontClass		*Return_Font_Ptr		()						{ return( MyFontPtr ); };
-		wchar_t			*Return_Text			()						{ return( String ); };
+		WideChar* Return_Text()
+		{
+			return( String );
+		};
+
 		void	 		Set_State				( BUTTON_STATE state )			{ ButtonState = state; };
 		int				Set_Stretched_Width		( int  );
 		int				Set_Stretched_Height	( int  );
@@ -93,7 +97,7 @@ class DrawButton
 		bool			UseBitmaps;
 		TTFontClass		*MyFontPtr;
 
-		wchar_t		String[ MAX_PATH ];
+		WideChar		String[ MAX_PATH ];
 	    char		NormalBitmap [ _MAX_FNAME ];
 		char		PressedBitmap[ _MAX_FNAME ];
 		char		FocusBitmap  [ _MAX_FNAME ];

@@ -235,7 +235,7 @@ class TTFontClass
 
 		virtual Point2D	Print(
 							HDC hdc,
-							wchar_t const * string,
+							const WideChar* string,
 							Rect const & cliprect,
 							COLORREF forecolor		= TEXT_COLOR,
 							COLORREF backcolor		= TEXT_NORMAL_SHADOW_COLOR,

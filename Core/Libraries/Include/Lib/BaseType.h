@@ -30,14 +30,12 @@
 #pragma once
 
 #include "Lib/BaseTypeCore.h"
+#include <Utility/WideChar.h>
 #include "Lib/trig.h"
 
 #if __cplusplus >= 201103L
 #include <type_traits>
 #endif
-
-//-----------------------------------------------------------------------------
-typedef wchar_t WideChar;  ///< multi-byte character representations
 
 //-----------------------------------------------------------------------------
 template <typename NUM>

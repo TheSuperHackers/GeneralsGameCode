@@ -123,13 +123,13 @@ int Read_Line(Straw & file, char * buffer, int len, bool & eof)
 	return(strlen(buffer));
 }
 
-int Read_Line(Straw & file, wchar_t * buffer, int len, bool & eof)
+int Read_Line(Straw & file, WideChar* buffer, int len, bool & eof)
 {
 	if (len == 0 || buffer == nullptr) return(0);
 
 	int count = 0;
 	for (;;) {
-		wchar_t c;
+		WideChar c;
 		if (file.Get(&c, sizeof(c)) != sizeof(c)) {
 			eof = true;
 			buffer[count] = L'\0';

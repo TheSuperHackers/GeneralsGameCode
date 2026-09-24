@@ -769,7 +769,7 @@ const char* LOCALE_getstring( int StringID )
         p = nullptr;
     }
 
-	Msg( __LINE__, __FILE__, L"%s", 1252, (wchar_t *)p );
+	Msg( __LINE__, __FILE__, L"%s", 1252, (WideChar*)p );
 
     return p;
 }

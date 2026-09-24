@@ -54,17 +54,17 @@ void swap( T & left, T & right )
 
 
 void		Fix_Single_Ampersands  			( LPSTR pszString, bool upper_case );
-void		Fix_Single_Ampersands  			( wchar_t *pszString, bool upper_case );
+void		Fix_Single_Ampersands  			( WideChar* pszString, bool upper_case );
 //UnicodeString Fix_Single_Ampersands ( UnicodeString string, bool upper_case);
 void		Fix_Double_Ampersands  			( LPSTR string, bool upper_case );
 void *		Load_Alloc_Data					( char *filename, long *filesize=0 );
 void *		Load_File						( char *filename, long *filesize=0 );
 char *		Make_Current_Path_To			( const char *filename, char *path );
-wchar_t *	Make_Current_Path_To			( const wchar_t *filename, wchar_t *path );
+WideChar* Make_Current_Path_To			( const WideChar* filename, WideChar* path );
 char *		Path_Add_Back_Slash				( char *path );
 char *		Path_Remove_Back_Slash			( char *path );
-wchar_t *	Path_Add_Back_Slash				( wchar_t *path );
-wchar_t *	Path_Remove_Back_Slash			( wchar_t *path );
+WideChar* Path_Add_Back_Slash				( WideChar* path );
+WideChar* Path_Remove_Back_Slash			( WideChar* path );
 void		PlugInProductName				( char *szString, int nName );
 void		PlugInProductName				( char *szString, char *szName );
-void		PlugInProductName				( wchar_t *szString, const wchar_t *szName );
+void		PlugInProductName				( WideChar* szString, const WideChar* szName );

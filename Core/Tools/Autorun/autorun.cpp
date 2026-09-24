@@ -109,7 +109,7 @@
 #include "WSYS_FileSystem.h"
 #include "WSYS_StdFileSystem.h"
 
-#include <string>
+#include <Utility/string_adapter.h>
 #include "GameText.h"
 
 #include "leanAndMeanAutorun.h"
@@ -221,12 +221,12 @@ char		szProduct_Name		[ _MAX_PATH ];
 
 #ifdef LEAN_AND_MEAN
 
-wchar_t 	szWideBuffer   		[ _MAX_PATH ];
-wchar_t 	szWideBuffer0  		[ _MAX_PATH ];
-wchar_t 	szWideBuffer2  		[ _MAX_PATH ];
-wchar_t 	szWideBuffer3  		[ _MAX_PATH ];
-wchar_t		szProductName		  [ _MAX_PATH ];
-wchar_t		szFullProductName	[ _MAX_PATH ];
+WideChar 	szWideBuffer   		[ _MAX_PATH ];
+WideChar 	szWideBuffer0  		[ _MAX_PATH ];
+WideChar 	szWideBuffer2  		[ _MAX_PATH ];
+WideChar 	szWideBuffer3  		[ _MAX_PATH ];
+WideChar		szProductName		  [ _MAX_PATH ];
+WideChar		szFullProductName	[ _MAX_PATH ];
 
 /*
 enum
@@ -1231,7 +1231,7 @@ BOOL MainWindow::Is_Product_Registered()
 	BOOL	result = FALSE;
 
 	char 		key			[_MAX_PATH];
-	wchar_t 	szPath		[_MAX_PATH];
+	WideChar 	szPath		[_MAX_PATH];
 	char		aName		[_MAX_PATH];			//jfs
 
 	unsigned long Type;
@@ -2566,9 +2566,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 	static char 	szLicense[ _MAX_PATH ];
 	static char 	szButtonBitmap[_MAX_PATH];
 
-	static wchar_t	szString1[ 500 ];
-	static wchar_t	szString2[ 500 ];
-	static wchar_t	szWholeString[ 1000 ];
+	static WideChar	szString1[ 500 ];
+	static WideChar	szString2[ 500 ];
+	static WideChar	szWholeString[ 1000 ];
 //	static wchar_t	szWSMsg1[ _MAX_PATH ];
 
 #ifdef LEAN_AND_MEAN
@@ -2577,8 +2577,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 	static UnicodeString	wsMsg1;
 #endif
 
-	static wchar_t	szWSMsg2[ _MAX_PATH ];
-	static wchar_t	szWholeWSMsg[ 1000 ];
+	static WideChar	szWSMsg2[ _MAX_PATH ];
+	static WideChar	szWholeWSMsg[ 1000 ];
 //	static wchar_t	szInstallWarningMsg[ _MAX_PATH ];
 
 	static HBITMAP		hBitmap   			= 0;
@@ -3733,8 +3733,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //						}
 /*
 						if (success == 0) {
-							std::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunAVIs");
-							std::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
+							stl::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunAVIs");
+							stl::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
 							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
@@ -3747,11 +3747,11 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 					case IDD_HELP:
 					{
-						std::wstring wFileName;
+						stl::wstring wFileName;
 						wFileName = Locale_GetString(HELP_FILENAME);
 
 						std::string fname;
-						const wchar_t *tmp = wFileName.c_str();
+						const WideChar* tmp = wFileName.c_str();
 						char hack[2] = "a";
 						while (*tmp)
 						{
@@ -3778,8 +3778,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 /*
 						if (success == 0) {
-							std::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunHelp");
-							std::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
+							stl::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunHelp");
+							stl::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
 							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
@@ -4804,8 +4804,8 @@ BOOL Valid_Environment ()
 	result = WinVersion.Meets_Minimum_Version_Requirements();
   if ( !result )
 	{
-		std::wstring wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
-		std::wstring wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
+		stl::wstring wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
+		stl::wstring wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
 		length = wideBuffer.length();
 		WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 		length = wideBuffer2.length();
@@ -5068,9 +5068,9 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 #else
 
-	std::wstring wideBuffer = TheGameText->fetch("Autorun:AutorunTitle");
-	std::wstring wideBuffer2.format( wideBuffer.str(), productName.str() );
-	std::wstring wideBuffer3 = TheGameText->fetch("Autorun:CantFind");
+	stl::wstring wideBuffer = TheGameText->fetch("Autorun:AutorunTitle");
+	stl::wstring wideBuffer2.format( wideBuffer.str(), productName.str() );
+	stl::wstring wideBuffer3 = TheGameText->fetch("Autorun:CantFind");
 
 	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, nullptr );
 	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, nullptr );

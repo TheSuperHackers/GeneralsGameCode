@@ -50,7 +50,7 @@ void LanguageFilter::init() {
 		return;
 	}
 
-	wchar_t word[128];
+	WideChar word[128];
 	while (readWord(file1, word)) {
 		Int wordLen = wcslen(word);
 		if (wordLen == 0) {
@@ -76,7 +76,7 @@ void LanguageFilter::reset() {
 void LanguageFilter::update() {
 }
 
-wchar_t ignoredChars[] = L"-_*'\"";
+WideChar ignoredChars[] = L"-_*'\"";
 
 void LanguageFilter::filterLine(UnicodeString &line)
 {
@@ -87,7 +87,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 	UnicodeString token;
 
 	while (newLine.nextToken(&token, L" ;,.!?:=\\/><`~()&^%#\n\t")) {
-		wchar_t *pos = wcsstr(buf, token.str());
+		WideChar* pos = wcsstr(buf, token.str());
 		if (pos == nullptr) {
 			DEBUG_CRASH(("Couldn't find the token in its own string."));
 			continue;
@@ -114,7 +114,7 @@ void LanguageFilter::unHaxor(UnicodeString &word) {
 	Int len = word.getLength();
 	UnicodeString newWord;
 	for (Int i = 0; i < len; ++i) {
-		wchar_t c = word.getCharAt(i);
+		WideChar c = word.getCharAt(i);
 		if ((c == L'p') || (c == L'P')) {
 			if (((i + 1) < len) && ((word.getCharAt(i+1) == L'h') || (word.getCharAt(i+1) == L'H'))) {
 				newWord.concat(L'f');

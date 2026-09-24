@@ -32,8 +32,8 @@ void CreateTranslationTable ()
 {
 	int i;
 	FILE *out;
-	wchar_t wc;
-	wchar_t mb;
+	WideChar wc;
+	WideChar mb;
 	DWORD last_error;
 
 	if ( ! ( out = fopen ( "utable.c", "wt" )))

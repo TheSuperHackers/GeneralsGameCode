@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <Utility/WideChar.h>
+
 #include "ref_ptr.h"
 #include "refcount.h"
 #include "STLUtils.h"

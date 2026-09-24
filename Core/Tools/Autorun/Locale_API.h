@@ -53,10 +53,10 @@ extern	int		SubLanguage;
 /****************************************************************************/
 int				Locale_Init						( int language, char *file );
 void			Locale_Restore					();
-const wchar_t* Locale_GetString( const char *id, wchar_t *buffer = nullptr, int size = _MAX_PATH );
+const WideChar* Locale_GetString( const char* id, WideChar* buffer = nullptr, int size = _MAX_PATH );
 /*
 const char*		Locale_GetString				( int StringID, char *String );
-const wchar_t*	Locale_GetString				( int StringID, wchar_t *String=nullptr );
+const WideChar*	Locale_GetString				( int StringID, WideChar* String=nullptr );
 */
 bool			Locale_Use_Multi_Language_Files	();
 //int				Locale_Get_Language_ID 			()	{ return LanguageID; };

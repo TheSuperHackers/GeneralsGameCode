@@ -30,6 +30,7 @@
 // Author: Matthew D. Campbell, June 2002
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include <Utility/string_adapter.h>
 
 #include "Common/Registry.h"
 #include "Common/OptionPreferences.h"
@@ -232,7 +233,11 @@ public:
 	UnsignedInt exeCRC() { return m_exeCRC; }
 	UnsignedInt iniCRC() { return m_iniCRC; }
 	UnsignedInt gameVersion() { return m_gameVersion; }
-	std::wstring getLocalStagingServerName() { return m_localStagingServerName; }
+	stl::wstring getLocalStagingServerName()
+	{
+		return m_localStagingServerName;
+	}
+
 	Int getLocalRoomID() { return m_localRoomID; }
 	std::string ladderIP() { return m_ladderIP; }
 	UnsignedShort ladderPort() { return m_ladderPort; }
@@ -314,7 +319,7 @@ private:
 
 	Int m_nextStagingServer;
 	std::map<Int, SBServer> m_stagingServers;
-	std::wstring m_localStagingServerName;
+	stl::wstring m_localStagingServerName;
 	Int m_localRoomID;
 
 	void doQuickMatch( PEER peer );
