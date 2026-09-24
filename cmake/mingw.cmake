@@ -34,6 +34,13 @@ if(MINGW)
         _int64=long\ long
     )
     
+    # Clang compatibility: Define _INTEGRAL_MAX_BITS for 64-bit type support
+    # GCC defines _INTEGRAL_MAX_BITS=64 automatically, but Clang does not.
+    # This is needed for GameSpy SDK gsi_i64/gsi_u64 type definitions.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        add_compile_definitions(_INTEGRAL_MAX_BITS=64)
+    endif()
+    
     # Enable math constants in MinGW's <math.h>
     # MinGW provides M_PI, M_E, etc. in <math.h>, but only when -std=c++XX is NOT used (strict ANSI mode),
     # or when _USE_MATH_DEFINES is defined. Since we compile with -std=c++20, we need this define.
