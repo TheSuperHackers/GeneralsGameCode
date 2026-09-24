@@ -58,7 +58,7 @@ class PointerRemapClass
 
 		void		Register_Pointer (void *old_pointer, void *new_pointer);
 
-#ifdef WWDEBUG
+#ifdef DEBUG_LOGGING
 		void		Request_Pointer_Remap (void **pointer_to_convert,const char * file,int line);
 		void		Request_Ref_Counted_Pointer_Remap (RefCountClass **pointer_to_convert,const char * file, int line);
 #else
@@ -86,7 +86,7 @@ class PointerRemapClass
 			bool operator != (const PtrRemapStruct & that) { return !(*this == that); }
 
 			void **			PointerToRemap;
-#ifdef WWDEBUG
+#ifdef DEBUG_LOGGING
 			const char *	File;
 			int				Line;
 #endif

@@ -991,10 +991,8 @@ WWTimeItClass::~WWTimeItClass()
 	__int64 End;
 	WWProfile_Get_Ticks( &End );
 	End -= Time;
-#ifdef WWDEBUG
-	float time = End * WWProfile_Get_Inv_Processor_Ticks_Per_Second();
-	WWDEBUG_SAY(( "*** WWTIMEIT *** %s took %1.9f", Name, time ));
-#endif
+
+	WWDEBUG_SAY(( "*** WWTIMEIT *** %s took %1.9f", Name, End * WWProfile_Get_Inv_Processor_Ticks_Per_Second() ));
 }
 
 

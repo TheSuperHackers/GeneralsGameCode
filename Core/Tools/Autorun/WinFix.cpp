@@ -127,6 +127,7 @@ WindowsVersionInfo::WindowsVersionInfo() :
 	version_info.dwOSVersionInfoSize = sizeof( version_info );
 
 	int result = GetVersionEx( &version_info );
+	(void)result;
 	assert( result != 0 );
 
 	//--------------------------------------------------------------------------

@@ -176,9 +176,7 @@ void StreakLineClass::Set_LocsWidthsColors( unsigned int num_points,
 		Set_Widths( num_points, widths );
 
 		//sanity check
-		int locCount = PointLocations.Count();
-		int widCount = PointWidths.Count();
-		WWASSERT(locCount == widCount);
+		WWASSERT(PointLocations.Count() == PointWidths.Count());
 
 	}
 
@@ -187,9 +185,7 @@ void StreakLineClass::Set_LocsWidthsColors( unsigned int num_points,
 		Set_Colors( num_points, colors );
 
 		//sanity check
-		int locCount = PointLocations.Count();
-		int colCount = PointColors.Count();
-		WWASSERT(locCount == colCount);
+		WWASSERT(PointLocations.Count() == PointColors.Count());
 
 	}
 

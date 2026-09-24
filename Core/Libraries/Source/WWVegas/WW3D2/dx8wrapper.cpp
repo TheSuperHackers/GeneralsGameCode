@@ -2023,7 +2023,7 @@ void DX8Wrapper::Draw(
 	// Debug feature to disable triangle drawing...
 	if (!_Is_Triangle_Draw_Enabled()) return;
 
-#ifdef MESH_RENDER_SNAPSHOT_ENABLED
+#ifdef DEBUG_LOGGING
 	if (WW3D::Is_Snapshot_Activated()) {
 		unsigned long passes=0;
 		SNAPSHOT_SAY(("ValidateDevice:"));
@@ -2071,10 +2071,9 @@ void DX8Wrapper::Draw(
 			break;
 		}
 	}
-#endif	// MESH_RENDER_SNAPSHOT_ENABLED
-
 
 	SNAPSHOT_SAY(("DX8 - draw %d polygons (%d vertices)",polygon_count,vertex_count));
+#endif
 
 	if (vertex_count<3) {
 		min_vertex_index=0;
@@ -2247,7 +2246,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 			if (render_state_changed&mask) {
 				SNAPSHOT_SAY(("DX8 - apply light %d",index));
 				if (render_state.LightEnable[index]) {
-#ifdef MESH_RENDER_SNAPSHOT_ENABLED
+#if defined(DEBUG_CRASHING) || defined(DEBUG_LOGGING)
 					if ( WW3D::Is_Snapshot_Activated() ) {
 						D3DLIGHT8 * light = &(render_state.Lights[index]);
 						static const char * _light_types[] = { "Unknown", "Point","Spot", "Directional" };

@@ -59,9 +59,11 @@ class		LightEnvironmentClass;
 class		MaterialPassClass;
 class 	StaticSortListClass;
 
-#define MESH_RENDER_SNAPSHOT_ENABLED
-#define SNAPSHOT_SAY(x) if (WW3D::Is_Snapshot_Activated()) { WWDEBUG_SAY(x); }
-//#define SNAPSHOT_SAY(x)
+#ifdef DEBUG_LOGGING
+	#define SNAPSHOT_SAY(x) if (WW3D::Is_Snapshot_Activated()) { WWDEBUG_SAY(x); }
+#else
+	#define SNAPSHOT_SAY(x)
+#endif
 
 /**
 ** WW3D

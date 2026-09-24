@@ -74,14 +74,14 @@ int LZOCompressor::Compress
 {
 	CriticalSectionClass::LockClass m(mutex);
 
-#ifdef WWDEBUG
+#ifdef DEBUG_CRASHING
 	// Debugging code to verify that the work buffer is not overrun...
 	*EOWorkBuffer = BUFFER_OVERRUN_TEST_VALUE;
 #endif
 
 	int result = lzo1x_1_compress(in,in_len,out,out_len,WorkBuffer);
 
-#ifdef WWDEBUG
+#ifdef DEBUG_CRASHING
 	WWASSERT(*EOWorkBuffer == BUFFER_OVERRUN_TEST_VALUE);
 #endif
 

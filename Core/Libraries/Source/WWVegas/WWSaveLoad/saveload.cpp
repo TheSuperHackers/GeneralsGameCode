@@ -212,7 +212,7 @@ void SaveLoadSystemClass::Register_Pointer (void *old_pointer, void *new_pointer
 	PointerRemapper.Register_Pointer(old_pointer,new_pointer);
 }
 
-#ifdef WWDEBUG
+#ifdef DEBUG_LOGGING
 
 void SaveLoadSystemClass::Request_Pointer_Remap (void **pointer_to_convert,const char * file,int line)
 {

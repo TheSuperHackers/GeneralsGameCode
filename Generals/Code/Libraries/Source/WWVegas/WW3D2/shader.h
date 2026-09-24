@@ -328,7 +328,7 @@ public:
 	static void				Invert_Backface_Culling(bool onoff);
 	static bool				Is_Backface_Culling_Inverted();
 
-	const StringClass& Get_Description(StringClass& str) const;
+	StringClass Get_Description() const;
 
 	// These are a bunch of predefined shaders for common cases. None of them
 	// have fogging since "no fog" is the surrender default and usage of fog

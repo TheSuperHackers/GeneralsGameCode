@@ -177,7 +177,7 @@ int __cdecl _purecall()
 	*/
 	WWDEBUG_SAY(("Pure Virtual Function call. Oh No!"));
 	WWDEBUG_BREAK
-#endif	//_DEBUG_ASSERT
+#endif
 
 	return(return_code);
 }

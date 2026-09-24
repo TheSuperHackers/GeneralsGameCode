@@ -267,7 +267,9 @@ bool BitChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
 
+#ifndef NDEBUG
 	int chunk_size = cload.Cur_Chunk_Length();
+#endif
 
 	W3dBitChannelStruct chan;
 	if (cload.Read(&chan,sizeof(W3dBitChannelStruct)) != sizeof(W3dBitChannelStruct)) {
@@ -744,7 +746,9 @@ bool TimeCodedBitChannelClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Free();
 
+#ifndef NDEBUG
 	int chunk_size = cload.Cur_Chunk_Length();
+#endif
 
 	W3dTimeCodedBitChannelStruct chan;
 	if (cload.Read(&chan,sizeof(W3dTimeCodedBitChannelStruct)) != sizeof(W3dTimeCodedBitChannelStruct)) {

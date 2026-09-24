@@ -43,9 +43,7 @@
 
 #include "WWLib/always.h"
 #include <d3d8.h>
-#ifdef WWDEBUG
 #include "WWDebug/wwdebug.h"
-#endif
 
 class StringClass;
 
@@ -262,11 +260,7 @@ public:
 
 	unsigned Get_Location_Offset() const { return location_offset; }
 	unsigned Get_Normal_Offset() const { return normal_offset; }
-#ifdef WWDEBUG
-	inline unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }
-#else
-	unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }
-#endif
+	unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }
 
 	unsigned Get_Diffuse_Offset() const { return diffuse_offset; }
 	unsigned Get_Specular_Offset() const { return specular_offset; }

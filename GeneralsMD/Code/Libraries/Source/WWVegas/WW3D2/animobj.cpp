@@ -745,7 +745,7 @@ bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const
  *=============================================================================================*/
 void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation)
 {
-#ifdef WWDEBUG
+#ifdef DEBUG_CRASHING
 	for (int j=0; j<3; j++) {
 		for (int i=0; i<4; i++) {
 			WWASSERT(WWMath::Is_Valid_Float(objtm[j][i]));
