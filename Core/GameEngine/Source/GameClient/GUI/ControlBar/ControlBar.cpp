@@ -1765,14 +1765,13 @@ void ControlBar::evaluateContextUI()
 	// sanity, nothing selected
 	if( TheInGameUI->getSelectCount() == 0 )
 		return;
-	
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
 	if( selectedDrawables->empty() == TRUE )
-	   return;
+		return;
 
 	//Make sure the selected objects are in fact, controllable! If not, then
 	//we don't show any GUI commands for them!!!

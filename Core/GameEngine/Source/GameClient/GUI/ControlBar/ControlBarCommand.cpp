@@ -703,7 +703,7 @@ void ControlBar::updateContextCommand()
 
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
 
-	if (obj->isLocallyControlled() == FALSE &&
+	if (obj && obj->isLocallyControlled() == FALSE &&
 		(localPlayer->getRelationship(obj->getTeam()) != NEUTRAL && isControlEnabled()) )
 	{
 		if (Drawable* draw = obj->getDrawable())
@@ -847,14 +847,14 @@ void ControlBar::updateContextCommand()
 //			continue;
 //		}
 //		else
-		if (!isControlEnabled())
-		{
-			win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
-		}
-		else
+		if (isControlEnabled())
 		{
 			win->winClearStatus(WIN_STATUS_NOT_READY);
 			win->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
+		}
+		else
+		{
+			win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 		}
 
 		// is the command available

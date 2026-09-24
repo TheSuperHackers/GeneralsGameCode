@@ -702,8 +702,6 @@ public:
 
 	Bool hasAnyShortcutSelection() const;
 	Bool canShowSpecialPowerShortcut() const;
-	Bool isApparentControllingPlayerNeutral(const Object* obj) const;
-	Bool isControllingPlayerNeutral(const Object* obj) const;
 	void showSpecialPowerShortcut();
 	void hideSpecialPowerShortcut();
 	void animateSpecialPowerShortcut( Bool isOn );
@@ -745,7 +743,6 @@ public:
 	void populateObserverInfoWindow ();
 	void populateObserverList();
 	Bool isObserverControlBarOn() const { return m_isObserverCommandBar;}
-	Bool isControlEnabled() const { return !isObserverControlBarOn();}
 
 	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
 	Player *getObserverLookAtPlayer () const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
@@ -1009,6 +1006,9 @@ private:
 
 	/// find existing command set
 	CommandSet *findNonConstCommandSet( const AsciiString& name );
+	Bool isApparentControllingPlayerNeutral(const Object* obj) const;
+	Bool isControllingPlayerNeutral(const Object* obj) const;
+	Bool isControlEnabled() const { return !isObserverControlBarOn(); }
 
 	const Image *m_genStarOn;
 	const Image *m_genStarOff;
