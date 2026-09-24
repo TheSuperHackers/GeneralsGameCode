@@ -595,7 +595,8 @@ void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, const Vector3*li
 	if(shadeB < 0.0f) shadeB = 0.0f;
 
 	if (m_useDepthFade && vb->z <= TheGlobalData->m_waterPositionZ)
-	{	//height is below water level
+	{
+		//height is below water level
 		//reduce lighting values based on light fall off as it travels through water.
 		float depthScale = (1.4f - vb->z)/TheGlobalData->m_waterPositionZ;
 		shadeR *= 1.0f - depthScale * (1.0f-m_depthFade.X);
@@ -749,14 +750,16 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		// Take the 2D bounding box of ray and check heights
 		// inside this box for intersection.
-		if (P0.X > P1.X) {	//flip start/end points
+		if (P0.X > P1.X) {
+			//flip start/end points
 			startCellX = REAL_TO_INT_FLOOR(P1.X/MAP_XY_FACTOR);
 			endCellX = REAL_TO_INT_CEIL(P0.X/MAP_XY_FACTOR);
 		}	else {
 			startCellX = REAL_TO_INT_FLOOR(P0.X/MAP_XY_FACTOR);
 			endCellX = REAL_TO_INT_CEIL(P1.X/MAP_XY_FACTOR);
 		}
-		if (P0.Y > P1.Y) {	//flip start/end points
+		if (P0.Y > P1.Y) {
+			//flip start/end points
 			startCellY = REAL_TO_INT_FLOOR(P1.Y/MAP_XY_FACTOR);
 			endCellY = REAL_TO_INT_CEIL(P0.Y/MAP_XY_FACTOR);
 		}	else {
@@ -1220,7 +1223,8 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 	//Find surrounding grid points
 
 	if (m_map == nullptr)
-	{	//sample point is not on the heightmap
+	{
+		//sample point is not on the heightmap
 		return 0.0f;	//return default height
 	}
 
@@ -1263,7 +1267,8 @@ Bool BaseHeightMapRenderObjClass::isCliffCell(Real x, Real y)
 {
 
 	if (m_map == nullptr)
-	{	//sample point is not on the heightmap
+	{
+		//sample point is not on the heightmap
 		return false;
 	}
 
@@ -1404,7 +1409,8 @@ Bool BaseHeightMapRenderObjClass::getMaximumVisibleBox(const FrustumClass &frust
 	for (Int i=0; i<4; i++)
 	{	ClippedCorners[i]=frustum.Corners[i];
 		if (groundPlane.Compute_Intersection(frustum.Corners[i],frustum.Corners[i+4],&clipFraction) == PlaneClass::INSIDE_SEGMENT)
-		{	//edge intersects the terrain
+		{
+			//edge intersects the terrain
 			ClippedCorners[i+4]=frustum.Corners[i]+(frustum.Corners[i+4]-frustum.Corners[i])*clipFraction;
 		}
 		else
@@ -1538,7 +1544,8 @@ void BaseHeightMapRenderObjClass::recordShoreLineSortInfos()
 			minY=maxY=m_shoreLineTilePositions[i].m_xy >> 16;
 
 			while ((m_shoreLineTilePositions[j].m_xy & 0xffff) == x && j < m_numShoreLineTiles)
-			{	//keep track of highest y coordinate.
+			{
+				//keep track of highest y coordinate.
 				Int y = m_shoreLineTilePositions[j].m_xy >> 16;
 				if (y > maxY)
 					maxY=y;
@@ -1571,7 +1578,8 @@ void BaseHeightMapRenderObjClass::recordShoreLineSortInfos()
 			minX=maxX=m_shoreLineTilePositions[i].m_xy & 0xffff;
 
 			while ((m_shoreLineTilePositions[j].m_xy >> 16) == y && j < m_numShoreLineTiles)
-			{	//keep track of highest x coordinate.
+			{
+				//keep track of highest x coordinate.
 				Int x = m_shoreLineTilePositions[j].m_xy & 0xffff;
 				if (x > maxX)
 					maxX=x;
@@ -1615,9 +1623,11 @@ void BaseHeightMapRenderObjClass::updateShorelineTile(Int i, Int j, Int border, 
 	if (waterSide < 0xf || (waterZ0 - terrainZ0) < transparentDepth ||
 		(waterZ1 - terrainZ1) < transparentDepth || (waterZ2 - terrainZ2) < transparentDepth
 		|| (waterZ3 - terrainZ3) < transparentDepth)
-	{	//add tile to set that needs shoreline blending.
+	{
+		//add tile to set that needs shoreline blending.
 		if (m_numShoreLineTiles >= m_shoreLineTilePositionsSize)
-		{	//no more room to store extra blend tiles so enlarge the buffer.
+		{
+			//no more room to store extra blend tiles so enlarge the buffer.
 			shoreLineTileInfo *tempPositions=NEW shoreLineTileInfo[m_shoreLineTilePositionsSize+512];
 			memcpy(tempPositions, m_shoreLineTilePositions, m_shoreLineTilePositionsSize*sizeof(shoreLineTileInfo));
 			delete [] m_shoreLineTilePositions;
@@ -1658,7 +1668,8 @@ void BaseHeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int m
 		maxY = (pMap->getYExtent() - 1);
 
 	if (!m_shoreLineTilePositions)
-	{	//Need to allocate memory
+	{
+		//Need to allocate memory
 		m_shoreLineTilePositions = NEW shoreLineTileInfo[DEFAULT_MAX_MAP_SHORELINE_TILES];
 		m_shoreLineTilePositionsSize = DEFAULT_MAX_MAP_SHORELINE_TILES;
 	}
@@ -1670,7 +1681,8 @@ void BaseHeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int m
 		Int y = m_shoreLineTilePositions[j].m_xy >> 16;
 		if (x >= minX && x < maxX &&
 			y >= minY && y < maxY)
-		{	//this tile is inside region being updated so remove it by shifting tile array
+		{
+			//this tile is inside region being updated so remove it by shifting tile array
 			memcpy(m_shoreLineTilePositions+j,m_shoreLineTilePositions+j+1,(m_numShoreLineTiles-1-j)*sizeof(shoreLineTileInfo));
 			m_numShoreLineTiles--;
 			j--;	//look at current tile again since it was removed.
@@ -1844,7 +1856,8 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 		needToAllocate = true;
 	}
 	if (data && needToAllocate)
-	{	//requested heightmap different from old one.
+	{
+		//requested heightmap different from old one.
 		//allocate a new one.
 		freeMapResources();	//free old data and ib/vb
 		REF_PTR_SET(m_map,pMap);	//update our heightmap pointer in case it changed since last call.
@@ -2316,7 +2329,8 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,DEFAULT_MAX_BATCH_SHORELINE_TILES*4);
 		DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,DEFAULT_MAX_BATCH_SHORELINE_TILES*6);
 
-		{	//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
+		{
+			//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
 			DynamicVBAccessClass::WriteLockClass lock(&vb_access);
 			VertexFormatXYZNDUV2 *vb= lock.Get_Formatted_Vertex_Array();
 			DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
@@ -2338,7 +2352,8 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 				Int y = shoreInfo->m_xy >> 16;
 
 				if (x >= drawStartX && x < drawEdgeX &&	y >= drawStartY && y < drawEdgeY)
-				{	//this tile is inside visible region
+				{
+					//this tile is inside visible region
 
 					vb->x = shoreInfo->verts[0];
 					vb->y = shoreInfo->verts[1];
@@ -2502,7 +2517,8 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,DEFAULT_MAX_BATCH_SHORELINE_TILES*4);
 		DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,DEFAULT_MAX_BATCH_SHORELINE_TILES*6);
 
-		{	//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
+		{
+			//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
 			DynamicVBAccessClass::WriteLockClass lock(&vb_access);
 			VertexFormatXYZNDUV2 *vb= lock.Get_Formatted_Vertex_Array();
 			DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
@@ -2517,7 +2533,8 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 			{
 				Int x=drawStartX;
 				for (; x<drawEdgeX; x++)
-				{	//figure out how many tiles are available in this column
+				{
+					//figure out how many tiles are available in this column
 					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[x];
 
 					if (!sortInfo->numTiles)
@@ -2638,7 +2655,8 @@ flushVertexBuffer0:
 			{
 				Int y=drawStartY;
 				for (; y<drawEdgeY; y++)
-				{	//figure out how many tiles are available in this row
+				{
+					//figure out how many tiles are available in this row
 					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[y];
 
 					if (!sortInfo->numTiles)

@@ -776,7 +776,8 @@ public:
 		NUM_ITEMS
 	};
 
-	enum { // Comparison types.  Stored in Int value.
+	enum {
+		// Comparison types.  Stored in Int value.
 		LESS_THAN = 0,
 		LESS_EQUAL,
 		EQUAL,
@@ -785,7 +786,8 @@ public:
 		NOT_EQUAL
 	};
 
-	enum { // Relation types. Stored in Int value. (Values from GameCommon.h)
+	enum {
+		// Relation types. Stored in Int value. (Values from GameCommon.h)
 		REL_ENEMY			= ENEMIES,
 		REL_NEUTRAL		= NEUTRAL,
 		REL_FRIEND		= ALLIES

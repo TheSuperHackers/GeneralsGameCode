@@ -635,7 +635,8 @@ Bool ScriptConditions::evaluateTeamStateIsNot(Parameter *pTeamParm, Parameter *p
 /** evaluateNamedOutsideArea */
 //-------------------------------------------------------------------------------------------------
 Bool ScriptConditions::evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter *pTriggerParm)
-{// This is actually NamedUnitInside(...)
+{
+	// This is actually NamedUnitInside(...)
 
 	return !evaluateNamedInsideArea(pUnitParm, pTriggerParm);
 }
@@ -644,7 +645,8 @@ Bool ScriptConditions::evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter 
 /** evaluateTeamInsideAreaEntirely */
 //-------------------------------------------------------------------------------------------------
 Bool ScriptConditions::evaluateTeamInsideAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
-{// This is actually TeamInside(...)
+{
+	// This is actually TeamInside(...)
 	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)

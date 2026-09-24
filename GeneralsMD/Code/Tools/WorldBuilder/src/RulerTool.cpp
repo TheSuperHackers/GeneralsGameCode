@@ -117,7 +117,8 @@ void RulerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		pView->doRulerFeedback(RULER_CIRCLE);
 		pView->rulerFeedbackInfo(cpt, pt, m_savedLength);
 		pView->Invalidate();
-	} else { //m_rulerType == RULER_LINE
+	} else {
+		//m_rulerType == RULER_LINE
 		Coord3D diff;
 		diff.set(cpt);
 		diff.sub(m_downPt3d);

@@ -97,7 +97,8 @@ void FrustumClass::Init
 	//compare correct z-vector with the one in the camera matrix.  If they point in
 	//opposite directions, we have a reflected camera matrix.
 	if (Vector3::Dot_Product(CameraTransform.Get_Z_Vector(),zv) < 0)
-	{	//flip the frustum corners horizontally for a reflected matrix
+	{
+	  //flip the frustum corners horizontally for a reflected matrix
 	  Corners[1].Set(vpmin.X, vpmax.Y, 1.0);
 	  Corners[5] = Corners[1];
 		Corners[1] *= znear;
@@ -116,7 +117,8 @@ void FrustumClass::Init
 		Corners[6] *= zfar;
 	}
 	else
-	{	//normal camera
+	{
+		//normal camera
 		Corners[0].Set(vpmin.X, vpmax.Y, 1.0);
 		Corners[4] = Corners[0];
 		Corners[0] *= znear;

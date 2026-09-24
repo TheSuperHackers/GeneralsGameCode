@@ -95,19 +95,22 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 					|| (mouseY < tabsTop)
 					|| (mouseY > tabsBottom)
 					)
-			{//I eat input on myself that isn't a tab (a button click would mean I don't see the input ever.)
+			{
+				//I eat input on myself that isn't a tab (a button click would mean I don't see the input ever.)
 				return MSG_HANDLED;
 			}
 
 			Int distanceIn;
 			Int tabSize;
 			if( (tabData->tabEdge == TP_RIGHT_SIDE) || (tabData->tabEdge == TP_LEFT_SIDE) )
-			{//scan down to find which button
+			{
+				//scan down to find which button
 				distanceIn = mouseY - tabsTop;
 				tabSize = tabData->tabHeight;
 			}
 			else
-			{//scan right to find which button
+			{
+				//scan right to find which button
 				distanceIn = mouseX - tabsLeft;
 				tabSize = tabData->tabWidth;
 			}
@@ -150,7 +153,8 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		}
 
 		case GGM_RESIZED:
-		{//On resize, we need to upkeep the pane sizes and tabs since they are bound to us
+		{
+			//On resize, we need to upkeep the pane sizes and tabs since they are bound to us
 			GadgetTabControlResizeSubPanes( tabControl );
 			GadgetTabControlComputeTabRegion( tabControl );
 
@@ -158,7 +162,8 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		}
 
 		case GBM_SELECTED:
-		{//Pass buttons messages up
+		{
+			//Pass buttons messages up
 			GameWindow *parent = tabControl->winGetParent();
 
 			if( parent )
@@ -296,7 +301,8 @@ void GadgetTabControlShowSubPane( GameWindow *tabControl, Int whichPane)
 }
 
 void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Windows attached to userData as Panes
-{//These two funcs are called after all the Editor set data is updated
+{
+	//These two funcs are called after all the Editor set data is updated
 	TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
 	Int width, height, x, y;
 	GadgetTabControlComputeSubPaneSize(tabControl, &width, &height, &x, &y);
@@ -350,7 +356,8 @@ void GadgetTabControlFixupSubPaneList( GameWindow *tabControl )
 	TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
 	GameWindow *child = tabControl->winGetChild();
 	if( child )
-	{//need to write down children, and they are reversed from our array
+	{
+		//need to write down children, and they are reversed from our array
 		while( child->winGetNext() != nullptr )
 		{
 			child = child->winGetNext();

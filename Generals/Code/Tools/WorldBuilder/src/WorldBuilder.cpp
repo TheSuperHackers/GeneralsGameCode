@@ -552,7 +552,8 @@ void CWorldBuilderApp::updateCurTool(Bool forceHand)
 {
 	Tool *curTool = m_curTool;
 	DEBUG_ASSERTCRASH((m_lockCurTool>=0),("oops"));
-	if (!m_lockCurTool) {	 // don't change tools that are doing something.
+	if (!m_lockCurTool) {
+		// don't change tools that are doing something.
 		if (forceHand || (0x8000 & ::GetAsyncKeyState(VK_SPACE))) {
 			// Space bar gives scroll hand.
 			m_curTool = &m_handScrollTool;

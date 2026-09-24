@@ -1790,7 +1790,8 @@ bool TextureLoadTaskClass::Load_Uncompressed_Mipmap()
 	unsigned src_pitch = src_width * src_bpp;
 
 	if (Reduction)
-	{	//texture needs to be reduced so allocate storage for full-sized version.
+	{
+		//texture needs to be reduced so allocate storage for full-sized version.
 		unsigned char * destination_surface	= new unsigned char[width*height*4];
 		//generate upper mip-levels that will be dropped in final texture
 		for (unsigned int level = 0; level < Reduction; ++level) {

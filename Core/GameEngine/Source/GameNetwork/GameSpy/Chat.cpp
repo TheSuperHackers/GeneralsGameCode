@@ -136,7 +136,8 @@ Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *pl
 	if (!message.isEmpty())
 	{
 		if (!playerListbox)
-		{	// Public message
+		{
+			// Public message
 			if( isAction  ||  message.compare(s_prevMsg) != 0 )  //don't send duplicate messages
 			{
 				req.message.isAction = isAction;
@@ -153,7 +154,8 @@ Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *pl
 		GadgetListBoxGetSelected(playerListbox, (Int *)&selections);
 
 		if (selections[0] == -1)
-		{	// Public message
+		{
+			// Public message
 			if( isAction  ||  message.compare(s_prevMsg) != 0 )  //don't send duplicate messages
 			{
 				req.message.isAction = isAction;

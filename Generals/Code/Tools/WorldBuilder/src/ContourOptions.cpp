@@ -121,12 +121,14 @@ void ContourOptions::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			nPos = m_contourStepSlider.GetPos();
 		}
 		m_contourStep = MIN_CONTOUR_STEP + MAX_CONTOUR_STEP - nPos;
-	} else if (offset) { // width
+	} else if (offset) {
+		// width
 		if (nSBCode != TB_THUMBTRACK) {
 			nPos = m_contourOffsetSlider.GetPos();
 		}
 		m_contourOffset = nPos;
-	} else { // width
+	} else {
+		// width
 		if (nSBCode != TB_THUMBTRACK) {
 			nPos = m_contourWidthSlider.GetPos();
 		}

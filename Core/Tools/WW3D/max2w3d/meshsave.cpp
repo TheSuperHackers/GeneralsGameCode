@@ -353,7 +353,8 @@ MeshSaveClass::MeshSaveClass
 	Build_Mesh(mesh, nodemtl, materialColors, numMaterialColors, numHouseColors);
 
 	if (materialColorTexture)
-	{	//diffuse color materials are replaced by textures
+	{
+		//diffuse color materials are replaced by textures
 		//set diffuse to 255,255,255 so it has no effect.
 		fix_diffuse_materials(numHouseColors != 0);
 	}
@@ -454,7 +455,8 @@ void getMaterialUV(UVVert &tvert,unsigned int diffuse, unsigned int *materialCol
 	int i;
 
 	if (house)
-	{	//this material is a house color, place it in first row.
+	{
+		//this material is a house color, place it in first row.
 		for (i=0; i<16; i++)
 		{
 			if (materialColors[i]==diffuse)
@@ -1875,7 +1877,8 @@ int MeshSaveClass::getNumSolidMaterials(Mtl * nodemtl)
 	int numSolid=0;
 
 	if ((nodemtl == nullptr) || (nodemtl->NumSubMtls() <= 1))
-	{	//Check if diffuse texture present
+	{
+		//Check if diffuse texture present
 		if (isTexturedMaterial(nodemtl))
 			return 00;
 		return 1;
@@ -1887,7 +1890,8 @@ int MeshSaveClass::getNumSolidMaterials(Mtl * nodemtl)
 		for (mat_index=0; mat_index<sub_mtl_count; mat_index++)
 		{
 			if (MaterialRemapTable[mat_index] != -1)
-			{	//material is used on some faces
+			{
+				//material is used on some faces
 				if (isTexturedMaterial(nodemtl->GetSubMtl(mat_index)))
 					continue;
 				numSolid++;
@@ -1915,13 +1919,15 @@ void MeshSaveClass::fix_diffuse_materials(bool isHouseColor)
 			{
 				W3dMapClass *map3d=MaterialDesc.Get_Texture(mat_index,pass,stage);
 				if (map3d && map3d->Filename && (*((unsigned int *)map3d->Filename) & 0xffff00ff) == DIFFUSE_COLOR_TEXTURE_MASK)	//check for 'TXC^' prefix
-				{	//found a material which had its material color replaced by a texture
+				{
+					//found a material which had its material color replaced by a texture
 					//set the material color to white so it's not being used.
 					vmat->Diffuse.Set(color,color,color);
 					vmat->Ambient.Set(color,color,color);
 
 					if (isHouseColor && *(map3d->Filename+1) != 'H')
-					{	//our material texture contains house colors, adjust the name
+					{
+						//our material texture contains house colors, adjust the name
 						//by adding H prefix.
 						sprintf(materialColorFilename,"%s%s","ZHCD",map3d->Filename+4);
 						map3d->Set_Filename(materialColorFilename);

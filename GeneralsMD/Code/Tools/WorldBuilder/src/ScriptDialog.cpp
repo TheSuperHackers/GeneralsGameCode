@@ -418,7 +418,8 @@ void ScriptDialog::patchScriptParametersForGC(Script *pScript)
 				warning = EditParameter::getWarningText(pParm, FALSE);
 				if (!warning.isEmpty()) {
 					if (pParm->getParameterType() == Parameter::OBJECT_TYPE)
-					{	//see if removing the GC prefix fixes this warning:
+					{
+						//see if removing the GC prefix fixes this warning:
 						AsciiString uiString = pParm->getString();
 						if (uiString.isEmpty())
 							uiString = "???";
@@ -427,7 +428,8 @@ void ScriptDialog::patchScriptParametersForGC(Script *pScript)
 							pParm->friend_setString(swapString);
 							warning = EditParameter::getWarningText(pParm, FALSE);
 							if (!warning.isEmpty())
-							{	//Removing GC prefix didn't help, so restore original
+							{
+								//Removing GC prefix didn't help, so restore original
 								pParm->friend_setString(uiString);
 							}
 							else
@@ -450,7 +452,8 @@ void ScriptDialog::patchScriptParametersForGC(Script *pScript)
 			warning = EditParameter::getWarningText(pParm, TRUE);
 			if (!warning.isEmpty()) {
 				if (pParm->getParameterType() == Parameter::OBJECT_TYPE)
-				{	//see if removing the GC prefix fixes this warning:
+				{
+					//see if removing the GC prefix fixes this warning:
 					AsciiString uiString = pParm->getString();
 					if (uiString.isEmpty())
 						uiString = "???";
@@ -459,7 +462,8 @@ void ScriptDialog::patchScriptParametersForGC(Script *pScript)
 						pParm->friend_setString(swapString);
 						warning = EditParameter::getWarningText(pParm, FALSE);
 						if (!warning.isEmpty())
-						{	//Removing GC prefix didn't help, so restore original
+						{
+							//Removing GC prefix didn't help, so restore original
 							pParm->friend_setString(uiString);
 						}
 						else
@@ -485,7 +489,8 @@ void ScriptDialog::checkParametersForGC()
 		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
 			updateScriptWarning(pScr);
 			if (pScr->hasWarnings())
-			{	//check if this is using invalid GC parameters
+			{
+				//check if this is using invalid GC parameters
 				patchScriptParametersForGC(pScr);
 			}
 		}

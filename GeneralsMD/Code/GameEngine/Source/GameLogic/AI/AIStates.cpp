@@ -4948,7 +4948,8 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
 
 	if( containedBy && weapon && contain && contain->isEnclosingContainerFor( source ) )
-	{                                          // non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
+	{
+		// non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
 		if (victim)
 		{
 			inFiringRange = contain->attemptBestFirePointPosition( source, weapon, victim );
@@ -5309,9 +5310,11 @@ StateReturnType AIAttackFireWeaponState::update()
 	{
 
     if( getMachineOwner()->getAI()->areTurretsLinked() ) //LINKED TURRETS
-    {// it doesn;t matter which weapon slot is locked, current or whatever
+    {
+      // it doesn;t matter which weapon slot is locked, current or whatever
       for ( Int slot = PRIMARY_WEAPON; slot < WEAPONSLOT_COUNT ; slot++ )
-      {// were firing with all barrels
+      {
+        // were firing with all barrels
         Weapon *weapon = obj->getWeaponInWeaponSlot( (WeaponSlotType)slot );
         if ( weapon )
         {

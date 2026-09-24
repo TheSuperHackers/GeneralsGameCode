@@ -149,7 +149,8 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	for (;level<ReductionFactor;++level)
 	{
 		if (level_size>16)
-		{	// If surface is bigger than one block (8 or 16 bytes)...
+		{
+			// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=level_mip_dec;
 		}
 	}
@@ -159,7 +160,8 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 		LevelOffsets[level]=level_offset;
 		level_offset+=level_size;
 		if (level_size>16)
-		{	// If surface is bigger than one block (8 or 16 bytes)...
+		{
+			// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=level_mip_dec;
 		}
 	}
@@ -293,7 +295,8 @@ bool DDSFileClass::Load()
 		skipped_offset+=level_size;
 		size-=level_size;
 		if (level_size>16)
-		{	// If surface is bigger than one block (8 or 16 bytes)...
+		{
+			// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=4;
 		}
 	}

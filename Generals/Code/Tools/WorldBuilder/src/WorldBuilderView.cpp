@@ -341,7 +341,8 @@ void CWorldBuilderView::OnPaint()
 		dc.FillSolidRect(&rect, RGB(255,255,255));
 	}
 
-	for (j=maxJ-1; j>=minJ; j--) { // map goes up, screen goes down.
+	for (j=maxJ-1; j>=minJ; j--) {
+		// map goes up, screen goes down.
 
 		rect.bottom = (pMap->getYExtent()-j)*m_cellSize;
 		rect.top = rect.bottom-m_cellSize;

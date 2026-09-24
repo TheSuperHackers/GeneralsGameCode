@@ -330,7 +330,8 @@ void GameLODManager::init()
 			testMinimumRequirements(nullptr,nullptr,nullptr,nullptr,&m_intBenchIndex,&m_floatBenchIndex,&m_memBenchIndex);
 
 			if (TheGlobalData->m_forceBenchmark)
-			{	//we want to see the numbers.  So dump them to a logfile.
+			{
+				//we want to see the numbers.  So dump them to a logfile.
 				FILE *fp=fopen("Benchmark.txt","w");
 				if (fp)
 				{
@@ -685,7 +686,8 @@ DynamicGameLODLevel GameLODManager::findDynamicLODLevel(Real averageFPS)
 	Int ifps=(Int)(averageFPS);	//convert to integer.
 
 	for (Int i=DYNAMIC_GAME_LOD_VERY_HIGH; i>=DYNAMIC_GAME_LOD_LOW; i--)
-	{	//check which of the LOD levels matches our fps
+	{
+		//check which of the LOD levels matches our fps
 		if (m_dynamicGameLODInfo[i].m_minFPS < ifps)
 			return (DynamicGameLODLevel)i;
 	}

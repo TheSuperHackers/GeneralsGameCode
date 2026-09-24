@@ -786,7 +786,8 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 			si.selectMineBuildings = TRUE;
 		}
 		else if ( si.newCountMineBuildings > 0 )////////////// SO SORRY, I KNOW THIS IS MICKEY MOUSE ///////////////////
-		{ // What we are after here is to allow the drag select to get the building,
+		{
+			// What we are after here is to allow the drag select to get the building,
 			// if the other things in the list are going to be ignored anyway
 			// so we find out whether the other things are not selectable
 			// this came up with the new AmericaBuildingFireBase, which shows its contained
@@ -799,7 +800,8 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 			{
 				const Drawable *d = *it;
 				if ( d->isKindOf( KINDOF_STRUCTURE ) )
-				{// make sure there is really only the one building in the list, as it may be multiply listed
+				{
+					// make sure there is really only the one building in the list, as it may be multiply listed
 
 					if ( buildingID == INVALID_DRAWABLE_ID ) // this is the first building
 						buildingID = d->getID();

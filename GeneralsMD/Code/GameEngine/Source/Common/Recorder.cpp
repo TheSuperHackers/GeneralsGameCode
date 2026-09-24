@@ -1544,7 +1544,8 @@ void RecorderClass::readArgument(GameMessageArgumentDataType type, GameMessage *
 #endif
 			break;
 		}
-		case ARGUMENTDATATYPE_TIMESTAMP: {  // Not to be confused with Terrance Stamp... Kneel before Zod!!!
+		case ARGUMENTDATATYPE_TIMESTAMP: {
+			// Not to be confused with Terrance Stamp... Kneel before Zod!!!
 			UnsignedInt stamp;
 			m_file->read(&stamp, sizeof(stamp));
 			msg->appendTimestampArgument(stamp);

@@ -186,7 +186,8 @@ bool SList<T>::Insert_After(T *newnode, T *oldnode)
 
 	// Did we find the data we want to insert after?
 	if (cur != nullptr  && cur->Data() == oldnode) {
-		if (cur == TailNode) {        // Inserting after tail
+		if (cur == TailNode) {
+			// Inserting after tail
 			return(Add_Tail(newnode));
 		}
 
@@ -480,9 +481,11 @@ bool SList<T>::Add_Tail(T *data)
 
 	SLNode<T> *temp = new SLNode<T> (data);
 
-	if (HeadNode == nullptr) {				// empty list
+	if (HeadNode == nullptr) {
+		// empty list
 		HeadNode = TailNode	= temp;
-	} else {									// non-empty list
+	} else {
+		// non-empty list
 		TailNode->Set_Next(temp);
 		TailNode					= temp;
 	}

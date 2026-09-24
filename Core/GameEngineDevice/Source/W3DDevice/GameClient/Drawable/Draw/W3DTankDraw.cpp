@@ -251,7 +251,8 @@ void W3DTankDraw::updateTreadObjects()
 			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH && subObj->Get_Name()
 				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != nullptr && *(meshName++))
 				&&_strnicmp(meshName,"TREADS", 6) == 0)
-			{	//check if sub-object has the correct material to do texture scrolling.
+			{
+				//check if sub-object has the correct material to do texture scrolling.
 				MaterialInfoClass *mat=subObj->Get_Material_Info();
 				if (mat)
 				{	for (Int j=0; j<mat->Vertex_Material_Count(); j++)
@@ -390,7 +391,8 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 		else
 		if (physics->isMotive() && physics->getVelocityMagnitude()/maxSpeed >= getW3DTankDrawModuleData()->m_treadDriveSpeedFraction)
-		{	//do simple scrolling based only on speed when tank is moving straight at high speed.
+		{
+			//do simple scrolling based only on speed when tank is moving straight at high speed.
 			//we stop scrolling when tank slows down to reduce the appearance of sliding
 			//tread scrolling speed was not directly tied into tank velocity because it looked odd
 			//under certain situations when tank moved sideways.

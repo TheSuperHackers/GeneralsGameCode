@@ -189,7 +189,8 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 				return;
 			}
 			if (pPath[i] == '\\' || pPath[i] == '/') {
-				if (i>0 && (i>1 || buffer[0]!='.') ) { // skip the "." directory.
+				if (i>0 && (i>1 || buffer[0]!='.') ) {
+					// skip the "." directory.
 					buffer[i] = 0;
 					parent = findOrAdd(parent, buffer);
 				}

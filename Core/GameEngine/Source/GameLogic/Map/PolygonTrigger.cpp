@@ -370,11 +370,13 @@ void PolygonTrigger::setPoint(const ICoord3D &point, Int ndx)
 {
 	DEBUG_ASSERTCRASH(ndx>=0 && ndx <= m_numPoints, ("Invalid ndx."));
 	if (ndx<0) return;
-	if (ndx == m_numPoints) {	// we are setting first available unused point
+	if (ndx == m_numPoints) {
+		// we are setting first available unused point
 		addPoint(point);
 		return;
 	}
-	if (ndx>m_numPoints) { // Can't skip points.
+	if (ndx>m_numPoints) {
+		// Can't skip points.
 		return;
 	}
 	m_points[ndx] = point;
@@ -390,7 +392,8 @@ void PolygonTrigger::insertPoint(const ICoord3D &point, Int ndx)
 {
 	DEBUG_ASSERTCRASH(ndx>=0 && ndx <= m_numPoints, ("Invalid ndx."));
 	if (ndx<0) return;
-	if (ndx == m_numPoints) {	// we are setting first available unused point
+	if (ndx == m_numPoints) {
+		// we are setting first available unused point
 		addPoint(point);
 		return;
 	}

@@ -4326,7 +4326,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_MOTION_BLUR_ZOOM:
 		{	Int mode;
 			if ((mode=TheTacticalView->getViewFilterType()) == FT_VIEW_MOTION_BLUR_FILTER)
-			{	//mode already set, turn it off
+			{
+				//mode already set, turn it off
 				TheTacticalView->setViewFilterMode(FM_NULL_MODE);
 				TheTacticalView->setViewFilter(FT_NULL_FILTER);
 			}
@@ -4356,10 +4357,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//------------------------------------------------------------------------------- DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_BW_VIEW:
-		{   //We're not testing BW mode anymore, so use this message for toggling wireframe mode.
+		{
+			//We're not testing BW mode anymore, so use this message for toggling wireframe mode.
 			static Int mode=0;
 			if (mode == 0)
-			{	//First turn on wireframe
+			{
+				//First turn on wireframe
 				TheTacticalView->set3DWireFrameMode(TRUE);
 				mode++;
 				disp = DESTROY_MESSAGE;
@@ -4368,7 +4371,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			if (mode == 1)
 			{
 				if ((TheTacticalView->getViewFilterType()) == FT_VIEW_CROSSFADE)
-				{	//mode already set, turn it off
+				{
+					//mode already set, turn it off
 					TheTacticalView->setViewFilterMode(FM_NULL_MODE);
 					TheTacticalView->setViewFilter(FT_NULL_FILTER);
 					TheTacticalView->setFadeParameters(0,-1);
@@ -4400,7 +4404,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_RED_VIEW:
 		{
 			if ((TheTacticalView->getViewFilterType()) == FT_VIEW_BW_FILTER)
-			{	//mode already set, turn it off
+			{
+				//mode already set, turn it off
 				TheTacticalView->setViewFilterMode(FM_NULL_MODE);
 				TheTacticalView->setViewFilter(FT_NULL_FILTER);
 				TheTacticalView->setFadeParameters(30,-1);
@@ -4421,7 +4426,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_GREEN_VIEW:
 		{
 			if ((TheTacticalView->getViewFilterType()) == FT_VIEW_BW_FILTER)
-			{	//mode already set, turn it off
+			{
+				//mode already set, turn it off
 				TheTacticalView->setViewFilterMode(FM_NULL_MODE);
 				TheTacticalView->setViewFilter(FT_NULL_FILTER);
 				TheTacticalView->setFadeParameters(30,-1);

@@ -185,7 +185,8 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 	for (p=0; p<3; p++) {
 		//find intersection point of ray and terrain bounding box
 		if (CollisionMath::Collide(lineseg,hbox,&result))
-		{	//ray intersects terrain or starts inside the terrain.
+		{
+			//ray intersects terrain or starts inside the terrain.
 			if (!result.StartBad)	//check if start point inside terrain
 				P0 = result.ContactPoint;			//make intersection point the new start of the ray.
 
@@ -204,14 +205,16 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 
 		// Take the 2D bounding box of ray and check heights
 		// inside this box for intersection.
-		if (P0.X > P1.X) {	//flip start/end points
+		if (P0.X > P1.X) {
+			//flip start/end points
 			StartCellX = floor(P1.X/MAP_XY_FACTOR);
 			EndCellX = ceil(P0.X/MAP_XY_FACTOR);
 		}	else {
 			StartCellX = floor(P0.X/MAP_XY_FACTOR);
 			EndCellX = ceil(P1.X/MAP_XY_FACTOR);
 		}
-		if (P0.Y > P1.Y) {	//flip start/end points
+		if (P0.Y > P1.Y) {
+			//flip start/end points
 			StartCellY=floor(P1.Y/MAP_XY_FACTOR);
 			EndCellY=ceil(P0.Y/MAP_XY_FACTOR);
 		}	else {

@@ -399,7 +399,8 @@ void W3dMaterialClass::Init(Mtl * mtl, char *materialColorTexture)
 	}
 
 	if (materialColorTexture && !mtl->GetSubTexmap(ID_DI) && !mtl->GetSubTexmap(ID_RL))
-	{	//no textures on material, substitute textures to improve rendering speed.
+	{
+		//no textures on material, substitute textures to improve rendering speed.
 		tex.Set_Filename(materialColorTexture);	///@todo: Fix this to procedural name/path
 		W3d_Shader_Set_Texturing(&shader,W3DSHADER_TEXTURING_ENABLE);
 		//This texture will hold solid pixels of material color, don't need any filtering.
@@ -645,7 +646,8 @@ void W3dMaterialClass::Init(GameMtl * gamemtl, char *materialColorTexture)
 
 			} else {
 						if (materialColorTexture)
-						{	//no textures on material, substitute textures to improve rendering speed.
+						{
+							//no textures on material, substitute textures to improve rendering speed.
 							w3dmap.Reset();
 							w3dmap.Set_Filename(materialColorTexture);
 
