@@ -16,5 +16,6 @@ target_include_directories(binkloader PUBLIC
 )
 
 target_link_libraries(binkloader PRIVATE
+    core_precompiled # Gives force included headers. Link early.
     core_utility
 )

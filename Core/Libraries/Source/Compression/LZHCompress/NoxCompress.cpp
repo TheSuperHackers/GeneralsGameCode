@@ -21,7 +21,6 @@
 // Author: Jeff Brown, January 1999
 
 #include <stdlib.h>
-#include "Lib/BaseTypeCore.h"
 #include "NoxCompress.h"
 #include "CompLibHeader/lzhl.h"
 

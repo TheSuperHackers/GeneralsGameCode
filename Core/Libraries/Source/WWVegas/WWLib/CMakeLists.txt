@@ -167,7 +167,7 @@ set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_precompile_headers(core_wwlib PRIVATE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     [["WWLib/always.h"]]
     [["Utility/STLUtils.h"]]
     [["WWLib/win.h"]]

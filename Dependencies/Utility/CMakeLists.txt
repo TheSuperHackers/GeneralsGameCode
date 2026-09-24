@@ -31,3 +31,7 @@ set(UTILITY_SRC
 add_library(core_utility INTERFACE)
 target_include_directories(core_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_sources(core_utility PRIVATE ${UTILITY_SRC})
+
+target_link_libraries(core_utility INTERFACE
+    core_precompiled # Gives force included headers. Link early.
+)

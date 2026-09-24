@@ -208,7 +208,7 @@ target_include_directories(z_worldbuilder PRIVATE
 )
 
 target_precompile_headers(z_worldbuilder PRIVATE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     [["WWLib/always.h"]]
     [["Common/STLTypedefs.h"]]
     [["StdAfx.h"]]

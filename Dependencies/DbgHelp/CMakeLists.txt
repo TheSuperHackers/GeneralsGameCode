@@ -19,6 +19,7 @@ target_include_directories(dbghelploader PUBLIC
 )
 
 target_link_libraries(dbghelploader PRIVATE
+    core_precompiled # Gives force included headers. Link early.
     core_utility
     stlport
 )

@@ -17,5 +17,6 @@ target_include_directories(usp10loader PUBLIC
 )
 
 target_link_libraries(usp10loader PRIVATE
+    core_precompiled # Gives force included headers. Link early.
     core_utility
 )

@@ -1095,5 +1095,5 @@ target_link_libraries(g_gameengine PUBLIC
 )
 
 target_precompile_headers(g_gameengine PRIVATE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
 )

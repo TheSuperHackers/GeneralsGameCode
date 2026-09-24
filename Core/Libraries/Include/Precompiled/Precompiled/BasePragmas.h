@@ -15,24 +15,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: BaseTypeCore.h ///////////////////////////////////////////////////////////
-//
-// Project:  RTS3
-//
-// Basic types and constants
-// Author: Michael S. Booth, January 1995, September 2000
-// TheSuperHackers @build feliwir 11/04/2025 Move common BaseType.h code to BaseTypeCore.h
-//
-///////////////////////////////////////////////////////////////////////////////
-
-// tell the compiler to only load this file once
-
 #pragma once
 
-#include <math.h>
-#include <string.h>
-// TheSuperHackers @build feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
-#include <Utility/compat.h>
+#if defined(_MSC_VER)
 
 /*
 **	Turn off some unneeded warnings.
@@ -81,44 +66,4 @@
 // 'unreferenced local variable'. good thing to know about...
 #pragma warning(error : 4101)
 
-#ifndef PI
-#define PI     3.14159265359f
-#define TWO_PI 6.28318530718f
-#endif
-
-// MSVC math.h defines overloaded functions with this name...
-//#ifndef abs
-//#define abs(x) (((x) < 0) ? -(x) : (x))
-//#endif
-
-#ifndef MIN
-#define MIN(x,y) (((x)<(y)) ? (x) : (y))
-#endif
-
-#ifndef MAX
-#define MAX(x,y) (((x)>(y)) ? (x) : (y))
-#endif
-
-#ifndef TRUE
-#define TRUE true
-#endif
-
-#ifndef FALSE
-#define FALSE false
-#endif
-
-//--------------------------------------------------------------------
-// Fundamental type definitions
-//--------------------------------------------------------------------
-typedef float						Real;					// 4 bytes
-typedef int32_t						Int;					// 4 bytes
-typedef uint32_t	                UnsignedInt;	  	    // 4 bytes
-typedef uint16_t	                UnsignedShort;		    // 2 bytes
-typedef int16_t						Short;					// 2 bytes
-typedef unsigned char	            UnsignedByte;			// 1 byte		USED TO BE "Byte"
-typedef char						Byte;					// 1 byte		USED TO BE "SignedByte"
-typedef char						Char;					// 1 byte of text
-typedef bool						Bool;					//
-// note, the types below should use "long long", but MSVC doesn't support it yet
-typedef int64_t						Int64;						// 8 bytes
-typedef uint64_t					UnsignedInt64;	  	        // 8 bytes
+#endif // defined(_MSC_VER)
