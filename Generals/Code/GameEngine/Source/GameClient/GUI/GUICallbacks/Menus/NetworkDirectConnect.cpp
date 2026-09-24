@@ -352,7 +352,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 		if (automatedStartup)
 		{
 #if defined(RTS_DEBUG)
-			NetworkAutoStart::onLocalAddressSet(TheLAN->SetLocalIP(IP));
+			NetworkAutoStart::onLocalAddressSet(TheLAN->init(IP));
 #endif
 		}
 		else
