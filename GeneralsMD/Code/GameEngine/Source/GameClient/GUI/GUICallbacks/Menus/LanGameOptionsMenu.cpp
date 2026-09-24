@@ -1081,6 +1081,7 @@ void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 #if defined(RTS_DEBUG)
 	if (NetworkAutoStart::isEnabled() && TheLAN != nullptr)
 	{
+		TheLAN->update();
 		NetworkAutoStart::updateGameOptions();
 	}
 #endif
