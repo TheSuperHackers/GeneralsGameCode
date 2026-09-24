@@ -164,7 +164,6 @@ GetCDClass::~GetCDClass()
 int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 {
 	char		volume_name[128] = "";
-	int			count = 0;
 	char		buffer[128];
 	unsigned	misc_dword;
 	unsigned	filename_length;

@@ -155,8 +155,6 @@ BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 BOOL CALLBACK SceneSetupDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int code = HIWORD(wParam);
-
 	switch (uMsg)
 	{
 

@@ -1660,8 +1660,6 @@ int MeshSaveClass::write_shader_ids(ChunkSaveClass & csave,int pass)
 
 int MeshSaveClass::write_dcg(ChunkSaveClass & csave,int pass)
 {
-	const MeshBuilderClass::MeshStatsStruct & stats = Builder.Get_Mesh_Stats();
-
 	if (!csave.Begin_Chunk(W3D_CHUNK_DCG)) {
 		return 1;
 	}
@@ -1947,8 +1945,6 @@ void MeshSaveClass::fix_diffuse_materials(bool isHouseColor)
  *=============================================================================================*/
 void MeshSaveClass::create_materials(Mtl * nodemtl,DWORD wirecolor, char *materialColorTexture)
 {
-	bool domaps = !use_simple_rendering(Header.Attributes);
-
 	//////////////////////////////////////////////////////////////////////
 	// Create materials
 	// Four cases:

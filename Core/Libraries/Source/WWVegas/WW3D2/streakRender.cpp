@@ -333,7 +333,7 @@ void StreakRendererClass::RenderStreak
 	// LastUsedSyncTime = WW3D::Get_Sync_Time();
 
 	// Used later
-	TextureMapMode map_mode = Get_Texture_Mapping_Mode();
+	//TextureMapMode map_mode = Get_Texture_Mapping_Mode();
 
 	/*
 	** Process line geometry:
@@ -745,7 +745,7 @@ void StreakRendererClass::RenderStreak
 
 			// Relevant midpoint:
 			Vector3 &midpoint = points[intersectionIndex - 1];
-			float mid_tex_v = tex_v[intersectionIndex - 1];
+//			float mid_tex_v = tex_v[intersectionIndex - 1];
 
 			// Initialize misc. fields
 			intersection[intersectionIndex][TOP_EDGE].PointCount = 1;
@@ -1329,12 +1329,6 @@ void StreakRendererClass::RenderStreak
 			unsigned int i;
 			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
 			const FVFInfoClass& fvfinfo=Verts.FVF_Info();
-			int segIdx = 0;
-			unsigned int argb = 0x00000000;
-
-			unsigned int oddEven = 0;
-
-			//oddEven = ( personalities[0] & 1 );
 
 			const unsigned verticesOffset = fvfinfo.Get_Location_Offset();
 			const unsigned diffuseOffset = fvfinfo.Get_Diffuse_Offset();

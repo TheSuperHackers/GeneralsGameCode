@@ -250,7 +250,6 @@ int main(int argc, char *argv[])
 	}
 
 	// Look for patch file(s) to apply
-	bool launchgame = true;
 
 	time_t cutoffTime = 0;
 	if (hasSecondEXE)

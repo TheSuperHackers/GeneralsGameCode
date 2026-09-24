@@ -239,5 +239,4 @@ void CExportDlg::OnSelchangeCombolang()
 void CExportDlg::OnSelendokCombolang()
 {
 	// TODO: Add your control notification handler code here
-	int i = 0;
 }

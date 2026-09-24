@@ -60,7 +60,6 @@ END_MESSAGE_MAP()
 
 void CWDumpTreeView::OnDraw(CDC* pDC)
 {
-	CDocument* pDoc = GetDocument();
 	// TODO: add draw code here
 }
 

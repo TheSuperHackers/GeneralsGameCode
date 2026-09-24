@@ -369,7 +369,6 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	/*
 	** Find the base object's origin.
 	*/
-	bool				is_base_object = false;
 	INodeListClass	*origin_list = get_origin_list();
 	unsigned int	i, count = origin_list->Num_Nodes();
 	INode				*base_origin = nullptr;
@@ -645,7 +644,6 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
    /*
 	** For every damage region we find, export an animation.
 	*/
-	bool			done = false;
 	int			current_region = 0;
 	int			num_damage_bones = 0;	// number of bones assigned to a damage region
 	for (current_region = 0; current_region < MAX_DAMAGE_REGIONS; current_region++)
@@ -1214,7 +1212,6 @@ static bool check_lod_extensions (INodeListClass &list, INode *origin)
 	if (origin->IsRootNode()) return true;
 
 	char	*extension = strrchr(origin->GetName(), '.');
-	int	ext_len = strlen(extension);
 	for (unsigned i = 0; i < list.Num_Nodes(); i++)
 	{
 		char *this_ext = strrchr(list[i]->GetName(), '.');

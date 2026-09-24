@@ -624,7 +624,6 @@ static DWORD CALLBACK streamin_cb (  DWORD dwCookie, LPBYTE pbBuff, LONG bytes, 
 static DWORD CALLBACK streamout_cb (  DWORD dwCookie, LPBYTE pbBuff, LONG bytes,  LONG *transfered )
 {
 	FILE *log = (FILE *) dwCookie;
-	int count = 0;
 
 	*transfered = fwrite ( pbBuff, 1, bytes, log );
 	return *transfered == -1;
@@ -1041,9 +1040,6 @@ int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) () 
 	BabylonLabel *label = nullptr;
 	int status = FALSE;
 	int line_number = 0;
-	int label_count = 0;
-	int	text_dup_count = 0;
-	int label_dup_count = 0;
 
 	init_info ( &global_info );
 
@@ -1735,7 +1731,6 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 	int result = IDOK;
 	UPDATEINFO	info;
 	int changes = FALSE;
-	int diffs = 0;
 	int skip_all = FALSE;
 
 	memset ( &info, 0, sizeof ( info ));

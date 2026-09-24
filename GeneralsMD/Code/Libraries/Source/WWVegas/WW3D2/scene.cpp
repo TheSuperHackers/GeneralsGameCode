@@ -555,7 +555,6 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 	// apply only the first four lights in the scene
 	// derived classes should use light environment
 	WWASSERT(rinfo.light_environment==nullptr);
-	int count=0;
 	// Turn off lights in case we have none
 	DX8Wrapper::Set_Light(0,nullptr);
 	DX8Wrapper::Set_Light(1,nullptr);
@@ -566,6 +565,7 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 // support real point lights, etc.  It will likely just evolve into "the n most important" lights
 // rather than optimizing lights into directional lights...
 #if 0
+	int count=0;
 	for (it.First(&LightList); !it.Is_Done(); it.Next())
 	{
 		if (count<4)

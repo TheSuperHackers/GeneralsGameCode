@@ -1299,9 +1299,9 @@ return;
 		int ivalue=WWMath::Float_To_Int_Floor(value);
 		CompressedData[i]=(unsigned short)(ivalue);
 
-		float new_scale=ValueScale/65535.0f;
-		float new_value=int(CompressedData[i]);
-		float new_float = new_value*new_scale+ValueOffset;
+//		float new_scale=ValueScale/65535.0f;
+//		float new_value=int(CompressedData[i]);
+//		float new_float = new_value*new_scale+ValueOffset;
 //			if (fabs(new_float-Data[i])>ValueScale/65536.0f) {
 //				int ii=0;
 //			}

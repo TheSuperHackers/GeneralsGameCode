@@ -215,8 +215,8 @@ void VoxelDebugWindowClass::update_display()
 	RECT			crect;
 
 	GetClientRect(ViewportHWND,&crect);
-	int cx = (crect.right - crect.left) / 2;
-	int cy = (crect.bottom - crect.top) / 2;
+	//int cx = (crect.right - crect.left) / 2;
+	//int cy = (crect.bottom - crect.top) / 2;
 	int x0 = 0; //cx - Bitmap->Get_Width();
 	int y0 = 0; //cy - Bitmap->Get_Height();
 	int x1 = 2 * Bitmap->Get_Width(); //cx + Bitmap->Get_Width();

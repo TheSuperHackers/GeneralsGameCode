@@ -566,7 +566,6 @@ RingSizePropPageClass::Update_Inner_Scale_Array ()
 	//
 	int x_index		= 0;
 	int y_index		= 0;
-	int list_index	= 0;
 	float x_val = x_values[0].Get_Value ();
 	float y_val = y_values[0].Get_Value ();
 	while (	x_index < max_x ||
@@ -664,7 +663,6 @@ RingSizePropPageClass::Update_Outer_Scale_Array ()
 	//
 	int x_index		= 0;
 	int y_index		= 0;
-	int list_index	= 0;
 	float x_val = x_values[0].Get_Value ();
 	float y_val = y_values[0].Get_Value ();
 	while (	x_index < max_x ||

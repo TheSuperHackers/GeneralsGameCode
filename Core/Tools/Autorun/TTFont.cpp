@@ -382,12 +382,9 @@ int TTFontClass::String_Pixel_Width( HDC hdc, char const * string ) const
 		return(0);
 	}
 
-	int		largest = 0;		// Largest recorded width of the string.
-	int		width   = 0;
 	HGDIOBJ	old_object;
 	int		length;
 	SIZE  	size;
-	bool  	make_dc = FALSE;
 	HDC		localDC = hdc;
 
 	size.cx = 0;
@@ -1044,7 +1041,6 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 	int	lastlen	= 0;
 	int	lines		= Get_Height();
 	char *letter	= str;
-	bool	make_dc	= FALSE;
 	HDC	localDC	= hdc;
 
 	if ( *str == '\0' || str == nullptr ) {

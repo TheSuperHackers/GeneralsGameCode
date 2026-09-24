@@ -707,7 +707,6 @@ float FindStartingXPos( const WCHAR *text )
 void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX, int *hkY)
 {
 	float char_height = Font->Get_Char_Height ();
-	int		wordWidth = 0;
 	int notCenteredHotkeyX = 0;
 	int notCenteredHotkeyY = 0;
 	Vector2 extent = Build_Sentence_Not_Centered(text,&notCenteredHotkeyX, &notCenteredHotkeyY, TRUE); //Get_Formatted_Text_Extents(text);

@@ -164,8 +164,6 @@ GameMtlPassDlg::~GameMtlPassDlg()
 BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int i=0;
-	int id = LOWORD(wParam);
-	int code = HIWORD(wParam);
 
 	switch (message) {
 

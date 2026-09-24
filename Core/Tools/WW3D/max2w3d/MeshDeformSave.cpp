@@ -65,8 +65,6 @@ MeshDeformSaveClass::Initialize
 	//
 	//	Attempt to gain access to the IDerivedObject this node references
 	//
-	int test = object->SuperClassID ();
-	int test2 = GEN_DERIVOB_CLASS_ID;
 	if ((object != nullptr) &&
 		 (object->SuperClassID () == GEN_DERIVOB_CLASS_ID)) {
 

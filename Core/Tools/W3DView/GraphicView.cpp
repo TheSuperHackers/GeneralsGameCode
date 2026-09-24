@@ -128,9 +128,6 @@ END_MESSAGE_MAP()
 void
 CGraphicView::OnDraw (CDC* pDC)
 {
-	// Get the document to display
-    CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
-
     // Are we in a valid state?
     if (!pDC->IsPrinting ())
     {
@@ -568,11 +565,12 @@ CGraphicView::RepaintView
 void
 CGraphicView::UpdateDisplay ()
 {
+	/*
 	// Get the document to display
     CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 
     // Are we in a valid state?
-    /*if (m_bInitialized && doc->GetScene ())
+    if (m_bInitialized && doc->GetScene ())
     {
         RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
         if (pCRenderObj)
@@ -649,7 +647,6 @@ CGraphicView::WindowProc
 	} else if (message == WM_KEYUP) {
 
 		if ((wParam == VK_CONTROL) && (m_bLightMeshInScene == true)) {
-			CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 			m_pLightMesh->Remove ();
 			m_bLightMeshInScene = false;
 		}
@@ -775,7 +772,6 @@ CGraphicView::OnMouseMove
     CPoint point
 )
 {
-	int iDeltaX = m_lastPoint.x-point.x;
 	int iDeltaY = m_lastPoint.y-point.y;
 
 	// Get the document to display

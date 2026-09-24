@@ -98,8 +98,6 @@ static void reverseWord ( OLECHAR *fp, OLECHAR *lp )
 
 static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 {
-	int slash = FALSE;
-
 	{
 		static OLECHAR buffer[100*1024];
 		OLECHAR *firstLetter = nullptr, *lastLetter;
@@ -547,9 +545,7 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) (), CBabylonDlg
 	int new_count = 0;
 	int changes_count = 0;
 	int missing_count = 0;
-	int mismatch_count = 0;
 	int stale_count = 0;
-	int	first_mismatch = TRUE;
 	int bad_id = FALSE;
 	int error_count = 0;
 	int revision;
@@ -739,11 +735,9 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) (), CBabyl
 	int row = 3;
 	int id;
 	int count = 0;
-	int new_count = 0;
 	int matched = 0;
 	int unmatched = 0;
 	int changed = 0;
-	int	first_mismatch = TRUE;
 	int bad_id = FALSE;
 	int error_count = 0;
 	int revision;
@@ -1391,8 +1385,6 @@ int GenerateGameFiles ( TransDB *db, const char *filepattern, GNOPTIONS *options
 
 void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 {
-	int imports = -1;
-
 	progress_dlg = dlg;
 
 	if ( dlg )
@@ -1406,8 +1398,6 @@ void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 	{
 		int row = 1;
 		int last_row = 1;
-		int matches = 0;
-		int unmatched = 0;
 		FILE *file = nullptr;
 		char *ptr;
 

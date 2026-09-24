@@ -319,7 +319,6 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 	ListSearch sh;
 	BabylonText		*text;
 	ListSearch sh_text;
-	int plen = wcslen ( pattern );
 
 	label = FirstLabel ( sh );
 
@@ -1647,8 +1646,6 @@ void TransDB::VerifyDialog( LangID langid, void (*cb) () )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
-	int count = 0;
-	LANGINFO *linfo = GetLangInfo ( langid );
 
 	label = FirstLabel ( sh_label );
 
@@ -1714,10 +1711,8 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
-	int count = 0;
 	DLGREPORT _info;
 	DLGREPORT *info = &_info;
-	int skip_verify = FALSE;
 	LANGINFO *linfo = GetLangInfo ( langid );
 
 	if ( report )
@@ -1785,8 +1780,6 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
-	int count = 0;
-	int first_error = FALSE;
 	TRNREPORT _info;
 	TRNREPORT *info = &_info;
 
@@ -1809,7 +1802,6 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 
 		while ( text )
 		{
-			int textnum = 0;
 			Translation *trans;
 			int too_big = FALSE;
 

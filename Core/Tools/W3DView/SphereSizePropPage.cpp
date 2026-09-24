@@ -471,7 +471,6 @@ SphereSizePropPageClass::Update_Scale_Array ()
 	int x_index		= 0;
 	int y_index		= 0;
 	int z_index		= 0;
-	int list_index	= 0;
 	float x_val = x_values[0].Get_Value ();
 	float y_val = y_values[0].Get_Value ();
 	float z_val = z_values[0].Get_Value ();

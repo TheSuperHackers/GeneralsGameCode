@@ -266,7 +266,7 @@ bool CDControlClass::Lock_Volume( HANDLE volume )
 	assert( WinVersion.Is_WinNT( ));
 
 	unsigned long bytes_returned	= 0;
-	unsigned long sleep_amount		= LOCK_TIMEOUT / LOCK_RETRIES;
+//	unsigned long sleep_amount		= LOCK_TIMEOUT / LOCK_RETRIES;
 
 	/*
 	** Do this in a loop until a timeout period has expired
@@ -301,7 +301,7 @@ bool CDControlClass::Unlock_Volume(HANDLE volume)
 	assert( WinVersion.Is_WinNT());
 
 	unsigned long bytes_returned;
-	unsigned long sleep_amount	= LOCK_TIMEOUT / LOCK_RETRIES;
+//	unsigned long sleep_amount	= LOCK_TIMEOUT / LOCK_RETRIES;
 
 	/*
 	** Do this in a loop until a timeout period has expired

@@ -1000,7 +1000,6 @@ HRESULT  Cftp::RecvReply( LPCSTR pReplyBuffer, int iSize, int * piRetCode )
 unsigned long MyIPAddress( int sockfd )
 {
 
-	int		 test = 99;
 	int i;
 	char pBuffer[ 256 ];
 	char * pAddr;
