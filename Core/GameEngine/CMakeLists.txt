@@ -486,6 +486,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/ObjectIter.h
 #    Include/GameLogic/ObjectScriptStatusBits.h
 #    Include/GameLogic/ObjectTypes.h
+     Include/GameLogic/Pathfinder/Path.h
      Include/GameLogic/Pathfinder/PathNode.h
 #    Include/GameLogic/PartitionManager.h
     Include/GameLogic/PolygonTrigger.h
