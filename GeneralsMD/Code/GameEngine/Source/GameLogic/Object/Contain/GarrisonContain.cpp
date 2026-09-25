@@ -95,12 +95,13 @@ Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex,
 	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
 #endif
 
+	// TheSuperHackers @bugfix CryoTheRenegade 06/09/2026 Assert that the condition index supplied by findConditionIndex is valid.
+	DEBUG_ASSERTCRASH(conditionIndex >= 0 && conditionIndex < MAX_GARRISON_POINT_CONDITIONS,
+		("GarrisonContain::findClosestFreeGarrisonPointIndex - Invalid condition index '%d'", conditionIndex));
+
 	// sanity
-	if (targetPos == nullptr || m_garrisonPointsInUse == MAX_GARRISON_POINTS ||
-		conditionIndex < 0 || conditionIndex >= MAX_GARRISON_POINT_CONDITIONS)
-	{
+	if( targetPos == nullptr || m_garrisonPointsInUse == MAX_GARRISON_POINTS )
 		return GARRISON_INDEX_INVALID;
-	}
 
 	Int closestIndex = GARRISON_INDEX_INVALID;
 	Real closestDistSq = -1.0f;
