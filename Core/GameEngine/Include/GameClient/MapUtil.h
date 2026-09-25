@@ -116,6 +116,7 @@ public:
 	void addShippingMap(AsciiString mapName) { mapName.toLower(); m_allowedMaps.insert(mapName); }
 
 private:
+	static AsciiString getCachePath(const AsciiString &mapDir);
 	void prepareUnseenMaps(const AsciiString &mapDir);
 	Bool clearUnseenMaps(const AsciiString &mapDir);
 	void loadMapsFromMapCacheINI(const AsciiString &mapDir);
