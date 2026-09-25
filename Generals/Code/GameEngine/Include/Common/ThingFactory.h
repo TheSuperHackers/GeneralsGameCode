@@ -30,7 +30,6 @@
 #pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Lib/BaseType.h"
 
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"

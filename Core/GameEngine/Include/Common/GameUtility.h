@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 // For miscellaneous game utility functions.
 
 class Player;

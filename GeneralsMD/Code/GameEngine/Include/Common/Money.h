@@ -44,7 +44,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Snapshot.h"
 

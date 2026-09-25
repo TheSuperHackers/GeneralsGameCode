@@ -29,7 +29,6 @@
 #pragma once
 
 #include "Common/SubsystemInterface.h"
-#include "Lib/BaseType.h"
 
 class Player;
 

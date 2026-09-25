@@ -31,7 +31,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Lib/BaseType.h"
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/WindowLayout.h"

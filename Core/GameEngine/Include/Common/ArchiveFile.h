@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/ArchiveFileSystem.h"
 

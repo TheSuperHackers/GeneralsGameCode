@@ -27,8 +27,6 @@
 #pragma once
 
 // ============================================================================
-#include "Lib/BaseType.h"
-// ============================================================================
 /// Ease in and out based on a linear velocity.
 /**
  * This ends up being a function that is parabolic at both ends and a linear

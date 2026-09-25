@@ -21,7 +21,6 @@
 
 #include "StdAfx.h"
 #include "WorldBuilder.h"
-#include "Lib/BaseType.h"
 #include "WW3D2/rendobj.h"
 #include "Common/GlobalData.h"
 #include "ShadowOptions.h"

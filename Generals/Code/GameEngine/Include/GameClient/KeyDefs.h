@@ -60,7 +60,6 @@
 #endif
 
 #include <dinput.h>
-#include <Lib/BaseType.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 

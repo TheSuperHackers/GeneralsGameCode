@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include <Lib/BaseType.h>
-
 // if it is set by the options panel, use the system setting parameter. Otherwise, this will be
 // appended to whatever the current system volume is.
 enum AudioAffect CPP_11(: Int)

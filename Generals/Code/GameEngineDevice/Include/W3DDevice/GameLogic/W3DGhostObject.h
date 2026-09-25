@@ -30,7 +30,6 @@
 #pragma once
 
 #include "GameLogic/GhostObject.h"
-#include "Lib/BaseType.h"
 #include "Common/GameCommon.h"
 #include "GameClient/DrawableInfo.h"
 

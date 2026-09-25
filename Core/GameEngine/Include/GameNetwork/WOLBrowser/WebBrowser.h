@@ -48,7 +48,6 @@
 #include <Common/GameMemory.h>
 #include "EABrowserDispatch/BrowserDispatch.h"
 #include "FEBDispatch.h"
-#include <Lib/BaseType.h>
 
 class GameWindow;
 

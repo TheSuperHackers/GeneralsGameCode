@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 extern void InitRandom();
 extern void InitRandom( UnsignedInt seed );
 extern UnsignedInt GetGameLogicRandomSeed();   ///< Get the seed (used for replays)

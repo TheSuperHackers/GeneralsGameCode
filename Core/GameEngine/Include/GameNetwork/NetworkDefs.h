@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "Common/MessageStream.h"
 
 static constexpr const Int WOL_NAME_LEN = 64;

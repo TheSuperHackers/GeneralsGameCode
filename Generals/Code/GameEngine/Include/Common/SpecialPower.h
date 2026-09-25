@@ -34,7 +34,6 @@
 #include "Common/AudioEventRTS.h"
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
-#include "Lib/BaseType.h"
 #include "Common/BitFlags.h"
 #include "Common/Overridable.h"
 #include "Common/Override.h"

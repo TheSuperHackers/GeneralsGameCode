@@ -60,7 +60,6 @@
 #include "WW3D2/dx8indexbuffer.h"
 #include "WW3D2/shader.h"
 #include "WW3D2/vertmaterial.h"
-#include "Lib/BaseType.h"
 #include "Common/GameType.h"
 
 class SegmentedLineClass;

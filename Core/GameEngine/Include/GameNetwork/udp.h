@@ -51,8 +51,6 @@
 #include <sys/select.h>
 #endif
 
-#include "Lib/BaseType.h"
-
 #define DEFAULT_PROTOCOL 0
 
 //#include "wlib/wstypes.h"

@@ -30,7 +30,6 @@
 #pragma once
 
 #include "Common/SubsystemInterface.h"
-#include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 

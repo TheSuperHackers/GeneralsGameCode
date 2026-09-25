@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "GameNetwork/NetCommandList.h"
 
 enum FrameDataReturnType CPP_11(: Int) {

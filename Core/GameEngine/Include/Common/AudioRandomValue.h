@@ -29,8 +29,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 // do NOT use these functions directly, rather use the macros below
 extern Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line );
 extern Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line );

@@ -30,7 +30,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"

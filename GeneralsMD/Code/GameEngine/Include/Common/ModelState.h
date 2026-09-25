@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "Common/BitFlags.h"
 #include "Common/BitFlagsIO.h"

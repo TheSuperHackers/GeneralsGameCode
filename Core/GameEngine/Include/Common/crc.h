@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 #ifdef RTS_DEBUG
 
 //#include "winsock2.h" // for htonl

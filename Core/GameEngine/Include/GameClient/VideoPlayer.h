@@ -45,7 +45,6 @@
 //           Includes
 //----------------------------------------------------------------------------
 
-#include <Lib/BaseType.h>
 #include "WWMath/rect.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/AsciiString.h"

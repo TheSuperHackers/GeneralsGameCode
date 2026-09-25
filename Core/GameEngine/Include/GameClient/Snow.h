@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/Overridable.h"
 #include "Common/Override.h"

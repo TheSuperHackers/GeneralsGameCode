@@ -21,7 +21,6 @@
 
 #include "StdAfx.h"
 #include "resource.h"
-#include "Lib/BaseType.h"
 #include "FeatherOptions.h"
 #include "WorldBuilderView.h"
 #include "FeatherTool.h"

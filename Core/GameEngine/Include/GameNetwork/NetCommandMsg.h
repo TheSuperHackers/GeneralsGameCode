@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NetPacketStructs.h"
 #include "Common/UnicodeString.h"

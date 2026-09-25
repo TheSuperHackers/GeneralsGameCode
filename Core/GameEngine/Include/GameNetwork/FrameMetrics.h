@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "GameNetwork/NetworkDefs.h"
 
 class FrameMetrics {
