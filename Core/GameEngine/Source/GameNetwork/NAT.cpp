@@ -745,9 +745,8 @@ void NAT::sendMangledSourcePort() {
 	// get the address of the mangler we need to talk to.
 	AsciiString manglerName = FirewallHelperClass::getManglerName(1);
 	DEBUG_LOG(("NAT::sendMangledSourcePort - about to call gethostbyname for mangler at %s", manglerName.str()));
-	const Int MANGLER_NAME_BUFFER_SIZE = 256;
 	struct hostent* hostInfo = nullptr;
-	if (!manglerName.isEmpty() && manglerName.getLength() < MANGLER_NAME_BUFFER_SIZE) {
+	if (!manglerName.isEmpty()) {
 		hostInfo = gethostbyname(manglerName.str());
 	}
 

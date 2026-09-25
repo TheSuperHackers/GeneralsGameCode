@@ -601,12 +601,12 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 {
 	AsciiString host;
 	UnsignedShort port;
-	if (!TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
+	if (TheGameSpyConfig->getManglerLocation(manglerIndex, host, port))
 	{
-		return AsciiString::TheEmptyString;
+		return host;
 	}
 
-	return host;
+	return AsciiString::TheEmptyString;
 }
 
 Bool FirewallHelperClass::detectionBeginUpdate() {
