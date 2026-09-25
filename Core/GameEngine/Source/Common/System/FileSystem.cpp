@@ -358,13 +358,9 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 		return false;
 	}
 
-#ifdef _WIN32
-	const char* pathSep = "\\";
-#else
-	const char* pathSep = "/";
-#endif
+	const char pathSep = getNativePathSeparator();
 
-	if (!basePathNormalized.endsWith(pathSep))
+	if (basePathNormalized.getCharAt(basePathNormalized.getLength() - 1) != pathSep)
 	{
 		basePathNormalized.concat(pathSep);
 	}
@@ -407,4 +403,15 @@ bool FileSystem::removeExtension(UnicodeString& path)
 	}
 
 	return false;
+}
+
+//============================================================================
+// FileSystem::appendPathSeparator
+//============================================================================
+void FileSystem::appendPathSeparator(AsciiString& path)
+{
+	if (path.isNotEmpty() && !isPathSeparator(path.getCharAt(path.getLength() - 1)))
+	{
+		path.concat(getNativePathSeparator());
+	}
 }
