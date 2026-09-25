@@ -3019,8 +3019,8 @@ static void unitTimings()
 		if (g_UT_curThing->getName()==SINGLE_UNIT) {
 			return;
 		}
-		while (g_UT_curThing->friend_getNextTemplate()
-			&& g_UT_curThing->friend_getNextTemplate()->getName()!=SINGLE_UNIT)
+		while (g_UT_curThing->friend_getNextTemplate() &&
+			g_UT_curThing->friend_getNextTemplate()->getName()!=SINGLE_UNIT)
 			g_UT_curThing = g_UT_curThing->friend_getNextTemplate();
 
 	}

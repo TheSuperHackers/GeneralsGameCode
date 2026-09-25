@@ -248,9 +248,9 @@ void W3DTankDraw::updateTreadObjects()
 			RenderObjClass *subObj=robj->Get_Sub_Object(i);
 			const char *meshName;
 			//Check if subobject name starts with "TREADS".
-			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH && subObj->Get_Name()
-				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != nullptr && *(meshName++))
-				&&_strnicmp(meshName,"TREADS", 6) == 0)
+			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH && subObj->Get_Name() &&
+				( (meshName=strchr(subObj->Get_Name(),'.') ) != nullptr && *(meshName++)) &&
+				_strnicmp(meshName,"TREADS", 6) == 0)
 			{	//check if sub-object has the correct material to do texture scrolling.
 				MaterialInfoClass *mat=subObj->Get_Material_Info();
 				if (mat)

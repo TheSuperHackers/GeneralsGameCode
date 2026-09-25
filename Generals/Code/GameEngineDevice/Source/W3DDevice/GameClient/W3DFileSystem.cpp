@@ -497,9 +497,9 @@ void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 
 				if (archive0->getFileInfo(filepath, &info0) && archive1->getFileInfo(filepath, &info1))
 				{
-					if (info0.size() < info1.size()
-						&& archive0->getName().endsWithNoCase(inferiorArchive)
-						&& archive1->getName().endsWithNoCase(superiorArchive))
+					if (info0.size() < info1.size() &&
+						archive0->getName().endsWithNoCase(inferiorArchive) &&
+						archive1->getName().endsWithNoCase(superiorArchive))
 					{
 						std::swap(it0->second, it1->second);
 

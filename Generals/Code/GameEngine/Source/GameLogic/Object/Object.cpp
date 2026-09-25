@@ -290,9 +290,9 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_smcHelper = newInstance(ObjectSMCHelper)(this, &smcModuleData);
 	*curB++ = m_smcHelper;
 
-	if (TheAI != nullptr
-			&& TheAI->getAiData()->m_enableRepulsors
-			&& isKindOf(KINDOF_CAN_BE_REPULSED))
+	if (TheAI != nullptr &&
+			TheAI->getAiData()->m_enableRepulsors &&
+			isKindOf(KINDOF_CAN_BE_REPULSED))
 	{
 		// if we can ever be a temporary-repulsor, make a repulsor helper. (srj)
 		static const NameKeyType repulsorHelperModuleDataTagNameKey = NAMEKEY( "ModuleTag_RepulsorHelper" );
@@ -2777,11 +2777,11 @@ void Object::setSelectable(Bool selectable)
 //-------------------------------------------------------------------------------------------------
 Bool Object::isSelectable() const
 {
-	return getTemplate()->isKindOf(KINDOF_ALWAYS_SELECTABLE)
-				|| (m_isSelectable
-						&& !testStatus(OBJECT_STATUS_UNSELECTABLE)
-						&& !isEffectivelyDead()
-						&& !getTemplate()->isKindOf(KINDOF_NO_SELECT)
+	return getTemplate()->isKindOf(KINDOF_ALWAYS_SELECTABLE) ||
+				(m_isSelectable &&
+						!testStatus(OBJECT_STATUS_UNSELECTABLE) &&
+						!isEffectivelyDead() &&
+						!getTemplate()->isKindOf(KINDOF_NO_SELECT)
 						);
 }
 
@@ -2880,10 +2880,10 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			break;
 	}
 
-	Bool doAnimation = provideFeedback
-		&& newLevel > oldLevel
-		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
-		&& isLogicallyVisible();
+	Bool doAnimation = provideFeedback &&
+		newLevel > oldLevel &&
+		!isKindOf(KINDOF_IGNORED_IN_GUI) &&
+		isLogicallyVisible();
 
 	if (doAnimation)
 		createVeterancyLevelFX(oldLevel, newLevel);
@@ -4463,9 +4463,9 @@ void Object::look()
 		// I removed the check for objects under construction by request of designers since
 		// they want constructing objects to have a reduced sight range now. -MW
 		// dead or blind things don't reveal shroud
-		if( ( ! isDestroyed() )// Some things get Destroyed directly without hitting Death.
-				&& ( ! isEffectivelyDead() )
-				&& ( getShroudClearingRange() > 0.0f )
+		if( ( ! isDestroyed() ) &&// Some things get Destroyed directly without hitting Death.
+				( ! isEffectivelyDead() ) &&
+				( getShroudClearingRange() > 0.0f )
 			)
 		{
 			PlayerMaskType lookingMask = 0;
@@ -5366,10 +5366,10 @@ Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
  	for( Int buttonIndex = 0; buttonIndex < MAX_COMMANDS_PER_SET; buttonIndex++ )
  	{
  		const CommandButton *button = set->getCommandButton(buttonIndex);
- 		if( button
-				&&  ( (button->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE)  ||  (button->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE) ) // Or else a button that requires an upgrade will appear the same as a button that gives an upgrade
-				&&  button->getUpgradeTemplate()
-				&&  (button->getUpgradeTemplate() == upgrade)
+ 		if( button &&
+				( (button->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE)  ||  (button->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE) ) && // Or else a button that requires an upgrade will appear the same as a button that gives an upgrade
+				button->getUpgradeTemplate() &&
+				(button->getUpgradeTemplate() == upgrade)
 				)
  			return TRUE; // getUpgradeTemplate only returns something if it is actually an upgrade
  	}

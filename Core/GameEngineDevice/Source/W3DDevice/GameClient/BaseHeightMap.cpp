@@ -1613,8 +1613,8 @@ void BaseHeightMapRenderObjClass::updateShorelineTile(Int i, Int j, Int border, 
 
 	//Check if mix of under/over water vertices or some vertices within depth fade region.
 	if (waterSide < 0xf || (waterZ0 - terrainZ0) < transparentDepth ||
-		(waterZ1 - terrainZ1) < transparentDepth || (waterZ2 - terrainZ2) < transparentDepth
-		|| (waterZ3 - terrainZ3) < transparentDepth)
+		(waterZ1 - terrainZ1) < transparentDepth || (waterZ2 - terrainZ2) < transparentDepth ||
+		(waterZ3 - terrainZ3) < transparentDepth)
 	{	//add tile to set that needs shoreline blending.
 		if (m_numShoreLineTiles >= m_shoreLineTilePositionsSize)
 		{	//no more room to store extra blend tiles so enlarge the buffer.

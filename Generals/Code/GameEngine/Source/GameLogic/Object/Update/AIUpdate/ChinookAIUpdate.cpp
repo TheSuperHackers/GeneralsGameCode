@@ -994,8 +994,8 @@ ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const
 AIFreeToExitType ChinookAIUpdate::getAiFreeToExit(const Object* exiter) const
 {
 #if RETAIL_COMPATIBLE_CRC
-	 if (m_flightStatus == CHINOOK_LANDED
-				|| (m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL)))
+	 if (m_flightStatus == CHINOOK_LANDED ||
+				(m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL)))
 #else
 	if (m_flightStatus == CHINOOK_LANDED)
 #endif

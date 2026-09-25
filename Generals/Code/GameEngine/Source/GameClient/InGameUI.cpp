@@ -157,13 +157,13 @@ static Bool kindOfUnitSelection( Drawable *test, void *userData )
 		Bool isKindOfMatch = object->isKindOfMulti(data->m_mustbeSet, data->m_mustbeClear);
 
 		// only select objects if not already selected
-		if( object && isKindOfMatch
-					&& object->isLocallyControlled()
-					&& !object->isContained()
-					&& !object->getDrawable()->isSelected()
-					&& !object->isEffectivelyDead()
-					&& object->isMassSelectable()
-					&& !object->isOffMap()
+		if( object && isKindOfMatch &&
+					object->isLocallyControlled() &&
+					!object->isContained() &&
+					!object->getDrawable()->isSelected() &&
+					!object->isEffectivelyDead() &&
+					object->isMassSelectable() &&
+					!object->isOffMap()
 				)
 		{
 			// enforce optional unit cap
@@ -217,12 +217,12 @@ static Bool similarUnitSelection( Drawable *test, void *userData )
 		}
 
 		// only select objects if not already selected
-		if( object && isEquivalent
-			  && object->isLocallyControlled()
-				&& !object->isContained()
-				&& !( object->getDrawable()->isSelected() )
-				&& object->isMassSelectable() // And only if they can be multiply selected. (otherwise the drawable will be, but the object will not be)
-				&& !object->isOffMap()
+		if( object && isEquivalent &&
+			  object->isLocallyControlled() &&
+				!object->isContained() &&
+				!( object->getDrawable()->isSelected() ) &&
+				object->isMassSelectable() && // And only if they can be multiply selected. (otherwise the drawable will be, but the object will not be)
+				!object->isOffMap()
 				)
 		{
 			// enforce optional unit cap
@@ -4586,8 +4586,8 @@ Bool InGameUI::canSelectedObjectsDoAction( ActionType action, const Object *obje
 			case ACTIONTYPE_REPAIR_OBJECT:
 			{
 				ObjectID currentRepairer = objectToInteractWith->getSoleHealingBenefactor();
-				success = ( TheActionManager->canRepairObject( other->getObject(), objectToInteractWith, CMD_FROM_PLAYER )
-										&& ( currentRepairer == INVALID_ID || currentRepairer == other->getObject()->getID() ) );
+				success = ( TheActionManager->canRepairObject( other->getObject(), objectToInteractWith, CMD_FROM_PLAYER ) &&
+										( currentRepairer == INVALID_ID || currentRepairer == other->getObject()->getID() ) );
 											// unless someone else is already healing it...
 											// please note that this add'l test is left out of canRepairObject() since canRepairObject
 											// gets called from within the Dozer/WorkerAIUpdates' stateMachines as they continue the repair process.
@@ -5357,9 +5357,9 @@ void InGameUI::drawFloatingText()
 		ThePartitionManager->worldToCell(ftd->m_pos3D.x, ftd->m_pos3D.y, &pCX, &pCY);
 
 		// translate it's 3d pos into a 2d screen pos
-		if( TheTacticalView->worldToScreen(&ftd->m_pos3D, &pos)
-			&& ftd->m_dString
-			&& ThePartitionManager->getShroudStatusForPlayer(playerIndex, pCX, pCY) == CELLSHROUD_CLEAR )
+		if( TheTacticalView->worldToScreen(&ftd->m_pos3D, &pos) &&
+			ftd->m_dString &&
+			ThePartitionManager->getShroudStatusForPlayer(playerIndex, pCX, pCY) == CELLSHROUD_CLEAR )
 		{
 			pos.y -= ftd->m_frameCount * m_floatingTextMoveUpSpeed;
 			Color dropColor;

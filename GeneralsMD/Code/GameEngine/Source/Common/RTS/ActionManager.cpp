@@ -109,9 +109,9 @@ static Bool isObjectShroudedForAction ( const Object *source, const Object *targ
 
 	if( source && target && source->getControllingPlayer() )
 	{
-		if( source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN
-			&& commandSource != CMD_FROM_SCRIPT
-			&& target->getShroudedStatus( source->getControllingPlayer()->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED
+		if( source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN &&
+			commandSource != CMD_FROM_SCRIPT &&
+			target->getShroudedStatus( source->getControllingPlayer()->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED
 			)
 		{
 			return TRUE;
@@ -561,9 +561,9 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 	// Can't enter something being sold
 	if( objectToEnter->testStatus(OBJECT_STATUS_SOLD) )
 		return FALSE;
-	if ( obj->isKindOf( KINDOF_IGNORED_IN_GUI )  //As in, Angry Mob Members, Cargo Planes
-		|| obj->isKindOf( KINDOF_MOB_NEXUS )
-		|| objectToEnter->isKindOf( KINDOF_IGNORED_IN_GUI ) )  // As in Cargo Planes
+	if ( obj->isKindOf( KINDOF_IGNORED_IN_GUI ) ||  //As in, Angry Mob Members, Cargo Planes
+		obj->isKindOf( KINDOF_MOB_NEXUS ) ||
+		objectToEnter->isKindOf( KINDOF_IGNORED_IN_GUI ) )  // As in Cargo Planes
 	{
 
 		return FALSE;
@@ -1738,10 +1738,10 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				break;
 
 			case SPECIAL_DISGUISE_AS_VEHICLE:
-				if( target->isKindOf( KINDOF_VEHICLE )
-						&& !target->isKindOf( KINDOF_AIRCRAFT )
-						&& !target->isKindOf( KINDOF_BOAT )
-						&& !target->isKindOf( KINDOF_CLIFF_JUMPER ) )
+				if( target->isKindOf( KINDOF_VEHICLE ) &&
+						!target->isKindOf( KINDOF_AIRCRAFT ) &&
+						!target->isKindOf( KINDOF_BOAT ) &&
+						!target->isKindOf( KINDOF_CLIFF_JUMPER ) )
 				{
 					//Don't allow it to disguise as another bomb truck -- that's just plain dumb.
 					//if( target->getTemplate() != obj->getTemplate() )

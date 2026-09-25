@@ -427,10 +427,10 @@ UpdateSleepTime ParachuteContain::update()
 	// the collide system doesn't always collide us with the ground if we fall into water.
 	// so force the issue.
 	Real waterZ;
-	if (!getObject()->isEffectivelyDead()
-			&& getObject()->getLayer() == LAYER_GROUND
-			&& TheTerrainLogic->isUnderwater(paraPos->x, paraPos->y, &waterZ)
-			&& (paraPos->z - waterZ) < d->m_killWhenLandingInWaterSlop)
+	if (!getObject()->isEffectivelyDead() &&
+			getObject()->getLayer() == LAYER_GROUND &&
+			TheTerrainLogic->isUnderwater(paraPos->x, paraPos->y, &waterZ) &&
+			(paraPos->z - waterZ) < d->m_killWhenLandingInWaterSlop)
 	{
 		getObject()->kill();
 	}
@@ -505,9 +505,9 @@ void ParachuteContain::onRemoving( Object *rider )
 	// if we land in the water, we die. alas.
 	const Coord3D* riderPos = rider->getPosition();
 	Real waterZ, terrainZ;
-	if (TheTerrainLogic->isUnderwater(riderPos->x, riderPos->y, &waterZ, &terrainZ)
-			&& riderPos->z <= waterZ + d->m_killWhenLandingInWaterSlop
-			&& rider->getLayer() == LAYER_GROUND)
+	if (TheTerrainLogic->isUnderwater(riderPos->x, riderPos->y, &waterZ, &terrainZ) &&
+			riderPos->z <= waterZ + d->m_killWhenLandingInWaterSlop &&
+			rider->getLayer() == LAYER_GROUND)
 	{
 		// don't call kill(); do it manually, so we can specify DEATH_FLOODED
 		DamageInfo damageInfo;

@@ -2129,10 +2129,10 @@ const ModelConditionInfo* W3DModelDraw::findTransitionForSig(TransitionSig sig) 
 //-------------------------------------------------------------------------------------------------
 Real W3DModelDraw::getCurrentAnimFraction() const
 {
-	if (m_curState != nullptr
-			&& isAnyMaintainFrameFlagSet(m_curState->m_flags)
-			&& m_renderObject != nullptr
-			&& m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+	if (m_curState != nullptr &&
+			isAnyMaintainFrameFlagSet(m_curState->m_flags) &&
+			m_renderObject != nullptr &&
+			m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
 	{
 		float framenum, dummy;
 		int mode, numFrames;
@@ -4147,10 +4147,10 @@ void W3DModelDraw::xfer( Xfer *xfer )
 		{
 				// srj sez: don't save info for transition states, since we can't really
 				// restore them effectively.
-			if ( m_renderObject
-					&& m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD
-					&& m_curState
-					&& m_curState->m_transitionSig == NO_TRANSITION )
+			if ( m_renderObject &&
+					m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD &&
+					m_curState &&
+					m_curState->m_transitionSig == NO_TRANSITION )
 			{
 
 				// cast to HLod

@@ -1634,12 +1634,12 @@ void W3DRadar::notifyViewChanged()
 		  Real alphaScale = INT_TO_REAL(TheGameLogic->getFrame() % framesForTransition) / (framesForTransition * 0.5f);
       minAlpha <<= 2; // decoy
 
- 			if ( ( obj->isLocallyControlled() == (Bool)a ) // another decoy, comparing the return of this non-inline with a local
-        && !obj->testStatus( OBJECT_STATUS_DISGUISED )
-        && !obj->testStatus( OBJECT_STATUS_DETECTED )
-        && ++a != 0 // The trick is that this increment does not occur unless all three above conditions are true
-        && minAlpha == 32  // tricksy hobbit decoy
-        && c != 0 )        // ditto
+ 			if ( ( obj->isLocallyControlled() == (Bool)a ) && // another decoy, comparing the return of this non-inline with a local
+        !obj->testStatus( OBJECT_STATUS_DISGUISED ) &&
+        !obj->testStatus( OBJECT_STATUS_DETECTED ) &&
+        ++a != 0 && // The trick is that this increment does not occur unless all three above conditions are true
+        minAlpha == 32 &&  // tricksy hobbit decoy
+        c != 0 )        // ditto
       {
         g = (UnsignedByte)(rObj->getColor());
         continue;

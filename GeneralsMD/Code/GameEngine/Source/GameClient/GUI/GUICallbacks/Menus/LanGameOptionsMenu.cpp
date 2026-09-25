@@ -154,8 +154,8 @@ static Int getNextSelectablePlayer(Int start)
 	{
 		LANGameSlot *slot = game->getLANSlot(j);
 		if (slot && slot->getStartPos() == -1 &&
-			( (j==game->getLocalSlotNum() && game->getConstSlot(j)->getPlayerTemplate()!=PLAYERTEMPLATE_OBSERVER)
-			|| slot->isAI()))
+			( (j==game->getLocalSlotNum() && game->getConstSlot(j)->getPlayerTemplate()!=PLAYERTEMPLATE_OBSERVER) ||
+			slot->isAI()))
 		{
 			return j;
 		}

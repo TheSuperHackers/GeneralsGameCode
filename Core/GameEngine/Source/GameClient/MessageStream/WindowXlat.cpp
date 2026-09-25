@@ -317,9 +317,9 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 
 			// If we're in a movie, we want to be able to escape out of it
-			if(returnCode != WIN_INPUT_USED
-				&& (key == KEY_ESC)
-				&& (BitIsSet( state, KEY_STATE_UP )) )
+			if(returnCode != WIN_INPUT_USED &&
+				(key == KEY_ESC) &&
+				(BitIsSet( state, KEY_STATE_UP )) )
 			{
 				if (TheGameClient->skipCurrentIntroStage())
 				{
@@ -334,9 +334,9 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 			// TheSuperHackers @bugfix If the input is disabled, then only allow the ESC button to get through.
 			// Otherwise it would be possible to call user camera actions during scripted camera scenes.
-			if(returnCode != WIN_INPUT_USED
-				&& (key != KEY_ESC)
-				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
+			if(returnCode != WIN_INPUT_USED &&
+				(key != KEY_ESC) &&
+				(TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
 			{
 				returnCode = WIN_INPUT_USED;
 			}

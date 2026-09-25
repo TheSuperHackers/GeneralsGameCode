@@ -521,18 +521,18 @@ bool GCALL HUFF_is(const void *compresseddata)
     bool ok=false;
     int packtype=ggetm(compresseddata,2);
 
-    if (packtype==0x30fb
-     || packtype==0x31fb
-     || packtype==0x32fb
-     || packtype==0x33fb
-     || packtype==0x34fb
-     || packtype==0x35fb
-     || packtype==0xb0fb
-     || packtype==0xb1fb
-     || packtype==0xb2fb
-     || packtype==0xb3fb
-     || packtype==0xb4fb
-     || packtype==0xb5fb)
+    if (packtype==0x30fb ||
+     packtype==0x31fb ||
+     packtype==0x32fb ||
+     packtype==0x33fb ||
+     packtype==0x34fb ||
+     packtype==0x35fb ||
+     packtype==0xb0fb ||
+     packtype==0xb1fb ||
+     packtype==0xb2fb ||
+     packtype==0xb3fb ||
+     packtype==0xb4fb ||
+     packtype==0xb5fb)
         ok = true;
 
     return(ok);

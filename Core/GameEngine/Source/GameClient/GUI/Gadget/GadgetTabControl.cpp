@@ -90,10 +90,10 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 	{
 		case GWM_LEFT_DOWN:
 		{
-			if(		(mouseX < tabsLeft)
-					|| (mouseX > tabsRight)
-					|| (mouseY < tabsTop)
-					|| (mouseY > tabsBottom)
+			if(		(mouseX < tabsLeft) ||
+					(mouseX > tabsRight) ||
+					(mouseY < tabsTop) ||
+					(mouseY > tabsBottom)
 					)
 			{//I eat input on myself that isn't a tab (a button click would mean I don't see the input ever.)
 				return MSG_HANDLED;

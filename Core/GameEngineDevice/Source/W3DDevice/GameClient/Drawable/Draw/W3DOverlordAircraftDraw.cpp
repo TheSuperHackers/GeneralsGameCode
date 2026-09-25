@@ -88,10 +88,10 @@ void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
 	// Our big thing is that we get our specific passenger (the turret thing) and then wake it up and make it draw
 	// It depends on us because our renderObject is only made correct in the act of drawing.
 	Object *me = getDrawable()->getObject();
-	if( me
-		&& me->getContain()
-		&& me->getContain()->friend_getRider()
-		&& me->getContain()->friend_getRider()->getDrawable()
+	if( me &&
+		me->getContain() &&
+		me->getContain()->friend_getRider() &&
+		me->getContain()->friend_getRider()->getDrawable()
 		)
 	{
 		Drawable *riderDraw = me->getContain()->friend_getRider()->getDrawable();
@@ -116,10 +116,10 @@ void W3DOverlordAircraftDraw::setHidden(Bool h)
 
 	// We need to hide our rider, since he won't realize he's being contained in a contained container
 	Object *me = getDrawable()->getObject();
-	if( me
-		&& me->getContain()
-		&& me->getContain()->friend_getRider()
-		&& me->getContain()->friend_getRider()->getDrawable()
+	if( me &&
+		me->getContain() &&
+		me->getContain()->friend_getRider() &&
+		me->getContain()->friend_getRider()->getDrawable()
 		)
 	{
 		me->getContain()->friend_getRider()->getDrawable()->setDrawableHidden(h);

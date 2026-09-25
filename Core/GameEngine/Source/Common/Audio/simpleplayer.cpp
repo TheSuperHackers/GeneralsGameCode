@@ -224,9 +224,9 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     //
     WCHAR wszFullUrl[ MAX_PATH ];
 
-    if( ( 0 == wcsstr( pszUrl, L"\\\\" ) )
-        && ( 0 == wcsstr( pszUrl, L":\\" ) )
-        && ( 0 == wcsstr( pszUrl, L"://" ) ) )
+    if( ( 0 == wcsstr( pszUrl, L"\\\\" ) ) &&
+        ( 0 == wcsstr( pszUrl, L":\\" ) ) &&
+        ( 0 == wcsstr( pszUrl, L"://" ) ) )
     {
         //
         // Expand to a full path name

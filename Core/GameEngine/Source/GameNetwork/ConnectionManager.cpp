@@ -178,9 +178,9 @@ static Bool hasValidTransferFileContent(const AsciiString& filePath, const Unsig
 		}
 		TGA2Footer footer;
 		memcpy(&footer, data + dataSize - sizeof(footer), sizeof(footer));
-		const Bool isTGA2 = memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) == 0
-			&& footer.RsvdChar == '.'
-			&& footer.BZST == '\0';
+		const Bool isTGA2 = memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) == 0 &&
+			footer.RsvdChar == '.' &&
+			footer.BZST == '\0';
 		if (!isTGA2)
 		{
 			DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));

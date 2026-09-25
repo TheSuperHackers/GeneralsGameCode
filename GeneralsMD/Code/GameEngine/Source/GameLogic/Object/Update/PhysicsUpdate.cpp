@@ -446,9 +446,9 @@ void PhysicsBehavior::applyGravitationalForces()
 void PhysicsBehavior::applyFrictionalForces()
 {
 	//Are we a plane that is taxiing on a deck with a height offset?
-	Bool deckTaxiing = getObject()->testStatus( OBJECT_STATUS_DECK_HEIGHT_OFFSET )
-										 && getObject()->getAI()
-										 && getObject()->getAI()->getCurLocomotorSetType() == LOCOMOTORSET_TAXIING;
+	Bool deckTaxiing = getObject()->testStatus( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) &&
+										 getObject()->getAI() &&
+										 getObject()->getAI()->getCurLocomotorSetType() == LOCOMOTORSET_TAXIING;
 
 	if (getFlag(APPLY_FRICTION2D_WHEN_AIRBORNE) || !getObject()->isSignificantlyAboveTerrain() || deckTaxiing )
 	{
@@ -688,8 +688,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		{
 			if ( (fabs(m_vel.x) < STUN_RELIEF_EPSILON &&
 				    fabs(m_vel.y) < STUN_RELIEF_EPSILON &&
-				    fabs(m_vel.z) < STUN_RELIEF_EPSILON)
-          ||
+				    fabs(m_vel.z) < STUN_RELIEF_EPSILON) ||
            obj->isSignificantlyAboveTerrain() == FALSE )
 			{
 				setStunned(false);
@@ -918,14 +917,14 @@ UpdateSleepTime PhysicsBehavior::update()
 UpdateSleepTime PhysicsBehavior::calcSleepTime() const
 {
 #ifdef SLEEPY_PHYSICS
-	if (isZero3D(m_vel)
-			&& isZero3D(m_accel)
-			&& !getFlag(HAS_PITCHROLLYAW)
-			&& !isMotive()
-			&& (getObject()->getLayer() == LAYER_GROUND && !getObject()->isAboveTerrain())
-			&& getCurrentOverlap() == INVALID_ID
-			&& getPreviousOverlap() == INVALID_ID
-			&& getFlag(UPDATE_EVER_RUN))
+	if (isZero3D(m_vel) &&
+			isZero3D(m_accel) &&
+			!getFlag(HAS_PITCHROLLYAW) &&
+			!isMotive() &&
+			(getObject()->getLayer() == LAYER_GROUND && !getObject()->isAboveTerrain()) &&
+			getCurrentOverlap() == INVALID_ID &&
+			getPreviousOverlap() == INVALID_ID &&
+			getFlag(UPDATE_EVER_RUN))
 	{
 		return UPDATE_SLEEP_FOREVER;
 	}
@@ -1637,8 +1636,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			// Now find the shortest.  Use the straightline distance to crush point as tie breaker
 			if( (frontPerpLength <= centerPerpLength)  && (frontPerpLength <= backPerpLength) )
 			{
-				if( perpsLogicallyEqual(frontPerpLength, centerPerpLength)
-					|| perpsLogicallyEqual(frontPerpLength, backPerpLength)
+				if( perpsLogicallyEqual(frontPerpLength, centerPerpLength) ||
+					perpsLogicallyEqual(frontPerpLength, backPerpLength)
 					)
 				{
 					Real frontVectorLength = frontVector.length();
@@ -1666,8 +1665,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			}
 			else if( (backPerpLength <= centerPerpLength)  && (backPerpLength <= frontPerpLength) )
 			{
-				if( perpsLogicallyEqual(backPerpLength, centerPerpLength)
-					|| perpsLogicallyEqual(backPerpLength, frontPerpLength)
+				if( perpsLogicallyEqual(backPerpLength, centerPerpLength) ||
+					perpsLogicallyEqual(backPerpLength, frontPerpLength)
 					)
 				{
 					Real backVectorLength = backVector.length();
@@ -1695,8 +1694,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			}
 			else // centerperp is shortest
 			{
-				if( perpsLogicallyEqual(centerPerpLength, backPerpLength)
-					|| perpsLogicallyEqual(centerPerpLength, frontPerpLength)
+				if( perpsLogicallyEqual(centerPerpLength, backPerpLength) ||
+					perpsLogicallyEqual(centerPerpLength, frontPerpLength)
 					)
 				{
 					Real centerVectorLength = centerVector.length();

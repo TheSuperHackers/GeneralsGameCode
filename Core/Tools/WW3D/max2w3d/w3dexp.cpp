@@ -117,11 +117,11 @@ public:
 
 		if
 		(
-			obj
+			obj &&
 //			&& !Is_Proxy (*node)
-			&& !Is_Origin(node)
-			&& !node->IsHidden()
-			&& Is_Geometry(node)
+			!Is_Origin(node) &&
+			!node->IsHidden() &&
+			Is_Geometry(node)
 		)
 		{
 			return TRUE;
