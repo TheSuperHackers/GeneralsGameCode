@@ -31,6 +31,7 @@
 #include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/ReplaySimulation.h"
+#include "ICU/IcuLoader.h"
 
 
 /**
@@ -60,6 +61,11 @@ Int GameMain()
 	TheFramePacer = nullptr;
 	delete TheGameEngine;
 	TheGameEngine = nullptr;
+
+#if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
+	// Release cached ICU after the engine has stopped its conversion workers.
+	IcuLoader::unload();
+#endif
 
 	return exitcode;
 }
