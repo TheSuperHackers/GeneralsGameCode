@@ -71,12 +71,11 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	if ( t == GameMessage::MSG_RAW_KEY_DOWN)
 	{
 		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
 		const KeyState keyState = (KeyState)msg->getArgument(1)->integer;
-		const KeyState pressedKeyState = (KeyState)msg->getArgument(2)->integer;
-		if( (keyState | pressedKeyState) & KEY_STATE_MODIFIERS )
+		if( keyState & (KEY_STATE_MODIFIERS | KEY_STATE_AUTOREPEAT) )
 			return disp;
 
 		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);

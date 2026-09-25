@@ -124,7 +124,7 @@ public:
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
 private:
-	void emitModifierKeyUps() const;							///< emit key-ups for held CTRL/SHIFT/ALT after focus loss
+	void emitModifierKeyUps() const;
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
@@ -140,7 +140,6 @@ protected:
 	void setKeyStateData( KeyDefType key, KeyState data );  ///< get key state
 
 	KeyState m_modifiers;
-	KeyState m_lastPressedKeyState[KEY_COUNT];
 	// internal keyboard data members
 	//Bool m_capsState;			// 1 if caps lock is on
 	//Bool m_shiftState;		// 1 if either shift key is pressed

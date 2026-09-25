@@ -79,12 +79,6 @@ void Keyboard::createStreamMessages()
 		// add message to stream
 		if( BitIsSet( key->state, KEY_STATE_DOWN ) )
 		{
-			const Bool isModifier = isCtrlShiftAltKey((KeyDefType)key->key) || key->key == m_shift2Key;
-			if( !isModifier && !BitIsSet( key->state, KEY_STATE_AUTOREPEAT ) )
-			{
-				// Track presses in message order, including multiple presses of one key in a frame.
-				m_lastPressedKeyState[key->key] = key->state;
-			}
 
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_KEY_DOWN );
 			DEBUG_ASSERTCRASH( msg, ("Unable to append key down message to stream") );
@@ -109,11 +103,6 @@ void Keyboard::createStreamMessages()
 		{
 			msg->appendIntegerArgument( key->key );
 			msg->appendIntegerArgument( key->state );
-			if( BitIsSet( key->state, KEY_STATE_UP ) )
-			{
-				msg->appendIntegerArgument( m_lastPressedKeyState[key->key] );
-				m_lastPressedKeyState[key->key] = KEY_STATE_NONE;
-			}
 		}
 
 		// next key please
@@ -199,8 +188,6 @@ void Keyboard::updateKeys()
 
 		}
 
-		// TheSuperHackers @bugfix CryoTheRenegade 31/08/2026 Preserve the current
-		// modifier state for each buffered event.
 		BitSet( m_keys[ index ].state, m_modifiers );
 
 		index++;
@@ -246,8 +233,7 @@ Bool Keyboard::checkKeyRepeat()
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
-				// This is an assignment, not a bit set.
-				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers;
+				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers;  // note: not a bitset; this is an assignment
 				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
 
 				// Set End Flag
@@ -713,7 +699,6 @@ Keyboard::Keyboard()
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
-	memset( m_lastPressedKeyState, 0, sizeof( m_lastPressedKeyState ) );
 	m_modifiers = KEY_STATE_NONE;
 	m_shift2Key = KEY_NONE;
 
@@ -766,13 +751,10 @@ void Keyboard::resetKeys()
 {
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
-	// CTRL and SHIFT have the same stuck-mode problem (force-attack, prefer-selection).
 	emitModifierKeyUps();
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
-	// A held key can still report its release after focus returns. Do not clear
-	// m_lastPressedKeyState until that release or a new press arrives.
 	m_modifiers = KEY_STATE_NONE;
 	if( getCapsState() )
 	{
@@ -789,12 +771,9 @@ static void emitRawKeyUpIfDown(const KeyboardIO *keyStatus, KeyDefType key)
 		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
 		msg->appendIntegerArgument(key);
 		msg->appendIntegerArgument(KEY_STATE_UP);
-		msg->appendIntegerArgument(KEY_STATE_NONE);
 	}
 }
 
-//-------------------------------------------------------------------------------------------------
-// Emit RAW_KEY_UP for still-held modifiers so MetaEvent can end force-attack / waypoints / etc.
 //-------------------------------------------------------------------------------------------------
 void Keyboard::emitModifierKeyUps() const
 {
