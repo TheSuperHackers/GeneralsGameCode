@@ -316,9 +316,9 @@ void MetalMapManagerClass::Update_Textures()
 				result.Update_Min(white);	// Clamp to white
 
 				unsigned char b,g,r,a;
-				b= (unsigned char)WWMath::Floor(result.Z * 255.99f);	// B
-				g= (unsigned char)WWMath::Floor(result.Y * 255.99f);	// G
-				r= (unsigned char)WWMath::Floor(result.X * 255.99f);	// R
+				b= (unsigned char)WWMath::Floorf(result.Z * 255.99f);	// B
+				g= (unsigned char)WWMath::Floorf(result.Y * 255.99f);	// G
+				r= (unsigned char)WWMath::Floorf(result.X * 255.99f);	// R
 				a= 0xFF;													// A
 
 				if (Use16Bit) {

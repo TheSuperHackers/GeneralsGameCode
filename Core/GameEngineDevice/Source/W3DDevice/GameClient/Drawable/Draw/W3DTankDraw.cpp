@@ -224,7 +224,7 @@ void W3DTankDraw::updateTreadPositions(Real uvDelta)
 		}
 
 		// ensure coordinates of offset are in [0, 1] range:
-		offset_u = offset_u - WWMath::Floor(offset_u);
+		offset_u = offset_u - WWMath::Floorf(offset_u);
 		pTread->m_materialSettings.customUVOffset.Set(offset_u,0);
 		pTread++;
 	}
@@ -398,7 +398,7 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 			{
 				offset_u = pTread->m_materialSettings.customUVOffset.X - treadScrollSpeed;
 				// ensure coordinates of offset are in [0, 1] range:
-				offset_u = offset_u - WWMath::Floor(offset_u);
+				offset_u = offset_u - WWMath::Floorf(offset_u);
 				pTread->m_materialSettings.customUVOffset.Set(offset_u,0);
 				pTread++;
 			}

@@ -75,9 +75,9 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClas
 	** against a cube which encloses the sphere...
 	*/
 	Vector3 dc = box.Center - sphere.Center;
-	if (WWMath::Fabs(dc.X) < box.Extent.X + sphere.Radius) return false;
-	if (WWMath::Fabs(dc.Y) < box.Extent.Y + sphere.Radius) return false;
-	if (WWMath::Fabs(dc.Z) < box.Extent.Z + sphere.Radius) return false;
+	if (WWMath::Fabsf_Legacy(dc.X) < box.Extent.X + sphere.Radius) return false;
+	if (WWMath::Fabsf_Legacy(dc.Y) < box.Extent.Y + sphere.Radius) return false;
+	if (WWMath::Fabsf_Legacy(dc.Z) < box.Extent.Z + sphere.Radius) return false;
 	return true;
 }
 
@@ -103,9 +103,9 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const OBBoxClas
 	Vector3 box_rel_center;
 	Matrix3D::Inverse_Transform_Vector(tm,sphere.Center,&box_rel_center);
 
-	if (box.Extent.X < WWMath::Fabs(box_rel_center.X)) return false;
-	if (box.Extent.Y < WWMath::Fabs(box_rel_center.Y)) return false;
-	if (box.Extent.Z < WWMath::Fabs(box_rel_center.Z)) return false;
+	if (box.Extent.X < WWMath::Fabsf_Legacy(box_rel_center.X)) return false;
+	if (box.Extent.Y < WWMath::Fabsf_Legacy(box_rel_center.Y)) return false;
+	if (box.Extent.Z < WWMath::Fabsf_Legacy(box_rel_center.Z)) return false;
 
 	return true;
 }

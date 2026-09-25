@@ -1788,7 +1788,7 @@ void INI::parseDurationReal( INI *ini, void * /*instance*/, void *store, const v
 void INI::parseDurationUnsignedInt( INI *ini, void * /*instance*/, void *store, const void* /*userData*/ )
 {
 	UnsignedInt val = scanUnsignedInt(ini->getNextToken());
-	*(UnsignedInt *)store = (UnsignedInt)ceilf(ConvertDurationFromMsecsToFrames((Real)val));
+	*(UnsignedInt *)store = (UnsignedInt)WWMath::Ceilf(ConvertDurationFromMsecsToFrames((Real)val));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1796,7 +1796,7 @@ void INI::parseDurationUnsignedInt( INI *ini, void * /*instance*/, void *store, 
 void INI::parseDurationUnsignedShort( INI *ini, void * /*instance*/, void *store, const void* /*userData*/ )
 {
 	UnsignedInt val = scanUnsignedInt(ini->getNextToken());
-	*(UnsignedShort *)store = (UnsignedShort)ceilf(ConvertDurationFromMsecsToFrames((Real)val));
+	*(UnsignedShort *)store = (UnsignedShort)WWMath::Ceilf(ConvertDurationFromMsecsToFrames((Real)val));
 }
 
 //-------------------------------------------------------------------------------------------------

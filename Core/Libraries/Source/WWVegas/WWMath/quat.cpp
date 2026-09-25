@@ -87,8 +87,8 @@ static float project_to_sphere(float,float,float);
  *=============================================================================================*/
 Quaternion::Quaternion(const Vector3 & axis,float angle)
 {
-	float s = WWMath::Sin(angle/2);
-	float c = WWMath::Cos(angle/2);
+	float s = WWMath::Sinf_Legacy(angle/2);
+	float c = WWMath::Cosf_Legacy(angle/2);
 	X = s * axis.X;
 	Y = s * axis.Y;
 	Z = s * axis.Z;
@@ -114,7 +114,7 @@ void Quaternion::Normalize()
 	if (0.0f == len2) {
 		return;
 	} else {
-		float inv_mag = WWMath::Inv_Sqrt(len2);
+		float inv_mag = WWMath::Inv_Sqrt_Legacy(len2);
 
 		X *= inv_mag;
 		Y *= inv_mag;
@@ -228,8 +228,8 @@ Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 	q[1] = tmp[1];
 	q[2] = tmp[2];
 
-	q.Scale(WWMath::Sin(phi / 2.0f));
-	q[3] =  WWMath::Cos(phi / 2.0f);
+	q.Scale(WWMath::Sinf_Legacy(phi / 2.0f));
+	q[3] =  WWMath::Cosf_Legacy(phi / 2.0f);
 
 	return q;
 }
@@ -325,10 +325,10 @@ normal_slerp:
 // normal slerp!
 //	else {
 //		theta = WWMath::Acos(cos_t);
-//		sin_t = WWMath::Sin(theta);
+//		sin_t = WWMath::Sinf_Legacy(theta);
 //		oo_sin_t = 1.0 / sin_t;
-//		beta = WWMath::Sin(theta - alpha*theta) * oo_sin_t;
-//		alpha = WWMath::Sin(alpha*theta) * oo_sin_t;
+//		beta = WWMath::Sinf_Legacy(theta - alpha*theta) * oo_sin_t;
+//		alpha = WWMath::Sinf_Legacy(alpha*theta) * oo_sin_t;
 // }
 //	if (qflip) {
 //		alpha = -alpha;
@@ -513,10 +513,10 @@ void Slerp(Quaternion& res, const Quaternion & p,const Quaternion & q,float alph
 
 		// normal slerp!
 		theta = WWMath::Acos(cos_t);
-		float sin_t = WWMath::Sin(theta);
+		float sin_t = WWMath::Sinf_Legacy(theta);
 		oo_sin_t = 1.0f / sin_t;
-		beta = WWMath::Sin(theta - alpha*theta) * oo_sin_t;
-		alpha = WWMath::Sin(alpha*theta) * oo_sin_t;
+		beta = WWMath::Sinf_Legacy(theta - alpha*theta) * oo_sin_t;
+		alpha = WWMath::Sinf_Legacy(alpha*theta) * oo_sin_t;
 	}
 
 	if (qflip) {
@@ -568,7 +568,7 @@ void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * sle
 
 		slerpinfo->Linear = false;
 		slerpinfo->Theta = WWMath::Acos(cos_t);
-		slerpinfo->SinT = WWMath::Sin(slerpinfo->Theta);
+		slerpinfo->SinT = WWMath::Sinf_Legacy(slerpinfo->Theta);
 
 	}
 }
@@ -600,8 +600,8 @@ Quaternion Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,Sl
 
 		// normal slerp!
 		oo_sin_t = 1.0f / slerpinfo->Theta;
-		beta = WWMath::Sin(slerpinfo->Theta - alpha*slerpinfo->Theta) * oo_sin_t;
-		alpha = WWMath::Sin(alpha*slerpinfo->Theta) * oo_sin_t;
+		beta = WWMath::Sinf_Legacy(slerpinfo->Theta - alpha*slerpinfo->Theta) * oo_sin_t;
+		alpha = WWMath::Sinf_Legacy(alpha*slerpinfo->Theta) * oo_sin_t;
 	}
 
 	if (slerpinfo->Flip) {
@@ -632,8 +632,8 @@ void Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,SlerpInf
 
 		// normal slerp!
 		oo_sin_t = 1.0f / slerpinfo->Theta;
-		beta = WWMath::Sin(slerpinfo->Theta - alpha*slerpinfo->Theta) * oo_sin_t;
-		alpha = WWMath::Sin(alpha*slerpinfo->Theta) * oo_sin_t;
+		beta = WWMath::Sinf_Legacy(slerpinfo->Theta - alpha*slerpinfo->Theta) * oo_sin_t;
+		alpha = WWMath::Sinf_Legacy(alpha*slerpinfo->Theta) * oo_sin_t;
 	}
 
 	if (slerpinfo->Flip) {
@@ -670,7 +670,7 @@ Quaternion Build_Quaternion(const Matrix3D & mat)
 
 	if (tr > 0.0f) {
 
-		s = sqrt(tr + 1.0);
+		s = WWMath::Sqrt(tr + 1.0);
 		q[3] = s * 0.5;
 		s = 0.5 / s;
 
@@ -686,7 +686,7 @@ Quaternion Build_Quaternion(const Matrix3D & mat)
 		j = _nxt[i];
 		k = _nxt[j];
 
-		s = sqrt((mat[i][i] - (mat[j][j] + mat[k][k])) + 1.0);
+		s = WWMath::Sqrt((mat[i][i] - (mat[j][j] + mat[k][k])) + 1.0);
 
 		q[i] = s * 0.5;
 		if (s != 0.0) {
@@ -713,7 +713,7 @@ Quaternion Build_Quaternion(const Matrix3x3 & mat)
 
 	if (tr > 0.0) {
 
-		s = sqrt(tr + 1.0);
+		s = WWMath::Sqrt(tr + 1.0);
 		q[3] = s * 0.5;
 		s = 0.5 / s;
 
@@ -730,7 +730,7 @@ Quaternion Build_Quaternion(const Matrix3x3 & mat)
 		j = _nxt[i];
 		k = _nxt[j];
 
-		s = sqrt( (mat[i][i] - (mat[j][j]+mat[k][k])) + 1.0);
+		s = WWMath::Sqrt( (mat[i][i] - (mat[j][j]+mat[k][k])) + 1.0);
 
 		q[i] =	s * 0.5;
 
@@ -757,7 +757,7 @@ Quaternion Build_Quaternion(const Matrix4x4 & mat)
 
 	if (tr > 0.0) {
 
-		s = sqrt(tr + 1.0);
+		s = WWMath::Sqrt(tr + 1.0);
 		q[3] = s * 0.5;
 		s = 0.5 / s;
 
@@ -774,7 +774,7 @@ Quaternion Build_Quaternion(const Matrix4x4 & mat)
 		j = _nxt[i];
 		k = _nxt[j];
 
-		s = sqrt( (mat[i][i] - (mat[j][j]+mat[k][k])) + 1.0);
+		s = WWMath::Sqrt( (mat[i][i] - (mat[j][j]+mat[k][k])) + 1.0);
 
 		q[i] =	s * 0.5;
 		if (s != 0.0) {

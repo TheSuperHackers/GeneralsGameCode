@@ -304,7 +304,7 @@ bool	HAnimComboClass::Normalize_Weights()
 		}
 
 		// weight_total should be very close to 1. If not, normalize this pivot's weights
-		if (weight_total != 0.0 && WWMath::Fabs( weight_total - 1.0 ) > WWMATH_EPSILON) {
+		if (weight_total != 0.0 && WWMath::Fabsf_Legacy( weight_total - 1.0 ) > WWMATH_EPSILON) {
 			float oo_total = 1.0f / weight_total;
 			for (anim_idx = 0; anim_idx < anim_count; anim_idx++ ) {
 				if (Peek_Motion(anim_idx) != nullptr ) {
@@ -329,7 +329,7 @@ bool	HAnimComboClass::Normalize_Weights()
 				}
 
 				// weight_total should be very close to 1. If not, normalize this pivot's weights
-				if (weight_total != 0.0 && WWMath::Fabs( weight_total - 1.0 ) > WWMATH_EPSILON) {
+				if (weight_total != 0.0 && WWMath::Fabsf_Legacy( weight_total - 1.0 ) > WWMATH_EPSILON) {
 					float oo_total = 1.0f / weight_total;
 					for (anim_idx = 0; anim_idx < anim_count; anim_idx++ ) {
 						if (Peek_Motion(anim_idx) != nullptr ) {

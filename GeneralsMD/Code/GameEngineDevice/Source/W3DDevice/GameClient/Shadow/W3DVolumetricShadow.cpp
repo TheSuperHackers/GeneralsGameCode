@@ -1792,9 +1792,9 @@ void W3DVolumetricShadow::Update()
    		if (fabs(pos.Z - groundHeight) >= AIRBORNE_UNIT_GROUND_DELTA)
    		{
  			Real extent = MAX_SHADOW_LENGTH_EXTRA_AIRBORNE_SCALE_FACTOR * m_robjExtent;
- 			if (WWMath::Fabs(pos.X - bcX) > (beX + extent) ||
- 				WWMath::Fabs(pos.Y - bcY) > (beY + extent) ||
- 				WWMath::Fabs(pos.Z - bcZ) > (beZ + extent))
+ 			if (WWMath::Fabsf_Legacy(pos.X - bcX) > (beX + extent) ||
+ 				WWMath::Fabsf_Legacy(pos.Y - bcY) > (beY + extent) ||
+ 				WWMath::Fabsf_Legacy(pos.Z - bcZ) > (beZ + extent))
  				return;	//shadow can't be visible so no point in updating.
 
 			//this unit is above ground, extend shadow volume to reach lowest point on the terrain plus extra bit to make
@@ -1805,9 +1805,9 @@ void W3DVolumetricShadow::Update()
  		{	//normal object that is not floating above ground so we don't need to extend the shadow lower than the object's
 			//base since it should be sitting directly at ground level.
 
- 			if (WWMath::Fabs(pos.X - bcX) > (beX + m_robjExtent) ||
- 				WWMath::Fabs(pos.Y - bcY) > (beY + m_robjExtent) ||
- 				WWMath::Fabs(pos.Z - bcZ) > (beZ + m_robjExtent))
+ 			if (WWMath::Fabsf_Legacy(pos.X - bcX) > (beX + m_robjExtent) ||
+ 				WWMath::Fabsf_Legacy(pos.Y - bcY) > (beY + m_robjExtent) ||
+ 				WWMath::Fabsf_Legacy(pos.Z - bcZ) > (beZ + m_robjExtent))
  				return;	//shadow can't be visible so no point in updating.
 
 				//check if this object has never had it's extrusion length updated.  Will only be true for
@@ -1948,7 +1948,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 	Vector3 vb = (Vector3 &)objectToWorld[0];
 	va.Normalize();
 	vb.Normalize();
-	Real cosAngle = WWMath::Fabs(Vector3::Dot_Product(va,vb));
+	Real cosAngle = WWMath::Fabsf_Legacy(Vector3::Dot_Product(va,vb));
 
 	if (cosAngle >= cosAngleToCare)
 	{
@@ -1957,7 +1957,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 		vb = (Vector3 &)objectToWorld[1];
 		va.Normalize();
 		vb.Normalize();
-		cosAngle = WWMath::Fabs(Vector3::Dot_Product(va,vb));
+		cosAngle = WWMath::Fabsf_Legacy(Vector3::Dot_Product(va,vb));
 
 		if (cosAngle >= cosAngleToCare)
 		{
@@ -1965,7 +1965,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 			vb = (Vector3 &)objectToWorld[2];
 			va.Normalize();
 			vb.Normalize();
-			cosAngle = WWMath::Fabs(Vector3::Dot_Product(va,vb));
+			cosAngle = WWMath::Fabsf_Legacy(Vector3::Dot_Product(va,vb));
 			if (cosAngle < cosAngleToCare)
 				isMeshRotating=true;
 		}

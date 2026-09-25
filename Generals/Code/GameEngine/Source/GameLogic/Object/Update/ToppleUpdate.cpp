@@ -130,7 +130,7 @@ static Real angleClosestTo(Real a1, Real a2, Real desired)
 {
 	a1 = normalizeAngle(a1);
 	a2 = normalizeAngle(a2);
-	return (fabs(stdAngleDiff(desired, a1)) < fabs(stdAngleDiff(desired, a2))) ? a1 : a2;
+	return (WWMath::Fabs(stdAngleDiff(desired, a1)) < WWMath::Fabs(stdAngleDiff(desired, a2))) ? a1 : a2;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	// yeah, it assumes the models are constructed appropriately, but is a cheap way
 	// of minimizing the problem. (srj)
 	Real curAngleX = normalizeAngle(getObject()->getOrientation());
-	Real toppleAngle = normalizeAngle(atan2(m_toppleDirection.y, m_toppleDirection.x));
+	Real toppleAngle = normalizeAngle(WWMath::Atan2(m_toppleDirection.y, m_toppleDirection.x));
 	if (d->m_toppleLeftOrRightOnly)
 	{
 		// it's a fence or such, and can only topple left or right, so pick the closest
@@ -298,7 +298,7 @@ UpdateSleepTime ToppleUpdate::update()
 		m_angularVelocity *= -d->m_bounceVelocityPercent;
 
 		if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE ||
-				fabs(m_angularVelocity) < VELOCITY_BOUNCE_LIMIT )
+				WWMath::Fabs(m_angularVelocity) < VELOCITY_BOUNCE_LIMIT )
 		{
 			// too slow, just stop
 			m_angularVelocity = 0;
@@ -338,7 +338,7 @@ UpdateSleepTime ToppleUpdate::update()
 				}
 			}
 		}
-		else if( fabs(m_angularVelocity) >= VELOCITY_BOUNCE_SOUND_LIMIT )
+		else if( WWMath::Fabs(m_angularVelocity) >= VELOCITY_BOUNCE_SOUND_LIMIT )
 		{
 			// fast enough bounce to warrant the bounce fx
 			if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_FX ) == FALSE )
