@@ -36,6 +36,7 @@
 #include "Common/ObjectStatusTypes.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameLogic/AI.h"
+#include "GameLogic/GameMode.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
 
 /*
@@ -66,20 +67,6 @@ class CommandButton;
 enum BuildableStatus CPP_11(: Int);
 
 typedef const CommandButton* ConstCommandButtonPtr;
-
-// What kind of game we're in.
-enum GameMode CPP_11(: Int)
-{
-	GAME_SINGLE_PLAYER,
-	GAME_LAN,
-	GAME_SKIRMISH,
-	GAME_REPLAY,
-	GAME_SHELL,
-	GAME_INTERNET,
-	GAME_NONE
-};
-
-const char* toString(GameMode mode);
 
 enum
 {
@@ -173,17 +160,15 @@ public:
 	void setGameMode( GameMode mode );
 	GameMode getGameMode();
 
-	Bool isInGame(); // Includes Shell Game
-	Bool isInLanGame();
-	Bool isInSinglePlayerGame();
-	Bool isInSkirmishGame();
-	Bool isInReplayGame();
-	Bool isInInternetGame();
-	Bool isInShellGame();
-	Bool isInMultiplayerGame();
+	Bool isInGame() const; // Includes Shell Game
+	Bool isInLanGame() const;
+	Bool isInSinglePlayerGame() const;
+	Bool isInSkirmishGame() const;
+	Bool isInReplayGame() const;
+	Bool isInInternetGame() const;
+	Bool isInShellGame() const;
+	Bool isInMultiplayerGame() const;
 	Bool isInInteractiveGame() const;
-
-	static Bool isInInteractiveGame(GameMode mode) { return mode != GAME_NONE && mode != GAME_SHELL; }
 
 	//Kris: Cut isLoadingGame() and replaced with isLoadingMap() and isLoadingSave() -- reason: nomenclature
 	//Bool isLoadingGame() const { return m_loadingScene; }		// This is the old function that isn't very clear on it's definition.
@@ -488,15 +473,15 @@ inline void GameLogic::setHeight( Real height ) { m_height = height; }
 inline Real GameLogic::getHeight() { return m_height; }
 inline UnsignedInt GameLogic::getFrame() { return m_frame; }
 
-inline Bool GameLogic::isInGame() { return m_gameMode != GAME_NONE; }
 inline GameMode GameLogic::getGameMode() { return m_gameMode; }
-inline Bool GameLogic::isInLanGame() { return (m_gameMode == GAME_LAN); }
-inline Bool GameLogic::isInSkirmishGame() { return (m_gameMode == GAME_SKIRMISH); }
-inline Bool GameLogic::isInMultiplayerGame() { return (m_gameMode == GAME_LAN) || (m_gameMode == GAME_INTERNET) ; }
-inline Bool GameLogic::isInInteractiveGame() const { return isInInteractiveGame(m_gameMode); }
-inline Bool GameLogic::isInReplayGame() { return (m_gameMode == GAME_REPLAY); }
-inline Bool GameLogic::isInInternetGame() { return (m_gameMode == GAME_INTERNET); }
-inline Bool GameLogic::isInShellGame() { return (m_gameMode == GAME_SHELL); }
+inline Bool GameLogic::isInGame() const { return rts::isGame(m_gameMode); }
+inline Bool GameLogic::isInLanGame() const { return rts::isLanGame(m_gameMode); }
+inline Bool GameLogic::isInSkirmishGame() const { return rts::isSkirmishGame(m_gameMode); }
+inline Bool GameLogic::isInReplayGame() const { return rts::isReplayGame(m_gameMode); }
+inline Bool GameLogic::isInInternetGame() const { return rts::isInternetGame(m_gameMode); }
+inline Bool GameLogic::isInShellGame() const { return rts::isShellGame(m_gameMode); }
+inline Bool GameLogic::isInMultiplayerGame() const { return rts::isMultiplayerGame(m_gameMode); }
+inline Bool GameLogic::isInInteractiveGame() const { return rts::isInteractiveGame(m_gameMode); }
 
 inline Object* GameLogic::findObjectByID( ObjectID id )
 {

@@ -27,6 +27,7 @@
 #include "Common/MessageStream.h"
 #include "GameNetwork/GameInfo.h"
 
+enum GameMode CPP_11(: Int);
 class File;
 
 /**
@@ -172,7 +173,7 @@ public:
 
 	Bool isMultiplayer();												///< is this a multiplayer game (record OR playback)?
 
-	Int getGameMode() { return m_originalGameMode; }
+	GameMode getGameMode() const { return m_originalGameMode; }
 
 	void logPlayerDisconnect(UnicodeString player, Int slot);
 	void logCRCMismatch();
@@ -182,7 +183,7 @@ public:
 	void setArchiveEnabled(Bool enable) { m_archiveReplays = enable; } ///< Enable or disable replay archiving.
 	void stopRecording();															///< Stop recording and close m_file.
 protected:
-	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
+	void startRecording(GameDifficulty diff, GameMode originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
 	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
 	void archiveReplay(AsciiString fileName);					///< Move the specified replay file to the archive directory.
 
@@ -218,7 +219,7 @@ protected:
 	Bool m_doingAnalysis;
 	Bool m_archiveReplays;														///< if true, each replay is archived to the replay archive folder after recording
 
-	Int m_originalGameMode; // valid in replays
+	GameMode m_originalGameMode; // valid in replays
 
 	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
 };
