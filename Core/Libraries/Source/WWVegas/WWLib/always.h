@@ -251,8 +251,3 @@ template <class T> T max(T a,T b)
 #if defined(__MINGW32__) || defined(__MINGW64__)
 #include	"mingw.h"
 #endif
-
-
-#ifndef size_of
-#define size_of(typ,id) sizeof(((typ*)0)->id)
-#endif
