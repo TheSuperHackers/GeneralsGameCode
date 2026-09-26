@@ -1,6 +1,6 @@
 set(USP10_SRC
-    usp10loader.cpp
-    usp10loader.h
+    Usp10Loader.cpp
+    Usp10Loader.h
     usp10_adapter.h
     usp10_subset.h
 )
