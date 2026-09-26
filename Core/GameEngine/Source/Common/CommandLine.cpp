@@ -35,6 +35,9 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "GameNetwork/NetworkAutoStart.h"
+
+#include <errno.h>
 
 
 
@@ -495,6 +498,112 @@ Int parseYRes(char *args[], int num)
 }
 
 #if defined(RTS_DEBUG)
+static Bool parseNonNegativeInt(const char *text, Int &result)
+{
+	if (text == nullptr || *text < '0' || *text > '9')
+	{
+		return false;
+	}
+
+	char *end;
+	errno = 0;
+	const long value = strtol(text, &end, 10);
+	if (errno == ERANGE || *end != '\0' || value > INT_MAX)
+	{
+		return false;
+	}
+
+	result = static_cast<Int>(value);
+	return true;
+}
+
+Int parseAutoNetworkMode(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setMode(args[1]))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkMode. Supported value: direct\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkHost(char *args[], int num)
+{
+	Int expectedPlayers = 0;
+	if (num > 1 && parseNonNegativeInt(args[1], expectedPlayers) && NetworkAutoStart::setHost(expectedPlayers))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkHost. Pass an expected player count from %d to %d and do not combine it with -autoNetworkJoin.\n",
+		NetworkAutoStart::MIN_EXPECTED_PLAYERS, MAX_SLOTS);
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkJoin(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setJoin(args[1]))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkJoin. Pass a dotted IPv4 host address and do not combine it with -autoNetworkHost.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkLocalAddress(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setLocalAddress(args[1]))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkLocalAddress. Pass a dotted IPv4 local address.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkName(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setPlayerName(args[1]))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkName. Pass a non-empty player name.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkMap(char *args[], int num)
+{
+	if (num > 1 && NetworkAutoStart::setMapName(args[1]))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkMap. Pass a non-empty map path.\n");
+	exit(1);
+	return 1;
+}
+
+Int parseAutoNetworkTimeout(char *args[], int num)
+{
+	Int timeoutSeconds = 0;
+	if (num > 1 && parseNonNegativeInt(args[1], timeoutSeconds) && NetworkAutoStart::setTimeoutSeconds(timeoutSeconds))
+	{
+		return 2;
+	}
+
+	printf("Invalid -autoNetworkTimeout. Pass a positive number of seconds.\n");
+	exit(1);
+	return 1;
+}
+
 //=============================================================================
 //=============================================================================
 Int parseLatencyAverage(char *args[], int num)
@@ -1186,11 +1295,23 @@ static CommandLineParam paramsForStartup[] =
 	// The last successful selection wins; otherwise use the executable directory.
 	{ "-setCwd", parseSetCwd },
 	{ "-useCwd", parseUseCwd },
+#if defined(RTS_DEBUG)
+	// TheSuperHackers @feature bobtista 10/08/2026 Automate network match startup for multi-instance testing.
+	{ "-autoNetworkMode", parseAutoNetworkMode },
+#endif
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
 static CommandLineParam paramsForEngineInit[] =
 {
+#if defined(RTS_DEBUG)
+	{ "-autoNetworkHost", parseAutoNetworkHost },
+	{ "-autoNetworkJoin", parseAutoNetworkJoin },
+	{ "-autoNetworkLocalAddress", parseAutoNetworkLocalAddress },
+	{ "-autoNetworkName", parseAutoNetworkName },
+	{ "-autoNetworkMap", parseAutoNetworkMap },
+	{ "-autoNetworkTimeout", parseAutoNetworkTimeout },
+#endif
 	{ "-nologo", parseNoLogo }, // TheSuperHackers @tweak Is now available in Release builds.
 	{ "-noshellmap", parseNoShellMap },
 	{ "-noShellAnim", parseNoWindowAnimation }, // TheSuperHackers @tweak Is now available in Release builds.
