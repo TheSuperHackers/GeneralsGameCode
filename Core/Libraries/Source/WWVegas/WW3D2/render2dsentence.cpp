@@ -40,6 +40,9 @@
 #include "WWDebug/wwprofile.h"
 #include "WWDebug/wwmemlog.h"
 #include "dx8wrapper.h"
+#if defined(_WIN32)
+#include "complextext.h"
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +51,13 @@
 #define no_TEST_PLACEMENT 1	 // Shows alignment markers for text.
 
 #define TEXTURE_OFFSET 2
+
+static inline uint16 Convert_Font_Pixel (uint8 intensity)
+{
+	const uint16 color = intensity == 0 ? 0 : 0x0FFF;
+	return color | ((intensity >> 4) << 12);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 //
 //	Render2DSentenceClass
@@ -1270,6 +1280,26 @@ FontCharsClass::Get_Char_Spacing (WCHAR ch)
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
+//	Is_Complex_Text
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+FontCharsClass::Is_Complex_Text (const WCHAR *text)
+{
+#if defined(_WIN32)
+	if (text == nullptr || text[0] == 0) {
+		return false;
+	}
+
+	return ::ScriptIsComplex(text, (int)wcslen(text), SIC_COMPLEX) == S_OK;
+#else
+	return false;
+#endif
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
 //	Blit_Char
 //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1301,6 +1331,122 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 			dest_ptr	+= dest_inc;
 		}
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//	Build_Complex_Text
+//
+////////////////////////////////////////////////////////////////////////////////////
+bool
+FontCharsClass::Build_Complex_Text (const WCHAR *text, int *width, int *height,
+	float maximum_width, int maximum_height, uint16 **raster)
+{
+	if (width == nullptr || height == nullptr) {
+		return false;
+	}
+
+	if (raster != nullptr) {
+		*raster = nullptr;
+	}
+	*width = 0;
+	*height = 0;
+
+#if defined(_WIN32)
+	const size_t text_length = text == nullptr ? 0 : wcslen(text);
+	if (text_length == 0 || text_length > (INT_MAX - 16) / 3 || MemDC == nullptr) {
+		return false;
+	}
+
+	ComplexTextLayout layout(MemDC);
+	HDC text_dc = layout.DC;
+	if (text_dc == nullptr) {
+		return false;
+	}
+
+	::SetBkColor(text_dc, RGB(0, 0, 0));
+	::SetTextColor(text_dc, RGB(255, 255, 255));
+	::SetBkMode(text_dc, TRANSPARENT);
+
+	// TheSuperHackers @bugfix Omar Aglan 02/09/2026 Preserve the primary font for
+	// Latin runs and use the configured Unicode font for the remaining runs.
+	HFONT alternate_font = AlternateUnicodeFont != nullptr && AlternateUnicodeFont != this ?
+		AlternateUnicodeFont->GDIFont : nullptr;
+	if (!Build_Complex_Text_Layout(text_dc, text, (int)text_length, GDIFont, alternate_font, &layout)) {
+		return false;
+	}
+
+	const int text_width = layout.Width;
+	const int text_height = layout.Height;
+	if ((maximum_width > 0 && text_width >= maximum_width) ||
+		(maximum_height > 0 && text_height >= maximum_height))
+	{
+		return false;
+	}
+
+	if (raster == nullptr) {
+		*width = text_width;
+		*height = text_height;
+		return true;
+	}
+
+	if (text_width > (INT_MAX - 3) / 3) {
+		return false;
+	}
+	const int bitmap_stride = ((text_width * 3) + 3) & ~3;
+	if (text_height > INT_MAX / bitmap_stride) {
+		return false;
+	}
+
+	BITMAPINFO bitmap_info = { 0 };
+	bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmap_info.bmiHeader.biWidth = text_width;
+	bitmap_info.bmiHeader.biHeight = -text_height;
+	bitmap_info.bmiHeader.biPlanes = 1;
+	bitmap_info.bmiHeader.biBitCount = 24;
+	bitmap_info.bmiHeader.biCompression = BI_RGB;
+
+	uint8 *bitmap_bits = nullptr;
+	HBITMAP bitmap = ::CreateDIBSection(MemDC, &bitmap_info, DIB_RGB_COLORS,
+		(void **)&bitmap_bits, nullptr, 0L);
+	if (bitmap == nullptr || bitmap_bits == nullptr) {
+		if (bitmap != nullptr) {
+			::DeleteObject(bitmap);
+		}
+		return false;
+	}
+
+	HBITMAP old_bitmap = (HBITMAP)::SelectObject(text_dc, bitmap);
+	if (old_bitmap == nullptr) {
+		::DeleteObject(bitmap);
+		return false;
+	}
+
+	::memset(bitmap_bits, 0, bitmap_stride * text_height);
+
+	const bool success = Draw_Complex_Text_Layout(layout);
+
+	if (success) {
+		uint16 *pixels = W3DNEWARRAY uint16[text_width * text_height];
+		for (int row = 0; row < text_height; ++row) {
+			const uint8 *source = bitmap_bits + row * bitmap_stride;
+			uint16 *destination = pixels + row * text_width;
+			for (int column = 0; column < text_width; ++column) {
+				destination[column] = Convert_Font_Pixel(source[column * 3]);
+			}
+		}
+		*raster = pixels;
+		*width = text_width;
+		*height = text_height;
+	}
+
+	::SelectObject(text_dc, old_bitmap);
+	::DeleteObject(bitmap);
+	return success;
+#else
+	return false;
+#endif
 }
 
 
@@ -1389,17 +1535,11 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
  			}
 #endif
 
-			uint16 pixel_color = 0;
-			if (pixel_value != 0) {
-				pixel_color = 0x0FFF;
-			}
-
 			//
 			//	Convert the pixel intensity from 8bit to 4bit and
 			// store it in our buffer
 			//
-			uint8 alpha_value	= ((pixel_value >> 4) & 0xF);
-			*curr_buffer_p++	= pixel_color | (alpha_value << 12);
+			*curr_buffer_p++ = Convert_Font_Pixel(pixel_value);
 		}
 	}
 
@@ -1563,7 +1703,6 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 	TEXTMETRIC text_metric = { 0 };
 	::GetTextMetrics (MemDC, &text_metric);
 	CharHeight = text_metric.tmHeight;
-	CharAscent = text_metric.tmAscent;
 	CharOverhang = text_metric.tmOverhang;
 	if (doingGenerals) {
 		CharOverhang = 0;

@@ -115,6 +115,9 @@
 #include "sortingrenderer.h"
 #include "WWLib/thread.h"
 #include "WWLib/cpudetect.h"
+#if defined(_WIN32)
+#include "Usp10Loader.h"
+#endif
 #include "dx8texman.h"
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
@@ -285,6 +288,10 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
 		return(WW3D_ERROR_INITIALIZATION_FAILED);
 	}
 
+#if defined(_WIN32)
+	Usp10Loader::load();
+#endif
+
 	WWDEBUG_SAY(("Allocate Debug Resources"));
 	Allocate_Debug_Resources();
 
@@ -384,6 +391,9 @@ WW3DErrorType WW3D::Shutdown()
 	** Release the animation-triggered sound data
 	*/
 	AnimatedSoundMgrClass::Shutdown ();
+#if defined(_WIN32)
+	Usp10Loader::unload();
+#endif
 
 	IsInitted = false;
 	return WW3D_ERROR_OK;
