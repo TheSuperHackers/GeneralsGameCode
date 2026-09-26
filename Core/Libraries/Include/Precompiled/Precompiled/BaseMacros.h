@@ -17,6 +17,17 @@
 
 #pragma once
 
+// This macro serves as a general way to determine the number of elements within an array.
+#ifndef ARRAY_SIZE
+#if (defined(_MSC_VER) && _MSC_VER < 1300) || !defined(__cplusplus)
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+#else
+// The templated version will reject pointers on compilation.
+template <typename Type, size_t Size> char (*ArraySizeHelper(Type(&)[Size]))[Size];
+#define ARRAY_SIZE(arr) sizeof(*ArraySizeHelper(arr))
+#endif
+#endif
+
 #ifndef PI
 #define PI     3.14159265359f
 #define TWO_PI 6.28318530718f
@@ -26,6 +37,10 @@
 //#ifndef abs
 //#define abs(x) (((x) < 0) ? -(x) : (x))
 //#endif
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 #ifndef MIN
 #define MIN(x,y) (((x)<(y)) ? (x) : (y))

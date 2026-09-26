@@ -20,6 +20,9 @@
 
 #include <Precompiled/precompiled.h> // Include the project dependencies first
 
-#include "BasePragmas.h" // Set pragmas before including other things
-#include "BaseMacros.h"
-#include "BaseTypes.h"
+#include "BasePragmas.h" // Set pragmas earliest
+#include "BaseMacros.h" // Set macros earlier
+#include "BaseTypes.h" // Set types early
+#ifdef __cplusplus
+	#include "BaseAlgorithm.h"
+#endif

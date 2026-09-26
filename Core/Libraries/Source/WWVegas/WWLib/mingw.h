@@ -25,9 +25,9 @@
 **	(which is done globally in cmake/mingw.cmake).
 **
 **	However, MinGW's <math.h> is missing one constant (M_1_SQRTPI) and uses a different name
-**	for another (M_SQRT1_2 instead of M_SQRT_2). We define those here to match MSVC and Watcom.
+**	for another (M_SQRT1_2 instead of M_SQRT_2). We define those here to match MSVC.
 **
-**	This brings MinGW in line with MSVC (visualc.h) and Watcom (watcom.h)
+**	This brings MinGW in line with MSVC (visualc.h)
 **	which provide all 14 mathematical constants.
 */
 
@@ -35,7 +35,7 @@
 
 /*
 **	M_1_SQRTPI is not defined by MinGW's math.h
-**	Define it to match visualc.h and watcom.h
+**	Define it to match visualc.h
 */
 #ifndef M_1_SQRTPI
 #define M_1_SQRTPI  0.564189583547756286948

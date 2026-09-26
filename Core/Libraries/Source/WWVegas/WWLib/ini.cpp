@@ -110,11 +110,6 @@
 #include "widestring.h"
 #include "nstrdup.h"
 
-#if defined(__WATCOMC__)
-// Disable the "temporary object used to initialize a non-constant reference" warning.
-#pragma warning 665 9
-#endif
-
 
 // Instance of the static variables.
 bool INIClass::KeepBlankEntries = false;

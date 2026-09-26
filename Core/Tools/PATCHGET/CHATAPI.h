@@ -26,13 +26,6 @@
 #include <ocidl.h>
 #include <olectl.h>
 
-/**********************************************************************
-**	This macro serves as a general way to determine the number of elements
-**	within an array.
-*/
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-#define size_of(typ,id) sizeof(((typ*)0)->id)
-
 namespace patchget
 {
 

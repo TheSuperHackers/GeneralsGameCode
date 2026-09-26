@@ -172,87 +172,14 @@ public: \
 #endif
 
 /*
-** Define the MIN and MAX macros.
-** NOTE: Joe used to #include <minmax.h> in the various compiler header files.  This
-** header defines 'min' and 'max' macros which conflict with the surrender code so
-** I'm replacing all occurrences of 'min' and 'max with 'MIN' and 'MAX'.  For code which
-** is out of our domain (e.g. Max sdk) I'm declaring template functions for 'min' and 'max'
-*/
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
-#ifndef MAX
-#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef MIN
-#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
-// Provide min/max template functions for compatibility with legacy code
-#ifndef _MIN_MAX_TEMPLATES_DEFINED_
-#define _MIN_MAX_TEMPLATES_DEFINED_
-
-#if defined(__MINGW32__) || defined(__MINGW64__)
-// For MinGW, use STL's min/max
-#include <algorithm>
-using std::min;
-using std::max;
-#else
-// For MSVC, provide custom templates
-template <class T> T min(T a,T b)
-{
-	if (a<b) {
-		return a;
-	} else {
-		return b;
-	}
-}
-
-template <class T> T max(T a,T b)
-{
-	if (a>b) {
-		return a;
-	} else {
-		return b;
-	}
-}
-#endif
-
-#endif // _MIN_MAX_TEMPLATES_DEFINED_
-
-
-/*
 **	This includes the minimum set of compiler defines and pragmas in order to bring the
 **	various compilers to a common behavior such that the C&C engine will compile without
 **	error or warning.
 */
-#if defined(__BORLANDC__)
-#include	"borlandc.h"
-#endif
-
 #if defined(_MSC_VER)
 #include	"visualc.h"
 #endif
 
-#if defined(__WATCOMC__)
-#include	"watcom.h"
-#endif
-
 #if defined(__MINGW32__) || defined(__MINGW64__)
 #include	"mingw.h"
-#endif
-
-
-#ifndef size_of
-#define size_of(typ,id) sizeof(((typ*)0)->id)
 #endif

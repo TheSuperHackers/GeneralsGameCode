@@ -30,16 +30,6 @@
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=nullptr; } }
 #endif
 
-// This macro serves as a general way to determine the number of elements within an array.
-#ifndef ARRAY_SIZE
-#if defined(_MSC_VER) && _MSC_VER < 1300
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
-#else
-template <typename Type, size_t Size> char (*ArraySizeHelper(Type(&)[Size]))[Size];
-#define ARRAY_SIZE(arr) sizeof(*ArraySizeHelper(arr))
-#endif
-#endif // ARRAY_SIZE
-
 enum
 {
 	// TheSuperHackers @info The original WWSync was 33 ms, ~30 fps, integer.
@@ -50,8 +40,6 @@ enum
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 typedef unsigned MemValueType;
-typedef long Interlocked32; // To use with Interlocked functions
 #else
 typedef unsigned long long MemValueType;
-typedef volatile long Interlocked32; // To use with Interlocked functions
 #endif

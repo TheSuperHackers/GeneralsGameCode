@@ -15,6 +15,7 @@ set(LIBRARIES_INCLUDE_SRC
     Lib/trig.h
     rts/debug.h
     rts/profile.h
+    Precompiled/Precompiled/BaseAlgorithm.h
     Precompiled/Precompiled/BaseMacros.h
     Precompiled/Precompiled/BasePragmas.h
     Precompiled/Precompiled/BasePrecomp.h
