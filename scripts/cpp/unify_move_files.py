@@ -726,6 +726,11 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/ThingTemplate.h", Game.CORE, "GameEngine/Include/Common/ThingTemplate.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Thing/ThingTemplate.cpp", Game.CORE, "GameEngine/Source/Common/Thing/ThingTemplate.cpp")
 
+    #unify_file(Game.ZEROHOUR, "Tools/WorldBuilder/include/BorderTool.h", Game.CORE, "Tools/WorldBuilder/include/BorderTool.h")
+    #unify_file(Game.ZEROHOUR, "Tools/WorldBuilder/include/WHeightMapEdit.h", Game.CORE, "Tools/WorldBuilder/include/WHeightMapEdit.h")
+    #unify_file(Game.ZEROHOUR, "Tools/WorldBuilder/src/BorderTool.cpp", Game.CORE, "Tools/WorldBuilder/src/BorderTool.cpp")
+    #unify_file(Game.ZEROHOUR, "Tools/WorldBuilder/src/WHeightMapEdit.cpp", Game.CORE, "Tools/WorldBuilder/src/WHeightMapEdit.cpp")
+
     return
 
 

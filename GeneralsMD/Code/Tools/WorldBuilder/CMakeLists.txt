@@ -4,7 +4,7 @@ set(WORLDBUILDER_SRC
     "src/BaseBuildProps.cpp"
     "src/BlendEdgeTool.cpp"
     "src/BlendMaterial.cpp"
-    "src/BorderTool.cpp"
+#    "src/BorderTool.cpp"
     "src/brushoptions.cpp"
     "src/BrushTool.cpp"
     "src/BuildList.cpp"
@@ -94,7 +94,7 @@ set(WORLDBUILDER_SRC
     "src/WBPopupSlider.cpp"
     "src/wbview.cpp"
     "src/wbview3d.cpp"
-    "src/WHeightMapEdit.cpp"
+#    "src/WHeightMapEdit.cpp"
     "src/WorldBuilder.cpp"
     "src/WorldBuilderDoc.cpp"
     "src/WorldBuilderView.cpp"
@@ -103,7 +103,7 @@ set(WORLDBUILDER_SRC
     "include/BaseBuildProps.h"
     "include/BlendEdgeTool.h"
     "include/BlendMaterial.h"
-    "include/BorderTool.h"
+#    "include/BorderTool.h"
     "include/brushoptions.h"
     "include/BrushTool.h"
     "include/BuildList.h"
@@ -191,7 +191,7 @@ set(WORLDBUILDER_SRC
     "include/WBHeightMap.h"
     "include/wbview.h"
     "include/wbview3d.h"
-    "include/WHeightMapEdit.h"
+#    "include/WHeightMapEdit.h"
     "include/WorldBuilder.h"
     "include/WorldBuilderDoc.h"
     "include/WorldBuilderView.h"
@@ -216,6 +216,7 @@ target_precompile_headers(z_worldbuilder PRIVATE
 )
 
 target_link_libraries(z_worldbuilder PRIVATE
+    corei_worldbuilder
     d3d8lib
     imm32
     vfw32
