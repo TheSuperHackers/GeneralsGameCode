@@ -649,6 +649,7 @@ protected:
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override;
 
 private:
+	void removeFromTunnelContain();
 
 	// yes, private. No, really. Private. Don't expose.
 	enum ObjectPrivateStatusBits
