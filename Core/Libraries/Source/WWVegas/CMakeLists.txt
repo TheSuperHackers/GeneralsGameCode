@@ -11,6 +11,7 @@ target_link_libraries(core_wwcommon INTERFACE
     dbghelploader
     milesloader
     stlport
+    unicodebidi
     usp10loader
 )
 
