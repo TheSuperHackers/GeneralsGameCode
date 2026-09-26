@@ -290,11 +290,34 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(targetPos, ("Particle Cannon target data must not be null"));
+		DEBUG_ASSERTCRASH(targetPos || targetObj, ("Particle Cannon target data must not be null"));
+
+		Coord3D pos;
+		if( targetPos )
+		{
+			pos.set( *targetPos );
+		}
+		else if( targetObj )
+		{
+			pos.set( *targetObj->getPosition() );
+		}
+#if !(RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC)
+		else
+		{
+			return false;
+		}
+#endif
+
+#if !RETAIL_COMPATIBLE_CRC
+		m_manualTargetMode = FALSE;
+#if !RTS_GENERALS
+		m_scriptedWaypointMode = FALSE;
+#endif
+#endif
 
 		//All computer controlled players have automatic control -- the "S" curve.
 		UnsignedInt now = TheGameLogic->getFrame();
-		m_initialTargetPosition.set( *targetPos );
+		m_initialTargetPosition.set( pos );
 		m_startAttackFrame = max( now, (UnsignedInt)1 );
 		m_laserStatus = LASERSTATUS_NONE;
 		setLogicalStatus( STATUS_READY_TO_FIRE );
