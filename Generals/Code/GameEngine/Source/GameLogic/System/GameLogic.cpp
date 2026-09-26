@@ -3215,6 +3215,40 @@ void GameLogic::update()
 
 	PROFILER_PLOT("LogicFrame", static_cast<int64_t>(now));
 
+#if defined(RTS_DEBUG)
+	// Save before scripts and object updates so loading does not repeat part of a frame.
+	if (TheGlobalData->m_saveAtFrame > 0 && (Int)m_frame >= TheGlobalData->m_saveAtFrame && isInInteractiveGame())
+	{
+		if (isInMultiplayerGame() || isInReplayGame())
+		{
+			DEBUG_LOG(("Command line save is not supported in multiplayer or replay games"));
+			TheWritableGlobalData->m_saveAtFrame = 0;
+			TheGameEngine->setExitCode(1);
+			TheGameEngine->setQuitting(TRUE);
+			return;
+		}
+
+		if (TheInGameUI != nullptr && TheInGameUI->getInputEnabled() == FALSE)
+		{
+			// Log once, on the frame that was actually requested
+			if ((Int)m_frame == TheGlobalData->m_saveAtFrame)
+			{
+				DEBUG_LOG(("Command line save deferred at frame %d: input is disabled", m_frame));
+			}
+		}
+		else
+		{
+			const AsciiString &saveName = TheGlobalData->m_saveToFile;
+			const SaveResult saveResult = TheGameState->saveGame(saveName, UnicodeString(L"Command line save"), SAVE_FILE_TYPE_NORMAL);
+			DEBUG_LOG(("Command line save to '%s' at frame %d returned %d", saveName.str(), m_frame, (Int)saveResult.saveCode));
+			TheWritableGlobalData->m_saveAtFrame = 0;
+			TheGameEngine->setExitCode(saveResult.saveCode == SC_OK ? 0 : 1);
+			TheGameEngine->setQuitting(TRUE);
+			return;
+		}
+	}
+#endif
+
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
