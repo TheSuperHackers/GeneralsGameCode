@@ -219,6 +219,7 @@ public:
 	virtual Int getUpgradedSupplyBoost() const override { return 0; }
 
 	virtual UpdateSleepTime update() override;
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 protected:
 
