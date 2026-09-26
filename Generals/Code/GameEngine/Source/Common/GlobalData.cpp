@@ -573,13 +573,19 @@ GlobalData::GlobalData()
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
+#endif
+
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	m_specialPowerUsesDelay = TRUE;
+#endif
+
+#if defined(RTS_DEBUG)
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
 	m_showCollisionExtents = FALSE;
   m_showAudioLocations = FALSE;
 	m_debugCamera = FALSE;
-	m_specialPowerUsesDelay = TRUE;
 	m_debugVisibility = FALSE;
 	m_debugVisibilityTileCount = 32;	// default to 32.
 	m_debugVisibilityTileDuration = LOGICFRAMES_PER_SECOND;
