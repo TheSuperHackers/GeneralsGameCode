@@ -1493,6 +1493,17 @@ void	WW3DAssetManager::Release_All_FontChars()
 	}
 }
 
+
+/***********************************************************************************************
+ * WW3DAssetManager::Free_All_FontChars_Glyph_Caches -- Discards all cached glyphs              *
+ *=============================================================================================*/
+void	WW3DAssetManager::Free_All_FontChars_Glyph_Caches()
+{
+	for ( int i = 0; i < FontCharsList.Count(); i++ ) {
+		FontCharsList[i]->Free_Glyph_Cache();
+	}
+}
+
 /***********************************************************************************************
  * WW3DAssetManager::Register_Prototype_Loader -- add a new loader to the system               *
  *                                                                                             *
