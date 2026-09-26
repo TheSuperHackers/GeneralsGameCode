@@ -172,7 +172,7 @@ static void restartMissionMenu()
 	// destroy the quit menu
 	destroyQuitMenu();
 
-	Int gameMode = TheGameLogic->getGameMode();
+	GameMode gameMode = TheGameLogic->getGameMode();
 	AsciiString mapName = TheGlobalData->m_mapName;
 
 	// TheSuperHackers @bugfix Caball009 07/02/2026 Reuse the previous seed value for the new skirmish match to prevent mismatches.
@@ -210,11 +210,11 @@ static void restartMissionMenu()
 		// send a message to the logic for a new game
 		TheWritableGlobalData->m_pendingFile = mapName;
 		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
-		msg->appendIntegerArgument(gameMode);
+		msg->appendIntegerArgument((Int)gameMode);
 		msg->appendIntegerArgument(diff);
 		msg->appendIntegerArgument(rankPointsStartedWith);
 		msg->appendIntegerArgument(fps);
-		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode,
+		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", (Int)gameMode,
 																																		TheScriptEngine->getGlobalDifficulty(),
 																																		rankPointsStartedWith)
 							);
