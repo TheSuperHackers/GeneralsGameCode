@@ -69,10 +69,12 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 	}
 
 
-	{	// Update all fields on this panel.
+	{
+		// Update all fields on this panel.
 		CWnd *pWnd;
 
-		{	// initial delay
+		{
+			// initial delay
 			Real initialDelay;
 
 			pWnd = GetDlgItem(IDC_PSEd_InitialDelayMin);
@@ -102,7 +104,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// burst delay
+		{
+			// burst delay
 			Real burstDelay;
 
 			pWnd = GetDlgItem(IDC_PSEd_BurstDelayMin);
@@ -132,7 +135,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// burst count
+		{
+			// burst count
 			Real burstCount;
 
 			pWnd = GetDlgItem(IDC_PSEd_BurstCountMin);
@@ -162,7 +166,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// color scale
+		{
+			// color scale
 			Real colorScale;
 
 			pWnd = GetDlgItem(IDC_PSEd_ColorScaleMin);
@@ -192,7 +197,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// particle lifetime
+		{
+			// particle lifetime
 			Real particleLifetime;
 
 			pWnd = GetDlgItem(IDC_PSEd_ParticleLifetimeMin);
@@ -222,7 +228,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// particle size
+		{
+			// particle size
 			Real particleSize;
 
 			pWnd = GetDlgItem(IDC_PSEd_SizeMin);
@@ -252,7 +259,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// start size rate
+		{
+			// start size rate
 			Real startSizeRate;
 
 			pWnd = GetDlgItem(IDC_PSEd_StartSizeRateMin);
@@ -282,7 +290,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// size rate
+		{
+			// size rate
 			Real sizeRate;
 
 			pWnd = GetDlgItem(IDC_PSEd_SizeRateMin);
@@ -312,7 +321,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// size damping
+		{
+			// size damping
 			Real sizeDamping;
 
 			pWnd = GetDlgItem(IDC_PSEd_SizeDampingMin);
@@ -342,7 +352,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// system lifetime
+		{
+			// system lifetime
 			Real systemLifetime;
 
 			pWnd = GetDlgItem(IDC_PSEd_SystemLifetime);
@@ -359,7 +370,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// slave position offset
+		{
+			// slave position offset
 			Real slaveOffset;
 
 			pWnd = GetDlgItem(IDC_PSEd_SlaveOffsetX);
@@ -402,7 +414,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// drift velocity
+		{
+			// drift velocity
 			Real driftVelocity;
 
 			pWnd = GetDlgItem(IDC_PSEd_DriftVelocityX);
@@ -445,7 +458,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// slave system
+		{
+			// slave system
 			CComboBox *pCombo;
 			pCombo = (CComboBox*) GetDlgItem(IDC_PSEd_SlaveSystem);
 			if (pCombo->GetCount() == 0) {
@@ -480,7 +494,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// slave system
+		{
+			// slave system
 			CComboBox *pCombo;
 			pCombo = (CComboBox*) GetDlgItem(IDC_PSEd_PerParticleSystem);
 			if (pCombo->GetCount() == 0) {
@@ -515,7 +530,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// ping pong wind start angle
+		{
+			// ping pong wind start angle
 			Real angle;
 
 			pWnd = GetDlgItem(IDC_PSEd_WindPingPongStartAngleMin);
@@ -545,7 +561,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// ping pong wind end angle
+		{
+			// ping pong wind end angle
 			Real angle;
 
 			pWnd = GetDlgItem(IDC_PSEd_WindPingPongEndAngleMin);
@@ -575,7 +592,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// wind angle change
+		{
+			// wind angle change
 			Real angle;
 
 			pWnd = GetDlgItem(IDC_PSEd_WindAngleChangeMin);
@@ -605,7 +623,8 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 			}
 		}
 
-		{	// wind motion
+		{
+			// wind motion
 			CComboBox *pCombo;
 			pCombo = (CComboBox*) GetDlgItem(IDC_PSEd_WindMotion);
 

@@ -526,7 +526,8 @@ void PolygonClass::Split(const PlaneClass & plane,PolygonClass & front,PolygonCl
 				sidelastdefinite = BPT_FRONT;
 				front.Verts[(front.NumVerts)++] = Verts[i];
 
-			} else { // side == BPT_BACK
+			} else {
+				// side == BPT_BACK
 
 				// Previous vert was in front, this vert is behind, compute
 				// the intersection and emit the point in both the front
@@ -558,7 +559,8 @@ void PolygonClass::Split(const PlaneClass & plane,PolygonClass & front,PolygonCl
 				sidelastdefinite = BPT_BACK;
 				back.Verts[(back.NumVerts)++] = Verts[i];
 
-			} else {  // side == BPT_BACK
+			} else {
+				// side == BPT_BACK
 
 				// segment is completely in the back halfspace, just emit the
 				// vertex into the back poly
@@ -584,7 +586,8 @@ void PolygonClass::Split(const PlaneClass & plane,PolygonClass & front,PolygonCl
 					back.Verts[(back.NumVerts)++] = Verts[i];
 				}
 
-			} else { // side == BPT_BACK
+			} else {
+				// side == BPT_BACK
 
 				if (sidelastdefinite == BPT_FRONT) {
 					back.Verts[(back.NumVerts)++] =	Verts[iprev];

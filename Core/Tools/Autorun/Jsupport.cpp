@@ -129,7 +129,8 @@ int nGetWord( char *string, int fdbcs )
 			c1 = ( c1<<8 ) | c;
 		}
 
-		if(( bDbcs0 || bDbcs1 ) && !( bDbcs0 && bDbcs1 )) {		// XOR
+		if(( bDbcs0 || bDbcs1 ) && !( bDbcs0 && bDbcs1 )) {
+			// XOR
 			break;
 		}
 

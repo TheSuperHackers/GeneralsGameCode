@@ -176,7 +176,8 @@ void FenceTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	Coord3D loc = cpt;
 	pView->snapPoint(&loc);
 	Real angle =  0 ;
-	if (m == TRACK_L) {	// Mouse is down, so fence.
+	if (m == TRACK_L) {
+		// Mouse is down, so fence.
 		p3View->setObjTracking(nullptr, loc, angle, false);
 		updateMapObjectList(m_downPt3d,loc, pView, pDoc, false);
 		return;

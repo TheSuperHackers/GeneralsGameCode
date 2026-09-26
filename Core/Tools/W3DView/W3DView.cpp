@@ -331,7 +331,8 @@ void Debug_Refs()
 		RefCountNodeClass * search = first;
 		while (search->Is_Valid()) {
 
-			if (search == node) {	// if this is not the first one
+			if (search == node) {
+				// if this is not the first one
 				if (count != 0) {
 					display = false;
 					break;

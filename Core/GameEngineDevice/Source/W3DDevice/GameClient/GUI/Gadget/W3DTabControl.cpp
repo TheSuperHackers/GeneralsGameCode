@@ -85,7 +85,8 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 
 	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
 			!BitIsSet( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
-	{//draw border if desired
+	{
+		//draw border if desired
 		tabControl->winDrawBorder();
 	}
 
@@ -112,17 +113,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 1 )//Does exist
 	{
 		if( tabData->subPaneDisabled[0] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabZero( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabZero( tabControl );
 		}
 		else if( tabData->activeTab == 0 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabZero( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabZero( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabZero( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabZero( tabControl );
 		}
@@ -146,17 +150,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 2 )//Does exist
 	{
 		if( tabData->subPaneDisabled[1] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabOne( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabOne( tabControl );
 		}
 		else if( tabData->activeTab == 1 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabOne( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabOne( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabOne( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabOne( tabControl );
 		}
@@ -180,17 +187,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 3 )//Does exist
 	{
 		if( tabData->subPaneDisabled[2] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabTwo( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabTwo( tabControl );
 		}
 		else if( tabData->activeTab == 2 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabTwo( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabTwo( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabTwo( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabTwo( tabControl );
 		}
@@ -214,17 +224,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 4 )//Does exist
 	{
 		if( tabData->subPaneDisabled[3] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabThree( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabThree( tabControl );
 		}
 		else if( tabData->activeTab == 3 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabThree( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabThree( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabThree( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabThree( tabControl );
 		}
@@ -248,17 +261,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 5 )//Does exist
 	{
 		if( tabData->subPaneDisabled[4] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabFour( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabFour( tabControl );
 		}
 		else if( tabData->activeTab == 4 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabFour( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabFour( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabFour( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabFour( tabControl );
 		}
@@ -282,17 +298,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 6 )//Does exist
 	{
 		if( tabData->subPaneDisabled[5] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabFive( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabFive( tabControl );
 		}
 		else if( tabData->activeTab == 5 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabFive( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabFive( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabFive( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabFive( tabControl );
 		}
@@ -316,17 +335,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 7 )//Doesn't exist
 	{
 		if( tabData->subPaneDisabled[6] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabSix( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabSix( tabControl );
 		}
 		else if( tabData->activeTab == 6 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabSix( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabSix( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabSix( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabSix( tabControl );
 		}
@@ -350,17 +372,20 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 	if( tabData->tabCount >= 8 )//Doesn't exist
 	{
 		if( tabData->subPaneDisabled[7] )
-		{//Disabled
+		{
+			//Disabled
 			color			= GadgetTabControlGetDisabledColorTabSeven( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabSeven( tabControl );
 		}
 		else if( tabData->activeTab == 7 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabSeven( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabSeven( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabSeven( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabSeven( tabControl );
 		}
@@ -396,7 +421,8 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 
 	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
 			!BitIsSet( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
-	{//draw border if desired
+	{
+		//draw border if desired
 		tabControl->winDrawBorder();
 	}
 
@@ -423,15 +449,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 1 )//Does exist
 	{
 		if( tabData->subPaneDisabled[0] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabZero( tabControl );
 		}
 		else if( tabData->activeTab == 0 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabZero( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabZero( tabControl );
 		}
 
@@ -452,15 +481,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 2 )//Does exist
 	{
 		if( tabData->subPaneDisabled[1] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabOne( tabControl );
 		}
 		else if( tabData->activeTab == 1 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabOne( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabOne( tabControl );
 		}
 
@@ -481,15 +513,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 3 )//Does exist
 	{
 		if( tabData->subPaneDisabled[2] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabTwo( tabControl );
 		}
 		else if( tabData->activeTab == 2 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabTwo( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabTwo( tabControl );
 		}
 
@@ -510,15 +545,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 4 )//Does exist
 	{
 		if( tabData->subPaneDisabled[3] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabThree( tabControl );
 		}
 		else if( tabData->activeTab == 3 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabThree( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabThree( tabControl );
 		}
 
@@ -539,15 +577,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 5 )//Does exist
 	{
 		if( tabData->subPaneDisabled[4] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabFour( tabControl );
 		}
 		else if( tabData->activeTab == 4 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabFour( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabFour( tabControl );
 		}
 
@@ -568,15 +609,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 6 )//Does exist
 	{
 		if( tabData->subPaneDisabled[5] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabFive( tabControl );
 		}
 		else if( tabData->activeTab == 5 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabFive( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabFive( tabControl );
 		}
 
@@ -597,15 +641,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 7 )//Doesn't exist
 	{
 		if( tabData->subPaneDisabled[6] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabSix( tabControl );
 		}
 		else if( tabData->activeTab == 6 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabSix( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabSix( tabControl );
 		}
 
@@ -626,15 +673,18 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 	if( tabData->tabCount >= 8 )//Doesn't exist
 	{
 		if( tabData->subPaneDisabled[7] )
-		{//Disabled
+		{
+			//Disabled
 			image			= GadgetTabControlGetDisabledImageTabSeven( tabControl );
 		}
 		else if( tabData->activeTab == 7 )
-		{//Hilited/Active
+		{
+			//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabSeven( tabControl );
 		}
 		else
-		{//Just enabled
+		{
+			//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabSeven( tabControl );
 		}
 

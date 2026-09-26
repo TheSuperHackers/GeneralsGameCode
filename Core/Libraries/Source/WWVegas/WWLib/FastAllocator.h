@@ -131,11 +131,13 @@ class StackAllocator{
 public:
    StackAllocator() : mnAllocCount(-1), mpTHeap(nullptr){}
   ~StackAllocator(){
-      if(mnAllocCount != -1){ //If there is anything to do...
+      if(mnAllocCount != -1){
+         //If there is anything to do...
          if(mpTHeap)
             delete mpTHeap;
          else{
-            if(bConstruct){ //Since this constant, the comparison gets optimized away.
+            if(bConstruct){
+               //Since this constant, the comparison gets optimized away.
                T* pTArray = (T*)mTArray;
                const T* const pTArrayEnd = pTArray + mnAllocCount;
                while(pTArray < pTArrayEnd){
@@ -150,9 +152,11 @@ public:
    T* New(unsigned nCount){
       if(mnAllocCount == -1){
          mnAllocCount = nCount;
-         if(nCount < nStackCount){ //If the request is small enough to come from the stack...
+         if(nCount < nStackCount){
+            //If the request is small enough to come from the stack...
             //We call the constructors of all the objects here.
-            if(bConstruct){ //Since this constant, the comparison gets optimized away.
+            if(bConstruct){
+               //Since this constant, the comparison gets optimized away.
                T* pTArray = (T*)mTArray;
                const T* const pTArrayEnd = pTArray + nCount;
                while(pTArray < pTArrayEnd){
@@ -174,8 +178,10 @@ public:
    }
 
    void Delete(T* pT){
-      if(pT == (T*)mTArray){ //If the allocation came from our stack...
-         if(bConstruct){ //Since this constant, the comparison gets optimized away.
+      if(pT == (T*)mTArray){
+         //If the allocation came from our stack...
+         if(bConstruct){
+            //Since this constant, the comparison gets optimized away.
             T* pTArray = (T*)mTArray;
             const T* const pTArrayEnd = pTArray + mnAllocCount;
             while(pTArray < pTArrayEnd){
@@ -185,7 +191,8 @@ public:
          }
          mnAllocCount = -1;
       }
-      else if(pT == mpTHeap){ //If the allocation came from our heap...
+      else if(pT == mpTHeap){
+         //If the allocation came from our heap...
          delete[] mpTHeap;    //The compiler will call the destructors here.
          mpTHeap      = nullptr; //We clear these out so that we can possibly
          mnAllocCount = -1;   //  use the allocator again.

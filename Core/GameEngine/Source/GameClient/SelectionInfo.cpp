@@ -364,7 +364,8 @@ Bool addDrawableToList( Drawable *draw, void *userData )
   {
     const Object *obj = draw->getObject();
     if ( obj && obj->getContainedBy() )//hmm, interesting... he is not selectable but he is contained
-    {// What we are after here is to propagate the selection the selection ti the container
+    {
+      // What we are after here is to propagate the selection the selection ti the container
       // if the container is non-enclosing... see also SelectionXlat, in the left_click case
 
       ContainModuleInterface *contain = obj->getContainedBy()->getContain();

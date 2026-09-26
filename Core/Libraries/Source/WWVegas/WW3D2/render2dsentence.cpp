@@ -1062,7 +1062,8 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 				Cursor.Y += char_height;
 			} else if (ch == 0) {
 				break;
-			} else if (wordBiggerThenLine){ // we've entered this loop because we're greater then the wordwrap so we need to force a wordwrap
+			} else if (wordBiggerThenLine){
+				// we've entered this loop because we're greater then the wordwrap so we need to force a wordwrap
 				Cursor.X = 0;
 				Cursor.Y += char_height;
 			}

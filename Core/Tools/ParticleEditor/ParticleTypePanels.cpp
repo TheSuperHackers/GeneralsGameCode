@@ -81,7 +81,8 @@ void ParticlePanelParticle::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update Particle parameters
+	{
+		// update Particle parameters
 		CComboBox *pWnd;
 
 		// first Xmin
@@ -134,7 +135,8 @@ void ParticlePanelDrawable::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update Drawable parameters
+	{
+		// update Drawable parameters
 		CComboBox *pWnd = (CComboBox*) GetDlgItem(IDC_PSEd_ParticleTypeDrawable);
 		if (pWnd) {
 			if (pWnd->GetCount() == 0) {

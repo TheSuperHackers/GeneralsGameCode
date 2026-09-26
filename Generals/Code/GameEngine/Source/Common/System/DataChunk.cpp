@@ -637,7 +637,8 @@ Bool DataChunkInput::parse( void *userData )
 
 	while( atEndOfFile() == false )
 	{
-		if (m_chunkStack) { // If we are parsing chunks in a chunk, check current length.
+		if (m_chunkStack) {
+			// If we are parsing chunks in a chunk, check current length.
 			if (m_chunkStack->dataLeft < CHUNK_HEADER_BYTES) {
 				DEBUG_ASSERTCRASH( m_chunkStack->dataLeft==0, ("Unexpected extra data in chunk."));
 				break;
@@ -645,7 +646,8 @@ Bool DataChunkInput::parse( void *userData )
 		}
 		// open the chunk
 		label = openDataChunk( &ver );
-		if (atEndOfFile()) { // FILE * returns eof after you read past end of file, so check.
+		if (atEndOfFile()) {
+			// FILE * returns eof after you read past end of file, so check.
 			break;
 		}
 

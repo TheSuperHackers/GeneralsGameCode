@@ -1005,7 +1005,8 @@ void DeleteObjectUndoable::Do()
 		pInvertedList = tmp;
 	}
 	WbView3d *p3View = m_pDoc->GetActive3DView();
-	if (p3View) { // Shouldn't ever be null, but just in case... jba.
+	if (p3View) {
+		// Shouldn't ever be null, but just in case... jba.
 		p3View->resetRenderObjects();
 		p3View->invalObjectInView(nullptr);
 	}

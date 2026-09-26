@@ -230,14 +230,16 @@ W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES f
 	}
 
 	if ((vbSlot=m_W3DVertexBufferSlots[fvfType][sizeIndex]) != nullptr)
-	{	//found a previously allocated slot matching required size
+	{
+		//found a previously allocated slot matching required size
 		m_W3DVertexBufferSlots[fvfType][sizeIndex]=vbSlot->m_nextSameSize;
 		if (vbSlot->m_nextSameSize)
 			vbSlot->m_nextSameSize->m_prevSameSize=nullptr;
 		return vbSlot;
 	}
 	else
-	{	//need to allocate a new slot
+	{
+		//need to allocate a new slot
 		return allocateSlotStorage(fvfType, size);
 	}
 
@@ -276,7 +278,8 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 	while (pVB)
 	{
 		if ((pVB->m_size - pVB->m_startFreeIndex) >= size)
-		{	//found enough free space in this vertex buffer
+		{
+			//found enough free space in this vertex buffer
 			vbSlot=&m_W3DVertexBufferEmptySlots[m_numEmptySlotsAllocated];
 			vbSlot->m_size=size;
 			vbSlot->m_start=pVB->m_startFreeIndex;
@@ -350,14 +353,16 @@ W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 	}
 
 	if ((ibSlot=m_W3DIndexBufferSlots[sizeIndex]) != nullptr)
-	{	//found a previously allocated slot matching required size
+	{
+		//found a previously allocated slot matching required size
 		m_W3DIndexBufferSlots[sizeIndex]=ibSlot->m_nextSameSize;
 		if (ibSlot->m_nextSameSize)
 			ibSlot->m_nextSameSize->m_prevSameSize=nullptr;
 		return ibSlot;
 	}
 	else
-	{	//need to allocate a new slot
+	{
+		//need to allocate a new slot
 		return allocateSlotStorage(size);
 	}
 
@@ -396,7 +401,8 @@ W3DBufferManager::W3DIndexBufferSlot * W3DBufferManager::allocateSlotStorage(Int
 	while (pIB)
 	{
 		if ((pIB->m_size - pIB->m_startFreeIndex) >= size)
-		{	//found enough free space in this index buffer
+		{
+			//found enough free space in this index buffer
 			ibSlot=&m_W3DIndexBufferEmptySlots[m_numEmptyIndexSlotsAllocated];
 			ibSlot->m_size=size;
 			ibSlot->m_start=pIB->m_startFreeIndex;

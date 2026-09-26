@@ -1234,7 +1234,8 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
 	if (val < 50)
-	{	//darker gamma
+	{
+		//darker gamma
 		if (val <= 0)
 			TheWritableGlobalData->m_displayGamma = 0.6f;
 		else

@@ -56,7 +56,8 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update ortho parameters
+	{
+		// update ortho parameters
 		Real ortho;
 		CWnd *pWnd;
 
@@ -190,7 +191,8 @@ void VelocityPanelSphere::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update Sphere Velocity Parameters
+	{
+		// update Sphere Velocity Parameters
 		Real radial;
 		CWnd *pWnd;
 
@@ -261,7 +263,8 @@ void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update Sphere Velocity Parameters
+	{
+		// update Sphere Velocity Parameters
 		Real radial;
 		CWnd *pWnd;
 
@@ -331,7 +334,8 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update cylinder parameters
+	{
+		// update cylinder parameters
 		Real cylinder;
 		CWnd *pWnd;
 
@@ -433,7 +437,8 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update outward parameters
+	{
+		// update outward parameters
 		Real outward;
 		CWnd *pWnd;
 

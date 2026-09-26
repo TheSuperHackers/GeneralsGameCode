@@ -130,7 +130,8 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 	terrainHeightMap = NEW WorldHeightMap(pStrm, true);
 
 	if (terrainHeightMap)
-	{	//copy loaded data
+	{
+		//copy loaded data
 		// Get the whole map, because we don't know which boundary is active yet
 		m_mapDX=terrainHeightMap->getXExtent();
 		m_mapDY=terrainHeightMap->getYExtent();

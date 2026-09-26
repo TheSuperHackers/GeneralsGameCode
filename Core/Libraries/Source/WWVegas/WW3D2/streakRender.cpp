@@ -527,7 +527,8 @@ void StreakRendererClass::RenderStreak
 
 
 		for (segmentIndex = 1; segmentIndex < point_cnt; segmentIndex++)
-		{	// #segments = #points - 1 (+ 2 dummy segments)
+		{
+			// #segments = #points - 1 (+ 2 dummy segments)
 
 			radius = widths[segmentIndex]; /// NEW ///// // TODO: Does not work correctly when subdivision are not 0
 

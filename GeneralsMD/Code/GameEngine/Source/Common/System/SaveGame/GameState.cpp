@@ -213,7 +213,8 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
 	UnicodeString displayDateBuffer;
 	if (GetVersionEx(&osvi))
-	{	//check if we're running Win9x variant since they may need different characters
+	{
+		//check if we're running Win9x variant since they may need different characters
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char dateBuffer[ DATE_BUFFER_SIZE ];
@@ -244,7 +245,8 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
 	if (GetVersionEx(&osvi))
-	{	//check if we're running Win9x variant since they may need different characters
+	{
+		//check if we're running Win9x variant since they may need different characters
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			char timeBuffer[ DATE_BUFFER_SIZE ];

@@ -718,7 +718,8 @@ static void saveOptions()
 		Real gammaval=1.0f;
 		//generate a value between 0.6 and 2.0.
 		if (val < 50)
-		{	//darker gamma
+		{
+			//darker gamma
 			if (val <= 0)
 				gammaval = 0.6f;
 			else
@@ -1199,7 +1200,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	Int selectedYRes=DEFAULT_DISPLAY_HEIGHT;
 	Int selectedResIndex=-1;
 	if (!selectedResolution.isEmpty())
-	{	//try to parse 2 integers out of string
+	{
+		//try to parse 2 integers out of string
 		if (sscanf(selectedResolution.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
 		{
 			selectedXRes=DEFAULT_DISPLAY_WIDTH;

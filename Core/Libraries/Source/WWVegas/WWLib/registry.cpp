@@ -86,7 +86,8 @@ RegistryClass::RegistryClass( const char * sub_key, bool create ) :
 RegistryClass::~RegistryClass()
 {
 	if ( IsValid ) {
-		if (::RegCloseKey( (HKEY)Key ) != ERROR_SUCCESS) {		// Close the reg key
+		if (::RegCloseKey( (HKEY)Key ) != ERROR_SUCCESS) {
+			// Close the reg key
 		}
 		IsValid = false;
 	}

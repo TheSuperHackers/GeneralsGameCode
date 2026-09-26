@@ -970,9 +970,11 @@ static void populateRandomStartPosition( GameInfo *game )
 		//choose a starting position
 		Int team = slot->getTeamNumber();
 		if( !hasStartSpotBeenPicked )
-		{	// We're the first real spot.  Pick randomly.
+		{
+			// We're the first real spot.  Pick randomly.
 			while (posIdx == -1)
-			{	// This while loop shouldn't be neccessary, since we're first.  Why not, though?
+			{
+				// This while loop shouldn't be neccessary, since we're first.  Why not, though?
 				posIdx = GameLogicRandomValue(0, numPlayers-1);
 				if (game->isStartPositionTaken(posIdx))
 					posIdx = -1;
@@ -984,9 +986,11 @@ static void populateRandomStartPosition( GameInfo *game )
 			if( team > -1 )
 				teamPosIdx[team] = posIdx;  //remember where this team is
 		} else
-		{	//pick teams far apart, team members close together
+		{
+			//pick teams far apart, team members close together
 			if( team < 0  ||  teamPosIdx[ team ] == -1 )  //if team None or team not yet placed
-			{	//pick position furthest from all other teams
+			{
+				//pick position furthest from all other teams
 				Real farthestDistance = 0.0f;
 				Int farthestIndex = -1;
 				for (posIdx = 0; posIdx < numPlayers; ++posIdx)
@@ -995,7 +999,8 @@ static void populateRandomStartPosition( GameInfo *game )
 						continue;  //skip occupied positions
 
 					if (farthestIndex < 0)
-					{	//take this one as best if none else
+					{
+						//take this one as best if none else
 						farthestIndex = posIdx;
 						for (Int n=0; n<numPlayers; ++n)
 						{
@@ -1004,7 +1009,8 @@ static void populateRandomStartPosition( GameInfo *game )
 						}
 					}
 					else
-					{	//find empty position furthest from all taken positions
+					{
+						//find empty position furthest from all taken positions
 						Real dist = 0.0f;
 						for (Int n=0; n<numPlayers; ++n)
 						{
@@ -1026,14 +1032,16 @@ static void populateRandomStartPosition( GameInfo *game )
 					teamPosIdx[team] = farthestIndex;  //remember where this team is
 			}
 			else  //team already has a starting position
-			{	//pick position closest to team
+			{
+				//pick position closest to team
 				Real closestDist = FLT_MAX;
 				Int  closestIdx = 0;
 				for( Int n=0;  n < numPlayers;  ++n )
 				{
 					Real dist = startSpotDistance[ teamPosIdx[team] ][n];
 					if( !taken[n]  &&  dist < closestDist )
-					{	//found a better match
+					{
+						//found a better match
 						closestDist = dist;
 						closestIdx = n;
 					}
