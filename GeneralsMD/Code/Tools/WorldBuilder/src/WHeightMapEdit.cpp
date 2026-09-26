@@ -600,13 +600,26 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 	chunkWriter.closeDataChunk();
 
 	/***************BLEND TILE DATA ***************/
-	chunkWriter.openDataChunk("BlendTileData", K_BLEND_TILE_VERSION_8);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	const DataChunkVersionType blendTileVersion = K_BLEND_TILE_VERSION_7;
+#else
+	const DataChunkVersionType blendTileVersion = K_BLEND_TILE_VERSION_8;
+#endif
+	chunkWriter.openDataChunk("BlendTileData", blendTileVersion);
 		chunkWriter.writeInt(m_dataSize);
 		chunkWriter.writeArrayOfBytes((char*)m_tileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_blendTileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_extraBlendTileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_cliffInfoNdxes, m_dataSize*sizeof(Short));
-		chunkWriter.writeArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
+		if (blendTileVersion == K_BLEND_TILE_VERSION_7) {
+			// Version 7 uses the legacy row width, even when the in-memory rows are wider.
+			Int byteWidth = (m_width+1)/8;
+			for (Int j=0; j<m_height; j++) {
+				chunkWriter.writeArrayOfBytes((char*)m_cellCliffState + j*m_flipStateWidth, byteWidth);
+			}
+		} else {
+			chunkWriter.writeArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
+		}
 		chunkWriter.writeInt(m_numBitmapTiles);
 		chunkWriter.writeInt(m_numBlendedTiles);
 		chunkWriter.writeInt(m_numCliffInfo);
@@ -1159,23 +1172,26 @@ void WorldHeightMapEdit::blendSpecificTiles(Int xIndex, Int yIndex, Int srcXInde
 	Short newNdx = findOrCreateBlendTile(&blendInfo);
 	if (newNdx >= 0) {
 		Int ndx = (yIndex*m_width)+xIndex;
-		m_tileNdxes[ndx] = curTileNdx;
 		if (TheGlobalData->m_use3WayTerrainBlends && m_blendTileNdxes[ndx] != 0)
 		{	//this tile already has a blend applied to it.  So we put the new blend into the
 			//secondary layer.
-			m_extraBlendTileNdxes[ndx]=newNdx;
 			//force the primary layer to flip if the extra blend layer needs flip.
 			//we only do this on vertical/horizontal base blends because they work in either flip cases.
 			if (flipped && !baseIsDiagonal)
 			{	//Find a new tile so as not to affect other cells using the base one.
 				TBlendTileInfo tempBlendTileInfo=m_blendedTiles[m_blendTileNdxes[ndx]];
 				tempBlendTileInfo.inverted |= FLIPPED_MASK;
-				Short newNdx = findOrCreateBlendTile(&tempBlendTileInfo);
-				m_blendTileNdxes[ndx] = newNdx;	//remap this tile to use a new one.
+				Short newBaseNdx = findOrCreateBlendTile(&tempBlendTileInfo);
+				if (newBaseNdx < 0) {
+					return;
+				}
+				m_blendTileNdxes[ndx] = newBaseNdx;	//remap this tile to use a new one.
 			}
+			m_extraBlendTileNdxes[ndx]=newNdx;
 		}
 		else
 			m_blendTileNdxes[ndx] = newNdx;
+		m_tileNdxes[ndx] = curTileNdx;
 	}
 }
 
@@ -3417,5 +3433,7 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 	}
 
 	(*outNdx) = -1;
-	(*outHandle) = -1;
+	if (outHandle) {
+		(*outHandle) = -1;
+	}
 }
