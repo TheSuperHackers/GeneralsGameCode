@@ -311,6 +311,17 @@ void W3DDebrisDraw::xfer( Xfer *xfer )
 
 	// state
 	xfer->xferInt( &m_state );
+	if (xfer->getXferMode() == XFER_LOAD)
+	{
+		if (m_state < INITIAL)
+		{
+			m_state = INITIAL;
+		}
+		else if (m_state > FINAL)
+		{
+			m_state = FINAL;
+		}
+	}
 
 	// frames
 	xfer->xferInt( &m_frames );
