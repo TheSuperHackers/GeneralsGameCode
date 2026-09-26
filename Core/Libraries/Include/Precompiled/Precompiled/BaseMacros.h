@@ -38,6 +38,10 @@ template <typename Type, size_t Size> char (*ArraySizeHelper(Type(&)[Size]))[Siz
 //#define abs(x) (((x) < 0) ? -(x) : (x))
 //#endif
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #ifndef MIN
 #define MIN(x,y) (((x)<(y)) ? (x) : (y))
 #endif
