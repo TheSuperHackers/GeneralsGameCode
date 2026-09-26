@@ -622,7 +622,23 @@ protected:
 		Real m_totalYaw;						///< Current total yaw for this frame
 		Real m_totalZ;
 
-		PhysicsXformInfo() : m_totalPitch(0), m_totalRoll(0), m_totalYaw(0), m_totalZ(0) { }
+		Real m_prevTotalPitch;
+		Real m_prevTotalRoll;
+		Real m_prevTotalYaw;
+		Real m_prevTotalZ;
+
+		UnsignedInt m_syncTime;			///< WW3D sync time of the last calculation, zero before the first one.
+
+		PhysicsXformInfo() : m_totalPitch(0), m_totalRoll(0), m_totalYaw(0), m_totalZ(0),
+			m_prevTotalPitch(0), m_prevTotalRoll(0), m_prevTotalYaw(0), m_prevTotalZ(0), m_syncTime(0) { }
+
+		void setPrevTotals()
+		{
+			m_prevTotalPitch = m_totalPitch;
+			m_prevTotalRoll = m_totalRoll;
+			m_prevTotalYaw = m_totalYaw;
+			m_prevTotalZ = m_totalZ;
+		}
 	};
 
 	Bool calcPhysicsXform(PhysicsXformInfo& info);
