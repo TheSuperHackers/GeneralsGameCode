@@ -742,7 +742,7 @@ public:
 	void initObserverControls();
 	void populateObserverInfoWindow ();
 	void populateObserverList();
-	Bool isObserverControlBarOn() { return m_isObserverCommandBar;}
+	Bool isObserverControlBarOn() const { return m_isObserverCommandBar;}
 
 	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
 	Player *getObserverLookAtPlayer () const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
@@ -814,7 +814,7 @@ protected:
 
 	/// switch the interface context to the new mode and populate as needed
 	void switchToContext( ControlBarContext context, Drawable *draw );
-
+	void switchToDefaultContext(Drawable* draw);
 	/// set the command data into the button
 	void setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
 											 const CommandButton *commandButton );
@@ -1006,6 +1006,9 @@ private:
 
 	/// find existing command set
 	CommandSet *findNonConstCommandSet( const AsciiString& name );
+	Bool isApparentControllingPlayerNeutral(const Object* obj) const;
+	Bool isControllingPlayerNeutral(const Object* obj) const;
+	Bool isControlEnabled() const { return !isObserverControlBarOn(); }
 
 	const Image *m_genStarOn;
 	const Image *m_genStarOff;

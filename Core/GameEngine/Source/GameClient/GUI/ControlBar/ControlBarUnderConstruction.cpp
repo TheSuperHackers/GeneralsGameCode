@@ -87,6 +87,14 @@ void ControlBar::populateUnderConstruction( Object *objectUnderConstruction )
 	setControlCommand( win, commandButton );
 	win->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
+	if (isControlEnabled()) {
+		win->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
+		win->winEnable(TRUE);
+	}
+	else {
+		win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+		win->winEnable(FALSE);
+	}
 	// set the text description of what is building
 	updateConstructionTextDisplay( objectUnderConstruction );
 
