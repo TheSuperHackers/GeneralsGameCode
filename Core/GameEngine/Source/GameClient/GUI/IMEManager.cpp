@@ -946,7 +946,8 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 					case IMN_SETCOMPOSITIONFONT:     //This message is sent when the font of the input context is updated.
 					case IMN_SETCOMPOSITIONWINDOW:   //This message is sent when the style or position of the composition window is updated.
 					case IMN_PRIVATE:                //This message is for your own use, it seems.
-*/				default:
+*/
+				default:
 						m_result =  1;
 						return TRUE;
 				}
