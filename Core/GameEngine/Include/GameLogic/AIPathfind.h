@@ -387,7 +387,16 @@ private:
 	Int						m_numWallPieces;
 	Real					m_wallHeight;
 
+	enum { MOVE_ALLIES_MAX_DEPTH = 2 };
 	Int						m_moveAlliesDepth;
+#if !RETAIL_COMPATIBLE_PATHFINDING
+	struct MoveAlliesCell
+	{
+		ICoord2D cell;
+		PathfindLayerEnum layer;
+	};
+	std::vector<MoveAlliesCell> m_moveAlliesCells[MOVE_ALLIES_MAX_DEPTH];	///< Separate snapshots for recursive calls.
+#endif
 
 
 	// Pathfind queue

@@ -10202,7 +10202,7 @@ if (g_UT_startTiming) return false;
 		}
 	}
 	LatchRestore<Int> recursiveDepth(m_moveAlliesDepth, m_moveAlliesDepth+1);
-	if (m_moveAlliesDepth > 2) {
+	if (m_moveAlliesDepth > MOVE_ALLIES_MAX_DEPTH) {
 		return false;
 	}
 
@@ -10211,18 +10211,40 @@ if (g_UT_startTiming) return false;
 	getRadiusAndCenter(obj, radius, centerInCell);
 	Int numCellsAbove = radius;
 	if (centerInCell) numCellsAbove++;
-	PathNode *node;
 	ObjectID ignoreId = INVALID_ID;
 	if (obj->getAIUpdateInterface()) {
 		ignoreId = obj->getAIUpdateInterface()->getIgnoredObstacleID();
 	}
-	for( node = path->getLastNode(); node && node != path->getFirstNode(); node = node->getPrevious() )	{
+
+#if RETAIL_COMPATIBLE_PATHFINDING
+	// TheSuperHackers @info Retail replays depend on the original walk, including reads of freed path nodes.
+	for (PathNode *node = path->getLastNode(); node && node != path->getFirstNode(); node = node->getPrevious())
+	{
 		ICoord2D curCell;
 		worldToCell(node->getPosition(), &curCell);
+		const PathfindLayerEnum layer = node->getLayer();
+#else
+	// TheSuperHackers @bugfix bobtista 20/09/2026 Snapshot the path before move-away orders can destroy it.
+	const Bool blockedByAlly = path->getBlockedByAlly();
+	std::vector<MoveAlliesCell> &cells = m_moveAlliesCells[m_moveAlliesDepth - 1];
+	cells.clear();
+	for (const PathNode *node = path->getLastNode(); node && node != path->getFirstNode(); node = node->getPrevious())
+	{
+		MoveAlliesCell entry;
+		worldToCell(node->getPosition(), &entry.cell);
+		entry.layer = node->getLayer();
+		cells.push_back(entry);
+	}
+
+	for (std::vector<MoveAlliesCell>::const_iterator it = cells.begin(); it != cells.end(); ++it)
+	{
+		const ICoord2D &curCell = it->cell;
+		const PathfindLayerEnum layer = it->layer;
+#endif
 		Int i, j;
 		for (i=curCell.x-radius; i<curCell.x+numCellsAbove; i++) {
 			for (j=curCell.y-radius; j<curCell.y+numCellsAbove; j++) {
-				PathfindCell	*cell = getCell(node->getLayer(), i, j);
+				PathfindCell	*cell = getCell(layer, i, j);
 				if (!cell) {
 					continue; // Cell is not on the pathfinding grid
 				}
@@ -10254,7 +10276,12 @@ if (g_UT_startTiming) return false;
 				}
 				if (obj->isKindOf(KINDOF_INFANTRY) && !otherObj->isKindOf(KINDOF_INFANTRY)) {
 					// If this is a general clear operation, don't let infantry push vehicles.
-					if (!path->getBlockedByAlly()) {
+#if RETAIL_COMPATIBLE_PATHFINDING
+					if (!path->getBlockedByAlly())
+#else
+					if (!blockedByAlly)
+#endif
+					{
 						continue;
 					}
 				}
