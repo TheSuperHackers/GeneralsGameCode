@@ -144,7 +144,8 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
 {
 	static const FieldParse myFieldParse[] =
 	{
-		{ "Armor", ArmorTemplate::parseArmorCoefficients, nullptr, 0 }
+		{ "Armor", ArmorTemplate::parseArmorCoefficients, nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
 	const char *c = ini->getNextToken();
