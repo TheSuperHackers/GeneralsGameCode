@@ -176,16 +176,8 @@ public: \
 **	various compilers to a common behavior such that the C&C engine will compile without
 **	error or warning.
 */
-#if defined(__BORLANDC__)
-#include	"borlandc.h"
-#endif
-
 #if defined(_MSC_VER)
 #include	"visualc.h"
-#endif
-
-#if defined(__WATCOMC__)
-#include	"watcom.h"
 #endif
 
 #if defined(__MINGW32__) || defined(__MINGW64__)

@@ -38,7 +38,7 @@ extern "C" {
 
 #ifndef _ARGB_T
     #define _ARGB_T
-    #if defined(_MSC_VER) || defined(__WATCOMC__) || defined(PSX) || defined(DC)
+    #if defined(_MSC_VER) || defined(PSX) || defined(DC)
 
         typedef struct
         {
@@ -187,7 +187,7 @@ typedef struct
 #endif
 
 #if !defined(GCALL)
-#if defined(_MSC_VER) || defined(__WATCOMC__)
+#if defined(_MSC_VER)
 #define GCALL __stdcall
 #else
 #define GCALL
@@ -195,9 +195,6 @@ typedef struct
 #endif
 
 /* disable unreferenced parameters warnings */
-#if defined(__WATCOMC__)
-#pragma warning 202 999999
-#endif
 #if defined(_MSC_VER)
 #pragma warning(disable : 4100)
 #endif
@@ -250,50 +247,6 @@ void          gputm(void *memptr, unsigned long val, int numbytes);
 void          gputi(void *memptr, unsigned long val, int numbytes);
 unsigned long ggetm(void *memptr, int numbytes);
 unsigned long ggeti(void *memptr, int numbytes);
-
-/****************************************************************************/
-/* Watcom Memory Functions                                                  */
-/****************************************************************************/
-
-#if defined(__WATCOMC__) && !defined(__NOINLINE__)
-#pragma aux ggeti = \
-    "mov 	eax,[eax+ecx-4]" \
-    "neg    ecx" \
-    "lea    ecx,32[ecx*8]" \
-    "shr    eax,cl" \
-    parm   [eax] [ecx] \
-    modify [eax ecx] \
-    value  [eax];
-
-#pragma aux ggetm = \
-    ".586" \
-    "mov 	eax,[eax]" \
-    "bswap  eax" \
-    "neg    ecx" \
-    "lea    ecx,32[ecx*8]" \
-    "shr    eax,cl" \
-    parm   [eax] [ecx] \
-    modify [eax ecx] \
-    value  [eax];
-
-unsigned long bswap(unsigned long val);
-#pragma aux bswap = "bswap eax" parm [eax] modify [eax] value [eax];
-
-#define gputm(putmdest,putmdata,putmbytes) \
-      (((int)(putmbytes)==4) ? ((void)(*((unsigned long *) (putmdest)) = bswap((unsigned long)(putmdata)))) \
-    : (((int)(putmbytes)==1) ? ((void)(*((unsigned char *) (putmdest)) = (unsigned char)(putmdata))) \
-    : (((int)(putmbytes)==2) ? ((void)(*((unsigned short *) (putmdest)) = (unsigned short)(bswap((unsigned long)(putmdata))>>16))) \
-    : (((int)(putmbytes)==3) ? ((void)(*((unsigned char *) (putmdest)+2) = (unsigned char)(putmdata)),(void)(*((unsigned short *) (putmdest)) = (unsigned short)(bswap((unsigned long)(putmdata))>>8))) \
-    : (void)0))))
-
-#define gputi(putidest,putidata,putibytes) \
-      (((int)(putibytes)==4) ? ((void)(*((unsigned long *) (putidest)) = ((unsigned long)(putidata)))) \
-    : (((int)(putibytes)==1) ? ((void)(*((unsigned char *) (putidest)) = (unsigned char)(putidata))) \
-    : (((int)(putibytes)==2) ? ((void)(*((unsigned short *) (putidest)) = (unsigned short)(putidata))) \
-    : (((int)(putibytes)==3) ? ((void)(*((unsigned short *) (putidest)) = (unsigned short)(putidata)),(void)(*((unsigned char *) (putidest)+2) = (unsigned char)((unsigned long)(putidata)>>16))) \
-    : (void)0))))
-
-#endif /* __WATCOMC__ */
 
 #ifdef __cplusplus
 }

@@ -44,12 +44,6 @@
 #include "XSTRAW.h"
 
 
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
-// Disable the "temporary object used to initialize a non-constant reference" warning.
-#pragma warning 665 9
-#endif
-
-
 /***********************************************************************************************
  * Read_Line -- Read a text line from the file.                                                *
  *                                                                                             *

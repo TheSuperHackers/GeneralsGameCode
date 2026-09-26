@@ -38,14 +38,6 @@
 
 #if defined(_MSC_VER)
 
-/**********************************************************************
-**	The "bool" integral type was defined by the C++ comittee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-//#include	"bool.h"
-
-
 /*
 ** Make the inline depth 255
 */
