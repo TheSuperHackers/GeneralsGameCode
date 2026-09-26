@@ -308,6 +308,12 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		}
 #endif
 
+#if !RETAIL_COMPATIBLE_CRC
+		m_manualTargetMode = FALSE;
+#if !RTS_GENERALS
+		m_scriptedWaypointMode = FALSE;
+#endif
+#endif
 
 		//All computer controlled players have automatic control -- the "S" curve.
 		UnsignedInt now = TheGameLogic->getFrame();
