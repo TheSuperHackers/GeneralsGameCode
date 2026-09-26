@@ -600,13 +600,26 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 	chunkWriter.closeDataChunk();
 
 	/***************BLEND TILE DATA ***************/
-	chunkWriter.openDataChunk("BlendTileData", K_BLEND_TILE_VERSION_8);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	const DataChunkVersionType blendTileVersion = K_BLEND_TILE_VERSION_7;
+#else
+	const DataChunkVersionType blendTileVersion = K_BLEND_TILE_VERSION_8;
+#endif
+	chunkWriter.openDataChunk("BlendTileData", blendTileVersion);
 		chunkWriter.writeInt(m_dataSize);
 		chunkWriter.writeArrayOfBytes((char*)m_tileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_blendTileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_extraBlendTileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_cliffInfoNdxes, m_dataSize*sizeof(Short));
-		chunkWriter.writeArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
+		if (blendTileVersion <= K_BLEND_TILE_VERSION_7) {
+			// Version 7 uses the legacy row width, even when the in-memory rows are wider.
+			Int byteWidth = (m_width+1)/8;
+			for (Int j=0; j<m_height; j++) {
+				chunkWriter.writeArrayOfBytes((char*)m_cellCliffState + j*m_flipStateWidth, byteWidth);
+			}
+		} else {
+			chunkWriter.writeArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
+		}
 		chunkWriter.writeInt(m_numBitmapTiles);
 		chunkWriter.writeInt(m_numBlendedTiles);
 		chunkWriter.writeInt(m_numCliffInfo);
