@@ -832,7 +832,14 @@ AsciiString GameState::getSaveGamePathForRead(const AsciiString& filenameOrPath)
 //-------------------------------------------------------------------------------------------------
 Bool GameState::isInSaveDirectory(const AsciiString& path) const
 {
-	return FileSystem::isPathInDirectory(path, getSaveDirectory());
+	// TheSuperHackers @info Map paths are lowercased, while the save directory can contain uppercase letters.
+	AsciiString lowercasePath = path;
+	AsciiString lowercaseSaveDirectory = getSaveDirectory();
+
+	lowercasePath.toLower();
+	lowercaseSaveDirectory.toLower();
+
+	return FileSystem::isPathInDirectory(lowercasePath, lowercaseSaveDirectory);
 }
 
 // ------------------------------------------------------------------------------------------------
