@@ -421,7 +421,7 @@ void WeaponTemplate::postProcessLoad()
 		m_projectileTmpl = TheThingFactory->findTemplate(m_projectileName);
 		DEBUG_ASSERTCRASH(m_projectileTmpl, ("projectile %s not found!",m_projectileName.str()));
 
-#if RTS_DEBUG
+#ifdef DEBUG_LOGGING
 		if (m_projectileTmpl && m_primaryDamage > 0.0)
 		{
 			const Real projectileRadius = m_projectileTmpl->getTemplateGeometryInfo().getMajorRadius();
