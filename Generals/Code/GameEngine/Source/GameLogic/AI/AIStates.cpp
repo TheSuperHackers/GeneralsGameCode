@@ -4826,6 +4826,21 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	if( containedBy && weapon )
 	{
 		ContainModuleInterface *contain = containedBy->getContain();
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Caball009 22/09/2026 Return early to prevent a crash.
+		// This is needed when a Tunnel Network with units is transferred to another player and then sold or destroyed.
+		// The units are not properly transferred and are left in an invalid state.
+		// Returning a failure prevents units from firing while hidden and indestructible.
+		if (!contain)
+		{
+			// destroy this object, because it serves no purpose in its invalid state
+			TheGameLogic->destroyObject(source);
+
+			return STATE_FAILURE;
+		}
+#endif
+
 		if (victim)
 		{
 			inFiringRange = contain->attemptBestFirePointPosition( source, weapon, victim );
