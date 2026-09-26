@@ -33,7 +33,7 @@ target_include_directories(core_libraries INTERFACE
 target_sources(core_libraries PRIVATE ${LIBRARIES_INCLUDE_SRC})
 
 target_link_libraries(core_libraries INTERFACE
-    core_precompiled
+    deps_precompiled
 )
 
 # Makes the game base macros and types available in every C++ translation unit
