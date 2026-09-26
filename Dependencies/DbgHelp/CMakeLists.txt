@@ -7,19 +7,16 @@ set(DBGHELP_SRC
     minidump_subset.h
 )
 
-## dbghelploader
+add_library(deps_dbghelp STATIC)
 
-add_library(dbghelploader STATIC)
-set_target_properties(dbghelploader PROPERTIES OUTPUT_NAME dbghelploader)
+target_sources(deps_dbghelp PRIVATE ${DBGHELP_SRC})
 
-target_sources(dbghelploader PRIVATE ${DBGHELP_SRC})
-
-target_include_directories(dbghelploader PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR} # include "DbgHelpLoader.h", "DbgHelpGuard.h" and "imagehlp_adapter.h"
+target_include_directories(deps_dbghelp PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(dbghelploader PRIVATE
-    core_precompiled # Gives force included headers. Link early.
-    core_utility
+target_link_libraries(deps_dbghelp PRIVATE
+    deps_precompiled # Gives force included headers. Link early.
+    deps_utility
     stlport
 )

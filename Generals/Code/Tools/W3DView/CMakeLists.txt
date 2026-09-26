@@ -6,11 +6,11 @@ target_link_libraries(g_w3dview PRIVATE
     d3d8
     d3d8lib
     d3dx8
+    deps_miles
     g_wwaudio
     g_wwvegas
     gi_always
     imm32
-    milesloader
     Version
     vfw32
     winmm
