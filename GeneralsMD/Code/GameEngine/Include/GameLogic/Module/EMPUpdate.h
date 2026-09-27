@@ -34,7 +34,6 @@
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Weapon.h"
 
-
 //-------------------------------------------------------------------------------------------------
 class EMPUpdateModuleData : public UpdateModuleData
 {
@@ -42,20 +41,20 @@ public:
 	UnsignedInt m_lifeFrames;
 	UnsignedInt m_startFadeFrame;
 	UnsignedInt m_disabledDuration;
-	Real				m_startScale; ///< how big I start drawing
-	Real				m_targetScaleMin; ///< how big I change to by the time I'm done
-	Real				m_targetScaleMax; ///< how big I change to by the time I'm done
-	//Real				m_spinRateMax; ///< how fast may I spin?
-	RGBColor		m_startColor;
-	RGBColor		m_endColor;
-	const ParticleSystemTemplate *m_disableFXParticleSystem;
-	Real				m_sparksPerCubicFoot; //<just like it sounds
-	Real				m_effectRadius;
-	Int         m_rejectMask;
+	Real m_startScale;    ///< how big I start drawing
+	Real m_targetScaleMin;    ///< how big I change to by the time I'm done
+	Real m_targetScaleMax;    ///< how big I change to by the time I'm done
+	// Real				m_spinRateMax; ///< how fast may I spin?
+	RGBColor m_startColor;
+	RGBColor m_endColor;
+	const ParticleSystemTemplate* m_disableFXParticleSystem;
+	Real m_sparksPerCubicFoot;    //<just like it sounds
+	Real m_effectRadius;
+	Int m_rejectMask;
 
-  KindOfMaskType m_victimKindOf;
-  KindOfMaskType m_victimKindOfNot;
-	Bool				m_doesNotAffectMyOwnBuildings;
+	KindOfMaskType m_victimKindOf;
+	KindOfMaskType m_victimKindOfNot;
+	Bool m_doesNotAffectMyOwnBuildings;
 
 	EMPUpdateModuleData()
 	{
@@ -65,8 +64,8 @@ public:
 		m_targetScaleMax = 1.0f;
 		m_targetScaleMin = 1.0f;
 		m_startColor.setFromInt(0xffffffff);
-		m_endColor.setFromInt  (0x00000000);
-		//m_spinRateMax = 0.0f;
+		m_endColor.setFromInt(0x00000000);
+		// m_spinRateMax = 0.0f;
 		m_disabledDuration = 0;
 		m_disableFXParticleSystem = nullptr;
 		m_sparksPerCubicFoot = 0.001f;
@@ -74,36 +73,35 @@ public:
 		m_rejectMask = 0;
 		m_doesNotAffectMyOwnBuildings = FALSE;
 
-    m_victimKindOf.clear();
-    m_victimKindOfNot.clear();
+		m_victimKindOf.clear();
+		m_victimKindOfNot.clear();
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "Lifetime",	INI::parseDurationUnsignedInt,		nullptr, offsetof( EMPUpdateModuleData, m_lifeFrames ) },
-			{ "StartFadeTime",	INI::parseDurationUnsignedInt,		nullptr, offsetof( EMPUpdateModuleData, m_startFadeFrame ) },
-			{ "StartScale",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_startScale ) },
-			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( EMPUpdateModuleData, m_disabledDuration ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "Lifetime", INI::parseDurationUnsignedInt, nullptr, offsetof(EMPUpdateModuleData, m_lifeFrames) },
+			{ "StartFadeTime", INI::parseDurationUnsignedInt, nullptr, offsetof(EMPUpdateModuleData, m_startFadeFrame) },
+			{ "StartScale", INI::parseReal, nullptr, offsetof(EMPUpdateModuleData, m_startScale) },
+			{ "DisabledDuration", INI::parseDurationUnsignedInt, nullptr, offsetof(EMPUpdateModuleData, m_disabledDuration) },
 			//{ "SpinRateMax",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
-			{ "TargetScaleMax",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_targetScaleMax ) },
-			{ "TargetScaleMin",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_targetScaleMin ) },
-			{ "StartColor",	INI::parseRGBColor,			nullptr, offsetof( EMPUpdateModuleData, m_startColor ) },
-			{ "EndColor",	INI::parseRGBColor,				nullptr, offsetof( EMPUpdateModuleData, m_endColor ) },
-			{ "DisableFXParticleSystem",		INI::parseParticleSystemTemplate, nullptr, offsetof( EMPUpdateModuleData, m_disableFXParticleSystem ) },
-			{ "SparksPerCubicFoot",		INI::parseReal, nullptr, offsetof( EMPUpdateModuleData, m_sparksPerCubicFoot ) },
-			{ "EffectRadius",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_effectRadius ) },
-			{ "DoesNotAffect", INI::parseBitString32,	TheWeaponAffectsMaskNames, offsetof(EMPUpdateModuleData, m_rejectMask) },
-			{ "DoesNotAffectMyOwnBuildings", INI::parseBool, nullptr, offsetof( EMPUpdateModuleData, m_doesNotAffectMyOwnBuildings ) },
+			{ "TargetScaleMax", INI::parseReal, nullptr, offsetof(EMPUpdateModuleData, m_targetScaleMax) },
+			{ "TargetScaleMin", INI::parseReal, nullptr, offsetof(EMPUpdateModuleData, m_targetScaleMin) },
+			{ "StartColor", INI::parseRGBColor, nullptr, offsetof(EMPUpdateModuleData, m_startColor) },
+			{ "EndColor", INI::parseRGBColor, nullptr, offsetof(EMPUpdateModuleData, m_endColor) },
+			{ "DisableFXParticleSystem", INI::parseParticleSystemTemplate, nullptr, offsetof(EMPUpdateModuleData, m_disableFXParticleSystem) },
+			{ "SparksPerCubicFoot", INI::parseReal, nullptr, offsetof(EMPUpdateModuleData, m_sparksPerCubicFoot) },
+			{ "EffectRadius", INI::parseReal, nullptr, offsetof(EMPUpdateModuleData, m_effectRadius) },
+			{ "DoesNotAffect", INI::parseBitString32, TheWeaponAffectsMaskNames, offsetof(EMPUpdateModuleData, m_rejectMask) },
+			{ "DoesNotAffectMyOwnBuildings", INI::parseBool, nullptr, offsetof(EMPUpdateModuleData, m_doesNotAffectMyOwnBuildings) },
 
-      { "VictimRequiredKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( EMPUpdateModuleData, m_victimKindOf ) },
-		  { "VictimForbiddenKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( EMPUpdateModuleData, m_victimKindOfNot ) },
+			{ "VictimRequiredKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof(EMPUpdateModuleData, m_victimKindOf) },
+			{ "VictimForbiddenKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof(EMPUpdateModuleData, m_victimKindOfNot) },
 
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -111,13 +109,11 @@ public:
 //-------------------------------------------------------------------------------------------------
 class EMPUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( EMPUpdate, "EMPUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( EMPUpdate, EMPUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EMPUpdate, "EMPUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(EMPUpdate, EMPUpdateModuleData)
 
 public:
-
-	EMPUpdate( Thing *thing, const ModuleData* moduleData );
+	EMPUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	UnsignedInt getDieFrame() { return m_dieFrame; }
@@ -126,30 +122,16 @@ public:
 	void doDisableAttack();
 
 protected:
+	UnsignedInt m_dieFrame;    ///< frame we die on
+	UnsignedInt m_tintEnvFadeFrames;    ///< param for tint envelope
+	UnsignedInt m_tintEnvPlayFrame;    ///< which frame to trigger the tint envelope
 
-	UnsignedInt m_dieFrame;			///< frame we die on
-	UnsignedInt m_tintEnvFadeFrames;///< param for tint envelope
-	UnsignedInt m_tintEnvPlayFrame;///< which frame to trigger the tint envelope
+	Real m_targetScale;    /// How big will I get
+	// Real				m_spinRate;			///HowMuch To Spin each frame;
+	Real m_currentScale;    ///< how big I am drawing this frame
 
-	Real				m_targetScale;  ///How big will I get
-	//Real				m_spinRate;			///HowMuch To Spin each frame;
-	Real				m_currentScale; ///< how big I am drawing this frame
-
-	//static Bool s_lastInstanceSpunPositive;/// so that only every other instance spins positive direction
-
-
+	// static Bool s_lastInstanceSpunPositive;/// so that only every other instance spins positive direction
 };
-
-
-
-
-
-
-
-
-
-
-
 
 //-------------------------------------------------------------------------------------------------
 class LeafletDropBehaviorModuleData : public UpdateModuleData
@@ -157,64 +139,55 @@ class LeafletDropBehaviorModuleData : public UpdateModuleData
 public:
 	UnsignedInt m_delayFrames;
 	UnsignedInt m_disabledDuration;
-  Real m_radius;
-	const ParticleSystemTemplate *m_leafletFXParticleSystem;
-
+	Real m_radius;
+	const ParticleSystemTemplate* m_leafletFXParticleSystem;
 
 	LeafletDropBehaviorModuleData()
 	{
 		m_delayFrames = 1;
 		m_disabledDuration = 0;
-    m_radius = 60.0f;
-    m_leafletFXParticleSystem = nullptr;
+		m_radius = 60.0f;
+		m_leafletFXParticleSystem = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "Delay",	        INI::parseDurationUnsignedInt,	nullptr, offsetof( LeafletDropBehaviorModuleData, m_delayFrames ) },
-			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( LeafletDropBehaviorModuleData, m_disabledDuration ) },
-      { "AffectRadius",     INI::parseReal,                 nullptr, offsetof( LeafletDropBehaviorModuleData, m_radius ) },
-      { "LeafletFXParticleSystem", INI::parseParticleSystemTemplate,  nullptr, offsetof( LeafletDropBehaviorModuleData, m_leafletFXParticleSystem ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "Delay", INI::parseDurationUnsignedInt, nullptr, offsetof(LeafletDropBehaviorModuleData, m_delayFrames) },
+			{ "DisabledDuration", INI::parseDurationUnsignedInt, nullptr, offsetof(LeafletDropBehaviorModuleData, m_disabledDuration) },
+			{ "AffectRadius", INI::parseReal, nullptr, offsetof(LeafletDropBehaviorModuleData, m_radius) },
+			{ "LeafletFXParticleSystem", INI::parseParticleSystemTemplate, nullptr, offsetof(LeafletDropBehaviorModuleData, m_leafletFXParticleSystem) },
 
-
-
-      { 0, 0, 0, 0 }
+			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class LeafletDropBehavior : public UpdateModule,
-													public DieModuleInterface
+                            public DieModuleInterface
 
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LeafletDropBehavior, "LeafletDropBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( LeafletDropBehavior, LeafletDropBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(LeafletDropBehavior, "LeafletDropBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(LeafletDropBehavior, LeafletDropBehaviorModuleData)
 
 public:
-
-	LeafletDropBehavior( Thing *thing, const ModuleData* moduleData );
+	LeafletDropBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update() override;
 	void doDisableAttack();
 
-  // BehaviorModule
+	// BehaviorModule
 	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
-
-
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 protected:
-
-	UnsignedInt m_startFrame;			///< frame we die on
-  Bool  m_fxFired; ///< have we done our fx yet
+	UnsignedInt m_startFrame;    ///< frame we die on
+	Bool m_fxFired;    ///< have we done our fx yet
 };

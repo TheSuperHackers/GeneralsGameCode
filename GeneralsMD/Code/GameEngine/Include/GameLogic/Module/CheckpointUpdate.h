@@ -33,7 +33,6 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
 
-
 //-------------------------------------------------------------------------------------------------
 /** Checkpoint update */
 //-------------------------------------------------------------------------------------------------
@@ -51,13 +50,12 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		nullptr, offsetof( CheckpointUpdateModuleData, m_enemyScanDelayTime ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "ScanDelayTime", INI::parseDurationUnsignedInt, nullptr, offsetof(CheckpointUpdateModuleData, m_enemyScanDelayTime) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -65,13 +63,11 @@ public:
 // ------------------------------------------------------------------------------------------------
 class CheckpointUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CheckpointUpdate, "CheckpointUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CheckpointUpdate, CheckpointUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CheckpointUpdate, "CheckpointUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CheckpointUpdate, CheckpointUpdateModuleData)
 
 public:
-
-	CheckpointUpdate( Thing *thing, const ModuleData* moduleData );
+	CheckpointUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update() override;
@@ -83,5 +79,4 @@ protected:
 
 	UnsignedInt m_enemyScanDelay;
 	void checkForAlliesAndEnemies();
-
 };

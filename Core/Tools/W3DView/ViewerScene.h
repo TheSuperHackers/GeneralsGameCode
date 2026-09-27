@@ -40,7 +40,6 @@
 #include "WWMath/aabox.h"
 #include "WWMath/sphere.h"
 
-
 class RenderObjIterator;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -49,60 +48,58 @@ class RenderObjIterator;
 //
 class ViewerSceneClass : public SimpleSceneClass
 {
-	public:
+public:
+	///////////////////////////////////////////////////////////////////
+	//
+	//	Public constructors/destructors
+	//
+	ViewerSceneClass()
+	  : m_AllowLODSwitching(false)
+	{}
 
-		///////////////////////////////////////////////////////////////////
-		//
-		//	Public constructors/destructors
-		//
-		ViewerSceneClass ()
-			: m_AllowLODSwitching (false)		{ }
+	virtual ~ViewerSceneClass() override {}
 
-		virtual ~ViewerSceneClass () override		{ }
+	///////////////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
 
+	//
+	//	Overrides from SimpleSceneClass
+	//
+	virtual void Visibility_Check(CameraClass* pcamera) override;
+	virtual void Add_Render_Object(RenderObjClass* obj) override;
+	virtual void Customized_Render(RenderInfoClass& rinfo) override;
 
-		///////////////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
+	//
+	//	Inline accessors
+	//
+	virtual void Allow_LOD_Switching(bool onoff) { m_AllowLODSwitching = onoff; }
+	virtual bool Are_LODs_Switching() { return m_AllowLODSwitching; }
 
-		//
-		//	Overrides from SimpleSceneClass
-		//
-		virtual void				Visibility_Check (CameraClass *pcamera) override;
-		virtual void				Add_Render_Object(RenderObjClass * obj) override;
-		virtual void				Customized_Render(RenderInfoClass & rinfo) override;
+	//
+	// General methods
+	//
+	virtual void Add_To_Lineup(RenderObjClass* obj);
+	virtual void Clear_Lineup();
+	virtual AABoxClass Get_Line_Up_Bounding_Box();
+	bool Can_Line_Up(RenderObjClass* obj);
+	bool Can_Line_Up(int class_id);
+	void Recalculate_Fog_Planes();
+	virtual SphereClass Get_Bounding_Sphere();
 
-		//
-		//	Inline accessors
-		//
-		virtual void				Allow_LOD_Switching (bool onoff)			{ m_AllowLODSwitching = onoff; }
-		virtual bool				Are_LODs_Switching ()					{ return m_AllowLODSwitching; }
+	//
+	// Line-Up list iteration
+	//
+	virtual SceneIterator* Create_Line_Up_Iterator();
+	virtual void Destroy_Line_Up_Iterator(SceneIterator* iterator);
 
-		//
-		// General methods
-		//
-		virtual void				Add_To_Lineup (RenderObjClass *obj);
-		virtual void				Clear_Lineup ();
-		virtual AABoxClass		Get_Line_Up_Bounding_Box ();
-		bool							Can_Line_Up (RenderObjClass *obj);
-		bool							Can_Line_Up (int class_id);
-		void							Recalculate_Fog_Planes ();
-		virtual SphereClass		Get_Bounding_Sphere ();
-
-		//
-		// Line-Up list iteration
-		//
-		virtual SceneIterator *	Create_Line_Up_Iterator ();
-		virtual void				Destroy_Line_Up_Iterator (SceneIterator *iterator);
-
-	private:
-
-		///////////////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		bool							m_AllowLODSwitching;
-		RefRenderObjListClass	LineUpList;
-		RefRenderObjListClass	LightList;
+private:
+	///////////////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	bool m_AllowLODSwitching;
+	RefRenderObjListClass LineUpList;
+	RefRenderObjListClass LightList;
 };

@@ -38,64 +38,69 @@ class CriticalSection
 {
 	CRITICAL_SECTION m_windowsCriticalSection;
 
-	public:
-		CriticalSection()
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			InitializeCriticalSection( &m_windowsCriticalSection );
-		}
+public:
+	CriticalSection()
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		InitializeCriticalSection(&m_windowsCriticalSection);
+	}
 
-		virtual ~CriticalSection()
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			DeleteCriticalSection( &m_windowsCriticalSection );
-		}
+	virtual ~CriticalSection()
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		DeleteCriticalSection(&m_windowsCriticalSection);
+	}
 
-	public:	// Use these when entering/exiting a critical section.
-		void enter()
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			EnterCriticalSection( &m_windowsCriticalSection );
-		}
+public:    // Use these when entering/exiting a critical section.
+	void enter()
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		EnterCriticalSection(&m_windowsCriticalSection);
+	}
 
-		void exit()
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			LeaveCriticalSection( &m_windowsCriticalSection );
-		}
+	void exit()
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		LeaveCriticalSection(&m_windowsCriticalSection);
+	}
 };
 
 class ScopedCriticalSection
 {
-	private:
-		CriticalSection *m_cs;
+private:
+	CriticalSection* m_cs;
 
-	public:
-		ScopedCriticalSection( CriticalSection *cs ) : m_cs(cs)
+public:
+	ScopedCriticalSection(CriticalSection* cs)
+	  : m_cs(cs)
+	{
+		if (m_cs)
 		{
-			if (m_cs)
-				m_cs->enter();
+			m_cs->enter();
 		}
+	}
 
-		virtual ~ScopedCriticalSection()
+	virtual ~ScopedCriticalSection()
+	{
+		if (m_cs)
 		{
-			if (m_cs)
-				m_cs->exit();
+			m_cs->exit();
 		}
+	}
 };
 
 // These should be null on creation then non-null in WinMain or equivalent.
 // This allows us to be silently non-threadsafe for WB and other single-threaded apps.
-extern CriticalSection *TheAsciiStringCriticalSection;
-extern CriticalSection *TheUnicodeStringCriticalSection;
-extern CriticalSection *TheDmaCriticalSection;
-extern CriticalSection *TheMemoryPoolCriticalSection;
-extern CriticalSection *TheDebugLogCriticalSection;
+extern CriticalSection* TheAsciiStringCriticalSection;
+extern CriticalSection* TheUnicodeStringCriticalSection;
+extern CriticalSection* TheDmaCriticalSection;
+extern CriticalSection* TheMemoryPoolCriticalSection;
+extern CriticalSection* TheDebugLogCriticalSection;

@@ -19,8 +19,8 @@
 #pragma once
 
 //-----------------------------------------------------------------------------
-inline Real rad2deg(Real rad) { return rad * (180/PI); }
-inline Real deg2rad(Real rad) { return rad * (PI/180); }
+inline Real rad2deg(Real rad) { return rad * (180 / PI); }
+inline Real deg2rad(Real rad) { return rad * (PI / 180); }
 
 //-------------------------------------------------------------------------------------------------
 
@@ -48,8 +48,8 @@ __forceinline long fast_float2long_round(float f)
 __forceinline float fast_float_trunc(float f)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
-  {
+	_asm
+	{
     mov ecx,[f]
     shr ecx,23
     mov eax,0xff800000
@@ -58,46 +58,50 @@ __forceinline float fast_float_trunc(float f)
     cmovc eax,ebx
     sar eax,cl
     and [f],eax
-  }
-  return f;
+	}
+	return f;
 #else
-  unsigned x = *(unsigned *)&f;
-  unsigned char exp = x >> 23;
-  int mask = exp < 127 ? 0 : 0xff800000;
-  exp -= 127;
-  mask >>= exp & 31;
-  x &= mask;
-  return *(float *)&x;
+	unsigned x = *(unsigned*)&f;
+	unsigned char exp = x >> 23;
+	int mask = exp < 127 ? 0 : 0xff800000;
+	exp -= 127;
+	mask >>= exp & 31;
+	x &= mask;
+	return *(float*)&x;
 #endif
 }
 
 // same here, fast floor function
 __forceinline float fast_float_floor(float f)
 {
-  static unsigned almost1=(126<<23)|0x7fffff;
-  if (*(unsigned *)&f &0x80000000)
-    f-=*(float *)&almost1;
-  return fast_float_trunc(f);
+	static unsigned almost1 = (126 << 23) | 0x7fffff;
+	if (*(unsigned*)&f & 0x80000000)
+	{
+		f -= *(float*)&almost1;
+	}
+	return fast_float_trunc(f);
 }
 
 // same here, fast ceil function
 __forceinline float fast_float_ceil(float f)
 {
-  static unsigned almost1=(126<<23)|0x7fffff;
-  if ( (*(unsigned *)&f &0x80000000)==0)
-    f+=*(float *)&almost1;
-  return fast_float_trunc(f);
+	static unsigned almost1 = (126 << 23) | 0x7fffff;
+	if ((*(unsigned*)&f & 0x80000000) == 0)
+	{
+		f += *(float*)&almost1;
+	}
+	return fast_float_trunc(f);
 }
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
 #if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
-#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
-#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
+#define REAL_TO_INT_CEIL(x) (fast_float2long_round(ceilf(x)))
+#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(floorf(x)))
 #else
-#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(fast_float_ceil(x)))
-#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(fast_float_floor(x)))
+#define REAL_TO_INT_CEIL(x) (fast_float2long_round(fast_float_ceil(x)))
+#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(fast_float_floor(x)))
 #endif
 
-#define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
-#define FAST_REAL_CEIL(x)         fast_float_ceil(x)
-#define FAST_REAL_FLOOR(x)        fast_float_floor(x)
+#define FAST_REAL_TRUNC(x) fast_float_trunc(x)
+#define FAST_REAL_CEIL(x) fast_float_ceil(x)
+#define FAST_REAL_FLOOR(x) fast_float_floor(x)

@@ -42,48 +42,43 @@
 class Null3DObjClass : public RenderObjClass
 {
 public:
+	Null3DObjClass(const char* name = "NULL");
+	Null3DObjClass(const Null3DObjClass& src);
+	Null3DObjClass& operator=(const Null3DObjClass& that);
 
-	Null3DObjClass(const char * name = "NULL");
-	Null3DObjClass(const Null3DObjClass & src);
-	Null3DObjClass & operator = (const Null3DObjClass & that);
-
-	virtual int						Class_ID() const override;
-	virtual RenderObjClass *	Clone() const override;
-	virtual const char *			Get_Name() const override { return Name; }
-	virtual void					Render(RenderInfoClass & rinfo) override;
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual int Class_ID() const override;
+	virtual RenderObjClass* Clone() const override;
+	virtual const char* Get_Name() const override { return Name; }
+	virtual void Render(RenderInfoClass& rinfo) override;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& box) const override;
 
 protected:
-
-	char								Name[2*W3D_NAME_LEN];
+	char Name[2 * W3D_NAME_LEN];
 };
-
 
 class NullPrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(NullPrototypeClass)
 public:
 	NullPrototypeClass();
-	NullPrototypeClass(const W3dNullObjectStruct &null);
+	NullPrototypeClass(const W3dNullObjectStruct& null);
 
-	virtual const char *			Get_Name()	const override { return Definition.Name; }
-	virtual int								Get_Class_ID() const override { return RenderObjClass::CLASSID_NULL; }
-	virtual RenderObjClass *	Create() override					{ return NEW_REF(Null3DObjClass,(Definition.Name)); }
-	virtual void							DeleteSelf() override { delete this; }
+	virtual const char* Get_Name() const override { return Definition.Name; }
+	virtual int Get_Class_ID() const override { return RenderObjClass::CLASSID_NULL; }
+	virtual RenderObjClass* Create() override { return NEW_REF(Null3DObjClass, (Definition.Name)); }
+	virtual void DeleteSelf() override { delete this; }
 
 protected:
-	W3dNullObjectStruct			Definition;
+	W3dNullObjectStruct Definition;
 };
-
 
 class NullLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type() override { return W3D_CHUNK_NULL_OBJECT; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
+	virtual int Chunk_Type() override { return W3D_CHUNK_NULL_OBJECT; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) override;
 };
-
 
 /*
 ** Instance of the default loader which the asset manager can

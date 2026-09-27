@@ -30,34 +30,36 @@ class ScriptActionsTrue : public CPropertyPage
 {
 	DECLARE_DYNCREATE(ScriptActionsTrue)
 
-// Construction
+	// Construction
 public:
 	ScriptActionsTrue();
 	virtual ~ScriptActionsTrue() override;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ScriptActionsTrue)
-	enum { IDD = IDD_ScriptActionsTrue };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	enum
+	{
+		IDD = IDD_ScriptActionsTrue
+	};
+	// NOTE - ClassWizard will add data members here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(ScriptActionsTrue)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	void setScript(Script *pScript) {m_script = pScript;}
+	void setScript(Script* pScript) { m_script = pScript; }
 
 protected:
-	Script *m_script;	 // Doesn't change.
-	ScriptAction *m_action; // Currently selected action.
-	Int					m_index; // Index of whatever is currently selected.
+	Script* m_script;    // Doesn't change.
+	ScriptAction* m_action;    // Currently selected action.
+	Int m_index;    // Index of whatever is currently selected.
 
 protected:
 	void enableUI();
@@ -79,7 +81,6 @@ protected:
 	afx_msg void OnChangeEditComment();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

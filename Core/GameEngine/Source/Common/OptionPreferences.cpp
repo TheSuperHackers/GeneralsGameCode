@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioSettings.h"
 #include "Common/GameAudio.h"
@@ -71,7 +71,9 @@ WW3D::MultiSampleModeEnum OptionPreferences::getAntiAliasing() const
 {
 	OptionPreferences::const_iterator it = find("AntiAliasing");
 	if (it == end())
+	{
 		return WW3D::MULTISAMPLE_MODE_NONE;
+	}
 
 	WW3D::MultiSampleModeEnum level = (WW3D::MultiSampleModeEnum)atoi(it->second.str());
 	level = clamp(WW3D::MULTISAMPLE_MODE_NONE, level, WW3D::MULTISAMPLE_MODE_8X);
@@ -84,7 +86,9 @@ TextureFilterClass::TextureFilterMode OptionPreferences::getTextureFilterMode() 
 {
 	OptionPreferences::const_iterator it = find("TextureFilter");
 	if (it == end())
+	{
 		return TextureFilterClass::TEXTURE_FILTER_BILINEAR;
+	}
 
 	return TextureFilterClass::getTextureFilterMode(it->second.str());
 }
@@ -93,7 +97,9 @@ TextureFilterClass::AnisotropicFilterMode OptionPreferences::getTextureAnisotrop
 {
 	OptionPreferences::const_iterator it = find("AnisotropyLevel");
 	if (it == end())
+	{
 		return TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X;
+	}
 
 	TextureFilterClass::AnisotropicFilterMode level = (TextureFilterClass::AnisotropicFilterMode)atoi(it->second.str());
 	level = clamp(TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X, level, TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_16X);
@@ -106,13 +112,19 @@ Int OptionPreferences::getCampaignDifficulty()
 {
 	OptionPreferences::const_iterator it = find("CampaignDifficulty");
 	if (it == end())
+	{
 		return TheScriptEngine->getGlobalDifficulty();
+	}
 
 	Int factor = atoi(it->second.str());
 	if (factor < DIFFICULTY_EASY)
+	{
 		factor = DIFFICULTY_EASY;
+	}
 	if (factor > DIFFICULTY_HARD)
+	{
 		factor = DIFFICULTY_HARD;
+	}
 
 	return factor;
 }
@@ -128,7 +140,7 @@ UnsignedInt OptionPreferences::getLANIPAddress()
 {
 	AsciiString selectedIP = (*this)["IPAddress"];
 	IPEnumeration IPs;
-	EnumeratedIP *IPlist = IPs.getAddresses();
+	EnumeratedIP* IPlist = IPs.getAddresses();
 	while (IPlist)
 	{
 		if (selectedIP.compareNoCase(IPlist->getIPstring()) == 0)
@@ -156,7 +168,7 @@ UnsignedInt OptionPreferences::getOnlineIPAddress()
 {
 	AsciiString selectedIP = (*this)["GameSpyIPAddress"];
 	IPEnumeration IPs;
-	EnumeratedIP *IPlist = IPs.getAddresses();
+	EnumeratedIP* IPlist = IPs.getAddresses();
 	while (IPlist)
 	{
 		if (selectedIP.compareNoCase(IPlist->getIPstring()) == 0)
@@ -184,9 +196,12 @@ Bool OptionPreferences::getArchiveReplaysEnabled() const
 {
 	OptionPreferences::const_iterator it = find("ArchiveReplays");
 	if (it == end())
+	{
 		return FALSE;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -196,9 +211,12 @@ Bool OptionPreferences::getAlternateMouseModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("UseAlternateMouse");
 	if (it == end())
+	{
 		return TheGlobalData->m_useAlternateMouse;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -208,9 +226,12 @@ Bool OptionPreferences::getRightMouseScrollWithAlternateMouseEnabled() const
 {
 	OptionPreferences::const_iterator it = find("UseRightMouseScrollWithAlternateMouse");
 	if (it == end())
+	{
 		return TheGlobalData->m_useRightMouseScrollWithAlternateMouse;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -220,9 +241,12 @@ Bool OptionPreferences::getRetaliationModeEnabled()
 {
 	OptionPreferences::const_iterator it = find("Retaliation");
 	if (it == end())
+	{
 		return TheGlobalData->m_clientRetaliationModeEnabled;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -231,11 +255,15 @@ Bool OptionPreferences::getRetaliationModeEnabled()
 Bool OptionPreferences::getDoubleClickAttackMoveEnabled()
 {
 	OptionPreferences::const_iterator it = find("UseDoubleClickAttackMove");
-	if( it == end() )
+	if (it == end())
+	{
 		return TheGlobalData->m_doubleClickAttackMove;
+	}
 
-	if( stricmp( it->second.str(), "yes" ) == 0 )
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -244,7 +272,9 @@ Int OptionPreferences::getJpegQuality() const
 {
 	OptionPreferences::const_iterator it = find("JpegQuality");
 	if (it == end())
+	{
 		return DEFAULT_JPEG_QUALITY;
+	}
 
 	// TheSuperHackers @info bobtista 14/07/2026 Clamp the quality to 50-95: above 95 the file
 	// size increases significantly with no visible benefit, below 50 the image degrades visibly.
@@ -256,7 +286,9 @@ Real OptionPreferences::getScrollFactor()
 {
 	OptionPreferences::const_iterator it = find("ScrollFactor");
 	if (it == end())
+	{
 		return TheGlobalData->m_keyboardDefaultScrollFactor;
+	}
 
 	Int factor = atoi(it->second.str());
 
@@ -264,9 +296,11 @@ Real OptionPreferences::getScrollFactor()
 	// No longer caps the upper limit to 100, because the options setting can go beyond that.
 	// No longer caps the lower limit to 0, because that would mean standstill.
 	if (factor < 1)
+	{
 		factor = 1;
+	}
 
-	return factor/100.0f;
+	return factor / 100.0f;
 }
 
 Bool OptionPreferences::getDrawScrollAnchor()
@@ -274,9 +308,12 @@ Bool OptionPreferences::getDrawScrollAnchor()
 	OptionPreferences::const_iterator it = find("DrawScrollAnchor");
 	// TheSuperHackers @info this default is based on the same variable within InGameUi.ini
 	if (it == end())
+	{
 		return FALSE;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -287,9 +324,12 @@ Bool OptionPreferences::getMoveScrollAnchor()
 	OptionPreferences::const_iterator it = find("MoveScrollAnchor");
 	// TheSuperHackers @info this default is based on the same variable within InGameUi.ini
 	if (it == end())
+	{
 		return TRUE;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -299,10 +339,14 @@ Bool OptionPreferences::getCursorCaptureEnabledInWindowedGame() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInWindowedGame");
 	if (it == end())
+	{
 		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedGame) != 0;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -311,10 +355,14 @@ Bool OptionPreferences::getCursorCaptureEnabledInWindowedMenu() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInWindowedMenu");
 	if (it == end())
+	{
 		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedMenu) != 0;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -323,10 +371,14 @@ Bool OptionPreferences::getCursorCaptureEnabledInFullscreenGame() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInFullscreenGame");
 	if (it == end())
+	{
 		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenGame) != 0;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -335,10 +387,14 @@ Bool OptionPreferences::getCursorCaptureEnabledInFullscreenMenu() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInFullscreenMenu");
 	if (it == end())
+	{
 		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenMenu) != 0;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -357,10 +413,14 @@ Bool OptionPreferences::getScreenEdgeScrollEnabledInWindowedApp() const
 {
 	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabledInWindowedApp");
 	if (it == end())
+	{
 		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInWindowedApp) != 0;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -369,10 +429,14 @@ Bool OptionPreferences::getScreenEdgeScrollEnabledInFullscreenApp() const
 {
 	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabledInFullscreenApp");
 	if (it == end())
+	{
 		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInFullscreenApp) != 0;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -389,9 +453,12 @@ Bool OptionPreferences::usesSystemMapDir()
 {
 	OptionPreferences::const_iterator it = find("UseSystemMapDir");
 	if (it == end())
+	{
 		return TRUE;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -401,9 +468,12 @@ Bool OptionPreferences::saveCameraInReplays()
 {
 	OptionPreferences::const_iterator it = find("SaveCameraInReplays");
 	if (it == end())
+	{
 		return TRUE;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -413,9 +483,12 @@ Bool OptionPreferences::useCameraInReplays()
 {
 	OptionPreferences::const_iterator it = find("UseCameraInReplays");
 	if (it == end())
+	{
 		return TRUE;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -425,10 +498,14 @@ Bool OptionPreferences::getPlayerObserverEnabled() const
 {
 	OptionPreferences::const_iterator it = find("PlayerObserverEnabled");
 	if (it == end())
+	{
 		return TRUE;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -437,7 +514,9 @@ Int OptionPreferences::getIdealStaticGameDetail()
 {
 	OptionPreferences::const_iterator it = find("IdealStaticGameLOD");
 	if (it == end())
+	{
 		return STATIC_GAME_LOD_UNKNOWN;
+	}
 
 	return TheGameLODManager->getStaticGameLODIndex(it->second);
 }
@@ -446,7 +525,9 @@ Int OptionPreferences::getStaticGameDetail()
 {
 	OptionPreferences::const_iterator it = find("StaticGameLOD");
 	if (it == end())
+	{
 		return TheGameLODManager->getStaticLODLevel();
+	}
 
 	return TheGameLODManager->getStaticGameLODIndex(it->second);
 }
@@ -455,7 +536,9 @@ Int OptionPreferences::getFirewallBehavior()
 {
 	OptionPreferences::const_iterator it = find("FirewallBehavior");
 	if (it == end())
+	{
 		return TheGlobalData->m_firewallBehavior;
+	}
 
 	Int behavior = atoi(it->second.str());
 	if (behavior < 0)
@@ -468,7 +551,8 @@ Int OptionPreferences::getFirewallBehavior()
 Short OptionPreferences::getFirewallPortAllocationDelta()
 {
 	OptionPreferences::const_iterator it = find("FirewallPortAllocationDelta");
-	if (it == end()) {
+	if (it == end())
+	{
 		return TheGlobalData->m_firewallPortAllocationDelta;
 	}
 
@@ -479,26 +563,31 @@ Short OptionPreferences::getFirewallPortAllocationDelta()
 UnsignedShort OptionPreferences::getFirewallPortOverride()
 {
 	OptionPreferences::const_iterator it = find("FirewallPortOverride");
-	if (it == end()) {
+	if (it == end())
+	{
 		return TheGlobalData->m_firewallPortOverride;
 	}
 
 	Int portOverride = atoi(it->second.str());
 	if (portOverride < 0 || portOverride > 65535)
+	{
 		portOverride = 0;
+	}
 	return portOverride;
 }
 
 Bool OptionPreferences::getFirewallNeedToRefresh()
 {
 	OptionPreferences::const_iterator it = find("FirewallNeedToRefresh");
-	if (it == end()) {
+	if (it == end())
+	{
 		return FALSE;
 	}
 
 	Bool retval = FALSE;
 	AsciiString str = it->second;
-	if (str.compareNoCase("TRUE") == 0) {
+	if (str.compareNoCase("TRUE") == 0)
+	{
 		retval = TRUE;
 	}
 	return retval;
@@ -508,7 +597,9 @@ AsciiString OptionPreferences::getPreferred3DProvider()
 {
 	OptionPreferences::const_iterator it = find("3DAudioProvider");
 	if (it == end())
+	{
 		return TheAudio->getAudioSettings()->m_preferred3DProvider[MAX_HW_PROVIDERS];
+	}
 	return it->second;
 }
 
@@ -516,7 +607,9 @@ AsciiString OptionPreferences::getSpeakerType()
 {
 	OptionPreferences::const_iterator it = find("SpeakerType");
 	if (it == end())
+	{
 		return TheAudio->translateUnsignedIntToSpeakerType(TheAudio->getAudioSettings()->m_defaultSpeakerType2D);
+	}
 	return it->second;
 }
 
@@ -526,7 +619,7 @@ Real OptionPreferences::getSoundVolume()
 	if (it == end())
 	{
 		Real relative = TheAudio->getAudioSettings()->m_relative2DVolume;
-		if( relative < 0 )
+		if (relative < 0)
 		{
 			Real scale = 1.0f + relative;
 			return TheAudio->getAudioSettings()->m_defaultSoundVolume * 100.0f * scale;
@@ -534,7 +627,7 @@ Real OptionPreferences::getSoundVolume()
 		return TheAudio->getAudioSettings()->m_defaultSoundVolume * 100.0f;
 	}
 
-	Real volume = (Real) atof(it->second.str());
+	Real volume = (Real)atof(it->second.str());
 	if (volume < 0.0f)
 	{
 		volume = 0.0f;
@@ -548,7 +641,7 @@ Real OptionPreferences::get3DSoundVolume()
 	if (it == end())
 	{
 		Real relative = TheAudio->getAudioSettings()->m_relative2DVolume;
-		if( relative > 0 )
+		if (relative > 0)
 		{
 			Real scale = 1.0f - relative;
 			return TheAudio->getAudioSettings()->m_default3DSoundVolume * 100.0f * scale;
@@ -556,7 +649,7 @@ Real OptionPreferences::get3DSoundVolume()
 		return TheAudio->getAudioSettings()->m_default3DSoundVolume * 100.0f;
 	}
 
-	Real volume = (Real) atof(it->second.str());
+	Real volume = (Real)atof(it->second.str());
 	if (volume < 0.0f)
 	{
 		volume = 0.0f;
@@ -568,9 +661,11 @@ Real OptionPreferences::getSpeechVolume()
 {
 	OptionPreferences::const_iterator it = find("VoiceVolume");
 	if (it == end())
+	{
 		return TheAudio->getAudioSettings()->m_defaultSpeechVolume * 100.0f;
+	}
 
-	Real volume = (Real) atof(it->second.str());
+	Real volume = (Real)atof(it->second.str());
 	if (volume < 0.0f)
 	{
 		volume = 0.0f;
@@ -582,9 +677,12 @@ Bool OptionPreferences::getCloudShadowsEnabled()
 {
 	OptionPreferences::const_iterator it = find("UseCloudMap");
 	if (it == end())
+	{
 		return TheGlobalData->m_useCloudMap;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -594,9 +692,12 @@ Bool OptionPreferences::getLightmapEnabled()
 {
 	OptionPreferences::const_iterator it = find("UseLightMap");
 	if (it == end())
+	{
 		return TheGlobalData->m_useLightMap;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -606,9 +707,12 @@ Bool OptionPreferences::getSmoothWaterEnabled()
 {
 	OptionPreferences::const_iterator it = find("ShowSoftWaterEdge");
 	if (it == end())
+	{
 		return TheGlobalData->m_showSoftWaterEdge;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -618,9 +722,12 @@ Bool OptionPreferences::getTreesEnabled()
 {
 	OptionPreferences::const_iterator it = find("ShowTrees");
 	if (it == end())
+	{
 		return TheGlobalData->m_useTrees;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -630,10 +737,13 @@ Bool OptionPreferences::getExtraAnimationsDisabled()
 {
 	OptionPreferences::const_iterator it = find("ExtraAnimations");
 	if (it == end())
+	{
 		return TheGlobalData->m_useDrawModuleLOD;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
-		return FALSE;	//we are enabling extra animations, so disabled LOD
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
+		return FALSE;    // we are enabling extra animations, so disabled LOD
 	}
 	return TRUE;
 }
@@ -642,9 +752,12 @@ Bool OptionPreferences::getUseHeatEffects()
 {
 	OptionPreferences::const_iterator it = find("HeatEffects");
 	if (it == end())
+	{
 		return TheGlobalData->m_useHeatEffects;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -654,9 +767,12 @@ Bool OptionPreferences::getDynamicLODEnabled()
 {
 	OptionPreferences::const_iterator it = find("DynamicLOD");
 	if (it == end())
+	{
 		return TheGlobalData->m_enableDynamicLOD;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -666,9 +782,12 @@ Bool OptionPreferences::getFPSLimitEnabled()
 {
 	OptionPreferences::const_iterator it = find("FPSLimit");
 	if (it == end())
+	{
 		return TheGlobalData->m_useFpsLimit;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -678,9 +797,12 @@ Bool OptionPreferences::get3DShadowsEnabled()
 {
 	OptionPreferences::const_iterator it = find("UseShadowVolumes");
 	if (it == end())
+	{
 		return TheGlobalData->m_useShadowVolumes;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -690,9 +812,12 @@ Bool OptionPreferences::get2DShadowsEnabled()
 {
 	OptionPreferences::const_iterator it = find("UseShadowDecals");
 	if (it == end())
+	{
 		return TheGlobalData->m_useShadowDecals;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -702,9 +827,12 @@ Bool OptionPreferences::getBuildingOcclusionEnabled()
 {
 	OptionPreferences::const_iterator it = find("BuildingOcclusion");
 	if (it == end())
+	{
 		return TheGlobalData->m_enableBehindBuildingMarkers;
+	}
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
 		return TRUE;
 	}
 	return FALSE;
@@ -714,11 +842,15 @@ Int OptionPreferences::getParticleCap()
 {
 	OptionPreferences::const_iterator it = find("MaxParticleCount");
 	if (it == end())
+	{
 		return TheGlobalData->m_maxParticleCount;
+	}
 
-	Int factor = (Int) atoi(it->second.str());
-	if (factor < 100)	//clamp to at least 100 particles.
+	Int factor = (Int)atoi(it->second.str());
+	if (factor < 100)    // clamp to at least 100 particles.
+	{
 		factor = 100;
+	}
 
 	return factor;
 }
@@ -727,11 +859,15 @@ Int OptionPreferences::getTextureReduction()
 {
 	OptionPreferences::const_iterator it = find("TextureReduction");
 	if (it == end())
-		return -1;	//unknown texture reduction
+	{
+		return -1;    // unknown texture reduction
+	}
 
-	Int factor = (Int) atoi(it->second.str());
-	if (factor > 2)	//clamp it.
-		factor=2;
+	Int factor = (Int)atoi(it->second.str());
+	if (factor > 2)    // clamp it.
+	{
+		factor = 2;
+	}
 	return factor;
 }
 
@@ -739,36 +875,44 @@ Real OptionPreferences::getGammaValue()
 {
 	OptionPreferences::const_iterator it = find("Gamma");
 	if (it == end())
+	{
 		return 50.0f;
+	}
 
-	Real gamma = (Real) atoi(it->second.str());
+	Real gamma = (Real)atoi(it->second.str());
 	return gamma;
 }
 
-void OptionPreferences::getResolution(Int *xres, Int *yres)
+void OptionPreferences::getResolution(Int* xres, Int* yres)
 {
 	*xres = TheGlobalData->m_xResolution;
 	*yres = TheGlobalData->m_yResolution;
 
 	OptionPreferences::const_iterator it = find("Resolution");
 	if (it == end())
+	{
 		return;
+	}
 
-	Int selectedXRes,selectedYRes;
-	if (sscanf(it->second.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
+	Int selectedXRes, selectedYRes;
+	if (sscanf(it->second.str(), "%d%d", &selectedXRes, &selectedYRes) != 2)
+	{
 		return;
+	}
 
-	*xres=selectedXRes;
-	*yres=selectedYRes;
+	*xres = selectedXRes;
+	*yres = selectedYRes;
 }
 
 Real OptionPreferences::getMusicVolume()
 {
 	OptionPreferences::const_iterator it = find("MusicVolume");
 	if (it == end())
+	{
 		return TheAudio->getAudioSettings()->m_defaultMusicVolume * 100.0f;
+	}
 
-	Real volume = (Real) atof(it->second.str());
+	Real volume = (Real)atof(it->second.str());
 	if (volume < 0.0f)
 	{
 		volume = 0.0f;
@@ -780,11 +924,15 @@ Real OptionPreferences::getMoneyTransactionVolume() const
 {
 	OptionPreferences::const_iterator it = find("MoneyTransactionVolume");
 	if (it == end())
+	{
 		return TheAudio->getAudioSettings()->m_defaultMoneyTransactionVolume * 100.0f;
+	}
 
-	Real volume = (Real) atof(it->second.str());
+	Real volume = (Real)atof(it->second.str());
 	if (volume < 0.0f)
+	{
 		volume = 0.0f;
+	}
 
 	return volume;
 }
@@ -793,7 +941,9 @@ Int OptionPreferences::getNetworkLatencyFontSize()
 {
 	OptionPreferences::const_iterator it = find("NetworkLatencyFontSize");
 	if (it == end())
+	{
 		return 8;
+	}
 
 	Int fontSize = atoi(it->second.str());
 	if (fontSize < 0)
@@ -807,7 +957,9 @@ Int OptionPreferences::getRenderFpsFontSize()
 {
 	OptionPreferences::const_iterator it = find("RenderFpsFontSize");
 	if (it == end())
+	{
 		return 8;
+	}
 
 	Int fontSize = atoi(it->second.str());
 	if (fontSize < 0)
@@ -821,7 +973,9 @@ Int OptionPreferences::getSystemTimeFontSize()
 {
 	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
 	if (it == end())
+	{
 		return 8;
+	}
 
 	Int fontSize = atoi(it->second.str());
 	if (fontSize < 0)
@@ -835,7 +989,9 @@ Int OptionPreferences::getGameTimeFontSize()
 {
 	OptionPreferences::const_iterator it = find("GameTimeFontSize");
 	if (it == end())
+	{
 		return 8;
+	}
 
 	Int fontSize = atoi(it->second.str());
 	if (fontSize < 0)
@@ -849,7 +1005,9 @@ Int OptionPreferences::getPlayerInfoListFontSize()
 {
 	OptionPreferences::const_iterator it = find("PlayerInfoListFontSize");
 	if (it == end())
+	{
 		return 8;
+	}
 
 	Int fontSize = atoi(it->second.str());
 	if (fontSize < 0)
@@ -863,7 +1021,9 @@ Real OptionPreferences::getResolutionFontAdjustment()
 {
 	OptionPreferences::const_iterator it = find("ResolutionFontAdjustment");
 	if (it == end())
+	{
 		return -1.0f;
+	}
 
 	Real fontScale = (Real)atof(it->second.str()) / 100.0f;
 	if (fontScale < 0.0f)
@@ -877,7 +1037,9 @@ Bool OptionPreferences::getShowMoneyPerMinute() const
 {
 	OptionPreferences::const_iterator it = find("ShowMoneyPerMinute");
 	if (it == end())
+	{
 		return TheGlobalData->m_showMoneyPerMinute;
+	}
 
 	if (stricmp(it->second.str(), "yes") == 0)
 	{
@@ -890,8 +1052,10 @@ Real OptionPreferences::getGameWindowTransitionSpeedMultiplier() const
 {
 	OptionPreferences::const_iterator it = find("GameWindowTransitionSpeedMultiplier");
 	if (it == end())
+	{
 		return 1.0f;
+	}
 
-	Real speed = (Real) atof(it->second.str());
+	Real speed = (Real)atof(it->second.str());
 	return clamp(1.0f, speed, 1000.0f);
 }

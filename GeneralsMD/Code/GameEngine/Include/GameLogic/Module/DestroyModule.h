@@ -44,13 +44,11 @@ public:
 //-------------------------------------------------------------------------------------------------
 class DestroyModule : public BehaviorModule, public DestroyModuleInterface
 {
-
-	MEMORY_POOL_GLUE_ABC( DestroyModule )
-	MAKE_STANDARD_MODULE_MACRO_ABC( DestroyModule )
+	MEMORY_POOL_GLUE_ABC(DestroyModule)
+	MAKE_STANDARD_MODULE_MACRO_ABC(DestroyModule)
 
 public:
-
-	DestroyModule( Thing *thing, const ModuleData* moduleData );
+	DestroyModule(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	static Int getInterfaceMask() { return MODULEINTERFACE_DESTROY; }
@@ -59,5 +57,4 @@ public:
 	virtual DestroyModuleInterface* getDestroy() override { return this; }
 
 protected:
-
 };

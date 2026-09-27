@@ -28,18 +28,21 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/DrawGroupInfo.h"
 
-void parseInt( INI* ini, void * /*instance*/, void *store, const void* userData )
+void parseInt(INI* ini, void* /*instance*/, void* store, const void* userData)
 {
-	DrawGroupInfo *dgi = (DrawGroupInfo*) store;
-	if (userData == nullptr) {
+	DrawGroupInfo* dgi = (DrawGroupInfo*)store;
+	if (userData == nullptr)
+	{
 		store = &dgi->m_pixelOffsetX;
 		dgi->m_usingPixelOffsetX = TRUE;
-	} else {
+	}
+	else
+	{
 		store = &dgi->m_pixelOffsetY;
 		dgi->m_usingPixelOffsetY = TRUE;
 	}
@@ -47,13 +50,16 @@ void parseInt( INI* ini, void * /*instance*/, void *store, const void* userData 
 	INI::parseInt(ini, nullptr, store, nullptr);
 }
 
-void parsePercentToReal( INI* ini, void * /*instance*/, void *store, const void* userData )
+void parsePercentToReal(INI* ini, void* /*instance*/, void* store, const void* userData)
 {
-	DrawGroupInfo *dgi = (DrawGroupInfo*) store;
-	if (userData == nullptr) {
+	DrawGroupInfo* dgi = (DrawGroupInfo*)store;
+	if (userData == nullptr)
+	{
 		store = &dgi->m_pixelOffsetX;
 		dgi->m_usingPixelOffsetX = FALSE;
-	} else {
+	}
+	else
+	{
 		store = &dgi->m_pixelOffsetY;
 		dgi->m_usingPixelOffsetY = FALSE;
 	}
@@ -61,31 +67,30 @@ void parsePercentToReal( INI* ini, void * /*instance*/, void *store, const void*
 	INI::parsePercentToReal(ini, nullptr, store, nullptr);
 }
 
-const FieldParse DrawGroupInfo::s_fieldParseTable[] =
-{
-	{ "UsePlayerColor",												INI::parseBool,						nullptr, offsetof( DrawGroupInfo, m_usePlayerColor) },
-	{ "ColorForText",													INI::parseColorInt,				nullptr, offsetof( DrawGroupInfo, m_colorForText ) },
-	{ "ColorForTextDropShadow",								INI::parseColorInt,				nullptr, offsetof( DrawGroupInfo, m_colorForTextDropShadow ) },
+const FieldParse DrawGroupInfo::s_fieldParseTable[] = {
+	{ "UsePlayerColor", INI::parseBool, nullptr, offsetof(DrawGroupInfo, m_usePlayerColor) },
+	{ "ColorForText", INI::parseColorInt, nullptr, offsetof(DrawGroupInfo, m_colorForText) },
+	{ "ColorForTextDropShadow", INI::parseColorInt, nullptr, offsetof(DrawGroupInfo, m_colorForTextDropShadow) },
 
-	{ "FontName",															INI::parseQuotedAsciiString,		nullptr, offsetof( DrawGroupInfo, m_fontName ) },
-	{ "FontSize",															INI::parseInt,						nullptr, offsetof( DrawGroupInfo, m_fontSize ) },
-	{ "FontIsBold",														INI::parseBool,						nullptr, offsetof( DrawGroupInfo, m_fontIsBold ) },
-	{ "DropShadowOffsetX",										INI::parseInt,						nullptr, offsetof( DrawGroupInfo, m_dropShadowOffsetX) },
-	{ "DropShadowOffsetY",										INI::parseInt,						nullptr, offsetof( DrawGroupInfo, m_dropShadowOffsetY) },
-	{ "DrawPositionXPixel",			  						parseInt,									(void*)nullptr, 0 },
-	{ "DrawPositionXPercent",			  					parsePercentToReal,				(void*)nullptr, 0 },
-	{ "DrawPositionYPixel",			  						parseInt,									(void*)1, 0 },
-	{ "DrawPositionYPercent",			  					parsePercentToReal,				(void*)1, 0 },
+	{ "FontName", INI::parseQuotedAsciiString, nullptr, offsetof(DrawGroupInfo, m_fontName) },
+	{ "FontSize", INI::parseInt, nullptr, offsetof(DrawGroupInfo, m_fontSize) },
+	{ "FontIsBold", INI::parseBool, nullptr, offsetof(DrawGroupInfo, m_fontIsBold) },
+	{ "DropShadowOffsetX", INI::parseInt, nullptr, offsetof(DrawGroupInfo, m_dropShadowOffsetX) },
+	{ "DropShadowOffsetY", INI::parseInt, nullptr, offsetof(DrawGroupInfo, m_dropShadowOffsetY) },
+	{ "DrawPositionXPixel", parseInt, (void*)nullptr, 0 },
+	{ "DrawPositionXPercent", parsePercentToReal, (void*)nullptr, 0 },
+	{ "DrawPositionYPixel", parseInt, (void*)1, 0 },
+	{ "DrawPositionYPercent", parsePercentToReal, (void*)1, 0 },
 
 	{ nullptr, nullptr, nullptr, 0 }
 };
 
 /*static */ void INI::parseDrawGroupNumberDefinition(INI* ini)
 {
-	if (!TheDrawGroupInfo) {
+	if (!TheDrawGroupInfo)
+	{
 		throw INI_UNKNOWN_ERROR;
 	}
 
 	ini->initFromINI(TheDrawGroupInfo, TheDrawGroupInfo->getFieldParse());
 }
-

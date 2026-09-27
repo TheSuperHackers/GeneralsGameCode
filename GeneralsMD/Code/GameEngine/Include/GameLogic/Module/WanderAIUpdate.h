@@ -37,26 +37,21 @@
  */
 class WanderAIUpdate : public AIUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WanderAIUpdate, "WanderAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( WanderAIUpdate )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(WanderAIUpdate, "WanderAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO(WanderAIUpdate)
 
 	/*
-		IMPORTANT NOTE: if you ever add module data to this, you must have it inherit from
-		AIUpdateModuleData to allow locomotors to work correctly. (see SupplyTruckAIUpdate
-		for an example.)
+	  IMPORTANT NOTE: if you ever add module data to this, you must have it inherit from
+	  AIUpdateModuleData to allow locomotors to work correctly. (see SupplyTruckAIUpdate
+	  for an example.)
 	*/
 
 	virtual UpdateSleepTime update() override;
 
 public:
-
-	WanderAIUpdate( Thing *thing, const ModuleData* moduleData );
+	WanderAIUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-
 protected:
-
 	virtual AIStateMachine* makeStateMachine() override;
-
 };

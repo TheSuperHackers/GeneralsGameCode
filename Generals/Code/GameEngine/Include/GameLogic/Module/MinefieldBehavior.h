@@ -40,41 +40,36 @@
 // ------------------------------------------------------------------------------------------------
 class MinefieldBehaviorModuleData : public UpdateModuleData
 {
-
 public:
-
 	MinefieldBehaviorModuleData();
 
-	static void buildFieldParse( MultiIniFieldParse &p );
+	static void buildFieldParse(MultiIniFieldParse& p);
 
-	const WeaponTemplate*	m_detonationWeapon;								///< what happens when we detonate
-	Int										m_detonatedBy;										///< can we be triggered by allies, etc?
-	Bool									m_stopsRegenAfterCreatorDies;
-	Bool									m_regenerates;										///< if t, can't be killed normally
-	Bool									m_workersDetonate;								///< if f, workers don't detonate mines
-	UnsignedInt						m_creatorDeathCheckRate;					///< if above is true, how often to check
-	UnsignedInt						m_scootFromStartingPointTime;			///< if nonzero, gradually scoot to dest pt
-	UnsignedInt						m_numVirtualMines;								///< num of "virtual" mines we have
-	Real									m_repeatDetonateMoveThresh;
-	Real									m_healthPercentToDrainPerSecond;
-
+	const WeaponTemplate* m_detonationWeapon;    ///< what happens when we detonate
+	Int m_detonatedBy;    ///< can we be triggered by allies, etc?
+	Bool m_stopsRegenAfterCreatorDies;
+	Bool m_regenerates;    ///< if t, can't be killed normally
+	Bool m_workersDetonate;    ///< if f, workers don't detonate mines
+	UnsignedInt m_creatorDeathCheckRate;    ///< if above is true, how often to check
+	UnsignedInt m_scootFromStartingPointTime;    ///< if nonzero, gradually scoot to dest pt
+	UnsignedInt m_numVirtualMines;    ///< num of "virtual" mines we have
+	Real m_repeatDetonateMoveThresh;
+	Real m_healthPercentToDrainPerSecond;
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class MinefieldBehavior : public UpdateModule,
-													public CollideModuleInterface,
-													public DamageModuleInterface,
-													public DieModuleInterface,
-													public LandMineInterface
+                          public CollideModuleInterface,
+                          public DamageModuleInterface,
+                          public DieModuleInterface,
+                          public LandMineInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( MinefieldBehavior, "MinefieldBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( MinefieldBehavior, MinefieldBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MinefieldBehavior, "MinefieldBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(MinefieldBehavior, MinefieldBehaviorModuleData)
 
 public:
-
-	MinefieldBehavior( Thing *thing, const ModuleData *moduleData );
+	MinefieldBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_COLLIDE) | (MODULEINTERFACE_DAMAGE) | (MODULEINTERFACE_DIE); }
@@ -86,22 +81,22 @@ public:
 	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo ) override;
-	virtual void onHealing( DamageInfo *damageInfo ) override;
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override { }
+	virtual void onDamage(DamageInfo* damageInfo) override;
+	virtual void onHealing(DamageInfo* damageInfo) override;
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override {}
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update() override;
 
 	// CollideModuleInterface
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
+	virtual void onCollide(Object* other, const Coord3D* loc, const Coord3D* normal) override;
 	virtual Bool wouldLikeToCollideWith(const Object* other) const override { return false; }
 	virtual Bool isHijackedVehicleCrateCollide() const override { return false; }
 	virtual Bool isCarBombCrateCollide() const override { return false; }
-	virtual Bool isRailroad() const override { return false;}
+	virtual Bool isRailroad() const override { return false; }
 	virtual Bool isSalvageCrateCollide() const override { return false; }
 
 	// Minefield specific methods
@@ -109,9 +104,11 @@ public:
 	virtual void disarm() override;
 
 private:
-
 	// mines are small, so we can get by with a small fixed number here
-	enum { MAX_IMMUNITY = 3 };
+	enum
+	{
+		MAX_IMMUNITY = 3
+	};
 	struct ImmuneInfo
 	{
 		ObjectID id;
@@ -124,18 +121,17 @@ private:
 		Coord3D where;
 	};
 
-	UnsignedInt		m_nextDeathCheckFrame;
-	UnsignedInt		m_scootFramesLeft;
-	Coord3D				m_scootVel;
-	Coord3D				m_scootAccel;
-	UnsignedInt		m_virtualMinesRemaining;
-	ImmuneInfo		m_immunes[MAX_IMMUNITY];
-	std::vector<DetonatorInfo>	m_detonators;
-	Bool					m_ignoreDamage;
-	Bool					m_regenerates;
-	Bool					m_draining;
+	UnsignedInt m_nextDeathCheckFrame;
+	UnsignedInt m_scootFramesLeft;
+	Coord3D m_scootVel;
+	Coord3D m_scootAccel;
+	UnsignedInt m_virtualMinesRemaining;
+	ImmuneInfo m_immunes[MAX_IMMUNITY];
+	std::vector<DetonatorInfo> m_detonators;
+	Bool m_ignoreDamage;
+	Bool m_regenerates;
+	Bool m_draining;
 
 	void detonateOnce(const Coord3D& position);
 	UpdateSleepTime calcSleepTime();
-
 };

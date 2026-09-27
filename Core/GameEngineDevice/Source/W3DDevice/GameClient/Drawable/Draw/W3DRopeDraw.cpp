@@ -44,14 +44,14 @@
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "Common/GameState.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DRopeDraw::W3DRopeDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData )
+W3DRopeDraw::W3DRopeDraw(Thing* thing, const ModuleData* moduleData)
+  : DrawModule(thing, moduleData)
 {
 	m_curLen = 0.0f;
 	m_maxLen = 1.0f;
@@ -62,7 +62,7 @@ W3DRopeDraw::W3DRopeDraw( Thing *thing, const ModuleData* moduleData ) : DrawMod
 	m_curSpeed = 0.0f;
 	m_maxSpeed = 0.0f;
 	m_accel = 0.0f;
-	m_wobbleLen = m_maxLen;	// huge
+	m_wobbleLen = m_maxLen;    // huge
 	m_wobbleAmp = 0.0f;
 	m_segments.clear();
 	m_curWobblePhase = 0.0f;
@@ -83,29 +83,29 @@ void W3DRopeDraw::buildSegments()
 	{
 		SegInfo info;
 
-		Real axis = GameClientRandomValueReal(0, 2*PI);
+		Real axis = GameClientRandomValueReal(0, 2 * PI);
 		info.wobbleAxisX = Cos(axis);
 		info.wobbleAxisY = Sin(axis);
-		info.line = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
-																	 Vector3(pos.x,pos.y,pos.z+eachLen),
-																	 m_width * 0.5f,  // width
-																	 m_color.red,  // red
-																	 m_color.green,  // green
-																	 m_color.blue,  // blue
-																	 1.0f );  // transparency
+		info.line = NEW Line3DClass(Vector3(pos.x, pos.y, pos.z),
+		                            Vector3(pos.x, pos.y, pos.z + eachLen),
+		                            m_width * 0.5f,    // width
+		                            m_color.red,    // red
+		                            m_color.green,    // green
+		                            m_color.blue,    // blue
+		                            1.0f);    // transparency
 
-		info.softLine = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
-																	 Vector3(pos.x,pos.y,pos.z+eachLen),
-																	 m_width,  // width
-																	 m_color.red,  // red
-																	 m_color.green,  // green
-																	 m_color.blue,  // blue
-																	 0.5f );  // transparency
+		info.softLine = NEW Line3DClass(Vector3(pos.x, pos.y, pos.z),
+		                                Vector3(pos.x, pos.y, pos.z + eachLen),
+		                                m_width,    // width
+		                                m_color.red,    // red
+		                                m_color.green,    // green
+		                                m_color.blue,    // blue
+		                                0.5f);    // transparency
 
 		if (W3DDisplay::m_3DScene)
 		{
-			W3DDisplay::m_3DScene->Add_Render_Object( info.line );
-			W3DDisplay::m_3DScene->Add_Render_Object( info.softLine );
+			W3DDisplay::m_3DScene->Add_Render_Object(info.line);
+			W3DDisplay::m_3DScene->Add_Render_Object(info.softLine);
 		}
 		m_segments.push_back(info);
 	}
@@ -121,19 +121,22 @@ void W3DRopeDraw::tossSegments()
 		if (it->line)
 		{
 			if (W3DDisplay::m_3DScene)
+			{
 				W3DDisplay::m_3DScene->Remove_Render_Object(it->line);
+			}
 			REF_PTR_RELEASE((it->line));
 		}
 		if (it->softLine)
 		{
 			if (W3DDisplay::m_3DScene)
+			{
 				W3DDisplay::m_3DScene->Remove_Render_Object(it->softLine);
+			}
 			REF_PTR_RELEASE((it->softLine));
 		}
 	}
 	m_segments.clear();
 }
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -192,96 +195,103 @@ void W3DRopeDraw::doDrawModule(const Matrix3D* transformMtx)
 		Real eachLen = m_curLen / m_segments.size();
 		for (std::vector<SegInfo>::iterator it = m_segments.begin(); it != m_segments.end(); ++it)
 		{
-			Vector3 end(pos->x + deflection*it->wobbleAxisX, pos->y + deflection*it->wobbleAxisY, start.Z - eachLen);
+			Vector3 end(pos->x + deflection * it->wobbleAxisX, pos->y + deflection * it->wobbleAxisY, start.Z - eachLen);
 			if (it->line)
+			{
 				(it->line)->Reset(start, end);
+			}
 			if (it->softLine)
+			{
 				(it->softLine)->Reset(start, end);
+			}
 			start = end;
 		}
 	}
 
 	m_curWobblePhase += m_wobbleRate;
-	if (m_curWobblePhase > 2*PI)
-		m_curWobblePhase -= 2*PI;
+	if (m_curWobblePhase > 2 * PI)
+	{
+		m_curWobblePhase -= 2 * PI;
+	}
 
 	m_curZOffset += m_curSpeed;
 	m_curSpeed += m_accel;
 	if (m_curSpeed > m_maxSpeed)
+	{
 		m_curSpeed = m_maxSpeed;
+	}
 	else if (m_curSpeed < -m_maxSpeed)
+	{
 		m_curSpeed = -m_maxSpeed;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DRopeDraw::crc( Xfer *xfer )
+void W3DRopeDraw::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DrawModule::crc( xfer );
-
+	DrawModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DRopeDraw::xfer( Xfer *xfer )
+void W3DRopeDraw::xfer(Xfer* xfer)
 {
-
 	// version
 	const XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DrawModule::xfer( xfer );
+	DrawModule::xfer(xfer);
 
 	// m_segments is not saved
 
 	// cur len
-	xfer->xferReal( &m_curLen );
+	xfer->xferReal(&m_curLen);
 
 	// max len
-	xfer->xferReal( &m_maxLen );
+	xfer->xferReal(&m_maxLen);
 
 	// width
-	xfer->xferReal( &m_width );
+	xfer->xferReal(&m_width);
 
 	// color
-	xfer->xferRGBColor( &m_color );
+	xfer->xferRGBColor(&m_color);
 
 	// cur speed
-	xfer->xferReal( &m_curSpeed );
+	xfer->xferReal(&m_curSpeed);
 
 	// max speed
-	xfer->xferReal( &m_maxSpeed );
+	xfer->xferReal(&m_maxSpeed);
 
 	// acceleration
-	xfer->xferReal( &m_accel );
+	xfer->xferReal(&m_accel);
 
 	// wobble len
-	xfer->xferReal( &m_wobbleLen );
+	xfer->xferReal(&m_wobbleLen);
 
 	// wobble amp
-	xfer->xferReal( &m_wobbleAmp );
+	xfer->xferReal(&m_wobbleAmp);
 
 	// wobble rate
-	xfer->xferReal( &m_wobbleRate );
+	xfer->xferReal(&m_wobbleRate);
 
 	// current wobble phase
-	xfer->xferReal( &m_curWobblePhase );
+	xfer->xferReal(&m_curWobblePhase);
 
 	// cur Z offset
-	xfer->xferReal( &m_curZOffset );
+	xfer->xferReal(&m_curZOffset);
 
 	if (xfer->getXferMode() == XFER_LOAD)
+	{
 		tossSegments();
-
-
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -289,8 +299,6 @@ void W3DRopeDraw::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void W3DRopeDraw::loadPostProcess()
 {
-
 	// extend base class
 	DrawModule::loadPostProcess();
-
 }

@@ -34,10 +34,10 @@
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
-enum AssaultStateTypes CPP_11(: Int)
+enum AssaultStateTypes CPP_11( : Int)
 {
-	IDLE,							          ///< Not doing anything.
-	ASSAULTING,						      ///< Transport is waiting while troops do fighting.
+	IDLE,    ///< Not doing anything.
+	ASSAULTING,    ///< Transport is waiting while troops do fighting.
 };
 
 #define MAX_TRANSPORT_SLOTS 10
@@ -57,66 +57,60 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    AIUpdateModuleData::buildFieldParse(p);
+		AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
-			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "MembersGetHealedAtLifeRatio", INI::parseReal, nullptr, offsetof(AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio) },
+			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, nullptr, offsetof(AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
 class AssaultTransportAIInterface
 {
 public:
-	virtual void beginAssault( const Object *designatedTarget ) const = 0;
+	virtual void beginAssault(const Object* designatedTarget) const = 0;
 };
-
 
 //-------------------------------------------------------------------------------------------------
 class AssaultTransportAIUpdate : public AIUpdateInterface, public AssaultTransportAIInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AssaultTransportAIUpdate, "AssaultTransportAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AssaultTransportAIUpdate, AssaultTransportAIUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AssaultTransportAIUpdate, "AssaultTransportAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(AssaultTransportAIUpdate, AssaultTransportAIUpdateModuleData)
 
 private:
-
 public:
-
-	AssaultTransportAIUpdate( Thing *thing, const ModuleData* moduleData );
+	AssaultTransportAIUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 	virtual Bool isIdle() const override;
 	virtual UpdateSleepTime update() override;
 	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() override { return this; }
 	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const override { return this; }
-	virtual void beginAssault( const Object *designatedTarget ) const override;
+	virtual void beginAssault(const Object* designatedTarget) const override;
 
 	UpdateSleepTime calcSleepTime();
 
 	void reset();
-	Bool isMemberWounded( const Object *member ) const;	//Member requires medical attention?
-	Bool isMemberHealthy( const Object *member ) const; //Member has full health?
+	Bool isMemberWounded(const Object* member) const;    // Member requires medical attention?
+	Bool isMemberHealthy(const Object* member) const;    // Member has full health?
 	void retrieveMembers();
 	void giveFinalOrders();
-  Bool isAttackPointless() const;
+	Bool isAttackPointless() const;
 
 protected:
-
-  ObjectID					m_memberIDs[ MAX_TRANSPORT_SLOTS ];
-	Bool							m_memberHealing[ MAX_TRANSPORT_SLOTS ];
-	Bool							m_newMember[ MAX_TRANSPORT_SLOTS ];
-  Coord3D						m_attackMoveGoalPos;
-  mutable ObjectID	m_designatedTarget;
-	AssaultStateTypes	m_state;
-	UnsignedInt				m_framesRemaining;
-	Int								m_currentMembers;
-	Bool							m_isAttackMove;
-	Bool							m_isAttackObject;
-	Bool							m_newOccupantsAreNewMembers;
+	ObjectID m_memberIDs[MAX_TRANSPORT_SLOTS];
+	Bool m_memberHealing[MAX_TRANSPORT_SLOTS];
+	Bool m_newMember[MAX_TRANSPORT_SLOTS];
+	Coord3D m_attackMoveGoalPos;
+	mutable ObjectID m_designatedTarget;
+	AssaultStateTypes m_state;
+	UnsignedInt m_framesRemaining;
+	Int m_currentMembers;
+	Bool m_isAttackMove;
+	Bool m_isAttackObject;
+	Bool m_newOccupantsAreNewMembers;
 };

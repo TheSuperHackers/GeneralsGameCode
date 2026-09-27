@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameClient/InGameUI.h"
@@ -47,24 +47,21 @@
 // ------------------------------------------------------------------------------------------------
 POWTruckBehaviorModuleData::POWTruckBehaviorModuleData()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void POWTruckBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
+/*static*/ void POWTruckBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  OpenContainModuleData::buildFieldParse( p );
+	OpenContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 
 		{ 0, 0, 0, 0 }
 
 	};
 
-  p.add(dataFieldParse);
-
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,74 +70,71 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData )
-								: OpenContain( thing, moduleData )
+POWTruckBehavior::POWTruckBehavior(Thing* thing, const ModuleData* moduleData)
+  : OpenContain(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 POWTruckBehavior::~POWTruckBehavior()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void POWTruckBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
+void POWTruckBehavior::onCollide(Object* other, const Coord3D* loc, const Coord3D* normal)
 {
-	Object *us = getObject();
+	Object* us = getObject();
 
 	// sanity
-	if( other == nullptr )
+	if (other == nullptr)
+	{
 		return;
+	}
 
 	// if other isn't slated to be picked up by us, ignore
-	AIUpdateInterface *otherAi = other->getAIUpdateInterface();
-	if( otherAi == nullptr || otherAi->isSurrendered() == FALSE )
+	AIUpdateInterface* otherAi = other->getAIUpdateInterface();
+	if (otherAi == nullptr || otherAi->isSurrendered() == FALSE)
+	{
 		return;
+	}
 
 	// get our AI info
-	AIUpdateInterface *ourAI = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ourAI, ("POWTruckBehavior::onCollide - '%s' has no AI",
-														us->getTemplate()->getName().str()) );
-	POWTruckAIUpdateInterface *powTruckAI = ourAI->getPOWTruckAIUpdateInterface();
-	DEBUG_ASSERTCRASH( powTruckAI, ("POWTruckBehavior::onCollide - '%s' has no POWTruckAI",
-																 us->getTemplate()->getName().str()) );
+	AIUpdateInterface* ourAI = us->getAIUpdateInterface();
+	DEBUG_ASSERTCRASH(ourAI, ("POWTruckBehavior::onCollide - '%s' has no AI",
+	                          us->getTemplate()->getName().str()));
+	POWTruckAIUpdateInterface* powTruckAI = ourAI->getPOWTruckAIUpdateInterface();
+	DEBUG_ASSERTCRASH(powTruckAI, ("POWTruckBehavior::onCollide - '%s' has no POWTruckAI",
+	                               us->getTemplate()->getName().str()));
 
 	// pick up the prisoner
-	powTruckAI->loadPrisoner( other );
-
+	powTruckAI->loadPrisoner(other);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void POWTruckBehavior::crc( Xfer *xfer )
+void POWTruckBehavior::crc(Xfer* xfer)
 {
-
 	// extend base class
-	OpenContain::crc( xfer );
-
+	OpenContain::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void POWTruckBehavior::xfer( Xfer *xfer )
+void POWTruckBehavior::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	OpenContain::xfer( xfer );
-
+	OpenContain::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -148,10 +142,8 @@ void POWTruckBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void POWTruckBehavior::loadPostProcess()
 {
-
 	// extend base class
 	OpenContain::loadPostProcess();
-
 }
 
 #endif

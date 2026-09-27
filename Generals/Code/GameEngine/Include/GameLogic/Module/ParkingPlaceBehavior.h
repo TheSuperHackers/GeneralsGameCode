@@ -38,17 +38,17 @@
 class ParkingPlaceBehaviorModuleData : public UpdateModuleData
 {
 public:
-	//UnsignedInt		m_framesForFullHeal;
-	Real					m_healAmount;
-	Int						m_numRows;
-	Int						m_numCols;
-	Real					m_approachHeight;
-	Bool					m_hasRunways;			// if true, each col has a runway in front of it
-	Bool					m_parkInHangars;	// if true, park at the hangar production spot, not the "real" parking place
+	// UnsignedInt		m_framesForFullHeal;
+	Real m_healAmount;
+	Int m_numRows;
+	Int m_numCols;
+	Real m_approachHeight;
+	Bool m_hasRunways;    // if true, each col has a runway in front of it
+	Bool m_parkInHangars;    // if true, park at the hangar production spot, not the "real" parking place
 
 	ParkingPlaceBehaviorModuleData()
 	{
-		//m_framesForFullHeal = 0;
+		// m_framesForFullHeal = 0;
 		m_healAmount = 0;
 		m_numRows = 0;
 		m_numCols = 0;
@@ -61,14 +61,13 @@ public:
 	{
 		UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "NumRows",						INI::parseInt,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numRows ) },
-			{ "NumCols",						INI::parseInt,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_numCols ) },
-			{ "ApproachHeight",			INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_approachHeight ) },
-			{ "HasRunways",					INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
-			{ "ParkInHangars",			INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
-			{ "HealAmountPerSecond",INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "NumRows", INI::parseInt, nullptr, offsetof(ParkingPlaceBehaviorModuleData, m_numRows) },
+			{ "NumCols", INI::parseInt, nullptr, offsetof(ParkingPlaceBehaviorModuleData, m_numCols) },
+			{ "ApproachHeight", INI::parseReal, nullptr, offsetof(ParkingPlaceBehaviorModuleData, m_approachHeight) },
+			{ "HasRunways", INI::parseBool, nullptr, offsetof(ParkingPlaceBehaviorModuleData, m_hasRunways) },
+			{ "ParkInHangars", INI::parseBool, nullptr, offsetof(ParkingPlaceBehaviorModuleData, m_parkInHangars) },
+			{ "HealAmountPerSecond", INI::parseReal, nullptr, offsetof(ParkingPlaceBehaviorModuleData, m_healAmount) },
 			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
@@ -76,49 +75,46 @@ public:
 	}
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class ParkingPlaceBehavior : public UpdateModule,
-														 public DieModuleInterface,
-														 public ParkingPlaceBehaviorInterface,
-														 public ExitInterface
+                             public DieModuleInterface,
+                             public ParkingPlaceBehaviorInterface,
+                             public ExitInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParkingPlaceBehavior, "ParkingPlaceBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ParkingPlaceBehavior, ParkingPlaceBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParkingPlaceBehavior, "ParkingPlaceBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ParkingPlaceBehavior, ParkingPlaceBehaviorModuleData)
 
 public:
-
-	ParkingPlaceBehavior( Thing *thing, const ModuleData* moduleData );
+	ParkingPlaceBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface *getDie() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return this; }
 	virtual ExitInterface* getUpdateExitInterface() override { return this; }
 
 	// ExitInterface
-	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
+	virtual Bool isExitBusy() const override { return FALSE; }    ///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit(const ThingTemplate* objType, Object* specificObject) override;
+	virtual void exitObjectViaDoor(Object* newObj, ExitDoorType exitDoor) override;
+	virtual void unreserveDoorForExit(ExitDoorType exitDoor) override;
+	virtual void exitObjectByBudding(Object* newObj, Object* budHost) override { return; }
 
-	virtual Bool getExitPosition( Coord3D& rallyPoint ) const override;
-	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const override;
-	virtual void setRallyPoint( const Coord3D *pos ) override;			///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint() const override;			///< define a "rally point" for units to move towards
+	virtual Bool getExitPosition(Coord3D& rallyPoint) const override;
+	virtual Bool getNaturalRallyPoint(Coord3D& rallyPoint, Bool offset = TRUE) const override;
+	virtual void setRallyPoint(const Coord3D* pos) override;    ///< define a "rally point" for units to move towards
+	virtual const Coord3D* getRallyPoint() const override;    ///< define a "rally point" for units to move towards
 
 	// UpdateModule
 	virtual UpdateSleepTime update() override;
 
 	// DieModule
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 	// ParkingPlaceBehaviorInterface
 	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const override;
@@ -138,19 +134,18 @@ public:
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) override;
 
 private:
-
 	struct ParkingPlaceInfo
 	{
-		Coord3D      m_hangarStart;
-		Real         m_hangarStartOrient;
-		Coord3D      m_location;
-		Coord3D      m_prep;
-		Real         m_orientation;
-		Int          m_runway;
+		Coord3D m_hangarStart;
+		Real m_hangarStartOrient;
+		Coord3D m_location;
+		Coord3D m_prep;
+		Real m_orientation;
+		Int m_runway;
 		ExitDoorType m_door;
-		ObjectID     m_objectInSpace;
-		Bool         m_reservedForExit;
-		Bool         m_postponedRunwayReservationForTakeoff;
+		ObjectID m_objectInSpace;
+		Bool m_reservedForExit;
+		Bool m_postponedRunwayReservationForTakeoff;
 
 		ParkingPlaceInfo()
 		{
@@ -169,24 +164,24 @@ private:
 
 	struct RunwayInfo
 	{
-		Coord3D		m_start;
-		Coord3D		m_end;
-		ObjectID	m_inUseBy;
-		ObjectID	m_nextInLineForTakeoff;
-		Bool			m_wasInLine;
+		Coord3D m_start;
+		Coord3D m_end;
+		ObjectID m_inUseBy;
+		ObjectID m_nextInLineForTakeoff;
+		Bool m_wasInLine;
 	};
 
 	struct HealingInfo
 	{
-		ObjectID		m_gettingHealedID;
-		UnsignedInt	m_healStartFrame;
+		ObjectID m_gettingHealedID;
+		UnsignedInt m_healStartFrame;
 	};
 
-	std::vector<ParkingPlaceInfo>	m_spaces;
-	std::vector<RunwayInfo>				m_runways;
-	std::list<HealingInfo>				m_healing;	// note, this list can vary in size, and be larger than the parking space count
-	UnsignedInt										m_nextHealFrame;
-	Bool													m_gotInfo;
+	std::vector<ParkingPlaceInfo> m_spaces;
+	std::vector<RunwayInfo> m_runways;
+	std::list<HealingInfo> m_healing;    // note, this list can vary in size, and be larger than the parking space count
+	UnsignedInt m_nextHealFrame;
+	Bool m_gotInfo;
 
 	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	void buildInfo();
@@ -197,5 +192,5 @@ private:
 	ParkingPlaceInfo* findEmptyPPI();
 
 	Coord3D m_heliRallyPoint;
-	Bool m_heliRallyPointExists;				///< Only move to the rally point if this is true
+	Bool m_heliRallyPointExists;    ///< Only move to the rally point if this is true
 };

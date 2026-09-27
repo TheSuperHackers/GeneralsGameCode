@@ -21,7 +21,6 @@
 // EditAction.h : header file
 //
 
-
 class ScriptAction;
 class SidesList;
 
@@ -30,42 +29,44 @@ class SidesList;
 
 class EditAction : public CDialog
 {
-// Construction
+	// Construction
 public:
-	EditAction(CWnd* pParent = nullptr);   // standard constructor
+	EditAction(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EditAction)
-	enum { IDD = IDD_ScriptAction };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ScriptAction
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditAction)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	void setAction(ScriptAction *pAction) {m_action = pAction;}
+	void setAction(ScriptAction* pAction) { m_action = pAction; }
 
 protected:
 	void formatScriptActionText(Int parmNdx);
+
 protected:
-	ScriptAction *m_action;
-	Bool			m_updating;
-	Bool			m_modifiedTextColor;
+	ScriptAction* m_action;
+	Bool m_updating;
+	Bool m_modifiedTextColor;
 	CRichEditCtrl m_myEditCtrl;
 	CHARRANGE m_curLinkChrg;
-	Int				m_curEditParameter;
-	CTreeCtrl	m_actionTreeView;
+	Int m_curEditParameter;
+	CTreeCtrl m_actionTreeView;
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(EditAction)
 	virtual BOOL OnInitDialog() override;

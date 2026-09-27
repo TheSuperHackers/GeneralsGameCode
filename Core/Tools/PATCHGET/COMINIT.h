@@ -28,9 +28,9 @@ namespace patchget
 
 class ComInit
 {
- public:
-         ComInit();
-        ~ComInit();
+public:
+	ComInit();
+	~ComInit();
 };
 
-} // namespace patchget
+}    // namespace patchget

@@ -71,22 +71,24 @@
 // W3DFontLibrary::loadFontData ===============================================
 /** Load a font */
 //=============================================================================
-Bool W3DFontLibrary::loadFontData( GameFont *font )
+Bool W3DFontLibrary::loadFontData(GameFont* font)
 {
 	// sanity
-	if( font == nullptr )
+	if (font == nullptr)
+	{
 		return FALSE;
+	}
 
 	const char* name = font->nameString.str();
 	const Int size = font->pointSize;
 	const Bool bold = font->bold;
 
 	// get the font data from the asset manager
-	FontCharsClass *fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
+	FontCharsClass* fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars(name, size, bold);
 
-	if( fontChar == nullptr )
+	if (fontChar == nullptr)
 	{
-		DEBUG_CRASH(( "Unable to find font '%s' in Asset Manager", name ));
+		DEBUG_CRASH(("Unable to find font '%s' in Asset Manager", name));
 		return FALSE;
 	}
 
@@ -96,7 +98,7 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 
 	// load Unicode of same point size
 	name = TheGlobalLanguageData ? TheGlobalLanguageData->m_unicodeFontName.str() : "Arial Unicode MS";
-	fontChar->AlternateUnicodeFont = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
+	fontChar->AlternateUnicodeFont = WW3DAssetManager::Get_Instance()->Get_FontChars(name, size, bold);
 
 	return TRUE;
 }
@@ -104,21 +106,20 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 // W3DFontLibrary::releaseFontData ============================================
 /** Release font data */
 //=============================================================================
-void W3DFontLibrary::releaseFontData( GameFont *font )
+void W3DFontLibrary::releaseFontData(GameFont* font)
 {
-
 	// presently we don't need to do anything because fonts are handled in
 	// the W3D asset manager which is all taken for of us
 	if (font && font->fontData)
 	{
-		if(((FontCharsClass *)(font->fontData))->AlternateUnicodeFont)
-			((FontCharsClass *)(font->fontData))->AlternateUnicodeFont->Release_Ref();
-		((FontCharsClass *)(font->fontData))->Release_Ref();
+		if (((FontCharsClass*)(font->fontData))->AlternateUnicodeFont)
+		{
+			((FontCharsClass*)(font->fontData))->AlternateUnicodeFont->Release_Ref();
+		}
+		((FontCharsClass*)(font->fontData))->Release_Ref();
 
 		font->fontData = nullptr;
 	}
-
 }
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-

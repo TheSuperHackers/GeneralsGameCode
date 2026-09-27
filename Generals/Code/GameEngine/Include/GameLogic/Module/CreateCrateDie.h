@@ -55,39 +55,36 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DieModuleData::buildFieldParse(p);
+		DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		nullptr, 0 },
+		static const FieldParse dataFieldParse[] = {
+			{ "CrateData", CreateCrateDieModuleData::parseCrateData, nullptr, 0 },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 
-	static void parseCrateData( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
+	static void parseCrateData(INI* ini, void* instance, void* /*store*/, const void* /*userData*/);
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class CreateCrateDie : public DieModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CreateCrateDie, "CreateCrateDie" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CreateCrateDie, CreateCrateDieModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CreateCrateDie, "CreateCrateDie")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CreateCrateDie, CreateCrateDieModuleData)
 
 public:
-
-	CreateCrateDie( Thing *thing, const ModuleData* moduleData );
+	CreateCrateDie(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ) override;
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 private:
-	Bool testCreationChance( CrateTemplate const *currentCrateData );
-	Bool testVeterancyLevel( CrateTemplate const *currentCrateData );
-	Bool testKillerType( CrateTemplate const *currentCrateData, Object *killer );
-	Bool testKillerScience( CrateTemplate const *currentCrateData, Object *killer );
+	Bool testCreationChance(CrateTemplate const* currentCrateData);
+	Bool testVeterancyLevel(CrateTemplate const* currentCrateData);
+	Bool testKillerType(CrateTemplate const* currentCrateData, Object* killer);
+	Bool testKillerScience(CrateTemplate const* currentCrateData, Object* killer);
 
-	Object *createCrate( CrateTemplate const *currentCrateData );
+	Object* createCrate(CrateTemplate const* currentCrateData);
 };

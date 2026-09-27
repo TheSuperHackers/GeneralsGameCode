@@ -30,12 +30,12 @@ class Vector3;
 
 struct RenderBackendViewport
 {
-    unsigned int x;
-    unsigned int y;
-    unsigned int width;
-    unsigned int height;
-    float min_z;
-    float max_z;
+	unsigned int x;
+	unsigned int y;
+	unsigned int width;
+	unsigned int height;
+	float min_z;
+	float max_z;
 };
 
 // A method appears here once a caller routes through it, not in anticipation of
@@ -50,19 +50,19 @@ struct RenderBackendViewport
 class IRenderBackend
 {
 public:
-    virtual ~IRenderBackend() {}
+	virtual ~IRenderBackend() {}
 
-    virtual void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true) = 0;
+	virtual void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true) = 0;
 
-    virtual void Begin_Scene() = 0;
-    virtual void End_Scene(bool flip_frame = true) = 0;
-    virtual void Flip_To_Primary() = 0;
-    virtual void Clear(bool clear_color, bool clear_z_stencil,
-                       const Vector3 & color,
-                       float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0) = 0;
-    virtual void Set_Viewport(const RenderBackendViewport & viewport) = 0;
-    virtual void Invalidate_Cached_Render_States() = 0;
+	virtual void Begin_Scene() = 0;
+	virtual void End_Scene(bool flip_frame = true) = 0;
+	virtual void Flip_To_Primary() = 0;
+	virtual void Clear(bool clear_color, bool clear_z_stencil,
+	                   const Vector3& color,
+	                   float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0) = 0;
+	virtual void Set_Viewport(const RenderBackendViewport& viewport) = 0;
+	virtual void Invalidate_Cached_Render_States() = 0;
 
-    virtual void Set_Ambient(const Vector3 & color) = 0;
-    virtual void Set_Light_Environment(LightEnvironmentClass * light_env) = 0;
+	virtual void Set_Ambient(const Vector3& color) = 0;
+	virtual void Set_Light_Environment(LightEnvironmentClass* light_env) = 0;
 };

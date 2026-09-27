@@ -37,35 +37,28 @@ class Thing;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class ExperienceScalarUpgradeModuleData: public UpgradeModuleData
+class ExperienceScalarUpgradeModuleData : public UpgradeModuleData
 {
-
 public:
-
 	ExperienceScalarUpgradeModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	Real m_addXPScalar;
-
 };
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class ExperienceScalarUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ExperienceScalarUpgrade, "ExperienceScalarUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ExperienceScalarUpgrade, ExperienceScalarUpgradeModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ExperienceScalarUpgrade, "ExperienceScalarUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ExperienceScalarUpgrade, ExperienceScalarUpgradeModuleData);
 
 public:
-
-	ExperienceScalarUpgrade( Thing *thing, const ModuleData* moduleData );
+	ExperienceScalarUpgrade(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-
-	virtual void upgradeImplementation() override; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() override;    ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
 };

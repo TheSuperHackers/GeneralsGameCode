@@ -30,20 +30,20 @@
 
 class GameWindow;
 
-GameWindow *GetGameListBox();
-GameWindow *GetGameInfoListBox();
+GameWindow* GetGameListBox();
+GameWindow* GetGameInfoListBox();
 NameKeyType GetGameListBoxID();
 NameKeyType GetGameInfoListBoxID();
 void GrabWindowInfo();
 void ReleaseWindowInfo();
-void RefreshGameInfoListBox( GameWindow *mainWin, GameWindow *win );
+void RefreshGameInfoListBox(GameWindow* mainWin, GameWindow* win);
 void RefreshGameListBoxes();
 void ToggleGameListType();
 
-void playerTemplateComboBoxTooltip(GameWindow *wndComboBox, WinInstanceData *instData, UnsignedInt mouse);
-void playerTemplateListBoxTooltip(GameWindow *wndListBox, WinInstanceData *instData, UnsignedInt mouse);
+void playerTemplateComboBoxTooltip(GameWindow* wndComboBox, WinInstanceData* instData, UnsignedInt mouse);
+void playerTemplateListBoxTooltip(GameWindow* wndListBox, WinInstanceData* instData, UnsignedInt mouse);
 
-enum GameSortType CPP_11(: Int)
+enum GameSortType CPP_11( : Int)
 {
 	GAMESORT_ALPHA_ASCENDING = 0,
 	GAMESORT_ALPHA_DESCENDING,
@@ -51,5 +51,5 @@ enum GameSortType CPP_11(: Int)
 	GAMESORT_PING_DESCENDING,
 };
 
-Bool HandleSortButton( NameKeyType sortButton );
+Bool HandleSortButton(NameKeyType sortButton);
 void PopulateLobbyPlayerListbox();

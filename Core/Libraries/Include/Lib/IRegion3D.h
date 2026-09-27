@@ -24,24 +24,24 @@
 
 struct IRegion3D
 {
-	ICoord3D lo, hi;					// axis-aligned bounding box
+	ICoord3D lo, hi;    // axis-aligned bounding box
 
 	// Keep only the overlapping portion of both regions.
-	void intersectWith( const IRegion3D &other )
+	void intersectWith(const IRegion3D& other)
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void uniteWith( const IRegion3D &other )
+	void uniteWith(const IRegion3D& other)
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void uniteWith( const ICoord3D &point )
+	void uniteWith(const ICoord3D& point)
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);

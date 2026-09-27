@@ -35,35 +35,35 @@ class ZoneBlock
 {
 public:
 	ZoneBlock();
-	~ZoneBlock();  // not virtual, please don't override without making virtual.  jba.
+	~ZoneBlock();    // not virtual, please don't override without making virtual.  jba.
 
-	void blockCalculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.
+	void blockCalculateZones(PathfindCell** map, PathfindLayer layers[], const IRegion2D& bounds);    ///< Does zone calculations.
 	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 
-	void clearMarkedPassable() {m_markedPassable = false;}
-	Bool isPassable() {return m_markedPassable;}
-	void setPassable(Bool pass) {m_markedPassable = pass;}
+	void clearMarkedPassable() { m_markedPassable = false; }
+	Bool isPassable() { return m_markedPassable; }
+	void setPassable(Bool pass) { m_markedPassable = pass; }
 
-	Bool getInteractsWithBridge() const {return m_interactsWithBridge;}
-	void setInteractsWithBridge(Bool interacts) {m_interactsWithBridge = interacts;}
+	Bool getInteractsWithBridge() const { return m_interactsWithBridge; }
+	void setInteractsWithBridge(Bool interacts) { m_interactsWithBridge = interacts; }
 
 protected:
 	void allocateZones();
 	void freeZones();
 
 protected:
-	ICoord2D		m_cellOrigin;
+	ICoord2D m_cellOrigin;
 
-	zoneStorageType m_firstZone; // First zone in this block.
-	UnsignedShort m_numZones;	 // Number of zones in this block.  If == 1, there is only one zone, and
-														 // no zone equivalency arrays will be allocated.
+	zoneStorageType m_firstZone;    // First zone in this block.
+	UnsignedShort m_numZones;    // Number of zones in this block.  If == 1, there is only one zone, and
+	                             // no zone equivalency arrays will be allocated.
 
 	UnsignedShort m_zonesAllocated;
-	zoneStorageType *m_groundCliffZones;
-	zoneStorageType *m_groundWaterZones;
-	zoneStorageType *m_groundRubbleZones;
-	zoneStorageType *m_crusherZones;
-	Bool					m_interactsWithBridge;
-	Bool					m_markedPassable;
+	zoneStorageType* m_groundCliffZones;
+	zoneStorageType* m_groundWaterZones;
+	zoneStorageType* m_groundRubbleZones;
+	zoneStorageType* m_crusherZones;
+	Bool m_interactsWithBridge;
+	Bool m_markedPassable;
 };
-typedef ZoneBlock *ZoneBlockP;
+typedef ZoneBlock* ZoneBlockP;

@@ -78,15 +78,15 @@ class ChunkLoadClass;
 */
 class PrototypeClass
 {
-
 public:
+	PrototypeClass()
+	  : NextHash(nullptr)
+	{}
 
-	PrototypeClass() : NextHash(nullptr) {}
-
-	virtual const char *			Get_Name()	const = 0;
-	virtual int								Get_Class_ID() const = 0;
-	virtual RenderObjClass *	Create() = 0;
-	virtual void							DeleteSelf() = 0;
+	virtual const char* Get_Name() const = 0;
+	virtual int Get_Class_ID() const = 0;
+	virtual RenderObjClass* Create() = 0;
+	virtual void DeleteSelf() = 0;
 
 	void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
 	PrototypeClass* friend_getNextHash() { return NextHash; }
@@ -95,25 +95,25 @@ protected:
 	virtual ~PrototypeClass() {};
 
 private:
-	PrototypeClass *				NextHash;
+	PrototypeClass* NextHash;
 
 	// Not Implemented
-	PrototypeClass(const PrototypeClass & that);
-	PrototypeClass & operator = (const PrototypeClass & that);
+	PrototypeClass(const PrototypeClass& that);
+	PrototypeClass& operator=(const PrototypeClass& that);
 };
 
 class PrimitivePrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(PrimitivePrototypeClass)
 public:
-	PrimitivePrototypeClass(RenderObjClass * proto);
+	PrimitivePrototypeClass(RenderObjClass* proto);
 
-	virtual const char *			Get_Name() const override;
-	virtual int						Get_Class_ID() const override;
-	virtual RenderObjClass *	Create() override;
-	virtual void							DeleteSelf() override { delete this; }
+	virtual const char* Get_Name() const override;
+	virtual int Get_Class_ID() const override;
+	virtual RenderObjClass* Create() override;
+	virtual void DeleteSelf() override { delete this; }
 
-	RenderObjClass *				Proto;
+	RenderObjClass* Proto;
 
 protected:
 	virtual ~PrimitivePrototypeClass() override;
@@ -127,23 +127,18 @@ protected:
 */
 class PrototypeLoaderClass
 {
-
 public:
-
 	PrototypeLoaderClass() {}
 	~PrototypeLoaderClass() {}
 
-	virtual int						Chunk_Type() = 0;
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) = 0;
+	virtual int Chunk_Type() = 0;
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) = 0;
 
 private:
-
 	// Not Implemented:
-	PrototypeLoaderClass(const PrototypeLoaderClass & that);
-	PrototypeLoaderClass & operator = (const PrototypeLoaderClass & that);
-
+	PrototypeLoaderClass(const PrototypeLoaderClass& that);
+	PrototypeLoaderClass& operator=(const PrototypeLoaderClass& that);
 };
-
 
 /*
 ** Default Prototype Loaders for Meshes and HModels
@@ -151,23 +146,20 @@ private:
 class MeshLoaderClass : public PrototypeLoaderClass
 {
 public:
-
-	virtual int						Chunk_Type() override { return W3D_CHUNK_MESH; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
+	virtual int Chunk_Type() override { return W3D_CHUNK_MESH; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) override;
 };
 
 class HModelLoaderClass : public PrototypeLoaderClass
 {
 public:
-
-	virtual int						Chunk_Type() override { return W3D_CHUNK_HMODEL; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
+	virtual int Chunk_Type() override { return W3D_CHUNK_HMODEL; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) override;
 };
-
 
 /*
 ** Instances of the default loaders which the asset manager can
 ** automatically install at creation time
 */
-extern MeshLoaderClass			_MeshLoader;
-extern HModelLoaderClass		_HModelLoader;
+extern MeshLoaderClass _MeshLoader;
+extern HModelLoaderClass _HModelLoader;

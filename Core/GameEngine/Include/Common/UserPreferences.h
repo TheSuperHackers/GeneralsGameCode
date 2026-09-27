@@ -81,16 +81,16 @@ public:
 
 	Bool loadFromIniFile();
 
-	UnicodeString getUserName();		// convenience function
-	Int getPreferredFaction();			// convenience function
-	Int getPreferredColor();				// convenience function
-	AsciiString getPreferredMap();	// convenience function
-	Bool usesSystemMapDir();		// convenience function
-	Int getNumRemoteIPs();					// convenience function
-	UnicodeString getRemoteIPEntry(Int i);	// convenience function
+	UnicodeString getUserName();    // convenience function
+	Int getPreferredFaction();    // convenience function
+	Int getPreferredColor();    // convenience function
+	AsciiString getPreferredMap();    // convenience function
+	Bool usesSystemMapDir();    // convenience function
+	Int getNumRemoteIPs();    // convenience function
+	UnicodeString getRemoteIPEntry(Int i);    // convenience function
 
-  Bool getSuperweaponRestricted() const;
-  Money getStartingCash() const;
-  void setSuperweaponRestricted( Bool superweaponRestricted);
-  void setStartingCash( const Money & startingCash );
+	Bool getSuperweaponRestricted() const;
+	Money getStartingCash() const;
+	void setSuperweaponRestricted(Bool superweaponRestricted);
+	void setStartingCash(const Money& startingCash);
 };

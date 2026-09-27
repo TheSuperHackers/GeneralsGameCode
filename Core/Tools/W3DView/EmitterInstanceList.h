@@ -36,7 +36,6 @@
 #include "WW3D2/part_ldr.h"
 #include "WW3D2/part_emt.h"
 
-
 /////////////////////////////////////////////////////////////////////
 //
 //	EmitterInstanceListClass
@@ -44,64 +43,62 @@
 /////////////////////////////////////////////////////////////////////
 class EmitterInstanceListClass : public ParticleEmitterDefClass
 {
-	public:
+public:
+	///////////////////////////////////////////////////////
+	// Public constructors/destructors
+	///////////////////////////////////////////////////////
+	EmitterInstanceListClass() {}
+	EmitterInstanceListClass(const EmitterInstanceListClass& src)
+	  : ParticleEmitterDefClass(src)
+	{}
 
-		///////////////////////////////////////////////////////
-		// Public constructors/destructors
-		///////////////////////////////////////////////////////
-		EmitterInstanceListClass ()		{ }
-		EmitterInstanceListClass (const EmitterInstanceListClass &src)
-			: ParticleEmitterDefClass (src)	{ }
+	virtual ~EmitterInstanceListClass() override;
 
-		virtual ~EmitterInstanceListClass () override;
+	///////////////////////////////////////////////////////
+	// Public methods
+	///////////////////////////////////////////////////////
+	virtual void Add_Emitter(ParticleEmitterClass* emitter);
+	virtual void Free_List();
 
-		///////////////////////////////////////////////////////
-		// Public methods
-		///////////////////////////////////////////////////////
-		virtual void			Add_Emitter (ParticleEmitterClass *emitter);
-		virtual void			Free_List ();
+	///////////////////////////////////////////////////////
+	// Derived overrides
+	///////////////////////////////////////////////////////
 
-		///////////////////////////////////////////////////////
-		// Derived overrides
-		///////////////////////////////////////////////////////
+	//
+	//	Note:  The following are settings that can be changed on
+	//		the fly.  All other settings are simply cached in the
+	//		definition and can be used to create a new prototype loader.
+	//
 
-		//
-		//	Note:  The following are settings that can be changed on
-		//		the fly.  All other settings are simply cached in the
-		//		definition and can be used to create a new prototype loader.
-		//
+	virtual void Set_Velocity(const Vector3& value) override;
+	virtual void Set_Acceleration(const Vector3& value) override;
+	virtual void Set_Burst_Size(unsigned int count) override;
+	virtual void Set_Outward_Vel(float value) override;
+	virtual void Set_Vel_Inherit(float value) override;
 
-		virtual void			Set_Velocity (const Vector3 &value) override;
-		virtual void			Set_Acceleration (const Vector3 &value) override;
-		virtual void			Set_Burst_Size (unsigned int count) override;
-		virtual void			Set_Outward_Vel (float value) override;
-		virtual void			Set_Vel_Inherit (float value) override;
+	//
+	//	Randomizer accessors
+	//
+	virtual void Set_Velocity_Random(Vector3Randomizer* randomizer) override;
 
-		//
-		//	Randomizer accessors
-		//
-		virtual void			Set_Velocity_Random (Vector3Randomizer *randomizer) override;
+	//
+	//	Keyframe accessors
+	//
+	virtual void Set_Color_Keyframes(ParticlePropertyStruct<Vector3>& keyframes) override;
+	virtual void Set_Opacity_Keyframes(ParticlePropertyStruct<float>& keyframes) override;
+	virtual void Set_Size_Keyframes(ParticlePropertyStruct<float>& keyframes) override;
+	virtual void Set_Rotation_Keyframes(ParticlePropertyStruct<float>& keyframes, float orient_rnd) override;
+	virtual void Set_Frame_Keyframes(ParticlePropertyStruct<float>& keyframes) override;
+	virtual void Set_Blur_Time_Keyframes(ParticlePropertyStruct<float>& keyframes) override;
 
-		//
-		//	Keyframe accessors
-		//
-		virtual void			Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) override;
-		virtual void			Set_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
-		virtual void			Set_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
-		virtual void			Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd) override;
-		virtual void			Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
-		virtual void			Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes) override;
+	virtual void Get_Color_Keyframes(ParticlePropertyStruct<Vector3>& keyframes) const override;
+	virtual void Get_Opacity_Keyframes(ParticlePropertyStruct<float>& keyframes) const override;
+	virtual void Get_Size_Keyframes(ParticlePropertyStruct<float>& keyframes) const override;
 
-		virtual void			Get_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes) const override;
-		virtual void			Get_Opacity_Keyframes (ParticlePropertyStruct<float> &keyframes) const override;
-		virtual void			Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const override;
+private:
+	///////////////////////////////////////////////////////
+	// Private member data
+	///////////////////////////////////////////////////////
 
-
-	private:
-
-		///////////////////////////////////////////////////////
-		// Private member data
-		///////////////////////////////////////////////////////
-
-		DynamicVectorClass<ParticleEmitterClass *>	m_List;
+	DynamicVectorClass<ParticleEmitterClass*> m_List;
 };

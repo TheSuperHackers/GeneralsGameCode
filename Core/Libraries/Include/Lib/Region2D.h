@@ -24,24 +24,24 @@
 
 struct Region2D
 {
-	Coord2D lo, hi;						// bounds of 2D rectangular region
+	Coord2D lo, hi;    // bounds of 2D rectangular region
 
 	// Keep only the overlapping portion of both regions.
-	void intersectWith( const Region2D &other )
+	void intersectWith(const Region2D& other)
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void uniteWith( const Region2D &other )
+	void uniteWith(const Region2D& other)
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void uniteWith( const Coord2D &point )
+	void uniteWith(const Coord2D& point)
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -60,5 +60,5 @@ struct Region2D
 
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
-	Bool isInRegion( Real x, Real y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
+	Bool isInRegion(Real x, Real y) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };

@@ -40,28 +40,40 @@ template <typename NUM>
 inline NUM clamp(NUM lo, NUM val, NUM hi)
 {
 	if (val < lo)
+	{
 		return lo;
+	}
 	else if (val > hi)
+	{
 		return hi;
+	}
 	else
+	{
 		return val;
+	}
 }
 
 template <typename NUM>
 inline NUM sqr(NUM x)
 {
-	return x*x;
+	return x * x;
 }
 
 template <typename NUM>
 inline int sign(NUM x)
 {
 	if (x > 0)
+	{
 		return 1;
+	}
 	else if (x < 0)
+	{
 		return -1;
+	}
 	else
+	{
 		return 0;
+	}
 }
 
 template <typename NUM>
@@ -86,13 +98,19 @@ inline PTR maxPtr(PTR x, PTR y) noexcept
 	static_assert(std::is_pointer<PTR>::value, "maxPtr is for pointer types only!");
 
 	if (x == nullptr)
+	{
 		return y;
+	}
 
 	if (y == nullptr)
+	{
 		return x;
+	}
 
 	if (x > y)
+	{
 		return x;
+	}
 
 	return y;
 }
@@ -103,13 +121,19 @@ inline PTR minPtr(PTR x, PTR y) noexcept
 	static_assert(std::is_pointer<PTR>::value, "minPtr is for pointer types only!");
 
 	if (x == nullptr)
+	{
 		return y;
+	}
 
 	if (y == nullptr)
+	{
 		return x;
+	}
 
 	if (x < y)
+	{
 		return x;
+	}
 
 	return y;
 }

@@ -24,7 +24,7 @@
 #include "Common/AsciiString.h"
 #include "Common/ThingSort.h"
 
-#define  BUILD_PICK_PANEL_SECTION "PickUnitWindow"
+#define BUILD_PICK_PANEL_SECTION "PickUnitWindow"
 
 class MapObject;
 class ThingTemplate;
@@ -34,40 +34,44 @@ class ThingTemplate;
 class PickUnitDialog : public CDialog
 {
 protected:
-	enum { NAME_MAX_LEN = 64 };
-	void addObject( MapObject *mapObject, const char *pPath, Int index, HTREEITEM parent );
-	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
-	Int				m_currentObjectIndex;
-	char			m_currentObjectName[NAME_MAX_LEN];
-	CTreeCtrl		m_objectTreeView;
-	MapObject		*m_objectsList;
-	Bool			m_allowable[ES_NUM_SORTING_TYPES];
-	Bool			m_factionOnly;
+	enum
+	{
+		NAME_MAX_LEN = 64
+	};
+	void addObject(MapObject* mapObject, const char* pPath, Int index, HTREEITEM parent);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char* pLabel);
+	Int m_currentObjectIndex;
+	char m_currentObjectName[NAME_MAX_LEN];
+	CTreeCtrl m_objectTreeView;
+	MapObject* m_objectsList;
+	Bool m_allowable[ES_NUM_SORTING_TYPES];
+	Bool m_factionOnly;
 
-// Construction
+	// Construction
 public:
-	PickUnitDialog(CWnd* pParent = nullptr);   // standard constructor
-	PickUnitDialog(UINT id, CWnd* pParent = nullptr);   // standard constructor
-	virtual ~PickUnitDialog() override;   ///< standard destructor
+	PickUnitDialog(CWnd* pParent = nullptr);    // standard constructor
+	PickUnitDialog(UINT id, CWnd* pParent = nullptr);    // standard constructor
+	virtual ~PickUnitDialog() override;    ///< standard destructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(PickUnitDialog)
-	enum { IDD = IDD_PICKUNIT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_PICKUNIT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PickUnitDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(PickUnitDialog)
 	virtual BOOL OnInitDialog() override;
@@ -80,19 +84,18 @@ public:
 	Bool IsAllowableType(EditorSortingType sort, Bool isBuildable);
 	void SetAllowableType(EditorSortingType sort);
 	const ThingTemplate* getPickedThing();
-	void SetFactionOnly(Bool faction) {m_factionOnly = faction;}
+	void SetFactionOnly(Bool faction) { m_factionOnly = faction; }
 	void SetupAsPanel();
 };
 
 class ReplaceUnitDialog : public PickUnitDialog
 {
 public:
-	ReplaceUnitDialog(CWnd* pParent = nullptr);   // standard constructor
+	ReplaceUnitDialog(CWnd* pParent = nullptr);    // standard constructor
 
-	void setMissing(AsciiString name) {m_missingName = name;};
+	void setMissing(AsciiString name) { m_missingName = name; };
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ReplaceUnitDialog)
 	virtual BOOL OnInitDialog() override;
@@ -102,9 +105,11 @@ protected:
 private:
 	AsciiString m_missingName;
 
-	enum { IDD = IDD_REPLACEUNIT };
+	enum
+	{
+		IDD = IDD_REPLACEUNIT
+	};
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

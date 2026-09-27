@@ -26,29 +26,30 @@
 
 class CEditLODDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CEditLODDialog(CWnd* pParent = nullptr);   // standard constructor
+	CEditLODDialog(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CEditLODDialog)
-	enum { IDD = IDD_EDIT_LOD };
-	CSpinButtonCtrl	m_switchUpSpin;
-	CSpinButtonCtrl	m_switchDownSpin;
-	CListCtrl	m_hierarchyListCtrl;
+	enum
+	{
+		IDD = IDD_EDIT_LOD
+	};
+	CSpinButtonCtrl m_switchUpSpin;
+	CSpinButtonCtrl m_switchDownSpin;
+	CListCtrl m_hierarchyListCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEditLODDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CEditLODDialog)
 	virtual BOOL OnInitDialog() override;
@@ -63,13 +64,13 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    public:
-    protected:
-        void ResetControls (int iIndex);
-        void EnableControls (BOOL bEnable);
+public:
+protected:
+	void ResetControls(int iIndex);
+	void EnableControls(BOOL bEnable);
 
-    private:
-        float m_spinIncrement;
+private:
+	float m_spinIncrement;
 };
 
 //{{AFX_INSERT_LOCATION}}

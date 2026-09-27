@@ -43,37 +43,36 @@
 ** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
 ** This helps find leaks.
 */
-//#define STEVES_NEW_CATCHER
+// #define STEVES_NEW_CATCHER
 #ifdef RTS_DEBUG
 #ifdef _MSC_VER
 #ifdef STEVES_NEW_CATCHER
 
-#include	<crtdbg.h>
+#include <crtdbg.h>
 #include <stdlib.h>
 #include <malloc.h>
 
-#define   malloc(s)         _malloc_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)
-#define   calloc(c, s)      _calloc_dbg(c, s, _NORMAL_BLOCK, __FILE__, __LINE__)
-#define   realloc(p, s)     _realloc_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)
-#define   _expand(p, s)     _expand_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)
-#define   free(p)           _free_dbg(p, _NORMAL_BLOCK)
-#define   _msize(p)         _msize_dbg(p, _NORMAL_BLOCK)
+#define malloc(s) _malloc_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)
+#define calloc(c, s) _calloc_dbg(c, s, _NORMAL_BLOCK, __FILE__, __LINE__)
+#define realloc(p, s) _realloc_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)
+#define _expand(p, s) _expand_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)
+#define free(p) _free_dbg(p, _NORMAL_BLOCK)
+#define _msize(p) _msize_dbg(p, _NORMAL_BLOCK)
 
 void* __cdecl operator new(unsigned int s);
 
-#endif	//STEVES_NEW_CATCHER
-#endif	//_MSC_VER
-#endif	//RTS_DEBUG
-
+#endif    // STEVES_NEW_CATCHER
+#endif    //_MSC_VER
+#endif    // RTS_DEBUG
 
 // Jani: Intel's C++ compiler issues too many warnings in WW libraries when using warning level 4
-#if defined (__ICL)    // Detect Intel compiler
-#pragma warning (3)
-#pragma warning ( disable: 981 ) // parameters defined in unspecified order
-#pragma warning ( disable: 279 ) // controlling expressaion is constant
-#pragma warning ( disable: 271 ) // trailing comma is nonstandard
-#pragma warning ( disable: 171 ) // invalid type conversion
-#pragma warning ( disable: 1 ) // last line of file ends without a newline
+#if defined(__ICL)    // Detect Intel compiler
+#pragma warning(3)
+#pragma warning(disable : 981)    // parameters defined in unspecified order
+#pragma warning(disable : 279)    // controlling expressaion is constant
+#pragma warning(disable : 271)    // trailing comma is nonstandard
+#pragma warning(disable : 171)    // invalid type conversion
+#pragma warning(disable : 1)    // last line of file ends without a newline
 #endif
 
 // Jani: MSVC doesn't necessarily inline code with inline keyword. Using __forceinline results better inlining
@@ -90,5 +89,5 @@ void* __cdecl operator new(unsigned int s);
 **	error or warning.
 */
 #if defined(_MSC_VER)
-#include	"visualc.h"
+#include "visualc.h"
 #endif

@@ -39,7 +39,7 @@ class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum ParticleSystemID CPP_11(: Int);
+enum ParticleSystemID CPP_11( : Int);
 
 #define MAX_OUTER_NODES 16
 
@@ -48,69 +48,67 @@ enum ParticleSystemID CPP_11(: Int);
 class ParticleUplinkCannonUpdateModuleData : public ModuleData
 {
 public:
-	UnsignedInt			m_beginChargeFrames;
-	UnsignedInt			m_raiseAntennaFrames;
-	UnsignedInt			m_readyDelayFrames;
-	UnsignedInt			m_widthGrowFrames;
-	UnsignedInt			m_beamTravelFrames;
-	UnsignedInt			m_totalFiringFrames;
-	UnsignedInt			m_framesBetweenLaunchFXRefresh;
+	UnsignedInt m_beginChargeFrames;
+	UnsignedInt m_raiseAntennaFrames;
+	UnsignedInt m_readyDelayFrames;
+	UnsignedInt m_widthGrowFrames;
+	UnsignedInt m_beamTravelFrames;
+	UnsignedInt m_totalFiringFrames;
+	UnsignedInt m_framesBetweenLaunchFXRefresh;
 
-	AsciiString			m_outerEffectBaseBoneName;
-	UnsignedInt			m_outerEffectNumBones;
-	AsciiString			m_outerNodesLightFlareParticleSystemName;
-	AsciiString			m_outerNodesMediumFlareParticleSystemName;
-	AsciiString			m_outerNodesIntenseFlareParticleSystemName;
+	AsciiString m_outerEffectBaseBoneName;
+	UnsignedInt m_outerEffectNumBones;
+	AsciiString m_outerNodesLightFlareParticleSystemName;
+	AsciiString m_outerNodesMediumFlareParticleSystemName;
+	AsciiString m_outerNodesIntenseFlareParticleSystemName;
 
-	AsciiString			m_connectorBoneName;
-	AsciiString			m_connectorMediumLaserNameName;
-	AsciiString			m_connectorIntenseLaserNameName;
-	AsciiString			m_connectorMediumFlareParticleSystemName;
-	AsciiString			m_connectorIntenseFlareParticleSystemName;
+	AsciiString m_connectorBoneName;
+	AsciiString m_connectorMediumLaserNameName;
+	AsciiString m_connectorIntenseLaserNameName;
+	AsciiString m_connectorMediumFlareParticleSystemName;
+	AsciiString m_connectorIntenseFlareParticleSystemName;
 
-	AsciiString			m_laserBaseLightFlareParticleSystemName;
-	AsciiString			m_laserBaseMediumFlareParticleSystemName;
-	AsciiString			m_laserBaseIntenseFlareParticleSystemName;
+	AsciiString m_laserBaseLightFlareParticleSystemName;
+	AsciiString m_laserBaseMediumFlareParticleSystemName;
+	AsciiString m_laserBaseIntenseFlareParticleSystemName;
 
-	AsciiString			m_fireBoneName;
-	AsciiString			m_particleBeamLaserName;
+	AsciiString m_fireBoneName;
+	AsciiString m_particleBeamLaserName;
 
-	FXList					*m_groundHitFX;
-	FXList					*m_beamLaunchFX;
+	FXList* m_groundHitFX;
+	FXList* m_beamLaunchFX;
 
-	Real						m_swathOfDeathDistance;
-	Real						m_swathOfDeathAmplitude;
-	UnsignedInt			m_totalScorchMarks;
-	Real						m_scorchMarkScalar;
+	Real m_swathOfDeathDistance;
+	Real m_swathOfDeathAmplitude;
+	UnsignedInt m_totalScorchMarks;
+	Real m_scorchMarkScalar;
 
-	UnsignedInt			m_totalDamagePulses;
-	Real						m_damagePerSecond;
-	DamageType			m_damageType;
-	DeathType				m_deathType;
-	Real						m_damageRadiusScalar;
-	Real						m_revealRange;
+	UnsignedInt m_totalDamagePulses;
+	Real m_damagePerSecond;
+	DamageType m_damageType;
+	DeathType m_deathType;
+	Real m_damageRadiusScalar;
+	Real m_revealRange;
 
-	SpecialPowerTemplate *m_specialPowerTemplate;
+	SpecialPowerTemplate* m_specialPowerTemplate;
 
+	AsciiString m_powerupSoundName;
+	AsciiString m_unpackToReadySoundName;
+	AsciiString m_firingToIdleSoundName;
+	AsciiString m_annihilationSoundName;
+	AsciiString m_damagePulseRemnantObjectName;
 
-	AsciiString		m_powerupSoundName;
-	AsciiString		m_unpackToReadySoundName;
-	AsciiString		m_firingToIdleSoundName;
-	AsciiString		m_annihilationSoundName;
-	AsciiString		m_damagePulseRemnantObjectName;
-
-  Real					m_manualDrivingSpeed;
-  Real					m_manualFastDrivingSpeed;
-  UnsignedInt		m_doubleClickToFastDriveDelay;
+	Real m_manualDrivingSpeed;
+	Real m_manualFastDrivingSpeed;
+	UnsignedInt m_doubleClickToFastDriveDelay;
 
 	ParticleUplinkCannonUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 private:
-
 };
 
-enum PUCStatus CPP_11(: Int)
+enum PUCStatus CPP_11( : Int)
 {
 	STATUS_IDLE,
 	STATUS_CHARGING,
@@ -123,7 +121,7 @@ enum PUCStatus CPP_11(: Int)
 	STATUS_PACKING,
 };
 
-enum LaserStatus CPP_11(: Int)
+enum LaserStatus CPP_11( : Int)
 {
 	LASERSTATUS_NONE,
 	LASERSTATUS_BORN,
@@ -131,7 +129,7 @@ enum LaserStatus CPP_11(: Int)
 	LASERSTATUS_DEAD,
 };
 
-enum IntensityTypes CPP_11(: Int)
+enum IntensityTypes CPP_11( : Int)
 {
 	IT_LIGHT,
 	IT_MEDIUM,
@@ -144,95 +142,92 @@ enum IntensityTypes CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 class ParticleUplinkCannonUpdate : public UpdateModule, public SpecialPowerUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParticleUplinkCannonUpdate, "ParticleUplinkCannonUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ParticleUplinkCannonUpdate, ParticleUplinkCannonUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParticleUplinkCannonUpdate, "ParticleUplinkCannonUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ParticleUplinkCannonUpdate, ParticleUplinkCannonUpdateModuleData);
 
 public:
-
-	ParticleUplinkCannonUpdate( Thing *thing, const ModuleData* moduleData );
+	ParticleUplinkCannonUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate* specialPowerTemplate, const Object* targetObj, const Coord3D* targetPos, const Waypoint* way, UnsignedInt commandOptions) override;
 	virtual Bool isSpecialAbility() const override { return false; }
 	virtual Bool isSpecialPower() const override { return true; }
-	virtual Bool isActive() const override {return m_status != STATUS_IDLE;}
+	virtual Bool isActive() const override { return m_status != STATUS_IDLE; }
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
 	virtual CommandOption getCommandOption() const override { return (CommandOption)0; }
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override;
+	virtual Bool isPowerCurrentlyInUse(const CommandButton* command = nullptr) const override;
 
 	virtual void onObjectCreated() override;
 	virtual UpdateSleepTime update() override;
 
 	void removeAllEffects();
 
-	void createOuterNodeParticleSystems( IntensityTypes intensity );
-	void createConnectorLasers( IntensityTypes intensity );
-	void createConnectorFlare( IntensityTypes intensity );
-	void createLaserBaseFlare( IntensityTypes intensity );
-	void createGroundToOrbitLaser( UnsignedInt growthFrames );
-	void createOrbitToTargetLaser( UnsignedInt growthFrames );
-	void createGroundHitParticleSystem( IntensityTypes intensity );
+	void createOuterNodeParticleSystems(IntensityTypes intensity);
+	void createConnectorLasers(IntensityTypes intensity);
+	void createConnectorFlare(IntensityTypes intensity);
+	void createLaserBaseFlare(IntensityTypes intensity);
+	void createGroundToOrbitLaser(UnsignedInt growthFrames);
+	void createOrbitToTargetLaser(UnsignedInt growthFrames);
+	void createGroundHitParticleSystem(IntensityTypes intensity);
 
 	Bool calculateDefaultInformation();
 	Bool calculateUpBonePositions();
 
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override; //Is it active now?
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return true; }	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override;
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override;    // Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return true; }    // Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination(const Coord3D* loc) override;
 
 	// Disabled conditions to process (termination conditions!)
-	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK3( DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK3(DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED); }
 
 protected:
-
-	void setLogicalStatus( PUCStatus status );
-	void setClientStatus( PUCStatus status, Bool revealThisFrame );
+	void setLogicalStatus(PUCStatus status);
+	void setClientStatus(PUCStatus status, Bool revealThisFrame);
 	void killEverything();
 
 	SpecialPowerModuleInterface* m_specialPowerModule;
 
-	AudioEventRTS		m_powerupSound;
-	AudioEventRTS		m_unpackToReadySound;
-	AudioEventRTS		m_firingToIdleSound;
-	AudioEventRTS		m_annihilationSound;
+	AudioEventRTS m_powerupSound;
+	AudioEventRTS m_unpackToReadySound;
+	AudioEventRTS m_firingToIdleSound;
+	AudioEventRTS m_annihilationSound;
 
-	Matrix3D				m_outerNodeOrientations[ MAX_OUTER_NODES ];
+	Matrix3D m_outerNodeOrientations[MAX_OUTER_NODES];
 
-	Coord3D					m_outerNodePositions[ MAX_OUTER_NODES ];
-	Coord3D					m_connectorNodePosition;
-	Coord3D					m_laserOriginPosition;
-	Coord3D					m_initialTargetPosition;
-	Coord3D					m_currentTargetPosition;
-	Coord3D					m_overrideTargetDestination;
+	Coord3D m_outerNodePositions[MAX_OUTER_NODES];
+	Coord3D m_connectorNodePosition;
+	Coord3D m_laserOriginPosition;
+	Coord3D m_initialTargetPosition;
+	Coord3D m_currentTargetPosition;
+	Coord3D m_overrideTargetDestination;
 
-	PUCStatus					m_status;
-	LaserStatus				m_laserStatus;
-	UnsignedInt				m_frames;
-	ParticleSystemID	m_outerSystemIDs[ MAX_OUTER_NODES ];
-	DrawableID				m_laserBeamIDs[ MAX_OUTER_NODES ];
-	DrawableID				m_groundToOrbitBeamID;
-	DrawableID				m_orbitToTargetBeamID;
-	LaserRadiusUpdate	m_orbitToTargetLaserRadius;
-	ParticleSystemID	m_connectorSystemID;
-	ParticleSystemID	m_laserBaseSystemID;
+	PUCStatus m_status;
+	LaserStatus m_laserStatus;
+	UnsignedInt m_frames;
+	ParticleSystemID m_outerSystemIDs[MAX_OUTER_NODES];
+	DrawableID m_laserBeamIDs[MAX_OUTER_NODES];
+	DrawableID m_groundToOrbitBeamID;
+	DrawableID m_orbitToTargetBeamID;
+	LaserRadiusUpdate m_orbitToTargetLaserRadius;
+	ParticleSystemID m_connectorSystemID;
+	ParticleSystemID m_laserBaseSystemID;
 
-	UnsignedInt			m_scorchMarksMade;
-	UnsignedInt			m_nextScorchMarkFrame;
-	UnsignedInt			m_nextLaunchFXFrame;
-	UnsignedInt			m_damagePulsesMade;
-	UnsignedInt			m_nextDamagePulseFrame;
-	UnsignedInt			m_startAttackFrame;
-	UnsignedInt			m_startDecayFrame;
-	UnsignedInt			m_lastDrivingClickFrame;
-	UnsignedInt			m_2ndLastDrivingClickFrame;
+	UnsignedInt m_scorchMarksMade;
+	UnsignedInt m_nextScorchMarkFrame;
+	UnsignedInt m_nextLaunchFXFrame;
+	UnsignedInt m_damagePulsesMade;
+	UnsignedInt m_nextDamagePulseFrame;
+	UnsignedInt m_startAttackFrame;
+	UnsignedInt m_startDecayFrame;
+	UnsignedInt m_lastDrivingClickFrame;
+	UnsignedInt m_2ndLastDrivingClickFrame;
 
-	XferVersion			m_xferVersion;
+	XferVersion m_xferVersion;
 
-	Bool						m_upBonesCached;
-	Bool						m_defaultInfoCached;
-	Bool						m_invalidSettings;
-	Bool						m_manualTargetMode;
-	Bool						m_clientShroudedLastFrame;
+	Bool m_upBonesCached;
+	Bool m_defaultInfoCached;
+	Bool m_invalidSettings;
+	Bool m_manualTargetMode;
+	Bool m_clientShroudedLastFrame;
 };

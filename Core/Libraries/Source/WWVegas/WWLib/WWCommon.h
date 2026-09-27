@@ -27,7 +27,14 @@
 #include <rts/profile.h>
 
 #ifndef SAFE_RELEASE
-#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=nullptr; } }
+#define SAFE_RELEASE(p) \
+	{ \
+		if (p) \
+		{ \
+			(p)->Release(); \
+			(p) = nullptr; \
+		} \
+	}
 #endif
 
 enum
