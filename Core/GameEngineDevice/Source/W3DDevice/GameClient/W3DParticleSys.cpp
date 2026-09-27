@@ -132,6 +132,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	//particles falling under the ground.
 
  	TheTerrainRenderObject->getMaximumVisibleBox(frustum, &bbox, TRUE);
+	m_currentBoundingBox = bbox;
 
 	//@todo lorenzen sez: put these in registers for sure
 	Real bcX = bbox.Center.X;
@@ -228,7 +229,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// setup a new particle batch texture if prior batch was flushed.
 		if (canBatch && m_batchTexture == nullptr)
 		{
-			initializeBatch(*sys, texture, bbox);
+			initializeBatch(*sys, texture);
 		}
 
 		UnsignedInt startCount = pointCount;
@@ -283,7 +284,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 				// This prevents particles being dropped. Bank the stats first as the flush resets count to 0.
 				m_onScreenParticleCount += (pointCount - startCount);
 				flushParticleBatch(rinfo, pointCount);
-				initializeBatch(*sys, texture, bbox);
+				initializeBatch(*sys, texture);
 				startCount = 0;
 			}
 		}
@@ -344,7 +345,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		else if (sys->isUsingStreak() && (pointCount == 1))
 		{
 			m_onScreenParticleCount += (pointCount - startCount);
-			initializeBatch(*sys, texture, bbox);
+			initializeBatch(*sys, texture);
 			flushParticleBatch(rinfo, pointCount);
 			startCount = 0;
 		}
@@ -433,12 +434,11 @@ Bool W3DParticleSystemManager::finishedBatch(const ParticleSystem& system, const
 		system.getParticleAlignment() != m_batchParticleAlignment;
 }
 
-void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const AABoxClass& bbox)
+void W3DParticleSystemManager::initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture)
 {
 	m_batchTexture = texture;
 	m_batchShaderType = system.getShaderType();
 	m_batchParticleAlignment = system.getParticleAlignment();
-	m_batchBoundingBox = bbox;
 }
 
 void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount)
@@ -467,7 +467,7 @@ void W3DParticleSystemManager::flushParticleBatch(RenderInfoClass& rinfo, Unsign
 			m_terrainParticles->setTexture(m_batchTexture.Peek());
 			m_terrainParticles->setShader( shader );
 			m_terrainParticles->setArrays( m_posBuffer, m_RGBABuffer, m_sizeBuffer, m_angleBuffer, pointCount );
-			m_terrainParticles->setBoundingBox( m_batchBoundingBox );
+			m_terrainParticles->setBoundingBox( m_currentBoundingBox );
 			m_terrainParticles->render();
 		}
 		else // draw regular point group

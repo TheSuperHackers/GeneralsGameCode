@@ -53,7 +53,7 @@ public:
 
 private:
 	Bool finishedBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
-	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture, const AABoxClass& bbox);
+	void initializeBatch(const ParticleSystem& system, const RefCountPtr<TextureClass>& texture);
 	void flushParticleBatch(RenderInfoClass& rinfo, UnsignedInt& pointCount);
 
 	enum { MAX_POINTS_PER_GROUP = 512 };
@@ -66,9 +66,9 @@ private:
 	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
 	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
 	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
+	AABoxClass m_currentBoundingBox;
 
 	ParticleSystemInfo::ParticleShaderType m_batchShaderType;
 	Bool m_readyToRender;											///< if true, it is OK to render
 	ParticleSystemInfo::ParticleAlignmentType m_batchParticleAlignment;
-	AABoxClass m_batchBoundingBox;
 };
