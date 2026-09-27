@@ -882,8 +882,9 @@ void Object::setOrRestoreTeam( Team* team, Bool restoring )
 	{
 		if (m_team->isInList_TeamMemberList(this))
 		{
+			const Bool objectXferLoad = restoring;
 			m_team->removeFrom_TeamMemberList(this);
-			m_team->getControllingPlayer()->becomingTeamMember(this, false);
+			m_team->getControllingPlayer()->becomingTeamMember(this, false, objectXferLoad);
 		}
 	}
 
@@ -895,8 +896,9 @@ void Object::setOrRestoreTeam( Team* team, Bool restoring )
 	{
 		if (!m_team->isInList_TeamMemberList(this))
 		{
+			const Bool objectXferLoad = restoring;
 			m_team->prependTo_TeamMemberList(this);
-			m_team->getControllingPlayer()->becomingTeamMember(this, true);
+			m_team->getControllingPlayer()->becomingTeamMember(this, true, objectXferLoad);
 		}
 
 		// now, adjust the attitude of the unit to its new team.
