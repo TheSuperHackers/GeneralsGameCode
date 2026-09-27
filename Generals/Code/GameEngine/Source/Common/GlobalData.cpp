@@ -563,6 +563,9 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = nullptr;
 
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	m_specialPowerUsesDelay = TRUE;
+#endif
   m_TiVOFastMode = FALSE;
 
 #if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
@@ -573,13 +576,6 @@ GlobalData::GlobalData()
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
-#endif
-
-#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-	m_specialPowerUsesDelay = TRUE;
-#endif
-
-#if defined(RTS_DEBUG)
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;

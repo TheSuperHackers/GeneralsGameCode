@@ -204,7 +204,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 //			extern std::vector<std::string>	preloadTextureNamesGlobalHack;
 //			preloadTextureNamesGlobalHack.push_back(tex->Get_Texture_Name());
 //		}
-#if defined(RTS_DEBUG)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		if (TheGlobalData->m_preloadReport)
 		{
 			//loading a new asset and app is requesting a log of all loaded assets.

@@ -44,6 +44,7 @@
 #include "GameLogic/Module/RebuildHoleExposeDie.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
+#include "GameClient/SelectionXlat.h"
 
 
 // ------------------------------------------------------------------------------------------------
@@ -99,6 +100,18 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 {
 	if (!isDieApplicable(damageInfo))
 		return;
+
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+  if(TheSelectionTranslator->isHandOfGodSelectionMode())
+  {
+    if ( getObject()->isKindOf( KINDOF_STRUCTURE ) )
+    {
+      if ( damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE )
+        return;
+    }
+  }
+#endif
+
 	const RebuildHoleExposeDieModuleData *modData = getRebuildHoleExposeDieModuleData();
 	Object *us = getObject();
 
