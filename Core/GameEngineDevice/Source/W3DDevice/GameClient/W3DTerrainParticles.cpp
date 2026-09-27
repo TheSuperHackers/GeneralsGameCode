@@ -28,7 +28,6 @@
 #include "WW3D2/statistics.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/vertmaterial.h"
-#include "WWLib/refcount.h"
 #include "WWMath/vector3.h"
 #include "WWMath/vector4.h"
 #include "WWMath/wwmath.h"
@@ -294,15 +293,19 @@ IRegion2D W3DTerrainParticles::calcTerrainBounds(const WorldHeightMap& map, cons
 	return bounds;
 }
 
+Bool W3DTerrainParticles::isDefaultWhiteOpaque() const
+{
+	constexpr const Real value255 = 254.0f / 255.0f;
+	return m_defaultPointColor.X > value255 &&
+	       m_defaultPointColor.Y > value255 &&
+	       m_defaultPointColor.Z > value255 &&
+	       m_defaultPointAlpha > value255;
+}
+
 void W3DTerrainParticles::updateSettings()
 {
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-	const Real value255 = 0.9961f;    // 254 / 255
-	const Bool defaultWhiteOpaque = m_defaultPointColor.X > value255 &&
-	                                m_defaultPointColor.Y > value255 &&
-	                                m_defaultPointColor.Z > value255 &&
-	                                m_defaultPointAlpha > value255;
-	if (m_pointDiffuse || !defaultWhiteOpaque)
+	if (m_pointDiffuse || !isDefaultWhiteOpaque())
 	{
 		m_shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
 	}
