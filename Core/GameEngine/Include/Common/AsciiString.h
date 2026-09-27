@@ -355,12 +355,12 @@ public:
 	/**
 		conceptually similar to strtok():
 
-		extract the next seps-delimited token from the front
+		extract the next separators-delimited token from the front
 		of 'this' and copy it into 'token', returning true if a nonempty
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(AsciiString* token, const char* seps = nullptr);
+	Bool nextToken(AsciiString* token, const char* separators = nullptr);
 
 	/**
 		return true iff the string is "NONE" (case-insensitive).

@@ -345,12 +345,12 @@ public:
 	/**
 		conceptually similar to strtok():
 
-		extract the next whitespace-delimited token from the front
+		extract the next separators-delimited token from the front
 		of 'this' and copy it into 'token', returning true if a nonempty
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(UnicodeString* token, UnicodeString delimiters = UnicodeString::TheEmptyString);
+	Bool nextToken(UnicodeString* token, const WideChar* separators = nullptr);
 
 //
 // You might think it would be a good idea to overload the * operator
