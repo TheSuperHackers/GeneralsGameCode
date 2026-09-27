@@ -26,25 +26,27 @@
 
 class ExportScriptsOptions : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ExportScriptsOptions(CWnd* pParent = nullptr);   // standard constructor
+	ExportScriptsOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ExportScriptsOptions)
-	enum { IDD = IDD_EXPORT_SCRIPTS_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EXPORT_SCRIPTS_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ExportScriptsOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	static Bool m_units;
 	static Bool m_waypoints;
@@ -52,13 +54,12 @@ protected:
 	static Bool m_allScripts;
 
 public:
-	Bool getDoUnits() {return m_units;}
-	Bool getDoWaypoints() {return m_waypoints;}
-	Bool getDoTriggers() {return m_triggers;}
-	Bool getDoAllScripts() {return m_allScripts;}
+	Bool getDoUnits() { return m_units; }
+	Bool getDoWaypoints() { return m_waypoints; }
+	Bool getDoTriggers() { return m_triggers; }
+	Bool getDoAllScripts() { return m_allScripts; }
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ExportScriptsOptions)
 	virtual void OnOK() override;

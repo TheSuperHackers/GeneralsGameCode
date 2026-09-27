@@ -26,14 +26,14 @@
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             BrushTool
-	 Does the Height Brush tool operation.
+   Does the Height Brush tool operation.
 ***************************************************************************/
 ///  Height brush tool.
 class BrushTool : public Tool
 {
 protected:
-	WorldHeightMapEdit *m_htMapEditCopy; ///< ref counted.
-	WorldHeightMapEdit *m_htMapFeatherCopy; ///< ref counted.
+	WorldHeightMapEdit* m_htMapEditCopy;    ///< ref counted.
+	WorldHeightMapEdit* m_htMapFeatherCopy;    ///< ref counted.
 
 	static Int m_brushWidth;
 	static Int m_brushFeather;
@@ -45,19 +45,18 @@ public:
 	virtual ~BrushTool() override;
 
 public:
-	static Int getWidth() {return m_brushWidth;};  ///<Returns width.
-	static Int getFeather() {return m_brushFeather;}; ///<Returns feather.
-	static Int getHeight() {return m_brushHeight;}; ///<Returns height.
+	static Int getWidth() { return m_brushWidth; };    ///< Returns width.
+	static Int getFeather() { return m_brushFeather; };    ///< Returns feather.
+	static Int getHeight() { return m_brushHeight; };    ///< Returns height.
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 	static void setHeight(Int height);
 
 public:
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual WorldHeightMapEdit *getHeightMap() override {return m_htMapEditCopy;};
-	virtual void activate() override; ///< Become the current tool.
-	virtual Bool followsTerrain() override {return false;};
-
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual WorldHeightMapEdit* getHeightMap() override { return m_htMapEditCopy; };
+	virtual void activate() override;    ///< Become the current tool.
+	virtual Bool followsTerrain() override { return false; };
 };

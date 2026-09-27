@@ -23,9 +23,9 @@
 #include "Common/ThingSort.h"
 #include "Common/ThingTemplate.h"
 
-#define ARBITRARY_BUFF_SIZE		128
+#define ARBITRARY_BUFF_SIZE 128
 
-/*extern*/ GroveOptions *TheGroveOptions = nullptr;
+/*extern*/ GroveOptions* TheGroveOptions = nullptr;
 
 void GroveOptions::makeMain()
 {
@@ -34,13 +34,13 @@ void GroveOptions::makeMain()
 
 GroveOptions::GroveOptions(CWnd* pParent)
 {
-
 }
 
 int GroveOptions::getNumTrees()
 {
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
-	if (!pWnd) {
+	if (!pWnd)
+	{
 		return 0;
 	}
 
@@ -49,36 +49,47 @@ int GroveOptions::getNumTrees()
 	return atoi(buff);
 }
 
-
 int GroveOptions::getNumType(int type)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 
-	if (type < 1 || type > 5) {
+	if (type < 1 || type > 5)
+	{
 		return -1;
 	}
 
-	CWnd *pWnd;
+	CWnd* pWnd;
 	CComboBox* pBox;
-	if (type == 1) {
+	if (type == 1)
+	{
 		pWnd = GetDlgItem(IDC_Grove_Per1);
-		pBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-	} else if (type == 2) {
+		pBox = (CComboBox*)GetDlgItem(IDC_Grove_Type1);
+	}
+	else if (type == 2)
+	{
 		pWnd = GetDlgItem(IDC_Grove_Per2);
-		pBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-	} else if (type == 3) {
+		pBox = (CComboBox*)GetDlgItem(IDC_Grove_Type2);
+	}
+	else if (type == 3)
+	{
 		pWnd = GetDlgItem(IDC_Grove_Per3);
-		pBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-	} else if (type == 4) {
+		pBox = (CComboBox*)GetDlgItem(IDC_Grove_Type3);
+	}
+	else if (type == 4)
+	{
 		pWnd = GetDlgItem(IDC_Grove_Per4);
-		pBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-	} else if (type == 5) {
+		pBox = (CComboBox*)GetDlgItem(IDC_Grove_Type4);
+	}
+	else if (type == 5)
+	{
 		pWnd = GetDlgItem(IDC_Grove_Per5);
-		pBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
+		pBox = (CComboBox*)GetDlgItem(IDC_Grove_Type5);
 	}
 
-	if (pWnd && pBox) {
-		if (pBox->GetCurSel() > 0) {
+	if (pWnd && pBox)
+	{
+		if (pBox->GetCurSel() > 0)
+		{
 			pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 			return atoi(buff);
 		}
@@ -89,25 +100,36 @@ int GroveOptions::getNumType(int type)
 
 AsciiString GroveOptions::getTypeName(int type)
 {
-	if (type < 1 || type > 5) {
+	if (type < 1 || type > 5)
+	{
 		return "";
 	}
 
-	CComboBox *pComboBox;
-	if (type == 1) {
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-	} else if (type == 2) {
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-	} else if (type == 3) {
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-	} else if (type == 4) {
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-	} else if (type == 5) {
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
+	CComboBox* pComboBox;
+	if (type == 1)
+	{
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type1);
+	}
+	else if (type == 2)
+	{
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type2);
+	}
+	else if (type == 3)
+	{
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type3);
+	}
+	else if (type == 4)
+	{
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type4);
+	}
+	else if (type == 5)
+	{
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type5);
 	}
 
 	int curSel = pComboBox->GetCurSel();
-	if (curSel < 0 || curSel > mVecDisplayNames.size()) {
+	if (curSel < 0 || curSel > mVecDisplayNames.size())
+	{
 		return "";
 	}
 	CString cstr;
@@ -122,11 +144,13 @@ int GroveOptions::getTotalTreePerc()
 	static char buff[ARBITRARY_BUFF_SIZE];
 
 	CWnd* pWnd = GetDlgItem(IDC_Grove_PerTotal);
-	if (!pWnd) {
+	if (!pWnd)
+	{
 		return -1;
 	}
 
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		return atoi(buff);
 	}
@@ -137,8 +161,9 @@ Bool GroveOptions::getCanPlaceInWater()
 {
 	CButton* pButt;
 
-	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowWaterPlacement);
-	if (pButt) {
+	pButt = (CButton*)GetDlgItem(IDC_Grove_AllowWaterPlacement);
+	if (pButt)
+	{
 		return (pButt->GetState() != 0);
 	}
 	return false;
@@ -148,8 +173,9 @@ Bool GroveOptions::getCanPlaceOnCliffs()
 {
 	CButton* pButt;
 
-	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowCliffPlacement);
-	if (pButt) {
+	pButt = (CButton*)GetDlgItem(IDC_Grove_AllowCliffPlacement);
+	if (pButt)
+	{
 		return (pButt->GetState() != 0);
 	}
 	return false;
@@ -171,74 +197,84 @@ GroveOptions::~GroveOptions()
 	TheGroveOptions = nullptr;
 }
 
-
 void GroveOptions::_setTreesToLists()
 {
 	CString str;
-	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); it++) {
+	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); it++)
+	{
 		// TODO: If/when Models get Display strings, we need to replace the
 		// current (str = ...) line with the commented one JKMCD
 		str = it->first.str();
-		//str = GetDisplayNameFromPair(it).str();
+		// str = GetDisplayNameFromPair(it).str();
 
-		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-		if (pComboBox) {
+		CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type1);
+		if (pComboBox)
+		{
 			pComboBox->AddString(str);
 		}
 
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-		if (pComboBox) {
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type2);
+		if (pComboBox)
+		{
 			pComboBox->AddString(str);
 		}
 
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-		if (pComboBox) {
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type3);
+		if (pComboBox)
+		{
 			pComboBox->AddString(str);
 		}
 
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-		if (pComboBox) {
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type4);
+		if (pComboBox)
+		{
 			pComboBox->AddString(str);
 		}
 
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
-		if (pComboBox) {
+		pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type5);
+		if (pComboBox)
+		{
 			pComboBox->AddString(str);
 		}
 	}
 
 	int selValue;
 	str = "";
-	CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-	if (pComboBox) {
+	CComboBox* pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type1);
+	if (pComboBox)
+	{
 		pComboBox->AddString(str);
 		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType1", 0);
 		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
 	}
 
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-	if (pComboBox) {
+	pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type2);
+	if (pComboBox)
+	{
 		pComboBox->AddString(str);
 		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType2", 0);
 		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
 	}
 
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-	if (pComboBox) {
+	pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type3);
+	if (pComboBox)
+	{
 		pComboBox->AddString(str);
 		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType3", 0);
 		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
 	}
 
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-	if (pComboBox) {
+	pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type4);
+	if (pComboBox)
+	{
 		pComboBox->AddString(str);
 		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType4", 0);
 		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
 	}
 
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
-	if (pComboBox) {
+	pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type5);
+	if (pComboBox)
+	{
 		pComboBox->AddString(str);
 		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType5", 0);
 		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
@@ -248,8 +284,10 @@ void GroveOptions::_setTreesToLists()
 void GroveOptions::_buildTreeList()
 {
 	const ThingTemplate* pTemplate;
-	for (pTemplate = TheThingFactory->firstTemplate(); pTemplate; pTemplate = pTemplate->friend_getNextTemplate()) {
-		if (pTemplate->getEditorSorting() == ES_SHRUBBERY) {
+	for (pTemplate = TheThingFactory->firstTemplate(); pTemplate; pTemplate = pTemplate->friend_getNextTemplate())
+	{
+		if (pTemplate->getEditorSorting() == ES_SHRUBBERY)
+		{
 			PairNameDisplayName currentName;
 			currentName.first = pTemplate->getName();
 			currentName.second = pTemplate->getDisplayName();
@@ -264,35 +302,40 @@ void GroveOptions::_setDefaultRatios()
 	int defaultRatio;
 
 	CWnd* pWnd = GetDlgItem(IDC_Grove_Per1);
-	if (pWnd) {
+	if (pWnd)
+	{
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio1", 0);
 		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per2);
-	if (pWnd) {
+	if (pWnd)
+	{
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio2", 0);
 		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per3);
-	if (pWnd) {
+	if (pWnd)
+	{
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio3", 0);
 		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per4);
-	if (pWnd) {
+	if (pWnd)
+	{
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio4", 0);
 		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per5);
-	if (pWnd) {
+	if (pWnd)
+	{
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio5", 0);
 		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
@@ -302,7 +345,8 @@ void GroveOptions::_setDefaultRatios()
 void GroveOptions::_setDefaultNumTrees()
 {
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
-	if (!pWnd) {
+	if (!pWnd)
+	{
 		return;
 	}
 
@@ -318,19 +362,20 @@ void GroveOptions::_setDefaultPlacementAllowed()
 	CButton* pButt;
 	int state;
 
-	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowCliffPlacement);
-	if (pButt) {
+	pButt = (CButton*)GetDlgItem(IDC_Grove_AllowCliffPlacement);
+	if (pButt)
+	{
 		state = AfxGetApp()->GetProfileInt("GroveOptions", "AllowCliffPlace", 1);
 		pButt->SetCheck(state);
 	}
 
-	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowWaterPlacement);
-	if (pButt) {
+	pButt = (CButton*)GetDlgItem(IDC_Grove_AllowWaterPlacement);
+	if (pButt)
+	{
 		state = AfxGetApp()->GetProfileInt("GroveOptions", "AllowWaterPlace", 1);
 		pButt->SetCheck(state);
 	}
 }
-
 
 void GroveOptions::_updateTreeWeights()
 {
@@ -338,7 +383,8 @@ void GroveOptions::_updateTreeWeights()
 	int val = 0;
 	int ratio;
 	CWnd* pWnd = GetDlgItem(IDC_Grove_Per1);
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		ratio = atoi(buff);
 		AfxGetApp()->WriteProfileInt("GroveOptions", "DefaultRatio1", ratio);
@@ -346,7 +392,8 @@ void GroveOptions::_updateTreeWeights()
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per2);
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		ratio = atoi(buff);
 		AfxGetApp()->WriteProfileInt("GroveOptions", "DefaultRatio2", ratio);
@@ -354,7 +401,8 @@ void GroveOptions::_updateTreeWeights()
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per3);
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		ratio = atoi(buff);
 		AfxGetApp()->WriteProfileInt("GroveOptions", "DefaultRatio3", ratio);
@@ -362,7 +410,8 @@ void GroveOptions::_updateTreeWeights()
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per4);
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		ratio = atoi(buff);
 		AfxGetApp()->WriteProfileInt("GroveOptions", "DefaultRatio4", ratio);
@@ -370,7 +419,8 @@ void GroveOptions::_updateTreeWeights()
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per5);
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		ratio = atoi(buff);
 		AfxGetApp()->WriteProfileInt("GroveOptions", "DefaultRatio5", ratio);
@@ -378,7 +428,8 @@ void GroveOptions::_updateTreeWeights()
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_PerTotal);
-	if (pWnd) {
+	if (pWnd)
+	{
 		snprintf(buff, ARRAY_SIZE(buff), "%d", val);
 		pWnd->SetWindowText(buff);
 	}
@@ -388,7 +439,8 @@ void GroveOptions::_updateTreeCount()
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
-	if (pWnd) {
+	if (pWnd)
+	{
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 		int val = atoi(buff);
 		AfxGetApp()->WriteProfileInt("GroveOptions", "NumberofTrees", val);
@@ -397,34 +449,54 @@ void GroveOptions::_updateTreeCount()
 
 void GroveOptions::_updateGroveMakeup()
 {
-	for (int type = 1; type <= 5; ++type) {
-		CComboBox *pComboBox;
-		if (type == 1) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-		} else if (type == 2) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-		} else if (type == 3) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-		} else if (type == 4) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-		} else if (type == 5) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
+	for (int type = 1; type <= 5; ++type)
+	{
+		CComboBox* pComboBox;
+		if (type == 1)
+		{
+			pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type1);
+		}
+		else if (type == 2)
+		{
+			pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type2);
+		}
+		else if (type == 3)
+		{
+			pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type3);
+		}
+		else if (type == 4)
+		{
+			pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type4);
+		}
+		else if (type == 5)
+		{
+			pComboBox = (CComboBox*)GetDlgItem(IDC_Grove_Type5);
 		}
 
-		if (!pComboBox) {
+		if (!pComboBox)
+		{
 			continue;
 		}
 
 		int curSel = pComboBox->GetCurSel();
-		if (type == 1) {
+		if (type == 1)
+		{
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType1", curSel);
-		} else if (type == 2) {
+		}
+		else if (type == 2)
+		{
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType2", curSel);
-		} else if (type == 3) {
+		}
+		else if (type == 3)
+		{
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType3", curSel);
-		} else if (type == 4) {
+		}
+		else if (type == 4)
+		{
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType4", curSel);
-		} else if (type == 5) {
+		}
+		else if (type == 5)
+		{
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType5", curSel);
 		}
 	}
@@ -435,37 +507,36 @@ void GroveOptions::_updatePlacementAllowed()
 	// huh huh huh-huh
 	CButton* pButt;
 
-	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowCliffPlacement);
-	if (pButt) {
+	pButt = (CButton*)GetDlgItem(IDC_Grove_AllowCliffPlacement);
+	if (pButt)
+	{
 		AfxGetApp()->WriteProfileInt("GroveOptions", "AllowCliffPlace", pButt->GetCheck());
 	}
 
-	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowWaterPlacement);
-	if (pButt) {
+	pButt = (CButton*)GetDlgItem(IDC_Grove_AllowWaterPlacement);
+	if (pButt)
+	{
 		AfxGetApp()->WriteProfileInt("GroveOptions", "AllowWaterPlace", pButt->GetCheck());
 	}
-
-
 }
 
 void GroveOptions::OnOK()
 {
-
 }
 
 void GroveOptions::OnClose()
 {
-
-
 }
 
 UnicodeString GetDisplayNameFromPair(const PairNameDisplayName* pNamePair)
 {
-	if (!pNamePair) {
+	if (!pNamePair)
+	{
 		return UnicodeString::TheEmptyString;
 	}
 
-	if (!pNamePair->second.isEmpty()) {
+	if (!pNamePair->second.isEmpty())
+	{
 		return pNamePair->second;
 	}
 
@@ -476,17 +547,17 @@ UnicodeString GetDisplayNameFromPair(const PairNameDisplayName* pNamePair)
 }
 
 BEGIN_MESSAGE_MAP(GroveOptions, CDialog)
-	ON_EN_KILLFOCUS(IDC_Grove_Per1, _updateTreeWeights)
-	ON_EN_KILLFOCUS(IDC_Grove_Per2, _updateTreeWeights)
-	ON_EN_KILLFOCUS(IDC_Grove_Per3, _updateTreeWeights)
-	ON_EN_KILLFOCUS(IDC_Grove_Per4, _updateTreeWeights)
-	ON_EN_KILLFOCUS(IDC_Grove_Per5, _updateTreeWeights)
-	ON_EN_KILLFOCUS(IDC_Grove_NumberTrees, _updateTreeCount)
-	ON_CBN_SELENDOK(IDC_Grove_Type1, _updateGroveMakeup)
-	ON_CBN_SELENDOK(IDC_Grove_Type2, _updateGroveMakeup)
-	ON_CBN_SELENDOK(IDC_Grove_Type3, _updateGroveMakeup)
-	ON_CBN_SELENDOK(IDC_Grove_Type4, _updateGroveMakeup)
-	ON_CBN_SELENDOK(IDC_Grove_Type5, _updateGroveMakeup)
-	ON_BN_CLICKED(IDC_Grove_AllowCliffPlacement, _updatePlacementAllowed)
-	ON_BN_CLICKED(IDC_Grove_AllowWaterPlacement, _updatePlacementAllowed)
+ON_EN_KILLFOCUS(IDC_Grove_Per1, _updateTreeWeights)
+ON_EN_KILLFOCUS(IDC_Grove_Per2, _updateTreeWeights)
+ON_EN_KILLFOCUS(IDC_Grove_Per3, _updateTreeWeights)
+ON_EN_KILLFOCUS(IDC_Grove_Per4, _updateTreeWeights)
+ON_EN_KILLFOCUS(IDC_Grove_Per5, _updateTreeWeights)
+ON_EN_KILLFOCUS(IDC_Grove_NumberTrees, _updateTreeCount)
+ON_CBN_SELENDOK(IDC_Grove_Type1, _updateGroveMakeup)
+ON_CBN_SELENDOK(IDC_Grove_Type2, _updateGroveMakeup)
+ON_CBN_SELENDOK(IDC_Grove_Type3, _updateGroveMakeup)
+ON_CBN_SELENDOK(IDC_Grove_Type4, _updateGroveMakeup)
+ON_CBN_SELENDOK(IDC_Grove_Type5, _updateGroveMakeup)
+ON_BN_CLICKED(IDC_Grove_AllowCliffPlacement, _updatePlacementAllowed)
+ON_BN_CLICKED(IDC_Grove_AllowWaterPlacement, _updatePlacementAllowed)
 END_MESSAGE_MAP()

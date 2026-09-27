@@ -38,7 +38,6 @@
 class SpyVisionUpdateModuleData : public UpdateModuleData
 {
 public:
-
 	SpyVisionUpdateModuleData()
 	{
 	}
@@ -50,23 +49,20 @@ public:
 //-------------------------------------------------------------------------------------------------
 class SpyVisionUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpyVisionUpdate, "SpyVisionUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpyVisionUpdate, SpyVisionUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpyVisionUpdate, "SpyVisionUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpyVisionUpdate, SpyVisionUpdateModuleData)
 
 public:
-
-	SpyVisionUpdate( Thing *thing, const ModuleData* moduleData );
+	SpyVisionUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onDelete() override;
 	virtual UpdateSleepTime update() override;
 
-	void activateSpyVision( UnsignedInt duration );
+	void activateSpyVision(UnsignedInt duration);
 
 private:
-
-	void doActivationWork( Bool setting );
+	void doActivationWork(Bool setting);
 
 	UnsignedInt m_deactivateFrame;
 };

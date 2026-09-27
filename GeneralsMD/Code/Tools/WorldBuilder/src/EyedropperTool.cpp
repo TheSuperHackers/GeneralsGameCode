@@ -35,8 +35,8 @@
 // EyedropperTool class.
 //
 /// Constructor
-EyedropperTool::EyedropperTool() :
-	Tool(ID_EYEDROPPER_TOOL, IDC_EYEDROPPER)
+EyedropperTool::EyedropperTool()
+  : Tool(ID_EYEDROPPER_TOOL, IDC_EYEDROPPER)
 {
 }
 
@@ -44,7 +44,6 @@ EyedropperTool::EyedropperTool() :
 EyedropperTool::~EyedropperTool()
 {
 }
-
 
 /// Shows the terrain materials options panel.
 void EyedropperTool::activate()
@@ -56,19 +55,23 @@ void EyedropperTool::activate()
 
 /// Perform the tool behavior on mouse down.
 /** Finds the current texture class, and tells the terrain material panel to use it as fg. */
-void EyedropperTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void EyedropperTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+	{
+		return;
+	}
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
 
 	CPoint ndx;
 	if (!pDoc->getCellIndexFromCoord(cpt, &ndx))
+	{
 		return;
+	}
 
-	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+	WorldHeightMapEdit* pMap = pDoc->GetHeightMap();
 	Int texClass = pMap->getTextureClass(ndx.x, ndx.y, true);
 	TerrainMaterial::setFgTexClass(texClass);
 }
-

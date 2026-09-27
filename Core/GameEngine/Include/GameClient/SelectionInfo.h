@@ -55,7 +55,6 @@ struct SelectionInfo
 	Bool selectMineBuildings;
 	Bool selectFriends;
 
-
 	SelectionInfo();
 };
 
@@ -63,7 +62,7 @@ struct SelectionInfo
 struct PickDrawableStruct
 {
 	// List to fill with Drawables. This should be provided by the caller.
-	DrawableList *drawableListToFill;
+	DrawableList* drawableListToFill;
 
 	Bool isPointSelection;
 	Bool forceAttackMode;
@@ -75,11 +74,10 @@ struct PickDrawableStruct
 };
 
 //-------------------------------------------------------------------------------------------------
-extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
-																					const DrawableList *newlySelectedDrawables,
-																					SelectionInfo *outSelectionInfo,
-																					Bool selectionIsPoint);
-
+extern Bool contextCommandForNewSelection(const DrawableList* currentlySelectedDrawables,
+                                          const DrawableList* newlySelectedDrawables,
+                                          SelectionInfo* outSelectionInfo,
+                                          Bool selectionIsPoint);
 
 //-------------------------------------------------------------------------------------------------
 // Returns ORed picktypes.
@@ -89,7 +87,6 @@ extern UnsignedInt getPickTypesForContext(Bool forceAttackMode);
 // Returns ORed picktypes based on the current selection.
 extern UnsignedInt getPickTypesForCurrentSelection(Bool forceAttackMode);
 
-
 //-------------------------------------------------------------------------------------------------
 // expects ORed picktypes.
 extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outmask);
@@ -98,4 +95,4 @@ extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& ou
 // Given a drawable, add it to an stl list. Useful for iterateDrawablesInRegion.
 // userData should be a pointer to a PickDrawableStruct, which is defined in
 // above.
-extern Bool addDrawableToList( Drawable *draw, void *userData );
+extern Bool addDrawableToList(Drawable* draw, void* userData);

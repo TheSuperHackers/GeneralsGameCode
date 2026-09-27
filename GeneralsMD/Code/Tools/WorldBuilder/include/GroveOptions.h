@@ -25,53 +25,52 @@
 #include "Common/STLTypedefs.h"
 
 // Used to store Display names in conjunction with internal names.
-typedef std::pair<AsciiString, UnicodeString>							PairNameDisplayName;
-typedef std::vector<PairNameDisplayName>									VecPairNameDisplayName;
-typedef std::vector<PairNameDisplayName>::iterator				VecPairNameDisplayNameIt;
-
+typedef std::pair<AsciiString, UnicodeString> PairNameDisplayName;
+typedef std::vector<PairNameDisplayName> VecPairNameDisplayName;
+typedef std::vector<PairNameDisplayName>::iterator VecPairNameDisplayNameIt;
 
 // This is a utility function useful to get a display string from a pair of AsciiString
 // UnicodeStrings. It attempts to use the UnicodeString, and if that fails then turns
 // to the AsciiString
 // As a last resort, it returns the EmptyString.
-UnicodeString GetDisplayNameFromPair(const PairNameDisplayName *pNamePair);
+UnicodeString GetDisplayNameFromPair(const PairNameDisplayName* pNamePair);
 
 class GroveOptions : public COptionsPanel
 {
-	protected:
-		std::vector<std::pair<Int, Int>/**/>	mVecGroup;
-		VecPairNameDisplayName mVecDisplayNames;
+protected:
+	std::vector<std::pair<Int, Int> /**/> mVecGroup;
+	VecPairNameDisplayName mVecDisplayNames;
 
-		Int	mNumTrees;
+	Int mNumTrees;
 
-	public:
-		GroveOptions(CWnd* pParent = nullptr);
-		virtual ~GroveOptions() override;
-		void makeMain();
+public:
+	GroveOptions(CWnd* pParent = nullptr);
+	virtual ~GroveOptions() override;
+	void makeMain();
 
-		virtual BOOL OnInitDialog() override;
-		int getNumTrees();
-		int getNumType(int type);
-		AsciiString getTypeName(int type);
-		int getTotalTreePerc();
-		Bool getCanPlaceInWater();
-		Bool getCanPlaceOnCliffs();
+	virtual BOOL OnInitDialog() override;
+	int getNumTrees();
+	int getNumType(int type);
+	AsciiString getTypeName(int type);
+	int getTotalTreePerc();
+	Bool getCanPlaceInWater();
+	Bool getCanPlaceOnCliffs();
 
-	protected:
-		void _setTreesToLists();
-		void _buildTreeList();
-		void _setDefaultRatios();
-		void _setDefaultNumTrees();
-		void _setDefaultPlacementAllowed();
+protected:
+	void _setTreesToLists();
+	void _buildTreeList();
+	void _setDefaultRatios();
+	void _setDefaultNumTrees();
+	void _setDefaultPlacementAllowed();
 
-		afx_msg void _updateTreeWeights();
-		afx_msg void _updateTreeCount();
-		afx_msg void _updateGroveMakeup();
-		afx_msg void _updatePlacementAllowed();
+	afx_msg void _updateTreeWeights();
+	afx_msg void _updateTreeCount();
+	afx_msg void _updateGroveMakeup();
+	afx_msg void _updatePlacementAllowed();
 
-		virtual void OnOK() override;
-		virtual void OnClose();
+	virtual void OnOK() override;
+	virtual void OnClose();
 	DECLARE_MESSAGE_MAP()
 };
 
-extern GroveOptions *TheGroveOptions;
+extern GroveOptions* TheGroveOptions;

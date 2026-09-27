@@ -34,46 +34,40 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DestroyModule::DestroyModule( Thing *thing, const ModuleData* moduleData )
-							: BehaviorModule( thing, moduleData )
+DestroyModule::DestroyModule(Thing* thing, const ModuleData* moduleData)
+  : BehaviorModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 DestroyModule::~DestroyModule()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DestroyModule::crc( Xfer *xfer )
+void DestroyModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
-
+	BehaviorModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info
-	* 1: Initial version */
+ * Version Info
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DestroyModule::xfer( Xfer *xfer )
+void DestroyModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	BehaviorModule::xfer( xfer );
-
+	BehaviorModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -81,9 +75,6 @@ void DestroyModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DestroyModule::loadPostProcess()
 {
-
 	// extend base class
 	BehaviorModule::loadPostProcess();
-
 }
-

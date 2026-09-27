@@ -44,37 +44,34 @@ class GameMtl;
 
 class GameMtlTextureDlg : public GameMtlFormClass
 {
-
 public:
-
-	GameMtlTextureDlg(HWND parent, IMtlParams * imp, GameMtl * m, int pass);
+	GameMtlTextureDlg(HWND parent, IMtlParams* imp, GameMtl* m, int pass);
 	~GameMtlTextureDlg();
 
-	virtual BOOL		Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam);
-	void					ActivateDlg(BOOL onOff);
-	void					ReloadDialog();
+	virtual BOOL Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam);
+	void ActivateDlg(BOOL onOff);
+	void ReloadDialog();
 
 private:
+	void Enable_Stage(int stage, BOOL onoff);
+	void Update_Texture_Buttons();
 
-	void					Enable_Stage(int stage,BOOL onoff);
-	void					Update_Texture_Buttons();
+	ISpinnerControl* Stage0FramesSpin;
+	ISpinnerControl* Stage1FramesSpin;
 
-	ISpinnerControl * Stage0FramesSpin;
-	ISpinnerControl * Stage1FramesSpin;
+	ISpinnerControl* Stage0RateSpin;
+	ISpinnerControl* Stage1RateSpin;
 
-	ISpinnerControl * Stage0RateSpin;
-	ISpinnerControl * Stage1RateSpin;
-
-	ICustButton *		Stage0PublishButton;
-	ICustButton *		Stage1PublishButton;
-	ICustButton *		Stage0ClampUButton;
-	ICustButton *		Stage1ClampUButton;
-	ICustButton *		Stage0ClampVButton;
-	ICustButton *		Stage1ClampVButton;
-	ICustButton *		Stage0NoLODButton;
-	ICustButton *		Stage1NoLODButton;
-	ICustButton *		Stage0AlphaBitmapButton;
-	ICustButton *		Stage1AlphaBitmapButton;
-	ICustButton *		Stage0DisplayButton;
-	ICustButton *		Stage1DisplayButton;
+	ICustButton* Stage0PublishButton;
+	ICustButton* Stage1PublishButton;
+	ICustButton* Stage0ClampUButton;
+	ICustButton* Stage1ClampUButton;
+	ICustButton* Stage0ClampVButton;
+	ICustButton* Stage1ClampVButton;
+	ICustButton* Stage0NoLODButton;
+	ICustButton* Stage1NoLODButton;
+	ICustButton* Stage0AlphaBitmapButton;
+	ICustButton* Stage1AlphaBitmapButton;
+	ICustButton* Stage0DisplayButton;
+	ICustButton* Stage1DisplayButton;
 };

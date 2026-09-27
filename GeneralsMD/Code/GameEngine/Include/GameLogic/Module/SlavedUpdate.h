@@ -32,36 +32,36 @@
 
 #pragma once
 
-const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND/4; ///< This is a low priority module that only needs to be called every this many frames
+const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND / 4;    ///< This is a low priority module that only needs to be called every this many frames
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/UpdateModule.h"
 class DamageInfo;
-enum ModelConditionFlagType CPP_11(: Int);
+enum ModelConditionFlagType CPP_11( : Int);
 
 //-------------------------------------------------------------------------------------------------
 class SlavedUpdateModuleData : public UpdateModuleData
 {
 public:
-	//Example: Currently used by scout drones owned by rangers AND stinger soldiers owned by stinger sites.
-	Int m_guardMaxRange;		//Distance from master I'm allowed when he's idle. If I go too far away, I'll come back.
-	Int m_guardWanderRange;	//Allowable wander distance from master while guarding master.
+	// Example: Currently used by scout drones owned by rangers AND stinger soldiers owned by stinger sites.
+	Int m_guardMaxRange;    // Distance from master I'm allowed when he's idle. If I go too far away, I'll come back.
+	Int m_guardWanderRange;    // Allowable wander distance from master while guarding master.
 
-	//Example: Below are only currently used by various drones owned by rangers/vehicles
-	Int m_attackRange;			//When master attacks a target, I'll go to the target -- how far am I allowed to go in this case.
-	Int m_attackWanderRange;//If I'm at the target point, how far can I wander from it.
-	Int m_scoutRange;				//If master is moving somewhere, I'll scout ahead -- how far am I allowed to go?
-	Int m_scoutWanderRange;	//If I'm at the scout point, how far can I wander from it.
-	Int m_distToTargetToGrantRangeBonus;	//How close I have to be to the master's target in order to grant master a range bonus.
+	// Example: Below are only currently used by various drones owned by rangers/vehicles
+	Int m_attackRange;    // When master attacks a target, I'll go to the target -- how far am I allowed to go in this case.
+	Int m_attackWanderRange;    // If I'm at the target point, how far can I wander from it.
+	Int m_scoutRange;    // If master is moving somewhere, I'll scout ahead -- how far am I allowed to go?
+	Int m_scoutWanderRange;    // If I'm at the scout point, how far can I wander from it.
+	Int m_distToTargetToGrantRangeBonus;    // How close I have to be to the master's target in order to grant master a range bonus.
 
-	//Example: Below are used by battle drones
+	// Example: Below are used by battle drones
 	Int m_repairRange;
 	Real m_repairMinAltitude;
 	Real m_repairMaxAltitude;
 
-	Real m_repairRatePerSecond;	//How fast I can repair
-	Int m_repairWhenHealthBelowPercentage; //When should I prioritize repairing my master.
+	Real m_repairRatePerSecond;    // How fast I can repair
+	Int m_repairWhenHealthBelowPercentage;    // When should I prioritize repairing my master.
 	Int m_minReadyFrames;
 	Int m_maxReadyFrames;
 	Int m_minWeldFrames;
@@ -93,35 +93,34 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "GuardMaxRange",			INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_guardMaxRange ) },
-			{ "GuardWanderRange",		INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_guardWanderRange ) },
-			{ "AttackRange",				INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_attackRange ) },
-			{ "AttackWanderRange",	INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_attackWanderRange ) },
-			{ "ScoutRange",					INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_scoutRange ) },
-			{ "ScoutWanderRange",		INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_scoutWanderRange ) },
-			{ "RepairRange",				INI::parseInt,	nullptr, offsetof( SlavedUpdateModuleData, m_repairRange ) },
-			{ "RepairMinAltitude",		  INI::parseReal, nullptr, offsetof( SlavedUpdateModuleData, m_repairMinAltitude ) },
-			{ "RepairMaxAltitude",		  INI::parseReal, nullptr, offsetof( SlavedUpdateModuleData, m_repairMaxAltitude ) },
-			{ "DistToTargetToGrantRangeBonus", INI::parseInt, nullptr, offsetof( SlavedUpdateModuleData, m_distToTargetToGrantRangeBonus ) },
-			{ "RepairRatePerSecond", INI::parseReal, nullptr, offsetof( SlavedUpdateModuleData, m_repairRatePerSecond ) },
-			{ "RepairWhenBelowHealth%", INI::parseInt, nullptr, offsetof( SlavedUpdateModuleData, m_repairWhenHealthBelowPercentage ) },
-			{ "RepairMinReadyTime", INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_minReadyFrames ) },
-			{ "RepairMaxReadyTime", INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_maxReadyFrames ) },
-			{ "RepairMinWeldTime",  INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_minWeldFrames ) },
-			{ "RepairMaxWeldTime",  INI::parseDurationUnsignedInt, nullptr, offsetof( SlavedUpdateModuleData, m_maxWeldFrames ) },
-			{ "RepairWeldingSys",		INI::parseAsciiString,	nullptr, offsetof( SlavedUpdateModuleData, m_weldingSysName ) },
-			{ "RepairWeldingFXBone", INI::parseAsciiString, nullptr, offsetof( SlavedUpdateModuleData, m_weldingFXBone ) },
-			{ "StayOnSameLayerAsMaster", INI::parseBool, nullptr, offsetof( SlavedUpdateModuleData, m_stayOnSameLayerAsMaster ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "GuardMaxRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_guardMaxRange) },
+			{ "GuardWanderRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_guardWanderRange) },
+			{ "AttackRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_attackRange) },
+			{ "AttackWanderRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_attackWanderRange) },
+			{ "ScoutRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_scoutRange) },
+			{ "ScoutWanderRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_scoutWanderRange) },
+			{ "RepairRange", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_repairRange) },
+			{ "RepairMinAltitude", INI::parseReal, nullptr, offsetof(SlavedUpdateModuleData, m_repairMinAltitude) },
+			{ "RepairMaxAltitude", INI::parseReal, nullptr, offsetof(SlavedUpdateModuleData, m_repairMaxAltitude) },
+			{ "DistToTargetToGrantRangeBonus", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_distToTargetToGrantRangeBonus) },
+			{ "RepairRatePerSecond", INI::parseReal, nullptr, offsetof(SlavedUpdateModuleData, m_repairRatePerSecond) },
+			{ "RepairWhenBelowHealth%", INI::parseInt, nullptr, offsetof(SlavedUpdateModuleData, m_repairWhenHealthBelowPercentage) },
+			{ "RepairMinReadyTime", INI::parseDurationUnsignedInt, nullptr, offsetof(SlavedUpdateModuleData, m_minReadyFrames) },
+			{ "RepairMaxReadyTime", INI::parseDurationUnsignedInt, nullptr, offsetof(SlavedUpdateModuleData, m_maxReadyFrames) },
+			{ "RepairMinWeldTime", INI::parseDurationUnsignedInt, nullptr, offsetof(SlavedUpdateModuleData, m_minWeldFrames) },
+			{ "RepairMaxWeldTime", INI::parseDurationUnsignedInt, nullptr, offsetof(SlavedUpdateModuleData, m_maxWeldFrames) },
+			{ "RepairWeldingSys", INI::parseAsciiString, nullptr, offsetof(SlavedUpdateModuleData, m_weldingSysName) },
+			{ "RepairWeldingFXBone", INI::parseAsciiString, nullptr, offsetof(SlavedUpdateModuleData, m_weldingFXBone) },
+			{ "StayOnSameLayerAsMaster", INI::parseBool, nullptr, offsetof(SlavedUpdateModuleData, m_stayOnSameLayerAsMaster) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
-enum RepairStates CPP_11(: Int)
+enum RepairStates CPP_11( : Int)
 {
 	REPAIRSTATE_NONE,
 	REPAIRSTATE_UNPACKING,
@@ -135,42 +134,39 @@ enum RepairStates CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 class SlavedUpdate : public UpdateModule, public SlavedUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SlavedUpdate, "SlavedUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SlavedUpdate, SlavedUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SlavedUpdate, "SlavedUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SlavedUpdate, SlavedUpdateModuleData)
 
 public:
-
-	SlavedUpdate( Thing *thing, const ModuleData* moduleData );
+	SlavedUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() override { return this; }
 
 	virtual ObjectID getSlaverID() const override { return m_slaver; }
-	virtual void onEnslave( const Object *slaver ) override;
-	virtual void onSlaverDie( const DamageInfo *info ) override;
-	virtual void onSlaverDamage( const DamageInfo *info ) override;
+	virtual void onEnslave(const Object* slaver) override;
+	virtual void onSlaverDie(const DamageInfo* info) override;
+	virtual void onSlaverDamage(const DamageInfo* info) override;
 	virtual void onObjectCreated() override;
 	virtual Bool isSelfTasking() const override { return FALSE; };
 
-
-	void doScoutLogic( const Coord3D *mastersDestination );
-	void doAttackLogic( const Object *target );
-	void doGuardLogic( Coord3D *pinnedPosition );
+	void doScoutLogic(const Coord3D* mastersDestination);
+	void doAttackLogic(const Object* target);
+	void doGuardLogic(Coord3D* pinnedPosition);
 	void doRepairLogic();
 	void endRepair();
-	void setRepairState( RepairStates repairState );
-	void setRepairModelConditionStates( ModelConditionFlagType flag );
+	void setRepairState(RepairStates repairState);
+	void setRepairModelConditionStates(ModelConditionFlagType flag);
 	void moveToNewRepairSpot();
 
-	virtual UpdateSleepTime update() override;	///< Deciding whether or not to make new guys
+	virtual UpdateSleepTime update() override;    ///< Deciding whether or not to make new guys
 
 private:
-	void startSlavedEffects( const Object *slaver );	///< We have been marked as Slaved, so we can't be selected or move too far or other stuff
-	void stopSlavedEffects();		///< We are no longer slaved.
+	void startSlavedEffects(const Object* slaver);    ///< We have been marked as Slaved, so we can't be selected or move too far or other stuff
+	void stopSlavedEffects();    ///< We are no longer slaved.
 
-	ObjectID m_slaver;			///< To whom we are enslaved
-	Coord3D m_guardPointOffset;	///< Where we should go when not busy and still enslaved
+	ObjectID m_slaver;    ///< To whom we are enslaved
+	Coord3D m_guardPointOffset;    ///< Where we should go when not busy and still enslaved
 	Int m_framesToWait;
 	RepairStates m_repairState;
 	Bool m_repairing;

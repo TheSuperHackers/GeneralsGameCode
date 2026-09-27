@@ -26,7 +26,7 @@
 // GameSpy Persistent Storage callbacks, utils, etc
 // Author: Matthew D. Campbell, March 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/gstats/gpersist.h"
 
@@ -40,38 +40,63 @@
 static Bool isProfileAuthorized = false;
 
 static Bool gameSpyInitPersistentStorageConnection();
-static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance);
-static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance);
-
+static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char* data, int len, void* instance);
+static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void* instance);
 
 class GameSpyPlayerInfo : public GameSpyPlayerInfoInterface
 {
 public:
-	GameSpyPlayerInfo() { m_locale.clear(); m_wins = m_losses = m_operationCount = 0; m_shouldDisconnect = false; }
+	GameSpyPlayerInfo()
+	{
+		m_locale.clear();
+		m_wins = m_losses = m_operationCount = 0;
+		m_shouldDisconnect = false;
+	}
 	virtual ~GameSpyPlayerInfo() { reset(); }
 
-	virtual void init() { m_locale.clear(); m_wins = m_losses = m_operationCount = 0; queueDisconnect(); };
-	virtual void reset() { m_locale.clear(); m_wins = m_losses = m_operationCount = 0; queueDisconnect(); };
+	virtual void init()
+	{
+		m_locale.clear();
+		m_wins = m_losses = m_operationCount = 0;
+		queueDisconnect();
+	};
+	virtual void reset()
+	{
+		m_locale.clear();
+		m_wins = m_losses = m_operationCount = 0;
+		queueDisconnect();
+	};
 	virtual void update();
 
 	virtual AsciiString getLocale() { return m_locale; }
 	virtual Int getWins() { return m_wins; }
 	virtual Int getLosses() { return m_losses; }
 
-	virtual void setLocale( AsciiString locale, Bool setOnServer );
-	virtual void setWins( Int wins, Bool setOnServer );
-	virtual void setLosses( Int losses, Bool setOnServer );
+	virtual void setLocale(AsciiString locale, Bool setOnServer);
+	virtual void setWins(Int wins, Bool setOnServer);
+	virtual void setLosses(Int losses, Bool setOnServer);
 
 	virtual void readFromServer();
 	virtual void threadReadFromServer();
-	virtual void threadSetLocale( AsciiString val );
-	virtual void threadSetWins  ( AsciiString val );
-	virtual void threadSetLosses( AsciiString val );
+	virtual void threadSetLocale(AsciiString val);
+	virtual void threadSetWins(AsciiString val);
+	virtual void threadSetLosses(AsciiString val);
 
-	void queueDisconnect() { 	MutexClass::LockClass m(TheGameSpyMutex); if (IsStatsConnected()) m_shouldDisconnect = true; else m_shouldDisconnect = false; }
+	void queueDisconnect()
+	{
+		MutexClass::LockClass m(TheGameSpyMutex);
+		if (IsStatsConnected())
+		{
+			m_shouldDisconnect = true;
+		}
+		else
+		{
+			m_shouldDisconnect = false;
+		}
+	}
 
 private:
-	void setValue( AsciiString key, AsciiString val, Bool setOnServer );
+	void setValue(AsciiString key, AsciiString val, Bool setOnServer);
 
 	AsciiString m_locale;
 	Int m_wins;
@@ -113,28 +138,32 @@ void GameSpyPlayerInfo::threadReadFromServer()
 	}
 	else
 	{
-		//TheGameSpyThread->setNextShellScreen("Menus/WOLWelcomeMenu.wnd");
-		//TheShell->pop();
-		//TheShell->push("Menus/WOLWelcomeMenu.wnd");
+		// TheGameSpyThread->setNextShellScreen("Menus/WOLWelcomeMenu.wnd");
+		// TheShell->pop();
+		// TheShell->push("Menus/WOLWelcomeMenu.wnd");
 	}
 }
 
-void GameSpyPlayerInfo::setLocale( AsciiString locale, Bool setOnServer )
+void GameSpyPlayerInfo::setLocale(AsciiString locale, Bool setOnServer)
 {
 	m_locale = locale;
 
 	if (!TheGameSpyChat->getProfileID() || !setOnServer)
+	{
 		return;
+	}
 
 	setValue("locale", m_locale, setOnServer);
 }
 
-void GameSpyPlayerInfo::setWins( Int wins, Bool setOnServer )
+void GameSpyPlayerInfo::setWins(Int wins, Bool setOnServer)
 {
 	m_wins = wins;
 
 	if (!TheGameSpyChat->getProfileID() || !setOnServer)
+	{
 		return;
+	}
 
 	AsciiString winStr;
 	winStr.format("%d", wins);
@@ -142,12 +171,14 @@ void GameSpyPlayerInfo::setWins( Int wins, Bool setOnServer )
 	setValue("wins", winStr, setOnServer);
 }
 
-void GameSpyPlayerInfo::setLosses( Int losses, Bool setOnServer )
+void GameSpyPlayerInfo::setLosses(Int losses, Bool setOnServer)
 {
 	m_losses = losses;
 
 	if (!TheGameSpyChat->getProfileID() || !setOnServer)
+	{
 		return;
+	}
 
 	AsciiString lossesStr;
 	lossesStr.format("%d", losses);
@@ -155,100 +186,106 @@ void GameSpyPlayerInfo::setLosses( Int losses, Bool setOnServer )
 	setValue("losses", lossesStr, setOnServer);
 }
 
-void GameSpyPlayerInfo::setValue( AsciiString key, AsciiString val, Bool setOnServer )
+void GameSpyPlayerInfo::setValue(AsciiString key, AsciiString val, Bool setOnServer)
 {
 	if (!setOnServer)
+	{
 		return;
+	}
 
 	if (key == "locale")
+	{
 		TheGameSpyThread->queueUpdateLocale(val);
+	}
 	else if (key == "wins")
+	{
 		TheGameSpyThread->queueUpdateWins(val);
+	}
 	else if (key == "losses")
+	{
 		TheGameSpyThread->queueUpdateLosses(val);
+	}
 }
 
-void GameSpyPlayerInfo::threadSetLocale( AsciiString val )
+void GameSpyPlayerInfo::threadSetLocale(AsciiString val)
 {
 	MutexClass::LockClass m(TheGameSpyMutex);
 	if (!gameSpyInitPersistentStorageConnection())
+	{
 		return;
+	}
 
 	// set locale info
 	AsciiString key = "locale";
 	AsciiString str;
 	str.format("\\%s\\%s", key.str(), val.str());
-	char *writable = strdup(str.str());
+	char* writable = strdup(str.str());
 	m_operationCount++;
 	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d", key.str(), m_operationCount));
 	SetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, writable, setPersistentDataCallback, &m_operationCount);
 	free(writable);
 }
 
-void GameSpyPlayerInfo::threadSetWins( AsciiString val )
+void GameSpyPlayerInfo::threadSetWins(AsciiString val)
 {
 	MutexClass::LockClass m(TheGameSpyMutex);
 	if (!gameSpyInitPersistentStorageConnection())
+	{
 		return;
+	}
 
 	// set win info
 	AsciiString key = "wins";
 	AsciiString str;
 	str.format("\\%s\\%s", key.str(), val.str());
-	char *writable = strdup(str.str());
+	char* writable = strdup(str.str());
 	m_operationCount++;
 	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d", key.str(), m_operationCount));
 	SetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, writable, setPersistentDataCallback, &m_operationCount);
 	free(writable);
 }
 
-void GameSpyPlayerInfo::threadSetLosses( AsciiString val )
+void GameSpyPlayerInfo::threadSetLosses(AsciiString val)
 {
 	MutexClass::LockClass m(TheGameSpyMutex);
 	if (!gameSpyInitPersistentStorageConnection())
+	{
 		return;
+	}
 
 	// set loss info
 	AsciiString key = "losses";
 	AsciiString str;
 	str.format("\\%s\\%s", key.str(), val.str());
-	char *writable = strdup(str.str());
+	char* writable = strdup(str.str());
 	m_operationCount++;
 	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d", key.str(), m_operationCount));
 	SetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, writable, setPersistentDataCallback, &m_operationCount);
 	free(writable);
 }
 
-GameSpyPlayerInfoInterface *TheGameSpyPlayerInfo = nullptr;
+GameSpyPlayerInfoInterface* TheGameSpyPlayerInfo = nullptr;
 
-GameSpyPlayerInfoInterface *createGameSpyPlayerInfo()
+GameSpyPlayerInfoInterface* createGameSpyPlayerInfo()
 {
 	return NEW GameSpyPlayerInfo;
 }
 
-
-
-
-
-
-
-
-
-static void persAuthCallback(int localid, int profileid, int authenticated, char *errmsg, void *instance)
+static void persAuthCallback(int localid, int profileid, int authenticated, char* errmsg, void* instance)
 {
-	DEBUG_LOG(("Auth callback: localid: %d profileid: %d auth: %d err: %s",localid, profileid, authenticated, errmsg));
+	DEBUG_LOG(("Auth callback: localid: %d profileid: %d auth: %d err: %s", localid, profileid, authenticated, errmsg));
 	isProfileAuthorized = (authenticated != 0);
 }
 
-static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance)
+static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char* data, int len, void* instance)
 {
-	DEBUG_LOG(("Data get callback: localid: %d profileid: %d success: %d len: %d data: %s",localid, profileid, success, len, data));
+	DEBUG_LOG(("Data get callback: localid: %d profileid: %d success: %d len: %d data: %s", localid, profileid, success, len, data));
 
 	if (!TheGameSpyPlayerInfo)
 	{
-		//TheGameSpyThread->setNextShellScreen("Menus/WOLWelcomeMenu.wnd");
-		//TheShell->pop();
-		//TheShell->push("Menus/WOLWelcomeMenu.wnd");
+		// TheGameSpyThread->setNextShellScreen("Menus/WOLWelcomeMenu.wnd");
+		// TheShell->pop();
+		// TheShell->push("Menus/WOLWelcomeMenu.wnd");
 		return;
 	}
 
@@ -276,23 +313,23 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 	}
 
 	// decrement count of active operations
-	Int *opCount = (Int *)instance;
-	(*opCount) --;
+	Int* opCount = (Int*)instance;
+	(*opCount)--;
 	DEBUG_LOG(("getPersistentDataCallback() operation count = %d", (*opCount)));
 	if (!*opCount)
 	{
 		DEBUG_LOG(("getPersistentDataCallback() queue disconnect"));
-		((GameSpyPlayerInfo *)TheGameSpyPlayerInfo)->queueDisconnect();
+		((GameSpyPlayerInfo*)TheGameSpyPlayerInfo)->queueDisconnect();
 	}
 
-	const char *keys[3] = { "locale", "wins", "losses" };
+	const char* keys[3] = { "locale", "wins", "losses" };
 	char valueStrings[3][20];
-	char *values[3] = { valueStrings[0], valueStrings[1], valueStrings[2] };
+	char* values[3] = { valueStrings[0], valueStrings[1], valueStrings[2] };
 	snprintf(values[0], 20, "%s", TheGameSpyPlayerInfo->getLocale().str());
 	snprintf(values[1], 20, "%d", TheGameSpyPlayerInfo->getWins());
 	snprintf(values[2], 20, "%d", TheGameSpyPlayerInfo->getLosses());
-	peerSetGlobalKeys(TheGameSpyChat->getPeer(), 3, (const char **)keys, (const char **)values);
-	peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), GroupRoom,   3, keys, PEERTrue);
+	peerSetGlobalKeys(TheGameSpyChat->getPeer(), 3, (const char**)keys, (const char**)values);
+	peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), GroupRoom, 3, keys, PEERTrue);
 	peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), StagingRoom, 3, keys, PEERTrue);
 
 	// choose next screen
@@ -302,24 +339,26 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 	}
 }
 
-static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance)
+static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void* instance)
 {
 	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d", localid, profileid, success));
 
-	Int *opCount = (Int *)instance;
-	(*opCount) --;
+	Int* opCount = (Int*)instance;
+	(*opCount)--;
 	DEBUG_LOG(("setPersistentDataCallback() operation count = %d", (*opCount)));
 	if (!*opCount)
 	{
 		DEBUG_LOG(("setPersistentDataCallback() queue disconnect"));
-		((GameSpyPlayerInfo *)TheGameSpyPlayerInfo)->queueDisconnect();
+		((GameSpyPlayerInfo*)TheGameSpyPlayerInfo)->queueDisconnect();
 	}
 }
 
 static Bool gameSpyInitPersistentStorageConnection()
 {
 	if (IsStatsConnected())
+	{
 		return true;
+	}
 
 	isProfileAuthorized = false;
 	Int result;
@@ -327,14 +366,24 @@ static Bool gameSpyInitPersistentStorageConnection()
 	/*********
 	First step, set our game authentication info
 	We could do:
-		strcpy(gcd_gamename,"gmtest");
-		strcpy(gcd_secret_key,"HA6zkS");
+	  strcpy(gcd_gamename,"gmtest");
+	  strcpy(gcd_secret_key,"HA6zkS");
 	...but this is more secure:
 	**********/
-	gcd_gamename[0]='g';gcd_gamename[1]='m';gcd_gamename[2]='t';gcd_gamename[3]='e';
-	gcd_gamename[4]='s';gcd_gamename[5]='t';gcd_gamename[6]='\0';
-	gcd_secret_key[0]='H';gcd_secret_key[1]='A';gcd_secret_key[2]='6';gcd_secret_key[3]='z';
-	gcd_secret_key[4]='k';gcd_secret_key[5]='S';gcd_secret_key[6]='\0';
+	gcd_gamename[0] = 'g';
+	gcd_gamename[1] = 'm';
+	gcd_gamename[2] = 't';
+	gcd_gamename[3] = 'e';
+	gcd_gamename[4] = 's';
+	gcd_gamename[5] = 't';
+	gcd_gamename[6] = '\0';
+	gcd_secret_key[0] = 'H';
+	gcd_secret_key[1] = 'A';
+	gcd_secret_key[2] = '6';
+	gcd_secret_key[3] = 'z';
+	gcd_secret_key[4] = 'k';
+	gcd_secret_key[5] = 'S';
+	gcd_secret_key[6] = '\0';
 
 	/*********
 	Next, open the stats connection. This may block for
@@ -344,7 +393,7 @@ static Bool gameSpyInitPersistentStorageConnection()
 
 	if (result != GE_NOERROR)
 	{
-		DEBUG_LOG(("InitStatsConnection returned %d",result));
+		DEBUG_LOG(("InitStatsConnection returned %d", result));
 		return isProfileAuthorized;
 	}
 
@@ -362,9 +411,9 @@ static Bool gameSpyInitPersistentStorageConnection()
 		client will create the validation token using GenerateAuth, and send it
 		back to the server for use in PreAuthenticatePlayerPM
 		***********/
-		char *munkeeHack = strdup(TheGameSpyChat->getPassword().str()); // GenerateAuth takes a char*, not a const char* :P
+		char* munkeeHack = strdup(TheGameSpyChat->getPassword().str());    // GenerateAuth takes a char*, not a const char* :P
 		GenerateAuth(GetChallenge(nullptr), munkeeHack, validate);
-		free (munkeeHack);
+		free(munkeeHack);
 
 		/************
 		After we get the validation token, we pass it and the profileid of the user
@@ -389,4 +438,3 @@ static Bool gameSpyInitPersistentStorageConnection()
 	DEBUG_LOG(("Persistent Storage connect: %d", isProfileAuthorized));
 	return isProfileAuthorized;
 }
-

@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -42,17 +42,17 @@
 //-------------------------------------------------------------------------------------------------
 void SpyVisionUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] =
-	{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse dataFieldParse[] = {
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpyVisionUpdate::SpyVisionUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+SpyVisionUpdate::SpyVisionUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_deactivateFrame = 0;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -66,24 +66,24 @@ SpyVisionUpdate::~SpyVisionUpdate()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::activateSpyVision( UnsignedInt duration )
+void SpyVisionUpdate::activateSpyVision(UnsignedInt duration)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	m_deactivateFrame = now + duration;
 
-	doActivationWork( TRUE );
+	doActivationWork(TRUE);
 
-	setWakeFrame( getObject(), UPDATE_SLEEP(duration) );
+	setWakeFrame(getObject(), UPDATE_SLEEP(duration));
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SpyVisionUpdate::update()
 {
-	if( m_deactivateFrame && (m_deactivateFrame <= TheGameLogic->getFrame()) )
+	if (m_deactivateFrame && (m_deactivateFrame <= TheGameLogic->getFrame()))
 	{
 		// Turn off SpyVision.
-		doActivationWork( FALSE );
+		doActivationWork(FALSE);
 
 		m_deactivateFrame = 0;
 	}
@@ -91,18 +91,20 @@ UpdateSleepTime SpyVisionUpdate::update()
 	return UPDATE_SLEEP_FOREVER;
 }
 
-void SpyVisionUpdate::doActivationWork( Bool setting )
+void SpyVisionUpdate::doActivationWork(Bool setting)
 {
-	Player *ourPlayer = getObject()->getControllingPlayer();
-	if( ourPlayer == nullptr  ||  ThePlayerList == nullptr )
-		return;
-
-	for (Int i=0; i < ThePlayerList->getPlayerCount(); ++i)
+	Player* ourPlayer = getObject()->getControllingPlayer();
+	if (ourPlayer == nullptr || ThePlayerList == nullptr)
 	{
-		Player *player = ThePlayerList->getNthPlayer(i);
-		if( ourPlayer->getRelationship(player->getDefaultTeam()) == ENEMIES )
+		return;
+	}
+
+	for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+	{
+		Player* player = ThePlayerList->getNthPlayer(i);
+		if (ourPlayer->getRelationship(player->getDefaultTeam()) == ENEMIES)
 		{
-			player->setUnitsVisionSpied( setting, ourPlayer->getPlayerIndex() );
+			player->setUnitsVisionSpied(setting, ourPlayer->getPlayerIndex());
 		}
 	}
 }
@@ -110,40 +112,38 @@ void SpyVisionUpdate::doActivationWork( Bool setting )
 void SpyVisionUpdate::onDelete()
 {
 	// If I was left on at the time of death, then turn me off.
-	if( m_deactivateFrame )
-		doActivationWork( FALSE );
+	if (m_deactivateFrame)
+	{
+		doActivationWork(FALSE);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::crc( Xfer *xfer )
+void SpyVisionUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SpyVisionUpdate::xfer( Xfer *xfer )
+void SpyVisionUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// deactivate frame
-	xfer->xferUnsignedInt( &m_deactivateFrame );
-
+	xfer->xferUnsignedInt(&m_deactivateFrame);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -151,8 +151,6 @@ void SpyVisionUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SpyVisionUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

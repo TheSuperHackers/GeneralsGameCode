@@ -40,7 +40,7 @@ class Player;
 class RadarUpgradeModuleData : public UpgradeModuleData
 {
 public:
-	Bool m_isDisableProof;// Super radar, ignores radarDisabled checks
+	Bool m_isDisableProof;    // Super radar, ignores radarDisabled checks
 
 	RadarUpgradeModuleData()
 	{
@@ -55,23 +55,18 @@ public:
 //-------------------------------------------------------------------------------------------------
 class RadarUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RadarUpgrade, "RadarUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RadarUpgrade, RadarUpgradeModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RadarUpgrade, "RadarUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(RadarUpgrade, RadarUpgradeModuleData);
 
 public:
-
-	RadarUpgrade( Thing *thing, const ModuleData* moduleData );
+	RadarUpgrade(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	virtual void onDelete() override;																///< we have some work to do when this module goes away
-	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;	///< object containing upgrade has changed teams
+	virtual void onDelete() override;    ///< we have some work to do when this module goes away
+	virtual void onCapture(Player* oldOwner, Player* newOwner) override;    ///< object containing upgrade has changed teams
 	Bool getIsDisableProof() const { return getRadarUpgradeModuleData()->m_isDisableProof; }
 
 protected:
-
-	virtual void upgradeImplementation() override; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() override;    ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
-
 };

@@ -21,7 +21,6 @@
 // EditCondition.h : header file
 //
 
-
 class Condition;
 class SidesList;
 /////////////////////////////////////////////////////////////////////////////
@@ -29,41 +28,43 @@ class SidesList;
 
 class EditCondition : public CDialog
 {
-// Construction
+	// Construction
 public:
-	EditCondition(CWnd* pParent = nullptr);   // standard constructor
+	EditCondition(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EditCondition)
-	enum { IDD = IDD_ScriptCondition };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ScriptCondition
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditCondition)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	void setCondition(Condition *pCond) {m_condition = pCond;}
+	void setCondition(Condition* pCond) { m_condition = pCond; }
 
 protected:
 	void formatConditionText(Int parmNdx);
+
 protected:
-	Condition *m_condition;
-	Bool			m_updating;
-	Bool			m_modifiedTextColor;
+	Condition* m_condition;
+	Bool m_updating;
+	Bool m_modifiedTextColor;
 	CRichEditCtrl m_myEditCtrl;
 	CHARRANGE m_curLinkChrg;
-	Int				m_curEditParameter;
+	Int m_curEditParameter;
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(EditCondition)
 	virtual BOOL OnInitDialog() override;

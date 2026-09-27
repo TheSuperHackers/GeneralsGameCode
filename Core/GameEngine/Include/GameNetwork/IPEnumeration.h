@@ -37,23 +37,27 @@ class EnumeratedIP : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EnumeratedIP, "EnumeratedIP")
 public:
-	EnumeratedIP() { m_IPstring = ""; m_next = nullptr; m_IP = 0; }
+	EnumeratedIP()
+	{
+		m_IPstring = "";
+		m_next = nullptr;
+		m_IP = 0;
+	}
 
 	// Access functions
 	AsciiString getIPstring() { return m_IPstring; }
-	void setIPstring( AsciiString name ) { m_IPstring = name; }
+	void setIPstring(AsciiString name) { m_IPstring = name; }
 	UnsignedInt getIP() { return m_IP; }
-	void setIP( UnsignedInt IP ) { m_IP = IP; }
-	EnumeratedIP *getNext() { return m_next; }
-	void setNext( EnumeratedIP *next ) { m_next = next; }
+	void setIP(UnsignedInt IP) { m_IP = IP; }
+	EnumeratedIP* getNext() { return m_next; }
+	void setNext(EnumeratedIP* next) { m_next = next; }
 
 protected:
 	AsciiString m_IPstring;
 	UnsignedInt m_IP;
-	EnumeratedIP *m_next;
+	EnumeratedIP* m_next;
 };
 EMPTY_DTOR(EnumeratedIP)
-
 
 /**
  * The IPEnumeration class is used to obtain a list of IP addresses on the
@@ -62,16 +66,15 @@ EMPTY_DTOR(EnumeratedIP)
 class IPEnumeration
 {
 public:
-
 	IPEnumeration();
 	~IPEnumeration();
 
-	EnumeratedIP * getAddresses();		///< Return a linked list of local IP addresses
-	AsciiString getMachineName();			///< Return the Network Neighborhood machine name
+	EnumeratedIP* getAddresses();    ///< Return a linked list of local IP addresses
+	AsciiString getMachineName();    ///< Return the Network Neighborhood machine name
 
 protected:
-	void addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d );
+	void addNewIP(UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d);
 
-	EnumeratedIP *m_IPlist;
+	EnumeratedIP* m_IPlist;
 	Bool m_isWinsockInitialized;
 };

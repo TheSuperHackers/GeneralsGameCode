@@ -53,24 +53,25 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
-enum { NO_TIME_FROM_WINDOWS = 0 };
+enum
+{
+	NO_TIME_FROM_WINDOWS = 0
+};
 // Win32Mouse -----------------------------------------------------------------
 /** Mouse interface for when using only the Win32 messages */
 //-----------------------------------------------------------------------------
 class Win32Mouse : public Mouse
 {
-
 public:
-
 	Win32Mouse();
 	virtual ~Win32Mouse() override;
 
-	virtual void init() override;		///< init mouse, extend this functionality, do not replace
-	virtual void reset() override;		///< reset the system
-	virtual void update() override;	///< update
-	virtual void initCursorResources() override;	///< load windows resources needed for 2d cursors.
+	virtual void init() override;    ///< init mouse, extend this functionality, do not replace
+	virtual void reset() override;    ///< reset the system
+	virtual void update() override;    ///< update
+	virtual void initCursorResources() override;    ///< load windows resources needed for 2d cursors.
 
-	virtual void setCursor( MouseCursor cursor ) override;		///< set mouse cursor
+	virtual void setCursor(MouseCursor cursor) override;    ///< set mouse cursor
 
 	virtual void setVisibility(Bool visible) override;
 
@@ -78,35 +79,34 @@ public:
 	virtual void regainFocus() override;
 
 	/// add an event from a win32 window procedure
-	void addWin32Event( UINT msg, WPARAM wParam, LPARAM lParam, DWORD time );
+	void addWin32Event(UINT msg, WPARAM wParam, LPARAM lParam, DWORD time);
 
 protected:
-
-	virtual void capture() override; ///< capture the mouse
-	virtual void releaseCapture() override; ///< release mouse capture
+	virtual void capture() override;    ///< capture the mouse
+	virtual void releaseCapture() override;    ///< release mouse capture
 
 	/// get the next event available in the buffer
-	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush ) override;
+	virtual UnsignedByte getMouseEvent(MouseIO* result, Bool flush) override;
 
 	/// translate a win32 mouse event to our own info
-	void translateEvent( UnsignedInt eventIndex, MouseIO *result );
+	void translateEvent(UnsignedInt eventIndex, MouseIO* result);
 
 	struct Win32MouseEvent
 	{
-		UINT msg;				///< WM_* message
-		WPARAM wParam;  ///< WPARAM from the WM_* message
-		LPARAM lParam;  ///< LPARAM from the WM_* message
-		DWORD time;			///< TIME from the WM_* message
+		UINT msg;    ///< WM_* message
+		WPARAM wParam;    ///< WPARAM from the WM_* message
+		LPARAM lParam;    ///< LPARAM from the WM_* message
+		DWORD time;    ///< TIME from the WM_* message
 	};
 	/// this is our buffer of events that we receive via a WndProc message
-	Win32MouseEvent m_eventBuffer[ Mouse::NUM_MOUSE_EVENTS ];
-	UnsignedInt m_nextFreeIndex;  ///< insert new events at this index
-	UnsignedInt m_nextGetIndex;  /** events retrieved through getMouseEvent
-															 will come from this index, then it will be
-															 incremented to the next index */
-	MouseCursor m_currentWin32Cursor;	///< keep track of last cursor image sent to D3D.
-	Int m_directionFrame;	///< current frame of directional cursor (from 0 points up).
-	Bool m_lostFocus;		///< flag if window has lost focus and mouse should stop being updated.
+	Win32MouseEvent m_eventBuffer[Mouse::NUM_MOUSE_EVENTS];
+	UnsignedInt m_nextFreeIndex;    ///< insert new events at this index
+	UnsignedInt m_nextGetIndex; /** events retrieved through getMouseEvent
+	                            will come from this index, then it will be
+	                            incremented to the next index */
+	MouseCursor m_currentWin32Cursor;    ///< keep track of last cursor image sent to D3D.
+	Int m_directionFrame;    ///< current frame of directional cursor (from 0 points up).
+	Bool m_lostFocus;    ///< flag if window has lost focus and mouse should stop being updated.
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////

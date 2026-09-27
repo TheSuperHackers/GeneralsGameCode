@@ -35,10 +35,9 @@ class GameWindow;
 
 class W3DWebBrowser : public WebBrowser
 {
-	public:
-		W3DWebBrowser();
+public:
+	W3DWebBrowser();
 
-		virtual Bool createBrowserWindow(const char *tag, GameWindow *win) override;
-		virtual void closeBrowserWindow(GameWindow *win) override;
-
+	virtual Bool createBrowserWindow(const char* tag, GameWindow* win) override;
+	virtual void closeBrowserWindow(GameWindow* win) override;
 };

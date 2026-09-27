@@ -43,72 +43,66 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 typedef enum
 {
-	IMAGE_STATUS_NONE									= 0x00000000,
-	IMAGE_STATUS_ROTATED_90_CLOCKWISE	= 0x00000001,  // image should be treated as rotated
-	IMAGE_STATUS_RAW_TEXTURE					= 0x00000002,  // image struct contains raw texture data
+	IMAGE_STATUS_NONE = 0x00000000,
+	IMAGE_STATUS_ROTATED_90_CLOCKWISE = 0x00000001,    // image should be treated as rotated
+	IMAGE_STATUS_RAW_TEXTURE = 0x00000002,    // image struct contains raw texture data
 
 } ImageStatus;
 #ifdef DEFINE_IMAGE_STATUS_NAMES
-static const char *const imageStatusNames[] =
-{
+static const char* const imageStatusNames[] = {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",
 	nullptr
 };
-#endif  // end DEFINE_IMAGE_STATUS_NAMES
+#endif    // end DEFINE_IMAGE_STATUS_NAMES
 
 //-------------------------------------------------------------------------------------------------
 /** Image bitmap information */
 //-------------------------------------------------------------------------------------------------
 class Image : public MemoryPoolObject
 {
-
-MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Image, "Image" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Image, "Image");
 
 public:
-
 	Image();
 	// virtual destructor defined by memory pool object
 
-	void setName( AsciiString name );							///< set image name
-	AsciiString getName() const;									///< return name
-	void setFilename( AsciiString filename );			///< set filename
-	AsciiString getFilename() const;							///< return filename
-	void setUV( Region2D *uv );										///< set UV coord range
-	const Region2D *getUV() const;											///< get UV coords
-	void setTextureWidth( Int width );						///< set width of texture page this image is on
-	void setTextureHeight( Int height );					///< set height of texture page this image is on
-	const ICoord2D *getTextureSize() const;							///< return the texture size defined
-	void setImageSize( ICoord2D *size );					///< set image width and height
-	const ICoord2D *getImageSize() const;								///< get size
-	Int getImageWidth() const;										///< get width
-	Int getImageHeight() const;										///< get height
-	void setRawTextureData( void *data );					///< set raw texture data
-	const void *getRawTextureData() const;							///< get raw texture data
-	UnsignedInt setStatus( UnsignedInt bit );			///< set status bit
-	UnsignedInt clearStatus( UnsignedInt bit );		///< clear status bit
-	UnsignedInt getStatus() const;								///< get status bits
-
+	void setName(AsciiString name);    ///< set image name
+	AsciiString getName() const;    ///< return name
+	void setFilename(AsciiString filename);    ///< set filename
+	AsciiString getFilename() const;    ///< return filename
+	void setUV(Region2D* uv);    ///< set UV coord range
+	const Region2D* getUV() const;    ///< get UV coords
+	void setTextureWidth(Int width);    ///< set width of texture page this image is on
+	void setTextureHeight(Int height);    ///< set height of texture page this image is on
+	const ICoord2D* getTextureSize() const;    ///< return the texture size defined
+	void setImageSize(ICoord2D* size);    ///< set image width and height
+	const ICoord2D* getImageSize() const;    ///< get size
+	Int getImageWidth() const;    ///< get width
+	Int getImageHeight() const;    ///< get height
+	void setRawTextureData(void* data);    ///< set raw texture data
+	const void* getRawTextureData() const;    ///< get raw texture data
+	UnsignedInt setStatus(UnsignedInt bit);    ///< set status bit
+	UnsignedInt clearStatus(UnsignedInt bit);    ///< clear status bit
+	UnsignedInt getStatus() const;    ///< get status bits
 
 	// for parsing from INI
-	const FieldParse *getFieldParse() const { return m_imageFieldParseTable; }
-	static void parseImageCoords( INI* ini, void *instance, void *store, const void* /*userData*/ );
-	static void parseImageStatus( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	const FieldParse* getFieldParse() const { return m_imageFieldParseTable; }
+	static void parseImageCoords(INI* ini, void* instance, void* store, const void* /*userData*/);
+	static void parseImageStatus(INI* ini, void* instance, void* store, const void* /*userData*/);
 
 protected:
+	friend class ImageCollection;
 
-friend class ImageCollection;
+	AsciiString m_name;    ///< name for this image
+	AsciiString m_filename;    ///< texture filename this image is in
+	ICoord2D m_textureSize;    ///< size of the texture this image is a part of
+	Region2D m_UVCoords;    ///< texture UV coords for image
+	ICoord2D m_imageSize;    ///< dimensions of image
+	void* m_rawTextureData;    ///< raw texture data
+	UnsignedInt m_status;    ///< status bits from ImageStatus
 
-	AsciiString m_name;				///< name for this image
-	AsciiString m_filename;		///< texture filename this image is in
-	ICoord2D m_textureSize;		///< size of the texture this image is a part of
-	Region2D m_UVCoords;			///< texture UV coords for image
-	ICoord2D m_imageSize;			///< dimensions of image
-	void *m_rawTextureData;		///< raw texture data
-	UnsignedInt m_status;			///< status bits from ImageStatus
-
-	static const FieldParse m_imageFieldParseTable[];		///< the parse table for INI definition
-
+	static const FieldParse m_imageFieldParseTable[];    ///< the parse table for INI definition
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -116,56 +110,65 @@ friend class ImageCollection;
 //-------------------------------------------------------------------------------------------------
 class ImageCollection : public SubsystemInterface
 {
-	typedef std::map<NameKeyType, Image *> ImageMap;
+	typedef std::map<NameKeyType, Image*> ImageMap;
 
 public:
-
 	ImageCollection();
 	virtual ~ImageCollection() override;
 
-	virtual void init() override { };				///< initialize system
-	virtual void reset() override { };				///< reset system
-	virtual void update() override { };			///< update system
+	virtual void init() override {};    ///< initialize system
+	virtual void reset() override {};    ///< reset system
+	virtual void update() override {};    ///< update system
 
-	void load( Int textureSize );												 ///< load images
+	void load(Int textureSize);    ///< load images
 
-	const Image *findImage( NameKeyType namekey ) const; ///< find image based on name key
-	const Image *findImageByName( const AsciiString& name ) const; ///< find image based on name
-	const Image *findImageByName( const char* name ) const; ///< find image based on name
+	const Image* findImage(NameKeyType namekey) const;    ///< find image based on name key
+	const Image* findImageByName(const AsciiString& name) const;    ///< find image based on name
+	const Image* findImageByName(const char* name) const;    ///< find image based on name
 
-  /// adds the given image to the collection, transfers ownership to this object
-  void addImage(Image *image);
+	/// adds the given image to the collection, transfers ownership to this object
+	void addImage(Image* image);
 
-  /// enumerates the list of existing images
-  Image *Enum(unsigned index)
-  {
-    for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
-      if (!index--)
-        return i->second;
-    return nullptr;
-  }
+	/// enumerates the list of existing images
+	Image* Enum(unsigned index)
+	{
+		for (ImageMap::iterator i = m_imageMap.begin(); i != m_imageMap.end(); ++i)
+		{
+			if (!index--)
+			{
+				return i->second;
+			}
+		}
+		return nullptr;
+	}
 
 protected:
-  ImageMap m_imageMap;  ///< maps named keys to images
+	ImageMap m_imageMap;    ///< maps named keys to images
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
-inline void Image::setName( AsciiString name ) { m_name = name; }
+inline void Image::setName(AsciiString name) { m_name = name; }
 inline AsciiString Image::getName() const { return m_name; }
-inline void Image::setFilename( AsciiString name ) { m_filename = name; }
+inline void Image::setFilename(AsciiString name) { m_filename = name; }
 inline AsciiString Image::getFilename() const { return m_filename; }
-inline void Image::setUV( Region2D *uv ) { if( uv ) m_UVCoords = *uv; }
-inline const Region2D *Image::getUV() const { return &m_UVCoords; }
-inline void Image::setTextureWidth( Int width ) { m_textureSize.x = width; }
-inline void Image::setTextureHeight( Int height ) { m_textureSize.y = height; }
-inline void Image::setImageSize( ICoord2D *size ) { m_imageSize = *size; }
-inline const ICoord2D *Image::getImageSize() const { return &m_imageSize; }
-inline const ICoord2D *Image::getTextureSize() const { return &m_textureSize; }
+inline void Image::setUV(Region2D* uv)
+{
+	if (uv)
+	{
+		m_UVCoords = *uv;
+	}
+}
+inline const Region2D* Image::getUV() const { return &m_UVCoords; }
+inline void Image::setTextureWidth(Int width) { m_textureSize.x = width; }
+inline void Image::setTextureHeight(Int height) { m_textureSize.y = height; }
+inline void Image::setImageSize(ICoord2D* size) { m_imageSize = *size; }
+inline const ICoord2D* Image::getImageSize() const { return &m_imageSize; }
+inline const ICoord2D* Image::getTextureSize() const { return &m_textureSize; }
 inline Int Image::getImageWidth() const { return m_imageSize.x; }
 inline Int Image::getImageHeight() const { return m_imageSize.y; }
-inline void Image::setRawTextureData( void *data ) { m_rawTextureData = data; }
-inline const void *Image::getRawTextureData() const { return m_rawTextureData; }
+inline void Image::setRawTextureData(void* data) { m_rawTextureData = data; }
+inline const void* Image::getRawTextureData() const { return m_rawTextureData; }
 inline UnsignedInt Image::getStatus() const { return m_status; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern ImageCollection *TheMappedImageCollection;  ///< mapped images
+extern ImageCollection* TheMappedImageCollection;    ///< mapped images

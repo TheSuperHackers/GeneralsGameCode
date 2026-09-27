@@ -37,39 +37,37 @@ struct DebugIcon;
 //
 class W3DDebugIcons : public RenderObjClass
 {
-
 public:
-
 	W3DDebugIcons(Int mapWidth, Int mapHeight);
-	W3DDebugIcons(const W3DDebugIcons & src);
-	W3DDebugIcons & operator = (const W3DDebugIcons &);
+	W3DDebugIcons(const W3DDebugIcons& src);
+	W3DDebugIcons& operator=(const W3DDebugIcons&);
 	~W3DDebugIcons();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
+	virtual RenderObjClass* Clone() const;
+	virtual int Class_ID() const;
+	virtual void Render(RenderInfoClass& rinfo);
 
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
+	virtual bool Cast_Ray(RayCollisionTestClass& raytest);
 
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-  virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
-
-protected:
-	VertexMaterialClass	  	*m_vertexMaterialClass;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& aabox) const;
 
 protected:
-	static DebugIcon        *m_debugIcons;
-	static Int              m_numDebugIcons;
-	static Int              m_maxDebugIcons;
+	VertexMaterialClass* m_vertexMaterialClass;
+
+protected:
+	static DebugIcon* m_debugIcons;
+	static Int m_numDebugIcons;
+	static Int m_maxDebugIcons;
 
 protected:
 	void allocateIconsArray();
 	void compressIconsArray();
 
 public:
-	static void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
+	static void addIcon(const Coord3D* pos, Real width, Int numFramesDuration, RGBColor color);
 };
-#endif // RTS_DEBUG
+#endif    // RTS_DEBUG

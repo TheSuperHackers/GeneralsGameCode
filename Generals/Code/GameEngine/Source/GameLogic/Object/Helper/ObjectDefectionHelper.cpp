@@ -36,7 +36,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ObjectDefectionHelper.h"
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 ObjectDefectionHelper::~ObjectDefectionHelper()
@@ -53,7 +52,9 @@ UpdateSleepTime ObjectDefectionHelper::update()
 	// if we are here, we should be an undetected defector, but
 	// just in case someone has changed us behind our backs...
 	if (!obj->getIsUndetectedDefector())
+	{
 		return UPDATE_SLEEP_FOREVER;
+	}
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_defectionDetectionEnd)
@@ -63,43 +64,43 @@ UpdateSleepTime ObjectDefectionHelper::update()
 		// timer has reached zero, so we flash white once!!!! -- lorenzen
 		if (draw && m_doDefectorFX)
 		{
-			RGBColor white = {1,1,1};
+			RGBColor white = { 1, 1, 1 };
 			if (draw)
-				draw->flashAsSelected( &white ); //Whew! that's easier, now, isn't it!
-
+			{
+				draw->flashAsSelected(&white);    // Whew! that's easier, now, isn't it!
+			}
 
 			AudioEventRTS defectorVulnerableSound = TheAudio->getMiscAudio()->m_defectorTimerDingSound;
-			defectorVulnerableSound.setObjectID( obj->getID() );
+			defectorVulnerableSound.setObjectID(obj->getID());
 			TheAudio->addAudioEvent(&defectorVulnerableSound);
 		}
-		return UPDATE_SLEEP_FOREVER;	// hey, we're done.
+		return UPDATE_SLEEP_FOREVER;    // hey, we're done.
 	}
 
 	// dead or attacking... our cover is blown.
-	if( obj->isEffectivelyDead() || obj->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
+	if (obj->isEffectivelyDead() || obj->getStatusBits().test(OBJECT_STATUS_IS_FIRING_WEAPON))
 	{
 		// PLEASE NOTE:
 		// checking the is_attacking statusbit above, only handles weapon related attacks...
 		// I also set m_undetectedDefector = FALSE in the groupDoSpecialPower[...]() functions;
 		obj->friend_setUndetectedDefector(FALSE);
-		return UPDATE_SLEEP_FOREVER;	// hey, we're done.
+		return UPDATE_SLEEP_FOREVER;    // hey, we're done.
 	}
 
-	if (draw && m_doDefectorFX) // skip fx if merely 'invulnerable'
+	if (draw && m_doDefectorFX)    // skip fx if merely 'invulnerable'
 	{
-		Bool lastPhase = ( ((Int)m_defectionDetectionFlashPhase) & 1 );// were we in a flashy phase last frame?
+		Bool lastPhase = (((Int)m_defectionDetectionFlashPhase) & 1);    // were we in a flashy phase last frame?
 		UnsignedInt timeLeft = m_defectionDetectionEnd - now;
-		m_defectionDetectionFlashPhase += 0.5f * ( 1.0f - ((Real)timeLeft / DEFECTION_DETECTION_TIME_MAX ) );
-		Bool thisPhase = ( ((Int)m_defectionDetectionFlashPhase) & 1 );// are we in a flashy phase this frame?
+		m_defectionDetectionFlashPhase += 0.5f * (1.0f - ((Real)timeLeft / DEFECTION_DETECTION_TIME_MAX));
+		Bool thisPhase = (((Int)m_defectionDetectionFlashPhase) & 1);    // are we in a flashy phase this frame?
 
-		if ( lastPhase && ( ! thisPhase ) )
+		if (lastPhase && (!thisPhase))
 		{
-			draw->flashAsSelected(); //Whew! that's easier, now, isn't it!
+			draw->flashAsSelected();    // Whew! that's easier, now, isn't it!
 
 			AudioEventRTS defectorTimerSound = TheAudio->getMiscAudio()->m_defectorTimerTickSound;
-			defectorTimerSound.setObjectID( obj->getID() );
+			defectorTimerSound.setObjectID(obj->getID());
 			TheAudio->addAudioEvent(&defectorTimerSound);
-
 		}
 	}
 
@@ -130,42 +131,38 @@ void ObjectDefectionHelper::startDefectionTimer(UnsignedInt numFrames, Bool with
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ObjectDefectionHelper::crc( Xfer *xfer )
+void ObjectDefectionHelper::crc(Xfer* xfer)
 {
-
 	// object helper crc
-	ObjectHelper::crc( xfer );
-
+	ObjectHelper::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ObjectDefectionHelper::xfer( Xfer *xfer )
+void ObjectDefectionHelper::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// object helper base class
-	ObjectHelper::xfer( xfer );
+	ObjectHelper::xfer(xfer);
 
 	// detection start
-	xfer->xferUnsignedInt( &m_defectionDetectionStart );
+	xfer->xferUnsignedInt(&m_defectionDetectionStart);
 
 	// detection end
-	xfer->xferUnsignedInt( &m_defectionDetectionEnd );
+	xfer->xferUnsignedInt(&m_defectionDetectionEnd);
 
 	// flash phase
-	xfer->xferReal( &m_defectionDetectionFlashPhase );
+	xfer->xferReal(&m_defectionDetectionFlashPhase);
 
 	// do defector fx
-	xfer->xferBool( &m_doDefectorFX );
-
+	xfer->xferBool(&m_doDefectorFX);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -173,8 +170,6 @@ void ObjectDefectionHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ObjectDefectionHelper::loadPostProcess()
 {
-
 	// object helper base class
 	ObjectHelper::loadPostProcess();
-
 }

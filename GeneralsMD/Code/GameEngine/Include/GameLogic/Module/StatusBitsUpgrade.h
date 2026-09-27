@@ -81,19 +81,16 @@ public:
 //-----------------------------------------------------------------------------
 class StatusBitsUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StatusBitsUpgrade, "StatusBitsUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StatusBitsUpgrade, StatusBitsUpgradeModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StatusBitsUpgrade, "StatusBitsUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(StatusBitsUpgrade, StatusBitsUpgradeModuleData);
 
 public:
-
-	StatusBitsUpgrade( Thing *thing, const ModuleData* moduleData );
+	StatusBitsUpgrade(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() override;    ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
 };
 
 //-----------------------------------------------------------------------------

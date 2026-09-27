@@ -39,7 +39,7 @@
 #include "BUFF.h"
 #include "STRAW.h"
 #include "WWFILE.h"
-#include	<stddef.h>
+#include <stddef.h>
 
 /*
 **	This class is used to manage a buffer as a data source. Data requests will draw from the
@@ -47,20 +47,26 @@
 */
 class BufferStraw : public Straw
 {
-	public:
-		BufferStraw(Buffer const & buffer) : BufferPtr(buffer), Index(0) {}
-		BufferStraw(void const * buffer, int length) : BufferPtr((void*)buffer, length), Index(0) {}
-		virtual int Get(void * source, int slen) override;
+public:
+	BufferStraw(Buffer const& buffer)
+	  : BufferPtr(buffer)
+	  , Index(0)
+	{}
+	BufferStraw(void const* buffer, int length)
+	  : BufferPtr((void*)buffer, length)
+	  , Index(0)
+	{}
+	virtual int Get(void* source, int slen) override;
 
-	private:
-		Buffer BufferPtr;
-		int Index;
-//		void const * BufferPtr;
-//		int Length;
+private:
+	Buffer BufferPtr;
+	int Index;
+	//		void const * BufferPtr;
+	//		int Length;
 
-		bool Is_Valid() {return(BufferPtr.Is_Valid());}
-		BufferStraw(BufferStraw & rvalue);
-		BufferStraw & operator = (BufferStraw const & pipe);
+	bool Is_Valid() { return (BufferPtr.Is_Valid()); }
+	BufferStraw(BufferStraw& rvalue);
+	BufferStraw& operator=(BufferStraw const& pipe);
 };
 
 /*
@@ -69,17 +75,23 @@ class BufferStraw : public Straw
 */
 class FileStraw : public Straw
 {
-	public:
-		FileStraw(FileClass * file) : File(file), HasOpened(false) {}
-		FileStraw(FileClass & file) : File(&file), HasOpened(false) {}
-		virtual ~FileStraw() override;
-		virtual int Get(void * source, int slen) override;
+public:
+	FileStraw(FileClass* file)
+	  : File(file)
+	  , HasOpened(false)
+	{}
+	FileStraw(FileClass& file)
+	  : File(&file)
+	  , HasOpened(false)
+	{}
+	virtual ~FileStraw() override;
+	virtual int Get(void* source, int slen) override;
 
-	private:
-		FileClass * File;
-		bool HasOpened;
+private:
+	FileClass* File;
+	bool HasOpened;
 
-		bool Valid_File() {return(File != nullptr);}
-		FileStraw(FileStraw & rvalue);
-		FileStraw & operator = (FileStraw const & pipe);
+	bool Valid_File() { return (File != nullptr); }
+	FileStraw(FileStraw& rvalue);
+	FileStraw& operator=(FileStraw const& pipe);
 };

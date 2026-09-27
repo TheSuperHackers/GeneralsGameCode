@@ -32,14 +32,14 @@ struct Coord3D
 		return xy;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y + z*z ); }
-	Real lengthSqr() const { return ( x*x + y*y + z*z ); }
+	Real length() const { return (Real)sqrt(x * x + y * y + z * z); }
+	Real lengthSqr() const { return (x * x + y * y + z * z); }
 
 	void normalize()
 	{
 		Real len = length();
 
-		if( len != 0 )
+		if (len != 0)
 		{
 			x /= len;
 			y /= len;
@@ -47,7 +47,7 @@ struct Coord3D
 		}
 	}
 
-	static void crossProduct( const Coord3D &a, const Coord3D &b, Coord3D &r )
+	static void crossProduct(const Coord3D& a, const Coord3D& b, Coord3D& r)
 	{
 		r.x = (a.y * b.z - a.z * b.y);
 		r.y = (a.z * b.x - a.x * b.z);
@@ -66,26 +66,26 @@ struct Coord3D
 		return x == value && y == value && z == value;
 	}
 
-	void add( const Coord3D &a )
+	void add(const Coord3D& a)
 	{
 		x += a.x;
 		y += a.y;
 		z += a.z;
 	}
 
-	void sub( const Coord3D &a )
+	void sub(const Coord3D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 		z -= a.z;
 	}
 
-	void operator+=( const Coord3D &a )
+	void operator+=(const Coord3D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const Coord3D &a )
+	void operator-=(const Coord3D& a)
 	{
 		sub(a);
 	}
@@ -104,74 +104,86 @@ struct Coord3D
 		return c;
 	}
 
-	void set( const Coord3D &a )
+	void set(const Coord3D& a)
 	{
 		x = a.x;
 		y = a.y;
 		z = a.z;
 	}
 
-	void set( Real ax, Real ay, Real az )
+	void set(Real ax, Real ay, Real az)
 	{
 		x = ax;
 		y = ay;
 		z = az;
 	}
 
-	void scale( Real scale )
+	void scale(Real scale)
 	{
 		x *= scale;
 		y *= scale;
 		z *= scale;
 	}
 
-	Bool equals( const Coord3D &r )
+	Bool equals(const Coord3D& r)
 	{
 		return (x == r.x &&
-						y == r.y &&
-						z == r.z);
+		        y == r.y &&
+		        z == r.z);
 	}
 
-	Bool operator==( const Coord3D &r ) const
+	Bool operator==(const Coord3D& r) const
 	{
 		return (x == r.x &&
-						y == r.y &&
-						z == r.z);
+		        y == r.y &&
+		        z == r.z);
 	}
 
-	void updateMin( const Coord3D &other )
+	void updateMin(const Coord3D& other)
 	{
 		if (x > other.x)
+		{
 			x = other.x;
+		}
 
 		if (y > other.y)
+		{
 			y = other.y;
+		}
 
 		if (z > other.z)
+		{
 			z = other.z;
+		}
 	}
 
-	void updateMax( const Coord3D &other )
+	void updateMax(const Coord3D& other)
 	{
 		if (x < other.x)
+		{
 			x = other.x;
+		}
 
 		if (y < other.y)
+		{
 			y = other.y;
+		}
 
 		if (z < other.z)
+		{
 			z = other.z;
+		}
 	}
 };
 
-inline Coord3D operator+( const Coord3D &a, const Coord3D &b )
+inline Coord3D operator+(const Coord3D& a, const Coord3D& b)
 {
 	Coord3D c = a;
 	c.add(b);
 	return c;
 }
 
-inline Coord3D operator-( const Coord3D &a, const Coord3D &b )
+inline Coord3D operator-(const Coord3D& a, const Coord3D& b)
 {
 	Coord3D c = a;
 	c.sub(b);

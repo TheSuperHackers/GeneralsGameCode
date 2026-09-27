@@ -31,32 +31,36 @@ class MapObject;
 
 class FenceOptions : public COptionsPanel
 {
-// Construction
+	// Construction
 public:
-	FenceOptions(CWnd* pParent = nullptr);   ///< standard constructor
+	FenceOptions(CWnd* pParent = nullptr);    ///< standard constructor
 
-	virtual ~FenceOptions() override;   ///< standard destructor
-	enum { NAME_MAX_LEN = 64 };
-// Dialog Data
+	virtual ~FenceOptions() override;    ///< standard destructor
+	enum
+	{
+		NAME_MAX_LEN = 64
+	};
+	// Dialog Data
 	//{{AFX_DATA(FenceOptions)
-	enum { IDD = IDD_FENCE_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_FENCE_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(FenceOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    ///< Modeless dialogs don't close on ESC, so eat this for modeless.
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(FenceOptions)
 	virtual BOOL OnInitDialog() override;
@@ -64,30 +68,29 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+protected:
+	static FenceOptions* m_staticThis;
+	static Bool m_updating;
+	static Int m_currentObjectIndex;
+	static Real m_fenceSpacing;
+	static Real m_fenceOffset;
+
+	CTreeCtrl m_objectTreeView;
+	MapObject* m_objectsList;
+	Bool m_customSpacing;
 
 protected:
-	static FenceOptions *m_staticThis;
-	static Bool				m_updating;
-	static Int				m_currentObjectIndex;
-	static Real				m_fenceSpacing;
-	static Real				m_fenceOffset;
-
-	CTreeCtrl					m_objectTreeView;
-	MapObject					*m_objectsList;
-	Bool							m_customSpacing;
-
-protected:
-	void addObject( MapObject *mapObject, const char *pPath, const char *name,
-									Int objectNdx, HTREEITEM parent );
-	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
+	void addObject(MapObject* mapObject, const char* pPath, const char* name,
+	               Int objectNdx, HTREEITEM parent);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char* pLabel);
 	Bool setObjectTreeViewSelection(HTREEITEM parent, Int selection);
 	void updateObjectOptions();
 
 public:
 	static void update();
 	static Bool hasSelectedObject();
-	static Real getFenceSpacing() {return m_fenceSpacing;}
-	static Real getFenceOffset() {return m_fenceOffset;}
+	static Real getFenceSpacing() { return m_fenceSpacing; }
+	static Real getFenceOffset() { return m_fenceOffset; }
 };
 
 //{{AFX_INSERT_LOCATION}}

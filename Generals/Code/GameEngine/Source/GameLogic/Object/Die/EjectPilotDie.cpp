@@ -27,7 +27,7 @@
 // Desc:   Create an object upon this object's death
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
@@ -42,10 +42,10 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EjectPilotDieModuleData::EjectPilotDieModuleData() :
-	m_oclInAir(nullptr),
-	m_oclOnGround(nullptr),
-	m_invulnerableTime(0)
+EjectPilotDieModuleData::EjectPilotDieModuleData()
+  : m_oclInAir(nullptr)
+  , m_oclOnGround(nullptr)
+  , m_invulnerableTime(0)
 {
 }
 
@@ -53,22 +53,22 @@ EjectPilotDieModuleData::EjectPilotDieModuleData() :
 //-------------------------------------------------------------------------------------------------
 void EjectPilotDieModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  DieModuleData::buildFieldParse(p);
+	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "AirCreationList",		INI::parseObjectCreationList,		nullptr, offsetof( EjectPilotDieModuleData, m_oclInAir ) },
-		{ "GroundCreationList",		INI::parseObjectCreationList,		nullptr, offsetof( EjectPilotDieModuleData, m_oclOnGround ) },
-		{	"InvulnerableTime",  INI::parseDurationUnsignedInt, nullptr, offsetof(EjectPilotDieModuleData, m_invulnerableTime ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "AirCreationList", INI::parseObjectCreationList, nullptr, offsetof(EjectPilotDieModuleData, m_oclInAir) },
+		{ "GroundCreationList", INI::parseObjectCreationList, nullptr, offsetof(EjectPilotDieModuleData, m_oclOnGround) },
+		{ "InvulnerableTime", INI::parseDurationUnsignedInt, nullptr, offsetof(EjectPilotDieModuleData, m_invulnerableTime) },
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EjectPilotDie::EjectPilotDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+EjectPilotDie::EjectPilotDie(Thing* thing, const ModuleData* moduleData)
+  : DieModule(thing, moduleData)
 {
 }
 
@@ -76,7 +76,6 @@ EjectPilotDie::EjectPilotDie( Thing *thing, const ModuleData* moduleData ) : Die
 //-------------------------------------------------------------------------------------------------
 EjectPilotDie::~EjectPilotDie()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -84,28 +83,32 @@ EjectPilotDie::~EjectPilotDie()
 /*static*/ void EjectPilotDie::ejectPilot(const ObjectCreationList* ocl, const Object* dyingObject, const Object* damageDealer)
 {
 	if (!ocl || !dyingObject)
-		return;	// it's OK for damageDealer to be null
+	{
+		return;    // it's OK for damageDealer to be null
+	}
 
 	ObjectCreationList::create(ocl, dyingObject, damageDealer);
 
 	AudioEventRTS voiceEject = *(dyingObject->getTemplate()->getPerUnitSound("VoiceEject"));
-	voiceEject.setPosition( dyingObject->getPosition() );
-	voiceEject.setPlayerIndex( dyingObject->getControllingPlayer()->getPlayerIndex() );
+	voiceEject.setPosition(dyingObject->getPosition());
+	voiceEject.setPlayerIndex(dyingObject->getControllingPlayer()->getPlayerIndex());
 	TheAudio->addAudioEvent(&voiceEject);
 
 	AudioEventRTS soundEject = *(dyingObject->getTemplate()->getPerUnitSound("SoundEject"));
-	soundEject.setPosition( dyingObject->getPosition() );
+	soundEject.setPosition(dyingObject->getPosition());
 	TheAudio->addAudioEvent(&soundEject);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void EjectPilotDie::onDie( const DamageInfo * damageInfo )
+void EjectPilotDie::onDie(const DamageInfo* damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
+	{
 		return;
-	Object* damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
+	}
+	Object* damageDealer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
 	const EjectPilotDieModuleData* d = getEjectPilotDieModuleData();
 	const ObjectCreationList* ocl = getObject()->isSignificantlyAboveTerrain() ? d->m_oclInAir : d->m_oclOnGround;
 	ejectPilot(ocl, getObject(), damageDealer);
@@ -114,30 +117,26 @@ void EjectPilotDie::onDie( const DamageInfo * damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void EjectPilotDie::crc( Xfer *xfer )
+void EjectPilotDie::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
-
+	DieModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void EjectPilotDie::xfer( Xfer *xfer )
+void EjectPilotDie::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
-
+	DieModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -145,8 +144,6 @@ void EjectPilotDie::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void EjectPilotDie::loadPostProcess()
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
-
 }

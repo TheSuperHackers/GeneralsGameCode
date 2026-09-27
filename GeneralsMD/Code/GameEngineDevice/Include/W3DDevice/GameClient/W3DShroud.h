@@ -32,94 +32,99 @@ class WorldHeightMap;
 
 typedef UnsignedByte W3DShroudLevel;
 // In Global Data now
-//const W3DShroudLevel	FULL_SHROUD_LEVEL=0;
-//const W3DShroudLevel	FOG_SHROUD_LEVEL=127;
-//const W3DShroudLevel	NO_SHROUD_LEVEL=255;
+// const W3DShroudLevel	FULL_SHROUD_LEVEL=0;
+// const W3DShroudLevel	FOG_SHROUD_LEVEL=127;
+// const W3DShroudLevel	NO_SHROUD_LEVEL=255;
 
 /** Custom W3D material pass which has been modified to apply
-	a shroud texture projection.
+  a shroud texture projection.
 */
 class W3DShroudMaterialPassClass : public MaterialPassClass
 {
 public:
-	W3DShroudMaterialPassClass() : m_isTransparentObjectPass(FALSE) {}
-	virtual void	Install_Materials() const override;
-	virtual void	UnInstall_Materials() const override;
-	void enableTransparentObjectPass(Bool enable) {m_isTransparentObjectPass = enable;}
+	W3DShroudMaterialPassClass()
+	  : m_isTransparentObjectPass(FALSE)
+	{}
+	virtual void Install_Materials() const override;
+	virtual void UnInstall_Materials() const override;
+	void enableTransparentObjectPass(Bool enable) { m_isTransparentObjectPass = enable; }
+
 protected:
-	//customized version to deal with transparent (alpha-tested) polys.
+	// customized version to deal with transparent (alpha-tested) polys.
 	Bool m_isTransparentObjectPass;
 };
 
 /** Custom W3D material pass which has been modified to apply
-	a texture projection.  Similar to the above code except
-	that it's more generic so could be used for non-shroud
-	projection of various masks.
+  a texture projection.  Similar to the above code except
+  that it's more generic so could be used for non-shroud
+  projection of various masks.
 */
 class W3DMaskMaterialPassClass : public MaterialPassClass
 {
 public:
-	W3DMaskMaterialPassClass() : m_texture(nullptr), m_allowUninstall(TRUE) {}
-	virtual void	Install_Materials() const override;
-	virtual void	UnInstall_Materials() const override;
-	void	setTexture(TextureClass *texture)	{m_texture=texture;}
-	void	setAllowUninstall(Bool state)	{ m_allowUninstall = state;}
+	W3DMaskMaterialPassClass()
+	  : m_texture(nullptr)
+	  , m_allowUninstall(TRUE)
+	{}
+	virtual void Install_Materials() const override;
+	virtual void UnInstall_Materials() const override;
+	void setTexture(TextureClass* texture) { m_texture = texture; }
+	void setAllowUninstall(Bool state) { m_allowUninstall = state; }
 
 protected:
-	TextureClass *m_texture;	///<texture to be projected.
-	Bool m_allowUninstall;		///<flag which allows uninstalling this material.
+	TextureClass* m_texture;    ///< texture to be projected.
+	Bool m_allowUninstall;    ///< flag which allows uninstalling this material.
 };
 
 /** Terrain shroud rendering class */
 class W3DShroud
 {
-
 public:
 	W3DShroud();
 	~W3DShroud();
 
-	void render(CameraClass *cam);	///< render the current shroud state as seen from camera
-	void init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSizeY);
+	void render(CameraClass* cam);    ///< render the current shroud state as seen from camera
+	void init(WorldHeightMap* pMap, Real worldCellSizeX, Real worldCellSizeY);
 	void reset();
-	TextureClass *getShroudTexture() { return m_pDstTexture;}	//<return shroud projection texture.
-	void ReleaseResources();	///<release resources that can't survive D3D device reset.
-	Bool ReAcquireResources();	///<allocate resources that can't survive D3D device reset.
-	void fillShroudData(W3DShroudLevel level);	///<sets the state of the current shroud to some constant value
-	Int	getNumShroudCellsY()	{return m_numCellsY;}
-	Int getNumShroudCellsX()	{return m_numCellsX;}
-	Real getCellWidth()			{return m_cellWidth;}	///<world-space width (x) of each shroud cell.
-	Real getCellHeight()		{return m_cellHeight;}	///<world-space height (y)of each shroud cell.
-	Int	 getTextureWidth()		{return m_dstTextureWidth;}	///<internal use by the shader system.
-	Int	 getTextureHeight()		{return m_dstTextureHeight;}
+	TextureClass* getShroudTexture() { return m_pDstTexture; }    //<return shroud projection texture.
+	void ReleaseResources();    ///< release resources that can't survive D3D device reset.
+	Bool ReAcquireResources();    ///< allocate resources that can't survive D3D device reset.
+	void fillShroudData(W3DShroudLevel level);    ///< sets the state of the current shroud to some constant value
+	Int getNumShroudCellsY() { return m_numCellsY; }
+	Int getNumShroudCellsX() { return m_numCellsX; }
+	Real getCellWidth() { return m_cellWidth; }    ///< world-space width (x) of each shroud cell.
+	Real getCellHeight() { return m_cellHeight; }    ///< world-space height (y)of each shroud cell.
+	Int getTextureWidth() { return m_dstTextureWidth; }    ///< internal use by the shader system.
+	Int getTextureHeight() { return m_dstTextureHeight; }
 	W3DShroudLevel getShroudLevel(Int x, Int y);
-	void setShroudLevel(Int x, Int y, W3DShroudLevel,Bool textureOnly=FALSE);
-	void setShroudFilter(Bool enable);	///<turns on bilinear filtering of shroud cells.
-	void setBorderShroudLevel(W3DShroudLevel level);	///<color that will appear in unused border terrain.
-	Real	getDrawOriginX()	{return m_drawOriginX;}	///<returns ws origin of first pixel in shroud texture.
-	Real	getDrawOriginY()	{return m_drawOriginY;}	///<returns ws origin of first pixel in shroud texture.
+	void setShroudLevel(Int x, Int y, W3DShroudLevel, Bool textureOnly = FALSE);
+	void setShroudFilter(Bool enable);    ///< turns on bilinear filtering of shroud cells.
+	void setBorderShroudLevel(W3DShroudLevel level);    ///< color that will appear in unused border terrain.
+	Real getDrawOriginX() { return m_drawOriginX; }    ///< returns ws origin of first pixel in shroud texture.
+	Real getDrawOriginY() { return m_drawOriginY; }    ///< returns ws origin of first pixel in shroud texture.
 
 protected:
-	Int m_numCellsX;						///<number of cells covering entire map
-	Int m_numCellsY;						///<number of cells covering entire map
-	Int m_numMaxVisibleCellsX;				///<maximum number of shroud cells that can be visible
-	Int m_numMaxVisibleCellsY;				///<maximum number of shroud cells that can be visible
-	Real m_cellWidth;						///<spacing between adjacent cells
-	Real m_cellHeight;						///<spacing between adjacent cells
-	Byte *m_shroudData;						///<holds amount of shroud per cell.
-	IDirect3DSurface8 *m_pSrcTexture;		///<stores sysmem copy of visible shroud.
-	void *m_srcTextureData;					///<pointer to shroud data
-	UnsignedInt m_srcTexturePitch;			///<width (in bytes) of shroud data buffer.
-	TextureClass *m_pDstTexture;			///<stores vidmem copy of visible shroud.
-	Int m_dstTextureWidth;					///<dimensions of m_pDstTexture
-	Int m_dstTextureHeight;					///<dimensions of m_pDstTexture
+	Int m_numCellsX;    ///< number of cells covering entire map
+	Int m_numCellsY;    ///< number of cells covering entire map
+	Int m_numMaxVisibleCellsX;    ///< maximum number of shroud cells that can be visible
+	Int m_numMaxVisibleCellsY;    ///< maximum number of shroud cells that can be visible
+	Real m_cellWidth;    ///< spacing between adjacent cells
+	Real m_cellHeight;    ///< spacing between adjacent cells
+	Byte* m_shroudData;    ///< holds amount of shroud per cell.
+	IDirect3DSurface8* m_pSrcTexture;    ///< stores sysmem copy of visible shroud.
+	void* m_srcTextureData;    ///< pointer to shroud data
+	UnsignedInt m_srcTexturePitch;    ///< width (in bytes) of shroud data buffer.
+	TextureClass* m_pDstTexture;    ///< stores vidmem copy of visible shroud.
+	Int m_dstTextureWidth;    ///< dimensions of m_pDstTexture
+	Int m_dstTextureHeight;    ///< dimensions of m_pDstTexture
 	TextureFilterClass::FilterType m_shroudFilter;
 	Real m_drawOriginX;
 	Real m_drawOriginY;
-	Bool m_drawFogOfWar;					///<switch to draw alternate fog style instead of solid black
-	Bool m_clearDstTexture;				///<flag indicating we must clear video memory destination texture
-	W3DShroudLevel m_boderShroudLevel;			///<color used to clear the shroud border
-	W3DShroudLevel *m_finalFogData;			///<copy of logical shroud in an easier to access array.
-	W3DShroudLevel *m_currentFogData;		///<copy of intermediate logical shroud while it's interpolated.
-	void interpolateFogLevels(RECT *rect);		///<fade current fog levels to actual logic side levels.
-	void fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface);	///<fill the destination texture with a known value
+	Bool m_drawFogOfWar;    ///< switch to draw alternate fog style instead of solid black
+	Bool m_clearDstTexture;    ///< flag indicating we must clear video memory destination texture
+	W3DShroudLevel m_boderShroudLevel;    ///< color used to clear the shroud border
+	W3DShroudLevel* m_finalFogData;    ///< copy of logical shroud in an easier to access array.
+	W3DShroudLevel* m_currentFogData;    ///< copy of intermediate logical shroud while it's interpolated.
+	void interpolateFogLevels(RECT* rect);    ///< fade current fog levels to actual logic side levels.
+	void fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface);    ///< fill the destination texture with a known value
 };

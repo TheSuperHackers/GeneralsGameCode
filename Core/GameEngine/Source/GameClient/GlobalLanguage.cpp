@@ -64,10 +64,9 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GlobalLanguage *TheGlobalLanguageData = nullptr;
+GlobalLanguage* TheGlobalLanguageData = nullptr;
 
-static const LookupListRec ResolutionFontSizeMethodNames[] =
-{
+static const LookupListRec ResolutionFontSizeMethodNames[] = {
 	{ "CLASSIC", GlobalLanguage::ResolutionFontSizeMethod_Classic },
 	{ "CLASSIC_NO_CEILING", GlobalLanguage::ResolutionFontSizeMethod_ClassicNoCeiling },
 	{ "STRICT", GlobalLanguage::ResolutionFontSizeMethod_Strict },
@@ -75,49 +74,48 @@ static const LookupListRec ResolutionFontSizeMethodNames[] =
 	{ nullptr, 0 }
 };
 
-static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
-{
-	{ "UnicodeFontName",									INI::parseAsciiString,nullptr,									offsetof( GlobalLanguage, m_unicodeFontName ) },
+static const FieldParse TheGlobalLanguageDataFieldParseTable[] = {
+	{ "UnicodeFontName", INI::parseAsciiString, nullptr, offsetof(GlobalLanguage, m_unicodeFontName) },
 	//{	"UnicodeFontFileName",							INI::parseAsciiString,nullptr,									offsetof( GlobalLanguage, m_unicodeFontFileName ) },
-	{ "LocalFontFile",										GlobalLanguage::parseFontFileName,					nullptr,			0},
-	{ "MilitaryCaptionSpeed",						INI::parseInt,					nullptr,		offsetof( GlobalLanguage, m_militaryCaptionSpeed ) },
-	{ "UseHardWordWrap",						INI::parseBool,					nullptr,		offsetof( GlobalLanguage, m_useHardWrap) },
-	{ "ResolutionFontAdjustment",						INI::parseReal,					nullptr,		offsetof( GlobalLanguage, m_resolutionFontSizeAdjustment) },
-	{ "ResolutionFontSizeMethod", INI::parseLookupList, ResolutionFontSizeMethodNames, offsetof( GlobalLanguage, m_resolutionFontSizeMethod) },
-	{ "CopyrightFont",					GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_copyrightFont ) },
-	{ "MessageFont",					GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_messageFont) },
-	{ "MilitaryCaptionTitleFont",		GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_militaryCaptionTitleFont) },
-	{ "MilitaryCaptionDelayMS",					INI::parseInt,					nullptr,		offsetof( GlobalLanguage, m_militaryCaptionDelayMS ) },
-	{ "MilitaryCaptionFont",			GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_militaryCaptionFont) },
-	{ "SuperweaponCountdownNormalFont",	GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_superweaponCountdownNormalFont) },
-	{ "SuperweaponCountdownReadyFont",	GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_superweaponCountdownReadyFont) },
-	{ "NamedTimerCountdownNormalFont",	GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_namedTimerCountdownNormalFont) },
-	{ "NamedTimerCountdownReadyFont",	GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_namedTimerCountdownReadyFont) },
-	{ "DrawableCaptionFont",			GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_drawableCaptionFont) },
-	{ "DefaultWindowFont",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_defaultWindowFont) },
-	{ "DefaultDisplayStringFont",		GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_defaultDisplayStringFont) },
-	{ "TooltipFontName",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_tooltipFontName) },
-	{ "NativeDebugDisplay",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_nativeDebugDisplay) },
-	{ "DrawGroupInfoFont",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_drawGroupInfoFont) },
-	{ "CreditsTitleFont",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_creditsTitleFont) },
-	{ "CreditsMinorTitleFont",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_creditsPositionFont) },
-	{ "CreditsNormalFont",				GlobalLanguage::parseFontDesc,	nullptr,	offsetof( GlobalLanguage, m_creditsNormalFont) },
+	{ "LocalFontFile", GlobalLanguage::parseFontFileName, nullptr, 0 },
+	{ "MilitaryCaptionSpeed", INI::parseInt, nullptr, offsetof(GlobalLanguage, m_militaryCaptionSpeed) },
+	{ "UseHardWordWrap", INI::parseBool, nullptr, offsetof(GlobalLanguage, m_useHardWrap) },
+	{ "ResolutionFontAdjustment", INI::parseReal, nullptr, offsetof(GlobalLanguage, m_resolutionFontSizeAdjustment) },
+	{ "ResolutionFontSizeMethod", INI::parseLookupList, ResolutionFontSizeMethodNames, offsetof(GlobalLanguage, m_resolutionFontSizeMethod) },
+	{ "CopyrightFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_copyrightFont) },
+	{ "MessageFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_messageFont) },
+	{ "MilitaryCaptionTitleFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_militaryCaptionTitleFont) },
+	{ "MilitaryCaptionDelayMS", INI::parseInt, nullptr, offsetof(GlobalLanguage, m_militaryCaptionDelayMS) },
+	{ "MilitaryCaptionFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_militaryCaptionFont) },
+	{ "SuperweaponCountdownNormalFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_superweaponCountdownNormalFont) },
+	{ "SuperweaponCountdownReadyFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_superweaponCountdownReadyFont) },
+	{ "NamedTimerCountdownNormalFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_namedTimerCountdownNormalFont) },
+	{ "NamedTimerCountdownReadyFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_namedTimerCountdownReadyFont) },
+	{ "DrawableCaptionFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_drawableCaptionFont) },
+	{ "DefaultWindowFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_defaultWindowFont) },
+	{ "DefaultDisplayStringFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_defaultDisplayStringFont) },
+	{ "TooltipFontName", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_tooltipFontName) },
+	{ "NativeDebugDisplay", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_nativeDebugDisplay) },
+	{ "DrawGroupInfoFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_drawGroupInfoFont) },
+	{ "CreditsTitleFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_creditsTitleFont) },
+	{ "CreditsMinorTitleFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_creditsPositionFont) },
+	{ "CreditsNormalFont", GlobalLanguage::parseFontDesc, nullptr, offsetof(GlobalLanguage, m_creditsNormalFont) },
 
-	{ nullptr,					nullptr,						nullptr,						0 }
+	{ nullptr, nullptr, nullptr, 0 }
 };
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-void INI::parseLanguageDefinition( INI *ini )
+void INI::parseLanguageDefinition(INI* ini)
 {
-	if( !TheGlobalLanguageData )
+	if (!TheGlobalLanguageData)
 	{
 		DEBUG_ASSERTCRASH(TheGlobalLanguageData, ("INI::parseLanguageDefinition - TheGlobalLanguage Data is not around, please create it before trying to parse the ini file."));
 		return;
 	}
 
-	ini->initFromINI( TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable );
+	ini->initFromINI(TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable);
 }
 
 GlobalLanguage::GlobalLanguage()
@@ -137,11 +135,11 @@ GlobalLanguage::GlobalLanguage()
 GlobalLanguage::~GlobalLanguage()
 {
 	StringList::iterator it = m_localFonts.begin();
-	while( it != m_localFonts.end())
+	while (it != m_localFonts.end())
 	{
 		AsciiString font = *it;
 		RemoveFontResource(font.str());
-		//SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
+		// SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 		++it;
 	}
 }
@@ -153,20 +151,20 @@ void GlobalLanguage::init()
 		fname.format("Data\\%s\\Language", GetRegistryLanguage().str());
 
 		INI ini;
-		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
+		ini.loadFileDirectory(fname, INI_LOAD_OVERWRITE, nullptr);
 	}
 
 	StringList::iterator it = m_localFonts.begin();
-	while( it != m_localFonts.end())
+	while (it != m_localFonts.end())
 	{
 		AsciiString font = *it;
-		if(AddFontResource(font.str()) == 0)
+		if (AddFontResource(font.str()) == 0)
 		{
 			DEBUG_CRASH(("GlobalLanguage::init Failed to add font %s", font.str()));
 		}
 		else
 		{
-			//SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
+			// SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 		}
 		++it;
 	}
@@ -180,17 +178,17 @@ void GlobalLanguage::reset()
 {
 }
 
-void GlobalLanguage::parseFontDesc(INI *ini, void *instance, void *store, const void *userData)
+void GlobalLanguage::parseFontDesc(INI* ini, void* instance, void* store, const void* userData)
 {
-	FontDesc *fontDesc = (FontDesc *)store;
+	FontDesc* fontDesc = (FontDesc*)store;
 	fontDesc->name = ini->getNextQuotedAsciiString();
 	fontDesc->size = ini->scanInt(ini->getNextToken());
 	fontDesc->bold = ini->scanBool(ini->getNextToken());
 }
 
-void GlobalLanguage::parseFontFileName(INI *ini, void *instance, void *store, const void *userData)
+void GlobalLanguage::parseFontFileName(INI* ini, void* instance, void* store, const void* userData)
 {
-	GlobalLanguage *globalLanguage = static_cast<GlobalLanguage *>(instance);
+	GlobalLanguage* globalLanguage = static_cast<GlobalLanguage*>(instance);
 	AsciiString asciiString = ini->getNextAsciiString();
 	globalLanguage->m_localFonts.push_front(asciiString);
 }
@@ -198,9 +196,13 @@ void GlobalLanguage::parseFontFileName(INI *ini, void *instance, void *store, co
 Real GlobalLanguage::getResolutionFontSizeAdjustment() const
 {
 	if (m_userResolutionFontSizeAdjustment >= 0.0f)
+	{
 		return m_userResolutionFontSizeAdjustment;
+	}
 	else
+	{
 		return m_resolutionFontSizeAdjustment;
+	}
 }
 
 Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method, Real scaler)
@@ -217,7 +219,9 @@ Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method,
 		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
 		adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
 		if (adjustFactor > 2.0f)
+		{
 			adjustFactor = 2.0f;
+		}
 		break;
 	}
 	case ResolutionFontSizeMethod_ClassicNoCeiling:
@@ -270,7 +274,9 @@ Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method,
 	}
 
 	if (adjustFactor < 1.0f)
+	{
 		adjustFactor = 1.0f;
+	}
 
 	return adjustFactor;
 }
@@ -305,4 +311,3 @@ FontDesc::FontDesc()
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-

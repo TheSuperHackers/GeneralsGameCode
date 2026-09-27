@@ -78,7 +78,6 @@ class DamageInfo;
 class ParticleSystemTemplate;
 class StealthUpdate;
 
-
 //-------------------------------------------------------------------------------------------------
 class BehaviorModuleData : public ModuleData
 {
@@ -89,7 +88,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    ModuleData::buildFieldParse(p);
+		ModuleData::buildFieldParse(p);
 	}
 };
 
@@ -97,7 +96,6 @@ public:
 class BehaviorModuleInterface
 {
 public:
-
 	virtual BodyModuleInterface* getBody() = 0;
 	virtual CollideModuleInterface* getCollide() = 0;
 	virtual ContainModuleInterface* getContain() = 0;
@@ -126,7 +124,7 @@ public:
 	virtual ExitInterface* getUpdateExitInterface() = 0;
 	virtual DelayedUpgradeUpdateInterface* getDelayedUpgradeUpdateInterface() = 0;
 	virtual DockUpdateInterface* getDockUpdateInterface() = 0;
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() = 0;
+	virtual RailedTransportDockUpdateInterface* getRailedTransportDockUpdateInterface() = 0;
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() = 0;
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() = 0;
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() = 0;
@@ -134,18 +132,15 @@ public:
 	virtual HordeUpdateInterface* getHordeUpdateInterface() = 0;
 	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() = 0;
 	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() = 0;
-
 };
 
 //-------------------------------------------------------------------------------------------------
 class BehaviorModule : public ObjectModule, public BehaviorModuleInterface
 {
-
-	MEMORY_POOL_GLUE_ABC( BehaviorModule )
+	MEMORY_POOL_GLUE_ABC(BehaviorModule)
 
 public:
-
-	BehaviorModule( Thing *thing, const ModuleData* moduleData );
+	BehaviorModule(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	static Int getInterfaceMask() { return 0; }
@@ -179,7 +174,7 @@ public:
 	virtual ExitInterface* getUpdateExitInterface() override { return nullptr; }
 	virtual DelayedUpgradeUpdateInterface* getDelayedUpgradeUpdateInterface() override { return nullptr; }
 	virtual DockUpdateInterface* getDockUpdateInterface() override { return nullptr; }
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() override { return nullptr; }
+	virtual RailedTransportDockUpdateInterface* getRailedTransportDockUpdateInterface() override { return nullptr; }
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() override { return nullptr; }
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return nullptr; }
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() override { return nullptr; }
@@ -189,15 +184,15 @@ public:
 	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() override { return nullptr; }
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
-
 };
-inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }
-inline BehaviorModule::~BehaviorModule() { }
+inline BehaviorModule::BehaviorModule(Thing* thing, const ModuleData* moduleData)
+  : ObjectModule(thing, moduleData)
+{}
+inline BehaviorModule::~BehaviorModule() {}
 
 enum
 {
@@ -210,14 +205,14 @@ class ParkingPlaceBehaviorInterface
 public:
 	struct PPInfo
 	{
-		Coord3D		parkingSpace;
-		Real			parkingOrientation;
-		Coord3D		runwayPrep;
-		Coord3D		runwayStart;
-		Coord3D		runwayEnd;
-		Coord3D		runwayApproach;
-		Coord3D		hangarInternal;
-		Real			hangarInternalOrient;
+		Coord3D parkingSpace;
+		Real parkingOrientation;
+		Coord3D runwayPrep;
+		Coord3D runwayStart;
+		Coord3D runwayEnd;
+		Coord3D runwayApproach;
+		Coord3D hangarInternal;
+		Real hangarInternalOrient;
 	};
 	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0;
 	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0;
@@ -240,15 +235,15 @@ public:
 class TransportPassengerInterface
 {
 public:
-	virtual Bool tryToEvacuate( Bool exposeStealthedUnits ) = 0; ///< Will try to kick everybody out with game checks, and will return whether anyone made it
+	virtual Bool tryToEvacuate(Bool exposeStealthedUnits) = 0;    ///< Will try to kick everybody out with game checks, and will return whether anyone made it
 };
 
 //-------------------------------------------------------------------------------------------------
 class CaveInterface
 {
 public:
-	virtual void tryToSetCaveIndex( Int newIndex ) = 0;	///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
-	virtual void setOriginalTeam( Team *oldTeam ) = 0;	///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
+	virtual void tryToSetCaveIndex(Int newIndex) = 0;    ///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
+	virtual void setOriginalTeam(Team* oldTeam) = 0;    ///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
 };
 
 //-------------------------------------------------------------------------------------------------

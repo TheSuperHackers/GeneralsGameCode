@@ -57,20 +57,18 @@
 #include "WW3D2/part_emt.h"
 #include "WW3D2/hanim.h"
 #include "WW3D2/htree.h"
-#include "WW3D2/animobj.h"  ///< @todo superhack for demo, remove!
+#include "WW3D2/animobj.h"    ///< @todo superhack for demo, remove!
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DGameClient::W3DGameClient()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DGameClient::~W3DGameClient()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -78,10 +76,8 @@ W3DGameClient::~W3DGameClient()
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::init()
 {
-
 	// extending initialization routine
 	GameClient::init();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -89,49 +85,46 @@ void W3DGameClient::init()
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::update()
 {
-
 	// call base
 	GameClient::update();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Reset this device client system.  Note we are extending reset functionality from
-	* the device independent client */
+ * the device independent client */
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::reset()
 {
-
 	// call base class
 	GameClient::reset();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** allocate a new drawable using the thing template for initialization.
-	* if we want to have the thing manager actually contain the pools of
-	* object and drawable storage it seems OK to have it be friends with the
-	* GameLogic/Client for those purposes, or we could put the allocation pools
-	* in the GameLogic and GameClient themselves */
+ * if we want to have the thing manager actually contain the pools of
+ * object and drawable storage it seems OK to have it be friends with the
+ * GameLogic/Client for those purposes, or we could put the allocation pools
+ * in the GameLogic and GameClient themselves */
 //-------------------------------------------------------------------------------------------------
-Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
-																								DrawableStatusBits statusBits )
+Drawable* W3DGameClient::friend_createDrawable(const ThingTemplate* tmplate,
+                                               DrawableStatusBits statusBits)
 {
-	Drawable *draw = nullptr;
+	Drawable* draw = nullptr;
 
 	// sanity
-	if( tmplate == nullptr )
+	if (tmplate == nullptr)
+	{
 		return nullptr;
+	}
 
-	draw = newInstance(Drawable)( tmplate, statusBits );
+	draw = newInstance(Drawable)(tmplate, statusBits);
 
 	return draw;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::addScorch(const Coord3D *pos, Real radius, Scorches type)
+void W3DGameClient::addScorch(const Coord3D* pos, Real radius, Scorches type)
 {
 	if (TheTerrainRenderObject)
 	{
@@ -143,13 +136,13 @@ void W3DGameClient::addScorch(const Coord3D *pos, Real radius, Scorches type)
 //-------------------------------------------------------------------------------------------------
 /** create an effect that requires a start and end location */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
-																		 const Coord3D *end,
-																		 const ThingTemplate* tmpl )
+void W3DGameClient::createRayEffectByTemplate(const Coord3D* start,
+                                              const Coord3D* end,
+                                              const ThingTemplate* tmpl)
 {
-	Drawable *draw = TheThingFactory->newDrawable(tmpl);
+	Drawable* draw = TheThingFactory->newDrawable(tmpl);
 
-	if( draw )
+	if (draw)
 	{
 		Coord3D pos;
 
@@ -157,67 +150,64 @@ void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
 		pos.x = (end->x - start->x) * 0.5f + start->x;
 		pos.y = (end->y - start->y) * 0.5f + start->y;
 		pos.z = (end->z - start->z) * 0.5f + start->z;
-		draw->setPosition( &pos );
+		draw->setPosition(&pos);
 
 		// add this ray effect to the list of ray effects
-		TheRayEffects->addRayEffect( draw, start, end );
-
+		TheRayEffects->addRayEffect(draw, start, end);
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /**  Tell all the drawables what time of day it is now */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::setTimeOfDay( TimeOfDay tod )
+void W3DGameClient::setTimeOfDay(TimeOfDay tod)
 {
-
 	GameClient::setTimeOfDay(tod);
 
-	//tell cloud/water plane to update its lighting/texture
+	// tell cloud/water plane to update its lighting/texture
 	if (TheWaterRenderObj)
+	{
 		TheWaterRenderObj->setTimeOfDay(tod);
+	}
 	if (TheW3DShadowManager)
+	{
 		TheW3DShadowManager->setTimeOfDay(tod);
+	}
 
-	//tell the display to update its lighting
-	TheDisplay->setTimeOfDay( tod );
-
+	// tell the display to update its lighting
+	TheDisplay->setTimeOfDay(tod);
 }
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::setTeamColor(Int red, Int green, Int blue)
 {
-
 	W3DStatusCircle::setColor(red, green, blue);
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::setTextureLOD( Int level )
+void W3DGameClient::setTextureLOD(Int level)
 {
 	if (WW3D::Get_Texture_Reduction() != level)
 	{
 		WW3D::Set_Texture_Reduction(level, 32);
 
-		if( TheTerrainRenderObject )
+		if (TheTerrainRenderObject)
+		{
 			TheTerrainRenderObject->setTextureLOD(level);
+		}
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 /**  Tell the terrain that an object moved, so it can knock down trees or crush grass
-		or whatever is appropriate. jba. */
+    or whatever is appropriate. jba. */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::notifyTerrainObjectMoved(Object *obj)
+void W3DGameClient::notifyTerrainObjectMoved(Object* obj)
 {
-	if (TheTerrainRenderObject) {
+	if (TheTerrainRenderObject)
+	{
 		TheTerrainRenderObject->unitMoved(obj);
 	}
-
 }
-
-

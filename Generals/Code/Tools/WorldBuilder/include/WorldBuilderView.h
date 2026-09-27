@@ -26,7 +26,7 @@
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "wbview.h"
 
-//#include "WW3D_SimpleWindow.h"
+// #include "WW3D_SimpleWindow.h"
 
 #define MIN_GRID_SIZE 4
 class MapObject;
@@ -34,25 +34,26 @@ class CWorldBuilderDoc;
 
 class CWorldBuilderView : public WbView
 {
-protected: // create from serialization only
+protected:    // create from serialization only
 	CWorldBuilderView();
 	DECLARE_DYNCREATE(CWorldBuilderView)
 
-// Operations
+	// Operations
 public:
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWorldBuilderView)
-	public:
+public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	protected:
+
+protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo) override;
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo) override;
 	virtual void OnDraw(CDC* pDC) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CWorldBuilderView() override;
 #ifdef RTS_DEBUG
@@ -61,61 +62,65 @@ public:
 #endif
 
 protected:
+	Int m_cellSize;    ///< Size of a height map cell in pixels when drawn in the 2d view.
+	Bool m_showContours;    ///< Flag whether contours are drawn in the 2d view.
 
-	Int			m_cellSize;						///< Size of a height map cell in pixels when drawn in the 2d view.
-	Bool		m_showContours;				///< Flag whether contours are drawn in the 2d view.
+	Bool m_showTexture;    ///< Flag whether textures are drawn in the 2d view.
+	Bool mShowGrid;    ///< Flag whether the gray grid is drawn in the 2d view.
 
-	Bool		m_showTexture;							///< Flag whether textures are drawn in the 2d view.
-	Bool		mShowGrid;								  ///< Flag whether the gray grid is drawn in the 2d view.
-
-	Int			mXScrollOffset;								///< The x offset to the upper left corner of the screen.
-	Int			mYScrollOffset;								///< The y offset to the upper left corner of the screen.
-	CPoint	m_scrollMin;								///< The minimum scrollbar positions.
-	CPoint	m_scrollMax;								///< The maximum scroll bar positions.
+	Int mXScrollOffset;    ///< The x offset to the upper left corner of the screen.
+	Int mYScrollOffset;    ///< The y offset to the upper left corner of the screen.
+	CPoint m_scrollMin;    ///< The minimum scrollbar positions.
+	CPoint m_scrollMax;    ///< The maximum scroll bar positions.
 
 protected:
-
 	/// Draw a texture bitmap in a rectangle in the dc.
-	void drawMyTexture(CDC *pDc, CRect *pRect, Int width, UnsignedByte *rgbData);
+	void drawMyTexture(CDC* pDc, CRect* pRect, Int width, UnsignedByte* rgbData);
 
 	/// Get a color for a height value.
 	DWORD getColorForHeight(UnsignedByte ht);
 
 	/// Draw the contours for the height map in the dc.
-	void drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, Int minY, Int maxY);
+	void drawContours(CDC* pDc, CRgn* pRgn, Int minX, Int maxX, Int minY, Int maxY);
 
 	/// Compound boolean expression.
-	static Bool isBetween(Int cur, Int first, Int second) {
+	static Bool isBetween(Int cur, Int first, Int second)
+	{
 		Bool is = false;
-		if (cur>=first && cur<=second) is = true;
-		if (cur<=first && cur>=second) is = true;
-		return(is);
+		if (cur >= first && cur <= second)
+		{
+			is = true;
+		}
+		if (cur <= first && cur >= second)
+		{
+			is = true;
+		}
+		return (is);
 	}
 
 	/// Interpolate the point at a given height between 2 points.
-	void interpolate(CPoint *pt, Int ht, CPoint pt1, Int ht1, CPoint pt2, Int ht2);
+	void interpolate(CPoint* pt, Int ht, CPoint pt1, Int ht1, CPoint pt2, Int ht2);
 
 	/// Draw the object's icon in the dc at a given point.
-	void drawObjectInView(CDC *pDc, MapObject *pMapObj);
+	void drawObjectInView(CDC* pDc, MapObject* pMapObj);
 
 public:
 	/// Get the current draw size in pixels in the 2d window of one height map cell.
-	Int getCellSize() {return m_cellSize;}
+	Int getCellSize() { return m_cellSize; }
 
 	/// Sets the current draw size.
 	void setCellSize(Int cellSize);
 
 	/// Set whether contours are drawn.
-	Bool getShowContours() {return m_showContours;}
+	Bool getShowContours() { return m_showContours; }
 	/// Set whether contours are drawn.
 	void setShowContours(Bool show);
 	/// Update the center to match a center point from the 3d view.
 	void updateCenterFromMapPoint(Real x, Real y);
 
 protected:
-
 public:
-	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain) override;
+	virtual Bool viewToDocCoords(CPoint curPt, Coord3D* newPt, Bool constrain) override;
 	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt) override;
 
 	/// Set the center for display.
@@ -125,7 +130,7 @@ public:
 	virtual void adjustDocSize() override;
 
 	/// Invalidates an object. Pass null to inval all objects.
-	virtual void invalObjectInView(MapObject *pObj) override;
+	virtual void invalObjectInView(MapObject* pObj) override;
 
 	/// Invalidates the area of one height map cell in the 2d view.
 	virtual void invalidateCellInView(int xIndex, int yIndex) override;
@@ -133,7 +138,7 @@ public:
 	/// Scrolls the window by this amount (doc coords).
 	virtual void scrollInView(Real x, Real y, Bool end) override;
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CWorldBuilderView)
 	afx_msg void OnPaint();
@@ -146,8 +151,8 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnViewShowtexture();
 	afx_msg void OnUpdateViewShowtexture(CCmdUI* pCmdUI);
-//	afx_msg void OnViewShowcontours();
-//	afx_msg void OnUpdateViewShowcontours(CCmdUI* pCmdUI);
+	//	afx_msg void OnViewShowcontours();
+	//	afx_msg void OnUpdateViewShowcontours(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
