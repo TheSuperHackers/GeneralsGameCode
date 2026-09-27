@@ -91,7 +91,7 @@ void W3DTerrainParticles::render()
 	if (m_pointCount <= 0 || !m_pointLoc || !TheTerrainRenderObject)
 		return;
 
-	WorldHeightMap* map = TheTerrainRenderObject->getMap();
+	const WorldHeightMap* map = TheTerrainRenderObject->getMap();
 	if (!map)
 		return;
 
@@ -137,7 +137,7 @@ void W3DTerrainParticles::render()
 	}
 }
 
-void W3DTerrainParticles::drawRegion(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
+void W3DTerrainParticles::drawRegion(const WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
 {
 	const Int sizeX = bounds.width() - 1;
 	const Int sizeY = bounds.height() - 1;
@@ -169,7 +169,7 @@ void W3DTerrainParticles::drawRegion(WorldHeightMap& map, const ParticleContext&
 	}
 }
 
-void W3DTerrainParticles::drawQuad(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
+void W3DTerrainParticles::drawQuad(const WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
 {
 	// See if this quad will still fit in the buffer, otherwise flush the buffer first.
 	if (m_numVertices + 4 > TerrainParticles::MAX_VERTICES || m_numIndices + 6 > TerrainParticles::MAX_INDICES)
@@ -198,7 +198,7 @@ void W3DTerrainParticles::drawQuad(WorldHeightMap& map, const ParticleContext& p
 	}
 }
 
-UnsignedShort W3DTerrainParticles::addVertex(WorldHeightMap& map, const ParticleContext& particle, Int x, Int y)
+UnsignedShort W3DTerrainParticles::addVertex(const WorldHeightMap& map, const ParticleContext& particle, Int x, Int y)
 {
 	// Keep track of the vertex in a lookup table, since vertices in the GPU buffer cannot be traced back to their location.
 	const Int gridLocation = (y - particle.bounds.lo.y) * particle.bounds.width() + (x - particle.bounds.lo.x);
@@ -280,7 +280,7 @@ void W3DTerrainParticles::resetVertexLookup(const ParticleContext& particle)
 	std::fill(m_vertexLookup.begin(), m_vertexLookup.begin() + count, TerrainParticles::INVALID_VERTEX);
 }
 
-IRegion2D W3DTerrainParticles::calcTerrainBounds(WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const
+IRegion2D W3DTerrainParticles::calcTerrainBounds(const WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const
 {
 	IRegion2D bounds;
 	bounds.lo.x = REAL_TO_INT_FLOOR((loc.X - projectedRadius) / MAP_XY_FACTOR);

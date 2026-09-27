@@ -68,13 +68,13 @@ private:
 
 	struct ParticleContext;
 
-	void drawRegion(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds);
-	void drawQuad(WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds);
-	UnsignedShort addVertex(WorldHeightMap& map, const ParticleContext& particle, Int x, Int y);
+	void drawRegion(const WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds);
+	void drawQuad(const WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds);
+	UnsignedShort addVertex(const WorldHeightMap& map, const ParticleContext& particle, Int x, Int y);
 	void addTriangle(UnsignedShort a, UnsignedShort b, UnsignedShort c);
 	void resetVertexLookup(const ParticleContext& particle);
 	void flushBatch();
-	IRegion2D calcTerrainBounds(WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const;
+	IRegion2D calcTerrainBounds(const WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const;
 	void updateSettings();
 
 	std::array<VertexFormatXYZNDUV2, TerrainParticles::MAX_VERTICES> m_vertexData;    ///< Vertices of the current batch.
