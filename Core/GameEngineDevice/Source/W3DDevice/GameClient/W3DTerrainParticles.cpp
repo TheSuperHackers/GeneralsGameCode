@@ -323,9 +323,9 @@ void W3DTerrainParticles::updateSettings()
 	m_shader.Set_Cull_Mode(ShaderClass::CULL_MODE_ENABLE);
 
 	DX8Wrapper::Set_World_Identity();
-	VertexMaterialClass* material = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(material);
-	REF_PTR_RELEASE(material);
+	RefCountPtr<VertexMaterialClass> material;
+	material.Assign_No_Add_Ref(VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE));
+	DX8Wrapper::Set_Material(material.Peek());
 	DX8Wrapper::Set_Shader(m_shader);
 	DX8Wrapper::Set_Texture(0, m_texture.Peek());
 
