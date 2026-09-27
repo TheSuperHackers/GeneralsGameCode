@@ -465,7 +465,7 @@ void InGameUI::xfer( Xfer *xfer )
 					xfer->xferBool(&swInfo->m_hiddenByScript);
 					xfer->xferBool(&swInfo->m_hiddenByScience);
 					xfer->xferBool(&swInfo->m_ready);
-          if ( currentVersion >= 3 )
+          if ( version >= 3 )
           {
             xfer->xferBool( &swInfo->m_evaReadyPlayed );
           }
@@ -512,7 +512,7 @@ void InGameUI::xfer( Xfer *xfer )
 			xfer->xferBool(&hiddenByScript);
 			xfer->xferBool(&hiddenByScience);
 			xfer->xferBool(&ready);
-      if ( currentVersion >= 3 )
+      if ( version >= 3 )
       {
         xfer->xferBool( &evaReadyPlayed );
       }
@@ -953,7 +953,21 @@ void INI::parseInGameUIDefinition( INI* ini )
 	{
 		// parse the ini weapon definition
 		ini->initFromINI( TheInGameUI, TheInGameUI->getFieldParse() );
+		TheInGameUI->validate();
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void InGameUI::validate()
+{
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @bugfix bobtista 02/09/2026 Correct the known retail InGameUI.ini message delay typo
+	if (m_messageDelayMS == 75000)
+	{
+		m_messageDelayMS = 7500;
+	}
+#endif
+	m_messageDelayMS = max(0, m_messageDelayMS);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1882,7 +1896,8 @@ void InGameUI::update()
 	// frame
 	//
 	UnsignedInt currLogicFrame = TheGameLogic->getFrame();
-	const int messageTimeout = m_messageDelayMS / LOGICFRAMES_PER_SECOND / 1000;
+	// TheSuperHackers @bugfix bobtista 13/08/2026 Convert milliseconds to logic frames
+	const int messageTimeout = REAL_TO_INT_CEIL( ConvertDurationFromMsecsToFrames( (Real)m_messageDelayMS ) );
 	UnsignedByte r, g, b, a;
 	Int amount;
 	for( i = MAX_UI_MESSAGES - 1; i >= 0; i-- )

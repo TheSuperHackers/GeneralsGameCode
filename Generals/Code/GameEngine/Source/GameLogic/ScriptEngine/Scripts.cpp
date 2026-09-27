@@ -43,8 +43,6 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Lib/BaseType.h"
-
 #define DEFINE_BUILDABLE_STATUS_NAMES
 #define DEFINE_OBJECT_STATUS_NAMES
 #define DEFINE_SCIENCE_AVAILABILITY_NAMES

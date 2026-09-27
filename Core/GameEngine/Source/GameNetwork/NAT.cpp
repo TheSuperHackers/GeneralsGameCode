@@ -743,13 +743,15 @@ void NAT::sendMangledSourcePort() {
 	// next port allocation.
 
 	// get the address of the mangler we need to talk to.
-	Char manglerName[256];
-	FirewallHelperClass::getManglerName(1, manglerName);
-	DEBUG_LOG(("NAT::sendMangledSourcePort - about to call gethostbyname for mangler at %s", manglerName));
-	struct hostent *hostInfo = gethostbyname(manglerName);
+	AsciiString manglerName = FirewallHelperClass::getManglerName(1);
+	DEBUG_LOG(("NAT::sendMangledSourcePort - about to call gethostbyname for mangler at %s", manglerName.str()));
+	struct hostent* hostInfo = nullptr;
+	if (!manglerName.isEmpty()) {
+		hostInfo = gethostbyname(manglerName.str());
+	}
 
 	if (hostInfo == nullptr) {
-		DEBUG_LOG(("NAT::sendMangledSourcePort - gethostbyname failed for mangler address %s", manglerName));
+		DEBUG_LOG(("NAT::sendMangledSourcePort - gethostbyname failed for mangler address %s", manglerName.str()));
 		// can't find the mangler, we're screwed so just send the source port.
 		sendMangledPortNumberToTarget(sourcePort, targetSlot);
 		m_sourcePorts[m_targetNodeNumber] = sourcePort;
@@ -759,7 +761,7 @@ void NAT::sendMangledSourcePort() {
 
 	memcpy(&m_manglerAddress, &(hostInfo->h_addr_list[0][0]), 4);
 	m_manglerAddress = ntohl(m_manglerAddress);
-	DEBUG_LOG(("NAT::sendMangledSourcePort - mangler %s address is %d.%d.%d.%d", manglerName,
+	DEBUG_LOG(("NAT::sendMangledSourcePort - mangler %s address is %d.%d.%d.%d", manglerName.str(),
 							PRINTF_IP_AS_4_INTS(m_manglerAddress)));
 
 	DEBUG_LOG(("NAT::sendMangledSourcePort - NAT behavior = 0x%08x", fwType));

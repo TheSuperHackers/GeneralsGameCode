@@ -369,6 +369,7 @@ public:  // ********************************************************************
 	virtual void update() override;														///< Update the UI by calling preDraw(), draw(), and postDraw()
 	virtual void reset() override;															///< Reset
 	//-----------------------------------------------------------------------------------------------
+	void validate();
 
 	// interface for the popup messages
 	virtual void popupMessage( const AsciiString& message, Int x, Int y, Int width, Bool pause, Bool pauseMusic);

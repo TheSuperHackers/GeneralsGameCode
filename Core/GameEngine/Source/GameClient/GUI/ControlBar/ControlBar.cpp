@@ -3603,6 +3603,7 @@ void ControlBar::updateSpecialPowerShortcut()
 	}
 	else if( !hasValidShortcutButton
 					 && !m_specialPowerShortcutParent->winIsHidden()
+					 && m_animateWindowManagerForGenShortcuts
 					 && m_animateWindowManagerForGenShortcuts->isFinished() )
 	{
 		animateSpecialPowerShortcut(FALSE);

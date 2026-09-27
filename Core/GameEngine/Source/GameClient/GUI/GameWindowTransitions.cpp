@@ -533,7 +533,13 @@ void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 
 void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPending )
 {
-	TransitionGroup *g = findGroup(groupName);
+	TransitionGroup* g = findGroup(groupName);
+
+	if (!g)
+	{
+		return;
+	}
+
 	if(m_pendingGroup == g)
 	{
 		if(skipPending)

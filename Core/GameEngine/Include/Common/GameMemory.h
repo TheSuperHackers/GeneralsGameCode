@@ -69,7 +69,6 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 
-#include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Errors.h"
 

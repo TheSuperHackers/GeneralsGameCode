@@ -75,9 +75,6 @@ typedef enum {
 #define MAX_COMMAND_LINE_ARGUMENTS	10
 #define MAX_ARGUMENT_LENGTH			80
 
-#define MIN(a,b)    				(((a) < (b)) ? (a) : (b))
-#define MAX(a,b)    				(((a) > (b)) ? (a) : (b))
-
 #define WM_GO					   	(WM_USER)+1
 #define WM_USERSTAT 			   	(WM_USER + 100)
 

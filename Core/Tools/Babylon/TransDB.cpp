@@ -80,7 +80,7 @@ const char *GetLangName ( LangID langid )
 {
 	LANGINFO *item;
 
-	if ( ( item = GetLangInfo ( langid )) )
+	if ( ( item = GetLangInfo ( langid )) != nullptr )
 	{
 		return item->name;
 	}
@@ -196,7 +196,7 @@ void					TransDB::RemoveLabel ( BabylonLabel *label )
 {
 	ListNode *node;
 
-	if ( (node = labels.Find ( label )) )
+	if ( (node = labels.Find ( label )) != nullptr )
 	{
 		node->Remove ();
 		label->SetDB ( nullptr );
@@ -216,7 +216,7 @@ void					TransDB::RemoveObsolete ( BabylonText *text )
 {
 	ListNode *node;
 
-	if ( (node = obsolete.Find ( text )) )
+	if ( (node = obsolete.Find ( text )) != nullptr )
 	{
 		node->Remove ();
 		obsolete_bin->Remove ( text );
@@ -258,7 +258,7 @@ BabylonLabel*			TransDB::FirstLabel	( ListSearch& sh )
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &labels )))
+	if ( ( node = sh.FirstNode ( &labels )) != nullptr)
 	{
 		return (BabylonLabel *) node->Item ();
 	}
@@ -270,7 +270,7 @@ BabylonLabel*			TransDB::NextLabel		( ListSearch& sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next ()))
+	if ( ( node = sh.Next ()) != nullptr)
 	{
 		return (BabylonLabel *) node->Item ();
 	}
@@ -282,7 +282,7 @@ BabylonText*			TransDB::FirstObsolete	( ListSearch& sh )
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &obsolete )))
+	if ( ( node = sh.FirstNode ( &obsolete )) != nullptr)
 	{
 		return (BabylonText *) node->Item ();
 	}
@@ -294,7 +294,7 @@ BabylonText*			TransDB::NextObsolete		( ListSearch& sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next ()))
+	if ( ( node = sh.Next ()) != nullptr)
 	{
 		return (BabylonText *) node->Item ();
 	}
@@ -319,7 +319,6 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 	ListSearch sh;
 	BabylonText		*text;
 	ListSearch sh_text;
-	int plen = wcslen ( pattern );
 
 	label = FirstLabel ( sh );
 
@@ -387,7 +386,7 @@ int					TransDB::Clear				()
 	label_bin->Clear ();
 	obsolete_bin->Clear ();
 
-	while ( node = sh.FirstNode ( &labels ) )
+	while ( (node = sh.FirstNode ( &labels )) != nullptr )
 	{
 		node->Remove ();
 		label = (BabylonLabel *) node->Item ();
@@ -396,7 +395,7 @@ int					TransDB::Clear				()
 		delete node;
 	}
 
-	while ( node = sh.FirstNode ( &obsolete ) )
+	while ( (node = sh.FirstNode ( &obsolete )) != nullptr )
 	{
 		node->Remove ();
 		text = (BabylonText *) node->Item ();
@@ -584,7 +583,7 @@ void					BabylonLabel::RemoveText ( BabylonText *txt )
 {
 	ListNode *node;
 
-	if ( (node = text.Find ( txt )) )
+	if ( (node = text.Find ( txt )) != nullptr )
 	{
 		node->Remove ();
 		txt->SetDB ( nullptr );
@@ -616,7 +615,7 @@ int					BabylonLabel::Clear				()
 	ListNode *node;
 	int count = 0;
 
-	while ( node = sh.FirstNode ( &text ) )
+	while ( (node = sh.FirstNode ( &text )) != nullptr )
 	{
 		node->Remove ();
 		txt = (BabylonText *) node->Item ();
@@ -662,7 +661,7 @@ BabylonText*			BabylonLabel::FirstText		( ListSearch& sh )
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &text )))
+	if ( ( node = sh.FirstNode ( &text )) != nullptr)
 	{
 		return (BabylonText *) node->Item ();
 	}
@@ -674,7 +673,7 @@ BabylonText*			BabylonLabel::NextText		( ListSearch& sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next (  )))
+	if ( ( node = sh.Next (  )) != nullptr)
 	{
 		return (BabylonText *) node->Item ();
 	}
@@ -908,7 +907,7 @@ void					BabylonText::SetDB				( TransDB *new_db )
 	}
 
 
-	if ( (db = new_db) )
+	if ( (db = new_db) != nullptr )
 	{
 		AssignID ();
 		db->AddText ( this );
@@ -1082,7 +1081,7 @@ Translation*			BabylonText::FirstTranslation		( ListSearch& sh )
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &translations )))
+	if ( ( node = sh.FirstNode ( &translations )) != nullptr)
 	{
 		return (Translation *) node->Item ();
 	}
@@ -1094,7 +1093,7 @@ Translation*			BabylonText::NextTranslation		( ListSearch& sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next (  )))
+	if ( ( node = sh.Next (  )) != nullptr)
 	{
 		return (Translation *) node->Item ();
 	}
@@ -1130,7 +1129,7 @@ int					BabylonText::Clear				()
 	ListNode *node;
 	int count = 0;
 
-	while ( node = sh.FirstNode ( &translations ) )
+	while ( (node = sh.FirstNode ( &translations )) != nullptr )
 	{
 		node->Remove ();
 		trans = (Translation *) node->Item ();
@@ -1477,7 +1476,7 @@ int TransDB::Warnings ( CBabylonDlg *dlg )
 				}
 				warnings++;
 			}
-			else if ( !DuplicatesAllowed() && ( existing_text = FindText ( text->Get () )))
+			else if ( !DuplicatesAllowed() && ( existing_text = FindText ( text->Get () )) != nullptr)
 			{
 				warnings++;
 				if ( dlg )
@@ -1506,7 +1505,7 @@ int TransDB::Warnings ( CBabylonDlg *dlg )
 	{
 		DupNode *dup;
 
-		while ( (dup = (DupNode*)dups.LastNode ()))
+		while ( (dup = (DupNode*)dups.LastNode ()) != nullptr)
 		{
 			sprintf ( buffer, "Warning:: text at line %5d is a duplicate of text on line %5d",
 									dup->Duplicate()->LineNumber(), dup->Original()->LineNumber());
@@ -1564,7 +1563,7 @@ int TransDB::Errors ( CBabylonDlg *dlg )
 
 		}
 
-		if ( ( existing_label = FindLabel ( label->Name () )))
+		if ( ( existing_label = FindLabel ( label->Name () )) != nullptr)
 		{
 			errors++;
 			if ( dlg )
@@ -1583,7 +1582,7 @@ int TransDB::Errors ( CBabylonDlg *dlg )
 
 		while ( text )
 		{
-				if ( ( existing_text = (BabylonText *) tbin->Get ( text->Get () )))
+				if ( ( existing_text = (BabylonText *) tbin->Get ( text->Get () )) != nullptr)
 				{
 					errors++;
 					if ( dlg )
@@ -1647,8 +1646,6 @@ void TransDB::VerifyDialog( LangID langid, void (*cb) () )
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
-	int count = 0;
-	LANGINFO *linfo = GetLangInfo ( langid );
 
 	label = FirstLabel ( sh_label );
 
@@ -1714,10 +1711,8 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
-	int count = 0;
 	DLGREPORT _info;
 	DLGREPORT *info = &_info;
-	int skip_verify = FALSE;
 	LANGINFO *linfo = GetLangInfo ( langid );
 
 	if ( report )
@@ -1785,8 +1780,6 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
-	int count = 0;
-	int first_error = FALSE;
 	TRNREPORT _info;
 	TRNREPORT *info = &_info;
 
@@ -1809,7 +1802,6 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 
 		while ( text )
 		{
-			int textnum = 0;
 			Translation *trans;
 			int too_big = FALSE;
 
@@ -1818,7 +1810,7 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 				info->numstrings++;
 				if ( langid != LANGID_US )
 				{
-					if ( (trans = text->GetTranslation ( langid ) ))
+					if ( (trans = text->GetTranslation ( langid ) ) != nullptr)
 					{
 						if ( maxlen && trans->Len() > maxlen )
 						{

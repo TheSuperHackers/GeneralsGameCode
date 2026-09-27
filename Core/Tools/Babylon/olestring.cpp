@@ -158,7 +158,7 @@ void OLEString::FormatMetaString ()
 	str = string;
 	ptr = sb;
 
-	while ( (ch = *ptr++) )
+	while ( (ch = *ptr++) != 0 )
 	{
 		if ( ch == ' '  )
 		{
@@ -218,7 +218,7 @@ template <typename text> void StripSpaces ( text *string )
 
 	str = ptr = string;
 
-	while ( (ch = *ptr++) )
+	while ( (ch = *ptr++) != 0 )
 	{
 		if ( ch == ' '  )
 		{
@@ -262,7 +262,7 @@ template <typename text> void StripSpacesFromMetaString ( text *string )
 
 	str = ptr = string;
 
-	while ( (ch = *ptr++) )
+	while ( (ch = *ptr++) != 0 )
 	{
 		if ( ch == ' '  )
 		{
@@ -318,11 +318,11 @@ template <typename text> void ConvertMetaChars ( text *string )
 
 	ptr = string;
 
-	while ( (ch = *string++) )
+	while ( (ch = *string++) != text(0) )
 	{
 		if ( ch == '\\' )
 		{
-			if ( ch = *string )
+			if ( (ch = *string) != text(0) )
 			{
 				switch  ( ch )
 				{

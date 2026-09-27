@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 class ParticleSystemTemplate;
 
 // Declared extern C to prevent name mangling, which makes life very unhappy

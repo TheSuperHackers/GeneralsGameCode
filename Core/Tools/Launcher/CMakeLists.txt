@@ -44,7 +44,6 @@ set(LAUNCHER_SRC
     "Toolkit/Support/UString.cpp"
     "Toolkit/Support/UString.h"
     "Toolkit/Support/UTypes.h"
-    "Toolkit/Support/Visualc.h"
 )
 
 add_library(corei_launcher INTERFACE)

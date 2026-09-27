@@ -66,5 +66,5 @@ private:
 
 	ParticleSystemInfo::ParticleShaderType m_batchShaderType;
 	Bool m_readyToRender;											///< if true, it is OK to render
-	Bool m_batchBillboard;
+	ParticleSystemInfo::ParticleAlignmentType m_batchParticleAlignment;
 };

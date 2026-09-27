@@ -401,6 +401,16 @@ ControlBarScheme::ControlBarScheme()
 }
 
 
+void ControlBarScheme::validate() const
+{
+	if (m_ScreenCreationRes.x <= 0 || m_ScreenCreationRes.y <= 0)
+	{
+		DEBUG_CRASH(("ControlBarScheme '%s' has an invalid screen creation resolution (%d, %d)",
+			m_name.str(), m_ScreenCreationRes.x, m_ScreenCreationRes.y));
+		throw INI_INVALID_DATA;
+	}
+}
+
 void ControlBarScheme::init()
 {
 	if(TheControlBar)
@@ -1040,8 +1050,8 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 	if(tempScheme)
 	{
 		// setup the multiplier value
-		m_multiplier.x = TheDisplay->getWidth() / tempScheme->m_ScreenCreationRes.x;
-		m_multiplier.y = TheDisplay->getHeight() / tempScheme->m_ScreenCreationRes.y;
+		m_multiplier.x = (Real)TheDisplay->getWidth() / tempScheme->m_ScreenCreationRes.x;
+		m_multiplier.y = (Real)TheDisplay->getHeight() / tempScheme->m_ScreenCreationRes.y;
 		m_currentScheme = tempScheme;
 	}
 	else

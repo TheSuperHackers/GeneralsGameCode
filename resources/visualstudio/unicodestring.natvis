@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- m_data points to a ref counted UnicodeStringData header, and the characters follow
+         directly behind it. No length is stored, so it is counted like getLength does. -->
     <Type Name="UnicodeString">
-        <DisplayString Condition="m_data != nullptr">{(const wchar_t *)(&amp; m_data[1]),su}</DisplayString>
-        <DisplayString Condition="m_data == nullptr">""</DisplayString>
+        <DisplayString Condition="m_data == 0">""</DisplayString>
+        <DisplayString>{(const wchar_t *)(m_data + 1),su}</DisplayString>
+        <StringView Condition="m_data != 0">(const wchar_t *)(m_data + 1),su</StringView>
         <Expand>
-            <Item Name="[data]" Optional="true" Condition="m_data != nullptr">m_data</Item>
-            <Item Name="[str]" Optional="true" Condition="m_data != nullptr">(const wchar_t *)(&amp; m_data[1])</Item>
+            <Item Name="[length]" ExcludeView="simple">m_data == 0 ? 0 : (int)wcsnlen((const wchar_t *)(m_data + 1), m_data-&gt;m_numCharsAllocated)</Item>
+            <Item Name="[capacity]" Condition="m_data != 0" ExcludeView="simple">(int)m_data-&gt;m_numCharsAllocated</Item>
+            <Item Name="[refs]" Condition="m_data != 0" ExcludeView="simple">(int)m_data-&gt;m_refCount</Item>
+            <Item Name="[str]" Condition="m_data != 0">(const wchar_t *)(m_data + 1),su</Item>
         </Expand>
     </Type>
 </AutoVisualizer>

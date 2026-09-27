@@ -21,8 +21,6 @@
 // NewHeightMap.h : header file
 //
 
-#include "Lib/BaseType.h"
-
 typedef struct {
 	Int xExtent;
 	Int yExtent;

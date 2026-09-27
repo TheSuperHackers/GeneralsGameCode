@@ -7082,12 +7082,21 @@ void ScriptEngine::removeAllSequentialScripts(Object *obj)
 	for (it = m_sequentialScripts.begin(); it != m_sequentialScripts.end(); /* empty */) {
 		SequentialScript *seqScript = (*it);
 		if (!seqScript) {
+			++it;
 			continue;
 		}
 		if (seqScript->m_objectID == id) {
-			cleanupSequentialScript(it, TRUE);
+			it = cleanupSequentialScript(it, TRUE);
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @info Preserve the original (bugged) traversal behavior by skipping the next element, if any.
+			if (it != m_sequentialScripts.end()) {
+				++it;
+			}
+#endif
 		}
-		++it;
+		else
+			++it;
 	}
 }
 

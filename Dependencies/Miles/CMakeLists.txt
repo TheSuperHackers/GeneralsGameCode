@@ -17,5 +17,6 @@ target_include_directories(milesloader PUBLIC
 )
 
 target_link_libraries(milesloader PRIVATE
+    core_precompiled # Gives force included headers. Link early.
     core_utility
 )

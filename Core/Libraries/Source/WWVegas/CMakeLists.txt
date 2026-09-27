@@ -8,8 +8,10 @@ target_compile_definitions(core_wwcommon INTERFACE
 
 target_link_libraries(core_wwcommon INTERFACE
     d3d8lib
+    dbghelploader
     milesloader
     stlport
+    usp10loader
 )
 
 target_include_directories(core_wwcommon INTERFACE

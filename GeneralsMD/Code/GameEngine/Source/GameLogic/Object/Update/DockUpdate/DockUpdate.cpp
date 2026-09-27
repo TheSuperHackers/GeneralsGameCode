@@ -653,6 +653,7 @@ void DockUpdate::xfer( Xfer *xfer )
 		// Vector of Bool gets packed as bitfield internally
 		Bool unpack = m_approachPositionReached[vectorIndex];
 		xfer->xferBool( &unpack );
+		m_approachPositionReached[vectorIndex] = unpack;
 	}
 
 	// active docker

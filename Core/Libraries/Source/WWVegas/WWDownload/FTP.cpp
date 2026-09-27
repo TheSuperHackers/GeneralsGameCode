@@ -1000,7 +1000,6 @@ HRESULT  Cftp::RecvReply( LPCSTR pReplyBuffer, int iSize, int * piRetCode )
 unsigned long MyIPAddress( int sockfd )
 {
 
-	int		 test = 99;
 	int i;
 	char pBuffer[ 256 ];
 	char * pAddr;
@@ -1827,7 +1826,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename)
 	char newdir[256];
 
 	const char *cptr=filename;
-	while(cptr=strchr(cptr,'\\'))
+	while((cptr=strchr(cptr,'\\')) != nullptr)
 	{
 		strlcpy(tempstr,filename,cptr-filename + 1);
 		snprintf(newdir, ARRAY_SIZE(newdir), "%s\\%s", rootdir, tempstr);

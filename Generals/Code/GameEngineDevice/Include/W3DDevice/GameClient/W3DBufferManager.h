@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "WW3D2/dx8vertexbuffer.h"
 #include "WW3D2/dx8indexbuffer.h"
 

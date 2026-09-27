@@ -44,7 +44,6 @@
 //----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Lib/BaseType.h"
 #include "Common/GameSounds.h"
 
 #include "Common/AudioEventInfo.h"
@@ -139,7 +138,7 @@ Bool SoundManager::addAudioEvent(DynamicAudioEventRTS *eventToAdd)
 		DEBUG_LOG((" - appended to request list with handle '%d'.", (UnsignedInt) eventToAdd->getPlayingHandle()));
 #endif
 		AudioRequest *audioRequest = TheAudio->allocateAudioRequest();
-		audioRequest->m_pendingEvent.Assign_Add_Ref(eventToAdd);
+		audioRequest->m_pendingEvent = eventToAdd;
 		audioRequest->m_request = AR_Play;
 		TheAudio->appendAudioRequest(audioRequest);
 		return true;

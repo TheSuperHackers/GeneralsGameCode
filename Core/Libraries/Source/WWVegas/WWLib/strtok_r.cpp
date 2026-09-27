@@ -36,7 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "strtok_r.h"
-#include "stringex.h"
+#include "Utility/stringex.h"
 
 //
 // Replacement for strtok() that doesn't use a static to

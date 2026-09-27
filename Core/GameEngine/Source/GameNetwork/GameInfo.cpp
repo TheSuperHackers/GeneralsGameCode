@@ -69,6 +69,7 @@ void GameSlot::reset()
 	m_NATBehavior = FirewallHelperClass::FIREWALL_TYPE_SIMPLE;
 	m_lastFrameInGame = 0;
 	m_disconnected = FALSE;
+	m_IP = 0;
 	m_port = 0;
 	m_isMuted = FALSE;
 	m_hasSavedOriginalSetup = FALSE;

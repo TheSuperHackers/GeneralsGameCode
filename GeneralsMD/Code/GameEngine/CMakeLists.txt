@@ -65,7 +65,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
 #    Include/Common/MapObject.h
-    Include/Common/MapReaderWriterInfo.h
+#    Include/Common/MapReaderWriterInfo.h
 #    Include/Common/MessageStream.h
 #    Include/Common/MiniLog.h
 #    Include/Common/MiscAudio.h
@@ -119,7 +119,7 @@ set(GAMEENGINE_SRC
     Include/Common/Thing.h
     Include/Common/ThingFactory.h
     Include/Common/ThingSort.h
-    Include/Common/ThingTemplate.h
+#    Include/Common/ThingTemplate.h
     Include/Common/TunnelTracker.h
 #    Include/Common/UnicodeString.h
     Include/Common/UnitTimings.h
@@ -477,16 +477,16 @@ set(GAMEENGINE_SRC
     Include/GameLogic/ObjectScriptStatusBits.h
     Include/GameLogic/ObjectTypes.h
     Include/GameLogic/PartitionManager.h
-    Include/GameLogic/PolygonTrigger.h
+#    Include/GameLogic/PolygonTrigger.h
     Include/GameLogic/Powers.h
 #    Include/GameLogic/RankInfo.h
     Include/GameLogic/ScriptActions.h
     Include/GameLogic/ScriptConditions.h
     Include/GameLogic/ScriptEngine.h
     Include/GameLogic/Scripts.h
-    Include/GameLogic/SidesList.h
+#    Include/GameLogic/SidesList.h
     Include/GameLogic/Squad.h
-    Include/GameLogic/TerrainLogic.h
+#    Include/GameLogic/TerrainLogic.h
     Include/GameLogic/TurretAI.h
     Include/GameLogic/VictoryConditions.h
     Include/GameLogic/Weapon.h
@@ -672,7 +672,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ModuleFactory.cpp
     Source/Common/Thing/Thing.cpp
     Source/Common/Thing/ThingFactory.cpp
-    Source/Common/Thing/ThingTemplate.cpp
+#    Source/Common/Thing/ThingTemplate.cpp
 #    Source/Common/UserPreferences.cpp
 #    Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
@@ -834,9 +834,9 @@ set(GAMEENGINE_SRC
     Source/GameLogic/AI/AITNGuard.cpp
     Source/GameLogic/AI/Squad.cpp
     Source/GameLogic/AI/TurretAI.cpp
-    Source/GameLogic/Map/PolygonTrigger.cpp
-    Source/GameLogic/Map/SidesList.cpp
-    Source/GameLogic/Map/TerrainLogic.cpp
+#    Source/GameLogic/Map/PolygonTrigger.cpp
+#    Source/GameLogic/Map/SidesList.cpp
+#    Source/GameLogic/Map/TerrainLogic.cpp
     Source/GameLogic/Object/Armor.cpp
     Source/GameLogic/Object/Behavior/AutoHealBehavior.cpp
     Source/GameLogic/Object/Behavior/BattleBusSlowDeathBehavior.cpp
@@ -1171,6 +1171,5 @@ target_link_libraries(z_gameengine PUBLIC
 )
 
 target_precompile_headers(z_gameengine PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
-#    Include/Precompiled/PreRTS.h
+    [["Precompiled/BasePrecomp.h"]] # Must be first
 )

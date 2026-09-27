@@ -952,6 +952,7 @@ WW3DErrorType MeshModelClass::read_shaders(ChunkLoadClass & cload,MeshLoadContex
 		W3dUtilityClass::Convert_Shader(shader,&newshader);
 
 		int index = context->Add_Shader(newshader);
+		(void)index;
 		WWASSERT(index == (int)i);
 	}
 	return WW3D_ERROR_OK;

@@ -96,7 +96,7 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 		return;
 	}
 
-	DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(damageName);
+	DamageType dt = (DamageType)INI::scanIndexList(damageName, DamageTypeFlags::getBitNames());
 	self->m_damageCoefficient[dt] = pct;
 }
 

@@ -87,7 +87,7 @@ int nGetWord( char *string, int fdbcs )
 	//--------------------------------------------------------------------------
 	// If no string was passed in, exit.
 	//--------------------------------------------------------------------------
-	if( !p || !( c0 = *p++ )) {
+	if( !p || ( c0 = *p++ ) == 0) {
 //	if(( p == nullptr ) || ( *p == '\0' )) {
 		return 0;
 	}
@@ -122,9 +122,9 @@ int nGetWord( char *string, int fdbcs )
 
 	bCiae0 = IsDBCSInvalidAtEnd( c0 );
 
-	while( c1 = *p ) {
+	while( (c1 = *p) != 0 ) {
 
-		bDbcs1 = ( IsDBCSLeadByte( c1 ) && ( c = *( p + 1 )));
+		bDbcs1 = ( IsDBCSLeadByte( c1 ) && ( c = *( p + 1 ) ) != 0 );
 		if( bDbcs1 ) {
 			c1 = ( c1<<8 ) | c;
 		}

@@ -58,7 +58,6 @@
 #include	<string.h>
 #include	<stddef.h>
 #include	<stdlib.h>
-#include	<Utility/stdint_adapter.h>
 
 
 /**************************************************************************

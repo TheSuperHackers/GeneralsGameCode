@@ -389,7 +389,7 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 	}
 
 	MINIDUMP_TYPE miniDumpType = static_cast<MINIDUMP_TYPE>(dumpTypeFlags);
-	BOOL success = DbgHelpLoader::miniDumpWriteDump(
+	BOOL success = DbgHelp::MiniDumpWriteDump(
 		::GetCurrentProcess(),
 		currentProcessId,
 		dumpFile,

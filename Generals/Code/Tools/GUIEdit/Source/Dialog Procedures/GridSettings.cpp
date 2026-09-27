@@ -47,7 +47,6 @@
 #include <windows.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Lib/BaseType.h"
 #include "resource.h"
 #include "EditWindow.h"
 #include "GUIEdit.h"

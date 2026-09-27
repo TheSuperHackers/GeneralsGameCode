@@ -809,13 +809,12 @@ void CPUDetectClass::Init_Processor_String()
 
 void CPUDetectClass::Init_CPUID_Instruction()
 {
-	unsigned long cpuid_available=0;
-
    // The pushfd/popfd commands are done using emits
    // because CodeWarrior seems to have problems with
    // the command (huh?)
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
+	unsigned long cpuid_available=0;
 #ifdef WIN32
    __asm
    {

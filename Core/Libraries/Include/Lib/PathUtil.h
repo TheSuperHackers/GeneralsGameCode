@@ -23,13 +23,29 @@
 #include "BaseType.h"
 #include <string.h>
 
-inline bool isPathSeparator(char ch)
+inline char getNativePathSeparator()
+{
+#ifdef _WIN32
+	return '\\';
+#else
+	return '/';
+#endif
+}
+
+// Returns true for a separator the host platform uses to open files.
+inline bool isFileSystemPathSeparator(char ch)
 {
 #ifdef _WIN32
 	return ch == '\\' || ch == '/';
 #else
 	return ch == '/';
 #endif
+}
+
+// Returns true for either separator. Game data paths carry '\\' on every platform.
+inline bool isPathSeparator(char ch)
+{
+	return ch == '/' || ch == '\\';
 }
 
 inline bool isAbsolutePath(const char* path)
@@ -39,20 +55,37 @@ inline bool isAbsolutePath(const char* path)
 		return false;
 	}
 
-	if (isPathSeparator(path[0]))
+	if (isFileSystemPathSeparator(path[0]))
 	{
 		return true;
 	}
 
 #ifdef _WIN32
 	const bool hasDriveLetter = (path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z');
-	if (hasDriveLetter && path[1] == ':' && isPathSeparator(path[2]))
+	if (hasDriveLetter && path[1] == ':' && isFileSystemPathSeparator(path[2]))
 	{
 		return true;
 	}
 #endif
 
 	return false;
+}
+
+inline const char* getLastPathSeparator(const char* path)
+{
+	return path ? maxPtr(strrchr(path, '/'), strrchr(path, '\\')) : nullptr;
+}
+
+inline const wchar_t* getLastPathSeparator(const wchar_t* path)
+{
+	return path ? maxPtr(wcsrchr(path, L'/'), wcsrchr(path, L'\\')) : nullptr;
+}
+
+// Returns the whole path when it contains no separator
+inline const char* getFileName(const char* path)
+{
+	const char* lastSeparator = getLastPathSeparator(path);
+	return lastSeparator ? lastSeparator + 1 : path;
 }
 
 inline const char* getExtension(const char* path)
@@ -64,7 +97,7 @@ inline const char* getExtension(const char* path)
 		return nullptr;
 	}
 
-	const char* lastSeparator = maxPtr(strrchr(path, '/'), strrchr(path, '\\'));
+	const char* lastSeparator = getLastPathSeparator(path);
 
 	// Check if the dot is contained in the filename
 	if (lastSeparator && lastDot < lastSeparator)
@@ -84,7 +117,7 @@ inline const wchar_t* getExtension(const wchar_t* path)
 		return nullptr;
 	}
 
-	const wchar_t* lastSeparator = maxPtr(wcsrchr(path, L'/'), wcsrchr(path, L'\\'));
+	const wchar_t* lastSeparator = getLastPathSeparator(path);
 
 	// Check if the dot is contained in the filename
 	if (lastSeparator && lastDot < lastSeparator)

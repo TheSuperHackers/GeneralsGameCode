@@ -171,10 +171,10 @@ add_library(corei_w3dview INTERFACE)
 target_sources(corei_w3dview INTERFACE ${W3DVIEW_SRC})
 
 target_precompile_headers(corei_w3dview INTERFACE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     "StdAfx.h"
     [["WWLib/always.h"]]
-    [["WWLib/STLUtils.h"]]
+    [["Utility/STLUtils.h"]]
     [["WWLib/WWCommon.h"]]
 )
 

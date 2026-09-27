@@ -45,7 +45,6 @@
 #pragma once
 
 #include "WW3D2/assetmgr.h"
-#include "Lib/BaseType.h"
 
 class Vector3;
 class VertexMaterialClass;

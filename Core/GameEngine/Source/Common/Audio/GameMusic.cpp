@@ -98,7 +98,7 @@ MusicManager::~MusicManager()
 void MusicManager::playTrack( DynamicAudioEventRTS *eventToUse )
 {
 	AudioRequest *audioRequest = TheAudio->allocateAudioRequest();
-	audioRequest->m_pendingEvent.Assign_Add_Ref(eventToUse);
+	audioRequest->m_pendingEvent = eventToUse;
 	audioRequest->m_request = AR_Play;
 	TheAudio->appendAudioRequest( audioRequest );
 }

@@ -1022,7 +1022,7 @@ void BuildAssistant::addBibs(const Coord3D *worldPos,
 																	const ThingTemplate *build  )
 {
 
-	Real range = build->friend_getVisionRange();
+	Real range = build->friend_calcVisionRange();
 	range += 3*build->getTemplateGeometryInfo().getMajorRadius();
 
 	PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_STRUCTURE), KINDOFMASK_NONE);

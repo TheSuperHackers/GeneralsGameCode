@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 class AsciiString;
 
 enum OSDisplayButtonType CPP_11(: UnsignedInt)

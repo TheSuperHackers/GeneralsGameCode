@@ -85,75 +85,10 @@ void* __cdecl operator new(unsigned int s);
 #endif
 
 /*
-** Define the MIN and MAX macros.
-** NOTE: Joe used to #include <minmax.h> in the various compiler header files.  This
-** header defines 'min' and 'max' macros which conflict with the surrender code so
-** I'm relpacing all occurrences of 'min' and 'max with 'MIN' and 'MAX'.  For code which
-** is out of our domain (e.g. Max sdk) I'm declaring template functions for 'min' and 'max'
-*/
-#define NOMINMAX
-
-#ifndef MAX
-#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef MIN
-#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
-template <class T> T min(T a,T b)
-{
-	if (a<b) {
-		return a;
-	} else {
-		return b;
-	}
-}
-
-template <class T> T max(T a,T b)
-{
-	if (a>b) {
-		return a;
-	} else {
-		return b;
-	}
-}
-
-
-/*
 **	This includes the minimum set of compiler defines and pragmas in order to bring the
 **	various compilers to a common behavior such that the C&C engine will compile without
 **	error or warning.
 */
-#if defined(__BORLANDC__)
-#include	"borlandc.h"
-#endif
-
 #if defined(_MSC_VER)
 #include	"visualc.h"
-#endif
-
-#if defined(__WATCOMC__)
-#include	"watcom.h"
-#endif
-
-
-/**********************************************************************
-**	This macro serves as a general way to determine the number of elements
-**	within an array.
-*/
-#ifndef ARRAY_SIZE
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-#endif
-
-#ifndef size_of
-#define size_of(typ,id) sizeof(((typ*)0)->id)
 #endif

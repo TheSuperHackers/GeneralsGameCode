@@ -98,7 +98,7 @@ BOOL CReport::OnInitDialog()
 	options.limit = 100;
 
 	index = 0;
-	while ( (info = GetLangInfo ( index )) )
+	while ( (info = GetLangInfo ( index )) != nullptr )
 	{
 		list->InsertString ( index,  info->name );
 		if ( info->langid == CurrentLanguage )
@@ -184,7 +184,7 @@ void CReport::OnOK()
 	{
 		LANGINFO *info;
 
-		if ( info = GetLangInfo ( langindices[i] ))
+		if ( (info = GetLangInfo ( langindices[i] )) != nullptr )
 		{
 			langids[num_langs++] = info->langid;
 		}

@@ -474,7 +474,7 @@ void RecorderClass::updateRecord()
 			 msg->getArgument(0)->integer != GAME_SINGLE_PLAYER && // Due to the massive amount of scripts that use <local player> in GC and single player, replays have been cut for them.
 			 msg->getArgument(0)->integer != GAME_NONE)
 		{
-			m_originalGameMode = msg->getArgument(0)->integer;
+			m_originalGameMode = (GameMode)msg->getArgument(0)->integer;
 			DEBUG_LOG(("RecorderClass::updateRecord() - original game is mode %d", m_originalGameMode));
 			lastFrame = 0;
 			GameDifficulty diff = DIFFICULTY_NORMAL;
@@ -519,7 +519,7 @@ void RecorderClass::updateRecord()
  * Start a new file for recording. This will always overwrite the "LastReplay.rep" file with the new one.
  * So don't call this unless you really mean it.
  */
-void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS) {
+void RecorderClass::startRecording(GameDifficulty diff, GameMode originalGameMode, Int rankPoints, Int maxFPS) {
 	DEBUG_ASSERTCRASH(m_file == nullptr, ("Starting to record game while game is in progress."));
 
 	reset();
@@ -677,7 +677,7 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	// Write maxFPS chosen
 	m_file->write(&maxFPS, sizeof(maxFPS));
 
-	DEBUG_LOG(("RecorderClass::startRecording() - diff=%d, mode=%d, FPS=%d", diff, originalGameMode, maxFPS));
+	DEBUG_LOG(("RecorderClass::startRecording() - diff=%d, mode=%d, FPS=%d", diff, (Int)originalGameMode, maxFPS));
 
 	/*
 	// Write the map name.
@@ -928,6 +928,8 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header, const AsciiString& fi
 		m_file = nullptr;
 		return FALSE;
 	}
+	// TheSuperHackers @bugfix bobtista 17/09/2026 Preserve the recorded local slot, including -1 for no local player.
+	m_gameInfo.setLocalSlotNum(header.localPlayerIndex);
 	if (header.localPlayerIndex >= 0)
 	{
 		Int localIP = m_gameInfo.getSlot(header.localPlayerIndex)->getIP();
@@ -1205,15 +1207,16 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	}
 #endif
 
-	Bool isMultiplayer = m_gameInfo.getSlot(header.localPlayerIndex)->getIP() != 0;
-	m_crcInfo = CRCInfo(header.localPlayerIndex, isMultiplayer);
 	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
-	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", m_crcInfo.getLocalPlayer(), REPLAY_CRC_INTERVAL));
 
 	Int difficulty = 0;
 	m_file->read(&difficulty, sizeof(difficulty));
 
 	m_file->read(&m_originalGameMode, sizeof(m_originalGameMode));
+
+	const Bool isMultiplayer = rts::isMultiplayerGame(m_originalGameMode);
+	m_crcInfo = CRCInfo(header.localPlayerIndex, isMultiplayer);
+	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", m_crcInfo.getLocalPlayer(), REPLAY_CRC_INTERVAL));
 
 	Int rankPoints = 0;
 	m_file->read(&rankPoints, sizeof(rankPoints));

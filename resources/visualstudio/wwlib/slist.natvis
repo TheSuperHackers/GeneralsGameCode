@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- The links and the payload both live in the GenericSLNode base as void pointers,
+         so each has to be cast back to the list's element type on the way out. -->
+    <Type Name="SList&lt;*&gt;">
+        <DisplayString Condition="HeadNode == 0">{{ size=0 }}</DisplayString>
+        <DisplayString>{{ SList }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="node" InitialValue="HeadNode"/>
+                <Loop>
+                    <Break Condition="node == 0"/>
+                    <Item>($T1 *)node-&gt;NodeData</Item>
+                    <Exec>node = (SLNode&lt;$T1&gt; *)node-&gt;NodeNext</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <Type Name="SLNode&lt;*&gt;">
+        <DisplayString>{*($T1 *)NodeData}</DisplayString>
+        <Expand>
+            <Item Name="[data]">($T1 *)NodeData</Item>
+            <Item Name="[next]">(SLNode&lt;$T1&gt; *)NodeNext</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>

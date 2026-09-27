@@ -172,7 +172,7 @@ static void restartMissionMenu()
 	// destroy the quit menu
 	destroyQuitMenu();
 
-	Int gameMode = TheGameLogic->getGameMode();
+	GameMode gameMode = TheGameLogic->getGameMode();
 	AsciiString mapName = TheGlobalData->m_mapName;
 
 	// TheSuperHackers @bugfix Caball009 07/02/2026 Reuse the previous seed value for the new skirmish match to prevent mismatches.
@@ -210,11 +210,11 @@ static void restartMissionMenu()
 		// send a message to the logic for a new game
 		TheWritableGlobalData->m_pendingFile = mapName;
 		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
-		msg->appendIntegerArgument(gameMode);
+		msg->appendIntegerArgument((Int)gameMode);
 		msg->appendIntegerArgument(diff);
 		msg->appendIntegerArgument(rankPointsStartedWith);
 		msg->appendIntegerArgument(fps);
-		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode,
+		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", (Int)gameMode,
 																																		TheScriptEngine->getGlobalDifficulty(),
 																																		rankPointsStartedWith)
 							);
@@ -280,7 +280,7 @@ void ToggleQuitMenu()
 	// BGC- this is kind of hackish, but its the safest way to do it I think.
 	// Basically we're seeing if either the save/load window or the options window is up
 	// and if one of them is, we quit out of them rather than toggle the quit menu.
-	if (TheShell->getOptionsLayout(FALSE) != FALSE) {
+	if (TheShell->getOptionsLayout(FALSE) != nullptr) {
 		WindowLayout *optLayout = TheShell->getOptionsLayout(FALSE);
 		GameWindow *optionsParent = optLayout->getFirstWindow();
 		DEBUG_ASSERTCRASH(optionsParent != nullptr, ("Not able to get the options layout parent window"));

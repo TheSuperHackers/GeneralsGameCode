@@ -823,7 +823,7 @@ void AIStateMachine::loadPostProcess()
  */
 void AIStateMachine::setGoalPath( std::vector<Coord3D>* path )
 {
-	stl::move_or_swap(m_goalPath, *path);
+	MOVE_TO(m_goalPath) = std::move(*path);
 }
 
 #ifdef STATE_MACHINE_DEBUG

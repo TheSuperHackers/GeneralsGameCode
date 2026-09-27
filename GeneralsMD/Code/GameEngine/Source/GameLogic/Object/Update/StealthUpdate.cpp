@@ -33,6 +33,7 @@
 #define DEFINE_OBJECT_STATUS_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+#include "Common/FramePacer.h"
 #include "Common/GameState.h"
 #include "Common/GameUtility.h"
 #include "Common/Player.h"
@@ -1001,7 +1002,7 @@ void StealthUpdate::changeVisualDisguise()
 			draw->setPosition( self->getPosition() );
 			draw->setOrientation( self->getOrientation() );
 			draw->setModelConditionFlags( flags );
-			draw->updateDrawable();
+			draw->updateDrawable(TheFramePacer->getActualLogicTimeScaleOverFpsRatio());
 			self->getPhysics()->resetDynamicPhysics();
 			if( selected )
 			{
@@ -1059,7 +1060,7 @@ void StealthUpdate::changeVisualDisguise()
 			draw->setPosition( self->getPosition() );
 			draw->setOrientation( self->getOrientation() );
 			draw->setModelConditionFlags( flags );
-			draw->updateDrawable();
+			draw->updateDrawable(TheFramePacer->getActualLogicTimeScaleOverFpsRatio());
 			self->getPhysics()->resetDynamicPhysics();
 			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
 				draw->setIndicatorColor( self->getNightIndicatorColor() );

@@ -32,11 +32,6 @@ set(WWLIB_SRC
     #crcstraw.h
     cstraw.cpp
     cstraw.h
-    DbgHelpGuard.cpp
-    DbgHelpGuard.h
-    DbgHelpLoader.cpp
-    DbgHelpLoader.h
-    DbgHelpLoader_minidump.h
     Except.cpp
     Except.h
     FastAllocator.cpp
@@ -112,14 +107,11 @@ set(WWLIB_SRC
     SLNODE.h
     stimer.cpp
     stimer.h
-    STLUtils.h
     straw.cpp
     STRAW.h
-    stringex.h
     strtok_r.cpp
     strtok_r.h
     #swap.h
-    SystemAllocator.h
     systimer.cpp
     systimer.h
     TARGA.cpp
@@ -162,8 +154,6 @@ if(WIN32)
         rcfile.h
         registry.cpp
         registry.h
-        Usp10Loader.cpp
-        Usp10Loader.h
         verchk.cpp
         verchk.h
         WWCOMUtil.cpp
@@ -177,9 +167,9 @@ set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_precompile_headers(core_wwlib PRIVATE
-    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     [["WWLib/always.h"]]
-    [["WWLib/STLUtils.h"]]
+    [["Utility/STLUtils.h"]]
     [["WWLib/win.h"]]
     [["WWLib/WWCommon.h"]]
     [["WWLib/wwstring.h"]]

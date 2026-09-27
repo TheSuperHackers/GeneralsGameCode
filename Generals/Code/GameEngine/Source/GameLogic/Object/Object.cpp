@@ -254,8 +254,8 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	m_constructionPercent = CONSTRUCTION_COMPLETE;  // complete by default
 
-	m_visionRange = tt->friend_getVisionRange();
-	m_shroudClearingRange = tt->friend_getShroudClearingRange();
+	m_visionRange = tt->friend_calcVisionRange();
+	m_shroudClearingRange = tt->friend_calcShroudClearingRange();
 	if( m_shroudClearingRange == -1.0f )
 		m_shroudClearingRange = m_visionRange;// Backwards compatible, and perfectly logical default to assign
 	m_shroudRange = 0.0f;
@@ -3374,9 +3374,11 @@ void Object::friend_adjustPowerForPlayer( Bool incoming )
 //-------------------------------------------------------------------------------------------------
 void Object::onDisabledEdge(Bool becomingDisabled)
 {
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	// rip through the behavior modules and call the onDisabledEdge for any modules that care
 	for( BehaviorModule **module = m_behaviors; *module; ++module )
 		(*module)->onDisabledEdge( becomingDisabled );
+#endif
 
 	Player* controller = getControllingPlayer();
 	// can be called during game teardown, thus controller can be null
@@ -4164,6 +4166,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	handlePartitionCellMaintenance();
 	if(m_team)
 		m_team->notifyTeamOfObjectDeath();
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
 	// Play death sound here.
 
 	AudioEventRTS deathSound = *getTemplate()->getSoundDie();
@@ -4185,6 +4188,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	PlayerIndex index = getControllingPlayer() ? getControllingPlayer()->getPlayerIndex() : 0;
 	deathSound.setPlayerIndex( index );
 	TheAudio->addAudioEvent(&deathSound);
+#endif
 
 	if (isLocallyViewed() && !selfInflicted) // wasLocallyViewed? :-)
 	{
@@ -5570,11 +5574,7 @@ void Object::enterGroup( AIGroup *group )
 	// if we are in another group, remove ourselves from it first
 	leaveGroup();
 
-#if RETAIL_COMPATIBLE_AIGROUP
 	m_group = group;
-#else
-	m_group.Assign_Add_Ref(group);
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------

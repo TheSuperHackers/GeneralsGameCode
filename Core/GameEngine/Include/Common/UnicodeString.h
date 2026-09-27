@@ -84,9 +84,6 @@ private:
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct UnicodeStringData
 	{
-#if defined(RTS_DEBUG)
-		const WideChar* m_debugptr;	// just makes it easier to read in the debugger
-#endif
 		unsigned short	m_refCount;						// reference count
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// WideChar m_stringdata[];
@@ -182,6 +179,11 @@ public:
 		No range checking is done (except in debug mode).
 	*/
 	WideChar getCharAt(int index) const;
+
+	// Requires a nonempty string.
+	WideChar front() const;
+	WideChar back() const;
+
 	/**
 		Return a pointer to the (null-terminated) string. Note that this is
 		a const pointer: do NOT change this! It is imperative that it be
@@ -421,6 +423,18 @@ inline WideChar UnicodeString::getCharAt(int index) const
 	DEBUG_ASSERTCRASH(index >= 0 && index < getLength(), ("bad index in getCharAt"));
 	validate();
 	return m_data ? peek()[index] : 0;
+}
+
+// -----------------------------------------------------
+inline WideChar UnicodeString::front() const
+{
+	return getCharAt(0);
+}
+
+// -----------------------------------------------------
+inline WideChar UnicodeString::back() const
+{
+	return getCharAt(getLength() - 1);
 }
 
 // -----------------------------------------------------

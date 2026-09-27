@@ -2495,11 +2495,12 @@ void W3DModelDraw::handleClientTurretPositioning()
 */
 void W3DModelDraw::handleClientRecoil()
 {
-	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
-	if (!(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID))
+	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID))
 	{
 		return;
 	}
+
+	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
 
 	// do recoil, if any
 	for (int wslot = 0; wslot < WEAPONSLOT_COUNT; ++wslot)

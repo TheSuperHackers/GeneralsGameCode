@@ -21,7 +21,6 @@
 
 #include "StdAfx.h"
 #include "resource.h"
-#include "Lib/BaseType.h"
 #include "ContourOptions.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"

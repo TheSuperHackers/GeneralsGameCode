@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- Buckets hold the head of a chain that is threaded through HashableClass::NextHash,
+         so the entries are gathered with a bucket loop wrapped around a chain loop. -->
+    <Type Name="HashTableClass">
+        <DisplayString>{{ buckets={HashTableSize} }}</DisplayString>
+        <Expand>
+            <Item Name="[buckets]" ExcludeView="simple">HashTableSize</Item>
+            <CustomListItems>
+                <Variable Name="bucket" InitialValue="0"/>
+                <Variable Name="entry" InitialValue="(HashableClass *)0"/>
+                <Loop>
+                    <Break Condition="bucket &gt;= HashTableSize"/>
+                    <Exec>entry = HashTable[bucket]</Exec>
+                    <Loop>
+                        <Break Condition="entry == 0"/>
+                        <Item>entry</Item>
+                        <Exec>entry = entry-&gt;NextHash</Exec>
+                    </Loop>
+                    <Exec>bucket = bucket + 1</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+
+    <Type Name="HashTableIteratorClass">
+        <DisplayString Condition="CurrentEntry == 0">{{ done }}</DisplayString>
+        <DisplayString>{*CurrentEntry}</DisplayString>
+        <Expand>
+            <Item Name="[current]">CurrentEntry</Item>
+            <Item Name="[next]" ExcludeView="simple">NextEntry</Item>
+            <Item Name="[bucket]" ExcludeView="simple">Index</Item>
+            <Item Name="[table]" ExcludeView="simple">Table</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>

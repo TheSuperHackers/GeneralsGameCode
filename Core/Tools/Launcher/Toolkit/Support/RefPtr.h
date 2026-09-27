@@ -67,7 +67,6 @@
 
 #pragma once
 
-#include "Visualc.h"
 #include "RefCounted.h"
 #include <stddef.h>
 #include <assert.h>

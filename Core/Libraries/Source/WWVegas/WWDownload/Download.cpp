@@ -19,7 +19,7 @@
 // Download.cpp : Implementation of CDownload
 #include "DownloadDebug.h"
 #include "Download.h"
-#include "WWLib/stringex.h"
+#include "Utility/stringex.h"
 #include <mmsystem.h>
 #include <assert.h>
 #include <direct.h>

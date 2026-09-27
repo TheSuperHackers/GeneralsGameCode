@@ -639,7 +639,7 @@ void HTreeClass::Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAni
 	endpivot=pivot+(NumPivots-1);
 	lastAnimPivot = &Pivot[num_anim_pivots];
 
-	for (int piv_idx=1; pivot < endpivot; pivot++,nodeMotion++) {
+	for (; pivot < endpivot; pivot++,nodeMotion++) {
 
 		// base pose
 		assert(pivot->Parent != nullptr);

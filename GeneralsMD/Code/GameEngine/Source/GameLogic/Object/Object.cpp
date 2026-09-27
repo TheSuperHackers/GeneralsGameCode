@@ -3863,9 +3863,11 @@ void Object::friend_adjustPowerForPlayer( Bool incoming )
 //-------------------------------------------------------------------------------------------------
 void Object::onDisabledEdge(Bool becomingDisabled)
 {
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 	// rip through the behavior modules and call the onDisabledEdge for any modules that care
 	for( BehaviorModule **module = m_behaviors; *module; ++module )
 		(*module)->onDisabledEdge( becomingDisabled );
+#endif
 
 	Player* controller = getControllingPlayer();
 	// can be called during game teardown, thus controller can be null
@@ -4665,6 +4667,29 @@ void Object::onDie( DamageInfo *damageInfo )
 	handlePartitionCellMaintenance();
 	if(m_team)
 		m_team->notifyTeamOfObjectDeath();
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	// Play death sound here.
+
+	AudioEventRTS deathSound = *getTemplate()->getSoundDie();
+	// If we were killed by fire, or by poison, we should play those die sounds instead of the usual
+	// sound
+	if (damageInfo->in.m_deathType == DEATH_BURNED)
+		deathSound = *getTemplate()->getSoundDieFire();
+	else if (damageInfo->in.m_deathType == DEATH_POISONED || damageInfo->in.m_deathType == DEATH_POISONED_BETA)
+		deathSound = *getTemplate()->getSoundDieToxin();
+
+	// If we didn't actually have a specialized die sound (for the case of fire or poison, we
+	// should use the generic death sound)
+	if (!TheAudio->isValidAudioEvent(&deathSound))
+		deathSound = *getTemplate()->getSoundDie();
+
+	// Use the position. Next frame, when this unit is gone, this sound will be clipped because we
+	// can no longer automatically find its position. - jkmcd
+	deathSound.setPosition(getPosition());
+	PlayerIndex index = getControllingPlayer() ? getControllingPlayer()->getPlayerIndex() : 0;
+	deathSound.setPlayerIndex( index );
+	TheAudio->addAudioEvent(&deathSound);
+#endif
 
 	if (isLocallyViewed() && !selfInflicted) // wasLocallyViewed? :-)
 	{
@@ -6393,11 +6418,7 @@ void Object::enterGroup( AIGroup *group )
 	// if we are in another group, remove ourselves from it first
 	leaveGroup();
 
-#if RETAIL_COMPATIBLE_AIGROUP
 	m_group = group;
-#else
-	m_group.Assign_Add_Ref(group);
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------

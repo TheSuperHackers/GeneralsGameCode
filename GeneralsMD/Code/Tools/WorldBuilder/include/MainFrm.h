@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
 #include "MyToolbar.h"
 #include "brushoptions.h"
 #include "FeatherOptions.h"

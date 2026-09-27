@@ -234,11 +234,11 @@ MeshDeformClass::BeginEditParams
 	//
 	// Register the desired sub-object selection types.
 	//
-	const TCHAR * ptype[] = { "Vertices" };
 #if defined W3D_MAX4		//defined as in the project (.dsp)
  	max_interface->SetSubObjectLevel(1);
 #else
 	//---This call is obsolete from max4.
+	const TCHAR * ptype[] = { "Vertices" };
 	max_interface->RegisterSubObjectTypes( ptype, 1);
 #endif
 
@@ -380,7 +380,7 @@ MeshDeformClass::HitTest
 	// Perform the hit test
 	//
 	SubObjHitList hitlist;
-	MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context->localData);
+	//MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context->localData);
 	Mesh &mesh = tri->mesh;//mod_data->Peek_Mesh ();
 	int result = mesh.SubObjectHitTest (graphics_wnd,
 													 graphics_wnd->getMaterial (),
@@ -466,7 +466,6 @@ MeshDeformClass::GetSubObjectTMs
 	ModContext *mc
 )
 {
-	int test = 0;
 }
 
 
@@ -486,7 +485,6 @@ MeshDeformClass::GetSubObjectCenters
 {
 	// Peek at the vertex selection array for this hit record
 	MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context->localData);
-	const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
 	Mesh *mesh = mod_data->Peek_Mesh ();
 
 	BitArray sel_array = mesh->vertSel;
@@ -571,8 +569,6 @@ MeshDeformClass::Move
 			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
 			if (mod_data != nullptr) {
 				Mesh *mesh = mod_data->Peek_Mesh ();
-				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
-				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
 
 				// Loop through all the selected verts
 				for (int vert = 0; vert < mesh->numVerts; vert ++) {
@@ -586,9 +582,6 @@ MeshDeformClass::Move
 						// Convert back to obj-space
 						vert_ws = tm_axis * vert_as;
 						mesh->verts[vert] = Inverse (parent_tm) * vert_ws;
-
-						// Record the delta
-						//delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
 					}
 				}
 
@@ -643,7 +636,6 @@ MeshDeformClass::Scale
 			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
 			if (mod_data != nullptr) {
 				Mesh *mesh = mod_data->Peek_Mesh ();
-				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
 				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
 
 				// Loop through all the selected verts
@@ -658,9 +650,6 @@ MeshDeformClass::Scale
 						// Convert back to obj-space
 						vert_ws = tm_axis * vert_as;
 						mesh->verts[vert] = Inverse (parent_tm) * vert_ws;
-
-						// Record the delta
-						//delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
 					}
 				}
 
@@ -719,8 +708,6 @@ MeshDeformClass::Rotate
 			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
 			if (mod_data != nullptr) {
 				Mesh *mesh = mod_data->Peek_Mesh ();
-				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
-				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
 
 				// Loop through all the selected verts
 				for (int vert = 0; vert < mesh->numVerts; vert ++) {
@@ -734,9 +721,6 @@ MeshDeformClass::Rotate
 						// Convert back to obj-space
 						vert_ws = tm_axis * vert_as;
 						mesh->verts[vert] = Inverse (parent_tm) * vert_ws;
-
-						// Record the delta
-						//delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
 					}
 				}
 

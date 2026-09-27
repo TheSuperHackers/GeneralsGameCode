@@ -510,11 +510,6 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 		}
 
-#if RETAIL_COMPATIBLE_CRC
-		// TheSuperHackers @info helmutbuhler 12/06/2025
-		// Note that this code is very brittle for retail compatibility. Inlining isFiring
-		// can cause incompatibility in some circumstances.
-#endif
 		const Bool isFiring = orbitalBirthFrame <= now && now < orbitalDeathFrame;
 		if ( isFiring )
 		{
@@ -537,7 +532,15 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				Coord3D buildingToInitialTargetVector;
 				buildingToInitialTargetVector.set( m_initialTargetPosition );
 				buildingToInitialTargetVector.sub( *me->getPosition() );
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @info Caball009 25/09/2026 VC6 is extremely sensitive to the ordering of floating-point operations in this code section.
+				// Nudge the compiler to generate the call to Coord3D::length as sqrt((x*x + y*y) + z*z), rather than sqrt((z*z + x*x) + y*y).
+				// The latter ordering is not retail-compatible here.
+				Real targetDistance = sqrt(sqr(buildingToInitialTargetVector.x) + sqr(buildingToInitialTargetVector.y) + sqr(buildingToInitialTargetVector.z));
+#else
 				Real targetDistance = buildingToInitialTargetVector.length();
+#endif
 
 				//Calculate the point position assuming the target position is on the x axis relative to the building.
 				m_currentTargetPosition.x = cxDistance + targetDistance;

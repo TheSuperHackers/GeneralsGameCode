@@ -34,7 +34,6 @@
 #include "WW3D2/shader.h"
 #include "WW3D2/vertmaterial.h"
 #include "WW3D2/light.h"
-#include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 

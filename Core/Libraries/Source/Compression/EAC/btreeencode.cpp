@@ -88,28 +88,11 @@ static void BTREE_writebits(struct BTreeEncodeContext *EC,
 static void BTREE_adjcount(unsigned char *s, unsigned char *bend, BTREEWORD *count)
 {
 
-#ifdef __WATCOMC__
-
-    union
-    {
-        unsigned char           b[4];
-        int                     w;
-    } i;
-
-    #define	COUNTADJ(j)	i.b[1] = i.b[0]; i.b[0] = *(s+j); ++count[i.w];
-
-    i.w = 0;
-	i.b[0] = (unsigned BTREEWORD) *s++;
-
-#else
-
 	unsigned BTREEWORD		i;
 
     #define COUNTADJ(j)	i = (BTREEWORD)(((i<<8) | *(s+j)));	++*(count+(int)i);
 
 	i = (unsigned BTREEWORD) *s++;
-
-#endif
 
 	bend -= 16;
 

@@ -242,6 +242,7 @@ void DX8TextureCategoryClass::Add_Polygon_Renderer(DX8PolygonRendererClass* p_re
 
 	if (add_after_this != nullptr) {
 		bool res = PolygonRendererList.Add_After(p_renderer,add_after_this,false);
+		(void)res;
 		WWASSERT(res);
 	} else {
 		PolygonRendererList.Add(p_renderer);
@@ -1217,7 +1218,9 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 	for (unsigned pass=0;pass<split_table.Get_Pass_Count();++pass) {
 		Textures_Material_And_Shader_Booking_Struct textures_material_and_shader_booking;
 
+#ifdef DEBUG_CRASHING
 		unsigned old_used_indices=used_indices;
+#endif
 
 		for (int i=0;i<polygon_count;++i) {
 			TextureClass* textures[MeshMatDescClass::MAX_TEX_STAGES];
@@ -1234,8 +1237,10 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 			Insert_To_Texture_Category(split_table,textures,mat,shader,pass,vertex_offset);
 		}
 
+#ifdef DEBUG_CRASHING
 		int new_inds=used_indices-old_used_indices;
 		WWASSERT(new_inds<=polygon_count*3);
+#endif
 	}
 }
 

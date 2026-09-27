@@ -77,7 +77,6 @@ void DebugIOFlat::OutputStream::Delete(const char *path)
     char *fileNameOnly=strrchr(m_fileName,'\\');
     fileNameOnly=fileNameOnly?fileNameOnly+1:m_fileName;
 
-    unsigned pathLen=strlen(path);
     for (;;)
     {
       // absolute path?
