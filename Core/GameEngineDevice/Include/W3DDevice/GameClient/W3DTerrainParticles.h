@@ -75,6 +75,7 @@ private:
 	void resetVertexLookup(const ParticleContext& particle);
 	void flushBatch();
 	IRegion2D calcTerrainBounds(const WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const;
+	Bool isDefaultWhiteOpaque()const;
 	void updateSettings();
 
 	std::array<VertexFormatXYZNDUV2, TerrainParticles::MAX_VERTICES> m_vertexData;    ///< Vertices of the current batch.
