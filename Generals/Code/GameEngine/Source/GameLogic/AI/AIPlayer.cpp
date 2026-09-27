@@ -928,7 +928,12 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 Bool AIPlayer::isSupplySourceAttacked()
 {
-	const Int SCAN_RATE = 10; // don't scan more often than every 10 seconds.
+	// TheSuperHackers @bugfix WebbontheWeb 27/09/2026 No longer scans for just 10 frames.
+#if RETAIL_COMPATIBLE_CRC
+    const Int SCAN_RATE = 10; // 10 frames.
+#else
+    const Int SCAN_RATE = 10 * LOGICFRAMES_PER_SECOND; // don't scan more often than every 10 seconds.
+#endif
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame==0) {
 		m_supplySourceAttackCheckFrame = curFrame+SCAN_RATE;
