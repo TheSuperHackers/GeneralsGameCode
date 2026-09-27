@@ -1441,6 +1441,13 @@ void Radar::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Radar::loadPostProcess()
 {
+	// TheSuperHackers @bugfix Keep saved event indices within the ring buffer, including the no-event sentinel.
+	if( m_nextFreeRadarEvent < 0 || m_nextFreeRadarEvent >= MAX_RADAR_EVENTS ||
+			m_lastRadarEvent < -1 || m_lastRadarEvent >= MAX_RADAR_EVENTS )
+	{
+		DEBUG_CRASH(( "Radar::loadPostProcess - Invalid event index" ));
+		throw SC_INVALID_DATA;
+	}
 
 	//
 	// refresh the radar texture now that all the objects (specifically bridges) have

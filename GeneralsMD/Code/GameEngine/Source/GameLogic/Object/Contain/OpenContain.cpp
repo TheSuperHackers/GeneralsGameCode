@@ -1940,6 +1940,13 @@ void OpenContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void OpenContain::loadPostProcess()
 {
+	// TheSuperHackers @bugfix Reject saved fire point indices before restoring contained objects.
+	if( m_firePointSize < 0 || m_firePointSize > MAX_FIRE_POINTS ||
+			m_firePointNext < 0 || m_firePointNext >= MAX_FIRE_POINTS )
+	{
+		DEBUG_CRASH(( "OpenContain::loadPostProcess - Invalid saved array bounds" ));
+		throw SC_INVALID_DATA;
+	}
 	Object *us = getObject();
 
 	// extend base class
