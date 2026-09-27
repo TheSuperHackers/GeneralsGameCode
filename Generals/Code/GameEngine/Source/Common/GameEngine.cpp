@@ -491,6 +491,10 @@ void GameEngine::init()
 		ini.loadFileDirectory("Data\\INI\\CommandMapDebug", INI_LOAD_MULTIFILE, nullptr);
 #endif
 
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+		ini.loadFileDirectory("Data\\INI\\CommandMapDemo", INI_LOAD_MULTIFILE, nullptr, INI::LoadFlags_SearchSubDirs); // Added in Zero Hour
+#endif
+
 		TheMetaMap->generateMetaMap();
 		TheMetaMap->verifyMetaMap();
 

@@ -239,7 +239,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 			FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
 			if (logfile)
 			{
-				fprintf(logfile,"TX: %s\n",tex->Get_Texture_Name());
+				fprintf(logfile,"TX: %s\n",tex->Get_Texture_Name().str());
 				fclose(logfile);
 			}
 		}
