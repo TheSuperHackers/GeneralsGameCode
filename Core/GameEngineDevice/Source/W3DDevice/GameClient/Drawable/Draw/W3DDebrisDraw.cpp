@@ -311,17 +311,6 @@ void W3DDebrisDraw::xfer( Xfer *xfer )
 
 	// state
 	xfer->xferInt( &m_state );
-	if (xfer->getXferMode() == XFER_LOAD)
-	{
-		if (m_state < INITIAL)
-		{
-			m_state = INITIAL;
-		}
-		else if (m_state > FINAL)
-		{
-			m_state = FINAL;
-		}
-	}
 
 	// frames
 	xfer->xferInt( &m_frames );
@@ -339,5 +328,8 @@ void W3DDebrisDraw::loadPostProcess()
 
 	// extend base class
 	DrawModule::loadPostProcess();
+
+	// TheSuperHackers @bugfix Clamp the loaded state before indexing the animation arrays.
+	m_state = clamp<Int>(INITIAL, m_state, FINAL);
 
 }
