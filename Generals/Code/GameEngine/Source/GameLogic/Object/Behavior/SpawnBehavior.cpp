@@ -585,7 +585,14 @@ Bool SpawnBehavior::createSpawn()
 		newSpawn = TheThingFactory->newObject( m_spawnTemplate, parent->getTeam() ); // just a little worried about this...
 
 		// Count this unit towards our score.
+#if RTS_GENERALS && defined(_MSC_VER) && _MSC_VER < 1300
+		// TheSuperHackers @info Set m_onUnitProducedZeroInit to true so it can be used in AIPlayer::onUnitProduced.
+		TheGameLogic->m_onUnitProducedZeroInit = true;
 		newSpawn->getControllingPlayer()->onUnitCreated(parent, newSpawn);
+		TheGameLogic->m_onUnitProducedZeroInit = false;
+#else
+		newSpawn->getControllingPlayer()->onUnitCreated(parent, newSpawn);
+#endif
 
 		// Gee, this is new...
 		// Now, we can have a list of template names.
