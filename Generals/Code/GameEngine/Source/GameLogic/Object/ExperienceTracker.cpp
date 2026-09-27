@@ -29,6 +29,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -295,6 +296,11 @@ void ExperienceTracker::xfer( Xfer *xfer )
 //-----------------------------------------------------------------------------
 void ExperienceTracker::loadPostProcess()
 {
-
+	// TheSuperHackers @bugfix Reject saved veterancy levels that would index outside the experience arrays.
+	if( m_currentLevel < LEVEL_FIRST || m_currentLevel > LEVEL_LAST )
+	{
+		DEBUG_CRASH(( "ExperienceTracker::loadPostProcess - Invalid saved index" ));
+		throw SC_INVALID_DATA;
+	}
 }
 

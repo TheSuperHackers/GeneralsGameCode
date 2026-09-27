@@ -30,6 +30,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
+#include <limits.h>
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -120,6 +121,14 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 	Int i;
 
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
+
+	// TheSuperHackers @bugfix Check INI counts before multiplying the line allocation size or using signed indices.
+	if( data->m_numBeams > INT_MAX ||
+			(data->m_numBeams != 0 && data->m_segments > UINT_MAX / sizeof(*m_line3D) / data->m_numBeams) )
+	{
+		DEBUG_CRASH(( "W3DLaserDraw - Invalid beam or segment count" ));
+		throw INI_INVALID_DATA;
+	}
 
 	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( data->m_textureName.str() );
 	if (m_texture)

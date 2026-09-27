@@ -3160,6 +3160,12 @@ void AIPlayer::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIPlayer::loadPostProcess()
 {
+	// TheSuperHackers @bugfix Reject saved repair counts outside the fixed queue.
+	if( m_structuresInQueue < 0 || m_structuresInQueue > MAX_STRUCTURES_TO_REPAIR )
+	{
+		DEBUG_CRASH(( "AIPlayer::loadPostProcess - Invalid saved array bounds" ));
+		throw SC_INVALID_DATA;
+	}
 
 }
 

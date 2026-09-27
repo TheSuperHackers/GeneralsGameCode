@@ -36,6 +36,7 @@
 
 #include "GameLogic/WeaponSet.h"
 
+#include "Common/GameState.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -312,7 +313,12 @@ void WeaponSet::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WeaponSet::loadPostProcess()
 {
-
+	// TheSuperHackers @bugfix Reject saved weapon slots that would index outside the weapon array.
+	if( m_curWeapon < PRIMARY_WEAPON || m_curWeapon >= WEAPONSLOT_COUNT )
+	{
+		DEBUG_CRASH(( "WeaponSet::loadPostProcess - Invalid saved index" ));
+		throw SC_INVALID_DATA;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

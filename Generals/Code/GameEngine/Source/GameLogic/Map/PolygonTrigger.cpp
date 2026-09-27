@@ -31,6 +31,7 @@
 #include "Common/DataChunk.h"
 #include "Common/MapObject.h"
 #include "Common/MapReaderWriterInfo.h"
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/TerrainLogic.h"
@@ -506,7 +507,15 @@ void PolygonTrigger::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// number of data points
-	xfer->xferInt( &m_numPoints );
+	Int numPoints = m_numPoints;
+	xfer->xferInt( &numPoints );
+	// TheSuperHackers @bugfix Validate the saved count against the buffer allocated by the map load.
+	if( numPoints < 0 || numPoints > m_sizePoints )
+	{
+		DEBUG_CRASH(( "PolygonTrigger::xfer - Invalid point count" ));
+		throw SC_INVALID_DATA;
+	}
+	m_numPoints = numPoints;
 
 	// xfer all data points
 	ICoord3D *point;
