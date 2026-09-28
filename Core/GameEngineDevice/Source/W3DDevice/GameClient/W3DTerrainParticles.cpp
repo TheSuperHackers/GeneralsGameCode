@@ -272,11 +272,7 @@ void W3DTerrainParticles::flushBatch()
 void W3DTerrainParticles::resetVertexLookup(const ParticleContext& particle)
 {
 	const Int count = particle.bounds.width() * particle.bounds.height();
-	// For extremely large particles we may need to grow the lookup buffer.
-	if (m_vertexLookup.size() < count)
-		m_vertexLookup.resize(count);
-
-	std::fill(m_vertexLookup.begin(), m_vertexLookup.begin() + count, TerrainParticles::INVALID_VERTEX);
+	m_vertexLookup.assign(count, TerrainParticles::INVALID_VERTEX);
 }
 
 IRegion2D W3DTerrainParticles::calcTerrainBounds(const WorldHeightMap& map, const Vector3& loc, Real projectedRadius) const
