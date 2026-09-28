@@ -34,7 +34,8 @@ namespace TerrainParticles
 	constexpr const UnsignedShort MAX_VERTICES = 32768;
 	constexpr const UnsignedShort MAX_INDICES = 65535;
 	constexpr const UnsignedShort INVALID_VERTEX = MAX_VERTICES + 1;
-	constexpr const Real Z_OFFSET = 1; // match the original particle height
+	constexpr const Real Z_OFFSET = MAP_HEIGHT_SCALE * 2; // match the original particle height
+	constexpr const Real MIN_PARTICLE_SIZE = MAP_XY_FACTOR * 0.01f; // 1% of a map cell
 
 	static_assert(MAX_VERTICES < INVALID_VERTEX, "Vertex indices must leave room for the INVALID_VERTEX sentinel value.");
 }

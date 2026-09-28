@@ -108,7 +108,7 @@ void W3DTerrainParticles::render()
 		const Real size = m_pointSize ? m_pointSize->Get_Array()[p] : m_defaultPointSize;
 		const UnsignedByte orientation = m_pointOrientation ? m_pointOrientation->Get_Array()[p] : m_defaultPointOrientation;
 
-		if (size < 0.001f)
+		if (size < TerrainParticles::MIN_PARTICLE_SIZE)
 			continue;
 
 		const Real angle = orientation / 255.0f * WWMATH_TWO_PI;
