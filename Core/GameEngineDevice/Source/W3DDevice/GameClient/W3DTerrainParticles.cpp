@@ -136,7 +136,7 @@ void W3DTerrainParticles::drawRegion(const WorldHeightMap& map, const ParticleCo
 	const Int sizeX = bounds.width() - 1;
 	const Int sizeY = bounds.height() - 1;
 
-	// Draw a quad if we can't subdivide further, or is the terrain is flat.
+	// Draw a quad if we can't subdivide further, or if the terrain is flat.
 	const Bool singleCell = sizeX <= 1 && sizeY <= 1;
 	if (singleCell || map.isTerrainFlat(bounds))
 	{
@@ -198,7 +198,7 @@ UnsignedShort W3DTerrainParticles::addVertex(const WorldHeightMap& map, const Pa
 	const Int gridLocation = (y - particle.bounds.lo.y) * particle.bounds.width() + (x - particle.bounds.lo.x);
 	UnsignedShort& index = m_vertexLookup[gridLocation];
 
-	// Vertex may not exist yet, or got removed in the last flush.
+	// The vertex may not exist yet, or may have been removed in the last flush.
 	if (index != TerrainParticles::INVALID_VERTEX)
 		return index;
 
@@ -221,7 +221,7 @@ UnsignedShort W3DTerrainParticles::addVertex(const WorldHeightMap& map, const Pa
 
 inline void W3DTerrainParticles::addTriangle(UnsignedShort a, UnsignedShort b, UnsignedShort c)
 {
-	// Skip the triangle when all UV's are outside (transparent).
+	// Skip the triangle when all UV coordinates are outside (transparent).
 	if ((m_outcodes[a] & m_outcodes[b] & m_outcodes[c]) != 0)
 		return;
 
@@ -295,7 +295,7 @@ Bool W3DTerrainParticles::isDefaultWhiteOpaque() const
 
 void W3DTerrainParticles::updateSettings()
 {
-	// If there is a color or alpha array enable gradient in shader - otherwise disable.
+	// If there is a color or alpha array, enable the shader gradient; otherwise, disable it.
 	if (m_pointDiffuse || !isDefaultWhiteOpaque())
 	{
 		m_shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
@@ -305,7 +305,7 @@ void W3DTerrainParticles::updateSettings()
 		m_shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
 	}
 
-	// If m_texture is non-null enable texturing in shader - otherwise disable.
+	// If m_texture is non-null, enable texturing in the shader; otherwise, disable it.
 	if (m_texture)
 	{
 		m_shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
@@ -323,7 +323,7 @@ void W3DTerrainParticles::updateSettings()
 	DX8Wrapper::Set_Shader(m_shader);
 	DX8Wrapper::Set_Texture(0, m_texture.Peek());
 
-	// To prevent visual glitches on overdraw we clamp the texture to a transparent black pixel.
+	// To prevent visual glitches on overdraw, we clamp the texture to a transparent black pixel.
 	DX8Wrapper::Apply_Render_State_Changes();
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER);
@@ -359,7 +359,7 @@ void W3DTerrainParticles::setArrays(
 	WWASSERT(locs);
 	WWASSERT(activePointCount <= locs->Get_Count());
 
-	// Ensure lengths of all arrays are the same
+	// Ensure that all arrays have the same length.
 	WWASSERT(!diffuse || locs->Get_Count() == diffuse->Get_Count());
 	WWASSERT(!sizes || locs->Get_Count() == sizes->Get_Count());
 	WWASSERT(!orientations || locs->Get_Count() == orientations->Get_Count());
