@@ -3442,5 +3442,7 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 	}
 
 	(*outNdx) = -1;
-	(*outHandle) = -1;
+	if (outHandle) {
+		(*outHandle) = -1;
+	}
 }
