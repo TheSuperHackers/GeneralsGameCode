@@ -64,6 +64,11 @@ struct W3DTerrainParticles::ParticleContext
 	Real size;
 	Real cosine;
 	Real sine;
+
+	Int getVertexLookupIndex(const Int x, const Int y) const
+	{
+		return (y - bounds.lo.y) * bounds.width() + (x - bounds.lo.x);
+	}
 };
 
 W3DTerrainParticles::W3DTerrainParticles()
@@ -195,8 +200,7 @@ void W3DTerrainParticles::drawQuad(const WorldHeightMap& map, const ParticleCont
 UnsignedShort W3DTerrainParticles::addVertex(const WorldHeightMap& map, const ParticleContext& particle, Int x, Int y)
 {
 	// Keep track of the vertex in a lookup table, since vertices in the GPU buffer cannot be traced back to their location.
-	const Int gridLocation = (y - particle.bounds.lo.y) * particle.bounds.width() + (x - particle.bounds.lo.x);
-	UnsignedShort& index = m_vertexLookup[gridLocation];
+	UnsignedShort& index = m_vertexLookup[particle.getVertexLookupIndex(x, y)];
 
 	// The vertex may not exist yet, or may have been removed in the last flush.
 	if (index != TerrainParticles::INVALID_VERTEX)
