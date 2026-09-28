@@ -262,7 +262,7 @@ void ProjectileStreamUpdate::loadPostProcess()
 	if( m_nextFreeIndex < 0 || m_nextFreeIndex >= MAX_PROJECTILE_STREAM ||
 			m_firstValidIndex < 0 || m_firstValidIndex >= MAX_PROJECTILE_STREAM )
 	{
-		DEBUG_CRASH(( "ProjectileStreamUpdate::loadPostProcess - Invalid projectile index" ));
+		DEBUG_LOG(( "ProjectileStreamUpdate::loadPostProcess - Invalid projectile index" ));
 		throw SC_INVALID_DATA;
 	}
 

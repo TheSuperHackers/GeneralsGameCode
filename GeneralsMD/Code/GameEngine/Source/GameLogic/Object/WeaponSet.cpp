@@ -317,7 +317,7 @@ void WeaponSet::loadPostProcess()
 	// TheSuperHackers @bugfix Reject saved weapon slots that would index outside the weapon array.
 	if( m_curWeapon < PRIMARY_WEAPON || m_curWeapon >= WEAPONSLOT_COUNT )
 	{
-		DEBUG_CRASH(( "WeaponSet::loadPostProcess - Invalid saved index" ));
+		DEBUG_LOG(( "WeaponSet::loadPostProcess - Invalid saved index" ));
 		throw SC_INVALID_DATA;
 	}
 }

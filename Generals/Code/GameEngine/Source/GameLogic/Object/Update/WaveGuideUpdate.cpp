@@ -930,7 +930,7 @@ void WaveGuideUpdate::loadPostProcess()
 	// TheSuperHackers @bugfix Reject saved shape counts outside the wave point arrays.
 	if( m_shapePointCount < 0 || m_shapePointCount > MAX_WAVEGUIDE_SHAPE_POINTS )
 	{
-		DEBUG_CRASH(( "WaveGuideUpdate::loadPostProcess - Invalid saved array bounds" ));
+		DEBUG_LOG(( "WaveGuideUpdate::loadPostProcess - Invalid saved array bounds" ));
 		throw SC_INVALID_DATA;
 	}
 
