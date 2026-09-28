@@ -54,7 +54,7 @@ static void parseNumberApproachPositions(INI *ini, void *instance, void *store, 
 	if( count < DYNAMIC_APPROACH_VECTOR_FLAG || count > DEFAULT_APPROACH_VECTOR_SIZE )
 	{
 		DEBUG_LOG(( "DockUpdate - Clamping invalid NumberApproachPositions %d to a usable fixed count", count ));
-		count = std::clamp<Int>(1, count, DEFAULT_APPROACH_VECTOR_SIZE);
+		count = std::clamp<Int>(count, 1, DEFAULT_APPROACH_VECTOR_SIZE);
 	}
 	*(Int *)store = count;
 }
