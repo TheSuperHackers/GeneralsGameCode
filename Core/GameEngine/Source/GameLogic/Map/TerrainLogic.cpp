@@ -2916,7 +2916,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 		// TheSuperHackers @bugfix Reject invalid counts before accessing the fixed water update array.
 		if( numWaterToUpdate < 0 || numWaterToUpdate > MAX_DYNAMIC_WATER )
 		{
-			DEBUG_CRASH(( "TerrainLogic::xfer - Invalid water update count" ));
+			DEBUG_LOG(( "TerrainLogic::xfer - Invalid water update count" ));
 			throw SC_INVALID_DATA;
 		}
 		m_numWaterToUpdate = numWaterToUpdate;

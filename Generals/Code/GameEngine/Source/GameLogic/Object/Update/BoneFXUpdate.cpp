@@ -652,7 +652,7 @@ void BoneFXUpdate::loadPostProcess()
 	// TheSuperHackers @bugfix Reject saved body states before indexing effect arrays.
 	if( m_curBodyState < BODY_PRISTINE || m_curBodyState >= BODYDAMAGETYPE_COUNT )
 	{
-		DEBUG_CRASH(( "BoneFXUpdate::loadPostProcess - Invalid saved array bounds" ));
+		DEBUG_LOG(( "BoneFXUpdate::loadPostProcess - Invalid saved array bounds" ));
 		throw SC_INVALID_DATA;
 	}
 

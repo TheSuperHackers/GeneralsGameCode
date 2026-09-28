@@ -8234,7 +8234,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	// TheSuperHackers @bugfix The repeated count must match the array entries just transferred.
 	if( numCounters != countersSize )
 	{
-		DEBUG_CRASH(( "ScriptEngine::xfer - Inconsistent Counters count" ));
+		DEBUG_LOG(( "ScriptEngine::xfer - Inconsistent Counters count" ));
 		throw SC_INVALID_DATA;
 	}
 	m_numCounters = numCounters;
@@ -8266,7 +8266,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	// TheSuperHackers @bugfix The repeated count must match the array entries just transferred.
 	if( numFlags != flagsSize )
 	{
-		DEBUG_CRASH(( "ScriptEngine::xfer - Inconsistent Flags count" ));
+		DEBUG_LOG(( "ScriptEngine::xfer - Inconsistent Flags count" ));
 		throw SC_INVALID_DATA;
 	}
 	m_numFlags = numFlags;
@@ -8295,7 +8295,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	// TheSuperHackers @bugfix The repeated count must match the array entries just transferred.
 	if( numAttackInfo != attackPriorityInfoSize )
 	{
-		DEBUG_CRASH(( "ScriptEngine::xfer - Inconsistent AttackInfo count" ));
+		DEBUG_LOG(( "ScriptEngine::xfer - Inconsistent AttackInfo count" ));
 		throw SC_INVALID_DATA;
 	}
 	m_numAttackInfo = numAttackInfo;

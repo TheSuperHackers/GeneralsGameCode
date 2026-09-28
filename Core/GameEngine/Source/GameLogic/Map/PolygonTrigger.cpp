@@ -537,7 +537,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 	// TheSuperHackers @bugfix Validate the saved count against the buffer allocated by the map load.
 	if( numPoints < 0 || numPoints > m_sizePoints )
 	{
-		DEBUG_CRASH(( "PolygonTrigger::xfer - Invalid point count" ));
+		DEBUG_LOG(( "PolygonTrigger::xfer - Invalid point count" ));
 		throw SC_INVALID_DATA;
 	}
 	m_numPoints = numPoints;

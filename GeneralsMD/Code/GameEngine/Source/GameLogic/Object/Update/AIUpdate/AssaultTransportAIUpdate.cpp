@@ -510,7 +510,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 	// TheSuperHackers @bugfix Reject invalid transport counts before reading member arrays.
 	if( currentMembers < 0 || currentMembers > MAX_TRANSPORT_SLOTS )
 	{
-		DEBUG_CRASH(( "AssaultTransportAIUpdate::xfer - Invalid member count" ));
+		DEBUG_LOG(( "AssaultTransportAIUpdate::xfer - Invalid member count" ));
 		throw SC_INVALID_DATA;
 	}
 	m_currentMembers = currentMembers;

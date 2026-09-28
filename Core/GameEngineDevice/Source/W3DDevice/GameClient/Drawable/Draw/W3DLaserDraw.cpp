@@ -122,12 +122,12 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 
-	// TheSuperHackers @bugfix Check INI counts before multiplying the line allocation size or using signed indices.
+	// TheSuperHackers @bugfix Disable invalid laser visuals before allocating lines or using signed indices.
 	if( data->m_numBeams > INT_MAX ||
 			(data->m_numBeams != 0 && data->m_segments > UINT_MAX / sizeof(*m_line3D) / data->m_numBeams) )
 	{
-		DEBUG_CRASH(( "W3DLaserDraw - Invalid beam or segment count" ));
-		throw INI_INVALID_DATA;
+		DEBUG_LOG(( "W3DLaserDraw - Disabling laser with invalid beam or segment count" ));
+		return;
 	}
 
 	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( data->m_textureName.str() );
@@ -230,7 +230,7 @@ W3DLaserDraw::~W3DLaserDraw()
 {
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 
-	for( UnsignedInt i = 0; i < data->m_numBeams * data->m_segments; i++ )
+	for( UnsignedInt i = 0; m_line3D != nullptr && i < data->m_numBeams * data->m_segments; i++ )
 	{
 
 		// remove line from scene
@@ -259,6 +259,10 @@ Real W3DLaserDraw::getLaserTemplateWidth() const
 //-------------------------------------------------------------------------------------------------
 void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 {
+	// TheSuperHackers @bugfix Invalid laser dimensions leave the visual unallocated.
+	if( m_line3D == nullptr )
+		return;
+
 	//UnsignedInt currentFrame = TheGameClient->getFrame();
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 

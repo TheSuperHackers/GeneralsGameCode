@@ -299,7 +299,7 @@ void ExperienceTracker::loadPostProcess()
 	// TheSuperHackers @bugfix Reject saved veterancy levels that would index outside the experience arrays.
 	if( m_currentLevel < LEVEL_FIRST || m_currentLevel > LEVEL_LAST )
 	{
-		DEBUG_CRASH(( "ExperienceTracker::loadPostProcess - Invalid saved index" ));
+		DEBUG_LOG(( "ExperienceTracker::loadPostProcess - Invalid saved index" ));
 		throw SC_INVALID_DATA;
 	}
 }

@@ -53,8 +53,8 @@ static void parseNumberApproachPositions(INI *ini, void *instance, void *store, 
 	Int count = INI::scanInt(ini->getNextToken());
 	if( count < DYNAMIC_APPROACH_VECTOR_FLAG || count > DEFAULT_APPROACH_VECTOR_SIZE )
 	{
-		DEBUG_CRASH(( "DockUpdate - Invalid NumberApproachPositions" ));
-		throw INI_INVALID_DATA;
+		DEBUG_LOG(( "DockUpdate - Ignoring invalid NumberApproachPositions %d", count ));
+		return;
 	}
 	*(Int *)store = count;
 }
@@ -599,7 +599,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	if( m_numberApproachPositions < DYNAMIC_APPROACH_VECTOR_FLAG ||
 			m_numberApproachPositions > DEFAULT_APPROACH_VECTOR_SIZE )
 	{
-		DEBUG_CRASH(( "DockUpdate::xfer - Invalid approach position count" ));
+		DEBUG_LOG(( "DockUpdate::xfer - Invalid approach position count" ));
 		throw SC_INVALID_DATA;
 	}
 
@@ -612,7 +612,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	if( vectorSize < 0 ||
 			(m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG && vectorSize != m_numberApproachPositions) )
 	{
-		DEBUG_CRASH(( "DockUpdate::xfer - Invalid approach vector size" ));
+		DEBUG_LOG(( "DockUpdate::xfer - Invalid approach vector size" ));
 		throw SC_INVALID_DATA;
 	}
 	m_approachPositions.resize(vectorSize);
@@ -630,7 +630,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	xfer->xferInt( &vectorSize );
 	if( vectorSize < 0 || vectorSize != m_approachPositions.size() )
 	{
-		DEBUG_CRASH(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
+		DEBUG_LOG(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
 		throw SC_INVALID_DATA;
 	}
 	m_approachPositionOwners.resize(vectorSize);
@@ -644,7 +644,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	xfer->xferInt( &vectorSize );
 	if( vectorSize < 0 || vectorSize != m_approachPositions.size() )
 	{
-		DEBUG_CRASH(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
+		DEBUG_LOG(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
 		throw SC_INVALID_DATA;
 	}
 	m_approachPositionReached.resize(vectorSize);

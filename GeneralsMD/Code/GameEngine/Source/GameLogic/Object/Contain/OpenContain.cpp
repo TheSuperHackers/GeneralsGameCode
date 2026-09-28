@@ -1944,7 +1944,7 @@ void OpenContain::loadPostProcess()
 	if( m_firePointSize < 0 || m_firePointSize > MAX_FIRE_POINTS ||
 			m_firePointNext < 0 || m_firePointNext >= MAX_FIRE_POINTS )
 	{
-		DEBUG_CRASH(( "OpenContain::loadPostProcess - Invalid saved array bounds" ));
+		DEBUG_LOG(( "OpenContain::loadPostProcess - Invalid saved array bounds" ));
 		throw SC_INVALID_DATA;
 	}
 	Object *us = getObject();
