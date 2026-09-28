@@ -150,19 +150,17 @@ void W3DTerrainParticles::drawRegion(const WorldHeightMap& map, const ParticleCo
 	}
 
 	// Subdivide the current region into four sub-regions, or two sub-regions if we can't split one of the sides.
-	const Bool splitX = sizeX > 1;
-	const Bool splitY = sizeY > 1;
-	const Int midX = bounds.lo.x + sizeX / 2;
-	const Int midY = bounds.lo.y + sizeY / 2;
-	for (Int y = 0; y < (splitY ? 2 : 1); y++)
+	const Int columns = sizeX > 1 ? 2 : 1;
+	const Int rows = sizeY > 1 ? 2 : 1;
+	for (Int y = 0; y < rows; y++)
 	{
-		for (Int x = 0; x < (splitX ? 2 : 1); x++)
+		for (Int x = 0; x < columns; x++)
 		{
 			IRegion2D child;
-			child.lo.x = x == 0 ? bounds.lo.x : midX;
-			child.hi.x = splitX && x == 0 ? midX + 1 : bounds.hi.x;
-			child.lo.y = y == 0 ? bounds.lo.y : midY;
-			child.hi.y = splitY && y == 0 ? midY + 1 : bounds.hi.y;
+			child.lo.x = bounds.lo.x + x * sizeX / columns;
+			child.hi.x = bounds.lo.x + (x + 1) * sizeX / columns + 1;
+			child.lo.y = bounds.lo.y + y * sizeY / rows;
+			child.hi.y = bounds.lo.y + (y + 1) * sizeY / rows + 1;
 			drawRegion(map, particle, child);
 		}
 	}
