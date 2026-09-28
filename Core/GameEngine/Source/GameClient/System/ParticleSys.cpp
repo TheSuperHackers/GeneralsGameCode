@@ -812,7 +812,7 @@ void Particle::loadPostProcess()
 	if( m_alphaTargetKey < 0 || m_alphaTargetKey > MAX_KEYFRAMES ||
 			m_colorTargetKey < 0 || m_colorTargetKey > MAX_KEYFRAMES )
 	{
-		DEBUG_CRASH(( "Particle::loadPostProcess - Invalid target key" ));
+		DEBUG_LOG(( "Particle::loadPostProcess - Invalid target key" ));
 		throw SC_INVALID_DATA;
 	}
 
