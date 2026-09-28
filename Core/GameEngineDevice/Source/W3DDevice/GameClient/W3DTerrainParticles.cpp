@@ -98,10 +98,10 @@ void W3DTerrainParticles::render()
 
 	for (Int p = 0; p < m_pointCount; p++)
 	{
-		Vector3 loc = m_pointLoc->Get_Array()[p];
-		UnsignedInt diffuse = m_pointDiffuse ? DX8Wrapper::Convert_Color_Clamp(m_pointDiffuse->Get_Array()[p]) : m_defaultDiffuse;
-		Real size = m_pointSize ? m_pointSize->Get_Array()[p] : m_defaultPointSize;
-		UnsignedByte orientation = m_pointOrientation ? m_pointOrientation->Get_Array()[p] : m_defaultPointOrientation;
+		const Vector3 loc = m_pointLoc->Get_Array()[p];
+		const UnsignedInt diffuse = m_pointDiffuse ? DX8Wrapper::Convert_Color_Clamp(m_pointDiffuse->Get_Array()[p]) : m_defaultDiffuse;
+		const Real size = m_pointSize ? m_pointSize->Get_Array()[p] : m_defaultPointSize;
+		const UnsignedByte orientation = m_pointOrientation ? m_pointOrientation->Get_Array()[p] : m_defaultPointOrientation;
 
 		if (size < 0.001f)
 			continue;
