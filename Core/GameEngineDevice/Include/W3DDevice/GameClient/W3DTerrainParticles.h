@@ -44,7 +44,7 @@ class TextureClass;
 class WorldHeightMap;
 
 /**
- * Render particles as terrain conforming overlays. For each particle, form an initial region by calculating the bounds
+ * Render particles as terrain-conforming overlays. For each particle, form an initial region by calculating the bounds
  * of its rotated square and intersecting that with the map bounds and visible-terrain bounds. Recursively subdivide this
  * region until each sub-region is either a single terrain cell or is on perfectly flat terrain. Flat regions become one
  * large quad, while non-flat regions must match the terrain's topology exactly.
@@ -89,7 +89,7 @@ private:
 	RefCountPtr<TextureClass> m_texture;
 	ShaderClass m_shader;
 
-	RefCountPtr<ShareBufferClass<Vector3>/**/> m_pointLoc;    ///< World space point locations.
+	RefCountPtr<ShareBufferClass<Vector3>/**/> m_pointLoc;    ///< World-space point locations.
 	RefCountPtr<ShareBufferClass<Vector4>/**/> m_pointDiffuse;    ///< RGBA values (nullptr if not used).
 	RefCountPtr<ShareBufferClass<Real>/**/> m_pointSize;    ///< Size override table (nullptr if not used).
 	RefCountPtr<ShareBufferClass<UnsignedByte>/**/> m_pointOrientation;    ///< Orientation indices (nullptr if not used).
