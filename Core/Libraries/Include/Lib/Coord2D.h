@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "BaseDefines.h"
 #include "trig.h"
 
 // NOTE: Keep the types simple; avoid constructors and destructors so they can be used within unions
@@ -134,7 +135,7 @@ inline Coord2D operator-( const Coord2D &a, const Coord2D &b )
 
 inline Real Coord2D::toAngle() const
 {
-#if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 	Coord2D vector;
 
 	vector.x = x;
