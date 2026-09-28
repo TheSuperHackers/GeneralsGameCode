@@ -201,7 +201,7 @@ void Money::loadPostProcess()
 	// TheSuperHackers @bugfix CryoTheRenegade 27/09/2026 Reject saved indices outside the income bucket array.
 	if( m_currentBucket >= ARRAY_SIZE(m_incomeBuckets) )
 	{
-		DEBUG_CRASH(( "Money::loadPostProcess - Invalid saved array bounds" ));
+		DEBUG_LOG(( "Money::loadPostProcess - Invalid saved array bounds" ));
 		throw SC_INVALID_DATA;
 	}
 

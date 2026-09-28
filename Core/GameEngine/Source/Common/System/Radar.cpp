@@ -1446,7 +1446,7 @@ void Radar::loadPostProcess()
 	if( m_nextFreeRadarEvent < 0 || m_nextFreeRadarEvent >= MAX_RADAR_EVENTS ||
 			m_lastRadarEvent < -1 || m_lastRadarEvent >= MAX_RADAR_EVENTS )
 	{
-		DEBUG_CRASH(( "Radar::loadPostProcess - Invalid event index" ));
+		DEBUG_LOG(( "Radar::loadPostProcess - Invalid event index" ));
 		throw SC_INVALID_DATA;
 	}
 
