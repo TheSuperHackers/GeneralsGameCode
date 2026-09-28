@@ -2,13 +2,12 @@ find_package(Tracy CONFIG QUIET)
 if(NOT Tracy_FOUND)
     FetchContent_Declare(
         tracy
+        # Exclude Tracy's development files from the INSTALL target.
+        EXCLUDE_FROM_ALL
         GIT_REPOSITORY https://github.com/TheSuperHackers/tracy
         GIT_TAG        05cceee0df3b8d7c6fa87e9638af311dbabc63cb # 0.13.1
     )
     FetchContent_MakeAvailable(tracy)
-
-    # Exclude Tracy's development files from the INSTALL target.
-    set_property(DIRECTORY "${tracy_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL YES)
 endif()
 
 if(NOT TARGET TracyClient)
