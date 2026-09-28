@@ -1,4 +1,3 @@
-# TheSuperHackers @build JohnsterID 05/01/2026 Add MinGW-w64 i686 cross-compilation toolchain
 # MinGW-w64 32-bit (i686) Toolchain File
 # Use with: cmake -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw-w64-i686.cmake
 

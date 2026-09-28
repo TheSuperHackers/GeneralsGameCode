@@ -64,30 +64,30 @@ else()
     if(NOT RTS_MEMORYPOOL_DEBUG_CUSTOM_NEW)
         target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW=1)
     endif()
-    
+
     if(RTS_MEMORYPOOL_DEBUG_CHECKPOINTING)
         # Set to 0 to override the default setting in code
         target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_CHECKPOINTING=0)
     else()
         target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_CHECKPOINTING=1)
     endif()
-    
+
     if(NOT RTS_MEMORYPOOL_DEBUG_BOUNDINGWALL)
         target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_BOUNDINGWALL=1)
     endif()
-    
+
     if(NOT RTS_MEMORYPOOL_DEBUG_STACKTRACE)
         target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_STACKTRACE=1)
     endif()
-    
+
     if(RTS_MEMORYPOOL_DEBUG_INTENSE_VERIFY)
         target_compile_definitions(core_config INTERFACE MEMORYPOOL_INTENSE_VERIFY=1)
     endif()
-    
+
     if(RTS_MEMORYPOOL_DEBUG_CHECK_BLOCK_OWNERSHIP)
         target_compile_definitions(core_config INTERFACE MEMORYPOOL_CHECK_BLOCK_OWNERSHIP=1)
     endif()
-    
+
     if(RTS_MEMORYPOOL_DEBUG_INTENSE_DMA_BOOKKEEPING)
         target_compile_definitions(core_config INTERFACE INTENSE_DMA_BOOKKEEPING=1)
     endif()
