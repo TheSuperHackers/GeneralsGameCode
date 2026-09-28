@@ -2,6 +2,8 @@
 .*
 !.editorconfig
 !.gitignore
+!.clang-format
+!.git-blame-ignore-revs
 !.gitattributes
 !.github
 !.gitmodules
@@ -44,7 +46,6 @@ CPackSourceConfig.cmake
 thumbs.db
 /CMakeUserPresets.json
 /.cache
-.clang-format
 /.vscode
 /Dependencies/MaxSDK/maxsdk
 /tmp/
