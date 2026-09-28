@@ -1169,31 +1169,40 @@ void WorldHeightMapEdit::blendSpecificTiles(Int xIndex, Int yIndex, Int srcXInde
 		if (baseBlendInfo && baseIsDiagonal && baseNeedsFlip != flipped)
 			return;	//the base requires a certain flip state which we can't alter so can't apply extra blend here.
 	}
-	updateFlatCellForAdjacentCliffs(xIndex, yIndex, getTextureClassFromNdx(blendTileNdx));
-
 	//Check if this tile is really necessary or if the base blend already does the same thing as the 3way blend.
-	if (baseBlendInfo && baseBlendInfo->blendNdx == blendTileNdx)
+	if (baseBlendInfo && baseBlendInfo->blendNdx == blendTileNdx) {
+		updateFlatCellForAdjacentCliffs(xIndex, yIndex, getTextureClassFromNdx(blendTileNdx));
 		return;
+	}
 
+	// TheSuperHackers @bugfix Leave the cell unchanged when a required blend allocation fails.
+	Int oldNumBlendedTiles = m_numBlendedTiles;
 	Short newNdx = findOrCreateBlendTile(&blendInfo);
 	if (newNdx >= 0) {
-		Int ndx = (yIndex*m_width)+xIndex;
+		Short newBaseNdx = m_blendTileNdxes[ndx];
+		//force the primary layer to flip if the extra blend layer needs flip.
+		//we only do this on vertical/horizontal base blends because they work in either flip cases.
+		if (baseBlendInfo && flipped && !baseIsDiagonal)
+		{
+			//Find a new tile so as not to affect other cells using the base one.
+			TBlendTileInfo tempBlendTileInfo = *baseBlendInfo;
+			tempBlendTileInfo.inverted |= FLIPPED_MASK;
+			newBaseNdx = findOrCreateBlendTile(&tempBlendTileInfo);
+			if (newBaseNdx < 0) {
+				// Discard any secondary record allocated by this failed edit.
+				m_numBlendedTiles = oldNumBlendedTiles;
+				return;
+			}
+		}
+
+		updateFlatCellForAdjacentCliffs(xIndex, yIndex, getTextureClassFromNdx(blendTileNdx));
 		m_tileNdxes[ndx] = curTileNdx;
-		if (TheGlobalData->m_use3WayTerrainBlends && m_blendTileNdxes[ndx] != 0)
+		if (baseBlendInfo)
 		{
 			//this tile already has a blend applied to it.  So we put the new blend into the
 			//secondary layer.
 			m_extraBlendTileNdxes[ndx]=newNdx;
-			//force the primary layer to flip if the extra blend layer needs flip.
-			//we only do this on vertical/horizontal base blends because they work in either flip cases.
-			if (flipped && !baseIsDiagonal)
-			{
-				//Find a new tile so as not to affect other cells using the base one.
-				TBlendTileInfo tempBlendTileInfo=m_blendedTiles[m_blendTileNdxes[ndx]];
-				tempBlendTileInfo.inverted |= FLIPPED_MASK;
-				Short newNdx = findOrCreateBlendTile(&tempBlendTileInfo);
-				m_blendTileNdxes[ndx] = newNdx;	//remap this tile to use a new one.
-			}
+			m_blendTileNdxes[ndx] = newBaseNdx;	//remap this tile to use a new one.
 		}
 		else
 			m_blendTileNdxes[ndx] = newNdx;
