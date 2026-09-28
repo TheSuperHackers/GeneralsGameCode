@@ -128,12 +128,7 @@ void W3DTerrainParticles::render()
 	}
 
 	flushBatch();
-
-	// Restore the texture state.
-	if (m_texture)
-	{
-		m_texture->Get_Filter().Apply(0);
-	}
+	restoreSettings();
 }
 
 void W3DTerrainParticles::drawRegion(const WorldHeightMap& map, const ParticleContext& particle, const IRegion2D& bounds)
@@ -333,6 +328,15 @@ void W3DTerrainParticles::updateSettings()
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_BORDERCOLOR, 0x00000000);
+}
+
+void W3DTerrainParticles::restoreSettings() const
+{
+	// Restore the texture state.
+	if (m_texture)
+	{
+		m_texture->Get_Filter().Apply(0);
+	}
 }
 
 void W3DTerrainParticles::setTexture(TextureClass* texture)
