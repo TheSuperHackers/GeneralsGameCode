@@ -3440,5 +3440,8 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 	}
 
 	(*outNdx) = -1;
-	(*outHandle) = -1;
+	// TheSuperHackers @bugfix Handle an omitted boundary handle on the no-match path.
+	if (outHandle) {
+		(*outHandle) = -1;
+	}
 }
