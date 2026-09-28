@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "BaseDefines.h"
+
 //-----------------------------------------------------------------------------
 inline Real rad2deg(Real rad) { return rad * (180/PI); }
 inline Real deg2rad(Real rad) { return rad * (PI/180); }
@@ -90,7 +92,7 @@ __forceinline float fast_float_ceil(float f)
 }
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
-#if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
 #define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
 #define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
 #else
