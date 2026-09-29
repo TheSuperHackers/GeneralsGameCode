@@ -243,7 +243,9 @@ void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *name, W
 		"Disable",
 		"Modulate",
 		"Add",
-		"Bump-Environment"
+		"Bump-Environment",
+		"Bump-Environment Luminance",
+		"Modulate 2X"
 	};
 	static const char * _secgradient[] = {
 		"Disable",
@@ -268,7 +270,11 @@ void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *name, W
 		"Sub",
 		"SubR",
 		"Blend",
-		"DetailBlend"
+		"DetailBlend",
+		"AddSigned",
+		"AddSigned2X",
+		"Scale2X",
+		"ModAlphaAddColor"
 	};
 	static const char * _detailalpha[] = {
 		"Disable",
