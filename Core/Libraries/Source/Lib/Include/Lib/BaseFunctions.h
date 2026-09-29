@@ -101,3 +101,20 @@ __forceinline float fast_float_ceil(float f)
 #define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
 #define FAST_REAL_CEIL(x)         fast_float_ceil(x)
 #define FAST_REAL_FLOOR(x)        fast_float_floor(x)
+
+//-------------------------------------------------------------------------------------------------
+// Checking whether a size matches the bit flags count from an enum definition:
+// enum MyEnum
+// {
+//   MyEnumValue1 = 1<<0,
+//   MyEnumValue2 = 1<<1,
+//   MyEnumValue3 = 1<<2,
+//   MyEnumEnd
+// }
+// static_assert(equalsEnumBitFlagsCount(3, MyEnumEnd), "Incorrect size");
+//
+template <typename EnumType>
+constexpr inline Bool equalsEnumBitFlagsCount(size_t expectedSize, EnumType bitFlagsEnd)
+{
+	return 1 << (expectedSize - 1) == static_cast<size_t>(bitFlagsEnd) - 1;
+}

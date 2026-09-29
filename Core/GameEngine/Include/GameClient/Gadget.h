@@ -105,6 +105,7 @@ enum
 	GWS_TAB_PANE					= 0x00004000,
 	GWS_COMBO_BOX					= 0x00008000,
 
+	GWS_END, // keep after the last named flag
 
 	GWS_ALL_SLIDER = GWS_VERT_SLIDER | GWS_HORZ_SLIDER,  // for convenience
 
