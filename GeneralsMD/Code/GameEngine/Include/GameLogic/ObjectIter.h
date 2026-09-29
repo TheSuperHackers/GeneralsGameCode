@@ -42,7 +42,9 @@ enum IterOrderType CPP_11(: Int)
 	ITER_SORTED_NEAR_TO_FAR,				///< iterate in nearest-to-farthest order (may be slower)
 	ITER_SORTED_FAR_TO_NEAR,				///< iterate in farthest-to-nearest order (may be slower)
 	ITER_SORTED_CHEAP_TO_EXPENSIVE,	///< iterate in cheapest-to-most-expensive order (slower)
-	ITER_SORTED_EXPENSIVE_TO_CHEAP	///< iterate in most-expensive-to-cheapest order (slower)
+	ITER_SORTED_EXPENSIVE_TO_CHEAP,	///< iterate in most-expensive-to-cheapest order (slower)
+
+	ITER_ORDER_TYPE_COUNT
 };
 
 

@@ -130,6 +130,7 @@ static const char* DeviceNamesNVidia[]={
 	"GeFORCE2_MX 400",
 	"Quadro DCC"
 };
+static_assert(ARRAY_SIZE(DeviceNamesNVidia) == DX8Caps::DEVICE_NVIDIA_COUNT, "Incorrect array size");
 
 static const char* DeviceNamesATI[]={
 	"Unknown ATI Device",
@@ -157,6 +158,7 @@ static const char* DeviceNamesATI[]={
 	"R7500",
 	"R8500"
 };
+static_assert(ARRAY_SIZE(DeviceNamesATI) == DX8Caps::DEVICE_ATI_COUNT, "Incorrect array size");
 
 static const char* DeviceNames3DLabs[]={
 	"Unknown 3DLabs Device",
@@ -176,6 +178,7 @@ static const char* DeviceNames3DLabs[]={
 	"TI P1",
 	"Permedia2"
 };
+static_assert(ARRAY_SIZE(DeviceNames3DLabs) == DX8Caps::DEVICE_3DLABS_COUNT, "Incorrect array size");
 
 static const char* DeviceNames3Dfx[]={
 	"Unknown 3Dfx Device",
@@ -186,6 +189,7 @@ static const char* DeviceNames3Dfx[]={
 	"Voodoo Graphics",
 	"Voodoo Rush"
 };
+static_assert(ARRAY_SIZE(DeviceNames3Dfx) == DX8Caps::DEVICE_3DFX_COUNT, "Incorrect array size");
 
 static const char* DeviceNamesMatrox[]={
 	"Unknown Matrox Device",
@@ -202,11 +206,13 @@ static const char* DeviceNamesMatrox[]={
 	"Parhelia",
 	"Parhelia AGP 8X"
 };
+static_assert(ARRAY_SIZE(DeviceNamesMatrox) == DX8Caps::DEVICE_MATROX_COUNT, "Incorrect array size");
 
 static const char* DeviceNamesPowerVR[]={
 	"Unknown PowerVR Device",
 	"Kyro"
 };
+static_assert(ARRAY_SIZE(DeviceNamesPowerVR) == DX8Caps::DEVICE_POWERVR_COUNT, "Incorrect array size");
 
 static const char* DeviceNamesS3[]={
 	"Unknown S3 Device",
@@ -214,6 +220,7 @@ static const char* DeviceNamesS3[]={
 	"Savage 4",
 	"Savage 200"
 };
+static_assert(ARRAY_SIZE(DeviceNamesS3) == DX8Caps::DEVICE_S3_COUNT, "Incorrect array size");
 
 static const char* DeviceNamesIntel[]={
 	"Unknown Intel Device",
@@ -221,6 +228,7 @@ static const char* DeviceNamesIntel[]={
 	"i810e",
 	"i815"
 };
+static_assert(ARRAY_SIZE(DeviceNamesIntel) == DX8Caps::DEVICE_INTEL_COUNT, "Incorrect array size");
 
 DX8Caps::DeviceTypeATI DX8Caps::Get_ATI_Device(unsigned device_id)
 {
