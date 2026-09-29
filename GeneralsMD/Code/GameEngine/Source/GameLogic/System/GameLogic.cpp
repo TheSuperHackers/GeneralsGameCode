@@ -289,6 +289,10 @@ GameLogic::GameLogic()
 	m_loadingSave = FALSE;
 	m_clearingGameData = FALSE;
 	m_quitToDesktopAfterMatch = FALSE;
+
+#if RTS_GENERALS && defined(_MSC_VER) && _MSC_VER < 1300
+	m_onUnitProducedZeroInit = false;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

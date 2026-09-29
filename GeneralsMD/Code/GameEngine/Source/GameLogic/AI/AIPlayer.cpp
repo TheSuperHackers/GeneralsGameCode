@@ -1058,6 +1058,16 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 	// To keep retail compatibility it needs to be set true in VS6 builds.
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	Bool supplyTruck = true;
+
+#if RTS_GENERALS
+	// A special initialization case for the call site in SpawnBehavior::createSpawn
+	// to mimic the initialization behavior in the retail Generals binary.
+	if (TheGameLogic->m_onUnitProducedZeroInit)
+	{
+		supplyTruck = false;
+	}
+#endif
+
 #else
 	Bool supplyTruck = false;
 #endif
