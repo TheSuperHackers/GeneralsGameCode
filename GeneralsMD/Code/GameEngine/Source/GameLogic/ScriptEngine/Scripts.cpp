@@ -57,6 +57,7 @@
 #include "Common/Xfer.h"
 
 #include "GameClient/ShellHooks.h"
+#include "GameClient/View.h"
 
 #include "GameLogic/AI.h"
 #include "GameLogic/Object.h"
@@ -139,6 +140,7 @@ const char *ShakeIntensities[] = {
 	"Cine_Extreme",
 	"Cine_Insane"
 };
+static_assert(ARRAY_SIZE(ShakeIntensities) == View::SHAKE_COUNT, "Incorrect array size");
 
 enum { K_SCRIPT_LIST_DATA_VERSION_1 = 1,
 			K_SCRIPT_GROUP_DATA_VERSION_1 = 1,
