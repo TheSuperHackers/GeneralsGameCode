@@ -50,7 +50,7 @@ public:
 		{
 			//{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalTemplate ) },
 			//{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalRadius ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

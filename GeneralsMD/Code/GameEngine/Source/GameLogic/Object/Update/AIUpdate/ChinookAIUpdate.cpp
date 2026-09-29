@@ -923,7 +923,7 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 		{ "RotorWashParticleSystem", INI::parseAsciiString,	nullptr, offsetof( ChinookAIUpdateModuleData, m_rotorWashParticleSystem ) },
 		{ "UpgradedSupplyBoost", INI::parseInt, nullptr, offsetof( ChinookAIUpdateModuleData, m_upgradedSupplyBoost) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

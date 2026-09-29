@@ -867,7 +867,7 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 		{ "PerRopeDelayMax", INI::parseDurationUnsignedInt, 0, offsetof(ChinookAIUpdateModuleData, m_perRopeDelayMax) },
 		{ "MinDropHeight", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_minDropHeight) },
 		{ "WaitForRopesToDrop", INI::parseBool, 0, offsetof(ChinookAIUpdateModuleData, m_waitForRopesToDrop) },
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

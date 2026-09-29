@@ -63,7 +63,7 @@ PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData()
 	{
 
 		{	"BrainwashDuration", INI::parseDurationUnsignedInt, nullptr, offsetof( PropagandaCenterBehaviorModuleData, m_brainwashDuration ) },
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 

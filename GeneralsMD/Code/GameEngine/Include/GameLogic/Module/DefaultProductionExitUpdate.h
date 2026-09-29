@@ -59,7 +59,7 @@ public:
 			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
 			{ "NaturalRallyPoint",  INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
 			{ "UseSpawnRallyPoint", INI::parseBool,				nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_useSpawnRallyPoint ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

@@ -76,7 +76,7 @@ public:
 			{ "TotalCrushSoundPercent",		INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[TOTAL_CRUSH] ) },
 			{ "BackEndCrushSoundPercent",	INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[BACK_END_CRUSH] ) },
 			{ "FrontEndCrushSoundPercent",INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[FRONT_END_CRUSH] ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

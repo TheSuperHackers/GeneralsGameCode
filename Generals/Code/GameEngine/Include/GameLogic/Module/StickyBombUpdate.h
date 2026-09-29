@@ -51,7 +51,7 @@ public:
 		{
 			{ "AttachToTargetBone",	INI::parseAsciiString,						nullptr, offsetof( StickyBombUpdateModuleData, m_attachToBone ) },
 			{ "OffsetZ",						INI::parseReal,						nullptr, offsetof( StickyBombUpdateModuleData, m_offsetZ ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

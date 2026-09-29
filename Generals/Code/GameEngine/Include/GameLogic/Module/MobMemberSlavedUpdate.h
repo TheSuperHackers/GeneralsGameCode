@@ -69,7 +69,7 @@ public:
 			{ "CatchUpCrisisBailTime",			INI::parseUnsignedInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_catchUpCrisisBailTime ) },
 			{ "NoNeedToCatchUpRadius",		INI::parseInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_noNeedToCatchUpRadius ) },
 			{ "Squirrelliness",     INI::parseReal, nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_squirrellinessRatio ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

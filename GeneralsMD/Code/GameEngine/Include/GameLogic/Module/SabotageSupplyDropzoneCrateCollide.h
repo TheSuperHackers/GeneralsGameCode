@@ -57,7 +57,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "StealCashAmount",	INI::parseUnsignedInt, nullptr, offsetof( SabotageSupplyDropzoneCrateCollideModuleData, m_stealCashAmount ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 		p.add( dataFieldParse );
 	}

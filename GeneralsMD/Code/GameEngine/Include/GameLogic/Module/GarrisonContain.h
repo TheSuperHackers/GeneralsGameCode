@@ -72,7 +72,7 @@ public:
 			{ "ImmuneToClearBuildingAttacks", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
       { "IsEnclosingContainer", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_isEnclosingContainer ) },
 
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	};

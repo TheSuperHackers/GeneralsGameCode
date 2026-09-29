@@ -52,7 +52,7 @@ public:
 		{
 			{ "AttachToTargetBone",	INI::parseAsciiString,		nullptr, offsetof( HijackerUpdateModuleData, m_attachToBone ) },
 			{ "ParachuteName",	INI::parseAsciiString,		nullptr, offsetof( HijackerUpdateModuleData, m_parachuteName ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

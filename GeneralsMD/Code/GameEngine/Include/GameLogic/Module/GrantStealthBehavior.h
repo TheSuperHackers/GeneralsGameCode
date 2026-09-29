@@ -73,7 +73,7 @@ public:
 			{ "RadiusGrowRate",						       INI::parseReal,									 nullptr, offsetof( GrantStealthBehaviorModuleData, m_radiusGrowRate ) },
 			{ "KindOf",						    KindOfMaskType::parseFromINI,					       nullptr, offsetof( GrantStealthBehaviorModuleData, m_kindOf ) },
 			{ "RadiusParticleSystemName",				 INI::parseParticleSystemTemplate, nullptr, offsetof( GrantStealthBehaviorModuleData, m_radiusParticleSystemTmpl ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		p.add(dataFieldParse);

@@ -90,7 +90,7 @@ public:
 			{ "DepositTiming",					INI::parseDurationUnsignedInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_depositFrame ) },
 			{ "DepositAmount",					INI::parseInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_depositAmount ) },
 			{ "InitialCaptureBonus",		INI::parseInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_initialCaptureBonus ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

@@ -97,7 +97,7 @@ public:
 			{ "InitialCaptureBonus",		INI::parseInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_initialCaptureBonus ) },
 			{ "ActualMoney",						INI::parseBool,		nullptr, offsetof( AutoDepositUpdateModuleData, m_isActualMoney ) },
 			{ "UpgradedBoost",					parseUpgradePair,		nullptr, offsetof( AutoDepositUpdateModuleData, m_upgradeBoost ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

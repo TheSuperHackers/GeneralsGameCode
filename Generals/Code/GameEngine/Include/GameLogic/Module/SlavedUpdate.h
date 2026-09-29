@@ -115,7 +115,7 @@ public:
 			{ "RepairWeldingSys",		INI::parseAsciiString,	nullptr, offsetof( SlavedUpdateModuleData, m_weldingSysName ) },
 			{ "RepairWeldingFXBone", INI::parseAsciiString, nullptr, offsetof( SlavedUpdateModuleData, m_weldingFXBone ) },
 			{ "StayOnSameLayerAsMaster", INI::parseBool, nullptr, offsetof( SlavedUpdateModuleData, m_stayOnSameLayerAsMaster ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

@@ -52,7 +52,7 @@ public:
 		{
 			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( DeletionUpdateModuleData, m_minFrames ) },
 			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( DeletionUpdateModuleData, m_maxFrames ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

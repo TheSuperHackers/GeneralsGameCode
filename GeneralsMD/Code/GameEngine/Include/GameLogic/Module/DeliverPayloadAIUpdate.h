@@ -227,7 +227,7 @@ public:
 			{ "DropVariance",							INI::parseCoord3D,							nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_dropVariance ) },
 			{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalTemplate ) },
 			{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 
