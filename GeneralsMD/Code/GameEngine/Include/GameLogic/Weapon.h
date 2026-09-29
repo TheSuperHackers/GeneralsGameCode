@@ -117,6 +117,8 @@ enum WeaponAffectsMaskType CPP_11(: Int)
 	WEAPON_KILLS_SELF							= 0x10,	// ensures that it's not possible to survive self damage
 	WEAPON_DOESNT_AFFECT_SIMILAR	= 0x20, // Doesn't affect others that are the same as us (like other terrorists for a terrorist bomb to prevent chain reaction)
 	WEAPON_DOESNT_AFFECT_AIRBORNE	= 0x40, // Radius damage doesn't affect airborne units, unless they are the primary target. (used for poison fields.)
+
+	WEAPON_AFFECTS_MASK_TYPE_END // keep after the last named flag
 };
 
 //#ifdef DEFINE_WEAPONAFFECTSMASK_NAMES ; Removed protection so other classes can use these strings... not sure why this was protected in the 1st place
@@ -131,6 +133,7 @@ static const char *const TheWeaponAffectsMaskNames[] =
 	"NOT_AIRBORNE",
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(TheWeaponAffectsMaskNames) - 1, WEAPON_AFFECTS_MASK_TYPE_END), "Incorrect array size");
 //#endif
 
 //-------------------------------------------------------------------------------------------------
@@ -146,7 +149,9 @@ enum WeaponCollideMaskType CPP_11(: Int)
 	WEAPON_COLLIDE_WALLS									= 0x0020,
 	WEAPON_COLLIDE_SMALL_MISSILES					= 0x0040, //All missiles are also projectiles!
 	WEAPON_COLLIDE_BALLISTIC_MISSILES			= 0x0080, //All missiles are also projectiles!
-	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100	//this is "ONLY structures belonging to the projectile's controller".
+	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100,	//this is "ONLY structures belonging to the projectile's controller".
+
+	WEAPON_COLLIDE_MASK_TYPE_END // keep after the last named flag
 };
 
 #ifdef DEFINE_WEAPONCOLLIDEMASK_NAMES
@@ -163,6 +168,7 @@ static const char *const TheWeaponCollideMaskNames[] =
 	"CONTROLLED_STRUCTURES",
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(TheWeaponCollideMaskNames) - 1, WEAPON_COLLIDE_MASK_TYPE_END), "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
