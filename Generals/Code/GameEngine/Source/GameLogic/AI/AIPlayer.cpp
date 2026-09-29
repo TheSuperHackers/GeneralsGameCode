@@ -928,25 +928,27 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 Bool AIPlayer::isSupplySourceAttacked()
 {
-	// TheSuperHackers @bugfix WebbontheWeb 27/09/2026 No longer scans for just 10 frames.
+	// TheSuperHackers @bugfix WebbontheWeb 27/09/2026 No longer scans for supply source attacks for just the last 10 frames.
+	// Original EA comment: "don't scan more often than every 10 seconds."
+	const Int REFRESH_RATE = 10; // 10 frames.
 #if RETAIL_COMPATIBLE_CRC
-    const Int SCAN_RATE = 10; // 10 frames.
+	const Int SCAN_WINDOW = 10;
 #else
-    const Int SCAN_RATE = 10 * LOGICFRAMES_PER_SECOND; // don't scan more often than every 10 seconds.
+	const Int SCAN_WINDOW = 10 * LOGICFRAMES_PER_SECOND; // 10 seconds of attack history.
 #endif
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame==0) {
-		m_supplySourceAttackCheckFrame = curFrame+SCAN_RATE;
+		m_supplySourceAttackCheckFrame = curFrame + REFRESH_RATE;
 		return false; // can't be attacked on first frame.
 	}
 	m_attackedSupplyCenter = INVALID_ID;
 	if (curFrame < m_supplySourceAttackCheckFrame) {
 		return false;
 	}
-	if (m_player->getAttackedFrame()+SCAN_RATE < curFrame) {
+	if (m_player->getAttackedFrame() + SCAN_WINDOW < curFrame) {
 		return false; // haven't been attacked recently.
 	}
-	m_supplySourceAttackCheckFrame = curFrame+SCAN_RATE;
+	m_supplySourceAttackCheckFrame = curFrame + REFRESH_RATE;
 
 	// Scan my units.
 	Player::PlayerTeamList::const_iterator it;
@@ -973,7 +975,7 @@ Bool AIPlayer::isSupplySourceAttacked()
 						if (info->out.m_noEffect) {
 							continue;
 						}
-						if (body->getLastDamageTimestamp() + SCAN_RATE > curFrame) {
+						if (body->getLastDamageTimestamp() + SCAN_WINDOW > curFrame) {
 							// winner.
 							m_attackedSupplyCenter = obj->getID();
 							return true;
