@@ -266,7 +266,7 @@ inline Bool isCommonMaintainFrameFlagSet(Int a, Int b)
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
+static const char *TerrainDecalTextureName[]=
 {
 #ifdef ALLOW_DEMORALIZE
 	"DM_RING",//demoralized
@@ -289,6 +289,7 @@ static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
 #endif
 	"" //dummy entry for TERRAIN_DECAL_SHADOW_TEXTURE
 };
+static_assert(ARRAY_SIZE(TerrainDecalTextureName) == TERRAIN_DECAL_MAX, "Incorrect array size");
 
 const UnsignedInt NO_NEXT_DURATION = 0xffffffff;
 

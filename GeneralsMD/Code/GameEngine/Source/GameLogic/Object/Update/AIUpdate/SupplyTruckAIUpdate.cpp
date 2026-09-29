@@ -55,6 +55,7 @@ static const char* statenames[] =
 	"ST_REGROUPING",			///< Wanting failed, so hang out at base until something changes.  Still on autopilot, but resting.
 	"ST_DOCKING"					///< Docking substates are running, wait for them to finish
 };
+static_assert(ARRAY_SIZE(statenames) == ST_COUNT, "Incorrect array size");
 #endif
 
 enum {

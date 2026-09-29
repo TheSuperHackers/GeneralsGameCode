@@ -6349,6 +6349,7 @@ void InGameUI::drawPlayerInfoList()
 			rankValue,
 			xpValue
 		};
+		static_assert(ARRAY_SIZE(currentValues) == PlayerInfoList::LabelType_Count, "Incorrect array size");
 		for (column = 0; column < ARRAY_SIZE(currentValues); ++column)
 		{
 			UnsignedInt &lastValue = m_playerInfoList.lastValues.values[column][row];

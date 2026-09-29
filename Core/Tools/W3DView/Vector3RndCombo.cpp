@@ -35,13 +35,14 @@
 #include "Vector3RndCombo.h"
 #include "WWMath/v3_rnd.h"
 
-const char * const RANDOMIZER_NAMES[Vector3Randomizer::CLASSID_MAXKNOWN] =
+const char * const RANDOMIZER_NAMES[] =
 {
 	"Solid Box",
 	"Solid Sphere",
 	"Hollow Sphere",
 	"Solid Cylinder",
 };
+static_assert(ARRAY_SIZE(RANDOMIZER_NAMES) == Vector3Randomizer::CLASSID_MAXKNOWN, "Incorrect array size");
 
 
 ////////////////////////////////////////////////////////////////////
@@ -52,8 +53,6 @@ const char * const RANDOMIZER_NAMES[Vector3Randomizer::CLASSID_MAXKNOWN] =
 void
 Fill_Vector3_Rnd_Combo (HWND hcombobox)
 {
-	ASSERT (Vector3Randomizer::CLASSID_MAXKNOWN == (sizeof (RANDOMIZER_NAMES) / sizeof (char *)));
-
 	//
 	//	Add all the strings to the combobox
 	//
