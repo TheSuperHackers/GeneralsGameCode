@@ -375,6 +375,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ 0, IDENTIFIER_INVALID, nullptr, nullptr, nullptr, 0 }
 
 };
+static_assert(ARRAY_SIZE(imageAndColorTable) == NUM_STATE_IDENTIFIERS, "Incorrect array size");
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 

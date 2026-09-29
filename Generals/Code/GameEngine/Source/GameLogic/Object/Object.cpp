@@ -112,7 +112,7 @@ ObjectID TheObjectIDToDebug = INVALID_ID;
 #endif
 
 // ------------------------------------------------------------------------------------------------
-static const ModelConditionFlags s_allWeaponFireFlags[WEAPONSLOT_COUNT] =
+static const ModelConditionFlags s_allWeaponFireFlags[] =
 {
 	MAKE_MODELCONDITION_MASK5(
 		MODELCONDITION_FIRING_A,
@@ -136,6 +136,7 @@ static const ModelConditionFlags s_allWeaponFireFlags[WEAPONSLOT_COUNT] =
 		MODELCONDITION_USING_WEAPON_C
 	)
 };
+static_assert(ARRAY_SIZE(s_allWeaponFireFlags) == WEAPONSLOT_COUNT, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -2773,10 +2774,13 @@ void Object::friend_bindToDrawable( Drawable *draw )
 		for (int i = 0; i < WEAPONSET_COUNT; ++i)
 		{
 			ModelConditionFlagType mcs = TheWeaponSetTypeToModelConditionTypeMap[i];
-			if (m_curWeaponSetFlags.test(i))
-				set.set(mcs);
-			else
-				clr.set(mcs);
+			if( mcs != MODELCONDITION_INVALID )
+			{
+				if (m_curWeaponSetFlags.test(i))
+					set.set(mcs);
+				else
+					clr.set(mcs);
+			}
 		}
 		if (TheGlobalData)
 		{
@@ -4346,7 +4350,7 @@ void Object::adjustModelConditionForWeaponStatus()
 		{
 			WeaponStatus newStatus = w->getStatus();
 
-			const static WeaponSetConditionType s_wsfLookup[WEAPON_STATUS_COUNT] =
+			const static WeaponSetConditionType s_wsfLookup[] =
 			{
 				WSF_NONE,				// READY_TO_FIRE,
 				WSF_NONE,				// OUT_OF_AMMO,
@@ -4354,6 +4358,7 @@ void Object::adjustModelConditionForWeaponStatus()
 				WSF_RELOADING,	// RELOADING_CLIP,
 				WSF_PREATTACK		// PRE_ATTACK,
 			};
+			static_assert(ARRAY_SIZE(s_wsfLookup) == WEAPON_STATUS_COUNT, "Incorrect array size");
 			conditionToSet = s_wsfLookup[newStatus];
 
 			// special case this: say we are firing in bursts: pow-pow-pow-pause, etc.

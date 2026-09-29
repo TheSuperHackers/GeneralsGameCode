@@ -92,8 +92,7 @@ static unsigned AllocateCount;
 static unsigned FreeCount;
 
 /*
-** Name for each memory category.  I'm padding the array with some "undefined" strings in case
-** someone forgets to set the name when adding a new category.
+** Name for each memory category.
 */
 static const char *const _MemoryCategoryNames[] =
 {
@@ -114,11 +113,8 @@ static const char *const _MemoryCategoryNames[] =
 	"Renderer",
 	"Network",
 	"BINK",
-	"<undefined>",
-	"<undefined>",
-	"<undefined>",
-	"<undefined>",
 };
+static_assert(ARRAY_SIZE(_MemoryCategoryNames) == MEM_COUNT, "Incorrect array size");
 
 
 /**

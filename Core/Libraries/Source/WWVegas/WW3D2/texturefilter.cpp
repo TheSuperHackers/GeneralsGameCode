@@ -40,13 +40,14 @@
 #include "texturefilter.h"
 #include "dx8wrapper.h"
 
-const char* const TextureFilterClass::TextureFilterModeString[TEXTURE_FILTER_COUNT] = {
+const char* const TextureFilterClass::TextureFilterModeString[] = {
 	"None",
 	"Point",
 	"Bilinear",
 	"Trilinear",
 	"Anisotropic"
 };
+static_assert(ARRAY_SIZE(TextureFilterClass::TextureFilterModeString) == TextureFilterClass::TEXTURE_FILTER_COUNT, "Incorrect array size");
 
 TextureFilterClass::TextureFilterMode TextureFilterClass::getTextureFilterMode(const char* str) {
 	for (int i = 0; i < TextureFilterClass::TEXTURE_FILTER_COUNT; ++i) {

@@ -57,10 +57,11 @@
 ParticleEmitterLoaderClass	_ParticleEmitterLoader;
 
 //	This array is declared in "W3D_File.h"
-const char *EMITTER_TYPE_NAMES[EMITTER_TYPEID_COUNT] =
+const char *EMITTER_TYPE_NAMES[] =
 {
 	"Default"
 };
+static_assert(ARRAY_SIZE(EMITTER_TYPE_NAMES) == EMITTER_TYPEID_COUNT, "Incorrect array size");
 
 
 ///////////////////////////////////////////////////////////////////////////////////
