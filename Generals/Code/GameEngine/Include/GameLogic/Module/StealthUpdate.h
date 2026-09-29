@@ -45,6 +45,9 @@ enum
 	STEALTH_NOT_WHILE_FIRING_PRIMARY		= 0x00000008,
 	STEALTH_NOT_WHILE_FIRING_SECONDARY	= 0x00000010,
 	STEALTH_NOT_WHILE_FIRING_TERTIARY		= 0x00000020,
+
+	STEALTH_LEVEL_END, // keep after the last named flag
+
 	STEALTH_NOT_WHILE_FIRING_WEAPON			= (STEALTH_NOT_WHILE_FIRING_PRIMARY | STEALTH_NOT_WHILE_FIRING_SECONDARY | STEALTH_NOT_WHILE_FIRING_TERTIARY),
 };
 
@@ -59,6 +62,7 @@ static const char *const TheStealthLevelNames[] =
 	"FIRING_TERTIARY",
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(TheStealthLevelNames) - 1, STEALTH_LEVEL_END), "Incorrect array size");
 #endif
 
 #define INVALID_OPACITY -1.0f

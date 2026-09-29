@@ -49,7 +49,9 @@ enum LocomotorSurfaceType CPP_11(: Int)
 	LOCOMOTORSURFACE_WATER			= (1 << 1),									///< water area
 	LOCOMOTORSURFACE_CLIFF			= (1 << 2),									///< steep altitude change
 	LOCOMOTORSURFACE_AIR				= (1 << 3),									///< airborne
-	LOCOMOTORSURFACE_RUBBLE			= (1 << 4)									///< building rubble
+	LOCOMOTORSURFACE_RUBBLE			= (1 << 4),									///< building rubble
+
+	LOCOMOTOR_SURFACE_TYPE_END // keep after the last named flag
 };
 
 typedef Int LocomotorSurfaceTypeMask;
@@ -68,6 +70,7 @@ static const char *const TheLocomotorSurfaceTypeNames[] =
 
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(TheLocomotorSurfaceTypeNames) - 1, LOCOMOTOR_SURFACE_TYPE_END), "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
