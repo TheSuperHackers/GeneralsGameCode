@@ -975,6 +975,12 @@ Bool AIPlayer::isSupplySourceAttacked()
 						if (info->out.m_noEffect) {
 							continue;
 						}
+#if !RETAIL_COMPATIBLE_CRC
+						// Ignore undamaged units.
+						if (body->getLastDamageTimestamp() == 0xffffffff) {
+							continue;
+						}
+#endif
 						if (body->getLastDamageTimestamp() + SCAN_WINDOW > curFrame) {
 							// winner.
 							m_attackedSupplyCenter = obj->getID();
