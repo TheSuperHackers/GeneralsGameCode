@@ -44,7 +44,9 @@ enum ShadowType CPP_11(: Int)
 	SHADOW_DYNAMIC_PROJECTION				= 0x00000008,		//extra setting for shadows which need dynamic updates
 	SHADOW_DIRECTIONAL_PROJECTION		= 0x00000010,		//extra setting for shadow decals that rotate with sun direction
 	SHADOW_ALPHA_DECAL							= 0x00000020,		//not really for shadows but for other decal uses. Alpha blended.
-	SHADOW_ADDITIVE_DECAL						= 0x00000040		//not really for shadows but for other decal uses. Additive blended.
+	SHADOW_ADDITIVE_DECAL						= 0x00000040,		//not really for shadows but for other decal uses. Additive blended.
+
+	SHADOW_TYPE_END // keep after the last named flag
 };
 #ifdef DEFINE_SHADOW_NAMES
 static const char* const TheShadowNames[] =
@@ -58,6 +60,7 @@ static const char* const TheShadowNames[] =
 	"SHADOW_ADDITIVE_DECAL",
 	nullptr
 };
+static_assert(equalsEnumBitFlagsCount(ARRAY_SIZE(TheShadowNames) - 1, SHADOW_TYPE_END), "Incorrect array size");
 #endif  // end DEFINE_SHADOW_NAMES
 
 #define MAX_SHADOW_LIGHTS 1	//maximum number of shadow casting light sources in scene - support for more than 1 has been dropped from most code.
