@@ -156,7 +156,6 @@ void Keyboard::updateKeys()
 		here so that we don't process anything */
 
 		const KeyDefType key = (KeyDefType)m_keys[ index ].key;
-		const Bool isModifier = isCtrlShiftAltKey(key);
 
 		m_keyStatus[ key ].state = m_keys[ index ].state;
 		m_keyStatus[ key ].status = m_keys[ index ].status;
@@ -176,7 +175,7 @@ void Keyboard::updateKeys()
 				m_keys[index].status = KeyboardIO::STATUS_USED;
 			}
 		}
-		else if( key == KEY_CAPS || isModifier )
+		else if( key == KEY_CAPS || isCtrlShiftAltKey(key) )
 
 		{
 
@@ -188,28 +187,14 @@ void Keyboard::updateKeys()
 
 		}
 
+		BitSet( m_keys[ index ].state, m_modifiers );
+
 		index++;
 
 	}
 
 	// check for key repeats
 	checkKeyRepeat();
-
-	if( m_modifiers )
-	{
-		index = 0;
-		while( m_keys[ index ].key != KEY_NONE )
-		{
-
-			// set in the modifier data into the already existing up/down state
-			BitSet( m_keys[ index ].state, m_modifiers );
-
-			// next key
-			index++;
-
-		}
-
-	}
 
 }
 
@@ -247,7 +232,7 @@ Bool Keyboard::checkKeyRepeat()
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
-				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT;  // note: not a bitset; this is an assignment
+				m_keys[ index ].state = KEY_STATE_DOWN | KEY_STATE_AUTOREPEAT | m_modifiers;  // note: not a bitset; this is an assignment
 				m_keys[ index ].status = KeyboardIO::STATUS_UNUSED;
 
 				// Set End Flag
