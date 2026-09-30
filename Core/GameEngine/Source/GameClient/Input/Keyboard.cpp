@@ -749,10 +749,9 @@ void Keyboard::update()
 //-------------------------------------------------------------------------------------------------
 void Keyboard::resetKeys()
 {
-
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
-	refreshAltKeys();
+	emitModifierKeyUps();
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
@@ -765,22 +764,27 @@ void Keyboard::resetKeys()
 }
 
 //-------------------------------------------------------------------------------------------------
-// Refresh the state of the alt keys, necessary after alt tab
-//-------------------------------------------------------------------------------------------------
-void Keyboard::refreshAltKeys() const
+static void emitRawKeyUpIfDown(const KeyboardIO *keyStatus, KeyDefType key)
 {
-	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
+	if (BitIsSet(keyStatus[key].state, KEY_STATE_DOWN))
 	{
 		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_LALT);
+		msg->appendIntegerArgument(key);
 		msg->appendIntegerArgument(KEY_STATE_UP);
 	}
-	if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
-	{
-		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_RALT);
-		msg->appendIntegerArgument(KEY_STATE_UP);
-	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void Keyboard::emitModifierKeyUps() const
+{
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LCTRL);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RCTRL);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LSHIFT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RSHIFT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_LALT);
+	emitRawKeyUpIfDown(m_keyStatus, KEY_RALT);
+	if (m_shift2Key != KEY_NONE && !isCtrlShiftAltKey(m_shift2Key))
+		emitRawKeyUpIfDown(m_keyStatus, m_shift2Key);
 }
 
 //-------------------------------------------------------------------------------------------------
