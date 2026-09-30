@@ -44,6 +44,23 @@ Keyboard *TheKeyboard = nullptr;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
+static Bool isCtrlShiftAltKey(KeyDefType key)
+{
+	switch (key)
+	{
+		case KEY_LCTRL:
+		case KEY_RCTRL:
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+		case KEY_LALT:
+		case KEY_RALT:
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Given the state of the device, create messages from the input and
 	* place them on the message stream */
 //-------------------------------------------------------------------------------------------------
@@ -138,17 +155,20 @@ void Keyboard::updateKeys()
 		/** @todo -- if we don't have focus, we could destroy all the keys retrieved
 		here so that we don't process anything */
 
-		m_keyStatus[ m_keys[ index ].key ].state = m_keys[ index ].state;
-		m_keyStatus[ m_keys[ index ].key ].status = m_keys[ index ].status;
+		const KeyDefType key = (KeyDefType)m_keys[ index ].key;
+		const Bool isModifier = isCtrlShiftAltKey(key);
+
+		m_keyStatus[ key ].state = m_keys[ index ].state;
+		m_keyStatus[ key ].status = m_keys[ index ].status;
 
 		// Update key down time for new key presses
 		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
 		{
-			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
+			m_keyStatus[ key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
 		}
 
 		// prevent ALT-TAB from causing a TAB event
-		if( m_keys[ index ].key == KEY_TAB )
+		if( key == KEY_TAB )
 		{
 			if( BitIsSet( m_keyStatus[ KEY_LALT ].state, KEY_STATE_DOWN ) ||
 					BitIsSet( m_keyStatus[ KEY_RALT ].state, KEY_STATE_DOWN ) )
@@ -156,13 +176,7 @@ void Keyboard::updateKeys()
 				m_keys[index].status = KeyboardIO::STATUS_USED;
 			}
 		}
-		else if( m_keys[ index ].key == KEY_CAPS	 ||
-						 m_keys[ index ].key == KEY_LCTRL  ||
-						 m_keys[ index ].key == KEY_RCTRL	 ||
-						 m_keys[ index ].key == KEY_LSHIFT ||
-						 m_keys[ index ].key == KEY_RSHIFT ||
-						 m_keys[ index ].key == KEY_LALT	 ||
-						 m_keys[ index ].key == KEY_RALT )
+		else if( key == KEY_CAPS || isModifier )
 
 		{
 
@@ -170,7 +184,7 @@ void Keyboard::updateKeys()
 			// this keeps our internal key state accurate event though we don't
 			// use the returned translation ... kinda weird I think
 			//
-			translateKey( m_keys[ index ].key );
+			translateKey( key );
 
 		}
 
@@ -816,7 +830,7 @@ UnsignedByte Keyboard::getKeyStatusData( KeyDefType key )
 //-------------------------------------------------------------------------------------------------
 /** Get the key state data as a Bool for the specified key */
 //-------------------------------------------------------------------------------------------------
-Bool Keyboard::getKeyStateBit( KeyDefType key, Int bit )
+Bool Keyboard::getKeyStateBit( KeyDefType key, KeyState bit )
 {
 	return (m_keyStatus[ key ].state & bit) ? 1 : 0;
 }
@@ -832,7 +846,7 @@ void Keyboard::setKeyStatusData( KeyDefType key, KeyboardIO::StatusType data )
 //-------------------------------------------------------------------------------------------------
 /** set the key state data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::setKeyStateData( KeyDefType key, UnsignedByte data )
+void Keyboard::setKeyStateData( KeyDefType key, KeyState data )
 {
 	m_keyStatus[ key ].state = data;
 }
