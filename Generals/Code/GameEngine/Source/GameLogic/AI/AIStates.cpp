@@ -5084,6 +5084,20 @@ StateReturnType AIAttackFireWeaponState::update()
 		return STATE_FAILURE;
 	}
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The target may have moved out of range since we entered this
+	// state, so we check the range again to avoid partially firing the weapon.
+	if (!weapon->hasLeechRange())
+	{
+		Bool inRange = m_att->isAttackingObject()
+			? weapon->isWithinAttackRange(obj, victim)
+			: weapon->isWithinAttackRange(obj, getMachineGoalPosition());
+
+		if (!inRange)
+			return STATE_FAILURE;
+	}
+#endif
+
 	/**
 		this is the weird case where we have multi turrets, and turret 'a' wants
 		to fire, but someone has changed the current weapon to be one not on him.
