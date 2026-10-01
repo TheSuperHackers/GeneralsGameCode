@@ -75,6 +75,7 @@ public:
 	// slow death methods
 	virtual void onDie( const DamageInfo *damageInfo ) override;
 	virtual void beginSlowDeath( const DamageInfo *damageInfo ) override;
+	virtual Bool isRealDeath() const override { return m_isRealDeath; }
 	virtual UpdateSleepTime update() override;
 
 protected:
