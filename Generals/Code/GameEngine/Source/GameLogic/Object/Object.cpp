@@ -44,6 +44,9 @@
 #include "Common/Team.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+#include "Common/TunnelTracker.h"
+#endif
 #include "Common/Upgrade.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/Xfer.h"
@@ -635,6 +638,22 @@ void Object::onRemovedFrom( Object *removedFrom )
 	m_containedBy = nullptr;
 	m_containedByFrame = 0;
 }
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+void Object::friend_removeFromTunnelContain()
+{
+	for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+	{
+		TunnelTracker* tracker = ThePlayerList->getNthPlayer(i)->getTunnelSystem();
+		if (tracker && tracker->removeFromContain(this))
+		{
+			break;
+		}
+	}
+
+	onRemovedFrom(nullptr);
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

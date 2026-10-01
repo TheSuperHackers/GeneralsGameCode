@@ -51,7 +51,7 @@ public:
 
 	Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
 	void addToContainList( Object *obj );				///< add 'obj' to contain list
-	void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
+	Bool removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
 	Bool isInContainer( Object *obj );				///< Is this thing inside?
 
 	void onTunnelCreated( const Object *newTunnel );		///< A tunnel was made

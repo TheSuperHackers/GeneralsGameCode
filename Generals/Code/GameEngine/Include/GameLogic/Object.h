@@ -425,6 +425,9 @@ public:
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy );
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	void friend_removeFromTunnelContain();
+#endif
 	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
 	const Object* getOuterObject() const; ///< Get the top-level object
 
