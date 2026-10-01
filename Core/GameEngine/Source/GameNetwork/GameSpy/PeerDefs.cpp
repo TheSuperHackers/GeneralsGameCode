@@ -43,6 +43,7 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 #include "GameNetwork/GameSpyOverlay.h"
+#include "GameNetwork/FirewallHelper.h"
 #include "GameNetwork/RankPointValue.h"
 #include "GameLogic/GameLogic.h"
 
@@ -633,6 +634,10 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 
 	TheGameSpyConfig = GameSpyConfigInterface::create(configBuffer);
 
+	DEBUG_ASSERTCRASH(TheFirewallHelper == nullptr, ("TheFirewallHelper already exists!"));
+	delete TheFirewallHelper;
+	TheFirewallHelper = createFirewallHelper();
+
 	TheLadderList = NEW LadderList;
 
 	ThePinger = PingerInterface::createNewPingerInterface();
@@ -696,6 +701,9 @@ void TearDownGameSpy()
 
 	delete TheLadderList;
 	TheLadderList = nullptr;
+
+	delete TheFirewallHelper;
+	TheFirewallHelper = nullptr;
 
 	delete TheGameSpyConfig;
 	TheGameSpyConfig = nullptr;
