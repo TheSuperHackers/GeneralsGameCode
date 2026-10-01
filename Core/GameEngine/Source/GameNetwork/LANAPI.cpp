@@ -592,6 +592,13 @@ void LANAPI::update()
 		// m_gameStartTime is when the next message goes out
 		// m_gameStartSeconds is how many seconds remain in the message
 
+		if (m_gameStartSeconds == 1)
+		{
+			// TheSuperHackers @bugfix Disable LAN menu buttons early to avoid a rare crash
+			// that may happen when using the buttons at the last moment (after they're deinitialized).
+			LANDisableButtons();
+		}
+
 		RequestGameStartTimer( m_gameStartSeconds );
 	}
 	else if (m_gameStartTime && m_gameStartTime <= now)
