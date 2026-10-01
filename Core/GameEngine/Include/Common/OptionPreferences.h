@@ -62,11 +62,8 @@ public:
 	TextureFilterClass::TextureFilterMode getTextureFilterMode() const;
 	TextureFilterClass::AnisotropicFilterMode getTextureAnisotropyLevel() const;
 	UnsignedInt getLANIPAddress();
-	UnsignedInt getOnlineIPAddress();
 	void setLANIPAddress(AsciiString IP);
-	void setOnlineIPAddress(AsciiString IP);
 	void setLANIPAddress(UnsignedInt IP);
-	void setOnlineIPAddress(UnsignedInt IP);
 	Bool getArchiveReplaysEnabled() const;
 	Bool getAlternateMouseModeEnabled();
 	Bool getRightMouseScrollWithAlternateMouseEnabled() const;
