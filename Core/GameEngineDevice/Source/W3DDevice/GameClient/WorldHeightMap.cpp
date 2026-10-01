@@ -539,17 +539,22 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 
 Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
 {
-	DEBUG_ASSERTCRASH(bounds.lo.x >= -m_borderSize && bounds.lo.y >= -m_borderSize &&
-	                  bounds.hi.x <= m_width - m_borderSize && bounds.hi.y <= m_height - m_borderSize,
-	                  ("WorldHeightMap::isTerrainFlat must use a region within the logical map bounds."));
+	DEBUG_ASSERTCRASH(getLogicalBounds().isInRegion(bounds), ("WorldHeightMap::isTerrainFlat must use a region within the logical map bounds."));
+
+	const Int width = bounds.width();
+	const Int height = bounds.height();
 	const UnsignedByte* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
-	const UnsignedByte referenceHeight = firstRow[0];
-	for (Int j = 0; j < bounds.height(); j++)
+
+	// Check that the first row is flat.
+	if (width > 1 && memcmp(firstRow, firstRow + 1, width - 1) != 0)
+		return false;
+
+	for (Int j = 1; j < height; j++)
 	{
+		// Check that row matches the first row.
 		const UnsignedByte* row = firstRow + j * m_width;
-		for (Int i = 0; i < bounds.width(); i++)
-			if (row[i] != referenceHeight)
-				return false;
+		if (memcmp(firstRow, row, width) != 0)
+			return false;
 	}
 
 	return true;
