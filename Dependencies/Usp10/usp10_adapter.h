@@ -29,9 +29,6 @@
 #endif
 
 #ifdef HAVE_USP10_H
-	#ifndef WIN32_LEAN_AND_MEAN
-		#define WIN32_LEAN_AND_MEAN
-	#endif
 	#include <usp10.h>
 #else
 	#include "usp10_subset.h"

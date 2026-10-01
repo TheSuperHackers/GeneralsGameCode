@@ -32,3 +32,16 @@
 #endif // __cplusplus
 
 #include "stdint_adapter.h"
+
+
+#ifdef _WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+#endif
+
+#ifndef NOMINMAX
+#define NOMINMAX // Exclude min/max macros from Windows headers
+#endif
+
+#endif // _MSC_VER

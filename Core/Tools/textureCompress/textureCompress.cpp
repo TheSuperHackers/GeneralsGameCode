@@ -20,7 +20,6 @@
 // Author: Matthew D. Campbell, Dec 2002
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
 //#include <afxwin.h>
 #include <windows.h>
 #include <lmcons.h>

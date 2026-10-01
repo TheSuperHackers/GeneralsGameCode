@@ -39,7 +39,7 @@ class STLSpecialAlloc;
 // different .cpp files, so I bit the bullet and included it here.
 // PLEASE DO NOT ABUSE WINDOWS OR IT WILL BE REMOVED ENTIRELY. :-)
 //--------------------------------------------------------------------------------- System Includes
-#define WIN32_LEAN_AND_MEAN
+
 // TheSuperHackers @build JohnsterID 05/01/2026 Add ATL compatibility for MinGW-w64 builds
 #if defined(__GNUC__) && defined(_WIN32)
     #include <Utility/atl_compat.h>
