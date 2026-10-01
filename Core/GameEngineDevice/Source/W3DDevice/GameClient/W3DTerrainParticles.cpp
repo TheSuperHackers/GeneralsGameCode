@@ -154,9 +154,9 @@ void W3DTerrainParticles::drawRegion(const WorldHeightMap& map, const ParticleCo
 	const Int rows = sizeY > 1 ? 2 : 1;
 	const Int xEdges[3] = { bounds.lo.x, bounds.lo.x + sizeX / columns, bounds.hi.x - 1 };
 	const Int yEdges[3] = { bounds.lo.y, bounds.lo.y + sizeY / rows, bounds.hi.y - 1 };
+	IRegion2D child;
 	for (Int y = 0; y < rows; y++)
 	{
-		IRegion2D child;
 		child.lo.y = yEdges[y];
 		child.hi.y = yEdges[y + 1] + 1;
 		for (Int x = 0; x < columns; x++)
@@ -363,13 +363,13 @@ void W3DTerrainParticles::setArrays(
 	ShareBufferClass<UnsignedByte>* orientations,
 	Int activePointCount)
 {
-	WWASSERT(locs);
-	WWASSERT(activePointCount <= locs->Get_Count());
+	DEBUG_ASSERTCRASH(locs, ("Missing locations."));
+	DEBUG_ASSERTCRASH(activePointCount <= locs->Get_Count(), ("Active point count higher than available points."));
 
 	// Ensure that all arrays have the same length.
-	WWASSERT(!diffuse || locs->Get_Count() == diffuse->Get_Count());
-	WWASSERT(!sizes || locs->Get_Count() == sizes->Get_Count());
-	WWASSERT(!orientations || locs->Get_Count() == orientations->Get_Count());
+	DEBUG_ASSERTCRASH(!diffuse || locs->Get_Count() == diffuse->Get_Count(), ("Diffuse count mismatch."));
+	DEBUG_ASSERTCRASH(!sizes || locs->Get_Count() == sizes->Get_Count(), ("Size count mismatch."));
+	DEBUG_ASSERTCRASH(!orientations || locs->Get_Count() == orientations->Get_Count(), ("Orientation count mismatch."));
 
 	m_pointLoc = locs;
 	m_pointDiffuse = diffuse;
