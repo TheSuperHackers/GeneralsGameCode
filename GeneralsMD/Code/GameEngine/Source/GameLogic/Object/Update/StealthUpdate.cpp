@@ -319,9 +319,9 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 #endif
 		{
 			//Can't stealth if we just took damage in the last frame or two.
-			if( self->getBodyModule()->getLastDamageTimestamp() != 0xffffffff )
+			if( self->getBodyModule()->hasLastDamageTimestamp() )
 			{
-				//But it's initialized to 0xffffffff so we don't think we took damage on the first frame.
+				//But it's initialized to InvalidBodyTimestamp so we don't think we took damage on the first frame.
 				return FALSE;
 			}
 		}

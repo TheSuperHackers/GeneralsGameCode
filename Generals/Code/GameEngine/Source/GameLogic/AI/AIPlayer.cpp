@@ -929,12 +929,12 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 Bool AIPlayer::isSupplySourceAttacked()
 {
 	// TheSuperHackers @bugfix WebbontheWeb 27/09/2026 No longer scans for supply source attacks for just the last 10 frames.
-	// Original EA comment: "don't scan more often than every 10 seconds."
-	const Int REFRESH_RATE = 10; // 10 frames.
+	// A prior EA comment indicated that the intent was to look for 10 seconds into the attack history.
+	const Int REFRESH_RATE = 10;
 #if RETAIL_COMPATIBLE_CRC
 	const Int SCAN_WINDOW = 10;
 #else
-	const Int SCAN_WINDOW = 10 * LOGICFRAMES_PER_SECOND; // 10 seconds of attack history.
+	const Int SCAN_WINDOW = 10 * LOGICFRAMES_PER_SECOND;
 #endif
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame==0) {
@@ -977,7 +977,7 @@ Bool AIPlayer::isSupplySourceAttacked()
 						}
 #if !RETAIL_COMPATIBLE_CRC
 						// Ignore undamaged units.
-						if (body->getLastDamageTimestamp() == 0xffffffff) {
+						if (!body->hasLastDamageTimestamp()) {
 							continue;
 						}
 #endif

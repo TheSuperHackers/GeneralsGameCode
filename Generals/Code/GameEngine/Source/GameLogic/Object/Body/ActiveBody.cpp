@@ -149,8 +149,8 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_curArmorSet(nullptr),
 	m_frontCrushed(false),
 	m_backCrushed(false),
-	m_lastDamageTimestamp(0xffffffff),// So we don't think we just got damaged on the first frame
-	m_lastHealingTimestamp(0xffffffff),// So we don't think we just got healed on the first frame
+	m_lastDamageTimestamp(InvalidBodyTimestamp),// So we don't think we just got damaged on the first frame
+	m_lastHealingTimestamp(InvalidBodyTimestamp),// So we don't think we just got healed on the first frame
 	m_curDamageState(BODY_PRISTINE),
 	m_nextDamageFXTime(0),
 	m_lastDamageFXDone((DamageType)-1),

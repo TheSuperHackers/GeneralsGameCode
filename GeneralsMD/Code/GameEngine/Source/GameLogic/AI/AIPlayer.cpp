@@ -984,7 +984,7 @@ Bool AIPlayer::isSupplySourceAttacked()
 						}
 #if !RETAIL_COMPATIBLE_CRC
 						// Ignore undamaged units.
-						if (body->getLastDamageTimestamp() == 0xffffffff) {
+						if (!body->hasLastDamageTimestamp()) {
 							continue;
 						}
 #endif

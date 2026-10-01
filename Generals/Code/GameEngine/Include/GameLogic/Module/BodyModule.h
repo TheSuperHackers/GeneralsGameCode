@@ -159,6 +159,7 @@ public:
 
 	virtual const DamageInfo *getLastDamageInfo() const = 0;
 	virtual UnsignedInt getLastDamageTimestamp() const = 0;
+	virtual Bool hasLastDamageTimestamp() const = 0;
 	virtual UnsignedInt getLastHealingTimestamp() const = 0;
 	virtual ObjectID getClearableLastAttacker() const = 0;
 	virtual void clearLastAttacker() = 0;
@@ -213,6 +214,7 @@ public:
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return nullptr; }	///< return info on last damage dealt to this object
 	virtual UnsignedInt getLastDamageTimestamp() const override { return 0; }	///< return frame of last damage dealt
+	virtual Bool hasLastDamageTimestamp() const override { return FALSE; }	///< return whether a frame of last damage has been recorded
 	virtual UnsignedInt getLastHealingTimestamp() const override { return 0; }	///< return frame of last healing dealt
 	virtual ObjectID getClearableLastAttacker() const override { return INVALID_ID; }
 	virtual void clearLastAttacker() override { }
