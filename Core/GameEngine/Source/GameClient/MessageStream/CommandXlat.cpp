@@ -3677,6 +3677,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Money *money = localPlayer->getMoney();
 				money->deposit( 10000 );
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugAddCash", L"Add Cash") );
+
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 		}
@@ -3717,6 +3719,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugObjectHealthOn", L"Object Health is ON") );
 				else
 					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugObjectHealthOff", L"Object Health is OFF") );
+
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 
@@ -4866,6 +4870,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_RENDER:
 		{
 			TheWritableGlobalData->m_disableRender = !TheGlobalData->m_disableRender;
+			disp = DESTROY_MESSAGE;
 			break;
 		}
 
@@ -4879,6 +4884,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Money *money = localPlayer->getMoney();
 				money->deposit( 10000 );
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugAddCash", L"Add Cash") );
+
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 		}
@@ -4919,6 +4926,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					obj->kill();
 				}
 			}
+			disp = DESTROY_MESSAGE;
 		}
 		break;
 
@@ -5012,6 +5020,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			} else {
 				TheDisplay->setDebugDisplayCallback(nullptr);
 			}
+			disp = DESTROY_MESSAGE;
 			break;
 		}
 #endif // #ifdef PERF_TIMERS
@@ -5595,6 +5604,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugPerformStatisticalDump",
 				L"Statistics dump made on frame: %d", TheGameLogic->getFrame() ) );
+			disp = DESTROY_MESSAGE;
 			break;
 #endif // DUMP_PERF_STATS
 
