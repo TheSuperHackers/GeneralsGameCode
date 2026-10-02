@@ -80,6 +80,10 @@ if(RTS_BUILD_OPTION_TESTS)
     include(cmake/googletest.cmake)
 endif()
 
+if(RTS_BUILD_OPTION_BENCHMARKS)
+    include(cmake/googlebenchmark.cmake)
+endif()
+
 add_subdirectory(Dependencies)
 
 add_subdirectory(resources)
@@ -97,6 +101,10 @@ endif()
 
 if(RTS_BUILD_OPTION_TESTS)
     add_subdirectory(Tests)
+endif()
+
+if(RTS_BUILD_OPTION_BENCHMARKS)
+    add_subdirectory(Benchmarks)
 endif()
 
 feature_summary(WHAT ENABLED_FEATURES DESCRIPTION "Enabled features:")

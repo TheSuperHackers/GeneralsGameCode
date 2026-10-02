@@ -39,3 +39,9 @@ A failed `DEBUG_ASSERTCRASH` fails the running test in builds with debug crashin
 A `RELEASE_CRASH` reports its reason as a failure of the running test and then exits the test executable. Expected release crashes can be tested with `EXPECT_EXIT(..., ::testing::ExitedWithCode(1), "")`.
 
 The test executables use the regular user data folder of the game, so a `RELEASE_CRASH` also writes its ReleaseCrashInfo.txt there.
+
+# Benchmarks
+
+Benchmarks use [Google Benchmark](https://github.com/TheSuperHackers/google-benchmark). Enable them with `RTS_BUILD_OPTION_BENCHMARKS`. They are organized like the unit tests under Benchmarks/Google, with the executables g_googlebenchmark and z_googlebenchmark.
+
+Run benchmarks from a Release build. Select benchmarks with `--benchmark_filter=<regex>`, and use `--benchmark_out=<file>.json` to compare the results before and after a change.
