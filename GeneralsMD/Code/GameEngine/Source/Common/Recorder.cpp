@@ -1004,6 +1004,17 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo.GetQueueSize()-1, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo.sawCRCMismatch())
 		{
+			// TheSuperHackers @feature bobtista 08/08/2026 Leave ignored mismatches unmarked so later mismatches
+			// are also reported and diagnostic playback does not count as failed.
+			if (TheDebugIgnoreReplaySyncErrors)
+			{
+				const UnsignedInt ignoredFrame = TheGameLogic->getFrame() - m_crcInfo.GetQueueSize() - 1;
+				DEBUG_LOG(("Replay CRC mismatch ignored\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
+					playbackCRC, newCRC, ignoredFrame));
+				printf("CRC Mismatch in Frame %d (ignored)\n", ignoredFrame);
+				return;
+			}
+
 			//Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
 			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
