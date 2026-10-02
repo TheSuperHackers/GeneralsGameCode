@@ -992,6 +992,10 @@ GlobalData::GlobalData()
 
 	m_buildMapCache = FALSE;
 	m_initialFile.clear();
+#if defined(RTS_DEBUG)
+	m_saveAtFrame = 0;
+	m_saveToFile = "commandline.sav";
+#endif
 	m_pendingFile.clear();
 
 	m_simulateReplays.clear();
