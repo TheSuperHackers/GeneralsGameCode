@@ -38,11 +38,11 @@ AsciiString GetFileFromPath( AsciiString path );
 AsciiString GetExtensionFromFile( AsciiString fname );
 AsciiString GetBaseFileFromFile( AsciiString fname );
 AsciiString GetPreviewFromMap( AsciiString path );
-AsciiString GetINIFromMap( AsciiString path );
-AsciiString GetStrFileFromMap( AsciiString path );
-AsciiString GetSoloINIFromMap( AsciiString path );
-AsciiString GetAssetUsageFromMap( AsciiString path );
-AsciiString GetReadmeFromMap( AsciiString path );
+AsciiString GetINIFromMap( const AsciiString &path );
+AsciiString GetStrFileFromMap( const AsciiString &path );
+AsciiString GetSoloINIFromMap( const AsciiString &path );
+AsciiString GetAssetUsageFromMap( const AsciiString &path );
+AsciiString GetReadmeFromMap( const AsciiString &path );
 
 // The meat of file (map) transfers
 Bool DoAnyMapTransfers(GameInfo *game);
