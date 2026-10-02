@@ -57,6 +57,7 @@
 #include "GameClient/Keyboard.h"
 #include "GameClient/GameText.h"
 #include "Common/AudioEventRTS.h"
+#include "Common/GlobalData.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -71,11 +72,15 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	// TheSuperHackers @fix CryoTheRenegade 17/10/2026 Optionally run hotkeys on press instead of release, consistent with typical meta event mappings.
+	// Releasing a modifier first can then no longer trigger a plain hotkey. A meta event on the same key consumes the press first.
+	const GameMessage::Type hotKeyType = TheGlobalData->m_triggerHotKeyOnDown ? GameMessage::MSG_RAW_KEY_DOWN : GameMessage::MSG_RAW_KEY_UP;
+
+	if ( t == hotKeyType )
 	{
 		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
 		const KeyState keyState = (KeyState)msg->getArgument(1)->integer;
-		if( keyState & KEY_STATE_MODIFIERS )
+		if( keyState & (KEY_STATE_MODIFIERS | KEY_STATE_AUTOREPEAT) )
 			return disp;
 
 		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);

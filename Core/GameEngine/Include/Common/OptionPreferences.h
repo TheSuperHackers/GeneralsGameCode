@@ -129,6 +129,7 @@ public:
 	Real getResolutionFontAdjustment();
 
 	Bool getShowMoneyPerMinute() const;
+	Bool getTriggerHotKeyOnDown() const;
 
 	Real getGameWindowTransitionSpeedMultiplier() const;
 };
