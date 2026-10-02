@@ -29,6 +29,7 @@
 #include "PreRTS.h"
 
 #include "Common/ArchiveFile.h"
+#include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
@@ -148,9 +149,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 	for (; diriter != dirInfo->m_directories.end(); ++diriter) {
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
 		AsciiString tempDirName = currentDirectory;
-		if (!tempDirName.isEmpty() && !tempDirName.endsWith("\\")) {
-			tempDirName.concat('\\');
-		}
+		FileSystem::appendPathSeparator(tempDirName);
 		tempDirName.concat(tempDirInfo->m_directoryName);
 		getFileListInDirectory(tempDirInfo, tempDirName, searchName, filenameList, searchSubdirectories);
 	}
@@ -161,9 +160,7 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 		if (SearchStringMatches(fileInfo.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			if (!tempfilename.isEmpty() && !tempfilename.endsWith("\\")) {
-				tempfilename.concat('\\');
-			}
+			FileSystem::appendPathSeparator(tempfilename);
 			tempfilename.concat(fileInfo.m_filename);
 			if (filenameList.find(tempfilename) == filenameList.end()) {
 				// only insert into the list if its not already in there.
