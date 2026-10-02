@@ -114,6 +114,7 @@ static char theLogFileNamePrev[ _MAX_PATH ];
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
 static int theDebugFlags = 0;
 static DWORD theMainThreadID = 0;
+static DebugCrashHandler theCrashHandler = nullptr;
 // ----------------------------------------------------------------------------
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
@@ -548,6 +549,13 @@ void DebugCrash(const char *format, ...)
 #endif
 	}
 
+	if (theCrashHandler != nullptr)
+	{
+		// Every crash reaches the handler, because the ignore option of the crash box does not apply.
+		theCrashHandler(theCrashBuffer);
+		return;
+	}
+
 	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", ARRAY_SIZE(theCrashBuffer));
 
 	const int result = doCrashBox(theCrashBuffer, useLogging);
@@ -623,6 +631,18 @@ void DebugSetFlags(int flags)
 }
 
 #endif	// ALLOW_DEBUG_UTILS
+
+// ----------------------------------------------------------------------------
+// DebugSetCrashHandler
+// ----------------------------------------------------------------------------
+/**
+	Set the handler that receives debug and release crashes instead of the crash box.
+	Pass nullptr to show the crash box again.
+*/
+void DebugSetCrashHandler(DebugCrashHandler handler)
+{
+	theCrashHandler = handler;
+}
 
 #ifdef DEBUG_PROFILE
 // ----------------------------------------------------------------------------
@@ -747,6 +767,11 @@ static void TriggerMiniDump()
 
 void ReleaseCrash(const char *reason)
 {
+	if (theCrashHandler != nullptr)
+	{
+		theCrashHandler(reason);
+	}
+
 	/// do additional reporting on the crash, if possible
 
 	if (!DX8Wrapper_IsWindowed) {
@@ -808,7 +833,7 @@ void ReleaseCrash(const char *reason)
 #if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	if (!(TheGlobalData && TheGlobalData->m_headless))
+	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 	}
@@ -818,7 +843,7 @@ void ReleaseCrash(const char *reason)
 //	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
 // crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
-	if (!(TheGlobalData && TheGlobalData->m_headless))
+	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
 			"Technical Difficulties...",
@@ -839,6 +864,11 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		return;
 	}
 
+	if (theCrashHandler != nullptr)
+	{
+		theCrashHandler(m.str());
+	}
+
 	TriggerMiniDump();
 
 	UnicodeString prompt = TheGameText->fetch(p);
@@ -853,7 +883,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		}
 	}
 
-	if (!(TheGlobalData && TheGlobalData->m_headless))
+	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}

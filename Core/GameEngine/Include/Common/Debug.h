@@ -217,6 +217,11 @@ DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiStrin
 #define RELEASE_CRASH(m)				do { ReleaseCrash(m); } while (0)
 #define RELEASE_CRASHLOCALIZED(p, m)		do { ReleaseCrashLocalized(p, m); } while (0)
 
+// Debug and release crashes go to the crash handler instead of a crash box,
+// for example to fail a unit test. A debug crash then continues, a release crash still exits.
+typedef void (*DebugCrashHandler)(const char *message);
+DEBUG_EXTERN_C void DebugSetCrashHandler(DebugCrashHandler handler);
+
 
 #ifdef DEBUG_PROFILE
 
