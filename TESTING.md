@@ -34,7 +34,7 @@ Each game has one test executable, g_googletest for Generals and z_googletest fo
 
 A test file is named after the file it tests and follows its naming style, for example stringex_test.cpp for stringex.h and AsciiStringTest.cpp for AsciiString.h.
 
-A failed `DEBUG_ASSERTCRASH` fails the running test in builds with debug crashing, which are the debug presets and builds with `RTS_DEBUG_CRASHING=ON`. Release builds compile these asserts out, so a test must not rely on them alone.
+A failed `DEBUG_ASSERTCRASH` fails the running test in builds with debug crashing, which are the debug presets and builds with `RTS_DEBUG_CRASHING=ON`. Release builds compile these asserts out, so a test must not rely on them alone. CI runs the tests in release, profile and debug builds.
 
 A `RELEASE_CRASH` reports its reason as a failure of the running test and then exits the test executable. Expected release crashes can be tested with `EXPECT_EXIT(..., ::testing::ExitedWithCode(1), "")`.
 
@@ -42,6 +42,6 @@ The test executables use the regular user data folder of the game, so a `RELEASE
 
 # Benchmarks
 
-Benchmarks use [Google Benchmark](https://github.com/TheSuperHackers/google-benchmark). Enable them with `RTS_BUILD_OPTION_BENCHMARKS`. They are organized like the unit tests in GoogleBenchmark folders, with the executables g_googlebenchmark and z_googlebenchmark.
+Benchmarks use [Google Benchmark](https://github.com/TheSuperHackers/google-benchmark). Enable them with `RTS_BUILD_OPTION_BENCHMARKS`. They are organized like the unit tests in GoogleBenchmark folders, with the executables g_googlebenchmark and z_googlebenchmark. CI builds them, but does not run them.
 
 Run benchmarks from a Release build. Select benchmarks with `--benchmark_filter=<regex>`, and use `--benchmark_out=<file>.json` to compare the results before and after a change.
