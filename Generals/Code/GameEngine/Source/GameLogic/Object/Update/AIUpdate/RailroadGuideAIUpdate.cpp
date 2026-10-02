@@ -249,11 +249,15 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 	{
 		//If it is a civilian building like a tunnel or a train station, let it be
 		//but if it is a faction building, kill it!
-		if (other->isKindOf( KINDOF_FS_POWER ) ||
-				other->isKindOf( KINDOF_FS_FACTORY ) ||
-				other->isKindOf( KINDOF_FS_BASE_DEFENSE ) ||
-				other->isKindOf( KINDOF_FS_TECHNOLOGY ) ||
-				other->isKindOf( KINDOF_REBUILD_HOLE ) )
+		if (other->isKindOf(KINDOF_FS_POWER) ||
+				other->isKindOf(KINDOF_FS_FACTORY) ||
+				other->isKindOf(KINDOF_FS_BASE_DEFENSE) ||
+				other->isKindOf(KINDOF_FS_TECHNOLOGY) ||
+				other->isKindOf(KINDOF_REBUILD_HOLE)
+#if !RETAIL_COMPATIBLE_CRC
+				|| other->isFactionStructure()
+#endif
+			)
 		{
 			playImpactSound(other, other->getPosition());
 			other->kill();
@@ -271,6 +275,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 			other->kill();
 			return;
 		}
+		return;
 	}
 
 
