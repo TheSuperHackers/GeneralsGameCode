@@ -74,6 +74,12 @@ else()
     add_library(core_profile_tracy INTERFACE)
 endif()
 
+if(RTS_BUILD_OPTION_TESTS)
+    # Must come before the subdirectories that add tests.
+    enable_testing()
+    include(cmake/googletest.cmake)
+endif()
+
 add_subdirectory(Dependencies)
 
 add_subdirectory(resources)
@@ -87,6 +93,10 @@ endif()
 
 if(RTS_BUILD_GENERALS)
     add_subdirectory(Generals)
+endif()
+
+if(RTS_BUILD_OPTION_TESTS)
+    add_subdirectory(Tests)
 endif()
 
 feature_summary(WHAT ENABLED_FEATURES DESCRIPTION "Enabled features:")
