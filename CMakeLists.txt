@@ -80,6 +80,10 @@ if(RTS_BUILD_OPTION_TESTS)
     include(cmake/googletest.cmake)
 endif()
 
+if(RTS_BUILD_OPTION_BENCHMARKS)
+    include(cmake/googlebenchmark.cmake)
+endif()
+
 add_subdirectory(Dependencies)
 
 add_subdirectory(resources)
