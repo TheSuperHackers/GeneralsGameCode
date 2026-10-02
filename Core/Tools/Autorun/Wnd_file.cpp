@@ -82,13 +82,6 @@ char DebugFile	[ MAX_PATH ] = { '\0' };
 //-----------------------------------------------------------------------------
 // public file class functions...
 //-----------------------------------------------------------------------------
-#if(0)
-#ifndef RTS_DEBUG
-void __cdecl Msg( int, char *, char *, ... ) { };	// line, file, fmt
-void 	Delete_Msg_File ()  { };
-#endif
-#endif
-
 
 #ifdef RTS_DEBUG
 
@@ -107,7 +100,7 @@ void 	Delete_Msg_File ()  { };
  *   08/19/1998   MML : Created.											*
  *==========================================================================*/
 
-void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
+void Msg( int line, const char *filename, const char *fmt, ... )
 {
 	char     szBuffer1[ MAX_PATH * 3 ];
 	char     szBuffer2[ MAX_PATH * 2 ];
@@ -163,7 +156,7 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
 	//----------------------------------------------------------------------
 	OutputDebugString( szBuffer1 );
 
-} /* Msg */
+}
 
 
 /****************************************************************************
@@ -181,7 +174,7 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
  *   08/19/1998   MML : Created.											*
  *==========================================================================*/
 
-void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codepage, ... )
+void Msg( int line, const char *filename, const wchar_t *fmt, UINT codepage, ... )
 {
 	wchar_t		szBuffer1[ MAX_PATH * 3 ];
 	wchar_t		szBuffer2[ MAX_PATH * 3 ];
@@ -254,7 +247,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 	//----------------------------------------------------------------------
 	OutputDebugString( szBuffer3 );
 
-} /* Msg */
+}
 
 
 /***************************************************************************

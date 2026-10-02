@@ -44,4 +44,4 @@
 #define NOMINMAX // Exclude min/max macros from Windows headers
 #endif
 
-#endif // _MSC_VER
+#endif // _WIN32
