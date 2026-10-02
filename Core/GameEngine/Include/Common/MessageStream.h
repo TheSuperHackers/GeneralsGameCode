@@ -479,6 +479,7 @@ public:
 		MSG_DO_INVALID_HINT,												///< Display invalid cursor because no real command can be done in this context.
 		MSG_DO_ATTACK_OBJECT_AFTER_MOVING_HINT,
 		MSG_HACK_HINT,
+		MSG_GUI_HOTKEY, ///< (KeyDefType, KeyState) a press consumed by a meta action, still available to GUI hotkeys
 
 //*********************************************************************************************************
 //*********************************************************************************************************

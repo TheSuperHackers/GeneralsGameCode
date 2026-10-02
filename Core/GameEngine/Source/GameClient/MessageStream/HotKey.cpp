@@ -68,14 +68,16 @@
 //-----------------------------------------------------------------------------
 GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage *msg)
 {
-	GameMessageDisposition disp = KEEP_MESSAGE;
 	GameMessage::Type t = msg->getType();
+	GameMessageDisposition disp = t == GameMessage::MSG_GUI_HOTKEY ? DESTROY_MESSAGE : KEEP_MESSAGE;
 
-	if ( t == GameMessage::MSG_RAW_KEY_UP)
+	// TheSuperHackers @fix Run hotkeys on press instead of release, consistent with typical meta event mappings.
+	// Releasing a modifier first can no longer trigger a plain hotkey.
+	if ( t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_GUI_HOTKEY)
 	{
 		const KeyDefType key = (KeyDefType)msg->getArgument(0)->integer;
 		const KeyState keyState = (KeyState)msg->getArgument(1)->integer;
-		if( keyState & KEY_STATE_MODIFIERS )
+		if( keyState & (KEY_STATE_MODIFIERS | KEY_STATE_AUTOREPEAT) )
 			return disp;
 
 		WideChar printableKey = TheKeyboard->getPrintableKey(key, 0);

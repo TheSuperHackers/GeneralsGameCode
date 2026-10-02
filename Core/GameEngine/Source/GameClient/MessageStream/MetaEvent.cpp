@@ -550,6 +550,16 @@ void MetaEventTranslator::onKeyEvent(const GameMessage *msg, GameMessageDisposit
 	{
 		onKeyPressed(disp, systemKeyState, keyType, keyModState);
 	}
+
+	// TheSuperHackers @fix Preserve overlapping GUI hotkeys without suppressing the meta action
+	// or passing the consumed raw key to other translators. Insert in place to keep key order.
+	if (disp == DESTROY_MESSAGE && msg->getType() == GameMessage::MSG_RAW_KEY_DOWN &&
+		!(systemKeyState & (KEY_STATE_MODIFIERS | KEY_STATE_AUTOREPEAT)))
+	{
+		GameMessage *hotKeyMessage = TheMessageStream->insertMessage(GameMessage::MSG_GUI_HOTKEY, const_cast<GameMessage*>(msg));
+		hotKeyMessage->appendIntegerArgument(systemKey);
+		hotKeyMessage->appendIntegerArgument(systemKeyState);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
