@@ -43,6 +43,7 @@
 
 #include "Common/DataChunk.h"
 
+
 int WorldHeightMapEdit::m_numGlobalTextureClasses=0;
 TGlobalTextureClass WorldHeightMapEdit::m_globalTextureClasses[NUM_TEXTURE_CLASSES];
 /** Destructor -.
@@ -120,7 +121,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(Int width, Int height, UnsignedByte initi
 	// Note - we have one less cell than the width & height. But for paranoia, allocate
 	// extra row. jba.
 	//
-	Int numBytesX = (m_width+1)/8;	//how many bytes to fit all bitflags
+	Int numBytesX = (m_width+7)/8;	//how many bytes to fit all bitflags
 	Int numBytesY = m_height;
 
 	m_flipStateWidth=numBytesX;
@@ -209,7 +210,7 @@ m_warnTooManyBlend(false)
 	// Note - we have one less cell than the width & height. But for paranoia, allocate
 	// extra row. jba.
 	//
-	Int numBytesX = (m_width+1)/8;	//how many bytes to fit all bitflags
+	Int numBytesX = (m_width+7)/8;	//how many bytes to fit all bitflags
 	Int numBytesY = m_height;
 
 	m_flipStateWidth=numBytesX;
@@ -433,8 +434,7 @@ void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 	FilenameList::iterator it = filenameList.begin();
 	do {
 		AsciiString filename = *it;
-
-		snprintf(fileBuf, ARRAY_SIZE(fileBuf), "%s%s", dirBuf, filename.str());
+		strlcpy(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 		loadBitmap(fileBuf, filename.str());
 
 		++it;
@@ -505,39 +505,6 @@ void WorldHeightMapEdit::loadImagesFromTerrainType( TerrainType *terrain )
 	m_numGlobalTextureClasses++;
 
 }
-
-
-Bool  WorldHeightMapEdit::getRawTileData(Short tileNdx, Int width,
-																				 UnsignedByte *buffer, Int bufLen)
-{
-	TileData *pSrc = nullptr;
-	if (tileNdx/4 < NUM_SOURCE_TILES) {
-		pSrc = m_sourceTiles[tileNdx/4];
-	}
-	if (bufLen < (width*width*TILE_BYTES_PER_PIXEL)) {
-		return(false);
-	}
-	if (pSrc && pSrc->hasRGBDataForWidth(2*width)) {
-		Int j;
-		UnsignedByte *pSrcData = pSrc->getRGBDataForWidth(2*width);
-		Int xOffset=0;
-		Int yOffset=0;
-		if (tileNdx & 1) xOffset = width;
-		if (tileNdx & 2) yOffset = width;
-		for (j=0; j<width; j++) {
-			UnsignedByte *pDestData = buffer;
-			pDestData += j*(width)*TILE_BYTES_PER_PIXEL;
-			UnsignedByte *pSrc = pSrcData;
-			pSrc += (j+yOffset)*width*TILE_BYTES_PER_PIXEL*2;
-			pSrc += xOffset*TILE_BYTES_PER_PIXEL;
-			memcpy(pDestData, pSrc, width*TILE_BYTES_PER_PIXEL);
-		}
-		return(true);
-	}
-	return(false);
-}
-
-
 
 UnsignedByte * WorldHeightMapEdit::getPointerToClassTileData(Int texClass)
 {
@@ -633,13 +600,26 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 	chunkWriter.closeDataChunk();
 
 	/***************BLEND TILE DATA ***************/
-	chunkWriter.openDataChunk("BlendTileData", K_BLEND_TILE_VERSION_7);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	const DataChunkVersionType blendTileVersion = K_BLEND_TILE_VERSION_7;
+#else
+	const DataChunkVersionType blendTileVersion = K_BLEND_TILE_VERSION_8;
+#endif
+	chunkWriter.openDataChunk("BlendTileData", blendTileVersion);
 		chunkWriter.writeInt(m_dataSize);
 		chunkWriter.writeArrayOfBytes((char*)m_tileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_blendTileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_extraBlendTileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_cliffInfoNdxes, m_dataSize*sizeof(Short));
-		chunkWriter.writeArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
+		if (blendTileVersion <= K_BLEND_TILE_VERSION_7) {
+			// Version 7 uses the legacy row width, even when the in-memory rows are wider.
+			Int byteWidth = (m_width+1)/8;
+			for (Int j=0; j<m_height; j++) {
+				chunkWriter.writeArrayOfBytes((char*)m_cellCliffState + j*m_flipStateWidth, byteWidth);
+			}
+		} else {
+			chunkWriter.writeArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
+		}
 		chunkWriter.writeInt(m_numBitmapTiles);
 		chunkWriter.writeInt(m_numBlendedTiles);
 		chunkWriter.writeInt(m_numCliffInfo);
@@ -1133,7 +1113,7 @@ void WorldHeightMapEdit::blendSpecificTiles(Int xIndex, Int yIndex, Int srcXInde
 	blendInfo.customBlendEdgeClass = edgeClass;
 
 	//Check if there is already a blend tile at the destination and record its flip state.
-	//We need to know this so that we don't accidentally apply a third blend layer with with
+	//We need to know this so that we don't accidentally apply a third blend layer with
 	//a different flip and introduce z-fighting over this tile.
 	Bool baseNeedsFlip = false;
 	UnsignedByte baseIsDiagonal = 0;
@@ -1189,25 +1169,40 @@ void WorldHeightMapEdit::blendSpecificTiles(Int xIndex, Int yIndex, Int srcXInde
 		if (baseBlendInfo && baseIsDiagonal && baseNeedsFlip != flipped)
 			return;	//the base requires a certain flip state which we can't alter so can't apply extra blend here.
 	}
-	updateFlatCellForAdjacentCliffs(xIndex, yIndex, getTextureClassFromNdx(blendTileNdx));
-
 	//Check if this tile is really necessary or if the base blend already does the same thing as the 3way blend.
-	if (baseBlendInfo && baseBlendInfo->blendNdx == blendTileNdx)
+	if (baseBlendInfo && baseBlendInfo->blendNdx == blendTileNdx) {
+		updateFlatCellForAdjacentCliffs(xIndex, yIndex, getTextureClassFromNdx(blendTileNdx));
 		return;
+	}
 
+	// TheSuperHackers @bugfix Leave the cell unchanged when a required blend allocation fails.
+	Int oldNumBlendedTiles = m_numBlendedTiles;
 	Short newNdx = findOrCreateBlendTile(&blendInfo);
 	if (newNdx >= 0) {
-		Int ndx = (yIndex*m_width)+xIndex;
+		Short newBaseNdx = m_blendTileNdxes[ndx];
+		//force the primary layer to flip if the extra blend layer needs flip.
+		//we only do this on vertical/horizontal base blends because they work in either flip cases.
+		if (baseBlendInfo && flipped && !baseIsDiagonal)
+		{
+			//Find a new tile so as not to affect other cells using the base one.
+			TBlendTileInfo tempBlendTileInfo = *baseBlendInfo;
+			tempBlendTileInfo.inverted |= FLIPPED_MASK;
+			newBaseNdx = findOrCreateBlendTile(&tempBlendTileInfo);
+			if (newBaseNdx < 0) {
+				// Discard any secondary record allocated by this failed edit.
+				m_numBlendedTiles = oldNumBlendedTiles;
+				return;
+			}
+		}
+
+		updateFlatCellForAdjacentCliffs(xIndex, yIndex, getTextureClassFromNdx(blendTileNdx));
 		m_tileNdxes[ndx] = curTileNdx;
-		if (TheGlobalData->m_use3WayTerrainBlends && m_blendTileNdxes[ndx] != 0)
+		if (baseBlendInfo)
 		{
 			//this tile already has a blend applied to it.  So we put the new blend into the
 			//secondary layer.
 			m_extraBlendTileNdxes[ndx]=newNdx;
-			//force the primary layer to flip if the extra blend layer needs flip.
-			//we only do this on vertical/horizontal base blends because they work in either flip cases.
-			if (flipped && !baseIsDiagonal)
-				m_blendedTiles[m_blendTileNdxes[ndx]].inverted |= FLIPPED_MASK;
+			m_blendTileNdxes[ndx] = newBaseNdx;	//remap this tile to use a new one.
 		}
 		else
 			m_blendTileNdxes[ndx] = newNdx;
@@ -1895,7 +1890,7 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 	m_dataSize = newDataSize;
 	delete(m_cellCliffState);
 	delete(m_cellFlipState);
-	Int numBytesX = (m_width+1)/8;	//how many bytes to fit all bitflags
+	Int numBytesX = (m_width+7)/8;	//how many bytes to fit all bitflags
  	m_flipStateWidth=numBytesX;
 
 	m_cellFlipState	= MSGNEW("WorldHeightMapEdit::resize") UnsignedByte[numBytesX*m_height];
@@ -3454,6 +3449,5 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 	}
 
 	(*outNdx) = -1;
+	(*outHandle) = -1;
 }
-
-
