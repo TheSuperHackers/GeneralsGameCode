@@ -40,3 +40,7 @@ add_subdirectory(Main)
 if (RTS_BUILD_GENERALS_TOOLS OR RTS_BUILD_GENERALS_EXTRAS)
     add_subdirectory(Tools)
 endif()
+
+if (RTS_BUILD_OPTION_TESTS)
+    add_subdirectory(GoogleTest)
+endif()

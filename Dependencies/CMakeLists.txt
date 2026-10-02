@@ -23,3 +23,7 @@ else()
     add_library(deps_dbghelp INTERFACE)
     add_library(deps_usp10 INTERFACE)
 endif()
+
+if(RTS_BUILD_OPTION_TESTS)
+    add_subdirectory(GoogleTest)
+endif()
