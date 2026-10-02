@@ -815,6 +815,16 @@ static void saveOptions()
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	// Set Trigger Hot Key On Down
+	{
+		Bool onDown = pref->getTriggerHotKeyOnDown();
+		AsciiString prefString;
+		prefString = onDown ? "yes" : "no";
+		(*pref)["TriggerHotKeyOnDown"] = prefString;
+		TheWritableGlobalData->m_triggerHotKeyOnDown = onDown;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	// Set Game Window Transition Speed Multiplier
 	{
 		Real speed = pref->getGameWindowTransitionSpeedMultiplier();
