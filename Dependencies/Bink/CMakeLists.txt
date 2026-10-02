@@ -13,6 +13,6 @@ target_include_directories(deps_bink PUBLIC
 )
 
 target_link_libraries(deps_bink PRIVATE
-    deps_precompiled # Gives force included headers. Link early.
+    depsi_always # Gives force included headers. Link early.
     deps_utility
 )
