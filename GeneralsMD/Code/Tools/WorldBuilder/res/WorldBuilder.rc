@@ -1322,7 +1322,8 @@ BEGIN
                     225,117,8
 END
 
-IDD_EXPORT_SCRIPTS_OPTIONS DIALOG DISCARDABLE  0, 0, 186, 153
+// TheSuperHackers @fix Keep the export buttons inside the expanded dialog.
+IDD_EXPORT_SCRIPTS_OPTIONS DIALOG DISCARDABLE  0, 0, 186, 173
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Export Script Options"
 FONT 8, "MS Sans Serif"
@@ -1342,7 +1343,7 @@ BEGIN
     CONTROL         "Export selected scripts.",IDC_SELECTED_SCRIPTS,"Button",
                     BS_AUTORADIOBUTTON,15,127,99,8
     GROUPBOX        "Export Mode:",IDC_STATIC,7,104,172,39
-    CONTROL         "Include sides.",IDC_SIDES,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Include sides.",IDC_SIDES,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,12,79,154,9
 END
 
@@ -2208,7 +2209,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 179
         TOPMARGIN, 7
-        BOTTOMMARGIN, 146
+        BOTTOMMARGIN, 166
     END
 
     IDD_GROVE_OPTIONS, DIALOG
