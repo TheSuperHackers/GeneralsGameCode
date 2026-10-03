@@ -3581,7 +3581,7 @@ void Object::xfer( Xfer *xfer )
 {
 
 	// version
-#if RETAIL_COMPATIBLE_XFER_SAVE
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
 	const XferVersion currentVersion = 8;
@@ -3648,17 +3648,19 @@ void Object::xfer( Xfer *xfer )
 	}
 	else
 	{
-		static_assert(m_status.size() == OBJECT_STATUS_COUNT && OBJECT_STATUS_COUNT == 29 + 16,
-			"Generals object status count was 29 originally & 16 types from Zero Hour");
+		// TheSuperHackers @info Originally OBJECT_STATUS_IS_CARBOMB (28) + 1 would equal OBJECT_STATUS_COUNT,
+		// but the enum has been expanded with Zero Hour specific entries. Ignore the upper 3 bits as they're unused.
+		constexpr const UnsignedInt count = OBJECT_STATUS_IS_CARBOMB + 1;
+		constexpr const UnsignedInt mask = (1 << count) - 1;
+		static_assert(count == 29, "This code needs to be updated when inserting new entries into ObjectStatusTypes");
 
-		// TheSuperHackers @info Ignore the upper 3 bits because they're unused in Generals.
 		// Bitset / 32-bit int conversion is offset by one bit for OBJECT_STATUS_NONE (0).
-		UnsignedInt status = (m_status.toUnsignedInt() & 0x1FFFFFFF) >> 1;
+		UnsignedInt status = (m_status.toUnsignedInt() & mask) >> 1;
 		xfer->xferUnsignedInt(&status);
 
 		m_status.clear();
 
-		for( int i = 0; i < 29; i++ )
+		for( int i = 0; i < count; i++ )
 		{
 			UnsignedInt bit = 1u<<i;
 			if( status & bit )
@@ -3715,18 +3717,26 @@ void Object::xfer( Xfer *xfer )
 	}
 
 	// disabled till frame
-	if (version <= 7)
 	{
-		static_assert(ARRAYSIZE(m_disabledTillFrame) == DISABLED_COUNT && DISABLED_COUNT == 10 + 3,
-			"Generals disabled count was 10 originally & 3 types from Zero Hour");
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_DEFAULT]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_HACKED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_EMP]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_HELD]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_PARALYZED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_UNMANNED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_UNDERPOWERED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_FREEFALL]);
 
-		xfer->xferUser(m_disabledTillFrame, 8 * sizeof(UnsignedInt));
-		xfer->xferUnsignedInt(&m_disabledTillFrame[11]);
-		xfer->xferUnsignedInt(&m_disabledTillFrame[12]);
-	}
-	else
-	{
-		xfer->xferUser(m_disabledTillFrame, sizeof(m_disabledTillFrame));
+		if (version >= 8)
+		{
+			// TheSuperHackers @info These 3 types are Zero Hour specific, but inserted in the middle of the enum.
+			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_AWESTRUCK]);
+			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_BRAINWASHED]);
+			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_SUBDUED]);
+		}
+
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_SCRIPT_DISABLED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_SCRIPT_UNDERPOWERED]);
 	}
 
 	// OK, now that we have xferred our status bits and disabled data, it's safe to set the team...
