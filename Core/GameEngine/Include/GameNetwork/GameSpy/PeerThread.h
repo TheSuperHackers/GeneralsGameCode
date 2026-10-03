@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include <Utility/string_adapter.h>
-
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 

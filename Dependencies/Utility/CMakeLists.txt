@@ -25,7 +25,6 @@ set(UTILITY_SRC
     Utility/time_compat.h
     Utility/utility_adapter.h
     Utility/wchar_compat.h
-    Utility/WideChar.h
 )
 
 ## core_utility
@@ -37,12 +36,3 @@ target_sources(core_utility PRIVATE ${UTILITY_SRC})
 target_link_libraries(core_utility INTERFACE
     core_precompiled # Gives force included headers. Link early.
 )
-
-# Make the character type available throughout the project, including builds without PCH.
-if(MSVC)
-    target_compile_options(core_utility INTERFACE
-        "$<$<COMPILE_LANGUAGE:C,CXX>:/FIUtility/WideChar.h>")
-else()
-    target_compile_options(core_utility INTERFACE
-        "$<$<COMPILE_LANGUAGE:C,CXX>:SHELL:-include Utility/WideChar.h>")
-endif()

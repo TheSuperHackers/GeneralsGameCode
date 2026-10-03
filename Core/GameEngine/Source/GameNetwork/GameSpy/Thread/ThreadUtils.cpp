@@ -27,7 +27,6 @@
 // Author: Matthew D. Campbell, July 2002
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-#include <Utility/string_adapter.h>
 
 #include "WWLib/utf8.h"
 

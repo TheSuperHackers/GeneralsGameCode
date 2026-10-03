@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include <Utility/WideChar.h>
-
 // Fundamental type definitions
 
 typedef float Real;
@@ -36,5 +34,6 @@ typedef char Byte;
 typedef unsigned char UnsignedByte;
 
 typedef char Char;
+typedef unichar WideChar;
 
 typedef bool Bool;

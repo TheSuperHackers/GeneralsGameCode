@@ -17,9 +17,6 @@
 
 #pragma once
 
-#include "Precompiled/CppTypes.h"
-#include <stddef.h>
-
 // Shared project wide-character type, currently using the native representation.
 // Changing it also requires adapting wide literals, character traits, and CRT/platform APIs.
-typedef wchar_t WideChar;
+typedef wchar_t unichar;
