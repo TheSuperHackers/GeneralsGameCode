@@ -3573,8 +3573,9 @@ void Object::crc( Xfer *xfer )
 	* 5: m_isReceivingDifficultyBonus
 	* 6: We do indeed need to save m_containedBy.  The comment misrepresents what the contain module will do.
 	* 7: save full mtx, not pos+orient.
-	* 8: TheSuperHackers @tweak Conversion of object status bits from UnsignedInt to BitFlags<> (backported from Zero Hour).
-	*    TheSuperHackers @tweak Serialize all disabled types (m_disabledTillFrame) including Zero Hour only types.
+	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>. Added in Zero Hour
+	*    TheSuperHackers @tweak Serialize all object status types (m_status) and disabled types (m_disabledTillFrame)
+	*    including Zero Hour specific entries.
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
@@ -3654,7 +3655,7 @@ void Object::xfer( Xfer *xfer )
 		constexpr const UnsignedInt mask = (1 << count) - 1;
 		static_assert(count == 29, "This code needs to be updated when inserting new entries into ObjectStatusTypes");
 
-		// bitset / 32-bit int conversion is offset by one bit for OBJECT_STATUS_NONE (0)
+		// shift by one bit: OBJECT_STATUS_NONE (0) has a dedicated bit in the bitset but not in the integer
 		UnsignedInt status = (m_status.toUnsignedInt() & mask) >> 1;
 		xfer->xferUnsignedInt(&status);
 
