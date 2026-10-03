@@ -396,6 +396,9 @@ public:
 
 	/// Return true if drawable has been marked as "selected"
 	Bool isSelected() const {	return m_selected; }
+	// TheSuperHackers @feature Green selection ring decal (Options.ini: SelectionCircle).
+	// Client only -- never xfer'd, never read by game logic.
+	void updateSelectionDecal( void );
 	void onSelected();														///< Work unrelated to selection that must happen at time of selection
 	void onUnselected();													///< Work unrelated to selection that must happen at time of unselection
 

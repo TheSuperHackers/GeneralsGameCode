@@ -82,6 +82,9 @@ public:
 	virtual void setTerrainDecal(TerrainDecalType type) {};
 	virtual void setTerrainDecalSize(Real x, Real y) {};
 	virtual void setTerrainDecalOpacity(Real o) {};
+	// TheSuperHackers @feature Selection ring decal, in its own slot so it does not evict the
+	// horde or chem suit decal while a unit is selected.
+	virtual void setSelectionDecal(Bool enable, Real radius) {};
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) = 0;
 
