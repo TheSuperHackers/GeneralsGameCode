@@ -18,15 +18,11 @@
 
 #pragma once
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-
 namespace UnicodeBidi
 {
 
-// Returns the UAX #9 paragraph base embedding level: 0 for LTR, 1 for RTL.
-WORD Get_Paragraph_Base_Level(const WCHAR *text, int length);
+// Returns the first paragraph's UAX #9 P2/P3 base level: 0 for LTR, 1 for RTL.
+// Accepts UTF-16 code units or scalar values on platforms with 32-bit wchar_t.
+unsigned short Get_Paragraph_Base_Level(const wchar_t *text, int length);
 
 }

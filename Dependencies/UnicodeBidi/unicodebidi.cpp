@@ -35,30 +35,30 @@ struct DirectionRange
 	Direction Value;
 };
 
-static const DirectionRange SupplementaryDirectionRanges[] = {
-#include "supplementarybidi.inl"
+static const DirectionRange DirectionRanges[] = {
+#include "bididirection.inl"
 };
 
-static Direction Get_Supplementary_Direction(unsigned codepoint)
+static Direction Get_Direction(unsigned codepoint)
 {
 	unsigned first = 0;
-	unsigned last = sizeof(SupplementaryDirectionRanges) / sizeof(SupplementaryDirectionRanges[0]);
+	unsigned last = sizeof(DirectionRanges) / sizeof(DirectionRanges[0]);
 
 	while (first < last) {
 		const unsigned middle = first + (last - first) / 2;
-		if (codepoint < SupplementaryDirectionRanges[middle].First) {
+		if (codepoint < DirectionRanges[middle].First) {
 			last = middle;
-		} else if (codepoint > SupplementaryDirectionRanges[middle].Last) {
+		} else if (codepoint > DirectionRanges[middle].Last) {
 			first = middle + 1;
 		} else {
-			return SupplementaryDirectionRanges[middle].Value;
+			return DirectionRanges[middle].Value;
 		}
 	}
 
 	return LeftToRight;
 }
 
-static bool Is_Paragraph_Separator(WCHAR ch)
+static bool Is_Paragraph_Separator(unsigned ch)
 {
 	return ch == L'\n' || ch == L'\r' || (ch >= 0x001C && ch <= 0x001E) ||
 		ch == 0x0085 || ch == 0x2029;
@@ -69,23 +69,23 @@ static bool Is_Paragraph_Separator(WCHAR ch)
 namespace UnicodeBidi
 {
 
-WORD Get_Paragraph_Base_Level(const WCHAR *text, int length)
+unsigned short Get_Paragraph_Base_Level(const wchar_t *text, int length)
 {
 	int isolate_depth = 0;
 
 	for (int index = 0; index < length; ++index) {
-		const WCHAR ch = text[index];
+		unsigned codepoint = static_cast<unsigned>(text[index]);
 
 		// First-strong detection applies to one bidi paragraph only.
-		if (Is_Paragraph_Separator(ch)) {
+		if (Is_Paragraph_Separator(codepoint)) {
 			break;
 		}
 
-		if (ch >= 0x2066 && ch <= 0x2068) {
+		if (codepoint >= 0x2066 && codepoint <= 0x2068) {
 			++isolate_depth;
 			continue;
 		}
-		if (ch == 0x2069) {
+		if (codepoint == 0x2069) {
 			if (isolate_depth > 0) {
 				--isolate_depth;
 			}
@@ -97,23 +97,20 @@ WORD Get_Paragraph_Base_Level(const WCHAR *text, int length)
 			continue;
 		}
 
-		Direction direction = Neutral;
-		if (ch >= 0xD800 && ch <= 0xDBFF) {
+		// Decode a UTF-16 pair before classification; lone surrogates are ignored.
+		if (codepoint >= 0xD800 && codepoint <= 0xDBFF) {
 			if (index + 1 < length && text[index + 1] >= 0xDC00 && text[index + 1] <= 0xDFFF) {
-				const unsigned codepoint = 0x10000 + ((ch - 0xD800) << 10) + (text[++index] - 0xDC00);
-				direction = Get_Supplementary_Direction(codepoint);
+				const unsigned high = codepoint - 0xD800;
+				const unsigned low = static_cast<unsigned>(text[++index]) - 0xDC00;
+				codepoint = 0x10000 + (high << 10) + low;
+			} else {
+				continue;
 			}
-		} else if (ch < 0xDC00 || ch > 0xDFFF) {
-			WORD type = C2_NOTAPPLICABLE;
-			if (::GetStringTypeW(CT_CTYPE2, &ch, 1, &type)) {
-				if (type == C2_LEFTTORIGHT) {
-					direction = LeftToRight;
-				} else if (type == C2_RIGHTTOLEFT) {
-					direction = RightToLeft;
-				}
-			}
+		} else if ((codepoint >= 0xDC00 && codepoint <= 0xDFFF) || codepoint > 0x10FFFF) {
+			continue;
 		}
 
+		const Direction direction = Get_Direction(codepoint);
 		if (direction != Neutral) {
 			return direction == RightToLeft ? 1 : 0;
 		}

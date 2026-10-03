@@ -1,7 +1,7 @@
 set(UNICODEBIDI_SRC
     unicodebidi.cpp
     unicodebidi.h
-    supplementarybidi.inl
+    bididirection.inl
 )
 
 add_library(unicodebidi STATIC)
