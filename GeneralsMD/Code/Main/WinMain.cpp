@@ -69,6 +69,7 @@
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
+#include "Common/CrashReporting.h"
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
@@ -865,13 +866,14 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 #ifdef RTS_ENABLE_CRASHDUMP
-		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
-		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData());
+		// Initialize reporting after parseCommandLineForStartup provides the user-data path.
+		CrashReporting::initialize(TheGlobalData->getPath_UserData(), VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM);
 #endif
 
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
+			CrashReporting::shutdown();
 			return exitcode;
 		}
 
@@ -909,6 +911,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			DEBUG_LOG(("Generals is already running...Bail!"));
 			delete TheVersion;
 			TheVersion = nullptr;
+			CrashReporting::shutdown();
 			shutdownMemoryManager();
 			return exitcode;
 		}
@@ -940,7 +943,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 
 #ifdef RTS_ENABLE_CRASHDUMP
-	MiniDumper::shutdownMiniDumper();
+	CrashReporting::shutdown();
 #endif
 	TheUnicodeStringCriticalSection = nullptr;
 	TheDmaCriticalSection = nullptr;

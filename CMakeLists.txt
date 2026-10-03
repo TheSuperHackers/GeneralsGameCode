@@ -89,6 +89,8 @@ endif()
 
 add_subdirectory(resources)
 
+include(cmake/crashpad.cmake)
+
 add_subdirectory(Core)
 
 # Add main build targets

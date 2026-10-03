@@ -176,6 +176,18 @@ jobs:
               Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
           }
 
+          # Preserve Crashpad build metadata and dependency notices beside
+          # the game, matched handler and adapter DLL.
+          $gameOutput = if ("${{ inputs.preset }}" -like "win32*") {
+            "$buildDir\${{ inputs.game }}\$configToUse"
+          } else {
+            "$buildDir\${{ inputs.game }}"
+          }
+          Get-ChildItem -Path $gameOutput -Filter "*-crashpad-build.json" -File |
+            Copy-Item -Destination $artifactsDir -Force
+          if (Test-Path "$gameOutput\crashpad-notices") {
+            Copy-Item -Path "$gameOutput\crashpad-notices" -Destination $artifactsDir -Recurse -Force
+          }
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
       - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
@@ -183,5 +195,5 @@ jobs:
         with:
           name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
           path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
-          retention-days: 30
+          retention-days: 90
           if-no-files-found: error

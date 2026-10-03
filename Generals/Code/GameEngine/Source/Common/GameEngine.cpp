@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, April 2001
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "Common/CrashReporting.h"
 
 #include "Common/ActionManager.h"
 #include "Common/AudioAffect.h"
@@ -401,6 +402,9 @@ void GameEngine::init()
 
 		// special-case: parse command-line parameters after loading global data
 		CommandLine::parseCommandLineForEngineInit();
+
+		// Generals obtains its user-data path from the GameData INI files above.
+		CrashReporting::userDirectoryReady(TheGlobalData->getPath_UserData());
 
 		TheArchiveFileSystem->loadMods();
 
