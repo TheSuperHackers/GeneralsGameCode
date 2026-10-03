@@ -142,7 +142,7 @@ class GameTextManager : public GameTextInterface
 		virtual void					update() {};			///< update text manager
 		virtual void					reset();					///< Resets the text system
 
-		virtual const WideChar* fetch( const Char* label );		///< Returns the associated labeled unicode text
+		virtual const WideChar * fetch( const Char *label );		///< Returns the associated labeled unicode text
 	protected:
 
 		Int							m_textCount;
@@ -1045,7 +1045,7 @@ quit:
 // *GameTextManager::fetch
 //============================================================================
 
-const WideChar* GameTextManager::fetch( const Char* label )
+const WideChar * GameTextManager::fetch( const Char *label )
 {
 	DEBUG_ASSERTCRASH ( m_initialized, ("String Manager has not been m_initialized") );
 

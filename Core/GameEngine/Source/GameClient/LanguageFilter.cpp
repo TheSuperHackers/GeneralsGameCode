@@ -87,7 +87,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 	UnicodeString token;
 
 	while (newLine.nextToken(&token, L" ;,.!?:=\\/><`~()&^%#\n\t")) {
-		WideChar* pos = wcsstr(buf, token.str());
+		WideChar *pos = wcsstr(buf, token.str());
 		if (pos == nullptr) {
 			DEBUG_CRASH(("Couldn't find the token in its own string."));
 			continue;

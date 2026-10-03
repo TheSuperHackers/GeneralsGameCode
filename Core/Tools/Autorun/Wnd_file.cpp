@@ -170,8 +170,8 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
  * MSG -- Write Message to Debug file with line and filename.				*
  *																			*
  * INPUT:		int		line		--	line where message originated.	   	*
- *				WideChar* filename	-- file where message originated.	   	*
- *				WideChar* fmt		-- variable argument list. 				*
+ *				WideChar *filename	-- file where message originated.	   	*
+ *				WideChar *fmt		-- variable argument list. 				*
  *																			*
  * OUTPUT:		none.														*
  *																			*
@@ -181,7 +181,7 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
  *   08/19/1998   MML : Created.											*
  *==========================================================================*/
 
-void __cdecl Msg( int line, const char* filename, const WideChar* fmt, UINT codepage, ... )
+void __cdecl Msg( int line, const char *filename, const WideChar *fmt, UINT codepage, ... )
 {
 	WideChar		szBuffer1[ MAX_PATH * 3 ];
 	WideChar		szBuffer2[ MAX_PATH * 3 ];

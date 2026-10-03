@@ -232,11 +232,7 @@ public:
 	UnsignedInt exeCRC() { return m_exeCRC; }
 	UnsignedInt iniCRC() { return m_iniCRC; }
 	UnsignedInt gameVersion() { return m_gameVersion; }
-	stl::wstring getLocalStagingServerName()
-	{
-		return m_localStagingServerName;
-	}
-
+	stl::wstring getLocalStagingServerName() { return m_localStagingServerName; }
 	Int getLocalRoomID() { return m_localRoomID; }
 	std::string ladderIP() { return m_ladderIP; }
 	UnsignedShort ladderPort() { return m_ladderPort; }

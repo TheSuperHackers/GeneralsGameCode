@@ -3751,7 +3751,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						wFileName = Locale_GetString(HELP_FILENAME);
 
 						std::string fname;
-						const WideChar* tmp = wFileName.c_str();
+						const WideChar *tmp = wFileName.c_str();
 						char hack[2] = "a";
 						while (*tmp)
 						{

@@ -28,5 +28,5 @@
 
 #pragma once
 
-stl::wstring MultiByteToWideCharSingleLine( const char* orig );
+stl::wstring MultiByteToWideCharSingleLine( const char *orig );
 std::string WideCharStringToMultiByte( const WideChar *orig );
