@@ -71,6 +71,7 @@
 #define  STRICT
 #include <windows.h>
 #include <windowsx.h>
+#include <shellapi.h>
 #include <assert.h>
 #include <ctype.h>
 #include <direct.h>

@@ -39,6 +39,7 @@
 #include "DebugPrint.h"
 #include <windows.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
 

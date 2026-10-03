@@ -27,7 +27,6 @@
 // Debug exception dialog test program
 //////////////////////////////////////////////////////////////////////////////
 #define STRICT
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <commctrl.h>
 #include <stdio.h>

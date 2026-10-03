@@ -26,3 +26,6 @@
 
 // The Max SDK defines its own PI
 #undef PI
+
+// The Max SDK expects Windows.h in full glory
+#undef WIN32_LEAN_AND_MEAN

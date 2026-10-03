@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <commctrl.h>
+#include <commdlg.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"

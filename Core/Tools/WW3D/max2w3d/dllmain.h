@@ -38,6 +38,7 @@
 #pragma once
 
 #include <windows.h>
+#include <commdlg.h>
 
 extern HINSTANCE AppInstance;
 

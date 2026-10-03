@@ -37,9 +37,10 @@
 #ifndef _WIN32
 #include <netinet/in.h>
 #else
-#define Win32_Winsock
 #include <windows.h>
+#include <winsock.h>
 #endif
+
 #include "field.h"
 
 

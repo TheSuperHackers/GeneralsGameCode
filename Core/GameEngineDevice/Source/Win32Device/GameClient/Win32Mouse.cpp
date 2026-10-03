@@ -27,7 +27,6 @@
 // Desc:       Interface for the mouse using only the Win32 messages
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include "Common/Debug.h"
