@@ -75,6 +75,8 @@ public:
 	virtual Bool isActive() {return m_isActive;}	///< returns whether app has OS focus.
 	virtual void setIsActive(Bool isActive) { m_isActive = isActive; };
 
+	virtual UnsignedInt getTicksMsec() const;	///< Get a monotonic cross-platform timestamp in milliseconds
+
 protected:
 
 	virtual void resetSubsystems();
