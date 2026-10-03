@@ -6031,7 +6031,7 @@ void InGameUI::recreateControlBar()
 
 	delete TheControlBar;
 	TheControlBar = NEW ControlBar;
-	TheControlBar->init();	
+	TheControlBar->init();
 }
 
 void InGameUI::refreshCustomUiResources()
