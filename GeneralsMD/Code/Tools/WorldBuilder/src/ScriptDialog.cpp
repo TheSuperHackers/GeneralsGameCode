@@ -1576,10 +1576,10 @@ void ScriptDialog::OnLoad()
 				curSide = m_curSelection.m_playerIndex;
 			} else {
 				Int j;
+				// TheSuperHackers @bugfix Match each imported player to the current map side by name.
 				for (j=0; j<m_sides.getNumSides(); j++) {
-					// Using i as an index assumes that i < m_sides.getNumSides.  Is that safe???
- 					AsciiString name = m_sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
-					if (name == m_readPlayerNames[j]) {
+					AsciiString name = m_sides.getSideInfo(j)->getDict()->getAsciiString(TheKey_playerName);
+					if (name == m_readPlayerNames[i]) {
 						curSide = j;
 						break;
 					}
