@@ -91,6 +91,7 @@ public:
 	virtual void draw( Int x, Int y, Color color, Color dropColor, Int xDrop, Int yDrop ) = 0;  ///< render text with the drop shadow being at the offsets passed in
 	virtual void getSize( Int *width, Int *height ) = 0;  ///< get render size
 	virtual Int getWidth( Int charPos = -1 ) = 0; ///< get text with up to charPos characters, 1- = all characters
+	virtual void setComplexTextEnabled( Bool enabled ) = 0; ///< enable shaped complex text for this string
 
 	virtual void setUseHotkey( Bool useHotkey, Color hotKeyColor ) = 0;
 
