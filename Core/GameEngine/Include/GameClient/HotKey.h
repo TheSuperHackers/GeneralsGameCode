@@ -98,6 +98,11 @@ public:
 	AsciiString searchHotKey( const AsciiString& label);
 	AsciiString searchHotKey( const UnicodeString& uStr );
 
+	// TheSuperHackers @feature Is this key currently claimed by a visible, enabled command
+	// button? Used so grid hotkeys can take precedence over a meta event bound to the same
+	// letter, but only while a button actually wants it.
+	Bool isHotKeyClaimed( const AsciiString& key ) const;
+
 private:
 	typedef std::map<AsciiString, HotKey> HotKeyMap;
 	HotKeyMap m_hotKeyMap;
