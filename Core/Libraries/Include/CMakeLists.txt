@@ -1,4 +1,5 @@
 set(LIBRARIES_INCLUDE_SRC
+    Lib/BaseDefines.h
     Lib/BaseFunctions.h
     Lib/BaseType.h
     Lib/Coord2D.h

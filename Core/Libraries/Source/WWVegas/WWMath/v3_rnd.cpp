@@ -118,7 +118,7 @@ void Vector3HollowSphereRandomizer::Get_Vector(Vector3 &vector)
 		if (v_l2 <= 1.0f && v_l2 > 0.0f) break;
 	}
 
-	float scale = Radius * WWMath::Inv_Sqrt(v_l2);
+	float scale = Radius * WWMath::Inv_Sqrt_Legacy(v_l2);
 
 	vector.X *= scale;
 	vector.Y *= scale;

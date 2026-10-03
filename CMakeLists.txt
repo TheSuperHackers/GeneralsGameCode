@@ -66,6 +66,11 @@ endif()
 
 include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
+if (IS_VS6_BUILD)
+    add_library(gamemath INTERFACE)
+else()
+    include(cmake/gamemath.cmake)
+endif()
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
 
