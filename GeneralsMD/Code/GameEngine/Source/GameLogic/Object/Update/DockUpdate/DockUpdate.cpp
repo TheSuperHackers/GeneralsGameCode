@@ -29,6 +29,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Debug.h"
+#include "Common/GameState.h"
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/GameLogic.h"
@@ -46,6 +47,21 @@ DockUpdateModuleData::DockUpdateModuleData()
 	m_isAllowPassthrough = TRUE;
 }
 
+// TheSuperHackers @bugfix Bound fixed docking positions by the bone buffer while preserving dynamic docking.
+static void parseNumberApproachPositions(INI *ini, void *instance, void *store, const void *userData)
+{
+	Int count = INI::scanInt(ini->getNextToken());
+	if( count < DYNAMIC_APPROACH_VECTOR_FLAG || count > DEFAULT_APPROACH_VECTOR_SIZE )
+	{
+		DEBUG_LOG(( "DockUpdate - Clamping invalid NumberApproachPositions %d to a usable fixed count", count ));
+		if( count < 1 )
+			count = 1;
+		else
+			count = DEFAULT_APPROACH_VECTOR_SIZE;
+	}
+	*(Int *)store = count;
+}
+
 /*static*/ void DockUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
@@ -53,7 +69,7 @@ DockUpdateModuleData::DockUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "NumberApproachPositions"	,INI::parseInt,		nullptr, offsetof( DockUpdateModuleData, m_numberApproachPositionsData ) },
+		{ "NumberApproachPositions"	,parseNumberApproachPositions,		nullptr, offsetof( DockUpdateModuleData, m_numberApproachPositionsData ) },
 		{ "AllowsPassthrough"				,INI::parseBool,	nullptr, offsetof( DockUpdateModuleData, m_isAllowPassthrough ) },
 		{ nullptr, nullptr, nullptr, 0 }
 
@@ -585,6 +601,13 @@ void DockUpdate::xfer( Xfer *xfer )
 
 	// # approach positions
 	xfer->xferInt( &m_numberApproachPositions );
+	// TheSuperHackers @bugfix Validate saved docking counts before resizing or filling their arrays.
+	if( m_numberApproachPositions < DYNAMIC_APPROACH_VECTOR_FLAG ||
+			m_numberApproachPositions > DEFAULT_APPROACH_VECTOR_SIZE )
+	{
+		DEBUG_LOG(( "DockUpdate::xfer - Invalid approach position count" ));
+		throw SC_INVALID_DATA;
+	}
 
 	// positions loaded
 	xfer->xferBool( &m_positionsLoaded );
@@ -592,6 +615,12 @@ void DockUpdate::xfer( Xfer *xfer )
 	// approach positions
 	Int vectorSize = m_approachPositions.size();
 	xfer->xferInt( &vectorSize );
+	if( vectorSize < 0 ||
+			(m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG && vectorSize != m_numberApproachPositions) )
+	{
+		DEBUG_LOG(( "DockUpdate::xfer - Invalid approach vector size" ));
+		throw SC_INVALID_DATA;
+	}
 	m_approachPositions.resize(vectorSize);
 	Int vectorIndex = 0;
 	for( ; vectorIndex < vectorSize; ++vectorIndex )
@@ -605,6 +634,11 @@ void DockUpdate::xfer( Xfer *xfer )
 	// approach position owners
 	vectorSize = m_approachPositionOwners.size();
 	xfer->xferInt( &vectorSize );
+	if( vectorSize < 0 || vectorSize != m_approachPositions.size() )
+	{
+		DEBUG_LOG(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
+		throw SC_INVALID_DATA;
+	}
 	m_approachPositionOwners.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
 	{
@@ -614,6 +648,11 @@ void DockUpdate::xfer( Xfer *xfer )
 	// approach positions reached
 	vectorSize = m_approachPositionReached.size();
 	xfer->xferInt( &vectorSize );
+	if( vectorSize < 0 || vectorSize != m_approachPositions.size() )
+	{
+		DEBUG_LOG(( "DockUpdate::xfer - Inconsistent approach vector sizes" ));
+		throw SC_INVALID_DATA;
+	}
 	m_approachPositionReached.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
 	{
