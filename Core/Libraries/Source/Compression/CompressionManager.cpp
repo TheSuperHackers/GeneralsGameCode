@@ -41,7 +41,7 @@
 
 const char *CompressionManager::getCompressionNameByType( CompressionType compType )
 {
-	static const char *s_compressionNames[COMPRESSION_MAX+1] = {
+	static const char *s_compressionNames[] = {
 		"No compression",
 		"RefPack",
 		"LZHL",
@@ -57,13 +57,14 @@ const char *CompressionManager::getCompressionNameByType( CompressionType compTy
 		"BTree",
 		"Huff",
 	};
+	static_assert(ARRAY_SIZE(s_compressionNames) == COMPRESSION_MAX + 1, "Incorrect array size");
 	return s_compressionNames[compType];
 }
 
 // For perf timers, so we can have separate ones for compression/decompression
 const char *CompressionManager::getDecompressionNameByType( CompressionType compType )
 {
-	static const char *s_decompressionNames[COMPRESSION_MAX+1] = {
+	static const char *s_decompressionNames[] = {
 		"d_None",
 		"d_RefPack",
 		"d_NoxLZW",
@@ -79,6 +80,7 @@ const char *CompressionManager::getDecompressionNameByType( CompressionType comp
 		"d_BTree",
 		"d_Huff",
 	};
+	static_assert(ARRAY_SIZE(s_decompressionNames) == COMPRESSION_MAX + 1, "Incorrect array size");
 	return s_decompressionNames[compType];
 }
 

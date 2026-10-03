@@ -58,37 +58,41 @@
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
-static const ModelConditionFlagType theOpeningFlags[DOOR_COUNT_MAX] =
+static const ModelConditionFlagType theOpeningFlags[] =
 {
 	MODELCONDITION_DOOR_1_OPENING,
 	MODELCONDITION_DOOR_2_OPENING,
 	MODELCONDITION_DOOR_3_OPENING,
 	MODELCONDITION_DOOR_4_OPENING
 };
+static_assert(ARRAY_SIZE(theOpeningFlags) == DOOR_COUNT_MAX, "Incorrect array size");
 
-static const ModelConditionFlagType theClosingFlags[DOOR_COUNT_MAX] =
+static const ModelConditionFlagType theClosingFlags[] =
 {
 	MODELCONDITION_DOOR_1_CLOSING,
 	MODELCONDITION_DOOR_2_CLOSING,
 	MODELCONDITION_DOOR_3_CLOSING,
 	MODELCONDITION_DOOR_4_CLOSING
 };
+static_assert(ARRAY_SIZE(theClosingFlags) == DOOR_COUNT_MAX, "Incorrect array size");
 
-static const ModelConditionFlagType theWaitingOpenFlags[DOOR_COUNT_MAX] =
+static const ModelConditionFlagType theWaitingOpenFlags[] =
 {
 	MODELCONDITION_DOOR_1_WAITING_OPEN,
 	MODELCONDITION_DOOR_2_WAITING_OPEN,
 	MODELCONDITION_DOOR_3_WAITING_OPEN,
 	MODELCONDITION_DOOR_4_WAITING_OPEN
 };
+static_assert(ARRAY_SIZE(theWaitingOpenFlags) == DOOR_COUNT_MAX, "Incorrect array size");
 
-static const ModelConditionFlagType theWaitingToCloseFlags[DOOR_COUNT_MAX] =
+static const ModelConditionFlagType theWaitingToCloseFlags[] =
 {
 	MODELCONDITION_DOOR_1_WAITING_TO_CLOSE,
 	MODELCONDITION_DOOR_2_WAITING_TO_CLOSE,
 	MODELCONDITION_DOOR_3_WAITING_TO_CLOSE,
 	MODELCONDITION_DOOR_4_WAITING_TO_CLOSE
 };
+static_assert(ARRAY_SIZE(theWaitingToCloseFlags) == DOOR_COUNT_MAX, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

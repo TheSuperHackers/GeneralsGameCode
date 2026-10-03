@@ -960,6 +960,7 @@ static DistCalcProc theDistCalcProcs[] =
 	distCalcProc_BoundaryAndBoundary_2D,
 	distCalcProc_BoundaryAndBoundary_3D,
 };
+static_assert(ARRAY_SIZE(theDistCalcProcs) == DISTANCE_CALCULATION_TYPE_COUNT, "Incorrect array size");
 
 // NOTE: This *DEPENDS* on the order of the geometry enum defines
 static CollideTestProc theCollideTestProcs[] =
@@ -974,6 +975,7 @@ static CollideTestProc theCollideTestProcs[] =
 	collideTest_Box_Cylinder,
 	collideTest_Box_Box
 };
+static_assert(ARRAY_SIZE(theCollideTestProcs) == GEOMETRY_NUM_TYPES * GEOMETRY_NUM_TYPES, "Incorrect array size");
 
 //-----------------------------------------------------------------------------
 //         Public Data

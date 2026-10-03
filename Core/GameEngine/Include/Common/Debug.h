@@ -154,7 +154,7 @@ class AsciiString;
 		DEBUG_LEVEL_NET = 0,           // in-game network
 		DEBUG_LEVEL_MAX
 	};
-	extern const char *TheDebugLevels[DEBUG_LEVEL_MAX];
+	extern const char *TheDebugLevels[];
 
 	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0) // Log message with trailing new line character (LF)
 	#define DEBUG_LOG_RAW(m)				do { { DebugLogRaw m ; } } while (0) // Log message without trailing new line character (LF)
