@@ -1588,9 +1588,10 @@ RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
 
 	while (msg != nullptr) {
 		next = msg->next();
-		if ((msg->getType() > GameMessage::MSG_BEGIN_NETWORK_MESSAGES) &&
-				(msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES) &&
-				(msg->getType() != GameMessage::MSG_LOGIC_CRC)) {
+		if (msg->getType() > GameMessage::MSG_BEGIN_NETWORK_MESSAGES && msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES)
+		{
+			DEBUG_ASSERTCRASH(msg->getType() != GameMessage::MSG_LOGIC_CRC,
+				("Use MSG_LOGIC_CRC_PLAYBACK instead of MSG_LOGIC_CRC during replay playback"));
 
 			deleteInstance(msg);
 		}
