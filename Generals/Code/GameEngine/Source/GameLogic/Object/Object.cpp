@@ -3654,7 +3654,7 @@ void Object::xfer( Xfer *xfer )
 		constexpr const UnsignedInt mask = (1 << count) - 1;
 		static_assert(count == 29, "This code needs to be updated when inserting new entries into ObjectStatusTypes");
 
-		// Bitset / 32-bit int conversion is offset by one bit for OBJECT_STATUS_NONE (0).
+		// bitset / 32-bit int conversion is offset by one bit for OBJECT_STATUS_NONE (0)
 		UnsignedInt status = (m_status.toUnsignedInt() & mask) >> 1;
 		xfer->xferUnsignedInt(&status);
 
@@ -3718,6 +3718,21 @@ void Object::xfer( Xfer *xfer )
 
 	// disabled till frame
 	{
+		static_assert(DISABLED_DEFAULT             == 0,  "Unexpected enum value");
+		static_assert(DISABLED_HACKED              == 1,  "Unexpected enum value");
+		static_assert(DISABLED_EMP                 == 2,  "Unexpected enum value");
+		static_assert(DISABLED_HELD                == 3,  "Unexpected enum value");
+		static_assert(DISABLED_PARALYZED           == 4,  "Unexpected enum value");
+		static_assert(DISABLED_UNMANNED            == 5,  "Unexpected enum value");
+		static_assert(DISABLED_UNDERPOWERED        == 6,  "Unexpected enum value");
+		static_assert(DISABLED_FREEFALL            == 7,  "Unexpected enum value");
+		static_assert(DISABLED_AWESTRUCK           == 8,  "Unexpected enum value");
+		static_assert(DISABLED_BRAINWASHED         == 9,  "Unexpected enum value");
+		static_assert(DISABLED_SUBDUED             == 10, "Unexpected enum value");
+		static_assert(DISABLED_SCRIPT_DISABLED     == 11, "Unexpected enum value");
+		static_assert(DISABLED_SCRIPT_UNDERPOWERED == 12, "Unexpected enum value");
+		static_assert(DISABLED_COUNT               == 13, "Unexpected enum value");
+
 		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_DEFAULT]);
 		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_HACKED]);
 		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_EMP]);
