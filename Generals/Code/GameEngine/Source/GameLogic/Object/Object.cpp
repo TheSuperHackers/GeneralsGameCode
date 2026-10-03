@@ -3574,6 +3574,7 @@ void Object::crc( Xfer *xfer )
 	* 6: We do indeed need to save m_containedBy.  The comment misrepresents what the contain module will do.
 	* 7: save full mtx, not pos+orient.
 	* 8: TheSuperHackers @tweak Conversion of object status bits from UnsignedInt to BitFlags<> (backported from Zero Hour).
+	*    TheSuperHackers @tweak Serialize all disabled types (m_disabledTillFrame) including Zero Hour only types.
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
@@ -3714,7 +3715,19 @@ void Object::xfer( Xfer *xfer )
 	}
 
 	// disabled till frame
-	xfer->xferUser( m_disabledTillFrame, sizeof( UnsignedInt ) * DISABLED_COUNT );
+	if (version <= 7)
+	{
+		static_assert(ARRAYSIZE(m_disabledTillFrame) == DISABLED_COUNT && DISABLED_COUNT == 10 + 3,
+			"Generals disabled count was 10 originally & 3 types from Zero Hour");
+
+		xfer->xferUser(m_disabledTillFrame, 8 * sizeof(UnsignedInt));
+		xfer->xferUnsignedInt(&m_disabledTillFrame[11]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[12]);
+	}
+	else
+	{
+		xfer->xferUser(m_disabledTillFrame, sizeof(m_disabledTillFrame));
+	}
 
 	// OK, now that we have xferred our status bits and disabled data, it's safe to set the team...
 	// TheSuperHackers @todo Refactor so that this code can be moved to loadPostProcess.
