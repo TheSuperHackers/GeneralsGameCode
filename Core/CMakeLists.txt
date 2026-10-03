@@ -36,3 +36,11 @@ add_subdirectory(GameEngine)
 add_subdirectory(GameEngineDevice)
 
 add_subdirectory(Tools)
+
+if(RTS_BUILD_OPTION_TESTS)
+    add_subdirectory(GoogleTest)
+endif()
+
+if(RTS_BUILD_OPTION_BENCHMARKS)
+    add_subdirectory(GoogleBenchmark)
+endif()

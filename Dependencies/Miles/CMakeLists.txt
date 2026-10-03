@@ -14,6 +14,6 @@ target_include_directories(deps_miles PUBLIC
 )
 
 target_link_libraries(deps_miles PRIVATE
-    deps_precompiled # Gives force included headers. Link early.
+    depsi_always # Gives force included headers. Link early.
     deps_utility
 )

@@ -99,6 +99,8 @@ jobs:
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
+      tests: ${{ startsWith(matrix.preset, 'win32') }}
+      benchmarks: ${{ matrix.preset == 'win32' }}
     secrets: inherit
 
   # Note build-generalsmd is split into two jobs for vc6 and win32 because replaycheck-generalsmd
@@ -170,6 +172,8 @@ jobs:
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
       ffmpeg: ${{ matrix.ffmpeg || false}}
+      tests: true
+      benchmarks: ${{ matrix.preset == 'win32' }}
     secrets: inherit
 
   replaycheck-generalsmd:

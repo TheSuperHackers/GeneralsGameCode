@@ -31,6 +31,16 @@ on:
         default: false
         type: boolean
         description: "Build with FFmpeg support"
+      tests:
+        required: false
+        default: false
+        type: boolean
+        description: "Build and run the tests"
+      benchmarks:
+        required: false
+        default: false
+        type: boolean
+        description: "Build the benchmarks"
 
 jobs:
   build:
@@ -152,6 +162,8 @@ jobs:
           $buildFlags += "-DRTS_BUILD_CORE_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_OPTION_FFMPEG=${{ inputs.ffmpeg && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_OPTION_TESTS=${{ inputs.tests && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_OPTION_BENCHMARKS=${{ inputs.benchmarks && 'ON' || 'OFF' }}"
 
           Write-Host "Build flags: $($buildFlags -join ' | ')"
           cmake --preset ${{ inputs.preset }} $buildFlags
@@ -160,6 +172,14 @@ jobs:
         shell: pwsh
         run: |
           cmake --build --preset ${{ inputs.preset }}
+
+      # The benchmarks are only built, because running them takes too long here.
+      # Verbose prints the Google Test output, which lists the test cases of each executable.
+      - name: Test ${{ inputs.game }} with CTest Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+        if: ${{ inputs.tests }}
+        shell: pwsh
+        run: |
+          ctest --preset ${{ inputs.preset }} --verbose
 
       - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh
