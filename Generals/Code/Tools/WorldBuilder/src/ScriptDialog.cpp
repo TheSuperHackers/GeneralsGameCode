@@ -1101,6 +1101,8 @@ void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool 
 }
 
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1 1
+// Added in Zero Hour
+#define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2
 
 /** Write out selected scripts, and possibly waypoints, trigger areas & teams. */
 void ScriptDialog::OnSave()
@@ -1109,6 +1111,7 @@ void ScriptDialog::OnSave()
 	Bool doTriggerAreas = true;
 	Bool doUnits = true;
 	Bool doAllScripts = true;
+	Bool doSides = true;
 	Int	 i;
 
 	ExportScriptsOptions optionsDlg;
@@ -1119,6 +1122,7 @@ void ScriptDialog::OnSave()
 	doUnits = optionsDlg.getDoUnits();
 	doTriggerAreas = optionsDlg.getDoTriggers();
 	doAllScripts = optionsDlg.getDoAllScripts();
+	doSides = optionsDlg.getDoSides();
 
 	Script *pScript = getCurScript();
 	ScriptGroup *pGroup = getCurGroup();
@@ -1212,12 +1216,27 @@ void ScriptDialog::OnSave()
 		ScriptList::WriteScriptsDataChunk(chunkWriter, scripts, numScriptLists);
 
 		/***************Players DATA ***************/
-		chunkWriter.openDataChunk("ScriptsPlayers", 	K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1);
-		if (doAllScripts) {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+		const DataChunkVersionType playersVersion = K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1;
+		doSides = false;
+#else
+		const DataChunkVersionType playersVersion = K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2;
+#endif
+		chunkWriter.openDataChunk("ScriptsPlayers", playersVersion);
+		if (playersVersion >= K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2) {
+			chunkWriter.writeInt(doSides);
+		}
+		if (doAllScripts || doSides) {
 			chunkWriter.writeInt(m_sides.getNumSides());
 			for (i=0; i<m_sides.getNumSides(); i++) {
 				AsciiString name = m_sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 				chunkWriter.writeAsciiString(name);
+
+				if (doSides) {
+					// The user has requested that the sides get exported.
+					chunkWriter.writeDict(*m_sides.getSideInfo(i)->getDict());
+				}
+
 			}
 		} else  {
 			chunkWriter.writeInt(1);
@@ -1416,6 +1435,10 @@ void ScriptDialog::OnLoad()
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 		m_sides = *TheSidesList;
 
+		for (Int sideIndex = sidesBeforeImport.getNumSides(); sideIndex < m_sides.getNumSides(); sideIndex++) {
+			addPlayer(sideIndex);
+		}
+
 		if (m_firstReadObject) {
 			AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, m_firstReadObject);
 			pDoc->AddAndDoUndoable(pUndo);
@@ -1484,12 +1507,20 @@ void ScriptDialog::OnLoad()
 				scripts[i]->discard(); /* Frees the script list, but none of it's children, as they have been
 															copied into the current scripts. */
 				scripts[i] = nullptr;
-				reloadPlayer(curSide, pSL);
+				//reloadPlayer(curSide, pSL);
 			} else {
 				deleteInstance(scripts[i]);
 				scripts[i] = nullptr;
 			}
 		}
+
+		for (i = 0; i < m_sides.getNumSides(); i++) {
+			// Make sure that the dialog tree is updated.
+			ScriptList *pSL = m_sides.getSideInfo(i)->getScriptList();
+			reloadPlayer(i, pSL);
+			updateIcons(TVI_ROOT);
+		}
+
 
 	} catch(...) {
 		::AfxMessageBox("Unable to import scripts. The file contains invalid data or exceeds the player limit.", MB_OK);
@@ -1636,15 +1667,19 @@ Bool ScriptDialog::ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info
 			TeamsInfo ti;
 			ti.init(&teamDict);
 			CFixTeamOwnerDialog fix(&ti, &pThis->m_sides);
+			bool nameSet = false;
 			if (fix.DoModal() == IDOK) {
 				if (fix.pickedValidTeam()) {
 					teamDict.setAsciiString(TheKey_teamOwner, fix.getSelectedOwner());
+					nameSet = true;
 				}
 			}
 
-			AsciiString neutralPlayerName; // neutral player name is empty string
-			// player doesn't exist, so add it to the neutral player.
-			teamDict.setAsciiString(TheKey_teamOwner, neutralPlayerName);
+			if (nameSet == false) {
+				AsciiString neutralPlayerName; // neutral player name is empty string
+				// player doesn't exist, so add it to the neutral player.
+				teamDict.setAsciiString(TheKey_teamOwner, neutralPlayerName);
+			}
 			pThis->m_sides.addTeam(&teamDict);
 		}
 	}
@@ -1661,6 +1696,10 @@ Bool ScriptDialog::ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info
 Bool ScriptDialog::ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	ScriptDialog *pThis = (ScriptDialog *)userData;
+	Int readDicts = 0;
+	if (info->version >= K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2) {
+		readDicts = file.readInt();
+	}
 	Int numNames = file.readInt();
 	if (numNames < 0 || numNames > MAX_PLAYER_COUNT) {
 		return false;
@@ -1668,6 +1707,38 @@ Bool ScriptDialog::ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *in
 	Int i;
 	for (i=0; i<numNames; i++) {
 		pThis->m_readPlayerNames[i] = file.readAsciiString();
+		if (readDicts) {
+			Dict sideDict = file.readDict();
+			Bool hasPlayerName;
+			AsciiString playerName = sideDict.getAsciiString(TheKey_playerName, &hasPlayerName);
+			if (!hasPlayerName || playerName != pThis->m_readPlayerNames[i]) {
+				return false;
+			}
+			bool nameFound = false;
+			for (Int j=0; j < pThis->m_sides.getNumSides(); j++) {
+				AsciiString name = pThis->m_sides.getSideInfo(j)->getDict()->getAsciiString(TheKey_playerName);
+
+				if (name == pThis->m_readPlayerNames[i]) {
+					// The side already exists so don't add it or overwrite the old data.
+					nameFound = true;
+					break;
+				}
+			}
+			if (nameFound == false) {
+				if (pThis->m_sides.getNumSides() >= MAX_PLAYER_COUNT) {
+					return false;
+				}
+				// This side doesn't currently exist, so add it.
+				pThis->m_sides.addSide(&sideDict);
+				SidesInfo* sides = pThis->m_sides.findSideInfo(playerName);
+				if (sides == nullptr) {
+					return false;
+				}
+				ScriptList* pList = newInstance(ScriptList);
+				// A script list must be created.
+				sides->setScriptList(pList);
+			}
+		}
 	}
 	pThis->m_numReadPlayerNames = numNames;
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));

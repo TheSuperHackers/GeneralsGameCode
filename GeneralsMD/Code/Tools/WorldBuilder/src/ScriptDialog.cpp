@@ -1258,6 +1258,7 @@ void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool 
 }
 
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1 1
+// Added in Zero Hour
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2
 
 /** Write out selected scripts, and possibly waypoints, trigger areas & teams. */
@@ -1372,8 +1373,16 @@ void ScriptDialog::OnSave()
 		ScriptList::WriteScriptsDataChunk(chunkWriter, scripts, numScriptLists);
 
 		/***************Players DATA ***************/
-		chunkWriter.openDataChunk("ScriptsPlayers", 	K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2);
-		chunkWriter.writeInt(doSides);
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+		const DataChunkVersionType playersVersion = K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1;
+		doSides = false;
+#else
+		const DataChunkVersionType playersVersion = K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2;
+#endif
+		chunkWriter.openDataChunk("ScriptsPlayers", playersVersion);
+		if (playersVersion >= K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2) {
+			chunkWriter.writeInt(doSides);
+		}
 		if (doAllScripts || doSides) {
 			chunkWriter.writeInt(m_sides.getNumSides());
 			for (i=0; i<m_sides.getNumSides(); i++) {
