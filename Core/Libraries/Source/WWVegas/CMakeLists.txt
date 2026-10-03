@@ -10,6 +10,7 @@ target_link_libraries(core_wwcommon INTERFACE
     d3d8lib
     deps_dbghelp
     deps_miles
+    deps_unicodebidi
     deps_usp10
     stlport
 )
