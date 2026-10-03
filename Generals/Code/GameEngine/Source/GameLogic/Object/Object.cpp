@@ -3574,14 +3574,20 @@ void Object::crc( Xfer *xfer )
 	* 5: m_isReceivingDifficultyBonus
 	* 6: We do indeed need to save m_containedBy.  The comment misrepresents what the contain module will do.
 	* 7: save full mtx, not pos+orient.
-	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>
+	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>. Added in Zero Hour
+	*    TheSuperHackers @tweak Serialize all object status types (m_status) and disabled types (m_disabledTillFrame)
+	*    including Zero Hour specific entries.
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
 {
 
 	// version
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 7;
+#else
 	const XferVersion currentVersion = 8;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3644,20 +3650,25 @@ void Object::xfer( Xfer *xfer )
 	}
 	else
 	{
-		//We are loading an old version, so we must convert it from a 32-bit int to a bitflag
-		UnsignedInt oldStatus;
-		xfer->xferUnsignedInt( &oldStatus );
+		// TheSuperHackers @info Originally OBJECT_STATUS_IS_CARBOMB (28) + 1 would equal OBJECT_STATUS_COUNT,
+		// but the enum has been expanded with Zero Hour specific entries. Ignore the upper 3 bits as they're unused.
+		constexpr const UnsignedInt count = OBJECT_STATUS_IS_CARBOMB + 1;
+		constexpr const UnsignedInt mask = (1 << count) - 1;
+		static_assert(count == 29, "This code needs to be updated when inserting new entries into ObjectStatusTypes");
 
-		//Clear our status
+		// shift by one bit: OBJECT_STATUS_NONE (0) has a dedicated bit in the bitset but not in the integer
+		UnsignedInt status = (m_status.toUnsignedInt() & mask) >> 1;
+		xfer->xferUnsignedInt(&status);
+
 		m_status.clear();
 
-		for( int i = 0; i < 32; i++ )
+		for( int i = 0; i < count; i++ )
 		{
-			UnsignedInt bit = 1<<i;
-			if( oldStatus & bit )
+			UnsignedInt bit = 1u<<i;
+			if( status & bit )
 			{
-				ObjectStatusTypes status = (ObjectStatusTypes)(i+1);
-				m_status.set( MAKE_OBJECT_STATUS_MASK( status ) );
+				ObjectStatusTypes type = (ObjectStatusTypes)(i + 1);
+				m_status.set( MAKE_OBJECT_STATUS_MASK( type ) );
 			}
 		}
 	}
@@ -3708,7 +3719,42 @@ void Object::xfer( Xfer *xfer )
 	}
 
 	// disabled till frame
-	xfer->xferUser( m_disabledTillFrame, sizeof( UnsignedInt ) * DISABLED_COUNT );
+	{
+		static_assert(DISABLED_DEFAULT             == 0,  "Unexpected enum value");
+		static_assert(DISABLED_HACKED              == 1,  "Unexpected enum value");
+		static_assert(DISABLED_EMP                 == 2,  "Unexpected enum value");
+		static_assert(DISABLED_HELD                == 3,  "Unexpected enum value");
+		static_assert(DISABLED_PARALYZED           == 4,  "Unexpected enum value");
+		static_assert(DISABLED_UNMANNED            == 5,  "Unexpected enum value");
+		static_assert(DISABLED_UNDERPOWERED        == 6,  "Unexpected enum value");
+		static_assert(DISABLED_FREEFALL            == 7,  "Unexpected enum value");
+		static_assert(DISABLED_AWESTRUCK           == 8,  "Unexpected enum value");
+		static_assert(DISABLED_BRAINWASHED         == 9,  "Unexpected enum value");
+		static_assert(DISABLED_SUBDUED             == 10, "Unexpected enum value");
+		static_assert(DISABLED_SCRIPT_DISABLED     == 11, "Unexpected enum value");
+		static_assert(DISABLED_SCRIPT_UNDERPOWERED == 12, "Unexpected enum value");
+		static_assert(DISABLED_COUNT               == 13, "Unexpected enum value");
+
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_DEFAULT]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_HACKED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_EMP]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_HELD]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_PARALYZED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_UNMANNED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_UNDERPOWERED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_FREEFALL]);
+
+		if (version >= 8)
+		{
+			// TheSuperHackers @info These 3 types are Zero Hour specific, but inserted in the middle of the enum.
+			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_AWESTRUCK]);
+			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_BRAINWASHED]);
+			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_SUBDUED]);
+		}
+
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_SCRIPT_DISABLED]);
+		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_SCRIPT_UNDERPOWERED]);
+	}
 
 	// OK, now that we have xferred our status bits and disabled data, it's safe to set the team...
 	// TheSuperHackers @todo Refactor so that this code can be moved to loadPostProcess.
