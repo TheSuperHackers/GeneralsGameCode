@@ -1795,9 +1795,9 @@ void W3DDisplay::update()
 	// TheSuperHackers @bugfix The client updates have moved here from W3DDisplay::draw, so that
 	// they also advance when the draw is skipped, for example when the window is minimized.
 
-	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
+	const Bool freezeTime = TheFramePacer->isTimeFrozen();
 
-	if (!freezeTime && TheScriptEngine->isTimeFast())
+	if ((!freezeTime || TheFramePacer->isGameHalted()) && TheScriptEngine->isTimeFast())
 	{
 		/// @todo: I'm assuming the first view is our main 3D view.
 		W3DView *primaryW3DView=(W3DView *)getFirstView();
@@ -1930,12 +1930,12 @@ AGAIN:
   	//
 	//PredictiveLODOptimizerClass::Optimize_LODs( 5000 );
 
-	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
-
 	/// @todo: I'm assuming the first view is our main 3D view.
 	W3DView *primaryW3DView=(W3DView *)getFirstView();
 
-	if (!freezeTime && TheScriptEngine->isTimeFast())
+	const Bool freezeTime = TheFramePacer->isTimeFrozen();
+
+	if ((!freezeTime || TheFramePacer->isGameHalted()) && TheScriptEngine->isTimeFast())
 	{
 		return;
 	}
@@ -2123,7 +2123,7 @@ AGAIN:
 
 		if (TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript() || TheGameLogic->isGamePaused())
 		{
-			freezeTime = false; // We're frozen for debug or for pause, and need to continue out of the loop.
+			break; // We're frozen for debug or for pause, and need to break out of the loop.
 		}
 
 	} while (freezeTime && !TheTacticalView->isCameraMovementFinished());
