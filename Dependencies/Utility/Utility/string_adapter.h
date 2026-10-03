@@ -1,5 +1,5 @@
 /*
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -17,23 +17,10 @@
 
 #pragma once
 
-// Fundamental type definitions
+#include <string>
 
-typedef float Real;
-
-typedef int64_t Int64;
-typedef uint64_t UnsignedInt64;
-
-typedef int32_t Int;
-typedef uint32_t UnsignedInt;
-
-typedef int16_t Short;
-typedef uint16_t UnsignedShort;
-
-typedef char Byte;
-typedef unsigned char UnsignedByte;
-
-typedef char Char;
-typedef unichar WideChar;
-
-typedef bool Bool;
+namespace stl
+{
+typedef std::basic_string<char> string;
+typedef std::basic_string<unichar> wstring;
+}
