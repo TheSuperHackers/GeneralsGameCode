@@ -6021,7 +6021,7 @@ void InGameUI::resetIdleWorker()
 void InGameUI::recreateControlBar()
 {
 	{
-		GameWindow* win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent"));
+		GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent"));
 		TheWindowManager->winDestroy(win);
 	}
 
@@ -6031,7 +6031,7 @@ void InGameUI::recreateControlBar()
 
 	delete TheControlBar;
 	TheControlBar = NEW ControlBar;
-	TheControlBar->init();	
+	TheControlBar->init();
 }
 
 void InGameUI::refreshCustomUiResources()
