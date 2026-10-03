@@ -64,6 +64,8 @@
 
 #define YELLOW_DAMAGE_PERCENT (0.25f)
 
+constexpr const UnsignedInt InvalidBodyTimestamp = ~0u; ///< damage or healing timestamp that has not been recorded yet
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 
 // ------------------------------------------------------------------------------------------------
@@ -1335,6 +1337,18 @@ Bool ActiveBody::isSubdued() const
 		return m_maxHealth <= m_currentSubdualDamage;
 
 	return getObject()->isDisabledByType(DISABLED_SUBDUED);
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+const UnsignedInt *ActiveBody::getLastDamageTimestamp() const
+{
+#if RETAIL_COMPATIBLE_CRC
+	return &m_lastDamageTimestamp;
+#else
+	// TheSuperHackers @fix WebbontheWeb 03/10/2026 Avoid treating never-damaged sentinels as an attack timestamp.
+	return m_lastDamageTimestamp != InvalidBodyTimestamp ? &m_lastDamageTimestamp : nullptr;
 #endif
 }
 

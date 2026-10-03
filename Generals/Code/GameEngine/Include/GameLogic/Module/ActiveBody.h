@@ -40,8 +40,6 @@
 class BodyParticleSystem;
 class ParticleSystemTemplate;
 
-constexpr const UnsignedInt InvalidBodyTimestamp = ~0u; ///< damage or healing timestamp that has not been recorded yet
-
 //-------------------------------------------------------------------------------------------------
 /** Active body module */
 //-------------------------------------------------------------------------------------------------
@@ -81,8 +79,7 @@ public:
 	virtual void setAflame( Bool setting ) override;///< This is a major change like a damage state.
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const override { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
-	virtual Bool hasLastDamageTimestamp() const override { return m_lastDamageTimestamp != InvalidBodyTimestamp; }	///< return whether a frame of last damage has been recorded
+	virtual const UnsignedInt *getLastDamageTimestamp() const override;	///< return frame of last damage, or nullptr if none (only in non-retail builds)
 	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
 	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
 	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }
