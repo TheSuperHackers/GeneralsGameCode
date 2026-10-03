@@ -64,7 +64,7 @@ static bool Is_Paragraph_Separator(unsigned ch)
 		ch == 0x0085 || ch == 0x2029;
 }
 
-}
+} // namespace
 
 namespace UnicodeBidi
 {
@@ -119,4 +119,4 @@ unsigned short Get_Paragraph_Base_Level(const wchar_t *text, int length)
 	return 0;
 }
 
-}
+} // namespace UnicodeBidi

@@ -4,15 +4,15 @@ set(UNICODEBIDI_SRC
     bididirection.inl
 )
 
-add_library(unicodebidi STATIC)
-set_target_properties(unicodebidi PROPERTIES OUTPUT_NAME unicodebidi)
+add_library(deps_unicodebidi STATIC)
+set_target_properties(deps_unicodebidi PROPERTIES OUTPUT_NAME unicodebidi)
 
-target_sources(unicodebidi PRIVATE ${UNICODEBIDI_SRC})
+target_sources(deps_unicodebidi PRIVATE ${UNICODEBIDI_SRC})
 
-target_include_directories(unicodebidi PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR} # include "unicodebidi.h"
+target_include_directories(deps_unicodebidi PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(unicodebidi PRIVATE
+target_link_libraries(deps_unicodebidi PRIVATE
     deps_precompiled # Gives force included headers. Link early.
 )
