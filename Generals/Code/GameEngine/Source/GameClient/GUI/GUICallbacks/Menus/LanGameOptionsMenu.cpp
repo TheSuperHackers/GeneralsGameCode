@@ -870,12 +870,7 @@ void updateGameOptions()
 		}
 		else
 		{
-			AsciiString s = TheLAN->GetMyGame()->getMap();
-			if (s.reverseFind('\\'))
-			{
-				s = s.reverseFind('\\') + 1;
-			}
-			mapDisplayName.format(L"%hs", s.str());
+			mapDisplayName.format(L"%hs", getFileName(TheLAN->GetMyGame()->getMap().str()));
 		}
 		UnicodeString old = GadgetStaticTextGetText(textEntryMapDisplay);
 		if(old.compare(mapDisplayName) != 0)

@@ -530,7 +530,7 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 		AsciiString filepathLower = *filepathIt;
 		filepathLower.toLower();
 
-		const char *szFilenameLower = filepathLower.reverseFind('\\');
+		const char *szFilenameLower = getLastPathSeparator(filepathLower.str());
 		if (!szFilenameLower)
 		{
 			DEBUG_CRASH(("Couldn't find \\ in map name!"));
@@ -592,7 +592,7 @@ Bool MapCache::addMap(
 			{
 				// unofficial maps or maps without names
 				AsciiString tempdisplayname;
-				tempdisplayname = fname.reverseFind('\\') + 1;
+				tempdisplayname = getFileName(fname.str());
 				(*this)[lowerFname].m_displayName.translate(tempdisplayname);
 				if (md.m_numPlayers >= 2)
 				{
@@ -654,7 +654,7 @@ Bool MapCache::addMap(
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
 		AsciiString tempdisplayname;
-		tempdisplayname = fname.reverseFind('\\') + 1;
+		tempdisplayname = getFileName(fname.str());
 		md.m_displayName.translate(tempdisplayname);
 		if (md.m_numPlayers >= 2)
 		{

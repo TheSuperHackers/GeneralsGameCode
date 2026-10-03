@@ -908,13 +908,8 @@ void WOLDisplayGameOptions()
 	}
 	else
 	{
-		AsciiString s = TheGameSpyInfo->getCurrentStagingRoom()->getMap();
-		if (s.reverseFind('\\'))
-		{
-			s = s.reverseFind('\\') + 1;
-		}
 		UnicodeString mapDisplay;
-		mapDisplay.translate(s);
+		mapDisplay.translate(getFileName(TheGameSpyInfo->getCurrentStagingRoom()->getMap().str()));
 		GadgetStaticTextSetText(textEntryMapDisplay, mapDisplay);
 	}
 	WOLPositionStartSpots();
