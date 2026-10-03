@@ -42,4 +42,4 @@
 
 int Read_Line(FileClass & file, char * buffer, int len, bool & eof);
 int Read_Line(Straw & file, char * buffer, int len, bool & eof);
-int Read_Line(Straw & file, WideChar* buffer, int len, bool & eof);
+int Read_Line(Straw & file, unichar * buffer, int len, bool & eof);

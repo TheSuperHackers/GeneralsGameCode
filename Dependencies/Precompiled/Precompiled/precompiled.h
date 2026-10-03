@@ -22,7 +22,6 @@
 
 	#include "CppMacros.h"
 	#include "CppTypes.h"
-	#include "unichar.h"
 
 #else
 
@@ -32,4 +31,5 @@
 
 #endif // __cplusplus
 
+#include "unichar.h"
 #include "stdint_adapter.h"

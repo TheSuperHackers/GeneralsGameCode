@@ -85,11 +85,11 @@ char* strtrim(char* buffer)
 }
 
 
-WideChar* wcstrim(WideChar* buffer)
+unichar* wcstrim(unichar* buffer)
 {
 	if (buffer) {
 		/* Strip leading white space from the string. */
-		WideChar* source = buffer;
+		unichar* source = buffer;
 
 		while ((*source != 0) && ((unsigned int)*source <= 32)) {
 			++source;
@@ -97,7 +97,7 @@ WideChar* wcstrim(WideChar* buffer)
 
 		if (source != buffer) {
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace wcscpy with safer memmove as memory regions can overlap when part of string is copied to itself
-			memmove(buffer, source, (wcslen(source) + 1) * sizeof(WideChar));
+			memmove(buffer, source, (wcslen(source) + 1) * sizeof(unichar));
 		}
 
 		/* Clip trailing white space from the string. */

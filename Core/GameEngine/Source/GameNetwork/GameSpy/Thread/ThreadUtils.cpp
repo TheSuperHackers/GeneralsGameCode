@@ -33,15 +33,12 @@
 //-------------------------------------------------------------------------
 
 // TheSuperHackers @refactor bobtista 02/04/2026 Use WWLib UTF-8 functions instead of raw Win32 API calls
-stl::wstring MultiByteToWideCharSingleLine( const char* orig )
+stl::wstring MultiByteToWideCharSingleLine( const char *orig )
 {
 	const size_t srcLen = strlen(orig);
 	const size_t dstLen = Utf8_To_Wide_Len(orig, srcLen);
 	if (dstLen == 0)
-	{
 		return stl::wstring();
-	}
-
 	stl::wstring ret;
 	if (dstLen == UTF8_INVALID)
 	{
