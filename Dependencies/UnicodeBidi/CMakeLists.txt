@@ -5,7 +5,6 @@ set(UNICODEBIDI_SRC
 )
 
 add_library(deps_unicodebidi STATIC)
-set_target_properties(deps_unicodebidi PROPERTIES OUTPUT_NAME unicodebidi)
 
 target_sources(deps_unicodebidi PRIVATE ${UNICODEBIDI_SRC})
 
