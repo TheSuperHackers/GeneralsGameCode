@@ -87,7 +87,7 @@ public:
 	virtual Real getCurrentSubdualDamageAmount() const override { return m_currentSubdualDamage; }
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const override { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
+	virtual const UnsignedInt *getLastDamageTimestamp() const override;	///< return frame of last damage, or nullptr if none (only in non-retail builds)
 	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
 	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
 	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }

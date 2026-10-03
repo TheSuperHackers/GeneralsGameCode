@@ -230,7 +230,8 @@ Bool AITNGuardMachine::lookForInnerTarget()
 					if (info->out.m_noEffect) {
 						continue;
 					}
-					if (body->getLastDamageTimestamp() + TheAI->getAiData()->m_guardEnemyScanRate > TheGameLogic->getFrame()) {
+					const UnsignedInt *lastDamageTimestamp = body->getLastDamageTimestamp();
+					if (lastDamageTimestamp && *lastDamageTimestamp + TheAI->getAiData()->m_guardEnemyScanRate > TheGameLogic->getFrame()) {
 						// winner.
 						ObjectID attackerID = info->in.m_sourceID;
 						Object *attacker = TheGameLogic->findObjectByID(attackerID);

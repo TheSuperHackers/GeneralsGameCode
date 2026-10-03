@@ -1814,7 +1814,8 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	const DamageInfo *damageInfo = obj->getBodyModule()->getLastDamageInfo();
 	if (damageInfo)
 	{
-		if (obj->getBodyModule()->getLastDamageTimestamp() > m_lastDamageTimestamp && damageInfo->in.m_amount > RECOIL_DAMAGE)
+		const UnsignedInt *lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
+		if (lastDamageTimestamp && *lastDamageTimestamp > m_lastDamageTimestamp && damageInfo->in.m_amount > RECOIL_DAMAGE)
 		{
 			Object *attacker = TheGameLogic->getObject( damageInfo->in.m_sourceID );
 			if (attacker)
@@ -1833,7 +1834,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 				m_locoInfo->m_accelerationRollRate -= recoil * lateral;
 			}
 
-			m_lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
+			m_lastDamageTimestamp = *lastDamageTimestamp;
 		}
 	}
 #endif

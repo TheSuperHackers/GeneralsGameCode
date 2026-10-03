@@ -168,7 +168,7 @@ public:
 	virtual Bool testArmorSetFlag(ArmorSetType ast) = 0;
 
 	virtual const DamageInfo *getLastDamageInfo() const = 0;
-	virtual UnsignedInt getLastDamageTimestamp() const = 0;
+	virtual const UnsignedInt *getLastDamageTimestamp() const = 0;
 	virtual UnsignedInt getLastHealingTimestamp() const = 0;
 	virtual ObjectID getClearableLastAttacker() const = 0;
 	virtual void clearLastAttacker() = 0;
@@ -228,7 +228,7 @@ public:
 	virtual Real getInitialHealth() const override {return 0.0f;}  // return initial health
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return nullptr; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const override { return 0; }	///< return frame of last damage dealt
+	virtual const UnsignedInt *getLastDamageTimestamp() const override { return nullptr; }	///< return frame of last damage dealt
 	virtual UnsignedInt getLastHealingTimestamp() const override { return 0; }	///< return frame of last healing dealt
 	virtual ObjectID getClearableLastAttacker() const override { return INVALID_ID; }
 	virtual void clearLastAttacker() override { }
