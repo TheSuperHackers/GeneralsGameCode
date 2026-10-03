@@ -479,43 +479,86 @@ public:
 
 static const char *const ParticleShaderTypeNames[] =
 {
-	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", nullptr
+	"NONE",
+	"ADDITIVE",
+	"ALPHA",
+	"ALPHA_TEST",
+	"MULTIPLY",
+	nullptr
 };
 static_assert(ARRAY_SIZE(ParticleShaderTypeNames) == ParticleSystemInfo::PARTICLE_SHADER_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const ParticleTypeNames[] =
 {
-	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", "SMUDGE", nullptr
+	"NONE",
+	"PARTICLE",
+	"DRAWABLE",
+	"STREAK",
+	"VOLUME_PARTICLE",
+	"SMUDGE",
+	nullptr
 };
 static_assert(ARRAY_SIZE(ParticleTypeNames) == ParticleSystemInfo::PARTICLE_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const EmissionVelocityTypeNames[] =
 {
-	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", nullptr
+	"NONE",
+	"ORTHO",
+	"SPHERICAL",
+	"HEMISPHERICAL",
+	"CYLINDRICAL",
+	"OUTWARD",
+	nullptr
 };
 static_assert(ARRAY_SIZE(EmissionVelocityTypeNames) == ParticleSystemInfo::EMISSION_VELOCITY_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const EmissionVolumeTypeNames[] =
 {
-	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", nullptr
+	"NONE",
+	"POINT",
+	"LINE",
+	"BOX",
+	"SPHERE",
+	"CYLINDER",
+	nullptr
 };
 static_assert(ARRAY_SIZE(EmissionVolumeTypeNames) == ParticleSystemInfo::EMISSION_VOLUME_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const ParticlePriorityNames[] =
 {
-	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", nullptr
+	"NONE",
+	"WEAPON_EXPLOSION",
+	"SCORCHMARK",
+	"DUST_TRAIL",
+	"BUILDUP",
+	"DEBRIS_TRAIL",
+	"UNIT_DAMAGE_FX",
+	"DEATH_EXPLOSION",
+	"SEMI_CONSTANT",
+	"CONSTANT",
+	"WEAPON_TRAIL",
+	"AREA_EFFECT",
+	"CRITICAL",
+	"ALWAYS_RENDER",
+	nullptr
 };
 static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, "Incorrect array size");
 
 static const char *const GroundAlignmentTypeNames[] =
 {
-	"No", "Yes", nullptr
+	"No",
+	"Yes",
+	nullptr
 };
 static_assert(ARRAY_SIZE(GroundAlignmentTypeNames) == ParticleSystemInfo::PARTICLE_ALIGNMENT_TYPE_COUNT + 1, "Incorrect array size");
 
 static const char *const WindMotionNames[] =
 {
-	"NONE", "Unused", "PingPong", "Circular", nullptr
+	"NONE",
+	"Unused",
+	"PingPong",
+	"Circular",
+	nullptr
 };
 static_assert(ARRAY_SIZE(WindMotionNames) == ParticleSystemInfo::WIND_MOTION_COUNT + 1, "Incorrect array size");
 

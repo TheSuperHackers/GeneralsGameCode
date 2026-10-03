@@ -2146,7 +2146,12 @@ void W3DProjectedShadow::updateTexture(Vector3 &lightPos)
 {
 	SpecialRenderInfoClass *context;
 	//default uv coordinates before rotation starting at top/left going clockwise
-	static Vector2 uvData[4]={Vector2(-0.5,-0.5f),Vector2(-0.5,0.5f),Vector2(0.5f,0.5f),Vector2(-0.5f,0.5f)};
+	static Vector2 uvData[4]={
+		Vector2(-0.5,-0.5f),
+		Vector2(-0.5,0.5f),
+		Vector2(0.5f,0.5f),
+		Vector2(-0.5f,0.5f)
+	};
 
 	//force light always 2000 units from object - for some reason projection fails if
 	//light is too far.

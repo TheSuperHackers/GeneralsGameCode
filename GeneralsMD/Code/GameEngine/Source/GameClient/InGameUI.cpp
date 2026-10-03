@@ -6342,7 +6342,13 @@ void InGameUI::drawPlayerInfoList()
 		const UnsignedInt xpValue = static_cast<UnsignedInt>(player->getSkillPoints());
 		const UnicodeString nameValue = player->getPlayerDisplayName();
 
-		const UnsignedInt currentValues[] = {teamValue, moneyValue, moneyPerMinuteValue, rankValue, xpValue};
+		const UnsignedInt currentValues[] = {
+			teamValue,
+			moneyValue,
+			moneyPerMinuteValue,
+			rankValue,
+			xpValue
+		};
 		for (column = 0; column < ARRAY_SIZE(currentValues); ++column)
 		{
 			UnsignedInt &lastValue = m_playerInfoList.lastValues.values[column][row];

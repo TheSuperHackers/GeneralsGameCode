@@ -187,7 +187,13 @@ UpdateSleepTime StealthDetectorUpdate::update()
 	PartitionFilterRelationship						filterTeam(self, PartitionFilterRelationship::ALLOW_ENEMIES | PartitionFilterRelationship::ALLOW_NEUTRAL );
 	PartitionFilterAcceptByKindOf					filterKindof(data->m_extraDetectKindof, data->m_extraDetectKindofNot);
 	PartitionFilterSameMapStatus					filterMapStatus(getObject());
-	PartitionFilter*											filters[] = { &filterStealthOrStealthGarrisoned, &filterTeam, &filterKindof, &filterMapStatus, nullptr };
+	PartitionFilter*											filters[] = {
+		&filterStealthOrStealthGarrisoned,
+		&filterTeam,
+		&filterKindof,
+		&filterMapStatus,
+		nullptr
+	};
 
 	Real visionRange = self->getVisionRange();
 	if( data->m_detectionRange > 0.0f )

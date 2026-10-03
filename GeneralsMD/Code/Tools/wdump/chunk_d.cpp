@@ -206,20 +206,88 @@ void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *Name, W
 
 void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *name, W3dShaderStruct * shader)
 {
-	static const char * _depth_compare[] = { "Pass Never","Pass Less","Pass Equal","Pass Less or Equal", "Pass Greater","Pass Not Equal","Pass Greater or Equal","Pass Always" };
-	static const char * _depth_mask[] = { "Write Disable", "Write Enable" };
-	static const char * _color_mask[] = { "Write Disable", "Write Enable" };
-	static const char * _destblend[] = { "Zero","One","Src Color","One Minus Src Color","Src Alpha","One Minus Src Alpha","Src Color Prefog" };
-	static const char * _fogfunc[] = { "Disable","Enable","Scale Fragment","Replace Fragment" };
-	static const char * _prigradient[] = { "Disable","Modulate","Add","Bump-Environment" };
-	static const char * _secgradient[] = { "Disable","Enable" };
-	static const char * _srcblend[] = { "Zero","One","Src Alpha","One Minus Src Alpha" };
-	static const char * _texturing[] = { "Disable","Enable" };
-	static const char * _detailcolor[] = { "Disable","Detail","Scale","InvScale","Add","Sub","SubR","Blend","DetailBlend" };
-	static const char * _detailalpha[] = { "Disable","Detail","Scale","InvScale" };
-	static const char * _dithermask[] = { "Disable", "Enable" };
-	static const char * _shademodel[] = { "Smooth", "Flat" };
-	static const char * _alphatest[] = { "Alpha Test Disable", "Alpha Test Enable" };
+	static const char * _depth_compare[] = {
+		"Pass Never",
+		"Pass Less",
+		"Pass Equal",
+		"Pass Less or Equal",
+		"Pass Greater",
+		"Pass Not Equal",
+		"Pass Greater or Equal",
+		"Pass Always"
+	};
+	static const char * _depth_mask[] = {
+		"Write Disable",
+		"Write Enable"
+	};
+	static const char * _color_mask[] = {
+		"Write Disable",
+		"Write Enable"
+	};
+	static const char * _destblend[] = {
+		"Zero",
+		"One",
+		"Src Color",
+		"One Minus Src Color",
+		"Src Alpha",
+		"One Minus Src Alpha",
+		"Src Color Prefog"
+	};
+	static const char * _fogfunc[] = {
+		"Disable",
+		"Enable",
+		"Scale Fragment",
+		"Replace Fragment"
+	};
+	static const char * _prigradient[] = {
+		"Disable",
+		"Modulate",
+		"Add",
+		"Bump-Environment"
+	};
+	static const char * _secgradient[] = {
+		"Disable",
+		"Enable"
+	};
+	static const char * _srcblend[] = {
+		"Zero",
+		"One",
+		"Src Alpha",
+		"One Minus Src Alpha"
+	};
+	static const char * _texturing[] = {
+		"Disable",
+		"Enable"
+	};
+	static const char * _detailcolor[] = {
+		"Disable",
+		"Detail",
+		"Scale",
+		"InvScale",
+		"Add",
+		"Sub",
+		"SubR",
+		"Blend",
+		"DetailBlend"
+	};
+	static const char * _detailalpha[] = {
+		"Disable",
+		"Detail",
+		"Scale",
+		"InvScale"
+	};
+	static const char * _dithermask[] = {
+		"Disable",
+		"Enable"
+	};
+	static const char * _shademodel[] = {
+		"Smooth",
+		"Flat"
+	};
+	static const char * _alphatest[] = {
+		"Alpha Test Disable",
+		"Alpha Test Enable"
+	};
 
 	int counter = 0;
 	char label[256];
@@ -251,19 +319,75 @@ void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *name, W
 
 void ChunkTableClass::AddItem(CListCtrl *list, int &Counter, const char *name, W3dPS2ShaderStruct * shader)
 {
-	static const char * _depth_compare[] = { "Pass Never","Pass Less","Pass Always","Pass Less or Equal"};
-	static const char * _depth_mask[] = { "Write Disable", "Write Enable" };
-	static const char * _color_mask[] = { "Write Disable", "Write Enable" };
-	static const char * _ablend[] = { "Src Color","Dest Color","Zero"};
-	static const char * _cblend[] = { "Src Alpha","Dest Alpha","One"};
-	static const char * _fogfunc[] = { "Disable","Enable","Scale Fragment","Replace Fragment" };
-	static const char * _prigradient[] = { "Disable","Modulate","Highlight","Highlight2" };
-	static const char * _secgradient[] = { "Disable","Enable" };
-	static const char * _texturing[] = { "Disable","Enable" };
-	static const char * _detailcolor[] = { "Disable","Detail","Scale","InvScale","Add","Sub","SubR","Blend","DetailBlend" };
-	static const char * _detailalpha[] = { "Disable","Detail","Scale","InvScale" };
-	static const char * _dithermask[] = { "Disable", "Enable" };
-	static const char * _shademodel[] = { "Smooth", "Flat" };
+	static const char * _depth_compare[] = {
+		"Pass Never",
+		"Pass Less",
+		"Pass Always",
+		"Pass Less or Equal"
+	};
+	static const char * _depth_mask[] = {
+		"Write Disable",
+		"Write Enable"
+	};
+	static const char * _color_mask[] = {
+		"Write Disable",
+		"Write Enable"
+	};
+	static const char * _ablend[] = {
+		"Src Color",
+		"Dest Color",
+		"Zero"
+	};
+	static const char * _cblend[] = {
+		"Src Alpha",
+		"Dest Alpha",
+		"One"
+	};
+	static const char * _fogfunc[] = {
+		"Disable",
+		"Enable",
+		"Scale Fragment",
+		"Replace Fragment"
+	};
+	static const char * _prigradient[] = {
+		"Disable",
+		"Modulate",
+		"Highlight",
+		"Highlight2"
+	};
+	static const char * _secgradient[] = {
+		"Disable",
+		"Enable"
+	};
+	static const char * _texturing[] = {
+		"Disable",
+		"Enable"
+	};
+	static const char * _detailcolor[] = {
+		"Disable",
+		"Detail",
+		"Scale",
+		"InvScale",
+		"Add",
+		"Sub",
+		"SubR",
+		"Blend",
+		"DetailBlend"
+	};
+	static const char * _detailalpha[] = {
+		"Disable",
+		"Detail",
+		"Scale",
+		"InvScale"
+	};
+	static const char * _dithermask[] = {
+		"Disable",
+		"Enable"
+	};
+	static const char * _shademodel[] = {
+		"Smooth",
+		"Flat"
+	};
 
 	int counter = 0;
 	char label[256];
