@@ -3573,14 +3573,18 @@ void Object::crc( Xfer *xfer )
 	* 5: m_isReceivingDifficultyBonus
 	* 6: We do indeed need to save m_containedBy.  The comment misrepresents what the contain module will do.
 	* 7: save full mtx, not pos+orient.
-	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>
+	* 8: TheSuperHackers @tweak Conversion of object status bits from UnsignedInt to BitFlags<> (backported from Zero Hour).
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 7;
+#else
 	const XferVersion currentVersion = 8;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3643,20 +3647,23 @@ void Object::xfer( Xfer *xfer )
 	}
 	else
 	{
-		//We are loading an old version, so we must convert it from a 32-bit int to a bitflag
-		UnsignedInt oldStatus;
-		xfer->xferUnsignedInt( &oldStatus );
+		static_assert(m_status.size() == OBJECT_STATUS_COUNT && OBJECT_STATUS_COUNT == 29 + 16,
+			"Generals object status count was 29 originally & 16 types from Zero Hour");
 
-		//Clear our status
+		// TheSuperHackers @info Ignore the upper 3 bits because they're unused in Generals.
+		// Bitset / 32-bit int conversion is offset by one bit for OBJECT_STATUS_NONE (0).
+		UnsignedInt status = (m_status.toUnsignedInt() & 0x1FFFFFFF) >> 1;
+		xfer->xferUnsignedInt(&status);
+
 		m_status.clear();
 
-		for( int i = 0; i < 32; i++ )
+		for( int i = 0; i < 29; i++ )
 		{
-			UnsignedInt bit = 1<<i;
-			if( oldStatus & bit )
+			UnsignedInt bit = 1u<<i;
+			if( status & bit )
 			{
-				ObjectStatusTypes status = (ObjectStatusTypes)(i+1);
-				m_status.set( MAKE_OBJECT_STATUS_MASK( status ) );
+				ObjectStatusTypes type = (ObjectStatusTypes)(i + 1);
+				m_status.set( MAKE_OBJECT_STATUS_MASK( type ) );
 			}
 		}
 	}

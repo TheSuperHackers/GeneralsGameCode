@@ -162,9 +162,9 @@ public:
 		return (m_bits & that.m_bits).none();
 	}
 
-	Int size() const
+	static constexpr Int size()
 	{
-		return m_bits.size();
+		return NUMBITS;
 	}
 
 	Int count() const
