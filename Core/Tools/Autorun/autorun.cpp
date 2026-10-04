@@ -221,12 +221,12 @@ char		szProduct_Name		[ _MAX_PATH ];
 
 #ifdef LEAN_AND_MEAN
 
-WideChar 	szWideBuffer   		[ _MAX_PATH ];
-WideChar 	szWideBuffer0  		[ _MAX_PATH ];
-WideChar 	szWideBuffer2  		[ _MAX_PATH ];
-WideChar 	szWideBuffer3  		[ _MAX_PATH ];
-WideChar		szProductName		  [ _MAX_PATH ];
-WideChar		szFullProductName	[ _MAX_PATH ];
+unichar 	szWideBuffer   		[ _MAX_PATH ];
+unichar 	szWideBuffer0  		[ _MAX_PATH ];
+unichar 	szWideBuffer2  		[ _MAX_PATH ];
+unichar 	szWideBuffer3  		[ _MAX_PATH ];
+unichar		szProductName		  [ _MAX_PATH ];
+unichar		szFullProductName	[ _MAX_PATH ];
 
 /*
 enum
@@ -1231,7 +1231,7 @@ BOOL MainWindow::Is_Product_Registered()
 	BOOL	result = FALSE;
 
 	char 		key			[_MAX_PATH];
-	WideChar 	szPath		[_MAX_PATH];
+	unichar 	szPath		[_MAX_PATH];
 	char		aName		[_MAX_PATH];			//jfs
 
 	unsigned long Type;
@@ -2566,9 +2566,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 	static char 	szLicense[ _MAX_PATH ];
 	static char 	szButtonBitmap[_MAX_PATH];
 
-	static WideChar	szString1[ 500 ];
-	static WideChar	szString2[ 500 ];
-	static WideChar	szWholeString[ 1000 ];
+	static unichar	szString1[ 500 ];
+	static unichar	szString2[ 500 ];
+	static unichar	szWholeString[ 1000 ];
 //	static wchar_t	szWSMsg1[ _MAX_PATH ];
 
 #ifdef LEAN_AND_MEAN
@@ -2577,8 +2577,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 	static UnicodeString	wsMsg1;
 #endif
 
-	static WideChar	szWSMsg2[ _MAX_PATH ];
-	static WideChar	szWholeWSMsg[ 1000 ];
+	static unichar	szWSMsg2[ _MAX_PATH ];
+	static unichar	szWholeWSMsg[ 1000 ];
 //	static wchar_t	szInstallWarningMsg[ _MAX_PATH ];
 
 	static HBITMAP		hBitmap   			= 0;
@@ -3751,7 +3751,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						wFileName = Locale_GetString(HELP_FILENAME);
 
 						std::string fname;
-						const WideChar *tmp = wFileName.c_str();
+						const unichar *tmp = wFileName.c_str();
 						char hack[2] = "a";
 						while (*tmp)
 						{

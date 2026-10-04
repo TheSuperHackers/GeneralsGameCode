@@ -44,7 +44,7 @@
 
 #define MISSING_STRING_HINTS_MAX (20)
 
-const WideChar *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
+const unichar *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 {
 	{ L"0 MissingInstall"		},
 	{ L"1 MissingExplore"		},
@@ -104,7 +104,7 @@ int			SubLanguage		= SUBLANG_DEFAULT;
 /****************************************************************************/
 /* LOCALE API                                                               */
 /****************************************************************************/
-WideChar *	Remove_Quotes_Around_String ( WideChar *old_string );
+unichar *	Remove_Quotes_Around_String ( unichar *old_string );
 
 
 //=============================================================================
@@ -309,15 +309,15 @@ void Locale_Restore ()
 const char* Locale_GetString( int StringID, char *String )
 {
 	static	char		buffer[ _MAX_PATH ];
-	static	WideChar		wide_buffer[ _MAX_PATH ];
+	static	unichar		wide_buffer[ _MAX_PATH ];
 
 	memset( buffer, '\0', _MAX_PATH );
 	memset(	wide_buffer, '\0', _MAX_PATH );
 
 	#if( USE_MULTI_FILE_FORMAT )
-		wcscpy( wide_buffer, (WideChar *)LOCALE_getstring( StringID ));
+		wcscpy( wide_buffer, (unichar *)LOCALE_getstring( StringID ));
 	#else
-		wcscpy( wide_buffer, (WideChar *)LOCALE_getstr( LocaleFile, StringID ));
+		wcscpy( wide_buffer, (unichar *)LOCALE_getstr( LocaleFile, StringID ));
 	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
@@ -330,11 +330,11 @@ const char* Locale_GetString( int StringID, char *String )
 	return buffer;
 }
 
-const WideChar* Locale_GetString( const char *id, WideChar *buffer, int size )
+const unichar* Locale_GetString( const char *id, unichar *buffer, int size )
 {
 	if (TheGameText)
 	{
-		const WideChar *fetched = TheGameText->fetch(id);
+		const unichar *fetched = TheGameText->fetch(id);
 		if (buffer)
 		{
 			wcsncpy(buffer, fetched, size);
@@ -346,20 +346,20 @@ const WideChar* Locale_GetString( const char *id, WideChar *buffer, int size )
 }
 
 /*
-const WideChar* Locale_GetString( int StringID, WideChar *String )
+const unichar* Locale_GetString( int StringID, unichar *String )
 {
-	static WideChar wide_buffer[ _MAX_PATH ];
+	static unichar wide_buffer[ _MAX_PATH ];
 
 	memset(	wide_buffer, '\0', _MAX_PATH );
 
 	#if( USE_MULTI_FILE_FORMAT )
-		wcscpy( wide_buffer, (WideChar *)LOCALE_getstring( StringID ));
+		wcscpy( wide_buffer, (unichar *)LOCALE_getstring( StringID ));
 	#else
 
-		WideChar *localeStr = nullptr;
+		unichar *localeStr = nullptr;
 
 		if (TheGameText != nullptr)
-			localeStr = (WideChar *)TheGameText->fetch( s_stringLabels[StringID] );
+			localeStr = (unichar *)TheGameText->fetch( s_stringLabels[StringID] );
 
 		if (localeStr == nullptr)
 		{
@@ -385,10 +385,10 @@ const WideChar* Locale_GetString( int StringID, WideChar *String )
 /* formating strings   														*/
 /****************************************************************************/
 
-WideChar *Remove_Quotes_Around_String ( WideChar *old_string )
+unichar *Remove_Quotes_Around_String ( unichar *old_string )
 {
-	WideChar	wide_buffer[ _MAX_PATH ];
-	WideChar *letter = old_string;
+	unichar	wide_buffer[ _MAX_PATH ];
+	unichar *letter = old_string;
 	int		length;
 
 	//----------------------------------------------------------------------
