@@ -105,16 +105,16 @@ public:
 
     static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
     static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
-    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset);
-    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset);
+    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset);
+    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset);
     static void Set_Index_Buffer_Index_Offset(unsigned offset);
 
-    static void Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
-                               unsigned short min_vertex_index, unsigned short vertex_count);
-    static void Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
-                               unsigned short min_vertex_index, unsigned short vertex_count);
-    static void Draw_Strip(unsigned short start_index, unsigned short polygon_count,
-                           unsigned short min_vertex_index, unsigned short vertex_count);
+    static void Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                               unsigned int min_vertex_index, unsigned int vertex_count);
+    static void Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                           unsigned int min_vertex_index, unsigned int vertex_count);
 
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);
     static void Set_Transform(RenderTransform transform, const Matrix3D & m);
