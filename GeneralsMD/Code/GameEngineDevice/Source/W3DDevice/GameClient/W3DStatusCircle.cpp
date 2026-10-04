@@ -321,8 +321,8 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		Renderer::Set_Material(m_vertexMaterialClass);
 		Renderer::Set_Shader(m_shaderClass);
 		Renderer::Set_Texture(0, nullptr);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferCircle);
+		Renderer::Set_Index_Buffer(m_indexBuffer,0);
+		Renderer::Set_Vertex_Buffer(m_vertexBufferCircle);
 		setIndex = true;
 
 		Vector3 vec(0.95f, 0.67f, 0);
@@ -331,7 +331,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		tm.Set_Translation(vec);
 
 		Renderer::Set_Transform(RenderTransform_World,tm);
-		DX8Wrapper::Draw_Triangles(	0,NUM_TRI, 0,	(m_numTriangles*3));
+		Renderer::Draw_Triangles(	0,NUM_TRI, 0,	(m_numTriangles*3));
 	}
 
 
@@ -342,7 +342,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 
 	if (!setIndex) {
 		Renderer::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+		Renderer::Set_Index_Buffer(m_indexBuffer,0);
 		Renderer::Set_Texture(0, nullptr);
 	}
 
@@ -353,30 +353,30 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	updateScreenVB(diffuse);
 	Renderer::Set_Transform(RenderTransform_World,tm);
 	Renderer::Set_Shader(ShaderClass(SC_ADD));
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferScreen);
+	Renderer::Set_Vertex_Buffer(m_vertexBufferScreen);
 	Renderer::Apply_Render_State_Changes();
 	switch (fade) {
 		default:
 		case ScriptEngine::FADE_ADD:
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
+			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			break;
 		case ScriptEngine::FADE_SUBTRACT:
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT );
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
+			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_BLENDOP, D3DBLENDOP_ADD );
 			break;
 		case ScriptEngine::FADE_SATURATE:
 			// 4x multiply
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_DESTCOLOR);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND,D3DBLEND_SRCCOLOR);
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
+			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
+			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			break;
 		case ScriptEngine::FADE_MULTIPLY:
 			// Straight multiply
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND,D3DBLEND_ZERO);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND,D3DBLEND_SRCCOLOR);
-			DX8Wrapper::Draw_Triangles(	0,2, 0,	(2*3));
+			Renderer::Draw_Triangles(	0,2, 0,	(2*3));
 			break;
 	}
 	ShaderClass::Invalidate();

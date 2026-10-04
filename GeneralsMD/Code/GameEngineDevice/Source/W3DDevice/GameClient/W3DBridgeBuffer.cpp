@@ -134,7 +134,7 @@ void W3DBridge::renderBridge(Bool wireframe)
 	if (m_visible && m_numPolygons && m_numVertex) {
 		if (!wireframe) Renderer::Set_Texture(0,m_bridgeTexture);
 		// Draw all the bridges.
-		DX8Wrapper::Draw_Triangles(	m_firstIndex, m_numPolygons, m_firstVertex,	m_numVertex);
+		Renderer::Draw_Triangles(	m_firstIndex, m_numPolygons, m_firstVertex,	m_numVertex);
 	}
 }
 
@@ -1163,8 +1163,8 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 
 	Renderer::Set_Material(m_vertexMaterial);
 	// Setup the vertex buffer, shader & texture.
-	DX8Wrapper::Set_Index_Buffer(m_indexBridge,0);
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexBridge);
+	Renderer::Set_Index_Buffer(m_indexBridge,0);
+	Renderer::Set_Vertex_Buffer(m_vertexBridge);
 	Renderer::Set_Shader(detailAlphaShader);
 #ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows alpha clipping.
@@ -1196,8 +1196,8 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 		Renderer::Invalidate_Cached_Render_States();
 		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
 		Renderer::Set_Material(m_vertexMaterial);
-		DX8Wrapper::Set_Index_Buffer(m_indexBridge,0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexBridge);
+		Renderer::Set_Index_Buffer(m_indexBridge,0);
+		Renderer::Set_Vertex_Buffer(m_vertexBridge);
 		Renderer::Apply_Render_State_Changes();
 		//Apply custom shroud projection shader.
 		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
