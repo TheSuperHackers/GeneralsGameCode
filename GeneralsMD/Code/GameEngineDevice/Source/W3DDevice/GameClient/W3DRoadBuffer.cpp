@@ -160,8 +160,8 @@ RoadType::~RoadType()
 void RoadType::applyTexture()
 {
  	W3DShaderManager::setTexture(0,m_roadTexture);
-	DX8Wrapper::Set_Index_Buffer(m_indexRoad,0);
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexRoad);
+	Renderer::Set_Index_Buffer(m_indexRoad,0);
+	Renderer::Set_Vertex_Buffer(m_vertexRoad);
 }
 
 
@@ -3347,7 +3347,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 				if (!wireframe)
 		 			W3DShaderManager::setShader(st, pass);
 				//Draw all this road type.
-				DX8Wrapper::Draw_Triangles(	0, m_roadTypes[i].getNumIndices()/3, 0,	m_roadTypes[i].getNumVertices());
+				Renderer::Draw_Triangles(	0, m_roadTypes[i].getNumIndices()/3, 0,	m_roadTypes[i].getNumVertices());
 #ifdef LOG_STATS
 				polys += m_roadTypes[i].getNumIndices()/3;
 #endif
@@ -3365,8 +3365,8 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 
 #if 0
 	// Need to use a separate set of index & vertex buffers for this.  jba.
-	DX8Wrapper::Set_Index_Buffer(nullptr,0);
-	DX8Wrapper::Set_Vertex_Buffer(nullptr);
+	Renderer::Set_Index_Buffer(nullptr,0);
+	Renderer::Set_Vertex_Buffer(nullptr);
 	if (pDynamicLightsIterator) {
 		for (i=0; i<m_maxRoadTypes; i++) {
 			m_curRoadType = i;
@@ -3384,7 +3384,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 			}
 			Renderer::Set_Shader(detailAlphaShader);
 			//Draw all the roads.
-			DX8Wrapper::Draw_Triangles(	0, m_curNumRoadIndices/3, 0,	m_curNumRoadVertices);
+			Renderer::Draw_Triangles(	0, m_curNumRoadIndices/3, 0,	m_curNumRoadVertices);
 		}
 	}
 #endif
