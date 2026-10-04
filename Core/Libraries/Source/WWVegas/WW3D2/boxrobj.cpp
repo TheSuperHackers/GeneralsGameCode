@@ -505,8 +505,8 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		/*
 		** Apply the shader and material
 		*/
-		DX8Wrapper::Set_Material(_BoxMaterial);
-		DX8Wrapper::Set_Shader(_BoxShader);
+		Renderer::Set_Material(_BoxMaterial);
+		Renderer::Set_Shader(_BoxShader);
 		DX8Wrapper::Set_Texture(0,nullptr);
 
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);

@@ -900,8 +900,8 @@ Try improving the fit to vertical surfaces like cliffs.
 	if (m_edgesToFlush >= 2)
 	{
 		ShaderClass::Invalidate();
-		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		DX8Wrapper::Set_Shader(m_shaderClass);
+		Renderer::Set_Material(m_vertexMaterialClass);
+		Renderer::Set_Shader(m_shaderClass);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBuffer);
 
