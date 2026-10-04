@@ -509,10 +509,10 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		Renderer::Set_Shader(_BoxShader);
 		Renderer::Set_Texture(0,nullptr);
 
-		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
-		DX8Wrapper::Set_Vertex_Buffer(vbaccess);
+		Renderer::Set_Index_Buffer(ibaccess,0);
+		Renderer::Set_Vertex_Buffer(vbaccess);
 
-		DX8Wrapper::Draw_Triangles(buffer_type,0,NUM_BOX_FACES,0,NUM_BOX_VERTS);
+		Renderer::Draw_Triangles(buffer_type,0,NUM_BOX_FACES,0,NUM_BOX_VERTS);
 	}
 }
 

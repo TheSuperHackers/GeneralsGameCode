@@ -2103,14 +2103,14 @@ void WaterRenderObjClass::renderSky()
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
+	Renderer::Set_Index_Buffer(m_indexBuffer,0);
+	Renderer::Set_Vertex_Buffer(vb_access);
 
 	Matrix3D tm(1);
 	tm.Set_Translation(Vector3(0,0,0));
 	Renderer::Set_Transform(RenderTransform_World,tm);
 
-	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
+	Renderer::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2207,10 +2207,10 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
+	Renderer::Set_Index_Buffer(m_indexBuffer,0);
+	Renderer::Set_Vertex_Buffer(vb_access);
 
-	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
+	Renderer::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
 
 //Defines for procedural water animation.
@@ -2891,8 +2891,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	Matrix3D tm(1);
 
 	Renderer::Set_Transform(RenderTransform_World,tm);	//position the water surface
-	DX8Wrapper::Set_Index_Buffer(ib_access,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
+	Renderer::Set_Index_Buffer(ib_access,0);
+	Renderer::Set_Vertex_Buffer(vb_access);
 	Renderer::Set_Texture(0,m_riverTexture);	//set to blue
 
 	setupJbaWaterShader();
@@ -2912,7 +2912,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	if (wireframeForDebug) {
 		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
 	}
-	DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
+	Renderer::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
 	if (wireframeForDebug) {
 		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
 	}
@@ -3255,8 +3255,8 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	Matrix3D tm(1);
 
 	Renderer::Set_Transform(RenderTransform_World,tm);	//position the water surface
-	DX8Wrapper::Set_Index_Buffer(ib_access,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
+	Renderer::Set_Index_Buffer(ib_access,0);
+	Renderer::Set_Vertex_Buffer(vb_access);
 
 	setupFlatWaterShader();// lorenzen sez use the alpha shader
 
@@ -3292,7 +3292,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 //		}
 //#endif // FEATHER_WATER
 //#endif //WAVY_WATER
-		DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);//lorenzen thinks this is where to itereate the soft shoreline effect
+		Renderer::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);//lorenzen thinks this is where to itereate the soft shoreline effect
 	}
 
 
@@ -3301,7 +3301,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	if (false) {
 		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
 		m_pDev->SetRenderState(D3DRS_ALPHABLENDENABLE , false);
-		DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
+		Renderer::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
 		m_pDev->SetRenderState(D3DRS_ALPHABLENDENABLE , true);
 		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
 	}
@@ -3336,7 +3336,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 			//Shroud shader uses z-compare of EQUAL which wouldn't work on water because it doesn't
 			//write to the zbuffer.  Change to LESSEQUAL.
 			DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-			DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
+			Renderer::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
 			DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
 			W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
 		}
@@ -3413,15 +3413,15 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
+	Renderer::Set_Index_Buffer(m_indexBuffer,0);
+	Renderer::Set_Vertex_Buffer(vb_access);
 
 	Matrix3D tm(1);
 	//set position of skybody in world
 //	tm.Set_Translation(Vector3(40,0,0));
 	Renderer::Set_Transform(RenderTransform_World,tm);
 
-	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
+	Renderer::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
 #endif
 

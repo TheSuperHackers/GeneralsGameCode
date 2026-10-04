@@ -1368,8 +1368,8 @@ void StreakRendererClass::RenderStreak
 		}
 
 
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Vertex_Buffer(Verts);
+		Renderer::Set_Index_Buffer(ib_access,0);
+		Renderer::Set_Vertex_Buffer(Verts);
 		Renderer::Set_Texture(0,Texture);
 		Renderer::Set_Shader(shader);
 
@@ -1379,7 +1379,7 @@ void StreakRendererClass::RenderStreak
 		}
 		else
 		{
-			DX8Wrapper::Draw_Triangles(0,triangleIndex,0,vnum);
+			Renderer::Draw_Triangles(0,triangleIndex,0,vnum);
 		}
 
 	}
