@@ -311,8 +311,8 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 		return FALSE;
 	}
 
-	const UnsignedInt *lastDamageTimestamp = self->getBodyModule()->getLastDamageTimestamp();
-	if( flags & STEALTH_NOT_WHILE_TAKING_DAMAGE && lastDamageTimestamp && *lastDamageTimestamp >= now - 1 && *lastDamageTimestamp <= now )
+	const UnsignedInt *lastDamageTimestamp = self->getBodyModule()->getRecordedLastDamageTimestamp();
+	if( flags & STEALTH_NOT_WHILE_TAKING_DAMAGE && lastDamageTimestamp && *lastDamageTimestamp >= now - 1 )
 	{
 #if RETAIL_COMPATIBLE_CRC || PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR
 		//Only if it's not healing damage.
