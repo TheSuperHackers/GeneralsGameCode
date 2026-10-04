@@ -533,7 +533,7 @@ void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & cen
 		RingShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
 	Renderer::Set_Shader(RingShader);
-	DX8Wrapper::Set_Texture(0,RingTexture);
+	Renderer::Set_Texture(0,RingTexture);
 	Renderer::Set_Material(RingMaterial);
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.

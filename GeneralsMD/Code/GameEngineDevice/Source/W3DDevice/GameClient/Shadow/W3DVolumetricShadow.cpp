@@ -3492,8 +3492,8 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		REF_PTR_RELEASE(vmat);
 
 		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);	//turn off textures
-		DX8Wrapper::Set_Texture(1,nullptr);	//turn off textures
+		Renderer::Set_Texture(0,nullptr);	//turn off textures
+		Renderer::Set_Texture(1,nullptr);	//turn off textures
 		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		// turn off z writing
@@ -3679,7 +3679,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);
 		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(0,nullptr);
 		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		renderStencilShadows();

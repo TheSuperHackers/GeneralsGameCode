@@ -189,6 +189,11 @@ void Renderer::Set_Material(const VertexMaterialClass * material)
     DX8Wrapper::Set_Material(material);
 }
 
+void Renderer::Set_Texture(unsigned stage, TextureBaseClass * texture)
+{
+    DX8Wrapper::Set_Texture(stage, texture);
+}
+
 void Renderer::Apply_Render_State_Changes()
 {
     DX8Wrapper::Apply_Render_State_Changes();

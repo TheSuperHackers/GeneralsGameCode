@@ -470,7 +470,7 @@ void SphereRenderObjClass::render_sphere()
 		SphereShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
 	Renderer::Set_Shader(SphereShader);
-	DX8Wrapper::Set_Texture(0,SphereTexture);
+	Renderer::Set_Texture(0,SphereTexture);
 	Renderer::Set_Material(SphereMaterial);
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.
