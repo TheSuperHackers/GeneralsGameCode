@@ -1348,15 +1348,8 @@ const UnsignedInt *ActiveBody::getLastDamageTimestamp() const
 	return &m_lastDamageTimestamp;
 #else
 	// TheSuperHackers @fix WebbontheWeb 03/10/2026 Avoid treating never-damaged sentinels as an attack timestamp.
-	return getRecordedLastDamageTimestamp();
-#endif
-}
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-const UnsignedInt *ActiveBody::getRecordedLastDamageTimestamp() const
-{
 	return m_lastDamageTimestamp != InvalidBodyTimestamp ? &m_lastDamageTimestamp : nullptr;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
