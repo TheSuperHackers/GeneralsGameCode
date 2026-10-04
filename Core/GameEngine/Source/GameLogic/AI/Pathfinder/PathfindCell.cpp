@@ -952,3 +952,115 @@ UnsignedInt PathfindCell::costSoFar( PathfindCell *parent )
 #endif
 
 }
+
+Bool PathfindCell::typesMatch(const PathfindCell& targetCell, const PathfindCell& sourceCell)
+{
+	CellType targetType = targetCell.getType();
+	CellType srcType = sourceCell.getType();
+	if (targetType == srcType)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+Bool PathfindCell::waterGround(const PathfindCell& targetCell, const PathfindCell& sourceCell)
+{
+	CellType targetType = targetCell.getType();
+	CellType srcType = sourceCell.getType();
+	if ((targetType == CELL_CLEAR &&
+	     (srcType & CELL_WATER)))
+	{
+		return true;
+	}
+	if ((srcType == CELL_CLEAR &&
+	     (targetType & CELL_WATER)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+Bool PathfindCell::groundRubble(const PathfindCell& targetCell, const PathfindCell& sourceCell)
+{
+	CellType targetType = targetCell.getType();
+	CellType srcType = sourceCell.getType();
+	if ((targetType == CELL_CLEAR &&
+	     (srcType == CELL_RUBBLE)))
+	{
+		return true;
+	}
+	if ((srcType == CELL_CLEAR &&
+	     (targetType == CELL_RUBBLE)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+Bool PathfindCell::terrain(const PathfindCell& targetCell, const PathfindCell& sourceCell)
+{
+	Int targetType = targetCell.getType();
+	Int srcType = sourceCell.getType();
+	if (targetType == CELL_OBSTACLE)
+	{
+		targetType = CELL_CLEAR;
+	}
+	if (srcType == CELL_OBSTACLE)
+	{
+		srcType = CELL_CLEAR;
+	}
+	if (targetType == srcType)
+	{
+		return true;
+	}
+	return false;
+}
+
+Bool PathfindCell::crusherGround(const PathfindCell& targetCell, const PathfindCell& sourceCell)
+{
+	Int targetType = targetCell.getType();
+	Int srcType = sourceCell.getType();
+	if (targetType == CELL_OBSTACLE)
+	{
+		if (targetCell.isObstacleFence())
+		{
+			if (srcType == CELL_CLEAR)
+			{
+				return true;
+			}
+		}
+	}
+	if (srcType == CELL_OBSTACLE)
+	{
+		if (sourceCell.isObstacleFence())
+		{
+			if (targetType == CELL_CLEAR)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+Bool PathfindCell::groundCliff(const PathfindCell& targetCell, const PathfindCell& sourceCell)
+{
+	CellType targetType = targetCell.getType();
+	CellType srcType = sourceCell.getType();
+
+	if ((targetType == CELL_CLIFF) &&
+	    (srcType == CELL_CLEAR))
+	{
+		return true;
+	}
+	if ((targetType == CELL_CLEAR) &&
+	    (srcType == CELL_CLIFF))
+	{
+		return true;
+	}
+	return false;
+}

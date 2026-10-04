@@ -147,90 +147,6 @@ void Pathfinder::forceCleanCells()
 }
 #endif
 
-inline Bool typesMatch(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
-	PathfindCell::CellType targetType = targetCell.getType();
-	PathfindCell::CellType srcType = sourceCell.getType();
-	if (targetType == srcType) return true;
-
-	return false;
-}
-
-inline Bool waterGround(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
-	PathfindCell::CellType targetType = targetCell.getType();
-	PathfindCell::CellType srcType = sourceCell.getType();
-	if ( (targetType==PathfindCell::CELL_CLEAR &&
-		(srcType&PathfindCell::CELL_WATER ))) {
-			return true;
-	}
-	if ( (srcType==PathfindCell::CELL_CLEAR &&
-		(targetType&PathfindCell::CELL_WATER ))) {
-			return true;
-	}
-
-	return false;
-}
-
-inline Bool groundRubble(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
-	PathfindCell::CellType targetType = targetCell.getType();
-	PathfindCell::CellType srcType = sourceCell.getType();
-	if ( (targetType==PathfindCell::CELL_CLEAR &&
-		(srcType==PathfindCell::CELL_RUBBLE ))) {
-			return true;
-	}
-	if ( (srcType==PathfindCell::CELL_CLEAR &&
-		(targetType==PathfindCell::CELL_RUBBLE ))) {
-			return true;
-	}
-
-	return false;
-}
-
-inline Bool terrain(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
-	Int targetType = targetCell.getType();
-	Int srcType = sourceCell.getType();
-	if (targetType == PathfindCell::CELL_OBSTACLE) targetType = PathfindCell::CELL_CLEAR;
-	if (srcType == PathfindCell::CELL_OBSTACLE) srcType = PathfindCell::CELL_CLEAR;
-	if (targetType==srcType) {
-		return true;
-	}
-	return false;
-}
-
-inline Bool crusherGround(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
-	Int targetType = targetCell.getType();
-	Int srcType = sourceCell.getType();
-	if (targetType==PathfindCell::CELL_OBSTACLE) {
-		if (targetCell.isObstacleFence()) {
-			if (srcType == PathfindCell::CELL_CLEAR) {
-				return true;
-			}
-		}
-	}
-	if (srcType==PathfindCell::CELL_OBSTACLE) {
-		if (sourceCell.isObstacleFence()) {
-			if (targetType == PathfindCell::CELL_CLEAR) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-inline Bool groundCliff(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
-	PathfindCell::CellType targetType = targetCell.getType();
-	PathfindCell::CellType srcType = sourceCell.getType();
-
-	if ( (targetType==PathfindCell::CELL_CLIFF ) &&
-			 (srcType==PathfindCell::CELL_CLEAR) ) {
-			return true;
-	}
-	if ( (targetType==PathfindCell::CELL_CLEAR ) &&
-			 (srcType==PathfindCell::CELL_CLIFF) ) {
-			return true;
-	}
-	return false;
-}
-
 static void __fastcall resolveBlockZones(Int srcZone, Int targetZone, zoneStorageType *zoneEquivalency, Int sizeOfZE)
 {
 	Int i;
@@ -400,30 +316,30 @@ void ZoneBlock::blockCalculateZones(PathfindCell **map, PathfindLayer layers[], 
 		for( i=bounds.lo.x; i<=bounds.hi.x; i++ )	{
 			if (i>bounds.lo.x && map[i][j].getZone()!=map[i-1][j].getZone()) {
 
-				if (waterGround(map[i][j], map[i-1][j])) {
+				if (PathfindCell::waterGround(map[i][j], map[i-1][j])) {
 					applyBlockZone(map[i][j], map[i-1][j], m_groundWaterZones, m_firstZone, m_numZones);
 				}
-				if (groundRubble(map[i][j], map[i-1][j])) {
+				if (PathfindCell::groundRubble(map[i][j], map[i-1][j])) {
 					applyBlockZone(map[i][j], map[i-1][j], m_groundRubbleZones, m_firstZone, m_numZones);
 				}
-				if (groundCliff(map[i][j], map[i-1][j])) {
+				if (PathfindCell::groundCliff(map[i][j], map[i-1][j])) {
 					applyBlockZone(map[i][j], map[i-1][j], m_groundCliffZones, m_firstZone, m_numZones);
 				}
-				if (crusherGround(map[i][j], map[i-1][j])) {
+				if (PathfindCell::crusherGround(map[i][j], map[i-1][j])) {
 					applyBlockZone(map[i][j], map[i-1][j], m_crusherZones, m_firstZone, m_numZones);
 				}
 			}
 			if (j>bounds.lo.y && map[i][j].getZone()!=map[i][j-1].getZone()) {
-				if (waterGround(map[i][j],map[i][j-1])) {
+				if (PathfindCell::waterGround(map[i][j],map[i][j-1])) {
 					applyBlockZone(map[i][j], map[i][j-1], m_groundWaterZones, m_firstZone, m_numZones);
 				}
-				if (groundRubble(map[i][j], map[i][j-1])) {
+				if (PathfindCell::groundRubble(map[i][j], map[i][j-1])) {
 					applyBlockZone(map[i][j], map[i][j-1], m_groundRubbleZones, m_firstZone, m_numZones);
 				}
-				if (groundCliff(map[i][j],map[i][j-1])) {
+				if (PathfindCell::groundCliff(map[i][j],map[i][j-1])) {
 					applyBlockZone(map[i][j], map[i][j-1], m_groundCliffZones, m_firstZone, m_numZones);
 				}
-				if (crusherGround(map[i][j], map[i][j-1])) {
+				if (PathfindCell::crusherGround(map[i][j], map[i][j-1])) {
 					applyBlockZone(map[i][j], map[i][j-1], m_crusherZones, m_firstZone, m_numZones);
 				}
 			}
@@ -824,19 +740,19 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 				if (r_thisCell.getType() == r_leftCell.getType()) {
 					applyZone(r_thisCell, r_leftCell, m_hierarchicalZones, m_maxZone);
 				}
-				if (waterGround(r_thisCell, r_leftCell)) {
+				if (PathfindCell::waterGround(r_thisCell, r_leftCell)) {
 					applyZone(r_thisCell, r_leftCell, m_groundWaterZones, m_maxZone);
 				}
-				if (groundRubble(r_thisCell, r_leftCell)) {
+				if (PathfindCell::groundRubble(r_thisCell, r_leftCell)) {
 					applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, m_maxZone);
 				}
-				if (groundCliff(r_thisCell, r_leftCell)) {
+				if (PathfindCell::groundCliff(r_thisCell, r_leftCell)) {
 					applyZone(r_thisCell, r_leftCell, m_groundCliffZones, m_maxZone);
 				}
-				if (terrain(r_thisCell, r_leftCell)) {
+				if (PathfindCell::terrain(r_thisCell, r_leftCell)) {
 					applyZone(r_thisCell, r_leftCell, m_terrainZones, m_maxZone);
 				}
-				if (crusherGround(r_thisCell, r_leftCell)) {
+				if (PathfindCell::crusherGround(r_thisCell, r_leftCell)) {
 					applyZone(r_thisCell, r_leftCell, m_crusherZones, m_maxZone);
 				}
 #else
@@ -846,22 +762,22 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 				else {
 					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
 
-					if (terrain(r_thisCell, r_leftCell)) {
+					if (PathfindCell::terrain(r_thisCell, r_leftCell)) {
 						applyZone(r_thisCell, r_leftCell, m_terrainZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
-					if (crusherGround(r_thisCell, r_leftCell)) {
+					if (PathfindCell::crusherGround(r_thisCell, r_leftCell)) {
 						applyZone(r_thisCell, r_leftCell, m_crusherZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
 					if ( notTerrainOrCrusher ) {
-						if (waterGround(r_thisCell, r_leftCell))
+						if (PathfindCell::waterGround(r_thisCell, r_leftCell))
 							applyZone(r_thisCell, r_leftCell, m_groundWaterZones, m_maxZone);
-						else if (groundRubble(r_thisCell, r_leftCell))
+						else if (PathfindCell::groundRubble(r_thisCell, r_leftCell))
 							applyZone(r_thisCell, r_leftCell, m_groundRubbleZones, m_maxZone);
-						else if (groundCliff(r_thisCell, r_leftCell))
+						else if (PathfindCell::groundCliff(r_thisCell, r_leftCell))
 							applyZone(r_thisCell, r_leftCell, m_groundCliffZones, m_maxZone);
 					}
 
@@ -877,19 +793,19 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 				if (r_thisCell.getType() == r_topCell.getType()) {
 					applyZone(r_thisCell, r_topCell, m_hierarchicalZones, m_maxZone);
 				}
-				if (waterGround(r_thisCell, r_topCell)) {
+				if (PathfindCell::waterGround(r_thisCell, r_topCell)) {
 					applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
 				}
-				if (groundRubble(r_thisCell, r_topCell)) {
+				if (PathfindCell::groundRubble(r_thisCell, r_topCell)) {
 					applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
 				}
-				if (groundCliff(r_thisCell, r_topCell)) {
+				if (PathfindCell::groundCliff(r_thisCell, r_topCell)) {
 					applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
 				}
-				if (terrain(r_thisCell, r_topCell)) {
+				if (PathfindCell::terrain(r_thisCell, r_topCell)) {
 					applyZone(r_thisCell, r_topCell, m_terrainZones, m_maxZone);
 				}
-				if (crusherGround(r_thisCell, r_topCell)) {
+				if (PathfindCell::crusherGround(r_thisCell, r_topCell)) {
 					applyZone(r_thisCell, r_topCell, m_crusherZones, m_maxZone);
 				}
 #else
@@ -899,22 +815,22 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 				else {
 					Bool notTerrainOrCrusher = TRUE; // if this is false, skip the if-else-ladder below
 
-					if (terrain(r_thisCell, r_topCell)) {
+					if (PathfindCell::terrain(r_thisCell, r_topCell)) {
 						applyZone(r_thisCell, r_topCell, m_terrainZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
-					if (crusherGround(r_thisCell, r_topCell)) {
+					if (PathfindCell::crusherGround(r_thisCell, r_topCell)) {
 						applyZone(r_thisCell, r_topCell, m_crusherZones, m_maxZone);
 						notTerrainOrCrusher = FALSE;
 					}
 
 					if (notTerrainOrCrusher) {
-						if (waterGround(r_thisCell, r_topCell))
+						if (PathfindCell::waterGround(r_thisCell, r_topCell))
 							applyZone(r_thisCell, r_topCell, m_groundWaterZones, m_maxZone);
-						else if (groundRubble(r_thisCell, r_topCell))
+						else if (PathfindCell::groundRubble(r_thisCell, r_topCell))
 							applyZone(r_thisCell, r_topCell, m_groundRubbleZones, m_maxZone);
-						else if (groundCliff(r_thisCell, r_topCell))
+						else if (PathfindCell::groundCliff(r_thisCell, r_topCell))
 							applyZone(r_thisCell, r_topCell, m_groundCliffZones, m_maxZone);
 					}
 
@@ -1038,8 +954,8 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 							if (cell->getZone()!=UNINITIALIZED_ZONE) continue;
 						}
 						if (i<blockBounds.hi.x) {
-							if (typesMatch(*cell, map[i+1][j-1]) &&
-									typesMatch(*cell, map[i+1][j])) {
+							if (PathfindCell::typesMatch(*cell, map[i+1][j-1]) &&
+									PathfindCell::typesMatch(*cell, map[i+1][j])) {
 								cell->setZone(map[i+1][j-1].getZone());
 								if (cell->getZone()!=UNINITIALIZED_ZONE) continue;
 							}
@@ -1063,8 +979,8 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 							if (cell->getZone()!=UNINITIALIZED_ZONE) continue;
 						}
 						if (i<blockBounds.hi.x) {
-							if (typesMatch(*cell, map[i+1][j+1]) &&
-									typesMatch(*cell, map[i+1][j])) {
+							if (PathfindCell::typesMatch(*cell, map[i+1][j+1]) &&
+									PathfindCell::typesMatch(*cell, map[i+1][j])) {
 								cell->setZone(map[i+1][j+1].getZone());
 								if (cell->getZone()!=UNINITIALIZED_ZONE) continue;
 							}

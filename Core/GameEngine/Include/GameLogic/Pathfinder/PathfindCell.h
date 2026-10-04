@@ -166,6 +166,13 @@ public:
 	void setConnectLayer( PathfindLayerEnum layer ) { m_connectsToLayer = layer; }	///< set the cell layer	connect id
 	PathfindLayerEnum getConnectLayer() const { return (PathfindLayerEnum)m_connectsToLayer; }				///< get the cell layer connect id
 
+	static Bool typesMatch(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool waterGround(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool groundRubble(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool terrain(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool crusherGround(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool groundCliff(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+
 private:
 	PathfindCellInfo *m_info;
 	ObjectID m_obstacleID;	                  ///< the object ID who overlaps this cell
