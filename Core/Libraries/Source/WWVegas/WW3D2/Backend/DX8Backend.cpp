@@ -28,6 +28,13 @@
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
 
+static unsigned short To_Unsigned_Short(unsigned int value)
+{
+    const unsigned short narrowed = static_cast<unsigned short>(value);
+    WWASSERT(narrowed == value);
+    return narrowed;
+}
+
 static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderTransform transform)
 {
     switch (transform)
@@ -224,14 +231,14 @@ void Renderer::Set_Vertex_Buffer(const DynamicVBAccessClass & vba)
     DX8Wrapper::Set_Vertex_Buffer(vba);
 }
 
-void Renderer::Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset)
+void Renderer::Set_Index_Buffer(const IndexBufferClass * ib, unsigned int index_base_offset)
 {
-    DX8Wrapper::Set_Index_Buffer(ib, index_base_offset);
+    DX8Wrapper::Set_Index_Buffer(ib, To_Unsigned_Short(index_base_offset));
 }
 
-void Renderer::Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset)
+void Renderer::Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned int index_base_offset)
 {
-    DX8Wrapper::Set_Index_Buffer(iba, index_base_offset);
+    DX8Wrapper::Set_Index_Buffer(iba, To_Unsigned_Short(index_base_offset));
 }
 
 void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
@@ -239,22 +246,25 @@ void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
     DX8Wrapper::Set_Index_Buffer_Index_Offset(offset);
 }
 
-void Renderer::Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
-                              unsigned short min_vertex_index, unsigned short vertex_count)
+void Renderer::Draw_Triangles(unsigned buffer_type, unsigned int start_index, unsigned int polygon_count,
+                              unsigned int min_vertex_index, unsigned int vertex_count)
 {
-    DX8Wrapper::Draw_Triangles(buffer_type, start_index, polygon_count, min_vertex_index, vertex_count);
+    DX8Wrapper::Draw_Triangles(buffer_type, To_Unsigned_Short(start_index), To_Unsigned_Short(polygon_count),
+                               To_Unsigned_Short(min_vertex_index), To_Unsigned_Short(vertex_count));
 }
 
-void Renderer::Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
-                              unsigned short min_vertex_index, unsigned short vertex_count)
+void Renderer::Draw_Triangles(unsigned int start_index, unsigned int polygon_count,
+                              unsigned int min_vertex_index, unsigned int vertex_count)
 {
-    DX8Wrapper::Draw_Triangles(start_index, polygon_count, min_vertex_index, vertex_count);
+    DX8Wrapper::Draw_Triangles(To_Unsigned_Short(start_index), To_Unsigned_Short(polygon_count),
+                               To_Unsigned_Short(min_vertex_index), To_Unsigned_Short(vertex_count));
 }
 
-void Renderer::Draw_Strip(unsigned short start_index, unsigned short polygon_count,
-                          unsigned short min_vertex_index, unsigned short vertex_count)
+void Renderer::Draw_Strip(unsigned int start_index, unsigned int polygon_count,
+                          unsigned int min_vertex_index, unsigned int vertex_count)
 {
-    DX8Wrapper::Draw_Strip(start_index, polygon_count, min_vertex_index, vertex_count);
+    DX8Wrapper::Draw_Strip(To_Unsigned_Short(start_index), To_Unsigned_Short(polygon_count),
+                           To_Unsigned_Short(min_vertex_index), To_Unsigned_Short(vertex_count));
 }
 
 void Renderer::Set_Transform(RenderTransform transform, const Matrix4x4 & m)
