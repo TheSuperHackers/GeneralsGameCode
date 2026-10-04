@@ -127,7 +127,7 @@ void W3DScorch::drawScorches(WorldHeightMap& map)
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexScorch);
 	Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 
-	DX8Wrapper::Set_Texture(0, m_scorchTexture);
+	Renderer::Set_Texture(0, m_scorchTexture);
 	DX8Wrapper::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
 }
 

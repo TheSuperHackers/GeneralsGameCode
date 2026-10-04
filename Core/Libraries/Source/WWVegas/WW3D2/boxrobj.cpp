@@ -507,7 +507,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		*/
 		Renderer::Set_Material(_BoxMaterial);
 		Renderer::Set_Shader(_BoxShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(0,nullptr);
 
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
 		DX8Wrapper::Set_Vertex_Buffer(vbaccess);

@@ -33,6 +33,7 @@ class LightEnvironmentClass;
 class Matrix3D;
 class Matrix4x4;
 class ShaderClass;
+class TextureBaseClass;
 class Vector3;
 class VertexMaterialClass;
 
@@ -89,6 +90,7 @@ public:
 
     static void Set_Shader(const ShaderClass & shader);
     static void Set_Material(const VertexMaterialClass * material);
+    static void Set_Texture(unsigned stage, TextureBaseClass * texture);
     static void Apply_Render_State_Changes();
 
     static void Set_Transform(RenderTransform transform, const Matrix4x4 & m);

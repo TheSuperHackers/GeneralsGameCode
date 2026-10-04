@@ -260,7 +260,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	VertexMaterialClass * linemat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	Renderer::Set_Material(linemat);
 	Renderer::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0, Texture);
+	Renderer::Set_Texture(0, Texture);
 	REF_PTR_RELEASE(linemat);
 
 	WWASSERT(StartLineLoc && StartLineLoc->Get_Array());
