@@ -37,9 +37,11 @@ class Matrix3D;
 class Matrix4x4;
 class ShaderClass;
 class TextureBaseClass;
+class TextureClass;
 class Vector3;
 class VertexBufferClass;
 class VertexMaterialClass;
+class ZTextureClass;
 
 struct RenderViewport
 {
@@ -91,6 +93,10 @@ public:
                       float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0);
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
+
+    static void Set_Render_Target_With_Z(TextureClass * texture, ZTextureClass * ztexture = nullptr);
+    static void Set_Default_Render_Target();
+    static bool Is_Render_To_Texture();
 
     static void Set_Shader(const ShaderClass & shader);
     static void Set_Material(const VertexMaterialClass * material);
