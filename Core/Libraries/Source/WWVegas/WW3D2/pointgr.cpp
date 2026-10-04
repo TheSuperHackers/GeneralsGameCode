@@ -976,8 +976,8 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 			}
 		}
 
-		DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
-		DX8Wrapper::Set_Vertex_Buffer (PointVerts);
+		Renderer::Set_Index_Buffer (indexbuffer, 0);
+		Renderer::Set_Vertex_Buffer (PointVerts);
 
 		if ( sort )
 		{
@@ -985,7 +985,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 		}
 		else
 		{
-			DX8Wrapper::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
+			Renderer::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
 		}
 
 		current+=delta;
@@ -1908,8 +1908,8 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 				}
 			}
 
-			DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
-			DX8Wrapper::Set_Vertex_Buffer (PointVerts);
+			Renderer::Set_Index_Buffer (indexbuffer, 0);
+			Renderer::Set_Vertex_Buffer (PointVerts);
 
 			/// @todo lorenzen sez: precompute these params, above
 
@@ -1917,7 +1917,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			if ( sort )
 					SortingRendererClass::Insert_Triangles (0, delta / verticesperprimitive, 0, delta);
 			else
-				DX8Wrapper::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
+				Renderer::Draw_Triangles (0, delta / verticesperprimitive, 0, delta);
 
 
 			current+=delta;

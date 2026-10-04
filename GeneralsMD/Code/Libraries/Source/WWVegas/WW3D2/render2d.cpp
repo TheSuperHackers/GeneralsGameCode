@@ -661,8 +661,8 @@ void Render2DClass::Render()
 			mem[i]=Indices[i];
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(vb);
-	DX8Wrapper::Set_Index_Buffer(ib,0);
+	Renderer::Set_Vertex_Buffer(vb);
+	Renderer::Set_Index_Buffer(ib,0);
 
 	if (IsGrayScale)
 	{
@@ -696,7 +696,7 @@ void Render2DClass::Render()
 	}
 	else
 		Renderer::Set_Shader(Shader);
-	DX8Wrapper::Draw_Triangles(0,Indices.Count()/3,0,Vertices.Count());
+	Renderer::Draw_Triangles(0,Indices.Count()/3,0,Vertices.Count());
 
 	Renderer::Set_Transform(RenderTransform_View,view);
 	Renderer::Set_Transform(RenderTransform_Projection,proj);

@@ -485,8 +485,8 @@ Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 
 	Int idxCount=(m_y-1)*(m_x*2+2) - 2;	//index count
 
-	DX8Wrapper::Set_Index_Buffer(TheWaterTracksRenderSystem->m_indexBuffer,batchStart);
-	DX8Wrapper::Draw_Strip(0,idxCount-2,0,m_x*m_y);	//there are always n-2 primitives for n index strip.
+	Renderer::Set_Index_Buffer(TheWaterTracksRenderSystem->m_indexBuffer,batchStart);
+	Renderer::Draw_Strip(0,idxCount-2,0,m_x*m_y);	//there are always n-2 primitives for n index strip.
 
 	return batchStart+m_x*m_y;	//return new offset into unused area of vertex buffer
 }
@@ -906,7 +906,7 @@ Try improving the fit to vertical surfaces like cliffs.
 	Renderer::Set_Material(m_vertexMaterialClass);
 	Renderer::Set_Shader(m_shaderClass);
 
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexBuffer);
+	Renderer::Set_Vertex_Buffer(m_vertexBuffer);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,8);
 	//Force apply of render states so we can override them.
 	Renderer::Apply_Render_State_Changes();

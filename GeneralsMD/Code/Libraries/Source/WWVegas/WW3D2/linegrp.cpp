@@ -466,13 +466,13 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(iba, 0);
-	DX8Wrapper::Set_Vertex_Buffer(vba);
+	Renderer::Set_Index_Buffer(iba, 0);
+	Renderer::Set_Vertex_Buffer(vba);
 
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(0, num_tris, 0, num_vertices);
 	} else {
-		DX8Wrapper::Draw_Triangles(0, num_tris, 0, num_vertices);
+		Renderer::Draw_Triangles(0, num_tris, 0, num_vertices);
 	}
 
 	// restore the matrices
