@@ -251,8 +251,8 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 	/*
 	** Set vertex and index buffers
 	*/
-	DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
-	DX8Wrapper::Set_Index_Buffer(dynamic_ib,0);
+	Renderer::Set_Vertex_Buffer(dynamic_vb);
+	Renderer::Set_Index_Buffer(dynamic_ib,0);
 
 	/*
 	** Draw dynamesh, one pass at a time
@@ -335,7 +335,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 				SortingRendererClass::Insert_Triangles(sphere,0, DynamicMeshPNum, 0, DynamicMeshVNum);
 			}
 			else {
-				DX8Wrapper::Draw_Triangles(0, DynamicMeshPNum, 0, DynamicMeshVNum);
+				Renderer::Draw_Triangles(0, DynamicMeshPNum, 0, DynamicMeshVNum);
 			}
 			continue;
 		}
@@ -375,7 +375,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 						1 + max_vert_idx - min_vert_idx);
 				}
 				else {
-					DX8Wrapper::Draw_Triangles(
+					Renderer::Draw_Triangles(
 						(start_tri_idx * 3),
 						(1 + cur_tri_idx - start_tri_idx),
 						min_vert_idx,

@@ -2439,9 +2439,9 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 
 		if (indexCount > 0 && vertexCount > 0)
 		{
-			DX8Wrapper::Set_Index_Buffer(ib_access,0);
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
+			Renderer::Set_Index_Buffer(ib_access,0);
+			Renderer::Set_Vertex_Buffer(vb_access);
+			Renderer::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 			m_numVisibleShoreLineTiles += indexCount/6;
 		}
 
@@ -2782,9 +2782,9 @@ flushVertexBuffer1:
 
 		if (indexCount > 0 && vertexCount > 0)
 		{
-			DX8Wrapper::Set_Index_Buffer(ib_access,0);
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
+			Renderer::Set_Index_Buffer(ib_access,0);
+			Renderer::Set_Vertex_Buffer(vb_access);
+			Renderer::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 			m_numVisibleShoreLineTiles += indexCount/6;
 		}
 

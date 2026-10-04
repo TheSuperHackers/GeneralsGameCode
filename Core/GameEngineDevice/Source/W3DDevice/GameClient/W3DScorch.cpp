@@ -123,12 +123,12 @@ void W3DScorch::drawScorches(WorldHeightMap& map)
 	{
 		return;
 	}
-	DX8Wrapper::Set_Index_Buffer(m_indexScorch, 0);
-	DX8Wrapper::Set_Vertex_Buffer(m_vertexScorch);
+	Renderer::Set_Index_Buffer(m_indexScorch, 0);
+	Renderer::Set_Vertex_Buffer(m_vertexScorch);
 	Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 
 	Renderer::Set_Texture(0, m_scorchTexture);
-	DX8Wrapper::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
+	Renderer::Draw_Triangles(0, m_curNumScorchIndices / 3, 0, m_curNumScorchVertices);
 }
 
 static Real getMapHeight(WorldHeightMap& map, Int x, Int y)

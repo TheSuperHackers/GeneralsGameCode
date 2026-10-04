@@ -304,9 +304,9 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 		}
 		if (numVertex == 0) break;
 		Renderer::Set_Shader(ShaderClass(SC_ALPHA));
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Vertex_Buffer(vb_access);
-		DX8Wrapper::Draw_Triangles(	0,curIndex/3, 0,	numVertex);	//draw a quad, 2 triangles, 4 verts
+		Renderer::Set_Index_Buffer(ib_access,0);
+		Renderer::Set_Vertex_Buffer(vb_access);
+		Renderer::Draw_Triangles(	0,curIndex/3, 0,	numVertex);	//draw a quad, 2 triangles, 4 verts
 	}
 
 	if (anyVanished) {

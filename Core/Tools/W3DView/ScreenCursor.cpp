@@ -293,8 +293,8 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 	Renderer::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
 	Renderer::Set_Texture(0,m_pTexture.Peek());
 
-	DX8Wrapper::Set_Vertex_Buffer(vbaccess);
-	DX8Wrapper::Set_Index_Buffer(ibaccess,0);
+	Renderer::Set_Vertex_Buffer(vbaccess);
+	Renderer::Set_Index_Buffer(ibaccess,0);
 
 	SphereClass sphere;
 	Get_Obj_Space_Bounding_Sphere(sphere);

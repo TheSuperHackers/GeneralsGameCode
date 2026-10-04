@@ -355,9 +355,9 @@ void RigidDecalMeshClass::Render()
 	while (next_poly_index < Polys.Count()) {
 		next_poly_index = Process_Material_Run(cur_poly_index);
 
-		DX8Wrapper::Set_Index_Buffer(dynamic_ib,0);
-		DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
-		DX8Wrapper::Draw_Triangles(	3*cur_poly_index,
+		Renderer::Set_Index_Buffer(dynamic_ib,0);
+		Renderer::Set_Vertex_Buffer(dynamic_vb);
+		Renderer::Draw_Triangles(	3*cur_poly_index,
 												(next_poly_index - cur_poly_index), // poly count
 												Polys[cur_poly_index].I,
 												1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
@@ -853,9 +853,9 @@ void SkinDecalMeshClass::Render()
 	while (next_poly_index < Polys.Count()) {
 		next_poly_index = Process_Material_Run(cur_poly_index);
 
-		DX8Wrapper::Set_Index_Buffer(dynamic_ib,0);
-		DX8Wrapper::Set_Vertex_Buffer(dynamic_vb);
-		DX8Wrapper::Draw_Triangles(3*cur_poly_index,
+		Renderer::Set_Index_Buffer(dynamic_ib,0);
+		Renderer::Set_Vertex_Buffer(dynamic_vb);
+		Renderer::Draw_Triangles(3*cur_poly_index,
 											(next_poly_index - cur_poly_index), // poly count
 											Polys[cur_poly_index].I,
 											1 + Polys[next_poly_index-1].K - Polys[cur_poly_index].I);
