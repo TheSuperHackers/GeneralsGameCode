@@ -178,6 +178,5 @@ paths with spaces and non-ASCII characters, concurrent instances, disabled
 uploads, export identity, and pruning of a 600 MiB synthetic database. The
 executable forbids use of its global allocator during adapter operations.
 
-See [the validation record](crashpad-validation.md) for local build and runtime
-results and the remaining qualification work. Keep the option off by default
-until those limitations and full-memory requirements have been resolved.
+Keep the option off by default until the intended deployment environments and
+full-memory requirements have been qualified.
