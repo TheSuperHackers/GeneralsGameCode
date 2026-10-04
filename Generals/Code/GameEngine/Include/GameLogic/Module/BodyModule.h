@@ -212,7 +212,15 @@ public:
 	virtual Real getInitialHealth() const override {return 0.0f;}  // return initial health
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return nullptr; }	///< return info on last damage dealt to this object
-	virtual const UnsignedInt *getLastDamageTimestamp() const override { return nullptr; }	///< return frame of last damage dealt
+	virtual const UnsignedInt *getLastDamageTimestamp() const override	///< return frame of last damage, or nullptr if none (only in non-retail builds)
+	{
+#if RETAIL_COMPATIBLE_CRC
+		static const UnsignedInt timestamp = 0;
+		return &timestamp;
+#else
+		return nullptr;
+#endif
+	}
 	virtual UnsignedInt getLastHealingTimestamp() const override { return 0; }	///< return frame of last healing dealt
 	virtual ObjectID getClearableLastAttacker() const override { return INVALID_ID; }
 	virtual void clearLastAttacker() override { }
