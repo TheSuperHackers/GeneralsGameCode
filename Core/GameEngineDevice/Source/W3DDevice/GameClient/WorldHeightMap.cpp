@@ -52,6 +52,7 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 
 #include "Common/file.h"
+#include "Utility/stringex.h"
 
 
 #define K_OBSOLETE_HEIGHT_MAP_VERSION 8
@@ -543,17 +544,15 @@ Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
 
 	const Int width = bounds.width();
 	const Int height = bounds.height();
+	if (width <= 0 || height <= 0)
+		return true;
+
 	const UnsignedByte* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
-
-	// Check that the first row is flat.
-	if (width > 1 && memcmp(firstRow, firstRow + 1, width - 1) != 0)
-		return false;
-
-	for (Int j = 1; j < height; j++)
+	const UnsignedByte referenceHeight = firstRow[0];
+	for (Int j = 0; j < height; j++)
 	{
-		// Check that row matches the first row.
 		const UnsignedByte* row = firstRow + j * m_width;
-		if (memcmp(firstRow, row, width) != 0)
+		if (memcchr(row, referenceHeight, width) != 0)
 			return false;
 	}
 
