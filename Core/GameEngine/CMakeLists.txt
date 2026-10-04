@@ -863,6 +863,7 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/AI/AIStates.cpp
 #    Source/GameLogic/AI/AITNGuard.cpp
     Source/GameLogic/AI/Pathfinder/Path.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindCellInfo.cpp
     Source/GameLogic/AI/Pathfinder/PathNode.cpp
 #    Source/GameLogic/AI/Squad.cpp
 #    Source/GameLogic/AI/TurretAI.cpp
