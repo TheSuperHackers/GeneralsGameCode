@@ -183,7 +183,13 @@ void ArchiveFile::attachFile(File *file)
 
 	m_file = file;
 
-	if (m_file == nullptr || !TheLocalFileSystem->getFileInfo(m_file->getName(), &m_fileInfo)) {
+	if (m_file != nullptr) {
+		if (!TheLocalFileSystem->getFileInfo(m_file->getName(), &m_fileInfo)) {
+			DEBUG_CRASH(("ArchiveFile::attachFile - Cannot query file info for '%s' unexpectedly", m_file->getName()));
+			m_fileInfo = FileInfo();
+		}
+	}
+	else {
 		m_fileInfo = FileInfo();
 	}
 }
