@@ -881,7 +881,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	if (	Is_Not_Hidden_At_All() &&
 			_dazzle_rendering_enabled &&
-			!DX8Wrapper::Is_Render_To_Texture()	)
+			!Renderer::Is_Render_To_Texture()	)
 	{
 		// First check if the dazzle is blinking and is "off"
 		bool is_on = true;

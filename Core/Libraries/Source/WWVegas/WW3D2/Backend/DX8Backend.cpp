@@ -179,6 +179,21 @@ void Renderer::Invalidate_Cached_Render_States()
     DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
+void Renderer::Set_Render_Target_With_Z(TextureClass * texture, ZTextureClass * ztexture)
+{
+    DX8Wrapper::Set_Render_Target_With_Z(texture, ztexture);
+}
+
+void Renderer::Set_Default_Render_Target()
+{
+    DX8Wrapper::Set_Render_Target(static_cast<IDirect3DSurface8 *>(nullptr));
+}
+
+bool Renderer::Is_Render_To_Texture()
+{
+    return DX8Wrapper::Is_Render_To_Texture();
+}
+
 void Renderer::Set_Shader(const ShaderClass & shader)
 {
     DX8Wrapper::Set_Shader(shader);
