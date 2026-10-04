@@ -66,6 +66,7 @@
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "WW3D2/camera.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/dx8renderer.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
@@ -1160,16 +1161,16 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 		return;
 	}
 
-	DX8Wrapper::Set_Material(m_vertexMaterial);
+	Renderer::Set_Material(m_vertexMaterial);
 	// Setup the vertex buffer, shader & texture.
 	DX8Wrapper::Set_Index_Buffer(m_indexBridge,0);
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBridge);
-	DX8Wrapper::Set_Shader(detailAlphaShader);
+	Renderer::Set_Shader(detailAlphaShader);
 #ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows alpha clipping.
 #endif
 
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	if (!wireframe && cloudTexture)
 	{
@@ -1192,12 +1193,12 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 	if (!wireframe && TheTerrainRenderObject->getShroud())
 	{
 		//Reset to a known shader.
-		DX8Wrapper::Invalidate_Cached_Render_States();
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Material(m_vertexMaterial);
+		Renderer::Invalidate_Cached_Render_States();
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Set_Material(m_vertexMaterial);
 		DX8Wrapper::Set_Index_Buffer(m_indexBridge,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBridge);
-		DX8Wrapper::Apply_Render_State_Changes();
+		Renderer::Apply_Render_State_Changes();
 		//Apply custom shroud projection shader.
 		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
 		W3DShaderManager::setShader(W3DShaderManager::ST_SHROUD_TEXTURE, 0);

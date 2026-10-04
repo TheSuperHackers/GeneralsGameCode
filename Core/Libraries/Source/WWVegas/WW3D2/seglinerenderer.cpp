@@ -1178,9 +1178,9 @@ void SegLineRendererClass::Render
 
 		DX8Wrapper::Set_Index_Buffer(ib_access,0);
 		DX8Wrapper::Set_Vertex_Buffer(Verts);
-		DX8Wrapper::Set_Material(mat);
+		Renderer::Set_Material(mat);
 		DX8Wrapper::Set_Texture(0,Texture);
-		DX8Wrapper::Set_Shader(shader);
+		Renderer::Set_Shader(shader);
 
 		if (sorting) {
 			SortingRendererClass::Insert_Triangles(obj_sphere,0,tidx,0,vnum);

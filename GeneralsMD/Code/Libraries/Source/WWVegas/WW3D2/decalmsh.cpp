@@ -385,8 +385,8 @@ void RigidDecalMeshClass::Render()
 int RigidDecalMeshClass::Process_Material_Run(int start_index)
 {
 	DX8Wrapper::Set_Texture(0,Textures[start_index]);
-	DX8Wrapper::Set_Material(VertexMaterials[Polys[start_index].I]);
-	DX8Wrapper::Set_Shader(Shaders[start_index]);
+	Renderer::Set_Material(VertexMaterials[Polys[start_index].I]);
+	Renderer::Set_Shader(Shaders[start_index]);
 
 	int next_index = start_index;
 	while (	(next_index < Polys.Count()) &&
@@ -883,8 +883,8 @@ void SkinDecalMeshClass::Render()
 int SkinDecalMeshClass::Process_Material_Run(int start_index)
 {
 	DX8Wrapper::Set_Texture(0,Textures[start_index]);
-	DX8Wrapper::Set_Material(VertexMaterials[Polys[start_index].I]);
-	DX8Wrapper::Set_Shader(Shaders[start_index]);
+	Renderer::Set_Material(VertexMaterials[Polys[start_index].I]);
+	Renderer::Set_Shader(Shaders[start_index]);
 
 	int next_index = start_index;
 	while (	(next_index < Polys.Count()) &&

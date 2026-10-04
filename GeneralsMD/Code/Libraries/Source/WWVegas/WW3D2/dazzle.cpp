@@ -1203,21 +1203,21 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 
 	if (halo_poly_count) {
 		DX8Wrapper::Set_Index_Buffer(ib_access,dazzle_vertex_count);
-		DX8Wrapper::Set_Shader(default_halo_shader);
+		Renderer::Set_Shader(default_halo_shader);
 		DX8Wrapper::Set_Texture(0,types[type]->Get_Halo_Texture());
 		DX8Wrapper::Draw_Triangles(0,halo_poly_count,0,vertex_count);
 	}
 
 	if (dazzle_poly_count) {
 		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Shader(default_dazzle_shader);
+		Renderer::Set_Shader(default_dazzle_shader);
 		DX8Wrapper::Set_Texture(0,types[type]->Get_Dazzle_Texture());
 		DX8Wrapper::Draw_Triangles(0,dazzle_poly_count,0,vertex_count);
 	}
 
 	if (lensflare_poly_count) {
 		DX8Wrapper::Set_Index_Buffer(ib_access,dazzle_vertex_count+halo_vertex_count);
-		DX8Wrapper::Set_Shader(default_dazzle_shader);
+		Renderer::Set_Shader(default_dazzle_shader);
 		DX8Wrapper::Set_Texture(0,lensflare->Get_Texture());
 		DX8Wrapper::Draw_Triangles(0,lensflare_poly_count,0,vertex_count);
 	}
@@ -1430,7 +1430,7 @@ void DazzleLayerClass::Render(CameraClass* camera)
 
 	camera->Apply();
 
-	DX8Wrapper::Set_Material(nullptr);
+	Renderer::Set_Material(nullptr);
 
 	for (unsigned type=0;type<type_count;++type) {
 		if (!types[type]) continue;
