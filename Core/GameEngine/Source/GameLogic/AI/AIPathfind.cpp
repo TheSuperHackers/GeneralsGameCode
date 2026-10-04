@@ -147,16 +147,6 @@ void Pathfinder::forceCleanCells()
 }
 #endif
 
-//-----------------------------------------------------------------------------------
-
-Bool PathfindCellList::canReverseSort(PathfindCell& currentCell) const
-{
-	if (m_head && m_tail)
-		return m_head->getTotalCostDifference(currentCell) > m_tail->getTotalCostDifference(currentCell);
-
-	return false;
-}
-
 inline Bool typesMatch(const PathfindCell &targetCell, const PathfindCell &sourceCell) {
 	PathfindCell::CellType targetType = targetCell.getType();
 	PathfindCell::CellType srcType = sourceCell.getType();
