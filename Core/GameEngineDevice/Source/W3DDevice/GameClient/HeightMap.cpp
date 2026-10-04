@@ -1922,7 +1922,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	}
 #endif
 
-	DX8Wrapper::Set_Light_Environment(rinfo.light_environment);
+	Renderer::Set_Light_Environment(rinfo.light_environment);
 
 	// Force shaders to update.
 	m_stageTwoTexture->restore();

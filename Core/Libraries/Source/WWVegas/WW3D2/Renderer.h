@@ -28,6 +28,7 @@
 // Forward declarations keep this header includable without pulling in the full
 // WW3D2 header graph. All W3D classes below are passed by pointer or reference.
 
+class LightClass;
 class LightEnvironmentClass;
 class Matrix3D;
 class Matrix4x4;
@@ -93,4 +94,7 @@ public:
 
     static void Set_Ambient(const Vector3 & color);
     static void Set_Light_Environment(LightEnvironmentClass * light_env);
+    static void Set_Light(unsigned index, const LightClass & light);
+    static void Clear_Light(unsigned index);
+    static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
 };
