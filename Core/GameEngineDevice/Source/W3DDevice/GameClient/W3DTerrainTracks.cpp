@@ -912,7 +912,7 @@ Try improving the fit to vertical surfaces like cliffs.
 		{
 			if (mod->m_activeEdgeCount >= 2 && mod->Is_Really_Visible())
 			{
-				DX8Wrapper::Set_Texture(0,mod->m_stageZeroTexture);
+				Renderer::Set_Texture(0,mod->m_stageZeroTexture);
 				DX8Wrapper::Set_Index_Buffer_Index_Offset(trackStartIndex);
 				DX8Wrapper::Draw_Triangles(	0,(mod->m_activeEdgeCount-1)*2, 0, mod->m_activeEdgeCount*2);
 

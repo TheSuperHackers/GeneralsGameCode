@@ -219,7 +219,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	Renderer::Apply_Render_State_Changes();
 
 	Renderer::Set_Material(m_vertexMaterialClass);
-	DX8Wrapper::Set_Texture(0, nullptr);
+	Renderer::Set_Texture(0, nullptr);
 	Renderer::Apply_Render_State_Changes();
 
 	Renderer::Set_Transform(RenderTransform_World,Transform);
