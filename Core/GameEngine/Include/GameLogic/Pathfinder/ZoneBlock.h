@@ -47,6 +47,12 @@ public:
 	Bool getInteractsWithBridge() const {return m_interactsWithBridge;}
 	void setInteractsWithBridge(Bool interacts) {m_interactsWithBridge = interacts;}
 
+	static void __fastcall resolveBlockZones(Int srcZone, Int targetZone, zoneStorageType* zoneEquivalency, Int sizeOfZE);
+	static void __fastcall resolveZones(Int srcZone, Int targetZone, zoneStorageType* zoneEquivalency, Int sizeOfZE);
+	static void flattenZones(zoneStorageType* zoneArray, zoneStorageType* zoneHierarchical, Int sizeOfZones);
+	static void applyZone(PathfindCell& targetCell, const PathfindCell& sourceCell, zoneStorageType* zoneEquivalency, Int sizeOfZE);
+	static void applyBlockZone(PathfindCell& targetCell, const PathfindCell& sourceCell, zoneStorageType* zoneEquivalency, Int firstZone, Int sizeOfZE);
+
 protected:
 	void allocateZones();
 	void freeZones();
