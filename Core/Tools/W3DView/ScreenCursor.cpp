@@ -291,7 +291,7 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 	*/
 	Renderer::Set_Material(m_pVertMaterial.Peek());
 	Renderer::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
-	DX8Wrapper::Set_Texture(0,m_pTexture.Peek());
+	Renderer::Set_Texture(0,m_pTexture.Peek());
 
 	DX8Wrapper::Set_Vertex_Buffer(vbaccess);
 	DX8Wrapper::Set_Index_Buffer(ibaccess,0);

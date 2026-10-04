@@ -934,7 +934,7 @@ Try improving the fit to vertical surfaces like cliffs.
 	while( mod )
 	{
 		if (LastTextureType != mod->m_type)
-			DX8Wrapper::Set_Texture(0,mod->m_stageZeroTexture);
+			Renderer::Set_Texture(0,mod->m_stageZeroTexture);
 
 		Int vertsRendered=mod->render(m_vertexBuffer,m_batchStart);
 

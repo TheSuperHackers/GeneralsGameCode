@@ -132,7 +132,7 @@ are already set.  */
 void W3DBridge::renderBridge(Bool wireframe)
 {
 	if (m_visible && m_numPolygons && m_numVertex) {
-		if (!wireframe) DX8Wrapper::Set_Texture(0,m_bridgeTexture);
+		if (!wireframe) Renderer::Set_Texture(0,m_bridgeTexture);
 		// Draw all the bridges.
 		DX8Wrapper::Draw_Triangles(	m_firstIndex, m_numPolygons, m_firstVertex,	m_numVertex);
 	}

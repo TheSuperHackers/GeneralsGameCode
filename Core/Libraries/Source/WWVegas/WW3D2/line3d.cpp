@@ -269,7 +269,7 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 	}
 
 	Renderer::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0,nullptr);
+	Renderer::Set_Texture(0,nullptr);
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	Renderer::Set_Material(vm);
 	REF_PTR_RELEASE(vm);

@@ -364,7 +364,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 
 	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
-		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
+		Renderer::Set_Texture(i,render_state.Textures[i]);
 	}
 
 	DX8Wrapper::_Set_DX8_Transform(D3DTS_WORLD,render_state.world);
