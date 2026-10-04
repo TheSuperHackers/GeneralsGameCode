@@ -320,7 +320,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		//Apply the shader and material
 		Renderer::Set_Material(m_vertexMaterialClass);
 		Renderer::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, nullptr);
+		Renderer::Set_Texture(0, nullptr);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferCircle);
 		setIndex = true;
@@ -343,7 +343,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	if (!setIndex) {
 		Renderer::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Texture(0, nullptr);
+		Renderer::Set_Texture(0, nullptr);
 	}
 
 	tm.Make_Identity();

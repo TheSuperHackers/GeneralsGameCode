@@ -1926,8 +1926,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	// Force shaders to update.
 	m_stageTwoTexture->restore();
-	DX8Wrapper::Set_Texture(0,nullptr);
-	DX8Wrapper::Set_Texture(1,nullptr);
+	Renderer::Set_Texture(0,nullptr);
+	Renderer::Set_Texture(1,nullptr);
 	ShaderClass::Invalidate();
 
 	Renderer::Set_Transform(RenderTransform_World,Transform);
@@ -2030,7 +2030,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		{
  			if (m_disableTextures ) {
  				Renderer::Set_Shader(ShaderClass::_PresetOpaque2DShader);
- 				DX8Wrapper::Set_Texture(0,nullptr);
+ 				Renderer::Set_Texture(0,nullptr);
    			} else {
  				W3DShaderManager::setShader(st, pass);
 			}
@@ -2081,8 +2081,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		Int xCoordMin = m_map->getDrawOrgX();
 		Int xCoordMax = m_x+m_map->getDrawOrgX()-1;
 #ifdef DO_ROADS
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 
 		ShaderClass::Invalidate();
@@ -2099,14 +2099,14 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	if (m_propBuffer) {
 		m_propBuffer->drawProps(rinfo);
 	}
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 
 		drawScorches();
 
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 		ShaderClass::Invalidate();
 		Renderer::Apply_Render_State_Changes();
@@ -2135,8 +2135,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	m_bibBuffer->renderBibs();
 
 	// We do some custom blending, so tell the shader class to reset everything.
-	DX8Wrapper::Set_Texture(0,nullptr);
-	DX8Wrapper::Set_Texture(1,nullptr);
+	Renderer::Set_Texture(0,nullptr);
+	Renderer::Set_Texture(1,nullptr);
 	m_stageTwoTexture->restore();
 	ShaderClass::Invalidate();
 	Renderer::Set_Material(nullptr);
@@ -2349,7 +2349,7 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);	//disable lighting.
 			shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);		//disable texturing.
 			Renderer::Set_Shader(shader);
-			DX8Wrapper::Set_Texture(0,nullptr);	//debug mode which draws terrain tiles in white.
+			Renderer::Set_Texture(0,nullptr);	//debug mode which draws terrain tiles in white.
 			if (Is_Hidden() == 0) {
 				DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 				m_numVisibleExtraBlendTiles += indexCount/6;

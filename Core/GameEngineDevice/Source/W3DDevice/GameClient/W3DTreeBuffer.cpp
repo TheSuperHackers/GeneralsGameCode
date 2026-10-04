@@ -1575,7 +1575,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 #ifdef DEBUG_TEXTURE // Draw the combined texture for debugging. jba. [4/21/2003]
 	// Setup the vertex buffer, shader & texture.
 	Renderer::Set_Shader(detailAlphaShader);
-	DX8Wrapper::Set_Texture(0,m_treeTexture);
+	Renderer::Set_Texture(0,m_treeTexture);
 	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8, 6);
 	//draw an infinite sky plane
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8, DX8_FVF_XYZNDUV2, 4);
@@ -1642,8 +1642,8 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	}
 	Renderer::Set_Shader(detailAlphaShader);
 
-	DX8Wrapper::Set_Texture(0,m_treeTexture);
-	DX8Wrapper::Set_Texture(1,nullptr);
+	Renderer::Set_Texture(0,m_treeTexture);
+	Renderer::Set_Texture(1,nullptr);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_TEXCOORDINDEX, 1);
 	// Draw all the trees.
