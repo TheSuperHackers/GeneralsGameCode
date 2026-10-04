@@ -316,14 +316,14 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		}
 
 		if (material_array) {
-			DX8Wrapper::Set_Material(material_array[tris[0].I]);
+			Renderer::Set_Material(material_array[tris[0].I]);
 		} else {
-			DX8Wrapper::Set_Material(MatDesc->Peek_Single_Material(pass));
+			Renderer::Set_Material(MatDesc->Peek_Single_Material(pass));
 		}
 		if (shader_array) {
-			DX8Wrapper::Set_Shader(shader_array[0]);
+			Renderer::Set_Shader(shader_array[0]);
 		} else {
-			DX8Wrapper::Set_Shader(MatDesc->Get_Single_Shader(pass));
+			Renderer::Set_Shader(MatDesc->Get_Single_Shader(pass));
 		}
 
 		SphereClass sphere;
@@ -386,8 +386,8 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 				max_vert_idx = 0;
 				if (texture_changed) DX8Wrapper::Set_Texture(0,texture_array0[next_tri_idx]);
 				if (texture1_changed) DX8Wrapper::Set_Texture(1,texture_array1[next_tri_idx]);
-				if (material_changed) DX8Wrapper::Set_Material(material_array[tris[next_tri_idx].I]);
-				if (shader_changed) DX8Wrapper::Set_Shader(shader_array[next_tri_idx]);
+				if (material_changed) Renderer::Set_Material(material_array[tris[next_tri_idx].I]);
+				if (shader_changed) Renderer::Set_Shader(shader_array[next_tri_idx]);
 			}
 
 			cur_tri_idx = next_tri_idx;
