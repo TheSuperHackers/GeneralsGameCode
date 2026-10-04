@@ -3491,9 +3491,12 @@ void AIPlayer::getPlayerStructureBounds(Region2D *bounds, Int playerNdx )
 	Player::PlayerTeamList::const_iterator it;
 	Bool firstObject = true;
 	Bool firstStructure = true;
-	bounds->hi.x = bounds->lo.x = bounds->hi.y = bounds->lo.x = 0;
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info In the Generals code, lo.y used to be uninitialized for both Region2D variables in this function.
+#endif
+	bounds->zero();
 	Region2D objBounds;
-	objBounds.hi.x = objBounds.lo.x = objBounds.hi.y = objBounds.lo.x = 0;
+	objBounds.zero();
 
 	Player* pPlayer = ThePlayerList->getNthPlayer(playerNdx);
 	if (pPlayer == nullptr) return;
