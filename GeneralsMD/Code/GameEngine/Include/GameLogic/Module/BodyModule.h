@@ -228,7 +228,7 @@ public:
 	virtual Real getInitialHealth() const override {return 0.0f;}  // return initial health
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return nullptr; }	///< return info on last damage dealt to this object
-	virtual const UnsignedInt *getLastDamageTimestamp() const override	///< return frame of last damage, or nullptr if none (only in non-retail builds)
+	virtual const UnsignedInt *getLastDamageTimestamp() const override	///< return frame of last damage, or nullptr if none
 	{
 #if RETAIL_COMPATIBLE_CRC
 		static const UnsignedInt timestamp = 0;
@@ -237,7 +237,7 @@ public:
 		return nullptr;
 #endif
 	}
-	virtual const UnsignedInt *getLastHealingTimestamp() const override	///< return frame of last healing, or nullptr if none (only in non-retail builds)
+	virtual const UnsignedInt *getLastHealingTimestamp() const override	///< return frame of last healing, or nullptr if none
 	{
 #if RETAIL_COMPATIBLE_CRC
 		static const UnsignedInt timestamp = 0;

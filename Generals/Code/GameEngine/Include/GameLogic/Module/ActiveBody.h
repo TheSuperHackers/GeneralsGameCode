@@ -79,8 +79,8 @@ public:
 	virtual void setAflame( Bool setting ) override;///< This is a major change like a damage state.
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
-	virtual const UnsignedInt *getLastDamageTimestamp() const override;	///< return frame of last damage, or nullptr if none (only in non-retail builds)
-	virtual const UnsignedInt *getLastHealingTimestamp() const override;	///< return frame of last healing, or nullptr if none (only in non-retail builds)
+	virtual const UnsignedInt *getLastDamageTimestamp() const override;	///< return frame of last damage, or nullptr if none
+	virtual const UnsignedInt *getLastHealingTimestamp() const override;	///< return frame of last healing, or nullptr if none
 	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
 	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }
 
