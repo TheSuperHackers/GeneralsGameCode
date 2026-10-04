@@ -218,3 +218,18 @@ void Renderer::Set_Light_Environment(LightEnvironmentClass * light_env)
 {
     DX8Wrapper::Set_Light_Environment(light_env);
 }
+
+void Renderer::Set_Light(unsigned index, const LightClass & light)
+{
+    DX8Wrapper::Set_Light(index, light);
+}
+
+void Renderer::Clear_Light(unsigned index)
+{
+    DX8Wrapper::Set_Light(index, nullptr);
+}
+
+void Renderer::Set_Fog(bool enable, const Vector3 & color, float start, float end)
+{
+    DX8Wrapper::Set_Fog(enable, color, start, end);
+}
