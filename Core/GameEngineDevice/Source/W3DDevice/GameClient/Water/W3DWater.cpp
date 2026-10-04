@@ -2377,10 +2377,10 @@ void WaterRenderObjClass::renderWaterMesh()
 	DX8Wrapper::Set_Texture(0,setting->waterTexture);
 	DX8Wrapper::Set_Texture(1,setting->waterTexture);
 
-	DX8Wrapper::Set_Light(0,*m_meshLight);
-	DX8Wrapper::Set_Light(1,nullptr);
-	DX8Wrapper::Set_Light(2,nullptr);
-	DX8Wrapper::Set_Light(3,nullptr);
+	Renderer::Set_Light(0,*m_meshLight);
+	Renderer::Clear_Light(1);
+	Renderer::Clear_Light(2);
+	Renderer::Clear_Light(3);
 /*
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_AMBIENT,0);	//turn off scene ambient
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_SPECULARENABLE,TRUE);
