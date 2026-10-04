@@ -30,6 +30,7 @@
 
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
+#include "Common/LocalFileSystem.h"
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
 
@@ -179,7 +180,12 @@ void ArchiveFile::attachFile(File *file)
 		m_file->close();
 		m_file = nullptr;
 	}
+
 	m_file = file;
+
+	if (m_file == nullptr || !TheLocalFileSystem->getFileInfo(m_file->getName(), &m_fileInfo)) {
+		m_fileInfo = FileInfo();
+	}
 }
 
 const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const

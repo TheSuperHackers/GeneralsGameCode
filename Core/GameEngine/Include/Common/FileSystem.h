@@ -109,6 +109,14 @@ typedef UnsignedByte FileInstance;
 
 struct FileInfo {
 
+	FileInfo()
+		: sizeHigh(0)
+		, sizeLow(0)
+		, timestampHigh(0)
+		, timestampLow(0)
+	{
+	}
+
 	Int64 size() const { return (Int64)sizeHigh << 32 | sizeLow; }
 	Int64 timestamp() const { return (Int64)timestampHigh << 32 | timestampLow; }
 

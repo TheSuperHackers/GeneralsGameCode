@@ -68,6 +68,7 @@ protected:
 
 protected:
 	File *m_file; ///< file pointer to the archive file on disk.  Kept open so we don't have to continuously open and close the file all the time.
+	FileInfo m_fileInfo; ///< file info of the archive file on disk.
 
 private:
 	DetailedArchivedDirectoryInfo m_rootDirectory;

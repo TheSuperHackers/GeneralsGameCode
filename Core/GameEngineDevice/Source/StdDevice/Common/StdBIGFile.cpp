@@ -160,8 +160,9 @@ Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 	// fill in the size info.  Since the size can't be bigger than a JUNK file, the high int will always be 0.
 	fileInfo->sizeHigh = 0;
 	fileInfo->sizeLow = archivedFileInfo->m_size;
-	fileInfo->timestampHigh = 0;
-	fileInfo->timestampLow = 0;
+	// the timestamp is taken from the archive file.
+	fileInfo->timestampHigh = m_fileInfo.timestampHigh;
+	fileInfo->timestampLow = m_fileInfo.timestampLow;
 
 	return TRUE;
 }
