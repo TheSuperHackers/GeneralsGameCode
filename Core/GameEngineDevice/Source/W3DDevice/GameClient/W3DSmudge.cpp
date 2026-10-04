@@ -230,7 +230,7 @@ Bool W3DSmudgeManager::testHardwareSupport()
 		shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
 		shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
 		Renderer::Set_Shader(shader);
-		DX8Wrapper::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(0,nullptr);
 		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		struct _TRANS_LIT_TEX_VERTEX {
@@ -455,7 +455,7 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 	Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
 
-	DX8Wrapper::Set_Texture(0,m_backgroundTexture);
+	Renderer::Set_Texture(0,m_backgroundTexture);
 	//Need these states in case texture is non-power-of-2
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
