@@ -937,25 +937,25 @@ Bool AIPlayer::isSupplySourceAttacked()
 {
 	// TheSuperHackers @bugfix WebbontheWeb 27/09/2026 No longer scans for supply source attacks for just the last 10 frames.
 	// A prior EA comment indicated that the intent was to look for 10 seconds into the attack history.
-	const Int REFRESH_RATE = 10;
+	const Int RefreshRate = 10;
 #if RETAIL_COMPATIBLE_CRC
-	const Int SCAN_WINDOW = 10;
+	const Int ScanWindow = 10;
 #else
-	const Int SCAN_WINDOW = 10 * LOGICFRAMES_PER_SECOND;
+	const Int ScanWindow = 10 * LOGICFRAMES_PER_SECOND;
 #endif
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame==0) {
-		m_supplySourceAttackCheckFrame = curFrame + REFRESH_RATE;
+		m_supplySourceAttackCheckFrame = curFrame + RefreshRate;
 		return false; // can't be attacked on first frame.
 	}
 	m_attackedSupplyCenter = INVALID_ID;
 	if (curFrame < m_supplySourceAttackCheckFrame) {
 		return false;
 	}
-	if (m_player->getAttackedFrame() + SCAN_WINDOW < curFrame) {
+	if (m_player->getAttackedFrame() + ScanWindow < curFrame) {
 		return false; // haven't been attacked recently.
 	}
-	m_supplySourceAttackCheckFrame = curFrame + REFRESH_RATE;
+	m_supplySourceAttackCheckFrame = curFrame + RefreshRate;
 
 	// Scan my units.
 	Player::PlayerTeamList::const_iterator it;
@@ -983,7 +983,7 @@ Bool AIPlayer::isSupplySourceAttacked()
 							continue;
 						}
 						const UnsignedInt *lastDamageTimestamp = body->getLastDamageTimestamp();
-						if (lastDamageTimestamp && *lastDamageTimestamp + SCAN_WINDOW > curFrame) {
+						if (lastDamageTimestamp && *lastDamageTimestamp + ScanWindow > curFrame) {
 							// winner.
 							m_attackedSupplyCenter = obj->getID();
 							return true;
