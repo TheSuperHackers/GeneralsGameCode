@@ -3819,19 +3819,24 @@ void WorkOrder::loadPostProcess()
 /**
  * Get the bounds for a player's structure.
  */
-void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool conservative )
+void AIPlayer::getPlayerStructureBounds(Region2D *bounds, Int playerNdx, Bool conservative)
 {
-	Player::PlayerTeamList::const_iterator it;
-	Bool firstObject = true;
-	Bool firstStructure = true;
-	bounds->hi.x = bounds->lo.x = bounds->hi.y = bounds->lo.y = 0;
-	Region2D objBounds;
-	objBounds.hi.x = objBounds.lo.x = objBounds.hi.y = objBounds.lo.y = 0;
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info In the Generals code, lo.y used to be uninitialized for both Region2D variables in this function.
+#endif
+	bounds->zero();
 
 	Player* pPlayer = ThePlayerList->getNthPlayer(playerNdx);
 	if (pPlayer == nullptr)
 		return;
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+
+	Bool firstObject = true;
+	Bool firstStructure = true;
+	Region2D objBounds;
+	objBounds.zero();
+
+	const Player::PlayerTeamList& list = *pPlayer->getPlayerTeams();
+	for (Player::PlayerTeamList::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
 		{
