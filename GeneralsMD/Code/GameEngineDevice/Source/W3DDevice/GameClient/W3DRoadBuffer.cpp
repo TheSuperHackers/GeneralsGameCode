@@ -63,6 +63,7 @@
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "WW3D2/camera.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/dx8renderer.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
@@ -3381,7 +3382,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 					DX8Wrapper::Set_Texture(1,cloudTexture);
 				}
 			}
-			DX8Wrapper::Set_Shader(detailAlphaShader);
+			Renderer::Set_Shader(detailAlphaShader);
 			//Draw all the roads.
 			DX8Wrapper::Draw_Triangles(	0, m_curNumRoadIndices/3, 0,	m_curNumRoadVertices);
 		}
