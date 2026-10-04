@@ -37,6 +37,7 @@
 #include "Pathfinder/PathfindCell.h"
 #include "Pathfinder/PathfindCellInfo.h"
 #include "Pathfinder/PathfindCellList.h"
+#include "Pathfinder/PathfindConstants.h"
 #include "Pathfinder/PathfindLayer.h"
 #include "Pathfinder/PathfindZoneManager.h"
 #include "Pathfinder/PathNode.h"
@@ -67,16 +68,7 @@ class PathfindCell;
 // See GameType.h for
 // enum {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_TOP=2 };
 
-// Fits in 4 bits for now
-enum {MAX_WALL_PIECES = 128};
 
-// how close a unit has to be in z to interact with the layer.
-#define LAYER_Z_CLOSE_ENOUGH_F 10.0f
-
-#define PATHFIND_CELL_SIZE		10
-#define PATHFIND_CELL_SIZE_F	10.0f
-
-enum { PATHFIND_QUEUE_LEN=512};
 
 struct TCheckMovementInfo;
 

@@ -28,6 +28,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/AIPathfind.h"
+#include "GameLogic/Pathfinder/PathfindConstants.h"
 
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -111,18 +112,8 @@ inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 //-----------------------------------------------------------------------------------
 static Int frameToShowObstacles;
 
-constexpr const UnsignedInt ZONE_UPDATE_FREQUENCY = 300;
-constexpr const UnsignedInt MAX_CELL_COUNT = 500;
-constexpr const UnsignedInt MAX_ADJUSTMENT_CELL_COUNT = 400;
-constexpr const UnsignedInt MAX_SAFE_PATH_CELL_COUNT = 2000;
-
-constexpr const UnsignedInt PATHFIND_CELLS_PER_FRAME = 5000; // Number of cells we will search pathfinding per frame.
 
 #if RETAIL_COMPATIBLE_PATHFINDING
-// TheSuperHackers @info This variable is here so the code will run down the retail compatible path till a failure mode is hit
-// The pathfinding will then switch over to the corrected pathfinding code for SH clients
-Bool s_useFixedPathfinding = false;
-Bool s_forceCleanCells = false;
 
 void Pathfinder::forceCleanCells()
 {
@@ -1000,10 +991,6 @@ inline Bool PathfindCell::isObstacleFence() const
 }
 
 
-const Int COST_ORTHOGONAL = 10;
-const Int COST_DIAGONAL = 14;
-const Real COST_TO_DISTANCE_FACTOR = 1.0f/10.0f;
-const Real COST_TO_DISTANCE_FACTOR_SQR = COST_TO_DISTANCE_FACTOR*COST_TO_DISTANCE_FACTOR;
 
 UnsignedInt PathfindCell::costToGoal( PathfindCell *goal )
 {
