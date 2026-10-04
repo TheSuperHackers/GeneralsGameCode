@@ -1934,7 +1934,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	//Apply the shader and material
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+	Renderer::Set_Index_Buffer(m_indexBuffer,0);
 
 	Bool doMultiPassWireFrame=FALSE;
 
@@ -2039,7 +2039,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		for (j=0; j<m_numVBTilesY; j++)
 			for (i=0; i<m_numVBTilesX; i++)
 			{
-				DX8Wrapper::Set_Vertex_Buffer(getVertexBufferTile(i, j));
+				Renderer::Set_Vertex_Buffer(getVertexBufferTile(i, j));
 #ifdef PRE_TRANSFORM_VERTEX
 				if (m_xformedVertexBuffer && pass==0) {
 					// Note - m_xformedVertexBuffer should only be used for non T&L hardware.  jba.
@@ -2058,7 +2058,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 				}
 #endif
 				if (Is_Hidden() == 0) {
-					DX8Wrapper::Draw_Triangles(0, HEIGHTMAP_POLYGON_NUM, 0, HEIGHTMAP_VERTEX_NUM);
+					Renderer::Draw_Triangles(0, HEIGHTMAP_POLYGON_NUM, 0, HEIGHTMAP_VERTEX_NUM);
 				}
 
 			}
@@ -2152,12 +2152,12 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 
 	//Apply the shader and material
 
-	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+	Renderer::Set_Index_Buffer(m_indexBuffer,0);
 
 	for (Int j=0; j<m_numVBTilesY; j++)
 		for (Int i=0; i<m_numVBTilesX; i++)
 		{
-			DX8Wrapper::Set_Vertex_Buffer(getVertexBufferTile(i, j));
+			Renderer::Set_Vertex_Buffer(getVertexBufferTile(i, j));
 #ifdef PRE_TRANSFORM_VERTEX
 			if (m_xformedVertexBuffer && pass==0) {
 				// Note - m_xformedVertexBuffer should only be used for non T&L hardware.  jba.
@@ -2176,7 +2176,7 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 			}
 #endif
 			if (Is_Hidden() == 0) {
-				DX8Wrapper::Draw_Triangles(0, HEIGHTMAP_POLYGON_NUM, 0, HEIGHTMAP_VERTEX_NUM);
+				Renderer::Draw_Triangles(0, HEIGHTMAP_POLYGON_NUM, 0, HEIGHTMAP_VERTEX_NUM);
 			}
 		}
 }
@@ -2335,8 +2335,8 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			maxBlendTiles += 16;	//enlarge by 16 to reduce trashing.
 
 		ShaderClass::Invalidate();	//invalidate to force shader to reset since we directly changed states
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Vertex_Buffer(vb_access);
+		Renderer::Set_Index_Buffer(ib_access,0);
+		Renderer::Set_Vertex_Buffer(vb_access);
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);
@@ -2351,7 +2351,7 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			Renderer::Set_Shader(shader);
 			Renderer::Set_Texture(0,nullptr);	//debug mode which draws terrain tiles in white.
 			if (Is_Hidden() == 0) {
-				DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
+				Renderer::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 				m_numVisibleExtraBlendTiles += indexCount/6;
 			}
 		}
@@ -2386,7 +2386,7 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			{
 				W3DShaderManager::setShader(st, pass);
 				if (Is_Hidden() == 0) {
-					DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
+					Renderer::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 					m_numVisibleExtraBlendTiles += indexCount/6;
 				}
 			}
