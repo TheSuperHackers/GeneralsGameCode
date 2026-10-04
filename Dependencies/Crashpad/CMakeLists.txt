@@ -62,13 +62,3 @@ configure_file("${package}/share/crashpad/vcpkg_abi_info.txt" "${notices}/crashp
 configure_file(getopt-LICENSE "${notices}/getopt-LICENSE" COPYONLY)
 configure_file(mini-chromium-LICENSE "${notices}/mini-chromium-LICENSE" COPYONLY)
 set(RTS_CRASHPAD_NOTICES "${notices}" PARENT_SCOPE)
-
-add_executable(rts_crashpad_reports CrashpadReports.cpp)
-target_compile_features(rts_crashpad_reports PRIVATE cxx_std_20)
-target_link_libraries(rts_crashpad_reports PRIVATE crashpad::crashpad)
-set_target_properties(rts_crashpad_reports PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-
-if(RTS_BUILD_CRASHPAD_TESTS)
-    add_subdirectory(tests)
-endif()
