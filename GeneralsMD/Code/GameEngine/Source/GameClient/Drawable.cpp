@@ -3183,8 +3183,10 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 //		if( lastDamage != nullptr && lastDamage->in.m_damageType == DAMAGE_HEALING
 //			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME
 //			)
+		const UnsignedInt *lastHealingTimestamp = body->getLastHealingTimestamp();
 		if ( TheGameLogic->getFrame() > HEALING_ICON_DISPLAY_TIME && // because so many things init health early in game
-			(TheGameLogic->getFrame() - body->getLastHealingTimestamp() <= HEALING_ICON_DISPLAY_TIME) )
+			lastHealingTimestamp != nullptr &&
+			(TheGameLogic->getFrame() - *lastHealingTimestamp <= HEALING_ICON_DISPLAY_TIME) )
 
 			showHealing = TRUE;
 	}

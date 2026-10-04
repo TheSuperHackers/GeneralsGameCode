@@ -169,7 +169,7 @@ public:
 
 	virtual const DamageInfo *getLastDamageInfo() const = 0;
 	virtual const UnsignedInt *getLastDamageTimestamp() const = 0;
-	virtual UnsignedInt getLastHealingTimestamp() const = 0;
+	virtual const UnsignedInt *getLastHealingTimestamp() const = 0;
 	virtual ObjectID getClearableLastAttacker() const = 0;
 	virtual void clearLastAttacker() = 0;
 	virtual Bool getFrontCrushed() const = 0;
@@ -237,7 +237,15 @@ public:
 		return nullptr;
 #endif
 	}
-	virtual UnsignedInt getLastHealingTimestamp() const override { return 0; }	///< return frame of last healing dealt
+	virtual const UnsignedInt *getLastHealingTimestamp() const override	///< return frame of last healing, or nullptr if none (only in non-retail builds)
+	{
+#if RETAIL_COMPATIBLE_CRC
+		static const UnsignedInt timestamp = 0;
+		return &timestamp;
+#else
+		return nullptr;
+#endif
+	}
 	virtual ObjectID getClearableLastAttacker() const override { return INVALID_ID; }
 	virtual void clearLastAttacker() override { }
 	virtual Bool getFrontCrushed() const override { return false; }

@@ -1354,6 +1354,18 @@ const UnsignedInt *ActiveBody::getLastDamageTimestamp() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+const UnsignedInt *ActiveBody::getLastHealingTimestamp() const
+{
+#if RETAIL_COMPATIBLE_CRC
+	return &m_lastHealingTimestamp;
+#else
+	// TheSuperHackers @fix WebbontheWeb 04/10/2026 Avoid treating never-healed sentinels as a healing timestamp.
+	return m_lastHealingTimestamp != InvalidBodyTimestamp ? &m_lastHealingTimestamp : nullptr;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 Real ActiveBody::getHealth() const
 {
 	return m_currentHealth;

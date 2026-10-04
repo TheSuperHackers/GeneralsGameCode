@@ -88,7 +88,7 @@ public:
 
 	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
 	virtual const UnsignedInt *getLastDamageTimestamp() const override;	///< return frame of last damage, or nullptr if none (only in non-retail builds)
-	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
+	virtual const UnsignedInt *getLastHealingTimestamp() const override;	///< return frame of last healing, or nullptr if none (only in non-retail builds)
 	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
 	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }
 
