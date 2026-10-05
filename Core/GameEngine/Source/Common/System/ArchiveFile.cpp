@@ -32,7 +32,10 @@
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/file.h"
+#include "Common/LocalFile.h"
 #include "Common/PerfTimer.h"
+#include "Common/RAMFile.h"
+#include "Common/StreamingArchiveFile.h"
 
 
 // checks to see if str matches searchString.  Search string is done in the
@@ -90,8 +93,10 @@ ArchiveFile::~ArchiveFile()
 	}
 }
 
-ArchiveFile::ArchiveFile()
+ArchiveFile::ArchiveFile(AsciiString name, AsciiString path)
 	: m_file(nullptr)
+	, m_name(name)
+	, m_path(path)
 {
 }
 
@@ -228,4 +233,117 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 		return nullptr;
 	}
 
+}
+
+//============================================================================
+// ArchiveFile::openFile
+//============================================================================
+
+File* ArchiveFile::openFile( const Char *filename, Int access )
+{
+	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
+
+	if (fileInfo == nullptr) {
+		return nullptr;
+	}
+
+	RAMFile *ramFile = nullptr;
+
+	if (BitIsSet(access, File::STREAMING))
+		ramFile = newInstance( StreamingArchiveFile );
+	else
+		ramFile = newInstance( RAMFile );
+
+	ramFile->deleteOnClose();
+	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE) {
+		ramFile->close();
+		ramFile = nullptr;
+		return nullptr;
+	}
+
+	if ((access & File::WRITE) == 0) {
+		// requesting read only access. Just return the RAM file.
+		return ramFile;
+	}
+
+	// whoever is opening this file wants write access, so copy the file to the local disk
+	// and return that file pointer.
+
+	constexpr size_t bufferSize = 0;
+	File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
+	if (localFile != nullptr) {
+		ramFile->copyDataToFile(localFile);
+	}
+
+	ramFile->close();
+	ramFile = nullptr;
+
+	return localFile;
+}
+
+//============================================================================
+// ArchiveFile::closeAllFiles
+//============================================================================
+
+void ArchiveFile::closeAllFiles()
+{
+
+}
+
+//============================================================================
+// ArchiveFile::getName
+//============================================================================
+
+AsciiString ArchiveFile::getName()
+{
+	return m_name;
+}
+
+//============================================================================
+// ArchiveFile::getPath
+//============================================================================
+
+AsciiString ArchiveFile::getPath()
+{
+	return m_path;
+}
+
+//============================================================================
+// ArchiveFile::setSearchPriority
+//============================================================================
+
+void ArchiveFile::setSearchPriority( Int new_priority )
+{
+
+}
+
+//============================================================================
+// ArchiveFile::close
+//============================================================================
+
+void ArchiveFile::close()
+{
+
+}
+
+//============================================================================
+// ArchiveFile::getFileInfo
+//============================================================================
+
+Bool ArchiveFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+{
+	const ArchivedFileInfo *archivedFileInfo = getArchivedFileInfo(filename);
+
+	if (archivedFileInfo == nullptr) {
+		return FALSE;
+	}
+
+	// fill in the size info.  Since the size can't be bigger than a JUNK file, the high int will always be 0.
+	fileInfo->sizeHigh = 0;
+	fileInfo->sizeLow = archivedFileInfo->m_size;
+	// the timestamp is taken from the archive file.
+	fileInfo->timestampHigh = m_fileInfo.timestampHigh;
+	fileInfo->timestampLow = m_fileInfo.timestampLow;
+
+	return TRUE;
 }

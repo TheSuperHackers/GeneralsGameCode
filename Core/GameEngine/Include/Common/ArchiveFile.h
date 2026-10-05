@@ -46,16 +46,16 @@ class File;
 class ArchiveFile
 {
 public:
-	ArchiveFile();
-	virtual ~ArchiveFile();
+	ArchiveFile(AsciiString name, AsciiString path);
+	~ArchiveFile();
 
-	virtual Bool					getFileInfo( const AsciiString& filename, FileInfo *fileInfo) const = 0;	///< fill in the fileInfo struct with info about the file requested.
-	virtual File*					openFile( const Char *filename, Int access = 0) = 0;	///< Open the specified file within the archive file
-	virtual void					closeAllFiles() = 0;									///< Close all file opened in this archive file
-	virtual AsciiString		getName() = 0;												///< Returns the name of the archive file
-	virtual AsciiString		getPath() = 0;												///< Returns full path and name of archive file
-	virtual void					setSearchPriority( Int new_priority ) = 0;	///< Set this archive file's search priority
-	virtual void					close() = 0;													///< Close this archive file
+	Bool					getFileInfo( const AsciiString& filename, FileInfo *fileInfo) const;	///< fill in the fileInfo struct with info about the file requested.
+	File*					openFile( const Char *filename, Int access = 0);	///< Open the specified file within the archive file
+	void					closeAllFiles();									///< Close all file opened in this archive file
+	AsciiString		getName();												///< Returns the name of the archive file
+	AsciiString		getPath();												///< Returns full path and name of archive file
+	void					setSearchPriority( Int new_priority );	///< Set this archive file's search priority
+	void					close();													///< Close this archive file
 	void									attachFile(File *file);
 
 	void									getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const;
@@ -69,6 +69,8 @@ protected:
 protected:
 	File *m_file; ///< file pointer to the archive file on disk.  Kept open so we don't have to continuously open and close the file all the time.
 	FileInfo m_fileInfo; ///< file info of the archive file on disk.
+	AsciiString m_name; ///< archive file name
+	AsciiString m_path; ///< archive file path
 
 private:
 	DetailedArchivedDirectoryInfo m_rootDirectory;

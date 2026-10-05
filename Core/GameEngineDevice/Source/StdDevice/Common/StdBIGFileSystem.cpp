@@ -38,7 +38,6 @@
 #include "Common/Registry.h"
 #endif
 
-#include "StdDevice/Common/StdBIGFile.h"
 #include "StdDevice/Common/StdBIGFileSystem.h"
 #include "Utility/endian_compat.h"
 
@@ -127,7 +126,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->seek(0x10, File::START);
 	// read in each directory listing.
 	ArchivedFileInfo fileInfo;
-	ArchiveFile *archiveFile = NEW StdBIGFile(filename, AsciiString::TheEmptyString);
+	ArchiveFile *archiveFile = NEW ArchiveFile(filename, AsciiString::TheEmptyString);
 
 	for (Int i = 0; i < numLittleFiles; ++i) {
 		Int filesize = 0;
