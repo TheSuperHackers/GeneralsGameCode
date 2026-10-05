@@ -63,7 +63,15 @@
 //           Type Defines
 //----------------------------------------------------------------------------
 
-typedef std::set<AsciiString, rts::less_than_nocase<AsciiString>/**/> FilenameList;
+// Orders file names case insensitive.
+// TheSuperHackers @tweak Also orders file names path separator insensitive,
+// so that the kind and number of path separators make no difference.
+struct FilenameLess
+{
+	bool operator()(const AsciiString& a, const AsciiString& b) const;
+};
+
+typedef std::set<AsciiString, FilenameLess> FilenameList;
 typedef FilenameList::iterator FilenameListIter;
 typedef UnsignedByte FileInstance;
 
@@ -175,6 +183,14 @@ public:
 	/// Existing separators are not converted.
 	static void appendPathSeparator(AsciiString& path);
 
+	/// Writes the key form of a path: lowercase ascii with every run of separators as one backslash.
+	/// Two paths refer to the same game file exactly when their keys are equal.
+	/// Returns FALSE and writes an empty key if the key does not fit.
+	static Bool makePathKey(Char* key, size_t keySize, const Char* path);
+
+	/// Compares the key forms of two paths like strcmp, without building them.
+	static Int comparePath(const Char* a, const Char* b);
+
 protected:
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 	struct FileExistData
@@ -200,3 +216,8 @@ extern FileSystem*	TheFileSystem;
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
+
+inline bool FilenameLess::operator()(const AsciiString& a, const AsciiString& b) const
+{
+	return FileSystem::comparePath(a.str(), b.str()) < 0;
+}

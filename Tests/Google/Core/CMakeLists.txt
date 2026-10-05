@@ -2,6 +2,8 @@
 set(COREI_GOOGLETEST_SRC
     GoogleTestMain.cpp
     GameEngine/Common/AsciiStringTest.cpp
+    GameEngine/Common/FileSystemTest.cpp
+    GameEngine/Common/FileSystemTestFixture.h
     GameEngine/Common/INITest.cpp
     GameEngineDevice/StdDevice/Common/StdLocalFileSystemTest.cpp
     Libraries/Compression/CompressionManagerTest.cpp
