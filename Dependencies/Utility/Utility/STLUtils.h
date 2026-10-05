@@ -145,4 +145,26 @@ const_range<std::multimap<Key, Val, Pr, Alloc>/**/> get_range(const std::multima
 	return const_range<Multimap>(it, pair.second);
 }
 
+// Moves the mapped value of 'it' to 'first' in a map-like container and shifts the mapped values in between
+// back by one, so they keep their order. The keys stay in place, so the container stays sorted. This is meant
+// for elements with equal keys, such as the elements of one key in a multimap.
+template <typename Iter>
+void move_mapped_value_to_front(Iter first, Iter it)
+{
+	if (it == first)
+		return;
+
+	typename Iter::value_type::second_type value = CPP_11(std::move)(it->second);
+
+	while (it != first)
+	{
+		Iter previous = it;
+		--previous;
+		it->second = CPP_11(std::move)(previous->second);
+		it = previous;
+	}
+
+	first->second = CPP_11(std::move)(value);
+}
+
 } // namespace stl

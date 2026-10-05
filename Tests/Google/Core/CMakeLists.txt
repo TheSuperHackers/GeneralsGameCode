@@ -1,6 +1,7 @@
 # Core GameEngine code needs a game to compile, so g_googletest and z_googletest compile these sources.
 set(COREI_GOOGLETEST_SRC
     GoogleTestMain.cpp
+    GameEngine/Common/ArchiveFileSystemTest.cpp
     GameEngine/Common/AsciiStringTest.cpp
     GameEngine/Common/FileSystemTest.cpp
     GameEngine/Common/FileSystemTestFixture.h
