@@ -49,7 +49,9 @@ public:
 	virtual void closeArchiveFile(const Char *filename) override;
 	virtual void closeAllFiles() override;															///< Close all files associated with ArchiveFiles
 
-	virtual Bool loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) override;
+	virtual Bool loadArchiveFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) override;
+
+	virtual void loadMods() override;
 protected:
 
 };
