@@ -42,6 +42,8 @@ protected:
 	}
 };
 
+INSTANTIATE_TEST_SUITE_P(FS, FileSystemTest, ::testing::ValuesIn(localFileSystems), localFileSystemName);
+
 static std::string toPathKey(const char *path)
 {
 	Char key[_MAX_PATH];
@@ -191,7 +193,7 @@ TEST(FilenameList, KeepsOrderOfNamesWithBackslashes)
 
 // The file exist cache holds a file under its path key. What is learned about a file in one spelling
 // of its path is therefore known for all others.
-TEST_F(FileSystemTest, KnowsCreatedFileInAnySpelling)
+TEST_P(FileSystemTest, KnowsCreatedFileInAnySpelling)
 {
 	EXPECT_FALSE(TheFileSystem->doesFileExist("Data\\INI\\Weapon.ini"));
 	EXPECT_FALSE(TheFileSystem->doesFileExist("data/ini/weapon.ini"));

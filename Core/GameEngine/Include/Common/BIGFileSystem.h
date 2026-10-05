@@ -45,8 +45,8 @@ public:
 	virtual void closeAllArchiveFiles() override;											///< Close all Archivefiles currently open
 
 	// File operations
-	virtual ArchiveFile * openArchiveFile(const Char *filename, Bool overwrite = FALSE) override;
-	virtual void closeArchiveFile(const Char *filename) override;
+	virtual ArchiveFile * openArchiveFile(const AsciiString &filename, Bool overwrite = FALSE) override;
+	virtual void closeArchiveFile(const AsciiString &filename) override;
 	virtual void closeAllFiles() override;															///< Close all files associated with ArchiveFiles
 
 	virtual Bool loadArchiveFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) override;
