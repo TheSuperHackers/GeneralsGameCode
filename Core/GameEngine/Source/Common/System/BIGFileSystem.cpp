@@ -80,7 +80,7 @@ void BIGFileSystem::update() {
 void BIGFileSystem::postProcessLoad() {
 }
 
-ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
+ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename, Bool overwrite) {
 	File *fp = TheLocalFileSystem->openFile(filename, File::READ | File::BINARY);
 	AsciiString archiveFileName;
 	archiveFileName = filename;
@@ -169,6 +169,7 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 //		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, &fileInfo);
+		addFile(archiveFile, debugpath, fileInfo, overwrite);
 	}
 
 	archiveFile->attachFile(fp);
@@ -195,6 +196,7 @@ void BIGFileSystem::closeArchiveFile(const Char *filename) {
 
 	// may need to do some other processing here first.
 
+	removeFiles(it->second);
 	delete (it->second);
 	m_archiveFileMap.erase(it);
 }
@@ -223,7 +225,7 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 		}
 #endif
 
-		ArchiveFile *archiveFile = openArchiveFile((*it).str());
+		ArchiveFile *archiveFile = openArchiveFile((*it).str(), overwrite);
 
 		if (archiveFile != nullptr) {
 			DEBUG_LOG(("BIGFileSystem::loadArchiveFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
@@ -243,7 +245,7 @@ void BIGFileSystem::loadMods()
 {
 	if (TheGlobalData->m_modBIG.isNotEmpty())
 	{
-		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
+		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str(), TRUE);
 
 		if (archiveFile != nullptr) {
 			DEBUG_LOG(("BIGFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));

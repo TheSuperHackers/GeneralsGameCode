@@ -54,6 +54,8 @@
 #include "Common/FileSystem.h" // for typedefs, etc.
 #include "Common/STLTypedefs.h"
 
+#include <Utility/STLUtils.h>
+
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
@@ -111,13 +113,21 @@ public:
 	AsciiString m_archiveFilename;
 	UnsignedInt m_offset;
 	UnsignedInt m_size;
+	ArchiveFile* m_archiveFile; // The archive file that contains this file
 
 	ArchivedFileInfo()
 		: m_offset(0)
 		, m_size(0)
+		, m_archiveFile(nullptr)
 	{
 	}
 };
+
+// TheSuperHackers @refactor All archived files are held in one map that is sorted by the path key of the file.
+// Files of a directory are therefore neighbors. So are files with the same path in different archive files,
+// which are ordered by priority. The first one is file instance 0.
+typedef rts::string_key<AsciiString> ArchivedFileKey;
+typedef std::multimap<ArchivedFileKey, ArchivedFileInfo, rts::string_key_less> ArchivedFileMap; // Path key of archived file to archived file info
 
 
 class ArchiveFileSystem : public SubsystemInterface
@@ -129,7 +139,7 @@ public:
 	virtual void postProcessLoad() override = 0;
 
 	// ArchiveFile operations
-	virtual ArchiveFile*	openArchiveFile( const Char *filename ) = 0;		///< Create new or return existing Archive file from file name
+	virtual ArchiveFile*	openArchiveFile( const Char *filename, Bool overwrite = FALSE ) = 0;		///< Create new Archive file from file name and add its files. Its files take priority over the same files of other Archive files if overwrite is set.
 	virtual void					closeArchiveFile( const Char *filename ) = 0;		///< Close the one specified big file.
 	virtual void					closeAllArchiveFiles() = 0;								///< Close all Archive files currently open
 
@@ -146,6 +156,7 @@ public:
 	virtual void loadMods() = 0;
 
 	ArchivedDirectoryInfo* friend_getArchivedDirectoryInfo(const Char* directory);
+	stl::range<ArchivedFileMap> friend_getArchivedFiles(const Char* directory); ///< returns all archived files in the directory and its subdirectories.
 
 protected:
 	struct ArchivedDirectoryInfoResult
@@ -162,8 +173,13 @@ protected:
 
 	virtual void loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool overwrite = FALSE);	///< load the archive file's header information and apply it to the global archive directory tree.
 
+	void addFile(ArchiveFile *archiveFile, const AsciiString& path, const ArchivedFileInfo& fileInfo, Bool overwrite); ///< add a file of the Archive file. path is the full path of the file inside the Archive file.
+	void removeFiles(const ArchiveFile *archiveFile); ///< remove all files of the Archive file.
+	const ArchivedFileInfo* findFile(const Char *filename, FileInstance instance) const;
+
 	ArchiveFileMap m_archiveFileMap;
 	ArchivedDirectoryInfo m_rootDirectory;
+	ArchivedFileMap m_files;
 };
 
 
