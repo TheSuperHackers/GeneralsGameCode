@@ -61,4 +61,26 @@ struct IRegion3D
 	Int width() const { return hi.x - lo.x; }
 	Int height() const { return hi.y - lo.y; }
 	Int depth() const { return hi.z - lo.z; }
+
+	Bool isInRegion( const ICoord2D& point ) const
+	{
+		return (lo.x <= point.x) && (point.x <= hi.x) &&
+		       (lo.y <= point.y) && (point.y <= hi.y);
+	}
+
+	Bool isInRegion( Int x, Int y, Int z ) const
+	{
+		return (lo.x <= x) && (x <= hi.x) &&
+		       (lo.y <= y) && (y <= hi.y) &&
+		       (lo.z <= z) && (z <= hi.z);
+	}
+
+	Bool isInRegion( const ICoord3D& point ) const { return isInRegion(point.x, point.y, point.z); }
+
+	Bool isInRegion( const IRegion3D& other ) const
+	{
+		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
+		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y) &&
+		       (lo.z <= other.lo.z) && (other.hi.z <= hi.z);
+	}
 };

@@ -3836,7 +3836,7 @@ void AIFollowWaypointPathState::computeGoal(Bool useGroupOffsets)
 	}
 	Region3D extent;
 	TheTerrainLogic->getMaximumPathfindExtent(&extent);
-	if (!extent.isInRegionNoZ(m_goalPosition)) {
+	if (!extent.isInRegion(m_goalPosition.asCoord2D())) {
 		setAdjustsDestination(false); // moving off the map.
 		ai->getCurLocomotor()->setAllowInvalidPosition(true); // allow it to move off the map.
 		m_appendGoalPosition = true; // Moving off the map.
