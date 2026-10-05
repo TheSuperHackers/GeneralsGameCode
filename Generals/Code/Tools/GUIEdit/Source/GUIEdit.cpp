@@ -84,7 +84,7 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/GameClient/Win32DIKeyboard.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
-#include "Win32Device/Common/Win32BIGFileSystem.h"
+#include "Common/BIGFileSystem.h"
 
 #include "resource.h"
 #include "WinMain.h"
@@ -484,7 +484,7 @@ void GUIEdit::init()
 	// create file system
 	TheFileSystem = new FileSystem;
 	TheLocalFileSystem = new Win32LocalFileSystem;
-	TheArchiveFileSystem = new Win32BIGFileSystem;
+	TheArchiveFileSystem = new BIGFileSystem;
 	TheFileSystem->init();
 
 	//---------------------------------------------------------------------------

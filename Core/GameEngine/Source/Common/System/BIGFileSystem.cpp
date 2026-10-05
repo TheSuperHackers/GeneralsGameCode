@@ -22,13 +22,16 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-//////// Win32BIGFileSystem.h ///////////////////////////
+//////// BIGFileSystem.cpp ///////////////////////////
 // Bryan Cleveland, August 2002
 /////////////////////////////////////////////////////////////
 
+#include "PreRTS.h"
+
+#include "Common/BIGFileSystem.h"
+
 #include "Common/AudioAffect.h"
 #include "Common/ArchiveFile.h"
-#include "Common/ArchiveFileSystem.h"
 #include "Common/file.h"
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"
@@ -38,19 +41,18 @@
 #include "Common/Registry.h"
 #endif
 
-#include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "Utility/endian_compat.h"
 
 
 static const char *BIGFileIdentifier = "BIGF";
 
-Win32BIGFileSystem::Win32BIGFileSystem() : ArchiveFileSystem() {
+BIGFileSystem::BIGFileSystem() : ArchiveFileSystem() {
 }
 
-Win32BIGFileSystem::~Win32BIGFileSystem() {
+BIGFileSystem::~BIGFileSystem() {
 }
 
-void Win32BIGFileSystem::init() {
+void BIGFileSystem::init() {
 	DEBUG_ASSERTCRASH(TheLocalFileSystem != nullptr, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
 	if (TheLocalFileSystem == nullptr) {
 		return;
@@ -69,16 +71,16 @@ void Win32BIGFileSystem::init() {
 #endif
 }
 
-void Win32BIGFileSystem::reset() {
+void BIGFileSystem::reset() {
 }
 
-void Win32BIGFileSystem::update() {
+void BIGFileSystem::update() {
 }
 
-void Win32BIGFileSystem::postProcessLoad() {
+void BIGFileSystem::postProcessLoad() {
 }
 
-ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
+ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 	File *fp = TheLocalFileSystem->openFile(filename, File::READ | File::BINARY);
 	AsciiString archiveFileName;
 	archiveFileName = filename;
@@ -86,7 +88,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	Int archiveFileSize = 0;
 	Int numLittleFiles = 0;
 
-	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
+	DEBUG_LOG(("BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
 	if (fp == nullptr) {
 		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
@@ -107,7 +109,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	// read in the file size.
 	fp->read(&archiveFileSize, 4);
 
-	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - size of archive file is %d bytes", archiveFileSize));
+	DEBUG_LOG(("BIGFileSystem::openArchiveFile - size of archive file is %d bytes", archiveFileSize));
 
 //	char t;
 
@@ -116,7 +118,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->read(&numLittleFiles, 4);
 	numLittleFiles = betoh(numLittleFiles);
 
-	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - %d are contained in archive", numLittleFiles));
+	DEBUG_LOG(("BIGFileSystem::openArchiveFile - %d are contained in archive", numLittleFiles));
 //	for (Int i = 0; i < 2; ++i) {
 //		t = buffer[i];
 //		buffer[i] = buffer[(4-i)-1];
@@ -164,7 +166,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 		AsciiString debugpath;
 		debugpath = path;
 		debugpath.concat(fileInfo.m_filename);
-//		DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
+//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, &fileInfo);
 	}
@@ -176,7 +178,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	return archiveFile;
 }
 
-void Win32BIGFileSystem::closeArchiveFile(const Char *filename) {
+void BIGFileSystem::closeArchiveFile(const Char *filename) {
 	// Need to close the specified big file
 	ArchiveFileMap::iterator it =  m_archiveFileMap.find(filename);
 	if (it == m_archiveFileMap.end()) {
@@ -197,13 +199,13 @@ void Win32BIGFileSystem::closeArchiveFile(const Char *filename) {
 	m_archiveFileMap.erase(it);
 }
 
-void Win32BIGFileSystem::closeAllArchiveFiles() {
+void BIGFileSystem::closeAllArchiveFiles() {
 }
 
-void Win32BIGFileSystem::closeAllFiles() {
+void BIGFileSystem::closeAllFiles() {
 }
 
-Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
+Bool BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
 
 	FilenameList filenameList;
 	TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList, TRUE);
@@ -224,10 +226,10 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString 
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
 		if (archiveFile != nullptr) {
-			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
+			DEBUG_LOG(("BIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
 			loadIntoDirectoryTree(archiveFile, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;
-			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
+			DEBUG_LOG(("BIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
 			actuallyAdded = TRUE;
 		}
 

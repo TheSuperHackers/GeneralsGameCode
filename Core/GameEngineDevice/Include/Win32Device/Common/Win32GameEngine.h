@@ -32,12 +32,12 @@
 
 #pragma once
 
+#include "Common/BIGFileSystem.h"
 #include "Common/GameEngine.h"
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "MilesAudioDevice/MilesAudioManager.h"
-#include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "W3DDevice/Common/W3DModuleFactory.h"
 #include "W3DDevice/GameLogic/W3DGameLogic.h"
@@ -93,7 +93,7 @@ inline ModuleFactory *Win32GameEngine::createModuleFactory() { return NEW W3DMod
 inline ThingFactory *Win32GameEngine::createThingFactory() { return NEW W3DThingFactory; }
 inline FunctionLexicon *Win32GameEngine::createFunctionLexicon() { return NEW W3DFunctionLexicon; }
 inline LocalFileSystem *Win32GameEngine::createLocalFileSystem() { return NEW Win32LocalFileSystem; }
-inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem() { return NEW Win32BIGFileSystem; }
+inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem() { return NEW BIGFileSystem; }
 inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager(Bool dummy)
 {
 	if (dummy)

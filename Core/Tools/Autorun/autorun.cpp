@@ -120,7 +120,7 @@
 #include "GameClient/GameText.h"
 #include "Common/UnicodeString.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
-#include "Win32Device/Common/Win32BIGFileSystem.h"
+#include "Common/BIGFileSystem.h"
 #endif
 
 //-----------------------------------------------------------------------------
@@ -450,7 +450,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	// create singletons
 	TheFileSystem->init();
 	TheLocalFileSystem = new Win32LocalFileSystem;
-	TheArchiveFileSystem = new Win32BIGFileSystem;
+	TheArchiveFileSystem = new BIGFileSystem;
 	TheGameText = CreateGameTextInterface();
 	TheGameText->init();
 

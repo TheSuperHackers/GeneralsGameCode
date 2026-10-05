@@ -15,6 +15,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/BattleHonors.h
     Include/Common/BezFwdIterator.h
     Include/Common/BezierSegment.h
+    Include/Common/BIGFileSystem.h
 #    Include/Common/BitFlags.h
 #    Include/Common/BitFlagsIO.h
 #    Include/Common/BorderColors.h
@@ -657,6 +658,7 @@ set(GAMEENGINE_SRC
     Source/Common/System/ArchiveFile.cpp
     Source/Common/System/ArchiveFileSystem.cpp
     Source/Common/System/AsciiString.cpp
+    Source/Common/System/BIGFileSystem.cpp
 #    Source/Common/System/BuildAssistant.cpp
 #    Source/Common/System/CriticalSection.cpp
 #    Source/Common/System/DataChunk.cpp
