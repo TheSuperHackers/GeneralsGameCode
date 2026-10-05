@@ -101,23 +101,23 @@ struct Region3D
 
 	Bool isInRegion( const Coord2D& point ) const
 	{
-		return (lo.x <= point.x) && (point.x <= hi.x) &&
-		       (lo.y <= point.y) && (point.y <= hi.y);
+		return (lo.x < point.x) && (point.x < hi.x) &&
+		       (lo.y < point.y) && (point.y < hi.y);
 	}
 
 	Bool isInRegion( Real x, Real y, Real z ) const
 	{
-		return (lo.x <= x) && (x <= hi.x) &&
-		       (lo.y <= y) && (y <= hi.y) &&
-		       (lo.z <= z) && (z <= hi.z);
+		return (lo.x < x) && (x < hi.x) &&
+		       (lo.y < y) && (y < hi.y) &&
+		       (lo.z < z) && (z < hi.z);
 	}
 
 	Bool isInRegion( const Coord3D& point ) const { return isInRegion(point.x, point.y, point.z); }
 
 	Bool isInRegion( const Region3D& other ) const
 	{
-		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
-		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y) &&
-		       (lo.z <= other.lo.z) && (other.hi.z <= hi.z);
+		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
+		       (lo.y < other.lo.y) && (other.hi.y < hi.y) &&
+		       (lo.z < other.lo.z) && (other.hi.z < hi.z);
 	}
 };

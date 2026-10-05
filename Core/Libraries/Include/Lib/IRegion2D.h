@@ -61,13 +61,13 @@ struct IRegion2D
 	Int width() const { return hi.x - lo.x; }
 	Int height() const { return hi.y - lo.y; }
 
-	Bool isInRegion( Int x, Int y ) const { return (lo.x <= x) && (x <= hi.x) && (lo.y <= y) && (y <= hi.y); }
+	Bool isInRegion( Int x, Int y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 
 	Bool isInRegion( const ICoord2D& point ) const { return isInRegion(point.x, point.y); }
 
 	Bool isInRegion( const IRegion2D& other ) const
 	{
-		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
-		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y);
+		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
+		       (lo.y < other.lo.y) && (other.hi.y < hi.y);
 	}
 };
