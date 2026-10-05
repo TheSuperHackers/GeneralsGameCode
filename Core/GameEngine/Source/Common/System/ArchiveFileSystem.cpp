@@ -94,6 +94,53 @@ ArchiveFileSystem *TheArchiveFileSystem = nullptr;
 //         Private Functions
 //----------------------------------------------------------------------------
 
+// checks to see if str matches searchString.  Search string is done in the
+// using * and ? as wildcards. * is used to denote any number of characters,
+// and ? is used to denote a single wildcard character.
+static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
+{
+	if (str.isEmpty()) {
+		if (searchString.isEmpty()) {
+			return TRUE;
+		}
+		return FALSE;
+	}
+	if (searchString.isEmpty()) {
+		return FALSE;
+	}
+
+	const char *c1 = str.str();
+	const char *c2 = searchString.str();
+
+	while ((*c1 == *c2) || (*c2 == '?') || (*c2 == '*')) {
+		if ((*c1 == *c2) || (*c2 == '?')) {
+			++c1;
+			++c2;
+		} else if (*c2 == '*') {
+			++c2;
+			if (*c2 == 0) {
+				return TRUE;
+			}
+			while (*c1 != 0) {
+				if (SearchStringMatches(AsciiString(c1), AsciiString(c2))) {
+					return TRUE;
+				}
+				++c1;
+			}
+		}
+		if (*c1 == 0) {
+			if (*c2 == 0) {
+				return TRUE;
+			}
+			return FALSE;
+		}
+		if (*c2 == 0) {
+			return FALSE;
+		}
+	}
+	return FALSE;
+}
+
 // Appends a backslash unless the key is empty or has one. Returns the new length, or -1 if it does not fit.
 static Int ensureTrailingArchivePathSeparator(Char* key, size_t keySize)
 {
@@ -152,160 +199,19 @@ ArchiveFileSystem::~ArchiveFileSystem()
 	}
 }
 
-void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool overwrite)
-{
-
-	FilenameList filenameList;
-
-	archiveFile->getFileListInDirectory("", "", "*", filenameList, TRUE);
-
-	FilenameListIter it = filenameList.begin();
-
-	while (it != filenameList.end())
-	{
-		ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
-
-		AsciiString path;
-		AsciiString token;
-		AsciiString tokenizer = *it;
-		tokenizer.toLower();
-		tokenizer.nextToken(&token, "\\/");
-
-		while (!tokenizer.isEmpty())
-		{
-			path.concat(token);
-			path.concat('\\');
-
-			ArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
-			if (tempiter == dirInfo->m_directories.end())
-			{
-				dirInfo = &(dirInfo->m_directories[token]);
-				dirInfo->m_path = path;
-				dirInfo->m_directoryName = token;
-			}
-			else
-			{
-				dirInfo = &tempiter->second;
-			}
-
-			tokenizer.nextToken(&token, "\\/");
-		}
-
-		ArchivedFileLocationMap::iterator fileIt;
-		if (overwrite)
-		{
-			// When overwriting, try place the new value at the beginning of the key list.
-			fileIt = dirInfo->m_files.find(token);
-		}
-		else
-		{
-			// Append to the end of the key list.
-			fileIt = dirInfo->m_files.end();
-		}
-
-		dirInfo->m_files.insert(fileIt, std::make_pair(token, archiveFile));
-
-#if defined(DEBUG_LOGGING) && ENABLE_FILESYSTEM_LOGGING
-		{
-			const stl::const_range<ArchivedFileLocationMap> range = stl::get_range(dirInfo->m_files, token, 0);
-			if (range.distance() >= 2)
-			{
-				ArchivedFileLocationMap::const_iterator rangeIt0;
-				ArchivedFileLocationMap::const_iterator rangeIt1;
-
-				if (overwrite)
-				{
-					rangeIt0 = range.begin;
-					rangeIt1 = std::next(rangeIt0);
-
-					DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s, overwriting same file in %s",
-						it->str(),
-						rangeIt0->second->getName().str(),
-						rangeIt1->second->getName().str()
-					));
-				}
-				else
-				{
-					rangeIt1 = std::prev(range.end);
-					rangeIt0 = std::prev(rangeIt1);
-
-					DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s, overwritten by same file in %s",
-						it->str(),
-						rangeIt1->second->getName().str(),
-						rangeIt0->second->getName().str()
-					));
-				}
-			}
-			else
-			{
-				DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s", it->str(), archiveFile->getName().str()));
-			}
-		}
-#endif
-
-		it++;
-	}
-}
-
 Bool ArchiveFileSystem::doesFileExist(const Char *filename, FileInstance instance) const
 {
-	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename);
-
-	if (!result.valid())
-		return false;
-
-	stl::const_range<ArchivedFileLocationMap> range = stl::get_range(result.dirInfo->m_files, result.lastToken, instance);
-
-	return range.valid();
-}
-
-ArchivedDirectoryInfo* ArchiveFileSystem::friend_getArchivedDirectoryInfo(const Char* directory)
-{
-	ArchivedDirectoryInfoResult result = getArchivedDirectoryInfo(directory);
-
-	return result.dirInfo;
-}
-
-ArchiveFileSystem::ArchivedDirectoryInfoResult ArchiveFileSystem::getArchivedDirectoryInfo(const Char* directory)
-{
-	ArchivedDirectoryInfoResult result;
-	ArchivedDirectoryInfo* dirInfo = &m_rootDirectory;
-
-	AsciiString token;
-	AsciiString tokenizer = directory;
-	tokenizer.toLower();
-	tokenizer.nextToken(&token, "\\/");
-
-	while (!tokenizer.isEmpty())
-	{
-		ArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
-		if (tempiter != dirInfo->m_directories.end())
-		{
-			dirInfo = &tempiter->second;
-			tokenizer.nextToken(&token, "\\/");
-		}
-		else
-		{
-			// the directory doesn't exist
-			result.dirInfo = nullptr;
-			result.lastToken = AsciiString::TheEmptyString;
-			return result;
-		}
-	}
-
-	result.dirInfo = dirInfo;
-	result.lastToken = token;
-	return result;
+	return findFile(filename, instance) != nullptr;
 }
 
 File * ArchiveFileSystem::openFile(const Char *filename, Int access, FileInstance instance)
 {
-	ArchiveFile* archive = getArchiveFile(filename, instance);
+	const ArchivedFileInfo* archivedFileInfo = findFile(filename, instance);
 
-	if (archive == nullptr)
+	if (archivedFileInfo == nullptr)
 		return nullptr;
 
-	return archive->openFile(filename, access);
+	return archivedFileInfo->m_archiveFile->openFile(*archivedFileInfo, filename, access);
 }
 
 Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance) const
@@ -314,31 +220,12 @@ Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileI
 		return FALSE;
 	}
 
-	if (filename.isEmpty()) {
-		return FALSE;
-	}
+	const ArchivedFileInfo* archivedFileInfo = findFile(filename.str(), instance);
 
-	ArchiveFile* archive = getArchiveFile(filename, instance);
-
-	if (archive == nullptr)
+	if (archivedFileInfo == nullptr)
 		return FALSE;
 
-	return archive->getFileInfo(filename, fileInfo);
-}
-
-ArchiveFile* ArchiveFileSystem::getArchiveFile(const AsciiString& filename, FileInstance instance) const
-{
-	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename.str());
-
-	if (!result.valid())
-		return nullptr;
-
-	stl::const_range<ArchivedFileLocationMap> range = stl::get_range(result.dirInfo->m_files, result.lastToken, instance);
-
-	if (!range.valid())
-		return nullptr;
-	
-	return range.get()->second;
+	return archivedFileInfo->m_archiveFile->getFileInfo(*archivedFileInfo, fileInfo);
 }
 
 stl::range<ArchivedFileMap> ArchiveFileSystem::friend_getArchivedFiles(const Char* directory)
@@ -360,10 +247,32 @@ stl::range<ArchivedFileMap> ArchiveFileSystem::friend_getArchivedFiles(const Cha
 
 void ArchiveFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
-	ArchiveFileMap::const_iterator it = m_archiveFileMap.begin();
-	while (it != m_archiveFileMap.end()) {
-		it->second->getFileListInDirectory(currentDirectory, originalDirectory, searchName, filenameList, searchSubdirectories);
-		it++;
+	Char directoryKey[_MAX_PATH];
+	const Int directoryKeyLength = makeArchivedDirectoryKey(directoryKey, ARRAY_SIZE(directoryKey), originalDirectory.str());
+
+	if (directoryKeyLength < 0)
+		return;
+
+	AsciiString directory = originalDirectory;
+	if (directory.isNotEmpty() && !isPathSeparator(directory.back()))
+		directory.concat('\\');
+
+	ArchivedFileMap::const_iterator it = m_files.lower_bound(ArchivedFileKey::temporary(directoryKey));
+
+	for (; it != m_files.end(); ++it)
+	{
+		const Char* path = it->first.c_str();
+
+		if (strncmp(path, directoryKey, directoryKeyLength) != 0)
+			break;
+
+		if (SearchStringMatches(getFileName(path), searchName))
+		{
+			// The path is listed with the directory as the caller wrote it.
+			AsciiString filename = directory;
+			filename.concat(path + directoryKeyLength);
+			filenameList.insert(filename);
+		}
 	}
 }
 

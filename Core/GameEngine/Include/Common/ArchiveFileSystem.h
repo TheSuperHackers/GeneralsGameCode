@@ -79,33 +79,6 @@ class ArchiveFile;
 	* openFile() member searches all Archive files for the specified sub file.
 	*/
 //===============================
-class ArchivedDirectoryInfo;
-class DetailedArchivedDirectoryInfo;
-class ArchivedFileInfo;
-
-typedef std::map<AsciiString, DetailedArchivedDirectoryInfo> DetailedArchivedDirectoryInfoMap; // Archived directory name to detailed archived directory info
-typedef std::map<AsciiString, ArchivedDirectoryInfo> ArchivedDirectoryInfoMap; // Archived directory name to archived directory info
-typedef std::map<AsciiString, ArchivedFileInfo> ArchivedFileInfoMap; // Archived file name to archived file info
-typedef std::map<AsciiString, ArchiveFile *> ArchiveFileMap; // Archive file name to archive data
-typedef std::multimap<AsciiString, ArchiveFile *> ArchivedFileLocationMap; // Archived file name to archive data
-
-class ArchivedDirectoryInfo
-{
-public:
-	AsciiString								m_path; // The full path to this directory
-	AsciiString								m_directoryName; // The current directory
-	ArchivedDirectoryInfoMap	m_directories; // Contained leaf directories
-	ArchivedFileLocationMap		m_files; // Contained files
-};
-
-class DetailedArchivedDirectoryInfo
-{
-public:
-	AsciiString												m_directoryName;
-	DetailedArchivedDirectoryInfoMap	m_directories;
-	ArchivedFileInfoMap								m_files;
-};
-
 class ArchivedFileInfo
 {
 public:
@@ -128,6 +101,7 @@ public:
 // which are ordered by priority. The first one is file instance 0.
 typedef rts::string_key<AsciiString> ArchivedFileKey;
 typedef std::multimap<ArchivedFileKey, ArchivedFileInfo, rts::string_key_less> ArchivedFileMap; // Path key of archived file to archived file info
+typedef std::map<AsciiString, ArchiveFile *> ArchiveFileMap; // Archive file name to archive data
 
 
 class ArchiveFileSystem : public SubsystemInterface
@@ -155,30 +129,14 @@ public:
 
 	virtual void loadMods() = 0;
 
-	ArchivedDirectoryInfo* friend_getArchivedDirectoryInfo(const Char* directory);
 	stl::range<ArchivedFileMap> friend_getArchivedFiles(const Char* directory); ///< returns all archived files in the directory and its subdirectories.
 
 protected:
-	struct ArchivedDirectoryInfoResult
-	{
-		ArchivedDirectoryInfoResult() : dirInfo(nullptr) {}
-		Bool valid() const { return dirInfo != nullptr; }
-
-		ArchivedDirectoryInfo* dirInfo;
-		AsciiString lastToken; ///< Synonymous for file name if the search directory was a file path
-	};
-
-	ArchiveFile* getArchiveFile(const AsciiString& filename, FileInstance instance = 0) const;
-	ArchivedDirectoryInfoResult getArchivedDirectoryInfo(const Char* directory);
-
-	virtual void loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool overwrite = FALSE);	///< load the archive file's header information and apply it to the global archive directory tree.
-
 	void addFile(ArchiveFile *archiveFile, const AsciiString& path, const ArchivedFileInfo& fileInfo, Bool overwrite); ///< add a file of the Archive file. path is the full path of the file inside the Archive file.
 	void removeFiles(const ArchiveFile *archiveFile); ///< remove all files of the Archive file.
 	const ArchivedFileInfo* findFile(const Char *filename, FileInstance instance) const;
 
 	ArchiveFileMap m_archiveFileMap;
-	ArchivedDirectoryInfo m_rootDirectory;
 	ArchivedFileMap m_files;
 };
 

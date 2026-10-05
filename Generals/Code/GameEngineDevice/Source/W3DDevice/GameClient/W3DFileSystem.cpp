@@ -443,19 +443,8 @@ void W3DFileSystem::Return_File( FileClass *file )
 }
 
 //-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-void W3DFileSystem::reprioritizeTexturesBySize()
-{
-	ArchivedDirectoryInfo* dirInfo = TheArchiveFileSystem->friend_getArchivedDirectoryInfo(TGA_DIR_PATH);
-	if (dirInfo != nullptr)
-	{
-		reprioritizeTexturesBySize(*dirInfo);
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
 // TheSuperHackers @info This function moves the largest texture of its name to the front of the
-// directory info. The algorithm only prioritizes the first item in the multimap, because this is
+// archived files. The algorithm only prioritizes the first item of the same path, because this is
 // what we currently need:
 // Before: A(256kb) B(128kb) C(512kb)
 // After:  C(512kb) B(128kb) A(256kb)
@@ -463,14 +452,16 @@ void W3DFileSystem::reprioritizeTexturesBySize()
 // Catered to specific game archives only. This ensures that user created archives are not included
 // for the re-prioritization of textures.
 //-------------------------------------------------------------------------------------------------
-void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
+void W3DFileSystem::reprioritizeTexturesBySize()
 {
 	const char* const superiorArchive = "Textures.big";
 	const char* const inferiorArchive = "TexturesZH.big";
 
-	ArchivedFileLocationMap::iterator it0;
-	ArchivedFileLocationMap::iterator it1 = dirInfo.m_files.begin();
-	ArchivedFileLocationMap::iterator end = dirInfo.m_files.end();
+	const stl::range<ArchivedFileMap> files = TheArchiveFileSystem->friend_getArchivedFiles(TGA_DIR_PATH);
+
+	ArchivedFileMap::iterator it0;
+	ArchivedFileMap::iterator it1 = files.begin;
+	ArchivedFileMap::iterator end = files.end;
 
 	if (it1 != end)
 	{
@@ -480,35 +471,30 @@ void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 
 	for (; it1 != end; ++it1)
 	{
-		const AsciiString& file0 = it0->first;
-		const AsciiString& file1 = it1->first;
+		const char* file0 = it0->first.c_str();
+		const char* file1 = it1->first.c_str();
 
-		if (file0 == file1)
+		if (strcmp(file0, file1) == 0)
 		{
-			GameFileType type = getFileType(file0.str());
+			GameFileType type = getFileType(file0);
 			if (isImageFileType(type))
 			{
-				ArchiveFile* archive0 = it0->second;
-				ArchiveFile* archive1 = it1->second;
-				FileInfo info0;
-				FileInfo info1;
-				AsciiString filepath(dirInfo.m_path);
-				filepath.concat(file0);
+				ArchiveFile* archive0 = it0->second.m_archiveFile;
+				ArchiveFile* archive1 = it1->second.m_archiveFile;
+				const UnsignedInt size0 = it0->second.m_size;
+				const UnsignedInt size1 = it1->second.m_size;
 
-				if (archive0->getFileInfo(filepath, &info0) && archive1->getFileInfo(filepath, &info1))
+				if (size0 < size1 &&
+					archive0->getName().endsWithNoCase(inferiorArchive) &&
+					archive1->getName().endsWithNoCase(superiorArchive))
 				{
-					if (info0.size() < info1.size() &&
-						archive0->getName().endsWithNoCase(inferiorArchive) &&
-						archive1->getName().endsWithNoCase(superiorArchive))
-					{
-						std::swap(it0->second, it1->second);
+					std::swap(it0->second, it1->second);
 
 #if ENABLE_FILESYSTEM_LOGGING
-						DEBUG_LOG(("W3DFileSystem::reprioritizeTexturesBySize - prioritize %s(%ukb) from %s over %s(%ukb) from %s",
-							file1.str(), UnsignedInt(info1.size() / 1024), archive1->getName().str(),
-							file0.str(), UnsignedInt(info0.size() / 1024), archive0->getName().str()));
+					DEBUG_LOG(("W3DFileSystem::reprioritizeTexturesBySize - prioritize %s(%ukb) from %s over %s(%ukb) from %s",
+						file1, size1 / 1024, archive1->getName().str(),
+						file0, size0 / 1024, archive0->getName().str()));
 #endif
-					}
 				}
 			}
 		}
