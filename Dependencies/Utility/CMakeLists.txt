@@ -19,6 +19,9 @@ set(UTILITY_SRC
     Utility/STLUtils.h
     Utility/string_compat.h
     Utility/stringex.h
+    Utility/stringex_memcchr.inl
+    Utility/stringex_memcchr_sse2.inl
+    Utility/stringex_memcchr_x86asm.inl
     Utility/tchar_compat.h
     Utility/thread_compat.h
     Utility/time_compat.h

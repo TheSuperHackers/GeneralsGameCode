@@ -63,8 +63,20 @@ template<typename T> bool startsWithNoCase(const T *str, const T *prefix);
 template<typename T> bool endsWithNoCase(const T *str, const T *suffix);
 template<typename T> bool endsWithNoCase(const T *str, const T *suffix);
 
+const void* memcchr(const void* data, int c, size_t n);
 
 // Implementation
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+  #include "stringex_memcchr_x86asm.inl"
+#else
+  #if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
+    #include "stringex_memcchr_sse2.inl"
+  #else
+    #include "stringex_memcchr.inl"
+  #endif
+#endif
+
 
 // Templated strlen.
 // Returns the number of characters until the first zero character.
