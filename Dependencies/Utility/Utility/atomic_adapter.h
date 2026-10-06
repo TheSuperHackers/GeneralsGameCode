@@ -18,6 +18,13 @@
 
 // This file contains a VC6 compatible atomic template class for the integer types up to the size of long, enums and pointers.
 // It also contains a specialized template for the bool type.
+//
+// The VC6 classes differ from the standard classes in these points:
+// - They always have the size and alignment of long, because the VC6 interlocked functions work on no other type.
+//   A class that holds a std::atomic of bool, char or short is therefore larger with VC6.
+// - Their constructors are not constexpr. An object with static storage duration is initialized when its constructor
+//   runs during the static initialization, where the standard classes initialize it at compile time. A value that
+//   another static initializer stored into the object before that is overwritten.
 #pragma once
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
@@ -230,6 +237,8 @@ namespace std
 
 		long load_stored() const
 		{
+			// Reads with an interlocked function, because the VC6 optimizer does not reliably treat a data member as
+			// volatile. It can move a plain read out of a loop that waits for another thread to store a value.
 			return InterlockedCompareExchange(&m_stored, 0, 0);
 		}
 
@@ -308,6 +317,7 @@ namespace std
 
 		bool load(memory_order = memory_order_seq_cst) const
 		{
+			// Reads with an interlocked function for the same reason as the generic class.
 			const long value = InterlockedCompareExchange(&m_stored, 0, 0);
 			return from_long(value);
 		}
