@@ -226,8 +226,7 @@ namespace std
 			operation_xor
 		};
 
-		// Fails to compile for a type that has no interlocked functions of its size.
-		typedef char type_must_have_1_2_or_4_bytes[sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ? 1 : -1];
+		static_assert_cpp98(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4, "The type must have a size that interlocked functions exist for");
 
 		atomic(const atomic&) FUNCTION_DELETE;
 		atomic& operator=(const atomic&) FUNCTION_DELETE;
