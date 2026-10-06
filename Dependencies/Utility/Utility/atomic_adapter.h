@@ -20,11 +20,15 @@
 // It also contains a specialized template for the bool type with logical functions.
 #pragma once
 
-#if !(defined(_MSC_VER) && _MSC_VER < 1300) || __cplusplus >= 201103L
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+
 #include <atomic>
+
 #else
+
 #include <windows.h>
-#include "interlocked_adapter.h"
+
+#include "Utility/interlocked_adapter.h"
 
 namespace std
 {
@@ -371,7 +375,7 @@ namespace std
 	class atomic<bool>
 	{
 	public:
-		atomic(bool value = 0)
+		atomic(bool value = false)
 			: m_stored(to_long(value))
 		{
 		}
@@ -466,4 +470,4 @@ namespace std
 
 }
 
-#endif //!(defined(_MSC_VER) && _MSC_VER < 1300)
+#endif
