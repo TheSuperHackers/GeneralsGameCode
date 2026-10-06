@@ -23,8 +23,6 @@ target_sources(corei_patchgrabber INTERFACE ${PATCHGET_SRC})
 
 target_link_libraries(corei_patchgrabber INTERFACE
     comctl32
-    core_debug
-    core_profile_legacy
     gamespy::gamespy
     imm32
     vfw32

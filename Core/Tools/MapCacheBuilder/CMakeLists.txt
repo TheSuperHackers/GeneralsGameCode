@@ -15,8 +15,6 @@ target_include_directories(corei_mapcachebuilder INTERFACE
 #
 target_link_libraries(corei_mapcachebuilder INTERFACE
     comctl32
-    core_debug
-    core_profile_legacy
     imm32
     vfw32
     winmm
