@@ -156,7 +156,6 @@ void Keyboard::updateKeys()
 		here so that we don't process anything */
 
 		const KeyDefType key = (KeyDefType)m_keys[ index ].key;
-		const Bool isModifier = isCtrlShiftAltKey(key) || key == m_shift2Key;
 
 		m_keyStatus[ key ].state = m_keys[ index ].state;
 		m_keyStatus[ key ].status = m_keys[ index ].status;
@@ -176,7 +175,7 @@ void Keyboard::updateKeys()
 				m_keys[index].status = KeyboardIO::STATUS_USED;
 			}
 		}
-		else if( key == KEY_CAPS || isModifier )
+		else if( key == KEY_CAPS || isCtrlShiftAltKey(key) )
 
 		{
 
@@ -783,8 +782,6 @@ void Keyboard::emitModifierKeyUps() const
 	emitRawKeyUpIfDown(m_keyStatus, KEY_RSHIFT);
 	emitRawKeyUpIfDown(m_keyStatus, KEY_LALT);
 	emitRawKeyUpIfDown(m_keyStatus, KEY_RALT);
-	if (m_shift2Key != KEY_NONE && !isCtrlShiftAltKey(m_shift2Key))
-		emitRawKeyUpIfDown(m_keyStatus, m_shift2Key);
 }
 
 //-------------------------------------------------------------------------------------------------
