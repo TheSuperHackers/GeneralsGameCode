@@ -3,9 +3,7 @@ macro(setup_patchgrabber appname)
 
     target_link_libraries(${appname} PRIVATE
         corei_patchgrabber
-        g_gameengine
         g_gameenginedevice
-        g_wwvegas
         gi_always
     )
 endmacro()

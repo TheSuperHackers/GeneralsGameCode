@@ -9,16 +9,9 @@ endif()
 
 target_link_libraries(z_generals PRIVATE
     comctl32
-    d3d8
-    d3dx8
-    dinput8
-    dxguid
-    deps_bink
-    deps_miles
     imm32
     vfw32
     winmm
-    z_gameengine
     z_gameenginedevice
     zi_always
 )

@@ -211,9 +211,6 @@ target_precompile_headers(g_worldbuilder PRIVATE
 )
 
 target_link_libraries(g_worldbuilder PRIVATE
-    d3d8lib
-    core_browserdispatch
-    g_gameengine
     g_gameenginedevice
     gi_always
     imm32

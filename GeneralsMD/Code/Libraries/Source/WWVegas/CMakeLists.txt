@@ -3,9 +3,6 @@ add_library(z_wwcommon INTERFACE)
 
 target_link_libraries(z_wwcommon INTERFACE
     core_wwcommon
-    d3d8lib
-    deps_miles
-    stlport
 )
 
 target_include_directories(z_wwcommon INTERFACE

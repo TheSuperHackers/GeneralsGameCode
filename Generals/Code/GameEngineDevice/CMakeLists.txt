@@ -198,7 +198,6 @@ target_link_libraries(g_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     gi_always
     gi_main
-    stb
 )
 
 target_link_libraries(g_gameenginedevice PUBLIC
