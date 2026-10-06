@@ -97,42 +97,42 @@ namespace std
 
 		T load(memory_order = memory_order_seq_cst) const
 		{
-			return from_long(load_stored());
+			return load_stored();
 		}
 
 		void store(T value, memory_order = memory_order_seq_cst)
 		{
-			exchange_stored(to_long(value));
+			exchange_stored(value);
 		}
 
 		T exchange(T value, memory_order = memory_order_seq_cst)
 		{
-			return from_long(exchange_stored(to_long(value)));
+			return exchange_stored(value);
 		}
 
 		T fetch_add(T value, memory_order = memory_order_seq_cst)
 		{
-			return from_long(fetch_modify(operation_add, to_operand(value)));
+			return fetch_modify(operation_add, value);
 		}
 
 		T fetch_sub(T value, memory_order = memory_order_seq_cst)
 		{
-			return from_long(fetch_modify(operation_sub, to_operand(value)));
+			return fetch_modify(operation_sub, value);
 		}
 
 		T fetch_or(T value, memory_order = memory_order_seq_cst)
 		{
-			return from_long(fetch_modify(operation_or, to_operand(value)));
+			return fetch_modify(operation_or, value);
 		}
 
 		T fetch_and(T value, memory_order = memory_order_seq_cst)
 		{
-			return from_long(fetch_modify(operation_and, to_operand(value)));
+			return fetch_modify(operation_and, value);
 		}
 
 		T fetch_xor(T value, memory_order = memory_order_seq_cst)
 		{
-			return from_long(fetch_modify(operation_xor, to_operand(value)));
+			return fetch_modify(operation_xor, value);
 		}
 
 		bool compare_exchange_strong(T& expected, T desired, memory_order = memory_order_seq_cst)
@@ -231,71 +231,51 @@ namespace std
 		atomic(const atomic&) FUNCTION_DELETE;
 		atomic& operator=(const atomic&) FUNCTION_DELETE;
 
-		static long to_long(T value)
-		{
-			return (long)value;
-		}
-
-		static T from_long(long value)
-		{
-			return (T)value;
-		}
-
-		// Converts the argument of an arithmetic or bitwise function. Compiles for the integer types only,
-		// because an int converts implicitly to neither an enum nor a pointer.
-		static long to_operand(T value)
-		{
-			const T integerTypesOnly = 1;
-			(void)integerTypesOnly;
-
-			return to_long(value);
-		}
-
-		// The four functions below call the function for the size of the type. They pass the value as a long whose
-		// low bytes hold it. The size is constant, so that the compiler keeps the one case that applies.
-		long load_stored() const
+		// The four functions below call the function for the size of the type and convert the value to and from the
+		// type of that function. The size is constant, so that the compiler keeps the one case that applies.
+		T load_stored() const
 		{
 			switch (sizeof(T))
 			{
-			case 1: return ::utility_atomic_detail::load8((const char volatile*)&m_stored);
-			case 2: return ::utility_atomic_detail::load16((const short volatile*)&m_stored);
-			default: return ::utility_atomic_detail::load32((const long volatile*)&m_stored);
+			case 1: return (T)::utility_atomic_detail::load8((const char volatile*)&m_stored);
+			case 2: return (T)::utility_atomic_detail::load16((const short volatile*)&m_stored);
+			default: return (T)::utility_atomic_detail::load32((const long volatile*)&m_stored);
 			}
 		}
 
-		long exchange_stored(long value)
+		T exchange_stored(T value)
 		{
 			switch (sizeof(T))
 			{
-			case 1: return InterlockedExchange8((char volatile*)&m_stored, (char)value);
-			case 2: return InterlockedExchange16((short volatile*)&m_stored, (short)value);
-			default: return InterlockedExchange((long volatile*)&m_stored, value);
+			case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)value);
+			case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)value);
+			default: return (T)InterlockedExchange((long volatile*)&m_stored, (long)value);
 			}
 		}
 
-		long exchange_add_stored(long value)
+		T exchange_add_stored(T value)
 		{
 			switch (sizeof(T))
 			{
-			case 1: return InterlockedExchangeAdd8((char volatile*)&m_stored, (char)value);
-			case 2: return InterlockedExchangeAdd16((short volatile*)&m_stored, (short)value);
-			default: return InterlockedExchangeAdd((long volatile*)&m_stored, value);
+			case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)value);
+			case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)value);
+			default: return (T)InterlockedExchangeAdd((long volatile*)&m_stored, (long)value);
 			}
 		}
 
-		long compare_exchange_stored(long exchange, long comparand)
+		T compare_exchange_stored(T exchange, T comparand)
 		{
 			switch (sizeof(T))
 			{
-			case 1: return InterlockedCompareExchange8((char volatile*)&m_stored, (char)exchange, (char)comparand);
-			case 2: return InterlockedCompareExchange16((short volatile*)&m_stored, (short)exchange, (short)comparand);
-			default: return InterlockedCompareExchange((long volatile*)&m_stored, exchange, comparand);
+			case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)exchange, (char)comparand);
+			case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)exchange, (short)comparand);
+			default: return (T)InterlockedCompareExchange((long volatile*)&m_stored, (long)exchange, (long)comparand);
 			}
 		}
 
 		bool compare_exchange(T& expected, T desired)
 		{
-			const T oldValue = from_long(compare_exchange_stored(to_long(desired), to_long(expected)));
+			const T oldValue = compare_exchange_stored(desired, expected);
 
 			if (oldValue == expected)
 				return true;
@@ -304,32 +284,36 @@ namespace std
 			return false;
 		}
 
-		static long compute(operation op, long stored, long operand)
+		static T compute(operation op, T stored, T operand)
 		{
 			switch (op)
 			{
 			// Adds and subtracts unsigned, because that wraps around without undefined behavior.
-			case operation_add: return (long)((unsigned long)stored + (unsigned long)operand);
-			case operation_sub: return (long)((unsigned long)stored - (unsigned long)operand);
-			case operation_or: return stored | operand;
-			case operation_and: return stored & operand;
-			default: return stored ^ operand;
+			case operation_add: return (T)((unsigned long)stored + (unsigned long)operand);
+			case operation_sub: return (T)((unsigned long)stored - (unsigned long)operand);
+			case operation_or: return (T)(stored | operand);
+			case operation_and: return (T)(stored & operand);
+			default: return (T)(stored ^ operand);
 			}
 		}
 
-		// Returns the stored value from before the operation.
-		long fetch_modify(operation op, long operand)
+		// Returns the value from before the operation.
+		T fetch_modify(operation op, T operand)
 		{
+			// Compiles for the integer types only, because an int converts implicitly to neither an enum nor a pointer.
+			const T integerTypesOnly = 1;
+			(void)integerTypesOnly;
+
 			// The processor adds in the size of the type and wraps around like the type does, so that an addition
 			// needs no retry loop.
 			if (op == operation_add)
 				return exchange_add_stored(operand);
 
 			if (op == operation_sub)
-				return exchange_add_stored((long)(0ul - (unsigned long)operand));
+				return exchange_add_stored((T)(0ul - (unsigned long)operand));
 
-			long oldValue;
-			long newValue;
+			T oldValue;
+			T newValue;
 
 			do
 			{
@@ -344,10 +328,7 @@ namespace std
 		// Returns the value from after the operation.
 		T modify(operation op, T value)
 		{
-			const long operand = to_operand(value);
-			const long oldValue = fetch_modify(op, operand);
-
-			return from_long(compute(op, oldValue, operand));
+			return compute(op, fetch_modify(op, value), value);
 		}
 
 		mutable volatile T m_stored;
