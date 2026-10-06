@@ -19,12 +19,10 @@
 // This file contains a VC6 compatible atomic template class for the integer types up to the size of long, enums and pointers.
 // It also contains a specialized template for the bool type.
 //
-// The VC6 classes differ from the standard classes in these points:
-// - They always have the size and alignment of long, because the VC6 interlocked functions work on no other type.
-//   A class that holds a std::atomic of bool, char or short is therefore larger with VC6.
-// - Their constructors are not constexpr. An object with static storage duration is initialized when its constructor
-//   runs during the static initialization, where the standard classes initialize it at compile time. A value that
-//   another static initializer stored into the object before that is overwritten.
+// The VC6 classes have the size of the type they hold, like the standard classes. They differ in one point: their
+// constructors are not constexpr. An object with static storage duration is initialized when its constructor runs
+// during the static initialization, where the standard classes initialize it at compile time. A value that another
+// static initializer stored into the object before that is overwritten.
 #pragma once
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
@@ -52,14 +50,14 @@ namespace std
 	};
 
 
-	// The VC6 std::atomic compatible template uses long internally as storage. It supports the integer types up to
+	// The VC6 std::atomic compatible template stores the value in its own size. It supports the integer types up to
 	// the size of long, enums and pointers. Its arithmetic and bitwise functions compile for the integer types only.
 	template<typename T>
 	class atomic
 	{
 	public:
 		atomic(T value = (T)0)
-			: m_stored(to_long(value))
+			: m_stored(value)
 		{
 		}
 
@@ -70,13 +68,12 @@ namespace std
 
 		void store(T value, memory_order = memory_order_seq_cst)
 		{
-			InterlockedExchange(&m_stored, to_long(value));
+			exchange_stored(to_long(value));
 		}
 
 		T exchange(T value, memory_order = memory_order_seq_cst)
 		{
-			const long oldValue = InterlockedExchange(&m_stored, to_long(value));
-			return from_long(oldValue);
+			return from_long(exchange_stored(to_long(value)));
 		}
 
 		T fetch_add(T value, memory_order = memory_order_seq_cst)
@@ -195,8 +192,8 @@ namespace std
 			operation_xor
 		};
 
-		// Fails to compile for a type that does not fit into the stored long.
-		typedef char type_must_fit_in_long[sizeof(T) <= sizeof(long) ? 1 : -1];
+		// Fails to compile for a type that has no interlocked functions of its size.
+		typedef char type_must_have_1_2_or_4_bytes[sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ? 1 : -1];
 
 		atomic(const atomic&) FUNCTION_DELETE;
 		atomic& operator=(const atomic&) FUNCTION_DELETE;
@@ -221,58 +218,84 @@ namespace std
 			return to_long(value);
 		}
 
-		bool compare_exchange(T& expected, T desired)
-		{
-			const long storedExpected = to_long(expected);
-			const long storedDesired = to_long(desired);
-
-			const long oldValue = InterlockedCompareExchange(&m_stored, storedDesired, storedExpected);
-
-			if (oldValue == storedExpected)
-				return true;
-
-			expected = from_long(oldValue);
-			return false;
-		}
-
+		// The four functions below call the interlocked function for the size of the type. They pass the value as a
+		// long whose low bytes hold it. The size is constant, so that the compiler keeps the one case that applies.
 		long load_stored() const
 		{
 			// Reads with an interlocked function, because the VC6 optimizer does not reliably treat a data member as
 			// volatile. It can move a plain read out of a loop that waits for another thread to store a value.
-			return InterlockedCompareExchange(&m_stored, 0, 0);
+			switch (sizeof(T))
+			{
+			case 1: return InterlockedCompareExchange8((char volatile*)&m_stored, 0, 0);
+			case 2: return InterlockedCompareExchange16((short volatile*)&m_stored, 0, 0);
+			default: return InterlockedCompareExchange((long volatile*)&m_stored, 0, 0);
+			}
+		}
+
+		long exchange_stored(long value)
+		{
+			switch (sizeof(T))
+			{
+			case 1: return InterlockedExchange8((char volatile*)&m_stored, (char)value);
+			case 2: return InterlockedExchange16((short volatile*)&m_stored, (short)value);
+			default: return InterlockedExchange((long volatile*)&m_stored, value);
+			}
+		}
+
+		long exchange_add_stored(long value)
+		{
+			switch (sizeof(T))
+			{
+			case 1: return InterlockedExchangeAdd8((char volatile*)&m_stored, (char)value);
+			case 2: return InterlockedExchangeAdd16((short volatile*)&m_stored, (short)value);
+			default: return InterlockedExchangeAdd((long volatile*)&m_stored, value);
+			}
+		}
+
+		long compare_exchange_stored(long exchange, long comparand)
+		{
+			switch (sizeof(T))
+			{
+			case 1: return InterlockedCompareExchange8((char volatile*)&m_stored, (char)exchange, (char)comparand);
+			case 2: return InterlockedCompareExchange16((short volatile*)&m_stored, (short)exchange, (short)comparand);
+			default: return InterlockedCompareExchange((long volatile*)&m_stored, exchange, comparand);
+			}
+		}
+
+		bool compare_exchange(T& expected, T desired)
+		{
+			const T oldValue = from_long(compare_exchange_stored(to_long(desired), to_long(expected)));
+
+			if (oldValue == expected)
+				return true;
+
+			expected = oldValue;
+			return false;
 		}
 
 		static long compute(operation op, long stored, long operand)
 		{
-			long result;
-
 			switch (op)
 			{
 			// Adds and subtracts unsigned, because that wraps around without undefined behavior.
-			case operation_add: result = (long)((unsigned long)stored + (unsigned long)operand); break;
-			case operation_sub: result = (long)((unsigned long)stored - (unsigned long)operand); break;
-			case operation_or: result = stored | operand; break;
-			case operation_and: result = stored & operand; break;
-			default: result = stored ^ operand; break;
+			case operation_add: return (long)((unsigned long)stored + (unsigned long)operand);
+			case operation_sub: return (long)((unsigned long)stored - (unsigned long)operand);
+			case operation_or: return stored | operand;
+			case operation_and: return stored & operand;
+			default: return stored ^ operand;
 			}
-
-			// Wraps the result around to the value range of the type.
-			return to_long(from_long(result));
 		}
 
 		// Returns the stored value from before the operation.
 		long fetch_modify(operation op, long operand)
 		{
-			// A long sized value needs no wrapping around to a smaller value range, so that one interlocked
-			// function can do the whole addition without a retry loop.
-			if (sizeof(T) == sizeof(long))
-			{
-				if (op == operation_add)
-					return InterlockedExchangeAdd(&m_stored, operand);
+			// The processor adds in the size of the type and wraps around like the type does, so that an addition
+			// needs no retry loop.
+			if (op == operation_add)
+				return exchange_add_stored(operand);
 
-				if (op == operation_sub)
-					return InterlockedExchangeAdd(&m_stored, (long)(0ul - (unsigned long)operand));
-			}
+			if (op == operation_sub)
+				return exchange_add_stored((long)(0ul - (unsigned long)operand));
 
 			long oldValue;
 			long newValue;
@@ -282,7 +305,7 @@ namespace std
 				oldValue = load_stored();
 				newValue = compute(op, oldValue, operand);
 			}
-			while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
+			while (compare_exchange_stored(newValue, oldValue) != oldValue);
 
 			return oldValue;
 		}
@@ -296,41 +319,41 @@ namespace std
 			return from_long(compute(op, oldValue, operand));
 		}
 
-		mutable volatile long m_stored;
+		mutable volatile T m_stored;
 	};
 
 
-	// A float fits into the stored long, but the conversion to long would drop its fraction.
+	// A float has a supported size, but the conversion to long would drop its fraction.
 	template<>
 	class atomic<float>;
 
 
-	// Atomic bool is a specialized template and for VC6 it internally uses a long and windows interlocked functions
+	// Atomic bool is a specialized template and for VC6 it internally uses a char and the 8 bit interlocked functions
 	template<>
 	class atomic<bool>
 	{
 	public:
 		atomic(bool value = false)
-			: m_stored(to_long(value))
+			: m_stored(to_char(value))
 		{
 		}
 
 		bool load(memory_order = memory_order_seq_cst) const
 		{
 			// Reads with an interlocked function for the same reason as the generic class.
-			const long value = InterlockedCompareExchange(&m_stored, 0, 0);
-			return from_long(value);
+			const char value = InterlockedCompareExchange8(&m_stored, 0, 0);
+			return from_char(value);
 		}
 
 		void store(bool value, memory_order = memory_order_seq_cst)
 		{
-			InterlockedExchange(&m_stored, to_long(value));
+			InterlockedExchange8(&m_stored, to_char(value));
 		}
 
 		bool exchange(bool value, memory_order = memory_order_seq_cst)
 		{
-			const long oldValue = InterlockedExchange(&m_stored, to_long(value));
-			return from_long(oldValue);
+			const char oldValue = InterlockedExchange8(&m_stored, to_char(value));
+			return from_char(oldValue);
 		}
 
 		bool compare_exchange_strong(bool& expected, bool desired, memory_order = memory_order_seq_cst)
@@ -368,12 +391,12 @@ namespace std
 
 	private:
 
-		static long to_long(bool value)
+		static char to_char(bool value)
 		{
 			return value ? 1 : 0;
 		}
 
-		static bool from_long(long value)
+		static bool from_char(char value)
 		{
 			return value != 0;
 		}
@@ -383,19 +406,19 @@ namespace std
 
 		bool compare_exchange(bool& expected, bool desired)
 		{
-			const long storedExpected = to_long(expected);
-			const long storedDesired = to_long(desired);
+			const char storedExpected = to_char(expected);
+			const char storedDesired = to_char(desired);
 
-			const long oldValue = InterlockedCompareExchange(&m_stored, storedDesired, storedExpected);
+			const char oldValue = InterlockedCompareExchange8(&m_stored, storedDesired, storedExpected);
 
 			if (oldValue == storedExpected)
 				return true;
 
-			expected = from_long(oldValue);
+			expected = from_char(oldValue);
 			return false;
 		}
 
-		mutable volatile long m_stored;
+		mutable volatile char m_stored;
 	};
 
 }
