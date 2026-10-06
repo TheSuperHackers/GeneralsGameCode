@@ -21,6 +21,5 @@
 
 namespace stl
 {
-typedef std::basic_string<char> string;
 typedef std::basic_string<unichar> wstring;
 }
