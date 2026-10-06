@@ -32,6 +32,19 @@
 
 namespace std
 {
+	// The VC6 atomic classes take the memory orders for source compatibility with the standard classes.
+	// Their functions are always sequentially consistent, which satisfies every order.
+	enum memory_order
+	{
+		memory_order_relaxed,
+		memory_order_consume,
+		memory_order_acquire,
+		memory_order_release,
+		memory_order_acq_rel,
+		memory_order_seq_cst
+	};
+
+
 	// Capture unsupported types and error during compilation
 	template<typename T>
 	struct atomic_trait;
@@ -128,24 +141,24 @@ namespace std
 		{
 		}
 
-		T load() const
+		T load(memory_order = memory_order_seq_cst) const
 		{
 			const long oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		void store(T value)
+		void store(T value, memory_order = memory_order_seq_cst)
 		{
 			InterlockedExchange(&m_stored, atomic_trait<T>::to_long(value));
 		}
 
-		T exchange(T value)
+		T exchange(T value, memory_order = memory_order_seq_cst)
 		{
 			const long oldValue = InterlockedExchange(&m_stored, atomic_trait<T>::to_long(value));
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		T fetch_add(T value)
+		T fetch_add(T value, memory_order = memory_order_seq_cst)
 		{
 			long oldValue;
 			long newValue;
@@ -168,7 +181,7 @@ namespace std
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		T fetch_sub(T value)
+		T fetch_sub(T value, memory_order = memory_order_seq_cst)
 		{
 			long oldValue;
 			long newValue;
@@ -191,7 +204,7 @@ namespace std
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		T fetch_or(T value)
+		T fetch_or(T value, memory_order = memory_order_seq_cst)
 		{
 			long oldValue;
 			long newValue;
@@ -210,7 +223,7 @@ namespace std
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		T fetch_and(T value)
+		T fetch_and(T value, memory_order = memory_order_seq_cst)
 		{
 			long oldValue;
 			long newValue;
@@ -229,7 +242,7 @@ namespace std
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		T fetch_xor(T value)
+		T fetch_xor(T value, memory_order = memory_order_seq_cst)
 		{
 			long oldValue;
 			long newValue;
@@ -248,12 +261,22 @@ namespace std
 			return atomic_trait<T>::from_long(oldValue);
 		}
 
-		bool compare_exchange_strong(T& expected, T desired)
+		bool compare_exchange_strong(T& expected, T desired, memory_order = memory_order_seq_cst)
 		{
 			return compare_exchange(expected, desired);
 		}
 
-		bool compare_exchange_weak(T& expected, T desired)
+		bool compare_exchange_strong(T& expected, T desired, memory_order, memory_order)
+		{
+			return compare_exchange(expected, desired);
+		}
+
+		bool compare_exchange_weak(T& expected, T desired, memory_order = memory_order_seq_cst)
+		{
+			return compare_exchange(expected, desired);
+		}
+
+		bool compare_exchange_weak(T& expected, T desired, memory_order, memory_order)
 		{
 			return compare_exchange(expected, desired);
 		}
@@ -380,29 +403,39 @@ namespace std
 		{
 		}
 
-		bool load() const
+		bool load(memory_order = memory_order_seq_cst) const
 		{
 			const long value = InterlockedCompareExchange(&m_stored, 0, 0);
 			return from_long(value);
 		}
 
-		void store(bool value)
+		void store(bool value, memory_order = memory_order_seq_cst)
 		{
 			InterlockedExchange(&m_stored, to_long(value));
 		}
 
-		bool exchange(bool value)
+		bool exchange(bool value, memory_order = memory_order_seq_cst)
 		{
 			const long oldValue = InterlockedExchange(&m_stored, to_long(value));
 			return from_long(oldValue);
 		}
 
-		bool compare_exchange_strong(bool& expected, bool desired)
+		bool compare_exchange_strong(bool& expected, bool desired, memory_order = memory_order_seq_cst)
 		{
 			return compare_exchange(expected, desired);
 		}
 
-		bool compare_exchange_weak(bool& expected, bool desired)
+		bool compare_exchange_strong(bool& expected, bool desired, memory_order, memory_order)
+		{
+			return compare_exchange(expected, desired);
+		}
+
+		bool compare_exchange_weak(bool& expected, bool desired, memory_order = memory_order_seq_cst)
+		{
+			return compare_exchange(expected, desired);
+		}
+
+		bool compare_exchange_weak(bool& expected, bool desired, memory_order, memory_order)
 		{
 			return compare_exchange(expected, desired);
 		}
