@@ -19,10 +19,11 @@
 // This file contains a VC6 compatible atomic template class for bool, the integer types up to the size of long, enums
 // and pointers.
 //
-// The VC6 classes have the size of the type they hold, like the standard classes. They differ in one point: their
-// constructors are not constexpr. An object with static storage duration is initialized when its constructor runs
-// during the static initialization, where the standard classes initialize it at compile time. A value that another
-// static initializer stored into the object before that is overwritten.
+// The VC6 class has the size of the type it holds, like the standard class. It differs from it in two points:
+// - Its constructor is not constexpr. An object with static storage duration is initialized when its constructor
+//   runs during the static initialization, where the standard class initializes it at compile time. A value that
+//   another static initializer stored into the object before that is overwritten.
+// - An atomic pointer has no fetch_add, fetch_sub, ++, --, += and -=.
 #pragma once
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
@@ -37,7 +38,7 @@
 
 namespace utility_atomic_detail
 {
-	// Read a value without locking, which is sufficient because every store of the atomic classes is a locked
+	// Read a value without locking, which is sufficient because every store of the atomic class is a locked
 	// instruction. The functions are naked, so that VC6 never expands them inline. Its optimizer does not reliably treat
 	// a data member as volatile and would otherwise move the read out of a loop that waits for another thread to store
 	// a value. With __fastcall the argument is in ecx. The result is returned in al, ax or eax.
@@ -71,8 +72,8 @@ namespace utility_atomic_detail
 
 namespace std
 {
-	// The VC6 atomic classes take the memory orders for source compatibility with the standard classes.
-	// Their functions are always sequentially consistent, which satisfies every order.
+	// The VC6 atomic class takes the memory orders for source compatibility with the standard class.
+	// Its functions are always sequentially consistent, which satisfies every order.
 	enum memory_order
 	{
 		memory_order_relaxed,
@@ -85,8 +86,9 @@ namespace std
 
 
 	// The VC6 std::atomic compatible template stores the value in its own size. It supports bool, the integer types
-	// up to the size of long, enums and pointers. Its arithmetic and bitwise functions compile for the integer types
-	// only.
+	// up to the size of long, enums and pointers. All of them can be loaded, stored, exchanged and compare exchanged.
+	// The arithmetic and bitwise functions compile for the integer types only. The standard class does not have them
+	// for bool and enums either.
 	template<typename T>
 	class atomic
 	{
@@ -301,8 +303,8 @@ namespace std
 		// Returns the value from before the operation.
 		T fetch_modify(operation op, T operand)
 		{
-			// Compiles for the integer types only: an int converts implicitly to neither an enum nor a pointer, and a
-			// bool cannot be decremented.
+			// Makes the arithmetic and bitwise functions, which all come through here, fail to compile for bool, enums
+			// and pointers: an int converts implicitly to neither an enum nor a pointer, and a bool cannot be decremented.
 			T integerTypesOnly = 1;
 			--integerTypesOnly;
 
