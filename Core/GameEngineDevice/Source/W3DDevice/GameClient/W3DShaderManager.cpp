@@ -1291,101 +1291,6 @@ void ShroudTextureShader::reset()
 	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 }
 
-///Shroud layer rendering shader
-class FlatShroudTextureShader : public W3DShaderInterface
-{
-	virtual Int set(Int pass) override;		///<setup shader for the specified rendering pass.
-	virtual Int init() override;			///<perform any one time initialization and validation
-	virtual void reset() override;		///<do any custom resetting necessary to bring W3D in sync.
-	Int m_stageOfSet;
-} flatShroudTextureShader;
-
-///List of different shroud shader implementations in order of preference
-W3DShaderInterface *FlatShroudShaderList[]=
-{
-	&flatShroudTextureShader,
-	nullptr
-};
-
-//#define SHROUD_STRETCH_FACTOR	(1.0f/MAP_XY_FACTOR)	//1 texel per heightmap cell width
-
-Int FlatShroudTextureShader::init()
-{
-	W3DShaders[W3DShaderManager::ST_FLAT_SHROUD_TEXTURE]=&flatShroudTextureShader;
-	W3DShadersPassCount[W3DShaderManager::ST_FLAT_SHROUD_TEXTURE]=1;
-
-	return TRUE;
-}
-
-//Setup a texture projection in the given stage that applies our shroud.
-Int FlatShroudTextureShader::set(Int stage)
-{
-	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-	if (stage < 2)
-		Renderer::Set_Texture(stage, W3DShaderManager::getShaderTexture(stage));
-	else	//stages larger than 1 are not supported by W3D so set them directly
-		DX8Wrapper::Set_DX8_Texture(stage, W3DShaderManager::getShaderTexture(stage)->Peek_D3D_Texture());
-
-	DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-	DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
-	//DX8Wrapper::Apply_Render_State_Changes();
-
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
-
-	//We need to scale so shroud texel stretches over one full terrain cell.  Each texel
-	//is 1/128 the size of full texture. (assuming 128x128 vid-mem texture).
-	W3DShroud *shroud;
-	if ((shroud=TheTerrainRenderObject->getShroud()) != nullptr)
-	{
-		///@todo: All this code really only need to be done once per camera/view.  Find a way to optimize it out.
-		D3DXMATRIX curView;
-		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-
-		D3DXMATRIX inv;
-		float det;
-		D3DXMatrixInverse(&inv, &det, &curView);
-
-		D3DXMATRIX scale,offset;
-
-		//We need to make all world coordinates be relative to the heightmap data origin since that
-		//is where the shroud begins.
-
-		float xoffset = 0;
-		float yoffset = 0;
-		Real width=shroud->getCellWidth();
-		Real height=shroud->getCellHeight();
-
-		if (TheTerrainRenderObject->getMap())
-		{
-			//subtract origin position from all coordinates.  Origin is shifted by 1 cell width/height to allow for unused border texels.
-			xoffset = -(float)shroud->getDrawOriginX() + width;
-			yoffset = -(float)shroud->getDrawOriginY() + height;
-		}
-
-		D3DXMatrixTranslation(&offset, xoffset, yoffset,0);
-
-		width = 1.0f/(width*shroud->getTextureWidth());
-		height = 1.0f/(height*shroud->getTextureHeight());
-		D3DXMatrixScaling(&scale, width, height, 1);
-		curView = (inv * offset) * scale;
-		DX8Wrapper::_Set_DX8_Transform((D3DTRANSFORMSTATETYPE )(D3DTS_TEXTURE0+stage), curView);
-	}
-	m_stageOfSet=stage;
-	return TRUE;
-}
-
-void FlatShroudTextureShader::reset()
-{
-	if (m_stageOfSet < MAX_TEXTURE_STAGES)
-		Renderer::Set_Texture(m_stageOfSet,nullptr);
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXCOORDINDEX, m_stageOfSet);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
-}
-
 ///Mask layer rendering shader
 class MaskTextureShader : public W3DShaderInterface
 {
@@ -2574,7 +2479,6 @@ W3DShaderInterface **MasterShaderList[]=
 {
 	TerrainShaderList,
 	ShroudShaderList,
-	FlatShroudShaderList,
 	RoadShaderList,
 	MaskShaderList,
 	CloudShaderList,
