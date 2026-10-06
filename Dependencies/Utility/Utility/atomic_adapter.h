@@ -35,6 +35,40 @@
 
 #include "Utility/interlocked_adapter.h"
 
+namespace utility_atomic_detail
+{
+	// Read a value without locking, which is sufficient because every store of the atomic classes is a locked
+	// instruction. The functions are naked, so that VC6 never expands them inline. Its optimizer does not reliably treat
+	// a data member as volatile and would otherwise move the read out of a loop that waits for another thread to store
+	// a value. With __fastcall the argument is in ecx. The result is returned in al, ax or eax.
+	__declspec(naked) inline char __fastcall load8(const char volatile *source)
+	{
+		__asm
+		{
+			mov al, byte ptr [ecx]
+			ret
+		}
+	}
+
+	__declspec(naked) inline short __fastcall load16(const short volatile *source)
+	{
+		__asm
+		{
+			mov ax, word ptr [ecx]
+			ret
+		}
+	}
+
+	__declspec(naked) inline long __fastcall load32(const long volatile *source)
+	{
+		__asm
+		{
+			mov eax, dword ptr [ecx]
+			ret
+		}
+	}
+}
+
 namespace std
 {
 	// The VC6 atomic classes take the memory orders for source compatibility with the standard classes.
@@ -218,17 +252,15 @@ namespace std
 			return to_long(value);
 		}
 
-		// The four functions below call the interlocked function for the size of the type. They pass the value as a
-		// long whose low bytes hold it. The size is constant, so that the compiler keeps the one case that applies.
+		// The four functions below call the function for the size of the type. They pass the value as a long whose
+		// low bytes hold it. The size is constant, so that the compiler keeps the one case that applies.
 		long load_stored() const
 		{
-			// Reads with an interlocked function, because the VC6 optimizer does not reliably treat a data member as
-			// volatile. It can move a plain read out of a loop that waits for another thread to store a value.
 			switch (sizeof(T))
 			{
-			case 1: return InterlockedCompareExchange8((char volatile*)&m_stored, 0, 0);
-			case 2: return InterlockedCompareExchange16((short volatile*)&m_stored, 0, 0);
-			default: return InterlockedCompareExchange((long volatile*)&m_stored, 0, 0);
+			case 1: return ::utility_atomic_detail::load8((const char volatile*)&m_stored);
+			case 2: return ::utility_atomic_detail::load16((const short volatile*)&m_stored);
+			default: return ::utility_atomic_detail::load32((const long volatile*)&m_stored);
 			}
 		}
 
@@ -340,8 +372,7 @@ namespace std
 
 		bool load(memory_order = memory_order_seq_cst) const
 		{
-			// Reads with an interlocked function for the same reason as the generic class.
-			const char value = InterlockedCompareExchange8(&m_stored, 0, 0);
+			const char value = ::utility_atomic_detail::load8(&m_stored);
 			return from_char(value);
 		}
 
