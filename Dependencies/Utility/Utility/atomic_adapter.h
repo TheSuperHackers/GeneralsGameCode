@@ -341,6 +341,29 @@ namespace std
 	template<>
 	class atomic<float>;
 
+	// The aliases of the standard for the types that the class supports.
+	typedef atomic<bool> atomic_bool;
+	typedef atomic<char> atomic_char;
+	typedef atomic<signed char> atomic_schar;
+	typedef atomic<unsigned char> atomic_uchar;
+	typedef atomic<short> atomic_short;
+	typedef atomic<unsigned short> atomic_ushort;
+	typedef atomic<int> atomic_int;
+	typedef atomic<unsigned int> atomic_uint;
+	typedef atomic<long> atomic_long;
+	typedef atomic<unsigned long> atomic_ulong;
+	typedef atomic<wchar_t> atomic_wchar_t;
+	typedef atomic<int8_t> atomic_int8_t;
+	typedef atomic<uint8_t> atomic_uint8_t;
+	typedef atomic<int16_t> atomic_int16_t;
+	typedef atomic<uint16_t> atomic_uint16_t;
+	typedef atomic<int32_t> atomic_int32_t;
+	typedef atomic<uint32_t> atomic_uint32_t;
+	typedef atomic<intptr_t> atomic_intptr_t;
+	typedef atomic<uintptr_t> atomic_uintptr_t;
+	typedef atomic<size_t> atomic_size_t;
+	typedef atomic<ptrdiff_t> atomic_ptrdiff_t;
+
 }
 
 #endif
