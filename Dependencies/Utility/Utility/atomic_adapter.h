@@ -54,8 +54,6 @@ namespace std
 	{
 		static long to_long(long value) { return value; }
 		static long from_long(long value) { return value; }
-		static unsigned long to_unsigned_long(long value) { return (unsigned long)value; }
-		static long from_unsigned_long(unsigned long value) { return (long)value; }
 	};
 
 	template<>
@@ -63,8 +61,6 @@ namespace std
 	{
 		static long to_long(unsigned long value) { return (long)value; }
 		static unsigned long from_long(long value) { return (unsigned long)value; }
-		static unsigned long to_unsigned_long(unsigned long value) { return value; }
-		static unsigned long from_unsigned_long(unsigned long value) { return value; }
 	};
 
 	template<>
@@ -72,8 +68,6 @@ namespace std
 	{
 		static long to_long(int value) { return (long)value; }
 		static int from_long(long value) { return (int)value; }
-		static unsigned long to_unsigned_long(int value) { return (unsigned long)value; }
-		static int from_unsigned_long(unsigned long value) { return (int)value; }
 	};
 
 	template<>
@@ -81,8 +75,6 @@ namespace std
 	{
 		static long to_long(unsigned int value) { return (long)value; }
 		static unsigned int from_long(long value) { return (unsigned int)value; }
-		static unsigned long to_unsigned_long(unsigned int value) { return (unsigned long)value; }
-		static unsigned int from_unsigned_long(unsigned long value) { return (unsigned int)value; }
 	};
 
 	template<>
@@ -90,8 +82,6 @@ namespace std
 	{
 		static long to_long(short value) { return (long)value; }
 		static short from_long(long value) { return (short)value; }
-		static unsigned long to_unsigned_long(short value) { return (unsigned short)value; }
-		static short from_unsigned_long(unsigned long value) { return (short)(unsigned short)value; }
 	};
 
 	template<>
@@ -99,8 +89,6 @@ namespace std
 	{
 		static long to_long(unsigned short value) { return (long)value; }
 		static unsigned short from_long(long value) { return (unsigned short)value; }
-		static unsigned long to_unsigned_long(unsigned short value) { return (unsigned long)value; }
-		static unsigned short from_unsigned_long(unsigned long value) { return (unsigned short)value; }
 	};
 
 	template<>
@@ -108,8 +96,6 @@ namespace std
 	{
 		static long to_long(char value) { return (long)value; }
 		static char from_long(long value) { return (char)value; }
-		static unsigned long to_unsigned_long(char value) { return (unsigned char)value; }
-		static char from_unsigned_long(unsigned long value) { return (char)(unsigned char)value; }
 	};
 
 	template<>
@@ -117,8 +103,6 @@ namespace std
 	{
 		static long to_long(unsigned char value) { return (long)value; }
 		static unsigned char from_long(long value) { return (unsigned char)value; }
-		static unsigned long to_unsigned_long(unsigned char value) { return (unsigned char)value; }
-		static unsigned char from_unsigned_long(unsigned long value) { return (unsigned char)value; }
 	};
 
 	template <>
@@ -126,8 +110,6 @@ namespace std
 	{
 		static long to_long(signed char value) { return (long)value; }
 		static signed char from_long(long value) { return (signed char)value; }
-		static unsigned long to_unsigned_long(signed char value) { return (unsigned char)value; }
-		static signed char from_unsigned_long(unsigned long value) { return (signed char)(unsigned char)value; }
 	};
 
 
@@ -143,8 +125,7 @@ namespace std
 
 		T load(memory_order = memory_order_seq_cst) const
 		{
-			const long oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
-			return atomic_trait<T>::from_long(oldValue);
+			return atomic_trait<T>::from_long(load_stored());
 		}
 
 		void store(T value, memory_order = memory_order_seq_cst)
@@ -160,105 +141,27 @@ namespace std
 
 		T fetch_add(T value, memory_order = memory_order_seq_cst)
 		{
-			long oldValue;
-			long newValue;
-
-			do
-			{
-				oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
-
-				const T oldTyped = atomic_trait<T>::from_long(oldValue);
-
-				const unsigned long oldUnsigned = atomic_trait<T>::to_unsigned_long(oldTyped);
-				const unsigned long valueUnsigned = atomic_trait<T>::to_unsigned_long(value);
-				const unsigned long newUnsigned = oldUnsigned + valueUnsigned;
-
-				const T newTyped = atomic_trait<T>::from_unsigned_long(newUnsigned);
-
-				newValue = atomic_trait<T>::to_long(newTyped);
-			} while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
-
-			return atomic_trait<T>::from_long(oldValue);
+			return atomic_trait<T>::from_long(fetch_modify(operation_add, atomic_trait<T>::to_long(value)));
 		}
 
 		T fetch_sub(T value, memory_order = memory_order_seq_cst)
 		{
-			long oldValue;
-			long newValue;
-
-			do
-			{
-				oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
-
-				const T oldTyped = atomic_trait<T>::from_long(oldValue);
-
-				const unsigned long oldUnsigned = atomic_trait<T>::to_unsigned_long(oldTyped);
-				const unsigned long valueUnsigned = atomic_trait<T>::to_unsigned_long(value);
-				const unsigned long newUnsigned = oldUnsigned - valueUnsigned;
-
-				const T newTyped = atomic_trait<T>::from_unsigned_long(newUnsigned);
-
-				newValue = atomic_trait<T>::to_long(newTyped);
-			} while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
-
-			return atomic_trait<T>::from_long(oldValue);
+			return atomic_trait<T>::from_long(fetch_modify(operation_sub, atomic_trait<T>::to_long(value)));
 		}
 
 		T fetch_or(T value, memory_order = memory_order_seq_cst)
 		{
-			long oldValue;
-			long newValue;
-
-			do
-			{
-				oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
-
-				const T oldTyped = atomic_trait<T>::from_long(oldValue);
-				const T newTyped = (T)(oldTyped | value);
-
-				newValue = atomic_trait<T>::to_long(newTyped);
-			}
-			while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
-
-			return atomic_trait<T>::from_long(oldValue);
+			return atomic_trait<T>::from_long(fetch_modify(operation_or, atomic_trait<T>::to_long(value)));
 		}
 
 		T fetch_and(T value, memory_order = memory_order_seq_cst)
 		{
-			long oldValue;
-			long newValue;
-
-			do
-			{
-				oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
-
-				const T oldTyped = atomic_trait<T>::from_long(oldValue);
-				const T newTyped = (T)(oldTyped & value);
-
-				newValue = atomic_trait<T>::to_long(newTyped);
-			}
-			while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
-
-			return atomic_trait<T>::from_long(oldValue);
+			return atomic_trait<T>::from_long(fetch_modify(operation_and, atomic_trait<T>::to_long(value)));
 		}
 
 		T fetch_xor(T value, memory_order = memory_order_seq_cst)
 		{
-			long oldValue;
-			long newValue;
-
-			do
-			{
-				oldValue = InterlockedCompareExchange(&m_stored, 0, 0);
-
-				const T oldTyped = atomic_trait<T>::from_long(oldValue);
-				const T newTyped = (T)(oldTyped ^ value);
-
-				newValue = atomic_trait<T>::to_long(newTyped);
-			}
-			while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
-
-			return atomic_trait<T>::from_long(oldValue);
+			return atomic_trait<T>::from_long(fetch_modify(operation_xor, atomic_trait<T>::to_long(value)));
 		}
 
 		bool compare_exchange_strong(T& expected, T desired, memory_order = memory_order_seq_cst)
@@ -297,8 +200,7 @@ namespace std
 		// Increment/decrement.
 		T operator++()
 		{
-			const T oldValue = fetch_add((T)1);
-			return add_result(oldValue, (T)1);
+			return modify(operation_add, (T)1);
 		}
 
 		T operator++(int)
@@ -308,8 +210,7 @@ namespace std
 
 		T operator--()
 		{
-			const T oldValue = fetch_sub((T)1);
-			return sub_result(oldValue, (T)1);
+			return modify(operation_sub, (T)1);
 		}
 
 		T operator--(int)
@@ -320,42 +221,40 @@ namespace std
 		// Arithmetic operators.
 		T operator+=(T value)
 		{
-			const T oldValue = fetch_add(value);
-			return add_result(oldValue, value);
+			return modify(operation_add, value);
 		}
 
 		T operator-=(T value)
 		{
-			const T oldValue = fetch_sub(value);
-			return sub_result(oldValue, value);
+			return modify(operation_sub, value);
 		}
 
 		// Optional bitwise operators.
 		T operator|=(T value)
 		{
-			const T oldValue = fetch_or(value);
-
-			const unsigned long newValue = atomic_trait<T>::to_unsigned_long(oldValue) | atomic_trait<T>::to_unsigned_long(value);
-			return atomic_trait<T>::from_unsigned_long(newValue);
+			return modify(operation_or, value);
 		}
 
 		T operator&=(T value)
 		{
-			const T oldValue = fetch_and(value);
-
-			const unsigned long newValue = atomic_trait<T>::to_unsigned_long(oldValue) & atomic_trait<T>::to_unsigned_long(value);
-			return atomic_trait<T>::from_unsigned_long(newValue);
+			return modify(operation_and, value);
 		}
 
 		T operator^=(T value)
 		{
-			const T oldValue = fetch_xor(value);
-
-			const unsigned long newValue = atomic_trait<T>::to_unsigned_long(oldValue) ^ atomic_trait<T>::to_unsigned_long(value);
-			return atomic_trait<T>::from_unsigned_long(newValue);
+			return modify(operation_xor, value);
 		}
 
 	private:
+		enum operation
+		{
+			operation_add,
+			operation_sub,
+			operation_or,
+			operation_and,
+			operation_xor
+		};
+
 		atomic(const atomic&) FUNCTION_DELETE;
 		atomic& operator=(const atomic&) FUNCTION_DELETE;
 
@@ -373,20 +272,52 @@ namespace std
 			return false;
 		}
 
-		T add_result(T oldValue, T value)
+		long load_stored() const
 		{
-			const unsigned long oldUnsigned =	atomic_trait<T>::to_unsigned_long(oldValue);
-			const unsigned long valueUnsigned =	atomic_trait<T>::to_unsigned_long(value);
-
-			return atomic_trait<T>::from_unsigned_long(oldUnsigned + valueUnsigned);
+			return InterlockedCompareExchange(&m_stored, 0, 0);
 		}
 
-		T sub_result(T oldValue, T value)
+		static long compute(operation op, long stored, long operand)
 		{
-			const unsigned long oldUnsigned =	atomic_trait<T>::to_unsigned_long(oldValue);
-			const unsigned long valueUnsigned =	atomic_trait<T>::to_unsigned_long(value);
+			long result;
 
-			return atomic_trait<T>::from_unsigned_long(oldUnsigned - valueUnsigned);
+			switch (op)
+			{
+			// Adds and subtracts unsigned, because that wraps around without undefined behavior.
+			case operation_add: result = (long)((unsigned long)stored + (unsigned long)operand); break;
+			case operation_sub: result = (long)((unsigned long)stored - (unsigned long)operand); break;
+			case operation_or: result = stored | operand; break;
+			case operation_and: result = stored & operand; break;
+			default: result = stored ^ operand; break;
+			}
+
+			// Wraps the result around to the value range of the type.
+			return atomic_trait<T>::to_long(atomic_trait<T>::from_long(result));
+		}
+
+		// Returns the stored value from before the operation.
+		long fetch_modify(operation op, long operand)
+		{
+			long oldValue;
+			long newValue;
+
+			do
+			{
+				oldValue = load_stored();
+				newValue = compute(op, oldValue, operand);
+			}
+			while (InterlockedCompareExchange(&m_stored, newValue, oldValue) != oldValue);
+
+			return oldValue;
+		}
+
+		// Returns the value from after the operation.
+		T modify(operation op, T value)
+		{
+			const long operand = atomic_trait<T>::to_long(value);
+			const long oldValue = fetch_modify(op, operand);
+
+			return atomic_trait<T>::from_long(compute(op, oldValue, operand));
 		}
 
 		mutable volatile long m_stored;
