@@ -5241,7 +5241,7 @@ StateReturnType AIAttackFireWeaponState::update()
 	}
 
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The target may have moved out of range since we entered this
+	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The weapon may have gone out of range since we entered this
 	// state, so we check the range again to avoid partially firing the weapon.
 	if (!weapon->hasLeechRange())
 	{
@@ -5332,6 +5332,18 @@ StateReturnType AIAttackFireWeaponState::update()
         Weapon *weapon = obj->getWeaponInWeaponSlot( (WeaponSlotType)slot );
         if ( weapon )
         {
+#if !RETAIL_COMPATIBLE_CRC
+					// TheSuperHackers @bugfix Stubbjax 28/09/2026 The weapon may have gone out of range since we entered this
+					// state, so we check the range again to avoid partially firing the weapon.
+					if (!weapon->hasLeechRange())
+					{
+						Bool inRange = weapon->isWithinAttackRange(obj, getMachineGoalPosition());
+
+						if (!inRange)
+							continue;
+					}
+#endif
+
           if ( weapon->fireWeapon(obj, getMachineGoalPosition()) ) //fire() returns 'reloaded'
             obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
 

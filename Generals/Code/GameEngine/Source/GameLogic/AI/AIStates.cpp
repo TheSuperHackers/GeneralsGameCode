@@ -5085,7 +5085,7 @@ StateReturnType AIAttackFireWeaponState::update()
 	}
 
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The target may have moved out of range since we entered this
+	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The weapon may have gone out of range since we entered this
 	// state, so we check the range again to avoid partially firing the weapon.
 	if (!weapon->hasLeechRange())
 	{
