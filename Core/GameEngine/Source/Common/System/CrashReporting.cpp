@@ -106,7 +106,8 @@ void CrashReporting::initialize(const AsciiString& userDirectory, int major, int
 #endif
 #ifdef RTS_ENABLE_CRASHDUMP
     MiniDumper::initMiniDumper(userDirectory);
-    DEBUG_LOG(("Crash reporting: %s\n", backendName()));
+    DEBUG_LOG(("Crash reporting: %s\n",
+        TheMiniDumper && TheMiniDumper->IsInitialized() ? "minidumper" : "unavailable"));
 #endif
 }
 
@@ -120,24 +121,6 @@ void CrashReporting::userDirectoryReady(const AsciiString& userDirectory)
         initialize(userDirectory, savedMajor, savedMinor, savedBuild);
     }
 #endif
-}
-
-const char* CrashReporting::backendName()
-{
-#ifdef RTS_USE_CRASHPAD
-    if (capture)
-    {
-        return "crashpad";
-    }
-#endif
-#ifdef RTS_ENABLE_CRASHDUMP
-    if (TheMiniDumper && TheMiniDumper->IsInitialized())
-    {
-        return "minidumper";
-    }
-#endif
-
-    return "unavailable";
 }
 
 void CrashReporting::captureFatal()

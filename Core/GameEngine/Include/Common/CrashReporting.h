@@ -25,7 +25,6 @@ namespace CrashReporting
 {
     void initialize(const AsciiString& userDirectory, int major, int minor, int build);
     void userDirectoryReady(const AsciiString& userDirectory);
-    const char* backendName();
     void captureFatal();
     void shutdown();
 }

@@ -37,7 +37,7 @@ function(rts_enable_crashpad game engine)
     add_dependencies(${game} ${game}_crashpad_runtime)
 endfunction()
 
-function(rts_install_crashpad game destination)
+function(rts_install_crashpad destination)
     if(RTS_BUILD_OPTION_CRASHPAD)
         install(FILES "$<TARGET_FILE:rts_crashpad>" "$<TARGET_PDB_FILE:rts_crashpad>"
             "${RTS_CRASHPAD_HANDLER}"

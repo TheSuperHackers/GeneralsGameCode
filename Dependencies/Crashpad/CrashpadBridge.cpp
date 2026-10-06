@@ -29,16 +29,17 @@
 #include "client/prune_crash_reports.h"
 #include "client/settings.h"
 #include "util/misc/capture_context.h"
+#include "util/win/scoped_handle.h"
 
 namespace
 {
     std::unique_ptr<crashpad::CrashpadClient> client;
     LPTOP_LEVEL_EXCEPTION_FILTER previousFilter;
     void (*previousAbortHandler)(int);
-    HANDLE stopEvent;
-    HANDLE captureEvent;
-    HANDLE completedEvent;
-    HANDLE watchdogThread;
+    crashpad::ScopedKernelHANDLE stopEvent;
+    crashpad::ScopedKernelHANDLE captureEvent;
+    crashpad::ScopedKernelHANDLE completedEvent;
+    crashpad::ScopedKernelHANDLE watchdogThread;
     volatile LONG capturedFatal;
     bool attempted;
     bool active;
@@ -49,10 +50,10 @@ namespace
     // and then let the game reuse memory still referenced by the handler.
     DWORD WINAPI Watchdog(void*)
     {
-        const HANDLE events[] = {stopEvent, captureEvent};
+        const HANDLE events[] = {stopEvent.get(), captureEvent.get()};
         if (WaitForMultipleObjects(2, events, FALSE, INFINITE) == WAIT_OBJECT_0 + 1)
         {
-            if (WaitForSingleObject(completedEvent, 15000) != WAIT_OBJECT_0)
+            if (WaitForSingleObject(completedEvent.get(), 15000) != WAIT_OBJECT_0)
             {
                 TerminateProcess(GetCurrentProcess(), 1);
             }
@@ -71,31 +72,16 @@ namespace
 
     void StopWatchdog()
     {
-        if (watchdogThread)
+        if (watchdogThread.is_valid())
         {
-            SetEvent(stopEvent);
-            WaitForSingleObject(watchdogThread, INFINITE);
-            CloseHandle(watchdogThread);
-            watchdogThread = nullptr;
+            SetEvent(stopEvent.get());
+            WaitForSingleObject(watchdogThread.get(), INFINITE);
         }
 
-        if (stopEvent)
-        {
-            CloseHandle(stopEvent);
-            stopEvent = nullptr;
-        }
-
-        if (captureEvent)
-        {
-            CloseHandle(captureEvent);
-            captureEvent = nullptr;
-        }
-
-        if (completedEvent)
-        {
-            CloseHandle(completedEvent);
-            completedEvent = nullptr;
-        }
+        watchdogThread.reset();
+        stopEvent.reset();
+        captureEvent.reset();
+        completedEvent.reset();
     }
 
     bool Initialize(const char* userDirectory, const char* game,
@@ -158,16 +144,16 @@ namespace
             new crashpad::DatabaseSizePruneCondition(500 * 1024));
         crashpad::PruneCrashReportDatabase(database.get(), &retention);
 
-        stopEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-        captureEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-        completedEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-        if (!stopEvent || !captureEvent || !completedEvent)
+        stopEvent.reset(CreateEventW(nullptr, TRUE, FALSE, nullptr));
+        captureEvent.reset(CreateEventW(nullptr, TRUE, FALSE, nullptr));
+        completedEvent.reset(CreateEventW(nullptr, TRUE, FALSE, nullptr));
+        if (!stopEvent.is_valid() || !captureEvent.is_valid() || !completedEvent.is_valid())
         {
             return false;
         }
 
-        watchdogThread = CreateThread(nullptr, 0, Watchdog, nullptr, 0, nullptr);
-        if (!watchdogThread)
+        watchdogThread.reset(CreateThread(nullptr, 0, Watchdog, nullptr, 0, nullptr));
+        if (!watchdogThread.is_valid())
         {
             return false;
         }
@@ -228,13 +214,13 @@ extern "C" void __cdecl RtsCrashpadCaptureFatal()
 
     CONTEXT context;
     crashpad::CaptureContext(&context);
-    if (!SetEvent(captureEvent))
+    if (!SetEvent(captureEvent.get()))
     {
         TerminateProcess(GetCurrentProcess(), 1);
     }
 
     crashpad::CrashpadClient::DumpWithoutCrash(context);
-    SetEvent(completedEvent);
+    SetEvent(completedEvent.get());
     SetUnhandledExceptionFilter(AlreadyCaptured);
     // Removes the heap-corruption vectored handler too. The client leaves its
     // IPC state alive for process lifetime; never unload this DLL.
