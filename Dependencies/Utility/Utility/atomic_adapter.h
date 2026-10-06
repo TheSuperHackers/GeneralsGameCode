@@ -254,6 +254,17 @@ namespace std
 		// Returns the stored value from before the operation.
 		long fetch_modify(operation op, long operand)
 		{
+			// A long sized value needs no wrapping around to a smaller value range, so that one interlocked
+			// function can do the whole addition without a retry loop.
+			if (sizeof(T) == sizeof(long))
+			{
+				if (op == operation_add)
+					return InterlockedExchangeAdd(&m_stored, operand);
+
+				if (op == operation_sub)
+					return InterlockedExchangeAdd(&m_stored, (long)(0ul - (unsigned long)operand));
+			}
+
 			long oldValue;
 			long newValue;
 
