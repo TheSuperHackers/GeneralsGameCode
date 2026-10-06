@@ -3582,10 +3582,16 @@ void Object::xfer( Xfer *xfer )
 {
 
 	// version
-#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+#if RTS_GENERALS
+
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
 	const XferVersion currentVersion = 8;
+#endif
+
+#else
+	const XferVersion currentVersion = 9;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -3649,19 +3655,24 @@ void Object::xfer( Xfer *xfer )
 	}
 	else
 	{
+#if RTS_GENERALS
 		// TheSuperHackers @info Originally OBJECT_STATUS_IS_CARBOMB (28) + 1 would equal OBJECT_STATUS_COUNT,
-		// but the enum has been expanded with Zero Hour specific entries. Ignore the upper 3 bits as they're unused.
+		// but the enum has been expanded with Zero Hour specific entries.
 		constexpr const UnsignedInt count = OBJECT_STATUS_IS_CARBOMB + 1;
 		constexpr const UnsignedInt mask = (1 << count) - 1;
 		static_assert(count == 29, "This code needs to be updated when inserting new entries into ObjectStatusTypes");
 
 		// shift by one bit: OBJECT_STATUS_NONE (0) has a dedicated bit in the bitset but not in the integer
 		UnsignedInt status = (m_status.toUnsignedInt() & mask) >> 1;
+#else
+		// Zero Hour uses this branch only for XFER_LOAD
+		UnsignedInt status;
+#endif
 		xfer->xferUnsignedInt(&status);
 
 		m_status.clear();
 
-		for( int i = 0; i < count; i++ )
+		for( int i = 0; i < 32; i++ )
 		{
 			UnsignedInt bit = 1u<<i;
 			if( status & bit )
@@ -3743,7 +3754,9 @@ void Object::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_UNDERPOWERED]);
 		xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_FREEFALL]);
 
+#if RTS_GENERALS
 		if (version >= 8)
+#endif
 		{
 			// TheSuperHackers @info These 3 types are Zero Hour specific, but inserted in the middle of the enum.
 			xfer->xferUnsignedInt(&m_disabledTillFrame[DISABLED_AWESTRUCK]);
