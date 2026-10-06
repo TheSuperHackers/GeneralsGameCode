@@ -4,6 +4,7 @@ set(PRECOMPILED_SRC
     Precompiled/precompiled.h
     Precompiled/stdint_adapter.h
     Precompiled/stdint_subset.h
+    Precompiled/unichar.h
 )
 
 add_library(deps_precompiled INTERFACE)

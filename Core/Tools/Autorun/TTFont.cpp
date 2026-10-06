@@ -664,7 +664,7 @@ int TTFontClass::Set_YSpacing( int y )
 
 Point2D TTFontClass::Print(
 	HDC hdc,
-	wchar_t const * string,
+	unichar const * string,
 	Rect const & cliprect,
 	COLORREF forecolor,		/* = TEXT_COLOR,		*/
 	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
@@ -684,7 +684,7 @@ Point2D TTFontClass::Print(
 
 Point2D TTFontClass::Print(
 	HDC hdc,
-	wchar_t const * string,
+	unichar const * string,
 	Rect const & cliprect,
 	COLORREF forecolor,		/* = TEXT_COLOR,		*/
 	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
