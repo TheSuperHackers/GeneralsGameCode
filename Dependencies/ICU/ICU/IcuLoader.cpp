@@ -20,7 +20,7 @@
 
 #if defined(RTS_ICU_DYNAMIC) || defined(RTS_HAS_ICU_WINSDK)
 
-#include <Utility/interlocked_adapter.h>
+#include <Utility/lazy_static.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -37,51 +37,36 @@ HMODULE Module = nullptr;
 StrFromUtf8 FromUtf8 = nullptr;
 StrToUtf8WithSub ToUtf8WithSub = nullptr;
 
-CRITICAL_SECTION CriticalSection;
-LONG CriticalSectionState = 0;
-
-void freeResources();
-
-void cleanup()
+class CriticalSection
 {
-    // Conversion workers must have stopped before process shutdown.
-    freeResources();
-    LoadAttempted = false;
-    DeleteCriticalSection(&CriticalSection);
-    InterlockedExchange(&CriticalSectionState, 0);
-}
-
-void initializeCriticalSection()
-{
-    // Startup logging can convert strings before global constructors have run.
-    // VC6 also lacks synchronized local statics. Publish the native lock once;
-    // this loop only waits during initialization, not during ICU conversions.
-    while (InterlockedCompareExchange(&CriticalSectionState, 2, 2) != 2)
+public:
+    CriticalSection()
     {
-        if (InterlockedCompareExchange(&CriticalSectionState, 1, 0) == 0)
-        {
-            InitializeCriticalSection(&CriticalSection);
-            atexit(cleanup);
-            InterlockedExchange(&CriticalSectionState, 2);
-            return;
-        }
-
-        Sleep(0);
+        InitializeCriticalSection(&m_criticalSection);
+        atexit(IcuLoader::unload);
     }
-}
+
+    void lock() { EnterCriticalSection(&m_criticalSection); }
+    void unlock() { LeaveCriticalSection(&m_criticalSection); }
+
+private:
+    CRITICAL_SECTION m_criticalSection;
+};
+
+// Usable before global constructors and throughout static destruction, including on VC6.
+lazy_static<CriticalSection> Lock;
 
 class LoaderLock
 {
 public:
     LoaderLock()
     {
-        initializeCriticalSection();
-        EnterCriticalSection(&CriticalSection);
+        Lock.get().lock();
     }
 
     ~LoaderLock()
     {
-        LeaveCriticalSection(&CriticalSection);
+        Lock.get().unlock();
     }
 
 private:
@@ -160,12 +145,6 @@ bool load()
 }
 
 } // namespace
-
-bool IcuLoader::isAvailable()
-{
-    LoaderLock lock;
-    return load();
-}
 
 void IcuLoader::unload()
 {

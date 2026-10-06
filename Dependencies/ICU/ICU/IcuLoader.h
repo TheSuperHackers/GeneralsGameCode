@@ -34,7 +34,6 @@ public:
     typedef int Char32;
     typedef int ErrorCode;
 
-    static bool isAvailable();
     static void unload();
 
     // Return false when ICU is unavailable; otherwise call ICU and return true.

@@ -43,24 +43,6 @@ bool FitsInt(size_t length)
 
 #ifdef _WIN32
 
-size_t WindowsWideToUtf8Len(const wchar_t* src, size_t srcLen)
-{
-    if (!FitsInt(srcLen))
-    {
-        assert(false);
-        return 0;
-    }
-
-    const int outputLength = WideCharToMultiByte(CP_UTF8, 0, src, static_cast<int>(srcLen), nullptr, 0, nullptr, nullptr);
-    if (outputLength == 0 && srcLen != 0)
-    {
-        assert(false);
-        return 0;
-    }
-
-    return static_cast<size_t>(outputLength);
-}
-
 size_t WindowsWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t srcLen)
 {
     if (!FitsInt(destLen) || !FitsInt(srcLen))
@@ -85,21 +67,9 @@ size_t WindowsWideToUtf8(char* dest, size_t destLen, const wchar_t* src, size_t 
     return static_cast<size_t>(outputLength);
 }
 
-size_t WindowsUtf8ToWideLen(const char* src, size_t srcLen)
+size_t WindowsWideToUtf8Len(const wchar_t* src, size_t srcLen)
 {
-    if (!FitsInt(srcLen))
-    {
-        return UTF8_INVALID;
-    }
-
-    const int outputLength = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src,
-        static_cast<int>(srcLen), nullptr, 0);
-    if (outputLength == 0 && srcLen != 0)
-    {
-        return UTF8_INVALID;
-    }
-
-    return static_cast<size_t>(outputLength);
+    return WindowsWideToUtf8(nullptr, 0, src, srcLen);
 }
 
 size_t WindowsUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t srcLen)
@@ -132,6 +102,11 @@ size_t WindowsUtf8ToWide(wchar_t* dest, size_t destLen, const char* src, size_t 
     }
 
     return static_cast<size_t>(outputLength);
+}
+
+size_t WindowsUtf8ToWideLen(const char* src, size_t srcLen)
+{
+    return WindowsUtf8ToWide(nullptr, 0, src, srcLen);
 }
 
 #endif
