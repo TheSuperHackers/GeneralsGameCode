@@ -17,7 +17,7 @@
 */
 
 // This file contains a VC6 compatible atomic template class for the numeric signed and unsigned; long, int, short and char types.
-// It also contains a specialized template for the bool type with logical functions.
+// It also contains a specialized template for the bool type.
 #pragma once
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
@@ -418,22 +418,6 @@ namespace std
 		operator bool() const
 		{
 			return load();
-		}
-
-		// basic operators that make sense for boolean types
-		bool operator!() const
-		{
-			return !load();
-		}
-
-		bool operator==(bool value) const
-		{
-			return load() == value;
-		}
-
-		bool operator!=(bool value) const
-		{
-			return load() != value;
 		}
 
 	private:
