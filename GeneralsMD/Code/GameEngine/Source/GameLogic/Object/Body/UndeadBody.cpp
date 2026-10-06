@@ -79,15 +79,15 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 	// remaining, then go ahead and take it.
 	Bool shouldStartSecondLife = FALSE;
 
-	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
-			&& !m_isSecondLife
+	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE &&
+			!m_isSecondLife &&
 #if RETAIL_COMPATIBLE_CRC || PRESERVE_PREMATURE_BATTLE_BUS_DEATH
-			&& damageInfo->in.m_amount >= getHealth()
+			damageInfo->in.m_amount >= getHealth() &&
 #else
 			// TheSuperHackers @bugfix Stubbjax 20/09/2025 Battle Buses now correctly apply damage modifiers when calculating lethal damage
-			&& estimateDamage(damageInfo->in) >= getHealth()
+			estimateDamage(damageInfo->in) >= getHealth() &&
 #endif
-			&& IsHealthDamagingDamage(damageInfo->in.m_damageType)
+			IsHealthDamagingDamage(damageInfo->in.m_damageType)
 			)
 	{
 		damageInfo->in.m_amount = min( damageInfo->in.m_amount, getHealth() - 1 );

@@ -151,7 +151,7 @@ public:
 			{ "AwardXPForTriggering",				INI::parseInt,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_awardXPForTriggering ) },
 			{ "SkillPointsForTriggering",		INI::parseInt,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_skillPointsForTriggering ) },
 			{ "ApproachRequiresLOS",				INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_approachRequiresLOS ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

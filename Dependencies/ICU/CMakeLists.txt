@@ -8,4 +8,4 @@ target_sources(core_icu PRIVATE
 )
 
 target_include_directories(core_icu PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(core_icu PRIVATE core_config core_utility stlport)
+target_link_libraries(core_icu PRIVATE core_config deps_utility stlport)

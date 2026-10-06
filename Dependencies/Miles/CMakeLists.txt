@@ -4,19 +4,16 @@ set(MILES_SRC
     MilesLoader.h
 )
 
-## milesloader
+add_library(deps_miles STATIC)
 
-add_library(milesloader STATIC)
-set_target_properties(milesloader PROPERTIES OUTPUT_NAME milesloader)
+target_sources(deps_miles PRIVATE ${MILES_SRC})
 
-target_sources(milesloader PRIVATE ${MILES_SRC})
-
-target_include_directories(milesloader PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}     # include "mss/mss.h" and "MilesLoader.h"
-    ${CMAKE_CURRENT_SOURCE_DIR}/mss # include "mss.h"
+target_include_directories(deps_miles PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/mss
 )
 
-target_link_libraries(milesloader PRIVATE
-    core_precompiled # Gives force included headers. Link early.
-    core_utility
+target_link_libraries(deps_miles PRIVATE
+    deps_precompiled # Gives force included headers. Link early.
+    deps_utility
 )

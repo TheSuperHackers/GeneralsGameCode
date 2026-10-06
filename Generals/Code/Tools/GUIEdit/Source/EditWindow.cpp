@@ -1632,7 +1632,8 @@ void EditWindow::drawImage( const Image *image,
 	RectClass uv_rect(uv->lo.x,uv->lo.y,uv->hi.x,uv->hi.y);
 
 	if (m_isClippedEnabled)
-	{	//need to clip this quad to clip rectangle
+	{
+		//need to clip this quad to clip rectangle
 
 		//
 		//	Check for completely clipped

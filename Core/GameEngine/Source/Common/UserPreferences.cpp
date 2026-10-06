@@ -663,7 +663,8 @@ AsciiString CustomMatchPreferences::getPreferredMap()
 	AsciiString ret;
 	CustomMatchPreferences::const_iterator it = find("Map");
 	if (it == end())
-	{	//map not found, use default instead
+	{
+		//map not found, use default instead
 		ret = getDefaultOfficialMap();
 		return ret;
 	}
@@ -671,7 +672,8 @@ AsciiString CustomMatchPreferences::getPreferredMap()
 	ret = QuotedPrintableToAsciiString(it->second);
 	ret.trim();
 	if (ret.isEmpty() || !isValidMap(ret, TRUE))
-	{	//map is invalid, use default instead
+	{
+		//map is invalid, use default instead
 		ret = getDefaultOfficialMap();
 		return ret;
 	}

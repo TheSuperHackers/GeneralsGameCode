@@ -51,7 +51,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "DelayTime",	INI::parseDurationUnsignedInt,	nullptr, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

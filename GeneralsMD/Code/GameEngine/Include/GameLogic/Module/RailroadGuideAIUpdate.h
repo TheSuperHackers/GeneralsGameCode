@@ -69,7 +69,7 @@ public:
 			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
 			{ "WhistleSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
 			{ "Friction",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_friction) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		p.add( dataFieldParse );

@@ -106,7 +106,8 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 		return;
 	}
 
-	{	// update the colors
+	{
+		// update the colors
 		for (int i = 0; i < MAX_KEYFRAMES; ++i) {
 			// update the color swatch
 			CButtonShowColor *pSwatch = (CButtonShowColor*) GetDlgItem(colorControls[i][0]);
@@ -133,13 +134,15 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 		}
 	}
 
-	{ // update the values
+	{
+		// update the values
 		for (int i = 0; i < MAX_KEYFRAMES; ++i) {
 			ParticleSystemInfo::RandomKeyframe keyFrame;
 
 			pParent->getAlphaRangeFromSystem(i, keyFrame);
 
-			{	// Minimum first
+			{
+				// Minimum first
 				CWnd *pMin = GetDlgItem(alphaControls[i][0]);
 				if (pMin) {
 					if (toUI) {
@@ -152,7 +155,8 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 				}
 			}
 
-			{	// then maximum
+			{
+				// then maximum
 				CWnd *pMax = GetDlgItem(alphaControls[i][1]);
 				if (pMax) {
 					if (toUI) {
@@ -165,7 +169,8 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 				}
 			}
 
-			{ // then the frame
+			{
+				// then the frame
 				CWnd *pFrame = GetDlgItem(alphaControls[i][2]);
 				if (pFrame) {
 					if (toUI) {

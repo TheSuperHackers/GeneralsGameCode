@@ -83,7 +83,8 @@ Bool W3DSnowManager::ReAcquireResources()
 		DEBUG_ASSERTCRASH(m_pDev, ("Trying to ReAcquireResources on W3DSnowManager without device"));
 
 		if (m_VertexBufferD3D == nullptr)
-		{	// Create vertex buffer
+		{
+			// Create vertex buffer
 
 			if (FAILED(m_pDev->CreateVertexBuffer
 			(
@@ -185,9 +186,11 @@ void W3DSnowManager::renderSubBox(RenderInfoClass &rinfo, Int originX, Int origi
 	MinMaxAABoxClass mmbox;
 
 	if (boxDimX > m_leafDim)
-	{	//subdivide the box
+	{
+		//subdivide the box
 		if (boxDimY > m_leafDim)
-		{	//subdivide in both directions
+		{
+			//subdivide in both directions
 			//Upper left
 			mmbox.MinCorner.Set(originX*m_emitterSpacing-m_cullOverscan, (originY + halfY)*m_emitterSpacing-m_cullOverscan, m_snowCeiling-m_boxDimensions);
 			mmbox.MaxCorner.Set((originX + halfX)*m_emitterSpacing+m_cullOverscan, cubeDimY*m_emitterSpacing+m_cullOverscan, m_snowCeiling);
@@ -211,7 +214,8 @@ void W3DSnowManager::renderSubBox(RenderInfoClass &rinfo, Int originX, Int origi
 			return;
 		}
 		else
-		{	//only subdivide in x direction.
+		{
+			//only subdivide in x direction.
 			//Left
 			mmbox.MinCorner.Set(originX*m_emitterSpacing-m_cullOverscan, originY*m_emitterSpacing-m_cullOverscan, m_snowCeiling-m_boxDimensions);
 			mmbox.MaxCorner.Set((originX + halfX)*m_emitterSpacing+m_cullOverscan, cubeDimY*m_emitterSpacing+m_cullOverscan, m_snowCeiling);
@@ -227,7 +231,8 @@ void W3DSnowManager::renderSubBox(RenderInfoClass &rinfo, Int originX, Int origi
 	}
 	else
 	if (boxDimY > m_leafDim)
-	{	//only subdivide in y direction
+	{
+		//only subdivide in y direction
 		//Top
 		mmbox.MinCorner.Set(originX*m_emitterSpacing-m_cullOverscan, (originY+halfY)*m_emitterSpacing-m_cullOverscan, m_snowCeiling-m_boxDimensions);
 		mmbox.MaxCorner.Set(cubeDimX*m_emitterSpacing+m_cullOverscan, cubeDimY*m_emitterSpacing+m_cullOverscan, m_snowCeiling);

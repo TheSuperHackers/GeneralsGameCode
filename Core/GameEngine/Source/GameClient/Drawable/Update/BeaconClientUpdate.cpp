@@ -102,7 +102,8 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 					system->attachToDrawable( draw );
 			}
 			else// This is a failsafe... if someone has monkeyed with the particle system names, or the MP house colors
-			{// THis this will whip up a new particle system to match the house color provided
+			{
+				// THis this will whip up a new particle system to match the house color provided
 				templateName.format("BeaconSmokeFFFFFF");
 				const ParticleSystemTemplate *failsafeTemplate = TheParticleSystemManager->findTemplate( templateName );
 				DEBUG_ASSERTCRASH(TheParticleSystemManager->isDummy() || failsafeTemplate, ("Doh, this is bad \n I Could not even find the white particle system to make a failsafe system out of."));

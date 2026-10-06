@@ -23,16 +23,55 @@ wtime                      Neal Kettler
 #include <ctype.h>
 #include "wtime.h"
 
-static const char *DAYS[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+static const char *DAYS[] = {
+	"Sun",
+	"Mon",
+	"Tue",
+	"Wed",
+	"Thu",
+	"Fri",
+	"Sat"
+};
 
-static const char *FULLDAYS[]={"Sunday","Monday","Tuesday","Wednesday","Thursday",
-               "Friday","Saturday"};
+static const char *FULLDAYS[] = {
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday"
+};
 
-static const char *MONTHS[]={"Jan","Feb","Mar","Apr","May","Jun","Jul",
-               "Aug","Sep","Oct","Nov","Dec"};
+static const char *MONTHS[] = {
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec"
+};
 
-static const char *FULLMONTHS[]={"January","February","March","April","May","June",
-               "July","August","September","October","November","December"};
+static const char *FULLMONTHS[] = {
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December"
+};
 
 // MDC: Windows doesn't provide a localtime_r, so make our own...
 #ifdef _WIN32

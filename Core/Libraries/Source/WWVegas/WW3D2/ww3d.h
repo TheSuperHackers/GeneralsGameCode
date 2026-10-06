@@ -186,6 +186,8 @@ public:
 	// Total sync time in milliseconds. Advances in full logic time steps only.
 	static unsigned int		Get_Sync_Time() { return SyncTime; }
 
+	static unsigned int		Get_Previous_Sync_Time() { return PreviousSyncTime; }
+
 	// Current sync frame time in milliseconds. Can be zero when the logic has not stepped forward in the current render update.
 	static unsigned int		Get_Sync_Frame_Time() { return SyncTime - PreviousSyncTime; }
 

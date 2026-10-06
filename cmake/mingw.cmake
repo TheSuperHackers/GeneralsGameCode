@@ -1,9 +1,8 @@
-# TheSuperHackers @build JohnsterID 05/01/2026 Add MinGW-w64 cross-compilation support
 # MinGW-w64 specific compiler and linker configurations
 
 if(MINGW)
     message(STATUS "Configuring MinGW-w64 build settings")
-    
+
     # Detect if this is 32-bit or 64-bit MinGW
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(IS_MINGW32 TRUE)
@@ -11,19 +10,19 @@ if(MINGW)
     else()
         message(FATAL_ERROR "MinGW-w64 64-bit (x86_64) detected, but this project only supports 32-bit builds. Use the i686-w64-mingw32 toolchain.")
     endif()
-    
+
     # Windows subsystem
     add_link_options(-mwindows)
-    
+
     # Static linking of GCC runtime libraries
     # This embeds libgcc and libstdc++ into the executable to avoid DLL dependencies
     add_link_options(-static-libgcc -static-libstdc++)
-    
+
     # Compatibility flags for legacy code
     add_compile_options(
         -fno-strict-aliasing        # Avoid type-punning issues with DX8/COM
     )
-    
+
     # MSVC compatibility macros for MinGW
     # Note: MinGW already defines _cdecl and _stdcall correctly, so we only add __forceinline
     # The escaped syntax below expands to: -D__forceinline="inline __attribute__((always_inline))"
@@ -33,7 +32,7 @@ if(MINGW)
         __int64=long\ long
         _int64=long\ long
     )
-    
+
     # Enable math constants in MinGW's <math.h>
     # MinGW provides M_PI, M_E, etc. in <math.h>, but only when -std=c++XX is NOT used (strict ANSI mode),
     # or when _USE_MATH_DEFINES is defined. Since we compile with -std=c++20, we need this define.
@@ -41,7 +40,7 @@ if(MINGW)
     add_compile_definitions(
         _USE_MATH_DEFINES
     )
-    
+
     # Ensure proper calling conventions are defined
     # MinGW-w64 should define these, but verify they exist
     include(CheckCXXSymbolExists)
@@ -52,28 +51,28 @@ if(MINGW)
             STDMETHODIMP=HRESULT\ __stdcall
         )
     endif()
-    
+
     # Required Windows libraries for DX8 + COM
     link_libraries(
-        uuid        # COM GUIDs
-        ole32       # COM runtime
-        oleaut32    # COM automation
-        gdi32       # GDI
-        user32      # User interface
         comctl32    # Common controls
-        winmm       # Multimedia (timeGetTime, etc.)
-        vfw32       # Video for Windows (AVIFile functions)
         d3d8        # Direct3D 8
         dinput8     # DirectInput 8
         dsound      # DirectSound
+        gdi32       # GDI
         imm32       # Input Method Manager (IME)
+        ole32       # COM runtime
+        oleaut32    # COM automation
+        user32      # User interface
+        uuid        # COM GUIDs
+        vfw32       # Video for Windows (AVIFile functions)
+        winmm       # Multimedia (timeGetTime, etc.)
     )
-    
+
     # Note: MinGW-w64 does not provide comsuppw (COM support utilities library).
     # COM support utilities (_com_util::ConvertStringToBSTR, ConvertBSTRToString)
     # are provided by Dependencies/Utility/Utility/comsupp_compat.h as header-only
     # implementations. No library linking required.
-    
+
     # MinGW-w64 compatibility: Create d3dx8 as an alias to d3dx8d
     # MinGW-w64 only provides libd3dx8d.a (debug library), not libd3dx8.a
     # The min-dx8-sdk (dx8.cmake) handles this correctly via d3d8lib interface target,
@@ -86,6 +85,6 @@ if(MINGW)
         )
         message(STATUS "Created d3dx8 -> d3dx8d alias for MinGW-w64")
     endif()
-    
+
     message(STATUS "MinGW-w64 configuration complete")
 endif()

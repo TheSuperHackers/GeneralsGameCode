@@ -159,9 +159,9 @@ void UpdateModule::xfer( Xfer *xfer )
 	}
 
 #ifdef FIX_OLD_SAVES
-	if (xfer->getXferMode() == XFER_LOAD
-			&& thisModuleIsNowSleepy
-			&& m_nextCallFrameAndPhase == 0)
+	if (xfer->getXferMode() == XFER_LOAD &&
+			thisModuleIsNowSleepy &&
+			m_nextCallFrameAndPhase == 0)
 	{
 	#ifdef ALLOW_NONSLEEPY_UPDATES
 		// when the file was saved, this module was nonsleepy, but now it is sleepy.

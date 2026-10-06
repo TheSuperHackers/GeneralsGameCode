@@ -109,6 +109,14 @@ typedef UnsignedByte FileInstance;
 
 struct FileInfo {
 
+	FileInfo()
+		: sizeHigh(0)
+		, sizeLow(0)
+		, timestampHigh(0)
+		, timestampLow(0)
+	{
+	}
+
 	Int64 size() const { return (Int64)sizeHigh << 32 | sizeLow; }
 	Int64 timestamp() const { return (Int64)timestampHigh << 32 | timestampLow; }
 
@@ -177,8 +185,8 @@ protected:
 	};
 	typedef std::hash_map<
 		rts::string_key<AsciiString>, FileExistData,
-		rts::string_key_hash<AsciiString>,
-		rts::string_key_equal<AsciiString>/**/> FileExistMap;
+		rts::string_key_hash,
+		rts::string_key_equal> FileExistMap;
 
 	mutable FileExistMap m_fileExist;
 	mutable FastCriticalSectionClass m_fileExistMutex;

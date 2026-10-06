@@ -117,11 +117,11 @@ public:
 
 		if
 		(
-			obj
+			obj &&
 //			&& !Is_Proxy (*node)
-			&& !Is_Origin(node)
-			&& !node->IsHidden()
-			&& Is_Geometry(node)
+			!Is_Origin(node) &&
+			!node->IsHidden() &&
+			Is_Geometry(node)
 		)
 		{
 			return TRUE;
@@ -754,7 +754,8 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 	char	materialColorFilename[_MAX_FNAME + 1];
 	memset(materialColors,0,sizeof(materialColors));
 	for (i=0; i<TEAM_COLOR_PALETTE_SIZE; i++)
-	{	//preset the first 16 colors to predefined set of house colors
+	{
+		//preset the first 16 colors to predefined set of house colors
 		materialColors[i]=houseColorScale[i] << 16;
 	}
 

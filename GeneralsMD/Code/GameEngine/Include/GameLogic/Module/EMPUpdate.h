@@ -101,7 +101,7 @@ public:
       { "VictimRequiredKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( EMPUpdateModuleData, m_victimKindOf ) },
 		  { "VictimForbiddenKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( EMPUpdateModuleData, m_victimKindOfNot ) },
 
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}
@@ -181,7 +181,7 @@ public:
 
 
 
-      { 0, 0, 0, 0 }
+      { nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

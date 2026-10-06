@@ -84,7 +84,7 @@ public:
 			{ "ContinuousWeaponRubble", INI::parseWeaponTemplate, nullptr, offsetof(FireWeaponWhenDamagedBehaviorModuleData,				m_continuousWeaponRubble) },
 			{ "DamageTypes", INI::parseDamageTypeFlags, nullptr, offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_damageTypes ) },
 			{ "DamageAmount", INI::parseReal, nullptr, offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_damageAmount ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		UpdateModuleData::buildFieldParse(p);

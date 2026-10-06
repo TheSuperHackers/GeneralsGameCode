@@ -246,7 +246,8 @@ static void quitCallback()
 
 
 	//if (!TheGameLODManager->didMemPass())
-	{	//GIANT CRAPTACULAR HACK ALERT!!!!  On sytems with little memory, we skip all normal exit code
+	{
+		//GIANT CRAPTACULAR HACK ALERT!!!!  On sytems with little memory, we skip all normal exit code
 //		//and let Windows clean up the mess.  This reduces exit times from minutes to seconds.
 //		//8-19-03. MW
 //		delete TheGameClient;
@@ -1271,8 +1272,8 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 #endif
 
 			// don't allow mouse click slop that occurs during transitions to unset this flag
-			if (TheTransitionHandler->isFinished()
-				&& controlID != buttonEasyID && controlID != buttonMediumID && controlID != buttonHardID)
+			if (TheTransitionHandler->isFinished() &&
+				controlID != buttonEasyID && controlID != buttonMediumID && controlID != buttonHardID)
 			{
 				// this toggle must only be reset if one of these buttons have not been pressed
 				// ...the difficulty selection behavior must have a chance to act upon this toggle

@@ -120,7 +120,8 @@ HSVColorReal rgbToHSV( RGBColorReal rgbColor )
   if (saturation == 0)  {
     hue = 0;  // hue is really undefined
   }
-  else  {  // chromatic case, determine hue
+  else  {
+    // chromatic case, determine hue
     Real delta = max - min;
 
     if (red == max)
@@ -179,7 +180,8 @@ RGBColorReal hsvToRGB( HSVColorReal hsvColor )
 	{
 		// the colors is on the black and white center line
     if( hue == 0.0f )
-		{  // achromatic color ... there is no hue
+		{
+			// achromatic color ... there is no hue
       red = green = blue = value;
     }
     else
@@ -810,7 +812,8 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           RGBColorReal rgbColor;
           HSVColorReal hsvColor;
 
-          if (mode == MODE_RGB)  {  // switch to HSV
+          if (mode == MODE_RGB)  {
+            // switch to HSV
             rgbColor.red = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, nullptr, FALSE);
             rgbColor.green = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, nullptr, FALSE);
             rgbColor.blue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3, nullptr, FALSE);
@@ -848,7 +851,8 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
                            "Switch to RGB");
 
           }
-          else  {  // switch to RGB
+          else  {
+            // switch to RGB
             hsvColor.hue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, nullptr, FALSE);
             hsvColor.saturation = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, nullptr, FALSE);
             hsvColor.value = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3, nullptr, FALSE);

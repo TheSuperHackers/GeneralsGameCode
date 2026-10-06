@@ -558,7 +558,10 @@ void DockUpdate::crc( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Xfer Method */
+/** Xfer Method
+	* Version Info:
+	* 1: Initial version
+	*/
 // ------------------------------------------------------------------------------------------------
 void DockUpdate::xfer( Xfer *xfer )
 {
@@ -642,6 +645,12 @@ void DockUpdate::loadPostProcess()
 
 	// call base class
 	UpdateModule::loadPostProcess();
+
+	// TheSuperHackers @bugfix bobtista 30/09/2026 Restore the unsaved approach bone count.
+	if( m_positionsLoaded )
+	{
+		loadDockPositions();
+	}
 
 }
 

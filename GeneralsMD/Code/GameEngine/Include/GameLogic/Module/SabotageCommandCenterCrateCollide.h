@@ -54,7 +54,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 		p.add( dataFieldParse );
 	}

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
 
 # Use packagename_ROOT for FindPackage.
 if(POLICY CMP0074)
@@ -85,8 +85,8 @@ if (WIN32)
     add_subdirectory(Dependencies/DbgHelp)
     add_subdirectory(Dependencies/Usp10)
 else()
-    add_library(dbghelploader INTERFACE)
-    add_library(usp10loader INTERFACE)
+    add_library(deps_dbghelp INTERFACE)
+    add_library(deps_usp10 INTERFACE)
 endif()
 
 add_subdirectory(resources)

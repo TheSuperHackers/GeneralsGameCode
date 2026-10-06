@@ -172,7 +172,8 @@ inline bool IntersectionClass::_Point_In_Polygon_Z(
 
 	if (u1 == 0.0f)    {
 	  beta = u0 / u2;			// beta is the percentage down the edge Corner1->Corner3
-	  if ((beta >= 0.0f) && (beta <= 1.0f)) {		// make sure it's within the edge segment
+	  if ((beta >= 0.0f) && (beta <= 1.0f)) {
+			// make sure it's within the edge segment
 			alpha = (v0 - beta * v2) / v1;	 // alpha is the percentage down the edge Corner1->Corner2
 
 			// if alpha is valid & the sum of alpha & beta is <= 1 then it's within the triangle
@@ -250,7 +251,8 @@ inline bool IntersectionClass::_Point_In_Polygon(
 
 	if (u1 == 0.0f)    {
 	  Beta = beta = u0 / u2;			// beta is the percentage down the edge loc1->loc3
-	  if ((beta >= 0.0f) && (beta <= 1.0f)) {		// make sure it's within the edge segment
+	  if ((beta >= 0.0f) && (beta <= 1.0f)) {
+			// make sure it's within the edge segment
 			Alpha = alpha = (v0 - beta * v2) / v1;	 // alpha is the percentage down the edge loc1->loc2
 
 			// if alpha is valid & the sum of alpha & beta is <= 1 then it's within the triangle

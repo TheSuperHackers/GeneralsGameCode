@@ -1246,7 +1246,8 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 
 	static char buff[ARBITRARY_BUFF_SIZE];
 
-	{	// Update the emission type, velocity type, particle type and shader type.
+	{
+		// Update the emission type, velocity type, particle type and shader type.
 
 		CComboBox *pCombo;
 
@@ -1336,7 +1337,8 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{	// update the minimum and maximum for Angle X, Y and Z, and Angular X, Y, and Z
+	{
+		// update the minimum and maximum for Angle X, Y and Z, and Angular X, Y, and Z
 
 		CWnd *pWnd;
 		pWnd = GetDlgItem(IDC_PSEd_AngleXMin);
@@ -1520,7 +1522,8 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{	// update the damping values.
+	{
+		// update the damping values.
 		CWnd *pWnd;
 		pWnd = GetDlgItem(IDC_PSEd_AngleDampingMin);
 		if (pWnd) {
@@ -1567,7 +1570,8 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{ // update gravity
+	{
+		// update gravity
 		CWnd *pWnd;
 		pWnd = GetDlgItem(IDC_PSEd_Gravity);
 		if (pWnd) {
@@ -1581,7 +1585,8 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{	// all the kids need to update too.
+	{
+		// all the kids need to update too.
 		m_colorAlphaDialog.performUpdate(toUI);
 		m_switchesDialog.performUpdate(toUI);
 		m_moreParmsDialog.performUpdate(toUI);

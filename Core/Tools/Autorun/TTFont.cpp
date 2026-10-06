@@ -531,7 +531,8 @@ UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) co
 	//
 	//	Declared in winnls.h.
 	//--------------------------------------------------------------------------
-	if( IsDBCSLeadByte( c )&& *ptr ) {		// [OYO]
+	if( IsDBCSLeadByte( c )&& *ptr ) {
+		// [OYO]
 		c = ( c << 8 ) | *(BYTE *)ptr++;
 		if ( num_bytes != nullptr ) {
 			*num_bytes = 2;
@@ -1259,7 +1260,8 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		//	FW_BLACK		900
 		//---------------------------------------------------------------------
 
-		switch( LanguageID ) { 	// [OYO] Add this line if you wish to support another languages
+		switch( LanguageID ) {
+			// [OYO] Add this line if you wish to support another languages
 
 			//=================================================================
 			// JAPANESE

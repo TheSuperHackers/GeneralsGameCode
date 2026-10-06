@@ -135,7 +135,7 @@ protected:
 	Coord3D m_dockPosition;
 	Coord3D m_exitPosition;
 	Int m_numberApproachPositions;
-	Int m_numberApproachPositionBones;
+	Int m_numberApproachPositionBones; ///< Recomputed after loading; does not need serialization.
 
 	// These are real variables local to my specific needs here in DockUpdate
 	Bool m_positionsLoaded;	///< FALSE until we have loaded all the docking positions

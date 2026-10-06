@@ -5396,8 +5396,8 @@ Bool Pathfinder::adjustToLandingDestination(Object *obj, Coord3D *dest)
 	TheTerrainLogic->getMaximumPathfindExtent(&extent);
 	// If the object is off the map & the goal is off the map, it is a scripted setup, so just
 	// go to the dest.
-	if (!extent.isInRegionNoZ(*dest)) {
-		if (!extent.isInRegionNoZ(*obj->getPosition())) {
+	if (!extent.isInRegion(dest->asCoord2D())) {
+		if (!extent.isInRegion(obj->getPosition()->asCoord2D())) {
 			return true;
 		}
 	}
@@ -5517,7 +5517,12 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	//
 	Int limit = MAX_ADJUSTMENT_CELL_COUNT;
 	Int segmentLength = 1;
-	const ICoord2D directions[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
+	const ICoord2D directions[4] = {
+		{1, 0},
+		{0, 1},
+		{-1, 0},
+		{0, -1}
+	};
 	while (limit>0) {
 		for (Int dir = 0; dir < 4; dir++) {
 			for (Int count = segmentLength; count>0; count--) {
@@ -6235,8 +6240,14 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		// expand search to neighboring orthogonal cells
 		static ICoord2D delta[] =
 		{
-			{ 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 },
-			{ 1, 1 }, { -1, 1 }, { -1, -1 }, { 1, -1 }
+			{ 1, 0 },
+			{ 0, 1 },
+			{ -1, 0 },
+			{ 0, -1 },
+			{ 1, 1 },
+			{ -1, 1 },
+			{ -1, -1 },
+			{ 1, -1 }
 		};
 		const Int numNeighbors = 8;
 		const Int firstDiagonal = 4;
@@ -7252,8 +7263,14 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		// expand search to neighboring orthogonal cells
 		static ICoord2D delta[] =
 		{
-			{ 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 },
-			{ 1, 1 }, { -1, 1 }, { -1, -1 }, { 1, -1 }
+			{ 1, 0 },
+			{ 0, 1 },
+			{ -1, 0 },
+			{ 0, -1 },
+			{ 1, 1 },
+			{ -1, 1 },
+			{ -1, -1 },
+			{ 1, -1 }
 		};
 		const Int numNeighbors = 8;
 		const Int firstDiagonal = 4;
@@ -8524,8 +8541,14 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		// expand search to neighboring orthogonal cells
 		static ICoord2D delta[] =
 		{
-			{ 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 },
-			{ 1, 1 }, { -1, 1 }, { -1, -1 }, { 1, -1 }
+			{ 1, 0 },
+			{ 0, 1 },
+			{ -1, 0 },
+			{ 0, -1 },
+			{ 1, 1 },
+			{ -1, 1 },
+			{ -1, -1 },
+			{ 1, -1 }
 		};
 		const Int numNeighbors = 8;
 		const Int firstDiagonal = 4;
@@ -9628,7 +9651,10 @@ Bool Pathfinder::segmentIntersectsTallBuilding(const PathNode *curNode,
 Bool Pathfinder::circleClipsTallBuilding(	const Coord3D *from, const Coord3D *to, Real circleRadius, ObjectID ignoreBuilding, Coord3D *adjustTo)
 {
 	PartitionFilterAcceptByKindOf filterKindof(MAKE_KINDOF_MASK(KINDOF_AIRCRAFT_PATH_AROUND), KINDOFMASK_NONE);
-	PartitionFilter *filters[] = { &filterKindof, nullptr };
+	PartitionFilter *filters[] = {
+		&filterKindof,
+		nullptr
+	};
 	Object* tallBuilding = ThePartitionManager->getClosestObject(to, circleRadius, FROM_BOUNDINGSPHERE_2D, filters);
 	if (tallBuilding) {
 		Real radius = tallBuilding->getGeometryInfo().getBoundingCircleRadius() + 2*PATHFIND_CELL_SIZE_F;

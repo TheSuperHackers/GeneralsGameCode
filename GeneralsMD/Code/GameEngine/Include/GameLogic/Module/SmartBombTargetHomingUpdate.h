@@ -49,7 +49,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "CourseCorrectionScalar",	INI::parseReal,		nullptr, offsetof( SmartBombTargetHomingUpdateModuleData, m_courseCorrectionScalar ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

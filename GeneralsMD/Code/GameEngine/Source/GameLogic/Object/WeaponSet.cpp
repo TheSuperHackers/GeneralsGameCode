@@ -366,11 +366,33 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 /*static*/ ModelConditionFlags WeaponSet::getModelConditionForWeaponSlot(WeaponSlotType wslot, WeaponSetConditionType a)
 {
 	static const ModelConditionFlagType Nothing[WEAPONSLOT_COUNT] = { MODELCONDITION_INVALID, MODELCONDITION_INVALID, MODELCONDITION_INVALID };
-	static const ModelConditionFlagType Firing[WEAPONSLOT_COUNT] = { MODELCONDITION_FIRING_A, MODELCONDITION_FIRING_B, MODELCONDITION_FIRING_C };
-	static const ModelConditionFlagType Betweening[WEAPONSLOT_COUNT] = { MODELCONDITION_BETWEEN_FIRING_SHOTS_A, MODELCONDITION_BETWEEN_FIRING_SHOTS_B, MODELCONDITION_BETWEEN_FIRING_SHOTS_C };
-	static const ModelConditionFlagType Reloading[WEAPONSLOT_COUNT] = { MODELCONDITION_RELOADING_A, MODELCONDITION_RELOADING_B, MODELCONDITION_RELOADING_C };
-	static const ModelConditionFlagType PreAttack[WEAPONSLOT_COUNT] = { MODELCONDITION_PREATTACK_A, MODELCONDITION_PREATTACK_B, MODELCONDITION_PREATTACK_C };
-	static const ModelConditionFlagType* Lookup[WSF_COUNT] = { Nothing, Firing, Betweening, Reloading, PreAttack };
+	static const ModelConditionFlagType Firing[WEAPONSLOT_COUNT] = {
+		MODELCONDITION_FIRING_A,
+		MODELCONDITION_FIRING_B,
+		MODELCONDITION_FIRING_C
+	};
+	static const ModelConditionFlagType Betweening[WEAPONSLOT_COUNT] = {
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_A,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_B,
+		MODELCONDITION_BETWEEN_FIRING_SHOTS_C
+	};
+	static const ModelConditionFlagType Reloading[WEAPONSLOT_COUNT] = {
+		MODELCONDITION_RELOADING_A,
+		MODELCONDITION_RELOADING_B,
+		MODELCONDITION_RELOADING_C
+	};
+	static const ModelConditionFlagType PreAttack[WEAPONSLOT_COUNT] = {
+		MODELCONDITION_PREATTACK_A,
+		MODELCONDITION_PREATTACK_B,
+		MODELCONDITION_PREATTACK_C
+	};
+	static const ModelConditionFlagType* Lookup[WSF_COUNT] = {
+		Nothing,
+		Firing,
+		Betweening,
+		Reloading,
+		PreAttack
+	};
 
 	ModelConditionFlags flags;	// defaults to all clear
 
@@ -378,7 +400,11 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 	if (f != MODELCONDITION_INVALID)
 		flags.set(f);
 
-	static const ModelConditionFlagType Using[WEAPONSLOT_COUNT] = { MODELCONDITION_USING_WEAPON_A, MODELCONDITION_USING_WEAPON_B, MODELCONDITION_USING_WEAPON_C };
+	static const ModelConditionFlagType Using[WEAPONSLOT_COUNT] = {
+		MODELCONDITION_USING_WEAPON_A,
+		MODELCONDITION_USING_WEAPON_B,
+		MODELCONDITION_USING_WEAPON_C
+	};
 	if (a != WSF_NONE)
 		flags.set(Using[wslot]);
 
@@ -672,7 +698,8 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 			Bool handled = FALSE;
 			ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
 			if( contain && contain->isGarrisonable() && contain->isEnclosingContainerFor( source ))
-			{                                       // non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
+			{
+				// non enclosing garrison containers do not use firepoints. Lorenzen, 6/11/03
 				//For contained things, we need to fake-move objects to the best garrison point in order
 				//to get precise range checks.
 				Coord3D targetPos = *pos;
@@ -790,9 +817,9 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 // selected and get the "attack if I move" cursor against an enemy. since the stinger site can't
 // move or fire, you shouldn't really EVER get this cursor for it. and since we just verified above
 // that our slaves (the soldiers) can attack correctly, just nork it.
-		if (source->isKindOf( KINDOF_IMMOBILE )
-				&& source->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS )
-				&& okResult == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
+		if (source->isKindOf( KINDOF_IMMOBILE ) &&
+				source->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ) &&
+				okResult == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
 			okResult = ATTACKRESULT_POSSIBLE;
 
 		return okResult;

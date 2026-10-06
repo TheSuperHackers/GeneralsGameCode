@@ -473,6 +473,11 @@ private:
 	void xferObjectTOC( Xfer *xfer );												///< save/load object TOC for current state of map
 	void prepareLogicForObjectLoad();									///< prepare engine for object data from game file
 
+#if RTS_GENERALS && defined(_MSC_VER) && _MSC_VER < 1300
+public:
+	Bool m_onUnitProducedZeroInit;
+#endif
+
 };
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////

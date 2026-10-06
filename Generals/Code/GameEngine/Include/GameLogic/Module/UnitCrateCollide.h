@@ -56,7 +56,7 @@ public:
 		{
 			{ "UnitCount",	INI::parseUnsignedInt,	nullptr, offsetof( UnitCrateCollideModuleData, m_unitCount ) },
 			{ "UnitName",		INI::parseAsciiString,	nullptr, offsetof( UnitCrateCollideModuleData, m_unitType ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

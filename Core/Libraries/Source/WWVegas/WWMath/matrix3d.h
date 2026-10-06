@@ -969,7 +969,8 @@ WWINLINE void Matrix3D::Rotate_Z(float s,float c)
 // !! with Orthogonal Matrices, for optimization purposes
 // !!
 WWINLINE void	Matrix3D::Scale(float scale)
-{	// uniform scale all 3 axis
+{
+	// uniform scale all 3 axis
 	// X
 	Row[0][0] *= scale;
 	Row[1][0] *= scale;
@@ -1001,7 +1002,8 @@ WWINLINE void	Matrix3D::Scale(float scale)
 // !! with Orthogonal Matrices, for optimization purposes
 // !!
 WWINLINE void	Matrix3D::Scale(float x, float y, float z)
-{ // separate input for each axis
+{
+	// separate input for each axis
 	// X
 	Row[0][0] *= x;
 	Row[1][0] *= x;
@@ -1033,7 +1035,8 @@ WWINLINE void	Matrix3D::Scale(float x, float y, float z)
 // !! with Orthogonal Matrices, for optimization purposes
 // !!
 WWINLINE void	Matrix3D::Scale(Vector3 &scale)
-{ // scale each axis
+{
+	// scale each axis
 	Scale(scale.X, scale.Y, scale.Z);
 }
 

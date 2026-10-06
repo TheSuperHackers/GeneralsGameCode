@@ -374,7 +374,8 @@ int Random4Class::operator() ()
     static unsigned int mag01[2]={0x0, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (mti >= N) { /* generate N words at one time */
+    if (mti >= N) {
+        /* generate N words at one time */
         int kk;
 
         for (kk=0;kk<N-M;kk++) {

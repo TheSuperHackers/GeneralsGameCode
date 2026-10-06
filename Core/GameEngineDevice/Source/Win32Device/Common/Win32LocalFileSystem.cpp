@@ -60,7 +60,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t b
 		AsciiString dirName;
 		string.nextToken(&token, "\\/");
 		dirName = token;
-		while ((token.find('.') == nullptr) || (string.find('.') != nullptr)) {
+		while (!string.isEmpty()) {
 			createDirectory(dirName);
 			string.nextToken(&token, "\\/");
 			dirName.concat('\\');
@@ -184,10 +184,10 @@ Bool Win32LocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fi
 		return FALSE;
 	}
 
-	fileInfo->timestampHigh = findData.ftLastWriteTime.dwHighDateTime;
-	fileInfo->timestampLow = findData.ftLastWriteTime.dwLowDateTime;
 	fileInfo->sizeHigh = findData.nFileSizeHigh;
 	fileInfo->sizeLow = findData.nFileSizeLow;
+	fileInfo->timestampHigh = findData.ftLastWriteTime.dwHighDateTime;
+	fileInfo->timestampLow = findData.ftLastWriteTime.dwLowDateTime;
 
 	FindClose(findHandle);
 

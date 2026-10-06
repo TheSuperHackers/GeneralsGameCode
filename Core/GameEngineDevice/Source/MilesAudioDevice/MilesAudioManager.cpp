@@ -2350,8 +2350,8 @@ void MilesAudioManager::processPlayingList()
 			{
 				Real volForConsideration = getEffectiveVolume(playing->m_audioEventRTS.Peek());
 				volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
-				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL)
-					|| playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
+				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) ||
+					playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
 				if( volForConsideration < m_audioSettings->m_minVolume && !playAnyways )
 				{
 					stopPlayingAudio(playing);

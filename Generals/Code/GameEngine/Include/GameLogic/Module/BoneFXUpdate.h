@@ -206,7 +206,7 @@ public:
 			{ "RubbleParticleSystem7",				BoneFXUpdateModuleData::parseParticleSystem,			nullptr, offsetof( BoneFXUpdateModuleData, m_particleSystem[ BODY_RUBBLE ][ 6 ] ) },
 			{ "RubbleParticleSystem8",				BoneFXUpdateModuleData::parseParticleSystem,			nullptr, offsetof( BoneFXUpdateModuleData, m_particleSystem[ BODY_RUBBLE ][ 7 ] ) },
 
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

@@ -294,10 +294,10 @@ Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *file
 
 	// TODO: fix this to be win compatible (time since 1601)
 	auto time = write_time.time_since_epoch().count();
+	fileInfo->sizeHigh = file_size >> 32;
+	fileInfo->sizeLow = file_size & UINT32_MAX;
 	fileInfo->timestampHigh = time >> 32;
 	fileInfo->timestampLow = time & UINT32_MAX;
-	fileInfo->sizeHigh      = file_size >> 32;
-	fileInfo->sizeLow  = file_size & UINT32_MAX;
 
 	return TRUE;
 }
@@ -331,7 +331,7 @@ AsciiString StdLocalFileSystem::normalizePath(const AsciiString& filePath) const
 	std::string nonNormalized(filePath.str());
 #ifndef _WIN32
 	// Replace backslashes with forward slashes on non-Windows platforms
-	std::replace(unNormalized.begin(), unNormalized.end(), '\\', '/');
+	std::replace(nonNormalized.begin(), nonNormalized.end(), '\\', '/');
 #endif
 	std::filesystem::path pathNonNormalized(nonNormalized);
 	return AsciiString(pathNonNormalized.lexically_normal().string().c_str());

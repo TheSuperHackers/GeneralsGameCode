@@ -49,7 +49,7 @@ public:
 		{
 
 			{ "RodsExtendTime", INI::parseDurationUnsignedInt, nullptr, offsetof( PowerPlantUpdateModuleData, m_rodsExtendTime ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

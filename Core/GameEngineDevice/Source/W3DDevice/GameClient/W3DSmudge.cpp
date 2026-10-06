@@ -203,7 +203,8 @@ error:
 Bool W3DSmudgeManager::testHardwareSupport()
 {
 	if (m_hardwareSupportStatus == SMUDGE_SUPPORT_UNKNOWN)
-	{	//we have not done the test yet.
+	{
+		//we have not done the test yet.
 
 		IDirect3DTexture8 *backTexture=W3DShaderManager::getRenderTexture();
 		if (!backTexture || !W3DShaderManager::isRenderingToTexture())

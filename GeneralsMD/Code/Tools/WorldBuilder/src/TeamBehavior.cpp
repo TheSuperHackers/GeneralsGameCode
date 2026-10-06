@@ -201,7 +201,8 @@ void TeamBehavior::OnPerimeterDefense()
 	{
 		Bool checked = 	pCheck->GetCheck()==1;
 		m_teamDict->setBool(TheKey_teamIsPerimeterDefense, checked);
-		if (checked) {	// Can't be both base & perimeter defense.
+		if (checked) {
+			// Can't be both base & perimeter defense.
 			pCheck = (CButton *) GetDlgItem(IDC_BASE_DEFENSE);
 			if( pCheck )
 			{
@@ -219,7 +220,8 @@ void TeamBehavior::OnBaseDefense()
 	{
 		Bool checked = 	pCheck->GetCheck()==1;
 		m_teamDict->setBool(TheKey_teamIsBaseDefense, checked);
-		if (checked) {	// Can't be both base & perimeter defense.
+		if (checked) {
+			// Can't be both base & perimeter defense.
 			pCheck = (CButton *) GetDlgItem(IDC_PERIMETER_DEFENSE);
 			if( pCheck )
 			{

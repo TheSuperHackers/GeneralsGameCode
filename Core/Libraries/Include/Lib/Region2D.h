@@ -60,5 +60,14 @@ struct Region2D
 
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
+
 	Bool isInRegion( Real x, Real y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
+
+	Bool isInRegion( const Coord2D& point ) const { return isInRegion(point.x, point.y); }
+
+	Bool isInRegion( const Region2D& other ) const
+	{
+		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
+		       (lo.y < other.lo.y) && (other.hi.y < hi.y);
+	}
 };

@@ -88,7 +88,8 @@ public:
 			{ "SpawnTemplateName",				INI::parseAsciiStringVectorAppend,nullptr, offsetof( SpawnBehaviorModuleData, m_spawnTemplateNameData ) },
 			{ "SpawnedRequireSpawner",		INI::parseBool,										nullptr,	offsetof( SpawnBehaviorModuleData, m_spawnedRequireSpawner ) },
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( SpawnBehaviorModuleData, m_damageTypesToPropagateToSlaves ) },
-			{ "InitialBurst",				      INI::parseInt,						        nullptr, offsetof( SpawnBehaviorModuleData, m_initialBurst ) },			{ 0, 0, 0, 0 }
+			{ "InitialBurst",				      INI::parseInt,						        nullptr, offsetof( SpawnBehaviorModuleData, m_initialBurst ) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 		p.add(DieMuxData::getFieldParse(), offsetof( SpawnBehaviorModuleData, m_dieMuxData ));

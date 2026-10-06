@@ -858,7 +858,8 @@ void WbView3d::setLighting(const GlobalData::TerrainLighting *tl, Int whichLight
 		Matrix3D mtx;
 		mtx.Set(Vector3(1,0,0), Vector3(0,1,0), Vector3(ol->lightPos.x, ol->lightPos.y, ol->lightPos.z), Vector3(0,0,0));
 		m_globalLight[whichLight]->Set_Transform(mtx);
-		if( m_scene && whichLight == 0) {	//only let the first light contribute to ambient
+		if( m_scene && whichLight == 0) {
+			//only let the first light contribute to ambient
 			m_scene->Set_Ambient_Light( Vector3(ol->ambient.red, ol->ambient.green, ol->ambient.blue) );
 			m_baseBuildScene->Set_Ambient_Light( Vector3(ol->ambient.red, ol->ambient.green, ol->ambient.blue) );
 		}
@@ -1406,7 +1407,8 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 					shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
 					const ThingTemplate *tTemplate = pMapObj->getThingTemplate();
 					if (tTemplate && tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
-					{	//add correct type of shadow
+					{
+						//add correct type of shadow
 						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 						DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 						shadowInfo.m_type=(ShadowType)tTemplate->getShadowType();
@@ -2311,7 +2313,8 @@ void WbView3d::drawLabels(HDC hdc)
 			}
 
 			if (m_doLightFeedback && pMapObj->isSelected())
-			{	//find out position of selected object in order to use it for light feedback tracking.
+			{
+				//find out position of selected object in order to use it for light feedback tracking.
 				selectedPos=*pMapObj->getLocation();
 				selectedPos.z = m_heightMapRenderObj->getHeightMapHeight(selectedPos.x, selectedPos.y, nullptr);
 				RenderObjClass *selRobj=pMapObj->getRenderObj();
@@ -2415,7 +2418,8 @@ void WbView3d::drawLabels(HDC hdc)
 	}
 
 	if (hdc && m_doLightFeedback)
-	{	//Draw Lines to indicate the direction of each light source
+	{
+		//Draw Lines to indicate the direction of each light source
 //		Int LightColors[MAX_GLOBAL_LIGHTS]={RGB(255,0,0),RGB(0,255,0),RGB(0,0,255)};
 
 		for (Int lIndex=0; lIndex<MAX_GLOBAL_LIGHTS; lIndex++)
@@ -2481,7 +2485,8 @@ void WbView3d::drawLabels(HDC hdc)
 	}
 	else
 	{	if (!m_doLightFeedback)
-		{	//not in light feedback mode.  Make sure the temporary feeback models are gone
+		{
+			//not in light feedback mode.  Make sure the temporary feeback models are gone
 
 			for (Int lIndex=0; lIndex<MAX_GLOBAL_LIGHTS; lIndex++)
 			{
@@ -2803,7 +2808,8 @@ void WbView3d::OnViewShowSoftWater()
 {
 	TheWritableGlobalData->m_showSoftWaterEdge = !TheGlobalData->m_showSoftWaterEdge;
 	if (TheGlobalData->m_showSoftWaterEdge)
-	{	//we just turned it on, so recompute shoreline tiles since they may not exist.
+	{
+		//we just turned it on, so recompute shoreline tiles since they may not exist.
 		TheTerrainRenderObject->updateShorelineTiles(0,0,WbDoc()->GetHeightMap()->getXExtent()-1,WbDoc()->GetHeightMap()->getYExtent()-1,
 			WbDoc()->GetHeightMap());
 	}

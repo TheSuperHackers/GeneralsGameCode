@@ -51,7 +51,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		nullptr, offsetof( EnemyNearUpdateModuleData, m_enemyScanDelayTime ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

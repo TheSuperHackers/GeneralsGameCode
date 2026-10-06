@@ -107,7 +107,7 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData()
 
 		{ "ShowPrisoners",	INI::parseBool,					nullptr,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },
 		{ "YardBonePrefix",	INI::parseAsciiString,	nullptr,		offsetof( PrisonBehaviorModuleData, m_prisonYardBonePrefix ) },
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 

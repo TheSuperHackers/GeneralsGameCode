@@ -1891,7 +1891,8 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 
 
 	if (ShaderClass::Is_Backface_Culling_Inverted())
-	{	//we are rendering reflections
+	{
+		//we are rendering reflections
 		///@todo: Have better flag to detect reflection pass
 
 		// Loop over all top-level RenderObjects in this scene. If the bounding sphere is not in front
@@ -1914,7 +1915,8 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 				}
 			}
 			else
-			{	//perform normal culling on non-drawables
+			{
+				//perform normal culling on non-drawables
 				if (robj->Is_Force_Visible()) {
 					robj->Set_Visible(true);
 				} else {
@@ -1948,7 +1950,8 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 				robj->Set_VisibleWithCheatSpy(isVisible);
 				if (robj->Is_VisibleWithCheatSpy())//this will clear for the bit set above
 
-				{	//need to keep track of occluders and ocludees for subsequent code.
+				{
+					//need to keep track of occluders and ocludees for subsequent code.
 					drawInfo = (DrawableInfo *)robj->Get_User_Data();
 					if (drawInfo && (draw=drawInfo->m_drawable) != nullptr)
 					{
@@ -1970,7 +1973,8 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 						{
 							//visible drawable. Check if it's either an occluder or occludee
 							if (draw->isKindOf(KINDOF_STRUCTURE) && m_numPotentialOccluders < TheGlobalData->m_maxVisibleOccluderObjects)
-							{	//object which could occlude other objects that need to be visible.
+							{
+								//object which could occlude other objects that need to be visible.
 								//Make sure this object is not translucent so it's not rendered twice (from m_potentialOccluders and m_translucentObjectsBuffer)
 								if (drawInfo->m_flags ^ DrawableInfo::ERF_IS_TRANSLUCENT)
 									m_potentialOccluders[m_numPotentialOccluders++]=robj;
@@ -1980,14 +1984,16 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 							if (draw->getObject() &&
 									(draw->isKindOf(KINDOF_SCORE) || draw->isKindOf(KINDOF_SCORE_CREATE) || draw->isKindOf(KINDOF_SCORE_DESTROY) || draw->isKindOf(KINDOF_MP_COUNT_FOR_VICTORY)) &&
 									(draw->getObject()->getSafeOcclusionFrame()) <= currentFrame && m_numPotentialOccludees < TheGlobalData->m_maxVisibleOccludeeObjects)
-							{	//object which could be occluded but still needs to be visible.
+							{
+								//object which could be occluded but still needs to be visible.
 								//We process transucent units twice (also in m_translucentObjectsBuffer) because we need to see them when occluded.
 								m_potentialOccludees[m_numPotentialOccludees++]=robj;
 								drawInfo->m_flags |= DrawableInfo::ERF_POTENTIAL_OCCLUDEE;
 							}
 							else
 							if (drawInfo->m_flags == DrawableInfo::ERF_IS_NORMAL && m_numNonOccluderOrOccludee < TheGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects)
-							{	//regular object with no custom effects but still needs to be delayed to get the occlusion feature to work correctly.
+							{
+								//regular object with no custom effects but still needs to be delayed to get the occlusion feature to work correctly.
 								//Make sure this object is not translucent so it's not rendered twice (from m_potentialOccluders and m_translucentObjectsBuffer)
 								if (drawInfo->m_flags ^ DrawableInfo::ERF_IS_TRANSLUCENT)	//make sure not translucent
 									m_nonOccludersOrOccludees[m_numNonOccluderOrOccludee++]=robj;

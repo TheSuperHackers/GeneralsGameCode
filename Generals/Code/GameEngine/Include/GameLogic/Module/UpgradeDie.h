@@ -53,7 +53,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "UpgradeToRemove",					INI::parseAsciiString,		nullptr, offsetof( UpgradeDieModuleData, m_upgradeName ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
     p.add(dataFieldParse);

@@ -57,5 +57,5 @@ target_sources(core_pluglib PRIVATE ${PLUGLIB_SRC})
 
 target_link_libraries(core_pluglib PUBLIC
     corei_always
-    maxsdk # Must stay below corei_always so that max_undef.h is force included after Precompiled/BasePrecomp.h
+    deps_maxsdk # Must stay below corei_always so that max_undef.h is force included after Precompiled/BasePrecomp.h
 )

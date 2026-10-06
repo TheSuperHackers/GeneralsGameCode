@@ -220,9 +220,13 @@ enum
 };
 enum{ MAX_DISCONNECTS_COUNT = 5 };
 
-static Int MAX_DISCONNECTS[MAX_DISCONNECTS_COUNT] = {MAX_DISCONNECTS_ANY, MAX_DISCONNECTS_5,
-																											MAX_DISCONNECTS_10, MAX_DISCONNECTS_25,
-																											MAX_DISCONNECTS_50};
+static Int MAX_DISCONNECTS[MAX_DISCONNECTS_COUNT] = {
+	MAX_DISCONNECTS_ANY,
+	MAX_DISCONNECTS_5,
+	MAX_DISCONNECTS_10,
+	MAX_DISCONNECTS_25,
+	MAX_DISCONNECTS_50
+};
 
 
 void UpdateStartButton()
@@ -766,9 +770,9 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	comboBoxSide = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, comboBoxSideID );
 	comboBoxColor = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, comboBoxColorID );
 
-	if (TheLadderList->getStandardLadders()->empty()
-		&& TheLadderList->getSpecialLadders()->empty()
-		&& TheLadderList->getLocalLadders()->empty())
+	if (TheLadderList->getStandardLadders()->empty() &&
+		TheLadderList->getSpecialLadders()->empty() &&
+		TheLadderList->getLocalLadders()->empty())
 	{
 		// no ladders, so just disable them
 		comboBoxDisabledLadder = comboBoxLadder;

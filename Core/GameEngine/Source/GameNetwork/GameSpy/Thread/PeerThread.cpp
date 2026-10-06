@@ -328,10 +328,23 @@ private:
 };
 
 #ifdef USE_BROADCAST_KEYS
-const char* PeerThreadClass::s_keys[6] = { "b_locale", "b_wins", "b_losses", "b_points", "b_side", "b_pre" };
+const char* PeerThreadClass::s_keys[6] = {
+	"b_locale",
+	"b_wins",
+	"b_losses",
+	"b_points",
+	"b_side",
+	"b_pre"
+};
 char PeerThreadClass::s_valueBuffers[6][20] = { "", "", "", "", "", "" };
-const char* PeerThreadClass::s_values[6] = { s_valueBuffers[0], s_valueBuffers[1], s_valueBuffers[2],
-	s_valueBuffers[3], s_valueBuffers[4], s_valueBuffers[5]};
+const char* PeerThreadClass::s_values[6] = {
+	s_valueBuffers[0],
+	s_valueBuffers[1],
+	s_valueBuffers[2],
+	s_valueBuffers[3],
+	s_valueBuffers[4],
+	s_valueBuffers[5]
+};
 
 void PeerThreadClass::trackStatsForPlayer(RoomType roomType, const char *nick, const char *key, const char *val)
 {
@@ -1502,10 +1515,23 @@ void PeerThreadClass::Thread_Function()
 					snprintf(s_valueBuffers[5], 20, "%d", incomingRequest.statsToPush.preorder);
 					pushStatsToRoom(peer);
 #else
-					const char *keys[6] = { "locale", "wins", "losses", "points", "side", "pre" };
+					const char *keys[6] = {
+						"locale",
+						"wins",
+						"losses",
+						"points",
+						"side",
+						"pre"
+					};
 					char valueStrings[6][20];
-					char *values[6] = { valueStrings[0], valueStrings[1], valueStrings[2],
-						valueStrings[3], valueStrings[4], valueStrings[5]};
+					char *values[6] = {
+						valueStrings[0],
+						valueStrings[1],
+						valueStrings[2],
+						valueStrings[3],
+						valueStrings[4],
+						valueStrings[5]
+					};
 					snprintf(values[0], 20, "%d", incomingRequest.statsToPush.locale);
 					snprintf(values[1], 20, "%d", incomingRequest.statsToPush.wins);
 					snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);

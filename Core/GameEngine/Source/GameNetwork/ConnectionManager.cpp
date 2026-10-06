@@ -178,9 +178,9 @@ static Bool hasValidTransferFileContent(const AsciiString& filePath, const Unsig
 		}
 		TGA2Footer footer;
 		memcpy(&footer, data + dataSize - sizeof(footer), sizeof(footer));
-		const Bool isTGA2 = memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) == 0
-			&& footer.RsvdChar == '.'
-			&& footer.BZST == '\0';
+		const Bool isTGA2 = memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) == 0 &&
+			footer.RsvdChar == '.' &&
+			footer.BZST == '\0';
 		if (!isTGA2)
 		{
 			DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));
@@ -2523,7 +2523,8 @@ void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedIn
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending data for frame %d", frame));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((m_frameData[i] != nullptr) && (i != playerID)) { // no need to send his own commands to him.
+		if ((m_frameData[i] != nullptr) && (i != playerID)) {
+			// no need to send his own commands to him.
 			NetCommandList *list = m_frameData[i]->getFrameCommandList(frame);
 			if (list != nullptr) {
 				NetCommandRef *ref = list->getFirstMessage();

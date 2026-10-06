@@ -991,9 +991,11 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 						break;
 					case ANIM_MODE_LOOP_PINGPONG:
 						if (ModeAnim.animDirection >= 1.0f)
-						{	//playing forwards, reverse direction
+						{
+							//playing forwards, reverse direction
 							if (frame >= numFrames)
-							{	//step backwards in animation by excess time
+							{
+								//step backwards in animation by excess time
 								frame = numFrames * 2 - frame;
 								// If it is still too far out, reset
 								if ( frame >= numFrames - 1 )
@@ -1002,9 +1004,11 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 							}
 						}
 						else
-						{	//playing backwards, reverse direction
+						{
+							//playing backwards, reverse direction
 							if (frame < 0)
-							{	//step forwards in animation by excess time
+							{
+								//step forwards in animation by excess time
 								frame = -frame;
 								// If it is still too far out, reset
 								if ( frame >= numFrames )

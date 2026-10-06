@@ -585,16 +585,21 @@ Bool AsciiString::isNone() const
 }
 
 //-----------------------------------------------------------------------------
-Bool AsciiString::nextToken(AsciiString* tok, const char* seps)
+Bool AsciiString::nextToken(AsciiString* tok, const char* separators)
 {
-	if (this->isEmpty() || tok == this)
+	DEBUG_ASSERTCRASH(tok != this, ("Tokenizer and Token cannot be the same object"));
+
+	if (this->isEmpty())
+	{
+		tok->clear();
 		return false;
+	}
 
-	if (seps == nullptr)
-		seps = " \n\r\t";
+	if (separators == nullptr)
+		separators = " \n\r\t";
 
-	char* start = skipSeps(peek(), seps);
-	char* end = skipNonSeps(start, seps);
+	char* start = skipSeps(peek(), separators);
+	char* end = skipNonSeps(start, separators);
 
 	if (end > start)
 	{

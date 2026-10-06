@@ -30,6 +30,7 @@
 
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
+#include "Common/LocalFileSystem.h"
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
 
@@ -179,7 +180,18 @@ void ArchiveFile::attachFile(File *file)
 		m_file->close();
 		m_file = nullptr;
 	}
+
 	m_file = file;
+
+	if (m_file != nullptr) {
+		if (!TheLocalFileSystem->getFileInfo(m_file->getName(), &m_fileInfo)) {
+			DEBUG_CRASH(("ArchiveFile::attachFile - Cannot query file info for '%s' unexpectedly", m_file->getName()));
+			m_fileInfo = FileInfo();
+		}
+	}
+	else {
+		m_fileInfo = FileInfo();
+	}
 }
 
 const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const
@@ -191,7 +203,7 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 	tokenizer.toLower();
 	tokenizer.nextToken(&token, "\\/");
 
-	while (!token.find('.') || tokenizer.find('.'))
+	while (!tokenizer.isEmpty())
 	{
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
 		if (it != dirInfo->m_directories.end())

@@ -118,7 +118,8 @@ void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	pView->viewToDocCoords(viewPt, &cpt, false); // Don't constrain.
 	Coord3D loc = cpt;
 	pView->snapPoint(&loc);
-	if (m == TRACK_L) {	// Mouse is down, so preview the angle if > hysteresis.
+	if (m == TRACK_L) {
+		// Mouse is down, so preview the angle if > hysteresis.
 		// always check hysteresis in view coords.
 		justAClick = (abs(viewPt.x - m_downPt2d.x)<HYSTERESIS || abs(viewPt.x - m_downPt2d.x)<HYSTERESIS);
 		loc = m_downPt3d;

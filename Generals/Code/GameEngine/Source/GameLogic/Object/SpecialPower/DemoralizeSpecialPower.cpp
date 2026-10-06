@@ -71,7 +71,7 @@ void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
 		{ "MaxDuration",								INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_maxDurationInFrames ) },
 		{ "FXList",											INI::parseFXList,								nullptr,		offsetof( DemoralizeSpecialPowerModuleData, m_fxList ) },
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add( dataFieldParse );
 

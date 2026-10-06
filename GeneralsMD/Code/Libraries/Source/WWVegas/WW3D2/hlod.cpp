@@ -2172,7 +2172,8 @@ void HLodClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	Animatable3DObjClass::Special_Render(rinfo);
 
 	int lod_index = CurLod;
-	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_SHADOW) {			// (gth) HACK HACK! yikes
+	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_SHADOW) {
+		// (gth) HACK HACK! yikes
 		lod_index = LodCount-1;
 	}
 

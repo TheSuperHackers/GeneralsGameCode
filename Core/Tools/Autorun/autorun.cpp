@@ -5323,7 +5323,8 @@ void Debug_Date_And_Time_Stamp ()
 		strcpy( ampm, "PM" );
 		today->tm_hour -= 12;
     }
-	if( today->tm_hour == 0 ) {		/* Adjust if midnight hour. */
+	if( today->tm_hour == 0 ) {
+		/* Adjust if midnight hour. */
 		today->tm_hour = 12;
 	}
 

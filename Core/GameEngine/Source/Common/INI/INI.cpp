@@ -826,7 +826,8 @@ AsciiString INI::getNextAsciiString()
 				result.set(buff);
 			} else {
 				Int len = strlen(buff);
-				if (len && buff[len-1] == '"') { // strip off trailing quote jba. [2/12/2003]
+				if (len && buff[len-1] == '"') {
+					// strip off trailing quote jba. [2/12/2003]
 					buff[len-1] = 0;
 				}
 				result.set(buff);

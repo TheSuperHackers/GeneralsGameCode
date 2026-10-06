@@ -34,16 +34,55 @@ long long after you'll be dead.
 #endif
 #include "xtime.h"
 
-static const char *DAYS[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+static const char *DAYS[] = {
+	"Sun",
+	"Mon",
+	"Tue",
+	"Wed",
+	"Thu",
+	"Fri",
+	"Sat"
+};
 
-static const char *FULLDAYS[]={"Sunday","Monday","Tuesday","Wednesday","Thursday",
-               "Friday","Saturday"};
+static const char *FULLDAYS[] = {
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday"
+};
 
-static const char *MONTHS[]={"Jan","Feb","Mar","Apr","May","Jun","Jul",
-               "Aug","Sep","Oct","Nov","Dec"};
+static const char *MONTHS[] = {
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec"
+};
 
-static const char *FULLMONTHS[]={"January","February","March","April","May","June",
-               "July","August","September","October","November","December"};
+static const char *FULLMONTHS[] = {
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December"
+};
 
 
 #define IS_LEAP(y) ((y) % 4) == 0 && (! ((y) % 100) == 0 || ((y) % 400) == 0)

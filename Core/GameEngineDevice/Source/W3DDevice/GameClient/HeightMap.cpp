@@ -909,7 +909,8 @@ void HeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, Wor
 	}
 
 	if (!m_extraBlendTilePositions)
-	{	//Need to allocate memory
+	{
+		//Need to allocate memory
 		m_extraBlendTilePositions = NEW Int[DEFAULT_MAX_MAP_EXTRABLEND_TILES];
 		m_extraBlendTilePositionsSize = DEFAULT_MAX_MAP_EXTRABLEND_TILES;
 	}
@@ -924,7 +925,8 @@ void HeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, Wor
 		Int y = m_extraBlendTilePositions[j] >> 16;
 		if (x >= partialRange.lo.x && x < partialRange.hi.x &&
 			y >= partialRange.lo.y && y < partialRange.hi.y)
-		{	//this tile is inside region being updated so remove it by shifting tile array
+		{
+			//this tile is inside region being updated so remove it by shifting tile array
 			memcpy(m_extraBlendTilePositions+j,m_extraBlendTilePositions+j+1,(m_numExtraBlendTiles-1-j)*sizeof(Int));
 			m_numExtraBlendTiles--;
 			j--;	//need to look at index j again because this tile was removed
@@ -940,7 +942,8 @@ void HeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, Wor
 			Bool flipState,cliffState;
 			if (htMap->getExtraAlphaUVData(i,j,U,V,alpha,&flipState, &cliffState))
 			{	if (m_numExtraBlendTiles >= m_extraBlendTilePositionsSize)
-				{	//no more room to store extra blend tiles so enlarge the buffer.
+				{
+					//no more room to store extra blend tiles so enlarge the buffer.
 					Int *tempPositions=NEW Int[m_extraBlendTilePositionsSize+512];
 					memcpy(tempPositions, m_extraBlendTilePositions, m_extraBlendTilePositionsSize*sizeof(Int));
 					delete [] m_extraBlendTilePositions;
@@ -1232,7 +1235,8 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 			Int m_mapDX=pMap->getXExtent();
 			Int m_mapDY=pMap->getYExtent();
 			if (!m_extraBlendTilePositions)
-			{	//Need to allocate memory
+			{
+				//Need to allocate memory
 				m_extraBlendTilePositions = NEW Int[DEFAULT_MAX_MAP_EXTRABLEND_TILES];
 				m_extraBlendTilePositionsSize = DEFAULT_MAX_MAP_EXTRABLEND_TILES;
 			}
@@ -1247,7 +1251,8 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 					Bool flipState,cliffState;
 					if (pMap->getExtraAlphaUVData(i,j,U,V,alpha,&flipState, &cliffState))
 					{	if (m_numExtraBlendTiles >= m_extraBlendTilePositionsSize)
-						{	//no more room to store extra blend tiles so enlarge the buffer.
+						{
+							//no more room to store extra blend tiles so enlarge the buffer.
 							Int *tempPositions=NEW Int[m_extraBlendTilePositionsSize+512];
 							memcpy(tempPositions, m_extraBlendTilePositions, m_extraBlendTilePositionsSize*sizeof(Int));
 							delete [] m_extraBlendTilePositions;
@@ -1274,7 +1279,8 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		needToAllocate = true;
 	}
 	if (data && needToAllocate && m_treeBuffer != nullptr)
-	{	//requested heightmap different from old one.
+	{
+		//requested heightmap different from old one.
 		freeIndexVertexBuffers();
 		//Create static index buffers.  These will index the vertex buffers holding the map.
 		m_indexBuffer=NEW_REF(DX8IndexBufferClass,(VERTEX_BUFFER_TILE_LENGTH*VERTEX_BUFFER_TILE_LENGTH*2*3));
@@ -1937,7 +1943,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		((SceneClass *)rinfo.Camera.Get_User_Data())->Get_Extra_Pass_Polygon_Mode() == SceneClass::EXTRA_PASS_CLEAR_LINE)
 	{
 			if (WW3D::Is_Texturing_Enabled())
-			{	//first pass where we just fill the z-buffer
+			{
+				//first pass where we just fill the z-buffer
 
 				devicePasses=1;	//one pass solid, next in wireframe.
 				doMultiPassWireFrame=TRUE;
@@ -1951,7 +1958,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 				}
 			}
 			else
-			{	//wireframe pass
+			{
+				//wireframe pass
 				//Set to vertex diffuse lighting
 				DX8Wrapper::Set_Material(m_vertexMaterialClass);
 				//Set shader to non-textured solid color from vertex
@@ -1975,23 +1983,27 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
  		//set correct shader based on current settings
  		if (!ShaderClass::Is_Backface_Culling_Inverted())
- 		{	//not reflection pass
+ 		{
+ 			//not reflection pass
  			if (TheGlobalData->m_useLightMap && doCloud)
  			{	st=W3DShaderManager::ST_TERRAIN_BASE_NOISE12;
  			}
  			else
  			if (TheGlobalData->m_useLightMap)
- 			{	//lightmap only
+ 			{
+ 				//lightmap only
  				st=W3DShaderManager::ST_TERRAIN_BASE_NOISE2;
  			}
  			else
  			if (doCloud)
- 			{	//cloudmap only
+ 			{
+ 				//cloudmap only
  				st=W3DShaderManager::ST_TERRAIN_BASE_NOISE1;
  			}
  		}
  		else
- 		{	//reflection pass, just do base texture
+ 		{
+ 			//reflection pass, just do base texture
  			st=W3DShaderManager::ST_TERRAIN_BASE;
  		}
 
@@ -2228,7 +2240,8 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			if (x >= drawStartX && x < drawEdgeX &&
 				y >= drawStartY && y < drawEdgeY &&
 				m_map->getExtraAlphaUVData(x,y,U,V,alpha,&flipState, &cliffState))
-			{	//this tile is inside visible region and has 3rd blend layer.
+			{
+				//this tile is inside visible region and has 3rd blend layer.
 
 				Int idx = x+y*xExtent;
 
@@ -2358,11 +2371,13 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 				st = W3DShaderManager::ST_ROAD_BASE_NOISE12;
  			}
  			else if (TheGlobalData->m_useLightMap)
- 			{	//lightmap only
+ 			{
+ 				//lightmap only
  				st = W3DShaderManager::ST_ROAD_BASE_NOISE2;
  			}
  			else if (doCloud)
- 			{	//cloudmap only
+ 			{
+ 				//cloudmap only
  				st = W3DShaderManager::ST_ROAD_BASE_NOISE1;
  			}
 

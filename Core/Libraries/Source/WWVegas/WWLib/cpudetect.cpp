@@ -519,7 +519,8 @@ void CPUDetectClass::Init_Intel_Processor_Type()
 				if (L2CacheSize==0) {
 					IntelProcessor=INTEL_PROCESSOR_CELERON_MODEL_5;
 				}
-				else if (L2CacheSize<=512*1024) {	// If Xeon has 512k L2 cache we will assume a PII - tough luck!
+				else if (L2CacheSize<=512*1024) {
+					// If Xeon has 512k L2 cache we will assume a PII - tough luck!
 					IntelProcessor=INTEL_PROCESSOR_PENTIUM_II_MODEL_5;
 				}
 				else {
@@ -531,7 +532,8 @@ void CPUDetectClass::Init_Intel_Processor_Type()
 			IntelProcessor=INTEL_PROCESSOR_CELERON_MODEL_6;
 			break;
 		case 7:
-			if (L2CacheSize<=512*1024) {	// If Xeon has 512k L2 cache we will assume a PIII - tough luck!
+			if (L2CacheSize<=512*1024) {
+				// If Xeon has 512k L2 cache we will assume a PIII - tough luck!
 				IntelProcessor=INTEL_PROCESSOR_PENTIUM_III_MODEL_7;
 			}
 			else {
@@ -880,7 +882,8 @@ void CPUDetectClass::Init_Processor_Features()
 	if (ProcessorManufacturer==MANUFACTURER_AMD) {
 		if (Has_CPUID_Instruction()) {
 			CPUIDStruct max_ext_id(0x80000000);
-			if (max_ext_id.Eax>=0x80000001) {	// Signature & features field available?
+			if (max_ext_id.Eax>=0x80000001) {
+				// Signature & features field available?
 				CPUIDStruct ext_signature(0x80000001);
 				ExtendedFeatureBits=ext_signature.Edx;
 				Has3DNowSupport=!!(ExtendedFeatureBits&0x80000000);

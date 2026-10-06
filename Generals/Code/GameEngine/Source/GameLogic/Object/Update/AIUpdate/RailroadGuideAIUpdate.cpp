@@ -362,7 +362,8 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 	Real dot = delta.x * myDir->x + delta.y * myDir->y + delta.z * myDir->z;
 
 	if (other->isEffectivelyDead())
-	{// we just run over debris, instead of shoving it around
+	{
+		// we just run over debris, instead of shoving it around
 		delta.scale( MIN(0.3f,m_pullInfo.speed * 0.66f) );
 	}
 	else
@@ -1426,7 +1427,8 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 					}
 
 					if ( edge && ! m_inTunnel )
-					{//play my clickety clack sound, `cause I just rode over a join IN the tracks
+					{
+						//play my clickety clack sound, `cause I just rode over a join IN the tracks
 						TheAudio->addAudioEvent( &m_clicketyClackSound );
 						m_clicketyClackSound.setPosition( getObject()->getPosition() );
 						m_clicketyClackSound.setVolume( (Real)conductorPullInfo.speed / 10.0f );//assumed max speed
