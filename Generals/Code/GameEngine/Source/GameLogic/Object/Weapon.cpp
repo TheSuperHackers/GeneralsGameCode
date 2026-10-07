@@ -2138,6 +2138,24 @@ Bool Weapon::isWithinAttackRange(const Object *source, const Object *target) con
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool Weapon::isWithinEffectiveAttackRange(const Object* source, const Object* target) const
+{
+	if (hasLeechRange())
+		return true;
+
+	return isWithinAttackRange(source, target);
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool Weapon::isWithinEffectiveAttackRange(const Object* source, const Coord3D* pos) const
+{
+	if (hasLeechRange())
+		return true;
+
+	return isWithinAttackRange(source, pos);
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool Weapon::isTooClose(const Object *source, const Object *target) const
 {
 	Real minAttackRange = m_template->getMinimumAttackRange();

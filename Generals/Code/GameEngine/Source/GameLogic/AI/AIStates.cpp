@@ -1138,7 +1138,7 @@ Bool outOfWeaponRangeObject( State *thisState, void* userData )
 			//	victim->getID(), victim->getTemplate()->getName().str()));
 			return true;
 		}
-		if (!weapon->hasLeechRange() && !weapon->isWithinAttackRange(obj, victim))
+		if (!weapon->isWithinEffectiveAttackRange(obj, victim))
 		{
 			//CRCDEBUG_LOG(("outOfWeaponRangeObject() - object %d (%s) is out of range for attacking %d (%s)",
 			//	obj->getID(), obj->getTemplate()->getName().str(),
@@ -5087,15 +5087,12 @@ StateReturnType AIAttackFireWeaponState::update()
 #if !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The weapon may have gone out of range since we entered this
 	// state, so we check the range again to avoid partially firing the weapon.
-	if (!weapon->hasLeechRange())
-	{
-		Bool inRange = m_att->isAttackingObject()
-			? weapon->isWithinAttackRange(obj, victim)
-			: weapon->isWithinAttackRange(obj, getMachineGoalPosition());
+	Bool inRange = m_att->isAttackingObject()
+		? weapon->isWithinEffectiveAttackRange(obj, victim)
+		: weapon->isWithinEffectiveAttackRange(obj, getMachineGoalPosition());
 
-		if (!inRange)
-			return STATE_FAILURE;
-	}
+	if (!inRange)
+		return STATE_FAILURE;
 #endif
 
 	/**
