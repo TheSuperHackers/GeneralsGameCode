@@ -1,0 +1,45 @@
+name: GameMath
+
+permissions:
+  contents: read
+
+# workflow_dispatch only works once this file is on the default branch, so the
+# push trigger is what runs it from a test branch.
+on:
+  push:
+    branches:
+      - 'okji/test/**'
+    paths:
+      - '.github/workflows/game-math.yml'
+      - 'cmake/gamemath.cmake'
+      - 'scripts/run_all_game_math.ps1'
+      - 'Tests/GameMath/Scripts/**'
+      - 'Tests/GameMath/Source/**'
+      - 'Benchmarks/GameMath/Scripts/**'
+      - 'Benchmarks/GameMath/Source/**'
+  workflow_dispatch:
+
+jobs:
+  run-all:
+    name: run_all_game_math.ps1
+    runs-on: windows-2022
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run GameMath Refresh
+        shell: cmd
+        run: powershell -ExecutionPolicy Bypass -File scripts\run_all_game_math.ps1
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: game-math-results
+          path: |
+            Tests/GameMath/Snapshots
+            Benchmarks/GameMath/Snapshots
