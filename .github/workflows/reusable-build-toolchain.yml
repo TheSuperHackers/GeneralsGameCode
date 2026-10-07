@@ -120,6 +120,8 @@ jobs:
         if: contains(inputs.preset, 'vcpkg')
         uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 # v11.6
         with:
+          # The optional Crashpad package has its own separate manifest.
+          vcpkgJsonGlob: 'vcpkg.json'
           runVcpkgInstall: false
           doNotCache: true
 
@@ -176,6 +178,15 @@ jobs:
               Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
           }
 
+          # Preserve dependency notices alongside the optional Crashpad runtime.
+          $gameOutput = if ("${{ inputs.preset }}" -like "win32*") {
+            "$buildDir\${{ inputs.game }}\$configToUse"
+          } else {
+            "$buildDir\${{ inputs.game }}"
+          }
+          if (Test-Path "$gameOutput\crashpad-notices") {
+            Copy-Item -Path "$gameOutput\crashpad-notices" -Destination $artifactsDir -Recurse -Force
+          }
           $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
       - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact

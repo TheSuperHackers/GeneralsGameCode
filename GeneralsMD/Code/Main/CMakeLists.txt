@@ -78,3 +78,5 @@ endif()
 if(MINGW AND COMMAND add_debug_strip_target)
     add_debug_strip_target(z_generals)
 endif()
+
+rts_enable_crashpad(z_generals z_gameengine)

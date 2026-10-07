@@ -69,9 +69,7 @@
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
 #endif
-#ifdef RTS_ENABLE_CRASHDUMP
-#include "Common/MiniDumper.h"
-#endif
+#include "Common/CrashReporting.h"
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
@@ -730,23 +728,16 @@ double SimpleProfiler::getAverageTime()
 	}
 
 
-static void TriggerMiniDump()
-{
-#ifdef RTS_ENABLE_CRASHDUMP
-	if (TheMiniDumper && TheMiniDumper->IsInitialized())
-	{
-		// Create both minimal and full memory dumps
-		TheMiniDumper->TriggerMiniDump(DumpType_Minimal);
-		TheMiniDumper->TriggerMiniDump(DumpType_Full);
-	}
-
-	MiniDumper::shutdownMiniDumper();
-#endif
-}
-
-
 void ReleaseCrash(const char *reason)
 {
+	CrashReporting::captureFatal();
+
+	// We are shutting down, and TheGlobalData has been freed. jba. [4/15/2003]
+	if (TheGlobalData == nullptr)
+	{
+		return;
+	}
+
 	/// do additional reporting on the crash, if possible
 
 	if (!DX8Wrapper_IsWindowed) {
@@ -755,14 +746,8 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-	TriggerMiniDump();
-
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
-
-	if (TheGlobalData==nullptr) {
-		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
-	}
 
 	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
@@ -833,13 +818,20 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
+	// TheSuperHackers @bugfix Codex 01/10/2026 Match ReleaseCrash during shutdown instead of dereferencing freed global data.
+	if (TheGlobalData == nullptr)
+	{
+		CrashReporting::captureFatal();
+		return;
+	}
+
 	if (!TheGameText) {
 		ReleaseCrash(m.str());
 		// This won't ever return
 		return;
 	}
 
-	TriggerMiniDump();
+	CrashReporting::captureFatal();
 
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);

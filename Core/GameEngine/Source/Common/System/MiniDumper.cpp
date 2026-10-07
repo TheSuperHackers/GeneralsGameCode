@@ -43,7 +43,14 @@ void MiniDumper::initMiniDumper(const AsciiString& userDirPath)
 
 	// Use placement new on the process heap so TheMiniDumper is placed outside the MemoryPoolFactory managed area.
 	// If the crash is due to corrupted MemoryPoolFactory structures, try to mitigate the chances of MiniDumper memory also being corrupted
-	TheMiniDumper = new (::HeapAlloc(::GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS, sizeof(MiniDumper))) MiniDumper;
+	// TheSuperHackers @bugfix Codex 01/10/2026 Reporting initialization must not crash the game when allocation fails.
+	void* storage = ::HeapAlloc(::GetProcessHeap(), 0, sizeof(MiniDumper));
+	if (!storage)
+	{
+		return;
+	}
+
+	TheMiniDumper = new (storage) MiniDumper;
 	TheMiniDumper->Initialize(userDirPath);
 }
 

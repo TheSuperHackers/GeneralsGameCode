@@ -72,6 +72,7 @@ set(GAMEENGINE_SRC
     Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
+    Include/Common/CrashReporting.h
     Include/Common/MiniDumper.h
     Include/Common/MiniLog.h
     Include/Common/MiscAudio.h
@@ -674,6 +675,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/List.cpp
     Source/Common/System/LocalFile.cpp
     Source/Common/System/LocalFileSystem.cpp
+    Source/Common/System/CrashReporting.cpp
     Source/Common/System/MiniDumper.cpp
     Source/Common/System/ObjectStatusTypes.cpp
 #    Source/Common/System/QuotedPrintable.cpp
