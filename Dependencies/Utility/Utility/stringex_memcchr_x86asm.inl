@@ -25,6 +25,7 @@
 // SSE2 uses _emit because VC6 does not recognize these instruction mnemonics.
 inline __declspec(naked) const void* __cdecl memcchr(const void* data, int c, size_t n)
 {
+	// clang-format off
 	__asm {
 		push ebp
 		mov ebp, esp
@@ -365,4 +366,5 @@ inline __declspec(naked) const void* __cdecl memcchr(const void* data, int c, si
 		pop ebp
 		ret
 	}
+	// clang-format on
 }

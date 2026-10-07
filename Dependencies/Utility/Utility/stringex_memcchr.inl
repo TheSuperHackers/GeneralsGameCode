@@ -27,23 +27,29 @@ inline const void* memcchr(const void* data, int c, size_t n)
 	const unsigned char b = static_cast<unsigned char>(c);
 	const uint32_t repeated32 = b * 0x01010101u;
 	const uint64_t repeated64 = (uint64_t(repeated32) << 32) | repeated32;
-	while (n >= 8) {
+	while (n >= 8)
+	{
 		uint64_t v;
 		memcpy(&v, p, sizeof(v));
-		if (v != repeated64) break;
+		if (v != repeated64)
+			break;
 		p += 8;
 		n -= 8;
 	}
-	if (n >= 4) {
+	if (n >= 4)
+	{
 		uint32_t v;
 		memcpy(&v, p, sizeof(v));
-		if (v == repeated32) {
+		if (v == repeated32)
+		{
 			p += 4;
 			n -= 4;
 		}
 	}
-	while (n) {
-		if (*p != b) return p;
+	while (n)
+	{
+		if (*p != b)
+			return p;
 		++p;
 		--n;
 	}
