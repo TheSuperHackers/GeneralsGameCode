@@ -1,0 +1,1042 @@
+GameMath cross-platform comparison
+generated 2026-10-07 23:24 UTC
+baseline math-mac-arm64-clang.txt
+
+Each function is called on the same value several ways. The suffix on
+the row name says which way, so a difference can be traced to the
+function itself or to a conversion around it.
+
+  .d     double function, double result        gm_f(x)
+  .f     float function, float result          gm_ff((float)x)
+  .f2d   float function, result widened        (double)gm_ff((float)x)
+  .d2f   double function, result narrowed      (float)gm_f(x)
+
+Two argument functions vary each argument on its own, since a value can
+arrive as a full double or as one that already went through a float,
+and each combination is recorded both ways round:
+
+  .dd     gm_f(x, y)
+  .dd2f   (float)gm_f(x, y)
+  .df     gm_f(x, (double)(float)y)
+  .df2f   (float)gm_f(x, (double)(float)y)
+  .fd     gm_f((double)(float)x, y)
+  .fd2f   (float)gm_f((double)(float)x, y)
+  .ff     gm_f((double)(float)x, (double)(float)y)
+  .ff2f   (float)gm_f((double)(float)x, (double)(float)y)
+
+The .f2d row is what the WWMath wrappers do, so it is the one that
+matters for the game.
+
+Every function is also fed into a small expression, since a result that
+is merely stored may be rounded correctly while the same result kept in
+a register and used in arithmetic is not. r1, r2 and r3 are the function
+applied to three consecutive inputs, in float and in double:
+
+  .mul.d  .mul.f   r1 * r2
+  .inv.d  .inv.f   1 / r1
+  .mad.d  .mad.f   r1 * r2 + r3
+
+================ mac-arm64-clang vs win-x64-precise ================
+differing lines: 22
+
+group              differing  of total
+------------------ ---------  --------
+through double            17      1194
+float -> double            1       258
+double -> float            0       420
+plain float                4      1032
+
+row                differing  of total
+------------------ ---------  --------
+.d                         5       204
+.mad.d                     5       258
+.mul.d                     4       258
+.inv.d                     3       258
+.mul.f                     2       258
+.f                         1       258
+.f2d                       1       258
+.mad.f                     1       258
+
+row                  arguments                                      macOS              win-x64-precise
+-------------------- ---------------------------------------------- ------------------ ------------------
+lgamma.d             2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+lgamma.d             187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mad.d         0.5                                            3FDBD4199664F249   3FDBD4199664F248
+lgamma.mad.d         1                                              4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mul.d         187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+lgamma.inv.d         187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+gamma.d              2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+gamma.d              187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+gamma.mad.d          0.5                                            3FDBD4199664F249   3FDBD4199664F248
+gamma.mad.d          1                                              4088C7C8DA885829   4088C7C8DA88582A
+gamma.mul.d          187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+gamma.inv.d          187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+j0.d                 100.5                                          3FABDF1C507A77F2   3FABDF1C507A77F0
+j0.mad.d             187.66                                         3FAA5B40D51CDD19   3FAA5B40D51CDD17
+j0.mul.d             0.00012300000000000001                         3FABDF1C4EB5B4A5   3FABDF1C4EB5B4A3
+j0.mul.d             100.5                                          3FAA2815FBB926BF   3FAA2815FBB926BD
+j0.inv.d             100.5                                          40325EB87CC4B9B8   40325EB87CC4B9B9
+y0.f                 0.5                                            BEE397F6           BEE397F5
+y0.f2d               0.5                                            BFDC72FEC0000000   BFDC72FEA0000000
+y0.mul.f             0.5                                            BD20B199           BD20B198
+y0.mad.f             0.00012300000000000001                         BDDC0BC0           BDDC0BBC
+y0.mul.f             100.5                                          3CD36E0A           3CD36E09
+
+================ mac-arm64-clang vs win-x64-strict ================
+differing lines: 22
+
+group              differing  of total
+------------------ ---------  --------
+through double            17      1194
+float -> double            1       258
+double -> float            0       420
+plain float                4      1032
+
+row                differing  of total
+------------------ ---------  --------
+.d                         5       204
+.mad.d                     5       258
+.mul.d                     4       258
+.inv.d                     3       258
+.mul.f                     2       258
+.f                         1       258
+.f2d                       1       258
+.mad.f                     1       258
+
+row                  arguments                                      macOS              win-x64-strict
+-------------------- ---------------------------------------------- ------------------ ------------------
+lgamma.d             2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+lgamma.d             187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mad.d         0.5                                            3FDBD4199664F249   3FDBD4199664F248
+lgamma.mad.d         1                                              4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mul.d         187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+lgamma.inv.d         187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+gamma.d              2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+gamma.d              187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+gamma.mad.d          0.5                                            3FDBD4199664F249   3FDBD4199664F248
+gamma.mad.d          1                                              4088C7C8DA885829   4088C7C8DA88582A
+gamma.mul.d          187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+gamma.inv.d          187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+j0.d                 100.5                                          3FABDF1C507A77F2   3FABDF1C507A77F0
+j0.mad.d             187.66                                         3FAA5B40D51CDD19   3FAA5B40D51CDD17
+j0.mul.d             0.00012300000000000001                         3FABDF1C4EB5B4A5   3FABDF1C4EB5B4A3
+j0.mul.d             100.5                                          3FAA2815FBB926BF   3FAA2815FBB926BD
+j0.inv.d             100.5                                          40325EB87CC4B9B8   40325EB87CC4B9B9
+y0.f                 0.5                                            BEE397F6           BEE397F5
+y0.f2d               0.5                                            BFDC72FEC0000000   BFDC72FEA0000000
+y0.mul.f             0.5                                            BD20B199           BD20B198
+y0.mad.f             0.00012300000000000001                         BDDC0BC0           BDDC0BBC
+y0.mul.f             100.5                                          3CD36E0A           3CD36E09
+
+================ mac-arm64-clang vs win-x86-precise-PC24 ================
+differing lines: 355
+
+group              differing  of total
+------------------ ---------  --------
+through double           324      1194
+float -> double           12       258
+double -> float           15       420
+plain float                4      1032
+
+row                differing  of total
+------------------ ---------  --------
+.mad.d                    98       258
+.mul.d                    78       258
+.inv.d                    61       258
+.d                        55       204
+.d2f                      12       204
+.f2d                      12       258
+.dd                        8        54
+.df                        8        54
+.fd                        8        54
+.ff                        8        54
+.mul.f                     2       258
+.dd2f                      1        54
+.df2f                      1        54
+.f                         1       258
+.ff2f                      1        54
+.mad.f                     1       258
+
+row                  arguments                                      macOS              win-x86-precise-PC24
+-------------------- ---------------------------------------------- ------------------ ------------------
+asin.d               -0.90000000000000002                           BFF1EA93705FA172   BFF1EA936F74B57D
+asin.d2f             -0.90000000000000002                           BF8F549C           BF8F549B
+asin.d               0.90000000000000002                            3FF1EA93705FA172   3FF1EA936F74B57D
+asin.d2f             0.90000000000000002                            3F8F549C           3F8F549B
+asin.mul.d           -0.90000000000000002                           3FE2C30D13F6ABE8   3FE2C30D1300A97D
+asin.inv.d           -0.90000000000000002                           BFEC93CA8E32D8A2   BFEC93CA8FA98E85
+asin.mad.d           -0.90000000000000002                           3FE2C30D13F6ABE8   3FE2C30D1300A97D
+asin.mad.d           0.25                                           3FF4087D43E47C1C   3FF4087D42F99028
+asin.mul.d           0.5                                            3FE2C30D13F6ABE8   3FE2C30D1300A97D
+asin.mad.d           0.5                                            BFE11219CCC896FC   BFE11219CBE8C17D
+asin.mul.d           0.90000000000000002                            BFF40FE86CB0C837   BFF40FE86AA2AA6F
+asin.inv.d           0.90000000000000002                            3FEC93CA8E32D8A2   3FEC93CA8FA98E85
+asin.mad.d           0.90000000000000002                            BFFC709188C781EA   BFFC709186B96422
+acos.d               0                                              3FF921FB54442D18   3FF921FB60000000
+acos.mad.d           -0.90000000000000002                           401CD2D89035E524   401CD2D89324D9DE
+acos.mul.d           -0.5                                           400A51A6625307D4   400A51A66E9CA0A7
+acos.mad.d           -0.5                                           40126E936959D6B3   40126E936F7EA31D
+acos.mul.d           0                                              4000905E0C76FDDF   4000905E1432AF99
+acos.inv.d           0                                              3FE45F306DC9C883   3FE45F306446F9B4
+acos.mad.d           0                                              4008F107288DB792   4008F1073049694C
+atan.d               0.00012300000000000001                         3F201F31F311A135   3F201F3200000000
+atan.mad.d           2.7000000000000002                             3FFE764419ACBA55   3FFE764419AD21C8
+atan.mul.d           187.66                                         3F293CFD7D6CFF25   3F293CFD91AB4628
+atan.mad.d           187.66                                         3FF8FA03FCC52325   3FF8FA03FCC5C517
+atan.mul.d           0.00012300000000000001                         3F2929EAEC0822FB   3F2929EB00371DC0
+atan.inv.d           0.00012300000000000001                         40BFC214D2D12AAB   40BFC214B958220B
+atan.mad.d           0.00012300000000000001                         3FDDAF8C42BF3C53   3FDDAF8C42C1C233
+atan2.dd             0.40000000000000002, 1.3                       3FD31A9B43436DE1   3FD31A9B40000000
+atan2.df             0.40000000000000002, 1.3                       3FD31A9B4E556B23   3FD31A9B40000000
+atan2.fd             0.40000000000000002, 1.3                       3FD31A9B47C2BCC0   3FD31A9B40000000
+atan2.ff             0.40000000000000002, 1.3                       3FD31A9B52D4BA04   3FD31A9B60000000
+atan2.dd             2.7000000000000002, 11.9                       3FCC8EFA8684064B   3FCC8EFA80000000
+atan2.df             2.7000000000000002, 11.9                       3FCC8EFA955EC904   3FCC8EFAA0000000
+atan2.fd             2.7000000000000002, 11.9                       3FCC8EFA8EB3105D   3FCC8EFA80000000
+atan2.ff             2.7000000000000002, 11.9                       3FCC8EFA9D8DD31A   3FCC8EFAA0000000
+atan2.dd             187.66, -59.130000000000003                    3FFE0442913C85A9   3FFE044280000000
+atan2.dd2f           187.66, -59.130000000000003                    3FF02215           3FF02214
+atan2.df             187.66, -59.130000000000003                    3FFE044292A054C5   3FFE044280000000
+atan2.df2f           187.66, -59.130000000000003                    3FF02215           3FF02214
+atan2.fd             187.66, -59.130000000000003                    3FFE04428FBC2320   3FFE044280000000
+atan2.ff             187.66, -59.130000000000003                    3FFE0442911FF23C   3FFE044280000000
+atan2.ff2f           187.66, -59.130000000000003                    3FF02215           3FF02214
+atan2.dd             0.00012300000000000001, 9999.5                 3E4A6A55AA26BFD1   3E4A6A55A0000000
+atan2.df             0.00012300000000000001, 9999.5                 3E4A6A55AA26BFD1   3E4A6A55A0000000
+atan2.fd             0.00012300000000000001, 9999.5                 3E4A6A55BD1A9641   3E4A6A55C0000000
+atan2.ff             0.00012300000000000001, 9999.5                 3E4A6A55BD1A9641   3E4A6A55C0000000
+atan2.dd             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.df             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.fd             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.ff             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.mul.d          0.40000000000000002, 1.3                       3FB10CA37C00B487   3FB10CA375335100
+atan2.inv.d          0.40000000000000002, 1.3                       400ACCFEFF359628   400ACCFF03C99AA5
+atan2.mad.d          0.40000000000000002, 1.3                       3FFF150CC8FC90F1   3FFF150CB7533510
+atan2.mul.d          2.7000000000000002, 11.9                       3FDAC9D825EF2E68   3FDAC9D810709200
+atan2.inv.d          2.7000000000000002, 11.9                       4011ED985BCF4F15   4011ED985FE670CD
+atan2.mad.d          2.7000000000000002, 11.9                       3FDAC9D83324593D   3FDAC9D81DA5BCD0
+atan2.mul.d          187.66, -59.130000000000003                    3E58C7348D6E117D   3E58C73475ADF080
+atan2.inv.d          187.66, -59.130000000000003                    3FE10EA4FFBCE924   3FE10EA509885CF4
+atan2.mad.d          187.66, -59.130000000000003                    4002D97C824C0864   4002D97C8318E68F
+atan2.mul.d          0.00012300000000000001, 9999.5                 3E5F1EB013579EBF   3E5F1EB008B44500
+atan2.inv.d          0.00012300000000000001, 9999.5                 419361F5AFDEB2FE   419361F5B7519194
+atan2.mad.d          0.00012300000000000001, 9999.5                 BFF0D38F2493F49A   BFF0D38F2493F49D
+atan2.mul.d          1, -1                                          C003D2B9450B4D85   C003D2B945E2C08E
+atan2.inv.d          1, -1                                          3FDB2995E7B7B604   3FDB2995E6907E6C
+atan2.mad.d          1, -1                                          C0016F65DCA2DFC9   C0016F65DDE2C08E
+atan2.mul.d          -3.5, 2                                        BFD41735158CB259   BFD41735121E1E0B
+atan2.mad.d          -3.5, 2                                        BFB73EDF492ABCCE   BFB73EDF4878782C
+sinh.d               2.7000000000000002                             401DA0036F88823C   401DA0037D412331
+sinh.d2f             2.7000000000000002                             40ED001B           40ED001C
+sinh.d               187.66                                         50CAA6D0A0D36780   50CAA6D0A0000000
+sinh.f2d             187.66                                         7FF0000000000000   48160F3020000000
+sinh.d               100.5                                          48EFCC37A76F9E76   48EFCC37A0000000
+sinh.f2d             100.5                                          7FF0000000000000   4807A09FA0000000
+sinh.mad.d           0.5                                            401C89F4C54D4392   401C89F4D305E487
+sinh.mul.d           -0.5                                           C00EDFFCD2147562   C00EDFFCE0614987
+sinh.mad.d           -0.5                                           50CAA6D0A0D36780   50CAA6D0A0000000
+sinh.mul.d           2.7000000000000002                             50F8AC72016B9B02   50F8AC720C156E18
+sinh.inv.d           2.7000000000000002                             3FC1485D0CF0615D   3FC1485D04EF2EA6
+sinh.mad.d           2.7000000000000002                             50F8AC72016B9B02   50F8AC720C156E18
+sinh.mul.d           187.66                                         4FFADAC70C354881   4FFADAC70B6044D4
+sinh.inv.d           187.66                                         2F1335F98C6858F4   2F1335F98D00BB00
+sinh.mad.d           187.66                                         4FFADAC70C354881   4FFADAC70B6044D4
+sinh.mul.d           0.00012300000000000001                         4820051B4DE8010D   4820051B4A28F215
+sinh.mad.d           0.00012300000000000001                         4820051B4DE8010D   4820051B4A28F215
+sinh.mul.d           100.5                                          48E091D43E1208A1   48E091D43A321119
+sinh.inv.d           100.5                                          36F01A0E5643644F   36F01A0E5A075973
+sinh.mad.d           100.5                                          48E091D43E1208A1   48E091D43A321119
+cosh.d               0.5                                            3FF20AC1862AE8D0   3FF20AC181B4A8D1
+cosh.d               -0.5                                           3FF20AC1862AE8D0   3FF20AC181B4A8D1
+cosh.d               2.7000000000000002                             401DE4D4F525D240   401DE4D502BEDCCF
+cosh.d               187.66                                         50CAA6D0A0D36780   50CAA6D0A0000000
+cosh.f2d             187.66                                         7FF0000000000000   4C63E9E4E0000000
+cosh.d               100.5                                          48EFCC37A76F9E76   48EFCC37A0000000
+cosh.f2d             100.5                                          7FF0000000000000   4C63E9E4E0000000
+cosh.mul.d           0.5                                            3FF4583AA8ECFAA7   3FF4583A9EDCEAEB
+cosh.inv.d           0.5                                            3FEC60D1FF040DD1   3FEC60D20608B19E
+cosh.mad.d           0.5                                            40217D71CFB08875   40217D71D53B0BC5
+cosh.mul.d           -0.5                                           4020DAC415EC9A39   4020DAC4196C2FFE
+cosh.inv.d           -0.5                                           3FEC60D1FF040DD1   3FEC60D20608B19E
+cosh.mad.d           -0.5                                           50CAA6D0A0D36780   50CAA6D0A0000000
+cosh.mul.d           2.7000000000000002                             50F8E5C2FD8C4ED3   50F8E5C3081A0C68
+cosh.inv.d           2.7000000000000002                             3FC12093C2680A40   3FC12093BA9DA0FC
+cosh.mad.d           2.7000000000000002                             50F8E5C2FD8C4ED3   50F8E5C3081A0C68
+cosh.mul.d           187.66                                         50CAA6D0A4354BD8   50CAA6D0A361E458
+cosh.inv.d           187.66                                         2F1335F98C6858F4   2F1335F98D00BB00
+cosh.mad.d           187.66                                         50CAA6D0A4354BD8   50CAA6D0A361E458
+cosh.mul.d           0.00012300000000000001                         48EFCC37AB78B443   48EFCC37A40915CC
+cosh.mad.d           0.00012300000000000001                         48EFCC37AB78B443   48EFCC37A40915CC
+cosh.mul.d           100.5                                          48F1ED8F6C94924B   48F1ED8F63F441B6
+cosh.inv.d           100.5                                          36F01A0E5643644F   36F01A0E5A075973
+cosh.mad.d           100.5                                          48F1ED8F6C94924B   48F1ED8F63F441B6
+tanh.d               2.7000000000000002                             3FEFB655437478D5   3FEFB655437D9975
+tanh.d               0.00012300000000000001                         3F201F31F311A135   3F201F31FEA2CEEC
+tanh.mad.d           0.5                                            3FE8E0E9B317BC69   3FE8E0E9B320DD09
+tanh.mul.d           -0.5                                           BFDD4F3DF3236418   BFDD4F3DF32BD3AE
+tanh.mad.d           -0.5                                           3FE15861066E4DF4   3FE15861066A1629
+tanh.mul.d           2.7000000000000002                             3FEFB655437478D5   3FEFB655437D9975
+tanh.inv.d           2.7000000000000002                             3FF0252AEE84F44E   3FF0252AEE804EB1
+tanh.mad.d           2.7000000000000002                             3FEFB7573693A9EF   3FEFB757369D83A2
+tanh.mul.d           187.66                                         3F201F31F311A135   3F201F31FEA2CEEC
+tanh.mad.d           187.66                                         3FF00080F98F988D   3FF00080F98FF516
+tanh.mul.d           0.00012300000000000001                         3F201F31F311A135   3F201F31FEA2CEEC
+tanh.inv.d           0.00012300000000000001                         40BFC214D2D12AAB   40BFC214BC07FFB6
+tanh.mad.d           0.00012300000000000001                         3FDD9557BD94ED27   3FDD9557BD965F4D
+asinh.d              0.5                                            3FDECC2CAEC5160A   3FDECC2CB9A9C3D6
+asinh.d2f            0.5                                            3EF66165           3EF66166
+asinh.d              -0.5                                           BFDECC2CAEC5160A   BFDECC2CB9A9C3D6
+asinh.d2f            -0.5                                           BEF66165           BEF66166
+asinh.d              0.00012300000000000001                         3F201F31F3C039BE   3F201F31E4CEF7D9
+asinh.d2f            0.00012300000000000001                         3900F990           3900F98F
+asinh.mul.d          0.5                                            BFCDA3EA81A43E84   BFCDA3EA969C067A
+asinh.inv.d          0.5                                            40009FEC09279921   40009FEC034640E9
+asinh.mad.d          0.5                                            3FF7CCBF335C995E   3FF7CCBF30BDA05F
+asinh.mul.d          -0.5                                           BFEA78A7050A20D0   BFEA78A70E6711EA
+asinh.inv.d          -0.5                                           C0009FEC09279921   C0009FEC034640E9
+asinh.mad.d          -0.5                                           401466F8AE322BBD   401466F8AD068D9A
+asinh.mad.d          2.7000000000000002                             4024616E4D325B49   4024616E4D324C58
+asinh.mul.d          187.66                                         3F47E4484FDB7B05   3F47E44839B6A755
+asinh.mad.d          187.66                                         4015375B2F17CA26   4015375B2F1718FF
+asinh.mul.d          0.00012300000000000001                         3F455FF815984DBB   3F455FF801C8A744
+asinh.inv.d          0.00012300000000000001                         40BFC214D1793BD5   40BFC214EEE888C2
+asinh.mad.d          0.00012300000000000001                         3FDED6DCAACFE231   3FDED6DCB5AAA82A
+asinh.mul.d          100.5                                          40046A8C0DCBEF4D   40046A8C15049860
+asinh.mad.d          100.5                                          4000910677F34C8C   400091067DCF5FE5
+acosh.d              1.5                                            3FEECC2CAEC5160A   3FEECC2CB222D5D4
+acosh.d2f            1.5                                            3F766165           3F766166
+acosh.mul.d          1.5                                            3FF96934E49D4440   3FF96934E7644B04
+acosh.inv.d          1.5                                            3FF09FEC09279921   3FF09FEC07566BCD
+acosh.mad.d          1.5                                            4012535CA20E53FA   4012535CA2C015AB
+acosh.mad.d          1000                                           3FEECC2CAEC5160A   3FEECC2CB222D5D4
+atanh.d              -0.90000000000000002                           BFF78E360604B32D   BFF78E3600000000
+atanh.d              -0.5                                           BFE193EA7AAD030A   BFE193EA80000000
+atanh.d              0.25                                           3FD058AEFA811452   3FD058AF00000000
+atanh.d              0.5                                            3FE193EA7AAD030A   3FE193EA80000000
+atanh.d              0.90000000000000002                            3FF78E360604B32D   3FF78E3600000000
+atanh.mul.d          -0.90000000000000002                           3FE9E0DD2B2D73A2   3FE9E0DD2C677000
+atanh.inv.d          -0.90000000000000002                           BFE5BC633F70001E   BFE5BC6344FDAF1A
+atanh.mad.d          -0.90000000000000002                           3FE9E0DD2B2D73A2   3FE9E0DD2C677000
+atanh.inv.d          -0.5                                           BFFD20AE03BCC154   BFFD20ADFAEA2FF0
+atanh.mad.d          -0.5                                           3FD058AEFA811452   3FD058AF00000000
+atanh.mad.d          0                                              3FE193EA7AAD030A   3FE193EA80000000
+atanh.mul.d          0.25                                           3FC1F558401AAF56   3FC1F5584B94D800
+atanh.inv.d          0.25                                           400F52644DEC8C3E   400F52644364B4FF
+atanh.mad.d          0.25                                           3FF9CCE10E080918   3FF9CCE109729B00
+atanh.mul.d          0.5                                            3FE9E0DD2B2D73A2   3FE9E0DD2C677000
+atanh.inv.d          0.5                                            3FFD20AE03BCC154   3FFD20ADFAEA2FF0
+atanh.mad.d          0.5                                            BFE53B8EE0DBF2B8   BFE53B8ED3989000
+atanh.mul.d          0.90000000000000002                            C00156E5A8775F98   C00156E59F9B2000
+atanh.inv.d          0.90000000000000002                            3FE5BC633F70001E   3FE5BC6344FDAF1A
+atanh.mad.d          0.90000000000000002                            C005BBE04722A05A   C005BBE03F9B2000
+exp.d                0.5                                            3FFA61298E1E069C   3FFA612980000000
+exp.d                -0.5                                           3FE368B2FC6F960A   3FE368B300000000
+exp.d                2.7000000000000002                             402DC26C32572A3E   402DC26C40000000
+exp.d                187.66                                         50DAA6D0A0D36780   50DAA6D0A0000000
+exp.f2d              187.66                                         7FF0000000000000   4C63E9E4E0000000
+exp.d                100.5                                          48FFCC37A76F9E76   48FFCC37A0000000
+exp.f2d              100.5                                          7FF0000000000000   4C63E9E4E0000000
+exp.mul.d            0.5                                            3FF0000000000000   3FEFFFFFF4C04800
+exp.inv.d            0.5                                            3FE368B2FC6F960A   3FE368B306D2A345
+exp.mad.d            0.5                                            402FC26C32572A3E   402FC26C3F4C0480
+exp.mul.d            -0.5                                           40220CCE91C40E5F   40220CCE9D5D8600
+exp.inv.d            -0.5                                           3FFA61298E1E069C   3FFA61298945ED40
+exp.mad.d            -0.5                                           50DAA6D0A0D36780   50DAA6D0A0000000
+exp.mul.d            2.7000000000000002                             5118C91A7F7BF4EA   5118C91A8A17BD40
+exp.inv.d            2.7000000000000002                             3FB13461675400C2   3FB134615F6E678E
+exp.mad.d            2.7000000000000002                             5118C91A7F7BF4EA   5118C91A8A17BD40
+exp.mul.d            187.66                                         50DAA7A77A6DAD83   50DAA7A7799A3F5B
+exp.inv.d            187.66                                         2F0335F98C6858F4   2F0335F98D00BB00
+exp.mad.d            187.66                                         50DAA7A77A6DAD83   50DAA7A7799A3F5B
+exp.mul.d            0.00012300000000000001                         48FFCD37FD2D92C4   48FFCD37F5BDB85C
+exp.mad.d            0.00012300000000000001                         48FFCD37FD2D92C4   48FFCD37F5BDB85C
+exp.mul.d            100.5                                          490A36798B9D969C   490A367977752380
+exp.inv.d            100.5                                          36E01A0E5643644F   36E01A0E5A075973
+exp.mad.d            100.5                                          490A36798B9D969C   490A367977752380
+exp2.d               0.5                                            3FF6A09E667F3BCD   3FF6A09E60000000
+exp2.d               -0.5                                           3FE6A09E667F3BCD   3FE6A09E60000000
+exp2.d               2.7000000000000002                             4019FDF8BCCE533E   4019FDF8C0000000
+exp2.d               187.66                                         4BA94804B79E25F6   4BA94804C0000000
+exp2.f2d             187.66                                         7FF0000000000000   4C70000000000000
+exp2.d               0.00012300000000000001                         3FF00059670147E2   3FF0005960000000
+exp2.d               100.5                                          4636A09E667F3BCD   4636A09E60000000
+exp2.mul.d           0.5                                            3FF0000000000001   3FEFFFFFED9FAA40
+exp2.inv.d           0.5                                            3FE6A09E667F3BCC   3FE6A09E6CFE779B
+exp2.mad.d           0.5                                            401DFDF8BCCE533E   401DFDF8BDB3F548
+exp2.mul.d           -0.5                                           4012611186BAE675   4012611183B61E40
+exp2.inv.d           -0.5                                           3FF6A09E667F3BCC   3FF6A09E6CFE779B
+exp2.mad.d           -0.5                                           4BA94804B79E25F6   4BA94804C0000000
+exp2.mul.d           2.7000000000000002                             4BD488E9980DF427   4BD488E9A162EC80
+exp2.inv.d           2.7000000000000002                             3FC3B2C47BFF8328   3FC3B2C47993D4A8
+exp2.mad.d           2.7000000000000002                             4BD488E9980DF427   4BD488E9A162EC80
+exp2.mul.d           187.66                                         4BA94891FAFA07C9   4BA94891F84A8880
+exp2.inv.d           187.66                                         34344089FC7CC78A   34344089F5C5CD64
+exp2.mad.d           187.66                                         4BA94891FAFA07C9   4BA94891F84A8880
+exp2.mul.d           0.00012300000000000001                         4636A11CD59C2157   4636A11CC534AC40
+exp2.inv.d           0.00012300000000000001                         3FEFFF4D35E47379   3FEFFF4D43E666B7
+exp2.mad.d           0.00012300000000000001                         4636A11CD59C2157   4636A11CC534AC40
+exp2.mul.d           100.5                                          4640000000000001   463FFFFFED9FAA40
+exp2.inv.d           100.5                                          39A6A09E667F3BCC   39A6A09E6CFE779B
+exp2.mad.d           100.5                                          4640000000000001   463FFFFFED9FAA40
+expm1.d              2.7000000000000002                             402BC26C32572A3E   402BC26C40000000
+expm1.d              187.66                                         50DAA6D0A0D36780   50DAA6D0A0000000
+expm1.f2d            187.66                                         7FF0000000000000   4C63E9E4E0000000
+expm1.d              100.5                                          48FFCC37A76F9E76   48FFCC37A0000000
+expm1.f2d            100.5                                          7FF0000000000000   4C63E9E4E0000000
+expm1.mad.d          0.5                                            402B3FBBD0CC700A   402B3FBBDE7545CC
+expm1.mul.d          -0.5                                           C015D851A0B42A7F   C015D851AB73F5F1
+expm1.mad.d          -0.5                                           50DAA6D0A0D36780   50DAA6D0A0000000
+expm1.mul.d          2.7000000000000002                             51171EAD756EBE72   51171EAD8017BD40
+expm1.inv.d          2.7000000000000002                             3FB271B4811803CA   3FB271B478049ECE
+expm1.mad.d          2.7000000000000002                             51171EAD756EBE72   51171EAD8017BD40
+expm1.mul.d          187.66                                         500ADB3348C05EBA   500ADB3347EB57B3
+expm1.inv.d          187.66                                         2F0335F98C6858F4   2F0335F98D00BB00
+expm1.mad.d          187.66                                         500ADB3348C05EBA   500ADB3347EB57B3
+expm1.mul.d          0.00012300000000000001                         4830055BDF44DC6D   4830055BDB85BE5B
+expm1.mad.d          0.00012300000000000001                         4830055BDF44DC6D   4830055BDB85BE5B
+expm1.mul.d          100.5                                          48F4A0BB6FCB8EC1   48F4A0BB6AF8A3B7
+expm1.inv.d          100.5                                          36E01A0E5643644F   36E01A0E5A075973
+expm1.mad.d          100.5                                          48F4A0BB6FCB8EC1   48F4A0BB6AF8A3B7
+pow.dd               0.40000000000000002, 1.3                       3FD3727E49ADFAD4   3FD3727E40000000
+pow.df               0.40000000000000002, 1.3                       3FD3727E57EF60B1   3FD3727E60000000
+pow.fd               0.40000000000000002, 1.3                       3FD3727E4FFFFD79   3FD3727E40000000
+pow.ff               0.40000000000000002, 1.3                       3FD3727E5E416357   3FD3727E60000000
+pow.dd               2.7000000000000002, 11.9                       410096F75FA58808   410096F760000000
+pow.df               2.7000000000000002, 11.9                       410096F6F6305F74   410096F700000000
+pow.fd               2.7000000000000002, 11.9                       410096F79A240577   410096F7A0000000
+pow.ff               2.7000000000000002, 11.9                       410096F730AEDB50   410096F740000000
+pow.dd               187.66, -59.130000000000003                    2405E16D4F560B15   2405E16D40000000
+pow.df               187.66, -59.130000000000003                    2405E1654AD7E218   2405E16540000000
+pow.fd               187.66, -59.130000000000003                    2405E16BA7BEF832   2405E16BA0000000
+pow.ff               187.66, -59.130000000000003                    2405E163A34169EB   2405E163A0000000
+pow.f2d              187.66, -59.130000000000003                    0000000000000000   3379B604A0000000
+pow.f2d              0.00012300000000000001, 9999.5                 0000000000000000   3379B604A0000000
+pow.mul.d            0.40000000000000002, 1.3                       40E429FC555F4B34   40E429FC4BC3F180
+pow.inv.d            0.40000000000000002, 1.3                       400A53E07B9D09ED   400A53E088B7B969
+pow.mad.d            0.40000000000000002, 1.3                       40E429FC555F4B34   40E429FC4BC3F180
+pow.mul.d            2.7000000000000002, 11.9                       2516AFE0FAF22243   2516AFE0EB871B80
+pow.inv.d            2.7000000000000002, 11.9                       3EDEDCCCD68C228A   3EDEDCCCD5E3D521
+pow.mad.d            2.7000000000000002, 11.9                       2516AFE0FAF22243   2516AFE0EB871B80
+pow.inv.d            187.66, -59.130000000000003                    5BD766561E4C4A22   5BD766562EB2EB7C
+pow.mad.d            1, -1                                          40291B93F24D6FD7   40291B93F2000000
+pow.mul.d            -3.5, 2                                        400DC75160D26815   400DC75152000000
+pow.mad.d            -3.5, 2                                        4100971526F6E8DA   4100971527515200
+rint.d               2.7000000000000002                             4008000000000000   0000000000000000
+rint.d2f             2.7000000000000002                             40400000           00000000
+rint.d               187.66                                         4067800000000000   0000000000000000
+rint.d2f             187.66                                         433C0000           00000000
+rint.d               100.5                                          4059000000000000   0000000000000000
+rint.d2f             100.5                                          42C80000           00000000
+rint.mad.d           0.5                                            4008000000000000   0000000000000000
+rint.mad.d           -0.5                                           4067800000000000   0000000000000000
+rint.mul.d           2.7000000000000002                             4081A00000000000   0000000000000000
+rint.inv.d           2.7000000000000002                             3FD5555555555555   7FF0000000000000
+rint.mad.d           2.7000000000000002                             4081A00000000000   0000000000000000
+rint.inv.d           187.66                                         3F75C9882B931057   7FF0000000000000
+rint.mad.d           187.66                                         4059000000000000   0000000000000000
+rint.inv.d           100.5                                          3F847AE147AE147B   7FF0000000000000
+erf.d                -0.90000000000000002                           BFE98045A6C8A2E6   BFE98045A0000000
+erf.d                0.90000000000000002                            3FE98045A6C8A2E6   3FE98045A0000000
+erf.mul.d            -0.90000000000000002                           3FDA8BEDFC9F2851   3FDA8BEDF58F51CB
+erf.inv.d            -0.90000000000000002                           BFF413DD3CE46CC4   BFF413DD423BB855
+erf.mad.d            -0.90000000000000002                           3FDA8BEDFC9F2851   3FDA8BEDF58F51CB
+erf.mad.d            0.25                                           3FEE1A8285077F41   3FEE1A827E3EDC5B
+erf.mul.d            0.5                                            3FDA8BEDFC9F2851   3FDA8BEDF58F51CB
+erf.mad.d            0.5                                            BFD8749D50F21D7B   BFD8749D4A70AE35
+erf.mul.d            0.90000000000000002                            BFE4526F02675E45   BFE4526EF7977D20
+erf.inv.d            0.90000000000000002                            3FF413DD3CE46CC4   3FF413DD423BB855
+erf.mad.d            0.90000000000000002                            BFF27D2F2F40260C   BFF27D2F29D83579
+erfc.d               -0.90000000000000002                           3FFCC022D3645173   3FFCC022C0000000
+erfc.d2f             -0.90000000000000002                           3FE60117           3FE60116
+erfc.d               -0.5                                           3FF853F7AE0C76E9   3FF853F7C0000000
+erfc.d2f             -0.5                                           3FC29FBD           3FC29FBE
+erfc.d               0.90000000000000002                            3FC9FEE964DD7469   3FC9FEE960000000
+erfc.mul.d           -0.90000000000000002                           4005DB8B004C4938   4005DB8B01AF0A80
+erfc.inv.d           -0.90000000000000002                           3FE1CEF11B3FF877   3FE1CEF12742EB42
+erfc.mad.d           -0.90000000000000002                           400DDB8B004C4938   400DDB8B01AF0A80
+erfc.mul.d           -0.5                                           3FF853F7AE0C76E9   3FF853F7C0000000
+erfc.inv.d           -0.5                                           3FE50BB3AC3E17D9   3FE50BB39CB6942D
+erfc.mad.d           -0.5                                           4001F4113ABFE0B4   4001F41143B9A53F
+erfc.mad.d           0.25                                           3FE19A5D6A43E09F   3FE19A5D690C8384
+erfc.mul.d           0.5                                            3FB8EE0FDB701B87   3FB8EE0FD6C5B755
+erfc.mad.d           0.5                                            3FFE4F03D11B532B   3FFE4F03BD6C5B75
+erfc.mul.d           0.90000000000000002                            3FD75B21FB314377   3FD75B21E7116E40
+erfc.inv.d           0.90000000000000002                            4013B20E206A63DC   4013B20E241A006A
+erfc.mad.d           0.90000000000000002                            3FFE2AC02CD8C7C7   3FFE2AC039C45B90
+lgamma.d             2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+lgamma.d             187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mad.d         0.5                                            3FDBD4199664F249   3FDBD4199664F248
+lgamma.mad.d         1                                              4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mul.d         187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+lgamma.inv.d         187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+gamma.d              2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+gamma.d              187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+gamma.mad.d          0.5                                            3FDBD4199664F249   3FDBD4199664F248
+gamma.mad.d          1                                              4088C7C8DA885829   4088C7C8DA88582A
+gamma.mul.d          187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+gamma.inv.d          187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+j0.d                 2.7000000000000002                             BFC23BC7ECD77A69   BFC23BC7E0000000
+j0.d                 187.66                                         BF683DB7B7637733   BF683DB7C0000000
+j0.d                 100.5                                          3FABDF1C507A77F2   3FABDF1C60000000
+j0.mad.d             0.5                                            3FE26BDA2BB670C4   3FE26BDA2EEC4F5E
+j0.mul.d             1                                              BFBBE78CE5B9BC0A   BFBBE78CD21297D9
+j0.mad.d             1                                              BFBCA97AA374D7C4   BFBCA97A901297D9
+j0.mul.d             2.7000000000000002                             3F3BA0012A35EA61   3F3BA00120917080
+j0.inv.d             2.7000000000000002                             C01C1484DBC05F56   C01C1484EF872F5B
+j0.mad.d             2.7000000000000002                             3FF001B9FF0EB953   3FF001B9FF0E1F0C
+j0.mul.d             187.66                                         BF683DB7B5D9AD8D   BF683DB7BE76365A
+j0.inv.d             187.66                                         C0751F04D0853F22   C0751F04C90471AA
+j0.mad.d             187.66                                         3FAA5B40D51CDD19   3FAA5B40E4189C9A
+j0.mul.d             0.00012300000000000001                         3FABDF1C4EB5B4A5   3FABDF1C5E3B3CB2
+j0.mad.d             0.00012300000000000001                         3FEFC5E39A379A7E   3FEFC5E39B2FF2FF
+j0.mul.d             100.5                                          3FAA2815FBB926BF   3FAA28160A4A30CF
+j0.inv.d             100.5                                          40325EB87CC4B9B8   40325EB87289C9C0
+j0.mad.d             100.5                                          3FEA1F013B934B5C   3FEA1F013C7C5BFD
+y0.f                 0.5                                            BEE397F6           BEE397F5
+y0.f2d               0.5                                            BFDC72FEC0000000   BFDC72FEA0000000
+y0.d                 2.7000000000000002                             3FDD78E3E0BE20CC   3FDD78E3E0000000
+y0.d                 187.66                                         BFADC85687B75072   BFADC85680000000
+y0.d                 100.5                                          BFADBA3383291BF7   BFADBA3380000000
+y0.mul.f             0.5                                            BD20B199           BD20B198
+y0.mad.d             0.5                                            3FDAF61D78D7879A   3FDAF61D781966CE
+y0.mul.d             1                                              3FA4CF1CE05C2A2C   3FA4CF1CDFD5EC77
+y0.mad.d             1                                              BF91F2734EB64C8C   BF91F27340542712
+y0.mul.d             2.7000000000000002                             BF9B6E11C5CC34CF   BF9B6E11BDFFF980
+y0.inv.d             2.7000000000000002                             40015F4E3A01542A   40015F4E3A716627
+y0.mad.d             2.7000000000000002                             C0175442FED6D998   C0175442FECF0D5C
+y0.mul.d             187.66                                         3FD59CE2F4DA257E   3FD59CE2EF40AF87
+y0.inv.d             187.66                                         C03130F69CE0C462   C03130F6A154F81A
+y0.mad.d             187.66                                         3FD1E59C847501FF   3FD1E59C7F40AF87
+y0.mul.d             0.00012300000000000001                         3FD592A0AE3B3DD9   3FD592A0ABF014C7
+y0.mad.d             0.00012300000000000001                         BFBB817815F1EB24   BFBB81781F1E8F6C
+y0.mad.f             0.00012300000000000001                         BDDC0BC0           BDDC0BBC
+y0.mul.d             100.5                                          3F9A6DC107345883   3F9A6DC104650470
+y0.mul.f             100.5                                          3CD36E0A           3CD36E09
+y0.inv.d             100.5                                          C03139237BB10D7E   C03139237D85D3FC
+y0.mad.d             100.5                                          3FBD337268C06F01   3FBD3372680C99FC
+
+================ mac-arm64-clang vs win-x86-precise-PC53 ================
+differing lines: 44
+
+group              differing  of total
+------------------ ---------  --------
+through double            17      1194
+float -> double           17       258
+double -> float            0       420
+plain float               10      1032
+
+row                differing  of total
+------------------ ---------  --------
+.f2d                      17       258
+.d                         5       204
+.mad.d                     5       258
+.mul.d                     4       258
+.mul.f                     4       258
+.inv.d                     3       258
+.mad.f                     3       258
+.f                         2       258
+.inv.f                     1       258
+
+row                  arguments                                      macOS              win-x86-precise-PC53
+-------------------- ---------------------------------------------- ------------------ ------------------
+atan.f2d             0.00012300000000000001                         3F201F3200000000   3F201F31FEA2CEEB
+atan2.f2d            187.66, -59.130000000000003                    3FFE044280000000   3FFE044288885A40
+atan2.f2d            1, -1                                          4002D97C80000000   4002D97C7C442D20
+sinh.f2d             187.66                                         7FF0000000000000   48160F3012750D80
+sinh.f2d             100.5                                          7FF0000000000000   4807A09FAA400000
+cosh.f2d             187.66                                         7FF0000000000000   4C63E9E4EED0EC80
+cosh.f2d             100.5                                          7FF0000000000000   4C63E9E4EED0EC80
+exp.f2d              187.66                                         7FF0000000000000   4C63E9E4EED0EC80
+exp.f2d              100.5                                          7FF0000000000000   4C63E9E4EED0EC80
+exp2.f2d             187.66                                         7FF0000000000000   4C70000000000000
+expm1.f2d            187.66                                         7FF0000000000000   4C63E9E4EED0EC80
+expm1.f2d            100.5                                          7FF0000000000000   4C63E9E4EED0EC80
+pow.f2d              187.66, -59.130000000000003                    0000000000000000   3379B604AD690000
+pow.f2d              0.00012300000000000001, 9999.5                 0000000000000000   3379B604AD690000
+erfc.f2d             -0.90000000000000002                           3FFCC022C0000000   3FFCC022D0000000
+erfc.f               -0.5                                           3FC29FBE           3FC29FBD
+erfc.f2d             -0.5                                           3FF853F7C0000000   3FF853F7AE000000
+erfc.mul.f           -0.90000000000000002                           402EDC58           402EDC57
+erfc.mad.f           -0.90000000000000002                           406EDC58           406EDC57
+erfc.mul.f           -0.5                                           3FC29FBE           3FC29FBD
+erfc.inv.f           -0.5                                           3F285D9D           3F285D9E
+erfc.mad.f           0.90000000000000002                            3FF15602           3FF15601
+lgamma.d             2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+lgamma.d             187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mad.d         0.5                                            3FDBD4199664F249   3FDBD4199664F248
+lgamma.mad.d         1                                              4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mul.d         187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+lgamma.inv.d         187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+gamma.d              2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+gamma.d              187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+gamma.mad.d          0.5                                            3FDBD4199664F249   3FDBD4199664F248
+gamma.mad.d          1                                              4088C7C8DA885829   4088C7C8DA88582A
+gamma.mul.d          187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+gamma.inv.d          187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+j0.d                 100.5                                          3FABDF1C507A77F2   3FABDF1C507A77F0
+j0.mad.d             187.66                                         3FAA5B40D51CDD19   3FAA5B40D51CDD17
+j0.mul.d             0.00012300000000000001                         3FABDF1C4EB5B4A5   3FABDF1C4EB5B4A3
+j0.mul.d             100.5                                          3FAA2815FBB926BF   3FAA2815FBB926BD
+j0.inv.d             100.5                                          40325EB87CC4B9B8   40325EB87CC4B9B9
+y0.f                 0.5                                            BEE397F6           BEE397F5
+y0.f2d               0.5                                            BFDC72FEC0000000   BFDC72FEA0000000
+y0.mul.f             0.5                                            BD20B199           BD20B198
+y0.mad.f             0.00012300000000000001                         BDDC0BC0           BDDC0BBC
+y0.mul.f             100.5                                          3CD36E0A           3CD36E09
+
+================ mac-arm64-clang vs win-x86-strict-PC24 ================
+differing lines: 355
+
+group              differing  of total
+------------------ ---------  --------
+through double           324      1194
+float -> double           12       258
+double -> float           15       420
+plain float                4      1032
+
+row                differing  of total
+------------------ ---------  --------
+.mad.d                    98       258
+.mul.d                    78       258
+.inv.d                    61       258
+.d                        55       204
+.d2f                      12       204
+.f2d                      12       258
+.dd                        8        54
+.df                        8        54
+.fd                        8        54
+.ff                        8        54
+.mul.f                     2       258
+.dd2f                      1        54
+.df2f                      1        54
+.f                         1       258
+.ff2f                      1        54
+.mad.f                     1       258
+
+row                  arguments                                      macOS              win-x86-strict-PC24
+-------------------- ---------------------------------------------- ------------------ ------------------
+asin.d               -0.90000000000000002                           BFF1EA93705FA172   BFF1EA936F74B57D
+asin.d2f             -0.90000000000000002                           BF8F549C           BF8F549B
+asin.d               0.90000000000000002                            3FF1EA93705FA172   3FF1EA936F74B57D
+asin.d2f             0.90000000000000002                            3F8F549C           3F8F549B
+asin.mul.d           -0.90000000000000002                           3FE2C30D13F6ABE8   3FE2C30D1300A97D
+asin.inv.d           -0.90000000000000002                           BFEC93CA8E32D8A2   BFEC93CA8FA98E85
+asin.mad.d           -0.90000000000000002                           3FE2C30D13F6ABE8   3FE2C30D1300A97D
+asin.mad.d           0.25                                           3FF4087D43E47C1C   3FF4087D42F99028
+asin.mul.d           0.5                                            3FE2C30D13F6ABE8   3FE2C30D1300A97D
+asin.mad.d           0.5                                            BFE11219CCC896FC   BFE11219CBE8C17D
+asin.mul.d           0.90000000000000002                            BFF40FE86CB0C837   BFF40FE86AA2AA6F
+asin.inv.d           0.90000000000000002                            3FEC93CA8E32D8A2   3FEC93CA8FA98E85
+asin.mad.d           0.90000000000000002                            BFFC709188C781EA   BFFC709186B96422
+acos.d               0                                              3FF921FB54442D18   3FF921FB60000000
+acos.mad.d           -0.90000000000000002                           401CD2D89035E524   401CD2D89324D9DE
+acos.mul.d           -0.5                                           400A51A6625307D4   400A51A66E9CA0A7
+acos.mad.d           -0.5                                           40126E936959D6B3   40126E936F7EA31D
+acos.mul.d           0                                              4000905E0C76FDDF   4000905E1432AF99
+acos.inv.d           0                                              3FE45F306DC9C883   3FE45F306446F9B4
+acos.mad.d           0                                              4008F107288DB792   4008F1073049694C
+atan.d               0.00012300000000000001                         3F201F31F311A135   3F201F3200000000
+atan.mad.d           2.7000000000000002                             3FFE764419ACBA55   3FFE764419AD21C8
+atan.mul.d           187.66                                         3F293CFD7D6CFF25   3F293CFD91AB4628
+atan.mad.d           187.66                                         3FF8FA03FCC52325   3FF8FA03FCC5C517
+atan.mul.d           0.00012300000000000001                         3F2929EAEC0822FB   3F2929EB00371DC0
+atan.inv.d           0.00012300000000000001                         40BFC214D2D12AAB   40BFC214B958220B
+atan.mad.d           0.00012300000000000001                         3FDDAF8C42BF3C53   3FDDAF8C42C1C233
+atan2.dd             0.40000000000000002, 1.3                       3FD31A9B43436DE1   3FD31A9B40000000
+atan2.df             0.40000000000000002, 1.3                       3FD31A9B4E556B23   3FD31A9B40000000
+atan2.fd             0.40000000000000002, 1.3                       3FD31A9B47C2BCC0   3FD31A9B40000000
+atan2.ff             0.40000000000000002, 1.3                       3FD31A9B52D4BA04   3FD31A9B60000000
+atan2.dd             2.7000000000000002, 11.9                       3FCC8EFA8684064B   3FCC8EFA80000000
+atan2.df             2.7000000000000002, 11.9                       3FCC8EFA955EC904   3FCC8EFAA0000000
+atan2.fd             2.7000000000000002, 11.9                       3FCC8EFA8EB3105D   3FCC8EFA80000000
+atan2.ff             2.7000000000000002, 11.9                       3FCC8EFA9D8DD31A   3FCC8EFAA0000000
+atan2.dd             187.66, -59.130000000000003                    3FFE0442913C85A9   3FFE044280000000
+atan2.dd2f           187.66, -59.130000000000003                    3FF02215           3FF02214
+atan2.df             187.66, -59.130000000000003                    3FFE044292A054C5   3FFE044280000000
+atan2.df2f           187.66, -59.130000000000003                    3FF02215           3FF02214
+atan2.fd             187.66, -59.130000000000003                    3FFE04428FBC2320   3FFE044280000000
+atan2.ff             187.66, -59.130000000000003                    3FFE0442911FF23C   3FFE044280000000
+atan2.ff2f           187.66, -59.130000000000003                    3FF02215           3FF02214
+atan2.dd             0.00012300000000000001, 9999.5                 3E4A6A55AA26BFD1   3E4A6A55A0000000
+atan2.df             0.00012300000000000001, 9999.5                 3E4A6A55AA26BFD1   3E4A6A55A0000000
+atan2.fd             0.00012300000000000001, 9999.5                 3E4A6A55BD1A9641   3E4A6A55C0000000
+atan2.ff             0.00012300000000000001, 9999.5                 3E4A6A55BD1A9641   3E4A6A55C0000000
+atan2.dd             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.df             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.fd             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.ff             1, -1                                          4002D97C7F3321D2   4002D97C80000000
+atan2.mul.d          0.40000000000000002, 1.3                       3FB10CA37C00B487   3FB10CA375335100
+atan2.inv.d          0.40000000000000002, 1.3                       400ACCFEFF359628   400ACCFF03C99AA5
+atan2.mad.d          0.40000000000000002, 1.3                       3FFF150CC8FC90F1   3FFF150CB7533510
+atan2.mul.d          2.7000000000000002, 11.9                       3FDAC9D825EF2E68   3FDAC9D810709200
+atan2.inv.d          2.7000000000000002, 11.9                       4011ED985BCF4F15   4011ED985FE670CD
+atan2.mad.d          2.7000000000000002, 11.9                       3FDAC9D83324593D   3FDAC9D81DA5BCD0
+atan2.mul.d          187.66, -59.130000000000003                    3E58C7348D6E117D   3E58C73475ADF080
+atan2.inv.d          187.66, -59.130000000000003                    3FE10EA4FFBCE924   3FE10EA509885CF4
+atan2.mad.d          187.66, -59.130000000000003                    4002D97C824C0864   4002D97C8318E68F
+atan2.mul.d          0.00012300000000000001, 9999.5                 3E5F1EB013579EBF   3E5F1EB008B44500
+atan2.inv.d          0.00012300000000000001, 9999.5                 419361F5AFDEB2FE   419361F5B7519194
+atan2.mad.d          0.00012300000000000001, 9999.5                 BFF0D38F2493F49A   BFF0D38F2493F49D
+atan2.mul.d          1, -1                                          C003D2B9450B4D85   C003D2B945E2C08E
+atan2.inv.d          1, -1                                          3FDB2995E7B7B604   3FDB2995E6907E6C
+atan2.mad.d          1, -1                                          C0016F65DCA2DFC9   C0016F65DDE2C08E
+atan2.mul.d          -3.5, 2                                        BFD41735158CB259   BFD41735121E1E0B
+atan2.mad.d          -3.5, 2                                        BFB73EDF492ABCCE   BFB73EDF4878782C
+sinh.d               2.7000000000000002                             401DA0036F88823C   401DA0037D412331
+sinh.d2f             2.7000000000000002                             40ED001B           40ED001C
+sinh.d               187.66                                         50CAA6D0A0D36780   50CAA6D0A0000000
+sinh.f2d             187.66                                         7FF0000000000000   48160F3020000000
+sinh.d               100.5                                          48EFCC37A76F9E76   48EFCC37A0000000
+sinh.f2d             100.5                                          7FF0000000000000   4807A09FA0000000
+sinh.mad.d           0.5                                            401C89F4C54D4392   401C89F4D305E487
+sinh.mul.d           -0.5                                           C00EDFFCD2147562   C00EDFFCE0614987
+sinh.mad.d           -0.5                                           50CAA6D0A0D36780   50CAA6D0A0000000
+sinh.mul.d           2.7000000000000002                             50F8AC72016B9B02   50F8AC720C156E18
+sinh.inv.d           2.7000000000000002                             3FC1485D0CF0615D   3FC1485D04EF2EA6
+sinh.mad.d           2.7000000000000002                             50F8AC72016B9B02   50F8AC720C156E18
+sinh.mul.d           187.66                                         4FFADAC70C354881   4FFADAC70B6044D4
+sinh.inv.d           187.66                                         2F1335F98C6858F4   2F1335F98D00BB00
+sinh.mad.d           187.66                                         4FFADAC70C354881   4FFADAC70B6044D4
+sinh.mul.d           0.00012300000000000001                         4820051B4DE8010D   4820051B4A28F215
+sinh.mad.d           0.00012300000000000001                         4820051B4DE8010D   4820051B4A28F215
+sinh.mul.d           100.5                                          48E091D43E1208A1   48E091D43A321119
+sinh.inv.d           100.5                                          36F01A0E5643644F   36F01A0E5A075973
+sinh.mad.d           100.5                                          48E091D43E1208A1   48E091D43A321119
+cosh.d               0.5                                            3FF20AC1862AE8D0   3FF20AC181B4A8D1
+cosh.d               -0.5                                           3FF20AC1862AE8D0   3FF20AC181B4A8D1
+cosh.d               2.7000000000000002                             401DE4D4F525D240   401DE4D502BEDCCF
+cosh.d               187.66                                         50CAA6D0A0D36780   50CAA6D0A0000000
+cosh.f2d             187.66                                         7FF0000000000000   4C63E9E4E0000000
+cosh.d               100.5                                          48EFCC37A76F9E76   48EFCC37A0000000
+cosh.f2d             100.5                                          7FF0000000000000   4C63E9E4E0000000
+cosh.mul.d           0.5                                            3FF4583AA8ECFAA7   3FF4583A9EDCEAEB
+cosh.inv.d           0.5                                            3FEC60D1FF040DD1   3FEC60D20608B19E
+cosh.mad.d           0.5                                            40217D71CFB08875   40217D71D53B0BC5
+cosh.mul.d           -0.5                                           4020DAC415EC9A39   4020DAC4196C2FFE
+cosh.inv.d           -0.5                                           3FEC60D1FF040DD1   3FEC60D20608B19E
+cosh.mad.d           -0.5                                           50CAA6D0A0D36780   50CAA6D0A0000000
+cosh.mul.d           2.7000000000000002                             50F8E5C2FD8C4ED3   50F8E5C3081A0C68
+cosh.inv.d           2.7000000000000002                             3FC12093C2680A40   3FC12093BA9DA0FC
+cosh.mad.d           2.7000000000000002                             50F8E5C2FD8C4ED3   50F8E5C3081A0C68
+cosh.mul.d           187.66                                         50CAA6D0A4354BD8   50CAA6D0A361E458
+cosh.inv.d           187.66                                         2F1335F98C6858F4   2F1335F98D00BB00
+cosh.mad.d           187.66                                         50CAA6D0A4354BD8   50CAA6D0A361E458
+cosh.mul.d           0.00012300000000000001                         48EFCC37AB78B443   48EFCC37A40915CC
+cosh.mad.d           0.00012300000000000001                         48EFCC37AB78B443   48EFCC37A40915CC
+cosh.mul.d           100.5                                          48F1ED8F6C94924B   48F1ED8F63F441B6
+cosh.inv.d           100.5                                          36F01A0E5643644F   36F01A0E5A075973
+cosh.mad.d           100.5                                          48F1ED8F6C94924B   48F1ED8F63F441B6
+tanh.d               2.7000000000000002                             3FEFB655437478D5   3FEFB655437D9975
+tanh.d               0.00012300000000000001                         3F201F31F311A135   3F201F31FEA2CEEC
+tanh.mad.d           0.5                                            3FE8E0E9B317BC69   3FE8E0E9B320DD09
+tanh.mul.d           -0.5                                           BFDD4F3DF3236418   BFDD4F3DF32BD3AE
+tanh.mad.d           -0.5                                           3FE15861066E4DF4   3FE15861066A1629
+tanh.mul.d           2.7000000000000002                             3FEFB655437478D5   3FEFB655437D9975
+tanh.inv.d           2.7000000000000002                             3FF0252AEE84F44E   3FF0252AEE804EB1
+tanh.mad.d           2.7000000000000002                             3FEFB7573693A9EF   3FEFB757369D83A2
+tanh.mul.d           187.66                                         3F201F31F311A135   3F201F31FEA2CEEC
+tanh.mad.d           187.66                                         3FF00080F98F988D   3FF00080F98FF516
+tanh.mul.d           0.00012300000000000001                         3F201F31F311A135   3F201F31FEA2CEEC
+tanh.inv.d           0.00012300000000000001                         40BFC214D2D12AAB   40BFC214BC07FFB6
+tanh.mad.d           0.00012300000000000001                         3FDD9557BD94ED27   3FDD9557BD965F4D
+asinh.d              0.5                                            3FDECC2CAEC5160A   3FDECC2CB9A9C3D6
+asinh.d2f            0.5                                            3EF66165           3EF66166
+asinh.d              -0.5                                           BFDECC2CAEC5160A   BFDECC2CB9A9C3D6
+asinh.d2f            -0.5                                           BEF66165           BEF66166
+asinh.d              0.00012300000000000001                         3F201F31F3C039BE   3F201F31E4CEF7D9
+asinh.d2f            0.00012300000000000001                         3900F990           3900F98F
+asinh.mul.d          0.5                                            BFCDA3EA81A43E84   BFCDA3EA969C067A
+asinh.inv.d          0.5                                            40009FEC09279921   40009FEC034640E9
+asinh.mad.d          0.5                                            3FF7CCBF335C995E   3FF7CCBF30BDA05F
+asinh.mul.d          -0.5                                           BFEA78A7050A20D0   BFEA78A70E6711EA
+asinh.inv.d          -0.5                                           C0009FEC09279921   C0009FEC034640E9
+asinh.mad.d          -0.5                                           401466F8AE322BBD   401466F8AD068D9A
+asinh.mad.d          2.7000000000000002                             4024616E4D325B49   4024616E4D324C58
+asinh.mul.d          187.66                                         3F47E4484FDB7B05   3F47E44839B6A755
+asinh.mad.d          187.66                                         4015375B2F17CA26   4015375B2F1718FF
+asinh.mul.d          0.00012300000000000001                         3F455FF815984DBB   3F455FF801C8A744
+asinh.inv.d          0.00012300000000000001                         40BFC214D1793BD5   40BFC214EEE888C2
+asinh.mad.d          0.00012300000000000001                         3FDED6DCAACFE231   3FDED6DCB5AAA82A
+asinh.mul.d          100.5                                          40046A8C0DCBEF4D   40046A8C15049860
+asinh.mad.d          100.5                                          4000910677F34C8C   400091067DCF5FE5
+acosh.d              1.5                                            3FEECC2CAEC5160A   3FEECC2CB222D5D4
+acosh.d2f            1.5                                            3F766165           3F766166
+acosh.mul.d          1.5                                            3FF96934E49D4440   3FF96934E7644B04
+acosh.inv.d          1.5                                            3FF09FEC09279921   3FF09FEC07566BCD
+acosh.mad.d          1.5                                            4012535CA20E53FA   4012535CA2C015AB
+acosh.mad.d          1000                                           3FEECC2CAEC5160A   3FEECC2CB222D5D4
+atanh.d              -0.90000000000000002                           BFF78E360604B32D   BFF78E3600000000
+atanh.d              -0.5                                           BFE193EA7AAD030A   BFE193EA80000000
+atanh.d              0.25                                           3FD058AEFA811452   3FD058AF00000000
+atanh.d              0.5                                            3FE193EA7AAD030A   3FE193EA80000000
+atanh.d              0.90000000000000002                            3FF78E360604B32D   3FF78E3600000000
+atanh.mul.d          -0.90000000000000002                           3FE9E0DD2B2D73A2   3FE9E0DD2C677000
+atanh.inv.d          -0.90000000000000002                           BFE5BC633F70001E   BFE5BC6344FDAF1A
+atanh.mad.d          -0.90000000000000002                           3FE9E0DD2B2D73A2   3FE9E0DD2C677000
+atanh.inv.d          -0.5                                           BFFD20AE03BCC154   BFFD20ADFAEA2FF0
+atanh.mad.d          -0.5                                           3FD058AEFA811452   3FD058AF00000000
+atanh.mad.d          0                                              3FE193EA7AAD030A   3FE193EA80000000
+atanh.mul.d          0.25                                           3FC1F558401AAF56   3FC1F5584B94D800
+atanh.inv.d          0.25                                           400F52644DEC8C3E   400F52644364B4FF
+atanh.mad.d          0.25                                           3FF9CCE10E080918   3FF9CCE109729B00
+atanh.mul.d          0.5                                            3FE9E0DD2B2D73A2   3FE9E0DD2C677000
+atanh.inv.d          0.5                                            3FFD20AE03BCC154   3FFD20ADFAEA2FF0
+atanh.mad.d          0.5                                            BFE53B8EE0DBF2B8   BFE53B8ED3989000
+atanh.mul.d          0.90000000000000002                            C00156E5A8775F98   C00156E59F9B2000
+atanh.inv.d          0.90000000000000002                            3FE5BC633F70001E   3FE5BC6344FDAF1A
+atanh.mad.d          0.90000000000000002                            C005BBE04722A05A   C005BBE03F9B2000
+exp.d                0.5                                            3FFA61298E1E069C   3FFA612980000000
+exp.d                -0.5                                           3FE368B2FC6F960A   3FE368B300000000
+exp.d                2.7000000000000002                             402DC26C32572A3E   402DC26C40000000
+exp.d                187.66                                         50DAA6D0A0D36780   50DAA6D0A0000000
+exp.f2d              187.66                                         7FF0000000000000   4C63E9E4E0000000
+exp.d                100.5                                          48FFCC37A76F9E76   48FFCC37A0000000
+exp.f2d              100.5                                          7FF0000000000000   4C63E9E4E0000000
+exp.mul.d            0.5                                            3FF0000000000000   3FEFFFFFF4C04800
+exp.inv.d            0.5                                            3FE368B2FC6F960A   3FE368B306D2A345
+exp.mad.d            0.5                                            402FC26C32572A3E   402FC26C3F4C0480
+exp.mul.d            -0.5                                           40220CCE91C40E5F   40220CCE9D5D8600
+exp.inv.d            -0.5                                           3FFA61298E1E069C   3FFA61298945ED40
+exp.mad.d            -0.5                                           50DAA6D0A0D36780   50DAA6D0A0000000
+exp.mul.d            2.7000000000000002                             5118C91A7F7BF4EA   5118C91A8A17BD40
+exp.inv.d            2.7000000000000002                             3FB13461675400C2   3FB134615F6E678E
+exp.mad.d            2.7000000000000002                             5118C91A7F7BF4EA   5118C91A8A17BD40
+exp.mul.d            187.66                                         50DAA7A77A6DAD83   50DAA7A7799A3F5B
+exp.inv.d            187.66                                         2F0335F98C6858F4   2F0335F98D00BB00
+exp.mad.d            187.66                                         50DAA7A77A6DAD83   50DAA7A7799A3F5B
+exp.mul.d            0.00012300000000000001                         48FFCD37FD2D92C4   48FFCD37F5BDB85C
+exp.mad.d            0.00012300000000000001                         48FFCD37FD2D92C4   48FFCD37F5BDB85C
+exp.mul.d            100.5                                          490A36798B9D969C   490A367977752380
+exp.inv.d            100.5                                          36E01A0E5643644F   36E01A0E5A075973
+exp.mad.d            100.5                                          490A36798B9D969C   490A367977752380
+exp2.d               0.5                                            3FF6A09E667F3BCD   3FF6A09E60000000
+exp2.d               -0.5                                           3FE6A09E667F3BCD   3FE6A09E60000000
+exp2.d               2.7000000000000002                             4019FDF8BCCE533E   4019FDF8C0000000
+exp2.d               187.66                                         4BA94804B79E25F6   4BA94804C0000000
+exp2.f2d             187.66                                         7FF0000000000000   4C70000000000000
+exp2.d               0.00012300000000000001                         3FF00059670147E2   3FF0005960000000
+exp2.d               100.5                                          4636A09E667F3BCD   4636A09E60000000
+exp2.mul.d           0.5                                            3FF0000000000001   3FEFFFFFED9FAA40
+exp2.inv.d           0.5                                            3FE6A09E667F3BCC   3FE6A09E6CFE779B
+exp2.mad.d           0.5                                            401DFDF8BCCE533E   401DFDF8BDB3F548
+exp2.mul.d           -0.5                                           4012611186BAE675   4012611183B61E40
+exp2.inv.d           -0.5                                           3FF6A09E667F3BCC   3FF6A09E6CFE779B
+exp2.mad.d           -0.5                                           4BA94804B79E25F6   4BA94804C0000000
+exp2.mul.d           2.7000000000000002                             4BD488E9980DF427   4BD488E9A162EC80
+exp2.inv.d           2.7000000000000002                             3FC3B2C47BFF8328   3FC3B2C47993D4A8
+exp2.mad.d           2.7000000000000002                             4BD488E9980DF427   4BD488E9A162EC80
+exp2.mul.d           187.66                                         4BA94891FAFA07C9   4BA94891F84A8880
+exp2.inv.d           187.66                                         34344089FC7CC78A   34344089F5C5CD64
+exp2.mad.d           187.66                                         4BA94891FAFA07C9   4BA94891F84A8880
+exp2.mul.d           0.00012300000000000001                         4636A11CD59C2157   4636A11CC534AC40
+exp2.inv.d           0.00012300000000000001                         3FEFFF4D35E47379   3FEFFF4D43E666B7
+exp2.mad.d           0.00012300000000000001                         4636A11CD59C2157   4636A11CC534AC40
+exp2.mul.d           100.5                                          4640000000000001   463FFFFFED9FAA40
+exp2.inv.d           100.5                                          39A6A09E667F3BCC   39A6A09E6CFE779B
+exp2.mad.d           100.5                                          4640000000000001   463FFFFFED9FAA40
+expm1.d              2.7000000000000002                             402BC26C32572A3E   402BC26C40000000
+expm1.d              187.66                                         50DAA6D0A0D36780   50DAA6D0A0000000
+expm1.f2d            187.66                                         7FF0000000000000   4C63E9E4E0000000
+expm1.d              100.5                                          48FFCC37A76F9E76   48FFCC37A0000000
+expm1.f2d            100.5                                          7FF0000000000000   4C63E9E4E0000000
+expm1.mad.d          0.5                                            402B3FBBD0CC700A   402B3FBBDE7545CC
+expm1.mul.d          -0.5                                           C015D851A0B42A7F   C015D851AB73F5F1
+expm1.mad.d          -0.5                                           50DAA6D0A0D36780   50DAA6D0A0000000
+expm1.mul.d          2.7000000000000002                             51171EAD756EBE72   51171EAD8017BD40
+expm1.inv.d          2.7000000000000002                             3FB271B4811803CA   3FB271B478049ECE
+expm1.mad.d          2.7000000000000002                             51171EAD756EBE72   51171EAD8017BD40
+expm1.mul.d          187.66                                         500ADB3348C05EBA   500ADB3347EB57B3
+expm1.inv.d          187.66                                         2F0335F98C6858F4   2F0335F98D00BB00
+expm1.mad.d          187.66                                         500ADB3348C05EBA   500ADB3347EB57B3
+expm1.mul.d          0.00012300000000000001                         4830055BDF44DC6D   4830055BDB85BE5B
+expm1.mad.d          0.00012300000000000001                         4830055BDF44DC6D   4830055BDB85BE5B
+expm1.mul.d          100.5                                          48F4A0BB6FCB8EC1   48F4A0BB6AF8A3B7
+expm1.inv.d          100.5                                          36E01A0E5643644F   36E01A0E5A075973
+expm1.mad.d          100.5                                          48F4A0BB6FCB8EC1   48F4A0BB6AF8A3B7
+pow.dd               0.40000000000000002, 1.3                       3FD3727E49ADFAD4   3FD3727E40000000
+pow.df               0.40000000000000002, 1.3                       3FD3727E57EF60B1   3FD3727E60000000
+pow.fd               0.40000000000000002, 1.3                       3FD3727E4FFFFD79   3FD3727E40000000
+pow.ff               0.40000000000000002, 1.3                       3FD3727E5E416357   3FD3727E60000000
+pow.dd               2.7000000000000002, 11.9                       410096F75FA58808   410096F760000000
+pow.df               2.7000000000000002, 11.9                       410096F6F6305F74   410096F700000000
+pow.fd               2.7000000000000002, 11.9                       410096F79A240577   410096F7A0000000
+pow.ff               2.7000000000000002, 11.9                       410096F730AEDB50   410096F740000000
+pow.dd               187.66, -59.130000000000003                    2405E16D4F560B15   2405E16D40000000
+pow.df               187.66, -59.130000000000003                    2405E1654AD7E218   2405E16540000000
+pow.fd               187.66, -59.130000000000003                    2405E16BA7BEF832   2405E16BA0000000
+pow.ff               187.66, -59.130000000000003                    2405E163A34169EB   2405E163A0000000
+pow.f2d              187.66, -59.130000000000003                    0000000000000000   3379B604A0000000
+pow.f2d              0.00012300000000000001, 9999.5                 0000000000000000   3379B604A0000000
+pow.mul.d            0.40000000000000002, 1.3                       40E429FC555F4B34   40E429FC4BC3F180
+pow.inv.d            0.40000000000000002, 1.3                       400A53E07B9D09ED   400A53E088B7B969
+pow.mad.d            0.40000000000000002, 1.3                       40E429FC555F4B34   40E429FC4BC3F180
+pow.mul.d            2.7000000000000002, 11.9                       2516AFE0FAF22243   2516AFE0EB871B80
+pow.inv.d            2.7000000000000002, 11.9                       3EDEDCCCD68C228A   3EDEDCCCD5E3D521
+pow.mad.d            2.7000000000000002, 11.9                       2516AFE0FAF22243   2516AFE0EB871B80
+pow.inv.d            187.66, -59.130000000000003                    5BD766561E4C4A22   5BD766562EB2EB7C
+pow.mad.d            1, -1                                          40291B93F24D6FD7   40291B93F2000000
+pow.mul.d            -3.5, 2                                        400DC75160D26815   400DC75152000000
+pow.mad.d            -3.5, 2                                        4100971526F6E8DA   4100971527515200
+rint.d               2.7000000000000002                             4008000000000000   0000000000000000
+rint.d2f             2.7000000000000002                             40400000           00000000
+rint.d               187.66                                         4067800000000000   0000000000000000
+rint.d2f             187.66                                         433C0000           00000000
+rint.d               100.5                                          4059000000000000   0000000000000000
+rint.d2f             100.5                                          42C80000           00000000
+rint.mad.d           0.5                                            4008000000000000   0000000000000000
+rint.mad.d           -0.5                                           4067800000000000   0000000000000000
+rint.mul.d           2.7000000000000002                             4081A00000000000   0000000000000000
+rint.inv.d           2.7000000000000002                             3FD5555555555555   7FF0000000000000
+rint.mad.d           2.7000000000000002                             4081A00000000000   0000000000000000
+rint.inv.d           187.66                                         3F75C9882B931057   7FF0000000000000
+rint.mad.d           187.66                                         4059000000000000   0000000000000000
+rint.inv.d           100.5                                          3F847AE147AE147B   7FF0000000000000
+erf.d                -0.90000000000000002                           BFE98045A6C8A2E6   BFE98045A0000000
+erf.d                0.90000000000000002                            3FE98045A6C8A2E6   3FE98045A0000000
+erf.mul.d            -0.90000000000000002                           3FDA8BEDFC9F2851   3FDA8BEDF58F51CB
+erf.inv.d            -0.90000000000000002                           BFF413DD3CE46CC4   BFF413DD423BB855
+erf.mad.d            -0.90000000000000002                           3FDA8BEDFC9F2851   3FDA8BEDF58F51CB
+erf.mad.d            0.25                                           3FEE1A8285077F41   3FEE1A827E3EDC5B
+erf.mul.d            0.5                                            3FDA8BEDFC9F2851   3FDA8BEDF58F51CB
+erf.mad.d            0.5                                            BFD8749D50F21D7B   BFD8749D4A70AE35
+erf.mul.d            0.90000000000000002                            BFE4526F02675E45   BFE4526EF7977D20
+erf.inv.d            0.90000000000000002                            3FF413DD3CE46CC4   3FF413DD423BB855
+erf.mad.d            0.90000000000000002                            BFF27D2F2F40260C   BFF27D2F29D83579
+erfc.d               -0.90000000000000002                           3FFCC022D3645173   3FFCC022C0000000
+erfc.d2f             -0.90000000000000002                           3FE60117           3FE60116
+erfc.d               -0.5                                           3FF853F7AE0C76E9   3FF853F7C0000000
+erfc.d2f             -0.5                                           3FC29FBD           3FC29FBE
+erfc.d               0.90000000000000002                            3FC9FEE964DD7469   3FC9FEE960000000
+erfc.mul.d           -0.90000000000000002                           4005DB8B004C4938   4005DB8B01AF0A80
+erfc.inv.d           -0.90000000000000002                           3FE1CEF11B3FF877   3FE1CEF12742EB42
+erfc.mad.d           -0.90000000000000002                           400DDB8B004C4938   400DDB8B01AF0A80
+erfc.mul.d           -0.5                                           3FF853F7AE0C76E9   3FF853F7C0000000
+erfc.inv.d           -0.5                                           3FE50BB3AC3E17D9   3FE50BB39CB6942D
+erfc.mad.d           -0.5                                           4001F4113ABFE0B4   4001F41143B9A53F
+erfc.mad.d           0.25                                           3FE19A5D6A43E09F   3FE19A5D690C8384
+erfc.mul.d           0.5                                            3FB8EE0FDB701B87   3FB8EE0FD6C5B755
+erfc.mad.d           0.5                                            3FFE4F03D11B532B   3FFE4F03BD6C5B75
+erfc.mul.d           0.90000000000000002                            3FD75B21FB314377   3FD75B21E7116E40
+erfc.inv.d           0.90000000000000002                            4013B20E206A63DC   4013B20E241A006A
+erfc.mad.d           0.90000000000000002                            3FFE2AC02CD8C7C7   3FFE2AC039C45B90
+lgamma.d             2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+lgamma.d             187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mad.d         0.5                                            3FDBD4199664F249   3FDBD4199664F248
+lgamma.mad.d         1                                              4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mul.d         187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+lgamma.inv.d         187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+gamma.d              2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+gamma.d              187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+gamma.mad.d          0.5                                            3FDBD4199664F249   3FDBD4199664F248
+gamma.mad.d          1                                              4088C7C8DA885829   4088C7C8DA88582A
+gamma.mul.d          187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+gamma.inv.d          187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+j0.d                 2.7000000000000002                             BFC23BC7ECD77A69   BFC23BC7E0000000
+j0.d                 187.66                                         BF683DB7B7637733   BF683DB7C0000000
+j0.d                 100.5                                          3FABDF1C507A77F2   3FABDF1C60000000
+j0.mad.d             0.5                                            3FE26BDA2BB670C4   3FE26BDA2EEC4F5E
+j0.mul.d             1                                              BFBBE78CE5B9BC0A   BFBBE78CD21297D9
+j0.mad.d             1                                              BFBCA97AA374D7C4   BFBCA97A901297D9
+j0.mul.d             2.7000000000000002                             3F3BA0012A35EA61   3F3BA00120917080
+j0.inv.d             2.7000000000000002                             C01C1484DBC05F56   C01C1484EF872F5B
+j0.mad.d             2.7000000000000002                             3FF001B9FF0EB953   3FF001B9FF0E1F0C
+j0.mul.d             187.66                                         BF683DB7B5D9AD8D   BF683DB7BE76365A
+j0.inv.d             187.66                                         C0751F04D0853F22   C0751F04C90471AA
+j0.mad.d             187.66                                         3FAA5B40D51CDD19   3FAA5B40E4189C9A
+j0.mul.d             0.00012300000000000001                         3FABDF1C4EB5B4A5   3FABDF1C5E3B3CB2
+j0.mad.d             0.00012300000000000001                         3FEFC5E39A379A7E   3FEFC5E39B2FF2FF
+j0.mul.d             100.5                                          3FAA2815FBB926BF   3FAA28160A4A30CF
+j0.inv.d             100.5                                          40325EB87CC4B9B8   40325EB87289C9C0
+j0.mad.d             100.5                                          3FEA1F013B934B5C   3FEA1F013C7C5BFD
+y0.f                 0.5                                            BEE397F6           BEE397F5
+y0.f2d               0.5                                            BFDC72FEC0000000   BFDC72FEA0000000
+y0.d                 2.7000000000000002                             3FDD78E3E0BE20CC   3FDD78E3E0000000
+y0.d                 187.66                                         BFADC85687B75072   BFADC85680000000
+y0.d                 100.5                                          BFADBA3383291BF7   BFADBA3380000000
+y0.mul.f             0.5                                            BD20B199           BD20B198
+y0.mad.d             0.5                                            3FDAF61D78D7879A   3FDAF61D781966CE
+y0.mul.d             1                                              3FA4CF1CE05C2A2C   3FA4CF1CDFD5EC77
+y0.mad.d             1                                              BF91F2734EB64C8C   BF91F27340542712
+y0.mul.d             2.7000000000000002                             BF9B6E11C5CC34CF   BF9B6E11BDFFF980
+y0.inv.d             2.7000000000000002                             40015F4E3A01542A   40015F4E3A716627
+y0.mad.d             2.7000000000000002                             C0175442FED6D998   C0175442FECF0D5C
+y0.mul.d             187.66                                         3FD59CE2F4DA257E   3FD59CE2EF40AF87
+y0.inv.d             187.66                                         C03130F69CE0C462   C03130F6A154F81A
+y0.mad.d             187.66                                         3FD1E59C847501FF   3FD1E59C7F40AF87
+y0.mul.d             0.00012300000000000001                         3FD592A0AE3B3DD9   3FD592A0ABF014C7
+y0.mad.d             0.00012300000000000001                         BFBB817815F1EB24   BFBB81781F1E8F6C
+y0.mad.f             0.00012300000000000001                         BDDC0BC0           BDDC0BBC
+y0.mul.d             100.5                                          3F9A6DC107345883   3F9A6DC104650470
+y0.mul.f             100.5                                          3CD36E0A           3CD36E09
+y0.inv.d             100.5                                          C03139237BB10D7E   C03139237D85D3FC
+y0.mad.d             100.5                                          3FBD337268C06F01   3FBD3372680C99FC
+
+================ mac-arm64-clang vs win-x86-strict-PC53 ================
+differing lines: 44
+
+group              differing  of total
+------------------ ---------  --------
+through double            17      1194
+float -> double           17       258
+double -> float            0       420
+plain float               10      1032
+
+row                differing  of total
+------------------ ---------  --------
+.f2d                      17       258
+.d                         5       204
+.mad.d                     5       258
+.mul.d                     4       258
+.mul.f                     4       258
+.inv.d                     3       258
+.mad.f                     3       258
+.f                         2       258
+.inv.f                     1       258
+
+row                  arguments                                      macOS              win-x86-strict-PC53
+-------------------- ---------------------------------------------- ------------------ ------------------
+atan.f2d             0.00012300000000000001                         3F201F3200000000   3F201F31FEA2CEEB
+atan2.f2d            187.66, -59.130000000000003                    3FFE044280000000   3FFE044288885A40
+atan2.f2d            1, -1                                          4002D97C80000000   4002D97C7C442D20
+sinh.f2d             187.66                                         7FF0000000000000   48160F3012750D80
+sinh.f2d             100.5                                          7FF0000000000000   4807A09FAA400000
+cosh.f2d             187.66                                         7FF0000000000000   4C63E9E4EED0EC80
+cosh.f2d             100.5                                          7FF0000000000000   4C63E9E4EED0EC80
+exp.f2d              187.66                                         7FF0000000000000   4C63E9E4EED0EC80
+exp.f2d              100.5                                          7FF0000000000000   4C63E9E4EED0EC80
+exp2.f2d             187.66                                         7FF0000000000000   4C70000000000000
+expm1.f2d            187.66                                         7FF0000000000000   4C63E9E4EED0EC80
+expm1.f2d            100.5                                          7FF0000000000000   4C63E9E4EED0EC80
+pow.f2d              187.66, -59.130000000000003                    0000000000000000   3379B604AD690000
+pow.f2d              0.00012300000000000001, 9999.5                 0000000000000000   3379B604AD690000
+erfc.f2d             -0.90000000000000002                           3FFCC022C0000000   3FFCC022D0000000
+erfc.f               -0.5                                           3FC29FBE           3FC29FBD
+erfc.f2d             -0.5                                           3FF853F7C0000000   3FF853F7AE000000
+erfc.mul.f           -0.90000000000000002                           402EDC58           402EDC57
+erfc.mad.f           -0.90000000000000002                           406EDC58           406EDC57
+erfc.mul.f           -0.5                                           3FC29FBE           3FC29FBD
+erfc.inv.f           -0.5                                           3F285D9D           3F285D9E
+erfc.mad.f           0.90000000000000002                            3FF15602           3FF15601
+lgamma.d             2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+lgamma.d             187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mad.d         0.5                                            3FDBD4199664F249   3FDBD4199664F248
+lgamma.mad.d         1                                              4088C7C8DA885829   4088C7C8DA88582A
+lgamma.mul.d         187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+lgamma.inv.d         187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+gamma.d              2.7000000000000002                             3FDBD4199664F249   3FDBD4199664F248
+gamma.d              187.66                                         4088C7C8DA885829   4088C7C8DA88582A
+gamma.mad.d          0.5                                            3FDBD4199664F249   3FDBD4199664F248
+gamma.mad.d          1                                              4088C7C8DA885829   4088C7C8DA88582A
+gamma.mul.d          187.66                                         40BBE356C5EA33CD   40BBE356C5EA33CE
+gamma.inv.d          187.66                                         3F54A956FA2E8CF8   3F54A956FA2E8CF7
+j0.d                 100.5                                          3FABDF1C507A77F2   3FABDF1C507A77F0
+j0.mad.d             187.66                                         3FAA5B40D51CDD19   3FAA5B40D51CDD17
+j0.mul.d             0.00012300000000000001                         3FABDF1C4EB5B4A5   3FABDF1C4EB5B4A3
+j0.mul.d             100.5                                          3FAA2815FBB926BF   3FAA2815FBB926BD
+j0.inv.d             100.5                                          40325EB87CC4B9B8   40325EB87CC4B9B9
+y0.f                 0.5                                            BEE397F6           BEE397F5
+y0.f2d               0.5                                            BFDC72FEC0000000   BFDC72FEA0000000
+y0.mul.f             0.5                                            BD20B199           BD20B198
+y0.mad.f             0.00012300000000000001                         BDDC0BC0           BDDC0BBC
+y0.mul.f             100.5                                          3CD36E0A           3CD36E09
+

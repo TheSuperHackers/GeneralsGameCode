@@ -1,0 +1,83 @@
+# GameMath calls per logic frame in Zero Hour.
+#
+# Measured with counters placed at the 52 call sites that reach GameMath: 51 in
+# Core/Libraries/Source/WWVegas/WWMath/wwmath.h and 1 in
+# GeneralsMD/Code/GameEngine/Source/Common/System/Trig.cpp, where gm_sqrtf is
+# called directly. Counters are keyed on the gm_ function reached, not on the
+# WWMath wrapper: WWMath::Fabsf and WWMath::Fabsf_Legacy both feed gm_fabsf.
+#
+# Run on macOS ARM64, GeneralsOnlineZH, GENERALS_ONLINE_HIGH_FPS_SERVER = 1, so
+# 60 Hz logic. Counters dumped every 100 logic frames and reset. Multiplayer,
+# eight slots, map Ring Ring 8.
+#
+# Two long battles, recorded in separate runs, are carried side by side so the
+# spread between them is visible rather than averaged away:
+#
+#   battle44   44 min 20 s in total. Plateau: minutes 8 to 28, blocks 289-1008,
+#              72 000 frames, 20 minutes. Around 30 000 calls per frame.
+#              Source: callcounts-mac-arm64.txt, session 3.
+#
+#   battle69   69 min 30 s in total. Plateau: minutes 20 to 42, blocks 721-1512,
+#              79 200 frames, 22 minutes. Around 29 000 calls per frame.
+#              Source: callcounts-v2-mac-arm64.txt, session 3.
+#
+# In both cases the plateau is the stretch where the call volume has risen and
+# holds, and it contains that battle's busiest minute. Before it the game is
+# still building up; after it the volume falls away and stays down.
+#
+# The estimate is read off the busier of the two. The other is there to show how
+# far the extremes are apart: gm_powf and gm_sqrt agree to within a fraction of
+# a per cent across two independent battles, while gm_cosf differs by a quarter
+# and gm_floorf by a factor of eight.
+#
+# Windows are picked by call volume and wall clock, never by time per call. A
+# call count is a fact about the game; a nanosecond is a fact about one
+# implementation on one machine. Choosing the window by cost would bake that
+# implementation into the profile, and comparing implementations is the only
+# reason the profile exists.
+#
+# Regenerate either column with
+#
+#   sh profile_from_counts.sh <dump>                             lists sessions
+#   sh profile_from_counts.sh callcounts-mac-arm64.txt    3 289-1008  battle44
+#   sh profile_from_counts.sh callcounts-v2-mac-arm64.txt 3 721-1512  battle69
+#
+# Applying this profile to a Windows x86 build assumes the game issues the same
+# calls there. The simulation is deterministic and the code is the same, but the
+# profile itself was not measured on Windows.
+#
+# gm_lrint / gm_lrintf have no row of their own in the benchmark table; the rint
+# row stands in for them.
+#
+# Columns: gm function, benchmark row, benchmark column (d or f), then the calls
+# counted in each window, and the same figures as rates for reading. Only the
+# counts are used. They are the counter readings themselves, and the coefficient
+# is calls divided by frames worked out where it is needed, so nothing is lost
+# to rounding on the way: gm_ceil is 2 936 calls, which shows as 0.0 per frame.
+#
+# gm_ceilf and gm_floor are zero in both windows. Both are called only in the
+# first block of a session, while the map loads, long before either plateau.
+#
+# Ordered by the busier column.
+
+#                                     calls        calls    per frame    per frame
+profiles                           battle44     battle69
+frames                                72000        79200
+
+gm_fabsf       fabs    f         1186020421   1238681383      16472.5      15639.9
+gm_sqrtf       sqrt    f          436292215    485772191       6059.6       6133.5
+gm_powf        pow     f          169140216    186203226       2349.2       2351.1
+gm_sinf        sin     f          102467217    110783177       1423.2       1398.8
+gm_cosf        cos     f          100186351     82816853       1391.5       1045.7
+gm_sqrt        sqrt    d           84654401     93311750       1175.8       1178.2
+gm_atan2f      atan2   f           45575736     58036763        633.0        732.8
+gm_lrintf      rint    f           41720719     49014184        579.5        618.9
+gm_acosf       acos    f           11042349     11417027        153.4        144.2
+gm_floorf      floor   f             264263      2450369          3.7         30.9
+gm_asinf       asin    f             105158        81143          1.5          1.0
+gm_ceil        ceil    d               2936         3974          0.0          0.1
+gm_ceilf       ceil    f                  0            0          0.0          0.0
+gm_floor       floor   d                  0            0          0.0          0.0
+
+# totals: battle44 2 177 471 982 calls, 30 242.7 per frame
+#         battle69 2 318 572 040 calls, 29 274.9 per frame
