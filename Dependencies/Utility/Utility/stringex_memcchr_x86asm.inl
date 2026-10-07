@@ -21,8 +21,7 @@
 #pragma once
 
 // VC6-compatible x86 cdecl implementation of memcchr.
-// Requires SSE2. Returns the first differing byte; reads only within [data,data+n).
-// Naked function: manually preserve all callee-saved registers and leave ESP balanced.
+// An SSE2-capable CPU is assumed.
 // SSE2 uses _emit because VC6 does not recognize these instruction mnemonics.
 inline __declspec(naked) const void* __cdecl memcchr(const void* data, int c, size_t n)
 {

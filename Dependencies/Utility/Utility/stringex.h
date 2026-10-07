@@ -67,17 +67,6 @@ const void* memcchr(const void* data, int c, size_t n);
 
 // Implementation
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
-  #include "stringex_memcchr_x86asm.inl"
-#else
-  #if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
-    #include "stringex_memcchr_sse2.inl"
-  #else
-    #include "stringex_memcchr.inl"
-  #endif
-#endif
-
-
 // Templated strlen.
 // Returns the number of characters until the first zero character.
 template<typename T> size_t strlen_t(const T *str)
@@ -311,3 +300,14 @@ template<typename T> inline bool endsWithNoCase(const T *str, const T *suffix)
 	return strnicmp_t(str + strlen - suffixlen, suffix, suffixlen) == 0;
 }
 
+// Memcchr. Multiple implementations: 1) VC6-compatible in x86 ASM; 2) SSE2 intrinsics; 3) portable.
+// Return a pointer to the first byte that differs from a given value, or nullptr if there is no mismatch.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+  #include "stringex_memcchr_x86asm.inl"
+#else
+  #if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
+    #include "stringex_memcchr_sse2.inl"
+  #else
+    #include "stringex_memcchr.inl"
+  #endif
+#endif

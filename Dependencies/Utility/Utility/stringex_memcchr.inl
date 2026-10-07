@@ -20,8 +20,7 @@
 
 #pragma once
 
-// Portable implementation of memcchr. Compares 8 or 4 bytes at a time
-// and locates the mismatching byte with a scalar scan.
+// Portable implementation of memcchr.
 inline const void* memcchr(const void* data, int c, size_t n)
 {
 	const unsigned char* p = static_cast<const unsigned char*>(data);
@@ -48,5 +47,5 @@ inline const void* memcchr(const void* data, int c, size_t n)
 		++p;
 		--n;
 	}
-	return 0;
+	return nullptr;
 }
