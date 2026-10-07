@@ -85,7 +85,7 @@ W3DShroud::W3DShroud()
 	m_cellHeight=DEFAULT_SHROUD_CELL_SIZE;
 	m_numCellsX=0;
 	m_numCellsY=0;
-	m_shroudFilter=TextureFilterClass::FILTER_TYPE_DEFAULT;
+	m_shroudFilter=TextureFilterClass::FILTER_TYPE_FAST;
 }
 
 //-----------------------------------------------------------------------------
@@ -781,7 +781,7 @@ void W3DShroud::interpolateFogLevels(RECT *rect)
 void W3DShroud::setShroudFilter(Bool enable)
 {
 	if (enable)
-		m_shroudFilter=TextureFilterClass::FILTER_TYPE_DEFAULT;
+		m_shroudFilter=TextureFilterClass::FILTER_TYPE_FAST;
 	else
 		m_shroudFilter=TextureFilterClass::FILTER_TYPE_NONE;
 }
