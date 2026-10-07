@@ -1611,8 +1611,9 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 #if USE_STD_FROM_CHARS_PARSING
 
 template <typename Type>
-Type scanType(std::string_view token)
+Type scanType(const char* tokenString)
 {
+	std::string_view token(tokenString);
 	DEBUG_ASSERTCRASH(!token.empty(), ("token is not expected to be empty"));
 
 	// Unlike sscanf, std::from_chars cannot parse "+".
@@ -1625,6 +1626,18 @@ Type scanType(std::string_view token)
 	// Unlike sscanf, std::from_chars cannot parse "-" as unsigned integer.
 	std::conditional_t<std::is_integral_v<Type>, Int64, Type> result{};
 	const auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), result);
+
+	if constexpr (std::is_integral_v<Type>)
+	{
+		// TheSuperHackers @bugfix Preserve legacy INI parsing for integers outside the Int64 range.
+		if (ec == std::errc::result_out_of_range)
+		{
+			Type value;
+			if (sscanf(tokenString, std::is_signed_v<Type> ? "%d" : "%u", &value) != 1)
+				throw INI_INVALID_DATA;
+			return value;
+		}
+	}
 
 	if (ec != std::errc{})
 	{
