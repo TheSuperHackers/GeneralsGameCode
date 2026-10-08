@@ -24,7 +24,7 @@
 #include "Utility/stringex.h"
 #include <Utility/stdio_adapter.h>
 #include <Utility/utility_adapter.h>
-#include <rts/profile.h>
+#include "Lib/Profile.h"
 
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=nullptr; } }

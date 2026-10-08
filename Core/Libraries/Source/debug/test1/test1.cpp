@@ -26,7 +26,7 @@
 //
 // Debug module - Test 1 (Checking early exceptions)
 //////////////////////////////////////////////////////////////////////////////
-#include "../debug.h"
+#include "debug/debug.h"
 
 const char *DebugGetDefaultCommands()
 {

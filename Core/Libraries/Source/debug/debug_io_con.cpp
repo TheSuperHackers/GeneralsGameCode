@@ -27,7 +27,7 @@
 // Debug I/O class con (console window)
 //////////////////////////////////////////////////////////////////////////////
 
-#include "debug.h"
+#include "debug/debug.h"
 #include "internal.h"
 #include "internal_io.h"
 #include <stdlib.h>

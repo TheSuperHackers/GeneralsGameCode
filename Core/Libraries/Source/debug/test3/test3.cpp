@@ -27,7 +27,7 @@
 // Debug module - Test 3 (Checking FLAT I/O, logging)
 //////////////////////////////////////////////////////////////////////////////
 
-#include "../debug.h"
+#include "debug/debug.h"
 
 unsigned divByNull;
 

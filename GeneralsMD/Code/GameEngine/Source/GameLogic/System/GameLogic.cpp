@@ -111,7 +111,7 @@
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
-#include <rts/profile.h>
+#include "Lib/Profile.h"
 
 struct QuitGameException {};
 

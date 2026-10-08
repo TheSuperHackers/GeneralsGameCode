@@ -26,7 +26,7 @@
 //
 // Debug module - Test 5 (printf style formatting)
 //////////////////////////////////////////////////////////////////////////////
-#include "../debug.h"
+#include "debug/debug.h"
 
 const char *DebugGetDefaultCommands()
 {

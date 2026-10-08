@@ -27,9 +27,9 @@
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
 
-#include "profile.h"
+#include "profile/profile.h"
 #include "internal.h"
-#include "../debug/debug.h"
+#include "debug/debug.h"
 #include <new>
 
 #ifdef HAS_PROFILE

@@ -9,13 +9,12 @@ set(LIBRARIES_INCLUDE_SRC
     Include/Lib/IRegion2D.h
     Include/Lib/IRegion3D.h
     Include/Lib/PathUtil.h
+    Include/Lib/Profile.h
     Include/Lib/RealRange.h
     Include/Lib/Region2D.h
     Include/Lib/Region3D.h
     Include/Lib/RGBColor.h
     Include/Lib/trig.h
-    Include/rts/debug.h
-    Include/rts/profile.h
     Include/Precompiled/Precompiled/BaseAlgorithm.h
     Include/Precompiled/Precompiled/BaseMacros.h
     Include/Precompiled/Precompiled/BasePragmas.h

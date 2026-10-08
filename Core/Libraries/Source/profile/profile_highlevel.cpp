@@ -27,7 +27,7 @@
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
 
-#include "profile.h"
+#include "profile/profile.h"
 #include "internal.h"
 #include <new>
 #include <Utility/stdio_adapter.h>
