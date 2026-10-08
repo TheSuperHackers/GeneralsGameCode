@@ -873,8 +873,12 @@ StateReturnType AIStateMachine::updateStateMachine()
 
 			return status;
 		}
-		m_temporaryState->onExit(EXIT_NORMAL);
-		m_temporaryState = nullptr;
+		// TheSuperHackers @bugfix Okladnoj 08/10/2026 Do not exit the temporary state if clear() already reset it during its own update.
+		if (m_temporaryState)
+		{
+			m_temporaryState->onExit(EXIT_NORMAL);
+			m_temporaryState = nullptr;
+		}
 	}
 	StateReturnType retType = StateMachine::updateStateMachine();
 
