@@ -374,6 +374,8 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 //-------------------------------------------------------------------------------------------------
 /** Discard lines up to and including the next end token. */
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature triatomic 08/10/2026 Unknown blocks and fields are logged and skipped
+// instead of crashing or throwing, so an INI written for a newer build still loads.
 void INI::skipToEndToken( void )
 {
 	while( !m_endOfFile )
@@ -385,6 +387,10 @@ void INI::skipToEndToken( void )
 			return;
 		}
 	}
+
+	DEBUG_CRASH( ("Error parsing block in INI file '%s'.  Missing '%s' token",
+										 getFilename().str(), getEndToken()) );
+	throw INI_MISSING_END_TOKEN;
 }
 
 //-------------------------------------------------------------------------------------------------
