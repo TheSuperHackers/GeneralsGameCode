@@ -4833,10 +4833,8 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 		// The units are not properly transferred and are left in an invalid state.
 		if (!contain)
 		{
-			source->friend_removeFromTunnelContain();
-
-			// destroy this object, because it serves no purpose in its invalid state
-			TheGameLogic->destroyObject(source);
+			// remove all such units from the tunnel tracker and destroy them
+			TheGameLogic->friend_destroyInTunnelContain(source);
 
 			return STATE_FAILURE;
 		}
