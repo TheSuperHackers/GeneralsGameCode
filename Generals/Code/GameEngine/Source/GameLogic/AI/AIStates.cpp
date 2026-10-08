@@ -873,7 +873,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 
 			return status;
 		}
-		// TheSuperHackers @bugfix Okladnoj 08/10/2026 Do not exit the temporary state if clear() already reset it during its own update.
+		// TheSuperHackers @bugfix Okladnoj 08/10/2026 Check that the temporary state still exists as it can be cleared from the state machine within the states update.
 		if (m_temporaryState)
 		{
 			m_temporaryState->onExit(EXIT_NORMAL);
