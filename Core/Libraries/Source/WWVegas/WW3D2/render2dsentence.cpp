@@ -61,7 +61,6 @@ Render2DSentenceClass::Render2DSentenceClass () :
 	TextureStartX (0),
 	CurSurface (nullptr),
 	CurrTextureSize (0),
-	MonoSpaced (false),
 	IsClippedEnabled (false),
 	ClipRect (0, 0, 0, 0),
 	BaseLocation (0, 0),
@@ -147,7 +146,6 @@ Render2DSentenceClass::Reset ()
 	}
 
 	Cursor.Set (0, 0);
-	MonoSpaced = false;
 
 	Release_Pending_Surfaces ();
 	Reset_Sentence_Data ();
