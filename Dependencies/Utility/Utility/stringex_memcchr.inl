@@ -16,10 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Included by stringex.h
-
-#pragma once
-
 // Portable implementation of memcchr.
 inline const void* memcchr(const void* data, int c, size_t n)
 {

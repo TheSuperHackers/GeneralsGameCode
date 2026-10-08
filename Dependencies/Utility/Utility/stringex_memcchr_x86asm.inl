@@ -16,10 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Included by stringex.h
-
-#pragma once
-
 // VC6-compatible x86 cdecl implementation of memcchr.
 // An SSE2-capable CPU is assumed.
 // SSE2 uses _emit because VC6 does not recognize these instruction mnemonics.
