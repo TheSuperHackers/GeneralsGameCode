@@ -27,6 +27,7 @@
 #include "W3DViewView.h"
 #include "Utils.h"
 #include "ColorUtils.h"
+#include "Lib/Debug.h"
 #include "WWLib/verchk.h"
 #include "WWMath/wwmath.h"
 #include "WWAudio/WWAudio.h"
@@ -48,11 +49,6 @@ static char THIS_FILE[] = __FILE__;
 
 
 HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
-
-/// just to satisfy the game libraries we link to
-HWND ApplicationHWnd = nullptr;
-
-const char *gAppPrefix = "w3_";
 
 // Where are the default string files?
 const char *g_strFile = "data\\Generals.str";
@@ -170,6 +166,8 @@ Do_Version_Check ()
 //
 BOOL CW3DViewApp::InitInstance ()
 {
+	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
 	//  of your final executable, you should remove from the following
@@ -408,6 +406,9 @@ CW3DViewApp::ExitInstance()
 	}
 
 	Debug_Refs ();
+
+	DEBUG_SHUTDOWN();
+
 	return CWinApp::ExitInstance ();
 }
 

@@ -1,9 +1,10 @@
-# Base headers shared by all libraries
+# Base headers and debug utilities shared by all libraries
 set(LIBRARIES_INCLUDE_SRC
     Include/Lib/BaseFunctions.h
     Include/Lib/BaseType.h
     Include/Lib/Coord2D.h
     Include/Lib/Coord3D.h
+    Include/Lib/Debug.h
     Include/Lib/ICoord2D.h
     Include/Lib/ICoord3D.h
     Include/Lib/IRegion2D.h
@@ -22,19 +23,28 @@ set(LIBRARIES_INCLUDE_SRC
     Include/Precompiled/Precompiled/BaseTypes.h
 )
 
-add_library(core_libraries INTERFACE)
+set(LIBRARIES_SOURCE_SRC
+    Source/Lib/Debug.cpp
+)
 
-target_include_directories(core_libraries INTERFACE
+add_library(core_libraries STATIC)
+
+target_include_directories(core_libraries PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/Include/Precompiled
 )
 
-target_sources(core_libraries PRIVATE ${LIBRARIES_INCLUDE_SRC})
+target_sources(core_libraries PRIVATE ${LIBRARIES_INCLUDE_SRC} ${LIBRARIES_SOURCE_SRC})
 
-target_link_libraries(core_libraries INTERFACE
+target_link_libraries(core_libraries PUBLIC
     deps_precompiled # Gives force included headers. Link early.
     core_profile_legacy
     core_profile_tracy
+)
+
+target_link_libraries(core_libraries PRIVATE
+    core_config
+    deps_utility
 )
 
 # Makes the game base macros and types available in every C++ translation unit
@@ -46,11 +56,11 @@ target_link_libraries(core_libraries INTERFACE
 # as their first entry, because the Visual Studio generator prepends the precompiled
 # header to the forced include list, so this one would otherwise be read too late.
 if (MSVC)
-    target_compile_options(core_libraries INTERFACE
+    target_compile_options(core_libraries PUBLIC
         "$<$<COMPILE_LANGUAGE:CXX>:/FIPrecompiled/BasePrecomp.h>"
     )
 else()
-    target_compile_options(core_libraries INTERFACE
+    target_compile_options(core_libraries PUBLIC
         "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-include Precompiled/BasePrecomp.h>"
     )
 endif()

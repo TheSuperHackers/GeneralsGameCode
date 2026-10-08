@@ -20,4 +20,4 @@
 
 #pragma once
 
-#include "Common/Debug.h"
+#include "Lib/Debug.h"

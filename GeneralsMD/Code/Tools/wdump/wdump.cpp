@@ -26,6 +26,8 @@
 #include "wdumpdoc.h"
 #include "wdview.h"
 
+#include "Lib/Debug.h"
+
 #include "fcntl.h"
 
 #ifdef RTS_DEBUG
@@ -36,11 +38,6 @@ static char THIS_FILE[] = __FILE__;
 
 
 HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
-
-/// just to satisfy the game libraries we link to
-HWND ApplicationHWnd = nullptr;
-
-const char *gAppPrefix = "wd_";
 
 // Where are the default string files?
 const char *g_strFile = "data\\Generals.str";
@@ -105,6 +102,8 @@ class CWDumpCommandLineInfo : public CCommandLineInfo
 
 BOOL CWdumpApp::InitInstance()
 {
+	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
 	//  of your final executable, you should remove from the following
@@ -205,6 +204,13 @@ BOOL CWdumpApp::InitInstance()
 	doc->UpdateAllViews(nullptr);
 
 	return TRUE;
+}
+
+int CWdumpApp::ExitInstance()
+{
+	DEBUG_SHUTDOWN();
+
+	return CWinApp::ExitInstance();
 }
 
 /////////////////////////////////////////////////////////////////////////////

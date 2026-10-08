@@ -1,6 +1,5 @@
 set(WWSTUB_SRC
     wwallocstub.cpp
-    wwdebugstub.cpp
 )
 
 add_library(core_wwstub STATIC)
