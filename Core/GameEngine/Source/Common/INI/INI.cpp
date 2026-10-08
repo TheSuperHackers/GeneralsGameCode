@@ -372,6 +372,22 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Discard lines up to and including the next end token. */
+//-------------------------------------------------------------------------------------------------
+void INI::skipToEndToken( void )
+{
+	while( !m_endOfFile )
+	{
+		readLine();
+		const char *token = strtok( m_buffer, getSeps() );
+		if( token && stricmp( token, getEndToken() ) == 0 )
+		{
+			return;
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
 //-------------------------------------------------------------------------------------------------
 UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
@@ -421,9 +437,9 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				}
 				else
 				{
-					DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Unknown block '%s'",
-														 getLineNum(), getFilename().str(), token ) );
-					throw INI_UNKNOWN_TOKEN;
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown block '%s', skipped to its '%s'",
+														 getLineNum(), getFilename().str(), token, getEndToken() ) );
+					skipToEndToken();
 				}
 
 			}
@@ -1563,8 +1579,8 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 				if (!found)
 				{
-					DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'",
-														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown field '%s', skipped",
+														 INI::getLineNum(), INI::getFilename().str(), field) );
 				}
 
 			}
