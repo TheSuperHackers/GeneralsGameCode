@@ -55,9 +55,6 @@
 //#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
 #define DEBUG_THREADSAFE
-#ifdef DEBUG_THREADSAFE
-#include "Common/CriticalSection.h"
-#endif
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/CRCDebug.h"
@@ -72,12 +69,6 @@
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
-
-// Horrible reference, but we really, really need to know if we are windowed.
-extern bool DX8Wrapper_IsWindowed;
-extern HWND ApplicationHWnd;
-
-extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 
 // ----------------------------------------------------------------------------
@@ -115,6 +106,19 @@ static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bu
 static int theDebugFlags = 0;
 static DWORD theMainThreadID = 0;
 static DebugCrashHandler theCrashHandler = nullptr;
+#ifdef ALLOW_DEBUG_UTILS
+static DebugIgnoreAssertsQuery theIgnoreAssertsQuery = nullptr;
+static DebugMainWindowQuery theMainWindowQuery = nullptr;
+static DebugStackDumpHandler theStackDumpHandler = nullptr;
+static DebugCrashIgnoredHandler theCrashIgnoredHandler = nullptr;
+static DebugLogHandler theLogHandler = nullptr;
+#endif
+#if defined(DEBUG_LOGGING) && defined(DEBUG_THREADSAFE)
+// Created in DebugInit and never deleted, because other threads can be inside a log function
+// when DebugShutdown is called.
+static CRITICAL_SECTION theLogCriticalSection;
+static bool theLogCriticalSectionInitialized = false;
+#endif
 // ----------------------------------------------------------------------------
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
@@ -149,34 +153,53 @@ static void doStackDump();
 // PRIVATE FUNCTIONS
 // ----------------------------------------------------------------------------
 
+#ifdef ALLOW_DEBUG_UTILS
 // ----------------------------------------------------------------------------
 inline Bool ignoringAsserts()
 {
-	if (!DX8Wrapper_IsWindowed)
-		return true;
-	if (TheGlobalData && TheGlobalData->m_headless)
-		return true;
-#ifdef DEBUG_CRASHING
-	if (TheGlobalData && TheGlobalData->m_debugIgnoreAsserts)
-		return true;
-#endif
-
-	return false;
+	return theIgnoreAssertsQuery != nullptr && theIgnoreAssertsQuery();
 }
 
 // ----------------------------------------------------------------------------
 inline HWND getThreadHWND()
 {
-	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:nullptr;
+	if (theMainThreadID == GetCurrentThreadId() && theMainWindowQuery != nullptr)
+		return (HWND)theMainWindowQuery();
+
+	return nullptr;
 }
 
 // ----------------------------------------------------------------------------
 
-int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
+static int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
 {
 	HWND threadHWND = getThreadHWND();
 	return ::MessageBox(threadHWND, lpText, lpCaption, uType);
 }
+#endif
+
+#if defined(DEBUG_LOGGING) && defined(DEBUG_THREADSAFE)
+// ----------------------------------------------------------------------------
+// Serializes the log functions. Does nothing before DebugInit.
+class ScopedLogLock
+{
+public:
+	ScopedLogLock() : m_isLocked(theLogCriticalSectionInitialized)
+	{
+		if (m_isLocked)
+			::EnterCriticalSection(&theLogCriticalSection);
+	}
+
+	~ScopedLogLock()
+	{
+		if (m_isLocked)
+			::LeaveCriticalSection(&theLogCriticalSection);
+	}
+
+private:
+	const bool m_isLocked;
+};
+#endif
 
 // ----------------------------------------------------------------------------
 // getCurrentTimeString
@@ -256,9 +279,10 @@ static void doLogOutput(const char *buffer, const char *endline)
 		::OutputDebugString(endline);
 	}
 
-#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
-	addCRCDebugLineNoCounter("%s%s", buffer, endline);
-#endif
+	if (theLogHandler != nullptr)
+	{
+		theLogHandler(buffer, endline);
+	}
 }
 #endif // DEBUG_LOGGING
 
@@ -316,13 +340,10 @@ static int doCrashBox(const char *buffer, Bool logResult)
 */
 static void doStackDump()
 {
-	const int STACKTRACE_SIZE	= 24;
-	const int STACKTRACE_SKIP = 2;
-	void* stacktrace[STACKTRACE_SIZE];
-
-	doLogOutput("\nStack Dump:");
-	::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
-	::StackDumpFromAddresses(stacktrace, STACKTRACE_SIZE, doLogOutput);
+	if (theStackDumpHandler != nullptr)
+	{
+		theStackDumpHandler(doLogOutput);
+	}
 }
 #endif
 
@@ -368,66 +389,66 @@ void DebugInit(int flags)
 
 		theMainThreadID = GetCurrentThreadId();
 
-	#ifdef DEBUG_LOGGING
-
-		// TheSuperHackers @info Debug initialization can happen very early.
-		// Determine the client instance id before creating the log file with an instance specific name.
-		CommandLine::parseCommandLineForStartup();
-
-		if (!rts::ClientInstance::initialize())
-			return;
-
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
-		if (char *pEnd = strrchr(dirbuf, '\\'))
+	#if defined(DEBUG_LOGGING) && defined(DEBUG_THREADSAFE)
+		if (!theLogCriticalSectionInitialized)
 		{
-			*(pEnd + 1) = 0;
-		}
-
-		static_assert(ARRAY_SIZE(theLogFileNamePrev) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
-		strcpy(theLogFileNamePrev, dirbuf);
-		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
-		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
-		if (rts::ClientInstance::getInstanceId() > 1u)
-		{
-			size_t offset = strlen(theLogFileNamePrev);
-			snprintf(theLogFileNamePrev + offset, ARRAY_SIZE(theLogFileNamePrev) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
-		}
-		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
-
-		static_assert(ARRAY_SIZE(theLogFileName) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
-		strcpy(theLogFileName, dirbuf);
-		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
-		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
-		if (rts::ClientInstance::getInstanceId() > 1u)
-		{
-			size_t offset = strlen(theLogFileName);
-			snprintf(theLogFileName + offset, ARRAY_SIZE(theLogFileName) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
-		}
-		strlcat(theLogFileName, ".txt", ARRAY_SIZE(theLogFileNamePrev));
-
-		remove(theLogFileNamePrev);
-		if (rename(theLogFileName, theLogFileNamePrev) != 0)
-		{
-#ifdef DEBUG_LOGGING
-			DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", theLogFileName, theLogFileNamePrev);
-#endif
-			if (remove(theLogFileName) != 0)
-			{
-#ifdef DEBUG_LOGGING
-				DebugLog("Warning: Failed to remove file '%s'", theLogFileName);
-#endif
-			}
-		}
-
-		theLogFile = fopen(theLogFileName, "w");
-		if (theLogFile != nullptr)
-		{
-			DebugLog("Log %s opened: %s", theLogFileName, getCurrentTimeString());
+			::InitializeCriticalSection(&theLogCriticalSection);
+			theLogCriticalSectionInitialized = true;
 		}
 	#endif
 	}
 
+}
+#endif
+
+// ----------------------------------------------------------------------------
+// DebugOpenLogFile
+// ----------------------------------------------------------------------------
+#ifdef DEBUG_LOGGING
+/**
+	Open the log file in the folder of the executable. The prefix and suffix are
+	put around the name of the log file, so that applications and their instances
+	can write to different files. The log file of the previous run is kept under
+	another name. Until this is called, messages are logged to the console only.
+*/
+void DebugOpenLogFile(const char *prefix, const char *suffix)
+{
+	char dirbuf[ _MAX_PATH ];
+	::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
+	if (char *pEnd = strrchr(dirbuf, '\\'))
+	{
+		*(pEnd + 1) = 0;
+	}
+
+	static_assert(ARRAY_SIZE(theLogFileNamePrev) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
+	strcpy(theLogFileNamePrev, dirbuf);
+	strlcat(theLogFileNamePrev, prefix, ARRAY_SIZE(theLogFileNamePrev));
+	strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
+	strlcat(theLogFileNamePrev, suffix, ARRAY_SIZE(theLogFileNamePrev));
+	strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
+
+	static_assert(ARRAY_SIZE(theLogFileName) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
+	strcpy(theLogFileName, dirbuf);
+	strlcat(theLogFileName, prefix, ARRAY_SIZE(theLogFileNamePrev));
+	strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
+	strlcat(theLogFileName, suffix, ARRAY_SIZE(theLogFileNamePrev));
+	strlcat(theLogFileName, ".txt", ARRAY_SIZE(theLogFileNamePrev));
+
+	remove(theLogFileNamePrev);
+	if (rename(theLogFileName, theLogFileNamePrev) != 0)
+	{
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", theLogFileName, theLogFileNamePrev);
+		if (remove(theLogFileName) != 0)
+		{
+			DebugLog("Warning: Failed to remove file '%s'", theLogFileName);
+		}
+	}
+
+	theLogFile = fopen(theLogFileName, "w");
+	if (theLogFile != nullptr)
+	{
+		DebugLog("Log %s opened: %s", theLogFileName, getCurrentTimeString());
+	}
 }
 #endif
 
@@ -441,7 +462,7 @@ void DebugInit(int flags)
 void DebugLog(const char *format, ...)
 {
 #ifdef DEBUG_THREADSAFE
-	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
+	ScopedLogLock scopedLogLock;
 #endif
 
 	if (theDebugFlags == 0)
@@ -468,7 +489,7 @@ void DebugLog(const char *format, ...)
 void DebugLogRaw(const char *format, ...)
 {
 #ifdef DEBUG_THREADSAFE
-	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
+	ScopedLogLock scopedLogLock;
 #endif
 
 	if (theDebugFlags == 0)
@@ -542,10 +563,7 @@ void DebugCrash(const char *format, ...)
 		doLogOutput(theCrashBuffer);
 #endif
 #ifdef DEBUG_STACKTRACE
-		if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
-		{
-			doStackDump();
-		}
+		doStackDump();
 #endif
 	}
 
@@ -573,10 +591,10 @@ void DebugCrash(const char *format, ...)
 		}
 		if (yn == IDYES)
 			*TheCurrentIgnoreCrashPtr = 1;
-		if( TheKeyboard )
-			TheKeyboard->resetKeys();
-		if( TheMouse )
-			TheMouse->reset();
+		if (theCrashIgnoredHandler != nullptr)
+		{
+			theCrashIgnoredHandler();
+		}
 	}
 
 }
@@ -630,6 +648,34 @@ void DebugSetFlags(int flags)
 	theDebugFlags = flags;
 }
 
+// ----------------------------------------------------------------------------
+// Host callbacks
+// ----------------------------------------------------------------------------
+void DebugSetIgnoreAssertsQuery(DebugIgnoreAssertsQuery query)
+{
+	theIgnoreAssertsQuery = query;
+}
+
+void DebugSetMainWindowQuery(DebugMainWindowQuery query)
+{
+	theMainWindowQuery = query;
+}
+
+void DebugSetStackDumpHandler(DebugStackDumpHandler handler)
+{
+	theStackDumpHandler = handler;
+}
+
+void DebugSetCrashIgnoredHandler(DebugCrashIgnoredHandler handler)
+{
+	theCrashIgnoredHandler = handler;
+}
+
+void DebugSetLogHandler(DebugLogHandler handler)
+{
+	theLogHandler = handler;
+}
+
 #endif	// ALLOW_DEBUG_UTILS
 
 // ----------------------------------------------------------------------------
@@ -643,6 +689,123 @@ void DebugSetCrashHandler(DebugCrashHandler handler)
 {
 	theCrashHandler = handler;
 }
+
+DebugCrashHandler DebugGetCrashHandler()
+{
+	return theCrashHandler;
+}
+
+// ----------------------------------------------------------------------------
+// GAME ENGINE
+// ----------------------------------------------------------------------------
+
+// Horrible reference, but we really, really need to know if we are windowed.
+extern bool DX8Wrapper_IsWindowed;
+extern HWND ApplicationHWnd;
+
+extern const char *gAppPrefix; /// So WB can have a different log file name.
+
+#ifdef ALLOW_DEBUG_UTILS
+// ----------------------------------------------------------------------------
+static bool queryIgnoreAsserts()
+{
+	if (!DX8Wrapper_IsWindowed)
+		return true;
+	if (TheGlobalData && TheGlobalData->m_headless)
+		return true;
+#ifdef DEBUG_CRASHING
+	if (TheGlobalData && TheGlobalData->m_debugIgnoreAsserts)
+		return true;
+#endif
+
+	return false;
+}
+
+// ----------------------------------------------------------------------------
+static void *queryMainWindow()
+{
+	return ApplicationHWnd;
+}
+
+#ifdef DEBUG_STACKTRACE
+// ----------------------------------------------------------------------------
+static void handleStackDump(void (*output)(const char *line))
+{
+	if (TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace)
+		return;
+
+	const int STACKTRACE_SIZE	= 24;
+	// Skips FillStackAddresses, this function and the debug function that calls it, so that the trace begins at DebugCrash.
+	const int STACKTRACE_SKIP = 3;
+	void* stacktrace[STACKTRACE_SIZE];
+
+	output("\nStack Dump:");
+	::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
+	::StackDumpFromAddresses(stacktrace, STACKTRACE_SIZE, output);
+}
+#endif
+
+// ----------------------------------------------------------------------------
+static void handleCrashIgnored()
+{
+	if( TheKeyboard )
+		TheKeyboard->resetKeys();
+	if( TheMouse )
+		TheMouse->reset();
+}
+
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
+// ----------------------------------------------------------------------------
+static void handleLog(const char *buffer, const char *endline)
+{
+	addCRCDebugLineNoCounter("%s%s", buffer, endline);
+}
+#endif
+
+// ----------------------------------------------------------------------------
+// GameDebugInit
+// ----------------------------------------------------------------------------
+/**
+	Initialize the debug utilities for an application that uses the game engine.
+	This connects them to the game engine and opens the log file of the client instance.
+*/
+void GameDebugInit(int flags)
+{
+	// just quietly allow multiple calls to this, so that static ctors can call it.
+	if (DebugGetFlags() != 0)
+		return;
+
+	DebugSetIgnoreAssertsQuery(queryIgnoreAsserts);
+	DebugSetMainWindowQuery(queryMainWindow);
+#ifdef DEBUG_STACKTRACE
+	DebugSetStackDumpHandler(handleStackDump);
+#endif
+	DebugSetCrashIgnoredHandler(handleCrashIgnored);
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
+	DebugSetLogHandler(handleLog);
+#endif
+
+	DebugInit(flags);
+
+#ifdef DEBUG_LOGGING
+	// TheSuperHackers @info Debug initialization can happen very early.
+	// Determine the client instance id before creating the log file with an instance specific name.
+	CommandLine::parseCommandLineForStartup();
+
+	if (!rts::ClientInstance::initialize())
+		return;
+
+	char suffix[32];
+	suffix[0] = 0;
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		snprintf(suffix, ARRAY_SIZE(suffix), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+	}
+
+	DebugOpenLogFile(gAppPrefix, suffix);
+#endif
+}
+#endif // ALLOW_DEBUG_UTILS
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
@@ -685,9 +848,10 @@ static void TriggerMiniDump()
 
 void ReleaseCrash(const char *reason)
 {
-	if (theCrashHandler != nullptr)
+	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
+	if (crashHandler != nullptr)
 	{
-		theCrashHandler(reason);
+		crashHandler(reason);
 	}
 
 	/// do additional reporting on the crash, if possible
@@ -751,7 +915,7 @@ void ReleaseCrash(const char *reason)
 #if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
+	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 	}
@@ -761,7 +925,7 @@ void ReleaseCrash(const char *reason)
 //	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
 // crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
-	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
+	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
 			"Technical Difficulties...",
@@ -782,9 +946,10 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		return;
 	}
 
-	if (theCrashHandler != nullptr)
+	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
+	if (crashHandler != nullptr)
 	{
-		theCrashHandler(m.str());
+		crashHandler(m.str());
 	}
 
 	TriggerMiniDump();
@@ -801,7 +966,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		}
 	}
 
-	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
+	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}

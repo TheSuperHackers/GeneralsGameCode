@@ -127,6 +127,26 @@ class AsciiString;
 	#define DEBUG_INIT(f)						do { DebugInit(f); } while (0)
 	#define DEBUG_SHUTDOWN()				do { DebugShutdown(); } while (0)
 
+	// TheSuperHackers @info The application that hosts the debug utilities connects them
+	// to its own state with these callbacks. All of them are optional.
+
+	// Returns true while debug crashes must be ignored without showing the crash box.
+	typedef bool (*DebugIgnoreAssertsQuery)();
+	// Returns the HWND of the window that owns the boxes shown from the main thread.
+	typedef void *(*DebugMainWindowQuery)();
+	// Writes the stack trace of a debug crash line by line to the given output.
+	typedef void (*DebugStackDumpHandler)(void (*output)(const char *line));
+	// Called after a debug crash was ignored.
+	typedef void (*DebugCrashIgnoredHandler)();
+	// Receives every log message in addition to the log file and the console.
+	typedef void (*DebugLogHandler)(const char *buffer, const char *endline);
+
+	DEBUG_EXTERN_C void DebugSetIgnoreAssertsQuery(DebugIgnoreAssertsQuery query);
+	DEBUG_EXTERN_C void DebugSetMainWindowQuery(DebugMainWindowQuery query);
+	DEBUG_EXTERN_C void DebugSetStackDumpHandler(DebugStackDumpHandler handler);
+	DEBUG_EXTERN_C void DebugSetCrashIgnoredHandler(DebugCrashIgnoredHandler handler);
+	DEBUG_EXTERN_C void DebugSetLogHandler(DebugLogHandler handler);
+
 #else
 
 	#define DEBUG_INIT(f)						((void)0)
@@ -138,6 +158,7 @@ class AsciiString;
 
 	DEBUG_EXTERN_C void DebugLog(const char *format, ...);
 	DEBUG_EXTERN_C void DebugLogRaw(const char *format, ...);
+	DEBUG_EXTERN_C void DebugOpenLogFile(const char *prefix, const char *suffix);
 	DEBUG_EXTERN_C const char* DebugGetLogFileName();
 	DEBUG_EXTERN_C const char* DebugGetLogFileNamePrev();
 
@@ -207,15 +228,29 @@ class AsciiString;
 
 #endif
 
+// Debug and release crashes go to the crash handler instead of a crash box,
+// for example to fail a unit test. A debug crash then continues, a release crash still exits.
+typedef void (*DebugCrashHandler)(const char *message);
+DEBUG_EXTERN_C void DebugSetCrashHandler(DebugCrashHandler handler);
+DEBUG_EXTERN_C DebugCrashHandler DebugGetCrashHandler();
+
+#ifdef ALLOW_DEBUG_UTILS
+
+	// Initializes the debug utilities for an application that uses the game engine.
+	DEBUG_EXTERN_C void GameDebugInit(int flags);
+
+	#define GAME_DEBUG_INIT(f)			do { GameDebugInit(f); } while (0)
+
+#else
+
+	#define GAME_DEBUG_INIT(f)			((void)0)
+
+#endif
+
 DEBUG_EXTERN_C void ReleaseCrash(const char* reason);
 DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m);
 
 #define RELEASE_CRASH(m)				do { ReleaseCrash(m); } while (0)
 #define RELEASE_CRASHLOCALIZED(p, m)		do { ReleaseCrashLocalized(p, m); } while (0)
-
-// Debug and release crashes go to the crash handler instead of a crash box,
-// for example to fail a unit test. A debug crash then continues, a release crash still exits.
-typedef void (*DebugCrashHandler)(const char *message);
-DEBUG_EXTERN_C void DebugSetCrashHandler(DebugCrashHandler handler);
 
 // MACROS //////////////////////////////////////////////////////////////////

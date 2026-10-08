@@ -51,7 +51,6 @@ public:
 		TheUnicodeStringCriticalSection = &m_unicodeString;
 		TheDmaCriticalSection = &m_dma;
 		TheMemoryPoolCriticalSection = &m_memoryPool;
-		TheDebugLogCriticalSection = &m_debugLog;
 	}
 
 	~EngineCriticalSections()
@@ -60,7 +59,6 @@ public:
 		TheUnicodeStringCriticalSection = nullptr;
 		TheDmaCriticalSection = nullptr;
 		TheMemoryPoolCriticalSection = nullptr;
-		TheDebugLogCriticalSection = nullptr;
 	}
 
 private:
@@ -68,7 +66,6 @@ private:
 	CriticalSection m_unicodeString;
 	CriticalSection m_dma;
 	CriticalSection m_memoryPool;
-	CriticalSection m_debugLog;
 };
 
 static int runBenchmarks(int argc, char **argv)
@@ -78,7 +75,7 @@ static int runBenchmarks(int argc, char **argv)
 
 	DebugSetCrashHandler(printCrash);
 
-	// Same startup as DebugInit does in logging builds, so that the benchmarks run alike in every build.
+	// Same startup as GameDebugInit does in logging builds, so that the benchmarks run alike in every build.
 	initMemoryManager();
 	CommandLine::parseCommandLineForStartup();
 	rts::ClientInstance::initialize();
