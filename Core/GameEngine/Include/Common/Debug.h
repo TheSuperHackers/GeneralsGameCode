@@ -54,7 +54,6 @@ class AsciiString;
 	#define DEBUG_LOGGING 1
 	#define DISABLE_DEBUG_CRASHING 1
 	#define DISABLE_DEBUG_STACKTRACE 1
-	#define DISABLE_DEBUG_PROFILE 1
 #endif
 
 // These are stolen from the WW3D Debug file. REALLY useful. :-)
@@ -65,7 +64,7 @@ class AsciiString;
 // by default, turn on ALLOW_DEBUG_UTILS if RTS_DEBUG is turned on.
 #if defined(RTS_DEBUG) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
 	#define ALLOW_DEBUG_UTILS 1
-#elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE) || defined(DEBUG_PROFILE)
+#elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE)
 	// TheSuperHackers @tweak also turn on when any of the above options is already set.
 	#define ALLOW_DEBUG_UTILS 1
 #endif
@@ -83,9 +82,6 @@ class AsciiString;
 	#ifndef DEBUG_LOGGING
 		#define DEBUG_LOGGING 1 // TheSuperHackers @build Stack trace requires logging.
 	#endif
-#endif
-#if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_PROFILE) && !defined(DISABLE_DEBUG_PROFILE)
-	#define DEBUG_PROFILE 1
 #endif
 
 #ifdef __cplusplus
@@ -221,44 +217,5 @@ DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiStrin
 // for example to fail a unit test. A debug crash then continues, a release crash still exits.
 typedef void (*DebugCrashHandler)(const char *message);
 DEBUG_EXTERN_C void DebugSetCrashHandler(DebugCrashHandler handler);
-
-
-#ifdef DEBUG_PROFILE
-
-class SimpleProfiler
-{
-private:
-	__int64 m_freq;
-	__int64 m_startThisSession;
-	__int64 m_totalThisSession;
-	__int64 m_totalAllSessions;
-	int			m_numSessions;
-
-public:
-
-	SimpleProfiler();
-	void start();
-	void stop();
-	void stopAndLog(const char *msg, int howOftenToLog, int howOftenToResetAvg);
-	double getTime();				// of most recent session, in milliseconds
-	int getNumSessions();
-	double getTotalTime();	// total over all sessions, in milliseconds
-	double getAverageTime();	// averaged over all sessions, in milliseconds
-
-};
-
-#define BEGIN_PROFILE(uniqueid) \
-	static SimpleProfiler prof_##uniqueid; \
-	prof_##uniqueid.start();
-
-#define END_PROFILE(uniqueid, msg, howoftentolog, howoftentoreset) \
-	prof_##uniqueid.stopAndLog(msg, howoftentolog, howoftentoreset);
-
-#else
-
-#define BEGIN_PROFILE(uniqueid)
-#define END_PROFILE(uniqueid, msg, howoftentolog, howoftentoreset)
-
-#endif
 
 // MACROS //////////////////////////////////////////////////////////////////
