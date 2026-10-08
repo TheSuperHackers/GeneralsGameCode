@@ -43,7 +43,7 @@ static int runBenchmarks(int argc, char **argv)
 {
 	DebugSetCrashHandler(printCrash);
 
-	// Same startup as DebugInit does in logging builds, so that the benchmarks run alike in every build.
+	// Same startup as GameDebugInit does in logging builds, so that the benchmarks run alike in every build.
 	initMemoryManager();
 	CommandLine::parseCommandLineForStartup();
 	rts::ClientInstance::initialize();

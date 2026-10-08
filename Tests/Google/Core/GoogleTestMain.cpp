@@ -46,7 +46,7 @@ static int runTests(int argc, char **argv)
 	::testing::InitGoogleTest(&argc, testArgs.data());
 	DebugSetCrashHandler(failTestOnCrash);
 
-	// Same startup as DebugInit does in logging builds, so that the tests run alike in every build.
+	// Same startup as GameDebugInit does in logging builds, so that the tests run alike in every build.
 	initMemoryManager();
 	CommandLine::parseCommandLineForStartup();
 	rts::ClientInstance::initialize();
