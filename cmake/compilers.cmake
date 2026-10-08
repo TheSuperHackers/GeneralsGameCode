@@ -41,6 +41,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 if (NOT IS_VS6_BUILD)
     if (MSVC)
