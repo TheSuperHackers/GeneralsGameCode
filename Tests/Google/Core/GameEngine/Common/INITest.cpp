@@ -16,31 +16,35 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdio>
 #include <gtest/gtest.h>
 
 #include "Common/INI.h"
 
 TEST(INI, OversizedIntegersMatchLegacyParser)
 {
-	const char* tokens[] = {
-		"9999999999999999999", "+9999999999999999999",
-		"-9999999999999999999", "9999999999999999999suffix",
-		"9223372036854775807", "-9223372036854775808",
-		"9223372036854775808", "-9223372036854775809",
-		"18446744073709551616", "-18446744073709551616",
-		"99999999999999999999999999999999999999999999999999"
+	const struct {
+		const char* token;
+		Int signedExpected;
+		UnsignedInt unsignedExpected;
+	} cases[] = {
+		{"9999999999999999999", -1, 2313682943u},
+		{"+9999999999999999999", -1, 2313682943u},
+		{"-9999999999999999999", 0, 1981284353u},
+		{"9999999999999999999suffix", -1, 2313682943u},
+		{"9223372036854775807", -1, 4294967295u},
+		{"-9223372036854775808", 0, 0u},
+		{"9223372036854775808", -1, 0u},
+		{"-9223372036854775809", 0, 4294967295u},
+		{"18446744073709551616", -1, 4294967295u},
+		{"-18446744073709551616", 0, 4294967295u},
+		{"99999999999999999999999999999999999999999999999999", -1, 4294967295u}
 	};
-	for (const char* token : tokens)
+	// Windows legacy parsing saturates at 64 bits, then keeps the low 32 bits.
+	for (const auto& test : cases)
 	{
-		SCOPED_TRACE(token);
-		// Preserve the old parser's behavior on this runtime, not a portable overflow policy.
-		Int signedExpected = 0;
-		UnsignedInt unsignedExpected = 0;
-		ASSERT_EQ(std::sscanf(token, "%d", &signedExpected), 1);
-		ASSERT_EQ(std::sscanf(token, "%u", &unsignedExpected), 1);
-		EXPECT_EQ(INI::scanInt(token), signedExpected);
-		EXPECT_EQ(INI::scanUnsignedInt(token), unsignedExpected);
+		SCOPED_TRACE(test.token);
+		EXPECT_EQ(INI::scanInt(test.token), test.signedExpected);
+		EXPECT_EQ(INI::scanUnsignedInt(test.token), test.unsignedExpected);
 	}
 }
 

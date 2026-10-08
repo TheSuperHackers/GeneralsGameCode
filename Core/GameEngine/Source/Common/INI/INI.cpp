@@ -67,6 +67,7 @@
 
 #if USE_STD_FROM_CHARS_PARSING
 #include <charconv>
+#include <cstdlib>
 #include <string_view>
 #include <type_traits>
 #endif
@@ -1629,11 +1630,16 @@ Type scanType(const char* tokenString)
 
 	if constexpr (std::is_integral_v<Type>)
 	{
-		// TheSuperHackers @bugfix Preserve legacy INI parsing for integers outside the Int64 range.
+		// TheSuperHackers @bugfix Match Windows legacy parsing with defined 64-bit saturation before narrowing.
 		if (ec == std::errc::result_out_of_range)
 		{
+			char* end;
 			Type value;
-			if (sscanf(tokenString, std::is_signed_v<Type> ? "%d" : "%u", &value) != 1)
+			if constexpr (std::is_signed_v<Type>)
+				value = static_cast<Type>(std::strtoll(tokenString, &end, 10));
+			else
+				value = static_cast<Type>(std::strtoull(tokenString, &end, 10));
+			if (end == tokenString)
 				throw INI_INVALID_DATA;
 			return value;
 		}
