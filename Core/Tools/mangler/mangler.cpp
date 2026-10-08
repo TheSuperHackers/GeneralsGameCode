@@ -118,7 +118,6 @@ int main(int argc, char **argv)
 
 
 	// Set up a UDP listener
-	uint8  *buff=new uint8[1024];
 	int     retval;
 	UDP     udp;
 	UDP     udp2;

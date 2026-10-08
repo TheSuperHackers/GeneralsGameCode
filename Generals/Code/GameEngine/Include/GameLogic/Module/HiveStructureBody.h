@@ -53,7 +53,7 @@ public:
 		{
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
 			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

@@ -328,7 +328,8 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 	//find today's stats
 	const char* pToday = strstr( szHTTPStats, "Today" );
 	if( !pToday )
-	{	//error
+	{
+		//error
 		DEBUG_LOG(( "Unable to parse win/loss stats.  Could not find 'Today' in:\n%s", szHTTPStats ));
 		return;
 	}
@@ -337,7 +338,8 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 
 	//find win/loss for each side
 	for( int i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); i++)
-	{	//get current side (USA, GLA, etc.)
+	{
+		//get current side (USA, GLA, etc.)
 		const PlayerTemplate* pTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(i);
 		if( !pTemplate->isPlayableSide()  ||  pTemplate->getSide().compare("Boss") == 0 )
 			continue;  //skip non-players
@@ -349,7 +351,8 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 		//find this side
 		const char* pSide = strstr( pToday, side.str() );
 		if( pSide == nullptr )
-		{	//error, skip this side
+		{
+			//error, skip this side
 			DEBUG_LOG(( "Unable to parse win/loss stats for %s in:\n%s", side.str(), szHTTPStats ));
 			continue;
 		}

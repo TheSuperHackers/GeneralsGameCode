@@ -79,8 +79,8 @@ public:
 	void clearObstruction() { m_type = CELL_CLEAR; m_obstacleID = INVALID_ID; m_obstacleIsFence = false; m_obstacleIsTransparent = false; }
 #endif
 
-	inline Bool isObstacleTransparent() const;
-	inline Bool isObstacleFence() const;
+	Bool isObstacleTransparent() const;
+	Bool isObstacleFence() const;
 
 	/// Return estimated cost from given cell to reach goal cell
 	UnsignedInt costToGoal( PathfindCell *goal );
@@ -118,29 +118,29 @@ public:
 	/// remove all cells from closed list.
 	static Int releaseOpenList( PathfindCellList &list );
 
-	inline PathfindCell *getNextOpen() {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
-	inline PathfindCell *getPrevOpen() {return m_info->m_prevOpen?m_info->m_prevOpen->m_cell: nullptr;}
+	PathfindCell *getNextOpen() {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
+	PathfindCell *getPrevOpen() {return m_info->m_prevOpen?m_info->m_prevOpen->m_cell: nullptr;}
 
-	inline UnsignedShort getXIndex() const {return m_info->m_pos.x;}
-	inline UnsignedShort getYIndex() const {return m_info->m_pos.y;}
+	UnsignedShort getXIndex() const {return m_info->m_pos.x;}
+	UnsignedShort getYIndex() const {return m_info->m_pos.y;}
 
-	inline Bool isBlockedByAlly() const;
-	inline void setBlockedByAlly(Bool blocked);
+	Bool isBlockedByAlly() const;
+	void setBlockedByAlly(Bool blocked);
 
-	inline Bool getOpen() const {return m_info->m_open;}
-	inline Bool getClosed() const {return m_info->m_closed;}
-	inline UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
-	inline UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
+	Bool getOpen() const {return m_info->m_open;}
+	Bool getClosed() const {return m_info->m_closed;}
+	UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
+	UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
 
-	inline UnsignedInt getTotalCostDifference(PathfindCell& other) const;
+	UnsignedInt getTotalCostDifference(PathfindCell& other) const;
 
-	inline void setCostSoFar(UnsignedInt cost) { if( m_info ) m_info->m_costSoFar = cost;}
-	inline void setTotalCost(UnsignedInt cost) { if( m_info ) m_info->m_totalCost = cost;}
+	void setCostSoFar(UnsignedInt cost) { if( m_info ) m_info->m_costSoFar = cost;}
+	void setTotalCost(UnsignedInt cost) { if( m_info ) m_info->m_totalCost = cost;}
 
 	void setParentCell(PathfindCell* parent);
 	void clearParentCell();
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell() const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
+	PathfindCell* getParentCell() const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
 	Bool getPinched() const {return m_pinched;}
@@ -154,17 +154,24 @@ public:
 	void setGoalUnit(ObjectID unit, const ICoord2D &pos );
 	void setGoalAircraft(ObjectID unit, const ICoord2D &pos );
 	void setPosUnit(ObjectID unit, const ICoord2D &pos );
-	inline ObjectID getGoalUnit() const {ObjectID id = m_info?m_info->m_goalUnitID:INVALID_ID; return id;}
-	inline ObjectID getGoalAircraft() const {ObjectID id = m_info?m_info->m_goalAircraftID:INVALID_ID; return id;}
-	inline ObjectID getPosUnit() const {ObjectID id = m_info?m_info->m_posUnitID:INVALID_ID; return id;}
+	ObjectID getGoalUnit() const {ObjectID id = m_info?m_info->m_goalUnitID:INVALID_ID; return id;}
+	ObjectID getGoalAircraft() const {ObjectID id = m_info?m_info->m_goalAircraftID:INVALID_ID; return id;}
+	ObjectID getPosUnit() const {ObjectID id = m_info?m_info->m_posUnitID:INVALID_ID; return id;}
 
-	inline ObjectID getObstacleID() const;
+	ObjectID getObstacleID() const;
 
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the cell layer
 	PathfindLayerEnum getLayer() const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
 
 	void setConnectLayer( PathfindLayerEnum layer ) { m_connectsToLayer = layer; }	///< set the cell layer	connect id
 	PathfindLayerEnum getConnectLayer() const { return (PathfindLayerEnum)m_connectsToLayer; }				///< get the cell layer connect id
+
+	static Bool typesMatch(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool waterGround(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool groundRubble(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool terrain(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool crusherGround(const PathfindCell& targetCell, const PathfindCell& sourceCell);
+	static Bool groundCliff(const PathfindCell& targetCell, const PathfindCell& sourceCell);
 
 private:
 	PathfindCellInfo *m_info;

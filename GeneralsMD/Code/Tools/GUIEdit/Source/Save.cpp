@@ -1021,7 +1021,8 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 	saveDrawData( "HILITEDRAWDATA", window, fp, dataIndent );
 
 	if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
-	{//Seems cleaner to put this before the children list since this Gadget needs both
+	{
+		//Seems cleaner to put this before the children list since this Gadget needs both
 		saveGadgetData( window, fp, dataIndent );
 	}
 

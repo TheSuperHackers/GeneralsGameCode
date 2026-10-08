@@ -1832,9 +1832,9 @@ UpdateSleepTime JetAIUpdate::update()
 			setLastCommandSource( CMD_FROM_AI );
 			getStateMachine()->setState(RETURNING_FOR_LANDING);
 		}
-		else if (getFlag(HAS_PENDING_COMMAND)
+		else if (getFlag(HAS_PENDING_COMMAND) &&
 			// srj sez: if we are reloading ammo, wait will we are done before processing the pending command.
-			&& getStateMachine()->getCurrentStateID() != RELOAD_AMMO)
+			getStateMachine()->getCurrentStateID() != RELOAD_AMMO)
 		{
 			m_returnToBaseFrame = 0;
 
@@ -1953,11 +1953,11 @@ UpdateSleepTime JetAIUpdate::update()
 		Drawable *draw = jet->getDrawable();
 		if( draw )
 		{
-			if( getFlag(TAKEOFF_IN_PROGRESS)
-					|| getFlag(LANDING_IN_PROGRESS)
-					|| getObject()->isSignificantlyAboveTerrain()
-					|| isMoving()
-					|| isWaitingForPath() )
+			if( getFlag(TAKEOFF_IN_PROGRESS) ||
+					getFlag(LANDING_IN_PROGRESS) ||
+					getObject()->isSignificantlyAboveTerrain() ||
+					isMoving() ||
+					isWaitingForPath() )
 			{
 				if( !m_enginesOn )
 				{
@@ -2004,8 +2004,8 @@ Bool JetAIUpdate::chooseLocomotorSet(LocomotorSetType wst)
 //-------------------------------------------------------------------------------------------------
 void JetAIUpdate::setLocomotorGoalNone()
 {
-	if ((getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
-			&& getFlag(ALLOW_AIR_LOCO) && !getFlag(ALLOW_CIRCLING))
+	if ((getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS)) &&
+			getFlag(ALLOW_AIR_LOCO) && !getFlag(ALLOW_CIRCLING))
 	{
 		Object* jet = getObject();
 		Coord3D desiredPos = *jet->getPosition();

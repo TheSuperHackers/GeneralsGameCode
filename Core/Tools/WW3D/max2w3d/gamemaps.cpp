@@ -158,11 +158,9 @@ RefResult GameMapsClass::NotifyRefChanged
 {
 	switch (message) {
 		case REFMSG_GET_PARAM_DIM: {
-			GetParamDim *gpd = (GetParamDim*)partID;
 			break;
 		}
 		case REFMSG_GET_PARAM_NAME: {
-			GetParamName *gpn = (GetParamName*)partID;
 			return REF_STOP;
 		}
 	}

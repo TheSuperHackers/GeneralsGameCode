@@ -182,14 +182,14 @@ function(GetGitState _working_dir)
         else()
             set(ENV{GIT_COMMIT_BODY} "\"\"") # empty string.
         endif()
-        
+
         RunGitCommand(show -s "--format=%ct" ${object})
         if(exit_code EQUAL 0)
             set(ENV{GIT_COMMIT_TSTAMP} "${output}")
         else()
             set(ENV{GIT_COMMIT_TSTAMP} "0")
         endif()
-        
+
         RunGitCommand(show -s "--format=%h" ${object})
         if(exit_code EQUAL 0)
             set(ENV{GIT_HEAD_SHORT_SHA1} ${output})
@@ -208,7 +208,7 @@ function(GetGitState _working_dir)
         else()
             set(ENV{GIT_TAG} "")
         endif()
-        
+
         # >>>
         # 2. Additional git properties can be added here via the
         #    "execute_process()" command. Be sure to set them in

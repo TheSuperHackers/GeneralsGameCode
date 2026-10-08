@@ -91,7 +91,8 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update line parameters
+	{
+		// update line parameters
 		Real linePoint;
 		CWnd *pWnd;
 
@@ -228,7 +229,8 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update half size of box
+	{
+		// update half size of box
 		Real halfSize;
 		CWnd *pWnd;
 
@@ -316,7 +318,8 @@ void EmissionPanelSphere::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update sphere radius
+	{
+		// update sphere radius
 		Real radius;
 		CWnd *pWnd;
 
@@ -372,7 +375,8 @@ void EmissionPanelCylinder::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update cylinder parameters
+	{
+		// update cylinder parameters
 		CWnd *pWnd;
 
 		// first the Radius

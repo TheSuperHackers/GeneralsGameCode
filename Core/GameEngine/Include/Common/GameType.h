@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 // the default size of the world map
 #define DEFAULT_WORLD_WIDTH		64
 #define DEFAULT_WORLD_HEIGHT	64

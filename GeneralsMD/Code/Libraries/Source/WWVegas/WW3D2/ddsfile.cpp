@@ -148,7 +148,8 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	for (;level<ReductionFactor;++level)
 	{
 		if (level_size>16)
-		{	// If surface is bigger than one block (8 or 16 bytes)...
+		{
+			// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=level_mip_dec;
 		}
 	}
@@ -158,7 +159,8 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 		LevelOffsets[level]=level_offset;
 		level_offset+=level_size;
 		if (level_size>16)
-		{	// If surface is bigger than one block (8 or 16 bytes)...
+		{
+			// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=level_mip_dec;
 		}
 	}
@@ -283,13 +285,15 @@ bool DDSFileClass::Load()
 		skipped_offset+=level_size;
 		size-=level_size;
 		if (level_size>16)
-		{	// If surface is bigger than one block (8 or 16 bytes)...
+		{
+			// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=4;
 		}
 	}
 
 	// Skip the header and info block and possible unused mip levels
 	unsigned seek_size=file->Seek(SurfaceDesc.Size+4+skipped_offset);
+	(void)seek_size;
 	WWASSERT(seek_size==(SurfaceDesc.Size+4+skipped_offset));
 
 	if (size && size<0x80000000)
@@ -298,6 +302,7 @@ bool DDSFileClass::Load()
 		DDSMemory=MSGW3DNEWARRAY("DDSMemory") unsigned char[size];
 		// Read data
 		unsigned read_size=file->Read(DDSMemory,size);
+		(void)read_size;
 		// Verify we got all the data
 		WWASSERT(read_size==size);
 	}

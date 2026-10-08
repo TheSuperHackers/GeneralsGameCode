@@ -621,14 +621,14 @@ Bool Drawable::getShouldAnimate( Bool considerPower ) const
          ! obj->isKindOf( KINDOF_PRODUCED_AT_HELIPAD )  &&
         // mal sez: helicopters just look goofy if they stop animating, so keep animating them, anyway
 
-        (  obj->isDisabledByType( DISABLED_HACKED )
-				|| obj->isDisabledByType( DISABLED_PARALYZED )
-				|| obj->isDisabledByType( DISABLED_EMP )
-				|| obj->isDisabledByType( DISABLED_SUBDUED )
+        (  obj->isDisabledByType( DISABLED_HACKED ) ||
+				obj->isDisabledByType( DISABLED_PARALYZED ) ||
+				obj->isDisabledByType( DISABLED_EMP ) ||
+				obj->isDisabledByType( DISABLED_SUBDUED ) ||
 				// srj sez: unmanned things also should not animate. (eg, gattling tanks,
 				// which have a slight barrel animation even when at rest). if this causes
 				// a problem, we will need to fix gattling tanks in another way.
-				|| obj->isDisabledByType( DISABLED_UNMANNED ) )
+				obj->isDisabledByType( DISABLED_UNMANNED ) )
 
 				)
 				return FALSE;
@@ -1361,17 +1361,33 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 {
 	if (m_physicsXform != nullptr)
 	{
-		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
-		// All calculations are originally catered to a 30 fps logic step.
+		// TheSuperHackers @tweak Advance physics only on WW Sync frames.
 		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
+			m_physicsXform->setPrevTotals();
 			calcPhysicsXform(*m_physicsXform);
+
+			// New or previously undrawn objects have no result from the previous logic step.
+			if (m_physicsXform->m_syncTime != WW3D::Get_Previous_Sync_Time())
+			{
+				m_physicsXform->setPrevTotals();
+			}
+			m_physicsXform->m_syncTime = WW3D::Get_Sync_Time();
 		}
 
-		mtx->Translate(0.0f, 0.0f, m_physicsXform->m_totalZ);
-		mtx->Rotate_Y( m_physicsXform->m_totalPitch );
-		mtx->Rotate_X( -m_physicsXform->m_totalRoll );
-		mtx->Rotate_Z( m_physicsXform->m_totalYaw );
+		// TheSuperHackers @tweak bobtista 14/09/2026 Interpolate the rendered transform between
+		// logic frames, so the motion stays smooth when the render rate is above the logic rate.
+		const Real t = TheFramePacer->getLogicFramePhase();
+
+		const Real interpPitch = WWMath::Lerp(m_physicsXform->m_prevTotalPitch, m_physicsXform->m_totalPitch, t);
+		const Real interpRoll = WWMath::Lerp(m_physicsXform->m_prevTotalRoll, m_physicsXform->m_totalRoll, t);
+		const Real interpYaw = WWMath::Lerp(m_physicsXform->m_prevTotalYaw, m_physicsXform->m_totalYaw, t);
+		const Real interpZ = WWMath::Lerp(m_physicsXform->m_prevTotalZ, m_physicsXform->m_totalZ, t);
+
+		mtx->Translate(0.0f, 0.0f, interpZ);
+		mtx->Rotate_Y( interpPitch );
+		mtx->Rotate_X( -interpRoll );
+		mtx->Rotate_Z( interpYaw );
 	}
 }
 
@@ -1812,7 +1828,8 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	const DamageInfo *damageInfo = obj->getBodyModule()->getLastDamageInfo();
 	if (damageInfo)
 	{
-		if (obj->getBodyModule()->getLastDamageTimestamp() > m_lastDamageTimestamp && damageInfo->in.m_amount > RECOIL_DAMAGE)
+		const UnsignedInt *lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
+		if (lastDamageTimestamp && *lastDamageTimestamp > m_lastDamageTimestamp && damageInfo->in.m_amount > RECOIL_DAMAGE)
 		{
 			Object *attacker = TheGameLogic->getObject( damageInfo->in.m_sourceID );
 			if (attacker)
@@ -1831,7 +1848,7 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 				m_locoInfo->m_accelerationRollRate -= recoil * lateral;
 			}
 
-			m_lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
+			m_lastDamageTimestamp = *lastDamageTimestamp;
 		}
 	}
 #endif
@@ -2084,23 +2101,27 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		m_locoInfo->m_wheelInfo.m_wheelAngle += (newInfo.m_wheelAngle - m_locoInfo->m_wheelInfo.m_wheelAngle)/WHEEL_SMOOTHNESS;
 
 		const Real SPRING_FACTOR = 0.9f;
-		if (pitchHeight<0) {	// Front raising up
+		if (pitchHeight<0) {
+			// Front raising up
 			newInfo.m_frontLeftHeightOffset = SPRING_FACTOR*(pitchHeight/3+pitchHeight/2);
 			newInfo.m_frontRightHeightOffset = SPRING_FACTOR*(pitchHeight/3+pitchHeight/2);
 			newInfo.m_rearLeftHeightOffset = -pitchHeight/2 + pitchHeight/4;
 			newInfo.m_rearRightHeightOffset = -pitchHeight/2 + pitchHeight/4;
-		}	else {	// Back rasing up.
+		}	else {
+			// Back rasing up.
 			newInfo.m_frontLeftHeightOffset = (-pitchHeight/4+pitchHeight/2);
 			newInfo.m_frontRightHeightOffset = (-pitchHeight/4+pitchHeight/2);
 			newInfo.m_rearLeftHeightOffset = SPRING_FACTOR*(-pitchHeight/2 + -pitchHeight/3);
 			newInfo.m_rearRightHeightOffset = SPRING_FACTOR*(-pitchHeight/2 + -pitchHeight/3);
 		}
-		if (rollHeight>0) {	// Right raising up
+		if (rollHeight>0) {
+			// Right raising up
 			newInfo.m_frontRightHeightOffset += -SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_rearRightHeightOffset += -SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_rearLeftHeightOffset += rollHeight/2 - rollHeight/4;
 			newInfo.m_frontLeftHeightOffset += rollHeight/2 - rollHeight/4;
-		}	else {	// Left rasing up.
+		}	else {
+			// Left rasing up.
 			newInfo.m_frontRightHeightOffset += -rollHeight/2 + rollHeight/4;
 			newInfo.m_rearRightHeightOffset += -rollHeight/2 + rollHeight/4;
 			newInfo.m_rearLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
@@ -2408,10 +2429,12 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 			newInfo.m_rearRightHeightOffset		= newInfo.m_rearLeftHeightOffset;
 		}
 		/*
-		if (rollHeight>0) {	// Right raising up
+		if (rollHeight>0) {
+			// Right raising up
 			newInfo.m_frontRightHeightOffset += -SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_rearLeftHeightOffset += rollHeight/2 - rollHeight/4;
-		}	else {	// Left raising up.
+		}	else {
+			// Left raising up.
 			newInfo.m_frontRightHeightOffset += -rollHeight/2 + rollHeight/4;
 			newInfo.m_rearLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 		}
@@ -3177,8 +3200,10 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 //		if( lastDamage != nullptr && lastDamage->in.m_damageType == DAMAGE_HEALING
 //			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME
 //			)
+		const UnsignedInt *lastHealingTimestamp = body->getLastHealingTimestamp();
 		if ( TheGameLogic->getFrame() > HEALING_ICON_DISPLAY_TIME && // because so many things init health early in game
-			(TheGameLogic->getFrame() - body->getLastHealingTimestamp() <= HEALING_ICON_DISPLAY_TIME) )
+			lastHealingTimestamp != nullptr &&
+			(TheGameLogic->getFrame() - *lastHealingTimestamp <= HEALING_ICON_DISPLAY_TIME) )
 
 			showHealing = TRUE;
 	}
@@ -3569,11 +3594,11 @@ void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
 	//
 	// Disabled Emoticon /Lightning
 	//                   7/
-	if( obj->isDisabledByType( DISABLED_HACKED )
-		|| obj->isDisabledByType( DISABLED_PARALYZED )
-		|| obj->isDisabledByType( DISABLED_EMP )
-		|| obj->isDisabledByType( DISABLED_SUBDUED )
-		|| obj->isDisabledByType( DISABLED_UNDERPOWERED )
+	if( obj->isDisabledByType( DISABLED_HACKED ) ||
+		obj->isDisabledByType( DISABLED_PARALYZED ) ||
+		obj->isDisabledByType( DISABLED_EMP ) ||
+		obj->isDisabledByType( DISABLED_SUBDUED ) ||
+		obj->isDisabledByType( DISABLED_UNDERPOWERED )
 		)
 	{
 		// create icon if necessary
@@ -3853,12 +3878,14 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 			outColor.green =inColor.green * 0.5f;
 
 			if( m_conditionState.test( MODELCONDITION_REALLY_DAMAGED ) == TRUE )
-			{//average the above color with red
+			{
+				//average the above color with red
 				inColor.red = (1.0f + inColor.red) * 0.5f;
 				inColor.green *= 0.5f;
 			}
 			else if ( m_conditionState.test( MODELCONDITION_DAMAGED ) == FALSE )
-			{//average the above color with green
+			{
+				//average the above color with green
 				inColor.green = (1.0f + inColor.green) * 0.5f;
 				inColor.red *= 0.5f;
 			}

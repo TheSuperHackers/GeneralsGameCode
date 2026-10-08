@@ -2,7 +2,7 @@
     "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 25,
+        "minor": 28,
         "patch": 0
     },
     "configurePresets": [
@@ -290,6 +290,68 @@
             "configurePreset": "mingw-w64-i686-profile",
             "displayName": "Build MinGW-w64 32-bit (i686) Profile",
             "description": "Build MinGW-w64 32-bit (i686) Profile"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "displayName": "Default Test (don't use directly!)",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "timeout": 300
+            }
+        },
+        {
+            "name": "win32",
+            "inherits": "default",
+            "configurePreset": "win32",
+            "displayName": "Test Windows 32bit Release",
+            "description": "Test Windows 32bit Release",
+            "configuration": "Release"
+        },
+        {
+            "name": "win32-profile",
+            "inherits": "default",
+            "configurePreset": "win32-profile",
+            "displayName": "Test Windows 32bit Profile",
+            "description": "Test Windows 32bit Profile",
+            "configuration": "Release"
+        },
+        {
+            "name": "win32-debug",
+            "inherits": "default",
+            "configurePreset": "win32-debug",
+            "displayName": "Test Windows 32bit Debug",
+            "description": "Test Windows 32bit Debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "win32-vcpkg",
+            "inherits": "default",
+            "configurePreset": "win32-vcpkg",
+            "displayName": "Test Windows 32bit VCPKG Release",
+            "description": "Test Windows 32bit VCPKG Release",
+            "configuration": "Release"
+        },
+        {
+            "name": "win32-vcpkg-profile",
+            "inherits": "default",
+            "configurePreset": "win32-vcpkg-profile",
+            "displayName": "Test Windows 32bit VCPKG Profile",
+            "description": "Test Windows 32bit VCPKG Profile",
+            "configuration": "Release"
+        },
+        {
+            "name": "win32-vcpkg-debug",
+            "inherits": "default",
+            "configurePreset": "win32-vcpkg-debug",
+            "displayName": "Test Windows 32bit VCPKG Debug",
+            "description": "Test Windows 32bit VCPKG Debug",
+            "configuration": "Debug"
         }
     ],
     "workflowPresets": [

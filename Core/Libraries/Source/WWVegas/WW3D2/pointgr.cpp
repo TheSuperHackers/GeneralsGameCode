@@ -1875,9 +1875,6 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 			indexbuffer = sort ? static_cast <IndexBufferClass*> (SortingTris) : static_cast <IndexBufferClass*> (Tris);
 		}
 
-
-		float nudge = 0;
-
 		current = 0;
 		while (current<vnum)
 		{

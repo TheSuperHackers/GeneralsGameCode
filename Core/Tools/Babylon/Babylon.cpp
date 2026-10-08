@@ -146,7 +146,7 @@ BOOL CBabylonApp::InitInstance()
 		m_pMainWnd = &dlg;
 		MainDLG = &dlg;
 
-		int nResponse = dlg.DoModal();
+		dlg.DoModal();
 
 		CloseExcel ();
 	}

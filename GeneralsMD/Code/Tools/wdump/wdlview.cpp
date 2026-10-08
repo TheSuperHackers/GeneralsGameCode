@@ -54,7 +54,6 @@ END_MESSAGE_MAP()
 
 void CWDumpListView::OnDraw(CDC* pDC)
 {
-	CDocument* pDoc = GetDocument();
 	// TODO: add draw code here
 }
 

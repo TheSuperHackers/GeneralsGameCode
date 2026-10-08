@@ -44,6 +44,7 @@
 #include "GameLogic/Module/RebuildHoleExposeDie.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
+#include "GameClient/SelectionXlat.h"
 
 
 // ------------------------------------------------------------------------------------------------
@@ -99,6 +100,23 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 {
 	if (!isDieApplicable(damageInfo))
 		return;
+
+
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+  if(TheSelectionTranslator->isHandOfGodSelectionMode())
+  {
+    if ( getObject()->isKindOf( KINDOF_STRUCTURE ) )
+    {
+      if ( damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE )
+        return;
+    }
+  }
+#endif
+
+
+
+
+
 	const RebuildHoleExposeDieModuleData *modData = getRebuildHoleExposeDieModuleData();
 	Object *us = getObject();
 
@@ -106,9 +124,9 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 	// if we are being constructed from either the first time or from a hole reconstruction
 	// we do not "spawn" a hole object
 	//
-	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer()
-		  && us->getControllingPlayer()->isPlayerActive()
-			&& !us->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer() &&
+		  us->getControllingPlayer()->isPlayerActive() &&
+			!us->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		Object *hole;
 

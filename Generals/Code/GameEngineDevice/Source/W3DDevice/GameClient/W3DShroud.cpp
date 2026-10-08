@@ -246,7 +246,8 @@ Bool W3DShroud::ReAcquireResources()
 		DEBUG_ASSERTCRASH( m_pDstTexture != nullptr, ("Failed ReAcquire of shroud texture"));
 
 		if (!m_pDstTexture)
-		{	//could not create a valid texture
+		{
+			//could not create a valid texture
 			m_dstTextureWidth = 0;
 			m_dstTextureHeight = 0;
 			return FALSE;
@@ -322,7 +323,8 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 //			UnsignedInt greenpixel = (UnsignedInt)((Real)level*((Real)((SHROUD_COLOR&0xff00)>>8)/255.0f));
 //			UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((SHROUD_COLOR&0xff0000)>>16)/255.0f));
 			if (level == 255)
-			{	//unshrouded pixels should be fully lit
+			{
+				//unshrouded pixels should be fully lit
 				redpixel = 255;
 				greenpixel = 255;
 				bluepixel = 255;
@@ -383,7 +385,8 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 //		UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((SHROUD_COLOR&0xff0000)>>16)/255.0f));
 
 		if (level == 255)
-		{	//unshrouded pixels should be fully lit
+		{
+			//unshrouded pixels should be fully lit
 			redpixel = 255;
 			greenpixel = 255;
 			bluepixel = 255;
@@ -440,7 +443,8 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 		UnsignedInt redpixel = (UnsignedInt)((Real)level*((Real)((TheGlobalData->m_shroudColor.getAsInt()&0xff0000)>>16)/255.0f));
 
 		if (level == 255)
-		{	//unshrouded pixels should be fully lit
+		{
+			//unshrouded pixels should be fully lit
 			redpixel = 255;
 			greenpixel = 255;
 			bluepixel = 255;
@@ -702,7 +706,8 @@ void W3DShroud::render(CameraClass *cam)
 #endif
 
 	if (m_clearDstTexture)
-	{	//we need to clear unused parts of the destination texture to a known
+	{
+		//we need to clear unused parts of the destination texture to a known
 		//color in order to keep map border in the state we want.
 		m_clearDstTexture=FALSE;
 
@@ -747,7 +752,8 @@ void W3DShroud::interpolateFogLevels(RECT *rect)
 	{
 		for (Int i=0; i<m_numCellsX; i++,startLevel++,finalLevel++)
 			if (*startLevel != *finalLevel)
-			{	//fog needs fading.
+			{
+				//fog needs fading.
 				if (*startLevel == *finalLevel)
 					continue;
 				else

@@ -49,7 +49,7 @@ public:
 		{
 
 			{ "RadarExtendTime", INI::parseDurationReal, nullptr, offsetof( RadarUpdateModuleData, m_radarExtendTime ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

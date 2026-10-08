@@ -30,6 +30,7 @@
 
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
+#include "Common/LocalFileSystem.h"
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
 
@@ -106,13 +107,11 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 	while (!token.isEmpty())
 	{
 		DetailedArchivedDirectoryInfoMap::iterator tempiter = dirInfo->m_directories.find(token);
-		if (tempiter == dirInfo->m_directories.end())
-		{
+		if (tempiter == dirInfo->m_directories.end()) {
 			dirInfo = &(dirInfo->m_directories[token]);
 			dirInfo->m_directoryName = token;
 		}
-		else
-		{
+		else {
 			dirInfo = &tempiter->second;
 		}
 
@@ -132,18 +131,12 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 	tokenizer.nextToken(&token, "\\/");
 
 	while (!token.isEmpty()) {
-
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
-		if (it != dirInfo->m_directories.end())
-		{
-			dirInfo = &it->second;
-		}
-		else
-		{
-			// if the directory doesn't exist, then there aren't any files to be had.
+		// if the directory doesn't exist, then there aren't any files to be had.
+		if (it == dirInfo->m_directories.end())
 			return;
-		}
 
+		dirInfo = &it->second;
 		tokenizer.nextToken(&token, "\\/");
 	}
 
@@ -153,33 +146,31 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *dirInfo, const AsciiString& currentDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
 	DetailedArchivedDirectoryInfoMap::const_iterator diriter = dirInfo->m_directories.begin();
-	while (diriter != dirInfo->m_directories.end()) {
+	for (; diriter != dirInfo->m_directories.end(); ++diriter) {
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
-		AsciiString tempdirname;
-		tempdirname = currentDirectory;
-		if ((!tempdirname.isEmpty()) && (!tempdirname.endsWith("\\"))) {
-			tempdirname.concat('\\');
+		AsciiString tempDirName = currentDirectory;
+		if (!tempDirName.isEmpty() && !tempDirName.endsWith("\\")) {
+			tempDirName.concat('\\');
 		}
-		tempdirname.concat(tempDirInfo->m_directoryName);
-		getFileListInDirectory(tempDirInfo, tempdirname, searchName, filenameList, searchSubdirectories);
-		diriter++;
+		tempDirName.concat(tempDirInfo->m_directoryName);
+		getFileListInDirectory(tempDirInfo, tempDirName, searchName, filenameList, searchSubdirectories);
 	}
 
 	ArchivedFileInfoMap::const_iterator fileiter = dirInfo->m_files.begin();
-	while (fileiter != dirInfo->m_files.end()) {
-		if (SearchStringMatches(fileiter->second.m_filename, searchName)) {
+	for (; fileiter != dirInfo->m_files.end(); ++fileiter) {
+		const ArchivedFileInfo &fileInfo = fileiter->second;
+		if (SearchStringMatches(fileInfo.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			if ((!tempfilename.isEmpty()) && (!tempfilename.endsWith("\\"))) {
+			if (!tempfilename.isEmpty() && !tempfilename.endsWith("\\")) {
 				tempfilename.concat('\\');
 			}
-			tempfilename.concat(fileiter->second.m_filename);
+			tempfilename.concat(fileInfo.m_filename);
 			if (filenameList.find(tempfilename) == filenameList.end()) {
 				// only insert into the list if its not already in there.
 				filenameList.insert(tempfilename);
 			}
 		}
-		fileiter++;
 	}
 }
 
@@ -189,7 +180,18 @@ void ArchiveFile::attachFile(File *file)
 		m_file->close();
 		m_file = nullptr;
 	}
+
 	m_file = file;
+
+	if (m_file != nullptr) {
+		if (!TheLocalFileSystem->getFileInfo(m_file->getName(), &m_fileInfo)) {
+			DEBUG_CRASH(("ArchiveFile::attachFile - Cannot query file info for '%s' unexpectedly", m_file->getName()));
+			m_fileInfo = FileInfo();
+		}
+	}
+	else {
+		m_fileInfo = FileInfo();
+	}
 }
 
 const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const
@@ -201,7 +203,7 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 	tokenizer.toLower();
 	tokenizer.nextToken(&token, "\\/");
 
-	while (!token.find('.') || tokenizer.find('.'))
+	while (!tokenizer.isEmpty())
 	{
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
 		if (it != dirInfo->m_directories.end())

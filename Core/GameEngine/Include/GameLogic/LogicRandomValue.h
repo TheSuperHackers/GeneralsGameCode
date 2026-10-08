@@ -29,8 +29,6 @@
 
 #pragma once
 
-#include "Lib/BaseType.h"
-
 // do NOT use these functions directly, rather use the macros below
 extern Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line );
 extern Int GetGameLogicRandomValueUnchanged(int lo, int hi, const char* file, int line);

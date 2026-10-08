@@ -59,7 +59,7 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData()
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 

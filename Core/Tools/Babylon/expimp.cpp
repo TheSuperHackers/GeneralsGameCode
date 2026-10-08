@@ -98,8 +98,6 @@ static void reverseWord ( OLECHAR *fp, OLECHAR *lp )
 
 static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 {
-	int slash = FALSE;
-
 	{
 		static OLECHAR buffer[100*1024];
 		OLECHAR *firstLetter = nullptr, *lastLetter;
@@ -107,7 +105,7 @@ static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 		int formatWord = FALSE;
 		OLECHAR ch;
 
-		while ( (ch = *inbuf++))
+		while ( (ch = *inbuf++) != 0)
 		{
 			if ( ! (( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <= 'Z' )))
 			{
@@ -128,7 +126,7 @@ static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 				}
 				if ( ch == '%' )
 				{
-					while ( (ch = *inbuf++) && !IsFormatTypeChar ( ch ) && ch != '%')
+					while ( (ch = *inbuf++) != 0 && !IsFormatTypeChar ( ch ) && ch != '%')
 					{
 						*b++ = ch;
 					}
@@ -284,7 +282,7 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 			}
 			else
 			{
-				if ( ! (do_export = all) )
+				if ( (do_export = all) == 0 )
 				{
 					if ( !trans )
 					{
@@ -418,7 +416,7 @@ int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPT
 		return 0;
 	}
 
-	if ( (progress_dlg = dlg) )
+	if ( (progress_dlg = dlg) != nullptr )
 	{
 		const char *format;
 		dlg->InitProgress ( exports );
@@ -547,9 +545,7 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) (), CBabylonDlg
 	int new_count = 0;
 	int changes_count = 0;
 	int missing_count = 0;
-	int mismatch_count = 0;
 	int stale_count = 0;
-	int	first_mismatch = TRUE;
 	int bad_id = FALSE;
 	int error_count = 0;
 	int revision;
@@ -659,7 +655,7 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) (), CBabylonDlg
 
 		Translation *trans;
 
-		if ( ! (trans = text->GetTranslation ( langid )))
+		if ( (trans = text->GetTranslation ( langid )) == nullptr)
 		{
 				new_count++;
 
@@ -739,11 +735,9 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) (), CBabyl
 	int row = 3;
 	int id;
 	int count = 0;
-	int new_count = 0;
 	int matched = 0;
 	int unmatched = 0;
 	int changed = 0;
-	int	first_mismatch = TRUE;
 	int bad_id = FALSE;
 	int error_count = 0;
 	int revision;
@@ -967,7 +961,7 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 	int ok = FALSE;
 	FILE *file;
 
-	if ( ! ( file = fopen ( filename, "wt" ) ))
+	if ( ( file = fopen ( filename, "wt" ) ) == nullptr)
 	{
 		goto error;
 	}
@@ -1156,7 +1150,7 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 	FILE *file;
 	LANGINFO	*linfo = GetLangInfo ( langid);
 
-	if ( ! ( file = fopen ( filename, "w+b" ) ))
+	if ( ( file = fopen ( filename, "w+b" ) ) == nullptr)
 	{
 		goto error;
 	}
@@ -1327,7 +1321,7 @@ int GenerateGameFiles ( TransDB *db, const char *filepattern, GNOPTIONS *options
 					{
 						int missing;
 
-						if ( (missing = trnreport.missing + trnreport.retranslate) )
+						if ( (missing = trnreport.missing + trnreport.retranslate) != 0 )
 						{
 							sprintf ( buffer, "%d translation%s missing", missing, missing > 1 ? "s are" : " is" );
 							dlg->Log ( buffer );
@@ -1391,8 +1385,6 @@ int GenerateGameFiles ( TransDB *db, const char *filepattern, GNOPTIONS *options
 
 void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 {
-	int imports = -1;
-
 	progress_dlg = dlg;
 
 	if ( dlg )
@@ -1406,21 +1398,19 @@ void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 	{
 		int row = 1;
 		int last_row = 1;
-		int matches = 0;
-		int unmatched = 0;
 		FILE *file = nullptr;
 		char *ptr;
 
 		strcpy ( buffer, filename );
 
-		if ( (ptr = strchr ( buffer, '.' )) )
+		if ( (ptr = strchr ( buffer, '.' )) != nullptr )
 		{
 			*ptr = 0;
 		}
 
 		strcat ( buffer, ".txt" );
 
-		if ( (file = fopen (buffer, "wt" )))
+		if ( (file = fopen (buffer, "wt" )) != nullptr)
 		{
 
 			while ( row - last_row < 1000 )
@@ -1439,7 +1429,7 @@ void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 					GetString ( row, 'K' -'A' + 1, olebuf );
 					StripSpaces ( olebuf );
 
-					if ( (text = db->FindSubText ( olebuf ) ))
+					if ( (text = db->FindSubText ( olebuf ) ) != nullptr)
 					{
 						fprintf ( file, "%6d", text->LineNumber () );
 					}
@@ -1500,7 +1490,7 @@ int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, Lang
 		num = 0;
 	}
 
-	if ( ! ( file = fopen ( filename, "wt" )))
+	if ( ( file = fopen ( filename, "wt" )) == nullptr)
 	{
 		static char buffer[500];
 

@@ -57,7 +57,7 @@ public:
 			{ "BlastRadius",		INI::parseReal, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_blastRadius ) },
 			{ "AffectAirborne", INI::parseBool, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_isAffectAirborne ) },
 			{ "AffectAllies",		INI::parseBool, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_affectAllies ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		p.add(dataFieldParse);

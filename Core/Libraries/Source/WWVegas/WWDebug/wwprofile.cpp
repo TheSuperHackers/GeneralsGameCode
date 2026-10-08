@@ -951,11 +951,14 @@ void	WWProfileInOrderIterator::First()
 
 void	WWProfileInOrderIterator::Next()
 {
-	if ( CurrentNode->Get_Child() ) {				// If I have a child, go to child
+	if ( CurrentNode->Get_Child() ) {
+		// If I have a child, go to child
 		CurrentNode = CurrentNode->Get_Child();
-	} else if ( CurrentNode->Get_Sibling() ) {	// If I have a sibling, go to sibling
+	} else if ( CurrentNode->Get_Sibling() ) {
+		// If I have a sibling, go to sibling
 		CurrentNode = CurrentNode->Get_Sibling();
-	} else {											//	if not, go to my parent's sibling, or his.......
+	} else {
+		//	if not, go to my parent's sibling, or his.......
 		// Find a parent with a sibling....
 		bool done = false;
 		while ( CurrentNode != nullptr && !done ) {
@@ -991,10 +994,8 @@ WWTimeItClass::~WWTimeItClass()
 	__int64 End;
 	WWProfile_Get_Ticks( &End );
 	End -= Time;
-#ifdef WWDEBUG
-	float time = End * WWProfile_Get_Inv_Processor_Ticks_Per_Second();
-	WWDEBUG_SAY(( "*** WWTIMEIT *** %s took %1.9f", Name, time ));
-#endif
+
+	WWDEBUG_SAY(( "*** WWTIMEIT *** %s took %1.9f", Name, End * WWProfile_Get_Inv_Processor_Ticks_Per_Second() ));
 }
 
 

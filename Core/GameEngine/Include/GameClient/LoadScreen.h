@@ -32,7 +32,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/GameWindow.h"
 #include "GameNetwork/GameInfo.h"

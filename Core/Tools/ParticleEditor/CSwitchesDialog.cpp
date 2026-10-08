@@ -41,7 +41,8 @@ void CSwitchesDialog::performUpdate( IN Bool toUI )
 		return;
 	}
 
-	{ // update hollowness
+	{
+		// update hollowness
 		CButton *pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_Hollow);
 		if (pWnd) {
@@ -56,7 +57,8 @@ void CSwitchesDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{ // update one shot
+	{
+		// update one shot
 		CButton *pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_OneShot);
 		if (pWnd) {
@@ -71,7 +73,8 @@ void CSwitchesDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{ // update Ground Aligned
+	{
+		// update Ground Aligned
 		CButton *pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_GroundAligned);
 		if (pWnd) {
@@ -86,7 +89,8 @@ void CSwitchesDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{ // update Emit above ground only
+	{
+		// update Emit above ground only
 		CButton *pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_EmitAboveGroundOnly);
 		if (pWnd) {
@@ -101,7 +105,8 @@ void CSwitchesDialog::performUpdate( IN Bool toUI )
 		}
 	}
 
-	{ // update Particle Up towards emitter
+	{
+		// update Particle Up towards emitter
 		CButton *pWnd;
 		pWnd = (CButton*)GetDlgItem(IDC_PSEd_ParticleUpTowardsEmitter);
 		if (pWnd) {

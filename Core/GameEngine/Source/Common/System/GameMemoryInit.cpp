@@ -46,7 +46,6 @@
 // SYSTEM INCLUDES
 
 // USER INCLUDES
-#include "Lib/BaseType.h"
 #include "Common/GameMemory.h"
 
 struct PoolSizeRec

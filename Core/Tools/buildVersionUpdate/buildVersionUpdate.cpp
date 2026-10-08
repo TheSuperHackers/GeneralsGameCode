@@ -21,7 +21,6 @@
 // Author: Matthew D. Campbell, November 2001
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>

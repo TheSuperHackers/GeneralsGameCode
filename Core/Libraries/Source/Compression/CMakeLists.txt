@@ -29,7 +29,6 @@ target_include_directories(core_compression INTERFACE
 )
 
 target_link_libraries(core_compression PRIVATE
-    corei_libraries_include
     corei_always
 )
 

@@ -47,7 +47,6 @@
 //           Includes
 //----------------------------------------------------------------------------
 
-#include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 

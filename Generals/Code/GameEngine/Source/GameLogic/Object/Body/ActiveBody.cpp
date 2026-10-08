@@ -60,6 +60,8 @@
 
 #define YELLOW_DAMAGE_PERCENT (0.25f)
 
+constexpr const UnsignedInt InvalidBodyTimestamp = ~0u; ///< damage or healing timestamp that has not been recorded yet
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 
 // ------------------------------------------------------------------------------------------------
@@ -149,8 +151,8 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_curArmorSet(nullptr),
 	m_frontCrushed(false),
 	m_backCrushed(false),
-	m_lastDamageTimestamp(0xffffffff),// So we don't think we just got damaged on the first frame
-	m_lastHealingTimestamp(0xffffffff),// So we don't think we just got healed on the first frame
+	m_lastDamageTimestamp(InvalidBodyTimestamp),// So we don't think we just got damaged on the first frame
+	m_lastHealingTimestamp(InvalidBodyTimestamp),// So we don't think we just got healed on the first frame
 	m_curDamageState(BODY_PRISTINE),
 	m_nextDamageFXTime(0),
 	m_lastDamageFXDone((DamageType)-1),
@@ -1000,6 +1002,30 @@ void ActiveBody::internalChangeHealth( Real delta )
 	// still re-flag this bit in the AIDeadState every frame.)
 	getObject()->setEffectivelyDead(m_currentHealth <= 0);
 
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+const UnsignedInt *ActiveBody::getLastDamageTimestamp() const
+{
+#if RETAIL_COMPATIBLE_CRC
+	return &m_lastDamageTimestamp;
+#else
+	// TheSuperHackers @fix WebbontheWeb 03/10/2026 Avoid treating never-damaged sentinels as an attack timestamp.
+	return m_lastDamageTimestamp != InvalidBodyTimestamp ? &m_lastDamageTimestamp : nullptr;
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+const UnsignedInt *ActiveBody::getLastHealingTimestamp() const
+{
+#if RETAIL_COMPATIBLE_CRC
+	return &m_lastHealingTimestamp;
+#else
+	// TheSuperHackers @fix WebbontheWeb 04/10/2026 Avoid treating never-healed sentinels as a healing timestamp.
+	return m_lastHealingTimestamp != InvalidBodyTimestamp ? &m_lastHealingTimestamp : nullptr;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

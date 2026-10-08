@@ -208,7 +208,7 @@ target_include_directories(z_worldbuilder PRIVATE
 )
 
 target_precompile_headers(z_worldbuilder PRIVATE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     [["WWLib/always.h"]]
     [["Common/STLTypedefs.h"]]
     [["StdAfx.h"]]
@@ -216,12 +216,9 @@ target_precompile_headers(z_worldbuilder PRIVATE
 )
 
 target_link_libraries(z_worldbuilder PRIVATE
-    d3d8lib
     imm32
     vfw32
     winmm
-    core_browserdispatch
-    z_gameengine
     z_gameenginedevice
     zi_always
 )

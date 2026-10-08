@@ -126,7 +126,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/Thing.h
 #    Include/Common/ThingFactory.h
 #    Include/Common/ThingSort.h
-#    Include/Common/ThingTemplate.h
+    Include/Common/ThingTemplate.h
 #    Include/Common/TunnelTracker.h
     Include/Common/UnicodeString.h
 #    Include/Common/UnitTimings.h
@@ -255,6 +255,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/FiringTracker.h
 #    Include/GameLogic/FPUControl.h
 #    Include/GameLogic/GameLogic.h
+    Include/GameLogic/GameMode.h
 #    Include/GameLogic/GhostObject.h
 #    Include/GameLogic/Locomotor.h
 #    Include/GameLogic/LocomotorSet.h
@@ -490,6 +491,7 @@ set(GAMEENGINE_SRC
      Include/GameLogic/Pathfinder/PathfindCell.h
      Include/GameLogic/Pathfinder/PathfindCellInfo.h
      Include/GameLogic/Pathfinder/PathfindCellList.h
+     Include/GameLogic/Pathfinder/PathfindConstants.h
      Include/GameLogic/Pathfinder/PathfindLayer.h
      Include/GameLogic/Pathfinder/PathfindZoneManager.h
      Include/GameLogic/Pathfinder/PathNode.h
@@ -698,7 +700,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/Thing/ModuleFactory.cpp
 #    Source/Common/Thing/Thing.cpp
 #    Source/Common/Thing/ThingFactory.cpp
-#    Source/Common/Thing/ThingTemplate.cpp
+    Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
     Source/Common/version.cpp
     Source/Common/WorkerProcess.cpp
@@ -861,6 +863,15 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/AI/AISkirmishPlayer.cpp
 #    Source/GameLogic/AI/AIStates.cpp
 #    Source/GameLogic/AI/AITNGuard.cpp
+    Source/GameLogic/AI/Pathfinder/Path.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindCell.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindCellInfo.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindCellList.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindConstants.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindLayer.cpp
+    Source/GameLogic/AI/Pathfinder/PathfindZoneManager.cpp
+    Source/GameLogic/AI/Pathfinder/PathNode.cpp
+    Source/GameLogic/AI/Pathfinder/ZoneBlock.cpp
 #    Source/GameLogic/AI/Squad.cpp
 #    Source/GameLogic/AI/TurretAI.cpp
     Source/GameLogic/Map/PolygonTrigger.cpp
@@ -1209,9 +1220,9 @@ target_include_directories(corei_gameengine_public INTERFACE
 target_link_libraries(corei_gameengine_public INTERFACE
     core_compression
     core_browserdispatch
-    dbghelploader
     #core_wwvegas
     d3d8lib
+    deps_dbghelp
     gamespy::gamespy
     stlport
 )

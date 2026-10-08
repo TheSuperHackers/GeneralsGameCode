@@ -123,8 +123,8 @@ void	LList::add( LListNode* new_node )
 		node = &m_head;
 		while( (node = node->prev() ))
 		{
-			if( (m_sortMode == ASCENDING && node->priority() >= pri)
-					|| (m_sortMode == DESCENDING && node->priority() <= pri) )
+			if( (m_sortMode == ASCENDING && node->priority() >= pri) ||
+					(m_sortMode == DESCENDING && node->priority() <= pri) )
 			{
 				node->append( new_node );
 				return;
@@ -138,8 +138,8 @@ void	LList::add( LListNode* new_node )
 		node = &m_head;
 		while( (node = node->next() ))
 		{
-			if( (m_sortMode == ASCENDING && node->priority() <= pri)
-					|| (m_sortMode == DESCENDING && node->priority() >= pri) )
+			if( (m_sortMode == ASCENDING && node->priority() <= pri) ||
+					(m_sortMode == DESCENDING && node->priority() >= pri) )
 			{
 				node->insert( new_node );
 				return;

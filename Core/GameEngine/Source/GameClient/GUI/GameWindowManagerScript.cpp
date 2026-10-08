@@ -48,7 +48,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
@@ -137,22 +136,56 @@ static GameFont  *defFont				= nullptr;
 // These strings must be in the same order as they are in their definitions
 // (see WIN_STATUS_* enums and GWS_* enums).
 //
-const char *const WindowStatusNames[] = { "ACTIVE", "TOGGLE", "DRAGABLE", "ENABLED", "HIDDEN",
-														  "ABOVE", "BELOW", "IMAGE", "TABSTOP", "NOINPUT",
-														  "NOFOCUS", "DESTROYED", "BORDER",
-														  "SMOOTH_TEXT", "ONE_LINE", "NO_FLUSH", "SEE_THRU",
-															"RIGHT_CLICK", "WRAP_CENTERED", "CHECK_LIKE","HOTKEY_TEXT",
-															"USE_OVERLAY_STATES", "NOT_READY", "FLASHING", "ALWAYS_COLOR",
-															"ON_MOUSE_DOWN", /*"SHORTCUT_BUTTON",*/
-															nullptr };
+const char *const WindowStatusNames[] = {
+	"ACTIVE",
+	"TOGGLE",
+	"DRAGABLE",
+	"ENABLED",
+	"HIDDEN",
+	"ABOVE",
+	"BELOW",
+	"IMAGE",
+	"TABSTOP",
+	"NOINPUT",
+	"NOFOCUS",
+	"DESTROYED",
+	"BORDER",
+	"SMOOTH_TEXT",
+	"ONE_LINE",
+	"NO_FLUSH",
+	"SEE_THRU",
+	"RIGHT_CLICK",
+	"WRAP_CENTERED",
+	"CHECK_LIKE",
+	"HOTKEY_TEXT",
+	"USE_OVERLAY_STATES",
+	"NOT_READY",
+	"FLASHING",
+	"ALWAYS_COLOR",
+	"ON_MOUSE_DOWN",
+	/*"SHORTCUT_BUTTON",*/
+	nullptr
+};
 
-const char *const WindowStyleNames[] = { "PUSHBUTTON",	"RADIOBUTTON",	"CHECKBOX",
-														 "VERTSLIDER",	"HORZSLIDER",		"SCROLLLISTBOX",
-														 "ENTRYFIELD",	"STATICTEXT",		"PROGRESSBAR",
-														 "USER",				"MOUSETRACK",		"ANIMATED",
-														 "TABSTOP",			"TABCONTROL",		"TABPANE",
-														 "COMBOBOX",
-														 nullptr };
+const char *const WindowStyleNames[] = {
+	"PUSHBUTTON",
+	"RADIOBUTTON",
+	"CHECKBOX",
+	"VERTSLIDER",
+	"HORZSLIDER",
+	"SCROLLLISTBOX",
+	"ENTRYFIELD",
+	"STATICTEXT",
+	"PROGRESSBAR",
+	"USER",
+	"MOUSETRACK",
+	"ANIMATED",
+	"TABSTOP",
+	"TABCONTROL",
+	"TABPANE",
+	"COMBOBOX",
+	nullptr
+};
 
 // Implement a stack to keep track of parent/child nested window descriptions.
 static GameWindow *windowStack[ WIN_STACK_DEPTH ];
@@ -2751,7 +2784,7 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 		{
 
 			DEBUG_LOG(( "WinCreateFromScript: Error parsing layout block" ));
-			return FALSE;
+			return nullptr;
 
 		}
 

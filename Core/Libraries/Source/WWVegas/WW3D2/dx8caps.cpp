@@ -895,7 +895,8 @@ void DX8Caps::Check_Driver_Version_Status()
 				DriverVersionStatus=DRIVER_STATUS_BAD;
 				break;
 			default:
-				if (DriverBuildVersion<2000) {	// All under 20.xx versions are too old!
+				if (DriverBuildVersion<2000) {
+					// All under 20.xx versions are too old!
 					DriverVersionStatus=DRIVER_STATUS_BAD;
 				}
 				else {

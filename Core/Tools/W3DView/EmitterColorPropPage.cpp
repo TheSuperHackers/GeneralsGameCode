@@ -610,9 +610,7 @@ EmitterColorPropPageClass::OnCommand
 
 void EmitterColorPropPageClass::OnDeltaposRedRandomSpin(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	// TODO: Add your control notification handler code here
-	int test = 0;
 
 	*pResult = 0;
 }

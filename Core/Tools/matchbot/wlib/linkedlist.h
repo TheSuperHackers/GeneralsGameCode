@@ -181,7 +181,8 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
   if (newnodeptr)
     *newnodeptr=&(item->Node);
 
-  if ((pos==0)||(pos==Entries)) {  // Both cases can be true for a new list!
+  if ((pos==0)||(pos==Entries)) {
+    // Both cases can be true for a new list!
     if (pos==0) {
       item->Next=Head;
       if (Head)
@@ -274,7 +275,8 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
   if (pos>=Entries)
     pos=Entries-1;
 
-  if ((pos==0)||(pos==Entries-1)) {  // Both can be true for a 1 item list
+  if ((pos==0)||(pos==Entries-1)) {
+    // Both can be true for a 1 item list
     if (pos==0) {
       item=Head;
       if (item->Next)
@@ -296,7 +298,8 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
     delete(item);
     Entries--;
 
-    if (Entries==0) { // Super paranoia check
+    if (Entries==0) {
+      // Super paranoia check
       assert(Current==nullptr);
       assert(CurIndex==-1);
       assert(Head==nullptr);

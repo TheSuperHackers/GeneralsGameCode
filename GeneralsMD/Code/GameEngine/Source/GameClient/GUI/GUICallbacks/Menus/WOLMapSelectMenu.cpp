@@ -156,7 +156,8 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 	GameWindow *radioButtonSystemMaps = TheWindowManager->winGetWindowFromId( parent, radioButtonSystemMapsID );
 	GameWindow *radioButtonUserMaps = TheWindowManager->winGetWindowFromId( parent, radioButtonUserMapsID );
 	if( TheGameSpyInfo->getCurrentStagingRoom()->getUseStats() )
-	{	//disable unofficial maps if stats are being recorded
+	{
+		//disable unofficial maps if stats are being recorded
 		GadgetRadioSetSelection( radioButtonSystemMaps, FALSE );
 		radioButtonUserMaps->winEnable( FALSE );
 	}

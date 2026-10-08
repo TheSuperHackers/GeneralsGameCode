@@ -22,7 +22,6 @@
 
 #include "WWMath/vector3.h"
 #include "Common/GameType.h"
-#include "Lib/BaseTypeCore.h"
 
 struct VertexFormatXYZDUV1;
 class TextureClass;

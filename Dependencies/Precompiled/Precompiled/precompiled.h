@@ -18,5 +18,30 @@
 
 #pragma once
 
-#include "CppMacros.h"
-#include "CppTypes.h"
+#ifdef __cplusplus
+
+	#include "CppMacros.h"
+	#include "CppTypes.h"
+
+#else
+
+	#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+		#include <stdbool.h>
+	#endif
+
+#endif // __cplusplus
+
+#include "stdint_adapter.h"
+
+
+#ifdef _WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+#endif
+
+#ifndef NOMINMAX
+#define NOMINMAX // Exclude min/max macros from Windows headers
+#endif
+
+#endif // _WIN32

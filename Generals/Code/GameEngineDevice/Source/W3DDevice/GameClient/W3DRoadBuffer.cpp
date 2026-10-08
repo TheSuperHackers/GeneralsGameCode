@@ -651,7 +651,8 @@ void W3DRoadBuffer::loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc,
 				}
 			}
 
-			if (true) { // !nextColumn.lightGradient) {
+			if (true) {
+				// !nextColumn.lightGradient) {
 				nextColumn.collapsed = true;
 				nextColumn.vtx[0].Z = maxHeight;
 				nextColumn.vtx[1] = nextColumn.vtx[vCount-1];

@@ -528,8 +528,8 @@ void MapSelectorTooltip(GameWindow *window,
 		// Check to see if we mouse over a tech building
 		while(it != TheSupplyAndTechImageLocations.m_techPosList.end())
 		{
-			if ((x > (pixelX + it->x) && x < (pixelX + it->x + SUPPLY_TECH_SIZE))
-				  && ( y > (pixelY + it->y) && y < (pixelY + it->y + SUPPLY_TECH_SIZE)))
+			if ((x > (pixelX + it->x) && x < (pixelX + it->x + SUPPLY_TECH_SIZE)) &&
+				  ( y > (pixelY + it->y) && y < (pixelY + it->y + SUPPLY_TECH_SIZE)))
 			{
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:TechBuilding"), -1, nullptr); //, 1.5f
 				return;
@@ -543,8 +543,8 @@ void MapSelectorTooltip(GameWindow *window,
 		// Check to see if we mouse over a supply dock
 		while (it2 != TheSupplyAndTechImageLocations.m_supplyPosList.end())
 		{
-			if ((x > (pixelX + it2->x) && x < (pixelX + it2->x + SUPPLY_TECH_SIZE))
-					 && ( y > (pixelY + it2->y) && y < (pixelY + it2->y + SUPPLY_TECH_SIZE)))
+			if ((x > (pixelX + it2->x) && x < (pixelX + it2->x + SUPPLY_TECH_SIZE)) &&
+					 ( y > (pixelY + it2->y) && y < (pixelY + it2->y + SUPPLY_TECH_SIZE)))
 			{
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:SupplyDock"), -1, nullptr); // , 1.5f
 				break;
@@ -588,8 +588,8 @@ void positionStartSpotControls( GameWindow *win, GameWindow *mapWindow, Coord3D 
 		ICoord2D tempPos;
 		buttonMapStartPositions[i]->winGetScreenPosition(&tempPos.x, &tempPos.y);
 		// we're inside the other gadget
-		if(gadgetPos.x > tempPos.x && gadgetPos.x < tempPos.x + gadgetSize.x
-				&& gadgetPos.y > tempPos.y && gadgetPos.y < tempPos.y + gadgetSize.y)
+		if(gadgetPos.x > tempPos.x && gadgetPos.x < tempPos.x + gadgetSize.x &&
+				gadgetPos.y > tempPos.y && gadgetPos.y < tempPos.y + gadgetSize.y)
 		{
 			Int closerRight = tempPos.x + gadgetSize.x - gadgetPos.x;
 			Int closerBottom = tempPos.y + gadgetSize.y - gadgetPos.y;

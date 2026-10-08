@@ -81,9 +81,9 @@ void DX8RendererDebugger::Update()
 //	if (!Enabled) return;
 }
 
-#ifdef WWDEBUG
 void DX8RendererDebugger::Add_Mesh(MeshClass* mesh)
 {
+#ifdef WWDEBUG
 	if (!Enabled) return;
 
 	// Don't insert the same mesh twice
@@ -91,8 +91,8 @@ void DX8RendererDebugger::Add_Mesh(MeshClass* mesh)
 
 	mesh->Add_Ref();
 	MeshHash.Insert(mesh->Get_Debug_Id(),mesh);
-}
 #endif
+}
 
 void DX8RendererDebugger::Disable_Mesh(unsigned id)
 {

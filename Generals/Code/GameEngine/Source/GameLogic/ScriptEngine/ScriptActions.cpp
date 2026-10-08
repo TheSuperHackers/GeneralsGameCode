@@ -2892,13 +2892,15 @@ void ScriptActions::doCameraMotionBlurJump(const AsciiString& waypointName, Bool
 		passed = TRUE;
 		if (saturate) {
 			if (!TheTacticalView->setViewFilterMode(FM_VIEW_MB_IN_AND_OUT_SATURATE))
-			{	//failed to set filter so restore default state
+			{
+				//failed to set filter so restore default state
 				TheTacticalView->setViewFilter(FT_NULL_FILTER);
 				passed = FALSE;
 			}
 		} else {
 			if (!TheTacticalView->setViewFilterMode(FM_VIEW_MB_IN_AND_OUT_ALPHA))
-			{	//failed to set filter so restore default state
+			{
+				//failed to set filter so restore default state
 				TheTacticalView->setViewFilter(FT_NULL_FILTER);
 				passed = FALSE;
 			};
@@ -2940,7 +2942,8 @@ void ScriptActions::doCameraMotionBlur(Bool zoomIn, Bool saturate)
 			}
 		}
 		if (!TheTacticalView->setViewFilterMode(mode))
-		{	//failed to set the filter so restore everything to normal
+		{
+			//failed to set the filter so restore everything to normal
 			TheTacticalView->setViewFilter(FT_NULL_FILTER);
 		}
 	}
@@ -3606,7 +3609,8 @@ void ScriptActions::doBlackWhiteMode(Bool startBWMode, Int frames)
 	else
 	{
 		if ((TheTacticalView->getViewFilterType()) == FT_VIEW_BW_FILTER)
-		{	//mode already set, turn it off
+		{
+			//mode already set, turn it off
 			TheTacticalView->setFadeParameters(frames, -1);
 		}
 	}
@@ -4734,7 +4738,8 @@ void ScriptActions::doForceObjectSelection(const AsciiString& teamName, const As
 		}
 
 		if (obj->getTemplate() && obj->getTemplate()->getName() == objectType) {
-			if (bestGuess == nullptr || obj->getID() < bestGuess->getID()) { // lower ID means its newer
+			if (bestGuess == nullptr || obj->getID() < bestGuess->getID()) {
+				// lower ID means its newer
 				bestGuess = obj;
 			}
 		}

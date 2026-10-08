@@ -22,8 +22,6 @@
 
 #pragma once
 
-#include "Lib/BaseTypeCore.h"
-
 enum CompressionType
 {
 	COMPRESSION_MIN = 0,

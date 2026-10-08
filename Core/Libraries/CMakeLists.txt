@@ -1,3 +1,6 @@
+# Base headers shared by all libraries
+add_subdirectory(Include)
+
 # WW common libraries decended from earliest C&C games
 add_subdirectory(Source/WWVegas)
 

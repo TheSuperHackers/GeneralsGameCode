@@ -242,8 +242,6 @@ bool LogDataDialogClass::Dialog_Proc
 	LPARAM
 )
 {
-	int code = HIWORD(wParam);
-
 	switch (message )	{
 
 		/*******************************************************************

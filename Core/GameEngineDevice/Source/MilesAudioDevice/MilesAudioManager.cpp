@@ -38,7 +38,6 @@
 /*		7/18/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
 
-#include <dsound.h>
 #include "Lib/BaseType.h"
 #include "MilesAudioDevice/MilesAudioManager.h"
 
@@ -69,6 +68,7 @@
 #include <Utility/interlocked_adapter.h>
 #include "MilesLoader.h"
 
+#include <dsound.h>
 
 enum { INFINITE_LOOP_COUNT = 1000000 };
 
@@ -2350,8 +2350,8 @@ void MilesAudioManager::processPlayingList()
 			{
 				Real volForConsideration = getEffectiveVolume(playing->m_audioEventRTS.Peek());
 				volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
-				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL)
-					|| playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
+				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) ||
+					playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
 				if( volForConsideration < m_audioSettings->m_minVolume && !playAnyways )
 				{
 					stopPlayingAudio(playing);

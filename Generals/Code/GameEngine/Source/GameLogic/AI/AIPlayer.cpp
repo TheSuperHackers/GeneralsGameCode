@@ -928,20 +928,27 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 Bool AIPlayer::isSupplySourceAttacked()
 {
-	const Int SCAN_RATE = 10; // don't scan more often than every 10 seconds.
+	// TheSuperHackers @bugfix WebbontheWeb 27/09/2026 No longer scans for supply source attacks for just the last 10 frames.
+	// A prior EA comment indicated that the intent was to look for 10 seconds into the attack history.
+	const Int RefreshRate = 10;
+#if RETAIL_COMPATIBLE_CRC
+	const Int ScanWindow = 10;
+#else
+	const Int ScanWindow = 10 * LOGICFRAMES_PER_SECOND;
+#endif
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame==0) {
-		m_supplySourceAttackCheckFrame = curFrame+SCAN_RATE;
+		m_supplySourceAttackCheckFrame = curFrame + RefreshRate;
 		return false; // can't be attacked on first frame.
 	}
 	m_attackedSupplyCenter = INVALID_ID;
 	if (curFrame < m_supplySourceAttackCheckFrame) {
 		return false;
 	}
-	if (m_player->getAttackedFrame()+SCAN_RATE < curFrame) {
+	if (m_player->getAttackedFrame() + ScanWindow < curFrame) {
 		return false; // haven't been attacked recently.
 	}
-	m_supplySourceAttackCheckFrame = curFrame+SCAN_RATE;
+	m_supplySourceAttackCheckFrame = curFrame + RefreshRate;
 
 	// Scan my units.
 	Player::PlayerTeamList::const_iterator it;
@@ -968,7 +975,8 @@ Bool AIPlayer::isSupplySourceAttacked()
 						if (info->out.m_noEffect) {
 							continue;
 						}
-						if (body->getLastDamageTimestamp() + SCAN_RATE > curFrame) {
+						const UnsignedInt *lastDamageTimestamp = body->getLastDamageTimestamp();
+						if (lastDamageTimestamp && *lastDamageTimestamp + ScanWindow > curFrame) {
 							// winner.
 							m_attackedSupplyCenter = obj->getID();
 							return true;
@@ -1051,6 +1059,16 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 	// To keep retail compatibility it needs to be set true in VS6 builds.
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	Bool supplyTruck = true;
+
+#if RTS_GENERALS
+	// A special initialization case for the call site in SpawnBehavior::createSpawn
+	// to mimic the initialization behavior in the retail Generals binary.
+	if (TheGameLogic->m_onUnitProducedZeroInit)
+	{
+		supplyTruck = false;
+	}
+#endif
+
 #else
 	Bool supplyTruck = false;
 #endif
@@ -2427,7 +2445,8 @@ void AIPlayer::doBaseBuilding()
 			if (m_readyToBuildStructure) {
 				processBaseBuilding();
 			}
-			if (m_buildDelay<1) {	// processBaseBuilding may reset m_buildDelay.
+			if (m_buildDelay<1) {
+				// processBaseBuilding may reset m_buildDelay.
 				m_buildDelay = 2*LOGICFRAMES_PER_SECOND; // check again in 2 seconds.
 			}
 			// Note that this timer gets shortcut when a building is completed.
@@ -2442,7 +2461,8 @@ void AIPlayer::doBaseBuilding()
 void AIPlayer::checkReadyTeams()
 {
 	// See if any ready teams are gathered at their rally point
-	{	// needed to scope iter.  silly ms c++.
+	{
+		// needed to scope iter.  silly ms c++.
 		for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamReadyQueue(); !iter.done(); iter.advance())
 		{
 			TeamInQueue *team = iter.cur();
@@ -2523,7 +2543,8 @@ void AIPlayer::checkReadyTeams()
 void AIPlayer::checkQueuedTeams()
 {
 	// See if any teams are expired.
-	{	// needed to scope iter.  silly ms c++.
+	{
+		// needed to scope iter.  silly ms c++.
 		for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamBuildQueue(); !iter.done(); iter.advance())
 		{
 			TeamInQueue *team = iter.cur();
@@ -2552,7 +2573,8 @@ void AIPlayer::checkQueuedTeams()
 	}
 
 	// See if any teams are ready.
-	{	// needed to scope iter.  silly ms c++.
+	{
+		// needed to scope iter.  silly ms c++.
 		for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamBuildQueue(); !iter.done(); iter.advance())
 		{
 			TeamInQueue *team = iter.cur();
@@ -2821,7 +2843,8 @@ void AIPlayer::computeCenterAndRadiusOfBase(Coord3D *center, Real *radius)
  */
 Bool AIPlayer::dozerInQueue()
 {
-	{	// needed to scope iter.  silly ms c++.
+	{
+		// needed to scope iter.  silly ms c++.
 		for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamBuildQueue(); !iter.done(); iter.advance())
 		{
 			TeamInQueue *team = iter.cur();

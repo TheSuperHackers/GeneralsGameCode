@@ -160,7 +160,7 @@ public:
 			{ "EliteCashAmount",		INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_eliteCashAmount ) },
 			{ "HeroicCashAmount",		INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_heroicCashAmount ) },
 			{ "XpPerCashUpdate",		INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_xpPerCashUpdate ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

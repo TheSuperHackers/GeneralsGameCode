@@ -54,7 +54,7 @@ public:
 		{
 			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( SupplyCenterProductionExitUpdateModuleData, m_unitCreatePoint ) },
 			{ "NaturalRallyPoint",  INI::parseCoord3D,		nullptr, offsetof( SupplyCenterProductionExitUpdateModuleData, m_naturalRallyPoint ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

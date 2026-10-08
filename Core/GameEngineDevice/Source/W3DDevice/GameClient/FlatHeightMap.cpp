@@ -507,12 +507,14 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
  	}
  	else
  	if (TheGlobalData->m_useLightMap)
- 	{	//lightmap only
+ 	{
+ 		//lightmap only
  		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE2;
  	}
  	else
  	if (doCloud)
- 	{	//cloudmap only
+ 	{
+ 		//cloudmap only
  		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE1;
  	}
 

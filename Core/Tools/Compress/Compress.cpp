@@ -19,7 +19,6 @@
 #include <string>
 #include <Utility/stdio_adapter.h>
 #include <cstdarg>
-#include "Lib/BaseTypeCore.h"
 #include "Compression.h"
 
 

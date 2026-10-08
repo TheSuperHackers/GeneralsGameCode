@@ -97,7 +97,7 @@ BOOL CGenerateDlg::OnInitDialog()
 
 
 	index = 0;
-	while ( (info = GetLangInfo ( index )) )
+	while ( (info = GetLangInfo ( index )) != nullptr )
 	{
 		list->InsertString ( index,  info->name );
 		if ( info->langid == CurrentLanguage )
@@ -205,7 +205,7 @@ void CGenerateDlg::OnOK()
 	{
 		LANGINFO *info;
 
-		if ( info = GetLangInfo ( langindices[i] ))
+		if ( (info = GetLangInfo ( langindices[i] )) != nullptr )
 		{
 			langids[num_langs++] = info->langid;
 		}

@@ -5,7 +5,7 @@ FetchContent_Populate(zlib DOWNLOAD_EXTRACT_TIMESTAMP
     GIT_TAG        ac753eee3990a2f592bd4807ff0b30ff572c2104
     SOURCE_DIR     ${ZLIB_DIR}
 )
-    
+
 add_library(libzlib STATIC)
 
 target_sources(libzlib PRIVATE

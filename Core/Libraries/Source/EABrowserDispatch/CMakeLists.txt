@@ -16,13 +16,13 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
         )
         add_library(core_browserdispatchwin STATIC BrowserDispatch_i.c)
     else()
-        message(FATAL_ERROR 
+        message(FATAL_ERROR
             "EABrowserDispatch requires an IDL compiler for Windows builds:\n"
             "  - For MinGW: Install widl (apt-get install wine-stable-dev)\n"
             "  - For MSVC: midl.exe should be in PATH\n"
             "  - For other compilers: Not currently supported")
     endif()
-    
+
     if(TARGET core_browserdispatchwin)
         set_target_properties(core_browserdispatchwin PROPERTIES OUTPUT_NAME browserdispatchwin)
         target_link_libraries(core_browserdispatch INTERFACE core_browserdispatchwin)

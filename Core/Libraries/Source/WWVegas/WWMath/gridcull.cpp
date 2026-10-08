@@ -919,7 +919,7 @@ void GridCullSystemClass::unlink_object_from_list(CullableClass ** head,Cullable
 	/*
 	** check to see that the object is actually in this list
 	*/
-#ifdef WWDEBUG
+#ifdef DEBUG_CRASHING
 	CullableClass * tmp = *head;
 	bool found = false;
 	while (tmp && !found) {

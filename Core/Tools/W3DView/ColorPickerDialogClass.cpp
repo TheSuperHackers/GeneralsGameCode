@@ -370,7 +370,7 @@ ColorPickerDialogClass::Update_Whiteness_Bar ()
 	//
 	float whiteness = min (m_CurrentRed, m_CurrentGreen);
 	whiteness = min (whiteness, m_CurrentBlue);
-	float percent = whiteness / 255;
+	//float percent = whiteness / 255;
 	m_WhitenessColorBar->Set_Selection_Pos (whiteness);
 
 	m_WhitenessColorBar->Modify_Point (0, 0, (float)red, (float)green, (float)blue);

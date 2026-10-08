@@ -71,7 +71,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 //			{ "DamageTypes", INI::parseDamageTypeFlags, nullptr, offsetof( DamageModuleData, m_damageTypes ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
     p.add(dataFieldParse);

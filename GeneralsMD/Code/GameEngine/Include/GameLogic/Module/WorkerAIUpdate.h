@@ -103,7 +103,7 @@ public:
 			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof( WorkerAIUpdateModuleData, m_warehouseScanDistance ) },
  			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof( WorkerAIUpdateModuleData, m_suppliesDepletedVoice) },
  			{ "UpgradedSupplyBoost", INI::parseInt, nullptr, offsetof( WorkerAIUpdateModuleData, m_upgradedSupplyBoost) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

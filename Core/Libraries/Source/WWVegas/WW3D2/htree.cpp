@@ -639,7 +639,7 @@ void HTreeClass::Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAni
 	endpivot=pivot+(NumPivots-1);
 	lastAnimPivot = &Pivot[num_anim_pivots];
 
-	for (int piv_idx=1; pivot < endpivot; pivot++,nodeMotion++) {
+	for (; pivot < endpivot; pivot++,nodeMotion++) {
 
 		// base pose
 		assert(pivot->Parent != nullptr);
@@ -1078,7 +1078,19 @@ HTreeClass * HTreeClass::Alter_Avatar_HTree( const HTreeClass *tree, Vector3 &sc
 	// being stretched out on the Y-axis instead of the Z-axis like the rest of the bodies. Hence, the list of pivots
 	// below are ones that I will special case and scale them based on the Z-axis scaling factor instead of the Y-axis
 	// scaling factor.
-	const char * flip_list[] = { " RIGHTFOREARM", " RIGHTHAND", " LEFTFOREARM", " LEFTHAND", "RIGHTINDEX", "RIGHTFINGERS", "RIGHTTHUMB", "LEFTINDEX", "LEFTFINGERS", "LEFTTHUMB", nullptr };
+	const char * flip_list[] = {
+		" RIGHTFOREARM",
+		" RIGHTHAND",
+		" LEFTFOREARM",
+		" LEFTHAND",
+		"RIGHTINDEX",
+		"RIGHTFINGERS",
+		"RIGHTTHUMB",
+		"LEFTINDEX",
+		"LEFTFINGERS",
+		"LEFTTHUMB",
+		nullptr
+	};
 
 	// Clone the new tree with the tree that is passed in
 	HTreeClass * new_tree = new HTreeClass( *tree );

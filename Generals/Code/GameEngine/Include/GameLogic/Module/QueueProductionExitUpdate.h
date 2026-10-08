@@ -65,7 +65,7 @@ public:
 			{ "ExitDelay",							INI::parseDurationUnsignedInt,	nullptr, offsetof( QueueProductionExitUpdateModuleData, m_exitDelayData ) },
 			{ "AllowAirborneCreation",	INI::parseBool,									nullptr, offsetof( QueueProductionExitUpdateModuleData, m_allowAirborneCreationData ) },
 			{ "InitialBurst",						INI::parseUnsignedInt,					nullptr, offsetof( QueueProductionExitUpdateModuleData, m_initialBurst ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

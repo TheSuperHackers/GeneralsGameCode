@@ -30,7 +30,7 @@ target_include_directories(core_debug INTERFACE
 )
 
 target_precompile_headers(core_debug PRIVATE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     "debug.h"
     "internal.h"
     "internal_except.h"

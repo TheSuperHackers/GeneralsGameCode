@@ -179,6 +179,11 @@ public:
 		No range checking is done (except in debug mode).
 	*/
 	char getCharAt(int index) const;
+
+	// Requires a nonempty string.
+	char front() const;
+	char back() const;
+
 	/**
 		Return a pointer to the (null-terminated) string. Note that this is
 		a const pointer: do NOT change this! It is imperative that it be
@@ -350,12 +355,12 @@ public:
 	/**
 		conceptually similar to strtok():
 
-		extract the next seps-delimited token from the front
+		extract the next separators-delimited token from the front
 		of 'this' and copy it into 'token', returning true if a nonempty
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(AsciiString* token, const char* seps = nullptr);
+	Bool nextToken(AsciiString* token, const char* separators = nullptr);
 
 	/**
 		return true iff the string is "NONE" (case-insensitive).
@@ -439,6 +444,18 @@ inline char AsciiString::getCharAt(int index) const
 	DEBUG_ASSERTCRASH(index >= 0 && index < getLength(), ("bad index in getCharAt"));
 	validate();
 	return m_data ? peek()[index] : 0;
+}
+
+// -----------------------------------------------------
+inline char AsciiString::front() const
+{
+	return getCharAt(0);
+}
+
+// -----------------------------------------------------
+inline char AsciiString::back() const
+{
+	return getCharAt(getLength() - 1);
 }
 
 // -----------------------------------------------------

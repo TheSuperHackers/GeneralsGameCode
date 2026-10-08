@@ -47,7 +47,6 @@
 //           Includes
 //----------------------------------------------------------------------------
 
-#include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/UnicodeString.h"
 

@@ -200,7 +200,7 @@ bool Append_Lod_Character (char *meshname, int lod_level, INodeListClass *origin
 	** If there is, we will append the current LOD level digit to the name.
 	** If there is not, the name will not be modified.
 	*/
-	INode *conflict = nullptr, *cur_origin = nullptr;
+	INode *conflict = nullptr;
 	int i, lod;
 	for (i = 0; i < num_lods; i++)
 	{

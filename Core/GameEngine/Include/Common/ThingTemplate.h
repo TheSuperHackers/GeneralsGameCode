@@ -109,6 +109,12 @@ enum ThingTemplateAudioType CPP_11(: Int)
 	TTAUDIO_soundMoveStartDamaged,		///< Sound when unit starts moving and is damaged
 	TTAUDIO_soundMoveLoop,						///< Sound when unit is moving
 	TTAUDIO_soundMoveLoopDamaged,			///< Sound when unit is moving and is damaged
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	TTAUDIO_soundDie,									///< Sound when unit is dieing
+	TTAUDIO_soundDieFire,							///< Sound when unit dies by fire. NOTE: Replaces soundDie if present and unit dies by fire.
+	TTAUDIO_soundDieToxin,						///< Sound when unit dies by Toxin. NOTE: Replaces soundDie if present and unit dies by fire.
+	TTAUDIO_soundCrush,								///< Sound when unit is crushed
+#endif
 	TTAUDIO_soundAmbient,							///< Ambient sound for unit during normal status. Also the default sound
 	TTAUDIO_soundAmbientDamaged,			///< Ambient sound for unit if damaged. Corresponds to body info damage
 	TTAUDIO_soundAmbientReallyDamaged,///< Ambient sound for unit if badly damaged.
@@ -482,6 +488,12 @@ public:
 	const AudioEventRTS *getSoundMoveStartDamaged() const			{ return getAudio(TTAUDIO_soundMoveStartDamaged); }
 	const AudioEventRTS *getSoundMoveLoop() const							{ return getAudio(TTAUDIO_soundMoveLoop); }
 	const AudioEventRTS *getSoundMoveLoopDamaged() const			{ return getAudio(TTAUDIO_soundMoveLoopDamaged); }
+#if RTS_GENERALS && RETAIL_COMPATIBLE_DATA
+	const AudioEventRTS *getSoundDie() const									{ return getAudio(TTAUDIO_soundDie); }
+	const AudioEventRTS *getSoundDieFire() const							{ return getAudio(TTAUDIO_soundDieFire); }
+	const AudioEventRTS *getSoundDieToxin() const							{ return getAudio(TTAUDIO_soundDieToxin); }
+	const AudioEventRTS *getSoundCrush() const								{ return getAudio(TTAUDIO_soundCrush); }
+#endif
 	const AudioEventRTS *getSoundAmbient() const							{ return getAudio(TTAUDIO_soundAmbient); }
 	const AudioEventRTS *getSoundAmbientDamaged() const				{ return getAudio(TTAUDIO_soundAmbientDamaged); }
 	const AudioEventRTS *getSoundAmbientReallyDamaged() const	{ return getAudio(TTAUDIO_soundAmbientReallyDamaged); }

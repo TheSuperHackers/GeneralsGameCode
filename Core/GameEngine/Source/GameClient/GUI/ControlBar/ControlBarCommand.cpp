@@ -389,10 +389,10 @@ void ControlBar::populateCommand( Object *obj )
 									Int i;
 
 									// get command set
-									if( !player || !player->getPlayerTemplate()
-											|| player->getPlayerTemplate()->getPurchaseScienceCommandSetRank1().isEmpty()
-											|| player->getPlayerTemplate()->getPurchaseScienceCommandSetRank3().isEmpty()
-											|| player->getPlayerTemplate()->getPurchaseScienceCommandSetRank8().isEmpty() )
+									if( !player || !player->getPlayerTemplate() ||
+											player->getPlayerTemplate()->getPurchaseScienceCommandSetRank1().isEmpty() ||
+											player->getPlayerTemplate()->getPurchaseScienceCommandSetRank3().isEmpty() ||
+											player->getPlayerTemplate()->getPurchaseScienceCommandSetRank8().isEmpty() )
 									{
 										continue;
 									}
@@ -1011,8 +1011,8 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 																												GameWindow *applyToWin,
 																												Bool forceDisabledEvaluation ) const
 {
-	if(	command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT
-			|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT )
+	if(	command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT ||
+			command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT )
 	{
 		if (ThePlayerList && ThePlayerList->getLocalPlayer())
 			obj = ThePlayerList->getLocalPlayer()->findMostReadyShortcutSpecialPowerOfType( command->getSpecialPowerTemplate()->getSpecialPowerType() );
@@ -1064,10 +1064,10 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	Bool disabled = obj->isDisabled();
 
 	// if we are only disabled by being underpowered, and this button doesn't care, well, fix it
-	if (disabled
-			&& BitIsSet(command->getOptions(), IGNORES_UNDERPOWERED)
-			&& obj->getDisabledFlags().test(DISABLED_UNDERPOWERED)
-			&& obj->getDisabledFlags().count() == 1)
+	if (disabled &&
+			BitIsSet(command->getOptions(), IGNORES_UNDERPOWERED) &&
+			obj->getDisabledFlags().test(DISABLED_UNDERPOWERED) &&
+			obj->getDisabledFlags().count() == 1)
 	{
 		disabled = false;
 	}
@@ -1301,15 +1301,15 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				return COMMAND_AVAILABLE;
 			}
 
-			if( w == nullptr																	// No weapon
-				|| w->getStatus() != READY_TO_FIRE					// Weapon not ready
-				|| w->getPossibleNextShotFrame() == now			// Weapon ready, but could fire this exact frame (handle button flicker since it may be going to fire anyway)
+			if( w == nullptr ||																	// No weapon
+				w->getStatus() != READY_TO_FIRE ||					// Weapon not ready
+				w->getPossibleNextShotFrame() == now ||			// Weapon ready, but could fire this exact frame (handle button flicker since it may be going to fire anyway)
 /// @todo srj -- not sure why this next check is necessary, but the Comanche missile buttons will flicker without it. figure out someday.
 /// @todo ml  -- and note: that the "now-1" below causes zero-clip-reload weapons to never be ready, so I added this
 /// If you make changes to this code, make sure that the DragonTank's firewall weapon can be retargeted while active,
 /// that is, while the tank is squirting out flames all over the floor, you can click the firewall button (or "F"),
 /// and re-target the firewall without having to stop or move in-between.. Thanks for reading
-				|| (w->getPossibleNextShotFrame()==now-1)
+				(w->getPossibleNextShotFrame()==now-1)
 				)
 			{
 				if ( w != nullptr )
@@ -1327,8 +1327,8 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 					// if this is a mine-clearing button but we don't have the right weaponset,
 					// just declare it available... we'll switch weaponsets when the time comes
 					if (
-						(command->getOptions() & USES_MINE_CLEARING_WEAPONSET) != 0
-						&& !obj->testWeaponSetFlag(WEAPONSET_MINE_CLEARING_DETAIL)
+						(command->getOptions() & USES_MINE_CLEARING_WEAPONSET) != 0 &&
+						!obj->testWeaponSetFlag(WEAPONSET_MINE_CLEARING_DETAIL)
 					)
 					{
 						return COMMAND_AVAILABLE;

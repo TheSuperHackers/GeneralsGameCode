@@ -72,7 +72,7 @@ public:
 			{ "ResetTurretBeforePacking", INI::parseBool,						nullptr, offsetof( DeployStyleAIUpdateModuleData, m_resetTurretBeforePacking ) },
 			{ "TurretsFunctionOnlyWhenDeployed", INI::parseBool,		nullptr, offsetof( DeployStyleAIUpdateModuleData, m_turretsFunctionOnlyWhenDeployed ) },
 			{ "TurretsMustCenterBeforePacking", INI::parseBool,			nullptr, offsetof( DeployStyleAIUpdateModuleData, m_turretsMustCenterBeforePacking ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 		p.add(dataFieldParse);
 	}

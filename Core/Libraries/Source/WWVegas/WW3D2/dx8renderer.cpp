@@ -242,6 +242,7 @@ void DX8TextureCategoryClass::Add_Polygon_Renderer(DX8PolygonRendererClass* p_re
 
 	if (add_after_this != nullptr) {
 		bool res = PolygonRendererList.Add_After(p_renderer,add_after_this,false);
+		(void)res;
 		WWASSERT(res);
 	} else {
 		PolygonRendererList.Add(p_renderer);
@@ -303,7 +304,8 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes()
    		MeshClass * mesh = mpr->Peek_Mesh();
 
    		if (mesh->Get_Base_Vertex_Offset() == VERTEX_BUFFER_OVERFLOW)	//check if this mesh is valid
-   		{	//skip this mesh so it gets rendered later after vertices are filled in.
+   		{
+	        //skip this mesh so it gets rendered later after vertices are filled in.
 	        last_mpr = mpr;
    			mpr = mpr->Get_Next_Visible();
    			renderTasksRemaining = true;
@@ -730,7 +732,8 @@ unsigned DX8FVFCategoryContainer::Define_FVF(MeshModelClass* mmc,bool enable_lig
 	case 8: fvf|=D3DFVF_TEX8; break;
 	}
 
-	if (!mmc->Needs_Vertex_Normals()) {  //enable_lighting || mmc->Get_Flag(MeshModelClass::PRELIT_MASK)) {
+	if (!mmc->Needs_Vertex_Normals()) {
+		//enable_lighting || mmc->Get_Flag(MeshModelClass::PRELIT_MASK)) {
 		return fvf;
 	}
 
@@ -1217,7 +1220,9 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 	for (unsigned pass=0;pass<split_table.Get_Pass_Count();++pass) {
 		Textures_Material_And_Shader_Booking_Struct textures_material_and_shader_booking;
 
+#ifdef DEBUG_CRASHING
 		unsigned old_used_indices=used_indices;
+#endif
 
 		for (int i=0;i<polygon_count;++i) {
 			TextureClass* textures[MeshMatDescClass::MAX_TEX_STAGES];
@@ -1234,8 +1239,10 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 			Insert_To_Texture_Category(split_table,textures,mat,shader,pass,vertex_offset);
 		}
 
+#ifdef DEBUG_CRASHING
 		int new_inds=used_indices-old_used_indices;
 		WWASSERT(new_inds<=polygon_count*3);
+#endif
 	}
 }
 
@@ -1300,7 +1307,8 @@ void DX8SkinFVFCategoryContainer::Render()
 	//'Generals' customization to allow more than 65535 vertices
 	unsigned int maxVertexCount=VisibleVertexCount;
 	if (maxVertexCount > 65535)
-	{	//clamp vertex count to maximum size that can be indexed by 16-bit index
+	{
+		//clamp vertex count to maximum size that can be indexed by 16-bit index
 		maxVertexCount = 65535;
 	}
 
@@ -1327,7 +1335,8 @@ void DX8SkinFVFCategoryContainer::Render()
 				int mesh_vertex_count=mmc->Get_Vertex_Count();
 				//'Generals' mod to deal with cases where not all meshes fit in VB.
 				if (vertex_offset+mesh_vertex_count > maxVertexCount || remainingMesh)
-				{	//flag mesh so we know it didn't fit in the vertex buffer
+				{
+					//flag mesh so we know it didn't fit in the vertex buffer
 					mesh->Set_Base_Vertex_Offset(VERTEX_BUFFER_OVERFLOW);
 					if (remainingMesh == nullptr)
 						remainingMesh = mesh;	//start of meshes that didn't fit in buffer
@@ -1735,7 +1744,8 @@ void DX8TextureCategoryClass::Render()
 		MeshClass * mesh = prt->Peek_Mesh();
 
 		if (mesh->Get_Base_Vertex_Offset() == VERTEX_BUFFER_OVERFLOW)	//check if this mesh is valid
-		{	//skip this mesh so it gets rendered later after vertices are filled in.
+		{
+			//skip this mesh so it gets rendered later after vertices are filled in.
 			last_prt = prt;
 			prt = prt->Get_Next_Visible();
 			renderTasksRemaining = true;
@@ -1874,7 +1884,8 @@ void DX8TextureCategoryClass::Render()
 			//non-transparent mesh that will be rendered immediately.  Okay to adjust the shader/material
 			//if necessary
 			if (mesh->Get_Alpha_Override() != 1.0 || (mesh->Get_User_Data() && *(int *)mesh->Get_User_Data() == RenderObjClass::USER_DATA_MATERIAL_OVERRIDE))
-			{	//mesh has material override of some kind
+			{
+				//mesh has material override of some kind
 				//adjust the opacity of this model
 				float oldOpacity=vmaterial->Get_Opacity();
 				Vector3 oldDiffuse;
@@ -1895,7 +1906,8 @@ void DX8TextureCategoryClass::Render()
 				if (mesh->Get_Alpha_Override() != 1.0)
 				{
 					if (mesh->Is_Additive())
-					{	//additvie blended mesh can't switch to alpha or we will get a black outline.
+					{
+						//additvie blended mesh can't switch to alpha or we will get a black outline.
 						//so adjust diffuse color instead.
 						vmaterial->Set_Diffuse(mesh->Get_Alpha_Override(),mesh->Get_Alpha_Override(),mesh->Get_Alpha_Override());
 						theAlphaShader = theShader;	//keep using additive blending.

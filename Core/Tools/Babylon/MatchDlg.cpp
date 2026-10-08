@@ -88,7 +88,7 @@ void CMatchDlg::OnNomatch()
 void CMatchDlg::OnMatch()
 {
 	// TODO: Add your control notification handler code here
-	if ( (MatchingBabylonText = current_match ) )
+	if ( (MatchingBabylonText = current_match ) != nullptr )
 	{
 		CButton *check = (CButton *) GetDlgItem ( IDC_CHECKRETRANSLATE );
 

@@ -186,7 +186,7 @@ target_include_directories(g_gameenginedevice PUBLIC
 )
 
 target_precompile_headers(g_gameenginedevice PRIVATE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     [["Common/STLTypedefs.h"]]
     [["Common/SubsystemInterface.h"]]
     [["WWLib/INI.h"]]
@@ -198,7 +198,6 @@ target_link_libraries(g_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     gi_always
     gi_main
-    stb
 )
 
 target_link_libraries(g_gameenginedevice PUBLIC

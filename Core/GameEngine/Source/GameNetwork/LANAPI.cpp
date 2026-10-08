@@ -24,8 +24,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
-
 #include "Common/crc.h"
 #include "Common/GameState.h"
 #include "Common/Registry.h"

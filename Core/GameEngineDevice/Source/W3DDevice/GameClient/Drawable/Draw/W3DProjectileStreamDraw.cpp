@@ -100,7 +100,8 @@ W3DProjectileStreamDraw::W3DProjectileStreamDraw( Thing *thing, const ModuleData
 void W3DProjectileStreamDraw::setFullyObscuredByShroud(Bool fullyObscured)
 {
 	if (fullyObscured)
-	{	//we need to remove all our lines from the scene because they are hidden
+	{
+		//we need to remove all our lines from the scene because they are hidden
 		for( Int lineIndex = 0; lineIndex < m_linesValid; lineIndex++ )
 		{
 			SegmentedLineClass *deadLine = m_allLines[lineIndex];
@@ -109,7 +110,8 @@ void W3DProjectileStreamDraw::setFullyObscuredByShroud(Bool fullyObscured)
 		}
 	}
 	else
-	{	//we need to restore lines into scene
+	{
+		//we need to restore lines into scene
 		for( Int lineIndex = 0; lineIndex < m_linesValid; lineIndex++ )
 		{
 			SegmentedLineClass *deadLine = m_allLines[lineIndex];

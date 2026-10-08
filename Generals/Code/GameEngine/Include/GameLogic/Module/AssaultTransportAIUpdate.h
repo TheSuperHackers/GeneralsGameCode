@@ -63,7 +63,7 @@ public:
 		{
 			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
 			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	}

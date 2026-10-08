@@ -92,7 +92,7 @@ public:
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( SpawnBehaviorModuleData, m_damageTypesToPropagateToSlaves ) },
 			{ "InitialBurst",				      INI::parseInt,						        nullptr, offsetof( SpawnBehaviorModuleData, m_initialBurst ) },
 			{ "SlavesHaveFreeWill",				INI::parseBool,										nullptr, offsetof( SpawnBehaviorModuleData, m_slavesHaveFreeWill ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 
 		};
     p.add(dataFieldParse);

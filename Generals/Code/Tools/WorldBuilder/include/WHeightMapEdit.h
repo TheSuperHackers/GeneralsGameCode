@@ -137,8 +137,8 @@ public: // Editing methods.
 	void showTileStatusInfo(); ///< pops up a dialog box with tile mem usage.
 
 
-	Bool selectDuplicates(); ///< Selects any dupicate map objects.
-	Bool selectSimilar(); ///< Selects any dupicate map objects.
+	Bool selectDuplicates(); ///< Selects any duplicate map objects.
+	Bool selectSimilar(); ///< Selects any duplicate map objects.
 	Bool selectInvalidTeam(); ///< Selects any objects with invalid teams.
 
 	Bool resize(Int newXSize, Int newYSize, Int newHeight, Int newBorder, Bool anchorTop, Bool anchorBottom,
@@ -146,8 +146,6 @@ public: // Editing methods.
 	Bool remapTextures(); ///< returns true if the operation had an effect.
 	void reloadTextures(); ///< Reloads textures from disk.
 	void resetResources(); ///< Releases textures in preparation for device reset.
-
-	Bool getRawTileData(Short tileNdx, Int width, UnsignedByte *buffer, Int bufLen);
 
 	void dbgVerifyAfterUndo(); ///< Verifies the structures are still consistent.
 	Bool doCliffAdjustment(Int xIndex, Int yIndex);

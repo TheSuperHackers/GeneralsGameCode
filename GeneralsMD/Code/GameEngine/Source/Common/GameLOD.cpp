@@ -70,6 +70,7 @@ static const FieldParse TheStaticGameLODFieldParseTable[] =
 	{ "UseEmissiveNightMaterials",		INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useEmissiveNightMaterials ) },
 	{ "UseHeatEffects",					INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useHeatEffects ) },
 	{ "TextureReductionFactor",		INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_textureReduction ) },
+	{ nullptr, nullptr, nullptr, 0 }
 };
 
 static const char *const StaticGameLODNames[]=
@@ -117,6 +118,7 @@ static const FieldParse TheDynamicGameLODFieldParseTable[] =
 	{ "SlowDeathScale",					INI::parseReal,					nullptr,	offsetof( DynamicGameLODInfo, m_slowDeathScale)},
 	{ "MinParticlePriority",			INI::parseIndexList, ParticlePriorityNames,	offsetof( DynamicGameLODInfo, m_minDynamicParticlePriority)},
 	{ "MinParticleSkipPriority",		INI::parseIndexList, ParticlePriorityNames,	offsetof( DynamicGameLODInfo, m_minDynamicParticleSkipPriority)},
+	{ nullptr, nullptr, nullptr, 0 }
 };
 
 static const char *const DynamicGameLODNames[]=
@@ -141,14 +143,34 @@ DynamicGameLODInfo::DynamicGameLODInfo()
 //Keep this in sync with enum in GameLOD.h
 static const char *const CPUNames[] =
 {
-	"XX","P3", "P4","K7", nullptr
+	"XX",
+	"P3",
+	"P4",
+	"K7",
+	nullptr
 };
 static_assert(ARRAY_SIZE(CPUNames) == CPU_MAX + 1, "Incorrect array size");
 
 //Keep this in sync with enum in GameLOD.h
 static const char *const VideoNames[] =
 {
-	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", nullptr
+	"XX",
+	"V2",
+	"V3",
+	"V4",
+	"V5",
+	"TNT",
+	"TNT2",
+	"GF2",
+	"R100",
+	"PS11",
+	"GF3",
+	"GF4",
+	"PS14",
+	"R200",
+	"PS20",
+	"R300",
+	nullptr
 };
 static_assert(ARRAY_SIZE(VideoNames) == DC_MAX + 1, "Incorrect array size");
 
@@ -333,7 +355,8 @@ void GameLODManager::init()
 			testMinimumRequirements(nullptr,nullptr,nullptr,nullptr,&m_intBenchIndex,&m_floatBenchIndex,&m_memBenchIndex);
 
 			if (TheGlobalData->m_forceBenchmark)
-			{	//we want to see the numbers.  So dump them to a logfile.
+			{
+				//we want to see the numbers.  So dump them to a logfile.
 				FILE *fp=fopen("Benchmark.txt","w");
 				if (fp)
 				{
@@ -691,7 +714,8 @@ DynamicGameLODLevel GameLODManager::findDynamicLODLevel(Real averageFPS)
 	Int ifps=(Int)(averageFPS);	//convert to integer.
 
 	for (Int i=DYNAMIC_GAME_LOD_VERY_HIGH; i>=DYNAMIC_GAME_LOD_LOW; i--)
-	{	//check which of the LOD levels matches our fps
+	{
+		//check which of the LOD levels matches our fps
 		if (m_dynamicGameLODInfo[i].m_minFPS < ifps)
 			return (DynamicGameLODLevel)i;
 	}

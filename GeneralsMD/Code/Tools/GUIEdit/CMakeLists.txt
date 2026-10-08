@@ -47,14 +47,10 @@ target_include_directories(z_guiedit PRIVATE
 
 target_link_libraries(z_guiedit PRIVATE
     comctl32
-    d3d8lib
     imm32
-    stlport
     vfw32
     winmm
-    z_gameengine
     z_gameenginedevice
-    z_wwvegas
     zi_always
 )
 

@@ -2,8 +2,6 @@ set(PLUGLIB_SRC
     "aaplane.h"
     "always.h"
     "BITTYPE.h"
-    "bool.h"
-    "borlandc.h"
     "chunkio.cpp"
     "chunkio.h"
     "errclass.h"
@@ -44,7 +42,6 @@ set(PLUGLIB_SRC
     "w3d_file.h"
     "w3dquat.cpp"
     "w3dquat.h"
-    "watcom.h"
     "win.h"
     "wwfile.h"
     "wwmath.cpp"
@@ -60,8 +57,5 @@ target_sources(core_pluglib PRIVATE ${PLUGLIB_SRC})
 
 target_link_libraries(core_pluglib PUBLIC
     corei_always
-)
-
-target_link_libraries(core_pluglib PRIVATE
-    maxsdk
+    deps_maxsdk # Must stay below corei_always so that max_undef.h is force included after Precompiled/BasePrecomp.h
 )

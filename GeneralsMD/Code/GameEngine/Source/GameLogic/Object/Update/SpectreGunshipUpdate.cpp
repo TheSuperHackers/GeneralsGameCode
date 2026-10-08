@@ -306,7 +306,7 @@ Bool SpectreGunshipUpdate::isPointOffMap( const Coord3D& testPos ) const
 	Region3D mapRegion;
 	TheTerrainLogic->getExtentIncludingBorder( &mapRegion );
 
-	if (!mapRegion.isInRegionNoZ( testPos ))
+	if (!mapRegion.isInRegion( testPos.asCoord2D() ))
 		return true;
 
 	return false;

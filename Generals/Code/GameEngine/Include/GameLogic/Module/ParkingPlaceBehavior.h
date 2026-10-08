@@ -70,7 +70,7 @@ public:
 			{ "ParkInHangars",			INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
 			{ "HealAmountPerSecond",INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
 			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 		p.add(dataFieldParse);
 	}

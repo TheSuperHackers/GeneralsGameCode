@@ -15,7 +15,6 @@ set(UTILITY_SRC
     Utility/mem_compat.h
     Utility/pseh_compat.h
     Utility/sstream_adapter.h
-    Utility/stdint_adapter.h
     Utility/stdio_adapter.h
     Utility/STLUtils.h
     Utility/string_compat.h
@@ -27,8 +26,10 @@ set(UTILITY_SRC
     Utility/wchar_compat.h
 )
 
-## core_utility
+add_library(deps_utility INTERFACE)
+target_include_directories(deps_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_sources(deps_utility PRIVATE ${UTILITY_SRC})
 
-add_library(core_utility INTERFACE)
-target_include_directories(core_utility INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-target_sources(core_utility PRIVATE ${UTILITY_SRC})
+target_link_libraries(deps_utility INTERFACE
+    depsi_always # Gives force included headers. Link early.
+)

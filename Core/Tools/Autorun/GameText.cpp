@@ -590,7 +590,7 @@ void GameTextManager::reverseWord ( Char *file, Char *lp )
 {
 	Int first = TRUE;
 	Char f, l;
-	Int ok = TRUE	;
+	Bool ok = TRUE;
 
 	while ( ok )
 	{
@@ -754,7 +754,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 
 Bool GameTextManager::getStringCount( char *filename )
 {
-	Int ok = TRUE;
+	Bool ok = TRUE;
 
 	m_textCount = 0;
 
@@ -796,7 +796,7 @@ Bool GameTextManager::getStringCount( char *filename )
 Bool GameTextManager::getCSFInfo ( Char *filename )
 {
 	CSFHeader header;
-	Int ok = FALSE;
+	Bool ok = FALSE;
 	RAMFile file;
 
 	if ( file.open( filename, File::READ | File::BINARY ) )
@@ -948,7 +948,7 @@ quit:
 Bool GameTextManager::parseStringFile( char *filename )
 {
 	Int listCount = 0;
-	Int ok = TRUE;
+	Bool ok = TRUE;
 
 	RAMFile file;
 
@@ -1097,7 +1097,7 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 
 Bool	GameTextManager::readLine( char *buffer, Int max, File *file )
 {
-	Int ok = FALSE;
+	Bool ok = FALSE;
 
 	while ( max && file->read( buffer, 1 ) == 1 )
 	{

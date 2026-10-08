@@ -137,7 +137,7 @@ static int writeTransForm ( IFF_FILE *iff, Translation *trans )
 			writeString ( iff, trans->Get (), CHUNK_TEXT );
 			writeString ( iff, trans->Comment (), CHUNK_COMMENT );
 
-			if ( (wvinfo.valid = trans->WaveInfo.Valid()) )
+			if ( (wvinfo.valid = trans->WaveInfo.Valid()) != 0 )
 			{
 				wvinfo.lo = trans->WaveInfo.Lo ();
 				wvinfo.hi = trans->WaveInfo.Hi ();
@@ -185,7 +185,7 @@ static int writeTextForm ( IFF_FILE *iff, BabylonText *text )
 			writeString ( iff, text->Get (), CHUNK_TEXT );
 			writeString ( iff, text->Wave (), CHUNK_WAVE );
 
-			if ( (wvinfo.valid = text->WaveInfo.Valid()) )
+			if ( (wvinfo.valid = text->WaveInfo.Valid()) != 0 )
 			{
 				wvinfo.lo = text->WaveInfo.Lo ();
 				wvinfo.hi = text->WaveInfo.Hi ();
@@ -226,7 +226,7 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 	}
 
 
-	if ( !( iff = IFF_New ( filename )))
+	if ( ( iff = IFF_New ( filename )) == nullptr)
 	{
 		goto error;
 	}
@@ -348,7 +348,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) () )
 	int ok = FALSE;
 
 
-	if ( !(iff = IFF_Load ( filename ) ) )
+	if ( (iff = IFF_Load ( filename ) ) == nullptr )
 	{
 		goto error;
 	}
@@ -407,7 +407,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) () )
 					}
 				}
 
-				if ( ! (label = new BabylonLabel ()))
+				if ( (label = new BabylonLabel ()) == nullptr)
 				{
 					goto error;
 				}
@@ -462,7 +462,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) () )
 					text = nullptr;
 				}
 
-				if ( ! (text = new BabylonText ()))
+				if ( (text = new BabylonText ()) == nullptr)
 				{
 					goto error;
 				}
@@ -503,7 +503,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) () )
 			{
 				TRINFO		trinfo;
 
-				if ( ! (trans = new Translation ()))
+				if ( (trans = new Translation ()) == nullptr)
 				{
 					goto error;
 				}
@@ -610,7 +610,7 @@ int	GetLabelCountDB ( char *filename )
 	int count = 0;
 
 
-	if ( !(iff = IFF_Open ( filename ) ) )
+	if ( (iff = IFF_Open ( filename ) ) == nullptr )
 	{
 		goto error;
 	}

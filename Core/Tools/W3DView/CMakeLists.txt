@@ -171,7 +171,7 @@ add_library(corei_w3dview INTERFACE)
 target_sources(corei_w3dview INTERFACE ${W3DVIEW_SRC})
 
 target_precompile_headers(corei_w3dview INTERFACE
-    [["Precompiled/precompiled.h"]] # Must be first
+    [["Precompiled/BasePrecomp.h"]] # Must be first
     "StdAfx.h"
     [["WWLib/always.h"]]
     [["Utility/STLUtils.h"]]

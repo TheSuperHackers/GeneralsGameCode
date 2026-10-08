@@ -8,7 +8,6 @@ if (DEFINED MSVC_VERSION)
     message(STATUS "MSVC_VERSION: ${MSVC_VERSION}")
 endif()
 
-# TheSuperHackers @build JohnsterID 05/01/2026 Add MinGW-w64 detection and configure compiler flags
 # Detect MinGW-w64
 if(MINGW)
     message(STATUS "MinGW-w64 detected")
@@ -29,7 +28,7 @@ if(MSVC)
     # Create PDB for Release as long as debug info was generated during compile.
     string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
     string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    
+
     # /INCREMENTAL:NO prevents PDB size bloat in Debug configuration(s).
     add_link_options("/INCREMENTAL:NO")
 else()

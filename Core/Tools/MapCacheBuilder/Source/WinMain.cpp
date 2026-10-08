@@ -42,7 +42,6 @@
 #include <stdlib.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"

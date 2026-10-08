@@ -47,7 +47,6 @@
 //           Includes
 //----------------------------------------------------------------------------
 
-#include "Lib/BaseType.h"
 #include <Utility/stdio_adapter.h>
 
 

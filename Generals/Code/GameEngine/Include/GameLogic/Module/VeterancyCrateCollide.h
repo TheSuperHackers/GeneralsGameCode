@@ -60,7 +60,7 @@ public:
 			{ "EffectRange",	INI::parseUnsignedInt,	nullptr, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
 			{ "AddsOwnerVeterancy",	INI::parseBool,	nullptr, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
 			{ "IsPilot", INI::parseBool, nullptr, offsetof( VeterancyCrateCollideModuleData, m_isPilot ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

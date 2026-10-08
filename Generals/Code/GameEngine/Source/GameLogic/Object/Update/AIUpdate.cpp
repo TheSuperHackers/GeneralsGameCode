@@ -1658,10 +1658,10 @@ Bool AIUpdateInterface::computePath( PathfindServicesInterface *pathServices, Co
 	m_retryPath = false;
 	Region3D extent;
 	TheTerrainLogic->getMaximumPathfindExtent(&extent);
-	if (!extent.isInRegionNoZ(*destination)) {
+	if (!extent.isInRegion(destination->asCoord2D())) {
 		// We're going off the map.
 		Coord3D pos = *getObject()->getPosition();
-		if (!extent.isInRegionNoZ(pos))	{
+		if (!extent.isInRegion(pos.asCoord2D()))	{
 			// We're starting off the map.  Since we're off the map, we can't pathfind so just build a path.
 			return computeQuickPath(destination);
 		}
@@ -2259,11 +2259,11 @@ UpdateSleepTime AIUpdateInterface::doLocomotor()
 		m_curMaxBlockedSpeed = FAST_AS_POSSIBLE;
 	}
 
-	if (m_curLocomotor != nullptr
-			&& m_locomotorGoalType == NONE
-			&& m_doFinalPosition == FALSE
-			&& m_isBlocked == FALSE
-			&& requiresConstantCalling == FALSE)
+	if (m_curLocomotor != nullptr &&
+			m_locomotorGoalType == NONE &&
+			m_doFinalPosition == FALSE &&
+			m_isBlocked == FALSE &&
+			requiresConstantCalling == FALSE)
 	{
 		return UPDATE_SLEEP_FOREVER;
 	}
@@ -3857,7 +3857,7 @@ void AIUpdateInterface::privateGuardPosition( const Coord3D *pos, GuardMode guar
 		// Clip to playable area.
 		Region3D r;
 		TheTerrainLogic->getExtent(&r);
-		if (!r.isInRegionNoZ(adjPos))
+		if (!r.isInRegion(adjPos.asCoord2D()))
 			adjPos = TheTerrainLogic->findClosestEdgePoint(&adjPos);
 	}
 	m_locationToGuard = adjPos;
@@ -4406,9 +4406,9 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 
 	// Instead of shroud affecting the ability to attack, it affects the ability to target.
 	// The same checks apply as the old WeaponSet check (now commented out, search for getShroudedStatus)
-	if( calledByAI
-			&& obj->getControllingPlayer()
-			&& obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN
+	if( calledByAI &&
+			obj->getControllingPlayer() &&
+			obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN
 		)
 	{
 		flags |= AI::UNFOGGED;

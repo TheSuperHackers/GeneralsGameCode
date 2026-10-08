@@ -390,7 +390,6 @@ void MotionClass::compute_frame_motion(int frame)
 			*/
 			Matrix3 basetm = BasePose->Get_Node_Relative_Transform(bindex);
 			Matrix3 thistm = tree->Get_Node_Relative_Transform(tindex);
-			INode *tree_node = tree->Get_Node(tindex);
 
 			Matrix3 motion = thistm * Inverse(basetm);
 

@@ -20,7 +20,6 @@
 // Author: Matthew D. Campbell, Dec 2002
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
 //#include <afxwin.h>
 #include <windows.h>
 #include <lmcons.h>
@@ -346,6 +345,7 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 
 	DEBUG_LOG(("Compressing textures with command line of '%s'", commandLine.c_str()));
 	int ret = system(commandLine.c_str());
+	(void)ret;
 	DEBUG_LOG(("system(%s) returned %d", commandLine.c_str(), ret));
 	DeleteFile(tmpFname);
 
@@ -411,6 +411,7 @@ void copyOrigFiles(const std::string& sourceDirName, const std::string& targetDi
 			DEBUG_LOG(("Cannot chmod '%s'", dest.c_str()));
 		}
 		BOOL res = CopyFile(src.c_str(), dest.c_str(), FALSE);
+		(void)res;
 		DEBUG_LOG(("Copying file: %s returns %d", src.c_str(), res));
 	}
 }

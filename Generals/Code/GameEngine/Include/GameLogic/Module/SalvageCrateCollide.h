@@ -68,7 +68,7 @@ public:
 			{ "MoneyChance",	INI::parsePercentToReal,	nullptr, offsetof( SalvageCrateCollideModuleData, m_moneyChance ) },
 			{ "MinMoney",			INI::parseInt,						nullptr, offsetof( SalvageCrateCollideModuleData, m_minimumMoney ) },
 			{ "MaxMoney",			INI::parseInt,						nullptr, offsetof( SalvageCrateCollideModuleData, m_maximumMoney ) },
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

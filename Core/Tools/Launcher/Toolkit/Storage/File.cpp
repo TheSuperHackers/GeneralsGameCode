@@ -37,6 +37,7 @@
 #include "File.h"
 #include <Debug/DebugPrint.h>
 #include <assert.h>
+#include <stdlib.h>
 
 // This should be whatever the file system uses for invalid files
 const HANDLE File::INVALID_HANDLE = INVALID_HANDLE_VALUE;

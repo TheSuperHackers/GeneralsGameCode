@@ -59,7 +59,7 @@ public:
 			{ "MoneyProvided",	INI::parseUnsignedInt,	nullptr, offsetof( MoneyCrateCollideModuleData, m_moneyProvided ) },
 			{ "UpgradedBoost",	parseUpgradePair,		nullptr, offsetof( MoneyCrateCollideModuleData, m_upgradeBoost ) },
 
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

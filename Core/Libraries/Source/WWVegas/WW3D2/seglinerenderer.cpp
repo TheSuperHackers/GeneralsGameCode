@@ -410,7 +410,8 @@ void SegLineRendererClass::Render
 		// segment.
 		LineSegmentIntersection intersection[MAX_SEGLINE_POINT_BUFFER_SIZE + 1][NUM_EDGES];
 
-		for (sidx = 1; sidx < point_cnt; sidx++) {	// #segments = #points - 1 (+ 2 dummy segments)
+		for (sidx = 1; sidx < point_cnt; sidx++) {
+			// #segments = #points - 1 (+ 2 dummy segments)
 
 			Vector3 &curr_point = points[sidx - 1];
 			Vector3 &next_point = points[sidx];

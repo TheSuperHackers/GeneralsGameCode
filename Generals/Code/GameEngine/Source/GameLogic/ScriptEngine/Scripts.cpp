@@ -43,8 +43,6 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Lib/BaseType.h"
-
 #define DEFINE_BUILDABLE_STATUS_NAMES
 #define DEFINE_OBJECT_STATUS_NAMES
 #define DEFINE_SCIENCE_AVAILABILITY_NAMES
@@ -127,8 +125,19 @@ void SignalUIInteraction(Int interaction)
 
 // Changing the order or meaning of either of these will require you to update the maps
 // in a meaningful way. If there are new entries, add them to the end, rather than the middle.
-const char *Surfaces[] = { "Ground", "Air", "Ground or Air" };
-const char *ShakeIntensities[] = { "Subtle", "Normal", "Strong", "Severe", "Cine_Extreme", "Cine_Insane" };
+const char *Surfaces[] = {
+	"Ground",
+	"Air",
+	"Ground or Air"
+};
+const char *ShakeIntensities[] = {
+	"Subtle",
+	"Normal",
+	"Strong",
+	"Severe",
+	"Cine_Extreme",
+	"Cine_Insane"
+};
 
 enum { K_SCRIPT_LIST_DATA_VERSION_1 = 1,
 			K_SCRIPT_GROUP_DATA_VERSION_1 = 1,

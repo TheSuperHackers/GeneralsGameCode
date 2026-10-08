@@ -67,7 +67,7 @@ public:
 			{ "InitialRoster", parseInitialRoster, nullptr, 0 },
 			{ "ImmuneToClearBuildingAttacks", INI::parseBool, nullptr, offsetof( GarrisonContainModuleData, m_immuneToClearBuildingAttacks ) },
 
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 	};

@@ -227,10 +227,9 @@ target_link_libraries(corei_gameenginedevice_private INTERFACE
 )
 
 target_link_libraries(corei_gameenginedevice_public INTERFACE
-    binkloader
     corei_gameengine_public
-    d3d8lib
-    milesloader
+    deps_bink
+    deps_miles
 )
 
 if(RTS_BUILD_OPTION_FFMPEG)

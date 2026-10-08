@@ -217,7 +217,7 @@ public:
 			{ "RubbleParticleSystem11",				TransitionDamageFXModuleData::parseParticleSystem,			nullptr, offsetof( TransitionDamageFXModuleData, m_particleSystem[ BODY_RUBBLE ][ 10 ] ) },
 			{ "RubbleParticleSystem12",				TransitionDamageFXModuleData::parseParticleSystem,			nullptr, offsetof( TransitionDamageFXModuleData, m_particleSystem[ BODY_RUBBLE ][ 11 ] ) },
 
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);
 

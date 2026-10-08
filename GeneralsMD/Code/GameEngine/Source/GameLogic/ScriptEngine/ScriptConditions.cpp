@@ -635,7 +635,8 @@ Bool ScriptConditions::evaluateTeamStateIsNot(Parameter *pTeamParm, Parameter *p
 /** evaluateNamedOutsideArea */
 //-------------------------------------------------------------------------------------------------
 Bool ScriptConditions::evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter *pTriggerParm)
-{// This is actually NamedUnitInside(...)
+{
+	// This is actually NamedUnitInside(...)
 
 	return !evaluateNamedInsideArea(pUnitParm, pTriggerParm);
 }
@@ -644,7 +645,8 @@ Bool ScriptConditions::evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter 
 /** evaluateTeamInsideAreaEntirely */
 //-------------------------------------------------------------------------------------------------
 Bool ScriptConditions::evaluateTeamInsideAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
-{// This is actually TeamInside(...)
+{
+	// This is actually TeamInside(...)
 	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)
@@ -1079,7 +1081,13 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
 
-	PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterStealth, &filterMapStatus, nullptr };
+	PartitionFilter *filters[] = {
+		&filterTeam,
+		&filterAlive,
+		&filterStealth,
+		&filterMapStatus,
+		nullptr
+	};
 
 	Real visionRange = theObj->getVisionRange();
 
@@ -1124,7 +1132,12 @@ Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTyp
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
 
-	PartitionFilter *filters[] = { &filterAlive, &filterStealth, &filterMapStatus, nullptr };
+	PartitionFilter *filters[] = {
+		&filterAlive,
+		&filterStealth,
+		&filterMapStatus,
+		nullptr
+	};
 
 	Real visionRange = theObj->getVisionRange();
 
@@ -2218,7 +2231,12 @@ Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter
 	PartitionFilterPlayerAffiliation f2(player, ALLOW_NEUTRAL, true);
 	PartitionFilterOnMap filterMapStatus;
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
+	PartitionFilter *filters[] = {
+		&f1,
+		&f2,
+		&filterMapStatus,
+		nullptr
+	};
 
 	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(&center, distance, FROM_CENTER_2D, filters, ITER_FASTEST);
 	MemoryPoolObjectHolder hold(iter);
@@ -2269,7 +2287,13 @@ Bool ScriptConditions::evaluateSkirmishPlayerTechBuildingWithinDistancePerimeter
 	PartitionFilterOnMap filterMapStatus;
 
 
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
+	PartitionFilter *filters[] = {
+		&f1,
+		&f2,
+		&f3,
+		&filterMapStatus,
+		nullptr
+	};
 
 	Bool comparison = ThePartitionManager->getClosestObject(&center, radius, FROM_CENTER_2D, filters) != nullptr;
 	pCondition->setCustomData(-1); // false.

@@ -34,6 +34,7 @@
 
 #pragma warning(disable : 4201 4310)
 #include	<windows.h>
+#include	<shellapi.h>
 
 #include "ViewHTML.h"
 //#include "..\win.h"

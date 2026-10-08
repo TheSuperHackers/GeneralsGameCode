@@ -31,7 +31,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
 #include <windows.h>
 #include <stdlib.h>
 #include <crtdbg.h>
@@ -41,7 +40,6 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "WinMain.h"
-#include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"

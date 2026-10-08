@@ -745,7 +745,7 @@ bool Animatable3DObjClass::Is_Bone_Captured(int boneindex) const
  *=============================================================================================*/
 void Animatable3DObjClass::Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation)
 {
-#ifdef WWDEBUG
+#ifdef DEBUG_CRASHING
 	for (int j=0; j<3; j++) {
 		for (int i=0; i<4; i++) {
 			WWASSERT(WWMath::Is_Valid_Float(objtm[j][i]));
@@ -999,9 +999,11 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 						break;
 					case ANIM_MODE_LOOP_PINGPONG:
 						if (ModeAnim.animDirection >= 1.0f)
-						{	//playing forwards, reverse direction
+						{
+							//playing forwards, reverse direction
 							if (frame >= numFrames)
-							{	//step backwards in animation by excess time
+							{
+								//step backwards in animation by excess time
 								frame = numFrames * 2 - frame;
 								// If it is still too far out, reset
 								if ( frame >= numFrames - 1 )
@@ -1010,9 +1012,11 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 							}
 						}
 						else
-						{	//playing backwards, reverse direction
+						{
+							//playing backwards, reverse direction
 							if (frame < 0)
-							{	//step forwards in animation by excess time
+							{
+								//step forwards in animation by excess time
 								frame = -frame;
 								// If it is still too far out, reset
 								if ( frame >= numFrames )

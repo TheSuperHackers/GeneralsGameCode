@@ -563,6 +563,9 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = nullptr;
 
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	m_specialPowerUsesDelay = TRUE;
+#endif
   m_TiVOFastMode = FALSE;
 
 #if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
@@ -579,7 +582,6 @@ GlobalData::GlobalData()
 	m_showCollisionExtents = FALSE;
   m_showAudioLocations = FALSE;
 	m_debugCamera = FALSE;
-	m_specialPowerUsesDelay = TRUE;
 	m_debugVisibility = FALSE;
 	m_debugVisibilityTileCount = 32;	// default to 32.
 	m_debugVisibilityTileDuration = LOGICFRAMES_PER_SECOND;
@@ -1227,7 +1229,8 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
 	if (val < 50)
-	{	//darker gamma
+	{
+		//darker gamma
 		if (val <= 0)
 			TheWritableGlobalData->m_displayGamma = 0.6f;
 		else

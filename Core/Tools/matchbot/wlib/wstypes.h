@@ -54,24 +54,6 @@ Standard type definitions for the sake of portability and readability.
 #include "threadsafe.h"   // enforce threadsafe-only calls
 #endif
 
-#define adelete(X) (delete[](X))
-
-#ifndef TRUE
-#define TRUE               1
-#endif
-
-#ifndef FALSE
-#define FALSE              0
-#endif
-
-#ifndef MIN
-#define MIN(x,y) (((x)<(y))?(x):(y))
-#endif
-
-#ifndef MAX
-#define MAX(x,y) (((x)>(y))?(x):(y))
-#endif
-
 //These are used for readability purposes mostly, when a method takes a
 //  pointer or reference these help specify what will happen to the data
 //  that is sent in.

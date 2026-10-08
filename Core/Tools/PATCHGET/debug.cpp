@@ -24,6 +24,7 @@
 #include "debug.h"
 #include <cstdarg>
 #include <cstdio>
+#include <stdlib.h>
 
 namespace patchget
 {

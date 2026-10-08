@@ -31,7 +31,6 @@
 Streamer::Streamer() : streambuf(), Output_Device(nullptr), Buf(nullptr)
 {
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
-  int state=unbuffered();
   unbuffered(0);  // 0 = buffered, 1 = unbuffered
 #else
   static_assert(STREAMER_UNBUFFERED==0, "std::streambuf is assumed to be buffered by default");
@@ -85,8 +84,8 @@ int Streamer::overflow(int c)
     return(EOF);
   else {
     sputc(c);
-    if ((STREAMER_UNBUFFERED && c=='\n' || pptr() >= epptr())
-        && sync()==EOF) {
+    if ((STREAMER_UNBUFFERED && c=='\n' || pptr() >= epptr()) &&
+        sync()==EOF) {
       return(EOF);
     }
     return(c);
