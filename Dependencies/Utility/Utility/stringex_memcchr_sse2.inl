@@ -22,32 +22,26 @@
 #endif
 
 // SSE2 implementation of memcchr.
-namespace stringex_memcchr_detail
-{
-inline unsigned mismatch_mask(const unsigned char* p, __m128i needle)
-{
-	const __m128i v = _mm_loadu_si128(reinterpret_cast<const __m128i*>(p));
-	return static_cast<unsigned>(_mm_movemask_epi8(_mm_cmpeq_epi8(v, needle))) ^ 0xffffu;
-}
-
-// The caller guarantees a nonzero mask.
-inline unsigned first_set_bit(unsigned mask)
-{
-#if defined(_MSC_VER)
-	unsigned long index;
-	_BitScanForward(&index, mask);
-	return static_cast<unsigned>(index);
-#else
-	return static_cast<unsigned>(__builtin_ctz(mask));
-#endif
-}
-
-}    // namespace stringex_memcchr_detail
-
 inline const void* memcchr(const void* data, int c, size_t n)
 {
-	using stringex_memcchr_detail::first_set_bit;
-	using stringex_memcchr_detail::mismatch_mask;
+	const auto mismatch_mask = [](const unsigned char* p, __m128i needle)
+	{
+		const __m128i v = _mm_loadu_si128(reinterpret_cast<const __m128i*>(p));
+		return static_cast<unsigned>(_mm_movemask_epi8(_mm_cmpeq_epi8(v, needle))) ^ 0xffffu;
+	};
+
+	// The caller guarantees a nonzero mask.
+	const auto first_set_bit = [](unsigned mask)
+	{
+#if defined(_MSC_VER)
+		unsigned long index;
+		_BitScanForward(&index, mask);
+		return static_cast<unsigned>(index);
+#else
+		return static_cast<unsigned>(__builtin_ctz(mask));
+#endif
+	};
+
 	const unsigned char* p = static_cast<const unsigned char*>(data);
 	unsigned index;
 	if (n >= 16)

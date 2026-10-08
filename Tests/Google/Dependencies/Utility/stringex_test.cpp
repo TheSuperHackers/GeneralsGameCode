@@ -63,9 +63,7 @@ TEST(StringEx, MemcchrPortable)
 // memcchr: SSE2 intrinsics
 #if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
 #define memcchr memcchrSse2
-#define stringex_memcchr_detail stringex_memcchr_detail_sse2
 #include "Utility/stringex_memcchr_sse2.inl"
-#undef stringex_memcchr_detail
 #undef memcchr
 TEST(StringEx, MemcchrSse2)
 {
