@@ -439,6 +439,7 @@ void RecorderClass::updatePlayback() {
 	while (m_nextFrame == curFrame) {
 		appendNextCommand();	// append the next command to TheCommandQueue
 		readNextFrame();	// Read the next command's frame number for playback.
+		validateNextFrameValue(curFrame);
 	}
 }
 
@@ -1232,6 +1233,8 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	TheCommandList->reset();
 
 	readNextFrame();
+	validateNextFrameValue(0);
+
 	// readNextFrame() closes m_file via stopPlayback() if the first frame cannot be read.
 	if(m_file == nullptr)
 	{
@@ -1331,6 +1334,21 @@ void RecorderClass::readNextFrame() {
 	Int bytesRead = m_file->read(&m_nextFrame, sizeof(m_nextFrame));
 	if (bytesRead != sizeof(m_nextFrame)) {
 		DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
+		m_nextFrame = -1;
+		stopPlayback();
+	}
+}
+
+void RecorderClass::validateNextFrameValue(UnsignedInt curFrame)
+{
+	if (m_doingAnalysis)
+		return;
+
+	const bool isInValidRange = m_nextFrame >= curFrame && m_nextFrame < curFrame + 3600 * LOGICFRAMES_PER_SECOND;
+	if (!isInValidRange)
+	{
+		DEBUG_LOG(("RecorderClass::validateNextFrame - current frame %d, next frame %d is in unexpected distance",
+			TheGameLogic->getFrame(), m_nextFrame));
 		m_nextFrame = -1;
 		stopPlayback();
 	}
