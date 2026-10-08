@@ -41,37 +41,34 @@ static const char* NEUTRAL_NAME_STR = "(neutral)";
 /////////////////////////////////////////////////////////////////////////////
 // CTeamsDialog dialog
 
-
 CTeamsDialog::CTeamsDialog(CWnd* pParent /*=nullptr*/)
-	: CDialog(CTeamsDialog::IDD, pParent)
+  : CDialog(CTeamsDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CTeamsDialog)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 void CTeamsDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CTeamsDialog)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CTeamsDialog, CDialog)
-	//{{AFX_MSG_MAP(CTeamsDialog)
-	ON_BN_CLICKED(IDC_NEWTEAM, OnNewteam)
-	ON_BN_CLICKED(IDC_DELETETEAM, OnDeleteteam)
-	ON_LBN_SELCHANGE(IDC_PLAYER_LIST, OnSelchangePlayerList)
-	ON_NOTIFY(NM_CLICK, IDC_TEAMS_LIST, OnClickTeamsList)
-	ON_NOTIFY(NM_DBLCLK, IDC_TEAMS_LIST, OnDblclkTeamsList)
-	ON_BN_CLICKED(IDC_COPYTEAM, OnCopyteam)
-	ON_BN_CLICKED(IDC_SelectTeamMembers, OnSelectTeamMembers)
-	ON_BN_CLICKED(IDC_MOVEDOWNTEAM, OnMoveDownTeam)
-	ON_BN_CLICKED(IDC_MOVEUPTEAM, OnMoveUpTeam)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CTeamsDialog)
+ON_BN_CLICKED(IDC_NEWTEAM, OnNewteam)
+ON_BN_CLICKED(IDC_DELETETEAM, OnDeleteteam)
+ON_LBN_SELCHANGE(IDC_PLAYER_LIST, OnSelchangePlayerList)
+ON_NOTIFY(NM_CLICK, IDC_TEAMS_LIST, OnClickTeamsList)
+ON_NOTIFY(NM_DBLCLK, IDC_TEAMS_LIST, OnDblclkTeamsList)
+ON_BN_CLICKED(IDC_COPYTEAM, OnCopyteam)
+ON_BN_CLICKED(IDC_SelectTeamMembers, OnSelectTeamMembers)
+ON_BN_CLICKED(IDC_MOVEDOWNTEAM, OnMoveDownTeam)
+ON_BN_CLICKED(IDC_MOVEUPTEAM, OnMoveUpTeam)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -86,18 +83,22 @@ static AsciiString playerNameForUI(SidesList& sides, int i)
 {
 	AsciiString b = sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 	if (b.isEmpty())
+	{
 		b = NEUTRAL_NAME_STR;
+	}
 	return b;
 }
 
 static AsciiString teamNameForUI(SidesList& sides, int i)
 {
-	TeamsInfo *ti = sides.getTeamInfo(i);
+	TeamsInfo* ti = sides.getTeamInfo(i);
 	if (sides.isPlayerDefaultTeam(ti))
 	{
 		AsciiString ostr = ti->getDict()->getAsciiString(TheKey_teamOwner);
 		if (ostr.isEmpty())
+		{
 			ostr = NEUTRAL_NAME_STR;
+		}
 		AsciiString n;
 		n.format("(default team)");
 		return n;
@@ -112,7 +113,9 @@ static AsciiString UIToInternal(SidesList& sides, const AsciiString& n)
 	for (i = 0; i < sides.getNumSides(); i++)
 	{
 		if (playerNameForUI(sides, i) == n)
+		{
 			return sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
+		}
 	}
 
 	DEBUG_CRASH(("ui name not found"));
@@ -127,7 +130,7 @@ static Int findTeamParentIndex(SidesList& sides, Int i)
 	{
 		if (oname == sides.getSideInfo(j)->getDict()->getAsciiString(TheKey_playerName))
 		{
-			return -(j+1);
+			return -(j + 1);
 		}
 	}
 	DEBUG_CRASH(("hmm"));
@@ -137,22 +140,29 @@ static Int findTeamParentIndex(SidesList& sides, Int i)
 void CTeamsDialog::updateUI(Int whatToRebuild)
 {
 	if (m_updating)
+	{
 		return;
+	}
 
 	++m_updating;
 
 	// make sure everything is canonical.
 	Bool modified = m_sides.validateSides();
-	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::updateUI! (caller should do this)"));
+	DEBUG_ASSERTLOG(!modified, ("had to clean up sides in CTeamsDialog::updateUI! (caller should do this)"));
 	if (modified)
 	{
-		whatToRebuild = REBUILD_ALL;	// assume the worst.
+		whatToRebuild = REBUILD_ALL;    // assume the worst.
 	}
 
 	// constrain team index.
-	if (m_curTeam < 0) m_curTeam = 0;
+	if (m_curTeam < 0)
+	{
+		m_curTeam = 0;
+	}
 	if (m_curTeam >= m_sides.getNumTeams())
-		m_curTeam = m_sides.getNumTeams()-1;
+	{
+		m_curTeam = m_sides.getNumTeams() - 1;
+	}
 
 	if (whatToRebuild & REBUILD_TEAMS)
 	{
@@ -161,28 +171,28 @@ void CTeamsDialog::updateUI(Int whatToRebuild)
 
 	Bool isDefault = true;
 
-	if (m_curTeam >= 0) {
+	if (m_curTeam >= 0)
+	{
 		isDefault = isPlayerDefaultTeamIndex(m_sides, m_curTeam);
 	}
 
 	// update delete button
-	CButton *del = (CButton*)GetDlgItem(IDC_DELETETEAM);
-	del->EnableWindow(!isDefault);	// toplevel team names are delete-able, but "default" teams are not
-	CButton *copyteam = (CButton*)GetDlgItem(IDC_COPYTEAM);
-	copyteam->EnableWindow(!isDefault);	// toplevel team names are delete-able, but "default" teams are not
+	CButton* del = (CButton*)GetDlgItem(IDC_DELETETEAM);
+	del->EnableWindow(!isDefault);    // toplevel team names are delete-able, but "default" teams are not
+	CButton* copyteam = (CButton*)GetDlgItem(IDC_COPYTEAM);
+	copyteam->EnableWindow(!isDefault);    // toplevel team names are delete-able, but "default" teams are not
 
-	//update move up and move down buttons
-	CButton *moveup = (CButton*)GetDlgItem(IDC_MOVEUPTEAM);
+	// update move up and move down buttons
+	CButton* moveup = (CButton*)GetDlgItem(IDC_MOVEUPTEAM);
 	moveup->EnableWindow(!isDefault);
-	CButton *movedown = (CButton*)GetDlgItem(IDC_MOVEDOWNTEAM);
+	CButton* movedown = (CButton*)GetDlgItem(IDC_MOVEDOWNTEAM);
 	movedown->EnableWindow(!isDefault);
 
-	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
+	CListBox* players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
 	Int whichPlayer = players->GetCurSel();
 
-	CButton *newteam = (CButton*)GetDlgItem(IDC_NEWTEAM);
-	newteam->EnableWindow(whichPlayer>0);	// toplevel team names are delete-able, but "default" teams are not
-
+	CButton* newteam = (CButton*)GetDlgItem(IDC_NEWTEAM);
+	newteam->EnableWindow(whichPlayer > 0);    // toplevel team names are delete-able, but "default" teams are not
 
 	--m_updating;
 }
@@ -198,15 +208,14 @@ BOOL CTeamsDialog::OnInitDialog()
 	m_sides = *TheSidesList;
 	m_curTeam = thePrevCurTeam;
 
-	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
+	CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_TEAMS_LIST);
 	pList->InsertColumn(0, "Team Name", LVCFMT_LEFT, 150, 0);
 	pList->InsertColumn(1, "Origin", LVCFMT_LEFT, 150, 1);
 	pList->InsertColumn(2, "Priority", LVCFMT_LEFT, 50, 2);
 	pList->InsertColumn(3, "Script", LVCFMT_LEFT, 150, 3);
 	pList->InsertColumn(4, "Trigger", LVCFMT_LEFT, 150, 4);
 
-
-	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
+	CListBox* players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
 	players->ResetContent();
 	for (int i = 0; i < m_sides.getNumSides(); i++)
 	{
@@ -224,12 +233,12 @@ void CTeamsDialog::OnOK()
 {
 	Bool modified = m_sides.validateSides();
 	(void)modified;
-	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
+	DEBUG_ASSERTLOG(!modified, ("had to clean up sides in CTeamsDialog::OnOK"));
 
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-	SidesListUndoable *pUndo = new SidesListUndoable(m_sides, pDoc);
+	SidesListUndoable* pUndo = new SidesListUndoable(m_sides, pDoc);
 	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+	REF_PTR_RELEASE(pUndo);    // belongs to pDoc now.
 
 	thePrevCurTeam = m_curTeam;
 
@@ -247,7 +256,7 @@ void CTeamsDialog::OnNewteam()
 	AsciiString tname;
 	do
 	{
-		tname.format("team%04d",num++);
+		tname.format("team%04d", num++);
 	}
 	while (m_sides.findTeamInfo(tname));
 
@@ -255,12 +264,13 @@ void CTeamsDialog::OnNewteam()
 
 	Dict d;
 	d.setAsciiString(TheKey_teamName, tname);
-	d.setAsciiString(TheKey_teamOwner, oname);	// owned by the parent of whatever is selected.
+	d.setAsciiString(TheKey_teamOwner, oname);    // owned by the parent of whatever is selected.
 	d.setBool(TheKey_teamIsSingleton, false);
 
 	m_sides.addTeam(&d);
 	Int i;
-	if (m_sides.findTeamInfo(tname, &i)) {
+	if (m_sides.findTeamInfo(tname, &i))
+	{
 		m_curTeam = i;
 		OnEditTemplate();
 	}
@@ -270,7 +280,9 @@ void CTeamsDialog::OnNewteam()
 void CTeamsDialog::OnDeleteteam()
 {
 	if (m_curTeam < 0)
+	{
 		return;
+	}
 
 	Bool isDefault = isPlayerDefaultTeamIndex(m_sides, m_curTeam);
 	if (isDefault)
@@ -286,7 +298,9 @@ void CTeamsDialog::OnDeleteteam()
 		CString msg;
 		msg.Format(IDS_REMOVING_INUSE_TEAM, count);
 		if (::AfxMessageBox(msg, MB_YESNO) == IDNO)
+		{
 			return;
+		}
 	}
 
 	m_sides.removeTeam(m_curTeam);
@@ -313,28 +327,31 @@ void CTeamsDialog::OnEditTemplate()
 	editDialog.AddPage(&behavior);
 	editDialog.AddPage(&generic);
 
-	if (IDOK == editDialog.DoModal()) {
+	if (IDOK == editDialog.DoModal())
+	{
 	}
 	updateUI(REBUILD_ALL);
 }
 
 void CTeamsDialog::UpdateTeamsList()
 {
-	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
+	CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_TEAMS_LIST);
 	pList->DeleteAllItems();
-	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
+	CListBox* players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
 
 	Int which = players->GetCurSel();
 	if (which < 0)
+	{
 		return;
+	}
 
 	Int numTeams = m_sides.getNumTeams();
 	Bool selected = false;
 	Int inserted = 0;
 
-	for (Int i=0; i<numTeams; i++)
+	for (Int i = 0; i < numTeams; i++)
 	{
-		TeamsInfo *ti = m_sides.getTeamInfo(i);
+		TeamsInfo* ti = m_sides.getTeamInfo(i);
 		if (ti->getDict()->getAsciiString(TheKey_teamOwner) == playerNameForUI(m_sides, which).str())
 		{
 			Bool exists;
@@ -352,7 +369,8 @@ void CTeamsDialog::UpdateTeamsList()
 			pList->SetItemText(inserted, 4, trigger.str());
 
 			pList->SetItemData(inserted, i);
-			if (m_curTeam == i) {
+			if (m_curTeam == i)
+			{
 				selected = true;
 				pList->SetItemState(inserted, LVIS_SELECTED, LVIS_SELECTED);
 				pList->EnsureVisible(inserted, false);
@@ -360,9 +378,11 @@ void CTeamsDialog::UpdateTeamsList()
 			inserted++;
 		}
 	}
-	if (!selected) {
+	if (!selected)
+	{
 		m_curTeam = -1;
-		if (inserted > 0) {
+		if (inserted > 0)
+		{
 			m_curTeam = pList->GetItemData(0);
 			pList->SetItemState(0, LVIS_SELECTED, LVIS_SELECTED);
 			pList->EnsureVisible(0, false);
@@ -377,9 +397,9 @@ void CTeamsDialog::OnSelchangePlayerList()
 
 void CTeamsDialog::OnClickTeamsList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
+	CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_TEAMS_LIST);
 
-	int		nItem = pList->GetNextItem(-1, LVNI_SELECTED);
+	int nItem = pList->GetNextItem(-1, LVNI_SELECTED);
 	if (nItem >= 0)
 	{
 		m_curTeam = pList->GetItemData(nItem);
@@ -392,14 +412,15 @@ void CTeamsDialog::OnClickTeamsList(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CTeamsDialog::OnDblclkTeamsList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
+	CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_TEAMS_LIST);
 
-	int		nItem = pList->GetNextItem(-1, LVNI_SELECTED);
+	int nItem = pList->GetNextItem(-1, LVNI_SELECTED);
 	if (nItem >= 0)
 	{
 		m_curTeam = pList->GetItemData(nItem);
 	}
-	if (m_curTeam >= 0 && !isPlayerDefaultTeamIndex(m_sides, m_curTeam)) {
+	if (m_curTeam >= 0 && !isPlayerDefaultTeamIndex(m_sides, m_curTeam))
+	{
 		OnEditTemplate();
 	}
 
@@ -415,7 +436,7 @@ void CTeamsDialog::OnCopyteam()
 	AsciiString tname;
 	do
 	{
-		tname.format("%s.%2d",origName.str(), num++);
+		tname.format("%s.%2d", origName.str(), num++);
 	}
 	while (m_sides.findTeamInfo(tname));
 
@@ -431,11 +452,13 @@ void CTeamsDialog::OnSelectTeamMembers()
 	Dict d = *m_sides.getTeamInfo(m_curTeam)->getDict();
 	AsciiString teamName = d.getAsciiString(TheKey_teamName);
 	Coord3D pos;
-	MapObject *pObj;
-	for (pObj=MapObject::getFirstMapObject(); pObj; pObj=pObj->getNext()) {
+	MapObject* pObj;
+	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+	{
 		pObj->setSelected(false);
 		AsciiString objectsTeam = pObj->getProperties()->getAsciiString(TheKey_originalOwner);
-		if (teamName==objectsTeam) {
+		if (teamName == objectsTeam)
+		{
 			pObj->setSelected(true);
 			pos = *pObj->getLocation();
 			count++;
@@ -443,12 +466,15 @@ void CTeamsDialog::OnSelectTeamMembers()
 	}
 	CString info;
 	info.Format(IDS_NUM_SELECTED_ON_TEAM, teamName.str(), count);
-	if (count>0) {
-		CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-		if (pDoc) {
-			WbView3d *p3View = pDoc->GetActive3DView();
-			if (p3View) {
-				p3View->setCenterInView(pos.x/MAP_XY_FACTOR, pos.y/MAP_XY_FACTOR);
+	if (count > 0)
+	{
+		CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+		if (pDoc)
+		{
+			WbView3d* p3View = pDoc->GetActive3DView();
+			if (p3View)
+			{
+				p3View->setCenterInView(pos.x / MAP_XY_FACTOR, pos.y / MAP_XY_FACTOR);
 			}
 		}
 	}
@@ -460,19 +486,21 @@ void CTeamsDialog::OnMoveUpTeam()
 {
 	// don't move up if already at top of list
 	if (m_curTeam <= 1)
+	{
 		return;
+	}
 
 	Dict temp, current;
 	int startRemove;
 	int totalTeams = m_sides.getNumTeams();
 
 	// iterates through all modified entries in the teams list
-	for (int i=m_curTeam-1; i<totalTeams; i++)
+	for (int i = m_curTeam - 1; i < totalTeams; i++)
 	{
-
 		/* saves the one right above the selected team, then deletes it
 		 from the list */
-		if (i == (m_curTeam-1)) {
+		if (i == (m_curTeam - 1))
+		{
 			temp = *m_sides.getTeamInfo(i)->getDict();
 			m_sides.removeTeam(i);
 			startRemove = i;
@@ -481,7 +509,8 @@ void CTeamsDialog::OnMoveUpTeam()
 		/* saves the selected item, deletes from the list, then adds it
 		 to the bottom of the list -- then adds the saved "temp" item
 		 to the bottom of the list */
-		else if (i == m_curTeam) {
+		else if (i == m_curTeam)
+		{
 			current = *m_sides.getTeamInfo(startRemove)->getDict();
 			m_sides.removeTeam(startRemove);
 			m_sides.addTeam(&current);
@@ -490,7 +519,8 @@ void CTeamsDialog::OnMoveUpTeam()
 
 		/* saves each following item, deletes from the list, and then
 		 adds it to the bottom of the list */
-		else if (i > m_curTeam) {
+		else if (i > m_curTeam)
+		{
 			current = *m_sides.getTeamInfo(startRemove)->getDict();
 			m_sides.removeTeam(startRemove);
 			m_sides.addTeam(&current);
@@ -501,16 +531,16 @@ void CTeamsDialog::OnMoveUpTeam()
 	m_curTeam--;
 
 	// rebuild user interface to reflect changes
-/*
-	LVITEM *pItem = nullptr;
-	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
-	Bool result = pList->GetItem(pItem);
-	pList->DeleteItem(m_curTeam);
-	pList->InsertItem(pItem);
-	for (i=0; i<m_sides.getNumTeams(); i++)
-		pList->Update(i);
-	pList->SetItemState(m_curTeam, LVIS_SELECTED, LVIS_SELECTED);
-*/
+	/*
+	  LVITEM *pItem = nullptr;
+	  CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
+	  Bool result = pList->GetItem(pItem);
+	  pList->DeleteItem(m_curTeam);
+	  pList->InsertItem(pItem);
+	  for (i=0; i<m_sides.getNumTeams(); i++)
+	    pList->Update(i);
+	  pList->SetItemState(m_curTeam, LVIS_SELECTED, LVIS_SELECTED);
+	*/
 	updateUI(REBUILD_ALL);
 }
 
@@ -518,20 +548,22 @@ void CTeamsDialog::OnMoveUpTeam()
 void CTeamsDialog::OnMoveDownTeam()
 {
 	// don't move down if already at bottom of list
-	if (m_curTeam >= m_sides.getNumTeams()-1)
+	if (m_curTeam >= m_sides.getNumTeams() - 1)
+	{
 		return;
+	}
 
 	Dict temp, current;
 	int startRemove;
 	int totalTeams = m_sides.getNumTeams();
 
 	// iterates through all modified entries in the teams list
-	for (int i=m_curTeam; i<totalTeams; i++)
+	for (int i = m_curTeam; i < totalTeams; i++)
 	{
-
 		/* saves the  selected team, then deletes it
 		 from the list */
-		if (i == m_curTeam) {
+		if (i == m_curTeam)
+		{
 			temp = *m_sides.getTeamInfo(i)->getDict();
 			m_sides.removeTeam(i);
 			startRemove = i;
@@ -540,7 +572,8 @@ void CTeamsDialog::OnMoveDownTeam()
 		/* saves the one right after the selected item, deletes it from the list,
 		 then adds it to the bottom of the list -- then adds the saved "temp" item
 		 to the bottom of the list */
-		else if (i == (m_curTeam+1)) {
+		else if (i == (m_curTeam + 1))
+		{
 			current = *m_sides.getTeamInfo(startRemove)->getDict();
 			m_sides.removeTeam(startRemove);
 			m_sides.addTeam(&current);
@@ -549,7 +582,8 @@ void CTeamsDialog::OnMoveDownTeam()
 
 		/* saves each following item, deletes from the list, and then
 		 adds it to the bottom of the list */
-		else if (i > m_curTeam+1) {
+		else if (i > m_curTeam + 1)
+		{
 			current = *m_sides.getTeamInfo(startRemove)->getDict();
 			m_sides.removeTeam(startRemove);
 			m_sides.addTeam(&current);
@@ -560,66 +594,75 @@ void CTeamsDialog::OnMoveDownTeam()
 	m_curTeam++;
 
 	// rebuild user interface to reflect changes
-/*	LVITEM *pItem = nullptr;
-	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
-	Bool result = pList->GetItem(pItem);
-	pList->DeleteItem(m_curTeam);
-	pList->InsertItem(pItem);
-	for (i=0; i<m_sides.getNumTeams(); i++)
-		pList->Update(i);
-	pList->SetItemState(m_curTeam, LVIS_SELECTED, LVIS_SELECTED);
-*/
+	/*	LVITEM *pItem = nullptr;
+	  CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
+	  Bool result = pList->GetItem(pItem);
+	  pList->DeleteItem(m_curTeam);
+	  pList->InsertItem(pItem);
+	  for (i=0; i<m_sides.getNumTeams(); i++)
+	    pList->Update(i);
+	  pList->SetItemState(m_curTeam, LVIS_SELECTED, LVIS_SELECTED);
+	*/
 	updateUI(REBUILD_ALL);
 }
 
 void CTeamsDialog::validateTeamOwners()
 {
 	Int numTeams = m_sides.getNumTeams();
-	for (Int i = 0; i < numTeams; ++i) {
-		TeamsInfo *ti = m_sides.getTeamInfo(i);
-		if (!ti) {
+	for (Int i = 0; i < numTeams; ++i)
+	{
+		TeamsInfo* ti = m_sides.getTeamInfo(i);
+		if (!ti)
+		{
 			continue;
 		}
 
 		Bool exists;
 		AsciiString owner = ti->getDict()->getAsciiString(TheKey_teamOwner, &exists);
 
-		if (exists) {
-			if (isValidTeamOwner(owner)) {
+		if (exists)
+		{
+			if (isValidTeamOwner(owner))
+			{
 				continue;
 			}
 		}
 
 		doCorrectTeamOwnerDialog(ti);
 	}
-
 }
 
-Bool CTeamsDialog::isValidTeamOwner( AsciiString ownerName )
+Bool CTeamsDialog::isValidTeamOwner(AsciiString ownerName)
 {
 	Int numOwners = m_sides.getNumSides();
-	for (Int i = 0; i < numOwners; ++i) {
-		SidesInfo *side = m_sides.getSideInfo(i);
-		if (!side) {
+	for (Int i = 0; i < numOwners; ++i)
+	{
+		SidesInfo* side = m_sides.getSideInfo(i);
+		if (!side)
+		{
 			continue;
 		}
 
 		Bool exists;
 		AsciiString sideOwnerName = side->getDict()->getAsciiString(TheKey_playerName, &exists);
 
-		if (!exists) {
+		if (!exists)
+		{
 			continue;
 		}
 
-		if (ownerName == sideOwnerName) {
+		if (ownerName == sideOwnerName)
+		{
 			return true;
 		}
 
-		if (sideOwnerName.isEmpty()) {
+		if (sideOwnerName.isEmpty())
+		{
 			sideOwnerName = NEUTRAL_NAME_STR;
 		}
 
-		if (ownerName == sideOwnerName) {
+		if (ownerName == sideOwnerName)
+		{
 			return true;
 		}
 	}
@@ -627,13 +670,14 @@ Bool CTeamsDialog::isValidTeamOwner( AsciiString ownerName )
 	return false;
 }
 
-void CTeamsDialog::doCorrectTeamOwnerDialog( TeamsInfo *ti )
+void CTeamsDialog::doCorrectTeamOwnerDialog(TeamsInfo* ti)
 {
 	CFixTeamOwnerDialog fix(ti, &m_sides);
-	if (fix.DoModal() == IDOK) {
-		if (fix.pickedValidTeam()) {
+	if (fix.DoModal() == IDOK)
+	{
+		if (fix.pickedValidTeam())
+		{
 			ti->getDict()->setAsciiString(TheKey_teamOwner, fix.getSelectedOwner());
 		}
 	}
 }
-

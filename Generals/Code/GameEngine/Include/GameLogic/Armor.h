@@ -39,38 +39,36 @@ class ArmorStore;
 
 //-------------------------------------------------------------------------------------------------
 /**
-	An Armor encapsulates the a particular type of actual modifier to damage taken, in order
-	to simulate different materials, and to help make game balance easier to adjust.
+  An Armor encapsulates the a particular type of actual modifier to damage taken, in order
+  to simulate different materials, and to help make game balance easier to adjust.
 */
 //-------------------------------------------------------------------------------------------------
 class ArmorTemplate
 {
 public:
-
 	ArmorTemplate();
 
 	void clear();
 
 	/**
-		This is the real "meat" of the class: given a damage type and amount, adjust the damage
-		and return the amount that should be dealt.
+	  This is the real "meat" of the class: given a damage type and amount, adjust the damage
+	  and return the amount that should be dealt.
 	*/
 	Real adjustDamage(DamageType t, Real damage) const;
 
-	static void parseArmorCoefficients( INI* ini, void *instance, void* /* store */, const void* userData );
+	static void parseArmorCoefficients(INI* ini, void* instance, void* /* store */, const void* userData);
 
 protected:
-
 private:
-	Real						m_damageCoefficient[DAMAGE_NUM_TYPES];	///< modifiers to damage
+	Real m_damageCoefficient[DAMAGE_NUM_TYPES];    ///< modifiers to damage
 };
 
 //-------------------------------------------------------------------------------------------------
 class Armor
 {
 public:
-
-	inline Armor(const ArmorTemplate* tmpl = nullptr) : m_template(tmpl)
+	inline Armor(const ArmorTemplate* tmpl = nullptr)
+	  : m_template(tmpl)
 	{
 	}
 
@@ -85,46 +83,42 @@ public:
 	}
 
 private:
-	const ArmorTemplate* m_template;		///< the kind of armor this is
+	const ArmorTemplate* m_template;    ///< the kind of armor this is
 };
 
 //------------------------------------------------------------------------------------------------
 /** Interface class for TheArmorStore, which is just a convenient place for us to
-	* store each Armor we read from INI together in a list, with some access
-	* methods for finding Armors */
+ * store each Armor we read from INI together in a list, with some access
+ * methods for finding Armors */
 //-------------------------------------------------------------------------------------------------
 class ArmorStore : public SubsystemInterface
 {
-
 public:
-
 	ArmorStore();
 	virtual ~ArmorStore() override;
 
-	virtual void init() override { }
-	virtual void reset() override { }
-	virtual void update() override { }
+	virtual void init() override {}
+	virtual void reset() override {}
+	virtual void update() override {}
 
 	const ArmorTemplate* findArmorTemplate(NameKeyType namekey) const;
 	/**
-		Find the Armor with the given name. If no such Armor exists, return null.
+	  Find the Armor with the given name. If no such Armor exists, return null.
 	*/
 	const ArmorTemplate* findArmorTemplate(const AsciiString& name) const;
 	const ArmorTemplate* findArmorTemplate(const char* name) const;
 
-	inline Armor makeArmor(const ArmorTemplate *tmpl) const
+	inline Armor makeArmor(const ArmorTemplate* tmpl) const
 	{
-		return Armor(tmpl);	// my, that was easy
+		return Armor(tmpl);    // my, that was easy
 	}
 
 	static void parseArmorDefinition(INI* ini);
 
 private:
-
-	typedef std::hash_map< NameKeyType, ArmorTemplate, rts::hash<NameKeyType>, rts::equal_to<NameKeyType>/**/> ArmorTemplateMap;
+	typedef std::hash_map< NameKeyType, ArmorTemplate, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> /**/> ArmorTemplateMap;
 	ArmorTemplateMap m_armorTemplates;
-
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern ArmorStore *TheArmorStore;
+extern ArmorStore* TheArmorStore;

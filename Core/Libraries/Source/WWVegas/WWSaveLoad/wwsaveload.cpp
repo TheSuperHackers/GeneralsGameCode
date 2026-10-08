@@ -39,7 +39,6 @@
 #include "wwsaveload.h"
 #include "definitionmgr.h"
 
-
 void WWSaveLoad::Init()
 {
 }
@@ -48,5 +47,3 @@ void WWSaveLoad::Shutdown()
 {
 	_TheDefinitionMgr.Free_Definitions();
 }
-
-

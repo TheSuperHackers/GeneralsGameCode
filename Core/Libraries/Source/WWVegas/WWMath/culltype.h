@@ -47,7 +47,7 @@
 
 typedef enum CULLTYPE
 {
-	CULL_OUTSIDE = 0,			// the object was completely outside the culling volume
-	CULL_INTERSECTING,		// the object intersects an edge of the culling volume
-	CULL_INSIDE					// the object is completely inside the culling volume
+	CULL_OUTSIDE = 0,    // the object was completely outside the culling volume
+	CULL_INTERSECTING,    // the object intersects an edge of the culling volume
+	CULL_INSIDE    // the object is completely inside the culling volume
 };

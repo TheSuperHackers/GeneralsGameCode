@@ -28,15 +28,15 @@
 
 #pragma once
 
-enum LocaleType CPP_11(: Int)
+enum LocaleType CPP_11( : Int)
 {
-    LOC_UNKNOWN = 0,
-    LOC_MIN = 1,
-    LOC_MAX = 37
+	LOC_UNKNOWN = 0,
+	LOC_MIN = 1,
+	LOC_MAX = 37
 };
 
 void HandlePersistentStorageResponses();
 void UpdateLocalPlayerStats();
 
-void SetLookAtPlayer( Int id, AsciiString nick );
-void PopulatePlayerInfoWindows( AsciiString parentWindowName );
+void SetLookAtPlayer(Int id, AsciiString nick);
+void PopulatePlayerInfoWindows(AsciiString parentWindowName);

@@ -26,28 +26,29 @@
 
 class ParticleSizeDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ParticleSizeDialogClass (float size, CWnd* pParent = nullptr);   // standard constructor
+	ParticleSizeDialogClass(float size, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ParticleSizeDialogClass)
-	enum { IDD = IDD_PARTICLE_SIZE };
-	CSpinButtonCtrl	m_SizeSpin;
+	enum
+	{
+		IDD = IDD_PARTICLE_SIZE
+	};
+	CSpinButtonCtrl m_SizeSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ParticleSizeDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ParticleSizeDialogClass)
 	virtual BOOL OnInitDialog() override;
@@ -55,19 +56,17 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////////
+	//	Public methods
+	/////////////////////////////////////////////////////////////
+	float Get_Size() const { return m_Size; }
 
-		/////////////////////////////////////////////////////////////
-		//	Public methods
-		/////////////////////////////////////////////////////////////
-		float					Get_Size () const { return m_Size; }
-
-	private:
-
-		/////////////////////////////////////////////////////////////
-		//	Private member data
-		/////////////////////////////////////////////////////////////
-		float					m_Size;
+private:
+	/////////////////////////////////////////////////////////////
+	//	Private member data
+	/////////////////////////////////////////////////////////////
+	float m_Size;
 };
 
 //{{AFX_INSERT_LOCATION}}

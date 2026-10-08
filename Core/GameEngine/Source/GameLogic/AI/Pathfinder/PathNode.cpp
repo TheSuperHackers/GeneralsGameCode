@@ -18,13 +18,13 @@
 
 #include "GameLogic/Pathfinder/PathNode.h"
 
-PathNode::PathNode() :
-	m_nextOpti(nullptr),
-	m_next(nullptr),
-	m_prev(nullptr),
-	m_nextOptiDist2D(0),
-	m_canOptimize(false),
-	m_id(-1)
+PathNode::PathNode()
+  : m_nextOpti(nullptr)
+  , m_next(nullptr)
+  , m_prev(nullptr)
+  , m_nextOptiDist2D(0)
+  , m_canOptimize(false)
+  , m_id(-1)
 {
 	m_nextOptiDirNorm2D.x = 0;
 	m_nextOptiDirNorm2D.y = 0;
@@ -38,7 +38,7 @@ PathNode::~PathNode()
 }
 
 //-----------------------------------------------------------------------------------
-void PathNode::setNextOptimized(PathNode *node)
+void PathNode::setNextOptimized(PathNode* node)
 {
 	m_nextOpti = node;
 	if (node)
@@ -48,7 +48,7 @@ void PathNode::setNextOptimized(PathNode *node)
 		m_nextOptiDist2D = m_nextOptiDirNorm2D.length();
 		if (m_nextOptiDist2D == 0.0f)
 		{
-			//DEBUG_LOG(("Warning - Path Seg length == 0, adjusting. john a."));
+			// DEBUG_LOG(("Warning - Path Seg length == 0, adjusting. john a."));
 			m_nextOptiDist2D = 0.01f;
 		}
 		m_nextOptiDirNorm2D.x /= m_nextOptiDist2D;
@@ -62,34 +62,35 @@ void PathNode::setNextOptimized(PathNode *node)
 
 //-----------------------------------------------------------------------------------
 /// given a list, prepend this node, return new list
-PathNode *PathNode::prependToList( PathNode *list )
+PathNode* PathNode::prependToList(PathNode* list)
 {
 	m_next = list;
 	if (list)
+	{
 		list->m_prev = this;
+	}
 	m_prev = nullptr;
 	return this;
 }
 
-
 //-----------------------------------------------------------------------------------
 /// given a node, append new node to this.
-void PathNode::append( PathNode *newNode )
+void PathNode::append(PathNode* newNode)
 {
 	newNode->m_next = this->m_next;
 	newNode->m_prev = this;
-	if (newNode->m_next) {
+	if (newNode->m_next)
+	{
 		newNode->m_next->m_prev = newNode;
 	}
 	this->m_next = newNode;
-
 }
 
 //-----------------------------------------------------------------------------------
 /**
  * Compute direction vector to next node
  */
-const Coord3D *PathNode::computeDirectionVector()
+const Coord3D* PathNode::computeDirectionVector()
 {
 	static Coord3D dir;
 

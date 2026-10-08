@@ -56,16 +56,16 @@ public:
 	// Modify given texture size to nearest valid size on current hardware.
 	static void Validate_Texture_Size(unsigned& width, unsigned& height, unsigned& depth);
 
-	static IDirect3DTexture8 * Load_Thumbnail(
-		const StringClass& filename,const Vector3& hsv_shift);
-//		WW3DFormat texture_format);	// Pass WW3D_FORMAT_UNKNOWN if you don't care
+	static IDirect3DTexture8* Load_Thumbnail(
+	  const StringClass& filename, const Vector3& hsv_shift);
+	//		WW3DFormat texture_format);	// Pass WW3D_FORMAT_UNKNOWN if you don't care
 
-	static IDirect3DSurface8 *		Load_Surface_Immediate(
-		const StringClass& filename,
-		WW3DFormat surface_format,		// Pass WW3D_FORMAT_UNKNOWN if you don't care
-		bool allow_compression);
+	static IDirect3DSurface8* Load_Surface_Immediate(
+	  const StringClass& filename,
+	  WW3DFormat surface_format,    // Pass WW3D_FORMAT_UNKNOWN if you don't care
+	  bool allow_compression);
 
-	static void	Request_Thumbnail(TextureBaseClass* tc);
+	static void Request_Thumbnail(TextureBaseClass* tc);
 
 	// Adds a loading task to the system. The task if processed in a separate
 	// thread as soon as possible. The task will appear in finished tasks list
@@ -78,8 +78,8 @@ public:
 	// is called from the main thread the texture is loaded immediatelly.
 	static void Request_Foreground_Loading(TextureBaseClass* tc);
 
-	static void	Flush_Pending_Load_Tasks();
-	static void Update(void(*network_callback)() = nullptr);
+	static void Flush_Pending_Load_Tasks();
+	static void Update(void (*network_callback)() = nullptr);
 
 	// returns true if current thread of execution is allowed to make DX8 calls.
 	static bool Is_DX8_Thread();
@@ -87,85 +87,86 @@ public:
 	static void Suspend_Texture_Load();
 	static void Continue_Texture_Load();
 
-	static void Set_Texture_Inactive_Override_Time(int time_ms) {TextureInactiveOverrideTime = time_ms;}
+	static void Set_Texture_Inactive_Override_Time(int time_ms) { TextureInactiveOverrideTime = time_ms; }
 
 private:
-	static void Process_Foreground_Load			(TextureLoadTaskClass *task);
-	static void Process_Foreground_Thumbnail	(TextureLoadTaskClass *task);
+	static void Process_Foreground_Load(TextureLoadTaskClass* task);
+	static void Process_Foreground_Thumbnail(TextureLoadTaskClass* task);
 
-	static void Begin_Load_And_Queue				(TextureLoadTaskClass *task);
-	static void Load_Thumbnail						(TextureBaseClass *tc);
+	static void Begin_Load_And_Queue(TextureLoadTaskClass* task);
+	static void Load_Thumbnail(TextureBaseClass* tc);
 
 	static bool TextureLoadSuspended;
 
 	// The time in ms before a texture is thrown out.
 	// The default is zero.  The scripted movies set this to reduce texture stalls in movies.
-	static int	TextureInactiveOverrideTime;
+	static int TextureInactiveOverrideTime;
 };
 
 class TextureLoadTaskListNodeClass
 {
 	friend class TextureLoadTaskListClass;
 
-	public:
-		TextureLoadTaskListNodeClass() : Next(0), Prev(0) { }
+public:
+	TextureLoadTaskListNodeClass()
+	  : Next(0)
+	  , Prev(0)
+	{}
 
-		TextureLoadTaskListClass *Get_List()		{ return List; }
+	TextureLoadTaskListClass* Get_List() { return List; }
 
-		TextureLoadTaskListNodeClass *Next;
-		TextureLoadTaskListNodeClass *Prev;
-		TextureLoadTaskListClass *		List;
+	TextureLoadTaskListNodeClass* Next;
+	TextureLoadTaskListNodeClass* Prev;
+	TextureLoadTaskListClass* List;
 };
-
 
 class TextureLoadTaskListClass
 {
 	// This class implements an unsynchronized, double-linked list of TextureLoadTaskClass
 	// objects, using an embedded list node.
 
-	public:
-		TextureLoadTaskListClass();
+public:
+	TextureLoadTaskListClass();
 
-		// Returns true if list is empty, false otherwise.
-		bool									Is_Empty		() const		{ return (Root.Next == &Root); }
+	// Returns true if list is empty, false otherwise.
+	bool Is_Empty() const { return (Root.Next == &Root); }
 
-		// Add a task to beginning of list
-		void									Push_Front	(TextureLoadTaskClass *task);
+	// Add a task to beginning of list
+	void Push_Front(TextureLoadTaskClass* task);
 
-		// Add a task to end of list
-		void									Push_Back	(TextureLoadTaskClass *task);
+	// Add a task to end of list
+	void Push_Back(TextureLoadTaskClass* task);
 
-		// Remove and return a task from beginning of list, or null if list is empty.
-		TextureLoadTaskClass *			Pop_Front	();
+	// Remove and return a task from beginning of list, or null if list is empty.
+	TextureLoadTaskClass* Pop_Front();
 
-		// Remove and return a task from end of list, or null if list is empty
-		TextureLoadTaskClass *			Pop_Back		();
+	// Remove and return a task from end of list, or null if list is empty
+	TextureLoadTaskClass* Pop_Back();
 
-		// Remove specified task from list, if present
-		void									Remove		(TextureLoadTaskClass *task);
+	// Remove specified task from list, if present
+	void Remove(TextureLoadTaskClass* task);
 
-	private:
-		// This list is implemented using a sentinel node.
-		TextureLoadTaskListNodeClass	Root;
+private:
+	// This list is implemented using a sentinel node.
+	TextureLoadTaskListNodeClass Root;
 };
-
 
 class SynchronizedTextureLoadTaskListClass : public TextureLoadTaskListClass
 {
 	// This class added thread-safety to the basic TextureLoadTaskListClass.
 
-	public:
-		SynchronizedTextureLoadTaskListClass();
+public:
+	SynchronizedTextureLoadTaskListClass();
 
-		// See comments above for description of member functions.
-		void									Push_Front	(TextureLoadTaskClass *task);
-		void									Push_Back	(TextureLoadTaskClass *task);
-		TextureLoadTaskClass *			Pop_Front	();
-		TextureLoadTaskClass *			Pop_Back		();
-		void									Remove		(TextureLoadTaskClass *task);
+	// See comments above for description of member functions.
+	void Push_Front(TextureLoadTaskClass* task);
+	void Push_Back(TextureLoadTaskClass* task);
+	TextureLoadTaskClass* Pop_Front();
+	TextureLoadTaskClass* Pop_Back();
+	void Remove(TextureLoadTaskClass* task);
 
-	private:
-		FastCriticalSectionClass		CriticalSection;
+private:
+	FastCriticalSectionClass CriticalSection;
 };
 
 /*
@@ -175,96 +176,97 @@ class SynchronizedTextureLoadTaskListClass : public TextureLoadTaskListClass
 ** each derived class to put the task back into the correct free list.
 */
 
-
 class TextureLoadTaskClass : public TextureLoadTaskListNodeClass
 {
-	public:
-		enum TaskType {
-			TASK_NONE,
-			TASK_THUMBNAIL,
-			TASK_LOAD,
-		};
+public:
+	enum TaskType
+	{
+		TASK_NONE,
+		TASK_THUMBNAIL,
+		TASK_LOAD,
+	};
 
-		enum PriorityType {
-			PRIORITY_LOW,
-			PRIORITY_HIGH,
-		};
+	enum PriorityType
+	{
+		PRIORITY_LOW,
+		PRIORITY_HIGH,
+	};
 
-		enum StateType {
-			STATE_NONE,
+	enum StateType
+	{
+		STATE_NONE,
 
-			STATE_LOAD_BEGUN,
-			STATE_LOAD_MIPMAP,
-			STATE_LOAD_COMPLETE,
+		STATE_LOAD_BEGUN,
+		STATE_LOAD_MIPMAP,
+		STATE_LOAD_COMPLETE,
 
-			STATE_COMPLETE,
-		};
+		STATE_COMPLETE,
+	};
 
+	TextureLoadTaskClass();
+	~TextureLoadTaskClass();
 
-		TextureLoadTaskClass();
-		~TextureLoadTaskClass();
+	static TextureLoadTaskClass* Create(TextureBaseClass* tc, TaskType type, PriorityType priority);
+	static void Delete_Free_Pool();
 
-		static TextureLoadTaskClass *	Create			(TextureBaseClass *tc, TaskType type, PriorityType priority);
-		static void				Delete_Free_Pool			();
+	virtual void Destroy();
+	virtual void Init(TextureBaseClass* tc, TaskType type, PriorityType priority);
+	virtual void Deinit();
 
-		virtual void			Destroy						();
-		virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority);
-		virtual void			Deinit						();
+	TaskType Get_Type() const { return Type; }
+	PriorityType Get_Priority() const { return Priority; }
+	StateType Get_State() const { return State; }
 
-		TaskType					Get_Type						() const		{ return Type;				}
-		PriorityType			Get_Priority				() const		{ return Priority;		}
-		StateType				Get_State					() const		{ return State;			}
+	WW3DFormat Get_Format() const { return Format; }
+	unsigned int Get_Width() const { return Width; }
+	unsigned int Get_Height() const { return Height; }
+	unsigned int Get_Mip_Level_Count() const { return MipLevelCount; }
+	unsigned int Get_Reduction() const { return Reduction; }
 
-		WW3DFormat				Get_Format					() const		{ return Format;			}
-		unsigned int			Get_Width					() const		{ return Width;			}
-		unsigned int			Get_Height					() const		{ return Height;			}
-		unsigned int			Get_Mip_Level_Count		() const		{ return MipLevelCount; }
-		unsigned int			Get_Reduction				() const		{ return Reduction;		}
+	unsigned char* Get_Locked_Surface_Ptr(unsigned int level);
+	unsigned int Get_Locked_Surface_Pitch(unsigned int level) const;
 
-		unsigned char *		Get_Locked_Surface_Ptr	(unsigned int level);
-		unsigned int			Get_Locked_Surface_Pitch(unsigned int level) const;
+	TextureBaseClass* Peek_Texture() { return Texture; }
+	IDirect3DTexture8* Peek_D3D_Texture() { return (IDirect3DTexture8*)D3DTexture; }
 
-		TextureBaseClass *	Peek_Texture				()				{ return Texture;			}
-		IDirect3DTexture8	*	Peek_D3D_Texture			()				{ return (IDirect3DTexture8*)D3DTexture;		}
+	void Set_Type(TaskType t) { Type = t; }
+	void Set_Priority(PriorityType p) { Priority = p; }
+	void Set_State(StateType s) { State = s; }
 
-		void						Set_Type						(TaskType t)		{ Type		= t;			}
-		void						Set_Priority				(PriorityType p)	{ Priority	= p;			}
-		void						Set_State					(StateType s)		{ State		= s;			}
+	bool Begin_Load();
+	bool Load();
+	void End_Load();
+	void Finish_Load();
+	void Apply_Missing_Texture();
 
-		bool						Begin_Load					();
-		bool						Load							();
-		void						End_Load						();
-		void						Finish_Load					();
-		void						Apply_Missing_Texture	();
+protected:
+	virtual bool Begin_Compressed_Load();
+	virtual bool Begin_Uncompressed_Load();
 
-	protected:
-		virtual bool			Begin_Compressed_Load	();
-		virtual bool			Begin_Uncompressed_Load	();
+	virtual bool Load_Compressed_Mipmap();
+	virtual bool Load_Uncompressed_Mipmap();
 
-		virtual bool			Load_Compressed_Mipmap	();
-		virtual bool			Load_Uncompressed_Mipmap();
+	virtual void Lock_Surfaces();
+	virtual void Unlock_Surfaces();
 
-		virtual void			Lock_Surfaces				();
-		virtual void			Unlock_Surfaces			();
+	void Apply(bool initialize);
 
-		void						Apply							(bool initialize);
+	TextureBaseClass* Texture;
+	IDirect3DBaseTexture8* D3DTexture;
+	WW3DFormat Format;
 
-		TextureBaseClass*		Texture;
-		IDirect3DBaseTexture8*	D3DTexture;
-		WW3DFormat				Format;
+	unsigned int Width;
+	unsigned int Height;
+	unsigned int MipLevelCount;
+	unsigned int Reduction;
+	Vector3 HSVShift;
 
-		unsigned int			Width;
-		unsigned	int			Height;
-		unsigned	int			MipLevelCount;
-		unsigned	int			Reduction;
-		Vector3					HSVShift;
+	unsigned char* LockedSurfacePtr[MIP_LEVELS_MAX];
+	unsigned int LockedSurfacePitch[MIP_LEVELS_MAX];
 
-		unsigned char *		LockedSurfacePtr[MIP_LEVELS_MAX];
-		unsigned	int			LockedSurfacePitch[MIP_LEVELS_MAX];
-
-		TaskType					Type;
-		PriorityType			Priority;
-		StateType				State;
+	TaskType Type;
+	PriorityType Priority;
+	StateType State;
 };
 
 class CubeTextureLoadTaskClass : public TextureLoadTaskClass
@@ -272,28 +274,28 @@ class CubeTextureLoadTaskClass : public TextureLoadTaskClass
 public:
 	CubeTextureLoadTaskClass();
 
-	virtual void			Destroy						() override;
-	virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority) override;
-	virtual void			Deinit						() override;
+	virtual void Destroy() override;
+	virtual void Init(TextureBaseClass* tc, TaskType type, PriorityType priority) override;
+	virtual void Deinit() override;
 
 protected:
-	virtual bool			Begin_Compressed_Load	() override;
-	virtual bool			Begin_Uncompressed_Load	() override;
+	virtual bool Begin_Compressed_Load() override;
+	virtual bool Begin_Uncompressed_Load() override;
 
-	virtual bool			Load_Compressed_Mipmap	() override;
-//	virtual bool			Load_Uncompressed_Mipmap() override;
+	virtual bool Load_Compressed_Mipmap() override;
+	//	virtual bool			Load_Uncompressed_Mipmap() override;
 
-	virtual void			Lock_Surfaces				() override;
-	virtual void			Unlock_Surfaces			() override;
+	virtual void Lock_Surfaces() override;
+	virtual void Unlock_Surfaces() override;
 
 private:
-	unsigned char*			Get_Locked_CubeMap_Surface_Pointer(unsigned int face, unsigned int level);
-	unsigned int			Get_Locked_CubeMap_Surface_Pitch(unsigned int face, unsigned int level) const;
+	unsigned char* Get_Locked_CubeMap_Surface_Pointer(unsigned int face, unsigned int level);
+	unsigned int Get_Locked_CubeMap_Surface_Pitch(unsigned int face, unsigned int level) const;
 
-	IDirect3DCubeTexture8*	Peek_D3D_Cube_Texture()				{ return (IDirect3DCubeTexture8*)D3DTexture;		}
+	IDirect3DCubeTexture8* Peek_D3D_Cube_Texture() { return (IDirect3DCubeTexture8*)D3DTexture; }
 
-	unsigned char*			LockedCubeSurfacePtr[6][MIP_LEVELS_MAX];
-	unsigned int			LockedCubeSurfacePitch[6][MIP_LEVELS_MAX];
+	unsigned char* LockedCubeSurfacePtr[6][MIP_LEVELS_MAX];
+	unsigned int LockedCubeSurfacePitch[6][MIP_LEVELS_MAX];
 };
 
 class VolumeTextureLoadTaskClass : public TextureLoadTaskClass
@@ -301,27 +303,27 @@ class VolumeTextureLoadTaskClass : public TextureLoadTaskClass
 public:
 	VolumeTextureLoadTaskClass();
 
-	virtual void			Destroy						() override;
-	virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority) override;
+	virtual void Destroy() override;
+	virtual void Init(TextureBaseClass* tc, TaskType type, PriorityType priority) override;
 
 protected:
-	virtual bool			Begin_Compressed_Load	() override;
-	virtual bool			Begin_Uncompressed_Load	() override;
+	virtual bool Begin_Compressed_Load() override;
+	virtual bool Begin_Uncompressed_Load() override;
 
-	virtual bool			Load_Compressed_Mipmap	() override;
-//	virtual bool			Load_Uncompressed_Mipmap() override;
+	virtual bool Load_Compressed_Mipmap() override;
+	//	virtual bool			Load_Uncompressed_Mipmap() override;
 
-	virtual void			Lock_Surfaces				() override;
-	virtual void			Unlock_Surfaces			() override;
+	virtual void Lock_Surfaces() override;
+	virtual void Unlock_Surfaces() override;
 
 private:
-	unsigned char*			Get_Locked_Volume_Pointer(unsigned int level);
-	unsigned int			Get_Locked_Volume_Row_Pitch(unsigned int level);
-	unsigned int			Get_Locked_Volume_Slice_Pitch(unsigned int level);
+	unsigned char* Get_Locked_Volume_Pointer(unsigned int level);
+	unsigned int Get_Locked_Volume_Row_Pitch(unsigned int level);
+	unsigned int Get_Locked_Volume_Slice_Pitch(unsigned int level);
 
-	IDirect3DVolumeTexture8*	Peek_D3D_Volume_Texture()				{ return (IDirect3DVolumeTexture8*)D3DTexture;		}
+	IDirect3DVolumeTexture8* Peek_D3D_Volume_Texture() { return (IDirect3DVolumeTexture8*)D3DTexture; }
 
-	unsigned	int			LockedSurfaceSlicePitch[MIP_LEVELS_MAX];
+	unsigned int LockedSurfaceSlicePitch[MIP_LEVELS_MAX];
 
-	unsigned int		Depth;
+	unsigned int Depth;
 };

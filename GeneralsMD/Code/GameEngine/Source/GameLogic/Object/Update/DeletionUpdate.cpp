@@ -37,7 +37,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DeletionUpdate::DeletionUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+DeletionUpdate::DeletionUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_dieFrame = 0;
 	const DeletionUpdateModuleData* d = getDeletionUpdateModuleData();
@@ -51,14 +52,12 @@ DeletionUpdate::~DeletionUpdate()
 {
 }
 
-
-//#define CRISS_CROSS_GEOMETRY
+// #define CRISS_CROSS_GEOMETRY
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void DeletionUpdate::setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames )
+void DeletionUpdate::setLifetimeRange(UnsignedInt minFrames, UnsignedInt maxFrames)
 {
-
 #if defined RTS_DEBUG && defined CRISS_CROSS_GEOMETRY
 	setWakeFrame(getObject(), UPDATE_SLEEP(2));
 #else
@@ -71,8 +70,11 @@ void DeletionUpdate::setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFra
 //-------------------------------------------------------------------------------------------------
 UnsignedInt DeletionUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt maxFrames)
 {
-	UnsignedInt delay = GameLogicRandomValue( minFrames, maxFrames );
-	if (delay < 1) delay = 1;
+	UnsignedInt delay = GameLogicRandomValue(minFrames, maxFrames);
+	if (delay < 1)
+	{
+		delay = 1;
+	}
 	m_dieFrame = TheGameLogic->getFrame() + delay;
 	return delay;
 }
@@ -82,26 +84,25 @@ UnsignedInt DeletionUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt ma
 UpdateSleepTime DeletionUpdate::update()
 {
 	// Destroy (NOT kill) if time is up
-#if defined RTS_DEBUG  && defined CRISS_CROSS_GEOMETRY
-	Object *obj = getObject();
+#if defined RTS_DEBUG && defined CRISS_CROSS_GEOMETRY
+	Object* obj = getObject();
 	if (obj)
 	{
-		GeometryInfo geom =	geom=obj->getGeometryInfo();
-		geom.setMajorRadius(obj->getGeometryInfo().getMinorRadius());// CRIS
-		geom.setMinorRadius(obj->getGeometryInfo().getMajorRadius());// CROSS
+		GeometryInfo geom = geom = obj->getGeometryInfo();
+		geom.setMajorRadius(obj->getGeometryInfo().getMinorRadius());    // CRIS
+		geom.setMinorRadius(obj->getGeometryInfo().getMajorRadius());    // CROSS
 		obj->setGeometryInfo(geom);
 	}
 
 	if (TheGameLogic->getFrame() > m_dieFrame)
 	{
-		TheGameLogic->destroyObject( getObject() );
+		TheGameLogic->destroyObject(getObject());
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-
 	return UPDATE_SLEEP(2);
 #else
-	TheGameLogic->destroyObject( getObject() );
+	TheGameLogic->destroyObject(getObject());
 	return UPDATE_SLEEP_FOREVER;
 #endif
 }
@@ -109,33 +110,29 @@ UpdateSleepTime DeletionUpdate::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DeletionUpdate::crc( Xfer *xfer )
+void DeletionUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DeletionUpdate::xfer( Xfer *xfer )
+void DeletionUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// die frame
-	xfer->xferUnsignedInt( &m_dieFrame );
-
+	xfer->xferUnsignedInt(&m_dieFrame);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -143,8 +140,6 @@ void DeletionUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeletionUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

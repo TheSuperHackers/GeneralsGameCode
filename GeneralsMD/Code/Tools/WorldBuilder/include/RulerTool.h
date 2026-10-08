@@ -26,12 +26,12 @@
 class RulerTool : public Tool
 {
 protected:
-	Coord3D		m_downPt3d;
-	int				m_rulerType;
-	WbView*		m_View;
-	Real			m_savedLength;
+	Coord3D m_downPt3d;
+	int m_rulerType;
+	WbView* m_View;
+	Real m_savedLength;
 
-	static RulerTool*	m_staticThis;
+	static RulerTool* m_staticThis;
 
 public:
 	RulerTool();
@@ -43,13 +43,12 @@ public:
 	virtual void deactivate() override;
 
 	virtual void setCursor() override;
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual Bool followsTerrain() override {return false;};
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual Bool followsTerrain() override { return false; };
 
 	static void setLength(Real length);
 	static Bool switchType();
-	static int	getType();
+	static int getType();
 	static Real getLength();
-
 };

@@ -36,21 +36,17 @@
 // ------------------------------------------------------------------------------------------------
 class RailedTransportContain : public TransportContain
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RailedTransportContain, "RailedTransportContain" )
-	MAKE_STANDARD_MODULE_MACRO( RailedTransportContain )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RailedTransportContain, "RailedTransportContain")
+	MAKE_STANDARD_MODULE_MACRO(RailedTransportContain)
 
 public:
-
-	RailedTransportContain( Thing *thing, const ModuleData* moduleData );
+	RailedTransportContain(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; };
+	virtual void onRemoving(Object* obj) override;    ///< object no longer contains 'obj'
+	virtual void exitObjectViaDoor(Object* newObj, ExitDoorType exitDoor) override;
+	virtual void exitObjectByBudding(Object* newObj, Object* budHost) override { return; };
 
 protected:
-
-	virtual Bool isSpecificRiderFreeToExit( Object *obj ) override;
-
+	virtual Bool isSpecificRiderFreeToExit(Object* obj) override;
 };

@@ -23,13 +23,13 @@
 
 namespace SaveLoadStatus
 {
-	void Set_Status_Text(const char* text,int id);
+void Set_Status_Text(const char* text, int id);
 
-	void	Reset_Status_Count();
-	void	Inc_Status_Count();
-	int	Get_Status_Count();
-	void Get_Status_Text(StringClass& text, int id);
-};
+void Reset_Status_Count();
+void Inc_Status_Count();
+int Get_Status_Count();
+void Get_Status_Text(StringClass& text, int id);
+};    // namespace SaveLoadStatus
 
-#define INIT_STATUS(t) SaveLoadStatus::Set_Status_Text(t,0)
-#define INIT_SUB_STATUS(t) SaveLoadStatus::Set_Status_Text(t,1)
+#define INIT_STATUS(t) SaveLoadStatus::Set_Status_Text(t, 0)
+#define INIT_SUB_STATUS(t) SaveLoadStatus::Set_Status_Text(t, 1)

@@ -45,13 +45,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 /*typedef enum
 {
-	TYPE_INT					= 0,
-	TYPE_FLOAT,
-	TYPE_STRING,
-	TYPE_VECTOR3,
-	TYPE_MATRIX3D,
-	TYPE_TRANSITION,
-	TYPE_PRESETID,
-	TYPE_MODELFILENAME
+  TYPE_INT					= 0,
+  TYPE_FLOAT,
+  TYPE_STRING,
+  TYPE_VECTOR3,
+  TYPE_MATRIX3D,
+  TYPE_TRANSITION,
+  TYPE_PRESETID,
+  TYPE_MODELFILENAME
 
 }	ParameterType;*/

@@ -52,22 +52,19 @@ class HTreeClass;
 class ChunkLoadClass;
 class ChunkSaveClass;
 
-
 /**********************************************************************************
 
-	Hierarchy Compressed Animation Class
+  Hierarchy Compressed Animation Class
 
-	Stores motion data to be applied to a HierarchyTree.  Each frame
-	of the motion contains deltas from the HierarchyTree's base position
-	to the desired position.
+  Stores motion data to be applied to a HierarchyTree.  Each frame
+  of the motion contains deltas from the HierarchyTree's base position
+  to the desired position.
 
 **********************************************************************************/
 
 class HCompressedAnimClass : public HAnimClass
 {
-
 public:
-
 	enum
 	{
 		OK,
@@ -77,50 +74,47 @@ public:
 	HCompressedAnimClass();
 	virtual ~HCompressedAnimClass() override;
 
-	int							Load_W3D(ChunkLoadClass & cload);
+	int Load_W3D(ChunkLoadClass& cload);
 
-	virtual const char *				Get_Name() const override { return Name; }
-	virtual const char *				Get_HName() const override { return HierarchyName; }
-	virtual int							Get_Num_Frames() override { return NumFrames; }
-	virtual float							Get_Frame_Rate() override { return FrameRate; }
-	virtual float							Get_Total_Time() override { return (float)NumFrames / FrameRate; }
-	int							Get_Flavor() { return Flavor; }
+	virtual const char* Get_Name() const override { return Name; }
+	virtual const char* Get_HName() const override { return HierarchyName; }
+	virtual int Get_Num_Frames() override { return NumFrames; }
+	virtual float Get_Frame_Rate() override { return FrameRate; }
+	virtual float Get_Total_Time() override { return (float)NumFrames / FrameRate; }
+	int Get_Flavor() { return Flavor; }
 
-	virtual void							Get_Translation(Vector3& translation, int pividx,float frame) const override;
-	virtual void							Get_Orientation(Quaternion& orientation, int pividx,float frame) const override;
-	virtual void							Get_Transform(Matrix3D& transform, int pividx,float frame) const override;
-	virtual bool							Get_Visibility(int pividx,float frame) override;
+	virtual void Get_Translation(Vector3& translation, int pividx, float frame) const override;
+	virtual void Get_Orientation(Quaternion& orientation, int pividx, float frame) const override;
+	virtual void Get_Transform(Matrix3D& transform, int pividx, float frame) const override;
+	virtual bool Get_Visibility(int pividx, float frame) override;
 
-	virtual bool							Is_Node_Motion_Present(int pividx) override;
-	virtual int							Get_Num_Pivots()	const override { return NumNodes; }
+	virtual bool Is_Node_Motion_Present(int pividx) override;
+	virtual int Get_Num_Pivots() const override { return NumNodes; }
 
 	// Methods that test the presence of a certain motion channel.
-	virtual bool							Has_X_Translation (int pividx) override;
-	virtual bool							Has_Y_Translation (int pividx) override;
-	virtual bool							Has_Z_Translation (int pividx) override;
-	virtual bool							Has_Rotation (int pividx) override;
-	virtual bool							Has_Visibility (int pividx) override;
+	virtual bool Has_X_Translation(int pividx) override;
+	virtual bool Has_Y_Translation(int pividx) override;
+	virtual bool Has_Z_Translation(int pividx) override;
+	virtual bool Has_Rotation(int pividx) override;
+	virtual bool Has_Visibility(int pividx) override;
 
 private:
+	char Name[2 * W3D_NAME_LEN];
+	char HierarchyName[W3D_NAME_LEN];
 
-	char							Name[2*W3D_NAME_LEN];
-	char							HierarchyName[W3D_NAME_LEN];
+	int NumFrames;
+	int NumNodes;
+	int Flavor;
+	float FrameRate;
 
-	int							NumFrames;
-	int							NumNodes;
-	int							Flavor;
-	float							FrameRate;
-
-	NodeCompressedMotionStruct *		NodeMotion;
+	NodeCompressedMotionStruct* NodeMotion;
 
 	void Free();
-	bool read_channel(ChunkLoadClass & cload,TimeCodedMotionChannelClass * * newchan);
-	bool read_channel(ChunkLoadClass & cload,AdaptiveDeltaMotionChannelClass * * newchan);
-	void add_channel(TimeCodedMotionChannelClass * newchan);
-	void add_channel(AdaptiveDeltaMotionChannelClass * newchan);
+	bool read_channel(ChunkLoadClass& cload, TimeCodedMotionChannelClass** newchan);
+	bool read_channel(ChunkLoadClass& cload, AdaptiveDeltaMotionChannelClass** newchan);
+	void add_channel(TimeCodedMotionChannelClass* newchan);
+	void add_channel(AdaptiveDeltaMotionChannelClass* newchan);
 
-
-	bool read_bit_channel(ChunkLoadClass & cload,TimeCodedBitChannelClass * * newchan);
-	void add_bit_channel(TimeCodedBitChannelClass * newchan);
-
+	bool read_bit_channel(ChunkLoadClass& cload, TimeCodedBitChannelClass** newchan);
+	void add_bit_channel(TimeCodedBitChannelClass* newchan);
 };

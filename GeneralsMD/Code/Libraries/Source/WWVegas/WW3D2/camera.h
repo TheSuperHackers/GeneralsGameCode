@@ -65,17 +65,25 @@ class RenderInfoClass;
 class ViewportClass
 {
 public:
-	ViewportClass() : Min(0,0), Max(1,1)													{ }
-	ViewportClass(const Vector2 & min,const Vector2 & max) : Min(min), Max(max)	{ }
-	ViewportClass(const ViewportClass & vp) : Min(vp.Min), Max(vp.Max)				{ }
+	ViewportClass()
+	  : Min(0, 0)
+	  , Max(1, 1)
+	{}
+	ViewportClass(const Vector2& min, const Vector2& max)
+	  : Min(min)
+	  , Max(max)
+	{}
+	ViewportClass(const ViewportClass& vp)
+	  : Min(vp.Min)
+	  , Max(vp.Max)
+	{}
 
-	float	Width()	const																			{ return Max.X - Min.X; }
-	float Height() const																		{ return Max.Y - Min.Y; }
+	float Width() const { return Max.X - Min.X; }
+	float Height() const { return Max.Y - Min.Y; }
 
 	Vector2 Min;
 	Vector2 Max;
 };
-
 
 /**
 ** CameraClass
@@ -102,7 +110,6 @@ public:
 class CameraClass : public RenderObjClass
 {
 public:
-
 	enum ProjectionType
 	{
 		PERSPECTIVE = 0,
@@ -118,143 +125,149 @@ public:
 	};
 
 	CameraClass();
-	CameraClass(const CameraClass & src);
-	CameraClass & operator = (const CameraClass &);
+	CameraClass(const CameraClass& src);
+	CameraClass& operator=(const CameraClass&);
 	virtual ~CameraClass() override;
-	virtual RenderObjClass *	Clone() const override;
-	virtual int						Class_ID() const override { return CLASSID_CAMERA; }
+	virtual RenderObjClass* Clone() const override;
+	virtual int Class_ID() const override { return CLASSID_CAMERA; }
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface -  Rendering, cameras don't "render"
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo) override { }
+	virtual void Render(RenderInfoClass& rinfo) override {}
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Cameras cache their frustum description, this is invalidated whenever
 	// the transform/position is changed
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void 					Set_Transform(const Matrix3D &m) override;
-	virtual void 					Set_Position(const Vector3 &v) override;
+	virtual void Set_Transform(const Matrix3D& m) override;
+	virtual void Set_Position(const Vector3& v) override;
 
 	// Get camera directions
-	Vector3								Get_Right_Dir() const;
-	Vector3								Get_Forward_Dir() const;
-	Vector3								Get_Up_Dir() const;
+	Vector3 Get_Right_Dir() const;
+	Vector3 Get_Forward_Dir() const;
+	Vector3 Get_Up_Dir() const;
 
-  	/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass& sphere) const override;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass& box) const override;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Camera parameter control
 	///////////////////////////////////////////////////////////////////////////
 	// Depth of the scene.
-	float								Get_Depth() const;
+	float Get_Depth() const;
 
 	// Setting the projection type
-	void								Set_Projection_Type(ProjectionType ptype);
-	ProjectionType					Get_Projection_Type();
+	void Set_Projection_Type(ProjectionType ptype);
+	ProjectionType Get_Projection_Type();
 
 	// Setting the clipping ranges in world space distances
-	void								Set_Clip_Planes(float znear,float zfar);
-	void								Get_Clip_Planes(float & znear,float & zfar) const;
+	void Set_Clip_Planes(float znear, float zfar);
+	void Get_Clip_Planes(float& znear, float& zfar) const;
 
 	// Setting the zbuffer range used during rendering. (Added to allow subdividing the z-buffer. -MW).
-	void								Set_Zbuffer_Range(float znear,float zfar) {ZBufferMin = znear;ZBufferMax=zfar;}
-	void								Get_Zbuffer_Range(float & znear,float & zfar) const {znear=ZBufferMin;zfar=ZBufferMax;}
+	void Set_Zbuffer_Range(float znear, float zfar)
+	{
+		ZBufferMin = znear;
+		ZBufferMax = zfar;
+	}
+	void Get_Zbuffer_Range(float& znear, float& zfar) const
+	{
+		znear = ZBufferMin;
+		zfar = ZBufferMax;
+	}
 
 	// Methods for setting the View Plane.
 	// NOTE: View plane is always at a distance of 1.0 from the eye.
-	void								Set_View_Plane(const Vector2 & min,const Vector2 & max);
-	void								Set_View_Plane(float hfov,float vfov = -1);
-	void								Set_Aspect_Ratio(float width_to_height);
+	void Set_View_Plane(const Vector2& min, const Vector2& max);
+	void Set_View_Plane(float hfov, float vfov = -1);
+	void Set_Aspect_Ratio(float width_to_height);
 
 	// Methods for querying the View Plane settings.
-	void								Get_View_Plane(Vector2 & set_min,Vector2 & set_max) const;
-	float								Get_Horizontal_FOV() const;
-	float								Get_Vertical_FOV() const;
-	float								Get_Aspect_Ratio() const;
+	void Get_View_Plane(Vector2& set_min, Vector2& set_max) const;
+	float Get_Horizontal_FOV() const;
+	float Get_Vertical_FOV() const;
+	float Get_Aspect_Ratio() const;
 
 	// Access to the projection matrices for this camera
-	void								Get_Projection_Matrix(Matrix4x4 * set_tm);
-	void								Get_D3D_Projection_Matrix(Matrix4x4 * set_tm);
-	void								Get_View_Matrix(Matrix3D * set_tm);
-	const Matrix4x4 &				Get_Projection_Matrix();
-	const Matrix3D &				Get_View_Matrix();
+	void Get_Projection_Matrix(Matrix4x4* set_tm);
+	void Get_D3D_Projection_Matrix(Matrix4x4* set_tm);
+	void Get_View_Matrix(Matrix3D* set_tm);
+	const Matrix4x4& Get_Projection_Matrix();
+	const Matrix3D& Get_View_Matrix();
 
 	// Projecting and Un-Projecting a point
-	ProjectionResType				Project(Vector3 & dest,const Vector3 & ws_point) const;
-	ProjectionResType				Project_Camera_Space_Point(Vector3 & dest,const Vector3 & cam_point) const;
-	void								Un_Project(Vector3 & dest,const Vector2 & view_point) const;
-	void								Transform_To_View_Space(Vector3 & dest,const Vector3 & ws_point) const;
-	void								Rotate_To_View_Space(Vector3 & dest,const Vector3 & ws_vector) const;
+	ProjectionResType Project(Vector3& dest, const Vector3& ws_point) const;
+	ProjectionResType Project_Camera_Space_Point(Vector3& dest, const Vector3& cam_point) const;
+	void Un_Project(Vector3& dest, const Vector2& view_point) const;
+	void Transform_To_View_Space(Vector3& dest, const Vector3& ws_point) const;
+	void Rotate_To_View_Space(Vector3& dest, const Vector3& ws_vector) const;
 
 	// Viewport control
-	void								Set_Viewport(const Vector2 & min,const Vector2 & max);
-	void								Get_Viewport(Vector2 & set_min,Vector2 & set_max) const;
-	const ViewportClass &		Get_Viewport() const;
+	void Set_Viewport(const Vector2& min, const Vector2& max);
+	void Get_Viewport(Vector2& set_min, Vector2& set_max) const;
+	const ViewportClass& Get_Viewport() const;
 
-	void								Set_Depth_Range(float zstart = 0.0f,float zend = 1.0f);
-	void								Get_Depth_Range(float * set_zstart,float * set_zend) const;
+	void Set_Depth_Range(float zstart = 0.0f, float zend = 1.0f);
+	void Get_Depth_Range(float* set_zstart, float* set_zend) const;
 
 	// Culling for various bounding volumes.  These functions will return true if the
 	// given primitive is culled (i.e. it is *outside* the view frustum)
-	bool								Cull_Sphere(const SphereClass & sphere) const;
-	bool								Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere) const;
-	bool								Cull_Box(const AABoxClass & box) const;
+	bool Cull_Sphere(const SphereClass& sphere) const;
+	bool Cull_Sphere_On_Frustum_Sides(const SphereClass& sphere) const;
+	bool Cull_Box(const AABoxClass& box) const;
 
 	// Various properties of the camera's frustum:  These functions return a
 	// pointer to the internal storage of the descriptions.  there will be
 	// 6 frustum planes, 8 corner points, see the implementations of these
 	// functions for definitions on which points/planes are associated with
 	// each index.  Better yet, just use the Frustum object.
-	const FrustumClass &			Get_Frustum() const;
-	const PlaneClass *			Get_Frustum_Planes() const;
-	const Vector3 *				Get_Frustum_Corners() const;
-	const FrustumClass &			Get_View_Space_Frustum() const;
-	const PlaneClass *			Get_View_Space_Frustum_Planes() const;
-	const Vector3 *				Get_View_Space_Frustum_Corners() const;
-	const OBBoxClass &			Get_Near_Clip_Bounding_Box() const;
+	const FrustumClass& Get_Frustum() const;
+	const PlaneClass* Get_Frustum_Planes() const;
+	const Vector3* Get_Frustum_Corners() const;
+	const FrustumClass& Get_View_Space_Frustum() const;
+	const PlaneClass* Get_View_Space_Frustum_Planes() const;
+	const Vector3* Get_View_Space_Frustum_Corners() const;
+	const OBBoxClass& Get_Near_Clip_Bounding_Box() const;
 
 	// Methods for transforming/projecting points between various coordinate systems
 	// associated with this camera.
 	// "Device Space" - pixel coordinate
 	// "View Space" - 3D space where the view point is at 0,0,0 and the view plane is at z=-1.0
 	// "World Space" - 3D world coordinate system.
-	void								Device_To_View_Space(const Vector2 & device_coord,Vector3 * view_coord);
-	void								Device_To_World_Space(const Vector2 & device_coord,Vector3 * world_coord);
-	float								Compute_Projected_Sphere_Radius(float dist,float radius);
+	void Device_To_View_Space(const Vector2& device_coord, Vector3* view_coord);
+	void Device_To_World_Space(const Vector2& device_coord, Vector3* world_coord);
+	float Compute_Projected_Sphere_Radius(float dist, float radius);
 
 	// apply this camera's settings into d3d.
-	void								Apply();
+	void Apply();
 
 	// utility class to convert to old space of 0..1
-	static void	Convert_Old(Vector3 &pos);
+	static void Convert_Old(Vector3& pos);
 
 protected:
+	void Update_Frustum() const;
 
-	void								Update_Frustum() const;
+	ProjectionType Projection;    // projection type, orthographic or perspective
+	ViewportClass Viewport;    // pixel viewport to render into
+	ViewportClass ViewPlane;    // corners of a slice through the frustum at z=-1.0
+	float AspectRatio;    // aspect ratio of the camera, width / height
+	float ZNear;    // near clip plane distance
+	float ZFar;    // far clip plane distance
+	float ZBufferMin;    // smallest value we'll write into the z-buffer (usually 0.0)
+	float ZBufferMax;    // largest value we'll write into the z-buffer (usually 1.0)
 
-	ProjectionType					Projection;		// projection type, orthographic or perspective
-	ViewportClass					Viewport;		// pixel viewport to render into
-	ViewportClass					ViewPlane;		// corners of a slice through the frustum at z=-1.0
-	float								AspectRatio;	// aspect ratio of the camera, width / height
-	float								ZNear;			// near clip plane distance
-	float								ZFar;				// far clip plane distance
-	float								ZBufferMin;		// smallest value we'll write into the z-buffer (usually 0.0)
-	float								ZBufferMax;		// largest value we'll write into the z-buffer (usually 1.0)
-
-	mutable bool					FrustumValid;
-	mutable FrustumClass			Frustum;							// world-space frustum and clip planes
-	mutable FrustumClass			ViewSpaceFrustum;				// view-space frustum and clip planes
-	mutable OBBoxClass			NearClipBBox;					// obbox which bounds the near clip plane
-	mutable Matrix4x4				ProjectionTransform;
-	mutable Matrix3D				CameraInvTransform;
+	mutable bool FrustumValid;
+	mutable FrustumClass Frustum;    // world-space frustum and clip planes
+	mutable FrustumClass ViewSpaceFrustum;    // view-space frustum and clip planes
+	mutable OBBoxClass NearClipBBox;    // obbox which bounds the near clip plane
+	mutable Matrix4x4 ProjectionTransform;
+	mutable Matrix3D CameraInvTransform;
 };
-
 
 inline float CameraClass::Get_Depth() const
 {
@@ -272,56 +285,59 @@ inline CameraClass::ProjectionType CameraClass::Get_Projection_Type()
 	return Projection;
 }
 
-inline void CameraClass::Set_Viewport(const Vector2 & min,const Vector2 & max)
+inline void CameraClass::Set_Viewport(const Vector2& min, const Vector2& max)
 {
-	Viewport.Min = min; Viewport.Max = max;
+	Viewport.Min = min;
+	Viewport.Max = max;
 	FrustumValid = false;
 }
 
-inline void	CameraClass::Get_Viewport(Vector2 & set_min,Vector2 & set_max) const
+inline void CameraClass::Get_Viewport(Vector2& set_min, Vector2& set_max) const
 {
 	set_min = Viewport.Min;
 	set_max = Viewport.Max;
 }
 
-inline void	CameraClass::Set_Depth_Range(float zmin,float zmax)
+inline void CameraClass::Set_Depth_Range(float zmin, float zmax)
 {
 	ZBufferMin = zmin;
 	ZBufferMax = zmax;
 }
 
-inline void	CameraClass::Get_Depth_Range(float * set_zmin,float * set_zmax) const
+inline void CameraClass::Get_Depth_Range(float* set_zmin, float* set_zmax) const
 {
-	if (set_zmin != nullptr) {
+	if (set_zmin != nullptr)
+	{
 		*set_zmin = ZBufferMin;
 	}
-	if (set_zmax != nullptr) {
+	if (set_zmax != nullptr)
+	{
 		*set_zmax = ZBufferMax;
 	}
 }
 
-inline const ViewportClass & CameraClass::Get_Viewport() const
+inline const ViewportClass& CameraClass::Get_Viewport() const
 {
 	return Viewport;
 }
 
-inline bool CameraClass::Cull_Sphere(const SphereClass & sphere) const
+inline bool CameraClass::Cull_Sphere(const SphereClass& sphere) const
 {
-	const FrustumClass & frustum = Get_Frustum();
-	return CollisionMath::Overlap_Test(frustum,sphere) == CollisionMath::OUTSIDE;
+	const FrustumClass& frustum = Get_Frustum();
+	return CollisionMath::Overlap_Test(frustum, sphere) == CollisionMath::OUTSIDE;
 }
 
-inline bool CameraClass::Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere) const
+inline bool CameraClass::Cull_Sphere_On_Frustum_Sides(const SphereClass& sphere) const
 {
-	const FrustumClass & frustum = Get_Frustum();
-	const PlaneClass * planes = frustum.Planes;
+	const FrustumClass& frustum = Get_Frustum();
+	const PlaneClass* planes = frustum.Planes;
 	bool is_visible = true;
-	for (int i = 1; i < 5; i++) {
-		is_visible = is_visible && (CollisionMath::Overlap_Test(planes[i],sphere) & (CollisionMath::INSIDE|CollisionMath::BOTH));
+	for (int i = 1; i < 5; i++)
+	{
+		is_visible = is_visible && (CollisionMath::Overlap_Test(planes[i], sphere) & (CollisionMath::INSIDE | CollisionMath::BOTH));
 	}
 	return !is_visible;
 }
-
 
 /***********************************************************************************************
  * CameraClass::Get_Frustum -- returns the frustum of the camera                               *
@@ -335,7 +351,7 @@ inline bool CameraClass::Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere
  * HISTORY:                                                                                    *
  *   3/24/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline const FrustumClass &
+inline const FrustumClass&
 CameraClass::Get_Frustum() const
 {
 	Update_Frustum();
@@ -354,13 +370,12 @@ CameraClass::Get_Frustum() const
  * HISTORY:                                                                                    *
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline const PlaneClass *
+inline const PlaneClass*
 CameraClass::Get_Frustum_Planes() const
 {
-	const FrustumClass & frustum = Get_Frustum();
+	const FrustumClass& frustum = Get_Frustum();
 	return frustum.Planes;
 }
-
 
 /***********************************************************************************************
  * CameraClass::Get_Frustum_Corners -- returns pointer to the array of frustum corners         *
@@ -381,13 +396,12 @@ CameraClass::Get_Frustum_Planes() const
  * HISTORY:                                                                                    *
  *   5/29/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-inline const Vector3 *
+inline const Vector3*
 CameraClass::Get_Frustum_Corners() const
 {
-	const FrustumClass & frustum = Get_Frustum();
+	const FrustumClass& frustum = Get_Frustum();
 	return frustum.Corners;
 }
-
 
 /***********************************************************************************************
  * CameraClass::Get_View_Space_Frustum -- returns the view-space frustum for this camera       *
@@ -401,12 +415,11 @@ CameraClass::Get_Frustum_Corners() const
  * HISTORY:                                                                                    *
  *   5/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-inline const FrustumClass & CameraClass::Get_View_Space_Frustum() const
+inline const FrustumClass& CameraClass::Get_View_Space_Frustum() const
 {
 	Update_Frustum();
 	return ViewSpaceFrustum;
 }
-
 
 /***********************************************************************************************
  * CameraClass::Get_View_Space_Frustum_Planes -- returns the view space clip planes for this c *
@@ -420,12 +433,11 @@ inline const FrustumClass & CameraClass::Get_View_Space_Frustum() const
  * HISTORY:                                                                                    *
  *   5/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes() const
+inline const PlaneClass* CameraClass::Get_View_Space_Frustum_Planes() const
 {
-	const FrustumClass & frustum = Get_View_Space_Frustum();
+	const FrustumClass& frustum = Get_View_Space_Frustum();
 	return frustum.Planes;
 }
-
 
 /***********************************************************************************************
  * CameraClass::Get_View_Space_Frustum_Corners -- returns the corners of the view space frustu *
@@ -446,8 +458,8 @@ inline const PlaneClass * CameraClass::Get_View_Space_Frustum_Planes() const
  * HISTORY:                                                                                    *
  *   5/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners() const
+inline const Vector3* CameraClass::Get_View_Space_Frustum_Corners() const
 {
-	const FrustumClass & frustum = Get_View_Space_Frustum();
+	const FrustumClass& frustum = Get_View_Space_Frustum();
 	return frustum.Corners;
 }

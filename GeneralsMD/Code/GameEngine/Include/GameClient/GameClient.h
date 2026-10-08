@@ -29,7 +29,7 @@
 #pragma once
 
 #include "Common/GameType.h"
-#include "Common/MessageStream.h"		// for GameMessageTranslator
+#include "Common/MessageStream.h"    // for GameMessageTranslator
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
@@ -56,24 +56,23 @@ class ChallengeGenerals;
 class SnowManager;
 
 /// Function pointers for use by GameClient callback functions.
-typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData );
-//typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
-//typedef DrawablePtrHash::iterator DrawablePtrHashIt;
+typedef void (*GameClientFuncPtr)(Drawable* draw, void* userData);
+// typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
+// typedef DrawablePtrHash::iterator DrawablePtrHashIt;
 
 typedef std::vector<Drawable*> DrawablePtrVector;
 
 //-----------------------------------------------------------------------------
 /** The Client message dispatcher, this is the last "translator" on the message
-	* stream before the messages go to the network for processing.  It gives
-	* the client itself the opportunity to respond to any messages on the stream
-	* or create new ones to pass along to the network and logic */
+ * stream before the messages go to the network for processing.  It gives
+ * the client itself the opportunity to respond to any messages on the stream
+ * or create new ones to pass along to the network and logic */
 class GameClientMessageDispatcher : public GameMessageTranslator
 {
 public:
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
-	virtual ~GameClientMessageDispatcher() override { }
+	virtual GameMessageDisposition translateGameMessage(const GameMessage* msg) override;
+	virtual ~GameClientMessageDispatcher() override {}
 };
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -81,123 +80,122 @@ public:
  * implements the interface to all GameClient operations such as Drawable access and user-interface functions.
  */
 class GameClient : public SubsystemInterface,
-									 public Snapshot
+                   public Snapshot
 {
-
 public:
-
 	GameClient();
 	virtual ~GameClient() override;
 
 	// subsystem methods
-	virtual void init() override;																					///< Initialize resources
-	virtual void update() override;																				///< Updates the GUI, display, audio, etc
+	virtual void init() override;    ///< Initialize resources
+	virtual void update() override;    ///< Updates the GUI, display, audio, etc
 	virtual void draw() override;
-	virtual void reset() override;																					///< reset system
+	virtual void reset() override;    ///< reset system
 
-	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number
-	virtual void registerDrawable( Drawable *draw );										///< Given a drawable, register it with the GameClient and give it a unique ID
+	virtual void setFrame(UnsignedInt frame) { m_frame = frame; }    ///< Set the GameClient's internal frame number
+	virtual void registerDrawable(Drawable* draw);    ///< Given a drawable, register it with the GameClient and give it a unique ID
 
-	void step(); ///< Do one fixed time step
+	void step();    ///< Do one fixed time step
 
-	void addDrawableToLookupTable( Drawable *draw );			///< add drawable ID to hash lookup table
-	void removeDrawableFromLookupTable( Drawable *draw );	///< remove drawable ID from hash lookup table
+	void addDrawableToLookupTable(Drawable* draw);    ///< add drawable ID to hash lookup table
+	void removeDrawableFromLookupTable(Drawable* draw);    ///< remove drawable ID from hash lookup table
 
-	virtual Drawable *findDrawableByID( const DrawableID id );					///< Given an ID, return the associated drawable
+	virtual Drawable* findDrawableByID(const DrawableID id);    ///< Given an ID, return the associated drawable
 
-	void setDrawableIDCounter( DrawableID nextDrawableID ) { m_nextDrawableID = nextDrawableID; }
+	void setDrawableIDCounter(DrawableID nextDrawableID) { m_nextDrawableID = nextDrawableID; }
 	DrawableID getDrawableIDCounter() { return m_nextDrawableID; }
 
-	virtual Drawable *firstDrawable() { return m_drawableList; }
+	virtual Drawable* firstDrawable() { return m_drawableList; }
 
-	virtual GameMessage::Type evaluateContextCommand( Drawable *draw,
-																										const Coord3D *pos,
-																										CommandTranslator::CommandEvaluateType cmdType );
-	void addTextBearingDrawable( Drawable *tbd );
+	virtual GameMessage::Type evaluateContextCommand(Drawable* draw,
+	                                                 const Coord3D* pos,
+	                                                 CommandTranslator::CommandEvaluateType cmdType);
+	void addTextBearingDrawable(Drawable* tbd);
 	void flushTextBearingDrawables();
 	void updateFakeDrawables();
 
-	virtual void removeFromRayEffects( Drawable *draw );  ///< remove the drawable from the ray effect system if present
-	virtual void getRayEffectData( Drawable *draw, RayEffectData *effectData );  ///< get ray effect data for a drawable
-	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl ) = 0;  ///< create effect needing start and end location
+	virtual void removeFromRayEffects(Drawable* draw);    ///< remove the drawable from the ray effect system if present
+	virtual void getRayEffectData(Drawable* draw, RayEffectData* effectData);    ///< get ray effect data for a drawable
+	virtual void createRayEffectByTemplate(const Coord3D* start, const Coord3D* end, const ThingTemplate* tmpl) = 0;    ///< create effect needing start and end location
 
-	virtual void addScorch(const Coord3D *pos, Real radius, Scorches type) = 0;
+	virtual void addScorch(const Coord3D* pos, Real radius, Scorches type) = 0;
 
-	virtual Bool loadMap( AsciiString mapName );  ///< load a map into our scene
-	virtual void unloadMap( AsciiString mapName );  ///< unload the specified map from our scene
+	virtual Bool loadMap(AsciiString mapName);    ///< load a map into our scene
+	virtual void unloadMap(AsciiString mapName);    ///< unload the specified map from our scene
 
-	virtual void iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr userFunc, void *userData );		///< Calls userFunc for each drawable contained within the region
+	virtual void iterateDrawablesInRegion(Region3D* region, GameClientFuncPtr userFunc, void* userData);    ///< Calls userFunc for each drawable contained within the region
 
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT ) = 0;
-	virtual void destroyDrawable( Drawable *draw );											///< Destroy the given drawable
+	virtual Drawable* friend_createDrawable(const ThingTemplate* thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT) = 0;
+	virtual void destroyDrawable(Drawable* draw);    ///< Destroy the given drawable
 
-	virtual void setTimeOfDay( TimeOfDay tod );													///< Tell all the drawables what time of day it is now
+	virtual void setTimeOfDay(TimeOfDay tod);    ///< Tell all the drawables what time of day it is now
 
-	virtual void selectDrawablesInGroup( Int group );									///< select all drawables belong to the specifies group
-	virtual void assignSelectedDrawablesToGroup( Int group );						///< assign all selected drawables to the specified group
+	virtual void selectDrawablesInGroup(Int group);    ///< select all drawables belong to the specifies group
+	virtual void assignSelectedDrawablesToGroup(Int group);    ///< assign all selected drawables to the specified group
 	//---------------------------------------------------------------------------------------
-	virtual UnsignedInt getFrame() { return m_frame; }						///< Returns the current simulation frame number
+	virtual UnsignedInt getFrame() { return m_frame; }    ///< Returns the current simulation frame number
 
 	//---------------------------------------------------------------------------
-	virtual void setTeamColor( Int red, Int green, Int blue ) = 0;  ///< @todo superhack for demo, remove!!!
+	virtual void setTeamColor(Int red, Int green, Int blue) = 0;    ///< @todo superhack for demo, remove!!!
 
-	virtual void setTextureLOD( Int level ) = 0;
+	virtual void setTextureLOD(Int level) = 0;
 
-	virtual void releaseShadows();	///< frees all shadow resources used by this module - used by Options screen.
-	virtual void allocateShadows(); ///< create shadow resources if not already present. Used by Options screen.
+	virtual void releaseShadows();    ///< frees all shadow resources used by this module - used by Options screen.
+	virtual void allocateShadows();    ///< create shadow resources if not already present. Used by Options screen.
 
-  virtual void preloadAssets( TimeOfDay timeOfDay );									///< preload assets
+	virtual void preloadAssets(TimeOfDay timeOfDay);    ///< preload assets
 
-	virtual Drawable *getDrawableList() { return m_drawableList; }
+	virtual Drawable* getDrawableList() { return m_drawableList; }
 
 	void resetRenderedObjectCount() { m_renderedObjectCount = 0; }
 	UnsignedInt getRenderedObjectCount() const { return m_renderedObjectCount; }
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
-	virtual void notifyTerrainObjectMoved(Object *obj) = 0;
+	virtual void notifyTerrainObjectMoved(Object* obj) = 0;
 
 	Bool skipCurrentIntroStage();
 
 	static Bool isMovieAbortRequested();
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 	// @todo Should there be a separate GameClient frame counter?
-	UnsignedInt m_frame;																				///< Simulation frame number from server
+	UnsignedInt m_frame;    ///< Simulation frame number from server
 
-	Drawable *m_drawableList;																		///< All of the drawables in the world
-//	DrawablePtrHash m_drawableHash;															///< Used for DrawableID lookups
+	Drawable* m_drawableList;    ///< All of the drawables in the world
+	//	DrawablePtrHash m_drawableHash;															///< Used for DrawableID lookups
 	DrawablePtrVector m_drawableVector;
 
-	DrawableID m_nextDrawableID;																///< For allocating drawable id's
-	DrawableID allocDrawableID();													///< Returns a new unique drawable id
+	DrawableID m_nextDrawableID;    ///< For allocating drawable id's
+	DrawableID allocDrawableID();    ///< Returns a new unique drawable id
 
-	enum { MAX_CLIENT_TRANSLATORS = 32 };
-	TranslatorID m_translators[ MAX_CLIENT_TRANSLATORS ];				///< translators we have used
-	UnsignedInt m_numTranslators;																///< number of translators in m_translators[]
-	CommandTranslator *m_commandTranslator;											///< the command translator on the message stream
+	enum
+	{
+		MAX_CLIENT_TRANSLATORS = 32
+	};
+	TranslatorID m_translators[MAX_CLIENT_TRANSLATORS];    ///< translators we have used
+	UnsignedInt m_numTranslators;    ///< number of translators in m_translators[]
+	CommandTranslator* m_commandTranslator;    ///< the command translator on the message stream
 
 private:
-
 	Intro* m_intro;
-	UnsignedInt m_renderedObjectCount;													///< Keeps track of the number of rendered objects -- resets each frame.
+	UnsignedInt m_renderedObjectCount;    ///< Keeps track of the number of rendered objects -- resets each frame.
 
 	//---------------------------------------------------------------------------
 
-	virtual Display *createGameDisplay() = 0;							///< Factory for Display classes. Called during init to instantiate TheDisplay.
-	virtual InGameUI *createInGameUI() = 0;								///< Factory for InGameUI classes. Called during init to instantiate TheInGameUI
-	virtual GameWindowManager *createWindowManager() = 0; ///< Factory to window manager
-	virtual FontLibrary *createFontLibrary() = 0;					///< Factory for font library
-	virtual DisplayStringManager *createDisplayStringManager() = 0;  ///< Factory for display strings
-	virtual VideoPlayerInterface *createVideoPlayer() = 0;///< Factory for video device
-	virtual TerrainVisual *createTerrainVisual() = 0;			///< Factory for TerrainVisual classes. Called during init to instance TheTerrainVisual
-	virtual Keyboard *createKeyboard() = 0;								///< factory for the keyboard
-	virtual Mouse *createMouse() = 0;											///< factory for the mouse
-	virtual SnowManager *createSnowManager() = 0;
+	virtual Display* createGameDisplay() = 0;    ///< Factory for Display classes. Called during init to instantiate TheDisplay.
+	virtual InGameUI* createInGameUI() = 0;    ///< Factory for InGameUI classes. Called during init to instantiate TheInGameUI
+	virtual GameWindowManager* createWindowManager() = 0;    ///< Factory to window manager
+	virtual FontLibrary* createFontLibrary() = 0;    ///< Factory for font library
+	virtual DisplayStringManager* createDisplayStringManager() = 0;    ///< Factory for display strings
+	virtual VideoPlayerInterface* createVideoPlayer() = 0;    ///< Factory for video device
+	virtual TerrainVisual* createTerrainVisual() = 0;    ///< Factory for TerrainVisual classes. Called during init to instance TheTerrainVisual
+	virtual Keyboard* createKeyboard() = 0;    ///< factory for the keyboard
+	virtual Mouse* createMouse() = 0;    ///< factory for the mouse
+	virtual SnowManager* createSnowManager() = 0;
 	virtual void setFrameRate(Real msecsPerFrame) = 0;
 
 	// ----------------------------------------------------------------------------------------------
@@ -208,63 +206,66 @@ private:
 	};
 	typedef std::list< DrawableTOCEntry > DrawableTOCList;
 	typedef DrawableTOCList::iterator DrawableTOCListIterator;
-	DrawableTOCList m_drawableTOC;														///< the drawable TOC
-	void addTOCEntry( AsciiString name, UnsignedShort id );		///< add a new name/id TOC pair
-	DrawableTOCEntry *findTOCEntryByName( AsciiString name );	///< find DrawableTOC by name
-	DrawableTOCEntry *findTOCEntryById( UnsignedShort id );		///< find DrawableTOC by id
-	void xferDrawableTOC( Xfer *xfer );												///< save/load drawable TOC for current state of map
+	DrawableTOCList m_drawableTOC;    ///< the drawable TOC
+	void addTOCEntry(AsciiString name, UnsignedShort id);    ///< add a new name/id TOC pair
+	DrawableTOCEntry* findTOCEntryByName(AsciiString name);    ///< find DrawableTOC by name
+	DrawableTOCEntry* findTOCEntryById(UnsignedShort id);    ///< find DrawableTOC by id
+	void xferDrawableTOC(Xfer* xfer);    ///< save/load drawable TOC for current state of map
 
 	typedef std::list< Drawable* > TextBearingDrawableList;
 	typedef TextBearingDrawableList::iterator TextBearingDrawableListIterator;
-	TextBearingDrawableList m_textBearingDrawableList;	///< the drawables that have registered here during drawablepostdraw
+	TextBearingDrawableList m_textBearingDrawableList;    ///< the drawables that have registered here during drawablepostdraw
 };
 
-//Kris: Try not to use this if possible. In every case I found in the code base, the status was always Drawable::SELECTED.
-//      There is another iterator already in game that stores JUST selected drawables. Take a look at the efficient
-//      example, InGameUI::getAllSelectedDrawables().
+// Kris: Try not to use this if possible. In every case I found in the code base, the status was always Drawable::SELECTED.
+//       There is another iterator already in game that stores JUST selected drawables. Take a look at the efficient
+//       example, InGameUI::getAllSelectedDrawables().
 #define BEGIN_ITERATE_DRAWABLES_WITH_STATUS(STATUS, DRAW) \
 	do \
 	{ \
 		Drawable* _xq_nextDrawable; \
-		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != nullptr; DRAW = _xq_nextDrawable ) \
+		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != nullptr; DRAW = _xq_nextDrawable) \
 		{ \
 			_xq_nextDrawable = DRAW->getNextDrawable(); \
 			if (DRAW->getStatusFlags() & (STATUS)) \
 			{
-
 #define END_ITERATE_DRAWABLES \
-			} \
-		} \
-	} while (0);
+	} \
+	} \
+	} \
+	while (0) \
+		;
 
 /** -----------------------------------------------------------------------------------------------
  * Given an object id, return the associated object.
  * This method is the primary interface for accessing objects, and should be used
  * instead of pointers to "attach" objects to each other.
  */
-inline Drawable* GameClient::findDrawableByID( const DrawableID id )
+inline Drawable* GameClient::findDrawableByID(const DrawableID id)
 {
-	if( id == INVALID_DRAWABLE_ID )
+	if (id == INVALID_DRAWABLE_ID)
+	{
 		return nullptr;
+	}
 
-//	DrawablePtrHashIt it = m_drawableHash.find(id);
-//	if (it == m_drawableHash.end()) {
-//		// no such drawable
-//		return nullptr;
-//	}
-//
-//	return (*it).second;
+	//	DrawablePtrHashIt it = m_drawableHash.find(id);
+	//	if (it == m_drawableHash.end()) {
+	//		// no such drawable
+	//		return nullptr;
+	//	}
+	//
+	//	return (*it).second;
 
-	if( (size_t)id < m_drawableVector.size() )
+	if ((size_t)id < m_drawableVector.size())
+	{
 		return m_drawableVector[(size_t)id];
+	}
 
 	return nullptr;
 }
 
-
 // the singleton
-extern GameClient *TheGameClient;
-
+extern GameClient* TheGameClient;
 
 // TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
 // Some information about the architecture and headless mode:

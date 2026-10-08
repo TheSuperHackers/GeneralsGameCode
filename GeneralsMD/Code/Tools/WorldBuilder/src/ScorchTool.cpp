@@ -38,8 +38,8 @@
 //
 
 /// Constructor
-ScorchTool::ScorchTool() :
-	Tool(ID_SCORCH_TOOL, IDC_SCORCH)
+ScorchTool::ScorchTool()
+  : Tool(ID_SCORCH_TOOL, IDC_SCORCH)
 {
 }
 
@@ -62,11 +62,14 @@ void ScorchTool::activate()
 }
 
 // Pick a scorchmark.
-MapObject *ScorchTool::pickScorch(Coord3D loc){
+MapObject* ScorchTool::pickScorch(Coord3D loc)
+{
 	// Tight check first.
-	MapObject *pObj;
-	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
-		if (!pObj->isScorch()) {
+	MapObject* pObj;
+	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+	{
+		if (!pObj->isScorch())
+		{
 			continue;
 		}
 		Coord3D cloc = *pObj->getLocation();
@@ -75,13 +78,16 @@ MapObject *ScorchTool::pickScorch(Coord3D loc){
 		cpt.x -= cloc.x;
 		cpt.y -= cloc.y;
 		cpt.z = 0;
-		if (cpt.length() < 0.5f*MAP_XY_FACTOR) {
+		if (cpt.length() < 0.5f * MAP_XY_FACTOR)
+		{
 			return pObj;
 		}
 	}
 	// Loose check
-	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
-		if (!pObj->isScorch()) {
+	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+	{
+		if (!pObj->isScorch())
+		{
 			continue;
 		}
 		Coord3D cloc = *pObj->getLocation();
@@ -90,60 +96,70 @@ MapObject *ScorchTool::pickScorch(Coord3D loc){
 		cpt.x -= cloc.x;
 		cpt.y -= cloc.y;
 		cpt.z = 0;
-		if (cpt.length() < 1.5f*MAP_XY_FACTOR) {
+		if (cpt.length() < 1.5f * MAP_XY_FACTOR)
+		{
 			return pObj;
 		}
 	}
 	return nullptr;
 }
 
-
 /// Perform the tool behavior on mouse down.
-void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+	{
+		return;
+	}
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
-	MapObject *pObj = pickScorch(docPt);
-	if (pObj) {
+	MapObject* pObj = pickScorch(docPt);
+	if (pObj)
+	{
 		pObj->setSelected(true);
 		docPt = *pObj->getLocation();
 		ScorchOptions::update();
-	} else {
+	}
+	else
+	{
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance(MapObject)(docPt, "Scorch", 0, 0, nullptr, nullptr );
+		MapObject* pNew = newInstance(MapObject)(docPt, "Scorch", 0, 0, nullptr, nullptr);
 		pNew->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 		pNew->setSelected(true);
 		pNew->setIsScorch();
 		pNew->getProperties()->setReal(TheKey_objectRadius, ScorchOptions::getScorchSize());
 		pNew->getProperties()->setInt(TheKey_scorchType, ScorchOptions::getScorchType());
-		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
+		AddObjectUndoable* pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
-		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		pNew = nullptr; // undoable owns it now.
+		REF_PTR_RELEASE(pUndo);    // belongs to pDoc now.
+		pNew = nullptr;    // undoable owns it now.
 		ScorchOptions::update();
 	}
 	m_mouseDownPt = docPt;
 }
 
 /// Left button move code.
-void ScorchTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void ScorchTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+	{
+		return;
+	}
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
-	MapObject *pObj = pickScorch(docPt);
-	if (pObj) {
+	MapObject* pObj = pickScorch(docPt);
+	if (pObj)
+	{
 		docPt = *pObj->getLocation();
-	} else {
+	}
+	else
+	{
 		pView->snapPoint(&docPt);
 	}
 	pView->Invalidate();
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void ScorchTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void ScorchTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-
 }
-

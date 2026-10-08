@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/Image.h"
@@ -40,7 +40,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse mapped image entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseMappedImageDefinition( INI* ini )
+void INI::parseMappedImageDefinition(INI* ini)
 {
 	// read the name
 	const char* name = ini->getNextToken();
@@ -50,27 +50,26 @@ void INI::parseMappedImageDefinition( INI* ini )
 	// in the images like we do in systems that are more "design" oriented, images
 	// are assets as they are
 	//
-	if( !TheMappedImageCollection )
+	if (!TheMappedImageCollection)
 	{
-		//We don't need it if we're in the builder... which doesn't have this.
+		// We don't need it if we're in the builder... which doesn't have this.
 		return;
 	}
-	Image *image = const_cast<Image*>(TheMappedImageCollection->findImageByName( name ));
-	if(image)
-		DEBUG_ASSERTCRASH(!image->getRawTextureData(), ("We are trying to parse over an existing image that contains a non-null rawTextureData, you should fix that"));
-
-	if( image == nullptr )
+	Image* image = const_cast<Image*>(TheMappedImageCollection->findImageByName(name));
+	if (image)
 	{
+		DEBUG_ASSERTCRASH(!image->getRawTextureData(), ("We are trying to parse over an existing image that contains a non-null rawTextureData, you should fix that"));
+	}
 
+	if (image == nullptr)
+	{
 		// image not found, create a new one
 		image = newInstance(Image);
-		image->setName( name );
+		image->setName(name);
 		TheMappedImageCollection->addImage(image);
-		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'", name) );
-
+		DEBUG_ASSERTCRASH(image, ("parseMappedImage: unable to allocate image for '%s'", name));
 	}
 
 	// parse the ini definition
-	ini->initFromINI( image, image->getFieldParse());
-
+	ini->initFromINI(image, image->getFieldParse());
 }

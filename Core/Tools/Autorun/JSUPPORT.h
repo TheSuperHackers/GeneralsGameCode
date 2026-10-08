@@ -18,4 +18,4 @@
 
 // JSUPPORT.h
 // DBCS Support Header
-extern int nGetWord( char *,int );
+extern int nGetWord(char*, int);

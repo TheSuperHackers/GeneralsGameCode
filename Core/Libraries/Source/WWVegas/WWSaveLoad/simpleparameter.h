@@ -44,7 +44,6 @@
 #include "WWMath/rect.h"
 #include <float.h>
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	SimpleParameterClass
@@ -54,56 +53,56 @@ template <class T, ParameterClass::Type type>
 class SimpleParameterClass : public ParameterClass
 {
 public:
-
 	///////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////////
-	SimpleParameterClass (void *data, const char *name);
+	SimpleParameterClass(void* data, const char* name);
 
 	//////////////////////////////////////////////////////////////////////////////
 	//	Public operators
 	//////////////////////////////////////////////////////////////////////////////
-	virtual bool				operator== (const ParameterClass &src) override;
+	virtual bool operator==(const ParameterClass& src) override;
 
 	///////////////////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////////////////
-	const T &		Get_Value () const;
-	void				Set_Value (const T &new_value);
+	const T& Get_Value() const;
+	void Set_Value(const T& new_value);
 
 	// From Parameter class
-	virtual ParameterClass::Type	Get_Type () const override;
-	virtual void						Copy_Value (const ParameterClass &src) override;
+	virtual ParameterClass::Type Get_Type() const override;
+	virtual void Copy_Value(const ParameterClass& src) override;
 
 private:
-
 	///////////////////////////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////////////////////////
-	T *			m_Data;
-	T				m_Min;
-	T				m_Max;
+	T* m_Data;
+	T m_Min;
+	T m_Max;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 //	SimpleParameterClass
 //////////////////////////////////////////////////////////////////////////////////
-template <class T, ParameterClass::Type type> inline
-SimpleParameterClass<T, type>::SimpleParameterClass (void *data, const char *name)
+template <class T, ParameterClass::Type type>
+inline SimpleParameterClass<T, type>::SimpleParameterClass(void* data, const char* name)
 {
-	Set_Name (name);
-	m_Data = (T *)data;
+	Set_Name(name);
+	m_Data = (T*)data;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //	Get_Value
 //////////////////////////////////////////////////////////////////////////////////
-template <class T, ParameterClass::Type type> inline bool
-SimpleParameterClass<T, type>::operator== (const ParameterClass &src)
+template <class T, ParameterClass::Type type>
+inline bool
+SimpleParameterClass<T, type>::operator==(const ParameterClass& src)
 {
 	bool retval = false;
-	if (src.Get_Type () == Get_Type ()) {
-		retval = ((*m_Data) == *(((const SimpleParameterClass &)src).m_Data));
+	if (src.Get_Type() == Get_Type())
+	{
+		retval = ((*m_Data) == *(((const SimpleParameterClass&)src).m_Data));
 	}
 
 	return retval;
@@ -112,8 +111,9 @@ SimpleParameterClass<T, type>::operator== (const ParameterClass &src)
 //////////////////////////////////////////////////////////////////////////////////
 //	Get_Value
 //////////////////////////////////////////////////////////////////////////////////
-template <class T, ParameterClass::Type type> inline const T &
-SimpleParameterClass<T, type>::Get_Value () const
+template <class T, ParameterClass::Type type>
+inline const T&
+SimpleParameterClass<T, type>::Get_Value() const
 {
 	return (*m_Data);
 }
@@ -121,18 +121,20 @@ SimpleParameterClass<T, type>::Get_Value () const
 //////////////////////////////////////////////////////////////////////////////////
 //	Set_Value
 //////////////////////////////////////////////////////////////////////////////////
-template <class T, ParameterClass::Type type> inline  void
-SimpleParameterClass<T, type>::Set_Value (const T &new_value)
+template <class T, ParameterClass::Type type>
+inline void
+SimpleParameterClass<T, type>::Set_Value(const T& new_value)
 {
 	(*m_Data) = new_value;
-	Set_Modified ();
+	Set_Modified();
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //	Get_Type
 //////////////////////////////////////////////////////////////////////////////////
-template <class T, ParameterClass::Type type> inline ParameterClass::Type
-SimpleParameterClass<T, type>::Get_Type () const
+template <class T, ParameterClass::Type type>
+inline ParameterClass::Type
+SimpleParameterClass<T, type>::Get_Type() const
 {
 	return type;
 }
@@ -140,14 +142,16 @@ SimpleParameterClass<T, type>::Get_Type () const
 //////////////////////////////////////////////////////////////////////////////////
 //	Copy_Value
 //////////////////////////////////////////////////////////////////////////////////
-template <class T, ParameterClass::Type type> inline void
-SimpleParameterClass<T, type>::Copy_Value (const ParameterClass &src)
+template <class T, ParameterClass::Type type>
+inline void
+SimpleParameterClass<T, type>::Copy_Value(const ParameterClass& src)
 {
-	if (Get_Type () == src.Get_Type ()) {
-		(*m_Data) = ((SimpleParameterClass<T, type> &)src).Get_Value ();
+	if (Get_Type() == src.Get_Type())
+	{
+		(*m_Data) = ((SimpleParameterClass<T, type>&)src).Get_Value();
 	}
 
-	ParameterClass::Copy_Value (src);
+	ParameterClass::Copy_Value(src);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -155,14 +159,13 @@ SimpleParameterClass<T, type>::Copy_Value (const ParameterClass &src)
 //	Simple parameter types
 //
 //////////////////////////////////////////////////////////////////////////////////
-typedef SimpleParameterClass<bool,		ParameterClass::TYPE_BOOL>			BoolParameterClass;
-typedef SimpleParameterClass<Vector2,	ParameterClass::TYPE_VECTOR2>		Vector2ParameterClass;
-typedef SimpleParameterClass<Vector3,	ParameterClass::TYPE_VECTOR3>		Vector3ParameterClass;
-typedef SimpleParameterClass<Matrix3D, ParameterClass::TYPE_MATRIX3D>	Matrix3DParameterClass;
-typedef SimpleParameterClass<RectClass,ParameterClass::TYPE_RECT>			RectParameterClass;
-typedef SimpleParameterClass<Vector3,	ParameterClass::TYPE_COLOR	>		ColorParameterClass;
-typedef SimpleParameterClass<int,		ParameterClass::TYPE_STRINGSDB_ID>	StringsDBEntryParameterClass;
-
+typedef SimpleParameterClass<bool, ParameterClass::TYPE_BOOL> BoolParameterClass;
+typedef SimpleParameterClass<Vector2, ParameterClass::TYPE_VECTOR2> Vector2ParameterClass;
+typedef SimpleParameterClass<Vector3, ParameterClass::TYPE_VECTOR3> Vector3ParameterClass;
+typedef SimpleParameterClass<Matrix3D, ParameterClass::TYPE_MATRIX3D> Matrix3DParameterClass;
+typedef SimpleParameterClass<RectClass, ParameterClass::TYPE_RECT> RectParameterClass;
+typedef SimpleParameterClass<Vector3, ParameterClass::TYPE_COLOR > ColorParameterClass;
+typedef SimpleParameterClass<int, ParameterClass::TYPE_STRINGSDB_ID> StringsDBEntryParameterClass;
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -178,25 +181,28 @@ public:
 	///////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////////
-	RangedParameterClass (void *data, const char *name)
-		:	SimpleParameterClass<T, type> (data, name) { }
+	RangedParameterClass(void* data, const char* name)
+	  : SimpleParameterClass<T, type>(data, name)
+	{}
 
 	///////////////////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////////////////
-	void				Set_Range (const T &min, const T &max)	{ m_Min = min; m_Max = max; }
-	const T &		Get_Min () const							{ return m_Min; }
-	const T &		Get_Max () const							{ return m_Max; }
+	void Set_Range(const T& min, const T& max)
+	{
+		m_Min = min;
+		m_Max = max;
+	}
+	const T& Get_Min() const { return m_Min; }
+	const T& Get_Max() const { return m_Max; }
 
 private:
-
 	///////////////////////////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////////////////////////
-	T				m_Min;
-	T				m_Max;
+	T m_Min;
+	T m_Max;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //	IntParameterClass
@@ -204,29 +210,29 @@ private:
 class IntParameterClass : public RangedParameterClass<int, ParameterClass::TYPE_INT>
 {
 public:
-	IntParameterClass (void *data, const char *name)
-		:	RangedParameterClass<int, ParameterClass::TYPE_INT> (data, name)
-			{ Set_Range (-1000000000L, 1000000000L); }
+	IntParameterClass(void* data, const char* name)
+	  : RangedParameterClass<int, ParameterClass::TYPE_INT>(data, name)
+	{ Set_Range(-1000000000L, 1000000000L); }
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 //	FloatParameterClass
 //////////////////////////////////////////////////////////////////////////////////
-class FloatParameterClass  : public RangedParameterClass<float, ParameterClass::TYPE_FLOAT>
+class FloatParameterClass : public RangedParameterClass<float, ParameterClass::TYPE_FLOAT>
 {
 public:
-	FloatParameterClass  (void *data, const char *name)
-		:	RangedParameterClass<float, ParameterClass::TYPE_FLOAT> (data, name)
-			{ Set_Range (-100000.0F, 100000.0F); }
+	FloatParameterClass(void* data, const char* name)
+	  : RangedParameterClass<float, ParameterClass::TYPE_FLOAT>(data, name)
+	{ Set_Range(-100000.0F, 100000.0F); }
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 //	AngleParameterClass
 //////////////////////////////////////////////////////////////////////////////////
-class AngleParameterClass   : public RangedParameterClass<float, ParameterClass::TYPE_ANGLE>
+class AngleParameterClass : public RangedParameterClass<float, ParameterClass::TYPE_ANGLE>
 {
 public:
-	AngleParameterClass   (void *data, const char *name)
-		:	RangedParameterClass<float, ParameterClass::TYPE_ANGLE> (data, name)
-			{ Set_Range (0.0F,  6.283185307F); }
+	AngleParameterClass(void* data, const char* name)
+	  : RangedParameterClass<float, ParameterClass::TYPE_ANGLE>(data, name)
+	{ Set_Range(0.0F, 6.283185307F); }
 };

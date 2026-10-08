@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include"winblows.h"
-#include<commctrl.h>
+#include "winblows.h"
+#include <commctrl.h>
 HWND Create_Patch_Dialog();
 
 extern HWND PatchDialog;

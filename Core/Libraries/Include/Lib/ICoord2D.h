@@ -35,27 +35,27 @@ struct ICoord2D
 		return x == value && y == value;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
-	Int lengthSqr() const { return x*x + y*y; }
+	Int length() const { return (Int)sqrt((double)(x * x + y * y)); }
+	Int lengthSqr() const { return x * x + y * y; }
 
-	void add( const ICoord2D &a )
+	void add(const ICoord2D& a)
 	{
 		x += a.x;
 		y += a.y;
 	}
 
-	void sub( const ICoord2D &a )
+	void sub(const ICoord2D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 	}
 
-	void operator+=( const ICoord2D &a )
+	void operator+=(const ICoord2D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const ICoord2D &a )
+	void operator-=(const ICoord2D& a)
 	{
 		sub(a);
 	}
@@ -73,45 +73,53 @@ struct ICoord2D
 		return c;
 	}
 
-	void set( const ICoord2D &a )
+	void set(const ICoord2D& a)
 	{
 		x = a.x;
 		y = a.y;
 	}
 
-	void set( Int ax, Int ay )
+	void set(Int ax, Int ay)
 	{
 		x = ax;
 		y = ay;
 	}
 
-	void updateMin( const ICoord2D &other )
+	void updateMin(const ICoord2D& other)
 	{
 		if (x > other.x)
+		{
 			x = other.x;
+		}
 
 		if (y > other.y)
+		{
 			y = other.y;
+		}
 	}
 
-	void updateMax( const ICoord2D &other )
+	void updateMax(const ICoord2D& other)
 	{
 		if (x < other.x)
+		{
 			x = other.x;
+		}
 
 		if (y < other.y)
+		{
 			y = other.y;
+		}
 	}
 };
 
-inline ICoord2D operator+( const ICoord2D &a, const ICoord2D &b )
+inline ICoord2D operator+(const ICoord2D& a, const ICoord2D& b)
 {
 	ICoord2D c = a;
 	c.add(b);
 	return c;
 }
 
-inline ICoord2D operator-( const ICoord2D &a, const ICoord2D &b )
+inline ICoord2D operator-(const ICoord2D& a, const ICoord2D& b)
 {
 	ICoord2D c = a;
 	c.sub(b);

@@ -28,13 +28,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/FireWeaponUpdate.h"
 #include "GameLogic/WeaponStatus.h"
-
 
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
@@ -45,27 +44,26 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "Weapon",	INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "Weapon", INI::parseWeaponTemplate, nullptr, offsetof(FireWeaponUpdateModuleData, m_weaponTemplate) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
-	UpdateModule( thing, moduleData ),
-	m_weapon(nullptr)
+FireWeaponUpdate::FireWeaponUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
+  , m_weapon(nullptr)
 {
-	const WeaponTemplate *tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
+	const WeaponTemplate* tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
 	if (tmpl)
 	{
 		m_weapon = TheWeaponStore->allocateNewWeapon(tmpl, PRIMARY_WEAPON);
-		m_weapon->loadAmmoNow( getObject() );
+		m_weapon->loadAmmoNow(getObject());
 	}
 }
 
@@ -81,9 +79,9 @@ FireWeaponUpdate::~FireWeaponUpdate()
 UpdateSleepTime FireWeaponUpdate::update()
 {
 	// If my weapon is ready, shoot it.
-	if( isOkayToFire() )
+	if (isOkayToFire())
 	{
-		m_weapon->forceFireWeapon( getObject(), getObject()->getPosition() );
+		m_weapon->forceFireWeapon(getObject(), getObject()->getPosition());
 	}
 	return UPDATE_SLEEP_NONE;
 }
@@ -92,12 +90,16 @@ UpdateSleepTime FireWeaponUpdate::update()
 //-------------------------------------------------------------------------------------------------
 Bool FireWeaponUpdate::isOkayToFire()
 {
-	if( m_weapon == nullptr )
+	if (m_weapon == nullptr)
+	{
 		return FALSE;
+	}
 
 	// Weapon is reloading
-	if( m_weapon->getStatus() != READY_TO_FIRE )
+	if (m_weapon->getStatus() != READY_TO_FIRE)
+	{
 		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -105,32 +107,29 @@ Bool FireWeaponUpdate::isOkayToFire()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::crc( Xfer *xfer )
+void FireWeaponUpdate::crc(Xfer* xfer)
 {
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponUpdate::xfer( Xfer *xfer )
+void FireWeaponUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// weapon
-	xfer->xferSnapshot( m_weapon );
-
+	xfer->xferSnapshot(m_weapon);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -138,8 +137,6 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void FireWeaponUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

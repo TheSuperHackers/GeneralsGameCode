@@ -32,8 +32,8 @@ struct ICoord3D
 		return xy;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
-	Int lengthSqr() const { return x*x + y*y + z*z; }
+	Int length() const { return (Int)sqrt((double)(x * x + y * y + z * z)); }
+	Int lengthSqr() const { return x * x + y * y + z * z; }
 
 	void zero()
 	{
@@ -47,26 +47,26 @@ struct ICoord3D
 		return x == value && y == value && z == value;
 	}
 
-	void add( const ICoord3D &a )
+	void add(const ICoord3D& a)
 	{
 		x += a.x;
 		y += a.y;
 		z += a.z;
 	}
 
-	void sub( const ICoord3D &a )
+	void sub(const ICoord3D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 		z -= a.z;
 	}
 
-	void operator+=( const ICoord3D &a )
+	void operator+=(const ICoord3D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const ICoord3D &a )
+	void operator-=(const ICoord3D& a)
 	{
 		sub(a);
 	}
@@ -85,53 +85,65 @@ struct ICoord3D
 		return c;
 	}
 
-	void set( const ICoord3D &a )
+	void set(const ICoord3D& a)
 	{
 		x = a.x;
 		y = a.y;
 		z = a.z;
 	}
 
-	void set( Int ax, Int ay, Int az )
+	void set(Int ax, Int ay, Int az)
 	{
 		x = ax;
 		y = ay;
 		z = az;
 	}
 
-	void updateMin( const ICoord3D &other )
+	void updateMin(const ICoord3D& other)
 	{
 		if (x > other.x)
+		{
 			x = other.x;
+		}
 
 		if (y > other.y)
+		{
 			y = other.y;
+		}
 
 		if (z > other.z)
+		{
 			z = other.z;
+		}
 	}
 
-	void updateMax( const ICoord3D &other )
+	void updateMax(const ICoord3D& other)
 	{
 		if (x < other.x)
+		{
 			x = other.x;
+		}
 
 		if (y < other.y)
+		{
 			y = other.y;
+		}
 
 		if (z < other.z)
+		{
 			z = other.z;
+		}
 	}
 };
 
-inline ICoord3D operator+( const ICoord3D &a, const ICoord3D &b )
+inline ICoord3D operator+(const ICoord3D& a, const ICoord3D& b)
 {
 	ICoord3D c = a;
 	c.add(b);
 	return c;
 }
 
-inline ICoord3D operator-( const ICoord3D &a, const ICoord3D &b )
+inline ICoord3D operator-(const ICoord3D& a, const ICoord3D& b)
 {
 	ICoord3D c = a;
 	c.sub(b);

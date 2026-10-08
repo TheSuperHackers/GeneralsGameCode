@@ -29,27 +29,28 @@ class ColorBarClass;
 
 class OpacitySettingsDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	OpacitySettingsDialogClass(float opacity, CWnd* pParent = nullptr);   // standard constructor
+	OpacitySettingsDialogClass(float opacity, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(OpacitySettingsDialogClass)
-	enum { IDD = IDD_OPACITY };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_OPACITY
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(OpacitySettingsDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(OpacitySettingsDialogClass)
 	virtual BOOL OnInitDialog() override;
@@ -57,20 +58,18 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	////////////////////////////////////////////////////////////////
+	//	Public methods
+	////////////////////////////////////////////////////////////////
+	float Get_Opacity() const { return m_Opacity; }
 
-		////////////////////////////////////////////////////////////////
-		//	Public methods
-		////////////////////////////////////////////////////////////////
-		float					Get_Opacity () const	{ return m_Opacity; }
-
-	private:
-
-		////////////////////////////////////////////////////////////////
-		//	Private member data
-		////////////////////////////////////////////////////////////////
-		ColorBarClass *	m_OpacityBar;
-		float					m_Opacity;
+private:
+	////////////////////////////////////////////////////////////////
+	//	Private member data
+	////////////////////////////////////////////////////////////////
+	ColorBarClass* m_OpacityBar;
+	float m_Opacity;
 };
 
 //{{AFX_INSERT_LOCATION}}

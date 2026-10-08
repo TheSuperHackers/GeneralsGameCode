@@ -34,7 +34,7 @@
 
 class DynamicAudioEventRTS;
 
-enum RequestType CPP_11(: Int)
+enum RequestType CPP_11( : Int)
 {
 	AR_Play,
 	AR_Pause,
@@ -43,21 +43,20 @@ enum RequestType CPP_11(: Int)
 
 struct AudioRequest : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AudioRequest, "AudioRequest" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AudioRequest, "AudioRequest")
 
 public:
-
 	AudioRequest()
-		: m_request(AR_Play)
-		, m_pendingEvent(nullptr)
-		, m_handleToInteractOn(AHSV_Error)
-		, m_requiresCheckForSample(false)
-		, m_requestStop(false)
+	  : m_request(AR_Play)
+	  , m_pendingEvent(nullptr)
+	  , m_handleToInteractOn(AHSV_Error)
+	  , m_requiresCheckForSample(false)
+	  , m_requestStop(false)
 	{}
 
 	RequestType m_request;
 	RefCountPtr<DynamicAudioEventRTS> m_pendingEvent;
 	AudioHandle m_handleToInteractOn;
 	Bool m_requiresCheckForSample;
-	Bool m_requestStop; // Let the audio play and finish but stop looping if it is looping
+	Bool m_requestStop;    // Let the audio play and finish but stop looping if it is looping
 };

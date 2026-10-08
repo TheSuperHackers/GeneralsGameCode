@@ -39,15 +39,15 @@ class Intro
 	struct DisplayEntity
 	{
 		DisplayEntity()
-			: displayString(nullptr)
-			, image(nullptr)
-			, sizeX(10)
-			, sizeY(10)
-			, centerOffsetY(0)
+		  : displayString(nullptr)
+		  , image(nullptr)
+		  , sizeX(10)
+		  , sizeY(10)
+		  , centerOffsetY(0)
 		{}
 		~DisplayEntity();
 
-		DisplayString* displayString; // is owner
+		DisplayString* displayString;    // is owner
 		const Image* image;
 		Int sizeX;
 		Int sizeY;
@@ -55,7 +55,6 @@ class Intro
 	};
 
 public:
-
 	Intro();
 
 	void update();
@@ -65,7 +64,6 @@ public:
 	Bool isDone() const { return m_currentState == IntroState_Done; }
 
 private:
-
 	void enterNextState();
 
 	void doEALogoMovie();
@@ -77,7 +75,6 @@ private:
 	void drawDisplayEntities();
 
 private:
-
 	IntroState m_currentState;
 	UnsignedInt m_allowedStateFlags;
 	UnsignedInt m_waitUntilMs;

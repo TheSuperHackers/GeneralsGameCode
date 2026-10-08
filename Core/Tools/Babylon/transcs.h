@@ -22,4 +22,4 @@
 
 #pragma once
 
-void CreateTranslationTable ();
+void CreateTranslationTable();

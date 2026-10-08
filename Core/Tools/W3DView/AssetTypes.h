@@ -38,8 +38,8 @@
 
 typedef enum
 {
-	TypeUnknown		= -1,
-	TypeMaterial	= 0,
+	TypeUnknown = -1,
+	TypeMaterial = 0,
 	TypeMesh,
 	TypeHierarchy,
 	TypeAggregate,

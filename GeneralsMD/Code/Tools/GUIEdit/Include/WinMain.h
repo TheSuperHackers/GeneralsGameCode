@@ -54,11 +54,11 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
-#define TIMER_EDIT_WINDOW_PULSE  1
+#define TIMER_EDIT_WINDOW_PULSE 1
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern HWND ApplicationHWnd;  ///< application main window handle
-extern HINSTANCE ApplicationHInstance;  ///< application main instance handle
-extern Win32Mouse *TheWin32Mouse;  ///< the mouse for win processing
+extern HWND ApplicationHWnd;    ///< application main window handle
+extern HINSTANCE ApplicationHInstance;    ///< application main instance handle
+extern Win32Mouse* TheWin32Mouse;    ///< the mouse for win processing

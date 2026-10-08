@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include <Precompiled/precompiled.h> // Include the project dependencies first
+#include <Precompiled/precompiled.h>    // Include the project dependencies first
 
-#include "BasePragmas.h" // Set pragmas earliest
-#include "BaseMacros.h" // Set macros earlier
-#include "BaseTypes.h" // Set types early
+#include "BasePragmas.h"    // Set pragmas earliest
+#include "BaseMacros.h"    // Set macros earlier
+#include "BaseTypes.h"    // Set types early
 #ifdef __cplusplus
-	#include "BaseAlgorithm.h"
+#include "BaseAlgorithm.h"
 #endif

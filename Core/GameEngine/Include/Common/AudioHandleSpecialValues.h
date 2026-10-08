@@ -28,9 +28,9 @@
 
 #pragma once
 
-enum AudioHandleSpecialValues CPP_11(: Int)
+enum AudioHandleSpecialValues CPP_11( : Int)
 {
-	AHSV_Error					= 0x00,
+	AHSV_Error = 0x00,
 	AHSV_NoSound,
 	AHSV_Muted,
 	AHSV_NotForLocal,

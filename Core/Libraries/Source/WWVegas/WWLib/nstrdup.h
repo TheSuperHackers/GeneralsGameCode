@@ -36,4 +36,4 @@
 
 #pragma once
 
-char * nstrdup(const char *str);
+char* nstrdup(const char* str);

@@ -25,41 +25,39 @@
 #include "DataTreeView.h"
 #include "Toolbar.h"
 
-
 #if defined(_MSC_VER) && _MSC_VER < 1300
 typedef HTASK HTASK_OR_DWORD;
 #else
 typedef DWORD HTASK_OR_DWORD;
 #endif
 
-
 class CMainFrame : public CFrameWnd
 {
-protected: // create from serialization only
+protected:    // create from serialization only
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
 
-// Attributes
+	// Attributes
 protected:
 	CSplitterWnd m_wndSplitter;
-public:
 
-// Operations
 public:
-
-// Overrides
+	// Operations
+public:
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainFrame)
-	public:
+public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) override;
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo) override;
-	protected:
+
+protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMainFrame() override;
 #ifdef RTS_DEBUG
@@ -67,11 +65,11 @@ public:
 	virtual void Dump(CDumpContext& dc) const override;
 #endif
 
-protected:  // control bar embedded members
-	CStatusBar  m_wndStatusBar;
-	CToolBar    m_wndToolBar;
+protected:    // control bar embedded members
+	CStatusBar m_wndStatusBar;
+	CToolBar m_wndToolBar;
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -244,37 +242,34 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	//////////////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////////////
-	CView *GetPane (int iRow, int iCol) const
-	{ return (CView *)m_wndSplitter.GetPane (iRow, iCol); }
+	CView* GetPane(int iRow, int iCol) const
+	{ return (CView*)m_wndSplitter.GetPane(iRow, iCol); }
 
-	void	ShowObjectProperties ();
+	void ShowObjectProperties();
 
-	void	OnSelectionChanged (ASSET_TYPE newAssetType);
+	void OnSelectionChanged(ASSET_TYPE newAssetType);
 
-	void	Update_Frame_Time (DWORD milliseconds);
-	void	UpdatePolygonCount (int iPolygons);
-	void	Update_Particle_Count (int particles);
-	void	UpdateCameraDistance (float cameraDistance);
-	void	UpdateFrameCount (int iCurrentFrame, int iTotalFrames, float frame_rate);
-	void	RestoreOriginalSize ();
-	void	Select_Device (bool show_dlg = true);
+	void Update_Frame_Time(DWORD milliseconds);
+	void UpdatePolygonCount(int iPolygons);
+	void Update_Particle_Count(int particles);
+	void UpdateCameraDistance(float cameraDistance);
+	void UpdateFrameCount(int iCurrentFrame, int iTotalFrames, float frame_rate);
+	void RestoreOriginalSize();
+	void Select_Device(bool show_dlg = true);
 
-	HMENU	Get_Emitters_List_Menu () const { return m_hEmittersSubMenu; }
-	void	Update_Emitters_List ();
+	HMENU Get_Emitters_List_Menu() const { return m_hEmittersSubMenu; }
+	void Update_Emitters_List();
 
 protected:
-
 	//////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////////////
-	void	Restore_Window_State ();
+	void Restore_Window_State();
 
 private:
-
 	//////////////////////////////////////////////////////////////////////
 	//	Private member data
 	//////////////////////////////////////////////////////////////////////
