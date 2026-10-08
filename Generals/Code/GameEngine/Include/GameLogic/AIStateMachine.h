@@ -175,7 +175,8 @@ private:
 	Squad *								m_goalSquad;
 
 	/** A temporary state to run for a while (usually AI_MOVE_OUT_OF_THE_WAY).
-	Doesn't clear or reset the state machine, so it goes back to doing what it was doing.  jba. */
+	Doesn't clear or reset the state machine, so it goes back to doing what it was doing.  jba.
+	TheSuperHackers @info Okladnoj 08/10/2026 Without RETAIL_COMPATIBLE_CRC, clear() exits and resets it, even while it is updating. */
 	State									*m_temporaryState;
 	UnsignedInt						m_temporaryStateFramEnd; ///< Last frame to run m_temporaryState.
 };

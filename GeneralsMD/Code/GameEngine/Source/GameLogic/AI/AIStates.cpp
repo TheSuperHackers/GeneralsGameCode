@@ -878,12 +878,18 @@ StateReturnType AIStateMachine::updateStateMachine()
 
 			return status;
 		}
+
+#if RETAIL_COMPATIBLE_CRC
+		m_temporaryState->onExit(EXIT_NORMAL);
+		m_temporaryState = nullptr;
+#else
 		// TheSuperHackers @bugfix Okladnoj 08/10/2026 Check that the temporary state still exists as it can be cleared from the state machine within the states update.
 		if (m_temporaryState)
 		{
 			m_temporaryState->onExit(EXIT_NORMAL);
 			m_temporaryState = nullptr;
 		}
+#endif
 	}
 	StateReturnType retType = StateMachine::updateStateMachine();
 
