@@ -97,6 +97,7 @@ protected:
 	Render2DSentenceClass m_textRendererHotKey;  ///< for drawing text
 	Bool m_textChanged;  ///< when contents of string change this is TRUE
 	Bool m_fontChanged;  ///< when font has changed this is TRUE
+	Bool m_clipChanged;  ///< when clip region has changed this is TRUE
 	UnicodeString m_hotkey;		///< holds the current hotkey marker.
 	Bool m_useHotKey;
 	ICoord2D m_hotKeyPos;

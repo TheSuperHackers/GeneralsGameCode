@@ -195,6 +195,7 @@ public:
 	//
 	void	Build_Sentence (const WCHAR *text, int *hkX, int *hkY);
 	void	Draw_Sentence (uint32 color = 0xFFFFFFFF);
+	bool	Has_Sentence_Data () const						{ return SentenceData.Count () > 0; }
 
 	//
 	//	Texture hint

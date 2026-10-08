@@ -86,6 +86,7 @@ W3DDisplayString::W3DDisplayString()
 	m_size.x = 0;
 	m_size.y = 0;
 	m_fontChanged = FALSE;
+	m_clipChanged = FALSE;
 	m_clipRegion.lo.x = 0;
 	m_clipRegion.lo.y = 0;
 	m_clipRegion.hi.x = 0;
@@ -170,19 +171,18 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	{
 		if(m_useHotKey)
 		{
-			m_textRenderer.Set_Hot_Key_Parse(TRUE);
 			m_textRenderer.Build_Sentence( getText().str(), &m_hotKeyPos.x, &m_hotKeyPos.y );
 			m_hotkey.translate(TheHotKeyManager->searchHotKey(getText()));
 			if(!m_hotkey.isEmpty())
 				m_textRendererHotKey.Build_Sentence(m_hotkey.str(), nullptr, nullptr);
 			else
-			{
-				m_useHotKey = FALSE;
 				m_textRendererHotKey.Reset();
-			}
 		}
 		else
+		{
 			m_textRenderer.Build_Sentence( getText().str(), nullptr, nullptr );
+			m_textRendererHotKey.Reset();
+		}
 		m_fontChanged = FALSE;
 		m_textChanged = FALSE;
 		needNewPolys = TRUE;
@@ -193,7 +193,9 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	// if our position has changed, or our colors have changed, or our
 	// text data has changed, we need to redo the texture quads
 	//
+	// TheSuperHackers @bugfix arcticdolphin 08/10/2026 Redo the quads when the clip region changes.
 	if( needNewPolys ||
+			m_clipChanged ||
 			x != m_textPos.x ||
 			y != m_textPos.y ||
 			color != m_currTextColor ||
@@ -205,6 +207,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 		m_textPos.y = y;
 		m_currTextColor = color;
 		m_currDropColor = dropColor;
+		m_clipChanged = FALSE;
 
 		// reset the quads
 		m_textRenderer.Reset_Polys();
@@ -217,7 +220,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 		m_textRenderer.Set_Location( Vector2( m_textPos.x, m_textPos.y ) );
 		m_textRenderer.Draw_Sentence( m_currTextColor );
 
-		if (m_useHotKey)
+		if (m_textRendererHotKey.Has_Sentence_Data())
 		{
 			m_textRendererHotKey.Reset_Polys();
 			m_textRendererHotKey.Set_Location( Vector2( m_textPos.x + m_hotKeyPos.x , m_textPos.y +m_hotKeyPos.y) );
@@ -228,7 +231,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 
 	TheDisplay->flush();
 
-	if (m_useHotKey)
+	if (m_textRendererHotKey.Has_Sentence_Data())
 	{
 		m_textRendererHotKey.Render();
 	}
@@ -336,6 +339,7 @@ void W3DDisplayString::setClipRegion( IRegion2D *region )
 
 		// assign new region
 		m_clipRegion = *region;
+		m_clipChanged = TRUE;
 
 		// set new region in renderer
 		m_textRenderer.Set_Clipping_Rect( RectClass( m_clipRegion.lo.x,
@@ -388,6 +392,10 @@ void W3DDisplayString::setWordWrap( Int wordWrap )
 
 void W3DDisplayString::setUseHotkey( Bool useHotkey, Color hotKeyColor )
 {
+	// TheSuperHackers @performance arcticdolphin 08/10/2026 Skip the rebuild when the request is unchanged.
+	if( m_useHotKey == useHotkey && m_hotKeyColor == hotKeyColor )
+		return;
+
 	m_useHotKey = useHotkey;
 	m_hotKeyColor = hotKeyColor;
 	m_textRenderer.Set_Hot_Key_Parse(useHotkey);

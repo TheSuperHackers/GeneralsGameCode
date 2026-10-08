@@ -148,7 +148,6 @@ Render2DSentenceClass::Reset ()
 
 	Cursor.Set (0, 0);
 	MonoSpaced = false;
-	ParseHotKey = false;
 
 	Release_Pending_Surfaces ();
 	Reset_Sentence_Data ();
