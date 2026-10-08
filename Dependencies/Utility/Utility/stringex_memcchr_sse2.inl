@@ -16,11 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <emmintrin.h>
-#if defined(_MSC_VER)
-	#include <intrin.h>
-#endif
-
 // SSE2 implementation of memcchr.
 inline const void* memcchr(const void* data, int c, size_t n)
 {

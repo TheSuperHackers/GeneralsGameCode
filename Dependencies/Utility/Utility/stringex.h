@@ -306,6 +306,10 @@ template<typename T> inline bool endsWithNoCase(const T *str, const T *suffix)
   #include "stringex_memcchr_x86asm.inl"
 #else
   #if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
+    #include <emmintrin.h>
+    #if defined(_MSC_VER)
+      #include <intrin.h>
+    #endif
     #include "stringex_memcchr_sse2.inl"
   #else
     #include "stringex_memcchr.inl"

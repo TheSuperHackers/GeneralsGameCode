@@ -19,6 +19,12 @@
 #include <gtest/gtest.h>
 
 #include "Utility/stringex.h"
+#if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
+#include <emmintrin.h>
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
+#endif
 
 namespace
 {
@@ -51,33 +57,33 @@ TEST(StringEx, StrlcpyTruncatesAndTerminates)
 	EXPECT_STREQ(buffer, "hel");
 }
 
-// memcchr: portable
-#define memcchr memcchrPortable
+namespace memcchr_portable
+{
 #include "Utility/stringex_memcchr.inl"
-#undef memcchr
 TEST(StringEx, MemcchrPortable)
 {
-	testMemcchr(memcchrPortable);
+	testMemcchr(memcchr_portable::memcchr);
 }
+} // namespace memcchr_portable
 
-// memcchr: SSE2 intrinsics
+namespace memcchr_sse2_intrinsics
+{
 #if defined(_M_IX86) || defined(_M_X64) || defined(__SSE2__)
-#define memcchr memcchrSse2
 #include "Utility/stringex_memcchr_sse2.inl"
-#undef memcchr
 TEST(StringEx, MemcchrSse2)
 {
-	testMemcchr(memcchrSse2);
+	testMemcchr(memcchr_sse2_intrinsics::memcchr);
 }
 #endif
+} // namespace memcchr_sse2_intrinsics
 
-// memcchr: VC6-compatible ASM
+namespace memcchr_vc6_compat
+{
 #if defined(_MSC_VER) && defined(_M_IX86)
-#define memcchr memcchrX86Asm
 #include "Utility/stringex_memcchr_x86asm.inl"
-#undef memcchr
 TEST(StringEx, MemcchrX86Asm)
 {
-	testMemcchr(memcchrX86Asm);
+	testMemcchr(memcchr_vc6_compat::memcchr);
 }
 #endif
+} // namespace memcchr_vc6_compat
