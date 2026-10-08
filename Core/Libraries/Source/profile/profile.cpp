@@ -27,7 +27,7 @@
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
 
-#include "profile.h"
+#include "profile/profile.h"
 #include "internal.h"
 #include <new>
 #include "mmsystem.h"

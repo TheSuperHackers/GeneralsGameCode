@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "../debug/debug.h"
+#include "debug/debug.h"
 #include "internal_funclevel.h"
 #include "internal_highlevel.h"
 #include "internal_cmd.h"

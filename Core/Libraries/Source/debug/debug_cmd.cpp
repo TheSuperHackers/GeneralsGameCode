@@ -26,8 +26,8 @@
 //
 // Debug command group 'debug'
 //////////////////////////////////////////////////////////////////////////////
-#include "debug.h"
-#include "debug_cmd.h"
+#include "debug/debug.h"
+#include "debug/debug_cmd.h"
 #include "internal.h"
 #include <windows.h>
 #include <process.h>

@@ -27,7 +27,7 @@
 // Debug class implementation
 //////////////////////////////////////////////////////////////////////////////
 
-#include "debug.h"
+#include "debug/debug.h"
 #include "internal.h"
 #include "internal_except.h"
 #include "internal_io.h"

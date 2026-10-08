@@ -26,8 +26,8 @@
 //
 // Profile module - Test 1 (basic testing)
 //////////////////////////////////////////////////////////////////////////////
-#include "../profile.h"
-#include "../../debug/debug.h"
+#include "profile/profile.h"
+#include "debug/debug.h"
 #include <stdio.h>
 
 const char *DebugGetDefaultCommands()

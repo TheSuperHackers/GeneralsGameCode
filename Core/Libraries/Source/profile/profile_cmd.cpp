@@ -27,7 +27,7 @@
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
 
-#include "profile.h"
+#include "profile/profile.h"
 #include "internal.h"
 
 unsigned ProfileCmdInterface::numResIf;

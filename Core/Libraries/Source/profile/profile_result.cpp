@@ -27,7 +27,7 @@
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
 
-#include "profile.h"
+#include "profile/profile.h"
 #include "internal.h"
 #include <new>
 #include <stdlib.h>

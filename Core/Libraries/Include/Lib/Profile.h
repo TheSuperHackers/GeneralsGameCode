@@ -30,7 +30,7 @@
 #pragma once
 
 #if defined(RTS_PROFILE_LEGACY)
-#include "../../Source/profile/profile.h"
+#include "profile/profile.h"
 #endif
 
 #if defined(RTS_PROFILE_TRACY)

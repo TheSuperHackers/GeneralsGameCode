@@ -29,7 +29,7 @@
 
 #include "StdAfx.h"
 #include "resource.h"
-#include "../debug.h"
+#include "debug/debug.h"
 
 #define MAX_LOADSTRING 100
 

@@ -26,7 +26,7 @@
 //
 // Debug module - Test 4 (Multiple DASSERTs, high-count DCHECKs)
 //////////////////////////////////////////////////////////////////////////////
-#include "../debug.h"
+#include "debug/debug.h"
 
 void main()
 {

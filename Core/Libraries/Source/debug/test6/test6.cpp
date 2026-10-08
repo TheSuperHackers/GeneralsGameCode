@@ -26,7 +26,7 @@
 //
 // Debug module - Test 6 (SEH, FPO test)
 //////////////////////////////////////////////////////////////////////////////
-#include "../debug.h"
+#include "debug/debug.h"
 #include <stdio.h>
 
 int test,divByZero;
