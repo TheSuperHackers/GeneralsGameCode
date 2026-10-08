@@ -79,7 +79,6 @@ class ParticleSystemTemplate;
 class StealthUpdate;
 class SpyVisionUpdate;
 
-
 //-------------------------------------------------------------------------------------------------
 class BehaviorModuleData : public ModuleData
 {
@@ -90,7 +89,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    ModuleData::buildFieldParse(p);
+		ModuleData::buildFieldParse(p);
 	}
 };
 
@@ -98,7 +97,6 @@ public:
 class BehaviorModuleInterface
 {
 public:
-
 	virtual BodyModuleInterface* getBody() = 0;
 	virtual CollideModuleInterface* getCollide() = 0;
 	virtual ContainModuleInterface* getContain() = 0;
@@ -126,7 +124,7 @@ public:
 	virtual AIUpdateInterface* getAIUpdateInterface() = 0;
 	virtual ExitInterface* getUpdateExitInterface() = 0;
 	virtual DockUpdateInterface* getDockUpdateInterface() = 0;
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() = 0;
+	virtual RailedTransportDockUpdateInterface* getRailedTransportDockUpdateInterface() = 0;
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() = 0;
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() = 0;
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() = 0;
@@ -136,18 +134,15 @@ public:
 	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() = 0;
 	virtual CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() = 0;
 	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const = 0;
-
 };
 
 //-------------------------------------------------------------------------------------------------
 class BehaviorModule : public ObjectModule, public BehaviorModuleInterface
 {
-
-	MEMORY_POOL_GLUE_ABC( BehaviorModule )
+	MEMORY_POOL_GLUE_ABC(BehaviorModule)
 
 public:
-
-	BehaviorModule( Thing *thing, const ModuleData* moduleData );
+	BehaviorModule(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	static Int getInterfaceMask() { return 0; }
@@ -163,7 +158,7 @@ public:
 	virtual SpecialPowerModuleInterface* getSpecialPower() override { return nullptr; }
 	virtual UpdateModuleInterface* getUpdate() override { return nullptr; }
 	virtual UpgradeModuleInterface* getUpgrade() override { return nullptr; }
-  virtual StealthUpdate* getStealth() { return nullptr; }
+	virtual StealthUpdate* getStealth() { return nullptr; }
 	virtual SpyVisionUpdate* getSpyVisionUpdate() { return nullptr; }
 
 	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return nullptr; }
@@ -181,7 +176,7 @@ public:
 	virtual AIUpdateInterface* getAIUpdateInterface() override { return nullptr; }
 	virtual ExitInterface* getUpdateExitInterface() override { return nullptr; }
 	virtual DockUpdateInterface* getDockUpdateInterface() override { return nullptr; }
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() override { return nullptr; }
+	virtual RailedTransportDockUpdateInterface* getRailedTransportDockUpdateInterface() override { return nullptr; }
 	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() override { return nullptr; }
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return nullptr; }
 	virtual SlavedUpdateInterface* getSlavedUpdateInterface() override { return nullptr; }
@@ -193,18 +188,17 @@ public:
 	virtual const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const override { return nullptr; }
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
-
 };
-inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }
-inline BehaviorModule::~BehaviorModule() { }
+inline BehaviorModule::BehaviorModule(Thing* thing, const ModuleData* moduleData)
+  : ObjectModule(thing, moduleData)
+{}
+inline BehaviorModule::~BehaviorModule() {}
 
-
-enum RunwayReservationType CPP_11(: Int)
+enum RunwayReservationType CPP_11( : Int)
 {
 	RESERVATION_TAKEOFF,
 	RESERVATION_LANDING,
@@ -221,56 +215,56 @@ class ParkingPlaceBehaviorInterface
 public:
 	struct PPInfo
 	{
-		Coord3D		parkingSpace;
-		Real			parkingOrientation;
-		Coord3D		runwayPrep;
-		Coord3D		runwayStart;
-		Coord3D		runwayEnd;
-		Coord3D		runwayExit;
-		Coord3D	  runwayLandingStart;
-		Coord3D	  runwayLandingEnd;
-		Coord3D		runwayApproach;
-		Coord3D		hangarInternal;
-		Real			runwayTakeoffDist;
-		Real			hangarInternalOrient;
+		Coord3D parkingSpace;
+		Real parkingOrientation;
+		Coord3D runwayPrep;
+		Coord3D runwayStart;
+		Coord3D runwayEnd;
+		Coord3D runwayExit;
+		Coord3D runwayLandingStart;
+		Coord3D runwayLandingEnd;
+		Coord3D runwayApproach;
+		Coord3D hangarInternal;
+		Real runwayTakeoffDist;
+		Real hangarInternalOrient;
 	};
 	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0;
 	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0;
 	virtual Bool hasReservedSpace(ObjectID id) const = 0;
-	virtual Int  getSpaceIndex( ObjectID id ) const = 0;
+	virtual Int getSpaceIndex(ObjectID id) const = 0;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) = 0;
 	virtual void releaseSpace(ObjectID id) = 0;
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding) = 0;
-	virtual void calcPPInfo( ObjectID id, PPInfo *info ) = 0;
+	virtual void calcPPInfo(ObjectID id, PPInfo* info) = 0;
 	virtual void releaseRunway(ObjectID id) = 0;
 	virtual Int getRunwayIndex(ObjectID id) = 0;
 	virtual Int getRunwayCount() const = 0;
-	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type = RESERVATION_TAKEOFF ) = 0;
+	virtual ObjectID getRunwayReservation(Int r, RunwayReservationType type = RESERVATION_TAKEOFF) = 0;
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) = 0;
 	virtual Real getApproachHeight() const = 0;
 	virtual Real getLandingDeckHeightOffset() const = 0;
 	virtual void setHealee(Object* healee, Bool add) = 0;
 	virtual void killAllParkedUnits() = 0;
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) = 0;
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr ) = 0;
+	virtual Bool calcBestParkingAssignment(ObjectID id, Coord3D* pos, Int* oldIndex = nullptr, Int* newIndex = nullptr) = 0;
 
-	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const = 0;
-	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const = 0;
+	virtual const std::vector<Coord3D>* getTaxiLocations(ObjectID id) const = 0;
+	virtual const std::vector<Coord3D>* getCreationLocations(ObjectID id) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
 class TransportPassengerInterface
 {
 public:
-	virtual Bool tryToEvacuate( Bool exposeStealthedUnits ) = 0; ///< Will try to kick everybody out with game checks, and will return whether anyone made it
+	virtual Bool tryToEvacuate(Bool exposeStealthedUnits) = 0;    ///< Will try to kick everybody out with game checks, and will return whether anyone made it
 };
 
 //-------------------------------------------------------------------------------------------------
 class CaveInterface
 {
 public:
-	virtual void tryToSetCaveIndex( Int newIndex ) = 0;	///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
-	virtual void setOriginalTeam( Team *oldTeam ) = 0;	///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
+	virtual void tryToSetCaveIndex(Int newIndex) = 0;    ///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
+	virtual void setOriginalTeam(Team* oldTeam) = 0;    ///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
 };
 
 //-------------------------------------------------------------------------------------------------

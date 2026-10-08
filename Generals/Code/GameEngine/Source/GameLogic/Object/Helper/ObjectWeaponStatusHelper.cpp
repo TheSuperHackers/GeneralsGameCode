@@ -36,36 +36,31 @@
 // ------------------------------------------------------------------------------------------------
 ObjectWeaponStatusHelper::~ObjectWeaponStatusHelper()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ObjectWeaponStatusHelper::crc( Xfer *xfer )
+void ObjectWeaponStatusHelper::crc(Xfer* xfer)
 {
-
 	// object helper crc
-	ObjectHelper::crc( xfer );
-
+	ObjectHelper::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ObjectWeaponStatusHelper::xfer( Xfer *xfer )
+void ObjectWeaponStatusHelper::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// object helper base class
-	ObjectHelper::xfer( xfer );
-
+	ObjectHelper::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -73,8 +68,6 @@ void ObjectWeaponStatusHelper::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ObjectWeaponStatusHelper::loadPostProcess()
 {
-
 	// object helper base class
 	ObjectHelper::loadPostProcess();
-
 }

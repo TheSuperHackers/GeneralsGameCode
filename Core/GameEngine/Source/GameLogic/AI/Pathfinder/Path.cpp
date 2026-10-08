@@ -25,20 +25,27 @@
 #include "GameLogic/Pathfinder/PathNode.h"
 #include "GameLogic/TerrainLogic.h"
 
-inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
+inline Int IABS(Int x)
+{
+	if (x >= 0)
+	{
+		return x;
+	}
+	return -x;
+};
 
 //-----------------------------------------------------------------------------------
-Path::Path():
-m_path(nullptr),
-m_pathTail(nullptr),
-m_isOptimized(FALSE),
-m_blockedByAlly(FALSE),
-m_cpopRecentStart(nullptr),
-m_cpopCountdown(MAX_CPOP),
-m_cpopValid(FALSE)
+Path::Path()
+  : m_path(nullptr)
+  , m_pathTail(nullptr)
+  , m_isOptimized(FALSE)
+  , m_blockedByAlly(FALSE)
+  , m_cpopRecentStart(nullptr)
+  , m_cpopCountdown(MAX_CPOP)
+  , m_cpopValid(FALSE)
 {
 	m_cpopIn.zero();
-	m_cpopOut.distAlongPath=0;
+	m_cpopOut.distAlongPath = 0;
 	m_cpopOut.layer = LAYER_GROUND;
 	m_cpopOut.posOnPath.zero();
 }
@@ -48,7 +55,7 @@ Path::~Path()
 	PathNode *node, *nextNode;
 
 	// delete all of the path nodes
-	for( node = m_path; node; node = nextNode )
+	for (node = m_path; node; node = nextNode)
 	{
 		nextNode = node->getNext();
 		deleteInstance(node);
@@ -58,31 +65,34 @@ Path::~Path()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void Path::crc( Xfer *xfer )
+void Path::crc(Xfer* xfer)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void Path::xfer( Xfer *xfer )
+void Path::xfer(Xfer* xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
-	PathNode *node = m_path;
+	PathNode* node = m_path;
 	Int count = 0;
-	while (node) {
+	while (node)
+	{
 		count++;
 		node = node->getNext();
 	}
 	xfer->xferInt(&count);
 
-	if (xfer->getXferMode() == XFER_SAVE)	{
-		node = m_pathTail;  // Write them out backwards.
-		while (node) {
+	if (xfer->getXferMode() == XFER_SAVE)
+	{
+		node = m_pathTail;    // Write them out backwards.
+		while (node)
+		{
 			node->m_id = count;
 			xfer->xferInt(&count);
 			Coord3D pos = *node->getPosition();
@@ -92,20 +102,24 @@ void Path::xfer( Xfer *xfer )
 			Bool canOpt = node->getCanOptimize();
 			xfer->xferBool(&canOpt);
 			Int id = -1;
-			if (node->getNextOptimized()) {
+			if (node->getNextOptimized())
+			{
 				id = node->getNextOptimized()->m_id;
 			}
 			xfer->xferInt(&id);
 			count--;
 			node = node->getPrevious();
 		}
-		DEBUG_ASSERTCRASH(count==0, ("Wrong data count"));
-	} else {
+		DEBUG_ASSERTCRASH(count == 0, ("Wrong data count"));
+	}
+	else
+	{
 		m_cpopValid = FALSE;
-		while (count) {
+		while (count)
+		{
 			Int nodeId;
 			xfer->xferInt(&nodeId);
-			DEBUG_ASSERTCRASH(nodeId==count, ("Bad data"));
+			DEBUG_ASSERTCRASH(nodeId == count, ("Bad data"));
 			Coord3D pos;
 			xfer->xferCoord3D(&pos);
 			PathfindLayerEnum layer;
@@ -114,23 +128,28 @@ void Path::xfer( Xfer *xfer )
 			xfer->xferBool(&canOpt);
 			Int optID = -1;
 			xfer->xferInt(&optID);
-			PathNode *node = newInstance(PathNode);
+			PathNode* node = newInstance(PathNode);
 			node->m_id = nodeId;
 			node->setPosition(&pos);
 			node->setLayer(layer);
 			node->setCanOptimize(canOpt);
-			PathNode *optNode = nullptr;
-			if (optID > 0) {
+			PathNode* optNode = nullptr;
+			if (optID > 0)
+			{
 				optNode = m_path;
-				while (optNode && optNode->m_id != optID) {
+				while (optNode && optNode->m_id != optID)
+				{
 					optNode = optNode->getNext();
 				}
-				DEBUG_ASSERTCRASH (optNode && optNode->m_id == optID, ("Could not find optimized link."));
+				DEBUG_ASSERTCRASH(optNode && optNode->m_id == optID, ("Could not find optimized link."));
 			}
 			m_path = node->prependToList(m_path);
 			if (m_pathTail == nullptr)
+			{
 				m_pathTail = node;
-			if (optNode) {
+			}
+			if (optNode)
+			{
 				node->setNextOptimized(optNode);
 			}
 			count--;
@@ -144,30 +163,28 @@ void Path::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt(&obsolete2);
 	xfer->xferBool(&m_blockedByAlly);
 
-
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
-		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+		extern void addIcon(const Coord3D* pos, Real width, Int numFramesDuration, RGBColor color);
+		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		addIcon(nullptr, 0, 0, color); // erase feedback.
-		for( PathNode *node = getFirstNode(); node; node = node->getNext() )
+		addIcon(nullptr, 0, 0, color);    // erase feedback.
+		for (PathNode* node = getFirstNode(); node; node = node->getNext())
 		{
-
 			// create objects to show path - they decay
 
 			pos = *node->getPosition();
-			addIcon(&pos, PATHFIND_CELL_SIZE_F*.25f, 200, color);
+			addIcon(&pos, PATHFIND_CELL_SIZE_F * .25f, 200, color);
 		}
 
 		// show optimized path
-		for( node = getFirstNode(); node; node = node->getNextOptimized() )
+		for (node = getFirstNode(); node; node = node->getNextOptimized())
 		{
 			pos = *node->getPosition();
-			addIcon(&pos, PATHFIND_CELL_SIZE_F*.8f, 200, color);
+			addIcon(&pos, PATHFIND_CELL_SIZE_F * .8f, 200, color);
 		}
 		TheAI->pathfinder()->setDebugPath(this);
 	}
@@ -184,17 +201,19 @@ void Path::loadPostProcess()
 /**
  * Create a new node at the head of the path
  */
-void Path::prependNode( const Coord3D *pos, PathfindLayerEnum layer )
+void Path::prependNode(const Coord3D* pos, PathfindLayerEnum layer)
 {
-	PathNode *node = newInstance(PathNode);
+	PathNode* node = newInstance(PathNode);
 
-	node->setPosition( pos );
+	node->setPosition(pos);
 	node->setLayer(layer);
 
-	m_path = node->prependToList( m_path );
+	m_path = node->prependToList(m_path);
 
 	if (m_pathTail == nullptr)
+	{
 		m_pathTail = node;
+	}
 
 	m_isOptimized = false;
 }
@@ -202,19 +221,20 @@ void Path::prependNode( const Coord3D *pos, PathfindLayerEnum layer )
 /**
  * Create a new node at the tail of the path
  */
-void Path::appendNode( const Coord3D *pos, PathfindLayerEnum layer )
+void Path::appendNode(const Coord3D* pos, PathfindLayerEnum layer)
 {
 	if (m_isOptimized && m_pathTail)
 	{
 		/* Check for duplicates. */
-		if (pos->x == m_pathTail->getPosition()->x && pos->y == m_pathTail->getPosition()->y) {
+		if (pos->x == m_pathTail->getPosition()->x && pos->y == m_pathTail->getPosition()->y)
+		{
 			DEBUG_LOG(("Warning - Path Seg length == 0, ignoring. john a."));
 			return;
 		}
 	}
-	PathNode *node = newInstance(PathNode);
+	PathNode* node = newInstance(PathNode);
 
-	node->setPosition( pos );
+	node->setPosition(pos);
 	node->setLayer(layer);
 
 	if (!m_path)
@@ -237,20 +257,23 @@ void Path::appendNode( const Coord3D *pos, PathfindLayerEnum layer )
 /**
  * Create a new node at the tail of the path
  */
-void Path::updateLastNode( const Coord3D *pos )
+void Path::updateLastNode(const Coord3D* pos)
 {
 	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(pos);
-	if (m_pathTail) {
+	if (m_pathTail)
+	{
 		m_pathTail->setPosition(pos);
 		m_pathTail->setLayer(layer);
 	}
 	if (m_isOptimized && m_pathTail)
 	{
-		PathNode *node = m_path;
-		while(node && node->getNextOptimized() != m_pathTail) {
+		PathNode* node = m_path;
+		while (node && node->getNextOptimized() != m_pathTail)
+		{
 			node = node->getNextOptimized();
 		}
-		if (node && node->getNextOptimized() == m_pathTail) {
+		if (node && node->getNextOptimized() == m_pathTail)
+		{
 			node->setNextOptimized(m_pathTail);
 		}
 	}
@@ -259,7 +282,7 @@ void Path::updateLastNode( const Coord3D *pos )
 /**
  * Optimize the path by checking line of sight
  */
-void Path::optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfaces, Bool blocked )
+void Path::optimize(const Object* obj, LocomotorSurfaceTypeMask acceptableSurfaces, Bool blocked)
 {
 	PathNode *node, *anchor;
 
@@ -275,97 +298,135 @@ void Path::optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfa
 	// For each node in the path, check LOS from last node in path, working forward.
 	// When a clear LOS is found, keep the resulting straight line segment.
 	//
-	while( anchor != getLastNode() )
+	while (anchor != getLastNode())
 	{
 		// find the farthest node in the path that has a clear line-of-sight to this anchor
 		Bool optimizedSegment = false;
 		PathfindLayerEnum layer = anchor->getLayer();
 		PathfindLayerEnum curLayer = anchor->getLayer();
 		Int count = 0;
-		const Int ALLOWED_STEPS = 3; // we can optimize 3 steps to or from a bridge.  Otherwise, we need to insert a point. jba.
-		for (node = anchor->getNext(); node->getNext(); node=node->getNext()) {
+		const Int ALLOWED_STEPS = 3;    // we can optimize 3 steps to or from a bridge.  Otherwise, we need to insert a point. jba.
+		for (node = anchor->getNext(); node->getNext(); node = node->getNext())
+		{
 			count++;
-			if (curLayer==LAYER_GROUND) {
-				if (node->getLayer() != curLayer) {
+			if (curLayer == LAYER_GROUND)
+			{
+				if (node->getLayer() != curLayer)
+				{
 					layer = node->getLayer();
 					curLayer = layer;
-					if (count > ALLOWED_STEPS) break;
+					if (count > ALLOWED_STEPS)
+					{
+						break;
+					}
 				}
-			}	else {
-				if (node->getNext()->getLayer() != curLayer) {
-					if (count > ALLOWED_STEPS) break;
+			}
+			else
+			{
+				if (node->getNext()->getLayer() != curLayer)
+				{
+					if (count > ALLOWED_STEPS)
+					{
+						break;
+					}
 				}
 			}
 			curLayer = node->getLayer();
-			if (node->getCanOptimize()==false) {
+			if (node->getCanOptimize() == false)
+			{
 				break;
 			}
 		}
-		if (firstNode) {
+		if (firstNode)
+		{
 			layer = firstLayer;
 			firstNode = false;
 		}
-		//PathfindLayerEnum curLayer = LAYER_GROUND;
-		for( ; node != anchor; node = node->getPrevious() )
+		// PathfindLayerEnum curLayer = LAYER_GROUND;
+		for (; node != anchor; node = node->getPrevious())
 		{
 			Bool isPassable = false;
-			//CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()"));
-			if (TheAI->pathfinder()->isLinePassable( obj, acceptableSurfaces, layer, *anchor->getPosition(),
-				*node->getPosition(), blocked, false))
+			// CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()"));
+			if (TheAI->pathfinder()->isLinePassable(obj, acceptableSurfaces, layer, *anchor->getPosition(),
+			                                        *node->getPosition(), blocked, false))
 			{
 				isPassable = true;
 			}
-			PathfindCell* cell = TheAI->pathfinder()->getCell( layer, node->getPosition());
-			if (cell && cell->getType()==PathfindCell::CELL_CLIFF && !cell->getPinched()) {
+			PathfindCell* cell = TheAI->pathfinder()->getCell(layer, node->getPosition());
+			if (cell && cell->getType() == PathfindCell::CELL_CLIFF && !cell->getPinched())
+			{
 				isPassable = true;
 			}
 			// Horizontal, diagonal, and vertical steps are passable.
-			if (!isPassable) {
+			if (!isPassable)
+			{
 				Int dx = node->getPosition()->x - anchor->getPosition()->x;
 				Int dy = node->getPosition()->y - anchor->getPosition()->y;
 				Bool mightBePassable = false;
-				if (IABS(dx)==PATHFIND_CELL_SIZE && IABS(dy)==PATHFIND_CELL_SIZE) {
+				if (IABS(dx) == PATHFIND_CELL_SIZE && IABS(dy) == PATHFIND_CELL_SIZE)
+				{
 					isPassable = true;
 				}
-				PathNode *tmpNode;
-				if (dx==0) {
+				PathNode* tmpNode;
+				if (dx == 0)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dx = tmpNode->getNext()->getPosition()->x - tmpNode->getPosition()->x;
-						if (dx!=0) mightBePassable = false;
+						if (dx != 0)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (dy==0) {
+				if (dy == 0)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dy = tmpNode->getNext()->getPosition()->y - tmpNode->getPosition()->y;
-						if (dy!=0) mightBePassable = false;
+						if (dy != 0)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (dx == dy) {
+				if (dx == dy)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode &&   tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dx = tmpNode->getNext()->getPosition()->x - tmpNode->getPosition()->x;
 						dy = tmpNode->getNext()->getPosition()->y - tmpNode->getPosition()->y;
-						if (dy!=dx) mightBePassable = false;
+						if (dy != dx)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (dx == -dy) {
+				if (dx == -dy)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode &&   tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dx = tmpNode->getNext()->getPosition()->x - tmpNode->getPosition()->x;
 						dy = tmpNode->getNext()->getPosition()->y - tmpNode->getPosition()->y;
-						if (dy!=-dx) mightBePassable = false;
+						if (dy != -dx)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (mightBePassable) {
+				if (mightBePassable)
+				{
 					isPassable = true;
 				}
 			}
 			if (isPassable)
 			{
 				// anchor can directly see this node, make it next in the optimized path
-				anchor->setNextOptimized( node );
+				anchor->setNextOptimized(node);
 				anchor = node;
 				optimizedSegment = true;
 				break;
@@ -375,7 +436,7 @@ void Path::optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfa
 		if (optimizedSegment == false)
 		{
 			// for some reason, there is no clear LOS between the anchor node and the very next node
-			anchor->setNextOptimized( anchor->getNext() );
+			anchor->setNextOptimized(anchor->getNext());
 			anchor = anchor->getNext();
 		}
 	}
@@ -387,7 +448,7 @@ void Path::optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfa
 /**
  * Optimize the path by checking line of sight
  */
-void Path::optimizeGroundPath( Bool crusher, Int pathDiameter )
+void Path::optimizeGroundPath(Bool crusher, Int pathDiameter)
 {
 	PathNode *node, *anchor;
 
@@ -398,84 +459,118 @@ void Path::optimizeGroundPath( Bool crusher, Int pathDiameter )
 	// For each node in the path, check LOS from last node in path, working forward.
 	// When a clear LOS is found, keep the resulting straight line segment.
 	//
-	while( anchor != getLastNode() )
+	while (anchor != getLastNode())
 	{
 		// find the farthest node in the path that has a clear line-of-sight to this anchor
 		Bool optimizedSegment = false;
 		PathfindLayerEnum layer = anchor->getLayer();
 		PathfindLayerEnum curLayer = anchor->getLayer();
 		Int count = 0;
-		const Int ALLOWED_STEPS = 3; // we can optimize 3 steps to or from a bridge.  Otherwise, we need to insert a point. jba.
-		for (node = anchor->getNext(); node->getNext(); node=node->getNext()) {
+		const Int ALLOWED_STEPS = 3;    // we can optimize 3 steps to or from a bridge.  Otherwise, we need to insert a point. jba.
+		for (node = anchor->getNext(); node->getNext(); node = node->getNext())
+		{
 			count++;
-			if (curLayer==LAYER_GROUND) {
-				if (node->getLayer() != curLayer) {
+			if (curLayer == LAYER_GROUND)
+			{
+				if (node->getLayer() != curLayer)
+				{
 					layer = node->getLayer();
 					curLayer = layer;
-					if (count > ALLOWED_STEPS) break;
+					if (count > ALLOWED_STEPS)
+					{
+						break;
+					}
 				}
-			}	else {
-				if (node->getNext()->getLayer() != curLayer) {
-					if (count > ALLOWED_STEPS) break;
+			}
+			else
+			{
+				if (node->getNext()->getLayer() != curLayer)
+				{
+					if (count > ALLOWED_STEPS)
+					{
+						break;
+					}
 				}
 			}
 			curLayer = node->getLayer();
 		}
 
 		// find the farthest node in the path that has a clear line-of-sight to this anchor
-		for( ; node != anchor; node = node->getPrevious() )
+		for (; node != anchor; node = node->getPrevious())
 		{
 			Bool isPassable = false;
-			//CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()"));
-			if (TheAI->pathfinder()->isGroundPathPassable( crusher, *anchor->getPosition(), layer,
-				*node->getPosition(), pathDiameter))
+			// CRCDEBUG_LOG(("Path::optimize() calling isLinePassable()"));
+			if (TheAI->pathfinder()->isGroundPathPassable(crusher, *anchor->getPosition(), layer,
+			                                              *node->getPosition(), pathDiameter))
 			{
 				isPassable = true;
 			}
 			// Horizontal, diagonal, and vertical steps are passable.
-			if (!isPassable) {
+			if (!isPassable)
+			{
 				Int dx = node->getPosition()->x - anchor->getPosition()->x;
 				Int dy = node->getPosition()->y - anchor->getPosition()->y;
 				Bool mightBePassable = false;
-				PathNode *tmpNode;
-				if (dx==0) {
+				PathNode* tmpNode;
+				if (dx == 0)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dx = tmpNode->getNext()->getPosition()->x - tmpNode->getPosition()->x;
-						if (dx!=0) mightBePassable = false;
+						if (dx != 0)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (dy==0) {
+				if (dy == 0)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dy = tmpNode->getNext()->getPosition()->y - tmpNode->getPosition()->y;
-						if (dy!=0) mightBePassable = false;
+						if (dy != 0)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (dx == dy) {
+				if (dx == dy)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode &&   tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dx = tmpNode->getNext()->getPosition()->x - tmpNode->getPosition()->x;
 						dy = tmpNode->getNext()->getPosition()->y - tmpNode->getPosition()->y;
-						if (dy!=dx) mightBePassable = false;
+						if (dy != dx)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (dx == -dy) {
+				if (dx == -dy)
+				{
 					mightBePassable = true;
-					for (tmpNode = node->getPrevious(); tmpNode &&   tmpNode != anchor; tmpNode = tmpNode->getPrevious()) {
+					for (tmpNode = node->getPrevious(); tmpNode && tmpNode != anchor; tmpNode = tmpNode->getPrevious())
+					{
 						dx = tmpNode->getNext()->getPosition()->x - tmpNode->getPosition()->x;
 						dy = tmpNode->getNext()->getPosition()->y - tmpNode->getPosition()->y;
-						if (dy!=-dx) mightBePassable = false;
+						if (dy != -dx)
+						{
+							mightBePassable = false;
+						}
 					}
 				}
-				if (mightBePassable) {
+				if (mightBePassable)
+				{
 					isPassable = true;
 				}
 			}
 			if (isPassable)
 			{
 				// anchor can directly see this node, make it next in the optimized path
-				anchor->setNextOptimized( node );
+				anchor->setNextOptimized(node);
 				anchor = node;
 				optimizedSegment = true;
 				break;
@@ -485,19 +580,22 @@ void Path::optimizeGroundPath( Bool crusher, Int pathDiameter )
 		if (optimizedSegment == false)
 		{
 			// for some reason, there is no clear LOS between the anchor node and the very next node
-			anchor->setNextOptimized( anchor->getNext() );
+			anchor->setNextOptimized(anchor->getNext());
 			anchor = anchor->getNext();
 		}
 	}
 
 	// Remove jig/jogs :) jba.
-	for (anchor=getFirstNode(); anchor!=nullptr; anchor=anchor->getNextOptimized()) {
+	for (anchor = getFirstNode(); anchor != nullptr; anchor = anchor->getNextOptimized())
+	{
 		node = anchor->getNextOptimized();
-		if (node && node->getNextOptimized()) {
+		if (node && node->getNextOptimized())
+		{
 			Real dx = node->getPosition()->x - anchor->getPosition()->x;
 			Real dy = node->getPosition()->y - anchor->getPosition()->y;
 			// If the x & y offsets are less than 2 pathfind cells, kill it.
-			if (dx*dx+dy*dy < sqr(PATHFIND_CELL_SIZE_F)*3.9f) {
+			if (dx * dx + dy * dy < sqr(PATHFIND_CELL_SIZE_F) * 3.9f)
+			{
 				anchor->setNextOptimized(node->getNextOptimized());
 			}
 		}
@@ -510,10 +608,9 @@ void Path::optimizeGroundPath( Bool crusher, Int pathDiameter )
 inline Bool isReallyClose(const Coord3D& a, const Coord3D& b)
 {
 	const Real CLOSE_ENOUGH = 0.1f;
-	return
-		fabs(a.x-b.x) <= CLOSE_ENOUGH &&
-		fabs(a.y-b.y) <= CLOSE_ENOUGH &&
-		fabs(a.z-b.z) <= CLOSE_ENOUGH;
+	return fabs(a.x - b.x) <= CLOSE_ENOUGH &&
+	       fabs(a.y - b.y) <= CLOSE_ENOUGH &&
+	       fabs(a.z - b.z) <= CLOSE_ENOUGH;
 }
 
 /**
@@ -542,11 +639,10 @@ inline Bool isReallyClose(const Coord3D& a, const Coord3D& b)
  * return along-path distance to the end will be returned as function result
  */
 void Path::computePointOnPath(
-	const Object* obj,
-	const LocomotorSet& locomotorSet,
-	const Coord3D& pos,
-	ClosestPointOnPathInfo& out
-)
+  const Object* obj,
+  const LocomotorSet& locomotorSet,
+  const Coord3D& pos,
+  ClosestPointOnPathInfo& out)
 {
 	CRCDEBUG_LOG(("Path::computePointOnPath() for %s", DebugDescribeObject(obj).str()));
 
@@ -561,7 +657,7 @@ void Path::computePointOnPath(
 	}
 	out.layer = m_path->getLayer();
 
-	if (m_cpopValid && m_cpopCountdown>0 && isReallyClose(pos, m_cpopIn))
+	if (m_cpopValid && m_cpopCountdown > 0 && isReallyClose(pos, m_cpopIn))
 	{
 		out = m_cpopOut;
 		m_cpopCountdown--;
@@ -587,9 +683,9 @@ void Path::computePointOnPath(
 	Real segmentLength;
 
 	// note that the seg dir and len returned by this is the dist & vec from 'prevNode' to 'node'
-	for ( const PathNode* node = prevNode->getNextOptimized(&segmentDirNorm, &segmentLength);
-				node != nullptr;
-				node = node->getNextOptimized(&segmentDirNorm, &segmentLength) )
+	for (const PathNode* node = prevNode->getNextOptimized(&segmentDirNorm, &segmentLength);
+	     node != nullptr;
+	     node = node->getNextOptimized(&segmentDirNorm, &segmentLength))
 	{
 		const Coord3D* prevNodePos = prevNode->getPosition();
 		const Coord3D* nodePos = node->getPosition();
@@ -639,7 +735,7 @@ void Path::computePointOnPath(
 		offset.x = pos.x - pointOnPath.x;
 		offset.y = pos.y - pointOnPath.y;
 
-		Real offsetDistSqr = offset.x*offset.x + offset.y*offset.y;
+		Real offsetDistSqr = offset.x * offset.x + offset.y * offset.y;
 		if (offsetDistSqr < closeDistSqr)
 		{
 			closeDistSqr = offsetDistSqr;
@@ -690,7 +786,9 @@ void Path::computePointOnPath(
 
 		// we know this is the closest segment, so don't allow farther back than the start node
 		if (alongPathDist < 0.0f)
+		{
 			alongPathDist = 0.0f;
+		}
 
 		// compute distance of point from this path segment
 		Real toDistSqr = sqr(toPos.x) + sqr(toPos.y);
@@ -705,12 +803,14 @@ void Path::computePointOnPath(
 		const Real maxPathErrorInv = 1.0 / maxPathError;
 		Real k = offsetDist * maxPathErrorInv;
 		if (k > 1.0f)
+		{
 			k = 1.0f;
+		}
 
 		Bool gotPos = false;
 		CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 1"));
-		if (TheAI->pathfinder()->isLinePassable( obj, locomotorSet.getValidSurfaces(), out.layer, pos, *nextNodePos,
-			false, true ))
+		if (TheAI->pathfinder()->isLinePassable(obj, locomotorSet.getValidSurfaces(), out.layer, pos, *nextNodePos,
+		                                        false, true))
 		{
 			out.posOnPath = *nextNodePos;
 			gotPos = true;
@@ -718,24 +818,26 @@ void Path::computePointOnPath(
 			Bool tryAhead = alongPathDist > segmentLength * 0.5;
 			if (closeNext->getCanOptimize() == false)
 			{
-				tryAhead = false; // don't go past no-opt nodes.
+				tryAhead = false;    // don't go past no-opt nodes.
 			}
 			if (closeNode->getLayer() != closeNext->getLayer())
 			{
-				tryAhead = false; // don't go past layers.
+				tryAhead = false;    // don't go past layers.
 			}
-			if (obj->getLayer()!=LAYER_GROUND) {
+			if (obj->getLayer() != LAYER_GROUND)
+			{
 				tryAhead = false;
 			}
 			Bool veryClose = false;
-			if (segmentLength-alongPathDist<1.0f) {
+			if (segmentLength - alongPathDist < 1.0f)
+			{
 				tryAhead = true;
 				veryClose = true;
 			}
 			if (tryAhead)
 			{
 				// try next segment middle.
-				const PathNode *next = closeNext->getNextOptimized();
+				const PathNode* next = closeNext->getNextOptimized();
 				if (next)
 				{
 					Coord3D tryPos;
@@ -743,7 +845,7 @@ void Path::computePointOnPath(
 					tryPos.y = (nextNodePos->y + next->getPosition()->y) * 0.5;
 					tryPos.z = nextNodePos->z;
 					CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 2"));
-					if (veryClose || TheAI->pathfinder()->isLinePassable( obj, locomotorSet.getValidSurfaces(), closeNext->getLayer(), pos, tryPos, false, true ))
+					if (veryClose || TheAI->pathfinder()->isLinePassable(obj, locomotorSet.getValidSurfaces(), closeNext->getLayer(), pos, tryPos, false, true))
 					{
 						gotPos = true;
 						out.posOnPath = tryPos;
@@ -761,7 +863,7 @@ void Path::computePointOnPath(
 			out.posOnPath.z = closeNodePos->z;
 
 			CRCDEBUG_LOG(("Path::computePointOnPath() calling isLinePassable() 3"));
-			if (TheAI->pathfinder()->isLinePassable( obj, locomotorSet.getValidSurfaces(), out.layer, pos, out.posOnPath, false, true ))
+			if (TheAI->pathfinder()->isLinePassable(obj, locomotorSet.getValidSurfaces(), out.layer, pos, out.posOnPath, false, true))
 			{
 				k = 0.5f;
 				gotPos = true;
@@ -787,14 +889,15 @@ void Path::computePointOnPath(
 				out.posOnPath.z = closeNodePos->z;
 				Real dx = fabs(pos.x - out.posOnPath.x);
 				Real dy = fabs(pos.y - out.posOnPath.y);
-				if (dx<1 && dy<1 && closeNode->getNextOptimized() && closeNode->getNextOptimized()->getNextOptimized()) {
+				if (dx < 1 && dy < 1 && closeNode->getNextOptimized() && closeNode->getNextOptimized()->getNextOptimized())
+				{
 					out.posOnPath = *closeNode->getNextOptimized()->getNextOptimized()->getPosition();
 				}
 			}
 		}
 	}
 
-	TheAI->pathfinder()->setDebugPathPosition( &out.posOnPath );
+	TheAI->pathfinder()->setDebugPathPosition(&out.posOnPath);
 
 	out.distAlongPath = totalPathLength - lengthAlongPathToPos;
 
@@ -812,16 +915,14 @@ void Path::computePointOnPath(
 	m_cpopOut = out;
 	m_cpopValid = true;
 	CRCDEBUG_LOG(("Path::computePointOnPath() end"));
-
 }
 
-
 /**
-	Given a position, computes the distance to the goal.  Returns 0 if we are past the goal.
-	Returns the goal position in goalPos.  This is intended for use with flying paths, that go
-	directly to the goal and don't consider obstacles.  jba.
+  Given a position, computes the distance to the goal.  Returns 0 if we are past the goal.
+  Returns the goal position in goalPos.  This is intended for use with flying paths, that go
+  directly to the goal and don't consider obstacles.  jba.
  */
-Real Path::computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos )
+Real Path::computeFlightDistToGoal(const Coord3D* pos, Coord3D& goalPos)
 {
 	if (m_path == nullptr)
 	{
@@ -830,19 +931,23 @@ Real Path::computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos )
 		goalPos.z = 0.0f;
 		return 0.0f;
 	}
-	const PathNode *curNode = getFirstNode();
-	if (m_cpopRecentStart) {
+	const PathNode* curNode = getFirstNode();
+	if (m_cpopRecentStart)
+	{
 		curNode = m_cpopRecentStart;
-	} else {
+	}
+	else
+	{
 		m_cpopRecentStart = curNode;
 	}
-	const PathNode *nextNode = curNode->getNextOptimized();
+	const PathNode* nextNode = curNode->getNextOptimized();
 	goalPos = *curNode->getPosition();
 	Real distance = 0;
 	Bool useNext = true;
-	while (nextNode) {
-
-		if (useNext) {
+	while (nextNode)
+	{
+		if (useNext)
+		{
 			goalPos = *nextNode->getPosition();
 		}
 
@@ -863,16 +968,18 @@ Real Path::computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos )
 		pathVector.normalize();
 
 		// Dot product is the posToGoal vector projected onto the path vector.
-		Real dotProduct = posToGoalVector.x*pathVector.x	+ posToGoalVector.y*pathVector.y;
-		if (dotProduct>=0) {
+		Real dotProduct = posToGoalVector.x * pathVector.x + posToGoalVector.y * pathVector.y;
+		if (dotProduct >= 0)
+		{
 			distance += dotProduct;
 			useNext = false;
-		}	else if (useNext) {
+		}
+		else if (useNext)
+		{
 			m_cpopRecentStart = nextNode;
 		}
 		curNode = nextNode;
 		nextNode = curNode->getNextOptimized();
 	}
 	return distance;
-
 }

@@ -39,7 +39,7 @@ public:
 	GlobalClass();
 
 	ConfigFile config;
-	bool ReadFile(const char *fname);
+	bool ReadFile(const char* fname);
 
 	bool GetString(const Wstring& key, Wstring& val);
 

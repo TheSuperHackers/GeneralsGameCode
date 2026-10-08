@@ -54,11 +54,12 @@ class IndexBufferClass : public RefCountClass
 {
 protected:
 	virtual ~IndexBufferClass() override;
+
 public:
 	IndexBufferClass(unsigned type, unsigned short index_count);
 
-	void Copy(unsigned int* indices,unsigned start_index,unsigned index_count);
-	void Copy(unsigned short* indices,unsigned start_index,unsigned index_count);
+	void Copy(unsigned int* indices, unsigned start_index, unsigned index_count);
+	void Copy(unsigned short* indices, unsigned start_index, unsigned index_count);
 
 	unsigned short Get_Index_Count() const { return index_count; }
 
@@ -72,8 +73,9 @@ public:
 	{
 		IndexBufferClass* index_buffer;
 		unsigned short* indices;
+
 	public:
-		WriteLockClass(IndexBufferClass* index_buffer, int flags=0);
+		WriteLockClass(IndexBufferClass* index_buffer, int flags = 0);
 		~WriteLockClass();
 
 		unsigned short* Get_Index_Array() { return indices; }
@@ -83,8 +85,9 @@ public:
 	{
 		IndexBufferClass* index_buffer;
 		unsigned short* indices;
+
 	public:
-		AppendLockClass(IndexBufferClass* index_buffer,unsigned start_index, unsigned index_range);
+		AppendLockClass(IndexBufferClass* index_buffer, unsigned start_index, unsigned index_range);
 		~AppendLockClass();
 
 		unsigned short* Get_Index_Array() { return indices; }
@@ -95,11 +98,10 @@ public:
 	static unsigned Get_Total_Allocated_Memory();
 
 protected:
-	mutable int					engine_refs;
-	unsigned short				index_count;		// number of indices
-	unsigned						type;
+	mutable int engine_refs;
+	unsigned short index_count;    // number of indices
+	unsigned type;
 };
-
 
 // HY 2/14/01
 // Created
@@ -129,7 +131,7 @@ public:
 	// the recycled dynamic index buffer.
 	static void _Deinit();
 	static void _Reset(bool frame_changed);
-	static unsigned short Get_Default_Index_Count();	///<current size of dynamic index buffer
+	static unsigned short Get_Default_Index_Count();    ///< current size of dynamic index buffer
 
 	// To lock the index buffer, create instance of this write class locally.
 	// The buffer is automatically unlocked when you exit the scope.
@@ -137,6 +139,7 @@ public:
 	{
 		DynamicIBAccessClass* DynamicIBAccess;
 		unsigned short* Indices;
+
 	public:
 		WriteLockClass(DynamicIBAccessClass* ib_access);
 		~WriteLockClass();
@@ -145,7 +148,6 @@ public:
 
 	friend WriteLockClass;
 };
-
 
 /**
 ** DX8IndexBufferClass
@@ -157,27 +159,27 @@ class DX8IndexBufferClass : public IndexBufferClass
 
 	friend IndexBufferClass::WriteLockClass;
 	friend IndexBufferClass::AppendLockClass;
+
 public:
-	enum UsageType {
-		USAGE_DEFAULT=0,
-		USAGE_DYNAMIC=1,
-		USAGE_SOFTWAREPROCESSING=2,
-		USAGE_NPATCHES=4
+	enum UsageType
+	{
+		USAGE_DEFAULT = 0,
+		USAGE_DYNAMIC = 1,
+		USAGE_SOFTWAREPROCESSING = 2,
+		USAGE_NPATCHES = 4
 	};
 
-	DX8IndexBufferClass(unsigned short index_count,UsageType usage=USAGE_DEFAULT);
+	DX8IndexBufferClass(unsigned short index_count, UsageType usage = USAGE_DEFAULT);
 	virtual ~DX8IndexBufferClass() override;
 
-	void Copy(unsigned int* indices,unsigned start_index,unsigned index_count);
-	void Copy(unsigned short* indices,unsigned start_index,unsigned index_count);
+	void Copy(unsigned int* indices, unsigned start_index, unsigned index_count);
+	void Copy(unsigned short* indices, unsigned start_index, unsigned index_count);
 
-	IDirect3DIndexBuffer8* Get_DX8_Index_Buffer()	{ return index_buffer; }
+	IDirect3DIndexBuffer8* Get_DX8_Index_Buffer() { return index_buffer; }
 
 private:
-	IDirect3DIndexBuffer8*	index_buffer;		// actual dx8 index buffer
+	IDirect3DIndexBuffer8* index_buffer;    // actual dx8 index buffer
 };
-
-
 
 class SortingIndexBufferClass : public IndexBufferClass
 {
@@ -188,6 +190,7 @@ class SortingIndexBufferClass : public IndexBufferClass
 	friend IndexBufferClass::WriteLockClass;
 	friend IndexBufferClass::AppendLockClass;
 	friend DynamicIBAccessClass::WriteLockClass;
+
 public:
 	SortingIndexBufferClass(unsigned short index_count);
 	virtual ~SortingIndexBufferClass() override;

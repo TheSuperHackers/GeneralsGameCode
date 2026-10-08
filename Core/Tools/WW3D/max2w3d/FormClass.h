@@ -38,27 +38,26 @@
 
 #include <max.h>
 
-
 class FormClass : public ParamDlg
 {
-	public:
-		FormClass ()
-			: m_hWnd (nullptr) {}
-		~FormClass () {}
+public:
+	FormClass()
+	  : m_hWnd(nullptr)
+	{}
+	~FormClass() {}
 
-		HWND						Create_Form (HWND parent_wnd, UINT template_id);
-		void						Show (bool show_flag = true) { ::ShowWindow (m_hWnd, show_flag ? SW_SHOW : SW_HIDE); }
-		virtual BOOL			Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam) = 0;
-		HWND						Get_Hwnd() { return m_hWnd; }
-		virtual void			Invalidate() { InvalidateRect(m_hWnd,nullptr,0); }
+	HWND Create_Form(HWND parent_wnd, UINT template_id);
+	void Show(bool show_flag = true) { ::ShowWindow(m_hWnd, show_flag ? SW_SHOW : SW_HIDE); }
+	virtual BOOL Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam) = 0;
+	HWND Get_Hwnd() { return m_hWnd; }
+	virtual void Invalidate() { InvalidateRect(m_hWnd, nullptr, 0); }
 
-	protected:
+protected:
+	BOOL ExecuteDlgInit(LPVOID lpResource);
+	BOOL ExecuteDlgInit(LPCTSTR lpszResourceName);
 
-		BOOL						ExecuteDlgInit(LPVOID lpResource);
-		BOOL						ExecuteDlgInit(LPCTSTR lpszResourceName);
+	static BOOL WINAPI fnFormProc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam);
 
-		static BOOL	WINAPI	fnFormProc (HWND dlg_wnd, UINT message, WPARAM wparam,  LPARAM lparam);
-
-		HWND						m_hWnd;
-		RECT						m_FormRect;
+	HWND m_hWnd;
+	RECT m_FormRect;
 };

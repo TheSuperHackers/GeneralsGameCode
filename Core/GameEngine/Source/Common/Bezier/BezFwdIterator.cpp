@@ -26,7 +26,9 @@
 #include "Common/BezFwdIterator.h"
 
 //-------------------------------------------------------------------------------------------------
-BezFwdIterator::BezFwdIterator(): mStep(0), mStepsDesired(0)
+BezFwdIterator::BezFwdIterator()
+  : mStep(0)
+  , mStepsDesired(0)
 {
 	mCurrPoint.zero();
 	mDDDq.zero();
@@ -35,7 +37,7 @@ BezFwdIterator::BezFwdIterator(): mStep(0), mStepsDesired(0)
 }
 
 //-------------------------------------------------------------------------------------------------
-BezFwdIterator::BezFwdIterator(Int stepsDesired, const BezierSegment *bezSeg)
+BezFwdIterator::BezFwdIterator(Int stepsDesired, const BezierSegment* bezSeg)
 {
 	mCurrPoint.zero();
 	mDDDq.zero();
@@ -51,9 +53,11 @@ void BezFwdIterator::start()
 	mStep = 0;
 
 	if (mStepsDesired <= 1)
+	{
 		return;
+	}
 
-	float d	 = 1.0f / (mStepsDesired - 1);
+	float d = 1.0f / (mStepsDesired - 1);
 	float d2 = d * d;
 	float d3 = d * d2;
 
@@ -69,22 +73,28 @@ void BezFwdIterator::start()
 	mCurrPoint = mBezSeg.m_controlPoints[0];
 
 	int i = 3;
-	while (i--) {
+	while (i--)
+	{
 		float a = cVec[i].x;
 		float b = cVec[i].y;
 		float c = cVec[i].z;
 
 		float *pD, *pDD, *pDDD;
 
-		if (i == 2) {
+		if (i == 2)
+		{
 			pD = &mDq.z;
 			pDD = &mDDq.z;
 			pDDD = &mDDDq.z;
-		} else if (i == 1) {
+		}
+		else if (i == 1)
+		{
 			pD = &mDq.y;
 			pDD = &mDDq.y;
 			pDDD = &mDDDq.y;
-		} else if (i == 0) {
+		}
+		else if (i == 0)
+		{
 			pD = &mDq.x;
 			pDD = &mDDq.x;
 			pDDD = &mDDDq.x;
@@ -117,4 +127,3 @@ void BezFwdIterator::next()
 
 	++mStep;
 }
-

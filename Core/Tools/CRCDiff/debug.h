@@ -26,11 +26,11 @@
 
 #include <cstdarg>
 
-void DebugLog( const char *fmt, ... );
+void DebugLog(const char* fmt, ...);
 #define DEBUG_LOG(x) DebugLog x
 
-#else // DEBUG
+#else    // DEBUG
 
 #define DEBUG_LOG(x)
 
-#endif // DEBUG
+#endif    // DEBUG

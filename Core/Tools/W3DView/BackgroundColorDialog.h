@@ -26,30 +26,31 @@
 
 class CBackgroundColorDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CBackgroundColorDialog(CWnd* pParent = nullptr);   // standard constructor
+	CBackgroundColorDialog(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CBackgroundColorDialog)
-	enum { IDD = IDD_BACKGROUND_COLOR };
-	CSliderCtrl	m_blueSlider;
-	CSliderCtrl	m_greenSlider;
-	CSliderCtrl	m_redSlider;
+	enum
+	{
+		IDD = IDD_BACKGROUND_COLOR
+	};
+	CSliderCtrl m_blueSlider;
+	CSliderCtrl m_greenSlider;
+	CSliderCtrl m_redSlider;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBackgroundColorDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CBackgroundColorDialog)
 	virtual BOOL OnInitDialog() override;
@@ -59,10 +60,10 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    public:
-        int m_initialRed;
-        int m_initialGreen;
-        int m_initialBlue;
+public:
+	int m_initialRed;
+	int m_initialGreen;
+	int m_initialBlue;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -50,177 +50,167 @@
 ** efficiently get an array of random points.
 */
 
-class Vector3Randomizer {
+class Vector3Randomizer
+{
+public:
+	enum
+	{
+		CLASSID_UNKNOWN = 0xFFFFFFFF,
+		CLASSID_SOLIDBOX = 0,
+		CLASSID_SOLIDSPHERE,
+		CLASSID_HOLLOWSPHERE,
+		CLASSID_SOLIDCYLINDER,
+		CLASSID_MAXKNOWN,
+		CLASSID_LAST = 0x0000FFFF
+	};
 
-	public:
+	virtual ~Vector3Randomizer() {}
 
-		enum
-		{
-			CLASSID_UNKNOWN		= 0xFFFFFFFF,
-			CLASSID_SOLIDBOX		= 0,
-			CLASSID_SOLIDSPHERE,
-			CLASSID_HOLLOWSPHERE,
-			CLASSID_SOLIDCYLINDER,
-			CLASSID_MAXKNOWN,
-			CLASSID_LAST			= 0x0000FFFF
-		};
+	// RTTI identifiction
+	virtual unsigned int Class_ID() const = 0;
 
-		virtual ~Vector3Randomizer()																		{ }
+	// Return a random vector
+	virtual void Get_Vector(Vector3& vector) = 0;
 
-		// RTTI identifiction
-		virtual unsigned int				Class_ID () const											= 0;
+	// Get the maximum component possible for generated vectors
+	virtual float Get_Maximum_Extent() = 0;
 
-		// Return a random vector
-		virtual void						Get_Vector(Vector3 &vector) 									= 0;
+	// Scale all vectors produced in future
+	virtual void Scale(float scale) = 0;
 
-		// Get the maximum component possible for generated vectors
-		virtual float						Get_Maximum_Extent()										= 0;
+	// Clone the randomizer
+	virtual Vector3Randomizer* Clone() const = 0;
 
-		// Scale all vectors produced in future
-		virtual void						Scale(float scale)												= 0;
+protected:
+	// Derived classes should have protected copy CTors so users use the Clone() function
 
-		// Clone the randomizer
-		virtual Vector3Randomizer *	Clone() const													= 0;
+	// Utility functions
+	float Get_Random_Float_Minus1_To_1() { return Randomizer * OOIntMax; }
+	float Get_Random_Float_0_To_1() { return ((unsigned int)Randomizer) * OOUIntMax; }
 
-	protected:
+	static const float OOIntMax;
+	static const float OOUIntMax;
+	static Random3Class Randomizer;
 
-		// Derived classes should have protected copy CTors so users use the Clone() function
-
-		// Utility functions
-		float Get_Random_Float_Minus1_To_1()	{ return Randomizer * OOIntMax; }
-		float Get_Random_Float_0_To_1()			{ return ((unsigned int)Randomizer) * OOUIntMax; }
-
-		static const float OOIntMax;
-		static const float OOUIntMax;
-		static Random3Class	Randomizer;
-
-	private:
-
-		// Derived classes should have a private dummy assignment operator to block usage
+private:
+	// Derived classes should have a private dummy assignment operator to block usage
 };
-
 
 /*
 ** Vector3SolidBoxRandomizer is a randomizer for generating points uniformly distributed inside a
 ** box which is centered on the origin.
 */
-class Vector3SolidBoxRandomizer : public Vector3Randomizer {
+class Vector3SolidBoxRandomizer : public Vector3Randomizer
+{
+public:
+	Vector3SolidBoxRandomizer(const Vector3& extents);
 
-	public:
+	virtual unsigned int Class_ID() const override { return CLASSID_SOLIDBOX; }
+	virtual const Vector3& Get_Extents() const { return Extents; }
+	virtual void Get_Vector(Vector3& vector) override;
+	virtual float Get_Maximum_Extent() override;
+	virtual void Scale(float scale) override;
+	virtual Vector3Randomizer* Clone() const override { return W3DNEW Vector3SolidBoxRandomizer(*this); }
 
-		Vector3SolidBoxRandomizer(const Vector3 & extents);
+protected:
+	// Derived classes should have protected copy CTors so users use the Clone() function
+	Vector3SolidBoxRandomizer(const Vector3SolidBoxRandomizer& src)
+	  : Extents(src.Extents)
+	{}
 
-		virtual unsigned int				Class_ID () const override { return CLASSID_SOLIDBOX; }
-		virtual const Vector3 &			Get_Extents () const { return Extents; }
-		virtual void						Get_Vector(Vector3 &vector) override;
-		virtual float						Get_Maximum_Extent() override;
-		virtual void						Scale(float scale) override;
-		virtual Vector3Randomizer *	Clone() const override { return W3DNEW Vector3SolidBoxRandomizer(*this); }
+private:
+	// Derived classes should have a private dummy assignment operator to block usage
+	Vector3SolidBoxRandomizer& operator=(const Vector3SolidBoxRandomizer&) FUNCTION_DELETE;
 
-	protected:
-
-		// Derived classes should have protected copy CTors so users use the Clone() function
-		Vector3SolidBoxRandomizer(const Vector3SolidBoxRandomizer &src) : Extents(src.Extents) { }
-
-	private:
-
-		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidBoxRandomizer & operator = (const Vector3SolidBoxRandomizer&) FUNCTION_DELETE;
-
-		Vector3	Extents;
+	Vector3 Extents;
 };
-
 
 /*
 ** Vector3SolidSphereRandomizer is a randomizer for generating points uniformly distributed inside
 ** a sphere which is centered on the origin.
 */
-class Vector3SolidSphereRandomizer : public Vector3Randomizer {
+class Vector3SolidSphereRandomizer : public Vector3Randomizer
+{
+public:
+	Vector3SolidSphereRandomizer(float radius);
 
-	public:
+	virtual unsigned int Class_ID() const override { return CLASSID_SOLIDSPHERE; }
+	virtual float Get_Radius() const { return Radius; }
+	virtual void Get_Vector(Vector3& vector) override;
+	virtual float Get_Maximum_Extent() override;
+	virtual void Scale(float scale) override;
+	virtual Vector3Randomizer* Clone() const override { return W3DNEW Vector3SolidSphereRandomizer(*this); }
 
-		Vector3SolidSphereRandomizer(float radius);
+protected:
+	// Derived classes should have protected copy CTors so users use the Clone() function
+	Vector3SolidSphereRandomizer(const Vector3SolidSphereRandomizer& src)
+	  : Radius(src.Radius)
+	{}
 
-		virtual unsigned int				Class_ID () const override { return CLASSID_SOLIDSPHERE; }
-		virtual float						Get_Radius () const { return Radius; }
-		virtual void						Get_Vector(Vector3 &vector) override;
-		virtual float						Get_Maximum_Extent() override;
-		virtual void						Scale(float scale) override;
-		virtual Vector3Randomizer *	Clone() const override { return W3DNEW Vector3SolidSphereRandomizer(*this); }
+private:
+	// Derived classes should have a private dummy assignment operator to block usage
+	Vector3SolidSphereRandomizer& operator=(const Vector3SolidSphereRandomizer&) FUNCTION_DELETE;
 
-	protected:
-
-		// Derived classes should have protected copy CTors so users use the Clone() function
-		Vector3SolidSphereRandomizer(const Vector3SolidSphereRandomizer &src) : Radius(src.Radius) { }
-
-	private:
-
-		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidSphereRandomizer & operator = (const Vector3SolidSphereRandomizer&) FUNCTION_DELETE;
-
-		float	Radius;
+	float Radius;
 };
-
 
 /*
 ** Vector3HollowSphereRandomizer is a randomizer for generating points uniformly distributed on the
 ** surface of a sphere which is centered on the origin.
 */
-class Vector3HollowSphereRandomizer : public Vector3Randomizer {
+class Vector3HollowSphereRandomizer : public Vector3Randomizer
+{
+public:
+	Vector3HollowSphereRandomizer(float radius);
 
-	public:
+	virtual unsigned int Class_ID() const override { return CLASSID_HOLLOWSPHERE; }
+	virtual float Get_Radius() const { return Radius; }
+	virtual void Get_Vector(Vector3& vector) override;
+	virtual float Get_Maximum_Extent() override;
+	virtual void Scale(float scale) override;
+	virtual Vector3Randomizer* Clone() const override { return W3DNEW Vector3HollowSphereRandomizer(*this); }
 
-		Vector3HollowSphereRandomizer(float radius);
+protected:
+	// Derived classes should have protected copy CTors so users use the Clone() function
+	Vector3HollowSphereRandomizer(const Vector3HollowSphereRandomizer& src)
+	  : Radius(src.Radius)
+	{}
 
-		virtual unsigned int				Class_ID () const override { return CLASSID_HOLLOWSPHERE; }
-		virtual float						Get_Radius () const { return Radius; }
-		virtual void						Get_Vector(Vector3 &vector) override;
-		virtual float						Get_Maximum_Extent() override;
-		virtual void						Scale(float scale) override;
-		virtual Vector3Randomizer *	Clone() const override { return W3DNEW Vector3HollowSphereRandomizer(*this); }
+private:
+	// Derived classes should have a private dummy assignment operator to block usage
+	Vector3HollowSphereRandomizer& operator=(const Vector3HollowSphereRandomizer&) FUNCTION_DELETE;
 
-	protected:
-
-		// Derived classes should have protected copy CTors so users use the Clone() function
-		Vector3HollowSphereRandomizer(const Vector3HollowSphereRandomizer &src) : Radius(src.Radius) { }
-
-	private:
-
-		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3HollowSphereRandomizer & operator = (const Vector3HollowSphereRandomizer&) FUNCTION_DELETE;
-
-		float	Radius;
+	float Radius;
 };
-
 
 /*
 ** Vector3SolidCylinderRandomizer is a randomizer for generating points uniformly distributed
 ** inside a cylinder which is centered on the origin (set extent to 0 for a disk).
 */
-class Vector3SolidCylinderRandomizer : public Vector3Randomizer {
+class Vector3SolidCylinderRandomizer : public Vector3Randomizer
+{
+public:
+	Vector3SolidCylinderRandomizer(float extent, float radius);
 
-	public:
+	virtual unsigned int Class_ID() const override { return CLASSID_SOLIDCYLINDER; }
+	virtual float Get_Radius() const { return Radius; }
+	virtual float Get_Height() const { return Extent; }
+	virtual void Get_Vector(Vector3& vector) override;
+	virtual float Get_Maximum_Extent() override;
+	virtual void Scale(float scale) override;
+	virtual Vector3Randomizer* Clone() const override { return W3DNEW Vector3SolidCylinderRandomizer(*this); }
 
-		Vector3SolidCylinderRandomizer(float extent, float radius);
+protected:
+	// Derived classes should have protected copy CTors so users use the Clone() function
+	Vector3SolidCylinderRandomizer(const Vector3SolidCylinderRandomizer& src)
+	  : Extent(src.Extent)
+	  , Radius(src.Radius)
+	{}
 
-		virtual unsigned int				Class_ID () const override { return CLASSID_SOLIDCYLINDER; }
-		virtual float						Get_Radius () const { return Radius; }
-		virtual float						Get_Height () const { return Extent; }
-		virtual void						Get_Vector(Vector3 &vector) override;
-		virtual float						Get_Maximum_Extent() override;
-		virtual void						Scale(float scale) override;
-		virtual Vector3Randomizer *	Clone() const override { return W3DNEW Vector3SolidCylinderRandomizer(*this); }
+private:
+	// Derived classes should have a private dummy assignment operator to block usage
+	Vector3SolidCylinderRandomizer& operator=(const Vector3SolidCylinderRandomizer&) FUNCTION_DELETE;
 
-	protected:
-
-		// Derived classes should have protected copy CTors so users use the Clone() function
-		Vector3SolidCylinderRandomizer(const Vector3SolidCylinderRandomizer &src) : Extent(src.Extent), Radius(src.Radius) { }
-
-	private:
-
-		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidCylinderRandomizer & operator = (const Vector3SolidCylinderRandomizer&) FUNCTION_DELETE;
-
-		float	Extent;
-		float	Radius;
+	float Extent;
+	float Radius;
 };

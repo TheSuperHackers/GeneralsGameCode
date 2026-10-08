@@ -24,24 +24,24 @@
 
 struct IRegion2D
 {
-	ICoord2D lo, hi;					// bounds of 2D rectangular region
+	ICoord2D lo, hi;    // bounds of 2D rectangular region
 
 	// Keep only the overlapping portion of both regions.
-	void intersectWith( const IRegion2D &other )
+	void intersectWith(const IRegion2D& other)
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void uniteWith( const IRegion2D &other )
+	void uniteWith(const IRegion2D& other)
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void uniteWith( const ICoord2D &point )
+	void uniteWith(const ICoord2D& point)
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -61,11 +61,11 @@ struct IRegion2D
 	Int width() const { return hi.x - lo.x; }
 	Int height() const { return hi.y - lo.y; }
 
-	Bool isInRegion( Int x, Int y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
+	Bool isInRegion(Int x, Int y) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 
-	Bool isInRegion( const ICoord2D& point ) const { return isInRegion(point.x, point.y); }
+	Bool isInRegion(const ICoord2D& point) const { return isInRegion(point.x, point.y); }
 
-	Bool isInRegion( const IRegion2D& other ) const
+	Bool isInRegion(const IRegion2D& other) const
 	{
 		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
 		       (lo.y < other.lo.y) && (other.hi.y < hi.y);

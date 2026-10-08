@@ -47,8 +47,6 @@
 //           Forward References
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //           Type Defines
 //----------------------------------------------------------------------------
@@ -57,32 +55,25 @@
 // StdFile
 //===============================
 /**
-  *	File abstraction for standard C file operators: open, close, lseek, read, write
-	*/
+ *	File abstraction for standard C file operators: open, close, lseek, read, write
+ */
 //===============================
 
 class StdFile : public File
 {
-	protected:
+protected:
+	int m_handle;    ///< Std C file handle
 
-		int m_handle;											///< Std C file handle
+public:
+	StdFile();
+	virtual ~StdFile();
 
-	public:
-
-		StdFile();
-		virtual				~StdFile();
-
-
-		virtual Bool	open( const Char *filename, Int access = 0 );				///< Open a fioe for access
-		virtual void	close();																			///< Close the file
-		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
-		virtual Int		write( void *buffer, Int bytes );										///< Write the specified number of bytes from the buffer: See File::write
-		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
-
+	virtual Bool open(const Char* filename, Int access = 0);    ///< Open a fioe for access
+	virtual void close();    ///< Close the file
+	virtual Int read(void* buffer, Int bytes);    ///< Read the specified number of bytes in to buffer: See File::read
+	virtual Int write(void* buffer, Int bytes);    ///< Write the specified number of bytes from the buffer: See File::write
+	virtual Int seek(Int new_pos, seekMode mode = CURRENT);    ///< Set file position: See File::seek
 };
-
-
-
 
 //----------------------------------------------------------------------------
 //           Inlining

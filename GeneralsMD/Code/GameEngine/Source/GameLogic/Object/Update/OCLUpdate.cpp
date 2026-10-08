@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -43,31 +43,35 @@
 #include "GameLogic/TerrainLogic.h"
 
 //-------------------------------------------------------------------------------------------------
-void parseFactionObjectCreationList( INI *ini, void *instance, void *store, const void *userData )
+void parseFactionObjectCreationList(INI* ini, void* instance, void* store, const void* userData)
 {
 	OCLUpdateModuleData::FactionOCLInfo info;
 	info.m_ocl = nullptr;
 
-	const char *token = ini->getNextToken( ini->getSepsColon() );
-	if ( stricmp(token, "Faction") == 0 )
+	const char* token = ini->getNextToken(ini->getSepsColon());
+	if (stricmp(token, "Faction") == 0)
 	{
-		token = ini->getNextToken( ini->getSepsColon() );
+		token = ini->getNextToken(ini->getSepsColon());
 		info.m_factionName = token;
 	}
 	else
+	{
 		throw INI_INVALID_DATA;
+	}
 
-
-	token = ini->getNextToken( ini->getSepsColon() );
-	if ( stricmp(token, "OCL") == 0 )
-		ini->parseObjectCreationList( ini, instance, &info.m_ocl, nullptr );
+	token = ini->getNextToken(ini->getSepsColon());
+	if (stricmp(token, "OCL") == 0)
+	{
+		ini->parseObjectCreationList(ini, instance, &info.m_ocl, nullptr);
+	}
 	else
+	{
 		throw INI_INVALID_DATA;
+	}
 
 	// Insert the info into the ocl hashmap
-	OCLUpdateModuleData::FactionOCLList * theList = (OCLUpdateModuleData::FactionOCLList*)store;
+	OCLUpdateModuleData::FactionOCLList* theList = (OCLUpdateModuleData::FactionOCLList*)store;
 	theList->push_back(info);
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -84,24 +88,24 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "OCL",					INI::parseObjectCreationList,		nullptr, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "FactionOCL",		parseFactionObjectCreationList,	nullptr, offsetof( OCLUpdateModuleData, m_factionOCL ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									nullptr, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
-		{ "FactionTriggered",	INI::parseBool,							nullptr, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "OCL", INI::parseObjectCreationList, nullptr, offsetof(OCLUpdateModuleData, m_ocl) },
+		{ "FactionOCL", parseFactionObjectCreationList, nullptr, offsetof(OCLUpdateModuleData, m_factionOCL) },
+		{ "MinDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(OCLUpdateModuleData, m_minDelay) },
+		{ "MaxDelay", INI::parseDurationUnsignedInt, nullptr, offsetof(OCLUpdateModuleData, m_maxDelay) },
+		{ "CreateAtEdge", INI::parseBool, nullptr, offsetof(OCLUpdateModuleData, m_isCreateAtEdge) },
+		{ "FactionTriggered", INI::parseBool, nullptr, offsetof(OCLUpdateModuleData, m_isFactionTriggered) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLUpdate::OCLUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+OCLUpdate::OCLUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_nextCreationFrame = 0;
 	m_timerStartedFrame = 0;
@@ -120,7 +124,7 @@ OCLUpdate::~OCLUpdate()
 UpdateSleepTime OCLUpdate::update()
 {
 #if RETAIL_COMPATIBLE_CRC
-	if( getObject()->isDisabled() )
+	if (getObject()->isDisabled())
 	{
 		m_nextCreationFrame++;
 		return UPDATE_SLEEP_NONE;
@@ -128,7 +132,7 @@ UpdateSleepTime OCLUpdate::update()
 #else
 	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under construction
 	// When the construction is finished, we allow the timer to be initialized and then start shifting the timer while subdued
-	if ( m_timerStartedFrame > 0 && getObject()->isDisabled() )
+	if (m_timerStartedFrame > 0 && getObject()->isDisabled())
 	{
 		m_nextCreationFrame++;
 		m_timerStartedFrame++;
@@ -136,17 +140,17 @@ UpdateSleepTime OCLUpdate::update()
 	}
 #endif
 
-	const OCLUpdateModuleData *data = getOCLUpdateModuleData();
+	const OCLUpdateModuleData* data = getOCLUpdateModuleData();
 
 	// Test if the OCL update is faction dependent. If so, check for faction changes
 	if (data->m_isFactionTriggered)
 	{
-		Player *player = getObject()->getControllingPlayer();
+		Player* player = getObject()->getControllingPlayer();
 
 		// Test for when a player captures the building
 		if (m_isFactionNeutral)
 		{
-			if( player && player->isPlayableSide() )
+			if (player && player->isPlayableSide())
 			{
 				m_currentPlayerColor = player->getPlayerColor();
 				m_isFactionNeutral = FALSE;
@@ -157,12 +161,12 @@ UpdateSleepTime OCLUpdate::update()
 		else
 		{
 			// If this is no longer under player control, then we set the faction to neutral
-			if( !player || !player->isPlayableSide() )
+			if (!player || !player->isPlayableSide())
 			{
 				m_isFactionNeutral = TRUE;
 			}
 			// If another player has taken control, reset the timer
-			else if( player && player->getPlayerColor() != m_currentPlayerColor)
+			else if (player && player->getPlayerColor() != m_currentPlayerColor)
 			{
 				m_currentPlayerColor = player->getPlayerColor();
 				setNextCreationFrame();
@@ -171,13 +175,15 @@ UpdateSleepTime OCLUpdate::update()
 
 		// If the building is neutal, skip further update
 		if (m_isFactionNeutral)
+		{
 			return UPDATE_SLEEP_NONE;
+		}
 	}
 
-/// @todo srj use SLEEPY_UPDATE here
-	if( shouldCreate() )
+	/// @todo srj use SLEEPY_UPDATE here
+	if (shouldCreate())
 	{
-		if( m_nextCreationFrame == 0 )
+		if (m_nextCreationFrame == 0)
 		{
 			// You don't get to actually spread the first try, you start on a timer, then go
 			setNextCreationFrame();
@@ -187,32 +193,45 @@ UpdateSleepTime OCLUpdate::update()
 		setNextCreationFrame();
 
 		Coord3D creationCoord;
-		if( getOCLUpdateModuleData()->m_isCreateAtEdge )
-			creationCoord = TheTerrainLogic->findClosestEdgePoint( getObject()->getPosition() );
+		if (getOCLUpdateModuleData()->m_isCreateAtEdge)
+		{
+			creationCoord = TheTerrainLogic->findClosestEdgePoint(getObject()->getPosition());
+		}
 		else
+		{
 			creationCoord = *getObject()->getPosition();
+		}
 
 		// If this is faction triggered, search through the faction specific OCLs to find the match
 		if (data->m_isFactionTriggered)
 		{
 			std::string playerFactionName;
 
-			Player *player = getObject()->getControllingPlayer();
-			if (!player) return UPDATE_SLEEP_NONE;
+			Player* player = getObject()->getControllingPlayer();
+			if (!player)
+			{
+				return UPDATE_SLEEP_NONE;
+			}
 
-			const PlayerTemplate *playerT = player->getPlayerTemplate();
-			if (!playerT) return UPDATE_SLEEP_NONE;
+			const PlayerTemplate* playerT = player->getPlayerTemplate();
+			if (!playerT)
+			{
+				return UPDATE_SLEEP_NONE;
+			}
 
 			// Get and store the faction side to compare with the faction ocl list
-			if (playerT->getSide().str()) playerFactionName = playerT->getSide().str();
+			if (playerT->getSide().str())
+			{
+				playerFactionName = playerT->getSide().str();
+			}
 
 			// Loop through the list of faction ocls to find the matching faction that triggers the specific ocls
 			for (OCLUpdateModuleData::FactionOCLList::const_iterator it = data->m_factionOCL.begin(); it != data->m_factionOCL.end(); ++it)
 			{
-				const OCLUpdateModuleData::FactionOCLInfo &info = *it;
+				const OCLUpdateModuleData::FactionOCLInfo& info = *it;
 				if (playerFactionName == info.m_factionName)
 				{
-					ObjectCreationList::create( info.m_ocl, getObject(), &creationCoord, getObject()->getPosition(), getObject()->getOrientation() );
+					ObjectCreationList::create(info.m_ocl, getObject(), &creationCoord, getObject()->getPosition(), getObject()->getOrientation());
 					break;
 				}
 			}
@@ -220,7 +239,7 @@ UpdateSleepTime OCLUpdate::update()
 		// Use the non faction OCL information
 		else
 		{
-			ObjectCreationList::create( data->m_ocl, getObject(), &creationCoord, getObject()->getPosition(), getObject()->getOrientation() );
+			ObjectCreationList::create(data->m_ocl, getObject(), &creationCoord, getObject()->getPosition(), getObject()->getOrientation());
 		}
 	}
 	return UPDATE_SLEEP_NONE;
@@ -236,11 +255,15 @@ void OCLUpdate::resetTimer()
 // ------------------------------------------------------------------------------------------------
 Bool OCLUpdate::shouldCreate()
 {
-	if( TheGameLogic->getFrame() < m_nextCreationFrame )
-		return FALSE;//too soon
+	if (TheGameLogic->getFrame() < m_nextCreationFrame)
+	{
+		return FALSE;    // too soon
+	}
 
-	if( getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
-		return FALSE;// not built yet
+	if (getObject()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
+		return FALSE;    // not built yet
+	}
 
 	return TRUE;
 }
@@ -249,11 +272,10 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
-																						getOCLUpdateModuleData()->m_maxDelay );
+	UnsignedInt delay = GameLogicRandomValue(getOCLUpdateModuleData()->m_minDelay,
+	                                         getOCLUpdateModuleData()->m_maxDelay);
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -262,7 +284,7 @@ Real OCLUpdate::getCountdownPercent() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	return 1.0f - (( m_nextCreationFrame - now ) / (float)( m_nextCreationFrame - m_timerStartedFrame ));
+	return 1.0f - ((m_nextCreationFrame - now) / (float)(m_nextCreationFrame - m_timerStartedFrame));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -271,48 +293,44 @@ UnsignedInt OCLUpdate::getRemainingFrames() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	return ( m_nextCreationFrame - now );
+	return (m_nextCreationFrame - now);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::crc( Xfer *xfer )
+void OCLUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::xfer( Xfer *xfer )
+void OCLUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// next creation frame
-	xfer->xferUnsignedInt( &m_nextCreationFrame );
+	xfer->xferUnsignedInt(&m_nextCreationFrame);
 
 	// timer stated frame
-	xfer->xferUnsignedInt( &m_timerStartedFrame );
+	xfer->xferUnsignedInt(&m_timerStartedFrame);
 
 	// faction status
-	xfer->xferBool( &m_isFactionNeutral );
+	xfer->xferBool(&m_isFactionNeutral);
 
 	// current owning player color
-	xfer->xferInt( &m_currentPlayerColor );
-
+	xfer->xferInt(&m_currentPlayerColor);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -320,8 +338,6 @@ void OCLUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

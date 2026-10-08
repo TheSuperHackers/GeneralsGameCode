@@ -45,7 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DebugDisplay.h"
 #include "Common/GameAudio.h"
@@ -54,61 +54,48 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
 
-static DebugDisplayInterface *debugDisplay;
+static DebugDisplayInterface* debugDisplay;
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
 
-
-static void printFunc( char *text )
+static void printFunc(char* text)
 {
-	debugDisplay->printf( text );
+	debugDisplay->printf(text);
 }
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
 
-
 //============================================================================
 // AudioDebugDisplay
 //============================================================================
 
 #if defined(RTS_DEBUG)
-void AudioDebugDisplay ( DebugDisplayInterface *dd, void *, FILE *fp = nullptr )
+void AudioDebugDisplay(DebugDisplayInterface* dd, void*, FILE* fp = nullptr)
 {
-	TheAudio->audioDebugDisplay( dd, nullptr, fp );
+	TheAudio->audioDebugDisplay(dd, nullptr, fp);
 }
 #endif
-

@@ -38,17 +38,14 @@
  *   BonePickerClass::Pick -- MAX Pick method                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "bpick.h"
 #include "dllmain.h"
 #include "resource.h"
-
 
 /*
 ** Global instance of a bone picker :-)
 */
 BonePickerClass TheBonePicker;
-
 
 /***********************************************************************************************
  * BonePickerClass::Filter -- determine whether the passed node is suitable                    *
@@ -62,17 +59,24 @@ BonePickerClass TheBonePicker;
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL BonePickerClass::Filter(INode *node)
+BOOL BonePickerClass::Filter(INode* node)
 {
-	if (BoneList == nullptr) {
-		ObjectState os  = node->EvalWorldState(0);
-		if (os.obj) {
+	if (BoneList == nullptr)
+	{
+		ObjectState os = node->EvalWorldState(0);
+		if (os.obj)
+		{
 			return TRUE;
 		}
-
-	} else {
-		for (int i=0; i<BoneList->Count(); i++) {
-			if ((*BoneList)[i] == node) return TRUE;
+	}
+	else
+	{
+		for (int i = 0; i < BoneList->Count(); i++)
+		{
+			if ((*BoneList)[i] == node)
+			{
+				return TRUE;
+			}
 		}
 	}
 
@@ -91,11 +95,14 @@ BOOL BonePickerClass::Filter(INode *node)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL BonePickerClass::HitTest(IObjParam *ip,HWND hwnd,ViewExp *vpt,IPoint2 m,int flags)
+BOOL BonePickerClass::HitTest(IObjParam* ip, HWND hwnd, ViewExp* vpt, IPoint2 m, int flags)
 {
-	if (ip->PickNode(hwnd,m,GetFilter())) {
+	if (ip->PickNode(hwnd, m, GetFilter()))
+	{
 		return TRUE;
-	} else {
+	}
+	else
+	{
 		return FALSE;
 	}
 }
@@ -112,12 +119,12 @@ BOOL BonePickerClass::HitTest(IObjParam *ip,HWND hwnd,ViewExp *vpt,IPoint2 m,int
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL BonePickerClass::Pick(IObjParam *ip,ViewExp *vpt)
+BOOL BonePickerClass::Pick(IObjParam* ip, ViewExp* vpt)
 {
-	INode *node = vpt->GetClosestHit();
+	INode* node = vpt->GetClosestHit();
 
-	if (node) {
-
+	if (node)
+	{
 		/*
 		** Tell the "owning" skin modifier about the
 		** bone which was picked.
@@ -131,12 +138,12 @@ BOOL BonePickerClass::Pick(IObjParam *ip,ViewExp *vpt)
 	return TRUE;
 }
 
-BOOL BonePickerClass::filter(INode * inode)
+BOOL BonePickerClass::filter(INode* inode)
 {
 	return Filter(inode);
 }
 
-void BonePickerClass::proc(INodeTab & nodetab)
+void BonePickerClass::proc(INodeTab& nodetab)
 {
 	assert(User != nullptr);
 	User->User_Picked_Bones(nodetab);
@@ -144,12 +151,12 @@ void BonePickerClass::proc(INodeTab & nodetab)
 	BoneList = nullptr;
 }
 
-TCHAR * BonePickerClass::dialogTitle()
+TCHAR* BonePickerClass::dialogTitle()
 {
 	return Get_String(IDS_PICK_BONE_DIALOG_TITLE);
 }
 
-TCHAR * BonePickerClass::buttonText()
+TCHAR* BonePickerClass::buttonText()
 {
 	return Get_String(IDS_PICK_BONE_BUTTON_TEXT);
 }

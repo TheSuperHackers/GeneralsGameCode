@@ -45,16 +45,20 @@ class RampOptions : public COptionsPanel
 {
 	Bool m_shouldApplyTheRamp;
 	Real m_rampWidth;
-	public:
-		enum { IDD = IDD_RAMP_OPTIONS };
-		RampOptions(CWnd* pParent = nullptr);
-		virtual ~RampOptions() override;
 
-		Bool shouldApplyTheRamp();
-		Real getRampWidth() { return m_rampWidth; }
+public:
+	enum
+	{
+		IDD = IDD_RAMP_OPTIONS
+	};
+	RampOptions(CWnd* pParent = nullptr);
+	virtual ~RampOptions() override;
 
-		afx_msg void OnApply();
-		afx_msg void OnWidthChange();
+	Bool shouldApplyTheRamp();
+	Real getRampWidth() { return m_rampWidth; }
+
+	afx_msg void OnApply();
+	afx_msg void OnWidthChange();
 
 	DECLARE_MESSAGE_MAP()
 };

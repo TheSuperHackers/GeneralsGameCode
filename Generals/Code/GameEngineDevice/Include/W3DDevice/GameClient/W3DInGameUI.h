@@ -47,43 +47,41 @@ class HAnimClass;
 
 // W3DInGameUI ----------------------------------------------------------------
 /** Implementation for the W3D game user interface.  This singleton is
-  * responsible for all user interaction and feedback with as part of the
-	* user interface */
+ * responsible for all user interaction and feedback with as part of the
+ * user interface */
 //-----------------------------------------------------------------------------
 class W3DInGameUI : public InGameUI
 {
-
 public:
-
 	W3DInGameUI();
 	virtual ~W3DInGameUI() override;
 
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init() override;		///< Initialize the in-game user interface
-	virtual void update() override;	//< Update the UI by calling preDraw(), draw(), and postDraw()
-	virtual void reset() override;		///< Reset
+	virtual void init() override;    ///< Initialize the in-game user interface
+	virtual void update() override;    //< Update the UI by calling preDraw(), draw(), and postDraw()
+	virtual void reset() override;    ///< Reset
 	//-----------------------------------------------------------------------------------------------
 
-	virtual void draw() override; ///< Render the in-game user interface
+	virtual void draw() override;    ///< Render the in-game user interface
 
 protected:
-
 	/// factory for views
-	virtual View *createView(bool dummy) override
+	virtual View* createView(bool dummy) override
 	{
 		if (dummy)
+		{
 			return NEW ViewDummy;
+		}
 		return NEW W3DView;
 	}
 
-	virtual void drawSelectionRegion();			///< draw the selection region on screen
-	virtual void drawMoveHints( View *view );			///< draw move hint visual feedback
-	virtual void drawAttackHints( View *view );		///< draw attack hint visual feedback
-	virtual void drawPlaceAngle( View *view ); 		///< draw place building angle if needed
+	virtual void drawSelectionRegion();    ///< draw the selection region on screen
+	virtual void drawMoveHints(View* view);    ///< draw move hint visual feedback
+	virtual void drawAttackHints(View* view);    ///< draw attack hint visual feedback
+	virtual void drawPlaceAngle(View* view);    ///< draw place building angle if needed
 
-	RenderObjClass *m_moveHintRenderObj[ MAX_MOVE_HINTS ];
-	HAnimClass		 *m_moveHintAnim[ MAX_MOVE_HINTS ];
-	RenderObjClass *m_buildingPlacementAnchor;
-	RenderObjClass *m_buildingPlacementArrow;
-
+	RenderObjClass* m_moveHintRenderObj[MAX_MOVE_HINTS];
+	HAnimClass* m_moveHintAnim[MAX_MOVE_HINTS];
+	RenderObjClass* m_buildingPlacementAnchor;
+	RenderObjClass* m_buildingPlacementArrow;
 };

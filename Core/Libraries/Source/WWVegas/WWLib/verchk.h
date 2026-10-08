@@ -56,4 +56,4 @@ bool GetFileCreationTime(char* filename, FILETIME* createTime);
 // older, 0 if they are the same, and +1 if the current process is newer.
 //
 ////////////////////////////////////////////////////////////////////////
-int Compare_EXE_Version (int app_instance, const char *filename);
+int Compare_EXE_Version(int app_instance, const char* filename);

@@ -36,7 +36,11 @@
 class GameSpyGroupRoom
 {
 public:
-	GameSpyGroupRoom() { m_name = AsciiString::TheEmptyString; m_groupID = m_numWaiting = m_maxWaiting = m_numGames = m_numPlaying = 0; }
+	GameSpyGroupRoom()
+	{
+		m_name = AsciiString::TheEmptyString;
+		m_groupID = m_numWaiting = m_maxWaiting = m_numGames = m_numPlaying = 0;
+	}
 	AsciiString m_name;
 	Int m_groupID;
 	Int m_numWaiting;
@@ -49,7 +53,7 @@ typedef std::map<Int, GameSpyGroupRoom> GroupRoomMap;
 class GameSpyChatInterface : public SubsystemInterface
 {
 public:
-	virtual ~GameSpyChatInterface() { };
+	virtual ~GameSpyChatInterface() {};
 
 	virtual void init() = 0;
 	virtual void reset() = 0;
@@ -60,35 +64,33 @@ public:
 	virtual void reconnectProfile() = 0;
 	virtual void disconnectFromChat() = 0;
 
-	virtual void UTMRoom( RoomType roomType, const char *key, const char *val, Bool authenticate = FALSE ) = 0;
-	virtual void UTMPlayer( const char *name, const char *key, const char *val, Bool authenticate = FALSE ) = 0;
+	virtual void UTMRoom(RoomType roomType, const char* key, const char* val, Bool authenticate = FALSE) = 0;
+	virtual void UTMPlayer(const char* name, const char* key, const char* val, Bool authenticate = FALSE) = 0;
 	virtual void startGame() = 0;
-	virtual void leaveRoom( RoomType roomType ) = 0;
-	virtual void setReady( Bool ready ) = 0;
-	virtual void enumPlayers( RoomType roomType, peerEnumPlayersCallback callback, void *userData ) = 0;
-	virtual void startListingGames( peerListingGamesCallback callback ) = 0;
+	virtual void leaveRoom(RoomType roomType) = 0;
+	virtual void setReady(Bool ready) = 0;
+	virtual void enumPlayers(RoomType roomType, peerEnumPlayersCallback callback, void* userData) = 0;
+	virtual void startListingGames(peerListingGamesCallback callback) = 0;
 	virtual void stopListingGames() = 0;
 
-	virtual void joinGroupRoom( Int ID ) = 0;
-	virtual void joinStagingRoom( GServer server, AsciiString password ) = 0;
-	virtual void createStagingRoom( AsciiString gameName, AsciiString password, Int maxPlayers ) = 0;
+	virtual void joinGroupRoom(Int ID) = 0;
+	virtual void joinStagingRoom(GServer server, AsciiString password) = 0;
+	virtual void createStagingRoom(AsciiString gameName, AsciiString password, Int maxPlayers) = 0;
 	virtual void joinBestGroupRoom() = 0;
 
-	inline PEER getPeer()									{ return m_peer; }
-	inline AsciiString getLoginName()			{ return m_loginName; }
-	inline AsciiString getPassword()			{ return m_password; }
-	inline GroupRoomMap* getGroupRooms()	{ return &m_groupRooms; }
-	inline Int getCurrentGroupRoomID()		{ return m_currentGroupRoomID; }
-	inline Bool getUsingProfile()					{ return m_usingProfiles; }
-	inline Int getProfileID()							{ return m_profileID; }
+	inline PEER getPeer() { return m_peer; }
+	inline AsciiString getLoginName() { return m_loginName; }
+	inline AsciiString getPassword() { return m_password; }
+	inline GroupRoomMap* getGroupRooms() { return &m_groupRooms; }
+	inline Int getCurrentGroupRoomID() { return m_currentGroupRoomID; }
+	inline Bool getUsingProfile() { return m_usingProfiles; }
+	inline Int getProfileID() { return m_profileID; }
 
-	inline void setCurrentGroupRoomID( Int ID )	{ m_currentGroupRoomID = ID; }
+	inline void setCurrentGroupRoomID(Int ID) { m_currentGroupRoomID = ID; }
 	void clearGroupRoomList();
-	inline Int getNumGroupRooms()					{ return m_groupRooms.size(); }
-
+	inline Int getNumGroupRooms() { return m_groupRooms.size(); }
 
 protected:
-
 	AsciiString m_loginName;
 	AsciiString m_password;
 	AsciiString m_email;
@@ -100,22 +102,22 @@ protected:
 	Int m_currentGroupRoomID;
 };
 
-GameSpyChatInterface *createGameSpyChat();
+GameSpyChatInterface* createGameSpyChat();
 
-extern GameSpyChatInterface *TheGameSpyChat;
-
+extern GameSpyChatInterface* TheGameSpyChat;
 
 void JoinRoomCallback(PEER peer, PEERBool success,
-											PEERJoinResult result, RoomType roomType,
-											void *param);																	///< Called when we (fail to) join a room.  param is address of Bool to store result
+                      PEERJoinResult result, RoomType roomType,
+                      void* param);    ///< Called when we (fail to) join a room.  param is address of Bool to store result
 
 void ListGroupRoomsCallback(PEER peer, PEERBool success,
-														int groupID, GServer server,
-														const char * name, int numWaiting,
-														int maxWaiting, int numGames,
-														int numPlaying, void * param);					///< Called while listing group rooms
+                            int groupID, GServer server,
+                            const char* name, int numWaiting,
+                            int maxWaiting, int numGames,
+                            int numPlaying, void* param);    ///< Called while listing group rooms
 
-enum GameSpyColors CPP_11(: Int) {
+enum GameSpyColors CPP_11( : Int)
+{
 	GSCOLOR_DEFAULT = 0,
 	GSCOLOR_CURRENTROOM,
 	GSCOLOR_ROOM,

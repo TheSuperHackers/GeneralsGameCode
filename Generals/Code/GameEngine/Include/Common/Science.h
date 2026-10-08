@@ -37,7 +37,7 @@
 class Player;
 
 //-------------------------------------------------------------------------------------------------
-enum ScienceType CPP_11(: Int)
+enum ScienceType CPP_11( : Int)
 {
 	SCIENCE_INVALID = -1
 };
@@ -48,23 +48,24 @@ typedef std::vector<ScienceType> ScienceVec;
 //-------------------------------------------------------------------------------------------------
 class ScienceInfo : public Overridable
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ScienceInfo, "ScienceInfo"  )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScienceInfo, "ScienceInfo")
 
 	friend class ScienceStore;
 
 private:
-	ScienceType						m_science;
-	UnicodeString					m_name;
-	UnicodeString					m_description;
-	ScienceVec						m_rootSciences;			// this is calced at runtime, NOT read from INI
-	ScienceVec						m_prereqSciences;
-	Int										m_sciencePurchasePointCost;
-	Bool									m_grantable;
+	ScienceType m_science;
+	UnicodeString m_name;
+	UnicodeString m_description;
+	ScienceVec m_rootSciences;    // this is calced at runtime, NOT read from INI
+	ScienceVec m_prereqSciences;
+	Int m_sciencePurchasePointCost;
+	Bool m_grantable;
 
-	ScienceInfo() :
-		m_science(SCIENCE_INVALID),
-		m_sciencePurchasePointCost(0),	// 0 means "cannot be purchased"
-		m_grantable(true)
+	ScienceInfo()
+	  : m_science(SCIENCE_INVALID)
+	  , m_sciencePurchasePointCost(0)
+	  ,    // 0 means "cannot be purchased"
+	  m_grantable(true)
 	{
 	}
 
@@ -82,7 +83,7 @@ public:
 
 	virtual void init() override;
 	virtual void reset() override;
-	virtual void update() override { }
+	virtual void update() override {}
 
 	Bool isValidScience(ScienceType st) const;
 
@@ -93,11 +94,11 @@ public:
 	Bool playerHasPrereqsForScience(const Player* player, ScienceType st) const;
 
 	/**
-		this is a subtle call, and should ALMOST NEVER be called by external code...
-		this is used to determine if you have the "root" requirements for a given science,
-		and thus could *potentially* obtain it if you got extra prereqs.
+	  this is a subtle call, and should ALMOST NEVER be called by external code...
+	  this is used to determine if you have the "root" requirements for a given science,
+	  and thus could *potentially* obtain it if you got extra prereqs.
 
-		Generally, you should call getPurchasableSciences() instead of this!
+	  Generally, you should call getPurchasableSciences() instead of this!
 	*/
 	Bool playerHasRootPrereqsForScience(const Player* player, ScienceType st) const;
 
@@ -107,7 +108,7 @@ public:
 	AsciiString getInternalNameForScience(ScienceType science) const;
 
 	/** return a list of the sciences the given player can purchase now, and a list he might be able to purchase in the future,
-		but currently lacks prereqs or points for. (either might be an empty list) */
+	  but currently lacks prereqs or points for. (either might be an empty list) */
 	void getPurchasableSciences(const Player* player, ScienceVec& purchasable, ScienceVec& potentiallyPurchasable) const;
 
 	// this is intended ONLY for use by INI::scanScience.
@@ -121,9 +122,7 @@ public:
 	// do not use it in RTS!
 	std::vector<AsciiString> friend_getScienceNames() const;
 
-
 private:
-
 	const ScienceInfo* findScienceInfo(ScienceType st) const;
 
 	typedef std::vector<ScienceInfo*> ScienceInfoVec;

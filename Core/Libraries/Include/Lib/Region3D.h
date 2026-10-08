@@ -26,24 +26,24 @@
 // For alternative see AABoxClass
 struct Region3D
 {
-	Coord3D lo, hi;						// axis-aligned bounding box
+	Coord3D lo, hi;    // axis-aligned bounding box
 
 	// Keep only the overlapping portion of both regions.
-	void intersectWith( const Region3D &other )
+	void intersectWith(const Region3D& other)
 	{
 		lo.updateMax(other.lo);
 		hi.updateMin(other.hi);
 	}
 
 	// Expand to include the other region.
-	void uniteWith( const Region3D &other )
+	void uniteWith(const Region3D& other)
 	{
 		lo.updateMin(other.lo);
 		hi.updateMax(other.hi);
 	}
 
 	// Expand to include the point.
-	void uniteWith( const Coord3D &point )
+	void uniteWith(const Coord3D& point)
 	{
 		lo.updateMin(point);
 		hi.updateMax(point);
@@ -53,7 +53,11 @@ struct Region3D
 	Real height() const { return hi.y - lo.y; }
 	Real depth() const { return hi.z - lo.z; }
 
-	void zero() { lo.zero(); hi.zero(); }
+	void zero()
+	{
+		lo.zero();
+		hi.zero();
+	}
 
 	bool is(Real value) const
 	{
@@ -61,7 +65,7 @@ struct Region3D
 	}
 
 	// Set XY from a 2D region and leave Z unchanged.
-	void setXY(const Region2D &region)
+	void setXY(const Region2D& region)
 	{
 		lo.x = region.lo.x;
 		lo.y = region.lo.y;
@@ -79,13 +83,21 @@ struct Region3D
 		for (Int i = 1; i < count; ++i)
 		{
 			if (points[i].x < lo.x)
+			{
 				lo.x = points[i].x;
+			}
 			if (points[i].y < lo.y)
+			{
 				lo.y = points[i].y;
+			}
 			if (points[i].x > hi.x)
+			{
 				hi.x = points[i].x;
+			}
 			if (points[i].y > hi.y)
+			{
 				hi.y = points[i].y;
+			}
 		}
 	}
 
@@ -99,22 +111,22 @@ struct Region3D
 		}
 	}
 
-	Bool isInRegion( const Coord2D& point ) const
+	Bool isInRegion(const Coord2D& point) const
 	{
 		return (lo.x < point.x) && (point.x < hi.x) &&
 		       (lo.y < point.y) && (point.y < hi.y);
 	}
 
-	Bool isInRegion( Real x, Real y, Real z ) const
+	Bool isInRegion(Real x, Real y, Real z) const
 	{
 		return (lo.x < x) && (x < hi.x) &&
 		       (lo.y < y) && (y < hi.y) &&
 		       (lo.z < z) && (z < hi.z);
 	}
 
-	Bool isInRegion( const Coord3D& point ) const { return isInRegion(point.x, point.y, point.z); }
+	Bool isInRegion(const Coord3D& point) const { return isInRegion(point.x, point.y, point.z); }
 
-	Bool isInRegion( const Region3D& other ) const
+	Bool isInRegion(const Region3D& other) const
 	{
 		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
 		       (lo.y < other.lo.y) && (other.hi.y < hi.y) &&

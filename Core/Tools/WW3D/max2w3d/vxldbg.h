@@ -51,26 +51,23 @@
 #include "vxl.h"
 #endif
 
-
 class VoxelDebugWindowClass
 {
 public:
-
-	VoxelDebugWindowClass(VoxelClass * vxl);
+	VoxelDebugWindowClass(VoxelClass* vxl);
 	~VoxelDebugWindowClass();
 
-	void	Display_Window();
-	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+	void Display_Window();
+	bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
 private:
+	int CurLayer;
 
-	int						CurLayer;
-
-	SimpleDIBClass *		Bitmap;
-	VoxelClass *			Voxel;
-	HWND						WindowHWND;
-	HWND						ViewportHWND;
-	ISpinnerControl *		LayerSpin;
+	SimpleDIBClass* Bitmap;
+	VoxelClass* Voxel;
+	HWND WindowHWND;
+	HWND ViewportHWND;
+	ISpinnerControl* LayerSpin;
 
 	void update_display();
 };

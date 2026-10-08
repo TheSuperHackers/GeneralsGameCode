@@ -22,37 +22,37 @@
 //
 
 #include "TransDB.h"
-#define IDSKIP		100
+#define IDSKIP 100
 /////////////////////////////////////////////////////////////////////////////
 // RetranslateDlg dialog
 
 class RetranslateDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
+	BabylonText* newtext;
+	BabylonText* oldtext;
 
-	BabylonText *newtext;
-	BabylonText *oldtext;
+	RetranslateDlg(CWnd* pParent = nullptr);    // standard constructor
 
-	RetranslateDlg(CWnd* pParent = nullptr);   // standard constructor
-
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(RetranslateDlg)
-	enum { IDD = IDD_RETRANSLATE };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_RETRANSLATE
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(RetranslateDlg)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(RetranslateDlg)
 	virtual BOOL OnInitDialog();

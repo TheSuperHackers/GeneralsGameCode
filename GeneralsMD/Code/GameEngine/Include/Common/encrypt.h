@@ -33,4 +33,4 @@
 
 #define MAX_ENCRYPTED_STRING 8
 
-const char *EncryptString(const char *);
+const char* EncryptString(const char*);

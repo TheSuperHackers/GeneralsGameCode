@@ -10,15 +10,16 @@
 
 #include "clang-tidy/ClangTidyModule.h"
 
-namespace clang::tidy::generalsgamecode {
+namespace clang::tidy::generalsgamecode
+{
 
 /// This module is for GeneralsGameCode-specific checks.
-class GeneralsGameCodeTidyModule : public ClangTidyModule {
+class GeneralsGameCodeTidyModule : public ClangTidyModule
+{
 public:
-  void addCheckFactories(ClangTidyCheckFactories &CheckFactories) override;
+	void addCheckFactories(ClangTidyCheckFactories& CheckFactories) override;
 };
 
-} // namespace clang::tidy::generalsgamecode
+}    // namespace clang::tidy::generalsgamecode
 
-#endif // LLVM_CLANG_TOOLS_EXTRA_CLANG_TIDY_GENERALSGAMECODE_GENERALSGAMECODETIDYMODULE_H
-
+#endif    // LLVM_CLANG_TOOLS_EXTRA_CLANG_TIDY_GENERALSGAMECODE_GENERALSGAMECODETIDYMODULE_H
