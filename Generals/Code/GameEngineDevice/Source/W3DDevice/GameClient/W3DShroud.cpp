@@ -380,13 +380,10 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 
 #ifdef DO_FOG_INTERPOLATION
 	//Set the final shroud state.  May differe from current state because of time interpolation.
-	W3DShroudLevel *cptr=m_finalFogData;
-	Int pitch = m_numCellsX;
 	for (y=0; y<m_numCellsY; y++)
 	{
 		for (x=0; x<m_numCellsX; x++)
-			cptr[x]=level;
-		ptr	+= pitch;
+			m_finalFogData[x+y*m_numCellsX]=level;
 	}
 #endif
 }
