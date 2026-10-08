@@ -46,6 +46,7 @@ public:
 	//{{AFX_VIRTUAL(CWdumpApp)
 	public:
 	virtual BOOL InitInstance() override;
+	virtual int ExitInstance() override;
 	//}}AFX_VIRTUAL
 
 // Implementation
