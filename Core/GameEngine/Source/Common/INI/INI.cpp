@@ -441,6 +441,12 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 						strcpy(m_curBlockStart, "NO_BLOCK");
 					#endif
 				}
+				else if( stricmp( token, getEndToken() ) == 0 )
+				{
+					// The skip stopped at a child block's End, so this End closes the skipped block.
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Stray '%s' after a skipped block, ignored",
+														 getLineNum(), getFilename().str(), token ) );
+				}
 				else
 				{
 					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown block '%s', skipped to its '%s'",
