@@ -84,7 +84,7 @@
 #include "matpass.h"
 #include "bwrender.h"
 #include "assetmgr.h"
-#include "dx8wrapper.h"
+#include "Renderer.h"
 
 
 // DEBUG DEBUG
@@ -1136,7 +1136,7 @@ bool TexProjectClass::Compute_Texture
 		/*
 		** Set the render target
 		*/
-		DX8Wrapper::Set_Render_Target_With_Z (rtarget,ztarget);
+		Renderer::Set_Render_Target_With_Z (rtarget,ztarget);
 
 		/*
 		** Set up the camera
@@ -1161,7 +1161,7 @@ bool TexProjectClass::Compute_Texture
 		WW3D::End_Render(false);
 		WW3D::Activate_Snapshot(snapshot);	// End_Render() ends the shapsnot, so restore the state
 
-		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
+		Renderer::Set_Default_Render_Target();
 
 	}
 

@@ -54,6 +54,7 @@
 #include "ww3d.h"
 #include "rinfo.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8fvf.h"
@@ -267,13 +268,13 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 		return;
 	}
 
-	DX8Wrapper::Set_Shader(Shader);
-	DX8Wrapper::Set_Texture(0,nullptr);
+	Renderer::Set_Shader(Shader);
+	Renderer::Set_Texture(0,nullptr);
 	VertexMaterialClass *vm=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vm);
+	Renderer::Set_Material(vm);
 	REF_PTR_RELEASE(vm);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
 
 	DynamicVBAccessClass vb(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,8);
 	{
@@ -299,9 +300,9 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 			mem[i]=Indices[i];
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(vb);
-	DX8Wrapper::Set_Index_Buffer(ib,0);
-	DX8Wrapper::Draw_Triangles(0,36/3,0,8);
+	Renderer::Set_Vertex_Buffer(vb);
+	Renderer::Set_Index_Buffer(ib,0);
+	Renderer::Draw_Triangles(0,36/3,0,8);
 }
 
 /**************************************************************************

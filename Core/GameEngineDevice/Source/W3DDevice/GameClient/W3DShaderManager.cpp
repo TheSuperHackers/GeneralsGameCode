@@ -54,6 +54,7 @@
 //-----------------------------------------------------------------------------
 
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/assetmgr.h"
 #include "Lib/BaseType.h"
 #include "Common/file.h"
@@ -233,15 +234,15 @@ Bool ScreenDefaultFilter::postRender(FilterModes mode, Coord2D &scrollDelta,Bool
 Int ScreenDefaultFilter::set(FilterModes mode)
 {
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-	DX8Wrapper::Set_Texture(0,nullptr);
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+	Renderer::Set_Texture(0,nullptr);
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE,FALSE);
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 	return true;
 }
@@ -249,7 +250,7 @@ Int ScreenDefaultFilter::set(FilterModes mode)
 void ScreenDefaultFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 /*=========  ScreenBWFilter	=============================================================*/
@@ -414,15 +415,15 @@ Int ScreenBWFilter::set(FilterModes mode)
 		}
 
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE,FALSE);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		hr=DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBWPixelShader);
 		DX8Wrapper::_Get_D3D_Device8()->SetPixelShaderConstant(0,   D3DXVECTOR4(0.3f, 0.59f, 0.11f, 1.0f), 1);
@@ -473,7 +474,7 @@ void ScreenBWFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
 	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(0);	//turn off pixel shader
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 Int ScreenBWFilter::shutdown()
@@ -589,8 +590,8 @@ Bool ScreenBWFilterDOT3::postRender(FilterModes mode, Coord2D &scrollDelta,Bool 
 	ShaderClass::Invalidate();	//reset DOT3 blend from above.
 	ShaderClass shader=ShaderClass::_PresetAlphaShader;
 	shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
-	DX8Wrapper::Set_Shader(shader);
-	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+	Renderer::Set_Shader(shader);
+	Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 	//replace texture alpha with vertex alpha
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
 
@@ -643,15 +644,15 @@ Int ScreenBWFilterDOT3::set(FilterModes mode)
 		}
 
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE,FALSE);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		return true;
 	}
@@ -661,7 +662,7 @@ Int ScreenBWFilterDOT3::set(FilterModes mode)
 void ScreenBWFilterDOT3::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 Int ScreenBWFilterDOT3::shutdown()
@@ -867,12 +868,12 @@ Int ScreenCrossFadeFilter::set(FilterModes mode)
 	{
 		//rendering a quad with redirected rendering surface
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Set_Shader(ShaderClass::_PresetAlphaShader);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(1,nullptr);
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -905,7 +906,7 @@ void ScreenCrossFadeFilter::reset()
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 Int ScreenCrossFadeFilter::shutdown()
@@ -1006,7 +1007,7 @@ Bool ScreenMotionBlurFilter::postRender(FilterModes mode, Coord2D &scrollDelta,B
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE,false);
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	Coord2D center;
@@ -1077,7 +1078,7 @@ Bool ScreenMotionBlurFilter::postRender(FilterModes mode, Coord2D &scrollDelta,B
 	pDev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(_TRANS_LIT_TEX_VERTEX));
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE,true);
 
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 	{
 		Int limit = m_maxCount;
 		if (m_maxCount>30) limit = 30;
@@ -1159,16 +1160,16 @@ Int ScreenMotionBlurFilter::set(FilterModes mode)
 		//rendering a quad with redirected rendering surface motion blurred
 
 		VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		DX8Wrapper::Set_Material(vmat);
+		Renderer::Set_Material(vmat);
 		REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaqueShader);
-		DX8Wrapper::Set_Texture(0,nullptr);
-		DX8Wrapper::Set_Texture(1,nullptr);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Set_Shader(ShaderClass::_PresetOpaqueShader);
+		Renderer::Set_Texture(0,nullptr);
+		Renderer::Set_Texture(1,nullptr);
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_ALWAYS);
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE,FALSE);
-		DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
+		Renderer::Apply_Render_State_Changes();	//force update of view and projection matrices
 	}
 	return TRUE;
 }
@@ -1176,7 +1177,7 @@ Int ScreenMotionBlurFilter::set(FilterModes mode)
 void ScreenMotionBlurFilter::reset()
 {
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0,nullptr);	//previously rendered frame inside this texture
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 Int ScreenMotionBlurFilter::shutdown()
@@ -1219,22 +1220,22 @@ Int ShroudTextureShader::set(Int stage)
 {
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
-	DX8Wrapper::Set_Texture(stage, W3DShaderManager::getShaderTexture(0));	//shroud always stored in texture 0
+	Renderer::Set_Texture(stage, W3DShaderManager::getShaderTexture(0));	//shroud always stored in texture 0
 
 	if (stage == 0)
 	{
 #if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaSpriteShader);
+		Renderer::Set_Shader(ShaderClass::_PresetAlphaSpriteShader);
 	else
-		DX8Wrapper::Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
+		Renderer::Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
 #else
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
+	Renderer::Set_Shader(ShaderClass::_PresetMultiplicativeSpriteShader);
 #endif
 	}
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
@@ -1284,7 +1285,7 @@ Int ShroudTextureShader::set(Int stage)
 
 void ShroudTextureShader::reset()
 {
-	DX8Wrapper::Set_Texture(m_stageOfSet,nullptr);
+	Renderer::Set_Texture(m_stageOfSet,nullptr);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXCOORDINDEX, m_stageOfSet);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
@@ -1321,7 +1322,7 @@ Int FlatShroudTextureShader::set(Int stage)
 {
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
 	if (stage < 2)
-		DX8Wrapper::Set_Texture(stage, W3DShaderManager::getShaderTexture(stage));
+		Renderer::Set_Texture(stage, W3DShaderManager::getShaderTexture(stage));
 	else	//stages larger than 1 are not supported by W3D so set them directly
 		DX8Wrapper::Set_DX8_Texture(stage, W3DShaderManager::getShaderTexture(stage)->Peek_D3D_Texture());
 
@@ -1379,7 +1380,7 @@ Int FlatShroudTextureShader::set(Int stage)
 void FlatShroudTextureShader::reset()
 {
 	if (m_stageOfSet < MAX_TEXTURE_STAGES)
-		DX8Wrapper::Set_Texture(m_stageOfSet,nullptr);
+		Renderer::Set_Texture(m_stageOfSet,nullptr);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXCOORDINDEX, m_stageOfSet);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(m_stageOfSet,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
@@ -1420,15 +1421,15 @@ Int MaskTextureShader::set(Int pass)
 
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-	DX8Wrapper::Set_Material(vmat);
+	Renderer::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
 
 	//For now we're always going to project the texture coming from the crossfade effect
-	DX8Wrapper::Set_Texture(0, ScreenCrossFadeFilter::getCurrentMaskTexture());
+	Renderer::Set_Texture(0, ScreenCrossFadeFilter::getCurrentMaskTexture());
 	ShaderClass shader=ShaderClass::_PresetOpaqueShader;
 	shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
-	DX8Wrapper::Set_Shader(shader);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Set_Shader(shader);
+	Renderer::Apply_Render_State_Changes();
 
 	D3DXMATRIX curView;
 	DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
@@ -1487,7 +1488,7 @@ Int MaskTextureShader::set(Int pass)
 
 void MaskTextureShader::reset()
 {
-	DX8Wrapper::Set_Texture(0,nullptr);
+	Renderer::Set_Texture(0,nullptr);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 }
@@ -1652,7 +1653,7 @@ void TerrainShader2Stage::updateNoise2(D3DXMATRIX *destMatrix,D3DXMATRIX *curVie
 Int TerrainShader2Stage::set(Int pass)
 {
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	if (TheGlobalData && (TheGlobalData->m_bilinearTerrainTex || TheGlobalData->m_trilinearTerrainTex)) {
 		DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
@@ -1823,7 +1824,7 @@ Int TerrainShader8Stage::set(Int pass)
 	if (pass == 0)
 	{
 		//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-		DX8Wrapper::Apply_Render_State_Changes();
+		Renderer::Apply_Render_State_Changes();
 
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -1929,7 +1930,7 @@ Int TerrainShader8Stage::set(Int pass)
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-		DX8Wrapper::Invalidate_Cached_Render_States();
+		Renderer::Invalidate_Cached_Render_States();
 
 		terrainShader2Stage.set(2);
 	}
@@ -1947,7 +1948,7 @@ void TerrainShader8Stage::reset()
 
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0, nullptr);
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(1, nullptr);
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 Int TerrainShaderPixelShader::shutdown()
@@ -2023,7 +2024,7 @@ Int TerrainShaderPixelShader::init()
 Int TerrainShaderPixelShader::set(Int pass)
 {
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	//setup base pass
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(0, W3DShaderManager::getShaderTexture(0)->Peek_D3D_Texture());
@@ -2154,7 +2155,7 @@ void TerrainShaderPixelShader::reset()
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU|3);
 
 
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 ///Cloud layer rendering shader - used for objects similar to terrain which only need the cloud layer.
@@ -2304,9 +2305,9 @@ Int RoadShaderPixelShader::init()
 
 Int RoadShaderPixelShader::set(Int pass)
 {
-	DX8Wrapper::Set_Texture(0,W3DShaderManager::getShaderTexture(0));
+	Renderer::Set_Texture(0,W3DShaderManager::getShaderTexture(0));
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	//tell pixel shader which UV set to use for each stage
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_TEXCOORDINDEX, 0 );
@@ -2345,8 +2346,8 @@ Int RoadShaderPixelShader::set(Int pass)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 
-	DX8Wrapper::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
-	DX8Wrapper::Set_Texture(2,W3DShaderManager::getShaderTexture(2));
+	Renderer::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
+	Renderer::Set_Texture(2,W3DShaderManager::getShaderTexture(2));
 
 	DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise2PixelShader);
 
@@ -2387,7 +2388,7 @@ void RoadShaderPixelShader::reset()
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU|3);
 
 
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 Int RoadShader2Stage::init()
@@ -2408,9 +2409,9 @@ Int RoadShader2Stage::init()
 Int RoadShader2Stage::set(Int pass)
 {
 	//First stage always contains base texture.
-	DX8Wrapper::Set_Texture(0,W3DShaderManager::getShaderTexture(0));
+	Renderer::Set_Texture(0,W3DShaderManager::getShaderTexture(0));
 	//Force system to apply world/view transforms.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE,FALSE);
@@ -2464,7 +2465,7 @@ Int RoadShader2Stage::set(Int pass)
 			if (W3DShaderManager::getCurrentShader() == W3DShaderManager::ST_ROAD_BASE_NOISE12)
 			{
 				//full shader, apply noise 1 in pass 0.
-				DX8Wrapper::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
+				Renderer::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
 				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
 
@@ -2477,7 +2478,7 @@ Int RoadShader2Stage::set(Int pass)
 				if (W3DShaderManager::getCurrentShader() == W3DShaderManager::ST_ROAD_BASE_NOISE1)
 				{
 					//cloud map
-					DX8Wrapper::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
+					Renderer::Set_Texture(1,W3DShaderManager::getShaderTexture(1));
 					terrainShader2Stage.updateNoise1(&curView, &inv, false);	//update curView with texture matrix
 					DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 					DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
@@ -2485,7 +2486,7 @@ Int RoadShader2Stage::set(Int pass)
 				else
 				{
 					//light map
-					DX8Wrapper::Set_Texture(1,W3DShaderManager::getShaderTexture(2));
+					Renderer::Set_Texture(1,W3DShaderManager::getShaderTexture(2));
 					terrainShader2Stage.updateNoise2(&curView,&inv, false);	//update curView with texture matrix
 					DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MINFILTER, D3DTEXF_POINT);
 					DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
@@ -2515,7 +2516,7 @@ Int RoadShader2Stage::set(Int pass)
 		else
 			DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MIPFILTER, D3DTEXF_POINT);
 
-		DX8Wrapper::Set_Texture(1,W3DShaderManager::getShaderTexture(2));
+		Renderer::Set_Texture(1,W3DShaderManager::getShaderTexture(2));
 
 		terrainShader2Stage.updateNoise2(&curView, &inv, false);	//update curView with texture matrix
 		DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MINFILTER, D3DTEXF_POINT);
@@ -2896,17 +2897,17 @@ void W3DShaderManager::startRenderToTexture()
 			ShaderClass shader=ShaderClass::_PresetOpaqueSolidShader;
 			shader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
 			shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
-			DX8Wrapper::Set_Shader(shader);
+			Renderer::Set_Shader(shader);
 
 			VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-			DX8Wrapper::Set_Material(vmat);
+			Renderer::Set_Material(vmat);
 			REF_PTR_RELEASE(vmat);	//no need to keep a reference since it's a preset.
 
 			drawViewport(0x00ffffff | (((Int)(TheWaterTransparency->m_minWaterOpacity*255.0f)) <<24));
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_RED|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_BLUE);	//disable writes to alpha
 		}
 		else	//normal clear that overwrites everything.
-			DX8Wrapper::Clear(true, false, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity);
+			Renderer::Clear(true, false, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity);
 	}
 }
 
@@ -3241,7 +3242,7 @@ Int W3DShaderManager::setShroudTex(Int stage)
 	W3DShroud *shroud;
 	if ((shroud=TheTerrainRenderObject->getShroud()) != nullptr)
 	{
-		DX8Wrapper::Set_Texture(stage, shroud->getShroudTexture());
+		Renderer::Set_Texture(stage, shroud->getShroudTexture());
 
 		DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
 		DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
@@ -3325,7 +3326,7 @@ void FlatTerrainShader2Stage::reset()
 Int FlatTerrainShader2Stage::set(Int pass)
 {
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	if (TheGlobalData && (TheGlobalData->m_bilinearTerrainTex || TheGlobalData->m_trilinearTerrainTex)) {
 		DX8Wrapper::Set_DX8_Texture_Stage_State(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
@@ -3604,10 +3605,10 @@ Int FlatTerrainShaderPixelShader::set(Int pass)
 
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-	DX8Wrapper::Set_Texture(0, W3DShaderManager::getShaderTexture(2));
-	DX8Wrapper::Set_Texture(1, W3DShaderManager::getShaderTexture(2));
+	Renderer::Set_Texture(0, W3DShaderManager::getShaderTexture(2));
+	Renderer::Set_Texture(1, W3DShaderManager::getShaderTexture(2));
 	//force WW3D2 system to set it's states so it won't later overwrite our custom settings.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 
 
@@ -3746,7 +3747,7 @@ Int FlatTerrainShaderPixelShader::set(Int pass)
 		DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_dwBaseNoise2PixelShader);
 	}
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 	DX8Wrapper::_Get_D3D_Device8()->SetTexture(curStage, W3DShaderManager::getShaderTexture(3)->Peek_D3D_Texture());
 	return TRUE;
 }
@@ -3774,7 +3775,7 @@ void FlatTerrainShaderPixelShader::reset()
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU|3);
 
 
-	DX8Wrapper::Invalidate_Cached_Render_States();
+	Renderer::Invalidate_Cached_Render_States();
 }
 
 

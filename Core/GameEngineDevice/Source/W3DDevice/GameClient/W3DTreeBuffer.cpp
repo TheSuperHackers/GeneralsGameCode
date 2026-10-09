@@ -83,6 +83,7 @@ enum
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
 #include "WW3D2/camera.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/dx8renderer.h"
 #include "WW3D2/matinfo.h"
 #include "WW3D2/mesh.h"
@@ -1571,8 +1572,8 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 //#define DEBUG_TEXTURE 1
 #ifdef DEBUG_TEXTURE // Draw the combined texture for debugging. jba. [4/21/2003]
 	// Setup the vertex buffer, shader & texture.
-	DX8Wrapper::Set_Shader(detailAlphaShader);
-	DX8Wrapper::Set_Texture(0,m_treeTexture);
+	Renderer::Set_Shader(detailAlphaShader);
+	Renderer::Set_Texture(0,m_treeTexture);
 	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8, 6);
 	//draw an infinite sky plane
 	DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8, DX8_FVF_XYZNDUV2, 4);
@@ -1624,29 +1625,29 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 		}
 	}
 
-	DX8Wrapper::Set_Index_Buffer(ib_access,0);
-	DX8Wrapper::Set_Vertex_Buffer(vb_access);
+	Renderer::Set_Index_Buffer(ib_access,0);
+	Renderer::Set_Vertex_Buffer(vb_access);
 
 	Matrix3D tm(1);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
-	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
+	Renderer::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 #endif
 
 
 	if (m_curNumTreeIndices[0] == 0) {
 		return;
 	}
-	DX8Wrapper::Set_Shader(detailAlphaShader);
+	Renderer::Set_Shader(detailAlphaShader);
 
-	DX8Wrapper::Set_Texture(0,m_treeTexture);
-	DX8Wrapper::Set_Texture(1,nullptr);
+	Renderer::Set_Texture(0,m_treeTexture);
+	Renderer::Set_Texture(1,nullptr);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_TEXCOORDINDEX, 1);
 	// Draw all the trees.
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 	W3DShaderManager::setShroudTex(1);
-	DX8Wrapper::Apply_Render_State_Changes();
+	Renderer::Apply_Render_State_Changes();
 
 	if (m_dwTreeVertexShader) {
 		D3DXMATRIX matProj, matView, matWorld;
@@ -1712,22 +1713,22 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 		if (m_curNumTreeIndices[bNdx]==0) {
 			break;
 		}
-		DX8Wrapper::Set_Index_Buffer(m_indexTree[bNdx],0);
-		DX8Wrapper::Set_Vertex_Buffer(m_vertexTree[bNdx]);
+		Renderer::Set_Index_Buffer(m_indexTree[bNdx],0);
+		Renderer::Set_Vertex_Buffer(m_vertexTree[bNdx]);
 		// Render the waving grass
-		DX8Wrapper::Apply_Render_State_Changes();
+		Renderer::Apply_Render_State_Changes();
 		if (m_dwTreeVertexShader) {
 			DX8Wrapper::_Get_D3D_Device8()->SetVertexShader(m_dwTreeVertexShader);
 			DX8Wrapper::_Get_D3D_Device8()->SetTextureStageState(0,  D3DTSS_TEXCOORDINDEX, 0);
 			DX8Wrapper::_Get_D3D_Device8()->SetTextureStageState(1,  D3DTSS_TEXCOORDINDEX, 1);
 			DX8Wrapper::_Get_D3D_Device8()->SetTextureStageState(1,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
 		}
-		DX8Wrapper::Draw_Triangles(	0, m_curNumTreeIndices[bNdx]/3, 0,	m_curNumTreeVertices[bNdx]);
+		Renderer::Draw_Triangles(	0, m_curNumTreeIndices[bNdx]/3, 0,	m_curNumTreeVertices[bNdx]);
 	}
 
 	DX8Wrapper::Set_Vertex_Shader(DX8_FVF_XYZNDUV1);
 	DX8Wrapper::Set_Pixel_Shader(0);
-	DX8Wrapper::Invalidate_Cached_Render_States();	//code above mucks around with W3D states so make sure we reset
+	Renderer::Invalidate_Cached_Render_States();	//code above mucks around with W3D states so make sure we reset
 
 }
 
