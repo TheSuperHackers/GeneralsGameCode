@@ -30,7 +30,7 @@ target_include_directories(core_debug INTERFACE
 )
 
 target_precompile_headers(core_debug PRIVATE
-    [["Precompiled/BasePrecomp.h"]] # Must be first
+    [["Precompiled/precompiled.h"]] # Must be first
     "debug.h"
     "internal.h"
     "internal_except.h"
@@ -39,6 +39,8 @@ target_precompile_headers(core_debug PRIVATE
 )
 
 target_link_libraries(core_debug PRIVATE
-    core_wwcommon
-    corei_always
+    depsi_always # Gives force included headers. Link early.
+    core_config
+    deps_utility
+    stlport
 )

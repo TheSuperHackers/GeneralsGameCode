@@ -25,14 +25,16 @@ target_include_directories(core_profile_legacy INTERFACE
 )
 
 target_precompile_headers(core_profile_legacy PRIVATE
-    [["Precompiled/BasePrecomp.h"]] # Must be first
+    [["Precompiled/precompiled.h"]] # Must be first
     "profile.h"
     "internal.h"
     <windows.h>
 )
 
 target_link_libraries(core_profile_legacy PRIVATE
+    depsi_always # Gives force included headers. Link early.
+    core_config
     core_debug
-    core_wwcommon
-    corei_always
+    deps_utility
+    stlport
 )
