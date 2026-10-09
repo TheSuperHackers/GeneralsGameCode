@@ -438,8 +438,7 @@ void RecorderClass::updatePlayback() {
 	// While there are commands to be queued up for this frame, do it.
 	while (m_nextFrame == curFrame) {
 		appendNextCommand();	// append the next command to TheCommandQueue
-		readNextFrame();	// Read the next command's frame number for playback.
-		validateNextFrameValue(curFrame);
+		readNextFrame();	// Read and validate the next command's frame number for playback.
 	}
 }
 
@@ -1232,9 +1231,8 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	// Otherwise a crc message remains and messes up the crc calculation on the restarted replay.
 	TheCommandList->reset();
 
+	m_nextFrame = 0;
 	readNextFrame();
-	validateNextFrameValue(0);
-
 	// readNextFrame() closes m_file via stopPlayback() if the first frame cannot be read.
 	if(m_file == nullptr)
 	{
@@ -1330,25 +1328,30 @@ AsciiString RecorderClass::readAsciiString() {
  * Read the frame number for the next command in the playback file. If the end of the file is reached, the playback
  * is stopped and the next frame is said to be -1.
  */
-void RecorderClass::readNextFrame() {
-	Int bytesRead = m_file->read(&m_nextFrame, sizeof(m_nextFrame));
-	if (bytesRead != sizeof(m_nextFrame)) {
-		DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
-		m_nextFrame = -1;
-		stopPlayback();
-	}
-}
-
-void RecorderClass::validateNextFrameValue(UnsignedInt curFrame)
+void RecorderClass::readNextFrame()
 {
-	if (m_doingAnalysis)
-		return;
+	const UnsignedInt curFrame = m_nextFrame;
 
-	const bool isInValidRange = m_nextFrame >= curFrame && m_nextFrame < curFrame + 3600 * LOGICFRAMES_PER_SECOND;
-	if (!isInValidRange)
+	Int bytesRead = m_file->read(&m_nextFrame, sizeof(m_nextFrame));
+	if (bytesRead == sizeof(m_nextFrame))
 	{
-		DEBUG_LOG(("RecorderClass::validateNextFrame - current frame %d, next frame %d is in unexpected distance",
-			TheGameLogic->getFrame(), m_nextFrame));
+		// TheSuperHackers @bugfix Check whether the next frame value is within a reasonable range
+		// to avoid prolonging playback due to potentially corrupted data.
+		const bool isInValidRange = m_nextFrame >= curFrame && m_nextFrame < curFrame + 3600 * LOGICFRAMES_PER_SECOND;
+		if (!isInValidRange)
+		{
+			if (m_doingAnalysis)
+				return;
+
+			DEBUG_LOG(("RecorderClass::readNextFrame - current frame %d, next frame %d is in unexpected distance",
+				TheGameLogic->getFrame(), m_nextFrame));
+			m_nextFrame = -1;
+			stopPlayback();
+		}
+	}
+	else
+	{
+		DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
 		m_nextFrame = -1;
 		stopPlayback();
 	}

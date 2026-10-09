@@ -192,8 +192,7 @@ protected:
 
 	AsciiString readAsciiString();										///< Read the next string from m_file using ascii characters.
 	UnicodeString readUnicodeString();								///< Read the next string from m_file using unicode characters.
-	void readNextFrame();															///< Read the next frame number to execute a command on.
-	void validateNextFrameValue(UnsignedInt curFrame);///< Stop recording if next frame value is not within a valid range.
+	void readNextFrame();															///< Read and validate the next frame number to execute a command on.
 	void appendNextCommand();													///< Read the next GameMessage and append it to TheCommandList.
 	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
 	void readArgument(GameMessageArgumentDataType type, GameMessage *msg);
