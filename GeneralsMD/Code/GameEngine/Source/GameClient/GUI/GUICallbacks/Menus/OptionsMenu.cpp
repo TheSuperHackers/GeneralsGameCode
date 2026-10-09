@@ -878,6 +878,7 @@ static void saveOptions()
 
 				TheInGameUI->recreateControlBar();
 				TheInGameUI->refreshCustomUiResources();
+				TheInGameUI->calcUnitInfoScaleFactor();
 			}
 		}
 	}
