@@ -86,6 +86,7 @@
 #include "camera.h"
 #include "statistics.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "sortingrenderer.h"
@@ -468,9 +469,9 @@ void SphereRenderObjClass::render_sphere()
 	} else {
 		SphereShader.Set_Texturing (ShaderClass::TEXTURING_DISABLE);
 	}
-	DX8Wrapper::Set_Shader(SphereShader);
-	DX8Wrapper::Set_Texture(0,SphereTexture);
-	DX8Wrapper::Set_Material(SphereMaterial);
+	Renderer::Set_Shader(SphereShader);
+	Renderer::Set_Texture(0,SphereTexture);
+	Renderer::Set_Material(SphereMaterial);
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.
 	const bool sort = (SphereShader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (SphereShader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
@@ -517,13 +518,13 @@ void SphereRenderObjClass::render_sphere()
 		}
 	}
 
-	DX8Wrapper::Set_Vertex_Buffer(vb);
-	DX8Wrapper::Set_Index_Buffer(ib,0);
+	Renderer::Set_Vertex_Buffer(vb);
+	Renderer::Set_Index_Buffer(ib,0);
 
 	if (sort) {
 		SortingRendererClass::Insert_Triangles(Get_Bounding_Sphere(), 0, mesh.face_ct, 0, mesh.Vertex_ct);
 	} else {
-		DX8Wrapper::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
+		Renderer::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
 	}
 
 }
@@ -659,7 +660,7 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 		// Camera Align
 		if (Flags & USE_CAMERA_ALIGN) {
 			Matrix4x4 view,ident(true);
-			DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+			Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
 
 			Vector4 wpos(Transform[0][3],Transform[1][3],Transform[2][3],1);
 			Vector4 cpos;
@@ -670,12 +671,12 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 							1.0f, 0.0f, 0.0f, cpos.Z);
 
 			tm.Scale(real_scale);
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,ident);
-			DX8Wrapper::Set_Transform(D3DTS_VIEW,tm);
+			Renderer::Set_Transform(RB_TRANSFORM_WORLD,ident);
+			Renderer::Set_Transform(RB_TRANSFORM_VIEW,tm);
 			render_sphere();
-			DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
+			Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
 		} else {
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
+			Renderer::Set_Transform(RB_TRANSFORM_WORLD,temp);
 			render_sphere();
 		}
 	}

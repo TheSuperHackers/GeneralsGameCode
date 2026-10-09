@@ -23,11 +23,25 @@
 
 #pragma once
 
-// Forward declarations keep this header includable without pulling in the full
-// WW3D2 header graph. All W3D types below are passed by pointer or reference.
+#include "WW3D2/ww3dformat.h"
 
+// Forward declarations keep this header includable without pulling in the full
+// WW3D2 header graph. All W3D classes below are passed by pointer or reference.
+
+class DynamicIBAccessClass;
+class DynamicVBAccessClass;
+class IndexBufferClass;
+class LightClass;
 class LightEnvironmentClass;
+class Matrix3D;
+class Matrix4x4;
+class ShaderClass;
+class TextureBaseClass;
+class TextureClass;
 class Vector3;
+class VertexBufferClass;
+class VertexMaterialClass;
+class ZTextureClass;
 
 struct RenderViewport
 {
@@ -39,13 +53,15 @@ struct RenderViewport
     float max_z;
 };
 
-// A method appears here once a caller routes through it, not in anticipation of
-// one. The set below is what current callers route through; the rest of the
-// DX8Wrapper API stays reachable through DX8Wrapper's static methods until a
-// caller migrates, at which point the method it needs moves here.
-//
-// Method names intentionally match the existing DX8Wrapper names so migrating a
-// caller is a mechanical DX8Wrapper::X(...) -> Renderer::X(...) rewrite.
+enum RenderBackendTransform
+{
+    RB_TRANSFORM_WORLD,
+    RB_TRANSFORM_VIEW,
+    RB_TRANSFORM_PROJECTION
+};
+
+// The interface holds only the methods that callers route through. The rest of
+// the DX8Wrapper API is called directly.
 
 class Renderer
 {
@@ -53,6 +69,19 @@ public:
     // Initialized in WW3D::Init and shut down in WW3D::Shutdown.
     static bool Init(void * window, bool lite);
     static void Shutdown();
+
+    static int Get_Render_Device_Count();
+    static int Get_Render_Device();
+    static const char * Get_Render_Device_Name(int device_index);
+    static void Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed);
+    static void Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed);
+    static int Get_Device_Resolution_Width();
+    static int Get_Device_Resolution_Height();
+    static bool Is_Windowed();
+    static int Get_Texture_Bitdepth();
+    static int Get_Swap_Interval();
+    static bool Has_Stencil();
+    static WW3DFormat Get_Back_Buffer_Format();
 
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
@@ -65,6 +94,38 @@ public:
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
 
+    static void Set_Render_Target_With_Z(TextureClass * texture, ZTextureClass * ztexture = nullptr);
+    static void Set_Default_Render_Target();
+    static bool Is_Render_To_Texture();
+
+    static void Set_Shader(const ShaderClass & shader);
+    static void Set_Material(const VertexMaterialClass * material);
+    static void Set_Texture(unsigned stage, TextureBaseClass * texture);
+    static void Apply_Render_State_Changes();
+
+    static void Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream = 0);
+    static void Set_Vertex_Buffer(const DynamicVBAccessClass & vba);
+    static void Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset);
+    static void Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset);
+    static void Set_Index_Buffer_Index_Offset(unsigned offset);
+
+    static void Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
+                               unsigned short min_vertex_index, unsigned short vertex_count);
+    static void Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
+                               unsigned short min_vertex_index, unsigned short vertex_count);
+    static void Draw_Strip(unsigned short start_index, unsigned short polygon_count,
+                           unsigned short min_vertex_index, unsigned short vertex_count);
+
+    static void Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m);
+    static void Set_Transform(RenderBackendTransform transform, const Matrix3D & m);
+    static void Get_Transform(RenderBackendTransform transform, Matrix4x4 & m);
+    static void Set_World_Identity();
+    static void Set_View_Identity();
+    static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
+
     static void Set_Ambient(const Vector3 & color);
     static void Set_Light_Environment(LightEnvironmentClass * light_env);
+    static void Set_Light(unsigned index, const LightClass & light);
+    static void Clear_Light(unsigned index);
+    static void Set_Fog(bool enable, const Vector3 & color, float start, float end);
 };

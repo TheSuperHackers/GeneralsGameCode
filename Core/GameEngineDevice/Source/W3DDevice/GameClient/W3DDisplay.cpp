@@ -86,6 +86,7 @@ static void drawFramerateBar();
 #include "WWMath/wwmath.h"
 #include "WWLib/registry.h"
 #include "WW3D2/ww3d.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/predlod.h"
 #include "WW3D2/part_emt.h"
 #include "WW3D2/part_ldr.h"
@@ -549,7 +550,7 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 	if (m_windowed)
 		return;	//we don't allow gamma to change in window because it would affect desktop.
 
-	DX8Wrapper::Set_Gamma(gamma,bright,contrast,calibrate, false);
+	Renderer::Set_Gamma(gamma,bright,contrast,calibrate, false);
 }
 
 /** Set resolution of display */
@@ -2936,7 +2937,7 @@ VideoBuffer*	W3DDisplay::createVideoBuffer()
 
 	// first try to use the native format
 
-	WW3DFormat displayFormat = DX8Wrapper::getBackBufferFormat();
+	WW3DFormat displayFormat = Renderer::Get_Back_Buffer_Format();
 
 	if ( DX8Wrapper::Get_Current_Caps()->Support_Texture_Format( displayFormat ))
 	{

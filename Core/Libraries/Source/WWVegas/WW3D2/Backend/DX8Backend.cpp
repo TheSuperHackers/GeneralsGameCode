@@ -28,6 +28,21 @@
 #include "WW3D2/lightenvironment.h"
 #include "WWDebug/wwdebug.h"
 
+static D3DTRANSFORMSTATETYPE To_D3D_Transform(RenderBackendTransform transform)
+{
+    switch (transform)
+    {
+    case RB_TRANSFORM_WORLD:
+        return D3DTS_WORLD;
+    case RB_TRANSFORM_VIEW:
+        return D3DTS_VIEW;
+    case RB_TRANSFORM_PROJECTION:
+        return D3DTS_PROJECTION;
+    }
+    WWASSERT(0);
+    return D3DTS_WORLD;
+}
+
 static bool Initialized = false;
 static bool Lite = false;
 
@@ -58,6 +73,66 @@ void Renderer::Shutdown()
         DX8Wrapper::Shutdown();
     }
     Initialized = false;
+}
+
+int Renderer::Get_Render_Device_Count()
+{
+    return DX8Wrapper::Get_Render_Device_Count();
+}
+
+int Renderer::Get_Render_Device()
+{
+    return DX8Wrapper::Get_Render_Device();
+}
+
+const char * Renderer::Get_Render_Device_Name(int device_index)
+{
+    return DX8Wrapper::Get_Render_Device_Name(device_index);
+}
+
+void Renderer::Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed)
+{
+    DX8Wrapper::Get_Device_Resolution(width, height, bits, windowed);
+}
+
+void Renderer::Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed)
+{
+    DX8Wrapper::Get_Render_Target_Resolution(width, height, bits, windowed);
+}
+
+int Renderer::Get_Device_Resolution_Width()
+{
+    return DX8Wrapper::Get_Device_Resolution_Width();
+}
+
+int Renderer::Get_Device_Resolution_Height()
+{
+    return DX8Wrapper::Get_Device_Resolution_Height();
+}
+
+bool Renderer::Is_Windowed()
+{
+    return DX8Wrapper::Is_Windowed();
+}
+
+int Renderer::Get_Texture_Bitdepth()
+{
+    return DX8Wrapper::Get_Texture_Bitdepth();
+}
+
+int Renderer::Get_Swap_Interval()
+{
+    return DX8Wrapper::Get_Swap_Interval();
+}
+
+bool Renderer::Has_Stencil()
+{
+    return DX8Wrapper::Has_Stencil();
+}
+
+WW3DFormat Renderer::Get_Back_Buffer_Format()
+{
+    return DX8Wrapper::getBackBufferFormat();
 }
 
 void Renderer::Set_Gamma(float gamma, float bright, float contrast, bool calibrate, bool uselimit)
@@ -104,6 +179,114 @@ void Renderer::Invalidate_Cached_Render_States()
     DX8Wrapper::Invalidate_Cached_Render_States();
 }
 
+void Renderer::Set_Render_Target_With_Z(TextureClass * texture, ZTextureClass * ztexture)
+{
+    DX8Wrapper::Set_Render_Target_With_Z(texture, ztexture);
+}
+
+void Renderer::Set_Default_Render_Target()
+{
+    DX8Wrapper::Set_Render_Target(static_cast<IDirect3DSurface8 *>(nullptr));
+}
+
+bool Renderer::Is_Render_To_Texture()
+{
+    return DX8Wrapper::Is_Render_To_Texture();
+}
+
+void Renderer::Set_Shader(const ShaderClass & shader)
+{
+    DX8Wrapper::Set_Shader(shader);
+}
+
+void Renderer::Set_Material(const VertexMaterialClass * material)
+{
+    DX8Wrapper::Set_Material(material);
+}
+
+void Renderer::Set_Texture(unsigned stage, TextureBaseClass * texture)
+{
+    DX8Wrapper::Set_Texture(stage, texture);
+}
+
+void Renderer::Apply_Render_State_Changes()
+{
+    DX8Wrapper::Apply_Render_State_Changes();
+}
+
+void Renderer::Set_Vertex_Buffer(const VertexBufferClass * vb, unsigned stream)
+{
+    DX8Wrapper::Set_Vertex_Buffer(vb, stream);
+}
+
+void Renderer::Set_Vertex_Buffer(const DynamicVBAccessClass & vba)
+{
+    DX8Wrapper::Set_Vertex_Buffer(vba);
+}
+
+void Renderer::Set_Index_Buffer(const IndexBufferClass * ib, unsigned short index_base_offset)
+{
+    DX8Wrapper::Set_Index_Buffer(ib, index_base_offset);
+}
+
+void Renderer::Set_Index_Buffer(const DynamicIBAccessClass & iba, unsigned short index_base_offset)
+{
+    DX8Wrapper::Set_Index_Buffer(iba, index_base_offset);
+}
+
+void Renderer::Set_Index_Buffer_Index_Offset(unsigned offset)
+{
+    DX8Wrapper::Set_Index_Buffer_Index_Offset(offset);
+}
+
+void Renderer::Draw_Triangles(unsigned buffer_type, unsigned short start_index, unsigned short polygon_count,
+                              unsigned short min_vertex_index, unsigned short vertex_count)
+{
+    DX8Wrapper::Draw_Triangles(buffer_type, start_index, polygon_count, min_vertex_index, vertex_count);
+}
+
+void Renderer::Draw_Triangles(unsigned short start_index, unsigned short polygon_count,
+                              unsigned short min_vertex_index, unsigned short vertex_count)
+{
+    DX8Wrapper::Draw_Triangles(start_index, polygon_count, min_vertex_index, vertex_count);
+}
+
+void Renderer::Draw_Strip(unsigned short start_index, unsigned short polygon_count,
+                          unsigned short min_vertex_index, unsigned short vertex_count)
+{
+    DX8Wrapper::Draw_Strip(start_index, polygon_count, min_vertex_index, vertex_count);
+}
+
+void Renderer::Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m)
+{
+    DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Set_Transform(RenderBackendTransform transform, const Matrix3D & m)
+{
+    DX8Wrapper::Set_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Get_Transform(RenderBackendTransform transform, Matrix4x4 & m)
+{
+    DX8Wrapper::Get_Transform(To_D3D_Transform(transform), m);
+}
+
+void Renderer::Set_World_Identity()
+{
+    DX8Wrapper::Set_World_Identity();
+}
+
+void Renderer::Set_View_Identity()
+{
+    DX8Wrapper::Set_View_Identity();
+}
+
+void Renderer::Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar)
+{
+    DX8Wrapper::Set_Projection_Transform_With_Z_Bias(matrix, znear, zfar);
+}
+
 void Renderer::Set_Ambient(const Vector3 & color)
 {
     DX8Wrapper::Set_Ambient(color);
@@ -112,4 +295,19 @@ void Renderer::Set_Ambient(const Vector3 & color)
 void Renderer::Set_Light_Environment(LightEnvironmentClass * light_env)
 {
     DX8Wrapper::Set_Light_Environment(light_env);
+}
+
+void Renderer::Set_Light(unsigned index, const LightClass & light)
+{
+    DX8Wrapper::Set_Light(index, light);
+}
+
+void Renderer::Clear_Light(unsigned index)
+{
+    DX8Wrapper::Set_Light(index, nullptr);
+}
+
+void Renderer::Set_Fog(bool enable, const Vector3 & color, float start, float end)
+{
+    DX8Wrapper::Set_Fog(enable, color, start, end);
 }
