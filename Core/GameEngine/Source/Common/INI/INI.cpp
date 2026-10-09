@@ -1614,6 +1614,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 template <typename Type>
 Type scanType(const char* tokenString)
 {
+	// strto* needs the original null-terminated token, including any leading '+'.
 	std::string_view token(tokenString);
 	DEBUG_ASSERTCRASH(!token.empty(), ("token is not expected to be empty"));
 
@@ -1639,8 +1640,10 @@ Type scanType(const char* tokenString)
 				value = static_cast<Type>(std::strtoll(tokenString, &end, 10));
 			else
 				value = static_cast<Type>(std::strtoull(tokenString, &end, 10));
+
 			if (end == tokenString)
 				throw INI_INVALID_DATA;
+
 			return value;
 		}
 	}
