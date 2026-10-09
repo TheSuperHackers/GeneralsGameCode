@@ -35,6 +35,7 @@
 #include "render2d.h"
 #include "WWLib/mutex.h"
 #include "ww3d.h"
+#include "Renderer.h"
 #include "font3d.h"
 #include "WWMath/rect.h"
 #include "texture.h"
@@ -541,14 +542,14 @@ void Render2DClass::Render()
 	//
 	//	Configure the viewport for entire screen
 	//
-	D3DVIEWPORT8 vp = { 0 };
-	vp.X			= (DWORD)ScreenResolution.Left;
-	vp.Y			= (DWORD)ScreenResolution.Top;
-	vp.Width		= (DWORD)ScreenResolution.Width ();
-	vp.Height	= (DWORD)ScreenResolution.Height ();
-	vp.MinZ		= 0;
-	vp.MaxZ		= 1;
-	DX8Wrapper::Set_Viewport(&vp);
+	RenderViewport vp;
+	vp.x			= (unsigned int)ScreenResolution.Left;
+	vp.y			= (unsigned int)ScreenResolution.Top;
+	vp.width		= (unsigned int)ScreenResolution.Width ();
+	vp.height	= (unsigned int)ScreenResolution.Height ();
+	vp.min_z		= 0;
+	vp.max_z		= 1;
+	Renderer::Set_Viewport(vp);
 
 
 	DX8Wrapper::Set_Texture(0,Texture);
