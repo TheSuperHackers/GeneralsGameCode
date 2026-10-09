@@ -27,7 +27,6 @@
 #include "WW3D2/ww3dformat.h"
 #include "WWMath/wwmath.h"
 #include <cstring>
-#include <d3dx8core.h>
 
 W3DProfilerFrameCapture::W3DProfilerFrameCapture()
 {
@@ -62,28 +61,23 @@ void W3DProfilerFrameCapture::Capture(UnsignedInt displayWidth, UnsignedInt disp
 		return;
 	}
 
-	// compile swizzle shader convert BGRA to RGBA
+	// create swizzle shader to convert BGRA to RGBA
 	// TheSuperHackers @todo In DX9 with ps2.0 this shader will be much simpler
 	if (!m_swizzleShader)
 	{
-		ID3DXBuffer *compiledShader = nullptr;
-		const char *shader =
-			"ps.1.4\n"
-			"texld r0, t0\n"
-			"mov r1.a, r0.r\n"
-			"mov r2.a, r0.g\n"
-			"mov r3.a, r0.b\n"
-			"mul r0.rgb, r3.a, c0\n"
-			"mad r0.rgb, r2.a, c1, r0\n"
-			"mad r0.rgb, r1.a, c2, r0\n";
-
-		HRESULT hr = D3DXAssembleShader(shader, strlen(shader), 0, nullptr, &compiledShader, nullptr);
-		if (FAILED(hr))
-			return;
-
-		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD *)compiledShader->GetBufferPointer(), &m_swizzleShader);
-		compiledShader->Release();
-
+		static const DWORD swizzleShader[] =
+		{
+			0xffff0104,                                                 // ps.1.4
+			0x00000042, 0x800f0000, 0xb0e40000,                         // texld r0, t0
+			0x00000001, 0x80080001, 0x80000000,                         // mov r1.a, r0.r
+			0x00000001, 0x80080002, 0x80550000,                         // mov r2.a, r0.g
+			0x00000001, 0x80080003, 0x80aa0000,                         // mov r3.a, r0.b
+			0x00000005, 0x80070000, 0x80ff0003, 0xa0e40000,             // mul r0.rgb, r3.a, c0
+			0x00000004, 0x80070000, 0x80ff0002, 0xa0e40001, 0x80e40000, // mad r0.rgb, r2.a, c1, r0
+			0x00000004, 0x80070000, 0x80ff0001, 0xa0e40002, 0x80e40000, // mad r0.rgb, r1.a, c2, r0
+			0x0000ffff,                                                 // end
+		};
+		const HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(swizzleShader, &m_swizzleShader);
 		if (FAILED(hr))
 			return;
 	}
