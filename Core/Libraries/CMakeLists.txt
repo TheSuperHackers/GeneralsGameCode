@@ -33,7 +33,9 @@ target_include_directories(core_libraries INTERFACE
 target_sources(core_libraries PRIVATE ${LIBRARIES_INCLUDE_SRC})
 
 target_link_libraries(core_libraries INTERFACE
-    deps_precompiled
+    deps_precompiled # Gives force included headers. Link early.
+    core_profile_legacy
+    core_profile_tracy
 )
 
 # Makes the game base macros and types available in every C++ translation unit

@@ -30,7 +30,7 @@
 #pragma once
 
 /**
-  \interface DebugIOInterface debug.h <rts/debug.h>
+  \interface DebugIOInterface
 
   \brief Debug I/O interface.
 

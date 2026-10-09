@@ -30,7 +30,7 @@
 #pragma once
 
 /**
-  \interface DebugCmdInterface debug.h <rts/debug.h>
+  \interface DebugCmdInterface
 
   \brief Debug command group interface.
 

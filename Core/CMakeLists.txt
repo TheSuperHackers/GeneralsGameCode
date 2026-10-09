@@ -15,7 +15,6 @@ target_include_directories(corei_main INTERFACE "Main")
 target_link_libraries(corei_always INTERFACE
     core_libraries # Gives force included headers. Link early.
     core_config
-    core_profile_tracy
     deps_utility
     resources
 )

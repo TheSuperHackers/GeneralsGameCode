@@ -37,7 +37,6 @@ target_include_directories(core_particleeditor PRIVATE
 )
 
 target_link_libraries(core_particleeditor PRIVATE
-    core_profile_legacy
     corei_always_no_pch
     corei_gameengine_include
     corei_libraries_source_wwvegas
