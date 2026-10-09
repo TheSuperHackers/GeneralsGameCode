@@ -41,6 +41,7 @@
 #include "WW3D2/rinfo.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/dx8vertexbuffer.h"
 #include "WW3D2/dx8indexbuffer.h"
 #include "WW3D2/sortingrenderer.h"
@@ -288,9 +289,9 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 	/*
 	** Apply the shader and material
 	*/
-	DX8Wrapper::Set_Material(m_pVertMaterial.Peek());
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
-	DX8Wrapper::Set_Texture(0,m_pTexture.Peek());
+	Renderer::Set_Material(m_pVertMaterial.Peek());
+	Renderer::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
+	Renderer::Set_Texture(0,m_pTexture.Peek());
 
 	DX8Wrapper::Set_Vertex_Buffer(vbaccess);
 	DX8Wrapper::Set_Index_Buffer(ibaccess,0);

@@ -42,6 +42,7 @@
 #include "w3derr.h"
 #include "meshmatdesc.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "WWDebug/wwdebug.h"
 #include "matinfo.h"
 #include "rendobj.h"
@@ -794,7 +795,7 @@ void WSEnvMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 	}
 	// multiply by inverse of view transform
 	Matrix4x4 mat;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);
+	Renderer::Get_Transform(RB_TRANSFORM_VIEW,mat);
 	Matrix4x4 mat2(	mat[0].X, mat[1].X, mat[2].X, 0.0f,
 						mat[0].Y, mat[1].Y, mat[2].Y, 0.0f,
 						mat[0].Z, mat[1].Z, mat[2].Z, 0.0f,
@@ -927,7 +928,7 @@ void ScreenMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 
 	// multiply by projection matrix
 	// followed by scale and translation
-	DX8Wrapper::Get_Transform(D3DTS_PROJECTION, tex_matrix);
+	Renderer::Get_Transform(RB_TRANSFORM_PROJECTION, tex_matrix);
 	tex_matrix[0] *= Scale.X; // entire row since we're pre-multiplying
 	tex_matrix[1] *= Scale.Y;
 	Vector4 last(tex_matrix[3]); // this gets the w
@@ -1154,7 +1155,7 @@ void GridWSEnvMapperClass::Calculate_Texture_Matrix(Matrix4x4 &tex_matrix)
 {
 	// multiply by inverse of view transform
 	Matrix4x4 mat;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);
+	Renderer::Get_Transform(RB_TRANSFORM_VIEW,mat);
 	Matrix4x4 mv (	mat[0].X, mat[1].X, mat[2].X, 0.0f,
 						mat[0].Y, mat[1].Y, mat[2].Y, 0.0f,
 						mat[0].Z, mat[1].Z, mat[2].Z, 0.0f,
