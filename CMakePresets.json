@@ -156,6 +156,14 @@
             }
         },
         {
+            "name": "win32-vcpkg-modern",
+            "displayName": "Windows 32bit VCPKG Modern Release",
+            "inherits": "win32-vcpkg",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME": "OFF"
+            }
+        },
+        {
             "name": "unix",
             "inherits": "default-vcpkg",
             "hidden": false,
@@ -265,6 +273,13 @@
             "displayName": "Build Windows 32bit VCPKG Debug",
             "description": "Build Windows 32bit VCPKG Debug",
             "configuration": "Debug"
+        },
+        {
+            "name": "win32-vcpkg-modern",
+            "configurePreset": "win32-vcpkg-modern",
+            "displayName": "Build Windows 32bit VCPKG Modern Release",
+            "description": "Build Windows 32bit VCPKG Modern Release",
+            "configuration": "Release"
         },
         {
             "name": "unix",
@@ -495,6 +510,19 @@
                 {
                     "type": "build",
                     "name": "win32-vcpkg-debug"
+                }
+            ]
+        },
+        {
+            "name": "win32-vcpkg-modern",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-vcpkg-modern"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-vcpkg-modern"
                 }
             ]
         },
