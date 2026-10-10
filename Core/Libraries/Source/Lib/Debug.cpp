@@ -597,6 +597,10 @@ void DebugCrash(const char *format, ...)
 void DebugShutdown()
 {
 #ifdef DEBUG_LOGGING
+#ifdef DEBUG_THREADSAFE
+	// Lets log calls of other threads finish before the file is closed.
+	ScopedLogLock scopedLogLock;
+#endif
 	if (theLogFile)
 	{
 		DebugLog("Log closed: %s", getCurrentTimeString());
