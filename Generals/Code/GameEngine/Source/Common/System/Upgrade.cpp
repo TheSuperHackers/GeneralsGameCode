@@ -209,7 +209,8 @@ void UpgradeTemplate::cacheButtonImage()
 	{
 		m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName );
 		DEBUG_ASSERTCRASH( m_buttonImage, ("UpgradeTemplate: %s is looking for button image %s but can't find it. Skipping...", m_name.str(), m_buttonImageName.str() ) );
-		m_buttonImageName.clear();	// we're done with this, so nuke it
+		if (m_buttonImage)
+			m_buttonImageName.clear();	// we're done with this, so nuke it
 	}
 }
 
@@ -281,7 +282,7 @@ void UpgradeCenter::init()
 //-------------------------------------------------------------------------------------------------
 void UpgradeCenter::reset()
 {
-	if( TheMappedImageCollection && !buttonImagesCached )
+	if (TheMappedImageCollection)
 	{
 		UpgradeTemplate *upgrade;
 		for( upgrade = m_upgradeList; upgrade; upgrade = upgrade->friend_getNext() )

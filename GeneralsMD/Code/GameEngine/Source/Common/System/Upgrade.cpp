@@ -497,5 +497,9 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );
 
+	// TheSuperHackers @bugfix DrGoldFish 21/02/2026 Keeps map.ini upgrade cameos scoped to the map override lifetime.
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+		upgrade->cacheButtonImage();
+
 }
 

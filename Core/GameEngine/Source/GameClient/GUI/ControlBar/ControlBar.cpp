@@ -751,9 +751,10 @@ Bool CommandButton::isContextCommand() const
 // bleah. shouldn't be const, but is. sue me. (srj)
 void CommandButton::copyImagesFrom( const CommandButton *button, Bool markUIDirtyIfChanged ) const
 {
-	if( m_buttonImage != button->getButtonImage() )
+	CommandButton * finalOverride = (CommandButton*)getFinalOverride();
+	if (finalOverride->m_buttonImage != button->getButtonImage())
 	{
-		m_buttonImage = button->getButtonImage();
+		finalOverride->m_buttonImage = button->getButtonImage();
 
 		//Code renderer handles these states now.
 		//m_disabledImage = button->getDisabledImage();
@@ -2538,6 +2539,14 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 //-------------------------------------------------------------------------------------------------
 void CommandButton::cacheButtonImage()
 {
+	// TheSuperHackers @bugfix DrGoldFish 21/02/2026 Use the ButtonImage from the final map.ini command button override.
+	CommandButton* finalOverride = (CommandButton*)friend_getFinalOverride();
+	if (finalOverride != this)
+	{
+		finalOverride->cacheButtonImage();
+		return;
+	}
+
 	if (!TheMappedImageCollection) {
 		return;
 	}

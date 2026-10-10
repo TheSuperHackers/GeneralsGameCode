@@ -345,7 +345,13 @@ public:
 	Int getMaxShotsToFire() const { return m_maxShotsToFire; }
 	const ScienceVec& getScienceVec() const { return m_science; }
 	CommandButtonMappedBorderType getCommandButtonMappedBorderType() const { return m_commandButtonBorder; }
-	const Image* getButtonImage() const { return m_buttonImage;	}
+	const Image* getButtonImage() const
+	{
+		CommandButton* finalOverride = (CommandButton*)getFinalOverride();
+		if (finalOverride->m_buttonImageName.isNotEmpty())
+			const_cast<CommandButton*>(finalOverride)->cacheButtonImage();
+		return finalOverride->m_buttonImage;
+	}
 	void cacheButtonImage();
 
 	GameWindow* getWindow() const { return m_window;	}
@@ -776,6 +782,9 @@ public:
 	static void parseCommandSetDefinition( INI *ini );
 	static void parseCommandButtonDefinition( INI *ini );
 
+	/// post process step, after all commands and command sets are loaded
+	void postProcessCommands();
+
 	void drawTransitionHandler();
 	const Image *getArrowImage(){ return m_genArrow;	}
 	void setArrowImage( const Image *arrowImage ){ m_genArrow = arrowImage;	}
@@ -827,9 +836,6 @@ protected:
 
 	/// show rally point at world location, a nullptr location will hide any visible rally point marker
 	void showRallyPoint( const Coord3D *loc );
-
-	/// post process step, after all commands and command sets are loaded
-	void postProcessCommands();
 
 	// the following methods are for resetting data for various contexts
 	void resetCommonCommandData();	/// reset shared command data

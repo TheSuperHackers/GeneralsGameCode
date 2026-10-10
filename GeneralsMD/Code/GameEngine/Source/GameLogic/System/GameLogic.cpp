@@ -2511,6 +2511,10 @@ void GameLogic::loadMapINI( AsciiString mapName )
 		ini.load( AsciiString(fullFledgeFilename), INI_LOAD_CREATE_OVERRIDES, nullptr );
 	}
 
+	if (TheControlBar)
+		TheControlBar->postProcessCommands();
+	TheUpgradeCenter->reset();
+
 	// No error here. There could've just *not* been a map.ini file.
 
 	// now look for a string file

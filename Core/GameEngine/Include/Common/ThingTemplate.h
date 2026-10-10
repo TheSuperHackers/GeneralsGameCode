@@ -451,7 +451,7 @@ public:
 	const ModuleInfo& getClientUpdateModuleInfo() const { return m_clientUpdateModuleInfo; }
 
 	const Image *getSelectedPortraitImage() const { return m_selectedPortraitImage; }
-	const Image *getButtonImage() const { return m_buttonImage; }
+	const Image *getButtonImage() const { return ((const ThingTemplate*)getFinalOverride())->m_buttonImage; }
 
 	//Code renderer handles these states now.
 	//const AsciiString& getInventoryImageName( InventoryImageType type ) const { return m_inventoryImage[ type ]; }
