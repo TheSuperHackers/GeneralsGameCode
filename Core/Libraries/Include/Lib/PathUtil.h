@@ -71,6 +71,18 @@ inline bool isAbsolutePath(const char* path)
 	return false;
 }
 
+// Copies a game-data path using native separators. Output needs strlen(path) + 1 bytes.
+inline void normalizePathSeparators(char* output, const char* path)
+{
+	const char separator = getNativePathSeparator();
+	while (*path)
+	{
+		*output++ = isPathSeparator(*path) ? separator : *path;
+		++path;
+	}
+	*output = 0;
+}
+
 inline const char* getLastPathSeparator(const char* path)
 {
 	return path ? maxPtr(strrchr(path, '/'), strrchr(path, '\\')) : nullptr;
