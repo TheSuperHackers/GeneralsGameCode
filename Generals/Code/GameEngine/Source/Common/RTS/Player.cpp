@@ -2762,6 +2762,76 @@ ScienceAvailabilityType Player::getScienceAvailabilityTypeFromString( const Asci
 	return SCIENCE_AVAILABILITY_INVALID;
 }
 
+namespace
+{
+  // ------------------------------------------------------------------------------------------------
+  // For countExisting
+  struct TypeCountData
+  {
+    UnsignedInt count;
+    const ThingTemplate *type;
+    NameKeyType linkKey;
+    Bool        checkProductionInterface;
+  };
+}
+
+// ------------------------------------------------------------------------------------------------
+/** Count all the units of a given type that exist or are in any production queues for a player */
+// ------------------------------------------------------------------------------------------------
+static void countExisting( Object *obj, void *userData )
+{
+  // Don't care about dead objects
+  if ( obj->isEffectivelyDead() )
+    return;
+
+  TypeCountData *typeCountData = (TypeCountData *)userData;
+
+  // Compare templates
+  if ( ( typeCountData->type && typeCountData->type->isEquivalentTo( obj->getTemplate() ) ) ||
+       ( typeCountData->linkKey != NAMEKEY_INVALID && obj->getTemplate() != nullptr && typeCountData->linkKey == obj->getTemplate()->getMaxSimultaneousLinkKey() ) )
+  {
+    typeCountData->count++;
+  }
+
+  // Also consider objects that have a production update interface
+  if ( typeCountData->checkProductionInterface )
+  {
+    ProductionUpdateInterface *pui = ProductionUpdate::getProductionUpdateInterfaceFromObject( obj );
+    if( pui )
+    {
+      // add the count of this type that are in the queue
+      typeCountData->count += pui->countUnitTypeInQueue( typeCountData->type );
+    }
+  }
+}
+
+//=============================================================================
+// Make sure that building another of this unit/structure/object won't exceed MaxSimultaneousOfType()
+Bool Player::canBuildMoreOfType( const ThingTemplate *whatToBuild ) const
+{
+  // make sure we're not maxed out for this type of unit.
+  UnsignedInt maxSimultaneousOfType = whatToBuild->getMaxSimultaneousOfType();
+  if (maxSimultaneousOfType != 0)
+  {
+
+    TypeCountData typeCountData;
+    typeCountData.count = 0;
+    typeCountData.type = whatToBuild;
+    typeCountData.linkKey = whatToBuild->getMaxSimultaneousLinkKey();
+    // Assumption: Things with a KINDOF_STRUCTURE flag can never be built from
+    // a factory (ProductionUpdateInterface), because the building can't move
+    // out of the factory. When we do our Starcraft port and have flying Terran
+    // buildings, we'll have to change this ;-)
+    // Remember: To ASSUME makes an ASS out of U and ME.
+    typeCountData.checkProductionInterface = !whatToBuild->isKindOf( KINDOF_STRUCTURE );
+
+    iterateObjects( countExisting, &typeCountData );
+    if( typeCountData.count >= maxSimultaneousOfType )
+      return false;
+  }
+  return true;
+}
+
 //=============================================================================
 Bool Player::canBuild(const ThingTemplate *tmplate) const
 {
