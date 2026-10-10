@@ -180,7 +180,7 @@ void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 	_euler_unpack_order(order,i,j,k,h,n,s,f);
 
 	if (s == EULER_REPEAT_YES) {
-		double sy = sqrt(M[i][j]*M[i][j] + M[i][k]*M[i][k]);
+		float sy = WWMath::Sqrt(M[i][j]*M[i][j] + M[i][k]*M[i][k]);
 
 		if (sy > 16*FLT_EPSILON) {
 
@@ -197,7 +197,7 @@ void EulerAnglesClass::From_Matrix(const Matrix3D & M, int order)
 
 	} else {
 
-		double cy = sqrt(M[i][i]*M[i][i] + M[j][i]*M[j][i]);
+		float cy = WWMath::Sqrt(M[i][i]*M[i][i] + M[j][i]*M[j][i]);
 
 		if (cy > 16*FLT_EPSILON) {
 
@@ -284,8 +284,8 @@ void EulerAnglesClass::To_Matrix(Matrix3D & M)
 	}
 
 	ti = a0;				tj = a1;				th = a2;
-	ci = WWMath::Cos(ti);		cj = WWMath::Cos(tj);		ch = WWMath::Cos(th);
-	si = WWMath::Sin(ti);		sj = WWMath::Sin(tj);		sh = WWMath::Sin(th);
+	ci = WWMath::Cosf_Legacy(ti);		cj = WWMath::Cosf_Legacy(tj);		ch = WWMath::Cosf_Legacy(th);
+	si = WWMath::Sinf_Legacy(ti);		sj = WWMath::Sinf_Legacy(tj);		sh = WWMath::Sinf_Legacy(th);
 
 	cc = ci*ch;
 	cs = ci*sh;

@@ -35,7 +35,7 @@ struct ICoord2D
 		return x == value && y == value;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
+	Int length() const { return (Int)Sqrt( (double)(x*x + y*y) ); }
 	Int lengthSqr() const { return x*x + y*y; }
 
 	void add( const ICoord2D &a )

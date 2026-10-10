@@ -4,8 +4,12 @@ set(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME "DEFAULT" CACHE STRING "Build for re
 set_property(CACHE RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME PROPERTY STRINGS DEFAULT ON OFF)
 
 collect_defines_from_file(_retail_guards "${CMAKE_CURRENT_SOURCE_DIR}/Core/GameEngine/Include/Common/GameDefines.h" "RETAIL_COMPATIBLE_")
+collect_defines_from_file(_retail_base_guards "${CMAKE_CURRENT_SOURCE_DIR}/Core/Libraries/Include/Lib/BaseDefines.h" "RETAIL_COMPATIBLE_")
+list(APPEND _retail_guards ${_retail_base_guards})
+list(REMOVE_DUPLICATES _retail_guards)
 define_tristate_option(RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME RetailCompatibleGame "Build with Retail Compatibility" "${_retail_guards}" "")
 unset(_retail_guards)
+unset(_retail_base_guards)
 
 if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "12.0.8804" AND NOT RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME STREQUAL "OFF")
     message(NOTICE "")

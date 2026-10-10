@@ -2,6 +2,7 @@
 set(COREI_GOOGLEBENCHMARK_SRC
     GoogleBenchmarkMain.cpp
     GameEngine/Common/AsciiStringBenchmark.cpp
+    GameEngine/Common/Diagnostic/SimulationMathBenchmark.cpp
     Libraries/Compression/CompressionManagerBenchmark.cpp
 )
 
