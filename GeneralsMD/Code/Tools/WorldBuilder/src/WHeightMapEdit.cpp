@@ -420,7 +420,7 @@ void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 	strlcpy(dirBuf, pFilePath, ARRAY_SIZE(dirBuf));
 	int len = strlen(dirBuf);
 
-	if (len > 0 && dirBuf[len - 1] != '\\') {
+	if (len > 0 && !isPathSeparator(dirBuf[len - 1])) {
 		dirBuf[len++] = '\\';
 		dirBuf[len] = 0;
 	}

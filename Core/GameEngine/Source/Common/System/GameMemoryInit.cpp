@@ -112,7 +112,7 @@ void userMemoryManagerInitPools()
 	// we expect. so do it the hard way.
 	char buf[_MAX_PATH];
 	::GetModuleFileName(nullptr, buf, sizeof(buf));
-	if (char* pEnd = strrchr(buf, '\\'))
+	if (char* pEnd = getLastPathSeparator(buf))
 	{
 		*pEnd = 0;
 	}

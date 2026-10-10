@@ -76,6 +76,7 @@
 #include "Utils.h"
 #include "WinFix.h"
 #include "Wnd_File.h"
+#include "Lib/PathUtil.h"
 #include <winver.h>
 #include <shlwapi.h>
 //#include "resources.h"
@@ -393,7 +394,7 @@ wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
 char *Path_Add_Back_Slash ( char *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
-		if ( path[ strlen( path )-1 ] != '\\' ) {
+		if ( !isPathSeparator( path[ strlen( path )-1 ] ) ) {
 			 strcat( path, "\\" );
 		}
 	}
@@ -403,7 +404,7 @@ char *Path_Add_Back_Slash ( char *path )
 wchar_t *Path_Add_Back_Slash ( wchar_t *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
-		if ( path[ wcslen( path )-1 ] != '\\' ) {
+		if ( !isPathSeparator( path[ wcslen( path )-1 ] ) ) {
 			 wcscat( path, L"\\" );
 		}
 	}
@@ -427,7 +428,7 @@ wchar_t *Path_Add_Back_Slash ( wchar_t *path )
 char *Path_Remove_Back_Slash ( char *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
-		if ( path[ strlen( path )-1 ] == '\\' ) {
+		if ( isPathSeparator( path[ strlen( path )-1 ] ) ) {
 			 path[ strlen( path )-1 ] = '\0';
 		}
 	}
@@ -437,7 +438,7 @@ char *Path_Remove_Back_Slash ( char *path )
 wchar_t *Path_Remove_Back_Slash ( wchar_t *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
-		if ( path[ wcslen( path )-1 ] == L'\\' ) {
+		if ( isPathSeparator( path[ wcslen( path )-1 ] ) ) {
 			 path[ wcslen( path )-1 ] = L'\0';
 		}
 	}

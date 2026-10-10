@@ -44,6 +44,7 @@
 #include "tchar.h"
 #include "gamemtl.h"
 #include "notify.h"
+#include "Lib/PathUtil.h"
 #include "gennamesdialog.h"
 #include "genmtlnamesdialog.h"
 #include "genlodextensiondialog.h"
@@ -1529,7 +1530,7 @@ void SettingsFormClass::Init()
 	// space before or after the equal sign as well.
 	char dllpath[_MAX_PATH];
 	::GetModuleFileName(AppInstance,dllpath,sizeof(dllpath));
-	char * last_slash = strrchr(dllpath,'\\');
+	char * last_slash = getLastPathSeparator(dllpath);
 	last_slash++;
 	strcpy(last_slash,DAZZLE_SETTINGS_FILENAME);
 

@@ -31,6 +31,7 @@
 #include "debug_stack.h"
 #include <windows.h>
 #include "Utility/stringex.h"
+#include "Lib/PathUtil.h"
 #include <imagehlp.h>
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
@@ -74,7 +75,7 @@ static void InitDbghelp()
 	char dbgHelpPath[256];
 	if (GetModuleFileName(nullptr,dbgHelpPath,sizeof(dbgHelpPath)))
 	{
-		char *slash=strrchr(dbgHelpPath,'\\');
+		char *slash=getLastPathSeparator(dbgHelpPath);
 		if (slash)
 		{
 			strcpy(slash+1,"DBGHELP.DLL");
@@ -170,8 +171,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   char symbolBuffer[512];
   GetModuleFileName((HMODULE)modBase,symbolBuffer,sizeof(symbolBuffer));
 
-  char *p=strrchr(symbolBuffer,'\\'); // use filename only, strip off path
-  p=p?p+1:symbolBuffer;
+  const char *p=getFileName(symbolBuffer); // use filename only, strip off path
   *buf++=' ';
   strcpy(buf,p);
   buf+=strlen(buf);
@@ -198,8 +198,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned buf
   if (!gDbg._SymGetLineFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement,&line))
     return;
 
-  p=strrchr(line.FileName,'\\'); // use filename only, strip off path
-  p=p?p+1:line.FileName;
+  p=getFileName(line.FileName); // use filename only, strip off path
 
   if ((unsigned int)(bufEnd-buf)<strlen(p)+16)
     return;
@@ -252,9 +251,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
   {
     GetModuleFileName((HMODULE)modBase,symbolBuffer,sizeof(symbolBuffer));
 
-    char *p=strrchr(symbolBuffer,'\\'); // use filename only, strip off path
-    p=p?p+1:symbolBuffer;
-    strlcpy(bufMod,p,sizeMod);
+    strlcpy(bufMod,getFileName(symbolBuffer),sizeMod); // use filename only, strip off path
   }
   if (relMod)
     *relMod=addr-modBase;
@@ -288,9 +285,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
       strcpy(bufFile,"(unknown)");
     else
     {
-      char *p=strrchr(line.FileName,'\\'); // use filename only, strip off path
-      p=p?p+1:line.FileName;
-      strlcpy(bufFile,p,sizeFile);
+      strlcpy(bufFile,getFileName(line.FileName),sizeFile); // use filename only, strip off path
       if (linePtr)
         *linePtr=line.LineNumber;
       if (relLine)

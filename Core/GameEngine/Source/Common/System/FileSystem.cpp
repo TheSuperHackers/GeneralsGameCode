@@ -54,7 +54,6 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/PerfTimer.h"
 
-#include "Lib/PathUtil.h"
 
 
 DECLARE_PERF_TIMER(FileSystem)

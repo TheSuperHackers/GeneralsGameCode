@@ -379,7 +379,7 @@ void DebugInit(int flags)
 
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
-		if (char *pEnd = strrchr(dirbuf, '\\'))
+		if (char *pEnd = getLastPathSeparator(dirbuf))
 		{
 			*(pEnd + 1) = 0;
 		}

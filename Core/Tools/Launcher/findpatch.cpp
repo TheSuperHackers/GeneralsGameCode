@@ -145,7 +145,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   //  path to a file, you better end the directory with a trailing '\\'!!!
   char *cptr=gamePath;
   char *tempPtr;
-  while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
+  while( (tempPtr=strpbrk(cptr,"\\/")) !=nullptr)
     cptr=tempPtr+1;
   if (cptr)
     *cptr=0;

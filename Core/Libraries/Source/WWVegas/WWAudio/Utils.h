@@ -40,6 +40,8 @@
 #include "mss.h"
 #pragma warning (pop)
 
+#include "Lib/PathUtil.h"
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Macros
@@ -74,15 +76,5 @@ class MMSLockClass
 __inline LPCTSTR
 Get_Filename_From_Path (LPCTSTR path)
 {
-	// Find the last occurrence of the directory deliminator
-	LPCTSTR filename = ::strrchr (path, '\\');
-	if (filename != nullptr) {
-		// Increment past the directory deliminator
-		filename ++;
-	} else {
-		filename = path;
-	}
-
-	// Return the filename part of the path
-	return filename;
+	return getFileName (path);
 }
