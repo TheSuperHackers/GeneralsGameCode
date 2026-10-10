@@ -23,8 +23,10 @@
 
 #pragma once
 
+#include "WW3D2/ww3dformat.h"
+
 // Forward declarations keep this header includable without pulling in the full
-// WW3D2 header graph. All W3D types below are passed by pointer or reference.
+// WW3D2 header graph. All W3D classes below are passed by pointer or reference.
 
 class LightEnvironmentClass;
 class Vector3;
@@ -39,13 +41,8 @@ struct RenderViewport
     float max_z;
 };
 
-// A method appears here once a caller routes through it, not in anticipation of
-// one. The set below is what current callers route through; the rest of the
-// DX8Wrapper API stays reachable through DX8Wrapper's static methods until a
-// caller migrates, at which point the method it needs moves here.
-//
-// Method names intentionally match the existing DX8Wrapper names so migrating a
-// caller is a mechanical DX8Wrapper::X(...) -> Renderer::X(...) rewrite.
+// The interface holds only the methods that callers route through. The rest of
+// the DX8Wrapper API is called directly.
 
 class Renderer
 {
@@ -53,6 +50,19 @@ public:
     // Initialized in WW3D::Init and shut down in WW3D::Shutdown.
     static bool Init(void * window, bool lite);
     static void Shutdown();
+
+    static int Get_Render_Device_Count();
+    static int Get_Render_Device();
+    static const char * Get_Render_Device_Name(int device_index);
+    static void Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed);
+    static void Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed);
+    static int Get_Device_Resolution_Width();
+    static int Get_Device_Resolution_Height();
+    static bool Is_Windowed();
+    static int Get_Texture_Bitdepth();
+    static int Get_Swap_Interval();
+    static bool Has_Stencil();
+    static WW3DFormat Get_Back_Buffer_Format();
 
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
