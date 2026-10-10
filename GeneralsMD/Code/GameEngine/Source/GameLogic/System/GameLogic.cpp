@@ -3760,19 +3760,26 @@ void GameLogic::update()
 	if (generateForSolo || generateForMP)
 	{
 		m_CRC = getCRC( CRC_RECALC );
-		bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 
-		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
-		msg->appendIntegerArgument(m_CRC);
-		msg->appendBooleanArgument(isPlayback);
+		// TheSuperHackers @tweak Caball009 30/09/2026 Playback CRC is now separate from regular CRC,
+		// removing the need for the second parameter used to distinguish them. Older clients can still
+		// parse newer replays because GameMessage::getArgument returns false for the missing playback argument.
+		const bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
+		if (isPlayback)
+		{
+			// TheSuperHackers @info helmutbuhler 13/04/2025
+			// During replay simulation, we bypass TheMessageStream and instead put the CRC message
+			// directly into TheCommandList because we don't update TheMessageStream during simulation.
+			GameMessage* msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC_PLAYBACK);
+			msg->appendIntegerArgument(m_CRC);
 
-		// TheSuperHackers @info helmutbuhler 13/04/2025
-		// During replay simulation, we bypass TheMessageStream and instead put the CRC message
-		// directly into TheCommandList because we don't update TheMessageStream during simulation.
-		GameMessageList *messageList = TheMessageStream;
-		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK)
-			messageList = TheCommandList;
-		messageList->appendMessage(msg);
+			TheCommandList->appendMessage(msg);
+		}
+		else
+		{
+			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_LOGIC_CRC);
+			msg->appendIntegerArgument(m_CRC);
+		}
 
 		DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", isPlayback ? "Playback " : "", m_frame, m_CRC));
 	}
