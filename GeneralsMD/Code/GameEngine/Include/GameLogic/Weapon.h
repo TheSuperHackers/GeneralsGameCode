@@ -32,6 +32,9 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameCommon.h"
+#if !RETAIL_COMPATIBLE_SCRIPTING
+#include "Common/Overridable.h"
+#endif
 
 #include "GameLogic/Damage.h"
 
@@ -339,7 +342,12 @@ struct HistoricWeaponDamageInfo
 typedef std::list<HistoricWeaponDamageInfo> HistoricWeaponDamageList;
 
 //-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_SCRIPTING
 class WeaponTemplate : public MemoryPoolObject
+#else
+class WeaponTemplate : public Overridable
+#endif
+
 {
 	friend class WeaponStore;
 
@@ -352,9 +360,11 @@ public:
 
 	void reset();
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	void friend_setNextTemplate(WeaponTemplate *nextTemplate) { m_nextTemplate = nextTemplate; }
 	WeaponTemplate *friend_clearNextTemplate() {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = nullptr; return ret; }
 	Bool isOverride() { return m_nextTemplate != nullptr; }
+#endif
 
 	/// field table for loading the values from an INI
 	const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
@@ -483,8 +493,10 @@ protected:
 
 private:
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	// NOTE: m_nextTemplate will be cleaned up if it is NON-nullptr.
 	WeaponTemplate *m_nextTemplate;
+#endif
 
 	static void parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseScatterTarget( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
@@ -846,7 +858,11 @@ public:
 	// this dynamically allocates a new Weapon, which is owned (and must be freed!) by the caller.
 	Weapon* allocateNewWeapon(const WeaponTemplate *tmpl, WeaponSlotType wslot) const
 	{
+#if RETAIL_COMPATIBLE_SCRIPTING
 		return newInstance(Weapon)(tmpl, wslot);	// my, that was easy
+#else
+		return newInstance(Weapon)(static_cast<const WeaponTemplate*>(tmpl->getFinalOverride()), wslot);	// my, that was easy
+#endif
 	}
 
 	void createAndFireTempWeapon(const WeaponTemplate* w, const Object *source, const Coord3D* pos);

@@ -248,7 +248,11 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_SCRIPTING
 WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
+#else
+WeaponTemplate::WeaponTemplate()
+#endif
 {
 
 	m_name													= "NoNameWeapon";
@@ -330,7 +334,9 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
 //-------------------------------------------------------------------------------------------------
 WeaponTemplate::~WeaponTemplate()
 {
+#if RETAIL_COMPATIBLE_SCRIPTING
 	deleteInstance(m_nextTemplate);
+#endif
 
 	// delete any extra-bonus that's present
 	deleteInstance(m_extraBonus);
@@ -1663,8 +1669,11 @@ WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 	// search weapon list for name
 	WeaponTemplateMap::const_iterator it = m_weaponTemplateHashMap.find(key);
 	if(it != m_weaponTemplateHashMap.end())
+#if RETAIL_COMPATIBLE_SCRIPTING
 		return it->second;
-
+#else
+		return (WeaponTemplate*)(it->second->getFinalOverride());
+#endif
 	return nullptr;
 
 }
@@ -1693,10 +1702,24 @@ WeaponTemplate *WeaponStore::newOverride(WeaponTemplate *weaponTemplate)
 	if (!weaponTemplate)
 		return nullptr;
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	// allocate a new weapon
 	WeaponTemplate *wt = newInstance(WeaponTemplate);
 	(*wt) = (*weaponTemplate);
 	(wt)->friend_setNextTemplate(weaponTemplate);
+#else
+	// TheSuperHackers @bugfix DrGoldFish 10/10/2026 Keep existing weapon template references valid when applying map overrides.
+	// Create a new override rather than replacing the base template.
+	WeaponTemplate *wt = newInstance(WeaponTemplate);
+	(*wt) = (*weaponTemplate);
+	if (weaponTemplate->m_extraBonus)
+	{
+		wt->m_extraBonus = newInstance(WeaponBonusSet);
+		(*wt->m_extraBonus) = (*weaponTemplate->m_extraBonus);
+	}
+	weaponTemplate->setNextOverride(wt);
+	wt->markAsOverride();
+#endif
 
 	return wt;
 }
@@ -1742,6 +1765,7 @@ void WeaponStore::resetWeaponTemplates()
 //-------------------------------------------------------------------------------------------------
 void WeaponStore::reset()
 {
+#if RETAIL_COMPATIBLE_SCRIPTING
 	// clean up any overrides.
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
@@ -1753,6 +1777,23 @@ void WeaponStore::reset()
 			deleteInstance(overrideData);
 		}
 	}
+#else
+	// Clean up map and solo INI overrides.
+	for (std::vector<WeaponTemplate*>::iterator it = m_weaponTemplateVector.begin(); it != m_weaponTemplateVector.end(); )
+	{
+		WeaponTemplate *wt = *it;
+		NameKeyType nameKey = wt->getNameKey();
+		if (!wt->deleteOverrides())
+		{
+			m_weaponTemplateHashMap.erase(nameKey);
+			it = m_weaponTemplateVector.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+#endif
 
 	deleteAllDelayedDamage();
 	resetWeaponTemplates();
@@ -1822,6 +1863,13 @@ void WeaponStore::postProcessLoad()
 
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
+
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+	{
+		weapon->postProcessLoad();
+	}
+#endif
 
 #if defined(RTS_DEBUG)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0)
