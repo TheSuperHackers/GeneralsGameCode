@@ -329,7 +329,9 @@ void MapObject::fastAssignAllUniqueIDs()
 void MapObject::setThingTemplate(const ThingTemplate *thing)
 {
 	m_thingTemplate = thing;
-	m_objectName = thing->getName();
+	if (thing) {
+		m_objectName = thing->getName();
+	}
 }
 
 

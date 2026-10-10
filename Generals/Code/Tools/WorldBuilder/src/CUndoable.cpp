@@ -32,6 +32,7 @@
 #include "GameLogic/SidesList.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "Common/Debug.h"
+#include "Common/ThingTemplate.h"
 #include "mapobjectprops.h"
 #include "ObjectOptions.h"
 #include "BuildList.h"
@@ -346,6 +347,8 @@ MoveInfo::MoveInfo( MapObject *pObjToMove):
 	m_oldLocation = *m_objectToModify->getLocation();
 	m_newThing = m_objectToModify->getThingTemplate();
 	m_oldThing = m_objectToModify->getThingTemplate();
+	m_newName = m_objectToModify->getName();
+	m_oldName = m_objectToModify->getName();
 }
 
 //
@@ -375,6 +378,9 @@ void MoveInfo::SetZOffset(CWorldBuilderDoc *pDoc, Real z)
 void MoveInfo::SetThingTemplate(CWorldBuilderDoc *pDoc, const ThingTemplate* thing)
 {
 	m_newThing = thing;
+	if (thing && thing != m_oldThing) {
+		m_newName = thing->getName();
+	}
 	DoMove(pDoc);
 }
 
@@ -406,7 +412,7 @@ void MoveInfo::DoMove(CWorldBuilderDoc *pDoc)
 	if (m_newThing != m_oldThing) {
 		m_objectToModify->setThingTemplate(m_newThing);
 	}
-	if (m_newName != m_oldName) {
+	if (m_newName != m_oldName || m_newThing != m_oldThing) {
 		m_objectToModify->setName(m_newName);
 	}
 }
@@ -421,7 +427,7 @@ void MoveInfo::UndoMove(CWorldBuilderDoc *pDoc)
 	if (m_newThing != m_oldThing) {
 		m_objectToModify->setThingTemplate(m_oldThing);
 	}
-	if (m_newName != m_oldName) {
+	if (m_newName != m_oldName || m_newThing != m_oldThing) {
 		m_objectToModify->setName(m_oldName);
 	}
 }
