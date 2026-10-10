@@ -52,6 +52,7 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 
 #include "Common/file.h"
+#include "Utility/stringex.h"
 
 
 #define K_OBSOLETE_HEIGHT_MAP_VERSION 8
@@ -535,6 +536,27 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 
 	TheSidesList->validateSides();
 	setupAlphaTiles();
+}
+
+Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
+{
+	DEBUG_ASSERTCRASH(getLogicalBounds().isInRegionInclusive(bounds), ("WorldHeightMap::isTerrainFlat must use a region within the logical map bounds."));
+
+	const Int width = bounds.width();
+	const Int height = bounds.height();
+	if (width <= 0 || height <= 0)
+		return true;
+
+	const UnsignedByte* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
+	const UnsignedByte referenceHeight = firstRow[0];
+	for (Int j = 0; j < height; j++)
+	{
+		const UnsignedByte* row = firstRow + j * m_width;
+		if (memcchr(row, referenceHeight, width) != 0)
+			return false;
+	}
+
+	return true;
 }
 
 /** Optimized version of method to get triangle flip state of a terrain cell.  Use this

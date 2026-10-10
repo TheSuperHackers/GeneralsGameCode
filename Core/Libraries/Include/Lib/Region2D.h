@@ -70,4 +70,10 @@ struct Region2D
 		return (lo.x < other.lo.x) && (other.hi.x < hi.x) &&
 		       (lo.y < other.lo.y) && (other.hi.y < hi.y);
 	}
+
+	Bool isInRegionInclusive( const Region2D& other ) const
+	{
+		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
+		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y);
+	}
 };
