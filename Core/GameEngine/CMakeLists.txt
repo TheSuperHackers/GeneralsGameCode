@@ -49,6 +49,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameEngine.h
 #    Include/Common/GameLOD.h
     Include/Common/GameMemory.h
+    Include/Common/GameMemoryNull.inl
     Include/Common/GameMusic.h
     Include/Common/GameSounds.h
 #    Include/Common/GameSpyMiscPreferences.h
@@ -667,8 +668,13 @@ set(GAMEENGINE_SRC
     Source/Common/System/FileSystem.cpp
 #    Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
-    #Source/Common/System/GameMemory.cpp # is conditionally appended
-    #Source/Common/System/GameMemoryInit.cpp # is conditionally appended
+    Source/Common/System/GameMemory.cpp
+    Source/Common/System/GameMemoryInit.cpp
+    Source/Common/System/GameMemoryInitDMA_Generals.inl
+    Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl
+    Source/Common/System/GameMemoryInitPools_Generals.inl
+    Source/Common/System/GameMemoryInitPools_GeneralsMD.inl
+    Source/Common/System/GameMemoryNull.cpp
     Source/Common/System/GameType.cpp
 #    Source/Common/System/Geometry.cpp
 #    Source/Common/System/KindOf.cpp
@@ -1171,24 +1177,6 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/WOLBrowser/WebBrowser.cpp
     Source/Precompiled/PreRTS.cpp
 )
-
-if(RTS_GAMEMEMORY_ENABLE)
-    # Uses the original Game Memory implementation.
-    list(APPEND GAMEENGINE_SRC
-        Source/Common/System/GameMemory.cpp
-        Source/Common/System/GameMemoryInit.cpp
-        Source/Common/System/GameMemoryInitDMA_Generals.inl
-        Source/Common/System/GameMemoryInitDMA_GeneralsMD.inl
-        Source/Common/System/GameMemoryInitPools_Generals.inl
-        Source/Common/System/GameMemoryInitPools_GeneralsMD.inl
-    )
-else()
-    # Uses the null implementation when disabled.
-    list(APPEND GAMEENGINE_SRC
-        Source/Common/System/GameMemoryNull.cpp
-        Include/Common/GameMemoryNull.h
-    )
-endif()
 
 
 add_library(corei_gameengine_private INTERFACE)

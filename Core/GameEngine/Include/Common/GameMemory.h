@@ -179,7 +179,9 @@
 // Useful for address sanitizer checks and other investigations.
 // Is included below the macros so that memory pool debug code can still be used.
 #ifdef DISABLE_GAMEMEMORY
-#include "GameMemoryNull.h"
+	#define INCLUDE_GAMEMEMORYNULL_INL 1
+	#include "GameMemoryNull.inl"
+	#undef INCLUDE_GAMEMEMORYNULL_INL
 #else
 
 #ifdef MEMORYPOOL_DEBUG

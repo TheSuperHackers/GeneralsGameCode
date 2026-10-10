@@ -43,6 +43,8 @@
 // ----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#ifndef DISABLE_GAMEMEMORY
+
 // SYSTEM INCLUDES
 
 // USER INCLUDES
@@ -145,3 +147,4 @@ void userMemoryManagerInitPools()
 	}
 }
 
+#endif // DISABLE_GAMEMEMORY
