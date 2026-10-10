@@ -58,6 +58,8 @@ SimpleObjectIterator::Clump::~Clump()
 //=============================================================================
 SimpleObjectIterator::SimpleObjectIterator()
 {
+	static_assert(ARRAY_SIZE(theClumpCompareProcs) == ITER_ORDER_TYPE_COUNT, "Incorrect array size");
+
 	m_firstClump = nullptr;
 	m_curClump = nullptr;
 	m_clumpCount = 0;

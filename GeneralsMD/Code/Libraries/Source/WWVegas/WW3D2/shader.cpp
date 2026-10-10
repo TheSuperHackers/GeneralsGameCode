@@ -375,15 +375,16 @@ public:
 	bool		useAlpha;
 };
 
-const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
+const Blend srcBlendLUT[] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
 	Blend(D3DBLEND_SRCALPHA, true),
  	Blend(D3DBLEND_DESTCOLOR, true)
 };
+static_assert(ARRAY_SIZE(srcBlendLUT) == ShaderClass::SRCBLEND_MAX, "Incorrect array size");
 
-const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] =
+const Blend dstBlendLUT[] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -392,6 +393,7 @@ const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] =
  	Blend(D3DBLEND_SRCALPHA, true),
  	Blend(D3DBLEND_INVSRCALPHA, true)
 };
+static_assert(ARRAY_SIZE(dstBlendLUT) == ShaderClass::DSTBLEND_MAX, "Incorrect array size");
 
 
 /***********************************************************************************************

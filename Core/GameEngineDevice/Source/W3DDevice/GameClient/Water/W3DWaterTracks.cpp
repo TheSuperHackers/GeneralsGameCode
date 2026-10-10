@@ -105,14 +105,16 @@ struct waveInfo
 	const char *m_waveTypeName;			//name of this wave type.
 };
 
-waveInfo waveTypeInfo[WaveTypeMax]=
+waveInfo waveTypeInfo[]=
 {
 	{28.0f, 18.0f, 25.0f, 0.018f, 900, 0.01f, 0.18f, 1500, 0,"wave256.tga","Pond"},	//pond
 	{55.0f, 36.0f, 80.0f, 0.015f, 2000, 0.5f, 0.18f, 1000, 6267,"wave256.tga","Ocean"},	//ocean
 	{55.0f, 36.0f, 80.0f, 0.015f, 2000, 0.05f, 0.18f, 1000, 6267,"wave256.tga","Close Ocean"},
 	{55.0f, 36.0f, 80.0f, 0.015f, 4000, 0.01f, 0.18f, 2000, 6267,"wave256.tga","Close Ocean Double"},
 	{55.0f, 27.0f, 80.0f, 0.015f, 2000, 0.01f, 8.0f, 2000, 5367,"wave256.tga","Radial"},
+	{0.0f, 0.0f, 0.0f, 0.0f, 0, 0.0f, 0.0f, 0, 0, nullptr, nullptr},	//stationary
 };
+static_assert(ARRAY_SIZE(waveTypeInfo) == WaveTypeMax, "Incorrect array size");
 
 //=============================================================================
 // WaterTracksObj::~WaterTracksObj
