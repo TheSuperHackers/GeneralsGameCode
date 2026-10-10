@@ -145,15 +145,17 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 
 void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *dirInfo, const AsciiString& currentDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
-	DetailedArchivedDirectoryInfoMap::const_iterator diriter = dirInfo->m_directories.begin();
-	for (; diriter != dirInfo->m_directories.end(); ++diriter) {
-		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
-		AsciiString tempDirName = currentDirectory;
-		if (!tempDirName.isEmpty() && !tempDirName.endsWith("\\")) {
-			tempDirName.concat('\\');
+	if (searchSubdirectories) {
+		DetailedArchivedDirectoryInfoMap::const_iterator diriter = dirInfo->m_directories.begin();
+		for (; diriter != dirInfo->m_directories.end(); ++diriter) {
+			const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
+			AsciiString tempDirName = currentDirectory;
+			if (!tempDirName.isEmpty() && !tempDirName.endsWith("\\")) {
+				tempDirName.concat('\\');
+			}
+			tempDirName.concat(tempDirInfo->m_directoryName);
+			getFileListInDirectory(tempDirInfo, tempDirName, searchName, filenameList, searchSubdirectories);
 		}
-		tempDirName.concat(tempDirInfo->m_directoryName);
-		getFileListInDirectory(tempDirInfo, tempDirName, searchName, filenameList, searchSubdirectories);
 	}
 
 	ArchivedFileInfoMap::const_iterator fileiter = dirInfo->m_files.begin();
