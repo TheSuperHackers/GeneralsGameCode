@@ -256,7 +256,11 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 				other->isKindOf( KINDOF_FS_FACTORY ) ||
 				other->isKindOf( KINDOF_FS_BASE_DEFENSE ) ||
 				other->isKindOf( KINDOF_FS_TECHNOLOGY ) ||
-				other->isKindOf( KINDOF_REBUILD_HOLE ) )
+				other->isKindOf( KINDOF_REBUILD_HOLE ) 
+#if !RETAIL_COMPATIBLE_CRC
+			  || other->isFactionStructure()
+#endif
+				)
 		{
 			playImpactSound(other, other->getPosition());
 			other->kill();
@@ -274,6 +278,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 			other->kill();
 			return;
 		}
+		return;
 	}
 
 
