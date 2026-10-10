@@ -31,6 +31,7 @@
 #include "WW3D2/camera.h"
 #include "WWLib/simplevec.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/formconv.h"
 #include "Common/MapObject.h"
 #include "Common/PerfTimer.h"
 #include "W3DDevice/GameClient/HeightMap.h"
@@ -94,7 +95,10 @@ W3DShroud::~W3DShroud()
 	ReleaseResources();
 
 	if (m_pSrcTexture)
+	{
+		DX8_ErrorCode(m_pSrcTexture->UnlockRect());
 		m_pSrcTexture->Release();
+	}
 
 	delete [] m_finalFogData;
 	delete [] m_currentFogData;
@@ -155,26 +159,41 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
  	memset(m_finalFogData,0,srcWidth*srcHeight);
 #endif
 
+	WW3DFormat sourceFormat = WW3D_FORMAT_R5G6B5;
 #if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-		m_pSrcTexture = DX8Wrapper::_Create_DX8_Surface(srcWidth,srcHeight, WW3D_FORMAT_A4R4G4B4);
-	else
+	{
+		sourceFormat = WW3D_FORMAT_A4R4G4B4;
+	}
 #endif
-		m_pSrcTexture = DX8Wrapper::_Create_DX8_Surface(srcWidth,srcHeight, WW3D_FORMAT_R5G6B5);
 
-	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Failed to Allocate Shroud Src Surface"));
+	// TheSuperHackers @bugfix Codex 09/10/2026 Avoid D3D8 allocations retained by scratch-surface CopyRects uploads.
+	IDirect3DTexture8* sourceTexture = DX8Wrapper::_Create_DX8_Texture(srcWidth, srcHeight, sourceFormat, MIP_LEVELS_1, D3DPOOL_SYSTEMMEM);
+	if (!sourceTexture)
+	{
+		RELEASE_CRASH("Failed to allocate shroud source texture");
+		return;
+	}
 
-	D3DLOCKED_RECT rect;
+	HRESULT result = sourceTexture->GetSurfaceLevel(0, &m_pSrcTexture);
+	sourceTexture->Release();
+	if (FAILED(result))
+	{
+		RELEASE_CRASH("Failed to acquire shroud source surface");
+		return;
+	}
 
-	//Get a pointer to source surface pixels.
-	HRESULT res = m_pSrcTexture->LockRect(&rect,nullptr,D3DLOCK_NO_DIRTY_UPDATE);
-	m_pSrcTexture->UnlockRect();
+	D3DSURFACE_DESC sourceDesc;
+	result = m_pSrcTexture->GetDesc(&sourceDesc);
+	if (FAILED(result) || sourceDesc.Width < srcWidth || sourceDesc.Height < srcHeight || sourceDesc.Format != WW3DFormat_To_D3DFormat(sourceFormat))
+	{
+		m_pSrcTexture->Release();
+		m_pSrcTexture = nullptr;
+		RELEASE_CRASH("Unsupported shroud source texture dimensions or format");
+		return;
+	}
 
-	DEBUG_ASSERTCRASH( res == D3D_OK, ("Failed to lock shroud src surface"));
-	res = 0;// just to avoid compiler warnings
-
-	m_srcTextureData=rect.pBits;
-	m_srcTexturePitch=rect.Pitch;
+	lockSourceTexture();
 
 	//clear entire texture to black
 	memset(m_srcTextureData,0,m_srcTexturePitch*srcHeight);
@@ -205,8 +224,10 @@ void W3DShroud::reset()
 	//Free old shroud data since it may no longer fit new map.
 	if (m_pSrcTexture)
 	{
+		DX8_ErrorCode(m_pSrcTexture->UnlockRect());
 		m_pSrcTexture->Release();
 		m_pSrcTexture=nullptr;
+		m_srcTextureData=nullptr;
 	}
 
 	delete [] m_finalFogData;
@@ -471,6 +492,8 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 	Int numFullCopies = m_dstTextureWidth/srcRect.right;
 	Int numExtraPixels = m_dstTextureWidth%srcRect.right;
 
+	DX8_ErrorCode(m_pSrcTexture->UnlockRect());
+
 	for (y=0; y<m_dstTextureHeight; y++)
 	{
 		dstPoint.y=y;
@@ -501,6 +524,21 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 		}
 	}
 
+	lockSourceTexture();
+}
+
+// Keep CPU shroud access inside the lock and refresh the pointer after each upload.
+void W3DShroud::lockSourceTexture()
+{
+	D3DLOCKED_RECT rect;
+	if (FAILED(m_pSrcTexture->LockRect(&rect, nullptr, D3DLOCK_NO_DIRTY_UPDATE)))
+	{
+		RELEASE_CRASH("Failed to lock shroud source texture");
+		return;
+	}
+
+	m_srcTextureData = rect.pBits;
+	m_srcTexturePitch = rect.Pitch;
 }
 
 /**Set the shroud color within the border area of the map*/
@@ -711,12 +749,14 @@ void W3DShroud::render(CameraClass *cam)
 
 	{
 		//USE_PERF_TIMER(shroudCopy)
+		DX8_ErrorCode(m_pSrcTexture->UnlockRect());
 		DX8Wrapper::_Copy_DX8_Rects(
 				m_pSrcTexture,
 				&srcRect,
 				1,
 				pDestSurface->Peek_D3D_Surface(),
 				&dstPoint);
+		lockSourceTexture();
 	}
 
 	REF_PTR_RELEASE (pDestSurface);
