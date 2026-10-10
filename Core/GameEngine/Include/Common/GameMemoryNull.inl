@@ -16,7 +16,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#if !INCLUDE_GAMEMEMORYNULL_INL
+#error Never include GameMemoryNull.inl. Include GameMemory.h instead
+#endif
 
 #define allocateBytes(ARGCOUNT,ARGLITERAL)          allocateBytesImplementation(ARGCOUNT)
 #define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL) allocateBytesDoNotZeroImplementation(ARGCOUNT)
