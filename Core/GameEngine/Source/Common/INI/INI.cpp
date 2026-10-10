@@ -1612,32 +1612,34 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 #if USE_STD_FROM_CHARS_PARSING
 
 template <typename Type>
-Type scanType(std::string_view token)
+Type scanType(const char* tokenString)
 {
+	std::string_view token(tokenString);
 	DEBUG_ASSERTCRASH(!token.empty(), ("token is not expected to be empty"));
 
 	// Unlike sscanf, std::from_chars cannot parse "+".
 	// Skip it for from_chars while preserving the original token for the fallback.
 	const size_t tokenOffset = (token[0] == '+');
+	if (tokenOffset && token.size() > 1 && token[1] == '-')
+		throw INI_INVALID_DATA;
 
 	// Unlike sscanf, std::from_chars cannot parse "-" as unsigned integer.
 	std::conditional_t<std::is_integral_v<Type>, Int64, Type> result{};
 	const auto [ptr, ec] = std::from_chars(token.data() + tokenOffset, token.data() + token.size(), result);
 
-	// TheSuperHackers @bugfix Preserve legacy range handling with defined strto* conversions.
+	// Preserve legacy range handling with defined strto* conversions.
 	if (ec == std::errc::result_out_of_range)
 	{
-		// All callers pass null-terminated INI tokens.
 		char* end;
 		Type value;
 		if constexpr (std::is_floating_point_v<Type>)
-			value = std::strtof(token.data(), &end);
+			value = std::strtof(tokenString, &end);
 		else if constexpr (std::is_signed_v<Type>)
-			value = static_cast<Type>(std::strtoll(token.data(), &end, 10));
+			value = static_cast<Type>(std::strtoll(tokenString, &end, 10));
 		else
-			value = static_cast<Type>(std::strtoull(token.data(), &end, 10));
+			value = static_cast<Type>(std::strtoull(tokenString, &end, 10));
 
-		if (end == token.data())
+		if (end == tokenString)
 			throw INI_INVALID_DATA;
 
 		return value;

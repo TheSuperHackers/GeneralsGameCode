@@ -62,11 +62,15 @@ TEST(INI, OversizedIntegersMatchLegacyParser)
 
 TEST(INI, InvalidIntegersAreRejected)
 {
-	for (const char* token : {"abc", "+", "-", "+-9999999999999999999"})
+	for (const char* token : {"abc", "+", "-", "++1", "+-99999999", "+-9999999999999999999"})
 	{
 		SCOPED_TRACE(token);
 		EXPECT_THROW(INI::scanInt(token), decltype(INI_INVALID_DATA));
 		EXPECT_THROW(INI::scanUnsignedInt(token), decltype(INI_INVALID_DATA));
+		Int legacySigned;
+		UnsignedInt legacyUnsigned;
+		EXPECT_NE(std::sscanf(token, "%d", &legacySigned), 1);
+		EXPECT_NE(std::sscanf(token, "%u", &legacyUnsigned), 1);
 	}
 }
 
@@ -108,9 +112,11 @@ TEST(INI, RealRangeErrorsMatchLegacyParser)
 
 TEST(INI, InvalidRealsAreRejected)
 {
-	for (const char* token : {"abc", "+", "-", "+-1e100", "+-1e-100"})
+	for (const char* token : {"abc", "+", "-", "++1.25", "+-1.25", "+-1e100", "+-1e-100"})
 	{
 		SCOPED_TRACE(token);
 		EXPECT_THROW(INI::scanReal(token), decltype(INI_INVALID_DATA));
+		Real legacy;
+		EXPECT_NE(std::sscanf(token, "%f", &legacy), 1);
 	}
 }
