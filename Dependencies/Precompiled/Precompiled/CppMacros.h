@@ -23,10 +23,15 @@
 #if __cplusplus >= 201103L
 #define CPP_11(code) code
 #define FUNCTION_DELETE = delete
+#define static_assert_cpp98(expr, msg) static_assert(expr, msg)
 #else
 #define CPP_11(code)
 #define FUNCTION_DELETE
 #define static_assert(expr, msg)
+// Unlike static_assert, static_assert_cpp98 is also checked before C++11. Use it with expressions that a C++98
+// compiler can evaluate. The array has a negative size when the expression is false, which does not compile.
+// VC6 accepts that every use in a scope declares the same typedef name.
+#define static_assert_cpp98(expr, msg) typedef char static_assert_cpp98_failed[(expr) ? 1 : -1]
 #define alignof(type) __alignof(type)
 #define constexpr
 #define noexcept
