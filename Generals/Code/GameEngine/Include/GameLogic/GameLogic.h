@@ -249,6 +249,10 @@ public:
 
 	Bool isQuitToDesktopRequested() const { return m_quitToDesktopAfterMatch; }
 
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	void friend_destroyInTunnelContain(const Object* strandedObject);
+#endif
+
 protected:
 
 	// snapshot methods
