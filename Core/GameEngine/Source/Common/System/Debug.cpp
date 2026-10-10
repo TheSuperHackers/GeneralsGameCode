@@ -22,26 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Debug.cpp
-//-----------------------------------------------------------------------------
-//
-//                       Westwood Studios Pacific.
-//
-//                       Confidential Information
-//                Copyright (C) 2001 - All Rights Reserved
-//
-//-----------------------------------------------------------------------------
-//
-// Project:   RTS3
-//
-// File name: Debug.cpp
-//
-// Created:   Steven Johnson, August 2001
-//
-// Desc:      Debug logging and other debug utilities
-//
-// ----------------------------------------------------------------------------
-
 // SYSTEM INCLUDES
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
@@ -54,10 +34,6 @@
 // deterministic or the same on all peers in multiplayer games.
 //#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
-#define DEBUG_THREADSAFE
-#ifdef DEBUG_THREADSAFE
-#include "Common/CriticalSection.h"
-#endif
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/CRCDebug.h"
@@ -73,84 +49,16 @@
 #include "Common/MiniDumper.h"
 #endif
 
+
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-
+#ifdef ALLOW_DEBUG_UTILS
 // ----------------------------------------------------------------------------
-// DEFINES
-// ----------------------------------------------------------------------------
-
-#ifdef DEBUG_LOGGING
-
-#if defined(RTS_DEBUG)
-	#define DEBUG_FILE_NAME				"DebugLogFileD"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
-#else
-	#define DEBUG_FILE_NAME				"DebugLogFile"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev"
-#endif
-
-#endif
-
-// ----------------------------------------------------------------------------
-// PRIVATE TYPES
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-// PRIVATE DATA
-// ----------------------------------------------------------------------------
-// TheSuperHackers @info Must not use static RAII types when set in DebugInit,
-// because DebugInit can be called during static module initialization before the main function is called.
-#ifdef DEBUG_LOGGING
-static FILE *theLogFile = nullptr;
-static char theLogFileName[ _MAX_PATH ];
-static char theLogFileNamePrev[ _MAX_PATH ];
-#endif
-#define LARGE_BUFFER	8192
-static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
-static int theDebugFlags = 0;
-static DWORD theMainThreadID = 0;
-static DebugCrashHandler theCrashHandler = nullptr;
-// ----------------------------------------------------------------------------
-// PUBLIC DATA
-// ----------------------------------------------------------------------------
-
-char* TheCurrentIgnoreCrashPtr = nullptr;
-#ifdef DEBUG_LOGGING
-UnsignedInt DebugLevelMask = 0;
-const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
-	"NET"
-};
-#endif
-
-// ----------------------------------------------------------------------------
-// PRIVATE PROTOTYPES
-// ----------------------------------------------------------------------------
-static const char *getCurrentTimeString();
-static const char *getCurrentTickString();
-static void prepBuffer(char *buffer);
-#ifdef DEBUG_LOGGING
-static void doLogOutput(const char *buffer);
-static void doLogOutput(const char *buffer, const char *endline);
-#endif
-#ifdef DEBUG_CRASHING
-static int doCrashBox(const char *buffer, Bool logResult);
-#endif
-static void whackFunnyCharacters(char *buf);
-#ifdef DEBUG_STACKTRACE
-static void doStackDump();
-#endif
-
-// ----------------------------------------------------------------------------
-// PRIVATE FUNCTIONS
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-inline Bool ignoringAsserts()
+static bool queryIgnoreAsserts()
 {
 	if (!DX8Wrapper_IsWindowed)
 		return true;
@@ -165,566 +73,90 @@ inline Bool ignoringAsserts()
 }
 
 // ----------------------------------------------------------------------------
-inline HWND getThreadHWND()
+static void *queryMainWindow()
 {
-	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:nullptr;
+	return ApplicationHWnd;
 }
-
-// ----------------------------------------------------------------------------
-
-int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
-{
-	HWND threadHWND = getThreadHWND();
-	return ::MessageBox(threadHWND, lpText, lpCaption, uType);
-}
-
-// ----------------------------------------------------------------------------
-// getCurrentTimeString
-/**
-	Return the current time in string form
-*/
-// ----------------------------------------------------------------------------
-static const char *getCurrentTimeString()
-{
-	time_t aclock;
-	time(&aclock);
-	struct tm *newtime = localtime(&aclock);
-	return asctime(newtime);
-}
-
-// ----------------------------------------------------------------------------
-// getCurrentTickString
-/**
-	Return the current TickCount in string form
-*/
-// ----------------------------------------------------------------------------
-static const char *getCurrentTickString()
-{
-	static char TheTickString[32];
-	snprintf(TheTickString, ARRAY_SIZE(TheTickString), "(T=%08lx)", ::GetTickCount());
-	return TheTickString;
-}
-
-// ----------------------------------------------------------------------------
-// prepBuffer
-// zap the buffer and optionally prepend the tick time.
-// ----------------------------------------------------------------------------
-/**
-	Empty the buffer passed in, then optionally prepend the current TickCount
-	value in string form, depending on the setting of theDebugFlags.
-*/
-static void prepBuffer(char *buffer)
-{
-	buffer[0] = 0;
-#ifdef ALLOW_DEBUG_UTILS
-	if (theDebugFlags & DEBUG_FLAG_PREPEND_TIME)
-	{
-		strcpy(buffer, getCurrentTickString());
-		strcat(buffer, " ");
-	}
-#endif
-}
-
-// ----------------------------------------------------------------------------
-// doLogOutput
-/**
-	send a string directly to the log file and/or console without further processing.
-*/
-// ----------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-static void doLogOutput(const char *buffer)
-{
-		doLogOutput(buffer, "\n");
-}
-
-static void doLogOutput(const char *buffer, const char *endline)
-{
-	// log message to file
-	if (theDebugFlags & DEBUG_FLAG_LOG_TO_FILE)
-	{
-		if (theLogFile)
-		{
-			fprintf(theLogFile, "%s%s", buffer, endline);
-			fflush(theLogFile);
-		}
-	}
-
-	// log message to dev studio output window
-	if (theDebugFlags & DEBUG_FLAG_LOG_TO_CONSOLE)
-	{
-		::OutputDebugString(buffer);
-		::OutputDebugString(endline);
-	}
-
-#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
-	addCRCDebugLineNoCounter("%s%s", buffer, endline);
-#endif
-}
-#endif // DEBUG_LOGGING
-
-// ----------------------------------------------------------------------------
-// doCrashBox
-/*
-	present a messagebox with the given message. Depending on user selection,
-	we exit the app, break into debugger, or continue execution.
-*/
-// ----------------------------------------------------------------------------
-#ifdef DEBUG_CRASHING
-static int doCrashBox(const char *buffer, Bool logResult)
-{
-	int result;
-
-	if (!ignoringAsserts()) {
-		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
-		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
-	}	else {
-		result = IDIGNORE;
-	}
-
-	switch(result)
-	{
-		case IDABORT:
-#ifdef DEBUG_LOGGING
-			if (logResult)
-				DebugLog("[Abort]");
-#endif
-			_exit(1);
-			break;
-		case IDRETRY:
-#ifdef DEBUG_LOGGING
-			if (logResult)
-				DebugLog("[Retry]");
-#endif
-			::DebugBreak();
-			break;
-		case IDIGNORE:
-#ifdef DEBUG_LOGGING
-			// do nothing, just keep going
-			if (logResult)
-				DebugLog("[Ignore]");
-#endif
-			break;
-	}
-	return result;
-}
-#endif
 
 #ifdef DEBUG_STACKTRACE
 // ----------------------------------------------------------------------------
-/**
-	Dumps a stack trace (from the current PC) to logfile and/or console.
-*/
-static void doStackDump()
+static void handleStackDump(void (*output)(const char *line))
 {
+	if (TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace)
+		return;
+
 	const int STACKTRACE_SIZE	= 24;
-	const int STACKTRACE_SKIP = 2;
+	// Skips FillStackAddresses, this function and the debug function that calls it, so that the trace begins at DebugCrash.
+	const int STACKTRACE_SKIP = 3;
 	void* stacktrace[STACKTRACE_SIZE];
 
-	doLogOutput("\nStack Dump:");
+	output("\nStack Dump:");
 	::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
-	::StackDumpFromAddresses(stacktrace, STACKTRACE_SIZE, doLogOutput);
+	::StackDumpFromAddresses(stacktrace, STACKTRACE_SIZE, output);
 }
 #endif
 
 // ----------------------------------------------------------------------------
-// whackFunnyCharacters
-/**
-	Eliminates any undesirable nonprinting characters, aside from newline,
-	replacing them with spaces.
-*/
-// ----------------------------------------------------------------------------
-static void whackFunnyCharacters(char *buf)
+static void handleCrashIgnored()
 {
-	for (char *p = buf + strlen(buf) - 1; p >= buf; --p)
-	{
-		// ok, these are naughty magic numbers, but I'm guessing you know ASCII....
-		if (*p >= 0 && *p < 32 && *p != 10 && *p != 13)
-			*p = 32;
-	}
+	if( TheKeyboard )
+		TheKeyboard->resetKeys();
+	if( TheMouse )
+		TheMouse->reset();
 }
 
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
 // ----------------------------------------------------------------------------
-// PUBLIC FUNCTIONS
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-// DebugInit
-// ----------------------------------------------------------------------------
-#ifdef ALLOW_DEBUG_UTILS
-/**
-	Initialize the debug utilities. This should be called once, as near to the
-	start of the app as possible, before anything else (since other code will
-	probably want to make use of it).
-*/
-void DebugInit(int flags)
+static void handleLog(const char *buffer, const char *endline)
 {
-//	if (theDebugFlags != 0)
-//		::MessageBox(nullptr, "Debug already inited", "", MB_OK|MB_APPLMODAL);
+	addCRCDebugLineNoCounter("%s%s", buffer, endline);
+}
+#endif
 
+// ----------------------------------------------------------------------------
+// GameDebugInit
+// ----------------------------------------------------------------------------
+/**
+	Initialize the debug utilities for an application that uses the game engine.
+	This connects them to the game engine and opens the log file of the client instance.
+*/
+void GameDebugInit(int flags)
+{
 	// just quietly allow multiple calls to this, so that static ctors can call it.
-	if (theDebugFlags == 0)
-	{
-		theDebugFlags = flags;
-
-		theMainThreadID = GetCurrentThreadId();
-
-	#ifdef DEBUG_LOGGING
-
-		// TheSuperHackers @info Debug initialization can happen very early.
-		// Determine the client instance id before creating the log file with an instance specific name.
-		CommandLine::parseCommandLineForStartup();
-
-		if (!rts::ClientInstance::initialize())
-			return;
-
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
-		if (char *pEnd = strrchr(dirbuf, '\\'))
-		{
-			*(pEnd + 1) = 0;
-		}
-
-		static_assert(ARRAY_SIZE(theLogFileNamePrev) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
-		strcpy(theLogFileNamePrev, dirbuf);
-		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
-		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
-		if (rts::ClientInstance::getInstanceId() > 1u)
-		{
-			size_t offset = strlen(theLogFileNamePrev);
-			snprintf(theLogFileNamePrev + offset, ARRAY_SIZE(theLogFileNamePrev) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
-		}
-		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
-
-		static_assert(ARRAY_SIZE(theLogFileName) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
-		strcpy(theLogFileName, dirbuf);
-		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
-		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
-		if (rts::ClientInstance::getInstanceId() > 1u)
-		{
-			size_t offset = strlen(theLogFileName);
-			snprintf(theLogFileName + offset, ARRAY_SIZE(theLogFileName) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
-		}
-		strlcat(theLogFileName, ".txt", ARRAY_SIZE(theLogFileNamePrev));
-
-		remove(theLogFileNamePrev);
-		if (rename(theLogFileName, theLogFileNamePrev) != 0)
-		{
-#ifdef DEBUG_LOGGING
-			DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", theLogFileName, theLogFileNamePrev);
-#endif
-			if (remove(theLogFileName) != 0)
-			{
-#ifdef DEBUG_LOGGING
-				DebugLog("Warning: Failed to remove file '%s'", theLogFileName);
-#endif
-			}
-		}
-
-		theLogFile = fopen(theLogFileName, "w");
-		if (theLogFile != nullptr)
-		{
-			DebugLog("Log %s opened: %s", theLogFileName, getCurrentTimeString());
-		}
-	#endif
-	}
-
-}
-#endif
-
-// ----------------------------------------------------------------------------
-// DebugLog
-// ----------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-/**
-	Print a string to the log file and/or console.
-*/
-void DebugLog(const char *format, ...)
-{
-#ifdef DEBUG_THREADSAFE
-	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
-#endif
-
-	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
-
-	prepBuffer(theBuffer);
-
-	va_list args;
-	va_start(args, format);
-	size_t offset = strlen(theBuffer);
-	vsnprintf(theBuffer + offset, ARRAY_SIZE(theBuffer) - offset, format, args);
-	va_end(args);
-
-	if (strlen(theBuffer) >= sizeof(theBuffer))
-		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
-
-	whackFunnyCharacters(theBuffer);
-	doLogOutput(theBuffer);
-}
-
-/**
-	Print a string with no modifications to the log file and/or console.
-*/
-void DebugLogRaw(const char *format, ...)
-{
-#ifdef DEBUG_THREADSAFE
-	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
-#endif
-
-	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLogRaw - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
-
-	theBuffer[0] = 0;
-
-	va_list args;
-	va_start(args, format);
-	vsnprintf(theBuffer, ARRAY_SIZE(theBuffer), format, args);
-	va_end(args);
-
-	if (strlen(theBuffer) >= sizeof(theBuffer))
-		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
-
-	doLogOutput(theBuffer, "");
-}
-
-const char* DebugGetLogFileName()
-{
-	return theLogFileName;
-}
-
-const char* DebugGetLogFileNamePrev()
-{
-	return theLogFileNamePrev;
-}
-
-#endif
-
-// ----------------------------------------------------------------------------
-// DebugCrash
-// ----------------------------------------------------------------------------
-#ifdef DEBUG_CRASHING
-/**
-	Print a character string to the log file and/or console, then halt execution
-	while presenting the user with an exit/debug/ignore dialog containing the same
-	text message.
-
-	TheSuperHackers @tweak Now shows a message box without any logging when debug was not yet initialized.
-*/
-void DebugCrash(const char *format, ...)
-{
-	// Note: You might want to make this thread safe, but we cannot. The reason is that
-	// there is an implicit requirement on other threads that the message loop be running.
-
-	// make it not static so that it'll be thread-safe.
-	// make it big to avoid weird overflow bugs in debug mode
-	char theCrashBuffer[ LARGE_BUFFER ];
-
-	prepBuffer(theCrashBuffer);
-	strlcat(theCrashBuffer, "ASSERTION FAILURE: ", ARRAY_SIZE(theCrashBuffer));
-
-	va_list arg;
-	va_start(arg, format);
-	size_t offset =  strlen(theCrashBuffer);
-	vsnprintf(theCrashBuffer + offset, ARRAY_SIZE(theCrashBuffer) - offset, format, arg);
-	va_end(arg);
-
-	whackFunnyCharacters(theCrashBuffer);
-
-	const bool useLogging = theDebugFlags != 0;
-
-	if (useLogging)
-	{
-#ifdef DEBUG_LOGGING
-		if (ignoringAsserts())
-		{
-			doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
-		}
-		doLogOutput(theCrashBuffer);
-#endif
-#ifdef DEBUG_STACKTRACE
-		if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
-		{
-			doStackDump();
-		}
-#endif
-	}
-
-	if (theCrashHandler != nullptr)
-	{
-		// Every crash reaches the handler, because the ignore option of the crash box does not apply.
-		theCrashHandler(theCrashBuffer);
+	if (DebugGetFlags() != 0)
 		return;
-	}
 
-	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", ARRAY_SIZE(theCrashBuffer));
-
-	const int result = doCrashBox(theCrashBuffer, useLogging);
-
-	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != nullptr)
-	{
-		int yn;
-		if (!ignoringAsserts())
-		{
-			yn = MessageBoxWrapper("Ignore this crash from now on?", "", MB_YESNO|MB_TASKMODAL);
-		}
-		else
-		{
-			yn = IDYES;
-		}
-		if (yn == IDYES)
-			*TheCurrentIgnoreCrashPtr = 1;
-		if( TheKeyboard )
-			TheKeyboard->resetKeys();
-		if( TheMouse )
-			TheMouse->reset();
-	}
-
-}
+	DebugSetIgnoreAssertsQuery(queryIgnoreAsserts);
+	DebugSetMainWindowQuery(queryMainWindow);
+#ifdef DEBUG_STACKTRACE
+	DebugSetStackDumpHandler(handleStackDump);
+#endif
+	DebugSetCrashIgnoredHandler(handleCrashIgnored);
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
+	DebugSetLogHandler(handleLog);
 #endif
 
-// ----------------------------------------------------------------------------
-// DebugShutdown
-// ----------------------------------------------------------------------------
-#ifdef ALLOW_DEBUG_UTILS
-/**
-	Shut down the debug utilities. This should be called once, as near to the
-	end of the app as possible, after everything else (since other code will
-	probably want to make use of it).
-*/
-void DebugShutdown()
-{
+	DebugInit(flags);
+
 #ifdef DEBUG_LOGGING
-	if (theLogFile)
+	// TheSuperHackers @info Debug initialization can happen very early.
+	// Determine the client instance id before creating the log file with an instance specific name.
+	CommandLine::parseCommandLineForStartup();
+
+	if (!rts::ClientInstance::initialize())
+		return;
+
+	char suffix[32];
+	suffix[0] = 0;
+	if (rts::ClientInstance::getInstanceId() > 1u)
 	{
-		DebugLog("Log closed: %s", getCurrentTimeString());
-		fclose(theLogFile);
+		snprintf(suffix, ARRAY_SIZE(suffix), "_Instance%.2u", rts::ClientInstance::getInstanceId());
 	}
-	theLogFile = nullptr;
+
+	DebugOpenLogFile(gAppPrefix, suffix);
 #endif
-	theDebugFlags = 0;
 }
-
-// ----------------------------------------------------------------------------
-// DebugGetFlags
-// ----------------------------------------------------------------------------
-/**
-	Get the current values for the flags passed to DebugInit. Most code will never
-	need to use this; the most common usage would be to temporarily enable or disable
-	the DEBUG_FLAG_PREPEND_TIME bit for complex logfile messages.
-*/
-int DebugGetFlags()
-{
-	return theDebugFlags;
-}
-
-// ----------------------------------------------------------------------------
-// DebugSetFlags
-// ----------------------------------------------------------------------------
-/**
-	Set the current values for the flags passed to DebugInit. Most code will never
-	need to use this; the most common usage would be to temporarily enable or disable
-	the DEBUG_FLAG_PREPEND_TIME bit for complex logfile messages.
-*/
-void DebugSetFlags(int flags)
-{
-	theDebugFlags = flags;
-}
-
-#endif	// ALLOW_DEBUG_UTILS
-
-// ----------------------------------------------------------------------------
-// DebugSetCrashHandler
-// ----------------------------------------------------------------------------
-/**
-	Set the handler that receives debug and release crashes instead of the crash box.
-	Pass nullptr to show the crash box again.
-*/
-void DebugSetCrashHandler(DebugCrashHandler handler)
-{
-	theCrashHandler = handler;
-}
-
-#ifdef DEBUG_PROFILE
-// ----------------------------------------------------------------------------
-SimpleProfiler::SimpleProfiler()
-{
-	QueryPerformanceFrequency((LARGE_INTEGER*)&m_freq);
-	m_startThisSession = 0;
-	m_totalThisSession = 0;
-	m_totalAllSessions = 0;
-	m_numSessions = 0;
-}
-
-// ----------------------------------------------------------------------------
-void SimpleProfiler::start()
-{
-	DEBUG_ASSERTCRASH(m_startThisSession == 0, ("already started"));
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_startThisSession);
-}
-
-// ----------------------------------------------------------------------------
-void SimpleProfiler::stop()
-{
-	if (m_startThisSession != 0)
-	{
-		__int64 stop;
-		QueryPerformanceCounter((LARGE_INTEGER*)&stop);
-		m_totalThisSession = stop - m_startThisSession;
-		m_totalAllSessions += stop - m_startThisSession;
-		m_startThisSession = 0;
-		++m_numSessions;
-	}
-}
-
-// ----------------------------------------------------------------------------
-void SimpleProfiler::stopAndLog(const char *msg, int howOftenToLog, int howOftenToResetAvg)
-{
-	stop();
-	// howOftenToResetAvg==0 means "never reset"
-	if (howOftenToResetAvg > 0 && m_numSessions >= howOftenToResetAvg)
-	{
-		m_numSessions = 0;
-		m_totalAllSessions = 0;
-		DEBUG_LOG(("%s: reset averages",msg));
-	}
-	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec",msg,getTime(),getTotalTime(),getAverageTime()));
-}
-
-// ----------------------------------------------------------------------------
-double SimpleProfiler::getTime()
-{
-	stop();
-	return (double)m_totalThisSession / (double)m_freq * 1000.0;
-}
-
-// ----------------------------------------------------------------------------
-int SimpleProfiler::getNumSessions()
-{
-	stop();
-	return m_numSessions;
-}
-
-// ----------------------------------------------------------------------------
-double SimpleProfiler::getTotalTime()
-{
-	stop();
-	if (!m_numSessions)
-		return 0.0;
-
-	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq);
-}
-
-// ----------------------------------------------------------------------------
-double SimpleProfiler::getAverageTime()
-{
-	stop();
-	if (!m_numSessions)
-		return 0.0;
-
-	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq * (double)m_numSessions);
-}
-
-#endif	// DEBUG_PROFILE
+#endif // ALLOW_DEBUG_UTILS
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
@@ -750,6 +182,15 @@ double SimpleProfiler::getAverageTime()
 	}
 
 
+static const char *getCurrentTimeString()
+{
+	time_t aclock;
+	time(&aclock);
+	struct tm *newtime = localtime(&aclock);
+	return asctime(newtime);
+}
+
+
 static void TriggerMiniDump()
 {
 #ifdef RTS_ENABLE_CRASHDUMP
@@ -767,9 +208,10 @@ static void TriggerMiniDump()
 
 void ReleaseCrash(const char *reason)
 {
-	if (theCrashHandler != nullptr)
+	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
+	if (crashHandler != nullptr)
 	{
-		theCrashHandler(reason);
+		crashHandler(reason);
 	}
 
 	/// do additional reporting on the crash, if possible
@@ -833,7 +275,7 @@ void ReleaseCrash(const char *reason)
 #if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
+	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 	}
@@ -843,7 +285,7 @@ void ReleaseCrash(const char *reason)
 //	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
 // crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
-	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
+	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
 			"Technical Difficulties...",
@@ -864,9 +306,10 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		return;
 	}
 
-	if (theCrashHandler != nullptr)
+	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
+	if (crashHandler != nullptr)
 	{
-		theCrashHandler(m.str());
+		crashHandler(m.str());
 	}
 
 	TriggerMiniDump();
@@ -883,7 +326,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		}
 	}
 
-	if (theCrashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
+	if (crashHandler == nullptr && !(TheGlobalData && TheGlobalData->m_headless))
 	{
 		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 	}

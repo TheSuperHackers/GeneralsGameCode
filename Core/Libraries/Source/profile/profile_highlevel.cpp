@@ -27,10 +27,11 @@
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
 
-#include "profile.h"
+#include "profile/profile.h"
 #include "internal.h"
 #include <new>
-#include <WWLib/WWCommon.h>
+#include <Utility/stdio_adapter.h>
+#include <Utility/stringex.h>
 
 // our own fast critical section
 static ProfileFastCS cs;

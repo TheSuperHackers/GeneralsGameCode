@@ -27,7 +27,7 @@
 // Implementation of internal code
 //////////////////////////////////////////////////////////////////////////////
 
-#include "debug.h"
+#include "debug/debug.h"
 #include <windows.h>
 
 void DebugInternalAssert(const char *file, int line, const char *expr)

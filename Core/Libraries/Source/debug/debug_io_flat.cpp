@@ -27,13 +27,13 @@
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
 
-#include "debug.h"
-#include "debug_io.h"
+#include "debug/debug.h"
+#include "debug/debug_io.h"
 #include "internal.h"
 #include "internal_io.h"
 #include <stdlib.h>
 #include <windows.h>
-#include <WWLib/WWCommon.h>
+#include <Utility/stringex.h>
 #include <new>      // needed for placement new prototype
 
 DebugIOFlat::OutputStream::OutputStream(const char *filename, unsigned maxSize):
@@ -83,20 +83,20 @@ void DebugIOFlat::OutputStream::Delete(const char *path)
       char help[512];
       if (path[0]&&(path[1]==':'||(path[0]=='\\'&&path[1]=='\\')))
       {
-        strlcpy(help, path, ARRAY_SIZE(help));
-        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
+        strlcpy(help, path, sizeof(help));
+        strlcat(help, fileNameOnly, sizeof(help));
       }
       else
       {
         // no, relative path given
-        strlcpy(help, m_fileName, ARRAY_SIZE(help));
-        strlcat(help, path, ARRAY_SIZE(help));
-        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
+        strlcpy(help, m_fileName, sizeof(help));
+        strlcat(help, path, sizeof(help));
+        strlcat(help, fileNameOnly, sizeof(help));
       }
       if (++run)
         wsprintf(help+strlen(help),"(%i)%s",run,ext);
       else
-        strlcat(help, ext, ARRAY_SIZE(help));
+        strlcat(help, ext, sizeof(help));
       if (CopyFile(m_fileName,help,TRUE))
         break;
       if (GetLastError()!=ERROR_FILE_EXISTS)
@@ -266,7 +266,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
       case 'n':
       case 'N':
         if (splitName&&strlen(splitName)<250)
-          strlcpy(help, splitName, ARRAY_SIZE(help));
+          strlcpy(help, splitName, sizeof(help));
         break;
       default:
         *dst++=src[-1];
@@ -416,7 +416,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
     // add [ <filename> [ <size in kb> ] ]
     __ASSERT(m_firstStream==nullptr);
 
-    strlcpy(m_baseFilename, argn?argv[0]:"*eMN", ARRAY_SIZE(m_baseFilename));
+    strlcpy(m_baseFilename, argn?argv[0]:"*eMN", sizeof(m_baseFilename));
 
     char fn[256];
     ExpandMagic(m_baseFilename,nullptr,fn);

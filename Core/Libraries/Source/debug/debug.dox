@@ -59,7 +59,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./
+INPUT                  = ./Include/debug/
 FILE_PATTERNS          = debug*.h
 RECURSIVE              = NO
 EXCLUDE                = 

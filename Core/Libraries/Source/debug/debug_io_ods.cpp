@@ -26,7 +26,7 @@
 //
 // Debug I/O class ods (OutputDebugString, for use in debugger)
 //////////////////////////////////////////////////////////////////////////////
-#include "debug.h"
+#include "debug/debug.h"
 #include "internal.h"
 #include "internal_io.h"
 #include <new>      // needed for placement new prototype
