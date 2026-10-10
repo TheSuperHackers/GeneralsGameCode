@@ -1149,7 +1149,7 @@ Bool outOfWeaponRangeObject( State *thisState, void* userData )
 			//	victim->getID(), victim->getTemplate()->getName().str()));
 			return true;
 		}
-		if (!weapon->hasLeechRange() && !weapon->isWithinAttackRange(obj, victim))
+		if (!weapon->isWithinEffectiveAttackRange(obj, victim))
 		{
 			//CRCDEBUG_LOG(("outOfWeaponRangeObject() - object %d (%s) is out of range for attacking %d (%s)",
 			//	obj->getID(), obj->getTemplate()->getName().str(),
@@ -5246,6 +5246,17 @@ StateReturnType AIAttackFireWeaponState::update()
 		return STATE_FAILURE;
 	}
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 28/09/2026 The weapon may have gone out of range since we entered this
+	// state, so we check the range again to avoid partially firing the weapon.
+	Bool inRange = m_att->isAttackingObject()
+		? weapon->isWithinEffectiveAttackRange(obj, victim)
+		: weapon->isWithinEffectiveAttackRange(obj, getMachineGoalPosition());
+
+	if (!inRange)
+		return STATE_FAILURE;
+#endif
+
 	/**
 		this is the weird case where we have multi turrets, and turret 'a' wants
 		to fire, but someone has changed the current weapon to be one not on him.
@@ -5324,6 +5335,15 @@ StateReturnType AIAttackFireWeaponState::update()
         Weapon *weapon = obj->getWeaponInWeaponSlot( (WeaponSlotType)slot );
         if ( weapon )
         {
+#if !RETAIL_COMPATIBLE_CRC
+					// TheSuperHackers @bugfix Stubbjax 28/09/2026 The weapon may have gone out of range since we entered this
+					// state, so we check the range again to avoid partially firing the weapon.
+					Bool inRange = weapon->isWithinEffectiveAttackRange(obj, getMachineGoalPosition());
+
+					if (!inRange)
+						continue;
+#endif
+
           if ( weapon->fireWeapon(obj, getMachineGoalPosition()) ) //fire() returns 'reloaded'
             obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
 
