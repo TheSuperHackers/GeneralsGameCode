@@ -79,8 +79,6 @@ Bool g_useStringFile = TRUE;
 #define CSF_STRINGWITHWAVE ( ('S'<<24) | ('T'<<16) | ('R'<<8) | ('W') )
 #define CSF_VERSION 3
 
-#define STRING_FILE 0
-#define CSF_FILE 1
 #define MAX_UITEXT_LENGTH (10*1024)
 //----------------------------------------------------------------------------
 //         Private Types
@@ -102,6 +100,8 @@ struct StringLookUp
 	AsciiString		*label;
 	StringInfo		*info;
 };
+
+typedef std::vector<StringInfo> StringInfoVec;
 
 //===============================
 // CSFHeader
@@ -190,11 +190,9 @@ class GameTextManager : public GameTextInterface
 		void						readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen );
 		void						reverseWord ( Char *file, Char *lp );
 		void						translateCopy( WideChar *outbuf, Char *inbuf );
-		Bool						getStringCount( const Char *filename, Int& textCount );
-		Bool						getCSFInfo ( const Char *filename );
-		Bool						parseCSF(  const Char *filename );
-		Bool						parseStringFile( const char *filename );
-		Bool						parseMapStringFile( const char *filename );
+		Bool						getCSFInfo( const Char *filename, LanguageID& language );
+		Bool						parseCSF( const Char *filename, StringInfoVec& out );
+		Bool						parseStringFile( const char *filename, StringInfoVec& out, Bool filterLanguage );
 		Bool						readLine( char *buffer, Int max, File *file );
 		Char						readChar( File *file );
 };
@@ -288,7 +286,6 @@ void GameTextManager::init()
 {
 	AsciiString csfFile;
 	csfFile.format(g_csfFile, GetRegistryLanguage().str());
-	Int format;
 
 	if ( m_initialized )
 	{
@@ -306,18 +303,19 @@ void GameTextManager::init()
 	}
 #endif
 
-	if ( m_useStringFile && getStringCount( g_strFile, m_textCount ) )
+	StringInfoVec merged;
+
+	// Generals.str replaces generals.csf if it loads.
+	if ( !m_useStringFile || !parseStringFile( g_strFile, merged, FALSE ) )
 	{
-		format = STRING_FILE;
+		merged.clear();
+		if ( !getCSFInfo( csfFile.str(), m_language ) || !parseCSF( csfFile.str(), merged ) )
+		{
+			return;
+		}
 	}
-	else if ( getCSFInfo ( csfFile.str() ) )
-	{
-		format = CSF_FILE;
-	}
-	else
-	{
-		return;
-	}
+
+	m_textCount = (Int)merged.size();
 
 	if( m_textCount == 0 )
 	{
@@ -334,22 +332,7 @@ void GameTextManager::init()
 		return;
 	}
 
-	if ( format == STRING_FILE )
-	{
-		if( parseStringFile( g_strFile ) == FALSE )
-		{
-			deinit();
-			return;
-		}
-	}
-	else
-	{
-		if ( !parseCSF ( csfFile.str() ) )
-		{
-			deinit();
-			return;
-		}
-	}
+	std::copy( merged.begin(), merged.end(), m_stringInfo );
 
 	m_stringLUT = NEW StringLookUp[m_textCount];
 
@@ -793,54 +776,10 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 }
 
 //============================================================================
-// GameTextManager::getStringCount
-//============================================================================
-
-Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
-{
-	Bool ok = TRUE;
-
-	textCount = 0;
-
-	File *file;
-	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
-	DEBUG_LOG(("Looking in %s for string file", filename));
-
-	if ( file == nullptr )
-	{
-		return FALSE;
-	}
-
-	while(ok)
-	{
-		if( !readLine( m_buffer, sizeof( m_buffer) -1, file ) )
-			break;
-		removeLeadingAndTrailing ( m_buffer );
-
-		if( m_buffer[0] == '"' )
-		{
-				Int len = strlen(m_buffer);
-				m_buffer[ len ] = '\n';
-				m_buffer[ len+1] = 0;
-			readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
-		}
-		else if( stricmp( m_buffer, "END") == 0 )
-		{
-			textCount++;
-		}
-	}
-
-	textCount += 500;
-	file->close();
-	file = nullptr;
-	return TRUE;
-}
-
-//============================================================================
 // GameTextManager::getCSFInfo
 //============================================================================
 
-Bool GameTextManager::getCSFInfo ( const Char *filename )
+Bool GameTextManager::getCSFInfo( const Char *filename, LanguageID& language )
 {
 	CSFHeader header;
 	Bool ok = FALSE;
@@ -853,15 +792,13 @@ Bool GameTextManager::getCSFInfo ( const Char *filename )
 		{
 			if ( header.id == CSF_ID )
 			{
-				m_textCount = header.num_labels;
-
 				if ( header.version >= 2 )
 				{
-					m_language = (LanguageID) header.langid;
+					language = (LanguageID) header.langid;
 				}
 				else
 				{
-					m_language = LANGUAGE_ID_US;
+					language = LANGUAGE_ID_US;
 				}
 
 				ok = TRUE;
@@ -879,7 +816,7 @@ Bool GameTextManager::getCSFInfo ( const Char *filename )
 // GameTextManager::parseCSF
 //============================================================================
 
-Bool GameTextManager::parseCSF( const Char *filename )
+Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 {
 	File *file;
 	Int id;
@@ -900,17 +837,25 @@ Bool GameTextManager::parseCSF( const Char *filename )
 		return FALSE;
 	}
 
+	if ( header.id != CSF_ID )
+	{
+		goto quit;
+	}
+
+	out.reserve( header.num_labels );
+
 	while( file->read ( &id, sizeof (id)) == sizeof ( id) )
 	{
 		Int num;
 		Int num_strings;
+		StringInfo info;
 
 		if ( id != CSF_LABEL )
 		{
 			goto quit;
 		}
 
-		file->read ( &num_strings, sizeof ( Int ));
+		file->read ( &num_strings, sizeof ( Int ) );
 
 		file->read ( &len, sizeof ( Int ) );
 
@@ -921,8 +866,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 
 		m_buffer[len] = 0;
 
-		m_stringInfo[listCount].label = m_buffer;
-
+		info.label = m_buffer;
 
 		if ( len > m_maxLabelLen )
 		{
@@ -933,14 +877,14 @@ Bool GameTextManager::parseCSF( const Char *filename )
 
 		while ( num < num_strings )
 		{
-		 	file->read ( &id, sizeof ( Int ) );
+			file->read ( &id, sizeof ( Int ) );
 
 			if ( id != CSF_STRING && id != CSF_STRINGWITHWAVE )
 			{
 				goto quit;
 			}
 
-		 	file->read ( &len, sizeof ( Int ) );
+			file->read ( &len, sizeof ( Int ) );
 
 			if ( len )
 			{
@@ -965,12 +909,12 @@ Bool GameTextManager::parseCSF( const Char *filename )
 				}
 
 				stripSpaces ( m_tbuffer );
-				m_stringInfo[listCount].text = m_tbuffer;
+				info.text = m_tbuffer;
 			}
 
 			if ( id == CSF_STRINGWITHWAVE )
 			{
-			 	file->read ( &len, sizeof ( Int ) );
+				file->read ( &len, sizeof ( Int ) );
 				if ( len )
 				{
 					file->read ( m_buffer, len );
@@ -980,7 +924,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 				if ( num == 0 && len )
 				{
 					// only use the first string found
-					m_stringInfo[listCount].speech = m_buffer;
+					info.speech = m_buffer;
 				}
 
 			}
@@ -988,6 +932,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 			num++;
 		}
 
+		out.push_back( info );
 		listCount++;
 	}
 
@@ -1006,9 +951,8 @@ quit:
 // GameTextManager::parseStringFile
 //============================================================================
 
-Bool GameTextManager::parseStringFile( const char *filename )
+Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out, Bool filterLanguage )
 {
-	Int listCount = 0;
 	Bool ok = TRUE;
 
 	File *file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
@@ -1021,6 +965,8 @@ Bool GameTextManager::parseStringFile( const char *filename )
 	while( ok )
 	{
 		Int len;
+		StringInfo info;
+
 		if( !readLine( m_buffer, MAX_UITEXT_LENGTH, file ))
 		{
 			break;
@@ -1033,17 +979,16 @@ Bool GameTextManager::parseStringFile( const char *filename )
 
 		// make sure label is unique
 
-		for ( Int i = 0; i < listCount; i++ )
+		for ( StringInfoVec::const_iterator it = out.begin(); it != out.end(); ++it )
 		{
-			if ( stricmp ( m_stringInfo[i].label.str(), m_buffer ) == 0)
+			if ( stricmp ( it->label.str(), m_buffer ) == 0)
 			{
 				DEBUG_CRASH ( ("String label '%s' multiply defined!", m_buffer ));
 			}
 		}
 
-		m_stringInfo[listCount].label = m_buffer;
+		info.label = m_buffer;
 		len = strlen ( m_buffer );
-
 
 		if ( len > m_maxLabelLen )
 		{
@@ -1069,11 +1014,10 @@ Bool GameTextManager::parseStringFile( const char *filename )
 				m_buffer[ len+1] = 0;
 				readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
 
-
 				if ( readString )
 				{
-					// only one string per label allows
-						DEBUG_CRASH ( ("String label '%s' has more than one string defined!", m_stringInfo[listCount].label.str()));
+					// only one string per label allowed
+					DEBUG_CRASH ( ("String label '%s' has more than one string defined!", info.label.str()));
 				}
 				else
 				{
@@ -1081,8 +1025,12 @@ Bool GameTextManager::parseStringFile( const char *filename )
 					translateCopy( m_tbuffer, m_buffer2 );
 					stripSpaces ( m_tbuffer );
 
-					m_stringInfo[listCount].text = m_tbuffer ;
-					m_stringInfo[listCount].speech = m_buffer3;
+					UnicodeString text = UnicodeString(m_tbuffer);
+					if ( filterLanguage && TheLanguageFilter )
+						TheLanguageFilter->filterLine(text);
+
+					info.text = text;
+					info.speech = m_buffer3;
 					readString = TRUE;
 				}
 			}
@@ -1092,7 +1040,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 			}
 		}
 
-		listCount++;
+		out.push_back( info );
 	}
 
 quit:
@@ -1109,12 +1057,12 @@ quit:
 
 void GameTextManager::initMapStringFile( const AsciiString& filename )
 {
-	m_mapTextCount = 0;
-	getStringCount( filename.str(), m_mapTextCount );
+	StringInfoVec parsed;
+	parseStringFile( filename.str(), parsed, TRUE );
 
+	m_mapTextCount = (Int)parsed.size();
 	m_mapStringInfo = NEW StringInfo[m_mapTextCount];
-
-	parseMapStringFile( filename.str() );
+	std::copy( parsed.begin(), parsed.end(), m_mapStringInfo );
 
 	m_mapStringLUT = NEW StringLookUp[m_mapTextCount];
 
@@ -1132,111 +1080,6 @@ void GameTextManager::initMapStringFile( const AsciiString& filename )
 	qsort( m_mapStringLUT, m_mapTextCount, sizeof(StringLookUp), compareLUT  );
 }
 
-//============================================================================
-// GameTextManager::parseMapStringFile
-//============================================================================
-
-Bool GameTextManager::parseMapStringFile( const char *filename )
-{
-	Int listCount = 0;
-	Bool ok = TRUE;
-
-	File *file;
-
-	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
-	if ( file == nullptr )
-	{
-		return FALSE;
-	}
-
-	while( ok )
-	{
-		Int len;
-		if( !readLine( m_buffer, MAX_UITEXT_LENGTH, file ))
-		{
-			break;
-		}
-
-		removeLeadingAndTrailing ( m_buffer );
-
-		if( ( *(unsigned short *)m_buffer == 0x2F2F) || !m_buffer[0])			//	0x2F2F is Hex for //
-			continue;
-
-		// make sure label is unique
-
-		for ( Int i = 0; i < listCount; i++ )
-		{
-			if ( stricmp ( m_mapStringInfo[i].label.str(), m_buffer ) == 0)
-			{
-				DEBUG_CRASH ( ("String label '%s' multiply defined!", m_buffer ));
-			}
-		}
-
-		m_mapStringInfo[listCount].label = m_buffer;
-		len = strlen ( m_buffer );
-
-
-		if ( len > m_maxLabelLen )
-		{
-			m_maxLabelLen = len;
-		}
-
-		Bool readString = FALSE;
-		while( ok )
-		{
-			if (!readLine ( m_buffer, sizeof(m_buffer)-1, file ))
-			{
-				DEBUG_CRASH (("Unexpected end of string file"));
-				ok = FALSE;
-				goto quit;
-			}
-
-			removeLeadingAndTrailing ( m_buffer );
-
-			if( m_buffer[0] == '"' )
-			{
-				len = strlen(m_buffer);
-				m_buffer[ len ] = '\n';
-				m_buffer[ len+1] = 0;
-				readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
-
-
-				if ( readString )
-				{
-					// only one string per label allowed
-						DEBUG_CRASH ( ("String label '%s' has more than one string defined!", m_stringInfo[listCount].label.str()));
-				}
-				else
-				{
-					// Copy string into new home
-					translateCopy( m_tbuffer, m_buffer2 );
-					stripSpaces ( m_tbuffer );
-
-					UnicodeString text = UnicodeString(m_tbuffer);
-					if (TheLanguageFilter)
-						TheLanguageFilter->filterLine(text);
-
-					m_mapStringInfo[listCount].text = text;
-					m_mapStringInfo[listCount].speech = m_buffer3;
-					readString = TRUE;
-				}
-			}
-			else if ( stricmp ( m_buffer, "END" ) == 0)
-			{
-				break;
-			}
-		}
-
-		listCount++;
-	}
-
-quit:
-
-	file->close();
-	file = nullptr;
-
-	return ok;
-}
 
 //============================================================================
 // *GameTextManager::fetch
