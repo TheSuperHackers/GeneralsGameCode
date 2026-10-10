@@ -176,6 +176,7 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_prevHealth = getActiveBodyModuleData()->m_initialHealth;
 	m_maxHealth = getActiveBodyModuleData()->m_maxHealth;
 	m_initialHealth = getActiveBodyModuleData()->m_initialHealth;
+	m_veterancyHealthScale = 1.0f;
 
 	// force an initially-valid armor setup
 	validateArmorAndDamageFX();
@@ -957,8 +958,8 @@ void ActiveBody::setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeT
 void ActiveBody::addMaxHealth( Real addMaxHealth, MaxHealthChangeType healthChangeType )
 {
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix arcticdolphin 13/09/2026 Scale the addition by the veterancy bonus the max health already carries, so the result does not depend on the order of upgrades and promotions.
-	addMaxHealth *= TheGlobalData->m_healthBonus[getObject()->getVeterancyLevel()];
+	// TheSuperHackers @bugfix arcticdolphin 13/09/2026 Scale by the applied veterancy bonus so upgrade and promotion order does not matter.
+	addMaxHealth *= m_veterancyHealthScale;
 #endif
 	setMaxHealth( m_maxHealth + addMaxHealth, healthChangeType );
 }
@@ -1528,6 +1529,7 @@ void ActiveBody::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLeve
 
 	// change the max
 	setMaxHealth(m_maxHealth * mult, PRESERVE_RATIO );
+	m_veterancyHealthScale = newBonus / TheGlobalData->m_healthBonus[LEVEL_REGULAR];
 
 	// now change the cur (setMaxHealth now handles it)
 	//internalChangeHealth( newHealth - m_currentHealth );
@@ -1706,5 +1708,7 @@ void ActiveBody::loadPostProcess()
 
 	// extend base class
 	BodyModule::loadPostProcess();
+
+	m_veterancyHealthScale = TheGlobalData->m_healthBonus[getObject()->getVeterancyLevel()] / TheGlobalData->m_healthBonus[LEVEL_REGULAR];
 
 }

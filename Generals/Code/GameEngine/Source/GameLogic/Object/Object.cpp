@@ -2835,23 +2835,15 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		return;
 #endif
 
-	BodyModuleInterface* body = getBodyModule();
-#if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix arcticdolphin 13/09/2026 Apply the health bonus before the upgrade modules run, they scale their additions by the level the body has applied.
-	if (body)
-		body->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
-#endif
-
 	updateUpgradeModules();
 
 	const UpgradeTemplate* up = TheUpgradeCenter->findVeterancyUpgrade(newLevel);
 	if (up)
 		giveUpgrade(up);
 
-#if RETAIL_COMPATIBLE_CRC
+	BodyModuleInterface* body = getBodyModule();
 	if (body)
-		body->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
-#endif
+		body->onVeterancyLevelChanged(oldLevel, newLevel, provideFeedback);
 
 	switch (newLevel)
 	{
