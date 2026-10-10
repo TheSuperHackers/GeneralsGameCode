@@ -246,9 +246,6 @@ void HelixContain::addToContainList( Object *obj )
 {
   if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && m_portableStructureID == INVALID_ID)
   {
-    if ( Object *portable = getPortableStructure() )
-      TheGameLogic->destroyObject( portable );
-
     m_portableStructureID = obj->getID();
     obj->friend_setContainedBy( getObject() );//fool portable into thinking my object is his container
 
@@ -266,9 +263,6 @@ void HelixContain::addToContain( Object *obj )
 {
   if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && m_portableStructureID == INVALID_ID)
   {
-    if ( Object *portable = getPortableStructure() )
-      TheGameLogic->destroyObject( portable );
-
     m_portableStructureID = obj->getID();
     obj->friend_setContainedBy( getObject() );//fool portable into thinking my object is his container
 
