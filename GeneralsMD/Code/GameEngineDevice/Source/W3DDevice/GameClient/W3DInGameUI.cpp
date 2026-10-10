@@ -48,6 +48,7 @@
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/Common/W3DConvert.h"
 #include "WW3D2/ww3d.h"
+#include "WW3D2/Renderer.h"
 #include "WW3D2/hanim.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
@@ -249,7 +250,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 		Matrix3D tm = Transform;
 		Vector3 vec(m_myLoc.x, m_myLoc.y, m_myLoc.z);
 		tm.Set_Translation(vec);
-		DX8Wrapper::Set_Transform(D3DTS_WORLD, tm);
+		Renderer::Set_Transform(RB_TRANSFORM_WORLD, tm);
 
 		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
 	}
