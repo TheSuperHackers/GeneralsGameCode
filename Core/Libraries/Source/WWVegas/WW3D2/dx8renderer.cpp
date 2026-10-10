@@ -42,6 +42,7 @@
 
 #include "dx8renderer.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8polygonrenderer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
@@ -1860,11 +1861,11 @@ void DX8TextureCategoryClass::Render()
 
 		if (identity) {
 			SNAPSHOT_SAY(("Set_World_Identity"));
-			DX8Wrapper::Set_World_Identity();
+			Renderer::Set_World_Identity();
 		}
 		else {
 			SNAPSHOT_SAY(("Set_World_Transform"));
-			DX8Wrapper::Set_Transform(D3DTS_WORLD,*world_transform);
+			Renderer::Set_Transform(RB_TRANSFORM_WORLD,*world_transform);
 		}
 
 

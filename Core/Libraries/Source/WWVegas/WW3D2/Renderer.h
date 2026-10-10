@@ -23,10 +23,14 @@
 
 #pragma once
 
+#include "WW3D2/ww3dformat.h"
+
 // Forward declarations keep this header includable without pulling in the full
-// WW3D2 header graph. All W3D types below are passed by pointer or reference.
+// WW3D2 header graph. All W3D classes below are passed by pointer or reference.
 
 class LightEnvironmentClass;
+class Matrix3D;
+class Matrix4x4;
 class Vector3;
 
 struct RenderViewport
@@ -39,13 +43,15 @@ struct RenderViewport
     float max_z;
 };
 
-// A method appears here once a caller routes through it, not in anticipation of
-// one. The set below is what current callers route through; the rest of the
-// DX8Wrapper API stays reachable through DX8Wrapper's static methods until a
-// caller migrates, at which point the method it needs moves here.
-//
-// Method names intentionally match the existing DX8Wrapper names so migrating a
-// caller is a mechanical DX8Wrapper::X(...) -> Renderer::X(...) rewrite.
+enum RenderBackendTransform
+{
+    RB_TRANSFORM_WORLD,
+    RB_TRANSFORM_VIEW,
+    RB_TRANSFORM_PROJECTION
+};
+
+// The interface holds only the methods that callers route through. The rest of
+// the DX8Wrapper API is called directly.
 
 class Renderer
 {
@@ -53,6 +59,19 @@ public:
     // Initialized in WW3D::Init and shut down in WW3D::Shutdown.
     static bool Init(void * window, bool lite);
     static void Shutdown();
+
+    static int Get_Render_Device_Count();
+    static int Get_Render_Device();
+    static const char * Get_Render_Device_Name(int device_index);
+    static void Get_Device_Resolution(int & width, int & height, int & bits, bool & windowed);
+    static void Get_Render_Target_Resolution(int & width, int & height, int & bits, bool & windowed);
+    static int Get_Device_Resolution_Width();
+    static int Get_Device_Resolution_Height();
+    static bool Is_Windowed();
+    static int Get_Texture_Bitdepth();
+    static int Get_Swap_Interval();
+    static bool Has_Stencil();
+    static WW3DFormat Get_Back_Buffer_Format();
 
     static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true, bool uselimit = true);
 
@@ -64,6 +83,13 @@ public:
                       float dest_alpha = 0.0f, float z = 1.0f, unsigned int stencil = 0);
     static void Set_Viewport(const RenderViewport & viewport);
     static void Invalidate_Cached_Render_States();
+
+    static void Set_Transform(RenderBackendTransform transform, const Matrix4x4 & m);
+    static void Set_Transform(RenderBackendTransform transform, const Matrix3D & m);
+    static void Get_Transform(RenderBackendTransform transform, Matrix4x4 & m);
+    static void Set_World_Identity();
+    static void Set_View_Identity();
+    static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4 & matrix, float znear, float zfar);
 
     static void Set_Ambient(const Vector3 & color);
     static void Set_Light_Environment(LightEnvironmentClass * light_env);

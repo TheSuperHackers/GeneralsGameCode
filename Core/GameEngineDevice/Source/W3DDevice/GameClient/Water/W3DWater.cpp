@@ -1818,7 +1818,7 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 	matWW3D._23=1.0f;
 	matWW3D._44=1.0f;
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);	//position the water surface
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);	//position the water surface
 	DX8Wrapper::Set_Texture(0,nullptr);	//we'll be setting our own textures, so reset W3D
 	DX8Wrapper::Set_Texture(1,nullptr);	//we'll be setting our own textures, so reset W3D
 
@@ -2138,7 +2138,7 @@ void WaterRenderObjClass::renderSky()
 
 	Matrix3D tm(1);
 	tm.Set_Translation(Vector3(0,0,0));
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
@@ -2180,7 +2180,7 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	tm.Adjust_Translation(Vector3(SKYBODY_X,SKYBODY_Y,SKYBODY_HEIGHT));
 
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -2389,7 +2389,7 @@ void WaterRenderObjClass::renderWaterMesh()
 
 	m_vertexBufferD3D->Unlock();
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);	//position the water surface
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);	//position the water surface
 	DX8Wrapper::Set_Material(m_meshVertexMaterialClass);
 
 	ShaderClass::CullModeType oldCullMode=m_shaderClass.Get_Cull_Mode();
@@ -2913,7 +2913,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 	Matrix3D tm(1);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 	DX8Wrapper::Set_Texture(0,m_riverTexture);	//set to blue
@@ -3277,14 +3277,14 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 	Matrix3D tm(1);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
 	setupFlatWaterShader();// lorenzen sez use the alpha shader
 
 	//If video card supports it and it's enabled, feather the water edge using destination alpha
-	if (DX8Wrapper::getBackBufferFormat() == WW3D_FORMAT_A8R8G8B8 && TheGlobalData->m_showSoftWaterEdge && TheWaterTransparency->m_transparentWaterDepth !=0)
+	if (Renderer::Get_Back_Buffer_Format() == WW3D_FORMAT_A8R8G8B8 && TheGlobalData->m_showSoftWaterEdge && TheWaterTransparency->m_transparentWaterDepth !=0)
 	{		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_DESTALPHA );
 			if (!TheWaterTransparency->m_additiveBlend)
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVDESTALPHA );
@@ -3442,7 +3442,7 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	Matrix3D tm(1);
 	//set position of skybody in world
 //	tm.Set_Translation(Vector3(40,0,0));
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }

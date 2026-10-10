@@ -52,6 +52,7 @@
 #include "GameLogic/GameLogic.h"
 #include "Common/MapObject.h"
 #include "WW3D2/dx8wrapper.h"
+#include "WW3D2/Renderer.h"
 
 #if defined(RTS_DEBUG)
 
@@ -221,7 +222,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Texture(0, nullptr);
 	DX8Wrapper::Apply_Render_State_Changes();
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
 
 	Int numRect = m_numDebugIcons;
 	static Real offset = 30;
