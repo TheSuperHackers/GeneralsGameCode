@@ -16,10 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "Common/MiniDumper.h"
+#include "MiniDumper/MiniDumper.h"
 #include "Lib/Debug.h"
 #include "gitinfo.h"
 #include <Utility/stdio_adapter.h>

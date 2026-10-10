@@ -66,7 +66,7 @@
 #include "resource.h"
 
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "Common/MiniDumper.h"
+#include "MiniDumper/MiniDumper.h"
 #endif
 
 

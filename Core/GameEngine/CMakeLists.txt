@@ -73,7 +73,6 @@ set(GAMEENGINE_SRC
     Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
-    Include/Common/MiniDumper.h
     Include/Common/MiniLog.h
     Include/Common/MiscAudio.h
 #    Include/Common/MissionStats.h
@@ -681,7 +680,6 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/List.cpp
     Source/Common/System/LocalFile.cpp
     Source/Common/System/LocalFileSystem.cpp
-    Source/Common/System/MiniDumper.cpp
     Source/Common/System/ObjectStatusTypes.cpp
 #    Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
@@ -1206,6 +1204,7 @@ target_include_directories(corei_gameengine_public INTERFACE
 target_link_libraries(corei_gameengine_public INTERFACE
     core_compression
     core_browserdispatch
+    core_minidumper
     #core_wwvegas
     d3d8lib
     deps_dbghelp
