@@ -1822,37 +1822,6 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 		m_locoInfo->m_accelerationRollRate += -(LATERAL_ACCEL_COEFF * lateralAccel);
 	}
 
-#ifdef RECOIL_FROM_BEING_DAMAGED
-	// recoil from being hit
-	/// @todo Recoil needs to be based on sane damage amounts (MSB)
-	const DamageInfo *damageInfo = obj->getBodyModule()->getLastDamageInfo();
-	if (damageInfo)
-	{
-		const UnsignedInt *lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
-		if (lastDamageTimestamp && *lastDamageTimestamp > m_lastDamageTimestamp && damageInfo->in.m_amount > RECOIL_DAMAGE)
-		{
-			Object *attacker = TheGameLogic->getObject( damageInfo->in.m_sourceID );
-			if (attacker)
-			{
-				Coord3D to;
-				ThePartitionManager->getVectorTo( obj, attacker, FROM_CENTER_2D, &to );
-
-				to.normalize();
-
-				Real forward = dir->x * to.x + dir->y * to.y;
-				Real lateral = perp.x * to.x + perp.y * to.y;
-
-				Real recoil = PI/16.0f * GameClientRandomValueReal( 0.5f, 1.0f );
-
-				m_locoInfo->m_accelerationPitchRate -= recoil * forward;
-				m_locoInfo->m_accelerationRollRate -= recoil * lateral;
-			}
-
-			m_lastDamageTimestamp = *lastDamageTimestamp;
-		}
-	}
-#endif
-
 	// limit recoil pitch and roll
 
 	if (m_locoInfo->m_accelerationPitch > DECEL_PITCH_LIMIT)
