@@ -16,11 +16,17 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "stringex_memcchr_common.h"
 
-#include <stddef.h>
-
-namespace memcchr_x86asm
+#if defined(_MSC_VER) && defined(_M_IX86)
+// Internal linkage keeps this memcchr distinct from the other implementations linked into the test.
+namespace
 {
 #include "Utility/stringex_memcchr_x86asm.inl"
-} // namespace memcchr_x86asm
+} // namespace
+
+TEST(StringEx, MemcchrX86Asm)
+{
+	testMemcchr(memcchr);
+}
+#endif

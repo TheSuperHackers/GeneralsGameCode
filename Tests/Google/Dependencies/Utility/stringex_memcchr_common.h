@@ -18,14 +18,27 @@
 
 #pragma once
 
-#include <stdint.h>
-#include <string.h>
-#include <emmintrin.h>
-#if defined(_MSC_VER)
-#include <intrin.h>
-#endif
+#include <gtest/gtest.h>
 
-namespace memcchr_sse2
+#include <string.h>
+
+using MemcchrFunction = const void* (*)(const void* data, int c, size_t n);
+
+// Fills a buffer like "aaab" and checks that memcchr finds the first 'b'.
+// If the searched length has no 'b', memcchr must return nullptr.
+// Tests with variable lengths.
+inline void testMemcchr(MemcchrFunction memcchrFunction)
 {
-#include "Utility/stringex_memcchr_sse2.inl"
-} // namespace memcchr_sse2
+	constexpr Int maxLength = 256;
+	char buffer[maxLength + 1];
+	for (Int length = 0; length <= maxLength; ++length)
+	{
+		for (Int firstB = 0; firstB <= length; ++firstB)
+		{
+			memset(buffer, 'b', sizeof(buffer));
+			memset(buffer, 'a', firstB);
+			const void* expected = firstB < length ? buffer + firstB : nullptr;
+			ASSERT_EQ(memcchrFunction(buffer, 'a', length), expected);
+		}
+	}
+}

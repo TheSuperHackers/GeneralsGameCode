@@ -16,13 +16,15 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
+#include "stringex_memcchr_common.h"
 
-#include "Utility/stringex.h"
-
-TEST(StringEx, StrlcpyTruncatesAndTerminates)
+// Internal linkage keeps this memcchr distinct from the other implementations linked into the test.
+namespace
 {
-	char buffer[4];
-	EXPECT_EQ(strlcpy_t(buffer, "hello"), 5u);
-	EXPECT_STREQ(buffer, "hel");
+#include "Utility/stringex_memcchr.inl"
+} // namespace
+
+TEST(StringEx, MemcchrPortable)
+{
+	testMemcchr(memcchr);
 }
