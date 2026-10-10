@@ -572,6 +572,7 @@ protected:
 
 	static bool	Create_Device();
 	static void Release_Device();
+	static void Unbind_Device_Resources();
 
 	static void Reset_Statistics();
 	static void Enumerate_Devices();
@@ -634,6 +635,7 @@ protected:
 
 	static bool								IsInitted;
 	static bool								IsDeviceLost;
+	static bool								DeviceResetFailed;	///< Reset() failed. The device must not be touched until one succeeds.
 	static void *							Hwnd;
 	static unsigned						_MainThreadID;
 

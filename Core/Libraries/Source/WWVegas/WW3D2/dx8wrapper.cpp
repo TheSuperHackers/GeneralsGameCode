@@ -156,6 +156,7 @@ bool								DX8Wrapper::IsRenderToTexture							= false;
 unsigned							DX8Wrapper::_MainThreadID								= 0;
 bool								DX8Wrapper::CurrentDX8LightEnables[4];
 bool								DX8Wrapper::IsDeviceLost;
+bool								DX8Wrapper::DeviceResetFailed = false;
 int								DX8Wrapper::ZBias;
 float								DX8Wrapper::ZNear;
 float								DX8Wrapper::ZFar;
@@ -431,7 +432,7 @@ void DX8Wrapper::Invalidate_Cached_Render_States()
 		}
 		//Need to explicitly set texture to null, otherwise app will not be able to
 		//set it to null because of redundant state checker. MW
-		if (_Get_D3D_Device8())
+		if (_Get_D3D_Device8() && !DeviceResetFailed)
 			_Get_D3D_Device8()->SetTexture(a,nullptr);
 		if (Textures[a] != nullptr) {
 			Textures[a]->Release();
@@ -485,6 +486,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns()
 bool DX8Wrapper::Create_Device()
 {
 	WWASSERT(D3DDevice==nullptr);	// for now, once you've created a device, you're stuck with it!
+	DeviceResetFailed = false;
 
 	D3DCAPS8 caps;
 	if
@@ -630,7 +632,13 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 
 		HRESULT hr=_Get_D3D_Device8()->TestCooperativeLevel();
 		if (hr != D3DERR_DEVICELOST )
-		{	DX8CALL_HRES(Reset(&_PresentParameters),hr)
+		{
+			// TheSuperHackers @bugfix arcticdolphin 09/10/2026 Unbind on the device before Reset(), resources still bound there crash it in DestroyResource.
+			Unbind_Device_Resources();
+			Invalidate_Cached_Render_States();
+			Set_Render_Target((IDirect3DSurface8*)nullptr);
+			DX8CALL_HRES(Reset(&_PresentParameters),hr)
+			DeviceResetFailed = (hr != D3D_OK);
 			if (hr != D3D_OK)
 				return false;	//reset failed.
 		}
@@ -654,18 +662,26 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	return false;
 }
 
+// Drops the device's bindings of the last draw, the Set_ calls only drop the wrapper's. Skipped after a failed Reset().
+void DX8Wrapper::Unbind_Device_Resources()
+{
+	if (DeviceResetFailed) {
+		return;
+	}
+	for (unsigned stage = 0; stage < MAX_TEXTURE_STAGES; ++stage) {
+		DX8CALL(SetTexture(stage, nullptr));
+	}
+	for (unsigned stream = 0; stream < MAX_VERTEX_STREAMS; ++stream) {
+		DX8CALL(SetStreamSource(stream, nullptr, 0));
+	}
+	DX8CALL(SetIndices(nullptr, 0));
+}
+
 void DX8Wrapper::Release_Device()
 {
 	if (D3DDevice) {
 
-		for (int a=0;a<MAX_TEXTURE_STAGES;++a)
-		{
-			//release references to any textures that were used in last rendering call
-			DX8CALL(SetTexture(a,nullptr));
-		}
-
-		DX8CALL(SetStreamSource(0, nullptr, 0));	//release reference count on last rendered vertex buffer
-		DX8CALL(SetIndices(nullptr,0));	//release reference count on last rendered index buffer
+		Unbind_Device_Resources();
 
 
 		/*
