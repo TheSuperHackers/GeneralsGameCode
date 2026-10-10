@@ -1819,6 +1819,11 @@ bool GameLogic::onQueueUnitCreate(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &cur
 
 	// get data from the message
 	whatToCreate = TheThingFactory->findByTemplateID( msg->getArgument( 0 )->integer );
+#if !RETAIL_COMPATIBLE_CRC
+  // TheSuperHackers @bugfix DrGoldFish 08/10/2026 Resolve map.ini object overrides before charging production costs.
+	if( whatToCreate != nullptr )
+		whatToCreate = static_cast<const ThingTemplate*>(whatToCreate->getFinalOverride() );
+#endif
 	productionID = (ProductionID)msg->getArgument( 1 )->integer;
 
 	// sanity
@@ -1883,6 +1888,11 @@ bool GameLogic::onDozerConstruct(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &curr
 	Object *constructorObject = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 #endif
 	place = TheThingFactory->findByTemplateID( msg->getArgument( 0 )->integer );
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix DrGoldFish 08/10/2026 Resolve map.ini object overrides before charging production costs.
+	if ( place != nullptr )
+		place = static_cast<const ThingTemplate *>( place->getFinalOverride() );
+#endif
 	loc = msg->getArgument( 1 )->location;
 	angle = msg->getArgument( 2 )->real;
 
