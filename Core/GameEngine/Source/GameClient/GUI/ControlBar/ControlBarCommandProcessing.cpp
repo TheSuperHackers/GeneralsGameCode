@@ -51,6 +51,15 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/AnimateWindowManager.h"
+// TheSuperHackers @feature for quick cast
+#if RTS_ZEROHOUR
+#include "Common/OptionPreferences.h"
+#include "Common/Recorder.h"
+#include "GameClient/HotKey.h"
+#include "GameClient/Mouse.h"
+#include "GameClient/View.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
+#endif
 
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
@@ -117,6 +126,123 @@ CBCommandStatus ControlBar::processCommandTransitionUI( GameWindow *control, Gad
 /** Process a button selected message from the window system that should be for one of
 	* our GUI commands */
 //-------------------------------------------------------------------------------------------------
+#if RTS_ZEROHOUR
+// TheSuperHackers @feature Quick cast (Options.ini: CastMode).
+/**
+ * Fire a targeted command at the cursor instead of waiting for a second click.
+ *
+ * Returns TRUE only if the command was actually dispatched. Every rejection path returns
+ * FALSE so the caller arms the command normally -- an input is never silently eaten.
+ *
+ * Deliberately limited to keyboard activation. Clicking a cameo with the mouse leaves the
+ * cursor over the control bar, where there is no world position worth targeting.
+ */
+static Bool tryQuickCast( const CommandButton *commandButton )
+{
+	if( commandButton == nullptr || TheGlobalData == nullptr )
+		return FALSE;
+
+	if( TheGlobalData->m_castMode == CastMode_Normal )
+		return FALSE;
+
+	// only from a hotkey -- see the note above
+	if( !HotKeyManager::isExecutingHotKey() )
+		return FALSE;
+
+	// Hold to aim: on the key down pass we want the normal arming path, which already shows the
+	// targeting decal and lets the player move the cursor. The key up pass then fires.
+	if( HotKeyManager::isQuickCastAiming() )
+		return FALSE;
+
+	if( TheInGameUI == nullptr || TheMouse == nullptr || TheTacticalView == nullptr )
+		return FALSE;
+
+	// leave replay playback alone, matching InGameUI::setGUICommand
+	if( TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK )
+		return FALSE;
+
+	const UnsignedInt options = commandButton->getOptions();
+
+	// A single use command burns the button permanently, so a misfire is unrecoverable --
+	// never fire one blind.
+	if( BitIsSet( options, SINGLE_USE_COMMAND ) )
+		return FALSE;
+
+	// Rally points and beacons place a marker wherever the cursor happens to be, which is
+	// silent and easy to miss. Structure placement needs a deliberate footprint.
+	switch( commandButton->getCommandType() )
+	{
+		case GUI_COMMAND_SET_RALLY_POINT:
+		case GUICOMMANDMODE_PLACE_BEACON:
+		case GUI_COMMAND_DOZER_CONSTRUCT:
+		case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT:
+		case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
+			return FALSE;
+
+		// Superweapons are excluded on purpose: firing one at an unintended spot cannot be
+		// undone, and the stray keypress that does it is easy to make.
+		case GUI_COMMAND_SPECIAL_POWER:
+		case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
+			return FALSE;
+
+		default:
+			break;
+	}
+
+	// The cursor has to be over the battlefield, not the command bar or another panel.
+	const MouseIO *mouseIO = TheMouse->getMouseStatus();
+	if( mouseIO == nullptr )
+		return FALSE;
+
+	if( TheWindowManager &&
+			TheWindowManager->getWindowUnderCursor( mouseIO->pos.x, mouseIO->pos.y ) != nullptr )
+		return FALSE;
+
+	// TheSuperHackers @feature If the ability is still recharging, remember the cast and let
+	// InGameUI fire it the moment the logic side says it is ready, rather than throwing the
+	// input away. The cooldown itself is untouched -- this only stops the press being wasted.
+	if( commandButton->getSpecialPowerTemplate() )
+	{
+		Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+		Object *source = draw ? draw->getObject() : nullptr;
+		if( source )
+		{
+			SpecialPowerModuleInterface *mod =
+				source->getSpecialPowerModule( commandButton->getSpecialPowerTemplate() );
+			if( mod && !mod->isReady() )
+			{
+				TheInGameUI->queueQuickCast( commandButton, mouseIO->pos );
+				TheInGameUI->triggerQuickCastHint( commandButton, mouseIO->pos );
+				return TRUE;
+			}
+		}
+	}
+
+	// Hand the click to the normal path. Synthesizing the message rather than calling the
+	// do*Command helpers directly means quick cast reuses the engine's own validation,
+	// voice responses and cleanup, and cannot drift away from normal behaviour.
+	//
+	// In hold to aim mode the command was already armed on key down; re-arming here is
+	// harmless and covers the case where something cleared it while the key was held.
+	TheInGameUI->setGUICommand( commandButton );
+
+	// GUICommandTranslator reads the click position from pixelRegion.hi
+	IRegion2D clickRegion;
+	clickRegion.lo = mouseIO->pos;
+	clickRegion.hi = mouseIO->pos;
+
+	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_MOUSE_LEFT_CLICK );
+	msg->appendPixelRegionArgument( clickRegion );
+
+	// In indicator mode the decal has been visible the whole time the key was held, so let it
+	// linger briefly at the point it fired rather than vanishing the instant the key comes up.
+	if( TheGlobalData->m_castMode == CastMode_QuickCastWithIndicator )
+		TheInGameUI->triggerQuickCastHint( commandButton, mouseIO->pos );
+
+	return TRUE;
+}
+#endif // RTS_ZEROHOUR
+
 CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 																							GadgetGameMessage gadgetMessage )
 {
@@ -221,8 +347,27 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		//with. For example, the terrorist can jack a car and convert it into a carbomb, but he has to
 		//click on a valid car. In this case the doCommandOrHint code will determine if the mode is valid
 		//or not and the cursor modes will be set appropriately.
+
+#if RTS_ZEROHOUR
+		// TheSuperHackers @feature Quick cast fires the command at the cursor instead of waiting for
+		// a second click. If it declines -- wrong mode, unsafe command, cursor not over the
+		// battlefield -- fall through and arm normally, so nothing is ever silently swallowed.
+		if( tryQuickCast( commandButton ) )
+			return CBC_COMMAND_USED;
+#endif
+
 		TheInGameUI->setGUICommand( commandButton );
 	}
+#if RTS_ZEROHOUR
+	// TheSuperHackers @fix In hold to aim mode the key down pass exists only to arm targeted
+	// commands so the decal shows while aiming. Everything else must act on the key up pass
+	// alone - otherwise a production hotkey queues two units per press and a toggle undoes
+	// itself, one per key transition.
+	else if( HotKeyManager::isQuickCastAiming() )
+	{
+		// swallow the key down half; the key up pass executes normally
+	}
+#endif
 	else switch( commandButton->getCommandType() )
 	{
 
