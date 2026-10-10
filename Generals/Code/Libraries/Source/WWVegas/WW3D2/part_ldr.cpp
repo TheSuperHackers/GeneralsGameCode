@@ -306,7 +306,7 @@ ParticleEmitterDefClass::Normalize_Filename ()
 	::lstrcpy (path, m_Info.TextureFilename);
 
 	// Find the last occurrence of the directory deliminator
-	LPCTSTR filename = ::strrchr (path, '\\');
+	LPCTSTR filename = getLastPathSeparator (path);
 	if (filename != nullptr) {
 
 		// Increment past the directory deliminator

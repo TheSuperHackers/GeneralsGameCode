@@ -346,10 +346,7 @@ AggregateDefClass::Load_Assets (const char *passet_name)
 		char path[MAX_PATH];
 		::GetCurrentDirectory (sizeof (path), path);
 
-		// Ensure the path is directory delimited
-		if (path[::lstrlen(path)-1] != '\\') {
-			::lstrcat (path, "\\");
-		}
+		appendPathSeparator (path, ARRAY_SIZE (path));
 
 		// Assume the filename is simply the "asset name" + the w3d extension
 		::lstrcat (path, passet_name);

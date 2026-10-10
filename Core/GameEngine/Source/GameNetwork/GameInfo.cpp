@@ -539,7 +539,7 @@ void GameInfo::setMap( AsciiString mapName )
 				// directory name, we can do this since the filename
 				// is just the directory name with the file extention
 				// added onto it.
-				while (mapName.find('\\') != nullptr)
+				while (getLastPathSeparator(mapName.str()) != nullptr)
 				{
 					if (!newMapName.isEmpty())
 					{
@@ -973,7 +973,7 @@ static AsciiString buildGameInfoAsciiString(const GameInfo& game, const AsciiStr
 		// directory name, we can do this since the filename
 		// is just the directory name with the file extention
 		// added onto it.
-		while (mapName.find('\\') != nullptr)
+		while (getLastPathSeparator(mapName.str()) != nullptr)
 		{
 			if (!newMapName.isEmpty())
 			{

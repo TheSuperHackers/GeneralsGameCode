@@ -74,8 +74,7 @@ void DebugIOFlat::OutputStream::Delete(const char *path)
     char *ext=strrchr(m_fileName,'.');
     if (!ext)
       ext=m_fileName+strlen(m_fileName);
-    char *fileNameOnly=strrchr(m_fileName,'\\');
-    fileNameOnly=fileNameOnly?fileNameOnly+1:m_fileName;
+    const char *fileNameOnly=getFileName(m_fileName);
 
     for (;;)
     {

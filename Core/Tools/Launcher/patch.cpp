@@ -248,7 +248,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     char   *cptr=patchfile;
     char   *tempPtr;
     DWORD   version;
-    while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
+    while( (tempPtr=strpbrk(cptr,"\\/")) !=nullptr)
       cptr=tempPtr+1;
     if (cptr)
       version=atol(cptr);

@@ -48,6 +48,11 @@ inline bool isPathSeparator(char ch)
 	return ch == '/' || ch == '\\';
 }
 
+inline bool isPathSeparator(wchar_t ch)
+{
+	return ch == L'/' || ch == L'\\';
+}
+
 inline bool isAbsolutePath(const char* path)
 {
 	if (path == nullptr)
@@ -81,11 +86,31 @@ inline const wchar_t* getLastPathSeparator(const wchar_t* path)
 	return path ? maxPtr(wcsrchr(path, L'/'), wcsrchr(path, L'\\')) : nullptr;
 }
 
+inline char* getLastPathSeparator(char* path)
+{
+	return const_cast<char*>(getLastPathSeparator(static_cast<const char*>(path)));
+}
+
+inline wchar_t* getLastPathSeparator(wchar_t* path)
+{
+	return const_cast<wchar_t*>(getLastPathSeparator(static_cast<const wchar_t*>(path)));
+}
+
 // Returns the whole path when it contains no separator
 inline const char* getFileName(const char* path)
 {
 	const char* lastSeparator = getLastPathSeparator(path);
 	return lastSeparator ? lastSeparator + 1 : path;
+}
+
+inline void appendPathSeparator(char* path, size_t size)
+{
+	const size_t len = strlen(path);
+	if (len > 0 && len + 1 < size && !isPathSeparator(path[len - 1]))
+	{
+		path[len] = getNativePathSeparator();
+		path[len + 1] = '\0';
+	}
 }
 
 inline const char* getExtension(const char* path)

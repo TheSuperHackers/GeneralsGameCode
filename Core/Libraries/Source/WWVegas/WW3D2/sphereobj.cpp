@@ -1176,12 +1176,7 @@ SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 	//
 	if (sphere->SphereTexture != nullptr) {
 		StringClass name = sphere->SphereTexture->Get_Full_Path();
-		const char *filename = ::strrchr (name, '\\');
-		if (filename != nullptr) {
-			filename ++;
-		} else {
-			filename = name;
-		}
+		const char *filename = getFileName (name);
 
 		strlcpy(Definition.TextureName, filename, ARRAY_SIZE(Definition.TextureName));
 

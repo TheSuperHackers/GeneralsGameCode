@@ -145,13 +145,7 @@ BOOL CWdumpApp::InitInstance()
 
 	if(NoWindow) {
 		if(cmdInfo.m_nShellCommand == CWDumpCommandLineInfo::FileOpen) {
-			const char *c = strrchr(cmdInfo.m_strFileName, '\\');
-			if(c == nullptr)
-				c = (LPCTSTR) cmdInfo.m_strFileName;
-			if(*c == '\\')
-				c++;
-
-			Filename = c;
+			Filename = getFileName(cmdInfo.m_strFileName);
 
 
 

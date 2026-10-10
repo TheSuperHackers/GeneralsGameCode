@@ -62,14 +62,14 @@ class RenderObjClass;
 
 __inline void Delimit_Path (LPTSTR path)
 {
-	if (::lstrlen (path) > 0 && path[::lstrlen (path) - 1] != '\\') {
+	if (::lstrlen (path) > 0 && !isPathSeparator (path[::lstrlen (path) - 1])) {
 		::lstrcat (path, "\\");
 	}
 }
 
 __inline void Delimit_Path (CString &path)
 {
-	if (path[::lstrlen (path) - 1] != '\\') {
+	if (!isPathSeparator (path[::lstrlen (path) - 1])) {
 		path += CString ("\\");
 	}
 }

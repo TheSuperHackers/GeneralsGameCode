@@ -60,6 +60,7 @@
 #include "monod.h"
 #include "filed.h"
 #include "configfile.h"
+#include "Lib/PathUtil.h"
 #include <windows.h>
 
 #include <Debug/DebugPrint.h>
@@ -163,7 +164,7 @@ int main(int argc, char *argv[])
 	char debugFile[MAX_PATH + 3];
 	strcpy(debugFile, configName);
 	strcat(debugFile, ".txt");
-	strcpy(debugLogName, strrchr(configName, '\\'));
+	strcpy(debugLogName, getLastPathSeparator(configName));
 	strcat(debugLogName, "Log");
 	FileD outputDevice(debugFile, true);
 	MsgManager::setAllStreams(&outputDevice);
@@ -362,7 +363,7 @@ void myChdir(char *path)
 	_splitpath( path, drive, dir, file, ext );
 	_makepath ( filepath,   drive, dir, nullptr, nullptr );
 
-	if ( filepath[ strlen( filepath ) - 1 ] == '\\' )
+	if ( isPathSeparator( filepath[ strlen( filepath ) - 1 ] ) )
 	{
 		filepath[ strlen( filepath ) - 1 ] = '\0';
 	}

@@ -418,12 +418,7 @@ void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 	char				fileBuf[_MAX_PATH];
 
 	strlcpy(dirBuf, pFilePath, ARRAY_SIZE(dirBuf));
-	int len = strlen(dirBuf);
-
-	if (len > 0 && dirBuf[len - 1] != '\\') {
-		dirBuf[len++] = '\\';
-		dirBuf[len] = 0;
-	}
+	appendPathSeparator(dirBuf, ARRAY_SIZE(dirBuf));
 
 	FilenameList filenameList;
 	TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), "*.*", filenameList, TRUE);

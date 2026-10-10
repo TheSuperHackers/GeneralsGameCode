@@ -1798,7 +1798,7 @@ void Cftp::GetDownloadFilename(const char *localname, char *downloadname, size_t
 	char *s = name;
 	while (*s)
 	{
-		if (*s == '\\' || *s == '.' || *s == ' ')
+		if (isPathSeparator(*s) || *s == '.' || *s == ' ')
 			*s = '_';
 		++s;
 	}
@@ -1826,7 +1826,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename)
 	char newdir[256];
 
 	const char *cptr=filename;
-	while((cptr=strchr(cptr,'\\')) != nullptr)
+	while((cptr=strpbrk(cptr,"\\/")) != nullptr)
 	{
 		strlcpy(tempstr,filename,cptr-filename + 1);
 		snprintf(newdir, ARRAY_SIZE(newdir), "%s\\%s", rootdir, tempstr);
