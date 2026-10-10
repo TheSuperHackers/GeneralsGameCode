@@ -187,7 +187,7 @@ class GameTextManager : public GameTextInterface
 
 		void						stripSpaces ( WideChar *string );
 		void						removeLeadingAndTrailing ( Char *m_buffer );
-		void						readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen );
+		Bool						readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen );
 		void						reverseWord ( Char *file, Char *lp );
 		void						translateCopy( WideChar *outbuf, Char *inbuf );
 		Bool						getCSFInfo( const Char *filename, LanguageID& language );
@@ -479,7 +479,7 @@ void GameTextManager::removeLeadingAndTrailing ( Char *buffer )
 // GameTextManager::readToEndOfQuote
 //============================================================================
 
-void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen )
+Bool GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *wavefile, Int maxBufLen )
 {
 	Int slash = FALSE;
 	Int state = 0;
@@ -488,8 +488,11 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 	Int ccount = 0;
 	Int len = 0;
 	Int done = FALSE;
+	Bool closed = FALSE;
+	// Room for the 'e' suffix and the terminator.
+	const Int maxWaveLen = maxBufLen - 2;
 
-	while ( maxBufLen )
+	while ( maxBufLen > 1 )
 	{
 		// get next Char
 
@@ -506,9 +509,11 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 			ch = readChar ( file );
 		}
 
-		if ( ch == EOF )
+		if ( ch == 0 )
 		{
-			return ;
+			*out = 0;
+			*wavefile = 0;
+			return FALSE;
 		}
 
 		if ( ch == '\n' )
@@ -528,6 +533,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 		}
 		else if ( ch == '"' && !slash )
 		{
+			closed = TRUE;
 			break; // done
 		}
 		else
@@ -546,6 +552,12 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 
 	*out = 0;
 
+	if ( !closed )
+	{
+		*wavefile = 0;
+		return FALSE;
+	}
+
 	while ( !done )
 	{
 		// get next Char
@@ -563,7 +575,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 			ch = readChar ( file );
 		}
 
-		if ( ch == '\n' || ch == EOF )
+		if ( ch == '\n' || ch == 0 )
 		{
 			break;
 		}
@@ -582,6 +594,11 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 			case 1:
 				if ( ( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9') || ch == '_' )
 				{
+					if ( len >= maxWaveLen )
+					{
+						*wavefile = 0;
+						return FALSE;
+					}
 					*wavefile++ = ch;
 					len++;
 					break;
@@ -604,6 +621,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 		}
 	}
 
+	return TRUE;
 }
 
 
@@ -822,6 +840,7 @@ Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 	Int id;
 	Int len;
 	Int listCount = 0;
+	Int stringCount = 0;
 	Bool ok = FALSE;
 	CSFHeader header;
 
@@ -834,18 +853,25 @@ Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 
 	if (  file->read ( &header, sizeof ( CSFHeader)) != sizeof ( CSFHeader) )
 	{
-		return FALSE;
+		goto quit;
 	}
 
-	if ( header.id != CSF_ID )
+	// A label record is at least 12 bytes.
+	if ( header.id != CSF_ID || header.num_labels < 0 || header.num_labels > file->size() / 12 ||
+		header.num_strings < 0 )
 	{
 		goto quit;
 	}
 
 	out.reserve( header.num_labels );
 
-	while( file->read ( &id, sizeof (id)) == sizeof ( id) )
+	while ( TRUE )
 	{
+		Int bytesRead = file->read( &id, sizeof(id) );
+		if ( bytesRead == 0 )
+			break;
+		if ( bytesRead != sizeof(id) )
+			goto quit;
 		Int num;
 		Int num_strings;
 		StringInfo info;
@@ -855,13 +881,28 @@ Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 			goto quit;
 		}
 
-		file->read ( &num_strings, sizeof ( Int ) );
+		if ( file->read ( &num_strings, sizeof ( Int ) ) != (Int)(sizeof ( Int )) ||
+			num_strings < 0 || num_strings > header.num_strings - stringCount )
+		{
+			goto quit;
+		}
 
-		file->read ( &len, sizeof ( Int ) );
+		if ( file->read ( &len, sizeof ( Int ) ) != (Int)(sizeof ( Int )) )
+		{
+			goto quit;
+		}
+
+		if ( len < 0 || len >= MAX_UITEXT_LENGTH )
+		{
+			goto quit;
+		}
 
 		if ( len )
 		{
-			file->read ( m_buffer, len );
+			if ( file->read ( m_buffer, len ) != (Int)(len) )
+			{
+				goto quit;
+			}
 		}
 
 		m_buffer[len] = 0;
@@ -877,18 +918,32 @@ Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 
 		while ( num < num_strings )
 		{
-			file->read ( &id, sizeof ( Int ) );
+			if ( file->read ( &id, sizeof ( Int ) ) != (Int)(sizeof ( Int )) )
+			{
+				goto quit;
+			}
 
 			if ( id != CSF_STRING && id != CSF_STRINGWITHWAVE )
 			{
 				goto quit;
 			}
 
-			file->read ( &len, sizeof ( Int ) );
+			if ( file->read ( &len, sizeof ( Int ) ) != (Int)(sizeof ( Int )) )
+			{
+				goto quit;
+			}
+
+			if ( len < 0 || len >= MAX_UITEXT_LENGTH*2 )
+			{
+				goto quit;
+			}
 
 			if ( len )
 			{
-				file->read ( m_tbuffer, len*sizeof(WideChar) );
+				if ( file->read ( m_tbuffer, len*sizeof(WideChar) ) != (Int)(len*sizeof(WideChar)) )
+				{
+					goto quit;
+				}
 			}
 
 			if ( num == 0 )
@@ -914,10 +969,20 @@ Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 
 			if ( id == CSF_STRINGWITHWAVE )
 			{
-				file->read ( &len, sizeof ( Int ) );
+				if ( file->read ( &len, sizeof ( Int ) ) != (Int)(sizeof ( Int )) )
+				{
+					goto quit;
+				}
+				if ( len < 0 || len >= MAX_UITEXT_LENGTH )
+				{
+					goto quit;
+				}
 				if ( len )
 				{
-					file->read ( m_buffer, len );
+					if ( file->read ( m_buffer, len ) != (Int)(len) )
+					{
+						goto quit;
+					}
 				}
 				m_buffer[len] = 0;
 
@@ -934,9 +999,10 @@ Bool GameTextManager::parseCSF( const Char *filename, StringInfoVec& out )
 
 		out.push_back( info );
 		listCount++;
+		stringCount += num_strings;
 	}
 
-	ok = TRUE;
+	ok = ( listCount == (Int)header.num_labels && stringCount == header.num_strings );
 
 quit:
 
@@ -967,9 +1033,15 @@ Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out,
 		Int len;
 		StringInfo info;
 
-		if( !readLine( m_buffer, MAX_UITEXT_LENGTH, file ))
+		if( !readLine( m_buffer, sizeof(m_buffer)-1, file ))
 		{
 			break;
+		}
+
+		if ( strlen( m_buffer ) >= sizeof(m_buffer)-1 )
+		{
+			ok = FALSE;
+			goto quit;
 		}
 
 		removeLeadingAndTrailing ( m_buffer );
@@ -998,9 +1070,15 @@ Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out,
 		Bool readString = FALSE;
 		while( ok )
 		{
-			if (!readLine ( m_buffer, sizeof(m_buffer)-1, file ))
+			if (!readLine ( m_buffer, sizeof(m_buffer)-2, file ))
 			{
 				DEBUG_CRASH (("Unexpected end of string file"));
+				ok = FALSE;
+				goto quit;
+			}
+
+			if ( strlen( m_buffer ) >= sizeof(m_buffer)-2 )
+			{
 				ok = FALSE;
 				goto quit;
 			}
@@ -1012,16 +1090,18 @@ Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out,
 				len = strlen(m_buffer);
 				m_buffer[ len ] = '\n';
 				m_buffer[ len+1] = 0;
-				readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
+				if ( !readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH ) )
+				{
+					ok = FALSE;
+					goto quit;
+				}
 
 				if ( readString )
 				{
-					// only one string per label allowed
 					DEBUG_CRASH ( ("String label '%s' has more than one string defined!", info.label.str()));
 				}
 				else
 				{
-					// Copy string into new home
 					translateCopy( m_tbuffer, m_buffer2 );
 					stripSpaces ( m_tbuffer );
 
@@ -1038,6 +1118,12 @@ Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out,
 			{
 				break;
 			}
+		}
+
+		if ( !readString )
+		{
+			ok = FALSE;
+			goto quit;
 		}
 
 		out.push_back( info );
@@ -1058,7 +1144,10 @@ quit:
 void GameTextManager::initMapStringFile( const AsciiString& filename )
 {
 	StringInfoVec parsed;
-	parseStringFile( filename.str(), parsed, TRUE );
+	if ( !parseStringFile( filename.str(), parsed, TRUE ) )
+	{
+		parsed.clear();
+	}
 
 	m_mapTextCount = (Int)parsed.size();
 	m_mapStringInfo = NEW StringInfo[m_mapTextCount];
