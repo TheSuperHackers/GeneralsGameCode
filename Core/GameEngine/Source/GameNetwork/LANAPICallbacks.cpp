@@ -45,6 +45,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/NetworkAutoStart.h"
 #include "GameNetwork/networkutil.h"
 
 LANAPI *TheLAN = nullptr;
@@ -158,17 +159,14 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 		{
 			UnicodeString mapDisplayName;
 			const MapMetaData *mapData = TheMapCache->findMap( m_currentGame->getMap() );
-			Bool willTransfer = TRUE;
+			Bool willTransfer = CanTransferMap(m_currentGame->getMap());
 			if (mapData)
 			{
 				mapDisplayName.format(L"%ls", mapData->m_displayName.str());
-				if (mapData->m_isOfficial)
-					willTransfer = FALSE;
 			}
 			else
 			{
 				mapDisplayName.format(L"%hs", m_currentGame->getMap().str());
-				willTransfer = WouldMapTransfer(m_currentGame->getMap());
 			}
 			if (!status)
 			{
@@ -243,6 +241,9 @@ void LANAPI::OnGameStart()
 		if (!filesOk || TheMapCache->findMap(m_currentGame->getMap()) == nullptr)
 		{
 			DEBUG_LOG(("After transfer, we didn't really have the map.  Bailing..."));
+#if defined(RTS_DEBUG)
+			NetworkAutoStart::onGameStartFailure();
+#endif
 			OnPlayerLeave(m_name);
 			removeGame(m_currentGame);
 			m_currentGame = nullptr;
@@ -271,6 +272,10 @@ void LANAPI::OnGameStart()
 		// Set the seeds
 		InitRandom( m_currentGame->getSeed() );
 		DEBUG_LOG(("InitRandom( %d )", m_currentGame->getSeed()));
+
+#if defined(RTS_DEBUG)
+		NetworkAutoStart::onGameStart();
+#endif
 	}
 }
 
@@ -515,6 +520,15 @@ void LANAPI::OnPlayerJoin( Int slot, UnicodeString playerName )
 
 void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 {
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::isEnabled())
+	{
+		NetworkAutoStart::onGameJoin(ret);
+		if (ret != RET_OK)
+			return;
+	}
+#endif
+
 	if (ret == RET_OK)
 	{
 		LANbuttonPushed = true;
@@ -605,6 +619,15 @@ void LANAPI::OnGameList( LANGameInfo *gameList )
 
 void LANAPI::OnGameCreate( ReturnType ret )
 {
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::isEnabled())
+	{
+		NetworkAutoStart::onGameCreate(ret);
+		if (ret != RET_OK)
+			return;
+	}
+#endif
+
 	if (ret == RET_OK)
 	{
 

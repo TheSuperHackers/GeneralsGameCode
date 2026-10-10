@@ -29,6 +29,8 @@
 
 UnsignedInt AssembleIp(UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d);
 UnsignedInt ResolveIP(AsciiString host);
+// Parse four decimal IPv4 octets, excluding unspecified and broadcast addresses.
+Bool ParseIPv4Address(const AsciiString &address, UnsignedInt &result);
 UnsignedShort GenerateNextCommandID();
 Bool DoesCommandRequireACommandID(NetCommandType type);
 Bool CommandRequiresAck(const NetCommandMsg *msg);

@@ -53,6 +53,7 @@
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/NetworkAutoStart.h"
 #include "Common/MultiplayerSettings.h"
 #include "GameClient/GameText.h"
 #include "GameNetwork/GUIUtil.h"
@@ -211,7 +212,7 @@ static void playerTooltip(GameWindow *window,
 	setLANPlayerTooltip(player);
 }
 
-void StartPressed()
+Bool StartLANGame()
 {
 	LANGameInfo *myGame = TheLAN->GetMyGame();
 
@@ -220,7 +221,7 @@ void StartPressed()
 	Int playerCount = 0;
 	if (!myGame)
 	{
-		return;
+		return false;
 	}
 	myGame->getLANSlot(0)->setAccept(); // cause we are, of course!
 
@@ -249,7 +250,7 @@ void StartPressed()
 			text.format(TheGameText->fetch("LAN:TooManyPlayers"), (md)?md->m_numPlayers:0);
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	// Check for observer + AI players
@@ -260,7 +261,7 @@ void StartPressed()
 			UnicodeString text = TheGameText->fetch("GUI:NeedHumanPlayers");
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	// Check for too few players
@@ -272,7 +273,7 @@ void StartPressed()
 			text.format(TheGameText->fetch("LAN:NeedMorePlayers"),numUsers);
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	// Check for too few teams
@@ -301,7 +302,7 @@ void StartPressed()
 			text.format(TheGameText->fetch("LAN:NeedMoreTeams"));
 			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
-		return;
+		return false;
 	}
 
 	if (numRandom + teams.size() < 2)
@@ -363,6 +364,7 @@ void StartPressed()
 		else
 			TheLAN->RequestGameStart();
 		LANEnableStartButton(false);
+		return true;
 	}
 	else
 	{
@@ -374,6 +376,7 @@ void StartPressed()
 		}
 	}
 
+	return false;
 }
 
 void LANEnableStartButton(Bool enabled)
@@ -780,8 +783,13 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		slot->setColor( pref.getPreferredColor() );
 		slot->setPlayerTemplate( pref.getPreferredFaction() );
 		slot->setNATBehavior(FirewallHelperClass::FIREWALL_TYPE_SIMPLE);
-		game->setMap( pref.getPreferredMap() );
-		AsciiString lowerMap = pref.getPreferredMap();
+		AsciiString mapName = pref.getPreferredMap();
+#if defined(RTS_DEBUG)
+		if (NetworkAutoStart::isEnabled() && NetworkAutoStart::getMapName().isNotEmpty())
+			mapName = NetworkAutoStart::getMapName();
+#endif
+		game->setMap(mapName);
+		AsciiString lowerMap = mapName;
 		lowerMap.toLower();
 		std::map<AsciiString, MapMetaData>::iterator it = TheMapCache->find(lowerMap);
 		if (it != TheMapCache->end())
@@ -975,6 +983,14 @@ void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 {
+#if defined(RTS_DEBUG)
+	if (NetworkAutoStart::isEnabled() && TheLAN != nullptr)
+	{
+		TheLAN->update();
+		NetworkAutoStart::updateGameOptions();
+	}
+#endif
+
 	if(LANisShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 	//TheLAN->update(); // this is handled in the lobby
@@ -1160,7 +1176,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				{
 					if (TheLAN->AmIHost())
 					{
-						StartPressed();
+						StartLANGame();
 						//TheLAN->RequestGameStart();
 					}
 					else

@@ -721,6 +721,16 @@ Bool WouldMapTransfer( const AsciiString& mapName )
 	return mapName.startsWithNoCase(TheMapCache->getUserMapDir());
 }
 
+Bool CanTransferMap(const AsciiString &mapName)
+{
+	const MapMetaData *mapData = TheMapCache->findMap(mapName);
+	if (mapData != nullptr)
+	{
+		return !mapData->m_isOfficial;
+	}
+	return WouldMapTransfer(mapName);
+}
+
 //-------------------------------------------------------------------------------------------------
 typedef std::set<UnicodeString, rts::less_than_nocase<UnicodeString>/**/> MapNameList;
 typedef std::map<UnicodeString, AsciiString> MapDisplayToFileNameList;
