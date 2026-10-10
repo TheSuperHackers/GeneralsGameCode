@@ -40,6 +40,10 @@
 #define PRESERVE_NO_XP_FROM_FLAME_KILLS (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
+#ifndef PRESERVE_NO_XP_FROM_HELIX_ATTACHMENT_KILLS
+#define PRESERVE_NO_XP_FROM_HELIX_ATTACHMENT_KILLS (1)
+#endif
+
 #ifndef PRESERVE_NO_XP_FROM_OCL_KILLS
 #define PRESERVE_NO_XP_FROM_OCL_KILLS (1)
 #endif
