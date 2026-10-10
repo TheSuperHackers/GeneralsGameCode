@@ -1,0 +1,6 @@
+# Commits listed here are skipped by `git blame` (GitHub honors this file automatically).
+# Locally, enable with: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: Apply clang-format to the entire codebase
+# TODO: replace with the real SHA once the clang-format PR is merged
+0000000000000000000000000000000000000000
