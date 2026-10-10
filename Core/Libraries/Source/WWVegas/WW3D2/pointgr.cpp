@@ -81,6 +81,7 @@
 #include "WWMath/vp.h"
 #include "WWMath/matrix4.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "rinfo.h"
@@ -880,7 +881,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	// Get the world and view matrices
 	Matrix4x4 view;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+	Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
 
 	// Transform the point locations from worldspace to camera space if needed
 	// (i.e. if they are not already in camera space):
@@ -919,11 +920,11 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	// so set world and view matrices to identity and render
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
 
-	DX8Wrapper::Set_Material(PointMaterial);
-	DX8Wrapper::Set_Shader(Shader);
+	Renderer::Set_Material(PointMaterial);
+	Renderer::Set_Shader(Shader);
 	DX8Wrapper::Set_Texture(0,Texture);
 
 	// Enable sorting if the primitives are translucent and alpha testing is not enabled.
@@ -996,7 +997,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	}
 
 	// restore the matrices
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
 }
 
 
@@ -1220,7 +1221,7 @@ void PointGroupClass::Update_Arrays(
 				Matrix4x4 view;
 				Vector4 result;
 				if (!Billboard) {
-					DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+					Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
 				}
 
 				// Scale vertex offsets and add them to point locations to get vertex locations
@@ -1710,7 +1711,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 
 		// Get the world and view matrices
 		Matrix4x4 view;
-		DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+		Renderer::Get_Transform(RB_TRANSFORM_VIEW,view);
 
 
 
@@ -1849,11 +1850,11 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 		// so set world and view matrices to identity and render
 
 		Matrix4x4 identity(true);
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-		DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+		Renderer::Set_Transform(RB_TRANSFORM_WORLD,identity);
+		Renderer::Set_Transform(RB_TRANSFORM_VIEW,identity);
 
-		DX8Wrapper::Set_Material(PointMaterial);
-		DX8Wrapper::Set_Shader(Shader);
+		Renderer::Set_Material(PointMaterial);
+		Renderer::Set_Shader(Shader);
 		DX8Wrapper::Set_Texture(0,Texture);
 
 		// Enable sorting if the primitives are translucent and alpha testing is not enabled.
@@ -1932,5 +1933,5 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 
 
 	// restore the matrices
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
+	Renderer::Set_Transform(RB_TRANSFORM_VIEW,view);
 }

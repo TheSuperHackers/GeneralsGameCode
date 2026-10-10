@@ -2937,7 +2937,7 @@ VideoBuffer*	W3DDisplay::createVideoBuffer()
 
 	// first try to use the native format
 
-	WW3DFormat displayFormat = DX8Wrapper::getBackBufferFormat();
+	WW3DFormat displayFormat = Renderer::Get_Back_Buffer_Format();
 
 	if ( DX8Wrapper::Get_Current_Caps()->Support_Texture_Format( displayFormat ))
 	{

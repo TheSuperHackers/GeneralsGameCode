@@ -98,6 +98,7 @@
 #include "coltest.h"
 #include "inttest.h"
 #include "dx8wrapper.h"
+#include "Renderer.h"
 #include "dx8indexbuffer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8fvf.h"
@@ -504,8 +505,8 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		/*
 		** Apply the shader and material
 		*/
-		DX8Wrapper::Set_Material(_BoxMaterial);
-		DX8Wrapper::Set_Shader(_BoxShader);
+		Renderer::Set_Material(_BoxMaterial);
+		Renderer::Set_Shader(_BoxShader);
 		DX8Wrapper::Set_Texture(0,nullptr);
 
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
@@ -701,7 +702,7 @@ void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	Matrix3D temp(1);
 	temp.Translate(Transform.Get_Translation());
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,temp);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,temp);
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 
@@ -1085,7 +1086,7 @@ int OBBoxRenderObjClass::Class_ID() const
  *=============================================================================================*/
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
+	Renderer::Set_Transform(RB_TRANSFORM_WORLD,Transform);
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 
