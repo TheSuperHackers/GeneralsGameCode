@@ -108,6 +108,7 @@ protected:
 	Int							m_maxWaypoint;
 
 	AsciiString			m_readPlayerNames[MAX_PLAYER_COUNT];
+	Int						m_numReadPlayerNames;
 
 protected:
 	HTREEITEM addPlayer(Int playerIndx);
