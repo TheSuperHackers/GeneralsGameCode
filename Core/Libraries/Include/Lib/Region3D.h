@@ -120,4 +120,11 @@ struct Region3D
 		       (lo.y < other.lo.y) && (other.hi.y < hi.y) &&
 		       (lo.z < other.lo.z) && (other.hi.z < hi.z);
 	}
+
+	Bool isInRegionInclusive( const Region3D& other ) const
+	{
+		return (lo.x <= other.lo.x) && (other.hi.x <= hi.x) &&
+		       (lo.y <= other.lo.y) && (other.hi.y <= hi.y) &&
+		       (lo.z <= other.lo.z) && (other.hi.z <= hi.z);
+	}
 };

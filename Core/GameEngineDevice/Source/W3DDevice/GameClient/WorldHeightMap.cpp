@@ -540,7 +540,7 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 
 Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
 {
-	DEBUG_ASSERTCRASH(getLogicalBounds().isInRegion(bounds), ("WorldHeightMap::isTerrainFlat must use a region within the logical map bounds."));
+	DEBUG_ASSERTCRASH(getLogicalBounds().isInRegionInclusive(bounds), ("WorldHeightMap::isTerrainFlat must use a region within the logical map bounds."));
 
 	const Int width = bounds.width();
 	const Int height = bounds.height();
