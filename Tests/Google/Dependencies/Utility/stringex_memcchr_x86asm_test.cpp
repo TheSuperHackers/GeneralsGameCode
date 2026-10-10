@@ -23,7 +23,7 @@
 namespace
 {
 #include "Utility/stringex_memcchr_x86asm.inl"
-} // namespace
+}
 
 TEST(StringEx, MemcchrX86Asm)
 {

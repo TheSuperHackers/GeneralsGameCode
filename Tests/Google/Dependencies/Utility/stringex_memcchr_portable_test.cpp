@@ -22,7 +22,7 @@
 namespace
 {
 #include "Utility/stringex_memcchr.inl"
-} // namespace
+}
 
 TEST(StringEx, MemcchrPortable)
 {

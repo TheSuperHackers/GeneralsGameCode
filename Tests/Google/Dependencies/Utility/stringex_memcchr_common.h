@@ -26,19 +26,23 @@ using MemcchrFunction = const void* (*)(const void* data, int c, size_t n);
 
 // Fills a buffer like "aaab" and checks that memcchr finds the first 'b'.
 // If the searched length has no 'b', memcchr must return nullptr.
-// Tests with variable lengths.
+// Tests with variable lengths, and with variations of buffer contents.
 inline void testMemcchr(MemcchrFunction memcchrFunction)
 {
+	const Int testCases[][3] = { { 'a', 'b', 'a' }, { 0xFF, 0x7F, -1 }, { 0x80, 0x00, 0x180 } };
 	constexpr Int maxLength = 256;
 	char buffer[maxLength + 1];
 	for (Int length = 0; length <= maxLength; ++length)
 	{
 		for (Int firstB = 0; firstB <= length; ++firstB)
 		{
-			memset(buffer, 'b', sizeof(buffer));
-			memset(buffer, 'a', firstB);
-			const void* expected = firstB < length ? buffer + firstB : nullptr;
-			ASSERT_EQ(memcchrFunction(buffer, 'a', length), expected);
+			for (const auto& [a, b, c] : testCases)
+			{
+				memset(buffer, b, sizeof(buffer));
+				memset(buffer, a, firstB);
+				const void* expected = firstB < length ? buffer + firstB : nullptr;
+				ASSERT_EQ(memcchrFunction(buffer, c, length), expected);
+			}
 		}
 	}
 }

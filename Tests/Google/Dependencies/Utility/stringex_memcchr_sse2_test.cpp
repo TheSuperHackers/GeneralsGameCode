@@ -28,7 +28,7 @@
 namespace
 {
 #include "Utility/stringex_memcchr_sse2.inl"
-} // namespace
+}
 
 TEST(StringEx, MemcchrSse2)
 {
