@@ -486,9 +486,29 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
-extern void showReplayControls();
-extern void hideReplayControls();
-extern void toggleReplayControls();
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void showReplayControls()
+{
+	if (TheInGameUI != nullptr)
+		TheInGameUI->showReplayControls();
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void hideReplayControls()
+{
+	if (TheInGameUI != nullptr)
+		TheInGameUI->hideReplayControls();
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void toggleReplayControls()
+{
+	if (TheInGameUI != nullptr)
+		TheInGameUI->toggleReplayControls();
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Force the control bar to be shown */
