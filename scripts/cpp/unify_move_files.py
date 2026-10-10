@@ -726,6 +726,8 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/ThingTemplate.h", Game.CORE, "GameEngine/Include/Common/ThingTemplate.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Thing/ThingTemplate.cpp", Game.CORE, "GameEngine/Source/Common/Thing/ThingTemplate.cpp")
 
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/ChallengeMenu.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/ChallengeMenu.cpp")
+
     return
 
 

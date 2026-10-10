@@ -100,6 +100,7 @@
 		{ "ScoreScreenImage",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_scoreScreenImage ) },
 		{ "LoadScreenImage",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenImage ) },
 		{ "LoadScreenMusic",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_loadScreenMusic ) },
+		{ "ScoreScreenMusic",					INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_scoreScreenMusic ) }, // Added in Zero Hour
 
 		{ "HeadWaterMark",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_headWaterMark ) },
 		{ "FlagWaterMark",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_flagWaterMark ) },
@@ -108,8 +109,15 @@
 		//{ "HiliteImage",							INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_hiliteImage ) },
 		//{ "PushedImage",							INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_pushedImage ) },
 		{ "SideIconImage",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_sideIconImage ) },
+		{ "GeneralImage",						INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_generalImage ) }, // Added in Zero Hour
 
 		{ "BeaconName",								INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_beaconTemplate ) },
+		{ "ArmyTooltip",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_tooltip ) }, // Added in Zero Hour
+		{ "Features",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strGeneralFeatures ) }, // Added in Zero Hour
+		{ "MedallionRegular",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strMedallionNormal ) }, // Added in Zero Hour
+		{ "MedallionHilite",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strMedallionHilite ) }, // Added in Zero Hour
+		{ "MedallionSelect",						INI::parseAsciiString,					nullptr, offsetof( PlayerTemplate, m_strMedallionSelected ) }, // Added in Zero Hour
+
 		{ nullptr,											nullptr,																				nullptr, 0 },
 	};
 
@@ -212,6 +220,12 @@ const Image *PlayerTemplate::getSideIconImage() const
 }
 
 //-----------------------------------------------------------------------------
+const Image *PlayerTemplate::getGeneralImage() const
+{
+	return TheMappedImageCollection->findImageByName(m_generalImage);
+}
+
+//-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getEnabledImage() const
 {
 	return TheMappedImageCollection->findImageByName(m_enabledImage);
@@ -270,6 +284,18 @@ void PlayerTemplateStore::reset()
 void PlayerTemplateStore::update()
 {
 	// nothing
+}
+
+
+Int PlayerTemplateStore::getTemplateNumByName(AsciiString name) const
+{
+	for (Int num = 0; num < m_playerTemplates.size(); num++)
+	{
+		if (m_playerTemplates[num].getName().compareNoCase(name.str()) == 0)
+			return num;
+	}
+	DEBUG_CRASH(("Template doesn't exist for given name"));
+	return -1;
 }
 
 //-----------------------------------------------------------------------------
