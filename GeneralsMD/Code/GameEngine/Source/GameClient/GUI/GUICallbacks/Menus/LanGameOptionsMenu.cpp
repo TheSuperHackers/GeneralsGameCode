@@ -389,6 +389,25 @@ void LANEnableStartButton(Bool enabled)
 	buttonSelectMap->winEnable(enabled);
 }
 
+void LANDisableButtons()
+{
+	buttonStart->winEnable(false);
+	buttonBack->winEnable(false);
+	buttonSelectMap->winEnable(false);
+	checkboxLimitSuperweapons->winEnable(false);
+	comboBoxStartingCash->winEnable(false);
+
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		comboBoxPlayer[i]->winEnable(false);
+		comboBoxColor[i]->winEnable(false);
+		comboBoxPlayerTemplate[i]->winEnable(false);
+		comboBoxTeam[i]->winEnable(false);
+		buttonAccept[i]->winEnable(false);
+		buttonMapStartPosition[i]->winEnable(false);
+	}
+}
+
 static void handleColorSelection(int index)
 {
 	GameWindow *combo = comboBoxColor[index];
