@@ -20,6 +20,7 @@
 
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "DbgHelpLoader.h"
+#include <string>
 
 enum DumpType CPP_11(: Char)
 {
@@ -44,12 +45,13 @@ public:
 	Bool IsInitialized() const;
 	void TriggerMiniDump(DumpType dumpType);
 	void TriggerMiniDumpForException(_EXCEPTION_POINTERS* e_info, DumpType dumpType);
-	static void initMiniDumper(const AsciiString& userDirPath);
+	// The product is the letter that identifies the game in the dump file names.
+	static void initMiniDumper(const char* userDirPath, Char product);
 	static void shutdownMiniDumper();
 	static LONG WINAPI DumpingExceptionFilter(_EXCEPTION_POINTERS* e_info);
 
 private:
-	void Initialize(const AsciiString& userDirPath);
+	void Initialize(const char* userDirPath, Char product);
 	void ShutDown();
 	void CreateMiniDump(DumpType dumpType);
 	void CleanupResources();
@@ -61,7 +63,7 @@ private:
 	DWORD ThreadProcInternal();
 
 	// Dump file directory bookkeeping
-	Bool InitializeDumpDirectory(const AsciiString& userDirPath);
+	Bool InitializeDumpDirectory(const char* userDirPath);
 	static void KeepNewestFiles(const std::string& directory, const DumpType dumpType, const Int keepCount);
 
 	// Struct to hold file information
@@ -77,6 +79,7 @@ private:
 	Bool m_miniDumpInitialized;
 	Bool m_loadedDbgHelp;
 	DumpType m_requestedDumpType;
+	Char m_product;
 
 	// Path buffers
 	Char m_dumpDir[MAX_PATH];

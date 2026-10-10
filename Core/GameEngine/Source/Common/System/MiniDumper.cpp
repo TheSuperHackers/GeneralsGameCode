@@ -20,8 +20,15 @@
 
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
-#include <wctype.h>
+#include "Lib/Debug.h"
 #include "gitinfo.h"
+#include <Utility/stdio_adapter.h>
+#include <Utility/stringex.h>
+#include <algorithm>
+#include <io.h>
+#include <new>
+#include <vector>
+#include <wctype.h>
 
 // Globals for storing the pointer to the exception
 _EXCEPTION_POINTERS* g_dumpException = nullptr;
@@ -37,14 +44,14 @@ CONTEXT g_exceptionContext = { 0 };
 
 constexpr const char* DumpFileNamePrefix = "Crash";
 
-void MiniDumper::initMiniDumper(const AsciiString& userDirPath)
+void MiniDumper::initMiniDumper(const char* userDirPath, Char product)
 {
 	DEBUG_ASSERTCRASH(TheMiniDumper == nullptr, ("MiniDumper::initMiniDumper called on already created instance"));
 
 	// Use placement new on the process heap so TheMiniDumper is placed outside the MemoryPoolFactory managed area.
 	// If the crash is due to corrupted MemoryPoolFactory structures, try to mitigate the chances of MiniDumper memory also being corrupted
 	TheMiniDumper = new (::HeapAlloc(::GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS, sizeof(MiniDumper))) MiniDumper;
-	TheMiniDumper->Initialize(userDirPath);
+	TheMiniDumper->Initialize(userDirPath, product);
 }
 
 void MiniDumper::shutdownMiniDumper()
@@ -63,6 +70,7 @@ MiniDumper::MiniDumper()
 	m_miniDumpInitialized = false;
 	m_loadedDbgHelp = false;
 	m_requestedDumpType = DumpType_Minimal;
+	m_product = 0;
 	m_dumpRequested = nullptr;
 	m_dumpComplete = nullptr;
 	m_quitting = nullptr;
@@ -143,8 +151,9 @@ void MiniDumper::TriggerMiniDumpForException(_EXCEPTION_POINTERS* e_info, DumpTy
 	::ResetEvent(m_dumpComplete);
 }
 
-void MiniDumper::Initialize(const AsciiString& userDirPath)
+void MiniDumper::Initialize(const char* userDirPath, Char product)
 {
+	m_product = product;
 	m_loadedDbgHelp = DbgHelpLoader::load();
 
 	// We want to only use the dbghelp.dll from the OS installation, as the one bundled with the game does not support MiniDump functionality
@@ -211,12 +220,12 @@ Bool MiniDumper::IsDumpThreadStillRunning() const
 	return false;
 }
 
-Bool MiniDumper::InitializeDumpDirectory(const AsciiString& userDirPath)
+Bool MiniDumper::InitializeDumpDirectory(const char* userDirPath)
 {
 	constexpr const Int MaxFullFileCount = 2;
 	constexpr const Int MaxMiniFileCount = 10;
 
-	strlcpy(m_dumpDir, userDirPath.str(), ARRAY_SIZE(m_dumpDir));
+	strlcpy(m_dumpDir, userDirPath, ARRAY_SIZE(m_dumpDir));
 	strlcat(m_dumpDir, "CrashDumps\\", ARRAY_SIZE(m_dumpDir));
 	if (::_access(m_dumpDir, 0) != 0)
 	{
@@ -345,17 +354,12 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 	// Create a unique dump file name, using the path from m_dumpDir, in m_dumpFile
 	SYSTEMTIME sysTime;
 	::GetLocalTime(&sysTime);
-#if RTS_GENERALS
-	const Char product = 'G';
-#elif RTS_ZEROHOUR
-	const Char product = 'Z';
-#endif
 	Char dumpTypeSpecifier = static_cast<Char>(dumpType);
 	DWORD currentProcessId = ::GetCurrentProcessId();
 
 	// m_dumpDir is stored with trailing backslash in Initialize
 	snprintf(m_dumpFile, ARRAY_SIZE(m_dumpFile), "%s%s%c%c-%04d%02d%02d-%02d%02d%02d-%s-pid%ld.dmp",
-		m_dumpDir, DumpFileNamePrefix, dumpTypeSpecifier, product, sysTime.wYear, sysTime.wMonth,
+		m_dumpDir, DumpFileNamePrefix, dumpTypeSpecifier, m_product, sysTime.wYear, sysTime.wMonth,
 		sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
 		GitShortSHA1, currentProcessId);
 

@@ -864,7 +864,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #ifdef RTS_ENABLE_CRASHDUMP
 		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
-		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData());
+		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData().str(), 'Z');
 #endif
 
 		// register windows class and create application window
