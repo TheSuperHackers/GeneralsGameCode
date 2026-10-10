@@ -102,6 +102,37 @@ struct StringLookUp
 };
 
 typedef std::vector<StringInfo> StringInfoVec;
+typedef std::set<AsciiString, rts::less_than_nocase<AsciiString> > LabelSet;
+
+// Name order, .str before .csf of the same name.
+struct StringFileOrder
+{
+	Bool operator()( const AsciiString& a, const AsciiString& b ) const
+	{
+		const char *extA = a.reverseFind( '.' );
+		const char *extB = b.reverseFind( '.' );
+		Int lenA = a.getLength();
+		if ( extA )
+			lenA = (Int)(extA - a.str());
+		Int lenB = b.getLength();
+		if ( extB )
+			lenB = (Int)(extB - b.str());
+		Int compareLength = lenA;
+		if ( lenB < compareLength )
+			compareLength = lenB;
+		Int cmp = _strnicmp( a.str(), b.str(), compareLength );
+		if ( cmp != 0 )
+			return cmp < 0;
+		if ( lenA != lenB )
+			return lenA < lenB;
+		if ( !extA || !extB )
+			return FALSE;
+		Bool isStrA = stricmp( extA, ".str" ) == 0;
+		Bool isStrB = stricmp( extB, ".str" ) == 0;
+		return isStrA && !isStrB;
+	}
+};
+typedef std::set<AsciiString, StringFileOrder> StringFileList;
 
 //===============================
 // CSFHeader
@@ -192,9 +223,12 @@ class GameTextManager : public GameTextInterface
 		void						translateCopy( WideChar *outbuf, Char *inbuf );
 		Bool						getCSFInfo( const Char *filename, LanguageID& language );
 		Bool						parseCSF( const Char *filename, StringInfoVec& out );
-		Bool						parseStringFile( const char *filename, StringInfoVec& out, Bool filterLanguage );
+		Bool						parseStringFile( const char *filename, StringInfoVec& out, Bool filterLanguage, Bool optional );
 		Bool						readLine( char *buffer, Int max, File *file );
 		Char						readChar( File *file );
+
+		void						collectStringFiles( const AsciiString& directory, StringFileList& files );
+		Bool						mergeStringFile( const AsciiString& filename, StringInfoVec& merged, LabelSet& labels, Bool optional = FALSE );
 };
 
 static int __cdecl			compareLUT ( const void *,  const void*);
@@ -303,13 +337,32 @@ void GameTextManager::init()
 	}
 #endif
 
+	// TheSuperHackers @feature arcticdolphin 27/09/2026 Load every *.str and *.csf in data\<Language>\ and data\ before the string file. The first file to define a label wins.
 	StringInfoVec merged;
+	LabelSet labels;
+
+	AsciiString languageDir;
+	languageDir.format( "data\\%s\\", GetRegistryLanguage().str() );
+	StringFileList languageFiles, neutralFiles;
+	collectStringFiles( languageDir, languageFiles );
+	collectStringFiles( "data\\", neutralFiles );
+	languageFiles.erase( csfFile );
+	neutralFiles.erase( AsciiString( g_strFile ) );
+
+	StringFileList::const_iterator it;
+	for ( it = languageFiles.begin(); it != languageFiles.end(); ++it )
+	{
+		mergeStringFile( *it, merged, labels, TRUE );
+	}
+	for ( it = neutralFiles.begin(); it != neutralFiles.end(); ++it )
+	{
+		mergeStringFile( *it, merged, labels, TRUE );
+	}
 
 	// Generals.str replaces generals.csf if it loads.
-	if ( !m_useStringFile || !parseStringFile( g_strFile, merged, FALSE ) )
+	if ( !m_useStringFile || !mergeStringFile( AsciiString( g_strFile ), merged, labels ) )
 	{
-		merged.clear();
-		if ( !getCSFInfo( csfFile.str(), m_language ) || !parseCSF( csfFile.str(), merged ) )
+		if ( !getCSFInfo( csfFile.str(), m_language ) || !mergeStringFile( csfFile, merged, labels ) )
 		{
 			return;
 		}
@@ -349,6 +402,44 @@ void GameTextManager::init()
 
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
+}
+
+void GameTextManager::collectStringFiles( const AsciiString& directory, StringFileList& files )
+{
+	FilenameList found;
+	TheFileSystem->getFileListInDirectory( directory, "*.str", found, FALSE );
+	TheFileSystem->getFileListInDirectory( directory, "*.csf", found, FALSE );
+	files.insert( found.begin(), found.end() );
+}
+
+Bool GameTextManager::mergeStringFile( const AsciiString& filename, StringInfoVec& merged, LabelSet& labels, Bool optional )
+{
+	const char *ext = filename.reverseFind('.');
+	Bool isStr = ext && stricmp( ext, ".str" ) == 0;
+
+	StringInfoVec parsed;
+	Bool ok = isStr ? parseStringFile( filename.str(), parsed, FALSE, optional )
+					: parseCSF( filename.str(), parsed );
+
+	if ( !ok )
+	{
+		DEBUG_LOG(("GameText: Failed to parse string file '%s', skipping", filename.str()));
+		return FALSE;
+	}
+
+	Int skippedCount = 0;
+	for ( StringInfoVec::const_iterator it = parsed.begin(); it != parsed.end(); ++it )
+	{
+		if ( !labels.insert( it->label ).second )
+		{
+			skippedCount++;
+			continue;
+		}
+		merged.push_back( *it );
+	}
+
+	DEBUG_LOG(("GameText: Loaded string file '%s' (%d entries, %d already defined)", filename.str(), (Int)parsed.size(), skippedCount));
+	return TRUE;
 }
 
 //============================================================================
@@ -1017,7 +1108,7 @@ quit:
 // GameTextManager::parseStringFile
 //============================================================================
 
-Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out, Bool filterLanguage )
+Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out, Bool filterLanguage, Bool optional )
 {
 	Bool ok = TRUE;
 
@@ -1072,7 +1163,10 @@ Bool GameTextManager::parseStringFile( const char *filename, StringInfoVec& out,
 		{
 			if (!readLine ( m_buffer, sizeof(m_buffer)-2, file ))
 			{
-				DEBUG_CRASH (("Unexpected end of string file"));
+				if ( !optional )
+				{
+					DEBUG_CRASH (("Unexpected end of string file"));
+				}
 				ok = FALSE;
 				goto quit;
 			}
@@ -1144,7 +1238,7 @@ quit:
 void GameTextManager::initMapStringFile( const AsciiString& filename )
 {
 	StringInfoVec parsed;
-	if ( !parseStringFile( filename.str(), parsed, TRUE ) )
+	if ( !parseStringFile( filename.str(), parsed, TRUE, FALSE ) )
 	{
 		parsed.clear();
 	}
