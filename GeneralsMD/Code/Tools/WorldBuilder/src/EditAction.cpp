@@ -32,7 +32,8 @@
 
 
 EditAction::EditAction(CWnd* pParent /*=nullptr*/)
-	: CDialog(EditAction::IDD, pParent)
+	: CDialog(EditAction::IDD, pParent),
+	m_populatingTree(false)
 {
 	//{{AFX_DATA_INIT(EditAction)
 		// NOTE: the ClassWizard will add member initialization here
@@ -52,6 +53,7 @@ void EditAction::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(EditAction, CDialog)
 	//{{AFX_MSG_MAP(EditAction)
 	ON_WM_TIMER()
+	ON_EN_CHANGE(IDC_SCRIPT_SEARCH, OnChangeSearch)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -90,7 +92,7 @@ BOOL EditAction::OnInitDialog()
 	m_myEditCtrl.ShowWindow(SW_SHOW);
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
-	populateTemplateTree(&m_actionTreeView, ScriptAction::NUM_ITEMS, getActionTemplate, m_action->getActionType());
+	populateActionTree();
 	m_action->setWarnings(false);
 	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	m_myEditCtrl.SetSel(-1, -1);
@@ -99,6 +101,34 @@ BOOL EditAction::OnInitDialog()
 
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void EditAction::populateActionTree()
+{
+	char search[_MAX_PATH];
+	GetDlgItemText(IDC_SCRIPT_SEARCH, search, sizeof(search));
+
+	// Rebuilding the tree drops and restores the selection. Selecting another action
+	// would reset its parameters, so ignore selection changes until the rebuild is done.
+	m_populatingTree = true;
+	populateTemplateTree(&m_actionTreeView, search, ScriptAction::NUM_ITEMS, getActionTemplate, m_action->getActionType());
+	m_populatingTree = false;
+}
+
+void EditAction::OnChangeSearch()
+{
+	populateActionTree();
+}
+
+void EditAction::OnOK()
+{
+	// Enter in the search box moves to the results instead of closing the dialog.
+	CWnd *pSearch = GetDlgItem(IDC_SCRIPT_SEARCH);
+	if (pSearch && ::GetFocus() == pSearch->GetSafeHwnd()) {
+		m_actionTreeView.SetFocus();
+		return;
+	}
+	CDialog::OnOK();
 }
 
 
@@ -198,6 +228,9 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	// Handle events from the tree control.
 	if (pHdr->hdr.idFrom == IDC_ACTION_TREE) {
 		if (pHdr->hdr.code == TVN_SELCHANGED) {
+			if (m_populatingTree) {
+				return TRUE;
+			}
 			char buffer[_MAX_PATH];
 			HTREEITEM hItem = m_actionTreeView.GetSelectedItem();
 			TVITEM item;

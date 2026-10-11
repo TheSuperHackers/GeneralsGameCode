@@ -575,6 +575,7 @@
 #define IDC_STATIC_MAPOBJECT_SOUND      1381
 #define IDC_STATIC_MAPOBJECT_VISUAL     1382
 #define IDC_MAPOBJECT_DISTANCE          1383
+#define IDC_SCRIPT_SEARCH               1384
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791

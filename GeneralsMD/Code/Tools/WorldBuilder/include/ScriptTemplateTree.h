@@ -22,6 +22,6 @@ class Template;
 
 typedef const Template *(*GetTemplateFunc)(Int ndx);
 
-// Fills the tree with the script templates, using the '/' separated parts of their names as
-// folders, and selects the template selNdx.
-void populateTemplateTree(CTreeCtrl *tree, Int numTemplates, GetTemplateFunc getTemplate, Int selNdx);
+// Rebuilds the tree of script templates, keeping only those whose name contains every
+// word of searchText, ignoring case. Selects the template selNdx if it is shown.
+void populateTemplateTree(CTreeCtrl *tree, const char *searchText, Int numTemplates, GetTemplateFunc getTemplate, Int selNdx);

@@ -43,7 +43,8 @@ LRESULT CMyTreeCtrl::WindowProc(	UINT message, WPARAM wParam, LPARAM lParam )
 
 
 EditCondition::EditCondition(CWnd* pParent /*=nullptr*/)
-	: CDialog(EditCondition::IDD, pParent)
+	: CDialog(EditCondition::IDD, pParent),
+	m_populatingTree(false)
 {
 	//{{AFX_DATA_INIT(EditCondition)
 		// NOTE: the ClassWizard will add member initialization here
@@ -64,6 +65,7 @@ BEGIN_MESSAGE_MAP(EditCondition, CDialog)
 	//{{AFX_MSG_MAP(EditCondition)
 	ON_CBN_SELCHANGE(IDC_CONDITION_TYPE, OnSelchangeConditionType)
 	ON_WM_TIMER()
+	ON_EN_CHANGE(IDC_SCRIPT_SEARCH, OnChangeSearch)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -102,7 +104,7 @@ BOOL EditCondition::OnInitDialog()
 	m_myEditCtrl.ShowWindow(SW_SHOW);
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
-	populateTemplateTree(&m_conditionTreeView, Condition::NUM_ITEMS, getConditionTemplate, m_condition->getConditionType());
+	populateConditionTree();
 	m_condition->setWarnings(false);
 	m_myEditCtrl.SetWindowText(m_condition->getUiText().str());
 	m_myEditCtrl.SetSel(-1, -1);
@@ -111,6 +113,34 @@ BOOL EditCondition::OnInitDialog()
 
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void EditCondition::populateConditionTree()
+{
+	char search[_MAX_PATH];
+	GetDlgItemText(IDC_SCRIPT_SEARCH, search, sizeof(search));
+
+	// Rebuilding the tree drops and restores the selection. Selecting another condition
+	// would reset its parameters, so ignore selection changes until the rebuild is done.
+	m_populatingTree = true;
+	populateTemplateTree(&m_conditionTreeView, search, Condition::NUM_ITEMS, getConditionTemplate, m_condition->getConditionType());
+	m_populatingTree = false;
+}
+
+void EditCondition::OnChangeSearch()
+{
+	populateConditionTree();
+}
+
+void EditCondition::OnOK()
+{
+	// Enter in the search box moves to the results instead of closing the dialog.
+	CWnd *pSearch = GetDlgItem(IDC_SCRIPT_SEARCH);
+	if (pSearch && ::GetFocus() == pSearch->GetSafeHwnd()) {
+		m_conditionTreeView.SetFocus();
+		return;
+	}
+	CDialog::OnOK();
 }
 
 
@@ -210,6 +240,9 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	// Handle events from the tree control.
 	if (pHdr->hdr.idFrom == IDC_CONDITION_TREE) {
 		if (pHdr->hdr.code == TVN_SELCHANGED) {
+			if (m_populatingTree) {
+				return TRUE;
+			}
 			char buffer[_MAX_PATH];
 			HTREEITEM hItem = m_conditionTreeView.GetSelectedItem();
 			TVITEM item;

@@ -90,21 +90,88 @@ static HTREEITEM addTemplateItem(CTreeCtrl *tree, const char *name, Int ndx)
 	return tree->InsertItem(&ins);
 }
 
-void populateTemplateTree(CTreeCtrl *tree, Int numTemplates, GetTemplateFunc getTemplate, Int selNdx)
+// True if every word occurs in name, ignoring case. The words must already be lower case.
+static Bool matchesSearch(const char *name, const AsciiStringList &words)
 {
+	if (words.empty()) {
+		return true;
+	}
+
+	AsciiString lowerName(name);
+	lowerName.toLower();
+	for (AsciiStringListConstIterator it = words.begin(); it != words.end(); ++it) {
+		if (strstr(lowerName.str(), it->str()) == nullptr) {
+			return false;
+		}
+	}
+	return true;
+}
+
+static void expandAll(CTreeCtrl *tree, HTREEITEM parent)
+{
+	HTREEITEM child;
+	for (child = tree->GetChildItem(parent); child != nullptr; child = tree->GetNextSiblingItem(child)) {
+		if (tree->GetChildItem(child) != nullptr) {
+			tree->Expand(child, TVE_EXPAND);
+			expandAll(tree, child);
+		}
+	}
+}
+
+// TheSuperHackers @feature WebbontheWeb 11/10/2026 Filter the script action and condition trees by the text in the search box.
+void populateTemplateTree(CTreeCtrl *tree, const char *searchText, Int numTemplates, GetTemplateFunc getTemplate, Int selNdx)
+{
+	AsciiString search(searchText);
+	search.toLower();
+	AsciiStringList words;
+	AsciiString word;
+	while (search.nextToken(&word)) {
+		words.push_back(word);
+	}
+	const Bool filtering = !words.empty();
+
+	tree->SetRedraw(FALSE);
+	tree->DeleteAllItems();
+
 	HTREEITEM selItem = nullptr;
 	for (Int i=0; i<numTemplates; i++) {
 		const Template *pTemplate = getTemplate(i);
 		const char *name = pTemplate->getName().str();
-		HTREEITEM item = addTemplateItem(tree, name, i);
-		if (i == selNdx) {
-			selItem = item;
+		if (matchesSearch(name, words)) {
+			HTREEITEM item = addTemplateItem(tree, name, i);
+			if (i == selNdx) {
+				selItem = item;
+			}
 		}
 
-		if (pTemplate->getName2().isEmpty()) continue;
+		if (pTemplate->getName2().isEmpty()) {
+			continue;
+		}
 		name = pTemplate->getName2().str();
-		addTemplateItem(tree, name, i);
+		if (matchesSearch(name, words)) {
+			HTREEITEM item = addTemplateItem(tree, name, i);
+			if (i == selNdx && selItem == nullptr) {
+				selItem = item;
+			}
+		}
 	}
-	tree->Select(selItem, TVGN_FIRSTVISIBLE);
-	tree->SelectItem(selItem);
+
+	// Show search results from the top. Selecting afterwards only scrolls as far as needed
+	// to keep the selected template visible.
+	if (filtering) {
+		expandAll(tree, TVI_ROOT);
+		HTREEITEM firstItem = tree->GetRootItem();
+		if (firstItem != nullptr) {
+			tree->Select(firstItem, TVGN_FIRSTVISIBLE);
+		}
+	}
+	if (selItem != nullptr) {
+		if (!filtering) {
+			tree->Select(selItem, TVGN_FIRSTVISIBLE);
+		}
+		tree->SelectItem(selItem);
+	}
+
+	tree->SetRedraw(TRUE);
+	tree->Invalidate();
 }

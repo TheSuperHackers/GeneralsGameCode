@@ -55,10 +55,12 @@ public:
 
 protected:
 	void formatScriptActionText(Int parmNdx);
+	void populateActionTree();
 protected:
 	ScriptAction *m_action;
 	Bool			m_updating;
 	Bool			m_modifiedTextColor;
+	Bool			m_populatingTree;
 	CRichEditCtrl m_myEditCtrl;
 	CHARRANGE m_curLinkChrg;
 	Int				m_curEditParameter;
@@ -69,8 +71,10 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(EditAction)
 	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	afx_msg void OnSelchangeScriptActionType();
 	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnChangeSearch();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
