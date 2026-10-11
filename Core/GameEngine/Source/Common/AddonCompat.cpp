@@ -29,6 +29,7 @@ Bool HasFullviewportDat()
 	if (File* file = TheFileSystem->openFile("GenTool/fullviewport.dat", File::READ | File::BINARY))
 	{
 		file->read(&value, 1);
+		file->close();
 	}
 	return value != '0';
 }
