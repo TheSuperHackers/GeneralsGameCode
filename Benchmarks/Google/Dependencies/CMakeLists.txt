@@ -1,5 +1,8 @@
 # g_googlebenchmark and z_googlebenchmark compile these sources together with the Core benchmarks.
 set(DEPSI_GOOGLEBENCHMARK_SRC
+    Utility/atomic_x86interlocked_benchmark.cpp
+    Utility/interlocked_x86asm_benchmark.cpp
+    Utility/interlocked_x86asm_common.h
     Utility/stringex_benchmark.cpp
 )
 
