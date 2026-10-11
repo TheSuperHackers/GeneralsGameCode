@@ -185,7 +185,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 		return;
 	}
 
-	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
+	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format));
 	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), nullptr, 0, surfaceCopy->Peek_D3D_Surface(), nullptr);
 
 	surface->Release_Ref();
