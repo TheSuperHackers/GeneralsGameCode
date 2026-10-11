@@ -103,14 +103,12 @@ void W3DTerrainParticles::render()
 
 	for (Int p = 0; p < m_pointCount; p++)
 	{
-		const Vector3 loc = m_pointLoc->Get_Array()[p];
-		const UnsignedInt diffuse = m_pointDiffuse ? DX8Wrapper::Convert_Color_Clamp(m_pointDiffuse->Get_Array()[p]) : m_defaultDiffuse;
 		const Real size = m_pointSize ? m_pointSize->Get_Array()[p] : m_defaultPointSize;
-		const UnsignedByte orientation = m_pointOrientation ? m_pointOrientation->Get_Array()[p] : m_defaultPointOrientation;
-
 		if (size < TerrainParticles::MIN_PARTICLE_SIZE)
 			continue;
 
+		const Vector3 loc = m_pointLoc->Get_Array()[p];
+		const UnsignedByte orientation = m_pointOrientation ? m_pointOrientation->Get_Array()[p] : m_defaultPointOrientation;
 		const Real angle = orientation / 255.0f * WWMATH_TWO_PI;
 		const Real cosine = WWMath::Fast_Cos(angle);
 		const Real sine = WWMath::Fast_Sin(angle);
@@ -119,6 +117,8 @@ void W3DTerrainParticles::render()
 		const IRegion2D bounds = calcTerrainBounds(*map, loc, projectedRadius);
 		if (bounds.width() < 2 || bounds.height() < 2)
 			continue;
+		
+		const UnsignedInt diffuse = m_pointDiffuse ? DX8Wrapper::Convert_Color_Clamp(m_pointDiffuse->Get_Array()[p]) : m_defaultDiffuse;
 
 		ParticleContext particle;
 		particle.loc = loc;
