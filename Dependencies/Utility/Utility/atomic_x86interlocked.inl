@@ -295,63 +295,140 @@ private:
 };
 
 
-// A float is kept as the long with the same bytes, because the generic class would convert its value to an integer
-// and would compare values with ==. Like the standard class this one compares bytes, which differs from == for
-// -0.0f and for a NaN, and it adds and subtracts but has no other arithmetic.
-template<>
-class atomic<float>
+// A floating point value is kept as the integer with the same bytes, because the generic class would convert its
+// value to an integer and would compare values with ==. Like the standard class this one compares bytes, which
+// differs from == for a negative zero and for a NaN, and it adds and subtracts but has no other arithmetic.
+// The specializations of atomic for the floating point types derive from this class.
+template<typename Float, typename Bits>
+class atomic_floating
 {
 public:
-	atomic(float value = 0.0f)
+	atomic_floating(Float value)
 		: m_bits(to_bits(value))
 	{
 	}
 
-	float load(memory_order = memory_order_seq_cst) const
+	Float load(memory_order = memory_order_seq_cst) const
 	{
 		return from_bits(m_bits.load());
 	}
 
-	void store(float value, memory_order = memory_order_seq_cst)
+	void store(Float value, memory_order = memory_order_seq_cst)
 	{
 		m_bits.store(to_bits(value));
 	}
 
-	float exchange(float value, memory_order = memory_order_seq_cst)
+	Float exchange(Float value, memory_order = memory_order_seq_cst)
 	{
 		return from_bits(m_bits.exchange(to_bits(value)));
 	}
 
-	float fetch_add(float value, memory_order = memory_order_seq_cst)
+	Float fetch_add(Float value, memory_order = memory_order_seq_cst)
 	{
-		long newBits;
+		Bits newBits;
 		return from_bits(modify_bits(value, false, newBits));
 	}
 
-	float fetch_sub(float value, memory_order = memory_order_seq_cst)
+	Float fetch_sub(Float value, memory_order = memory_order_seq_cst)
 	{
-		long newBits;
+		Bits newBits;
 		return from_bits(modify_bits(value, true, newBits));
 	}
 
-	bool compare_exchange_strong(float& expected, float desired, memory_order = memory_order_seq_cst)
+	bool compare_exchange_strong(Float& expected, Float desired, memory_order = memory_order_seq_cst)
 	{
 		return compare_exchange(expected, desired);
 	}
 
-	bool compare_exchange_strong(float& expected, float desired, memory_order, memory_order)
+	bool compare_exchange_strong(Float& expected, Float desired, memory_order, memory_order)
 	{
 		return compare_exchange(expected, desired);
 	}
 
-	bool compare_exchange_weak(float& expected, float desired, memory_order = memory_order_seq_cst)
+	bool compare_exchange_weak(Float& expected, Float desired, memory_order = memory_order_seq_cst)
 	{
 		return compare_exchange(expected, desired);
 	}
 
-	bool compare_exchange_weak(float& expected, float desired, memory_order, memory_order)
+	bool compare_exchange_weak(Float& expected, Float desired, memory_order, memory_order)
 	{
 		return compare_exchange(expected, desired);
+	}
+
+	operator Float() const
+	{
+		return load();
+	}
+
+	Float operator+=(Float value)
+	{
+		Bits newBits;
+		modify_bits(value, false, newBits);
+		return from_bits(newBits);
+	}
+
+	Float operator-=(Float value)
+	{
+		Bits newBits;
+		modify_bits(value, true, newBits);
+		return from_bits(newBits);
+	}
+
+private:
+	static_assert_cpp98(sizeof(Float) == sizeof(Bits), "The integer type must have the size of the floating point type");
+
+	atomic_floating(const atomic_floating&) FUNCTION_DELETE;
+	atomic_floating& operator=(const atomic_floating&) FUNCTION_DELETE;
+
+	// The bytes are read through a pointer, so that the value does not pass through the floating point unit on
+	// the way, which changes the bytes of a signaling NaN.
+	static Bits to_bits(const Float& value)
+	{
+		return *(const Bits*)&value;
+	}
+
+	static Float from_bits(const Bits& bits)
+	{
+		return *(const Float*)&bits;
+	}
+
+	bool compare_exchange(Float& expected, Float desired)
+	{
+		Bits expectedBits = to_bits(expected);
+
+		if (m_bits.compare_exchange_strong(expectedBits, to_bits(desired)))
+			return true;
+
+		*(Bits*)&expected = expectedBits;
+		return false;
+	}
+
+	// Adds or subtracts with a retry loop. Returns the bytes from before the operation.
+	Bits modify_bits(Float value, bool subtract, Bits& newBits)
+	{
+		Bits oldBits = m_bits.load();
+
+		do
+		{
+			const Float oldValue = from_bits(oldBits);
+			const Float newValue = subtract ? oldValue - value : oldValue + value;
+			newBits = to_bits(newValue);
+		}
+		while (!m_bits.compare_exchange_weak(oldBits, newBits));
+
+		return oldBits;
+	}
+
+	atomic<Bits> m_bits;
+};
+
+template<>
+class atomic<float> : public atomic_floating<float, long>
+{
+public:
+	atomic(float value = 0.0f)
+		: atomic_floating<float, long>(value)
+	{
 	}
 
 	float operator=(float value)
@@ -360,69 +437,9 @@ public:
 		return value;
 	}
 
-	operator float() const
-	{
-		return load();
-	}
-
-	float operator+=(float value)
-	{
-		long newBits;
-		modify_bits(value, false, newBits);
-		return from_bits(newBits);
-	}
-
-	float operator-=(float value)
-	{
-		long newBits;
-		modify_bits(value, true, newBits);
-		return from_bits(newBits);
-	}
-
 private:
 	atomic(const atomic&) FUNCTION_DELETE;
 	atomic& operator=(const atomic&) FUNCTION_DELETE;
-
-	// The bytes are read through a pointer, so that the value does not pass through the floating point unit on
-	// the way, which changes the bytes of a signaling NaN.
-	static long to_bits(const float& value)
-	{
-		return *(const long*)&value;
-	}
-
-	static float from_bits(const long& bits)
-	{
-		return *(const float*)&bits;
-	}
-
-	bool compare_exchange(float& expected, float desired)
-	{
-		long expectedBits = to_bits(expected);
-
-		if (m_bits.compare_exchange_strong(expectedBits, to_bits(desired)))
-			return true;
-
-		*(long*)&expected = expectedBits;
-		return false;
-	}
-
-	// Adds or subtracts with a retry loop. Returns the bytes from before the operation.
-	long modify_bits(float value, bool subtract, long& newBits)
-	{
-		long oldBits = m_bits.load();
-
-		do
-		{
-			const float oldValue = from_bits(oldBits);
-			const float newValue = subtract ? oldValue - value : oldValue + value;
-			newBits = to_bits(newValue);
-		}
-		while (!m_bits.compare_exchange_weak(oldBits, newBits));
-
-		return oldBits;
-	}
-
-	atomic<long> m_bits;
 };
 
 // A double and a long double have a supported size, but the conversion to a 64 bit integer would drop their
