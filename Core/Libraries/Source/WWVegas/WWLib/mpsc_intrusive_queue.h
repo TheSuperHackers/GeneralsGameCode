@@ -18,7 +18,6 @@
 
 #pragma once
 
-// Requires <windows.h> to be included first for the Interlocked intrinsics.
 #include "Utility/interlocked_adapter.h"
 
 // Lock-free intrusive queue for multiple producer threads and a single consumer thread,

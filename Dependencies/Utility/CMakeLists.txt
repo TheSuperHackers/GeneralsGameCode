@@ -10,6 +10,7 @@ set(UTILITY_SRC
     Utility/fstream_adapter.h
     Utility/hash_map_adapter.h
     Utility/interlocked_adapter.h
+    Utility/interlocked_x86asm.inl
     Utility/intrin_compat.h
     Utility/iostream_adapter.h
     Utility/lazy_static.h
