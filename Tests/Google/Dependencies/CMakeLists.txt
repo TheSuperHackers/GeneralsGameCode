@@ -1,5 +1,7 @@
 # g_googletest and z_googletest compile these sources together with the Core tests.
 set(DEPSI_GOOGLETEST_SRC
+    Utility/interlocked_x86asm_common.h
+    Utility/interlocked_x86asm_test.cpp
     Utility/stringex_memcchr_common.h
     Utility/stringex_memcchr_portable_test.cpp
     Utility/stringex_memcchr_sse2_test.cpp
