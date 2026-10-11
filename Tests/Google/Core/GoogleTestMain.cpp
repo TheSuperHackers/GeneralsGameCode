@@ -22,6 +22,7 @@
 #include <gtest/gtest.h>
 
 #include "Common/CommandLine.h"
+#include "Common/CriticalSection.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
 #include "GameClient/ClientInstance.h"
@@ -38,8 +39,42 @@ static void failTestOnCrash(const char *message)
 	ADD_FAILURE() << message;
 }
 
+// The engine locks its memory manager, its strings and its debug log only if the executable provides the critical
+// sections for it, as the game does in WinMain. Tests that run threads need these locks.
+class EngineCriticalSections
+{
+public:
+	EngineCriticalSections()
+	{
+		TheAsciiStringCriticalSection = &m_asciiString;
+		TheUnicodeStringCriticalSection = &m_unicodeString;
+		TheDmaCriticalSection = &m_dma;
+		TheMemoryPoolCriticalSection = &m_memoryPool;
+		TheDebugLogCriticalSection = &m_debugLog;
+	}
+
+	~EngineCriticalSections()
+	{
+		TheAsciiStringCriticalSection = nullptr;
+		TheUnicodeStringCriticalSection = nullptr;
+		TheDmaCriticalSection = nullptr;
+		TheMemoryPoolCriticalSection = nullptr;
+		TheDebugLogCriticalSection = nullptr;
+	}
+
+private:
+	CriticalSection m_asciiString;
+	CriticalSection m_unicodeString;
+	CriticalSection m_dma;
+	CriticalSection m_memoryPool;
+	CriticalSection m_debugLog;
+};
+
 static int runTests(int argc, char **argv)
 {
+	// Is gone again when this function returns, before the static objects of the program free their memory.
+	EngineCriticalSections criticalSections;
+
 	// Google Test removes its flags from the argument array it gets, but the engine reads the process
 	// arguments through __argv and __argc, so Google Test gets a copy that includes the terminating null.
 	std::vector<char *> testArgs(argv, argv + argc + 1);
