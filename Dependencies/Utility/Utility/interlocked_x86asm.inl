@@ -143,3 +143,36 @@ inline __declspec(naked) void* __fastcall InterlockedExchangePointer(void* volat
 	}
 	// clang-format on
 }
+
+// A plain read is sufficient next to the functions above, because they all store with a locked instruction.
+// The reads are functions, because the VC6 optimizer does not reliably treat a data member as volatile and
+// would otherwise move the read out of a loop that waits for another thread to store a value.
+inline __declspec(naked) long __fastcall ReadAcquire(long const volatile *Source)
+{
+	// clang-format off
+	__asm {
+		mov eax, dword ptr [ecx]
+		ret
+	}
+	// clang-format on
+}
+
+inline __declspec(naked) short __fastcall ReadAcquire16(short const volatile *Source)
+{
+	// clang-format off
+	__asm {
+		mov ax, word ptr [ecx]
+		ret
+	}
+	// clang-format on
+}
+
+inline __declspec(naked) char __fastcall ReadAcquire8(char const volatile *Source)
+{
+	// clang-format off
+	__asm {
+		mov al, byte ptr [ecx]
+		ret
+	}
+	// clang-format on
+}

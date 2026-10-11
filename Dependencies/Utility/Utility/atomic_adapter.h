@@ -36,40 +36,6 @@
 
 #include "Utility/interlocked_adapter.h"
 
-namespace utility_atomic_detail
-{
-	// Read a value without locking, which is sufficient because every store of the atomic class is a locked
-	// instruction. The functions are naked, so that VC6 never expands them inline. Its optimizer does not reliably treat
-	// a data member as volatile and would otherwise move the read out of a loop that waits for another thread to store
-	// a value. With __fastcall the argument is in ecx. The result is returned in al, ax or eax.
-	__declspec(naked) inline char __fastcall load8(const char volatile *source)
-	{
-		__asm
-		{
-			mov al, byte ptr [ecx]
-			ret
-		}
-	}
-
-	__declspec(naked) inline short __fastcall load16(const short volatile *source)
-	{
-		__asm
-		{
-			mov ax, word ptr [ecx]
-			ret
-		}
-	}
-
-	__declspec(naked) inline long __fastcall load32(const long volatile *source)
-	{
-		__asm
-		{
-			mov eax, dword ptr [ecx]
-			ret
-		}
-	}
-}
-
 namespace std
 {
 	// The VC6 atomic class takes the memory orders for source compatibility with the standard class.
@@ -240,9 +206,9 @@ namespace std
 		{
 			switch (sizeof(T))
 			{
-			case 1: return (T)::utility_atomic_detail::load8((const char volatile*)&m_stored);
-			case 2: return (T)::utility_atomic_detail::load16((const short volatile*)&m_stored);
-			default: return (T)::utility_atomic_detail::load32((const long volatile*)&m_stored);
+			case 1: return (T)ReadAcquire8((const char volatile*)&m_stored);
+			case 2: return (T)ReadAcquire16((const short volatile*)&m_stored);
+			default: return (T)ReadAcquire((const long volatile*)&m_stored);
 			}
 		}
 
