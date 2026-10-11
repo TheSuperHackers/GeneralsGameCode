@@ -23,6 +23,7 @@
 #include "WorldBuilder.h"
 #include "EditAction.h"
 #include "EditParameter.h"
+#include "ScriptTemplateTree.h"
 #include "GameLogic/ScriptEngine.h"
 
 
@@ -54,36 +55,9 @@ BEGIN_MESSAGE_MAP(EditAction, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-/** Locate the child item in tree item parent with name pLabel.  If not
-found, add it.  Either way, return child. */
-static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel)
+static const Template *getActionTemplate(Int ndx)
 {
-	TVINSERTSTRUCT ins;
-	char buffer[_MAX_PATH];
-	::memset(&ins, 0, sizeof(ins));
-	HTREEITEM child = tree->GetChildItem(parent);
-	while (child != nullptr) {
-		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
-		ins.item.hItem = child;
-		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;
-		tree->GetItem(&ins.item);
-		if (strcmp(buffer, pLabel) == 0) {
-			return(child);
-		}
-		child = tree->GetNextSiblingItem(child);
-	}
-
-	// not found, so add it.
-	::memset(&ins, 0, sizeof(ins));
-	ins.hParent = parent;
-	ins.hInsertAfter = TVI_SORT;
-	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
-	ins.item.lParam = -1;
-	ins.item.pszText = (char*)pLabel;
-	ins.item.cchTextMax = strlen(pLabel);
-	child = tree->InsertItem(&ins);
-	return(child);
+	return TheScriptEngine->getActionTemplate(ndx);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -116,83 +90,7 @@ BOOL EditAction::OnInitDialog()
 	m_myEditCtrl.ShowWindow(SW_SHOW);
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
-	Int i;
-	HTREEITEM selItem = nullptr;
-	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
-		const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(i);
-		char prefix[_MAX_PATH];
-		const char *name = pTemplate->getName().str();
-
-		Int count = 0;
-		HTREEITEM parent = TVI_ROOT;
-		do {
-			count = 0;
-			const char *nameStart = name;
-			while (*name && *name != '/') {
-				count++;
-				name++;
-			}
-			if (*name=='/') {
-				count++;
-				name++;
-			} else {
-				name = nameStart;
-				count = 0;
-			}
-			if (count>0) {
-				strlcpy(prefix, nameStart, count);
-				parent = findOrAdd(&m_actionTreeView, parent, prefix);
-			}
-		} while (count>0);
-
-		TVINSERTSTRUCT ins;
-		::memset(&ins, 0, sizeof(ins));
-		ins.hParent = parent;
-		ins.hInsertAfter = TVI_SORT;
-		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
-		ins.item.lParam = i;
-		ins.item.pszText = (char*)name;
-		ins.item.cchTextMax = 0;
-		HTREEITEM item = m_actionTreeView.InsertItem(&ins);
-		if (i == m_action->getActionType()) {
-			selItem = item;
-		}
-
-		name = pTemplate->getName2().str();
-		count = 0;
-		if (pTemplate->getName2().isEmpty()) continue;
-		parent = TVI_ROOT;
-		do {
-			count = 0;
-			const char *nameStart = name;
-			while (*name && *name != '/') {
-				count++;
-				name++;
-			}
-			if (*name=='/') {
-				count++;
-				name++;
-			} else {
-				name = nameStart;
-				count = 0;
-			}
-			if (count>0) {
-				strlcpy(prefix, nameStart, count);
-				parent = findOrAdd(&m_actionTreeView, parent, prefix);
-			}
-		} while (count>0);
-
-		::memset(&ins, 0, sizeof(ins));
-		ins.hParent = parent;
-		ins.hInsertAfter = TVI_SORT;
-		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
-		ins.item.lParam = i;
-		ins.item.pszText = (char*)name;
-		ins.item.cchTextMax = 0;
-		m_actionTreeView.InsertItem(&ins);
-	}
-	m_actionTreeView.Select(selItem, TVGN_FIRSTVISIBLE);
-	m_actionTreeView.SelectItem(selItem);
+	populateTemplateTree(&m_actionTreeView, ScriptAction::NUM_ITEMS, getActionTemplate, m_action->getActionType());
 	m_action->setWarnings(false);
 	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	m_myEditCtrl.SetSel(-1, -1);
