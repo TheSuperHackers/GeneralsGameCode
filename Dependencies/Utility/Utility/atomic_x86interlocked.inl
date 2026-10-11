@@ -193,7 +193,7 @@ private:
 		case 2: return (T)ReadAcquire16((const short volatile*)&m_stored);
 		// Reading 8 bytes takes two instructions, between which another thread can store. A compare exchange of
 		// 0 for 0 reads them in one step: it leaves every value as it is and returns it.
-		case 8: return (T)InterlockedCompareExchange64((__int64 volatile*)&m_stored, 0, 0);
+		case 8: return (T)InterlockedCompareExchange64((int64_t volatile*)&m_stored, 0, 0);
 		default: return (T)ReadAcquire((const long volatile*)&m_stored);
 		}
 	}
@@ -204,7 +204,7 @@ private:
 		{
 		case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)(long)value);
 		case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)(long)value);
-		case 8: return (T)InterlockedExchange64((__int64 volatile*)&m_stored, (__int64)value);
+		case 8: return (T)InterlockedExchange64((int64_t volatile*)&m_stored, (int64_t)value);
 		default: return (T)InterlockedExchange((long volatile*)&m_stored, (long)value);
 		}
 	}
@@ -215,7 +215,7 @@ private:
 		{
 		case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)(long)value);
 		case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)(long)value);
-		case 8: return (T)InterlockedExchangeAdd64((__int64 volatile*)&m_stored, (__int64)value);
+		case 8: return (T)InterlockedExchangeAdd64((int64_t volatile*)&m_stored, (int64_t)value);
 		default: return (T)InterlockedExchangeAdd((long volatile*)&m_stored, (long)value);
 		}
 	}
@@ -226,7 +226,7 @@ private:
 		{
 		case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)(long)exchange, (char)(long)comparand);
 		case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)(long)exchange, (short)(long)comparand);
-		case 8: return (T)InterlockedCompareExchange64((__int64 volatile*)&m_stored, (__int64)exchange, (__int64)comparand);
+		case 8: return (T)InterlockedCompareExchange64((int64_t volatile*)&m_stored, (int64_t)exchange, (int64_t)comparand);
 		default: return (T)InterlockedCompareExchange((long volatile*)&m_stored, (long)exchange, (long)comparand);
 		}
 	}
@@ -248,8 +248,8 @@ private:
 		{
 		// Adds and subtracts unsigned, because that wraps around without undefined behavior, and in 64 bits for the
 		// types of that size. The compiler reduces that to the size of a smaller type.
-		case operation_add: return (T)((unsigned __int64)stored + (unsigned __int64)operand);
-		case operation_sub: return (T)((unsigned __int64)stored - (unsigned __int64)operand);
+		case operation_add: return (T)((uint64_t)stored + (uint64_t)operand);
+		case operation_sub: return (T)((uint64_t)stored - (uint64_t)operand);
 		case operation_or: return (T)(stored | operand);
 		case operation_and: return (T)(stored & operand);
 		default: return (T)(stored ^ operand);
@@ -270,7 +270,7 @@ private:
 			return exchange_add_stored(operand);
 
 		if (op == operation_sub)
-			return exchange_add_stored((T)(0ui64 - (unsigned __int64)operand));
+			return exchange_add_stored((T)((uint64_t)0 - (uint64_t)operand));
 
 		T oldValue;
 		T newValue;
@@ -443,11 +443,11 @@ private:
 };
 
 template<>
-class atomic<double> : public atomic_floating<double, __int64>
+class atomic<double> : public atomic_floating<double, int64_t>
 {
 public:
 	atomic(double value = 0.0)
-		: atomic_floating<double, __int64>(value)
+		: atomic_floating<double, int64_t>(value)
 	{
 	}
 
@@ -477,8 +477,9 @@ typedef atomic<int> atomic_int;
 typedef atomic<unsigned int> atomic_uint;
 typedef atomic<long> atomic_long;
 typedef atomic<unsigned long> atomic_ulong;
-typedef atomic<__int64> atomic_llong;
-typedef atomic<unsigned __int64> atomic_ullong;
+// VC6 has no long long. With the compilers that have it, it is the type of int64_t.
+typedef atomic<int64_t> atomic_llong;
+typedef atomic<uint64_t> atomic_ullong;
 typedef atomic<wchar_t> atomic_wchar_t;
 typedef atomic<int8_t> atomic_int8_t;
 typedef atomic<uint8_t> atomic_uint8_t;
