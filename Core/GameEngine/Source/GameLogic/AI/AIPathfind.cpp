@@ -1560,8 +1560,8 @@ Bool Pathfinder::adjustToLandingDestination(Object *obj, Coord3D *dest)
 	TheTerrainLogic->getMaximumPathfindExtent(&extent);
 	// If the object is off the map & the goal is off the map, it is a scripted setup, so just
 	// go to the dest.
-	if (!extent.isInRegion(dest->asCoord2D())) {
-		if (!extent.isInRegion(obj->getPosition()->asCoord2D())) {
+	if (!extent.containsWithin(dest->asCoord2D())) {
+		if (!extent.containsWithin(obj->getPosition()->asCoord2D())) {
 			return true;
 		}
 	}

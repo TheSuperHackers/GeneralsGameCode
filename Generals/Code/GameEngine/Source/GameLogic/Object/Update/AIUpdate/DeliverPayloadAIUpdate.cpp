@@ -383,7 +383,7 @@ Bool DeliverPayloadAIUpdate::isOffMap() const
 	Region3D mapRegion;
 	TheTerrainLogic->getExtentIncludingBorder( &mapRegion );
 
-	if (!mapRegion.isInRegion( getObject()->getPosition()->asCoord2D() ))
+	if (!mapRegion.containsWithin( getObject()->getPosition()->asCoord2D() ))
 		return true;
 
 	return false;
