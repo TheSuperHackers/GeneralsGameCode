@@ -22,10 +22,10 @@
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 
-#include "interlocked_x86asm.inl"
+	#include "interlocked_x86asm.inl"
 
 #elif defined(_WIN32)
 
-#include <windows.h>
+	#include <windows.h>
 
 #endif

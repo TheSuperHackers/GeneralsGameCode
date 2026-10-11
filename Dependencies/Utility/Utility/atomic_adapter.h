@@ -24,21 +24,20 @@
 //   runs during the static initialization, where the standard class initializes it at compile time. A value that
 //   another static initializer stored into the object before that is overwritten.
 // - An atomic pointer has no fetch_add, fetch_sub, ++, --, += and -=.
+
 #pragma once
 
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+#if defined(_MSC_VER) && _MSC_VER < 1300
 
-#include <atomic>
+	#include <stddef.h>
+	#include "Utility/interlocked_adapter.h"
+	namespace std
+	{
+	#include "atomic_x86interlocked.inl"
+	}
 
 #else
 
-#include <stddef.h>
-
-#include "Utility/interlocked_adapter.h"
-
-namespace std
-{
-#include "atomic_x86interlocked.inl"
-}
+	#include <atomic>
 
 #endif
