@@ -1074,6 +1074,7 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 					m_cellCliffState[j*m_flipStateWidth + i] = data[j*byteWidth + i];
 				}
 			}
+			delete[] data;
 		} else {
 			file.readArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
 		}
