@@ -102,7 +102,7 @@
 #define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_DISCREPANCY (1)
 #endif
 
-// Whether to preserve the arithmetic mean speed based on the original forward speed discrepancy bug.
+// Whether to preserve the harmonic mean of the straight and diagonal speeds of the original forward speed discrepancy bug.
 // The locomotor speeds from the INI files are effectively scaled up a bit so that on average the world objects travel at comparable speeds.
 // Set this to 0 when speeds are set correctly by INI settings (recommended).
 #ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE

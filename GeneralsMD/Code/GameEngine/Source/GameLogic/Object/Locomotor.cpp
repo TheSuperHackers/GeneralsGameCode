@@ -80,7 +80,7 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 #if USE_RETAIL_PHYSICS_FORWARD_SPEED_AVERAGE()
 
 // TheSuperHackers @bugfix xezon 30/07/2026 The compensation that equalizes straight and diagonal
-// movement speeds by the arithmetic mean.
+// movement speeds at their harmonic mean.
 //
 // Retail measured forward speed as sqrt(sum of (vi * di)^2) rather than the true projection of the
 // velocity onto the heading, sum of (vi * di). For a unit heading d that understates the speed by
@@ -93,19 +93,22 @@ static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT 
 // the commanded speed on every heading. The speeds commanded by the 2d movers are scaled by a single
 // constant, which picks where inside the old range that now uniform speed sits.
 //
-// The constant is the mean of the old factor over a uniformly random heading, so the average
-// movement speed of the game is preserved and only the spread between headings collapses. It is
-// deliberately not the midpoint of the old range. The factor is weighted heavily toward its low end,
-// spending far more of the circle near 1x than near sqrt(2)x, so the midpoint sits above the mean
-// and would quietly speed the whole game up. The mean has a closed form as a complete elliptic
-// integral of the first kind, and equals 1.18034060.
+// The constant is the harmonic mean of the two ends of the old range, 1 and sqrt(2). Axis aligned
+// headings become exactly as much faster as diagonal headings become slower, 17.16% each, so no
+// heading changes its speed by more than that, whatever mix of headings a map produces.
+//
+// Averaging the old factor over all headings instead would preserve the average pace of the game,
+// but only for an even mix of headings, and the result depends on whether that mix is even over
+// distance travelled (harmonic mean, 1.1630) or over time spent (arithmetic mean, 1.1803). The
+// constant sits between the two, within 0.75% of both. The midpoint of the old range, 1.2071, lies
+// above all of them and would quietly speed the whole game up.
 //
 // THRUST, the only mover that measures itself with getForwardSpeed3D, is deliberately not scaled.
 // Its thrust is damped by the velocity times acceleration over max speed, which cancels the thrust
 // at exactly the max speed on every heading, so the understated measurement never raised its speed.
 // Scaling it would make missiles faster than retail.
 
-constexpr const Real DiagonalCompensation2D = 1.18034060f; // (2/pi)*K(1/2) = Gamma(1/4)^2 / (2*pi^(3/2))
+constexpr const Real DiagonalCompensation2D = 1.17157288f; // 2*sqrt(2) / (1 + sqrt(2)) = 4 - 2*sqrt(2)
 
 #endif
 
