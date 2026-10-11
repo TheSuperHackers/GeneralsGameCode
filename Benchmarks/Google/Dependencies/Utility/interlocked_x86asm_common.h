@@ -23,8 +23,9 @@
 #if defined(_MSC_VER) && defined(_M_IX86)
 
 #include <windows.h>
+#include <atomic>
 #include <intrin.h>
-#include <process.h>
+#include <thread>
 
 // The Windows SDK defines these names as macros for compiler intrinsics. They are removed, so that the functions
 // that VC6 uses can be declared under them. The intrinsics stay available under their own names, which begin
@@ -50,43 +51,32 @@ namespace interlocked_benchmark
 {
 // Calls the function in a loop on a second thread for as long as the object exists, so that a benchmark can
 // measure an operation that competes with another thread.
-// The thread is started with the C runtime. Neither ->Threads() of Google Benchmark nor std::thread can be used:
-// both free memory with operator delete on the new thread. In the benchmark executables that is the memory manager
-// of the game, and nothing there sets up the locks it needs for more than one thread. For the same reason the
-// function must not allocate.
 template <typename Function>
 class CompetingThread
 {
 public:
 	explicit CompetingThread(Function function)
-		: m_function(function)
-		, m_stop(0)
-		, m_thread(reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, &CompetingThread::run, this, 0, nullptr)))
+		: m_stop(false)
+		, m_thread([this, function]()
+			{
+				while (!m_stop.load())
+					function();
+			})
 	{
 	}
 
 	~CompetingThread()
 	{
-		_InterlockedExchange(&m_stop, 1);
-		WaitForSingleObject(m_thread, INFINITE);
-		CloseHandle(m_thread);
+		m_stop.store(true);
+		m_thread.join();
 	}
 
 	CompetingThread(const CompetingThread &) = delete;
 	CompetingThread &operator=(const CompetingThread &) = delete;
 
 private:
-	static unsigned __stdcall run(void *argument)
-	{
-		CompetingThread *self = static_cast<CompetingThread *>(argument);
-		while (self->m_stop == 0)
-			self->m_function();
-		return 0;
-	}
-
-	Function m_function;
-	volatile long m_stop;
-	HANDLE m_thread;
+	std::atomic<bool> m_stop;
+	std::thread m_thread;
 };
 } // namespace interlocked_benchmark
 

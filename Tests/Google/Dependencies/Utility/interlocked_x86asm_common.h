@@ -24,7 +24,7 @@
 
 #include <windows.h>
 #include <intrin.h>
-#include <process.h>
+#include <thread>
 
 // The Windows SDK defines these names as macros for compiler intrinsics. They are removed, so that the functions
 // that VC6 uses can be declared under them. The intrinsics stay available under their own names, which begin
@@ -52,37 +52,15 @@ constexpr int ThreadCount = 4;
 constexpr int ThreadIterations = 50000;
 
 // Runs the function on every thread at once and passes it the index of its thread.
-// The threads are started with the C runtime and not with std::thread, which frees memory with operator delete on
-// the new thread. In the test executables that is the memory manager of the game, and nothing there sets up the
-// locks it needs for more than one thread. For the same reason the function must not allocate.
 template <typename Function>
 void runThreads(Function function)
 {
-	struct Context
-	{
-		Function* function;
-		int index;
-
-		static unsigned __stdcall run(void* argument)
-		{
-			const Context* context = static_cast<const Context*>(argument);
-			(*context->function)(context->index);
-			return 0;
-		}
-	};
-
-	Context contexts[ThreadCount];
-	HANDLE threads[ThreadCount];
+	std::thread threads[ThreadCount];
 	for (int index = 0; index < ThreadCount; ++index)
-	{
-		contexts[index].function = &function;
-		contexts[index].index = index;
-		threads[index] = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, &Context::run, &contexts[index], 0, nullptr));
-	}
+		threads[index] = std::thread([&function, index]() { function(index); });
 
-	WaitForMultipleObjects(ThreadCount, threads, TRUE, INFINITE);
-	for (HANDLE thread : threads)
-		CloseHandle(thread);
+	for (std::thread& thread : threads)
+		thread.join();
 }
 } // namespace interlocked_test
 
