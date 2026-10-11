@@ -17,7 +17,7 @@
 */
 
 // This file provides the Interlocked functions of the Windows SDK. The VC6 headers have them neither for volatile
-// pointers nor for 8 and 16 bit values, so VC6 gets its own implementations.
+// pointers nor for 8, 16 and 64 bit values, so VC6 gets its own implementations.
 #pragma once
 
 #if defined(_MSC_VER) && _MSC_VER < 1300

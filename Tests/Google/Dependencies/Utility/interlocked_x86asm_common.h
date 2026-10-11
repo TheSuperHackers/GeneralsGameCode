@@ -37,6 +37,9 @@
 #undef InterlockedExchangeAdd16
 #undef InterlockedExchange8
 #undef InterlockedExchangeAdd8
+#undef InterlockedCompareExchange64
+#undef InterlockedExchange64
+#undef InterlockedExchangeAdd64
 #undef InterlockedCompareExchangePointer
 #undef InterlockedExchangePointer
 

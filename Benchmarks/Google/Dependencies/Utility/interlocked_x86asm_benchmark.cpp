@@ -28,7 +28,9 @@ namespace
 template <typename Value, typename Operation>
 void runOperation(benchmark::State &state, Operation operation)
 {
-	volatile Value value = 0;
+	// Aligned, because the stack of x86 aligns a 64 bit value to 4 bytes only, and a locked instruction on a value
+	// that crosses a cache line takes about a hundred times as long.
+	alignas(Value) volatile Value value = 0;
 	for (auto _ : state)
 	{
 		benchmark::DoNotOptimize(operation(&value));
@@ -72,6 +74,32 @@ static void BM_InterlockedExchangeAdd_intrinsic(benchmark::State &state)
 }
 BENCHMARK(BM_InterlockedExchangeAdd_intrinsic);
 
+// The processor has no instruction that adds or exchanges 64 bits. The Windows SDK has these two as inline
+// functions that repeat the compare exchange intrinsic, and the assembler functions do the same.
+static void BM_InterlockedExchangeAdd64_x86asm(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return x86asm::InterlockedExchangeAdd64(value, 1); });
+}
+BENCHMARK(BM_InterlockedExchangeAdd64_x86asm);
+
+static void BM_InterlockedExchangeAdd64_sdk(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return _InlineInterlockedExchangeAdd64(value, 1); });
+}
+BENCHMARK(BM_InterlockedExchangeAdd64_sdk);
+
+static void BM_InterlockedExchange64_x86asm(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return x86asm::InterlockedExchange64(value, 1); });
+}
+BENCHMARK(BM_InterlockedExchange64_x86asm);
+
+static void BM_InterlockedExchange64_sdk(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return _InlineInterlockedExchange64(value, 1); });
+}
+BENCHMARK(BM_InterlockedExchange64_sdk);
+
 // The compare exchange always finds the comparand and stores the same value again.
 static void BM_InterlockedCompareExchange8_x86asm(benchmark::State &state)
 {
@@ -108,6 +136,18 @@ static void BM_InterlockedCompareExchange_intrinsic(benchmark::State &state)
 	runOperation<long>(state, [](volatile long *value) { return _InterlockedCompareExchange(value, 0, 0); });
 }
 BENCHMARK(BM_InterlockedCompareExchange_intrinsic);
+
+static void BM_InterlockedCompareExchange64_x86asm(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return x86asm::InterlockedCompareExchange64(value, 0, 0); });
+}
+BENCHMARK(BM_InterlockedCompareExchange64_x86asm);
+
+static void BM_InterlockedCompareExchange64_intrinsic(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return _InterlockedCompareExchange64(value, 0, 0); });
+}
+BENCHMARK(BM_InterlockedCompareExchange64_intrinsic);
 
 static void BM_ReadAcquire_x86asm(benchmark::State &state)
 {

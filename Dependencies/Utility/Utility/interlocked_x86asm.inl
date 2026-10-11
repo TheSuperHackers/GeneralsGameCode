@@ -17,7 +17,7 @@
 */
 
 // VC6-compatible x86 implementations of Interlocked functions of the Windows SDK.
-// The VC6 headers have them neither for volatile pointers nor for 8 and 16 bit values.
+// The VC6 headers have them neither for volatile pointers nor for 8, 16 and 64 bit values.
 //
 // The functions are naked, because VC6 fails with an internal compiler error when it expands inline
 // assembler into a function of a class template. With __fastcall the first argument is in ecx, the
@@ -146,5 +146,72 @@ inline __declspec(naked) char __fastcall ReadAcquire8(char const volatile *Sourc
 	__asm {
 		mov al, byte ptr [ecx]
 		ret
+	}
+}
+
+// The 64 bit functions build on cmpxchg8b, the one instruction that locks 8 bytes. It compares edx:eax with the
+// destination and stores ecx:ebx there if they are equal, else it loads the destination into edx:eax.
+// A 64 bit argument is on the stack even with __fastcall. The result is returned in edx:eax.
+//
+// There is no ReadAcquire64. Reading 8 bytes takes two instructions, between which another thread can store, so
+// that the two halves would come from different values. A compare exchange of 0 for 0 reads them in one step:
+// it leaves every value as it is and returns it.
+inline __declspec(naked) __int64 __fastcall InterlockedCompareExchange64(__int64 volatile *Destination, __int64 Exchange, __int64 Comparand)
+{
+	__asm {
+		push ebx
+		push esi
+		mov esi, ecx
+		mov ebx, dword ptr [esp+12]
+		mov ecx, dword ptr [esp+16]
+		mov eax, dword ptr [esp+20]
+		mov edx, dword ptr [esp+24]
+		lock cmpxchg8b qword ptr [esi]
+		pop esi
+		pop ebx
+		ret 16
+	}
+}
+
+// The processor cannot exchange or add 8 bytes in one instruction. These two repeat a compare exchange until no
+// other thread got in between. The first comparand is read plainly and can be half of a value that another thread
+// is storing, which only makes the first attempt fail.
+inline __declspec(naked) __int64 __fastcall InterlockedExchange64(__int64 volatile *Target, __int64 Value)
+{
+	__asm {
+		push ebx
+		push esi
+		mov esi, ecx
+		mov ebx, dword ptr [esp+12]
+		mov ecx, dword ptr [esp+16]
+		mov eax, dword ptr [esi]
+		mov edx, dword ptr [esi+4]
+	retry:
+		lock cmpxchg8b qword ptr [esi]
+		jnz retry
+		pop esi
+		pop ebx
+		ret 8
+	}
+}
+
+inline __declspec(naked) __int64 __fastcall InterlockedExchangeAdd64(__int64 volatile *Addend, __int64 Value)
+{
+	__asm {
+		push ebx
+		push esi
+		mov esi, ecx
+		mov eax, dword ptr [esi]
+		mov edx, dword ptr [esi+4]
+	retry:
+		mov ebx, eax
+		mov ecx, edx
+		add ebx, dword ptr [esp+12]
+		adc ecx, dword ptr [esp+16]
+		lock cmpxchg8b qword ptr [esi]
+		jnz retry
+		pop esi
+		pop ebx
+		ret 8
 	}
 }
