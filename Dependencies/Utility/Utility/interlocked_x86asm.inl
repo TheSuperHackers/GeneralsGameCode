@@ -152,10 +152,6 @@ inline __declspec(naked) char __fastcall ReadAcquire8(char const volatile *Sourc
 // The 64 bit functions build on cmpxchg8b, the one instruction that locks 8 bytes. It compares edx:eax with the
 // destination and stores ecx:ebx there if they are equal, else it loads the destination into edx:eax.
 // A 64 bit argument is on the stack even with __fastcall. The result is returned in edx:eax.
-//
-// There is no ReadAcquire64. Reading 8 bytes takes two instructions, between which another thread can store, so
-// that the two halves would come from different values. A compare exchange of 0 for 0 reads them in one step:
-// it leaves every value as it is and returns it.
 inline __declspec(naked) __int64 __fastcall InterlockedCompareExchange64(__int64 volatile *Destination, __int64 Exchange, __int64 Comparand)
 {
 	__asm {
@@ -213,5 +209,18 @@ inline __declspec(naked) __int64 __fastcall InterlockedExchangeAdd64(__int64 vol
 		pop esi
 		pop ebx
 		ret 8
+	}
+}
+
+// Reads the two halves one after the other, as the function of the Windows SDK does on 32 bit x86. Another thread
+// can store in between, so that the halves come from two different values. The result is therefore only good as
+// the first comparand of a compare exchange, which does not match such a value. A compare exchange of 0 for 0
+// reads all 8 bytes in one step: it leaves every value as it is and returns it.
+inline __declspec(naked) __int64 __fastcall ReadAcquire64(__int64 const volatile *Source)
+{
+	__asm {
+		mov eax, dword ptr [ecx]
+		mov edx, dword ptr [ecx+4]
+		ret
 	}
 }

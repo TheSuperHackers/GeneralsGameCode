@@ -32,6 +32,10 @@ enum memory_order
 };
 
 
+template<typename Float, typename Bits>
+class atomic_floating;
+
+
 // The VC6 std::atomic compatible template stores the value in its own size. It supports bool, the integer types,
 // enums and pointers. All of them can be loaded, stored, exchanged and compare exchanged. The arithmetic and
 // bitwise functions compile for the integer types only. The standard class does not have them for bool and enums
@@ -181,6 +185,10 @@ private:
 	atomic(const atomic&) FUNCTION_DELETE;
 	atomic& operator=(const atomic&) FUNCTION_DELETE;
 
+	// The floating point classes start their retry loop with load_first_comparand, like fetch_modify does.
+	friend class atomic_floating<float, T>;
+	friend class atomic_floating<double, T>;
+
 	// The four functions below call the function for the size of the type and convert the value to and from the
 	// type of that function. The size is constant, so that the compiler keeps the one case that applies. A value is
 	// cast to long first, because the cases that do not apply are compiled as well and a pointer does not cast to
@@ -195,6 +203,18 @@ private:
 		// 0 for 0 reads them in one step: it leaves every value as it is and returns it.
 		case 8: return (T)InterlockedCompareExchange64((int64_t volatile*)&m_stored, 0, 0);
 		default: return (T)ReadAcquire((const long volatile*)&m_stored);
+		}
+	}
+
+	// Returns the value that a retry loop starts with. It saves the locked instruction that load_stored takes for
+	// 8 bytes. Such a value is read in two steps here and can consist of the halves of two values. The compare
+	// exchange of the loop does not match it then and hands back the stored value.
+	T load_first_comparand() const
+	{
+		switch (sizeof(T))
+		{
+		case 8: return (T)ReadAcquire64((const int64_t volatile*)&m_stored);
+		default: return load_stored();
 		}
 	}
 
@@ -272,17 +292,20 @@ private:
 		if (op == operation_sub)
 			return exchange_add_stored((T)((uint64_t)0 - (uint64_t)operand));
 
-		T oldValue;
-		T newValue;
+		T oldValue = load_first_comparand();
 
-		do
+		// A compare exchange that does not match returns the stored value, which is the comparand of the next
+		// attempt.
+		for (;;)
 		{
-			oldValue = load_stored();
-			newValue = compute(op, oldValue, operand);
-		}
-		while (compare_exchange_stored(newValue, oldValue) != oldValue);
+			const T newValue = compute(op, oldValue, operand);
+			const T storedValue = compare_exchange_stored(newValue, oldValue);
 
-		return oldValue;
+			if (storedValue == oldValue)
+				return oldValue;
+
+			oldValue = storedValue;
+		}
 	}
 
 	// Returns the value from after the operation.
@@ -406,7 +429,7 @@ private:
 	// Adds or subtracts with a retry loop. Returns the bytes from before the operation.
 	Bits modify_bits(Float value, bool subtract, Bits& newBits)
 	{
-		Bits oldBits = m_bits.load();
+		Bits oldBits = m_bits.load_first_comparand();
 
 		do
 		{

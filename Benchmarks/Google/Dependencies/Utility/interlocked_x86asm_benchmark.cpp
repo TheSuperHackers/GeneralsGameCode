@@ -162,4 +162,18 @@ static void BM_ReadAcquire_volatile(benchmark::State &state)
 }
 BENCHMARK(BM_ReadAcquire_volatile);
 
+// The read of 64 bits in two steps. Reading them in one step takes a compare exchange of 0 for 0, which
+// BM_InterlockedCompareExchange64_x86asm measures.
+static void BM_ReadAcquire64_x86asm(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return x86asm::ReadAcquire64(value); });
+}
+BENCHMARK(BM_ReadAcquire64_x86asm);
+
+static void BM_ReadAcquire64_volatile(benchmark::State &state)
+{
+	runOperation<long long>(state, [](volatile long long *value) { return *value; });
+}
+BENCHMARK(BM_ReadAcquire64_volatile);
+
 #endif

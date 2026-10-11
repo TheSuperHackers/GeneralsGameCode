@@ -159,6 +159,8 @@ TEST(InterlockedX86Asm, Functions64MatchWindowsSdk)
 			volatile long long ours = first;
 			volatile long long theirs = first;
 
+			ASSERT_EQ(x86asm::ReadAcquire64(&ours), first);
+
 			ASSERT_EQ(x86asm::InterlockedExchange64(&ours, second), _InlineInterlockedExchange64(&theirs, second));
 			ASSERT_EQ(ours, theirs);
 
@@ -184,6 +186,8 @@ TEST(InterlockedX86Asm, Functions64MatchWindowsSdk)
 			// A compare exchange of 0 for 0 reads the value and leaves it as it is.
 			ASSERT_EQ(x86asm::InterlockedCompareExchange64(&ours, 0, 0), second);
 			ASSERT_EQ(ours, second);
+
+			ASSERT_EQ(x86asm::ReadAcquire64(&ours), theirs);
 		}
 	}
 }
