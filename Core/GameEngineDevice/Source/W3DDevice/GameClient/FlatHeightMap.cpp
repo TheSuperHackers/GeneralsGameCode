@@ -179,6 +179,7 @@ void FlatHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 //=============================================================================
 void FlatHeightMapRenderObjClass::ReleaseResources()
 {
+	releaseTiles();
 	BaseHeightMapRenderObjClass::ReleaseResources();
 }
 
