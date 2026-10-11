@@ -182,7 +182,9 @@ private:
 	atomic& operator=(const atomic&) FUNCTION_DELETE;
 
 	// The four functions below call the function for the size of the type and convert the value to and from the
-	// type of that function. The size is constant, so that the compiler keeps the one case that applies.
+	// type of that function. The size is constant, so that the compiler keeps the one case that applies. A value is
+	// cast to long first, because the cases that do not apply are compiled as well and a pointer does not cast to
+	// a smaller type.
 	T load_stored() const
 	{
 		switch (sizeof(T))
@@ -197,8 +199,8 @@ private:
 	{
 		switch (sizeof(T))
 		{
-		case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)value);
-		case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)value);
+		case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)(long)value);
+		case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)(long)value);
 		default: return (T)InterlockedExchange((long volatile*)&m_stored, (long)value);
 		}
 	}
@@ -207,8 +209,8 @@ private:
 	{
 		switch (sizeof(T))
 		{
-		case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)value);
-		case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)value);
+		case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)(long)value);
+		case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)(long)value);
 		default: return (T)InterlockedExchangeAdd((long volatile*)&m_stored, (long)value);
 		}
 	}
@@ -217,8 +219,8 @@ private:
 	{
 		switch (sizeof(T))
 		{
-		case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)exchange, (char)comparand);
-		case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)exchange, (short)comparand);
+		case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)(long)exchange, (char)(long)comparand);
+		case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)(long)exchange, (short)(long)comparand);
 		default: return (T)InterlockedCompareExchange((long volatile*)&m_stored, (long)exchange, (long)comparand);
 		}
 	}
