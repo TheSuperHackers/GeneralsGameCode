@@ -884,12 +884,16 @@ void AIUpdateInterface::chooseGoodLocomotorFromCurrentSet()
 }
 
 //----------------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix WebbontheWeb 07/10/2026 The function can now return the crate object.
 Object* AIUpdateInterface::checkForCrateToPickup()
 {
 	if (m_crateCreated != INVALID_ID)
 	{
+#if RETAIL_COMPATIBLE_CRC
 		m_crateCreated = INVALID_ID; // we have processed it, so clear it.
+#endif
 		Object* crate = TheGameLogic->findObjectByID(m_crateCreated);
+		m_crateCreated = INVALID_ID; // we have processed it, so clear it.
 		if (crate)
 		{
 			for (BehaviorModule** m = crate->getBehaviorModules(); *m; ++m)
