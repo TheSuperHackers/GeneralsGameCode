@@ -25,123 +25,101 @@
 
 inline __declspec(naked) long __fastcall InterlockedCompareExchange(long volatile *Destination, long Exchange, long Comparand)
 {
-	// clang-format off
 	__asm {
 		mov eax, dword ptr [esp+4]
 		lock cmpxchg dword ptr [ecx], edx
 		ret 4
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) long __fastcall InterlockedExchange(long volatile *Target, long Value)
 {
-	// clang-format off
 	__asm {
 		mov eax, edx
 		xchg dword ptr [ecx], eax
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) long __fastcall InterlockedExchangeAdd(long volatile *Addend, long Value)
 {
-	// clang-format off
 	__asm {
 		mov eax, edx
 		lock xadd dword ptr [ecx], eax
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) short __fastcall InterlockedCompareExchange16(short volatile *Destination, short Exchange, short Comparand)
 {
-	// clang-format off
 	__asm {
 		mov ax, word ptr [esp+4]
 		lock cmpxchg word ptr [ecx], dx
 		ret 4
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) short __fastcall InterlockedExchange16(short volatile *Target, short Value)
 {
-	// clang-format off
 	__asm {
 		mov ax, dx
 		xchg word ptr [ecx], ax
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) short __fastcall InterlockedExchangeAdd16(short volatile *Addend, short Value)
 {
-	// clang-format off
 	__asm {
 		mov ax, dx
 		lock xadd word ptr [ecx], ax
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) char __fastcall InterlockedCompareExchange8(char volatile *Destination, char Exchange, char Comparand)
 {
-	// clang-format off
 	__asm {
 		mov al, byte ptr [esp+4]
 		lock cmpxchg byte ptr [ecx], dl
 		ret 4
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) char __fastcall InterlockedExchange8(char volatile *Target, char Value)
 {
-	// clang-format off
 	__asm {
 		mov al, dl
 		xchg byte ptr [ecx], al
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) char __fastcall InterlockedExchangeAdd8(char volatile *Addend, char Value)
 {
-	// clang-format off
 	__asm {
 		mov al, dl
 		lock xadd byte ptr [ecx], al
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) void* __fastcall InterlockedCompareExchangePointer(void* volatile *Destination, void* Exchange, void* Comparand)
 {
-	// clang-format off
 	__asm {
 		mov eax, dword ptr [esp+4]
 		lock cmpxchg dword ptr [ecx], edx
 		ret 4
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) void* __fastcall InterlockedExchangePointer(void* volatile *Target, void* Value)
 {
-	// clang-format off
 	__asm {
 		mov eax, edx
 		xchg dword ptr [ecx], eax
 		ret
 	}
-	// clang-format on
 }
 
 // A plain read is sufficient next to the functions above, because they all store with a locked instruction.
@@ -149,30 +127,24 @@ inline __declspec(naked) void* __fastcall InterlockedExchangePointer(void* volat
 // would otherwise move the read out of a loop that waits for another thread to store a value.
 inline __declspec(naked) long __fastcall ReadAcquire(long const volatile *Source)
 {
-	// clang-format off
 	__asm {
 		mov eax, dword ptr [ecx]
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) short __fastcall ReadAcquire16(short const volatile *Source)
 {
-	// clang-format off
 	__asm {
 		mov ax, word ptr [ecx]
 		ret
 	}
-	// clang-format on
 }
 
 inline __declspec(naked) char __fastcall ReadAcquire8(char const volatile *Source)
 {
-	// clang-format off
 	__asm {
 		mov al, byte ptr [ecx]
 		ret
 	}
-	// clang-format on
 }
