@@ -16,28 +16,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file contains a VC6 compatible atomic template class for bool, the integer types up to the size of long, enums
-// and pointers.
-//
-// The VC6 class has the size of the type it holds, like the standard class. It differs from it in two points:
-// - Its constructor is not constexpr. An object with static storage duration is initialized when its constructor
-//   runs during the static initialization, where the standard class initializes it at compile time. A value that
-//   another static initializer stored into the object before that is overwritten.
-// - An atomic pointer has no fetch_add, fetch_sub, ++, --, += and -=.
-#pragma once
+// VC6-compatible implementation of std::atomic on top of the Interlocked functions.
+// The file that includes this one provides interlocked_adapter.h, <stddef.h> and the namespace.
 
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
-
-#include <atomic>
-
-#else
-
-#include <windows.h>
-
-#include "Utility/interlocked_adapter.h"
-
-namespace std
-{
 	// The VC6 atomic class takes the memory orders for source compatibility with the standard class.
 	// Its functions are always sequentially consistent, which satisfies every order.
 	enum memory_order
@@ -331,7 +312,3 @@ namespace std
 	typedef atomic<uintptr_t> atomic_uintptr_t;
 	typedef atomic<size_t> atomic_size_t;
 	typedef atomic<ptrdiff_t> atomic_ptrdiff_t;
-
-}
-
-#endif
