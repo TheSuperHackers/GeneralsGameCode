@@ -552,7 +552,7 @@ Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
 	for (Int j = 0; j < height; j++)
 	{
 		const UnsignedByte* row = firstRow + j * m_width;
-		if (memcchr(row, referenceHeight, width) != 0)
+		if (memcchr(row, referenceHeight, width) != nullptr)
 			return false;
 	}
 

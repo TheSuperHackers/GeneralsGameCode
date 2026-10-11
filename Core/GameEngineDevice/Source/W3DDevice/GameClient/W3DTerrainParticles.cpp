@@ -299,7 +299,6 @@ Bool W3DTerrainParticles::isDefaultWhiteOpaque() const
 
 void W3DTerrainParticles::updateSettings()
 {
-	// If there is a color or alpha array, enable the shader gradient; otherwise, disable it.
 	if (m_pointDiffuse || !isDefaultWhiteOpaque())
 	{
 		m_shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
@@ -309,7 +308,6 @@ void W3DTerrainParticles::updateSettings()
 		m_shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
 	}
 
-	// If m_texture is non-null, enable texturing in the shader; otherwise, disable it.
 	if (m_texture)
 	{
 		m_shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);

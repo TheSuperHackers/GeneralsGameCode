@@ -45,12 +45,10 @@ class AABoxClass;
 class TextureClass;
 class WorldHeightMap;
 
-/**
- * Render particles as terrain-conforming overlays. For each particle, form an initial region by calculating the bounds
- * of its rotated square and intersecting that with the map bounds and visible-terrain bounds. Recursively subdivide this
- * region until each sub-region is either a single terrain cell or is on perfectly flat terrain. Flat regions become one
- * large quad, while non-flat regions must match the terrain's topology exactly.
- */
+/// Render particles as terrain-conforming overlays. For each particle, form an initial region by calculating the bounds
+/// of its rotated square and intersecting that with the map bounds and visible-terrain bounds. Recursively subdivide this
+/// region until each sub-region is either a single terrain cell or is on perfectly flat terrain. Flat regions become one
+/// large quad, while non-flat regions must match the terrain's topology exactly.
 class W3DTerrainParticles
 {
 public:
