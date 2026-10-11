@@ -3,7 +3,7 @@ set(UTILITY_SRC
     Utility/aligned_pod.h
     Utility/array_adapter.h
     Utility/atl_compat.h
-    Utility/atomic_adapter.h
+    Utility/atomic_x86interlocked.inl
     Utility/compat.h
     Utility/comsupp_compat.h
     Utility/endian_compat.h
