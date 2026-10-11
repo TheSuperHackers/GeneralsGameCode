@@ -51,6 +51,9 @@ BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, int);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, int);
+// The class of VC6 loads 64 bits with a locked instruction.
+BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, long long);
+BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, long long);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, float);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, float);
 
@@ -67,6 +70,8 @@ BENCHMARK_TEMPLATE(BM_AtomicStore, x86asm::atomic, bool);
 BENCHMARK_TEMPLATE(BM_AtomicStore, std::atomic, bool);
 BENCHMARK_TEMPLATE(BM_AtomicStore, x86asm::atomic, int);
 BENCHMARK_TEMPLATE(BM_AtomicStore, std::atomic, int);
+BENCHMARK_TEMPLATE(BM_AtomicStore, x86asm::atomic, long long);
+BENCHMARK_TEMPLATE(BM_AtomicStore, std::atomic, long long);
 
 template <template <typename> class Atomic, typename T>
 static void BM_AtomicFetchAdd(benchmark::State &state)
@@ -83,6 +88,9 @@ BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, int);
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, int);
+// For 64 bits both classes add with a retry loop around a compare exchange.
+BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, long long);
+BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, long long);
 // For a float both classes add with a retry loop around a compare exchange.
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, float);
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, float);
@@ -103,6 +111,8 @@ BENCHMARK_TEMPLATE(BM_AtomicFetchOr, x86asm::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicFetchOr, std::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicFetchOr, x86asm::atomic, int);
 BENCHMARK_TEMPLATE(BM_AtomicFetchOr, std::atomic, int);
+BENCHMARK_TEMPLATE(BM_AtomicFetchOr, x86asm::atomic, long long);
+BENCHMARK_TEMPLATE(BM_AtomicFetchOr, std::atomic, long long);
 
 // The compare exchange always finds the expected value and stores the same value again.
 template <template <typename> class Atomic, typename T>
@@ -123,6 +133,8 @@ BENCHMARK_TEMPLATE(BM_AtomicCompareExchange, x86asm::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicCompareExchange, std::atomic, short);
 BENCHMARK_TEMPLATE(BM_AtomicCompareExchange, x86asm::atomic, int);
 BENCHMARK_TEMPLATE(BM_AtomicCompareExchange, std::atomic, int);
+BENCHMARK_TEMPLATE(BM_AtomicCompareExchange, x86asm::atomic, long long);
+BENCHMARK_TEMPLATE(BM_AtomicCompareExchange, std::atomic, long long);
 
 // The same operations while a second thread keeps adding to the object.
 template <template <typename> class Atomic, typename T>

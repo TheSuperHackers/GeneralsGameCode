@@ -17,13 +17,17 @@
 */
 
 // This file provides std::atomic. VC6 has no <atomic> header and gets a class that is built on the functions of
-// interlocked_adapter.h. It supports bool, the integer types up to the size of long, float, enums and pointers.
+// interlocked_adapter.h. It supports bool, the integer types, float, enums and pointers.
 //
-// The VC6 class has the size of the type it holds, like the standard class. It differs from it in two points:
+// The VC6 class has the size of the type it holds, like the standard class. It differs from it in these points:
 // - Its constructor is not constexpr. An object with static storage duration is initialized when its constructor
 //   runs during the static initialization, where the standard class initializes it at compile time. A value that
 //   another static initializer stored into the object before that is overwritten.
 // - An atomic pointer has no fetch_add, fetch_sub, ++, --, += and -=.
+// - A 64 bit value is loaded with a locked instruction, which costs as much as storing it.
+// - A 64 bit value is aligned to 8 bytes as a global and inside a class, but only to 4 bytes on the stack and in
+//   memory of an allocator that aligns to 4 bytes. A value that crosses a cache line works correctly, but every
+//   operation on it takes about a hundred times as long.
 
 #pragma once
 

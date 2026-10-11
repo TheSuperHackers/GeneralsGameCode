@@ -42,9 +42,16 @@ enum Color
 	Color_Big = 0x40000000
 };
 
-const long BoundaryValues[] = { 0, 1, 2, 3, -1, -2, 126, 127, 128, 129, -127, -128, -129, 254, 255, 256, 257,
+const long long BoundaryValues[] = { 0, 1, 2, 3, -1, -2, 126, 127, 128, 129, -127, -128, -129, 254, 255, 256, 257,
 	32766, 32767, 32768, 32769, -32767, -32768, -32769, 65534, 65535, 65536, 65537, 0x55555555, 0x7ffffffe,
-	0x7fffffff, -0x7fffffff, -0x7fffffff - 1 };
+	0x7fffffff, -0x7fffffff, -0x7fffffff - 1, 0x80000000, 0xffffffff, 0x100000000, 0x100000001, -0x100000000,
+	0x5555555555555555, 0x7ffffffffffffffe, 0x7fffffffffffffff, -0x7fffffffffffffff, -0x7fffffffffffffff - 1 };
+
+// Whether the two halves of a 64 bit value differ.
+bool hasUnequalHalves(long long value)
+{
+	return static_cast<unsigned long>(value) != static_cast<unsigned long>(static_cast<unsigned long long>(value) >> 32);
+}
 
 // Applies an operation to both objects. They must return the same value and hold the same value afterwards.
 template <typename T, typename Operation>
@@ -117,7 +124,7 @@ class AtomicX86InterlockedInteger : public ::testing::Test
 };
 
 using IntegerTypes = ::testing::Types<char, signed char, unsigned char, short, unsigned short, int, unsigned int,
-	long, unsigned long, wchar_t>;
+	long, unsigned long, long long, unsigned long long, wchar_t>;
 TYPED_TEST_SUITE(AtomicX86InterlockedInteger, IntegerTypes);
 
 // Every function and operator, for every pair of the boundary values.
@@ -128,9 +135,9 @@ TYPED_TEST(AtomicX86InterlockedInteger, OperationsMatchStdAtomic)
 	std::atomic<T> theirs;
 	ASSERT_EQ(ours.load(), theirs.load());
 
-	for (const long first : BoundaryValues)
+	for (const long long first : BoundaryValues)
 	{
-		for (const long second : BoundaryValues)
+		for (const long long second : BoundaryValues)
 		{
 			const T a = static_cast<T>(first);
 			const T b = static_cast<T>(second);
@@ -190,7 +197,8 @@ TYPED_TEST(AtomicX86InterlockedInteger, RandomSequenceMatchesStdAtomic)
 		const unsigned long choice = random() % 18;
 		const unsigned long low = random();
 		const unsigned long high = random();
-		const T v = static_cast<T>(low ^ (high << 12));
+		const unsigned long long upper = random();
+		const T v = static_cast<T>(low ^ (high << 12) ^ (upper << 36));
 
 		switch (choice)
 		{
@@ -454,6 +462,8 @@ TEST(AtomicX86Interlocked, SizeAndAlignmentMatchStdAtomic)
 	EXPECT_TRUE(sameLayout<unsigned int>());
 	EXPECT_TRUE(sameLayout<long>());
 	EXPECT_TRUE(sameLayout<unsigned long>());
+	EXPECT_TRUE(sameLayout<long long>());
+	EXPECT_TRUE(sameLayout<unsigned long long>());
 	EXPECT_TRUE(sameLayout<float>());
 	EXPECT_TRUE(sameLayout<Color>());
 	EXPECT_TRUE(sameLayout<int*>());
@@ -470,6 +480,8 @@ static_assert(std::is_same_v<x86asm::atomic_int, x86asm::atomic<int>>, "atomic_i
 static_assert(std::is_same_v<x86asm::atomic_uint, x86asm::atomic<unsigned int>>, "atomic_uint");
 static_assert(std::is_same_v<x86asm::atomic_long, x86asm::atomic<long>>, "atomic_long");
 static_assert(std::is_same_v<x86asm::atomic_ulong, x86asm::atomic<unsigned long>>, "atomic_ulong");
+static_assert(std::is_same_v<x86asm::atomic_llong, x86asm::atomic<long long>>, "atomic_llong");
+static_assert(std::is_same_v<x86asm::atomic_ullong, x86asm::atomic<unsigned long long>>, "atomic_ullong");
 static_assert(std::is_same_v<x86asm::atomic_wchar_t, x86asm::atomic<wchar_t>>, "atomic_wchar_t");
 static_assert(std::is_same_v<x86asm::atomic_int8_t, x86asm::atomic<int8_t>>, "atomic_int8_t");
 static_assert(std::is_same_v<x86asm::atomic_uint8_t, x86asm::atomic<uint8_t>>, "atomic_uint8_t");
@@ -477,20 +489,29 @@ static_assert(std::is_same_v<x86asm::atomic_int16_t, x86asm::atomic<int16_t>>, "
 static_assert(std::is_same_v<x86asm::atomic_uint16_t, x86asm::atomic<uint16_t>>, "atomic_uint16_t");
 static_assert(std::is_same_v<x86asm::atomic_int32_t, x86asm::atomic<int32_t>>, "atomic_int32_t");
 static_assert(std::is_same_v<x86asm::atomic_uint32_t, x86asm::atomic<uint32_t>>, "atomic_uint32_t");
+static_assert(std::is_same_v<x86asm::atomic_int64_t, x86asm::atomic<int64_t>>, "atomic_int64_t");
+static_assert(std::is_same_v<x86asm::atomic_uint64_t, x86asm::atomic<uint64_t>>, "atomic_uint64_t");
 static_assert(std::is_same_v<x86asm::atomic_intptr_t, x86asm::atomic<intptr_t>>, "atomic_intptr_t");
 static_assert(std::is_same_v<x86asm::atomic_uintptr_t, x86asm::atomic<uintptr_t>>, "atomic_uintptr_t");
 static_assert(std::is_same_v<x86asm::atomic_size_t, x86asm::atomic<size_t>>, "atomic_size_t");
 static_assert(std::is_same_v<x86asm::atomic_ptrdiff_t, x86asm::atomic<ptrdiff_t>>, "atomic_ptrdiff_t");
+static_assert(std::is_same_v<x86asm::atomic_intmax_t, x86asm::atomic<intmax_t>>, "atomic_intmax_t");
+static_assert(std::is_same_v<x86asm::atomic_uintmax_t, x86asm::atomic<uintmax_t>>, "atomic_uintmax_t");
 
-// Changes of several threads must all arrive. The narrow counters wrap around on the way.
+// Changes of several threads must all arrive. The narrow counters wrap around on the way, and every addition to
+// the 64 bit counter carries into its upper half. The 64 bit objects are aligned, because the stack aligns them to
+// 4 bytes only and a locked instruction on a value that crosses a cache line is far slower.
 TEST(AtomicX86Interlocked, CountersAreExactWithThreads)
 {
+	const long long wideStep = 0x180000001;
 	x86asm::atomic<int> intCounter;
 	x86asm::atomic<unsigned int> unsignedCounter;
 	x86asm::atomic<short> shortCounter;
 	x86asm::atomic<unsigned short> unsignedShortCounter;
 	x86asm::atomic<char> charCounter;
 	x86asm::atomic<unsigned char> unsignedCharCounter;
+	alignas(8) x86asm::atomic<long long> wideCounter;
+	alignas(8) x86asm::atomic<unsigned long long> unsignedWideCounter;
 
 	interlocked_test::runThreads([&](int)
 	{
@@ -502,6 +523,8 @@ TEST(AtomicX86Interlocked, CountersAreExactWithThreads)
 			unsignedShortCounter++; unsignedShortCounter.fetch_add(4);
 			++charCounter; charCounter.fetch_add(2); charCounter -= 1;
 			unsignedCharCounter++; unsignedCharCounter += 6;
+			wideCounter.fetch_add(wideStep); wideCounter += wideStep; ++wideCounter; wideCounter--; wideCounter.fetch_sub(wideStep);
+			unsignedWideCounter -= 0x100000001; --unsignedWideCounter; unsignedWideCounter++; unsignedWideCounter.fetch_add(0x100000000);
 		}
 	});
 
@@ -512,6 +535,8 @@ TEST(AtomicX86Interlocked, CountersAreExactWithThreads)
 	EXPECT_EQ(unsignedShortCounter.load(), static_cast<unsigned short>(total * 5));
 	EXPECT_EQ(charCounter.load(), static_cast<char>(total * 2));
 	EXPECT_EQ(unsignedCharCounter.load(), static_cast<unsigned char>(total * 7));
+	EXPECT_EQ(wideCounter.load(), total * wideStep);
+	EXPECT_EQ(unsignedWideCounter.load(), 0ull - static_cast<unsigned long long>(total));
 }
 
 // Every addition goes through a retry loop, so none may get lost. All sums on the way are whole numbers that a
@@ -541,6 +566,7 @@ TEST(AtomicX86Interlocked, BitwiseFunctionsKeepBitsOfOtherThreads)
 	x86asm::atomic<unsigned char> byteBits;
 	x86asm::atomic<short> shortBits;
 	x86asm::atomic<int> intBits;
+	alignas(8) x86asm::atomic<unsigned long long> wideBits;
 	x86asm::atomic<int> errors;
 
 	interlocked_test::runThreads([&](int index)
@@ -548,6 +574,8 @@ TEST(AtomicX86Interlocked, BitwiseFunctionsKeepBitsOfOtherThreads)
 		const unsigned char byteBit = static_cast<unsigned char>(1 << index);
 		const short shortBit = static_cast<short>(1 << (index + 8));
 		const int intBit = 1 << (index + 24);
+		// One bit in each half of the 64 bit value.
+		const unsigned long long wideBit = (1ull << index) | (1ull << (index + 40));
 		int seen = 0;
 
 		for (int i = 0; i < interlocked_test::ThreadIterations; ++i)
@@ -565,6 +593,11 @@ TEST(AtomicX86Interlocked, BitwiseFunctionsKeepBitsOfOtherThreads)
 			if (intBits.fetch_xor(intBit) & intBit) ++seen;
 			if (!(intBits.fetch_or(intBit) & intBit)) ++seen;
 			if (!(intBits.fetch_and(~intBit) & intBit)) ++seen;
+
+			if (wideBits.fetch_or(wideBit) & wideBit) ++seen;
+			if ((wideBits.fetch_xor(wideBit) & wideBit) != wideBit) ++seen;
+			if (((wideBits |= wideBit) & wideBit) != wideBit) ++seen;
+			if ((wideBits.fetch_and(~wideBit) & wideBit) != wideBit) ++seen;
 		}
 
 		errors += seen;
@@ -574,6 +607,35 @@ TEST(AtomicX86Interlocked, BitwiseFunctionsKeepBitsOfOtherThreads)
 	EXPECT_EQ(byteBits.load(), 0);
 	EXPECT_EQ(shortBits.load(), 0);
 	EXPECT_EQ(intBits.load(), 0);
+	EXPECT_EQ(wideBits.load(), 0ull);
+}
+
+// Every thread stores values whose two halves are equal. A 64 bit value that was loaded or exchanged in two steps
+// would show the halves of two different values.
+TEST(AtomicX86Interlocked, WideValueIsNeverSeenInHalves)
+{
+	alignas(8) x86asm::atomic<long long> shared;
+	x86asm::atomic<int> halved;
+
+	interlocked_test::runThreads([&](int index)
+	{
+		int seen = 0;
+		for (int i = 0; i < interlocked_test::ThreadIterations; ++i)
+		{
+			const long long half = index * 1000000 + i;
+			const long long value = (half << 32) | half;
+
+			shared.store(value);
+			if (hasUnequalHalves(shared.load())) ++seen;
+			const long long converted = shared;
+			if (hasUnequalHalves(converted)) ++seen;
+			if (hasUnequalHalves(shared.exchange(value))) ++seen;
+		}
+
+		halved += seen;
+	});
+
+	EXPECT_EQ(halved.load(), 0);
 }
 
 TEST(AtomicX86Interlocked, SpinLocksExcludeThreads)

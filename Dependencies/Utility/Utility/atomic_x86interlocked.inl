@@ -32,10 +32,10 @@ enum memory_order
 };
 
 
-// The VC6 std::atomic compatible template stores the value in its own size. It supports bool, the integer types
-// up to the size of long, enums and pointers. All of them can be loaded, stored, exchanged and compare exchanged.
-// The arithmetic and bitwise functions compile for the integer types only. The standard class does not have them
-// for bool and enums either.
+// The VC6 std::atomic compatible template stores the value in its own size. It supports bool, the integer types,
+// enums and pointers. All of them can be loaded, stored, exchanged and compare exchanged. The arithmetic and
+// bitwise functions compile for the integer types only. The standard class does not have them for bool and enums
+// either.
 template<typename T>
 class atomic
 {
@@ -176,7 +176,7 @@ private:
 		operation_xor
 	};
 
-	static_assert_cpp98(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4, "The type must have a size that interlocked functions exist for");
+	static_assert_cpp98(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8, "The type must have a size that interlocked functions exist for");
 
 	atomic(const atomic&) FUNCTION_DELETE;
 	atomic& operator=(const atomic&) FUNCTION_DELETE;
@@ -191,6 +191,9 @@ private:
 		{
 		case 1: return (T)ReadAcquire8((const char volatile*)&m_stored);
 		case 2: return (T)ReadAcquire16((const short volatile*)&m_stored);
+		// Reading 8 bytes takes two instructions, between which another thread can store. A compare exchange of
+		// 0 for 0 reads them in one step: it leaves every value as it is and returns it.
+		case 8: return (T)InterlockedCompareExchange64((__int64 volatile*)&m_stored, 0, 0);
 		default: return (T)ReadAcquire((const long volatile*)&m_stored);
 		}
 	}
@@ -201,6 +204,7 @@ private:
 		{
 		case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)(long)value);
 		case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)(long)value);
+		case 8: return (T)InterlockedExchange64((__int64 volatile*)&m_stored, (__int64)value);
 		default: return (T)InterlockedExchange((long volatile*)&m_stored, (long)value);
 		}
 	}
@@ -211,6 +215,7 @@ private:
 		{
 		case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)(long)value);
 		case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)(long)value);
+		case 8: return (T)InterlockedExchangeAdd64((__int64 volatile*)&m_stored, (__int64)value);
 		default: return (T)InterlockedExchangeAdd((long volatile*)&m_stored, (long)value);
 		}
 	}
@@ -221,6 +226,7 @@ private:
 		{
 		case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)(long)exchange, (char)(long)comparand);
 		case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)(long)exchange, (short)(long)comparand);
+		case 8: return (T)InterlockedCompareExchange64((__int64 volatile*)&m_stored, (__int64)exchange, (__int64)comparand);
 		default: return (T)InterlockedCompareExchange((long volatile*)&m_stored, (long)exchange, (long)comparand);
 		}
 	}
@@ -240,9 +246,10 @@ private:
 	{
 		switch (op)
 		{
-		// Adds and subtracts unsigned, because that wraps around without undefined behavior.
-		case operation_add: return (T)((unsigned long)stored + (unsigned long)operand);
-		case operation_sub: return (T)((unsigned long)stored - (unsigned long)operand);
+		// Adds and subtracts unsigned, because that wraps around without undefined behavior, and in 64 bits for the
+		// types of that size. The compiler reduces that to the size of a smaller type.
+		case operation_add: return (T)((unsigned __int64)stored + (unsigned __int64)operand);
+		case operation_sub: return (T)((unsigned __int64)stored - (unsigned __int64)operand);
 		case operation_or: return (T)(stored | operand);
 		case operation_and: return (T)(stored & operand);
 		default: return (T)(stored ^ operand);
@@ -263,7 +270,7 @@ private:
 			return exchange_add_stored(operand);
 
 		if (op == operation_sub)
-			return exchange_add_stored((T)(0ul - (unsigned long)operand));
+			return exchange_add_stored((T)(0ui64 - (unsigned __int64)operand));
 
 		T oldValue;
 		T newValue;
@@ -418,6 +425,14 @@ private:
 	atomic<long> m_bits;
 };
 
+// A double and a long double have a supported size, but the conversion to a 64 bit integer would drop their
+// fraction.
+template<>
+class atomic<double>;
+
+template<>
+class atomic<long double>;
+
 // The aliases of the standard for the types that the class supports.
 typedef atomic<bool> atomic_bool;
 typedef atomic<char> atomic_char;
@@ -429,6 +444,8 @@ typedef atomic<int> atomic_int;
 typedef atomic<unsigned int> atomic_uint;
 typedef atomic<long> atomic_long;
 typedef atomic<unsigned long> atomic_ulong;
+typedef atomic<__int64> atomic_llong;
+typedef atomic<unsigned __int64> atomic_ullong;
 typedef atomic<wchar_t> atomic_wchar_t;
 typedef atomic<int8_t> atomic_int8_t;
 typedef atomic<uint8_t> atomic_uint8_t;
@@ -436,7 +453,11 @@ typedef atomic<int16_t> atomic_int16_t;
 typedef atomic<uint16_t> atomic_uint16_t;
 typedef atomic<int32_t> atomic_int32_t;
 typedef atomic<uint32_t> atomic_uint32_t;
+typedef atomic<int64_t> atomic_int64_t;
+typedef atomic<uint64_t> atomic_uint64_t;
 typedef atomic<intptr_t> atomic_intptr_t;
 typedef atomic<uintptr_t> atomic_uintptr_t;
 typedef atomic<size_t> atomic_size_t;
 typedef atomic<ptrdiff_t> atomic_ptrdiff_t;
+typedef atomic<intmax_t> atomic_intmax_t;
+typedef atomic<uintmax_t> atomic_uintmax_t;
