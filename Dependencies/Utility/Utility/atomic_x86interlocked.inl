@@ -442,11 +442,27 @@ private:
 	atomic& operator=(const atomic&) FUNCTION_DELETE;
 };
 
-// A double and a long double have a supported size, but the conversion to a 64 bit integer would drop their
-// fraction.
 template<>
-class atomic<double>;
+class atomic<double> : public atomic_floating<double, __int64>
+{
+public:
+	atomic(double value = 0.0)
+		: atomic_floating<double, __int64>(value)
+	{
+	}
 
+	double operator=(double value)
+	{
+		store(value);
+		return value;
+	}
+
+private:
+	atomic(const atomic&) FUNCTION_DELETE;
+	atomic& operator=(const atomic&) FUNCTION_DELETE;
+};
+
+// A long double has a supported size, but the conversion to a 64 bit integer would drop its fraction.
 template<>
 class atomic<long double>;
 

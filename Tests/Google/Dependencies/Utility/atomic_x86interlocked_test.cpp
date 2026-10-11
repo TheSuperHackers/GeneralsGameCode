@@ -21,6 +21,8 @@
 #if defined(_MSC_VER) && defined(_M_IX86)
 
 #include <atomic>
+#include <iterator>
+#include <limits>
 #include <stddef.h>
 #include <string.h>
 #include <type_traits>
@@ -98,21 +100,44 @@ bool sameLayout()
 	return sizeof(x86asm::atomic<T>) == sizeof(std::atomic<T>) && alignof(x86asm::atomic<T>) == alignof(std::atomic<T>);
 }
 
-// Zeros of both signs, ordinary values, the smallest and the largest values, infinities and quiet NaNs.
-const unsigned long FloatBits[] = { 0x00000000, 0x80000000, 0x3f800000, 0xbf800000, 0x3fc00000, 0x40490fdb, 0x3e99999a,
-	0x4b800000, 0x00000001, 0x00800000, 0x7f7fffff, 0x7f800000, 0xff800000, 0x7fc00000, 0xffc00000, 0x7fc12345 };
+// The bytes of floating point values: zeros of both signs, ordinary values, the limit of the exact whole numbers,
+// the smallest and the largest values, infinities and quiet NaNs.
+template <typename T>
+struct FloatingBits;
 
-// Floats are compared by their bytes, because == cannot tell the two zeros apart and a NaN never equals itself.
-unsigned long bitsOf(float value)
+template <>
+struct FloatingBits<float>
 {
-	unsigned long bits;
+	using Bits = unsigned long;
+	static constexpr Bits Values[] = { 0x00000000, 0x80000000, 0x3f800000, 0xbf800000, 0x3fc00000, 0x40490fdb,
+		0x3e99999a, 0x4b800000, 0x00000001, 0x00800000, 0x7f7fffff, 0x7f800000, 0xff800000, 0x7fc00000, 0xffc00000,
+		0x7fc12345 };
+};
+
+template <>
+struct FloatingBits<double>
+{
+	using Bits = unsigned long long;
+	static constexpr Bits Values[] = { 0x0000000000000000, 0x8000000000000000, 0x3ff0000000000000, 0xbff0000000000000,
+		0x3ff8000000000000, 0x400921fb54442d18, 0x3fd3333333333333, 0x4340000000000000, 0x0000000000000001,
+		0x0010000000000000, 0x7fefffffffffffff, 0x7ff0000000000000, 0xfff0000000000000, 0x7ff8000000000000,
+		0xfff8000000000000, 0x7ff8000000012345 };
+};
+
+// Floating point values are compared by their bytes, because == cannot tell the two zeros apart and a NaN never
+// equals itself.
+template <typename T>
+typename FloatingBits<T>::Bits bitsOf(T value)
+{
+	typename FloatingBits<T>::Bits bits;
 	memcpy(&bits, &value, sizeof(bits));
 	return bits;
 }
 
-float floatOf(unsigned long bits)
+template <typename T>
+T floatingOf(typename FloatingBits<T>::Bits bits)
 {
-	float value;
+	T value;
 	memcpy(&value, &bits, sizeof(value));
 	return value;
 }
@@ -367,32 +392,41 @@ TEST(AtomicX86Interlocked, PointerMatchesStdAtomic)
 	EXPECT_EQ(untyped.load(), values);
 }
 
-TEST(AtomicX86Interlocked, FloatMatchesStdAtomic)
+template <typename T>
+class AtomicX86InterlockedFloating : public ::testing::Test
 {
-	x86asm::atomic<float> ours;
-	std::atomic<float> theirs;
+};
+
+using FloatingTypes = ::testing::Types<float, double>;
+TYPED_TEST_SUITE(AtomicX86InterlockedFloating, FloatingTypes);
+
+TYPED_TEST(AtomicX86InterlockedFloating, OperationsMatchStdAtomic)
+{
+	using T = TypeParam;
+	x86asm::atomic<T> ours;
+	std::atomic<T> theirs;
 	EXPECT_EQ(bitsOf(ours.load()), bitsOf(theirs.load()));
 
-	for (const unsigned long first : FloatBits)
+	for (const auto first : FloatingBits<T>::Values)
 	{
-		for (const unsigned long second : FloatBits)
+		for (const auto second : FloatingBits<T>::Values)
 		{
-			const float a = floatOf(first);
-			const float b = floatOf(second);
+			const T a = floatingOf<T>(first);
+			const T b = floatingOf<T>(second);
 
 			ours.store(a);
 			theirs.store(a);
 			ASSERT_EQ(bitsOf(ours.load()), first);
 			ASSERT_EQ(bitsOf(ours.exchange(b)), bitsOf(theirs.exchange(b)));
 			ASSERT_EQ(bitsOf(ours = a), bitsOf(theirs = a));
-			const float converted = ours;
+			const T converted = ours;
 			ASSERT_EQ(bitsOf(converted), first);
 
 			// The object holds a. Every value is tried as the expected one.
-			for (const unsigned long third : FloatBits)
+			for (const auto third : FloatingBits<T>::Values)
 			{
-				float ourExpected = floatOf(third);
-				float theirExpected = floatOf(third);
+				T ourExpected = floatingOf<T>(third);
+				T theirExpected = floatingOf<T>(third);
 				ASSERT_EQ(ours.compare_exchange_strong(ourExpected, b), theirs.compare_exchange_strong(theirExpected, b));
 				ASSERT_EQ(bitsOf(ourExpected), bitsOf(theirExpected));
 				ASSERT_EQ(bitsOf(ours.load()), bitsOf(theirs.load()));
@@ -403,17 +437,21 @@ TEST(AtomicX86Interlocked, FloatMatchesStdAtomic)
 	}
 }
 
-TEST(AtomicX86Interlocked, FloatArithmeticMatchesStdAtomic)
+// The last two values are left out, so that the operands hold one NaN only. Which of two different NaNs an addition
+// returns depends on the instructions that the compiler chooses for it.
+TYPED_TEST(AtomicX86InterlockedFloating, ArithmeticMatchesStdAtomic)
 {
-	x86asm::atomic<float> ours;
-	std::atomic<float> theirs;
+	using T = TypeParam;
+	const size_t count = std::size(FloatingBits<T>::Values) - 2;
+	x86asm::atomic<T> ours;
+	std::atomic<T> theirs;
 
-	for (const unsigned long first : FloatBits)
+	for (size_t first = 0; first < count; ++first)
 	{
-		for (const unsigned long second : FloatBits)
+		for (size_t second = 0; second < count; ++second)
 		{
-			const float a = floatOf(first);
-			const float b = floatOf(second);
+			const T a = floatingOf<T>(FloatingBits<T>::Values[first]);
+			const T b = floatingOf<T>(FloatingBits<T>::Values[second]);
 			ours.store(a);
 			theirs.store(a);
 
@@ -430,22 +468,25 @@ TEST(AtomicX86Interlocked, FloatArithmeticMatchesStdAtomic)
 }
 
 // compare_exchange compares the bytes and not the values.
-TEST(AtomicX86Interlocked, FloatCompareExchangeComparesBytes)
+TYPED_TEST(AtomicX86InterlockedFloating, CompareExchangeComparesBytes)
 {
-	x86asm::atomic<float> value(0.0f);
+	using T = TypeParam;
+	using Bits = typename FloatingBits<T>::Bits;
+	const Bits signBit = Bits(1) << (sizeof(T) * 8 - 1);
+	x86asm::atomic<T> value(T(0));
 
 	// The two zeros are equal as values, but their bytes differ.
-	float expected = -0.0f;
-	EXPECT_FALSE(value.compare_exchange_strong(expected, 1.0f));
-	EXPECT_EQ(bitsOf(expected), 0x00000000ul);
-	EXPECT_EQ(bitsOf(value.load()), 0x00000000ul);
+	T expected = floatingOf<T>(signBit);
+	EXPECT_FALSE(value.compare_exchange_strong(expected, T(1)));
+	EXPECT_EQ(bitsOf(expected), Bits(0));
+	EXPECT_EQ(bitsOf(value.load()), Bits(0));
 
 	// A NaN does not equal itself as a value, but its bytes do.
-	const float notANumber = floatOf(0x7fc00000);
+	const T notANumber = std::numeric_limits<T>::quiet_NaN();
 	value.store(notANumber);
 	expected = notANumber;
-	EXPECT_TRUE(value.compare_exchange_strong(expected, 2.0f));
-	EXPECT_EQ(value.load(), 2.0f);
+	EXPECT_TRUE(value.compare_exchange_strong(expected, T(2)));
+	EXPECT_EQ(value.load(), T(2));
 }
 
 // A class that holds an atomic must have the same layout with VC6 as with the standard class.
@@ -465,6 +506,7 @@ TEST(AtomicX86Interlocked, SizeAndAlignmentMatchStdAtomic)
 	EXPECT_TRUE(sameLayout<long long>());
 	EXPECT_TRUE(sameLayout<unsigned long long>());
 	EXPECT_TRUE(sameLayout<float>());
+	EXPECT_TRUE(sameLayout<double>());
 	EXPECT_TRUE(sameLayout<Color>());
 	EXPECT_TRUE(sameLayout<int*>());
 }
@@ -539,24 +581,25 @@ TEST(AtomicX86Interlocked, CountersAreExactWithThreads)
 	EXPECT_EQ(unsignedWideCounter.load(), 0ull - static_cast<unsigned long long>(total));
 }
 
-// Every addition goes through a retry loop, so none may get lost. All sums on the way are whole numbers that a
-// float holds exactly.
-TEST(AtomicX86Interlocked, FloatAdditionsAreExactWithThreads)
+// Every addition goes through a retry loop, so none may get lost. All sums on the way are whole numbers that the
+// type holds exactly.
+TYPED_TEST(AtomicX86InterlockedFloating, AdditionsAreExactWithThreads)
 {
-	x86asm::atomic<float> sum;
+	using T = TypeParam;
+	alignas(8) x86asm::atomic<T> sum;
 
 	interlocked_test::runThreads([&](int)
 	{
 		for (int i = 0; i < interlocked_test::ThreadIterations; ++i)
 		{
-			sum += 2.0f;
-			sum.fetch_add(1.0f);
-			sum -= 1.0f;
-			sum.fetch_sub(1.0f);
+			sum += T(2);
+			sum.fetch_add(T(1));
+			sum -= T(1);
+			sum.fetch_sub(T(1));
 		}
 	});
 
-	EXPECT_EQ(sum.load(), static_cast<float>(interlocked_test::ThreadCount * interlocked_test::ThreadIterations));
+	EXPECT_EQ(sum.load(), static_cast<T>(interlocked_test::ThreadCount * interlocked_test::ThreadIterations));
 }
 
 // Every thread owns one bit and is the only one to change it. A lost update of the retry loop flips the bit of

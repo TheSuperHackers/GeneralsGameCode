@@ -56,6 +56,8 @@ BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, long long);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, long long);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, float);
 BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, float);
+BENCHMARK_TEMPLATE(BM_AtomicLoad, x86asm::atomic, double);
+BENCHMARK_TEMPLATE(BM_AtomicLoad, std::atomic, double);
 
 template <template <typename> class Atomic, typename T>
 static void BM_AtomicStore(benchmark::State &state)
@@ -91,9 +93,11 @@ BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, int);
 // For 64 bits both classes add with a retry loop around a compare exchange.
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, long long);
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, long long);
-// For a float both classes add with a retry loop around a compare exchange.
+// For a float and a double both classes add with a retry loop around a compare exchange.
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, float);
 BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, float);
+BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, x86asm::atomic, double);
+BENCHMARK_TEMPLATE(BM_AtomicFetchAdd, std::atomic, double);
 
 // The bitwise functions are a retry loop around a compare exchange in the class of VC6.
 template <template <typename> class Atomic, typename T>

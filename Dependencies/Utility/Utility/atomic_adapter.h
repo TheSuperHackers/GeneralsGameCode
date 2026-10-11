@@ -17,7 +17,7 @@
 */
 
 // This file provides std::atomic. VC6 has no <atomic> header and gets a class that is built on the functions of
-// interlocked_adapter.h. It supports bool, the integer types, float, enums and pointers.
+// interlocked_adapter.h. It supports bool, the integer types, float, double, enums and pointers.
 //
 // The VC6 class has the size of the type it holds, like the standard class. It differs from it in these points:
 // - Its constructor is not constexpr. An object with static storage duration is initialized when its constructor
