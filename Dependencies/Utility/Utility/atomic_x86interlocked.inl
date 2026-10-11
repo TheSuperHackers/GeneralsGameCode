@@ -19,296 +19,296 @@
 // VC6-compatible implementation of std::atomic on top of the Interlocked functions.
 // The file that includes this one provides interlocked_adapter.h, <stddef.h> and the namespace.
 
-	// The VC6 atomic class takes the memory orders for source compatibility with the standard class.
-	// Its functions are always sequentially consistent, which satisfies every order.
-	enum memory_order
+// The VC6 atomic class takes the memory orders for source compatibility with the standard class.
+// Its functions are always sequentially consistent, which satisfies every order.
+enum memory_order
+{
+	memory_order_relaxed,
+	memory_order_consume,
+	memory_order_acquire,
+	memory_order_release,
+	memory_order_acq_rel,
+	memory_order_seq_cst
+};
+
+
+// The VC6 std::atomic compatible template stores the value in its own size. It supports bool, the integer types
+// up to the size of long, enums and pointers. All of them can be loaded, stored, exchanged and compare exchanged.
+// The arithmetic and bitwise functions compile for the integer types only. The standard class does not have them
+// for bool and enums either.
+template<typename T>
+class atomic
+{
+public:
+	atomic(T value = (T)0)
+		: m_stored(value)
 	{
-		memory_order_relaxed,
-		memory_order_consume,
-		memory_order_acquire,
-		memory_order_release,
-		memory_order_acq_rel,
-		memory_order_seq_cst
+	}
+
+	T load(memory_order = memory_order_seq_cst) const
+	{
+		return load_stored();
+	}
+
+	void store(T value, memory_order = memory_order_seq_cst)
+	{
+		exchange_stored(value);
+	}
+
+	T exchange(T value, memory_order = memory_order_seq_cst)
+	{
+		return exchange_stored(value);
+	}
+
+	T fetch_add(T value, memory_order = memory_order_seq_cst)
+	{
+		return fetch_modify(operation_add, value);
+	}
+
+	T fetch_sub(T value, memory_order = memory_order_seq_cst)
+	{
+		return fetch_modify(operation_sub, value);
+	}
+
+	T fetch_or(T value, memory_order = memory_order_seq_cst)
+	{
+		return fetch_modify(operation_or, value);
+	}
+
+	T fetch_and(T value, memory_order = memory_order_seq_cst)
+	{
+		return fetch_modify(operation_and, value);
+	}
+
+	T fetch_xor(T value, memory_order = memory_order_seq_cst)
+	{
+		return fetch_modify(operation_xor, value);
+	}
+
+	bool compare_exchange_strong(T& expected, T desired, memory_order = memory_order_seq_cst)
+	{
+		return compare_exchange(expected, desired);
+	}
+
+	bool compare_exchange_strong(T& expected, T desired, memory_order, memory_order)
+	{
+		return compare_exchange(expected, desired);
+	}
+
+	bool compare_exchange_weak(T& expected, T desired, memory_order = memory_order_seq_cst)
+	{
+		return compare_exchange(expected, desired);
+	}
+
+	bool compare_exchange_weak(T& expected, T desired, memory_order, memory_order)
+	{
+		return compare_exchange(expected, desired);
+	}
+
+	// Assignment from the underlying type.
+	T operator=(T value)
+	{
+		store(value);
+		return value;
+	}
+
+	// Implicit read, matching the usual std::atomic integral behavior.
+	operator T() const
+	{
+		return load();
+	}
+
+	// Increment/decrement.
+	T operator++()
+	{
+		return modify(operation_add, (T)1);
+	}
+
+	T operator++(int)
+	{
+		return fetch_add((T)1);
+	}
+
+	T operator--()
+	{
+		return modify(operation_sub, (T)1);
+	}
+
+	T operator--(int)
+	{
+		return fetch_sub((T)1);
+	}
+
+	// Arithmetic operators.
+	T operator+=(T value)
+	{
+		return modify(operation_add, value);
+	}
+
+	T operator-=(T value)
+	{
+		return modify(operation_sub, value);
+	}
+
+	// Optional bitwise operators.
+	T operator|=(T value)
+	{
+		return modify(operation_or, value);
+	}
+
+	T operator&=(T value)
+	{
+		return modify(operation_and, value);
+	}
+
+	T operator^=(T value)
+	{
+		return modify(operation_xor, value);
+	}
+
+private:
+	enum operation
+	{
+		operation_add,
+		operation_sub,
+		operation_or,
+		operation_and,
+		operation_xor
 	};
 
+	static_assert_cpp98(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4, "The type must have a size that interlocked functions exist for");
 
-	// The VC6 std::atomic compatible template stores the value in its own size. It supports bool, the integer types
-	// up to the size of long, enums and pointers. All of them can be loaded, stored, exchanged and compare exchanged.
-	// The arithmetic and bitwise functions compile for the integer types only. The standard class does not have them
-	// for bool and enums either.
-	template<typename T>
-	class atomic
+	atomic(const atomic&) FUNCTION_DELETE;
+	atomic& operator=(const atomic&) FUNCTION_DELETE;
+
+	// The four functions below call the function for the size of the type and convert the value to and from the
+	// type of that function. The size is constant, so that the compiler keeps the one case that applies.
+	T load_stored() const
 	{
-	public:
-		atomic(T value = (T)0)
-			: m_stored(value)
+		switch (sizeof(T))
 		{
+		case 1: return (T)ReadAcquire8((const char volatile*)&m_stored);
+		case 2: return (T)ReadAcquire16((const short volatile*)&m_stored);
+		default: return (T)ReadAcquire((const long volatile*)&m_stored);
 		}
+	}
 
-		T load(memory_order = memory_order_seq_cst) const
+	T exchange_stored(T value)
+	{
+		switch (sizeof(T))
 		{
-			return load_stored();
+		case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)value);
+		case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)value);
+		default: return (T)InterlockedExchange((long volatile*)&m_stored, (long)value);
 		}
+	}
 
-		void store(T value, memory_order = memory_order_seq_cst)
+	T exchange_add_stored(T value)
+	{
+		switch (sizeof(T))
 		{
-			exchange_stored(value);
+		case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)value);
+		case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)value);
+		default: return (T)InterlockedExchangeAdd((long volatile*)&m_stored, (long)value);
 		}
+	}
 
-		T exchange(T value, memory_order = memory_order_seq_cst)
+	T compare_exchange_stored(T exchange, T comparand)
+	{
+		switch (sizeof(T))
 		{
-			return exchange_stored(value);
+		case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)exchange, (char)comparand);
+		case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)exchange, (short)comparand);
+		default: return (T)InterlockedCompareExchange((long volatile*)&m_stored, (long)exchange, (long)comparand);
 		}
+	}
 
-		T fetch_add(T value, memory_order = memory_order_seq_cst)
+	bool compare_exchange(T& expected, T desired)
+	{
+		const T oldValue = compare_exchange_stored(desired, expected);
+
+		if (oldValue == expected)
+			return true;
+
+		expected = oldValue;
+		return false;
+	}
+
+	static T compute(operation op, T stored, T operand)
+	{
+		switch (op)
 		{
-			return fetch_modify(operation_add, value);
+		// Adds and subtracts unsigned, because that wraps around without undefined behavior.
+		case operation_add: return (T)((unsigned long)stored + (unsigned long)operand);
+		case operation_sub: return (T)((unsigned long)stored - (unsigned long)operand);
+		case operation_or: return (T)(stored | operand);
+		case operation_and: return (T)(stored & operand);
+		default: return (T)(stored ^ operand);
 		}
+	}
 
-		T fetch_sub(T value, memory_order = memory_order_seq_cst)
+	// Returns the value from before the operation.
+	T fetch_modify(operation op, T operand)
+	{
+		// Makes the arithmetic and bitwise functions, which all come through here, fail to compile for bool, enums
+		// and pointers: an int converts implicitly to neither an enum nor a pointer, and a bool cannot be decremented.
+		T integerTypesOnly = 1;
+		--integerTypesOnly;
+
+		// The processor adds in the size of the type and wraps around like the type does, so that an addition
+		// needs no retry loop.
+		if (op == operation_add)
+			return exchange_add_stored(operand);
+
+		if (op == operation_sub)
+			return exchange_add_stored((T)(0ul - (unsigned long)operand));
+
+		T oldValue;
+		T newValue;
+
+		do
 		{
-			return fetch_modify(operation_sub, value);
+			oldValue = load_stored();
+			newValue = compute(op, oldValue, operand);
 		}
+		while (compare_exchange_stored(newValue, oldValue) != oldValue);
 
-		T fetch_or(T value, memory_order = memory_order_seq_cst)
-		{
-			return fetch_modify(operation_or, value);
-		}
+		return oldValue;
+	}
 
-		T fetch_and(T value, memory_order = memory_order_seq_cst)
-		{
-			return fetch_modify(operation_and, value);
-		}
+	// Returns the value from after the operation.
+	T modify(operation op, T value)
+	{
+		return compute(op, fetch_modify(op, value), value);
+	}
 
-		T fetch_xor(T value, memory_order = memory_order_seq_cst)
-		{
-			return fetch_modify(operation_xor, value);
-		}
-
-		bool compare_exchange_strong(T& expected, T desired, memory_order = memory_order_seq_cst)
-		{
-			return compare_exchange(expected, desired);
-		}
-
-		bool compare_exchange_strong(T& expected, T desired, memory_order, memory_order)
-		{
-			return compare_exchange(expected, desired);
-		}
-
-		bool compare_exchange_weak(T& expected, T desired, memory_order = memory_order_seq_cst)
-		{
-			return compare_exchange(expected, desired);
-		}
-
-		bool compare_exchange_weak(T& expected, T desired, memory_order, memory_order)
-		{
-			return compare_exchange(expected, desired);
-		}
-
-		// Assignment from the underlying type.
-		T operator=(T value)
-		{
-			store(value);
-			return value;
-		}
-
-		// Implicit read, matching the usual std::atomic integral behavior.
-		operator T() const
-		{
-			return load();
-		}
-
-		// Increment/decrement.
-		T operator++()
-		{
-			return modify(operation_add, (T)1);
-		}
-
-		T operator++(int)
-		{
-			return fetch_add((T)1);
-		}
-
-		T operator--()
-		{
-			return modify(operation_sub, (T)1);
-		}
-
-		T operator--(int)
-		{
-			return fetch_sub((T)1);
-		}
-
-		// Arithmetic operators.
-		T operator+=(T value)
-		{
-			return modify(operation_add, value);
-		}
-
-		T operator-=(T value)
-		{
-			return modify(operation_sub, value);
-		}
-
-		// Optional bitwise operators.
-		T operator|=(T value)
-		{
-			return modify(operation_or, value);
-		}
-
-		T operator&=(T value)
-		{
-			return modify(operation_and, value);
-		}
-
-		T operator^=(T value)
-		{
-			return modify(operation_xor, value);
-		}
-
-	private:
-		enum operation
-		{
-			operation_add,
-			operation_sub,
-			operation_or,
-			operation_and,
-			operation_xor
-		};
-
-		static_assert_cpp98(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4, "The type must have a size that interlocked functions exist for");
-
-		atomic(const atomic&) FUNCTION_DELETE;
-		atomic& operator=(const atomic&) FUNCTION_DELETE;
-
-		// The four functions below call the function for the size of the type and convert the value to and from the
-		// type of that function. The size is constant, so that the compiler keeps the one case that applies.
-		T load_stored() const
-		{
-			switch (sizeof(T))
-			{
-			case 1: return (T)ReadAcquire8((const char volatile*)&m_stored);
-			case 2: return (T)ReadAcquire16((const short volatile*)&m_stored);
-			default: return (T)ReadAcquire((const long volatile*)&m_stored);
-			}
-		}
-
-		T exchange_stored(T value)
-		{
-			switch (sizeof(T))
-			{
-			case 1: return (T)InterlockedExchange8((char volatile*)&m_stored, (char)value);
-			case 2: return (T)InterlockedExchange16((short volatile*)&m_stored, (short)value);
-			default: return (T)InterlockedExchange((long volatile*)&m_stored, (long)value);
-			}
-		}
-
-		T exchange_add_stored(T value)
-		{
-			switch (sizeof(T))
-			{
-			case 1: return (T)InterlockedExchangeAdd8((char volatile*)&m_stored, (char)value);
-			case 2: return (T)InterlockedExchangeAdd16((short volatile*)&m_stored, (short)value);
-			default: return (T)InterlockedExchangeAdd((long volatile*)&m_stored, (long)value);
-			}
-		}
-
-		T compare_exchange_stored(T exchange, T comparand)
-		{
-			switch (sizeof(T))
-			{
-			case 1: return (T)InterlockedCompareExchange8((char volatile*)&m_stored, (char)exchange, (char)comparand);
-			case 2: return (T)InterlockedCompareExchange16((short volatile*)&m_stored, (short)exchange, (short)comparand);
-			default: return (T)InterlockedCompareExchange((long volatile*)&m_stored, (long)exchange, (long)comparand);
-			}
-		}
-
-		bool compare_exchange(T& expected, T desired)
-		{
-			const T oldValue = compare_exchange_stored(desired, expected);
-
-			if (oldValue == expected)
-				return true;
-
-			expected = oldValue;
-			return false;
-		}
-
-		static T compute(operation op, T stored, T operand)
-		{
-			switch (op)
-			{
-			// Adds and subtracts unsigned, because that wraps around without undefined behavior.
-			case operation_add: return (T)((unsigned long)stored + (unsigned long)operand);
-			case operation_sub: return (T)((unsigned long)stored - (unsigned long)operand);
-			case operation_or: return (T)(stored | operand);
-			case operation_and: return (T)(stored & operand);
-			default: return (T)(stored ^ operand);
-			}
-		}
-
-		// Returns the value from before the operation.
-		T fetch_modify(operation op, T operand)
-		{
-			// Makes the arithmetic and bitwise functions, which all come through here, fail to compile for bool, enums
-			// and pointers: an int converts implicitly to neither an enum nor a pointer, and a bool cannot be decremented.
-			T integerTypesOnly = 1;
-			--integerTypesOnly;
-
-			// The processor adds in the size of the type and wraps around like the type does, so that an addition
-			// needs no retry loop.
-			if (op == operation_add)
-				return exchange_add_stored(operand);
-
-			if (op == operation_sub)
-				return exchange_add_stored((T)(0ul - (unsigned long)operand));
-
-			T oldValue;
-			T newValue;
-
-			do
-			{
-				oldValue = load_stored();
-				newValue = compute(op, oldValue, operand);
-			}
-			while (compare_exchange_stored(newValue, oldValue) != oldValue);
-
-			return oldValue;
-		}
-
-		// Returns the value from after the operation.
-		T modify(operation op, T value)
-		{
-			return compute(op, fetch_modify(op, value), value);
-		}
-
-		mutable volatile T m_stored;
-	};
+	mutable volatile T m_stored;
+};
 
 
-	// A float has a supported size, but the conversion to long would drop its fraction.
-	template<>
-	class atomic<float>;
+// A float has a supported size, but the conversion to long would drop its fraction.
+template<>
+class atomic<float>;
 
-	// The aliases of the standard for the types that the class supports.
-	typedef atomic<bool> atomic_bool;
-	typedef atomic<char> atomic_char;
-	typedef atomic<signed char> atomic_schar;
-	typedef atomic<unsigned char> atomic_uchar;
-	typedef atomic<short> atomic_short;
-	typedef atomic<unsigned short> atomic_ushort;
-	typedef atomic<int> atomic_int;
-	typedef atomic<unsigned int> atomic_uint;
-	typedef atomic<long> atomic_long;
-	typedef atomic<unsigned long> atomic_ulong;
-	typedef atomic<wchar_t> atomic_wchar_t;
-	typedef atomic<int8_t> atomic_int8_t;
-	typedef atomic<uint8_t> atomic_uint8_t;
-	typedef atomic<int16_t> atomic_int16_t;
-	typedef atomic<uint16_t> atomic_uint16_t;
-	typedef atomic<int32_t> atomic_int32_t;
-	typedef atomic<uint32_t> atomic_uint32_t;
-	typedef atomic<intptr_t> atomic_intptr_t;
-	typedef atomic<uintptr_t> atomic_uintptr_t;
-	typedef atomic<size_t> atomic_size_t;
-	typedef atomic<ptrdiff_t> atomic_ptrdiff_t;
+// The aliases of the standard for the types that the class supports.
+typedef atomic<bool> atomic_bool;
+typedef atomic<char> atomic_char;
+typedef atomic<signed char> atomic_schar;
+typedef atomic<unsigned char> atomic_uchar;
+typedef atomic<short> atomic_short;
+typedef atomic<unsigned short> atomic_ushort;
+typedef atomic<int> atomic_int;
+typedef atomic<unsigned int> atomic_uint;
+typedef atomic<long> atomic_long;
+typedef atomic<unsigned long> atomic_ulong;
+typedef atomic<wchar_t> atomic_wchar_t;
+typedef atomic<int8_t> atomic_int8_t;
+typedef atomic<uint8_t> atomic_uint8_t;
+typedef atomic<int16_t> atomic_int16_t;
+typedef atomic<uint16_t> atomic_uint16_t;
+typedef atomic<int32_t> atomic_int32_t;
+typedef atomic<uint32_t> atomic_uint32_t;
+typedef atomic<intptr_t> atomic_intptr_t;
+typedef atomic<uintptr_t> atomic_uintptr_t;
+typedef atomic<size_t> atomic_size_t;
+typedef atomic<ptrdiff_t> atomic_ptrdiff_t;
