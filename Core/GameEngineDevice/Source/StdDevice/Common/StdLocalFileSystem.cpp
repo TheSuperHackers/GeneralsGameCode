@@ -65,19 +65,13 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 		// Traverse path to try and match case-insensitively
 		std::filesystem::path parent = path.parent_path();
 
-		std::filesystem::path pathFixed;
-		std::filesystem::path pathCurrent;
-		for (auto& p : path)
+		// The walk begins at the root of the path, which is empty
+		// for a relative path. The first part of a relative path is then matched like the parts after it.
+		std::filesystem::path pathFixed = path.root_path();
+		std::filesystem::path pathCurrent = path.root_path();
+		for (auto& p : path.relative_path())
 		{
 			std::filesystem::path pathFixedPart;
-			if (pathCurrent.empty())
-			{
-				// Load the first part of the path
-				pathFixed /= p;
-				pathCurrent /= p;
-				continue;
-			}
-
 			if (std::filesystem::exists(pathCurrent / p, ec))
 			{
 				pathFixedPart = p;
@@ -89,7 +83,9 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 			else
 			{
 				// Check if the subpath exists using case-insensitive comparison
-				for (auto& entry : std::filesystem::directory_iterator(pathFixed, ec))
+				// The first part of a relative path is searched in the working directory.
+				const std::filesystem::path pathSearch = pathFixed.empty() ? std::filesystem::path(".") : pathFixed;
+				for (auto& entry : std::filesystem::directory_iterator(pathSearch, ec))
 				{
 					if (strcasecmp(entry.path().filename().string().c_str(), p.string().c_str()) == 0)
 					{
