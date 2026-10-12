@@ -800,7 +800,6 @@ void GameClient::updateFakeDrawables()
 
 /** -----------------------------------------------------------------------------------------------
  * Given an object id, return the associated object.
- * For efficiency, a small Least Recently Used cache is incorporated.
  * This method is the primary interface for accessing objects, and should be used
  * instead of pointers to "attach" objects to each other.
  */
