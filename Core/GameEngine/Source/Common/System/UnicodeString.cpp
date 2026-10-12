@@ -44,7 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common/CriticalSection.h"
 #include "WWLib/utf8.h"
 
 
@@ -66,7 +65,6 @@ void UnicodeString::validate() const
 // -----------------------------------------------------
 UnicodeString::UnicodeString(const UnicodeString& stringSrc) : m_data(stringSrc.m_data)
 {
-	ScopedCriticalSection scopedCriticalSection(TheUnicodeStringCriticalSection);
 	if (m_data)
 		++m_data->m_refCount;
 	validate();
@@ -100,7 +98,8 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	DEBUG_ASSERTCRASH(numCharsNeeded <= MAX_LEN, ("UnicodeString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d", MAX_LEN, numCharsNeeded));
 	int minBytes = sizeof(UnicodeStringData) + numCharsNeeded*sizeof(WideChar);
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
-	UnicodeStringData* newData = (UnicodeStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_UnicodeString::ensureUniqueBufferOfSize");
+	void* rawData = TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_UnicodeString::ensureUniqueBufferOfSize");
+	UnicodeStringData* newData = new(rawData) UnicodeStringData;
 	newData->m_refCount = 1;
 	newData->m_numCharsAllocated = (actualBytes - sizeof(UnicodeStringData))/sizeof(WideChar);
 
@@ -130,17 +129,19 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 // -----------------------------------------------------
 void UnicodeString::releaseBuffer()
 {
-	ScopedCriticalSection scopedCriticalSection(TheUnicodeStringCriticalSection);
-
 	validate();
 	if (m_data)
 	{
-		if (--m_data->m_refCount == 0)
-		{
-			TheDynamicMemoryAllocator->freeBytes(m_data);
-		}
+		UnicodeStringData* oldData = m_data;
 		m_data = nullptr;
+
+		if (--oldData->m_refCount == 0)
+		{
+			oldData->~UnicodeStringData();
+			TheDynamicMemoryAllocator->freeBytes(oldData);
+		}
 	}
+	validate();
 }
 
 // -----------------------------------------------------
@@ -167,15 +168,15 @@ UnicodeString::UnicodeString(const WideChar* s, int len) : m_data(nullptr)
 // -----------------------------------------------------
 void UnicodeString::set(const UnicodeString& stringSrc)
 {
-	ScopedCriticalSection scopedCriticalSection(TheUnicodeStringCriticalSection);
-
 	validate();
 	if (&stringSrc != this)
 	{
+		UnicodeStringData* newData = stringSrc.m_data;
+		if (newData)
+			++newData->m_refCount;
+
 		releaseBuffer();
-		m_data = stringSrc.m_data;
-		if (m_data)
-			++m_data->m_refCount;
+		m_data = newData;
 	}
 	validate();
 }
