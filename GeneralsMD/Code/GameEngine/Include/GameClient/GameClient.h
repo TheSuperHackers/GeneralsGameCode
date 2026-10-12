@@ -237,30 +237,6 @@ private:
 		} \
 	} while (0);
 
-/** -----------------------------------------------------------------------------------------------
- * Given an object id, return the associated object.
- * This method is the primary interface for accessing objects, and should be used
- * instead of pointers to "attach" objects to each other.
- */
-inline Drawable* GameClient::findDrawableByID( const DrawableID id )
-{
-	if( id == INVALID_DRAWABLE_ID )
-		return nullptr;
-
-//	DrawablePtrHashIt it = m_drawableHash.find(id);
-//	if (it == m_drawableHash.end()) {
-//		// no such drawable
-//		return nullptr;
-//	}
-//
-//	return (*it).second;
-
-	if( (size_t)id < m_drawableVector.size() )
-		return m_drawableVector[(size_t)id];
-
-	return nullptr;
-}
-
 
 // the singleton
 extern GameClient *TheGameClient;
