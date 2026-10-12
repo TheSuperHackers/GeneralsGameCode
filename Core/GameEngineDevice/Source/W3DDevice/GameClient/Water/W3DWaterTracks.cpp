@@ -1010,20 +1010,15 @@ void WaterTracksRenderSystem::loadTracks()
 		return;
 
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
+	// TheSuperHackers @bugfix bobtista 11/10/2026 Saved maps do not include their water track file.
+	if (TheGameState != nullptr && TheGameState->isInSaveDirectory(fileName))
+	{
+		fileName = TheGameState->getPristineMapName();
+	}
 	FileSystem::removeExtension(fileName);
 	fileName.concat(".wak");
 
 	File *file = TheFileSystem->openFile(fileName.str(), File::READ | File::BINARY);
-
-	// TheSuperHackers @bugfix bobtista 11/10/2026 A save game only embeds the map, so read the tracks from the pristine map.
-	if (file == nullptr && TheGameState != nullptr && !TheGameState->getPristineMapName().isEmpty())
-	{
-		fileName = TheGameState->getPristineMapName();
-		FileSystem::removeExtension(fileName);
-		fileName.concat(".wak");
-		file = TheFileSystem->openFile(fileName.str(), File::READ | File::BINARY);
-	}
-
 	WaterTracksObj *umod;
 	Int trackCount=0;
 	Int flipU=0;
