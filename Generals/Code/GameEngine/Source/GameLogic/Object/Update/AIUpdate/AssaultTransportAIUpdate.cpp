@@ -509,6 +509,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
+	// Keep the previous count on failure because reset() uses it to clear the member arrays.
 	Int currentMembers = m_currentMembers;
 	xfer->xferInt( &currentMembers );
 	// TheSuperHackers @bugfix Reject invalid transport counts before reading member arrays.

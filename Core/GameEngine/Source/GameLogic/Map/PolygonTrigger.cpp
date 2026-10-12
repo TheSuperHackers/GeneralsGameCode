@@ -535,15 +535,13 @@ void PolygonTrigger::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// number of data points
-	Int numPoints = m_numPoints;
-	xfer->xferInt( &numPoints );
+	xfer->xferInt( &m_numPoints );
 	// TheSuperHackers @bugfix Validate the saved count against the buffer allocated by the map load.
-	if( numPoints < 0 || numPoints > m_sizePoints )
+	if( m_numPoints < 0 || m_numPoints > m_sizePoints )
 	{
 		DEBUG_LOG(( "PolygonTrigger::xfer - Invalid point count" ));
 		throw SC_INVALID_DATA;
 	}
-	m_numPoints = numPoints;
 
 	// xfer all data points
 	ICoord3D *point;

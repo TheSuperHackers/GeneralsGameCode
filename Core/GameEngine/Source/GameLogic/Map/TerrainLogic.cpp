@@ -2924,15 +2924,13 @@ void TerrainLogic::xfer( Xfer *xfer )
 	{
 
 		// number of water entries in our update array
-		Int numWaterToUpdate = m_numWaterToUpdate;
-		xfer->xferInt( &numWaterToUpdate );
+		xfer->xferInt( &m_numWaterToUpdate );
 		// TheSuperHackers @bugfix Reject invalid counts before accessing the fixed water update array.
-		if( numWaterToUpdate < 0 || numWaterToUpdate > MAX_DYNAMIC_WATER )
+		if( m_numWaterToUpdate < 0 || m_numWaterToUpdate > MAX_DYNAMIC_WATER )
 		{
 			DEBUG_LOG(( "TerrainLogic::xfer - Invalid water update count" ));
 			throw SC_INVALID_DATA;
 		}
-		m_numWaterToUpdate = numWaterToUpdate;
 
 		// water update entry data
 		for( UnsignedInt i = 0; i < m_numWaterToUpdate; ++i )

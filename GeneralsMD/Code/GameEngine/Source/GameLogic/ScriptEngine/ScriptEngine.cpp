@@ -8956,15 +8956,13 @@ void ScriptEngine::xfer( Xfer *xfer )
 	}
 
 	// num counters
-	Int numCounters = m_numCounters;
-	xfer->xferInt( &numCounters );
+	xfer->xferInt( &m_numCounters );
 	// TheSuperHackers @bugfix The repeated count must match the array entries just transferred.
-	if( numCounters != countersSize )
+	if( m_numCounters != countersSize )
 	{
 		DEBUG_LOG(( "ScriptEngine::xfer - Inconsistent Counters count" ));
 		throw SC_INVALID_DATA;
 	}
-	m_numCounters = numCounters;
 
 	// flags
 	UnsignedShort flagsSize = m_numFlags;
@@ -8988,15 +8986,13 @@ void ScriptEngine::xfer( Xfer *xfer )
 	}
 
 	// num flags
-	Int numFlags = m_numFlags;
-	xfer->xferInt( &numFlags );
+	xfer->xferInt( &m_numFlags );
 	// TheSuperHackers @bugfix The repeated count must match the array entries just transferred.
-	if( numFlags != flagsSize )
+	if( m_numFlags != flagsSize )
 	{
 		DEBUG_LOG(( "ScriptEngine::xfer - Inconsistent Flags count" ));
 		throw SC_INVALID_DATA;
 	}
-	m_numFlags = numFlags;
 
 	// attack priority info
 	UnsignedShort attackPriorityInfoSize = m_numAttackInfo;
@@ -9017,15 +9013,13 @@ void ScriptEngine::xfer( Xfer *xfer )
 	}
 
 	// num attack info
-	Int numAttackInfo = m_numAttackInfo;
-	xfer->xferInt( &numAttackInfo );
+	xfer->xferInt( &m_numAttackInfo );
 	// TheSuperHackers @bugfix The repeated count must match the array entries just transferred.
-	if( numAttackInfo != attackPriorityInfoSize )
+	if( m_numAttackInfo != attackPriorityInfoSize )
 	{
 		DEBUG_LOG(( "ScriptEngine::xfer - Inconsistent AttackInfo count" ));
 		throw SC_INVALID_DATA;
 	}
-	m_numAttackInfo = numAttackInfo;
 
 	// end game timers
 	xfer->xferInt( &m_endGameTimer );
