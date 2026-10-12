@@ -767,7 +767,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 }
 
 // Necessary to allow memory managers and such to have useful critical sections
-static CriticalSection critSec1, critSec2, critSec3, critSec4;
+static CriticalSection critSec2, critSec3, critSec4;
 
 // UnHandledExceptionFilter ===================================================
 /** Handler for unhandled win32 exceptions. */
@@ -806,7 +806,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// default in a DevStudio project
 		//
 
-		TheAsciiStringCriticalSection = &critSec1;
 		TheUnicodeStringCriticalSection = &critSec2;
 		TheDmaCriticalSection = &critSec3;
 		TheMemoryPoolCriticalSection = &critSec4;
@@ -911,7 +910,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #ifdef RTS_ENABLE_CRASHDUMP
 	MiniDumper::shutdownMiniDumper();
 #endif
-	TheAsciiStringCriticalSection = nullptr;
 	TheUnicodeStringCriticalSection = nullptr;
 	TheDmaCriticalSection = nullptr;
 	TheMemoryPoolCriticalSection = nullptr;

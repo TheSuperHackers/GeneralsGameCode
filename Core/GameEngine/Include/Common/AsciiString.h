@@ -49,6 +49,7 @@
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Errors.h"
+#include <Utility/atomic_adapter.h>
 
 class UnicodeString;
 
@@ -80,11 +81,11 @@ class AsciiString
 {
 private:
 
-	// Note, this is a Plain Old Data Structure... don't
-	// add a ctor/dtor, 'cuz they won't ever be called.
+	// This header data is allocated in raw storage with an explicit lifetime.
+	// It is constructed when string data is allocated and destroyed when the string is freed.
 	struct AsciiStringData
 	{
-		unsigned short	m_refCount;						// reference count
+		std::atomic<unsigned short>	m_refCount;						// reference count
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// char m_stringdata[];
 
