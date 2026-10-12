@@ -433,7 +433,6 @@ void GameClient::init()
 /** Reset the game client for a new game */
 void GameClient::reset()
 {
-	Drawable *draw, *nextDraw;
 	m_drawableHash.clear();
 #if USING_STLPORT
 	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
@@ -445,7 +444,7 @@ void GameClient::reset()
 	TheInGameUI->reset();
 
 	// destroy all Drawables
-	for( draw = m_drawableList; draw; draw = nextDraw )
+	for( Drawable *draw = m_drawableList, *nextDraw = nullptr; draw; draw = nextDraw )
 	{
 		nextDraw = draw->getNextDrawable();
 		destroyDrawable( draw );
@@ -860,7 +859,7 @@ void GameClient::addDrawableToLookupTable(Drawable *draw )
 	if( draw == nullptr )
 		return;
 
-	// add to lookup
+	// add to lookup table
 	m_drawableHash[ draw->getID() ] = draw;
 
 }
@@ -875,7 +874,7 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 	if( draw == nullptr )
 		return;
 
-	// remove from table
+	// remove from lookup table
 	m_drawableHash.erase( draw->getID() );
 
 }

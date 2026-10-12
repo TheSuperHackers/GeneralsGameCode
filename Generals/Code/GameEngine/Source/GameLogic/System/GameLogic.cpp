@@ -3444,7 +3444,7 @@ void GameLogic::addObjectToLookupTable( Object *obj )
 	if( obj == nullptr )
 		return;
 
-	// add to lookup
+	// add to lookup table
 	m_objHash[ obj->getID() ] = obj;
 
 }
