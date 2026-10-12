@@ -83,6 +83,7 @@ public:
 /* ********* MapObject class ****************************/
 /*static*/ MapObject *MapObject::TheMapObjectListPtr = nullptr;
 /*static*/ Dict MapObject::TheWorldDict;
+static Int s_nextTreeID = 1;
 
 MapObject::MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const Dict* props,
 										 const ThingTemplate *thingTemplate )
@@ -97,6 +98,7 @@ MapObject::MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const
 	m_renderObj = nullptr;
 	m_shadowObj = nullptr;
 	m_runtimeFlags = 0;
+	m_treeID = (DrawableID)s_nextTreeID++;
 	// Note - do NOT set TheKey_objectSelectable on creation - allow it to follow the .ini value unless specified by user action.  jba. [3/20/2003]
 	if (props)
 	{
