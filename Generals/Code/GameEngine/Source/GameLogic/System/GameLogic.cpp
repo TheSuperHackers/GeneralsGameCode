@@ -54,7 +54,9 @@
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
 #include "Common/ThingTemplate.h"
-#include "GameClient/Water.h"
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+#include "Common/TunnelTracker.h"
+#endif
 #include "Common/WellKnownKeys.h"
 #include "Common/Xfer.h"
 #include "Common/XferCRC.h"
@@ -73,6 +75,7 @@
 #include "GameClient/View.h"
 #include "GameClient/CampaignManager.h"
 #include "GameClient/GameWindowTransitions.h"
+#include "GameClient/Water.h"
 
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
@@ -2828,6 +2831,40 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 		return;
 	}
 }
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+// ------------------------------------------------------------------------------------------------
+// Find the tunnel tracker that contains the object and destroy all objects in the contain list
+// ------------------------------------------------------------------------------------------------
+void GameLogic::friend_destroyInTunnelContain(const Object* strandedObject)
+{
+	for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+	{
+		TunnelTracker* tracker = ThePlayerList->getNthPlayer(i)->getTunnelSystem();
+		if (!tracker)
+			continue;
+
+		const ContainedItemsList& list = *tracker->getContainedItemsList();
+
+		const ContainedItemsList::const_iterator it = std::find(list.begin(), list.end(), strandedObject);
+		if (it == list.end())
+			continue;
+
+		while (!list.empty())
+		{
+			Object* obj = list.front();
+
+			tracker->removeFromContain(obj);
+
+			obj->onRemovedFrom(nullptr);
+
+			destroyObject(obj);
+		}
+
+		break;
+	}
+}
+#endif
 
 // ------------------------------------------------------------------------------------------------
 #ifdef DO_UNIT_TIMINGS

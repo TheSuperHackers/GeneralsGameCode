@@ -4318,6 +4318,20 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 					//Not contained
 					return nullptr;
 				}
+
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix Caball009 22/09/2026 Return early to prevent a crash.
+				// This is needed when a Tunnel Network with units is transferred to another player and then sold or destroyed.
+				// The units are not properly transferred and are left in an invalid state.
+				if (!container->getContain())
+				{
+					// remove all such units from the tunnel tracker and destroy them
+					TheGameLogic->friend_destroyInTunnelContain(obj);
+
+					return nullptr;
+				}
+#endif
+
 				if( !container->getContain()->isPassengerAllowedToFire() )
 				{
 					//Container doesn't allow for passenger to shoot.
