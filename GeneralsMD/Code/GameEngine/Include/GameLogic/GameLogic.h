@@ -78,8 +78,8 @@ enum
 
 /// Function pointers for use by GameLogic callback functions.
 typedef void (*GameLogicFuncPtr)( Object *obj, void *userData );
-//typedef std::hash_map<ObjectID, Object *, rts::hash<ObjectID>, rts::equal_to<ObjectID> > ObjectPtrHash;
-//typedef ObjectPtrHash::const_iterator ObjectPtrIter;
+typedef std::hash_map<ObjectID, Object *, rts::hash<ObjectID>, rts::equal_to<ObjectID>/**/> ObjectPtrHash;
+typedef ObjectPtrHash::const_iterator ObjectPtrIter;
 
 typedef std::vector<Object*> ObjectPtrVector;
 
@@ -401,8 +401,7 @@ private:
 	WindowLayout *m_background;
 
 	Object* m_objList;																			///< All of the objects in the world.
-//	ObjectPtrHash m_objHash;																///< Used for ObjectID lookups
-	ObjectPtrVector m_objVector;
+	ObjectPtrHash m_objHash;																///< Used for ObjectID lookups
 
 	// this is a vector, but is maintained as a priority queue.
 	// never modify it directly; please use the proper access methods.
@@ -503,15 +502,11 @@ inline Object* GameLogic::findObjectByID( ObjectID id )
 	if( id == INVALID_ID )
 		return nullptr;
 
-//	ObjectPtrHash::iterator it = m_objHash.find(id);
-//	if (it == m_objHash.end())
-//		return nullptr;
-//
-//	return (*it).second;
-	if( (size_t)id < m_objVector.size() )
-		return m_objVector[(size_t)id];
+	ObjectPtrHash::iterator it = m_objHash.find(id);
+	if (it == m_objHash.end())
+		return nullptr;
 
-	return nullptr;
+	return (*it).second;
 }
 
 
