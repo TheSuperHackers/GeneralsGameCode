@@ -2542,6 +2542,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 	{
 	case GameMessage::MSG_FRAME_TICK:
 	case GameMessage::MSG_CLEAR_GAME_DATA:
+	case GameMessage::MSG_LOGIC_CRC_PLAYBACK:
 	case GameMessage::MSG_META_OPTIONS:
 	case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
 	case GameMessage::MSG_DESTROY_SELECTED_GROUP:

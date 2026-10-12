@@ -3768,11 +3768,13 @@ void GameLogic::update()
 	if (generateForSolo || generateForMP)
 	{
 		m_CRC = getCRC( CRC_RECALC );
-		bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
+		const bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 
-		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
+		// TheSuperHackers @tweak Caball009 30/09/2026 Playback CRC is now separate from regular CRC,
+		// removing the need for the second parameter used to distinguish them. Older clients can still
+		// parse newer replays because GameMessage::getArgument returns false for the missing playback argument.
+		GameMessage *msg = newInstance(GameMessage)(isPlayback ? GameMessage::MSG_LOGIC_CRC_PLAYBACK : GameMessage::MSG_LOGIC_CRC);
 		msg->appendIntegerArgument(m_CRC);
-		msg->appendBooleanArgument(isPlayback);
 
 		// TheSuperHackers @info helmutbuhler 13/04/2025
 		// During replay simulation, we bypass TheMessageStream and instead put the CRC message
