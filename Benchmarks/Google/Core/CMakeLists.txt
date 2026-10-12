@@ -4,6 +4,7 @@ set(COREI_GOOGLEBENCHMARK_SRC
     GameEngine/Common/AsciiStringBenchmark.cpp
     GameEngine/Common/INIBenchmark.cpp
     Libraries/Compression/CompressionManagerBenchmark.cpp
+    Libraries/WWVegas/WWMath/WWMathBenchmark.cpp
 )
 
 add_library(corei_googlebenchmark INTERFACE)
