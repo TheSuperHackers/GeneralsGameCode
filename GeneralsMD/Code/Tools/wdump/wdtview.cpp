@@ -127,7 +127,7 @@ void CWDumpTreeView::InsertItem(ChunkItem * item, HTREEITEM Parent)
 
 	CTreeCtrl &tree = GetTreeCtrl();
 	HTREEITEM tree_item = tree.InsertItem(name, Parent);
-	tree.SetItem(tree_item, TVIF_PARAM,nullptr,0,0,0,0, (long) item);
+	tree.SetItem(tree_item, TVIF_PARAM,nullptr,0,0,0,0, (LPARAM) item);
 
 	POSITION p = item->Chunks.GetHeadPosition();
 	while(p != nullptr) {
@@ -282,7 +282,7 @@ void CWDumpTreeView::SelectTreeItem (HTREEITEM treeitem, ChunkItem *chunkitem)
 
 		HTREEITEM subtreeitem;
 
-		if (tree.GetItemData (treeitem) == (DWORD) chunkitem) {
+		if (tree.GetItemData (treeitem) == (uintptr_t) chunkitem) {
 			tree.SelectItem (treeitem);
 		}
 		subtreeitem = tree.GetChildItem (treeitem);

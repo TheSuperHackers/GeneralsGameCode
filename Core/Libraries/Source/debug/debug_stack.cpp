@@ -46,7 +46,7 @@ static union
   {
 #include "debug_stack.inl"
   };
-  unsigned funcPtr[1];
+  uintptr_t funcPtr[1];
 } gDbg;
 #undef DBGHELP
 
@@ -89,11 +89,11 @@ static void InitDbghelp()
     return;
 
   // Get function addresses
-  unsigned *funcptr=gDbg.funcPtr;
+  uintptr_t *funcptr=gDbg.funcPtr;
   unsigned k=0;
   for (;DebughelpFunctionNames[k];++k,++funcptr)
   {
-    *funcptr=(unsigned)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
+    *funcptr=(uintptr_t)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
     if (!*funcptr)
       break;
   }

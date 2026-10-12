@@ -144,8 +144,8 @@ protected:
  	{
  		size_t operator()(ConstGameWindowPtr p) const
  		{
- 			std::hash<UnsignedInt> hasher;
- 			return hasher((UnsignedInt)p);
+ 			std::hash<uintptr_t> hasher;
+ 			return hasher((uintptr_t)p);
  		}
  	};
 

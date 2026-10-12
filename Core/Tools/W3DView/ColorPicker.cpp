@@ -207,7 +207,7 @@ fnColorPickerProc
 
 			// Get the creation information from the window handle
 			ColorPickerClass *pwnd = (ColorPickerClass *)::GetProp (hwnd, "CLASSPOINTER");
-			BOOL created = (BOOL)::GetProp (hwnd, "CREATED");
+			BOOL created = (BOOL)(uintptr_t)::GetProp (hwnd, "CREATED");
 
 			if (pwnd != nullptr) {
 				pwnd->Detach ();

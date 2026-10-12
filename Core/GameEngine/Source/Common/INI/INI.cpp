@@ -655,7 +655,7 @@ void INI::parseBool( INI* ini, void * /*instance*/, void *store, const void* /*u
 void INI::parseBitInInt32( INI *ini, void *instance, void *store, const void* userData )
 {
 	UnsignedInt* s = (UnsignedInt*)store;
-	UnsignedInt mask = (UnsignedInt)userData;
+	UnsignedInt mask = (UnsignedInt)(uintptr_t)userData;
 
 	if (INI::scanBool(ini->getNextToken()))
 		*s |= mask;

@@ -1233,7 +1233,7 @@ enum AnimParseType CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 static void parseAnimation(INI* ini, void *instance, void * /*store*/, const void* userData)
 {
-	AnimParseType animType = (AnimParseType)(UnsignedInt)userData;
+	AnimParseType animType = (AnimParseType)(uintptr_t)userData;
 
 	AsciiString animName = ini->getNextAsciiString();
 	animName.toLower();
@@ -1447,7 +1447,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 	ModelConditionInfo info;
 	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
-	ParseCondStateType cst = (ParseCondStateType)(UnsignedInt)userData;
+	ParseCondStateType cst = (ParseCondStateType)(uintptr_t)userData;
 	switch (cst)
 	{
 		case PARSE_DEFAULT:
