@@ -119,6 +119,8 @@ class DynamicIBAccessClass
 	void Allocate_DX8_Dynamic_Buffer();
 
 public:
+	enum { MAX_INDEX_COUNT = 0xffff }; ///< index_count is an unsigned short
+
 	DynamicIBAccessClass(unsigned short type, unsigned short index_count);
 	~DynamicIBAccessClass();
 
