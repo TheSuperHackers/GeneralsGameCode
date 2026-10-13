@@ -109,6 +109,15 @@
             }
         },
         {
+            "name": "windows-x86-msvc19-weekly",
+            "inherits": "windows-x86-msvc19",
+            "displayName": "Windows 32bit MSVC19 Weekly Release",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME": "OFF",
+                "RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR": "OFF"
+            }
+        },
+        {
             "name": "windows-x86-mingwgcc",
             "displayName": "MinGW-w64 32-bit (i686) Release",
             "generator": "Unix Makefiles",
@@ -191,6 +200,13 @@
             "displayName": "Build Windows 32bit MSVC19 Debug",
             "description": "Build Windows 32bit MSVC19 Debug",
             "configuration": "Debug"
+        },
+        {
+            "name": "windows-x86-msvc19-weekly",
+            "configurePreset": "windows-x86-msvc19-weekly",
+            "displayName": "Build Windows 32bit MSVC19 Weekly Release",
+            "description": "Build Windows 32bit MSVC19 Weekly Release",
+            "configuration": "Release"
         },
         {
             "name": "windows-x86-mingwgcc",
@@ -351,6 +367,19 @@
                 {
                     "type": "build",
                     "name": "windows-x86-msvc19-debug"
+                }
+            ]
+        },
+        {
+            "name": "windows-x86-msvc19-weekly",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "windows-x86-msvc19-weekly"
+                },
+                {
+                    "type": "build",
+                    "name": "windows-x86-msvc19-weekly"
                 }
             ]
         },
