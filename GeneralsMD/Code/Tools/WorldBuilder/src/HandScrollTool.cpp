@@ -34,7 +34,6 @@
 // HandScrollTool class.
 //
 
-inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 static const Int MAX_SCROLL = 1000;
 
 /// Constructor
