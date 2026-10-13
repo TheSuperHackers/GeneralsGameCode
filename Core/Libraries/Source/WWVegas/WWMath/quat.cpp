@@ -271,18 +271,18 @@ void __cdecl Fast_Slerp(Quaternion& res, const Quaternion & p,const Quaternion &
 		mov		edi, q
 		fld1										// we'll need 1.0 and 0.0 later
 
-// ----------------------------------------------------------------------------
-//	cos theta = dot product of p and q
-//	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;
-// if q is on opposite hemisphere from A, use -B instead
-// if (cos_t < 0.0) {
-//		cos_t = -cos_t;
-//		qflip = true;
-//	}
-//	else {
-//		qflip = false;
-//	}
-// ----------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------
+		//	cos theta = dot product of p and q
+		//	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;
+		// if q is on opposite hemisphere from A, use -B instead
+		// if (cos_t < 0.0) {
+		//		cos_t = -cos_t;
+		//		qflip = true;
+		//	}
+		//	else {
+		//		qflip = false;
+		//	}
+		// ----------------------------------------------------------------------------
 
 		fld      dword ptr [esi]			// p.X
 		fmul     dword ptr [edi]			//	p.X*q.X
@@ -300,13 +300,13 @@ void __cdecl Fast_Slerp(Quaternion& res, const Quaternion & p,const Quaternion &
 		mov		ebx,beta
 		and		ebx,0x80000000
 
-// ----------------------------------------------------------------------------
-// if q is very close to p, just linearly interpolate
-// between the two.
-//	if (1.0 - cos_t < WWMATH_EPSILON * WWMATH_EPSILON) {
-//		beta = 1.0 - alpha;
-// }
-// ----------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------
+		// if q is very close to p, just linearly interpolate
+		// between the two.
+		//	if (1.0 - cos_t < WWMATH_EPSILON * WWMATH_EPSILON) {
+		//		beta = 1.0 - alpha;
+		// }
+		// ----------------------------------------------------------------------------
 
 		fld		st(0)						// duplicate st(0), which contains cos_t
 		fsubr		st(0),st(2)				// st(2) contains 1.0
@@ -317,23 +317,23 @@ void __cdecl Fast_Slerp(Quaternion& res, const Quaternion & p,const Quaternion &
 
 		fld		alpha
 		fsubr		st(0),st(1)				// st(1) contains 1.0
- 		fstp     beta
+		fstp     beta
 		jmp      done_slerp
 
-normal_slerp:
-// ----------------------------------------------------------------------------
-// normal slerp!
-//	else {
-//		theta = WWMath::Acos(cos_t);
-//		sin_t = WWMath::Sin(theta);
-//		oo_sin_t = 1.0 / sin_t;
-//		beta = WWMath::Sin(theta - alpha*theta) * oo_sin_t;
-//		alpha = WWMath::Sin(alpha*theta) * oo_sin_t;
-// }
-//	if (qflip) {
-//		alpha = -alpha;
-//	}
-// ----------------------------------------------------------------------------
+	normal_slerp:
+		// ----------------------------------------------------------------------------
+		// normal slerp!
+		//	else {
+		//		theta = WWMath::Acos(cos_t);
+		//		sin_t = WWMath::Sin(theta);
+		//		oo_sin_t = 1.0 / sin_t;
+		//		beta = WWMath::Sin(theta - alpha*theta) * oo_sin_t;
+		//		alpha = WWMath::Sin(alpha*theta) * oo_sin_t;
+		// }
+		//	if (qflip) {
+		//		alpha = -alpha;
+		//	}
+		// ----------------------------------------------------------------------------
 
 		fld		HalfOfSinTableSize
 		fld		HalfOfArcTableSize
@@ -344,11 +344,11 @@ normal_slerp:
 		jns		no_neg
 		xor		eax,eax
 		jmp		contin
-no_neg:
+	no_neg:
 		cmp		eax,ARC_TABLE_SIZE
 		jl			contin					// Note: Use Setcc/Movcc here!!!
 		mov		eax,ARC_TABLE_SIZE_MASK
-contin:
+	contin:
 		fld		dword ptr[_FastAcosTable+eax*4]
 		fst		theta
 
@@ -386,20 +386,20 @@ contin:
 		fstp     alpha
 		fstp st(0)							// pop oo_sin_t
 		fstp	st(0)							// pop HalfOfSinTableSize
-done_slerp:
+	done_slerp:
 		test     ebx, ebx
 		je       no_negative
 		fld      alpha
 		fchs
 		fstp     alpha
 
-no_negative:
-// ----------------------------------------------------------------------------
-//	res.X = beta*p.X + alpha*q.X;
-//	res.Y = beta*p.Y + alpha*q.Y;
-//	res.Z = beta*p.Z + alpha*q.Z;
-//	res.W = beta*p.W + alpha*q.W;
-// ----------------------------------------------------------------------------
+	no_negative:
+		// ----------------------------------------------------------------------------
+		//	res.X = beta*p.X + alpha*q.X;
+		//	res.Y = beta*p.Y + alpha*q.Y;
+		//	res.Z = beta*p.Z + alpha*q.Z;
+		//	res.W = beta*p.W + alpha*q.W;
+		// ----------------------------------------------------------------------------
 
 		fstp		st(0)						// pop cos_t
 		fstp		st(0)						// pop 1.0

@@ -1233,7 +1233,7 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 
 #if defined(_MSC_VER)
 	__asm {
-here:
+	here:
 		lea	eax,here
 		mov	reg_eip,eax
 		mov	reg_ebp,ebp

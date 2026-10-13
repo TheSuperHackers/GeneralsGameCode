@@ -48,17 +48,16 @@ __forceinline long fast_float2long_round(float f)
 __forceinline float fast_float_trunc(float f)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
-  {
-    mov ecx,[f]
-    shr ecx,23
-    mov eax,0xff800000
-    xor ebx,ebx
-    sub cl,127
-    cmovc eax,ebx
-    sar eax,cl
-    and [f],eax
-  }
+	__asm {
+		mov ecx,[f]
+		shr ecx,23
+		mov eax,0xff800000
+		xor ebx,ebx
+		sub cl,127
+		cmovc eax,ebx
+		sar eax,cl
+		and [f],eax
+	}
   return f;
 #else
   unsigned x = *(unsigned *)&f;

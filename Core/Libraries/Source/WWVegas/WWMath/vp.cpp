@@ -48,29 +48,15 @@
 #define SHUFFLE(x, y, z, w)	(((x)&3)<< 6|((y)&3)<<4|((z)&3)<< 2|((w)&3))
 #define	BROADCAST(XMM, INDEX)	__asm	shufps	XMM,XMM,(((INDEX)&3)<< 6|((INDEX)&3)<<4|((INDEX)&3)<< 2|((INDEX)&3))
 
-#define TRANSPOSE(BX, BY, BZ, BW, TV)					\
-		__asm	movaps		TV,BZ						\
-		__asm	unpcklps	BZ,BW						\
-		__asm	unpckhps	TV,BW						\
-		__asm	movaps		BW,BX						\
-		__asm	unpcklps	BX,BY						\
-		__asm	unpckhps	BW,BY						\
-		__asm	movaps		BY,BX						\
-		__asm	shufps		BX,BZ,SHUFFLE(1, 0, 1, 0)	\
-		__asm	shufps		BY,BZ,SHUFFLE(3, 2, 3, 2)	\
-		__asm	movaps		BZ,BW						\
-		__asm	shufps		BZ,TV,SHUFFLE(1, 0, 1, 0)	\
-		__asm	shufps		BW,TV,SHUFFLE(3, 2, 3, 2)
-
 
 void VectorProcessorClass::Prefetch(void* address)
 {
 #if defined (__ICL)    // Detect Intel compiler
 	if (CPUDetectClass::_Has_SSE_Instruction_Set()) {
 		__asm {
-//			mov edx,address
-//			mov eax,[edx]
-//			prefetchT1 address
+			//			mov edx,address
+			//			mov eax,[edx]
+			//			prefetchT1 address
 		}
 	}
 #endif
@@ -84,7 +70,7 @@ void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Mat
 #if defined (__ICL)    // Detect Intel compiler
 	if (CPUDetectClass::_Has_SSE_Instruction_Set()) {
 
-		__asm	{
+		__asm {
 			mov		edx,dst
 			mov		eax,src
 			mov		ebx,mtx
@@ -95,7 +81,19 @@ void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Mat
 			movups	xmm6,[ebx+32]
 			movups	xmm7,lastrow	//[ebx+48]
 
-			TRANSPOSE(xmm4, xmm5, xmm6, xmm7, xmm0);
+			// transpose xmm4..xmm7 (xmm0 = temp)
+			movaps		xmm0,xmm6
+			unpcklps	xmm6,xmm7
+			unpckhps	xmm0,xmm7
+			movaps		xmm7,xmm4
+			unpcklps	xmm4,xmm5
+			unpckhps	xmm7,xmm5
+			movaps		xmm5,xmm4
+			shufps		xmm4,xmm6,SHUFFLE(1,0,1,0)
+			shufps		xmm5,xmm6,SHUFFLE(3,2,3,2)
+			movaps		xmm6,xmm7
+			shufps		xmm6,xmm0,SHUFFLE(1,0,1,0)
+			shufps		xmm7,xmm0,SHUFFLE(3,2,3,2)
 
 			shufps	xmm4,xmm4,SHUFFLE(2,1,0,0)
 			shufps	xmm5,xmm5,SHUFFLE(2,1,0,0)
@@ -152,153 +150,153 @@ void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Mat
 
 			align	16
 
-			_noxlatelp:
-				prefetchnta	[eax+ecx+48]
-				prefetchnta	[eax+ecx+48+32]
+		_noxlatelp:
+			prefetchnta	[eax+ecx+48]
+			prefetchnta	[eax+ecx+48+32]
 
-				movss	xmm0,[eax+ecx]
-				BROADCAST(xmm0,0)
-				movss	xmm1,[eax+ecx+4]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+8]
-				BROADCAST(xmm2,0)
-				mulps	xmm0,xmm4
-				mulps	xmm1,xmm5
-				mulps	xmm2,xmm6
-				addps	xmm0,xmm1
-				addps	xmm0,xmm2
+			movss	xmm0,[eax+ecx]
+			BROADCAST(xmm0,0)
+			movss	xmm1,[eax+ecx+4]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+8]
+			BROADCAST(xmm2,0)
+			mulps	xmm0,xmm4
+			mulps	xmm1,xmm5
+			mulps	xmm2,xmm6
+			addps	xmm0,xmm1
+			addps	xmm0,xmm2
 
-				movss	xmm1,[eax+ecx+12]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+16]
-				BROADCAST(xmm2,0)
-				movss	xmm3,[eax+ecx+20]
-				BROADCAST(xmm3,0)
-				mulps	xmm1,xmm4
-				mulps	xmm2,xmm5
-				mulps	xmm3,xmm6
-				addps	xmm1,xmm2
-				addps	xmm3,xmm1
+			movss	xmm1,[eax+ecx+12]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+16]
+			BROADCAST(xmm2,0)
+			movss	xmm3,[eax+ecx+20]
+			BROADCAST(xmm3,0)
+			mulps	xmm1,xmm4
+			mulps	xmm2,xmm5
+			mulps	xmm3,xmm6
+			addps	xmm1,xmm2
+			addps	xmm3,xmm1
 
-				movss	xmm0,xmm3
-				shufps	xmm0,xmm0,SHUFFLE(0,3,2,1)
+			movss	xmm0,xmm3
+			shufps	xmm0,xmm0,SHUFFLE(0,3,2,1)
 
-				movaps	[edx+ecx],xmm0
+			movaps	[edx+ecx],xmm0
 
-				prefetcht0	[edx+ecx+48]
-				prefetcht0	[edx+ecx+48+32]
+			prefetcht0	[edx+ecx+48]
+			prefetcht0	[edx+ecx+48+32]
 
-				movss	xmm0,[eax+ecx+24]
-				BROADCAST(xmm0,0)
-				movss	xmm1,[eax+ecx+24+4]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+24+8]
-				BROADCAST(xmm2,0)
-				mulps	xmm0,xmm4
-				mulps	xmm1,xmm5
-				mulps	xmm2,xmm6
-				addps	xmm0,xmm1
-				addps	xmm0,xmm2
+			movss	xmm0,[eax+ecx+24]
+			BROADCAST(xmm0,0)
+			movss	xmm1,[eax+ecx+24+4]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+24+8]
+			BROADCAST(xmm2,0)
+			mulps	xmm0,xmm4
+			mulps	xmm1,xmm5
+			mulps	xmm2,xmm6
+			addps	xmm0,xmm1
+			addps	xmm0,xmm2
 
-				shufps	xmm3,xmm0,SHUFFLE(2,1,3,2)
-				movaps	[edx+ecx+16],xmm3
+			shufps	xmm3,xmm0,SHUFFLE(2,1,3,2)
+			movaps	[edx+ecx+16],xmm3
 
-				movss	xmm1,[eax+ecx+24+12]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+24+16]
-				BROADCAST(xmm2,0)
-				movss	xmm3,[eax+ecx+24+20]
-				BROADCAST(xmm3,0)
-				mulps	xmm1,xmm4
-				mulps	xmm2,xmm5
-				mulps	xmm3,xmm6
-				addps	xmm1,xmm2
-				addps	xmm1,xmm3
+			movss	xmm1,[eax+ecx+24+12]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+24+16]
+			BROADCAST(xmm2,0)
+			movss	xmm3,[eax+ecx+24+20]
+			BROADCAST(xmm3,0)
+			mulps	xmm1,xmm4
+			mulps	xmm2,xmm5
+			mulps	xmm3,xmm6
+			addps	xmm1,xmm2
+			addps	xmm1,xmm3
 
-				shufps	xmm0,xmm0,SHUFFLE(2,1,0,3)
-				movss	xmm1,xmm0
-				movaps	[edx+ecx+32],xmm1
+			shufps	xmm0,xmm0,SHUFFLE(2,1,0,3)
+			movss	xmm1,xmm0
+			movaps	[edx+ecx+32],xmm1
 
-				add		ecx,48
-				js		_noxlatelp
+			add		ecx,48
+			js		_noxlatelp
 
 			jmp	_lp
 
 			align	16
 
-			_xlatelp:
-				prefetchnta	[eax+ecx+48]
-				prefetchnta	[eax+ecx+48+32]
+		_xlatelp:
+			prefetchnta	[eax+ecx+48]
+			prefetchnta	[eax+ecx+48+32]
 
-				movss	xmm0,[eax+ecx]
-				BROADCAST(xmm0,0)
-				movss	xmm1,[eax+ecx+4]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+8]
-				BROADCAST(xmm2,0)
-				mulps	xmm0,xmm4
-				mulps	xmm1,xmm5
-				mulps	xmm2,xmm6
-				addps	xmm0,xmm1
-				addps	xmm0,xmm2
-				addps	xmm0,xmm7
+			movss	xmm0,[eax+ecx]
+			BROADCAST(xmm0,0)
+			movss	xmm1,[eax+ecx+4]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+8]
+			BROADCAST(xmm2,0)
+			mulps	xmm0,xmm4
+			mulps	xmm1,xmm5
+			mulps	xmm2,xmm6
+			addps	xmm0,xmm1
+			addps	xmm0,xmm2
+			addps	xmm0,xmm7
 
-				movss	xmm1,[eax+ecx+12]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+16]
-				BROADCAST(xmm2,0)
-				movss	xmm3,[eax+ecx+20]
-				BROADCAST(xmm3,0)
-				mulps	xmm1,xmm4
-				mulps	xmm2,xmm5
-				mulps	xmm3,xmm6
-				addps	xmm1,xmm2
-				addps	xmm3,xmm1
-				addps	xmm3,xmm7
+			movss	xmm1,[eax+ecx+12]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+16]
+			BROADCAST(xmm2,0)
+			movss	xmm3,[eax+ecx+20]
+			BROADCAST(xmm3,0)
+			mulps	xmm1,xmm4
+			mulps	xmm2,xmm5
+			mulps	xmm3,xmm6
+			addps	xmm1,xmm2
+			addps	xmm3,xmm1
+			addps	xmm3,xmm7
 
-				movss	xmm0,xmm3
-				shufps	xmm0,xmm0,SHUFFLE(0,3,2,1)
-				movaps	[edx+ecx],xmm0
+			movss	xmm0,xmm3
+			shufps	xmm0,xmm0,SHUFFLE(0,3,2,1)
+			movaps	[edx+ecx],xmm0
 
-				prefetcht0	[edx+ecx+48]
-				prefetcht0	[edx+ecx+48+32]
+			prefetcht0	[edx+ecx+48]
+			prefetcht0	[edx+ecx+48+32]
 
-				movss	xmm0,[eax+ecx+24]
-				BROADCAST(xmm0,0)
-				movss	xmm1,[eax+ecx+24+4]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+24+8]
-				BROADCAST(xmm2,0)
-				mulps	xmm0,xmm4
-				mulps	xmm1,xmm5
-				mulps	xmm2,xmm6
-				addps	xmm0,xmm1
-				addps	xmm0,xmm2
-				addps	xmm0,xmm7
+			movss	xmm0,[eax+ecx+24]
+			BROADCAST(xmm0,0)
+			movss	xmm1,[eax+ecx+24+4]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+24+8]
+			BROADCAST(xmm2,0)
+			mulps	xmm0,xmm4
+			mulps	xmm1,xmm5
+			mulps	xmm2,xmm6
+			addps	xmm0,xmm1
+			addps	xmm0,xmm2
+			addps	xmm0,xmm7
 
-				shufps	xmm3,xmm0,SHUFFLE(2,1,3,2)
-				movaps	[edx+ecx+16],xmm3
+			shufps	xmm3,xmm0,SHUFFLE(2,1,3,2)
+			movaps	[edx+ecx+16],xmm3
 
-				movss	xmm1,[eax+ecx+24+12]
-				BROADCAST(xmm1,0)
-				movss	xmm2,[eax+ecx+24+16]
-				BROADCAST(xmm2,0)
-				movss	xmm3,[eax+ecx+24+20]
-				BROADCAST(xmm3,0)
-				mulps	xmm1,xmm4
-				mulps	xmm2,xmm5
-				mulps	xmm3,xmm6
-				addps	xmm1,xmm2
-				addps	xmm1,xmm3
-				addps	xmm1,xmm7
+			movss	xmm1,[eax+ecx+24+12]
+			BROADCAST(xmm1,0)
+			movss	xmm2,[eax+ecx+24+16]
+			BROADCAST(xmm2,0)
+			movss	xmm3,[eax+ecx+24+20]
+			BROADCAST(xmm3,0)
+			mulps	xmm1,xmm4
+			mulps	xmm2,xmm5
+			mulps	xmm3,xmm6
+			addps	xmm1,xmm2
+			addps	xmm1,xmm3
+			addps	xmm1,xmm7
 
-				shufps	xmm0,xmm0,SHUFFLE(2,1,0,3)
-				movss	xmm1,xmm0
+			shufps	xmm0,xmm0,SHUFFLE(2,1,0,3)
+			movss	xmm1,xmm0
 
-				movaps	[edx+ecx+32],xmm1
+			movaps	[edx+ecx+32],xmm1
 
-				add		ecx,48
-				js		_xlatelp
+			add		ecx,48
+			js		_xlatelp
 
 			jmp	_lp
 		_ulos:

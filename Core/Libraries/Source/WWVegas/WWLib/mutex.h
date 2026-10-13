@@ -160,21 +160,25 @@ public:
       // ASM statements because sometimes the jump
       // would be 1 byte off....
 
-		  __asm mov ebx, [nFlag]
-		  __asm ts_lock
-		  __asm bts dword ptr [ebx], 0
-		  __asm jnc BitSet
-      //__asm _emit 0x73
-      //__asm _emit 0x0f
+			__asm {
+				mov ebx, [nFlag]
+				ts_lock
+				bts dword ptr [ebx], 0
+				jnc BitSet
+				//_emit 0x73
+				//_emit 0x0f
+			}
 
 		  The_Bit_Was_Previously_Set_So_Try_Again:
 		    ThreadClass::Switch_Thread();
-		  __asm mov ebx, [nFlag]
-		  __asm ts_lock
-		  __asm bts dword ptr [ebx], 0
-		  __asm jc  The_Bit_Was_Previously_Set_So_Try_Again
-      //_asm _emit 0x72
-      //_asm _emit 0xf1
+			__asm {
+				mov ebx, [nFlag]
+				ts_lock
+				bts dword ptr [ebx], 0
+				jc  The_Bit_Was_Previously_Set_So_Try_Again
+				//_emit 0x72
+				//_emit 0xf1
+			}
 
       BitSet:
         ;

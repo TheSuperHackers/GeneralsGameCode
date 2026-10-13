@@ -70,16 +70,15 @@ void StackDump(void (*callback)(const char*))
 	DWORD myeip,myesp,myebp;
 
 #if defined(_MSC_VER)
-_asm
-{
-MYEIP1:
- mov eax, MYEIP1
- mov dword ptr [myeip] , eax
- mov eax, esp
- mov dword ptr [myesp] , eax
- mov eax, ebp
- mov dword ptr [myebp] , eax
-}
+	__asm {
+	MYEIP1:
+		mov eax, MYEIP1
+		mov dword ptr [myeip] , eax
+		mov eax, esp
+		mov dword ptr [myesp] , eax
+		mov eax, ebp
+		mov dword ptr [myebp] , eax
+	}
 #elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
 	// GCC/Clang inline assembly for x86-32
 	__asm__ __volatile__(
@@ -330,17 +329,16 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
 
 	DWORD myeip,myesp,myebp;
 #if defined(_MSC_VER)
-_asm
-{
-MYEIP2:
- mov eax, MYEIP2
- mov dword ptr [myeip] , eax
- mov eax, esp
- mov dword ptr [myesp] , eax
- mov eax, ebp
- mov dword ptr [myebp] , eax
- xor eax,eax
-}
+	__asm {
+	MYEIP2:
+		mov eax, MYEIP2
+		mov dword ptr [myeip] , eax
+		mov eax, esp
+		mov dword ptr [myesp] , eax
+		mov eax, ebp
+		mov dword ptr [myebp] , eax
+		xor eax,eax
+	}
 #elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
 	// GCC/Clang inline assembly for x86-32
 	__asm__ __volatile__(
