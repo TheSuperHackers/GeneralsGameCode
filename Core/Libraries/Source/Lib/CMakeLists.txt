@@ -21,6 +21,7 @@ set(CORE_LIBRARIES_SRC
     Include/Precompiled/BasePragmas.h
     Include/Precompiled/BasePrecomp.h
     Include/Precompiled/BaseTypes.h
+    Trig.cpp
 )
 
 add_library(core_libraries STATIC)

@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -26,8 +26,6 @@
 // fast trig functions
 // Author: Michael S. Booth, March 1994
 // Converted to Generals by Matthew D. Campbell, February 2002
-
-#include "PreRTS.h"
 
 #include <math.h>
 #include <limits.h>
