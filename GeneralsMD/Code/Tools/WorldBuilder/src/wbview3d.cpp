@@ -119,6 +119,13 @@ static Real theLightYOffset = 0.07f;
 static Int theFlashCount = 0;
 #endif
 
+static const Int MAX_DRAWABLE_MAP_AREA = 1024*1024; ///< Larger maps draw the partial terrain window
+
+static Bool canDrawEntireMap(const WorldHeightMap *htMap)
+{
+	return htMap != nullptr && htMap->getXExtent() * htMap->getYExtent() <= MAX_DRAWABLE_MAP_AREA;
+}
+
 // ----------------------------------------------------------------------------
 // Global Variables:
 // ----------------------------------------------------------------------------
@@ -1590,7 +1597,7 @@ void WbView3d::updateHeightMapInView(WorldHeightMap *htMap, Bool partial, const 
 		if (partial) {
 			m_heightMapRenderObj->doPartialUpdate(partialRange, htMap, &lightListIt);
 		} else {
-			if (m_showEntireMap) {
+			if (m_showEntireMap && canDrawEntireMap(htMap)) {
 				htMap->setDrawOrg(0, 0);
 				htMap->setDrawWidth(htMap->getXExtent());
 				htMap->setDrawHeight(htMap->getYExtent());
@@ -2888,7 +2895,9 @@ void WbView3d::OnViewShowentire3dmap()
 
 void WbView3d::OnUpdateViewShowentire3dmap(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_showEntireMap?1:0);
+	const Bool canDraw = canDrawEntireMap(WbDoc() ? WbDoc()->GetHeightMap() : nullptr);
+	pCmdUI->Enable(canDraw);
+	pCmdUI->SetCheck(m_showEntireMap && canDraw ? 1 : 0);
 }
 
 void WbView3d::OnViewShowtopdownview()
