@@ -64,6 +64,13 @@ inline int sign(NUM x)
 		return 0;
 }
 
+inline Int IABS(Int x)
+{
+	if (x >= 0)
+		return x;
+	return -x;
+}
+
 template <typename NUM>
 inline NUM highestBit(NUM x)
 {

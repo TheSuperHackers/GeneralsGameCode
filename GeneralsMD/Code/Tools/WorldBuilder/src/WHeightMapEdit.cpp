@@ -2220,7 +2220,6 @@ AsciiString WorldHeightMapEdit::getTexClassUiName(int ndx)
 
 static const Real HEIGHT_SCALE = MAP_HEIGHT_SCALE / MAP_XY_FACTOR;
 static const Real STRETCH_LIMIT = 1.5f;	 // If it is stretching less than this, don't adjust.
-static inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 
 static const Real TEX_PER_CELL = 32.0f/TEXTURE_WIDTH; // we use 32 texels per cell.
 

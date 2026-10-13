@@ -298,12 +298,6 @@ inline Real calcSqrDist_3D(const Coord3D *dist)
 }
 
 //-----------------------------------------------------------------------------
-inline Int absInt(Int a)
-{
-	if (a < 0) return -a; else return a;
-}
-
-//-----------------------------------------------------------------------------
 //         Local Functions
 //-----------------------------------------------------------------------------
 
@@ -1089,7 +1083,7 @@ try_again:
 			m_axis = 0;
 			m_inc = -m_inc;
 			m_cnt += 1;
-			m_cellRadius = max(absInt(m_delta[0]), absInt(m_delta[1]));
+			m_cellRadius = max(IABS(m_delta[0]), IABS(m_delta[1]));
 		}
 
 		m_iter = m_cnt;
@@ -1926,8 +1920,8 @@ void PartitionData::doSmallFill(
 	ThePartitionManager->worldToCell(centerX - radius, centerY - radius, &cx1, &cy1);
 	ThePartitionManager->worldToCell(centerX + radius, centerY + radius, &cx2, &cy2);
 
-	DEBUG_ASSERTCRASH(absInt(cx2-cx1)<=1,("bad cx"));
-	DEBUG_ASSERTCRASH(absInt(cy2-cy1)<=1,("bad cy"));
+	DEBUG_ASSERTCRASH(IABS(cx2-cx1)<=1,("bad cx"));
+	DEBUG_ASSERTCRASH(IABS(cy2-cy1)<=1,("bad cy"));
 
 	for (Int x = cx1; x <= cx2; x++)
 	{
