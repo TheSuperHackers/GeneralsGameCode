@@ -300,30 +300,6 @@ inline Int absInt(Int a)
 }
 
 //-----------------------------------------------------------------------------
-inline Int minInt(Int a, Int b)
-{
-	if (a < b) return a; else return b;
-}
-
-//-----------------------------------------------------------------------------
-inline Int maxInt(Int a, Int b)
-{
-	if (a > b) return a; else return b;
-}
-
-//-----------------------------------------------------------------------------
-inline Real minReal(Real a, Real b)
-{
-	if (a < b) return a; else return b;
-}
-
-//-----------------------------------------------------------------------------
-inline Real maxReal(Real a, Real b)
-{
-	if (a > b) return a; else return b;
-}
-
-//-----------------------------------------------------------------------------
 //         Local Functions
 //-----------------------------------------------------------------------------
 
@@ -507,8 +483,8 @@ static Bool xy_collideTest_Rect_Circle(const CollideInfo *a, const CollideInfo *
 		{
 			vecDiff_2D(&b->position, &a->position, &cinfo->normal);
 			cinfo->normal.normalize();
-			cinfo->loc.x = (maxReal(circ_l, rect_l) + minReal(circ_r, rect_r)) * 0.5f;
-			cinfo->loc.y = (maxReal(circ_t, rect_t) + minReal(circ_b, rect_b)) * 0.5f;
+			cinfo->loc.x = (max(circ_l, rect_l) + min(circ_r, rect_r)) * 0.5f;
+			cinfo->loc.y = (max(circ_t, rect_t) + min(circ_b, rect_b)) * 0.5f;
 			cinfo->loc.z = (a->position.z + b->position.z) * 0.5f;
 		}
 		return true;
@@ -1068,7 +1044,7 @@ CellOutwardIterator::CellOutwardIterator(PartitionManager *mgr, Int x, Int y)
 	m_cellCenterX = x;
 	m_cellCenterY = y;
 	m_cellRadius = 0;
-	m_maxRadius = maxInt(maxInt(x, mgr->getCellCountX() - x), maxInt(y, mgr->getCellCountY() - y));
+	m_maxRadius = max(max(x, mgr->getCellCountX() - x), max(y, mgr->getCellCountY() - y));
 	m_delta[0] = m_delta[1] = 0;
 	m_inc = -1;
 	m_cnt = 0;
@@ -1109,7 +1085,7 @@ try_again:
 			m_axis = 0;
 			m_inc = -m_inc;
 			m_cnt += 1;
-			m_cellRadius = maxInt(absInt(m_delta[0]), absInt(m_delta[1]));
+			m_cellRadius = max(absInt(m_delta[0]), absInt(m_delta[1]));
 		}
 
 		m_iter = m_cnt;
@@ -3342,7 +3318,7 @@ Object *PartitionManager::getClosestObjects(
 	if (maxDist < HUGE_DIST)
 	{
 		// don't go outwards any farther than necessary.
-		maxRadius = minInt(m_maxGcoRadius, worldToCellDist(maxDist));
+		maxRadius = min(m_maxGcoRadius, worldToCellDist(maxDist));
 	}
 #if defined(INTENSE_DEBUG)
 	/*
