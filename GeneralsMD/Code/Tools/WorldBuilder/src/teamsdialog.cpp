@@ -339,7 +339,8 @@ void CTeamsDialog::UpdateTeamsList()
 	for (Int i=0; i<numTeams; i++)
 	{
 		TeamsInfo *ti = m_sides.getTeamInfo(i);
-		if (ti->getDict()->getAsciiString(TheKey_teamOwner) == playerNameForUI(m_sides, which).str())
+		// TheSuperHackers @bugfix Okladnoj 14/10/2026 Compare the team owner with the internal player name. The neutral player is shown as "(neutral)" but owns its teams under an empty name.
+		if (ti->getDict()->getAsciiString(TheKey_teamOwner) == m_sides.getSideInfo(which)->getDict()->getAsciiString(TheKey_playerName))
 		{
 			Bool exists;
 			AsciiString teamName = teamNameForUI(m_sides, i);
