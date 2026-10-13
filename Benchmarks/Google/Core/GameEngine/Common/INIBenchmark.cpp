@@ -21,7 +21,20 @@
 #include <type_traits>
 
 #include "Common/INI.h"
-#include "Precompiled/CppMacros.h"
+
+enum ScanParser
+{
+	ScanParser_Current,
+	ScanParser_Legacy,
+};
+
+// Ordinary inputs use the fast path. Overflow and underflow (Real only) use the range fallback.
+enum ScanInput
+{
+	ScanInput_Ordinary,
+	ScanInput_Overflow,
+	ScanInput_Underflow,
+};
 
 // Keep the original conversion and failure check, with a call boundary like the production scanners.
 // Out-of-range sscanf results characterize the local CRT, not portable C behavior.
@@ -36,8 +49,7 @@ NOINLINE static Type scanLegacy(const char* token)
 }
 
 // Each iteration parses four fixed tokens. These are microbenchmarks, not a distribution of game INI inputs.
-// Input 0 uses the fast path, 1 overflows, and 2 underflows (Real only).
-template <typename Type, bool Legacy, int Input>
+template <typename Type, ScanParser Parser, ScanInput Input>
 static void BM_INIScan(benchmark::State &state)
 {
 	const char* const integerTokens[][4] = {
@@ -57,7 +69,7 @@ static void BM_INIScan(benchmark::State &state)
 		{
 			benchmark::DoNotOptimize(token);
 			Type value;
-			if constexpr (Legacy)
+			if constexpr (Parser == ScanParser_Legacy)
 				value = scanLegacy<Type>(token);
 			else if constexpr (std::is_same_v<Type, Real>)
 				value = INI::scanReal(token);
@@ -71,17 +83,17 @@ static void BM_INIScan(benchmark::State &state)
 	state.SetItemsProcessed(state.iterations() * 4);
 }
 
-BENCHMARK_TEMPLATE(BM_INIScan, Int,         false, 0)->Name("INI/Int/Ordinary/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, Int,         true,  0)->Name("INI/Int/Ordinary/Legacy");
-BENCHMARK_TEMPLATE(BM_INIScan, Int,         false, 1)->Name("INI/Int/Overflow/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, Int,         true,  1)->Name("INI/Int/Overflow/Legacy");
-BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, false, 0)->Name("INI/UnsignedInt/Ordinary/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, true,  0)->Name("INI/UnsignedInt/Ordinary/Legacy");
-BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, false, 1)->Name("INI/UnsignedInt/Overflow/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, true,  1)->Name("INI/UnsignedInt/Overflow/Legacy");
-BENCHMARK_TEMPLATE(BM_INIScan, Real,        false, 0)->Name("INI/Real/Ordinary/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, Real,        true,  0)->Name("INI/Real/Ordinary/Legacy");
-BENCHMARK_TEMPLATE(BM_INIScan, Real,        false, 1)->Name("INI/Real/Overflow/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, Real,        true,  1)->Name("INI/Real/Overflow/Legacy");
-BENCHMARK_TEMPLATE(BM_INIScan, Real,        false, 2)->Name("INI/Real/Underflow/Current");
-BENCHMARK_TEMPLATE(BM_INIScan, Real,        true,  2)->Name("INI/Real/Underflow/Legacy");
+BENCHMARK_TEMPLATE(BM_INIScan, Int, ScanParser_Current, ScanInput_Ordinary);
+BENCHMARK_TEMPLATE(BM_INIScan, Int, ScanParser_Legacy, ScanInput_Ordinary);
+BENCHMARK_TEMPLATE(BM_INIScan, Int, ScanParser_Current, ScanInput_Overflow);
+BENCHMARK_TEMPLATE(BM_INIScan, Int, ScanParser_Legacy, ScanInput_Overflow);
+BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, ScanParser_Current, ScanInput_Ordinary);
+BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, ScanParser_Legacy, ScanInput_Ordinary);
+BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, ScanParser_Current, ScanInput_Overflow);
+BENCHMARK_TEMPLATE(BM_INIScan, UnsignedInt, ScanParser_Legacy, ScanInput_Overflow);
+BENCHMARK_TEMPLATE(BM_INIScan, Real, ScanParser_Current, ScanInput_Ordinary);
+BENCHMARK_TEMPLATE(BM_INIScan, Real, ScanParser_Legacy, ScanInput_Ordinary);
+BENCHMARK_TEMPLATE(BM_INIScan, Real, ScanParser_Current, ScanInput_Overflow);
+BENCHMARK_TEMPLATE(BM_INIScan, Real, ScanParser_Legacy, ScanInput_Overflow);
+BENCHMARK_TEMPLATE(BM_INIScan, Real, ScanParser_Current, ScanInput_Underflow);
+BENCHMARK_TEMPLATE(BM_INIScan, Real, ScanParser_Legacy, ScanInput_Underflow);
