@@ -406,6 +406,8 @@ W3DDisplay::W3DDisplay()
 
 	for (i = 0; i < DisplayStringCount; i++)
 		m_displayStrings[i] = nullptr;
+	m_benchmarkDisplayString = nullptr;
+	m_cinematicDisplayString = nullptr;
 
 	m_batchTexture = nullptr;
 	m_batchMode = DRAW_IMAGE_ALPHA;
@@ -440,6 +442,8 @@ W3DDisplay::~W3DDisplay()
 	if( m_benchmarkDisplayString ) {
 		TheDisplayStringManager->freeDisplayString(m_benchmarkDisplayString);
 	}
+
+	TheDisplayStringManager->freeDisplayString(m_cinematicDisplayString);
 
 	// delete 2D renderer
 	if( m_2DRender )
@@ -2067,28 +2071,29 @@ AGAIN:
 				// display cinematicText over the black
 				if( m_cinematicText != AsciiString::TheEmptyString && m_cinematicTextFrames != 0)
 				{
-					DisplayString *displayString = TheDisplayStringManager->newDisplayString();
+					if( m_cinematicDisplayString == nullptr )
+						m_cinematicDisplayString = TheDisplayStringManager->newDisplayString();
 
 					// set word wrap if necessary
 
 					Int wordWrapWidth = TheDisplay->getWidth() - 20;
-					displayString->setWordWrap( wordWrapWidth );
-					displayString->setWordWrapCentered( TRUE );
+					m_cinematicDisplayString->setWordWrap( wordWrapWidth );
+					m_cinematicDisplayString->setWordWrapCentered( TRUE );
 
 					UnicodeString text;
 					text.translate( m_cinematicText );
-					displayString->setText( text );
+					m_cinematicDisplayString->setText( text );
 					Color color = GameMakeColor( 255, 255, 255, 255 );  // white
 					Color backColor = GameMakeColor( 0, 0, 0, 0 );      // black
-					displayString->setFont( m_cinematicFont );
+					m_cinematicDisplayString->setFont( m_cinematicFont );
 					Int height = TheDisplay->getHeight() * .9;
 
 					Int width;
-					if( displayString->getWidth() > TheDisplay->getWidth() )
+					if( m_cinematicDisplayString->getWidth() > TheDisplay->getWidth() )
 						width = 20;
 					else
-						width = ( TheDisplay->getWidth() - displayString->getWidth() ) / 2;
-					displayString->draw( width, height, color, backColor );
+						width = ( TheDisplay->getWidth() - m_cinematicDisplayString->getWidth() ) / 2;
+					m_cinematicDisplayString->draw( width, height, color, backColor );
 
 					m_cinematicTextFrames--;
 				}
