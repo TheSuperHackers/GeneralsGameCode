@@ -116,9 +116,6 @@ typedef VertexFormatXYZNDUV2 MaterMeshVertexFormat;
 typedef VertexFormatXYZDUV2 MaterMeshVertexFormat;
 #endif
 
-// Converts a FLOAT to a DWORD for use in SetRenderState() calls
-static inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
-
 #define DRAW_WATER_WAKES
 /// @todo: Fix clipping of objects that intersect the mirror surface
 //#define CLIP_GEOMETRY_TO_PLANE	// this enables clipping of objects that intersect the mirror surfaces
