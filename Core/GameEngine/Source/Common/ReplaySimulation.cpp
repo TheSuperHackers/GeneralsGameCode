@@ -169,7 +169,8 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 			UnicodeString filenameWide;
 			filenameWide.translate(filenames[filenamePositionStarted]);
 			UnicodeString command;
-			command.format(L"\"%s\"%s%s -replay \"%s\"",
+			// Pass -useCwd, so that the worker keeps the working directory that it inherits from this process.
+			command.format(L"\"%s\"%s%s -useCwd -replay \"%s\"",
 				exePath,
 				TheGlobalData->m_windowed ? L" -win" : L"",
 				TheGlobalData->m_headless ? L" -headless" : L"",
