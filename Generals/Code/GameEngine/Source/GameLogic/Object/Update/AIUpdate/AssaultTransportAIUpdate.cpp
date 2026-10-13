@@ -509,16 +509,13 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
-	// Keep the previous count on failure because reset() uses it to clear the member arrays.
-	Int currentMembers = m_currentMembers;
-	xfer->xferInt( &currentMembers );
+	xfer->xferInt( &m_currentMembers );
 	// TheSuperHackers @bugfix Reject invalid transport counts before reading member arrays.
-	if( currentMembers < 0 || currentMembers > MAX_TRANSPORT_SLOTS )
+	if( m_currentMembers < 0 || m_currentMembers > MAX_TRANSPORT_SLOTS )
 	{
 		DEBUG_LOG(( "AssaultTransportAIUpdate::xfer - Invalid member count" ));
 		throw SC_INVALID_DATA;
 	}
-	m_currentMembers = currentMembers;
 
 	for( int i = 0; i < m_currentMembers; i++ )
 	{
