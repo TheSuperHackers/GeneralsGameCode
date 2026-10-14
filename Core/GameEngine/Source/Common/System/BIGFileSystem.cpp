@@ -166,7 +166,7 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 		AsciiString debugpath;
 		debugpath = path;
 		debugpath.concat(fileInfo.m_filename);
-//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
+//		DEBUG_LOG(("BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo.m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, &fileInfo);
 	}

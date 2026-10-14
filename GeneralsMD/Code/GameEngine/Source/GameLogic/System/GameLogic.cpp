@@ -1373,7 +1373,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			TheSidesList->prepareForMP_or_Skirmish();
 		}
 
-		//DEBUG_LOG(("Starting LAN game with %d players", game->getNumPlayers()));
+		//DEBUG_LOG(("Starting LAN game with %d players", TheGameInfo->getNumPlayers()));
 		for (int i=0; i<MAX_SLOTS; ++i)
 		{
 			// Add a Side to TheSidesList
@@ -3860,7 +3860,7 @@ void GameLogic::update()
 			{
 				USE_PERF_TIMER(GameLogic_update_sleepy)
 
-				//DEBUG_LOG(("calling update %08lx (%d %d)...",update,update->friend_getNextCallFrame(),update->friend_getNextCallPhase()));
+				//DEBUG_LOG(("calling update %08lx (%d %d)...",u,u->friend_getNextCallFrame(),u->friend_getNextCallPhase()));
 				m_curUpdateModule = u;
 
 				sleepLen = u->update();
