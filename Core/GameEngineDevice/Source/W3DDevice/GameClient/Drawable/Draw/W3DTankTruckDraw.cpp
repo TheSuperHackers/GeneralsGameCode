@@ -471,9 +471,6 @@ void W3DTankTruckDraw::updateTreadObjects()
 //-------------------------------------------------------------------------------------------------
 void W3DTankTruckDraw::onRenderObjRecreated()
 {
-	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
-	//	m_prevRenderObj, getRenderObject(), getRenderObject()->Get_Num_Bones(),
-	//	m_prevNumBones));
 	m_prevRenderObj = nullptr;
 	m_frontLeftTireBone = 0;
 	m_frontRightTireBone = 0;
