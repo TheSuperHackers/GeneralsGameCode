@@ -3,6 +3,7 @@ set(COREI_GOOGLETEST_SRC
     GoogleTestMain.cpp
     GameEngine/Common/AsciiStringTest.cpp
     GameEngine/Common/INITest.cpp
+    GameEngine/GameClient/DisplayStringDummyTest.cpp
     Libraries/Compression/CompressionManagerTest.cpp
 )
 
