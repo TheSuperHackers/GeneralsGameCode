@@ -2072,7 +2072,17 @@ Bool Object::isStructure() const
 //-------------------------------------------------------------------------------------------------
 Bool Object::isFactionStructure() const
 {
+#if RTS_GENERALS && RETAIL_COMPATIBLE_CRC
+	KindOfMaskType bits;
+	bits.set(KINDOF_FS_POWER);
+	bits.set(KINDOF_FS_FACTORY);
+	bits.set(KINDOF_FS_BASE_DEFENSE);
+	bits.set(KINDOF_FS_TECHNOLOGY);
+
+	return isAnyKindOf(bits);
+#else
 	return isAnyKindOf( KINDOFMASK_FS );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
