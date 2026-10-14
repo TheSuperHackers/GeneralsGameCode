@@ -25,7 +25,14 @@ constexpr const Int PATHFIND_QUEUE_LEN = 512;
 constexpr const Real LAYER_Z_CLOSE_ENOUGH_F = 10.0f;
 
 constexpr const UnsignedInt PATHFIND_CELL_SIZE = 10;
+
+#if RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @info Avoid mismatches by using a macro to retain
+// VC6's floating-point optimizations (e.g. 10.0f division -> 0.1f multiplication).
+#define PATHFIND_CELL_SIZE_F 10.0f
+#else
 constexpr const Real PATHFIND_CELL_SIZE_F = 10.0f;
+#endif
 
 constexpr const UnsignedInt ZONE_UPDATE_FREQUENCY = 300;
 constexpr const UnsignedInt MAX_CELL_COUNT = 500;
