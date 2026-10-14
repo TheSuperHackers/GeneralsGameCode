@@ -30,6 +30,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DisplayStringManager.h"
+#include "GameClient/GlobalLanguage.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 DisplayStringManager *TheDisplayStringManager = nullptr;
@@ -100,4 +101,78 @@ void DisplayStringManager::unLink( DisplayString *string )
 
 	}
 
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Assign the default font to a new display string */
+//-------------------------------------------------------------------------------------------------
+void DisplayStringManager::setDefaultFont( DisplayString *string )
+{
+
+	if (TheGlobalLanguageData && TheGlobalLanguageData->m_defaultDisplayStringFont.name.isNotEmpty())
+	{
+		string->setFont(TheFontLibrary->getFont(
+			TheGlobalLanguageData->m_defaultDisplayStringFont.name,
+			TheGlobalLanguageData->m_defaultDisplayStringFont.size,
+			TheGlobalLanguageData->m_defaultDisplayStringFont.bold) );
+	}
+	else
+		string->setFont( TheFontLibrary->getFont( "Times New Roman", 12, FALSE ) );
+
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Remove a display string from the master list and delete the data */
+//-------------------------------------------------------------------------------------------------
+void DisplayStringManager::freeDisplayString( DisplayString *string )
+{
+
+	// sanity
+	if( string == nullptr )
+		return;
+
+	// unlink
+	unLink( string );
+
+	// if the string happens to fall where our current checkpoint was, set the checkpoint to null
+	if ( m_currentCheckpoint == string) {
+		m_currentCheckpoint = nullptr;
+	}
+
+	// free data
+	deleteInstance(string);
+
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+DisplayStringManagerDummy::DisplayStringManagerDummy()
+{
+	m_markerString = nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+DisplayStringManagerDummy::~DisplayStringManagerDummy()
+{
+	freeDisplayString(m_markerString);
+	m_markerString = nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void DisplayStringManagerDummy::postProcessLoad()
+{
+	m_markerString = newDisplayString();
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Same default font as W3DDisplayStringManager, because callers read the font height */
+//-------------------------------------------------------------------------------------------------
+DisplayString *DisplayStringManagerDummy::newDisplayString()
+{
+	DisplayString *newString = newInstance(DisplayStringDummy);
+	setDefaultFont( newString );
+	link( newString );
+	return newString;
 }

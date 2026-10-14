@@ -55,9 +55,6 @@ public:
 	/// allocate a new display string
 	virtual DisplayString *newDisplayString() override;
 
-	/// free a display string
-	virtual void freeDisplayString( DisplayString *string ) override;
-
 	// This is used to save us a few FPS and storage space. There's no reason to
 	// duplicate the DisplayString on every drawable when 1 copy will suffice.
 	virtual DisplayString *getGroupNumeralString( Int numeral ) override;
