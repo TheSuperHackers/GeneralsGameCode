@@ -68,8 +68,6 @@ void BIGFileSystem::init() {
       installPath = TheGlobalData->m_generalsDataDir;
     if (installPath.isEmpty())
       GetStringFromGeneralsRegistry("", "InstallPath", installPath );
-    //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
     if (!installPath.isEmpty())
       loadArchiveFilesFromDirectory(installPath, "*.big");
 #endif
