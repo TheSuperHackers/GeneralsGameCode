@@ -83,67 +83,71 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-  build-generals:
+  build-generals-vc6:
     needs: [detect-scm-changes, get-date]
     if: needs.detect-scm-changes.outputs.changed == 'true'
-    name: Build Generals${{ matrix.preset && '' }}
+    name: Build Generals
     permissions:
       contents: read
-      packages: write
-    strategy:
-      matrix:
-        include:
-          - preset: "windows-x86-vc6-weekly"
-            tools: true
-            extras: false
-          - preset: "windows-x86-msvc19-weekly"
-            tools: true
-            extras: false
-            vcpkg: true
-            ffmpeg: false
-      fail-fast: false
     uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "Generals"
-      preset: ${{ matrix.preset }}
-      tools: ${{ matrix.tools }}
-      extras: ${{ matrix.extras }}
-      vcpkg: ${{ matrix.vcpkg || false }}
-      ffmpeg: ${{ matrix.ffmpeg || false }}
+      preset: "windows-x86-vc6-weekly"
+      tools: true
+      extras: false
     secrets: inherit
 
-  build-generalsmd:
+  build-generals-msvc19:
     needs: [detect-scm-changes, get-date]
     if: needs.detect-scm-changes.outputs.changed == 'true'
-    name: Build GeneralsMD${{ matrix.preset && '' }}
+    name: Build Generals
     permissions:
       contents: read
       packages: write
-    strategy:
-      matrix:
-        include:
-          - preset: "windows-x86-vc6-weekly"
-            tools: true
-            extras: false
-          - preset: "windows-x86-msvc19-weekly"
-            tools: true
-            extras: false
-            vcpkg: true
-            ffmpeg: true
-      fail-fast: false
+    uses: ./.github/workflows/reusable-build-toolchain.yml
+    with:
+      game: "Generals"
+      preset: "windows-x86-msvc19-weekly"
+      tools: true
+      extras: false
+      vcpkg: true
+      ffmpeg: false
+    secrets: inherit
+
+  build-generalsmd-vc6:
+    needs: [detect-scm-changes, get-date]
+    if: needs.detect-scm-changes.outputs.changed == 'true'
+    name: Build GeneralsMD
+    permissions:
+      contents: read
     uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
       game: "GeneralsMD"
-      preset: ${{ matrix.preset }}
-      tools: ${{ matrix.tools }}
-      extras: ${{ matrix.extras }}
-      vcpkg: ${{ matrix.vcpkg || false }}
-      ffmpeg: ${{ matrix.ffmpeg || false }}
+      preset: "windows-x86-vc6-weekly"
+      tools: true
+      extras: false
+    secrets: inherit
+
+  build-generalsmd-msvc19:
+    needs: [detect-scm-changes, get-date]
+    if: needs.detect-scm-changes.outputs.changed == 'true'
+    name: Build GeneralsMD
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/reusable-build-toolchain.yml
+    with:
+      game: "GeneralsMD"
+      preset: "windows-x86-msvc19-weekly"
+      tools: true
+      extras: false
+      vcpkg: true
+      ffmpeg: true
     secrets: inherit
 
   create-release:
     name: Create Release
-    needs: [build-generals, build-generalsmd, get-date]
+    needs: [build-generals-vc6, build-generals-msvc19, build-generalsmd-vc6, build-generalsmd-msvc19, get-date]
     runs-on: ubuntu-latest
     permissions:
       contents: write
