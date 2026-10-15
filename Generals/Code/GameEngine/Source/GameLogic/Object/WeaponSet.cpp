@@ -1065,6 +1065,12 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 		return false;
 	}
 
+	if (static_cast<UnsignedInt>(weaponSlot) >= ARRAY_SIZE(m_weapons))
+	{
+		// TheSuperHackers @fix Don't process commands with an invalid weaponslot.
+		return false;
+	}
+
 	// Verify the asked for weapon exists , choose it, and then lock it as chosen until unlocked
 	// the old code was just plain wrong. (look at it in perforce and you'll see...)
 	if (m_weapons[weaponSlot] != nullptr)
