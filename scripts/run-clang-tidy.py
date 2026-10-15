@@ -412,7 +412,7 @@ Examples:
   python scripts/run-clang-tidy.py --verbose --include Core/Libraries/
 
   # Use different build directory
-  python scripts/run-clang-tidy.py --build-dir build/win32-debug
+  python scripts/run-clang-tidy.py --build-dir build/windows-x86-msvc19-debug
 
 Note: Requires a PCH-free build. Create with:
       cmake -B build/clang-tidy -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -G Ninja

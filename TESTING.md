@@ -17,9 +17,9 @@ It will run the game in the background and check that each replay is compatible.
 
 Unit tests use [Google Test](https://github.com/TheSuperHackers/google-test). They need a C++17 compiler, so they are not available with VC6. Enable them with `RTS_BUILD_OPTION_TESTS` and run them with CTest:
 ```
-cmake --preset win32 -DRTS_BUILD_OPTION_TESTS=ON
-cmake --build --preset win32
-ctest --preset win32
+cmake --preset windows-x86-msvc19 -DRTS_BUILD_OPTION_TESTS=ON
+cmake --build --preset windows-x86-msvc19
+ctest --preset windows-x86-msvc19
 ```
 Visual Studio also lists the tests in its Test Explorer. A test executable can be run directly as well, for example with `--gtest_filter=AsciiString.*` or with `--gtest_break_on_failure` to stop in the debugger.
 
@@ -50,8 +50,8 @@ The `BM_INIScan` benchmarks compare the production numeric scanners with the ori
 
 For example, from an x86 developer shell:
 ```
-cmake --preset win32 -DRTS_BUILD_OPTION_BENCHMARKS=ON
-cmake --build --preset win32 --target z_googlebenchmark g_googlebenchmark
-build/win32/Benchmarks/Google/Release/z_googlebenchmark.exe --benchmark_filter=^BM_INIScan --benchmark_min_time=0.2s --benchmark_repetitions=5 --benchmark_enable_random_interleaving=true --benchmark_out=ini-benchmark.json --benchmark_out_format=json
+cmake --preset windows-x86-msvc19 -DRTS_BUILD_OPTION_BENCHMARKS=ON
+cmake --build --preset windows-x86-msvc19 --target z_googlebenchmark g_googlebenchmark
+build/windows-x86-msvc19/Benchmarks/Google/Release/z_googlebenchmark.exe --benchmark_filter=^BM_INIScan --benchmark_min_time=0.2s --benchmark_repetitions=5 --benchmark_enable_random_interleaving=true --benchmark_out=ini-benchmark.json --benchmark_out_format=json
 ```
 Use the median CPU time for each case when comparing repeated runs. The same filter also works with `g_googlebenchmark.exe`. Relative output paths are resolved from the executable's directory; use an absolute `--benchmark_out` path to save elsewhere.

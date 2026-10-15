@@ -69,8 +69,8 @@ Docker, CLion, and links to forks supporting additional versions.
 
 **Windows (Visual Studio 2022)**
 ```bash
-cmake --preset win32
-cmake --build build/win32 --config Release
+cmake --preset windows-x86-msvc19
+cmake --build build/windows-x86-msvc19 --config Release
 ```
 
 **Linux (via Docker)**
@@ -91,12 +91,12 @@ The presets do not require vcpkg. Without it, CMake downloads the dependencies w
 FFmpeg support requires, pass its toolchain file when configuring:
 
 ```bash
-cmake --preset win32 -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+cmake --preset windows-x86-msvc19 -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 ```
 
 ### Profiling
 
-Tracy profiling is supported in the CMake preset `win32-profile`.
+Tracy profiling is supported in the CMake preset `windows-x86-msvc19-profile`.
 Use `tracy-profiler.exe` from [Tracy v0.13.1](https://github.com/wolfpld/tracy/releases/tag/v0.13.1).
 If you get an error when using Tracy, try removing `dbghelp.dll` from the game binary directory.
 

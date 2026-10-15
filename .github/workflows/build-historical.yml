@@ -185,17 +185,17 @@ jobs:
             "-DRTS_BUILD_CORE_TOOLS=ON",
             "-DRTS_BUILD_${{ matrix.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}_TOOLS=ON"
           )
-          cmake --preset vc6 $buildFlags
+          cmake --preset windows-x86-vc6 $buildFlags
 
       - name: Build with CMake
         shell: pwsh
         run: |
-          cmake --build --preset vc6
+          cmake --build --preset windows-x86-vc6
 
       - name: Collect Artifacts
         shell: pwsh
         run: |
-          $buildDir = "build\vc6"
+          $buildDir = "build\windows-x86-vc6"
           $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ matrix.game }}\artifacts"
 
           $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ matrix.game }}" -File |
@@ -206,8 +206,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: ${{ matrix.game }}-vc6-${{ needs.prepare.outputs.short_sha }}
-          path: build\vc6\${{ matrix.game }}\artifacts
+          name: ${{ matrix.game }}-windows-x86-vc6-${{ needs.prepare.outputs.short_sha }}
+          path: build\windows-x86-vc6\${{ matrix.game }}\artifacts
           retention-days: 90
 
   create-release:
@@ -222,14 +222,14 @@ jobs:
         if: ${{ github.event.inputs.game == 'Generals' || github.event.inputs.game == 'Both' }}
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
-          name: Generals-vc6-${{ needs.prepare.outputs.short_sha }}
+          name: Generals-windows-x86-vc6-${{ needs.prepare.outputs.short_sha }}
           path: generals-artifacts
 
       - name: Download GeneralsMD Artifact
         if: ${{ github.event.inputs.game == 'GeneralsMD' || github.event.inputs.game == 'Both' }}
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
-          name: GeneralsMD-vc6-${{ needs.prepare.outputs.short_sha }}
+          name: GeneralsMD-windows-x86-vc6-${{ needs.prepare.outputs.short_sha }}
           path: generalsmd-artifacts
 
       - name: Prepare Release Archives

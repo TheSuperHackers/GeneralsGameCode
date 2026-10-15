@@ -68,7 +68,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Cache VC6 Installation
-        if: startsWith(inputs.preset, 'vc6')
+        if: startsWith(inputs.preset, 'windows-x86-vc6')
         id: cache-vc6
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
@@ -83,7 +83,7 @@ jobs:
           key: cmake-deps-${{ inputs.preset }}${{ inputs.vcpkg && '+v' || '' }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
       - name: Download VC6 Portable from itsmattkc repo
-        if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
+        if: ${{ startsWith(inputs.preset, 'windows-x86-vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
         env:
           EXPECTED_HASH: "D0EE1F6DCEF7DB3AD703120D9FB4FAD49EBCA28F44372E40550348B1C00CA583"
           COMMIT: "001c4bafdcf2ef4b474d693acccd35a91e848f40"
@@ -107,7 +107,7 @@ jobs:
           Remove-Item VS6_VisualStudio6.zip -Verbose
 
       - name: Set Up VC6 Environment
-        if: startsWith(inputs.preset, 'vc6')
+        if: startsWith(inputs.preset, 'windows-x86-vc6')
         shell: pwsh
         run: |
           # Define the base directories as local variables first
@@ -126,7 +126,7 @@ jobs:
           "LIB=$MSVCDir\LIB;$MSVCDir\MFC\LIB;$env:LIB" >> $env:GITHUB_ENV
 
       - name: Set Up VC2022 Environment
-        if: startsWith(inputs.preset, 'win32')
+        if: startsWith(inputs.preset, 'windows-x86-msvc19')
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
         with:
           arch: x86
@@ -196,7 +196,7 @@ jobs:
           $buildDir = "build\${{ inputs.preset }}"
           $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
 
-          if ("${{ inputs.preset }}" -like "win32*") {
+          if ("${{ inputs.preset }}" -like "windows-x86-msvc19*") {
             $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
             $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File |
               Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
