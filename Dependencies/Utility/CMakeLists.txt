@@ -5,6 +5,7 @@ set(UTILITY_SRC
     Utility/atl_compat.h
     Utility/atomic_adapter.h
     Utility/atomic_x86interlocked.inl
+    Utility/bit_adapter.h
     Utility/compat.h
     Utility/comsupp_compat.h
     Utility/endian_compat.h

@@ -43,8 +43,9 @@
 #include "Lib/BaseType.h"
 #include "WWMath/vector3.h"
 #include "WWMath/matrix3d.h"
+#include <Utility/bit_adapter.h>
 
-	#define AS_INT(x) (*(Int *)(&x))
+	#define AS_INT(x) (std::bit_cast<Int>(x))
 	#define DUMPVEL DUMPCOORD3DNAMED(&m_vel, "m_vel")
 	#define DUMPACCEL DUMPCOORD3DNAMED(&m_accel, "m_accel")
 	#define DUMPVECTOR3(x) DUMPVECTOR3NAMED(x, #x)

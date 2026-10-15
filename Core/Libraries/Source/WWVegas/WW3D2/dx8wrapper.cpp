@@ -84,6 +84,7 @@
 #include "dx8texman.h"
 #include "WWLib/bound.h"
 #include "DbgHelpGuard.h"
+#include <Utility/bit_adapter.h>
 
 #include "shdlib.h"
 
@@ -4057,7 +4058,7 @@ void DX8Wrapper::Get_DX8_Render_State_Value_Name(StringClass& name, D3DRENDERSTA
 	case D3DRS_PATCHSEGMENTS:
 	case D3DRS_POINTSIZE_MAX:
 	case D3DRS_TWEENFACTOR:
-		name.Format("%f",*(float*)&value);
+		name.Format("%f",std::bit_cast<float>(value));
 		break;
 
 	case D3DRS_ZBIAS:
@@ -4162,7 +4163,7 @@ void DX8Wrapper::Get_DX8_Texture_Stage_State_Value_Name(StringClass& name, D3DTE
 	case D3DTSS_BUMPENVMAT11:
 	case D3DTSS_BUMPENVLSCALE:
 	case D3DTSS_BUMPENVLOFFSET:
-		name.Format("%f",*(float*)&value);
+		name.Format("%f",std::bit_cast<float>(value));
 		break;
 
 	case D3DTSS_TEXCOORDINDEX:

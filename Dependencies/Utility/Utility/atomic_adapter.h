@@ -35,6 +35,7 @@
 
 	#include <stddef.h>
 	#include "Utility/interlocked_adapter.h"
+	#include "Utility/bit_adapter.h"
 	namespace std
 	{
 	#include "atomic_x86interlocked.inl"

@@ -45,6 +45,7 @@
 #include "camera.h"
 #include "dx8renderer.h"
 #include "WWLib/hashtemplate.h"
+#include <Utility/bit_adapter.h>
 
 
 /*
@@ -493,12 +494,12 @@ struct TriangleSide
 	Vector3 loc2;
 	TriangleSide(const Vector3& l1,const Vector3& l2)
 	{
-		int i1=*(int*)&l1[0];
-		i1=37*i1+*(int*)&l1[1];
-		i1=37*i1+*(int*)&l1[2];
-		int i2=*(int*)&l2[0];
-		i2=37*i2+*(int*)&l2[1];
-		i2=37*i2+*(int*)&l2[2];
+		int i1=std::bit_cast<int>(l1[0]);
+		i1=37*i1+std::bit_cast<int>(l1[1]);
+		i1=37*i1+std::bit_cast<int>(l1[2]);
+		int i2=std::bit_cast<int>(l2[0]);
+		i2=37*i2+std::bit_cast<int>(l2[1]);
+		i2=37*i2+std::bit_cast<int>(l2[2]);
 		if (i1<i2) {
 			loc1=l1;
 			loc2=l2;
@@ -512,12 +513,12 @@ struct TriangleSide
 
 	bool operator== (const TriangleSide& s)
 	{
-		unsigned i=*(unsigned*)&loc1[0]^*(unsigned*)&s.loc1[0];
-		i|=*(unsigned*)&loc1[1]^*(unsigned*)&s.loc1[1];
-		i|=*(unsigned*)&loc1[2]^*(unsigned*)&s.loc1[2];
-		i|=*(unsigned*)&loc2[0]^*(unsigned*)&s.loc2[0];
-		i|=*(unsigned*)&loc2[1]^*(unsigned*)&s.loc2[1];
-		i|=*(unsigned*)&loc2[2]^*(unsigned*)&s.loc2[2];
+		unsigned i=std::bit_cast<unsigned>(loc1[0])^std::bit_cast<unsigned>(s.loc1[0]);
+		i|=std::bit_cast<unsigned>(loc1[1])^std::bit_cast<unsigned>(s.loc1[1]);
+		i|=std::bit_cast<unsigned>(loc1[2])^std::bit_cast<unsigned>(s.loc1[2]);
+		i|=std::bit_cast<unsigned>(loc2[0])^std::bit_cast<unsigned>(s.loc2[0]);
+		i|=std::bit_cast<unsigned>(loc2[1])^std::bit_cast<unsigned>(s.loc2[1]);
+		i|=std::bit_cast<unsigned>(loc2[2])^std::bit_cast<unsigned>(s.loc2[2]);
 		return !i;
 	}
 };

@@ -42,6 +42,7 @@
 #pragma once
 
 #include "WWLib/always.h"
+#include <Utility/bit_adapter.h>
 #include "dllist.h"
 #include "d3d8.h"
 #include "WWMath/matrix4.h"
@@ -145,7 +146,7 @@ WWINLINE void DX8_ErrorCode(unsigned res)
 }
 
 // Converts a FLOAT to a DWORD for use in SetRenderState() calls
-inline DWORD F2DW(FLOAT f) { return *((DWORD*)&f); }
+inline DWORD F2DW(FLOAT f) { return std::bit_cast<DWORD>(f); }
 
 #ifdef WWDEBUG
 #define DX8CALL_HRES(x,res) DX8_Assert(); res = DX8Wrapper::_Get_D3D_Device8()->x; DX8_ErrorCode(res); DX8Wrapper::Increment_DX8_CallCount();
@@ -809,8 +810,8 @@ WWINLINE void DX8Wrapper::Set_Fog(bool enable, const Vector3 &color, float start
 	ShaderClass::Invalidate();
 
 	// Set renderstates which are not affected by the shader
-	Set_DX8_Render_State(D3DRS_FOGSTART, *(DWORD *)(&start));
-	Set_DX8_Render_State(D3DRS_FOGEND,   *(DWORD *)(&end));
+	Set_DX8_Render_State(D3DRS_FOGSTART, std::bit_cast<DWORD>(start));
+	Set_DX8_Render_State(D3DRS_FOGEND,   std::bit_cast<DWORD>(end));
 }
 
 

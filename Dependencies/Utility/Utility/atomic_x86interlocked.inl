@@ -403,16 +403,16 @@ private:
 	atomic_floating(const atomic_floating&) FUNCTION_DELETE;
 	atomic_floating& operator=(const atomic_floating&) FUNCTION_DELETE;
 
-	// The bytes are read through a pointer, so that the value does not pass through the floating point unit on
+	// The bytes are copied with memcpy, so that the value does not pass through the floating point unit on
 	// the way, which changes the bytes of a signaling NaN.
 	static Bits to_bits(const Float& value)
 	{
-		return *(const Bits*)&value;
+		return bit_cast<Bits>(value);
 	}
 
 	static Float from_bits(const Bits& bits)
 	{
-		return *(const Float*)&bits;
+		return bit_cast<Float>(bits);
 	}
 
 	bool compare_exchange(Float& expected, Float desired)
@@ -422,7 +422,7 @@ private:
 		if (m_bits.compare_exchange_strong(expectedBits, to_bits(desired)))
 			return true;
 
-		*(Bits*)&expected = expectedBits;
+		::memcpy(&expected, &expectedBits, sizeof(expected));
 		return false;
 	}
 

@@ -91,6 +91,7 @@
 #include "WWSaveLoad/saveload.h"
 #include "ww3dids.h"
 #include "intersec.h"
+#include <Utility/bit_adapter.h>
 
 
 
@@ -133,18 +134,18 @@ static inline bool Check_Is_Transform_Identity(const Matrix3D& m)
 	const float one=1.0f;
 
 	unsigned d=
-		((unsigned&)m[0][0]^(unsigned&)one) |
-		((unsigned&)m[0][1]^(unsigned&)zero) |
-		((unsigned&)m[0][2]^(unsigned&)zero) |
-		((unsigned&)m[0][3]^(unsigned&)zero) |
-		((unsigned&)m[1][0]^(unsigned&)zero) |
-		((unsigned&)m[1][1]^(unsigned&)one) |
-		((unsigned&)m[1][2]^(unsigned&)zero) |
-		((unsigned&)m[1][3]^(unsigned&)zero) |
-		((unsigned&)m[2][0]^(unsigned&)zero) |
-		((unsigned&)m[2][1]^(unsigned&)zero) |
-		((unsigned&)m[2][2]^(unsigned&)one) |
-		((unsigned&)m[2][3]^(unsigned&)zero);
+		(std::bit_cast<unsigned>(m[0][0])^std::bit_cast<unsigned>(one)) |
+		(std::bit_cast<unsigned>(m[0][1])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[0][2])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[0][3])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[1][0])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[1][1])^std::bit_cast<unsigned>(one)) |
+		(std::bit_cast<unsigned>(m[1][2])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[1][3])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[2][0])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[2][1])^std::bit_cast<unsigned>(zero)) |
+		(std::bit_cast<unsigned>(m[2][2])^std::bit_cast<unsigned>(one)) |
+		(std::bit_cast<unsigned>(m[2][3])^std::bit_cast<unsigned>(zero));
 	return !d;
 }
 

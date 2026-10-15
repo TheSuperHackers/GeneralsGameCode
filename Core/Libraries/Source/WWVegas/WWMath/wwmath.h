@@ -37,6 +37,7 @@
 #pragma once
 
 #include "WWLib/always.h"
+#include <Utility/bit_adapter.h>
 #include <math.h>
 #include <float.h>
 #include <assert.h>
@@ -99,9 +100,9 @@ static void			Shutdown();
 // These are meant to be a collection of small math utility functions to be optimized at some point.
 static WWINLINE float Fabs(float val)
 {
-	int value=*(int*)&val;
+	int value=std::bit_cast<int>(val);
 	value&=0x7fffffff;
-	return *(float*)&value;
+	return std::bit_cast<float>(value);
 }
 
 static WWINLINE int Float_To_Int_Chop(const float& f);
@@ -153,7 +154,7 @@ static WWINLINE double		Wrap(double val, double min = 0.0f, double max = 1.0f);
 static WWINLINE float		Min(float a, float b);
 static WWINLINE float		Max(float a, float b);
 
-static WWINLINE int			Float_As_Int(const float f) { return *((int*)&f); }
+static WWINLINE int			Float_As_Int(const float f) { return std::bit_cast<int>(f); }
 
 // Linearly interpolates between a and b using parameter t in [0, 1].
 // t = 0 returns a, t = 1 returns b, values in between return a proportionate blend.
@@ -190,7 +191,7 @@ WWINLINE float WWMath::Sign(float val)
 
 WWINLINE bool WWMath::Fast_Is_Float_Positive(const float & val)
 {
-	return !((*(int *)(&val)) & 0x80000000);
+	return !(std::bit_cast<int>(val) & 0x80000000);
 }
 
 WWINLINE bool WWMath::Is_Power_Of_2(const unsigned int val)
@@ -582,7 +583,7 @@ WWINLINE float WWMath::Sqrt(float val)
 
 WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
 {
-    int a	= *reinterpret_cast<const int*>(&f);				// take bit pattern of float into a register
+    int a	= std::bit_cast<int>(f);				// take bit pattern of float into a register
     int sign	= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
     int mantissa	= (a&((1<<23)-1))|(1<<23);						// extract mantissa and add the hidden bit
     int exponent	= ((a&0x7fffffff)>>23)-127;					// extract the exponent
@@ -592,7 +593,7 @@ WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
 
 WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 {
-	int a			= *reinterpret_cast<const int*>(&f);			// take bit pattern of float into a register
+	int a			= std::bit_cast<int>(f);			// take bit pattern of float into a register
 	int sign		= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
 	a&=0x7fffffff;															// we don't need the sign any more
 

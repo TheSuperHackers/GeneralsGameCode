@@ -37,6 +37,7 @@
 #pragma once
 
 #include "always.h"
+#include <Utility/bit_adapter.h>
 #include <math.h>
 #include <assert.h>
 
@@ -126,7 +127,7 @@ inline float WWMath::Sign(float val)
 
 inline bool WWMath::Fast_Is_Float_Positive(const float & val)
 {
-	return !((*(int *)(&val)) & 0x80000000);
+	return !(std::bit_cast<int>(val) & 0x80000000);
 }
 
 inline float WWMath::Random_Float(float min,float max)

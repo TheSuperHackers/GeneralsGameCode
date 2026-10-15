@@ -45,6 +45,7 @@
 #include "WWDebug/wwdebug.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
+#include <Utility/bit_adapter.h>
 
 
 bool ShaderClass::ShaderDirty=true;
@@ -831,7 +832,7 @@ void ShaderClass::Apply()
 	if (diff&ShaderClass::MASK_NPATCHENABLE) {
 		float level=1.0f;
 		if (Get_NPatch_Enable()) level=float(WW3D::Get_NPatches_Level());
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_PATCHSEGMENTS,*((DWORD*)&level));
+		DX8Wrapper::Set_DX8_Render_State(D3DRS_PATCHSEGMENTS,std::bit_cast<DWORD>(level));
 	}
 
 	// Enable/disable alpha test
