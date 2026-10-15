@@ -156,12 +156,6 @@
             }
         },
         {
-            "name": "unix",
-            "inherits": "default-vcpkg",
-            "hidden": false,
-            "displayName": "Unix 32bit VCPKG Release"
-        },
-        {
             "name": "mingw-w64-i686",
             "displayName": "MinGW-w64 32-bit (i686) Release",
             "generator": "Unix Makefiles",
@@ -265,13 +259,6 @@
             "displayName": "Build Windows 32bit VCPKG Debug",
             "description": "Build Windows 32bit VCPKG Debug",
             "configuration": "Debug"
-        },
-        {
-            "name": "unix",
-            "configurePreset": "unix",
-            "displayName": "Build Unix 32bit VCPKG Release",
-            "description": "Build Unix 32bit VCPKG Release",
-            "configuration": "Release"
         },
         {
             "name": "mingw-w64-i686",
@@ -495,19 +482,6 @@
                 {
                     "type": "build",
                     "name": "win32-vcpkg-debug"
-                }
-            ]
-        },
-        {
-            "name": "unix",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "unix"
-                },
-                {
-                    "type": "build",
-                    "name": "unix"
                 }
             ]
         },
