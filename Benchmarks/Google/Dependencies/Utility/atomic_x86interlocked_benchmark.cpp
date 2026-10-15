@@ -22,6 +22,9 @@
 
 #include <atomic>
 #include <stddef.h>
+#include <string.h>
+
+#include "Utility/bit_adapter.h"
 
 // The class that VC6 uses as std::atomic, compiled by this compiler and running on the assembler functions.
 namespace x86asm

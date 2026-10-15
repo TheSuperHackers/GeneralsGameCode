@@ -407,12 +407,12 @@ private:
 	// the way, which changes the bytes of a signaling NaN.
 	static Bits to_bits(const Float& value)
 	{
-		return bit_cast<Bits>(value);
+		return std::bit_cast<Bits>(value);
 	}
 
 	static Float from_bits(const Bits& bits)
 	{
-		return bit_cast<Float>(bits);
+		return std::bit_cast<Float>(bits);
 	}
 
 	bool compare_exchange(Float& expected, Float desired)
