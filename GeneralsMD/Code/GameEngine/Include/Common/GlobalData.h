@@ -571,6 +571,7 @@ public:
 	Bool				m_breakTheMovie;								///< The user has hit escape!
 	AsciiString m_modDir;
 	AsciiString m_modBIG;
+	AsciiString m_generalsDataDir;				///< Overrides the Generals InstallPath registry value. The trailing '\' is included.
 
 	//-allAdvice feature
 	//Bool m_allAdvice;
