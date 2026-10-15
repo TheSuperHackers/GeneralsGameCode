@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "Common/GameType.h"
 #include "PathfindCellInfo.h"
 
 class Object;

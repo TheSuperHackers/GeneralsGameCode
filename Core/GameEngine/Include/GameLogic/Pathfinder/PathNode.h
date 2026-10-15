@@ -19,6 +19,9 @@
 #pragma once
 
 #include "Common/GameMemory.h"
+#include "Common/GameType.h"
+#include "Lib/Coord2D.h"
+#include "Lib/Coord3D.h"
 
 /**
  * PathNodes are used to create a final Path to return from the

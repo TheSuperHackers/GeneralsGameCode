@@ -18,6 +18,10 @@
 
 #pragma once
 
+#include "Common/GameDefines.h"
+#include "Common/GameType.h"
+#include "Lib/ICoord2D.h"
+
 class PathfindCell;
 
 class PathfindCellInfo

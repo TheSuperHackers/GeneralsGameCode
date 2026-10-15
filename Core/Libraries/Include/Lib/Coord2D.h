@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <math.h>
 #include "trig.h"
 
 // NOTE: Keep the types simple; avoid constructors and destructors so they can be used within unions

@@ -18,6 +18,11 @@
 
 #pragma once
 
+#include "Common/GameType.h"
+#include "Lib/Coord3D.h"
+#include "Lib/ICoord2D.h"
+#include "Lib/IRegion2D.h"
+
 class Bridge;
 class LocomotorSet;
 class PathfindCell;
