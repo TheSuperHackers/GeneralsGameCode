@@ -109,6 +109,16 @@
             }
         },
         {
+            "name": "windows-x86-msvc19-nonretail",
+            "inherits": "windows-x86-msvc19",
+            "displayName": "Windows 32bit MSVC19 Non-Retail Release",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_RETAIL_COMPATIBLE_GAME": "OFF",
+                "RTS_BUILD_OPTION_PRESERVE_RETAIL_BEHAVIOR": "OFF",
+                "RTS_FLAGS": "/W3;/DENABLE_GAMETEXT_SUBSTITUTES=0;/DENABLE_CONFIGURABLE_SHROUD=0;/DENABLE_FILESYSTEM_EXISTENCE_CACHE=0;/DPRIORITIZE_TEXTURES_BY_SIZE=0;/DENABLE_GUI_HACKS=0"
+            }
+        },
+        {
             "name": "windows-x86-msvc19-weekly",
             "inherits": "windows-x86-msvc19",
             "displayName": "Windows 32bit MSVC19 Weekly Release",
@@ -202,6 +212,13 @@
             "configuration": "Debug"
         },
         {
+            "name": "windows-x86-msvc19-nonretail",
+            "configurePreset": "windows-x86-msvc19-nonretail",
+            "displayName": "Build Windows 32bit MSVC19 Non-Retail Release",
+            "description": "Build Windows 32bit MSVC19 Non-Retail Release",
+            "configuration": "Release"
+        },
+        {
             "name": "windows-x86-msvc19-weekly",
             "configurePreset": "windows-x86-msvc19-weekly",
             "displayName": "Build Windows 32bit MSVC19 Weekly Release",
@@ -263,6 +280,14 @@
             "displayName": "Test Windows 32bit MSVC19 Debug",
             "description": "Test Windows 32bit MSVC19 Debug",
             "configuration": "Debug"
+        },
+        {
+            "name": "windows-x86-msvc19-nonretail",
+            "inherits": "default",
+            "configurePreset": "windows-x86-msvc19-nonretail",
+            "displayName": "Test Windows 32bit MSVC19 Non-Retail Release",
+            "description": "Test Windows 32bit MSVC19 Non-Retail Release",
+            "configuration": "Release"
         }
     ],
     "workflowPresets": [
@@ -367,6 +392,19 @@
                 {
                     "type": "build",
                     "name": "windows-x86-msvc19-debug"
+                }
+            ]
+        },
+        {
+            "name": "windows-x86-msvc19-nonretail",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "windows-x86-msvc19-nonretail"
+                },
+                {
+                    "type": "build",
+                    "name": "windows-x86-msvc19-nonretail"
                 }
             ]
         },

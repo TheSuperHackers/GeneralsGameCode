@@ -97,6 +97,9 @@ jobs:
           - preset: "windows-x86-msvc19-debug"
             tools: true
             extras: true
+          - preset: "windows-x86-msvc19-nonretail"
+            tools: true
+            extras: true
       fail-fast: false
     uses: ./.github/workflows/reusable-build-toolchain.yml
     with:
@@ -171,6 +174,9 @@ jobs:
             tools: true
             extras: true
           - preset: "windows-x86-msvc19-debug"
+            tools: true
+            extras: true
+          - preset: "windows-x86-msvc19-nonretail"
             tools: true
             extras: true
       fail-fast: false
